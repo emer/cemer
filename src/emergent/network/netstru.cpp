@@ -3500,6 +3500,13 @@ void Layer::ConnectSelf() {
   }
 }
 
+taBase::DumpQueryResult Layer::Dump_QuerySaveMember(MemberDef* md) {
+  // only save unit_names if any (to ease backwards compat)
+  if (md->name != "unit_names") 
+    return inherited::Dump_QuerySaveMember(md);
+  return (unit_names.dims()) ? DQR_SAVE : DQR_NO_SAVE;
+}
+
 void Layer::SyncSendPrjns() {
   Projection* p;
   taLeafItr i;

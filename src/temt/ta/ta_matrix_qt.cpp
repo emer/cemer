@@ -505,12 +505,13 @@ void iMatrixTableView::GetSel(CellRange& sel) {
   if (!mod) return;
   // first, get the sel assuming no BOT_0
   sel.SetFromModel(selectionModel()->selectedIndexes());
-  // if BOT_0, need to flip the row around
+  // if BOT_0, need to flip the row around (and swap fr/to)
   if (mod->matView() == taMisc::BOT_ZERO) {
     int max_row = mod->rowCount() - 1;
     if ((max_row) < 0) return; // row_xx s/already be 0
-    sel.row_fr = max_row - sel.row_fr;
-    sel.row_to = max_row - sel.row_to;
+    int row_to = max_row - sel.row_fr;
+    sel.row_fr = max_row - sel.row_to;
+    sel.row_to = row_to;
   }
 }
 

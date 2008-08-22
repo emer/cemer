@@ -256,10 +256,8 @@ QWidget* taiData::MakeLayoutWidget(QWidget* gui_parent) const {
 }
 
 bool taiData::readOnly() const {
-  if (mparent != NULL)
-    return (mparent->readOnly() || (mflags & flgReadOnly));
-  else
-    return (mflags & flgReadOnly);
+  if (mflags & flgReadOnly) return true;
+  return (mparent && mparent->readOnly());
 }
 
 void taiData::setHighlight(bool value) {

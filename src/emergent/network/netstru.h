@@ -1596,6 +1596,7 @@ public:
   override int	GetEnabled() const { return !lesioned(); }
   override String GetTypeDecoKey() const { return "Layer"; }
 
+  override DumpQueryResult Dump_QuerySaveMember(MemberDef* md);
   void 	UpdateAfterEdit();
   void 	InitLinks();
   void	CutLinks();
