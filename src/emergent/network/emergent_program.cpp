@@ -458,7 +458,6 @@ const String NetUpdateView::GenCssBody_impl(int indent_level) {
 ////////////////////////////////////////////////////
 
 void InitNamedUnits::Initialize() {
-  init_label_net = true;
   n_lay_name_chars = 1;
   max_unit_chars = -1;
 }
@@ -555,12 +554,7 @@ bool InitNamedUnits::GetNetworkVar() {
 }
 
 const String InitNamedUnits::GenCssBody_impl(int indent_level) {
-  if(!init_label_net || !network_var)
-    return "// InitNamedUnits: not labeling units!\n";
-  String il = cssMisc::Indent(indent_level);
-  String rval = il + "{ " + "InitNamedUnits* inu = this" + GetPath(NULL,program()) + ";\n"; 
-  rval += il + "  inu->LabelNetwork(); }\n";
-  return rval;
+  return "// InitNamedUnits: no action taken\n";
 }
 
 bool InitNamedUnits::InitNamesTable() {
@@ -646,14 +640,17 @@ bool InitNamedUnits::InitDynEnumFmUnitNames(DynEnumType* dyn_enum,
   return true;
 }
 
-bool InitNamedUnits::LabelNetwork() {
-  if(TestError(!GetUnitNamesVar(), "InitNamesTable", "could not find unit names data table -- this should not usually happen because it is auto-made if not found"))
+bool InitNamedUnits::LabelNetwork(bool propagate_names) {
+  if(TestError(!GetUnitNamesVar(), "LabelNetwork", "could not find unit names data table -- this should not usually happen because it is auto-made if not found"))
     return false;
-  if(TestError(!GetNetworkVar(), "InitNamesTable", "network variable is not set and could not find one -- please set and try again"))
+  if(TestError(!GetNetworkVar(), "LabelNetwork", "network variable is not set and could not find one -- please set and try again"))
     return false;
 
   DataTable* undt = (DataTable*)unit_names_var->object_val.ptr();
   if(!undt) return false;	// should not happen
+  if(TestError(undt->rows < 1, "LabelNetwork", "unit names table doesn't have 1 or more rows!")) {
+    return false;
+  }
 
   Network* net = (Network*)network_var->object_val.ptr();
   if(!net) return false;	// should not happen
@@ -664,7 +661,8 @@ bool InitNamedUnits::LabelNetwork() {
     if(!lay) continue;
     InitLayerFmUnitNames(lay, ndc, max_unit_chars);
   }
-  net->GetLocalistName();	// propagate (why not!)
+  if(propagate_names)
+    net->GetLocalistName();	// propagate
   return true;
 }
 
@@ -673,13 +671,44 @@ bool InitNamedUnits::InitLayerFmUnitNames(Layer* lay, const DataCol* unit_names_
     taMisc::Error("InitLayerFmUnitNames", "null args");
     return false;
   }
-  for(int i=0;i<lay->units.leaves;i++) {
-    int cidx = i % unit_names_col->cell_size();
-    String cnm = unit_names_col->GetValAsStringM(-1, cidx);
-    if(cnm.empty()) continue;
-    Unit* un = lay->units.Leaf(i);
-    un->name = cnm.elidedTo(max_un_chars);
+  const MatrixGeom& cg = unit_names_col->cell_geom;
+  taMatrix* nmat = (const_cast<DataCol*>(unit_names_col))->GetValAsMatrix(-1);
+  if(nmat) {
+    taBase::Ref(nmat);
+
+    if(lay->unit_groups && cg.dims() == 4) { // check if all but first group is empty
+      bool hugp_empty = true;
+      int gx, gy, ux, uy;
+      for(gy = 0; gy<cg.dim(3); gy++) {
+	for(gx = 0; gx<cg.dim(2); gx++) {
+	  if(gx == 0 && gy == 0) continue; // skip 1st gp
+	  for(uy = 0; uy<cg.dim(1); uy++) {
+	    for(ux = 0; ux<cg.dim(0); ux++) {
+	      if(nmat->SafeElAsStr(ux,uy,gx,gy).nonempty()) {
+		hugp_empty = false;
+		break;
+	      }
+	    }
+	  }
+	}
+      }
+      if(hugp_empty) {
+	lay->unit_names.SetGeom(2, cg.dim(0), cg.dim(1)); // just set for 1st gp
+      }
+      else {
+	lay->unit_names.SetGeomN(cg); // get our geom
+      }
+    }
+    else {
+      lay->unit_names.SetGeomN(cg); // get our geom
+    }
+    for(int i=0;i<nmat->size && i<lay->unit_names.size;i++) {
+      String cnm = nmat->SafeElAsStr_Flat(i);
+      lay->unit_names.SetFmStr_Flat(cnm.elidedTo(max_un_chars), i);
+    }
+    taBase::unRefDone(nmat);
   }
+  lay->SetUnitNames();		// actually set from these names
   return true;
 }
 

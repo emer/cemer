@@ -1258,8 +1258,10 @@ public:
   // #CAT_Structure find unit from given set of x and y coordinates
   TwoDCoord	GetGpGeomPos();
   // #CAT_Structure returns unit group position in terms of layer unit group geometry gp_geom (pos is in unit coordinates and not unit group geometry)
-  void 		SetUnitNames(taMatrix* mat);
-  // #CAT_Structure #EXPERT sets the unit names from the mat -- should generally be 2d but we are permissive about dims, size, etc.
+  virtual bool	SetUnitNames(taMatrix* mat);
+  // #CAT_XpertStructure sets the unit names from the matrix mat -- should generally be 2d but we are permissive about dims, size, etc.
+  virtual bool	GetUnitNames(taMatrix* mat);
+  // #CAT_XpertStructure gets current unit names into matrix mat -- should generally be 2d but we are permissive about dims, size, etc.
 
   // implement save_rmv_units:
   override bool	Dump_QuerySaveChildren();
@@ -1371,7 +1373,7 @@ public:
   // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!
   bool			lesion_;	
   // #AKA_lesion #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 flag to inactivate this layer from processing (reversable)
-  String_Matrix		unit_names; // #SHOW_TREE set unit names from this mat -- set dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable
+  String_Matrix		unit_names; // #SHOW_TREE set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
 
   ProjectBase*		project(); // #IGNORE this layer's project
   	
@@ -1437,9 +1439,9 @@ public:
   virtual void	RemoveUnitGroups();
   // #MENU #DYN1 #CAT_Structure remove all unit groups in this layer
   virtual void  PreConnect();
-  // #CAT_Structure prepare to connect the layer (create con_groups)
+  // #CAT_XpertStructure prepare to connect the layer (create con_groups)
   virtual void	SyncSendPrjns();
-  // #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
+  // #CAT_XpertStructure synchronize sending projections with the recv projections so everyone's happy
   virtual void  LinkSendCons();
   // #IGNORE re-connect the layer after loading
   virtual void	DisConnect();
@@ -1493,14 +1495,18 @@ public:
   // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
 
   virtual void	PropagateInputDistance();
-  // #CAT_Structure propagate my input distance (dist.fm_input) to layers I send to
+  // #CAT_XpertStructure propagate my input distance (dist.fm_input) to layers I send to
   virtual void	PropagateOutputDistance();
-  // #CAT_Structure propagate my output distance (dist.fm_output) to layers I receive from
+  // #CAT_XpertStructure propagate my output distance (dist.fm_output) to layers I receive from
   virtual void	Compute_PrjnDirections();
   // #CAT_Structure compute the directions of projections based on the relative distances from input/output layers
 
+  virtual bool	SetUnitNames(bool force_use_unit_names = false);
+  // #MENU #MENU_SEP_BEFORE #CAT_Structure set unit names from unit_names matrix (called automatically on Build) -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
+  virtual bool	GetUnitNames(bool force_use_unit_names = true);
+  // #MENU #CAT_Structure get unit_names matrix values from current unit name values -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
   virtual void	GetLocalistName();
-  // #CAT_Structure look for a receiving projection from a single unit, which has a name: if found, set our name to that name
+  // #CAT_XpertStructure look for a receiving projection from a single unit, which has a name: if found, set our unit name to that name (also sets unit_names)
 
   virtual void	TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights
@@ -2034,6 +2040,10 @@ public:
   virtual void	Compute_PrjnDirections();
   // #MENU #CONFIRM #CAT_Structure compute the directions of projections based on the relative distances from input/output layers (calls Compute_LayerDistances first)
 
+  virtual void	SetUnitNames(bool force_use_unit_names = false);
+  // #MENU #MENU_SEP_BEFORE #CAT_Structure for all layers, set unit names from unit_names matrix (called automatically on Build) -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
+  virtual void	GetUnitNames(bool force_use_unit_names = true);
+  // #MENU #CAT_Structure for all layers, get unit_names matrix values from current unit name values -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
   virtual void	GetLocalistName();
   // #CAT_Structure look for a receiving projection from a single unit, which has a name: if found, set our name to that name
 

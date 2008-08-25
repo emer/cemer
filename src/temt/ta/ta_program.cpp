@@ -544,7 +544,7 @@ void ProgVar::SetFlagsByOwnership() {
   if(is_global) {
     ClearVarFlag(LOCAL_VAR);
     ClearVarFlag(FUN_ARG);
-    if(var_type == T_Object && object_type && object_type->InheritsFrom(&TA_taMatrix)) {
+    if(!objs_ptr && var_type == T_Object && object_type && object_type->InheritsFrom(&TA_taMatrix)) {
 	TestWarning(true, "ProgVar", "for Matrix* ProgVar named:",name,
 		    "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
     }
@@ -658,7 +658,7 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
       rval = false;
     }
     if(object_type) {
-      TestWarning(!HasVarFlag(LOCAL_VAR) && object_type->InheritsFrom(&TA_taMatrix),
+      TestWarning(!objs_ptr && !HasVarFlag(LOCAL_VAR) && object_type->InheritsFrom(&TA_taMatrix),
 		  "ProgVar", "for Matrix* ProgVar named:",name,
 		  "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
     }

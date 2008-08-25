@@ -206,7 +206,9 @@ public:
   
   bool			SetSize(int sz); // sets to size, zeroing orphaned or new dims (true if changed size; false if not)
   int			SafeEl(int i) const {if (InRange(i)) return el[i]; else return 0;}
-    // the element at the given index
+  // the element at the given index
+  int			dim(int i) const { return SafeEl(i); }
+  // given dimension value
   
   void			Add(int value); // safely add a new element
   void			Set(int i, int value) // safely set an element
@@ -524,7 +526,7 @@ public:
   // #CAT_Modify set geom for matrix -- if matches current size, it is non-destructive 
   void			SetGeomN(const MatrixGeom& geom_) 
   { SetGeom_(geom_.size, geom_.el);}
-  // #MENU #MENU_ON_Matrix #MENU_SEP_BEFORE #CAT_Modify #INIT_ARGVAL_ON_geom set geom for any sized matrix -- if matches current size, it is non-destructive 
+  // #MENU #MENU_CONTEXT #MENU_ON_Matrix #MENU_SEP_BEFORE #CAT_Modify #INIT_ARGVAL_ON_geom set geom for any sized matrix -- if matches current size, it is non-destructive 
   
   // Slicing -- NOTES: 
   // 1. slices are updated if parent allocation changes -- this could collapse slice to [0]

@@ -94,6 +94,18 @@ void iTextEdit::keyPressEvent(QKeyEvent* e) {
       e->accept();
       cut();
     }
+    else if(e->key() == Qt::Key_C) { // global sc can grab these so do it here??
+      e->accept();
+      copy();
+    }
+    else if(e->key() == Qt::Key_X) {
+      e->accept();
+      cut();
+    }
+    else if(e->key() == Qt::Key_V) {
+      e->accept();
+      paste();
+    }
     else if(e->key() == Qt::Key_Slash) {
       e->accept();
       undo();

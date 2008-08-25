@@ -3244,6 +3244,32 @@ void Unit_Group::VarToTable(DataTable* dt, const String& variable) {
   dt->WriteClose();
 }
 
+bool Unit_Group::SetUnitNames(taMatrix* mat) {
+  if (!mat) return false;
+  int x, y;
+  for (y = 0; ((y < mat->dim(1)) && (y < geom.y)); ++y) {
+    for (x = 0; ((x < mat->dim(0)) && (x < geom.x)); ++x) {
+      Unit* un = FindUnitFmCoord(x, y);
+      if (!un) continue;
+      un->SetName(mat->SafeElAsVar(x, y).toString());
+    }
+  }
+  return true;
+}
+
+bool Unit_Group::GetUnitNames(taMatrix* mat) {
+  if (!mat) return false;
+  int x, y;
+  for (y = 0; ((y < mat->dim(1)) && (y < geom.y)); ++y) {
+    for (x = 0; ((x < mat->dim(0)) && (x < geom.x)); ++x) {
+      Unit* un = FindUnitFmCoord(x, y);
+      if (!un) continue;
+      mat->SetFmVar((Variant)un->GetName(), x, y);
+    }
+  }
+  return true;
+}
+
 Unit* Unit_Group::FindUnitFmCoord(int x, int y) {
   if (( x < 0) || (x >= geom.x) || (y < 0) || (y >= geom.y)) return NULL;
   int idx = y * geom.x + x;
@@ -3691,40 +3717,9 @@ void Layer::BuildUnits() {
       pjn->projected = false;
     }
   }
-  if (unit_names.dims() > 0) {
-    // set the names
-    if(unit_groups) {
-    //TODO
-/*      units.gp.SetSize(gp_geom.n);
-      for(int k=0; k< units.gp.size; k++) {
-        Unit_Group* ug = (Unit_Group*)units.gp.FastEl(k);
-        ug->UpdateAfterEdit();
-        if(ug->BuildUnits())
-          units_changed = true;
-      } */
-    }
-    else {
-      units.SetUnitNames(&unit_names);
-    }
-  }
+  SetUnitNames();
   StructUpdate(false);
   taMisc::DoneBusy();
-}
-
-void Unit_Group::SetUnitNames(taMatrix* mat) {
-  if (!mat) return;
-  MatrixGeom mat_idx(2); // we iterate assuming 2d is valid
-  // convenience accessors:
-  int& y = mat_idx[1]; int& x = mat_idx[0];
-  for (y = 0; ((y < mat->dim(1)) && (y < geom.y)); ++y)
-  for (x = 0; ((x < mat->dim(0)) && (x < geom.x)); ++x)
-  {
-    Unit* un = FindUnitFmCoord(x, y);
-    if (!un) goto exit;
-    un->SetName(mat->SafeElAsVarN(mat_idx).toString());
-  }
-exit:
-  ;
 }
 
 void Layer::LayoutUnitGroups() {
@@ -4254,12 +4249,77 @@ void Layer::Compute_PrjnDirections() {
   }  
 }
 
+bool Layer::SetUnitNames(bool force_use_unit_names) {
+  if(!force_use_unit_names && unit_names.dims() == 0) return false;
+  // first enforce geom, then do it.
+  if(unit_groups) {
+    if(unit_names.dims() == 2) {
+      unit_names.SetGeom(2, un_geom.x, un_geom.y);
+      if(units.gp.size > 0)
+	((Unit_Group*)units.gp[0])->SetUnitNames(&unit_names);
+    }
+    else { 
+      unit_names.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
+      int gx, gy, ux, uy;
+      for (gy = 0; gy < gp_geom.y; ++gy) {
+	for (gx = 0; gx < gp_geom.x; ++gx) {
+	  for (uy = 0; uy < un_geom.y; ++uy) {
+	    for (ux = 0; ux < un_geom.x; ++ux) {
+	      Unit* un = FindUnitFmGpCoord(gx, gy, ux, uy);
+	      if (!un) continue;
+	      un->SetName(unit_names.SafeElAsVar(ux, uy, gx, gy).toString());
+	    }
+	  }
+	}
+      }
+    }
+  }
+  else {
+    unit_names.SetGeom(2, un_geom.x, un_geom.y);
+    units.SetUnitNames(&unit_names);
+  }
+  return true;
+}
+
+bool Layer::GetUnitNames(bool force_use_unit_names) {
+  if(!force_use_unit_names && unit_names.dims() == 0) return false;
+  // first enforce geom, then do it.
+  if(unit_groups) {
+    if(unit_names.dims() == 2) {
+      unit_names.SetGeom(2, un_geom.x, un_geom.y);
+      if(units.gp.size > 0)
+	((Unit_Group*)units.gp[0])->GetUnitNames(&unit_names);
+    }
+    else { 
+      unit_names.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
+      int gx, gy, ux, uy;
+      for (gy = 0; gy < gp_geom.y; ++gy) {
+	for (gx = 0; gx < gp_geom.x; ++gx) {
+	  for (uy = 0; uy < un_geom.y; ++uy) {
+	    for (ux = 0; ux < un_geom.x; ++ux) {
+	      Unit* un = FindUnitFmGpCoord(gx, gy, ux, uy);
+	      if (!un) continue;
+	      unit_names.SetFmVar((Variant)un->GetName(), ux, uy, gx, gy);
+	    }
+	  }
+	}
+      }
+    }
+  }
+  else {
+    unit_names.SetGeom(2, un_geom.x, un_geom.y);
+    units.GetUnitNames(&unit_names);
+  }
+  return true;
+}
+
 void Layer::GetLocalistName() {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, units., i) {
     u->GetLocalistName();
   }
+  GetUnitNames(); // grab from units
 }
 
 void Layer::TransformWeights(const SimpleMathSpec& trans) {
@@ -5902,8 +5962,27 @@ void Network::Compute_PrjnDirections() {
   }
 }
 
+void Network::SetUnitNames(bool force_use_unit_names) {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->SetUnitNames(force_use_unit_names);
+  }
+  UpdateAllViews();
+}
+
+void Network::GetUnitNames(bool force_use_unit_names) {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->GetUnitNames(force_use_unit_names);
+  }
+  UpdateAllViews();
+}
+
 void Network::GetLocalistName() {
-  taMisc::Busy();
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
@@ -5911,7 +5990,6 @@ void Network::GetLocalistName() {
       l->GetLocalistName();
   }
   UpdateAllViews();
-  taMisc::DoneBusy();
 }
 
 bool Network::SnapVar() {
