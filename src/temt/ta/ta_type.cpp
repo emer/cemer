@@ -5246,16 +5246,12 @@ void TypeDef::SetValStr_enum(const String& val, void* base, void* par, MemberDef
     String tp_nm = strval.before("::");
     String en_nm = strval.after("::");
     TypeDef* td = taMisc::types.FindName(tp_nm);
-    if(td != NULL) {
-      td->SetValStr(en_nm, base, par, memb_def, sc, force_inline);
+    if(!td) {
+      taMisc::Warning("Enum type name:", tp_nm, "not found in list of registered types -- cannot set value for string:", strval);
       return;
     }
-    EnumDef* ed = FindEnum(en_nm);
-    if(ed) {
-      *((int*)base) = ed->enum_no;
-      return;
-    }
-    taMisc::Warning("Enum named:", strval, "not found in enum type:", name);
+    td->SetValStr_enum(en_nm, base, par, memb_def, sc, force_inline);
+    return;
   }
   if(strval.contains('|')) { // bits
     int bits = 0;
