@@ -789,6 +789,11 @@ void NetMonItem::ScanObject_Network(Network* net, String var) {
 void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   // check for projection monitor
   if(var.contains('.')) {
+    if(var.contains('[')) {
+      ScanObject_LayerUnits(lay, var);
+      return;
+    }
+
     String subvar = var.before('.');
     if((subvar == "projections") || (subvar == "prjns")) {
       ScanObject_ProjectionGroup(&lay->projections, var.after('.'));
@@ -843,6 +848,87 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
 	  }
 	}
       }
+    }
+  }
+}
+
+void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
+  String range2;
+  String range1 = var.between('[', ']');
+  String rmdr = var.after(']');
+  if(rmdr.contains('[')) {
+    range2 = rmdr.between('[', ']');
+    rmdr = rmdr.after(']');
+  }
+  if(rmdr.startsWith('.')) rmdr = rmdr.after('.');
+
+  String valname = GetChanName(lay, val_specs.size);
+  MatrixGeom geom;
+
+  if(range2.nonempty()) { // group case
+    if(range1.contains('-')) {
+      int gpidx1 = (int)range1.before('-');
+      int gpidx2 = (int)range1.after('-');
+
+      if(range2.contains('-')) {
+	int unidx1 = (int)range2.before('-');
+	int unidx2 = (int)range2.after('-');
+	geom.SetGeom(2, 1+unidx2-unidx1, 1+gpidx2-gpidx1);
+	AddMatrixChan(valname, VT_FLOAT, &geom);
+	for (int gi = gpidx1; gi <= lay->units.gp.size && gi <= gpidx2; ++gi) {
+	  Unit_Group* gp = (Unit_Group*)lay->units.gp.SafeEl(gi);
+	  if(!gp) break;
+	  for (int i = unidx1; i < gp->size && i <= unidx2; ++i) {
+	    ScanObject_InObject(gp->SafeEl(i), rmdr, NULL); // don't make a col
+	  }
+	}
+      }
+      else {
+	int idx = (int)range2;
+	geom.SetGeom(1, 1+gpidx2-gpidx1);
+	AddMatrixChan(valname, VT_FLOAT, &geom);
+	for (int gi = gpidx1; gi <= lay->units.gp.size && gi <= gpidx2; ++gi) {
+	  Unit_Group* gp = (Unit_Group*)lay->units.gp.SafeEl(gi);
+	  if(!gp) break;
+	  ScanObject_InObject(gp->SafeEl(idx), rmdr, NULL); // don't make a col
+	}
+      }
+    }
+    else {
+      int gpidx = (int)range1;
+      Unit_Group* gp = (Unit_Group*)lay->units.gp.SafeEl(gpidx);
+      if(!gp) return;
+      if(range2.contains('-')) {
+	int unidx1 = (int)range2.before('-');
+	int unidx2 = (int)range2.after('-');
+	geom.SetGeom(1, 1+unidx2-unidx1);
+	AddMatrixChan(valname, VT_FLOAT, &geom);
+	for (int i = unidx1; i < gp->size && i <= unidx2; ++i) {
+	  ScanObject_InObject(gp->SafeEl(i), rmdr, NULL); // don't make a col
+	}
+      }
+      else {
+	int idx = (int)range2;
+	AddScalarChan(valname, VT_FLOAT);
+	ScanObject_InObject(gp->SafeEl(idx), rmdr, NULL); // don't make a col
+      }
+    }
+  }
+  else {			// just unit idxs
+    if(range1.contains('-')) {
+      int idx1 = (int)range1.before('-');
+      int idx2 = (int)range1.after('-');
+      geom.SetGeom(1, 1+idx2-idx1);
+      AddMatrixChan(valname, VT_FLOAT, &geom);
+      for (int i = idx1; i < lay->units.leaves && i <= idx2; ++i) {
+	ScanObject_InObject(lay->units.Leaf(i), rmdr, NULL); // don't make a col
+      }
+    }
+    else {
+      int idx = (int)range1;
+      String valname = GetChanName(lay, val_specs.size);
+      AddScalarChan(valname, VT_FLOAT);
+      ScanObject_InObject(lay->units.Leaf(idx), rmdr, NULL); // don't make a col
     }
   }
 }

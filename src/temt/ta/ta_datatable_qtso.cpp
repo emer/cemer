@@ -2462,8 +2462,8 @@ bool GraphAxisBase::UpdateRange() {
 }
 
 void GraphAxisBase::ComputeTicks() {
-  float min = range.min;
-  float max = range.max;
+  double min = range.min;
+  double max = range.max;
   double rng = nicenum(max-min, false);
   if(rng == 0.0) {
     double unitsval = fabs(min);
@@ -2476,6 +2476,8 @@ void GraphAxisBase::ComputeTicks() {
     act_n_ticks = 1;
     return;
   }
+
+//   if(rng < 1.0e-8) rng = 1.0e-8;
 
   tick_incr = nicenum((rng / (double)n_ticks), true);
   double newmin = floor(min / tick_incr) * tick_incr;
@@ -2497,8 +2499,8 @@ void GraphAxisBase::ComputeTicks() {
   units = pow(10.0, (double)units_order);
 
   // empirically compute the actual number of ticks..
-  float chk_max = max + (tick_incr / 100.0f); // give a little tolerance..
-  float val;
+  double chk_max = max + (tick_incr / 100.0f); // give a little tolerance..
+  double val;
   int i;
   for (i=0, val = start_tick; val <= chk_max; val += tick_incr, i++);
   act_n_ticks = i;
@@ -4013,10 +4015,18 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 	tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
 	T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
 	gr->addChild(ln);
-	if(mat_layout == taMisc::TOP_ZERO)
-	  idx = mgeom.IndexFmDims(pos.x, geom_y-1-pos.y);
-	else
-	  idx = mgeom.IndexFmDims(pos.x, pos.y);
+	if(mat_layout == taMisc::TOP_ZERO) {
+	  if(mgeom.size == 1)
+	    idx = MAX(geom_y-1-pos.y, pos.x);
+	  else
+	    idx = mgeom.IndexFmDims(pos.x, geom_y-1-pos.y);
+	}
+	else {
+	  if(mgeom.size == 1)
+	    idx = MAX(pos.y,pos.y);
+	  else
+	    idx = mgeom.IndexFmDims(pos.x, pos.y);
+	}
 	PlotData_XY(*mainy, *erry, *mainy, ln, idx);
       }
     }

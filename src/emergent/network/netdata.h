@@ -234,7 +234,7 @@ public:
   TypeDef*		object_type;	// #APPLY_IMMED #CONDSHOW_OFF_computed LAYER #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
   taSmartRef 		object;		// #CONDSHOW_OFF_computed #TYPE_ON_object_type #NO_SCOPE the network object being monitored
   MemberDef*		lookup_var;	// #APPLY_IMMED #CONDSHOW_OFF_computed #TYPE_ON_object_type #NULL_OK #NO_SAVE #NO_EDIT lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
-  String        	variable;	// #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt)
+  String        	variable;	// #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections or prjns gets projection-level variables; can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified
   String		var_label;	// #CONDSHOW_OFF_computed label to use in place of variable in naming the columns/channels generated from this data (if empty, variable is used)
   NameStyle		name_style;	 // #CONDSHOW_OFF_computed how to name the columns/channels generated from this data?
   int			max_name_len;	 // #DEF_6 #EXPERT maximum length for any name segment
@@ -319,6 +319,8 @@ protected:
   // if name_obj == NULL, don't make a column for this guy
   void	ScanObject_Network(Network* net, String var);
   void	ScanObject_Layer(Layer* lay, String var);
+  void	ScanObject_LayerUnits(Layer* lay, String var);
+  // specific subrange of units within a layer
   void	ScanObject_Projection(Projection* p, String var);
   void	ScanObject_ProjectionGroup(Projection_Group* p, String var);
   void	ScanObject_UnitGroup(Unit_Group* ug, String var);
