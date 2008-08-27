@@ -87,8 +87,6 @@ bool taiSpecMember::NoCheckBox(IDataHost* host_) const {
   return true;			// default is to not have box...
 }
 
-//TEMP
-#define    flgGlomParent	0x20000
 taiData* taiSpecMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
   QWidget* gui_parent, int flags_, MemberDef* mbr_) 
 {
@@ -104,7 +102,7 @@ taiData* taiSpecMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
   } else {
     taiPlusToggle* rval = new taiPlusToggle(NULL, host_, par, gui_parent, flags_);
     rval->InitLayout();
-    taiData* rdat; flags_ |= flgGlomParent;
+    taiData* rdat;
     if (m_sub_types)
       rdat = sub_types()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_, mbr_);
     else

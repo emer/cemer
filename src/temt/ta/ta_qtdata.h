@@ -91,7 +91,7 @@ signals:
   // emitted whenever a child does DataChangedNotify
 #endif
 protected:
-public:  QLayout*		lay;	protected: // may be ignored/unused by subclasses
+  QLayout*		lay; // may be ignored/unused by subclasses
   int			last_spc;	// space after last widget, -1 = none
   LayoutType		lay_type;
   mutable taBase*	m_child_base; // typically set in PolyData GetImage
