@@ -249,9 +249,12 @@ iLabel* taiData::MakeLabel(QWidget* gui_parent, int font_spec) const {
 QWidget* taiData::MakeLayoutWidget(QWidget* gui_parent) const {
   QWidget* wid = new QWidget(gui_parent);
 #if defined(TA_OS_MAC) && (QT_VERSION >= 0x040300)
-  wid->setAttribute(Qt::WA_LayoutUsesWidgetRect, true);
+//  wid->setAttribute(Qt::WA_LayoutUsesWidgetRect, true);
+  wid->setAttribute(Qt::WA_LayoutOnEntireRect, true);
 #endif
   wid->setMaximumHeight(taiM->max_control_height(defSize()));
+  //following needed to fix the squished layout issue on Mac:
+  wid->setMinimumHeight(taiM->max_control_height(defSize()));
   return wid;
 }
 
@@ -620,7 +623,7 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
   lookupfun_md = NULL;
   lookupfun_base = NULL;
   if (flags_ & flgEditDialog) {
-    QWidget* act_par = new QWidget(gui_parent_);
+    QWidget* act_par = MakeLayoutWidget(gui_parent_);
     QHBoxLayout* lay = new QHBoxLayout(act_par);
     lay->setMargin(0);
     lay->setSpacing(1);
