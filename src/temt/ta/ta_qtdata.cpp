@@ -81,7 +81,10 @@ using namespace Qt;
 
 class cssiArgDialog;
 
-  
+//TEMP
+#define    flgGlomParent	0x20000
+ // use parent's widget and layout (only set by taiDefault and taiSpecMember; only used by PolyData)
+
 //////////////////////////
 //    taiDataList	//
 //////////////////////////
@@ -357,6 +360,7 @@ void taiCompData::ChildRemove(taiData* child) {
 }
 
 void taiCompData::InitLayout() { //virtual/overridable
+if (mflags & flgGlomParent) return;
   switch (lay_type) {
   case LT_HBox:
     lay = new QHBoxLayout(GetRep());
@@ -436,6 +440,7 @@ void taiCompData::AddChildMember(MemberDef* md) {
 }
 
 void taiCompData::EndLayout() { //virtual/overridable
+if (mflags & flgGlomParent) return;
   switch (lay_type) {
   case LT_HBox:
     layHBox()->addStretch();
@@ -1347,7 +1352,17 @@ void taiDimEdit::GetValue(MatrixGeom* arr) const {
 taiPolyData* taiPolyData::New(bool add_members, TypeDef* typ_, IDataHost* host_,
   taiData* par, QWidget* gui_parent_, int flags)
 {
+taiCompData* cpar = NULL;
+if (flags & flgGlomParent) {
+  if (!(cpar = dynamic_cast<taiCompData*>(par))) 
+    flags &= ~flgGlomParent;
+}
   taiPolyData*  rval = new taiPolyData(typ_, host_, par, gui_parent_, flags);
+// ensure parent is also a CompData!
+if (flags & flgGlomParent) {
+  rval->SetRep(gui_parent_);
+  rval->lay = cpar->lay;
+} else
   rval->Constr(gui_parent_);
   if (add_members) 
     rval->AddTypeMembers();
