@@ -157,13 +157,21 @@ public:
   // #CAT_Clip
 
   virtual void	PenColorRGBA(float r, float g, float b, float a);
-  // #CAT_Draw 
+  // #CAT_Draw values are from 0-1 in proportion to amount of each given color, a is alpha transparency value, 0=transparent, 1=opaque
+  virtual void	PenColorHSVA(float h, float s, float v, float a);
+  // #CAT_Draw h=hue (0-360), s=saturation (0-1), v=value/brightness (0-1), a is alpha transparency value, 0=transparent, 1=opaque
+  virtual void	PenColorCMYKA(float c, float m, float y, float k, float a);
+  // #CAT_Draw values are from 0-1 in proportion to amount of each given color, a is alpha transparency value, 0=transparent, 1=opaque
   virtual void	PenColorName(const String& name);
   // #CAT_Draw 
   virtual void	PenWidth(float width);
   // #CAT_Draw 
   virtual void	FillColorRGBA(float r, float g, float b, float a);
-  // #CAT_Draw 
+  // #CAT_Draw values are from 0-1 in proportion to amount of each given color, a is alpha transparency value, 0=transparent, 1=opaque
+  virtual void	FillColorHSVA(float h, float s, float v, float a);
+  // #CAT_Draw h=hue (0-360), s=saturation (0-1), v=value/brightness (0-1), a is alpha transparency value, 0=transparent, 1=opaque
+  virtual void	FillColorCMYKA(float c, float m, float y, float k, float a);
+  // #CAT_Draw values are from 0-1 in proportion to amount of each given color, a is alpha transparency value, 0=transparent, 1=opaque
   virtual void	FillColorName(const String& name);
   // #CAT_Draw 
 

@@ -41,9 +41,10 @@ iLineEdit::iLineEdit(const char* text, QWidget* parent)
 void iLineEdit::init() {
   mmin_char_width = 0;
   mchar_width = 0;
-  QShortcut* sc = new QShortcut(QKeySequence(/*Qt::ALT +*/ Qt::CTRL + Qt::Key_U), this);
-  sc->setContext(Qt::WidgetShortcut);
-  connect(sc, SIGNAL(activated()), this, SLOT(editInEditor()));
+  // this seems unnecessary, and conflicts with ctrl-U select-all!
+//   QShortcut* sc = new QShortcut(QKeySequence(/*Qt::ALT +*/ Qt::CTRL + Qt::Key_U), this);
+//   sc->setContext(Qt::WidgetShortcut);
+//   connect(sc, SIGNAL(activated()), this, SLOT(editInEditor()));
 }
 
 void iLineEdit::editInEditor() {
@@ -166,6 +167,10 @@ void iLineEdit::keyPressEvent(QKeyEvent* e) {
       e->accept();
       end(true);		// mark
       cut();
+    }
+    else if(e->key() == Qt::Key_U) {	 
+      e->accept();	 
+      selectAll();	 
     }
     else if(e->key() == Qt::Key_Y) {
       e->accept();

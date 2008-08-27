@@ -472,7 +472,22 @@ void taCanvas::PenColorRGBA(float r, float g, float b, float a) {
   QPen pen = q_painter.pen();
   pen.setColor(clr);
   q_painter.setPen(pen);
-  
+}
+void taCanvas::PenColorHSVA(float h, float s, float v, float a) {
+  if(!CheckInit()) return;
+  QColor clr;
+  clr.setHsvF(h/360.0f, s, v, a);
+  QPen pen = q_painter.pen();
+  pen.setColor(clr);
+  q_painter.setPen(pen);
+}
+void taCanvas::PenColorCMYKA(float c, float m, float y, float k, float a) {
+  if(!CheckInit()) return;
+  QColor clr;
+  clr.setCmykF(c, m, y, k, a);
+  QPen pen = q_painter.pen();
+  pen.setColor(clr);
+  q_painter.setPen(pen);
 }
 void taCanvas::PenColorName(const String& name) {
   if(!CheckInit()) return;
@@ -491,6 +506,18 @@ void taCanvas::FillColorRGBA(float r, float g, float b, float a) {
   if(!CheckInit()) return;
   QColor clr;
   clr.setRgbF(r, g, b, a);
+  fill_brush.setColor(clr);
+}
+void taCanvas::FillColorHSVA(float h, float s, float v, float a) {
+  if(!CheckInit()) return;
+  QColor clr;
+  clr.setHsvF(h/360.0f, s, v, a);
+  fill_brush.setColor(clr);
+}
+void taCanvas::FillColorCMYKA(float c, float m, float y, float k, float a) {
+  if(!CheckInit()) return;
+  QColor clr;
+  clr.setCmykF(c, m, y, k, a);
   fill_brush.setColor(clr);
 }
 void taCanvas::FillColorName(const String& name) {
