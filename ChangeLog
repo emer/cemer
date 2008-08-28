@@ -1,3 +1,1061 @@
+2008-08-28 07:05  oreilly
+
+	* [r3118] src/emergent/network/emergent_program.cpp,
+	  src/temt/ta/ta_dataproc.cpp: include index var name in data loop
+	  display name so find will pick it up
+
+2008-08-27 22:02  oreilly
+
+	* [r3117] src/temt/ta/ta_imgproc.cpp, src/temt/ta/ta_imgproc.h,
+	  src/temt/taiqtso/ilineedit.cpp: added other color models to
+	  taCanvas, fixed Ctrl+U on line edit which brian accidentally
+	  nuked in 3100
+
+2008-08-27 10:09  baisa
+
+	* [r3116] src/temt/ta/ta_qtdata.cpp: omg good enough fix for Mac
+	  layout
+
+2008-08-27 05:39  baisa
+
+	* [r3115] src/emergent/network/emergent_qtso.cpp,
+	  src/temt/ta/ta_qtdata.cpp, src/temt/ta/ta_qtdata.h: fixed up from
+	  INTERMEDIATE
+
+2008-08-27 01:17  baisa
+
+	* [r3114] src/emergent/network/emergent_qtso.cpp,
+	  src/temt/ta/ta_qtdata.cpp, src/temt/ta/ta_qtdata.h: INTERMEDIATE
+	  CHECKIN -- do not check out
+
+2008-08-26 06:49  oreilly
+
+	* [r3113] src/temt/ta/ta_type.cpp: Fixed BugID:483 --
+	  SetValStr_enum is supposed to recurse but it was calling the
+	  non-_enum
+	  version on recursion -- ooops! this would have affected any use
+	  of typename::enumname
+	  which is fortunately not super common..
+
+2008-08-26 05:24  oreilly
+
+	* [r3112] src/emergent/network/netdata.cpp,
+	  src/emergent/network/netdata.h,
+	  src/temt/ta/ta_datatable_qtso.cpp: * added
+	  units[gpidx<-endidx>][unidx<-endidx].var support in layer
+	  monitor, so you can grab
+	  specific units' values without having to actually monitor them
+	  directly. very useful for
+	  scalarvallayers
+	  * also fixed display of 1d matrix data in graph, and an endless
+	  loop in the display code..
+
+2008-08-25 08:01  oreilly
+
+	* [r3111] demo/leabra/ax_tutorial_final.proj,
+	  src/emergent/network/emergent_program.cpp,
+	  src/emergent/network/emergent_program.h,
+	  src/emergent/network/netstru.cpp, src/emergent/network/netstru.h,
+	  src/temt/ta/ta_matrix.h, src/temt/ta/ta_program.cpp,
+	  src/temt/taiqtso/itextedit.cpp: * fixed Ctrl/Cmd-C = copy (and
+	  X=cut, V=paste) in textedit panels
+	  * fixed up unit_names impl with linkage to InitNamedUnits program
+	  el, and Set/GetUnitNames
+	  funs on the Layer provide interface for it, including turning on
+	  the use of unit_names
+	  in the first place.
+	  * added dim() funs to matrix, and expose Set Geom N fun in
+	  context menu
+
+2008-08-22 19:51  baisa
+
+	* [r3110] src/emergent/network/netstru.cpp,
+	  src/emergent/network/netstru.h, src/temt/ta/ta_matrix_qt.cpp,
+	  src/temt/ta/ta_project.cpp, src/temt/ta/ta_qtdata.cpp: fixed bug
+	  bugID:339
+
+2008-08-19 08:18  oreilly
+
+	* [r3109] demo/data_proc/data_tutorial.proj: data proc tutorial
+	  fixes from Seth.
+
+2008-08-18 08:10  baisa
+
+	* [r3108] src/emergent/network/netstru.cpp,
+	  src/emergent/network/netstru.h, src/temt/ta/ta_matrix_qt.cpp:
+	  change unit_names to mat
+
+2008-08-18 02:40  baisa
+
+	* [r3107] src/temt/ta/ta_global.h, src/temt/ta/ta_project.cpp:
+	  fixed bug bugID:164 minor Windows tab focus bug
+
+2008-08-16 01:29  baisa
+
+	* [r3106] src/emergent/network/netstru.cpp,
+	  src/emergent/network/netstru.h, src/temt/ta/ta_base.cpp,
+	  src/temt/ta/ta_base.h, src/temt/ta/ta_datatable.h,
+	  src/temt/ta/ta_qtdata.cpp: added simple net names and tweak of
+	  token chooser display
+
+2008-08-15 19:21  baisa
+
+	* [r3105] plugins/audioproc/ap_files.h: missing SimpleLinks in
+	  ap_files
+
+2008-08-15 02:47  baisa
+
+	* [r3104] src/temt/ta/ta_qtviewer.cpp, src/temt/ta/ta_qtviewer.h,
+	  src/temt/taiqtso/itreewidget.cpp, src/temt/taiqtso/itreewidget.h:
+	  fixed bug bugID:479
+
+2008-08-14 06:26  oreilly
+
+	* [r3103] src/emergent/leabra/leabra_pbwm.h,
+	  src/emergent/network/netstru_extra.h: * UNDO of def child for
+	  tessels because they already have one!! Brad, when are you going
+	  to checkin that fix for this you mentioned??
+	  * fix of weird output gating bias weight thing on matrix units:
+	  wasn't overriding fun
+	  because of args change.. Ct should now be functional with pbwm!
+
+2008-08-13 09:08  oreilly
+
+	* [r3102] src/emergent/network/netstru_extra.h: def child on tessel
+	  prjns
+
+2008-08-12 07:02  baisa
+
+	* [r3101] src/temt/ta/t3node_so.cpp, src/temt/ta/t3node_so.h,
+	  src/temt/ta/ta_type.cpp, src/temt/ta/ta_type.h,
+	  src/temt/ta/ta_virtenv_qtso.cpp: flexible texture loading via
+	  simage or Qt
+
+2008-08-12 02:24  mingus
+
+	* [r3100] src/temt/taiqtso/ibutton.h,
+	  src/temt/taiqtso/ichooserdialog.cpp[DEL],
+	  src/temt/taiqtso/ichooserdialog.h[DEL],
+	  src/temt/taiqtso/idialog.h, src/temt/taiqtso/igroup_so.h[DEL],
+	  src/temt/taiqtso/ihilightbutton.cpp[DEL],
+	  src/temt/taiqtso/ihilightbutton.h[DEL],
+	  src/temt/taiqtso/ilineedit.cpp, src/temt/taiqtso/iscrollarea.h,
+	  src/temt/taiqtso/itransformer.cpp[DEL],
+	  src/temt/taiqtso/itransformer.h[DEL],
+	  src/temt/taiqtso/ivcrbuttons.cpp[DEL],
+	  src/temt/taiqtso/ivcrbuttons.h[DEL],
+	  src/temt/taiqtso/iwidgetlist.cpp[DEL],
+	  src/temt/taiqtso/iwidgetlist.h[DEL]: undoing bad parts of last
+	  commit
+
+2008-08-12 02:18  mingus
+
+	* [r3099] gendoc/gendoc_wiki, src/temt/ta/ta_gendoc.cpp,
+	  src/temt/taiqtso/ibutton.h,
+	  src/temt/taiqtso/ichooserdialog.cpp[CPY],
+	  src/temt/taiqtso/ichooserdialog.h[CPY],
+	  src/temt/taiqtso/idialog.h, src/temt/taiqtso/igroup_so.h[CPY],
+	  src/temt/taiqtso/ihilightbutton.cpp[CPY],
+	  src/temt/taiqtso/ihilightbutton.h[CPY],
+	  src/temt/taiqtso/iscrollarea.h,
+	  src/temt/taiqtso/itransformer.cpp[CPY],
+	  src/temt/taiqtso/itransformer.h[CPY],
+	  src/temt/taiqtso/ivcrbuttons.cpp[CPY],
+	  src/temt/taiqtso/ivcrbuttons.h[CPY],
+	  src/temt/taiqtso/iwidgetlist.cpp[CPY],
+	  src/temt/taiqtso/iwidgetlist.h[CPY]: BugId: 81
+
+2008-08-11 23:53  mingus
+
+	* [r3098] gendoc/gendoc_wiki,
+	  gendoc/gendoc_wiki.emergent.debug.log: fixed bugs, added debug
+	  output
+
+2008-08-10 07:48  oreilly
+
+	* [r3097] src/emergent/leabra/leabra.h,
+	  src/emergent/leabra/leabra_pbwm.cpp: fix for matrix output gate
+	  unitspec bias_spec -- was not set right in wizard and this
+	  caused it to be set to LeabraConSpec in all test sims -- very
+	  bad!
+
+2008-08-10 05:23  oreilly
+
+	* [r3096] src/emergent/leabra/leabra_pbwm.h: fix double-soft-bound
+	  bug on matrix con spec learning under ct
+
+2008-08-10 04:29  oreilly
+
+	* [r3095] src/emergent/leabra/leabra_pbwm.cpp,
+	  src/emergent/leabra/leabra_pbwm.h,
+	  src/emergent/leabra/leabra_pvlv.h: fixed pbwm bug with ct: matrix
+	  was not learning at all, due to sravg_sum not incrementing
+
+2008-08-09 21:54  oreilly
+
+	* [r3094] src/emergent/leabra/leabra.cpp,
+	  src/emergent/leabra/leabra.h, src/emergent/leabra/leabra_extra.h,
+	  src/emergent/leabra/leabra_pbwm.h,
+	  src/emergent/leabra/leabra_pvlv.h,
+	  src/emergent/leabra/leabra_td.h: got rid of CTLEABRA_DCAL -- too
+	  experimental for the main codebase.
+
+2008-08-08 20:49  mingus
+
+	* [r3093] gendoc/gendoc_wiki: just the good stuff
+
+2008-08-08 18:57  oreilly
+
+	* [r3092] demo/data_proc/data_tutorial.proj,
+	  demo/data_proc/data_tutorial_final.proj: data tutorial updates
+	  from Dean's comments
+
+2008-08-08 06:54  oreilly
+
+	* [r3091] configure.ac: updated version to 4.0.17 in prep for
+	  release
+
+2008-08-07 06:20  baisa
+
+	* [r3090] src/temt/ta/ta_global.h, src/temt/ta/ta_program_els.cpp,
+	  src/temt/ta/ta_thread.h: Win64 fixups
+
+2008-08-05 18:47  oreilly
+
+	* [r3089] src/temt/ta/ta_qtviewer.cpp: F&ile menu instead of &File
+
+2008-08-05 08:58  oreilly
+
+	* [r3088] src/temt/ta/ta_program_els.cpp,
+	  src/temt/ta/ta_program_els.h, src/temt/ta/ta_program_qt.cpp: *
+	  Ctrl+L for path expressions in program member= etc
+	  * skip over read only edits for finding first tab focus item
+
+2008-08-05 07:57  baisa
+
+	* [r3087] src/temt/ta/ta_qttype.cpp, src/temt/ta/ta_string.h,
+	  src/temt/ta/ta_type.cpp: fixed bugID:303 related to commas in
+	  intl locales
+
+2008-08-05 07:00  oreilly
+
+	* [r3086] demo/data_proc/Makefile.am,
+	  demo/data_proc/data_tutorial.proj,
+	  demo/data_proc/data_tutorial_final.proj: data tutorial done!
+
+2008-08-04 17:26  baisa
+
+	* [r3085] src/temt/ta/ta_program_qt.cpp: suppressed ;) bug
+	  bugID:477
+
+2008-08-04 09:20  oreilly
+
+	* [r3084] demo/data_proc/data_tutorial_final.proj: data tutorial
+	  theoretically done! just need to review last section, copy to
+	  wiki, etc
+
+2008-08-03 20:51  oreilly
+
+	* [r3083] src/emergent/leabra/leabra.cpp,
+	  src/emergent/leabra/leabra.h, src/temt/ta/ta_program_els.cpp: *
+	  nuke sb_margin but keep location of that sb call which fixes
+	  problems on highvis!
+	  * add --help (or -h) startup arg processing for register args
+
+2008-08-03 08:27  oreilly
+
+	* [r3082] demo/data_proc/data_tutorial_final.proj: data tutorial
+	  almost done!!
+
+2008-08-02 08:36  oreilly
+
+	* [r3081] demo/data_proc/data_tutorial_final.proj,
+	  prog_lib/LeabraMovieFrameSave.prog, prog_lib/Makefile.am,
+	  src/emergent/leabra/leabra_pvlv.cpp, src/temt/ta/ta_qtviewer.cpp,
+	  src/temt/taiqtso/ilineedit.cpp: * data tutorial updates
+	  * lvconspec check
+	  * new save image program
+	  * Ctrl+U for select-all in text fields
+
+2008-08-01 22:32  baisa
+
+	* [r3080] src/temt/ta/ta_base.cpp, src/temt/ta/ta_base.h,
+	  src/temt/ta/ta_list.cpp, src/temt/ta/ta_list.h,
+	  src/temt/ta/ta_qtdialog.cpp: change to impl of CloseLater
+
+2008-08-01 07:31  baisa
+
+	* [r3079] src/temt/ta/ta_qtviewer.cpp: fixed regression bug
+	  bugID:475
+
+2008-08-01 04:56  baisa
+
+	* [r3078] plugins/config.pri.in, src/temt/ta/ta_base.cpp: minor Win
+	  fixes
+
+2008-07-31 20:16  baisa
+
+	* [r3077] test/leabra_ra.proj: slightly augmented leabra_ra
+
+2008-07-31 19:52  baisa
+
+	* [r3076] src/temt/ta/ta_base.h, src/temt/taiqtso/Makefile.am: fix
+	  for Win fixes and fix of delayed FunCallList to fix datalink
+	  errors
+
+2008-07-31 17:37  baisa
+
+	* [r3075] build/msvc7/Makefile, build/msvc7/temt/temt.vcproj,
+	  src/temt/ta/ta_filer.cpp, src/temt/taiqtso/ibutton.h,
+	  src/temt/taiqtso/ichooserdialog.cpp[DEL],
+	  src/temt/taiqtso/ichooserdialog.h[DEL],
+	  src/temt/taiqtso/idialog.h, src/temt/taiqtso/igroup_so.h[DEL],
+	  src/temt/taiqtso/ihilightbutton.cpp[DEL],
+	  src/temt/taiqtso/ihilightbutton.h[DEL],
+	  src/temt/taiqtso/iscrollarea.h,
+	  src/temt/taiqtso/itransformer.cpp[DEL],
+	  src/temt/taiqtso/itransformer.h[DEL],
+	  src/temt/taiqtso/ivcrbuttons.cpp[DEL],
+	  src/temt/taiqtso/ivcrbuttons.h[DEL],
+	  src/temt/taiqtso/iwidgetlist.cpp[DEL],
+	  src/temt/taiqtso/iwidgetlist.h[DEL]: Win fixes plus deleted some
+	  unused files
+
+2008-07-31 08:45  oreilly
+
+	* [r3074] src/temt/ta/ta_program.cpp, src/temt/ta/ta_program.h,
+	  src/temt/ta/ta_program_qt.cpp, src/temt/ta/ta_qttype.cpp: Fixes
+	  for New From Lib BugID:458
+
+2008-07-31 07:09  oreilly
+
+	* [r3073] src/temt/taiqtso/idialog.cpp,
+	  src/temt/taiqtso/itreewidget.cpp: idialog Ctrl+Enter fix:
+	  itreewidget needs to ignore it -- default Qt guy doesn't
+
+2008-07-31 06:16  oreilly
+
+	* [r3072] src/temt/ta/ta_program_qt.cpp, src/temt/ta/ta_type.cpp,
+	  src/temt/taiqtso/idialog.cpp: * shrink forward/back button sizes
+	  on prog edit toolbar
+	  * attempt to fix Ctrl+Return not working in linux dialogs
+	  * change default font complexity to .5 instead of .1
+
+2008-07-31 05:28  baisa
+
+	* [r3071] build/msvc7/config.h, src/temt/ta/ta_string.cpp,
+	  src/temt/ta/ta_string.h: minor Win edits
+
+2008-07-30 21:13  baisa
+
+	* [r3070] src/temt/ta/ta_base.h, src/temt/ta/ta_group.h,
+	  src/temt/ta/ta_qtdialog.cpp, src/temt/ta/ta_qtviewer.cpp,
+	  src/temt/ta/ta_seledit.h, src/temt/ta/ta_seledit_qt.cpp,
+	  src/temt/ta/ta_type.cpp: seledit crashes plus fixes to MethodDef
+	  show logic and clients such as viewer and eddialog
+
+2008-07-30 20:12  baisa
+
+	* [r3069] src/emergent/leabra/leabra_pbwm.cpp: const char change
+
+2008-07-30 16:51  baisa
+
+	* [r3068] src/temt/ta/ta_base.h: protect taMisc::DelayedClose
+
+2008-07-30 16:44  baisa
+
+	* [r3067] src/temt/ta/ta_base.cpp, src/temt/ta/ta_base.h,
+	  src/temt/ta/ta_program_qt.cpp, src/temt/ta/ta_program_qt.h,
+	  src/temt/ta/ta_type.h: browse hist in progedit plus delayed close
+	  crash fix
+
+2008-07-30 09:16  oreilly
+
+	* [r3066] src/temt/ta/ta_qtviewer.cpp: added delete keypressevent
+	  to iTreeView, changed duplicate to Ctrl+M -- the delete is using
+	  CloseLater() but this seems to be giving a refcount error -- Brad
+	  -- what is the right call
+	  to use here??? Thanks!
+
+2008-07-30 07:43  baisa
+
+	* [r3065] src/temt/ta/ta_qtviewer.cpp, src/temt/ta/ta_qtviewer.h,
+	  src/temt/ta/ta_type.cpp, src/temt/ta/ta_type.h: alpha of tree
+	  navigator
+
+2008-07-30 03:50  baisa
+
+	* [r3064] src/temt/ta/ta_qtviewer.cpp: bug bugID:348
+
+2008-07-30 03:40  baisa
+
+	* [r3063] src/temt/ta/ta_qtviewer.cpp, src/temt/ta/ta_qtviewer.h:
+	  bug bugID:348
+
+2008-07-30 02:33  baisa
+
+	* [r3062] src/temt/ta/ta_program_els.cpp,
+	  src/temt/ta/ta_program_els.h, src/temt/ta/ta_qtviewer.cpp,
+	  src/temt/ta/ta_qtviewer.h: intermediate checkin
+
+2008-07-29 15:35  baisa
+
+	* [r3061] src/temt/ta/ta_list.cpp: fixed bug bugID:456
+
+2008-07-29 09:29  oreilly
+
+	* [r3060] src/temt/ta/ta_program_qt.cpp: finally got secret formula
+	  for first item to tab into in program editor..
+
+2008-07-28 21:39  baisa
+
+	* [r3059] bench/030/shared/nb_netstru.cpp,
+	  bench/030/shared/nb_netstru.h, bench/log_thread/20080728_01.xls,
+	  bench/log_thread/20080728_02.xls,
+	  bench/log_thread/20080728_02a_send_dnorm0.log,
+	  bench/log_thread/20080728_02b_send_dnorm1.log,
+	  bench/log_thread/20080728_02c_send_dnorm0_sra.log,
+	  bench/log_thread/20080728_02d_send_dnorm1_sra.log,
+	  bench/log_thread/20080728_02e_send_dnorm0_sraN.log,
+	  bench/log_thread/20080728_02f_send_dnorm1_sraN.log,
+	  bench/log_thread/Notes.txt: latest
+
+2008-07-28 17:37  baisa
+
+	* [r3058] bench/030/shared/nb_netstru.cpp,
+	  bench/030/shared/nb_netstru.h, bench/log_thread/20080714_01.xls,
+	  bench/log_thread/20080714_01a_fast-cn-send.log,
+	  bench/log_thread/20080714_01b_slow-cn-send.log,
+	  bench/log_thread/20080727_01.xls,
+	  bench/log_thread/20080727_01a_recv_dnorm0.log,
+	  bench/log_thread/20080727_01b_recv_dnorm1.log,
+	  bench/log_thread/20080727_01c_send_dnorm0.log,
+	  bench/log_thread/20080727_01d_send_dnorm1.log,
+	  bench/log_thread/20080727_02.xls,
+	  bench/log_thread/20080727_02a_recv_dnorm0.log,
+	  bench/log_thread/20080727_02b_recv_dnorm1.log,
+	  bench/log_thread/20080727_02c_send_dnorm0.log,
+	  bench/log_thread/20080727_02d_send_dnorm1.log,
+	  bench/log_thread/20080728_01.xls,
+	  bench/log_thread/20080728_01a_send_dnorm0.log,
+	  bench/log_thread/20080728_01b_send_dnorm1.log,
+	  bench/log_thread/20080728_01c_send_dnorm0_sra.log,
+	  bench/log_thread/20080728_01d_send_dnorm1_sra.log,
+	  bench/log_thread/Notes.txt, bench/run_bench_4.sh: added async
+	  SRA_Avg and logs
+
+2008-07-28 00:14  baisa
+
+	* [r3057] src/temt/ta/ta_type.cpp: minor debug chg
+
+2008-07-26 07:41  oreilly
+
+	* [r3056] src/emergent/leabra/leabra.cpp,
+	  src/emergent/leabra/leabra.h, src/temt/ta/ta_program.h,
+	  src/temt/taiqtso/itextedit.cpp: sb_margin for soft bounding in
+	  CtLeabra: mix of linear and sb; also fixed
+	  Ctrl+Return for text field edit dialog
+
+2008-07-25 22:22  baisa
+
+	* [r3055] bench/030/shared/nb_netstru.cpp,
+	  bench/030/shared/nb_netstru.h: latest
+
+2008-07-25 21:24  baisa
+
+	* [r3054] bench/010/shared/nb_netstru.cpp,
+	  bench/010/shared/nb_netstru.h, bench/010/shared/nb_util.h: latest
+
+2008-07-25 21:23  baisa
+
+	* [r3053] bench/030/shared/nb_netstru.cpp,
+	  bench/030/shared/nb_netstru.h: dnorm and QtConcurrent
+
+2008-07-25 06:44  oreilly
+
+	* [r3052] src/temt/taiqtso/idialog.cpp, src/temt/taiqtso/idialog.h:
+	  oops forgot new files.
+
+2008-07-25 06:26  oreilly
+
+	* [r3051] src/emergent/network/netstru.cpp, src/temt/ta/ta_qt.cpp,
+	  src/temt/ta/ta_qt.h, src/temt/ta/ta_qtdata.cpp,
+	  src/temt/ta/ta_qtdata.h, src/temt/ta/ta_qtdialog.cpp,
+	  src/temt/ta/ta_qtdialog.h, src/temt/taiqtso/Makefile.am,
+	  src/temt/taiqtso/ichooserdialog.cpp,
+	  src/temt/taiqtso/ichooserdialog.h, src/temt/taiqtso/ilineedit.h,
+	  src/temt/taiqtso/qconsole.cpp: * current iDialog -> iHostDialog
+	  * new iDialog -- replacement for QDialog with Ctrl+Enter shortcut
+	  for Apply/Accept --
+	  Enter wasn't working on Linux so needed this at low level, and it
+	  is nice to
+	  have consistent key shortcut for all apply cases.
+
+2008-07-24 03:12  baisa
+
+	* [r3050] bench/010/shared/nb_netstru.cpp,
+	  bench/010/shared/nb_netstru.h, bench/040/shared/nb_netstru.h: int
+	  checkin
+
+2008-07-23 22:58  baisa
+
+	* [r3049] bench/010/shared/nb_netstru.cpp,
+	  bench/010/shared/nb_netstru.h, bench/010/shared/nb_util.h: int
+	  checkin
+
+2008-07-23 17:37  baisa
+
+	* [r3048] src/temt/ta/ta_qtdata.cpp, src/temt/ta/ta_qtdata_def.h,
+	  src/temt/ta/ta_qtdialog.cpp, src/temt/ta/ta_qtdialog.h: leak fix
+
+2008-07-23 07:06  baisa
+
+	* [r3047] src/emergent/network/netstru_qtso.cpp,
+	  src/temt/ta/t3viewer.cpp, src/temt/ta/ta_base.cpp,
+	  src/temt/ta/ta_datatable_qtso.h, src/temt/ta/ta_project.cpp,
+	  src/temt/ta/ta_project.h, src/temt/ta/ta_qtdata.cpp,
+	  src/temt/ta/ta_qtdialog.cpp, src/temt/ta/ta_qtdialog.h,
+	  src/temt/ta/ta_qttype.cpp, src/temt/ta/ta_qttype_def.h,
+	  src/temt/ta/ta_qtviewer.cpp, src/temt/ta/ta_qtviewer.h,
+	  src/temt/ta/ta_type.cpp, src/temt/ta/ta_type.h: ref and leak
+	  fixes
+
+2008-07-21 05:26  baisa
+
+	* [r3046] src/temt/css/css_machine.cpp, src/temt/ta/t3viewer.cpp,
+	  src/temt/ta/ta_datatable_qtso.cpp,
+	  src/temt/ta/ta_datatable_qtso.h, src/temt/ta/ta_qtdata.cpp,
+	  src/temt/ta/ta_qtdata_def.h, src/temt/ta/ta_qtviewer.cpp: fixed
+	  various memory leaks
+
+2008-07-20 08:20  oreilly
+
+	* [r3045] src/temt/ta/ta_base.cpp, src/temt/ta/ta_qtviewer.cpp:
+	  added Ctrl+D as duplicate item in tree browser, and removed that
+	  as delete tab
+	  -- too dangerous and infrequent to have delete tab. DupliateMe
+	  had a ! missing.
+
+2008-07-20 07:34  oreilly
+
+	* [r3044] src/temt/ta/ta_qtviewer.cpp, src/temt/ta/ta_qtviewer.h: *
+	  Alt+F = find fixed so it is always the local find
+	  * fixed the tab keys -- they now work fine but you have to give
+	  the thing
+	  keyboard focus (tab into it)
+
+2008-07-20 06:14  oreilly
+
+	* [r3043] src/temt/ta/ta_matrix_qt.cpp, src/temt/ta/ta_matrix_qt.h,
+	  src/temt/ta/ta_program_qt.cpp, src/temt/ta/ta_program_qt.h,
+	  src/temt/ta/ta_qtdialog.cpp, src/temt/ta/ta_qtdialog.h,
+	  src/temt/ta/ta_qtviewer.cpp, src/temt/ta/ta_qtviewer.h,
+	  src/temt/taiqtso/itreewidget.cpp: keyboarding all done!!! see
+	  Keyboard shortcuts on wiki for updates..
+
+2008-07-19 08:53  oreilly
+
+	* [r3042] src/emergent/leabra/leabra.cpp,
+	  src/emergent/network/emergent_base.cpp,
+	  src/emergent/network/emergent_project.cpp,
+	  src/emergent/network/emergent_project.h,
+	  src/emergent/network/netstru.h, src/temt/ta/t3viewer.cpp,
+	  src/temt/ta/ta_datatable_qtso.cpp,
+	  src/temt/ta/ta_datatable_qtso.h, src/temt/ta/ta_matrix_qt.cpp,
+	  src/temt/ta/ta_matrix_qt.h, src/temt/ta/ta_program_qt.cpp,
+	  src/temt/ta/ta_program_qt.h, src/temt/ta/ta_qtdialog.cpp,
+	  src/temt/ta/ta_qtdialog.h, src/temt/ta/ta_qtgroup.cpp,
+	  src/temt/ta/ta_qtgroup.h, src/temt/ta/ta_qtviewer.cpp,
+	  src/temt/ta/ta_qtviewer.h, src/temt/ta/ta_viewer.cpp: * leabra
+	  no_plus_test = 2nd minus phase for MINUS_PLUS_xxx (NOTHING,
+	  MINUS)
+	  - sets phase_no == 1 to act_m, calls test stats then (incl
+	  minus_output_name)
+	  * huge progress on keyboard nav: can do most things by emacs nav
+	  keys, Ctrl+I,
+	  and tabbing -- try Ctrl+F,B on tab bars! (or arrow keys if you
+	  want to..)
+	  * Alt+Return = Apply on any edit dialog.
+	  * just missing tab from program editor code up to inline edit
+	  dialog and back
+	  (this is key!!)
+
+2008-07-16 08:39  oreilly
+
+	* [r3041] src/temt/taiqtso/itreewidget.cpp: ok how about this one?
+
+2008-07-16 08:27  oreilly
+
+	* [r3040] src/temt/ta/t3viewer.cpp, src/temt/ta/ta_qtviewer.cpp,
+	  src/temt/ta/ta_viewer.cpp, src/temt/taiqtso/itreewidget.cpp:
+	  maybe this fixes emacs nav on linux?
+
+2008-07-16 07:34  baisa
+
+	* [r3039] bench/040/shared/nb_netstru.cpp,
+	  bench/040/shared/nb_netstru.h, bench/040/shared/nb_util.h,
+	  bench/doc/nb_jobs.txt: latest
+
+2008-07-15 18:30  baisa
+
+	* [r3038] bench/040, bench/040/README, bench/040/shared,
+	  bench/040/shared/nb_netstru.cpp, bench/040/shared/nb_netstru.h,
+	  bench/040/shared/nb_util.cpp, bench/040/shared/nb_util.h,
+	  bench/040/thread, bench/040/thread/nb_thread.cpp,
+	  bench/040/thread/nb_thread.pro: task guy 040
+
+2008-07-15 09:30  oreilly
+
+	* [r3037] src/temt/ta/ta_base.h, src/temt/ta/ta_program.h: default
+	  arg problem for StringFieldLookup int& new_pos arg -- no default!
+
+2008-07-15 09:17  oreilly
+
+	* [r3036] src/temt/ta/ta_dataproc.cpp, src/temt/ta/ta_dataproc.h:
+	  fix for BugID:457 -- selectrows use_var uses var val directly and
+	  gens' err for local
+	  var usage -- should now work for netmonitor and any other
+	  context.
+
+2008-07-15 09:00  oreilly
+
+	* [r3035] src/temt/taiqtso/itreewidget.cpp: * Ctrl-N,P,U,V emacs
+	  nav keys now move selection around in itreewidget -- this
+	  allows you to construct an entire project strictly through the
+	  keyboard without
+	  lifting your hands from the home key position!!!!!
+	  * there is just one catch: you can't tab into the edit dialogs --
+	  this now
+	  is the last step to full keyboard bliss!! Brad: help!!!
+
+2008-07-15 08:41  oreilly
+
+	* [r3034] src/emergent/bp/bp.h, src/emergent/bp/rbp.h,
+	  src/emergent/cs/cs.h, src/emergent/leabra/leabra.h,
+	  src/emergent/network/netdata.h, src/emergent/network/netstru.h,
+	  src/emergent/so/so.h, src/temt/css/css_builtin.cpp,
+	  src/temt/css/css_machine.h, src/temt/ta/ta_base.cpp,
+	  src/temt/ta/ta_base.h, src/temt/ta/ta_data.h,
+	  src/temt/ta/ta_dataanal.h, src/temt/ta/ta_datagen.h,
+	  src/temt/ta/ta_dataproc.h, src/temt/ta/ta_datatable.h,
+	  src/temt/ta/ta_geometry.h, src/temt/ta/ta_group.h,
+	  src/temt/ta/ta_imgproc.h, src/temt/ta/ta_math.h,
+	  src/temt/ta/ta_matrix.h, src/temt/ta/ta_program.cpp,
+	  src/temt/ta/ta_program.h, src/temt/ta/ta_program_qt.cpp,
+	  src/temt/ta/ta_program_qt.h, src/temt/ta/ta_project.cpp,
+	  src/temt/ta/ta_qtdata.cpp, src/temt/ta/ta_qtdata.h,
+	  src/temt/ta/ta_qttype.cpp, src/temt/ta/ta_qtviewer.cpp,
+	  src/temt/ta/ta_qtviewer.h, src/temt/ta/ta_seledit.h,
+	  src/temt/ta/ta_time.h, src/temt/ta/ta_type.cpp,
+	  src/temt/ta/ta_type.h, src/temt/ta/ta_virtenv.h,
+	  src/temt/taiqtso/itreewidget.cpp, src/temt/taiqtso/itreewidget.h:
+	  * cssMisc::Shutdown -- should deal with exit crashing!
+	  * added STEM_BASE to all stem classes, and support in
+	  ChangeMyType
+	  * Ctrl+L now puts cursor after new completed text (saves Ctrl+E)
+	  * New Ctrl+I insert function in itreeview -- avail to all
+	  treeview guys!! pulls
+	  up a type selector and allows you to create a new obj of that
+	  type for any tree
+	  anywhere!!
+	  * added emacs-style nav keys for all treeview dialogs (version 1:
+	  doesn't change
+	  selecdtion -- next version will change selection)
+
+2008-07-15 05:37  baisa
+
+	* [r3033] bench/log_thread/Notes.txt, src/temt/ta/ta_project.cpp:
+	  patched bad ref to root on shutdown
+
+2008-07-15 00:06  baisa
+
+	* [r3032] bench/020/shared/nb_netstru.cpp,
+	  bench/020/shared/nb_netstru.h, plugins/shared_pre.pri,
+	  src/temt/ta/ta_base.cpp, src/temt/ta/ta_base.h,
+	  src/temt/ta/ta_qtviewer.cpp, src/temt/ta/ta_qtviewer.h,
+	  src/temt/ta/ta_type.cpp, src/temt/ta/ta_viewer.cpp: not yet well
+	  tested fix to MainWinViewer mem leak plus chg to delayed close
+	  and fun
+
+2008-07-14 08:23  oreilly
+
+	* [r3031] src/temt/ta/qtdefs.h, src/temt/ta/ta_group.h,
+	  src/temt/ta/ta_program.h, src/temt/ta/ta_program_qt.cpp,
+	  src/temt/ta/ta_program_qt.h, src/temt/ta/ta_qtdata.cpp: * added
+	  Ctrl/Cmd I for "insert element" in program editor -- will be
+	  generalized later
+	  to itreeview and will add emacs key nav for the list too! this is
+	  very cool and does
+	  mostly what brian requested -- just type the first letter of the
+	  guy you want to insert
+	  and it goes through them..
+	  * added NewGp_gui and NewFromLib as buttons
+
+2008-07-13 08:37  oreilly
+
+	* [r3030] src/temt/ta/t3node_so.cpp, src/temt/ta/t3viewer.cpp,
+	  src/temt/ta/ta_base.h, src/temt/ta/ta_datatable_qtso.cpp,
+	  src/temt/ta/ta_datatable_qtso.h, src/temt/ta/ta_program.cpp: *
+	  important fix to yesterday's checkin: reset children call in
+	  datatableview
+	  was NOT the issue, and getting rid of that loses all gridview
+	  config info!! restored!
+	  * new fix for graph/grid instability: key problem is during
+	  scrolling, so
+	  created a special sub-event loop in ExaminerViewer that is
+	  engaged during
+	  scrolling! works great! stops all the action during scrolling
+	  * added back MENU_CONTEXT to new_gui (in addn to BUTTON) so it
+	  shows up on
+	  menus as well as the swell new button.
+	  * finished UpdateCallerArgs on function using taBase::Search
+	  function. nice.
+	  * added n_ticks to non-expert config items for graph axis.
+
+2008-07-12 22:48  baisa
+
+	* [r3029] src/temt/ta/ta_base.cpp, src/temt/ta/ta_base.h: added
+	  debug version of taBase Ref
+
+2008-07-12 22:47  baisa
+
+	* [r3028] bench/010/README, bench/020/README,
+	  bench/020/shared/nb_netstru.cpp, bench/020/shared/nb_netstru.h,
+	  bench/030/README, bench/log_thread/20080702_08.xls,
+	  bench/log_thread/20080712_01.xls,
+	  bench/log_thread/20080712_01a_fast-cn.log,
+	  bench/log_thread/20080712_01b_slow-cn.log: more logs and test of
+	  fast vs slow con access
+
+2008-07-12 10:00  baisa
+
+	* [r3027] bench/log_thread/20080702_08.xls,
+	  bench/log_thread/20080708_01.xls: new xls compare sheets
+
+2008-07-12 09:27  oreilly
+
+	* [r3026] src/emergent/network/netstru.h,
+	  src/temt/css/css_builtin.cpp, src/temt/css/css_machine.cpp,
+	  src/temt/ta/ta_base.cpp, src/temt/ta/ta_base.h,
+	  src/temt/ta/ta_datatable_qtso.cpp,
+	  src/temt/ta/ta_datatable_qtso.h, src/temt/ta/ta_imgproc.h,
+	  src/temt/ta/ta_matrix.h, src/temt/ta/ta_plugin_p.h,
+	  src/temt/ta/ta_program.cpp, src/temt/ta/ta_program.h,
+	  src/temt/ta/ta_qttype.cpp, src/temt/ta/ta_qttype.h,
+	  src/temt/ta/ta_qtviewer.cpp, src/temt/ta/ta_qtviewer.h,
+	  src/temt/ta/ta_script.h, src/temt/ta/ta_viewer.h,
+	  src/temt/ta/ta_virtenv.h: many fixes: FILE_DIALOG on members and
+	  missed methods, GuiFindMe and search string
+	  arg on gui find function, and UpdateCallerArgs on progs, depth
+	  disp on graph,
+	  nuked override of reset children in dataview base obj that MAY
+	  have been source
+	  of crashing when manipulating graph/grid while running (seems to
+	  be better now!).
+	  * also added Refn of instances during css type build-out for
+	  taBase, and some
+	  further guards against css types deleting instances -- hopefully
+	  fixes quit
+	  crashing. still need to test on valgrind.
+
+2008-07-12 08:08  baisa
+
+	* [r3025] src/temt/ta/ta_qtdialog.cpp: fixed small mem leak in
+	  EditDataHost
+
+2008-07-12 04:43  baisa
+
+	* [r3024] src/temt/ta/ta_string.cpp: stabinthedark fix for quit bug
+	  that worked for me
+
+2008-07-12 04:21  baisa
+
+	* [r3023] configure.ac, src/temt/ta/ta_list.cpp,
+	  src/temt/ta/ta_plugin_p.h, src/temt/ta/ta_string.cpp,
+	  src/temt/ta/ta_string.h: stabinthedark fix for quit bug that
+	  worked for me
+
+2008-07-11 07:49  baisa
+
+	* [r3022] bench/010/thread/nb_thread.pro,
+	  bench/030/thread/nb_thread.pro: latest changes on lin incl bug
+	  fix to legacy nibbling
+
+2008-07-11 07:48  baisa
+
+	* [r3021] bench/010/shared/nb_netstru.cpp,
+	  bench/020/shared/nb_netstru.cpp, bench/020/thread/nb_thread.pro,
+	  bench/030/shared/nb_netstru.cpp,
+	  bench/log_thread/20080709_01_Compare_a_b.xls,
+	  bench/log_thread/20080709_01a_cn-send-v.log,
+	  bench/log_thread/20080709_01b_cn-send.log,
+	  bench/log_thread/20080710_02a_lin64-4.log,
+	  bench/log_thread/20080710_02b_lin64-4.log,
+	  bench/log_thread/20080710_03_OldvsNewThread.xls,
+	  bench/log_thread/20080710_03a_lin64-4.log,
+	  bench/log_thread/20080710_03b_lin64-4.log,
+	  bench/log_thread/20080710_03c_lin64-4.log,
+	  bench/log_thread/Notes.txt, bench/run_bench_4.sh: latest changes
+	  on lin incl bug fix to legacy nibbling
+
+2008-07-11 07:23  baisa
+
+	* [r3020] bench/log_thread/Notes.txt: Notes
+
+2008-07-11 05:34  baisa
+
+	* [r3019] bench/020/thread/nb_thread.pro,
+	  bench/log_thread/20080710_01a_mac.log,
+	  bench/log_thread/20080710_01b_mac.log: added mac logs
+
+2008-07-11 04:44  baisa
+
+	* [r3018] bench/030, bench/030/shared,
+	  bench/030/shared/nb_netstru.cpp, bench/030/shared/nb_netstru.h,
+	  bench/030/shared/nb_util.cpp, bench/030/shared/nb_util.h,
+	  bench/030/thread, bench/030/thread/nb_thread.cpp,
+	  bench/030/thread/nb_thread.pro: latest benches on mac
+
+2008-07-11 04:42  baisa
+
+	* [r3017] bench/log_thread/Notes.txt: latest benches on mac
+
+2008-07-11 03:20  baisa
+
+	* [r3016] bench/010/shared/nb_netstru.cpp,
+	  bench/010/shared/nb_util.h, bench/doc, bench/doc/nb_jobs.txt:
+	  latest
+
+2008-07-10 19:38  baisa
+
+	* [r3015] bench/010/shared/nb_netstru.h: had Bp typedefs backwards
+
+2008-07-10 06:16  baisa
+
+	* [r3014] bench/010/shared/nb_netstru.cpp,
+	  bench/010/shared/nb_netstru.h, bench/010/shared/nb_util.h,
+	  bench/010/thread/nb_thread.pro, bench/020/shared/nb_netstru.cpp,
+	  bench/020/shared/nb_netstru.h, bench/020/shared/nb_util.h,
+	  bench/020/thread/nb_thread.pro, bench/log_thread/Notes.txt: this
+	  is either templated genius or utter madness
+
+2008-07-09 15:26  baisa
+
+	* [r3013] bench/010/actual[DEL], bench/010/shared/nb_netstru.h,
+	  bench/020/shared/nb_util.h, bench/actual[CPY]: moved actual
+
+2008-07-09 08:19  baisa
+
+	* [r3012] bench/020, bench/020/shared,
+	  bench/020/shared/nb_netstru-notes.txt,
+	  bench/020/shared/nb_netstru.cpp, bench/020/shared/nb_netstru.h,
+	  bench/020/shared/nb_util.cpp, bench/020/shared/nb_util.h,
+	  bench/020/thread, bench/020/thread/nb_thread.cpp,
+	  bench/020/thread/nb_thread.pro, bench/020/thread/run_bench_2.cmd,
+	  bench/020/thread/run_bench_2.sh, bench/020/thread/run_bench_4.sh:
+	  latest branch
+
+2008-07-09 08:15  baisa
+
+	* [r3011] bench/010, bench/010/actual[CPY], bench/010/cuda[CPY],
+	  bench/010/mpi[CPY], bench/010/shared[CPY], bench/010/thread[CPY],
+	  bench/010/thread/log[DEL], bench/actual[DEL], bench/cuda[DEL],
+	  bench/log_thread[CPY],
+	  bench/log_thread/CmpWtInSendVsConInSend.xls[CPY],
+	  bench/mpi_bench[DEL], bench/shared[DEL], bench/thread[DEL]: reorg
+	  to enable parallel trunks of benches
+
+2008-07-09 08:10  baisa
+
+	* [r3010] bench/thread/log/CmpWtInSendVsConInSend.xls: added logs
+
+2008-07-09 08:08  baisa
+
+	* [r3009] bench/thread/log/20080708_01a_cn-recv.log,
+	  bench/thread/log/20080708_01b_cn-send.log,
+	  bench/thread/log/20080708_02a_cn-recv.log,
+	  bench/thread/log/20080708_02b_cn-send.log,
+	  bench/thread/log/20080708_03b_cn-un-send.log,
+	  bench/thread/log/Notes.txt: added logs
+
+2008-07-08 09:43  baisa
+
+	* [r3008] bench/shared/nb_netstru.cpp, bench/shared/nb_netstru.h,
+	  bench/shared/nb_util.h: reworked Task to use procs not ids
+
+2008-07-07 22:44  baisa
+
+	* [r3007] bench/shared/nb_netstru.cpp, bench/shared/nb_netstru.h,
+	  bench/thread/run_send_4.sh: latest working
+
+2008-07-07 22:23  baisa
+
+	* [r3006] bench/shared/nb_netstru.cpp, bench/shared/nb_netstru.h,
+	  bench/shared/nb_util.h: latest but buggy
+
+2008-07-05 21:50  oreilly
+
+	* [r3005] src/emergent/network/emergent_program.cpp,
+	  src/emergent/network/emergent_program.h,
+	  src/temt/ta/ta_dataproc.h, src/temt/ta/ta_program.cpp,
+	  src/temt/ta/ta_program.h, src/temt/ta/ta_program_els.cpp,
+	  src/temt/ta/ta_program_els.h, src/temt/ta/ta_qtdata.cpp: fixed
+	  token chooser to use explicit display name call (BugID:444) and
+	  added
+	  datatable and network specific item filters (BugID:442)
+
+2008-07-05 19:29  oreilly
+
+	* [r3004] demo/data_proc/data_tutorial_final.proj,
+	  demo/data_proc/epoch_log_analysis.proj,
+	  src/emergent/leabra/leabra.cpp: soft clamp.gain is always from
+	  spec if d_gain = 0
+
+2008-07-04 20:39  baisa
+
+	* [r3003] bench/thread/log/20080703_01_sndary-sym.log,
+	  bench/thread/log/20080703_02_sndary-asym.log,
+	  bench/thread/log/20080703_03_sndary-asym.log,
+	  bench/thread/log/20080703_04_sndary-sym.log: added missing logs
+
+2008-07-03 22:55  baisa
+
+	* [r3002] bench/shared/nb_netstru.h, bench/shared/nb_util.h,
+	  bench/thread/log/20080703_05a_sndary-sym_winxp.log,
+	  bench/thread/log/20080703_05b_sndary-asym_winxp.log: win changes
+
+2008-07-03 22:25  baisa
+
+	* [r3001] bench/shared/nb_netstru.cpp, bench/shared/nb_netstru.h,
+	  bench/shared/nb_util.h, bench/thread/log/Notes.txt,
+	  bench/thread/run_bench_2.cmd[CPY],
+	  bench/thread/run_bench_2.sh[CPY],
+	  bench/thread/run_bench_4.sh[CPY],
+	  bench/thread/run_leabra_bench_2.cmd[DEL],
+	  bench/thread/run_leabra_bench_2.sh[DEL],
+	  bench/thread/run_leabra_bench_4.sh[DEL]: added modal tests for
+	  SEND_ARY_ASYM
+
+2008-07-03 09:28  baisa
+
+	* [r3000] bench/thread/log/20080702_10a_recv_mac-pwr.log,
+	  bench/thread/log/20080702_10b_send_mac-pwr.log,
+	  bench/thread/log/20080702_10c_conn_mac-pwr.log,
+	  bench/thread/log/20080702_10d_send-pwt_mac-pwr.log: mac updates
+
+2008-07-03 09:10  baisa
+
+	* [r2999] bench/shared/nb_netstru.h,
+	  bench/thread/log/20080702_12a_recv_win32.log,
+	  bench/thread/log/20080702_12b_send_win32.log,
+	  bench/thread/log/20080702_12c_conn_win32.log,
+	  bench/thread/log/20080702_12d_send-pwt_win32.log,
+	  bench/thread/run_leabra_bench_2.cmd: win32xp bench changes and
+	  tests
+
+2008-07-03 08:46  baisa
+
+	* [r2998] bench/shared/nb_netstru.cpp, bench/shared/nb_util.cpp,
+	  bench/shared/nb_util.h, bench/thread/nb_thread.pro: tweaks for
+	  Windows now working
+
+2008-07-03 08:33  baisa
+
+	* [r2997] bench/shared/nb_util.h: win32 atomic
+
+2008-07-03 07:17  baisa
+
+	* [r2996] bench/shared/nb_netstru.cpp, bench/shared/nb_netstru.h:
+	  latest modal source plus logs
+
+2008-07-03 06:40  baisa
+
+	* [r2995] bench/thread/log/20080702_07_lin64.log,
+	  bench/thread/log/20080702_08a_recv.log,
+	  bench/thread/log/20080702_08b_send.log,
+	  bench/thread/log/20080702_08c_conn.log,
+	  bench/thread/log/20080702_09b_send-pwt.log,
+	  bench/thread/log/Notes.txt: latest modal source plus logs
+
+2008-07-03 03:23  baisa
+
+	* [r2994] bench/shared/nb_netstru.cpp, bench/shared/nb_netstru.h,
+	  bench/thread/log/20080630_05_mac.log,
+	  bench/thread/log/20080702_01a_mac-bat.log,
+	  bench/thread/log/20080702_01b_mac-ac.log,
+	  bench/thread/log/20080702_04_mac-bat.log,
+	  bench/thread/log/20080702_05_mac-bat.log,
+	  bench/thread/log/20080702_06_mac-bat.log,
+	  bench/thread/log/Notes.txt: removed idx use and modalized for wt
+	  owner
+
+2008-07-02 22:58  baisa
+
+	* [r2993] bench/shared/nb_netstru.cpp, bench/shared/nb_netstru.h,
+	  bench/thread/log/Notes.txt: intermed checkin
+
+2008-07-02 18:13  baisa
+
+	* [r2992] bench/shared/nb_netstru.cpp: small param cmd line change
+
+2008-07-02 08:04  baisa
+
+	* [r2991] bench/shared/nb_netstru.cpp, bench/shared/nb_netstru.h,
+	  bench/thread/log/20080701_01.dbg.log,
+	  bench/thread/log/20080701_02.log,
+	  bench/thread/log/20080701_03a.log,
+	  bench/thread/log/20080701_03b_no-sra.log,
+	  bench/thread/log/20080701_03c_no-sra-dwt.log,
+	  bench/thread/log/20080701_04a.log,
+	  bench/thread/log/20080701_04b_no-sra-dwt.log,
+	  bench/thread/log/20080701_04c_no-sra.log,
+	  bench/thread/log/20080701_05c_no-sra.log,
+	  bench/thread/log/Notes.txt, bench/thread/run_leabra_bench_2.sh,
+	  bench/thread/run_leabra_bench_4.sh: latest perhaps not so shiny
+
+2008-07-02 07:22  oreilly
+
+	* [r2990] configure.ac, demo/data_proc/data_tutorial_final.proj,
+	  src/temt/ta/ta_dataproc.h, src/temt/ta/ta_datatable_qtso.cpp,
+	  src/temt/ta/ta_matrix.h, src/temt/ta/ta_program.h,
+	  src/temt/ta/ta_qtclassbrowse.h, src/temt/ta/ta_qtclipdata.h,
+	  src/temt/ta/ta_qtmodel.h, src/temt/ta/ta_server.h,
+	  src/temt/ta/ta_viewer.h: no sooner do we release 15 than we
+	  update to 16 and make a bunch of changes!! :)
+	  * fixed bar graph error bars -- now centered over bars (could
+	  swear I fixed that b4)
+	  * fixed a bunch of // forwards comments in header files that led
+	  to extra comments
+	  including in DataTable!
+	  * fixed class comments for all DataCalcLoop guys to indicate
+	  necessity of use within DCL
+
+2008-07-02 03:57  baisa
+
+	* [r2988] bench/shared/nb_netstru.cpp, bench/thread/log/Notes.txt:
+	  cleaned up version with dWt calc added
+
+2008-07-02 03:10  mingus
+
+	* [r2986] ChangeLog: 4.0.15
+
+2008-07-01 23:42  baisa
+
+	* [r2985] bench/shared/nb_netstru.cpp, bench/shared/nb_netstru.h,
+	  bench/shared/nb_util.h, bench/thread/nb_thread.pro: reorg with
+	  bugs fixed
+
+2008-07-01 18:05  baisa
+
+	* [r2984] bench/shared/nb_netstru.cpp, bench/thread/nb_thread.pro:
+	  latest
+
+2008-07-01 17:22  baisa
+
+	* [r2983] bench/cuda/doc/design.txt, bench/shared/nb_netstru.cpp,
+	  bench/shared/nb_netstru.h, bench/thread/log/Notes.txt: latest but
+	  bugs
+
 2008-06-30 18:06  baisa
 
 	* [r2982] bench/shared/nb_netstru-notes.txt: notes
