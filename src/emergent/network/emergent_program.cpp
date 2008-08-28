@@ -85,7 +85,10 @@ String NetDataLoop::GetDisplayName() const {
   String data_nm;
   if(data_var) data_nm = data_var->name;
   else data_nm = "ERROR: data_var not set!";
-  return "Net Data Loop (" + ord_str + " over: " + data_nm + ")";
+  String index_nm;
+  if(index_var) index_nm = index_var->name;
+  else index_nm = "ERROR: index_var not set!";
+  return "Net Data Loop (" + ord_str + " over: " + data_nm + " index: " + index_nm +")";
 }
 
 
@@ -257,8 +260,15 @@ String NetGroupedDataLoop::GetDisplayName() const {
   String data_nm;
   if(data_var) data_nm = data_var->name;
   else data_nm = "ERROR: data_var not set!";
+  String group_index_nm;
+  if(group_index_var) group_index_nm = group_index_var->name;
+  else group_index_nm = "ERROR: group_index_var not set!";
+  String item_index_nm;
+  if(item_index_var) item_index_nm = item_index_var->name;
+  else item_index_nm = "ERROR: item_index_var not set!";
   return "Net Grouped Data Loop (gp: " + group_ord_str + "\n itm: " + item_ord_str
-    + " over: " + data_nm + ")";
+    + " over: " + data_nm + " group index: " + group_index_nm
+    + " item index: " + item_index_nm +")";
 }
 
 ///////////////////////////////////

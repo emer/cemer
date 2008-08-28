@@ -1437,7 +1437,10 @@ String DataLoop::GetDisplayName() const {
   String data_nm;
   if(data_var) data_nm = data_var->name;
   else data_nm = "ERROR: data_var not set!";
-  return "DataTable Loop (" + ord_str + " over: " + data_nm + ")";
+  String index_nm;
+  if(index_var) index_nm = index_var->name;
+  else index_nm = "ERROR: index_var not set!";
+  return "DataTable Loop (" + ord_str + " over: " + data_nm + " index: " + index_nm +")";
 }
 
 
