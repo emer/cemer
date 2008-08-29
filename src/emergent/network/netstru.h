@@ -1503,6 +1503,8 @@ public:
 
   virtual bool	SetUnitNames(bool force_use_unit_names = false);
   // #MENU #MENU_SEP_BEFORE #CAT_Structure set unit names from unit_names matrix (called automatically on Build) -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
+  virtual bool	SetUnitNamesFromDataCol(const DataCol* unit_names_col, int max_unit_chars=-1);
+  // #MENU #CAT_Structure set unit names from unit names table column (string matrix with one row) -- max_unit_chars is max length of name to apply to unit (-1 = all)
   virtual bool	GetUnitNames(bool force_use_unit_names = true);
   // #MENU #CAT_Structure get unit_names matrix values from current unit name values -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
   virtual void	GetLocalistName();
@@ -2042,6 +2044,9 @@ public:
 
   virtual void	SetUnitNames(bool force_use_unit_names = false);
   // #MENU #MENU_SEP_BEFORE #CAT_Structure for all layers, set unit names from unit_names matrix (called automatically on Build) -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
+  virtual void 	SetUnitNamesFromDataTable(DataTable* unit_names_table, int max_unit_chars=-1,
+					  bool propagate_names=false);
+  // #MENU #CAT_Structure label units in the network based on unit names table -- also sets the unit_names matrix in the layer so they are persistent -- max_unit_chars is max length of name to apply to unit (-1 = all) -- if propagate_names is set, then names will be propagated along one-to-one projections to other layers that do not have names in the table (GetLocalistName)
   virtual void	GetUnitNames(bool force_use_unit_names = true);
   // #MENU #CAT_Structure for all layers, get unit_names matrix values from current unit name values -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
   virtual void	GetLocalistName();

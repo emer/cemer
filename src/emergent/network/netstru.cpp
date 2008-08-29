@@ -4313,6 +4313,50 @@ bool Layer::GetUnitNames(bool force_use_unit_names) {
   return true;
 }
 
+bool Layer::SetUnitNamesFromDataCol(const DataCol* unit_names_col, int max_un_chars) {
+  if(TestError(!unit_names_col, "SetUnitNamesFromDataCol", "null unit_names_col"))
+    return false;
+
+  const MatrixGeom& cg = unit_names_col->cell_geom;
+  taMatrix* nmat = (const_cast<DataCol*>(unit_names_col))->GetValAsMatrix(-1);
+  if(!nmat) return false;
+  taBase::Ref(nmat);
+
+  if(unit_groups && cg.dims() == 4) { // check if all but first group is empty
+    bool hugp_empty = true;
+    int gx, gy, ux, uy;
+    for(gy = 0; gy<cg.dim(3); gy++) {
+      for(gx = 0; gx<cg.dim(2); gx++) {
+	if(gx == 0 && gy == 0) continue; // skip 1st gp
+	for(uy = 0; uy<cg.dim(1); uy++) {
+	  for(ux = 0; ux<cg.dim(0); ux++) {
+	    if(nmat->SafeElAsStr(ux,uy,gx,gy).nonempty()) {
+	      hugp_empty = false;
+	      break;
+	    }
+	  }
+	}
+      }
+    }
+    if(hugp_empty) {
+      unit_names.SetGeom(2, cg.dim(0), cg.dim(1)); // just set for 1st gp
+    }
+    else {
+      unit_names.SetGeomN(cg); // get our geom
+    }
+  }
+  else {
+    unit_names.SetGeomN(cg); // get our geom
+  }
+  for(int i=0;i<nmat->size && i<unit_names.size;i++) {
+    String cnm = nmat->SafeElAsStr_Flat(i);
+    unit_names.SetFmStr_Flat(cnm.elidedTo(max_un_chars), i);
+  }
+  taBase::unRefDone(nmat);
+  SetUnitNames();		// actually set from these names
+  return true;
+}
+
 void Layer::GetLocalistName() {
   Unit* u;
   taLeafItr i;
@@ -5970,6 +6014,23 @@ void Network::SetUnitNames(bool force_use_unit_names) {
       l->SetUnitNames(force_use_unit_names);
   }
   UpdateAllViews();
+}
+
+void Network::SetUnitNamesFromDataTable(DataTable* undt, int max_unit_chars, 
+					bool propagate_names) {
+  if(TestError(!undt || undt->rows < 1, "SetUnitNamesFromDataTable", "null unit names table or doesn't have 1 or more rows!")) {
+    return;
+  }
+
+  for(int i=0;i<undt->cols();i++) {
+    DataCol* ndc = undt->data.FastEl(i);
+    Layer* lay = (Layer*)layers.FindLeafName(ndc->name);
+    if(!lay) continue;
+    lay->SetUnitNamesFromDataCol(ndc, max_unit_chars);
+  }
+  if(propagate_names)
+    GetLocalistName();	// propagate
+  return;
 }
 
 void Network::GetUnitNames(bool force_use_unit_names) {

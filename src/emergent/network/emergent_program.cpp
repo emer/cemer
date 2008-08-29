@@ -658,67 +658,10 @@ bool InitNamedUnits::LabelNetwork(bool propagate_names) {
 
   DataTable* undt = (DataTable*)unit_names_var->object_val.ptr();
   if(!undt) return false;	// should not happen
-  if(TestError(undt->rows < 1, "LabelNetwork", "unit names table doesn't have 1 or more rows!")) {
-    return false;
-  }
-
   Network* net = (Network*)network_var->object_val.ptr();
   if(!net) return false;	// should not happen
 
-  for(int i=0;i<undt->cols();i++) {
-    DataCol* ndc = undt->data.FastEl(i);
-    Layer* lay = (Layer*)net->layers.FindLeafName(ndc->name);
-    if(!lay) continue;
-    InitLayerFmUnitNames(lay, ndc, max_unit_chars);
-  }
-  if(propagate_names)
-    net->GetLocalistName();	// propagate
-  return true;
-}
-
-bool InitNamedUnits::InitLayerFmUnitNames(Layer* lay, const DataCol* unit_names_col, int max_un_chars) {
-  if(!lay || !unit_names_col) {
-    taMisc::Error("InitLayerFmUnitNames", "null args");
-    return false;
-  }
-  const MatrixGeom& cg = unit_names_col->cell_geom;
-  taMatrix* nmat = (const_cast<DataCol*>(unit_names_col))->GetValAsMatrix(-1);
-  if(nmat) {
-    taBase::Ref(nmat);
-
-    if(lay->unit_groups && cg.dims() == 4) { // check if all but first group is empty
-      bool hugp_empty = true;
-      int gx, gy, ux, uy;
-      for(gy = 0; gy<cg.dim(3); gy++) {
-	for(gx = 0; gx<cg.dim(2); gx++) {
-	  if(gx == 0 && gy == 0) continue; // skip 1st gp
-	  for(uy = 0; uy<cg.dim(1); uy++) {
-	    for(ux = 0; ux<cg.dim(0); ux++) {
-	      if(nmat->SafeElAsStr(ux,uy,gx,gy).nonempty()) {
-		hugp_empty = false;
-		break;
-	      }
-	    }
-	  }
-	}
-      }
-      if(hugp_empty) {
-	lay->unit_names.SetGeom(2, cg.dim(0), cg.dim(1)); // just set for 1st gp
-      }
-      else {
-	lay->unit_names.SetGeomN(cg); // get our geom
-      }
-    }
-    else {
-      lay->unit_names.SetGeomN(cg); // get our geom
-    }
-    for(int i=0;i<nmat->size && i<lay->unit_names.size;i++) {
-      String cnm = nmat->SafeElAsStr_Flat(i);
-      lay->unit_names.SetFmStr_Flat(cnm.elidedTo(max_un_chars), i);
-    }
-    taBase::unRefDone(nmat);
-  }
-  lay->SetUnitNames();		// actually set from these names
+  net->SetUnitNamesFromDataTable(undt, max_unit_chars, propagate_names);
   return true;
 }
 

@@ -233,9 +233,6 @@ public:
   static bool	InitDynEnumFmUnitNames(DynEnumType* dyn_enum, const DataCol* unit_names_col,
 				       const String& prefix);
   // initialize a dynamic enum with names from unit names table colum (string matrix with one row)
-  static bool	InitLayerFmUnitNames(Layer* lay, const DataCol* unit_names_col, int max_un_chars=-1);
-  // initialize layer unit names from unit names table column (string matrix with one row) -- max_un_chars is max length of name to apply to unit
-
   virtual bool	InitNamesTable();
   // #BUTTON #CONFIRM intialize (and update) the unit names table (will auto-create if not set) -- must have set the input_data_var to point to an input data table already!
   virtual bool	InitDynEnums();
