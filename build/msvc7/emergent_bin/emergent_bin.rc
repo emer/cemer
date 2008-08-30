@@ -62,8 +62,8 @@ IDI_ICON1               ICON                    "..\\..\\..\\src\\temt\\ta\\imag
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,15,0
- PRODUCTVERSION 4,0,15,0
+ FILEVERSION 4,0,17,0
+ PRODUCTVERSION 4,0,17,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -80,12 +80,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "CCN Lab"
             VALUE "FileDescription", "Emergent Application"
-            VALUE "FileVersion", "4, 0, 15, 0"
+            VALUE "FileVersion", "4, 0, 17, 0"
             VALUE "InternalName", "emergent"
             VALUE "LegalCopyright", "Copyright (C) 1995-2007 Regents of the University of Colorado, Carnegie Mellon University, Princeton University."
             VALUE "OriginalFilename", "emergent.exe"
             VALUE "ProductName", "Emergent"
-            VALUE "ProductVersion", "4, 0, 15, 0"
+            VALUE "ProductVersion", "4, 0, 17, 0"
         END
     END
     BLOCK "VarFileInfo"

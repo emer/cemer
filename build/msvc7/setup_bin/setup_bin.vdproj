@@ -753,6 +753,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_E4DDB3854D1446469247E106815FE177"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E6285D4DDADB492897765D0FEFE90070"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -820,6 +826,12 @@
         "Entry"
         {
         "MsmKey" = "8:_FA16FF37A7B14D429DFD5BC7789B99ED"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FBE87D0FBEA44B4E8593CDE54EBCE9D1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3153,6 +3165,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E4DDB3854D1446469247E106815FE177"
+            {
+            "SourcePath" = "8:..\\..\\..\\demo\\data_proc\\data_tutorial_final.proj"
+            "TargetName" = "8:data_tutorial_final.proj"
+            "Tag" = "8:"
+            "Folder" = "8:_F5A1A232E83C4D3998F1F6F2AF4FB7FF"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_E6285D4DDADB492897765D0FEFE90070"
             {
             "SourcePath" = "8:..\\..\\..\\prog_lib\\LeabraStartup_pb.prog"
@@ -3359,6 +3391,26 @@
             "TargetName" = "8:simple_vis_search.proj"
             "Tag" = "8:"
             "Folder" = "8:_F58B6B1B33BD4BEB9F3C7FC18A2A9A08"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_FBE87D0FBEA44B4E8593CDE54EBCE9D1"
+            {
+            "SourcePath" = "8:..\\..\\..\\demo\\data_proc\\data_tutorial.proj"
+            "TargetName" = "8:data_tutorial.proj"
+            "Tag" = "8:"
+            "Folder" = "8:_F5A1A232E83C4D3998F1F6F2AF4FB7FF"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -3751,13 +3803,13 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Emergent"
-        "ProductCode" = "8:{FAB6E99B-6B57-40C3-822B-EAA684DE114A}"
-        "PackageCode" = "8:{DED4A05F-9027-4389-A427-BBB212C43D9D}"
+        "ProductCode" = "8:{179C23A7-9622-4482-99C5-DD8B10A07CA5}"
+        "PackageCode" = "8:{60BC1F40-5962-474B-831E-3426DC17C5AC}"
         "UpgradeCode" = "8:{44D9DB79-4385-44C5-8AAE-9E349721CFFC}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
-        "ProductVersion" = "8:4.0.15"
+        "ProductVersion" = "8:4.0.17"
         "Manufacturer" = "8:CCN Lab"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://grey.colorado.edu/emergent/index.php/Main_Page"
