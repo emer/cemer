@@ -565,7 +565,7 @@ void TemtClient::cmdGetData() {
   if (!p.ValidateParams()) return;
   
   // ok, we can do it!
-  SendOk("line=" + String(p.lines));
+  SendOk("lines=" + String(p.lines));
   
   ostringstream ostr;
   String ln;
