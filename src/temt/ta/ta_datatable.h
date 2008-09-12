@@ -906,6 +906,9 @@ public:
   // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
   taMatrix*	 	GetValAsMatrixColName(const String& col_name, int row);
   // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
+  taMatrix*	 	GetValAsMatrixColRowName(const String& col_name, const String& row_col_name,
+					 const Variant& row_value);
+  // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column name, and row by looking up row_value in column named row_col_name; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
   bool 			SetValAsMatrix(const taMatrix* val, int col, int row);
   // #CAT_XpertModify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
   bool 			SetValAsMatrixColName(const taMatrix* val, const String& col_name, int row);

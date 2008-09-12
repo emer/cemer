@@ -450,7 +450,7 @@ private:
 };
 
 class TA_API DataVarProg : public DataOneProg { 
-  // A program element for exchanging information between program variables and data table values in columns with the same names as the variables -- scalar only variables
+  // A program element for exchanging information between program variables and data table values in columns with the same names as the variables -- scalar var/col and matrix var/col supported
 INHERITED(DataOneProg)
 public:
   enum RowType {
@@ -476,7 +476,9 @@ protected:
 
   override const String	GenCssBody_impl(int indent_level);
   virtual bool	GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm,
-			      const String& il, int var_no);
+                              String il, int var_no);
+  virtual bool	GenCss_OneVarMat(String& rval, ProgVarRef& mat_var, const String& idnm,
+			      String il, int var_no);
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
@@ -489,7 +491,7 @@ public:
   TA_BASEFUNS_NOCOPY(DataVarProgMatrix);
 protected:
   override bool	GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm,
-			      const String& il, int var_no);
+			      String il, int var_no);
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }

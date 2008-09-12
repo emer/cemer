@@ -1490,8 +1490,14 @@ String DataVarProg::GetDisplayName() const {
 }
 
 bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm, 
-				const String& il, int var_no) {
-  if(!var) return false;
+				String il, int var_no) 
+{
+  if (!var) return false;
+  // if the var is a matrix, then delegate to our Mat handler
+  if ((var->var_type == ProgVar::T_Object) &&
+    var->object_type->InheritsFrom(&TA_taMatrix))
+    return GenCss_OneVarMat(rval, var, idnm, il, var_no);
+    
   DataCol* da = NULL;
   DataTable* dt = GetData();
   String string_cvt = "";
@@ -1525,6 +1531,39 @@ bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idn
   return true;
 }
 
+bool DataVarProg::GenCss_OneVarMat(String& rval, ProgVarRef& var, const String& idnm, 
+  String il, int var_no) 
+{
+    
+  DataCol* da = NULL;
+  DataTable* dt = GetData();
+  String string_cvt = "";
+  if(dt) {
+    da = dt->FindColName(var->name);
+    if(da && da->isString())
+      string_cvt = "(String)";	// cast variant value to a string for setting!
+  }
+  // in all cases, we need a temp var that is ref counted, to hold the mat slice for the col
+  rval += "{taMatrix* __tmp_mat;\n"; 
+  // first, get the mat slice
+  if (row_spec == CUR_ROW) {
+    rval += il + "__tmp_mat = " + idnm + ".GetMatrixDataByName(\"" + var->name + "\");\n";
+  } else if (row_spec == ROW_NUM) {
+    rval += il + "__tmp_mat = " + idnm + ".GetValAsMatrixColName(\"" + var->name + "\", "
+      + row_var->name + ");\n";
+  } else if (row_spec == ROW_VAL) {
+    rval += il + "__tmp_mat = " + idnm + ".GetValAsMatrixColRowName(\"" + var->name +"\", \""
+      + row_var->name + "\", " + row_var->name + ");\n";
+  }
+  if(set_data) {
+    rval +=  il + "__tmp_mat.CopyFrom(" + var->name + ");\n";
+  } else {
+    rval += il + var->name + ".CopyFrom(__tmp_mat);\n";
+  }
+  rval += "}\n"; 
+  return true;
+}
+
 const String DataVarProg::GenCssBody_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   if(!data_var) return il + "// data_var not set!\n";
@@ -1546,7 +1585,7 @@ void DataVarProgMatrix::Initialize() {
 }
 
 bool DataVarProgMatrix::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm, 
-				      const String& il, int var_no) {
+				      String il, int var_no) {
   if(!var) return false;
   DataCol* da = NULL;
   String col_nm = var->name.before('_', -1);

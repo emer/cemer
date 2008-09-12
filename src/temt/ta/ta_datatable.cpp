@@ -1321,6 +1321,22 @@ taMatrix* DataTable::GetValAsMatrixColName(const String& col_nm, int row) {
   else return NULL;
 }
 
+taMatrix* DataTable::GetValAsMatrixColRowName(const String& col_nm, const String& row_col_name,
+	const Variant& row_value)
+{
+  int col;
+  DataCol* cda = FindColName(col_nm, col, true);
+  if(!cda) return NULL;
+  int rcol;
+  DataCol* rda = FindColName(row_col_name, rcol, true);
+  if(!rda) return NULL;
+  int row = rda->FindVal(row_value);
+  if(row >= 0)
+    return cda->GetValAsMatrix(row);
+  return NULL;
+}
+
+
 taMatrix* DataTable::GetRangeAsMatrix(int col, int st_row, int n_rows) {
   DataCol* da = GetColData(col);
   int i;
