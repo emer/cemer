@@ -198,7 +198,12 @@ bool DataViewer::SaveImageAs(const String& fname, ImageFormat img_fmt) {
     QPixmap pix = GrabImage(rval);
     if(rval) {
       flr->Close();
-      pix.save(flr->fileName(), ext, taMisc::jpeg_quality);
+      int quality = taMisc::jpeg_quality;
+      // for png, quality should be 0, which uses maximum deflate compression
+      if (img_fmt == PNG) {
+        quality = 0;
+      }
+      pix.save(flr->fileName(), ext, quality);
       cerr << "Saving image of size: " << pix.width() << " x " << pix.height() << " depth: " << pix.depth() << " to: " << flr->fileName() << endl;
     }
   }
