@@ -114,6 +114,7 @@ public:
 
 class CSS_API cssTA_Base : public cssTA {
   // specifically for taBase types -- calls the overloaded versions of TypeDef functions
+INHERITED(cssTA)
 public:
   void 		Print(ostream& fh = cout) const;
   void 		PrintR(ostream& fh = cout) const;		// recursive
@@ -156,6 +157,7 @@ public:
   void PtrAssignPtr(const cssEl& s);
   override bool PtrAssignPtrPtr(void* new_ptr_val);
   // use SetPointer..
+  override void PtrAssignNull();
 
   void UpdateAfterEdit();
 

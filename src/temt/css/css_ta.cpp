@@ -560,6 +560,15 @@ bool cssTA_Base::PtrAssignPtrPtr(void* new_ptr_val) {
   return true;
 }
 
+void cssTA_Base::PtrAssignNull() {
+// NOTE: BA 2008-09-11 added this as needed fix, so am calling base
+// only for cases I don't understand -- this may still need work...
+  if(ptr_cnt == 1)
+    taBase::DelPointer((taBase**)&ptr);
+  else
+    inherited::PtrAssignNull();
+}
+
 void cssTA_Base::operator=(void* cp) {
 // these are very bad because of the ref counting but we just have to assume the pointer is a taBase*!
 #ifdef DEBUG
@@ -724,7 +733,8 @@ cssEl* cssTA_Base::NewOpr() {
     cssMisc::Error(prog, "New token of type:", type_def->name, "could not be made");
     return &cssMisc::Void;
   }
-  taBase::Ref(nw);			// refer to this
+//NO!  taBase::Ref(nw);			// refer to this
+//BA 20080911 the call below also does its own Ref so we end up double-refing it!
   return new cssTA_Base((void*)nw, 1, type_def); // this guy points to it..
 }
 

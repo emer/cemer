@@ -430,9 +430,10 @@ void taBase::OwnPointer(taBase** ptr, taBase* new_val, taBase* onr) {
 }
 
 void taBase::DelPointer(taBase** ptr) {
-  if(*ptr != NULL)
+  if (*ptr != NULL) {
     UnRef(*ptr);
-  *ptr = NULL;
+    *ptr = NULL;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////
