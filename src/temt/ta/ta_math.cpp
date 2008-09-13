@@ -59,6 +59,25 @@ double erf(double x) {
 
 #endif
 
+#ifdef HAVE_LIBGSL
+// gsl error handler -- needed to prevent default from raising abort!
+void ta_gsl_err_handler(const char * reason,
+  const char * file, int line, int gsl_errno)
+{
+  // note, the rest of the info is really not helpful to users, so we
+  // only print the reason -- Emergent programs will then print the
+  // CSS line number, which can be helpful
+  taMisc::Error("taMath: GSL library error:", reason);
+}
+
+void ta_gsl_module_init() {
+  // note: we don't save result, because it will be NULL, and we won't reset it
+  //gsl_error_handler_t* =
+  gsl_set_error_handler(ta_gsl_err_handler);
+}
+// initialize error handler
+InitProcRegistrar mod_init_gsl(ta_gsl_module_init);
+#endif // HAVE_LIBGSL
 
 //////////////////////////
 //  	Relation     	//
