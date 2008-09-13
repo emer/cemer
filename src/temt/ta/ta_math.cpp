@@ -1611,8 +1611,8 @@ bool taMath_double::mat_get_gsl_fm_ta(gsl_matrix* gsl_mat, const double_Matrix* 
     taMisc::Error("taMath::mat_get_gsl_fm_ta: dimension of matrix must be 2 for gsl calls!");
     return false;
   }
-  gsl_mat->size1 = ta_mat->dim(0); // "rows" (rows are contiguous in mem)
-  gsl_mat->size2 = ta_mat->dim(1); // "columns"
+  gsl_mat->size2 = ta_mat->dim(0); // "rows" (rows are contiguous in mem)
+  gsl_mat->size1 = ta_mat->dim(1); // "columns"
   gsl_mat->tda = ta_mat->dim(0); // actual size of row in memory
   gsl_mat->data = (double*)ta_mat->data();
   gsl_mat->block = NULL;
@@ -3843,8 +3843,8 @@ bool taMath_float::mat_get_gsl_fm_ta(gsl_matrix_float* gsl_mat, const float_Matr
     taMisc::Error("taMath::mat_get_gsl_fm_ta: dimension of matrix must be 2 for gsl calls!");
     return false;
   }
-  gsl_mat->size1 = ta_mat->dim(0); // "rows" (rows are contiguous in mem)
-  gsl_mat->size2 = ta_mat->dim(1); // "columns"
+  gsl_mat->size2 = ta_mat->dim(0); // "rows" (rows are contiguous in mem)
+  gsl_mat->size1 = ta_mat->dim(1); // "columns"
   gsl_mat->tda = ta_mat->dim(0); // actual size of row in memory
   gsl_mat->data = (float*)ta_mat->data();
   gsl_mat->block = NULL;
