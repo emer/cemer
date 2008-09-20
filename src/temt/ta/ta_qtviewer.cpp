@@ -6907,12 +6907,13 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
       return;
     }
   }
-  if((ctrl_pressed && e->key() == Qt::Key_W) || (e->key() == Qt::Key_Delete)) {
+  if((ctrl_pressed && e->key() == Qt::Key_W) ||
+     (ctrl_pressed && e->key() == Qt::Key_D) || (e->key() == Qt::Key_Delete)) {
     ISelectable* si = curItem();
     if(si && si->link()) {
       taBase* sb = si->link()->taData();
       if(sb) {
-	sb->CloseLater();	// this doesn't seem to be working: gives an error
+	sb->CloseLater();
       }
     }
     e->accept();

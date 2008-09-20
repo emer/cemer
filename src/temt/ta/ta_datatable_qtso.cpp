@@ -2380,6 +2380,7 @@ void GraphAxisBase::SetRange_impl(float first, float last) {
 // limits are needed to prevent numerical overflow!
 static const float range_min_limit = 1.0e-18f;
 static const float range_zero_range = 5.0e-17f; // half-range for zero-range values
+static const float range_zero_label_range = 5.0e-6f; // for tick labels
 
 // updates range based on new data and returns true if it really is a new range
 bool GraphAxisBase::UpdateRange_impl(float first, float last) {
@@ -2584,7 +2585,7 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
     t3ax->addLine(fm, to);
     if(!ticks_only) {
       float lab_val = val / units;
-      if (fabsf(lab_val) < range_zero_range)
+      if (fabsf(val / tick_incr) < range_zero_label_range)
 	lab_val = 0.0f;		// the 0 can be screwy
       label = String(lab_val);
       if(use_str_labels && da) {
@@ -2657,7 +2658,7 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
     t3ax->addLine(fm, to);
     if(!ticks_only) {
       float lab_val = val / units;
-      if (fabsf(lab_val) < range_zero_range)
+      if (fabsf(val / tick_incr) < range_zero_label_range)
 	lab_val = 0.0f;		// the 0 can be screwy
       label = String(lab_val);
       if(n_ax > 0) {
@@ -2731,7 +2732,7 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
     t3ax->addLine(fm, to);
     if(!ticks_only) {
       float lab_val = val / units;
-      if (fabsf(lab_val) < range_zero_range)
+      if (fabsf(val / tick_incr) < range_zero_label_range)
 	lab_val = 0.0f;		// the 0 can be screwy
       label = String(lab_val);
       if(use_str_labels && da) {

@@ -1508,6 +1508,16 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
 	return CSS_VAR;
       }
     }
+    else {
+      Function* fun = prog->functions.FindName(vnm);
+      if(fun) {
+	cssScriptFun* sfn = new cssScriptFun(vnm);
+	pe->parse_tmp.Push(sfn);
+	sfn->argc = fun->args.size;
+	el_ptr.SetDirect(sfn);
+	return CSS_FUN;
+      }
+    }
   }
   return 0;			// not found!
 }

@@ -141,6 +141,9 @@ public:
   ProgExprBase		test; // a test expression for whether to continue looping (e.g., 'i < max')
   ProgExprBase	    	iter; // the iteration operation run after each loop (e.g., increment the loop variable; 'i++')
 
+  virtual void		ChangeLoopVar(const String& fm_var, const String& to_var);
+  // #BUTTON change looping variable name from given variable name to new variable name -- just does simple search & replace by text
+
   override String	GetDisplayName() const;
   override void		SetProgExprFlags();
 
@@ -505,16 +508,19 @@ class TA_API MemberMethodCall: public MemberProgEl {
   // ##DEF_CHILD_meth_args call a method on a member of an object
 INHERITED(MemberProgEl)
 public:
+  TypeDef*		mth_obj_type;
+  // #NO_SHOW #NO_SAVE obj type for method lookup
   ProgVarRef		result_var;
   // #ITEM_FILTER_StdProgVarFilter where to store the result of the method call (optional -- can be NULL)
   MethodDef*		method;
-  // #TYPE_ON_obj_type #APPLY_IMMED the method to call on object obj->path
+  // #TYPE_ON_mth_obj_type #APPLY_IMMED the method to call on object obj->path
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
 
   override taList_impl*	children_() {return &meth_args;}	
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
+  override bool		GetTypeFromPath(bool quiet = false);
 
   PROGEL_SIMPLE_BASEFUNS(MemberMethodCall);
 protected:

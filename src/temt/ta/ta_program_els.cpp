@@ -288,6 +288,16 @@ String ForLoop::GetDisplayName() const {
   return "for (" + init.expr + "; " + test.expr + "; " + iter.expr + ")";
 }
 
+void ForLoop::ChangeLoopVar(const String& fm_var, const String& to_var) {
+  init.expr.gsub(fm_var, to_var);
+  test.expr.gsub(fm_var, to_var);
+  iter.expr.gsub(fm_var, to_var);
+  init.ParseExpr();		// re-parse just to be sure!
+  test.ParseExpr();		// re-parse just to be sure!
+  iter.ParseExpr();		// re-parse just to be sure!
+  UpdateAfterEdit();
+}
+
 
 //////////////////////////
 //  IfContinue		//
@@ -1039,6 +1049,7 @@ String MemberFmArg::GetDisplayName() const {
 
 void MemberMethodCall::Initialize() {
   method = NULL;
+  mth_obj_type = &TA_taBase; // placeholder
 }
 
 void MemberMethodCall::UpdateAfterEdit_impl() {
@@ -1080,6 +1091,20 @@ const String MemberMethodCall::GenCssBody_impl(int indent_level) {
   rval += ";\n";
   
   return rval;
+}
+
+bool MemberMethodCall::GetTypeFromPath(bool quiet) {
+  bool rval = inherited::GetTypeFromPath(quiet);
+  if(!rval) return false;
+
+  TypeDef* ot = obj->act_object_type();
+  int net_base_off = 0;
+  ta_memb_ptr net_mbr_off = 0;
+  String tmp_pth = path + ".";	// get sub-guy
+  MemberDef* md = TypeDef::FindMemberPathStatic(ot, net_base_off, net_mbr_off, tmp_pth, false);
+  // gets static path based just on member types, updates ot to point to owner type of md
+  mth_obj_type = ot;
+  return (bool)md;
 }
 
 String MemberMethodCall::GetDisplayName() const {

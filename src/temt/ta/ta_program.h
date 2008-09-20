@@ -876,6 +876,8 @@ public:
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
+  override bool 	SetName(const String& nm)    	{ name = nm; return true; }
+  override String	GetName() const			{ return name; }
 
   override void		InitLinks();
   PROGEL_SIMPLE_COPY(Function);
