@@ -677,11 +677,11 @@ public:
   // #CAT_Rows allocate space for at least n rows
   virtual int		AddBlankRow() 
   { if (AddRows(1)) {rd_itr = wr_itr = rows - 1; return wr_itr;} else return -1; }
-  // #MENU #MENU_ON_Rows #CAT_Rows add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row #
+  // #CAT_Rows add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row #
   virtual bool		AddRows(int n = 1);
-  // #MENU #CAT_Rows add n rows, returns true if successfully added
+  // #BUTTON #CAT_Rows add n rows, returns true if successfully added
   virtual bool		InsertRows(int st_row, int n_rows=1);
-  // #MENU #CAT_Rows insert n rows at starting row number, returns true if succesfully inserted
+  // #MENU #MENU_ON_Rows #CAT_Rows insert n rows at starting row number, returns true if succesfully inserted
   
   virtual bool		RemoveRows(int st_row, int n_rows=1);
   // #MENU #MENU_ON_Rows #CAT_Rows Remove n rows of data, starting at st_row.  st_row = -1 means last row, and n_rows = -1 means remove from starting row to end
@@ -1047,7 +1047,7 @@ public:
 				DataCol* col4 = NULL, bool ascending4 = true,
 				DataCol* col5 = NULL, bool ascending5 = true,
 				DataCol* col6 = NULL, bool ascending6 = true);
-  // #CAT_XpertDataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_GROUP_data #NULL_OK sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
+  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_GROUP_data #NULL_OK sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
   virtual bool		Filter(const String& filter_expr);
   // #CAT_DataProc #MENU #FROM_GROUP_data filter (select) table rows by applying given expression -- if it evaluates to true, the row is included, and otherwise it is removed.  refer to current colum values by name.  NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
   virtual bool		GroupMeanSEM(DataTable* dest_data,
