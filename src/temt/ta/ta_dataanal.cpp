@@ -435,6 +435,101 @@ DataCol* taDataAnal::GetStringDataCol(DataTable* src_data, const String& name_co
   return nmda;
 }
 
+DataCol* taDataAnal::GetNumDataCol(DataTable* src_data, const String& name_col_nm) {
+  if(name_col_nm.empty()) return NULL;
+  int idx;
+  DataCol* nmda = src_data->FindColName(name_col_nm, idx, true); // err msg
+  if(!nmda)
+    return NULL;
+  if(nmda->is_matrix) {
+    taMisc::Error("taDataAnal: column named:", name_col_nm,
+		  "is a matrix where a scalar is required, in data table:", src_data->name);
+    return NULL;
+  }
+  if(!nmda->isNumeric()) {
+    taMisc::Error("taDataAnal: column named:", name_col_nm,
+		  "is not a numeric type -- must be, in data table:", src_data->name);
+    return NULL;
+  }
+  return nmda;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+//	stats 
+
+String taDataAnal::RegressLinear(DataTable* src_data, const String& x_data_col_nm,
+				const String& y_data_col_nm, bool render_line) {
+  
+  String rval = "err";
+  DataCol* xda = GetNumDataCol(src_data, x_data_col_nm);
+  if(!xda) return rval;
+  DataCol* yda = GetNumDataCol(src_data, y_data_col_nm);
+  if(!yda) return rval;
+
+  double r, b, m;
+
+  if(xda->valType() == VT_DOUBLE && yda->valType() == VT_DOUBLE) {
+    double cov00, cov01, cov11, sum_sq;
+    taMath_double::vec_regress_lin((double_Matrix*)xda->AR(), (double_Matrix*)yda->AR(),
+					  b, m, cov00, cov01, cov11, sum_sq);
+    r = taMath_double::vec_correl((double_Matrix*)xda->AR(), (double_Matrix*)yda->AR());
+  }
+  else if(xda->valType() == VT_FLOAT && yda->valType() == VT_FLOAT) {
+    float fb, fm, fcov00, fcov01, fcov11, fsum_sq;
+    taMath_float::vec_regress_lin((float_Matrix*)xda->AR(), (float_Matrix*)yda->AR(),
+				  fb, fm, fcov00, fcov01, fcov11, fsum_sq);
+    b=fb; m=fm;
+    r = (double)taMath_float::vec_correl((float_Matrix*)xda->AR(), (float_Matrix*)yda->AR());
+  }
+  else {
+    double_Matrix xm;
+    double_Matrix ym;
+    double_Matrix* xmp = &xm;
+    double_Matrix* ymp = &ym;
+    if(xda->valType() == VT_DOUBLE) {
+      xmp = (double_Matrix*)xda->AR();
+    }
+    else if(xda->valType() == VT_FLOAT) {
+      taMath_double::mat_cvt_float_to_double(&xm, (float_Matrix*)xda->AR());
+    }
+    else if(xda->valType() == VT_INT) {
+      taMath_double::vec_fm_ints(&xm, (int_Matrix*)xda->AR());
+    }
+
+    if(yda->valType() == VT_DOUBLE) {
+      ymp = (double_Matrix*)yda->AR();
+    }
+    else if(yda->valType() == VT_FLOAT) {
+      taMath_double::mat_cvt_float_to_double(&ym, (float_Matrix*)yda->AR());
+    }
+    else if(yda->valType() == VT_INT) {
+      taMath_double::vec_fm_ints(&ym, (int_Matrix*)yda->AR());
+    }
+    double cov00, cov01, cov11, sum_sq;
+    taMath_double::vec_regress_lin(xmp, ymp, b, m, cov00, cov01, cov11, sum_sq);
+    r = taMath_double::vec_correl(xmp, ymp);
+  }
+
+  rval = "y = " + String(m) + " * x + " + String(b) + "; r = " + String(r) + "; r^2 = "
+    + String(r*r);
+
+  cout << rval << endl;
+
+  if(render_line) {
+    src_data->StructUpdate(true);
+    int idx;
+    DataCol* rl = src_data->FindMakeColName("regress_line", idx, VT_FLOAT);
+    rl->desc = rval;
+    for(int i=0; i<src_data->rows;i++) {
+      float xv = xda->GetValAsFloat(i);
+      float yv = (float)b + (float)m * xv;
+      rl->SetValAsFloat(yv, i);
+    }
+    src_data->StructUpdate(false);
+  }
+  return rval;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 //	distance matricies
 

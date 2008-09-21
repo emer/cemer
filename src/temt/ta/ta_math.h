@@ -440,6 +440,11 @@ public:
   ///////////////////////////////////////
   // arithmetic ops
 
+  static void	vec_fm_ints(double_Matrix* double_mat, const int_Matrix* int_mat);
+  // initialize given double matrix (which is completely overwritten) from integer matrix data
+  static void	vec_to_ints(int_Matrix* int_mat, const double_Matrix* double_mat);
+  // copy double matrix data back to integer matrix
+
   static bool	vec_check_same_size(const double_Matrix* a, const double_Matrix* b, bool quiet = false);
   // check that both vectors are the same size, and issue warning if not (unless quiet)
 
@@ -532,6 +537,11 @@ public:
 
   static void	vec_sort(double_Matrix* vec, bool descending = false);
   // #CAT_Statistics sort the given vector values in numerical order (in place)
+
+  static bool	vec_regress_lin(const double_Matrix* x_vec, const double_Matrix* y_vec,
+				double& b, double& m, double& cov00, double& cov01,
+				double& cov11, double& sum_sq);
+  // #CAT_Statistics computes the best-fit linear regression coefficients (b,m) of the model y = b + mx for the dataset (x, y). The variance-covariance matrix for the parameters (c0, c1) is estimated from the scatter of the points around the best-fit line and returned via the parameters (cov00, cov01, cov11). The sum of squares of the residuals from the best-fit line is returned in sum_sq.  See vec_correl to compute the correlation coefficient.
 
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)
@@ -1058,6 +1068,11 @@ public:
 
   static void	vec_sort(float_Matrix* vec, bool descending = false);
   // #CAT_Statistics sort the given vector values in numerical order (in place)
+
+  static bool	vec_regress_lin(const float_Matrix* x_vec, const float_Matrix* y_vec,
+				float& b, float& m, float& cov00, float& cov01,
+				float& cov11, float& sum_sq);
+  // #CAT_Statistics computes the best-fit linear regression coefficients (b,m) of the model y = b + mx for the dataset (x, y). The variance-covariance matrix for the parameters (c0, c1) is estimated from the scatter of the points around the best-fit line and returned via the parameters (cov00, cov01, cov11). The sum of squares of the residuals from the best-fit line is returned in sum_sq.  See vec_correl to compute the correlation coefficient.
 
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)

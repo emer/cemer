@@ -27,6 +27,7 @@
 # include <gsl/gsl_errno.h>
 # include <gsl/gsl_eigen.h>
 # include <gsl/gsl_linalg.h>
+# include <gsl/gsl_fit.h>
 # include <gsl/gsl_fft_real.h>
 # include <gsl/gsl_fft_halfcomplex.h>
 #endif
@@ -800,6 +801,16 @@ double taMath_double::Ftest_q(double F, double v1, double v2) {
 ///////////////////////////////////////
 // arithmetic ops
 
+void taMath_double::vec_fm_ints(double_Matrix* double_mat, const int_Matrix* int_mat) {
+  double_mat->SetGeomN(int_mat->geom);
+  for(int i=0;i<int_mat->size;i++) double_mat->FastEl_Flat(i) = (double)int_mat->FastEl_Flat(i);
+}
+
+void taMath_double::vec_to_ints(int_Matrix* int_mat, const double_Matrix* double_mat) {
+  int_mat->SetGeomN(double_mat->geom);
+  for(int i=0;i<double_mat->size;i++) int_mat->FastEl_Flat(i) = (int)double_mat->FastEl_Flat(i);
+}
+
 bool taMath_double::vec_check_same_size(const double_Matrix* a, const double_Matrix* b, bool quiet) {
   if(a->size != b->size) {
     if(!quiet)
@@ -1202,6 +1213,18 @@ String taMath_double::vec_stats(const double_Matrix* vec) {
   rval += "stdev=" + String(vec_std_dev(vec, mean, true)) + "; ";
   rval += "sem=" + String(vec_sem(vec, mean, true)) + ";";
   return rval;
+}
+
+bool taMath_double::vec_regress_lin(const double_Matrix* x_vec, const double_Matrix* y_vec,
+				      double& b, double& m, double& cov00, double& cov01,
+				      double& cov11, double& sum_sq) {
+#ifdef HAVE_LIBGSL
+  gsl_fit_linear((double*)x_vec->data(), 1, (double*)y_vec->data(), 1, 
+		 MIN(x_vec->size, y_vec->size), &b, &m, &cov00, &cov01, &cov11, &sum_sq);
+  return true;
+#else 
+  return false;
+#endif
 }
 
 ///////////////////////////////////////
@@ -3432,7 +3455,18 @@ String taMath_float::vec_stats(const float_Matrix* vec) {
   return rval;
 }
 
-
+bool taMath_float::vec_regress_lin(const float_Matrix* x_vec, const float_Matrix* y_vec,
+				      float& b, float& m, float& cov00, float& cov01,
+				      float& cov11, float& sum_sq) {
+  double_Matrix dx;
+  mat_cvt_float_to_double(&dx, x_vec);
+  double_Matrix dy;
+  mat_cvt_float_to_double(&dy, y_vec);
+  double db, dm, dcov00, dcov01, dcov11, dsum_sq;
+  bool rval = taMath_double::vec_regress_lin(&dx, &dy, db, dm, dcov00, dcov01, dcov11, dsum_sq);
+  b = db; m = dm; cov00 = dcov00; cov01 = dcov01; cov11 = dcov11; sum_sq = dsum_sq;
+  return rval;
+}
 
 ///////////////////////////////////////
 // distance metrics (comparing two vectors)

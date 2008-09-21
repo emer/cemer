@@ -107,7 +107,16 @@ public:
   // #IGNORE get named column from data, with checks that it is a matrix of type float or double
   static DataCol* GetStringDataCol(DataTable* src_data, const String& name_col_nm);
   // #IGNORE get named column from data, with checks that it is a non-matrix of type String
+  static DataCol* GetNumDataCol(DataTable* src_data, const String& name_col_nm);
+  // #IGNORE get named column from data, with checks that it is a non-matrix of numeric type
   
+  ///////////////////////////////////////////////////////////////////
+  // basic statistics
+
+  static String	RegressLinear(DataTable* src_data, const String& x_data_col_nm,
+			      const String& y_data_col_nm, bool render_line = true);
+  // #CAT_Stats #MENU_BUTTON #MENU_ON_Stats compute linear regression (least squares fit of function y = mx + b) to given data -- if render_line, a column called "regress_line" is created and the function is generated into it as data.  Returns a string descriptor of the regression equation and r value
+
   ///////////////////////////////////////////////////////////////////
   // distance matricies
 
