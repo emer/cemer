@@ -510,7 +510,8 @@ String taDataAnal::RegressLinear(DataTable* src_data, const String& x_data_col_n
     r = taMath_double::vec_correl(xmp, ymp);
   }
 
-  rval = "y = " + String(m) + " * x + " + String(b) + "; r = " + String(r) + "; r^2 = "
+  rval = yda->name + " = " + String(m) + " * " + xda->name + " + "
+    + String(b) + "; r = " + String(r) + "; r^2 = "
     + String(r*r);
 
   cout << rval << endl;

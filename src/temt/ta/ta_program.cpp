@@ -873,29 +873,30 @@ void ProgVar::DataChanged(int dcr, void* op1, void* op2) {
 
 String ProgVar::GetDisplayName() const {
   if(var_type == T_Int)
-    return "int " + name + " = " + String(int_val);
+    return name + " = " + String(int_val) + " (int)";
   else if(var_type == T_Real)
-    return "real " + name + " = " + String(real_val);
+    return name + " = " + String(real_val) + " (real)";
   else if(var_type == T_String)
-    return "String " + name + " = " + string_val;
+    return name + " = " + string_val + " (String)";
   else if(var_type == T_Bool)
-    return "bool " + name + " = " + ((bool_val ? "true" : "false"));
+    return name + " = " + ((bool_val ? "true" : "false")) + " (bool)";
   else if(var_type == T_Object) {
-    if(!object_type) return "NULL object type";
-    return object_type->name + " " + name + " = " + ((object_val ? object_val->GetDisplayName() : "NULL"));
+    if(!object_type) return name + " = NULL object type";
+    return name + " = " + ((object_val ? object_val->GetDisplayName() : "NULL"))
+      + " (" + object_type->name + ")";
   }
   else if(var_type == T_HardEnum) {
-    if(!hard_enum_type) return "NULL hard enum type";
-    return hard_enum_type->name + " " + name + " = " + 
-      hard_enum_type->Get_C_EnumString(int_val);
+    if(!hard_enum_type) return name + " = NULL hard enum type";
+    return name + " = " + 
+      hard_enum_type->Get_C_EnumString(int_val) + " (" + hard_enum_type->name + ")";
   }
   else if(var_type == T_DynEnum) {
     if((bool)dyn_enum_val.enum_type)
-      return dyn_enum_val.enum_type->name + " " + name + " = " + dyn_enum_val.NameVal();
+      return name + " = " + dyn_enum_val.NameVal() + " (" + dyn_enum_val.enum_type->name + ")";
     else
-      return "(no dyn enum type!) " + name + " = " + dyn_enum_val.NameVal();
+      return name + " = " + dyn_enum_val.NameVal() + " (no dyn enum type!)";
   }
-  return "invalid type!";
+  return name + " invalid type!";
 }
 
 String ProgVar::GetSchemaSig() const {
