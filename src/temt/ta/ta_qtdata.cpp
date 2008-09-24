@@ -1242,7 +1242,8 @@ taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par
         || (ed->HasOption(TypeItem::opt_APPLY_IMMED)));
       if (cnt++ > 0)
         lay->addSpacing(taiM->hsep_c);
-      AddBoolItem(auto_apply, ed->GetLabel(), ed->enum_no, ed->desc);
+      AddBoolItem(auto_apply, ed->GetLabel(), ed->enum_no, ed->desc,
+        ed->HasOption("READ_ONLY"));
     }
     lay->addStretch();
   }
@@ -1267,14 +1268,14 @@ void taiBitBox::bitCheck_clicked(iBitCheckBox* sender, bool on) {
 }
 
 void taiBitBox::AddBoolItem(bool auto_apply, String name, int val,
-  const String& desc) 
+  const String& desc, bool bit_ro) 
 {
   iBitCheckBox* bcb = new iBitCheckBox(auto_apply, val, name, m_rep);
   if (desc.nonempty()) {
     bcb->setToolTip(desc);
   }
   lay->addWidget(bcb);
-  if (readOnly()) {
+  if (readOnly() || bit_ro) {
     bcb->setReadOnly(true);
   } else {
     QObject::connect(bcb, SIGNAL(clickedEx(iBitCheckBox*, bool)),

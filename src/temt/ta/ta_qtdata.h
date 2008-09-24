@@ -376,7 +376,8 @@ public:
   taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0); // treats typ as enum, and fills values
 
-  void		AddBoolItem(bool auto_apply, String name, int val, const String& desc = _nilString); // add an item to the list
+  void		AddBoolItem(bool auto_apply, String name, int val,
+     const String& desc = _nilString, bool bit_ro = false); // add an item to the list
 
   void 		GetImage(int val);  // set to this value, according to bit fields
   void		GetValue(int& val) const;
