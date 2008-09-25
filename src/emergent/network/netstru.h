@@ -1642,6 +1642,9 @@ INHERITED(taGroup<Layer>)
 public:
   TDCoord	pos;		// Position of Group of layers relative to network
 
+  virtual void		BuildLayers() {} // #CAT_Structure create any algorithmically specified layers
+  virtual void		BuildPrjns() {} // #CAT_Structure create any algorithmically specified prjns
+   
   override String GetTypeDecoKey() const { return "Layer"; }
 
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
@@ -1897,9 +1900,13 @@ public:
 //  calling an inner extensible virtual _impl
 
   void  Build();
-  // #BUTTON #CAT_Structure Build the network units and Connect them (calls BuildUnits and Connect)
+  // #BUTTON #CAT_Structure Build the network units and Connect them (calls BuildLayers/Units/Prjns and Connect)
+  virtual void  BuildLayers();
+  // #MENU #MENU_ON_Actions #CAT_Structure Build any network layers that are dynamically constructed
   virtual void  BuildUnits();
   // #MENU #MENU_ON_Actions #CAT_Structure Build the network units in layers according to geometry
+  virtual void  BuildPrjns();
+  // #MENU #MENU_ON_Actions #CAT_Structure Build any network prjns that are dynamically constructed
   void	Connect();
   // #MENU #CAT_Structure Connect this network according to projections on Layers
   virtual bool	CheckBuild(bool quiet=false);

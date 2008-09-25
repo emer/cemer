@@ -4959,13 +4959,28 @@ int Network::GetDefaultZ(){
 void Network::Build() {
   taMisc::Busy();
   StructUpdate(true);
+  BuildLayers(); // note: for Area constructs
   BuildUnits();
+  BuildPrjns(); // note: for Area constructs
   Connect();
   StructUpdate(false);
   if (net_inst.ptr()) {
     net_inst->OnBuild();
   }
   taMisc::DoneBusy();
+}
+
+void Network::BuildLayers() {
+  taMisc::Busy();
+  StructUpdate(true);
+  Layer_Group* lg;
+  taGroupItr i;
+  FOR_ITR_GP(Layer_Group, lg, layers., i)
+    lg->BuildLayers();
+  StructUpdate(false);
+  taMisc::DoneBusy();
+//nn??  UpdtAfterNetMod();
+  if(!taMisc::gui_active)    return;
 }
 
 void Network::BuildUnits() {
@@ -4982,6 +4997,19 @@ void Network::BuildUnits() {
   DMem_DistributeUnits();
 #endif
   UpdtAfterNetMod();
+  if(!taMisc::gui_active)    return;
+}
+
+void Network::BuildPrjns() {
+  taMisc::Busy();
+  StructUpdate(true);
+  Layer_Group* lg;
+  taGroupItr i;
+  FOR_ITR_GP(Layer_Group, lg, layers., i)
+    lg->BuildPrjns();
+  StructUpdate(false);
+  taMisc::DoneBusy();
+//nn?  UpdtAfterNetMod();
   if(!taMisc::gui_active)    return;
 }
 
