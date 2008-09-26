@@ -285,6 +285,7 @@ void LeabraLimPrecConSpec::Initialize() {
 
 void LeabraCtExptConSpec::Initialize() {
   learn_var = STD_CT;
+  bcm_pct = 0.0f;
 }
 
 //////////////////////////////////

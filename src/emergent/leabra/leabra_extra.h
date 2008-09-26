@@ -833,14 +833,17 @@ public:
     CHL_SUBPROD,		// CHL with subprod: (x+ - x-) * (y+ - y-)
     MINUS_INDEP_AVG, // use the independently computed average activations instead of sravg coproduct: x+ y+ - <x-> <y-> instead of - <x- y->
     MINUS_INDEP_AVG_SUBPROD, // compute product of sub terms: (x+ - <x->)(y+ - <y->)
+    CT_DELTA_BCM,	     // delta-rule version of ct with BCM floating longer-term avg sub
   };
 
   LearnVar	learn_var;	// learning variant to implement
+  float		bcm_pct;	// amount of bcm floating avg learnign to inject
 
   inline float C_Compute_Err_CtLeabraCAL(LeabraCon* cn, 
 					 float ru_act_p, float su_act_p, float avg_nrm, 
 					 LeabraCon* rbwt, LeabraCon* sbwt,
-					 float ru_act_m, float su_act_m) {
+					 float ru_act_m, float su_act_m,
+					 float ru_act_avg) {
     float err;
     if(learn_var == STD_CT) {
       err = (ru_act_p * su_act_p) - (avg_nrm * cn->sravg);
@@ -859,10 +862,11 @@ public:
       // using bias weight's sravg here!
       err = (ru_act_p - (avg_nrm * rbwt->sravg)) * (su_act_p - (avg_nrm * sbwt->sravg));
     }
-    if(lmix.err_sb) {
-      if(err > 0.0f)	err *= (1.0f - cn->wt);
-      else		err *= cn->wt;
+    else if(learn_var == CT_DELTA_BCM) {
+      err = (ru_act_p - (((1.0f - bcm_pct) * (avg_nrm * rbwt->sravg)) + (bcm_pct * ru_act_avg)))
+	* su_act_p;
     }
+    // note: sb now done in compute weights
     return err;
   }
 
@@ -900,7 +904,7 @@ public:
       C_Compute_dWt_NoHebb(cn, ru, 
 			   C_Compute_Err_CtLeabraCAL(cn, ru->act_p, su->act_p,
 						     rlay->sravg_nrm, rbwt, sbwt,
-						     ru->act_m, su->act_m));
+						     ru->act_m, su->act_m, ru->act_avg));
       cn->sravg = 0.0f;
     }
   }
