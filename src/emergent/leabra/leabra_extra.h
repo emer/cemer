@@ -834,6 +834,7 @@ public:
     MINUS_INDEP_AVG, // use the independently computed average activations instead of sravg coproduct: x+ y+ - <x-> <y-> instead of - <x- y->
     MINUS_INDEP_AVG_SUBPROD, // compute product of sub terms: (x+ - <x->)(y+ - <y->)
     CT_DELTA_BCM,	     // delta-rule version of ct with BCM floating longer-term avg sub
+    CT_DELTA_SAVG_BCM,	     // delta-rule version of ct with BCM floating longer-term avg sub - use avg of plus and minus for sending acts
   };
 
   LearnVar	learn_var;	// learning variant to implement
@@ -865,6 +866,10 @@ public:
     else if(learn_var == CT_DELTA_BCM) {
       err = (ru_act_p - (((1.0f - bcm_pct) * (avg_nrm * rbwt->sravg)) + (bcm_pct * ru_act_avg)))
 	* su_act_p;
+    }
+    else if(learn_var == CT_DELTA_SAVG_BCM) {
+      err = (ru_act_p - (((1.0f - bcm_pct) * (avg_nrm * rbwt->sravg)) + (bcm_pct * ru_act_avg)))
+	* .5 * (su_act_p + su_act_m);
     }
     // note: sb now done in compute weights
     return err;
