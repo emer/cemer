@@ -424,7 +424,7 @@ void GammatoneBlock::GraphFilter(DataTable* graph_data,
     "ProcNextFrame did not complete ok")) goto exit;
   // NOTE: we only analyze one of the outputs
 {     
-  DataBuffer* ob = outBuff(anali);
+  DataBuffer* ob = gb->outBuff(anali);
   // do an fft on it -- have to invert the data
   float_Matrix fft_in(2, n, gb->n_chans);
   for (int chan = 0; chan < gb->n_chans; ++chan)
