@@ -1951,3 +1951,94 @@ void DoG1dFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
 }
 
 
+//////////////////////////////////
+//  LogLinearBlock			//
+//////////////////////////////////
+
+void LogLinearBlock::Initialize() {
+  // note: following would be for only one channel, spanning ~96 dB
+  cl = -48;
+  width = 80;
+  norm = 0; // in UAE
+//  f = .3f; // determined empirically - gives ~ .5-.95 points for +-10dB
+}
+
+void LogLinearBlock::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if (width <= 0) width = 80;
+  norm = (20 / width);
+}
+
+void LogLinearBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
+  inherited::InitThisConfig_impl(check, quiet, ok);
+  
+  DataBuffer* src_buff = in_block.GetBuffer();
+  if (!src_buff) return;
+  float_Matrix* in_mat = &src_buff->mat;
+  
+  if (CheckError(((cl < -120) || (cl >= 0)), quiet, ok,
+    "cl should be in range: -120:0")) return;
+  if (CheckError(((width <= 0) || (width > 120)), quiet, ok,
+    "width should be in range: 0:120")) return;
+    
+  if (check) return;
+  out_buff.fs = src_buff->fs;
+  out_buff.fields = src_buff->fields;
+  out_buff.chans = src_buff->chans;
+  out_buff.vals = src_buff->vals;
+}
+
+void LogLinearBlock::AcceptData_impl(SignalProcBlock* src_blk,
+    DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps)
+{
+  float_Matrix* in_mat = &src_buff->mat;
+  ps = AcceptData_LL(in_mat, stage);
+}
+
+SignalProcBlock::ProcStatus LogLinearBlock::AcceptData_LL(float_Matrix* in_mat, int stage)
+{
+  ProcStatus ps = PS_OK;
+  float_Matrix* out_mat = &out_buff.mat;
+  const int in_items = in_mat->dim(ITEM_DIM);
+  const int in_fields = in_mat->dim(FIELD_DIM);
+  const int in_chans = in_mat->dim(CHAN_DIM);
+  const int in_vals = in_mat->dim(VAL_DIM);
+  for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) {
+    for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) 
+    for (int chan = 0; ((ps == PS_OK) && (chan < in_chans)); ++chan) 
+    for (int val = 0; ((ps == PS_OK) && (val < in_vals)); ++val) 
+    {
+      float dat = in_mat->SafeEl(val, chan, f, i, stage);
+      dat = CalcValue(dat) * in_gain;
+      out_mat->Set(dat, val, chan, f, out_buff.item, out_buff.stage);
+    }
+    if (out_buff.NextIndex()) {
+      NotifyClientsBuffStageFull(&out_buff, 0, ps);
+    }
+  }
+  return ps;
+}
+
+float LogLinearBlock::CalcValue(float in) {
+  if (in < 0) return 0; // only defined for non-neg values
+  // transform to dB -- sh/be ~ -96 < in_db <= 0
+  float in_db = 10 * log10(in); // note: the ref is 1, but ok if exceeded
+  // translate so that cf is at 0, and normalize
+  double rval = (in_db - cl) * norm; 
+/*from AN  switch (val_type) {
+  case LogLinearBlock::AN_EXP: {  
+    // do the exponential
+    rval = 1 / (1 + exp(-(rval * f)));
+    } break;
+  case LogLinearBlock::AN_SIG: {
+    //TODO:
+    } break;
+  case LogLinearBlock::AN_GAUSS: {  
+    // do the guassian
+    rval = exp(-((rval * rval)/2)) * f;
+    } break;
+  //no default -- must handle all, so let compiler warn
+  }*/
+  return rval;
+}
+

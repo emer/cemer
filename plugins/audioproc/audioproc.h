@@ -21,7 +21,8 @@ class StdBlock;
 class StimChan;
 class ToneChan;
 class StimGen;
-class DoG1dFilterSpec; //
+class DoG1dFilterSpec; 
+class LogLinearBlock; //
 
 /*
   Input data to processing blocks is always a whole matrix:
@@ -1118,5 +1119,31 @@ protected:
   void	UpdateAfterEdit_impl();
 };
 
+class AUDIOPROC_API LogLinearBlock: public StdBlock
+{ // ##CAT_Audioproc auditory nerve block -- intended for +ve signal values only (ex rectified)
+INHERITED(StdBlock) 
+public:
+  float 		cl; // center level (in dB) of the block
+  float			width; // the ~90% (.05-.95) width in dB 
+  float			norm; // #EXPERT the normalization factor
+  Level			in_gain; // a gain factor applied to the input values -- eff gain should result in values from 0-1
+  
+  ProcStatus 		AcceptData_LL(float_Matrix* in_mat, int stage = 0);
+    // #IGNORE mostly for proc
+
+  TA_BASEFUNS(LogLinearBlock)
+  
+protected:
+  override void		UpdateAfterEdit_impl();
+  override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok);
+  override void		AcceptData_impl(SignalProcBlock* src_blk,
+    DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps);
+
+  virtual float		CalcValue(float in);
+private:
+  void	Initialize();
+  void	Destroy() {}
+  SIMPLE_COPY(LogLinearBlock)
+};
 
 #endif
