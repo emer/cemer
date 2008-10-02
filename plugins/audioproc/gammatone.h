@@ -94,7 +94,7 @@ public:
   DataBuffer		out_buff_delta_env; //  #SHOW_TREE delta envelope output (if enabled)
   
   ChanSpacing		chan_spacing; // how to space the channels
-  float			ear_q; //Moore and Glasberg ERB values
+  float			ear_q; // Moore and Glasberg def=9.26449 -- ERB is min_bw + (cf / ear_q)
   float			min_bw;
   float			cf_lo; // lower center frequency (Hz)
   float			cf_hi; // upper center frequency (Hz)
