@@ -1143,6 +1143,23 @@ bool taDataAnal::SmoothPow(DataTable* smooth_data, bool view, DataTable* src_dat
 		    kern_half_wd, keep_edges, float_only);
 }
 
+bool taDataAnal::Matrix3DGraph(DataTable* data, const String& x_axis_col, const String& z_axis_col) {
+  if(!data) return false;
+
+  DataCol* xax = GetNumDataCol(data, x_axis_col);
+  if(!xax) return false;
+  DataCol* zax = GetNumDataCol(data, z_axis_col);
+  if(!zax) return false;
+
+  data->SortCol(xax, true, zax, true);
+
+  DataTable dupl;
+  dupl.CopyFrom(data);
+  dupl.SortColName(x_axis_col, true, z_axis_col, true);
+  taDataProc::AppendRows(data, &dupl);
+  dupl.Reset();
+}
+
 /*
 void Environment::PatFreqGrid(GridLog* disp_log, float act_thresh, bool prop) {
   if(events.leaves == 0)

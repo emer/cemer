@@ -1075,16 +1075,55 @@ float taDataGen::LastMinMaxDist(DataCol* da, int row, float& max_dist,
 ///////////////////////////////////////////////////////////////////
 // misc data functions
 
+static bool taDataGen_GetDirFiles_impl(DataTable* dest, const String& dir_path, 
+				       const String& filter, bool recursive,
+				       int fname_idx, int path_idx, int depth) {
+
+  if(depth > 20) {
+    taMisc::Warning("taDataGen::GetDirFiles -- recursive directory search with depth > 20: probably symbolic link loop");
+    return false;
+  }
+  
+  bool found_some = false;
+  QDir dir(dir_path);
+  if(recursive)
+    dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::AllDirs);
+  else
+    dir.setFilter(QDir::Files);
+  QFileInfoList files = dir.entryInfoList();
+  if(files.size() == 0) return false;
+  for(int i=0;i<files.size();i++) {
+    QFileInfo fli = files[i];
+    String fl = fli.fileName();
+    if(fli.isFile()) {
+      if(filter.empty() || fl.contains(filter)) {
+	dest->AddBlankRow();
+	found_some = true;
+	if(fname_idx >= 0) {
+	  dest->SetValAsString(fl, fname_idx, -1);
+	}
+	if(path_idx >= 0) {
+	  dest->SetValAsString(fli.filePath(), path_idx, -1);
+	}
+      }
+    }
+    if(recursive && fli.isDir()) {
+      String nwpth = dir_path + "/" + fl;
+      bool gs = taDataGen_GetDirFiles_impl(dest, nwpth, filter, recursive, fname_idx,
+					   path_idx, depth+1);
+      found_some = found_some || gs; 
+    }
+  }
+  return found_some;
+}
+
+
 bool taDataGen::GetDirFiles(DataTable* dest, const String& dir_path, 
 			    const String& filter, bool recursive,
 			    const String& fname_col_nm,
 			    const String& path_col_nm) {
   if(!dest) return false;
   dest->StructUpdate(true);
-
-  if(recursive) {
-    taMisc::Warning("Warning: GetDirFiles does not yet support the recursive flag!");
-  }
 
   int fname_idx = -1;
   if(!fname_col_nm.empty())
@@ -1094,26 +1133,7 @@ bool taDataGen::GetDirFiles(DataTable* dest, const String& dir_path,
   if(!path_col_nm.empty())
     dest->FindMakeColName(path_col_nm, path_idx, DataTable::VT_STRING, 0);
 
-  bool found_some = false;
-  QDir dir(dir_path);
-  QStringList files = dir.entryList();
-  if(files.size() == 0) return false;
-  for(int i=0;i<files.size();i++) {
-    String fl = files[i];
-    if(filter.empty() || fl.contains(filter)) {
-      dest->AddBlankRow();
-      found_some = true;
-      if(fname_idx >= 0) {
-	dest->SetValAsString(fl, fname_idx, -1);
-      }
-      if(path_idx >= 0) {
-	dest->SetValAsString(dir_path + "/" + fl, path_idx, -1);
-      }
-    }
-    // todo: deal with recursive flag
-  }
-  
-  return found_some;
+  return taDataGen_GetDirFiles_impl(dest, dir_path, filter, recursive, fname_idx, path_idx, 0);
 }
 
 /////////////////////////////////////////////////////////

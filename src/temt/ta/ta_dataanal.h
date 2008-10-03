@@ -229,6 +229,13 @@ public:
 			  bool float_only=true);
   // #CAT_Clean #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable power-function smoothing: compute the power-function-convolved average for all the numeric fields of source data, using an power-function kernel of given half-width and exponent (typically negative).  neg and pos tail determine if kernel includes the negative (earlier) side and the positive (later) side. if(keep_edges) then smooth data is same size as src_data, otherwise edges of kern_half_wd are lost on either side of the data.  if(float_only) then int or byte data is not averaged
 
+  ///////////////////////////////////////////////////////////////////
+  // data graphing prep functions
+
+  static bool	Matrix3DGraph(DataTable* data, const String& x_axis_col, const String& z_axis_col);
+  // #CAT_Graph #MENU_BUTTON #MENU_ON_Graph prepare data for a 3D matrix graph, where data is plotted by X and Z axis values -- sorts data by X then Z, then adds a duplicate copy of data sorted by Z then X, which produces a matrix grid in a graph view plot (turn off the Z neg draw flag)
+
+
 //   static bool	PatFreqArray(float_RArray& freqs, int pat_no, float act_thresh = .5f, bool proportion = false);
 //   // get frequency (proportion) of pattern activations greater than act_thresh across events
 //   static bool	PatFreqText(float act_thresh = .5f, bool proportion = false, ostream& strm = cerr);

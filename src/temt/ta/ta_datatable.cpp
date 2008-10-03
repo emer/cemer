@@ -147,9 +147,10 @@ void DataCol::CopyFromCol_Robust(const DataCol& cp) {
   inherited::Copy_impl(cp); // do all common generic class copying
   SetBaseFlag(COPYING); // note: still have to set/reset here, because not nestable
   // assume name already copied, else don't want it overwritten
-  desc = cp.desc;
-  col_flags = cp.col_flags;
-  calc_expr = cp.calc_expr;
+  // don't do these -- just the data!!
+//   desc = cp.desc;
+//   col_flags = cp.col_flags;
+//   calc_expr = cp.calc_expr;
 
   //NOTE: we only copy data, leaving geom and type as is (since we can't change anyway)
   int rows = cp.rows();
