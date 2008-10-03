@@ -1130,7 +1130,8 @@ public:
   
   ProcStatus 		AcceptData_LL(float_Matrix* in_mat, int stage = 0);
     // #IGNORE mostly for proc
-
+  
+  SIMPLE_LINKS(LogLinearBlock)
   TA_BASEFUNS(LogLinearBlock)
   
 protected:
@@ -1142,7 +1143,7 @@ protected:
   virtual float		CalcValue(float in);
 private:
   void	Initialize();
-  void	Destroy() {}
+  void	Destroy() {CutLinks();}
   SIMPLE_COPY(LogLinearBlock)
 };
 

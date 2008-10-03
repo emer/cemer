@@ -1966,7 +1966,7 @@ void LogLinearBlock::Initialize() {
 void LogLinearBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if (width <= 0) width = 80;
-  norm = (20 / width);
+  norm = (96 / width);
 }
 
 void LogLinearBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
@@ -2024,7 +2024,8 @@ float LogLinearBlock::CalcValue(float in) {
   // transform to dB -- sh/be ~ -96 < in_db <= 0
   float in_db = 10 * log10(in); // note: the ref is 1, but ok if exceeded
   // translate so that cf is at 0, and normalize
-  double rval = (in_db - cl) * norm; 
+//AN  double rval = (in_db - cl) * norm; 
+  double rval = ((in_db - cl) / width) + 0.5; 
 /*from AN  switch (val_type) {
   case LogLinearBlock::AN_EXP: {  
     // do the exponential
