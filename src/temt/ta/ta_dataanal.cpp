@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "ta_dataanal.h"
+#include "ta_dataproc.h"
 #include "css_machine.h"
 #include "ta_project.h"		// for debugging
 
@@ -1155,9 +1156,10 @@ bool taDataAnal::Matrix3DGraph(DataTable* data, const String& x_axis_col, const 
 
   DataTable dupl;
   dupl.CopyFrom(data);
-  dupl.SortColName(x_axis_col, true, z_axis_col, true);
+  dupl.SortColName(z_axis_col, true, x_axis_col, true);
   taDataProc::AppendRows(data, &dupl);
   dupl.Reset();
+  return true;
 }
 
 /*
