@@ -923,6 +923,146 @@ private:
   void	Destroy()		{ };
 };
 
+////////////////////////////////////////////////////////////////////////
+// 	XCal -- Extremization Contrastive Attractor Learning
+//
+
+class LEABRA_API XCalLeabraUnit : public LeabraUnit {
+  // extremization contrastive attractor learning: biologically derived learning rule: stronger get stronger, weaker get weaker
+INHERITED(LeabraUnit)
+public:
+  float 	trl_avg;	// trial-wise average activation value
+  float 	trl_sum;	// trial-wise sum activation, for computing average
+  float		avg_trl_avg;	// long time-average of trial-wise average activation
+
+  void	Copy_(const XCalLeabraUnit& cp);
+  TA_BASEFUNS(XCalLeabraUnit);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
+class LEABRA_API XCalActSpec : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCal activation specs
+INHERITED(taOBase)
+public:
+  float		avg_init;	// initial value for avg_trl_avg 
+  float		avg_dt;		// time constant for integrating avg_trl_avg
+  int		n_avg_only_epcs; // #DEF_2 number of epochs during which time only an average activation value is accumulated -- no learning
+
+  SIMPLE_COPY(XCalActSpec);
+  TA_BASEFUNS(XCalActSpec);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API XCalLeabraUnitSpec : public LeabraUnitSpec {
+  // extremization contrastive attractor learning: biologically derived learning rule: stronger get stronger, weaker get weaker
+INHERITED(LeabraUnitSpec)
+public:
+  XCalActSpec	xcal;		// xcal parameters
+
+  override void 	Init_Weights(Unit* u);
+  override void 	Init_ActAvg(LeabraUnit* u);
+  override void 	Compute_SRAvg(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
+  override void		Compute_ActTimeAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
+					   LeabraNetwork* net);
+  override void		Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
+  override void		Compute_Weights(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
+  
+  TA_BASEFUNS(XCalLeabraUnitSpec);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
+class LEABRA_API XCalLearnSpec : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCal learning specs
+INHERITED(taOBase)
+public:
+  float		p_thr_gain;	// multiplier on recv avg_trl_avg to produce p_thr value: higher values = more sparse strong weights; lower values = more distributed 
+  float		sravg_r_pct;	// #DEF_0.65 proportion that recv unit contributes to sravg value used in learning
+  float		d_rev;		// #DEF_0.15 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
+
+  float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- muliplication factor in learning rule
+  float		sravg_s_pct;	// #HIDDEN #READ_ONLY 1-sravg_r_pct -- how much send unit contributes
+
+  SIMPLE_COPY(XCalLearnSpec);
+  TA_BASEFUNS(XCalLearnSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API XCalLeabraConSpec : public LeabraConSpec {
+  // extremization contrastive attractor learning: biologically derived learning rule: stronger get stronger, weaker get weaker
+INHERITED(LeabraConSpec)
+public:
+  XCalLearnSpec	xcal;		// XCal learning parameters
+
+  inline float C_Compute_Err_CtLeabraCAL(LeabraCon* cn, 
+					 float ru_trl_avg, float su_trl_avg,
+					 float ru_avg_trl_avg) {
+    float sravg = xcal.sravg_r_pct * ru_trl_avg + xcal.sravg_s_pct * su_trl_avg;
+    float thr_p = xcal.p_thr_gain * ru_avg_trl_avg;
+    float err;
+    if(sravg >= thr_p * xcal.d_rev)
+      err = sravg - thr_p;
+    else
+      err = -sravg * xcal.d_rev_ratio;
+    // note: sb now done in compute weights
+    return err;
+  }
+
+  inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    // need to do recv layer here because savg_cor.thresh is only here.. could optimize this later
+    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+    if(rlay->acts_p.avg < savg_cor.thresh) { // if layer not active in attractor phase, no learn
+      Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
+    }
+    LeabraLayer* lfm = (LeabraLayer*)cg->prjn->from.ptr();
+    if(lfm->acts_p.avg < savg_cor.thresh) {
+      Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
+    }
+    if(ru->in_subgp) {
+      LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
+      if(ogp->acts_p.avg < savg_cor.thresh) {
+	Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
+      }
+    }
+
+    // only no hebb condition supported!!
+
+    XCalLeabraUnit* xru = (XCalLeabraUnit*)ru;
+
+    for(int i=0; i<cg->cons.size; i++) {
+      XCalLeabraUnit* su = (XCalLeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      if(su->in_subgp) {
+	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
+	if(ogp->acts_p.avg < savg_cor.thresh) {
+	  cn->sravg = 0.0f;	continue; // critical: must reset!
+	}
+      }
+      C_Compute_dWt_NoHebb(cn, ru, 
+			   C_Compute_Err_CtLeabraCAL(cn, xru->trl_avg, su->trl_avg,
+						     xru->avg_trl_avg));
+      cn->sravg = 0.0f;
+    }
+  }
+
+  SIMPLE_COPY(XCalLeabraConSpec);
+  TA_BASEFUNS(XCalLeabraConSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
 //////////////////////////////////
 // 	Scalar Value Layer	//
 //////////////////////////////////

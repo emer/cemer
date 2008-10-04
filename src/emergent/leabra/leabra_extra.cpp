@@ -288,6 +288,107 @@ void LeabraCtExptConSpec::Initialize() {
   bcm_pct = 0.0f;
 }
 
+////////////////////////////////////////////////////////////////////////
+// 	XCal -- Extremization Contrastive Attractor Learning
+//
+
+void XCalActSpec::Initialize() {
+  avg_init = .25f;
+  avg_dt = .005f;
+  n_avg_only_epcs = 2;
+}
+
+void XCalLeabraUnitSpec::Initialize() {
+}
+  
+void XCalLeabraUnitSpec::Init_Weights(Unit* u) {
+  inherited::Init_Weights(u);
+  XCalLeabraUnit* lu = (XCalLeabraUnit*)u;
+  lu->avg_trl_avg = xcal.avg_init;
+  lu->trl_sum = 0.0f;
+  lu->trl_avg = 0.0f;
+}
+
+void XCalLeabraUnitSpec::Init_ActAvg(LeabraUnit* u) {
+  inherited::Init_ActAvg(u);
+  XCalLeabraUnit* lu = (XCalLeabraUnit*)u;
+  lu->avg_trl_avg = xcal.avg_init;
+  lu->trl_sum = 0.0f;
+  lu->trl_avg = 0.0f;
+}  
+
+void XCalLeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
+  XCalLeabraUnit* lu = (XCalLeabraUnit*)u;
+  lu->trl_sum += lu->act;
+}
+
+void XCalLeabraUnitSpec::Compute_ActTimeAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
+					    LeabraNetwork* net)
+{
+  inherited::Compute_ActTimeAvg(u, lay, thr, net);
+  XCalLeabraUnit* lu = (XCalLeabraUnit*)u;
+  if(lay->sravg_sum > 0.0f)
+    lu->trl_avg = lu->trl_sum / lay->sravg_sum;
+  else
+    lu->trl_avg = xcal.avg_init;
+  lu->trl_sum = 0.0f;
+  lu->avg_trl_avg += xcal.avg_dt * (lu->trl_avg - lu->avg_trl_avg);
+}
+
+void XCalLeabraUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
+  if(net->epoch <= xcal.n_avg_only_epcs) {
+    if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+      Init_SRAvg(u, lay, net);
+    }
+    return;
+  }
+  inherited::Compute_dWt(u, lay, net);
+}
+
+void XCalLeabraUnitSpec::Compute_Weights(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
+  if(net->epoch <= xcal.n_avg_only_epcs) {
+    return;
+  }
+  inherited::Compute_Weights(u, lay, net);
+}
+
+void XCalLeabraUnit::Initialize() {
+  trl_avg = 0.0f;
+  trl_sum = 0.0f;
+  avg_trl_avg = 0.25f;
+}
+
+void XCalLeabraUnit::Copy_(const XCalLeabraUnit& cp) {
+  trl_avg = cp.trl_avg;
+  trl_sum = cp.trl_sum;
+  avg_trl_avg = cp.avg_trl_avg;
+}
+
+void XCalLearnSpec::Initialize() {
+  p_thr_gain = 1.0f;
+  sravg_r_pct = .65;
+  sravg_s_pct = 1.0f - sravg_r_pct;
+  d_rev = .15;
+  d_rev_ratio = (1.0f - d_rev) / d_rev;
+}
+
+void XCalLearnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  sravg_s_pct = 1.0f - sravg_r_pct;
+  if(d_rev > 0.0f)
+    d_rev_ratio = (1.0f - d_rev) / d_rev;
+  else
+    d_rev_ratio = 1.0f;
+}
+
+void XCalLeabraConSpec::Initialize() {
+}
+  
+void XCalLeabraConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  xcal.UpdateAfterEdit();
+}
+
 //////////////////////////////////
 // 	Scalar Value Layer	//
 //////////////////////////////////

@@ -858,7 +858,7 @@ public:
   FunLookup	nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
   FunLookup	noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
 
-  void 		Init_Weights(Unit* u);
+  override void Init_Weights(Unit* u);
   virtual void 	Init_ActAvg(LeabraUnit* u);
   // #CAT_Activation initialize average activation values, used to control learning
 

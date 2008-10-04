@@ -1499,10 +1499,18 @@ void LeabraUnitSpec::Init_SRAvg(LeabraUnit* u, LeabraLayer*, LeabraNetwork* net)
 }
 
 void LeabraUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
-  if((u->act_p <= opt_thresh.learn) && (u->act_m <= opt_thresh.learn))
+  if((u->act_p <= opt_thresh.learn) && (u->act_m <= opt_thresh.learn)) {
+    if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+      Init_SRAvg(u, lay, net);
+    }
     return;
-  if(lay->phase_dif_ratio < opt_thresh.phase_dif)
+  }
+  if(lay->phase_dif_ratio < opt_thresh.phase_dif) {
+    if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+      Init_SRAvg(u, lay, net);
+    }
     return;
+  }
   Compute_dWt_impl(u, lay, net);
 }
 
