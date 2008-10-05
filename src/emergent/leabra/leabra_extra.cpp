@@ -366,15 +366,12 @@ void XCalLeabraUnit::Copy_(const XCalLeabraUnit& cp) {
 
 void XCalLearnSpec::Initialize() {
   p_thr_gain = 1.0f;
-  sravg_r_pct = .65;
-  sravg_s_pct = 1.0f - sravg_r_pct;
   d_rev = .15;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
 }
 
 void XCalLearnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  sravg_s_pct = 1.0f - sravg_r_pct;
   if(d_rev > 0.0f)
     d_rev_ratio = (1.0f - d_rev) / d_rev;
   else

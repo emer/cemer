@@ -982,11 +982,9 @@ class LEABRA_API XCalLearnSpec : public taOBase {
 INHERITED(taOBase)
 public:
   float		p_thr_gain;	// multiplier on recv avg_trl_avg to produce p_thr value: higher values = more sparse strong weights; lower values = more distributed 
-  float		sravg_r_pct;	// #DEF_0.65 proportion that recv unit contributes to sravg value used in learning
   float		d_rev;		// #DEF_0.15 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
 
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- muliplication factor in learning rule
-  float		sravg_s_pct;	// #HIDDEN #READ_ONLY 1-sravg_r_pct -- how much send unit contributes
 
   SIMPLE_COPY(XCalLearnSpec);
   TA_BASEFUNS(XCalLearnSpec);
@@ -1005,15 +1003,13 @@ public:
 
   inline float C_Compute_Err_CtLeabraCAL(LeabraCon* cn, 
 					 float ru_trl_avg, float su_trl_avg,
-					 float ru_avg_trl_avg) {
-    float sravg = xcal.sravg_r_pct * ru_trl_avg + xcal.sravg_s_pct * su_trl_avg;
-    float thr_p = xcal.p_thr_gain * ru_avg_trl_avg;
+					 float thr_p, float thr_p_d_rev) {
+    float srval = ru_trl_avg * su_trl_avg;
     float err;
-    if(sravg >= thr_p * xcal.d_rev)
-      err = sravg - thr_p;
+    if(srval >= thr_p_d_rev)
+      err = srval - thr_p;
     else
-      err = -sravg * xcal.d_rev_ratio;
-    // note: sb now done in compute weights
+      err = -srval * xcal.d_rev_ratio;
     return err;
   }
 
@@ -1037,6 +1033,8 @@ public:
     // only no hebb condition supported!!
 
     XCalLeabraUnit* xru = (XCalLeabraUnit*)ru;
+    float thr_p = xcal.p_thr_gain * xru->avg_trl_avg;
+    float thr_p_d_rev = thr_p * xcal.d_rev;
 
     for(int i=0; i<cg->cons.size; i++) {
       XCalLeabraUnit* su = (XCalLeabraUnit*)cg->Un(i);
@@ -1049,7 +1047,7 @@ public:
       }
       C_Compute_dWt_NoHebb(cn, ru, 
 			   C_Compute_Err_CtLeabraCAL(cn, xru->trl_avg, su->trl_avg,
-						     xru->avg_trl_avg));
+						     thr_p, thr_p_d_rev));
       cn->sravg = 0.0f;
     }
   }
