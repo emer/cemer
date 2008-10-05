@@ -5549,10 +5549,9 @@ void iDataTableEditor::setDataTable(DataTable* dt_) {
   ConfigView();
 }
 
-void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index) {
-  tvCell->setMatrix(mat);
-  m_cell = mat; 
-  m_cell_index = index;
+void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index,
+    bool pat_4d) 
+{
   // unlink old parent
   if (m_cell_par) {
     m_cell_par->RemoveDataClient(this);
@@ -5565,6 +5564,10 @@ void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index) {
       m_cell_par->AddDataClient(this);
     }
   }
+  m_cell = mat; 
+  m_cell_index = index;
+  // actually set mat last, because gui immediately calls back
+  tvCell->setMatrix(mat, pat_4d);
 }
 
 void iDataTableEditor::tvTable_layoutChanged()
@@ -5579,8 +5582,8 @@ void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
   if (col && col->is_matrix) {
     taMatrix* tcell = dt_->GetValAsMatrix(index.column(), index.row());
     if (tcell) {
-      setCellMat(tcell, index);
-      tvCell->model()->setPat4D(col->HasColFlag(DataCol::PAT_4D), false);
+      bool pat_4d = (col->HasColFlag(DataCol::PAT_4D) && tcell->dims() >= 4);
+      setCellMat(tcell, index, pat_4d);
       return;
     }
   }

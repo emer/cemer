@@ -178,7 +178,7 @@ public:
 
   taMatrix*		mat() const {return m_mat;}
   MatrixTableModel* 	model() const {return m_model;}
-  void			setMatrix(taMatrix* mat);
+  void			setMatrix(taMatrix* mat, bool pat_4d = false);
   
   void			Refresh(); // for manual refresh -- note, this also updates all other mat editors too
   

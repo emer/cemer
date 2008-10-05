@@ -146,29 +146,29 @@ QVariant MatrixTableModel::headerData(int section,
     if (pat_4d) {
       // need to break the flat col down 
       div_t qr = div(section, m_mat->dim(0));
-      // d0:d2
-      return QString("u%1:g%2").arg(qr.rem).arg(qr.quot);
+      // d2:d0
+      return QString("g%1:x%2").arg(qr.quot).arg(qr.rem);
     } else {
       return QString::number(section); //QString("%1").arg(section);
     }
   } else {// in form: d1[[:d2]:d3]
-    int eff_row;
-    switch (matView()) {
-    case taMisc::BOT_ZERO: eff_row = m_mat->rowCount(pat_4d) - section - 1; break;
-    default /*case taMisc::TOP_ZERO*/: eff_row = section; break;
-    }
-    if (m_mat->dims() <= 2) {
-      return QString::number(eff_row);
+    if (m_mat->dims() < 2) {
+      return ""; // no dim is applicable, only in cols
+    };
+    // use same formula as matIndex()
+    int row_flat_idx =  m_mat->geom.IndexFmDims2D(0, section, pat_4d, matView());
+    MatrixGeom coords;
+    m_mat->geom.DimsFmIndex(row_flat_idx, coords);
+    if (m_mat->dims() == 2) {
+      return QString::number(coords[1]);
     } else {
-      const int cc = m_mat->colCount(pat_4d);
-      int row_flat_idx = eff_row * cc;
-      MatrixGeom coords;
-      m_mat->geom.DimsFmIndex(row_flat_idx, coords);
+      //const int cc = m_mat->colCount(pat_4d);
+      //int row_flat_idx = matIndex(index); //eff_row * cc;
       QString rval;
       int j;
       if (pat_4d) {
-        // d1:d3...
-        rval = QString("u%1:g%2").arg(coords[1]).arg(coords[3]);
+        // d3:d1...
+        rval = QString("g%1:y%2").arg(coords[3]).arg(coords[1]);
         j = 4;
       } else {
         // d1...
@@ -176,20 +176,8 @@ QVariant MatrixTableModel::headerData(int section,
         j = 2;
       }
       for (int i = j; i < coords.size; ++i) {
-        rval += QString(":%1").arg(coords[i]);
+        rval = QString("%1:").arg(coords[i]) + rval;
       }
-      
-/*obs      int d_this = m_mat->colCount(pat_4d);
-      div_t r;
-      // find each nextmost dim n by doing modulo remaining dim[n-1]
-      for (int i = (pat_4d) ? 2:1; i < (m_mat->dims() - 1); ++i) {
-        r = div(eff_row, d_this); 
-        eff_row = r.quot;
-        if (i > 1) rval = ":" + rval;
-        rval = String(r.rem) + rval; 
-        d_this = m_mat->geom.SafeEl(i+1); // for next iter, but safe in case done
-      }
-      rval = String(eff_row) + ":"  + rval; */
       return rval;
     }
   }
@@ -290,6 +278,8 @@ iTableView::iTableView(QWidget* parent)
   connect(horizontalHeader(), SIGNAL(customContextMenuRequested(const QPoint&)),
     this, SLOT(hor_customContextMenuRequested(const QPoint&)) );
   verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+  // note: auto resize a lot more important for vertical, for multi dims 
+  verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
   connect(verticalHeader(), SIGNAL(customContextMenuRequested(const QPoint&)),
     this, SLOT(ver_customContextMenuRequested(const QPoint&)) );
   // wire the selection signals to the UpdateUi, to update enabling
@@ -555,7 +545,7 @@ void iMatrixEditor::Refresh() {
     mod->emit_layoutChanged(); // default values mean entire table
 }
 
-void iMatrixEditor::setMatrix(taMatrix* mat_) {
+void iMatrixEditor::setMatrix(taMatrix* mat_, bool pat_4d) {
   if (m_mat == mat_) return;
   if (m_model) {
     delete m_model;
@@ -564,6 +554,7 @@ void iMatrixEditor::setMatrix(taMatrix* mat_) {
   m_mat = mat_;
   if (mat_){
     m_model = new MatrixTableModel(mat_, this);
+    m_model->setPat4D(pat_4d, false);
   }
   tv->setModel(m_model);
 }
