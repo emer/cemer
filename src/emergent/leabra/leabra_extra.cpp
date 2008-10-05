@@ -367,6 +367,7 @@ void XCalLeabraUnit::Copy_(const XCalLeabraUnit& cp) {
 void XCalLearnSpec::Initialize() {
   p_thr_gain = 1.0f;
   d_rev = .15;
+  d_gain = 1.5;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
 }
 
@@ -384,6 +385,32 @@ void XCalLeabraConSpec::Initialize() {
 void XCalLeabraConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   xcal.UpdateAfterEdit();
+}
+
+void XCalLeabraConSpec::GraphXCalFun(DataTable* graph_data, float thr_p) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_XCalFun", true);
+  }
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataCol* sravg = graph_data->FindMakeColName("SRAvg", idx, VT_FLOAT);
+  DataCol* dwt = graph_data->FindMakeColName("dWt", idx, VT_FLOAT);
+  sravg->SetUserData("MIN", 0.0f);
+  sravg->SetUserData("MAX", 1.0f);
+  dwt->SetUserData("MIN", -1.0f);
+  dwt->SetUserData("MAX", 1.0f);
+
+  float x;
+  for(x = 0.0f; x <= 1.0f; x += .01f) {
+    float y = C_Compute_Err_CtLeabraCAL(NULL, x, 1.0f, thr_p, thr_p * xcal.d_rev);
+    graph_data->AddBlankRow();
+    sravg->SetValAsFloat(x, -1);
+    dwt->SetValAsFloat(y, -1);
+  }
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGraphView();
 }
 
 //////////////////////////////////

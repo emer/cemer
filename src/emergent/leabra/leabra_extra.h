@@ -983,6 +983,7 @@ INHERITED(taOBase)
 public:
   float		p_thr_gain;	// multiplier on recv avg_trl_avg to produce p_thr value: higher values = more sparse strong weights; lower values = more distributed 
   float		d_rev;		// #DEF_0.15 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
+  float		d_gain;		// #DEF 1.5 multiplier on LTD values relative to LTP values
 
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- muliplication factor in learning rule
 
@@ -1006,10 +1007,12 @@ public:
 					 float thr_p, float thr_p_d_rev) {
     float srval = ru_trl_avg * su_trl_avg;
     float err;
-    if(srval >= thr_p_d_rev)
+    if(srval >= thr_p)
       err = srval - thr_p;
+    else if(srval > thr_p_d_rev)
+      err = xcal.d_gain * (srval - thr_p);
     else
-      err = -srval * xcal.d_rev_ratio;
+      err = -xcal.d_gain * srval * xcal.d_rev_ratio;
     return err;
   }
 
@@ -1051,6 +1054,9 @@ public:
       cn->sravg = 0.0f;
     }
   }
+
+  virtual void	GraphXCalFun(DataTable* graph_data = NULL, float thr_p = 0.25);
+  // #BUTTON #NULL_OK graph the xcal learning function (NULL = new data table)
 
   SIMPLE_COPY(XCalLeabraConSpec);
   TA_BASEFUNS(XCalLeabraConSpec);
