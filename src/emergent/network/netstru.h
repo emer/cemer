@@ -1642,8 +1642,8 @@ INHERITED(taGroup<Layer>)
 public:
   TDCoord	pos;		// Position of Group of layers relative to network
 
-  virtual void		BuildLayers() {} // #CAT_Structure create any algorithmically specified layers
-  virtual void		BuildPrjns() {} // #CAT_Structure create any algorithmically specified prjns
+  virtual void		BuildLayers(); // #CAT_Structure create any algorithmically specified layers
+  virtual void		BuildPrjns(); // #CAT_Structure create any algorithmically specified prjns
    
   override String GetTypeDecoKey() const { return "Layer"; }
 
@@ -1651,10 +1651,15 @@ public:
   void	InitLinks()		{ inherited::InitLinks(); taBase::Own(pos,this); }
   void  Copy_(const Layer_Group& cp)	{ pos = cp.pos; }
   TA_BASEFUNS(Layer_Group);
+protected:
+  virtual void		BuildLayers_impl(); 
+  virtual void		BuildPrjns_impl();
 private:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
 };
+
+TA_SMART_PTRS(Layer_Group)
 
 class EMERGENT_API Layer_PtrList : public taPtrList<Layer> {
   // ##IGNORE used in lookaside lists 

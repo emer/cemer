@@ -4641,6 +4641,30 @@ void Layer_Group::DataChanged(int dcr, void* op1, void* op2) {
   }
 }
 
+void Layer_Group::BuildLayers() {
+  BuildLayers_impl();
+}
+
+void Layer_Group::BuildLayers_impl() {
+  Layer_Group* lg;
+  for (int i = 0; i < gp.size; ++i) {
+    lg = (Layer_Group*)gp.FastEl(i);
+    lg->BuildLayers();
+  }
+}
+
+void Layer_Group::BuildPrjns() {
+  BuildPrjns_impl();
+} 
+
+void Layer_Group::BuildPrjns_impl() {
+  Layer_Group* lg;
+  for (int i = 0; i < gp.size; ++i) {
+    lg = (Layer_Group*)gp.FastEl(i);
+    lg->BuildPrjns();
+  }
+} 
+
 
 ////////////////////////
 //	Network	      //
@@ -4973,10 +4997,7 @@ void Network::Build() {
 void Network::BuildLayers() {
   taMisc::Busy();
   StructUpdate(true);
-  Layer_Group* lg;
-  taGroupItr i;
-  FOR_ITR_GP(Layer_Group, lg, layers., i)
-    lg->BuildLayers();
+  layers.BuildLayers(); // recurses
   StructUpdate(false);
   taMisc::DoneBusy();
 //nn??  UpdtAfterNetMod();
@@ -5003,10 +5024,7 @@ void Network::BuildUnits() {
 void Network::BuildPrjns() {
   taMisc::Busy();
   StructUpdate(true);
-  Layer_Group* lg;
-  taGroupItr i;
-  FOR_ITR_GP(Layer_Group, lg, layers., i)
-    lg->BuildPrjns();
+  layers.BuildPrjns(); // recurses
   StructUpdate(false);
   taMisc::DoneBusy();
 //nn?  UpdtAfterNetMod();
