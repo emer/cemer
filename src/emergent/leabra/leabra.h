@@ -1857,6 +1857,7 @@ private:
 };
 
 SpecPtr_of(LeabraLayerSpec);
+TA_SMART_PTRS(LeabraLayerSpec)
 
 class LEABRA_API AvgMaxVals : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds average and max statistics
