@@ -1891,7 +1891,7 @@ String taBase::GetStringRep_impl() const {
 bool taBase::HasUserData(const String& name) const {
   UserDataItem_List* ud = GetUserDataList();
   if (ud)
-    return (ud->FindName(name));
+    return (ud->FindLeafName(name));
   
   return false;
 }
@@ -1899,7 +1899,7 @@ bool taBase::HasUserData(const String& name) const {
 const Variant taBase::GetUserData(const String& name) const {
   UserDataItem_List* ud = GetUserDataList();
   if (ud) {
-    UserDataItemBase* udi = ud->FindName(name);
+    UserDataItemBase* udi = ud->FindLeafName(name);
     if (udi) return udi->valueAsVariant();
   }
   return _nilVariant;
@@ -1915,8 +1915,8 @@ UserDataItemBase* taBase::GetUserDataOfType(TypeDef* typ,
   UserDataItem_List* ud = GetUserDataList(force_create);
   if (!ud) return NULL;
   UserDataItemBase* rval = NULL; 
-  for (int i = 0; i < ud->size; ++i) {
-    UserDataItemBase* udi = ud->FastEl(i);
+  for (int i = 0; i < ud->leaves; ++i) {
+    UserDataItemBase* udi = ud->Leaf(i);
     if (udi->name != key) continue;
     if (udi->InheritsFrom(typ)) {
       rval = udi;
@@ -1952,25 +1952,44 @@ void taBase::SetDocLink(taDoc* doc) {
   DataChanged(DCR_USER_DATA_UPDATED);
 }
 
-void taBase::SetUserData(const String& name, const Variant& value) {
-  UserDataItem_List* ud = GetUserDataList(true);
-#ifdef DEBUG
-  if(TestWarning(!ud, "SetUserData", "Class does not support UserData")) return;
-#else
-  if (!ud) return; // not supported, shouldn't be calling
-#endif
+UserDataItem* taBase::SetUserData(const String& name, const Variant& value)
+{
+  if (TestError((name.empty()),
+    "SetUserData",
+    "name must be a valid name")) {
+    return NULL;
+  }
   
-  UserDataItemBase* udi = ud->FindName(name);
-  if (!udi) {
+  UserDataItem_List* ud = GetUserDataList(true);
+  if (!ud) return NULL; // not supported, shouldn't be calling
+  
+  bool notify = false;
+  UserDataItemBase* udi = ud->FindLeafName(name);
+  if (udi) {
+    if (TestError(!udi->isSimple(),
+      "SetUserData",
+      "non-simple UserData item with that name already exists!")) {
+      return NULL;
+    }
+  } else {
+    notify = !ud->hasVisibleItems(); // we'll do a notify if this is first
     udi = new UserDataItem;
     udi->SetName(name);
     ud->Add(udi);
   }
   TestWarning(!udi->setValueAsVariant(value),"SetUserData",
 	      "Attempt to set existing UserData value as Variant, was not supported for", name);
+  if (notify) DataChanged(DCR_USER_DATA_UPDATED);
+  return dynamic_cast<UserDataItem*>(udi); // should succeed!
 }
 
- 
+void taBase::SetUserData_Gui(const String& key, const Variant& value,
+    const String& desc)
+{
+  UserDataItem* udi = SetUserData(key, value);
+  if (udi && desc.nonempty()) 
+    udi->SetDesc(desc);
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // 	Browser gui

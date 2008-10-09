@@ -23,6 +23,7 @@
 #include "ta_qtgroup.h"
 #include "ta_defaults.h"
 #include "ta_project.h"
+#include "ta_userdata_qt.h"
 #include "css_qt.h"
 #include "css_basic_types.h"
 #include "css_ta.h"
@@ -3446,15 +3447,23 @@ void tabOViewType::CheckUpdateDataPanelSet(iDataPanelSet* pan) {
   if (!tab) return; // shouldn't happen
   UserDataItem_List* udl = tab->GetUserDataList(false); // no force
   if (udl) { // note: if not, can't have DocLink either...
-    /* TODO: 4.0release or 4.1: so make the panel
-    iUserDataPanel* udp = new iUserDataPanel((taiDataLink*)udl->GetDataLink());
-    DataPanelCreated(udp);*/
-    // if we have a DocLink, make a panel for it
+    // get or make a panel for Userdata, if any visible
+    int start_idx = 0;
+    bool udi_visible = udl->hasVisibleItems();
+    iUserDataPanel* udp = (iUserDataPanel*)pan->GetDataPanelOfType(&TA_iUserDataPanel, start_idx);
+    // leave an existing panel if none visible, but don't make one if not
+    if (!udp && udi_visible) {
+      udp = new iUserDataPanel((taiDataLink*)udl->GetDataLink());
+      DataPanelCreated(udp);
+    }
+    
+    
+    // if we have a DocLink, get or make a panel for it
     // if the content changes or it gets deleted, the panel updates
     // if we set a new Doc or null it out, we get a USER_DATA_UPDATED notify, and reset it
     taDoc* doc = tab->GetDocLink();
     // get an existing DocPanel, if any -- don't force yet...
-    int start_idx = 0;
+    start_idx = 0;
     iDocDataPanel* dp = (iDocDataPanel*)pan->GetDataPanelOfType(&TA_iDocDataPanel, start_idx);
     if (doc) {
       if (!dp) { // need to create one
@@ -3493,9 +3502,13 @@ void tabOViewType::CreateDataPanel_impl(taiDataLink* dl_)
   if (!tab) return; // shouldn't happen
   UserDataItem_List* udl = tab->GetUserDataList(false); // no force
   if (udl) { // note: if not, can't have DocLink either...
-    /* TODO: 4.0release or 4.1: so make the panel
-    iUserDataPanel* udp = new iUserDataPanel((taiDataLink*)udl->GetDataLink());
-    DataPanelCreated(udp);*/
+    bool udi_visible = udl->hasVisibleItems();
+    // only make one for UserData if any visible
+    if (udi_visible) {
+      iUserDataPanel* udp = new iUserDataPanel((taiDataLink*)udl->GetDataLink());
+      DataPanelCreated(udp);
+    }
+    
     // if we have a DocLink, make a panel for it
     // if the content changes or it gets deleted, the panel updates
     // if we set a new Doc or null it out, we get a USER_DATA_UPDATED notify, and reset it

@@ -57,6 +57,7 @@ TAHEADS_GUI =\
 	ta_qtclassbrowse.h \
 	ta_qtgroup.h \
 	ta_seledit_qt.h \
+	ta_userdata_qt.h \
 	ta_program_qt.h 
 
 HEADS_GUI =\
@@ -72,6 +73,7 @@ HEADS_GUI =\
 	ta_qtclassbrowse.h \
 	ta_qtcursors.h \
 	ta_seledit_qt.h \
+	ta_userdata_qt.h \
 	ta_program_qt.h  
 
 SRCS_GUI =\
@@ -94,6 +96,8 @@ SRCS_GUI =\
 	ta_qttype.cpp \
 	ta_seledit_qt.cpp \
 	ta_seledit_qt.moc.cpp \
+	ta_userdata_qt.cpp \
+	ta_userdata_qt.moc.cpp \
 	ta_program_qt.cpp  \
 	ta_program_qt.moc.cpp \
 	ta_filer_qt.cpp

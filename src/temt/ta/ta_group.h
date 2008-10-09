@@ -406,5 +406,24 @@ public:									      \
   TA_BASEFUNS(T ## _Group);					      \
 }
 
+class TA_API UserDataItem_List: public taGroup<UserDataItemBase> {
+  // #CHILDREN_INLINE
+INHERITED(taGroup<UserDataItemBase>)
+public:
+  bool			hasVisibleItems() const; // #IGNORE lets gui avoid putting up panel unless any user-visible items are present
+  
+  UserDataItem*		NewItem(const String& name, const Variant& value,
+    const String& desc); // #CAT_UserData #BUTTON #NO_SAVE_ARG_VAL Make a new simple user data entry with given name and value (desc optional)
+
+  TA_BASEFUNS_NOCOPY(UserDataItem_List)
+protected:
+
+private:
+  void Initialize() {SetBaseType(&TA_UserDataItemBase);}
+  void Destroy() {}
+};
+
+TA_SMART_PTRS(UserDataItem_List) // UserDataItem_ListPtr
+
 
 #endif // ta_group_h

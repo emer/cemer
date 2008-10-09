@@ -259,6 +259,21 @@ String taDoc::WikiParse(const String& in_str) {
 
 
 //////////////////////////////////
+//  UserData_DocLink		//
+//////////////////////////////////
+
+void UserData_DocLink::Initialize() {
+  Own(doc, this);
+}
+
+void UserData_DocLink::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj)
+{
+// destroy ourself, so we don't have this stale ref left over
+  if (ref == &doc)
+    this->CloseLater();
+}
+
+//////////////////////////////////
 //  Doc_Group		//
 //////////////////////////////////
 

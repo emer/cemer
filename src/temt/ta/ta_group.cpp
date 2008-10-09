@@ -720,4 +720,33 @@ void taGroup_impl::UpdateLeafCount_(int no) {
 }
 
 
+////////////////////////////
+//  UserDataItem_List  	  //
+////////////////////////////
 
+bool UserDataItem_List::hasVisibleItems() const {
+  // iterate all items and return true on first isVisible found
+  taLeafItr itr;
+  UserDataItemBase* udi;
+  FOR_ITR_EL(UserDataItemBase, udi, this->, itr) {
+    if (udi->isVisible()) return true;
+  }
+  return false;
+}
+
+UserDataItem* UserDataItem_List::NewItem(const String& name, const Variant& value,
+    const String& desc)
+{
+  if (TestError((name.empty() || (FindName(name) != NULL)),
+    "UserDataItem_List::NewItem",
+    "name must be a valid name, not already in the list")) {
+    return NULL;
+  }
+  // note: make the item w/o owner, then rename and insert, to avoid unnecessary updates
+  UserDataItem* udi = new UserDataItem;
+  udi->name = name;
+  udi->value = value;
+  udi->desc = desc;
+  Add(udi);
+  return udi;
+}

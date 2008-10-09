@@ -1115,8 +1115,11 @@ public:
     {return GetUserData(key).toDouble();} // #CAT_UserData #EXPERT get specified user data as double (see GetUserData)
   inline const String	GetUserDataAsString(const String& key) const
     {return GetUserData(key).toString();} // #CAT_UserData #EXPERT get specified user data as String (see GetUserData)
-  virtual void		SetUserData(const String& key, const Variant& value);
-  // #CAT_UserData #EXPERT set user data; ignored if class does not support user data
+  virtual UserDataItem*	SetUserData(const String& key, const Variant& value);
+  // #CAT_UserData make new (or change existing) simple user data entry with given name and value; returns item, which can be ignored
+  void			SetUserData_Gui(const String& key, const Variant& value,
+    const String& desc);
+  // #CAT_UserData #MENU #MENU_CONTEXT #LABEL_SetUserData make new (or change existing) simple user data entry with given name and value (desc optional) -- this is how to get User Data editor panel to show up the first time
   virtual taDoc*	GetDocLink() const; // #CAT_UserData #EXPERT gets a linked Doc, if any; you can use this to test for existence
   virtual void		SetDocLink(taDoc* doc); // #CAT_UserData #MENU #MENU_CONTEXT #DROP1 set a link to a doc from the .docs collection -- the doc will then show up automatically in a panel for this obj
   
@@ -2602,11 +2605,18 @@ class TA_API UserDataItemBase: public taNBase {
   // ##INLINE ##NO_TOKENS base class for all simple user data -- name is key
 INHERITED(taNBase)
 public:
+  virtual bool		canDelete() const {return false;}
+    // whether item can be manually deleted by user
+  virtual bool		canRename() const {return false;}
+    // but rename system-created items at your own peril!!!
   virtual bool		isSimple() const {return false;}
     // only true for UserDataItem class
+  virtual bool		isVisible() const {return false;}
+    // in general, custom guys are hidden on UserData page, unless they override
     
   virtual const Variant valueAsVariant() const {return _nilVariant;}
   virtual bool		setValueAsVariant(const Variant& value) {return false;}
+  virtual bool		SetDesc(const String& desc) {return false;}
   
   TA_BASEFUNS(UserDataItemBase)
 protected:
@@ -2625,11 +2635,16 @@ public:
   Variant		value;
   String		desc; // #NO_SAVE_EMPTY optional description (typ. used for schema, not items)
   
+  override bool		canDelete() const {return true;}
+  override bool		canRename() const {return true;}
   override bool		isSimple() const {return true;}
+  override bool		isVisible() const {return true;}
+  
   override const Variant valueAsVariant() const {return value;}
   override bool		setValueAsVariant(const Variant& v) {value = v; return true;}
   
   override String	GetDesc() const {return desc;}
+  override bool		SetDesc(const String& d) {desc = d; return true;}
   TA_BASEFUNS(UserDataItem)
   UserDataItem(const String& type_name, const String& key, const Variant& value,
 	       const String& desc = _nilString);
@@ -2640,20 +2655,5 @@ private:
   void Destroy() {}
 };
 TA_SMART_PTRS(UserDataItem);
-
-class TA_API UserDataItem_List: public taList<UserDataItemBase> {
-  // #CHILDREN_INLINE
-INHERITED(taList<UserDataItemBase>)
-public:
-
-  TA_BASEFUNS_NOCOPY(UserDataItem_List)
-protected:
-
-private:
-  void Initialize() {SetBaseType(&TA_UserDataItemBase);}
-  void Destroy() {}
-};
-
-TA_SMART_PTRS(UserDataItem_List) // UserDataItem_ListPtr
 
 #endif // ta_base_h

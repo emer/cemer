@@ -57,6 +57,7 @@
 ./ta_qtgroup.h
 ./ta_program_qt.h
 ./ta_seledit_qt.h
+./ta_userdata_qt.h
 ./ta_time.h
 ./fun_lookup.h
 ./ta_data_extras.h

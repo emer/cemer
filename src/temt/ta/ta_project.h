@@ -70,15 +70,11 @@ INHERITED(UserDataItemBase)
 public:
   taDocRef		doc; // the doc
   
-/*  override bool		isSimple() const {return true;}
-  override const Variant valueAsVariant() const {return doc;}
-  override bool		setValueAsVariant(const Variant& v) {value = v; return true;}*/
-  
-//  override String	GetDesc() const {return desc;}
+  override void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj);
   TA_BASEFUNS(UserData_DocLink)
 private:
   void Copy_(const UserData_DocLink& cp){doc = cp.doc;}
-  void Initialize() {}
+  void Initialize();
   void Destroy() {}
 };
 

@@ -485,11 +485,11 @@ void taiDataDelegate::setEditorData(QWidget* editor,
     const QModelIndex& index) const
 {
   if (!dat) return;
-#ifdef DEBUG
+/*nn! #ifdef DEBUG
     cerr << "setEditorData for (dat/rep): " <<
       dat->metaObject()->className() << "/" <<
       dat->GetRep()->metaObject()->className() << "\n";
-#endif 
+#endif */
   GetImage();
 }
 
@@ -497,11 +497,11 @@ void taiDataDelegate::setModelData(QWidget* editor,
   QAbstractItemModel* model, const QModelIndex& index ) const
 {
   if (!dat) return;
-#ifdef DEBUG
+/*nn!#ifdef DEBUG
     cerr << "setModelData for (dat/rep): " <<
       dat->metaObject()->className() << "/" <<
       dat->GetRep()->metaObject()->className() << "\n";
-#endif 
+#endif */
   GetValue();
 }
 
@@ -677,6 +677,7 @@ void iSelectEditDataHost2::Constr_Data_Labels() {
       EditMbrItem* item = grp->FastEl(i);
       MemberDef* md = item->mbr;
       if (!md || (md->im == NULL)) continue; // shouldn't happen
+      
      // taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
       ms->memb_el.Add(md);
      // ms->data_el.Add(mb_dat);
