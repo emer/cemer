@@ -1,0 +1,548 @@
+// Copyright, 1995-2007, Regents of the University of Colorado,
+// Carnegie Mellon University, Princeton University.
+//
+// This file is part of The Emergent Toolkit
+//
+//   Emergent is free software; you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation; either version 2 of the License, or
+//   (at your option) any later version.
+//
+//   Emergent is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+
+#include "ta_userdata_qt.h"
+
+#include "ta_qt.h"
+#include "ta_qtdialog.h"
+#include "ta_TA_inst.h"
+
+#include <QColor>
+#include <QHeaderView>
+#include <QLayout>
+#include <QTableWidget>
+#include <QTextEdit>
+
+
+//////////////////////////
+//   UserDataDelegate	//
+//////////////////////////
+
+UserDataDelegate::UserDataDelegate(UserDataItem_List* udil_,
+  iUserDataDataHost* uddh_)
+:inherited(uddh_)
+{
+  udil = udil_;
+  uddh = uddh_;
+}
+
+QWidget* UserDataDelegate::createEditor(QWidget* parent, 
+    const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+  QWidget* rval = inherited::createEditor(parent, option, index);
+  QSize sz(rval->size());
+  if (sz.width() > uddh->tw->columnWidth(1)) {
+    uddh->tw->setColumnWidth(1,sz.width());
+  }
+  return rval;
+}
+
+bool UserDataDelegate::IndexToMembBase(const QModelIndex& index,
+    MemberDef*& mbr, taBase*& base) const
+{
+  QTableWidgetItem* twi = uddh->tw->item(index.row(), index.column());
+  if (twi) {
+    UserDataItemBase* item = dynamic_cast<UserDataItemBase*>(
+      (taBase*)(twi->data(Qt::UserRole).value<ta_intptr_t>()));
+    if (item) {
+      if (item->isSimple()) {
+        mbr = item->FindMember("value"); // better be found!
+        base = item; // the item itself is the base
+        return (mbr != NULL);
+      } else { // complex
+      //TODO
+      }
+    }
+  }
+  return false;
+}
+
+
+//////////////////////////////////
+//  iUserDataDataHost		//
+//////////////////////////////////
+
+iUserDataDataHost::iUserDataDataHost(void* base, TypeDef* td,
+  bool read_only_, QObject* parent)
+:inherited(base, td, read_only_, false, parent)
+{
+  Initialize();
+  udil = (UserDataItem_List*)base;
+}
+
+iUserDataDataHost::~iUserDataDataHost() {
+  delete udd; // hope it's ref is deleted too!
+  udd = NULL;
+}
+
+void iUserDataDataHost::Initialize()
+{
+  udil = NULL;
+  sel_edit_mbrs = true; // note: we don't actually select members, just for removal
+  tw = NULL;
+  udd = new UserDataDelegate(udil, this);
+  sel_item_row = -1;
+}
+
+void iUserDataDataHost::Constr_Body() {
+  if (rebuild_body) {
+    meth_el.Reset();
+  }
+  inherited::Constr_Body();
+  // we deleted the normally not-deleted methods, so redo them here
+  if (rebuild_body) {
+    Constr_Methods();
+    frmMethButtons->setHidden(!showMethButtons());
+  }
+}
+  
+void iUserDataDataHost::Constr_Body_impl() {
+  if (tw) return;
+  tw = new QTableWidget(widget());
+  tw->setColumnCount(2);
+  tw->horizontalHeader()->setVisible(false);
+  tw->horizontalHeader()->setStretchLastSection(true); // note: works if header invis
+  tw->verticalHeader()->setVisible(false);
+  tw->setSortingEnabled(false);
+  // don't try to scroll by item, it looks ugly, just scroll smoothly
+  tw->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+  // colors
+  QPalette palette(tw->palette());
+  palette.setColor(QPalette::Base, bg_color);
+  palette.setColor(QPalette::AlternateBase, bg_color_dark);
+  tw->setPalette(palette);
+  tw->setAlternatingRowColors(true);
+  tw->setContextMenuPolicy(Qt::CustomContextMenu);
+  
+  tw->setItemDelegateForColumn(1, udd);
+  vblDialog->addWidget(tw, 1);
+  connect(tw, SIGNAL(currentCellChanged(int, int, int, int)), 
+    this, SLOT(tw_currentCellChanged(int, int, int, int)) );
+  connect(tw, SIGNAL(customContextMenuRequested(const QPoint&)), 
+    this, SLOT(tw_customContextMenuRequested(const QPoint&)) );
+  connect(tw, SIGNAL(itemChanged(QTableWidgetItem*)), 
+    this, SLOT(tw_itemChanged(QTableWidgetItem*)) );
+  body = tw;
+}
+ 
+void iUserDataDataHost::Constr_Box() {
+  row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if 
+}
+ 
+
+void iUserDataDataHost::ClearBody_impl() {
+  // we also clear all the methods, and then rebuild them
+  ta_menus.Reset();
+  ta_menu_buttons.Reset();
+//  meth_el.Reset(); // must defer deletion of these, because the MethodData objects are used in menu calls, so can't be
+  layMethButtons = NULL;
+  DeleteChildrenLater(frmMethButtons);
+  show_meth_buttons = false;
+
+  // note: no show menu in this class
+  cur_menu = NULL;
+  cur_menu_but = NULL;
+  if (menu) {
+    menu->Reset();
+  }
+//??  inherited::ClearBody_impl();
+}
+
+void iUserDataDataHost::Constr_Data_Labels() {
+  // delete all previous udil members
+  membs.ResetItems();
+  tw->clear();
+  // mark place
+  String nm;
+  String help_text;
+  MembSet* ms = NULL;
+  
+  bool def_grp = true; // first one
+  taGroupItr itr;
+  UserDataItem_List* grp;
+  int set_idx = 0;
+  int row = 0;
+  FOR_ITR_GP(UserDataItem_List, grp, udil->, itr) {
+    if (grp->size == 0) {def_grp = false; continue; }
+    membs.SetMinSize(set_idx + 1);
+    ms = membs.FastEl(set_idx);
+    // make a group header
+    if (!def_grp) {
+      tw->setRowCount(row+1);
+      int item_flags = Qt::ItemIsEnabled; //Qt::ItemIsUserCheckable;
+      ms->text = grp->GetName();
+      ms->show = true;
+      QTableWidgetItem* twi = new QTableWidgetItem;
+      twi->setText(ms->text);
+      twi->setFlags((Qt::ItemFlags)item_flags);
+      //TODO: Bold
+      QFont f(tw->font());
+      f.setBold(true);
+      twi->setFont(f);
+      tw->setItem(row, 0, twi);
+      tw->setSpan(row, 0, 1, 2);
+      tw->setRowHeight(row, row_height);
+      ++row;
+    }
+    
+    for (int i = 0; i < grp->size; ++i) {
+      int item_flags = 0;
+      UserDataItemBase* item_ = grp->FastEl(i);
+      if (!item_->isVisible()) continue;
+      
+      tw->setRowCount(row + 1);
+      QTableWidgetItem* twi = NULL;
+      
+      //TODO: Modal, based on type
+      if (item_->isSimple()) {
+        //UserDataItem* item = (UserDataItem*)item_;
+      // simple (Variant) user data
+        MemberDef* mbr = item_->FindMember("value"); // better be found!
+        if (!mbr || (mbr->im == NULL)) continue; // shouldn't happen
+        ms->memb_el.Add(mbr);
+        
+        // data item
+        twi = new QTableWidgetItem;
+        item_flags = Qt::ItemIsEnabled; // |Qt::ItemIsSelectable;
+        //TODO: check for READONLY
+        bool ro = false;
+        if (!ro)
+          item_flags |= Qt::ItemIsEditable;
+        twi->setFlags((Qt::ItemFlags)item_flags);
+        // set &UserDataItemBase into 1.data
+        twi->setData(Qt::UserRole, QVariant((ta_intptr_t)item_));
+        tw->setItem(row, 1, twi);
+      } else {
+      // complex user data
+        //TODO
+        //TEMP:
+        ms->memb_el.Add(NULL);
+      }
+      
+      // label item -- same for all types
+      twi = new QTableWidgetItem;
+      twi->setText(item_->GetName());
+      twi->setStatusTip(item_->GetDesc());
+      twi->setToolTip(item_->GetDesc());
+      item_flags = Qt::ItemIsEnabled;
+      // item is editable if renamable
+      if (item_->canRename())
+        item_flags |= Qt::ItemIsEditable;
+      twi->setFlags((Qt::ItemFlags)item_flags);
+      tw->setItem(row, 0, twi);
+      
+      tw->setRowHeight(row, row_height);
+      ++row;
+    }
+    def_grp = false;
+    ++set_idx;
+  }
+  tw->resizeColumnToContents(0); // note: don't do 1 here, do it in GetImage
+}
+
+void iUserDataDataHost::GetImage_Membs_def() {
+  for (int row = 0; row < tw->rowCount(); ++row) {
+    QTableWidgetItem* it = tw->item(row, 1);
+    QTableWidgetItem* lbl = tw->item(row, 0); // not always needed
+    if (!it) continue;
+    UserDataItemBase* item_ = dynamic_cast<UserDataItemBase*>(
+      (taBase*)(it->data(Qt::UserRole).value<ta_intptr_t>()));
+    if (item_ == NULL) continue;
+    if (item_->isSimple()) {
+      UserDataItem* item = (UserDataItem*)item_;
+      MemberDef* mbr = item->FindMember("value"); // better be found!
+      if (!mbr) continue; // shouldn't happen
+      void* off = mbr->GetOff(item);
+      String txt = mbr->type->GetValStr(off, item->GetOwner(),
+        mbr, TypeDef::SC_DISPLAY); 
+      it->setText(txt);
+      it->setToolTip(txt); // for when over
+    
+      // default highlighting
+      switch (mbr->im->GetDefaultStatus(txt)) {
+      case taiMember::NOT_DEF: 
+        lbl->setData(Qt::BackgroundRole, QColor(Qt::yellow)); 
+        break;
+      case taiMember::EQU_DEF:
+        //note: setting nil Variant will force it to ignore and use bg
+        lbl->setData(Qt::BackgroundRole, QVariant()); 
+        break;
+      default: break; // compiler food
+      }
+    } else {
+    //complex
+      //TODO
+    }
+  }
+  udd->GetImage(); // if a ctrl is active
+  tw->resizeColumnsToContents(); // do all cols, because names could change
+}
+
+void iUserDataDataHost::Constr_Methods() {
+  inherited::Constr_Methods();
+  Insert_Methods();
+}
+/*na  if (cur_menu != NULL) {// for safety... cur_menu should be the UserDataItem_List menu
+    cur_menu->AddSep();
+  }
+
+  taGroupItr itr;
+  EditMthItem_Group* grp;
+  //int set_idx = 0;
+  FOR_ITR_GP(EditMthItem_Group, grp, udil->mths., itr) {
+    if (grp->size == 0) continue;
+    //note: root group uses only buttons (hard wired)
+    EditMthItem_Group::MthGroupType group_type = grp->group_type;
+    
+    // make a menu or button group if needed
+    String men_nm = grp->GetDisplayName();
+    if (men_nm.empty()) // shouldn't happen
+      men_nm = "Actions";
+    switch (group_type) {
+    case EditMthItem_Group::GT_MENU: {
+      cur_menu = ta_menus.FindName(men_nm);
+      if (cur_menu == NULL) {
+        cur_menu = menu->AddSubMenu(men_nm);
+        ta_menus.Add(cur_menu);
+      }
+    } break;
+    case EditMthItem_Group::GT_MENU_BUTTON: { 
+      cur_menu_but = ta_menu_buttons.FindName(men_nm);
+      if (cur_menu_but == NULL) {
+        cur_menu_but = taiActions::New
+          (taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
+                  NULL, this, NULL, widget());
+        cur_menu_but->setLabel(men_nm);
+        DoAddMethButton((QPushButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
+        ta_menu_buttons.Add(cur_menu_but);
+      }
+    } break;
+    default: break; // nothing for butts
+    } // switch group_type
+          
+    for (int i = 0; i < grp->size; ++i) {
+      EditMthItem* item = grp->FastEl(i);
+      MethodDef* md = item->mth;
+      taBase* base = item->base;
+      if (!md || (md->im == NULL) || (base == NULL)) continue;
+      taiMethodData* mth_rep = md->im->GetMethodRep(base, this, NULL, frmMethButtons);
+      if (mth_rep == NULL) continue;
+      meth_el.Add(mth_rep);
+  
+      //NOTE: for userdata functions, we never place them on the last menu or button, because that may
+      // make no sense -- the label specifies the place, or Actions if no label
+      String mth_cap = item->caption();
+      String statustip = item->desc;
+      switch (group_type) {
+      case EditMthItem_Group::GT_BUTTONS:  {
+        AddMethButton(mth_rep, mth_cap);
+      } break;
+      case EditMthItem_Group::GT_MENU: {
+//        mth_rep->AddToMenu(cur_menu);
+        taiAction* act = cur_menu->AddItem(mth_cap, taiMenu::use_default,
+              taiAction::action, mth_rep, SLOT(CallFun()) );
+        if (statustip.nonempty())
+          act->setStatusTip(statustip);
+      } break;
+      case EditMthItem_Group::GT_MENU_BUTTON: { 
+//        mth_rep->AddToMenu(cur_menu_but);
+        taiAction* act = cur_menu_but->AddItem(mth_cap, taiMenu::use_default,
+              taiAction::action, mth_rep, SLOT(CallFun()) );
+        if (statustip.nonempty())
+          act->setStatusTip(statustip);
+      } break;
+      } // switch group_type
+    }
+  } // groups
+}*/
+
+void iUserDataDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+//note: we completely replace default, and basically rebuild on any Group notify,
+// and ignore the other notifies (i.e the List guys, which will be echoes of a Group
+  
+  // note: because of deferred construction, we may still need to update buttons/menus
+  if (state == DEFERRED1) {
+    Refresh_impl(false);
+    return;
+  }
+  // note: we should have unlinked if cancelled, but if not, ignore if cancelled
+  if (!isConstructed()) return;
+  
+  if (updating) return; // it is us that caused this
+  // only do simple refresh if an item is updated, otherwise, the major changes
+  // of Insert, Remove, etc. need full refresh
+  if ((dcr == DCR_GROUP_ITEM_UPDATE))
+  {
+    Refresh_impl(false);
+  } else if ((dcr > DCR_GROUP_ITEM_UPDATE) &&
+    (dcr <= DCR_GROUP_LIST_SORTED)) 
+  {
+    Refresh_impl(true);
+  } 
+}
+
+void iUserDataDataHost::DoDeleteUserDataItem() {
+   // removes the sel_item_index item 
+  if (udil->RemoveLeafEl(sel_item_base)) {
+  }
+#ifdef DEBUG
+  else
+    taMisc::Error("iUserDataDataHost::DoDeleteUserDataItem: could not find item");
+#endif
+}
+
+void iUserDataDataHost::DoRenameUserDataItem() {
+//TODO: start edit of sel_item_row
+  if (sel_item_row < 0) return;
+  QTableWidgetItem* item = tw->item(sel_item_row, 0);
+  if (item) tw->editItem(item);
+}
+
+void iUserDataDataHost::FillLabelContextMenu_SelEdit(QMenu* menu,
+  int& last_id)
+{
+  UserDataItemBase* item = dynamic_cast<UserDataItemBase*>(sel_item_base);
+  if ((item == NULL) ) return;
+
+  int sel_item_index = udil->FindLeafEl(item);
+  if (sel_item_index < 0) return;  //huh?
+  if (item->canDelete())
+    //QAction* act = 
+    menu->addAction("Delete UserDataItem", this, SLOT(DoDeleteUserDataItem()));
+  if (item->canRename())
+    //QAction* act = 
+    menu->addAction("Rename UserDataItem", this, SLOT(DoRenameUserDataItem()));
+}
+
+UserDataItemBase* iUserDataDataHost::GetUserDataItem(int row) {
+  if ((row < 0) || (row >= tw->rowCount())) return NULL;
+  QTableWidgetItem* twi = tw->item(row, 1);
+  if (!twi) return NULL; // ex. right clicking on a section
+  UserDataItemBase* item = dynamic_cast<UserDataItemBase*>(
+    (taBase*)(twi->data(Qt::UserRole).value<ta_intptr_t>()));
+  return item;
+}
+
+void iUserDataDataHost::GetValue_Membs_def() {
+  udd->GetValue();
+}
+
+void iUserDataDataHost::tw_currentCellChanged(int row, 
+    int col, int previousRow, int previousColumn)
+{
+  if ((row < 0) || (col < 1)) return;
+  // edit of item
+  QTableWidgetItem* twi = tw->item(row, col);
+  if (!twi) return;
+  tw->editItem(twi);
+}
+
+void iUserDataDataHost::tw_customContextMenuRequested(const QPoint& pos)
+{
+  int row = tw->rowAt(pos.y());
+  int col = tw->columnAt(pos.x());
+  if ((row < 0) || (col != 0)) return;
+  // we want the data item for the label, to get its goodies...
+  
+  UserDataItemBase* item = GetUserDataItem(row);
+  if ((item == NULL) ) return;
+    
+  //na sel_item_mbr = item->mbr;
+  sel_item_row = row;
+  sel_item_base = item;
+  QMenu* menu = new QMenu(widget());
+  int last_id = -1;
+  FillLabelContextMenu(menu, last_id);
+  if (menu->actions().count() > 0)
+    menu->exec(tw->mapToGlobal(pos));
+  delete menu;
+  
+}
+
+void iUserDataDataHost::tw_itemChanged(QTableWidgetItem* item)
+{
+  if (item->column() > 0) return;
+
+  UserDataItemBase* udi = GetUserDataItem(item->row());
+  if ((udi == NULL) ) return;
+  udi->SetName(item->text());
+  Refresh_impl(false);
+}
+
+//////////////////////////
+//   iUserDataPanel 	//
+//////////////////////////
+
+iUserDataPanel::iUserDataPanel(taiDataLink* dl_)
+:inherited(dl_)
+{
+  UserDataItem_List* se_ = udil();
+  se = NULL;
+  if (se_) {
+    switch (taMisc::edit_style) {
+    case taMisc::ES_WIDGETS:
+      se = new iUserDataDataHost(se_, se_->GetTypeDef()); 
+      break;
+    case taMisc::ES_TABLE:
+      se = new iUserDataDataHost(se_, se_->GetTypeDef()); 
+      break;
+    }
+    if (taMisc::color_hints & taMisc::CH_EDITS) {
+      bool ok;
+      iColor bgcol = se_->GetEditColorInherit(ok);
+      if (ok) se->setBgColor(bgcol);
+    }
+  }
+}
+
+iUserDataPanel::~iUserDataPanel() {
+  if (se) {
+    delete se;
+    se = NULL;
+  }
+}
+
+void iUserDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+  //NOTE: don't need to do anything because DataModel will handle it
+}
+
+bool iUserDataPanel::HasChanged() {
+  return se->HasChanged();
+}
+
+bool iUserDataPanel::ignoreDataChanged() const {
+  return !isVisible();
+}
+
+void iUserDataPanel::OnWindowBind_impl(iTabViewer* itv) {
+  inherited::OnWindowBind_impl(itv);
+  se->ConstrEditControl();
+  setCentralWidget(se->widget()); //sets parent
+  setButtonsWidget(se->widButtons);
+}
+
+void iUserDataPanel::UpdatePanel_impl() {
+  if (se) se->ReShow_Async();
+}
+
+void iUserDataPanel::ResolveChanges_impl(CancelOp& cancel_op) {
+ // per semantics elsewhere, we just blindly apply changes
+  if (se && se->HasChanged()) {
+    se->Apply();
+  }
+}
+
+
