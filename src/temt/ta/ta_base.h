@@ -1094,9 +1094,9 @@ public:
     {return (GetUserDataList(false) != NULL);}
   // #CAT_UserData #EXPERT returns true if UserData exists at all
   virtual bool		HasUserData(const String& key) const;
-  // #CAT_UserData #EXPERT returns true if UserData exists for this key (case sens)
+  // #CAT_UserData returns true if UserData exists for this key (case sens)
   virtual const Variant	GetUserData(const String& key) const;
-  // #CAT_UserData #EXPERT get specified user data; returns class default value if not present, or nilVariant if no default user data or class doesn't support UserData
+  // #CAT_UserData get specified user data; returns class default value if not present, or nilVariant if no default user data or class doesn't support UserData
   const Variant 	GetUserDataDef(const String& key, const Variant& def)
     {if (HasUserData(key)) return GetUserData(key); else return def;}
   // #CAT_UserData #EXPERT return value if exists, or default if doesn't
@@ -1121,7 +1121,7 @@ public:
     const String& desc);
   // #CAT_UserData #MENU #MENU_CONTEXT #LABEL_SetUserData make new (or change existing) simple user data entry with given name and value (desc optional) -- this is how to get User Data editor panel to show up the first time
   virtual taDoc*	GetDocLink() const; // #CAT_UserData #EXPERT gets a linked Doc, if any; you can use this to test for existence
-  virtual void		SetDocLink(taDoc* doc); // #CAT_UserData #MENU #MENU_CONTEXT #DROP1 set a link to a doc from the .docs collection -- the doc will then show up automatically in a panel for this obj
+  virtual void		SetDocLink(taDoc* doc); // #CAT_UserData #MENU #MENU_CONTEXT #DROP1 #NULL_OK set a link to a doc from the .docs collection -- the doc will then show up automatically in a panel for this obj -- set to NULL to remove it
   
   bool		HasOption(const char* op) const
   { return GetTypeDef()->HasOption(op); }

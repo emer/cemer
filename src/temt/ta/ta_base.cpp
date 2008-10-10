@@ -1945,10 +1945,16 @@ taDoc* taBase::GetDocLink() const {
 }
  
 void taBase::SetDocLink(taDoc* doc) {
+  // only force if setting a doc
   UserData_DocLink* uddl = (UserData_DocLink*)GetUserDataOfType(
-    &TA_UserData_DocLink, "DocLink", true);
-  if (TestError((!uddl), "SetDocLink", "Could not set DocLink -- the object may not support UserData")) return;
-  uddl->doc = doc;
+    &TA_UserData_DocLink, "DocLink", (doc != NULL));
+  if (TestError((doc && !uddl), "SetDocLink", "Could not set DocLink -- the object may not support UserData")) return;
+  if (!doc && !uddl) return; // not setting, doesn't already have
+  if (doc) {
+    uddl->doc = doc;
+  } else {
+    uddl->Close(); // do now, so update is good
+  }
   DataChanged(DCR_USER_DATA_UPDATED);
 }
 

@@ -3474,6 +3474,7 @@ void tabOViewType::CheckUpdateDataPanelSet(iDataPanelSet* pan) {
     } else {
       if (dp) {
         dp->setDoc(NULL);
+        //NOTE: we currently don't support removing data panels
       }
     }
   }
