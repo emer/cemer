@@ -78,6 +78,8 @@ public:
   
   override taList_impl*	children_() {return &children;}	
 
+  bool			SpecInheritsFrom(BaseSpec* spec) const;
+    // returns true if this spec is the spec, or is one of its children
   virtual BaseSpec*	FindParent();
   // #MENU #USE_RVAL #MENU_ON_Actions Find the parent spec of this one
 

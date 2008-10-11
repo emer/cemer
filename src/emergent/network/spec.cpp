@@ -303,6 +303,17 @@ bool BaseSpec::GetUnique(int memb_no) {
   return false;
 }
 
+bool BaseSpec::SpecInheritsFrom(BaseSpec* spec) const {
+  if (this == spec) return true;
+  // just iterate here, no need for recursion
+  taLeafItr itr;
+  BaseSpec* child;
+  FOR_ITR_EL(BaseSpec, child, spec->children., itr) {
+    if (this == child) return true;
+  }
+  return false;
+}
+
 void BaseSpec::UpdateSpec() {
   BaseSpec* parent = FindParent();
   if(parent) {

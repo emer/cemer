@@ -1346,8 +1346,8 @@ protected:
   union {
   int			refn_flags; // for efficient initialization
   struct {
-  int			refn: 24;	// number of references to this object
-  mutable int		m_flags: 8;
+  short			refn;	// number of references to this object
+  mutable short		m_flags;
   };
   };
 #endif
@@ -1831,8 +1831,9 @@ public:
 
   override taBase* New(int n_objs=1, TypeDef* typ=NULL);
   // #CAT_Modify create n_objs new objects of given type in list (NULL = default type, el_typ)
-  virtual taBase* New_gui(int n_objs=1, TypeDef* typ=NULL);
-  // #BUTTON #MENU_CONTEXT #TYPE_ON_el_base #CAT_Modify #LABEL_New #NO_SAVE_ARG_VAL create n_objs new objects of given type in list (NULL = default type, el_typ)
+  taBase* 	New_gui(int n_objs=1, TypeDef* typ=NULL,
+    const String& name="(default name)");
+  // #BUTTON #MENU_CONTEXT #TYPE_ON_el_base #CAT_Modify #LABEL_New #NO_SAVE_ARG_VAL create n_objs new objects of given type in list (typ=NULL: default type, el_typ; name only used for n=1)
   virtual void	SetSize(int sz);
   // #MENU #MENU_ON_Edit #CAT_Modify add or remove elements to force list to be of given size
 

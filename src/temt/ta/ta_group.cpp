@@ -622,12 +622,18 @@ TAGPtr taGroup_impl::NewGp_(int no, TypeDef* typ) {
   return rval;
 }
 
-TAGPtr taGroup_impl::NewGp_gui(int no, TypeDef* typ) {
+TAGPtr taGroup_impl::NewGp_gui(int no, TypeDef* typ, const String& name_) {
   TAGPtr rval = NewGp_(no, typ);
-  if(rval && taMisc::gui_active) {
-    if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
-      tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
-      tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+  if (rval) {
+    if ((no==1) && (name_.nonempty())) {
+      rval->SetName(name_);
+      rval->UpdateAfterEdit();
+    }
+    if (taMisc::gui_active) {
+      if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
+        tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
+        tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+      }
     }
   }
   return rval;

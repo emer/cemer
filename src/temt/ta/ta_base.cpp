@@ -3535,12 +3535,18 @@ taBase* taList_impl::New(int no, TypeDef* typ) {
   return rval;
 }
 
-taBase* taList_impl::New_gui(int no, TypeDef* typ) {
+taBase* taList_impl::New_gui(int no, TypeDef* typ, const String& name_) {
   taBase* rval = New(no, typ);
-  if(rval && taMisc::gui_active) {
-    if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
-      tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
-      tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+  if (rval) {
+    if ((no==1) && (name_ != "(default name)")) {
+      rval->SetName(name_);
+      rval->UpdateAfterEdit();
+    }
+    if (taMisc::gui_active) {
+      if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
+        tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
+        tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+      }
     }
   }
   return rval;
