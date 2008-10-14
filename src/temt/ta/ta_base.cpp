@@ -1888,18 +1888,18 @@ String taBase::GetStringRep_impl() const {
 ///////////////////////////////////////////////////////////////////////////
 //	User Data: optional configuration settings for objects
 
-bool taBase::HasUserData(const String& name) const {
+bool taBase::HasUserData(const String& key) const {
   UserDataItem_List* ud = GetUserDataList();
   if (ud)
-    return (ud->FindLeafName(name));
+    return (ud->FindLeafName(key));
   
   return false;
 }
 
-const Variant taBase::GetUserData(const String& name) const {
+const Variant taBase::GetUserData(const String& key) const {
   UserDataItem_List* ud = GetUserDataList();
   if (ud) {
-    UserDataItemBase* udi = ud->FindLeafName(name);
+    UserDataItemBase* udi = ud->FindLeafName(key);
     if (udi) return udi->valueAsVariant();
   }
   return _nilVariant;
@@ -1943,7 +1943,20 @@ taDoc* taBase::GetDocLink() const {
   if (!uddl) return NULL;
   return uddl->doc;
 }
- 
+
+bool taBase::RemoveUserData(const String& key) {
+  UserDataItem_List* ud = GetUserDataList();
+  if (ud) {
+    UserDataItemBase* udi = ud->FindLeafName(key);
+    if (udi) {
+      udi->Close();
+      DataChanged(DCR_USER_DATA_UPDATED);
+      return true;
+    }
+  }
+  return false;
+}
+
 void taBase::SetDocLink(taDoc* doc) {
   // only force if setting a doc
   UserData_DocLink* uddl = (UserData_DocLink*)GetUserDataOfType(

@@ -1090,17 +1090,17 @@ public:
   virtual UserDataItem_List* GetUserDataList(bool force_create = false) const
     {return NULL;}
   // #CAT_UserData #EXPERT gets the userdatalist for this class
-  virtual bool		HasUserDataList() const
+  bool			HasUserDataList() const
     {return (GetUserDataList(false) != NULL);}
   // #CAT_UserData #EXPERT returns true if UserData exists at all
-  virtual bool		HasUserData(const String& key) const;
+  bool			HasUserData(const String& key) const;
   // #CAT_UserData returns true if UserData exists for this key (case sens)
-  virtual const Variant	GetUserData(const String& key) const;
+  const Variant		GetUserData(const String& key) const;
   // #CAT_UserData get specified user data; returns class default value if not present, or nilVariant if no default user data or class doesn't support UserData
   const Variant 	GetUserDataDef(const String& key, const Variant& def)
     {if (HasUserData(key)) return GetUserData(key); else return def;}
   // #CAT_UserData #EXPERT return value if exists, or default if doesn't
-  virtual UserDataItemBase* GetUserDataOfType(TypeDef* typ, const String& key,
+  UserDataItemBase* 	GetUserDataOfType(TypeDef* typ, const String& key,
      bool force_create);
   // #CAT_UserData #EXPERT gets specified user data of given type, making one if doesn't exist and fc=true
   UserDataItemBase* 	GetUserDataOfTypeC(TypeDef* typ, const String& key) const;
@@ -1115,13 +1115,15 @@ public:
     {return GetUserData(key).toDouble();} // #CAT_UserData #EXPERT get specified user data as double (see GetUserData)
   inline const String	GetUserDataAsString(const String& key) const
     {return GetUserData(key).toString();} // #CAT_UserData #EXPERT get specified user data as String (see GetUserData)
-  virtual UserDataItem*	SetUserData(const String& key, const Variant& value);
+  UserDataItem*		SetUserData(const String& key, const Variant& value);
   // #CAT_UserData make new (or change existing) simple user data entry with given name and value; returns item, which can be ignored
   void			SetUserData_Gui(const String& key, const Variant& value,
     const String& desc);
   // #CAT_UserData #MENU #MENU_CONTEXT #LABEL_SetUserData make new (or change existing) simple user data entry with given name and value (desc optional) -- this is how to get User Data editor panel to show up the first time
-  virtual taDoc*	GetDocLink() const; // #CAT_UserData #EXPERT gets a linked Doc, if any; you can use this to test for existence
-  virtual void		SetDocLink(taDoc* doc); // #CAT_UserData #MENU #MENU_CONTEXT #DROP1 #NULL_OK set a link to a doc from the .docs collection -- the doc will then show up automatically in a panel for this obj -- set to NULL to remove it
+  bool			RemoveUserData(const String& key);
+  // #CAT_UserData removes data for indicated key; returns true if it existed
+  taDoc*		GetDocLink() const; // #CAT_UserData #EXPERT gets a linked Doc, if any; you can use this to test for existence
+  void			SetDocLink(taDoc* doc); // #CAT_UserData #MENU #MENU_CONTEXT #DROP1 #NULL_OK set a link to a doc from the .docs collection -- the doc will then show up automatically in a panel for this obj -- set to NULL to remove it
   
   bool		HasOption(const char* op) const
   { return GetTypeDef()->HasOption(op); }
