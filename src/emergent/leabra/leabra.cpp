@@ -90,7 +90,7 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 }
 
 void XCalLearnSpec::Initialize() {
-  lrn_var = XCAL_SRAVG;
+  lrn_var = XCAL_AVGSR;
   p_boost = .7f;
   p_thr_gain = 1.2f;
   d_rev = .15;
@@ -488,11 +488,13 @@ void SpikeFunSpec::UpdateAfterEdit_impl() {
 }
 
 void DepressSpec::Initialize() {
-  p_spike = P_NXX1;
+  on = false;
   rec = .2f;
   asymp_act = .5f;
   depl = rec * (1.0f - asymp_act) / (asymp_act * .95f);
-  max_amp = (.95f * depl + rec) / rec;
+  max_amp = 1.0f;
+  clamp_norm_max_amp = (.95f * depl + rec) / rec;
+  spike_eq = true;
 }
 
 void DepressSpec::UpdateAfterEdit_impl() {
@@ -502,7 +504,7 @@ void DepressSpec::UpdateAfterEdit_impl() {
   if(asymp_act > 1.0f) asymp_act = 1.0f;
   depl = rec * (1.0f - asymp_act) / (asymp_act * .95f);
   depl = MAX(depl, 0.0f);
-  max_amp = (.95f * depl + rec) / rec;
+  clamp_norm_max_amp = (.95f * depl + rec) / rec;
 }
 
 void SynDelaySpec::Initialize() {
@@ -653,7 +655,7 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   noise_sched.UpdateAfterEdit();
   spike.UpdateAfterEdit();
   CreateNXX1Fun();
-  if(act_fun == DEPRESS)
+  if(depress.on)
     act_range.max = depress.max_amp;
 }
 
@@ -746,8 +748,7 @@ void LeabraUnitSpec::Init_Weights(Unit* u) {
   lu->misc_1 = 0.0f;
   lu->misc_2 = 0.0f;
   lu->misc_3 = 0.0f;
-  if(act_fun != DEPRESS)
-    lu->spk_amp = 0.0f;
+  lu->spk_amp = depress.max_amp;
   lu->vcb.hyst = lu->vcb.g_h = 0.0f;
   lu->vcb.hyst_on = false;
   lu->vcb.acc = lu->vcb.g_a = 0.0f;
@@ -830,7 +831,7 @@ void LeabraUnitSpec::Init_Acts(LeabraUnit* ru, LeabraLayer*) {
   ru->g_i_raw = 0.0f;
 
   ru->i_thr = 0.0f;
-  if(act_fun == DEPRESS)
+  if(depress.on)
     ru->spk_amp = act_range.max;
   ru->act_buf.Reset();
   ru->spike_buf.Reset();
@@ -1175,103 +1176,112 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraLayer*, LeabraInhib*, Leabr
   u->v_m = vm_range.Clip(u->v_m);
 }
 
-void LeabraUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraLayer*, LeabraInhib*, LeabraNetwork* net) {
-  float new_act = u->v_m - act.thr;
+void LeabraUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
+				     LeabraNetwork* net) {
+  if(act_fun == SPIKE) {
+    Compute_ActFmVm_spike(u, lay, thr, net); 
+  }
+  else {
+    Compute_ActFmVm_rate(u, lay, thr, net); 
+  }
+}
+
+void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
+					  LeabraNetwork* net) {
+
+  float thr_vm = u->v_m - act.thr; // thresholded vm
+  float new_act = 0.0f;
   switch(act_fun) {
   case NOISY_XX1: {
-    if(new_act <= nxx1_fun.x_range.min)
+    if(thr_vm <= nxx1_fun.x_range.min)
       new_act = 0.0f;
-    else if(new_act >= nxx1_fun.x_range.max) {
-      new_act *= act.gain;
-      new_act = new_act / (new_act + 1.0f);
+    else if(thr_vm >= nxx1_fun.x_range.max) {
+      thr_vm *= act.gain;
+      new_act = thr_vm / (thr_vm + 1.0f);
     }
     else {
-      new_act = nxx1_fun.Eval(new_act);
+      new_act = nxx1_fun.Eval(thr_vm);
     }
   }
   break;
   case XX1: {
-    if(new_act < 0.0f)
+    if(thr_vm < 0.0f)
       new_act = 0.0f;
     else {
-      new_act *= act.gain;
-      new_act = new_act / (new_act + 1.0f);
+      thr_vm *= act.gain;
+      new_act = thr_vm / (thr_vm + 1.0f);
     }
   }
   break;
   case NOISY_LINEAR: {
-    if(new_act <= nxx1_fun.x_range.min)
+    if(thr_vm <= nxx1_fun.x_range.min)
       new_act = 0.0f;
-    else if(new_act >= nxx1_fun.x_range.max) {
-      new_act *= act.gain;
+    else if(thr_vm >= nxx1_fun.x_range.max) {
+      new_act = thr_vm * act.gain;
     }
     else {
-      new_act = nxx1_fun.Eval(new_act);
+      new_act = nxx1_fun.Eval(thr_vm);
     }
   }
   break;
   case LINEAR: {
-    if(new_act < 0.0f)
+    if(thr_vm < 0.0f)
       new_act = 0.0f;
     else
-      new_act *= act.gain;
+      new_act = thr_vm * act.gain;
   }
   break;
-  case DEPRESS: {
-    // new_act = spike probability
-    if(depress.p_spike == DepressSpec::P_NXX1) {
-      if(new_act <= nxx1_fun.x_range.min)
-	new_act = 0.0f;
-      else if(new_act >= nxx1_fun.x_range.max) {
-	new_act *= act.gain;
-	new_act = new_act / (new_act + 1.0f);
-      }
-      else {
-	new_act = nxx1_fun.Eval(new_act);
-      }
-    }
-    else {
-      if(new_act < 0.0f)
-	new_act = 0.0f;
-      else {
-	new_act *= act.gain;
-	new_act = MIN(new_act, 1.0f);
-      }
-    }
-    new_act *= u->spk_amp; // actual output = probability * amplitude
-    u->spk_amp += -new_act * depress.depl + (act_range.max - u->spk_amp) * depress.rec;
-    u->spk_amp = act_range.Clip(u->spk_amp);
-  }
-  break;
-  case SPIKE: {
-    if(u->v_m > act.thr) {
-      u->act = 1.0f;
-      u->v_m = spike.v_m_r;
-    }
-    else {
-      u->act = 0.0f;
-    }
-    float new_eq = u->act_eq / spike.eq_gain;
-    if(spike.eq_dt > 0.0f) {
-      new_eq = act_range.Clip(spike.eq_gain * ((1.0f - spike.eq_dt) * new_eq + spike.eq_dt * u->act));
-    }
-    else {
-      if(net->cycle > 0)
-	new_eq *= (float)net->cycle;
-      new_eq = act_range.Clip(spike.eq_gain * (new_eq + u->act) / (float)(net->cycle+1));
-    }
-    u->da = new_eq - u->act_eq;	// da is on equilibrium activation
-    u->act_eq = new_eq;
-  }
-  break;
+  case SPIKE:
+    break;			// compiler food
   }
 
-  if(act_fun != SPIKE) {
-    u->da = new_act - u->act;
-    if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-      new_act += noise_sched.GetVal(net->cycle) * noise.Gen();
+  if(depress.on) {		     // synaptic depression
+    new_act *= u->spk_amp;
+    u->spk_amp += -new_act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
+    if(u->spk_amp < 0.0f) 			u->spk_amp = 0.0f;
+    else if(u->spk_amp > depress.max_amp)	u->spk_amp = depress.max_amp;
+  }
+
+  u->da = new_act - u->act;
+  if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
+    new_act += noise_sched.GetVal(net->cycle) * noise.Gen();
+  }
+  u->act = u->act_eq = act_range.Clip(new_act);
+}
+
+void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
+					   LeabraNetwork* net) {
+  if(u->v_m > act.thr) {
+    u->act = 1.0f;
+    u->v_m = spike.v_m_r;
+  }
+  else {
+    u->act = 0.0f;
+  }
+  if(depress.on && depress.spike_eq) { // do it now before computing eq
+    u->act *= u->spk_amp;
+  }
+
+  float old_eq = u->act_eq / spike.eq_gain;
+  float new_eq;
+  if(spike.eq_dt > 0.0f) {
+    new_eq = act_range.Clip(spike.eq_gain * ((1.0f - spike.eq_dt) * old_eq + spike.eq_dt * u->act));
+  }
+  else {
+    if(net->cycle > 0)
+      old_eq *= (float)net->cycle;
+    new_eq = act_range.Clip(spike.eq_gain * (old_eq + u->act) / (float)(net->cycle+1));
+  }
+  u->da = new_eq - u->act_eq;	// da is on equilibrium activation
+  u->act_eq = new_eq;
+
+  if(depress.on) {
+    if(!depress.spike_eq) {
+      u->act *= u->spk_amp;	// after eq
     }
-    u->act = u->act_eq = act_range.Clip(new_act);
+    u->spk_amp += -u->act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
+    if(u->spk_amp < 0.0f) 			u->spk_amp = 0.0f;
+    else if(u->spk_amp > depress.max_amp)	u->spk_amp = depress.max_amp;
   }
 }
 
@@ -1349,7 +1359,7 @@ void LeabraUnitSpec::DecayPhase(LeabraUnit* u, LeabraLayer*, LeabraNetwork*, flo
     u->vcb.hyst -= decay * u->vcb.hyst;
   if(acc.on && !acc.trl)
     u->vcb.acc -= decay * u->vcb.acc;
-  if(act_fun == DEPRESS)
+  if(depress.on)
     u->spk_amp += (act_range.max - u->spk_amp) * decay;
 
   // reset the rest of this stuff just for clarity

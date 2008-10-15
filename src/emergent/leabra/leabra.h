@@ -199,16 +199,16 @@ class LEABRA_API XCalLearnSpec : public taOBase {
 INHERITED(taOBase)
 public:
   enum LearnVar {
-    XCAL_SRAVG,			// learn using xcal rule, based on connection-level sravg value: <sr>
     XCAL_AVGSR,			// learn using xcal rule, based on separate product of unit-level averages: <s><r>
+    XCAL_SRAVG,			// learn using xcal rule, based on connection-level sravg value: <sr>
     CAL,			// learn using standard CtLeabra_CAL rule (for comparision, esp of output layers)
   };
 
-  LearnVar	lrn_var;	// #DEF_XCAL_SRAVG learning rule variant to use
-  float		p_boost;	// plus-phase activation boost, simulating the effects of dopamine on amplifying the learning signals: adds this weighted proportion of the act_p plus phase values to the overall sravg signal (equivalent to making the plus phase longer -- more efficient to use this value)
-  float		p_thr_gain;	// #DEF_1.2 multiplier on recv avg_trl_avg to produce p_thr value: higher values = more sparse strong weights; lower values = more distributed 
-  float		d_rev;		// #DEF_0.15 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
-  float		d_gain;		// #DEF 1.5 multiplier on LTD values relative to LTP values
+  LearnVar	lrn_var;	// #DEF_XCAL_AVGSR learning rule variant to use
+  float		p_boost;	// #DEF_0.7 #CONDEDIT_OFF_lrn_var:CAL plus-phase activation boost, simulating the effects of dopamine on amplifying the learning signals: adds this weighted proportion of the act_p plus phase values to the overall sravg signal (equivalent to making the plus phase longer -- more efficient to use this value)
+  float		p_thr_gain;	// #DEF_1.2 #CONDEDIT_OFF_lrn_var:CAL multiplier on recv avg_trl_avg to produce p_thr value: higher values = more sparse strong weights; lower values = more distributed 
+  float		d_rev;		// #DEF_0.15 #CONDEDIT_OFF_lrn_var:CAL proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
+  float		d_gain;		// #DEF 1.5 #CONDEDIT_OFF_lrn_var:CAL multiplier on LTD values relative to LTP values
 
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- muliplication factor in learning rule
   float		p_boost_c;	// #HIDDEN #READ_ONLY 1-p_boost -- complement weighting of regular sravg
@@ -697,19 +697,16 @@ private:
 };
 
 class LEABRA_API DepressSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra depressing synapses activation function specs
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation/spiking conveyed to other units is subject to synaptic depression: depletes a given amount per spike, and recovers with exponential recovery rate (also subject to trial/phase decay = recovery proportion)
 INHERITED(taBase)
 public:
-  enum PSpike {
-    P_NXX1,			// probability of spiking is based on NOISY_XX1 f(Vm - Q)
-    P_LINEAR			// probability of spiking is based on LINEAR f(Vm - Q)
-  };
-
-  PSpike	p_spike;	// how to compute the probability of spiking, which is then mult by amp of spiking
-  float		rec;		// #DEF_0.2 rate of recovery of spike amplitude (determines overall time constant of depression function)
-  float		asymp_act;	// #DEF_0.5 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl value)
-  float		depl;		// #READ_ONLY #SHOW rate of depletion of spike amplitude as a function of activation output (computed from rec, asymp_act)
-  float		max_amp;	// #READ_ONLY #SHOW maximum amplitude required to maintain asymptotic firing at normal clamp levels (copied to act_range.max) 
+  bool		on;		// synaptic depression is in effect: multiplies normal activation computed by current activation function in effect
+  float		rec;		// #CONDEDIT_ON_on #DEF_0.2 rate of recovery of spike amplitude (determines overall time constant of depression function)
+  float		asymp_act;	// #CONDEDIT_ON_on #DEF_0.5 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl value)
+  float		depl;		// #CONDEDIT_ON_on #READ_ONLY #SHOW rate of depletion of spike amplitude as a function of activation output (computed from rec, asymp_act)
+  float		max_amp;	// #CONDEDIT_ON_on maximum spike amplitude -- this is the multiplier factor for activation values -- set to clamp_norm_max_amp to maintain asymptotic values at normal hard clamp levels, or set to 1 to retain usual normalized activation values (val is copied to act_range.max)
+  float		clamp_norm_max_amp;	// #CONDEDIT_ON_on #READ_ONLY #SHOW maximum spike amplitude required to maintain asymptotic firing at normal clamp levels -- set max_amp to this value for delta-based learning rules to normalize against large diffs across phases
+  bool		spike_eq;		// #CONDEDIT_ON_on does depression affect spiking act_eq value?  if true, yes, else no.
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(DepressSpec);
@@ -904,7 +901,6 @@ public:
     XX1,			// x over x plus 1, hard threshold, no noise convolution
     NOISY_LINEAR,		// simple linear output function (still thesholded) convolved with Gaussian noise (noise is nvar)
     LINEAR,			// simple linear output function (still thesholded)
-    DEPRESS,			// depressing synapses activation function (rate coded)
     SPIKE			// discrete spiking activations (spike when > thr)
   };
 
@@ -918,7 +914,7 @@ public:
   ActFun	act_fun;	// #APPLY_IMMED #CAT_Activation activation function to use
   ActFunSpec	act;		// #CAT_Activation activation function specs
   SpikeFunSpec	spike;		// #CONDEDIT_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
-  DepressSpec	depress;	// #CONDEDIT_ON_act_fun:DEPRESS #CAT_Activation depressing synapses activation function specs, note that act_range deterimines range of spk_amp spiking amplitude, max should be > 1
+  DepressSpec	depress;	// #CAT_Activation depressing synapses specs -- multiplies activation value by a spike amplitude/probability value that depresses with use and recovers exponentially
   SynDelaySpec	syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   OptThreshSpec	opt_thresh;	// #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
   MinMaxRange	clamp_range;	// #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
@@ -1032,6 +1028,10 @@ public:
   // #CAT_Activation compute the membrante potential from input conductances
   virtual void Compute_ActFmVm(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation compute the activation from membrane potential
+  virtual void Compute_ActFmVm_rate(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
+  // #CAT_Activation compute the activation from membrane potential -- rate code functions
+  virtual void Compute_ActFmVm_spike(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
+  // #CAT_Activation compute the activation from membrane potential -- discrete spiking
   virtual void Compute_SelfReg_Cycle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation compute self-regulatory currents (hysteresis, accommodation) -- at the cycle time scale
   virtual void Compute_SelfReg_Trial(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
@@ -1186,7 +1186,7 @@ public:
   float		g_i_delta;	// #NO_VIEW #NO_SAVE #EXPERT #DMEM_SHARE_SET_3 #CAT_Activation change in inhibitory netinput received from other units (send_delta mode only)
 
   float		i_thr;		// #NO_SAVE #CAT_Activation inhibitory threshold value for computing kWTA
-  float		spk_amp;	// #CAT_Activation amplitude of spiking output (for depressing synapse activation function)
+  float		spk_amp;	// #CAT_Activation amplitude/probability of spiking output (for synaptic depression function if unit spec depress.on is on)
   float		misc_1;		// #NO_VIEW #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   float		misc_2;		// #NO_VIEW #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   float		misc_3;		// #NO_VIEW #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
@@ -2776,8 +2776,8 @@ class LEABRA_API CtTrialTiming : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra timing parameters for a single stimulus input trial of ct learning algorithm
 INHERITED(taOBase)
 public:
-  int		minus;		// [40] number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
-  int		plus;		// [40] number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
+  int		minus;		// [50] number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
+  int		plus;		// [20] number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
   int		inhib;		// [1] number of cycles to run in the final inhibitory phase -- network can do MINUS_PLUS_PLUS, MINUS_PLUS_MINUS, or MINUS_PLUS_NOTHING for inputs on this phase
 
   int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
