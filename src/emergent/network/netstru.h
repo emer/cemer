@@ -962,7 +962,8 @@ public:
     NEXT,		// Recv from the next layer in network
     PREV,		// Recv from the previous layer in network
     SELF,		// Recv from the same layer
-    CUSTOM 		// Recv from the layer spec'd in the projection
+    CUSTOM, 		// Recv from the layer spec'd in the projection
+    INIT		// #IGNORE used during create to skip err msgs
   };
 
   enum PrjnDirection {	// which direction does this projection come from

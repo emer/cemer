@@ -2421,8 +2421,7 @@ bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
 
 void Projection::Initialize() {
   layer = NULL;
-  //  from = NULL; // now a layerref
-  from_type = PREV;
+  from_type = INIT; //was: PREV;
   con_type = &TA_Connection;
   recvcons_type = &TA_RecvCons;
   sendcons_type = &TA_SendCons;
@@ -2485,7 +2484,6 @@ void Projection::InitLinks() {
 
 void Projection::Copy_(const Projection& cp) {
   from_type = cp.from_type;
-  //  taBase::SetPointer((taBase**)&from, cp.from);
   from = cp.from;
   spec = cp.spec;
   con_type = cp.con_type;
@@ -2519,7 +2517,7 @@ void Projection::UpdateAfterMove_impl(taBase* old_owner) {
 
 void Projection::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(!taMisc::is_loading)
+  if(!(taMisc::is_loading || (from_type == INIT)))
     SetFrom();
 
   if((bool)from) {
@@ -2641,6 +2639,8 @@ void Projection::SetFrom() {
     break;
   case CUSTOM:
     TestWarning(!(bool)from, "SetFrom", "CUSTOM projection and from is NULL");
+    break;
+  case INIT:
     break;
   }
   //  mynet->UpdtAfterNetMod();
@@ -6566,14 +6566,15 @@ Layer* Network::FindMakeLayer(const char* nm, TypeDef* td, bool& nw_itm, const c
   return lay;
 }
 
-Projection* Network::FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* cs, bool& nw_itm) {
+Projection* Network::FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* cs, bool& nw_itm) 
+{
+  nw_itm = false; // default, esp for early return
   Projection* use_prj = NULL;
   int i;
   for(i=0;i<recv->projections.size;i++) {
     Projection* prj = (Projection*)recv->projections[i];
     if(prj->from.ptr() == send) {
       if((ps == NULL) && (cs == NULL)) {
-	nw_itm = false;
 	return prj;
       }
       if((ps) && (prj->spec.spec.ptr() != ps)) {
@@ -6584,13 +6585,13 @@ Projection* Network::FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, 
 	use_prj = prj;
 	break;
       }
-      nw_itm = false;
       return prj;
     }
   }
-  nw_itm = true;
-  if(use_prj == NULL)
+  if (use_prj == NULL) {
+    nw_itm = true;
     use_prj = (Projection*)recv->projections.NewEl(1);
+  }
   use_prj->SetCustomFrom(send);
   if(ps) {
     use_prj->spec.SetSpec(ps);
