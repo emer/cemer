@@ -1169,10 +1169,11 @@ void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md,
   } else {
     forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for G action calls
   }
-
+//NOTE: relaxed, 10/14/08 by BA
   // generic group paste only allows exact type, so we check for each inheriting from the other, which means same
   TypeDef* td = ms->td();
-  bool right_gptype = (td && (td->InheritsFrom(GetTypeDef()) && GetTypeDef()->InheritsFrom(td)));
+//old  bool right_gptype = (td && (td->InheritsFrom(GetTypeDef()) && GetTypeDef()->InheritsFrom(td)));
+  bool right_gptype = (td && (td->InheritsFrom(GetTypeDef())) );
 
   // find relevant ops 
   int op = 0;
