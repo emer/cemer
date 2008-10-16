@@ -1236,6 +1236,7 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraLayer* lay, Leabr
   }
 
   if(depress.on) {		     // synaptic depression
+    u->act_eq = act_range.Clip(new_act); // eq is non-discounted activation!!! solves tons of probs
     new_act *= u->spk_amp;
     u->spk_amp += -new_act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
     if(u->spk_amp < 0.0f) 			u->spk_amp = 0.0f;
@@ -1246,7 +1247,9 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraLayer* lay, Leabr
   if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
     new_act += noise_sched.GetVal(net->cycle) * noise.Gen();
   }
-  u->act = u->act_eq = act_range.Clip(new_act);
+  u->act = act_range.Clip(new_act);
+  if(!depress.on)
+    u->act_eq = u->act;
 }
 
 void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
@@ -1559,7 +1562,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* th
 //////////////////////////////////////////
 
 void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
-  u->trl_sum += u->act;
+  u->trl_sum += u->act;		// note: NOT eq -- raw act val for spiking, and depression
   if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
