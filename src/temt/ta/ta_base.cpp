@@ -562,15 +562,15 @@ TypeDef* taBase::StatTypeDef(int) {
 //	Object managment flags (taBase supports up to 8 flags for basic object mgmt purposes)
 
 bool taBase::HasBaseFlag(int flag) const {
-  return (m_flags & flag);
+  return (base_flags & flag);
 }
 
 void taBase::SetBaseFlag(int flag) {
-  m_flags |= flag;
+  base_flags |= flag;
 }
 
 void taBase::ClearBaseFlag(int flag) {
-  m_flags &= ~flag;
+  base_flags &= ~flag;
 }
 
 int taBase::GetEditableState(int mask) const {
@@ -581,7 +581,7 @@ int taBase::GetEditableState(int mask) const {
 }
 
 int taBase::GetThisEditableState_impl(int mask) const {
-  return m_flags & mask;
+  return base_flags & mask;
 // to extend, call the inherited, and then augment the flags
 // with your own -- you shouldn't make it "less" readonly than
 // than your inherited call returns, but you can make it more
@@ -1458,7 +1458,7 @@ bool taBase::CheckConfig_Gui(bool confirm_success, bool quiet) {
 }
 
 bool taBase::CheckConfig_impl(bool quiet) {
-  int cp_flags = m_flags; 
+  int cp_flags = base_flags; 
   bool this_rval = true;
   CheckThisConfig_impl(quiet, this_rval);
   if (this_rval) {
@@ -1473,13 +1473,13 @@ bool taBase::CheckConfig_impl(bool quiet) {
   } else {
     SetBaseFlag(CHILD_INVALID);
   }
-  if (cp_flags != m_flags)
+  if (cp_flags != base_flags)
     DataChanged(DCR_ITEM_UPDATED);
   return (this_rval && child_rval);
 }
 
 void taBase::ClearCheckConfig() {
-  if (m_flags & INVALID_MASK) {
+  if (base_flags & INVALID_MASK) {
     ClearBaseFlag(INVALID_MASK);
     DataChanged(DCR_ITEM_UPDATED);
   }
@@ -1579,7 +1579,7 @@ void taBase::CopyFromCustom(const taBase* cp_fm) {
 
 void taBase::Copy_impl(const taBase& cp) { // note: not a virtual method
   // just the flags
-  m_flags = (m_flags & ~COPY_MASK) | (cp.m_flags & COPY_MASK);
+  base_flags = (base_flags & ~COPY_MASK) | (cp.base_flags & COPY_MASK);
 }
 
 bool taBase::ChildCanDuplicate(const taBase* chld, bool quiet) const {

@@ -61,6 +61,7 @@ public:
   void 	Destroy()		{ }
   TA_BASEFUNS_NOCOPY(BaseSpec_Group);
 };
+TA_SMART_PTRS(BaseSpec_Group)
 
 class EMERGENT_API BaseSpec : public taNBase {
   // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network ##DEF_CHILD_children ##DEF_CHILDNAME_Sub_Specs ##CAT_Spec base specification class

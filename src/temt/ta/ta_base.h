@@ -461,17 +461,18 @@ public:
   };
   
   enum BaseFlags { // #BITS control flags 
-    THIS_INVALID	= 0x01, // CheckThisConfig_impl has detected a problem
-    CHILD_INVALID	= 0x02, // CheckChildConfig_impl returns issue with a child
-    COPYING		= 0x04, // this object is currently within a Copy function
-    USE_STALE		= 0x08, // calls setStale on appropriate changes; usually set in Initialize
-    BF_READ_ONLY	= 0x10, // this object should be considered readonly by most code (except controlling objs) and by CSS -- note that ro is a property -- use that to query the ro status
-    BF_GUI_READ_ONLY	= 0x20, // a less restrictive form of ro intended to prevent users from modifying an object, but still permit programmatic access; RO ==> GRO
-    DESTROYING		= 0x40, // Set in Destroying at the very beginning of destroy
-    DESTROYED		= 0x80  // set in base destroy (DEBUG only); lets us detect multi destroys
+    THIS_INVALID	= 0x0001, // CheckThisConfig_impl has detected a problem
+    CHILD_INVALID	= 0x0002, // CheckChildConfig_impl returns issue with a child
+    COPYING		= 0x0004, // this object is currently within a Copy function
+    USE_STALE		= 0x0008, // calls setStale on appropriate changes; usually set in Initialize
+    BF_READ_ONLY	= 0x0010, // this object should be considered readonly by most code (except controlling objs) and by CSS -- note that ro is a property -- use that to query the ro status
+    BF_GUI_READ_ONLY	= 0x0020, // a less restrictive form of ro intended to prevent users from modifying an object, but still permit programmatic access; RO ==> GRO
+    DESTROYING		= 0x0040, // Set in Destroying at the very beginning of destroy
+    DESTROYED		= 0x0080,  // set in base destroy (DEBUG only); lets us detect multi destroys
+    NAME_READONLY	= 0x0100  // set to disable editing of name
 #ifndef __MAKETA__
     ,INVALID_MASK	= THIS_INVALID | CHILD_INVALID
-    ,COPY_MASK		= THIS_INVALID | CHILD_INVALID // flags to copy when doing an object copy
+    ,COPY_MASK		= THIS_INVALID | CHILD_INVALID | NAME_READONLY // flags to copy when doing an object copy
     ,EDITABLE_MASK	= BF_READ_ONLY | BF_GUI_READ_ONLY // flags in the Editable group 
 #endif
   };
@@ -529,7 +530,7 @@ public:
   virtual void		InitLinks()		{ };
   // #IGNORE initialize links to other objs and do more elaborate object initialization, called after construction & SetOwner (added to object hierarchy).  ALWAYS CALL PARENT InitLinks!!!
   virtual void		CutLinks();
-  // #IGNORE cut any links to other objs, called upon removal from a group or owner.  ALWAYS CALL PARENT CutLinks!!!
+  // #IGNORE cut any links to other objs, called upon removal from a group or owner.  ALWAYS CALL PARENT CutLinks!!!  MIGHT BE CALLED MULTIPLE TIMES
   virtual void		InitLinks_taAuto(TypeDef* td);
   // #IGNORE automatic TA-based initlinks: calls inherited and goes through only my members & owns them
   virtual void		CutLinks_taAuto(TypeDef* td);
@@ -541,11 +542,6 @@ public:
   void 			unRegister()
   { CheckDestroyed(); if(!taMisc::not_constr) GetTypeDef()->unRegister((void*)this); }
   // #IGNORE non-virtual, called in destructors to unregister token in token list
-  void			Initialize()		{ refn_flags = 0; }
-  // #IGNORE constructor implementation to initialize memberes of class.  every class should define this initializer.  cannot refer to anything outside of the object itself (use InitLinks for when it gets added into the object hierarchy)
-  void			Destroy();
-  // #IGNORE destructor implementation -- free any allocated memory and reset pointers to null, etc.  MIGHT BE CALLED MULTIPLE TIMES -- set to null and check for null!
-
   virtual void		SetTypeDefaults();
   // #IGNORE initialize modifiable default initial values stored with the typedef -- see TypeDefault object in ta_defaults.  currently not used; was called in taBase::Own
   virtual void		SetTypeDefaults_impl(TypeDef* ttd, TAPtr scope); // #IGNORE
@@ -594,7 +590,7 @@ public:
   void			ChangeBaseFlag(int flag, bool set)
     {if (set) SetBaseFlag(flag); else ClearBaseFlag(flag);}
   // #CAT_ObjectMgmt sets or clears the flag(s)
-  int			baseFlags() const {return m_flags;}
+  int			baseFlags() const {return base_flags;}
   // #IGNORE flag values; see also HasBaseFlag
   inline bool		useStale() const {return HasBaseFlag(USE_STALE);}
     // #IGNORE
@@ -1340,19 +1336,31 @@ public:
   { }
 #endif
 
-protected:
+public:
   ///////////////////////////////////////////////////////////////////////////
   //		Misc Impl stuff
 
-#ifndef __MAKETA__
-  union {
-  int			refn_flags; // for efficient initialization
-  struct {
-  short			refn;	// number of references to this object
-  mutable short		m_flags;
-  };
-  };
+#ifdef __MAKETA__
+  BaseFlags		base_flags; // #NO_SHOW #NO_SAVE #READ_ONLY fake base_flags for ta system, flags are actually in the lower short
+#else
+# if    (TA_BYTE_ORDER == TA_BIG_ENDIAN)
+  protected: short	refn;	// number of references to this object
+  public: mutable short	base_flags;
+# define refn_base refn
+# elif (TA_BYTE_ORDER == TA_LITTLE_ENDIAN)
+  mutable short		base_flags;
+  protected: short	refn;	// number of references to this object
+# define refn_base base_flags
+# else
+#   error "undefined byte order"
+# endif
 #endif
+private: 
+// Initialize and Destroy are always private because they should only be called in ctor/dtor
+  void			Initialize() { *reinterpret_cast<int*>(&refn_base) = 0; }
+  // #IGNORE constructor implementation to initialize members of class.  every class should define this initializer.  cannot refer to anything outside of the object itself (use InitLinks for when it gets added into the object hierarchy)
+  void			Destroy();
+  // #IGNORE destructor implementation -- free any allocated memory and reset pointers to null, etc. -- set to null and check for null!
 
 };
 
@@ -1646,7 +1654,7 @@ private:
 class TA_API taNBase : public taOBase { // #NO_TOKENS Named, owned base class of taBase
 INHERITED(taOBase)
 public:
-  String		name;	// name of the object
+  String		name; // #CONDEDIT_OFF_base_flags:NAME_READONLY name of the object
 
   bool 		SetName(const String& nm)    	{ name = nm; return true; }
   String	GetName() const			{ return name; }
@@ -1753,7 +1761,7 @@ typedef taPtrList_ta_base inherited_taPtrList;
 public:
   static MemberDef* find_md;	// #HIDDEN #NO_SHOW_TREE #NO_SAVE return value for findmember of data
 
-  String        name;           // name of the object 
+  String        name;           // #CONDEDIT_OFF_base_flags:NAME_READONLY name of the object 
   TypeDef*	el_base;	// #EXPERT #NO_SHOW_TREE #READ_ONLY_GUI #NO_SAVE Base type for objects in group
   TypeDef* 	el_typ;		// #TYPE_ON_el_base #NO_SHOW_TREE Default type for objects in group
   int		el_def;		// #EXPERT Index of default element in group
