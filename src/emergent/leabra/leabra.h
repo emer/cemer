@@ -534,6 +534,7 @@ private:
   void 	Initialize();
   void	Destroy()		{ };
 };
+TA_SMART_PTRS(LeabraConSpec)
 
 class LEABRA_API LeabraBiasSpec : public LeabraConSpec {
   // Leabra bias-weight connection specs (bias wts are a little bit special)
@@ -1114,6 +1115,7 @@ private:
   void 	Initialize();
   void	Destroy()		{ };
 };
+TA_SMART_PTRS(LeabraUnitSpec)
 
 class LEABRA_API VChanBasis : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER basis variables for vchannels
@@ -2121,6 +2123,7 @@ private:
   void	Initialize();
   void	Destroy()		{ CutLinks(); }
 };
+TA_SMART_PTRS(LeabraLayer)
 
 class LEABRA_API LeabraUnit_Group : public Unit_Group, public LeabraInhib {
   // #STEM_BASE ##CAT_Leabra for independent subgroups of competing units within a single layer

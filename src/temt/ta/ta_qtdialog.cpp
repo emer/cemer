@@ -1988,7 +1988,7 @@ void taiEditDataHost::Constr_Data_Labels_impl(int& idx, Member_List* ms,
   String desc;
   for (int i = 0; i < ms->size; ++i) {
     MemberDef* md = ms->FastEl(i);
-    
+
     // Create data widget
     taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
     dl->Add(mb_dat);
