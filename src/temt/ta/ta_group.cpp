@@ -65,6 +65,7 @@ bool taSubGroup::Transfer(taBase* it) {
 //      taGroup_impl  	  //
 ////////////////////////////
 
+bool taGroup_impl::def_nw_item;
 
 void taGroup_impl::Initialize() {
   leaves = 0;
@@ -457,11 +458,14 @@ taBase* taGroup_impl::FindLeafType_(TypeDef* it, int& idx) const {
   return NULL;
 }
 
-TAGPtr taGroup_impl::FindMakeGpName(const String& nm, TypeDef* typ) {
+TAGPtr taGroup_impl::FindMakeGpName(const String& nm, TypeDef* typ, bool& nw_item) {
   TAGPtr rval = gp.FindName(nm);
-  if(rval) return rval;
-  rval = NewGp_(1, typ);
-  rval->SetName(nm);
+  if (rval) {
+    nw_item = false;
+    return rval;
+  }
+  rval = NewGp_gui(1, typ, nm);
+  nw_item = true;
   return rval;
 }
 

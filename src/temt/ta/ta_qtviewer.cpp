@@ -8048,6 +8048,17 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     swapChildren(n1_idx, n2_idx); 
   }
     break;
+  case DCR_GROUPS_SORTED: {	// no ops
+    int gp0_idx = indexOfChild(last_list_items_node) + 1; // valid if llin=NULL
+    int nd_idx; // index of the node
+    taGroup_impl* gp = this->data(); // cache
+    for (int i = 0; i < gp->gp.size; ++i) {
+      TAPtr tab = (TAPtr)gp->FastGp_(i);
+      FindChildForData(tab, nd_idx);
+      if ((gp0_idx+i) == nd_idx) continue; // in right place already
+      moveChild(nd_idx, (gp0_idx+i));
+    }
+  }  break;
   default: return; // don't update names
   }
   UpdateGroupNames();

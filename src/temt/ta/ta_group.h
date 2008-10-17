@@ -67,6 +67,7 @@ class TA_API taGroup_impl : public taList_impl {
   // #INSTANCE #NO_UPDATE_AFTER #STEM_BASE implementation of a group
 INHERITED(taList_impl)
 public:
+  static bool	def_nw_item; // #IGNORE default
   virtual TAGPtr GetSuperGp_();			// #IGNORE Parent super-group, or NULL
   virtual void	 UpdateLeafCount_(int no); 	// #IGNORE updates the leaves count
 
@@ -173,7 +174,8 @@ public:
   virtual taBase* FindLeafNameContains_(const String& it, int& idx=no_idx) const;	// #IGNORE
   virtual taBase* FindLeafType_(TypeDef* it, int& idx=no_idx) const;	// #IGNORE
 
-  virtual TAGPtr FindMakeGpName(const String& gp_nm, TypeDef* typ=NULL);
+  virtual TAGPtr FindMakeGpName(const String& gp_nm, TypeDef* typ=NULL,
+    bool& nw_item=def_nw_item);
   // #IGNORE find subgroup of given name; if it doesn't exist, then make it (using type if specified, else default type for subgroup)
 
   ////////////////////////////////////////////////
