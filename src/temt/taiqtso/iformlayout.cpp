@@ -45,7 +45,9 @@ int iFormLayout::GetIndexFromRowRole(int row, ItemRole role) {
   int trow;
   ItemRole trole;
   getItemPosition(index, &trow, &trole);
+  if (trow < 0) return -1; // not supposed to happen...
   while ((index >= 0) && ((row != trow) || (role != trole))) {
+    if (trow < 0) return -1; // not supposed to happen...
     index++;
     getItemPosition(index, &trow, &trole);
   }
@@ -91,13 +93,13 @@ void iFormLayout::setVisible(int row, bool val) {
     setLayout(row, FieldRole, field);
   } else { // going invisible
     int index = GetIndexFromRowRole(row, LabelRole);
-    QLayoutItem* it = takeAt(index);
+    QLayoutItem* it = (index >= 0) ? takeAt(index) : NULL;
     if (it) {
       label = it->widget();
       delete it;
     }
     index = GetIndexFromRowRole(row, FieldRole);
-    it = takeAt(index);
+    it = (index >= 0) ? takeAt(index) : NULL;
     if (it) {
       field = it->layout();
       // unparent, otherwise complains when we re-add 
