@@ -92,9 +92,11 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 void XCalLearnSpec::Initialize() {
   lrn_var = XCAL_AVGSR;
   p_boost = .7f;
-  p_thr_gain = 1.2f;
+  p_thr_gain = 1.9f;
   d_rev = .15;
-  d_gain = 1.5;
+  d_gain = 2.0;
+  rnd_min_avg = 0.01f;
+  rnd_var = 0.1f;
 
   d_rev_ratio = (1.0f - d_rev) / d_rev;
   p_boost_c = 1.0f - p_boost;
@@ -352,10 +354,10 @@ void LeabraConSpec::GraphXCalFun(DataTable* graph_data, float thr_p) {
   float x;
   for(x = 0.0f; x <= 1.0f; x += .01f) {
     cn.sravg = x;
-    float y = C_Compute_Err_CtLeabraXCAL(&cn, x, 1.0f, 1.0f, x, 1.0f, thr_p, thr_p * xcal.d_rev);
+    C_Compute_dWt_CtLeabraXCAL(&cn, x, 1.0f, x, 1.0f, thr_p, thr_p * xcal.d_rev);
     graph_data->AddBlankRow();
     sravg->SetValAsFloat(x, -1);
-    dwt->SetValAsFloat(y, -1);
+    dwt->SetValAsFloat(cn.dwt, -1);
   }
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();

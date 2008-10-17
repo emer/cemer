@@ -199,16 +199,17 @@ class LEABRA_API XCalLearnSpec : public taOBase {
 INHERITED(taOBase)
 public:
   enum LearnVar {
-    XCAL_AVGSR,			// learn using xcal rule, based on separate product of unit-level averages: <s><r>
-    XCAL_SRAVG,			// learn using xcal rule, based on connection-level sravg value: <sr>
+    XCAL_AVGSR,			// learn using xcal rule, based on separate product of unit-level averages: <s><r> (faster and seemingly quite effective than <sr> = sravg)
     CAL,			// learn using standard CtLeabra_CAL rule (for comparision, esp of output layers)
   };
 
   LearnVar	lrn_var;	// #DEF_XCAL_AVGSR learning rule variant to use
   float		p_boost;	// #DEF_0.7 #CONDEDIT_OFF_lrn_var:CAL plus-phase activation boost, simulating the effects of dopamine on amplifying the learning signals: adds this weighted proportion of the act_p plus phase values to the overall sravg signal (equivalent to making the plus phase longer -- more efficient to use this value)
-  float		p_thr_gain;	// #DEF_1.2 #CONDEDIT_OFF_lrn_var:CAL multiplier on recv avg_trl_avg to produce p_thr value: higher values = more sparse strong weights; lower values = more distributed 
+  float		p_thr_gain;	// #DEF_1.9 #CONDEDIT_OFF_lrn_var:CAL multiplier on recv avg_trl_avg to produce p_thr value: higher values = more sparse strong weights; lower values = more distributed 
   float		d_rev;		// #DEF_0.15 #CONDEDIT_OFF_lrn_var:CAL proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
-  float		d_gain;		// #DEF 1.5 #CONDEDIT_OFF_lrn_var:CAL multiplier on LTD values relative to LTP values
+  float		d_gain;		// #DEF 2.0 #CONDEDIT_OFF_lrn_var:CAL multiplier on LTD values relative to LTP values
+  float		rnd_min_avg;	// #CONDEDIT_OFF_lrn_var:CAL minimum avg_trl_avg value, below which random values are added to weights to drive exploration
+  float		rnd_var;	// variance (range) for uniform random noise added to weights when avg_trl_avg < rnd_min_avg (noise is then multiplied by lrate)
 
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- muliplication factor in learning rule
   float		p_boost_c;	// #HIDDEN #READ_ONLY 1-p_boost -- complement weighting of regular sravg
@@ -449,13 +450,18 @@ public:
   /////////////////////////////////////
   // CtLeabraXCAL code
 
-  inline float 	C_Compute_Err_CtLeabraXCAL(LeabraCon* cn, float ru_act_p, float su_act_p,
-					   float avg_nrm, float ru_trl_avg, float su_trl_avg,
+  inline void 	C_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, float ru_act_p, float su_act_p,
+					   float ru_trl_avg, float su_trl_avg,
 					   float thr_p, float thr_p_d_rev);
   // #CAT_Learning compute contrastive attractor learning (XCAL)
 
   inline virtual void 	Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru);
   // #CAT_Learning CtLeabra/XCAL weight changes
+
+  inline void		C_Compute_dWt_Rnd(LeabraCon* cn, float rnd_var);
+  // #CAT_Learning random weight changes: connection level
+  inline void		Compute_dWt_Rnd(LeabraRecvCons* cg, LeabraUnit* ru, float rnd_var);
+  // #CAT_Learning random weight changes
 
   inline void	C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn, LeabraRecvCons* cg, 
 			LeabraUnit* ru, LeabraUnit* su, LeabraUnitSpec* rus);
@@ -2526,20 +2532,12 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraCAL(LeabraRecvCons* cg, Leabr
 //////////////////////////////////////////////////////////////////////////////////
 //     Computing dWt: CtLeabra_XCAL
 
-inline float LeabraConSpec::C_Compute_Err_CtLeabraXCAL(LeabraCon* cn, 
-						       float ru_act_p, float su_act_p,
-						       float avg_nrm,
-						       float ru_trl_avg, float su_trl_avg,
-						       float thr_p, float thr_p_d_rev) {
-  if(xcal.lrn_var == XCalLearnSpec::CAL)
-    return (ru_act_p * su_act_p) - (avg_nrm * cn->sravg);
-
-  float srval;
-  if(xcal.lrn_var == XCalLearnSpec::XCAL_SRAVG)
-    srval = avg_nrm * cn->sravg;
-  else				// XCAL_AVGSR
-    srval = ru_trl_avg * su_trl_avg;
-  srval = (xcal.p_boost * ru_act_p * su_act_p) + (xcal.p_boost_c * srval);
+inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, 
+						      float ru_act_p, float su_act_p,
+						      float ru_trl_avg, float su_trl_avg,
+						      float thr_p, float thr_p_d_rev) {
+  float srval = (xcal.p_boost * ru_act_p * su_act_p) +
+    (xcal.p_boost_c * ru_trl_avg * su_trl_avg);
 
   float err;
   if(srval >= thr_p)
@@ -2548,55 +2546,53 @@ inline float LeabraConSpec::C_Compute_Err_CtLeabraXCAL(LeabraCon* cn,
     err = xcal.d_gain * (srval - thr_p);
   else
     err = -xcal.d_gain * srval * xcal.d_rev_ratio;
-  return err;
+
+  cn->dwt += cur_lrate * err;
 }
 
 
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-  // need to do recv layer here because savg_cor.thresh is only here.. could optimize this later
-  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-  if(rlay->acts_p.avg < savg_cor.thresh) { // if layer not active in attractor phase, no learn
-    Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
+  if(xcal.lrn_var == XCalLearnSpec::CAL) {
+    Compute_dWt_CtLeabraCAL(cg, ru);
+    return;
   }
-  LeabraLayer* lfm = (LeabraLayer*)cg->prjn->from.ptr();
-  if(lfm->acts_p.avg < savg_cor.thresh) {
-    Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
-  }
-  if(ru->in_subgp) {
-    LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
-    if(ogp->acts_p.avg < savg_cor.thresh) {
-      Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
-    }
-  }
+  // note: not doing all the checks for layers/groups inactive in plus phase
 
-  // only no hebb condition supported!!
-
+  if(ru->avg_trl_avg < xcal.rnd_min_avg) {
+    Compute_dWt_Rnd(cg, ru, xcal.rnd_var);
+    return;
+  }
+  
   float thr_p = xcal.p_thr_gain * ru->avg_trl_avg;
   float thr_p_d_rev = thr_p * xcal.d_rev;
 
   for(int i=0; i<cg->cons.size; i++) {
     LeabraUnit* su = (LeabraUnit*)cg->Un(i);
     LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-    if(su->in_subgp) {
-      LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
-      if(ogp->acts_p.avg < savg_cor.thresh) {
-	cn->sravg = 0.0f;	continue; // critical: must reset!
-      }
-    }
-    C_Compute_dWt_NoHebb(cn, ru, 
-			 C_Compute_Err_CtLeabraXCAL(cn, ru->act_p, su->act_p,
-						    rlay->sravg_nrm,
-						    ru->trl_avg, su->trl_avg,
-						    thr_p, thr_p_d_rev));
-    cn->sravg = 0.0f;
+    C_Compute_dWt_CtLeabraXCAL(cn, ru->act_p, su->act_p,
+			       ru->trl_avg, su->trl_avg,
+			       thr_p, thr_p_d_rev);
   }
 }
+
+inline void LeabraConSpec::C_Compute_dWt_Rnd(LeabraCon* cn, float rnd_var) {
+  cn->dwt += cur_lrate * rnd_var * Random::ZeroOne();
+}
+
+inline void LeabraConSpec::Compute_dWt_Rnd(LeabraRecvCons* cg, LeabraUnit* ru, float rnd_var) {
+  for(int i=0; i<cg->cons.size; i++) {
+    LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+    C_Compute_dWt_Rnd(cn, rnd_var);
+  }
+}
+
 
 /////////////////////////////////////
 //	Compute_Weights_CtLeabraXCAL
 
 inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn, LeabraRecvCons* cg,
-						       LeabraUnit*, LeabraUnit*, LeabraUnitSpec*)
+							  LeabraUnit* ru, LeabraUnit* su,
+							  LeabraUnitSpec* rus)
 {
   // do soft bounding now so it can include actreg, agg from dm, etc
   if(lmix.err_sb) {
