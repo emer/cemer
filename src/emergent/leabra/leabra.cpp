@@ -1413,6 +1413,9 @@ void LeabraUnitSpec::Compute_ActTimeAvg(LeabraUnit* u, LeabraLayer* lay, LeabraI
   // (i.e., not if net->train_mode == TEST)
   if(lay->sravg_sum > 0.0f) {
     u->trl_avg = u->trl_sum / lay->sravg_sum;
+    if(act_fun == SPIKE) {
+      u->trl_avg *= spike.eq_gain; // try to renorm into normal 0-1 range
+    }
     u->trl_sum = 0.0f;
     u->avg_trl_avg += xcal.avg_dt * (u->trl_avg - u->avg_trl_avg);
   }
