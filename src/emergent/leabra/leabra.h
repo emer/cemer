@@ -565,6 +565,7 @@ private:
   void 	Initialize();
   void	Destroy()		{ };
 };
+TA_SMART_PTRS(LeabraBiasSpec)
 
 class LEABRA_API LeabraRecvCons : public RecvCons {
   // #STEM_BASE ##CAT_Leabra Leabra receiving connection group
