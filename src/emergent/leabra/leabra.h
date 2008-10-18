@@ -830,8 +830,8 @@ class LEABRA_API XCalActSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCal activation specs
 INHERITED(taOBase)
 public:
-  float		avg_dt;		// #DEF_0.01 time constant for integrating avg_trl_avg
-  float		avg_init;	// #DEF_0.25 initial value for avg_trl_avg 
+  float		avg_dt;		// #DEF_0.02 time constant for integrating avg_trl_avg
+  float		avg_init;	// #DEF_0.15 initial value for avg_trl_avg 
   int		n_avg_only_epcs; // #DEF_2 number of epochs during which time only an average activation value is accumulated -- no learning
 
   SIMPLE_COPY(XCalActSpec);
