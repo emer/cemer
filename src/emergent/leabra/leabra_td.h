@@ -214,7 +214,7 @@ public:
     }
   }
 
-  // currently just same as std
+  // currently just same as std, except wt is lin_wt
   inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
     LeabraTdUnit* lru = (LeabraTdUnit*)ru;
     Compute_SAvgCor(cg, lru);
@@ -222,11 +222,9 @@ public:
       for(int i=0; i<cg->cons.size; i++) {
 	LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	float lin_wt = GetLinFmWt(cn->wt);
 	C_Compute_dWt(cn, lru, 
-		      C_Compute_Hebb(cn, cg, lin_wt, lru->act_p, su->p_act_p),
-		      C_Compute_Err(cn, lin_wt, lru, su));  
-	cn->sravg = 0.0f;
+		      C_Compute_Hebb(cn, cg, cn->wt, lru->act_p, su->p_act_p),
+		      C_Compute_Err(cn, cn->wt, lru, su));  
       }
     }
   }

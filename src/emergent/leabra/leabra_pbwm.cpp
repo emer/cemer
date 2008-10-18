@@ -1294,15 +1294,7 @@ void PFCLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
     LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
     LeabraUnit_Group* outgp = (LeabraUnit_Group*)pfcout_lay->units.gp[mg];
 
-    if(outgp->misc_state2 == PFCGateSpec::GATE_NOGO) {
-      if(net->learn_rule != LeabraNetwork::LEABRA_CHL) { // need to reset
-	LeabraUnit* u;
-	taLeafItr i;
-	FOR_ITR_EL(LeabraUnit, u, ugp->, i)
-	  u->Init_SRAvg(lay, net);
-      }
-    }
-    else {
+    if(outgp->misc_state2 != PFCGateSpec::GATE_NOGO) {
       LeabraUnit* u;
       taLeafItr i;
       FOR_ITR_EL(LeabraUnit, u, ugp->, i)
@@ -1311,11 +1303,7 @@ void PFCLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
   }
 
   AdaptKWTAPt(lay, net);
-  lay->sravg_sum = 0.0f;
 }
-
-
-
 
 //////////////////////////////////
 //	PFCOut Layer Spec	//

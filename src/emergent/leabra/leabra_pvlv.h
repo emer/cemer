@@ -82,7 +82,6 @@ public:
 	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
 	  C_Compute_dWt_NoHebb(cn, ru, C_Compute_Err_Delta(cn, ru, su));  
 	}
-	cn->sravg = 0.0f;
       }
     }
   }
@@ -184,7 +183,6 @@ public:
 	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
 	  C_Compute_dWt_NoHebb(cn, ru, C_Compute_Err_Delta(cn, ru, su));  
 	}
-	cn->sravg = 0.0f;
       }
     }
   }
@@ -244,7 +242,6 @@ public:
 	  C_Compute_dWt_NoHebb(cn, ru, C_Compute_Err_Delta(cn, ru, su));  
 	  C_Depress_Wt((TrialSynDepCon*)cn, ru, su);
 	}
-	cn->sravg = 0.0f;
       }
     }
   }

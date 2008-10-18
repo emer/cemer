@@ -878,18 +878,12 @@ public:
   inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
     // need to do recv layer here because savg_cor.thresh is only here.. could optimize this later
     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-    if(rlay->acts_p.avg < savg_cor.thresh) { // if layer not active in attractor phase, no learn
-      Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
-    }
+    if(rlay->acts_p.avg < savg_cor.thresh) return;
     LeabraLayer* lfm = (LeabraLayer*)cg->prjn->from.ptr();
-    if(lfm->acts_p.avg < savg_cor.thresh) {
-      Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
-    }
+    if(lfm->acts_p.avg < savg_cor.thresh) return;
     if(ru->in_subgp) {
       LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
-      if(ogp->acts_p.avg < savg_cor.thresh) {
-	Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
-      }
+      if(ogp->acts_p.avg < savg_cor.thresh) return;
     }
 
     // only no hebb condition supported!!
@@ -901,16 +895,13 @@ public:
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       if(su->in_subgp) {
 	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
-	if(ogp->acts_p.avg < savg_cor.thresh) {
-	  cn->sravg = 0.0f;	continue; // critical: must reset!
-	}
+	if(ogp->acts_p.avg < savg_cor.thresh) continue; // critical: must reset!
       }
       LeabraCon* sbwt = (LeabraCon*)su->bias.Cn(0);
       C_Compute_dWt_NoHebb(cn, ru, 
 			   C_Compute_Err_CtLeabraCAL(cn, ru->act_p, su->act_p,
 						     rlay->sravg_nrm, rbwt, sbwt,
 						     ru->act_m, su->act_m, ru->act_avg));
-      cn->sravg = 0.0f;
     }
   }
 

@@ -62,16 +62,10 @@ void LeabraTdUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwor
   LeabraTdUnit* lu = (LeabraTdUnit*)u;
   if((lu->act_p <= opt_thresh.learn) && (lu->act_m <= opt_thresh.learn)) {
     if((lu->p_act_p <= opt_thresh.learn) && (lu->p_act_m <= opt_thresh.learn)) {
-      if(net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) {
-	Init_SRAvg(u, lay, net);
-      }
       return;
     }
   }
   if(lay->phase_dif_ratio < opt_thresh.phase_dif) {
-    if(net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) {
-      Init_SRAvg(u, lay, net);
-    }
     return;
   }
   Compute_dWt_impl(u, lay, net);

@@ -479,6 +479,9 @@ public:
   inline virtual void 	B_Compute_SRAvg(LeabraCon* cn, LeabraUnit* ru);
   // #CAT_Learning compute bias weight sender-receiver average (actually just receiver)
 
+  inline virtual void 	B_Init_SRAvg(LeabraCon* cn, LeabraUnit* ru);
+  // #CAT_Learning initialize bias weight sender-receiver average (actually just receiver)
+
   inline virtual void	B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
 						  LeabraLayer* rlay);
   // #CAT_Learning compute bias weight change for netin model of bias weight
@@ -2084,6 +2087,9 @@ public:
   void 	Compute_SRAvg(LeabraNetwork* net) 
   { ((LeabraLayerSpec*)spec.SPtr())->Compute_SRAvg(this, net); }
   // #CAT_Learning compute sending-receiving activation product averages (CtLeabra_CAL)
+  void 	Init_SRAvg(LeabraNetwork* net) 
+  { ((LeabraLayerSpec*)spec.SPtr())->Init_SRAvg(this, net); }
+  // #CAT_Learning initialize sending-receiving activation product averages (CtLeabra_CAL)
 
   void	Compute_dWt_FirstPlus(LeabraNetwork* net)
   { ((LeabraLayerSpec*)spec.SPtr())->Compute_dWt_FirstPlus(this, net); }
@@ -2389,18 +2395,12 @@ inline void LeabraConSpec::C_Compute_dWt_NoHebb(LeabraCon* cn, LeabraUnit* ru, f
 inline void LeabraConSpec::Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
   // need to do recv layer here because savg_cor.thresh is only here.. could optimize this later
   LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-  if(rlay->acts_p.avg < savg_cor.thresh) { // if layer not active in attractor phase, no learn
-    Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
-  }
+  if(rlay->acts_p.avg < savg_cor.thresh) return; // if layer not active in attractor phase, no learn
   LeabraLayer* lfm = (LeabraLayer*)cg->prjn->from.ptr();
-  if(lfm->acts_p.avg < savg_cor.thresh) {
-    Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
-  }
+  if(lfm->acts_p.avg < savg_cor.thresh) return;
   if(ru->in_subgp) {
     LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
-    if(ogp->acts_p.avg < savg_cor.thresh) {
-      Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
-    }
+    if(ogp->acts_p.avg < savg_cor.thresh) return;
   }
 
   if(lmix.hebb == 0.0f) {	// hebb is sufficiently infrequent to warrant optimizing
@@ -2409,14 +2409,11 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUni
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       if(su->in_subgp) {
 	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
-	if(ogp->acts_p.avg < savg_cor.thresh) {
-	  cn->sravg = 0.0f;	continue; // critical: must reset!
-	}
+	if(ogp->acts_p.avg < savg_cor.thresh) continue;
       }
       C_Compute_dWt_NoHebb(cn, ru, 
 			   C_Compute_Err_CtLeabraCAL(cn, ru->act_p, su->act_p,
 						     rlay->sravg_nrm));
-      cn->sravg = 0.0f;
     }
   }
   else {
@@ -2426,14 +2423,11 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUni
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       if(su->in_subgp) {
 	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
-	if(ogp->acts_p.avg < savg_cor.thresh) {
-	  cn->sravg = 0.0f;	continue; // critical: must reset!
-	}
+	if(ogp->acts_p.avg < savg_cor.thresh) continue;
       }
       C_Compute_dWt(cn, ru, 	// note: cn->wt is linear -- no wt sig..
 		    C_Compute_Hebb(cn, cg, cn->wt, ru->act_p, su->act_p),
 		    C_Compute_Err_CtLeabraCAL(cn, ru->act_p, su->act_p, rlay->sravg_nrm));
-      cn->sravg = 0.0f;
     }
   }
 }
@@ -2640,35 +2634,24 @@ inline void LeabraConSpec::B_Compute_SRAvg(LeabraCon* cn, LeabraUnit* ru) {
   cn->sravg += ru->act_eq;
 }
 
+inline void LeabraConSpec::B_Init_SRAvg(LeabraCon* cn, LeabraUnit* ru) {
+  cn->sravg = 0.0f;
+}
+
 inline void LeabraConSpec::B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
 						      LeabraLayer* rlay) {
-  if(rlay->acts_p.avg < savg_cor.thresh) {
-    cn->sravg = 0.0f;  return; // if not active in attractor phase, no learn
-  }
+  if(rlay->acts_p.avg < savg_cor.thresh) return; // if not active in attractor phase, no learn
   if(ru->in_subgp) {
     LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
-    if(ogp->acts_p.avg < savg_cor.thresh) {
-      cn->sravg = 0.0f;  return;
-    }
+    if(ogp->acts_p.avg < savg_cor.thresh) return;
   }
 
   float err = ru->act_p - (rlay->sravg_nrm * cn->sravg);
   cn->dwt += cur_lrate * err;
-  cn->sravg = 0.0f;
 }
 
 inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru,
 						      LeabraLayer* rlay) {
-  if(rlay->acts_p.avg < savg_cor.thresh) {
-    cn->sravg = 0.0f;  return; // if not active in attractor phase, no learn
-  }
-  if(ru->in_subgp) {
-    LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
-    if(ogp->acts_p.avg < savg_cor.thresh) {
-      cn->sravg = 0.0f;  return;
-    }
-  }
-
   float err;
   if(xcal.lrn_var == XCalLearnSpec::CAL)
     err = ru->act_p - (rlay->sravg_nrm * cn->sravg);
@@ -2685,7 +2668,6 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit*
       err = -xcal.d_gain * ru->trl_avg * xcal.d_rev_ratio;
   }
   cn->dwt += cur_lrate * err;
-  cn->sravg = 0.0f;
 }
 
 
@@ -2702,34 +2684,19 @@ inline void LeabraBiasSpec::B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* r
 
 inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
 						      LeabraLayer* rlay) {
-  if(rlay->acts_p.avg < savg_cor.thresh) {
-    cn->sravg = 0.0f;  return; // if not active in attractor phase, no learn
-  }
+  if(rlay->acts_p.avg < savg_cor.thresh) return; // if not active in attractor phase, no learn
   if(ru->in_subgp) {
     LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
-    if(ogp->acts_p.avg < savg_cor.thresh) {
-      cn->sravg = 0.0f;  return;
-    }
+    if(ogp->acts_p.avg < savg_cor.thresh) return;
   }
 
   float err = ru->act_p - (rlay->sravg_nrm * cn->sravg);
   if(fabsf(err) >= dwt_thresh)
     cn->dwt += cur_lrate * err;
-  cn->sravg = 0.0f;
 }
 
 inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru,
 						      LeabraLayer* rlay) {
-  if(rlay->acts_p.avg < savg_cor.thresh) {
-    cn->sravg = 0.0f;  return; // if not active in attractor phase, no learn
-  }
-  if(ru->in_subgp) {
-    LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
-    if(ogp->acts_p.avg < savg_cor.thresh) {
-      cn->sravg = 0.0f;  return;
-    }
-  }
-
   float err;
   if(xcal.lrn_var == XCalLearnSpec::CAL)
     err = ru->act_p - (rlay->sravg_nrm * cn->sravg);
@@ -2747,7 +2714,6 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
   }
   if(fabsf(err) >= dwt_thresh)
     cn->dwt += cur_lrate * err;
-  cn->sravg = 0.0f;
 }
 
 
@@ -2977,6 +2943,8 @@ public:
 
   virtual void 	Compute_SRAvg();
   // #CAT_Learning compute sending-receiving activation coproduct averages (CtLeabra_CAL)
+  virtual void 	Init_SRAvg();
+  // #CAT_Learning initialize sending-receiving activation coproduct averages (CtLeabra_CAL)
 
   virtual void	Cycle_Run();	// #CAT_Cycle compute one cycle of updating: netinput, inhibition, activations
 
