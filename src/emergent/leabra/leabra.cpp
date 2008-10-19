@@ -1620,8 +1620,8 @@ void LeabraUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork*
 	return;
     }
     else {
-    if((u->act_p <= opt_thresh.learn) && (u->act_m <= opt_thresh.learn))
-      return;
+      if((u->act_p <= opt_thresh.learn) && (u->act_m <= opt_thresh.learn))
+	return;
     }
   }
   else {

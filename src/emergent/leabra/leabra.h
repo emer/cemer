@@ -749,7 +749,7 @@ public:
   float		send;		// #DEF_0.1 don't send activation when act <= send -- greatly speeds processing
   float		delta;		// #DEF_0.005 don't send activation changes until they exceed this threshold: only for when LeabraNetwork::send_delta is on!
   float		learn;		// #DEF_0.01 don't learn on recv unit weights when both phase acts <= learn
-  bool		lrn_trl_avg;	// use the trl_avg value for learn threshold, instead of the final minus and plus phase activations -- gets all transiently activated guys
+  bool		lrn_trl_avg;	// use the trl_avg value for learn threshold, instead of the final minus and plus phase activations -- gets all transiently activated guys (only used for CtLeabra variants)
   float		phase_dif;	// #DEF_0 don't learn when +/- phase difference ratio (- / +) < phase_dif (.8 when used, but off by default)
 
   void 	Defaults()	{ Initialize(); }
