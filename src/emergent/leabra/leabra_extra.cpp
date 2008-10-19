@@ -888,7 +888,6 @@ void ScalarValLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) 
 	      Compute_dWt_Ugp(ugp, lay, net);
 	      );
   AdaptKWTAPt(lay, net);
-  lay->sravg_sum = 0.0f;
 }
 
 float ScalarValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals) {
@@ -1760,7 +1759,6 @@ void TwoDValLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
 	      Compute_dWtUgp(ugp, lay, net);
 	      );
   AdaptKWTAPt(lay, net);
-  lay->sravg_sum = 0.0f;
 }
 
 float TwoDValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals) {

@@ -5029,6 +5029,7 @@ void LeabraNetwork::Trial_Init() {
     Init_Acts();
   else if(trial_init == DECAY_STATE)
     DecayState();
+  Init_SRAvg();			// 
 }
 
 void LeabraNetwork::Trial_UpdatePhase() {
@@ -5095,7 +5096,6 @@ void LeabraNetwork::Trial_UpdatePhase() {
 void LeabraNetwork::Trial_Final() {
   EncodeState();
   Compute_SelfReg_Trial();
-  Init_SRAvg();			// do this once at end of trial
 }
 
 void LeabraNetwork::Compute_ExtRew() {

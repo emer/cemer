@@ -252,7 +252,6 @@ void PViLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
 //   }
   Compute_PVPlusPhaseDwt(lay, net);
   AdaptKWTAPt(lay, net);
-  lay->sravg_sum = 0.0f;
 }
 
 void PViLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net) {
@@ -616,7 +615,6 @@ void LVeLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
 //   }
   Compute_LVPlusPhaseDwt(lay, net);
   AdaptKWTAPt(lay, net);
-  lay->sravg_sum = 0.0f;
 }
 
 void LVeLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net) {
@@ -794,7 +792,6 @@ void NVLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
 //   }
   Compute_NVPlusPhaseDwt(lay, net);
   AdaptKWTAPt(lay, net);
-  lay->sravg_sum = 0.0f;
 }
 
 void NVLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net) {
