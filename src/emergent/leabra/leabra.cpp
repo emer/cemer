@@ -518,6 +518,7 @@ void OptThreshSpec::Initialize() {
   send = .1f;
   delta = 0.005f;
   learn = 0.01f;
+  lrn_trl_avg = false;
   phase_dif = 0.0f;		// .8 also useful
 }
 
@@ -1614,8 +1615,14 @@ void LeabraUnitSpec::Init_SRAvg(LeabraUnit* u, LeabraLayer*, LeabraNetwork* net)
 
 void LeabraUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
   if(net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) {
-    if(u->trl_avg <= opt_thresh.learn)
+    if(opt_thresh.lrn_trl_avg) {
+      if(u->trl_avg <= opt_thresh.learn)
+	return;
+    }
+    else {
+    if((u->act_p <= opt_thresh.learn) && (u->act_m <= opt_thresh.learn))
       return;
+    }
   }
   else {
     if((u->act_p <= opt_thresh.learn) && (u->act_m <= opt_thresh.learn))
