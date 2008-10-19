@@ -773,7 +773,6 @@ void MatrixLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
   FOR_ITR_EL(LeabraUnit, u, lay->units., i)
     u->Compute_dWt(lay, net);
   AdaptKWTAPt(lay, net);
-  lay->sravg_sum = 0.0f;
 }
 
 void MatrixLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net) {
