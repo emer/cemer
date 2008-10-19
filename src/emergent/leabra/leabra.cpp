@@ -95,7 +95,7 @@ void XCalLearnSpec::Initialize() {
   p_thr_gain = 1.9f;
   d_rev = .15;
   d_gain = 2.0;
-  rnd_min_avg = 0.01f;
+  rnd_min_avg = -1.0f;		// turn off by default
   rnd_var = 0.1f;
 
   d_rev_ratio = (1.0f - d_rev) / d_rev;
@@ -518,7 +518,7 @@ void OptThreshSpec::Initialize() {
   send = .1f;
   delta = 0.005f;
   learn = 0.01f;
-  lrn_trl_avg = false;
+  lrn_trl_avg = true;
   phase_dif = 0.0f;		// .8 also useful
 }
 
