@@ -204,16 +204,17 @@ public:
   };
 
   LearnVar	lrn_var;	// #DEF_XCAL_AVGSR learning rule variant to use
-  float		p_boost;	// #DEF_0.7 #CONDEDIT_OFF_lrn_var:CAL plus-phase activation boost, simulating the effects of dopamine on amplifying the learning signals: adds this weighted proportion of the act_p plus phase values to the overall sravg signal (equivalent to making the plus phase longer -- more efficient to use this value)
   float		p_thr_gain;	// #DEF_1.9 #CONDEDIT_OFF_lrn_var:CAL multiplier on recv avg_trl_avg to produce p_thr value: higher values = more sparse strong weights; lower values = more distributed 
-  float		d_rev;		// #DEF_0.15 #CONDEDIT_OFF_lrn_var:CAL proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
+  float		p_boost;	// #DEF_0.7 #CONDEDIT_OFF_lrn_var:CAL plus-phase activation boost, simulating the effects of dopamine on amplifying the learning signals: adds this weighted proportion of the act_p plus phase values to the overall sravg signal (equivalent to making the plus phase longer -- more efficient to use this value)
+  float		noerr_lrate;	// #CONDEDIT_OFF_lrn_var:CAL effective learning rate when there is no error in output -- effective lrate = lrate * [noerr_lrate + (1-noerr_lrate) * norm_err] where norm_err is normalized error on this trial (0-1, with 1 = max err) -- simulates neuromodulatory effects on learning that emphasize error trials
   float		d_gain;		// #DEF 2.0 #CONDEDIT_OFF_lrn_var:CAL multiplier on LTD values relative to LTP values
+  float		d_rev;		// #DEF_0.15 #CONDEDIT_OFF_lrn_var:CAL proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
   float		rnd_min_avg;	// #CONDEDIT_OFF_lrn_var:CAL minimum avg_trl_avg value, below which random values are added to weights to drive exploration
   float		rnd_var;	// variance (range) for uniform random noise added to weights when avg_trl_avg < rnd_min_avg (noise is then multiplied by lrate)
 
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- muliplication factor in learning rule
   float		p_boost_c;	// #HIDDEN #READ_ONLY 1-p_boost -- complement weighting of regular sravg
-
+  float		noerr_lrate_c;	// #HIDDEN #READ_ONLY 1-noerr_lrate -- for computation
   SIMPLE_COPY(XCalLearnSpec);
   TA_BASEFUNS(XCalLearnSpec);
 protected:
@@ -452,7 +453,7 @@ public:
 
   inline void 	C_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, float ru_act_p, float su_act_p,
 					   float ru_trl_avg, float su_trl_avg,
-					   float thr_p, float thr_p_d_rev);
+					   float thr_p, float thr_p_d_rev, float norm_err);
   // #CAT_Learning compute contrastive attractor learning (XCAL)
 
   inline virtual void 	Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru);
@@ -1099,6 +1100,8 @@ public:
   // #CAT_Learning encode current state information after end of current trial (hook for time-based learning)
 
   override float Compute_SSE(bool& has_targ, Unit* u);
+  virtual float  Compute_NormErr(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute normalized binary error (0-1 as function of bits off from target) according to settings on the network (returns a 1 or 0)
 
   virtual void	CreateNXX1Fun();  // #CAT_Activation create convolved gaussian and x/x+1 
 
@@ -1318,6 +1321,10 @@ public:
   void 		EncodeState(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->EncodeState(this, lay, net); }
   // #CAT_Learning encode current state information at end of trial (hook for time-based learning)
+  float		Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net)
+  { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_NormErr(this, lay, net); }
+  // #CAT_Learning compute normalized binary trial-wise error
+
   void 		Compute_SelfReg_Trial(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_SelfReg_Trial(this, lay, net); }
   // #CAT_Activation compute self-regulation (accommodation, hysteresis) at end of trial
@@ -1827,6 +1834,11 @@ public:
 
   virtual float	Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
+  virtual float	Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+				    LeabraNetwork* net);
+  // #CAT_Statistic compute normalized binary error for given unit group -- just gets the raw sum over unit group
+  virtual float	Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute normalized binary error -- layer-level value is already normalized, and network just averages across the layers (each layer contributes equally to overal normalized value, instead of contributing in proportion to number of units) -- returns -1 if not an err target defined in same way as sse
 
   ////////////////////////////////////////////////////////////////////////////////
   //	Stage 7: Parameter Adaptation over longer timesales
@@ -1990,6 +2002,7 @@ public:
   AvgMaxVals	avg_netin;	// #READ_ONLY #EXPERT #CAT_Activation net input values for the layer, averaged over an epoch-level timescale
   AvgMaxVals	avg_netin_sum;	// #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM sum of net input values for the layer, for computing average over an epoch-level timescale
   int		avg_netin_n;	// #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
+  float		norm_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic normalized binary error value for this layer, computed subject to the parameters on the network
   int		da_updt;	// #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
   int_Array	misc_iar;	// #HIDDEN #CAT_Activation misc int array of data
 
@@ -2109,6 +2122,10 @@ public:
   override float Compute_SSE(int& n_vals, bool unit_avg = false, bool sqrt = false)
   { return spec->Compute_SSE(this, n_vals, unit_avg, sqrt); }
 
+  virtual float Compute_NormErr(LeabraNetwork* net)
+  { return spec->Compute_NormErr(this, net); }
+  // #CAT_Statistic compute normalized binary error across layer (returns normalized value or -1 for not applicable, averaged at network level -- see layerspec for more info)
+
   void	Compute_AbsRelNetin(LeabraNetwork* net)	{ spec->Compute_AbsRelNetin(this, net); }
   // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into this layer
   void	Compute_AvgAbsRelNetin(LeabraNetwork* net) { spec->Compute_AvgAbsRelNetin(this, net); }
@@ -2153,6 +2170,345 @@ public:
 private:
   void	Initialize();
   void	Destroy()		{ };
+};
+
+
+//////////////////////////
+// 	Network		//
+//////////////////////////
+
+class LEABRA_API LeabraNetMisc : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra misc network-level parameters for Leabra
+INHERITED(taOBase)
+public:
+  bool		cyc_syn_dep;	// if true, enable synaptic depression calculations at the synapse level (also need conspecs to implement this -- this just enables computation)
+  int		syn_dep_int;	// [20] #CONDEDIT_ON_cyc_syn_dep synaptic depression interval -- how frequently to actually perform synaptic depression within a trial (uses ct_cycle variable which counts up continously through trial)
+
+  SIMPLE_COPY(LeabraNetMisc);
+  TA_BASEFUNS(LeabraNetMisc);
+// protected:
+//   void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API CtTrialTiming : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra timing parameters for a single stimulus input trial of ct learning algorithm
+INHERITED(taOBase)
+public:
+  int		minus;		// [50] number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
+  int		plus;		// [20] number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
+  int		inhib;		// [1] number of cycles to run in the final inhibitory phase -- network can do MINUS_PLUS_PLUS, MINUS_PLUS_MINUS, or MINUS_PLUS_NOTHING for inputs on this phase
+
+  int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
+  int		inhib_start;	// #READ_ONLY computed start of inhib phase (=minus + plus)
+
+  SIMPLE_COPY(CtTrialTiming);
+  TA_BASEFUNS(CtTrialTiming);
+protected:
+  void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API CtSRAvgSpec : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of cycles 
+INHERITED(taOBase)
+public:
+  int		start;		// [30] number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
+  int		end;		// [1] number of cycles from the start of the final inhibitory phase to continue recording sravg
+  int		interval;	// [5] how frequently to compute sravg -- more infrequent updating saves computational costs as sravg is expensive
+  float		min_da_thr;	// [0 or 0.005] minimum threshold value of accumulated layer-level delta activation (da_sum) for computing sravg value
+
+  SIMPLE_COPY(CtSRAvgSpec);
+  TA_BASEFUNS(CtSRAvgSpec);
+  //protected:
+  //  void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API CtSineInhibMod : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra sinusoidal inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
+INHERITED(taBase)
+public:
+  int		start;		// [30] number of cycles from onset of new input to start applying sinusoidal inhibitory modulation
+  int		duration;	// [20] number of cycles from start to apply modulation
+  float		n_pi;		// number of multiples of PI to produce within duration of modulation (1.0 = positive only wave, 2.0 = full pos/neg wave, 4.0 = two waves, etc)
+  float		burst_i;	// [.02] maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
+  float		trough_i;	// [.02] maximum extra inhibition as proportion of computed kwta value to add for negative activation (trough) phase of wave -- value shoudl be a positive number
+
+  float		GetInhibMod(int ct_cycle, float bi, float ti) {
+    if((ct_cycle < start) || (ct_cycle >= (start + duration))) return 0.0f;
+    float rads = (((float)(ct_cycle - start) / (float)duration) * taMath_float::pi * n_pi);
+    float sinval = -taMath_float::sin(rads);
+    if(sinval < 0.0f) 	sinval *= bi; // signs are reversed for inhib vs activation
+    else		sinval *= ti;
+    return sinval;
+  }
+  // returns inhibitory modulation to apply as a fraction of computed kwta value
+
+  SIMPLE_COPY(CtSineInhibMod);
+  TA_BASEFUNS(CtSineInhibMod);
+// protected:
+//   void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API CtFinalInhibMod : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra extra inhibition to apply at end of stimulus processing during inhib phase, to clear out existing pattern
+INHERITED(taBase)
+public:
+  int		start;		// number of cycles into inhib phase for inhibition ramp to start
+  int		end;		// number of cycles into inhib phase for inhibition ramp to end -- remains at full inhibition level from end to end of inhib phase
+  float		inhib_i;	// [.05 when in use] maximum extra inhibition as proportion of computed kwta value to add during final inhib phase
+
+  float		GetInhibMod(int inh_cyc, float ii) {
+    if(inh_cyc < start) return 0.0f;
+    if(inh_cyc >= end) return ii;
+    float slp = (float)(inh_cyc - start) / (float)(end - start);
+    return slp * ii;
+  }
+  // returns inhibitory modulation to apply as a fraction of computed kwta value
+
+  SIMPLE_COPY(CtFinalInhibMod);
+  TA_BASEFUNS(CtFinalInhibMod);
+// protected:
+//   void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API LeabraNetwork : public Network {
+  // #STEM_BASE ##CAT_Leabra network that uses the Leabra algorithms and objects
+INHERITED(Network)
+public:
+  // IMPORTANT programming note: this enum must be same as in LeabraConSpec, and all Ct-like 
+  // algos that compute SRAvg etc must be *after* CTLEABRA_CAL, and vice-versa
+  // (i.e., logic uses >= and <= on CTLEABRA_CAL for many things)
+
+  enum LearnRule {
+    LEABRA_CHL,			// use the standard Leabra Contrastive Hebbian Learning rule: (s+r+) - (s-r-) (s=sender,r=recv +=plus phase, -=minus phase)
+    CTLEABRA_CAL,		// use the continuous-time Leabra Contrastive Attractor Learning rule: (s+r+) - <s-r-> (s=sender,r=recv +=plus phase, -=minus phase = average over all non-+ states) indicated by <>
+    CTLEABRA_XCAL,		// use the continuous-time Leabra eXtremization Contrastive Attractor Learning rule: <sr> - thr (s=sender,r=recv, thr=adaptive time-average threshold based on <r>) -- similar to BCM in many respects, but does full supervised learning when erroneous acts in minus phase are transient
+  };
+
+  enum StateInit {		// ways of initializing the state of the network
+    DO_NOTHING,			// do nothing
+    INIT_STATE,			// initialize state
+    DECAY_STATE,		// decay the state
+  };
+    
+  enum Phase {
+    MINUS_PHASE = 0,		// minus phase
+    PLUS_PHASE = 1,		// plus phase
+  };
+
+  enum PhaseOrder {
+    MINUS_PLUS,			// standard minus-plus (err and assoc)
+    PLUS_MINUS,			// reverse order: plus phase first
+    PLUS_ONLY,			// only present the plus phase (hebbian-only)
+    MINUS_PLUS_NOTHING,		// standard for CtLeabra_CAL and auto-encoder version with final 'nothing' minus phase
+    MINUS_PLUS_MINUS,		// alternative version for CtLeabra_CAL with input still in final phase -- this 2nd minus is also marked as a nothing_phase 
+    PLUS_NOTHING,		// just an auto-encoder (no initial minus phase)
+    MINUS_PLUS_PLUS,		// two plus phases for gated context layer updating in second plus phase, for the PBWM model
+    MINUS_PLUS_PLUS_NOTHING,	// PBWM in CtLeabra_CAL mode
+    MINUS_PLUS_PLUS_MINUS,	// PBWM in CtLeabra_CAL mode, alternative final inhib stage
+  };
+
+  LearnRule	learn_rule;	// The variant of Leabra learning rule to use 
+  PhaseOrder	phase_order;	// #APPLY_IMMED [Default: MINUS_PLUS] #CAT_Counter number and order of phases to present
+  bool		no_plus_test;	// #DEF_true #CAT_Counter don't run the plus phase when testing
+  StateInit	trial_init;	// #DEF_DECAY_STATE #CAT_Activation how to initialize network state at start of trial
+  StateInit	sequence_init;	// #DEF_DO_NOTHING #CAT_Activation how to initialize network state at start of a sequence of trials
+
+  Phase		phase;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW type of settling phase
+  bool		nothing_phase;	// #GUI_READ_ONLY #SHOW #CAT_Counter the current phase is a NOTHING phase (phase will indicate MINUS for learning purposes)
+  int		phase_no;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW phase as an ordinal number (regular phase is Phase enum)
+  int		phase_max;	// #CAT_Counter maximum number of phases to run (note: this is set by Trial_Init depending on phase_order)
+
+  int		ct_cycle;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from start of trial 
+
+  int		cycle_max;	// #DEF_60 #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL maximum number of cycles to settle for: note for CtLeabra_CAL this is overridden by phase specific settings by the settle process
+  int		min_cycles;	// #DEF_15 #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL minimum number of cycles to settle for
+  int		min_cycles_phase2; // #DEF_35 #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL minimum number of cycles to settle for in second phase
+
+  CtTrialTiming	 ct_time;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL timing parameters for ct leabra trial: Settle_Init sets the cycle_max based on these values
+  CtSRAvgSpec	 ct_sravg;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL parameters controlling computation of sravg value as a function of cycles
+  CtSineInhibMod ct_sin_i;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL sinusoidal inhibition parameters for inhibitory modulations during trial, simulating oscillations resulting from imperfect inhibtory set point behavior
+  CtFinalInhibMod ct_fin_i;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL final inhibition parameters for extra inhibition to apply during final inhib phase, simulating slow-onset GABA currents
+
+  float		minus_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
+  float		avg_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles in the minus phase (computed over previous epoch)
+  float		avg_cycles_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cycles in this epoch
+  int		avg_cycles_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cycles computation for this epoch
+
+  String	minus_output_name; // #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW output_name in the minus phase -- for recording in logs as network's response (output_name in plus phase is clamped target value)
+
+  LeabraNetMisc	net_misc;	// misc network level parameters for leabra
+  int		netin_mod;	// #DEF_1 net #CAT_Optimization input computation modulus: how often to compute netinput vs. activation update (2 = faster)
+  bool		send_delta;	// #DEF_true #CAT_Optimization send netin deltas instead of raw netin: more efficient (automatically sets corresponding unitspec flag)
+
+  float		send_pct;	// #GUI_READ_ONLY #SHOW #CAT_Statistic proportion of sending units that actually sent activations on this cycle
+  int		send_pct_n;	// #READ_ONLY #CAT_Statistic number of units sending activation this cycle
+  int		send_pct_tot;	// #READ_ONLY #CAT_Statistic total number of units that could send activation this cycle
+  float		avg_send_pct;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average proportion of units sending activation over an epoch
+  float		avg_send_pct_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average send_pct per epoch (integrates over cycles and trials etc)
+  int		avg_send_pct_n; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average send_pct per epoch (integrates over cycles and trials etc)
+
+  float		maxda_stopcrit;	// #DEF_0.005 #CAT_Statistic stopping criterion for max da
+  float		maxda;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW maximum change in activation (delta-activation) over network; used in stopping settling
+
+  float		trg_max_act_stopcrit;	// #CAT_Statistic stopping criterion for target-layer maximum activation (can be used for stopping settling)
+  float		trg_max_act;	// #GUI_READ_ONLY #SHOW #CAT_Statistic target-layer maximum activation (can be used for stopping settling)
+
+  float		ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW external reward value (on this trial)
+  float		avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average external reward value (computed over previous epoch)
+  float		avg_ext_rew_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average external reward value in this epoch
+  int		avg_ext_rew_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average external reward value computation for this epoch
+
+  bool		off_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly off (should have been on but were actually off) -- either 1 or both of off_errs and on_errs must be set
+  bool		on_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly on (should have been off but were actually on) -- either 1 or both of off_errs and on_errs must be set
+  float		norm_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW normalized binary (Hamming) error on this trial: number of units that were incorrectly activated or incorrectly inactivated (see off_errs to exclude latter)
+  float		avg_norm_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average normalized binary error value (computed over previous epoch)
+  float		avg_norm_err_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average norm err in this epoch
+  int		avg_norm_err_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average norm err value computation for this epoch
+
+  override void	Init_Counters();
+  override void	Init_Stats();
+  override void	Init_Sequence();
+
+  virtual void	SetLearnRule_ConSpecs(BaseSpec_Group* spgp);
+  // #IGMORE set the current learning rule into all conspecs in given spec group (recursive)
+  virtual void	SetLearnRule();
+  // #CAT_ObjectMgmt set the current learning rule into the conspecs on this network (done by network UAE only when rule changed)
+
+  // single cycle-level functions
+  virtual void	Compute_Netin();	// #CAT_Cycle compute netinputs (sender based, if send_delta, then only when sender activations change)
+  virtual void	Compute_Clamp_NetAvg();	// #CAT_Cycle add in clamped netinput values (computed once at start of settle) and average netinput values
+  virtual void	Compute_Inhib(); // #CAT_Cycle compute inhibitory conductances (kwta)
+  virtual void	Compute_ApplyInhib(); // #CAT_Cycle apply inhibitory conductances from kwta to individual units
+  virtual void	Compute_InhibAvg(); // #CAT_Cycle compute average inhibitory conductances (unit-level inhib)
+  virtual void	Compute_Act();	// #CAT_Cycle compute activations, and max delta activation
+
+  virtual void 	Compute_CycSynDep();
+  // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
+
+  virtual void 	Compute_SRAvg();
+  // #CAT_Learning compute sending-receiving activation coproduct averages (CtLeabra_CAL)
+  virtual void 	Init_SRAvg();
+  // #CAT_Learning initialize sending-receiving activation coproduct averages (CtLeabra_CAL)
+
+  virtual void	Cycle_Run();	// #CAT_Cycle compute one cycle of updating: netinput, inhibition, activations
+
+  // settling-phase level functions
+  virtual void	Compute_Active_K(); // #CAT_SettleInit determine the active k values for each layer based on pcts, etc (called by Settle_Init)
+  virtual void	DecayPhase();	// #CAT_SettleInit decay activations and other state between minus-plus phases (called by Settle_Init)
+  virtual void	DecayPhase2();	// #CAT_SettleInit decay activations and other state between second and third phase (if applicable) (called by Settle_Init)
+  virtual void	PhaseInit();	// #CAT_SettleInit initialize at start of settling phase -- sets external input flags based on phase (called by Settle_Init)
+  virtual void	ExtToComp();	// #CAT_SettleInit move external input values to comparison values (not currently used)
+  virtual void	TargExtToComp(); // #CAT_SettleInit move target and external input values to comparison (for PLUS_NOTHING, called by Settle_Init)
+  virtual void	Compute_HardClamp(); // #CAT_SettleInit compute hard clamping from external inputs (called by Settle_Init)
+  virtual void	Compute_NetinScale(); // #CAT_SettleInit compute netinput scaling values by projection (called by Settle_Init)
+  virtual void	Send_ClampNet(); // #CAT_SettleInit send clamped activation netinputs to other layers -- only needs to be computed once (called by Settle_Init)
+  virtual void  Settle_Init_Decay(); // #CAT_SettleInit logic for performing decay and updating external input settings as a function of phase
+  virtual void  Settle_Init_CtTimes(); // #CAT_SettleInit initialize cycles based on network phases for CtLeabra_CAL
+
+  virtual void  Settle_Init();	  // #CAT_SettleInit initialize network for settle-level processing (decay, active k, hard clamp, netscale, clampnet)
+
+  virtual void	PostSettle();	// #CAT_SettleFinal perform computations in layers at end of settling  (called by Settle_Final)
+
+  virtual void	Settle_Final();	  // #CAT_SettleFinal do final processing after settling (postsettle, Compute_dWt if needed
+
+  // trial-level functions
+  virtual void	SetCurLrate();	// #CAT_TrialInit set the current learning rate according to the LeabraConSpec parameters
+  virtual void	DecayEvent();	// #CAT_TrialInit decay activations and other state between events (trial-level)
+  virtual void	DecayState();	// #CAT_TrialInit decay the state in between trials (params in LayerSpec)
+
+  virtual void 	Trial_Init();	// #CAT_TrialInit initialize at start of trial (SetCurLrate, set phase_max, Decay state)
+
+  virtual void	Trial_UpdatePhase(); // #CAT_TrialInit update phase based on phase_no -- return false if no more phases need to be run
+
+  virtual void	EncodeState();
+  // #CAT_TrialFinal encode final state information at end of trial for time-based learning across trials
+  virtual void	Compute_SelfReg_Trial();
+  // #CAT_TrialFinal update self-regulation (accommodation, hysteresis) at end of trial
+
+  virtual void	Compute_dWt_FirstPlus();
+  // #CAT_TrialFinal compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_CAL
+  virtual void	Compute_dWt_SecondPlus();
+  // #CAT_TrialFinal compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
+  virtual void	Compute_dWt_Nothing();
+  // #CAT_TrialFinal compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
+
+  virtual void	Compute_ExtRew();
+  // #CAT_Statistic compute external reward information: Must be called in plus phase (phase_no == 1)
+  virtual void	Compute_NormErr();
+  // #CAT_Statistic compute normalized binary error: called in TrialStats
+  virtual void	Compute_MinusCycles();
+  // #CAT_Statistic compute minus-phase cycles (and increment epoch sums) -- at the end of the minus phase (of course)
+  override void	Compute_TrialStats();
+  // #CAT_Statistic compute trial-level statistics, including SSE and minus cycles -- to be called at end of minus phase
+  virtual bool	Compute_TrialStats_Test();
+  // #CAT_Statistic determine whether it is time to run trial stats -- typically the minus phase but it depends on network phase_order settings etc
+  virtual void	Trial_Final();
+  // #CAT_TrialFinal do final processing after trial (Compute_dWt, EncodeState)
+
+  virtual void	Compute_AbsRelNetin();
+  // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into layers in network
+  virtual void	Compute_AvgAbsRelNetin();
+  // #CAT_Statistic compute time-average absolute layer-level and relative netinput from different projections into layers in network (e.g. over epoch timescale)
+  virtual void	Compute_TrgRelNetin();
+  // #MENU #MENU_SEP_BEFORE #CONFIRM #CAT_Learning compute target rel netin based on projection direction information plus the adapt_rel_net values in the conspec
+  virtual void	Compute_AdaptRelNetin();
+  // #CAT_Learning adapt the relative input values by changing the conspec wt_scale.rel parameter; See Compute_AdaptAbsNetin for adaptation of wt_scale.abs parameters to achieve good netinput values overall
+  virtual void	Compute_AdaptAbsNetin();
+  // #CAT_Learning adapt the absolute net input values by changing the conspec wt_scale.abs parameter
+
+  virtual void	Compute_AvgCycles();
+  // #CAT_Statistic compute average cycles (at an epoch-level timescale)
+  virtual void	Compute_AvgExtRew();
+  // #CAT_Statistic compute average external reward information (at an epoch-level timescale)
+  virtual void	Compute_AvgNormErr();
+  // #CAT_Statistic compute average norm_err (at an epoch-level timescale)
+  virtual void	Compute_AvgSendPct();
+  // #CAT_Statistic compute average sending pct (at an epoch-level timescale)
+  override void	Compute_EpochStats();
+  // #CAT_Statistic compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles
+  override void	SetProjectionDefaultTypes(Projection* prjn);
+
+  virtual void	GraphInhibMod(bool flip_sign = true, DataTable* graph_data = NULL);
+  // #BUTTON #NULL_OK graph the overall inhibitory modulation curve, including sinusoidal and final -- if flip_sign is true, then sign is reversed so that graph looks like the activation profile instead of the inhibition profile
+
+  TA_SIMPLE_BASEFUNS(LeabraNetwork);
+protected:
+  int	prv_learn_rule;		// previous learning rule for triggering updates
+  void 	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()		{}
+};
+
+class LEABRA_API LeabraProject : public ProjectBase {
+  // #STEM_BASE ##CAT_Leabra project for Leabra models
+INHERITED(ProjectBase)
+public:
+
+  TA_BASEFUNS_NOCOPY(LeabraProject);
+private:
+  void	Initialize();
+  void 	Destroy()		{}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2531,7 +2887,8 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraCAL(LeabraRecvCons* cg, Leabr
 inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, 
 						      float ru_act_p, float su_act_p,
 						      float ru_trl_avg, float su_trl_avg,
-						      float thr_p, float thr_p_d_rev) {
+						      float thr_p, float thr_p_d_rev,
+						      float norm_err) {
   float srval = (xcal.p_boost * ru_act_p * su_act_p) +
     (xcal.p_boost_c * ru_trl_avg * su_trl_avg);
 
@@ -2543,7 +2900,7 @@ inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL(LeabraCon* cn,
   else
     err = -xcal.d_gain * srval * xcal.d_rev_ratio;
 
-  cn->dwt += cur_lrate * err;
+  cn->dwt += cur_lrate * (xcal.noerr_lrate + xcal.noerr_lrate_c * norm_err) * err;
 }
 
 
@@ -2558,6 +2915,8 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
     Compute_dWt_Rnd(cg, ru, xcal.rnd_var);
     return;
   }
+
+  LeabraNetwork* net = (LeabraNetwork*)cg->prjn->from.ptr()->own_net;
   
   float thr_p = xcal.p_thr_gain * ru->avg_trl_avg;
   float thr_p_d_rev = thr_p * xcal.d_rev;
@@ -2567,7 +2926,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
     LeabraCon* cn = (LeabraCon*)cg->Cn(i);
     C_Compute_dWt_CtLeabraXCAL(cn, ru->act_p, su->act_p,
 			       ru->trl_avg, su->trl_avg,
-			       thr_p, thr_p_d_rev);
+			       thr_p, thr_p_d_rev, net->norm_err);
   }
 }
 
@@ -2716,333 +3075,6 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
   if(fabsf(err) >= dwt_thresh)
     cn->dwt += cur_lrate * err;
 }
-
-
-//////////////////////////
-// 	Network		//
-//////////////////////////
-
-class LEABRA_API LeabraNetMisc : public taOBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra misc network-level parameters for Leabra
-INHERITED(taOBase)
-public:
-  bool		cyc_syn_dep;	// if true, enable synaptic depression calculations at the synapse level (also need conspecs to implement this -- this just enables computation)
-  int		syn_dep_int;	// [20] #CONDEDIT_ON_cyc_syn_dep synaptic depression interval -- how frequently to actually perform synaptic depression within a trial (uses ct_cycle variable which counts up continously through trial)
-
-  SIMPLE_COPY(LeabraNetMisc);
-  TA_BASEFUNS(LeabraNetMisc);
-// protected:
-//   void UpdateAfterEdit_impl();
-
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-class LEABRA_API CtTrialTiming : public taOBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra timing parameters for a single stimulus input trial of ct learning algorithm
-INHERITED(taOBase)
-public:
-  int		minus;		// [50] number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
-  int		plus;		// [20] number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
-  int		inhib;		// [1] number of cycles to run in the final inhibitory phase -- network can do MINUS_PLUS_PLUS, MINUS_PLUS_MINUS, or MINUS_PLUS_NOTHING for inputs on this phase
-
-  int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
-  int		inhib_start;	// #READ_ONLY computed start of inhib phase (=minus + plus)
-
-  SIMPLE_COPY(CtTrialTiming);
-  TA_BASEFUNS(CtTrialTiming);
-protected:
-  void UpdateAfterEdit_impl();
-
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-class LEABRA_API CtSRAvgSpec : public taOBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of cycles 
-INHERITED(taOBase)
-public:
-  int		start;		// [30] number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
-  int		end;		// [1] number of cycles from the start of the final inhibitory phase to continue recording sravg
-  int		interval;	// [5] how frequently to compute sravg -- more infrequent updating saves computational costs as sravg is expensive
-  float		min_da_thr;	// [0 or 0.005] minimum threshold value of accumulated layer-level delta activation (da_sum) for computing sravg value
-
-  SIMPLE_COPY(CtSRAvgSpec);
-  TA_BASEFUNS(CtSRAvgSpec);
-  //protected:
-  //  void UpdateAfterEdit_impl();
-
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-class LEABRA_API CtSineInhibMod : public taBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra sinusoidal inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
-INHERITED(taBase)
-public:
-  int		start;		// [30] number of cycles from onset of new input to start applying sinusoidal inhibitory modulation
-  int		duration;	// [20] number of cycles from start to apply modulation
-  float		n_pi;		// number of multiples of PI to produce within duration of modulation (1.0 = positive only wave, 2.0 = full pos/neg wave, 4.0 = two waves, etc)
-  float		burst_i;	// [.02] maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
-  float		trough_i;	// [.02] maximum extra inhibition as proportion of computed kwta value to add for negative activation (trough) phase of wave -- value shoudl be a positive number
-
-  float		GetInhibMod(int ct_cycle, float bi, float ti) {
-    if((ct_cycle < start) || (ct_cycle >= (start + duration))) return 0.0f;
-    float rads = (((float)(ct_cycle - start) / (float)duration) * taMath_float::pi * n_pi);
-    float sinval = -taMath_float::sin(rads);
-    if(sinval < 0.0f) 	sinval *= bi; // signs are reversed for inhib vs activation
-    else		sinval *= ti;
-    return sinval;
-  }
-  // returns inhibitory modulation to apply as a fraction of computed kwta value
-
-  SIMPLE_COPY(CtSineInhibMod);
-  TA_BASEFUNS(CtSineInhibMod);
-// protected:
-//   void UpdateAfterEdit_impl();
-
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-class LEABRA_API CtFinalInhibMod : public taBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra extra inhibition to apply at end of stimulus processing during inhib phase, to clear out existing pattern
-INHERITED(taBase)
-public:
-  int		start;		// number of cycles into inhib phase for inhibition ramp to start
-  int		end;		// number of cycles into inhib phase for inhibition ramp to end -- remains at full inhibition level from end to end of inhib phase
-  float		inhib_i;	// [.05 when in use] maximum extra inhibition as proportion of computed kwta value to add during final inhib phase
-
-  float		GetInhibMod(int inh_cyc, float ii) {
-    if(inh_cyc < start) return 0.0f;
-    if(inh_cyc >= end) return ii;
-    float slp = (float)(inh_cyc - start) / (float)(end - start);
-    return slp * ii;
-  }
-  // returns inhibitory modulation to apply as a fraction of computed kwta value
-
-  SIMPLE_COPY(CtFinalInhibMod);
-  TA_BASEFUNS(CtFinalInhibMod);
-// protected:
-//   void UpdateAfterEdit_impl();
-
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-class LEABRA_API LeabraNetwork : public Network {
-  // #STEM_BASE ##CAT_Leabra network that uses the Leabra algorithms and objects
-INHERITED(Network)
-public:
-  // IMPORTANT programming note: this enum must be same as in LeabraConSpec, and all Ct-like 
-  // algos that compute SRAvg etc must be *after* CTLEABRA_CAL, and vice-versa
-  // (i.e., logic uses >= and <= on CTLEABRA_CAL for many things)
-
-  enum LearnRule {
-    LEABRA_CHL,			// use the standard Leabra Contrastive Hebbian Learning rule: (s+r+) - (s-r-) (s=sender,r=recv +=plus phase, -=minus phase)
-    CTLEABRA_CAL,		// use the continuous-time Leabra Contrastive Attractor Learning rule: (s+r+) - <s-r-> (s=sender,r=recv +=plus phase, -=minus phase = average over all non-+ states) indicated by <>
-    CTLEABRA_XCAL,		// use the continuous-time Leabra eXtremization Contrastive Attractor Learning rule: <sr> - thr (s=sender,r=recv, thr=adaptive time-average threshold based on <r>) -- similar to BCM in many respects, but does full supervised learning when erroneous acts in minus phase are transient
-  };
-
-  enum StateInit {		// ways of initializing the state of the network
-    DO_NOTHING,			// do nothing
-    INIT_STATE,			// initialize state
-    DECAY_STATE,		// decay the state
-  };
-    
-  enum Phase {
-    MINUS_PHASE = 0,		// minus phase
-    PLUS_PHASE = 1,		// plus phase
-  };
-
-  enum PhaseOrder {
-    MINUS_PLUS,			// standard minus-plus (err and assoc)
-    PLUS_MINUS,			// reverse order: plus phase first
-    PLUS_ONLY,			// only present the plus phase (hebbian-only)
-    MINUS_PLUS_NOTHING,		// standard for CtLeabra_CAL and auto-encoder version with final 'nothing' minus phase
-    MINUS_PLUS_MINUS,		// alternative version for CtLeabra_CAL with input still in final phase -- this 2nd minus is also marked as a nothing_phase 
-    PLUS_NOTHING,		// just an auto-encoder (no initial minus phase)
-    MINUS_PLUS_PLUS,		// two plus phases for gated context layer updating in second plus phase, for the PBWM model
-    MINUS_PLUS_PLUS_NOTHING,	// PBWM in CtLeabra_CAL mode
-    MINUS_PLUS_PLUS_MINUS,	// PBWM in CtLeabra_CAL mode, alternative final inhib stage
-  };
-
-  LearnRule	learn_rule;	// The variant of Leabra learning rule to use 
-  PhaseOrder	phase_order;	// #APPLY_IMMED [Default: MINUS_PLUS] #CAT_Counter number and order of phases to present
-  bool		no_plus_test;	// #DEF_true #CAT_Counter don't run the plus phase when testing
-  StateInit	trial_init;	// #DEF_DECAY_STATE #CAT_Activation how to initialize network state at start of trial
-  StateInit	sequence_init;	// #DEF_DO_NOTHING #CAT_Activation how to initialize network state at start of a sequence of trials
-
-  Phase		phase;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW type of settling phase
-  bool		nothing_phase;	// #GUI_READ_ONLY #SHOW #CAT_Counter the current phase is a NOTHING phase (phase will indicate MINUS for learning purposes)
-  int		phase_no;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW phase as an ordinal number (regular phase is Phase enum)
-  int		phase_max;	// #CAT_Counter maximum number of phases to run (note: this is set by Trial_Init depending on phase_order)
-
-  int		ct_cycle;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from start of trial 
-
-  int		cycle_max;	// #DEF_60 #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL maximum number of cycles to settle for: note for CtLeabra_CAL this is overridden by phase specific settings by the settle process
-  int		min_cycles;	// #DEF_15 #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL minimum number of cycles to settle for
-  int		min_cycles_phase2; // #DEF_35 #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL minimum number of cycles to settle for in second phase
-
-  CtTrialTiming	 ct_time;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL timing parameters for ct leabra trial: Settle_Init sets the cycle_max based on these values
-  CtSRAvgSpec	 ct_sravg;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL parameters controlling computation of sravg value as a function of cycles
-  CtSineInhibMod ct_sin_i;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL sinusoidal inhibition parameters for inhibitory modulations during trial, simulating oscillations resulting from imperfect inhibtory set point behavior
-  CtFinalInhibMod ct_fin_i;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL final inhibition parameters for extra inhibition to apply during final inhib phase, simulating slow-onset GABA currents
-
-  float		minus_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
-  float		avg_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles in the minus phase (computed over previous epoch)
-  float		avg_cycles_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cycles in this epoch
-  int		avg_cycles_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cycles computation for this epoch
-
-  String	minus_output_name; // #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW output_name in the minus phase -- for recording in logs as network's response (output_name in plus phase is clamped target value)
-
-  LeabraNetMisc	net_misc;	// misc network level parameters for leabra
-  int		netin_mod;	// #DEF_1 net #CAT_Optimization input computation modulus: how often to compute netinput vs. activation update (2 = faster)
-  bool		send_delta;	// #DEF_true #CAT_Optimization send netin deltas instead of raw netin: more efficient (automatically sets corresponding unitspec flag)
-  float		send_pct;	// #GUI_READ_ONLY #SHOW #CAT_Statistic proportion of sending units that actually sent activations on this cycle
-  int		send_pct_n;	// #READ_ONLY #CAT_Statistic number of units sending activation this cycle
-  int		send_pct_tot;	// #READ_ONLY #CAT_Statistic total number of units that could send activation this cycle
-  float		avg_send_pct;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average proportion of units sending activation over an epoch
-  float		avg_send_pct_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average send_pct per epoch (integrates over cycles and trials etc)
-  int		avg_send_pct_n; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average send_pct per epoch (integrates over cycles and trials etc)
-
-  float		maxda_stopcrit;	// #DEF_0.005 #CAT_Statistic stopping criterion for max da
-  float		maxda;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW maximum change in activation (delta-activation) over network; used in stopping settling
-
-  float		trg_max_act_stopcrit;	// #CAT_Statistic stopping criterion for target-layer maximum activation (can be used for stopping settling)
-  float		trg_max_act;	// #GUI_READ_ONLY #SHOW #CAT_Statistic target-layer maximum activation (can be used for stopping settling)
-
-  float		ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW external reward value (on this trial)
-  float		avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average external reward value (computed over previous epoch)
-  float		avg_ext_rew_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average external reward value in this epoch
-  int		avg_ext_rew_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average external reward value computation for this epoch
-
-  override void	Init_Counters();
-  override void	Init_Stats();
-  override void	Init_Sequence();
-
-  virtual void	SetLearnRule_ConSpecs(BaseSpec_Group* spgp);
-  // #IGMORE set the current learning rule into all conspecs in given spec group (recursive)
-  virtual void	SetLearnRule();
-  // #CAT_ObjectMgmt set the current learning rule into the conspecs on this network (done by network UAE only when rule changed)
-
-  // single cycle-level functions
-  virtual void	Compute_Netin();	// #CAT_Cycle compute netinputs (sender based, if send_delta, then only when sender activations change)
-  virtual void	Compute_Clamp_NetAvg();	// #CAT_Cycle add in clamped netinput values (computed once at start of settle) and average netinput values
-  virtual void	Compute_Inhib(); // #CAT_Cycle compute inhibitory conductances (kwta)
-  virtual void	Compute_ApplyInhib(); // #CAT_Cycle apply inhibitory conductances from kwta to individual units
-  virtual void	Compute_InhibAvg(); // #CAT_Cycle compute average inhibitory conductances (unit-level inhib)
-  virtual void	Compute_Act();	// #CAT_Cycle compute activations, and max delta activation
-
-  virtual void 	Compute_CycSynDep();
-  // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
-
-  virtual void 	Compute_SRAvg();
-  // #CAT_Learning compute sending-receiving activation coproduct averages (CtLeabra_CAL)
-  virtual void 	Init_SRAvg();
-  // #CAT_Learning initialize sending-receiving activation coproduct averages (CtLeabra_CAL)
-
-  virtual void	Cycle_Run();	// #CAT_Cycle compute one cycle of updating: netinput, inhibition, activations
-
-  // settling-phase level functions
-  virtual void	Compute_Active_K(); // #CAT_SettleInit determine the active k values for each layer based on pcts, etc (called by Settle_Init)
-  virtual void	DecayPhase();	// #CAT_SettleInit decay activations and other state between minus-plus phases (called by Settle_Init)
-  virtual void	DecayPhase2();	// #CAT_SettleInit decay activations and other state between second and third phase (if applicable) (called by Settle_Init)
-  virtual void	PhaseInit();	// #CAT_SettleInit initialize at start of settling phase -- sets external input flags based on phase (called by Settle_Init)
-  virtual void	ExtToComp();	// #CAT_SettleInit move external input values to comparison values (not currently used)
-  virtual void	TargExtToComp(); // #CAT_SettleInit move target and external input values to comparison (for PLUS_NOTHING, called by Settle_Init)
-  virtual void	Compute_HardClamp(); // #CAT_SettleInit compute hard clamping from external inputs (called by Settle_Init)
-  virtual void	Compute_NetinScale(); // #CAT_SettleInit compute netinput scaling values by projection (called by Settle_Init)
-  virtual void	Send_ClampNet(); // #CAT_SettleInit send clamped activation netinputs to other layers -- only needs to be computed once (called by Settle_Init)
-  virtual void  Settle_Init_Decay(); // #CAT_SettleInit logic for performing decay and updating external input settings as a function of phase
-  virtual void  Settle_Init_CtTimes(); // #CAT_SettleInit initialize cycles based on network phases for CtLeabra_CAL
-
-  virtual void  Settle_Init();	  // #CAT_SettleInit initialize network for settle-level processing (decay, active k, hard clamp, netscale, clampnet)
-
-  virtual void	PostSettle();	// #CAT_SettleFinal perform computations in layers at end of settling  (called by Settle_Final)
-
-  virtual void	Settle_Final();	  // #CAT_SettleFinal do final processing after settling (postsettle, Compute_dWt if needed
-
-  // trial-level functions
-  virtual void	SetCurLrate();	// #CAT_TrialInit set the current learning rate according to the LeabraConSpec parameters
-  virtual void	DecayEvent();	// #CAT_TrialInit decay activations and other state between events (trial-level)
-  virtual void	DecayState();	// #CAT_TrialInit decay the state in between trials (params in LayerSpec)
-
-  virtual void 	Trial_Init();	// #CAT_TrialInit initialize at start of trial (SetCurLrate, set phase_max, Decay state)
-
-  virtual void	Trial_UpdatePhase(); // #CAT_TrialInit update phase based on phase_no -- return false if no more phases need to be run
-
-  virtual void	EncodeState();
-  // #CAT_TrialFinal encode final state information at end of trial for time-based learning across trials
-  virtual void	Compute_SelfReg_Trial();
-  // #CAT_TrialFinal update self-regulation (accommodation, hysteresis) at end of trial
-
-  virtual void	Compute_dWt_FirstPlus();
-  // #CAT_TrialFinal compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_CAL
-  virtual void	Compute_dWt_SecondPlus();
-  // #CAT_TrialFinal compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
-  virtual void	Compute_dWt_Nothing();
-  // #CAT_TrialFinal compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
-
-  virtual void	Compute_ExtRew();
-  // #CAT_Statistic compute external reward information: Must be called in plus phase (phase_no == 1)
-  virtual void	Compute_MinusCycles();
-  // #CAT_Statistic compute minus-phase cycles (and increment epoch sums) -- at the end of the minus phase (of course)
-  override void	Compute_TrialStats();
-  // #CAT_Statistic compute trial-level statistics, including SSE and minus cycles -- to be called at end of minus phase
-  virtual bool	Compute_TrialStats_Test();
-  // #CAT_Statistic determine whether it is time to run trial stats -- typically the minus phase but it depends on network phase_order settings etc
-  virtual void	Trial_Final();
-  // #CAT_TrialFinal do final processing after trial (Compute_dWt, EncodeState)
-
-  virtual void	Compute_AbsRelNetin();
-  // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into layers in network
-  virtual void	Compute_AvgAbsRelNetin();
-  // #CAT_Statistic compute time-average absolute layer-level and relative netinput from different projections into layers in network (e.g. over epoch timescale)
-  virtual void	Compute_TrgRelNetin();
-  // #MENU #MENU_SEP_BEFORE #CONFIRM #CAT_Learning compute target rel netin based on projection direction information plus the adapt_rel_net values in the conspec
-  virtual void	Compute_AdaptRelNetin();
-  // #CAT_Learning adapt the relative input values by changing the conspec wt_scale.rel parameter; See Compute_AdaptAbsNetin for adaptation of wt_scale.abs parameters to achieve good netinput values overall
-  virtual void	Compute_AdaptAbsNetin();
-  // #CAT_Learning adapt the absolute net input values by changing the conspec wt_scale.abs parameter
-
-  virtual void	Compute_AvgCycles();
-  // #CAT_Statistic compute average cycles (at an epoch-level timescale)
-  virtual void	Compute_AvgExtRew();
-  // #CAT_Statistic compute average external reward information (at an epoch-level timescale)
-  virtual void	Compute_AvgSendPct();
-  // #CAT_Statistic compute average sending pct (at an epoch-level timescale)
-  override void	Compute_EpochStats();
-  // #CAT_Statistic compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles
-  override void	SetProjectionDefaultTypes(Projection* prjn);
-
-  virtual void	GraphInhibMod(bool flip_sign = true, DataTable* graph_data = NULL);
-  // #BUTTON #NULL_OK graph the overall inhibitory modulation curve, including sinusoidal and final -- if flip_sign is true, then sign is reversed so that graph looks like the activation profile instead of the inhibition profile
-
-  TA_SIMPLE_BASEFUNS(LeabraNetwork);
-protected:
-  int	prv_learn_rule;		// previous learning rule for triggering updates
-  void 	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void 	Destroy()		{}
-};
-
-class LEABRA_API LeabraProject : public ProjectBase {
-  // #STEM_BASE ##CAT_Leabra project for Leabra models
-INHERITED(ProjectBase)
-public:
-
-  TA_BASEFUNS_NOCOPY(LeabraProject);
-private:
-  void	Initialize();
-  void 	Destroy()		{}
-};
 
 //////////////////////////
 //	Unit NetAvg   	//

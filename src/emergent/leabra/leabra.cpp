@@ -91,15 +91,17 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   lrn_var = XCAL_AVGSR;
-  p_boost = .7f;
   p_thr_gain = 1.9f;
-  d_rev = .15;
+  p_boost = .7f;
+  noerr_lrate = .5f;
   d_gain = 2.0;
+  d_rev = .15;
   rnd_min_avg = -1.0f;		// turn off by default
   rnd_var = 0.1f;
 
   d_rev_ratio = (1.0f - d_rev) / d_rev;
   p_boost_c = 1.0f - p_boost;
+  noerr_lrate_c = 1.0f - noerr_lrate;
 }
 
 void XCalLearnSpec::UpdateAfterEdit_impl() {
@@ -109,6 +111,7 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
   else
     d_rev_ratio = 1.0f;
   p_boost_c = 1.0f - p_boost;
+  noerr_lrate_c = 1.0f - noerr_lrate;
 }
 
 void SAvgCorSpec::Initialize() {
@@ -354,7 +357,7 @@ void LeabraConSpec::GraphXCalFun(DataTable* graph_data, float thr_p) {
   float x;
   for(x = 0.0f; x <= 1.0f; x += .01f) {
     cn.sravg = x;
-    C_Compute_dWt_CtLeabraXCAL(&cn, x, 1.0f, x, 1.0f, thr_p, thr_p * xcal.d_rev);
+    C_Compute_dWt_CtLeabraXCAL(&cn, x, 1.0f, x, 1.0f, thr_p, thr_p * xcal.d_rev, 1.0f);
     graph_data->AddBlankRow();
     sravg->SetValAsFloat(x, -1);
     dwt->SetValAsFloat(cn.dwt, -1);
@@ -1707,6 +1710,18 @@ float LeabraUnitSpec::Compute_SSE(bool& has_targ, Unit* u) {
     return 0.0f;
 }
 
+float LeabraUnitSpec::Compute_NormErr(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
+  if(!(u->ext_flag & (Unit::TARG | Unit::COMP))) return 0.0f;
+
+  if(net->on_errs) {
+    if(u->act_m > 0.5f && u->targ < 0.5f) return 1.0f;
+  }
+  if(net->off_errs) {
+    if(u->act_m < 0.5f && u->targ > 0.5f) return 1.0f;
+  }
+  return 0.0f;
+}
+
 //////////////////////////////////////////
 //	 Misc Functions 		//
 //////////////////////////////////////////
@@ -2200,6 +2215,8 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay) {
   lay->avg_netin_sum.avg = 0.0f;
   lay->avg_netin_sum.max = 0.0f;
   lay->avg_netin_n = 0;
+
+  lay->norm_err = 0.0f;
 
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
@@ -3780,6 +3797,53 @@ float LeabraLayerSpec::Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg,
   return lay->Layer::Compute_SSE(n_vals, unit_avg, sqrt);
 }
 
+
+float LeabraLayerSpec::Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug,
+					   LeabraInhib* thr, LeabraNetwork* net) {
+  float nerr = 0.0f;
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, ug->, i) {
+    nerr += u->Compute_NormErr(lay, net);
+  }
+  return nerr;
+}
+
+float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->norm_err = -1.0f;					 // assume not contributing
+  if(!(lay->ext_flag & (Unit::TARG | Unit::COMP))) return -1.0f; // indicates not applicable
+
+  float nerr = 0.0f;
+  int ntot = 0;
+  if((inhib_group != ENTIRE_LAYER) && (lay->units.gp.size > 0)) {
+    for(int g=0; g<lay->units.gp.size; g++) {
+      LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
+      nerr += Compute_NormErr_ugp(lay, rugp, (LeabraInhib*)rugp, net);
+      if(net->on_errs && net->off_errs)
+	ntot += 2 * rugp->kwta.k;
+      else
+	ntot += rugp->kwta.k;
+    }
+  }
+  else {
+    nerr += Compute_NormErr_ugp(lay, &(lay->units), (LeabraInhib*)lay, net);
+    if(net->on_errs && net->off_errs)
+      ntot += 2 * lay->kwta.k;
+    else
+      ntot += lay->kwta.k;
+  }
+  if(ntot == 0) return -1.0f;
+
+  lay->norm_err = nerr / (float)ntot;
+  if(lay->norm_err > 1.0f) lay->norm_err = 1.0f;
+
+  if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
+     ((lay->ext_flag & Unit::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE)))
+    return -1.0f;		// no contributarse
+
+  return lay->norm_err;
+}
+
 void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork*) {
   lay->avg_netin_sum.avg += lay->netin.avg;
   lay->avg_netin_sum.max += lay->netin.max;
@@ -4152,6 +4216,7 @@ void LeabraLayer::Initialize() {
   sravg_sum = 0.0f;
   sravg_nrm = 0.0f;
   maxda_sum = 0.0f;
+  norm_err = 0.0f;
   da_updt = false;
   net_rescale = 1.0f;
 
@@ -4219,6 +4284,7 @@ void LeabraLayer::Copy_(const LeabraLayer& cp) {
   sravg_sum = cp.sravg_sum;
   sravg_nrm = cp.sravg_nrm;
   maxda_sum = cp.maxda_sum;
+  norm_err = cp.norm_err;
 
   // this will update spec pointer to new network if we are copied from other guy
   // only if the network is not otherwise already copying too!!
@@ -4415,6 +4481,14 @@ void LeabraNetwork::Initialize() {
   avg_ext_rew = 0.0f;
   avg_ext_rew_sum = 0.0f;
   avg_ext_rew_n = 0;
+
+  on_errs = true;
+  off_errs = true;
+
+  norm_err = 0.0f;
+  avg_norm_err = 0.0f;
+  avg_norm_err_sum = 0.0f;
+  avg_norm_err_n = 0;
 }
 
 void LeabraNetwork::Init_Counters() {
@@ -4446,6 +4520,11 @@ void LeabraNetwork::Init_Stats() {
   avg_ext_rew = 0.0f;
   avg_ext_rew_sum = 0.0f;
   avg_ext_rew_n = 0;
+
+  norm_err = 0.0f;
+  avg_norm_err = 0.0f;
+  avg_norm_err_sum = 0.0f;
+  avg_norm_err_n = 0;
 }
 
 void LeabraNetwork::Init_Sequence() {
@@ -4471,6 +4550,11 @@ void LeabraNetwork::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   ct_time.UpdateAfterEdit();
 
+  if(TestError(!off_errs && !on_errs, "UAE", "can't have both off_errs and on_errs be off (no err would be computed at all) -- turned both back on")) {
+    on_errs = true;
+    off_errs = true;
+  }
+  
   if(prv_learn_rule == -1) {
     prv_learn_rule = learn_rule;
   }
@@ -5116,6 +5200,30 @@ void LeabraNetwork::Compute_ExtRew() {
   }
 }
 
+void LeabraNetwork::Compute_NormErr() {
+  float nerr_sum = 0.0f;
+  float nerr_avail = 0.0f;
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    float nerr = lay->Compute_NormErr(this);
+    if(nerr >= 0.0f) {
+      nerr_avail += 1.0f;
+      nerr_sum += nerr;
+    }
+  }
+  if(nerr_avail > 0.0f) {
+    norm_err = nerr_sum / nerr_avail; // normalize contribution across layers
+  }
+  else {
+    norm_err = 0.0f;
+  }
+
+  avg_norm_err_sum += norm_err;
+  avg_norm_err_n++;
+}
+
 void LeabraNetwork::Compute_MinusCycles() {
   minus_cycles = cycle;
   avg_cycles_sum += minus_cycles;
@@ -5171,6 +5279,7 @@ bool LeabraNetwork::Compute_TrialStats_Test() {
 
 void LeabraNetwork::Compute_TrialStats() {
   inherited::Compute_TrialStats();
+  Compute_NormErr();
   Compute_MinusCycles();
   minus_output_name = output_name; // grab and hold..
 }
@@ -5244,10 +5353,19 @@ void LeabraNetwork::Compute_AvgExtRew() {
   avg_ext_rew_n = 0;
 }
 
+void LeabraNetwork::Compute_AvgNormErr() {
+  if(avg_norm_err_n > 0) {
+    avg_norm_err = avg_norm_err_sum / (float)avg_norm_err_n;
+  }
+  avg_norm_err_sum = 0.0f;
+  avg_norm_err_n = 0;
+}
+
 void LeabraNetwork::Compute_EpochStats() {
   inherited::Compute_EpochStats();
   Compute_AvgCycles();
   Compute_AvgExtRew();
+  Compute_AvgNormErr();
   Compute_AvgSendPct();
 }
 

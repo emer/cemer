@@ -924,6 +924,50 @@ float ScalarValLayerSpec::Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_a
   return rval;
 }
 
+float ScalarValLayerSpec::Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug,
+					   LeabraInhib* thr, LeabraNetwork* net) {
+  LeabraUnit* u = (LeabraUnit*)ug->FastEl(0);
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
+  // only count if target value is within range -- otherwise considered a non-target
+  if(u->ext_flag & (Unit::TARG | Unit::COMP) && val_range.RangeTestEq(u->targ)) {
+    float uerr = u->targ - u->act_m;
+    if(fabsf(uerr) < us->sse_tol)
+      return 0.0f;
+    return fabsf(uerr);
+  }
+  return 0.0f;
+}
+
+float ScalarValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->norm_err = -1.0f;					 // assume not contributing
+  if(!(lay->ext_flag & (Unit::TARG | Unit::COMP))) return -1.0f; // indicates not applicable
+
+  float nerr = 0.0f;
+  float ntot = 0;
+  if((inhib_group != ENTIRE_LAYER) && (lay->units.gp.size > 0)) {
+    for(int g=0; g<lay->units.gp.size; g++) {
+      LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
+      nerr += Compute_NormErr_ugp(lay, rugp, (LeabraInhib*)rugp, net);
+      ntot += unit_range.range;
+    }
+  }
+  else {
+    nerr += Compute_NormErr_ugp(lay, &(lay->units), (LeabraInhib*)lay, net);
+    ntot += unit_range.range;
+  }
+  if(ntot == 0.0f) return -1.0f;
+
+  lay->norm_err = nerr / ntot;
+  if(lay->norm_err > 1.0f) lay->norm_err = 1.0f;
+
+  if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
+     ((lay->ext_flag & Unit::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE)))
+    return -1.0f;		// no contributarse
+
+  return lay->norm_err;
+}
+
+
 //////////////////////////////////
 // 	Scalar Value Self Prjn	//
 //////////////////////////////////
@@ -1809,6 +1853,64 @@ float TwoDValLayerSpec::Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg
     n_vals = 0;
   }
   return rval;
+}
+
+float TwoDValLayerSpec::Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ugp,
+					   LeabraInhib* thr, LeabraNetwork* net) {
+  float rval = 0.0f;
+  for(int k=0;k<twod.n_vals;k++) { // first loop over and find potential target values
+    LeabraUnit* x_tu = (LeabraUnit*)ugp->FastEl(k*2);
+    LeabraUnit* y_tu = (LeabraUnit*)ugp->FastEl(k*2+1);
+    LeabraUnitSpec* us = (LeabraUnitSpec*)x_tu->GetUnitSpec();
+    // only count if target value is within range -- otherwise considered a non-target
+    if((x_tu->ext_flag & (Unit::TARG | Unit::COMP)) && x_val_range.RangeTestEq(x_tu->targ) && 
+       (y_tu->ext_flag & (Unit::TARG | Unit::COMP)) && y_val_range.RangeTestEq(y_tu->targ)) {
+      // now find minimum dist actual activations
+      float mn_dist = taMath::flt_max;
+      for(int j=0;j<twod.n_vals;j++) {
+	LeabraUnit* x_u = (LeabraUnit*)ugp->FastEl(j*2);
+	LeabraUnit* y_u = (LeabraUnit*)ugp->FastEl(j*2+1);
+	float dx = x_tu->targ - x_u->act_m;
+	float dy = y_tu->targ - y_u->act_m;
+	if(fabsf(dx) < us->sse_tol) dx = 0.0f;
+	if(fabsf(dy) < us->sse_tol) dy = 0.0f;
+	float dist = fabsf(dx) + fabsf(dy); // only diff from sse!
+	if(dist < mn_dist)
+	  mn_dist = dist;
+      }
+      rval += mn_dist;
+    }
+  }
+  return rval;
+}
+
+float TwoDValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->norm_err = -1.0f;					 // assume not contributing
+  if(!(lay->ext_flag & (Unit::TARG | Unit::COMP))) return -1.0f; // indicates not applicable
+
+  float nerr = 0.0f;
+  float ntot = 0;
+  if((inhib_group != ENTIRE_LAYER) && (lay->units.gp.size > 0)) {
+    for(int g=0; g<lay->units.gp.size; g++) {
+      LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
+      nerr += Compute_NormErr_ugp(lay, rugp, (LeabraInhib*)rugp, net);
+      ntot += x_range.range + y_range.range;
+    }
+  }
+  else {
+    nerr += Compute_NormErr_ugp(lay, &(lay->units), (LeabraInhib*)lay, net);
+    ntot += x_range.range + y_range.range;
+  }
+  if(ntot == 0.0f) return -1.0f;
+
+  lay->norm_err = nerr / ntot;
+  if(lay->norm_err > 1.0f) lay->norm_err = 1.0f;
+
+  if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
+     ((lay->ext_flag & Unit::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE)))
+    return -1.0f;		// no contributarse
+
+  return lay->norm_err;
 }
 
 ///////////////////////////////////////////////////////////////

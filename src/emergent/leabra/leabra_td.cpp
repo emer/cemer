@@ -300,42 +300,45 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
 
     if(!(rew_lay->ext_flag & rew_chk_flag)) continue; // only proceed if valid 
 
-    LeabraLayerSpec* rls = (LeabraLayerSpec*)rew_lay->spec.SPtr();
-    if(rls->InheritsFrom(&TA_ScalarValLayerSpec)) {
-      UNIT_GP_ITR(rew_lay,
-		  LeabraUnit* eu = (LeabraUnit*)ugp->Leaf(0);
-		  float err = fabsf(eu->act_m - eu->targ);
-		  if(err < out_err.err_tol) err = 0.0f;
-		  toterr += err;
-		  totposs += out_err.scalar_val_max;
-		  )
-    }
-    else {
-      if(out_err.no_off_err) {
-	totposs += rew_lay->kwta.k; // only on units can make errors
-      }
-      else {
-	totposs += 2 * rew_lay->kwta.k; // both on and off units count
-      }
-      LeabraUnit* eu;
-      taLeafItr i;
-      FOR_ITR_EL(LeabraUnit, eu, rew_lay->units., i) {
-	if(out_err.no_off_err) {
-	  if(!(eu->ext_flag & rew_chk_flag)) continue;
-	  if(eu->act_m > 0.5f) {	// was active
-	    if(eu->targ < 0.5f)	// shouldn't have been
-	      toterr += 1.0f;
-	  }
-	}
-	else {
-	  if(!(eu->ext_flag & rew_chk_flag)) continue;
-	  float tmp = fabsf(eu->act_m - eu->targ);
-	  float err = 0.0f;
-	  if(tmp >= out_err.err_tol) err = 1.0f;
-	  toterr += err;
-	}
-      }
-    }
+    toterr += rew_lay->norm_err;	// now using norm err: todo: test this!!!
+    totposs += 1.0f;
+
+//     LeabraLayerSpec* rls = (LeabraLayerSpec*)rew_lay->spec.SPtr();
+//     if(rls->InheritsFrom(&TA_ScalarValLayerSpec)) {
+//       UNIT_GP_ITR(rew_lay,
+// 		  LeabraUnit* eu = (LeabraUnit*)ugp->Leaf(0);
+// 		  float err = fabsf(eu->act_m - eu->targ);
+// 		  if(err < out_err.err_tol) err = 0.0f;
+// 		  toterr += err;
+// 		  totposs += out_err.scalar_val_max;
+// 		  )
+//     }
+//     else {
+//       if(out_err.no_off_err) {
+// 	totposs += rew_lay->kwta.k; // only on units can make errors
+//       }
+//       else {
+// 	totposs += 2 * rew_lay->kwta.k; // both on and off units count
+//       }
+//       LeabraUnit* eu;
+//       taLeafItr i;
+//       FOR_ITR_EL(LeabraUnit, eu, rew_lay->units., i) {
+// 	if(out_err.no_off_err) {
+// 	  if(!(eu->ext_flag & rew_chk_flag)) continue;
+// 	  if(eu->act_m > 0.5f) {	// was active
+// 	    if(eu->targ < 0.5f)	// shouldn't have been
+// 	      toterr += 1.0f;
+// 	  }
+// 	}
+// 	else {
+// 	  if(!(eu->ext_flag & rew_chk_flag)) continue;
+// 	  float tmp = fabsf(eu->act_m - eu->targ);
+// 	  float err = 0.0f;
+// 	  if(tmp >= out_err.err_tol) err = 1.0f;
+// 	  toterr += err;
+// 	}
+//       }
+//     }
   }
   if(totposs == 0.0f)
     return -1.0f;		// -1 = no reward signal at all

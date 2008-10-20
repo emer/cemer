@@ -1055,6 +1055,9 @@ public:
   virtual float Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
   override float Compute_SSE(LeabraLayer* lay, int& n_vals,
 			     bool unit_avg = false, bool sqrt = false);
+  override float Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+				     LeabraNetwork* net);
+  override float Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
 
   virtual void	ReConfig(Network* net, int n_units = -1);
   // #BUTTON #CAT_ScalarVal reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
@@ -1280,6 +1283,9 @@ public:
   virtual float Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
   override float Compute_SSE(LeabraLayer* lay, int& n_vals,
 			     bool unit_avg = false, bool sqrt = false);
+  override float Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+				     LeabraNetwork* net);
+  override float Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
 
   virtual void	ReConfig(Network* net, int n_units = -1);
   // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value

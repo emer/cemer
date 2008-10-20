@@ -655,6 +655,7 @@ INHERITED(BaseSpec)
   static RecvCons*	rcg_rval; // return value for connecting
   static SendCons*	scg_rval; // return value for connecting
 public:
+
   MinMaxRange	act_range;
   // #CAT_Activation range of activation for units
   TypeDef*	bias_con_type;
@@ -1835,8 +1836,8 @@ public:
   String	trial_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current trial (e.g., name of input pattern, typically set by a LayerWriter)
   String	output_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (must be computed by a program)
   
-  bool		sse_unit_avg;	// #CAT_Statistic when computing the sse value, average over units
-  bool		sse_sqrt;	// #CAT_Statistic when computing the sse value, take the square root of the result
+  bool		sse_unit_avg;	// #CAT_Statistic compute sse as average sse over units (i.e., divide by total number of target units in layer)
+  bool		sse_sqrt;	// #CAT_Statistic take the square root of the SSE, producing a Euclidian distance instead of raw sse (note this cannot technically be added across trials in a linear fashion, as raw sse can)
   float		sse;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
   float		sum_sse;	// #GUI_READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
   float		avg_sse;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average sum squared error over an epoch or similar larger set of external input patterns
