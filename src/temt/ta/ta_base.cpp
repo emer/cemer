@@ -178,14 +178,15 @@ bool tabMisc::DoDelayedCloses() {
   items.Hijack(delayed_close);
   // we work fifo
   while (items.size > 0) {
-    // if there is only 1 ref count left, we must be it, so just remove,
-    // otherwise, try its owner, otherwise, prob an error (too many refs)
+    // note: active items can often have many refs, and CutLinks will typically
+    // resolve those (ex. Projection, which can have many cons)
+    // so if item is owned, we just defer to it, otherwise
     taBase* it = items.FastEl(0);
     items.RemoveIdx(0);
     int refn = taBase::GetRefn(it); 
 #ifdef DEBUG
-    if (refn != 1) {
-      taMisc::Error("tabMisc::delayed_close: item had refn != 1, was=",
+    if ((it->GetOwner() == NULL) && (refn != 1)) {
+      taMisc::Warning("tabMisc::delayed_close: item had refn != 1, was=",
         String(refn), "type=", it->GetTypeDef()->name, "name=",
         it->GetName());
     }
