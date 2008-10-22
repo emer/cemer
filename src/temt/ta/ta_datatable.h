@@ -454,11 +454,10 @@ INHERITED(taList<DataCol>)
 friend class DataTable;
 public:
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
-  
-  override taBase* New(int n_objs = 1, TypeDef* typ = NULL)
-   { return inherited::New(n_objs, typ); }
-  // #NO_MENU create new data array -- note, this should not be used by users to create new colums -- use the datatable functions instead (NewCol, NewMatrixCol, etc)
-
+#ifdef __MAKETA__  
+  taBase* 		New_gui(int n_objs=1, TypeDef* typ=NULL,
+    const String& name="(default name)"); // #NO_MENU
+#endif
   override int		NumListCols() const {return 3;}
   // name, val_type (float, etc.), disp_opts
   override String	GetColHeading(const KeyString& key) const;

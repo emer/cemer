@@ -782,6 +782,7 @@ public:
   static ContextFlag	is_checking;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently doing batch CheckConfig on objects
   static ContextFlag	in_gui_call;	// #READ_ONLY #NO_SAVE #NO_SHOW true if we are running a function call from the gui (used to modalize warning dialogs)
   static ContextFlag	in_plugin_init;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading typeinfo for a plugin
+  static ContextFlag	no_auto_expand;	// #READ_ONLY #NO_SAVE #NO_SHOW true to suppress auto-expanding (esp during code that makes a lot of objs)
   static TypeDef*	plugin_loading; // #READ_ONLY #NO_SAVE #NO_SHOW the TypeDef of the plugin currently loading -- we stamp this into all formal classes
 
   static String		last_check_msg; // #READ_ONLY #NO_SAVE #EDIT_DIALOG last error, or last batch of errors (if checking) by CheckConfig

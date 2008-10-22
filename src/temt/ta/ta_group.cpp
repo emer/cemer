@@ -464,7 +464,7 @@ TAGPtr taGroup_impl::FindMakeGpName(const String& nm, TypeDef* typ, bool& nw_ite
     nw_item = false;
     return rval;
   }
-  rval = NewGp_gui(1, typ, nm);
+  rval = NewGp_(1, typ, nm);
   nw_item = true;
   return rval;
 }
@@ -578,32 +578,38 @@ void taGroup_impl::List(ostream& strm) const {
     FastGp_(i)->List(strm);
 }
 
-taBase* taGroup_impl::New(int no, TypeDef* typ) {
+taBase* taGroup_impl::New_impl(int no, TypeDef* typ, const String& name_)
+{
+  taBase* rval = NULL;
   if (typ == NULL)
     typ = el_typ;
-
-  // if requested typ inherits from the list el type, then 
-  // we assume it is for a list el, and create the instances
-  if (typ->InheritsFrom(el_base)) {
-    taBase* rval = taList_impl::New(no, typ);
-    return rval;
-  }
+  // if requested typ inherits from the list el_base, then 
+  // just create list el
+  else if (!typ->InheritsFrom(el_base)) 
+    goto cont;
   
-  // otherwise, if it is for a group type, we check to make sure
-  // it either inherits from the current group type, or the current
-  // groups inherits from it -- in the latter case, we create the derived type
-  // (there is no officially supported member for specifying group type,
-  // so we have to be conservative and assume group must contain subgroups of 
-  // at least its own type)
+  rval = taList_impl::New_impl(no, typ, name_);
+  return rval;
+  
+cont:
+  // otherwise, we assume it will be a group, but do some additional
+  // checks here that we wouldn't do for the Gp guy...
+  // we check to make sure it either inherits from the current group type,
+  // or the current groups inherits from it -- in the latter case, we
+  // create the derived type (there is no officially supported member for
+  // specifying group type, so we have to be conservative and assume
+  // group must contain subgroups of at least its own type)
   if (typ->InheritsFrom(&TA_taGroup_impl)) {
     if (GetTypeDef()->InheritsFrom(typ)) {
-      typ = GetTypeDef(); 
+      typ = GetTypeDef(); // make our own type, in case we assume that
     } else if (!typ->InheritsFrom(GetTypeDef()))
       goto err;
-    taBase* rval = gp.New(no, typ);
-//    UpdateAfterEdit();
-    return rval;
-  }
+  } else goto err; // not a group type, so can't be right
+
+  rval = (TAGPtr)gp.New(no, typ, name_);
+//  UpdateAfterEdit();
+  return rval;
+    
 err: 
   taMisc::Warning("*** Attempt to create type:", typ->name,
 		   "in group of type:", GetTypeDef()->name,
@@ -618,23 +624,22 @@ taBase* taGroup_impl::NewEl_(int no, TypeDef* typ) {
   return rval;
 }
 
-TAGPtr taGroup_impl::NewGp_(int no, TypeDef* typ) {
-  if(typ == NULL || typ == &TA_TypeDef)
-    typ = GetTypeDef();		// always create one of yourself..
-  TAGPtr rval = (TAGPtr)gp.New(no, typ);
+TAGPtr taGroup_impl::NewGp_(int no, TypeDef* typ, const String& name_) {
+  if (typ == NULL)
+    typ = GetTypeDef();	// always create one of yourself..
+
+  // note: following will spit it out if it isn't a taGroup_impl of right type
+  TAGPtr rval = rval = (TAGPtr)gp.New(no, typ, name_);
 //  UpdateAfterEdit();
   return rval;
 }
 
 TAGPtr taGroup_impl::NewGp_gui(int no, TypeDef* typ, const String& name_) {
-  TAGPtr rval = NewGp_(no, typ);
+  TAGPtr rval = NewGp_(no, typ, name_);
   if (rval) {
-    if ((no==1) && (name_.nonempty())) {
-      rval->SetName(name_);
-      rval->UpdateAfterEdit();
-    }
-    if (taMisc::gui_active) {
-      if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
+    if (taMisc::gui_active && !taMisc::no_auto_expand) {
+      if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) 
+      {
         tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
         tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
       }

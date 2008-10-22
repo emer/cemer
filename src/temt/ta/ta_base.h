@@ -574,8 +574,13 @@ public:
   virtual TAPtr 	MakeTokenAry(int no)	{ return new taBase[no]; } // #IGNORE
 //  taBase&		operator=(const taBase& cp) { Copy(cp); return *this;}
   virtual TypeDef*	GetTypeDef() const;	// #IGNORE
-  virtual taBase*	New(int n_objs=1, TypeDef* type=NULL) { return NULL; }
+  taBase*		New(int n_objs=1, TypeDef* type=NULL,
+    const String& name = "(default name)")
+    { return New_impl(n_objs, type, name);}
   // #CAT_ObjectMgmt Create n_objs objects of given type (type is optional)
+protected:
+  virtual taBase*	New_impl(int n_objs, TypeDef* type,
+    const String& nm) { return NULL; }
 
   ////////////////////////////////////////////////////////////////////,T///////
   //	Object managment flags (taBase supports up to 8 flags for basic object mgmt purposes)
@@ -1839,11 +1844,9 @@ public:
   virtual int	SetDefaultEl(TAPtr it);
   // #CAT_Access set the default element to be given item
 
-  override taBase* New(int n_objs=1, TypeDef* typ=NULL);
-  // #CAT_Modify create n_objs new objects of given type in list (NULL = default type, el_typ)
   taBase* 	New_gui(int n_objs=1, TypeDef* typ=NULL,
     const String& name="(default name)");
-  // #BUTTON #MENU_CONTEXT #TYPE_ON_el_base #CAT_Modify #LABEL_New #NO_SAVE_ARG_VAL create n_objs new objects of given type in list (typ=NULL: default type, el_typ; name only used for n=1)
+  // #BUTTON #MENU_CONTEXT #TYPE_ON_el_base #CAT_Modify #LABEL_New #NO_SAVE_ARG_VAL create n_objs new objects of given type in list (typ=NULL: default type, el_typ;)
   virtual void	SetSize(int sz);
   // #MENU #MENU_ON_Edit #CAT_Modify add or remove elements to force list to be of given size
 
@@ -1921,6 +1924,7 @@ protected:
     bool& ok, bool virt) const;
   override void	CheckChildConfig_impl(bool quiet, bool& rval);
   override String ChildGetColText_impl(taBase* child, const KeyString& key, int itm_idx = -1) const;
+  override taBase* New_impl(int n_objs, TypeDef* typ, const String& nm);
 private:
   void 	Copy_(const taList_impl& cp);
   void 	Initialize();

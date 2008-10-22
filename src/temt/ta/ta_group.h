@@ -81,8 +81,6 @@ public:
   bool		IsRoot() const	{ return (root_gp == this); } // 'true' if this is the root
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 
-  taBase* 	New(int n_objs=1, TypeDef* typ = NULL);
-
   MemberDef* 	FindMembeR(const String& nm, void*& ptr) const;
   MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const;
 
@@ -163,12 +161,13 @@ public:
     return (taBase*)lf.cgp->el[lf.i];}
   inline taBase*	PrevEl(taLeafItr& lf) const {return PrevEl_(lf);} // #IGNORE
 
-  virtual TAGPtr  NewGp_(int no, TypeDef* typ=NULL);	// #IGNORE create sub groups
+  virtual TAGPtr  NewGp_(int no, TypeDef* typ=NULL, const String& name_ = "");
+    // #IGNORE create sub groups
   virtual taBase* NewEl_(int no, TypeDef* typ=NULL);	// #IGNORE create items
 
   TAGPtr  		NewGp_gui(int n_gps=1, TypeDef* typ=NULL,
     const String& name="");
-  // #CAT_Modify #BUTTON #MENU_CONTEXT #TYPE_this #NULL_OK_typ #NULL_TEXT_SameType #LABEL_NewGroup #NO_SAVE_ARG_VAL Create and add n_gps new sub group(s) of given type (typ=NULL: same type as this group; name only applies for n=1)
+  // #CAT_Modify #BUTTON #MENU_CONTEXT #TYPE_this #NULL_OK_typ #NULL_TEXT_SameType #LABEL_NewGroup #NO_SAVE_ARG_VAL Create and add n_gps new sub group(s) of given type (typ=NULL: same type as this group)
 
   virtual taBase* FindLeafName_(const char* it, int& idx=no_idx) const; 	// #IGNORE
   virtual taBase* FindLeafNameContains_(const String& it, int& idx=no_idx) const;	// #IGNORE
@@ -247,6 +246,8 @@ protected:
     bool& ok, bool virt) const;
   override void 	CheckChildConfig_impl(bool quiet, bool& rval);
   override void		ItemRemoved_(); // update the leaf counts (supercursively)
+  override taBase* 	New_impl(int n_objs, TypeDef* typ, const String& name_);
+
   virtual TAGPtr LeafGp_(int leaf_idx) const; // #IGNORE the leaf group containing leaf item -- **NONSTANDARD FUNCTION** put here to try to flush out any use
 #ifdef TA_GUI
 protected: // clip functions
@@ -320,7 +321,8 @@ public:
 
   virtual T* 	NewEl(int n_els=1, TypeDef* typ=NULL) { return (T*)NewEl_(n_els, typ);}
   // #CAT_Modify Create and add n_els new element(s) of given type to the group (NULL = default type, el_typ)
-  virtual taGroup<T>* NewGp(int n_gps=1, TypeDef* typ=NULL) { return (taGroup<T>*)NewGp_(n_gps, typ);}
+  virtual taGroup<T>* NewGp(int n_gps=1, TypeDef* typ=NULL,
+    const String& name="") { return (taGroup<T>*)NewGp_(n_gps, typ, name);}
   // #CAT_Modify Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
 
   T*		FindName(const char* item_nm, int& idx=no_idx)  const

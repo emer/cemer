@@ -3526,7 +3526,7 @@ String taList_impl::GetPath_Long(TAPtr ta, TAPtr par_stop) const {
   return rval;
 }
 
-taBase* taList_impl::New(int no, TypeDef* typ) {
+taBase* taList_impl::New_impl(int no, TypeDef* typ, const String& name_) {
   if(typ == NULL)
     typ = el_typ;
   if(TestWarning(!typ->InheritsFrom(el_base), "New",
@@ -3544,20 +3544,25 @@ taBase* taList_impl::New(int no, TypeDef* typ) {
     rval = taBase::MakeToken(typ);
     if(TestError(!rval, "New", "Could not make a token of type",typ->name,"(probably has #NO_INSTANCE in object header comment directive)"))
       return NULL;
+    if (name_.nonempty() && (name_ != "(default name)")) {
+      // if only 1 inst, then name is literal, else it is a base
+      if (no == 1) {
+        rval->SetName(name_);
+      } else {
+        rval->SetName(name_ + "_" + String(i));
+      }
+    }
     Add_(rval);
   }
   return rval;
 }
 
 taBase* taList_impl::New_gui(int no, TypeDef* typ, const String& name_) {
-  taBase* rval = New(no, typ);
+  taBase* rval = New(no, typ, name_);
   if (rval) {
-    if ((no==1) && (name_ != "(default name)")) {
-      rval->SetName(name_);
-      rval->UpdateAfterEdit();
-    }
-    if (taMisc::gui_active) {
-      if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
+    if (taMisc::gui_active && !taMisc::no_auto_expand) {
+      if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) 
+      {
         tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
         tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
       }

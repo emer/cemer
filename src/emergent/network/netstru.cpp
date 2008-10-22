@@ -4982,6 +4982,7 @@ int Network::GetDefaultZ(){
 
 void Network::Build() {
   taMisc::Busy();
+  ++taMisc::no_auto_expand; // c'mon...!!! ;)
   StructUpdate(true);
   BuildLayers(); // note: for Area constructs
   BuildUnits();
@@ -4991,14 +4992,17 @@ void Network::Build() {
   if (net_inst.ptr()) {
     net_inst->OnBuild();
   }
+  --taMisc::no_auto_expand;
   taMisc::DoneBusy();
 }
 
 void Network::BuildLayers() {
   taMisc::Busy();
+  ++taMisc::no_auto_expand;
   StructUpdate(true);
   layers.BuildLayers(); // recurses
   StructUpdate(false);
+  --taMisc::no_auto_expand;
   taMisc::DoneBusy();
 //nn??  UpdtAfterNetMod();
   if(!taMisc::gui_active)    return;
@@ -5023,11 +5027,13 @@ void Network::BuildUnits() {
 
 void Network::BuildPrjns() {
   taMisc::Busy();
+  ++taMisc::no_auto_expand;
   StructUpdate(true);
   layers.BuildPrjns(); // recurses
   StructUpdate(false);
   taMisc::DoneBusy();
 //nn?  UpdtAfterNetMod();
+  --taMisc::no_auto_expand;
   if(!taMisc::gui_active)    return;
 }
 
@@ -5040,6 +5046,7 @@ void Network::PreConnect() {
 
 void Network::Connect() {
   taMisc::Busy();
+  ++taMisc::no_auto_expand; // c'mon...!!! ;)
   StructUpdate(true);
   RemoveCons();
   SyncSendPrjns();
@@ -5053,6 +5060,7 @@ void Network::Connect() {
   }
   UpdtAfterNetMod();
   StructUpdate(false);
+  --taMisc::no_auto_expand;
   taMisc::DoneBusy();
 }
 
