@@ -952,7 +952,7 @@ private:
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
 };
-
+TA_SMART_PTRS(ProjectionSpec)
 SpecPtr_of(ProjectionSpec);
 
 class EMERGENT_API Projection: public taNBase {
