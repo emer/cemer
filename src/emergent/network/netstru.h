@@ -1588,7 +1588,7 @@ public:
   // #CAT_Structure get unit group from group coordinates (i.e., within gp_geom, not unit coordinates)
   virtual void	GetActGeomNoSpc(PosTwoDCoord& nospc_geom);
   // #CAT_Structure get the actual geometry of the layer, subtracting any gp_spc that might be present (as if there were no spaces between unit groups)
-
+  void		GetRelPos(TDCoord& rel_pos); // get relative pos, which factors in offsets from layer groups
   void		SetDefaultPos();
   // #IGNORE initialize position of layer
 

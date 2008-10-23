@@ -4562,6 +4562,16 @@ void Layer::GetActGeomNoSpc(PosTwoDCoord& nospc_geom) {
   nospc_geom.y -= (gp_geom.y - 1) * gp_spc.y;
 }
 
+void Layer::GetRelPos(TDCoord& rel_pos) {
+  rel_pos = pos;
+  taBase* last = this;
+  Layer_Group* lgp;
+  while ((lgp = GET_OWNER(last, Layer_Group))) {
+    rel_pos += lgp->pos;
+    last = lgp;
+  }
+}
+ 
 #ifdef DMEM_COMPILE
 void Layer::DMem_DistributeUnits() {
   dmem_share_units.Reset();

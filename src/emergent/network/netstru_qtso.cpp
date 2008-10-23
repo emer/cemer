@@ -1275,7 +1275,8 @@ void LayerView::Render_impl() {
   Layer* lay = this->layer(); //cache
   NetView* nv = this->nv();
 
-  TDCoord& pos = lay->pos;
+//obs  TDCoord& pos = lay->pos;
+  TDCoord pos; lay->GetRelPos(pos);
   FloatTransform* ft = transform(true);
   ft->translate.SetXYZ((float)pos.x / nv->max_size.x,
 		       ((float)pos.z + 0.5f) / nv->max_size.z,
