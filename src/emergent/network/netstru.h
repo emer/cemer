@@ -1650,15 +1650,17 @@ public:
   override String GetTypeDecoKey() const { return "Layer"; }
 
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
-  void	InitLinks()		{ inherited::InitLinks(); taBase::Own(pos,this); }
-  void  Copy_(const Layer_Group& cp)	{ pos = cp.pos; }
+  void	InitLinks();
+  void	CutLinks();
   TA_BASEFUNS(Layer_Group);
 protected:
+  override void	UpdateAfterEdit_impl();
   virtual void		BuildLayers_impl(); 
   virtual void		BuildPrjns_impl();
 private:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
+  void  Copy_(const Layer_Group& cp)	{ pos = cp.pos; }
 };
 
 TA_SMART_PTRS(Layer_Group)

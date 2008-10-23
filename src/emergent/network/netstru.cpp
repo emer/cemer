@@ -4642,6 +4642,32 @@ void Layer::DMem_SyncAct() {
 //  Layer_Group	      //
 ////////////////////////
 
+void Layer_Group::InitLinks() { 
+  inherited::InitLinks(); 
+  taBase::Own(pos,this);
+}
+
+void Layer_Group::CutLinks() { 
+  pos.CutLinks();
+  inherited::CutLinks(); 
+}
+
+void Layer_Group::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  // hack to disable the auto pos for nets
+  if (!pos.isZero()) {
+    Network* net = GET_MY_OWNER(Network);
+    if (net && TestWarning(!(net->flags & Network::MANUAL_POS),
+      "UpdateAfterEdit", 
+      "Using Layer_Group.pos requires Network to use manual positioning of layers; so Network.MANUAL_POS has been set; you can reverse this by setting all Layer_Group.pos to 0 and then unchecking Network.MANUAL_POS")) 
+    {
+      net->flags = (Network::NetFlags)(net->flags | Network::MANUAL_POS);
+      // don't do a UAE that is way too invasive
+      net->DataChanged(DCR_ITEM_UPDATED);
+    }
+  }
+}
+
 void Layer_Group::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
   if (dcr == DCR_LIST_ITEM_INSERT) {
