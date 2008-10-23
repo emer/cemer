@@ -231,7 +231,7 @@ class TA_API TDCoord : public TwoDCoord {
 public:
   int 		z;  		// depth
 
-  bool		isZero() {return ((x == 0) && (y == 0) && (z = 0));}
+  bool		isZero() {return ((x == 0) && (y == 0) && (z == 0));}
 
   inline void 	SetXYZ(int xx, int yy, int zz) {
     x = xx; y = yy; z = zz;
