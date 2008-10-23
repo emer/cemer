@@ -5995,6 +5995,7 @@ void Network::LayerZPos_Unitize() {
 }
 
 void Network::LayerPos_Cleanup() {
+  if (flags & MANUAL_POS) return;
   bool moved = false;
   int n_itr = 0;
   do {

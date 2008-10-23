@@ -1348,6 +1348,7 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   laynd->txfm_shape()->translation.setValue(xfrac, 0.0f, -yfrac); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
 
+  lay->DataChanged(DCR_ITEM_UPDATED);
   nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
 
   nv->UpdateDisplay();
@@ -1375,6 +1376,7 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   laynd->txfm_shape()->translation.setValue(shptrans[0], 0.0f, shptrans[2]); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
 
+  lay->DataChanged(DCR_ITEM_UPDATED);
   nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
 
   nv->UpdateDisplay();
@@ -1498,14 +1500,16 @@ void PrjnView::Render_impl() {
 
   FloatTDCoord src;		// source and dest coords
   FloatTDCoord dst;
+  TDCoord lay_fr_pos; lay_fr->GetRelPos(lay_fr_pos);
+  TDCoord lay_to_pos; lay_to->GetRelPos(lay_to_pos);
 
   float max_xy = MAX(nv->max_size.x, nv->max_size.y);
   float lay_ht = T3LayerNode::height / max_xy;
   float lay_wd = T3LayerNode::width / max_xy;
 
   // y = network z coords -- same for all cases  (add .5f to z..)
-  src.y = ((float)lay_fr->pos.z+.5f) / nv->max_size.z;
-  dst.y = ((float)lay_to->pos.z+.5f) / nv->max_size.z;
+  src.y = ((float)lay_fr_pos.z+.5f) / nv->max_size.z;
+  dst.y = ((float)lay_to_pos.z+.5f) / nv->max_size.z;
 
   // move above/below layer plane
   if(src.y < dst.y) {
@@ -1520,30 +1524,30 @@ void PrjnView::Render_impl() {
 
   if(nv->view_params.prjn_disp == NetViewParams::B_F) {
     // origin is *back* center
-    src.x = ((float)lay_fr->pos.x + .5f * (float)lay_fr->act_geom.x) / nv->max_size.x;
-    src.z = -((float)(lay_fr->pos.y + lay_fr->act_geom.y) / nv->max_size.y) - lay_wd;
+    src.x = ((float)lay_fr_pos.x + .5f * (float)lay_fr->act_geom.x) / nv->max_size.x;
+    src.z = -((float)(lay_fr_pos.y + lay_fr->act_geom.y) / nv->max_size.y) - lay_wd;
 
     // dest is *front* *center*
-    dst.x = ((float)lay_to->pos.x + .5f * (float)lay_to->act_geom.x) / nv->max_size.x;
-    dst.z = -((float)lay_to->pos.y / nv->max_size.y) + lay_wd;
+    dst.x = ((float)lay_to_pos.x + .5f * (float)lay_to->act_geom.x) / nv->max_size.x;
+    dst.z = -((float)lay_to_pos.y / nv->max_size.y) + lay_wd;
   }
   else if(nv->view_params.prjn_disp == NetViewParams::L_R_F) { // easier to see
     // origin is *front* left
-    src.x = ((float)lay_fr->pos.x) / nv->max_size.x + lay_wd;
-    src.z = -((float)(lay_fr->pos.y) / nv->max_size.y) + lay_wd;
+    src.x = ((float)lay_fr_pos.x) / nv->max_size.x + lay_wd;
+    src.z = -((float)(lay_fr_pos.y) / nv->max_size.y) + lay_wd;
 
     // dest is *front* right
-    dst.x = ((float)lay_to->pos.x + (float)lay_to->act_geom.x) / nv->max_size.x - lay_wd;
-    dst.z = -((float)lay_to->pos.y / nv->max_size.y) + lay_wd;
+    dst.x = ((float)lay_to_pos.x + (float)lay_to->act_geom.x) / nv->max_size.x - lay_wd;
+    dst.z = -((float)lay_to_pos.y / nv->max_size.y) + lay_wd;
   }
   else if(nv->view_params.prjn_disp == NetViewParams::L_R_B) { // out of the way
     // origin is *back* left
-    src.x = ((float)lay_fr->pos.x) / nv->max_size.x + lay_wd;
-    src.z = -((float)(lay_fr->pos.y + lay_fr->act_geom.y) / nv->max_size.y) - lay_wd;
+    src.x = ((float)lay_fr_pos.x) / nv->max_size.x + lay_wd;
+    src.z = -((float)(lay_fr_pos.y + lay_fr->act_geom.y) / nv->max_size.y) - lay_wd;
 
     // dest is *back* right
-    dst.x = ((float)lay_to->pos.x + (float)lay_to->act_geom.x) / nv->max_size.x - lay_wd;
-    dst.z = -((float)(lay_to->pos.y  + lay_to->act_geom.y) / nv->max_size.y) - lay_wd;
+    dst.x = ((float)lay_to_pos.x + (float)lay_to->act_geom.x) / nv->max_size.x - lay_wd;
+    dst.z = -((float)(lay_to_pos.y  + lay_to->act_geom.y) / nv->max_size.y) - lay_wd;
   }
 
   transform(true)->translate.SetXYZ(src.x, src.y, src.z);

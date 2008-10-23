@@ -1809,6 +1809,7 @@ public:
     NF_NONE		= 0, 	// #NO_BIT
     SAVE_UNITS		= 0x0001, // save units with the project or other saves (specificaly saving just the network always saves the units)
     SAVE_UNITS_FORCE 	= 0x0002, // #NO_SHOW internal flag that forces the saving of units in cases where it is important to do so (e.g., saving just the network, or for a crash recover file)
+    MANUAL_POS	 	= 0x0004, // disables the automatic cleanup/positioning of layers  (turn on to use Layer_Groups to position) 
   };
 
 
@@ -1819,7 +1820,7 @@ public:
   NetFlags	flags;		// #CAT_Structure flags controlling various aspects of network function
 
   AutoBuildMode	auto_build;     // #CAT_Structure whether to automatically build the network (make units and connections) after loading or not (if the SAVE_UNITS flag is not on, then auto building makes sense)
-  
+
   TrainMode	train_mode;	// #APPLY_IMMED #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
   WtUpdate	wt_update;	// #APPLY_IMMED #CAT_Learning #CONDEDIT_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)
   int		small_batch_n;	// #CONDEDIT_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
