@@ -295,10 +295,8 @@ public:
     const String& name = _nilString);
     // find an object deriving from base_type, with given name, or any name if blank
 
-#ifdef GPROF			// turn on for profiling
   virtual void  MonControl(bool on);
   // #MENU #MENU_ON_Object set profile monitoring: on=true = on, else off.  starts out off..
-#endif
   
   taBase*	GetTemplateInstance(TypeDef* typ);
   // get an instance of the indicated tab type, or NULL if not found

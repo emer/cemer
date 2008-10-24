@@ -292,12 +292,20 @@ else
 fi
 
 
-dnl  --enable-profile
+dnl gprof version: --enable-profile
 if test x"$profile" = x"true"; then
-  SIM_AC_CONFIGURATION_SETTING([Optimization],[-pg, except TA files which are -g -O0])  
+  SIM_AC_CONFIGURATION_SETTING([Optimization],[-pg , except TA files which are -g -O0])  
   LDFLAGS="$LDFLAGS -pg"
   AC_SUBST([OPT_LEVEL],["-pg"])
   AC_DEFINE([GPROF],[],[enables profiling control functions])
+fi
+
+dnl Mac Saturn version: --enable-saturn
+if test x"$saturn" = x"true"; then
+  SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -finstrument-functions, except TA files which are -g -O0])  
+  LDFLAGS="$LDFLAGS -g -finstrument-functions -lSaturn"
+  AC_SUBST([OPT_LEVEL],["-g -finstrument-functions"])
+  AC_DEFINE([SATURN_PROF],[],[enables Saturn profiling control functions])
 fi
 
 EMERGENT_DETERMINE_SUFFIX                                dnl Infixing

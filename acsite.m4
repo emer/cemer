@@ -77,6 +77,11 @@ AC_ARG_ENABLE([profile],
 			     [Enable profiling.  @<:@default=disabled@:>@]),
 			     [profile=true],
 			     [profile=false])
+AC_ARG_ENABLE([saturn],
+	      AC_HELP_STRING([--enable-saturn],
+			     [Enable Mac Saturn profiling.  @<:@default=disabled@:>@]),
+			     [saturn=true],
+			     [saturn=false])
 AC_ARG_ENABLE([maketa_opt],
 	      AC_HELP_STRING([--disable-maketa-opt],
 			     [Disable optimization of the maketa executeable. @<:@default=enabled@:>@]),
@@ -119,6 +124,7 @@ AM_CONDITIONAL([TA_GUI],[test $gui = true])
 AM_CONDITIONAL([NO_TA_GUI],[test $gui = false])
 AM_CONDITIONAL([MPI],[test $mpi = true])
 AM_CONDITIONAL([PROFILE],[test $profile = true])
+AM_CONDITIONAL([SATURN],[test $saturn = true])
 AM_CONDITIONAL([DEBUG],[test $debug = true])
 AM_CONDITIONAL([LIBTA],[test $libta = true])
 AM_CONDITIONAL([CSS_BIN],[test $css_bin = true])
@@ -324,6 +330,9 @@ if test x"$mpi" = x"true"; then
 	EMERGENT_SUFFIX="${EMERGENT_SUFFIX}_mpi"
 fi
 if test x"$profile" = x"true"; then
+	EMERGENT_SUFFIX="${EMERGENT_SUFFIX}_prof"
+fi
+if test x"$saturn" = x"true"; then
 	EMERGENT_SUFFIX="${EMERGENT_SUFFIX}_prof"
 fi
 if test x"$nightly" = x"true"; then

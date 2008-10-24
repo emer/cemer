@@ -65,6 +65,10 @@
 extern "C" void moncontrol(int mode);
 #endif
 
+#ifdef SATURN_PROF
+#include <Saturn.h>
+#endif
+
 //////////////////////////
 //   taDoc		//
 //////////////////////////
@@ -913,6 +917,21 @@ void taRootBase::CutLinks() {
 void taRootBase::MonControl(bool on) {
   moncontrol(on);
 }
+#else
+#ifdef SATURN_PROF
+void taRootBase::MonControl(bool on) {
+  if(on) {
+    startSaturn();
+  }
+  else {
+    stopSaturn();
+  }
+}
+#else
+void taRootBase::MonControl(bool on) {
+  // nop
+}
+#endif
 #endif
 
 void taRootBase::AddRecentFile(const String& value) {
@@ -2011,6 +2030,11 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
 #ifdef GPROF
   moncontrol(0);		// turn off at start
 #endif
+#ifdef SATURN_PROF
+  // this actually seems bad: get a warning
+  // initSaturn("");		// store in current wd
+#endif
+
   // just create the adapter obj, whether needed or not
   root_adapter = new taRootBaseAdapter;
   cssMisc::prompt = taMisc::app_name; // the same
