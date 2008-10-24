@@ -1019,18 +1019,33 @@ bool LeabraUnitSpec::Compute_SoftClamp(LeabraUnit* u, LeabraLayer* lay, LeabraNe
 //	Stage 3: inhibition		//
 //////////////////////////////////////////
 
-void LeabraUnitSpec::Compute_Netin_Spike(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*, LeabraNetwork*) {
-  // netin gets added at the end of the spike_buf -- 0 time is the end
-  u->spike_buf.CircAddLimit(u->net, spike.window); // add current net to buffer
-  float sum = 0.0f;
-  int mx = MAX(spike.window, u->spike_buf.length);
-  for(int t=0;t<mx;t++) {
-    float spkin = u->spike_buf.CircSafeEl(t);
-    if(spkin > 0.0f) {
-      sum += spkin * spike.ComputeAlpha(mx-t-1);
-    }
+void LeabraUnitSpec::Compute_Netin_Spike(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*,
+					 LeabraNetwork* net) {
+  if(spike.rise == 0.0f && spike.decay > 0.0f) {
+    // optimized fast recursive exp decay: note: does NOT use dt.net
+    u->net = u->prv_net + spike.oneo_decay * u->net - u->prv_net / spike.decay;
+    u->prv_net = u->net;
   }
-  u->net = sum;
+  else {
+    // netin gets added at the end of the spike_buf -- 0 time is the end
+    u->spike_buf.CircAddLimit(u->net, spike.window); // add current net to buffer
+    float sum = 0.0f;
+    int mx = MAX(spike.window, u->spike_buf.length);
+    for(int t=0;t<mx;t++) {
+      float spkin = u->spike_buf.CircSafeEl(t);
+      if(spkin > 0.0f) {
+	sum += spkin * spike.ComputeAlpha(mx-t-1);
+      }
+    }
+    u->net = sum;
+    // from compute_netinavg
+    u->net = u->prv_net + dt.net * (u->net - u->prv_net);
+    u->prv_net = u->net;
+  }
+  if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
+    u->net += noise_sched.GetVal(net->cycle) * noise.Gen();
+  }
+  u->i_thr = Compute_IThresh(u, lay, net);
 }
 
 float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
@@ -1811,42 +1826,42 @@ void LeabraUnitSpec::TimeExp(int mode, int nreps) {
 
   TimeUsedHR tu;
   tu.StartTimer(true);		// start, w/reset
-  double dsum = -1e10;
-  float  fsum = -1e10;
+  double dsum = 0.0;
+  float  fsum = 0.0f;
   switch (mode) {
   case 0: {
     for(int i=0;i<nreps; i++) {
-      dsum += Random::UniformMinMax(-100.0, 100.0);
+      dsum += Random::UniformMinMax(-100.0, 100.0) - 0.99 * dsum;
     }
     break;
   }
   case 1: {
     for(int i=0;i<nreps; i++) {
-      dsum += taMath_double::exp(Random::UniformMinMax(-100.0, 100.0));
+      dsum += taMath_double::exp(Random::UniformMinMax(-100.0, 100.0)) - 0.99 * dsum;
     }
     break;
   }
   case 2: {
     for(int i=0;i<nreps; i++) {
-      dsum += taMath_double::exp_fast(Random::UniformMinMax(-100.0, 100.0));
+      dsum += taMath_double::exp_fast(Random::UniformMinMax(-100.0, 100.0)) - 0.99 * dsum;
     }
     break;
   }
   case 3: {
     for(int i=0;i<nreps; i++) {
-      fsum += Random::UniformMinMax(-100.0, 100.0);
+      fsum += Random::UniformMinMax(-100.0, 100.0) - 0.99f * fsum;
     }
     break;
   }
   case 4: {
     for(int i=0;i<nreps; i++) {
-      fsum += taMath_float::exp(Random::UniformMinMax(-100.0, 100.0));
+      fsum += taMath_float::exp(Random::UniformMinMax(-100.0, 100.0)) - 0.99f * fsum;
     }
     break;
   }
   case 5: {
     for(int i=0;i<nreps; i++) {
-      fsum += taMath_float::exp_fast(Random::UniformMinMax(-100.0, 100.0));
+      fsum += taMath_float::exp_fast(Random::UniformMinMax(-100.0, 100.0)) - 0.99f * fsum;
     }
     break;
   }
@@ -1856,7 +1871,7 @@ void LeabraUnitSpec::TimeExp(int mode, int nreps) {
        << " dsum: " << dsum << " fsum: " << fsum << endl;
 }
 
-void LeabraUnitSpec::GraphSpikeAlphaFun(DataTable* graph_data) {
+void LeabraUnitSpec::GraphSpikeAlphaFun(DataTable* graph_data, bool force_alpha) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_SpikeAlphFun", true);
@@ -1871,12 +1886,27 @@ void LeabraUnitSpec::GraphSpikeAlphaFun(DataTable* graph_data) {
 
   float sumg = 0.0f;
   float x;
-  for(x = 0.0f; x <= tmax; x += 1.0f) {
-    float y = spike.ComputeAlpha(x);
-    graph_data->AddBlankRow();
-    t->SetValAsFloat(x, -1);
-    g->SetValAsFloat(y, -1);
-    sumg += y;
+  if(!force_alpha && spike.rise == 0.0f && spike.decay > 0.0f) {
+    float net;
+    for(x = 0.0f; x <= tmax; x += 1.0f) {
+      if(x == 0.0f)
+	net = spike.oneo_decay;
+      else
+	net = net - net / spike.decay;
+      graph_data->AddBlankRow();
+      t->SetValAsFloat(x, -1);
+      g->SetValAsFloat(net, -1);
+      sumg += net;
+    }
+  }
+  else {
+    for(x = 0.0f; x <= tmax; x += 1.0f) {
+      float y = spike.ComputeAlpha(x);
+      graph_data->AddBlankRow();
+      t->SetValAsFloat(x, -1);
+      g->SetValAsFloat(y, -1);
+      sumg += y;
+    }
   }
   graph_data->AddBlankRow();
   t->SetValAsFloat(x, -1);
