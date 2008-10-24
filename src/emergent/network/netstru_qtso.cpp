@@ -1276,7 +1276,7 @@ void LayerView::Render_impl() {
   NetView* nv = this->nv();
 
 //obs  TDCoord& pos = lay->pos;
-  TDCoord pos; lay->GetRelPos(pos);
+  TDCoord pos; lay->GetAbsPos(pos);
   FloatTransform* ft = transform(true);
   ft->translate.SetXYZ((float)pos.x / nv->max_size.x,
 		       ((float)pos.z + 0.5f) / nv->max_size.z,
@@ -1405,7 +1405,7 @@ void LayerView::UseViewer(T3DataViewMain* viewer) {
   Layer* lay = this->layer(); //cache
   if(!nv || !lay) return;
 
-  TDCoord& pos = lay->pos;
+  TDCoord pos; lay->GetAbsPos(pos);
   viewer->main_xform = nv->main_xform; // first get the network
 
   SbRotation cur_rot;
@@ -1500,8 +1500,8 @@ void PrjnView::Render_impl() {
 
   FloatTDCoord src;		// source and dest coords
   FloatTDCoord dst;
-  TDCoord lay_fr_pos; lay_fr->GetRelPos(lay_fr_pos);
-  TDCoord lay_to_pos; lay_to->GetRelPos(lay_to_pos);
+  TDCoord lay_fr_pos; lay_fr->GetAbsPos(lay_fr_pos);
+  TDCoord lay_to_pos; lay_to->GetAbsPos(lay_to_pos);
 
   float max_xy = MAX(nv->max_size.x, nv->max_size.y);
   float lay_ht = T3LayerNode::height / max_xy;
@@ -2489,7 +2489,8 @@ void NetView::Render_wt_lines() {
     mats.setNum(0);
     return;
   }
-
+  TDCoord src_lay_pos; src_lay->GetAbsPos(src_lay_pos);
+  
   drw->style = SoDrawStyleElement::LINES;
   drw->lineWidth = wt_line_width;
   vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_PART_INDEXED); // part = line segment = same as FACE but likely to be faster to compute line segs?
@@ -2549,7 +2550,8 @@ void NetView::Render_wt_lines() {
   int cidx = 0;
   int midx = 0;
 
-  TwoDCoord ru_pos = unit_src->GetMyAbsPos();
+  // note: only want layer_rel for ru_pos
+  TwoDCoord ru_pos; unit_src->GetLayerAbsPos(ru_pos);
   FloatTDCoord src;		// source and dest coords
   FloatTDCoord dst;
 
@@ -2567,18 +2569,20 @@ void NetView::Render_wt_lines() {
     if(!prjn || !prjn->from || !prjn->layer) continue;
     Layer* lay_fr = (swt ? prjn->layer : prjn->from);
     Layer* lay_to = (swt ? prjn->from : prjn->layer);
-
+    TDCoord lay_fr_pos; lay_fr->GetAbsPos(lay_fr_pos);
+    TDCoord lay_to_pos; lay_to->GetAbsPos(lay_to_pos);
+    
     // y = network z coords -- same for all cases  (add .5f to z..)
-    src.y = ((float)lay_to->pos.z+.5f) / max_size.z;
-    dst.y = ((float)lay_fr->pos.z+.5f) / max_size.z;
+    src.y = ((float)lay_to_pos.z+.5f) / max_size.z;
+    dst.y = ((float)lay_fr_pos.z+.5f) / max_size.z;
 
     // move above/below layer plane
     if(src.y < dst.y) { src.y += lay_ht; dst.y -= lay_ht; }
     else if(src.y > dst.y) { src.y -= lay_ht; dst.y += lay_ht; }
     else { src.y += lay_ht; dst.y += lay_ht; }
 
-    src.x = ((float)lay_to->pos.x + (float)ru_pos.x + .5f) / max_size.x;
-    src.z = -((float)lay_to->pos.y + (float)ru_pos.y + .5f) / max_size.y;
+    src.x = ((float)lay_to_pos.x + (float)ru_pos.x + .5f) / max_size.x;
+    src.z = -((float)lay_to_pos.y + (float)ru_pos.y + .5f) / max_size.y;
 
     int ru_idx = v_idx;
     vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
@@ -2588,9 +2592,10 @@ void NetView::Render_wt_lines() {
       float wt = (swt ? ((SendCons*)cg)->Cn(i)->wt : ((RecvCons*)cg)->Cn(i)->wt);
       if(fabsf(wt) < wt_line_thr) continue;
 
-      TwoDCoord su_pos = su->GetMyAbsPos();
-      dst.x = ((float)lay_fr->pos.x + (float)su_pos.x + .5f) / max_size.x;
-      dst.z = -((float)lay_fr->pos.y + (float)su_pos.y + .5f) / max_size.y;
+      // note: only want layer_rel for ru_pos
+      TwoDCoord su_pos; su->GetLayerAbsPos(su_pos);
+      dst.x = ((float)lay_fr_pos.x + (float)su_pos.x + .5f) / max_size.x;
+      dst.z = -((float)lay_fr_pos.y + (float)su_pos.y + .5f) / max_size.y;
 
       coords_dat[cidx++] = ru_idx; coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
       mats_dat[midx++] = c_idx;	// one per
@@ -2606,17 +2611,19 @@ void NetView::Render_wt_lines() {
   }
 
   if((bool)wt_prjn_lay) {
+    TDCoord wt_prjn_lay_pos; wt_prjn_lay->GetAbsPos(wt_prjn_lay_pos);
+    
     // y = network z coords -- same for all cases  (add .5f to z..)
-    src.y = ((float)src_lay->pos.z+.5f) / max_size.z;
-    dst.y = ((float)wt_prjn_lay->pos.z+.5f) / max_size.z;
+    src.y = ((float)src_lay_pos.z+.5f) / max_size.z;
+    dst.y = ((float)wt_prjn_lay_pos.z+.5f) / max_size.z;
 
     // move above/below layer plane
     if(src.y < dst.y) { src.y += lay_ht; dst.y -= lay_ht; }
     else if(src.y > dst.y) { src.y -= lay_ht; dst.y += lay_ht; }
     else { src.y += lay_ht; dst.y += lay_ht; }
 
-    src.x = ((float)src_lay->pos.x + (float)ru_pos.x + .5f) / max_size.x;
-    src.z = -((float)src_lay->pos.y + (float)ru_pos.y + .5f) / max_size.y;
+    src.x = ((float)src_lay_pos.x + (float)ru_pos.x + .5f) / max_size.x;
+    src.z = -((float)src_lay_pos.y + (float)ru_pos.y + .5f) / max_size.y;
 
     int ru_idx = v_idx;
     vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
@@ -2627,9 +2634,9 @@ void NetView::Render_wt_lines() {
       float wt = su->wt_prjn;
       if(fabsf(wt) < wt_line_thr) continue;
 
-      TwoDCoord su_pos = su->GetMyAbsPos();
-      dst.x = ((float)wt_prjn_lay->pos.x + (float)su_pos.x + .5f) / max_size.x;
-      dst.z = -((float)wt_prjn_lay->pos.y + (float)su_pos.y + .5f) / max_size.y;
+      TDCoord su_pos; su->GetAbsPos(su_pos);
+      dst.x = ((float)wt_prjn_lay_pos.x + (float)su_pos.x + .5f) / max_size.x;
+      dst.z = -((float)wt_prjn_lay_pos.y + (float)su_pos.y + .5f) / max_size.y;
 
       coords_dat[cidx++] = ru_idx; coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
       mats_dat[midx++] = c_idx;	// one per

@@ -1778,17 +1778,26 @@ int Unit::GetMyLeafIndex() {
   return -1;			// not found
 }
 
-TwoDCoord Unit::GetMyAbsPos() {
-  TwoDCoord rval;
-  Layer* lay = GET_MY_OWNER(Layer);
-  if(!lay) return rval;
-  Unit_Group* ug = GET_MY_OWNER(Unit_Group);
-  if(ug->owner == lay) return pos; // simple: we're the only unit group
-  rval.x = ug->pos.x + pos.x;
-  rval.y = ug->pos.y + pos.y;
-  return rval;
+void Unit::GetLayerAbsPos(TwoDCoord& lay_abs_pos) {
+  //note: simplest and fastest is to just add Unit_Group
+  // pos, even though it is 0 for flat guys, it saves
+  // a bunch of GetOwners
+  lay_abs_pos = pos;
+  Unit_Group* ug = dynamic_cast<Unit_Group*>(owner);
+  if (ug) { // should always succeed...
+    lay_abs_pos.x += ug->pos.x;
+    lay_abs_pos.y += ug->pos.y;
+  }
 }
 
+void Unit::AddRelPos(TDCoord& rel_pos) {
+  Unit_Group* ugp = GET_MY_OWNER(Unit_Group);
+  if (ugp) {
+    rel_pos += ugp->pos;
+    ugp->AddRelPos(rel_pos);
+  }
+}
+ 
 #ifdef DMEM_COMPILE
 int Unit::dmem_this_proc = 0;
 #endif
@@ -3288,6 +3297,21 @@ TwoDCoord Unit_Group::GetGpGeomPos() {
   return rval;
 }
 
+void Unit_Group::AddRelPos(TDCoord& rel_pos) {
+  // note: vastly most likely case is a flat root group of units...
+  Layer* lay = dynamic_cast<Layer*>(owner);
+  if (lay) {
+    rel_pos += lay->pos;
+    lay->AddRelPos(rel_pos);
+  } else { // better be in a group then!
+    Unit_Group* ugp = GET_MY_OWNER(Unit_Group);
+    if (ugp) {
+      rel_pos += ugp->pos;
+      ugp->AddRelPos(rel_pos);
+    }
+  }
+}
+ 
 bool Unit_Group::Dump_QuerySaveChildren() {
   if (!own_lay) return false; // huh? should always be valid...
   // always save if forced
@@ -4562,13 +4586,11 @@ void Layer::GetActGeomNoSpc(PosTwoDCoord& nospc_geom) {
   nospc_geom.y -= (gp_geom.y - 1) * gp_spc.y;
 }
 
-void Layer::GetRelPos(TDCoord& rel_pos) {
-  rel_pos = pos;
-  taBase* last = this;
-  Layer_Group* lgp;
-  while ((lgp = GET_OWNER(last, Layer_Group))) {
+void Layer::AddRelPos(TDCoord& rel_pos) {
+  Layer_Group* lgp = dynamic_cast<Layer_Group*>(owner);
+  if (lgp) {
     rel_pos += lgp->pos;
-    last = lgp;
+    lgp->AddRelPos(rel_pos);
   }
 }
  
@@ -4665,6 +4687,14 @@ void Layer_Group::UpdateAfterEdit_impl() {
       // don't do a UAE that is way too invasive
       net->DataChanged(DCR_ITEM_UPDATED);
     }
+  }
+}
+
+void Layer_Group::AddRelPos(TDCoord& rel_pos) {
+  Layer_Group* lg = GET_MY_OWNER(Layer_Group);
+  if (lg) {
+    rel_pos += lg->pos;
+    lg->AddRelPos(rel_pos);
   }
 }
 

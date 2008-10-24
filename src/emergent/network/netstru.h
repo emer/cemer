@@ -886,8 +886,16 @@ public: //
   override void	SetIndex(int i) { idx = i; }
   virtual int	GetMyLeafIndex();
   // compute leaf index from my individual index in an efficient manner
-  virtual TwoDCoord GetMyAbsPos();
-  // get the absolute position of this unit relative to the layer, taking into account any unit groups
+  TwoDCoord 		GetMyAbsPos()
+    {TwoDCoord r; GetLayerAbsPos(r); return r;}
+  // #NO_SHOW #OBSOLETE *use GetLayerAbsPos* get the absolute position of this unit relative to the layer, taking into account any unit groups
+  void			GetAbsPos(TDCoord& abs_pos)
+    {abs_pos = pos; AddRelPos(abs_pos);}
+    // get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
+  void			GetLayerAbsPos(TwoDCoord& lay_abs_pos); 
+  // get coords of this Unit in the Layer (NOT for any kind of layout/3D use, only for Unit-in-Layer usage)
+  void			AddRelPos(TDCoord& rel_pos); 
+  // #IGNORE add relative pos, which factors in offsets from above
   
   override String 	GetTypeDecoKey() const { return "Unit"; }
 
@@ -1260,6 +1268,10 @@ public:
   // #CAT_Structure find unit from given set of x and y coordinates
   TwoDCoord	GetGpGeomPos();
   // #CAT_Structure returns unit group position in terms of layer unit group geometry gp_geom (pos is in unit coordinates and not unit group geometry)
+  void		GetAbsPos(TDCoord& abs_pos)
+    {abs_pos = pos; AddRelPos(abs_pos);}
+    // get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
+  void		AddRelPos(TDCoord& rel_pos); //  #IGNORE add relative pos, which factors in offsets from above
   virtual bool	SetUnitNames(taMatrix* mat);
   // #CAT_XpertStructure sets the unit names from the matrix mat -- should generally be 2d but we are permissive about dims, size, etc.
   virtual bool	GetUnitNames(taMatrix* mat);
@@ -1588,7 +1600,10 @@ public:
   // #CAT_Structure get unit group from group coordinates (i.e., within gp_geom, not unit coordinates)
   virtual void	GetActGeomNoSpc(PosTwoDCoord& nospc_geom);
   // #CAT_Structure get the actual geometry of the layer, subtracting any gp_spc that might be present (as if there were no spaces between unit groups)
-  void		GetRelPos(TDCoord& rel_pos); // get relative pos, which factors in offsets from layer groups
+  void		GetAbsPos(TDCoord& abs_pos)
+    {abs_pos = pos; AddRelPos(abs_pos);}
+    // get absolute pos, which factors in offsets from layer groups
+  void		AddRelPos(TDCoord& rel_pos); //  #IGNORE add relative pos, which factors in offsets from above
   void		SetDefaultPos();
   // #IGNORE initialize position of layer
 
@@ -1644,6 +1659,11 @@ INHERITED(taGroup<Layer>)
 public:
   TDCoord	pos;		// Position of Group of layers relative to network
 
+  void		GetAbsPos(TDCoord& abs_pos)
+    {abs_pos = pos; AddRelPos(abs_pos);}
+    // get absolute pos, which factors in offsets from layer groups
+  void		AddRelPos(TDCoord& rel_pos); // add relative pos, which factors in offsets from layer groups
+  
   virtual void		BuildLayers(); // #CAT_Structure create any algorithmically specified layers
   virtual void		BuildPrjns(); // #CAT_Structure create any algorithmically specified prjns
    
