@@ -292,6 +292,27 @@ void taMath::mat_cvt_float_to_double(double_Matrix* dbl_dest, const float_Matrix
 
 double taMath_double::e = M_E;
 
+typedef union {
+  double d;
+  struct {
+#ifdef LITTLE_ENDIAN
+    int j, i;
+#else
+    int i, j;
+#endif
+  } n;
+} _eco;    
+
+#define EXP_A (1048576/M_LN2)
+#define EXP_C 60801
+
+double taMath_double::exp_fast(double x) {
+  _eco tmp;
+  tmp.n.j = 0;
+  tmp.n.i = EXP_A*x + (1072693248 - EXP_C);
+  return tmp.d;
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 // Trigonometry
 

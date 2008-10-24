@@ -679,10 +679,10 @@ class LEABRA_API SpikeFunSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically
 INHERITED(taBase)
 public:
-  float		g_gain;		// #DEF_4 multiplier for the spike-generated conductances -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
-  float		rise;		// #DEF_1 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay))
-  float		decay;		// #DEF_4 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function
-  int		window;		// #DEF_20 spike integration window -- how long to keep spike information around (should be long enough to incorporate the full alpha function)
+  float		g_gain;		// #DEF_5 multiplier for the spike-generated conductances -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
+  float		rise;		// #DEF_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is considerably faster and thus the default!
+  float		decay;		// #DEF_5 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function
+  int		window;		// #DEF_10 spike integration window -- how long to keep spike information around (should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost)
   float		v_m_r;		// #DEF_0 post-spiking membrane potential to reset to, produces refractory effect 
   float		eq_gain;	// #DEF_10 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
   float		eq_dt;		// #DEF_0.02 if non-zero, eq is computed as a running average with this time constant
@@ -694,9 +694,9 @@ public:
 
   float	ComputeAlpha(float t) {
     if(decay == 0.0f) return (t == 0.0f) ? g_gain : 0.0f; // delta function
-    if(rise == 0.0f) return oneo_decay * expf(-t/decay);	 // exponential
-    if(rise == decay) return t * oneo_decay_sq * expf(-t/decay); // symmetric alpha
-    return oneo_decay_rise * (expf(-t/decay) - expf(-t/rise)); // full alpha
+    if(rise == 0.0f) return oneo_decay * taMath_float::exp_fast(-t/decay);	 // exponential
+    if(rise == decay) return t * oneo_decay_sq * taMath_float::exp_fast(-t/decay); // symmetric alpha
+    return oneo_decay_rise * (taMath_float::exp_fast(-t/decay) - taMath_float::exp_fast(-t/rise)); // full alpha
   }
 
   void 	Defaults()	{ Initialize(); }
@@ -1114,7 +1114,9 @@ public:
   virtual void	GraphActFmNetFun(DataTable* graph_data, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .001);
   // #BUTTON #NULL_OK graph the activation function as a function of net input (projected through membrane potential) (NULL = new graph data)
   virtual void	GraphSpikeAlphaFun(DataTable* graph_data);
-  // #BUTTON #NULL_OK graph the spike alpha function for conductance integration over time window given in spike parameters
+  // #BUTTON #NULL_OK graph the spike alpha function for conductance integration over time window given in spike parameters -- last data point is the sum over the whole window (total conductance of a single spike)
+  virtual void TimeExp(int mode, int nreps=100000000);
+  // #BUTTON time how long it takes to compute various forms of exp() function: mode=0 = double sum ctrl (baseline), mode=1 = std double exp(), mode=2 = taMath_double::exp_fast, mode=3 = float sum ctrl (float baseline), mode=4 = expf, mode=5 = taMath_float::exp_fast -- this is the dominant cost in spike alpha function computation, so we're interested in optimizing it..
 
   override bool  CheckConfig_Unit(Unit* un, bool quiet=false);
 

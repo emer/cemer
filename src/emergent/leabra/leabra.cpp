@@ -1025,8 +1025,10 @@ void LeabraUnitSpec::Compute_Netin_Spike(LeabraUnit* u, LeabraLayer* lay, Leabra
   float sum = 0.0f;
   int mx = MAX(spike.window, u->spike_buf.length);
   for(int t=0;t<mx;t++) {
-    float vl = u->spike_buf.CircSafeEl(t) * spike.ComputeAlpha(mx-t-1);
-    sum += vl;
+    float spkin = u->spike_buf.CircSafeEl(t);
+    if(spkin > 0.0f) {
+      sum += spkin * spike.ComputeAlpha(mx-t-1);
+    }
   }
   u->net = sum;
 }
@@ -1800,6 +1802,58 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
   }
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();
+}
+
+void LeabraUnitSpec::TimeExp(int mode, int nreps) {
+
+  const char* modes[6] = {"double sum", "double exp", "double exp_fast",
+			  "float sum", "float exp", "float exp_fast"};
+
+  TimeUsedHR tu;
+  tu.StartTimer(true);		// start, w/reset
+  double dsum = -1e10;
+  float  fsum = -1e10;
+  switch (mode) {
+  case 0: {
+    for(int i=0;i<nreps; i++) {
+      dsum += Random::UniformMinMax(-100.0, 100.0);
+    }
+    break;
+  }
+  case 1: {
+    for(int i=0;i<nreps; i++) {
+      dsum += taMath_double::exp(Random::UniformMinMax(-100.0, 100.0));
+    }
+    break;
+  }
+  case 2: {
+    for(int i=0;i<nreps; i++) {
+      dsum += taMath_double::exp_fast(Random::UniformMinMax(-100.0, 100.0));
+    }
+    break;
+  }
+  case 3: {
+    for(int i=0;i<nreps; i++) {
+      fsum += Random::UniformMinMax(-100.0, 100.0);
+    }
+    break;
+  }
+  case 4: {
+    for(int i=0;i<nreps; i++) {
+      fsum += taMath_float::exp(Random::UniformMinMax(-100.0, 100.0));
+    }
+    break;
+  }
+  case 5: {
+    for(int i=0;i<nreps; i++) {
+      fsum += taMath_float::exp_fast(Random::UniformMinMax(-100.0, 100.0));
+    }
+    break;
+  }
+  }
+  tu.EndTimer();
+  cerr << "mode: " << mode << " " << modes[mode] << " seconds used: " << tu.s_used
+       << " dsum: " << dsum << " fsum: " << fsum << endl;
 }
 
 void LeabraUnitSpec::GraphSpikeAlphaFun(DataTable* graph_data) {

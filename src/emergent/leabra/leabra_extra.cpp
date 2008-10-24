@@ -338,7 +338,7 @@ float ScalarValSpec::GetUnitAct(int unit_idx) {
   if(rep == GAUSSIAN) {
     float cur = min + incr * (float)eff_idx;
     float dist = (cur - val) / un_width_eff;
-    return expf(-(dist * dist));
+    return taMath_float::exp_fast(-(dist * dist));
   }
   else if(rep == LOCALIST) {
     float cur = min + incr * (float)eff_idx;
@@ -1080,7 +1080,7 @@ float MotorForceSpec::GetWt(int pos_gp_idx, int vel_gp_idx) {
   float pos_dist = (ug_pos - cur_pos) / pos_width_eff;
   float ug_vel = vel_min + vel_incr * (float)vel_gp_idx;
   float vel_dist = (ug_vel - cur_vel) / vel_width_eff;
-  return expf(-(pos_dist * pos_dist + vel_dist * vel_dist));
+  return taMath_float::exp_fast(-(pos_dist * pos_dist + vel_dist * vel_dist));
 }
 
 void MotorForceLayerSpec::Initialize() {
@@ -2459,7 +2459,7 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
 	  TwoDCoord aup = au_own->GetGpGeomPos();
 
 	  float dst_sq = up.SqDist(aup);
-	  float cost = expf(-dst_sq * dst_norm_val);
+	  float cost = taMath_float::exp_fast(-dst_sq * dst_norm_val);
 	  sum_cost += cost;
 	}
       }

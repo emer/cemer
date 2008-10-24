@@ -424,11 +424,11 @@ void MatrixLayerSpec::Compute_ErrRndGo(LeabraLayer* lay, LeabraNetwork*) {
     LeabraUnit* snru = (LeabraUnit*)snrgp->FastEl(0);
     float exp_val = 0.0f;
     if(all_nogo) {
-      exp_val = expf(err_rnd_go.gain * snru->misc_2);	// misc_2 saves net from minus phase!
+      exp_val = taMath_float::exp_fast(err_rnd_go.gain * snru->misc_2);	// misc_2 saves net from minus phase!
     }
     else { // if_go
       if(snru->act_m < snrthalsp->snrthal.go_thr) // do not include already-firing guys
-	exp_val = expf(err_rnd_go.gain * snru->misc_2);
+	exp_val = taMath_float::exp_fast(err_rnd_go.gain * snru->misc_2);
     }
     sum_exp_val += exp_val;
     snru->misc_2 = exp_val;	// then using misc_2 for storing this!
@@ -479,7 +479,7 @@ void MatrixLayerSpec::Compute_AvgDaRndGo(LeabraLayer* lay, LeabraNetwork*) {
     float avgda_val = u->misc_1; // stored average da value
     // softmax competition is for everyone below avgda_thr
     if(avgda_val < avgda_rnd_go.avgda_thr) {
-      exp_val = expf(avgda_rnd_go.gain * (avgda_rnd_go.avgda_thr - avgda_val));
+      exp_val = taMath_float::exp_fast(avgda_rnd_go.gain * (avgda_rnd_go.avgda_thr - avgda_val));
     }
     sum_exp_val += exp_val;
     snru->misc_3 = exp_val;	// using misc_3 for storing this!

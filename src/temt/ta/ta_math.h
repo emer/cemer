@@ -287,6 +287,8 @@ public:
   // #CAT_ExpLog The natural exponential (e to the power x: e^x)
 //   static double exp2(double x) { return std::exp2(x); }
 //   // #CAT_ExpLog The base-2 expoenetial (2 to the power x: 2^x)
+  static double exp_fast(double x);
+  // #CAT_ExpLog a fast approximation to the exponential function from Nicol Schraudolph Neural Computation, 1999
   static double log(double x) { return std::log(x); }
   // #CAT_ExpLog The natural logarithm of x: ln(x)
   static double log10(double x) { return std::log10(x); }
@@ -300,6 +302,9 @@ public:
   static double logistic(double x, double gain=1.0, double off=0.0)
   { return 1.0 / (1.0 + exp(-gain*(x-off))); }
   // #CAT_ExpLog logistic (sigmoid) function of x: 1/(1 + e^(-gain*(x-off)))
+  static double logistic_fast(double x, double gain=1.0, double off=0.0)
+  { return 1.0 / (1.0 + exp_fast(-gain*(x-off))); }
+  // #CAT_ExpLog logistic (sigmoid) function of x: 1/(1 + e^(-gain*(x-off))) -- using exp_fast function
 
   /////////////////////////////////////////////////////////////////////////////////
   // Trigonometry
@@ -817,6 +822,8 @@ public:
   // #CAT_ExpLog The natural exponential (e to the power x: e^x)
 //   static float exp2(float x) { return exp2f(x); }
 //   // #CAT_ExpLog The base-2 expoenetial (2 to the power x: 2^x)
+  static float exp_fast(float x) { return (float)taMath_double::exp_fast(x); }
+  // #CAT_ExpLog a fast approximation to the exponential function from Nicol Schraudolph Neural Computation, 1999
   static float log(float x) { return std::log(x); }
   // #CAT_ExpLog The natural logarithm of x: ln(x)
   static float log10(float x) { return std::log10(x); }
@@ -830,6 +837,9 @@ public:
   static float logistic(float x, float gain=1.0, float off=0.0)
   { return 1.0 / (1.0 + exp(-gain*(x-off))); }
   // #CAT_ExpLog logistic (sigmoid) function of x: 1/(1 + e^(-gain*(x-off)))
+  static float logistic_fast(float x, float gain=1.0, float off=0.0)
+  { return 1.0 / (1.0 + exp_fast(-gain*(x-off))); }
+  // #CAT_ExpLog logistic (sigmoid) function of x: 1/(1 + e^(-gain*(x-off))) -- using exp_fast function
 
   /////////////////////////////////////////////////////////////////////////////////
   // Trigonometry
