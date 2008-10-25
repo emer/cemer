@@ -682,21 +682,23 @@ public:
   float		rise;		// #DEF_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is highly optimized (doesn't use window -- just uses recursive exp decay) and thus the default!
   float		decay;		// #DEF_5 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function (not very useful)
   float		g_gain;		// #DEF_5 multiplier for the spike-generated conductances when using alpha function which is normalized by area under the curve -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well, effectively neutralizing the area normalization (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
-  int		window;		// #DEF_2 spike integration window -- when rise=0, this window is used to smooth out the spike impulses similar to a rise time -- each net contributes over the window in proportion to 1/window -- for rise > 0, this is used for computing the alpha function -- should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost
+  int		window;		// #DEF_3 spike integration window -- when rise==0, this window is used to smooth out the spike impulses similar to a rise time -- each net contributes over the window in proportion to 1/window -- for rise > 0, this is used for computing the alpha function -- should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost
   float		v_m_r;		// #DEF_0 post-spiking membrane potential to reset to, produces refractory effect 
   float		eq_gain;	// #DEF_10 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
   float		eq_dt;		// #DEF_0.02 if non-zero, eq is computed as a running average with this time constant
   float		hard_gain;	// #DEF_0.2 gain for hard-clamped external inputs, mutliplies ext.  constant external inputs otherwise have too much influence compared to spiking ones: Note: soft clamping is strongly recommended
 
-  float		oneo_decay;	// #READ_ONLY #NO_SAVE g_gain/decay
-  float		oneo_decay_sq;	// #READ_ONLY #NO_SAVE g_gain/decay^2
-  float		oneo_decay_rise; // #READ_ONLY #NO_SAVE g_gain/(decay-rise)
+  float		gg_decay;	// #READ_ONLY #NO_SAVE g_gain/decay
+  float		gg_decay_sq;	// #READ_ONLY #NO_SAVE g_gain/decay^2
+  float		gg_decay_rise; // #READ_ONLY #NO_SAVE g_gain/(decay-rise)
+  float		oneo_decay;	// #READ_ONLY #NO_SAVE 1.0/decay
+  float		oneo_rise;	// #READ_ONLY #NO_SAVE 1.0/rise
 
   float	ComputeAlpha(float t) {
     if(decay == 0.0f) return (t == 0.0f) ? g_gain : 0.0f; // delta function
-    if(rise == 0.0f) return oneo_decay * taMath_float::exp_fast(-t/decay);	 // exponential
-    if(rise == decay) return t * oneo_decay_sq * taMath_float::exp_fast(-t/decay); // symmetric alpha
-    return oneo_decay_rise * (taMath_float::exp_fast(-t/decay) - taMath_float::exp_fast(-t/rise)); // full alpha
+    if(rise == 0.0f) return gg_decay * taMath_float::exp_fast(-t * oneo_decay);	 // exponential
+    if(rise == decay) return t * gg_decay_sq * taMath_float::exp_fast(-t * oneo_decay); // symmetric alpha
+    return gg_decay_rise * (taMath_float::exp_fast(-t * oneo_decay) - taMath_float::exp_fast(-t * oneo_rise)); // full alpha
   }
 
   void 	Defaults()	{ Initialize(); }

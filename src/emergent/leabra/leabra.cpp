@@ -466,29 +466,41 @@ void ActFunSpec::UpdateAfterEdit_impl() {
 }
 
 void SpikeFunSpec::Initialize() {
-  g_gain = 4.0f;
-  rise = 1.0f;
-  decay = 4.0f;
-  window = 20;
+  g_gain = 5.0f;
+  rise = 0.0f;
+  decay = 5.0f;
+  window = 3;
   v_m_r = 0.0f;
   eq_gain = 10.0f;
   eq_dt = 0.02f;
   hard_gain = .2f;
   // vm_dt of .1 should also be used; vm_noise var .002???
   
-  oneo_decay = g_gain / decay;
-  oneo_decay_sq = g_gain / (decay * decay);
-  oneo_decay_rise = g_gain / (decay - rise);
+  gg_decay = g_gain / decay;
+  gg_decay_sq = g_gain / (decay * decay);
+  gg_decay_rise = g_gain / (decay - rise);
+
+  oneo_decay = 1.0f / decay;
+  if(rise > 0.0f)
+    oneo_rise = 1.0f / rise;
+  else
+    oneo_rise = 1.0f;
 }
 
 void SpikeFunSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(window <= 0) window = 1;
   if(decay > 0.0f) {
-    oneo_decay = g_gain / decay;
-    oneo_decay_sq = g_gain / (decay * decay);
+    gg_decay = g_gain / decay;
+    gg_decay_sq = g_gain / (decay * decay);
     if(decay != rise)
-      oneo_decay_rise = g_gain / (decay - rise);
+      gg_decay_rise = g_gain / (decay - rise);
+
+    oneo_decay = 1.0f / decay;
+    if(rise > 0.0f)
+      oneo_rise = 1.0f / rise;
+    else
+      oneo_rise = 1.0f;
   }
 }
 
@@ -1043,7 +1055,7 @@ void LeabraUnitSpec::Compute_Netin_Spike(LeabraUnit* u, LeabraLayer* lay, Leabra
       sum += u->spike_buf.CircSafeEl(t);
     }
     sum /= (float)spike.window;	// normalize over window
-    u->net = u->prv_net + spike.oneo_decay * sum - (u->prv_net / spike.decay);
+    u->net = u->prv_net + spike.gg_decay * sum - (u->prv_net * spike.oneo_decay);
     u->prv_net = u->net;
   }
   else {
@@ -1908,7 +1920,7 @@ void LeabraUnitSpec::GraphSpikeAlphaFun(DataTable* graph_data, bool force_alpha)
     tmax = 20.0f;
     for(x = 0.0f; x <= tmax; x += 1.0f) {
       if(x < spike.window)
-	input = spike.oneo_decay / (float)spike.window;
+	input = spike.gg_decay / (float)spike.window;
       else
 	input = 0.0f;
       net = net + input - net / spike.decay;

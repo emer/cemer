@@ -229,7 +229,7 @@ else
   SIM_AC_CONFIGURATION_SETTING([Debugging],[Disabled])
   AC_SUBST([PL_DEBUG],[release])
   SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O2, except TA files which are -g -O0])  
-  AC_SUBST([OPT_LEVEL],["-g -O2"])
+  AC_SUBST([OPT_LEVEL],["-g -O2 -ftree-vectorize"])
 fi
 
 dnl  Qt

@@ -1511,7 +1511,7 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
     }
     else {
       Function* fun = prog->functions.FindName(vnm);
-      if(fun) {
+      if(fun && fun->name == vnm) { // findname will do crazy inherits thing on types, giving wrong match, so you need to make sure it is actually of the same name
 	cssScriptFun* sfn = new cssScriptFun(vnm);
 	pe->parse_tmp.Push(sfn);
 	sfn->argc = fun->args.size;
@@ -1569,6 +1569,7 @@ bool ProgExprBase::ParseExpr() {
   parse_prog.ext_parse_fun_pre = &cssExtParseFun_pre;
   parse_prog.ext_parse_fun_post = &cssExtParseFun_post;
   parse_prog.ext_parse_user_data = (void*)this;
+  // use this for debugging exprs:
   //  parse_prog.SetDebug(6);
 
   parse_prog.CompileCode(parse_expr);	// use css to do all the parsing!
