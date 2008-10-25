@@ -649,6 +649,7 @@ void LeabraUnitSpec::InitLinks() {
   taBase::Own(dt, this);
   taBase::Own(g_bar, this);
   taBase::Own(e_rev, this);
+  taBase::Own(e_rev_sub_thr, this);
   taBase::Own(hyst, this);
   taBase::Own(acc, this);
   taBase::Own(act_reg, this);
