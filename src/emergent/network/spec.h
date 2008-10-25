@@ -103,6 +103,8 @@ public:
   // checks typedef type, issues error and returns false if not sufficient
   virtual bool	CheckObjectType(TAPtr obj);
   // checks object type, issues error and returns false if not sufficient
+  virtual void	SpecSet(TAPtr obj) {}
+  // #IGNORE called just after the spec was was set but before obj->UAE
 
   virtual BaseSpec* FindMakeChild(const char* nm, TypeDef* td = NULL, bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
   // find a child spec of given name, and if not, make it (if nm is not found and alt_nm != NULL, it is searched for)
@@ -201,7 +203,7 @@ public:
     if(!owner) return false;
     if(!es || (es->InheritsFrom(base_type) && es->CheckObjectType(owner))) {
       spec.set(es);
-      if(es) { type = es->GetTypeDef(); }
+      if(es) { type = es->GetTypeDef(); es->SpecSet(owner);}
       owner->UpdateAfterEdit();	// owner might need to apply this change to all sub guys
       return true;
     }
