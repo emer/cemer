@@ -1569,7 +1569,7 @@ public:
 //  override void		set_data_link(taDataLink* dl) {m_data_link = dl;}
 
   TAPtr 		GetOwner() const	{ return owner; }
-  TAPtr			GetOwner(TypeDef* tp) const { return taBase::GetOwner(tp); }
+  USING(inherited::GetOwner)
   TAPtr 		SetOwner(TAPtr ta)	{ owner = ta; return ta; }
   UserDataItem_List* 	GetUserDataList(bool force = false) const;  
   void	CutLinks();
@@ -2619,7 +2619,12 @@ private:
 class TA_API UserDataItemBase: public taNBase {
   // ##INLINE ##NO_TOKENS base class for all simple user data -- name is key
 INHERITED(taNBase)
-public:
+public://
+//note: we hide the name, because we don't want it inline since we have a dedicated editor
+#ifdef __MAKETA__
+  String		name; // #HIDDEN #READ_ONLY
+#endif
+
   virtual bool		canDelete() const {return false;}
     // whether item can be manually deleted by user
   virtual bool		canRename() const {return false;}

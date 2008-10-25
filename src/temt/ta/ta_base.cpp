@@ -1927,6 +1927,7 @@ UserDataItemBase* taBase::GetUserDataOfType(TypeDef* typ,
   if (!rval && force_create) {
     rval = (UserDataItemBase*)ud->New(1, typ);
     rval->name = key;
+    DataChanged(DCR_USER_DATA_UPDATED);
   }
   return rval;
 }

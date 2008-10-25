@@ -41,12 +41,45 @@ UserDataDelegate::UserDataDelegate(UserDataItem_List* udil_,
 QWidget* UserDataDelegate::createEditor(QWidget* parent, 
     const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-  QWidget* rval = inherited::createEditor(parent, option, index);
-  QSize sz(rval->size());
-  if (sz.width() > uddh->tw->columnWidth(1)) {
-    uddh->tw->setColumnWidth(1,sz.width());
+  MemberDef* md = NULL;
+  taBase* base = NULL;
+  if (IndexToMembBase(index, md, base)) {
+    QWidget* rep = NULL;
+    if (md) {
+      if (md->im == NULL) goto exit; // shouldn't happen
+      // we create a wrap widget for many of these guys, mostly so that smaller
+      // guys like Combo don't try to be stretched the whole way
+      bool wrap = true;
+      QWidget* rep_par = (wrap) ?  new QWidget(parent) : parent;
+      
+      dat = md->im->GetDataRep(edh, NULL, rep_par);
+      dat->SetMemberDef(md);
+      rep = dat->GetRep(); // note: rep may get replaced by rep_par 
+      if (wrap) {
+        QHBoxLayout* hbl = new QHBoxLayout(rep_par);
+        hbl->setMargin(0);
+        hbl->setSpacing(0);
+        hbl->addWidget(rep);
+        // some controls do better without stretch
+        if (!(dynamic_cast<taiField*>((taiData*)dat)))
+          hbl->addStretch();
+        rep = rep_par;
+      }
+    } else { // an inline taBase
+      dat = taiPolyData::New(true, base->GetTypeDef(), edh, NULL,
+        parent);
+      rep = dat->GetRep(); 
+    }
+    dat->SetBase(base);
+    m_dat_row = index.row();
+    
+    connect(rep, SIGNAL(destroyed(QObject*)),
+      dat, SLOT(deleteLater()) );
+    return rep;
   }
-  return rval;
+exit:
+  return inherited::createEditor(parent, option, index);
+  
 }
 
 bool UserDataDelegate::IndexToMembBase(const QModelIndex& index,
@@ -56,14 +89,14 @@ bool UserDataDelegate::IndexToMembBase(const QModelIndex& index,
   if (twi) {
     UserDataItemBase* item = dynamic_cast<UserDataItemBase*>(
       (taBase*)(twi->data(Qt::UserRole).value<ta_intptr_t>()));
+    base = item; // the item itself is the base
     if (item) {
       if (item->isSimple()) {
         mbr = item->FindMember("value"); // better be found!
-        base = item; // the item itself is the base
-        return (mbr != NULL);
       } else { // complex
-      //TODO
+      //nothing
       }
+      return true;
     }
   }
   return false;
@@ -207,30 +240,28 @@ void iUserDataDataHost::Constr_Data_Labels() {
       QTableWidgetItem* twi = NULL;
       
       //TODO: Modal, based on type
+      // data item
+      twi = new QTableWidgetItem;
+      item_flags = Qt::ItemIsEnabled; // |Qt::ItemIsSelectable;
+      //TODO: check for READONLY
+      bool ro = item_->isReadOnly();
+      if (!ro)
+        item_flags |= Qt::ItemIsEditable;
+      twi->setFlags((Qt::ItemFlags)item_flags);
+      // set &UserDataItemBase into 1.data
+      twi->setData(Qt::UserRole, QVariant((ta_intptr_t)item_));
       if (item_->isSimple()) {
         //UserDataItem* item = (UserDataItem*)item_;
       // simple (Variant) user data
         MemberDef* mbr = item_->FindMember("value"); // better be found!
+        ms->memb_el.Add(mbr); // keep synced
         if (!mbr || (mbr->im == NULL)) continue; // shouldn't happen
-        ms->memb_el.Add(mbr);
         
-        // data item
-        twi = new QTableWidgetItem;
-        item_flags = Qt::ItemIsEnabled; // |Qt::ItemIsSelectable;
-        //TODO: check for READONLY
-        bool ro = false;
-        if (!ro)
-          item_flags |= Qt::ItemIsEditable;
-        twi->setFlags((Qt::ItemFlags)item_flags);
-        // set &UserDataItemBase into 1.data
-        twi->setData(Qt::UserRole, QVariant((ta_intptr_t)item_));
-        tw->setItem(row, 1, twi);
       } else {
-      // complex user data
-        //TODO
-        //TEMP:
+      // complex user data -- just do an inline guy
         ms->memb_el.Add(NULL);
       }
+      tw->setItem(row, 1, twi);
       
       // label item -- same for all types
       twi = new QTableWidgetItem;
@@ -267,7 +298,7 @@ void iUserDataDataHost::GetImage_Membs_def() {
       if (!mbr) continue; // shouldn't happen
       void* off = mbr->GetOff(item);
       String txt = mbr->type->GetValStr(off, item->GetOwner(),
-        mbr, TypeDef::SC_DISPLAY); 
+        mbr, TypeDef::SC_DISPLAY, true); 
       it->setText(txt);
       it->setToolTip(txt); // for when over
     
@@ -284,7 +315,10 @@ void iUserDataDataHost::GetImage_Membs_def() {
       }
     } else {
     //complex
-      //TODO
+      String txt = item_->GetTypeDef()->GetValStr(item_, NULL,
+        NULL, TypeDef::SC_DISPLAY, true); 
+      it->setText(txt);
+      it->setToolTip(txt); // for when over
     }
   }
   udd->GetImage(); // if a ctrl is active

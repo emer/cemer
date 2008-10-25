@@ -5028,12 +5028,16 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
 				       StrContext sc, bool force_inline) const 
 {
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
-  String rval("{");
+  String rval;
+  if (sc != SC_DISPLAY) rval = "{";
   for(int i=0; i<members.size; i++) {
     MemberDef* md = members.FastEl(i);
     // if streaming, do full save check, else just check for NO_SAVE
     if (sc == SC_STREAMING) {
       if (!md->DumpMember(base))
+	continue;
+    } else if (sc == SC_DISPLAY) {
+      if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF, SC_EDIT))
 	continue;
     } else {
       if(md->HasOption("NO_SAVE"))
@@ -5045,7 +5049,7 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
     if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
     rval += ": ";
   }
-  rval += "}";
+  if (sc != SC_DISPLAY) rval += "}";
   return rval;
 }
 

@@ -440,17 +440,26 @@ bool taiDataDelegate::eventFilter(QObject *object, QEvent *event)
 void taiDataDelegate::GetImage() const {
   if (!dat) return;
   edh->Updating(true);
-  dat->mbr->im->GetImage(dat, dat->Base());
+  if (dat->mbr) { // has member (typical case)
+    dat->mbr->im->GetImage(dat, dat->Base());
+  } else { // no mbr, typically an inline taBase, esp for userdata
+    dat->GetImage_(dat->Base());
+  }
   edh->Updating(false);
 }
 
 void taiDataDelegate::GetValue() const {
   if (!dat) return;
   taBase* base = dat->Base(); // cache
-  bool first_diff = true;
-  dat->mbr->im->GetMbrValue(dat, base, first_diff); 
-  if (!first_diff)
-    taiMember::EndScript(base);
+  if (dat->mbr) { // has member (typical case)
+    dat->mbr->im->GetImage(dat, base);
+    bool first_diff = true;
+    dat->mbr->im->GetMbrValue(dat, base, first_diff); 
+    if (!first_diff)
+      taiMember::EndScript(base);
+  } else { // no mbr, typically an inline taBase, esp for userdata
+    dat->GetValue_(base);
+  }
   base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
 }
 
@@ -722,7 +731,7 @@ void iSelectEditDataHost2::GetImage_Membs_def() {
     if ((item == NULL) || (item->base == NULL) ||  (item->mbr == NULL)) continue;
     void* off = item->mbr->GetOff(item->base);
     String txt = item->mbr->type->GetValStr(off, item->base->GetOwner(),
-      item->mbr, TypeDef::SC_DISPLAY); 
+      item->mbr, TypeDef::SC_DISPLAY, true); 
     it->setText(txt);
     it->setToolTip(txt); // for when over
     
