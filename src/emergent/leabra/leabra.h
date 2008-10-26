@@ -205,7 +205,6 @@ public:
 
   LearnVar	lrn_var;	// #DEF_XCAL_AVGSR learning rule variant to use
   float		p_thr_gain;	// #DEF_1.9 #CONDEDIT_OFF_lrn_var:CAL multiplier on recv avg_trl_avg to produce p_thr value: higher values = more sparse strong weights; lower values = more distributed 
-  float		p_boost;	// #DEF_0.7 #CONDEDIT_OFF_lrn_var:CAL plus-phase activation boost, simulating the effects of dopamine on amplifying the learning signals: adds this weighted proportion of the act_p plus phase values to the overall sravg signal (equivalent to making the plus phase longer -- more efficient to use this value)
   float		noerr_lrate;	// #CONDEDIT_OFF_lrn_var:CAL effective learning rate when there is no error in output -- effective lrate = lrate * [noerr_lrate + (1-noerr_lrate) * norm_err] where norm_err is normalized error on this trial (0-1, with 1 = max err) -- simulates neuromodulatory effects on learning that emphasize error trials
   float		d_gain;		// #DEF 2.0 #CONDEDIT_OFF_lrn_var:CAL multiplier on LTD values relative to LTP values
   float		d_rev;		// #DEF_0.15 #CONDEDIT_OFF_lrn_var:CAL proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
@@ -213,7 +212,6 @@ public:
   float		rnd_var;	// variance (range) for uniform random noise added to weights when avg_trl_avg < rnd_min_avg (noise is then multiplied by lrate)
 
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- muliplication factor in learning rule
-  float		p_boost_c;	// #HIDDEN #READ_ONLY 1-p_boost -- complement weighting of regular sravg
   float		noerr_lrate_c;	// #HIDDEN #READ_ONLY 1-noerr_lrate -- for computation
   SIMPLE_COPY(XCalLearnSpec);
   TA_BASEFUNS(XCalLearnSpec);
@@ -720,7 +718,6 @@ public:
   float		depl;		// #CONDEDIT_ON_on #READ_ONLY #SHOW rate of depletion of spike amplitude as a function of activation output (computed from rec, asymp_act)
   float		max_amp;	// #CONDEDIT_ON_on maximum spike amplitude -- this is the multiplier factor for activation values -- set to clamp_norm_max_amp to maintain asymptotic values at normal hard clamp levels, or set to 1 to retain usual normalized activation values (val is copied to act_range.max)
   float		clamp_norm_max_amp;	// #CONDEDIT_ON_on #READ_ONLY #SHOW maximum spike amplitude required to maintain asymptotic firing at normal clamp levels -- set max_amp to this value for delta-based learning rules to normalize against large diffs across phases
-  bool		spike_eq;		// #CONDEDIT_ON_on does depression affect spiking act_eq value?  if true, yes, else no.
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(DepressSpec);
@@ -837,6 +834,8 @@ class LEABRA_API XCalActSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCal activation specs
 INHERITED(taOBase)
 public:
+  float		p_boost;	// [2-3 typical] plus-phase activation multiplier, simulating the effects of dopamine on amplifying the learning signals: multiplies trl_sum vals for plus phase by this factor (also more efficient way of making the plus phase longer)
+  int		p_boost_off;	// [10-20 typical] offset in cycles into plus phase before applying the boosting factor
   float		avg_dt;		// #DEF_0.02 time constant for integrating avg_trl_avg
   float		avg_init;	// #DEF_0.15 initial value for avg_trl_avg 
   int		n_avg_only_epcs; // #DEF_2 number of epochs during which time only an average activation value is accumulated -- no learning
@@ -1180,7 +1179,7 @@ public:
   float		act_p;		// #CAT_Activation plus_phase activation, set after settling, used for learning
   float		act_dif;	// #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
   float 	trl_avg;	// #CAT_Activation trial-wise average activation value (computed over same period as sravg value on connection) -- for CtLeabra XCAL learning
-  float 	trl_sum;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation trial-wise sum activation, for computing average
+  float 	trl_sum;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation trial-wise sum activation, for computing trl_avg average
   float		avg_trl_avg;	// #CAT_Activation long time-average of trial-wise average activation (dt = xcal.avg_dt) -- for adapting the threshold in CtLeabra XCAL learning
   float		act_m2;		// #CAT_Activation second minus_phase activation (e.g., nothing phase), set after settling, used for learning
   float		act_p2;		// #CAT_Activation second plus_phase activation, set after settling, used for learning
@@ -2894,9 +2893,7 @@ inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL(LeabraCon* cn,
 						      float ru_trl_avg, float su_trl_avg,
 						      float thr_p, float thr_p_d_rev,
 						      float norm_err) {
-  float srval = (xcal.p_boost * ru_act_p * su_act_p) +
-    (xcal.p_boost_c * ru_trl_avg * su_trl_avg);
-
+  float srval = ru_trl_avg * su_trl_avg;
   float err;
   if(srval >= thr_p)
     err = srval - thr_p;

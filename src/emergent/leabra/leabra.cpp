@@ -92,7 +92,6 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 void XCalLearnSpec::Initialize() {
   lrn_var = XCAL_AVGSR;
   p_thr_gain = 1.9f;
-  p_boost = .7f;
   noerr_lrate = .5f;
   d_gain = 2.0;
   d_rev = .15;
@@ -100,7 +99,6 @@ void XCalLearnSpec::Initialize() {
   rnd_var = 0.1f;
 
   d_rev_ratio = (1.0f - d_rev) / d_rev;
-  p_boost_c = 1.0f - p_boost;
   noerr_lrate_c = 1.0f - noerr_lrate;
 }
 
@@ -110,7 +108,6 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
     d_rev_ratio = (1.0f - d_rev) / d_rev;
   else
     d_rev_ratio = 1.0f;
-  p_boost_c = 1.0f - p_boost;
   noerr_lrate_c = 1.0f - noerr_lrate;
 }
 
@@ -511,7 +508,6 @@ void DepressSpec::Initialize() {
   depl = rec * (1.0f - asymp_act) / (asymp_act * .95f);
   max_amp = 1.0f;
   clamp_norm_max_amp = (.95f * depl + rec) / rec;
-  spike_eq = true;
 }
 
 void DepressSpec::UpdateAfterEdit_impl() {
@@ -547,6 +543,8 @@ void DtSpec::Initialize() {
 }
 
 void XCalActSpec::Initialize() {
+  p_boost = 2.0f;
+  p_boost_off = 10;
   avg_init = .15f;
   avg_dt = .02f;
   n_avg_only_epcs = 2;
@@ -1312,9 +1310,6 @@ void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraLayer* lay, Leab
   else {
     u->act = 0.0f;
   }
-  if(depress.on && depress.spike_eq) { // do it now before computing eq
-    u->act *= u->spk_amp;
-  }
 
   float old_eq = u->act_eq / spike.eq_gain;
   float new_eq;
@@ -1330,9 +1325,7 @@ void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraLayer* lay, Leab
   u->act_eq = new_eq;
 
   if(depress.on) {
-    if(!depress.spike_eq) {
-      u->act *= u->spk_amp;	// after eq
-    }
+    u->act *= u->spk_amp;	// after eq
     u->spk_amp += -u->act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
     if(u->spk_amp < 0.0f) 			u->spk_amp = 0.0f;
     else if(u->spk_amp > depress.max_amp)	u->spk_amp = depress.max_amp;
@@ -1614,7 +1607,12 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* th
 //////////////////////////////////////////
 
 void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
-  u->trl_sum += u->act;		// note: NOT eq -- raw act val for spiking, and depression
+  // increment trl_sum -- used for XCAL learning (only)
+  if(net->phase == LeabraNetwork::PLUS_PHASE && net->cycle >= xcal.p_boost_off)
+    u->trl_sum += xcal.p_boost * u->act; // boosted for plus phase
+  else
+    u->trl_sum += u->act;		// note: NOT eq -- raw act val for spiking, and depression
+
   ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_SRAvg((LeabraCon*)u->bias.Cn(0), u);
 
   if(net->train_mode != LeabraNetwork::TEST) {	// expensive con-level only for training
@@ -4119,7 +4117,11 @@ void LeabraLayerSpec::Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) {
     FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
       u->Compute_SRAvg(lay, net);
     }
-    lay->sravg_sum += 1.0f;	// add one to weighting factor
+    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
+    if(net->phase == LeabraNetwork::PLUS_PHASE && net->cycle >= us->xcal.p_boost_off)
+      lay->sravg_sum += us->xcal.p_boost;	// normalize by boosting factor
+    else
+      lay->sravg_sum += 1.0f;	// normal weighting
     lay->maxda_sum = 0.0f;
   }
 }
