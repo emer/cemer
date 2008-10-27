@@ -4579,7 +4579,7 @@ Unit_Group* Layer::FindUnitGpFmCoord(int gp_x, int gp_y) {
   return (Unit_Group*)units.gp.FastEl(gidx);
 }
 
-void Layer::GetActGeomNoSpc(PosTwoDCoord& nospc_geom) {
+void Layer::GetActGeomNoSpc(TwoDCoord& nospc_geom) {
   nospc_geom = act_geom;
   if(!unit_groups) return;
   nospc_geom.x -= (gp_geom.x - 1) * gp_spc.x;

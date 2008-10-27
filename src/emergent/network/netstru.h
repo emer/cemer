@@ -1598,7 +1598,7 @@ public:
   // #CAT_Structure find the unit group at given group coordiantes (i.e., within gp_geom, not unit coordinates)
   Unit_Group* 	FindUnitGpFmCoord(const TwoDCoord& coord) {return FindUnitGpFmCoord(coord.x,coord.y);}
   // #CAT_Structure get unit group from group coordinates (i.e., within gp_geom, not unit coordinates)
-  virtual void	GetActGeomNoSpc(PosTwoDCoord& nospc_geom);
+  virtual void	GetActGeomNoSpc(TwoDCoord& nospc_geom);
   // #CAT_Structure get the actual geometry of the layer, subtracting any gp_spc that might be present (as if there were no spaces between unit groups)
   void		GetAbsPos(TDCoord& abs_pos)
     {abs_pos = pos; AddRelPos(abs_pos);}
