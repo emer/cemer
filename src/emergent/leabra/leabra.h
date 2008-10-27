@@ -205,7 +205,7 @@ public:
 
   LearnVar	lrn_var;	// #DEF_XCAL_AVGSR learning rule variant to use
   float		noerr_lrate;	// #CONDEDIT_OFF_lrn_var:CAL effective learning rate when there is no error in output -- effective lrate = lrate * [noerr_lrate + (1-noerr_lrate) * norm_err] where norm_err is normalized error on this trial (0-1, with 1 = max err) -- simulates neuromodulatory effects on learning that emphasize error trials
-  float		thr_savg_mult;	// #DEF_0.3 multiplier applied to xcal_thr (LTP thr value) to compensate for average sending activations, such that values below the average fall into the LTD range, and those above are in LTP (given a recv activation that is in the LTP range relative to the recv-derived threshold)
+  float		thr_savg_mult;	// #DEF_0.7 multiplier applied to xcal_thr (LTP thr value) to compensate for average sending activations, such that values below the average fall into the LTD range, and those above are in LTP (given a recv activation that is in the LTP range relative to the recv-derived threshold)
   float		d_gain;		// #DEF 2.0 #CONDEDIT_OFF_lrn_var:CAL multiplier on LTD values relative to LTP values
   float		d_rev;		// #DEF_0.15 #CONDEDIT_OFF_lrn_var:CAL proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
   float		rnd_min_avg;	// #DEF_-1 #CONDEDIT_OFF_lrn_var:CAL minimum avg_trl_avg value, below which random values are added to weights to drive exploration (-1 = off)
@@ -834,13 +834,14 @@ class LEABRA_API XCalActSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCal activation specs
 INHERITED(taOBase)
 public:
-  float		p_boost;	// [2-3 typical] plus-phase activation multiplier, simulating the effects of dopamine on amplifying the learning signals: multiplies trl_sum vals for plus phase by this factor (also more efficient way of making the plus phase longer)
+  float		p_boost;	// [10 typical] plus-phase activation multiplier, simulating the effects of dopamine on amplifying the learning signals: multiplies trl_sum vals for plus phase by this factor (also more efficient way of making the plus phase longer)
   int		p_boost_off;	// [10-20 typical] offset in cycles into plus phase before applying the boosting factor
   float		thr_trl_mix;	// how much of the current trl_avg value (unboosted, reflecting average over entire settling trajectory) should be included in the xcal_thr learning threshold value (rest is the long time average avg_trl_avg)
   float		thr_avg_gain;	// #DEF_2 multiplier on avg_trl_avg to contribute to LTP thr value -- note this is prior to multiplication by thr_savg_est: higher values = more sparse strong weights; lower values = more distributed 
   float		avg_dt;		// #DEF_0.02 time constant for integrating avg_trl_avg
   float		avg_init;	// #DEF_0.15 initial value for avg_trl_avg 
-  bool		avg_boost;	// #DEF_false include the plus-phase boosted value into the long-term avg_trl_avg value?
+  bool		avg_boost;	// include the plus-phase boosted value into the long-term avg_trl_avg value?
+  bool		thr_cur_avg;	// does threshold include current avg_trl_avg value, or not?
   int		n_avg_only_epcs; // #DEF_2 number of epochs during which time only an average activation value is accumulated -- no learning
 
   SIMPLE_COPY(XCalActSpec);

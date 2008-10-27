@@ -551,6 +551,7 @@ void XCalActSpec::Initialize() {
   avg_init = .15f;
   n_avg_only_epcs = 2;
   avg_boost = false;
+  thr_cur_avg = false;
 }
 
 void DaModSpec::Initialize() {
@@ -1472,13 +1473,19 @@ void LeabraUnitSpec::Compute_XCalTrlVals(LeabraUnit* u, LeabraLayer* lay, Leabra
 
   u->trl_avg = p_trl_avg;	// boosted
 
-  u->xcal_thr = xcal.thr_trl_mix * raw_trl_avg +
-    (1.0f - xcal.thr_trl_mix) * xcal.thr_avg_gain * u->avg_trl_avg;
+  float prv_avg_trl_avg = u->avg_trl_avg;
 
   if(xcal.avg_boost)
     u->avg_trl_avg += xcal.avg_dt * (p_trl_avg - u->avg_trl_avg);
   else
     u->avg_trl_avg += xcal.avg_dt * (raw_trl_avg - u->avg_trl_avg);
+
+  if(xcal.thr_cur_avg)
+    u->xcal_thr = xcal.thr_trl_mix * raw_trl_avg +
+      (1.0f - xcal.thr_trl_mix) * xcal.thr_avg_gain * u->avg_trl_avg;
+  else
+    u->xcal_thr = xcal.thr_trl_mix * raw_trl_avg +
+      (1.0f - xcal.thr_trl_mix) * xcal.thr_avg_gain * prv_avg_trl_avg;
 }
 
 
