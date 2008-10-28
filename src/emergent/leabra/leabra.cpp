@@ -91,10 +91,10 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   lrn_var = XCAL_AVGSR;
-  noerr_lrate = .1f;
-  thr_savg_mult = 0.3f;
-  d_gain = 2.0;
-  d_rev = .15;
+  noerr_lrate = 1.0f;
+  savg_thr = 0.6f;
+  d_gain = 2.5;
+  d_rev = .01;
   rnd_min_avg = -1.0f;		// turn off by default
   rnd_var = 0.1f;
 
@@ -543,14 +543,14 @@ void DtSpec::Initialize() {
 }
 
 void XCalActSpec::Initialize() {
-  p_boost = 2.0f;
+  p_boost = 100.0f;
   p_boost_off = 10;
-  thr_trl_mix = 0.5f;
-  thr_avg_gain = 2.0f;
+  trl_mix = 0.7f;
+  avg_gain = 1.8f;
   avg_dt = .02f;
   avg_init = .15f;
   n_avg_only_epcs = 2;
-  avg_boost = false;
+  avg_boost = true;
   thr_cur_avg = false;
 }
 
@@ -1481,11 +1481,11 @@ void LeabraUnitSpec::Compute_XCalTrlVals(LeabraUnit* u, LeabraLayer* lay, Leabra
     u->avg_trl_avg += xcal.avg_dt * (raw_trl_avg - u->avg_trl_avg);
 
   if(xcal.thr_cur_avg)
-    u->xcal_thr = xcal.thr_trl_mix * raw_trl_avg +
-      (1.0f - xcal.thr_trl_mix) * xcal.thr_avg_gain * u->avg_trl_avg;
+    u->xcal_thr = xcal.trl_mix * raw_trl_avg +
+      (1.0f - xcal.trl_mix) * xcal.avg_gain * u->avg_trl_avg;
   else
-    u->xcal_thr = xcal.thr_trl_mix * raw_trl_avg +
-      (1.0f - xcal.thr_trl_mix) * xcal.thr_avg_gain * prv_avg_trl_avg;
+    u->xcal_thr = xcal.trl_mix * raw_trl_avg +
+      (1.0f - xcal.trl_mix) * xcal.avg_gain * prv_avg_trl_avg;
 }
 
 
@@ -2219,7 +2219,7 @@ void KwtaTieBreak::Initialize() {
 
 void ClampSpec::Initialize() {
   hard = true;
-  gain = .5f;
+  gain = .2f;
   d_gain = 0.0f;
 }
 
