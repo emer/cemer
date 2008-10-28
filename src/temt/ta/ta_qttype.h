@@ -72,8 +72,17 @@ public:
   TAQT_TYPE_INSTANCE(taiInt64Type, taiType);
 };
 
+class TA_API taiRealType : public taiType { // handles real types, provides validators
+INHERITED(taiType)
+public:
+  int		BidForType(TypeDef* td);
 
-
+  TAQT_TYPE_INSTANCE(taiRealType, taiType);
+protected:
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr);
+  void		GetValue_impl(taiData* dat, void* base);
+};
 
 class TA_API taiEnumType : public taiType {
 public:
