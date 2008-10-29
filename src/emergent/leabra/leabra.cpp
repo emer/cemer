@@ -91,15 +91,13 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   lrn_var = XCAL_AVGSR;
-  noerr_lrate = 1.0f;
   savg_thr = 0.6f;
-  d_gain = 2.5;
-  d_rev = .01;
+  d_gain = 2.5f;
+  d_rev = .10f;
   rnd_min_avg = -1.0f;		// turn off by default
   rnd_var = 0.1f;
 
   d_rev_ratio = (1.0f - d_rev) / d_rev;
-  noerr_lrate_c = 1.0f - noerr_lrate;
 }
 
 void XCalLearnSpec::UpdateAfterEdit_impl() {
@@ -108,7 +106,6 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
     d_rev_ratio = (1.0f - d_rev) / d_rev;
   else
     d_rev_ratio = 1.0f;
-  noerr_lrate_c = 1.0f - noerr_lrate;
 }
 
 void SAvgCorSpec::Initialize() {
@@ -354,7 +351,7 @@ void LeabraConSpec::GraphXCalFun(DataTable* graph_data, float thr_p) {
   float x;
   for(x = 0.0f; x <= 1.0f; x += .01f) {
     cn.sravg = x;
-    C_Compute_dWt_CtLeabraXCAL(&cn, x, 1.0f, thr_p, thr_p * xcal.d_rev, 1.0f);
+    C_Compute_dWt_CtLeabraXCAL(&cn, x, 1.0f, thr_p, thr_p * xcal.d_rev);
     graph_data->AddBlankRow();
     sravg->SetValAsFloat(x, -1);
     dwt->SetValAsFloat(cn.dwt, -1);
@@ -543,15 +540,14 @@ void DtSpec::Initialize() {
 }
 
 void XCalActSpec::Initialize() {
-  p_boost = 100.0f;
+  p_boost = 15.0f;
   p_boost_off = 10;
   trl_mix = 0.7f;
-  avg_gain = 1.8f;
-  avg_dt = .02f;
+  avg_gain = 2.0f;
+  avg_dt = .03f;
   avg_init = .15f;
   n_avg_only_epcs = 2;
-  avg_boost = true;
-  thr_cur_avg = false;
+  avg_boost = false;
 }
 
 void DaModSpec::Initialize() {
@@ -1473,19 +1469,15 @@ void LeabraUnitSpec::Compute_XCalTrlVals(LeabraUnit* u, LeabraLayer* lay, Leabra
 
   u->trl_avg = p_trl_avg;	// boosted
 
-  float prv_avg_trl_avg = u->avg_trl_avg;
+  // always use previous avg in computing threshold: any contribution from current
+  // avg should come through trl_mix -- so, compute threshold first, then avg
+  u->xcal_thr = xcal.trl_mix * raw_trl_avg +
+    (1.0f - xcal.trl_mix) * xcal.avg_gain * u->avg_trl_avg;
 
   if(xcal.avg_boost)
     u->avg_trl_avg += xcal.avg_dt * (p_trl_avg - u->avg_trl_avg);
   else
     u->avg_trl_avg += xcal.avg_dt * (raw_trl_avg - u->avg_trl_avg);
-
-  if(xcal.thr_cur_avg)
-    u->xcal_thr = xcal.trl_mix * raw_trl_avg +
-      (1.0f - xcal.trl_mix) * xcal.avg_gain * u->avg_trl_avg;
-  else
-    u->xcal_thr = xcal.trl_mix * raw_trl_avg +
-      (1.0f - xcal.trl_mix) * xcal.avg_gain * prv_avg_trl_avg;
 }
 
 

@@ -204,15 +204,24 @@ public:
   };
 
   LearnVar	lrn_var;	// #DEF_XCAL_AVGSR learning rule variant to use
-  float		noerr_lrate;	// #CONDEDIT_OFF_lrn_var:CAL effective learning rate when there is no error in output -- effective lrate = lrate * [noerr_lrate + (1-noerr_lrate) * norm_err] where norm_err is normalized error on this trial (0-1, with 1 = max err) -- simulates neuromodulatory effects on learning that emphasize error trials
-  float		savg_thr;	// #DEF_0.6 multiplier applied to xcal_thr (LTP thr value) to compensate for average sending activations, such that values below the average fall into the LTD range, and those above are in LTP (given a recv activation that is in the LTP range relative to the recv-derived threshold)
+  float		savg_thr;	// #DEF_0.6 multiplier applied to xcal_thr (LTP thr value) to compensate for average sending activations, such that values below the average fall into the LTD range, and those above are in LTP (given a recv activation that is in the LTP range relative to the recv-derived threshold) -- this may depend on avg activation etc of sending layer
   float		d_gain;		// #DEF 2.5 #CONDEDIT_OFF_lrn_var:CAL multiplier on LTD values relative to LTP values
-  float		d_rev;		// #DEF_0.01 #CONDEDIT_OFF_lrn_var:CAL proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
+  float		d_rev;		// #DEF_0.1 #CONDEDIT_OFF_lrn_var:CAL proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
   float		rnd_min_avg;	// #DEF_-1 #CONDEDIT_OFF_lrn_var:CAL minimum avg_trl_avg value, below which random values are added to weights to drive exploration (-1 = off)
   float		rnd_var;	// #DEF_0.1 variance (range) for uniform random noise added to weights when avg_trl_avg < rnd_min_avg (noise is then multiplied by lrate)
 
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- muliplication factor in learning rule
-  float		noerr_lrate_c;	// #HIDDEN #READ_ONLY 1-noerr_lrate -- for computation
+
+  inline float  XCalFun(float srval, float thr_p, float thr_p_d_rev) {
+    float rval;
+    if(srval >= thr_p)
+      rval = srval - thr_p;
+    else if(srval > thr_p_d_rev)
+      rval = d_gain * (srval - thr_p);
+    else
+      rval = -d_gain * srval * d_rev_ratio;
+    return rval;
+  }
 
   SIMPLE_COPY(XCalLearnSpec);
   TA_BASEFUNS(XCalLearnSpec);
@@ -451,7 +460,7 @@ public:
   // CtLeabraXCAL code
 
   inline void 	C_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, float ru_trl_avg, float su_trl_avg,
-					   float thr_p, float thr_p_d_rev, float norm_err);
+					   float thr_p, float thr_p_d_rev);
   // #CAT_Learning compute contrastive attractor learning (XCAL)
 
   inline virtual void 	Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru);
@@ -834,14 +843,13 @@ class LEABRA_API XCalActSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCal activation specs
 INHERITED(taOBase)
 public:
-  float		p_boost;	// [10-100 typical] plus-phase activation multiplier, simulating the effects of dopamine on amplifying the learning signals: multiplies trl_sum vals for plus phase by this factor (also more efficient way of making the plus phase longer)
+  float		p_boost;	// #DEF_15 plus-phase activation multiplier, simulating the effects of dopamine on amplifying the learning signals: multiplies trl_sum vals for plus phase by this factor (also more efficient way of making the plus phase longer)
   int		p_boost_off;	// [10-20 typical] offset in cycles into plus phase before applying the boosting factor
-  float		trl_mix;	// how much of the current trl_avg value (unboosted, reflecting average over entire settling trajectory) should be included in the xcal_thr learning threshold value (rest is the long time average avg_trl_avg)
-  float		avg_gain;	// #DEF_1.8 multiplier on avg_trl_avg to contribute to LTP thr value -- note this is prior to multiplication by conspec savg_thr: higher values = more sparse strong weights; lower values = more distributed 
-  float		avg_dt;		// #DEF_0.02 time constant for integrating avg_trl_avg
+  float		trl_mix;	// #DEF_0.7 how much of the current trl_avg value (unboosted, reflecting average over entire settling trajectory) should be included in the xcal_thr learning threshold value (rest is the long time average avg_trl_avg)
+  float		avg_gain;	// #DEF_2.0 multiplier on avg_trl_avg to contribute to LTP thr value -- note this is prior to multiplication by conspec savg_thr: higher values = more sparse strong weights; lower values = more distributed 
+  float		avg_dt;		// #DEF_0.03 time constant for integrating avg_trl_avg
   float		avg_init;	// #DEF_0.15 initial value for avg_trl_avg 
-  bool		avg_boost;	// #DEF_true include the plus-phase boosted value into the long-term avg_trl_avg value?
-  bool		thr_cur_avg;	// #DEF_false does threshold include current avg_trl_avg value -- should not except for special testing situations
+  bool		avg_boost;	// #DEF_false include the plus-phase boosted value into the long-term avg_trl_avg value?  only set this to true when simulating a pure "self organizing" BCM-like model -- otherwise it is key for this average to contain information about "minus phase" activations
   int		n_avg_only_epcs; // #DEF_2 number of epochs during which time only an average activation value is accumulated -- no learning
 
   SIMPLE_COPY(XCalActSpec);
@@ -2900,18 +2908,8 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraCAL(LeabraRecvCons* cg, Leabr
 
 inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, 
 						      float ru_trl_avg, float su_trl_avg,
-						      float thr_p, float thr_p_d_rev,
-						      float norm_err) {
-  float srval = ru_trl_avg * su_trl_avg;
-  float err;
-  if(srval >= thr_p)
-    err = srval - thr_p;
-  else if(srval > thr_p_d_rev)
-    err = xcal.d_gain * (srval - thr_p);
-  else
-    err = -xcal.d_gain * srval * xcal.d_rev_ratio;
-
-  cn->dwt += cur_lrate * (xcal.noerr_lrate + xcal.noerr_lrate_c * norm_err) * err;
+						      float thr_p, float thr_p_d_rev) {
+  cn->dwt += cur_lrate * xcal.XCalFun(ru_trl_avg * su_trl_avg, thr_p, thr_p_d_rev);
 }
 
 
@@ -2927,16 +2925,13 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
     return;
   }
 
-  LeabraNetwork* net = (LeabraNetwork*)cg->prjn->from.ptr()->own_net;
-  
   float thr_p = xcal.savg_thr * ru->xcal_thr;
   float thr_p_d_rev = thr_p * xcal.d_rev;
 
   for(int i=0; i<cg->cons.size; i++) {
     LeabraUnit* su = (LeabraUnit*)cg->Un(i);
     LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-    C_Compute_dWt_CtLeabraXCAL(cn, ru->trl_avg, su->trl_avg,
-			       thr_p, thr_p_d_rev, net->norm_err);
+    C_Compute_dWt_CtLeabraXCAL(cn, ru->trl_avg, su->trl_avg, thr_p, thr_p_d_rev);
   }
 }
 
@@ -3022,26 +3017,13 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* 
 
 inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru,
 						      LeabraLayer* rlay) {
-  float err;
   if(xcal.lrn_var == XCalLearnSpec::CAL) {
-    err = ru->act_p - (rlay->sravg_nrm * cn->sravg);
-    cn->dwt += cur_lrate * err;
+    cn->dwt += cur_lrate * (ru->act_p - (rlay->sravg_nrm * cn->sravg));
     return;
   }
-  float thr_p = xcal.savg_thr * ru->xcal_thr;
+  float thr_p = ru->xcal_thr;	// note: no savg_thr for bias weights!!
   float thr_p_d_rev = thr_p * xcal.d_rev;
-
-  float norm_err = ((LeabraNetwork*)rlay->own_net)->norm_err;
-
-  // todo: make this a funcall!
-  if(ru->trl_avg >= thr_p)
-    err = ru->trl_avg - thr_p;
-  else if(ru->trl_avg > thr_p_d_rev)
-    err = xcal.d_gain * (ru->trl_avg - thr_p);
-  else
-    err = -xcal.d_gain * ru->trl_avg * xcal.d_rev_ratio;
-
-  cn->dwt += cur_lrate * (xcal.noerr_lrate + xcal.noerr_lrate_c * norm_err) * err;
+  cn->dwt += cur_lrate * xcal.XCalFun(ru->trl_avg, thr_p, thr_p_d_rev);
 }
 
 
@@ -3074,24 +3056,15 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
   float err;
   if(xcal.lrn_var == XCalLearnSpec::CAL) {
     err = ru->act_p - (rlay->sravg_nrm * cn->sravg);
-    cn->dwt += cur_lrate * err;
-    return;
   }
-  float thr_p = xcal.savg_thr * ru->xcal_thr;
-  float thr_p_d_rev = thr_p * xcal.d_rev;
-
-  float norm_err = ((LeabraNetwork*)rlay->own_net)->norm_err;
-
-  // todo: make this a funcall!
-  if(ru->trl_avg >= thr_p)
-    err = ru->trl_avg - thr_p;
-  else if(ru->trl_avg > thr_p_d_rev)
-    err = xcal.d_gain * (ru->trl_avg - thr_p);
-  else
-    err = -xcal.d_gain * ru->trl_avg * xcal.d_rev_ratio;
+  else {
+    float thr_p = ru->xcal_thr;	// note: no savg_thr for bias weights!!
+    float thr_p_d_rev = thr_p * xcal.d_rev;
+    err = xcal.XCalFun(ru->trl_avg, thr_p, thr_p_d_rev);
+  }
 
   if(fabsf(err) >= dwt_thresh)
-    cn->dwt += cur_lrate * (xcal.noerr_lrate + xcal.noerr_lrate_c * norm_err) * err;
+    cn->dwt += cur_lrate * err;
 }
 
 //////////////////////////
