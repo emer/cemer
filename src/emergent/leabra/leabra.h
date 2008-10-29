@@ -845,11 +845,11 @@ INHERITED(taOBase)
 public:
   float		p_boost;	// #DEF_15 plus-phase activation multiplier, simulating the effects of dopamine on amplifying the learning signals: multiplies trl_sum vals for plus phase by this factor (also more efficient way of making the plus phase longer)
   int		p_boost_off;	// [10-20 typical] offset in cycles into plus phase before applying the boosting factor
-  float		trl_mix;	// #DEF_0.7 how much of the current trl_avg value (unboosted, reflecting average over entire settling trajectory) should be included in the xcal_thr learning threshold value (rest is the long time average avg_trl_avg)
-  float		avg_gain;	// #DEF_2.0 multiplier on avg_trl_avg to contribute to LTP thr value -- note this is prior to multiplication by conspec savg_thr: higher values = more sparse strong weights; lower values = more distributed 
+  float		trl_mix;	// #DEF_0.7 how much of the current trl_avg value (unboosted, reflecting average over entire settling trajectory) should be included in the xcal_thr learning threshold value (rest is the long time average avg_trl_avg) -- including this produces an effective error-driven learning situation where the boosted (plus-phase weighted) vals are compared with the average acts over the trial, including any deviations etc
+  float		avg_gain;	// #DEF_2 multiplier on avg_trl_avg to contribute to LTP thr value -- note this is prior to multiplication by conspec savg_thr: higher values = more sparse strong weights; lower values = more distributed 
   float		avg_dt;		// #DEF_0.03 time constant for integrating avg_trl_avg
   float		avg_init;	// #DEF_0.15 initial value for avg_trl_avg 
-  bool		avg_boost;	// #DEF_false include the plus-phase boosted value into the long-term avg_trl_avg value?  only set this to true when simulating a pure "self organizing" BCM-like model -- otherwise it is key for this average to contain information about "minus phase" activations
+  bool		boost_in_avg;	// #DEF_false include the plus-phase boosted value into the long-term avg_trl_avg value?  only set this to true when simulating a pure "self organizing" BCM-like model -- otherwise it is key for this average to contain information about "minus phase" activations
   int		n_avg_only_epcs; // #DEF_2 number of epochs during which time only an average activation value is accumulated -- no learning
 
   SIMPLE_COPY(XCalActSpec);

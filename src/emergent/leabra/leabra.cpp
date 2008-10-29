@@ -93,7 +93,7 @@ void XCalLearnSpec::Initialize() {
   lrn_var = XCAL_AVGSR;
   savg_thr = 0.6f;
   d_gain = 2.5f;
-  d_rev = .10f;
+  d_rev = 0.1f;
   rnd_min_avg = -1.0f;		// turn off by default
   rnd_var = 0.1f;
 
@@ -547,7 +547,7 @@ void XCalActSpec::Initialize() {
   avg_dt = .03f;
   avg_init = .15f;
   n_avg_only_epcs = 2;
-  avg_boost = false;
+  boost_in_avg = false;
 }
 
 void DaModSpec::Initialize() {
@@ -1474,7 +1474,7 @@ void LeabraUnitSpec::Compute_XCalTrlVals(LeabraUnit* u, LeabraLayer* lay, Leabra
   u->xcal_thr = xcal.trl_mix * raw_trl_avg +
     (1.0f - xcal.trl_mix) * xcal.avg_gain * u->avg_trl_avg;
 
-  if(xcal.avg_boost)
+  if(xcal.boost_in_avg)
     u->avg_trl_avg += xcal.avg_dt * (p_trl_avg - u->avg_trl_avg);
   else
     u->avg_trl_avg += xcal.avg_dt * (raw_trl_avg - u->avg_trl_avg);
