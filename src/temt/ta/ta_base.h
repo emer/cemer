@@ -697,6 +697,7 @@ protected: // Impl
   static String		no_name; 	// return this for no names
   static int		no_idx;		// return this for no index
   static MemberDef*	no_mdef;	// return this for no memberdef ptr
+  static bool		no_new_itm; 	// for default arg
   
   ////////////////////////////////////////////////////////////////////// 
   // 	Saving and Loading to/from files
@@ -1102,8 +1103,8 @@ public:
     {if (HasUserData(key)) return GetUserData(key); else return def;}
   // #CAT_UserData #EXPERT return value if exists, or default if doesn't
   UserDataItemBase* 	GetUserDataOfType(TypeDef* typ, const String& key,
-     bool force_create);
-  // #CAT_UserData #EXPERT gets specified user data of given type, making one if doesn't exist and fc=true
+     bool force_create, bool new_itm=no_new_itm);
+  // #CAT_UserData #EXPERT #ARGC_2 gets specified user data of given type, making one if doesn't exist and fc=true
   UserDataItemBase* 	GetUserDataOfTypeC(TypeDef* typ, const String& key) const;
   // #IGNORE const non-forced version, for convenience
   inline bool		GetUserDataAsBool(const String& key) const

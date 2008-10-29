@@ -349,6 +349,7 @@ nel value. The debug
     
 */
 
+bool 	taBase::no_new_itm; // for default arg
 String 	taBase::no_name;
 int	taBase::no_idx = -1;
 MemberDef* taBase::no_mdef = NULL;
@@ -1907,8 +1908,9 @@ const Variant taBase::GetUserData(const String& key) const {
 }
 
 UserDataItemBase* taBase::GetUserDataOfType(TypeDef* typ,
-  const String& key, bool force_create) 
+  const String& key, bool force_create, bool new_itm) 
 {
+  new_itm = false;
   if (!typ) return NULL;
   typ = typ->GetNonPtrType();
   // need to verify, in case we have to create
@@ -1928,6 +1930,7 @@ UserDataItemBase* taBase::GetUserDataOfType(TypeDef* typ,
     rval = (UserDataItemBase*)ud->New(1, typ);
     rval->name = key;
     DataChanged(DCR_USER_DATA_UPDATED);
+    new_itm = true;
   }
   return rval;
 }
