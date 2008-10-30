@@ -90,14 +90,16 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 }
 
 void XCalLearnSpec::Initialize() {
-  lrn_var = XCAL_AVGSR;
+  lrn_var = XCAL_RAVG;
   savg_thr = 0.6f;
+  sr_trl_mix = 0.7f;
   d_gain = 2.5f;
   d_rev = 0.1f;
   rnd_min_avg = -1.0f;		// turn off by default
   rnd_var = 0.1f;
 
   d_rev_ratio = (1.0f - d_rev) / d_rev;
+  sr_trl_mix_c = 1.0f - sr_trl_mix;
 }
 
 void XCalLearnSpec::UpdateAfterEdit_impl() {
@@ -106,6 +108,7 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
     d_rev_ratio = (1.0f - d_rev) / d_rev;
   else
     d_rev_ratio = 1.0f;
+  sr_trl_mix_c = 1.0f - sr_trl_mix;
 }
 
 void SAvgCorSpec::Initialize() {
@@ -351,7 +354,7 @@ void LeabraConSpec::GraphXCalFun(DataTable* graph_data, float thr_p) {
   float x;
   for(x = 0.0f; x <= 1.0f; x += .01f) {
     cn.sravg = x;
-    C_Compute_dWt_CtLeabraXCAL(&cn, x, 1.0f, thr_p, thr_p * xcal.d_rev);
+    C_Compute_dWt_CtLeabraXCAL_ravg(&cn, x, 1.0f, thr_p, thr_p * xcal.d_rev);
     graph_data->AddBlankRow();
     sravg->SetValAsFloat(x, -1);
     dwt->SetValAsFloat(cn.dwt, -1);
@@ -1655,7 +1658,7 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraLayer* lay, LeabraNetwor
 	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
 	if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
 	// save time if full sravg not needed
-	if(((LeabraConSpec*)recv_gp->GetConSpec())->xcal.lrn_var == XCalLearnSpec::XCAL_AVGSR)
+	if(((LeabraConSpec*)recv_gp->GetConSpec())->xcal.lrn_var == XCalLearnSpec::XCAL_RAVG)
 	  continue;
 	recv_gp->Compute_SRAvg(u);
       }
@@ -1680,7 +1683,7 @@ void LeabraUnitSpec::Init_SRAvg(LeabraUnit* u, LeabraLayer*, LeabraNetwork* net)
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
       // save time if full sravg not needed
-      if(((LeabraConSpec*)recv_gp->GetConSpec())->xcal.lrn_var == XCalLearnSpec::XCAL_AVGSR)
+      if(((LeabraConSpec*)recv_gp->GetConSpec())->xcal.lrn_var == XCalLearnSpec::XCAL_RAVG)
 	continue;
       recv_gp->Init_SRAvg(u);
     }

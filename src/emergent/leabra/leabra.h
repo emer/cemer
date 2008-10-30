@@ -199,18 +199,21 @@ class LEABRA_API XCalLearnSpec : public taOBase {
 INHERITED(taOBase)
 public:
   enum LearnVar {
-    XCAL_AVGSR,			// learn using xcal rule, based on separate product of unit-level averages: <s><r> (faster and seemingly quite effective than <sr> = sravg)
+    XCAL_RAVG,			// use only recv average act for the trial-wise contribution to the LTP threshold
+    XCAL_SRAVG,			// use the sravg value for the trial-wise contribution to the LTP threshold -- be sure to set unitspec trl_mix = 0, and set trl_mix in this conspec
     CAL,			// learn using standard CtLeabra_CAL rule (for comparision, esp of output layers)
   };
 
-  LearnVar	lrn_var;	// #DEF_XCAL_AVGSR learning rule variant to use
+  LearnVar	lrn_var;	// #DEF_XCAL_RAVG learning rule variant to use
   float		savg_thr;	// #DEF_0.6 multiplier applied to xcal_thr (LTP thr value) to compensate for average sending activations, such that values below the average fall into the LTD range, and those above are in LTP (given a recv activation that is in the LTP range relative to the recv-derived threshold) -- this may depend on avg activation etc of sending layer
-  float		d_gain;		// #DEF 2.5 #CONDEDIT_OFF_lrn_var:CAL multiplier on LTD values relative to LTP values
+  float		sr_trl_mix;	// #DEF_0.7 #CONDEDIT_ON_lrn_var:XCAL_SRAVG contribution of trial-wise send-recv avg to LTP threshold (for XCAL_SRAVG)
+  float		d_gain;		// #DEF_2.5 #CONDEDIT_OFF_lrn_var:CAL multiplier on LTD values relative to LTP values
   float		d_rev;		// #DEF_0.1 #CONDEDIT_OFF_lrn_var:CAL proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
   float		rnd_min_avg;	// #DEF_-1 #CONDEDIT_OFF_lrn_var:CAL minimum avg_trl_avg value, below which random values are added to weights to drive exploration (-1 = off)
   float		rnd_var;	// #DEF_0.1 variance (range) for uniform random noise added to weights when avg_trl_avg < rnd_min_avg (noise is then multiplied by lrate)
 
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- muliplication factor in learning rule
+  float		sr_trl_mix_c;	// #HIDDEN #READ_ONLY 1-sr_trl_mix
 
   inline float  XCalFun(float srval, float thr_p, float thr_p_d_rev) {
     float rval;
@@ -459,9 +462,12 @@ public:
   /////////////////////////////////////
   // CtLeabraXCAL code
 
-  inline void 	C_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, float ru_trl_avg, float su_trl_avg,
+  inline void 	C_Compute_dWt_CtLeabraXCAL_ravg(LeabraCon* cn, float ru_trl_avg, float su_trl_avg,
 					   float thr_p, float thr_p_d_rev);
-  // #CAT_Learning compute contrastive attractor learning (XCAL)
+  // #CAT_Learning compute eXtremization contrastive attractor learning (XCAL), ravg version
+  inline void 	C_Compute_dWt_CtLeabraXCAL_sravg(LeabraCon* cn, float ru_trl_avg, float su_trl_avg,
+						 float thr_p, float thr_p_d_rev, float avg_nrm);
+  // #CAT_Learning compute eXtremization contrastive attractor learning (XCAL), sravg version
 
   inline virtual void 	Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru);
   // #CAT_Learning CtLeabra/XCAL weight changes
@@ -2906,10 +2912,18 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraCAL(LeabraRecvCons* cg, Leabr
 //////////////////////////////////////////////////////////////////////////////////
 //     Computing dWt: CtLeabra_XCAL
 
-inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, 
-						      float ru_trl_avg, float su_trl_avg,
-						      float thr_p, float thr_p_d_rev) {
+inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_ravg(LeabraCon* cn, 
+							   float ru_trl_avg, float su_trl_avg,
+							   float thr_p, float thr_p_d_rev) {
   cn->dwt += cur_lrate * xcal.XCalFun(ru_trl_avg * su_trl_avg, thr_p, thr_p_d_rev);
+}
+
+inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_sravg(LeabraCon* cn, 
+							    float ru_trl_avg, float su_trl_avg,
+							    float thr_p, float thr_p_d_rev,
+							    float avg_nrm) {
+  float eff_thr = xcal.sr_trl_mix*avg_nrm*cn->sravg + xcal.sr_trl_mix_c*thr_p;
+  cn->dwt += cur_lrate * xcal.XCalFun(ru_trl_avg * su_trl_avg, eff_thr, thr_p_d_rev);
 }
 
 
@@ -2928,10 +2942,22 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
   float thr_p = xcal.savg_thr * ru->xcal_thr;
   float thr_p_d_rev = thr_p * xcal.d_rev;
 
-  for(int i=0; i<cg->cons.size; i++) {
-    LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-    LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-    C_Compute_dWt_CtLeabraXCAL(cn, ru->trl_avg, su->trl_avg, thr_p, thr_p_d_rev);
+  if(xcal.lrn_var == XCalLearnSpec::XCAL_RAVG) {
+    for(int i=0; i<cg->cons.size; i++) {
+      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      C_Compute_dWt_CtLeabraXCAL_ravg(cn, ru->trl_avg, su->trl_avg, thr_p, thr_p_d_rev);
+    }
+  }
+  else if(xcal.lrn_var == XCalLearnSpec::XCAL_SRAVG) {
+    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+
+    for(int i=0; i<cg->cons.size; i++) {
+      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      C_Compute_dWt_CtLeabraXCAL_sravg(cn, ru->trl_avg, su->trl_avg, thr_p, thr_p_d_rev,
+				       rlay->sravg_nrm);
+    }
   }
 }
 
