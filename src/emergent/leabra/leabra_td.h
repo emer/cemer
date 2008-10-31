@@ -215,7 +215,7 @@ public:
   }
 
   // currently just same as std, except wt is lin_wt
-  inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  inline void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
     LeabraTdUnit* lru = (LeabraTdUnit*)ru;
     Compute_SAvgCor(cg, lru);
     if(lru->p_act_p >= 0.0f) {

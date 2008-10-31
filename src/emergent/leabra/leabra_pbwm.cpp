@@ -30,9 +30,6 @@ void MatrixConSpec::Initialize() {
   lmix.hebb = 0.0f;
   lmix.err = 1.0f;
 
-  SetUnique("dwt_norm", true);
-  dwt_norm.on = false;
-
   matrix_rule = MAINT;
 }
 
@@ -1285,8 +1282,12 @@ void PFCLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
   }
 
   if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
-    if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
-    lay->sravg_nrm = 1.0f / lay->sravg_sum;
+    if(lay->sravg_m_sum == 0.0f) return; // if nothing, nothing!
+    lay->sravg_m_nrm = 1.0f / lay->sravg_m_sum;
+    if(lay->sravg_s_sum > 0.0f) 
+      lay->sravg_s_nrm = 1.0f / lay->sravg_s_sum;
+    else
+      lay->sravg_s_nrm = 1.0f;	// whatever
   }
 
   for(int mg=0;mg<lay->units.gp.size;mg++) {
@@ -2147,11 +2148,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   else
     pfc_units->g_bar.h = .5f;
   pfc_units->g_bar.a = 2.0f;
-  pfc_units->SetUnique("act_reg", true);
-  if(nolrn_pfc)
-    pfc_units->act_reg.on = false;
-  else
-    pfc_units->act_reg.on = true;
   pfc_units->SetUnique("dt", true);
   pfc_units->dt.vm = .1f;	// slower is better..  .1 is even better!
 

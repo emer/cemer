@@ -45,9 +45,6 @@ void PVConSpec::Initialize() {
   lrate = .01f;
   cur_lrate = .01f;
 
-  SetUnique("dwt_norm", true);
-  dwt_norm.on = false;
-
   SetUnique("lrate_sched", true); // not to have any lrate schedule!!
   SetUnique("lrs_value", true); // not to have any lrate schedule!!
   lrs_value = NO_LRS;
@@ -309,9 +306,6 @@ void LVConSpec::Initialize() {
   SetUnique("lrate", true);
   lrate = .05f;
   cur_lrate = .05f;
-
-  SetUnique("dwt_norm", true);
-  dwt_norm.on = false;
 
 //   decay = 0.0f;
 

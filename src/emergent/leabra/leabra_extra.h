@@ -35,11 +35,12 @@ public:
   inline void 	Send_ClampNet(LeabraRecvCons*, float su_act) { };
   inline void 	Compute_dWt(RecvCons*, Unit*) { };
   inline void 	Compute_dWt_LeabraCHL(LeabraRecvCons*, LeabraUnit*) { };
-  inline void 	Compute_dWt_CtLeabraCAL(LeabraRecvCons*, LeabraUnit*) { };
-  inline void 	Compute_SRAvg(LeabraRecvCons*, LeabraUnit*) { };
+  inline void 	Compute_dWt_CtLeabraXCAL(LeabraRecvCons*, LeabraUnit*) { };
+  inline void 	Compute_SRAvg(LeabraRecvCons*, LeabraUnit*, bool do_s) { };
+  inline void 	Init_SRAvg(LeabraRecvCons*, LeabraUnit*) { };
   inline void	Compute_Weights(RecvCons*, Unit*) { };
   inline void	Compute_Weights_LeabraCHL(LeabraRecvCons*, LeabraUnit*) { };
-  inline void	Compute_Weights_CtLeabraCAL(LeabraRecvCons*, LeabraUnit*) { };
+  inline void	Compute_Weights_CtLeabraXCAL(LeabraRecvCons*, LeabraUnit*) { };
 
   bool	 DMem_AlwaysLocal() { return true; }
   // these connections always need to be there on all nodes..
@@ -121,13 +122,7 @@ public:
   float		decay;		// rate of weight decay towards zero 
   bool		updt_immed;	// update weights immediately when weights are changed
 
-  inline void	B_Compute_Weights(LeabraCon* cn, LeabraUnit* ru, LeabraUnitSpec* rus) {
-    if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
-      if(ru->act_avg <= rus->act_reg.min)
-	cn->dwt += cur_lrate * rus->act_reg.inc_wt;
-      else if(ru->act_avg >= rus->act_reg.max)
-	cn->dwt -= cur_lrate * rus->act_reg.dec_wt;
-    }
+  inline void	B_Compute_Weights(LeabraCon* cn, LeabraUnit* ru) {
     if(cn->dwt > 0.0f)		// positive only
       cn->dwt = 0.0f;
     cn->dwt -= decay * cn->wt;
@@ -139,11 +134,11 @@ public:
 
   inline void	B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru) {
     LeabraBiasSpec::B_Compute_dWt_LeabraCHL(cn, ru);
-    if(updt_immed) B_Compute_Weights(cn, ru, (LeabraUnitSpec*)ru->GetUnitSpec());
+    if(updt_immed) B_Compute_Weights(cn, ru);
   }
-  inline void	B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru, LeabraLayer* rlay) {
-    LeabraBiasSpec::B_Compute_dWt_CtLeabraCAL(cn, ru, rlay);
-    if(updt_immed) B_Compute_Weights(cn, ru, (LeabraUnitSpec*)ru->GetUnitSpec());
+  inline void	B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru, LeabraLayer* rlay) {
+    LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(cn, ru, rlay);
+    if(updt_immed) B_Compute_Weights(cn, ru);
   }
 
   SIMPLE_COPY(LeabraNegBiasSpec);
@@ -200,8 +195,8 @@ public:
     inherited::Compute_dWt_LeabraCHL(cg, ru);
     Depress_Wt(cg, ru);
   }
-  void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    inherited::Compute_dWt_CtLeabraCAL(cg, ru);
+  void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    inherited::Compute_dWt_CtLeabraXCAL(cg, ru);
     Depress_Wt(cg, ru);
   }
 
@@ -658,7 +653,7 @@ public:
       cn->wt += fast_wt.decay * (-cn->swt - cn->wt); // decay toward slow weights..
   }
 
-  // todo: do ctleabra_cal
+  // todo: do CtLeabra_XCal
 
   inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
     Compute_SAvgCor(cg, ru);
@@ -682,7 +677,7 @@ public:
   }
 
   inline void C_Compute_Weights_LeabraCHL(FastWtCon* cn, LeabraRecvCons* cg,
-					  LeabraUnit*, LeabraUnit*, LeabraUnitSpec*)
+					  LeabraUnit*, LeabraUnit*)
   {
     if(cn->sdwt != 0.0f) {
       cn->swt += cn->sdwt; // wt is not negative!
@@ -698,23 +693,9 @@ public:
     cn->sdwt = 0.0f;
   }
 
-  inline void C_Compute_WeightsActReg_LeabraCHL(FastWtCon* cn, LeabraRecvCons* cg,
-				    LeabraUnit* ru, LeabraUnit* su, LeabraUnitSpec* rus)
-  {
-    C_Compute_ActReg_LeabraCHL(cn, cg, ru, su, rus);
-    C_Compute_Weights_LeabraCHL(cn, cg, ru, su, rus);
-  }
-
   inline void Compute_Weights_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
-    if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
-      CON_GROUP_LOOP(cg, C_Compute_WeightsActReg_LeabraCHL((FastWtCon*)cg->Cn(i), cg,
-					       (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus));
-    }
-    else {
-      CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((FastWtCon*)cg->Cn(i), cg,
-					 (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus));
-    }
+    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((FastWtCon*)cg->Cn(i), cg,
+				   (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i)));
     //  ApplyLimits(cg, ru); limits are automatically enforced anyway
   }
 
@@ -806,8 +787,8 @@ public:
     Compute_LimPrecWts(cg, ru);
   }
 
-  inline override void	Compute_Weights_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    inherited::Compute_Weights_CtLeabraCAL(cg, ru);
+  inline override void	Compute_Weights_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    inherited::Compute_Weights_CtLeabraXCAL(cg, ru);
     Compute_LimPrecWts(cg, ru);
   }
 
@@ -823,96 +804,96 @@ private:
 };
 
 
-class LEABRA_API LeabraCtExptConSpec : public LeabraConSpec {
-  // experimental variations of Ct learning rules
-INHERITED(LeabraConSpec)
-public:
-  enum LearnVar {
-    STD_CT,			// standard ct
-    CHL,
-    CHL_SUBPROD,		// CHL with subprod: (x+ - x-) * (y+ - y-)
-    MINUS_INDEP_AVG, // use the independently computed average activations instead of sravg coproduct: x+ y+ - <x-> <y-> instead of - <x- y->
-    MINUS_INDEP_AVG_SUBPROD, // compute product of sub terms: (x+ - <x->)(y+ - <y->)
-    CT_DELTA_BCM,	     // delta-rule version of ct with BCM floating longer-term avg sub
-    CT_DELTA_SAVG_BCM,	     // delta-rule version of ct with BCM floating longer-term avg sub - use avg of plus and minus for sending acts
-  };
+// class LEABRA_API LeabraCtExptConSpec : public LeabraConSpec {
+//   // experimental variations of Ct learning rules
+// INHERITED(LeabraConSpec)
+// public:
+//   enum LearnVar {
+//     STD_CT,			// standard ct
+//     CHL,
+//     CHL_SUBPROD,		// CHL with subprod: (x+ - x-) * (y+ - y-)
+//     MINUS_INDEP_AVG, // use the independently computed average activations instead of sravg coproduct: x+ y+ - <x-> <y-> instead of - <x- y->
+//     MINUS_INDEP_AVG_SUBPROD, // compute product of sub terms: (x+ - <x->)(y+ - <y->)
+//     CT_DELTA_BCM,	     // delta-rule version of ct with BCM floating longer-term avg sub
+//     CT_DELTA_SAVG_BCM,	     // delta-rule version of ct with BCM floating longer-term avg sub - use avg of plus and minus for sending acts
+//   };
 
-  LearnVar	learn_var;	// learning variant to implement
-  float		bcm_pct;	// amount of bcm floating avg learnign to inject
+//   LearnVar	learn_var;	// learning variant to implement
+//   float		bcm_pct;	// amount of bcm floating avg learnign to inject
 
-  inline float C_Compute_Err_CtLeabraCAL(LeabraCon* cn, 
-					 float ru_act_p, float su_act_p, float avg_nrm, 
-					 LeabraCon* rbwt, LeabraCon* sbwt,
-					 float ru_act_m, float su_act_m,
-					 float ru_act_avg) {
-    float err;
-    if(learn_var == STD_CT) {
-      err = (ru_act_p * su_act_p) - (avg_nrm * cn->sravg);
-    }
-    else if(learn_var == CHL) {
-      err = (ru_act_p * su_act_p) - (ru_act_m * su_act_m);
-    }
-    else if(learn_var == CHL_SUBPROD) {
-      err = (ru_act_p - ru_act_m) * (su_act_p - su_act_m);
-    }
-    else if(learn_var == MINUS_INDEP_AVG) {
-      // using bias weight's sravg here!
-      err = (ru_act_p * su_act_p) - ((avg_nrm * rbwt->sravg) * (avg_nrm * sbwt->sravg));
-    }
-    else if(learn_var == MINUS_INDEP_AVG_SUBPROD) {
-      // using bias weight's sravg here!
-      err = (ru_act_p - (avg_nrm * rbwt->sravg)) * (su_act_p - (avg_nrm * sbwt->sravg));
-    }
-    else if(learn_var == CT_DELTA_BCM) {
-      err = (ru_act_p - (((1.0f - bcm_pct) * (avg_nrm * rbwt->sravg)) + (bcm_pct * ru_act_avg)))
-	* su_act_p;
-    }
-    else if(learn_var == CT_DELTA_SAVG_BCM) {
-      err = (ru_act_p - (((1.0f - bcm_pct) * (avg_nrm * rbwt->sravg)) + (bcm_pct * ru_act_avg)))
-	* .5 * (su_act_p + su_act_m);
-    }
-    // note: sb now done in compute weights
-    return err;
-  }
+//   inline float C_Compute_Err_CtLeabraCAL(LeabraCon* cn, 
+// 					 float ru_act_p, float su_act_p, float avg_nrm, 
+// 					 LeabraCon* rbwt, LeabraCon* sbwt,
+// 					 float ru_act_m, float su_act_m,
+// 					 float ru_act_avg) {
+//     float err;
+//     if(learn_var == STD_CT) {
+//       err = (ru_act_p * su_act_p) - (avg_nrm * cn->sravg);
+//     }
+//     else if(learn_var == CHL) {
+//       err = (ru_act_p * su_act_p) - (ru_act_m * su_act_m);
+//     }
+//     else if(learn_var == CHL_SUBPROD) {
+//       err = (ru_act_p - ru_act_m) * (su_act_p - su_act_m);
+//     }
+//     else if(learn_var == MINUS_INDEP_AVG) {
+//       // using bias weight's sravg here!
+//       err = (ru_act_p * su_act_p) - ((avg_nrm * rbwt->sravg) * (avg_nrm * sbwt->sravg));
+//     }
+//     else if(learn_var == MINUS_INDEP_AVG_SUBPROD) {
+//       // using bias weight's sravg here!
+//       err = (ru_act_p - (avg_nrm * rbwt->sravg)) * (su_act_p - (avg_nrm * sbwt->sravg));
+//     }
+//     else if(learn_var == CT_DELTA_BCM) {
+//       err = (ru_act_p - (((1.0f - bcm_pct) * (avg_nrm * rbwt->sravg)) + (bcm_pct * ru_act_avg)))
+// 	* su_act_p;
+//     }
+//     else if(learn_var == CT_DELTA_SAVG_BCM) {
+//       err = (ru_act_p - (((1.0f - bcm_pct) * (avg_nrm * rbwt->sravg)) + (bcm_pct * ru_act_avg)))
+// 	* .5 * (su_act_p + su_act_m);
+//     }
+//     // note: sb now done in compute weights
+//     return err;
+//   }
 
-  inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    // need to do recv layer here because savg_cor.thresh is only here.. could optimize this later
-    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-    if(rlay->acts_p.avg < savg_cor.thresh) return;
-    LeabraLayer* lfm = (LeabraLayer*)cg->prjn->from.ptr();
-    if(lfm->acts_p.avg < savg_cor.thresh) return;
-    if(ru->in_subgp) {
-      LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
-      if(ogp->acts_p.avg < savg_cor.thresh) return;
-    }
+//   inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+//     // need to do recv layer here because savg_cor.thresh is only here.. could optimize this later
+//     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+//     if(rlay->acts_p.avg < savg_cor.thresh) return;
+//     LeabraLayer* lfm = (LeabraLayer*)cg->prjn->from.ptr();
+//     if(lfm->acts_p.avg < savg_cor.thresh) return;
+//     if(ru->in_subgp) {
+//       LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
+//       if(ogp->acts_p.avg < savg_cor.thresh) return;
+//     }
 
-    // only no hebb condition supported!!
+//     // only no hebb condition supported!!
 
-    LeabraCon* rbwt = (LeabraCon*)ru->bias.Cn(0);
+//     LeabraCon* rbwt = (LeabraCon*)ru->bias.Cn(0);
 
-    for(int i=0; i<cg->cons.size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-      if(su->in_subgp) {
-	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
-	if(ogp->acts_p.avg < savg_cor.thresh) continue; // critical: must reset!
-      }
-      LeabraCon* sbwt = (LeabraCon*)su->bias.Cn(0);
-      C_Compute_dWt_NoHebb(cn, ru, 
-			   C_Compute_Err_CtLeabraCAL(cn, ru->act_p, su->act_p,
-						     rlay->sravg_nrm, rbwt, sbwt,
-						     ru->act_m, su->act_m, ru->act_avg));
-    }
-  }
+//     for(int i=0; i<cg->cons.size; i++) {
+//       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+//       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+//       if(su->in_subgp) {
+// 	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
+// 	if(ogp->acts_p.avg < savg_cor.thresh) continue; // critical: must reset!
+//       }
+//       LeabraCon* sbwt = (LeabraCon*)su->bias.Cn(0);
+//       C_Compute_dWt_NoHebb(cn, ru, 
+// 			   C_Compute_Err_CtLeabraCAL(cn, ru->act_p, su->act_p,
+// 						     rlay->sravg_nrm, rbwt, sbwt,
+// 						     ru->act_m, su->act_m, ru->act_avg));
+//     }
+//   }
 
-  SIMPLE_COPY(LeabraCtExptConSpec);
-  TA_BASEFUNS(LeabraCtExptConSpec);
-// protected:
-//   void	UpdateAfterEdit_impl();
-private:
-  void 	Initialize();
-  void	Destroy()		{ };
-};
+//   SIMPLE_COPY(LeabraCtExptConSpec);
+//   TA_BASEFUNS(LeabraCtExptConSpec);
+// // protected:
+// //   void	UpdateAfterEdit_impl();
+// private:
+//   void 	Initialize();
+//   void	Destroy()		{ };
+// };
 
 //////////////////////////////////
 // 	Scalar Value Layer	//

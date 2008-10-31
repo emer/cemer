@@ -79,7 +79,7 @@ public:
     }
   }
 
-  inline override void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
       for(int i=0; i<cg->cons.size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
@@ -123,8 +123,8 @@ public:
       cn->dwt += cur_lrate * err;
   }
 
-  inline override void B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
-						 LeabraLayer* rlay) {
+  inline override void B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru,
+						  LeabraLayer* rlay) {
     float err;
     if(matrix_rule == MAINT)
       err = ru->act_p2 - ru->act_p;

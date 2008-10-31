@@ -283,10 +283,10 @@ void LeabraLimPrecConSpec::Initialize() {
   prec_levels = 1024;
 }
 
-void LeabraCtExptConSpec::Initialize() {
-  learn_var = STD_CT;
-  bcm_pct = 0.0f;
-}
+// void LeabraCtExptConSpec::Initialize() {
+//   learn_var = STD_CT;
+//   bcm_pct = 0.0f;
+// }
 
 //////////////////////////////////
 // 	Scalar Value Layer	//
@@ -881,8 +881,12 @@ void ScalarValLayerSpec::Compute_dWt_Ugp(Unit_Group* ugp, LeabraLayer* lay, Leab
 
 void ScalarValLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
-    if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
-    lay->sravg_nrm = 1.0f / lay->sravg_sum;
+    if(lay->sravg_m_sum == 0.0f) return; // if nothing, nothing!
+    lay->sravg_m_nrm = 1.0f / lay->sravg_m_sum;
+    if(lay->sravg_s_sum > 0.0f) 
+      lay->sravg_s_nrm = 1.0f / lay->sravg_s_sum;
+    else
+      lay->sravg_s_nrm = 1.0f;	// whatever
   }
   UNIT_GP_ITR(lay, 
 	      Compute_dWt_Ugp(ugp, lay, net);
@@ -1796,8 +1800,12 @@ void TwoDValLayerSpec::Compute_dWtUgp(Unit_Group* ugp, LeabraLayer* lay, LeabraN
 
 void TwoDValLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
-    if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
-    lay->sravg_nrm = 1.0f / lay->sravg_sum;
+    if(lay->sravg_m_sum == 0.0f) return; // if nothing, nothing!
+    lay->sravg_m_nrm = 1.0f / lay->sravg_m_sum;
+    if(lay->sravg_s_sum > 0.0f) 
+      lay->sravg_s_nrm = 1.0f / lay->sravg_s_sum;
+    else
+      lay->sravg_s_nrm = 1.0f;	// whatever
   }
   UNIT_GP_ITR(lay, 
 	      Compute_dWtUgp(ugp, lay, net);
