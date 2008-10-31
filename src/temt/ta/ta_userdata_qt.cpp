@@ -44,7 +44,6 @@ QWidget* UserDataDelegate::createEditor(QWidget* parent,
   MemberDef* md = NULL;
   taBase* base = NULL;
   if (IndexToMembBase(index, md, base)) {
-    QWidget* rep = NULL;
     if (md) {
       if (md->im == NULL) goto exit; // shouldn't happen
       // we create a wrap widget for many of these guys, mostly so that smaller
@@ -65,10 +64,16 @@ QWidget* UserDataDelegate::createEditor(QWidget* parent,
           hbl->addStretch();
         rep = rep_par;
       }
-    } else { // an inline taBase
+    } else { // an inline taBase -- always wrap so we can stretch for longer guys
+      QWidget* rep_par = new QWidget(parent);
+      QHBoxLayout* hbl = new QHBoxLayout(rep_par);
+      hbl->setMargin(0);
+      hbl->setSpacing(0);
       dat = taiPolyData::New(true, base->GetTypeDef(), edh, NULL,
-        parent);
-      rep = dat->GetRep(); 
+        rep_par);
+      rep = dat->GetRep();
+      hbl->addWidget(rep);
+      rep = rep_par;
     }
     dat->SetBase(base);
     m_dat_row = index.row();

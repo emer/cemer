@@ -346,7 +346,7 @@ QWidget* taiDataDelegate::createEditor(QWidget* parent,
     m_dat_row = index.row();
     dat->SetBase(base);
     dat->SetMemberDef(md);
-    QWidget* rep = dat->GetRep(); // note: rep may get replaced by rep_par 
+    rep = dat->GetRep(); // note: rep may get replaced by rep_par 
     if (wrap) {
       QHBoxLayout* hbl = new QHBoxLayout(rep_par);
       hbl->setMargin(0);
@@ -357,8 +357,6 @@ QWidget* taiDataDelegate::createEditor(QWidget* parent,
         hbl->addStretch();
       rep = rep_par;
     }
-/*    connect(rep, SIGNAL(destroyed(QObject*)),
-      this, SLOT(rep_destroyed(QObject*)) );*/
     connect(rep, SIGNAL(destroyed(QObject*)),
       dat, SLOT(deleteLater()) );
     return rep;
@@ -513,6 +511,25 @@ void taiDataDelegate::setModelData(QWidget* editor,
 #endif */
   GetValue();
 }
+
+/* NOTE: see bugID:500
+QSize taiDataDelegate::sizeHint(const QStyleOptionViewItem& option,
+    const QModelIndex& index) const
+{
+  if ((index.column() == 1)) {
+#ifdef DEBUG
+     cerr << "taiDataDelegate::sizeHint() request for editor col\n";
+#endif
+    //note: we assume that if we still have a rep, it is asking about that
+    if (rep) {
+#ifdef DEBUG
+     cerr << "taiDataDelegate::sizeHint() request for rep\n";
+#endif
+      return rep->sizeHint();
+    }
+  } 
+  return inherited::sizeHint(option, index);
+}*/
 
 void taiDataDelegate::this_closeEditor(QWidget* /*editor*/,
     QAbstractItemDelegate::EndEditHint /*hint*/)
