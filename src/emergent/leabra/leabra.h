@@ -207,17 +207,18 @@ public:
   };
 
   AvgUpdt	avg_updt;	// how to update the relevant sr average variables
-  float		m_pct;		// how much the medium time-scale (trial) sravg contributes to overall subtraction term
-  float		l_pct;		// #READ_ONLY #SHOW 1-sravg_m_pct -- how much the long time-scale sravg contributes to overall subtraction term
+  float		m_pct;		// how much the medium time-scale (trial) sravg contributes to overall subtraction term -- the long time-scale (epoch) sravg is then 1-m_pct
+  float		l_pct;		// #READ_ONLY 1-sravg_m_pct -- how much the long time-scale sravg contributes to overall subtraction term
   float		l_gain;		// gain for long time-scale sravg term -- can affect overall sparseness of weights
   float		l_dt;		// #DEF_0.03 time constant for updating the long time-scale sravg_l value
   float		l_mult;		// #READ_ONLY overall multiplier for long-term value (l_pct * l_gain)
-  float		m_dt;		// #CONDEDIT_ON_avg_updt:CONT time constant for updating the medium time-scale sravg_m value
-  float		s_dt;		// #CONDEDIT_ON_avg_updt:CONT time constant for updating the short time-scale sravg_s value
+  float		m_dt;		// #CONDSHOW_ON_avg_updt:CONT time constant for updating the medium time-scale sravg_m value
+  float		s_dt;		// #CONDSHOW_ON_avg_updt:CONT time constant for updating the short time-scale sravg_s value
   // todo: need some params like this for continuous mode -- currently still use trial-wise hooks
-//   float		lrn_thr;	// #CONDEDIT_ON_avg_updt:CONT threshold on sravg_m value to initiate learning, in continous mode
-//   int		lrn_delay;	// #CONDEDIT_ON_avg_updt:CONT delay after lrn_thr threshold has been crossed after which learning occurs
+//   float		lrn_thr;	// #CONDSHOW_ON_avg_updt:CONT threshold on sravg_m value to initiate learning, in continous mode
+//   int		lrn_delay;	// #CONDSHOW_ON_avg_updt:CONT delay after lrn_thr threshold has been crossed after which learning occurs
 
+  bool		sbound;		// perform additional soft bounding of the weight changes (the long-term avg factor already serves this purpose to some extent)
   float		avg_init;	// #DEF_0.15 initial value for averages
   float		d_gain;		// #DEF_2.5 multiplier on LTD values relative to LTP values
   float		d_rev;		// #DEF_0.1 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
@@ -2686,12 +2687,14 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn, LeabraR
 							  LeabraUnit* ru, LeabraUnit* su)
 {
   // always do soft bounding, at this point (post agg across processors, etc)
-  if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - cn->wt);
-  else			cn->dwt *= cn->wt;
+  if(xcal.sbound) {
+    if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - cn->wt);
+    else		cn->dwt *= cn->wt;
+  }
 
   cn->wt += cn->dwt;		// weights always linear
-  // optimize: don't bother with this due to soft bounding above
-//   wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
+  // todo: optimize: don't bother with this if always doing soft bounding above
+  wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
 }

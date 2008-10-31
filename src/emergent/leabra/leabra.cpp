@@ -91,15 +91,16 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   avg_updt = TRIAL;
-  m_pct = 0.6f;
-  l_gain = 1.0f;
-  l_dt = 0.03f;
+  m_pct = 0.8f;
+  l_gain = 3.0f;
+  l_dt = 0.02f;
   m_dt = 0.03f;
   s_dt = 0.1f;
 
 //   lrn_thr = 0.2f;
 //   lrn_delay = 200;
 
+  sbound = true;
   avg_init = 0.15;
   d_gain = 2.5f;
   d_rev = 0.1f;
