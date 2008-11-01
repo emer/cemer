@@ -229,6 +229,10 @@ public:
     }
   }
 
+  inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    Compute_dWt_CtLeabraXCAL(cg, ru);
+  }
+
   TA_BASEFUNS_NOCOPY(TDRewPredConSpec);
 private:
   void 	Initialize();

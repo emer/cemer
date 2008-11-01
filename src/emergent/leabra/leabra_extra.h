@@ -35,11 +35,13 @@ public:
   inline void 	Send_ClampNet(LeabraRecvCons*, float su_act) { };
   inline void 	Compute_dWt(RecvCons*, Unit*) { };
   inline void 	Compute_dWt_LeabraCHL(LeabraRecvCons*, LeabraUnit*) { };
+  inline void 	Compute_dWt_CtLeabraCAL(LeabraRecvCons*, LeabraUnit*) { };
   inline void 	Compute_dWt_CtLeabraXCAL(LeabraRecvCons*, LeabraUnit*) { };
   inline void 	Compute_SRAvg(LeabraRecvCons*, LeabraUnit*, bool do_s) { };
   inline void 	Init_SRAvg(LeabraRecvCons*, LeabraUnit*) { };
   inline void	Compute_Weights(RecvCons*, Unit*) { };
   inline void	Compute_Weights_LeabraCHL(LeabraRecvCons*, LeabraUnit*) { };
+  inline void	Compute_Weights_CtLeabraCAL(LeabraRecvCons*, LeabraUnit*) { };
   inline void	Compute_Weights_CtLeabraXCAL(LeabraRecvCons*, LeabraUnit*) { };
 
   bool	 DMem_AlwaysLocal() { return true; }
@@ -140,6 +142,10 @@ public:
     LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(cn, ru, rlay);
     if(updt_immed) B_Compute_Weights(cn, ru);
   }
+  inline void	B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru, LeabraLayer* rlay) {
+    LeabraBiasSpec::B_Compute_dWt_CtLeabraCAL(cn, ru, rlay);
+    if(updt_immed) B_Compute_Weights(cn, ru);
+  }
 
   SIMPLE_COPY(LeabraNegBiasSpec);
   TA_BASEFUNS(LeabraNegBiasSpec);
@@ -197,6 +203,10 @@ public:
   }
   void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
     inherited::Compute_dWt_CtLeabraXCAL(cg, ru);
+    Depress_Wt(cg, ru);
+  }
+  void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    inherited::Compute_dWt_CtLeabraCAL(cg, ru);
     Depress_Wt(cg, ru);
   }
 
@@ -653,7 +663,7 @@ public:
       cn->wt += fast_wt.decay * (-cn->swt - cn->wt); // decay toward slow weights..
   }
 
-  // todo: do CtLeabra_XCal
+  // todo: do CtLeabra_XCal and cal
 
   inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
     Compute_SAvgCor(cg, ru);
@@ -789,6 +799,11 @@ public:
 
   inline override void	Compute_Weights_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
     inherited::Compute_Weights_CtLeabraXCAL(cg, ru);
+    Compute_LimPrecWts(cg, ru);
+  }
+
+  inline override void	Compute_Weights_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    inherited::Compute_Weights_CtLeabraCAL(cg, ru);
     Compute_LimPrecWts(cg, ru);
   }
 

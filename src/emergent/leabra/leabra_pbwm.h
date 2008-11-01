@@ -94,6 +94,10 @@ public:
     }
   }
 
+  inline override void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    Compute_dWt_CtLeabraXCAL(cg, ru);
+  }
+
   TA_BASEFUNS(MatrixConSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -125,13 +129,12 @@ public:
 
   inline override void B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru,
 						  LeabraLayer* rlay) {
-    float err;
-    if(matrix_rule == MAINT)
-      err = ru->act_p2 - ru->act_p;
-    else
-      err = ru->act_p - ru->act_m;
-    if(fabsf(err) >= dwt_thresh)
-      cn->dwt += cur_lrate * err;
+    B_Compute_dWt_LeabraCHL(cn, ru);
+  }
+
+  inline override void B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
+						 LeabraLayer* rlay) {
+    B_Compute_dWt_LeabraCHL(cn, ru);
   }
   
   TA_BASEFUNS(MatrixBiasSpec);
