@@ -113,9 +113,8 @@ public:
   float		pdw;		// #NO_SAVE previous delta-weight change -- useful for viewing because current weight change (dwt) is typically reset to 0 when views are updated
   float		sravg_s;	// #NO_SAVE short time-scale, most recent (plus phase) average of sender and receiver activation product over time
   float		sravg_m;	// #NO_SAVE medium time-scale, trial-level average of sender and receiver activation product over time
-  float		sravg_l;	// #NO_SAVE longer time-scale average of sender and receiver activation product over time
   
-  LeabraCon() { pdw = 0.0f; sravg_s = sravg_m = sravg_l = 0.0f; }
+  LeabraCon() { pdw = 0.0f; sravg_s = sravg_m = 0.0f; }
 };
 
 class LEABRA_API WtScaleSpec : public taBase {
@@ -208,9 +207,9 @@ public:
 
   AvgUpdt	avg_updt;	// how to update the relevant sr average variables
   float		m_pct;		// how much the medium time-scale (trial) sravg contributes to overall subtraction term -- the long time-scale (epoch) sravg is then 1-m_pct
+  float		l_dt;		// #DEF_0.02 time constant for updating the long time-scale sravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level sravg_l variable!!
   float		l_pct;		// #READ_ONLY 1-sravg_m_pct -- how much the long time-scale sravg contributes to overall subtraction term
   float		l_gain;		// gain for long time-scale sravg term -- can affect overall sparseness of weights
-  float		l_dt;		// #DEF_0.03 time constant for updating the long time-scale sravg_l value
   float		l_mult;		// #READ_ONLY overall multiplier for long-term value (l_pct * l_gain)
   float		m_dt;		// #CONDSHOW_ON_avg_updt:CONT time constant for updating the medium time-scale sravg_m value
   float		s_dt;		// #CONDSHOW_ON_avg_updt:CONT time constant for updating the short time-scale sravg_s value
@@ -218,12 +217,12 @@ public:
 //   float		lrn_thr;	// #CONDSHOW_ON_avg_updt:CONT threshold on sravg_m value to initiate learning, in continous mode
 //   int		lrn_delay;	// #CONDSHOW_ON_avg_updt:CONT delay after lrn_thr threshold has been crossed after which learning occurs
 
-  bool		sbound;		// perform additional soft bounding of the weight changes (the long-term avg factor already serves this purpose to some extent)
   float		avg_init;	// #DEF_0.15 initial value for averages
   float		d_gain;		// #DEF_2.5 multiplier on LTD values relative to LTP values
   float		d_rev;		// #DEF_0.1 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
   float		rnd_min_avg;	// #DEF_-1 minimum sravg_l value, below which random values are added to weights to drive exploration (-1 = off)
-  float		rnd_var;	// #DEF_0.1 variance (range) for uniform random noise added to weights when avg_trl_avg < rnd_min_avg (noise is then multiplied by lrate)
+  bool		rnd_ru;		// #CONDEDIT_OFF_rnd_min_avg:-1 is weight randomization triggered by sravg_l value of the recv unit (if true) or by that of the synapse (su_sravg_l * ru_sravg_l)?
+  float		rnd_var;	// #DEF_0.1 #CONDEDIT_OFF_rnd_min_avg:-1 variance (range) for uniform random noise added to weights when avg_trl_avg < rnd_min_avg (noise is then multiplied by lrate)
 
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- muliplication factor in learning rule
 
@@ -336,7 +335,7 @@ public:
 
   inline void 	C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
     ConSpec::C_Init_Weights(cg, cn, ru, su); LeabraCon* lcn = (LeabraCon*)cn;
-    lcn->pdw = 0.0f; lcn->sravg_s = lcn->sravg_m = lcn->sravg_l = xcal.avg_init;
+    lcn->pdw = 0.0f; lcn->sravg_s = lcn->sravg_m = xcal.avg_init;
     C_Init_Weights_Post(cg, cn, ru, su); }
   inline override void Init_Weights(RecvCons* cg, Unit* ru) {
     ConSpec::Init_Weights(cg, ru);
@@ -416,23 +415,28 @@ public:
   inline void Compute_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru, bool do_s);
   // accumulate sender-receiver activation product average, always does medium, also s if do_s is true
 
-  inline void C_Init_SRAvg(LeabraCon* cn, float sravg_m_nrm);
-  // initialize sender-receiver activation product averages for trial and below (also updates sravg_l as function of sravg_m)
+  inline void C_Init_SRAvg(LeabraCon* cn);
+  // initialize sender-receiver activation product averages for trial and below 
   inline void Init_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru);
   // initialize sender-receiver activation product average (only for trial-wise mode, else just in init weights) -- called at start of trial
 
   inline void 	C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn,
+						 float ru_sravg_l, float su_sravg_l,
 						 float sravg_s_nrm, float sravg_m_nrm);
   // #CAT_Learning compute eXtended Contrastive Attractor Learning (XCAL) -- trial-wise version (requires normalization factors)
-  inline void 	C_Compute_dWt_CtLeabraXCAL_cont(LeabraCon* cn);
+  inline void 	C_Compute_dWt_CtLeabraXCAL_cont(LeabraCon* cn, float ru_sravg_l,
+						float su_sravg_l);
   // #CAT_Learning compute eXtended Contrastive Attractor Learning (XCAL) -- continuous version (requires normalization factors) -- todo: needs timing things..
 
   inline virtual void 	Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru);
   // #CAT_Learning CtLeabraXCAL weight changes
 
-  inline void	C_Compute_dWt_Rnd(LeabraCon* cn, float rnd_var);
+  inline void	C_Compute_dWt_Rnd_XCAL_syn(LeabraCon* cn, float rnd_var,
+					   float ru_sravg_l, float su_sravg_l);
   // #CAT_Learning random weight changes: connection level
-  inline void	Compute_dWt_Rnd(LeabraRecvCons* cg, LeabraUnit* ru, float rnd_var);
+  inline void	C_Compute_dWt_Rnd_XCAL_ru(LeabraCon* cn, float rnd_var);
+  // #CAT_Learning random weight changes: connection level
+  inline void	Compute_dWt_Rnd_XCAL(LeabraRecvCons* cg, LeabraUnit* ru, float rnd_var);
   // #CAT_Learning random weight changes
 
   inline void	C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn, LeabraRecvCons* cg, 
@@ -453,6 +457,9 @@ public:
 
   inline virtual void 	B_Init_SRAvg(LeabraCon* cn, LeabraUnit* ru, LeabraLayer* rlay);
   // #CAT_Learning initialize bias weight sender-receiver average (actually just receiver)
+
+  inline virtual void 	B_Init_SRAvg_l(LeabraCon* cn, LeabraUnit* ru);
+  // #CAT_Learning initialize long-time-scale sravg value, stored on the unit (called during init weights)
 
   inline virtual void	B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru,
 							 LeabraLayer* rlay);
@@ -1093,7 +1100,8 @@ class LEABRA_API LeabraUnit : public Unit {
 INHERITED(Unit)
 public:
   float		act_eq;		// #CAT_Activation rate-code equivalent activity value (time-averaged spikes or just act)
-  float		act_avg;	// #CAT_Activation average activation over long time intervals (dt = act.avg_dt)
+  float		act_avg;	// #CAT_Activation average activation (of final plus phase activation state) over long time intervals (dt = act.avg_dt)
+  float		sravg_l;	// #CAT_Activation long time-scale average of medium-time scale (trial level) activation (as computed in the bias connection and spec) for the purposes of learning based on product of sender * receiver average activations in XCAL algorithm
   float		act_m;		// #CAT_Activation minus_phase activation, set after settling, used for learning
   float		act_p;		// #CAT_Activation plus_phase activation, set after settling, used for learning
   float		act_dif;	// #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
@@ -2585,7 +2593,6 @@ inline void LeabraConSpec::C_Compute_SRAvg_cont(LeabraCon* cn, LeabraUnit* ru,
   float sr = ru->act_eq * su->act_eq;
   cn->sravg_s += xcal.s_dt * (sr - cn->sravg_s);
   cn->sravg_m += xcal.m_dt * (sr - cn->sravg_m);
-  cn->sravg_l += xcal.l_dt * (sr - cn->sravg_l);
 }
 
 inline void LeabraConSpec::C_Compute_SRAvg_cont_casc(LeabraCon* cn, LeabraUnit* ru,
@@ -2593,7 +2600,6 @@ inline void LeabraConSpec::C_Compute_SRAvg_cont_casc(LeabraCon* cn, LeabraUnit* 
   // cascading updates
   cn->sravg_s += xcal.s_dt * (ru->act_eq * su->act_eq - cn->sravg_s);
   cn->sravg_m += xcal.m_dt * (cn->sravg_s - cn->sravg_m);
-  cn->sravg_l += xcal.l_dt * (cn->sravg_m - cn->sravg_l);
 }
 
 inline void LeabraConSpec::C_Compute_SRAvg_m(LeabraCon* cn, LeabraUnit* ru,
@@ -2625,31 +2631,33 @@ inline void LeabraConSpec::Compute_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru, boo
   }
 }
 
-inline void LeabraConSpec::C_Init_SRAvg(LeabraCon* cn, float sravg_m_nrm) {
-  cn->sravg_l += xcal.l_dt * (sravg_m_nrm * cn->sravg_m - cn->sravg_l);
+inline void LeabraConSpec::C_Init_SRAvg(LeabraCon* cn) {
   cn->sravg_s = 0.0f;
   cn->sravg_m = 0.0f;
 }
 
 inline void LeabraConSpec::Init_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru) {
   if(xcal.avg_updt == XCalLearnSpec::TRIAL) {
-    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-    CON_GROUP_LOOP(cg, C_Init_SRAvg((LeabraCon*)cg->Cn(i), rlay->sravg_m_nrm));
+    CON_GROUP_LOOP(cg, C_Init_SRAvg((LeabraCon*)cg->Cn(i)));
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 //     Computing dWt: CtLeabra_XCAL
 
-inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, 
+inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn,
+							    float ru_sravg_l, float su_sravg_l,
 							    float sravg_s_nrm, float sravg_m_nrm) {
-  float thr_p = xcal.m_pct * sravg_m_nrm * cn->sravg_m + xcal.l_mult * cn->sravg_l;
+  float sravg_l = ru_sravg_l * su_sravg_l;
+  float thr_p = xcal.m_pct * sravg_m_nrm * cn->sravg_m + xcal.l_mult * sravg_l;
   float thr_p_d_rev = thr_p * xcal.d_rev;
   cn->dwt += cur_lrate * xcal.dWtFun(sravg_s_nrm * cn->sravg_s, thr_p, thr_p_d_rev);
 }
 
-inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_cont(LeabraCon* cn) {
-  float thr_p = xcal.m_pct * cn->sravg_m + xcal.l_mult * cn->sravg_l;
+inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_cont(LeabraCon* cn, float ru_sravg_l,
+							   float su_sravg_l) {
+  float sravg_l = ru_sravg_l * su_sravg_l;
+  float thr_p = xcal.m_pct * cn->sravg_m + xcal.l_mult * sravg_l;
   float thr_p_d_rev = thr_p * xcal.d_rev;
   cn->dwt += cur_lrate * xcal.dWtFun(cn->sravg_s, thr_p, thr_p_d_rev);
 }
@@ -2660,51 +2668,64 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
   if(xcal.avg_updt == XCalLearnSpec::TRIAL) {
     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
     CON_GROUP_LOOP(cg,
-		   C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->Cn(i),
+		   C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->Cn(i), ru->sravg_l,
+						    ((LeabraUnit*)cg->Un(i))->sravg_l,
 						    rlay->sravg_s_nrm, rlay->sravg_m_nrm));
   }
   else {
     // todo: this actually requires all the timing stuff too..
     CON_GROUP_LOOP(cg,
-		   C_Compute_dWt_CtLeabraXCAL_cont((LeabraCon*)cg->Cn(i)));
+		   C_Compute_dWt_CtLeabraXCAL_cont((LeabraCon*)cg->Cn(i), ru->sravg_l,
+						    ((LeabraUnit*)cg->Un(i))->sravg_l));
   }
 }
 
 /////////////////////////////////////
 //	Compute_Weights_CtLeabraXCAL
 
-inline void LeabraConSpec::C_Compute_dWt_Rnd(LeabraCon* cn, float rnd_var) {
-  if(cn->sravg_l < xcal.rnd_min_avg) {
+inline void LeabraConSpec::C_Compute_dWt_Rnd_XCAL_syn(LeabraCon* cn, float rnd_var,
+						      float ru_sravg_l, float su_sravg_l) {
+  float sravg_l = ru_sravg_l * su_sravg_l;
+  if(sravg_l < xcal.rnd_min_avg) {
     cn->dwt += cur_lrate * rnd_var * Random::ZeroOne();
   }
 }
 
-inline void LeabraConSpec::Compute_dWt_Rnd(LeabraRecvCons* cg, LeabraUnit* ru, float rnd_var) {
-  CON_GROUP_LOOP(cg, C_Compute_dWt_Rnd((LeabraCon*)cg->Cn(i), rnd_var));
+inline void LeabraConSpec::C_Compute_dWt_Rnd_XCAL_ru(LeabraCon* cn, float rnd_var) {
+  cn->dwt += cur_lrate * rnd_var * Random::ZeroOne();
+}
+
+inline void LeabraConSpec::Compute_dWt_Rnd_XCAL(LeabraRecvCons* cg, LeabraUnit* ru,
+						float rnd_var) {
+  if(xcal.rnd_ru) {
+    CON_GROUP_LOOP(cg, C_Compute_dWt_Rnd_XCAL_ru((LeabraCon*)cg->Cn(i), rnd_var));
+  }
+  else {
+    CON_GROUP_LOOP(cg, C_Compute_dWt_Rnd_XCAL_syn((LeabraCon*)cg->Cn(i), rnd_var, ru->sravg_l,
+						  ((LeabraUnit*)cg->Un(i))->sravg_l));
+  }
 }
 
 inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn, LeabraRecvCons* cg,
 							  LeabraUnit* ru, LeabraUnit* su)
 {
   // always do soft bounding, at this point (post agg across processors, etc)
-  if(xcal.sbound) {
-    if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - cn->wt);
-    else		cn->dwt *= cn->wt;
-  }
+  if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - cn->wt);
+  else			cn->dwt *= cn->wt;
 
   cn->wt += cn->dwt;		// weights always linear
-  // todo: optimize: don't bother with this if always doing soft bounding above
-  wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
+  // optimize: don't bother with this if always doing soft bounding above
+  // wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
 }
 
 inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
   if(xcal.rnd_min_avg > 0.0f) {
-    Compute_dWt_Rnd(cg, ru, xcal.rnd_var);
+    Compute_dWt_Rnd_XCAL(cg, ru, xcal.rnd_var);
   }
   CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL((LeabraCon*)cg->Cn(i), cg,
-						    (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i)));
+						    ru, (LeabraUnit*)cg->Un(i)));
   //  ApplyLimits(cg, ru); limits are automatically enforced anyway
 }
 
@@ -2733,22 +2754,29 @@ inline void LeabraConSpec::B_Compute_SRAvg(LeabraCon* cn, LeabraUnit* ru, bool d
   else if(xcal.avg_updt == XCalLearnSpec::CONT) {
     cn->sravg_s += xcal.s_dt * (ru->act_eq - cn->sravg_s);
     cn->sravg_m += xcal.m_dt * (ru->act_eq - cn->sravg_m);
-    cn->sravg_l += xcal.l_dt * (ru->act_eq - cn->sravg_l);
+    ru->sravg_l += xcal.l_dt * (ru->act_eq - ru->sravg_l);
+    // note: updating unit-level sravg_l variable here..
   }
   else if(xcal.avg_updt == XCalLearnSpec::CONT_CASC) {
     cn->sravg_s += xcal.s_dt * (ru->act_eq - cn->sravg_s);
     cn->sravg_m += xcal.m_dt * (cn->sravg_s - cn->sravg_m);
-    cn->sravg_l += xcal.l_dt * (cn->sravg_m - cn->sravg_l);
+    ru->sravg_l += xcal.l_dt * (cn->sravg_m - ru->sravg_l);
+    // note: updating unit-level sravg_l variable here..
   }
 }
 
 inline void LeabraConSpec::B_Init_SRAvg(LeabraCon* cn, LeabraUnit* ru,
 						      LeabraLayer* rlay) {
   if(xcal.avg_updt == XCalLearnSpec::TRIAL) {
-    cn->sravg_l += xcal.l_dt * (rlay->sravg_m_nrm * cn->sravg_m - cn->sravg_l);
+    // note: updating unit-level sravg_l variable here..
+    ru->sravg_l += xcal.l_dt * (rlay->sravg_m_nrm * cn->sravg_m - ru->sravg_l);
     cn->sravg_s = 0.0f;
     cn->sravg_m = 0.0f;
   }
+}
+
+inline void LeabraConSpec::B_Init_SRAvg_l(LeabraCon* cn, LeabraUnit* ru) {
+  ru->sravg_l = xcal.avg_init;
 }
 
 inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru,
@@ -2756,12 +2784,12 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit*
   float dw;
   if(xcal.avg_updt == XCalLearnSpec::TRIAL) {
     float thr_p = xcal.m_pct * rlay->sravg_m_nrm * cn->sravg_m +
-      xcal.l_mult * cn->sravg_l;
+      xcal.l_mult * ru->sravg_l;
     float thr_p_d_rev = thr_p * xcal.d_rev;
     dw = xcal.dWtFun(rlay->sravg_s_nrm * cn->sravg_s, thr_p, thr_p_d_rev);
   }
   else {
-    float thr_p = xcal.m_pct * cn->sravg_m + xcal.l_mult * cn->sravg_l;
+    float thr_p = xcal.m_pct * cn->sravg_m + xcal.l_mult * ru->sravg_l;
     float thr_p_d_rev = thr_p * xcal.d_rev;
     dw = xcal.dWtFun(cn->sravg_s, thr_p, thr_p_d_rev);
   }
@@ -2785,12 +2813,12 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
   float dw;
   if(xcal.avg_updt == XCalLearnSpec::TRIAL) {
     float thr_p = xcal.m_pct * rlay->sravg_m_nrm * cn->sravg_m +
-      xcal.l_mult * cn->sravg_l;
+      xcal.l_mult * ru->sravg_l;
     float thr_p_d_rev = thr_p * xcal.d_rev;
     dw = xcal.dWtFun(rlay->sravg_s_nrm * cn->sravg_s, thr_p, thr_p_d_rev);
   }
   else {
-    float thr_p = xcal.m_pct * cn->sravg_m + xcal.l_mult * cn->sravg_l;
+    float thr_p = xcal.m_pct * cn->sravg_m + xcal.l_mult * ru->sravg_l;
     float thr_p_d_rev = thr_p * xcal.d_rev;
     dw = xcal.dWtFun(cn->sravg_s, thr_p, thr_p_d_rev);
   }

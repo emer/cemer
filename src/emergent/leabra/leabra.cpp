@@ -92,19 +92,20 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 void XCalLearnSpec::Initialize() {
   avg_updt = TRIAL;
   m_pct = 0.8f;
-  l_gain = 3.0f;
   l_dt = 0.02f;
+  l_gain = 3.0f;
   m_dt = 0.03f;
   s_dt = 0.1f;
 
 //   lrn_thr = 0.2f;
 //   lrn_delay = 200;
 
-  sbound = true;
   avg_init = 0.15;
   d_gain = 2.5f;
   d_rev = 0.1f;
+
   rnd_min_avg = -1.0f;		// turn off by default
+  rnd_ru = true;
   rnd_var = 0.1f;
 
   l_pct = 1.0f - m_pct;
@@ -750,10 +751,13 @@ void LeabraUnitSpec::Init_Weights(Unit* u) {
   lu->vcb.hyst_on = false;
   lu->vcb.acc = lu->vcb.g_a = 0.0f;
   lu->vcb.acc_on = false;
+
+  ((LeabraConSpec*)bias_spec.SPtr())->B_Init_SRAvg_l((LeabraCon*)u->bias.Cn(0), lu);
 }
 
 void LeabraUnitSpec::Init_ActAvg(LeabraUnit* u) {
   u->act_avg = act.avg_init;
+  ((LeabraConSpec*)bias_spec.SPtr())->B_Init_SRAvg_l((LeabraCon*)u->bias.Cn(0), u);
 }  
 
 void LeabraUnitSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
@@ -1880,6 +1884,7 @@ void LeabraUnit::Initialize() {
 
   act_eq = 0.0f;
   act_avg = 0.15f;
+  sravg_l = 0.15f;
   act_p = act_m = act_dif = 0.0f;
   act_m2 = act_p2 = act_dif2 = 0.0f;
   da = 0.0f;
@@ -1928,6 +1933,7 @@ void LeabraUnit::GetInSubGp() {
 void LeabraUnit::Copy_(const LeabraUnit& cp) {
   act_eq = cp.act_eq;
   act_avg = cp.act_avg;
+  sravg_l = cp.sravg_l;
   act_m = cp.act_m;
   act_p = cp.act_p;
   act_dif = cp.act_dif;
