@@ -94,6 +94,8 @@ void XCalLearnSpec::Initialize() {
   m_pct = 0.8f;
   l_dt = 0.02f;
   l_gain = 3.0f;
+  l_kwta_pct = false;
+
   m_dt = 0.03f;
   s_dt = 0.1f;
 
@@ -344,7 +346,7 @@ void LeabraConSpec::GraphXCaldWtFun(DataTable* graph_data, float thr_p) {
 
   float x;
   for(x = 0.0f; x <= 1.0f; x += .01f) {
-    float dw = xcal.dWtFun(x, thr_p, thr_p * xcal.d_rev);
+    float dw = xcal.dWtFun(x, thr_p);
     graph_data->AddBlankRow();
     sravg->SetValAsFloat(x, -1);
     dwt->SetValAsFloat(dw, -1);
