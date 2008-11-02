@@ -91,10 +91,12 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   avg_updt = TRIAL;
-  m_pct = 0.8f;
-  l_dt = 0.02f;
-  l_gain = 3.0f;
-  l_kwta_pct = false;
+  lrn_s_mix = 0.8f;
+  thr_m_mix = 0.6f;
+
+  l_dt = 0.03f;
+  l_gain = 4.0f;
+  l_kwta_pct = true;
 
   m_dt = 0.03f;
   s_dt = 0.1f;
@@ -102,22 +104,25 @@ void XCalLearnSpec::Initialize() {
 //   lrn_thr = 0.2f;
 //   lrn_delay = 200;
 
-  avg_init = 0.15;
   d_gain = 2.5f;
   d_rev = 0.1f;
 
+  avg_init = 0.15;
   rnd_min_avg = -1.0f;		// turn off by default
   rnd_var = 0.1f;
 
-  l_pct = 1.0f - m_pct;
-  l_mult = l_pct * l_gain;
+  lrn_m_mix = 1.0f - lrn_s_mix;
+  thr_l_mix = 1.0f - thr_m_mix;
+  l_mult = thr_l_mix * l_gain;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
 }
 
 void XCalLearnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  l_pct = 1.0f - m_pct;
-  l_mult = l_pct * l_gain;
+  lrn_m_mix = 1.0f - lrn_s_mix;
+  thr_l_mix = 1.0f - thr_m_mix;
+  l_mult = thr_l_mix * l_gain;
+  d_rev_ratio = (1.0f - d_rev) / d_rev;
   if(d_rev > 0.0f)
     d_rev_ratio = (1.0f - d_rev) / d_rev;
   else
@@ -769,6 +774,9 @@ void LeabraUnitSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
 void LeabraUnitSpec::SetLearnRule(LeabraNetwork* net) {
   if(bias_spec.SPtr())
     ((LeabraConSpec*)bias_spec.SPtr())->SetLearnRule(net);
+  if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
+    opt_thresh.learn = -1;	// some very tiny value could be used instead!
+  }
 }
 
 ////////////////////////////////////////////

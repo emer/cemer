@@ -206,11 +206,13 @@ public:
   };
 
   AvgUpdt	avg_updt;	// how to update the relevant sr average variables
-  float		m_pct;		// how much the medium time-scale (trial) sravg contributes to overall subtraction term -- the long time-scale (epoch) sravg is then 1-m_pct
-  float		l_dt;		// #DEF_0.02 time constant for updating the long time-scale ravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_l variable!!
-  float		l_pct;		// #READ_ONLY 1-sravg_m_pct -- how much the long time-scale ravg contributes to overall subtraction term
-  float		l_gain;		// gain for long time-scale sravg term -- can affect overall sparseness of weights
-  float		l_mult;		// #READ_ONLY overall multiplier for long-term value (l_pct * l_gain)
+  float		lrn_s_mix;	// how much the short time-scale (plus phase) sravg contributes to sravg term that drives learning -- the rest (1-s_mix) is medium time-scale (trial) sravg -- in addition to general recency effects, s_pct can also reflect dopamine and other neuromodulatory factors
+  float		lrn_m_mix;	// #READ_ONLY 1-lrn_s_mix -- amount that sravg_m contributes to learning
+  float		thr_m_mix;	// how much the medium time-scale (trial) sravg contributes to potentiation threshold -- the long time-scale (epoch) ravg is then 1-thr_m_mix -- when lrn_s_mix is high, and this is high, the result is an error-driven learning dynamic (CAL is lrn_s_mix = 1, thr_m_mix = 1, and d_rev = 0.00001)
+  float		thr_l_mix;	// #READ_ONLY 1-thr_m_mix -- how much the long time-scale ravg contributes to potentiation threshold (this is the activation regulation/homeostatsis BCM-style factor)
+  float		l_dt;		// #DEF_0.03 time constant for updating the long time-scale ravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_l variable!!
+  float		l_gain;		// gain for long time-scale ravg term -- needed to put into same terms as the sravg values used in the s and m components of learning (note ravg_l is already multiplied by sending kwta_pct or ravg_l_avg to compensate for overall layer activation differences)
+  float		l_mult;		// #READ_ONLY overall multiplier for long-term value (thr_l_mix * l_gain)
   bool		l_kwta_pct;	// if true, use sending layer kwta.pct value for multiplying times the ravg_l value, otherwise use the ravg_l_avg value on the layer
   float		m_dt;		// #CONDSHOW_ON_avg_updt:CONT time constant for updating the medium time-scale sravg_m value
   float		s_dt;		// #CONDSHOW_ON_avg_updt:CONT time constant for updating the short time-scale sravg_s value
@@ -218,10 +220,11 @@ public:
 //   float		lrn_thr;	// #CONDSHOW_ON_avg_updt:CONT threshold on sravg_m value to initiate learning, in continous mode
 //   int		lrn_delay;	// #CONDSHOW_ON_avg_updt:CONT delay after lrn_thr threshold has been crossed after which learning occurs
 
-  float		avg_init;	// #DEF_0.15 initial value for averages
   float		d_gain;		// #DEF_2.5 multiplier on LTD values relative to LTP values
   float		d_rev;		// #DEF_0.1 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
-  float		rnd_min_avg;	// #DEF_-1 minimum s/ravg_l value, below which random values are added to weights to drive exploration (-1 = off)
+
+  float		avg_init;	// #DEF_0.15 initial value for averages
+  float		rnd_min_avg;	// #DEF_-1 minimum ravg_l value, below which random values are added to weights to drive exploration (-1 = off)
   float		rnd_var;	// #DEF_0.1 #CONDEDIT_OFF_rnd_min_avg:-1 variance (range) for uniform random noise added to weights when avg_trl_avg < rnd_min_avg (noise is then multiplied by lrate)
 
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- muliplication factor in learning rule
@@ -422,7 +425,7 @@ public:
   // initialize sender-receiver activation product average (only for trial-wise mode, else just in init weights) -- called at start of trial
 
   inline void 	C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, float ru_ravg_l,
-						 float sravg_s_nrm, float sravg_m_nrm);
+		 float sravg_s_nrm, float sravg_m_nrm_lrn, float sravg_m_nrm_thr);
   // #CAT_Learning compute eXtended Contrastive Attractor Learning (XCAL) -- trial-wise version (requires normalization factors)
   inline void 	C_Compute_dWt_CtLeabraXCAL_cont(LeabraCon* cn, float ru_ravg_l);
   // #CAT_Learning compute eXtended Contrastive Attractor Learning (XCAL) -- continuous version (requires normalization factors) -- todo: needs timing things..
@@ -2673,16 +2676,18 @@ inline void LeabraConSpec::Init_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru) {
 //     Computing dWt: CtLeabra_XCAL
 
 inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, float ru_ravg_l,
-							    float sravg_s_nrm, float sravg_m_nrm) {
-  // appropriate scaling factors are already applied to sravg_m_nrm and ru_avg_l
-  float thr_p = sravg_m_nrm * cn->sravg_m + ru_ravg_l;
-  cn->dwt += cur_lrate * xcal.dWtFun(sravg_s_nrm * cn->sravg_s, thr_p);
+			    float sravg_s_nrm, float sravg_m_nrm_lrn, float sravg_m_nrm_thr) {
+  // appropriate scaling factors are already applied to nrm's and ru_avg_l
+  float lrn = sravg_s_nrm * cn->sravg_s + sravg_m_nrm_lrn * cn->sravg_m;
+  float thr_p = sravg_m_nrm_thr * cn->sravg_m + ru_ravg_l;
+  cn->dwt += cur_lrate * xcal.dWtFun(lrn, thr_p);
 }
 
 inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_cont(LeabraCon* cn, float ru_ravg_l) {
   // appropriate scaling factors are already applied to ru_avg_l
-  float thr_p = xcal.m_pct * cn->sravg_m + ru_ravg_l;
-  cn->dwt += cur_lrate * xcal.dWtFun(cn->sravg_s, thr_p);
+  float lrn = xcal.lrn_s_mix * cn->sravg_s + xcal.lrn_m_mix * cn->sravg_m;
+  float thr_p = xcal.thr_m_mix * cn->sravg_m + ru_ravg_l;
+  cn->dwt += cur_lrate * xcal.dWtFun(lrn, thr_p);
 }
 
 
@@ -2698,10 +2703,13 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
 
   if(xcal.avg_updt == XCalLearnSpec::TRIAL) {
     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-    float sravg_m_nrm = xcal.m_pct * rlay->sravg_m_nrm;
+    float sravg_s_nrm = xcal.lrn_s_mix * rlay->sravg_s_nrm;
+    float sravg_m_nrm_lrn = xcal.lrn_m_mix * rlay->sravg_m_nrm;
+    float sravg_m_nrm_thr = xcal.thr_m_mix * rlay->sravg_m_nrm;
     CON_GROUP_LOOP(cg,
 		   C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->Cn(i), ru_avg_l,
-						    rlay->sravg_s_nrm, sravg_m_nrm));
+						    sravg_s_nrm, sravg_m_nrm_lrn,
+						    sravg_m_nrm_thr));
   }
   else {
     // todo: this actually requires all the timing stuff too..
@@ -2835,13 +2843,16 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit*
 						      LeabraLayer* rlay) {
   float dw;
   if(xcal.avg_updt == XCalLearnSpec::TRIAL) {
-    float thr_p = xcal.m_pct * rlay->sravg_m_nrm * cn->sravg_m +
+    float lrn = xcal.lrn_s_mix * rlay->sravg_s_nrm * cn->sravg_s +
+      xcal.lrn_m_mix * rlay->sravg_m_nrm * cn->sravg_m;
+    float thr_p = xcal.thr_m_mix * rlay->sravg_m_nrm * cn->sravg_m +
       xcal.l_mult * ru->ravg_l;
-    dw = xcal.dWtFun(rlay->sravg_s_nrm * cn->sravg_s, thr_p);
+    dw = xcal.dWtFun(lrn, thr_p);
   }
   else {
-    float thr_p = xcal.m_pct * cn->sravg_m + xcal.l_mult * ru->ravg_l;
-    dw = xcal.dWtFun(cn->sravg_s, thr_p);
+    float lrn = xcal.lrn_s_mix * cn->sravg_s + xcal.lrn_m_mix * cn->sravg_m;
+    float thr_p = xcal.thr_m_mix * cn->sravg_m + xcal.l_mult * ru->ravg_l;
+    dw = xcal.dWtFun(lrn, thr_p);
   }
   cn->dwt += cur_lrate * dw;
 }
@@ -2867,13 +2878,16 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
 						      LeabraLayer* rlay) {
   float dw;
   if(xcal.avg_updt == XCalLearnSpec::TRIAL) {
-    float thr_p = xcal.m_pct * rlay->sravg_m_nrm * cn->sravg_m +
+    float lrn = xcal.lrn_s_mix * rlay->sravg_s_nrm * cn->sravg_s +
+      xcal.lrn_m_mix * rlay->sravg_m_nrm * cn->sravg_m;
+    float thr_p = xcal.thr_m_mix * rlay->sravg_m_nrm * cn->sravg_m +
       xcal.l_mult * ru->ravg_l;
-    dw = xcal.dWtFun(rlay->sravg_s_nrm * cn->sravg_s, thr_p);
+    dw = xcal.dWtFun(lrn, thr_p);
   }
   else {
-    float thr_p = xcal.m_pct * cn->sravg_m + xcal.l_mult * ru->ravg_l;
-    dw = xcal.dWtFun(cn->sravg_s, thr_p);
+    float lrn = xcal.lrn_s_mix * cn->sravg_s + xcal.lrn_m_mix * cn->sravg_m;
+    float thr_p = xcal.thr_m_mix * cn->sravg_m + xcal.l_mult * ru->ravg_l;
+    dw = xcal.dWtFun(lrn, thr_p);
   }
   if(fabsf(dw) >= dwt_thresh)
     cn->dwt += cur_lrate * dw;
