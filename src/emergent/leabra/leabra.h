@@ -405,13 +405,13 @@ public:
   /////////////////////////////////////
   // CtLeabraXCAL code
 
-  inline void C_Compute_SRAvg_cont(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su);
+  inline void C_Compute_SRAvg_cont(LeabraCon* cn, float ru_act, float su_act);
   // accumulate sender-receiver activation product average, fully continuous version
-  inline void C_Compute_SRAvg_cont_casc(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su);
+  inline void C_Compute_SRAvg_cont_casc(LeabraCon* cn, float ru_act, float su_act);
   // accumulate sender-receiver activation product average, fully continuous version, cascading
-  inline void C_Compute_SRAvg_m(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su);
+  inline void C_Compute_SRAvg_m(LeabraCon* cn, float ru_act, float su_act);
   // accumulate sender-receiver activation product average, medium time scale (trial-wise version)
-  inline void C_Compute_SRAvg_ms(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su);
+  inline void C_Compute_SRAvg_ms(LeabraCon* cn, float ru_act, float su_act);
   // accumulate sender-receiver activation product average, short and medium time scale (plus phase and trial, for trial-wise version)
   inline void Compute_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru, bool do_s);
   // accumulate sender-receiver activation product average, always does medium, also s if do_s is true
@@ -2613,46 +2613,48 @@ inline void LeabraConSpec::Compute_Weights_LeabraCHL(LeabraRecvCons* cg, LeabraU
 //////////////////////////////////////////////////////////////////////////////////
 //     CtLeabra XCAL SRAvg stuff
 
-inline void LeabraConSpec::C_Compute_SRAvg_cont(LeabraCon* cn, LeabraUnit* ru,
-					   LeabraUnit* su) {
-  float sr = ru->act_eq * su->act_eq;
+inline void LeabraConSpec::C_Compute_SRAvg_cont(LeabraCon* cn, float ru_act, float su_act) {
+  float sr = ru_act * su_act;
   cn->sravg_s += xcal.s_dt * (sr - cn->sravg_s);
   cn->sravg_m += xcal.m_dt * (sr - cn->sravg_m);
 }
 
-inline void LeabraConSpec::C_Compute_SRAvg_cont_casc(LeabraCon* cn, LeabraUnit* ru,
-					   LeabraUnit* su) {
+inline void LeabraConSpec::C_Compute_SRAvg_cont_casc(LeabraCon* cn, float ru_act, float su_act) {
   // cascading updates
-  cn->sravg_s += xcal.s_dt * (ru->act_eq * su->act_eq - cn->sravg_s);
+  cn->sravg_s += xcal.s_dt * (ru_act * su_act - cn->sravg_s);
   cn->sravg_m += xcal.m_dt * (cn->sravg_s - cn->sravg_m);
 }
 
-inline void LeabraConSpec::C_Compute_SRAvg_m(LeabraCon* cn, LeabraUnit* ru,
-					    LeabraUnit* su) {
-  cn->sravg_m += ru->act_eq * su->act_eq;
+inline void LeabraConSpec::C_Compute_SRAvg_m(LeabraCon* cn, float ru_act, float su_act) {
+  cn->sravg_m += ru_act * su_act;
 }
 
-inline void LeabraConSpec::C_Compute_SRAvg_ms(LeabraCon* cn, LeabraUnit* ru,
-					      LeabraUnit* su) {
-  float sr = ru->act_eq * su->act_eq;
+inline void LeabraConSpec::C_Compute_SRAvg_ms(LeabraCon* cn, float ru_act, float su_act) {
+  float sr = ru_act * su_act;
   cn->sravg_m += sr;
   cn->sravg_s += sr;
 }
 
 inline void LeabraConSpec::Compute_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru, bool do_s) {
+  // todo: for spiking, need to add a syndep eq var -- currently using act b/c it is depr 
+  // and that seems to be key for making this work!
   if(learn_rule == CTLEABRA_CAL || xcal.avg_updt == XCalLearnSpec::TRIAL) {
     if(do_s) {
-      CON_GROUP_LOOP(cg, C_Compute_SRAvg_ms((LeabraCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
+      CON_GROUP_LOOP(cg, C_Compute_SRAvg_ms((LeabraCon*)cg->Cn(i), ru->act,
+					    ((LeabraUnit*)cg->Un(i))->act));
     }
     else {
-      CON_GROUP_LOOP(cg, C_Compute_SRAvg_m((LeabraCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
+      CON_GROUP_LOOP(cg, C_Compute_SRAvg_m((LeabraCon*)cg->Cn(i), ru->act, 
+					   ((LeabraUnit*)cg->Un(i))->act));
     }
   }
   else if(xcal.avg_updt == XCalLearnSpec::CONT) {
-    CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont((LeabraCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
+    CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont((LeabraCon*)cg->Cn(i), ru->act,
+					    ((LeabraUnit*)cg->Un(i))->act));
   }
   else if(xcal.avg_updt == XCalLearnSpec::CONT_CASC) {
-    CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont_casc((LeabraCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
+    CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont_casc((LeabraCon*)cg->Cn(i), ru->act,
+						 ((LeabraUnit*)cg->Un(i))->act));
   }
 }
 
