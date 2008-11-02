@@ -91,12 +91,16 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   avg_updt = TRIAL;
-  lrn_s_mix = 0.8f;
+  s_var = AVG_PROD_RS;
+  m_var = AVG_PROD;
+  use_eq = true;
+
+  lrn_s_mix = 0.85f;
   thr_m_mix = 0.6f;
 
   l_dt = 0.03f;
-  l_gain = 4.0f;
-  l_kwta_pct = true;
+  l_gain = 5.0f;
+  l_norm = KWTA_PCT;
 
   m_dt = 0.03f;
   s_dt = 0.1f;
@@ -127,6 +131,12 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
     d_rev_ratio = (1.0f - d_rev) / d_rev;
   else
     d_rev_ratio = 1.0f;
+  if(s_var == SRAVG)
+    m_var = SRAVG;
+  if(s_var == AVG_PROD_RS)
+    m_var = AVG_PROD;
+  if(m_var == AVG_PROD_RS)
+    m_var = AVG_PROD;
 }
 
 void SAvgCorSpec::Initialize() {
