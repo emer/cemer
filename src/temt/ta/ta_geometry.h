@@ -192,6 +192,8 @@ public:
   inline PosTwoDCoord& operator=(int cp) { x = cp; y = cp; return *this;}
   inline PosTwoDCoord& operator=(float cp) { x = (int)cp; y = (int)cp; return *this;}
   inline PosTwoDCoord& operator=(double cp) { x = (int)cp; y = (int)cp; return *this;}
+  inline PosTwoDCoord& operator=(const TwoDCoord& cp) 
+    {x = cp.x; y = cp.y; SetGtEq(0); return *this;}
 protected:
   void	UpdateAfterEdit_impl();
 private:
