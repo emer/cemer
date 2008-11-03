@@ -1666,7 +1666,9 @@ public:
   
   virtual void		BuildLayers(); // #CAT_Structure create any algorithmically specified layers
   virtual void		BuildPrjns(); // #CAT_Structure create any algorithmically specified prjns
-   
+  virtual void		Clean();
+    // #MENU #MENU_CONTEXT #CAT_Structure remove any algorithmically specified layers/prjns etc.
+    
   override String GetTypeDecoKey() const { return "Layer"; }
 
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
@@ -1677,6 +1679,7 @@ protected:
   override void	UpdateAfterEdit_impl();
   virtual void		BuildLayers_impl(); 
   virtual void		BuildPrjns_impl();
+  virtual void		Clean_impl() {}
 private:
   void	Initialize() 		{ };
   void 	Destroy()		{ };

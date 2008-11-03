@@ -4731,6 +4731,15 @@ void Layer_Group::BuildPrjns_impl() {
   }
 } 
 
+void Layer_Group::Clean() {
+  Layer_Group* lg;
+  for (int i = gp.size - 1;  i >= 0; --i) {
+    lg = (Layer_Group*)gp.FastEl(i);
+    lg->Clean();
+  }
+  Clean_impl();
+}
+
 
 ////////////////////////
 //	Network	      //
