@@ -283,6 +283,11 @@ void LeabraLimPrecConSpec::Initialize() {
   prec_levels = 1024;
 }
 
+void LeabraDwtNorm::Initialize() {
+  on = false;
+  norm_pct = 1.0f;
+}
+
 // void LeabraCtExptConSpec::Initialize() {
 //   learn_var = STD_CT;
 //   bcm_pct = 0.0f;

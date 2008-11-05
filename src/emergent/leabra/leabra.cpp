@@ -91,8 +91,7 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   avg_updt = TRIAL;
-  s_var = AVG_PROD_RS;
-  m_var = AVG_PROD;
+  sm_vars = AVG_PROD_RS;
   use_eq = true;
 
   lrn_s_mix = 0.85f;
@@ -131,12 +130,6 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
     d_rev_ratio = (1.0f - d_rev) / d_rev;
   else
     d_rev_ratio = 1.0f;
-  if(s_var == SRAVG)
-    m_var = SRAVG;
-  if(s_var == AVG_PROD_RS)
-    m_var = AVG_PROD;
-  if(m_var == AVG_PROD_RS)
-    m_var = AVG_PROD;
 }
 
 void SAvgCorSpec::Initialize() {
@@ -1585,14 +1578,24 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* th
 void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net,
 				   bool do_s) {
   // always do bias b/c it is cheap, might be useful..
-  ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_SRAvg((LeabraCon*)u->bias.Cn(0), u, do_s);
+  LeabraConSpec* bias_sp = (LeabraConSpec*)bias_spec.SPtr();
+  bias_sp->B_Compute_SRAvg((LeabraCon*)u->bias.Cn(0), u, do_s);
 
   if(net->train_mode != LeabraNetwork::TEST) {	// expensive con-level only for training
-    if(net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) {
+    if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
       for(int g=0; g<u->recv.size; g++) {
 	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
 	if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
 	recv_gp->Compute_SRAvg(u, do_s);
+      }
+    }
+    else if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
+      if(bias_sp->xcal.sm_vars == XCalLearnSpec::SRAVG) { // only needed in this case
+	for(int g=0; g<u->recv.size; g++) {
+	  LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+	  if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+	  recv_gp->Compute_SRAvg(u, do_s);
+	}
       }
     }
   }

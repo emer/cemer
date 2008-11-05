@@ -686,9 +686,7 @@ public:
     }
   }
 
-  inline void C_Compute_Weights_LeabraCHL(FastWtCon* cn, LeabraRecvCons* cg,
-					  LeabraUnit*, LeabraUnit*)
-  {
+  inline void C_Compute_Weights_LeabraCHL(FastWtCon* cn) {
     if(cn->sdwt != 0.0f) {
       cn->swt += cn->sdwt; // wt is not negative!
       if(cn->swt < wt_limits.min) cn->swt = wt_limits.min;
@@ -704,8 +702,7 @@ public:
   }
 
   inline void Compute_Weights_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((FastWtCon*)cg->Cn(i), cg,
-				   (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i)));
+    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((FastWtCon*)cg->Cn(i)));
     //  ApplyLimits(cg, ru); limits are automatically enforced anyway
   }
 
@@ -811,6 +808,114 @@ public:
 
   SIMPLE_COPY(LeabraLimPrecConSpec);
   TA_BASEFUNS(LeabraLimPrecConSpec);
+// protected:
+//   void	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
+class LEABRA_API LeabraDwtNorm : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra renormalize weight changes -- makes zero sum
+INHERITED(taBase)
+public:
+  bool		on;		// whether to do normalized dwt Compute_Weights function: makes weight changes zero sum
+  float		norm_pct;	// #CONDEDIT_ON_on what proportion of full normalization to apply to the delta weights (0 = no norm, 1 = full norm)
+
+  SIMPLE_COPY(LeabraDwtNorm);
+  TA_BASEFUNS(LeabraDwtNorm);
+  //protected:
+  //  void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API LeabraDwtNormConSpec : public LeabraConSpec {
+  // ##CAT_Leabra delta-weight normalization: weight changes are zero-sum.  also includes hebbian learning for CtLeabraCAL learning rule
+INHERITED(LeabraConSpec)
+public:
+#ifdef __MAKETA__
+  LearnMixSpec	lmix;		// #CAT_Learning #CONDSHOW_OFF_learn_rule:CTLEABRA_XCAL mixture of hebbian & err-driven learning (note: no hebbian for CTLEABRA_XCAL)
+#endif
+
+  LeabraDwtNorm	dwt_norm;	// renormalize weight changes to compensate for overal mean changes (zero sum weight changes)
+
+  inline float	Compute_dWtMean(LeabraRecvCons* cg, LeabraUnit* ru) {
+    float dwt_mean = 0.0f;
+    CON_GROUP_LOOP(cg, dwt_mean += ((LeabraCon*)cg->Cn(i))->dwt);
+    return dwt_mean / (float)cg->cons.size;
+  }
+  // #CAT_Learning compute dwt_mean -- mean of all weight changes, for dwt_norm
+
+  inline void C_Compute_Weights_Norm_LeabraCHL(LeabraCon* cn, float dwnorm) {
+    float eff_dw = cn->dwt + dwnorm;
+    if(eff_dw != 0.0f) {
+      // weight increment happens in linear weights
+      cn->wt = GetWtFmLin(GetLinFmWt(cn->wt) + eff_dw);
+    }
+    cn->pdw = cn->dwt;
+    cn->dwt = 0.0f;
+  }
+
+  inline void Compute_Weights_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    if(dwt_norm.on) {
+      float dwnorm = -dwt_norm.norm_pct * Compute_dWtMean(cg, ru);
+      CON_GROUP_LOOP(cg, C_Compute_Weights_Norm_LeabraCHL((LeabraCon*)cg->Cn(i), dwnorm));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->Cn(i)));
+    }
+  }
+
+  inline void C_Compute_dWt_CtLeabraCAL_hebb(LeabraCon* cn,
+					     float sravg_s_nrm, float sravg_m_nrm, float hebb) {
+    cn->dwt += cur_lrate * (lmix.err * (sravg_s_nrm * cn->sravg_s - sravg_m_nrm * cn->sravg_m)
+			    + lmix.hebb * hebb);
+  }
+
+  inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    Compute_SAvgCor(cg, ru);
+    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+    for(int i=0; i<cg->cons.size; i++) {
+      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      C_Compute_dWt_CtLeabraCAL_hebb
+	(cn, rlay->sravg_s_nrm, rlay->sravg_m_nrm,
+	 C_Compute_Hebb(cn, cg, cn->wt, ru->act_p, su->act_p));
+    }
+  }
+
+  inline void C_Compute_Weights_Norm_CtLeabraCAL(LeabraCon* cn, float dwnorm) {
+    // do soft bounding now so it can include actreg, agg from dm, dwtnorm, 
+    cn->dwt += dwnorm;
+    if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - cn->wt);
+    else		cn->dwt *= cn->wt;
+
+    cn->wt += cn->dwt;	// weights always linear
+    // optimize: don't bother with this if always doing soft bounding above
+    //     wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
+    cn->pdw = cn->dwt;
+    cn->dwt = 0.0f;
+  }
+
+  inline void Compute_Weights_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    if(dwt_norm.on) {
+      float dwnorm = -dwt_norm.norm_pct * Compute_dWtMean(cg, ru);
+      CON_GROUP_LOOP(cg, C_Compute_Weights_Norm_CtLeabraCAL((LeabraCon*)cg->Cn(i), dwnorm));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraCAL((LeabraCon*)cg->Cn(i)));
+    }
+    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+  }
+
+
+  // NOTE: bias weights typically not subject to limited precision!
+
+  SIMPLE_COPY(LeabraDwtNormConSpec);
+  TA_BASEFUNS(LeabraDwtNormConSpec);
 // protected:
 //   void	UpdateAfterEdit_impl();
 private:
