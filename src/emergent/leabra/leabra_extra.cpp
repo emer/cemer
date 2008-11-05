@@ -288,6 +288,9 @@ void LeabraDwtNorm::Initialize() {
   norm_pct = 1.0f;
 }
 
+void LeabraDwtNormConSpec::Initialize() {
+}
+
 // void LeabraCtExptConSpec::Initialize() {
 //   learn_var = STD_CT;
 //   bcm_pct = 0.0f;
