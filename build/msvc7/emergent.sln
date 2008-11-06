@@ -66,8 +66,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		config.h = config.h
-		HowToMakeRelease.txt = HowToMakeRelease.txt
-		Makefile = Makefile
+		..\HowToMakeRelease.txt = ..\HowToMakeRelease.txt
+		..\Makefile = ..\Makefile
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

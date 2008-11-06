@@ -20,15 +20,15 @@ EXIT /B 2
 
 :cont2
 @cd %EMERGENTDIR%\src\temt\taiqtso
-nmake /f %EMERGENTDIR%\build\msvc7\Makefile "TARGET=%1" taiqtso_files
+nmake /f %EMERGENTDIR%\build\Makefile "TARGET=%1" taiqtso_files
 @if errorlevel 1 goto end
 
 @cd %EMERGENTDIR%\src\temt\ta
-nmake /f %EMERGENTDIR%\build\msvc7\Makefile "TARGET=%1" ta_files
+nmake /f %EMERGENTDIR%\build\Makefile "TARGET=%1" ta_files
 @if errorlevel 1 goto end
 
 @cd %EMERGENTDIR%\src\temt\css
-nmake /f %EMERGENTDIR%\build\msvc7\Makefile "TARGET=%1" css_files
+nmake /f %EMERGENTDIR%\build\Makefile "TARGET=%1" css_files
 @if errorlevel 1 goto end
 
 :end

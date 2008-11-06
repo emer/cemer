@@ -110,7 +110,7 @@ void XCalLearnSpec::Initialize() {
   d_gain = 2.5f;
   d_rev = 0.1f;
 
-  avg_init = 0.15;
+  avg_init = 0.15f;
   rnd_min_avg = -1.0f;		// turn off by default
   rnd_var = 0.1f;
 
@@ -1870,7 +1870,7 @@ void LeabraUnitSpec::GraphSpikeAlphaFun(DataTable* graph_data, bool force_alpha)
   float sumg = 0.0f;
   float x;
   if(!force_alpha && spike.rise == 0.0f && spike.decay > 0.0f) {
-    float net;
+    float net = 0.0f;
     float input;
     tmax = 20.0f;
     for(x = 0.0f; x <= tmax; x += 1.0f) {
@@ -4680,7 +4680,7 @@ void LeabraNetwork::SetLearnRule() {
     if(phase_order == MINUS_PLUS_NOTHING) {
       phase_order = MINUS_PLUS;
     }
-    maxda_stopcrit = 0.005;
+    maxda_stopcrit = 0.005f;
     min_cycles = 15;
     min_cycles_phase2 = 35;
     cycle_max = 60;
