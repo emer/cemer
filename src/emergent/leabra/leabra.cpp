@@ -1599,13 +1599,7 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraLayer* lay, LeabraNetwor
       }
     }
     else if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
-      if(bias_sp->xcal.sm_vars == XCalLearnSpec::SRAVG) { // only needed in this case
-	for(int g=0; g<u->recv.size; g++) {
-	  LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-	  if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
-	  recv_gp->Compute_SRAvg(u, do_s);
-	}
-      }
+      // nop: not needed due to no SRAVG factors here..
     }
   }
 }

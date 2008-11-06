@@ -107,6 +107,11 @@ TA_SMART_PTRS(LeabraTask);//
     code \
   } 
   
+
+// todo: if at any point CAL is dropped in favor of XCAL, then sravg_s and sravg_m can be 
+// eliminated from the connection (at considerable performance savings) and ravg_s, ravg_m 
+// added to the unit
+
 class LeabraCon : public Connection {
   // #STEM_BASE ##CAT_Leabra Leabra connection
 public:
@@ -214,7 +219,6 @@ public:
   enum SMVars {
     AVG_PROD_RS,		// use product of individual unit averages (from bias weight) for short and medium time scale, and only use the short term factor for the recv unit (sender is always medium) -- da mod only applies to recv unit..
     AVG_PROD,			// use product of individual unit averages (from bias weight) for short and medium time scale
-    SRAVG,			// use sravg terms for short and medium time scale
   };
 
   SMVars	sm_vars;	// #DEF_AVG_PROD_RS how to compute the short and medium timescale variables
@@ -422,25 +426,18 @@ public:
   /////////////////////////////////////
   // CtLeabraXCAL code
 
-  inline void C_Compute_SRAvg_cont(LeabraCon* cn, float ru_act, float su_act);
-  // accumulate sender-receiver activation product average, fully continuous version
-  inline void C_Compute_SRAvg_cont_casc(LeabraCon* cn, float ru_act, float su_act);
-  // accumulate sender-receiver activation product average, fully continuous version, cascading
   inline void C_Compute_SRAvg_m(LeabraCon* cn, float ru_act, float su_act);
-  // accumulate sender-receiver activation product average, medium time scale (trial-wise version)
+  // accumulate sender-receiver activation product average -- medium (trial-level) time scale
   inline void C_Compute_SRAvg_ms(LeabraCon* cn, float ru_act, float su_act);
-  // accumulate sender-receiver activation product average, short and medium time scale (plus phase and trial, for trial-wise version)
+  // accumulate sender-receiver activation product average -- medium (trial-level) and short (plus phase) time scales
   inline void Compute_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru, bool do_s);
-  // accumulate sender-receiver activation product average, always does medium, also s if do_s is true
+  // accumulate sender-receiver activation product average -- only for CtLeabraCAL
 
   inline void C_Init_SRAvg(LeabraCon* cn);
   // initialize sender-receiver activation product averages for trial and below 
   inline void Init_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru);
   // initialize sender-receiver activation product average (only for trial-wise mode, else just in init weights) -- called at start of trial
 
-  inline void 	C_Compute_dWt_CtLeabraXCAL_sravg(LeabraCon* cn, LeabraCon* rbias, LeabraCon* sbias,
-				 float ru_ravg_l, float sravg_s_nrm, float sravg_m_nrm);
-  // #CAT_Learning compute eXtended Contrastive Attractor Learning (XCAL) -- trial-wise version (requires normalization factors)
   inline void 	C_Compute_dWt_CtLeabraXCAL_avgprod(LeabraCon* cn, LeabraCon* rbias, LeabraCon* sbias,
 				 float ru_ravg_l, float sravg_s_nrm, float sravg_m_nrm);
   // #CAT_Learning compute eXtended Contrastive Attractor Learning (XCAL) -- trial-wise version (requires normalization factors)
@@ -2634,18 +2631,6 @@ inline void LeabraConSpec::Compute_Weights_LeabraCHL(LeabraRecvCons* cg, LeabraU
 //////////////////////////////////////////////////////////////////////////////////
 //     CtLeabra XCAL SRAvg stuff
 
-inline void LeabraConSpec::C_Compute_SRAvg_cont(LeabraCon* cn, float ru_act, float su_act) {
-  float sr = ru_act * su_act;
-  cn->sravg_s += xcal.s_dt * (sr - cn->sravg_s);
-  cn->sravg_m += xcal.m_dt * (sr - cn->sravg_m);
-}
-
-inline void LeabraConSpec::C_Compute_SRAvg_cont_casc(LeabraCon* cn, float ru_act, float su_act) {
-  // cascading updates
-  cn->sravg_s += xcal.s_dt * (ru_act * su_act - cn->sravg_s);
-  cn->sravg_m += xcal.m_dt * (cn->sravg_s - cn->sravg_m);
-}
-
 inline void LeabraConSpec::C_Compute_SRAvg_m(LeabraCon* cn, float ru_act, float su_act) {
   cn->sravg_m += ru_act * su_act;
 }
@@ -2657,48 +2642,13 @@ inline void LeabraConSpec::C_Compute_SRAvg_ms(LeabraCon* cn, float ru_act, float
 }
 
 inline void LeabraConSpec::Compute_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru, bool do_s) {
-  // todo: for spiking, need to add a syndep eq var -- currently using act b/c it is depr 
-  // and that seems to be key for making this work!
-
-  if(xcal.use_nd) {
-    if(learn_rule == CTLEABRA_CAL || xcal.avg_updt == XCalLearnSpec::TRIAL) {
-      if(do_s) {
-	CON_GROUP_LOOP(cg, C_Compute_SRAvg_ms((LeabraCon*)cg->Cn(i), ru->act_nd,
-					      ((LeabraUnit*)cg->Un(i))->act_nd));
-      }
-      else {
-	CON_GROUP_LOOP(cg, C_Compute_SRAvg_m((LeabraCon*)cg->Cn(i), ru->act_nd, 
-					     ((LeabraUnit*)cg->Un(i))->act_nd));
-      }
-    }
-    else if(xcal.avg_updt == XCalLearnSpec::CONT) {
-      CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont((LeabraCon*)cg->Cn(i), ru->act_nd,
-					      ((LeabraUnit*)cg->Un(i))->act_nd));
-    }
-    else if(xcal.avg_updt == XCalLearnSpec::CONT_CASC) {
-      CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont_casc((LeabraCon*)cg->Cn(i), ru->act_nd,
-						   ((LeabraUnit*)cg->Un(i))->act_nd));
-    }
+  if(do_s) {
+    CON_GROUP_LOOP(cg, C_Compute_SRAvg_ms((LeabraCon*)cg->Cn(i), ru->act_nd,
+					  ((LeabraUnit*)cg->Un(i))->act_nd));
   }
   else {
-    if(learn_rule == CTLEABRA_CAL || xcal.avg_updt == XCalLearnSpec::TRIAL) {
-      if(do_s) {
-	CON_GROUP_LOOP(cg, C_Compute_SRAvg_ms((LeabraCon*)cg->Cn(i), ru->act,
-					      ((LeabraUnit*)cg->Un(i))->act));
-      }
-      else {
-	CON_GROUP_LOOP(cg, C_Compute_SRAvg_m((LeabraCon*)cg->Cn(i), ru->act, 
-					     ((LeabraUnit*)cg->Un(i))->act));
-      }
-    }
-    else if(xcal.avg_updt == XCalLearnSpec::CONT) {
-      CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont((LeabraCon*)cg->Cn(i), ru->act,
-					      ((LeabraUnit*)cg->Un(i))->act));
-    }
-    else if(xcal.avg_updt == XCalLearnSpec::CONT_CASC) {
-      CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont_casc((LeabraCon*)cg->Cn(i), ru->act,
-						   ((LeabraUnit*)cg->Un(i))->act));
-    }
+    CON_GROUP_LOOP(cg, C_Compute_SRAvg_m((LeabraCon*)cg->Cn(i), ru->act_nd, 
+					 ((LeabraUnit*)cg->Un(i))->act_nd));
   }
 }
 
@@ -2715,15 +2665,6 @@ inline void LeabraConSpec::Init_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru) {
 
 //////////////////////////////////////////////////////////////////////////////////
 //     Computing dWt: CtLeabra_XCAL
-
-inline void LeabraConSpec::
-C_Compute_dWt_CtLeabraXCAL_sravg(LeabraCon* cn, LeabraCon* rbias, LeabraCon* sbias,
-				 float ru_ravg_l, float sravg_s_nrm, float sravg_m_nrm) {
-  float srm = sravg_m_nrm * cn->sravg_m;
-  float lrn = xcal.lrn_s_mix * sravg_s_nrm * cn->sravg_s + xcal.lrn_m_mix * srm;
-  float thr_p = xcal.thr_m_mix * srm + ru_ravg_l;
-  cn->dwt += cur_lrate * xcal.dWtFun(lrn, thr_p);
-}
 
 inline void LeabraConSpec::
 C_Compute_dWt_CtLeabraXCAL_avgprod(LeabraCon* cn, LeabraCon* rbias, LeabraCon* sbias,
@@ -2784,12 +2725,6 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
 	C_Compute_dWt_CtLeabraXCAL_avgprod((LeabraCon*)cg->Cn(i), rbias,
 				   (LeabraCon*)((LeabraUnit*)cg->Un(i))->bias.Cn(0),
 				   ru_avg_l, sravg_s_nrm, sravg_m_nrm));
-    }
-    else if(xcal.sm_vars == XCalLearnSpec::SRAVG) {
-      CON_GROUP_LOOP(cg,
-		     C_Compute_dWt_CtLeabraXCAL_sravg((LeabraCon*)cg->Cn(i), rbias,
-				      (LeabraCon*)((LeabraUnit*)cg->Un(i))->bias.Cn(0),
-				      ru_avg_l, sravg_s_nrm, sravg_m_nrm));
     }
   }
   else {
@@ -2887,7 +2822,7 @@ inline void LeabraConSpec::B_Compute_Weights(LeabraCon* cn, LeabraUnit* ru) {
 }
 
 inline void LeabraConSpec::B_Compute_SRAvg(LeabraCon* cn, LeabraUnit* ru, bool do_s) {
-  if(xcal.use_nd) {
+  if(learn_rule == CTLEABRA_CAL || xcal.use_nd) {
     if(learn_rule == CTLEABRA_CAL || xcal.avg_updt == XCalLearnSpec::TRIAL) {
       cn->sravg_m += ru->act_nd;
       if(do_s)
@@ -2907,19 +2842,23 @@ inline void LeabraConSpec::B_Compute_SRAvg(LeabraCon* cn, LeabraUnit* ru, bool d
     }
   }
   else {
-    if(learn_rule == CTLEABRA_CAL || xcal.avg_updt == XCalLearnSpec::TRIAL) {
-      cn->sravg_m += ru->act;
+    float ru_act = ru->act;
+    LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
+    if(rus->act_fun == LeabraUnitSpec::SPIKE)
+      ru_act *= rus->spike.eq_gain;
+    if(xcal.avg_updt == XCalLearnSpec::TRIAL) {
+      cn->sravg_m += ru_act;
       if(do_s)
-	cn->sravg_s += ru->act;
+	cn->sravg_s += ru_act;
     }
     else if(xcal.avg_updt == XCalLearnSpec::CONT) {
-      cn->sravg_s += xcal.s_dt * (ru->act - cn->sravg_s);
-      cn->sravg_m += xcal.m_dt * (ru->act - cn->sravg_m);
-      ru->ravg_l += xcal.l_dt * (ru->act - ru->ravg_l);
+      cn->sravg_s += xcal.s_dt * (ru_act - cn->sravg_s);
+      cn->sravg_m += xcal.m_dt * (ru_act - cn->sravg_m);
+      ru->ravg_l += xcal.l_dt * (ru_act - ru->ravg_l);
       // note: updating unit-level ravg_l variable here..
     }
     else if(xcal.avg_updt == XCalLearnSpec::CONT_CASC) {
-      cn->sravg_s += xcal.s_dt * (ru->act - cn->sravg_s);
+      cn->sravg_s += xcal.s_dt * (ru_act - cn->sravg_s);
       cn->sravg_m += xcal.m_dt * (cn->sravg_s - cn->sravg_m);
       ru->ravg_l += xcal.l_dt * (cn->sravg_m - ru->ravg_l);
       // note: updating unit-level ravg_l variable here..
