@@ -95,7 +95,7 @@ void XCalLearnSpec::Initialize() {
   use_eq = true;
 
   lrn_s_mix = 0.85f;
-  thr_m_mix = 0.6f;
+  thr_m_mix = 0.85f;
 
   l_dt = 0.03f;
   l_gain = 5.0f;
