@@ -1006,7 +1006,7 @@ void TdLayerSpec::Compute_Td(LeabraLayer* lay, LeabraNetwork*) {
     LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(0);
     u->dav = su->act_eq - su->act_m; // subtract current minus previous!
     u->ext = u->dav;
-    u->act_eq = u->act = u->net = u->ext;
+    u->act_eq = u->act_nd = u->act = u->net = u->ext;
     lay->dav += u->dav;
   }
   if(lay->units.leaves > 0) lay->dav /= (float)lay->units.leaves;

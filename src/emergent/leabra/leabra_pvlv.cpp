@@ -1027,7 +1027,7 @@ void PVLVDaLayerSpec::Compute_Da_SynDep(LeabraLayer* lay, LeabraNetwork* net) {
 //       }
     }
     u->ext = da.tonic_da + u->dav;
-    u->act_eq = u->act = u->net = u->ext;
+    u->act_eq = u->act_nd = u->act = u->net = u->ext;
     lay->dav += u->dav;
   }
   if(lay->units.leaves > 0) lay->dav /= (float)lay->units.leaves;
@@ -1096,7 +1096,7 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
     }
 
     u->ext = da.tonic_da + u->dav;
-    u->act_eq = u->act = u->net = u->ext;
+    u->act_eq = u->act_nd = u->act = u->net = u->ext;
     lay->dav += u->dav;
   }
   if(lay->units.leaves > 0) lay->dav /= (float)lay->units.leaves;

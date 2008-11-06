@@ -144,7 +144,7 @@ void LeabraLinUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraLayer*, LeabraInhib
   if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
     new_act += noise_sched.GetVal(net->cycle) * noise.Gen();
   }
-  u->act = u->act_eq = act_range.Clip(new_act);
+  u->act = u->act_nd = u->act_eq = act_range.Clip(new_act);
 }
 
 //////////////////////////
@@ -794,7 +794,7 @@ float ScalarValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
     avg /= sum_act;
   // set the first unit in the group to represent the value
   LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
-  u->act_eq = avg;
+  u->act_eq = u->act_nd = avg;
   u->act = 0.0f;		// very important to clamp act to 0: don't send!
   u->da = 0.0f;			// don't contribute to change in act
   return u->act_eq;
@@ -830,7 +830,7 @@ void ScalarValLayerSpec::ResetAfterClamp(LeabraLayer* lay, LeabraNetwork*) {
 	      if(ugp->size > 2) {
 		LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
 		u->act = 0.0f;		// must reset so it doesn't contribute!
-		u->act_eq = u->ext;	// avoid clamp_range!
+		u->act_eq = u->act_nd = u->ext;	// avoid clamp_range!
 	      }
 	      );
 }
@@ -1673,11 +1673,11 @@ void TwoDValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
     // set the first units in the group to represent the value
     LeabraUnit* x_u = (LeabraUnit*)ugp->FastEl(0);
     LeabraUnit* y_u = (LeabraUnit*)ugp->FastEl(1);
-    x_u->act_eq = x_avg;  x_u->act = 0.0f;  x_u->da = 0.0f;	
-    y_u->act_eq = y_avg;  y_u->act = 0.0f;  y_u->da = 0.0f;
+    x_u->act_eq = x_u->act_nd = x_avg;  x_u->act = 0.0f;  x_u->da = 0.0f;	
+    y_u->act_eq = y_u->act_nd = y_avg;  y_u->act = 0.0f;  y_u->da = 0.0f;
     for(int i=2;i<lay->un_geom.x;i++) {	// reset the rest!
       LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-      u->act_eq = u->act = 0.0f; u->da = 0.0f;
+      u->act_eq = u->act_nd = u->act = 0.0f; u->da = 0.0f;
     }
   }
   else {			// multiple items
@@ -1723,13 +1723,13 @@ void TwoDValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
       if(my_mn < mn_dist) { vi.val = -1.0f; j++; continue; } // mark with -1 so we know we skipped it
       LeabraUnit* x_u = (LeabraUnit*)ugp->FastEl(outi*2);
       LeabraUnit* y_u = (LeabraUnit*)ugp->FastEl(outi*2 + 1);
-      x_u->act_eq = x_cur;  x_u->act = 0.0f;  x_u->da = 0.0f;	
-      y_u->act_eq = y_cur;  y_u->act = 0.0f;  y_u->da = 0.0f;
+      x_u->act_eq = x_u->act_nd = x_cur;  x_u->act = 0.0f;  x_u->da = 0.0f;	
+      y_u->act_eq = y_u->act_nd = y_cur;  y_u->act = 0.0f;  y_u->da = 0.0f;
       j++; outi++;
     }
     for(int i=2 * twod.n_vals;i<lay->un_geom.x;i++) {	// reset the rest!
       LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-      u->act_eq = u->act = 0.0f; u->da = 0.0f;
+      u->act_eq = u->act_nd = u->act = 0.0f; u->da = 0.0f;
     }
   }
 }
@@ -1764,7 +1764,7 @@ void TwoDValLayerSpec::ResetAfterClamp(LeabraLayer* lay, LeabraNetwork*) {
 		for(int i=0; i<lay->un_geom.x; i++) {
 		  LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
 		  u->act = 0.0f;		// must reset so it doesn't contribute!
-		  u->act_eq = u->ext;	// avoid clamp_range!
+		  u->act_eq = u->act_nd = u->ext;	// avoid clamp_range!
 		}
 	      }
 	      );
@@ -1954,6 +1954,7 @@ void DecodeTwoDValLayerSpec::Compute_Act_impl(LeabraLayer*, Unit_Group* ug, Leab
     u->net = su->net;
     u->act = su->act;
     u->act_eq = su->act_eq;
+    u->act_nd = su->act_nd;
   }
   ReadValue(ug, net);		// always read out the value
 }

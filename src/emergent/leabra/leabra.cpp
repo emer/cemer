@@ -92,7 +92,7 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 void XCalLearnSpec::Initialize() {
   avg_updt = TRIAL;
   sm_vars = AVG_PROD_RS;
-  use_eq = true;
+  use_nd = true;
 
   lrn_s_mix = 0.85f;
   thr_m_mix = 0.85f;
@@ -830,6 +830,7 @@ void LeabraUnitSpec::Init_Acts(LeabraUnit* ru, LeabraLayer*) {
   ru->da = 0.0f;
   ru->act = 0.0f;
   ru->act_eq = 0.0f;
+  ru->act_nd = 0.0f;
   ru->act_p = ru->act_m = ru->act_dif = 0.0f;
   ru->act_m2 = ru->act_p2 = ru->act_dif2 = 0.0f;
   ru->dav = 0.0f;
@@ -979,6 +980,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraLayer*, LeabraNetwork*
 void LeabraUnitSpec::Compute_HardClamp(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork*) {
   u->net = u->prv_net = u->ext * lay->stm_gain;
   u->act_eq = clamp_range.Clip(u->ext);
+  u->act_nd = u->act_eq;
   if(act_fun == SPIKE)
     u->act = spike.hard_gain * u->act_eq;
   else
@@ -997,6 +999,7 @@ void LeabraUnitSpec::Compute_HardClampNoClip(LeabraUnit* u, LeabraLayer* lay, Le
   u->net = u->prv_net = u->ext * lay->stm_gain;
   //  u->act_eq = clamp_range.Clip(u->ext);
   u->act_eq = u->ext;
+  u->act_nd = u->act_eq;
   if(act_fun == SPIKE)
     u->act = spike.hard_gain * u->act_eq;
   else
@@ -1268,7 +1271,7 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraLayer* lay, Leabr
   }
 
   if(depress.on) {		     // synaptic depression
-    u->act_eq = act_range.Clip(new_act); // eq is non-discounted activation!!! solves tons of probs
+    u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
     new_act *= u->spk_amp;
     u->spk_amp += -new_act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
     if(u->spk_amp < 0.0f) 			u->spk_amp = 0.0f;
@@ -1280,8 +1283,9 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraLayer* lay, Leabr
     new_act += noise_sched.GetVal(net->cycle) * noise.Gen();
   }
   u->act = act_range.Clip(new_act);
+  u->act_eq =u->act;
   if(!depress.on)
-    u->act_eq = u->act;
+    u->act_nd = u->act_eq;
 }
 
 void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
@@ -1294,24 +1298,28 @@ void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraLayer* lay, Leab
     u->act = 0.0f;
   }
 
-  float old_eq = u->act_eq / spike.eq_gain;
-  float new_eq;
+  float old_nd = u->act_nd / spike.eq_gain;
+  float new_nd;
   if(spike.eq_dt > 0.0f) {
-    new_eq = act_range.Clip(spike.eq_gain * ((1.0f - spike.eq_dt) * old_eq + spike.eq_dt * u->act));
+    new_nd = act_range.Clip(spike.eq_gain * ((1.0f - spike.eq_dt) * old_nd + spike.eq_dt * u->act));
   }
-  else {
+  else {			// increment by phase
     if(net->cycle > 0)
-      old_eq *= (float)net->cycle;
-    new_eq = act_range.Clip(spike.eq_gain * (old_eq + u->act) / (float)(net->cycle+1));
+      old_nd *= (float)net->cycle;
+    new_nd = act_range.Clip(spike.eq_gain * (old_nd + u->act) / (float)(net->cycle+1));
   }
-  u->da = new_eq - u->act_eq;	// da is on equilibrium activation
-  u->act_eq = new_eq;
+  u->da = new_nd - u->act_nd;	// da is on equilibrium activation
+  u->act_nd = new_nd;
 
   if(depress.on) {
     u->act *= u->spk_amp;	// after eq
     u->spk_amp += -u->act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
     if(u->spk_amp < 0.0f) 			u->spk_amp = 0.0f;
     else if(u->spk_amp > depress.max_amp)	u->spk_amp = depress.max_amp;
+    u->act_eq = u->spk_amp * u->act_nd; // act_eq is depressed rate code, nd is non-depressed!
+  }
+  else {
+    u->act_eq = u->act_nd;	// eq = nd
   }
 }
 
@@ -1382,6 +1390,7 @@ void LeabraUnitSpec::PhaseInit(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* n
 void LeabraUnitSpec::DecayPhase(LeabraUnit* u, LeabraLayer*, LeabraNetwork*, float decay) {
   u->v_m -= decay * (u->v_m - v_m_init.mean);
   u->act -= decay * u->act;
+  u->act_nd -= decay * u->act_nd;
   u->act_eq -= decay * u->act_eq;
   u->prv_net -= decay * u->prv_net;
   u->prv_g_i -= decay * u->prv_g_i;
@@ -1463,15 +1472,15 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* th
   switch(net->phase_order) {
   case LeabraNetwork::MINUS_PLUS:
     if(no_plus_testing) {
-      u->act_m = u->act_p = u->act_eq;
+      u->act_m = u->act_p = u->act_nd;
       u->act_dif = 0.0f;
       Compute_ActTimeAvg(u, lay, thr, net);
     }
     else {
       if(net->phase == LeabraNetwork::MINUS_PHASE)
-	u->act_m = u->act_eq;
+	u->act_m = u->act_nd;
       else {
-	u->act_p = u->act_eq;
+	u->act_p = u->act_nd;
 	u->act_dif = u->act_p - u->act_m;
 	Compute_DaMod_PlusPost(u,lay,thr,net);
 	Compute_ActTimeAvg(u, lay, thr, net);
@@ -1480,23 +1489,23 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* th
     break;
   case LeabraNetwork::PLUS_MINUS:
     if(no_plus_testing) {
-      u->act_m = u->act_p = u->act_eq;
+      u->act_m = u->act_p = u->act_nd;
       u->act_dif = 0.0f;
       Compute_ActTimeAvg(u, lay, thr, net);
     }
     else {
       if(net->phase == LeabraNetwork::MINUS_PHASE) {
-	u->act_m = u->act_eq;
+	u->act_m = u->act_nd;
 	u->act_dif = u->act_p - u->act_m;
       }
       else {
-	u->act_p = u->act_eq;
+	u->act_p = u->act_nd;
 	Compute_ActTimeAvg(u, lay, thr, net);
       }
     }
     break;
   case LeabraNetwork::PLUS_ONLY:
-    u->act_m = u->act_p = u->act_eq;
+    u->act_m = u->act_p = u->act_nd;
     u->act_dif = 0.0f;
     Compute_ActTimeAvg(u, lay, thr, net);
     break;
@@ -1504,46 +1513,46 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* th
   case LeabraNetwork::MINUS_PLUS_MINUS:
     // don't use actual phase values because pluses might be minuses with testing
     if(net->phase_no == 0) {
-      u->act_m = u->act_eq;
+      u->act_m = u->act_nd;
     }
     else if(net->phase_no == 1) {
-      u->act_p = u->act_eq;
+      u->act_p = u->act_nd;
       u->act_dif = u->act_p - u->act_m;
       if(no_plus_testing) {
-	u->act_m = u->act_eq;	// update act_m because it is actually another test case!
+	u->act_m = u->act_nd;	// update act_m because it is actually another test case!
       }
       Compute_DaMod_PlusPost(u,lay,thr,net);
       Compute_ActTimeAvg(u, lay, thr, net);
     }
     else {
-      u->act_m2 = u->act_eq;
+      u->act_m2 = u->act_nd;
       u->act_dif2 = u->act_p - u->act_m2;
     }
     break;
   case LeabraNetwork::PLUS_NOTHING:
     // don't use actual phase values because pluses might be minuses with testing
     if(net->phase_no == 0) {
-      u->act_p = u->act_eq;
+      u->act_p = u->act_nd;
       Compute_ActTimeAvg(u, lay, thr, net);
     }
     else {
-      u->act_m = u->act_eq;
+      u->act_m = u->act_nd;
       u->act_dif = u->act_p - u->act_m;
     }
     break;
   case LeabraNetwork::MINUS_PLUS_PLUS:
     // don't use actual phase values because pluses might be minuses with testing
     if(net->phase_no == 0) {
-      u->act_m = u->act_eq;
+      u->act_m = u->act_nd;
     }
     else if(net->phase_no == 1) {
-      u->act_p = u->act_eq;
+      u->act_p = u->act_nd;
       Compute_DaMod_PlusPost(u,lay,thr,net);
       Compute_ActTimeAvg(u, lay, thr, net);
       u->act_dif = u->act_p - u->act_m;
     }
     else {
-      u->act_p2 = u->act_eq;
+      u->act_p2 = u->act_nd;
       u->act_dif2 = u->act_p2 - u->act_p;
     }
     break;
@@ -1551,20 +1560,20 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* th
   case LeabraNetwork::MINUS_PLUS_PLUS_MINUS:
     // don't use actual phase values because pluses might be minuses with testing
     if(net->phase_no == 0) {
-      u->act_m = u->act_eq;
+      u->act_m = u->act_nd;
     }
     else if(net->phase_no == 1) {
-      u->act_p = u->act_eq;
+      u->act_p = u->act_nd;
       u->act_dif = u->act_p - u->act_m;
       Compute_DaMod_PlusPost(u,lay,thr,net);
       Compute_ActTimeAvg(u, lay, thr, net);
     }
     else if(net->phase_no == 2) {
-      u->act_p2 = u->act_eq;
+      u->act_p2 = u->act_nd;
       u->act_dif2 = u->act_p2 - u->act_p;
     }
     else {
-      u->act_m2 = u->act_eq;
+      u->act_m2 = u->act_nd;
       u->act_dif2 = u->act_p2 - u->act_m2;
     }
     break;
@@ -1921,6 +1930,7 @@ void LeabraUnit::Initialize() {
   bias.con_type = &TA_LeabraCon;
 
   act_eq = 0.0f;
+  act_nd = 0.0f;
   act_avg = 0.15f;
   ravg_l = 0.15f;
   act_p = act_m = act_dif = 0.0f;
@@ -1970,6 +1980,7 @@ void LeabraUnit::GetInSubGp() {
 
 void LeabraUnit::Copy_(const LeabraUnit& cp) {
   act_eq = cp.act_eq;
+  act_nd = cp.act_nd;
   act_avg = cp.act_avg;
   ravg_l = cp.ravg_l;
   act_m = cp.act_m;

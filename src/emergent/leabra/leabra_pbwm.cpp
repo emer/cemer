@@ -1565,7 +1565,7 @@ void PFCOutLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
       LeabraUnit* pfcu = (LeabraUnit*)pfcgp->FastEl(i);
       
       ru->act = gain * pfcu->act;
-      ru->act_eq = ru->act;
+      ru->act_eq = ru->act_nd = ru->act;
       ru->da = 0.0f;		// I'm fully settled!
       ru->AddToActBuf(rus->syn_delay);
     }

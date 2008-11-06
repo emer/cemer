@@ -218,7 +218,7 @@ public:
   };
 
   SMVars	sm_vars;	// #DEF_AVG_PROD_RS how to compute the short and medium timescale variables
-  bool		use_eq;		// use the act_eq variables (non-depressed) for computing sravg/ravg terms (else use raw depressed acts)
+  bool		use_nd;		// use the act_nd variables (non-depressed) for computing sravg/ravg terms (else use raw act, which is raw spikes in spiking mode, and subject to depression if in place)
   float		lrn_s_mix;	// #DEF_0.85 how much the short time-scale (plus phase) sravg contributes to sravg term that drives learning -- the rest (1-s_mix) is medium time-scale (trial) sravg -- in addition to general recency effects, s_pct can also reflect dopamine and other neuromodulatory factors
   float		lrn_m_mix;	// #READ_ONLY 1-lrn_s_mix -- amount that sravg_m contributes to learning
   float		thr_m_mix;	// #DEF_0.9 how much the medium time-scale (trial) sravg contributes to potentiation threshold -- the long time-scale (epoch) ravg is then 1-thr_m_mix -- when lrn_s_mix is high, and this is high, the result is an error-driven learning dynamic (CAL is lrn_s_mix = 1, thr_m_mix = 1, and d_rev = 0.00001)
@@ -1145,13 +1145,14 @@ class LEABRA_API LeabraUnit : public Unit {
 INHERITED(Unit)
 public:
   float		act_eq;		// #CAT_Activation rate-code equivalent activity value (time-averaged spikes or just act)
+  float		act_nd;		// #CAT_Activation non-depressed rate-code equivalent activity value (time-averaged spikes or just act) -- used for final phase-based variables used in learning and stats
   float		act_avg;	// #CAT_Activation average activation (of final plus phase activation state) over long time intervals (dt = act.avg_dt)
   float		ravg_l;		// #CAT_Activation long time-scale average of medium-time scale (trial level) activation (as computed in the bias connection and spec) for the purposes of learning based on receiver average activations in XCAL algorithm
-  float		act_m;		// #CAT_Activation minus_phase activation, set after settling, used for learning
-  float		act_p;		// #CAT_Activation plus_phase activation, set after settling, used for learning
+  float		act_m;		// #CAT_Activation minus_phase activation (act_nd), set after settling, used for learning and performance stats 
+  float		act_p;		// #CAT_Activation plus_phase activation (act_nd), set after settling, used for learning and performance stats
   float		act_dif;	// #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
-  float		act_m2;		// #CAT_Activation second minus_phase activation (e.g., nothing phase), set after settling, used for learning
-  float		act_p2;		// #CAT_Activation second plus_phase activation, set after settling, used for learning
+  float		act_m2;		// #CAT_Activation second minus_phase (e.g., nothing phase) activation (act_nd), set after settling, used for learning and performance stats
+  float		act_p2;		// #CAT_Activation second plus_phase activation (act_nd), set after settling, used for learning and performance stats
   float		act_dif2;	// #CAT_Activation difference between second set of phases, where relevant (e.g., act_p - act_m2 for MINUS_PLUS_NOTHING, or act_p2 - act_p for MINUS_PLUS_PLUS)
   float		da;		// #NO_SAVE #CAT_Activation delta activation: change in act from one cycle to next, used to stop settling
   VChanBasis	vcb;		// #CAT_Activation voltage-gated channel basis variables
@@ -2659,24 +2660,24 @@ inline void LeabraConSpec::Compute_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru, boo
   // todo: for spiking, need to add a syndep eq var -- currently using act b/c it is depr 
   // and that seems to be key for making this work!
 
-  if(xcal.use_eq) {
+  if(xcal.use_nd) {
     if(learn_rule == CTLEABRA_CAL || xcal.avg_updt == XCalLearnSpec::TRIAL) {
       if(do_s) {
-	CON_GROUP_LOOP(cg, C_Compute_SRAvg_ms((LeabraCon*)cg->Cn(i), ru->act_eq,
-					      ((LeabraUnit*)cg->Un(i))->act_eq));
+	CON_GROUP_LOOP(cg, C_Compute_SRAvg_ms((LeabraCon*)cg->Cn(i), ru->act_nd,
+					      ((LeabraUnit*)cg->Un(i))->act_nd));
       }
       else {
-	CON_GROUP_LOOP(cg, C_Compute_SRAvg_m((LeabraCon*)cg->Cn(i), ru->act_eq, 
-					     ((LeabraUnit*)cg->Un(i))->act_eq));
+	CON_GROUP_LOOP(cg, C_Compute_SRAvg_m((LeabraCon*)cg->Cn(i), ru->act_nd, 
+					     ((LeabraUnit*)cg->Un(i))->act_nd));
       }
     }
     else if(xcal.avg_updt == XCalLearnSpec::CONT) {
-      CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont((LeabraCon*)cg->Cn(i), ru->act_eq,
-					      ((LeabraUnit*)cg->Un(i))->act_eq));
+      CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont((LeabraCon*)cg->Cn(i), ru->act_nd,
+					      ((LeabraUnit*)cg->Un(i))->act_nd));
     }
     else if(xcal.avg_updt == XCalLearnSpec::CONT_CASC) {
-      CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont_casc((LeabraCon*)cg->Cn(i), ru->act_eq,
-						   ((LeabraUnit*)cg->Un(i))->act_eq));
+      CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont_casc((LeabraCon*)cg->Cn(i), ru->act_nd,
+						   ((LeabraUnit*)cg->Un(i))->act_nd));
     }
   }
   else {
@@ -2886,20 +2887,20 @@ inline void LeabraConSpec::B_Compute_Weights(LeabraCon* cn, LeabraUnit* ru) {
 }
 
 inline void LeabraConSpec::B_Compute_SRAvg(LeabraCon* cn, LeabraUnit* ru, bool do_s) {
-  if(xcal.use_eq) {
+  if(xcal.use_nd) {
     if(learn_rule == CTLEABRA_CAL || xcal.avg_updt == XCalLearnSpec::TRIAL) {
-      cn->sravg_m += ru->act_eq;
+      cn->sravg_m += ru->act_nd;
       if(do_s)
-	cn->sravg_s += ru->act_eq;
+	cn->sravg_s += ru->act_nd;
     }
     else if(xcal.avg_updt == XCalLearnSpec::CONT) {
-      cn->sravg_s += xcal.s_dt * (ru->act_eq - cn->sravg_s);
-      cn->sravg_m += xcal.m_dt * (ru->act_eq - cn->sravg_m);
-      ru->ravg_l += xcal.l_dt * (ru->act_eq - ru->ravg_l);
+      cn->sravg_s += xcal.s_dt * (ru->act_nd - cn->sravg_s);
+      cn->sravg_m += xcal.m_dt * (ru->act_nd - cn->sravg_m);
+      ru->ravg_l += xcal.l_dt * (ru->act_nd - ru->ravg_l);
       // note: updating unit-level ravg_l variable here..
     }
     else if(xcal.avg_updt == XCalLearnSpec::CONT_CASC) {
-      cn->sravg_s += xcal.s_dt * (ru->act_eq - cn->sravg_s);
+      cn->sravg_s += xcal.s_dt * (ru->act_nd - cn->sravg_s);
       cn->sravg_m += xcal.m_dt * (cn->sravg_s - cn->sravg_m);
       ru->ravg_l += xcal.l_dt * (cn->sravg_m - ru->ravg_l);
       // note: updating unit-level ravg_l variable here..
