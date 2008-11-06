@@ -222,7 +222,7 @@ public:
   };
 
   SMVars	sm_vars;	// #DEF_AVG_PROD_RS how to compute the short and medium timescale variables
-  bool		use_nd;		// use the act_nd variables (non-depressed) for computing sravg/ravg terms (else use raw act, which is raw spikes in spiking mode, and subject to depression if in place)
+  bool		use_nd;		// #DEF_false use the act_nd variables (non-depressed) for computing sravg/ravg terms (else use raw act, which is raw spikes in spiking mode, and subject to depression if in place)
   float		lrn_s_mix;	// #DEF_0.85 how much the short time-scale (plus phase) sravg contributes to sravg term that drives learning -- the rest (1-s_mix) is medium time-scale (trial) sravg -- in addition to general recency effects, s_pct can also reflect dopamine and other neuromodulatory factors
   float		lrn_m_mix;	// #READ_ONLY 1-lrn_s_mix -- amount that sravg_m contributes to learning
   float		thr_m_mix;	// #DEF_0.9 how much the medium time-scale (trial) sravg contributes to potentiation threshold -- the long time-scale (epoch) ravg is then 1-thr_m_mix -- when lrn_s_mix is high, and this is high, the result is an error-driven learning dynamic (CAL is lrn_s_mix = 1, thr_m_mix = 1, and d_rev = 0.00001)
@@ -2922,12 +2922,12 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
     float lrn = xcal.lrn_s_mix * rlay->sravg_s_nrm * cn->sravg_s +
       xcal.lrn_m_mix * rlay->sravg_m_nrm * cn->sravg_m;
     float thr_p = xcal.thr_m_mix * rlay->sravg_m_nrm * cn->sravg_m +
-      xcal.l_mult * ru->ravg_l;
+      xcal.thr_l_mix * ru->ravg_l; // note: not using l_gain here -- defaults to 1
     dw = xcal.dWtFun(lrn, thr_p);
   }
   else {
     float lrn = xcal.lrn_s_mix * cn->sravg_s + xcal.lrn_m_mix * cn->sravg_m;
-    float thr_p = xcal.thr_m_mix * cn->sravg_m + xcal.l_mult * ru->ravg_l;
+    float thr_p = xcal.thr_m_mix * cn->sravg_m + xcal.thr_l_mix * ru->ravg_l;
     dw = xcal.dWtFun(lrn, thr_p);
   }
   if(fabsf(dw) >= dwt_thresh)

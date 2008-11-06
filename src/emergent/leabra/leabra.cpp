@@ -92,7 +92,7 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 void XCalLearnSpec::Initialize() {
   avg_updt = TRIAL;
   sm_vars = AVG_PROD_RS;
-  use_nd = true;
+  use_nd = false;
 
   lrn_s_mix = 0.85f;
   thr_m_mix = 0.85f;
@@ -2214,6 +2214,17 @@ void LeabraLayerSpec::InitLinks() {
 
 bool LeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   bool rval = true;
+
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+  if(net && net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
+    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
+    if(lay->CheckError(us->opt_thresh.learn > 0.0f, quiet, rval,
+		       "LeabraUnitSpec opt_thresh.learn must be -1 for CTLEABRA_XCAL -- I just set it for you in spec:", us->name)) {
+      us->SetUnique("opt_thresh", true);
+      us->opt_thresh.learn = -1.0f;
+    }
+  }
+
   if(lay->CheckError(!lay->projections.el_base->InheritsFrom(&TA_LeabraPrjn), quiet, rval,
 		"does not have LeabraPrjn projection base type!",
 		"project must be updated and projections remade"))
