@@ -6,12 +6,12 @@ INCLUDE = "-I$(EMERGENTDIR)\src\temt\ta" "-I$(EMERGENTDIR)\src\temt\ta\ios-g++-3
   "-I$(QTDIR)/include/QtCore" "-I$(QTDIR)/include/QtGui" \
   "-I$(QTDIR)/include/QtNetwork" "-I$(QTDIR)/include/QtOpenGL" \
   "-I$(QTDIR)/include/QtXml" "-I$(COINDIR)/include/Inventor" \
-  "-I$(EMERGENTDIR)\build\msvc7" "-I$(EMERGENTDIR)\build\msvc7\include" \
-  "-I$(VCDIR)\Vc7\include" "-I$(ODEDIR)\include"
+  "-I$(EMERGENT_VC_DIR)" "-I$(EMERGENT_VC_DIR)\include" \
+  "-I$(MSVCDIR)\include"
 CD = cd   
 MOC = $(QTDIR)\bin\moc $(INCLUDE)
 #MAKETA = $(EMERGENTDIR)\build\msvc7\maketa\Debug\maketa.exe -v1
-MAKETA = $(EMERGENTDIR)\build\msvc7\bin\maketa.exe 
+MAKETA = $(EMERGENT_VC_DIR)\bin\maketa.exe 
 
 
 all: maketa_files moc_files
@@ -117,6 +117,7 @@ TA_HEADS_GUI =\
 	$(EMERGENTDIR)/src/temt/ta/ta_qtclassbrowse.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_qtgroup.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_seledit_qt.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_userdata_qt.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_program_qt.h
 
 TA_HEADS_TAMISC =\
@@ -130,7 +131,7 @@ TA_HEADS =\
 	$(EMERGENTDIR)/src/temt/ta/ios-g++-3.1/iostream.h \
 	$(EMERGENTDIR)/src/temt/ta/ios-g++-3.1/fstream.h \
 	$(EMERGENTDIR)/src/temt/ta/ios-g++-3.1/sstream.h \
-	$(EMERGENTDIR)/build/msvc7/config.h \
+	$(EMERGENT_VC_DIR)/config.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_global.h \
 	$(EMERGENTDIR)/src/temt/taiqtso/igeometry.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_def.h \
@@ -199,6 +200,7 @@ ta_mocs: \
   ta_qtviewer.moc.cpp \
   ta_qtgroup.moc.cpp \
   ta_seledit_qt.moc.cpp \
+  ta_userdata_qt.moc.cpp \
   ta_server.moc.cpp \
   ta_type.moc.cpp \
   ta_virtenv_qtso.moc.cpp
@@ -267,6 +269,9 @@ ta_server.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_server.h
 	$(MOC) %s -o $@
 
 ta_type.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_type.h
+	$(MOC) %s -o $@
+
+ta_userdata_qt.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_userdata_qt.h
 	$(MOC) %s -o $@
 
 ta_virtenv_qtso.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_virtenv_qtso.h
