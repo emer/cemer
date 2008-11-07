@@ -1,0 +1,72 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "maketa", "maketa\maketa.vcproj", "{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "temt", "temt\temt.vcproj", "{8469AE41-9D63-4819-B0F0-C30849686581}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC} = {FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "emergent", "emergent\emergent.vcproj", "{CE66086C-AB6B-42B5-916F-4060AC936B55}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A09A57A9-A2D6-4BEB-8CE5-90D611B6FC75} = {A09A57A9-A2D6-4BEB-8CE5-90D611B6FC75}
+		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC} = {FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "emergent_bin", "emergent_bin\emergent_bin.vcproj", "{02BA2146-D457-443E-8B50-997AD5D45CA0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC} = {FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "css_bin", "css_bin\css_bin.vcproj", "{A09A57A9-A2D6-4BEB-8CE5-90D611B6FC75}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8469AE41-9D63-4819-B0F0-C30849686581} = {8469AE41-9D63-4819-B0F0-C30849686581}
+		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC} = {FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}
+	EndProjectSection
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "setup_bin", "setup_bin\setup_bin.vdproj", "{1D834B4E-E857-4387-8074-2D231663F4B7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HelloWorld", "plugins\HelloWorld\HelloWorld.vcproj", "{93CBAF00-4892-4660-8AE0-105317D6833D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CAA115FF-1E53-4081-BE28-3BE7864BF419}"
+	ProjectSection(SolutionItems) = preProject
+		config.h = config.h
+		..\HowToMakeRelease.txt = ..\HowToMakeRelease.txt
+		..\Makefile = ..\Makefile
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}.Debug|Win32.ActiveCfg = Release|Win32
+		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}.Debug|Win32.Build.0 = Release|Win32
+		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}.Release|Win32.ActiveCfg = Release|Win32
+		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}.Release|Win32.Build.0 = Release|Win32
+		{8469AE41-9D63-4819-B0F0-C30849686581}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8469AE41-9D63-4819-B0F0-C30849686581}.Debug|Win32.Build.0 = Debug|Win32
+		{8469AE41-9D63-4819-B0F0-C30849686581}.Release|Win32.ActiveCfg = Release|Win32
+		{8469AE41-9D63-4819-B0F0-C30849686581}.Release|Win32.Build.0 = Release|Win32
+		{CE66086C-AB6B-42B5-916F-4060AC936B55}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CE66086C-AB6B-42B5-916F-4060AC936B55}.Debug|Win32.Build.0 = Debug|Win32
+		{CE66086C-AB6B-42B5-916F-4060AC936B55}.Release|Win32.ActiveCfg = Release|Win32
+		{CE66086C-AB6B-42B5-916F-4060AC936B55}.Release|Win32.Build.0 = Release|Win32
+		{02BA2146-D457-443E-8B50-997AD5D45CA0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{02BA2146-D457-443E-8B50-997AD5D45CA0}.Debug|Win32.Build.0 = Debug|Win32
+		{02BA2146-D457-443E-8B50-997AD5D45CA0}.Release|Win32.ActiveCfg = Release|Win32
+		{02BA2146-D457-443E-8B50-997AD5D45CA0}.Release|Win32.Build.0 = Release|Win32
+		{A09A57A9-A2D6-4BEB-8CE5-90D611B6FC75}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A09A57A9-A2D6-4BEB-8CE5-90D611B6FC75}.Debug|Win32.Build.0 = Debug|Win32
+		{A09A57A9-A2D6-4BEB-8CE5-90D611B6FC75}.Release|Win32.ActiveCfg = Release|Win32
+		{A09A57A9-A2D6-4BEB-8CE5-90D611B6FC75}.Release|Win32.Build.0 = Release|Win32
+		{1D834B4E-E857-4387-8074-2D231663F4B7}.Debug|Win32.ActiveCfg = Debug
+		{1D834B4E-E857-4387-8074-2D231663F4B7}.Release|Win32.ActiveCfg = Release
+		{93CBAF00-4892-4660-8AE0-105317D6833D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{93CBAF00-4892-4660-8AE0-105317D6833D}.Release|Win32.ActiveCfg = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

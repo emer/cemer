@@ -25,7 +25,7 @@
 #define TA_USE_QFORMLAYOUT
 
 #ifndef __MAKETA__
-# if defined(_MSC_VER) && defined (_WIN64)
+# if defined(_MSC_VER) //&& defined (_WIN64)
 #   define __restrict
 # endif
 # include <stdlib.h>
