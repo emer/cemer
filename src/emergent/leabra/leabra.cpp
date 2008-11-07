@@ -91,11 +91,11 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   avg_updt = TRIAL;
-  sm_vars = AVG_PROD_RS;
+  lrn_var = AVG_PROD_RS;
   use_nd = false;
 
   lrn_s_mix = 0.85f;
-  thr_m_mix = 0.85f;
+  thr_m_mix = 0.9f;
 
   l_dt = 0.03f;
   l_gain = 5.0f;
@@ -1599,7 +1599,13 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraLayer* lay, LeabraNetwor
       }
     }
     else if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
-      // nop: not needed due to no SRAVG factors here..
+      for(int g=0; g<u->recv.size; g++) {
+	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+	if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+	if(cs->xcal.lrn_var != XCalLearnSpec::CAL) continue;
+	recv_gp->Compute_SRAvg(u, do_s);
+      }
     }
   }
 }
@@ -2222,6 +2228,14 @@ bool LeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 		       "LeabraUnitSpec opt_thresh.learn must be -1 for CTLEABRA_XCAL -- I just set it for you in spec:", us->name)) {
       us->SetUnique("opt_thresh", true);
       us->opt_thresh.learn = -1.0f;
+    }
+  }
+
+  if(net && net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) {
+    if(lay->CheckError(decay.phase == 1.0f, quiet, rval,
+		       "LeabraLayerSpec decay.phase should be 0 or small for for CTLEABRA_X/CAL -- I just set it to 0 for you in spec:", name)) {
+      SetUnique("decay", true);
+      decay.phase = 0.0f;
     }
   }
 
@@ -4489,8 +4503,8 @@ void CtTrialTiming::UpdateAfterEdit_impl() {
 void CtSRAvgSpec::Initialize() {
   start = 30;
   end = 1;
-  interval = 5;
-  plus_s_st = 10;
+  interval = 1;
+  plus_s_st = 18;
 }
 
 void CtSineInhibMod::Initialize() {

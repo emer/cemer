@@ -216,12 +216,13 @@ public:
     NO_NORM,			// don't normalize ravg_l value for learning
   };
 
-  enum SMVars {
+  enum LearnVar {
     AVG_PROD_RS,		// use product of individual unit averages (from bias weight) for short and medium time scale, and only use the short term factor for the recv unit (sender is always medium) -- da mod only applies to recv unit..
     AVG_PROD,			// use product of individual unit averages (from bias weight) for short and medium time scale
+    CAL,			// use standard contrastive attractor learning rule -- good for output layers because the homeostasis factor in XCAL which may not be consistent with the statistics of the output units
   };
 
-  SMVars	sm_vars;	// #DEF_AVG_PROD_RS how to compute the short and medium timescale variables
+  LearnVar	lrn_var;	// #DEF_AVG_PROD_RS learning rule -- for xcal how to compute the short and medium timescale variables, or CAL for output layers or comparison purposes (can also be used for bias weights)
   bool		use_nd;		// #DEF_false use the act_nd variables (non-depressed) for computing sravg/ravg terms (else use raw act, which is raw spikes in spiking mode, and subject to depression if in place)
   float		lrn_s_mix;	// #DEF_0.85 how much the short time-scale (plus phase) sravg contributes to sravg term that drives learning -- the rest (1-s_mix) is medium time-scale (trial) sravg -- in addition to general recency effects, s_pct can also reflect dopamine and other neuromodulatory factors
   float		lrn_m_mix;	// #READ_ONLY 1-lrn_s_mix -- amount that sravg_m contributes to learning
@@ -2714,17 +2715,22 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
 
     float sravg_s_nrm = rlay->sravg_s_nrm;
     float sravg_m_nrm = rlay->sravg_m_nrm;
-    if(xcal.sm_vars == XCalLearnSpec::AVG_PROD_RS) {
+    if(xcal.lrn_var == XCalLearnSpec::AVG_PROD_RS) {
       CON_GROUP_LOOP(cg,
 	C_Compute_dWt_CtLeabraXCAL_avgprod_rs((LeabraCon*)cg->Cn(i), rbias,
 				      (LeabraCon*)((LeabraUnit*)cg->Un(i))->bias.Cn(0),
 				      ru_avg_l, sravg_s_nrm, sravg_m_nrm));
     }
-    else if(xcal.sm_vars == XCalLearnSpec::AVG_PROD) {
+    else if(xcal.lrn_var == XCalLearnSpec::AVG_PROD) {
       CON_GROUP_LOOP(cg,
 	C_Compute_dWt_CtLeabraXCAL_avgprod((LeabraCon*)cg->Cn(i), rbias,
 				   (LeabraCon*)((LeabraUnit*)cg->Un(i))->bias.Cn(0),
 				   ru_avg_l, sravg_s_nrm, sravg_m_nrm));
+    }
+    else if(xcal.lrn_var == XCalLearnSpec::CAL) {
+      CON_GROUP_LOOP(cg,
+		     C_Compute_dWt_CtLeabraCAL((LeabraCon*)cg->Cn(i),
+					       rlay->sravg_s_nrm, rlay->sravg_m_nrm));
     }
   }
   else {
@@ -2884,11 +2890,16 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit*
 						      LeabraLayer* rlay) {
   float dw;
   if(xcal.avg_updt == XCalLearnSpec::TRIAL) {
-    float lrn = xcal.lrn_s_mix * rlay->sravg_s_nrm * cn->sravg_s +
-      xcal.lrn_m_mix * rlay->sravg_m_nrm * cn->sravg_m;
-    float thr_p = xcal.thr_m_mix * rlay->sravg_m_nrm * cn->sravg_m +
-      xcal.thr_l_mix * ru->ravg_l; // note: not using l_gain here -- defaults to 1
-    dw = xcal.dWtFun(lrn, thr_p);
+    if(xcal.lrn_var == XCalLearnSpec::CAL) {
+      dw = (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
+    }
+    else {
+      float lrn = xcal.lrn_s_mix * rlay->sravg_s_nrm * cn->sravg_s +
+	xcal.lrn_m_mix * rlay->sravg_m_nrm * cn->sravg_m;
+      float thr_p = xcal.thr_m_mix * rlay->sravg_m_nrm * cn->sravg_m +
+	xcal.thr_l_mix * ru->ravg_l; // note: not using l_gain here -- defaults to 1
+      dw = xcal.dWtFun(lrn, thr_p);
+    }
   }
   else {
     float lrn = xcal.lrn_s_mix * cn->sravg_s + xcal.lrn_m_mix * cn->sravg_m;
@@ -2900,7 +2911,8 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit*
 
 inline void LeabraConSpec::B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
 						     LeabraLayer* rlay) {
-  cn->dwt += cur_lrate * (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
+  float dw = (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
+  cn->dwt += cur_lrate * dw;
 }
 
 
@@ -2919,11 +2931,16 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
 						      LeabraLayer* rlay) {
   float dw;
   if(xcal.avg_updt == XCalLearnSpec::TRIAL) {
-    float lrn = xcal.lrn_s_mix * rlay->sravg_s_nrm * cn->sravg_s +
-      xcal.lrn_m_mix * rlay->sravg_m_nrm * cn->sravg_m;
-    float thr_p = xcal.thr_m_mix * rlay->sravg_m_nrm * cn->sravg_m +
-      xcal.thr_l_mix * ru->ravg_l; // note: not using l_gain here -- defaults to 1
-    dw = xcal.dWtFun(lrn, thr_p);
+    if(xcal.lrn_var == XCalLearnSpec::CAL) {
+      dw = (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
+    }
+    else {
+      float lrn = xcal.lrn_s_mix * rlay->sravg_s_nrm * cn->sravg_s +
+	xcal.lrn_m_mix * rlay->sravg_m_nrm * cn->sravg_m;
+      float thr_p = xcal.thr_m_mix * rlay->sravg_m_nrm * cn->sravg_m +
+	xcal.thr_l_mix * ru->ravg_l; // note: not using l_gain here -- defaults to 1
+      dw = xcal.dWtFun(lrn, thr_p);
+    }
   }
   else {
     float lrn = xcal.lrn_s_mix * cn->sravg_s + xcal.lrn_m_mix * cn->sravg_m;
@@ -2936,7 +2953,7 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
 
 inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
 						     LeabraLayer* rlay) {
-  float dw = cur_lrate * (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
+  float dw = (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
   if(fabsf(dw) >= dwt_thresh)
     cn->dwt += cur_lrate * dw;
 }
