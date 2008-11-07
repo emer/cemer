@@ -858,6 +858,7 @@ bool SoImageEx::SetTextureFile(SoTexture2* sotx, const String& fname) {
   case taMisc::SA_UNAVAIL:
     return SetTextureFile_impl(sotx, fname, false);
   }
+  return false; // compiler food, should only be 3 cases per above
 }
 
 bool SoImageEx::SetTextureFile_impl(SoTexture2* sotx, const String& fname,

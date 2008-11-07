@@ -24,6 +24,9 @@
  *
 \**************************************************************************/
 
+#ifdef _WINDOWS
+# define _USE_MATH_DEFINES
+#endif
 #ifndef __MAKETA__
 #include <Inventor/nodes/SoCylinder.h>
 #endif

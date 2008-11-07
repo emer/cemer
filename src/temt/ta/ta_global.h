@@ -344,7 +344,8 @@ typedef unsigned char   byte;
 #endif
 
 // hmm... these are *supposed* to be standard...
-#ifndef LLONG_MAX
+// probably added for early version of windows, but it is in 2008
+#if (_MSC_VER < 1400) && !defined(LLONG_MAX)
 #define LLONG_MAX 9223372036854775807ULL
 #endif
 

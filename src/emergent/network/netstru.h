@@ -20,6 +20,7 @@
 #ifndef netstru_h
 #define netstru_h
 
+#include "ta_group.h"
 #include "ta_math.h"
 #include "ta_geometry.h"
 #include "ta_time.h"
