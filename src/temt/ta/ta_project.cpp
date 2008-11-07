@@ -60,6 +60,7 @@
 #ifdef TA_USE_INVENTOR
   #include <Inventor/Qt/SoQt.h>
 #endif
+#include <ode/ode.h>
 
 #ifdef GPROF			// turn on for profiling
 extern "C" void moncontrol(int mode);
@@ -1364,6 +1365,8 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
     milestone |= SM_QAPP_OBJ;
   }    
   QCoreApplication::instance()->setApplicationName(taMisc::app_name);
+  // probably as good a place as any to init ODE
+  dInitODE();
   return true;
 }
 
