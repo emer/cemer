@@ -6,15 +6,14 @@ HEADERS += $${CONFIG_PRI}
 # standard headers
 HEADERS += $${TARGET}_TA_type.h $${TARGET}_TA_inst.h
 SOURCES += $${TARGET}_TA.cpp
-MSVC_FOLDER = msvc7
 
 # in the following, we create a new target 'maketa' which has the indicated properties
 maketa.target = $${TARGET}_TA_type.h
 
 win32 {
-  maketa.commands = $$(EMERGENTDIR)\\build\\$${MSVC_FOLDER}\\bin\\maketa.exe -css /D DEBUG -win_dll \
-  /I $$(EMERGENTDIR)\\build\\$${MSVC_FOLDER}\\include \
-  /I $$(EMERGENTDIR)\\build\\$${MSVC_FOLDER} /I $$(QTDIR)\\include\Qt \
+  maketa.commands = $$(EMERGENT_VC_DIR)\\bin\\maketa.exe -css /D DEBUG -win_dll \
+  /I $$(EMERGENT_VC_DIR)\\include \
+  /I $$(EMERGENT_VC_DIR) /I $$(QTDIR)\\include\Qt \
   $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
 } else {
   maketa.commands = $${MAKETA} -css -cpp=\"g++ -E\" $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}

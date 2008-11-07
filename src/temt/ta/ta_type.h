@@ -295,9 +295,9 @@ protected:
   { int rval=-1; if(*((void**)a) > *((void**)b)) rval=1; else if(*((void**)a) == *((void**)b)) rval=0; return rval; }
   bool		El_Equal_(const void* a, const void* b) const
     { return (*((void**)a) == *((void**)b)); }
-  String	El_GetStr_(const void* it) const { return (ta_uintptr_t)(*((void**)it)); }
+  String	El_GetStr_(const void* it) const { return *((ta_uintptr_t*)it); }
   void		El_SetFmStr_(void* it, const String& val)
-  { ta_uintptr_t tmp = (ta_uintptr_t)val; *((void**)it) = (void*)tmp; }
+  { ta_uintptr_t tmp = (ta_uintptr_t)val; *((ta_uintptr_t*)it) = tmp; }
   //note: dangerous, but needed to clear (if str empty)
 };
 

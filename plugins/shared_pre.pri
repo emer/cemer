@@ -12,8 +12,7 @@ THIS_ROOT = ../..
 
 # the specific build folder of the version of msvc we are using
 win32 {
-# TODO: this would need to be changed for later versions
-  BUILD_MSVC = $$(EMERGENTDIR)/build/msvc7
+  BUILD_MSVC = $$(EMERGENT_VC_DIR)
 }
 
 # we have up to 8 variants of binary, based on: debug, mpi, and nogui

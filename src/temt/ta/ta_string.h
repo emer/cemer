@@ -256,6 +256,7 @@ public:
   operator unsigned char() const { return (unsigned char)strtol(chars(), NULL, 0); } 
   // note: this is for 'byte' conversion -- we hope that char per-se is 'signed char'
   operator int() const	{ return strtol(chars(), NULL, 0); }
+  operator uint() const	{ return toUInt(); }
   operator long() const	{ return strtol(chars(), NULL, 0); }
   operator long long() const {return toInt64();}
   operator unsigned long long() const {return toUInt64();}
