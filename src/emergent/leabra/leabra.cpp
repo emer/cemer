@@ -95,6 +95,7 @@ void XCalLearnSpec::Initialize() {
   use_nd = false;
 
   lrn_s_mix = 0.85f;
+  thr_max = false;
   thr_m_mix = 0.9f;
 
   l_dt = 0.03f;
@@ -116,7 +117,10 @@ void XCalLearnSpec::Initialize() {
 
   lrn_m_mix = 1.0f - lrn_s_mix;
   thr_l_mix = 1.0f - thr_m_mix;
-  l_mult = thr_l_mix * l_gain;
+  if(thr_max)
+    l_mult = l_gain;
+  else
+    l_mult = thr_l_mix * l_gain;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
 }
 
@@ -124,7 +128,10 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   lrn_m_mix = 1.0f - lrn_s_mix;
   thr_l_mix = 1.0f - thr_m_mix;
-  l_mult = thr_l_mix * l_gain;
+  if(thr_max)
+    l_mult = l_gain;
+  else
+    l_mult = thr_l_mix * l_gain;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
   if(d_rev > 0.0f)
     d_rev_ratio = (1.0f - d_rev) / d_rev;

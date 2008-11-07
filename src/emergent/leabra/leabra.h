@@ -223,10 +223,10 @@ public:
   };
 
   LearnVar	lrn_var;	// #DEF_AVG_PROD_RS learning rule -- for xcal how to compute the short and medium timescale variables, or CAL for output layers or comparison purposes (can also be used for bias weights)
-  bool		use_nd;		// #DEF_false use the act_nd variables (non-depressed) for computing sravg/ravg terms (else use raw act, which is raw spikes in spiking mode, and subject to depression if in place)
   float		lrn_s_mix;	// #DEF_0.85 how much the short time-scale (plus phase) sravg contributes to sravg term that drives learning -- the rest (1-s_mix) is medium time-scale (trial) sravg -- in addition to general recency effects, s_pct can also reflect dopamine and other neuromodulatory factors
   float		lrn_m_mix;	// #READ_ONLY 1-lrn_s_mix -- amount that sravg_m contributes to learning
-  float		thr_m_mix;	// #DEF_0.9 how much the medium time-scale (trial) sravg contributes to potentiation threshold -- the long time-scale (epoch) ravg is then 1-thr_m_mix -- when lrn_s_mix is high, and this is high, the result is an error-driven learning dynamic (CAL is lrn_s_mix = 1, thr_m_mix = 1, and d_rev = 0.00001)
+  bool		thr_max;	// threshold is the MAX of the medium and long time scale variables
+  float		thr_m_mix;	// #DEF_0.9 #CONDEDIT_OFF_thr_max how much the medium time-scale (trial) sravg contributes to potentiation threshold -- the long time-scale (epoch) ravg is then 1-thr_m_mix -- when lrn_s_mix is high, and this is high, the result is an error-driven learning dynamic (CAL is lrn_s_mix = 1, thr_m_mix = 1, and d_rev = 0.00001)
   float		thr_l_mix;	// #READ_ONLY 1-thr_m_mix -- how much the long time-scale ravg contributes to potentiation threshold (this is the activation regulation/homeostatsis BCM-style factor)
   float		l_dt;		// #DEF_0.03 time constant for updating the long time-scale ravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_l variable!!
   float		l_gain;		// #DEF_5 gain for long time-scale ravg term -- needed to put into same terms as the sravg values used in the s and m components of learning (note ravg_l is already multiplied by sending kwta_pct or ravg_l_avg to compensate for overall layer activation differences) -- use 5 for KWTA_PCT, 6-7 for RAVG_L_AVG and around 1-2 for NO_NORM, generally
@@ -242,6 +242,8 @@ public:
 
   float		d_gain;		// #DEF_2.5 multiplier on LTD values relative to LTP values
   float		d_rev;		// #DEF_0.1 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
+
+  bool		use_nd;		// #DEF_false use the act_nd variables (non-depressed) for computing sravg/ravg terms (else use raw act, which is raw spikes in spiking mode, and subject to depression if in place)
 
   float		avg_init;	// #DEF_0.15 initial value for averages
   float		rnd_min_avg;	// #DEF_-1 minimum ravg_l value, below which random values are added to weights to drive exploration (-1 = off)
@@ -2673,7 +2675,11 @@ C_Compute_dWt_CtLeabraXCAL_avgprod(LeabraCon* cn, LeabraCon* rbias, LeabraCon* s
   float srm = (sravg_m_nrm * rbias->sravg_m) * (sravg_m_nrm * sbias->sravg_m);
   float lrn = xcal.lrn_s_mix * (sravg_s_nrm * rbias->sravg_s) * (sravg_s_nrm * sbias->sravg_s)
     + xcal.lrn_m_mix * srm;
-  float thr_p = xcal.thr_m_mix * srm + ru_ravg_l;
+  float thr_p;
+  if(xcal.thr_max)
+    thr_p = MAX(srm, ru_ravg_l);
+  else
+    thr_p = xcal.thr_m_mix * srm + ru_ravg_l;
   cn->dwt += cur_lrate * xcal.dWtFun(lrn, thr_p);
 }
 
@@ -2686,14 +2692,22 @@ C_Compute_dWt_CtLeabraXCAL_avgprod_rs(LeabraCon* cn, LeabraCon* rbias, LeabraCon
     xcal.lrn_m_mix * (sravg_m_nrm * rbias->sravg_m);
   float slrn = sravg_m_nrm * sbias->sravg_m; // send is pure medium
   float lrn = rlrn * slrn;
-  float thr_p = xcal.thr_m_mix * srm + ru_ravg_l;
+  float thr_p;
+  if(xcal.thr_max)
+    thr_p = MAX(srm, ru_ravg_l);
+  else
+    thr_p = xcal.thr_m_mix * srm + ru_ravg_l;
   cn->dwt += cur_lrate * xcal.dWtFun(lrn, thr_p);
 }
 
 inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_cont(LeabraCon* cn, float ru_ravg_l) {
   // appropriate scaling factors are already applied to ru_avg_l
   float lrn = xcal.lrn_s_mix * cn->sravg_s + xcal.lrn_m_mix * cn->sravg_m;
-  float thr_p = xcal.thr_m_mix * cn->sravg_m + ru_ravg_l;
+  float thr_p;
+  if(xcal.thr_max)
+    thr_p = MAX(cn->sravg_m, ru_ravg_l);
+  else
+    thr_p = xcal.thr_m_mix * cn->sravg_m + ru_ravg_l;
   cn->dwt += cur_lrate * xcal.dWtFun(lrn, thr_p);
 }
 
