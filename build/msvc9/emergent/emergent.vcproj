@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="emergent"
 	ProjectGUID="{CE66086C-AB6B-42B5-916F-4060AC936B55}"
+	RootNamespace="emergent"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -41,6 +42,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\src\emergent\network&quot;;&quot;$(EMERGENTDIR)\src\emergent\cs&quot;;&quot;$(EMERGENTDIR)\src\emergent\bp&quot;;&quot;$(EMERGENTDIR)\src\emergent\leabra&quot;;&quot;$(EMERGENTDIR)\src\emergent\so&quot;;&quot;$(EMERGENTDIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="COIN_DLL;SOQT_DLL;EMERGENT_DLL;EMERGENT_EXPORTS;TA_DLL;DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL"
@@ -52,7 +54,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4250;4258;4661"
+				DisableSpecificWarnings="4250;4258;4661;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -65,7 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="temt_debug.lib OpenGL32.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib"
+				AdditionalDependencies="temt_debug.lib OpenGL32.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib"
 				OutputFile="$(OutDir)/emergent_debug.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
@@ -137,7 +139,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="0"
-				DisableSpecificWarnings="4250;4661;4311;4258"
+				DisableSpecificWarnings="4250;4661;4311;4258;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -150,7 +152,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="temt.lib OpenGL32.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib"
+				AdditionalDependencies="temt.lib OpenGL32.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib"
 				OutputFile="$(OutDir)/emergent.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
@@ -192,6 +194,7 @@
 	<References>
 		<ProjectReference
 			ReferencedProjectIdentifier="{8469AE41-9D63-4819-B0F0-C30849686581}"
+			RelativePathToProject=".\temt\temt.vcproj"
 		/>
 	</References>
 	<Files>

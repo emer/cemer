@@ -65,7 +65,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="temt_debug.lib emergent_debug.lib OpenGL32.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib"
+				AdditionalDependencies="temt_debug.lib emergent_debug.lib OpenGL32.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib"
 				OutputFile="$(OutDir)/emergent_debug.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
@@ -148,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="temt.lib emergent.lib qtmain.lib OpenGL32.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib"
+				AdditionalDependencies="temt.lib emergent.lib qtmain.lib OpenGL32.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib"
 				OutputFile="$(OutDir)/emergent.exe"
 				Version="4.0.6"
 				LinkIncremental="1"
@@ -189,9 +189,11 @@
 	<References>
 		<ProjectReference
 			ReferencedProjectIdentifier="{CE66086C-AB6B-42B5-916F-4060AC936B55}"
+			RelativePathToProject=".\emergent\emergent.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{8469AE41-9D63-4819-B0F0-C30849686581}"
+			RelativePathToProject=".\temt\temt.vcproj"
 		/>
 	</References>
 	<Files>

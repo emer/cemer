@@ -11,7 +11,7 @@ INCLUDE = "-I$(EMERGENTDIR)\src\temt\ta" "-I$(EMERGENTDIR)\src\temt\ta\ios-g++-3
 CD = cd   
 MOC = $(QTDIR)\bin\moc $(INCLUDE)
 #MAKETA = $(EMERGENTDIR)\build\msvc7\maketa\Debug\maketa.exe -v1
-MAKETA = $(EMERGENT_VC_DIR)\bin\maketa.exe 
+MAKETA = $(EMERGENT_VC_DIR)\bin\maketa.exe -k
 
 
 all: maketa_files moc_files
@@ -27,6 +27,7 @@ taiqtso_mocs: \
   ieditgrid.moc.cpp \
   ilabel.moc.cpp \
   iflowlayout.moc.cpp \
+  iformlayout.moc.cpp \
   ilineedit.moc.cpp \
   igeometry.moc.cpp \
   irenderarea.moc.cpp \
@@ -58,6 +59,9 @@ idimedit.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\idimedit.h
 	$(MOC) %s -o $@
 
 iflowlayout.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\iflowlayout.h
+	$(MOC) %s -o $@
+
+iformlayout.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\iformlayout.h
 	$(MOC) %s -o $@
 
 igeometry.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\igeometry.h

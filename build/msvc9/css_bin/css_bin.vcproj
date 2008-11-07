@@ -52,7 +52,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4250;4661"
+				DisableSpecificWarnings="4250;4661;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -65,9 +65,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="temt_debug.lib qtmaind.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib libjpeg.lib"
+				AdditionalDependencies="temt_debug.lib qtmaind.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib"
 				ShowProgress="2"
-				OutputFile="$(OutDir)/css_bin.exe"
+				OutputFile="$(OutDir)/css_bin_debug.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(EMERGENTDIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
@@ -137,6 +137,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="0"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -149,7 +150,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="temt.lib qtmain.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib libjpeg.lib"
+				AdditionalDependencies="temt.lib qtmain.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib"
 				OutputFile="$(OutDir)/css_bin.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(EMERGENTDIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
@@ -188,6 +189,7 @@
 	<References>
 		<ProjectReference
 			ReferencedProjectIdentifier="{8469AE41-9D63-4819-B0F0-C30849686581}"
+			RelativePathToProject=".\temt\temt.vcproj"
 		/>
 	</References>
 	<Files>
@@ -207,11 +209,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\resource.h"
+				RelativePath=".\Resource.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource.h"
+				RelativePath=".\resource.h"
 				>
 			</File>
 		</Filter>
