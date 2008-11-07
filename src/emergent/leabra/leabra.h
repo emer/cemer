@@ -2908,16 +2908,24 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit*
       dw = (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
     }
     else {
-      float lrn = xcal.lrn_s_mix * rlay->sravg_s_nrm * cn->sravg_s +
-	xcal.lrn_m_mix * rlay->sravg_m_nrm * cn->sravg_m;
-      float thr_p = xcal.thr_m_mix * rlay->sravg_m_nrm * cn->sravg_m +
-	xcal.thr_l_mix * ru->ravg_l; // note: not using l_gain here -- defaults to 1
+      float srm = rlay->sravg_m_nrm * cn->sravg_m;
+      float lrn = xcal.lrn_s_mix * rlay->sravg_s_nrm * cn->sravg_s + xcal.lrn_m_mix * srm;
+      float thr_p;
+      if(xcal.thr_max)
+	thr_p = MAX(srm, ru->ravg_l);
+      else
+	thr_p = xcal.thr_m_mix * srm + xcal.thr_l_mix * ru->ravg_l;
+      // note: not using l_gain here -- defaults to 1
       dw = xcal.dWtFun(lrn, thr_p);
     }
   }
   else {
     float lrn = xcal.lrn_s_mix * cn->sravg_s + xcal.lrn_m_mix * cn->sravg_m;
-    float thr_p = xcal.thr_m_mix * cn->sravg_m + xcal.thr_l_mix * ru->ravg_l;
+    float thr_p;
+    if(xcal.thr_max)
+      thr_p = MAX(cn->sravg_m, ru->ravg_l);
+    else
+      thr_p = xcal.thr_m_mix * cn->sravg_m + xcal.thr_l_mix * ru->ravg_l;
     dw = xcal.dWtFun(lrn, thr_p);
   }
   cn->dwt += cur_lrate * dw;
@@ -2949,16 +2957,24 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
       dw = (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
     }
     else {
-      float lrn = xcal.lrn_s_mix * rlay->sravg_s_nrm * cn->sravg_s +
-	xcal.lrn_m_mix * rlay->sravg_m_nrm * cn->sravg_m;
-      float thr_p = xcal.thr_m_mix * rlay->sravg_m_nrm * cn->sravg_m +
-	xcal.thr_l_mix * ru->ravg_l; // note: not using l_gain here -- defaults to 1
+      float srm = rlay->sravg_m_nrm * cn->sravg_m;
+      float lrn = xcal.lrn_s_mix * rlay->sravg_s_nrm * cn->sravg_s + xcal.lrn_m_mix * srm;
+      float thr_p;
+      if(xcal.thr_max)
+	thr_p = MAX(srm, ru->ravg_l);
+      else
+	thr_p = xcal.thr_m_mix * srm + xcal.thr_l_mix * ru->ravg_l;
+      // note: not using l_gain here -- defaults to 1
       dw = xcal.dWtFun(lrn, thr_p);
     }
   }
   else {
     float lrn = xcal.lrn_s_mix * cn->sravg_s + xcal.lrn_m_mix * cn->sravg_m;
-    float thr_p = xcal.thr_m_mix * cn->sravg_m + xcal.thr_l_mix * ru->ravg_l;
+    float thr_p;
+    if(xcal.thr_max)
+      thr_p = MAX(cn->sravg_m, ru->ravg_l);
+    else
+      thr_p = xcal.thr_m_mix * cn->sravg_m + xcal.thr_l_mix * ru->ravg_l;
     dw = xcal.dWtFun(lrn, thr_p);
   }
   if(fabsf(dw) >= dwt_thresh)
