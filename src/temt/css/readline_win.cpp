@@ -274,7 +274,7 @@ char* readline(char* prompt) {
   }
 
   // prompt
-  int lprompt = (prompt) ? strlen(prompt) : 0;
+  int lprompt = (prompt) ? (int)strlen(prompt) : 0; //64: can't possibly be >4G
   cout << prompt; //hresult = WriteFile(hstdout, prompt, lprompt, NULL, NULL);
 
   read_error = 0;

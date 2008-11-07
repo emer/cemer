@@ -2178,7 +2178,7 @@ char* css_keyword_generator(const char* text, int state) {
   if(state == 0) {
     spc_idx = 0;
     item_idx = 0;
-    len = strlen(text);
+    len = (int)strlen(text); //64: can't possibly be >4G
   }
 
   cssSpace* spc = NULL;

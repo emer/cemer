@@ -207,7 +207,7 @@ void T3Node::setDefaultCaptionTransform() {
 }
 
 void T3Node::setCaption(const char* value) {
-  int len = (value) ? strlen(value) : 0;
+  int len = (value) ? (int)strlen(value) : 0; //64: can't possibly be >4G
   // only force getting captionNode if a non-blank value
   SoAsciiText* cn = captionNode(len > 0);
   // note: if node exists, we don't check for same value, so it will trigger a redraw

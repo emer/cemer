@@ -98,7 +98,7 @@ public:
   void 			setInt64(ta_int64_t val, bool null = false);
   void 			setUInt64(ta_uint64_t val, bool null = false);
   void 			setIntPtr(intptr_t val, bool null = false)
-    {if (sizeof(intptr_t) == sizeof(int)) setInt(val, null); else setInt64(val, null);}
+    {if (sizeof(intptr_t) == sizeof(int)) setInt((int)val, null); else setInt64(val, null);}
   void 			setFloat(float val, bool null = false);
   void 			setDouble(double val, bool null = false);
   void 			setChar(char val, bool null = false);
@@ -159,7 +159,7 @@ public:
   bool 			eqInt64(ta_int64_t val) const;
   bool 			eqUInt64(ta_uint64_t val) const;
   bool 			eqIntPtr(intptr_t val) const
-    {if (sizeof(intptr_t) == sizeof(int)) return eqInt(val); else return eqInt64(val);}
+    {if (sizeof(intptr_t) == sizeof(int)) return eqInt((int)val); else return eqInt64(val);}
   bool 			eqFloat(float val) const {return eqDouble(val);}
   bool 			eqDouble(double val) const;
   bool 			eqChar(char val) const;
@@ -181,7 +181,7 @@ public:
   int 			cmpInt64(ta_int64_t val) const;
   int 			cmpUInt64(ta_uint64_t val) const;
   int 			cmpIntPtr(intptr_t val) const
-    {if (sizeof(intptr_t) == sizeof(int)) return cmpInt(val); else return cmpInt64(val);}
+    {if (sizeof(intptr_t) == sizeof(int)) return cmpInt((int)val); else return cmpInt64(val);}
   int 			cmpFloat(float val) const {return cmpDouble(val);}
   int 			cmpDouble(double val) const;
   int 			cmpChar(char val) const;
