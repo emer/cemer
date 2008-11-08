@@ -2340,6 +2340,10 @@ void LeabraLayerSpec::SetLearnRule(LeabraLayer* lay, LeabraNetwork* net) {
   else {
     decay.phase = 0.0f;		// no phase decay -- these are not even called
     decay.phase2 = 0.0f;
+
+    if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
+      net->ct_sravg.interval = 1;
+    }
   }
 
   if(lay->unit_spec.SPtr()) {
@@ -4083,9 +4087,16 @@ void LeabraLayerSpec::Compute_AdaptAbsNetin(LeabraLayer* lay, LeabraNetwork*) {
 //////////////////////////////////////////
 
 void LeabraLayerSpec::Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) {
+  int eff_int = net->ct_sravg.interval;
+  if(net->phase == LeabraNetwork::PLUS_PHASE && net->cycle >= net->ct_sravg.plus_s_st) {
+    if((net->ct_time.plus - net->ct_sravg.plus_s_st) < eff_int) {
+      eff_int = 1;		// make sure you get short-time/plus phase info!
+    }
+  }
+
   if((net->ct_cycle >= net->ct_sravg.start) &&
      (net->ct_cycle < (net->ct_time.inhib_start + net->ct_sravg.end)) &&
-     ((net->ct_cycle - net->ct_sravg.start) % net->ct_sravg.interval == 0)) {
+     ((net->ct_cycle - net->ct_sravg.start) % eff_int == 0)) {
     bool do_s = false;
     if(net->phase == LeabraNetwork::PLUS_PHASE && net->cycle >= net->ct_sravg.plus_s_st)
       do_s = true;
