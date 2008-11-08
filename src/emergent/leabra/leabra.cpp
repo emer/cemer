@@ -93,7 +93,7 @@ void XCalLearnSpec::Initialize() {
   avg_updt = TRIAL;
   lrn_var = AVG_PROD;
 
-  lrn_s_mix = 0.80f;
+  s_mix = 0.80f;
 
   l_dt = 0.03f;
   l_gain = 4.0f;
@@ -114,13 +114,13 @@ void XCalLearnSpec::Initialize() {
   rnd_min_avg = -1.0f;		// turn off by default
   rnd_var = 0.1f;
 
-  lrn_m_mix = 1.0f - lrn_s_mix;
+  m_mix = 1.0f - s_mix;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
 }
 
 void XCalLearnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  lrn_m_mix = 1.0f - lrn_s_mix;
+  m_mix = 1.0f - s_mix;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
   if(d_rev > 0.0f)
     d_rev_ratio = (1.0f - d_rev) / d_rev;
