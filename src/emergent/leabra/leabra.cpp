@@ -4511,7 +4511,7 @@ void CtSRAvgSpec::Initialize() {
   start = 30;
   end = 1;
   interval = 1;
-  plus_s_st = 18;
+  plus_s_st = 19;
 }
 
 void CtSineInhibMod::Initialize() {
