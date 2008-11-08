@@ -91,15 +91,12 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   avg_updt = TRIAL;
-  lrn_var = AVG_PROD_RS;
-  use_nd = false;
+  lrn_var = AVG_PROD;
 
-  lrn_s_mix = 0.85f;
-  thr_max = false;
-  thr_m_mix = 0.9f;
+  lrn_s_mix = 0.80f;
 
   l_dt = 0.03f;
-  l_gain = 5.0f;
+  l_gain = 4.0f;
   l_norm = KWTA_PCT;
 
   m_dt = 0.03f;
@@ -108,30 +105,22 @@ void XCalLearnSpec::Initialize() {
 //   lrn_thr = 0.2f;
 //   lrn_delay = 200;
 
-  d_gain = 2.5f;
-  d_rev = 0.1f;
+  use_nd = false;
+
+  d_gain = 1.5f;
+  d_rev = 0.15f;
 
   avg_init = 0.15f;
   rnd_min_avg = -1.0f;		// turn off by default
   rnd_var = 0.1f;
 
   lrn_m_mix = 1.0f - lrn_s_mix;
-  thr_l_mix = 1.0f - thr_m_mix;
-  if(thr_max)
-    l_mult = l_gain;
-  else
-    l_mult = thr_l_mix * l_gain;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
 }
 
 void XCalLearnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   lrn_m_mix = 1.0f - lrn_s_mix;
-  thr_l_mix = 1.0f - thr_m_mix;
-  if(thr_max)
-    l_mult = l_gain;
-  else
-    l_mult = thr_l_mix * l_gain;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
   if(d_rev > 0.0f)
     d_rev_ratio = (1.0f - d_rev) / d_rev;
