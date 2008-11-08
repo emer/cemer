@@ -539,6 +539,10 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
   children_created = true;
 }
 
+void taTypeInfoTreeDataNode::willHaveChildren_impl(bool& will) const 
+{
+  will = true;
+}
 
 
 //////////////////////////////////
@@ -692,6 +696,11 @@ bool taTypeSpaceTreeDataNode::ShowType(TypeDef* td) const {
     return false;
   
   return true;
+}
+
+void taTypeSpaceTreeDataNode::willHaveChildren_impl(bool& will) const 
+{
+  will = true;
 }
 
 

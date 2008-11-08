@@ -205,6 +205,7 @@ public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_taTypeInfoTreeDataNode;}
 protected:
+  override void		willHaveChildren_impl(bool& will) const;
   override void 	CreateChildren_impl(); // called by the Node when it needs to create 
 //  override void		DataChanged_impl(int dcr, void* op1, void* op2);
 private:
@@ -245,6 +246,7 @@ protected:
 //  taMisc::TypeInfoKind		m_child_tik;
 //  TypeDef*		m_child_type;
 //  override void		DataChanged_impl(int dcr, void* op1, void* op2);
+  override void		willHaveChildren_impl(bool& will) const;
   override void 	CreateChildren_impl(); // called by the Node when it needs to create its children
   void			CreateListItem(taiTreeDataNode* par_node, taiTreeDataNode* after_node, void* el);
 //  void			UpdateListNames(); // #IGNORE updates names after inserts/deletes etc.
