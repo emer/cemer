@@ -123,6 +123,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				AdditionalIncludeDirectories="&quot;$(EMERGENTDIR)\src\temt&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(SolutionDir)&quot;"
 				PreprocessorDefinitions="NO_TA_BASE;WIN32;_WINDOWS"
 				RuntimeLibrary="0"
