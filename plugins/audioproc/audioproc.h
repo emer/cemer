@@ -315,7 +315,7 @@ private:
 };
 
 
-class AUDIOPROC_API SignalProcBlock: public SignalProcItem, public IRefListClient
+class AUDIOPROC_API SignalProcBlock: public SignalProcItem, public virtual IRefListClient
 { // #VIRT_BASE ##CAT_Audioproc common routines to signal processing blocks: in and/or out; we include the out data, since almost all blocks make output data, but it can be hidden
 INHERITED(SignalProcItem) 
 friend class SourceBlockSpec;
