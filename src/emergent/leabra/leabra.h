@@ -2679,8 +2679,17 @@ inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_cont(LeabraCon* cn, float 
 }
 
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-  // note: not doing all the checks for layers/groups inactive in plus phase: not needed since no hebb stuff
   LeabraLayer* slay = (LeabraLayer*)cg->prjn->from.ptr();
+  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+  // note: all these inactivity checks are actually really essential for objrec models
+  // todo: need a better system..
+  if((rlay->acts_p.avg < savg_cor.thresh) || (slay->acts_p.avg < savg_cor.thresh))
+    return;
+  if(ru->in_subgp) {
+    LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
+    if(ogp->acts_p.avg < savg_cor.thresh) return;
+  }
+
   float slay_avg_act;
   if(xcal.l_norm == XCalLearnSpec::KWTA_PCT)
     slay_avg_act = slay->kwta.pct;
@@ -2691,27 +2700,44 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
   float ru_avg_l = xcal.l_gain * slay_avg_act * ru->ravg_l;
 
   if(xcal.avg_updt == XCalLearnSpec::TRIAL) {
-    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
     LeabraCon* rbias = (LeabraCon*)ru->bias.Cn(0);
 
     float sravg_s_nrm = rlay->sravg_s_nrm;
     float sravg_m_nrm = rlay->sravg_m_nrm;
     if(xcal.lrn_var == XCalLearnSpec::AVG_PROD) {
-      CON_GROUP_LOOP(cg,
+      for(int i=0; i<cg->cons.size; i++) {
+	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+	if(su->in_subgp) {
+	  LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
+	  if(ogp->acts_p.avg < savg_cor.thresh) continue;
+	}
 	C_Compute_dWt_CtLeabraXCAL_avgprod((LeabraCon*)cg->Cn(i), rbias,
-				   (LeabraCon*)((LeabraUnit*)cg->Un(i))->bias.Cn(0),
-				   ru_avg_l, sravg_s_nrm, sravg_m_nrm));
+					   (LeabraCon*)su->bias.Cn(0),
+					   ru_avg_l, sravg_s_nrm, sravg_m_nrm);
+      }
     }
     else if(xcal.lrn_var == XCalLearnSpec::CAL) {
-      CON_GROUP_LOOP(cg,
-		     C_Compute_dWt_CtLeabraCAL((LeabraCon*)cg->Cn(i),
-					       rlay->sravg_s_nrm, rlay->sravg_m_nrm));
+      for(int i=0; i<cg->cons.size; i++) {
+	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+	if(su->in_subgp) {
+	  LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
+	  if(ogp->acts_p.avg < savg_cor.thresh) continue;
+	}
+	C_Compute_dWt_CtLeabraCAL((LeabraCon*)cg->Cn(i),
+				  rlay->sravg_s_nrm, rlay->sravg_m_nrm);
+      }
     }
   }
   else {
     // todo: this actually requires all the timing stuff too..
-    CON_GROUP_LOOP(cg,
-		   C_Compute_dWt_CtLeabraXCAL_cont((LeabraCon*)cg->Cn(i), ru_avg_l));
+    for(int i=0; i<cg->cons.size; i++) {
+      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+      if(su->in_subgp) {
+	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
+	if(ogp->acts_p.avg < savg_cor.thresh) continue;
+      }
+      C_Compute_dWt_CtLeabraXCAL_cont((LeabraCon*)cg->Cn(i), ru_avg_l);
+    }
   }
 }
 
@@ -2724,7 +2750,24 @@ inline void LeabraConSpec::C_Compute_dWt_Rnd_XCAL(LeabraCon* cn, float rnd_var) 
 
 inline void LeabraConSpec::Compute_dWt_Rnd_XCAL(LeabraRecvCons* cg, LeabraUnit* ru,
 						float rnd_var) {
-  CON_GROUP_LOOP(cg, C_Compute_dWt_Rnd_XCAL((LeabraCon*)cg->Cn(i), rnd_var));
+  LeabraLayer* slay = (LeabraLayer*)cg->prjn->from.ptr();
+  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+  // note: all these inactivity checks are actually really essential for objrec models
+  // todo: need a better system..
+  if((rlay->acts_p.avg < savg_cor.thresh) || (slay->acts_p.avg < savg_cor.thresh))
+    return;
+  if(ru->in_subgp) {
+    LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
+    if(ogp->acts_p.avg < savg_cor.thresh) return;
+  }
+  for(int i=0; i<cg->cons.size; i++) {
+    LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+    if(su->in_subgp) {
+      LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
+      if(ogp->acts_p.avg < savg_cor.thresh) continue;
+    }
+    C_Compute_dWt_Rnd_XCAL((LeabraCon*)cg->Cn(i), rnd_var);
+  }
 }
 
 inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn)
