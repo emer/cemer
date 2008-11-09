@@ -4495,7 +4495,7 @@ void CtTrialTiming::Initialize() {
   minus = 50;
   plus = 20;
   inhib = 1;
-  n_avg_only_epcs = 2;
+  n_avg_only_epcs = 1;
 
   total_cycles = minus + plus + inhib;
   inhib_start = minus + plus;

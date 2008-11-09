@@ -2169,7 +2169,7 @@ public:
   int		minus;		// [50] number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
   int		plus;		// [20] number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
   int		inhib;		// [1] number of cycles to run in the final inhibitory phase -- network can do MINUS_PLUS_PLUS, MINUS_PLUS_MINUS, or MINUS_PLUS_NOTHING for inputs on this phase
-  int		n_avg_only_epcs; // #DEF_2 number of epochs during which time only sravg values are accumulated, and no learning occurs
+  int		n_avg_only_epcs; // #DEF_1 number of epochs during which time only sravg values are accumulated, and no learning occurs
 
   int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
   int		inhib_start;	// #READ_ONLY computed start of inhib phase (=minus + plus)

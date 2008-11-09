@@ -460,7 +460,8 @@ void taBase::InitLinks_taAuto(TypeDef* td) {
 }
 
 void taBase::CutLinks_taAuto(TypeDef* td) {
-  for(int i=0; i<td->members.size; i++) {
+  // go in reverse order because sometimes later members refer to earlier member items
+  for(int i=td->members.size-1; i>=0; i--) {
     MemberDef* md = td->members.FastEl(i);
     if((md->owner != &(td->members)) || !md->type->DerivesFrom(TA_taBase)) continue;
     if(md->type->ptr == 0) {
