@@ -224,6 +224,7 @@ public:
   LearnVar	lrn_var;	// learning rule -- for xcal how to compute the short and medium timescale variables (AVG_PROD), or CAL for output layers or comparison purposes (can also be used for bias weights)
   float		s_mix;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.8 how much the short time-scale (plus phase) sravg contributes to sravg term that drives learning -- the rest (1-s_mix) is medium time-scale (trial) sravg -- in addition to general recency effects, s_mix can also reflect dopamine and other neuromodulatory factors
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that sravg_m contributes to learning
+  float		m_gain;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_1 gain for medium time-scale sravg term as it contributes to the potentiation threshold -- lower values make for less strict of an error-driven learning dynamic (0 = purely BCM)
   float		l_dt;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.03 time constant for updating the long time-scale ravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_l variable!!
   float		l_gain;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_4 gain for long time-scale ravg term -- needed to put into same terms as the sravg values used in the s and m components of learning (note ravg_l is already multiplied by sending kwta_pct or ravg_l_avg to compensate for overall layer activation differences) -- use 5 for KWTA_PCT, 6-7 for RAVG_L_AVG and around 1-2 for NO_NORM, generally
   ActNorm	l_norm;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_KWTA_PCT how to normalize the ravg_l values for learning 
@@ -2667,14 +2668,14 @@ C_Compute_dWt_CtLeabraXCAL_avgprod(LeabraCon* cn, LeabraCon* rbias, LeabraCon* s
   float srm = (sravg_m_nrm * rbias->sravg_m) * (sravg_m_nrm * sbias->sravg_m);
   float lrn = xcal.s_mix * (sravg_s_nrm * rbias->sravg_s) * (sravg_s_nrm * sbias->sravg_s)
     + xcal.m_mix * srm;
-  float thr_p = MAX(srm, ru_ravg_l);
+  float thr_p = MAX(xcal.m_gain * srm, ru_ravg_l);
   cn->dwt += cur_lrate * xcal.dWtFun(lrn, thr_p);
 }
 
 inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_cont(LeabraCon* cn, float ru_ravg_l) {
   // appropriate scaling factors are already applied to ru_avg_l
   float lrn = xcal.s_mix * cn->sravg_s + xcal.m_mix * cn->sravg_m;
-  float thr_p = MAX(cn->sravg_m, ru_ravg_l);
+  float thr_p = MAX(xcal.m_gain * cn->sravg_m, ru_ravg_l);
   cn->dwt += cur_lrate * xcal.dWtFun(lrn, thr_p);
 }
 
@@ -2927,14 +2928,14 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit*
     else {
       float srm = rlay->sravg_m_nrm * cn->sravg_m;
       float lrn = xcal.s_mix * rlay->sravg_s_nrm * cn->sravg_s + xcal.m_mix * srm;
-      float thr_p = MAX(srm, ru->ravg_l);
+      float thr_p = MAX(xcal.m_gain * srm, ru->ravg_l);
       // note: not using l_gain here -- defaults to 1
       dw = xcal.dWtFun(lrn, thr_p);
     }
   }
   else {
     float lrn = xcal.s_mix * cn->sravg_s + xcal.m_mix * cn->sravg_m;
-    float thr_p = MAX(cn->sravg_m, ru->ravg_l);
+    float thr_p = MAX(xcal.m_gain * cn->sravg_m, ru->ravg_l);
     dw = xcal.dWtFun(lrn, thr_p);
   }
   cn->dwt += cur_lrate * dw;
@@ -2978,14 +2979,14 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
     else {
       float srm = rlay->sravg_m_nrm * cn->sravg_m;
       float lrn = xcal.s_mix * rlay->sravg_s_nrm * cn->sravg_s + xcal.m_mix * srm;
-      float thr_p = MAX(srm, ru->ravg_l);
+      float thr_p = MAX(xcal.m_gain * srm, ru->ravg_l);
       // note: not using l_gain here -- defaults to 1
       dw = xcal.dWtFun(lrn, thr_p);
     }
   }
   else {
     float lrn = xcal.s_mix * cn->sravg_s + xcal.m_mix * cn->sravg_m;
-    float thr_p = MAX(cn->sravg_m, ru->ravg_l);
+    float thr_p = MAX(xcal.m_gain * cn->sravg_m, ru->ravg_l);
     dw = xcal.dWtFun(lrn, thr_p);
   }
   if(fabsf(dw) >= dwt_thresh)

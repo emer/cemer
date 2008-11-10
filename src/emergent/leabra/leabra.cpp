@@ -95,6 +95,8 @@ void XCalLearnSpec::Initialize() {
 
   s_mix = 0.80f;
 
+  m_gain = 1.0f;
+
   l_dt = 0.03f;
   l_gain = 4.0f;
   l_norm = KWTA_PCT;
