@@ -26,15 +26,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "css_bin", "css_bin\css_bin.
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "setup_bin", "setup_bin\setup_bin.vdproj", "{1D834B4E-E857-4387-8074-2D231663F4B7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HelloWorld", "plugins\HelloWorld\HelloWorld.vcproj", "{93CBAF00-4892-4660-8AE0-105317D6833D}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CAA115FF-1E53-4081-BE28-3BE7864BF419}"
-	ProjectSection(SolutionItems) = preProject
-		config.h = config.h
-		..\HowToMakeRelease.txt = ..\HowToMakeRelease.txt
-		..\Makefile = ..\Makefile
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -88,10 +79,6 @@ Global
 		{1D834B4E-E857-4387-8074-2D231663F4B7}.Debug|x64.Build.0 = Debug
 		{1D834B4E-E857-4387-8074-2D231663F4B7}.Release|Win32.ActiveCfg = Release
 		{1D834B4E-E857-4387-8074-2D231663F4B7}.Release|x64.ActiveCfg = Release
-		{93CBAF00-4892-4660-8AE0-105317D6833D}.Debug|Win32.ActiveCfg = Debug|Win32
-		{93CBAF00-4892-4660-8AE0-105317D6833D}.Debug|x64.ActiveCfg = Debug|x64
-		{93CBAF00-4892-4660-8AE0-105317D6833D}.Release|Win32.ActiveCfg = Release|Win32
-		{93CBAF00-4892-4660-8AE0-105317D6833D}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

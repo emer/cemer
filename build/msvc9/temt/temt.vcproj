@@ -408,6 +408,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\temt\taiqtso\stdafx.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\temt\ta\ta_global.h"
 				>
 			</File>
@@ -883,42 +887,6 @@
 				<File
 					RelativePath="..\..\..\src\temt\ta\minmax.cpp"
 					>
-				</File>
-				<File
-					RelativePath="..\..\..\3rdparty\misc\s_erf.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\SoCapsule.cpp"
@@ -1597,6 +1565,18 @@
 					>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="Solution Items"
+			>
+			<File
+				RelativePath="..\..\HowToMakeRelease.txt"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Makefile"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"

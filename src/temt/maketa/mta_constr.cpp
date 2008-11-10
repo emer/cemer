@@ -229,6 +229,8 @@ void TypeSpace_Includes(TypeSpace* ths, ostream& strm, const String_PArray& hv,
     String nstr = hv.FastEl(i);
     if(nstr.contains('/')) //note: assumed that all source uses / for path sep
       nstr = nstr.after('/',-1); // just the file name
+    else if(nstr.contains('\\')) //note: for Windows
+      nstr = nstr.after('\\',-1); // just the file name
     if(nstr.contains("streambuf") || nstr.contains("iostream") ||
        nstr.contains("fstream") || nstr.contains("sstream")) continue;
     strm << "#include \"" << nstr << "\"\n";

@@ -351,12 +351,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_174C44F3F0B3444C8E470235B37A5D25"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_17C4157A001B4E6192741F748079301C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -795,6 +789,30 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_3BAF0191F71648CA8B1C4C7E26E5531C"
+        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3BAF0191F71648CA8B1C4C7E26E5531C"
+        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3BAF0191F71648CA8B1C4C7E26E5531C"
+        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3BAF0191F71648CA8B1C4C7E26E5531C"
+        "OwnerKey" = "8:_CF8C64A0EFA94764B3BFE2265007B411"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3C4E89B06BD1427499777B33C3145929"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1077,6 +1095,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_4B810A20FF5C49E0B9DF4ECA1DBD3E5D"
+        "OwnerKey" = "8:_3BAF0191F71648CA8B1C4C7E26E5531C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_4BA785268122457E94F55E0189A87BF7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1223,12 +1247,6 @@
         {
         "MsmKey" = "8:_54553DF37BE24C11BAB849E21849863B"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_550B9E586F554CADBB0993431B561C3B"
-        "OwnerKey" = "8:_DAB00E6FBFEB4D3DBF030C7F2D29BA39"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2265,6 +2283,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_9D14665A122B410ABE17EA01E1B0E567"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_9D8AD21CF9B54F6B902CF29EBB5CDDFC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2644,6 +2668,12 @@
         "Entry"
         {
         "MsmKey" = "8:_BB033BA3F09E4324B81D7E1C04A8EC5B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BBCEE24A431A47809717B648160978B1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3099,30 +3129,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_DAB00E6FBFEB4D3DBF030C7F2D29BA39"
-        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DAB00E6FBFEB4D3DBF030C7F2D29BA39"
-        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DAB00E6FBFEB4D3DBF030C7F2D29BA39"
-        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DAB00E6FBFEB4D3DBF030C7F2D29BA39"
-        "OwnerKey" = "8:_CF8C64A0EFA94764B3BFE2265007B411"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_DAC4C9566D2A4CFBA0CF2387ED3CF3BC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3244,12 +3250,6 @@
         "Entry"
         {
         "MsmKey" = "8:_E2DD5AFFBCE34FD1AAAE59665451ED4C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_E331187F6C6D483794E23E2CCBC3858E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -4889,26 +4889,6 @@
             "TargetName" = "8:so_v3_compat.h"
             "Tag" = "8:"
             "Folder" = "8:_63F759F61C084FEA975771EB17E85EB9"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_174C44F3F0B3444C8E470235B37A5D25"
-            {
-            "SourcePath" = "8:..\\emergent_bin\\stdafx.cpp"
-            "TargetName" = "8:stdafx.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_70645D4176954D459A628615BBA2413A"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -11143,6 +11123,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9D14665A122B410ABE17EA01E1B0E567"
+            {
+            "SourcePath" = "8:..\\temt\\Release\\temt.lib"
+            "TargetName" = "8:temt.lib"
+            "Tag" = "8:"
+            "Folder" = "8:_C26992C9DFE244DFBFB536FD3F82D205"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9D8AD21CF9B54F6B902CF29EBB5CDDFC"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_mtrnd.h"
@@ -12369,6 +12369,26 @@
             "TargetName" = "8:css_machine.h"
             "Tag" = "8:"
             "Folder" = "8:_CB8336C6D5004C58B1398DE53EA42E5E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BBCEE24A431A47809717B648160978B1"
+            {
+            "SourcePath" = "8:..\\emergent\\Release\\emergent.lib"
+            "TargetName" = "8:emergent.lib"
+            "Tag" = "8:"
+            "Folder" = "8:_C26992C9DFE244DFBFB536FD3F82D205"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -14263,26 +14283,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E331187F6C6D483794E23E2CCBC3858E"
-            {
-            "SourcePath" = "8:..\\emergent_bin\\stdafx.h"
-            "TargetName" = "8:stdafx.h"
-            "Tag" = "8:"
-            "Folder" = "8:_70645D4176954D459A628615BBA2413A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E3C697F602A64D5883AEA1290A43F244"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_program_els.h"
@@ -15585,7 +15585,7 @@
             }
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_2CC1AE92E340477CBAE29B499B64198C"
             {
-            "DefaultLocation" = "8:[ProgramFilesFolder]\\[ProductName]"
+            "DefaultLocation" = "8:C:\\[ProductName]"
             "Name" = "8:#1925"
             "AlwaysCreate" = "11:TRUE"
             "Condition" = "8:"
@@ -16191,7 +16191,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Emergent"
         "ProductCode" = "8:{179C23A7-9622-4482-99C5-DD8B10A07CA5}"
-        "PackageCode" = "8:{195C8D29-A1A7-45E1-9BE4-3AE32C11BACF}"
+        "PackageCode" = "8:{EFD16CBB-6FC5-4A4A-9688-0262E1E243B4}"
         "UpgradeCode" = "8:{44D9DB79-4385-44C5-8AAE-9E349721CFFC}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
@@ -16276,7 +16276,7 @@
                                                             "Condition" = "8:"
                                                             "Transitive" = "11:FALSE"
                                                             "ValueTypes" = "3:2"
-                                                            "Value" = "8:[TARGETDIR]"
+                                                            "Value" = "8:[TARGETDIR]\\."
                                                             }
                                                             "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_FD58ED5607F74ABEB6B6195DB5951C8A"
                                                             {
@@ -16773,8 +16773,8 @@
                             "Type" = "3:3"
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
-                            "Setting" = "3:1"
-                            "Value" = "8:#1203"
+                            "Setting" = "3:2"
+                            "Value" = "8:The installer will guide you through the steps required to install [ProductName] on your computer. NOTE: If you want to build plugins or recompile [ProductName] then you MUST NOT install to a location with any spaces in the path."
                             "DefaultValue" = "8:#1203"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -16820,11 +16820,11 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_550B9E586F554CADBB0993431B561C3B"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_3BAF0191F71648CA8B1C4C7E26E5531C"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:microsoft_vc90_crt_x86.msm"
+            "SourcePath" = "8:policy_9_0_Microsoft_VC90_CRT_x86.msm"
                 "Properties"
                 {
                 }
@@ -16834,11 +16834,11 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_DAB00E6FBFEB4D3DBF030C7F2D29BA39"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_4B810A20FF5C49E0B9DF4ECA1DBD3E5D"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_9_0_Microsoft_VC90_CRT_x86.msm"
+            "SourcePath" = "8:microsoft_vc90_crt_x86.msm"
                 "Properties"
                 {
                 }

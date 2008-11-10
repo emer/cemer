@@ -1,4 +1,4 @@
-// pdp.cpp : Defines the entry point for the DLL application.
+// emegent_dll.cpp : Defines the entry point for the DLL application.
 //
 
 #include "stdafx.h"
