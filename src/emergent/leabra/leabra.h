@@ -2893,8 +2893,16 @@ inline void LeabraConSpec::B_Compute_SRAvg(LeabraCon* cn, LeabraUnit* ru, bool d
 inline void LeabraConSpec::B_Init_SRAvg(LeabraCon* cn, LeabraUnit* ru,
 						      LeabraLayer* rlay) {
   if(learn_rule == CTLEABRA_CAL || xcal.avg_updt == XCalLearnSpec::TRIAL) {
-    // note: updating unit-level ravg_l variable here..
-    ru->ravg_l += xcal.l_dt * (rlay->sravg_m_nrm * cn->sravg_m - ru->ravg_l);
+    bool updt_l = true;
+    if(rlay->acts_p.avg < savg_cor.thresh) updt_l = false;
+    if(ru->in_subgp) {
+      LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
+      if(ogp->acts_p.avg < savg_cor.thresh) updt_l = false;
+    }	
+    if(updt_l) {
+      // note: updating unit-level ravg_l variable here: ONLY if layer/subgp had sig acts
+      ru->ravg_l += xcal.l_dt * (rlay->sravg_m_nrm * cn->sravg_m - ru->ravg_l);
+    }
     cn->sravg_s = 0.0f;
     cn->sravg_m = 0.0f;
   }
@@ -2908,6 +2916,11 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit*
 						      LeabraLayer* rlay) {
   float dw;
   if(xcal.avg_updt == XCalLearnSpec::TRIAL) {
+    if(rlay->acts_p.avg < savg_cor.thresh) return;
+    if(ru->in_subgp) {
+      LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
+      if(ogp->acts_p.avg < savg_cor.thresh)  return;
+    }
     if(xcal.lrn_var == XCalLearnSpec::CAL) {
       dw = (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
     }
@@ -2929,6 +2942,11 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit*
 
 inline void LeabraConSpec::B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
 						     LeabraLayer* rlay) {
+  if(rlay->acts_p.avg < savg_cor.thresh) return;
+  if(ru->in_subgp) {
+    LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
+    if(ogp->acts_p.avg < savg_cor.thresh)  return;
+  }
   float dw = (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
   cn->dwt += cur_lrate * dw;
 }
@@ -2949,6 +2967,11 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
 						      LeabraLayer* rlay) {
   float dw;
   if(xcal.avg_updt == XCalLearnSpec::TRIAL) {
+    if(rlay->acts_p.avg < savg_cor.thresh) return;
+    if(ru->in_subgp) {
+      LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
+      if(ogp->acts_p.avg < savg_cor.thresh)  return;
+    }
     if(xcal.lrn_var == XCalLearnSpec::CAL) {
       dw = (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
     }
@@ -2971,6 +2994,11 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
 
 inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
 						     LeabraLayer* rlay) {
+  if(rlay->acts_p.avg < savg_cor.thresh) return;
+  if(ru->in_subgp) {
+    LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
+    if(ogp->acts_p.avg < savg_cor.thresh)  return;
+  }
   float dw = (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
   if(fabsf(dw) >= dwt_thresh)
     cn->dwt += cur_lrate * dw;
