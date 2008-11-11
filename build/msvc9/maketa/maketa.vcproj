@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(EMERGENTDIR)\src\temt&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(SolutionDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(EMERGENTDIR)\src\temt&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(SolutionDir)&quot;"
 				PreprocessorDefinitions="NO_TA_BASE;DEBUG;WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="0"
@@ -67,10 +67,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/maketa.exe"
+				OutputFile="$(OutDir)/maketa_debug.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/maketa.pdb"
+				ProgramDatabaseFile="$(OutDir)/maketa_debug.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -96,6 +96,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.exe $(SolutionDir)..\..\bin&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.dll $(SolutionDir)..\..\bin&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.pdb $(SolutionDir)..\..\bin&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.lib $(SolutionDir)..\..\lib"
 			/>
 		</Configuration>
 		<Configuration
@@ -148,7 +149,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/maketa.exe"
 				LinkIncremental="1"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -176,6 +177,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.exe $(SolutionDir)..\..\bin"
 			/>
 		</Configuration>
 		<Configuration

@@ -483,12 +483,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_211FCBE311DC4F206CBAB4DC6A3EA2FB"
-        "OwnerKey" = "8:_CF8C64A0EFA94764B3BFE2265007B411"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_21D57AE1021B408691A4DBB952AFFC23"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -783,32 +777,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_3B610ABB96884BBD8833B3B0EB840437"
+        "MsmKey" = "8:_3B47FE752C374FB8A04D494BCDBC18AF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_3BAF0191F71648CA8B1C4C7E26E5531C"
-        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3BAF0191F71648CA8B1C4C7E26E5531C"
-        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3BAF0191F71648CA8B1C4C7E26E5531C"
-        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3BAF0191F71648CA8B1C4C7E26E5531C"
-        "OwnerKey" = "8:_CF8C64A0EFA94764B3BFE2265007B411"
+        "MsmKey" = "8:_3B610ABB96884BBD8833B3B0EB840437"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1095,12 +1071,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_4B810A20FF5C49E0B9DF4ECA1DBD3E5D"
-        "OwnerKey" = "8:_3BAF0191F71648CA8B1C4C7E26E5531C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_4BA785268122457E94F55E0189A87BF7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1233,18 +1203,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_53961E1B25885D080B51B754DE3526AF"
-        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_53961E1B25885D080B51B754DE3526AF"
-        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_54553DF37BE24C11BAB849E21849863B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1306,6 +1264,12 @@
         "Entry"
         {
         "MsmKey" = "8:_5DC2813FD7ED49AA8E58CF54FA635054"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5E10CA2E56DD4AFCAD91305DEF0A9A7C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1551,6 +1515,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_6F1A0A253E0D4C2DAEB004F2E61F6FB3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_6F5199158E62482FA030432801BB2F1C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1683,6 +1653,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_791DAD208FE64B2D97794A0739FD9268"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_79431FC9213243178D7596B58CCF2828"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1750,6 +1726,12 @@
         "Entry"
         {
         "MsmKey" = "8:_7C8BF6063CC642D7B0E6E96F5DE346C0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7CA4B7C75DED4B5595638E45C21F115D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2122,12 +2104,6 @@
         "Entry"
         {
         "MsmKey" = "8:_927E9FDDFADE429BBF0F2F11AE02C821"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_92DF6C84F88E4E2E89B204E754F2FC01"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2535,24 +2511,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_B33799ED628EFEDE7DA813859382DEC4"
-        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B33799ED628EFEDE7DA813859382DEC4"
-        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B33799ED628EFEDE7DA813859382DEC4"
-        "OwnerKey" = "8:_CF8C64A0EFA94764B3BFE2265007B411"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_B3771C5F8BAA48C5AF8C5F00E221F3C3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2655,6 +2613,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_BA593E3622A145919E05BE10320D034D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BA9BEC3C313B4ABDBEFC9DB3CB462094"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_BAB3D518681948B9B5D7C284F4747B54"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2734,6 +2704,12 @@
         "Entry"
         {
         "MsmKey" = "8:_C094A0F6DE7145BBB6D49DDF0C4F7E0A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C0E34273F42247AFBC2EF10D754E246C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2859,6 +2835,30 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_C706A2C9B24D427C9580C9212CE9B355"
+        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C706A2C9B24D427C9580C9212CE9B355"
+        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C706A2C9B24D427C9580C9212CE9B355"
+        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C706A2C9B24D427C9580C9212CE9B355"
+        "OwnerKey" = "8:_CF8C64A0EFA94764B3BFE2265007B411"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_C720940DC9E646DEB2CFB3E8FBB1F9EC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2889,12 +2889,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C92434AB45034D78A120D3FF39B4F27D"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C928DCF91CAC4363A1D692F868B77B9F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2914,6 +2908,12 @@
         "Entry"
         {
         "MsmKey" = "8:_CAD06EE03A084F1AAE163E645695B213"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CCE34403DB5C444D87E6A402F0B690CF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2979,12 +2979,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_D0BAA0CF185DAE7B199FAFB6E48866BB"
-        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_D0D29D599AD547F6A3531BACECB45EBA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3015,6 +3009,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D3AC088A2FB04575BEE713E3F1ABF5D8"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_D3F32EE0D6F7478DA3976E1BF974A190"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3040,6 +3040,12 @@
         "Entry"
         {
         "MsmKey" = "8:_D5D691725AEF4D21BBDCA5832FDE77F1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D5EBACAC621D43778782057CAE5196CC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3196,6 +3202,12 @@
         "Entry"
         {
         "MsmKey" = "8:_E01DE4402DEC4F7E9DEE58C408B236EA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E09E360162984D1BA61EAD1C5DAC8E9E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3621,18 +3633,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_FEBA4DE919EA6D62B1EDE272504CF690"
-        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_FEBA4DE919EA6D62B1EDE272504CF690"
-        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_FEBDA0F7AFAF4B5F9F13035D0C80AFAA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3641,6 +3641,12 @@
         {
         "MsmKey" = "8:_FEC73B73E7294DC5978BFD89FE5AF0F5"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FECF9E23EBEE438ABE7EC7DA2B974C2D"
+        "OwnerKey" = "8:_C706A2C9B24D427C9580C9212CE9B355"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -5343,26 +5349,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_211FCBE311DC4F206CBAB4DC6A3EA2FB"
-            {
-            "SourcePath" = "8:emergent.dll"
-            "TargetName" = "8:emergent.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_21D57AE1021B408691A4DBB952AFFC23"
             {
             "SourcePath" = "8:..\\..\\..\\prog_lib\\BpBatch.prog"
@@ -6309,6 +6295,26 @@
             "TargetName" = "8:ta_type.h"
             "Tag" = "8:"
             "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3B47FE752C374FB8A04D494BCDBC18AF"
+            {
+            "SourcePath" = "8:..\\..\\..\\3rdparty\\bin\\ode_single.dll"
+            "TargetName" = "8:ode_single.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -7663,26 +7669,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_53961E1B25885D080B51B754DE3526AF"
-            {
-            "SourcePath" = "8:coin2.dll"
-            "TargetName" = "8:coin2.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_54553DF37BE24C11BAB849E21849863B"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\minmax.cpp"
@@ -7889,6 +7875,26 @@
             "TargetName" = "8:SoCapsule.h"
             "Tag" = "8:"
             "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5E10CA2E56DD4AFCAD91305DEF0A9A7C"
+            {
+            "SourcePath" = "8:..\\..\\..\\3rdparty\\bin\\ode_singled.pdb"
+            "TargetName" = "8:ode_singled.pdb"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -8703,6 +8709,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6F1A0A253E0D4C2DAEB004F2E61F6FB3"
+            {
+            "SourcePath" = "8:..\\..\\..\\3rdparty\\Coin-2.5.0\\bin\\coin2d.pdb"
+            "TargetName" = "8:coin2d.pdb"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6FE8D0973EDF4CFBB5E60068AAD3AF0B"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\maketa\\maketa.h"
@@ -9123,6 +9149,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_791DAD208FE64B2D97794A0739FD9268"
+            {
+            "SourcePath" = "8:..\\..\\..\\3rdparty\\bin\\zlibwapi_d.dll"
+            "TargetName" = "8:zlibwapi_d.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_79431FC9213243178D7596B58CCF2828"
             {
             "SourcePath" = "8:..\\..\\..\\prog_lib\\LeabraTrainBatchSeedNThr.prog"
@@ -9349,6 +9395,26 @@
             "TargetName" = "8:ReadMe.txt"
             "Tag" = "8:"
             "Folder" = "8:_FA86F97E6FDC463FAA68105469347856"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7CA4B7C75DED4B5595638E45C21F115D"
+            {
+            "SourcePath" = "8:..\\..\\..\\3rdparty\\Coin-2.5.0\\bin\\coin2.dll"
+            "TargetName" = "8:coin2.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -10589,26 +10655,6 @@
             "TargetName" = "8:emergent_32x32x256.ico"
             "Tag" = "8:"
             "Folder" = "8:_2CC1AE92E340477CBAE29B499B64198C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_92DF6C84F88E4E2E89B204E754F2FC01"
-            {
-            "SourcePath" = "8:..\\bin\\zlibwapi.dll"
-            "TargetName" = "8:zlibwapi.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -11963,26 +12009,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B33799ED628EFEDE7DA813859382DEC4"
-            {
-            "SourcePath" = "8:temt.dll"
-            "TargetName" = "8:temt.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B3771C5F8BAA48C5AF8C5F00E221F3C3"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_dump.h"
@@ -12323,6 +12349,46 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BA593E3622A145919E05BE10320D034D"
+            {
+            "SourcePath" = "8:..\\..\\..\\3rdparty\\bin\\zlibwapi.dll"
+            "TargetName" = "8:zlibwapi.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BA9BEC3C313B4ABDBEFC9DB3CB462094"
+            {
+            "SourcePath" = "8:..\\..\\..\\3rdparty\\Coin-2.5.0\\bin\\coin2d.dll"
+            "TargetName" = "8:coin2d.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BAB3D518681948B9B5D7C284F4747B54"
             {
             "SourcePath" = "8:..\\..\\..\\prog_lib\\CtLeabraSettle.prog"
@@ -12589,6 +12655,26 @@
             "TargetName" = "8:igeometry.h"
             "Tag" = "8:"
             "Folder" = "8:_B6627434CF78490C92A80330822C193D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C0E34273F42247AFBC2EF10D754E246C"
+            {
+            "SourcePath" = "8:..\\..\\..\\3rdparty\\bin\\ode_singled.dll"
+            "TargetName" = "8:ode_singled.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -13103,26 +13189,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C92434AB45034D78A120D3FF39B4F27D"
-            {
-            "SourcePath" = "8:..\\bin\\libsndfile-1.dll"
-            "TargetName" = "8:libsndfile-1.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C928DCF91CAC4363A1D692F868B77B9F"
             {
             "SourcePath" = "8:..\\..\\..\\demo\\leabra\\model_and_task.proj"
@@ -13189,6 +13255,26 @@
             "TargetName" = "8:SoTrain.prog"
             "Tag" = "8:"
             "Folder" = "8:_612BD7E23EAB4A64861742520DB7BE6D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CCE34403DB5C444D87E6A402F0B690CF"
+            {
+            "SourcePath" = "8:..\\..\\..\\3rdparty\\Coin-2.5.0\\bin\\soqt1d.pdb"
+            "TargetName" = "8:soqt1d.pdb"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -13383,26 +13469,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D0BAA0CF185DAE7B199FAFB6E48866BB"
-            {
-            "SourcePath" = "8:ode_single.dll"
-            "TargetName" = "8:ode_single.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D0D29D599AD547F6A3531BACECB45EBA"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_plugin.h"
@@ -13503,6 +13569,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D3AC088A2FB04575BEE713E3F1ABF5D8"
+            {
+            "SourcePath" = "8:..\\..\\..\\3rdparty\\Coin-2.5.0\\bin\\soqt1.dll"
+            "TargetName" = "8:soqt1.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D3F32EE0D6F7478DA3976E1BF974A190"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\maketa\\ta_parse.h"
@@ -13589,6 +13675,26 @@
             "TargetName" = "8:emergent_qtso.h"
             "Tag" = "8:"
             "Folder" = "8:_8A1F612F30E84C1D98F2809FE210D942"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D5EBACAC621D43778782057CAE5196CC"
+            {
+            "SourcePath" = "8:..\\..\\..\\3rdparty\\bin\\zlibwapi_d.pdb"
+            "TargetName" = "8:zlibwapi_d.pdb"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -14109,6 +14215,26 @@
             "TargetName" = "8:css_qtdialog.moc.cpp"
             "Tag" = "8:"
             "Folder" = "8:_CB8336C6D5004C58B1398DE53EA42E5E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E09E360162984D1BA61EAD1C5DAC8E9E"
+            {
+            "SourcePath" = "8:..\\..\\..\\3rdparty\\Coin-2.5.0\\bin\\soqt1d.dll"
+            "TargetName" = "8:soqt1d.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -15463,26 +15589,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FEBA4DE919EA6D62B1EDE272504CF690"
-            {
-            "SourcePath" = "8:soqt1.dll"
-            "TargetName" = "8:soqt1.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FEBDA0F7AFAF4B5F9F13035D0C80AFAA"
             {
             "SourcePath" = "8:..\\..\\..\\AUTHORS"
@@ -15934,6 +16040,17 @@
                             }
                         }
                     }
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_D4211E42C29A45298F63EA6BF18666D7"
+                    {
+                    "Name" = "8:3rdparty"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_63EAD7B528BF4283B92F7A359A728AB4"
+                        "Folders"
+                        {
+                        }
+                    }
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_DF175D613CB64950A5DCFB5ACF7DBDE8"
                     {
                     "Name" = "8:build"
@@ -16270,6 +16387,14 @@
                                                         }
                                                         "Values"
                                                         {
+                                                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_3C96B0989A8947C0B225E24B3602F65A"
+                                                            {
+                                                            "Name" = "8:COINDIR"
+                                                            "Condition" = "8:SET_COINDIR"
+                                                            "Transitive" = "11:FALSE"
+                                                            "ValueTypes" = "3:1"
+                                                            "Value" = "8:[TARGETDIR]3rdparty\\Coin-2.5.0"
+                                                            }
                                                             "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_97BB9AB0C0D1465CAB98FF460315B2EF"
                                                             {
                                                             "Name" = "8:EMERGENTDIR"
@@ -16710,6 +16835,262 @@
             "Attributes" = "3:1"
                 "Dialogs"
                 {
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_0C85E5690F514F5DBDFDC071AE724D59"
+                    {
+                    "Sequence" = "3:300"
+                    "DisplayName" = "8:Checkboxes   (A)"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdCustomCheck1Dlg.wid"
+                        "Properties"
+                        {
+                            "BannerBitmap"
+                            {
+                            "Name" = "8:BannerBitmap"
+                            "DisplayName" = "8:#1001"
+                            "Description" = "8:#1101"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:4"
+                            "Setting" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "BannerText"
+                            {
+                            "Name" = "8:BannerText"
+                            "DisplayName" = "8:#1014"
+                            "Description" = "8:#1114"
+                            "Type" = "3:3"
+                            "ContextData" = "8:"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:2"
+                            "Value" = "8:Set Environment Variables"
+                            "DefaultValue" = "8:#1214"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "BodyText"
+                            {
+                            "Name" = "8:BodyText"
+                            "DisplayName" = "8:#1015"
+                            "Description" = "8:#1115"
+                            "Type" = "3:3"
+                            "ContextData" = "8:"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:2"
+                            "Value" = "8:These options set environment variables that are needed for compiling plugins or recompiling Emergent -- only uncheck if you have installed the corresponding full package yourself."
+                            "DefaultValue" = "8:#1215"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox1Label"
+                            {
+                            "Name" = "8:Checkbox1Label"
+                            "DisplayName" = "8:#1034"
+                            "Description" = "8:#1134"
+                            "Type" = "3:3"
+                            "ContextData" = "8:"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:2"
+                            "Value" = "8:COINDIR"
+                            "DefaultValue" = "8:#1234"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox1Property"
+                            {
+                            "Name" = "8:Checkbox1Property"
+                            "DisplayName" = "8:#1030"
+                            "Description" = "8:#1130"
+                            "Type" = "3:14"
+                            "ContextData" = "8:Public"
+                            "Attributes" = "3:2"
+                            "Setting" = "3:2"
+                            "Value" = "8:SET_COINDIR"
+                            "DefaultValue" = "8:CHECKBOXA1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox1Value"
+                            {
+                            "Name" = "8:Checkbox1Value"
+                            "DisplayName" = "8:#1038"
+                            "Description" = "8:#1138"
+                            "Type" = "3:2"
+                            "ContextData" = "8:Unchecked=;Checked=1"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:2"
+                            "Value" = "8:1"
+                            "DefaultValue" = "8:"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox1Visible"
+                            {
+                            "Name" = "8:Checkbox1Visible"
+                            "DisplayName" = "8:#1026"
+                            "Description" = "8:#1126"
+                            "Type" = "3:5"
+                            "ContextData" = "8:1;True=1;False=0"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:0"
+                            "Value" = "3:1"
+                            "DefaultValue" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox2Label"
+                            {
+                            "Name" = "8:Checkbox2Label"
+                            "DisplayName" = "8:#1035"
+                            "Description" = "8:#1135"
+                            "Type" = "3:3"
+                            "ContextData" = "8:"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:1"
+                            "Value" = "8:#1235"
+                            "DefaultValue" = "8:#1235"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox2Property"
+                            {
+                            "Name" = "8:Checkbox2Property"
+                            "DisplayName" = "8:#1031"
+                            "Description" = "8:#1131"
+                            "Type" = "3:14"
+                            "ContextData" = "8:Public"
+                            "Attributes" = "3:2"
+                            "Setting" = "3:2"
+                            "Value" = "8:CHECKBOXA2"
+                            "DefaultValue" = "8:CHECKBOXA2"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox2Value"
+                            {
+                            "Name" = "8:Checkbox2Value"
+                            "DisplayName" = "8:#1039"
+                            "Description" = "8:#1139"
+                            "Type" = "3:2"
+                            "ContextData" = "8:Unchecked=;Checked=1"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:2"
+                            "Value" = "8:"
+                            "DefaultValue" = "8:"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox2Visible"
+                            {
+                            "Name" = "8:Checkbox2Visible"
+                            "DisplayName" = "8:#1027"
+                            "Description" = "8:#1127"
+                            "Type" = "3:5"
+                            "ContextData" = "8:1;True=1;False=0"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:0"
+                            "Value" = "3:0"
+                            "DefaultValue" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox3Label"
+                            {
+                            "Name" = "8:Checkbox3Label"
+                            "DisplayName" = "8:#1036"
+                            "Description" = "8:#1136"
+                            "Type" = "3:3"
+                            "ContextData" = "8:"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:1"
+                            "Value" = "8:#1236"
+                            "DefaultValue" = "8:#1236"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox3Property"
+                            {
+                            "Name" = "8:Checkbox3Property"
+                            "DisplayName" = "8:#1032"
+                            "Description" = "8:#1132"
+                            "Type" = "3:14"
+                            "ContextData" = "8:Public"
+                            "Attributes" = "3:2"
+                            "Setting" = "3:2"
+                            "Value" = "8:CHECKBOXA3"
+                            "DefaultValue" = "8:CHECKBOXA3"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox3Value"
+                            {
+                            "Name" = "8:Checkbox3Value"
+                            "DisplayName" = "8:#1040"
+                            "Description" = "8:#1140"
+                            "Type" = "3:2"
+                            "ContextData" = "8:Unchecked=;Checked=1"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:2"
+                            "Value" = "8:"
+                            "DefaultValue" = "8:"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox3Visible"
+                            {
+                            "Name" = "8:Checkbox3Visible"
+                            "DisplayName" = "8:#1028"
+                            "Description" = "8:#1128"
+                            "Type" = "3:5"
+                            "ContextData" = "8:1;True=1;False=0"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:0"
+                            "Value" = "3:0"
+                            "DefaultValue" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox4Label"
+                            {
+                            "Name" = "8:Checkbox4Label"
+                            "DisplayName" = "8:#1037"
+                            "Description" = "8:#1137"
+                            "Type" = "3:3"
+                            "ContextData" = "8:"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:1"
+                            "Value" = "8:#1237"
+                            "DefaultValue" = "8:#1237"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox4Property"
+                            {
+                            "Name" = "8:Checkbox4Property"
+                            "DisplayName" = "8:#1033"
+                            "Description" = "8:#1133"
+                            "Type" = "3:14"
+                            "ContextData" = "8:Public"
+                            "Attributes" = "3:2"
+                            "Setting" = "3:2"
+                            "Value" = "8:CHECKBOXA4"
+                            "DefaultValue" = "8:CHECKBOXA4"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox4Value"
+                            {
+                            "Name" = "8:Checkbox4Value"
+                            "DisplayName" = "8:#1041"
+                            "Description" = "8:#1141"
+                            "Type" = "3:2"
+                            "ContextData" = "8:Unchecked=;Checked=1"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:2"
+                            "Value" = "8:"
+                            "DefaultValue" = "8:"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Checkbox4Visible"
+                            {
+                            "Name" = "8:Checkbox4Visible"
+                            "DisplayName" = "8:#1029"
+                            "Description" = "8:#1129"
+                            "Type" = "3:5"
+                            "ContextData" = "8:1;True=1;False=0"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:0"
+                            "Value" = "3:0"
+                            "DefaultValue" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_145C7FEF02B247B691425D793EBBEEC4"
                     {
                     "Sequence" = "3:400"
@@ -16820,7 +17201,7 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_3BAF0191F71648CA8B1C4C7E26E5531C"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_C706A2C9B24D427C9580C9212CE9B355"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
@@ -16834,7 +17215,7 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_4B810A20FF5C49E0B9DF4ECA1DBD3E5D"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_FECF9E23EBEE438ABE7EC7DA2B974C2D"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"

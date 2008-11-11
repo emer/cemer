@@ -47,7 +47,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\..\..\3rdparty\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="COIN_DLL;SOQT_DLL;TA_DLL;TA_EXPORTS;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;WIN32;DEBUG;_DEBUG;_WINDOWS;_USRDLL"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
@@ -76,11 +76,11 @@
 				ShowProgress="2"
 				OutputFile="$(OutDir)/temt_debug.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(EMERGENTDIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib\debug&quot;;&quot;$(SolutionDir)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(EMERGENTDIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib\debug&quot;;&quot;$(SolutionDir)\..\..\3rdparty\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
-				ProgramDatabaseFile="$(OutDir)/temt.pdb"
+				ProgramDatabaseFile="$(OutDir)/temt_debug.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -107,7 +107,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)temt*.dll $(SolutionDir)lib&#x0D;&#x0A;copy $(TargetDir)temt*.lib $(SolutionDir)lib&#x0D;&#x0A;copy $(TargetDir)temt*.exp $(SolutionDir)lib&#x0D;&#x0A;copy $(TargetDir)temt*.dll $(SolutionDir)bin&#x0D;&#x0A;"
+				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)temt*.dll $(SolutionDir)..\..\bin&#x0D;&#x0A;copy $(TargetDir)temt*.pdb $(SolutionDir)..\..\bin&#x0D;&#x0A;copy $(TargetDir)temt*.lib $(SolutionDir)..\..\lib"
 			/>
 		</Configuration>
 		<Configuration
@@ -137,7 +137,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\..\..\3rdparty\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="COIN_DLL;SOQT_DLL;TA_DLL;TA_EXPORTS;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -164,7 +164,7 @@
 				AdditionalDependencies="Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlibwapi.lib libjpeg.lib gsl.lib cblas.lib ode_single.lib opengl32.lib"
 				OutputFile="$(OutDir)/temt.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(EMERGENTDIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib\release&quot;;&quot;$(SolutionDir)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(EMERGENTDIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib\release&quot;;&quot;$(SolutionDir)\..\..\3rdparty\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -195,7 +195,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)temt*.dll $(SolutionDir)lib&#x0D;&#x0A;copy $(TargetDir)temt*.lib $(SolutionDir)lib&#x0D;&#x0A;copy $(TargetDir)temt*.exp $(SolutionDir)lib&#x0D;&#x0A;copy $(TargetDir)temt*.dll $(SolutionDir)bin&#x0D;&#x0A;"
+				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.dll $(SolutionDir)..\..\bin&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.lib $(SolutionDir)..\..\lib"
 			/>
 		</Configuration>
 		<Configuration
@@ -1569,10 +1569,6 @@
 		<Filter
 			Name="Solution Items"
 			>
-			<File
-				RelativePath="..\..\HowToMakeRelease.txt"
-				>
-			</File>
 			<File
 				RelativePath="..\..\Makefile"
 				>

@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="css_bin"
 	ProjectGUID="{A09A57A9-A2D6-4BEB-8CE5-90D611B6FC75}"
+	RootNamespace="css_bin"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -73,7 +74,7 @@
 				ShowProgress="2"
 				OutputFile="$(OutDir)/css_bin_debug.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(EMERGENTDIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(EMERGENTDIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\..\..\lib&quot;"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/css_bin_debug.pdb"
@@ -102,7 +103,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)css*.exe $(SolutionDir)bin&#x0D;&#x0A;"
+				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.dll $(SolutionDir)..\..\bin&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.pdb $(SolutionDir)..\..\bin&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.lib $(SolutionDir)..\..\lib"
 			/>
 		</Configuration>
 		<Configuration
@@ -156,7 +157,7 @@
 				AdditionalDependencies="temt.lib qtmain.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib"
 				OutputFile="$(OutDir)/css_bin.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(EMERGENTDIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(EMERGENTDIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\..\..\lib&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="0"
@@ -185,6 +186,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.exe $(SolutionDir)..\..\bin"
 			/>
 		</Configuration>
 		<Configuration
@@ -381,11 +383,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\resource.h"
+				RelativePath=".\Resource.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource.h"
+				RelativePath=".\resource.h"
 				>
 			</File>
 		</Filter>

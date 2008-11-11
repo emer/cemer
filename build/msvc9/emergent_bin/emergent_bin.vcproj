@@ -72,7 +72,7 @@
 				AdditionalDependencies="temt_debug.lib emergent_debug.lib OpenGL32.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib"
 				OutputFile="$(OutDir)/emergent_debug.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\..\..\lib&quot;"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/emergent_bin.pdb"
 				SubSystem="1"
@@ -101,7 +101,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)emergent*.exe $(SolutionDir)bin&#x0D;&#x0A;"
+				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)emergent*.exe $(SolutionDir)..\..\bin&#x0D;&#x0A;copy $(TargetDir)emergent*.pdb $(SolutionDir)..\..\bin"
 			/>
 		</Configuration>
 		<Configuration
@@ -156,7 +156,7 @@
 				OutputFile="$(OutDir)/emergent.exe"
 				Version="4.0.6"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\..\..\lib&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="0"
@@ -185,7 +185,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(TargetDir)emergent*.exe $(SolutionDir)bin"
+				CommandLine="copy $(TargetDir)emergent*.exe $(SolutionDir)..\..\bin"
 			/>
 		</Configuration>
 		<Configuration

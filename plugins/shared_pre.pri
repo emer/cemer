@@ -75,8 +75,8 @@ win32 {
   DEFINES += QT_DLL TA_DLL EMERGENT_DLL
 #  LIBS += -L$${BUILD_MSVC}/lib
 #  LIBS += -ltemt$${BUILD_EXT_US} -lemergent$${BUILD_EXT_US}
-  LIBS += $${BUILD_MSVC}/lib/temt$${BUILD_EXT_US}.lib
-  LIBS += $${BUILD_MSVC}/lib/emergent$${BUILD_EXT_US}.lib
+  LIBS += $${EMERGENT_DIR}/lib/temt$${BUILD_EXT_US}.lib
+  LIBS += $${EMERGENT_DIR}/lib/emergent$${BUILD_EXT_US}.lib
 } else {
   LIBS += -L$${EMERGENT_DIR}/lib
   LIBS += -ltemt$${BUILD_EXT_US}-$${LIB_VER}
@@ -143,10 +143,12 @@ isEmpty( EMERGENT_DIR ) {
 win32 {
   INCLUDEPATH +=\
 	$${BUILD_MSVC} \
-	$${BUILD_MSVC}\\include
+	$${EMERGENT_DIR}\\3rdparty\\include
 	
   MAKETA_INCLUDEPATH +=\
-	-I$${BUILD_MSVC}
+	-I$${BUILD_MSVC} \
+	-I$${EMERGENT_DIR}\\3rdparty\\include
+
   DESTDIR = $${EMERGENT_DIR}/lib/plugins$${BUILD_EXT_SF}
 } else {
   INCLUDEPATH +=\

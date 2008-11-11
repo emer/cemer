@@ -6,12 +6,12 @@ INCLUDE = "-I$(EMERGENTDIR)\src\temt\ta" "-I$(EMERGENTDIR)\src\temt\ta\ios-g++-3
   "-I$(QTDIR)/include/QtCore" "-I$(QTDIR)/include/QtGui" \
   "-I$(QTDIR)/include/QtNetwork" "-I$(QTDIR)/include/QtOpenGL" \
   "-I$(QTDIR)/include/QtXml" "-I$(COINDIR)/include/Inventor" \
-  "-I$(EMERGENT_VC_DIR)" "-I$(EMERGENT_VC_DIR)\include" \
+  "-I$(EMERGENT_VC_DIR)" "-I$(EMERGENTDIR)\3rdparty\include" \
   "-I$(MSVCDIR)\include"
 CD = cd   
 MOC = $(QTDIR)\bin\moc $(INCLUDE)
-#MAKETA = $(EMERGENTDIR)\build\msvc7\maketa\Debug\maketa.exe -v1
-MAKETA = $(EMERGENT_VC_DIR)\bin\maketa.exe
+#MAKETA = $(EMERGENTDIR)\bin\maketa_debug.exe -v1
+MAKETA = $(EMERGENTDIR)\bin\maketa.exe
 
 
 all: maketa_files moc_files

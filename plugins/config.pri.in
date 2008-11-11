@@ -34,7 +34,7 @@ MSVC_TARGET = $$(MSVC_TARGET)
   CONFIG_PRI = $$(EMERGENTDIR)/plugins/config.pri
   EMERGENT_SYS_DIR = $$(EMERGENTDIR)
   EMERGENT_INC_DIR = $${EMERGENT_DIR}/src
-  MAKETA = $$(EMERGENT_VC_DIR)/bin/maketa
+  MAKETA = $$(EMERGENTDIR)/bin/maketa
   
 #TODO: add our pdp project depends on Windows, ex ode etc.
 #  LIBS +=   

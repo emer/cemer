@@ -95,6 +95,7 @@
 
 #if defined(__APPLE__) && (defined(__GNUC__) || defined(__xlC__) || defined(__xlc__))
 #  define TA_OS_DARWIN
+#  define TA_OS_MAC /* TA_OS_MAC is mostly for compatiblity, but also more clear */
 #elif defined(__CYGWIN__) // note: not supported
 #  define TA_OS_CYGWIN
 #  error "Cygwin is not supported for TA/PDP"
@@ -161,10 +162,6 @@
 
 #if defined(TA_OS_WIN32) || defined(TA_OS_WIN64)
 #  define TA_OS_WIN
-#endif
-
-#if defined(TA_OS_DARWIN)
-#  define TA_OS_MAC /* TA_OS_MAC is mostly for compatiblity, but also more clear */
 #endif
 
 #if defined(TA_OS_WIN)

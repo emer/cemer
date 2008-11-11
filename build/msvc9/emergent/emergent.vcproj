@@ -46,7 +46,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\src\emergent\network&quot;;&quot;$(EMERGENTDIR)\src\emergent\cs&quot;;&quot;$(EMERGENTDIR)\src\emergent\bp&quot;;&quot;$(EMERGENTDIR)\src\emergent\leabra&quot;;&quot;$(EMERGENTDIR)\src\emergent\so&quot;;&quot;$(EMERGENTDIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\src\emergent\network&quot;;&quot;$(EMERGENTDIR)\src\emergent\cs&quot;;&quot;$(EMERGENTDIR)\src\emergent\bp&quot;;&quot;$(EMERGENTDIR)\src\emergent\leabra&quot;;&quot;$(EMERGENTDIR)\src\emergent\so&quot;;&quot;$(EMERGENTDIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\..\..\3rdparty\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="COIN_DLL;SOQT_DLL;EMERGENT_DLL;EMERGENT_EXPORTS;TA_DLL;DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -72,7 +72,7 @@
 				AdditionalDependencies="temt_debug.lib OpenGL32.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib"
 				OutputFile="$(OutDir)/emergent_debug.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\..\..\3rdparty\lib&quot;;&quot;$(SolutionDir)\..\..\lib&quot;"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/emergent_debug.pdb"
 				SubSystem="2"
@@ -101,7 +101,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)emergent*.dll $(SolutionDir)lib&#x0D;&#x0A;copy $(TargetDir)emergent*.lib $(SolutionDir)lib&#x0D;&#x0A;copy $(TargetDir)emergent*.exp $(SolutionDir)lib&#x0D;&#x0A;copy $(TargetDir)emergent*.dll $(SolutionDir)bin&#x0D;&#x0A;"
+				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.dll $(SolutionDir)..\..\bin&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.pdb $(SolutionDir)..\..\bin&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.lib $(SolutionDir)..\..\lib"
 			/>
 		</Configuration>
 		<Configuration
@@ -131,7 +131,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\src\emergent\network&quot;;&quot;$(EMERGENTDIR)\src\emergent\cs&quot;;&quot;$(EMERGENTDIR)\src\emergent\bp&quot;;&quot;$(EMERGENTDIR)\src\emergent\leabra&quot;;&quot;$(EMERGENTDIR)\src\emergent\so&quot;;&quot;$(EMERGENTDIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\src\emergent\network&quot;;&quot;$(EMERGENTDIR)\src\emergent\cs&quot;;&quot;$(EMERGENTDIR)\src\emergent\bp&quot;;&quot;$(EMERGENTDIR)\src\emergent\leabra&quot;;&quot;$(EMERGENTDIR)\src\emergent\so&quot;;&quot;$(EMERGENTDIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\..\..\3rdparty\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="COIN_DLL;SOQT_DLL;EMERGENT_DLL;EMERGENT_EXPORTS;TA_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -157,7 +157,7 @@
 				AdditionalDependencies="temt.lib OpenGL32.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib"
 				OutputFile="$(OutDir)/emergent.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\..\..\3rdparty\lib&quot;;&quot;$(SolutionDir)\..\..\lib&quot;"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -188,7 +188,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)emergent*.dll $(SolutionDir)lib&#x0D;&#x0A;copy $(TargetDir)emergent*.lib $(SolutionDir)lib&#x0D;&#x0A;copy $(TargetDir)emergent*.exp $(SolutionDir)lib&#x0D;&#x0A;copy $(TargetDir)emergent*.dll $(SolutionDir)bin&#x0D;&#x0A;"
+				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.dll $(SolutionDir)..\..\bin&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.lib $(SolutionDir)..\..\lib"
 			/>
 		</Configuration>
 		<Configuration

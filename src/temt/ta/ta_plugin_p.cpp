@@ -148,6 +148,14 @@ void taPlugins::EnumeratePlugins() {
     folder = plugin_folders.FastEl(i);
     QDir pluginsDir(folder);
     // enumerate all files in the folder, and try loading
+	// for platforms with known dylib suffixes, only look for those
+#ifdef TA_OS_LINUX
+    pluginsDir.setNameFilter("*.so");
+#elif defined(TA_OS_WIN)
+    pluginsDir.setNameFilter("*.dll");
+#elif  defined(TA_OS_MAC)
+    pluginsDir.setNameFilter("*.dylib");
+#endif
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
       taPluginInst* pl = ProbePlugin(pluginsDir.absoluteFilePath(fileName));
       if (pl) {
