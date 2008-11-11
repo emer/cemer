@@ -2668,7 +2668,8 @@ C_Compute_dWt_CtLeabraXCAL_avgprod(LeabraCon* cn, LeabraCon* rbias, LeabraCon* s
   float srm = (sravg_m_nrm * rbias->sravg_m) * (sravg_m_nrm * sbias->sravg_m);
   float lrn = xcal.s_mix * (sravg_s_nrm * rbias->sravg_s) * (sravg_s_nrm * sbias->sravg_s)
     + xcal.m_mix * srm;
-  float thr_p = MAX(xcal.m_gain * srm, ru_ravg_l);
+  //  float thr_p = MAX(xcal.m_gain * srm, ru_ravg_l);
+  float thr_p = MAX(srm, ru_ravg_l);
   cn->dwt += cur_lrate * xcal.dWtFun(lrn, thr_p);
 }
 
@@ -2753,20 +2754,7 @@ inline void LeabraConSpec::Compute_dWt_Rnd_XCAL(LeabraRecvCons* cg, LeabraUnit* 
 						float rnd_var) {
   LeabraLayer* slay = (LeabraLayer*)cg->prjn->from.ptr();
   LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-  // note: all these inactivity checks are actually really essential for objrec models
-  // todo: need a better system..
-  if((rlay->acts_p.avg < savg_cor.thresh) || (slay->acts_p.avg < savg_cor.thresh))
-    return;
-  if(ru->in_subgp) {
-    LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
-    if(ogp->acts_p.avg < savg_cor.thresh) return;
-  }
   for(int i=0; i<cg->cons.size; i++) {
-    LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-    if(su->in_subgp) {
-      LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
-      if(ogp->acts_p.avg < savg_cor.thresh) continue;
-    }
     C_Compute_dWt_Rnd_XCAL((LeabraCon*)cg->Cn(i), rnd_var);
   }
 }
@@ -2928,7 +2916,8 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit*
     else {
       float srm = rlay->sravg_m_nrm * cn->sravg_m;
       float lrn = xcal.s_mix * rlay->sravg_s_nrm * cn->sravg_s + xcal.m_mix * srm;
-      float thr_p = MAX(xcal.m_gain * srm, ru->ravg_l);
+      //      float thr_p = MAX(xcal.m_gain * srm, ru->ravg_l);
+      float thr_p = MAX(srm, ru->ravg_l);
       // note: not using l_gain here -- defaults to 1
       dw = xcal.dWtFun(lrn, thr_p);
     }
@@ -2979,7 +2968,8 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
     else {
       float srm = rlay->sravg_m_nrm * cn->sravg_m;
       float lrn = xcal.s_mix * rlay->sravg_s_nrm * cn->sravg_s + xcal.m_mix * srm;
-      float thr_p = MAX(xcal.m_gain * srm, ru->ravg_l);
+      //      float thr_p = MAX(xcal.m_gain * srm, ru->ravg_l);
+      float thr_p = MAX(srm, ru->ravg_l);
       // note: not using l_gain here -- defaults to 1
       dw = xcal.dWtFun(lrn, thr_p);
     }
