@@ -2668,8 +2668,7 @@ C_Compute_dWt_CtLeabraXCAL_avgprod(LeabraCon* cn, LeabraCon* rbias, LeabraCon* s
   float srm = (sravg_m_nrm * rbias->sravg_m) * (sravg_m_nrm * sbias->sravg_m);
   float lrn = xcal.s_mix * (sravg_s_nrm * rbias->sravg_s) * (sravg_s_nrm * sbias->sravg_s)
     + xcal.m_mix * srm;
-  //  float thr_p = MAX(xcal.m_gain * srm, ru_ravg_l);
-  float thr_p = MAX(srm, ru_ravg_l);
+  float thr_p = MAX(xcal.m_gain * srm, ru_ravg_l);
   cn->dwt += cur_lrate * xcal.dWtFun(lrn, thr_p);
 }
 
@@ -2916,8 +2915,7 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit*
     else {
       float srm = rlay->sravg_m_nrm * cn->sravg_m;
       float lrn = xcal.s_mix * rlay->sravg_s_nrm * cn->sravg_s + xcal.m_mix * srm;
-      //      float thr_p = MAX(xcal.m_gain * srm, ru->ravg_l);
-      float thr_p = MAX(srm, ru->ravg_l);
+      float thr_p = MAX(xcal.m_gain * srm, ru->ravg_l);
       // note: not using l_gain here -- defaults to 1
       dw = xcal.dWtFun(lrn, thr_p);
     }
@@ -2968,8 +2966,7 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
     else {
       float srm = rlay->sravg_m_nrm * cn->sravg_m;
       float lrn = xcal.s_mix * rlay->sravg_s_nrm * cn->sravg_s + xcal.m_mix * srm;
-      //      float thr_p = MAX(xcal.m_gain * srm, ru->ravg_l);
-      float thr_p = MAX(srm, ru->ravg_l);
+      float thr_p = MAX(xcal.m_gain * srm, ru->ravg_l);
       // note: not using l_gain here -- defaults to 1
       dw = xcal.dWtFun(lrn, thr_p);
     }
