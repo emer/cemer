@@ -90,8 +90,7 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 }
 
 void XCalLearnSpec::Initialize() {
-  avg_updt = TRIAL;
-  lrn_var = AVG_PROD;
+  lrn_var = XCAL;
 
   s_mix = 0.80f;
 
@@ -99,22 +98,9 @@ void XCalLearnSpec::Initialize() {
 
   l_dt = 0.03f;
   l_gain = 4.0f;
-  l_norm = KWTA_PCT;
-
-  m_dt = 0.03f;
-  s_dt = 0.1f;
-
-//   lrn_thr = 0.2f;
-//   lrn_delay = 200;
-
-  use_nd = false;
 
   d_gain = 1.5f;
   d_rev = 0.15f;
-
-  avg_init = 0.15f;
-  rnd_min_avg = -1.0f;		// turn off by default
-  rnd_var = 0.1f;
 
   m_mix = 1.0f - s_mix;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
@@ -128,6 +114,31 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
     d_rev_ratio = (1.0f - d_rev) / d_rev;
   else
     d_rev_ratio = 1.0f;
+}
+
+void XCalMiscSpec::Initialize() {
+  l_norm = KWTA_PCT;
+  avg_updt = TRIAL;
+  ml_mix = 0.0f;
+  ml_dt = 0.2f;
+  m_dt = 0.03f;
+  s_dt = 0.1f;
+
+//   lrn_thr = 0.2f;
+//   lrn_delay = 200;
+
+  use_nd = false;
+
+  avg_init = 0.15f;
+  rnd_min_avg = -1.0f;		// turn off by default
+  rnd_var = 0.1f;
+
+  sm_mix = 1.0f - ml_mix;
+}
+
+void XCalMiscSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  sm_mix = 1.0f - ml_mix;
 }
 
 void SAvgCorSpec::Initialize() {
@@ -205,6 +216,7 @@ void LeabraConSpec::InitLinks() {
   taBase::Own(lrate_sched, this);
   taBase::Own(lmix, this);
   taBase::Own(xcal, this);
+  taBase::Own(xcalm, this);
   taBase::Own(savg_cor, this);
   taBase::Own(rel_net_adapt, this);
   taBase::Own(wt_sig_fun, this);
@@ -224,6 +236,7 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   CreateWtSigFun();
   lmix.UpdateAfterEdit();
   xcal.UpdateAfterEdit();
+  xcalm.UpdateAfterEdit();
 }
 
 void LeabraConSpec::Defaults() {
@@ -1623,7 +1636,7 @@ void LeabraUnitSpec::Init_SRAvg(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* 
 void LeabraUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
   if(net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) {
     LeabraConSpec* bsp = (LeabraConSpec*)bias_spec.SPtr();
-    if(bsp->xcal.avg_updt == XCalLearnSpec::TRIAL) {
+    if(bsp->xcalm.avg_updt == XCalMiscSpec::TRIAL) {
       if(lay->sravg_m_nrm * ((LeabraCon*)u->bias.Cn(0))->sravg_m < opt_thresh.learn) return;
     }
     else {
@@ -1931,6 +1944,7 @@ void LeabraUnit::Initialize() {
   act_nd = 0.0f;
   act_avg = 0.15f;
   ravg_l = 0.15f;
+  ravg_ml = 0.15f;
   act_p = act_m = act_dif = 0.0f;
   act_m2 = act_p2 = act_dif2 = 0.0f;
   da = 0.0f;
@@ -1981,6 +1995,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   act_nd = cp.act_nd;
   act_avg = cp.act_avg;
   ravg_l = cp.ravg_l;
+  ravg_ml = cp.ravg_ml;
   act_m = cp.act_m;
   act_p = cp.act_p;
   act_dif = cp.act_dif;
