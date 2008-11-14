@@ -2545,7 +2545,7 @@ String TokenSpace::El_GetName_(void* it) const {
 #else
   if(owner == NULL) {
 #endif
-    tmp_el_name = String((intptr_t)it);
+    tmp_el_name = String((ta_intptr_t)it);
     return tmp_el_name;
   }
 #ifndef NO_TA_BASE
@@ -5072,7 +5072,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       return fun->name;
     else if(*((void**)base) == NULL)
       return String::con_NULL;
-    return String((intptr_t)*((void**)base));
+    return String((ta_intptr_t)*((void**)base));
   }
   if (ptr == 0) {
     if (DerivesFrom(TA_bool)) {
@@ -5525,7 +5525,7 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
     else if(*((void**)base) == NULL)
       return Variant((void*)NULL);//String::con_NULL;
     else 
-      return String((intptr_t)*((void**)base)); //TODO: is this the best??
+      return String((ta_intptr_t)*((void**)base)); //TODO: is this the best??
   }
   if (ptr == 0) {
     if (DerivesFrom(TA_bool)) {
