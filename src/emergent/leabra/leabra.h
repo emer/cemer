@@ -2687,7 +2687,7 @@ inline void LeabraConSpec::C_Init_SRAvg(LeabraCon* cn) {
 }
 
 inline void LeabraConSpec::Init_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru) {
-  if(learn_rule == CTLEABRA_CAL || xcal.lrn_var == XCalLearnSpec::CAL) {
+  if(learn_rule == CTLEABRA_CAL || xcal.lrn_var != XCalLearnSpec::XCAL) {
     CON_GROUP_LOOP(cg, C_Init_SRAvg((LeabraCon*)cg->Cn(i)));
   }
 }
@@ -2708,8 +2708,9 @@ inline void LeabraConSpec::
 C_Compute_dWt_CtLeabraXCAL_svmcal(LeabraCon* cn, LeabraCon* rbias, LeabraCon* sbias,
 				  float ru_ravg_l, float sravg_s_nrm, float sravg_m_nrm) {
   float srm = (sravg_m_nrm * rbias->sravg_m) * (sravg_m_nrm * sbias->sravg_m);
-  cn->dwt += cur_lrate * ((sravg_s_nrm * cn->sravg_s - sravg_m_nrm * cn->sravg_m) +
-			  xcal.mvl_mix * xcal.dWtFun(srm, ru_ravg_l));
+  cn->dwt += cur_lrate *
+    (xcal.svm_mix * (sravg_s_nrm * cn->sravg_s - sravg_m_nrm * cn->sravg_m) +
+     xcal.mvl_mix * xcal.dWtFun(srm, ru_ravg_l));
 }
 
 inline void LeabraConSpec::
@@ -2781,7 +2782,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
     }
     else { // if(xcal.lrn_var == XCalLearnSpec::CAL) {
       CON_GROUP_LOOP(cg, C_Compute_dWt_CtLeabraCAL((LeabraCon*)cg->Cn(i),
-						   rlay->sravg_s_nrm, rlay->sravg_m_nrm));
+						   sravg_s_nrm, sravg_m_nrm));
     }
   }
   else {
