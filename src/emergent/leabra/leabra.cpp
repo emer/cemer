@@ -1612,7 +1612,7 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraLayer* lay, LeabraNetwor
 	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
 	if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
 	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-	if(cs->xcal.lrn_var != XCalLearnSpec::CAL) continue;
+	if(cs->xcal.lrn_var == XCalLearnSpec::XCAL) continue;
 	recv_gp->Compute_SRAvg(u, do_s);
       }
     }
