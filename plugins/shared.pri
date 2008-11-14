@@ -11,7 +11,7 @@ SOURCES += $${TARGET}_TA.cpp
 maketa.target = $${TARGET}_TA_type.h
 
 win32 {
-  maketa.commands = $$(EMERGENT_VC_DIR)\\bin\\maketa.exe -css /D DEBUG -win_dll \
+  maketa.commands = $$(EMERGENTDIR)\\bin\\maketa.exe -css /D DEBUG -win_dll \
   /I $$(EMERGENT_VC_DIR)\\include \
   /I $$(EMERGENT_VC_DIR) /I $$(QTDIR)\\include\Qt \
   $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}

@@ -753,30 +753,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_3975E20F90704993BDECADDB54C8A2BA"
-        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3975E20F90704993BDECADDB54C8A2BA"
-        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3975E20F90704993BDECADDB54C8A2BA"
-        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3975E20F90704993BDECADDB54C8A2BA"
-        "OwnerKey" = "8:_CF8C64A0EFA94764B3BFE2265007B411"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_3A390C844067442994DFF7E704F3E8B2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1791,6 +1767,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7E1749259CAB4E54A0619E6255D50D33"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_7E17E6DF6E9041A28B2331124B301424"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2061,6 +2043,30 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_8E5E9D5EDD434A0E86778C3C95858D3D"
+        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8E5E9D5EDD434A0E86778C3C95858D3D"
+        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8E5E9D5EDD434A0E86778C3C95858D3D"
+        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8E5E9D5EDD434A0E86778C3C95858D3D"
+        "OwnerKey" = "8:_CF8C64A0EFA94764B3BFE2265007B411"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8FAE8008DF1C4F47AFC58E60E23C26CC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2243,6 +2249,12 @@
         {
         "MsmKey" = "8:_9B202DCD937643AF971F6522E01E4BC5"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9B53F946EC944C6F812C19C1390F25F2"
+        "OwnerKey" = "8:_8E5E9D5EDD434A0E86778C3C95858D3D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -3477,12 +3489,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_EFF6A8C261DE45BBB0643756808F5995"
-        "OwnerKey" = "8:_3975E20F90704993BDECADDB54C8A2BA"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_F00F00C29D634098AFEF327B8FBBCC19"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3706,7 +3712,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\setup_bin.msi"
+        "OutputFilename" = "8:Release\\setup.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -3725,11 +3731,6 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Net.Framework.3.5.SP1"
-                    {
-                    "Name" = "8:.NET Framework 3.5 SP1"
-                    "ProductCode" = "8:Microsoft.Net.Framework.3.5.SP1"
-                    }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
                     {
                     "Name" = "8:Windows Installer 3.1"
@@ -11200,7 +11201,7 @@
             "SourcePath" = "8:..\\temt\\Release\\temt.lib"
             "TargetName" = "8:temt.lib"
             "Tag" = "8:"
-            "Folder" = "8:_C26992C9DFE244DFBFB536FD3F82D205"
+            "Folder" = "8:_9BE94055D14D48C9851AEA08B284477D"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -12480,7 +12481,7 @@
             "SourcePath" = "8:..\\emergent\\Release\\emergent.lib"
             "TargetName" = "8:emergent.lib"
             "Tag" = "8:"
-            "Folder" = "8:_C26992C9DFE244DFBFB536FD3F82D205"
+            "Folder" = "8:_9BE94055D14D48C9851AEA08B284477D"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -16066,10 +16067,21 @@
                             }
                         }
                     }
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_9BE94055D14D48C9851AEA08B284477D"
+                    {
+                    "Name" = "8:lib"
+                    "AlwaysCreate" = "11:TRUE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_EE42B723E728440F967AFB8D8EB16C47"
+                        "Folders"
+                        {
+                        }
+                    }
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_D4211E42C29A45298F63EA6BF18666D7"
                     {
                     "Name" = "8:3rdparty"
-                    "AlwaysCreate" = "11:FALSE"
+                    "AlwaysCreate" = "11:TRUE"
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
                     "Property" = "8:_63EAD7B528BF4283B92F7A359A728AB4"
@@ -16334,7 +16346,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Emergent"
         "ProductCode" = "8:{179C23A7-9622-4482-99C5-DD8B10A07CA5}"
-        "PackageCode" = "8:{AD72A865-1490-4A15-9345-517A1DB102FF}"
+        "PackageCode" = "8:{7D823ECF-9B52-406E-A955-A0AC00D46AAB}"
         "UpgradeCode" = "8:{44D9DB79-4385-44C5-8AAE-9E349721CFFC}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
@@ -16419,7 +16431,7 @@
                                                             "Condition" = "8:"
                                                             "Transitive" = "11:FALSE"
                                                             "ValueTypes" = "3:2"
-                                                            "Value" = "8:[TARGETDIR].\\"
+                                                            "Value" = "8:[TARGETDIR]."
                                                             }
                                                             "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_FD58ED5607F74ABEB6B6195DB5951C8A"
                                                             {
@@ -16528,7 +16540,7 @@
                                                                     "Condition" = "8:"
                                                                     "Transitive" = "11:FALSE"
                                                                     "ValueTypes" = "3:1"
-                                                                    "Value" = "8:[TargetDir]bin\\emergent.exe"
+                                                                    "Value" = "8:[TARGETDIR]bin\\emergent.exe"
                                                                     }
                                                                 }
                                                             }
@@ -16550,7 +16562,7 @@
                                                                     "Condition" = "8:"
                                                                     "Transitive" = "11:FALSE"
                                                                     "ValueTypes" = "3:1"
-                                                                    "Value" = "8:[TargetDir]bin\\maketa.exe"
+                                                                    "Value" = "8:[TARGETDIR]bin\\maketa.exe"
                                                                     }
                                                                 }
                                                             }
@@ -17063,7 +17075,7 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_3975E20F90704993BDECADDB54C8A2BA"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_8E5E9D5EDD434A0E86778C3C95858D3D"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
@@ -17077,7 +17089,7 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_EFF6A8C261DE45BBB0643756808F5995"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_9B53F946EC944C6F812C19C1390F25F2"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
@@ -17117,6 +17129,34 @@
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{CE66086C-AB6B-42B5-916F-4060AC936B55}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_7E1749259CAB4E54A0619E6255D50D33"
+            {
+            "SourcePath" = "8:..\\bin\\maketa.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
