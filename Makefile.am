@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I m4
+
 EXTRA_DIST =\
 	src/temt/ta/ta_global.h \
 	src/temt/ta/ta_maketa_defs.h \
