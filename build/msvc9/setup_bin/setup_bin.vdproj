@@ -693,7 +693,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_362F1856E37249FB976CB287C56F6111"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_364DAE2C29654FE19894DF05D45E02C3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_36E56189FADA4B6793A9A700E51BB64C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -838,6 +850,12 @@
         "Entry"
         {
         "MsmKey" = "8:_400C47EDCAD84421AA37C7EA51017102"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_401D2209821C481992FDBEA3680776CF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1161,6 +1179,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_54CD217F2FFD46ECB39BEF59E076C0BD"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_564FA57042514AE286FA54E19CE1FCA7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1330,6 +1354,12 @@
         "Entry"
         {
         "MsmKey" = "8:_6444D2129C47417393705CBEFB719D32"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_654A6680570D45348752992A41ACD3C5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1773,6 +1803,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_81031D5F36A740E78D880D916EC87E1C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8121EA356D7741ED930017FA0372E5A2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1840,6 +1876,12 @@
         "Entry"
         {
         "MsmKey" = "8:_8443124A203543CF8E7A0F71222C044A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_84901EDBD6E24A85820C36558689D35D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2805,6 +2847,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_C7F20152D9864CCBAC97CA349265CD13"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_C8325029F24F4F0BBDD26EB913B0B415"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2937,6 +2985,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D35CDE91DD66449DB870BD0BD0025D17"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_D365075D6CD9448A91438E45A6A19AE6"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3052,6 +3106,12 @@
         "Entry"
         {
         "MsmKey" = "8:_D91DDBB74D6C4F0FAAADEF31DFAE16C9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D9C298890A1242A582B252852FA2C1EB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3310,6 +3370,12 @@
         "Entry"
         {
         "MsmKey" = "8:_EB2FC227120A4796ABB41E8AFD60E084"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EB57E27A8F6D4E11B5BB678D40219ABF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -5911,12 +5977,52 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_362F1856E37249FB976CB287C56F6111"
+            {
+            "SourcePath" = "8:C:\\Qt\\4.4.3\\bin\\QtOpenGL4.dll"
+            "TargetName" = "8:QtOpenGL4.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_364DAE2C29654FE19894DF05D45E02C3"
             {
             "SourcePath" = "8:..\\..\\..\\src\\emergent\\leabra\\leabra_def.h"
             "TargetName" = "8:leabra_def.h"
             "Tag" = "8:"
             "Folder" = "8:_B46D74AB61524A02960CB05AD063B1A3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_36E56189FADA4B6793A9A700E51BB64C"
+            {
+            "SourcePath" = "8:C:\\Qt\\4.4.3\\bin\\Qt3Support4.dll"
+            "TargetName" = "8:Qt3Support4.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -6395,6 +6501,26 @@
             {
             "SourcePath" = "8:C:\\Qt\\4.4.3\\bin\\QtSvg4.dll"
             "TargetName" = "8:QtSvg4.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_401D2209821C481992FDBEA3680776CF"
+            {
+            "SourcePath" = "8:C:\\Qt\\4.4.3\\bin\\QtCore4.dll"
+            "TargetName" = "8:QtCore4.dll"
             "Tag" = "8:"
             "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
             "Condition" = "8:"
@@ -7471,6 +7597,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_54CD217F2FFD46ECB39BEF59E076C0BD"
+            {
+            "SourcePath" = "8:C:\\Qt\\4.4.3\\bin\\QtOpenGLd4.dll"
+            "TargetName" = "8:QtOpenGLd4.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_564FA57042514AE286FA54E19CE1FCA7"
             {
             "SourcePath" = "8:..\\..\\..\\src\\emergent\\network\\emergent_base.cpp"
@@ -8037,6 +8183,26 @@
             "TargetName" = "8:shared.pri"
             "Tag" = "8:"
             "Folder" = "8:_61EBFCA0C7864353890091C330F974DD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_654A6680570D45348752992A41ACD3C5"
+            {
+            "SourcePath" = "8:C:\\Qt\\4.4.3\\bin\\Qt3Supportd4.dll"
+            "TargetName" = "8:Qt3Supportd4.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -9511,6 +9677,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_81031D5F36A740E78D880D916EC87E1C"
+            {
+            "SourcePath" = "8:C:\\Qt\\4.4.3\\bin\\QtSvgd4.dll"
+            "TargetName" = "8:QtSvgd4.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8121EA356D7741ED930017FA0372E5A2"
             {
             "SourcePath" = "8:..\\..\\..\\src\\emergent\\cs\\cs_v3_compat.h"
@@ -9737,6 +9923,26 @@
             "TargetName" = "8:taiqtso_ti.cpp"
             "Tag" = "8:"
             "Folder" = "8:_B6627434CF78490C92A80330822C193D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_84901EDBD6E24A85820C36558689D35D"
+            {
+            "SourcePath" = "8:C:\\Qt\\4.4.3\\bin\\QtGui4.dll"
+            "TargetName" = "8:QtGui4.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -12951,6 +13157,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C7F20152D9864CCBAC97CA349265CD13"
+            {
+            "SourcePath" = "8:C:\\Qt\\4.4.3\\bin\\QtNetwork4.dll"
+            "TargetName" = "8:QtNetwork4.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C8325029F24F4F0BBDD26EB913B0B415"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_base.cpp"
@@ -13391,6 +13617,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D35CDE91DD66449DB870BD0BD0025D17"
+            {
+            "SourcePath" = "8:C:\\Qt\\4.4.3\\bin\\QtGuid4.dll"
+            "TargetName" = "8:QtGuid4.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D365075D6CD9448A91438E45A6A19AE6"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\images\\editundo.png"
@@ -13777,6 +14023,26 @@
             "TargetName" = "8:cs_TA_type.h"
             "Tag" = "8:"
             "Folder" = "8:_A17B1E255D3140FA97A96973E311B3FA"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D9C298890A1242A582B252852FA2C1EB"
+            {
+            "SourcePath" = "8:C:\\Qt\\4.4.3\\bin\\QtNetworkd4.dll"
+            "TargetName" = "8:QtNetworkd4.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -14637,6 +14903,26 @@
             "TargetName" = "8:netstru_extra.cpp"
             "Tag" = "8:"
             "Folder" = "8:_8A1F612F30E84C1D98F2809FE210D942"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EB57E27A8F6D4E11B5BB678D40219ABF"
+            {
+            "SourcePath" = "8:C:\\Qt\\4.4.3\\bin\\QtCored4.dll"
+            "TargetName" = "8:QtCored4.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -16141,7 +16427,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Emergent"
         "ProductCode" = "8:{179C23A7-9622-4482-99C5-DD8B10A07CA5}"
-        "PackageCode" = "8:{A80985A2-1F33-4D27-ADD1-1307671307C8}"
+        "PackageCode" = "8:{779906A1-B144-4A50-AFB9-4BA7FEEFFAC0}"
         "UpgradeCode" = "8:{44D9DB79-4385-44C5-8AAE-9E349721CFFC}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
@@ -16161,7 +16447,7 @@
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
-        "TargetPlatform" = "3:0"
+        "TargetPlatform" = "3:1"
         "PreBuildEvent" = "8:"
         "PostBuildEvent" = "8:"
         "RunPostBuildEvent" = "3:0"
