@@ -209,6 +209,10 @@ void taiData::emit_UpdateUi() {
   emit UpdateUi();
 }
 
+void taiData::emit_settingHighlight(bool setting) {
+  emit settingHighlight(setting);
+}
+
 bool taiData::eventFilter(QObject* watched, QEvent* ev) {
   //note: we don't delete events, just look for focusin on our rep
   bool rval = inherited::eventFilter(watched, ev);
@@ -266,7 +270,12 @@ bool taiData::readOnly() const {
 void taiData::setHighlight(bool value) {
   if (mhighlight == value) return;
   mhighlight = value;
-  emit settingHighlight(value);
+  // if we are in a DataDeck, then it is the deck that needs to emit signal
+  taiDataDeck* deck = dynamic_cast<taiDataDeck*>(mparent);
+  if (deck)
+    deck->emit_settingHighlight(value);
+  else
+    emit_settingHighlight(value);
 }
 void taiData::setParent(taiData* value) {
   if (mparent == value) return;

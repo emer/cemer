@@ -188,8 +188,10 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
 
     QFileInfo fi(tfname);
     // we always add the path here, to the sys paths -- if added again, it is a noop
-    if (tabMisc::root)
-      tabMisc::root->AddRecentPath(fi.path());
+    if (tabMisc::root) {
+      tabMisc::root->AddRecentPath(fi.path(), true);
+      save_paths = true;
+    }
     // note: if we further fixup partial filenames, then compress could be true
     if (fd->fileMode() & QFileDialog::ExistingFile)
       file_exists = true;

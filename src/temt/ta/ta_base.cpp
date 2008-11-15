@@ -1161,7 +1161,8 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
   
   if (flr->ostrm) {
     SetFileName(flr->fileName());
-    DataChanged(DCR_ITEM_UPDATED);
+    // don't notify! very dangerous in middle of save, and also marks Dirty
+   // DataChanged(DCR_ITEM_UPDATED);
   }
   return flr;
 }
@@ -1196,11 +1197,19 @@ int taBase::Save() {
 
 int taBase::SaveAs(const String& fname) {
   int rval = false;
-  taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString);
-  if(flr->ostrm)
-    rval = Save_strm(*flr->ostrm);
-  flr->Close();
-  taRefN::unRefDone(flr);
+  // we stream to a string first, in case there is a crash...
+  // we must do this first, because Filer clobers file when it opens
+  ostringstream oss;
+  if (Save_strm(oss)) {
+    taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString);
+    if (flr->ostrm) {
+      *(flr->ostrm) << oss.str();
+      flr->Close();
+      rval = true;
+    }
+    taRefN::unRefDone(flr);
+    DataChanged(DCR_ITEM_UPDATED_ND);
+  }
   return rval;
 }
 
@@ -1988,7 +1997,7 @@ UserDataItem* taBase::SetUserData(const String& name, const Variant& value)
   UserDataItem_List* ud = GetUserDataList(true);
   if (!ud) return NULL; // not supported, shouldn't be calling
   
-  bool notify = false;
+  bool notify = true; // always!
   UserDataItemBase* udi = ud->FindLeafName(name);
   if (udi) {
     if (TestError(!udi->isSimple(),
@@ -1997,7 +2006,6 @@ UserDataItem* taBase::SetUserData(const String& name, const Variant& value)
       return NULL;
     }
   } else {
-    notify = !ud->hasVisibleItems(); // we'll do a notify if this is first
     udi = new UserDataItem;
     udi->SetName(name);
     ud->Add(udi);

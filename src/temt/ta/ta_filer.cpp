@@ -315,10 +315,15 @@ void taFiler::Init(FilerFlags flags_) {
   file_selected = false;
   compressed = false;
   file_exists = false;
+  save_paths = false;
 }
 
 taFiler::~taFiler() {
   Close();
+  if (save_paths && taMisc::use_gui && tabMisc::root) {
+    save_paths = false;
+    tabMisc::root->Save();
+  }
 }
 
 taFiler& taFiler::operator=(const taFiler& cp) {

@@ -450,7 +450,6 @@ void taiDataDelegate::GetValue() const {
   if (!dat) return;
   taBase* base = dat->Base(); // cache
   if (dat->mbr) { // has member (typical case)
-    dat->mbr->im->GetImage(dat, base);
     bool first_diff = true;
     dat->mbr->im->GetMbrValue(dat, base, first_diff); 
     if (!first_diff)

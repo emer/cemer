@@ -181,21 +181,9 @@ void iUserDataDataHost::Constr_Box() {
  
 
 void iUserDataDataHost::ClearBody_impl() {
-  // we also clear all the methods, and then rebuild them
-  ta_menus.Reset();
-  ta_menu_buttons.Reset();
-//  meth_el.Reset(); // must defer deletion of these, because the MethodData objects are used in menu calls, so can't be
-  layMethButtons = NULL;
-  DeleteChildrenLater(frmMethButtons);
-  show_meth_buttons = false;
-
-  // note: no show menu in this class
-  cur_menu = NULL;
-  cur_menu_but = NULL;
-  if (menu) {
-    menu->Reset();
-  }
-//??  inherited::ClearBody_impl();
+  // note: we don't nuke control, we just clear it
+  membs.ResetItems();
+  tw->clear();
 }
 
 void iUserDataDataHost::Constr_Data_Labels() {

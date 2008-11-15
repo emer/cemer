@@ -139,6 +139,7 @@ protected:
   fstream*	fstrm;		// #READ_ONLY the underlying file
   bool		compressed; // set when file has .gz suffix
   bool		file_exists; // set by GetFileName if the file actually exists
+  bool		save_paths; // save path changes, but only on Close (*after* file save)
   
   taFiler(FilerFlags flags);
   virtual ~taFiler();

@@ -288,8 +288,8 @@ public:
   virtual void	SaveAll();
   // saves all the projects
   
-  void		AddRecentFile(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
-  void		AddRecentPath(const String& value); // #IGNORE add this path to the recent list
+  void		AddRecentFile(const String& value, bool no_save = false); // #IGNORE add this file to the recent list (also adds the path to recent paths)
+  void		AddRecentPath(const String& value, bool no_save = false); // #IGNORE add this path to the recent list
   
   taBase*	FindGlobalObject(TypeDef* base_type = &TA_taBase, 
     const String& name = _nilString);
@@ -388,6 +388,7 @@ protected:
   static int		milestone; // StartupMilestones
   static taMisc::ConsoleType console_type; // #IGNORE 
   static int console_options; //#IGNORE taMisc::ConsoleOptions 
+  static ContextFlag	in_init; // suppresses spurious Saves
   
   static bool	isAppDir(String path); // #IGNORE true if seems to be an app dir
   static bool 	Startup_InitTA_folders();  // #IGNORE 

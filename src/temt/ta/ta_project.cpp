@@ -636,7 +636,9 @@ bool taProject::SetFileName(const String& val) {
   if(vwr) {
     vwr->SetWinName();
   }
-  tabMisc::root->AddRecentFile(val);
+  // note: too dangerous to save root, since we are still saving project...
+  // BUT changes should get saved when we close the filer anyway
+  tabMisc::root->AddRecentFile(val, true);
   return true;
 }
 
@@ -651,6 +653,16 @@ void taProject::Dump_Load_pre() {
   docs.Reset();
   templates.Reset();
 }
+
+/*int taProject::SaveAs(const String& fname) {
+//hack, to save root if file changed (so we don't save it during save)
+  String old_fname = GetFileName();
+  int rval = inherited::SaveAs(fname);
+  if (rval && (old_fname != GetFileName() && taMisc::gui) {
+    taRoot::Save();
+  }
+  return rval;
+}*/
 
 int taProject::Save_strm(ostream& strm, TAPtr par, int indent) {
 #ifdef TA_GUI
@@ -833,6 +845,7 @@ int taRootBase::milestone;
 TypeDef* taRootBase::root_type;
 taMisc::ConsoleType taRootBase::console_type;
 int taRootBase::console_options;
+ContextFlag taRootBase::in_init;
 
 // note: not static class to avoid need qpointer in header
 QPointer<taRootBaseAdapter> root_adapter;
@@ -935,13 +948,15 @@ void taRootBase::MonControl(bool on) {
 #endif
 #endif
 
-void taRootBase::AddRecentFile(const String& value) {
+void taRootBase::AddRecentFile(const String& value, bool no_save) {
+// never save for dmem>0
+  no_save = no_save || (taMisc::dmem_proc > 0);
   bool save = AddRecentFile_impl(value);
   QFileInfo fi(value);
   String path = fi.path();
   if (AddRecentPath_impl(path))
     save = true;
-  if (save)
+  if (save && !no_save)
     Save();
 }
 
@@ -967,8 +982,10 @@ bool taRootBase::AddRecentFile_impl(const String& value) {
   return true;
 }
 
-void taRootBase::AddRecentPath(const String& value) {
-  if (AddRecentPath_impl(value))
+void taRootBase::AddRecentPath(const String& value, bool no_save) {
+// never save for dmem>0
+  no_save == no_save || (taMisc::dmem_proc > 0);
+  if (AddRecentPath_impl(value) && !no_save)
     Save();
 }
 
@@ -995,6 +1012,7 @@ bool taRootBase::AddRecentPath_impl(const String& value) {
 }
 
 int taRootBase::Save() {
+  if (in_init) return false; // no spurious, and also suppresses for dmem
   ++taFiler::no_save_last_fname;
   int rval = inherited::Save();
   --taFiler::no_save_last_fname;
@@ -2029,6 +2047,7 @@ bool taRootBase::Startup_RunStartupScript() {
 bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init_fun, 
 			      TypeDef* root_typ) 
 {
+  ++in_init;
   root_type = root_typ;
 #ifdef GPROF
   moncontrol(0);		// turn off at start
@@ -2059,6 +2078,7 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   // note: Startup_ProcessArgs() is called after having entered the event loop
   // note: don't call event loop yet, because we haven't initialized main event loop
   // happens in Startup_Run()
+  --in_init;
   if(taMisc::gui_active && (taMisc::dmem_proc == 0))	// only guy and don't have all the other nodes save
     instance()->Save();
   return true;

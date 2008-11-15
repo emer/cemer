@@ -160,7 +160,6 @@ public:
   virtual ~taiData();
 
   int			defSize() const;		// default taiMisc::SizeSpec value, for sizing controls (taken from parent, else dlg, else "default")
-  void			emit_UpdateUi();
   virtual bool		isConstructed();	// true if our parents (ex dialog) are fully constructed
   bool			highlight() const { return mhighlight; }	// #GET_highlight  changed highlight
   QLabel*		label() const {return m_label;}
@@ -195,6 +194,8 @@ public:
     // makes a layout widget, with max height set, and tweaked for Mac
    
 #ifndef __MAKETA__
+  void			emit_UpdateUi();
+  void 			emit_settingHighlight(bool setting);
 signals:
   bool 			settingHighlight(bool setting); // invoked when highlight state changes
   void			UpdateUi(); // cliphandler callback, to get it to requery the ui items
