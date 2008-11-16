@@ -31,8 +31,6 @@ AC_INIT([Emergent],[4.0.18],[emergent-users@grey.colorado.edu],[Emergent])
 LIB_VERSION=1:0:0   #Set library version here
 LIB_VERSION_2=1.0.0
 
-AC_CONFIG_MACRO_DIR([m4])
-
 AC_SUBST([PACKAGE_VERSION])
 AC_SUBST([LIB_VERSION])
 AC_SUBST([LIB_VERSION_2])
