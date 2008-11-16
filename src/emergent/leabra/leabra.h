@@ -458,10 +458,6 @@ public:
 						LeabraCon* rbias, LeabraCon* sbias,
 				 float ru_ravg_l, float sravg_s_nrm, float sravg_m_nrm);
   // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- trial-wise version (requires normalization factors)
-  inline void 	C_Compute_dWt_CtLeabraXCAL_svmcal(LeabraCon* cn,
-						  LeabraCon* rbias, LeabraCon* sbias,
-				 float ru_ravg_l, float sravg_s_nrm, float sravg_m_nrm);
-  // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- trial-wise version (requires normalization factors)
   inline void 	C_Compute_dWt_CtLeabraXCAL_trial_ml(LeabraCon* cn,
 						   LeabraCon* rbias, LeabraCon* sbias,
 						   LeabraUnit* ru, LeabraUnit* su,
