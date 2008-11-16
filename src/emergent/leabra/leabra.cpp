@@ -94,7 +94,7 @@ void XCalLearnSpec::Initialize() {
 
   mvl_mix = 0.05f;
 
-  s_mix = 0.80f;
+  s_mix = 0.90f;
 
   l_dt = 0.03f;
   l_gain = 1.8f;
