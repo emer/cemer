@@ -984,7 +984,7 @@ bool taRootBase::AddRecentFile_impl(const String& value) {
 
 void taRootBase::AddRecentPath(const String& value, bool no_save) {
 // never save for dmem>0
-  no_save == no_save || (taMisc::dmem_proc > 0);
+  no_save = no_save || (taMisc::dmem_proc > 0);
   if (AddRecentPath_impl(value) && !no_save)
     Save();
 }
