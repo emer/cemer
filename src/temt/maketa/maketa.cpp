@@ -523,7 +523,7 @@ void mta_cleanup(int err) {
   cerr << endl;
   String tmp_file = String("/tmp/mta_tmp.") + String(getpid());
   String rm_tmp = String("/bin/rm ") + tmp_file + " >/dev/null 2>&1";
-  system(rm_tmp);
+  int res = system(rm_tmp);
   kill(getpid(), err);		// activate signal
 }
 #endif
@@ -799,8 +799,9 @@ int main(int argc, char* argv[])
     while(mta->yy_state != MTA::YYRet_Exit) yyparse();
     mta->fh.close(); mta->fh.clear();
     mta->included.DupeUnique(mta->tmp_include); // copy over
-    if (!keep_tmp)
-      system(rm + tmp_file);
+    if (!keep_tmp) {
+      int res = system(rm + tmp_file);
+    }
   }
 
   TypeSpace_Generate_LinkRefs(&(mta->spc_target), &(mta->spc_extern));
@@ -862,11 +863,11 @@ int main(int argc, char* argv[])
     //TODO: fails on Windows (no "touch" command)
 #else
     comnd = String("touch ") + mta->ta_type_h;
-    system(comnd);
+    int res = system(comnd);
     comnd = String("touch ") + mta->ta_inst_h;
-    system(comnd);
+    res = system(comnd);
     comnd = String("touch ") + mta->ta_ccname;
-    system(comnd);
+    res = system(comnd);
 #endif
 
     // if in autohx mode, then update files that changed
