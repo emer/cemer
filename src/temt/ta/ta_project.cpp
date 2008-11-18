@@ -949,6 +949,7 @@ void taRootBase::MonControl(bool on) {
 #endif
 
 void taRootBase::AddRecentFile(const String& value, bool no_save) {
+  if (value.empty()) return; // oops...
 // never save for dmem>0
   no_save = no_save || (taMisc::dmem_proc > 0);
   bool save = AddRecentFile_impl(value);
@@ -983,6 +984,7 @@ bool taRootBase::AddRecentFile_impl(const String& value) {
 }
 
 void taRootBase::AddRecentPath(const String& value, bool no_save) {
+  if (value.empty()) return; // oops...
 // never save for dmem>0
   no_save = no_save || (taMisc::dmem_proc > 0);
   if (AddRecentPath_impl(value) && !no_save)

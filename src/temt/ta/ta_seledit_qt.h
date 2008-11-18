@@ -124,12 +124,13 @@ public: // overrides
     const QModelIndex& index) const;
   override void 	setModelData(QWidget* editor, QAbstractItemModel* model,
     const QModelIndex& index ) const;
-/*  override QSize	sizeHint(const QStyleOptionViewItem& option,
-    const QModelIndex& index) const;*/
+  override QSize	sizeHint(const QStyleOptionViewItem& option,
+    const QModelIndex& index) const;
 protected:
   mutable QPointer<taiData> dat; // most recently created
   mutable QPointer<QWidget> rep; // most recently created
   mutable int		m_dat_row; // row corresponding to dat, -1 if none
+  mutable QSize		sh; // current size hint -- we return greatest
 
   override bool 	eventFilter(QObject* object, QEvent* event); // replace
 

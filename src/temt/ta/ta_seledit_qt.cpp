@@ -347,6 +347,16 @@ QWidget* taiDataDelegate::createEditor(QWidget* parent,
     dat->SetBase(base);
     dat->SetMemberDef(md);
     rep = dat->GetRep(); // note: rep may get replaced by rep_par 
+    // color stuff
+    // by default, the table color shines through widget, which is weird
+    // so we will shut that off if it isn't merely a container widget
+    String cn(rep->metaObject()->className());
+//TODO: FIGURE THIS OUT!!! wasn't any of these:
+    if (cn != "QWidget") {
+      //rep->setAutoFillBackground(false);
+      //rep->setAttribute(Qt::WA_NoSystemBackground);
+      //rep->setAttribute(Qt::WA_OpaquePaintEvent);
+    }
     if (wrap) {
       QHBoxLayout* hbl = new QHBoxLayout(rep_par);
       hbl->setMargin(0);
@@ -359,6 +369,24 @@ QWidget* taiDataDelegate::createEditor(QWidget* parent,
     }
     connect(rep, SIGNAL(destroyed(QObject*)),
       dat, SLOT(deleteLater()) );
+
+    // resize the column to accommodate the controls
+    // (this seems the only place that works -- DataDelegate::sizeHint()
+    //  gets called *before* createEditor() so we don't know its
+    //  size yet at that point; therefore, we hackily do it here)
+    sh = rep->sizeHint();
+    QTableView* tv = NULL;
+    QWidget* tv_candidate = parent;
+    while (tv_candidate) {
+      tv = qobject_cast<QTableView*>(tv_candidate);
+      if (tv) break;
+      tv_candidate = tv_candidate->parentWidget();
+    }
+    if (tv) {
+      if (tv->columnWidth(1) < sh.width())
+        tv->setColumnWidth(1, sh.width());
+    }
+    
     return rep;
   }
 exit:
@@ -487,48 +515,33 @@ void taiDataDelegate::rep_destroyed(QObject* rep) {
     edh->Revert();*/
 }
 
+QSize taiDataDelegate::sizeHint(const QStyleOptionViewItem& option,
+    const QModelIndex& index) const
+{
+  QSize rval = inherited::sizeHint(option, index);
+  if (dat) {
+    rval = rval.expandedTo(sh);
+  }
+  return rval;
+}
+
 void taiDataDelegate::setEditorData(QWidget* editor,
     const QModelIndex& index) const
 {
   if (!dat) return;
-/*nn! #ifdef DEBUG
-    cerr << "setEditorData for (dat/rep): " <<
-      dat->metaObject()->className() << "/" <<
-      dat->GetRep()->metaObject()->className() << "\n";
-#endif */
   GetImage();
 }
 
 void taiDataDelegate::setModelData(QWidget* editor,
-  QAbstractItemModel* model, const QModelIndex& index ) const
+  QAbstractItemModel* model, const QModelIndex& index) const
 {
   if (!dat) return;
-/*nn!#ifdef DEBUG
-    cerr << "setModelData for (dat/rep): " <<
-      dat->metaObject()->className() << "/" <<
-      dat->GetRep()->metaObject()->className() << "\n";
-#endif */
   GetValue();
+//note: -- testing has indicated that this call only happens once
+// so we invalidate it now, so the cell paints properly
+  dat = NULL;
+  m_dat_row = -1;
 }
-
-/* NOTE: see bugID:500
-QSize taiDataDelegate::sizeHint(const QStyleOptionViewItem& option,
-    const QModelIndex& index) const
-{
-  if ((index.column() == 1)) {
-#ifdef DEBUG
-     cerr << "taiDataDelegate::sizeHint() request for editor col\n";
-#endif
-    //note: we assume that if we still have a rep, it is asking about that
-    if (rep) {
-#ifdef DEBUG
-     cerr << "taiDataDelegate::sizeHint() request for rep\n";
-#endif
-      return rep->sizeHint();
-    }
-  } 
-  return inherited::sizeHint(option, index);
-}*/
 
 void taiDataDelegate::this_closeEditor(QWidget* /*editor*/,
     QAbstractItemDelegate::EndEditHint /*hint*/)

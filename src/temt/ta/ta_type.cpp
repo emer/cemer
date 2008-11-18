@@ -5047,7 +5047,8 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
     if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
     rval += md->type->GetValStr(md->GetOff(base), base, md, sc, force_inline);
     if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
-    rval += ": ";
+    if (sc == SC_DISPLAY) rval += "; "; // semicolon more intuitive for display
+    else                  rval += ": ";
   }
   if (sc != SC_DISPLAY) rval += "}";
   return rval;
