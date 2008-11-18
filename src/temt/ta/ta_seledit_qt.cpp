@@ -369,28 +369,33 @@ QWidget* taiDataDelegate::createEditor(QWidget* parent,
     }
     connect(rep, SIGNAL(destroyed(QObject*)),
       dat, SLOT(deleteLater()) );
-
-    // resize the column to accommodate the controls
-    // (this seems the only place that works -- DataDelegate::sizeHint()
-    //  gets called *before* createEditor() so we don't know its
-    //  size yet at that point; therefore, we hackily do it here)
-    sh = rep->sizeHint();
-    QTableView* tv = NULL;
-    QWidget* tv_candidate = parent;
-    while (tv_candidate) {
-      tv = qobject_cast<QTableView*>(tv_candidate);
-      if (tv) break;
-      tv_candidate = tv_candidate->parentWidget();
-    }
-    if (tv) {
-      if (tv->columnWidth(1) < sh.width())
-        tv->setColumnWidth(1, sh.width());
-    }
-    
+      
+    EditorCreated(parent, rep, option, index);
     return rep;
   }
 exit:
   return inherited::createEditor(parent, option, index);
+}
+
+void taiDataDelegate::EditorCreated(QWidget* parent, QWidget* editor, 
+    const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+  // resize the column to accommodate the controls
+  // (this seems the only place that works -- DataDelegate::sizeHint()
+  //  gets called *before* createEditor() so we don't know its
+  //  size yet at that point; therefore, we hackily do it here)
+  sh = editor->sizeHint();
+  QTableView* tv = NULL;
+  QWidget* tv_candidate = parent;
+  while (tv_candidate) {
+    tv = qobject_cast<QTableView*>(tv_candidate);
+    if (tv) break;
+    tv_candidate = tv_candidate->parentWidget();
+  }
+  if (tv) {
+    if (tv->columnWidth(1) < sh.width())
+      tv->setColumnWidth(1, sh.width());
+  }
 }
 
 bool taiDataDelegate::eventFilter(QObject *object, QEvent *event)

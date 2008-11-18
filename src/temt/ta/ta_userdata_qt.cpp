@@ -80,6 +80,7 @@ QWidget* UserDataDelegate::createEditor(QWidget* parent,
     
     connect(rep, SIGNAL(destroyed(QObject*)),
       dat, SLOT(deleteLater()) );
+    EditorCreated(parent, rep, option, index);
     return rep;
   }
 exit:

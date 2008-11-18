@@ -133,7 +133,9 @@ protected:
   mutable QSize		sh; // current size hint -- we return greatest
 
   override bool 	eventFilter(QObject* object, QEvent* event); // replace
-
+  virtual void		EditorCreated(QWidget* parent, QWidget* editor, 
+    const QStyleOptionViewItem& option, const QModelIndex& index) const;
+  
 protected slots:
   virtual void		rep_destroyed(QObject* rep); // when dat.rep destroys
   virtual void 		this_closeEditor(QWidget* editor,
