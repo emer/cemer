@@ -6517,7 +6517,7 @@ comp_thr=0.5;
 comp_gain=2;
 gp_pt=0.2;
 };
-kwta {k_from=USE_K: k=12: pct=0.25: pat_q=0.5: diff_act_pct=1: act_pct=0.1: gp_i=0: gp_g=0.5: };
+kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 tie_brk {on=0: k_thr=1: diff_thr=0.2: };
 adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
