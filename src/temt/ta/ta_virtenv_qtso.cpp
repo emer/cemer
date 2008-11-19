@@ -16,6 +16,7 @@
 #include "ta_virtenv_qtso.h"
 
 #include "ta_math.h"
+#include "ta_imgproc.h"
 
 #include <QImage>
 #include <QGroupBox>
@@ -1274,6 +1275,13 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
 		    Qt::SmoothTransformation);
 }
 
+
+bool VEWorld::GetCameraTaImage(taImage& ta_img, int cam_no) {
+  QImage img = GetCameraImage(cam_no);
+  bool rval = (bool)img.isNull();
+  ta_img.SetImage(img);
+  return rval;
+}
 
 ////////////////////////////////////////////////////////////
 

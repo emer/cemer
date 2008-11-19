@@ -41,6 +41,9 @@ class VESpace_Group;
 class VEWorld;
 class VEWorldView;
 
+class taImage;
+
+
 class TA_API ODEIntParams : public taBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
 INHERITED(taBase)
@@ -852,6 +855,9 @@ public:
 
   virtual QImage GetCameraImage(int camera_no);
   // #CAT_ODE get camera image from given camera number (image may be null if camera not set)
+
+  virtual bool GetCameraTaImage(taImage& ta_img, int camera_no);
+  // #CAT_ODE gets camera image from given camera number into given taImage object -- returns false if unsuccessful
 
   //////////////////////////////////////
   // 	IMPL functions
