@@ -216,7 +216,7 @@ public:
 
   override bool	FitN(int n);
 
-  TA_BASEFUNS(XYNGeom);
+  TA_BASEFUNS_LITE(XYNGeom);
 protected:
   void	UpdateAfterEdit_impl();
 private:

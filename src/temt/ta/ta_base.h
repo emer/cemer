@@ -139,28 +139,6 @@ public: \
   void Copy(const y<T>& cp) { Copy_impl(cp);} \
   y<T>& operator=(const y<T>& cp) { Copy(cp); return *this; }
 
-#define TA_TMPLT2_BASEFUNS_MAIN_(y,T,U) \
-private: \
-  inline void Copy__(const y<T,U>& cp) { \
-    SetBaseFlag(COPYING); \
-      Copy_(cp); \
-    ClearBaseFlag(COPYING);} \
-protected: \
-  void Copy_impl(const y<T,U>& cp) { \
-    StructUpdate(true); \
-      inherited::Copy_impl(cp); \
-      Copy__(cp); \
-    StructUpdate(false);} \
-  void  UnSafeCopy(const taBase* cp) { if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y<T,U>*)cp)); \
-    else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
-  void  CastCopyTo(taBase* cp) const { y<T,U>& rf = *((y<T,U>*)cp); rf.Copy_impl(*this); } \
-public: \
-  static TypeDef* StatTypeDef(int) { return &TA_##y; } \
-  TypeDef* GetTypeDef() const { return &TA_##y; } \
-  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
-  void Copy(const y<T,U>& cp) { Copy_impl(cp);} \
-  y<T,U>& operator=(const y<T,U>& cp) { Copy(cp); return *this; }
-
 // common defs used to make instances: Cloning and Tokens
 #define TA_BASEFUNS_INST_(y) \
   TAPtr Clone() { return new y(*this); }  \
@@ -172,11 +150,6 @@ public: \
   TAPtr MakeToken(){ return (TAPtr)(new y<T>); }  \
   TAPtr MakeTokenAry(int n){ return (TAPtr)(new y<T>[n]); }  
 
-#define TA_TMPLT2_BASEFUNS_INST_(y,T,U) \
-  TAPtr Clone() { return new y<T,U>(*this); } \
-  TAPtr MakeToken(){ return (TAPtr)(new y<T,U>); }  \
-  TAPtr MakeTokenAry(int n){ return (TAPtr)(new y<T,U>[n]); }  
-
 // ctors -- one size fits all (where used) thanks to Initialize__
 #ifndef __MAKETA__
 #define TA_BASEFUNS_CTORS_(y) \
@@ -187,10 +160,6 @@ public: \
   y () { Initialize__(); } \
   y (const y<T>& cp):inherited(cp) { Initialize__(); Copy__(cp); }
 
-#define TA_TMPLT2_BASEFUNS_CTORS_(y,T,U) \
-  y () { Initialize__(); } \
-  y (const y<T,U>& cp):inherited(cp) { Initialize__(); Copy__(cp); }
-  
 #else
 
 #define TA_BASEFUNS_CTORS_(y) \
@@ -201,9 +170,6 @@ public: \
   y () { Initialize__(); } \
   y (const y<T>& cp) { Initialize__(); Copy__(cp); }
 
-#define TA_TMPLT2_BASEFUNS_CTORS_(y,T,U) \
-  y () { Initialize__(); } \
-  y (const y<T,U>& cp) { Initialize__(); Copy__(cp); }
 #endif
 
 // common dtor/init, when using tokens (same for TMPLT)
@@ -224,7 +190,6 @@ public: \
   ~y () { CheckDestroyed(); Destroying(); Destroy(); } 
 
 #define TA_TMPLT_BASEFUNS_NTOK_(y,T) TA_BASEFUNS_NTOK_(y)
-#define TA_TMPLT2_BASEFUNS_NTOK_(y,T,U) TA_BASEFUNS_NTOK_(y)
 
 // normal set of funs, for tokens, except ctors; you can use this yourself
 // when you have consts in your class and can't use the generic ctors
@@ -303,13 +268,6 @@ public: \
   TA_TMPLT_BASEFUNS_MAIN_(y,T) \
   TA_TMPLT_BASEFUNS_INST_(y,T) \
   TA_TMPLT_BASEFUNS_NTOK_(y,T) 
-
-// template versions, ex. for smart ptrs, and similar class with no reg
-#define TA_TMPLT2_BASEFUNS_LITE(y,T,U) \
-  TA_TMPLT2_BASEFUNS_CTORS_(y,T,U) \
-  TA_TMPLT2_BASEFUNS_MAIN_(y,T,U) \
-  TA_TMPLT2_BASEFUNS_INST_(y,T,U) \
-  TA_TMPLT2_BASEFUNS_NTOK_(y,T,U)
 
 // macro for abstract base classes (with pure virtual methods, and no instance)
 #define TA_ABSTRACT_BASEFUNS(y) \
@@ -1495,68 +1453,48 @@ public: // IDataLinkClient interface
   override void		DataLinkDestroying(taDataLink* dl);
 };
 
-#ifdef _MSC_VER 
-// evil msvc won't automatically promote to type to compare, but g++ chokes
-inline bool operator ==(const taBase* a, const taSmartRef& b)
-  {return a == b.ptr();}
-inline bool operator ==(const taSmartRef& a, const taBase* b)
-  {return a.ptr() == b;}
-#endif
-
-template<class T, TypeDef& td>
+template<class T>
 class taSmartRefT: public taSmartRef { 
 public:
-  inline T*	ptr() const {return (T*)m_ptr;} // typed alias for the base version
-
+  inline T*		ptr() const {return (T*)m_ptr;} // typed alias for the base version
+  
+  inline 		operator T*() const {return (T*)m_ptr;}
+  inline T* 		operator->() const {return (T*)m_ptr;}
+  T* 			operator=(const taSmartRefT<T>& src) {set((T*)src.m_ptr); return (T*)m_ptr;}
+  T* 			operator=(T* src) {set(src); return (T*)m_ptr;}
   override TypeDef*	GetBaseType() const {return T::StatTypeDef(0);}
-  
-  inline 	operator T*() const {return (T*)m_ptr;} //
-  inline T* 	operator->() const {return (T*)m_ptr;} //
-  
-protected: // must use macro below to make instance classes
-//  taSmartRefT() {} 
-  
-public:
-  T* operator=(const taSmartRefT<T,td>& src) {set((T*)src.m_ptr); return (T*)m_ptr;}
-  T* operator=(T* src) {set(src); return (T*)m_ptr;}
-  TypeDef* GetDataTypeDef() const {return (m_ptr) ? m_ptr->GetTypeDef() : &td;}
+  TypeDef*		GetDataTypeDef() const 
+    {return (m_ptr) ? m_ptr->GetTypeDef() : T::StatTypeDef(0);}
   taSmartRefT() {}  //
+  
 #ifndef __MAKETA__
-/*  friend bool	operator==(const taSmartRefT<T,td>& a, const taSmartRefT& b) 
-    {return (a.m_ptr == b.m_ptr);}  
-  friend bool	operator==(const taSmartRefT<T,td>& a, const T* b) 
-    {return (a.m_ptr == b);}  
-  friend bool	operator==(const T* a, const taSmartRefT& b) 
-    {return (a == b.m_ptr);}  */
-#ifndef _MSC_VER // not required in msvc, and just causes ambiguities
-  friend bool	operator==(const taSmartRefT& a, const taSmartRefT& b) 
+  template <class U>
+  inline friend bool	operator==(U* a, const taSmartRefT<T>& b) 
+    {return (a == b.m_ptr);} 
+  template <class U>
+  inline friend bool	operator!=(U* a, const taSmartRefT<T>& b) 
+    {return (a != b.m_ptr);} 
+  template <class U>
+  friend bool		operator==(const taSmartRefT<T>& a, U* b) 
+    {return (a.m_ptr == b);} 
+  template <class U>
+  friend bool		operator!=(const taSmartRefT<T>& a, U* b) 
+    {return (a.m_ptr != b);} 
+  template <class U>
+  friend bool		operator==(const taSmartRefT<T>& a, const taSmartRefT<U>& b) 
     {return (a.m_ptr == b.m_ptr);} 
-  friend bool	operator!=(const taSmartRefT& a, const taSmartRefT& b) 
+  template <class U>
+  friend bool		operator!=(const taSmartRefT<T>& a, const taSmartRefT<U>& b) 
     {return (a.m_ptr != b.m_ptr);} 
-#endif 
 private:
-  taSmartRefT(const taSmartRefT<T,td>& src); // not defined 
+  taSmartRefT(const taSmartRefT<T>& src); // not defined 
 #endif
-
 };
 
 // macro for creating smart refs of taBase classes
-/*
-#define SmartRef_Of(T)  class T ## Ref: public taSmartRefT<T> { \
-public: \
-  T* operator=(const T ## Ref& src) {set((T*)src.m_ptr); return (T*)m_ptr;} \
-  T* operator=(T* src) {set(src); return (T*)m_ptr;} \
-  TypeDef* GetDataTypeDef() const {return (m_ptr) ? m_ptr->GetTypeDef() : &TA_ ## T;} \
-  friend bool	operator==(const T ## Ref& a, const T ## Ref& b) \
-    {return (a.m_ptr == b.m_ptr);}  \
-  T ## Ref() {} \
-private:\
-  T ## Ref(const T ## Ref& src); \
-}; */
+#define SmartRef_Of(T,td)  typedef taSmartRefT<T> T ## Ref
 
-#define SmartRef_Of(T,td)  typedef taSmartRefT<T,td> T ## Ref
-
-SmartRef_Of(taBase,TA_taBase);		// basic ref if you don't know the type
+SmartRef_Of(taBase,);		// basic ref if you don't know the type
 
 
 class TA_API taOBase : public taBase {

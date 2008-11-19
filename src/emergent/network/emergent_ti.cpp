@@ -72,10 +72,10 @@ template class EMERGENT_API taGroup<Unit>;
 template class EMERGENT_API taGroup<Layer>; // netstru.h
 template class EMERGENT_API taGroup<Network>; // netstru.h
 
-template class EMERGENT_API SpecPtr<ConSpec,TA_ConSpec>;
-template class EMERGENT_API SpecPtr<UnitSpec,TA_UnitSpec>;
-template class EMERGENT_API SpecPtr<ProjectionSpec,TA_ProjectionSpec>;
-template class EMERGENT_API SpecPtr<EventSpec,TA_EventSpec>;
+template class EMERGENT_API SpecPtr<ConSpec>;
+template class EMERGENT_API SpecPtr<UnitSpec>;
+template class EMERGENT_API SpecPtr<ProjectionSpec>;
+template class EMERGENT_API SpecPtr<EventSpec>;
 
 // v3_compat.h
 template class EMERGENT_API taGroup<Event>;

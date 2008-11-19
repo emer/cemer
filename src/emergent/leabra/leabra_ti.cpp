@@ -21,5 +21,5 @@
 
 #include "leabra.h"
 
-template class SpecPtr<LeabraLayerSpec, TA_LeabraLayerSpec>;
+template class SpecPtr<LeabraLayerSpec>;
 template class taPtrList<LeabraUnit>;

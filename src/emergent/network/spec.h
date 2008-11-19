@@ -188,11 +188,11 @@ private:
   void	Copy_(const SpecPtr_impl& cp);
 };
 
-template<class T, TypeDef& typ> 
+template<class T> 
 class SpecPtr : public SpecPtr_impl {
 INHERITED(SpecPtr_impl)
 public:
-  taSmartRefT<T,typ>	spec;		// #TYPE_ON_type the actual spec itself
+  taSmartRefT<T>	spec;		// #TYPE_ON_type the actual spec itself
 
   inline T*		SPtr() const		{ return spec.ptr(); }
   // use this call to access the spec pointer value in all client calls -- fast!
@@ -260,17 +260,17 @@ public:
   void  InitLinks()		{ SpecPtr_impl::InitLinks(); taBase::Own(spec, this); }
   void  CutLinks()		{ spec.CutLinks(); SpecPtr_impl::CutLinks(); }
   
-  TA_TMPLT2_BASEFUNS_LITE(SpecPtr,T,typ)
+  TA_TMPLT_BASEFUNS_LITE(SpecPtr,T)
 private:
-  void	Copy_(const SpecPtr<T,typ>& cp) { spec.set(cp.SPtr()); } 
+  void	Copy_(const SpecPtr<T>& cp) { spec.set(cp.SPtr()); } 
   void 	Initialize()		{ }
   void	Destroy()		{ CutLinks(); }
 };
 
 #define SpecPtr_of(T) \
-class EMERGENT_API T ## _SPtr : public SpecPtr<T, TA_ ## T> { \
+class EMERGENT_API T ## _SPtr : public SpecPtr<T> { \
 private: \
-  typedef SpecPtr<T, TA_ ## T> inherited;\
+  typedef SpecPtr<T> inherited;\
   void Copy_(const T ## _SPtr&) {} \
   void 	Initialize() { }; \
   void	Destroy() { }; \
