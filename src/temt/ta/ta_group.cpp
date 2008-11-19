@@ -408,7 +408,7 @@ taBase* taGroup_impl::FindLeafName_(const char* nm, int& idx) const {
   TAGPtr sbg;
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
-    if((rval =(taBase*) sbg->FindName_(nm, idx))) {
+    if((rval =(taBase*) sbg->FindLeafName_(nm, idx))) {
       idx += new_idx;
       return rval;
     }

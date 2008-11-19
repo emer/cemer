@@ -1531,6 +1531,8 @@ public:
 #ifndef _MSC_VER // not required in msvc, and just causes ambiguities
   friend bool	operator==(const taSmartRefT& a, const taSmartRefT& b) 
     {return (a.m_ptr == b.m_ptr);} 
+  friend bool	operator!=(const taSmartRefT& a, const taSmartRefT& b) 
+    {return (a.m_ptr != b.m_ptr);} 
 #endif 
 private:
   taSmartRefT(const taSmartRefT<T,td>& src); // not defined 
