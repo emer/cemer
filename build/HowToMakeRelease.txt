@@ -6,9 +6,12 @@ notes:
 
 Release Steps
 
+* do the 64 bit build first (in Vista 64) then the 32 bit build -- so everything below
+  is done in each bit size, except where indicated
+
 * bring the project up to date, and make sure everything runs in Debug build
 
-* Version
+* Version (do this once, in the 64-bit build)
   * establish the new version number for this new release -- each new release MUST
     have a newer version number; ex if last release was 4.0.2 then it must
     be increased to at least 4.0.3 -- therefore, the Mac and Linux versions must 
@@ -36,7 +39,8 @@ Release Steps
     need to re-add the files
 
 * make setup_bin
-
+  * 64 bit: **Make sure the platform is x64**
+  * 32 bit: **Make sure the platform is x86** (should be only one available)
   * make the Release version of the setup project
   * NOTE: sometimes VS puts in a SETUP.CAB that it shouldn't -- this is a huge
     file that just replicates the stuff in the .msi, so if that is there
@@ -47,7 +51,7 @@ Release Steps
   * use something like WinZip to make a .zip file of setup_bin\Release --
     don't make a folder, just put the files into a the root of a zip
   * rename the zip file like this (ex. for 4.0.9):
-    emergent-4.0.9-win32.zip
+    emergent-4.0.9-win32.zip (or "64" for 64 bit)
   * make a self-extracting archive from that zip file -- it will have a .exe suffix --
     for the default extract folder, enter 'setup' so the files unpack to their own
     folder (so they are not mixed in with any other files anywhere)
@@ -63,17 +67,8 @@ Release Steps
   * then, roll back the VM -- there should be no install of pdp
   * install again, and test
 
-* (Optional) Make an Athlon Version
+* We no longer make non SSE versions -- users will have to compile that themselves
 
-  * for the 4 binary projects, change 
-    Project/C/C++/Code Generation/Enable Enhanced Instruction Set
-  FROM: /arch:/SSE2
-    TO: (not set)
-  * make a file change to config.h (to trigger full recompile)
-  * recompile and rebuild entire project
-  * rename zip:
-    emergent-4.0.9-win32-nosse.zip
-  * VERY IMPORTANT: change the SSE property back
 
 * Upload finished .exe
   * scp it to grey in your home dir (ex. using WinSCP on Win box, or scp on linux)
@@ -92,5 +87,5 @@ chmod go+r emergent-*
 03/12/08  4.0.14
 06/30/08  4.0.15
 08/29/08  4.0.17
-
+11/20/08  4.0.18 (interim release of new Windows build features)
 

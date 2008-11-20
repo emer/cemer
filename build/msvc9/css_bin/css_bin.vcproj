@@ -63,6 +63,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="$(SolutionDir)"
 				ResourceOutputFileName="$(IntDir)/$(InputName)_debug.res"
 			/>
 			<Tool
@@ -82,6 +83,95 @@
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)css_bin*.pdb $(SolutionDir)..\..\bin&#x0D;&#x0A;copy $(TargetDir)css_bin*.exe $(SolutionDir)..\..\bin&#x0D;&#x0A;"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug|x64"
+			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\src\temt\tamisc&quot;;&quot;$(EMERGENTDIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				PreprocessorDefinitions="TA_DLL;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;WIN32;DEBUG;_DEBUG;_WINDOWS"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="3"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4250;4661;4996"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="$(SolutionDir)"
+				ResourceOutputFileName="$(IntDir)/$(InputName)_debug.res"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="temt_debug.lib qtmaind.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib"
+				ShowProgress="2"
+				OutputFile="$(OutDir)/css_bin_debug.exe"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(EMERGENTDIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\..\..\lib&quot;"
+				IgnoreDefaultLibraryNames="LIBCD.lib"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="$(OutDir)/css_bin_debug.pdb"
+				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -148,6 +238,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="$(SolutionDir)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -187,94 +278,6 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)$(ProjectName)*.exe $(SolutionDir)..\..\bin&#x0D;&#x0A;"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				TargetEnvironment="3"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\src\temt\tamisc&quot;;&quot;$(EMERGENTDIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
-				PreprocessorDefinitions="TA_DLL;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;WIN32;DEBUG;_DEBUG;_WINDOWS"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="0"
-				RuntimeLibrary="3"
-				ForceConformanceInForLoopScope="true"
-				RuntimeTypeInfo="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4250;4661;4996"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				ResourceOutputFileName="$(IntDir)/$(InputName)_debug.res"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="temt_debug.lib qtmaind.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib"
-				ShowProgress="2"
-				OutputFile="$(OutDir)/css_bin_debug.exe"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(EMERGENTDIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\..\..\lib&quot;"
-				IgnoreDefaultLibraryNames="LIBCD.lib"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/css_bin_debug.pdb"
-				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="@echo on&#x0D;&#x0A;copy $(TargetDir)css_bin*.pdb $(SolutionDir)..\..\bin&#x0D;&#x0A;copy $(TargetDir)css_bin*.exe $(SolutionDir)..\..\bin&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -320,6 +323,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="$(SolutionDir)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -385,11 +389,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\Resource.h"
+				RelativePath=".\resource.h"
 				>
 			</File>
 			<File
-				RelativePath=".\resource.h"
+				RelativePath=".\Resource.h"
 				>
 			</File>
 		</Filter>

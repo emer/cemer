@@ -297,6 +297,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_12A77F35E7A04ECF93B4EFB6D97E4B95"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_12F5E9FE0F464BD0A59E4B1404E77D69"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -537,6 +543,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_26CD4D20FF9746CABC642686FEBEBC7A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_27404D41F67B4224941FC662ED54BE39"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -652,6 +664,12 @@
         "Entry"
         {
         "MsmKey" = "8:_3203044A497940A8A7FEE82D32EFAD05"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_323C427B3E6746CF99DBB5738075703A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -880,6 +898,12 @@
         "Entry"
         {
         "MsmKey" = "8:_40C90FBF27204A7D885FF2521CAD9E90"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_40EBC164B81140ECADEB925AFF7AA6ED"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1389,6 +1413,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_6798555C5F1046BF8A1C60DC28D639B4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_67FCDA59FD9242C09B9EBBDD184BE96B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1414,6 +1444,12 @@
         "Entry"
         {
         "MsmKey" = "8:_68E4A5FC82E94B82B07D6026709D9220"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_68EAF897D8C4489DA22BB9FD05D2519F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1504,6 +1540,12 @@
         "Entry"
         {
         "MsmKey" = "8:_6E96C66BD64A4D899F585E04E8F10BA5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6EC803FE24B249B68A5EE88732DF8B84"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1726,6 +1768,12 @@
         "Entry"
         {
         "MsmKey" = "8:_7C8BF6063CC642D7B0E6E96F5DE346C0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7C9DCCB302754D698A0B9C248BC715F6"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2193,6 +2241,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_99809A2AF9254337B3BB5F019B858057"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_9996D397CDAE4A2CBBAB93FA25010834"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2409,7 +2463,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_A7BC51FF9580488CA55BE289F0C0C7DF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_A7D00890310F47B49315C565ACCEA14C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A8C516113D934595B7236A416236FF84"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2685,6 +2751,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_BDB6311CDA414F0B85294B4CD28C4D46"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_BF408884F7A548C5991BEF207BAD259B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2799,6 +2871,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_C4B22833B8864371A3ABED6B72DFFD6B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_C50424B4AA03466A9CAA9628968D3191"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2895,6 +2973,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_CAEF1BE0E0F447B28629C0A9BBA579A1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_CB566977A4B8452A86824D6D7C7CCDBA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2943,6 +3027,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D024EE40560042A7A486A9EF0A8C0AD4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_D03AB3059661406C8BDC7B9A590E4811"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2974,6 +3064,12 @@
         "Entry"
         {
         "MsmKey" = "8:_D14D02FEFB554644826148F2F5E0A114"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D24C9FD7D7DB432BBDF9605EBEEB7EA4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3453,6 +3549,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_F0758FF6F8564B96B04652E7D3191201"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_F07AD742E00646F69BEC88792177367B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3562,6 +3664,12 @@
         "Entry"
         {
         "MsmKey" = "8:_F714857944DA4AE5860D64A077281974"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F7F1F299DEBF4643B1713A8214C6895F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -4657,6 +4765,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_12A77F35E7A04ECF93B4EFB6D97E4B95"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\gammatone.h"
+            "TargetName" = "8:gammatone.h"
+            "Tag" = "8:"
+            "Folder" = "8:_25052D3970C94587A93003BC847E6D17"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_12F5E9FE0F464BD0A59E4B1404E77D69"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\colorbar_qt.cpp"
@@ -5457,6 +5585,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_26CD4D20FF9746CABC642686FEBEBC7A"
+            {
+            "SourcePath" = "8:..\\afxres.h"
+            "TargetName" = "8:afxres.h"
+            "Tag" = "8:"
+            "Folder" = "8:_0B00744A807A4B929E5A9597E4A7843E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_27404D41F67B4224941FC662ED54BE39"
             {
             "SourcePath" = "8:..\\css_bin\\css_bin.vcproj"
@@ -5843,6 +5991,26 @@
             "TargetName" = "8:ta_qttype.h"
             "Tag" = "8:"
             "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_323C427B3E6746CF99DBB5738075703A"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\audioproc_pl.h"
+            "TargetName" = "8:audioproc_pl.h"
+            "Tag" = "8:"
+            "Folder" = "8:_25052D3970C94587A93003BC847E6D17"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -6603,6 +6771,26 @@
             "TargetName" = "8:ta_datatable_qtso.moc.cpp"
             "Tag" = "8:"
             "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_40EBC164B81140ECADEB925AFF7AA6ED"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\ap_files.h"
+            "TargetName" = "8:ap_files.h"
+            "Tag" = "8:"
+            "Folder" = "8:_25052D3970C94587A93003BC847E6D17"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -8297,6 +8485,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6798555C5F1046BF8A1C60DC28D639B4"
+            {
+            "SourcePath" = "8:..\\..\\..\\prog_lib\\LeabraMovieFrameSave.prog"
+            "TargetName" = "8:LeabraMovieFrameSave.prog"
+            "Tag" = "8:"
+            "Folder" = "8:_612BD7E23EAB4A64861742520DB7BE6D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_67FCDA59FD9242C09B9EBBDD184BE96B"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_qtmodel.h"
@@ -8383,6 +8591,26 @@
             "TargetName" = "8:ta_qtgroup.moc.cpp"
             "Tag" = "8:"
             "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_68EAF897D8C4489DA22BB9FD05D2519F"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\snd\\8000.1\\hello_universe.au"
+            "TargetName" = "8:hello_universe.au"
+            "Tag" = "8:"
+            "Folder" = "8:_9C5BF2629B9B4FAA91D8B0C093FBD4FE"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -8683,6 +8911,26 @@
             "TargetName" = "8:ta_viewspec.cpp"
             "Tag" = "8:"
             "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6EC803FE24B249B68A5EE88732DF8B84"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\audioproc.cpp"
+            "TargetName" = "8:audioproc.cpp"
+            "Tag" = "8:"
+            "Folder" = "8:_25052D3970C94587A93003BC847E6D17"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -9423,6 +9671,26 @@
             "TargetName" = "8:ReadMe.txt"
             "Tag" = "8:"
             "Folder" = "8:_FA86F97E6FDC463FAA68105469347856"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7C9DCCB302754D698A0B9C248BC715F6"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\snd\\44100.2\\AsianGamelan.aif"
+            "TargetName" = "8:AsianGamelan.aif"
+            "Tag" = "8:"
+            "Folder" = "8:_F402B7214BD645139BFC268F5740655E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -10977,6 +11245,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_99809A2AF9254337B3BB5F019B858057"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\snd\\8000.1\\yahoo1.au"
+            "TargetName" = "8:yahoo1.au"
+            "Tag" = "8:"
+            "Folder" = "8:_9C5BF2629B9B4FAA91D8B0C093FBD4FE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9996D397CDAE4A2CBBAB93FA25010834"
             {
             "SourcePath" = "8:..\\..\\..\\src\\emergent\\leabra\\leabra_extra.h"
@@ -11697,12 +11985,52 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A7BC51FF9580488CA55BE289F0C0C7DF"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\gammatone.cpp"
+            "TargetName" = "8:gammatone.cpp"
+            "Tag" = "8:"
+            "Folder" = "8:_25052D3970C94587A93003BC847E6D17"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A7D00890310F47B49315C565ACCEA14C"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\css\\css_qttype.h"
             "TargetName" = "8:css_qttype.h"
             "Tag" = "8:"
             "Folder" = "8:_CB8336C6D5004C58B1398DE53EA42E5E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A8C516113D934595B7236A416236FF84"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\snd\\8000.1\\spacemusic.au"
+            "TargetName" = "8:spacemusic.au"
+            "Tag" = "8:"
+            "Folder" = "8:_9C5BF2629B9B4FAA91D8B0C093FBD4FE"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -12617,6 +12945,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BDB6311CDA414F0B85294B4CD28C4D46"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\audioproc_pl.cpp"
+            "TargetName" = "8:audioproc_pl.cpp"
+            "Tag" = "8:"
+            "Folder" = "8:_25052D3970C94587A93003BC847E6D17"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BF408884F7A548C5991BEF207BAD259B"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\css\\css_qtdata.h"
@@ -12997,6 +13345,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C4B22833B8864371A3ABED6B72DFFD6B"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\snd\\11025.1\\1-welcome.wav"
+            "TargetName" = "8:1-welcome.wav"
+            "Tag" = "8:"
+            "Folder" = "8:_532105C66BE244F88076B8A6EF937761"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C50424B4AA03466A9CAA9628968D3191"
             {
             "SourcePath" = "8:..\\..\\..\\prog_lib\\LeabraAll_Std.progp"
@@ -13317,6 +13685,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CAEF1BE0E0F447B28629C0A9BBA579A1"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\snd\\16000.1\\arctic_a0027.wav"
+            "TargetName" = "8:arctic_a0027.wav"
+            "Tag" = "8:"
+            "Folder" = "8:_079CE4B136EC4687A5D744A1B96238F7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CB566977A4B8452A86824D6D7C7CCDBA"
             {
             "SourcePath" = "8:..\\..\\..\\3rdparty\\bin\\ode_single.dll"
@@ -13477,6 +13865,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D024EE40560042A7A486A9EF0A8C0AD4"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\audioproc_pl.obj"
+            "TargetName" = "8:audioproc_pl.obj"
+            "Tag" = "8:"
+            "Folder" = "8:_25052D3970C94587A93003BC847E6D17"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D03AB3059661406C8BDC7B9A590E4811"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\taiqtso\\taiqtso.cpp"
@@ -13583,6 +13991,26 @@
             "TargetName" = "8:resource.h"
             "Tag" = "8:"
             "Folder" = "8:_E588653B223146128E6981BF019733D3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D24C9FD7D7DB432BBDF9605EBEEB7EA4"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\ap_files.cpp"
+            "TargetName" = "8:ap_files.cpp"
+            "Tag" = "8:"
+            "Folder" = "8:_25052D3970C94587A93003BC847E6D17"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -15177,6 +15605,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F0758FF6F8564B96B04652E7D3191201"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\audioproc.h"
+            "TargetName" = "8:audioproc.h"
+            "Tag" = "8:"
+            "Folder" = "8:_25052D3970C94587A93003BC847E6D17"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F07AD742E00646F69BEC88792177367B"
             {
             "SourcePath" = "8:..\\..\\..\\prog_lib\\CtLeabraSettleTest.prog"
@@ -15543,6 +15991,26 @@
             "TargetName" = "8:ta_seledit_qt.moc.cpp"
             "Tag" = "8:"
             "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F7F1F299DEBF4643B1713A8214C6895F"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\audioproc_def.h"
+            "TargetName" = "8:audioproc_def.h"
+            "Tag" = "8:"
+            "Folder" = "8:_25052D3970C94587A93003BC847E6D17"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -15948,6 +16416,72 @@
                     "Property" = "8:_372A9D00439343429BD9FD07B1C7DA5A"
                         "Folders"
                         {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_25052D3970C94587A93003BC847E6D17"
+                            {
+                            "Name" = "8:audioproc"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_1FF6D2C2E37D4FCAB1C00CCF3A4354CC"
+                                "Folders"
+                                {
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_C57D5DDBC61F4A688382838CD3BAEFD1"
+                                    {
+                                    "Name" = "8:snd"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_85ED11185294404391F82E381E342766"
+                                        "Folders"
+                                        {
+                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_079CE4B136EC4687A5D744A1B96238F7"
+                                            {
+                                            "Name" = "8:16000.1"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_4C608046FC6A4B5C8E12D0C8E9C8C8FD"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_532105C66BE244F88076B8A6EF937761"
+                                            {
+                                            "Name" = "8:11025.1"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_450BB500C7354EB4A238260F27BF9EFF"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_9C5BF2629B9B4FAA91D8B0C093FBD4FE"
+                                            {
+                                            "Name" = "8:8000.1"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_13C13639440F4E75A054D77CD159FC5A"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_F402B7214BD645139BFC268F5740655E"
+                                            {
+                                            "Name" = "8:44100.2"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_754C2181BD294F8EB6087402F639D04E"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             "{9EF0B969-E518-4E46-987F-47570745A589}:_A270A6DDCE0346B1A2E547D60739F31B"
                             {
                             "Name" = "8:HelloWorld"
@@ -16426,14 +16960,14 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Emergent"
-        "ProductCode" = "8:{179C23A7-9622-4482-99C5-DD8B10A07CA5}"
-        "PackageCode" = "8:{779906A1-B144-4A50-AFB9-4BA7FEEFFAC0}"
+        "ProductCode" = "8:{1DA97457-585B-4F94-BE19-840C88158B9B}"
+        "PackageCode" = "8:{85E8F65C-3653-4B42-9D7A-A39795C578CE}"
         "UpgradeCode" = "8:{44D9DB79-4385-44C5-8AAE-9E349721CFFC}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:4.0.17"
+        "ProductVersion" = "8:4.0.18"
         "Manufacturer" = "8:CCN Lab"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://grey.colorado.edu/emergent/index.php/Main_Page"
@@ -16704,6 +17238,28 @@
                         }
                         "Values"
                         {
+                        }
+                    }
+                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_D3BF2895796D4D60BD3460B253CDC4E0"
+                    {
+                    "Name" = "8:Environment"
+                    "Condition" = "8:"
+                    "AlwaysCreate" = "11:FALSE"
+                    "DeleteAtUninstall" = "11:FALSE"
+                    "Transitive" = "11:FALSE"
+                        "Keys"
+                        {
+                        }
+                        "Values"
+                        {
+                            "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_E949A102706C41BDA7EEF6D20DFBC43A"
+                            {
+                            "Name" = "8:MSVC_TARGET"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "ValueTypes" = "3:2"
+                            "Value" = "8:Release"
+                            }
                         }
                     }
                 }
