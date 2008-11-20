@@ -96,8 +96,11 @@ void XCalLearnSpec::Initialize() {
 
   s_mix = 0.90f;
 
-  l_dt = 0.03f;
+  l_dt = 0.005f;
   l_gain = 1.8f;
+
+  ml_dt = 0.2f;
+  ml_gain = 1.8f;
 
   d_gain = 2.5f;
   d_rev = 0.15f;
@@ -121,7 +124,6 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
 void XCalMiscSpec::Initialize() {
   avg_updt = TRIAL;
   ml_mix = 0.0f;
-  ml_dt = 0.2f;
   m_dt = 0.03f;
   s_dt = 0.1f;
 
