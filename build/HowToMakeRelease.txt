@@ -38,9 +38,14 @@ Release Steps
   * any new dlls, or if the version of dependent dlls changed, you will probably
     need to re-add the files
 
-* make setup_bin
-  * 64 bit: **Make sure the platform is x64**
-  * 32 bit: **Make sure the platform is x86** (should be only one available)
+* make setup_bin -- unforutnately, this is a bit fussy, but the alternative of
+  making 2 distinct setup projects would be vastly more complicated to maintain
+  * 64 bit: 
+    * in Properties/Prerequisites -- select Visual C++ Runtime x64; unselect x86
+    * make sure the platform is x64
+  * 32 bit: 
+    * in Properties/Prerequisites -- select Visual C++ Runtime x84; unselect x64
+    * make sure the platform is x86
   * make the Release version of the setup project
   * NOTE: sometimes VS puts in a SETUP.CAB that it shouldn't -- this is a huge
     file that just replicates the stuff in the .msi, so if that is there
