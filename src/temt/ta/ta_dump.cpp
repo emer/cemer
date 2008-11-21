@@ -850,6 +850,10 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
               "in type:", md->GetOwnerType()->name);
           }
         }
+//TEMP
+if (md->name == "area_spec") {
+int i = 0;
+}
 	tmp = md->Dump_Load(strm, base, par);
 	if(tmp == EOF) {
 	  if(taMisc::verbose_load >= taMisc::MESSAGES)

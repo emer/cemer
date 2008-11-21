@@ -267,8 +267,8 @@ private:
   void	Destroy()		{ CutLinks(); }
 };
 
-#define SpecPtr_of(T) \
-class EMERGENT_API T ## _SPtr : public SpecPtr<T> { \
+#define SpecPtrEx_of(T, xxx_API) \
+class xxx_API T ## _SPtr : public SpecPtr<T> { \
 private: \
   typedef SpecPtr<T> inherited;\
   void Copy_(const T ## _SPtr&) {} \
@@ -277,5 +277,7 @@ private: \
 public: \
   TA_BASEFUNS_LITE(T ## _SPtr); \
 }
+
+#define SpecPtr_of(T) SpecPtrEx_of(T,EMERGENT_API) 
 
 #endif // spec_h
