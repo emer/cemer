@@ -144,9 +144,8 @@ bool taImage::ImageToDataCell(DataTable* dt, int col, int row) {
   int ht = q_img.height();
   int wd = q_img.width();
 
-  taMatrix* mat = dt->GetValAsMatrix(col, row);
+  taMatrixPtr mat; mat = dt->GetValAsMatrix(col, row);
   if(!mat) return false;
-  taBase::Ref(mat);
 
   bool rval = true;
 
@@ -178,7 +177,6 @@ bool taImage::ImageToDataCell(DataTable* dt, int col, int row) {
     rval = false;
   }
 
-  taBase::unRefDone(mat);
   DataUpdate(false); 
 
   return rval;
@@ -1105,18 +1103,14 @@ void RetinalSpacingSpec::PlotSpacing(DataTable* graph_data, float val) {
   if(graph_data->rows < 1)
     graph_data->AddBlankRow();
 
-  float_Matrix* mat = (float_Matrix*)matda->GetValAsMatrix(-1);
+  float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
   if(mat) {
-    taBase::Ref(mat);
-
     int x,y;
     for(y=border.y; y<= retina_size.y-border.y; y+= spacing.y) {
       for(x=border.x; x<= retina_size.x-border.x; x+=spacing.x) {
 	mat->FastEl(x,y) += val;
       }
     }
-
-    taBase::unRefDone(mat);
   }
 
   graph_data->StructUpdate(false);
@@ -2231,8 +2225,7 @@ bool RetinaSpec::TransformImageData(float_Matrix& img_data, DataTable* dt,
 
   DataCol* da_ret = GetRetImageColumn(dt);
   da_ret->SetUserData("IMAGE", true); // the one place we set this!
-  float_Matrix* ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
-  taBase::Ref(ret_img);
+  float_MatrixPtr ret_img; ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
 
   float_Matrix xform_img;     	taBase::Ref(xform_img);
 
@@ -2251,8 +2244,8 @@ bool RetinaSpec::TransformImageData(float_Matrix& img_data, DataTable* dt,
     taImageProc::RenderBorder_float(*use_img);
   }
 
-  float_Matrix sc_img;     	taBase::Ref(sc_img);
-  float_Matrix precrop_img;    	taBase::Ref(precrop_img);
+  float_Matrix sc_img;     //	taBase::Ref(sc_img);
+  float_Matrix precrop_img; //   	taBase::Ref(precrop_img);
 
   // special code to optimize large scaling operations: crop first then scale..
   if(scale > 1.3f) {
@@ -2283,15 +2276,11 @@ bool RetinaSpec::TransformImageData(float_Matrix& img_data, DataTable* dt,
   // and make double-sure.. on final image
 
   int idx;
-  float_Matrix* isz_mat = (float_Matrix*)dt->FindMakeColName("ImageSize", idx, DataTable::VT_FLOAT, 1, 2)->GetValAsMatrix(-1);
-  taBase::Ref(isz_mat);
+  float_MatrixPtr isz_mat; isz_mat = (float_Matrix*)dt->FindMakeColName("ImageSize", idx, DataTable::VT_FLOAT, 1, 2)->GetValAsMatrix(-1);
   isz_mat->FastEl(0) = img_size.x; isz_mat->FastEl(1) = img_size.y;
-  taBase::unRefDone(isz_mat);
   
-  float_Matrix* mv_mat = (float_Matrix*)dt->FindMakeColName("Move", idx, DataTable::VT_FLOAT, 1, 2)->GetValAsMatrix(-1);
-  taBase::Ref(mv_mat);
+  float_MatrixPtr mv_mat; mv_mat = (float_Matrix*)dt->FindMakeColName("Move", idx, DataTable::VT_FLOAT, 1, 2)->GetValAsMatrix(-1);
   mv_mat->FastEl(0) = move_x; mv_mat->FastEl(1) = move_y;
-  taBase::unRefDone(mv_mat);
 
   dt->FindMakeColName("Scale", idx, DataTable::VT_FLOAT, 0)->SetValAsFloat(scale, -1);
   dt->FindMakeColName("Rotate", idx, DataTable::VT_FLOAT, 0)->SetValAsFloat(rotate, -1);
@@ -2344,11 +2333,9 @@ bool RetinaSpec::LookAtImageData(float_Matrix& img_data, DataTable* dt,
 
   if(rval) {
     int idx;
-    float_Matrix* box_mat = (float_Matrix*)dt->FindMakeColName("LookBox", idx, DataTable::VT_FLOAT, 1, 4)->GetValAsMatrix(-1);
-    taBase::Ref(box_mat);
+    float_MatrixPtr box_mat; box_mat = (float_Matrix*)dt->FindMakeColName("LookBox", idx, DataTable::VT_FLOAT, 1, 4)->GetValAsMatrix(-1);
     box_mat->FastEl(0) = box_ll_x; box_mat->FastEl(1) = box_ll_y;
     box_mat->FastEl(2) = box_ur_x; box_mat->FastEl(1) = box_ur_y;
-    taBase::unRefDone(box_mat);
   }
   return rval;
 }
@@ -2361,8 +2348,7 @@ bool RetinaSpec::FilterImageData(DataTable* dt, bool superimpose, int renorm) {
   }
 
   DataCol* da_ret = GetRetImageColumn(dt);
-  float_Matrix* ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
-  taBase::Ref(ret_img);
+  float_MatrixPtr ret_img; ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
 
   int idx;
   float max_val = 0.0f;
@@ -2373,10 +2359,8 @@ bool RetinaSpec::FilterImageData(DataTable* dt, bool superimpose, int renorm) {
     DataCol* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
 						 2, sp->spacing.output_size.x, sp->spacing.output_size.y);
 
-    float_Matrix* on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
-    float_Matrix* off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
-    taBase::Ref(on_mat);
-    taBase::Ref(off_mat);
+    float_MatrixPtr on_mat; on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
+    float_MatrixPtr off_mat; off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
     taImageProc::DoGFilterRetina(*on_mat, *off_mat, *ret_img, *sp, superimpose);
     if(renorm > 0) {
       int idx;
@@ -2385,10 +2369,7 @@ bool RetinaSpec::FilterImageData(DataTable* dt, bool superimpose, int renorm) {
       max_val = MAX(max_val, on_max);
       max_val = MAX(max_val, off_max);
     }
-    taBase::unRefDone(on_mat);
-    taBase::unRefDone(off_mat);
   }
-  taBase::unRefDone(ret_img);
 
   if(renorm > 0 && max_val > 0.00001f) {
     float rescale = 1.0f;
@@ -2406,10 +2387,8 @@ bool RetinaSpec::FilterImageData(DataTable* dt, bool superimpose, int renorm) {
       DataCol* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
 					    2, sp->spacing.output_size.x, sp->spacing.output_size.y);
 
-      float_Matrix* on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
-      float_Matrix* off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
-      taBase::Ref(on_mat);
-      taBase::Ref(off_mat);
+      float_MatrixPtr on_mat; on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
+      float_MatrixPtr off_mat; off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
       if(renorm >= 2) {
 	for(int j=0;j<on_mat->size;j++)
 	  on_mat->FastEl_Flat(j) = logf(1.0f + renorm_factor * on_mat->FastEl_Flat(j)) * rescale;
@@ -2420,8 +2399,6 @@ bool RetinaSpec::FilterImageData(DataTable* dt, bool superimpose, int renorm) {
 	taMath_float::vec_mult_scalar(on_mat, rescale);
 	taMath_float::vec_mult_scalar(off_mat, rescale);
       }
-      taBase::unRefDone(on_mat);
-      taBase::unRefDone(off_mat);
     }
   }
 
@@ -2656,14 +2633,10 @@ bool RetinaSpec::AttendRegion(DataTable* dt, RetinalSpacingSpec::Region region) 
     DataCol* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
 						 2, sp->spacing.output_size.x, sp->spacing.output_size.y);
 
-    float_Matrix* on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
-    float_Matrix* off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
-    taBase::Ref(on_mat);
-    taBase::Ref(off_mat);
+    float_MatrixPtr on_mat; on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
+    float_MatrixPtr off_mat; off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
     taImageProc::AttentionFilter(*on_mat, fov_pct);
     taImageProc::AttentionFilter(*off_mat, fov_pct);
-    taBase::unRefDone(on_mat);
-    taBase::unRefDone(off_mat);
   }
   return true;
 }
@@ -2671,12 +2644,10 @@ bool RetinaSpec::AttendRegion(DataTable* dt, RetinalSpacingSpec::Region region) 
 bool RetinaSpec::RenderOccluder(DataTable* dt, float llx, float lly, float urx, float ury) {
   if(!dt) return false;
   DataCol* da_ret = GetRetImageColumn(dt);
-  float_Matrix* ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
-  taBase::Ref(ret_img);
+  float_MatrixPtr ret_img; ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
 
   taImageProc::RenderOccluderBorderColor_float(*ret_img, llx, lly, urx, ury);
   
-  taBase::unRefDone(ret_img);
   return true;
 }
 

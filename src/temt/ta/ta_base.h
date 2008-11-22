@@ -1381,6 +1381,7 @@ public:
     {set((T*)src.m_ptr); return (T*)m_ptr;} 
     //NOTE: copy only implies ptr, NOT the owner!
   T* 		operator=(T* src) {set(src); return (T*)m_ptr;}
+  T& 		operator*() const {return *(T*)m_ptr;}
    
   friend bool	operator==(const taSmartPtrT<T>& a, const taSmartPtrT<T>& b)
     {return (a.m_ptr == b.m_ptr);} 
