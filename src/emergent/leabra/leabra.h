@@ -2888,7 +2888,8 @@ inline void LeabraConSpec::B_Init_SRAvg(LeabraCon* cn, LeabraUnit* ru,
   if(learn_rule == CTLEABRA_CAL || xcalm.avg_updt == XCalMiscSpec::TRIAL) {
     float rm = rlay->sravg_m_nrm * cn->sravg_m;
     ru->ravg_l += xcal.l_dt * (rm - ru->ravg_l);
-    ru->ravg_ml += xcal.ml_dt * (rm - ru->ravg_ml);
+    // immediate memory-less rise and decay model, instead of same rise and decay..
+    ru->ravg_ml = MAX(ru->ravg_ml, rm) - xcal.ml_dt * ru->ravg_ml;
     cn->sravg_s = 0.0f;
     cn->sravg_m = 0.0f;
   }
