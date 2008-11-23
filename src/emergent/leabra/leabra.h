@@ -218,6 +218,7 @@ public:
   float		l_gain;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_1.8 gain for long time-scale ravg term -- needed to put into same terms as the s*r avg values used in the s and m components of learning
   float		ml_dt;		// #CONDSHOW_OFF_lrn_var:CAL time constant for updating the medium-to-long time-scale ravg_ml value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_ml variable!!
   float		ml_gain;	// #CONDSHOW_OFF_lrn_var:CAL gain of the medium-long time scale as it contributes to the learning threshold, as a MAX of ml and l factors
+  bool		ml_decay;	// #CONDSHOW_OFF_lrn_var:CAL ml factor has instant rise time and then exponential decay from there (otherwise is pure exponential integrator as with l_dt)
 
   float		d_gain;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_2.5 multiplier on LTD values relative to LTP values
   float		d_rev;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.15 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
@@ -2889,7 +2890,12 @@ inline void LeabraConSpec::B_Init_SRAvg(LeabraCon* cn, LeabraUnit* ru,
     float rm = rlay->sravg_m_nrm * cn->sravg_m;
     ru->ravg_l += xcal.l_dt * (rm - ru->ravg_l);
     // immediate memory-less rise and decay model, instead of same rise and decay..
-    ru->ravg_ml = MAX(ru->ravg_ml, rm) - xcal.ml_dt * ru->ravg_ml;
+    if(xcal.ml_decay) {
+      ru->ravg_ml = MAX(ru->ravg_ml, rm) - xcal.ml_dt * ru->ravg_ml;
+    }
+    else {			// exponential
+      ru->ravg_ml += xcal.ml_dt * (rm - ru->ravg_ml);
+    }
     cn->sravg_s = 0.0f;
     cn->sravg_m = 0.0f;
   }

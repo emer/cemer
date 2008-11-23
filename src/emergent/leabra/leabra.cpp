@@ -99,8 +99,9 @@ void XCalLearnSpec::Initialize() {
   l_dt = 0.005f;
   l_gain = 1.8f;
 
-  ml_dt = 0.2f;
+  ml_dt = 0.4f;
   ml_gain = 1.8f;
+  ml_decay = false;
 
   d_gain = 2.5f;
   d_rev = 0.15f;
