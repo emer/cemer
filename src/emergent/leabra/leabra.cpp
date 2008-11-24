@@ -92,7 +92,7 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 void XCalLearnSpec::Initialize() {
   lrn_var = XCAL;
 
-  mvl_mix = 0.05f;
+  mvl_mix = 0.03f;
 
   s_mix = 0.90f;
 
@@ -101,7 +101,6 @@ void XCalLearnSpec::Initialize() {
 
   ml_dt = 0.4f;
   ml_gain = 1.8f;
-  ml_decay = false;
 
   d_gain = 2.5f;
   d_rev = 0.15f;

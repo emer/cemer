@@ -210,15 +210,14 @@ public:
   };
 
   LearnVar	lrn_var;	// learning rule variant -- either XCAL, or CAL for output layers, bias weights, or comparison purposes
-  float		mvl_mix;	// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.05 amount that medium (trial) versus long (epoch) time scale learning contributes -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is short (plus phase) versus medium (trial) time scale which reflects pure error-driven learning
+  float		mvl_mix;	// #CONDSHOW_OFF_lrn_var:CAL [Default range .03 - .10] amount that medium (trial) versus long (epoch) time scale learning contributes -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is short (plus phase) versus medium (trial) time scale which reflects pure error-driven learning
   float		svm_mix;	// #READ_ONLY 1-mvl_mix -- how much the short (plus phase) versus medium (trial) time-scale factor contributes to learning -- this the pure error-driven learning component -- the rest (mvl_mix = 1-svm_mix) is medium (trial) versus long (epoch) time-scale
   float		s_mix;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.9 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level
-  float		l_dt;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.03 time constant for updating the long time-scale ravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_l variable!!
+  float		l_dt;		// #CONDSHOW_OFF_lrn_var:CAL [Default range .001 - .01] time constant for updating the long time-scale ravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_l variable!!
   float		l_gain;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_1.8 gain for long time-scale ravg term -- needed to put into same terms as the s*r avg values used in the s and m components of learning
-  float		ml_dt;		// #CONDSHOW_OFF_lrn_var:CAL time constant for updating the medium-to-long time-scale ravg_ml value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_ml variable!!
-  float		ml_gain;	// #CONDSHOW_OFF_lrn_var:CAL gain of the medium-long time scale as it contributes to the learning threshold, as a MAX of ml and l factors
-  bool		ml_decay;	// #CONDSHOW_OFF_lrn_var:CAL ml factor has instant rise time and then exponential decay from there (otherwise is pure exponential integrator as with l_dt)
+  float		ml_dt;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.4 time constant for updating the medium-to-long time-scale ravg_ml value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_ml variable!!
+  float		ml_gain;	// #CONDSHOW_OFF_lrn_var:CAL #DEF_1.8 gain of the medium-long time scale as it contributes to the learning threshold, as a MAX of ml and l factors
 
   float		d_gain;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_2.5 multiplier on LTD values relative to LTP values
   float		d_rev;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.15 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
@@ -2889,13 +2888,7 @@ inline void LeabraConSpec::B_Init_SRAvg(LeabraCon* cn, LeabraUnit* ru,
   if(learn_rule == CTLEABRA_CAL || xcalm.avg_updt == XCalMiscSpec::TRIAL) {
     float rm = rlay->sravg_m_nrm * cn->sravg_m;
     ru->ravg_l += xcal.l_dt * (rm - ru->ravg_l);
-    // immediate memory-less rise and decay model, instead of same rise and decay..
-    if(xcal.ml_decay) {
-      ru->ravg_ml = MAX(ru->ravg_ml, rm) - xcal.ml_dt * ru->ravg_ml;
-    }
-    else {			// exponential
-      ru->ravg_ml += xcal.ml_dt * (rm - ru->ravg_ml);
-    }
+    ru->ravg_ml += xcal.ml_dt * (rm - ru->ravg_ml);
     cn->sravg_s = 0.0f;
     cn->sravg_m = 0.0f;
   }
