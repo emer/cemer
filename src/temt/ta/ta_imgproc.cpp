@@ -2244,8 +2244,8 @@ bool RetinaSpec::TransformImageData(float_Matrix& img_data, DataTable* dt,
     taImageProc::RenderBorder_float(*use_img);
   }
 
-  float_Matrix sc_img;     //	taBase::Ref(sc_img);
-  float_Matrix precrop_img; //   	taBase::Ref(precrop_img);
+  float_Matrix sc_img;     	taBase::Ref(sc_img);
+  float_Matrix precrop_img;    	taBase::Ref(precrop_img);
 
   // special code to optimize large scaling operations: crop first then scale..
   if(scale > 1.3f) {
