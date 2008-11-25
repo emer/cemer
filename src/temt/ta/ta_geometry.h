@@ -160,10 +160,10 @@ public:
   // set each to be less than or equal to n
 
   static bool	WrapClipOne(bool wrap, int& c, int max);
-  // wrap-around or clip one dimension, true if clipped (coord set to -1)
+  // wrap-around or clip one dimension, true if out of range (clipped or more than half way around other side for wrap)
   bool		WrapClip(bool wrap, const TwoDCoord& max) {
     return WrapClipOne(wrap, x, max.x) || WrapClipOne(wrap, y, max.y);
-  } // wrap-around or clip coordinates within 0,0 - max range, true if clipped
+  } // wrap-around or clip coordinates within 0,0 - max range, true if out of range (clipped or more than half way around other side for wrap)
 private:
   inline void 	Copy_(const TwoDCoord& cp) { x = cp.x; y = cp.y; }
   inline void 	Initialize() 		{ x = y = 0; }

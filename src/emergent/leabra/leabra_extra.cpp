@@ -1964,6 +1964,7 @@ void DecodeTwoDValLayerSpec::Compute_Act_impl(LeabraLayer*, Unit_Group* ug, Leab
 
 void V1RFPrjnSpec::Initialize() {
   init_wts = true;
+  wrap = false;
   dog_surr_mult = 1.0f;
 }
 
@@ -2009,17 +2010,27 @@ void V1RFPrjnSpec::Connect_impl(Projection* prjn) {
       if(ru_gp == NULL) continue;
 
       TwoDCoord su_st;
-      su_st.x = rf_half_wd.x + (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
-      su_st.y = rf_half_wd.y + (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
-
-      su_st.SetGtEq(0);		// always keep entire rf in bounds!
-      TwoDCoord su_ed = su_st + rf_width;
-
-      if(su_ed.x > su_geo.x) {
-	su_ed.x = su_geo.x; su_st.x = su_ed.x - rf_width.x;
+      if(wrap) {
+	su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
+	su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
       }
-      if(su_ed.y > su_geo.y) {
-	su_ed.y = su_geo.y; su_st.y = su_ed.y - rf_width.y;
+      else {
+	su_st.x = (int)floor((float)ruc.x * rf_move.x);
+	su_st.y = (int)floor((float)ruc.y * rf_move.y);
+      }
+
+      su_st.WrapClip(wrap, su_geo);
+      TwoDCoord su_ed = su_st + rf_width;
+      if(wrap) {
+	su_ed.WrapClip(wrap, su_geo); // just wrap ends too
+      }
+      else {
+	if(su_ed.x > su_geo.x) {
+	  su_ed.x = su_geo.x; su_st.x = su_ed.x - rf_width.x;
+	}
+	if(su_ed.y > su_geo.y) {
+	  su_ed.y = su_geo.y; su_st.y = su_ed.y - rf_width.y;
+	}
       }
 
       for(int rui=0;rui<ru_gp->size;rui++) {
@@ -2027,9 +2038,12 @@ void V1RFPrjnSpec::Connect_impl(Projection* prjn) {
 	ru_u->ConnectAlloc(n_cons, prjn);
 
 	TwoDCoord suc;
+	TwoDCoord suc_wrp;
 	for(suc.y = su_st.y; suc.y < su_ed.y; suc.y++) {
 	  for(suc.x = su_st.x; suc.x < su_ed.x; suc.x++) {
-	    Unit* su_u = prjn->from->FindUnitFmCoord(suc);
+	    suc_wrp = suc;
+	    suc_wrp.WrapClip(wrap, su_geo);
+	    Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
 	    if(su_u == NULL) continue;
 	    if(!self_con && (su_u == ru_u)) continue;
 	    ru_u->ConnectFrom(su_u, prjn); // don't check: saves lots of time!

@@ -67,17 +67,28 @@ bool TwoDCoord::FitN(int n) {
 }
 
 bool TwoDCoord::WrapClipOne(bool wrap, int& c, int max) {
-  if(c >= max) {
-    if(wrap)	c = c % max;
-    else	c = -1;
+  bool out_of_range = false;
+  if(wrap) {
+    if(c >= max) {
+      if(c > max + max/2) out_of_range = true; // wraps past half way to other side
+      c = c % max;
+    }
+    else if(c < 0) {
+      if(c < -max/2) out_of_range = true; // wraps past half way to other side
+      c = max + (c % max);
+    }
   }
-  else if(c < 0) {
-    if(wrap)    c = max + (c % max);
-    else	c = -1;
+  else {
+    if(c >= max) {
+      out_of_range = true;
+      c = max-1;
+    }
+    else if(c < 0) {
+      out_of_range = true;
+      c = 0;
+    }
   }
-  if(c < 0)
-    return true;
-  return false;
+  return out_of_range;
 }
 
 

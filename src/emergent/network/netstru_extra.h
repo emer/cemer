@@ -414,6 +414,7 @@ INHERITED(ProjectionSpec)
 public:
   TwoDCoord	send_gp_size;		// number of groups in the sending receptive field
   TwoDCoord	send_gp_skip;		// number of groups to skip per each recv group (typically 1/2 of the size for nice overlap)
+  bool		wrap;			// if true, then connectivity has a wrap-around structure so it starts at -gp_skip (wrapped to right/top) and goes +gp_skip past the right/top edge (wrapped to left/bottom)
   bool		reciprocal;		// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
 
   void 	Connect_impl(Projection* prjn);

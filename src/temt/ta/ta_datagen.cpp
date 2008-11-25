@@ -504,7 +504,7 @@ bool taDataGen::WritePoint(float_Matrix* mat, int x, int y, float color, bool wr
   if(!CheckDims(mat, 2)) return false;
   bool clipped = (TwoDCoord::WrapClipOne(wrap, x, mat->dim(0)) ||
 		  TwoDCoord::WrapClipOne(wrap, y, mat->dim(1)));
-  if(!wrap && clipped)
+  if(clipped)
     return false;
   mat->FastEl(x,y) = color;
   return true;
