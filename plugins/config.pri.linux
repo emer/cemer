@@ -1,0 +1,86 @@
+# see Unix section for documentation of switches
+# this file is copied directly to .pri on Windows
+
+# for some whacky reason, CONFIG had way too much default stuff, so we init it here:
+CONFIG = lex yacc plugin warn_off uic resources qt incremental exceptions rtti stl link_prl thread
+# NOTE: nasty on Mac! causes libtool to fail to find libs
+#   but it was in the default list on Linux
+!macx {
+  CONFIG += qt_no_framework
+}
+# on Unix, if empty, then inc/lib etc. paths are from install
+EMERGENT_DIR = $$(EMERGENTDIR)
+
+win32 {
+  CONFIG += dll
+  QMAKE_CXXFLAGS += /arch:SSE2
+MSVC_TARGET = $$(MSVC_TARGET)
+
+  contains( MSVC_TARGET, Debug ) {
+    CONFIG += debug
+    QMAKE_CXXFLAGS += /RTC1 /GS
+  } else { 
+    contains( MSVC_TARGET, Release ) {
+      CONFIG += release
+    } else {
+      MSVC_TARGET = Release
+      CONFIG += release
+      warning("MSVC_TARGET variable should be defined as either Debug or Release; 'Release' has been assumed")
+    }
+  }
+  
+  LIB_VER = 
+  SYS_PLUGIN_DIR = $$(EMERGENTDIR)/plugins
+  CONFIG_PRI = $$(EMERGENTDIR)/plugins/config.pri
+  EMERGENT_SYS_DIR = $$(EMERGENTDIR)
+  EMERGENT_INC_DIR = $${EMERGENT_DIR}/src
+  MAKETA = $$(EMERGENTDIR)/bin/maketa
+  
+#TODO: add our pdp project depends on Windows, ex ode etc.
+#  LIBS +=   
+  
+} else {
+
+
+# needed to resolve autools paths
+#  prefix = /usr/local
+#  exec_prefix = /usr/local
+#  bindir = ${exec_prefix}/bin$$
+# this will be the prefix path of emergent system directory, if installed
+#  datadir = ${datarootdir}$$
+#  includedir = ${prefix}/include$$
+  
+# TODO: need to fix the bugs in various issues of configure/sed
+  prefix = /usr/local
+  bindir = $${prefix}/bin
+  datadir = $${prefix}/share
+  includedir = $${prefix}/include
+    
+  CONFIG += release
+  CONFIG += 
+  CONFIG += 
+
+  LIBS +=  -lgslcblas -lm -lode -ldl -lgsl -lreadline -lQtGui -lQt3Support -lQtNetwork -lQtOpenGL -lQtCore -lCoin -lGL -lXext -lSM -lICE -lX11 -lpthread -lSoQt -lXmu -lXi 
+
+# the tacss/pdp version string, for adding to libs and folder (Unix only)
+  LIB_VER = 4.0.18
+
+  
+# the install target for plugins
+##nn-nuke  SYS_PLUGIN_DIR = ${datadir}/emergent/plugins
+  
+  # now, the modal paths that depend on whether EMERGENTDIR is defined or not
+  isEmpty( EMERGENT_DIR ) {
+    CONFIG_PRI = $${datadir}/Emergent/plugins/config.pri
+    EMERGENT_INC_DIR = $${includedir}/emergent
+    MAKETA = $${bindir}/maketa
+  } else {
+    CONFIG_PRI = $${EMERGENT_DIR}/plugins/config.pri
+    EMERGENT_INC_DIR = $${EMERGENT_DIR}/src
+    LIBS += -L$${EMERGENT_DIR}/src/temt/lib/.libs
+    LIBS += -L$${EMERGENT_DIR}/src/emergent/lib/.libs
+    MAKETA = $${EMERGENT_DIR}/src/temt/maketa/maketa
+
+  }
+}
+
