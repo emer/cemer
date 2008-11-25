@@ -156,7 +156,7 @@ win32 {
 	
   MAKETA_INCLUDEPATH +=\
 	-I$${EMERGENT_DIR} \
-	-I$${QMAKE_INCDIR_QT}/Qt
+	-I$${QMAKE_INCDIR_QT}
 }
 #omg what a mess is mac... this is for the standard location of packages
 #TODO: add everything, for Network, etc.

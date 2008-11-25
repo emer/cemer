@@ -42,7 +42,7 @@
 
 //NOTE: qconfig.h has the endianness and ptr size, but no dependencies, and
 // no Qt-dependencies
-#include <qconfig.h>
+#include <Qt/qconfig.h>
 // define our own versions of stuff we need from qconfig.h, so remainder
 // of the file is independent of that stuff
 #define TA_LARGEFILE_SUPPORT QT_LARGEFILE_SUPPORT // usually 64
