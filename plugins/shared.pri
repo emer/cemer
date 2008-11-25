@@ -1,5 +1,4 @@
-# Shared declarations for libpdp-based plugin
-# Assumes you have ${EMERGENTDIR} AND ${QTDIR} set
+# Shared declarations for emergent-based plugin
 
 # add the master config file as a pseudo-header so we are dependent on it
 HEADERS += $${CONFIG_PRI}
@@ -11,12 +10,18 @@ SOURCES += $${TARGET}_TA.cpp
 maketa.target = $${TARGET}_TA_type.h
 
 win32 {
-  maketa.commands = $$(EMERGENTDIR)\\bin\\maketa.exe -css /D DEBUG -win_dll \
+  maketa.commands = $$(EMERGENTDIR)\\bin\\maketa.exe -css -win_dll \
   /I $$(EMERGENT_VC_DIR)\\include \
   /I $$(EMERGENT_VC_DIR) /I $$(QTDIR)\\include\Qt \
   $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
+  debug {
+    maketa.commands +=  /D DEBUG
+  }
 } else {
   maketa.commands = $${MAKETA} -css -cpp=\"g++ -E\" $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
+  debug {
+    maketa.commands +=  -DDEBUG
+  }
 }
 maketa.depends = $${CONFIG_PRI} $${MAKETA_HEADERS}
 

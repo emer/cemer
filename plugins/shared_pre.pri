@@ -1,13 +1,13 @@
-# Shared declarations for libpdp-based plugin
-# Assumes you have QTDIR enviro set
+# Shared declarations for emergent-based plugins
 
-# config info (created by configure)
+# config info (determines all the system and context-dependent paths)
 !include(config.pri) {
   error( "config.pri file is missing or could not be included!" )
 }
 TEMPLATE = lib
 
-# local root, relative to a plugin src folder, which works whether this is EMERGENTDIR or mypdpdir
+# local root, relative to a plugin src folder
+# works whether this is EMERGENTDIR or emergent_user
 THIS_ROOT = ../..
 
 # the specific build folder of the version of msvc we are using
