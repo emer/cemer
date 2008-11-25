@@ -397,7 +397,6 @@ AC_CONFIG_FILES([Makefile
 		prog_lib/Makefile
 		3dobj_lib/Makefile
 		test/Makefile
-		plugins/config.pri
 		plugins/Makefile
 		plugins/Makefile.plugin
 		css_lib/Makefile
