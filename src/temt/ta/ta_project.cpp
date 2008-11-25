@@ -1619,7 +1619,7 @@ bool MakeUserPluginConfigProxy(const String& uplugin_dir,
 //note: isEmpty takes a raw var, not its content
   String f(
 "tmpEMERGENT_DIR = $(EMERGENTDIR)\n"
-"isEmpty( tmpEMERGENT_DIR ) {\n"
+"isEmpty( $${tmpEMERGENT_DIR} ) {\n"
 "  tmpEMERGENT_DIR = " + taMisc::app_dir + "\n"
 "}\n"
 "!include($${tmpEMERGENT_DIR}/plugins/" + fname + ")  {\n"
@@ -1664,10 +1664,10 @@ bool taRootBase::Startup_InitTA_initUserAppDir() {
       err = true;
       msg += "Startup_InitTA_initUserAppDir: can't make " + uplugin_dir + "\n";
     }
-    if (!MakeUserPluginConfigProxy(uplugin_dir, "config.pri")) {
+/*nn-nuke    if (!MakeUserPluginConfigProxy(uplugin_dir, "config.pri")) {
       err = true;
       msg += "Startup_InitTA_initUserAppDir: can't make config.pri\n";
-    }
+    }*/
     if (!MakeUserPluginConfigProxy(uplugin_dir, "shared_pre.pri")) {
       err = true;
       msg += "Startup_InitTA_initUserAppDir: can't make shared_pre.pri\n";
