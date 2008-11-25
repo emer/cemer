@@ -1914,15 +1914,13 @@ bool taImageProc::CropImage_float(float_Matrix& crop_img, float_Matrix& orig_img
   else
     crop_img.SetGeom(2, crop_size.x, crop_size.y);
 
-  bool wrap = (edge == WRAP);
-
   TwoDCoord ic;
   for(int ny = 0; ny < crop_size.y; ny++) {
     ic.y = img_off.y + ny;
     for(int nx = 0; nx < crop_size.x; nx++) {
       ic.x = img_off.x + nx;
 
-      if(ic.WrapClip(wrap, img_size)) {
+      if(ic.WrapClip(false, img_size)) { // always clip!
 	if(edge != BORDER) continue; // border keep using clipped edge, others bail
       }
 

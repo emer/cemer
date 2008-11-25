@@ -162,7 +162,8 @@ public:
   static bool	WrapClipOne(bool wrap, int& c, int max);
   // wrap-around or clip one dimension, true if out of range (clipped or more than half way around other side for wrap)
   bool		WrapClip(bool wrap, const TwoDCoord& max) {
-    return WrapClipOne(wrap, x, max.x) || WrapClipOne(wrap, y, max.y);
+    bool wcx = WrapClipOne(wrap, x, max.x); bool wcy = WrapClipOne(wrap, y, max.y);
+    return wcx || wcy;		// have to explicitly call else cond eval will avoid clip!
   } // wrap-around or clip coordinates within 0,0 - max range, true if out of range (clipped or more than half way around other side for wrap)
 private:
   inline void 	Copy_(const TwoDCoord& cp) { x = cp.x; y = cp.y; }
@@ -356,8 +357,9 @@ public:
   { x = MIN(n, x);  y = MIN(n, y); z = MIN(n, z); }
 
   bool		WrapClip(bool wrap, const TDCoord& max) {
-    return TwoDCoord::WrapClip(wrap, max) || WrapClipOne(wrap, z, max.z);
-  } // wrap-around or clip coordinates within 0,0 - max range, -1 if clipped
+    bool wcxy = TwoDCoord::WrapClip(wrap, max); bool wcz = WrapClipOne(wrap, z, max.z);
+    return wcxy || wcz;
+  }  // wrap-around or clip coordinates within 0,0 - max range, true if out of range (clipped or more than half way around other side for wrap)
 private:
   inline void 	Copy_(const TDCoord& cp) { x = cp.x; y = cp.y; z = cp.z; }
   inline void 	Initialize() 		{ x = y = z = 0; }
