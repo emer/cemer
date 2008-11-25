@@ -42,7 +42,11 @@
 
 //NOTE: qconfig.h has the endianness and ptr size, but no dependencies, and
 // no Qt-dependencies
-#include <Qt/qconfig.h>
+#ifdef DARWIN // && Qt is a framework
+# include <qconfig.h>
+#else // Unix and Win
+# include <Qt/qconfig.h>
+#endif
 // define our own versions of stuff we need from qconfig.h, so remainder
 // of the file is independent of that stuff
 #define TA_LARGEFILE_SUPPORT QT_LARGEFILE_SUPPORT // usually 64
