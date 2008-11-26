@@ -165,8 +165,9 @@ void DataViewer::Show_impl() {
 void DataViewer::setVisible(bool value, bool update_view) {
   if (visible == value) return;
   visible = value;
-  if (update_view)
+  if (update_view) {
     if (visible) Show(); else Hide();
+  }
 }
 
 bool DataViewer::SetWinState() {

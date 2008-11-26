@@ -2562,7 +2562,7 @@ void taiToolBar::init(QToolBar* exist_bar) {
 taiEditButton* taiEditButton::New(void* base, taiEdit *taie, TypeDef* typ_,
   IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 {
-  if (typ_ && !typ_->InheritsFrom(TA_taBase) || typ_->HasOption("EDIT_ONLY"))
+  if (typ_ && (!typ_->InheritsFrom(TA_taBase) || typ_->HasOption("EDIT_ONLY")))
     flags_ |= flgEditOnly;
   taiEditButton* rval = new taiEditButton(base, taie, typ_,
     host_, par, gui_parent_, flags_);

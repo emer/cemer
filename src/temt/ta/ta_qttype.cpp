@@ -1549,8 +1549,8 @@ void taiMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff)
 int taiTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if (td->InheritsFrom(&TA_taBase) &&
      ((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase)) ||
-     ((md->type->ptr == 0) && (md->type->DerivesFrom(TA_taSmartPtr) || 
-      md->type->DerivesFrom(TA_taSmartRef))) )
+     ((md->type->ptr == 0) && ((md->type->DerivesFrom(TA_taSmartPtr) || 
+       md->type->DerivesFrom(TA_taSmartRef)))) )
      return inherited::BidForMember(md,td) + 1;
   return 0;
 }

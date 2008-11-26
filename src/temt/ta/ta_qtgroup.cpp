@@ -871,6 +871,9 @@ gpiNewFuns::gpiNewFuns(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* g
 {
   QWidget* vbox = new QWidget(gui_parent_);
   QVBoxLayout* layout = new QVBoxLayout(vbox);
+  layout->setMargin(0);
+  layout->setSpacing(0);
+  layout->addWidget(vbox);
   SetRep(vbox);
 
   for (int i = 0;i < typ->methods.size; ++i){

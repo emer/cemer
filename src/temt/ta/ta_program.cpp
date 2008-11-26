@@ -719,9 +719,10 @@ void ProgVar::ResetParseStuff() {
 
 TypeDef* ProgVar::act_object_type() const {
   TypeDef* rval = &TA_taBase; // the min return value
-  if (object_type)
+  if (object_type) {
     if (object_val) rval = object_val->GetTypeDef();
     else rval = object_type;
+  }
   return rval;
 }
 
