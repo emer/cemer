@@ -1201,7 +1201,7 @@ bool DoGRetinaSpec::FilterRetina(float_Matrix& on_output, float_Matrix& off_outp
 	for(int xf = -dog.filter_width; xf <= dog.filter_width; xf++) {
 	  ic.x = icc.x + xf;
 	  if(ic.WrapClip(wrap, img_size)) {
-	    if(edge != BORDER) continue; // border keep using clipped edge, others bail
+	    if(edge == CLIP) continue; // bail on clipping only
 	  }
 	  if(rgb_img) {
 	    cnvl += dog.FilterPoint(xf, yf, retina_img.FastEl(ic.x, ic.y,0),
@@ -1676,7 +1676,7 @@ bool taImageProc::TranslateImagePix_float(float_Matrix& xlated_img, float_Matrix
     for(int nx = 0; nx < img_size.x; nx++) {
       ic.x = nx - img_off.x;
       if(ic.WrapClip(wrap, img_size)) {
-	if(edge != BORDER) continue; // border keep using clipped edge, others bail
+	if(edge == CLIP) continue; // bail on clipping only
       }
       if(rgb_img) {
 	for(int i=0;i<3;i++)
@@ -1698,11 +1698,11 @@ bool taImageProc::TranslateImage_float(float_Matrix& xlated_img, float_Matrix& o
   FloatTwoDCoord img_ctr = FloatTwoDCoord(img_size) / 2.0f;
   TwoDCoord img_off = TwoDCoord(deltas * img_ctr);
 
-  return TranslateImagePix_float(xlated_img, orig_img, img_off.x, img_off.y);
+  return TranslateImagePix_float(xlated_img, orig_img, img_off.x, img_off.y, edge);
 }
 
 bool taImageProc::ScaleImage_float(float_Matrix& scaled_img, float_Matrix& orig_img,
-				   float scale) {
+				   float scale, EdgeMode edge) {
   if(scale < .01f) {
     taMisc::Error("Can't scale below .01.");
     return false;
@@ -1755,6 +1755,9 @@ bool taImageProc::ScaleImage_float(float_Matrix& scaled_img, float_Matrix& orig_
 
   taMath_float::vec_norm_sum(&sc_ary);		// make it add to 1
 
+  bool wrap = (edge == WRAP);
+
+  TwoDCoord ic;
   for(y=0; y<scaled_size.y; y++) {
     int oyc = (int)floor(.5f + ((float)y / scale));
     for(x=0; x<scaled_size.x; x++) {
@@ -1764,19 +1767,20 @@ bool taImageProc::ScaleImage_float(float_Matrix& scaled_img, float_Matrix& orig_
       float b_avg = 0.0f;
       int oxi, oyi;
       for(oyi=-n_orig_pix; oyi<=n_orig_pix; oyi++) {
-	int oy = oyc + oyi;
-	if(oy < 0) oy = 0; if(oy >= img_size.y) oy = img_size.y-1;
+	ic.y = oyc + oyi;
 	for(oxi=-n_orig_pix;oxi<=n_orig_pix;oxi++) {
-	  int ox = oxc + oxi;
-	  if(ox < 0) ox = 0; if(ox >= img_size.x) ox = img_size.x-1;
+	  ic.x = oxc + oxi;
+	  if(ic.WrapClip(wrap, img_size)) {
+	    if(edge == CLIP) continue; // bail on clipping only
+	  }
 	  float sc = sc_ary.FastEl(oxi + n_orig_pix, oyi + n_orig_pix);
 	  if(rgb_img) {
-	    r_avg += sc * orig_img.FastEl(ox, oy, 0);
-	    g_avg += sc * orig_img.FastEl(ox, oy, 1);
-	    b_avg += sc * orig_img.FastEl(ox, oy, 2);
+	    r_avg += sc * orig_img.FastEl(ic.x, ic.y, 0);
+	    g_avg += sc * orig_img.FastEl(ic.x, ic.y, 1);
+	    b_avg += sc * orig_img.FastEl(ic.x, ic.y, 2);
 	  }
 	  else {
-	    r_avg += sc * orig_img.FastEl(ox, oy);
+	    r_avg += sc * orig_img.FastEl(ic.x, ic.y);
 	  }
 	}
       }
@@ -1870,7 +1874,7 @@ bool taImageProc::RotateImage_float(float_Matrix& rotated_img, float_Matrix& ori
 	for(oxi=0;oxi<2;oxi++) {
 	  ic.x = pcx[oxi];
 	  if(ic.WrapClip(wrap, img_size)) {
-	    if(edge != BORDER) continue; // border keep using clipped edge, others bail
+	    if(edge == CLIP) continue; // bail on clipping only
 	  }
 	  if(rgb_img) {
 	    r_avg += sc_ary.FastEl(oxi, oyi) * orig_img.FastEl(ic.x, ic.y, 0); 
@@ -1921,7 +1925,7 @@ bool taImageProc::CropImage_float(float_Matrix& crop_img, float_Matrix& orig_img
       ic.x = img_off.x + nx;
 
       if(ic.WrapClip(false, img_size)) { // always clip!
-	if(edge != BORDER) continue; // border keep using clipped edge, others bail
+	if(edge == CLIP) continue; // bail on clipping only
       }
 
       if(rgb_img) {
@@ -1959,7 +1963,8 @@ bool taImageProc::TransformImage_float(float_Matrix& xformed_img, float_Matrix& 
     if(edge == BORDER) taImageProc::RenderBorder_float(*use_img);
   }
   if(scale != 1.0f) {
-    taImageProc::ScaleImage_float(sc_img, *use_img, scale);
+    taImageProc::RenderBorder_float(*use_img); // always borderize prior to scaling to avoid probs
+    taImageProc::ScaleImage_float(sc_img, *use_img, scale, BORDER); // border!
     use_img = &sc_img;
     if(edge == BORDER) taImageProc::RenderBorder_float(*use_img);
   }
@@ -1971,6 +1976,163 @@ bool taImageProc::TransformImage_float(float_Matrix& xformed_img, float_Matrix& 
   }
   return true;
 }
+
+bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& in_img,
+					  int win_width, int win_height,
+					  float ctr_x, float ctr_y,
+					  float rotate, float scale,
+					  EdgeMode edge) {
+  TwoDCoord img_size(in_img.dim(0), in_img.dim(1));
+  TwoDCoord win_size(win_width, win_height);
+
+  FloatTwoDCoord img_ctr(img_size.x * ctr_x, img_size.y * ctr_y);
+  FloatTwoDCoord win_ctr = ((FloatTwoDCoord) win_size) / 2.0f;
+
+  rotate *= 2.0f * taMath_float::pi; // convert to radians
+  float rot_sin = sin(rotate);
+  float rot_cos = cos(rotate);
+
+  bool rgb_img = false;
+  if(in_img.dims() == 3) { // rgb
+    out_img.SetGeom(3, win_size.x, win_size.y, 3);
+    rgb_img = true;
+  }
+  else {
+    out_img.SetGeom(2, win_size.x, win_size.y);
+  }
+
+  float half_sc;
+  if(scale < 1.0f)
+    half_sc = .5f / scale; // how much on each side of the pixel to include in avg
+  else
+    half_sc = .5f * scale;
+
+  // scale > 1
+  //   o o o    3
+  //  /|X|X|\   connections
+  // s s s s s  5
+
+  int	half_int = (int)floor(half_sc);
+  float extra = half_sc - (float)half_int;
+  int n_orig_pix = half_int + 1; // number of pixels to get from original image for each scaled pixel
+  //    int tot_org_pix = 2 * n_orig_pix + 1;
+  float_Matrix sc_ary;
+  sc_ary.SetGeom(2, n_orig_pix*2 + 1, n_orig_pix*2 + 1);
+  int x, y;
+  for(y=-n_orig_pix; y<= n_orig_pix; y++) {
+    float ysc = extra;
+    if((y >= -half_int) && (y <= half_int))
+      ysc = 1.0f;
+    for(x=-n_orig_pix; x<= n_orig_pix; x++) {
+      float xsc = extra;
+      if((x >= -half_int) && (x <= half_int))
+	xsc = 1.0f;
+      sc_ary.Set(ysc * xsc, x + n_orig_pix, y + n_orig_pix);
+    }
+  }
+
+  taMath_float::vec_norm_sum(&sc_ary);		// make it add to 1
+
+  bool wrap = (edge == WRAP);
+
+  int pcx[2];    int pcy[2];
+  float pwx[2];  float pwy[2];
+  float_Matrix rot_ary;  rot_ary.SetGeom(2, 2, 2);
+
+  TwoDCoord wc;
+  for(wc.y=0; wc.y<win_size.y; wc.y++) {
+    for(wc.x=0; wc.x<win_size.x; wc.x++) {
+      FloatTwoDCoord wcd = ((FloatTwoDCoord)wc) - win_ctr; // delta from ctr in window
+      FloatTwoDCoord icd = wcd / scale;			   // scaled delta from ctr in img
+      FloatTwoDCoord icr(icd.x * rot_cos + icd.y * rot_sin, // rotated
+			 icd.y * rot_cos - icd.x * rot_sin);
+      TwoDCoord icc((int)floor(.5f + icr.x + img_ctr.x), // img center coord
+		    (int)floor(.5f + icr.y + img_ctr.y));
+
+      float r_avg = 0.0f;
+      float g_avg = 0.0f;
+      float b_avg = 0.0f;
+      
+      TwoDCoord oc;		// offsets
+      for(oc.y=-n_orig_pix; oc.y<=n_orig_pix; oc.y++) {
+	for(oc.x=-n_orig_pix;oc.x<=n_orig_pix;oc.x++) {
+	  TwoDCoord ic = icc + oc;
+	  if(ic.WrapClip(wrap, img_size)) {
+	    if(edge == CLIP) continue; // bail on clipping only
+	  }
+	  float sc = sc_ary.FastEl(oc.x + n_orig_pix, oc.y + n_orig_pix);
+
+	  if(rotate != 0.0f) {
+	    // now, for each scaling fuzzy-sampled point, correct for rotational aliasing..
+	    GetWeightedPixels_float(ic.x, img_size.x, pcx, pwx);
+	    GetWeightedPixels_float(ic.y, img_size.y, pcy, pwy);
+
+	    int oxi, oyi;
+	    for(oyi=0;oyi<2;oyi++) {
+	      for(oxi=0;oxi<2;oxi++) {
+		rot_ary.FastEl(oxi, oyi) = pwx[oxi] + pwy[oyi];
+	      }
+	    }
+	    taMath_float::vec_norm_sum(&rot_ary);
+
+	    float r_r_avg = 0.0f;
+	    float r_g_avg = 0.0f;
+	    float r_b_avg = 0.0f;
+	    TwoDCoord ric;
+	    for(oyi=0;oyi<2;oyi++) {
+	      ric.y = pcy[oyi];
+	      for(oxi=0;oxi<2;oxi++) {
+		ric.x = pcx[oxi];
+		if(ric.WrapClip(wrap, img_size)) {
+		  if(edge == CLIP) continue; // bail on clipping only
+		}
+
+		float rsc = rot_ary.FastEl(oxi, oyi);
+
+		if(rgb_img) {
+		  r_r_avg += rsc * in_img.FastEl(ric.x, ric.y, 0); 
+		  r_g_avg += rsc * in_img.FastEl(ric.x, ric.y, 1);
+		  r_b_avg += rsc * in_img.FastEl(ric.x, ric.y, 2);
+		}
+		else {
+		  r_r_avg += rsc * in_img.SafeEl(ric.x, ric.y);
+		}
+	      }
+	    }
+	    if(rgb_img) {
+	      r_avg += sc * r_r_avg;
+	      g_avg += sc * r_g_avg;
+	      b_avg += sc * r_b_avg;
+	    }
+	    else {
+	      r_avg += sc * r_r_avg;
+	    }
+	  }
+	  else {
+	    if(rgb_img) {
+	      r_avg += sc * in_img.FastEl(ic.x, ic.y, 0);
+	      g_avg += sc * in_img.FastEl(ic.x, ic.y, 1);
+	      b_avg += sc * in_img.FastEl(ic.x, ic.y, 2);
+	    }
+	    else {
+	      r_avg += sc * in_img.FastEl(ic.x, ic.y);
+	    }
+	  }
+	}
+      }
+      if(rgb_img) {
+	out_img.FastEl(wc.x, wc.y, 0) = r_avg;
+	out_img.FastEl(wc.x, wc.y, 1) = g_avg;
+	out_img.FastEl(wc.x, wc.y, 2) = b_avg;
+      }
+      else {
+	out_img.FastEl(wc.x, wc.y) = r_avg;
+      }	
+    }
+  }
+  return true;
+}
+
 
 bool taImageProc::DoGFilterRetina(float_Matrix& on_output, float_Matrix& off_output,
 				  float_Matrix& retina_img, DoGRetinaSpec& spec,
@@ -2235,7 +2397,6 @@ DataCol* RetinaSpec::GetRetImageColumn(DataTable* dt) {
 bool RetinaSpec::TransformImageData(float_Matrix& img_data, DataTable* dt,
 				    float move_x, float move_y,
 				    float scale, float rotate,
-				    float ret_move_x, float ret_move_y,
 				    bool superimpose)
 {
   if(dogs.size == 0) return false;
@@ -2252,59 +2413,19 @@ bool RetinaSpec::TransformImageData(float_Matrix& img_data, DataTable* dt,
 
   TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
 
+  float ctr_x = .5f + .5 * move_x;
+  float ctr_y = .5f + .5 * move_y;
+
   DataCol* da_ret = GetRetImageColumn(dt);
   da_ret->SetUserData("IMAGE", true); // the one place we set this!
   float_MatrixPtr ret_img; ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
 
-  float_Matrix xform_img;     	taBase::Ref(xform_img);
+  taImageProc::SampleImageWindow_float(*ret_img, img_data, retina_size.x, retina_size.y, 
+				       ctr_x, ctr_y, rotate, scale, edge_mode);
 
-  // don't crop or scale yet..
-  taImageProc::TransformImage_float(xform_img, img_data, move_x, move_y, rotate, 1.0f, -1, -1,
-				    edge_mode);
-
-  float_Matrix xlate_img;     	taBase::Ref(xlate_img);
-  float_Matrix* use_img = &xform_img;
-  if((ret_move_x != 0.0f) || (ret_move_y != 0.0f)) {
-    FloatTwoDCoord deltas(ret_move_x / scale, ret_move_y / scale); // factor in scaling
-    FloatTwoDCoord img_ctr = FloatTwoDCoord(retina_size) / 2.0f; // using retina size here!
-    TwoDCoord img_off = TwoDCoord(deltas * img_ctr);
-    
-    taImageProc::TranslateImagePix_float(xlate_img, *use_img, img_off.x, img_off.y);
-    use_img = &xlate_img;
-    if(edge_mode == taImageProc::BORDER) taImageProc::RenderBorder_float(*use_img);
-  }
-
-  float_Matrix sc_img;     	taBase::Ref(sc_img);
-  float_Matrix precrop_img;    	taBase::Ref(precrop_img);
-
-  // special code to optimize large scaling operations: crop first then scale..
-  if(scale > 1.3f) {
-    FloatTwoDCoord crop_sz(retina_size.x, retina_size.y);
-    crop_sz *= 1.05f / scale;	// 1.05 = allow for some extra margin
-    taImageProc::CropImage_float(precrop_img, *use_img, (int)crop_sz.x, (int)crop_sz.y,
-				 edge_mode);
-
-    taImageProc::ScaleImage_float(sc_img, precrop_img, scale);
-    use_img = &sc_img;
-    if(edge_mode == taImageProc::BORDER) taImageProc::RenderBorder_float(*use_img);
-  }
-  else {
-    if(scale != 1.0f) {
-      taImageProc::ScaleImage_float(sc_img, *use_img, scale);
-      use_img = &sc_img;
-      if(edge_mode == taImageProc::BORDER) taImageProc::RenderBorder_float(*use_img);
-    }
-  }
-
-  if(edge_mode == taImageProc::BORDER && eff_fd_wd > 0)
-    taImageProc::FadeEdgesToBorder_float(*use_img, eff_fd_wd); 
-  // this should be JUST the original with no border fill -- crop does the filling
-
-  taImageProc::CropImage_float(*ret_img, *use_img, retina_size.x, retina_size.y, edge_mode);
-
-  if(edge_mode == taImageProc::BORDER && eff_fd_wd > 0)
+  if(edge_mode == taImageProc::BORDER && eff_fd_wd > 0) {
     taImageProc::FadeEdgesToBorder_float(*ret_img, eff_fd_wd); 
-  // and make double-sure.. on final image
+  }
 
   int idx;
   float_MatrixPtr isz_mat; isz_mat = (float_Matrix*)dt->FindMakeColName("ImageSize", idx, DataTable::VT_FLOAT, 1, 2)->GetValAsMatrix(-1);
@@ -2324,7 +2445,6 @@ bool RetinaSpec::LookAtImageData(float_Matrix& img_data, DataTable* dt,
 				 float box_ur_x, float box_ur_y,
 				 float move_x, float move_y,
 				 float scale, float rotate, 
-				 float ret_move_x, float ret_move_y,
 				 bool superimpose) {
   if(dogs.size == 0) return false;
 
@@ -2360,7 +2480,7 @@ bool RetinaSpec::LookAtImageData(float_Matrix& img_data, DataTable* dt,
     scale = .01f;
 
   bool rval = TransformImageData(img_data, dt, move_x, move_y, scale, rotate,
-				 ret_move_x, ret_move_y, superimpose);
+				 superimpose);
 
   if(rval) {
     int idx;
@@ -2464,7 +2584,6 @@ bool RetinaSpec::RecordImageName(taImage& img, DataTable* dt) {
 bool RetinaSpec::TransformImage(taImage& img, DataTable* dt,
 				float move_x, float move_y,
 				float scale, float rotate,
-				float ret_move_x, float ret_move_y,
 				bool superimpose)
 {
   if (!dt) return false;
@@ -2473,7 +2592,7 @@ bool RetinaSpec::TransformImage(taImage& img, DataTable* dt,
   ConvertImageToMatrix(img, img_data);
 
   bool rval = TransformImageData(img_data, dt, move_x, move_y, scale, rotate,
-				 ret_move_x, ret_move_y, superimpose);
+				 superimpose);
   if(rval) {
     RecordImageName(img, dt);
   }
@@ -2483,7 +2602,6 @@ bool RetinaSpec::TransformImage(taImage& img, DataTable* dt,
 bool RetinaSpec::TransformImageName(const String& img_fname, DataTable* dt,
 				    float move_x, float move_y,
 				    float scale, float rotate,
-				    float ret_move_x, float ret_move_y,
 				    bool superimpose)
 {
   if (!dt) return false;
@@ -2491,7 +2609,7 @@ bool RetinaSpec::TransformImageName(const String& img_fname, DataTable* dt,
   if(!img.LoadImage(img_fname)) return false;
   img.name = img_fname;		// explicitly name it
   return TransformImage(img, dt, move_x, move_y, scale, rotate,
-			ret_move_x, ret_move_y, superimpose);
+			superimpose);
 }
 
 ///////////// Look At
@@ -2502,7 +2620,6 @@ bool RetinaSpec::LookAtImage(taImage& img, DataTable* dt,
 			     float box_ur_x, float box_ur_y,
 			     float move_x, float move_y,
 			     float scale, float rotate, 
-			     float ret_move_x, float ret_move_y,
 			     bool superimpose) {
   float_Matrix img_data;
   taBase::Ref(img_data);	// make sure it isn't killed by some other ops..
@@ -2511,7 +2628,7 @@ bool RetinaSpec::LookAtImage(taImage& img, DataTable* dt,
   bool rval = LookAtImageData(img_data, dt, region,
 			      box_ll_x, box_ll_y, box_ur_x, box_ur_y,
 			      move_x, move_y, scale, rotate,
-			      ret_move_x, ret_move_y, superimpose);
+			      superimpose);
   if(rval) {
     RecordImageName(img, dt);
   }
@@ -2524,14 +2641,13 @@ bool RetinaSpec::LookAtImageName(const String& img_fname, DataTable* dt,
 				 float box_ur_x, float box_ur_y,
 				 float move_x, float move_y,
 				 float scale, float rotate, 
-				 float ret_move_x, float ret_move_y,
 				 bool superimpose) {
   taImage img;
   if(!img.LoadImage(img_fname)) return false;
   img.name = img_fname;		// explicitly name it
   return LookAtImage(img, dt, region, box_ll_x, box_ll_y, box_ur_x, box_ur_y,
 		     move_x, move_y, scale, rotate,
-		     ret_move_x, ret_move_y, superimpose);
+		     superimpose);
 }
 
 
@@ -2541,11 +2657,10 @@ bool RetinaSpec::LookAtImageName(const String& img_fname, DataTable* dt,
 bool RetinaSpec::XFormFilterImageData(float_Matrix& img_data, DataTable* dt,
 				      float move_x, float move_y,
 				      float scale, float rotate,
-				      float ret_move_x, float ret_move_y,
 				      bool superimpose, int renorm)
 {
   bool rval = TransformImageData(img_data, dt, move_x, move_y, scale, rotate,
-				 ret_move_x, ret_move_y, superimpose);
+				 superimpose);
   if(rval)
     rval = FilterImageData(dt, superimpose, renorm);
   if(rval)
@@ -2556,11 +2671,10 @@ bool RetinaSpec::XFormFilterImageData(float_Matrix& img_data, DataTable* dt,
 bool RetinaSpec::XFormFilterImage(taImage& img, DataTable* dt,
 				  float move_x, float move_y,
 				  float scale, float rotate,
-				  float ret_move_x, float ret_move_y,
 				  bool superimpose, int renorm)
 {
   bool rval = TransformImage(img, dt, move_x, move_y, scale, rotate,
-			     ret_move_x, ret_move_y, superimpose);
+			     superimpose);
   if(rval)
     rval = FilterImageData(dt, superimpose, renorm);
   if(rval)
@@ -2571,11 +2685,10 @@ bool RetinaSpec::XFormFilterImage(taImage& img, DataTable* dt,
 bool RetinaSpec::XFormFilterImageName(const String& img_fname, DataTable* dt,
 				      float move_x, float move_y,
 				      float scale, float rotate,
-				      float ret_move_x, float ret_move_y,
 				      bool superimpose, int renorm)
 {
   bool rval = TransformImageName(img_fname, dt, move_x, move_y, scale, rotate,
-				 ret_move_x, ret_move_y, superimpose);
+				 superimpose);
   if(rval)
     rval = FilterImageData(dt, superimpose, renorm);
   if(rval)
@@ -2589,12 +2702,10 @@ bool RetinaSpec::LookAtFilterImageData(float_Matrix& img_data, DataTable* dt,
 				       float box_ur_x, float box_ur_y,
 				       float move_x, float move_y,
 				       float scale, float rotate, 
-				       float ret_move_x, float ret_move_y,
 				       bool superimpose, int renorm) {
   bool rval = LookAtImageData(img_data, dt, region,
 			      box_ll_x, box_ll_y, box_ur_x, box_ur_y,
 			      move_x, move_y, scale, rotate, 
-			      ret_move_x, ret_move_y,
 			      superimpose);
   if(rval)
     rval = FilterImageData(dt, superimpose, renorm);
@@ -2609,12 +2720,11 @@ bool RetinaSpec::LookAtFilterImage(taImage& img, DataTable* dt,
 				   float box_ur_x, float box_ur_y,
 				   float move_x, float move_y,
 				   float scale, float rotate, 
-				   float ret_move_x, float ret_move_y,
 				   bool superimpose, int renorm) {
   bool rval = LookAtImage(img, dt, region,
 			  box_ll_x, box_ll_y, box_ur_x, box_ur_y,
 			  move_x, move_y, scale, rotate,
-			  ret_move_x, ret_move_y, superimpose);
+			  superimpose);
   if(rval)
     rval = FilterImageData(dt, superimpose, renorm);
   if(rval)
@@ -2628,12 +2738,11 @@ bool RetinaSpec::LookAtFilterImageName(const String& img_fname, DataTable* dt,
 				       float box_ur_x, float box_ur_y,
 				       float move_x, float move_y,
 				       float scale, float rotate, 
-				       float ret_move_x, float ret_move_y,
 				       bool superimpose, int renorm) {
   bool rval = LookAtImageName(img_fname, dt, region,
 			      box_ll_x, box_ll_y, box_ur_x, box_ur_y,
 			      move_x, move_y, scale, rotate,
-			      ret_move_x, ret_move_y, superimpose);
+			      superimpose);
   if(rval)
     rval = FilterImageData(dt, superimpose, renorm);
   if(rval)
