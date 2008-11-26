@@ -64,7 +64,7 @@ SRCS =\
 	v3_compat.cpp
 
 
-include_HEADERS = $(HEADS) $(TAHEADS) emergent_TA_type.h emergent_TA_inst.h
+include_HEADERS = $(HEADS) $(TAHEADS) emergent_TA_type.h emergent_TA_inst.h emergent_def.h
 
 include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/Moc.am

@@ -10,6 +10,7 @@ CONFIG = lex yacc plugin warn_off uic resources qt incremental exceptions rtti s
 }
 # on Unix, if empty, then inc/lib etc. paths are from install
 EMERGENT_DIR = $$(EMERGENTDIR)
+EMER_TARGET = $$(EMER_TARGET)
 
 # the temt/emergent version string, for adding to libs and folder (Unix only)
   LIB_VER = 4.0.18
@@ -42,7 +43,7 @@ win32 {
 #TODO: add our emergent project depends on Windows, ex ode etc.
 #  LIBS +=   
   
-} else { // mac and unix -- have common elements and disparate ones too...
+} else { # mac and unix -- have common elements and disparate ones too...
   # configuration for all cases
   # the modal paths in case that EMERGENTDIR is defined -- same for both
   isEmpty( EMERGENT_DIR ) {
@@ -50,12 +51,11 @@ win32 {
     # only warn for explicit Debug case, which may not be intended
     contains( EMER_TARGET, Debug ) {
       CONFIG += debug
-      QMAKE_CXXFLAGS += /RTC1 /GS
       warning("EMER_TARGET variable was defined as 'Debug' which is unexpected when building plugins without EMERGENTDIR defined (i.e. for system installation) -- 'unset EMER_TARGET' if you want to build Release version of plugin")
     } else { 
       CONFIG += release
     }
-  } else { // EMERGENTDIR env variable, assume dev install
+  } else { # EMERGENTDIR env variable, assume dev install
     CONFIG_PRI = $${EMERGENT_DIR}/plugins/config.pri
     EMERGENT_INC_DIR = $${EMERGENT_DIR}/src
     LIBS += -L$${EMERGENT_DIR}/src/temt/lib/.libs
@@ -82,7 +82,7 @@ win32 {
   
   macx {
     LIBS +=  -lgslcblas -lm -lode -ldl -lgsl -lreadline -Wl,-F/Library/Frameworks -Wl,-framework,QtGui -Wl,-framework,QtOpenGL -Wl,-framework,QtCore -Wl,-framework,Qt3Support -Wl,-framework,QtXml -Wl,-framework,QtNetwork -Wl,-framework,QtSql 
-  } else { // unix
+  } else { # unix
   #TODO: also add support for mpi
   
     # now, the modal paths for when EMERGENTDIR is *not* defined

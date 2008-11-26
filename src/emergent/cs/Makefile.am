@@ -19,7 +19,7 @@ SRCS=\
 	cs.cpp \
 	cs_v3_compat.cpp
 
-include_HEADERS = $(HEADS) $(TAHEADS) cs_TA_type.h cs_TA_inst.h
+include_HEADERS = $(HEADS) $(TAHEADS) cs_TA_type.h cs_TA_inst.h cs_def.h
 
 include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/mfstamp.am

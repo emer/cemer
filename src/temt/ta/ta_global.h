@@ -33,20 +33,10 @@
 # include <limits.h>
 #endif
 
-// Qt includes -- we typically only don't include Qt when building maketa, otherwise,
-// there are two options:
-//   non-gui builds get QtCore, but not Qt gui-related classes
-//   gui builds get QtGui etc.
-
-
-
 //NOTE: qconfig.h has the endianness and ptr size, but no dependencies, and
-// no Qt-dependencies
-#ifdef DARWIN // && Qt is a framework
-# include <qconfig.h>
-#else // Unix and Win
-# include <Qt/qconfig.h>
-#endif
+// no Qt-dependencies -- note that on Mac/frameworks, it is in QtCore
+#include <qconfig.h>
+
 // define our own versions of stuff we need from qconfig.h, so remainder
 // of the file is independent of that stuff
 #define TA_LARGEFILE_SUPPORT QT_LARGEFILE_SUPPORT // usually 64

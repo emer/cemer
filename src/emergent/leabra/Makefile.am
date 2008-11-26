@@ -31,7 +31,7 @@ SRCS=\
 	leabra_pbwm.cpp \
 	leabra_v3_compat.cpp
 
-include_HEADERS = $(HEADS) $(TAHEADS) leabra_TA_type.h leabra_TA_inst.h
+include_HEADERS = $(HEADS) $(TAHEADS) leabra_TA_type.h leabra_TA_inst.h leabra_def.h
 
 include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/mfstamp.am

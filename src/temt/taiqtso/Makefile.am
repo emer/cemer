@@ -73,7 +73,7 @@ SRCS =\
 	itextedit.moc.cpp \
 	taiqtso_ti.cpp
 
-include_HEADERS = $(HEADS) $(TAHEADS)
+include_HEADERS = $(HEADS) $(TAHEADS) taiqtso_def.h
 include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 

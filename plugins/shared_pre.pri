@@ -97,7 +97,7 @@ MAKETA_INCLUDEPATH +=\
 # modal include folders -- these are diff depending on platform and dev/retail
 # on win32, we must have EMERGENTDIR defined, and we always deploy just like dev
 # on unix, we use EMERGENTDIR for dev, and have hier includes, else flat includes
-isEmpty( EMERGENT_DIR ) {
+isEmpty( EMERGENT_DIR ) { # non-win32 only
   TEMT_INC_DIR_taiqtso = $${EMERGENT_INC_DIR}
   TEMT_INC_DIR_ta = $${EMERGENT_INC_DIR}
   TEMT_INC_DIR_css = $${EMERGENT_INC_DIR}
@@ -107,7 +107,15 @@ isEmpty( EMERGENT_DIR ) {
   EMERGENT_INC_DIR_leabra = $${EMERGENT_INC_DIR}
   EMERGENT_INC_DIR_so = $${EMERGENT_INC_DIR}
   
-} else { # unix
+  INCLUDEPATH +=\
+	$${EMERGENT_INC_DIR}
+	
+  #note: the Qt path is only for non-frameworks -- see later for Mac frameworks
+  MAKETA_INCLUDEPATH +=\
+	-I$${EMERGENT_INC_DIR} \
+	-I$${QMAKE_INCDIR_QT}/Qt
+  
+} else { # any platform
   TEMT_INC_DIR_taiqtso = $${EMERGENT_INC_DIR}/temt/taiqtso
   TEMT_INC_DIR_ta = $${EMERGENT_INC_DIR}/temt/ta
   TEMT_INC_DIR_css = $${EMERGENT_INC_DIR}/temt/css
@@ -140,6 +148,10 @@ isEmpty( EMERGENT_DIR ) {
 	-I$${EMERGENT_INC_DIR}/emergent/so	
 }
 
+#note: the Qt path is only for non-frameworks -- see later for Mac frameworks
+MAKETA_INCLUDEPATH +=\
+      -I$${QMAKE_INCDIR_QT}/Qt
+
 win32 {
   INCLUDEPATH +=\
 	$${BUILD_MSVC} \
@@ -150,21 +162,26 @@ win32 {
 	-I$${EMERGENT_DIR}\\3rdparty\\include
 
   DESTDIR = $${EMERGENT_DIR}/lib/plugins$${BUILD_EXT_SF}
-} else {
+  
+} else { #mac/unix
+  DESTDIR = $${THIS_ROOT}/lib/plugins$${BUILD_EXT_SF}
+
+  # need to find config.h but we use build/ version in Windows
   INCLUDEPATH +=\
-	$${EMERGENT_DIR}
-	
+        $${EMERGENT_DIR}
+        
   MAKETA_INCLUDEPATH +=\
-	-I$${EMERGENT_DIR} \
-	-I$${QMAKE_INCDIR_QT}
-}
-#omg what a mess is mac... this is for the standard location of packages
-#TODO: add everything, for Network, etc.
-macx {
-  MAKETA_INCLUDEPATH +=\
-	-I/Library/Frameworks/QtCore.framework/Versions/4/Headers \
-	-I/Library/Frameworks/QtGui.framework/Versions/4/Headers 
+        -I$${EMERGENT_DIR}
+
+  macx {
+    #omg what a mess is mac... this is for the standard location of packages
+    #TODO: add everything, for Network, etc.
+    MAKETA_INCLUDEPATH +=\
+          -I/Library/Frameworks/QtCore.framework/Versions/4/Headers \
+          -I/Library/Frameworks/QtGui.framework/Versions/4/Headers 
+  
+  } else { # unix
+  }
 }
 
-DESTDIR = $${THIS_ROOT}/lib/plugins$${BUILD_EXT_SF}
 
