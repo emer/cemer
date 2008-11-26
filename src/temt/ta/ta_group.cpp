@@ -629,7 +629,7 @@ TAGPtr taGroup_impl::NewGp_(int no, TypeDef* typ, const String& name_) {
     typ = GetTypeDef();	// always create one of yourself..
 
   // note: following will spit it out if it isn't a taGroup_impl of right type
-  TAGPtr rval = rval = (TAGPtr)gp.New(no, typ, name_);
+  TAGPtr rval = (TAGPtr)gp.New(no, typ, name_);
 //  UpdateAfterEdit();
   return rval;
 }
