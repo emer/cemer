@@ -66,7 +66,6 @@ win32 {
       CONFIG += release
     } else { 
       CONFIG += debug
-      QMAKE_CXXFLAGS += /RTC1 /GS
       !contains( EMER_TARGET, Debug ) {
         warning("EMER_TARGET variable should be defined as either Debug or Release; 'Debug' has been assumed")
       }
@@ -79,19 +78,17 @@ win32 {
   datadir = $${prefix}/share
   includedir = $${prefix}/include
     
+  # now, the modal paths for when EMERGENTDIR is *not* defined
+  isEmpty( EMERGENT_DIR ) {
+    CONFIG_PRI = $${datadir}/Emergent/plugins/config.pri
+    EMERGENT_INC_DIR = $${includedir}/emergent
+    MAKETA = $${bindir}/maketa
+  }
   
   macx {
     LIBS +=  -lgslcblas -lm -lode -ldl -lgsl -lreadline -Wl,-F/Library/Frameworks -Wl,-framework,QtGui -Wl,-framework,QtOpenGL -Wl,-framework,QtCore -Wl,-framework,Qt3Support -Wl,-framework,QtXml -Wl,-framework,QtNetwork -Wl,-framework,QtSql 
   } else { # unix
   #TODO: also add support for mpi
-  
-    # now, the modal paths for when EMERGENTDIR is *not* defined
-    isEmpty( EMERGENT_DIR ) {
-      CONFIG_PRI = $${datadir}/Emergent/plugins/config.pri
-      EMERGENT_INC_DIR = $${includedir}/emergent
-      MAKETA = $${bindir}/maketa
-    }
-    
     LIBS +=  -lgslcblas -lm -lode -ldl -lgsl -lreadline -lQtGui -lQt3Support -lQtNetwork -lQtOpenGL -lQtCore -lCoin -lGL -lXext -lSM -lICE -lX11 -lpthread -lSoQt -lXmu -lXi 
   }
   

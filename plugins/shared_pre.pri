@@ -146,6 +146,15 @@ isEmpty( EMERGENT_DIR ) { # non-win32 only
 	-I$${EMERGENT_INC_DIR}/emergent/cs \
 	-I$${EMERGENT_INC_DIR}/emergent/leabra \
 	-I$${EMERGENT_INC_DIR}/emergent/so	
+
+  !win32 {
+    # need to find config.h but we use build/ version in Windows
+    INCLUDEPATH +=\
+          $${EMERGENT_DIR}
+          
+    MAKETA_INCLUDEPATH +=\
+          -I$${EMERGENT_DIR}
+  }
 }
 
 #note: the Qt path is only for non-frameworks -- see later for Mac frameworks
@@ -166,19 +175,12 @@ win32 {
 } else { #mac/unix
   DESTDIR = $${THIS_ROOT}/lib/plugins$${BUILD_EXT_SF}
 
-  # need to find config.h but we use build/ version in Windows
-  INCLUDEPATH +=\
-        $${EMERGENT_DIR}
-        
-  MAKETA_INCLUDEPATH +=\
-        -I$${EMERGENT_DIR}
 
   macx {
-    #omg what a mess is mac... this is for the standard location of packages
+    #for Mac add the framework include for QtCore to get qconfig.h
     #TODO: add everything, for Network, etc.
     MAKETA_INCLUDEPATH +=\
-          -I/Library/Frameworks/QtCore.framework/Versions/4/Headers \
-          -I/Library/Frameworks/QtGui.framework/Versions/4/Headers 
+          -I/Library/Frameworks/QtCore.framework/Versions/4/Headers 
   
   } else { # unix
   }
