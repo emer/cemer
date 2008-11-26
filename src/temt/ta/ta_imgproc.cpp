@@ -1988,6 +1988,8 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
   FloatTwoDCoord img_ctr(img_size.x * ctr_x, img_size.y * ctr_y);
   FloatTwoDCoord win_ctr = ((FloatTwoDCoord) win_size) / 2.0f;
 
+  if(edge == BORDER) taImageProc::RenderBorder_float(in_img);
+
   rotate *= 2.0f * taMath_float::pi; // convert to radians
   float rot_sin = sin(rotate);
   float rot_cos = cos(rotate);
@@ -2422,6 +2424,7 @@ bool RetinaSpec::TransformImageData(float_Matrix& img_data, DataTable* dt,
 
   taImageProc::SampleImageWindow_float(*ret_img, img_data, retina_size.x, retina_size.y, 
 				       ctr_x, ctr_y, rotate, scale, edge_mode);
+  if(edge_mode == taImageProc::BORDER) taImageProc::RenderBorder_float(*ret_img);
 
   if(edge_mode == taImageProc::BORDER && eff_fd_wd > 0) {
     taImageProc::FadeEdgesToBorder_float(*ret_img, eff_fd_wd); 
