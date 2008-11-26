@@ -801,6 +801,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_3C1BA4CF5A0D48D9852366117BB81753"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3C4E89B06BD1427499777B33C3145929"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1114,12 +1120,6 @@
         "Entry"
         {
         "MsmKey" = "8:_4F2CC90861AB48C6B6170F0BB18AA578"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4FD82626749E45DCB5207729F6F5F0B9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -6450,6 +6450,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3C1BA4CF5A0D48D9852366117BB81753"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\config.pri"
+            "TargetName" = "8:config.pri"
+            "Tag" = "8:"
+            "Folder" = "8:_61EBFCA0C7864353890091C330F974DD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3C4E89B06BD1427499777B33C3145929"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\css\\css_qt.moc.cpp"
@@ -7496,26 +7516,6 @@
             "TargetName" = "8:ta_program_qt.moc.cpp"
             "Tag" = "8:"
             "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4FD82626749E45DCB5207729F6F5F0B9"
-            {
-            "SourcePath" = "8:..\\..\\..\\plugins\\config.pri.in"
-            "TargetName" = "8:config.pri"
-            "Tag" = "8:"
-            "Folder" = "8:_61EBFCA0C7864353890091C330F974DD"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -17259,7 +17259,7 @@
                         {
                             "{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_E949A102706C41BDA7EEF6D20DFBC43A"
                             {
-                            "Name" = "8:MSVC_TARGET"
+                            "Name" = "8:EMER_TARGET"
                             "Condition" = "8:"
                             "Transitive" = "11:FALSE"
                             "ValueTypes" = "3:2"
