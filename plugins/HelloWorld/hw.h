@@ -19,6 +19,7 @@ public:
   FloatTDCoord		a; // 1st input parameter to AddCoords
   FloatTDCoord		b; // 1st input parameter to AddCoords
   FloatTDCoord		c; // 1st input parameter to AddCoords
+  Variant		v; // a variant
   
   // Comment directives such as the one below are explained in section
   // 18.3.3 of the PDP++ User Guide. This particular directive creates
