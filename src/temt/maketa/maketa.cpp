@@ -84,6 +84,7 @@ TypeDef TA_template		("template", 	1, 0, 0, 1, 1); // formal
 TypeDef TA_templ_inst		("templ_inst", 	1, 0, 0, 1, 1);	// formal
 TypeDef TA_ta_array		("ta_array", 	1, 0, 0, 1, 1);	// formal
 TypeDef TA_taRegFun		("taRegFun", 	1, 0, 0, 0, 1); // pseudo formal, for global functions
+TypeDef TA_TypeItem		("TypeItem", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_TypeDef		("TypeDef", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_EnumDef		("EnumDef", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_MemberDefBase	("MemberDefBase", 	1, 0, 0, 0, 1, 1);
@@ -340,12 +341,26 @@ void MTA::InitTypeSpace(TypeSpace& ts) {
   ts.Add(&TA_taBase);
   TA_taBase.AddParFormal(&TA_class);
   ts.Add(&TA_taRegFun);
+  ts.Add(&TA_TypeItem);
+  TA_TypeItem.AddParFormal(&TA_class);
+  ts.Add(&TA_EnumDef);
+  TA_EnumDef.AddParFormal(&TA_class);
+  TA_EnumDef.AddParents(&TA_TypeItem);
   ts.Add(&TA_TypeDef);
   TA_TypeDef.AddParFormal(&TA_class);
+  TA_TypeDef.AddParents(&TA_TypeItem);
+  ts.Add(&TA_MemberDefBase);
+  TA_MemberDefBase.AddParFormal(&TA_class);
+  TA_MemberDefBase.AddParents(&TA_TypeItem);
   ts.Add(&TA_MemberDef);
   TA_MemberDef.AddParFormal(&TA_class);
+  TA_MemberDef.AddParents(&TA_MemberDefBase);
+  ts.Add(&TA_PropertyDef);
+  TA_PropertyDef.AddParFormal(&TA_class);
+  TA_PropertyDef.AddParents(&TA_MemberDefBase);
   ts.Add(&TA_MethodDef);
   TA_MethodDef.AddParFormal(&TA_class);
+  TA_MethodDef.AddParFormal(&TA_TypeItem);
   ts.Add(&TA_taString);
   TA_taString.AddParFormal(&TA_class);
   ts.Add(&TA_Variant);

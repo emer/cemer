@@ -175,6 +175,11 @@ void* cssTA::GetVoidPtrOfType(const char* td) const {
 }
 
 Variant cssTA::GetVar() const {
+  // if it is a ptr to a TypeItem guy, we can provide a TypeItem guy
+  if (ptr && type_def->DerivesFrom(&TA_TypeItem)) {
+    if (ptr_cnt == 1)
+      return Variant((TypeItem*)ptr);
+  }
   // could do getstr -- getting ptr is better.
   return Variant(GetVoidPtr());
 }

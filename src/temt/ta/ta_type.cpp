@@ -5459,19 +5459,27 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     }
   }
   else if(ptr == 1) {
+    bool is_null = ((val == "NULL") || (val == "(NULL)"));
 #ifndef NO_TA_BASE
-    if(DerivesFrom(TA_taBase) && (tabMisc::root)) {
-      taBase::SetValStr_ptr(val, this, base, par, memb_def, sc, force_inline);
+    if (DerivesFrom(TA_taBase)) {
+      if (tabMisc::root) {
+        if (is_null) 
+          taBase::DelPointer((taBase**)base);
+        else
+          taBase::SetValStr_ptr(val, this, base, par, memb_def, sc, force_inline);
+      }
     }
     else
 #endif
-    if(DerivesFrom(TA_TypeDef)) {
+    if (is_null) {
+      *((void**)base) = NULL;
+    }
+    else if(DerivesFrom(TA_TypeDef)) {
       TypeDef* td = taMisc::types.FindTypeR(val);
-      //TODO: shouldn't we set NULL values????? (also for members, etc.)
       if(td != NULL)
 	*((TypeDef**)base) = td;
     }
-    if(DerivesFrom(TA_MemberDef)) {
+    else if(DerivesFrom(TA_MemberDef)) {
       String fqtypnm = val.before("::", -1); // before final ::
       String mbnm = val.after("::", -1); // after final ::
       if(!fqtypnm.empty() && !mbnm.empty()) {
@@ -5483,7 +5491,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 	}
       }
     }
-    if(DerivesFrom(TA_MethodDef)) {
+    else if(DerivesFrom(TA_MethodDef)) {
       String fqtypnm = val.before("::", -1); // before final ::
       String mthnm = val.after("::", -1);
       if(!fqtypnm.empty() && !mthnm.empty()) {

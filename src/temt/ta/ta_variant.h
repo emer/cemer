@@ -22,7 +22,13 @@
 #include "ta_stdef.h"
 
 // externals
+class TypeItem;
+class EnumDef;
 class TypeDef;
+class MemberDefBase;
+class MemberDef;
+class PropertyDef;
+class MethodDef;
 #ifndef NO_TA_BASE
 class taBase;
 class taMatrix;
@@ -51,7 +57,9 @@ public:
     T_Ptr = 10, 	// #LABEL_Ptr void*
     
     T_Base = 11, 	// #LABEL_taBase taBase ref counted
-    T_Matrix = 12 	// #LABEL_taMatrix taMatrix ref counted
+    T_Matrix = 12, 	// #LABEL_taMatrix taMatrix ref counted
+    
+    T_TypeItem = 13	// #LABEL_TypeItem
 #ifndef __MAKETA__
     ,T_Atomic_Min = T_Bool,
     T_Atomic_Max = T_String
@@ -74,12 +82,26 @@ public:
   bool			isNumericStrict() const; // 'true' if an int-ish, float, or char type
   bool			isStringType() const {return ((m_type == T_String) || (m_type == T_Char));}
    // 'true' if a char or String
-  bool			isPtrType() const {return ((m_type >= T_Ptr) && (m_type <= T_Matrix));} 
+  bool			isPtrType() const {return ((m_type >= T_Ptr) && (m_type <= T_TypeItem));} 
     // 'true' if the value is a void*, taBase*, or taMatrix*
   bool			isBaseType() const {return ((m_type == T_Base) || (m_type == T_Matrix));} 
     // 'true' if the value is a taBase* or taMatrix*
   bool			isMatrixType() const {return (m_type == T_Matrix);} 
     // 'true' if the value is a taMatrix*, BUT could be NULL
+  bool			isTypeItem() const {return (m_type == T_TypeItem);} 
+    // 'true' if the value is a TypeItem*, BUT could be NULL
+  bool			isEnumDef() const {return (toEnumDef() != NULL);}
+    // 'true' if the value is a NON-NULL EnumDef*, else false
+  bool			isTypeDef() const {return (toTypeDef() != NULL);} 
+    // 'true' if the value is a NON-NULL TypeDef*, else false
+  bool			isMemberDefBase() const {return (toMemberDefBase() != NULL);} 
+    // 'true' if the value is a NON-NULL MemberDefBase*, else false
+  bool			isMemberDef() const {return (toMemberDef() != NULL);} 
+    // 'true' if the value is a NON-NULL MemberDef*, else false
+  bool			isPropertyDef() const {return (toPropertyDef() != NULL);} 
+    // 'true' if the value is a NON-NULL PropertyDef*, else false
+  bool			isMethodDef() const {return (toMethodDef() != NULL);} 
+    // 'true' if the value is a NON-NULL MethodDef*, else false
   VarType		type() const {return (VarType)m_type;} //
   void			setType(VarType value); // force it to be given type, if changed, set to default value
   String		getTypeAsString() const; // for debugging, get variant type as a string
@@ -110,6 +132,7 @@ public:
   void			setBase(taBase* cp); // handles setting of a taBase
   void			setMatrix(taMatrix* cp); // handles setting of a matrix
 #endif  
+  void			setTypeItem(TypeItem* cp); // handles setting of a TypeItem
 
   void			updateFromString(const String& val); // set value from string, but keep current type
   
@@ -129,6 +152,13 @@ public:
   taBase* 		toBase() const; // must be a Base or Matrix, otherwise returns NULL
   taMatrix* 		toMatrix() const; // must be a Matrix, otherwise returns NULL
 #endif  
+  TypeItem* 		toTypeItem() const; // must be a TypeItem, otherwise returns NULL
+  EnumDef* 		toEnumDef() const; // must be a EnumDef, otherwise returns NULL
+  TypeDef* 		toTypeDef() const; // must be a TypeDef, otherwise returns NULL
+  MemberDefBase* 	toMemberDefBase() const; // must be a MemberDefBase, otherwise returns NULL
+  MemberDef* 		toMemberDef() const; // must be a MemberDef, otherwise returns NULL
+  PropertyDef* 		toPropertyDef() const; // must be a PropertyDef, otherwise returns NULL
+  MethodDef* 		toMethodDef() const; // must be a MethodDef, otherwise returns NULL
   const String		toCssLiteral() const; // to a form suitable for initializing a Css variable, ex. quoted strings, U suffix for unsigned, path for taBase variable, etc.
   // following are the operators for C++ casting -- note they are all explicit
   // because you can't mix having cast operators with having various math operators
@@ -171,6 +201,7 @@ public:
   bool			eqBase(const taBase* val) const {return eqPtr(val);} 
   bool			eqMatrix(const taMatrix* val) const {return eqPtr(val);} 
 #endif
+  bool			eqTypeItem(const TypeItem* val) const {return eqPtr(val);} 
 
   // comparison operations, < -ve, == 0, > +ve
   int			cmpVariant(const Variant& val) const; // value compare, using fairly relaxed type rules; Invalid never == anything
@@ -193,6 +224,7 @@ public:
   int			cmpBase(const taBase* val) const {return cmpPtr(val);} 
   int			cmpMatrix(const taMatrix* val) const {return cmpPtr(val);} 
 #endif
+  int			cmpTypeItem(const TypeItem* val) const {return cmpPtr(val);} 
 
 //TODO  bool			canCast(VarType new_type);
     // returns 'true' if current type can be successfully cast to requested type
@@ -214,6 +246,7 @@ public:
   Variant& 	operator=(taBase* val) {setBase(val); return *this;}
   Variant& 	operator=(taMatrix* val) {setMatrix(val); return *this;} //
 #endif
+  Variant& 	operator=(TypeItem* val) {setTypeItem(val); return *this;} //
 
   Variant& 	operator+=(const String& rhs); 
     // concatenation, result is String if input is String or atomic
@@ -346,10 +379,11 @@ public:
   Variant(taBase* val);
   Variant(taMatrix* val);
 #endif 
+  Variant(TypeItem* val);
   ~Variant(); //
 
 public: // following primarily for TypeDef usage, streaming, etc.
-  void			GetRepInfo(TypeDef*& typ, void*& data); // current typedef, and pointer to the data
+  void			GetRepInfo(TypeDef*& typ, void*& data) const; // current typedef, and pointer to the data
   void			UpdateAfterLoad(); // called after internal modifications, to reassert correctness of null etc.
   void			ForceType(VarType vt, bool null);
     // called by streaming system to force the type to be indicated kind
@@ -375,6 +409,7 @@ protected:
 #ifndef NO_TA_BASE
       taBase* tab; // 32/64 note: properly ref counted; also used for matrix
 #endif
+      TypeItem* ti; // 32/64
   } d;
   int m_type : 29;
   mutable int m_is_numeric : 1; // true when we've tested string for numeric
@@ -419,6 +454,7 @@ inline Variant::Variant(float val):m_type(T_Double), m_is_null(false) {d.d = val
 inline Variant::Variant(double val):m_type(T_Double), m_is_null(false) {d.d = val;}
 inline Variant::Variant(char val):m_type(T_Char), m_is_null(false) {d.c = val;}
 inline Variant::Variant(void* val):m_type(T_Ptr) {m_is_null = (val == NULL); d.ptr = val;}
+inline Variant::Variant(TypeItem* val):m_type(T_TypeItem) {m_is_null = (val == NULL); d.ptr = val;}
 inline Variant::Variant(const String& val):m_type(T_String), m_is_null(false) {new(&d.str)String(val);}
 inline Variant::Variant(const char* val):m_type(T_String), m_is_null(false) 
   {if (val == NULL) {m_is_null = true; new(&d.str)String();} 

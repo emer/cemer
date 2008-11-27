@@ -241,6 +241,8 @@ cssEl::cssTypes cssVariant::GetPtrType() const {
   case Variant::T_Base:
   case Variant::T_Matrix:
     return T_TA;
+  case Variant::T_TypeItem:
+    return T_TA;
   }
   return T_Variant;
 }
@@ -250,6 +252,28 @@ cssVariant::operator taBase*() const {
     return val.toBase();
   else return inherited::operator taBase*();
 }
+
+cssVariant::operator TypeDef*() const {
+  TypeDef* rval;
+  if ((rval = val.toTypeDef())) 
+    return rval;
+  else return inherited::operator TypeDef*();
+}
+
+cssVariant::operator MemberDef*() const {
+  MemberDef* rval;
+  if ((rval = val.toMemberDef())) 
+    return rval;
+  else return inherited::operator MemberDef*();
+}
+
+cssVariant::operator MethodDef*() const {
+  MethodDef* rval;
+  if ((rval = val.toMethodDef())) 
+    return rval;
+  else return inherited::operator MethodDef*();
+}
+
 
 String cssVariant::PrintStr() const {
   return String(GetTypeName())+" "+ name + " = ("
@@ -264,7 +288,7 @@ void cssVariant::TypeInfo(ostream& fh) const {
   if(val_r.type() == Variant::T_String) {
     typ->OutputType(fh);
   }
-  else if(val_r.isBaseType()) {
+  else if(val_r.isBaseType() || val_r.isTypeItem()) {
     typ->OutputType(fh);
   }
   else {
@@ -279,7 +303,7 @@ void cssVariant::InheritInfo(ostream& fh) const {
   if(val_r.type() == Variant::T_String) {
     typ->OutputInherit(fh);
   }
-  else if(val_r.isBaseType()) {
+  else if(val_r.isBaseType() || val_r.isTypeItem()) {
     typ->OutputInherit(fh);
   }
   else {
@@ -348,6 +372,7 @@ bool cssVariant::operator>=(cssEl& s) { return (val >= s.GetVar()); }
 bool cssVariant::operator==(cssEl& s) { return (val == s.GetVar()); }
 bool cssVariant::operator!=(cssEl& s) { return (val != s.GetVar()); }
 
+//note: TypeItem guys don't get css info, so we don't handle those as Variants below...
 cssEl* cssVariant::GetMemberFmNo(int memb) const {
   TypeDef* typ = NULL;  void* base = NULL;
   Variant& val_r = (Variant&)val;
@@ -368,7 +393,7 @@ cssEl* cssVariant::GetMemberFmName(const char* memb) const {
   if(val_r.type() == Variant::T_String) {
     return GetMemberFmName_impl(typ, (String*)&val_r, memb);
   }
-  else if(val_r.isBaseType()) {
+  else if(val_r.isBaseType() ) {
     return GetMemberFmName_impl(typ, val_r.toBase(), memb);
   }
   return GetMemberFmName_impl(&TA_Variant, &val_r, memb);

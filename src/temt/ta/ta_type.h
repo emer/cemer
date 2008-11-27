@@ -153,12 +153,13 @@ extern TA_API TypeDef TA_templ_inst;	// par_formal template instantiation
 extern TA_API TypeDef TA_ta_array;	// par_formal (indicates "arrayness")
 extern TA_API TypeDef TA_taBase;
 extern TA_API TypeDef TA_taRegFun;	// registered functions
-extern TA_API TypeDef TA_TypeDef;	// give these to the user...
-extern TA_API TypeDef TA_EnumDef;
-extern TA_API TypeDef TA_MemberDef;
-extern TA_API TypeDef TA_MemberDefBase;
-extern TA_API TypeDef TA_PropertyDef;
-extern TA_API TypeDef TA_MethodDef;
+extern TA_API TypeDef TA_TypeItem;	// give these to the user...
+extern TA_API TypeDef   TA_TypeDef;
+extern TA_API TypeDef   TA_EnumDef;
+extern TA_API TypeDef   TA_MemberDefBase;
+extern TA_API TypeDef     TA_MemberDef;
+extern TA_API TypeDef     TA_PropertyDef;
+extern TA_API TypeDef   TA_MethodDef;
 extern TA_API TypeDef TA_ta_Globals;
 extern TA_API TypeDef TA_taString;
 extern TA_API TypeDef TA_Variant;

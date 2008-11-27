@@ -51,7 +51,8 @@ class taiMenu;
 class taiAction;
 class taiItemChooser; 
 class taiItemPtrBase; 
-class taiTokenPtrButton; //
+class taiTokenPtrButton; 
+class taiTypeDefButton; //
 
 
 class TA_API taiCompData : public taiData {
@@ -505,7 +506,8 @@ public:
     flgNoAtomics	= 0x020000, // don't let user choose any atomics
     flgIntOnly		= 0x040000, // Int only (used for Enum)
     flgNoPtr		= 0x080000, // don't let user choose raw ptr
-    flgNoBase		= 0x100000 // don't let user choose taBase or taMatrix
+    flgNoBase		= 0x100000, // don't let user choose taBase or taMatrix
+    flgNoTypeItem	= 0x200000, // don't let user choose TypeItem
   };
   
   bool			fillHor() {return true;} // override 
@@ -519,7 +521,8 @@ protected:
     scInt,
     scField, // includes string and char
     scPtr,
-    scBase
+    scBase,
+    scTypeItem // for TypeItem token
   };
   
   mutable int		m_updating;
@@ -531,6 +534,7 @@ protected:
   taiIncrField*		incVal; // for: ints
   taiField*		fldVal; // for: char, string, most numbers
   taiTokenPtrButton*	tabVal; // for taBase & Matrix token
+  iLabel*		tiVal; // for TypeItem token -- display-only for now
   
   void			Constr(QWidget* gui_parent_); // inits a widget, and calls _impl within InitLayout-EndLayout calls
   virtual void		Constr_impl(QWidget* gui_parent_, bool read_only_); 

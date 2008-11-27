@@ -579,6 +579,9 @@ public:
   operator ta_int64_t() const { return val.toInt64(); }
   operator ta_uint64_t() const { return val.toUInt64(); }
   operator taBase*() const;
+  operator TypeDef*() const;
+  operator MemberDef*() const;
+  operator MethodDef*() const;
   operator bool() const	{ return val.toBool(); }
   
   void operator=(Real cp) 		{ val = cp; }

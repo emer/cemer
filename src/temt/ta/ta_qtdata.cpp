@@ -1560,6 +1560,9 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
     cmbVarType->RemoveItemByData(QVariant(Variant::T_Matrix));
     cmbVarType->RemoveItemByData(QVariant(Variant::T_Base));
   }
+  if (mflags & (flgNoTypeItem | flgIntOnly)) {
+    cmbVarType->RemoveItemByData(QVariant(Variant::T_TypeItem));
+  }
   AddChildWidget(cmbVarType->rep(), taiM->hsep_c);
   lbl->setBuddy(cmbVarType->rep());
   if (read_only_) {
@@ -1590,6 +1593,9 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   
   tabVal = new taiTokenPtrButton(&TA_taBase, host, this, NULL, flgEditDialog);
   stack->addWidget(tabVal->GetRep());
+  
+  tiVal = MakeLabel("(TypeItem cannot be set)");
+  stack->addWidget(tiVal);
 }
     
 
@@ -1640,6 +1646,9 @@ void taiVariantBase::cmbVarType_itemChanged(int itm) {
     stack->setCurrentIndex(scBase);
     tabVal->GetImage(NULL, &TA_taMatrix); // obj, no scope
     break;
+  case Variant::T_TypeItem: 
+    stack->setCurrentIndex(scTypeItem);
+    break;
   default: return ;
   }
   --m_updating;
@@ -1687,6 +1696,10 @@ void taiVariantBase::GetImage_Variant(const Variant& var) {
     stack->setCurrentIndex(scBase);
     tabVal->GetImage(var.toMatrix(), &TA_taMatrix); // obj, no scope
     break;
+  case Variant::T_TypeItem: 
+    stack->setCurrentIndex(scTypeItem);
+    tiVal->setText(var.toString()); 
+    break;
   default: return ;
   }
   --m_updating;
@@ -1724,13 +1737,16 @@ void taiVariantBase::GetValue_Variant(Variant& var) const {
     break;
   
   case Variant::T_Ptr: 
-    //TODO: need to set something! maybe should be NULL
+    //nothing for now (will get set to NULL);
     break;
   case Variant::T_Base: 
     var.setBase(tabVal->GetValue());
     break;
   case Variant::T_Matrix:
     var.setBase(tabVal->GetValue());
+    break;
+  case Variant::T_TypeItem: 
+    //nothing for now (will get set to NULL);
     break;
   default: break;
   }

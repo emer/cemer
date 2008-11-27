@@ -48,6 +48,7 @@ using namespace std;
   case T_Ptr: 
   case T_Base: 
   case T_Matrix:
+  case T_TypeItem:
   default: return ;
   }
 */
@@ -95,6 +96,7 @@ Variant::Variant(VarType type) {
   case T_Ptr: 
   case T_Base: 
   case T_Matrix:
+  case T_TypeItem:
     m_is_null = true; 
     break;
   default: break;
@@ -281,7 +283,7 @@ int Variant::cmpString(const String& val) const {
   return cmp(str, val);
 }
 
-int Variant::cmpPtr(const void* val) const { // note: works for taBase/taMatrix as well
+int Variant::cmpPtr(const void* val) const { // note: works for taBase/taMatrix/TypeItem as well
   if (!isPtrType()) return -2;
   return cmp(d.ptr, val);
 }
@@ -468,8 +470,8 @@ void Variant::ForceType(VarType vt, bool null) {
   }
 }
 
-void Variant::GetRepInfo(TypeDef*& typ, void*& data) {
-  data = &d; 
+void Variant::GetRepInfo(TypeDef*& typ, void*& data) const {
+  data = const_cast<Data*>(&d); 
   switch (m_type) {
   case T_Invalid: typ = &TA_void; break;
   case T_Bool: typ = &TA_bool; break;
@@ -496,6 +498,16 @@ void Variant::GetRepInfo(TypeDef*& typ, void*& data) {
     typ = temp_typ->GetPtrType();
   } break;
 #endif
+  case T_TypeItem: {
+    // if null, get the base type, else the actual type
+    TypeDef* temp_typ;
+    if (d.ti == NULL) {
+      temp_typ = &TA_TypeItem;
+    } else
+      temp_typ = d.ti->GetTypeDef();
+    // now, get a ptr to that type
+    typ = temp_typ->GetPtrType();
+  } break;
   }
 }
 
@@ -513,6 +525,7 @@ bool Variant::isDefault() const {
   case T_Ptr: 
   case T_Base:  
   case T_Matrix: 
+  case T_TypeItem:
      return (d.ptr == 0) ;
 //  default: return ;
   }
@@ -523,14 +536,9 @@ bool Variant::isNull() const {
   //note: we try to keep m_is_null valid, but way safer to 
   // base this on the actual value, particularly to avoid
   // obscure issues when streaming in values, in case FixNull not called
-  switch (m_type) {
-  case T_Ptr: return (d.ptr == NULL);
-#ifndef NO_TA_BASE
-  case T_Base: 
-  case T_Matrix: return (d.tab == NULL);
-#endif
-  default: return m_is_null;
-  }
+  if (isPtrType()) 
+    return (d.ptr == NULL);
+  return m_is_null;
 }
 
 bool Variant::isNumeric() const {
@@ -1442,7 +1450,7 @@ void Variant::releaseType() {
   case T_Base:
   case T_Matrix: taBase::DelPointer(&d.tab); break;
 #endif
-	default: break; // compiler food
+  default: break; // compiler food
   }
 }
 
@@ -1478,7 +1486,7 @@ void Variant::save(ostream& s) const {
     s << getString(); 
     break;
   case T_Ptr: 
-    s << toString(); //NOIE: cannot be streamed back in!!!
+    s << toString(); //NOTE: cannot be streamed back in!!!
     break;
 #ifndef NO_TA_BASE
   case T_Base: 
@@ -1491,6 +1499,9 @@ void Variant::save(ostream& s) const {
     }
     break;
 #endif
+  case T_TypeItem:
+    s << toString();
+    break;
   default: break ;
   }
 }
@@ -1509,7 +1520,7 @@ void Variant::setVariant(const Variant &cp) {
   case T_Base: setBase(cp.d.tab); break;
   case T_Matrix: setMatrix(cp.getMatrix()); break;
 #endif
-	default: 
+  default: 
     releaseType();
     d = cp.d; // just copy bits, valid for all other types
     m_type = cp.m_type;
@@ -1558,6 +1569,9 @@ void Variant::setVariantData(const Variant& cp) {
     setMatrix(cp.toMatrix());
     break;
 #endif
+  case T_TypeItem: 
+    setTypeItem(cp.toTypeItem());
+    break;
   default: break ;
   }
 }
@@ -1653,6 +1667,13 @@ void Variant::setMatrix(taMatrix* cp) {
 }
 #endif
 
+void Variant::setTypeItem(TypeItem* val) {
+  releaseType();
+  d.ti = val;
+  m_type = T_TypeItem;
+  m_is_null = (val == NULL);
+}
+
 void Variant::setString(const String& val, bool null) {
   if (m_type == T_String)
     getString() = val;
@@ -1683,13 +1704,14 @@ void Variant::setType(VarType value) {
   case T_Base:  
   case T_Matrix: setBase(NULL); break;
 #endif
+  case T_TypeItem:  setTypeItem(NULL); break;
   default: return ;
   }
 }
 
 static const char* var_types_as_str[] = {
   "T_Invalid", "T_Bool", "T_Int", "T_UInt", "T_Int64", "T_UInt64", "T_Double",
-  "T_Char", "T_na", "T_String", "T_Ptr", "T_Base", "T_Matrix"};
+  "T_Char", "T_na", "T_String", "T_Ptr", "T_Base", "T_Matrix", "T_TypeItem"};
 
 String Variant::getTypeAsString() const {
   return var_types_as_str[m_type];
@@ -1721,14 +1743,15 @@ bool Variant::toBool() const {
       return ((c == 't') || (c == 'T') || (c == '1'));
     }
     } break;
-  case T_Ptr: 
+  case T_Ptr:
+  case T_TypeItem: 
     return (d.ptr != NULL);
 #ifndef NO_TA_BASE
   case T_Base: 
   case T_Matrix:
     return (d.tab != NULL);
 #endif
-	default: break;
+  default: break;
   }
   return false;
 }
@@ -1774,6 +1797,13 @@ const String Variant::toCssLiteral() const {
       rval += d.tab->GetPath();
     }
 #endif
+  case T_TypeItem: 
+    if (isNull()) {
+      rval += "NULL";
+    } else {
+      rval += "&";
+      rval += toString();
+    }  break; 
   default: break ;
   }
   return rval;
@@ -1859,7 +1889,8 @@ ta_int64_t Variant::toInt64() const {
     return d.c;
   case T_String: 
     return getString().toInt64();
-  case T_Ptr: 
+  case T_Ptr:
+  case T_TypeItem: 
     return (ta_int64_t)d.ptr;
   case T_Base: 
   case T_Matrix:
@@ -1890,6 +1921,7 @@ ta_uint64_t Variant::toUInt64() const {
   case T_String: 
     return getString().toUInt64();
   case T_Ptr: 
+  case T_TypeItem:
     return (ta_uint64_t)d.ptr;
   case T_Base: 
   case T_Matrix:
@@ -1990,10 +2022,62 @@ void* Variant::toPtr() const {
   case T_Matrix:
     return d.tab;
 #endif
-	default: break ;
+  case T_TypeItem: 
+    return d.ti;
+  default: break ;
   }
   return NULL;
 }
+ 
+TypeItem* Variant::toTypeItem() const {
+  if (m_type == T_TypeItem) {
+    return d.ti;
+  }
+  return NULL;
+}
+ 
+EnumDef* Variant::toEnumDef() const {
+  if (m_type == T_TypeItem) {
+    return dynamic_cast<EnumDef*>(d.ti);
+  }
+  return NULL;
+}
+ 
+TypeDef* Variant::toTypeDef() const {
+  if (m_type == T_TypeItem) {
+    return dynamic_cast<TypeDef*>(d.ti);
+  }
+  return NULL;
+}
+ 
+MemberDefBase* Variant::toMemberDefBase() const {
+  if (m_type == T_TypeItem) {
+    return dynamic_cast<MemberDefBase*>(d.ti);
+  }
+  return NULL;
+}
+ 
+MemberDef* Variant::toMemberDef() const {
+  if (m_type == T_TypeItem) {
+    return dynamic_cast<MemberDef*>(d.ti);
+  }
+  return NULL;
+}
+ 
+PropertyDef* Variant::toPropertyDef() const {
+  if (m_type == T_TypeItem) {
+    return dynamic_cast<PropertyDef*>(d.ti);
+  }
+  return NULL;
+}
+ 
+MethodDef* Variant::toMethodDef() const {
+  if (m_type == T_TypeItem) {
+    return dynamic_cast<MethodDef*>(d.ti);
+  }
+  return NULL;
+}
+ 
  
 String Variant::toString() const {
   switch (m_type) {
@@ -2024,6 +2108,12 @@ String Variant::toString() const {
     return taBase::GetStringRep(d.tab);
 #endif
   default: break ;
+  case T_TypeItem: {// streamable type Str
+    TypeDef* typ;
+    void* data;
+    GetRepInfo(typ, data);
+    return typ->GetValStr(data);
+    }
   }
   return _nilString;
 }
@@ -2061,6 +2151,12 @@ void Variant::updateFromString(const String& val) {
     warn("updateFromString() setting T_Base");
   }
 #endif
+  case T_TypeItem: {
+    TypeDef* typ;
+    void* data;
+    GetRepInfo(typ, data);
+    typ->SetValStr(val, data);
+    } break;
   default: break ;
   }
 }
@@ -2090,14 +2186,15 @@ taBase* Variant::toBase() const {
     return NULL;
   case T_String: 
     return NULL;
-  case T_Ptr: 
+  case T_Ptr:
+  case T_TypeItem: 
     return NULL;
 #ifndef NO_TA_BASE
   case T_Base:
   case T_Matrix:
     return d.tab;
 #endif
-	default: break ;
+  default: break ;
   }
   return NULL;
 } 
@@ -2122,7 +2219,8 @@ taMatrix* Variant::toMatrix() const {
     return NULL;
   case T_String: 
     return NULL;
-  case T_Ptr: 
+  case T_Ptr:
+  case T_TypeItem: 
     return NULL;
   case T_Base:
     if ((d.tab != NULL) && (d.tab->GetTypeDef()->InheritsFrom(TA_taMatrix)))
