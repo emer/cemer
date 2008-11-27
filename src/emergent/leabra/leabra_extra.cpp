@@ -2039,9 +2039,9 @@ void V1RFPrjnSpec::Connect_impl(Projection* prjn) {
 
 	TwoDCoord suc;
 	TwoDCoord suc_wrp;
-	for(suc.y = su_st.y; suc.y < su_ed.y; suc.y++) {
-	  for(suc.x = su_st.x; suc.x < su_ed.x; suc.x++) {
-	    suc_wrp = suc;
+	for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
+	  for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
+	    suc_wrp = su_st + suc;
 	    suc_wrp.WrapClip(wrap, su_geo);
 	    Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
 	    if(su_u == NULL) continue;
