@@ -23,27 +23,26 @@ ENDMACRO(MAKETA_GET_INC_DIRS)
 # this is critical for allowing dependencies to work out, and for compiling w/out extra load
 MACRO (SET_TA_PROPS ta_name path)
   SET_SOURCE_FILES_PROPERTIES(${path}/${ta_name}_TA.cpp
-    PROPERTIES COMPILE_FLAGS "-O0 -g0"
-  )
-  SET_SOURCE_FILES_PROPERTIES(${path}/${ta_name}_TA.cpp
-    PROPERTIES GENERATED 1
+    PROPERTIES COMPILE_FLAGS "-O0 -g0" GENERATED 1    
   )
 ENDMACRO(SET_TA_PROPS)
 
 MACRO (CREATE_MAKETA_COMMAND ta_name path maketa_headers)
   MAKETA_GET_INC_DIRS(maketa_includes)
-
+ 
+  SET(pta ${path}/${ta_name})
+  
   ADD_CUSTOM_COMMAND(
-    OUTPUT ${ta_name}_TA.ccx ${ta_name}_TA_type.hx ${ta_name}_TA_inst.hx
+    OUTPUT ${pta}_TA.ccx ${pta}_TA_type.hx ${pta}_TA_inst.hx
     WORKING_DIRECTORY ${path}
     COMMAND maketa ${MAKETA_FLAGS} ${maketa_includes} ${ta_name} ${maketa_headers}
     DEPENDS ${maketa_headers}
   )
   ADD_CUSTOM_COMMAND(
-    OUTPUT ${ta_name}_TA.cpp ${ta_name}_TA_type.h ${ta_name}_TA_inst.h 
+    OUTPUT ${pta}_TA.cpp ${pta}_TA_type.h ${pta}_TA_inst.h 
     WORKING_DIRECTORY ${path}
-    COMMAND cmp ${ta_name}_TA.ccx  ${ta_name}_TA.cpp || cp  ${ta_name}_TA.ccx  ${ta_name}_TA.cpp\; cmp ${ta_name}_TA_type.hx  ${ta_name}_TA_type.h || cp  ${ta_name}_TA_type.hx  ${ta_name}_TA_type.h\; cmp ${ta_name}_TA_inst.hx  ${ta_name}_TA_inst.h || cp  ${ta_name}_TA_inst.hx  ${ta_name}_TA_inst.h
-    DEPENDS ${ta_name}_TA.ccx ${ta_name}_TA_type.hx ${ta_name}_TA_inst.hx
+    COMMAND cmp ${pta}_TA.ccx  ${pta}_TA.cpp || cp  ${pta}_TA.ccx  ${pta}_TA.cpp\; cmp ${pta}_TA_type.hx  ${pta}_TA_type.h || cp  ${pta}_TA_type.hx  ${pta}_TA_type.h\; cmp ${pta}_TA_inst.hx  ${pta}_TA_inst.h || cp  ${pta}_TA_inst.hx  ${pta}_TA_inst.h
+    DEPENDS ${pta}_TA.ccx ${pta}_TA_type.hx ${pta}_TA_inst.hx
   )
 #   ADD_CUSTOM_TARGET(force_ta maketa ${maketa_flags} -autohx ${maketa_includes} ${PROJECT_NAME} ${MAKETA_HEADERS}
 # #     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
