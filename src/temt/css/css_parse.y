@@ -22,14 +22,6 @@
 #include "css_c_ptr_types.h"
 #include "css_builtin.h"
 #include "css_ta.h"
-#ifdef GUI_IV
-#include "css_iv.h"
-#endif // GUI_IV
-#ifdef GUI_QT
-#include "css_qt.h"
-#include "css_qtdata.h"
-#include "css_qtdialog.h"
-#endif
 
 #include <sstream>
 

@@ -1,0 +1,82 @@
+########### taiqtso target ###############
+
+# IMPORTANT: this is just a list of files -- the compile commands are all located
+# in the temt/lib dir, which is where everything is actually built
+
+# all headers
+set(taiqtso_HEADS
+taiqtso_def.h
+iflowlayout.h
+iformlayout.h
+ilabel.h
+icliptoolwidget.h
+ispinbox.h
+itreewidget.h
+idialog.h
+ilineedit.h
+icheckbox.h
+icombobox.h
+igeometry.h
+ieditgrid.h
+safeptr_so.h
+imisc_so.h
+irenderarea.h
+idimedit.h
+interceptor.h
+qconsole.h
+ibutton.h
+iscrollarea.h
+itextbrowser.h
+itextedit.h
+)
+
+# headers that need Qt moc run
+set(taiqtso_HEADS_MOC
+ilabel.h
+icliptoolwidget.h
+ispinbox.h
+itreewidget.h
+ilineedit.h
+idialog.h
+icheckbox.h
+icombobox.h
+ieditgrid.h
+idimedit.h
+interceptor.h
+qconsole.h
+irenderarea.h
+ibutton.h
+iscrollarea.h
+itextbrowser.h
+itextedit.h
+)
+
+# source files to compile: NOTE: do NOT include .moc files -- auto generated
+set(taiqtso_SRCS
+iflowlayout.cpp
+iformlayout.cpp
+ilabel.cpp
+icliptoolwidget.cpp
+ispinbox.cpp
+itreewidget.cpp
+ilineedit.cpp
+idialog.cpp
+icheckbox.cpp
+icombobox.cpp
+igeometry.cpp
+ieditgrid.cpp
+idimedit.cpp
+interceptor.cpp
+qconsole.cpp
+safeptr_so.cpp
+imisc_so.cpp
+irenderarea.cpp
+ibutton.cpp
+iscrollarea.cpp
+itextbrowser.cpp
+itextedit.cpp
+taiqtso_ti.cpp
+)
+
+set(taiqtso_FILES ${taiqtso_HEADS} ${taiqtso_SRCS})
+

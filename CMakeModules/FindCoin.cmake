@@ -4,8 +4,6 @@
 # COIN_LIBRARY     - full path to the Coin library
 # COIN_FOUND       - TRUE if Coin was found
 
-INCLUDE_DIRECTORIES ( /Library/Frameworks/Inventor.framework )
-
 FIND_PATH(COIN_INCLUDE_DIR SbVec3f.h
         /usr/include
         /usr/local/include
@@ -13,27 +11,31 @@ FIND_PATH(COIN_INCLUDE_DIR SbVec3f.h
         /usr/include/Inventor
         /usr/local/include/Inventor
 	/opt/local/include/Inventor
+	/Library/Frameworks/Inventor.framework/Headers
     $ENV{INCLUDE}
 )
+
+# NOTE: it is not finding the coin framework because the name is Inventor but the lib is Coin!
+# SoQt works perfectly just right out of the bag
 
 FIND_LIBRARY(COIN_LIBRARY NAMES Coin PATH
    /usr/lib
    /usr/local/lib
    /opt/local/lib
+   /Library/Frameworks/Inventor.framework/Libraries
 ) 
 
-IF (COIN_INCLUDE_DIR AND COIN_LIBRARY)
-   SET(COIN_FOUND TRUE)
-ELSE (COIN_INCLUDE_DIR AND COIN_LIBRARY)
-   SET(COIN_FOUND FALSE)
-ENDIF (COIN_INCLUDE_DIR AND COIN_LIBRARY)
+# special work-around for Coin Framework
+IF (APPLE)
+  IF (NOT COIN_LIBRARY)
+    IF (EXISTS /Library/Frameworks/Inventor.framework/Libraries)
+#      SET(COIN_LIBRARY "/Library/Frameworks/Inventor.framework/Libraries/libCoin.dylib -F/Library/Frameworks/Inventor.framework")
+      SET(COIN_LIBRARY "/Library/Frameworks/Inventor.framework")
+    ENDIF (EXISTS /Library/Frameworks/Inventor.framework/Libraries)
+  ENDIF (NOT COIN_LIBRARY)
+ENDIF (APPLE)
 
-IF (COIN_FOUND)
-   IF (NOT Coin_FIND_QUIETLY)
-      MESSAGE(STATUS "Found Coin: ${Coin_LIBRARY}")
-   ENDIF (NOT Coin_FIND_QUIETLY)
-ELSE (COIN_FOUND)
-   IF (Coin_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Could not find Coin. Please install it!)")
-   ENDIF (Coin_FIND_REQUIRED)
-ENDIF (COIN_FOUND)
+# handle the QUIETLY and REQUIRED arguments and set COIN_FOUND to TRUE if 
+# all listed variables are TRUE
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Coin DEFAULT_MSG COIN_LIBRARY COIN_INCLUDE_DIR)

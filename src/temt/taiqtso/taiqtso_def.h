@@ -51,6 +51,8 @@
 // NOTE: these are instantiated in tai_qtso_ti.cc (for want of a better place)
 // COLOR_BRIGHT_HILIGHT is for checkboxes, for better contrast
 //#define COLOR_BRIGHT_HILIGHT qtsoMisc::color_bright_hilight
+class QColor;
+
 extern TAIQTSO_API QColor& COLOR_HILIGHT;
 extern TAIQTSO_API QColor& COLOR_BRIGHT_HILIGHT;
 

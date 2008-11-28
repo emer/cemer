@@ -17,8 +17,8 @@
 
 #include "mta_constr.h"
 
-#include "ta/ta_platform.h"
-#include "ta/ta_type.h"
+#include "ta_platform.h"
+#include "ta_type.h"
 
 // The logical ordering is: enum, subtypes, members, methods
 // For member options, it goes guys with nothing, then expert, then hidden

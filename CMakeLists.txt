@@ -39,29 +39,32 @@ SET(CMAKE_MODULE_PATH ${mod_path})
 
 SET(CMAKE_VERBOSE_MAKEFILE ON)
 
-message(STATUS "module path: ${CMAKE_MODULE_PATH} !!!")
+#message(STATUS "module path: ${CMAKE_MODULE_PATH}")
 
 find_package(Qt4 REQUIRED)
 add_definitions(${QT_DEFINITIONS})
 
-#find_package(Coin REQUIRED)
-#FIND_PACKAGE(SoQt REQUIRED)
+find_package(Coin REQUIRED)
+find_package(SoQt REQUIRED)
 
-#include_directories(${QT_INCLUDES} ${COIN_INCLUDE_DIR} ${SOQT_INCLUDE_DIR})
+#include_directories(${QT_INCLUDES} 
 
-include_directories(${QT_INCLUDES})
+include_directories(${QT_INCLUDES} ${COIN_INCLUDE_DIR} ${SOQT_INCLUDE_DIR}
+${PROJECT_SOURCE_DIR}
+${PROJECT_SOURCE_DIR}/src/temt/ta
+${PROJECT_SOURCE_DIR}/src/temt/taiqtso
+${PROJECT_SOURCE_DIR}/src/temt/css
+)
 
-#TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${COIN_LIBRARY})
-#TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${SOQT_LIBRARY})
-
+# include this for any linking:
+#target_link_libraries(${PROJECT_NAME} ${COIN_LIBRARY} ${SOQT_LIBRARY} ${QT_LIBRARIES})
 
 #QT4_WRAP_CPP(MY_MOC_SRCS ${MOC_HDRS})
 
-# include(KDE4Defaults)
-# include(MacroLibrary)
 # include(ConvenienceLibs.cmake)
 # include(ManualStuff.cmake)
 
+include(${mod_path}/MacroLibrary.cmake)
 include(${mod_path}/ConfigureChecks.cmake)
 include(${mod_path}/Maketa.cmake)
 
@@ -69,9 +72,10 @@ include(${mod_path}/Maketa.cmake)
 #  All the subdirs
 
 add_subdirectory(src/temt/maketa)
-# add_subdirectory(src/temt/ta)
+# add_subdirectory(src/temt/taiqtso)
+add_subdirectory(src/temt/ta)
 # add_subdirectory(src/temt/css)
-# add_subdirectory(src/temt/lib)
+add_subdirectory(src/temt/lib)
 # add_subdirectory(src/emergent/network)
 # add_subdirectory(src/emergent/bp)
 # add_subdirectory(src/emergent/leabra)

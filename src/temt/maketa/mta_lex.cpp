@@ -17,7 +17,7 @@
 // the lexical analyzer
 
 #include "maketa.h"
-#include "ta/ta_platform.h"
+#include "ta_platform.h"
 #include <ctype.h>
 
 /* note: we handle the following line end types:

@@ -154,7 +154,8 @@ void taPlugins::EnumeratePlugins() {
 #elif defined(TA_OS_WIN)
     pluginsDir.setNameFilter("*.dll");
 #elif  defined(TA_OS_MAC)
-    pluginsDir.setNameFilter("*.dylib");
+    // oops: not on 4.4.1 mac
+    //    pluginsDir.setNameFilter("*.dylib");
 #endif
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
       taPluginInst* pl = ProbePlugin(pluginsDir.absoluteFilePath(fileName));

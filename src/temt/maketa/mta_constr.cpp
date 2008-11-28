@@ -18,8 +18,8 @@
 
 #include "mta_constr.h"
 
-#include "ta/ta_platform.h"
-#include "ta/ta_type.h"
+#include "ta_platform.h"
+#include "ta_type.h"
 
 //////////////////////////////////
 // 	Link Resolution		//

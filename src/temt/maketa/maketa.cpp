@@ -18,8 +18,8 @@
 
 #include "maketa.h"
 #include "mta_constr.h"
-#include "ta/ta_platform.h"
-#include "ta/ta_variant.h"
+#include "ta_platform.h"
+#include "ta_variant.h"
 
 #include <signal.h>
 //nn #include <malloc.h>

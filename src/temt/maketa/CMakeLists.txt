@@ -28,13 +28,11 @@ mta_gendoc.cpp
 maketa.cpp
 )
 
-set(maketa_FILES ${makta_HEADS} ${maketa_SRCS})
+set(maketa_FILES ${maketa_HEADS} ${maketa_SRCS})
 
 add_executable(maketa ${maketa_FILES})
 
 target_link_libraries(maketa ${QT_LIBRARIES})
-
-include_directories(${QT_INCLUDES} ../ ../ta)
 
 # note: special definitions
 add_definitions(-DNO_TA_BASE -O2 -g)

@@ -1,12 +1,16 @@
 /* config.h.  Generated from config.h.cmake by cmake.  */
 
-/* 
-
 /* Define to the version of this package. */
 #define VERSION "${EMERGENT_VERSION}"
 
 /* there is no real nogui build yet, so this is just manually set */
 #define TA_GUI 1
+
+/* always need Qt */
+#define TA_USE_QT 1
+
+/* always need Inventor */
+#define TA_USE_INVENTOR 1
 
 /* Basic system checks below */
 
