@@ -1,14 +1,9 @@
 #####################################
 ##	MAKETA suport for cmake
 
+# TODO: add a find cpp thing
 SET(MAKETA_FLAGS -hx -css -cpp=\"g++ -E\"
--I${PROJECT_SOURCE_DIR}/src/temt/taiqtso
 -I${PROJECT_SOURCE_DIR}/src/temt/ta/ios-g++-3.1
--I${PROJECT_SOURCE_DIR}/src/temt/ta
--I${PROJECT_SOURCE_DIR}/src/temt/css
--I${PROJECT_SOURCE_DIR}/src/emergent/network
--I${PROJECT_SOURCE_DIR}/src/emergent/leabra
--I${PROJECT_SOURCE_DIR}/src/emergent/bp
 )
 
 MACRO (MAKETA_GET_INC_DIRS _MAKETA_INC_DIRS)

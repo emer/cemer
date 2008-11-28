@@ -1,0 +1,71 @@
+########### css files ###############
+
+# IMPORTANT: this is just a list of files -- the compile commands are all located
+# in the temt/lib dir, which is where everything is actually built
+# other targets are in CMakeLists.txt in this directory
+
+# although some attempt is made to keep track of gui-related files, a huge amount
+# of additional work would be required to fully split this out, and we need Qt
+# anyway, so there really isn't any point to it anymore
+
+# gui-related headers
+set(css_HEADS_GUI
+    css_qtconsole.h
+    css_qttype.h
+    css_qt.h
+    css_qtdata.h
+    css_qtdialog.h
+)
+
+# all headers -- include maketa generated ones here
+set(css_HEADS
+    css_console.h
+    css_machine.h
+    css_basic_types.h
+    css_c_ptr_types.h
+    css_builtin.h
+    css_extern_support.h
+    css_ta.h
+    css_parse.h
+    hard_of_css.h
+    css_misc_funs.h
+    ${css_HEADS_GUI}
+    css_def.h
+)
+
+# headers that need Qt moc run
+set(css_HEADS_MOC
+    css_qtconsole.h
+    css_qttype.h
+    css_qtdata.h
+    css_console.h
+    css_machine.h
+)
+
+# gui-related source files to compile: NOTE: do NOT include .moc files -- auto generated
+set(css_SRCS_GUI
+    css_qtconsole.cpp
+    css_qttype.cpp
+    css_qt.cpp
+    css_qtdata.cpp
+    css_qtdialog.cpp
+)
+
+# all source files to compile: NOTE: do NOT include .moc or _TA.cpp files -- auto generated
+set(css_SRCS
+    css_console.cpp
+    css_parse.cpp
+    css_machine.cpp
+    css_basic_types.cpp
+    css_c_ptr_types.cpp
+    css_builtin.cpp
+    css_lex.cpp
+    css_ta.cpp
+    xmemory.cpp
+    css_misc_funs.cpp
+    readline_win.cpp
+    ${css_SRCS_GUI}
+    css_ti.cpp
+)
+
+set(css_FILES ${css_HEADS} ${css_SRCS})

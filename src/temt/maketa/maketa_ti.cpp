@@ -104,12 +104,12 @@ template class taPtrList<DynMethodDesc>; // in ta_qtviewer.h
 template class taList<DataViewer>; // in ta_qtviewer.h
 template class taPtrList<iDataPanel>; // in ta_qtviewer.h
 template class taPtrList<iTabView>;
-#ifdef DARWIN // for some reason, these need to be here for MacOS
-template class QPtrList<QObject>;
-template class QValueList<int>;
-template class QValueListPrivate<int>;
-template class QMemArray<char>;
-#endif // def DARWIN
+#ifdef TA_OS_MAC // for some reason, these need to be here for MacOS
+// template class QPtrList<QObject>;
+// template class QValueList<int>;
+// template class QValueListPrivate<int>;
+// template class QMemArray<char>;
+#endif // def TA_OS_MAC
 #endif // def TA_GUI
 
 #endif // !def NO_TA_BASE

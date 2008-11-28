@@ -21,7 +21,7 @@
 extern "C" {
   void execerror(char *s, char *t);
   char* readline(char *);
-#ifndef DARWIN
+#ifndef TA_OS_MAC
   char* xmalloc(int);
   char* xrealloc(char*, int);
   void memory_error_and_abort ();
@@ -29,7 +29,7 @@ extern "C" {
   char* rl_readline(char*);
 }
 
-#ifndef DARWIN
+#ifndef TA_OS_MAC
 char* xmalloc (int bytes) {
   char *temp = (char *)malloc (bytes);
 

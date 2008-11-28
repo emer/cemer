@@ -16,50 +16,70 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
 PROJECT(emergent)
 
 # default build type 
-#SET(CMAKE_BUILD_TYPE Release)
-SET(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 
 # to enable MPI
-#SET(MPI_BUILD true)
+#set(MPI_BUILD true)
 
 ####################################################
 # version setting
 
-SET(EMERGENT_VERSION_MAJOR "4")
-SET(EMERGENT_VERSION_MINOR "0")
-SET(EMERGENT_VERSION_PATCH "18")
-SET(EMERGENT_VERSION "${EMERGENT_VERSION_MAJOR}.${EMERGENT_VERSION_MINOR}.${EMERGENT_VERSION_PATCH}")
+set(EMERGENT_VERSION_MAJOR "4")
+set(EMERGENT_VERSION_MINOR "0")
+set(EMERGENT_VERSION_PATCH "18")
+set(EMERGENT_VERSION "${EMERGENT_VERSION_MAJOR}.${EMERGENT_VERSION_MINOR}.${EMERGENT_VERSION_PATCH}")
 
 ####################################################
 # misc global stuff: paths, finding packages etc
 
-SET(mod_path "${PROJECT_SOURCE_DIR}/CMakeModules")
+set(mod_path "${PROJECT_SOURCE_DIR}/CMakeModules")
 
-SET(CMAKE_MODULE_PATH ${mod_path})
+set(CMAKE_MODULE_PATH ${mod_path})
 
-SET(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 #message(STATUS "module path: ${CMAKE_MODULE_PATH}")
 
 find_package(Qt4 REQUIRED)
-add_definitions(${QT_DEFINITIONS})
-
 find_package(Coin REQUIRED)
 find_package(SoQt REQUIRED)
+find_package(Readline REQUIRED)
+find_package(ODE)
+find_package(GSL)
 
-#include_directories(${QT_INCLUDES} 
+# setup QT_LIBRARIES, defines, etc through options, and the QT_USE_FILE thing does automagic
+# TODO: can't figure out why it is still complaining about qt3 support but it is
+# need to fix that!
+set(QT_USE_QT3SUPPORT 1)
+set(QT_USE_QTOPENGL 1)
+set(QT_USE_QTXML 1)
+include(${QT_USE_FILE})
 
 include_directories(${QT_INCLUDES} ${COIN_INCLUDE_DIR} ${SOQT_INCLUDE_DIR}
 ${PROJECT_SOURCE_DIR}
 ${PROJECT_SOURCE_DIR}/src/temt/ta
 ${PROJECT_SOURCE_DIR}/src/temt/taiqtso
 ${PROJECT_SOURCE_DIR}/src/temt/css
+${PROJECT_SOURCE_DIR}/src/temt/css
+${PROJECT_SOURCE_DIR}/src/emergent/network
+${PROJECT_SOURCE_DIR}/src/emergent/bp
+${PROJECT_SOURCE_DIR}/src/emergent/leabra
+${PROJECT_SOURCE_DIR}/src/emergent/so
+${PROJECT_SOURCE_DIR}/src/emergent/cs
 )
 
-# include this for any linking:
-#target_link_libraries(${PROJECT_NAME} ${COIN_LIBRARY} ${SOQT_LIBRARY} ${QT_LIBRARIES})
+# use as in: target_link_libraries(<target> ${EMERGENT_LIBRARIES})
+set(EMERGENT_LIBRARIES ${COIN_LIBRARY} ${SOQT_LIBRARY} ${QT_LIBRARIES}
+    ${READLINE_LIBRARY}
+    ${ODE_LIBRARY}
+    ${GSL_LIBRARY}
+)
 
-#QT4_WRAP_CPP(MY_MOC_SRCS ${MOC_HDRS})
+# this is used for versioning the libs themselves
+# set_target_properties(temt PROPERTIES VERSION ${EMERGENT_LIB_VERSION} ${EMERGENT_LIB_SOVERSION})
+set(EMERGENT_LIB_VERSION EMERGENT_VERSION)
+set(EMERGENT_LIB_SOVERSION EMERGENT_VERSION_MAJOR)
 
 # include(ConvenienceLibs.cmake)
 # include(ManualStuff.cmake)
@@ -70,6 +90,11 @@ include(${mod_path}/Maketa.cmake)
 
 ####################################
 #  All the subdirs
+
+# NOTE: don't need to add any subdirs that are just convenience libs that DON'T have
+# maketa run in them (e.g., taiqtso, css)
+
+# TODO: this might change once install is figured out
 
 add_subdirectory(src/temt/maketa)
 # add_subdirectory(src/temt/taiqtso)

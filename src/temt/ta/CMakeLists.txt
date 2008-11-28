@@ -25,41 +25,7 @@ add_library(ta_dummy STATIC dummy.cpp)
 ##  extra stuff from original Makefile.am
 #
 #
-#include_HEADERS = $(HEADS) $(TAHEADS) ta_TA_type.h ta_TA_inst.h
-#
-#include $(top_srcdir)/Maketa.am
-#include $(top_srcdir)/Moc.am
-#include $(top_srcdir)/mfstamp.am
 #
 #interceptor.moc.cpp:
 #	$(QT_MOC) -o irenderarea.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/temt/ta interceptor.h
-#
-#noinst_LTLIBRARIES =\
-#	libta@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la
-#	libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la
-#
-#libta@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_DEPENDENCIES =\
-#	libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la
-#
-#libta@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(SRCS) $(HEADS)
-#libta@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @EMERGENT_INCLUDES@
-#libta@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
-#libta@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD =\
-#	libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la
-#
-#libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES =\
-#	ta_TA.cpp
-#	ta_TA_type.h
-#	ta_TA_inst.h
-#
-#libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS =\
-#	$(libta@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
-#
-#libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = -g -O0
-#
-#clean-local:
-#	-rm -f libta*
-#	if [ -n "`ls *\.moc\.cpp`" ];then rm `ls *\.moc\.cpp`;fi
-#
-#taglobal.h ta_maketa_defs.h qtdefs.h:
 #

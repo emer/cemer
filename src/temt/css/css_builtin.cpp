@@ -1512,7 +1512,7 @@ static cssEl* cssElCFun_ctermid_stub(int, cssEl**) {
   rval->val = ctermid(buf);
   return rval;
 }
-#ifndef DARWIN
+#ifndef TA_OS_MAC
 static cssEl* cssElCFun_cuserid_stub(int, cssEl**) {
   cssString* rval = new cssString();
   rval->val = cuserid(NULL);
@@ -1860,7 +1860,7 @@ static void Install_MiscFun() {
  numbers.  Returns success and sets errno flag on failure.");
   cssElCFun_inst(cssMisc::Functions, ctermid, 0, CSS_FUN,
 "Returns the character-id of the current terminal.");
-#ifndef DARWIN
+#ifndef TA_OS_MAC
   cssElCFun_inst(cssMisc::Functions, cuserid, 0, CSS_FUN,
 "Returns the character-id of the current user.");
 #endif
