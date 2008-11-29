@@ -1,7 +1,9 @@
 ################################################################
 # Basic Instructions for User
 # 
-# mkdir cmbuild; cd cmbuild; cmake ../ [-DMPI_BUILD=true for mpi] [-DCMAKE_BUILD_TYPE=Debug for debug]
+# mkdir cmbuild;
+# cd cmbuild;
+# cmake ../ [-G [-DMPI_BUILD=true for mpi] [-DCMAKE_BUILD_TYPE=Debug for debug]
 # ccmake ./ to edit custom options
 #
 
@@ -16,11 +18,11 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
 PROJECT(emergent)
 
 # default build type 
-#set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release CACHE STRING "Type of build to make: Debug or Release")
+#set(CMAKE_BUILD_TYPE Debug CACHE STRING "Type of build to make: Debug or Release")
 
 # to enable MPI
-#set(MPI_BUILD true)
+set(MPI_BUILD FALSE CACHE BOOL "Set to true to enable MPI distributed memory system")
 
 # default install prefix
 set(CMAKE_INSTALL_PREFIX /usr/local)
@@ -70,8 +72,8 @@ ${PROJECT_SOURCE_DIR}/src/emergent/so
 ${PROJECT_SOURCE_DIR}/src/emergent/cs
 )
 
-# all libraries to link to -- used automatically in
-# EMERGENT_LINK_LIBRARIES and EMERGENT_ADD_EXECUTABLE
+# all libraries to link to -- used automatically in EMERGENT_LINK_LIBRARIES
+# specify in executables
 set(EMERGENT_LIBRARIES ${COIN_LIBRARY} ${SOQT_LIBRARY} ${QT_LIBRARIES}
     ${READLINE_LIBRARY}
     ${ODE_LIBRARY}

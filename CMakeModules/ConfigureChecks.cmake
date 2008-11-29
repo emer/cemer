@@ -47,9 +47,14 @@ IF(CMAKE_BUILD_TYPE MATCHES "Debug")
   add_definitions(-DDEBUG) 
 ENDIF(CMAKE_BUILD_TYPE MATCHES "Debug") 
 
-# same for DMEM_COMPILE
+##############################
+# MPI = DMEM special stuff (set -DMPI_BUILD flag at compile time)
 IF(MPI_BUILD)
-  add_definitions(-DDMEM_COMPILE) 
+  find_package(MPI REQUIRED)
+  include_directories(${MPI_INCLUDE_PATH})
+  set(EMERGENT_LIBRARIES ${${EMERGENT_LIBRARIES}} ${MPI_LIBRARY})
+  add_definitions(-DDMEM_COMPILE)
+  set(CMAKE_CXX_COMPILER mpicxx)
 ENDIF(MPI_BUILD)
 
 # note: putting in source but default is to put in CMAKE_BINARY_DIR
