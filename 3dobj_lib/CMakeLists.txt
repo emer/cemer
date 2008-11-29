@@ -1,0 +1,10 @@
+########### 3dobj_lib install files ###############
+
+FILE(GLOB IV_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.iv")
+FILE(GLOB JPG_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.jpg")
+FILE(GLOB PNG_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.png")
+
+install(FILES ${IV_FILES} ${JPG_FILES} ${PNG_FILES}
+    DESTINATION ${EMERGENT_SHARE_DEST}/3dobj_lib
+)
+

@@ -7,31 +7,27 @@
 # happen in the original source directory!!  see ta for example
 
 # use relative pathing
-set(temtpath "..")
+set(mypath "..")
 
 # taiqtso
 include(${PROJECT_SOURCE_DIR}/src/temt/taiqtso/CMakeFiles.txt)
-ADD_PATH_TO_FILES(temt_taiqtso_SRCS ${temtpath}/taiqtso "${taiqtso_SRCS}")
-ADD_PATH_TO_FILES(temt_taiqtso_HEADS_MOC ${temtpath}/taiqtso "${taiqtso_HEADS_MOC}")
+ADD_PATH_TO_FILES(temt_taiqtso_SRCS ${mypath}/taiqtso "${taiqtso_SRCS}")
+ADD_PATH_TO_FILES(temt_taiqtso_HEADS_MOC ${mypath}/taiqtso "${taiqtso_HEADS_MOC}")
+QT4_WRAP_CPP(temt_taiqtso_SRCS_MOC ${temt_taiqtso_HEADS_MOC})
 
 # ta
 include(${PROJECT_SOURCE_DIR}/src/temt/ta/CMakeFiles.txt)
-ADD_PATH_TO_FILES(temt_ta_SRCS ${temtpath}/ta "${ta_SRCS}")
-ADD_PATH_TO_FILES(temt_ta_HEADS_MOC ${temtpath}/ta "${ta_HEADS_MOC}")
-ADD_PATH_TO_FILES(temt_ta_HEADS_MAKETA ${temtpath}/ta "${ta_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(temt_ta_SRCS ${mypath}/ta "${ta_SRCS}")
+ADD_PATH_TO_FILES(temt_ta_HEADS_MOC ${mypath}/ta "${ta_HEADS_MOC}")
+ADD_PATH_TO_FILES(temt_ta_HEADS_MAKETA ${mypath}/ta "${ta_HEADS_MAKETA}")
+QT4_WRAP_CPP(temt_ta_SRCS_MOC ${temt_ta_HEADS_MOC})
+SET_TA_PROPS(ta ${PROJECT_SOURCE_DIR}/src/temt/ta)
 
 # css
 include(${PROJECT_SOURCE_DIR}/src/temt/css/CMakeFiles.txt)
-ADD_PATH_TO_FILES(temt_css_SRCS ${temtpath}/css "${css_SRCS}")
-ADD_PATH_TO_FILES(temt_css_HEADS_MOC ${temtpath}/css "${css_HEADS_MOC}")
-
-# moc file generation
-QT4_WRAP_CPP(temt_taiqtso_SRCS_MOC ${temt_taiqtso_HEADS_MOC})
-QT4_WRAP_CPP(temt_ta_SRCS_MOC ${temt_ta_HEADS_MOC})
+ADD_PATH_TO_FILES(temt_css_SRCS ${mypath}/css "${css_SRCS}")
+ADD_PATH_TO_FILES(temt_css_HEADS_MOC ${mypath}/css "${css_HEADS_MOC}")
 QT4_WRAP_CPP(temt_css_SRCS_MOC ${temt_css_HEADS_MOC})
-
-# set special compile properties for ta_TA.cpp file
-SET_TA_PROPS(ta ${PROJECT_SOURCE_DIR}/src/temt/ta)
 
 # just list whole set of files here
 set(temtlib_SRCS
@@ -41,10 +37,11 @@ set(temtlib_SRCS
 
 add_library(temt SHARED ${temtlib_SRCS})
 
-EMERGENT_LINK_LIBRARIES(temt)
+# 2nd arg is extra libs to link to
+EMERGENT_LINK_LIBRARIES(temt "")
 
 ########### install files ###############
 
-#install(TARGETS temt@EMERGENT_SUFFIX@-@PACKAGE_VERSION@ ${INSTALL_TARGETS_DEFAULT_ARGS})
-
-
+install(TARGETS temt
+  LIBRARY DESTINATION lib
+)

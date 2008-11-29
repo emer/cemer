@@ -1,0 +1,80 @@
+########### emergent network files ###############
+
+# IMPORTANT: this is just a list of files -- the compile commands are all located
+# in the temt/lib dir, which is where everything is actually built
+# other targets are in CMakeLists.txt in this directory
+
+# although some attempt is made to keep track of gui-related files, a huge amount
+# of additional work would be required to fully split this out, and we need Qt
+# anyway, so there really isn't any point to it anymore
+
+# all headers that need maketa run on them
+set(network_HEADS_MAKETA
+    ../../temt/ta/ta_TA_type.h
+    emergent_base.h
+    spec.h
+    netstru.h
+    netstru_extra.h
+    netdata.h
+    emergent_program.h
+    emergent_project.h
+    netstru_so.h
+    netstru_qtso.h
+    emergent_qtso.h
+    emergent_program_qtso.h 
+    v3_compat.h
+)
+
+# gui heads
+set(network_HEADS_GUI
+    netstru_so.h
+    netstru_qtso.h
+    emergent_qtso.h
+    emergent_program_qtso.h 
+)
+
+# all heads -- include maketa generated ones here
+set(network_HEADS
+    emergent_base.h
+    spec.h
+    netstru.h
+    netstru_extra.h
+    netdata.h
+    emergent_program.h
+    emergent_project.h
+    v3_compat.h
+    ${network_HEADS_GUI}
+    emergent_TA_type.h
+    emergent_TA_inst.h
+)
+
+# headers that need Qt moc run
+set(network_HEADS_MOC
+    netstru_qtso.h
+)
+
+# gui-related source files to compile: NOTE: do NOT include .moc files -- auto generated
+set(network_SRCS_GUI
+    netstru_so.cpp
+    emergent_qtso.cpp
+    netstru_qtso.cpp
+    emergent_program_qtso.cpp
+)
+
+# all source files to compile: NOTE: do NOT include .moc files -- auto generated
+# but DO include _TA.cpp files
+set(network_SRCS
+    emergent_base.cpp
+    spec.cpp
+    netstru.cpp
+    netstru_extra.cpp
+    netdata.cpp
+    emergent_program.cpp
+    emergent_project.cpp
+    ${network_SRCS_GUI}
+    emergent_ti.cpp
+    v3_compat.cpp
+    emergent_TA.cpp
+)
+
+set(network_FILES ${network_HEADS} ${network_SRCS})

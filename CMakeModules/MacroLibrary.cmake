@@ -11,8 +11,8 @@ MACRO (ADD_PATH_TO_FILES _result _path _file_list)
 ENDMACRO(ADD_PATH_TO_FILES)
 
 # use this instead of TARGET_LINK_LIBRARIES -- sets suffix and other properties
-MACRO (EMERGENT_LINK_LIBRARIES _targ)
-    target_link_libraries(${_targ} ${EMERGENT_LIBRARIES})
+MACRO (EMERGENT_LINK_LIBRARIES _targ _xtra_libs)
+    target_link_libraries(${_targ}  ${_xtra_libs} ${EMERGENT_LIBRARIES})
     set_target_properties(${_targ} PROPERTIES
       VERSION ${EMERGENT_LIB_VERSION}
       SOVERSION ${EMERGENT_LIB_SOVERSION}

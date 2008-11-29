@@ -1,6 +1,10 @@
 ####################################
 #  Configure Checks
 
+# IMPORTANT NOTE: config.h must be completely generic relative to the build type
+# so that it can be installed in the global install dir, and won't conflict at all
+# for different bulid types existing on the same machine
+
 #include(CheckIncludeFiles)
 # usage: CHECK_INCLUDE_FILES (<header> <RESULT_VARIABLE> )
 # CHECK_INCLUDE_FILES (malloc.h HAVE_MALLOC_H)
@@ -11,6 +15,9 @@ set(TA_GUI TRUE)
 set(TA_USE_QT TRUE)
 # and always inventor too
 set(TA_USE_INVENTOR TRUE)
+
+# for now, obligatory V3 compatibility mode
+set(V3_COMPAT TRUE)
 
 # optional libraries -- found through the Findxx in main file
 IF(GSL_FOUND)
@@ -25,5 +32,29 @@ ELSE(ODE_FOUND)
   set(HAVE_LIBODE FALSE)
 ENDIF (ODE_FOUND)
 
+# qt console still unavailable for windows
+# NOTE: this must be passed as a compiler define arg and not put in config.h because
+# the relevant code is sufficiently low-level that it does not include config.h
+IF(WIN32)
+  set(HAVE_QT_CONSOLE FALSE)
+ELSE(WIN32)
+  set(HAVE_QT_CONSOLE TRUE)
+  add_definitions(-DHAVE_QT_CONSOLE) 
+ENDIF(WIN32)
+
+# put debug on the command line, so that config.h is truly general
+IF(CMAKE_BUILD_TYPE MATCHES "Debug") 
+  add_definitions(-DDEBUG) 
+ENDIF(CMAKE_BUILD_TYPE MATCHES "Debug") 
+
+# same for DMEM_COMPILE
+IF(MPI_BUILD)
+  add_definitions(-DDMEM_COMPILE) 
+ENDIF(MPI_BUILD)
+
 # note: putting in source but default is to put in CMAKE_BINARY_DIR
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake_config.h.in ${CMAKE_SOURCE_DIR}/config.h)
+
+# don't forget to install this guy!
+install(FILES ${CMAKE_SOURCE_DIR}/config.h DESTINATION ${EMERGENT_INCLUDE_DEST})
+

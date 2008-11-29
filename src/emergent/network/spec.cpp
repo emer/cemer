@@ -21,6 +21,8 @@
 
 #ifdef V3_COMPAT
 # include "v3_compat.h"
+#else
+# include "netstru.h"
 #endif
 
 //////////////////////////////////

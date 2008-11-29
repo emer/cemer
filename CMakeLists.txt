@@ -22,6 +22,9 @@ set(CMAKE_BUILD_TYPE Debug)
 # to enable MPI
 #set(MPI_BUILD true)
 
+# default install prefix
+set(CMAKE_INSTALL_PREFIX /usr/local)
+
 ####################################################
 # version setting
 
@@ -37,9 +40,7 @@ set(mod_path "${PROJECT_SOURCE_DIR}/CMakeModules")
 
 set(CMAKE_MODULE_PATH ${mod_path})
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-
-#message(STATUS "module path: ${CMAKE_MODULE_PATH}")
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 find_package(Qt4 REQUIRED)
 find_package(Coin REQUIRED)
@@ -81,6 +82,10 @@ set(EMERGENT_LIBRARIES ${COIN_LIBRARY} ${SOQT_LIBRARY} ${QT_LIBRARIES}
 set(EMERGENT_LIB_VERSION ${EMERGENT_VERSION})
 set(EMERGENT_LIB_SOVERSION ${EMERGENT_VERSION_MAJOR})
 
+# install destinations
+set(EMERGENT_INCLUDE_DEST include/Emergent)
+set(EMERGENT_SHARE_DEST share/Emergent)
+
 # determine the suffix based on build type
 
 IF(CMAKE_BUILD_TYPE MATCHES "Debug") 
@@ -112,38 +117,52 @@ include(${mod_path}/Maketa.cmake)
 ####################################
 #  All the subdirs
 
-# NOTE: don't need to add any subdirs that are just convenience libs that DON'T have
-# maketa run in them (e.g., taiqtso, css)
-
-# TODO: this might change once install is figured out
-
+# TEMT system: The EMergent Toolkit
 add_subdirectory(src/temt/maketa)
-# add_subdirectory(src/temt/taiqtso)
+add_subdirectory(src/temt/taiqtso)
 add_subdirectory(src/temt/ta)
-# add_subdirectory(src/temt/css)
+add_subdirectory(src/temt/css)
 add_subdirectory(src/temt/lib)
-# add_subdirectory(src/emergent/network)
-# add_subdirectory(src/emergent/bp)
-# add_subdirectory(src/emergent/leabra)
-# add_subdirectory(src/emergent/so)
-# add_subdirectory(src/emergent/cs)
-# add_subdirectory(src/emergent/lib)
-# add_subdirectory(src/emergent/bin)
+add_subdirectory(src/temt/css_bin)
+add_subdirectory(src/temt/ta/images)
+
+# Emergent code proper
+add_subdirectory(src/emergent/network)
+add_subdirectory(src/emergent/bp)
+add_subdirectory(src/emergent/leabra)
+add_subdirectory(src/emergent/so)
+add_subdirectory(src/emergent/cs)
+add_subdirectory(src/emergent/lib)
+add_subdirectory(src/emergent/bin)
+
+# Plugins
 # add_subdirectory(plugins)
-# add_subdirectory(prog_lib)
-# add_subdirectory(3dobj_lib)
-# add_subdirectory(css_lib)
-# add_subdirectory(test)
-# add_subdirectory(demo/bp)
-# add_subdirectory(demo/cs)
-# add_subdirectory(demo/leabra)
-# add_subdirectory(demo/so)
-# add_subdirectory(demo/virt_env)
-# add_subdirectory(demo/data_proc)
-# add_subdirectory(src/temt/ta/images)
+
+# share misc files
+add_subdirectory(prog_lib)
+add_subdirectory(3dobj_lib)
+add_subdirectory(css_lib)
+add_subdirectory(test)
+add_subdirectory(demo/bp)
+add_subdirectory(demo/cs)
+add_subdirectory(demo/leabra)
+add_subdirectory(demo/so)
+add_subdirectory(demo/virt_env)
+add_subdirectory(demo/data_proc)
 
 
 ########### install files ###############
 
-#install(FILES  AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README DESTINATION )
+install(FILES AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
+  DESTINATION ${EMERGENT_SHARE_DEST}
+)
 
+########### uninstall files ###############
+
+CONFIGURE_FILE(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+  IMMEDIATE @ONLY)
+
+ADD_CUSTOM_TARGET(uninstall
+  "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")

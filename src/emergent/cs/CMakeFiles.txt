@@ -1,0 +1,33 @@
+########### emergent cs files ###############
+
+# IMPORTANT: this is just a list of files -- the compile commands are all located
+# in the emergent/lib dir, which is where everything is actually built
+# other targets are in CMakeLists.txt in this directory
+
+# although some attempt is made to keep track of gui-related files, a huge amount
+# of additional work would be required to fully split this out, and we need Qt
+# anyway, so there really isn't any point to it anymore
+
+# all headers that need maketa run on them
+set(cs_HEADS_MAKETA
+    ../../temt/ta/ta_TA_type.h
+    ../network/emergent_TA_type.h
+    cs.h
+    cs_v3_compat.h
+)
+
+# all heads -- include maketa generated ones here
+set(cs_HEADS
+    cs.h
+    cs_v3_compat.h
+    cs_TA_inst.h
+    cs_TA_type.h
+)
+
+# all source files to compile: NOTE: do NOT include .moc files -- auto generated
+# but DO include _TA.cpp files
+set(cs_SRCS
+    cs.cpp
+    cs_v3_compat.cpp
+    cs_TA.cpp
+)

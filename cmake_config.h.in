@@ -12,3 +12,5 @@
 #cmakedefine HAVE_LIBGSL 1
 
 #cmakedefine HAVE_LIBODE 1
+
+#cmakedefine V3_COMPAT 1

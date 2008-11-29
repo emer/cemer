@@ -5,16 +5,10 @@ include(CMakeFiles.txt)
 
 ########### install files ###############
 
-#install(FILES  $(HEADS) $(TAHEADS) DESTINATION /include)
-
+install(FILES ${css_HEADS} DESTINATION ${EMERGENT_INCLUDE_DEST})
 
 ##############################################################
 ##  extra stuff from original Makefile.am
-#
-#
-#
-#css_qtconsole.moc.cpp:
-#	$(QT_MOC) -o css_qtconsole.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/css -I@abs_top_builddir@/src/temt/ta css_qtconsole.h
 #
 #make_css_parse:
 #	bison -dtvy css_parse.y;
