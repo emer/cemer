@@ -17,6 +17,10 @@
 # Note: required minimum cmake version
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
 
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
 PROJECT(emergent)
 
 # crazy how hard it is to set the default build type 

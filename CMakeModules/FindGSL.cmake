@@ -20,7 +20,7 @@ FIND_LIBRARY(GSL_GSL_LIBRARY NAMES gsl PATH
    /opt/local/lib
 ) 
 
-FIND_LIBRARY(GSL_CBLAS_LIBRARY NAMES cblas PATH
+FIND_LIBRARY(GSL_CBLAS_LIBRARY NAMES cblas gslsblas PATH
    /usr/lib
    /usr/local/lib
    /opt/local/lib
