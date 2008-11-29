@@ -3,7 +3,7 @@
 # 
 # mkdir cmbuild;
 # cd cmbuild;
-# cmake ../ [-G [-DMPI_BUILD=true for mpi] [-DCMAKE_BUILD_TYPE=Debug for debug]
+# cmake [-G XCode] ../ [-DMPI_BUILD=true for mpi] [-DCMAKE_BUILD_TYPE=Debug for debug]
 # ccmake ./ to edit custom options
 #
 
@@ -13,7 +13,7 @@
 #    found first!
 
 # Note: required minimum cmake version
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
 
 PROJECT(emergent)
 
