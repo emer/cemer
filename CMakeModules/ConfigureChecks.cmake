@@ -36,14 +36,12 @@ ENDIF (ODE_FOUND)
 set(MOC_DEFINES "")
 
 # qt console still unavailable for windows
-# NOTE: this must be passed as a compiler define arg and not put in config.h because
-# the relevant code is sufficiently low-level that it does not include config.h
+# note: due to moc not getting command-line -D commands, need to put this in config.h
+# and just include that in the relevant files.
 IF(WIN32)
   set(HAVE_QT_CONSOLE FALSE)
 ELSE(WIN32)
   set(HAVE_QT_CONSOLE TRUE)
-  add_definitions(-DHAVE_QT_CONSOLE) 
-  set(MOC_DEFINES ${${MOC_DEFINES}} -DHAVE_QT_CONSOLE)
 ENDIF(WIN32)
 
 # put debug on the command line, so that config.h is truly general

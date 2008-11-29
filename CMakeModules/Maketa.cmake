@@ -39,6 +39,9 @@ MACRO (CREATE_MAKETA_COMMAND _ta_name _path maketa_headers)
     COMMAND cmp ${pta}_TA.ccx  ${pta}_TA.cpp || cp  ${pta}_TA.ccx  ${pta}_TA.cpp\; cmp ${pta}_TA_type.hx  ${pta}_TA_type.h || cp  ${pta}_TA_type.hx  ${pta}_TA_type.h\; cmp ${pta}_TA_inst.hx  ${pta}_TA_inst.h || cp  ${pta}_TA_inst.hx  ${pta}_TA_inst.h
     DEPENDS ${pta}_TA.ccx ${pta}_TA_type.hx ${pta}_TA_inst.hx
     )
+
+  ADD_CUSTOM_TARGET(${_ta_name}_TA.cpp DEPENDS ${maketa_headers})
+
   #   ADD_CUSTOM_TARGET(force_ta maketa ${maketa_flags} -autohx ${maketa_includes} ${PROJECT_NAME} ${MAKETA_HEADERS}
   # #     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   #   )

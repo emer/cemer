@@ -6,15 +6,16 @@
 # also, all moc generation happens here, but all maket generation must
 # happen in the original source directory!!
 
-# use relative pathing
-set(mypath "..")
+# cmake 2.4 needs absolute pathing to find _TA.cpp file
+#set(mypath "..")
+set(mypath ${PROJECT_SOURCE_DIR}/src/emergent)
 
 # network
 include(${PROJECT_SOURCE_DIR}/src/emergent/network/CMakeFiles.txt)
 ADD_PATH_TO_FILES(emergent_network_SRCS ${mypath}/network "${network_SRCS}")
 ADD_PATH_TO_FILES(emergent_network_HEADS_MOC ${mypath}/network "${network_HEADS_MOC}")
 ADD_PATH_TO_FILES(emergent_network_HEADS_MAKETA ${mypath}/network "${network_HEADS_MAKETA}")
-QT4_WRAP_CPP(emergent_network_SRCS_MOC ${emergent_network_HEADS_MOC} OPTIONS ${MOC_DEFINES})
+QT4_WRAP_CPP(emergent_network_SRCS_MOC ${emergent_network_HEADS_MOC})
 SET_TA_PROPS(emergent ${PROJECT_SOURCE_DIR}/src/emergent/network)
 
 # bp

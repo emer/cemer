@@ -19,6 +19,8 @@
 
 // css_qtconsole.h -- abstraction of qt-based console (unix only)
 
+// note: need config.h for HAVE_QT_CONSOLE
+#include "config.h"
 #include "css_console.h"
 #ifdef HAVE_QT_CONSOLE
 

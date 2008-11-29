@@ -14,3 +14,5 @@
 #cmakedefine HAVE_LIBODE 1
 
 #cmakedefine V3_COMPAT 1
+
+#cmakedefine HAVE_QT_CONSOLE 1

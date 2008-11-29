@@ -18,6 +18,8 @@
 #ifndef QCONSOLE_H
 #define QCONSOLE_H
 
+// note: need config.h for HAVE_QT_CONSOLE
+#include "config.h"
 #include "taiqtso_def.h"
 
 #ifdef HAVE_QT_CONSOLE
