@@ -15,8 +15,7 @@ ADD_PATH_TO_FILES(emergent_network_SRCS ${mypath}/network "${network_SRCS}")
 ADD_PATH_TO_FILES(emergent_network_HEADS_MOC ${mypath}/network "${network_HEADS_MOC}")
 ADD_PATH_TO_FILES(emergent_network_HEADS_MAKETA ${mypath}/network "${network_HEADS_MAKETA}")
 QT4_WRAP_CPP(emergent_network_SRCS_MOC ${emergent_network_HEADS_MOC} OPTIONS ${MOC_DEFINES})
-CREATE_MAKETA_COMMAND(ta ${mypath} "${ta_HEADS_MAKETA}")
-#SET_TA_PROPS(emergent ${PROJECT_SOURCE_DIR}/src/emergent/network)
+SET_TA_PROPS(emergent ${PROJECT_SOURCE_DIR}/src/emergent/network)
 
 # bp
 include(${PROJECT_SOURCE_DIR}/src/emergent/bp/CMakeFiles.txt)
