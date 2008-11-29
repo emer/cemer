@@ -48,7 +48,7 @@ set(mod_path "${PROJECT_SOURCE_DIR}/CMakeModules")
 
 set(CMAKE_MODULE_PATH ${mod_path})
 
-#set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 find_package(Qt4 REQUIRED)
 find_package(Coin REQUIRED)
