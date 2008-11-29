@@ -3,7 +3,9 @@
 # 
 # mkdir cmbuild;
 # cd cmbuild;
-# cmake [-G XCode] ../ [-DMPI_BUILD=true for mpi] [-DCMAKE_BUILD_TYPE=Debug for debug]
+# cmake [-G XCode] [-DMPI_BUILD=true]
+#  [-DCMAKE_BUILD_TYPE=None | Debug | Release | RelWithDebInfo | MinSizeRel]
+#  ../ 
 # ccmake ./ to edit custom options
 #
 
@@ -13,19 +15,23 @@
 #    found first!
 
 # Note: required minimum cmake version
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
 
 PROJECT(emergent)
 
-# default build type 
-set(CMAKE_BUILD_TYPE Release CACHE STRING "Type of build to make: Debug or Release")
-#set(CMAKE_BUILD_TYPE Debug CACHE STRING "Type of build to make: Debug or Release")
+ease CACHE STRING "Type of build to make: Debug or Release"
+# crazy how hard it is to set the default build type 
+IF(NOT CMAKE_BUILD_TYPE)
+# this does nothing:
+#  set(CMAKE_BUILD_TYPE Release CACHE STRING "Type of build to make: Debug or Release")
+  set(CMAKE_BUILD_TYPE RelWithDebInfo)
+ENDIF(NOT CMAKE_BUILD_TYPE)
 
 # to enable MPI
 set(MPI_BUILD FALSE CACHE BOOL "Set to true to enable MPI distributed memory system")
 
-# default install prefix
-set(CMAKE_INSTALL_PREFIX /usr/local)
+# default install prefix: hopefully /usr/local/ ??
+#set(CMAKE_INSTALL_PREFIX /usr/local)
 
 ####################################################
 # version setting
