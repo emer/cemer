@@ -41,13 +41,7 @@ set(temtlib_SRCS
 
 add_library(temt SHARED ${temtlib_SRCS})
 
-target_link_libraries(temt ${EMERGENT_LIBRARIES})
-
-set_target_properties(temt PROPERTIES
- VERSION ${EMERGENT_LIB_VERSION}
- SOVERSION ${EMERGENT_LIB_SOVERSION}
-)
-
+EMERGENT_LINK_LIBRARIES(temt)
 
 ########### install files ###############
 

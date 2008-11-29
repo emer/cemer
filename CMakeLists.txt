@@ -69,7 +69,8 @@ ${PROJECT_SOURCE_DIR}/src/emergent/so
 ${PROJECT_SOURCE_DIR}/src/emergent/cs
 )
 
-# use as in: target_link_libraries(<target> ${EMERGENT_LIBRARIES})
+# all libraries to link to -- used automatically in
+# EMERGENT_LINK_LIBRARIES and EMERGENT_ADD_EXECUTABLE
 set(EMERGENT_LIBRARIES ${COIN_LIBRARY} ${SOQT_LIBRARY} ${QT_LIBRARIES}
     ${READLINE_LIBRARY}
     ${ODE_LIBRARY}
@@ -77,15 +78,35 @@ set(EMERGENT_LIBRARIES ${COIN_LIBRARY} ${SOQT_LIBRARY} ${QT_LIBRARIES}
 )
 
 # this is used for versioning the libs themselves
-# set_target_properties(temt PROPERTIES VERSION ${EMERGENT_LIB_VERSION} ${EMERGENT_LIB_SOVERSION})
-set(EMERGENT_LIB_VERSION EMERGENT_VERSION)
-set(EMERGENT_LIB_SOVERSION EMERGENT_VERSION_MAJOR)
+set(EMERGENT_LIB_VERSION ${EMERGENT_VERSION})
+set(EMERGENT_LIB_SOVERSION ${EMERGENT_VERSION_MAJOR})
 
-# include(ConvenienceLibs.cmake)
-# include(ManualStuff.cmake)
+# determine the suffix based on build type
 
+IF(CMAKE_BUILD_TYPE MATCHES "Debug") 
+    IF(MPI_BUILD)
+	set(CMAKE_DEBUG_POSTFIX "_dbg_mpi")
+	set(CMAKE_EXECUTABLE_SUFFIX "_dbg_mpi")
+    ELSE(MPI_BUILD)
+	set(CMAKE_DEBUG_POSTFIX "_dbg")
+	set(CMAKE_EXECUTABLE_SUFFIX "_dbg")
+    ENDIF(MPI_BUILD)
+ELSE(CMAKE_BUILD_TYPE MATCHES "Debug") 
+    IF(MPI_BUILD)
+	set(CMAKE_RELEASE_POSTFIX "_mpi")
+	set(CMAKE_EXECUTABLE_SUFFIX "_mpi")
+    ELSE(MPI_BUILD)
+	set(CMAKE_RELEASE_POSTFIX "")
+	set(CMAKE_EXECUTABLE_SUFFIX "")
+    ENDIF(MPI_BUILD)
+ENDIF(CMAKE_BUILD_TYPE MATCHES "Debug") 
+
+
+# NOTE: several important macros in here:
 include(${mod_path}/MacroLibrary.cmake)
+# this one makes the config.h from cmake_config.h.in
 include(${mod_path}/ConfigureChecks.cmake)
+# all the support for maketa:
 include(${mod_path}/Maketa.cmake)
 
 ####################################
