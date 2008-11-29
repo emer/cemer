@@ -1,11 +1,11 @@
 ################################################################
 # Basic Instructions for User
 # 
-# mkdir cmbuild;
-# cd cmbuild;
-# cmake [-G XCode] [-DMPI_BUILD=true]
+# mkdir build;
+# cd build;
+# cmake ../ [-G XCode] [-DMPI_BUILD=true]
 #  [-DCMAKE_BUILD_TYPE=None | Debug | Release | RelWithDebInfo | MinSizeRel]
-#  ../ 
+#
 # ccmake ./ to edit custom options
 #
 
@@ -51,7 +51,8 @@ set(mod_path "${PROJECT_SOURCE_DIR}/CMakeModules")
 
 set(CMAKE_MODULE_PATH ${mod_path})
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+# turn this on for debugging new things
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 find_package(Qt4 REQUIRED)
 find_package(Coin REQUIRED)
@@ -127,16 +128,17 @@ include(${mod_path}/Maketa.cmake)
 ####################################
 #  report on status prior to building
 
-MESSAGE( STATUS )
-MESSAGE( STATUS "-------------------------------------------------------------------------------" )
-#MESSAGE( STATUS "BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}" )
-MESSAGE( STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}" )
-MESSAGE( STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}" )
-MESSAGE( STATUS "MPI_BUILD = \"${MPI_BUILD}\"" )
-#MESSAGE( STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}" )
-#MESSAGE( STATUS "INSTALL_DOC = ${INSTALL_DOC}" )
-MESSAGE( STATUS "Change a value with: cmake -D<Variable>=<Value>" )
-MESSAGE( STATUS "-------------------------------------------------------------------------------" )
+message( STATUS )
+message( STATUS "-------------------------------------------------------------------------------" )
+message( STATUS "********************* Summary of Key Build Parameters *************************" )
+message( STATUS "-------------------------------------------------------------------------------" )
+message( STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}" )
+message( STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+message( STATUS "      (Options are: None | Debug | Release | RelWithDebInfo | MinSizeRel)" )
+message( STATUS "MPI_BUILD = ${MPI_BUILD}   (true or false)" )
+message( STATUS )
+message( STATUS "Change a value with: cmake -D<Variable>=<Value>" )
+message( STATUS "-------------------------------------------------------------------------------" )
 
 
 ####################################
