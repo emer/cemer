@@ -82,7 +82,7 @@ ${PROJECT_SOURCE_DIR}/src/emergent/cs
 set(EMERGENT_LIBRARIES ${COIN_LIBRARY} ${SOQT_LIBRARY} ${QT_LIBRARIES}
     ${READLINE_LIBRARY}
     ${ODE_LIBRARY}
-    ${GSL_LIBRARY}
+    ${GSL_LIBRARIES}
 )
 
 # this is used for versioning the libs themselves
@@ -113,13 +113,27 @@ ELSE(CMAKE_BUILD_TYPE MATCHES "Debug")
     ENDIF(MPI_BUILD)
 ENDIF(CMAKE_BUILD_TYPE MATCHES "Debug") 
 
-
 # NOTE: several important macros in here:
 include(${mod_path}/MacroLibrary.cmake)
 # this one makes the config.h from cmake_config.h.in
 include(${mod_path}/ConfigureChecks.cmake)
 # all the support for maketa:
 include(${mod_path}/Maketa.cmake)
+
+####################################
+#  report on status prior to building
+
+MESSAGE( STATUS )
+MESSAGE( STATUS "-------------------------------------------------------------------------------" )
+#MESSAGE( STATUS "BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}" )
+MESSAGE( STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}" )
+MESSAGE( STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}" )
+MESSAGE( STATUS "MPI_BUILD = \"${MPI_BUILD}\"" )
+#MESSAGE( STATUS "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}" )
+#MESSAGE( STATUS "INSTALL_DOC = ${INSTALL_DOC}" )
+MESSAGE( STATUS "Change a value with: cmake -D<Variable>=<Value>" )
+MESSAGE( STATUS "-------------------------------------------------------------------------------" )
+
 
 ####################################
 #  All the subdirs
