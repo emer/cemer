@@ -19,7 +19,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
 
 PROJECT(emergent)
 
-ease CACHE STRING "Type of build to make: Debug or Release"
 # crazy how hard it is to set the default build type 
 IF(NOT CMAKE_BUILD_TYPE)
 # this does nothing:
