@@ -17,7 +17,7 @@ FIND_LIBRARY(ODE_LIBRARY NAMES ode PATH
    /opt/local/lib
 ) 
 
-# handle the QUIETLY and REQUIRED arguments and set COIN_FOUND to TRUE if 
+# handle the QUIETLY and REQUIRED arguments and set x_FOUND to TRUE if 
 # all listed variables are TRUE
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(ODE DEFAULT_MSG ODE_LIBRARY ODE_INCLUDE_DIR)

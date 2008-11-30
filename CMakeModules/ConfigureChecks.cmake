@@ -59,9 +59,5 @@ IF(MPI_BUILD)
   set(CMAKE_CXX_COMPILER mpicxx)
 ENDIF(MPI_BUILD)
 
-# note: putting in source but default is to put in CMAKE_BINARY_DIR
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake_config.h.in ${CMAKE_SOURCE_DIR}/config.h)
-
-# don't forget to install this guy!
-install(FILES ${CMAKE_SOURCE_DIR}/config.h DESTINATION ${EMERGENT_INCLUDE_DEST})
-
+# Note: you have to include the ConfigureGenerate.cmake file to actually generate
+# a config.h file

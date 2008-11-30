@@ -22,7 +22,7 @@ MACRO (SET_TA_PROPS _ta_name _path)
     )
 ENDMACRO(SET_TA_PROPS)
 
-MACRO (CREATE_MAKETA_COMMAND _ta_name _path maketa_headers)
+MACRO (CREATE_MAKETA_COMMAND _ta_name _path _maketa_headers)
   MAKETA_GET_INC_DIRS(maketa_includes)
   
   SET(pta ${_path}/${_ta_name})
@@ -30,21 +30,23 @@ MACRO (CREATE_MAKETA_COMMAND _ta_name _path maketa_headers)
   ADD_CUSTOM_COMMAND(
     OUTPUT ${pta}_TA.ccx ${pta}_TA_type.hx ${pta}_TA_inst.hx
     WORKING_DIRECTORY ${_path}
-    COMMAND maketa ${MAKETA_FLAGS} ${maketa_includes} ${_ta_name} ${maketa_headers}
-    DEPENDS ${maketa_headers}
+    COMMAND maketa ${MAKETA_FLAGS} ${maketa_includes} ${_ta_name} ${_maketa_headers}
+    DEPENDS ${_maketa_headers}
     )
+
   ADD_CUSTOM_COMMAND(
     OUTPUT ${pta}_TA.cpp ${pta}_TA_type.h ${pta}_TA_inst.h 
     WORKING_DIRECTORY ${_path}
-    COMMAND cmp ${pta}_TA.ccx  ${pta}_TA.cpp || cp  ${pta}_TA.ccx  ${pta}_TA.cpp\; cmp ${pta}_TA_type.hx  ${pta}_TA_type.h || cp  ${pta}_TA_type.hx  ${pta}_TA_type.h\; cmp ${pta}_TA_inst.hx  ${pta}_TA_inst.h || cp  ${pta}_TA_inst.hx  ${pta}_TA_inst.h
+    COMMAND cmp -s ${pta}_TA.ccx  ${pta}_TA.cpp || cp  ${pta}_TA.ccx  ${pta}_TA.cpp\; cmp -s ${pta}_TA_type.hx  ${pta}_TA_type.h || cp  ${pta}_TA_type.hx  ${pta}_TA_type.h\; cmp -s ${pta}_TA_inst.hx  ${pta}_TA_inst.h || cp  ${pta}_TA_inst.hx  ${pta}_TA_inst.h
     DEPENDS ${pta}_TA.ccx ${pta}_TA_type.hx ${pta}_TA_inst.hx
     )
 
-  ADD_CUSTOM_TARGET(${_ta_name}_TA.cpp DEPENDS ${maketa_headers})
+  ADD_CUSTOM_TARGET(${_ta_name}_TA.cpp DEPENDS ${_maketa_headers})
 
-  #   ADD_CUSTOM_TARGET(force_ta maketa ${maketa_flags} -autohx ${maketa_includes} ${PROJECT_NAME} ${MAKETA_HEADERS}
-  # #     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-  #   )
+  ADD_CUSTOM_TARGET(force_ta_${_ta_name} maketa ${MAKETA_FLAGS} -autohx ${maketa_includes} ${_ta_name} ${_maketa_headers}
+    WORKING_DIRECTORY ${_path}
+  )
+
   SET_TA_PROPS(${_ta_name} ${_path})
 ENDMACRO (CREATE_MAKETA_COMMAND)
 
