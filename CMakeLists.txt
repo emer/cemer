@@ -23,6 +23,9 @@ endif(COMMAND cmake_policy)
 
 PROJECT(emergent)
 
+INCLUDE(CPack)
+INCLUDE(CTest)
+
 # crazy how hard it is to set the default build type 
 IF(NOT CMAKE_BUILD_TYPE)
 # this does nothing:
