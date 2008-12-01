@@ -130,6 +130,9 @@ set(ta_HEADS
   ta_seledit.h
   ta_project.h
   ta_server.h
+  ta_gendoc.h
+  ta_maketa_defs.h
+  ta_type_constr.h
   qtdefs.h
   ta_qt.h
   ta_qtdata_def.h
