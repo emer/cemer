@@ -2079,7 +2079,7 @@ void So3DHeightField::renderValues() {
 
 	SbVec3f n = n_00 + n_01 + n_10 + n_11;
 	n *= .25f;
-	normal_dat[n_idx++].setValue(n);
+	normal_dat[n_idx++].setValue(n.getValue());
       }
     }
   }
