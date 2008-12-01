@@ -31,6 +31,11 @@
 // ISO C++ 14882: 27.7  String-based streams
 //
 
+/* IMPORTANT NOTE: this is a "dummy" version of the standard libarary stream
+   interface that exposes only the functions that maketa will scan, generating
+   the exposed functionality that can be used in css etc */
+
+
 /** @file sstream
  *  This is a Standard C++ Library header.  You should @c #include this header
  *  in your programs, rather than any of the "st[dl]_*.h" implementation files.
@@ -39,7 +44,7 @@
 #ifndef _CPP_SSTREAM
 #define _CPP_SSTREAM	1
 
-#include "iostream.h"
+#include "maketa_iostream.h"
 
 extern "C++" {
 

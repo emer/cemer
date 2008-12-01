@@ -7,6 +7,9 @@ find_package(Readline REQUIRED)
 find_package(ODE)
 find_package(GSL)
 
+# NOTE: could also do BISON but it is not really required so not worth the hassle
+#find_package(BISON)
+
 # setup QT_LIBRARIES, defines, etc through options, and the QT_USE_FILE thing does automagic
 # TODO: can't figure out why it is still complaining about qt3 support but it is
 # need to fix that!

@@ -22,8 +22,9 @@ the resulting executable to be covered by the GNU General Public License.
 This exception does not however invalidate any other reasons why
 the executable file might be covered by the GNU General Public License. */
 
-// this is the hacked version providing just an interface that is compatible
-// with the stl g++-v3..
+/* IMPORTANT NOTE: this is a "dummy" version of the standard libarary stream
+   interface that exposes only the functions that maketa will scan, generating
+   the exposed functionality that can be used in css etc */
 
 #ifndef _STREAMBUF_H
 #define _STREAMBUF_H

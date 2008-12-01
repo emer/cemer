@@ -11,10 +11,10 @@
 # all headers that need maketa run on them
 set(ta_HEADS_MAKETA
   ../taiqtso/igeometry.h
-  ios-g++-3.1/streambuf.h
-  ios-g++-3.1/iostream.h
-  ios-g++-3.1/fstream.h
-  ios-g++-3.1/sstream.h
+  maketa_streambuf.h
+  maketa_iostream.h
+  maketa_fstream.h
+  maketa_sstream.h
   ta_def.h
   ta_platform.h
   ta_thread.h
@@ -89,6 +89,10 @@ set(ta_HEADS_MAKETA
 set(ta_HEADS
   ta_global.h
   ta_def.h
+  maketa_streambuf.h
+  maketa_iostream.h
+  maketa_fstream.h
+  maketa_sstream.h
   ta_platform.h
   ta_thread.h
   ta_string.h

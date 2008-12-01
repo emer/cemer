@@ -43,7 +43,7 @@
 
 #include "ta_def.h"
 #ifdef __MAKETA__
-# include <iostream.h>
+// # include <iostream.h>
 #else
   #include <iostream>
   #ifdef TA_USE_QT

@@ -83,7 +83,13 @@ set(plugin_HEADS_MAKETA ${plugin_HEADS})
 set(plugin_HEADS_MOC ${plugin_HEADS})
 
 # all the files necessary to compile the plugin -- used for install
-set(plugin_FILES ${plugin_HEADS} ${plugin_SRCS} CMakeLists.txt build_plugin.sh)
+set(plugin_FILES
+  ${plugin_HEADS}
+  ${plugin_SRCS}
+  CMakeLists.txt
+  build_plugin.sh
+  build_plugin_dbg.sh
+  )
 
 # NOTE to plugin programmer: you should be done now!  Everything below
 # is standard boilerplate code that you should not need to edit.

@@ -1,4 +1,4 @@
-/*  This is part of libio/iostream, providing -*- C++ -*- input/output.
+/* This is part of libio/iostream, providing -*- C++ -*- input/output.
 Copyright (C) 1993 Free Software Foundation
 
 This file is part of the GNU IO Library.  This library is free
@@ -22,41 +22,35 @@ the resulting executable to be covered by the GNU General Public License.
 This exception does not however invalidate any other reasons why
 the executable file might be covered by the GNU General Public License. */
 
-#ifndef _IOSTREAM_H
-#define _IOSTREAM_H
+/* IMPORTANT NOTE: this is a "dummy" version of the standard libarary stream
+   interface that exposes only the functions that maketa will scan, generating
+   the exposed functionality that can be used in css etc */
 
-#include "streambuf.h"
+#ifndef _FSTREAM_H
+#define _FSTREAM_H
+#include "maketa_iostream.h"
 
 extern "C++" {
-class istream; class ostream;
 
-class ostream : virtual public ios {
+class ifstream : public istream {
 public:
-  ostream& flush();
-  ostream& put(char c);
-  ostream& write(const char *s, streamsize n);
-  ostream& seekp(streamoff off, seekdir dir);
-  streampos tellp();
+  void close();
+  int is_open() const;
+  void open(const char *name, openmode mode= _S_in);
 };
 
-class istream : virtual public ios {
+class ofstream : public ostream {
 public:
-  istream& getline(char* ptr, int len, char delim = '\n');
-  istream& read(char *ptr, streamsize n);
-
-  int get();
-  int peek();
-  istream& ignore(int n=1, int delim = EOF);
-  int sync ();
-  istream& seekg(streamoff off, seekdir dir);
-  streampos tellg();
-  istream& putback(char ch);
-  istream& unget();
+  void close();
+  int is_open() const;
+  void open(const char *name, openmode mode= _S_out);
 };
 
-class iostream : public istream, public ostream {
-public:
-  iostream() { };
+class fstream : public iostream {
+  public:
+  void close();
+  int is_open() const;
+  void open(const char *name, openmode mode);
 };
 } // extern "C++"
-#endif /*!_IOSTREAM_H*/
+#endif /*!_FSTREAM_H*/

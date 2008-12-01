@@ -23,9 +23,9 @@
 
 #ifdef __MAKETA__
 //NOTE: must use "" for msvc
-#  include "iostream.h"
-#  include "fstream.h"
-#  include "sstream.h"
+#  include "maketa_iostream.h"
+#  include "maketa_fstream.h"
+#  include "maketa_sstream.h"
 #else
 # include <iostream>
 # include <fstream>

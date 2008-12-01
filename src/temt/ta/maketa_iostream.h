@@ -1,4 +1,4 @@
-/* This is part of libio/iostream, providing -*- C++ -*- input/output.
+/*  This is part of libio/iostream, providing -*- C++ -*- input/output.
 Copyright (C) 1993 Free Software Foundation
 
 This file is part of the GNU IO Library.  This library is free
@@ -22,33 +22,45 @@ the resulting executable to be covered by the GNU General Public License.
 This exception does not however invalidate any other reasons why
 the executable file might be covered by the GNU General Public License. */
 
-/* Written by Per Bothner (bothner@cygnus.com). */
+/* IMPORTANT NOTE: this is a "dummy" version of the standard libarary stream
+   interface that exposes only the functions that maketa will scan, generating
+   the exposed functionality that can be used in css etc */
 
-// strstream is not supported in g++ 3.x
+#ifndef _IOSTREAM_H
+#define _IOSTREAM_H
 
-// #ifndef __STRSTREAM_H
-// #define __STRSTREAM_H
+#include "maketa_streambuf.h"
 
-// #include "iostream.h"
+extern "C++" {
+class istream; class ostream;
 
-// extern "C++" {
+class ostream : virtual public ios {
+public:
+  ostream& flush();
+  ostream& put(char c);
+  ostream& write(const char *s, streamsize n);
+  ostream& seekp(streamoff off, seekdir dir);
+  streampos tellp();
+};
 
-// class istrstream : public istream {
-// public:
-//   istrstream();
-// };
+class istream : virtual public ios {
+public:
+  istream& getline(char* ptr, int len, char delim = '\n');
+  istream& read(char *ptr, streamsize n);
 
-// class ostrstream : public ostream {
-//   char *str();
-//   void freeze(int n = 1);
-//   int frozen();
-// };
+  int get();
+  int peek();
+  istream& ignore(int n=1, int delim = EOF);
+  int sync ();
+  istream& seekg(streamoff off, seekdir dir);
+  streampos tellg();
+  istream& putback(char ch);
+  istream& unget();
+};
 
-// class strstream : public iostream {
-//   public:
-//   char *str();
-//   void freeze(int n = 1);
-// };
-// } // extern "C++"
-
-// #endif /*!__STRSTREAM_H*/
+class iostream : public istream, public ostream {
+public:
+  iostream() { };
+};
+} // extern "C++"
+#endif /*!_IOSTREAM_H*/
