@@ -12,6 +12,7 @@
 set(bp_HEADS_MAKETA
     ../../temt/ta/ta_TA_type.h
     ../network/emergent_TA_type.h
+    bp_def.h
     bp.h
     rbp.h
     bp_v3_compat.h
@@ -19,6 +20,7 @@ set(bp_HEADS_MAKETA
 
 # all heads -- include maketa generated ones here
 set(bp_HEADS
+    bp_def.h
     bp.h
     rbp.h
     bp_v3_compat.h

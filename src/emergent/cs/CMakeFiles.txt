@@ -12,12 +12,14 @@
 set(cs_HEADS_MAKETA
     ../../temt/ta/ta_TA_type.h
     ../network/emergent_TA_type.h
+    cs_def.h
     cs.h
     cs_v3_compat.h
 )
 
 # all heads -- include maketa generated ones here
 set(cs_HEADS
+    cs_def.h
     cs.h
     cs_v3_compat.h
     cs_TA_inst.h

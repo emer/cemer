@@ -12,6 +12,7 @@
 set(leabra_HEADS_MAKETA
     ../../temt/ta/ta_TA_type.h
     ../network/emergent_TA_type.h
+    leabra_def.h
     leabra.h
     leabra_extra.h
     leabra_td.h
@@ -22,6 +23,7 @@ set(leabra_HEADS_MAKETA
 
 # all heads -- include maketa generated ones here
 set(leabra_HEADS
+    leabra_def.h
     leabra.h
     leabra_extra.h
     leabra_td.h

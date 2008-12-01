@@ -12,6 +12,7 @@
 set(so_HEADS_MAKETA
     ../../temt/ta/ta_TA_type.h
     ../network/emergent_TA_type.h
+    so_def.h
     so.h
     som.h
     cl.h
@@ -21,6 +22,7 @@ set(so_HEADS_MAKETA
 
 # all heads -- include maketa generated ones here
 set(so_HEADS
+    so_def.h
     so.h
     som.h
     cl.h
