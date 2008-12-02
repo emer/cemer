@@ -91,6 +91,11 @@ else (WIN32)
   set(EMERGENT_SHARE_DEST share/Emergent)
 endif (WIN32)
 
+# basic compiler warnings, etc.
+if (WIN32)
+#TODO, shut off : 4250;4258;4661;4996
+endif (WIN32)
+
 # set the lib and executable suffix based on build type
 include(${mod_path}/SetBuildSuffix.cmake)
 # several important macros in here:
