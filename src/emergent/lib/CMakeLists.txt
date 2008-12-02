@@ -58,7 +58,14 @@ EMERGENT_LINK_LIBRARIES(emergentlib temt)
 
 ########### install files ###############
 
-install(TARGETS emergentlib
-  LIBRARY DESTINATION lib
-)
+if (WIN32)
+  install(TARGETS emergentlib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+  )
+else (WIN32)
+  install(TARGETS emergentlib
+    LIBRARY DESTINATION lib
+  )
+endif (WIN32)
 
