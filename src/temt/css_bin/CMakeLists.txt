@@ -6,6 +6,7 @@ add_executable(css ${css_SRCS})
 
 target_link_libraries(css temt ${EMERGENT_DEP_LIBRARIES})
 
+# Windows import/export control
 if (WIN32)
   add_definitions(-DTA_DLL)
 endif (WIN32)

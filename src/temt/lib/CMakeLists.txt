@@ -41,6 +41,11 @@ add_library(temt SHARED ${temtlib_SRCS})
 # 2nd arg is extra libs to link to
 EMERGENT_LINK_LIBRARIES(temt "")
 
+# Windows import/export control
+if (WIN32)
+  add_definitions(-DTA_DLL -DTA_EXPORTS)
+endif (WIN32)
+
 ########### install files ###############
 
 if (WIN32)

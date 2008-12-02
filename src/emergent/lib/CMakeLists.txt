@@ -56,6 +56,11 @@ add_library(emergentlib SHARED ${emergentlib_SRCS})
 # 2nd arg is extra libs to link to
 EMERGENT_LINK_LIBRARIES(emergentlib temt)
 
+# Windows import/export control
+if (WIN32)
+  add_definitions(-DTA_DLL -DEMERGENT_DLL -DEMERGENT_EXPORTS)
+endif (WIN32)
+
 ########### install files ###############
 
 if (WIN32)

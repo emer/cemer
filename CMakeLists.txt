@@ -93,7 +93,11 @@ endif (WIN32)
 
 # basic compiler warnings, etc.
 if (WIN32)
-#TODO, shut off : 4250;4258;4661;4996
+  #shut off warnings: 4250 (inheritance dominance)
+  # 4258;4661;4996 (unsafe crt routines)
+  add_definitions(/wd4250 /wd4258 /wd4661 /wd4996)
+  # enable multi-threaded compiling (always safe, will ignore and print warning when incompatible)
+  add_definitions(/MP)
 endif (WIN32)
 
 # set the lib and executable suffix based on build type

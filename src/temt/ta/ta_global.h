@@ -177,23 +177,16 @@
 #define YYERROR_VERBOSE 1
 
 /* DLL building options under windows */
-// currently, we are putting taiqtso/ta/css/tamisc in one dll, so slave to TA
+// note: we put taiqtso/ta/css in one dll, so slave to TA
+// note: we put bp/cs/leabra/network/so in one dll, so slave to EMERGENT
 // define flags as follows:
 // DLL	    USING	  BUILDING
 // ta	    TA_DLL	  TA_DLL,TA_EXPORTS
-// pdp	    PDP_DLL	  PDP_DLL,PDP_EXPORTS
+// emergent EMERGENT_DLL  EMERGENT_DLL,EMERGENT_EXPORTS
 
 #ifdef TA_OS_WIN
-//note: following are temp cmake guys -- TODO: rip/replace
-# ifdef temt_EXPORTS
-#  define TA_DLL
-#  define TA_EXPORTS
-# endif
-# ifdef emergentlib_EXPORTS
-#  define TA_DLL
-#  define EMERGENT_EXPORTS
-# endif
-
+// note: cmake on Win automatically defines temt_EXPORTS or emergentlib_EXPORTS
+// but we just manually define our own legacy guys, including the xxx_DLL as appropriate
 # ifdef TA_DLL
 #   define TAIQTSO_DLL
 #   define CSS_DLL
