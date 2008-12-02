@@ -23,7 +23,11 @@ include_directories(${QT_INCLUDES} ${COIN_INCLUDE_DIR} ${SOQT_INCLUDE_DIR})
 # all dependency libraries to link to -- used automatically in EMERGENT_LINK_LIBRARIES
 # specify in executables
 set(EMERGENT_DEP_LIBRARIES ${COIN_LIBRARY} ${SOQT_LIBRARY} ${QT_LIBRARIES}
-    ${READLINE_LIBRARY}
     ${ODE_LIBRARY}
     ${GSL_LIBRARIES}
 )
+if (NOT WIN32)
+	set(EMERGENT_DEP_LIBRARIES ${EMERGENT_DEP_LIBRARIES}
+		${READLINE_LIBRARY}
+	)
+endif (NOT WIN32)
