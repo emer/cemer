@@ -3,7 +3,7 @@
 # READLINE_INCLUDE_DIR - where the directory containing the READLINE headers can be found
 # READLINE_LIBRARY     - full path to the READLINE library
 # READLINE_FOUND       - TRUE if READLINE was found
-
+IF (NOT WIN32)
 FIND_PATH(READLINE_INCLUDE_DIR readline/readline.h
         /usr/include
         /usr/local/include
@@ -21,3 +21,4 @@ FIND_LIBRARY(READLINE_LIBRARY NAMES readline PATH
 # all listed variables are TRUE
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Readline DEFAULT_MSG READLINE_LIBRARY READLINE_INCLUDE_DIR)
+ENDIF (NOT WIN32)

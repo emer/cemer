@@ -9,13 +9,24 @@ FIND_PATH(ODE_INCLUDE_DIR ode/ode.h
         /usr/local/include
 	/opt/local/include
     $ENV{INCLUDE}
+    $ENV{EMERGENTDIR}/3rdparty/include
 )
 
-FIND_LIBRARY(ODE_LIBRARY NAMES ode PATH
-   /usr/lib
-   /usr/local/lib
-   /opt/local/lib
+FIND_LIBRARY(ODE_LIBRARY NAMES ode ode_single PATH
+    /usr/lib
+    /usr/local/lib
+    /opt/local/lib
+    $ENV{EMERGENTDIR}/3rdparty/lib
 ) 
+
+#hack because finding lib on Windows not working for some reason...
+IF (WIN32)
+  IF (NOT ODE_LIBRARY)
+    IF (EXISTS $ENV{EMERGENTDIR}/3rdparty/lib/ode_single.lib)
+      SET(ODE_LIBRARY "$ENV{EMERGENTDIR}/3rdparty/lib/ode_single.lib")
+    ENDIF (EXISTS $ENV{EMERGENTDIR}/3rdparty/lib/ode_single.lib)
+  ENDIF (NOT ODE_LIBRARY)
+ENDIF (WIN32)
 
 # handle the QUIETLY and REQUIRED arguments and set x_FOUND to TRUE if 
 # all listed variables are TRUE

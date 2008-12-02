@@ -12,19 +12,36 @@ FIND_PATH(GSL_INCLUDE_DIR gsl/gsl_matrix.h
         /usr/local/include
 	/opt/local/include
     $ENV{INCLUDE}
+    $ENV{EMERGENTDIR}/3rdparty/include
 )
 
 FIND_LIBRARY(GSL_GSL_LIBRARY NAMES gsl PATH
-   /usr/lib
-   /usr/local/lib
-   /opt/local/lib
+    /usr/lib
+    /usr/local/lib
+    /opt/local/lib
+    $ENV{EMERGENTDIR}/3rdparty/lib
 ) 
 
 FIND_LIBRARY(GSL_CBLAS_LIBRARY NAMES cblas gslcblas PATH
-   /usr/lib
-   /usr/local/lib
-   /opt/local/lib
+    /usr/lib
+    /usr/local/lib
+    /opt/local/lib
+    $ENV{EMERGENTDIR}/3rdparty/lib
 ) 
+
+#hack because finding lib on Windows not working for some reason...
+IF (WIN32)
+  IF (NOT GSL_GSL_LIBRARY)
+    IF (EXISTS $ENV{EMERGENTDIR}/3rdparty/lib/gsl.lib)
+      SET(GSL_GSL_LIBRARY "$ENV{EMERGENTDIR}/3rdparty/lib/gsl.lib")
+    ENDIF (EXISTS $ENV{EMERGENTDIR}/3rdparty/lib/gsl.lib)
+  ENDIF (NOT GSL_GSL_LIBRARY)
+  IF (NOT GSL_CBLAS_LIBRARY)
+    IF (EXISTS $ENV{EMERGENTDIR}/3rdparty/lib/cblas.lib)
+      SET(GSL_CBLAS_LIBRARY "$ENV{EMERGENTDIR}/3rdparty/lib/cblas.lib")
+    ENDIF (EXISTS $ENV{EMERGENTDIR}/3rdparty/lib/cblas.lib)
+  ENDIF (NOT GSL_CBLAS_LIBRARY)
+ENDIF (WIN32)
 
 SET(GSL_LIBRARIES ${GSL_CBLAS_LIBRARY} ${GSL_GSL_LIBRARY})
 
