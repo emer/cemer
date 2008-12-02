@@ -184,6 +184,16 @@
 // pdp	    PDP_DLL	  PDP_DLL,PDP_EXPORTS
 
 #ifdef TA_OS_WIN
+//note: following are temp cmake guys -- TODO: rip/replace
+# ifdef temt_EXPORTS
+#  define TA_DLL
+#  define TA_EXPORTS
+# endif
+# ifdef emergentlib_EXPORTS
+#  define TA_DLL
+#  define EMERGENT_EXPORTS
+# endif
+
 # ifdef TA_DLL
 #   define TAIQTSO_DLL
 #   define CSS_DLL

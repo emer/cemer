@@ -5,15 +5,17 @@
 # SOQT_FOUND       - TRUE if SoQt was found
 
 FIND_PATH(SOQT_INCLUDE_DIR SoQt.h
-        /usr/include
-        /usr/local/include
+    /usr/include
+    /usr/local/include
 	/opt/local/include
-        /usr/include/Inventor/Qt
-        /usr/local/include/Inventor/Qt
+    /usr/include/Inventor/Qt
+    /usr/local/include/Inventor/Qt
 	/opt/local/include/Inventor/Qt
+	/Library/Frameworks/SoQt.framework/Headers
     $ENV{INCLUDE}
     $ENV{COINDIR}/include/Inventor/Qt
 )
+#MESSAGE("SOQT_INCLUDE_DIR=" ${SOQT_INCLUDE_DIR})
 
 FIND_LIBRARY(SOQT_LIBRARY NAMES SoQt PATH
    /usr/lib

@@ -80,8 +80,16 @@ set(EMERGENT_LIB_VERSION ${EMERGENT_VERSION})
 set(EMERGENT_LIB_SOVERSION ${EMERGENT_VERSION_MAJOR})
 
 # install destinations
-set(EMERGENT_INCLUDE_DEST include/Emergent)
-set(EMERGENT_SHARE_DEST share/Emergent)
+if (WIN32)
+  # we have issues with path spaces, so install to C:/Emergent
+  set(CMAKE_INSTALL_PREFIX "C:/")
+  # everything gets bundled
+  set(EMERGENT_INCLUDE_DEST Emergent/include)
+  set(EMERGENT_SHARE_DEST Emergent)
+else (WIN32)
+  set(EMERGENT_INCLUDE_DEST include/Emergent)
+  set(EMERGENT_SHARE_DEST share/Emergent)
+endif (WIN32)
 
 # set the lib and executable suffix based on build type
 include(${mod_path}/SetBuildSuffix.cmake)

@@ -3,7 +3,9 @@
 find_package(Qt4 REQUIRED)
 find_package(Coin REQUIRED)
 find_package(SoQt REQUIRED)
-find_package(Readline REQUIRED)
+if (NOT WIN32)
+  find_package(Readline REQUIRED)
+endif (NOT WIN32)
 find_package(ODE)
 find_package(GSL)
 
@@ -18,7 +20,22 @@ set(QT_USE_QTOPENGL 1)
 set(QT_USE_QTXML 1)
 include(${QT_USE_FILE})
 
-include_directories(${QT_INCLUDES} ${COIN_INCLUDE_DIR} ${SOQT_INCLUDE_DIR})
+include_directories(${QT_INCLUDES} ${COIN_INCLUDE_DIR} ${SOQT_INCLUDE_DIR}
+  ${ODE_INCLUDE_DIR}
+  ${GSL_INCLUDE_DIR}
+)
+if (WIN32)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/include
+    $ENV{COINDIR}/include
+  )
+else (WIN32)
+  include_directories(${READLINE_INCLUDE_DIR} )
+endif (WIN32)
+
+# Windows dll macros
+if (WIN32)
+  add_definitions(-DCOIN_DLL -DSOQT_DLL)
+endif (WIN32)
 
 # all dependency libraries to link to -- used automatically in EMERGENT_LINK_LIBRARIES
 # specify in executables
@@ -27,7 +44,7 @@ set(EMERGENT_DEP_LIBRARIES ${COIN_LIBRARY} ${SOQT_LIBRARY} ${QT_LIBRARIES}
     ${GSL_LIBRARIES}
 )
 if (NOT WIN32)
-	set(EMERGENT_DEP_LIBRARIES ${EMERGENT_DEP_LIBRARIES}
-		${READLINE_LIBRARY}
-	)
+  set(EMERGENT_DEP_LIBRARIES ${EMERGENT_DEP_LIBRARIES}
+	${READLINE_LIBRARY}
+  )
 endif (NOT WIN32)

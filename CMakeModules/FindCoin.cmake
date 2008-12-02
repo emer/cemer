@@ -5,11 +5,11 @@
 # COIN_FOUND       - TRUE if Coin was found
 
 FIND_PATH(COIN_INCLUDE_DIR SbVec3f.h
-        /usr/include
-        /usr/local/include
+    /usr/include
+    /usr/local/include
 	/opt/local/include
-        /usr/include/Inventor
-        /usr/local/include/Inventor
+    /usr/include/Inventor
+    /usr/local/include/Inventor
 	/opt/local/include/Inventor
 	/Library/Frameworks/Inventor.framework/Headers
     $ENV{INCLUDE}

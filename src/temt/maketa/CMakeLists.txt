@@ -30,12 +30,17 @@ set(maketa_SRCS
 
 set(maketa_FILES ${maketa_HEADS} ${maketa_SRCS})
 
+ add_definitions(-DNO_TA_BASE)
 # note: special definitions for compiling maketa: always optimized
-add_definitions(-DNO_TA_BASE -O2 -g)
+if (WIN32)
+  add_definitions(/O2)
+else (WIN32)
+  add_definitions(-O2 -g)
+endif (WIN32)
 
 add_executable(maketa ${maketa_SRCS})
 
-target_link_libraries(maketa ${QT_LIBRARIES})
+#no target_link_libraries(maketa ${QT_LIBRARIES})
 
 ########### running bison on mta_parse.y ###############
 
