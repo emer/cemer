@@ -695,21 +695,28 @@ void TemporalWindowBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if (out_rate <= 0) out_rate = 4.0;
   
+  float ot_gn = 1.0f;
+  switch (ot) {
+  case OT_ON_OFF:
+    ot_gn = 2.0f; // empirical
+    break;
+  default: break;
+  };
   // gain for non-linearity 
   switch (non_lin) {
   case NL_HALF_WAVE:
     // chops out half the signal, so, duh...
-    auto_gain.Set(2, Level::UN_SCALE);
+    auto_gain.Set(2*ot_gn, Level::UN_SCALE);
     break;
   case NL_SQUARE:
     //NOTE: the required gain has not been determined!!!
-    auto_gain.Set(1, Level::UN_SCALE);
+    auto_gain.Set(1*ot_gn, Level::UN_SCALE);
     break;
   // all these guys are gain-neutral
   case NL_NONE:
   case NL_FULL_WAVE:
   default: 
-    auto_gain.Set(1, Level::UN_SCALE);
+    auto_gain.Set(1*ot_gn, Level::UN_SCALE);
     break;
   }
 }

@@ -209,7 +209,7 @@ public: //
     {if (idx == 1) return &out_buff_off; else return inherited::outBuff(idx);}
   
   NonLinearity		non_lin; // type of non-linearity to apply to input values -- choose NONE for known +ve inputs (ex. Gamma Env)
-  Level			auto_gain; // #READ_ONLY #SHOW #NO_SAVE an automatically applied gain adjustment based on the non-lin selected
+  Level			auto_gain; // #READ_ONLY #SHOW #NO_SAVE an automatically applied gain adjustment based on the non-lin and ot selected
   float			l_dur; // duration of lower (forward) window in ms, typ 24 ms
   float			u_dur; // duration of upper (backward) window in ms, type 8 ms
   float			out_rate; // output rate, in ms; typ 4 ms (we set our fs by this)		
