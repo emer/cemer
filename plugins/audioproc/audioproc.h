@@ -179,9 +179,6 @@ public://
   static const short	field_right = 1;
 #endif*/
 
-  bool			stages_ro; //#NO_SHOW #NO_SAVE some guys require fixed number, so make it ro
-  bool			fields_ro; //#NO_SHOW #NO_SAVE some guys require fixed number, so make it ro
-  
   SampleFreq		fs; // the sample frequency of output of this buffer
   Duration		fr_dur; // the length of each frame, typically in terms of the fs;( 0 to disable the output)
   int			min_stages; // #READ_ONLY #NO_SAVE #SHOW some blocks require a min number of stages -- you may set more, but not fewer
@@ -196,8 +193,9 @@ public://
   int64_t		item_cnt; // #READ_ONLY #NO_SAVE #SHOW number of items that have been written since last Init (can be used for measuring duration)	
   float_Matrix		mat; // #NO_SAVE #EXPERT #EXPERT_TREE the data of the buffer
   bool			enabled; // #READ_ONLY #NO_SAVE #SHOW whether this buffer is being used 
-  
-  int			prevStage() const; // returns previous stage index, which is (usually) one less than the current stage, since we bump the stage before calling
+  bool			fields_ro; //#NO_SHOW #NO_SAVE some guys require fixed number, so make it ro
+
+  int			prevStage() const; // returns -offs stage index, which is (usually) one less than the current stage, since we bump the stage before calling
   virtual void		InitConfig(bool check, bool quiet, bool& ok);
     // #IGNORE configure data; we assume fs, geom, fr_dur, etc. are all valid/set
 
@@ -208,6 +206,7 @@ public://
     // get the root coordinates of the requested stage, relative to CURRENT (not prevStage, which is what you may usually want!), 0=current, -ve is earlier, +ve is later; rel_stage is NOT wrapped if it overflows! (an error is issued)
   bool			GetBaseGeomOfStageAbs(int abs_stage, MatrixGeom& geom);
     // get the root coordinates of the requested absolute stage
+  int			GetRelStage(int stage, int offs) const; // the stage relative to the offs (really, just does + modulo the stages)
   bool			NextIndex(); // advances item/stage index, returning true if a stage was completed (thus need to call NotifyClientsBuffStageFull)
   SignalProcBlock*	GetOwnerBlock() {return GET_MY_OWNER(SignalProcBlock);}
   
@@ -252,6 +251,8 @@ public: //
   
   int		index; // #READ_ONLY #NO_SAVE index of this guy in an owning list, if applicable, otherwise -1
 
+  virtual bool		off() const {return false;}
+  
   void		InitConfig_Int(bool check, bool quiet, bool& ok);
     // #IGNORE what parent or api functions call, NOT virtual! (override _impl)
   
@@ -263,7 +264,7 @@ public: // do not call
   
 protected:
   override bool		CheckConfig_impl(bool quiet)
-   {bool ok = true; InitConfig_impl(true, quiet, ok); return ok;}
+   {bool ok = true; if (!off()) InitConfig_impl(true, quiet, ok); return ok;}
   virtual void		InitConfig_impl(bool check, bool quiet, bool& ok);  // #IGNORE
   virtual void		InitThisConfig_impl(bool check, bool quiet, bool& ok) {}
   virtual void		InitThisConfigDataIn_impl(bool check, bool quiet, bool& ok) {}
@@ -351,7 +352,7 @@ public:
   BlockFlags		flags; // misc control flags
   int			num_clients; // #READ_ONLY #NO_SAVE #SHOW number of client blocks to this one
   
-  inline bool		off() const {return (flags & BF_OFF);} // off property
+  override bool		off() const {return (flags & BF_OFF);} // off property
   
   //note: in_buffs are not used much, only when the dude needs a buffer
   virtual int		inBuffCount() const {return 0;}
@@ -364,8 +365,7 @@ public:
   virtual SourceBlockSpec* srcBlock(int) {return NULL;}
     
     
-  virtual     
-  bool			InitConfig(); //  Initialize the block, return true if ok
+  virtual bool		InitConfig(); //  Initialize the block, return true if ok
   void			InitConfig_Gui(); // #LABEL_InitConfig #MENU #MENU_ON_SigProc #MENU_CONTEXT initialize the block, and all sub-items
   
 //  virtual SignalProcSet* GetParentSet() const; // gets the parent set, if any

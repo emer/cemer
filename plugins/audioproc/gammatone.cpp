@@ -665,7 +665,6 @@ void SharpenBlock::GraphFilter(DataTable* graph_data) {
 */
 
 void TemporalWindowBlock::Initialize() {
-  out_buff.stages_ro = true;
   non_lin = NL_HALF_WAVE;
   ft = FT_DEF; //
   ot = OT_SINGLE;
@@ -689,6 +688,7 @@ void TemporalWindowBlock::Initialize() {
 // DoG
   on_sigma = 0.5f;
   off_sigma = 1.0f;
+  conv_stages = 1; // set later
 }
 
 void TemporalWindowBlock::UpdateAfterEdit_impl() {
@@ -735,7 +735,6 @@ void TemporalWindowBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
     taMisc::Warning("GammatoneBlock: use of Squaring non-linearity does not apply any gain correction");
   }
     
-    
   // always calc these derived guys, to simplify checking
   out_wd = Duration::StatGetDurationSamples(
     out_rate, Duration::UN_TIME_MS, fs_in);
@@ -763,24 +762,28 @@ void TemporalWindowBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
     v_flt_wd = out_wd - lu_flt_wd;
   flt_wd = v_flt_wd + l_flt_wd + u_flt_wd;
   // at this point, each flt_wd is >= 1 integral # of out_wd slices
-  const int stages = flt_wd / out_wd;
+  conv_stages = flt_wd / out_wd;
+  if (conv_stages < 1) conv_stages = 1;
 
   if (!ok) return;
+  // we always init the conv guys
+  conv_idx.SetSize(conv_stages);
   
   if (!check) {
+    out_buff_off.enabled = (ot != OT_SINGLE);
     for (int i = 0; (ot==OT_SINGLE)? (i<1) : (i < 2); ++i) {
       DataBuffer* buff = outBuff(i);
       // output duration is set in terms of the input sample rate
       // since we are convolving the temporal filter as we get inputs
       buff->fs.SetCustom(1 / (out_rate / 1000));
       buff->fr_dur.Set(1, Duration::UN_SAMPLES);
-      // each output value is one stage by definition 
-      // but we typically need to keep several on the go
-      buff->stages = stages;
       buff->fields = src_buff->fields;
       buff->chans = src_buff->chans;
       buff->vals = src_buff->vals;
+      buff->UpdateAfterEdit();
     }
+    conv_mat.SetGeom(5, src_buff->vals, src_buff->chans,
+      src_buff->fields, 1, conv_stages);
   }
   // filter
   CheckMakeFilter(src_buff->fs, check, quiet, ok);
@@ -790,19 +793,21 @@ void TemporalWindowBlock::InitThisConfigDataOut_impl(bool check,
   bool quiet, bool& ok)
 {
   // clear out old data
-  if (!check) out_buff.mat.Reset();
+  if (!check) {
+    out_buff.mat.Clear();
+    conv_mat.Clear();
+  }
   inherited::InitThisConfigDataOut_impl(check, quiet, ok);
   if (!ok) return;
   if (check) return;
   
   // init the conv indexes, as if we've already been processing
-  conv_idx.SetGeom(1, out_buff.stages);
   for (int i = 0; i < conv_idx.size; ++i) {
     // spread the conv idx's evenly over the virtual filter range
     // because we apply in asc order, we need to preload in desc order
     // i.e. next guy out will be one most through the seq
-    int idx = ((int) ((conv_idx.size - i - 1) * ((float)flt_wd) / (float)out_buff.stages)) - v_flt_wd;
-    conv_idx.Set(idx, i);
+    int idx = ((int) ((conv_idx.size - i - 1) * ((float)flt_wd) / (float)conv_stages)) - v_flt_wd;
+    conv_idx[i] = idx;
   }
 }
 
@@ -937,7 +942,7 @@ void TemporalWindowBlock::AcceptData_impl(SignalProcBlock* src_blk,
   for (int i = 0; ((ps == PS_OK) && (i < in_mat->dim(SignalProcBlock::ITEM_DIM))); ++i) {
   
     // iterate all our outputs, convolving in, and outputting when appropriate
-    // note that we always convolve to main out_buff -- we only do on/off split 
+    // note that we always convolve to conv_buff -- we only do on/off split 
     // at data output time
     for (int ci = 0; ci < conv_idx.size; ++ci) {
       int& cidx = conv_idx.FastEl(ci); // we test/inc/set
@@ -963,31 +968,43 @@ void TemporalWindowBlock::AcceptData_impl(SignalProcBlock* src_blk,
             break;
           default: break; // compiler food
           }
-          float& item = out_mat->FastEl(val, chan, f, 0, ci);
+          float& item = conv_mat.FastEl(val, chan, f, 0, ci);
           item += (dat * filt_val);
         }
       }
-      // now, dec the conv_indx, and if < 0, means need to output and reset 
+      // now, inc the conv_indx; if overflows, means need to output and reset 
       if (++cidx >= filter.size) {
         cidx = -v_flt_wd;
-        out_buff.stage = ci;
         // if doing on/off, need to set the two items according to value of out
-        if (ot == OT_ON_OFF) {
-          out_buff_off.stage = ci;
+        if (ot == OT_SINGLE) {
           for (int f = 0; ((ps == PS_OK) && (f < fields)); ++f)
           for (int chan = 0; ((ps == PS_OK) && (chan < chans)); ++chan) 
           for (int val = 0; ((ps == PS_OK) && (val < vals)); ++val)
           {
-            float& out_val = out_mat->FastEl(val, chan, f, 0, ci);
+            float& conv_val = conv_mat.FastEl(val, chan, f, 0, ci);
+            float& out_val = out_mat->FastEl(val, chan, f, 0, out_buff.stage);
+            out_val = conv_val * auto_gain;
+            conv_val = 0.0f; // resets
+          }
+        } else { // ON_OFF
+          for (int f = 0; ((ps == PS_OK) && (f < fields)); ++f)
+          for (int chan = 0; ((ps == PS_OK) && (chan < chans)); ++chan) 
+          for (int val = 0; ((ps == PS_OK) && (val < vals)); ++val)
+          {
+            float& conv_val = conv_mat.FastEl(val, chan, f, 0, ci);
+            float& out_val = out_mat->FastEl(val, chan, f, 0, out_buff.stage);
+            float& out_val_off = out_mat_off->FastEl(val, chan, f, 0, 
+              out_buff_off.stage);
             // apply gain
-            out_val *= auto_gain;
-            float& out_val_off = out_mat_off->FastEl(val, chan, f, 0, ci);
-            if (out_val >= 0) {
+            conv_val *= auto_gain;
+            if (conv_val >= 0) {
+              out_val = conv_val;
               out_val_off = 0.0f;
             } else {
-              out_val_off = -out_val;
               out_val = 0.0f;
+              out_val_off = -conv_val;
             }
+            conv_val = 0.0f; // resets
           }
         }
         // send output
@@ -997,21 +1014,10 @@ void TemporalWindowBlock::AcceptData_impl(SignalProcBlock* src_blk,
           out_buff_off.NextIndex(); // note: always rolls over, so we don't test
           NotifyClientsBuffStageFull(&out_buff_off, 1, ps);
         }
-        // clear out the line
-        for (int f = 0; f < fields; ++f) 
-        for (int chan = 0; chan < chans; ++chan) 
-        for (int val = 0; val < vals; ++val)
-        {
-          out_mat->Set(0, val, chan, f, 0, ci);
-          if (ot == OT_ON_OFF) {
-            out_mat_off->Set(0, val, chan, f, 0, ci);
-          }
-        }
       }
     }
   }
 }
-
 
 void TemporalWindowBlock::GraphFilter(DataTable* graph_data) {
   DataBuffer* src_buff = in_block.GetBuffer();
@@ -1067,6 +1073,102 @@ void TemporalWindowBlock::GraphFilter(DataTable* graph_data) {
     graph_data->NewGraphView();
 }
 
+
+//////////////////////////////////
+//  DeltaBlock			//
+//////////////////////////////////
+
+void DeltaBlock::Initialize() {
+  degree = FIRST;
+}
+
+void DeltaBlock::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  //note: these gains are just empirical
+  float gn = 2.0f; // at least, since we split signal in two
+  gn *= (degree+2);
+  auto_gain.Set(gn, Level::UN_SCALE);
+}
+
+void DeltaBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
+{
+  inherited::InitThisConfig_impl(check, quiet, ok);
+  DataBuffer* src_buff = in_block.GetBuffer();
+  if (!src_buff) return;
+  float_Matrix* in_mat = &src_buff->mat;
+  // note: we can support any number of vals, chans, or items
+  const int data_dims = degree + 2;
+  // need enough prev stages to do the delta
+  if (CheckError((src_buff->stages < data_dims), quiet, ok,
+    "DeltaBlock: input requires degree+1 input stages"))
+    return;
+    
+  if (!ok) return;
+  
+  if (check) return;
+  data.SetSize(data_dims);
+  
+  for (int obi = 0; obi <= 1; ++obi) {
+    DataBuffer* ob = outBuff(obi);
+    ob->fs = src_buff->fs;
+    ob->fr_dur.Set(src_buff->items, Duration::UN_SAMPLES);
+    ob->fields = src_buff->fields;
+    ob->chans = src_buff->chans;
+    ob->vals = src_buff->vals;
+  }
+}
+
+void DeltaBlock::AcceptData_impl(SignalProcBlock* src_blk,
+    DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps)
+{
+  float_Matrix* in_mat = &src_buff->mat;
+  const int data_dims = degree + 2;
+  ps = PS_OK;
+  const int in_items = in_mat->dim(ITEM_DIM);
+  const int in_fields = in_mat->dim(FIELD_DIM); 
+  const int in_chans = in_mat->dim(CHAN_DIM); 
+  const int in_vals = in_mat->dim(VAL_DIM); 
+  
+  for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) { 
+    for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) 
+    for (int v = 0; ((ps == PS_OK) && (v < in_vals)); ++v)
+    {
+      for (int ch = 0;
+        ((ps == PS_OK) && (ch < in_chans)); ++ch)
+      {
+        // retrieve the data for doing the delta calcs
+        data[0] = in_mat->SafeElAsFloat(v, ch, f, i, stage);
+        for (int d = 1; d < data_dims; ++d) {
+          int dstage = src_buff->GetRelStage(stage, -d);
+          data[d] = in_mat->SafeElAsFloat(v, ch, f, i, dstage);
+        }
+        float delt = CalcDelta();
+        float pl, mi;
+        if (delt >= 0.0f) {
+          pl = delt; mi = 0.0f;
+        } else {
+          pl = 0.0f; mi = -delt;
+        }
+        // output
+        out_buff_pl.mat.FastEl(v, ch, f, out_buff_pl.item,
+          out_buff_pl.stage) = pl*auto_gain;
+        out_buff_mi.mat.FastEl(v, ch, f, out_buff_mi.item,
+          out_buff_mi.stage) = mi*auto_gain;
+      }
+    }
+    if (out_buff_pl.NextIndex()) {
+      NotifyClientsBuffStageFull(&out_buff_pl, 0, ps);
+    }
+    if (out_buff_mi.NextIndex()) {
+      NotifyClientsBuffStageFull(&out_buff_mi, 1, ps);
+    }
+  }
+}
+
+float DeltaBlock::CalcDelta() {
+//TODO: accel
+  return data[0] - data[1];
+}
 
 //////////////////////////////////
 //  IIDBlock			//

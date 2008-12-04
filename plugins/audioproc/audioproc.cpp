@@ -378,7 +378,6 @@ void Duration::AddSamples(double samp, float fs) {
 void DataBuffer::Initialize() {
   fr_dur.Set(1, Duration::UN_SAMPLES); // common default
   min_stages = 1;
-  stages_ro = false;
   fields_ro = false;
   stages = min_stages;
   stage = 0;
@@ -395,6 +394,9 @@ void DataBuffer::Initialize() {
 void DataBuffer::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   //TODO: should we invalidate stuff???
+  if (min_stages < 1) {
+    min_stages = 1;
+  }
   if (stages < min_stages) {
     stages = min_stages;
   }
@@ -468,6 +470,16 @@ bool DataBuffer::GetBaseGeomOfStageAbs(int abs_stage, MatrixGeom& geom) {
   return true;
 }
 
+int DataBuffer::GetRelStage(int stage, int offs) const {
+  int whr = stage + offs;
+  if (whr < 0) whr += stages;
+  else if (whr >= stages) whr -= stages;
+  if (TestError(((whr < 0) || (whr >= mat.geom.SafeEl(SignalProcBlock::STAGE_DIM))),
+    "GetRelStage",
+    "offs is out of bounds or data unexpectedly does not have the outer dim (eff_stage=" , String(whr), ")")) return 0;
+  return whr;
+}
+
 bool DataBuffer::GetBaseGeomOfStageRel(int rel_stage, MatrixGeom& geom) {
   int whr = stage + rel_stage;
   if (whr < 0) whr += stages;
@@ -492,6 +504,7 @@ int DataBuffer::prevStage() const {
 
 void SignalProcItem::InitConfig_Int(bool check, bool quiet, bool& ok)
 {
+  if (off()) return;
   InitConfig_impl(check, quiet, ok);
   if (!check) DataChanged(DCR_ITEM_UPDATED); // yuh think???
 }

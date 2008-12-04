@@ -247,8 +247,9 @@ public: //
   TA_BASEFUNS(TemporalWindowBlock) //
   
 public: // DO NOT USE
-  int_Matrix		conv_idx; // #READ_ONLY #EXPERT_TREE #NO_SAVE 1 item per out frame, tracks the index; pre-decrement
-
+  int			conv_stages; // #READ_ONLY #EXPERT #NO_SAVE number of conv_mat stages needed to hold the in-flight conv data 
+  int_Array		conv_idx; // #READ_ONLY #EXPERT_TREE #NO_SAVE 1 item per out frame, tracks the index; pre-decrement
+  float_Matrix		conv_mat; // #READ_ONLY #EXPERT_TREE #EXPERT #NO_SAVE
 protected:
 
   override void		UpdateAfterEdit_impl();
@@ -272,6 +273,45 @@ private:
   void	Initialize();
   void	Destroy() {CutLinks();}
   SIMPLE_COPY(TemporalWindowBlock)
+};
+
+
+class AUDIOPROC_API DeltaBlock: public OutputBlock
+{ // ##CAT_Audioproc Delta Block -- provides a delta+ (0) and - (1) channel, usually used after a TemporalWindowBlock 
+INHERITED(OutputBlock) 
+public: //
+  enum DerivDegree {
+    FIRST,		// first derivative ("velocity")
+    SECOND		// second derivative ("acceleration")
+  };
+  
+  DerivDegree		degree; // type of delta to compute
+  DataBuffer		out_buff_pl; // #SHOW_TREE plus delta
+  DataBuffer		out_buff_mi; // #SHOW_TREE minus delta
+  Level			auto_gain; // #READ_ONLY #SHOW #NO_SAVE an automatically applied gain adjustment based on the degree
+  
+  override int		outBuffCount() const {return 2;}
+  override DataBuffer* 	outBuff(int idx) {switch (idx) {
+    case 0: return &out_buff_pl;  case 1: return &out_buff_mi;} return NULL;}
+
+  
+  SIMPLE_LINKS(DeltaBlock);
+  TA_BASEFUNS(DeltaBlock) //
+
+public: //
+  float_Array		data; // #IGNORE working buffer, used by CalcDelta
+protected:
+  
+  override void		UpdateAfterEdit_impl();
+  override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok); 
+  
+  override void		AcceptData_impl(SignalProcBlock* src_blk,
+    DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps);
+  virtual float		CalcDelta();
+private:
+  void	Initialize();
+  void	Destroy() {CutLinks();}
+  SIMPLE_COPY(DeltaBlock)
 };
 
 
