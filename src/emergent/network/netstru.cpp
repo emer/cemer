@@ -292,7 +292,7 @@ void ConArray::Alloc(int sz) {
 
 void ConArray::SetSize(int sz) {
   if(sz > alloc_size) {
-    taMisc::Warning("ConArray SetSize error: requesting size:", String(sz), "more than allocated:", String(alloc_size), ".  Programmer must increase size of allocation in Connect_impl function!");
+    taMisc::Error("ConArray SetSize error: requesting size:", String(sz), "more than allocated:", String(alloc_size), ".  Programmer must increase size of allocation in Connect_impl function!");
     sz = alloc_size;
   }
   if(sz > size) {
@@ -541,7 +541,7 @@ void RecvCons::AllocCons(int no) {
 
 Connection* RecvCons::NewCon(Unit* un) {
   units.Link(un);
-  if(TestWarning(cons.size >= cons.alloc_size, "Newcon",
+  if(TestError(cons.size >= cons.alloc_size, "Newcon",
 		 "already at maximum allocated size.",
 		 "Programmer must increase size of allocation in Connect_impl function!")) {	
   }

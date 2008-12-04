@@ -48,6 +48,20 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   //TODO: should log errors on nodes > 0!!!
   if(taMisc::dmem_proc > 0) return;
 #endif
+#if !defined(NO_TA_BASE)
+  static bool cancel_mode = false;
+  static QTime prv_time;
+  if(cancel_mode) {
+    QTime cur_time = QTime::currentTime();
+    if(prv_time.secsTo(cur_time) > 60) {
+      cancel_mode = false;
+    }
+    else {
+      cerr << ".";
+      return;			// cancel!
+    }
+  }
+#endif
   // we always output to console
   if (beep_on_error) cerr << '\a'; // BEL character
   String errmsg = SuperCat(a, b, c, d, e, f, g, h, i);
@@ -59,17 +73,6 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   }
 #if !defined(NO_TA_BASE)
   if (taMisc::gui_active) {
-    static bool cancel_mode = false;
-    static QTime prv_time;
-    if(cancel_mode) {
-      QTime cur_time = QTime::currentTime();
-      if(prv_time.secsTo(cur_time) > 60) {
-	cancel_mode = false;
-      }
-      else {
-	return;			// cancel!
-      }
-    }
     bool cancel = taiChoiceDialog::ErrorDialog(NULL, errmsg);
     if(cancel) {
       cancel_mode = true;

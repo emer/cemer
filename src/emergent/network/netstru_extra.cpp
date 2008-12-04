@@ -1638,7 +1638,7 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
 	  Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc_wrp);
 	  if(su_gp == NULL) continue;
 
-	  int sugp_idx = suc.y * su_geo.x + suc.x;
+	  int sugp_idx = suc_wrp.y * su_geo.x + suc_wrp.x;
 	  alloc_sz[sugp_idx] += ru_gp->size;
 	}
       }
