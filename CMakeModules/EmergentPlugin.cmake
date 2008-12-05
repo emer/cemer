@@ -7,7 +7,7 @@
 # IMPORTANT: EMERGENT_SHARE_DIR will be set by the plugin CMakeLists.txt 
 # file, so we can use that to then find other stuff etc
 
-set(mod_path "${EMERGENT_SHARE_DIR}/Emergent/CMakeModules")
+set(mod_path "${EMERGENT_SHARE_DIR}/CMakeModules")
 
 set(CMAKE_MODULE_PATH ${mod_path})
 

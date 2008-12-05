@@ -21,17 +21,29 @@
 # To configure this file for a new plugin as a plugin programmer, skip to Step 2
 
 ################################################################
+# Step 0: ensure we have the right version of cmake and set build params
+# typically no need to change this stuff, but it has to come first
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
+
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
+################################################################
 # Step 1: Attempt to find the emergent share directory
 # from which everything else can be derived -- you do not typically
 # need to edit this code, so skip to step 2 unless you have a problem
 # with it finding the installed emergent code
 
 # note: you can add weird paths here in case it is not found on a standard path
-find_path(EMERGENT_SHARE_DIR Emergent/README
-   /usr/share
-   /usr/local/share
-   /opt/local/share
-   $ENV{SHARE}
+find_path(EMERGENT_SHARE_DIR README PATHS
+   /usr/share/Emergent
+   /usr/local/share/Emergent
+   /opt/local/share/Emergent
+   $ENV{SHARE}/Emergent
+   $ENV{EMERGENTDIR}
+   NO_DEFAULT_PATH
 )
 
 if(EMERGENT_SHARE_DIR)
@@ -41,9 +53,10 @@ else(EMERGENT_SHARE_DIR)
   message(STATUS "Could not find installed Emergent share directory -- cannot proceed further")
   message(FATAL_ERROR "Edit Step 3 of CMakeLists.txt file to include unusual paths for searching")
 endif(EMERGENT_SHARE_DIR)
+#message(FATAL_ERROR "TEMP: halt")
 
 # this includes all necessary setup stuff to setup the make process
-include(${EMERGENT_SHARE_DIR}/Emergent/CMakeModules/EmergentPluginSetup.cmake)
+include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginSetup.cmake)
 
 ################################################################
 # Step 2: set all the basic parameters about the project
@@ -107,10 +120,10 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # this grabs all the magic cmake stuff for actually making according to
 # the above settings
-include(${EMERGENT_SHARE_DIR}/Emergent/CMakeModules/EmergentPlugin.cmake)
+include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPlugin.cmake)
 
 # this actually defines a standard set of make targets for building the software
 # using the macros defined in the above include -- if you have more advanced
 # needs, you can instead look at this file and copy the commands in here instead
 # and modify them to suit your needs.
-include(${EMERGENT_SHARE_DIR}/Emergent/CMakeModules/EmergentPluginStdMake.cmake)
+include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginStdMake.cmake)
