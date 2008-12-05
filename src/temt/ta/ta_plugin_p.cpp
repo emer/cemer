@@ -147,16 +147,22 @@ void taPlugins::EnumeratePlugins() {
   for (int i = 0; i < plugin_folders.size; ++i) {
     folder = plugin_folders.FastEl(i);
     QDir pluginsDir(folder);
-    // enumerate all files in the folder, and try loading
-	// for platforms with known dylib suffixes, only look for those
+    // enumerate all files in the folder, filter by build string, then try loading
+    // for platforms with known dylib suffixes, only look for those
+    QString filt("*");
+    if (taMisc::build_str.nonempty()) {
+      filt.append("_").append(taMisc::build_str.chars());
+    }
 #ifdef TA_OS_LINUX
-    pluginsDir.setNameFilter("*.so");
+    filt += ".so";
 #elif defined(TA_OS_WIN)
-    pluginsDir.setNameFilter("*.dll");
+    filt += ".dll";
 #elif  defined(TA_OS_MAC)
-    // oops: not on 4.4.1 mac
-    //    pluginsDir.setNameFilter("*.dylib");
+    filt += ".dylib";
+#else // huh??? what else?
+    filt += ".*";
 #endif
+    pluginsDir.setNameFilter(filt);
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
       taPluginInst* pl = ProbePlugin(pluginsDir.absoluteFilePath(fileName));
       if (pl) {

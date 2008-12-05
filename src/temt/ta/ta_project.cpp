@@ -1764,8 +1764,14 @@ bool taRootBase::Startup_EnumeratePlugins() {
     plug_sub = PATH_SEP + taMisc::build_str;
   }
   // add plugin folders
-  taPlugins::AddPluginFolder(taMisc::app_dir + plug_dir + PATH_SEP + "plugins" + plug_sub);
-  taPlugins::AddPluginFolder(taMisc::user_app_dir + plug_dir + PATH_SEP + "plugins" + plug_sub);
+#ifdef TA_OS_WIN
+  taPlugins::AddPluginFolder(
+    taMisc::app_dir + PATH_SEP + "lib" + PATH_SEP + "plugins");
+#else
+  taPlugins::AddPluginFolder("/usr/local/lib/Emergent/plugins");
+#endif
+  taPlugins::AddPluginFolder(
+    taMisc::user_app_dir + PATH_SEP + "lib" + PATH_SEP + "plugins");
   taPlugins::InitLog(taMisc::prefs_dir + PATH_SEP + plug_log);
   taPlugins::EnumeratePlugins();
 
