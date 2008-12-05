@@ -2042,7 +2042,8 @@ void V1RFPrjnSpec::Connect_impl(Projection* prjn) {
 	for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
 	  for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
 	    suc_wrp = su_st + suc;
-	    suc_wrp.WrapClip(wrap, su_geo);
+	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+	      continue;
 	    Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
 	    if(su_u == NULL) continue;
 	    if(!self_con && (su_u == ru_u)) continue;

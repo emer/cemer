@@ -285,7 +285,7 @@ void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projecti
   for(i = 0; i< send_offs.size; i++) {
     te = (TessEl*)send_offs.FastEl(i);
     TwoDCoord suc = te->send_off + sctr;
-    if(suc.WrapClip(wrap, su_geo))
+    if(suc.WrapClip(wrap, su_geo) && !wrap)
       continue;
     Unit* su_u = prjn->from->FindUnitFmCoord(suc);
     if((su_u == NULL) || (!self_con && (su_u == ru_u)))
@@ -526,7 +526,7 @@ Unit* PolarRndPrjnSpec::GetUnitFmOff(UnitDistType typ, bool wrap, Projection* pr
     break;
   }
   }
-  if(suc.WrapClip(wrap, su_geom))
+  if(suc.WrapClip(wrap, su_geom) && !wrap)
     return NULL;
 
   Unit* su_u = (Unit*)prjn->from->FindUnitFmCoord(suc);
@@ -1300,7 +1300,7 @@ void GpRndTesselPrjnSpec::Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc
   for(int i = 0; i< send_gp_offs.size; i++) {
     GpTessEl* te = (GpTessEl*)send_gp_offs.FastEl(i);
     TwoDCoord suc = te->send_gp_off + sctr;
-    if(suc.WrapClip(wrap, su_geo))
+    if(suc.WrapClip(wrap, su_geo) && !wrap)
       continue;
     Unit_Group* su_gp = prjn->from->FindUnitGpFmCoord(suc);
     if(su_gp == NULL) continue;
@@ -1593,7 +1593,8 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
 	for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
 	  for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
 	    suc_wrp = suc;
-	    suc_wrp.WrapClip(wrap, su_geo);
+	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+	      continue;
 	    Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc_wrp);
 	    if(!su_gp) continue;
 
@@ -1634,7 +1635,8 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
       for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
 	for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
 	  suc_wrp = suc;
-	  suc_wrp.WrapClip(wrap, su_geo);
+	  if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+	    continue;
 	  Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc_wrp);
 	  if(su_gp == NULL) continue;
 
@@ -1669,7 +1671,8 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
       for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
 	for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
 	  suc_wrp = suc;
-	  suc_wrp.WrapClip(wrap, su_geo);
+	  if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+	    continue;
 	  Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc_wrp);
 	  if(su_gp == NULL) continue;
 
@@ -1727,7 +1730,8 @@ int TiledGpRFPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init
       for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
 	for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
 	  suc_wrp = suc;
-	  suc_wrp.WrapClip(wrap, su_geo);
+	  if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+	    continue;
 	  Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc_wrp);
 	  if(su_gp == NULL) continue;
 
