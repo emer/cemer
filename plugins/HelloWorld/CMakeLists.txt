@@ -6,7 +6,8 @@
 # cd build;
 # cmake ../ [-G see cmake --help for options] [-DMPI_BUILD=true] \
 #  [-DCMAKE_BUILD_TYPE=None | Debug | Release | RelWithDebInfo | MinSizeRel]
-#  [-DEMERGENT_PLUGIN_TYPE= User | System]
+#  [-DEMERGENT_PLUGIN_TYPE= User | System] # where to install plugin
+#  [-DCMAKE_VERBOSE_MAKEFILE=ON | OFF] # useful for tracking down issues sometimes
 #
 # ccmake ./ to edit custom options
 #
@@ -113,9 +114,6 @@ set(plugin_FILES
   build_plugin.sh
   build_plugin_dbg.sh
   )
-
-# to make the compile verbose -- useful for tracking down issues sometimes
-set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # NOTE to plugin programmer: you should be done now!  Everything below
 # is standard boilerplate code that you should not need to edit.

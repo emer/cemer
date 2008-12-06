@@ -6,9 +6,9 @@
 # for the lazy typers as well.
 
 echo "Running simple configure script wrapper around cmake build system!"
-echo "args are:"
+echo "args are (special for plugins):"
 echo "  --enable-debug (or --debug)  enable debug, non-optimized build"
-echo "  --prefix=<path>              set the install prefix to path"
+echo "  --prefix=user | system       where to install plugin: user's home dir, or system"
 echo "  --enable-mpi (or --mpi)      enable MPI distributed memory parallel build"
 echo "  --clean                      clean existing cmake cache etc first: start fresh"
 echo "  --verbose-build (or --verbose or -v) turn on verbose make output: for make probs"
@@ -31,7 +31,7 @@ do
     ;;
     --prefix | -prefix | prefix | p | -p)
       prefix=${1##*=}		# get part after =
-      cmake_cmd="$cmake_cmd -DCMAKE_INSTALL_PREFIX=$prefix"
+      cmake_cmd="$cmake_cmd -DEMERGENT_PLUGIN_TYPE=$prefix"
       shift 1
     ;;
 
