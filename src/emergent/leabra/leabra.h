@@ -210,6 +210,7 @@ public:
   };
 
   LearnVar	lrn_var;	// learning rule variant -- either XCAL, or CAL for output layers, bias weights, or comparison purposes
+  bool		sym_sb;		// symmetric softbounding: 2 * w * (1-w) -- maybe allows weights to get more extreme than regular softbounding
   float		mvl_mix;	// #CONDSHOW_OFF_lrn_var:CAL [Default range .03 - .10] amount that medium (trial) versus long (epoch) time scale learning contributes -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is short (plus phase) versus medium (trial) time scale which reflects pure error-driven learning
   float		svm_mix;	// #READ_ONLY 1-mvl_mix -- how much the short (plus phase) versus medium (trial) time-scale factor contributes to learning -- this the pure error-driven learning component -- the rest (mvl_mix = 1-svm_mix) is medium (trial) versus long (epoch) time-scale
   float		s_mix;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.9 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
@@ -217,7 +218,6 @@ public:
   float		l_dt;		// #CONDSHOW_OFF_lrn_var:CAL [Default range .001 - .01] time constant for updating the long time-scale ravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_l variable!!
   float		l_gain;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_1.8 gain for long time-scale ravg term -- needed to put into same terms as the s*r avg values used in the s and m components of learning
   float		ml_dt;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.4 time constant for updating the medium-to-long time-scale ravg_ml value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_ml variable!!
-  float		ml_gain;	// #CONDSHOW_OFF_lrn_var:CAL #DEF_1.8 gain of the medium-long time scale as it contributes to the learning threshold, as a MAX of ml and l factors
 
   float		d_gain;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_2.5 multiplier on LTD values relative to LTP values
   float		d_rev;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.15 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
@@ -2723,7 +2723,7 @@ inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_cont(LeabraCon* cn,
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
   LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
   // threshold is mix of l and ml terms:
-  float ru_thr = MAX(xcal.l_gain * ru->ravg_l, xcal.ml_gain * ru->ravg_ml);
+  float ru_thr = MAX(xcal.l_gain * ru->ravg_l, xcal.l_gain * ru->ravg_ml);
   LeabraCon* rbias = (LeabraCon*)ru->bias.Cn(0);
 
   if(xcalm.avg_updt == XCalMiscSpec::TRIAL) {
@@ -2779,8 +2779,13 @@ inline void LeabraConSpec::Compute_dWt_Rnd_XCAL(LeabraRecvCons* cg, LeabraUnit* 
 inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn)
 {
   // always do soft bounding, at this point (post agg across processors, etc)
-  if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - cn->wt);
-  else			cn->dwt *= cn->wt;
+  if(xcal.sym_sb) {
+    cn->dwt *= 2.0f * cn->wt * (1.0f - cn->wt);
+  }
+  else {
+    if(cn->dwt > 0.0f)		cn->dwt *= (1.0f - cn->wt);
+    else			cn->dwt *= cn->wt;
+  }
 
   cn->wt += cn->dwt;		// weights always linear
   // optimize: don't bother with this if always doing soft bounding above
