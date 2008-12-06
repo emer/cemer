@@ -2776,6 +2776,7 @@ bool Function_List::BrowserCollapseAll() {
 //////////////////////////
 
 void Function::Initialize() {
+  return_type = ProgVar::T_Int;
   args.var_context = ProgVar_List::VC_FuncArgs;
   return_val.name = "rval";
 }
@@ -2799,6 +2800,12 @@ void Function::UpdateAfterEdit_impl() {
   name = taMisc::StringCVar(name); // make names C legal names
   if(Program::IsForbiddenName(name))
     name = "My" + name;
+
+  // deal with obsolete return val type guy -- todo: remove at some point
+  if(return_val.var_type != ProgVar::T_Int) {
+    return_type = return_val.var_type;
+    return_val.var_type = ProgVar::T_Int;
+  }
 }
 
 void Function::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -2818,8 +2825,9 @@ void Function::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 const String Function::GenCssBody_impl(int indent_level) {
+  ProgVar rvt; rvt.var_type = return_type;
   String rval;
-  rval += cssMisc::Indent(indent_level) + return_val.GenCssType() + " " + name + "(";
+  rval += cssMisc::Indent(indent_level) + rvt.GenCssType() + " " + name + "(";
   if(args.size > 0) {
     rval += args.GenCss(0);
   }
@@ -2834,8 +2842,9 @@ const String Function::GenListing_children(int indent_level) {
 }
 
 String Function::GetDisplayName() const {
+  ProgVar rvt; rvt.var_type = return_type;
   String rval;
-  rval += return_val.GenCssType() + " " + name + "(";
+  rval += rvt.GenCssType() + " " + name + "(";
   if(args.size > 0) {
     rval += args.GenCss(0);
   }
