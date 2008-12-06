@@ -21,8 +21,8 @@ add_library(${PROJECT_NAME} SHARED ${plugin_full_SRCS})
 
 # does all the stuff to make the library link against all the right other libraries
 # final arg is for any extra libraries this plugin might want
-EMERGENT_PLUGIN_LINK_LIBRARIES(${PROJECT_NAME} "")
-# todo: something diff about a system vs. emergent plugin??
+EMERGENT_PLUGIN_LINK_LIBRARIES(${PROJECT_NAME} 
+  ${EMERGENT_PLUGIN_EXTRA_LIBRARIES})
 
 ################################################################
 # Step 5: install stuff

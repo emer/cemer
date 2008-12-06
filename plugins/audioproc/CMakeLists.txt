@@ -4,11 +4,9 @@
 # To build the plugin:
 # mkdir build;
 # cd build;
-# mkdir build;
-# cd build;
 # cmake ../ [-G see cmake --help for options] [-DMPI_BUILD=true] \
 #  [-DCMAKE_BUILD_TYPE=None | Debug | Release | RelWithDebInfo | MinSizeRel]
-#  [-DCMAKE_INSTALL_PREFIX=<path to install>]
+#  [-DEMERGENT_PLUGIN_TYPE= User | System]
 #
 # ccmake ./ to edit custom options
 #
@@ -20,26 +18,52 @@
 
 # To configure this file for a new plugin as a plugin programmer, skip to Step 2
 
-################################################################
-# Step 1: ensure we have the right version of cmake and set build params
-# typically no need to change this stuff, but it has to come first
-
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
 
-if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
+################################################################
+# Step 0: Attempt to find the emergent share directory
+# from which everything else can be derived -- you do not typically
+# need to edit this code, so skip to step 2 unless you have a problem
+# with it finding the installed emergent code
 
-# default build type is RelWithDebInfo
-IF(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE RelWithDebInfo)
-ENDIF(NOT CMAKE_BUILD_TYPE)
+# note: you can add weird paths here in case it is not found on a standard path
+# find the path, in terms of an equivalent to CMAKE_INSTALL_PREFIX
+if (WIN32)
+  find_path(EMERGENT_INSTALL_PREFIX Emergent/README PATHS
+    C:/
+    "C:/Program Files"
+    $ENV{EMERGENTDIR}
+    NO_DEFAULT_PATH
+  )
+else (WIN32)
+  find_path(EMERGENT_INSTALL_PREFIX share/Emergent/README PATHS
+    /usr
+    /usr/local
+    /opt/local
+    NO_DEFAULT_PATH
+  )
+endif (WIN32)
 
-# to enable MPI
-set(MPI_BUILD FALSE CACHE BOOL "Set to true to enable MPI distributed memory system")
+if(EMERGENT_INSTALL_PREFIX)
+  message(STATUS "Found Emergent Install Prefix Directory Successfully!!")
+  message(STATUS "EMERGENT_INSTALL_PREFIX is: ${EMERGENT_INSTALL_PREFIX}")
+else(EMERGENT_INSTALL_PREFIX)
+  message(STATUS "Could not find installed Emergent share directory -- cannot proceed further")
+  message(FATAL_ERROR "Edit Step 3 of CMakeLists.txt file to include unusual paths for searching")
+endif(EMERGENT_INSTALL_PREFIX)
 
-# to make the compile verbose -- useful for tracking down issues sometimes
-set(CMAKE_VERBOSE_MAKEFILE ON)
+if (WIN32)
+  set(EMERGENT_SHARE_DIR ${EMERGENT_INSTALL_PREFIX}/Emergent)
+else (WIN32)
+  set(EMERGENT_SHARE_DIR ${EMERGENT_INSTALL_PREFIX}/share/Emergent)
+endif (WIN32)
+
+
+################################################################
+# Step 1: ensure we have the right version of cmake and set build params
+# this includes all necessary setup stuff to setup the make process
+include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginSetup.cmake)
+
 
 ################################################################
 # Step 2: set all the basic parameters about the project
@@ -79,12 +103,14 @@ set(plugin_SRCS
 
 # this says that all the headers listed above are run through maketa (type scanning
 # system) -- if this should not be the case (rare), then make a separate list here
-set(plugin_HEADS_MAKETA ${plugin_HEADS})
+set(plugin_HEADS_MAKETA ${plugin_HEADS}) 
 
 # this says that all the headers listed above are run through moc (type scanning
 # system for Qt) -- if this should not be the case (rare), then make a separate list here
 # (typically just get a warning for files where it is not necessary)
-set(plugin_HEADS_MOC ${plugin_HEADS})
+set(plugin_HEADS_MOC 
+  audioproc_pl.h
+)
 
 # all the files necessary to compile the plugin -- used for install
 set(plugin_FILES ${plugin_HEADS} ${plugin_SRCS} CMakeLists.txt)
@@ -95,65 +121,22 @@ set(plugin_FILES ${plugin_HEADS} ${plugin_SRCS} CMakeLists.txt)
 # else see {root}/CMakeModules/FindGSL.cmake for example
 
 find_library(SNDFILE_LIBRARY sndfile)
-
+message(STATUS SNDFILE_LIBRARY: ${SNDFILE_LIBRARY})
+set(EMERGENT_PLUGIN_EXTRA_LIBRARIES sndfile)
 
 # NOTE to plugin programmer: you should be done now!  Everything below
 # is standard boilerplate code that you should not need to edit.
 
 ################################################################
-# Step 3: now the system attempts to find the emergent share directory
-# from which everything else can be derived
-
-find_path(EMERGENT_SHARE_DIR Emergent/README
-   /usr/share
-   /usr/local/share
-   /opt/local/share
-   $ENV{SHARE}
-)
-
-if(EMERGENT_SHARE_DIR)
-  message(STATUS "Found Emergent Share Directory Successfully!!")
-  message(STATUS "Share dir is: ${EMERGENT_SHARE_DIR}")
-else(EMERGENT_SHARE_DIR)
-  message(STATUS "Could not find installed Emergent share directory -- cannot proceed further")
-  message(FATAL_ERROR "Edit Step 3 of CMakeLists.txt file to include unusual paths for searching")
-endif(EMERGENT_SHARE_DIR)
-
-################################################################
-# Step 4: now use cmake modules from the installed code to 
+# Step 3: now use cmake modules from the installed code to 
 # do all the magic building of stuff for our plugin
 
-# this grabs all the magic cmake stuff
-include(${EMERGENT_SHARE_DIR}/Emergent/CMakeModules/EmergentPlugin.cmake)
+# this grabs all the magic cmake stuff for actually making according to
+# the above settings
+include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPlugin.cmake)
 
-QT4_WRAP_CPP(plugin_SRCS_MOC ${plugin_HEADS_MOC})
-
-# this sets up system to scan header files for type information using maketa
-CREATE_MAKETA_COMMAND(${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}" "${plugin_HEADS_MAKETA}")
-
-# set the full set of sources including auto-built ones here -- important that
-# _TA.cpp file is first one to make sure maketa is run first
-set(plugin_full_SRCS
-  ${PROJECT_NAME}_TA.cpp ${plugin_SRCS}
-  ${plugin_SRCS_MOC}
-)
-
-# adds the library as an official target to compile
-add_library(${PROJECT_NAME} SHARED ${plugin_full_SRCS})
-
-# does all the stuff to make the library link against all the right other libraries
-# final arg is for any extra libraries this plugin might want
-EMERGENT_PLUGIN_LINK_LIBRARIES(${PROJECT_NAME} ${SNDFILE_LIBRARY})
-# todo: something diff about a system vs. emergent plugin??
-
-################################################################
-# Step 5: install stuff
-
-#install(FILES ${plugin_FILES}
-#  DESTINATION ${EMERGENT_SHARE_DIR}/Emergent/plugins/${PROJECT_NAME}
-#)
-
-install(TARGETS ${PROJECT_NAME}
-  LIBRARY DESTINATION ${EMERGENT_PLUGIN_DEST}
-)
-
+# this actually defines a standard set of make targets for building the software
+# using the macros defined in the above include -- if you have more advanced
+# needs, you can instead look at this file and copy the commands in here instead
+# and modify them to suit your needs.
+include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginStdMake.cmake)

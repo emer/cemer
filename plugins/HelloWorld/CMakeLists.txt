@@ -4,11 +4,9 @@
 # To build the plugin:
 # mkdir build;
 # cd build;
-# mkdir build;
-# cd build;
 # cmake ../ [-G see cmake --help for options] [-DMPI_BUILD=true] \
 #  [-DCMAKE_BUILD_TYPE=None | Debug | Release | RelWithDebInfo | MinSizeRel]
-#  [-DCMAKE_INSTALL_PREFIX=<path to install>]
+#  [-DEMERGENT_PLUGIN_TYPE= User | System]
 #
 # ccmake ./ to edit custom options
 #
@@ -60,7 +58,6 @@ else (WIN32)
   set(EMERGENT_SHARE_DIR ${EMERGENT_INSTALL_PREFIX}/share/Emergent)
 endif (WIN32)
 
-#message(FATAL_ERROR "TEMP: halt")
 
 ################################################################
 # Step 1: ensure we have the right version of cmake and set build params

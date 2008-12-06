@@ -18,6 +18,7 @@ find_package(GSL)
 set(QT_USE_QT3SUPPORT 1)
 set(QT_USE_QTOPENGL 1)
 set(QT_USE_QTXML 1)
+set(QT_USE_QTNETWORK 1)
 include(${QT_USE_FILE})
 
 include_directories(${QT_INCLUDES} ${COIN_INCLUDE_DIR} ${SOQT_INCLUDE_DIR}
