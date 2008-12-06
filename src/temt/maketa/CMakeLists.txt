@@ -33,7 +33,8 @@ set(maketa_FILES ${maketa_HEADS} ${maketa_SRCS})
  add_definitions(-DNO_TA_BASE)
 # note: special definitions for compiling maketa: always optimized
 if (WIN32)
-  add_definitions(/O2)
+# :( /O2 is incompatible with /RTC1 that gets set automatically
+#  add_definitions(/O2)
 else (WIN32)
   add_definitions(-O2 -g)
 endif (WIN32)

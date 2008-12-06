@@ -82,7 +82,7 @@ set(EMERGENT_LIB_SOVERSION ${EMERGENT_VERSION_MAJOR})
 # install destinations
 if (WIN32)
   # we have issues with path spaces, so install to C:/Emergent
-  set(CMAKE_INSTALL_PREFIX "C:/")
+#try default  set(CMAKE_INSTALL_PREFIX "C:/")
   # everything gets bundled
   set(EMERGENT_INCLUDE_DEST Emergent/include)
   set(EMERGENT_SHARE_DEST Emergent)
@@ -162,6 +162,30 @@ add_subdirectory(demo/leabra)
 add_subdirectory(demo/so)
 add_subdirectory(demo/virt_env)
 add_subdirectory(demo/data_proc)
+
+# dependencies
+#TODO: fixup all those crazy dummy.cpp library things!
+add_dependencies(ta_TA.cpp maketa)
+add_dependencies(temt ta_TA.cpp)
+add_dependencies(css temt)
+add_dependencies(emergent_TA.cpp temt )
+add_dependencies(bp_TA.cpp emergent_TA.cpp )
+add_dependencies(cs_TA.cpp emergent_TA.cpp )
+add_dependencies(leabra_TA.cpp emergent_TA.cpp )
+add_dependencies(so_TA.cpp emergent_TA.cpp )
+add_dependencies(emergentlib emergent_TA.cpp bp_TA.cpp cs_TA.cpp leabra_TA.cpp so_TA.cpp)
+add_dependencies(emergent emergentlib)
+# dummy guys all here, in case we nuke them...
+add_dependencies(ta_dummy maketa)
+add_dependencies(temt ta_dummy)
+add_dependencies(css temt)
+add_dependencies(network_dummy temt )
+add_dependencies(bp_dummy network_dummy )
+add_dependencies(cs_dummy network_dummy )
+add_dependencies(leabra_dummy network_dummy )
+add_dependencies(so_dummy network_dummy )
+add_dependencies(emergentlib network_dummy bp_dummy cs_dummy leabra_dummy so_dummy)
+add_dependencies(emergent emergentlib)
 
 ########### install files ###############
 
