@@ -20,41 +20,50 @@
 
 # To configure this file for a new plugin as a plugin programmer, skip to Step 2
 
-################################################################
-# Step 0: ensure we have the right version of cmake and set build params
-# typically no need to change this stuff, but it has to come first
-
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
 
-if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
-
 ################################################################
-# Step 1: Attempt to find the emergent share directory
+# Step 0: Attempt to find the emergent share directory
 # from which everything else can be derived -- you do not typically
 # need to edit this code, so skip to step 2 unless you have a problem
 # with it finding the installed emergent code
 
 # note: you can add weird paths here in case it is not found on a standard path
-find_path(EMERGENT_SHARE_DIR README PATHS
-   /usr/share/Emergent
-   /usr/local/share/Emergent
-   /opt/local/share/Emergent
-   $ENV{SHARE}/Emergent
-   $ENV{EMERGENTDIR}
-   NO_DEFAULT_PATH
-)
+# find the path, in terms of an equivalent to CMAKE_INSTALL_PREFIX
+if (WIN32)
+  find_path(EMERGENT_INSTALL_PREFIX Emergent/README PATHS
+    C:/
+    "C:/Program Files"
+    $ENV{EMERGENTDIR}
+    NO_DEFAULT_PATH
+  )
+else (WIN32)
+  find_path(EMERGENT_INSTALL_PREFIX share/Emergent/README PATHS
+    /usr
+    /usr/local
+    /opt/local
+    NO_DEFAULT_PATH
+  )
+endif (WIN32)
 
-if(EMERGENT_SHARE_DIR)
-  message(STATUS "Found Emergent Share Directory Successfully!!")
-  message(STATUS "Share dir is: ${EMERGENT_SHARE_DIR}")
-else(EMERGENT_SHARE_DIR)
+if(EMERGENT_INSTALL_PREFIX)
+  message(STATUS "Found Emergent Install Prefix Directory Successfully!!")
+  message(STATUS "EMERGENT_INSTALL_PREFIX is: ${EMERGENT_INSTALL_PREFIX}")
+else(EMERGENT_INSTALL_PREFIX)
   message(STATUS "Could not find installed Emergent share directory -- cannot proceed further")
   message(FATAL_ERROR "Edit Step 3 of CMakeLists.txt file to include unusual paths for searching")
-endif(EMERGENT_SHARE_DIR)
+endif(EMERGENT_INSTALL_PREFIX)
+
+if (WIN32)
+  set(EMERGENT_SHARE_DIR ${EMERGENT_INSTALL_PREFIX}/Emergent)
+else (WIN32)
+  set(EMERGENT_SHARE_DIR ${EMERGENT_INSTALL_PREFIX}/share/Emergent)
+endif (WIN32)
+
 #message(FATAL_ERROR "TEMP: halt")
 
+################################################################
+# Step 1: ensure we have the right version of cmake and set build params
 # this includes all necessary setup stuff to setup the make process
 include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginSetup.cmake)
 

@@ -1767,11 +1767,14 @@ bool taRootBase::Startup_EnumeratePlugins() {
 #ifdef TA_OS_WIN
   taPlugins::AddPluginFolder(
     taMisc::app_dir + PATH_SEP + "lib" + PATH_SEP + "plugins");
-#else
-  taPlugins::AddPluginFolder("/usr/local/lib/Emergent/plugins");
-#endif
+TODO: fix this for Windows:
   taPlugins::AddPluginFolder(
     taMisc::user_app_dir + PATH_SEP + "lib" + PATH_SEP + "plugins");
+#else
+  taPlugins::AddPluginFolder("/usr/local/lib/Emergent/plugins");
+  taPlugins::AddPluginFolder(
+    taMisc::user_dir + PATH_SEP + "lib/Emergent/plugins");
+#endif
   taPlugins::InitLog(taMisc::prefs_dir + PATH_SEP + plug_log);
   taPlugins::EnumeratePlugins();
 
