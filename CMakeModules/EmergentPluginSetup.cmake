@@ -30,7 +30,7 @@ endif (NOT EMERGENT_PLUGIN_TYPE)
 
 if (EMERGENT_PLUGIN_TYPE STREQUAL "System")
   if (WIN32)
-    message(FATAL_ERROR "TODO: set up paths for Windows")
+    set(CMAKE_INSTALL_PREFIX ${EMERGENT_INSTALL_PREFIX} CACHE INTERNAL "do not change")
   else (WIN32)
     # we need to independently set CIP to be that of the root of the install
     set(CMAKE_INSTALL_PREFIX ${EMERGENT_INSTALL_PREFIX} CACHE INTERNAL "do not change")

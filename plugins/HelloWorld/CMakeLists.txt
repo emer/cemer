@@ -33,7 +33,7 @@ if (WIN32)
   find_path(EMERGENT_INSTALL_PREFIX Emergent/README PATHS
     C:/
     "C:/Program Files"
-    $ENV{EMERGENTDIR}
+    $ENV{EMERGENTDIR}/..
     NO_DEFAULT_PATH
   )
 else (WIN32)
