@@ -26,9 +26,9 @@ endif(COMMAND cmake_policy)
 # Step 1a: some standard env variables, loaded locally
 #   and fixed up for Windows
 
-file(TO_CMAKE_PATH $ENV{COINDIR} COINDIR)
+file(TO_CMAKE_PATH "$ENV{COINDIR}" COINDIR)
 # note: EMERGENTDIR is really only used on Windows
-file(TO_CMAKE_PATH $ENV{EMERGENTDIR} EMERGENTDIR)
+file(TO_CMAKE_PATH "$ENV{EMERGENTDIR}" EMERGENTDIR)
 
 ################################################################
 # Step 2: set all the basic parameters about the project
@@ -196,7 +196,7 @@ add_dependencies(emergentlib temt)
 add_dependencies(emergent emergentlib)
 # dummy guys all here, in case we nuke them...
 if (NOT WIN32)
-add_dependencies(ta_dummy maketa)
+#add_dependencies(ta_dummy maketa)
 add_dependencies(temt ta_dummy)
 add_dependencies(network_dummy temt )
 add_dependencies(bp_dummy network_dummy )

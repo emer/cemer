@@ -79,6 +79,11 @@ MACRO (CREATE_MAKETA_COMMAND _ta_name _path _maketa_headers)
 
   ADD_CUSTOM_TARGET(${_ta_name}_TA.cpp DEPENDS ${_maketa_headers})
 
+  # this target is so that other targets can depend on us
+  ADD_CUSTOM_TARGET (${_ta_name}_TA
+    DEPENDS ${pta}_TA.cpp
+  )
+
   ADD_CUSTOM_TARGET(force_ta_${_ta_name} maketa ${MAKETA_FLAGS} -autohx ${maketa_includes} ${_ta_name} ${_maketa_headers}
     WORKING_DIRECTORY ${_path}
   )
