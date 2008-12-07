@@ -11,7 +11,10 @@ echo "  --enable-debug (or --debug)  enable debug, non-optimized build"
 echo "  --prefix=user | system       where to install plugin: user's home dir, or system"
 echo "  --enable-mpi (or --mpi)      enable MPI distributed memory parallel build"
 echo "  --clean                      clean existing cmake cache etc first: start fresh"
+echo "  --build-dir=<name>           provide a custom build directory name (else auto)"
+echo "  --generator=<name>           use given code generator (-G in cmake, which also works)"
 echo "  --verbose-build (or --verbose or -v) turn on verbose make output: for make probs"
+echo " "
 echo "  (note: -- before args is optional, and - works too!)"
 echo " "
 
@@ -51,6 +54,17 @@ do
       shift 1
     ;;
 
+    --build-dir | -build-dir | build-dir | build | --build | -build)
+      build_dir=${1##*=}		# get part after =
+      shift 1
+    ;;
+
+    --generator | -generator | generator | --gen | -gen | gen | -G)
+      generator="-G ${1##*=}"		# get part after =
+      cmake_cmd="$cmake_cmd $generator"
+      shift 1
+    ;;
+
     *)
       echo "Invalid argument -- please see above list"
       shift 1
@@ -64,12 +78,16 @@ else
     cmake_cmd="$cmake_cmd -DCMAKE_VERBOSE_MAKEFILE=OFF"
 fi
 
+echo " "
+echo "####################################################"
 echo "configure script settings:"
-echo "  debug:    $debug"
-echo "  prefix:   $prefix"
-echo "  mpi:      $mpi"
-echo "  clean:    $clean"
-echo "  verbose:  $verbose_build"
+echo "  debug:        $debug"
+echo "  prefix:       $prefix"
+echo "  mpi:          $mpi"
+echo "  clean:        $clean"
+echo "  build-dir:    $build_dir"
+echo "  generator:    $generator"
+echo "  verbose:      $verbose_build"
 echo " "
 echo "  cmake command: $cmake_cmd"
 echo " "
