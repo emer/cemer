@@ -206,6 +206,7 @@ INHERITED(taOBase)
 public:
   enum LearnVar {
     XCAL,			// use XCAL default learning rule: product of separate sending and receiving unit averages (from bias weight) for short and medium time scale, relative to medium and long term averages, passed through the XCAL dwt function (see conspec for option to plot this)
+    XCAL_SR,			// XCAL with synapse-level sravg for short and medium time scales (as in cal)
     CAL,			// use standard contrastive attractor learning rule (CAL) -- good for output layers because the homeostasis factor in XCAL which may not be consistent with the statistics of the output units
   };
 
@@ -464,6 +465,9 @@ public:
 						   LeabraUnit* ru, LeabraUnit* su,
 				 float ru_thr, float sravg_s_nrm, float sravg_m_nrm);
   // #CAT_Learning medium-to-long factor != 0
+  inline void 	C_Compute_dWt_CtLeabraXCALSR_trial(LeabraCon* cn,
+				 float ru_thr, float sravg_s_nrm, float sravg_m_nrm);
+  // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- trial-wise version (requires normalization factors) -- uses synapse sravg terms
 
   inline void 	C_Compute_dWt_CtLeabraXCAL_cont(LeabraCon* cn,
 						LeabraCon* rbias, LeabraCon* sbias,
@@ -2712,6 +2716,16 @@ C_Compute_dWt_CtLeabraXCAL_trial_ml(LeabraCon* cn, LeabraCon* rbias, LeabraCon* 
 			  xcal.mvl_mix * xcal.dWtFun(sm_mix, ru_thr));
 }
 
+inline void LeabraConSpec::
+C_Compute_dWt_CtLeabraXCALSR_trial(LeabraCon* cn, 
+				float ru_thr, float sravg_s_nrm, float sravg_m_nrm) {
+  float srs = (sravg_s_nrm * cn->sravg_s);
+  float srm = (sravg_m_nrm * cn->sravg_m);
+  float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
+  cn->dwt += cur_lrate * (xcal.svm_mix * xcal.dWtFun(sm_mix, srm) + 
+			  xcal.mvl_mix * xcal.dWtFun(sm_mix, ru_thr));
+}
+
 inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_cont(LeabraCon* cn,
 					   LeabraCon* rbias, LeabraCon* sbias, float ru_thr) {
   float srs = rbias->sravg_s * sbias->sravg_s;
@@ -2745,6 +2759,13 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
 					   (LeabraCon*)su->bias.Cn(0),
 					   ru_thr, sravg_s_nrm, sravg_m_nrm);
 	}
+      }
+    }
+    else if(xcal.lrn_var == XCalLearnSpec::XCAL_SR) {
+      for(int i=0; i<cg->cons.size; i++) {
+	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+	C_Compute_dWt_CtLeabraXCALSR_trial((LeabraCon*)cg->Cn(i),
+					 ru_thr, sravg_s_nrm, sravg_m_nrm);
       }
     }
     else { // if(xcal.lrn_var == XCalLearnSpec::CAL) {
