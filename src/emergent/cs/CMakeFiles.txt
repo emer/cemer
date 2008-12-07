@@ -11,7 +11,7 @@
 # all headers that need maketa run on them
 set(cs_HEADS_MAKETA
     ../../temt/ta/ta_TA_type.h
-    ../network/emergent_TA_type.h
+    ../network/network_TA_type.h
     cs_def.h
     cs.h
     cs_v3_compat.h

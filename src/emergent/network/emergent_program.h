@@ -26,8 +26,7 @@
 class Network;
 class Layer;
 
-#include "emergent_def.h"
-#include "emergent_TA_type.h"
+#include "emergent_base.h"
 
 // note: the motivation for supporting dmem within the basic data loops is so that the
 // same project can be run transparently in dmem or non-dmem mode without modification

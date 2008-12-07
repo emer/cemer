@@ -11,7 +11,7 @@
 # all headers that need maketa run on them
 set(leabra_HEADS_MAKETA
     ../../temt/ta/ta_TA_type.h
-    ../network/emergent_TA_type.h
+    ../network/network_TA_type.h
     leabra_def.h
     leabra.h
     leabra_extra.h

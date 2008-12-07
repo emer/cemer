@@ -228,3 +228,16 @@ CONFIGURE_FILE(
 
 ADD_CUSTOM_TARGET(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+
+
+########### special targets and commands ###############
+
+# use this to remove all ta files from source tree
+ADD_CUSTOM_TARGET(clean_ta_all
+  DEPENDS clean_ta_ta clean_ta_network clean_ta_bp clean_ta_leabra clean_ta_cs clean_ta_so
+  )
+
+# ta files are only things built in source tree so this is effectively distclean
+ADD_CUSTOM_TARGET(distclean
+  DEPENDS clean_ta_all
+  )

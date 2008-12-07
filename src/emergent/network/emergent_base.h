@@ -20,7 +20,7 @@
 
 #include "ta_group.h" // this should get all the basic ta stuff
 #include "emergent_def.h"
-#include "emergent_TA_type.h"
+#include "network_TA_type.h"
 
 // global decl
 class ProjectBase; //

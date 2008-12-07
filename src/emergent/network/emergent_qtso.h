@@ -25,9 +25,6 @@
 #include "ta_qtdialog.h"
 #include "ta_qtviewer.h"
 #include "t3viewer.h"
-#include "emergent_TA_type.h"
-
-
 
 class EMERGENT_API taiSpecMember : public taiMember {
   // special for the spec type member (adds the unique box)

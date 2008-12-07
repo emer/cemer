@@ -11,9 +11,7 @@ MACRO (MAKETA_GET_INC_DIRS _MAKETA_INC_DIRS)
 ENDMACRO(MAKETA_GET_INC_DIRS)
 
 if (WIN32)
-SET(MAKETA_FLAGS -css -autohx -win_dll
-  -I${PROJECT_SOURCE_DIR}/src/temt/ta/ios-g++-3.1
-)
+SET(MAKETA_FLAGS -css -autohx -win_dll)
 
 # this is critical for allowing dependencies to work out, and for compiling w/out extra load
 MACRO (SET_TA_PROPS _ta_name _path)
@@ -48,9 +46,7 @@ ENDMACRO (CREATE_MAKETA_COMMAND)
 else (WIN32)
 
 # TODO: add a find cpp thing
-SET(MAKETA_FLAGS -hx -css -cpp=\"g++ -E\"
-  -I${PROJECT_SOURCE_DIR}/src/temt/ta/ios-g++-3.1
-)
+SET(MAKETA_FLAGS -hx -css -cpp=\"g++ -E\")
 
 MACRO (SET_TA_PROPS _ta_name _path)
   SET_SOURCE_FILES_PROPERTIES(${_path}/${_ta_name}_TA.cpp
@@ -84,8 +80,13 @@ MACRO (CREATE_MAKETA_COMMAND _ta_name _path _maketa_headers)
     DEPENDS ${pta}_TA.cpp
   )
 
-  ADD_CUSTOM_TARGET(force_ta_${_ta_name} maketa ${MAKETA_FLAGS} -autohx ${maketa_includes} ${_ta_name} ${_maketa_headers}
+  ADD_CUSTOM_TARGET(force_ta_${_ta_name}
+    COMMAND maketa ${MAKETA_FLAGS} -autohx ${maketa_includes} ${_ta_name} ${_maketa_headers}
     WORKING_DIRECTORY ${_path}
+  )
+
+  ADD_CUSTOM_TARGET(clean_ta_${_ta_name}
+    COMMAND rm -f ${pta}_TA.cpp ${pta}_TA_type.h ${pta}_TA_inst.h ${pta}_TA.ccx ${pta}_TA_type.hx ${pta}_TA_inst.hx
   )
 
   SET_TA_PROPS(${_ta_name} ${_path})

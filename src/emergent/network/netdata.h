@@ -20,11 +20,8 @@
 #ifndef NETDATA_H
 #define NETDATA_H
 
-#include "emergent_def.h"
 #include "ta_dataproc.h"
 #include "netstru.h"
-
-#include "emergent_TA_type.h"
 
 //////////////////////////////////////////
 //	Layer Reader / Writer		//

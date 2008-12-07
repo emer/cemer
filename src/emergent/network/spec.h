@@ -20,7 +20,6 @@
 #define SPEC_H
 
 #include "emergent_base.h"
-#include "emergent_TA_type.h"
 
 // forwards this file
 

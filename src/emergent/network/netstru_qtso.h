@@ -54,7 +54,6 @@
 #include "netstru.h"
 #include "emergent_qtso.h"
 //#include "ta_qtdata.h"
-#include "emergent_TA_type.h"
 
 #include "safeptr_so.h"
 #include "netstru_so.h"
