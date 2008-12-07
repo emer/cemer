@@ -2303,7 +2303,7 @@ void taBase::Help() {
 	       "Sorry, no help available")) return;
   String help_cmd = taMisc::help_cmd;
   help_cmd.gsub("%s", full_file);
-  system(help_cmd);
+  int rval = system(help_cmd);	// rval is compiler food
 }
 
 ///////////////////////////////////////////////////////////////////////////

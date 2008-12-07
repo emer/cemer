@@ -1641,7 +1641,7 @@ bool taImageProc::RenderOccluderBorderColor_float(float_Matrix& img_data,
   }
   TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
   TwoDCoord ll;
-  ll.x = (int)(img_size.x * llx);  ll.y = (int)img_size.y * lly;
+  ll.x = (int)(img_size.x * llx);  ll.y = (int)(img_size.y * lly);
   TwoDCoord ur;
   ur.x = (int)(img_size.x * urx);  ur.y = (int)(img_size.y * ury);
   float oavg = img_data.FastEl(0,0); // assuming already has renderborder called

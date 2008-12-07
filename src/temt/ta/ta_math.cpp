@@ -309,7 +309,7 @@ typedef union {
 double taMath_double::exp_fast(double x) {
   _eco tmp;
   tmp.n.j = 0;
-  tmp.n.i = EXP_A*x + (1072693248 - EXP_C);
+  tmp.n.i = (int)(EXP_A*x + (1072693248 - EXP_C));
   return tmp.d;
 }
 

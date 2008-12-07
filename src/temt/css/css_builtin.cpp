@@ -1024,8 +1024,9 @@ static cssEl* cssElCFun_step_stub(int na, cssEl* arg[]) {
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_system_stub(int, cssEl* arg[]) {
-  system((const char*)*arg[1]);
-  return &cssMisc::Void;
+  cssInt* rval = new cssInt();
+  rval->val = system((const char*)*arg[1]); // rval is compiler food
+  return rval;
 }
 static cssEl* cssElCFun_type_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
