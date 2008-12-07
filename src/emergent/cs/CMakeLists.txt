@@ -7,6 +7,7 @@ set(mypath ${PROJECT_SOURCE_DIR}/src/emergent/cs)
 
 CREATE_MAKETA_COMMAND(cs ${mypath} "${cs_HEADS_MAKETA}")
 
+if (NOT WIN32)
 # setup dependency between dummy.cpp file included in dummy library and TA file we 
 # actually want to generate now
 SET_SOURCE_FILES_PROPERTIES(dummy.cpp
@@ -15,6 +16,7 @@ SET_SOURCE_FILES_PROPERTIES(dummy.cpp
 
 # need a target to get anything to happen in this directory, so this is it
 add_library(cs_dummy STATIC dummy.cpp)
+endif (NOT WIN32)
 
 ########### install files ###############
 

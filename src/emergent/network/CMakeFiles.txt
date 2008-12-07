@@ -76,7 +76,7 @@ set(network_SRCS
     ${network_SRCS_GUI}
     emergent_ti.cpp
     v3_compat.cpp
-    emergent_TA.cpp
+    network_TA.cpp
 )
 
 set(network_FILES ${network_HEADS} ${network_SRCS})

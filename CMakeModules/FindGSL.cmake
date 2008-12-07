@@ -12,22 +12,43 @@ FIND_PATH(GSL_INCLUDE_DIR gsl/gsl_matrix.h
         /usr/local/include
 	/opt/local/include
     $ENV{INCLUDE}
-    $ENV{EMERGENTDIR}/3rdparty/include
+    ${EMERGENTDIR}/3rdparty/include
 )
 
-FIND_LIBRARY(GSL_GSL_LIBRARY NAMES gsl PATH
-    /usr/lib
-    /usr/local/lib
-    /opt/local/lib
-    $ENV{EMERGENTDIR}/3rdparty/lib
-) 
+# NOTE: General FIND_LIBRARY not working for some reason on Windows, but we want our own prereq
+# anyways, and must use the debug version (because of runtime linkage) when in Debug anyways
 
-FIND_LIBRARY(GSL_CBLAS_LIBRARY NAMES cblas gslcblas PATH
+if (WIN32)
+  if (CMAKE_BUILD_TYPE MATCHES "Debug")
+    IF (EXISTS ${EMERGENTDIR}/3rdparty/lib/gsl_d.lib)
+      SET(GSL_GSL_LIBRARY "${EMERGENTDIR}/3rdparty/lib/gsl_d.lib")
+    ENDIF (EXISTS ${EMERGENTDIR}/3rdparty/lib/gsl_d.lib)
+    IF (EXISTS ${EMERGENTDIR}/3rdparty/lib/cblas_d.lib)
+      SET(GSL_CBLAS_LIBRARY "${EMERGENTDIR}/3rdparty/lib/cblas_d.lib")
+    ENDIF (EXISTS ${EMERGENTDIR}/3rdparty/lib/cblas_d.lib)
+  else (CMAKE_BUILD_TYPE MATCHES "Debug") 
+    IF (EXISTS ${EMERGENTDIR}/3rdparty/lib/gsl.lib)
+      SET(GSL_GSL_LIBRARY "${EMERGENTDIR}/3rdparty/lib/gsl.lib")
+    ENDIF (EXISTS ${EMERGENTDIR}/3rdparty/lib/gsl.lib)
+    IF (EXISTS ${EMERGENTDIR}/3rdparty/lib/cblas.lib)
+      SET(GSL_CBLAS_LIBRARY "${EMERGENTDIR}/3rdparty/lib/cblas.lib")
+    ENDIF (EXISTS ${EMERGENTDIR}/3rdparty/lib/cblas.lib)
+  endif (CMAKE_BUILD_TYPE MATCHES "Debug")
+else (WIN32)
+  FIND_LIBRARY(GSL_GSL_LIBRARY NAMES gsl PATH
+    /usr/lib
+    /usr/local/lib
+    /opt/local/lib
+    ${EMERGENTDIR}/3rdparty/lib
+  ) 
+
+  FIND_LIBRARY(GSL_CBLAS_LIBRARY NAMES cblas gslcblas PATH
     /usr/lib
     /usr/local/lib
     /opt/local/lib
     $ENV{EMERGENTDIR}/3rdparty/lib
-) 
+  ) 
+ endif (WIN32) 
 
 #hack because finding lib on Windows not working for some reason...
 IF (WIN32)

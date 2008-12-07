@@ -13,24 +13,30 @@ FIND_PATH(SOQT_INCLUDE_DIR SoQt.h
 	/opt/local/include/Inventor/Qt
 	/Library/Frameworks/SoQt.framework/Headers
     $ENV{INCLUDE}
-    $ENV{COINDIR}/include/Inventor/Qt
+    ${COINDIR}/include/Inventor/Qt
 )
 #MESSAGE("SOQT_INCLUDE_DIR=" ${SOQT_INCLUDE_DIR})
 
-FIND_LIBRARY(SOQT_LIBRARY NAMES SoQt PATH
-   /usr/lib
-   /usr/local/lib
-   /opt/local/lib
-) 
+# NOTE: General FIND_LIBRARY not working for some reason on Windows, but we want our own prereq
+# anyways, and must use the debug version (because of runtime linkage) when in Debug anyways
 
-#hack because finding lib on Windows not working for some reason...
-IF (WIN32)
-  IF (NOT SOQT_LIBRARY)
-    IF (EXISTS $ENV{COINDIR}/lib/soqt1.lib)
-      SET(SOQT_LIBRARY "$ENV{COINDIR}/lib/soqt1.lib")
-    ENDIF (EXISTS $ENV{COINDIR}/lib/soqt1.lib)
-  ENDIF (NOT SOQT_LIBRARY)
-ENDIF (WIN32)
+if (WIN32)
+  if (CMAKE_BUILD_TYPE MATCHES "Debug")
+    IF (EXISTS ${COINDIR}/lib/soqt1d.lib)
+      SET(SOQT_LIBRARY "${COINDIR}/lib/soqt1d.lib")
+    ENDIF (EXISTS ${COINDIR}/lib/soqt1d.lib)
+  else (CMAKE_BUILD_TYPE MATCHES "Debug") 
+    IF (EXISTS ${COINDIR}/lib/soqt1.lib)
+      SET(SOQT_LIBRARY "${COINDIR}/lib/soqt1.lib")
+    ENDIF (EXISTS ${COINDIR}/lib/soqt1.lib)
+  endif (CMAKE_BUILD_TYPE MATCHES "Debug")
+else (WIN32)
+  FIND_LIBRARY(SOQT_LIBRARY NAMES SoQt PATH
+    /usr/lib
+    /usr/local/lib
+    /opt/local/lib
+  ) 
+ endif (WIN32) 
 
 # handle the QUIETLY and REQUIRED arguments and set COIN_FOUND to TRUE if 
 # all listed variables are TRUE

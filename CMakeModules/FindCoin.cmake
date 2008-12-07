@@ -13,20 +13,34 @@ FIND_PATH(COIN_INCLUDE_DIR SbVec3f.h
 	/opt/local/include/Inventor
 	/Library/Frameworks/Inventor.framework/Headers
     $ENV{INCLUDE}
-    $ENV{COINDIR}/include/Inventor
+    ${COINDIR}/include/Inventor
 )
 
-# NOTE: it is not finding the coin framework because the name is Inventor but the lib is Coin!
+# NOTE: Mac is not finding the coin framework because the name is Inventor but the lib is Coin!
 # SoQt works perfectly just right out of the bag
+# NOTE: General FIND_LIBRARY not working for some reason on Windows, but we want our own prereq
+# anyways, and must use the debug version (because of runtime linkage) when in Debug anyways
 
-FIND_LIBRARY(COIN_LIBRARY NAMES Coin PATH
-   C:/Coin-2.5.0/lib
-   /usr/lib
-   /usr/local/lib
-   /opt/local/lib
-   /Library/Frameworks/Inventor.framework/Libraries
-   $ENV{COINDIR}/lib
-) 
+if (WIN32)
+  if (CMAKE_BUILD_TYPE MATCHES "Debug")
+    IF (EXISTS ${COINDIR}/lib/coin2d.lib)
+      SET(COIN_LIBRARY "${COINDIR}/lib/coin2d.lib")
+    ENDIF (EXISTS ${COINDIR}/lib/coin2d.lib)
+  else (CMAKE_BUILD_TYPE MATCHES "Debug") 
+    IF (EXISTS ${COINDIR}/lib/coin2.lib)
+      SET(COIN_LIBRARY "${COINDIR}/lib/coin2.lib")
+    ENDIF (EXISTS ${COINDIR}/lib/coin2.lib)
+  endif (CMAKE_BUILD_TYPE MATCHES "Debug")
+else (WIN32)
+  FIND_LIBRARY(COIN_LIBRARY NAMES Coin PATH
+    /usr/lib
+    /usr/local/lib
+    /opt/local/lib
+    /Library/Frameworks/Inventor.framework/Libraries
+    ${COINDIR}/lib
+  )
+ endif (WIN32) 
+
 #MESSAGE("COIN_LIBRARY=" ${COIN_LIBRARY})
 # special work-around for Coin Framework
 IF (APPLE)
@@ -37,16 +51,6 @@ IF (APPLE)
     ENDIF (EXISTS /Library/Frameworks/Inventor.framework/Libraries)
   ENDIF (NOT COIN_LIBRARY)
 ENDIF (APPLE)
-
-#hack because finding lib on Windows not working for some reason...
-IF (WIN32)
-  IF (NOT COIN_LIBRARY)
-    IF (EXISTS $ENV{COINDIR}/lib/coin2.lib)
-      SET(COIN_LIBRARY "$ENV{COINDIR}/lib/coin2.lib")
-    ENDIF (EXISTS $ENV{COINDIR}/lib/coin2.lib)
-  ENDIF (NOT COIN_LIBRARY)
-ENDIF (WIN32)
-#MESSAGE("COIN_LIBRARY=" ${COIN_LIBRARY})
 
 # handle the QUIETLY and REQUIRED arguments and set COIN_FOUND to TRUE if 
 # all listed variables are TRUE

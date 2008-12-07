@@ -223,6 +223,7 @@ set(ta_SRCS_GUI
 # all source files to compile: NOTE: do NOT include .moc files -- auto generated
 # but DO include _TA.cpp files
 set(ta_SRCS
+  ta_TA.cpp
   ta_platform.cpp
   ta_thread.cpp
   ta_string.cpp
@@ -270,7 +271,6 @@ set(ta_SRCS
   ${ta_SRCS_GUI}
   ta_qrc.cpp
   ta_ti.cpp
-  ta_TA.cpp
 )
 
 set(ta_FILES ${ta_HEADS} ${ta_SRCS})

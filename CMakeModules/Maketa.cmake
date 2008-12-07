@@ -11,7 +11,7 @@ MACRO (MAKETA_GET_INC_DIRS _MAKETA_INC_DIRS)
 ENDMACRO(MAKETA_GET_INC_DIRS)
 
 if (WIN32)
-SET(MAKETA_FLAGS -css -win_dll
+SET(MAKETA_FLAGS -css -autohx -win_dll
   -I${PROJECT_SOURCE_DIR}/src/temt/ta/ios-g++-3.1
 )
 
@@ -25,16 +25,18 @@ ENDMACRO(SET_TA_PROPS)
 MACRO (CREATE_MAKETA_COMMAND _ta_name _path _maketa_headers)
   MAKETA_GET_INC_DIRS(maketa_includes)
   
-  SET(pta ${_path}/${_ta_name})
+  SET(pta "${_path}/${_ta_name}")
   
   ADD_CUSTOM_COMMAND (
     OUTPUT ${pta}_TA.cpp ${pta}_TA_type.h ${pta}_TA_inst.h 
-    WORKING_DIRECTORY ${_path}
     COMMAND maketa ${MAKETA_FLAGS} ${maketa_includes} ${_ta_name} ${_maketa_headers}
-    DEPENDS ${_maketa_headers}
-    )
-
-  ADD_CUSTOM_TARGET(${_ta_name}_TA.cpp DEPENDS ${_maketa_headers})
+    WORKING_DIRECTORY ${_path}
+    MAIN_DEPENDENCY ${_maketa_headers}
+  )
+  # this target is so that other targets can depend on us
+  ADD_CUSTOM_TARGET (${_ta_name}_TA
+    DEPENDS ${pta}_TA_type.h
+  )
 
   ADD_CUSTOM_TARGET(force_ta_${_ta_name} maketa ${MAKETA_FLAGS}  ${maketa_includes} ${_ta_name} ${_maketa_headers}
     WORKING_DIRECTORY ${_path}

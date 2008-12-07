@@ -23,6 +23,14 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 ################################################################
+# Step 1a: some standard env variables, loaded locally
+#   and fixed up for Windows
+
+file(TO_CMAKE_PATH $ENV{COINDIR} COINDIR)
+# note: EMERGENTDIR is really only used on Windows
+file(TO_CMAKE_PATH $ENV{EMERGENTDIR} EMERGENTDIR)
+
+################################################################
 # Step 2: set all the basic parameters about the project
 
 PROJECT(emergent)
@@ -125,6 +133,16 @@ message( STATUS "MPI_BUILD = ${MPI_BUILD}   (true or false)" )
 message( STATUS )
 message( STATUS "Change a value with: cmake -D<Variable>=<Value>" )
 message( STATUS "-------------------------------------------------------------------------------" )
+message( STATUS "********************* Summary of Prerequisities  ******************************" )
+message( STATUS "-------------------------------------------------------------------------------" )
+message( STATUS "QT_LIBRARIES = ${QT_LIBRARIES}" )
+message( STATUS "COIN_LIBRARY = ${COIN_LIBRARY}" )
+message( STATUS "SOQT_LIBRARY = ${SOQT_LIBRARY}" )
+message( STATUS "GSL_LIBRARIES = ${GSL_LIBRARIES}" )
+message( STATUS "ODE_LIBRARY = ${ODE_LIBRARY}" )
+if (NOT WIN32)
+message( STATUS "READLINE_LIBRARY = ${READLINE_LIBRARY}" )
+endif (NOT WIN32)
 
 
 ####################################
@@ -163,29 +181,30 @@ add_subdirectory(demo/so)
 add_subdirectory(demo/virt_env)
 add_subdirectory(demo/data_proc)
 
-# dependencies
+# dependencies -- note: the TA deps are permissive (i.e. don't depend on prior libs etc.)
 #TODO: fixup all those crazy dummy.cpp library things!
-add_dependencies(ta_TA.cpp maketa)
-add_dependencies(temt ta_TA.cpp)
+add_dependencies(temt maketa)
+add_dependencies(temt ta_TA)
 add_dependencies(css temt)
-add_dependencies(emergent_TA.cpp temt )
-add_dependencies(bp_TA.cpp emergent_TA.cpp )
-add_dependencies(cs_TA.cpp emergent_TA.cpp )
-add_dependencies(leabra_TA.cpp emergent_TA.cpp )
-add_dependencies(so_TA.cpp emergent_TA.cpp )
-add_dependencies(emergentlib emergent_TA.cpp bp_TA.cpp cs_TA.cpp leabra_TA.cpp so_TA.cpp)
+add_dependencies(network_TA ta_TA )
+add_dependencies(bp_TA network_TA )
+add_dependencies(cs_TA network_TA )
+add_dependencies(leabra_TA network_TA )
+add_dependencies(so_TA network_TA )
+add_dependencies(emergentlib temt network_TA bp_TA cs_TA leabra_TA so_TA)
+add_dependencies(emergentlib temt)
 add_dependencies(emergent emergentlib)
 # dummy guys all here, in case we nuke them...
+if (NOT WIN32)
 add_dependencies(ta_dummy maketa)
 add_dependencies(temt ta_dummy)
-add_dependencies(css temt)
 add_dependencies(network_dummy temt )
 add_dependencies(bp_dummy network_dummy )
 add_dependencies(cs_dummy network_dummy )
 add_dependencies(leabra_dummy network_dummy )
 add_dependencies(so_dummy network_dummy )
 add_dependencies(emergentlib network_dummy bp_dummy cs_dummy leabra_dummy so_dummy)
-add_dependencies(emergent emergentlib)
+endif (NOT WIN32)
 
 ########### install files ###############
 

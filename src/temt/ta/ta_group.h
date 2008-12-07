@@ -120,7 +120,7 @@ public:
   ////////////////////////////////////////////////
   // 	functions that return the type		//
   ////////////////////////////////////////////////
-
+#ifndef __MAKETA__
   TAGPtr	Gp_(int i) const	{ return gp.SafeEl(i); } // #IGNORE
   TAGPtr 	FastGp_(int i) const	{ return gp.FastEl(i); } // #IGNORE
   virtual taBase* Leaf_(int idx) const;	// #IGNORE DFS through all subroups for leaf i
@@ -160,7 +160,7 @@ public:
       lf.i = lf.cgp->size - 1;}
     return (taBase*)lf.cgp->el[lf.i];}
   inline taBase*	PrevEl(taLeafItr& lf) const {return PrevEl_(lf);} // #IGNORE
-
+#endif
   virtual TAGPtr  NewGp_(int no, TypeDef* typ=NULL, const String& name_ = "");
     // #IGNORE create sub groups
   virtual taBase* NewEl_(int no, TypeDef* typ=NULL);	// #IGNORE create items
