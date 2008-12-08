@@ -19,7 +19,7 @@
 // everything includes emergent_base.h, this is the minimal include
 
 #include "ta_group.h" // this should get all the basic ta stuff
-#include "emergent_def.h"
+#include "network_def.h"
 #include "network_TA_type.h"
 
 // global decl

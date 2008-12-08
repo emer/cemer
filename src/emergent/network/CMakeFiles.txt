@@ -11,7 +11,7 @@
 # all headers that need maketa run on them
 set(network_HEADS_MAKETA
     ../../temt/ta/ta_TA_type.h
-    emergent_def.h
+    network_def.h
     emergent_base.h
     spec.h
     netstru.h
@@ -36,7 +36,7 @@ set(network_HEADS_GUI
 
 # all heads -- include maketa generated ones here
 set(network_HEADS
-    emergent_def.h
+    network_def.h
     emergent_base.h
     spec.h
     netstru.h

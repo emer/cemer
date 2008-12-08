@@ -22,7 +22,7 @@
 #ifndef V3_COMPAT_H
 #define V3_COMPAT_H
 
-#include "emergent_def.h"
+#include "network_def.h"
 
 #include "ta_script.h"
 #include "ta_time.h"

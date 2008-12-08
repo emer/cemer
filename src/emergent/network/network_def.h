@@ -35,6 +35,6 @@
 #else 
 #define EMERGENT_API
 #endif
-
+#define NETWORK_API EMERGENT_API
 
 #endif // EMERGENT_DEF_H

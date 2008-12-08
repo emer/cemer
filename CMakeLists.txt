@@ -181,30 +181,19 @@ add_subdirectory(demo/so)
 add_subdirectory(demo/virt_env)
 add_subdirectory(demo/data_proc)
 
-# dependencies -- note: the TA deps are permissive (i.e. don't depend on prior libs etc.)
-#TODO: fixup all those crazy dummy.cpp library things!
-add_dependencies(temt maketa)
-add_dependencies(temt ta_TA)
-add_dependencies(css temt)
-add_dependencies(network_TA ta_TA )
-add_dependencies(bp_TA network_TA )
-add_dependencies(cs_TA network_TA )
-add_dependencies(leabra_TA network_TA )
-add_dependencies(so_TA network_TA )
-add_dependencies(emergentlib temt network_TA bp_TA cs_TA leabra_TA so_TA)
-add_dependencies(emergentlib temt)
-add_dependencies(emergent emergentlib)
-# dummy guys all here, in case we nuke them...
-if (NOT WIN32)
-#add_dependencies(ta_dummy maketa)
+# dependencies -- each _dummy is a proxy for the TA build for that folder
+add_dependencies(ta_dummy maketa)
 add_dependencies(temt ta_dummy)
+add_dependencies(css temt)
+#note: we have to make n_d dep on temt otherwise VS will build all the TAs first (slow)
 add_dependencies(network_dummy temt )
+#add_dependencies(network_dummy ta_dummy )
 add_dependencies(bp_dummy network_dummy )
 add_dependencies(cs_dummy network_dummy )
 add_dependencies(leabra_dummy network_dummy )
 add_dependencies(so_dummy network_dummy )
-add_dependencies(emergentlib network_dummy bp_dummy cs_dummy leabra_dummy so_dummy)
-endif (NOT WIN32)
+add_dependencies(emergentlib temt network_dummy bp_dummy cs_dummy leabra_dummy so_dummy)
+add_dependencies(emergent emergentlib)
 
 ########### install files ###############
 
