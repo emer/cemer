@@ -363,6 +363,7 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd, b
   // defaults for values -- some of the guys below alter these, before we read them
   rows = 1;
   header = false;
+  markers = false;
   
   // cmd decodes
   bool get = false;
@@ -429,6 +430,7 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd, b
   col_from = tc->name_params.GetValDef("col_from", 0).toInt();
   col_to = tc->name_params.GetValDef("col_to", -1).toInt();
   header = tc->name_params.GetValDef("header", header).toBool();
+  markers = tc->name_params.GetValDef("markers", markers).toBool();
   
   // init vals that need to be correctly set even if validation fails
   if (header) lines = 1; else lines = 0;
@@ -572,7 +574,7 @@ void TemtClient::cmdGetData() {
   
   // header row, if any
   if (p.header) {
-    tab->SaveHeader_strm(ostr);
+    tab->SaveHeader_strm(ostr, DataTable::TAB, p.markers);
     ln = ostr.str().c_str();
     Write(ln);
   }
@@ -583,7 +585,7 @@ void TemtClient::cmdGetData() {
     ostr.clear();
     tab->SaveDataRow_strm(ostr, row, DataTable::TAB, 
       true, // quote_str
-      false, // row_mark
+      p.markers, // row_mark
       p.col_from, p.col_to);
     ln = ostr.str().c_str();
     Write(ln);
@@ -713,8 +715,8 @@ void TemtClient::cmdRemoveData() {
   bool cmd_ok = p.ValidateParams(TemtClient::TableParams::Remove);
   if (!cmd_ok) return;
   
-  // ok if none
-  if (p.row_from >= 0) {
+  // ok if none; noop if start > rows
+  if ((p.row_from >= 0) && (p.row_from < tab->rows)) {
     if (!tab->RemoveRows(p.row_from, p.rows)) {
       SendError("RemoveRows command on table '" + tnm + "' did not succeed");
       return;

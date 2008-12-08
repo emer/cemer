@@ -156,6 +156,7 @@ protected:
     int lines;
     int cell;
     };
+    bool markers;
     
     bool	ValidateParams(Cmd cmd = Get, bool mat = false);
     TableParams(TemtClient* tc_, DataTable* tab_)
