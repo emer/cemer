@@ -599,9 +599,9 @@ void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
   } else if (nm[0] == '&') {
     nm = nm.after('&');
     vt = VT_VARIANT;
-  } else {
+  } /*no: caller must set default else {
     vt = VT_FLOAT;
-  }
+  }*/
   
   if(nm.contains('[')) {
     String mat_info = nm;
@@ -1863,15 +1863,14 @@ DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
   if(da) {
     if(da->valType() != (ValType)val_type) {
       StructUpdate(true);
-      DataCol* nda;
+      // need to remove old guy first, because validate doesn't permit dupl names
+      data.RemoveEl(da); // get rid of that guy
       if(dims > 0)
-	nda = NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4, d5, d6);
+	da = NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4, d5, d6);
       else
-	nda = NewCol(val_type, col_nm);
+	da = NewCol(val_type, col_nm);
       data.MoveIdx(data.size-1, col_idx);
-      data.RemoveEl(da);	// get rid of that guy
-      da = nda;
-      nda->EnforceRows(rows);	// keep row-constant
+      da->EnforceRows(rows);	// keep row-constant
       StructUpdate(false);
     } else if(da->cell_dims() != dims) {
       StructUpdate(true);
@@ -2421,11 +2420,18 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim) {
     int val_typ;
     MatrixGeom mat_idx;
     MatrixGeom mat_geom;
+    // val_typ =-1 means type not explicitly supplied -- we'll use existing if name found
     DataCol::DecodeHeaderName(str, base_nm, val_typ, mat_idx, mat_geom);
     int idx;
     DataCol* da = FindColName(base_nm, idx);
+    if (val_typ < 0) {
+     if (da) val_typ = da->valType(); // the actual type
+     else val_typ = VT_FLOAT; // the default type
+    }
     if(!da || (da->valType() != val_typ)) { // only make new one if val type doesn't match
-      // geom was made on first col and should not be remade..
+      // mat_geom is only decorated onto first col and should not be remade...
+      // if none was supplied, then set it for scalar col (the default)
+      if (mat_geom.size == 0)
       da = FindMakeColName(base_nm, idx, (ValType)val_typ, mat_geom.size,
 			   mat_geom[0], mat_geom[1], mat_geom[2],
 			   mat_geom[3]);
@@ -2526,15 +2532,26 @@ int DataTable::LoadHeader_strm(istream& strm, Delimiters delim) {
 }
 
 int DataTable::LoadDataRow_strm(istream& strm, Delimiters delim, bool quote_str) {
+  ResetLoadSchema();
+  return LoadDataRow_impl(strm, delim, quote_str);
+}
+
+int DataTable::LoadDataRowEx_strm(istream& strm, Delimiters delim,
+  bool quote_str, bool reset_load_schema) 
+{
+  if (reset_load_schema)
+    ResetLoadSchema();
+  return LoadDataRow_impl(strm, delim, quote_str);
+}
+
+void DataTable::ResetLoadSchema() const {
   load_col_idx.Reset();
   load_mat_idx.Reset();
-  return LoadDataRow_impl(strm, delim, quote_str);
 }
 
 void DataTable::LoadData_strm(istream& strm, Delimiters delim, bool quote_str, int max_recs) {
   StructUpdate(true);
-  load_col_idx.Reset();
-  load_mat_idx.Reset();
+  ResetLoadSchema();
   int st_row = rows;
   while(true) {
     int c = LoadDataRow_impl(strm, delim, quote_str);

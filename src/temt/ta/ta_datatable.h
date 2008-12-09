@@ -993,6 +993,8 @@ public:
   virtual int 		LoadDataRow_strm(istream& strm, Delimiters delim = TAB,
     bool quote_str = true);
   // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
+  int 			LoadDataRowEx_strm(istream& strm, Delimiters delim = TAB,
+    bool quote_str = true, bool reset_load_schema = true); // #IGNORE used by Server
   virtual void 		LoadData(const String& fname, Delimiters delim = TAB,
 				 bool quote_str = true, int max_recs = -1, bool reset_first=false);
   // #CAT_File #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings, reset_first = remove any existing data prior to loading
@@ -1000,7 +1002,7 @@ public:
   // #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
   virtual int 		LoadDataRow(const String& fname, Delimiters delim = TAB, bool quote_str = true);
   // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
-  
+  void			ResetLoadSchema() const; // #IGNORE can be used by ex Server to reset the load schema at beginning of a load
  
   /////////////////////////////////////////////////////////
   // calculated column values

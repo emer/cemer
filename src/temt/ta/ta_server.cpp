@@ -537,18 +537,28 @@ void TemtClient::cmdAppendData() {
   
   //note: we must have enough lines to have made it here
   tab->StructUpdate(true);
+  int ln_num = 0; // to do header/init stuff
   while ((p.lines > 0) && (lines.size > 0)) {
     String ln;
     //note: parser needs the eol, so we have to add it back in
     ln = lines.FastEl(0) + '\n';
     lines.RemoveIdx(0);
     p.lines--;
+    // simplest way to be compat with arcane DataTable load api
+    // is to tack the markers on if we aren't expecting them
+    if (!p.markers) {
+      if (p.header && (ln_num == 0))
+        ln = "_H:\t" + ln;
+      else ln = "_D:\t" + ln;
+    }
     // note: making a new one each loop simplifies things
     istringstream istr(ln.chars());
   
-    tab->LoadData_strm(istr, DataTable::TAB, 
-      true // quote_str
-      );
+    tab->LoadDataRowEx_strm(istr, DataTable::TAB, 
+      true, // quote_str
+      (ln_num == 0) // clear load schema on first guy
+    );
+    ++ln_num;
   }
   tab->StructUpdate(false);
   }
