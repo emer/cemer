@@ -4206,7 +4206,9 @@ void LeabraLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
+  if((net->phase_order == LeabraNetwork::MINUS_PLUS_NOTHING ||
+      net->phase_order == LeabraNetwork::MINUS_PLUS_MINUS) && 
+     net->learn_rule != LeabraNetwork::LEABRA_CHL) {
     return;			// we don't learn here -- only after nothing!
   }
   Compute_dWt_impl(lay, net);

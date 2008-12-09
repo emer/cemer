@@ -2337,9 +2337,9 @@ public:
     MINUS_PLUS,			// standard minus-plus (err and assoc)
     PLUS_MINUS,			// reverse order: plus phase first
     PLUS_ONLY,			// only present the plus phase (hebbian-only)
+    PLUS_NOTHING,		// just an auto-encoder (no initial minus phase)
     MINUS_PLUS_NOTHING,		// standard for CtLeabra_X/CAL and auto-encoder version with final 'nothing' minus phase
     MINUS_PLUS_MINUS,		// alternative version for CtLeabra_X/CAL with input still in final phase -- this 2nd minus is also marked as a nothing_phase 
-    PLUS_NOTHING,		// just an auto-encoder (no initial minus phase)
     MINUS_PLUS_PLUS,		// two plus phases for gated context layer updating in second plus phase, for the PBWM model
     MINUS_PLUS_PLUS_NOTHING,	// PBWM in CtLeabra_X/CAL mode
     MINUS_PLUS_PLUS_MINUS,	// PBWM in CtLeabra_X/CAL mode, alternative final inhib stage
