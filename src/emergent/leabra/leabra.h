@@ -2880,7 +2880,7 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn)
 
   cn->wt += cn->dwt;		// weights always linear
   // optimize: don't bother with this if always doing soft bounding above
-  // wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
+  wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
 }
@@ -2899,7 +2899,7 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL_norm(LeabraCon* cn, fl
 
   cn->wt += eff_dw;
   // optimize: don't bother with this if always doing soft bounding above
-  // wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
+  wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
   cn->pdw = eff_dw;
   cn->dwt = 0.0f;
 }
