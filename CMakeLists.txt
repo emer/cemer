@@ -62,6 +62,7 @@ set(CMAKE_MODULE_PATH ${mod_path})
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # packaging and testing systems
+include(CMakeModules/CPackConfig.cmake)
 include(CPack)
 include(CTest)
 
