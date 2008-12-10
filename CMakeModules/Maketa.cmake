@@ -44,7 +44,7 @@ macro(CREATE_MAKETA_COMMAND _ta_name _path _maketa_headers)
     DEPENDS ${_maketa_headers}
     )
   
-  add_custom_target(${_ta_name}_dummy ALL
+  add_custom_target(${_ta_name}_TA ALL
     DEPENDS ${_ta_name}_TA.ccx ${_ta_name}_TA_type.hx ${_ta_name}_TA_inst.hx
    )
   set_source_files_properties(${_ta_name}_TA.cpp ${_ta_name}_TA_type.h ${_ta_name}_TA_inst.h
@@ -55,57 +55,14 @@ macro(CREATE_MAKETA_COMMAND _ta_name _path _maketa_headers)
     COMMAND maketa ${MAKETA_FLAGS} -autohx ${maketa_includes} ${_ta_name} ${_maketa_headers}
     WORKING_DIRECTORY ${_path}
   )
-if (WIN32)
+  
+if (NOT WIN32)
 #NOTE: for some damn reason, clean_ta_xx is included in ALL in VS, even though force_ta_xx is not
 # the reason is unknown; tried swapping order here, that didn't change anything
-else (WIN32)
   add_custom_target(clean_ta_${_ta_name}
     COMMAND ${CMAKE_COMMAND} -E remove -f ${pta}_TA.cpp ${pta}_TA_type.h ${pta}_TA_inst.h ${pta}_TA.ccx ${pta}_TA_type.hx ${pta}_TA_inst.hx
     WORKING_DIRECTORY ${_path}
   )
-endif (WIN32)
+endif (NOT WIN32)
   SET_TA_PROPS(${_ta_name} ${_path})
 endmacro (CREATE_MAKETA_COMMAND)
-
-
-
-if (false)
-#NOTE: all below will be nuked once confirmed is working on all
-MACRO (CREATE_MAKETA_COMMAND _ta_name _path _maketa_headers)
-  MAKETA_GET_INC_DIRS(maketa_includes)
-  
-  SET(pta ${_path}/${_ta_name})
-  
-  ADD_CUSTOM_COMMAND(
-    OUTPUT ${pta}_TA.ccx ${pta}_TA_type.hx ${pta}_TA_inst.hx
-    WORKING_DIRECTORY ${_path}
-    COMMAND maketa ${MAKETA_FLAGS} ${maketa_includes} ${_ta_name} ${_maketa_headers}
-    DEPENDS ${_maketa_headers}
-    )
-  # note: don't concat these commands, not tested on Windows
-  # note: only use cmake -E commands, must work on Unix and Windows
-  ADD_CUSTOM_COMMAND(
-    OUTPUT ${pta}_TA.cpp ${pta}_TA_type.h ${pta}_TA_inst.h 
-    WORKING_DIRECTORY ${_path}
-    COMMAND ${CMAKE_COMMAND} -E compare_files ${pta}_TA.ccx  ${pta}_TA.cpp || ${CMAKE_COMMAND} -E copy  ${pta}_TA.ccx  ${pta}_TA.cpp
-    COMMAND ${CMAKE_COMMAND} -E compare_files ${pta}_TA_type.hx  ${pta}_TA_type.h || ${CMAKE_COMMAND} -E copy  ${pta}_TA_type.hx  ${pta}_TA_type.h
-    COMMAND ${CMAKE_COMMAND} -E compare_files  ${pta}_TA_inst.hx  ${pta}_TA_inst.h || ${CMAKE_COMMAND} -E copy  ${pta}_TA_inst.hx  ${pta}_TA_inst.h
-    DEPENDS ${pta}_TA.ccx ${pta}_TA_type.hx ${pta}_TA_inst.hx
-    )
-  
-  ADD_CUSTOM_TARGET(force_ta_${_ta_name}
-    COMMAND maketa ${MAKETA_FLAGS} -autohx ${maketa_includes} ${_ta_name} ${_maketa_headers}
-    WORKING_DIRECTORY ${_path}
-  )
-if (WIN32)
-#NOTE: for some damn reason, clean_ta_xx is included in ALL in VS, even though force_ta_xx is not
-# the reason is unknown; tried swapping order here, that didn't change anything
-else (WIN32)
-  ADD_CUSTOM_TARGET(clean_ta_${_ta_name}
-    COMMAND ${CMAKE_COMMAND} -E remove -f ${pta}_TA.cpp ${pta}_TA_type.h ${pta}_TA_inst.h ${pta}_TA.ccx ${pta}_TA_type.hx ${pta}_TA_inst.hx
-    WORKING_DIRECTORY ${_path}
-  )
-endif (WIN32)
-  SET_TA_PROPS(${_ta_name} ${_path})
-ENDMACRO (CREATE_MAKETA_COMMAND)
-endif (false)

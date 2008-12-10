@@ -50,6 +50,11 @@ set(EMERGENT_VERSION_MINOR "0")
 set(EMERGENT_VERSION_PATCH "18")
 set(EMERGENT_VERSION "${EMERGENT_VERSION_MAJOR}.${EMERGENT_VERSION_MINOR}.${EMERGENT_VERSION_PATCH}")
 
+# this is used for versioning the libs themselves
+set(EMERGENT_LIB_VERSION ${EMERGENT_VERSION})
+set(EMERGENT_LIB_SOVERSION ${EMERGENT_VERSION_MAJOR})
+
+
 ################################################################
 # Step 3: misc global stuff: paths, finding packages etc
 # Typically no need to change anything below here
@@ -60,6 +65,9 @@ set(CMAKE_MODULE_PATH ${mod_path})
 
 # turn this on for debugging new things
 #set(CMAKE_VERBOSE_MAKEFILE ON)
+
+# set the lib and executable suffix based on build type
+include(${mod_path}/SetBuildSuffix.cmake)
 
 # packaging and testing systems
 include(CMakeModules/CPackConfig.cmake)
@@ -84,10 +92,6 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/src/emergent/cs
 )
 
-# this is used for versioning the libs themselves
-set(EMERGENT_LIB_VERSION ${EMERGENT_VERSION})
-set(EMERGENT_LIB_SOVERSION ${EMERGENT_VERSION_MAJOR})
-
 # install destinations
 if (WIN32)
   # we have issues with path spaces, so install to C:/Emergent
@@ -109,8 +113,6 @@ if (WIN32)
   add_definitions(/MP)
 endif (WIN32)
 
-# set the lib and executable suffix based on build type
-include(${mod_path}/SetBuildSuffix.cmake)
 # several important macros in here:
 include(${mod_path}/MacroLibrary.cmake)
 # this one does all the configure checks to set various variables
@@ -182,18 +184,18 @@ add_subdirectory(demo/so)
 add_subdirectory(demo/virt_env)
 add_subdirectory(demo/data_proc)
 
-# dependencies -- each _dummy is a proxy for the TA build for that folder
-add_dependencies(ta_dummy maketa)
-add_dependencies(temt ta_dummy)
+# dependencies
+add_dependencies(ta_TA maketa)
+add_dependencies(temt ta_TA)
 add_dependencies(css temt)
 #note: we have to make n_d dep on temt otherwise VS will build all the TAs first (slow)
-add_dependencies(network_dummy temt )
-#add_dependencies(network_dummy ta_dummy )
-add_dependencies(bp_dummy network_dummy )
-add_dependencies(cs_dummy network_dummy )
-add_dependencies(leabra_dummy network_dummy )
-add_dependencies(so_dummy network_dummy )
-add_dependencies(emergentlib temt network_dummy bp_dummy cs_dummy leabra_dummy so_dummy)
+add_dependencies(network_TA temt )
+#add_dependencies(network_TA ta_TA )
+add_dependencies(bp_TA network_TA )
+add_dependencies(cs_TA network_TA )
+add_dependencies(leabra_TA network_TA )
+add_dependencies(so_TA network_TA )
+add_dependencies(emergentlib temt network_TA bp_TA cs_TA leabra_TA so_TA)
 add_dependencies(emergent emergentlib)
 
 ########### install files ###############

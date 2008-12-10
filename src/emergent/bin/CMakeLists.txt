@@ -4,7 +4,7 @@ set(emergentbin_SRCS main.cpp)
 
 add_executable(emergent ${emergentbin_SRCS})
 
-target_link_libraries(emergent emergentlib temt ${EMERGENT_DEP_LIBRARIES})
+EMERGENT_LINK_EXECUTABLES(emergent emergentlib temt)
 
 # Windows import/export control
 if (WIN32)

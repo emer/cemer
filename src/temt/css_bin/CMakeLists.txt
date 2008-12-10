@@ -4,7 +4,7 @@ set(css_SRCS main.cpp)
 
 add_executable(css ${css_SRCS})
 
-target_link_libraries(css temt ${EMERGENT_DEP_LIBRARIES})
+EMERGENT_LINK_EXECUTABLES(css temt)
 
 # Windows import/export control
 if (WIN32)
