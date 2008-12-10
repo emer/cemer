@@ -19,10 +19,12 @@ set(plugin_full_SRCS
 # adds the library as an official target to compile
 add_library(${PROJECT_NAME} SHARED ${plugin_full_SRCS})
 
+add_dependencies(${PROJECT_NAME} "${PROJECT_NAME}_TA")
+
 # does all the stuff to make the library link against all the right other libraries
 # final arg is for any extra libraries this plugin might want
 EMERGENT_PLUGIN_LINK_LIBRARIES(${PROJECT_NAME} 
-  ${EMERGENT_PLUGIN_EXTRA_LIBRARIES})
+  "${EMERGENT_PLUGIN_EXTRA_LIBRARIES}")
 
 ################################################################
 # Step 5: install stuff
