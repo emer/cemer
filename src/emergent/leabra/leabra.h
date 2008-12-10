@@ -214,6 +214,8 @@ public:
 
   LearnVar	lrn_var;	// learning rule variant -- either XCAL, or CAL for output layers, bias weights, or comparison purposes
   bool		sym_sb;		// #DEF_true symmetric softbounding: 2 * w * (1-w) -- maybe allows weights to get more extreme than regular softbounding
+  float		sb_pow;		// power to raise the softbounding term to (0-1): smaller numbers result in more of a linear middle region with squashing only at the extremes -- see graph for results
+  float		sb_mult;	// #READ_ONLY multiplier to correct for overall softbound differences due to sb_pow
   bool		dwt_norm;	// #DEF_false normalize dwts -- just for testing purposes
   float		mvl_mix;	// #CONDSHOW_OFF_lrn_var:CAL [Default range .03 - .10] amount that medium (trial) versus long (epoch) time scale learning contributes -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is short (plus phase) versus medium (trial) time scale which reflects pure error-driven learning
   float		svm_mix;	// #READ_ONLY 1-mvl_mix -- how much the short (plus phase) versus medium (trial) time-scale factor contributes to learning -- this the pure error-driven learning component -- the rest (mvl_mix = 1-svm_mix) is medium (trial) versus long (epoch) time-scale
@@ -237,6 +239,10 @@ public:
     else
       rval = -d_gain * srval * d_rev_ratio;
     return rval;
+  }
+
+  inline float  SoftBoundFun(float wt_val) {
+    return sb_mult * powf(wt_val, sb_pow) * powf(1.0f - wt_val, sb_pow);
   }
 
   SIMPLE_COPY(XCalLearnSpec);
@@ -579,9 +585,11 @@ public:
   virtual void	Defaults();	// #BUTTON #CONFIRM #CAT_ObjectMgmt restores default parameter settings: warning -- you will lose any unique parameters you might have set!
 
   virtual void	GraphWtSigFun(DataTable* graph_data = NULL);
-  // #BUTTON #NULL_OK graph the sigmoidal weight contrast enhancement function (NULL = new data table)
+  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the sigmoidal weight contrast enhancement function (NULL = new data table)
   virtual void	GraphXCaldWtFun(DataTable* graph_data = NULL, float thr_p = 0.25);
-  // #BUTTON #NULL_OK graph the xcal dWt function for given threshold value (NULL = new data table)
+  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the xcal dWt function for given threshold value (NULL = new data table)
+  virtual void	GraphXCalSoftBoundFun(DataTable* graph_data = NULL);
+  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the xcal soft weight bounding function (NULL = new data table)
 
   void	InitLinks();
   SIMPLE_COPY(LeabraConSpec);
@@ -1121,13 +1129,13 @@ public:
   virtual void	Defaults();	// #BUTTON #CONFIRM #CAT_ObjectMgmt restores default parameter settings: warning -- you will lose any unique parameters you might have set!
 
   virtual void	GraphVmFun(DataTable* graph_data, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .01);
-  // #BUTTON #NULL_OK graph membrane potential (v_m) as a function of excitatory net input (net) for given inhib conductance (g_i) (NULL = new graph data)
+  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph membrane potential (v_m) as a function of excitatory net input (net) for given inhib conductance (g_i) (NULL = new graph data)
   virtual void	GraphActFmVmFun(DataTable* graph_data, float min = .15, float max = .50, float incr = .001);
-  // #BUTTON #NULL_OK graph the activation function as a function of membrane potential (v_m) (NULL = new graph data)
+  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the activation function as a function of membrane potential (v_m) (NULL = new graph data)
   virtual void	GraphActFmNetFun(DataTable* graph_data, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .001);
-  // #BUTTON #NULL_OK graph the activation function as a function of net input (projected through membrane potential) (NULL = new graph data)
+  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the activation function as a function of net input (projected through membrane potential) (NULL = new graph data)
   virtual void	GraphSpikeAlphaFun(DataTable* graph_data, bool force_alpha=false);
-  // #BUTTON #NULL_OK graph the spike alpha function for conductance integration over time window given in spike parameters -- last data point is the sum over the whole window (total conductance of a single spike) -- force_alpha means use explicit alpha function even when rise=0 (otherewise it simulates actual recursive exp decay used in optimized code)
+  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the spike alpha function for conductance integration over time window given in spike parameters -- last data point is the sum over the whole window (total conductance of a single spike) -- force_alpha means use explicit alpha function even when rise=0 (otherewise it simulates actual recursive exp decay used in optimized code)
   virtual void TimeExp(int mode, int nreps=100000000);
   // #BUTTON time how long it takes to compute various forms of exp() function: mode=0 = double sum ctrl (baseline), mode=1 = std double exp(), mode=2 = taMath_double::exp_fast, mode=3 = float sum ctrl (float baseline), mode=4 = expf, mode=5 = taMath_float::exp_fast -- this is the dominant cost in spike alpha function computation, so we're interested in optimizing it..
 
@@ -2507,7 +2515,7 @@ public:
   override void	SetProjectionDefaultTypes(Projection* prjn);
 
   virtual void	GraphInhibMod(bool flip_sign = true, DataTable* graph_data = NULL);
-  // #BUTTON #NULL_OK graph the overall inhibitory modulation curve, including sinusoidal and final -- if flip_sign is true, then sign is reversed so that graph looks like the activation profile instead of the inhibition profile
+  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the overall inhibitory modulation curve, including sinusoidal and final -- if flip_sign is true, then sign is reversed so that graph looks like the activation profile instead of the inhibition profile
 
   TA_SIMPLE_BASEFUNS(LeabraNetwork);
 protected:
@@ -2863,7 +2871,7 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn)
 {
   // always do soft bounding, at this point (post agg across processors, etc)
   if(xcal.sym_sb) {
-    cn->dwt *= 2.0f * cn->wt * (1.0f - cn->wt);
+    cn->dwt *= xcal.SoftBoundFun(cn->wt);
   }
   else {
     if(cn->dwt > 0.0f)		cn->dwt *= (1.0f - cn->wt);
@@ -2882,7 +2890,7 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL_norm(LeabraCon* cn, fl
   // always do soft bounding, at this point (post agg across processors, etc)
   float eff_dw= cn->dwt + dwnorm;
   if(xcal.sym_sb) {
-    eff_dw *= 2.0f * cn->wt * (1.0f - cn->wt);
+    eff_dw *= xcal.SoftBoundFun(cn->wt);
   }
   else {
     if(eff_dw > 0.0f)		eff_dw *= (1.0f - cn->wt);
