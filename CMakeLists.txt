@@ -231,3 +231,14 @@ ADD_CUSTOM_TARGET(clean_ta_all
 ADD_CUSTOM_TARGET(distclean
   DEPENDS clean_ta_all
   )
+
+# svn commands b/c otherwise you're living in the build dir and this saves a cd..
+ADD_CUSTOM_TARGET(svn_update
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+  COMMAND svn update
+  )
+ADD_CUSTOM_TARGET(svn_commit
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+  COMMAND svn commit
+  )
+
