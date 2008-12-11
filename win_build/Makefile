@@ -354,7 +354,7 @@ CS_HEADS =\
 
 CS_MAKETA =\
 	$(EMERGENTDIR)/src/temt/ta/ta_TA_type.h \
-	$(EMERGENTDIR)/src/emergent/network/emergent_TA_type.h \
+	$(EMERGENTDIR)/src/emergent/network/network_TA_type.h \
 	$(CS_HEADS)
 
 BP_HEADS =\
@@ -364,7 +364,7 @@ BP_HEADS =\
 
 BP_MAKETA =\
 	$(EMERGENTDIR)/src/temt/ta/ta_TA_type.h \
-	$(EMERGENTDIR)/src/emergent/network/emergent_TA_type.h \
+	$(EMERGENTDIR)/src/emergent/network/network_TA_type.h \
 	$(BP_HEADS)
 
 LEABRA_HEADS =\
@@ -377,7 +377,7 @@ LEABRA_HEADS =\
 
 LEABRA_MAKETA =\
 	$(EMERGENTDIR)/src/temt/ta/ta_TA_type.h \
-	$(EMERGENTDIR)/src/emergent/network/emergent_TA_type.h \
+	$(EMERGENTDIR)/src/emergent/network/network_TA_type.h \
 	$(LEABRA_HEADS)
 
 SO_HEADS =\
@@ -389,7 +389,7 @@ SO_HEADS =\
 
 SO_MAKETA =\
 	$(EMERGENTDIR)/src/temt/ta/ta_TA_type.h \
-	$(EMERGENTDIR)/src/emergent/network/emergent_TA_type.h \
+	$(EMERGENTDIR)/src/emergent/network/network_TA_type.h \
 	$(SO_HEADS)
 
 #MAKETA_FLAGS = /I "$(VCINSTALLDIR)\Vc7\include"
@@ -412,11 +412,11 @@ ta_TA_type.hx: $(TA_HEADS) $(CSS_HEADS) $(TAIQTSO_HEADS)
   
 ta_TA_type.h: ta_TA_type.hx
 
-emergent_TA_type.hx: $(TA_HEADS) $(NETWORK_HEADS) 
+network_TA_type.hx: $(TA_HEADS) $(NETWORK_HEADS) 
   $(CD) $(EMERGENTDIR)/src/emergent/network
   $(MAKETA) $(MAKETA_FLAGS) emergent -f files.mta
   
-emergent_TA_type.h: emergent_TA_type.hx 
+network_TA_type.h: network_TA_type.hx 
 
 bp_TA_type.hx: $(TA_HEADS) $(NETWORK_MAKETA) $(BP_HEADS)
   $(CD) $(EMERGENTDIR)/src/emergent/bp
@@ -454,7 +454,7 @@ ta_files: ta_TA_type.h ta_mocs
 css_files: css_mocs
 
 
-network_files: emergent_TA_type.h network_mocs
+network_files: network_TA_type.h network_mocs
 
 bp_files: bp_TA_type.h
 

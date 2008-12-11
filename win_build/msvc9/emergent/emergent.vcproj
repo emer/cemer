@@ -485,7 +485,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\emergent\network\emergent_def.h"
+					RelativePath="..\..\..\src\emergent\network\network_def.h"
 					>
 				</File>
 				<File
@@ -545,7 +545,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\emergent\network\emergent_TA.cpp"
+					RelativePath="..\..\..\src\emergent\network\network_TA.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -565,11 +565,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\emergent\network\emergent_TA_inst.h"
+					RelativePath="..\..\..\src\emergent\network\network_TA_inst.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\emergent\network\emergent_TA_type.h"
+					RelativePath="..\..\..\src\emergent\network\network_TA_type.h"
 					>
 				</File>
 				<File

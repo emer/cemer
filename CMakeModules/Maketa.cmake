@@ -11,7 +11,7 @@ macro (MAKETA_GET_INC_DIRS _MAKETA_INC_DIRS)
 endmacro(MAKETA_GET_INC_DIRS)
 
 if (WIN32)
-  set(MAKETA_FLAGS -css -hx -win_dll)
+  set(MAKETA_FLAGS -css -autohx -win_dll)
   
   # this is critical for allowing dependencies to work out, and for compiling w/out extra load
   macro(SET_TA_PROPS _ta_name _path)
@@ -56,13 +56,14 @@ macro(CREATE_MAKETA_COMMAND _ta_name _path _maketa_headers)
     WORKING_DIRECTORY ${_path}
   )
   
-if (NOT WIN32)
+#if (NOT WIN32)
 #NOTE: for some damn reason, clean_ta_xx is included in ALL in VS, even though force_ta_xx is not
 # the reason is unknown; tried swapping order here, that didn't change anything
   add_custom_target(clean_ta_${_ta_name}
     COMMAND ${CMAKE_COMMAND} -E remove -f ${pta}_TA.cpp ${pta}_TA_type.h ${pta}_TA_inst.h ${pta}_TA.ccx ${pta}_TA_type.hx ${pta}_TA_inst.hx
     WORKING_DIRECTORY ${_path}
   )
-endif (NOT WIN32)
+#endif (NOT WIN32)
+  
   SET_TA_PROPS(${_ta_name} ${_path})
 endmacro (CREATE_MAKETA_COMMAND)

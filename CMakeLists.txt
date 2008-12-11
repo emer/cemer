@@ -131,8 +131,10 @@ message( STATUS "********************* Summary of Key Build Parameters *********
 message( STATUS "-------------------------------------------------------------------------------" )
 message( STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}" )
 message( STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
-message( STATUS "      (Options are: None | Debug | Release | RelWithDebInfo | MinSizeRel)" )
+message( STATUS "      (Options are: Debug | Release | RelWithDebInfo | MinSizeRel)" )
+if (NOT WIN32)
 message( STATUS "MPI_BUILD = ${MPI_BUILD}   (true or false)" )
+endif (NOT WIN32)
 message( STATUS )
 message( STATUS "Change a value with: cmake -D<Variable>=<Value>" )
 message( STATUS "-------------------------------------------------------------------------------" )
@@ -223,17 +225,23 @@ ADD_CUSTOM_TARGET(uninstall
 
 
 ########### special targets and commands ###############
-
+#BUG: these targets are flakily forcing all the subtargets to become ALL
+# targets on Windows (at least in VS) thus we have to omit them
+if (NOT WIN32)
 # use this to remove all ta files from source tree
 ADD_CUSTOM_TARGET(clean_ta_all
   DEPENDS clean_ta_ta clean_ta_network clean_ta_bp clean_ta_leabra clean_ta_cs clean_ta_so
   )
 
+# use this to build all ta files from source tree
+ADD_CUSTOM_TARGET(force_ta 
+  DEPENDS force_ta_ta force_ta_network force_ta_bp force_ta_leabra force_ta_cs force_ta_so
+  )
 # ta files are only things built in source tree so this is effectively distclean
 ADD_CUSTOM_TARGET(distclean
   DEPENDS clean_ta_all
   )
-
+endif (NOT WIN32)  
 # svn commands b/c otherwise you're living in the build dir and this saves a cd..
 ADD_CUSTOM_TARGET(svn_update
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}

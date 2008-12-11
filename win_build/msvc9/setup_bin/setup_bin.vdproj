@@ -6032,8 +6032,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_329849BDFFEB46BF827B820C89C6EEDC"
             {
-            "SourcePath" = "8:..\\..\\..\\src\\emergent\\network\\emergent_TA_inst.h"
-            "TargetName" = "8:emergent_TA_inst.h"
+            "SourcePath" = "8:..\\..\\..\\src\\emergent\\network\\network_TA_inst.h"
+            "TargetName" = "8:network_TA_inst.h"
             "Tag" = "8:"
             "Folder" = "8:_8A1F612F30E84C1D98F2809FE210D942"
             "Condition" = "8:"
@@ -6572,8 +6572,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3E439C958441472C93AB6C2CC44BFBF4"
             {
-            "SourcePath" = "8:..\\..\\..\\src\\emergent\\network\\emergent_TA.cpp"
-            "TargetName" = "8:emergent_TA.cpp"
+            "SourcePath" = "8:..\\..\\..\\src\\emergent\\network\\network_TA.cpp"
+            "TargetName" = "8:network_TA.cpp"
             "Tag" = "8:"
             "Folder" = "8:_8A1F612F30E84C1D98F2809FE210D942"
             "Condition" = "8:"
@@ -9992,8 +9992,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8123EEB99B3E408D9D41E342FB23C213"
             {
-            "SourcePath" = "8:..\\..\\..\\src\\emergent\\network\\emergent_TA_type.h"
-            "TargetName" = "8:emergent_TA_type.h"
+            "SourcePath" = "8:..\\..\\..\\src\\emergent\\network\\network_TA_type.h"
+            "TargetName" = "8:network_TA_type.h"
             "Tag" = "8:"
             "Folder" = "8:_8A1F612F30E84C1D98F2809FE210D942"
             "Condition" = "8:"
@@ -14552,8 +14552,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DB84A33F61574C638608CBDEDE8D8210"
             {
-            "SourcePath" = "8:..\\..\\..\\src\\emergent\\network\\emergent_def.h"
-            "TargetName" = "8:emergent_def.h"
+            "SourcePath" = "8:..\\..\\..\\src\\emergent\\network\\network_def.h"
+            "TargetName" = "8:network_def.h"
             "Tag" = "8:"
             "Folder" = "8:_8A1F612F30E84C1D98F2809FE210D942"
             "Condition" = "8:"
