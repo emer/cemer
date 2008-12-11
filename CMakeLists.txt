@@ -111,6 +111,9 @@ if (WIN32)
   add_definitions(/wd4250 /wd4258 /wd4661 /wd4996)
   # enable multi-threaded compiling (always safe, will ignore and print warning when incompatible)
   add_definitions(/MP)
+  if (CMAKE_CL_64)
+    add_definitions(/bigobj)
+  endif (CMAKE_CL_64)
 endif (WIN32)
 
 # several important macros in here:
