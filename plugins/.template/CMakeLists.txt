@@ -5,7 +5,7 @@
 # mkdir build;
 # cd build;
 # cmake ../ [-G see cmake --help for options] [-DMPI_BUILD=true] \
-#  [-DCMAKE_BUILD_TYPE=None | Debug | Release | RelWithDebInfo | MinSizeRel]
+#  [-DCMAKE_BUILD_TYPE=Debug | Release | RelWithDebInfo | MinSizeRel]
 #  [-DEMERGENT_PLUGIN_TYPE= User | System] # where to install plugin
 #  [-DCMAKE_VERBOSE_MAKEFILE=ON | OFF] # useful for tracking down issues sometimes
 #
@@ -19,10 +19,13 @@
 
 # To configure this file for a new plugin as a plugin programmer, skip to Step 2
 
+################################################################
+# Step 0: ensure we have the right version of cmake -- this
+# has to go here at the top of this file otherwise cmake complains
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
 
 ################################################################
-# Step 0: Attempt to find the emergent share directory
+# Step 1: Attempt to find the emergent share directory
 # from which everything else can be derived -- you do not typically
 # need to edit this code, so skip to step 2 unless you have a problem
 # with it finding the installed emergent code
@@ -53,58 +56,66 @@ else(EMERGENT_INSTALL_PREFIX)
   message(FATAL_ERROR "Edit Step 3 of CMakeLists.txt file to include unusual paths for searching")
 endif(EMERGENT_INSTALL_PREFIX)
 
-if (WIN32)
-  set(EMERGENT_SHARE_DIR ${EMERGENT_INSTALL_PREFIX}/Emergent)
-else (WIN32)
-  set(EMERGENT_SHARE_DIR ${EMERGENT_INSTALL_PREFIX}/share/Emergent)
-endif (WIN32)
-
 
 ################################################################
-# Step 1: ensure we have the right version of cmake and set build params
+# Step 1: set build params
 # this includes all necessary setup stuff to setup the make process
 include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginSetup.cmake)
 
 ################################################################
 # Step 2: set all the basic parameters about the project
 #
-# IMPORTANT: plugin programmer: this is stuff you need to set!!
-# if copying from the HelloWorld example, then replace hw with your project name
+# IMPORTANT: plugin programmer: this is stuff you may need to modify
+# or extend, especially if you add additional source files or
+# need to include or link to additional libraries not part of the
+# Emergent prerequisites
 
 # name the project: this will be the name of the plugin
-PROJECT(hw)
+PROJECT(template)
 
 #### version setting: you are responsible for your own versioning and it does not
 #### have to correspond with the emergent versions, though that wouldn't hurt
 
-set(PLUGIN_VERSION_MAJOR "4")
+set(PLUGIN_VERSION_MAJOR "1")
 set(PLUGIN_VERSION_MINOR "0")
-set(PLUGIN_VERSION_PATCH "18")
+set(PLUGIN_VERSION_PATCH "0")
 set(PLUGIN_VERSION "${PLUGIN_VERSION_MAJOR}.${PLUGIN_VERSION_MINOR}.${PLUGIN_VERSION_PATCH}")
 
-# list all the header files here (_def.h and _pl.h are obligatory plugin boilerplate
-# and those files also need to be edited to contain the proper name of the project)
+# list all the header files here (_def.h and _pl.h are obligatory plugin boilerplate)
+# do not list any included files, only new files that are in this folder
 # note: do NOT change the name "plugin" here or below
+# note: do *not* add the generated template_TA_*.h files
 set(plugin_HEADS
-  hw_def.h
-  hw_pl.h
-  hw.h
+  template_def.h
+  template_pl.h
+  template.h
 )
 
-# list all the .cpp source files that will actually be compiled into the plugin
+# list all the .cpp source files that will be compiled into the plugin
+# note: do *not* add the generated template_TA.cpp file
 set(plugin_SRCS
-  hw.cpp
-  hw_pl.cpp
+  template_pl.cpp
+  template.cpp
 )
 
-# this says that all the headers listed above are run through maketa (type scanning
-# system) -- if this should not be the case (rare), then make a separate list here
-set(plugin_HEADS_MAKETA ${plugin_HEADS})
+# list the project headers that are run through maketa (the Emergent
+# type scanning system) 
+set(plugin_HEADS_MAKETA
+  ta_TA_type.h
+# IMPORTANT: if your plugin uses network code, add the appropriate
+# headers after the ta_TA, ex, for a Leabra-based plugin, add these:
+# network_TA_type.h 
+# leabra_TA_type.h 
+  ${plugin_HEADS}
+)
 
-# this says that all the headers listed above are run through moc (type scanning
-# system for Qt) -- if this should not be the case (rare), then make a separate list here
-# (typically just get a warning for files where it is not necessary)
-set(plugin_HEADS_MOC ${plugin_HEADS})
+# any headers that declare any Qt/QObject-derived classes go here --
+# Emergent's taBase-derived classes (the bulk of Emergent) don't need this --
+# if you are unsure, you can usually put any header here and Qt/moc will
+# just ignore it with a warning that "no QObject classes were found"
+set(plugin_HEADS_MOC
+  template_pl.h
+)
 
 # all the files necessary to compile the plugin -- used for install
 set(plugin_FILES

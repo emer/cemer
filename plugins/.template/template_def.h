@@ -1,8 +1,9 @@
-// Copyright, 1995-2007, Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-//
-// This file is part of TA/HW
-//
+#ifndef TEMPLATE_DEF_H
+#define TEMPLATE_DEF_H
+
+// TODO: add any copyright information or license information here --
+//  (The GPL license is included by default below.)
+
 //   This library is free software; you can redistribute it and/or
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
@@ -14,28 +15,29 @@
 //   Lesser General Public License for more details.
 
 
-#ifndef HW_DEF_H
-#define HW_DEF_H
-
 #include "ta_global.h"
 
-// The following ifdef block is the standard way of creating macros which make exporting 
-// from a DLL simpler. All files within this DLL are compiled with the HW_EXPORTS
-// symbol defined on the command line. this symbol should not be defined on any project
-// that uses this DLL. This way any other project whose source files include this file see 
-// HW_API functions as being imported from a DLL, whereas this DLL sees symbols
+// The following ifdef block is the standard way of creating macros for exporting from
+// a Windows dll. You must decorate your classes and static functions with the
+// TEMPLATE_API macro so that your plugin will compile on Windows. Published plugins
+// MUST be compileable on all three platforms (Windows/Mac/Linux) unless they are 
+// specifically created for features of a specific platform.
+// All files within this DLL are compiled with the TEMPLATE_EXPORTS pre-processor symbol
+// defined. This symbol should then not be defined on any other plugin that dynamically
+// links to this plugin. This way any other project whose source files include this file see 
+// TEMPLATE_API functions as being imported from a dll, whereas this dll sees symbols
 // defined with this macro as being exported.
-#if ((defined(HW_DLL)) && (defined(TA_OS_WIN) && defined(_MSC_VER)) && (!defined(__MAKETA__)))
-# ifdef HW_EXPORTS
-#   define HW_API __declspec(dllexport)
+#if ((defined(_WIN32) && defined(_MSC_VER)) && (!defined(__MAKETA__)))
+# ifdef template_EXPORTS
+#   define TEMPLATE_API __declspec(dllexport)
 # else
-#   define HW_API __declspec(dllimport)
+#   define TEMPLATE_API __declspec(dllimport)
 # endif
 #else 
-# define HW_API
+# define TEMPLATE_API
 #endif
 
 #undef QT_SHARED                             // Already defined in config.h.
-#include "hw_TA_type.h" 
+#include "template_TA_type.h" 
 
-#endif // ta_def_h
+#endif // TEMPLATE_DEF_H
