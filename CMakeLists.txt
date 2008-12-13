@@ -15,7 +15,8 @@
 #    found first!
 
 ################################################################
-# Step 1: ensure we have the right version of cmake
+# Step 0: ensure we have the right version of cmake -- this
+# has to go directly here in this file otherwise cmake complains
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
 if(COMMAND cmake_policy)
@@ -23,25 +24,21 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 ################################################################
-# Step 1a: some standard env variables, loaded locally
-#   and fixed up for Windows
+# Step 1: set or lookup various defaults, for both Emergent
+#   and plugins -- this insures we have a consistent environment
+include(CMakeModules/EmergentDefaults.cmake)
 
-file(TO_CMAKE_PATH "$ENV{COINDIR}" COINDIR)
-# note: EMERGENTDIR is really only used on Windows
-file(TO_CMAKE_PATH "$ENV{EMERGENTDIR}" EMERGENTDIR)
+# we build the lib/bin targets up into the root folder, so
+# we can run and debug immediately in-place
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
+
 
 ################################################################
 # Step 2: set all the basic parameters about the project
 
 PROJECT(emergent)
 
-# default build type is RelWithDebInfo
-IF(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE RelWithDebInfo)
-ENDIF(NOT CMAKE_BUILD_TYPE)
-
-# set cache parameter for mpi option
-set(MPI_BUILD FALSE CACHE BOOL "Set to true to enable MPI distributed memory system")
 
 #### version setting
 
@@ -102,18 +99,6 @@ if (WIN32)
 else (WIN32)
   set(EMERGENT_INCLUDE_DEST include/Emergent)
   set(EMERGENT_SHARE_DEST share/Emergent)
-endif (WIN32)
-
-# basic compiler warnings, etc.
-if (WIN32)
-  #shut off warnings: 4250 (inheritance dominance)
-  # 4258;4661;4996 (unsafe crt routines)
-  add_definitions(/wd4250 /wd4258 /wd4661 /wd4996)
-  # enable multi-threaded compiling (always safe, will ignore and print warning when incompatible)
-  add_definitions(/MP)
-  if (CMAKE_CL_64)
-    add_definitions(/bigobj)
-  endif (CMAKE_CL_64)
 endif (WIN32)
 
 # several important macros in here:
@@ -193,13 +178,13 @@ add_subdirectory(demo/data_proc)
 add_dependencies(ta_TA maketa)
 add_dependencies(temt ta_TA)
 add_dependencies(css temt)
-#note: we have to make n_d dep on temt otherwise VS will build all the TAs first (slow)
-add_dependencies(network_TA temt )
-#add_dependencies(network_TA ta_TA )
-add_dependencies(bp_TA network_TA )
-add_dependencies(cs_TA network_TA )
-add_dependencies(leabra_TA network_TA )
-add_dependencies(so_TA network_TA )
+#note: we have to make n_TA dep on temt otherwise VS will build all the TAs first (slow)
+add_dependencies(network_TA temt)
+#add_dependencies(network_TA ta_TA)
+add_dependencies(bp_TA network_TA)
+add_dependencies(cs_TA network_TA)
+add_dependencies(leabra_TA network_TA)
+add_dependencies(so_TA network_TA)
 add_dependencies(emergentlib temt network_TA bp_TA cs_TA leabra_TA so_TA)
 add_dependencies(emergent emergentlib)
 
@@ -210,7 +195,7 @@ install(FILES AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
 )
 
 # also install our cmake module files for use by plugins, etc
-FILE(GLOB OUR_CMAKE_MOD_FILES "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/*.cmake")
+file(GLOB OUR_CMAKE_MOD_FILES "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/*.cmake")
 
 install(FILES ${OUR_CMAKE_MOD_FILES}
   DESTINATION ${EMERGENT_SHARE_DEST}/CMakeModules
