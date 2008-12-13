@@ -39,10 +39,8 @@ else (WIN32)
   add_definitions(-O2 -g)
 endif (WIN32)
 
-#NOTE: don't use decorative suffix -- confusing, and there should only be one
+#NOTE: we don't use decorative suffix -- confusing, and there should only be one
 add_executable(maketa ${maketa_SRCS})
-
-ADD_COPY_TO_EXECUTABLE_TARGET(maketa bin)
 
 #no target_link_libraries(maketa ${QT_LIBRARIES})
 
