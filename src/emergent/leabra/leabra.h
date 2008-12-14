@@ -2620,11 +2620,11 @@ inline float LeabraConSpec::C_Compute_Err_LeabraCHL(LeabraCon* cn, float lin_wt,
   float err = (ru_act_p * su_act_p) - (ru_act_m * su_act_m);
   if(lmix.err_sb) {
     if(lmix.sym_sb) {
-      if(err > 0.0f)	err *= (1.0f - lin_wt);
-      else		err *= lin_wt;
+      err *= lin_wt * (1.0f - lin_wt);
     }
     else {
-      err *= lin_wt * (1.0f - lin_wt);
+      if(err > 0.0f)	err *= (1.0f - lin_wt);
+      else		err *= lin_wt;
     }
   }
   return err;
