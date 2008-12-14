@@ -859,7 +859,7 @@ public:
     if(!quiet) CheckError_msg(a,b,c,d,e,f,g,h);
     return test;
   }
-  // #CAT_ObjectMgmt for CheckConfig routines: if test, then report config error, including object name, type, and path information; returns test & sets rval to false if test is true -- use e.g. CheckError((condition), rval, "msg"));
+  // #CAT_ObjectMgmt for CheckConfig routines: if test, then report config error, including object name, type, and path information; returns test & sets rval to false if test is true -- use e.g. CheckError((condition), quiet, rval, "msg"));
 
 protected: // impl
   virtual bool		CheckConfig_impl(bool quiet);

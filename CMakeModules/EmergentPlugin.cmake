@@ -23,11 +23,6 @@ include_directories(${EMERGENT_INCLUDE_DIR}/Emergent)
 # and sets the EMERGENT_DEP_LIBRARIES variable to all the dependency libraries
 find_package(EmergentDependencies)
 
-if (WIN32)
-  set(EMERGENT_PLUGIN_DEST Emergent/lib/plugins)
-else (WIN32)
-  set(EMERGENT_PLUGIN_DEST lib/Emergent/plugins)
-endif (WIN32)
 
 # several important macros in here:
 include(${mod_path}/MacroLibrary.cmake)
@@ -39,23 +34,26 @@ include(${mod_path}/Maketa.cmake)
 # use this instead of TARGET_LINK_LIBRARIES -- sets suffix and other properties
 MACRO (EMERGENT_PLUGIN_LINK_LIBRARIES _targ _xtra_libs)
     target_link_libraries(${_targ}  ${_xtra_libs} ${EMERGENT_LIBRARIES} ${EMERGENT_DEP_LIBRARIES})
+if (false) #not for plugins -- confusing to users and unnecessary, and Unix-specific
     set_target_properties(${_targ} PROPERTIES
       VERSION ${PLUGIN_VERSION}
-      SOVERSION ${PLUGIN_VERSION_MAJOR}
     )
+endif (false)
 ENDMACRO (EMERGENT_PLUGIN_LINK_LIBRARIES)
 
 ####################################
 #  report on status prior to building
 
 message( STATUS )
-message( STATUS "-------------------------------------------------------------------------------" )
-message( STATUS "********************* Summary of Key Build Parameters *************************" )
-message( STATUS "-------------------------------------------------------------------------------" )
+message( STATUS "----------------------------------------------------------------------------" )
+message( STATUS "******************* Summary of Key Build Parameters ************************" )
+message( STATUS "----------------------------------------------------------------------------" )
 message( STATUS "(Default values indicated by *" )
 message( STATUS "EMERGENT_PLUGIN_TYPE = ${EMERGENT_PLUGIN_TYPE}" )
 message( STATUS "    (Options are: User | System *)" )
-message( STATUS "Root of file installation will be: " ${CMAKE_INSTALL_PREFIX} )
+file(TO_NATIVE_PATH "${CMAKE_INSTALL_PREFIX}/${EMERGENT_PLUGIN_DEST}"
+  EMERGENT_PLUGIN_INSTALL_NATIVE)
+message( STATUS "Installation will be to: " ${EMERGENT_PLUGIN_INSTALL_NATIVE} )
 message( STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 message( STATUS "    (Options are: Debug | Release | RelWithDebInfo *)" )
 if (NOT WIN32)
@@ -63,6 +61,6 @@ message( STATUS "MPI_BUILD = ${MPI_BUILD}   (true or false)" )
 endif (NOT WIN32)
 message( STATUS)
 message( STATUS "Change a value with: cmake -D<Variable>=<Value>" )
-message( STATUS "-------------------------------------------------------------------------------" )
+message( STATUS "----------------------------------------------------------------------------" )
 
 

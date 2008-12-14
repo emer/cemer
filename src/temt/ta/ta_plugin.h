@@ -46,7 +46,9 @@ public:
     // called when loading plugin to initialize types -- implementer must call ta_init_Xxx() routine
   virtual int		InitializePlugin() = 0;
     // called to initialize plugin -- it can do things like create classes
-
+  virtual TypeDef*	GetPluginStateType() {return NULL;}
+    // returns the type of the state object, that will be created in root.plugin_state
+    
   virtual ~IPlugin() {}
 };
 

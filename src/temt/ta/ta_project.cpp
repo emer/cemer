@@ -299,6 +299,7 @@ void Doc_Group::AutoEdit() {
 void taWizard::Initialize() {
   auto_open = true;
   SetUserData("NO_CLIP", true);
+  SetBaseFlag(NAME_READONLY);
 }
 
 //////////////////////////////////
@@ -890,9 +891,11 @@ void taRootBase::InitLinks() {
   inherited::InitLinks();
   version = taMisc::version;
   taBase::Own(templates, this);
+  taBase::Own(wizards, this);
   taBase::Own(projects, this);
   taBase::Own(viewers, this);
   taBase::Own(plugins, this);
+  taBase::Own(plugin_state, this);
   taBase::Own(plugin_deps, this);
   taBase::Own(mime_factories, this);
   taBase::Own(colorspecs, this);
@@ -920,9 +923,12 @@ void taRootBase::CutLinks() {
   colorspecs.CutLinks();
   mime_factories.CutLinks();
   plugin_deps.CutLinks();
+//TODO: we should save the plugin state!
+  plugin_state.CutLinks();
   plugins.CutLinks();
   viewers.CutLinks();
   projects.CutLinks();
+  wizards.CutLinks();
   templates.CutLinks();
   inherited::CutLinks();
 }
@@ -1019,6 +1025,18 @@ int taRootBase::Save() {
   int rval = inherited::Save();
   --taFiler::no_save_last_fname;
   return rval;
+}
+
+int taRootBase::SavePluginState() {
+//TODO:
+// iterate the plugin_state collection, making a file for each guy
+// in the user data area
+}
+
+int taRootBase::LoadPluginState() {
+//TODO:
+// iterate the plugin_state collection, loading data for each guy
+// from the user data area
 }
 
 bool taRootBase::CheckAddPluginDep(TypeDef* td) {
@@ -1196,6 +1214,70 @@ void taRootBase::Options() {
 #endif
 }
 
+void taRootBase::MakeWizards() {
+  MakeWizards_impl();
+}
+
+void taRootBase::MakeWizards_impl() {
+  // plugins
+  wizards.New(1, &TA_PluginWizard, "PluginWizard");
+}
+
+
+//////////////////////////
+//  PluginWizard	//
+//////////////////////////
+
+void PluginWizard::Initialize() {
+  plugin_name = "MyPlugin";
+  plugin_type = UserPlugin;
+  default_location = true;
+  validated = false;
+//TODO: start with EMERGENTDIR if exists
+  plugin_location = "TODO:";
+}
+
+void PluginWizard::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  validated = false;
+  // modify it to force it to be C-valid
+  plugin_name = taMisc::StringCVar(plugin_name);
+  if (default_location) {
+    if (plugin_type == UserPlugin) {
+      plugin_location = taMisc::user_app_dir + PATH_SEP + "plugins" + PATH_SEP +
+        plugin_name;
+    } else {
+      plugin_location = taMisc::app_dir + PATH_SEP + "plugins" + PATH_SEP +
+        plugin_name;
+    }
+  }
+}
+
+void PluginWizard::CheckThisConfig_impl(bool quiet, bool& ok) {
+  inherited::CheckThisConfig_impl(quiet, ok);
+  // must be C valid, otherwise bail -- we assume our transform made it legal...
+  if (CheckError(plugin_name.empty(), quiet, ok,
+    "you must provide a C-valid name for your plugin")) 
+    return;
+  
+  CheckError((plugin_name == "template"), quiet, ok,
+    "you cannot use the name \"template\"");
+  //TODO: do our name conflict checks!
+}
+
+bool PluginWizard::Validate() {
+  return CheckConfig_Gui();
+}
+
+bool PluginWizard::MakePlugin() {
+  if (TestError((!validated),
+    "PluginWizard::MakePlugin", 
+    "You must Validate the plugin before you can make it"))
+    return false;
+  //TODO: make it!!!
+  //TODO: post a success dialog
+  return true;
+}
 
 
 /////////////////////////////////////////
@@ -1526,11 +1608,15 @@ have_app_dir:
     taMisc::user_dir = taPlatform::getHomePath();
   
   taMisc::user_app_dir = taMisc::FindArgByName("UserAppDir");;
-  if (taMisc::user_app_dir.empty())
-    taMisc::user_app_dir = taMisc::user_dir + PATH_SEP + taMisc::app_name + "_user";
   taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
   // make sure it exists
   taPlatform::mkdir(taMisc::prefs_dir);
+  if (taMisc::user_app_dir.empty())
+    taMisc::user_app_dir = taMisc::prefs_dir;
+/*TODO: nuke -- this was <4.0.19
+  if (taMisc::user_app_dir.empty())
+    taMisc::user_app_dir = taMisc::user_dir + PATH_SEP + taMisc::app_name + "_user";
+*/
   return true;
 }
 
@@ -1612,10 +1698,10 @@ exit:
 exit1:
   return rval;
 }
-
+//TODO: nuke
 bool MakeUserPluginConfigProxy(const String& uplugin_dir,
   const String& fname) 
-{
+{ return true;
 //note: isEmpty takes a raw var, not its content
   String f(
 "tmpEMERGENT_DIR = $(EMERGENTDIR)\n"
@@ -1668,7 +1754,7 @@ bool taRootBase::Startup_InitTA_initUserAppDir() {
       err = true;
       msg += "Startup_InitTA_initUserAppDir: can't make config.pri\n";
     }*/
-    if (!MakeUserPluginConfigProxy(uplugin_dir, "shared_pre.pri")) {
+/*TODO: nuke    if (!MakeUserPluginConfigProxy(uplugin_dir, "shared_pre.pri")) {
       err = true;
       msg += "Startup_InitTA_initUserAppDir: can't make shared_pre.pri\n";
     }
@@ -1690,7 +1776,7 @@ bool taRootBase::Startup_InitTA_initUserAppDir() {
     if (false && err) {
       taMisc::Warning(msg);
       taMisc::Warning("Your user folder could not be set up properly to build plugins -- this will not affect running the basic application but will prevent you from building or compiling your own plugins. Please contact your system administrator.");
-    }
+    }*/
   } // gui mode
   return true;
 }
@@ -1711,10 +1797,10 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
     taMisc::proj_view_pref = taMisc::PVP_3PANE;
   }
 
-  // init user dir first time
+/*TODO: nuke, done alread  // init user dir first time
   if (taMisc::user_app_dir.empty()) {
     taMisc::user_app_dir = taMisc::user_dir + PATH_SEP + taMisc::app_name + "_user";
-  }
+  }*/
 
   if (!Startup_InitTA_initUserAppDir()) return false;
   
@@ -1766,10 +1852,11 @@ bool taRootBase::Startup_EnumeratePlugins() {
   // add plugin folders
 #ifdef TA_OS_WIN
   taPlugins::AddPluginFolder(
-    taMisc::app_dir + PATH_SEP + "lib" + PATH_SEP + "plugins");
+    taMisc::app_dir + PATH_SEP + "plugins");
   taPlugins::AddPluginFolder(
     taPlatform::getAppDataPath(taMisc::app_name) + PATH_SEP + "lib" + PATH_SEP + "plugins");
 #else
+//TODO: need to figure out what is our root, and that is plugin root, etx. /usr/opt
   taPlugins::AddPluginFolder("/usr/local/lib/Emergent/plugins");
   taPlugins::AddPluginFolder(
     taMisc::user_dir + PATH_SEP + "lib/Emergent/plugins");
@@ -1948,6 +2035,11 @@ bool taRootBase::Startup_ConsoleType() {
   return true; // always works
 }
 
+bool taRootBase::Startup_MakeWizards() {
+  tabMisc::root->MakeWizards();
+  return true;
+}
+
 bool taRootBase::Startup_MakeMainWin() {
   tabMisc::root->version = taMisc::version;
   if(!taMisc::gui_active) return true;
@@ -2082,6 +2174,7 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   if(!Startup_InitCss()) goto startup_failed;
   if(!Startup_InitGui()) goto startup_failed; // note: does the taiType bidding
   if(!Startup_ConsoleType()) goto startup_failed;
+  Startup_MakeWizards(); // supposedly can't fail...
   if(!Startup_MakeMainWin()) goto startup_failed;
   if(!Startup_Console()) goto startup_failed;
   if(!Startup_RegisterSigHandler()) goto startup_failed;

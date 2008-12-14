@@ -262,9 +262,11 @@ public:
   
   String		version; 	// #READ_ONLY #SHOW current version number
   taBase_List		templates;	// #NO_SAVE #READ_ONLY objects used as templates -- do not use or mess with these!
+  Wizard_Group		wizards; // #NO_SAVE #HIDDEN global wizards -- see each project for project-specific wizards
   Project_Group		projects; 	// #NO_SAVE The projects
   DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
   taPlugin_List		plugins; //  available plugins
+  taBase_List		plugin_state; // #NO_SAVE #HIDDEN #HIDDEN_TREE state objs of plugins -- created/managed by plugin system; state saved as {name}.state in user data
   taPluginBase_List	plugin_deps; // #SHOW_TREE #EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
   taiMimeFactory_List	mime_factories; // #NO_SAVE #HIDDEN_TREE extensible list of mime factories
   ColorScaleSpec_Group 	colorspecs;	// Color Specs
@@ -334,6 +336,8 @@ public:
   // #IGNORE initialize default view colors
   static bool	Startup_ConsoleType();
   // #IGNORE arbitrate type of console, based on user options, and app context
+  static bool	Startup_MakeWizards();
+  // #IGNORE make the global wizards, including from plugins
   static bool	Startup_MakeMainWin();
   // #IGNORE open the main window (browser of root object) (returns success)
   static bool	Startup_Console();
@@ -366,10 +370,12 @@ public:
   	
   bool		CheckAddPluginDep(TypeDef* td); // add a plugin dependency, if this type is a  type defined in a plugin; true if it was
   bool		VerifyHasPlugins(); // check the current plugin_deps w/ loaded plugins, return true if all needed plugins loaded OR user says to continue loading anyway
-
+  void		MakeWizards();
   static void 	SaveRecoverFileHandler(int err = 1);
   // error handling function that saves a recover file when system crashes
 
+  int		SavePluginState(); // save current state for plugins in user data
+  int		LoadPluginState(); // load state for plugins from user data
   int	Save();
   void	InitLinks();
   void	CutLinks();
@@ -400,12 +406,42 @@ protected:
   bool		AddRecentPath_impl(const String& value); // #IGNORE add this path to the recent list;
   virtual void		AddTemplates(); // called in InitLinks -- extend to add new templates
   virtual taBase* 	GetTemplateInstance_impl(TypeDef* typ, taBase* base);
+  virtual void		MakeWizards_impl();
 private:
   SIMPLE_COPY(taRootBase)
   void	Initialize();
   void	Destroy();
 };
 
+
+class TA_API PluginWizard : public taWizard {
+  // #STEM_BASE ##CAT_Wizard wizard to create a new Plugin
+INHERITED(taWizard)
+public:
+  enum PluginType { // the type of plugin
+    UserPlugin,	// created in your emergent_user/plugins folder and only available for your login on your computer
+    SystemPlugin, // created in your computer's emergent/plugins folder -- makes plugin available to everyone, but may require Administrator/root access on your system
+  };
+  
+  String	plugin_name; // the name, which must be a valid C identifier, and cannot cause name clashes with existing classes or loaded plugins (this will be checked during Validate)
+  PluginType	plugin_type; // the type -- this controls the visibility of the plugin (just you, or everyone on your system) -- on Unix and some Windows installations, you will need administrator rights to install a system plugin	
+  bool		default_location; // #DEF_true create the plugin in the default location for the type RECOMMENDED
+  bool		validated; // #NO_SHOW
+  String	plugin_location; // folder where to create the plugin (folder name should usually be same as plugin_name)
+  
+  bool		Validate();
+  // #BUTTON  validate all the provided parameters, prior to making the Plugin
+  bool		MakePlugin();
+  // #BUTTON  create the plugin -- must be validated first
+
+  TA_BASEFUNS_NOCOPY(PluginWizard);
+protected:
+  override void		UpdateAfterEdit_impl();
+  override void		CheckThisConfig_impl(bool quiet, bool& ok);
+private:
+  void 	Initialize();
+  void 	Destroy()	{ };
+};
 
 
 #endif

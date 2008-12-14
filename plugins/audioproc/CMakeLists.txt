@@ -18,58 +18,60 @@
 
 # To configure this file for a new plugin as a plugin programmer, skip to Step 2
 
+################################################################
+# Step 0: ensure we have the right version of cmake -- this
+# has to go here at the top of this file otherwise cmake complains
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
 
-################################################################
-# Step 0: Attempt to find the emergent share directory
-# from which everything else can be derived -- you do not typically
-# need to edit this code, so skip to step 2 unless you have a problem
-# with it finding the installed emergent code
 
-# note: you can add weird paths here in case it is not found on a standard path
-# find the path, in terms of an equivalent to CMAKE_INSTALL_PREFIX
+################################################################
+# Step 1: Find the emergent share (application) directory
+# Normal default installation locations should be found, but you
+# can edit these paths to add a non-standard location 
+file(TO_CMAKE_PATH "$ENV{EMERGENTDIR}" EMERGENTDIR)
 if (WIN32)
-  find_path(EMERGENT_INSTALL_PREFIX Emergent/README PATHS
-    C:/
-    "C:/Program Files"
-    $ENV{EMERGENTDIR}
-    NO_DEFAULT_PATH
-  )
+  #note: the normal case is for the ENV var to exist...
+  if (${EMERGENTDIR})
+    set(EMERGENT_SHARE_DIR "${EMERGENTDIR}")
+  else (${EMERGENTDIR})
+    find_path(EMERGENT_SHARE_DIR README PATHS
+      "C:/Program Files/Emergent"
+      C:/Emergent
+      "C:/Program Files (x86)/Emergent" # W32 on 64, should be rare
+      NO_DEFAULT_PATH
+    )
+  endif (${EMERGENTDIR})
 else (WIN32)
-  find_path(EMERGENT_INSTALL_PREFIX share/Emergent/README PATHS
-    /usr
-    /usr/local
-    /opt/local
+  find_path(EMERGENT_SHARE_DIR README PATHS
+    /usr/share/Emergent
+    /usr/local/share/Emergent
+    /opt/local/share/Emergent
     NO_DEFAULT_PATH
   )
 endif (WIN32)
 
-if(EMERGENT_INSTALL_PREFIX)
-  message(STATUS "Found Emergent Install Prefix Directory Successfully!!")
-  message(STATUS "EMERGENT_INSTALL_PREFIX is: ${EMERGENT_INSTALL_PREFIX}")
-else(EMERGENT_INSTALL_PREFIX)
+if(EMERGENT_SHARE_DIR)
+  message(STATUS "Found Emergent Application Directory Successfully!!")
+  message(STATUS "EMERGENT_SHARE_DIR is: ${EMERGENT_SHARE_DIR}")
+else(EMERGENT_SHARE_DIR)
   message(STATUS "Could not find installed Emergent share directory -- cannot proceed further")
-  message(FATAL_ERROR "Edit Step 3 of CMakeLists.txt file to include unusual paths for searching")
-endif(EMERGENT_INSTALL_PREFIX)
-
-if (WIN32)
-  set(EMERGENT_SHARE_DIR ${EMERGENT_INSTALL_PREFIX}/Emergent)
-else (WIN32)
-  set(EMERGENT_SHARE_DIR ${EMERGENT_INSTALL_PREFIX}/share/Emergent)
-endif (WIN32)
+  message(FATAL_ERROR "Edit Step 1 of CMakeLists.txt file to include unusual paths for searching")
+endif(EMERGENT_SHARE_DIR)
 
 
 ################################################################
-# Step 1: ensure we have the right version of cmake and set build params
+# Step 2: set build params
 # this includes all necessary setup stuff to setup the make process
 include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginSetup.cmake)
 
 
 ################################################################
-# Step 2: set all the basic parameters about the project
+# Step 3: set all the basic parameters about the project
 #
-# IMPORTANT: plugin programmer: this is stuff you need to set!!
-# if copying from the HelloWorld example, then replace audioproc with your project name
+# IMPORTANT: plugin programmer: this is the section you may need
+# to modify or extend, especially if you add additional source
+# files or need to include or link to additional libraries not
+# part of the Emergent prerequisites
 
 # name the project: this will be the name of the plugin
 PROJECT(audioproc)
@@ -116,7 +118,7 @@ set(plugin_HEADS_MOC
 set(plugin_FILES ${plugin_HEADS} ${plugin_SRCS} CMakeLists.txt)
 
 ################################################################
-# Step 2a: find any additional libraries that are needed
+# Step 3a: find any additional libraries that are needed
 # assuming it is on known path, 
 # else see {root}/CMakeModules/FindGSL.cmake for example
 

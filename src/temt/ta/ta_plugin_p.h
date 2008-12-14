@@ -110,6 +110,7 @@ public:
   bool			reconciled; // #IGNORE true once reconciled; we delete those with no plugin
   taPluginInst*		plugin; // #IGNORE the plugin, if loaded (not used for descs)
   
+  virtual void		PluginOptions(); // #BUTTON open the Options dialog for this plugin (if it has one)
   int	GetEnabled() const {return enabled;}
   void	SetEnabled(bool value) {enabled = value;}
   void	Copy_(const taPlugin& cp); //note: we only use this for descs, not actual plugins

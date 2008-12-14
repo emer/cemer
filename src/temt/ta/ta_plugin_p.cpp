@@ -207,6 +207,8 @@ void taPlugin::Copy_(const taPlugin& cp) { // usually not copied
   plugin = NULL;
 }
 
+void taPlugin::PluginOptions() {
+}
 
 //////////////////////////
 //  taPluginDep		//

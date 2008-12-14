@@ -1,7 +1,12 @@
 #include "template.h"
 
+
+/////////////////////////////////////////////////////
+//  TemplatePluginExampleClass
+/////////////////////////////////////////////////////
+
 void TemplatePluginExampleClass::Initialize() {
-  // TODO: delete following and add your own member initializations
+// TODO: delete following and add your own member initializations
   a = 2;
   b = 4;
   sum_a_b = a + b;
@@ -26,7 +31,7 @@ void TemplatePluginExampleClass::Hello() {
   taMisc::Info("Hello from TemplatePluginExampleClass!");
 }
 
-void TemplatePluginExampleClass::AddToAandB(int add_to_a, int_add_to_b) {
+void TemplatePluginExampleClass::AddToAandB(int add_to_a, int add_to_b) {
   a += add_to_a;
   b += add_to_b;
   UpdateAfterEdit(); // updates any associated members, refreshes display, and notifies clients of this class
@@ -35,3 +40,24 @@ void TemplatePluginExampleClass::AddToAandB(int add_to_a, int_add_to_b) {
 void TemplatePluginExampleClass::MyCodeMethod() {
    // example, does nothing
 }
+
+
+/////////////////////////////////////////////////////
+//  TemplatePluginState	
+/////////////////////////////////////////////////////
+
+void TemplatePluginState::Initialize() {
+// TODO: add your member initializations
+}
+
+void TemplatePluginState::Destroy() {
+  CutLinks(); // unlinks any owned objects -- always put this in Destroy
+  // TODO: release any manually allocated resources, if any
+}
+
+void TemplatePluginState::UpdateAfterEdit_impl() {
+  // by using the 'inherited' pseudo-keyword we always call the right base class
+  inherited::UpdateAfterEdit_impl();
+//TODO: add any update code you may have, or leave empty
+}
+

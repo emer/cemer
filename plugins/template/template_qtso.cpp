@@ -1,20 +1,5 @@
-#include "hw.h"
+#include "template_qtso.h"
 
-void HelloBase::Initialize() {
-  // any member initializations would go here
-}
+// TODO: add any temt/emergent classes needed here
 
-void HelloBase::Destroy() {
-  CutLinks(); // unlinks any owned objects -- always put this in Destroy
-  // any additional destruction operations would go here
-}
-
-void HelloBase::Hello() {
-  taMisc::Error("Hello World!");
-}
-
-void HelloBase::AddCoords() {
-  FloatTDCoord t = a + b; // demonstrates use of temporary objects
-  c = t;
-  UpdateAfterEdit(); // updates any associated members, and refreshes display
-}
+// TODO: add any Qt, Coin, other library headers here

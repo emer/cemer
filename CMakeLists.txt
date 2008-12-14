@@ -191,6 +191,7 @@ add_dependencies(emergent emergentlib)
 ########### install files ###############
 
 install(FILES AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
+  cmake_uninstall.cmake.in
   DESTINATION ${EMERGENT_SHARE_DEST}
 )
 
@@ -199,6 +200,15 @@ file(GLOB OUR_CMAKE_MOD_FILES "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/*.cmake"
 
 install(FILES ${OUR_CMAKE_MOD_FILES}
   DESTINATION ${EMERGENT_SHARE_DEST}/CMakeModules
+)
+
+#plugin template files NOTE: prolly a more elegant way to make this list...
+set(PLT "plugins/template")
+install(FILES ${PLT}/CMakeLists.txt ${PLT}/NOBUILD ${PLT}/template_def.h
+  ${PLT}/template.h ${PLT}/template.cpp
+  ${PLT}/template_pl.h ${PLT}/template_pl.cpp
+  ${PLT}/template_qtso.h ${PLT}/template_qtso.cpp
+  DESTINATION ${EMERGENT_SHARE_DEST}/plugins
 )
 
 ########### uninstall files ###############
