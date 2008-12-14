@@ -656,6 +656,17 @@ String& String::cat(const String& y) {
   return *this;
 }
 
+String& String::cat(const char* y, int slen) {
+  if (slen < 0) slen = strlen(y);
+  if (y && (slen > 0) ) {
+    if (mrep->canCat(slen))
+      mrep->cat(y, slen);
+    else
+      ::cat(*this, y, slen, *this);
+  }
+  return *this;
+}
+
 String& String::cat(const char* y) {
   uint slen;
   if (y && (slen = (uint)strlen(y)) ) {
@@ -883,6 +894,33 @@ String& String::reverse() {
   makeUnique();
   mrep->reverse();
   return *this;
+}
+
+int String::Load_str(std::istream& istrm) {
+  truncate(0);
+  const int buf_len = 256;
+  char buf[buf_len];
+  bool done = false;
+  while (!done) {
+    istrm.read(buf, buf_len);
+    int n_read = buf_len;
+    if (istrm.bad()) break;
+    if (istrm.eof()) {
+      n_read = istrm.gcount();
+      done = true;
+    }
+    // append num read
+    cat(buf, n_read);
+  }
+  
+  if (istrm.bad()) return 1;
+  else return 0;
+}
+
+int String::Save_str(std::ostream& ostrm) {
+  ostrm.write(mrep->s, mrep->len);
+  if (ostrm.bad()) return 1;
+  else return 0;
 }
 
 String& String::set(const char* s, int slen) {

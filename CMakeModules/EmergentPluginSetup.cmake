@@ -68,3 +68,38 @@ elseif (EMERGENT_PLUGIN_TYPE STREQUAL "User")
 else (EMERGENT_PLUGIN_TYPE STREQUAL "User")
   message(FATAL_ERROR "EMERGENT_PLUGIN_TYPE must be set to one of: User | System")
 endif (EMERGENT_PLUGIN_TYPE STREQUAL "System")
+
+#TEMP: from EmergentPluginSetup
+set(mod_path "${EMERGENT_SHARE_DIR}/CMakeModules")
+
+set(CMAKE_MODULE_PATH ${mod_path})
+
+# set the lib and executable suffix based on build type -- need this before finding
+# the emergent and temt packages!
+include(${mod_path}/SetBuildSuffix.cmake)
+
+# find full emergent install
+find_package(Emergent)
+include_directories(${EMERGENT_INCLUDE_DIR}/Emergent)
+
+# find all of our dependencies -- also sets their include paths in include_directories
+# and sets the EMERGENT_DEP_LIBRARIES variable to all the dependency libraries
+find_package(EmergentDependencies)
+
+
+# several important macros in here:
+include(${mod_path}/MacroLibrary.cmake)
+# this one does all the configure checks to set various variables
+include(${mod_path}/ConfigureChecks.cmake)
+# all the support for maketa:
+include(${mod_path}/Maketa.cmake)
+
+# use this instead of TARGET_LINK_LIBRARIES -- sets suffix and other properties
+MACRO (EMERGENT_PLUGIN_LINK_LIBRARIES _targ _xtra_libs)
+    target_link_libraries(${_targ}  ${_xtra_libs} ${EMERGENT_LIBRARIES} ${EMERGENT_DEP_LIBRARIES})
+if (false) #not for plugins -- confusing to users and unnecessary, and Unix-specific
+    set_target_properties(${_targ} PROPERTIES
+      VERSION ${PLUGIN_VERSION}
+    )
+endif (false)
+ENDMACRO (EMERGENT_PLUGIN_LINK_LIBRARIES)

@@ -176,6 +176,8 @@ public:
   friend int        readline(istream& s, String& x,
 			     char terminator = '\n',
 			     int discard_terminator = 1);
+  int			Save_str(ostream& ostrm);
+  int			Load_str(istream& istrm);
   // #IGNORE 
 #else
   friend std::ostream&   operator<<(std::ostream& s, const String& x); // is inline
@@ -183,6 +185,8 @@ public:
   TA_API friend int        readline(std::istream& s, String& x,
 				 char terminator = '\n',
 				 int discard_terminator = 1);
+  int			Load_str(istream& istrm); // load contents from a stream
+  int			Save_str(std::ostream& ostrm); // save contents to a stream
 #endif
   
   ////////////////////////////////////////////////
@@ -471,6 +475,7 @@ protected:
   StrRep*		mrep;   // Strings are pointers to their representations
   void			init(const char* s, int slen = -1); // for calling in constructors
   void			newRep(StrRep* rep_); // for setting rep in a constructor
+  String&		cat(const char* s, int slen); // for internal use
 
   // some helper functions
   int		 	search(int start, int sl, const char* t, int tl = -1) const

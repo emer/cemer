@@ -1224,62 +1224,6 @@ void taRootBase::MakeWizards_impl() {
 }
 
 
-//////////////////////////
-//  PluginWizard	//
-//////////////////////////
-
-void PluginWizard::Initialize() {
-  plugin_name = "MyPlugin";
-  plugin_type = UserPlugin;
-  default_location = true;
-  validated = false;
-//TODO: start with EMERGENTDIR if exists
-  plugin_location = "TODO:";
-}
-
-void PluginWizard::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  validated = false;
-  // modify it to force it to be C-valid
-  plugin_name = taMisc::StringCVar(plugin_name);
-  if (default_location) {
-    if (plugin_type == UserPlugin) {
-      plugin_location = taMisc::user_app_dir + PATH_SEP + "plugins" + PATH_SEP +
-        plugin_name;
-    } else {
-      plugin_location = taMisc::app_dir + PATH_SEP + "plugins" + PATH_SEP +
-        plugin_name;
-    }
-  }
-}
-
-void PluginWizard::CheckThisConfig_impl(bool quiet, bool& ok) {
-  inherited::CheckThisConfig_impl(quiet, ok);
-  // must be C valid, otherwise bail -- we assume our transform made it legal...
-  if (CheckError(plugin_name.empty(), quiet, ok,
-    "you must provide a C-valid name for your plugin")) 
-    return;
-  
-  CheckError((plugin_name == "template"), quiet, ok,
-    "you cannot use the name \"template\"");
-  //TODO: do our name conflict checks!
-}
-
-bool PluginWizard::Validate() {
-  return CheckConfig_Gui();
-}
-
-bool PluginWizard::MakePlugin() {
-  if (TestError((!validated),
-    "PluginWizard::MakePlugin", 
-    "You must Validate the plugin before you can make it"))
-    return false;
-  //TODO: make it!!!
-  //TODO: post a success dialog
-  return true;
-}
-
-
 /////////////////////////////////////////
 // 	startup code
 
@@ -1611,12 +1555,6 @@ have_app_dir:
   taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
   // make sure it exists
   taPlatform::mkdir(taMisc::prefs_dir);
-  if (taMisc::user_app_dir.empty())
-    taMisc::user_app_dir = taMisc::prefs_dir;
-/*TODO: nuke -- this was <4.0.19
-  if (taMisc::user_app_dir.empty())
-    taMisc::user_app_dir = taMisc::user_dir + PATH_SEP + taMisc::app_name + "_user";
-*/
   return true;
 }
 
@@ -1796,11 +1734,10 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   if (taMisc::proj_view_pref == -1) {
     taMisc::proj_view_pref = taMisc::PVP_3PANE;
   }
-
-/*TODO: nuke, done alread  // init user dir first time
+  // init user dir first time
   if (taMisc::user_app_dir.empty()) {
-    taMisc::user_app_dir = taMisc::user_dir + PATH_SEP + taMisc::app_name + "_user";
-  }*/
+    taMisc::user_app_dir = taMisc::prefs_dir;
+  }
 
   if (!Startup_InitTA_initUserAppDir()) return false;
   
@@ -2447,3 +2384,152 @@ void taRootBase::SaveRecoverFileHandler(int err) {
 }
 
 //#endif // TA_OS_WIN
+
+//////////////////////////
+//  PluginWizard	//
+//////////////////////////
+
+void PluginWizard::Initialize() {
+  plugin_name = "MyPlugin";
+  plugin_type = UserPlugin;
+  default_location = true;
+  validated = false;
+  plugin_location = taMisc::user_app_dir + PATH_SEP + "plugins" + PATH_SEP +
+        plugin_name;
+}
+
+void PluginWizard::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  validated = false;
+  // modify it to force it to be C-valid
+  plugin_name = taMisc::StringCVar(plugin_name);
+  if (default_location) {
+    if (plugin_type == UserPlugin) {
+      plugin_location = taMisc::user_app_dir + PATH_SEP + "plugins" + PATH_SEP +
+        plugin_name;
+    } else {
+      plugin_location = taMisc::app_dir + PATH_SEP + "plugins" + PATH_SEP +
+        plugin_name;
+    }
+  }
+  //TODO: check if a plugin already exists there!
+}
+
+void PluginWizard::CheckThisConfig_impl(bool quiet, bool& ok) {
+  inherited::CheckThisConfig_impl(quiet, ok);
+  // must be C valid, otherwise bail -- we assume our transform made it legal...
+  if (CheckError(plugin_name.empty(), quiet, ok,
+    "you must provide a C-valid name for your plugin")) 
+    return;
+  
+  CheckError((plugin_name == "template"), quiet, ok,
+    "you cannot use the name \"template\"");
+  //TODO: do our name conflict checks!
+}
+
+bool PluginWizard::Validate() {
+  validated = CheckConfig_Gui();
+  return validated;
+}
+
+void PluginWizard::AddFiles(bool upgrade_only) {
+  files.Add("CMakeLists.txt");
+  if (upgrade_only) return;
+  files.Add("template.cpp");
+  files.Add("template_def.h");
+  files.Add("template.h");
+  files.Add("template_pl.cpp");
+  files.Add("template_pl.h");
+  files.Add("template_qtso.cpp");
+  files.Add("template_qtso.h");
+}
+
+void PluginWizard::TemplatizeFile(const String& src, String& dst, bool& ok)
+{
+  dst = src;
+  dst.makeUnique();
+  dst.gsub("template", plugin_name);
+  dst.gsub("Template", plugin_name);
+  dst.gsub("TEMPLATE", upcase(plugin_name));
+//TODO: detailed enablings of things like _qtso names, etc.
+}
+
+void PluginWizard::CreateDestFile(const String& src_file, 
+    const String& dst_file, bool& ok)
+{
+  fstream fsrc, fdst;
+  fsrc.open(src_file, ios::in | ios::binary);
+  if (TestError((!fsrc.is_open()),
+    "PluginWizard::CreateDestFile", 
+    "Could not open template file:", src_file)) {
+    ok = false; 
+    return;
+  }
+  fdst.open(dst_file, ios::out | ios::binary);
+  if (TestError((!fdst.is_open()),
+    "PluginWizard::CreateDestFile", 
+    "Could not open destination file:", dst_file,
+    " -- make sure the file does not exist and/or is not write_protected and/or you have permission to create files in the destination")) {
+    ok = false; 
+    return;
+  }
+  String src;
+  if (TestError(src.Load_str(fsrc),
+    "PluginWizard::CreateDestFile", 
+    "Could not read contents of file:", src_file)) {
+    ok = false; 
+    return;
+  }
+  fsrc.close();
+  String dst;
+  TemplatizeFile(src, dst, ok);
+  if (!ok) return;
+  if (TestError((dst.Save_str(fdst)),
+    "PluginWizard::CreateDestFile", 
+    "Could not write results to:", dst_file,
+    " -- make sure the file does not exist and/or is not write_protected and/or you have permission to create files in the destination")) {
+    ok = false; 
+    return;
+  }
+  fdst.close();
+}
+
+bool PluginWizard::MakePlugin() {
+  if (TestError((!validated),
+    "PluginWizard::MakePlugin", 
+    "You must Validate the plugin before you can make it"))
+    return false;
+  // extract dirs
+  src_dir = taMisc::app_dir + PATH_SEP + "plugins" + PATH_SEP + "template" + PATH_SEP;
+  
+  // make the dest dir
+  if (TestError(!taPlatform::mkdir(plugin_location),
+    "PluginWizard::MakePlugin", 
+    "Could not make folder for plugin -- make sure the path is valid, and you have permission to create a folder in that location"))
+    return false;
+  
+  // build file list
+  files.Reset();
+  bool upgrade_only = false; //TODO: check for upgrade
+  AddFiles(upgrade_only);
+  
+  // iterate files
+  bool ok = true;
+  for (int i = 0; (i < files.size) && ok; ++i) {
+    String src_file = files[i];
+    String dst_file = src_file;
+    // note: files like CMakeLists.txt keep their name
+    dst_file.gsub("template", plugin_name);
+    CreateDestFile(
+      src_dir + src_file, 
+      plugin_location + PATH_SEP + dst_file, 
+      ok
+    );
+  }
+  if (ok) {
+    taMisc::Info("The plugin was created successfully! To build and install the plugin... TODO: instructions");
+  } 
+  return true;
+}
+
+

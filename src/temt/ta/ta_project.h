@@ -262,7 +262,7 @@ public:
   
   String		version; 	// #READ_ONLY #SHOW current version number
   taBase_List		templates;	// #NO_SAVE #READ_ONLY objects used as templates -- do not use or mess with these!
-  Wizard_Group		wizards; // #NO_SAVE #HIDDEN global wizards -- see each project for project-specific wizards
+  Wizard_Group		wizards; // #NO_SAVE global wizards -- see each project for project-specific wizards
   Project_Group		projects; 	// #NO_SAVE The projects
   DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
   taPlugin_List		plugins; //  available plugins
@@ -423,21 +423,27 @@ public:
     SystemPlugin, // created in your computer's emergent/plugins folder -- makes plugin available to everyone, but may require Administrator/root access on your system
   };
   
-  String	plugin_name; // the name, which must be a valid C identifier, and cannot cause name clashes with existing classes or loaded plugins (this will be checked during Validate)
-  PluginType	plugin_type; // the type -- this controls the visibility of the plugin (just you, or everyone on your system) -- on Unix and some Windows installations, you will need administrator rights to install a system plugin	
-  bool		default_location; // #DEF_true create the plugin in the default location for the type RECOMMENDED
-  bool		validated; // #NO_SHOW
-  String	plugin_location; // folder where to create the plugin (folder name should usually be same as plugin_name)
+  String		plugin_name; // the name, which must be a valid C identifier, and cannot cause name clashes with existing classes or loaded plugins (this will be checked during Validate)
+  PluginType		plugin_type; // the type -- this controls the visibility of the plugin (just you, or everyone on your system) -- on Unix and some Windows installations, you will need administrator rights to install a system plugin	
+  bool			default_location; // #DEF_true create the plugin in the default location for the type RECOMMENDED
+  bool			validated; // #NO_SHOW
+  String		plugin_location; // folder where to create the plugin (folder name should usually be same as plugin_name)
   
-  bool		Validate();
-  // #BUTTON  validate all the provided parameters, prior to making the Plugin
-  bool		MakePlugin();
-  // #BUTTON  create the plugin -- must be validated first
+  bool			Validate();
+  // #BUTTON validate all the provided parameters, prior to making the Plugin
+  bool			MakePlugin();
+  // #BUTTON #CONDEDIT_ON_validated  create the plugin -- must be validated first
 
   TA_BASEFUNS_NOCOPY(PluginWizard);
 protected:
+  String 		src_dir;
+  String_PArray 	files;
   override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& ok);
+  virtual void		AddFiles(bool upgrade_only); // populate the file list
+  virtual void		CreateDestFile(const String& src_file, 
+    const String& dst_file, bool& ok);	
+  virtual void		TemplatizeFile(const String& src, String& dst, bool& ok);
 private:
   void 	Initialize();
   void 	Destroy()	{ };

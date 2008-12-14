@@ -6,7 +6,7 @@
 
 # IMPORTANT: EMERGENT_SHARE_DIR will be set by the plugin CMakeLists.txt 
 # file, so we can use that to then find other stuff etc
-
+if (false)
 set(mod_path "${EMERGENT_SHARE_DIR}/CMakeModules")
 
 set(CMAKE_MODULE_PATH ${mod_path})
@@ -40,7 +40,7 @@ if (false) #not for plugins -- confusing to users and unnecessary, and Unix-spec
     )
 endif (false)
 ENDMACRO (EMERGENT_PLUGIN_LINK_LIBRARIES)
-
+endif (false)
 ####################################
 #  report on status prior to building
 
