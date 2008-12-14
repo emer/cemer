@@ -190,6 +190,7 @@ public:
   float		hebb;		// [Default: .01] amount of hebbian learning (should be relatively small, can be effective at .0001)
   float		err;		// #READ_ONLY #SHOW [Default: .99] amount of error driven learning, automatically computed to be 1-hebb
   bool		err_sb;		// #DEF_true apply exponential soft-bounding to the error learning component (applied in dWt)
+  bool		sym_sb;		// use symmetric softbounding function: wt * (1-wt)
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(LearnMixSpec);
@@ -2618,8 +2619,13 @@ inline float LeabraConSpec::C_Compute_Err_LeabraCHL(LeabraCon* cn, float lin_wt,
 						    float su_act_p, float su_act_m) {
   float err = (ru_act_p * su_act_p) - (ru_act_m * su_act_m);
   if(lmix.err_sb) {
-    if(err > 0.0f)	err *= (1.0f - lin_wt);
-    else		err *= lin_wt;
+    if(lmix.sym_sb) {
+      if(err > 0.0f)	err *= (1.0f - lin_wt);
+      else		err *= lin_wt;
+    }
+    else {
+      err *= lin_wt * (1.0f - lin_wt);
+    }
   }
   return err;
 }

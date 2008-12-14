@@ -82,6 +82,7 @@ void LearnMixSpec::Initialize() {
   hebb = .001f;
   err = 1.0f - hebb;
   err_sb = true;
+  sym_sb = false;
 }
 
 void LearnMixSpec::UpdateAfterEdit_impl() {
