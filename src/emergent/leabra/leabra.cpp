@@ -94,6 +94,7 @@ void XCalLearnSpec::Initialize() {
   lrn_var = XCAL;
 
   sym_sb = true;
+  sb_pow = 1.0f;
   dwt_norm = false;
 
   mvl_mix = 0.03f;
@@ -122,6 +123,8 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
     d_rev_ratio = (1.0f - d_rev) / d_rev;
   else
     d_rev_ratio = 1.0f;
+
+  sb_mult = 2.0f * (0.25f / (powf(.5f, sb_pow) * powf(1.0f - .5f, sb_pow)));
 }
 
 void XCalMiscSpec::Initialize() {
@@ -374,6 +377,32 @@ void LeabraConSpec::GraphXCaldWtFun(DataTable* graph_data, float thr_p) {
     float dw = xcal.dWtFun(x, thr_p);
     graph_data->AddBlankRow();
     sravg->SetValAsFloat(x, -1);
+    dwt->SetValAsFloat(dw, -1);
+  }
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGraphView();
+}
+
+void LeabraConSpec::GraphXCalSoftBoundFun(DataTable* graph_data) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_XCalSoftBoundFun", true);
+  }
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataCol* wt = graph_data->FindMakeColName("Wt", idx, VT_FLOAT);
+  DataCol* dwt = graph_data->FindMakeColName("dWt", idx, VT_FLOAT);
+  wt->SetUserData("MIN", 0.0f);
+  wt->SetUserData("MAX", 1.0f);
+  dwt->SetUserData("MIN", 0.0f);
+  dwt->SetUserData("MAX", 0.5f);
+
+  float x;
+  for(x = 0.0f; x <= 1.0f; x += .01f) {
+    float dw = xcal.SoftBoundFun(x);
+    graph_data->AddBlankRow();
+    wt->SetValAsFloat(x, -1);
     dwt->SetValAsFloat(dw, -1);
   }
   graph_data->StructUpdate(false);
