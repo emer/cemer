@@ -80,9 +80,10 @@ PROJECT(template)
 
 # version setting: you are responsible for your own versioning and it does not
 # have to correspond with the emergent versions, though that wouldn't hurt
-set(PLUGIN_VERSION_MAJOR "1")
-set(PLUGIN_VERSION_MINOR "0")
-set(PLUGIN_VERSION_PATCH "0")
+# TODO: if you change these values, change them in template_pl.h as well
+set(PLUGIN_VERSION_MAJOR "@PLUGIN_VERSION_MAJOR@")
+set(PLUGIN_VERSION_MINOR "@PLUGIN_VERSION_MINOR@")
+set(PLUGIN_VERSION_PATCH "@PLUGIN_VERSION_PATCH@")
 set(PLUGIN_VERSION "${PLUGIN_VERSION_MAJOR}.${PLUGIN_VERSION_MINOR}.${PLUGIN_VERSION_PATCH}")
 
 # list all the header files here (_def.h and _pl.h are obligatory plugin boilerplate)
@@ -111,7 +112,7 @@ set(plugin_SRCS
 # list the project headers that are run through maketa (the Emergent
 # type scanning system) 
 set(plugin_HEADS_MAKETA
-  ${EMERGENT_INCLUDE_DIR}/Emergent/ta_TA_type.h
+  "${EMERGENT_INCLUDE_DIR}/Emergent/ta_TA_type.h"
 # IMPORTANT: if your plugin uses network code, add the appropriate
 # headers after the ta_TA, ex, for a Leabra-based plugin, add these:
 # network_TA_type.h 

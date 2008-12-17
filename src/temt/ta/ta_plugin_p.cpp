@@ -19,6 +19,7 @@
 
 #include "ta_qtclipdata.h"
 #include "ta_platform.h"
+#include "ta_project.h"
 
 #include <QDir>
 
@@ -39,6 +40,10 @@ IPlugin* taPluginInst::plugin() {
   return qobject_cast<IPlugin*>(in); 
 }
 
+IPlugin2* taPluginInst::plugin2() {
+  QObject* in = instance();
+  return qobject_cast<IPlugin2*>(in); 
+}
 
 bool taPluginInst::InitPlugin() {
   IPlugin* ipl = plugin();
@@ -184,7 +189,8 @@ void taPluginBase::Copy_(const taPluginBase& cp) {
   name = cp.name;
   desc = cp.desc;
   unique_id = cp.unique_id;
-  version = cp.version;
+  interface_version = cp.interface_version;
+  plugin_version = cp.plugin_version;
   url = cp.url;
 }
 
@@ -197,6 +203,7 @@ void taPlugin::Initialize() {
   loaded = false;
   reconciled = false;
   plugin = NULL;
+  gteq_v2 = false;
 }
 
 void taPlugin::Copy_(const taPlugin& cp) { // usually not copied
@@ -208,6 +215,21 @@ void taPlugin::Copy_(const taPlugin& cp) { // usually not copied
 }
 
 void taPlugin::PluginOptions() {
+  TypeDef* opt_typ = NULL;
+  taBase* opt_tab = NULL;
+  IPlugin2* ip2 = NULL; // 
+  if (gteq_v2 && plugin && (ip2 = plugin->plugin2()))  {
+    opt_typ = ip2->GetPluginStateType();
+  }
+  if (opt_typ && tabMisc::root) {
+    opt_tab = tabMisc::root->plugin_state.FindType(opt_typ);
+  }
+  if (opt_tab) {
+    opt_tab->EditDialog(true); // TODO: maybe not modal???
+    //TODO: should save now
+  } else {
+    taMisc::Confirm("This plugin does not have user-configurable options.");
+  }
 }
 
 //////////////////////////
@@ -366,9 +388,15 @@ void taPlugin_List::ReconcilePlugins() {
       }
       pl->name = ip->name();
       pl->desc = ip->desc();
-      ver.Clear();
-      ip->GetVersion(ver);
-      pl->version = ver.toString();
+      ip->GetVersion(pl->interface_version);
+      // v2.x info, only safe if v2.x i/f
+      IPlugin2* ip2 = pli->plugin2();
+      if (ip2) {
+        pl->gteq_v2 = true;
+        ver.Clear();
+        ip2->GetPluginVersion(ver);
+        pl->plugin_version = ver.toString();
+      }
     } else { // not loaded -- but match up the filename to a persistent guy if found
       pl = FindFilename(pli->fileName());
       // we don't update anything, and we don't make a new guy if not found before,

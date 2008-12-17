@@ -440,6 +440,13 @@ int taVersion::BeforeOrOf(char sep, String& in) {
   return s.left(i).toInt();
 }
 
+bool taVersion::GtEq(ushort mj, ushort mn, ushort st)
+{
+  return (major > mj) || 
+    ((major == mj) && (minor > mn)) ||
+     ((major == mj) && (minor == mn) && (step >= st));
+}
+
 //////////////////////////////////
 // 	     taMisc		//
 //////////////////////////////////

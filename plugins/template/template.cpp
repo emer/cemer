@@ -47,6 +47,7 @@ void TemplatePluginExampleClass::MyCodeMethod() {
 /////////////////////////////////////////////////////
 
 void TemplatePluginState::Initialize() {
+  SetBaseFlag(NAME_READONLY); // usually don't let user edit name
 // TODO: add your member initializations
 }
 

@@ -2396,6 +2396,9 @@ void PluginWizard::Initialize() {
   validated = false;
   plugin_location = taMisc::user_app_dir + PATH_SEP + "plugins" + PATH_SEP +
         plugin_name;
+  desc = "enter description of your plugin";
+  uniqueId = "pluginname.dept.organization.org";
+  url = "(replace this with a url for help or information on the plugin)";
 }
 
 void PluginWizard::UpdateAfterEdit_impl() {
@@ -2444,13 +2447,28 @@ void PluginWizard::AddFiles(bool upgrade_only) {
   files.Add("template_qtso.h");
 }
 
-void PluginWizard::TemplatizeFile(const String& src, String& dst, bool& ok)
+void PluginWizard::TemplatizeFile(const String& src_file,
+  const String& src, String& dst, bool& ok)
 {
   dst = src;
   dst.makeUnique();
   dst.gsub("template", plugin_name);
   dst.gsub("Template", plugin_name);
   dst.gsub("TEMPLATE", upcase(plugin_name));
+  if (src_file.contains("CMakeLists.txt")) {
+    dst.gsub("@PLUGIN_VERSION_MAJOR@", version.major);
+    dst.gsub("@PLUGIN_VERSION_MINOR@", version.minor);
+    dst.gsub("@PLUGIN_VERSION_PATCH@", version.step);
+  }
+  // specific values that occur in the template_pl files
+  if (src_file.contains("template_pl.")) {
+    dst.gsub("@EMERGENT_PLUGIN_DESC@", desc);
+    dst.gsub("@EMERGENT_PLUGIN_UNIQUEID@", uniqueId);
+    dst.gsub("@EMERGENT_PLUGIN_URL@", desc);
+    dst.gsub("@PLUGIN_VERSION_MAJOR@", version.major);
+    dst.gsub("@PLUGIN_VERSION_MINOR@", version.minor);
+    dst.gsub("@PLUGIN_VERSION_PATCH@", version.step);
+  }
 //TODO: detailed enablings of things like _qtso names, etc.
 }
 
@@ -2482,7 +2500,7 @@ void PluginWizard::CreateDestFile(const String& src_file,
   }
   fsrc.close();
   String dst;
-  TemplatizeFile(src, dst, ok);
+  TemplatizeFile(src_file, src, dst, ok);
   if (!ok) return;
   if (TestError((dst.Save_str(fdst)),
     "PluginWizard::CreateDestFile", 

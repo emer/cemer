@@ -428,6 +428,10 @@ public:
   bool			default_location; // #DEF_true create the plugin in the default location for the type RECOMMENDED
   bool			validated; // #NO_SHOW
   String		plugin_location; // folder where to create the plugin (folder name should usually be same as plugin_name)
+  String		desc;
+  String		uniqueId;
+  String		url;
+  taVersion		version;
   
   bool			Validate();
   // #BUTTON validate all the provided parameters, prior to making the Plugin
@@ -443,7 +447,8 @@ protected:
   virtual void		AddFiles(bool upgrade_only); // populate the file list
   virtual void		CreateDestFile(const String& src_file, 
     const String& dst_file, bool& ok);	
-  virtual void		TemplatizeFile(const String& src, String& dst, bool& ok);
+  virtual void		TemplatizeFile(const String& src_file, 
+    const String& src, String& dst, bool& ok);
 private:
   void 	Initialize();
   void 	Destroy()	{ };

@@ -442,6 +442,7 @@ public:
        cat(String(step)).cat(".").cat(String(build));}
 
   void		Clear() {major = minor = step = build = 0;} //
+  bool		GtEq(ushort mj, ushort mn, ushort st = 0); // true if the version is greater than or equal to the indicated version
   
   
   taVersion() {Clear();} //
