@@ -46,6 +46,7 @@ int main(int argc, const char *argv[]) {
   taMisc::app_lib_name = "tacss";
   cssMisc::prompt = "css";
   taMisc::use_gui = true;	// set opposite default from normal
+  taMisc::default_app_install_folder_name = "css";
 
   if(!taRootBase::Startup_Main(argc, argv, ta_Init_ta, &TA_taRootBase)) return 1;
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) css_cleanup);

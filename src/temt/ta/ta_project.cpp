@@ -1432,40 +1432,44 @@ bool taRootBase::isAppDir(String path) {
 // hairy, modal, issue-prone -- we put in its own routine
 bool taRootBase::Startup_InitTA_folders() {
   // explicit cmdline override has highest priority
+#ifndef TA_OS_WIN
+  String prefix_dir; // empty unless we found app_dir under here
+#endif
+  //note: this is not how Qt does it, but it seems windows follows normal rules
+  // and passes the arg[0] as the full path to the executable, so we just get path
+  QFileInfo fi(taMisc::args_raw.SafeEl(0));
+  //note: argv[0] can contain a relative path, so we need to absolutize
+  String bin_dir = fi.absolutePath();
+  
   String app_dir = taMisc::FindArgByName("AppDir");
   if (app_dir.nonempty() && isAppDir(app_dir))
     goto have_app_dir;
-  
-/* NOTE: we give priority to the EMERGENTDIR variable first, for
+ 
+/* NOTE: we give priority to the EMERGENTDIR (Windows) or
+   EMERGENT_SHARE_DIR (Unix) variable first, for custom or
    development purposes. Otherwise, we use the heuristic search
    based on the platform, and as a last resort, prompt user.
 */
-  app_dir = getenv("EMERGENTDIR");
-  if (app_dir.nonempty() && isAppDir(app_dir))
-    goto have_app_dir;
-
 //WARNING: cannot use QCoreApplication::applicationDirPath() at this point because
 // QCoreApplication has not been instantiated yet
 #ifdef TA_OS_WIN
+  app_dir = getenv("EMERGENTDIR");
+  if (app_dir.nonempty() && isAppDir(app_dir)) {
+    goto have_app_dir;
+  }
+
 /*
   {app_dir}\bin
 */
-  //note: this is not how Qt does it, but it seems windows follows normal rules
-  // and passes the arg[0] as the full path to the executable, so we just get path
-  {
-  QFileInfo fi(taMisc::args_raw.SafeEl(0));
-  app_dir = fi.path();
   // note: Qt docs say it returns the '/' version...
-  if (app_dir.endsWith("/bin") || app_dir.endsWith("\bin")) {
-    app_dir = app_dir.at(0, app_dir.length() - 4);
+  if (bin_dir.endsWith("/bin") || bin_dir.endsWith("\bin")) {
+    app_dir = bin_dir.at(0, bin_dir.length() - 4);
     if (isAppDir(app_dir)) goto have_app_dir;
-  }}
+  }
 #else // Mac and Unix -- defaults
-  // this is the normal install default, and possible alternate
-  app_dir = "/usr/local/share/" + taMisc::default_app_install_folder_name;
-  if (isAppDir(app_dir)) goto have_app_dir;
-  app_dir = "/opt/local/share/" + taMisc::default_app_install_folder_name;
-  if (isAppDir(app_dir)) goto have_app_dir;
+  app_dir = getenv("EMERGENT_SHARE_DIR");
+  if (app_dir.nonempty() && isAppDir(app_dir))
+    goto have_app_dir;
 
 # if defined(TA_OS_MAC)
 /*
@@ -1488,48 +1492,39 @@ bool taRootBase::Startup_InitTA_folders() {
     }
   }
   }
-  // seemingly not in a bundle, so try raw bin
-  if (app_dir.endsWith("/bin")) {
-    app_dir = app_dir.at(0, app_dir.length() - 4);
-    if (isAppDir(app_dir)) goto have_app_dir;
-  }
-    
-# else // non-Mac Unix
+  // seemingly not in a bundle, so try Unix defaults...
+# endif // Mac
 /*
   {app_dir}/bin
 */
-  if (app_dir.endsWith("/bin")) {
-    app_dir = app_dir.at(0, app_dir.length() - 4);
+  if (bin_dir.endsWith("/bin")) {
+    app_dir = bin_dir.at(0, bin_dir.length() - 4);
     if (isAppDir(app_dir)) goto have_app_dir;
   }
-# endif // non-Mac Unix-specific
-
-// continue with Mac/Unix tests
-  // on Unix platforms, check the other plausible prefix folders
-  app_dir = "/usr/local/" + taMisc::default_app_install_folder_name;
+  
+  // ok, we didn't find it relative to the bin, so just use the
+  // absolute defaults
+  
+  // try the normal install defaults
+  prefix_dir = "/usr/local";
+  app_dir = prefix_dir + "/share/" + taMisc::default_app_install_folder_name;
+  if (isAppDir(app_dir))  goto have_app_dir;
+  prefix_dir = "/usr";
+  app_dir = prefix_dir + "/share/" + taMisc::default_app_install_folder_name;
   if (isAppDir(app_dir)) goto have_app_dir;
-  app_dir = "/usr/share/" + taMisc::default_app_install_folder_name;
-  if (isAppDir(app_dir)) goto have_app_dir;
-  app_dir = "/usr/local/src/" + taMisc::default_app_install_folder_name;
-  if (isAppDir(app_dir)) goto have_app_dir;
-  app_dir = "/usr/share/src/" + taMisc::default_app_install_folder_name;
-  if (isAppDir(app_dir)) goto have_app_dir;
+  
   // these are more usual on Mac or BSD-ish ones:
-  app_dir = "/opt/local/" + taMisc::default_app_install_folder_name;
+  prefix_dir = "/opt/local";
+  app_dir = prefix_dir + "/share/" + taMisc::default_app_install_folder_name;
   if (isAppDir(app_dir)) goto have_app_dir;
-  app_dir = "/opt/share/" + taMisc::default_app_install_folder_name;
+  prefix_dir = "/opt";
+  app_dir = prefix_dir + "/share/" + taMisc::default_app_install_folder_name;
   if (isAppDir(app_dir)) goto have_app_dir;
-  app_dir = "/opt/local/src/" + taMisc::default_app_install_folder_name;
-  if (isAppDir(app_dir)) goto have_app_dir;
-  app_dir = "/opt/share/src/" + taMisc::default_app_install_folder_name;
-  if (isAppDir(app_dir)) goto have_app_dir;
+  prefix_dir = _nilString;
 
 #endif // all modality
 
-  // common code for failure to grok the app path
-  //  app_dir = QCoreApplication::applicationDirPath();
-  // TODO: see note above.
-  // first, maybe it is actually the exe's folder itself?
+  // maybe it is actually the exe's folder itself?
   if (isAppDir(app_dir)) goto have_app_dir;
   
   // is it the current directory? -- probe with known subfolder
@@ -1551,10 +1546,6 @@ have_app_dir:
   if (taMisc::user_dir.empty())
     taMisc::user_dir = taPlatform::getHomePath();
   
-  // plugin dirs
-#ifdef TA_OS_WIN
-#else // Unix
-#endif
 
   taMisc::user_app_dir = taMisc::FindArgByName("UserAppDir");;
   taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
@@ -1681,47 +1672,21 @@ bool taRootBase::Startup_InitTA_initUserAppDir() {
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "prog_lib");
   // make user css_lib
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "css_lib");
-/*OBS -- now suggested to host user plugins "in-place" in ~/lib/Emergent/plugins
-  // plugin making stuff should only run when interactive
-  if (taMisc::use_gui && (taMisc::dmem_proc == 0)) {
-    // make the user plugin folder, and assert the proxy files
-    // we redo those every time, in case app has been upgraded
-    // but don't fail if this can't be done -- just warn user
-    String uplugin_dir = taMisc::user_app_dir + PATH_SEP + "plugins";
-    bool err = false;
-    String msg;
-    if (!dir.exists(uplugin_dir) && !dir.mkdir(uplugin_dir)) {
-      err = true;
-      msg += "Startup_InitTA_initUserAppDir: can't make " + uplugin_dir + "\n";
-    }*/
-/*nn-nuke    if (!MakeUserPluginConfigProxy(uplugin_dir, "config.pri")) {
-      err = true;
-      msg += "Startup_InitTA_initUserAppDir: can't make config.pri\n";
-    }*/
-/*TODO: nuke    if (!MakeUserPluginConfigProxy(uplugin_dir, "shared_pre.pri")) {
-      err = true;
-      msg += "Startup_InitTA_initUserAppDir: can't make shared_pre.pri\n";
+  
+  // user plugin folder (no option override)
+#ifdef TA_OS_WIN
+  taMisc::user_plugin_dir = taPlatform::getHomePath() + "\\lib\\" + taMisc::default_app_install_folder_name + "\\plugins"; 
+#else // Unix
+  taMisc::user_plugin_dir = taPlatform::getHomePath() + "/lib/" + taMisc::default_app_install_folder_name + "/plugins"; 
+#endif
+  dir = taMisc::user_plugin_dir;
+  if (!dir.exists()) {
+    if (!dir.mkdir(taMisc::user_plugin_dir)) {
+      taMisc::Error("Could not find or make the user plugin dir:", taMisc::user_plugin_dir,
+       "Please make sure this directory exists and is readable, and try again.");
+      return false;
     }
-    if (!MakeUserPluginConfigProxy(uplugin_dir, "shared.pri")) {
-      err = true;
-      msg += "Startup_InitTA_initUserAppDir: can't make shared.pri\n";
-    }
-    // copy the Makefile
-    QFile::remove(uplugin_dir + "/Makefile");
-    if (!QFile::copy(taMisc::app_dir + "/plugins/Makefile.plugin",
-        uplugin_dir + "/Makefile")) {
-      err = true;
-      msg += "Startup_InitTA_initUserAppDir: can't copy plugins/Makefile.plugin\n";
-    }
-    // todo: this err message is pointless until the plugins/Makefile can be
-    // installed, and it can't be installed because it would conflict with the Makefile.am
-    // that would allow it to be installed according to the standard configure
-    // auto everything whatever.  need a workaround, and then can remove false below..
-    if (false && err) {
-      taMisc::Warning(msg);
-      taMisc::Warning("Your user folder could not be set up properly to build plugins -- this will not affect running the basic application but will prevent you from building or compiling your own plugins. Please contact your system administrator.");
-    }
-  }*/ // gui mode
+  }
   return true;
 }
 
@@ -1755,6 +1720,33 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
       return false;
     }
   }
+  // plugin dirs
+  taMisc::app_plugin_dir = getenv("EMERGENT_PLUGIN_DIR");
+  if (taMisc::app_plugin_dir.empty()) {
+#ifdef TA_OS_WIN
+    taMisc::app_plugin_dir = taMisc::app_dir + "\\plugins";
+#else // Unix
+    // allow an "in-place" development location, to simplify our life...
+    taMisc::app_plugin_dir = taMisc::app_dir + "/plugins";
+    QDir dir(taMisc::taMisc::app_plugin_dir);
+    if (dir.exists()) goto plugin_dir_found;
+    else {
+      String suff = "/share/" + taMisc::default_app_install_folder_name;
+      if (taMisc::app_dir.endsWith(suff)) {
+        taMisc::app_plugin_dir = taMisc::app_dir.at(0, taMisc::app_dir.length() - suff.length()) + "/lib/" + taMisc::default_app_install_folder_name + "/plugins";
+      } else {
+        taMisc::app_plugin_dir = "/usr/local/lib/" +  taMisc::default_app_install_folder_name + "/plugins";
+      }
+    }
+#endif
+  }
+  {QDir dir(taMisc::taMisc::app_plugin_dir);
+  if (!dir.exists()) { 
+    taMisc::Error("Could not find expected application plugin folder:", 
+      taMisc::taMisc::app_plugin_dir, "shutting down.");
+    return false;
+  }}
+plugin_dir_found:
   taMisc::Init_Defaults_PostLoadConfig();
 
   console_type = taMisc::console_type;
@@ -1793,17 +1785,9 @@ bool taRootBase::Startup_EnumeratePlugins() {
     plug_sub = PATH_SEP + taMisc::build_str;
   }
   // add plugin folders
-#ifdef TA_OS_WIN
-  taPlugins::AddPluginFolder(
-    taMisc::app_dir + PATH_SEP + "plugins");
-  taPlugins::AddPluginFolder(
-    taPlatform::getAppDataPath(taMisc::app_name) + PATH_SEP + "lib" + PATH_SEP + "plugins");
-#else
-//TODO: need to figure out what is our root, and that is plugin root, etx. /usr/opt
-  taPlugins::AddPluginFolder("/usr/local/lib/Emergent/plugins");
-  taPlugins::AddPluginFolder(
-    taMisc::user_dir + PATH_SEP + "lib/Emergent/plugins");
-#endif
+  taPlugins::AddPluginFolder(taMisc::app_plugin_dir);
+  taPlugins::AddPluginFolder(taMisc::user_plugin_dir);
+  
   taPlugins::InitLog(taMisc::prefs_dir + PATH_SEP + plug_log);
   taPlugins::EnumeratePlugins();
 
