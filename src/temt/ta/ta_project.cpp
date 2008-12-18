@@ -1681,7 +1681,7 @@ bool taRootBase::Startup_InitTA_initUserAppDir() {
 #endif
   dir = taMisc::user_plugin_dir;
   if (!dir.exists()) {
-    if (!dir.mkdir(taMisc::user_plugin_dir)) {
+    if (!dir.mkpath(taMisc::user_plugin_dir)) {
       taMisc::Error("Could not find or make the user plugin dir:", taMisc::user_plugin_dir,
        "Please make sure this directory exists and is readable, and try again.");
       return false;
