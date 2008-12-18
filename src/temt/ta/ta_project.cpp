@@ -1551,6 +1551,11 @@ have_app_dir:
   if (taMisc::user_dir.empty())
     taMisc::user_dir = taPlatform::getHomePath();
   
+  // plugin dirs
+#ifdef TA_OS_WIN
+#else // Unix
+#endif
+
   taMisc::user_app_dir = taMisc::FindArgByName("UserAppDir");;
   taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
   // make sure it exists
@@ -1676,6 +1681,7 @@ bool taRootBase::Startup_InitTA_initUserAppDir() {
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "prog_lib");
   // make user css_lib
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "css_lib");
+/*OBS -- now suggested to host user plugins "in-place" in ~/lib/Emergent/plugins
   // plugin making stuff should only run when interactive
   if (taMisc::use_gui && (taMisc::dmem_proc == 0)) {
     // make the user plugin folder, and assert the proxy files
@@ -1687,7 +1693,7 @@ bool taRootBase::Startup_InitTA_initUserAppDir() {
     if (!dir.exists(uplugin_dir) && !dir.mkdir(uplugin_dir)) {
       err = true;
       msg += "Startup_InitTA_initUserAppDir: can't make " + uplugin_dir + "\n";
-    }
+    }*/
 /*nn-nuke    if (!MakeUserPluginConfigProxy(uplugin_dir, "config.pri")) {
       err = true;
       msg += "Startup_InitTA_initUserAppDir: can't make config.pri\n";
@@ -1714,8 +1720,8 @@ bool taRootBase::Startup_InitTA_initUserAppDir() {
     if (false && err) {
       taMisc::Warning(msg);
       taMisc::Warning("Your user folder could not be set up properly to build plugins -- this will not affect running the basic application but will prevent you from building or compiling your own plugins. Please contact your system administrator.");
-    }*/
-  } // gui mode
+    }
+  }*/ // gui mode
   return true;
 }
 

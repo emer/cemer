@@ -712,7 +712,11 @@ public:
   static String		prefs_dir;
   // #READ_ONLY #SHOW #CAT_File location of preference files (e.g., ~/.appname)
   static String		user_app_dir;
-  // #SAVE #SHOW #CAT_File user's location of application, for user plugins, etc. 
+  // #SAVE #SHOW #CAT_File user's location of application, for Program libraries, etc. 
+  static String		app_plugin_dir;
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of installed system plugins 
+  static String		user_plugin_dir;
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of installed user plugins 
 
   // don't save these paths: they are generated from above which are saved, and can
   // be modified more reliably in a .cssinitrc or similar..

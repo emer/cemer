@@ -582,6 +582,8 @@ String	taMisc::web_home = "http://grey.colorado.edu/ta_css";
 String	taMisc::web_help_url; // note: set in main
 String	taMisc::prefs_dir; // this must be set at startup!
 String	taMisc::user_app_dir; 
+String	taMisc::app_plugin_dir; 
+String	taMisc::user_plugin_dir; 
 
 String_PArray	taMisc::css_include_paths;
 String_PArray	taMisc::load_paths;
