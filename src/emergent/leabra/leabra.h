@@ -2682,7 +2682,7 @@ inline void LeabraConSpec::C_Compute_Weights_LeabraCHL(LeabraCon* cn)
 {
   if(cn->dwt != 0.0f) {
     cn->wt_lin += cn->dwt;
-    cn->wt = wt_sig.SigFmLinWt(cn->wt_lin);
+    cn->wt = GetWtFmLin(cn->wt_lin); // note: wt_sig orig fun is waay too slow
   }
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
@@ -2893,7 +2893,7 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn)
 
   if(cn->dwt != 0.0f) {
     cn->wt_lin += cn->dwt;
-    cn->wt = wt_sig.SigFmLinWt(cn->wt_lin);
+    cn->wt = GetWtFmLin(cn->wt_lin); // note: wt_sig orig fun is waay too slow
   }
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
@@ -2913,7 +2913,7 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL_norm(LeabraCon* cn, fl
 
   if(eff_dw != 0.0f) {
     cn->wt_lin += eff_dw;
-    cn->wt = wt_sig.SigFmLinWt(cn->wt_lin);
+    cn->wt = GetWtFmLin(cn->wt_lin); // note: wt_sig orig fun is waay too slow
   }
   cn->pdw = eff_dw;
   cn->dwt = 0.0f;
@@ -2961,7 +2961,7 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraCAL(LeabraCon* cn)
 
   if(cn->dwt != 0.0f) {
     cn->wt_lin += cn->dwt;		// weights always linear
-    cn->wt = wt_sig.SigFmLinWt(cn->wt_lin);
+    cn->wt = GetWtFmLin(cn->wt_lin); // note: wt_sig orig fun is waay too slow
   }
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
