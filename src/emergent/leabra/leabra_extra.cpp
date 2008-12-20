@@ -594,8 +594,8 @@ void ScalarValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float val) {
 	cn->wt += act;
 	if(cn->wt < cs->wt_limits.min) cn->wt = cs->wt_limits.min;
 	if(cn->wt > cs->wt_limits.max) cn->wt = cs->wt_limits.max;
-	recv_gp->C_Init_Weights_Post(cn, u, recv_gp->Un(ci));
       }
+      recv_gp->Init_Weights_post(u);
     }
   }
 }
@@ -1515,8 +1515,8 @@ void TwoDValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float x_val, float y_
 	cn->wt += act;
 	if(cn->wt < cs->wt_limits.min) cn->wt = cs->wt_limits.min;
 	if(cn->wt > cs->wt_limits.max) cn->wt = cs->wt_limits.max;
-	recv_gp->C_Init_Weights_Post(cn, u, recv_gp->Un(ci));
       }
+      recv_gp->Init_Weights_post(u);
     }
   }
 }

@@ -94,7 +94,6 @@ void XCalLearnSpec::Initialize() {
   lrn_var = XCAL;
 
   sym_sb = true;
-  sb_pow = 1.0f;
   dwt_norm = false;
 
   mvl_mix = 0.03f;
@@ -123,8 +122,6 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
     d_rev_ratio = (1.0f - d_rev) / d_rev;
   else
     d_rev_ratio = 1.0f;
-
-  sb_mult = 2.0f * (0.25f / (powf(.5f, sb_pow) * powf(1.0f - .5f, sb_pow)));
 }
 
 void XCalMiscSpec::Initialize() {
@@ -319,12 +316,12 @@ void LeabraConSpec::CreateWtSigFun() {
   int i;
   for(i=0; i<wt_sig_fun.size; i++) {
     float w = wt_sig_fun.Xval(i);
-    wt_sig_fun[i] = WtSigSpec::SigFun(w, wt_sig.gain, wt_sig.off);
+    wt_sig_fun[i] = wt_sig.SigFmLinWt(w);
   }
   wt_sig_fun_inv.AllocForRange();
   for(i=0; i<wt_sig_fun_inv.size; i++) {
     float w = wt_sig_fun_inv.Xval(i);
-    wt_sig_fun_inv[i] = WtSigSpec::SigFunInv(w, wt_sig.gain, wt_sig.off);
+    wt_sig_fun_inv[i] = wt_sig.LinFmSigWt(w);
   }
   // prevent needless recomputation of this lookup table..
   wt_sig_fun_lst.gain = wt_sig.gain; wt_sig_fun_lst.off = wt_sig.off;
@@ -339,19 +336,24 @@ void LeabraConSpec::GraphWtSigFun(DataTable* graph_data) {
   graph_data->StructUpdate(true);
   graph_data->ResetData();
   int idx;
-  DataCol* lnwt = graph_data->FindMakeColName("LinWt", idx, VT_FLOAT);
-  DataCol* efwt = graph_data->FindMakeColName("EffWt", idx, VT_FLOAT);
+  DataCol* lnwt = graph_data->FindMakeColName("Wt", idx, VT_FLOAT);
+  DataCol* sigwt = graph_data->FindMakeColName("SigWt", idx, VT_FLOAT);
+  DataCol* invwt = graph_data->FindMakeColName("InvWt", idx, VT_FLOAT);
   lnwt->SetUserData("MIN", 0.0f);
   lnwt->SetUserData("MAX", 1.0f);
-  efwt->SetUserData("MIN", 0.0f);
-  efwt->SetUserData("MAX", 1.0f);
+  sigwt->SetUserData("MIN", 0.0f);
+  sigwt->SetUserData("MAX", 1.0f);
+  invwt->SetUserData("MIN", 0.0f);
+  invwt->SetUserData("MAX", 1.0f);
 
   float x;
   for(x = 0.0f; x <= 1.0f; x += .01f) {
-    float y = WtSigSpec::SigFun(x, wt_sig.gain, wt_sig.off);
+    float sig = wt_sig.SigFmLinWt(x);
+    float inv = wt_sig.LinFmSigWt(x);
     graph_data->AddBlankRow();
     lnwt->SetValAsFloat(x, -1);
-    efwt->SetValAsFloat(y, -1);
+    sigwt->SetValAsFloat(sig, -1);
+    invwt->SetValAsFloat(inv, -1);
   }
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();
@@ -400,7 +402,7 @@ void LeabraConSpec::GraphXCalSoftBoundFun(DataTable* graph_data) {
 
   float x;
   for(x = 0.0f; x <= 1.0f; x += .01f) {
-    float dw = xcal.SoftBoundFun(x);
+    float dw = xcal.SymSbFun(x);
     graph_data->AddBlankRow();
     wt->SetValAsFloat(x, -1);
     dwt->SetValAsFloat(dw, -1);

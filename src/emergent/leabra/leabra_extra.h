@@ -220,7 +220,8 @@ public:
     CON_GROUP_LOOP(cg, C_Reset_EffWt((TrialSynDepCon*)cg->Cn(i)));
   }
 
-  void 	C_Init_Weights_Post(RecvCons*, Connection* cn, Unit*, Unit*) {
+  void 	C_Init_Weights_post(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
+    inherited::C_Init_Weights_post(cg, cn, ru, su);
     TrialSynDepCon* lcn = (TrialSynDepCon*)cn; lcn->effwt = lcn->wt;
   }
 
@@ -348,7 +349,8 @@ public:
     CON_GROUP_LOOP(cg, C_Reset_EffWt((CycleSynDepCon*)cg->Cn(i)));
   }
 
-  void 	C_Init_Weights_Post(RecvCons*, Connection* cn, Unit*, Unit*) {
+  void 	C_Init_Weights_post(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
+    inherited::C_Init_Weights_post(cg, cn, ru, su);
     CycleSynDepCon* lcn = (CycleSynDepCon*)cn; lcn->effwt = lcn->wt;
   }
 
@@ -500,7 +502,8 @@ public:
   }
   // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
 
-  override void C_Init_Weights_Post(RecvCons*, Connection* cn, Unit*, Unit*) {
+  override void C_Init_Weights_post(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
+    inherited::C_Init_Weights_post(cg, cn, ru, su);
     CaiSynDepCon* lcn = (CaiSynDepCon*)cn; lcn->effwt = lcn->wt;
     lcn->cai = 0.0f; 
   }
@@ -617,7 +620,8 @@ INHERITED(LeabraConSpec)
 public:
   FastWtSpec	fast_wt;	// fast weight specs: fast weights are added in separately to overall weight value as an increment (
 
-  void 		C_Init_Weights_Post(RecvCons*, Connection* cn, Unit*, Unit*) {
+  void 		C_Init_Weights_post(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
+    inherited::C_Init_Weights_post(cg, cn, ru, su);
     FastWtCon* lcn = (FastWtCon*)cn; lcn->swt = lcn->wt;
   }
 

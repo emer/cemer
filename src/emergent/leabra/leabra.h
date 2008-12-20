@@ -115,11 +115,12 @@ TA_SMART_PTRS(LeabraTask);//
 class LeabraCon : public Connection {
   // #STEM_BASE ##CAT_Leabra Leabra connection
 public:
+  float		wt_lin;		// #NO_SAVE linear weight value, which is used in learning, while the wt value reflects the sigmoidal contrast-enhanced version of this linear weight value
   float		pdw;		// #NO_SAVE previous delta-weight change -- useful for viewing because current weight change (dwt) is typically reset to 0 when views are updated
   float		sravg_s;	// #NO_SAVE short time-scale, most recent (plus phase) average of sender and receiver activation product over time
   float		sravg_m;	// #NO_SAVE medium time-scale, trial-level average of sender and receiver activation product over time
   
-  LeabraCon() { pdw = 0.0f; sravg_s = sravg_m = 0.0f; }
+  LeabraCon() { wt_lin = 0.0f; pdw = 0.0f; sravg_s = sravg_m = 0.0f; }
 };
 
 class LEABRA_API WtScaleSpec : public taBase {
@@ -160,19 +161,29 @@ public:
   float		gain;		// #DEF_6 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1.25 offset of the function (1=centered at .5, >1=higher, <1=lower)
 
-  // function for implementing weight sigmodid
-  static inline float	SigFun(float w, float gain, float off) {
+  static inline float	SigFun(float w, float gn, float of) {
     if(w <= 0.0f) return 0.0f;
     if(w >= 1.0f) return 1.0f;
-    return 1.0f / (1.0f + powf(off * (1.0f - w) / w, gain));
+    return (1.0f / (1.0f + powf((of * (1.0f - w)) / w, gn)));
   }
+  // static version of function for implementing weight sigmodid
 
-  // function for implementing inverse of weight sigmoid
-  static inline float	SigFunInv(float w, float gain, float off) {
+  static inline float	InvFun(float w, float gn, float of) {
     if(w <= 0.0f) return 0.0f;
     if(w >= 1.0f) return 1.0f;
-    return 1.0f / (1.0f + powf((1.0f - w) / w, 1.0f / gain) / off);
+    return 1.0f / (1.0f + powf((1.0f - w) / w, 1.0f / gn) / of);
   }
+  // static version of function for implementing inverse of weight sigmoid
+
+  inline float	SigFmLinWt(float lw) {
+    return SigFun(lw, gain, off);
+  }
+  // get sigmoidal contrast-enhanced weight from linear weight
+  
+  inline float	LinFmSigWt(float sw) {
+    return InvFun(sw, gain, off);
+  }
+  // get linear weight from sigmoidal contrast-enhanced weight
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(WtSigSpec);
@@ -215,8 +226,6 @@ public:
 
   LearnVar	lrn_var;	// learning rule variant -- either XCAL, or CAL for output layers, bias weights, or comparison purposes
   bool		sym_sb;		// #DEF_true symmetric softbounding: 2 * w * (1-w) -- maybe allows weights to get more extreme than regular softbounding
-  float		sb_pow;		// power to raise the softbounding term to (1,2,4): larger numbers produce more strongly sigmoidal wt curve, similar to wt_sig in std leabra -- see graph for dwt curve
-  float		sb_mult;	// #READ_ONLY multiplier to correct for overall softbound differences due to sb_pow
   bool		dwt_norm;	// #DEF_false normalize dwts -- just for testing purposes
   float		mvl_mix;	// #CONDSHOW_OFF_lrn_var:CAL [Default range .03 - .10] amount that medium (trial) versus long (epoch) time scale learning contributes -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is short (plus phase) versus medium (trial) time scale which reflects pure error-driven learning
   float		svm_mix;	// #READ_ONLY 1-mvl_mix -- how much the short (plus phase) versus medium (trial) time-scale factor contributes to learning -- this the pure error-driven learning component -- the rest (mvl_mix = 1-svm_mix) is medium (trial) versus long (epoch) time-scale
@@ -242,9 +251,10 @@ public:
     return rval;
   }
 
-  inline float  SoftBoundFun(float wt_val) {
-    return sb_mult * powf(wt_val, sb_pow) * powf(1.0f - wt_val, sb_pow);
+  inline float  SymSbFun(float wt_val) {
+    return 2.0f * wt_val * (1.0f - wt_val);
   }
+  // symmetric soft bounding function -- factor of 2 to equate with asymmetric sb for overall lrate at a weight value of .5 (= .5)
 
   SIMPLE_COPY(XCalLearnSpec);
   TA_BASEFUNS(XCalLearnSpec);
@@ -363,7 +373,7 @@ public:
   LRSValue	lrs_value;	// #CAT_Learning what value to drive the learning rate schedule with (Important: affects values entered in start_ctr fields of schedule!)
   Schedule	lrate_sched;	// #CAT_Learning schedule of learning rate over training epochs or as a function of performance, as determined by lrs_value (NOTE: these factors multiply lrate to give the cur_lrate value)
 
-  WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn_rule:LEABRA_CHL sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
+  WtSigSpec	wt_sig;		// #CAT_Learning sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
   LearnMixSpec	lmix;		// #CAT_Learning #CONDSHOW_ON_learn_rule:LEABRA_CHL mixture of hebbian & err-driven learning (note: no hebbian for CTLEABRA_XCAL)
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL XCAL (eXtended Contrastive Attractor Learning) learning parameters
   XCalMiscSpec	xcalm;		// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL XCAL (eXtended Contrastive Attractor Learning) misc extra parameters
@@ -381,13 +391,14 @@ public:
   float		GetLinFmWt(float sig_wt)     { return wt_sig_fun_inv.Eval(sig_wt); }
   // #CAT_Learning get linear weight value from contrast-enhanced sigmoidal weight value
 
-  virtual void	C_Init_Weights_Post(RecvCons*, Connection*, Unit*, Unit*) { };
-  // #CAT_Learning hook for setting other weight-like values after initializing the weight value
+  override void	C_Init_Weights_post(RecvCons*, Connection* cn, Unit*, Unit*) {
+    ((LeabraCon*)cn)->wt_lin = wt_sig.LinFmSigWt(cn->wt);
+  }
+  // #CAT_Learning get linear weight from sigmoidal one which is reflected wt value
 
   inline void 	C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
     ConSpec::C_Init_Weights(cg, cn, ru, su); LeabraCon* lcn = (LeabraCon*)cn;
-    lcn->pdw = 0.0f; lcn->sravg_s = lcn->sravg_m = xcalm.avg_init;
-    C_Init_Weights_Post(cg, cn, ru, su); }
+    lcn->pdw = 0.0f; lcn->sravg_s = lcn->sravg_m = xcalm.avg_init; }
   inline override void Init_Weights(RecvCons* cg, Unit* ru) {
     ConSpec::Init_Weights(cg, ru);
     if(wt_scale_init.init) { wt_scale.abs = wt_scale_init.abs;
@@ -632,11 +643,6 @@ public:
   float		scale_eff;	// #NO_SAVE #CAT_Activation effective scale parameter for netin
   float		savg_cor;	// #NO_SAVE #CAT_Learning savg correction factor for hebbian learning
   float		net;		// #NO_SAVE #CAT_Activation netinput to this con_group: only computed for special statistics such as RelNetin
-
-  void	C_Init_Weights_Post(Connection* cn, Unit* ru, Unit* su) { 
-    ((LeabraConSpec*)GetConSpec())->C_Init_Weights_Post(this, cn, ru, su);
-  }
-  // #CAT_Learning hook for setting other weight-like values after initializing the weight value
 
   void	Compute_dWt_LeabraCHL(LeabraUnit* ru)
   { ((LeabraConSpec*)GetConSpec())->Compute_dWt_LeabraCHL(this, ru); }
@@ -2659,10 +2665,10 @@ inline void LeabraConSpec::Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit*
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       if(!(su->in_subgp &&
 	   (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	float lin_wt = GetLinFmWt(cn->wt);
+// 	float lin_wt = GetLinFmWt(cn->wt);
 	C_Compute_dWt(cn, ru, 
-		      C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p),
-		      C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m,
+		      C_Compute_Hebb(cn, cg, cn->wt_lin, ru->act_p, su->act_p),
+		      C_Compute_Err_LeabraCHL(cn, cn->wt_lin, ru->act_p, ru->act_m,
 					      su->act_p, su->act_m));  
       }
     }
@@ -2675,7 +2681,8 @@ inline void LeabraConSpec::Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit*
 inline void LeabraConSpec::C_Compute_Weights_LeabraCHL(LeabraCon* cn)
 {
   if(cn->dwt != 0.0f) {
-    cn->wt = GetWtFmLin(GetLinFmWt(cn->wt) + cn->dwt);
+    cn->wt_lin += cn->dwt;
+    cn->wt = wt_sig.SigFmLinWt(cn->wt_lin);
   }
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
@@ -2877,16 +2884,17 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn)
 {
   // always do soft bounding, at this point (post agg across processors, etc)
   if(xcal.sym_sb) {
-    cn->dwt *= xcal.SoftBoundFun(cn->wt);
+    cn->dwt *= xcal.SymSbFun(cn->wt_lin);
   }
   else {
-    if(cn->dwt > 0.0f)		cn->dwt *= (1.0f - cn->wt);
-    else			cn->dwt *= cn->wt;
+    if(cn->dwt > 0.0f)		cn->dwt *= (1.0f - cn->wt_lin);
+    else			cn->dwt *= cn->wt_lin;
   }
 
-  cn->wt += cn->dwt;		// weights always linear
-  // optimize: don't bother with this if always doing soft bounding above
-  // wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
+  if(cn->dwt != 0.0f) {
+    cn->wt_lin += cn->dwt;
+    cn->wt = wt_sig.SigFmLinWt(cn->wt_lin);
+  }
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
 }
@@ -2894,18 +2902,19 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn)
 inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL_norm(LeabraCon* cn, float dwnorm)
 {
   // always do soft bounding, at this point (post agg across processors, etc)
-  float eff_dw= cn->dwt + dwnorm;
+  float eff_dw = cn->dwt + dwnorm;
   if(xcal.sym_sb) {
-    eff_dw *= xcal.SoftBoundFun(cn->wt);
+    eff_dw *= xcal.SymSbFun(cn->wt_lin);
   }
   else {
-    if(eff_dw > 0.0f)		eff_dw *= (1.0f - cn->wt);
-    else			eff_dw *= cn->wt;
+    if(eff_dw > 0.0f)		eff_dw *= (1.0f - cn->wt_lin);
+    else			eff_dw *= cn->wt_lin;
   }
 
-  cn->wt += eff_dw;
-  // optimize: don't bother with this if always doing soft bounding above
-  // wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
+  if(eff_dw != 0.0f) {
+    cn->wt_lin += eff_dw;
+    cn->wt = wt_sig.SigFmLinWt(cn->wt_lin);
+  }
   cn->pdw = eff_dw;
   cn->dwt = 0.0f;
 }
@@ -2947,12 +2956,13 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUni
 inline void LeabraConSpec::C_Compute_Weights_CtLeabraCAL(LeabraCon* cn)
 {
   // always do soft bounding, at this point (post agg across processors, etc)
-  if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - cn->wt);
-  else			cn->dwt *= cn->wt;
+  if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - cn->wt_lin);
+  else			cn->dwt *= cn->wt_lin;
 
-  cn->wt += cn->dwt;		// weights always linear
-  // optimize: don't bother with this if always doing soft bounding above
-  // wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
+  if(cn->dwt != 0.0f) {
+    cn->wt_lin += cn->dwt;		// weights always linear
+    cn->wt = wt_sig.SigFmLinWt(cn->wt_lin);
+  }
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
 }
