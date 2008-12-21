@@ -88,6 +88,16 @@ bool taPlatform::mkdir(const String& dir) {
 #endif
 }
 
+bool taPlatform::mv(const String& fm, const String& to) {
+#ifdef NO_TA_BASE
+  return false;
+#else
+  QDir d;
+  return d.rename(fm, to);
+#endif
+}
+
+
 int taPlatform::posFinalSep(const String& in) {
   int rval = in.length() - 1;
   char c;
@@ -152,7 +162,8 @@ String taPlatform::getAppDataPath(const String& appname) {
 }
 
 #ifndef NO_TA_BASE
-String taPlatform::getHomePath() {
+
+String taPlatform::getDocPath() {
 //NOTE: we don't want the "home" folder, we really want the user's My Documents folder
 // since this can be moved from its default place, and/or renamed, we have to do this:
   TCHAR szPath[MAX_PATH];
@@ -169,7 +180,15 @@ String taPlatform::getHomePath() {
     return const_cast<const char*>(getenv("USERPROFILE")) + PATH_SEP + "My Documents";
   }
 }
+
+String taPlatform::getAppDocPath(const String& appname) {
+  return getDocPath() + "\\" + capitalize(appname);
+}
 #endif
+
+String taPlatform::getHomePath() {
+  return String(getenv("USERPROFILE"));
+}
 
 String taPlatform::getTempPath() {
   String rval;
@@ -250,17 +269,25 @@ int taPlatform::exec(const String& cmd) {
   return system(cmd.chars());
 }
 
-#ifdef TA_OS_MAC
 String taPlatform::getAppDataPath(const String& appname) {
   return getHomePath() + "/." + appname;
 }
-#else
-String taPlatform::getAppDataPath(const String& appname) {
+
+#ifdef TA_OS_MAC
+String taPlatform::getAppDocPath(const String& appname) {
   return getHomePath() + "/Library/" + capitalize(appname);
+}
+#else
+String taPlatform::getAppDocPath(const String& appname) {
+  return getHomePath() + "/lib/" + capitalize(appname);
 }
 #endif
 
 #ifndef NO_TA_BASE
+String taPlatform::getDocPath() {
+  return getHomePath() + "/Documents";
+}
+
 String taPlatform::getHomePath() {
  // return getenv("HOME");
  return QDir::homePath();

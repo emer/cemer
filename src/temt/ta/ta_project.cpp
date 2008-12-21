@@ -1694,12 +1694,10 @@ bool taRootBase::Startup_InitTA_InitUserAppDir() {
   }
   //NOTE: we could get excessively anal, and check all of these, but if we
   // can make/read the user folder, then very unlikely will these fail
-  // make user prog_lib
-  dir.mkdir(taMisc::user_app_dir + PATH_SEP + "prog_lib");
-  // make user css_lib
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "css_lib");
-  // user plugin folder (no option override)
+  dir.mkdir(taMisc::user_app_dir + PATH_SEP + "log");
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "plugins");
+  dir.mkdir(taMisc::user_app_dir + PATH_SEP + "prog_lib");
   return true;
 }
 
@@ -1740,27 +1738,50 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
     taMisc::proj_view_pref = taMisc::PVP_3PANE;
   }
   
-  // Application folder, Plugin folder
+  // Application folder
   // command line overrides saved preference value, if any
+  // it also completely skips our copy logic
   String user_app_dir = taMisc::FindArgByName("UserAppDir");
   if (user_app_dir.nonempty()) {
     taMisc::user_app_dir = user_app_dir;
-  } else if (taMisc::user_app_dir.empty()) {
-#ifdef TA_OS_WIN
-    // ex. [user]\My Documents\Emergent
-    taMisc::user_app_dir = taPlatform::getHomePath() + PATH_SEP +
-      capitalize(taMisc::app_name);
-#elif defined(TA_OS_MAC)
-    // ex. ~/Library/Emergent
-    taMisc::user_app_dir = taPlatform::getAppDataPath();
-#else // Unix/Linux 
-    // ex. ~/.emergent (same as prefs)
-    taMisc::user_app_dir = taMisc::prefs_dir;
-#endif
   }
-  taMisc::user_plugin_dir = taMisc::user_app_dir + PATH_SEP + "plugins";
+    
+  // NOTE: BA 12/21/08 we offer to move legacy app dir
+  // TODO: this capability can be nuked in a future version
+  user_app_dir = taPlatform::getAppDocPath(taMisc::app_name);
+  // offer to move the folder if current one is wrong AND not overridden in env
+  String user_app_dir_env_var = upcase(taMisc::app_name) + "_USER_APP_DIR";
+  String user_app_dir_env = getenv(user_app_dir_env_var);
+  //note: contrary to Qt docs, we can't use QMessageBox anymore before QApplication
+  // because it aborts with a QPaintDevice message
+  if (taMisc::use_gui &&
+    (taMisc::user_app_dir != user_app_dir) &&
+    (taMisc::user_app_dir != user_app_dir_env) && 
+    QDir(taMisc::user_app_dir).exists() 
+  ) {
+    String msg = "Your current emergent data folder is not in the default location for this version of the application and/or has not been overridden in user environment variable " + user_app_dir_env_var + "; for compatibility with plugin building and other reasons, we strongly suggest moving it\n"
+    "from: " + taMisc::user_app_dir + "\n"
+    "  to: " + user_app_dir + "\n\n"
+    "Would you like this done? (Your user folder should have no open files and no open file browser dialogs, and the 'to' folder should not already exist.)\n\n"
+    "Press Cancel to end the application at this point without doing anything.";
+    switch (taMisc::Choice(msg, "Yes", "No", "Cancel")
+    ){
+    case 0: {
+      if (taPlatform::mv(taMisc::user_app_dir, user_app_dir)) {
+        taMisc::Info( "Your application data folder has been moved.");
+      } else {
+        taMisc::Error("Your application data folder could not be moved -- please complete the move manually, delete your previous folder, and restart the application.");
+        return false;
+      }} break;
+    case 1: break; // not a good thing!
+    case 2: return false;
+    }
+  }
+  // if we get to here, we have the valid value in user_app_dir
+  taMisc::user_app_dir = user_app_dir;
 
   if (!Startup_InitTA_InitUserAppDir()) return false;
+  taMisc::user_plugin_dir = taMisc::user_app_dir + PATH_SEP + "plugins";
   
   // System (Share) Folder, System Plugins
   if (!Startup_InitTA_AppFolders()) return false;

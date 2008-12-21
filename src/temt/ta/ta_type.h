@@ -700,23 +700,23 @@ public:
 
   static String		app_dir; 
   // #SHOW #READ_ONLY #CAT_File base of installed app directory -- override with "-a <path>" command line switch
+  static String		app_plugin_dir;
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of installed system plugins 
   static String		app_dir_default; 
   // #HIDDEN #READ_ONLY #SAVE #CAT_File an override to use ONLY if we can't determine the app_dir
   static String		user_dir;
   // #SHOW #READ_ONLY #CAT_File location of user's home directory -- override with "-u <path>" command line switch
+  static String		prefs_dir;
+  // #READ_ONLY #SHOW #CAT_File location of preference files (e.g., ~/.appname)
+  static String		user_app_dir;
+  // #SAVE #SHOW #CAT_File user's location of application, for Program libraries, etc. 
+  static String		user_plugin_dir;
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of installed user plugins 
   static String		web_home;
   // #SAVE #CAT_File url for location of web repository of package information
 //NOTE: help url is not saved, for the moment, but s/b for release
   static String		web_help_url;
   // #NO_SAVE #CAT_File url for base of web application help
-  static String		prefs_dir;
-  // #READ_ONLY #SHOW #CAT_File location of preference files (e.g., ~/.appname)
-  static String		user_app_dir;
-  // #SAVE #SHOW #CAT_File user's location of application, for Program libraries, etc. 
-  static String		app_plugin_dir;
-  // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of installed system plugins 
-  static String		user_plugin_dir;
-  // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of installed user plugins 
 
   // don't save these paths: they are generated from above which are saved, and can
   // be modified more reliably in a .cssinitrc or similar..
