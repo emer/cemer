@@ -23,26 +23,21 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-################################################################
-# Step 1: set or lookup various defaults, for both Emergent
-#   and plugins -- this insures we have a consistent environment
-include(CMakeModules/EmergentDefaults.cmake)
-
-# we build the lib/bin targets up into the root folder, so
-# we can run and debug immediately in-place
-# need to use binary dir to preserve clean sep btwn src and build
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-
 
 ################################################################
-# Step 2: set all the basic parameters about the project
+# Step 1: set all the basic parameters about the project
 
-PROJECT(emergent)
+# set Project -- this has important default side-effects, 
+# especially on Windows, and needs to be done before almost anything else
+#TODO: capital-E needed on Windows to avoid additional non-standard overrides
+# ... might it not be ok for Unix/Mac too???
+if (WIN32)
+  PROJECT(Emergent)
+else (WIN32)
+  PROJECT(emergent)
+endif (WIN32)
 
-
-#### version setting
-
+# version setting
 set(EMERGENT_VERSION_MAJOR "4")
 set(EMERGENT_VERSION_MINOR "0")
 set(EMERGENT_VERSION_PATCH "18")
@@ -51,6 +46,19 @@ set(EMERGENT_VERSION "${EMERGENT_VERSION_MAJOR}.${EMERGENT_VERSION_MINOR}.${EMER
 # this is used for versioning the libs themselves
 set(EMERGENT_LIB_VERSION ${EMERGENT_VERSION})
 set(EMERGENT_LIB_SOVERSION ${EMERGENT_VERSION_MAJOR})
+
+
+################################################################
+# Step 2: set or lookup various defaults, for both Emergent
+#   and plugins -- this insures we have a consistent environment
+include(CMakeModules/EmergentDefaults.cmake)
+
+# we build the lib/bin targets up into the root folder, so
+# we can run and debug immediately in-place
+# need to use binary dir to preserve clean sep btwn src and build
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib) #for Win
 
 
 ################################################################
@@ -76,12 +84,16 @@ include(CTest)
 # and sets the EMERGENT_DEP_LIBRARIES variable to all the dependency libraries
 find_package(EmergentDependencies)
 
-# inclue all our subdirs in overall path
+# includes 
+include_directories(
+  ${PROJECT_SOURCE_DIR}
+  ${PROJECT_SOURCE_DIR}/include
+)
+if (false) # NUKE
 include_directories(
   ${PROJECT_SOURCE_DIR}
   ${PROJECT_SOURCE_DIR}/src/temt/ta
   ${PROJECT_SOURCE_DIR}/src/temt/taiqtso
-  ${PROJECT_SOURCE_DIR}/src/temt/css
   ${PROJECT_SOURCE_DIR}/src/temt/css
   ${PROJECT_SOURCE_DIR}/src/emergent/network
   ${PROJECT_SOURCE_DIR}/src/emergent/bp
@@ -89,14 +101,18 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/src/emergent/so
   ${PROJECT_SOURCE_DIR}/src/emergent/cs
 )
+endif (false)
 
 # install destinations
 if (WIN32)
+  # Note: contrary to cmake docs, the default CMAKE_INSTALL_PREFIX includes the project
+  # so it is C:/Program Files/Emergent
   # we have issues with path spaces, so install to C:/Emergent
 #try default  set(CMAKE_INSTALL_PREFIX "C:/")
+#set(CMAKE_INSTALL_PREFIX "C:/Users/baisa/tmp") #TEST
   # everything gets bundled
-  set(EMERGENT_INCLUDE_DEST Emergent/include)
-  set(EMERGENT_SHARE_DEST Emergent)
+  set(EMERGENT_INCLUDE_DEST include)
+  set(EMERGENT_SHARE_DEST .)
 else (WIN32)
   set(EMERGENT_INCLUDE_DEST include/Emergent)
   set(EMERGENT_SHARE_DEST share/Emergent)
@@ -175,6 +191,23 @@ add_subdirectory(demo/so)
 add_subdirectory(demo/virt_env)
 add_subdirectory(demo/data_proc)
 
+
+if (false) #source to make stub includes -- must be run after making the TA files
+file(GLOB_RECURSE xxx_HEADS "${PROJECT_SOURCE_DIR}/src/*.h") 
+message(STATUS "include files to be processed: ${xxx_HEADS}")
+  foreach(INC_FILE ${xxx_HEADS})
+    get_filename_component(DEST_FILE ${INC_FILE} NAME)
+    get_filename_component(DEST_FILE_WE ${INC_FILE} NAME_WE)
+    file(RELATIVE_PATH TARG_FILE "${PROJECT_SOURCE_DIR}/include" ${INC_FILE})
+	CONFIGURE_FILE(
+	  "${CMAKE_CURRENT_SOURCE_DIR}/local_inc.h.in"
+	  "${PROJECT_SOURCE_DIR}/include/${DEST_FILE_WE}.h"
+	  IMMEDIATE @ONLY
+    )
+    message(STATUS "created include file for: ${INC_FILE}")
+  endforeach(INC_FILE)
+endif (false)
+
 # dependencies
 add_dependencies(ta_TA maketa)
 add_dependencies(temt ta_TA)
@@ -198,7 +231,6 @@ install(FILES AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
 
 # also install our cmake module files for use by plugins, etc
 file(GLOB OUR_CMAKE_MOD_FILES "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/*.cmake")
-
 install(FILES ${OUR_CMAKE_MOD_FILES}
   DESTINATION ${EMERGENT_SHARE_DEST}/CMakeModules
 )
@@ -209,19 +241,43 @@ install(FILES ${PLT}/CMakeLists.txt ${PLT}/NOBUILD ${PLT}/template_def.h
   ${PLT}/template.h ${PLT}/template.cpp
   ${PLT}/template_pl.h ${PLT}/template_pl.cpp
   ${PLT}/template_qtso.h ${PLT}/template_qtso.cpp
-  DESTINATION ${EMERGENT_SHARE_DEST}/plugins
+  DESTINATION ${EMERGENT_SHARE_DEST}/plugins/template
 )
+
+if (WIN32)
+  # for Windows, we install the pre-req dll's in bin
+  file(GLOB OUR_3RDPARTY_FILES 
+    "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bin/*.dll"
+    "${COINDIR}/bin/*.dll"
+  )
+  install(FILES ${OUR_3RDPARTY_FILES}
+    DESTINATION bin
+  )
+endif (WIN32)
 
 ########### uninstall files ###############
 
+#TODO: Uninstall Windows Registry keys
 CONFIGURE_FILE(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
   IMMEDIATE @ONLY)
-
+  
 ADD_CUSTOM_TARGET(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 
+if (false) #NOTE: see the file for issues -- abandoned for now BA 12/19/08
+if (WIN32)
+CONFIGURE_FILE(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake_custom_install.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/cmake_custom_install.cmake"
+  IMMEDIATE @ONLY)
+  
+install(CODE
+  "execute_process(COMMAND \"${CMAKE_COMMAND}\" -P \"${CMAKE_CURRENT_BINARY_DIR}/cmake_custom_install.cmake\")"
+  )
+endif (WIN32)
+endif (false)
 
 ########### special targets and commands ###############
 #BUG: these targets are flakily forcing all the subtargets to become ALL

@@ -250,9 +250,15 @@ int taPlatform::exec(const String& cmd) {
   return system(cmd.chars());
 }
 
+#ifdef TA_OS_MAC
 String taPlatform::getAppDataPath(const String& appname) {
   return getHomePath() + "/." + appname;
 }
+#else
+String taPlatform::getAppDataPath(const String& appname) {
+  return getHomePath() + "/Library/" + capitalize(appname);
+}
+#endif
 
 #ifndef NO_TA_BASE
 String taPlatform::getHomePath() {

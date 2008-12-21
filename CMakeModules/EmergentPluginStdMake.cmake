@@ -19,6 +19,21 @@ set(plugin_full_SRCS
 # adds the library as an official target to compile
 add_library(${PROJECT_NAME} SHARED ${plugin_full_SRCS})
 
+# build directly into super-folder for no-install in-place yummy goodness
+if (WIN32)
+  # of course Windows cmake is evil, because it auto-adds the Config subfolder, so have to:
+  set(TARGET_LOCATION 
+    "\"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME}${EMERGENT_SUFFIX}.dll\"")
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND "${CMAKE_COMMAND}" ARGS -E copy 
+      ${TARGET_LOCATION} "\"${CMAKE_CURRENT_SOURCE_DIR}/..\""
+  )
+else (WIN32)
+  set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.." # for Unix
+  )
+endif (WIN32)
+
 add_dependencies(${PROJECT_NAME} "${PROJECT_NAME}_TA")
 
 # does all the stuff to make the library link against all the right other libraries
@@ -33,9 +48,16 @@ install(FILES ${plugin_FILES}
   DESTINATION ${EMERGENT_PLUGIN_DEST}/${PROJECT_NAME}
 )
 
-install(TARGETS ${PROJECT_NAME}
-  LIBRARY DESTINATION ${EMERGENT_PLUGIN_DEST}
-)
+if (WIN32)
+  install(TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION ${EMERGENT_PLUGIN_DEST}
+  )
+else (WIN32)
+  # note: we don't support linking to plugins, so no ARCHIVE dest
+  install(TARGETS ${PROJECT_NAME}
+    LIBRARY DESTINATION ${EMERGENT_PLUGIN_DEST}
+  )
+endif (WIN32)
 
 ########### uninstall files ###############
 

@@ -1031,12 +1031,14 @@ int taRootBase::SavePluginState() {
 //TODO:
 // iterate the plugin_state collection, making a file for each guy
 // in the user data area
+  return 0;
 }
 
 int taRootBase::LoadPluginState() {
 //TODO:
 // iterate the plugin_state collection, loading data for each guy
 // from the user data area
+  return 0;
 }
 
 bool taRootBase::CheckAddPluginDep(TypeDef* td) {
@@ -1098,15 +1100,15 @@ void taRootBase::About() {
   info += "WWW Page: http://grey.colorado.edu/temt\n";
   info += "\n\n";
 
-  info += "Copyright (c) 1995-2006, Regents of the University of Colorado,\n\
+  info += "Copyright (c) 1995-2009, Regents of the University of Colorado,\n\
  Carnegie Mellon University, Princeton University.\n\
  \n\
- TA/CSS is free software; you can redistribute it and/or modify\n\
+ TEMT is free software; you can redistribute it and/or modify\n\
  it under the terms of the GNU General Public License as published by\n\
  the Free Software Foundation; either version 2 of the License, or\n\
  (at your option) any later version.\n\
  \n\
- TA/CSS is distributed in the hope that it will be useful,\n\
+ TEMT is distributed in the hope that it will be useful,\n\
  but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
  GNU General Public License for more details.\n\
@@ -1430,7 +1432,7 @@ bool taRootBase::isAppDir(String path) {
 }
 
 // hairy, modal, issue-prone -- we put in its own routine
-bool taRootBase::Startup_InitTA_folders() {
+bool taRootBase::Startup_InitTA_AppFolders() {
   // explicit cmdline override has highest priority
 #ifndef TA_OS_WIN
   String prefix_dir; // empty unless we found app_dir under here
@@ -1535,26 +1537,50 @@ bool taRootBase::Startup_InitTA_folders() {
   cerr << "NOTE: default app_dir logic did not find the app_dir.\n";
 #endif  
   
-  app_dir = _nilString; // try finding override, or else prompt user
+  app_dir = _nilString; 
+  // try finding saved override, and/or prompt user
+  if (Startup_InitTA_GetMissingAppDir()) {
+    goto found_app_override;
+  } else {
+    return false;
+  }
   
 have_app_dir:
 
   // initialize the key folders
   taMisc::app_dir = app_dir;
-  // cmd line override of UserDir takes preference
-  taMisc::user_dir = taMisc::FindArgByName("UserDir");;
-  if (taMisc::user_dir.empty())
-    taMisc::user_dir = taPlatform::getHomePath();
   
+found_app_override:
 
-  taMisc::user_app_dir = taMisc::FindArgByName("UserAppDir");;
-  taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
-  // make sure it exists
-  taPlatform::mkdir(taMisc::prefs_dir);
+#ifdef TA_OS_WIN
+    taMisc::app_dir.gsub("/", "\\"); // clean it up, so it never causes issues
+#endif
+
+  // Plugin dirs
+  taMisc::app_plugin_dir = getenv("EMERGENT_PLUGIN_DIR");
+  if (taMisc::app_plugin_dir.empty()) {
+#ifdef TA_OS_WIN
+    taMisc::app_plugin_dir = taMisc::app_dir + "\\plugins";
+#else // Unix and Mac
+    String suff = "/share/" + taMisc::default_app_install_folder_name;
+    if (taMisc::app_dir.endsWith(suff)) {
+      taMisc::app_plugin_dir = taMisc::app_dir.at(0, taMisc::app_dir.length() - suff.length()) + "/lib/" + taMisc::default_app_install_folder_name + "/plugins";
+    } else {
+      taMisc::app_plugin_dir = "/usr/local/lib/" +  taMisc::default_app_install_folder_name + "/plugins";
+    }
+#endif
+  }
+  {QDir dir(taMisc::app_plugin_dir);
+  if (!dir.exists()) { 
+    taMisc::Error("Could not find expected application plugin folder:", 
+      taMisc::app_plugin_dir, "shutting down.");
+    return false;
+  }}
+  
   return true;
 }
 
-bool taRootBase::Startup_InitTA_getMissingAppDir() {
+bool taRootBase::Startup_InitTA_GetMissingAppDir() {
 //TODO: if gui, prompt user to find the app path, must be valid
   // start with a default, and then loop validating /fetching
   bool prompted = false;
@@ -1654,39 +1680,26 @@ bool MakeUserPluginConfigProxy(const String& uplugin_dir,
   return true;
 }
 
-bool taRootBase::Startup_InitTA_initUserAppDir() {
+bool taRootBase::Startup_InitTA_InitUserAppDir() {
   // make sure the folder exists
   // make sure the standard user subfolders exist:
   QDir dir(taMisc::user_app_dir);
   if (!dir.exists()) {
     if (!dir.mkdir(taMisc::user_app_dir)) {
-  //TODO: this is too harsh -- should prompt user for one, like for app dir
       taMisc::Error("Could not find or make the user dir:", taMisc::user_app_dir,
-       "Please make sure this directory exists and is readable, and try again.");
+        "Please make sure this directory exists and is readable, and try again"
+        " -- or use the -UserAppDir= command line option.");
       return false;
     }
   }
-//NOTE: we could get excessively anal, and check all of these, but if we
-// can make/read the user folder, then very unlikely will these fail
+  //NOTE: we could get excessively anal, and check all of these, but if we
+  // can make/read the user folder, then very unlikely will these fail
   // make user prog_lib
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "prog_lib");
   // make user css_lib
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "css_lib");
-  
   // user plugin folder (no option override)
-#ifdef TA_OS_WIN
-  taMisc::user_plugin_dir = taPlatform::getHomePath() + "\\lib\\" + taMisc::default_app_install_folder_name + "\\plugins"; 
-#else // Unix
-  taMisc::user_plugin_dir = taPlatform::getHomePath() + "/lib/" + taMisc::default_app_install_folder_name + "/plugins"; 
-#endif
-  dir = taMisc::user_plugin_dir;
-  if (!dir.exists()) {
-    if (!dir.mkpath(taMisc::user_plugin_dir)) {
-      taMisc::Error("Could not find or make the user plugin dir:", taMisc::user_plugin_dir,
-       "Please make sure this directory exists and is readable, and try again.");
-      return false;
-    }
-  }
+  dir.mkdir(taMisc::user_app_dir + PATH_SEP + "plugins");
   return true;
 }
 
@@ -1697,7 +1710,28 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   taMisc::Init_Hooks();	// client dlls register init hooks -- this calls them!
   milestone |= SM_TYPES_INIT;
     
-  if (!Startup_InitTA_folders()) return false;
+  // user directory, aka Home folder -- we don't necessarily use it as a base here though
+  // cmd line override of UserDir takes preference
+  taMisc::user_dir = taMisc::FindArgByName("UserDir");
+  if (taMisc::user_dir.empty()) {
+    taMisc::user_dir = taPlatform::getHomePath();
+  }
+  // Preferences directory -- hidden or hiddenish on all platforms
+  // by definition, it can't be overridden, because all other options get saved there
+  taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
+/* TODO nuke this
+#if defined(TA_OS_MAC)
+  taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name) + "/prefs";
+  //LEGACY: move old prefs to new location -- done once, and only if new not exists
+  old_prefs = taPlatform::getHomePath() + "/." + taMisc::appname;
+  if ((old_prefs != taMisc::prefs_dir) && 
+    !taPlatform::fileExists(taMisc::prefs_dir + "/.")) 
+  {
+    taPlatform::exec("mv -f \"" + old_prefs + "\" \"" + taMisc::prefs_dir + "\"");
+  }
+#endif */
+  // make sure it exists
+  taPlatform::mkdir(taMisc::prefs_dir);
 
   // then load configuration info: sets lots of user-defined config info
   taMisc::Init_Defaults_PreLoadConfig();
@@ -1705,48 +1739,33 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   if (taMisc::proj_view_pref == -1) {
     taMisc::proj_view_pref = taMisc::PVP_3PANE;
   }
-  // init user dir first time
-  if (taMisc::user_app_dir.empty()) {
-    taMisc::user_app_dir = taMisc::prefs_dir;
-  }
-
-  if (!Startup_InitTA_initUserAppDir()) return false;
   
-// if we still hadn't found an app_dir, need to find one now!
-  if (taMisc::app_dir.empty()) {
-    if (Startup_InitTA_getMissingAppDir() ) {
-    } else {
-      taMisc::Error("Could not find application folder, shutting down.");
-      return false;
-    }
-  }
-  // plugin dirs
-  taMisc::app_plugin_dir = getenv("EMERGENT_PLUGIN_DIR");
-  if (taMisc::app_plugin_dir.empty()) {
+  // Application folder, Plugin folder
+  // command line overrides saved preference value, if any
+  String user_app_dir = taMisc::FindArgByName("UserAppDir");
+  if (user_app_dir.nonempty()) {
+    taMisc::user_app_dir = user_app_dir;
+  } else if (taMisc::user_app_dir.empty()) {
 #ifdef TA_OS_WIN
-    taMisc::app_plugin_dir = taMisc::app_dir + "\\plugins";
-#else // Unix
-    // allow an "in-place" development location, to simplify our life...
-    taMisc::app_plugin_dir = taMisc::app_dir + "/plugins";
-    QDir dir(taMisc::taMisc::app_plugin_dir);
-    if (dir.exists()) goto plugin_dir_found;
-    else {
-      String suff = "/share/" + taMisc::default_app_install_folder_name;
-      if (taMisc::app_dir.endsWith(suff)) {
-        taMisc::app_plugin_dir = taMisc::app_dir.at(0, taMisc::app_dir.length() - suff.length()) + "/lib/" + taMisc::default_app_install_folder_name + "/plugins";
-      } else {
-        taMisc::app_plugin_dir = "/usr/local/lib/" +  taMisc::default_app_install_folder_name + "/plugins";
-      }
-    }
+    // ex. [user]\My Documents\Emergent
+    taMisc::user_app_dir = taPlatform::getHomePath() + PATH_SEP +
+      capitalize(taMisc::app_name);
+#elif defined(TA_OS_MAC)
+    // ex. ~/Library/Emergent
+    taMisc::user_app_dir = taPlatform::getAppDataPath();
+#else // Unix/Linux 
+    // ex. ~/.emergent (same as prefs)
+    taMisc::user_app_dir = taMisc::prefs_dir;
 #endif
   }
-  {QDir dir(taMisc::taMisc::app_plugin_dir);
-  if (!dir.exists()) { 
-    taMisc::Error("Could not find expected application plugin folder:", 
-      taMisc::taMisc::app_plugin_dir, "shutting down.");
-    return false;
-  }}
-plugin_dir_found:
+  taMisc::user_plugin_dir = taMisc::user_app_dir + PATH_SEP + "plugins";
+
+  if (!Startup_InitTA_InitUserAppDir()) return false;
+  
+  // System (Share) Folder, System Plugins
+  if (!Startup_InitTA_AppFolders()) return false;
+ 
+
   taMisc::Init_Defaults_PostLoadConfig();
 
   console_type = taMisc::console_type;

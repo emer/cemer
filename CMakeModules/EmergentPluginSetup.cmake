@@ -4,7 +4,6 @@
 # CMakeLists.txt after it finds the installed version of the code
 # We know that EMERGENT_SHARE_DIR is the Emergent install folder
 
-
 ################################################################
 # Step 1: ensure we have the right version of cmake and set build params
 # typically no need to change this stuff, but it has to come first
@@ -18,22 +17,18 @@ endif(COMMAND cmake_policy)
 # whether User or System, controls default install prefix
 # TODO: we could try to get fancy, and deduce based on current src location
 if (NOT EMERGENT_PLUGIN_TYPE)
-  set(EMERGENT_PLUGIN_TYPE System)
+  set(EMERGENT_PLUGIN_TYPE User)
 endif (NOT EMERGENT_PLUGIN_TYPE)
 
 # although we know the app folder, we need to extract install prefix
+# note that on Windows, it is the actual app folder, contrary to cmake docs
 if (WIN32)
-  #note: the normal case is for the ENV var to exist...
-  if (${EMERGENTDIR})
-    set(EMERGENT_INSTALL_PREFIX "${EMERGENTDIR}/..")
-  else (${EMERGENTDIR})
-    find_path(EMERGENT_INSTALL_PREFIX Emergent/README PATHS
-      C:/
-      "C:/Program Files"
-      "C:/Program Files (x86)" # W32 on 64, should be rare
-      NO_DEFAULT_PATH
-    )
-  endif (${EMERGENTDIR})
+  #note: EMERGENTDIR var must exist...
+  if (EMERGENTDIR)
+    set(EMERGENT_INSTALL_PREFIX "${EMERGENTDIR}")
+  else (EMERGENTDIR)
+    message(FATAL_ERROR "EMERGENTDIR variable must exist")
+  endif (EMERGENTDIR)
 else (WIN32)
   # find the path, in terms of an equivalent to CMAKE_INSTALL_PREFIX
   find_path(EMERGENT_INSTALL_PREFIX share/Emergent/README PATHS
@@ -51,7 +46,7 @@ endif (WIN32)
 if (EMERGENT_PLUGIN_TYPE STREQUAL "System")
   if (WIN32)
     set(CMAKE_INSTALL_PREFIX ${EMERGENT_INSTALL_PREFIX} CACHE INTERNAL "do not change")
-    set(EMERGENT_PLUGIN_DEST Emergent/plugins)
+    set(EMERGENT_PLUGIN_DEST plugins)
   else (WIN32)
     # we need to independently set CIP to be that of the root of the install
     set(CMAKE_INSTALL_PREFIX ${EMERGENT_INSTALL_PREFIX} CACHE INTERNAL "do not change")
@@ -59,8 +54,11 @@ if (EMERGENT_PLUGIN_TYPE STREQUAL "System")
   endif (WIN32)
 elseif (EMERGENT_PLUGIN_TYPE STREQUAL "User")
   if (WIN32)
-    set(CMAKE_INSTALL_PREFIX $ENV{APPDATA} CACHE INTERNAL "do not change")
-    set(EMERGENT_PLUGIN_DEST ccnlab/emergent/plugins)
+    set(CMAKE_INSTALL_PREFIX $ENV{USERPROFILE} CACHE INTERNAL "do not change")
+    set(EMERGENT_PLUGIN_DEST Emergent/plugins)
+  elseif (APPLE)
+    set(CMAKE_INSTALL_PREFIX $ENV{HOME} CACHE INTERNAL "do not change")
+    set(EMERGENT_PLUGIN_DEST Library/Emergent/plugins)
   else (WIN32)
     set(CMAKE_INSTALL_PREFIX $ENV{HOME} CACHE INTERNAL "do not change")
     set(EMERGENT_PLUGIN_DEST lib/Emergent/plugins)
@@ -69,23 +67,29 @@ else (EMERGENT_PLUGIN_TYPE STREQUAL "User")
   message(FATAL_ERROR "EMERGENT_PLUGIN_TYPE must be set to one of: User | System")
 endif (EMERGENT_PLUGIN_TYPE STREQUAL "System")
 
-#TEMP: from EmergentPluginSetup
 set(mod_path "${EMERGENT_SHARE_DIR}/CMakeModules")
-
 set(CMAKE_MODULE_PATH ${mod_path})
+
+# defaults shared by Emergent and plugins
+include(${mod_path}/EmergentDefaults.cmake)
 
 # set the lib and executable suffix based on build type -- need this before finding
 # the emergent and temt packages!
 include(${mod_path}/SetBuildSuffix.cmake)
 
-# find full emergent install
-find_package(Emergent)
-include_directories(${EMERGENT_INCLUDE_DIR}/Emergent)
+# packaging and testing systems 
+# NOTE: not applicable to plugins at this time
+#include(${mod_path}/CPackConfig.cmake)
+#include(CPack)
+#include(CTest)
 
 # find all of our dependencies -- also sets their include paths in include_directories
 # and sets the EMERGENT_DEP_LIBRARIES variable to all the dependency libraries
 find_package(EmergentDependencies)
 
+# find full emergent install
+find_package(Emergent)
+include_directories(${EMERGENT_INCLUDE_DIR})
 
 # several important macros in here:
 include(${mod_path}/MacroLibrary.cmake)

@@ -397,9 +397,9 @@ protected:
   static ContextFlag	in_init; // suppresses spurious Saves
   
   static bool	isAppDir(String path); // #IGNORE true if seems to be an app dir
-  static bool 	Startup_InitTA_folders();  // #IGNORE 
-  static bool 	Startup_InitTA_getMissingAppDir();  // #IGNORE 
-  static bool 	Startup_InitTA_initUserAppDir();  // #IGNORE 
+  static bool 	Startup_InitTA_GetMissingAppDir();  // #IGNORE may be called by:
+  static bool 	Startup_InitTA_AppFolders();  // #IGNORE Share, Plugins
+  static bool 	Startup_InitTA_InitUserAppDir();  // #IGNORE once found
   static void	Startup_EnumerateEnginesR(TypeDef* typ);
   // #IGNORE recursively enumerate from typ 
   bool		AddRecentFile_impl(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)

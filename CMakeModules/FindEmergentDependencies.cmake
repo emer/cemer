@@ -26,7 +26,8 @@ include_directories(${QT_INCLUDES} ${COIN_INCLUDE_DIR} ${SOQT_INCLUDE_DIR}
   ${GSL_INCLUDE_DIR}
 )
 if (WIN32)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/include
+  #note: valid in main app and plugin contexts:
+  include_directories(${EMERGENT_SHARE_DIR}/3rdparty/include
     $ENV{COINDIR}/include
   )
 else (WIN32)

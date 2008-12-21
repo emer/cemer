@@ -7,20 +7,39 @@
 
 # IMPORTANT: the EMERGENT_SUFFIX must be set by SetBuildSuffix.cmake module prior to this!
 
-# first find temt -- emergent requires that, and sets EMERGENT_LIBRARIES
+# first find temt -- emergent requires that, and sets TEMT_INCLUDE_DIR and TEMT_LIBRARY
 find_package(Temt REQUIRED)
 
-FIND_PATH(EMERGENT_INCLUDE_DIR Emergent/ta_type.h
-   /usr/include
-   /usr/local/include
-   /opt/local/include
-)
+if (WIN32)
+  #shortcut: we already found everything in Find(temt)
+  set(EMERGENT_INCLUDE_DIR ${TEMT_INCLUDE_DIR})
+else (WIN32)
+  FIND_PATH(EMERGENT_INCLUDE_DIR ta_type.h
+    $ENV{EMERGENT_INCLUDE_DIR}
+    /usr/include/Emergent
+    /usr/local/include/Emergent
+    /opt/local/include/Emergent
+  )
+endif (WIN32)
 
-FIND_LIBRARY(EMERGENT_LIBRARY NAMES emergentlib${EMERGENT_SUFFIX} PATH
-  /usr/lib
-  /usr/local/lib
-  /opt/local/lib
-)
+if (WIN32)
+  find_file(EMERGENT_LIBRARY "emergentlib${EMERGENT_SUFFIX}.lib" PATHS
+    "${EMERGENTDIR}/lib"
+    "${EMERGENTDIR}/lib/${CMAKE_BUILD_TYPE}" #don't use CMAKE_CFG_INTDIR not valid on "NMake Makefiles"
+    NO_DEFAULT_PATH
+  )
+  if (NOT EXISTS ${EMERGENT_LIBRARY})
+    message(FATAL_ERROR "EMERGENTDIR environment variable must point to Emergent install directory!")
+  endif (NOT EXISTS ${EMERGENT_LIBRARY})
+  # Windows import/export control -- since we are trying to find it, we assume importing
+  add_definitions(-DEMERGENT_DLL)
+else (WIN32)
+  FIND_LIBRARY(EMERGENT_LIBRARY NAMES "emergentlib${EMERGENT_SUFFIX}" PATH
+    /usr/lib
+    /usr/local/lib
+    /opt/local/lib
+  )
+endif (WIN32)
 
 # handle the QUIETLY and REQUIRED arguments and set x_FOUND to TRUE if 
 # all listed variables are TRUE

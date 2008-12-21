@@ -42,7 +42,6 @@ endif (WIN32)
 #NOTE: we don't use decorative suffix -- confusing, and there should only be one
 add_executable(maketa ${maketa_SRCS})
 
-#no target_link_libraries(maketa ${QT_LIBRARIES})
 
 ########### running bison on mta_parse.y ###############
 
@@ -61,5 +60,6 @@ ADD_CUSTOM_TARGET(make_mta_parse
 
 install(TARGETS maketa
   RUNTIME DESTINATION bin
+  OPTIONAL #TEMP
 )
 

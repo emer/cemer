@@ -17,7 +17,7 @@ include(${mod_path}/SetBuildSuffix.cmake)
 
 # find full emergent install
 find_package(Emergent)
-include_directories(${EMERGENT_INCLUDE_DIR}/Emergent)
+include_directories(${EMERGENT_INCLUDE_DIR})
 
 # find all of our dependencies -- also sets their include paths in include_directories
 # and sets the EMERGENT_DEP_LIBRARIES variable to all the dependency libraries

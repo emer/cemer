@@ -7,9 +7,13 @@
 
 # some standard env variables, loaded locally 
 # and fixed up for Windows
-file(TO_CMAKE_PATH "$ENV{COINDIR}" COINDIR)
 # note: EMERGENTDIR is really only used on Windows or for development
 file(TO_CMAKE_PATH "$ENV{EMERGENTDIR}" EMERGENTDIR)
+file(TO_CMAKE_PATH "$ENV{COINDIR}" COINDIR)
+# assume in 3rdparty
+#TODO: set COINDIR according to defaults
+#allowed overrides:
+file(TO_CMAKE_PATH "$ENV{EMERGENT_PLUGIN_DIR}" EMERGENT_PLUGIN_DIR)
 
 # default build type is RelWithDebInfo
 if(NOT CMAKE_BUILD_TYPE)
@@ -20,6 +24,7 @@ endif(NOT CMAKE_BUILD_TYPE)
 set(MPI_BUILD FALSE CACHE BOOL "Set to true to enable MPI distributed memory system")
 
 # basic compiler warnings, etc.
+# note: really should be testing MSVC but contrary to docs, it is not true using MSVC
 if (WIN32)
   #shut off warnings: 4250 (inheritance dominance)
   # 4258;4661;4996 (unsafe crt routines)
@@ -30,5 +35,8 @@ if (WIN32)
     # need to set this so larger .cpp files don't error (what a stupid non-default!!!)
     add_definitions(/bigobj)
   endif (CMAKE_CL_64)
+else (WIN32) # assume gcc!!!
+  # a function with a non-void return-type that doesn't return a value s/b an error!!!
+  add_definitions(-Werror=return-type)
 endif (WIN32)
 

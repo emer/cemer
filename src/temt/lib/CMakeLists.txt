@@ -50,7 +50,7 @@ endif (WIN32)
 
 if (WIN32)
   install(TARGETS temt
-    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
     RUNTIME DESTINATION bin
   )
 else (WIN32)
