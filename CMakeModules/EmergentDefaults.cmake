@@ -37,6 +37,10 @@ if (WIN32)
   endif (CMAKE_CL_64)
 else (WIN32) # assume gcc!!!
   # a function with a non-void return-type that doesn't return a value s/b an error!!!
+  if (APPLE) #grr... not working on Mac for some reason
+    message(STATUS "note: '-Werror=return-type' not working on Mac: suggest fixing") 
+  else (APPLE)
   add_definitions(-Werror=return-type)
+  endif (APPLE)
 endif (WIN32)
 
