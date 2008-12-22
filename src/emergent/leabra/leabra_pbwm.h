@@ -71,7 +71,7 @@ public:
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
 	if(!(su->in_subgp &&
 	     (((LeabraUnit_Group*)su->owner)->acts.avg < savg_cor.thresh))) {
-	  float lin_wt = GetLinFmWt(cn->wt);
+	  float lin_wt = LinFmSigWt(cn->wt);
 	  C_Compute_dWt_NoHebb(cn, ru, 
 			       C_Compute_Err_Delta(cn, lin_wt, ru, su));
 	}

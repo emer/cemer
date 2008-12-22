@@ -678,7 +678,7 @@ public:
 	if(!(su->in_subgp &&
 	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
 	  C_Compute_FastDecay(cn, ru, su);
-	  float lin_wt = GetLinFmWt(cn->wt);
+	  float lin_wt = LinFmSigWt(cn->wt);
 	  C_Compute_dWt(cn, ru, 
 			C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p),
 			C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m, su->act_p, su->act_m));  
@@ -698,7 +698,7 @@ public:
     }
     if(cn->dwt != 0.0f) {
       // always do this because of the decay term..
-      cn->wt = GetWtFmLin(GetLinFmWt(cn->wt) + cn->dwt);
+      cn->wt = SigFmLinWt(LinFmSigWt(cn->wt) + cn->dwt);
     }
     cn->pdw = cn->dwt;
     cn->dwt = 0.0f;
@@ -755,7 +755,7 @@ public:
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
 	if(!(su->in_subgp &&
 	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  float lin_wt = GetLinFmWt(cn->wt);
+	  float lin_wt = LinFmSigWt(cn->wt);
 	  C_Compute_dWt(cn, ru, 
 			C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p, ru->act_avg),
 			C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m, su->act_p, su->act_m));  
@@ -857,7 +857,7 @@ public:
     float eff_dw = cn->dwt + dwnorm;
     if(eff_dw != 0.0f) {
       // weight increment happens in linear weights
-      cn->wt = GetWtFmLin(GetLinFmWt(cn->wt) + eff_dw);
+      cn->wt = SigFmLinWt(LinFmSigWt(cn->wt) + eff_dw);
     }
     cn->pdw = cn->dwt;
     cn->dwt = 0.0f;
