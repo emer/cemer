@@ -27,10 +27,11 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
 ################################################################
 # Step 1: Find the emergent share (application) directory
 # Normal default installation locations should be found, but you
-# can edit these paths to add a non-standard location 
-file(TO_CMAKE_PATH "$ENV{EMERGENTDIR}" EMERGENTDIR)
+# can edit these paths to add a non-standard location. 
+# The platform environment variable overrides are checked first.
 if (WIN32)
-  #note: the normal case is for the ENV var to exist...
+  file(TO_CMAKE_PATH "$ENV{EMERGENTDIR}" EMERGENTDIR)
+  #note: on Windows the normal case is for the ENV var to exist...
   if (${EMERGENTDIR})
     set(EMERGENT_SHARE_DIR "${EMERGENTDIR}")
   else (${EMERGENTDIR})
@@ -42,12 +43,15 @@ if (WIN32)
     )
   endif (${EMERGENTDIR})
 else (WIN32)
-  find_path(EMERGENT_SHARE_DIR README PATHS
-    /usr/share/Emergent
-    /usr/local/share/Emergent
-    /opt/local/share/Emergent
-    NO_DEFAULT_PATH
-  )
+  set(EMERGENT_SHARE_DIR $ENV{EMERGENT_SHARE_DIR})
+  if (NOT ${EMERGENT_SHARE_DIR})
+    find_path(EMERGENT_SHARE_DIR README PATHS
+      /usr/share/Emergent
+      /usr/local/share/Emergent
+      /opt/local/share/Emergent
+      NO_DEFAULT_PATH
+    )
+  endif (NOT ${EMERGENT_SHARE_DIR})
 endif (WIN32)
 
 if(EMERGENT_SHARE_DIR)
@@ -61,6 +65,10 @@ endif(EMERGENT_SHARE_DIR)
 
 ################################################################
 # Step 2: set build params
+
+# name the project: this will be the name of the plugin
+PROJECT(audioproc)
+
 # this includes all necessary setup stuff to setup the make process
 include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginSetup.cmake)
 
@@ -72,9 +80,6 @@ include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginSetup.cmake)
 # to modify or extend, especially if you add additional source
 # files or need to include or link to additional libraries not
 # part of the Emergent prerequisites
-
-# name the project: this will be the name of the plugin
-PROJECT(audioproc)
 
 #### version setting: you are responsible for your own versioning and it does not
 #### have to correspond with the emergent versions, though that wouldn't hurt
