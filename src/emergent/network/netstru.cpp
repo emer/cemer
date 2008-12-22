@@ -608,12 +608,16 @@ void RecvCons::TransformWeights(const SimpleMathSpec& trans) {
   int i;
   for(i=0; i < cons.size; i++)
     Cn(i)->wt = trans.Evaluate(Cn(i)->wt);
+  Unit* ru = GET_MY_OWNER(Unit);
+  Init_Weights_post(ru);	// update weights after mod
 }
 
 void RecvCons::AddNoiseToWeights(const Random& noise_spec) {
   int i;
   for(i=0; i < cons.size; i++)
     Cn(i)->wt += noise_spec.Gen();
+  Unit* ru = GET_MY_OWNER(Unit);
+  Init_Weights_post(ru);	// update weights after mod
 }
 
 int RecvCons::PruneCons(Unit* un, const SimpleMathSpec& pre_proc,
@@ -706,6 +710,8 @@ bool RecvCons::ConValuesFromArray(float_Array& ary, const char* variable) {
     float* val = (float*)md->GetOff((void*)Cn(i));
     *val = ary[i];
   }
+  Unit* ru = GET_MY_OWNER(Unit);
+  Init_Weights_post(ru);	// update weights after mod
   return true;
 }
 
@@ -721,6 +727,8 @@ bool RecvCons::ConValuesFromMatrix(float_Matrix& mat, const char* variable) {
     float* val = (float*)md->GetOff((void*)Cn(i));
     *val = mat.FastEl_Flat(i);
   }
+  Unit* ru = GET_MY_OWNER(Unit);
+  Init_Weights_post(ru);	// update weights after mod
   return true;
 }
 
@@ -859,6 +867,8 @@ int RecvCons::LoadWeights_strm(istream& strm, Unit* ru, RecvCons::WtSaveFormat f
     }
   }
   RecvCons::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
+
+  Init_Weights_post(ru);	// update weights after loading
   return stat;			// should be tag end!
 }
 
@@ -1065,6 +1075,9 @@ int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
       i++;
     }
   }
+
+  Unit* ru = GET_MY_OWNER(Unit);
+  Init_Weights_post(ru);	// update weights after loading
   return true;
 }
 

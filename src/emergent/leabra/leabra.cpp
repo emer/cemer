@@ -4728,13 +4728,13 @@ void LeabraNetwork::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   ct_time.UpdateAfterEdit();
 
-  if(TestError(ct_sravg.plus_s_st >= ct_time.plus, "UAE",
+  if(TestWarning(ct_sravg.plus_s_st >= ct_time.plus, "UAE",
 	       "ct_sravg.plus_s_st is higher than ct_time.plus (# of cycles in plus phase)"
 	       "just set it to plus-2")) {
     ct_sravg.plus_s_st = ct_time.plus -2;
   }
 
-  if(TestError(!off_errs && !on_errs, "UAE", "can't have both off_errs and on_errs be off (no err would be computed at all) -- turned both back on")) {
+  if(TestWarning(!off_errs && !on_errs, "UAE", "can't have both off_errs and on_errs be off (no err would be computed at all) -- turned both back on")) {
     on_errs = true;
     off_errs = true;
   }

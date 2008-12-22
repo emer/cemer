@@ -235,7 +235,7 @@ public:
   inline virtual void	C_Init_Weights_post(RecvCons*, Connection*, Unit*, Unit*) { };
   // #IGNORE
   inline virtual void 	Init_Weights_post(RecvCons* cg, Unit* ru);
-  // #IGNORE post-initialize state variables (ie. for scaling symmetrical weights, etc)
+  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
   inline virtual void 	C_Init_dWt(RecvCons*, Connection* cn, Unit*, Unit*)
   { cn->dwt=0.0f; }
   // #CAT_Learning initialize weight-change variables on a single connecdtion
@@ -420,7 +420,7 @@ public:
   { GetConSpec()->C_Init_Weights(this, cn, ru, su); }
   // #CAT_Learning initialize weights for single connection
   void	Init_Weights_post(Unit* ru) 	{ GetConSpec()->Init_Weights_post(this,ru); }
-  // #IGNORE
+  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
   void 	Init_dWt(Unit* ru)	 	{ GetConSpec()->Init_dWt(this,ru); }
   // #CAT_Learning  initialize weight change variables
 
@@ -673,7 +673,7 @@ public:
   virtual void 	Init_Weights(Unit* u);
   // #CAT_Learning init weight state variables
   virtual void	Init_Weights_post(Unit* u);
-  // #IGNORE run after init wt state (ie. to scale wts)
+  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
 
   virtual void 	Compute_Netin(Unit* u);
   // #CAT_Activation compute net input: activations times weights (receiver based)
@@ -818,7 +818,8 @@ public: //
   // #MENU #CAT_Learning initialze weight change variables
   void 	Init_Weights()		{ GetUnitSpec()->Init_Weights(this); }
   // #MENU #CAT_Learning Initialize weight values
-  void	Init_Weights_post() 	{ GetUnitSpec()->Init_Weights_post(this); } // #IGNORE
+  void	Init_Weights_post() 	{ GetUnitSpec()->Init_Weights_post(this); }
+  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
   void 	Compute_Netin()		{ GetUnitSpec()->Compute_Netin(this); }
   // #CAT_Activation compute net input from other units
   void 	Send_Netin()		{ GetUnitSpec()->Send_Netin(this); }
@@ -944,7 +945,7 @@ public:
   virtual void 	Init_Weights(Projection* prjn);
   // #CAT_Weights initializes the weiht values
   virtual void 	Init_Weights_post(Projection* prjn);
-  // #IGNORE after weight init (ie. for weight scaling)
+  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
 
   virtual bool	CheckConnect(Projection* prjn, bool quiet=false);
   // #CAT_ObjectMgmt check if projection is connected
@@ -1039,7 +1040,8 @@ public:
   // #MENU #MENU_SEP_BEFORE #CAT_Weights Initialize weight changes for this projection
   void 	Init_Weights()		{ spec->Init_Weights(this); }
   // #BUTTON #CONFIRM #CAT_Weights Initialize weight state for this projection
-  void 	Init_Weights_post() 	{ spec->Init_Weights_post(this); } // #IGNORE
+  void 	Init_Weights_post() 	{ spec->Init_Weights_post(this); }
+  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
 
   void 	C_Init_Weights(RecvCons* cg, Unit* ru)  { spec->C_Init_Weights(this, cg, ru); }
   // #CAT_Weights custom initialize weights in this con group for given receiving unit ru
@@ -1477,7 +1479,7 @@ public:
   virtual void  Init_Weights();
   // #MENU #CONFIRM #CAT_Learning Initialize the weights
   virtual void	Init_Weights_post();
-  // #IGNORE run after init wt state (ie. to scale wts..)
+  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
 
   void		SetExtFlag(int flg)   { ext_flag = (Unit::ExtType)(ext_flag | flg); }
   // #CAT_Activation set external input data flag
@@ -2027,7 +2029,7 @@ public:
   virtual void  Init_Weights();
   // #MENU #CONFIRM #CAT_Learning Initialize the weights -- also inits acts, counters and stats
   virtual void	Init_Weights_post();
-  // #IGNORE run after init weight state (ie. to scale weights)
+  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
 
   virtual void	Init_Metrics(); 
   // #CAT_Statistic this is an omnibus guy that initializes every metric: Counters, Stats, and Timers
