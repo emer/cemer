@@ -3031,8 +3031,14 @@ inline void LeabraConSpec::B_Init_RAvg_l(LeabraCon* cn, LeabraUnit* ru) {
 
 inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru,
 						      LeabraLayer* rlay) {
-  // cal only for bias weights: only err is useful contributor to this learning
-  float dw = (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
+  float dw;
+  if(xcal.lrn_var == XCalLearnSpec::XCAL_CHL) {
+    dw = ru->act_p - ru->act_m;
+  }
+  else {
+    // cal only for bias weights: only err is useful contributor to this learning
+    dw = (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
+  }
   cn->dwt += cur_lrate * dw;
 }
 
@@ -3056,8 +3062,14 @@ inline void LeabraBiasSpec::B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* r
 
 inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru,
 						      LeabraLayer* rlay) {
-  // cal only for bias weights: only err is useful contributor to this learning
-  float dw = (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
+  float dw;
+  if(xcal.lrn_var == XCalLearnSpec::XCAL_CHL) {
+    dw = ru->act_p - ru->act_m;
+  }
+  else {
+    // cal only for bias weights: only err is useful contributor to this learning
+    dw = (rlay->sravg_s_nrm * cn->sravg_s - rlay->sravg_m_nrm * cn->sravg_m);
+  }
   if(fabsf(dw) >= dwt_thresh)
     cn->dwt += cur_lrate * dw;
 }
