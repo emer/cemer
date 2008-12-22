@@ -576,14 +576,15 @@ taMisc::SaveFormat	taMisc::save_format = taMisc::PLAIN;
 taMisc::LoadVerbosity	taMisc::verbose_load = taMisc::QUIET;
 
 String	taMisc::app_dir; // set early in startup, algorithmically to find app dir
+String	taMisc::app_plugin_dir; 
 String	taMisc::app_dir_default; // emergency override, obtained from user
 String  taMisc::user_dir;			// this will be set in init call
-String	taMisc::web_home = "http://grey.colorado.edu/ta_css";
-String	taMisc::web_help_url; // note: set in main
 String	taMisc::prefs_dir; // this must be set at startup!
 String	taMisc::user_app_dir; 
-String	taMisc::app_plugin_dir; 
 String	taMisc::user_plugin_dir; 
+String	taMisc::user_log_dir; 
+String	taMisc::web_home = "http://grey.colorado.edu/ta_css";
+String	taMisc::web_help_url; // note: set in main
 
 String_PArray	taMisc::css_include_paths;
 String_PArray	taMisc::load_paths;

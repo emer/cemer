@@ -707,11 +707,13 @@ public:
   static String		user_dir;
   // #SHOW #READ_ONLY #CAT_File location of user's home directory -- override with "-u <path>" command line switch
   static String		prefs_dir;
-  // #READ_ONLY #SHOW #CAT_File location of preference files (e.g., ~/.appname)
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of preference files
   static String		user_app_dir;
-  // #SAVE #SHOW #CAT_File user's location of application, for Program libraries, etc. 
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_File user's location of application, for Program libraries, etc. can be overridden in {APPNAME}_USER_APP_DIR env variable 
   static String		user_plugin_dir;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of installed user plugins 
+  static String		user_log_dir;
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of log files, such as plugin log 
   static String		web_home;
   // #SAVE #CAT_File url for location of web repository of package information
 //NOTE: help url is not saved, for the moment, but s/b for release

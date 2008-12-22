@@ -1306,7 +1306,7 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgName("user_dir=", "UserDir");
   taMisc::AddArgNameDesc("UserDir", "\
  -- explicitly specifies location of user home folder (should normally not need to override)");
-
+//TODO: >=4.0.19 nuke -- we now only support EMERGENT_USER_APP_DIR
   taMisc::AddArgName("-ua", "UserAppDir");
   taMisc::AddArgName("--user_app_dir", "UserAppDir");
   taMisc::AddArgName("user_app_dir=", "UserAppDir");
@@ -1697,8 +1697,105 @@ bool taRootBase::Startup_InitTA_InitUserAppDir() {
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "css_lib");
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "log");
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "plugins");
+  dir.mkdir(taMisc::user_app_dir + PATH_SEP + "prefs");
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "prog_lib");
   return true;
+}
+
+//NOTE: this can be nuked post 4.0.20-ish
+void Startup_InitTA_MoveLegacyPrefs() {
+  // Preferences directory
+  // 1. we check for an the old one (<= 4.0.18) -- we'll move contents silently...
+  String prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
+  if (!taPlatform::fileExists(prefs_dir + "/options"))
+    return;
+
+  // we only automatically handle the default folder case
+  String legacy_uad;
+#ifdef TA_OS_WIN
+  legacy_uad = taPlatform::getDocPath() + "\\emergent_user";
+#else
+  legacy_uad = taPlatform::getHomePath() + "/emergent_user";
+#endif
+
+  // fixup if possible -- just move legacy to most recent user_app_dir folder
+  QDir uad(legacy_uad);
+  if (!uad.exists()) return;
+  
+  taMisc::Info("Moving preferences to new default location...");
+  // note, 'prefs' subfolder shouldn't exist yet...
+  if (uad.exists("prefs")) {
+    if (!uad.rename("prefs", "prefs.old"))
+      goto move_failed;
+  }
+  if (uad.rename(prefs_dir, "prefs")) {
+    taMisc::Info("...preferences moved.");
+    return;
+  }
+    
+move_failed:
+  taMisc::Error("PREFERENCES COULD NOT BE MOVED -- your preferences may revert to defaults.");
+
+}
+
+
+//NOTE: this can be nuked post 4.0.20-ish
+void Startup_InitTA_MoveLegacyUserFiles() {
+  String msg;
+  // Preferences directory
+  // 1. we check for an the old one (<= 4.0.18) -- we'll move contents silently...
+  String prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
+  if (!taPlatform::fileExists(prefs_dir + "/options"))
+    return;
+
+  // we only automatically handle the default folder case
+  String legacy_uad;
+#ifdef TA_OS_WIN
+  legacy_uad = taPlatform::getDocPath() + "\\emergent_user";
+#else
+  legacy_uad = taPlatform::getHomePath() + "/emergent_user";
+#endif
+
+  // fixup if possible -- just move legacy to most recent user_app_dir folder
+  QDir uad(legacy_uad);
+  if (!uad.exists()) return;
+  
+  taMisc::Info("Moving preferences to new default location...");
+  // note, 'prefs' subfolder shouldn't exist yet...
+  if (uad.exists("prefs")) {
+    if (!uad.rename("prefs", "prefs.old"))
+      goto prefs_move_failed;
+  }
+  if (uad.rename(prefs_dir, "prefs")) {
+    taMisc::Info("...preferences moved.");
+    goto move_uad;
+  }
+    
+prefs_move_failed:
+  taMisc::Error("PREFERENCES COULD NOT BE MOVED -- your preferences may revert to defaults.");
+  
+move_uad:
+
+  String user_app_dir = taPlatform::getAppDocPath(taMisc::app_name);
+  taMisc::Info("Moving user data dir to new default location...");
+  // note, Emergent folder shouldn't exist yet...
+  if (QDir(user_app_dir).exists()) 
+    goto uad_move_failed;
+  if (!taPlatform::mv(legacy_uad, user_app_dir))
+    goto uad_move_failed;
+  msg = "...your emergent user data folder was moved\n"
+    "from: " + legacy_uad + "\n"
+    "  to: " + user_app_dir + "\n\n";
+  taMisc::Info(msg);
+  
+  return;
+  
+uad_move_failed:
+  msg = "Your current emergent data folder could not be moved\n"
+    "from: " + legacy_uad + "\n"
+    "  to: " + user_app_dir + "\n\n"
+    " -- please move it manually.";
+  taMisc::Error(msg);
 }
 
 bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
@@ -1714,80 +1811,34 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   if (taMisc::user_dir.empty()) {
     taMisc::user_dir = taPlatform::getHomePath();
   }
-  // Preferences directory -- hidden or hiddenish on all platforms
-  // by definition, it can't be overridden, because all other options get saved there
-  taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
-/* TODO nuke this
-#if defined(TA_OS_MAC)
-  taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name) + "/prefs";
-  //LEGACY: move old prefs to new location -- done once, and only if new not exists
-  old_prefs = taPlatform::getHomePath() + "/." + taMisc::appname;
-  if ((old_prefs != taMisc::prefs_dir) && 
-    !taPlatform::fileExists(taMisc::prefs_dir + "/.")) 
-  {
-    taPlatform::exec("mv -f \"" + old_prefs + "\" \"" + taMisc::prefs_dir + "\"");
-  }
-#endif */
-  // make sure it exists
-  taPlatform::mkdir(taMisc::prefs_dir);
-
-  // then load configuration info: sets lots of user-defined config info
-  taMisc::Init_Defaults_PreLoadConfig();
-  ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
-  if (taMisc::proj_view_pref == -1) {
-    taMisc::proj_view_pref = taMisc::PVP_3PANE;
-  }
+  
+  // move legacy prefs into current default location
+  Startup_InitTA_MoveLegacyUserFiles();
+  // we can assume files are in their default location now
   
   // Application folder
-  // command line overrides saved preference value, if any
-  // it also completely skips our copy logic
-  String user_app_dir = taMisc::FindArgByName("UserAppDir");
-  if (user_app_dir.nonempty()) {
-    taMisc::user_app_dir = user_app_dir;
-  }
-    
-  // NOTE: BA 12/21/08 we offer to move legacy app dir
-  // TODO: this capability can be nuked in a future version
-  user_app_dir = taPlatform::getAppDocPath(taMisc::app_name);
-  // offer to move the folder if current one is wrong AND not overridden in env
+  // env var overrides default
   String user_app_dir_env_var = upcase(taMisc::app_name) + "_USER_APP_DIR";
-  String user_app_dir_env = getenv(user_app_dir_env_var);
-  //note: contrary to Qt docs, we can't use QMessageBox anymore before QApplication
-  // because it aborts with a QPaintDevice message
-  // however, don't do this for the recent .emergent aberration...
-  if (taMisc::use_gui &&
-    (taMisc::user_app_dir != user_app_dir) &&
-    (taMisc::user_app_dir != user_app_dir_env) && 
-    !taMisc::user_app_dir.endsWith(".emergent") &&
-    QDir(taMisc::user_app_dir).exists() 
-  ) {
-    String msg = "Your current emergent data folder is not in the default location for this version of the application and/or has not been overridden in user environment variable " + user_app_dir_env_var + "; for compatibility with plugin building and other reasons, we strongly suggest moving it\n"
-    "from: " + taMisc::user_app_dir + "\n"
-    "  to: " + user_app_dir + "\n\n"
-    "Would you like this done? (Your user folder should have no open files and no open file browser dialogs, and the 'to' folder should not already exist.)\n\n"
-    "Press Cancel to end the application at this point without doing anything.";
-    switch (taMisc::Choice(msg, "Yes", "No", "Cancel")
-    ){
-    case 0: {
-      if (taPlatform::mv(taMisc::user_app_dir, user_app_dir)) {
-        taMisc::Info( "Your application data folder has been moved.");
-      } else {
-        taMisc::Error("Your application data folder could not be moved -- please complete the move manually, delete your previous folder, and restart the application.");
-        return false;
-      }} break;
-    case 1: break; // not a good thing!
-    case 2: return false;
-    }
+  String user_app_dir = getenv(user_app_dir_env_var);
+  if (user_app_dir.empty()) {
+    user_app_dir = taPlatform::getAppDocPath(taMisc::app_name);
   }
-  // if we get to here, we have the valid value in user_app_dir
   taMisc::user_app_dir = user_app_dir;
-
   if (!Startup_InitTA_InitUserAppDir()) return false;
+
+  // Preferences directory
+  taMisc::prefs_dir = taMisc::user_app_dir + PATH_SEP + "prefs";
+  taMisc::Init_Defaults_PreLoadConfig();
+  // then load configuration info: sets lots of user-defined config info
+  ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
+  // ugh: reload because legacy options file will load its value
+  taMisc::user_app_dir = user_app_dir;
+  
   taMisc::user_plugin_dir = taMisc::user_app_dir + PATH_SEP + "plugins";
+  taMisc::user_log_dir = taMisc::user_app_dir + PATH_SEP + "log";
   
   // System (Share) Folder, System Plugins
   if (!Startup_InitTA_AppFolders()) return false;
- 
 
   taMisc::Init_Defaults_PostLoadConfig();
 
@@ -1813,24 +1864,17 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
 }
   	
 bool taRootBase::Startup_EnumeratePlugins() {
-#ifdef TA_OS_WIN
-  String plug_dir = "\\lib"; 
-#else
-  String plug_dir = "/lib"; 
-#endif
   String plug_log;
-  String plug_sub; // subdirectory, if any, for debug, mpi, etc.
   if (taMisc::build_str.empty()) {
     plug_log = "plugins.log";
   } else {
     plug_log = "plugins_" + taMisc::build_str + ".log";
-    plug_sub = PATH_SEP + taMisc::build_str;
   }
   // add plugin folders
   taPlugins::AddPluginFolder(taMisc::app_plugin_dir);
   taPlugins::AddPluginFolder(taMisc::user_plugin_dir);
   
-  taPlugins::InitLog(taMisc::prefs_dir + PATH_SEP + plug_log);
+  taPlugins::InitLog(taMisc::user_log_dir + PATH_SEP + plug_log);
   taPlugins::EnumeratePlugins();
 
   return true;
