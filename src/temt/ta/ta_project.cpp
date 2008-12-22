@@ -1754,9 +1754,11 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   String user_app_dir_env = getenv(user_app_dir_env_var);
   //note: contrary to Qt docs, we can't use QMessageBox anymore before QApplication
   // because it aborts with a QPaintDevice message
+  // however, don't do this for the recent .emergent aberration...
   if (taMisc::use_gui &&
     (taMisc::user_app_dir != user_app_dir) &&
     (taMisc::user_app_dir != user_app_dir_env) && 
+    !taMisc::user_app_dir.endsWith(".emergent") &&
     QDir(taMisc::user_app_dir).exists() 
   ) {
     String msg = "Your current emergent data folder is not in the default location for this version of the application and/or has not been overridden in user environment variable " + user_app_dir_env_var + "; for compatibility with plugin building and other reasons, we strongly suggest moving it\n"
