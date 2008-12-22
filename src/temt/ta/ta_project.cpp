@@ -2469,6 +2469,8 @@ bool PluginWizard::Validate() {
 
 void PluginWizard::AddFiles(bool upgrade_only) {
   files.Add("CMakeLists.txt");
+  if (default_location)
+    files.Add("NOUNINSTALL");
   if (upgrade_only) return;
   files.Add("template.cpp");
   files.Add("template_def.h");

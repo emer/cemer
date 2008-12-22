@@ -61,10 +61,14 @@ endif (WIN32)
 
 ########### uninstall files ###############
 
-CONFIGURE_FILE(
-  "${EMERGENT_SHARE_DIR}/cmake_uninstall.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-  IMMEDIATE @ONLY)
-
-ADD_CUSTOM_TARGET(uninstall
-  "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+# we don't include these by default using the Wizard so users
+# don't accidentally delete their in-place source code
+if (NOT EXISTS "${PROJECT_SOURCE_DIR}/NOUNINSTALL")
+  CONFIGURE_FILE(
+    "${EMERGENT_SHARE_DIR}/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY)
+  
+  ADD_CUSTOM_TARGET(uninstall
+    "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+endif (NOT EXISTS "${PROJECT_SOURCE_DIR}/NOUNINSTALL")
