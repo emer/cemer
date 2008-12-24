@@ -30,13 +30,18 @@ if (WIN32)
     message(FATAL_ERROR "EMERGENTDIR variable must exist")
   endif (EMERGENTDIR)
 else (WIN32)
-  # find the path, in terms of an equivalent to CMAKE_INSTALL_PREFIX
-  find_path(EMERGENT_INSTALL_PREFIX share/Emergent/README PATHS
-    /usr
-    /usr/local
-    /opt/local
-    NO_DEFAULT_PATH
-  )
+  # use manual override first
+  set(EMERGENT_INSTALL_PREFIX $ENV{EMERGENT_PREFIX_DIR})
+  if (NOT "${EMERGENT_INSTALL_PREFIX}")
+    # find the path, in terms of an equivalent to CMAKE_INSTALL_PREFIX
+    find_path(EMERGENT_INSTALL_PREFIX share/Emergent/README PATHS
+      /usr/local
+      /usr
+      /opt/local
+      /opt
+      NO_DEFAULT_PATH
+    )
+  endif (NOT "${EMERGENT_INSTALL_PREFIX}")
 endif (WIN32)
 
 # set the install prefix and actual install location
@@ -53,16 +58,22 @@ if (EMERGENT_PLUGIN_TYPE STREQUAL "System")
     set(EMERGENT_PLUGIN_DEST lib/Emergent/plugins)
   endif (WIN32)
 elseif (EMERGENT_PLUGIN_TYPE STREQUAL "User")
-  if (WIN32)
-    set(CMAKE_INSTALL_PREFIX $ENV{USERPROFILE} CACHE INTERNAL "do not change")
-    set(EMERGENT_PLUGIN_DEST Emergent/plugins)
-  elseif (APPLE)
-    set(CMAKE_INSTALL_PREFIX $ENV{HOME} CACHE INTERNAL "do not change")
-    set(EMERGENT_PLUGIN_DEST Library/Emergent/plugins)
-  else (WIN32)
-    set(CMAKE_INSTALL_PREFIX $ENV{HOME} CACHE INTERNAL "do not change")
-    set(EMERGENT_PLUGIN_DEST lib/Emergent/plugins)
-  endif (WIN32)
+  # manual override 
+  if ($ENV{EMERGENT_USER_PLUGIN_DIR})
+    set(CMAKE_INSTALL_PREFIX $ENV{EMERGENT_USER_PLUGIN_DIR} CACHE INTERNAL "do not change")
+    set(EMERGENT_PLUGIN_DEST .)
+  else ($ENV{EMERGENT_USER_PLUGIN_DIR})
+    if (WIN32)
+      set(CMAKE_INSTALL_PREFIX $ENV{USERPROFILE} CACHE INTERNAL "do not change")
+      set(EMERGENT_PLUGIN_DEST Emergent/plugins)
+    elseif (APPLE)
+      set(CMAKE_INSTALL_PREFIX $ENV{HOME} CACHE INTERNAL "do not change")
+      set(EMERGENT_PLUGIN_DEST Library/Emergent/plugins)
+    else (WIN32)
+      set(CMAKE_INSTALL_PREFIX $ENV{HOME} CACHE INTERNAL "do not change")
+      set(EMERGENT_PLUGIN_DEST lib/Emergent/plugins)
+    endif (WIN32)
+  endif ($ENV{EMERGENT_USER_PLUGIN_DIR})
 else (EMERGENT_PLUGIN_TYPE STREQUAL "User")
   message(FATAL_ERROR "EMERGENT_PLUGIN_TYPE must be set to one of: User | System")
 endif (EMERGENT_PLUGIN_TYPE STREQUAL "System")

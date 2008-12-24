@@ -1253,7 +1253,13 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgName("--app_dir", "AppDir");
   taMisc::AddArgName("app_dir=", "AppDir");
   taMisc::AddArgNameDesc("AppDir", "\
- -- explicitly specifies location of the app directory (prog libs, plugins, etc.)");
+ -- explicitly specifies location of the app directory (prog libs, etc.)");
+
+  taMisc::AddArgName("-ap", "AppPluginDir");
+  taMisc::AddArgName("--app_plugin_dir", "AppPluginDir");
+  taMisc::AddArgName("app_plugin_dir=", "AppPluginDir");
+  taMisc::AddArgNameDesc("AppPluginDir", "\
+ -- explicitly specifies location of the System plugin directory");
 
   taMisc::AddArgName("-version", "Version");
   taMisc::AddArgName("--version", "Version");
@@ -1306,12 +1312,18 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgName("user_dir=", "UserDir");
   taMisc::AddArgNameDesc("UserDir", "\
  -- explicitly specifies location of user home folder (should normally not need to override)");
-//TODO: >=4.0.19 nuke -- we now only support EMERGENT_USER_APP_DIR
+
   taMisc::AddArgName("-ua", "UserAppDir");
   taMisc::AddArgName("--user_app_dir", "UserAppDir");
   taMisc::AddArgName("user_app_dir=", "UserAppDir");
   taMisc::AddArgNameDesc("UserAppDir", "\
  -- explicitly specifies location of user app folder (should normally not need to override)");
+
+  taMisc::AddArgName("-up", "UserPluginDir");
+  taMisc::AddArgName("--user_plugin_dir", "UserPluginDir");
+  taMisc::AddArgName("user_plugin_dir=", "UserPluginDir");
+  taMisc::AddArgNameDesc("UserPluginDir", "\
+ -- explicitly specifies location of user plugin folder (should normally not need to override)");
 
   taMisc::AddArgName("-v", "CssDebug");
   taMisc::AddArgName("--verbose", "CssDebug");
@@ -1418,220 +1430,201 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
   return true;
 }
 
-bool taRootBase::isAppDir(String path) {
-//NOTE: this is a test that is supposed to confirm a dir is a tacss dir
+bool isPluginDir(const String& path) {
+//NOTE: this is a test that is supposed to confirm a dir is a plugin dir
+  return QDir(path).exists();
+}
+
+bool isAppDir(const String& path, String* plugin_path = NULL) {
+//NOTE: this is a test that is supposed to confirm a dir is an app dir
 // our first version checks for the prog_lib folder
-  path = taPlatform::finalSep(path) + "prog_lib";
+// If requested, we also check if there is a plugin folder, and set that
+// thus leaving it valid for dev installs 
   QDir dir(path);
-  bool rval = dir.exists();
+  bool rval = dir.exists("prog_lib");
+  if (rval) {
+    if (plugin_path) {
+      if (dir.exists("plugins"))
+        *plugin_path = path + PATH_SEP + "plugins";
+    }
+  }
 #ifdef DEBUG // don't clutter with success, just failures
-  if (!rval)
+  else
     taMisc::Info("Did not find app_dir as:", path);
 #endif
   return rval;
 }
 
+
+#ifndef TA_OS_WIN
+const char* def_prefixes[] = {
+  "/usr/local", "/usr", "/opt/local", "/opt"};
+const int def_prefix_n = 4;
+#endif
+  
 // hairy, modal, issue-prone -- we put in its own routine
 bool taRootBase::Startup_InitTA_AppFolders() {
-  // explicit cmdline override has highest priority
 #ifndef TA_OS_WIN
   String prefix_dir; // empty unless we found app_dir under here
 #endif
+  
+/* We search for app path in following order:
+   1. app_dir command line switch (may require app_plugin_dir switch too)
+   2. "in-place" development (this is either the same as
+      or never conflicts with the installed production version)
+   3. EMERGENTDIR (Windows) or EMERGENT_PREFIX_DIR (Unix) variable
+   4. a platform-specific heuristic search
+   NOTE: for "in-place" contexts, plugin dir is local, else look independently
+*/
+//WARNING: cannot use QCoreApplication::applicationDirPath() at this point because
+// QCoreApplication has not been instantiated yet
+  
   //note: this is not how Qt does it, but it seems windows follows normal rules
   // and passes the arg[0] as the full path to the executable, so we just get path
   QFileInfo fi(taMisc::args_raw.SafeEl(0));
   //note: argv[0] can contain a relative path, so we need to absolutize
+  // but *don't* dereference links, because we typically want to use the 
+  // link file, not the target, which for dev contexts may be buried somewhere
   String bin_dir = fi.absolutePath();
   
+  String app_plugin_dir; // will get set for in-place contexts (Windows and dev)
   String app_dir = taMisc::FindArgByName("AppDir");
   if (app_dir.nonempty() && isAppDir(app_dir))
     goto have_app_dir;
- 
-/* NOTE: we give priority to the EMERGENTDIR (Windows) or
-   EMERGENT_SHARE_DIR (Unix) variable first, for custom or
-   development purposes. Otherwise, we use the heuristic search
-   based on the platform, and as a last resort, prompt user.
-*/
-//WARNING: cannot use QCoreApplication::applicationDirPath() at this point because
-// QCoreApplication has not been instantiated yet
+
 #ifdef TA_OS_WIN
+/*
+  {app_dir}\bin\xxx (MSVS build) 
+  {app_dir}\bin (normal release, nmake build)
+*/
+  // note: Qt docs say it returns the '/' version...
+  bin_dir.gsub("/", "\\");
+  if (bin_dir.contains("\\bin\\")) {
+    app_dir = bin_dir.before("\\bin\\");
+    if (isAppDir(app_dir)) goto have_app_dir;
+  }
   app_dir = getenv("EMERGENTDIR");
   if (app_dir.nonempty() && isAppDir(app_dir)) {
     goto have_app_dir;
   }
-
-/*
-  {app_dir}\bin
-*/
-  // note: Qt docs say it returns the '/' version...
-  if (bin_dir.endsWith("/bin") || bin_dir.endsWith("\bin")) {
+  if (bin_dir.endsWith("\\bin")) {
     app_dir = bin_dir.at(0, bin_dir.length() - 4);
     if (isAppDir(app_dir)) goto have_app_dir;
   }
 #else // Mac and Unix -- defaults
-  app_dir = getenv("EMERGENT_SHARE_DIR");
-  if (app_dir.nonempty() && isAppDir(app_dir))
-    goto have_app_dir;
-
 # if defined(TA_OS_MAC)
-/*
+/* Note: for Mac, if the bin is in a bundle, then it will be a link
+  to the actual file, so in this case, we dereference it
   {app_dir}/{appname.app}/Contents/MacOS (bundle in app root)
   {app_dir}/bin/{appname.app}/Contents/MacOS (bundle in app bin)
   {app_dir}/bin (typically non-gui only, since gui must run from bundle)
 */
-  { // because of goto
-  String probe = "/Contents/MacOS";
-  if (app_dir.endsWith(probe)) {
-    app_dir = app_dir.before(probe);
-    QDir dir(app_dir);
-    if (dir.cdUp()) {
-      app_dir = dir.absolutePath();
-      // if bundle is in bin folder, strip that
-      if (app_dir.endsWith("/bin")) {
-        app_dir = app_dir.at(0, app_dir.length() - 4);
-      }
-      if (isAppDir(app_dir)) goto have_app_dir;
-    }
-  }
+  if (bin_dir.endsWith("/Contents/MacOS")) {
+    bin_dir = fi.canonicalPath();
   }
   // seemingly not in a bundle, so try Unix defaults...
 # endif // Mac
 /*
-  {app_dir}/bin
+  {app_dir}/build[{SUFF}]/bin (cmake development) TEST FIRST!
+  {app_dir}/bin (legacy development)
+  {prefix_dir}/bin (standard Unix deployment)
 */
   if (bin_dir.endsWith("/bin")) {
-    app_dir = bin_dir.at(0, bin_dir.length() - 4);
-    if (isAppDir(app_dir)) goto have_app_dir;
+    if (bin_dir.contains("/build")) {
+      app_dir = bin_dir.before("/build");
+      if (isAppDir(app_dir, &app_plugin_dir)) goto have_app_dir;
+    } else { 
+      app_dir = bin_dir.at(0, bin_dir.length() - 4);
+      if (isAppDir(app_dir, &app_plugin_dir)) goto have_app_dir;
+    }
   }
-  
-  // ok, we didn't find it relative to the bin, so just use the
-  // absolute defaults
-  
-  // try the normal install defaults
-  prefix_dir = "/usr/local";
-  app_dir = prefix_dir + "/share/" + taMisc::default_app_install_folder_name;
-  if (isAppDir(app_dir))  goto have_app_dir;
-  prefix_dir = "/usr";
-  app_dir = prefix_dir + "/share/" + taMisc::default_app_install_folder_name;
-  if (isAppDir(app_dir)) goto have_app_dir;
-  
-  // these are more usual on Mac or BSD-ish ones:
-  prefix_dir = "/opt/local";
-  app_dir = prefix_dir + "/share/" + taMisc::default_app_install_folder_name;
-  if (isAppDir(app_dir)) goto have_app_dir;
-  prefix_dir = "/opt";
-  app_dir = prefix_dir + "/share/" + taMisc::default_app_install_folder_name;
-  if (isAppDir(app_dir)) goto have_app_dir;
+  // positional heuristics of prefix_dir:
+  // -2:env var; -1: default prefix implied by bin dir
+  // else, try the defaults in order
+  for (int i = -2; i < def_prefix_n; ++i) {
+    if (i == -2) {
+      prefix_dir = getenv("EMERGENT_PREFIX_DIR");
+      if (prefix_dir.empty()) continue;
+    } else if (i == -1) {
+      if (bin_dir.endsWith("/bin"))
+        prefix_dir =  bin_dir.before("/bin");
+      else continue;
+    } else {
+      prefix_dir = def_prefixes[i];
+    }
+    app_dir = prefix_dir + "/share/" + taMisc::default_app_install_folder_name;
+    if (isAppDir(app_dir))  goto have_app_dir;
+  }
   prefix_dir = _nilString;
 
 #endif // all modality
 
-  // maybe it is actually the exe's folder itself?
-  if (isAppDir(app_dir)) goto have_app_dir;
-  
-  // is it the current directory? -- probe with known subfolder
-  app_dir = QDir::currentPath();
-  if (isAppDir(app_dir)) goto have_app_dir;
-  
-#ifdef DEBUG
-  cerr << "NOTE: default app_dir logic did not find the app_dir.\n";
-#endif  
-  
-  app_dir = _nilString; 
-  // try finding saved override, and/or prompt user
-  if (Startup_InitTA_GetMissingAppDir()) {
-    goto found_app_override;
-  } else {
-    return false;
-  }
+  // inability to find the app is fatal in 4.0.19
+  taMisc::Error("The application install directory could not be found. Please see:\n"
+    "http://grey.colorado.edu/emergent/index.php/User_Guide\n"
+    "for instructions on setting command line switches and/or environment\n"
+    "variables for non-standard installations of the application.\n");
+  // use a Choice so console etc. doesn't disappear immediately, ex. on Windows
+  taMisc::Choice("The application will now terminate.");
+  return false;
   
 have_app_dir:
 
   // initialize the key folders
   taMisc::app_dir = app_dir;
-  
-found_app_override:
-
 #ifdef TA_OS_WIN
-    taMisc::app_dir.gsub("/", "\\"); // clean it up, so it never causes issues
+  taMisc::app_dir.gsub("/", "\\"); // clean it up, so it never causes issues
 #endif
 
-  // Plugin dirs
-  taMisc::app_plugin_dir = getenv("EMERGENT_PLUGIN_DIR");
-  if (taMisc::app_plugin_dir.empty()) {
-#ifdef TA_OS_WIN
-    taMisc::app_plugin_dir = taMisc::app_dir + "\\plugins";
-#else // Unix and Mac
-    String suff = "/share/" + taMisc::default_app_install_folder_name;
-    if (taMisc::app_dir.endsWith(suff)) {
-      taMisc::app_plugin_dir = taMisc::app_dir.at(0, taMisc::app_dir.length() - suff.length()) + "/lib/" + taMisc::default_app_install_folder_name + "/plugins";
-    } else {
-      taMisc::app_plugin_dir = "/usr/local/lib/" +  taMisc::default_app_install_folder_name + "/plugins";
-    }
-#endif
+/* We search for plugin path in following order:
+   1. app_plugin_dir command line switch
+   3. EMERGENT_PLUGIN_DIR variable
+   2. previously established "in-place" location (only for Windows
+      and dev contexts)
+   4. Unix/Mac: {EMERGENT_PREFIX_DIR}/lib/Emergent (if env var set)
+   4. a platform-specific heuristic search
+   NOTE: for "in-place" contexts, plugin dir is local, else look independently
+*/
+
+
+  String app_plugin_dir_cmd = taMisc::FindArgByName("AppPluginDir");
+  if (app_plugin_dir_cmd.nonempty()) {
+    app_plugin_dir = app_plugin_dir_cmd;
+    goto check_plugin_dir;
   }
-  {QDir dir(taMisc::app_plugin_dir);
-  if (!dir.exists()) { 
-    taMisc::Error("Could not find expected application plugin folder:", 
-      taMisc::app_plugin_dir, "shutting down.");
-    return false;
-  }}
+  if (app_plugin_dir.nonempty()) goto check_plugin_dir;
+  app_plugin_dir = getenv("EMERGENT_PLUGIN_DIR");
+  if (app_plugin_dir.nonempty()) goto check_plugin_dir;
   
-  return true;
-}
-
-bool taRootBase::Startup_InitTA_GetMissingAppDir() {
-//TODO: if gui, prompt user to find the app path, must be valid
-  // start with a default, and then loop validating /fetching
-  bool prompted = false;
-  bool new_one = false; // assume it existed before
-  String app_dir(taMisc::app_dir_default);
-  while (true) {
-    // validate current override, if any -- first one comes from options
-    if (app_dir.nonempty()) {
-      if (isAppDir(app_dir)) {
-        taMisc::app_dir_default = app_dir; // save for next time
-        taMisc::app_dir = app_dir;
-        // save the manual default so user doesn't get bothered every time
-        if (new_one)
-          ((taMisc*)TA_taMisc.GetInstance())->SaveConfig();
-        return true;
-      }
-    }
-    new_one = true;
-    // if in gui mode, prompt, otherwise just fail
-    if (!taMisc::use_gui) return false;
-    
-    //ask user to supply the application folder
-    // note: 1) we can't use our own gui stuff yet; 2) we may be in nogui mode!
-    String msg = "The folder where the application was installed could not be found -- would you like to find it yourself? (the application will close otherwise)";
-    
-    if (taMisc::use_gui) {
-      if (!prompted) {
-        //note: following will be non-gui
-        int chs = QMessageBox::question(NULL, "Can't find app folder", msg,
-          (QMessageBox::Yes | QMessageBox::No), QMessageBox::Yes);
-        if (chs != QMessageBox::Yes) return false;
-      }
-      app_dir = QFileDialog::getExistingDirectory(NULL, "Find root application folder");
+#ifdef TA_OS_WIN
+  app_plugin_dir = app_dir + "\\plugins"; // better be!!!
+#else
+  // Unix and Mac
+  // only got here because not in-place -- we first try the folder
+  // that corresponds to the share prefix, otherwise we do the cascade
+  // -1: default prefix previously discovered -- that would have used
+  //   EMERGENT_PREFIX_DIR as its first default, so we don't recheck here
+  // else, try the defaults in order
+  for (int i = -1; i < def_prefix_n; ++i) {
+    if (i < 0) {
+      if (prefix_dir.empty()) continue;
     } else {
-      if (!prompted) {
-        //note: following will be non-gui
-        int chs = taMisc::Choice(msg, "Yes (Find)", "No (Close)");
-        if (chs != 0) return false;
-      }
-      cout << "Enter path to root application folder (blank to cancel): ";
-      cout.flush();
-      cin >> app_dir;
+      prefix_dir = def_prefixes[i];
     }
-    prompted = true;
-    if (app_dir.empty()) return false;
-    // strip trailing slash
-    String last = app_dir.right(1);
-    if ((last == "/") || (last == "\\"))
-      app_dir.truncate(app_dir.length() - 1);
-  } 
-  return false;
+    app_plugin_dir = prefix_dir + "/lib/" + taMisc::default_app_install_folder_name + "/plugins";
+    if (isPluginDir(app_plugin_dir))  goto have_plugin_dir;
+  }
+  goto warn_no_plugin_dir;
+#endif
+check_plugin_dir:
+  if (isPluginDir(app_plugin_dir)) goto have_plugin_dir;
+warn_no_plugin_dir:
+  taMisc::Error("Expected application plugin folder", 
+    taMisc::app_plugin_dir, "does not exist! You should check your installation and/or create this folder, otherwise runtime errors may occur.");
+
+have_plugin_dir:
+  taMisc::app_plugin_dir = app_plugin_dir; 
+  return true;
 }
 
 bool FileWithContentExists(const String& in1, const String& fname) {
@@ -1658,27 +1651,6 @@ exit:
 exit1:
   return rval;
 }
-//TODO: nuke
-bool MakeUserPluginConfigProxy(const String& uplugin_dir,
-  const String& fname) 
-{ return true;
-//note: isEmpty takes a raw var, not its content
-  String f(
-"tmpEMERGENT_DIR = $(EMERGENTDIR)\n"
-"isEmpty( $${tmpEMERGENT_DIR} ) {\n"
-"  tmpEMERGENT_DIR = " + taMisc::app_dir + "\n"
-"}\n"
-"!include($${tmpEMERGENT_DIR}/plugins/" + fname + ")  {\n"
-"  error(\"could not find <emergentdir>/plugins/" + fname + "\")\n"
-"}\n");
-  String tfname = uplugin_dir + "/" + fname;
-  if (FileWithContentExists(f, tfname)) return true;
-  ofstream ofs(tfname, ios_base::out | ios_base::trunc);
-  if (!ofs.is_open()) return false;
-  ofs << f;
-  ofs.close();
-  return true;
-}
 
 bool taRootBase::Startup_InitTA_InitUserAppDir() {
   // make sure the folder exists
@@ -1701,43 +1673,6 @@ bool taRootBase::Startup_InitTA_InitUserAppDir() {
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "prog_lib");
   return true;
 }
-
-//NOTE: this can be nuked post 4.0.20-ish
-void Startup_InitTA_MoveLegacyPrefs() {
-  // Preferences directory
-  // 1. we check for an the old one (<= 4.0.18) -- we'll move contents silently...
-  String prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
-  if (!taPlatform::fileExists(prefs_dir + "/options"))
-    return;
-
-  // we only automatically handle the default folder case
-  String legacy_uad;
-#ifdef TA_OS_WIN
-  legacy_uad = taPlatform::getDocPath() + "\\emergent_user";
-#else
-  legacy_uad = taPlatform::getHomePath() + "/emergent_user";
-#endif
-
-  // fixup if possible -- just move legacy to most recent user_app_dir folder
-  QDir uad(legacy_uad);
-  if (!uad.exists()) return;
-  
-  taMisc::Info("Moving preferences to new default location...");
-  // note, 'prefs' subfolder shouldn't exist yet...
-  if (uad.exists("prefs")) {
-    if (!uad.rename("prefs", "prefs.old"))
-      goto move_failed;
-  }
-  if (uad.rename(prefs_dir, "prefs")) {
-    taMisc::Info("...preferences moved.");
-    return;
-  }
-    
-move_failed:
-  taMisc::Error("PREFERENCES COULD NOT BE MOVED -- your preferences may revert to defaults.");
-
-}
-
 
 //NOTE: this can be nuked post 4.0.20-ish
 void Startup_InitTA_MoveLegacyUserFiles() {

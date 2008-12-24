@@ -703,7 +703,7 @@ public:
   static String		app_plugin_dir;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of installed system plugins 
   static String		app_dir_default; 
-  // #HIDDEN #READ_ONLY #SAVE #CAT_File an override to use ONLY if we can't determine the app_dir
+  // #OBSOLETE #NO_SHOW #READ_ONLY #NO_SAVE #CAT_File obs as of 4.0.19 -- nuke at some point
   static String		user_dir;
   // #SHOW #READ_ONLY #CAT_File location of user's home directory -- override with "-u <path>" command line switch
   static String		prefs_dir;

@@ -44,16 +44,17 @@ if (WIN32)
     )
   endif ("${EMERGENTDIR}")
 else (WIN32)
-  set(EMERGENT_SHARE_DIR $ENV{EMERGENT_SHARE_DIR})
-  if (NOT "${EMERGENT_SHARE_DIR}")
+  if ("$ENV{EMERGENT_PREFIX_DIR}")
+    set(EMERGENT_SHARE_DIR "$ENV{EMERGENT_PREFIX_DIR}/share/Emergent")
+  else ("$ENV{EMERGENT_PREFIX_DIR}")
     find_path(EMERGENT_SHARE_DIR README PATHS
-      /usr/share/Emergent
       /usr/local/share/Emergent
+      /usr/share/Emergent
       /opt/local/share/Emergent
       /opt/share/Emergent
       NO_DEFAULT_PATH
     )
-  endif (NOT "${EMERGENT_SHARE_DIR}")
+  endif ("$ENV{EMERGENT_PREFIX_DIR}")
 endif (WIN32)
 
 if(EMERGENT_SHARE_DIR)
@@ -72,18 +73,6 @@ endif(EMERGENT_SHARE_DIR)
 # consistency should be the same as the folder in which it lives
 PROJECT(template)
 
-# this includes all necessary setup stuff to setup the make process
-include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginSetup.cmake)
-
-
-################################################################
-# Step 3: set all the basic parameters about the project
-#
-# IMPORTANT: plugin programmer: this is the section you may need
-# to modify or extend, especially if you add additional source
-# files or need to include or link to additional libraries not
-# part of the Emergent prerequisites
-
 # version setting: you are responsible for your own versioning and it does not
 # have to correspond with the emergent versions, though that wouldn't hurt
 # TODO: if you change these values, change them in template_pl.h as well
@@ -91,6 +80,18 @@ set(PLUGIN_VERSION_MAJOR "@PLUGIN_VERSION_MAJOR@")
 set(PLUGIN_VERSION_MINOR "@PLUGIN_VERSION_MINOR@")
 set(PLUGIN_VERSION_PATCH "@PLUGIN_VERSION_PATCH@")
 set(PLUGIN_VERSION "${PLUGIN_VERSION_MAJOR}.${PLUGIN_VERSION_MINOR}.${PLUGIN_VERSION_PATCH}")
+
+# this includes all necessary setup stuff to setup the make process
+include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginSetup.cmake)
+
+
+################################################################
+# Step 3: specify files and dependent libraries for your project
+#
+# IMPORTANT: plugin programmer: this is the section you may need
+# to modify or extend, especially if you add additional source
+# files or need to include or link to additional libraries not
+# part of the Emergent prerequisites
 
 # list all the header files here (_def.h and _pl.h are obligatory plugin boilerplate)
 # do not list any included files, only new files that are in this folder
@@ -121,8 +122,8 @@ set(plugin_HEADS_MAKETA
   "${EMERGENT_INCLUDE_DIR}/ta_TA_type.h"
 # IMPORTANT: if your plugin uses network code, add the appropriate
 # headers after the ta_TA, ex, for a Leabra-based plugin, add these:
-# network_TA_type.h 
-# leabra_TA_type.h 
+# "${EMERGENT_INCLUDE_DIR}/network_TA_type.h" 
+# "${EMERGENT_INCLUDE_DIR}/leabra_TA_type.h" 
   ${plugin_HEADS}
 )
 

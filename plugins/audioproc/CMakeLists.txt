@@ -43,16 +43,17 @@ if (WIN32)
     )
   endif ("${EMERGENTDIR}")
 else (WIN32)
-  set(EMERGENT_SHARE_DIR $ENV{EMERGENT_SHARE_DIR})
-  if (NOT "${EMERGENT_SHARE_DIR}")
+  if ("$ENV{EMERGENT_PREFIX_DIR}")
+    set(EMERGENT_SHARE_DIR "$ENV{EMERGENT_PREFIX_DIR}/share/Emergent")
+  else ("$ENV{EMERGENT_PREFIX_DIR}")
     find_path(EMERGENT_SHARE_DIR README PATHS
-      /usr/share/Emergent
       /usr/local/share/Emergent
+      /usr/share/Emergent
       /opt/local/share/Emergent
       /opt/share/Emergent
       NO_DEFAULT_PATH
     )
-  endif (NOT "${EMERGENT_SHARE_DIR}")
+  endif ("$ENV{EMERGENT_PREFIX_DIR}")
 endif (WIN32)
 
 if(EMERGENT_SHARE_DIR)
@@ -70,6 +71,14 @@ endif(EMERGENT_SHARE_DIR)
 # name the project: this will be the name of the plugin
 PROJECT(audioproc)
 
+#### version setting: you are responsible for your own versioning and it does not
+#### have to correspond with the emergent versions, though that wouldn't hurt
+
+set(PLUGIN_VERSION_MAJOR "4")
+set(PLUGIN_VERSION_MINOR "0")
+set(PLUGIN_VERSION_PATCH "18")
+set(PLUGIN_VERSION "${PLUGIN_VERSION_MAJOR}.${PLUGIN_VERSION_MINOR}.${PLUGIN_VERSION_PATCH}")
+
 # this includes all necessary setup stuff to setup the make process
 include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginSetup.cmake)
 
@@ -81,14 +90,6 @@ include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginSetup.cmake)
 # to modify or extend, especially if you add additional source
 # files or need to include or link to additional libraries not
 # part of the Emergent prerequisites
-
-#### version setting: you are responsible for your own versioning and it does not
-#### have to correspond with the emergent versions, though that wouldn't hurt
-
-set(PLUGIN_VERSION_MAJOR "4")
-set(PLUGIN_VERSION_MINOR "0")
-set(PLUGIN_VERSION_PATCH "18")
-set(PLUGIN_VERSION "${PLUGIN_VERSION_MAJOR}.${PLUGIN_VERSION_MINOR}.${PLUGIN_VERSION_PATCH}")
 
 # list all the header files here (_def.h and _pl.h are obligatory plugin boilerplate
 # and those files also need to be edited to contain the proper name of the project)
@@ -111,7 +112,10 @@ set(plugin_SRCS
 
 # this says that all the headers listed above are run through maketa (type scanning
 # system) -- if this should not be the case (rare), then make a separate list here
-set(plugin_HEADS_MAKETA ${plugin_HEADS}) 
+set(plugin_HEADS_MAKETA 
+  "${EMERGENT_INCLUDE_DIR}/ta_TA_type.h"
+  ${plugin_HEADS}
+) 
 
 # this says that all the headers listed above are run through moc (type scanning
 # system for Qt) -- if this should not be the case (rare), then make a separate list here

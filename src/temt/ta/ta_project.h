@@ -396,8 +396,6 @@ protected:
   static int console_options; //#IGNORE taMisc::ConsoleOptions 
   static ContextFlag	in_init; // suppresses spurious Saves
   
-  static bool	isAppDir(String path); // #IGNORE true if seems to be an app dir
-  static bool 	Startup_InitTA_GetMissingAppDir();  // #IGNORE may be called by:
   static bool 	Startup_InitTA_AppFolders();  // #IGNORE Share, Plugins
   static bool 	Startup_InitTA_InitUserAppDir();  // #IGNORE once found
   static void	Startup_EnumerateEnginesR(TypeDef* typ);
