@@ -20,45 +20,34 @@ class TemplatePluginState; //
 // need to be modified. It is not seen by `maketa' because its base classes
 // have not been scanned, and no programmatic access to this class is needed.
 
-class TEMPLATE_API TemplatePlugin : public QObject, 
-                           public IPlugin2
+class TEMPLATE_API TemplatePlugin : public QObject,
+  public IPlugin
 { // #NO_CSS #NO_MEMBERS
   Q_OBJECT
 
   // Tells Qt which interfaces are implemented by this class
   Q_INTERFACES(IPlugin)
-  Q_INTERFACES(IPlugin2)
 public:
-  static const taVersion	interface_version;
-  static const taVersion	plugin_version;
+  static const taVersion	version;
   
   TemplatePlugin(QObject* par = NULL);
 
 public: // IPlugin interface
   TYPED_OBJECT(TemplatePlugin)
   const char*	desc();
-  const char*	name() {return "TemplatePlugin";}
+  const char*	name() {return "Template";}
   const char*	uniqueId();
   const char*	url();
   
   int		NotifyTacssVersion(const taVersion& tav, bool& is_ok) {return 0;}
     // we pass temt version; set is_ok false if this version is no good for plugin
-  int		GetVersion(taVersion& tav) {tav = interface_version; return 0;}
+  int		GetVersion(taVersion& tav) {tav = version; return 0;}
   int 		InitializeTypes();
   int 		InitializePlugin();
-  
-public: // IPlugin2  interface methods
-  TypeDef*	GetPluginStateType();
-    // returns the type of the state object, that will be created in root.plugin_state
-  int		GetPluginVersion(taVersion& tav) {tav = plugin_version; return 0;}
-    // major.minor.step.build -- used to put version dependency stamp into project files
-  TypeDef*	GetPluginWizardType(int idx);
-    // will be iterated from 0, return types for plugins, until no more
-
 };
 
 // Associates a string with the interface TemplatePlugin
-Q_DECLARE_INTERFACE(TemplatePlugin, "emergent.TemplatePlugin/2.0")
+Q_DECLARE_INTERFACE(TemplatePlugin, "emergent.TemplatePlugin/1.0")
 #endif // !__MAKETA__
 
    

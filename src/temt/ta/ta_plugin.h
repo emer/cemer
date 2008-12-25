@@ -29,7 +29,7 @@
 
 
 class IPlugin: public virtual ITypedObject  { // #VIRT_BASE basic interface for a ta plugin; int ret codes use 0=success, !0=errcode
-public: // v 1.0 interface methods
+public:
 // the following interfaces are used in the plugin enumeration stage
   virtual const char*	desc() {return "(no description provided)";}
   virtual const char*	name() {return "pluginname";}
@@ -39,7 +39,7 @@ public: // v 1.0 interface methods
   virtual int		NotifyTacssVersion(const taVersion& tav, bool& is_ok) {return 0;}
     // we pass ta/css version; set is_ok false if this version is no good for plugin
   virtual int		GetVersion(taVersion& tav) {return -1;}
-    // major.minor -- used to insure safe access to the interface methods
+    // major.minor.step.build -- the plugin version
 
 // the following routines are only used if the plugin is actually loaded into tacss
   virtual int		InitializeTypes() = 0;
@@ -50,20 +50,9 @@ public: // v 1.0 interface methods
   virtual ~IPlugin() {}
 };
 
-class IPlugin2: public virtual IPlugin  { // #VIRT_BASE basic interface for a ta 
-public: // v2.0 interface methods interface
-  virtual TypeDef*	GetPluginStateType() {return NULL;}
-    // returns the type of the state object, that will be created in root.plugin_state
-  virtual int		GetPluginVersion(taVersion& tav) {return -1;}
-    // major.minor.step.build -- used to put version dependency stamp into project files
-  virtual TypeDef*	GetPluginWizardType(int idx) {return NULL;}
-    // will be iterated from 0, return types for plugins, until no more
-};
-
 #ifndef __MAKETA__
 // IMPORTANT: do NOT update these names, even though they are stale -- breaks plugins
 Q_DECLARE_INTERFACE(IPlugin, "pdp.IPlugin/1.0")
-Q_DECLARE_INTERFACE(IPlugin2, "emergent.IPlugin/2.0")
 #endif
 
 

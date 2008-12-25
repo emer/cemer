@@ -2,12 +2,8 @@
 
 #include <QtPlugin>
 
-//NOTE: do not change the interface_version unless you manually update the 
-// method signature in the header file with the new version
-const taVersion TemplatePlugin::interface_version(2,0,0,0);
-
 //TODO: you can update your Plugin's version here
-const taVersion TemplatePlugin::plugin_version(
+const taVersion TemplatePlugin::version(
   PLUGIN_VERSION_MAJOR,
   PLUGIN_VERSION_MINOR,
   PLUGIN_VERSION_PATCH,
@@ -21,6 +17,13 @@ int TemplatePlugin::InitializeTypes() {
 }
 
 int TemplatePlugin::InitializePlugin() {
+// NOTE: if you have a TemplatePluginState obj, it has been created
+//  and the previous saved state has been restored at this point
+
+// TODO: you can put code in here that does any of these things:
+// * creates global wizards in taMisc::root.wizards
+// * creates global objects in taMisc::root.objs
+// * creates any internal global objects your plugin uses
   return 0;
 }
 
@@ -34,17 +37,6 @@ const char* TemplatePlugin::uniqueId() {
 
 const char* TemplatePlugin::url() {
   return "@EMERGENT_PLUGIN_URL@";
-}
-
-// v1.1 interface methods
-TypeDef* TemplatePlugin::GetPluginStateType() {
-  return &TA_TemplatePluginState;
-}
-
-TypeDef* TemplatePlugin::GetPluginWizardType(int idx) {
-//TODO: if you declare any wizards, return the type for the index
-// 0..N-1 of each Wizard, then return NULL
-  return NULL;
 }
  
 Q_EXPORT_PLUGIN2(template, TemplatePlugin)

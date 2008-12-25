@@ -7,7 +7,7 @@
 
 
 class TEMPLATE_API TemplatePluginExampleClass : public taNBase
-{
+{ // TODO: describe your class
   INHERITED(taNBase) // declares 'inherited' keyword for safer base-class references
 public:
   String		example_member1; // TODO: replace these and add your own members
@@ -43,18 +43,21 @@ private:
 
   This class is used to hold user options and internal state. An instance
   is automatically created in the .root.plugin_state collections.
-  Note: if you rename this class you must fix up TemplatePlugin::GetPluginStateType
+  Note: if you rename your plugin you MUST fix up this class name accordingly.
 */
-class TEMPLATE_API TemplatePluginState : public taNBase
+class TEMPLATE_API TemplatePluginState : public taFBase
 { // this class is used to hold and save/restore user options and internal state for the TemplatePlugin 
-  INHERITED(taNBase)
+  INHERITED(taFBase)
 public:
+  static TemplatePluginState* instance(); 
+  // use this accessor routine to obtain your instance
+  
 /* TODO: add user options or internal state here and delete this comment block
   -- examples of how to do some are below
    
    String	user_option1; // this text here will explain to the user what "user_option1" does
    int		user_status1; // #READ_ONLY #NO_SAVE this item will display for user as read-only, and won't get saved
-   int		internal_state1; // #HIDDEN the user won't see this, but it will still be saved/loaded
+   float	internal_state1; // #HIDDEN the user won't see this, but it will still be saved/loaded
 */
   
   SIMPLE_LINKS(TemplatePluginState)

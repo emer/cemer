@@ -325,7 +325,7 @@ public:
   static bool	Startup_EnumeratePlugins();
   // #IGNORE enumeration of plugins 
   static bool	Startup_LoadPlugins();
-  // #IGNORE final initialize of plugins 
+  // #IGNORE load and init types of plugins 
   static bool	Startup_EnumerateEngines();
   // #IGNORE make a list of all available engines, both native and plugins 
   static bool	Startup_InitCss();
@@ -337,7 +337,9 @@ public:
   static bool	Startup_ConsoleType();
   // #IGNORE arbitrate type of console, based on user options, and app context
   static bool	Startup_MakeWizards();
-  // #IGNORE make the global wizards, including from plugins
+  // #IGNORE make the global wizards
+  static bool	Startup_InitPlugins();
+  // #IGNORE create and restore plugin state, and final initialize
   static bool	Startup_MakeMainWin();
   // #IGNORE open the main window (browser of root object) (returns success)
   static bool	Startup_Console();
@@ -421,8 +423,9 @@ public:
     SystemPlugin, // created in your computer's emergent/plugins folder -- makes plugin available to everyone, but may require Administrator/root access on your system
   };
   
-  String		plugin_name; // the name, which must be a valid C identifier, and cannot cause name clashes with existing classes or loaded plugins (this will be checked during Validate)
-  PluginType		plugin_type; // the type -- this controls the visibility of the plugin (just you, or everyone on your system) -- on Unix and some Windows installations, you will need administrator rights to install a system plugin	
+  String		plugin_name; // the name, which must be a valid C identifier, and must not cause name clashes with existing classes or loaded plugins (this will be checked during Validate) -- lower case by convention
+  String		class_name_prefix; // #READ_ONLY #SHOW capitalized version of plugin_name, for classes and similar contexts
+  PluginType		plugin_type; // the type -- this controls the visibility of the plugin (just you, or everyone on your system) -- on Unix and some Windows systems, you will need administrator rights to install a system plugin	
   bool			default_location; // #DEF_true create the plugin in the default location for the type RECOMMENDED
   bool			validated; // #NO_SHOW
   String		plugin_location; // folder where to create the plugin (folder name should usually be same as plugin_name)

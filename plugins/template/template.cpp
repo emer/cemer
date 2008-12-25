@@ -1,5 +1,6 @@
 #include "template.h"
 
+#include "ta_project.h"
 
 /////////////////////////////////////////////////////
 //  TemplatePluginExampleClass
@@ -45,6 +46,13 @@ void TemplatePluginExampleClass::MyCodeMethod() {
 /////////////////////////////////////////////////////
 //  TemplatePluginState	
 /////////////////////////////////////////////////////
+
+TemplatePluginState* TemplatePluginState::instance() {
+  if (tabMisc::root == NULL) return NULL;
+  TemplatePluginState* rval = (TemplatePluginState*)
+    tabMisc::root->plugin_state.FindType(StatTypeDef(0));
+  return rval;
+}
 
 void TemplatePluginState::Initialize() {
   SetBaseFlag(NAME_READONLY); // usually don't let user edit name

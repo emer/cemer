@@ -1988,6 +1988,12 @@ bool taRootBase::Startup_MakeWizards() {
   return true;
 }
 
+bool taRootBase::Startup_InitPlugins() {
+  if (!tabMisc::root) return false; // should be made
+  tabMisc::root->plugins.InitPlugins();
+  return true;
+}
+
 bool taRootBase::Startup_MakeMainWin() {
   tabMisc::root->version = taMisc::version;
   if(!taMisc::gui_active) return true;
@@ -2123,6 +2129,7 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   if(!Startup_InitGui()) goto startup_failed; // note: does the taiType bidding
   if(!Startup_ConsoleType()) goto startup_failed;
   Startup_MakeWizards(); // supposedly can't fail...
+  if(!Startup_InitPlugins()) goto startup_failed; // state, wizards, etc.
   if(!Startup_MakeMainWin()) goto startup_failed;
   if(!Startup_Console()) goto startup_failed;
   if(!Startup_RegisterSigHandler()) goto startup_failed;
@@ -2401,7 +2408,8 @@ void taRootBase::SaveRecoverFileHandler(int err) {
 //////////////////////////
 
 void PluginWizard::Initialize() {
-  plugin_name = "MyPlugin";
+  plugin_name = "myplugin";
+  class_name_prefix = "Myplugin";
   plugin_type = UserPlugin;
   default_location = true;
   validated = false;
@@ -2417,6 +2425,7 @@ void PluginWizard::UpdateAfterEdit_impl() {
   validated = false;
   // modify it to force it to be C-valid
   plugin_name = taMisc::StringCVar(plugin_name);
+  class_name_prefix = capitalize(plugin_name);
   if (default_location) {
     if (plugin_type == UserPlugin) {
       plugin_location = taMisc::user_app_dir + PATH_SEP + "plugins" + PATH_SEP +
@@ -2425,8 +2434,12 @@ void PluginWizard::UpdateAfterEdit_impl() {
       plugin_location = taMisc::app_dir + PATH_SEP + "plugins" + PATH_SEP +
         plugin_name;
     }
+  } else {
+#ifdef TA_OS_WIN
+    plugin_location.gsub("/", "\\");
+#endif
+    plugin_location = taPlatform::noFinalSep(plugin_location);
   }
-  //TODO: check if a plugin already exists there!
 }
 
 void PluginWizard::CheckThisConfig_impl(bool quiet, bool& ok) {
@@ -2439,6 +2452,7 @@ void PluginWizard::CheckThisConfig_impl(bool quiet, bool& ok) {
   CheckError((plugin_name == "template"), quiet, ok,
     "you cannot use the name \"template\"");
   //TODO: do our name conflict checks!
+  //TODO: check if a plugin already exists there!
 }
 
 bool PluginWizard::Validate() {
@@ -2466,7 +2480,7 @@ void PluginWizard::TemplatizeFile(const String& src_file,
   dst = src;
   dst.makeUnique();
   dst.gsub("template", plugin_name);
-  dst.gsub("Template", plugin_name);
+  dst.gsub("Template", class_name_prefix);
   dst.gsub("TEMPLATE", upcase(plugin_name));
   if (src_file.contains("CMakeLists.txt")) {
     dst.gsub("@PLUGIN_VERSION_MAJOR@", version.major);
@@ -2537,6 +2551,15 @@ bool PluginWizard::MakePlugin() {
   if (TestError(!taPlatform::mkdir(plugin_location),
     "PluginWizard::MakePlugin", 
     "Could not make folder for plugin -- make sure the path is valid, and you have permission to create a folder in that location"))
+    return false;
+  // std build dirs
+  if (TestError(!taPlatform::mkdir(plugin_location + PATH_SEP + "build"),
+    "PluginWizard::MakePlugin", 
+    "Could not make 'build' subfolder for plugin -- make sure the path is valid, and you have permission to create a folder in that location"))
+    return false;
+  if (TestError(!taPlatform::mkdir(plugin_location + PATH_SEP + "build_dbg"),
+    "PluginWizard::MakePlugin", 
+    "Could not make 'build' subfolder for plugin -- make sure the path is valid, and you have permission to create a folder in that location"))
     return false;
   
   // build file list

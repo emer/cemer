@@ -45,7 +45,6 @@ public:
   LoadState		load_state; // true once probed, for enumeration
     
   IPlugin*		plugin(); // access to the plugin object -- note: should be valid, because we don't register failed probes
-  IPlugin2*		plugin2(); // access to the Plugin2 i/f, if defined
   
   bool			InitTypes(); // done first, and only if enabled; true if succeed
   bool			InitPlugin();  // done last, and only if enabled
@@ -87,19 +86,14 @@ public:
   String		name; // #READ_ONLY #SHOW  the plugin name, provided by the plugin 
   String		desc; // #READ_ONLY #SHOW the plugin description, provided by the plugin
   String		unique_id; // #READ_ONLY #SHOW a unique string to identify the plugin
-  String		plugin_version; // #AKA_version #READ_ONLY #SHOW  the plugin's version (as of when plugin was loaded)
+  String		version; // #AKA_plugin_version #READ_ONLY #SHOW  the plugin's version (as of when plugin was loaded)
   String		url; // #READ_ONLY #SHOW a url that provides information on the plugin; used mostly for when missing in a proj file
-  
-  taVersion		interface_version; // #READ_ONLY #EXPERT the plugin's interface version
-  
+
   String        GetName() const { return name; } // note: user can't set name
   void          SetDefaultName() {} 
   String	GetDesc() const {return desc;}
   void		Copy_(const taPluginBase& cp); //note: we only use this for descs, not actual plugins
   TA_ABSTRACT_BASEFUNS(taPluginBase);
-public: // legacy 
-  String		version; // #READ_ONLY #NO_SHOW #NO_SAVE the plugin's interface version
-
 private:
   void	Initialize();
   void	Destroy() {}
@@ -116,8 +110,9 @@ public:
   bool			reconciled; // #IGNORE true once reconciled; we delete those with no plugin
   
   taPluginInst*		plugin; // #IGNORE the plugin, if loaded (not used for descs)
-  bool			gteq_v2; // #EXPERT #NO_SAVE has i/f 2
+  TypeDef*		plugin_state_type; // cached state type, if any -- is based on the plugin name, and must inherit taFBase
   
+  bool			InitPlugin(); // #IGNORE initializes the plugin, including making/loading state object if any -- assumes it has been reconciled
   virtual void		PluginOptions(); // #BUTTON open the Options dialog for this plugin (if it has one)
   int	GetEnabled() const {return enabled;}
   void	SetEnabled(bool value) {enabled = value;}
@@ -180,7 +175,8 @@ public:
   inline taPlugin*	FindUniqueId(const String& value)
     {return (taPlugin*)inherited::FindUniqueId(value);}
   
-  void		LoadPlugins(); // Load and initialize all the enabled plugins, unload remainder
+  void			LoadPlugins(); // Load all the enabled plugins (init's type system), unload remainder
+  void			InitPlugins(); // Initialize all the loaded plugins -- creates/loads state object first; then plugin can post Wizards, etc.
   
   void			ViewPluginLog(); // #MENU_CONTEXT #BUTTON view the most recent plugin log
   TA_BASEFUNS_NOCOPY(taPlugin_List);

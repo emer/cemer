@@ -40,11 +40,6 @@ IPlugin* taPluginInst::plugin() {
   return qobject_cast<IPlugin*>(in); 
 }
 
-IPlugin2* taPluginInst::plugin2() {
-  QObject* in = instance();
-  return qobject_cast<IPlugin2*>(in); 
-}
-
 bool taPluginInst::InitPlugin() {
   IPlugin* ipl = plugin();
   int err = ipl->InitializePlugin();
@@ -189,8 +184,7 @@ void taPluginBase::Copy_(const taPluginBase& cp) {
   name = cp.name;
   desc = cp.desc;
   unique_id = cp.unique_id;
-  interface_version = cp.interface_version;
-  plugin_version = cp.plugin_version;
+  version = cp.version;
   url = cp.url;
 }
 
@@ -203,7 +197,7 @@ void taPlugin::Initialize() {
   loaded = false;
   reconciled = false;
   plugin = NULL;
-  gteq_v2 = false;
+  plugin_state_type = NULL;
 }
 
 void taPlugin::Copy_(const taPlugin& cp) { // usually not copied
@@ -212,21 +206,50 @@ void taPlugin::Copy_(const taPlugin& cp) { // usually not copied
   loaded = false; // never for a copy
   reconciled = false;
   plugin = NULL;
+  plugin_state_type = cp.plugin_state_type; // ???
+}
+
+bool taPlugin::InitPlugin() {
+  if (!plugin) return false;
+  if (!plugin->InitPlugin()) return false;
+  loaded = true; // we are officially "loaded" -- need this for state...
+  // find state type, if any -- qualify before assigned to pl
+  String plugin_state_name = capitalize(name) + "PluginState";
+  TypeDef* pst = taMisc::types.FindName(plugin_state_name);
+  if (pst && pst->DerivesFrom(&TA_taFBase))
+    plugin_state_type = pst;
+  if (plugin_state_type && tabMisc::root) {
+    taFBase* opt = (taFBase*)tabMisc::root->plugin_state.New(
+      1, plugin_state_type, plugin_state_type->name + "_inst");
+    if (!opt) {
+      taPlugins::AppendLogEntry("Could not create state object for plugin");
+      return false;
+    }
+    String filename = taMisc::prefs_dir + PATH_SEP + opt->name;
+    opt->SetFileName(filename);
+    if (taPlatform::fileExists(filename)) {
+      int res = opt->Load(filename);
+      // note: we don't fail the plugin just because state didn't load...
+      if (!res) {
+        String msg = "Load of previously saved state for " + opt->name +
+          " did not succeed from file: '" + filename + "'";
+        taMisc::Warning(msg);
+        taPlugins::AppendLogEntry(msg);
+      }
+    }
+  }
+  return true;
 }
 
 void taPlugin::PluginOptions() {
-  TypeDef* opt_typ = NULL;
   taBase* opt_tab = NULL;
-  IPlugin2* ip2 = NULL; // 
-  if (gteq_v2 && plugin && (ip2 = plugin->plugin2()))  {
-    opt_typ = ip2->GetPluginStateType();
-  }
-  if (opt_typ && tabMisc::root) {
-    opt_tab = tabMisc::root->plugin_state.FindType(opt_typ);
+  if (plugin_state_type && tabMisc::root) {
+    opt_tab = tabMisc::root->plugin_state.FindType(plugin_state_type);
   }
   if (opt_tab) {
-    opt_tab->EditDialog(true); // TODO: maybe not modal???
-    //TODO: should save now
+    if (opt_tab->EditDialog(true)) {
+      opt_tab->Save();
+    }
   } else {
     taMisc::Confirm("This plugin does not have user-configurable options.");
   }
@@ -323,7 +346,7 @@ void taPlugin_List::LoadPlugins() {
   taPlugins::AppendLogEntry("");
     
   String log_entry;
-  // register types for everyone, before trying to init any plugin
+  // register types for everyone
   for (int i = 0; i < size; ++i) {
     taPlugin* pl = FastEl(i);
     if (!pl->enabled) continue;
@@ -343,8 +366,15 @@ void taPlugin_List::LoadPlugins() {
       continue; // in case more is added after this if
     }
   } 
-  
-  // finally, we can formally initialize each plugin
+}
+
+
+void taPlugin_List::InitPlugins() {
+  // make a blank line in log
+  taPlugins::AppendLogEntry("");
+    
+  String log_entry;
+  // initialize each plugin
   for (int i = 0; i < size; ++i) {
     taPlugin* pl = FastEl(i);
     if (!pl->enabled) continue;
@@ -353,7 +383,7 @@ void taPlugin_List::LoadPlugins() {
     if (pli->load_state != taPluginInst::LS_TYPE_INIT) continue;
     log_entry = "Attempting to InitPlugin for plugin: " + pl->filename;
     taPlugins::AppendLogEntry(log_entry);
-    if (pli->InitPlugin()) {
+    if (pl->InitPlugin()) {
       log_entry = "Successfully ran InitPlugin for plugin: " + pl->filename;
       taPlugins::AppendLogEntry(log_entry);
     } else {
@@ -361,7 +391,6 @@ void taPlugin_List::LoadPlugins() {
       taPlugins::AppendLogEntry(log_entry, true);
       continue;
     }
-    pl->loaded = true;
     pl->DataChanged(DCR_ITEM_UPDATED);
   } 
 }
@@ -388,15 +417,9 @@ void taPlugin_List::ReconcilePlugins() {
       }
       pl->name = ip->name();
       pl->desc = ip->desc();
-      ip->GetVersion(pl->interface_version);
-      // v2.x info, only safe if v2.x i/f
-      IPlugin2* ip2 = pli->plugin2();
-      if (ip2) {
-        pl->gteq_v2 = true;
-        ver.Clear();
-        ip2->GetPluginVersion(ver);
-        pl->plugin_version = ver.toString();
-      }
+      ip->GetVersion(ver);
+      pl->version = ver.toString();
+      
     } else { // not loaded -- but match up the filename to a persistent guy if found
       pl = FindFilename(pli->fileName());
       // we don't update anything, and we don't make a new guy if not found before,

@@ -2090,23 +2090,23 @@ bool taBase::Edit() {
 
 bool taBase::EditDialog(bool modal) {
   if(!taMisc::gui_active) return false;
-  // todo: it doesn't look like modal is being used here!!
 #ifdef TA_GUI
-  MainWindowViewer* wv = MainWindowViewer::NewEditDialog(this);
-  if (wv) {
-    wv->ViewWindow();
-    iMainWindowViewer* iwv = wv->widget();
-    iwv->resize( taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgVer) );
-    return iwv->AssertPanel((taiDataLink*)GetDataLink());
-      //bool new_tab, bool new_tab_lock)
+  if (modal) {
+    taiEdit* ie;
+    if ((ie = GetTypeDef()->ie)) {
+      //note: taiEdit looks up color, if hinting enabled
+      return ie->EditDialog((void*)this, false, true); // r/w, modal
+    }
+  } else {
+    MainWindowViewer* wv = MainWindowViewer::NewEditDialog(this);
+    if (wv) {
+      wv->ViewWindow();
+      iMainWindowViewer* iwv = wv->widget();
+      iwv->resize( taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgVer) );
+      return iwv->AssertPanel((taiDataLink*)GetDataLink());
+        //bool new_tab, bool new_tab_lock)
+    }
   }
-  return false;
-/*
-  taiEdit* ie;
-  if((ie = GetTypeDef()->ie) != NULL) {
-    //note: taiEdit looks up color, if hinting enabled
-    return ie->EditDialog((void*)this, false);
-  }*/
 #endif
   return false;
 }

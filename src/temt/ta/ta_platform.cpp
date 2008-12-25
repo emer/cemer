@@ -97,6 +97,15 @@ bool taPlatform::mv(const String& fm, const String& to) {
 #endif
 }
 
+String taPlatform::noFinalSep(const String& in) {
+  String rval = in;
+  char c;
+  while ((c = rval.lastchar()) && 
+    ( (c == '/') || (c == '\\')))
+    rval.truncate(rval.length() - 1);
+  return rval;
+}
+
 
 int taPlatform::posFinalSep(const String& in) {
   int rval = in.length() - 1;
