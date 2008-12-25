@@ -6,10 +6,10 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>emergent_dbg</string>
-	<key>CFBundleIconFile</key>
-	<string>emergent.icns</string>
 	<key>CFBundleDisplayName</key>
 	<string></string>
+	<key>CFBundleIconFile</key>
+	<string>emergent.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>edu.colorado.grey.oreilly.emergent.emergent</string>
 	<key>CFBundleInfoDictionaryVersion</key>
