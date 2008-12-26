@@ -1815,9 +1815,17 @@ void Unit::AddRelPos(TDCoord& rel_pos) {
 int Unit::dmem_this_proc = 0;
 #endif
 
-void Unit::ApplyInputData(float val, ExtType act_ext_flags, Random* ran) {
+void Unit::ApplyInputData(float val, ExtType act_ext_flags, Random* ran, bool na_by_range) {
   // note: not all flag values are valid, so following is a fuzzy cascade
   // ext is the default place, so we check for 
+  if(na_by_range) {
+    UnitSpec* us = GetUnitSpec();
+    if(us) {
+      if(!us->act_range.RangeTestEq(val))
+	return;
+    }
+  }
+
   if (ran && (ran->type != Random::NONE)) {
     val += ran->Gen();
   }
@@ -4017,7 +4025,7 @@ void Layer::SetLayUnitExtFlags(int flg) {
 }
 
 void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
-    Random* ran, const PosTwoDCoord* offset) 
+	   Random* ran, const PosTwoDCoord* offset, bool na_by_range) 
 {
   // note: when use LayerWriters, we typically always just get a single frame of 
   // the exact dimensions, and so ignore 'frame'
@@ -4035,18 +4043,18 @@ void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
     ApplyLayerFlags(ext_flags);
   }
   if(data->dims() == 2) {
-    ApplyInputData_2d(data, ext_flags, ran, offs);
+    ApplyInputData_2d(data, ext_flags, ran, offs, na_by_range);
   }
   else {
     if(unit_groups)
-      ApplyInputData_Gp4d(data, ext_flags, ran); // note: no offsets -- layerwriter does check
+      ApplyInputData_Gp4d(data, ext_flags, ran, na_by_range); // note: no offsets -- layerwriter does check
     else
-      ApplyInputData_Flat4d(data, ext_flags, ran, offs);
+      ApplyInputData_Flat4d(data, ext_flags, ran, offs, na_by_range);
   }
 }
 
 void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
-				  Random* ran, const TwoDCoord& offs) {
+			      Random* ran, const TwoDCoord& offs, bool na_by_range) {
   for(int d_y = 0; d_y < data->dim(1); d_y++) {
     int u_y = offs.y + d_y;
     for(int d_x = 0; d_x < data->dim(0); d_x++) {
@@ -4054,14 +4062,14 @@ void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
       Unit* un = FindUnitFmCoord(u_x, u_y);
       if(un) {
 	float val = data->SafeElAsVar(d_x, d_y).toFloat();
-	un->ApplyInputData(val, ext_flags, ran);
+	un->ApplyInputData(val, ext_flags, ran, na_by_range);
       }
     }
   }
 }
 
 void Layer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
-				  Random* ran, const TwoDCoord& offs) {
+				  Random* ran, const TwoDCoord& offs, bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
   for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
     for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
@@ -4073,7 +4081,7 @@ void Layer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
 	  Unit* un = FindUnitFmCoord(u_x, u_y);
 	  if(un) {
 	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
-	    un->ApplyInputData(val, ext_flags, ran);
+	    un->ApplyInputData(val, ext_flags, ran, na_by_range);
 	  }
 	}
       }
@@ -4081,7 +4089,8 @@ void Layer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
   }
 }
 
-void Layer::ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags, Random* ran) {
+void Layer::ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags, Random* ran,
+				bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
   for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
     for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
@@ -4091,7 +4100,7 @@ void Layer::ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags, Random*
 	  Unit* un = FindUnitFmGpCoord(dg_x, dg_y, d_x, d_y);
 	  if(un) {
 	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
-	    un->ApplyInputData(val, ext_flags, ran);
+	    un->ApplyInputData(val, ext_flags, ran, na_by_range);
 	  }
 	}
       }

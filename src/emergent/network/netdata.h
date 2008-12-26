@@ -120,6 +120,7 @@ class EMERGENT_API LayerWriterEl : public LayerDataEl {
 INHERITED(LayerDataEl)
 public: 
   bool		use_layer_type; // #APPLY_IMMED #DEF_true use layer_type information on the layer to determine flags to set (if false, turn on EXPERT showing to view flags)
+  bool		na_by_range;	// use act_range on the unitspec for the units to determine inputs that are not appplicable (n/a) and thus do not get relevant flags or values set: those that have input values outside the range are n/a
   Unit::ExtType	ext_flags;	// #EXPERT #CONDSHOW_OFF_use_layer_type:true how to flag the unit/layer's external input status
   Random	noise;		// #EXPERT noise optionally added to values when applied
 

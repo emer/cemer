@@ -836,7 +836,8 @@ public: //
   float	Compute_SSE(bool& has_targ) { return GetUnitSpec()->Compute_SSE(has_targ, this); }
   // #CAT_Statistic compute sum-squared-error of activations versus target values (standard measure of performance)
   
-  virtual void 	ApplyInputData(float val, ExtType act_ext_flags, Random* ran = NULL);
+  virtual void 	ApplyInputData(float val, ExtType act_ext_flags, Random* ran = NULL,
+			       bool na_by_range=false);
   // #CAT_Activation apply external input or target value to unit
   virtual bool	BuildUnits();
   // #CAT_Structure build unit: make sure bias connection is created and right type
@@ -1490,8 +1491,8 @@ public:
   // #CAT_Activation set external input data flags for layer and all units in the layer
 
   virtual void	ApplyInputData(taMatrix* data, Unit::ExtType ext_flags = Unit::NO_EXTERNAL,
-    Random* ran = NULL, const PosTwoDCoord* offset = NULL);
-  // #CAT_Activation apply the 2d or 4d external input pattern to the network, optional random additional values, and offsetting; uses a flat 2-d model where grouped layer or 4-d data are flattened to 2d; frame<0 means from end
+      Random* ran = NULL, const PosTwoDCoord* offset = NULL, bool na_by_range=false);
+  // #CAT_Activation apply the 2d or 4d external input pattern to the network, optional random additional values, and offsetting; uses a flat 2-d model where grouped layer or 4-d data are flattened to 2d; frame<0 means from end; na_by_range means that values are not applicable if they fall outside act_range on unit spec, and thus don't have flags or values set
 
   virtual void	Compute_Netin();
   // #CAT_Activation Compute NetInput -- weighted activations from other units
@@ -1639,13 +1640,13 @@ protected:
   virtual void		ApplyLayerFlags(Unit::ExtType act_ext_flags);
   // #IGNORE set layer flag to reflect the kind of input received
   virtual void		ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
-					       Random* ran, const TwoDCoord& offs);
+			       Random* ran, const TwoDCoord& offs, bool na_by_range=false);
   // #IGNORE 2d data is always treated the same: FindUnitFmCoord deals with unit grouping
   virtual void		ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
-					       Random* ran, const TwoDCoord& offs);
+			       Random* ran, const TwoDCoord& offs, bool na_by_range=false);
   // #IGNORE flat layer, 4d data
   virtual void		ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags,
-					     Random* ran);
+   			       Random* ran, bool na_by_range=false);
   // #IGNORE grouped layer, 4d data -- note this cannot have offsets..
 
   override void		CheckThisConfig_impl(bool quiet, bool& rval);

@@ -167,6 +167,7 @@ LayerDataEl* LayerDataEl_List::FindMakeLayerData(const String& cnm, const String
 
 void LayerWriterEl::Initialize() {
   use_layer_type = true;
+  na_by_range = false;
   ext_flags = Unit::NO_EXTERNAL;
   noise.type = Random::NONE;
   noise.mean = 0.0f;
@@ -228,7 +229,7 @@ bool LayerWriterEl::ApplyInputData(DataBlock* db, Network* net) {
   // note: always provide all data, it is up to the network to decide how to use it
   // based on train_mode
   // get the data as a slice -- therefore, frame is always 0
-  lay->ApplyInputData(mat, ext_flags, &noise, &offset);
+  lay->ApplyInputData(mat, ext_flags, &noise, &offset, na_by_range);
   // mat unrefs at this point, or on exit from routine
   return true;
 }
