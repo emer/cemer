@@ -1816,6 +1816,15 @@ private:
 class TA_API MemberDef : public MemberDefBase { //  defines a class member
 INHERITED(MemberDefBase)
 public:
+  enum DefaultStatus { //#BITS  status of default value comparison
+    HAS_DEF	= 0x01,	// member specified a default value
+     IS_DEF	= 0x02, // member's value is the default
+     
+     NO_DEF	= 0x00, // #NO_BIT none defined
+    NOT_DEF	= 0x01, // #NO_BIT default specified, current is not equal
+    EQU_DEF     = 0x03, // #NO_BIT default specified, current is default
+  };
+  
   static void		GetMembDesc(MemberDef* md, String& dsc_str, String indent); // gets a detailed description, typically for tooltip
 
   ta_memb_ptr	off;		// offset of member from owner type
@@ -1853,7 +1862,10 @@ public:
   override const Variant GetValVar(const void* base) const;
   override void	SetValVar(const Variant& val, void* base, void* par = NULL);
     // note: par is only needed really needed for owned taBase ptrs)
-  
+
+  DefaultStatus 	GetDefaultStatus(const void* base);
+  // get status of value of member at given base addr of class object that this member is in compared to DEF_ value(s) defined in directive
+
   void		CopyFromSameType(void* trg_base, void* src_base);
   // copy all members from same type
   void		CopyOnlySameType(void* trg_base, void* src_base);

@@ -3588,6 +3588,42 @@ const Variant MemberDef::GetValVar(const void* base) const {
   return type->GetValVar(GetOff(base), this);
 }
 
+MemberDef::DefaultStatus MemberDef::GetDefaultStatus(const void* base) {
+  String defval = OptionAfter("DEF_");
+  if (defval.empty()) return NO_DEF;
+  String cur_val = type->GetValStr(GetOff(base));
+  // hack for , in real numbers in international settings
+  // note: we would probably never have a variant member with float default
+  if (type->DerivesFrom(TA_float) || type->DerivesFrom(TA_double)) {
+    cur_val.gsub(",", "."); // does a makeUnique
+  }
+  if(defval.contains(';')) { // enumerated set of values specified
+    String dv1 = defval.before(';');
+    String dvr = defval.after(';');
+    while(true) {
+      if(cur_val == dv1) return EQU_DEF;
+      if(dvr.contains(';')) {
+	dv1 = dvr.before(';');
+	dvr = dvr.after(';');
+	continue;
+      }
+      return (cur_val == dvr) ? EQU_DEF : NOT_DEF;
+    }
+  }
+  else if(defval.contains(':')) { // range of values specified -- must be numeric
+    String dv1 = defval.before(':');
+    String dvr = defval.after(':');
+    double cv = (double)cur_val; // just use double because it should do the trick for anything
+    double dvl = (double)dv1;
+    double dvh = (double)dvr;
+    return (cv >= dvl && cv <= dvh) ? EQU_DEF : NOT_DEF;
+  }
+  else {
+    return (cur_val == defval) ? EQU_DEF : NOT_DEF;
+  }
+}
+
+
 bool MemberDef::isReadOnly() const {
   return HasOption("READ_ONLY");
 }

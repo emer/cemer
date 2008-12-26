@@ -297,11 +297,11 @@ void iUserDataDataHost::GetImage_Membs_def() {
       it->setToolTip(txt); // for when over
     
       // default highlighting
-      switch (mbr->im->GetDefaultStatus(txt)) {
-      case taiMember::NOT_DEF: 
+      switch (mbr->GetDefaultStatus(item)) {
+      case MemberDef::NOT_DEF: 
         lbl->setData(Qt::BackgroundRole, QColor(Qt::yellow)); 
         break;
-      case taiMember::EQU_DEF:
+      case MemberDef::EQU_DEF:
         //note: setting nil Variant will force it to ignore and use bg
         lbl->setData(Qt::BackgroundRole, QVariant()); 
         break;

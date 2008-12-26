@@ -158,7 +158,7 @@ class LEABRA_API WtSigSpec : public taOBase {
 INHERITED(taOBase)
 public:
   float		gain;		// #DEF_6 gain (contrast, sharpness) of the weight contrast function (1 = linear)
-  float		off;		// #DEF_1.25 offset of the function (1=centered at .5, >1=higher, <1=lower)
+  float		off;		// #DEF_1;1.25 offset of the function (1=centered at .5, >1=higher, <1=lower)
 
   static inline float	SigFun(float w, float gn, float of) {
     if(w <= 0.0f) return 0.0f;
@@ -200,7 +200,6 @@ public:
   float		hebb;		// [Default: .01] amount of hebbian learning (should be relatively small, can be effective at .0001)
   float		err;		// #READ_ONLY #SHOW [Default: .99] amount of error driven learning, automatically computed to be 1-hebb
   bool		err_sb;		// #DEF_true apply exponential soft-bounding to the error learning component (applied in dWt)
-  bool		sym_sb;		// #DEF_false use symmetric softbounding function: wt * (1-wt)
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(LearnMixSpec);
@@ -224,17 +223,16 @@ public:
   };
 
   LearnVar	lrn_var;	// learning rule variant -- either XCAL, or CAL for output layers, bias weights, or comparison purposes
-  bool		sym_sb;		// #DEF_false symmetric softbounding: 2 * w * (1-w) -- otherwise regular asymmetric softbounding
   bool		dwt_norm;	// #DEF_false normalize dwts -- just for testing purposes
-  float		mvl_mix;	// #CONDSHOW_OFF_lrn_var:CAL [Default range .03 - .10] amount that medium (trial) versus long (epoch) time scale learning contributes -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is short (plus phase) versus medium (trial) time scale which reflects pure error-driven learning
+  float		mvl_mix;	// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.001:1.0 amount that medium (trial) versus long (epoch) time scale learning contributes -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is short (plus phase) versus medium (trial) time scale which reflects pure error-driven learning
   float		svm_mix;	// #READ_ONLY 1-mvl_mix -- how much the short (plus phase) versus medium (trial) time-scale factor contributes to learning -- this the pure error-driven learning component -- the rest (mvl_mix = 1-svm_mix) is medium (trial) versus long (epoch) time-scale
-  float		s_mix;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.9 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
+  float		s_mix;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.7:0.9 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level
   float		l_dt;		// #CONDSHOW_OFF_lrn_var:CAL [Default range .001 - .01] time constant for updating the long time-scale ravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_l variable!!
   float		l_gain;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_1.8 gain for long time-scale ravg term -- needed to put into same terms as the s*r avg values used in the s and m components of learning
   float		ml_dt;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.4 time constant for updating the medium-to-long time-scale ravg_ml value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_ml variable!!
 
-  float		d_gain;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_2.5 multiplier on LTD values relative to LTP values
+  float		d_gain;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_1 multiplier on LTD values relative to LTP values
   float		d_rev;		// #CONDSHOW_OFF_lrn_var:CAL #DEF_0.15 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg
 
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- multiplication factor in learning rule
@@ -308,7 +306,7 @@ class LEABRA_API SAvgCorSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sending average activation correction specifications: affects hebbian learning and netinput computation
 INHERITED(taBase)
 public:
-  float		cor;		// #DEF_0.4 proportion of correction to apply (0=none, 1=all, .5=half, etc)
+  float		cor;		// #DEF_0.4:0.8 proportion of correction to apply (0=none, 1=all, .5=half, etc)
   float		thresh;		// #DEF_0.001 threshold of sending average activation below which learning does not occur (prevents learning when there is no input)
   bool		norm_con_n;	// #DEF_false #AKA_div_gp_n in normalizing netinput, divide by the actual number of connections (recv group n), not the overall number of units in the sending layer; this is good when units only receive from a small fraction of sending layer units
 
@@ -806,7 +804,7 @@ INHERITED(taBase)
 public:
   float		send;		// #DEF_0.1 don't send activation when act <= send -- greatly speeds processing
   float		delta;		// #DEF_0.005 don't send activation changes until they exceed this threshold: only for when LeabraNetwork::send_delta is on!
-  float		learn;		// #DEF_0.01 don't learn on recv unit weights when both phase acts (or bias.sravg_m for Ct) <= learn
+  float		learn;		// #DEF_0.01;-1 don't learn on recv unit weights when both phase acts (or bias.sravg_m for Ct) <= learn
   float		phase_dif;	// #DEF_0 don't learn when +/- phase difference ratio (- / +) < phase_dif (.8 when used, but off by default)
 
   void 	Defaults()	{ Initialize(); }
@@ -1437,7 +1435,7 @@ public:
   };
 
   InhibType	type;		// #APPLY_IMMED how to compute inhibition (g_i)
-  float		kwta_pt;	// [Default: .25 for KWTA_INHIB and KWTA_KV2K, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
+  float		kwta_pt;	// #DEF_0.25;0.6;0.2 [Default: .25 for KWTA_INHIB and KWTA_KV2K, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
   float		min_i;		// minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
   float		comp_thr;	// #CONDEDIT_ON_type:KWTA_COMP_COST [0-1] Threshold for competitors in KWTA_COMP_COST -- competitor threshold inhibition is normalized by k'th inhibition and those above this threshold are counted as competitors 
   float		comp_gain;	// #CONDEDIT_ON_type:KWTA_COMP_COST Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level
@@ -2627,13 +2625,8 @@ inline float LeabraConSpec::C_Compute_Err_LeabraCHL(LeabraCon* cn, float lin_wt,
 						    float su_act_p, float su_act_m) {
   float err = (ru_act_p * su_act_p) - (ru_act_m * su_act_m);
   if(lmix.err_sb) {
-    if(lmix.sym_sb) {
-      err *= lin_wt * (1.0f - lin_wt);
-    }
-    else {
-      if(err > 0.0f)	err *= (1.0f - lin_wt);
-      else		err *= lin_wt;
-    }
+    if(err > 0.0f)	err *= (1.0f - lin_wt);
+    else		err *= lin_wt;
   }
   return err;
 }
@@ -2877,13 +2870,8 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn)
 {
   // always do soft bounding, at this point (post agg across processors, etc)
   float lin_wt = LinFmSigWt(cn->wt);
-  if(xcal.sym_sb) {
-    cn->dwt *= xcal.SymSbFun(lin_wt);
-  }
-  else {
-    if(cn->dwt > 0.0f)		cn->dwt *= (1.0f - lin_wt);
-    else			cn->dwt *= lin_wt;
-  }
+  if(cn->dwt > 0.0f)		cn->dwt *= (1.0f - lin_wt);
+  else			cn->dwt *= lin_wt;
 
   if(cn->dwt != 0.0f) {
     cn->wt = SigFmLinWt(lin_wt + cn->dwt);
@@ -2897,13 +2885,8 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL_norm(LeabraCon* cn, fl
   // always do soft bounding, at this point (post agg across processors, etc)
   float lin_wt = LinFmSigWt(cn->wt);
   float eff_dw = cn->dwt + dwnorm;
-  if(xcal.sym_sb) {
-    eff_dw *= xcal.SymSbFun(lin_wt);
-  }
-  else {
-    if(eff_dw > 0.0f)		eff_dw *= (1.0f - lin_wt);
-    else			eff_dw *= lin_wt;
-  }
+  if(eff_dw > 0.0f)		eff_dw *= (1.0f - lin_wt);
+  else			eff_dw *= lin_wt;
 
   if(eff_dw != 0.0f) {
     cn->wt = SigFmLinWt(lin_wt + eff_dw); // note: wt_sig orig fun is waay too slow

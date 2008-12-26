@@ -1389,12 +1389,10 @@ taiMember::DefaultStatus taiMember::GetDefaultStatus(String memb_val) {
 void taiMember::GetOrigVal(taiData* dat, const void* base) {
   dat->orig_val = mbr->type->GetValStr(mbr->GetOff(base));
   // if a default value was specified, compare and set the highlight accordingly
-  /*if (!isReadOnly(dat))*/ { 
-    switch (GetDefaultStatus(dat->orig_val)) {
-    case NOT_DEF: dat->setHighlight(true); break;
-    case EQU_DEF: dat->setHighlight(false); break;
-    default: break; // compiler food
-    }
+  switch (mbr->GetDefaultStatus(base)) {
+  case MemberDef::NOT_DEF: dat->setHighlight(true); break;
+  case MemberDef::EQU_DEF: dat->setHighlight(false); break;
+  default: break; // compiler food
   }
 }
 

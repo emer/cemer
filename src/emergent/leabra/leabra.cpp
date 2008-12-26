@@ -82,7 +82,6 @@ void LearnMixSpec::Initialize() {
   hebb = .001f;
   err = 1.0f - hebb;
   err_sb = true;
-  sym_sb = false;
 }
 
 void LearnMixSpec::UpdateAfterEdit_impl() {
@@ -93,10 +92,9 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 void XCalLearnSpec::Initialize() {
   lrn_var = XCAL;
 
-  sym_sb = true;
   dwt_norm = false;
 
-  mvl_mix = 0.03f;
+  mvl_mix = 0.002f;
 
   s_mix = 0.90f;
 
@@ -105,7 +103,7 @@ void XCalLearnSpec::Initialize() {
 
   ml_dt = 0.4f;
 
-  d_gain = 2.5f;
+  d_gain = 1.0f;
   d_rev = 0.15f;
 
   svm_mix = 1.0f - mvl_mix;
