@@ -33,6 +33,9 @@ endif(COMMAND cmake_policy)
 # ... might it not be ok for Unix/Mac too???
 if (WIN32)
   PROJECT(Emergent)
+  if (NOT MSVC)
+    message(FATAL_ERROR "Only Microsoft Visual C++ (nmake or IDE) is supported")
+  endif (NOT MSVC)
 else (WIN32)
   PROJECT(emergent)
 endif (WIN32)
@@ -53,16 +56,23 @@ set(EMERGENT_LIB_SOVERSION ${EMERGENT_VERSION_MAJOR})
 #   and plugins -- this insures we have a consistent environment
 include(CMakeModules/EmergentDefaults.cmake)
 
-# we build the lib/bin targets up into the root folder, so
-# we can run and debug immediately in-place
-# need to use binary dir to preserve clean sep btwn src and build
-# slightly different on Windows -- note on Win there will automatically
-# be {CMAKE_RELEASE_TYPE} subfolder added
+# we build the lib/bin targets into a common folder, so
+# we can more easily run and debug immediately in-place
 if (WIN32)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib) #for Win
+  # on Windows we just build right up into subfolder of {proj}/bin 
+  # this simplifies using the legacy installer
+  # NOTE: for MSVC_IDE {CMAKE_RELEASE_TYPE} subfolder is implicitly added
+  if (MSVC_IDE)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib) #for Win
+  else (MSVC_IDE)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib/${CMAKE_BUILD_TYPE})
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib/${CMAKE_BUILD_TYPE}) #for Win
+  endif (MSVC_IDE)
 else (WIN32)
+  # on Unix we use binary dir to preserve clean sep btwn src and build
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 endif (WIN32)

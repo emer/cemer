@@ -27,9 +27,10 @@ if (WIN32)
     "${EMERGENTDIR}/lib/${CMAKE_BUILD_TYPE}" #don't use CMAKE_CFG_INTDIR not valid on "NMake Makefiles"
     NO_DEFAULT_PATH
   )
-  if (NOT EXISTS ${TEMT_LIBRARY})
+message(STATUS "TEMT_LIBRARY=${TEMT_LIBRARY}")
+  if (NOT EXISTS "${TEMT_LIBRARY}")
     message(FATAL_ERROR "EMERGENTDIR environment variable must point to Emergent install directory!")
-  endif (NOT EXISTS ${TEMT_LIBRARY})
+  endif (NOT EXISTS "${TEMT_LIBRARY}")
   # Windows import/export control -- since we are trying to find it, we assume importing
   add_definitions(-DTA_DLL)
 else (WIN32)

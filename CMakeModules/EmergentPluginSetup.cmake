@@ -23,6 +23,9 @@ endif (NOT EMERGENT_PLUGIN_TYPE)
 # although we know the app folder, we need to extract install prefix
 # note that on Windows, it is the actual app folder, contrary to cmake docs
 if (WIN32)
+  if (NOT MSVC)
+    message(FATAL_ERROR "Only Microsoft Visual C++ (nmake or IDE) is supported")
+  endif (NOT MSVC)
   #note: EMERGENTDIR var must exist...
   if (EMERGENTDIR)
     set(EMERGENT_INSTALL_PREFIX "${EMERGENTDIR}")

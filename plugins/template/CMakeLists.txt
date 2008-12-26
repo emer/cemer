@@ -33,20 +33,21 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
 if (WIN32)
   file(TO_CMAKE_PATH "$ENV{EMERGENTDIR}" EMERGENTDIR)
   #note: on Windows the normal case is for the ENV var to exist...
-  if ("${EMERGENTDIR}")
+  if (EMERGENTDIR)
     set(EMERGENT_SHARE_DIR "${EMERGENTDIR}")
-  else ("${EMERGENTDIR}")
+  else (EMERGENTDIR)
     find_path(EMERGENT_SHARE_DIR README PATHS
       "C:/Program Files/Emergent"
       C:/Emergent
       "C:/Program Files (x86)/Emergent" # W32 on 64, should be rare
       NO_DEFAULT_PATH
     )
-  endif ("${EMERGENTDIR}")
+  endif (EMERGENTDIR)
 else (WIN32)
-  if ("$ENV{EMERGENT_PREFIX_DIR}")
-    set(EMERGENT_SHARE_DIR "$ENV{EMERGENT_PREFIX_DIR}/share/Emergent")
-  else ("$ENV{EMERGENT_PREFIX_DIR}")
+  file(TO_CMAKE_PATH "$ENV{EMERGENT_PREFIX_DIR}" EMERGENT_PREFIX_DIR)
+  if (EMERGENT_PREFIX_DIR)
+    set(EMERGENT_SHARE_DIR "${EMERGENT_PREFIX_DIR}/share/Emergent")
+  else (EMERGENT_PREFIX_DIR)
     find_path(EMERGENT_SHARE_DIR README PATHS
       /usr/local/share/Emergent
       /usr/share/Emergent
@@ -54,7 +55,7 @@ else (WIN32)
       /opt/share/Emergent
       NO_DEFAULT_PATH
     )
-  endif ("$ENV{EMERGENT_PREFIX_DIR}")
+  endif (EMERGENT_PREFIX_DIR)
 endif (WIN32)
 
 if(EMERGENT_SHARE_DIR)

@@ -110,7 +110,8 @@ public:
   bool			reconciled; // #IGNORE true once reconciled; we delete those with no plugin
   
   taPluginInst*		plugin; // #IGNORE the plugin, if loaded (not used for descs)
-  TypeDef*		plugin_state_type; // cached state type, if any -- is based on the plugin name, and must inherit taFBase
+  String		state_classname; // #READ_ONLY #SHOW #NO_SAVE the name of the the cached state type, if any -- is based on the plugin name, and must inherit taFBase
+  TypeDef*		state_type; // #READ_ONLY #SHOW #NO_SAVE cached state type, if any -- is based on the plugin name, and must inherit taFBase
   
   bool			InitPlugin(); // #IGNORE initializes the plugin, including making/loading state object if any -- assumes it has been reconciled
   virtual void		PluginOptions(); // #BUTTON open the Options dialog for this plugin (if it has one)

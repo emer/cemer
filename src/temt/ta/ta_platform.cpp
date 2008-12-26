@@ -191,13 +191,13 @@ String taPlatform::getDocPath() {
 }
 
 String taPlatform::getAppDocPath(const String& appname) {
-  return getDocPath() + "\\" + capitalize(appname);
+  return getHomePath() + "\\" + capitalize(appname);
 }
-#endif
 
 String taPlatform::getHomePath() {
   return String(getenv("USERPROFILE"));
 }
+#endif
 
 String taPlatform::getTempPath() {
   String rval;

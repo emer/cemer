@@ -28,9 +28,9 @@ if (WIN32)
     "${EMERGENTDIR}/lib/${CMAKE_BUILD_TYPE}" #don't use CMAKE_CFG_INTDIR not valid on "NMake Makefiles"
     NO_DEFAULT_PATH
   )
-  if (NOT EXISTS ${EMERGENT_LIBRARY})
+  if (NOT EXISTS "${EMERGENT_LIBRARY}")
     message(FATAL_ERROR "EMERGENTDIR environment variable must point to Emergent install directory!")
-  endif (NOT EXISTS ${EMERGENT_LIBRARY})
+  endif (NOT EXISTS "${EMERGENT_LIBRARY}")
   # Windows import/export control -- since we are trying to find it, we assume importing
   add_definitions(-DEMERGENT_DLL)
 else (WIN32)

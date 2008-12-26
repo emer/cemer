@@ -21,9 +21,15 @@ add_library(${PROJECT_NAME} SHARED ${plugin_full_SRCS})
 
 # build directly into super-folder for no-install in-place yummy goodness
 if (WIN32)
-  # of course Windows cmake is evil, because it auto-adds the Config subfolder, so have to:
-  set(TARGET_LOCATION 
-    "\"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME}${EMERGENT_SUFFIX}.dll\"")
+  # use an intermediate folder, for all the cruft files MSVC creates
+  # (also, can't build directly anyway in ide because of CMAKE_CFG_INTDIR folder)
+  if (MSVC_IDE) # IDE
+    set(TARGET_LOCATION 
+      "\"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME}${EMERGENT_SUFFIX}.dll\"")
+  else (MSVC_IDE)  # nmake
+    set(TARGET_LOCATION 
+      "\"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${EMERGENT_SUFFIX}.dll\"")
+  endif (MSVC_IDE)
   add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND "${CMAKE_COMMAND}" ARGS -E copy 
       ${TARGET_LOCATION} "\"${CMAKE_CURRENT_SOURCE_DIR}/..\""

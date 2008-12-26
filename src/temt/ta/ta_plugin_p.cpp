@@ -197,7 +197,7 @@ void taPlugin::Initialize() {
   loaded = false;
   reconciled = false;
   plugin = NULL;
-  plugin_state_type = NULL;
+  state_type = NULL;
 }
 
 void taPlugin::Copy_(const taPlugin& cp) { // usually not copied
@@ -206,7 +206,7 @@ void taPlugin::Copy_(const taPlugin& cp) { // usually not copied
   loaded = false; // never for a copy
   reconciled = false;
   plugin = NULL;
-  plugin_state_type = cp.plugin_state_type; // ???
+  state_type = cp.state_type; // ???
 }
 
 bool taPlugin::InitPlugin() {
@@ -214,13 +214,14 @@ bool taPlugin::InitPlugin() {
   if (!plugin->InitPlugin()) return false;
   loaded = true; // we are officially "loaded" -- need this for state...
   // find state type, if any -- qualify before assigned to pl
-  String plugin_state_name = capitalize(name) + "PluginState";
-  TypeDef* pst = taMisc::types.FindName(plugin_state_name);
+  // we show to user for clarity, and if they want to add after the fact
+  state_classname = capitalize(name) + "PluginState";
+  TypeDef* pst = taMisc::types.FindName(state_classname);
   if (pst && pst->DerivesFrom(&TA_taFBase))
-    plugin_state_type = pst;
-  if (plugin_state_type && tabMisc::root) {
+    state_type = pst;
+  if (state_type && tabMisc::root) {
     taFBase* opt = (taFBase*)tabMisc::root->plugin_state.New(
-      1, plugin_state_type, plugin_state_type->name + "_inst");
+      1, state_type, state_type->name + "_inst");
     if (!opt) {
       taPlugins::AppendLogEntry("Could not create state object for plugin");
       return false;
@@ -243,8 +244,8 @@ bool taPlugin::InitPlugin() {
 
 void taPlugin::PluginOptions() {
   taBase* opt_tab = NULL;
-  if (plugin_state_type && tabMisc::root) {
-    opt_tab = tabMisc::root->plugin_state.FindType(plugin_state_type);
+  if (state_type && tabMisc::root) {
+    opt_tab = tabMisc::root->plugin_state.FindType(state_type);
   }
   if (opt_tab) {
     if (opt_tab->EditDialog(true)) {
