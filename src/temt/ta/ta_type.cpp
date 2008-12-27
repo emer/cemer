@@ -5094,7 +5094,7 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
       bool non_def = false;
       if(md->GetDefaultStatus(base) == MemberDef::NOT_DEF) {
 	non_def = true;
-	rval += "<font color=\"darkgoldenrod\"><i>";
+	rval += "<font style=\"background-color: yellow\"><i>";
       }
       rval += "<b>";
       rval += md->name + ":&nbsp;&nbsp;";
