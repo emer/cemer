@@ -42,7 +42,7 @@
 #include <QSplitter>
 #include <QTableView>
 #include <QTextStream>
-
+#include <QHeaderView>
 
 #include <Inventor/SbLinear.h>
 #include <Inventor/Qt/SoQt.h>
@@ -5350,6 +5350,9 @@ iDataTableView::iDataTableView(QWidget* parent)
 :inherited(parent)
 {
   setSelectionMode(QAbstractItemView::ContiguousSelection);
+
+  // this is important for faster viewing:
+  verticalHeader()->setResizeMode(QHeaderView::Interactive);
 }
   
 void iDataTableView::currentChanged(const QModelIndex& current, const QModelIndex& previous) {

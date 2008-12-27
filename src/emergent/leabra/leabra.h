@@ -818,10 +818,10 @@ class LEABRA_API DtSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra time constants
 INHERITED(taBase)
 public:
-  float		vm;		// #DEF_0.3 membrane potential time constant -- if units oscillate too much, then this is too high (but see d_vm_max for another solution)
+  float		vm;		// #DEF_0.1:0.3 membrane potential time constant -- if units oscillate too much, then this is too high (but see d_vm_max for another solution)
   float		net;		// #DEF_0.7 net input time constant -- how fast to update net input (damps oscillations)
-  bool		midpoint;	// use the midpoint method in computing the vm value -- better avoids oscillations and allows a larger dt.vm parameter to be used
-  float		d_vm_max;	// #DEF_0.025 maximum change in vm at any timestep (limits blowup)
+  bool		midpoint;	// #DEF_false use the midpoint method in computing the vm value -- better avoids oscillations and allows a larger dt.vm parameter to be used
+  float		d_vm_max;	// #DEF_0.02:0.025 maximum change in vm at any timestep (limits blowup)
   int		vm_eq_cyc;	// #AKA_cyc0_vm_eq #DEF_0 number of cycles to compute the vm as equilibirium potential given current inputs: set to 1 to quickly activate input layers; set to 100 to always use this computation
   float		vm_eq_dt;	// #DEF_1 time constant for integrating the vm_eq values: how quickly to move toward the current eq value from previous vm value
 
