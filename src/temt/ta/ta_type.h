@@ -2014,7 +2014,7 @@ public:
     SC_DEFAULT,		// default (for compat) -- if taMisc::is_loading/saving true, then STREAMING else VALUE
     SC_STREAMING,	// value is being used for streaming, ex. strings are quoted/escaped
     SC_VALUE,		// value is being manipulated programmatically, ex. strings are not quoted/escaped
-    SC_DISPLAY,		// value is being used for display purposes, ex. float value may be formatted prettily
+    SC_DISPLAY,		// value is being used for display purposes, and result includes html (rich text) formatting tags, etc
   };
   
   static TypeDef* 	GetCommonSubtype(TypeDef* typ1, TypeDef* typ2); // get the common primary (1st parent class) subtype between the two

@@ -24,6 +24,8 @@
 #include <QLayout>
 #include <QTableWidget>
 #include <QTextEdit>
+#include <QTextDocument>
+#include <QAbstractTextDocumentLayout>
 
 //////////////////////////////////
 //  tabSelectEditViewType 	//
@@ -499,8 +501,44 @@ void taiDataDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
   // skip, and just paint background if an editor is in place
   if (dat && (m_dat_row == index.row())) {
     drawBackground(painter, option, index);
-  } else { // normal
-    inherited::paint(painter, option, index);
+  } else { // normal, which also means interpret rich text!
+    QString text;
+    QRect rect; 
+    QVariant value;
+
+    // this stuff all from qitemdelegate.cpp
+    QStyleOptionViewItemV4 opt = setOptions(index, option); // or V2 for Qt4.2
+    const QStyleOptionViewItemV2 *v2 = qstyleoption_cast<const QStyleOptionViewItemV2 *>
+      (&option);
+    opt.features = v2 ? v2->features
+      : QStyleOptionViewItemV2::ViewItemFeatures(QStyleOptionViewItemV2::None);
+    const QStyleOptionViewItemV3 *v3 = qstyleoption_cast<const QStyleOptionViewItemV3 *>
+      (&option);
+    opt.locale = v3 ? v3->locale : QLocale();
+    opt.widget = v3 ? v3->widget : 0;
+ 
+    // draw rich text:
+    painter->save();
+
+    drawBackground(painter, option, index);
+
+    QRect disp_rect = option.rect;
+
+    // this does the rich text interp
+    QTextDocument doc;
+    doc.setHtml( index.data().toString() );
+    QAbstractTextDocumentLayout::PaintContext context;
+    doc.setPageSize( disp_rect.size());
+    painter->setClipRect(disp_rect);
+    painter->translate(disp_rect.x(), disp_rect.y()+2); // add a little border
+    
+    //if (option.state & QStyle::State_Selected)
+        //painter->setBrush(option.palette.highlightedText());
+    
+    doc.documentLayout()->draw(painter, context);
+    painter->restore();
+
+    drawFocus(painter, opt, disp_rect);
   }
 }
 
@@ -635,6 +673,7 @@ void iSelectEditDataHost2::Constr_Body_impl() {
   tw->horizontalHeader()->setVisible(false);
   tw->horizontalHeader()->setStretchLastSection(true); // note: works if header invis
   tw->verticalHeader()->setVisible(false);
+  tw->verticalHeader()->setResizeMode(QHeaderView::Fixed);
   tw->setSortingEnabled(false);
   // don't try to scroll by item, it looks ugly, just scroll smoothly
   tw->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -765,7 +804,8 @@ void iSelectEditDataHost2::GetImage_Membs_def() {
     if ((item == NULL) || (item->base == NULL) ||  (item->mbr == NULL)) continue;
     void* off = item->mbr->GetOff(item->base);
     String txt = item->mbr->type->GetValStr(off, item->base->GetOwner(),
-      item->mbr, TypeDef::SC_DISPLAY, true); 
+					    item->mbr, TypeDef::SC_DISPLAY, true); 
+    // true = force inline
     it->setText(txt);
     it->setToolTip(txt); // for when over
     

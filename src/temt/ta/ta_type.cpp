@@ -5090,12 +5090,30 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
       if(md->HasOption("NO_SAVE"))
 	continue;
     }
-    rval += md->name + "=";
-    if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
-    rval += md->type->GetValStr(md->GetOff(base), base, md, sc, force_inline);
-    if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
-    if (sc == SC_DISPLAY) rval += "; "; // semicolon more intuitive for display
-    else                  rval += ": ";
+    if(sc == SC_DISPLAY) {
+      bool non_def = false;
+      if(md->GetDefaultStatus(base) == MemberDef::NOT_DEF) {
+	non_def = true;
+	rval += "<font color=\"darkgoldenrod\"><i>";
+      }
+      rval += "<b>";
+      rval += md->name + ":&nbsp;&nbsp;";
+      rval += "</b>";
+      if(non_def) {
+	rval += "</i></font>";
+      }
+      if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
+      rval += md->type->GetValStr(md->GetOff(base), base, md, sc, force_inline);
+      if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
+      rval += "&nbsp;&nbsp;&nbsp;&nbsp;";
+    }
+    else {
+      rval += md->name + "=";
+      if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
+      rval += md->type->GetValStr(md->GetOff(base), base, md, sc, force_inline);
+      if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
+      rval += ": ";
+    }
   }
   if (sc != SC_DISPLAY) rval += "}";
   return rval;

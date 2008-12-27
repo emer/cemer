@@ -4175,7 +4175,7 @@ void taArray_base::DataChanged(int dcr, void* op1, void* op2) {
 String taArray_base::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
 			      bool force_inline) const {
   if(force_inline) {
-    return GetValStr();
+    return GetValStr();		// this is the taArray_impl version that actually lists items
   }
   else {
     String nm = " Size: ";
