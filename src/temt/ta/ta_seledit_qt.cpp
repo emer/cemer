@@ -386,7 +386,8 @@ void taiDataDelegate::EditorCreated(QWidget* parent, QWidget* editor,
   // (this seems the only place that works -- DataDelegate::sizeHint()
   //  gets called *before* createEditor() so we don't know its
   //  size yet at that point; therefore, we hackily do it here)
-  sh = editor->sizeHint();
+  //  sh = editor->sizeHint();
+  sh = editor->minimumSizeHint(); // use min b/c sometimes it gets too big..
   QTableView* tv = NULL;
   QWidget* tv_candidate = parent;
   while (tv_candidate) {
@@ -502,6 +503,8 @@ void taiDataDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
   if (dat && (m_dat_row == index.row())) {
     drawBackground(painter, option, index);
   } else { // normal, which also means interpret rich text!
+//     inherited::paint(painter, option, index);
+//     return;
     QString text;
     QRect rect; 
     QVariant value;
@@ -672,6 +675,7 @@ void iSelectEditDataHost2::Constr_Body_impl() {
   tw->setColumnCount(2);
   tw->horizontalHeader()->setVisible(false);
   tw->horizontalHeader()->setStretchLastSection(true); // note: works if header invis
+  tw->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
   tw->verticalHeader()->setVisible(false);
   tw->verticalHeader()->setResizeMode(QHeaderView::Fixed);
   tw->setSortingEnabled(false);
@@ -822,7 +826,10 @@ void iSelectEditDataHost2::GetImage_Membs_def() {
     }
   }
   sed->GetImage(); // if a ctrl is active
-  tw->resizeColumnToContents(1);
+  // note: this is taking the bulk of the compute time for refreshing during running:
+  // it seems fine to leave it off for now -- once you click on something it resizes
+  // and that seems good enough..
+  //  tw->resizeColumnToContents(1);
 }
 
 void iSelectEditDataHost2::DoRemoveSelEdit() {
