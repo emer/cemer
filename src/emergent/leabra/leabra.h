@@ -229,7 +229,7 @@ public:
   float		l_dt;		// #DEF_0.001:0.01 time constant for updating the long time-scale ravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_l variable!!
   float		l_gain;		// #DEF_1.8 gain for long time-scale ravg term -- needed to put into same terms as the s*r avg values used in the s and m components of learning
   float		ml_dt;		// #DEF_0.4 time constant for updating the medium-to-long time-scale ravg_ml value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_ml variable!!
-  float		d_rev;		// #DEF_0.1 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg 
+  float		d_rev;		// #DEF_0.05 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg 
   float		d_gain;		// #DEF_1 multiplier on LTD values relative to LTP values -- generally do not change from 1.0 default unless using only BCM-style learning
 
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- multiplication factor in learning rule
