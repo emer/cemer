@@ -41,6 +41,9 @@ void PVConSpec::Initialize() {
   SetUnique("wt_sig", true);
   wt_sig.gain = 1.0f;  wt_sig.off = 1.0f;
 
+  SetUnique("xcalm", true);
+  xcalm.use_sb = false;
+
   SetUnique("lrate", true);
   lrate = .01f;
   cur_lrate = .01f;
@@ -302,6 +305,9 @@ void LVConSpec::Initialize() {
 
   SetUnique("wt_sig", true);
   wt_sig.gain = 1.0f;  wt_sig.off = 1.0f;
+
+  SetUnique("xcalm", true);
+  xcalm.use_sb = false;
 
   SetUnique("lrate", true);
   lrate = .05f;

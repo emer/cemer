@@ -189,43 +189,37 @@ class LEABRA_API TDRewPredConSpec : public LeabraConSpec {
   // Reward Prediction connections: for TD RewPred Layer, uses TD algorithm for predicting rewards
 INHERITED(LeabraConSpec)
 public:
-  inline float C_Compute_Err(LeabraCon* cn, float lin_wt, LeabraTdUnit* ru, LeabraTdUnit* su) {
+  inline void C_Compute_dWt_Delta(LeabraCon* cn, float lin_wt, LeabraTdUnit* ru, LeabraTdUnit* su) {
     float err = (ru->act_p - ru->act_m) * su->trace;
     if(lmix.err_sb) {
       if(err > 0.0f)	err *= (1.0f - lin_wt);
       else		err *= lin_wt;	
     }
-    return err;
+    cn->dwt += cur_lrate * err;
   }
+
+  inline void C_Compute_dWt_Delta_NoSB(LeabraCon* cn, LeabraTdUnit* ru, LeabraTdUnit* su) {
+    float err = (ru->act_p - ru->act_m) * su->trace;
+    cn->dwt += cur_lrate * err;
+  }
+
 
   // this computes weight changes based on sender at time t-1
   inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
     LeabraTdUnit* lru = (LeabraTdUnit*)ru;
-    Compute_SAvgCor(cg, lru);
-    if(lru->p_act_p >= 0.0f) {
-      for(int i=0; i<cg->cons.size; i++) {
-	LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	float lin_wt = LinFmSigWt(cn->wt);
-	C_Compute_dWt(cn, lru, 
-		      C_Compute_Hebb(cn, cg, lin_wt, lru->act_p, su->p_act_p),
-		      C_Compute_Err(cn, lin_wt, lru, su));  
-      }
+    for(int i=0; i<cg->cons.size; i++) {
+      LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      C_Compute_dWt_Delta(cn, LinFmSigWt(cn->wt), lru, su);
     }
   }
 
-  // currently just same as std, except wt is lin_wt
   inline void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
     LeabraTdUnit* lru = (LeabraTdUnit*)ru;
-    Compute_SAvgCor(cg, lru);
-    if(lru->p_act_p >= 0.0f) {
-      for(int i=0; i<cg->cons.size; i++) {
-	LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	C_Compute_dWt(cn, lru, 
-		      C_Compute_Hebb(cn, cg, cn->wt, lru->act_p, su->p_act_p),
-		      C_Compute_Err(cn, cn->wt, lru, su));  
-      }
+    for(int i=0; i<cg->cons.size; i++) {
+      LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      C_Compute_dWt_Delta_NoSB(cn, lru, su);
     }
   }
 

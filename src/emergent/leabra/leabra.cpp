@@ -92,8 +92,6 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 void XCalLearnSpec::Initialize() {
   lrn_var = XCAL;
 
-  dwt_norm = false;
-
   mvl_mix = 0.002f;
 
   s_mix = 0.90f;
@@ -103,8 +101,9 @@ void XCalLearnSpec::Initialize() {
 
   ml_dt = 0.4f;
 
+  d_rev = 0.10f;
+
   d_gain = 1.0f;
-  d_rev = 0.15f;
 
   svm_mix = 1.0f - mvl_mix;
   m_mix = 1.0f - s_mix;
@@ -131,6 +130,7 @@ void XCalMiscSpec::Initialize() {
 //   lrn_thr = 0.2f;
 //   lrn_delay = 200;
 
+  use_sb = true;
   use_nd = false;
 
   avg_init = 0.15f;
@@ -303,6 +303,16 @@ void LeabraConSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
 
   if(lrs_value == EPOCH) {
     cur_lrate = lrate * lrate_sched.GetVal(epoch);
+  }
+}
+
+void LeabraConSpec::LogLrateSched(int epcs_per_step, float n_steps) {
+  float log_ns[3] = {1, .5, .2};
+  
+  lrate_sched.SetSize(n_steps);
+  for(int i=0;i<n_steps;i++) {
+    lrate_sched[i]->start_ctr = i * epcs_per_step;
+    lrate_sched[i]->start_val = log_ns[i%3] * powf(10.0f,-(i/3));
   }
 }
 
@@ -1650,7 +1660,7 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraLayer* lay, LeabraNetwor
 	if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
 	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
 	if((cs->xcal.lrn_var == XCalLearnSpec::XCAL) ||
-	   (cs->xcal.lrn_var == XCalLearnSpec::XCAL_CHL)) continue;
+	   (cs->xcal.lrn_var == XCalLearnSpec::CHL)) continue;
 	recv_gp->Compute_SRAvg(u, do_s);
       }
     }
@@ -4245,9 +4255,6 @@ void LeabraLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net
 }
 
 void LeabraLayerSpec::Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net) {
-  if((net->learn_rule != LeabraNetwork::LEABRA_CHL) && (net->phase_order == LeabraNetwork::MINUS_PLUS_PLUS)) {
-    Compute_dWt_impl(lay, net);	// go for it..
-  }
   return;			// standard layers never learn here
 }
 

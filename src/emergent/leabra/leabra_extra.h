@@ -841,7 +841,7 @@ class LEABRA_API LeabraDwtNormConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
 #ifdef __MAKETA__
-  LearnMixSpec	lmix;		// #CAT_Learning #CONDSHOW_OFF_learn_rule:CTLEABRA_XCAL mixture of hebbian & err-driven learning (note: no hebbian for CTLEABRA_XCAL)
+  LearnMixSpec	lmix;		// #CAT_Learning #CONDSHOW_OFF_learn_rule:CTLEABRA_XCAL mixture of hebbian & err-driven learning (note: no hebbian for CTLEABRA_XCAL, but yes for CTLEABRA_CAL)
 #endif
 
   LeabraDwtNorm	dwt_norm;	// renormalize weight changes to compensate for overal mean changes (zero sum weight changes)

@@ -55,21 +55,16 @@ class LEABRA_API PVConSpec : public LeabraConSpec {
   // primary value connection spec: learns using delta rule from PVe - PVi values -- does not use hebb or err_sb parameters
 INHERITED(LeabraConSpec)
 public:
-  inline float C_Compute_Err_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    return (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
-    // note: no err_sb
+  inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    float err = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
+    cn->dwt += cur_lrate * err;
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<cg->cons.size; i++) {
-	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	if(!(su->in_subgp &&
-	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  C_Compute_dWt_NoHebb(cn, ru, C_Compute_Err_Delta(cn, ru, su));  
-	}
-      }
+    for(int i=0; i<cg->cons.size; i++) {
+      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      C_Compute_dWt_Delta(cn, ru, su);  
     }
   }
 
@@ -151,23 +146,18 @@ INHERITED(PVConSpec)
 public:
   float 	wt_dec_mult;   // multiplier for weight decrease rate relative to basic lrate used for weight increases
 
-  inline float C_Compute_Err_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+  inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     float err = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
     if(err < 0.0f)	err *= wt_dec_mult;
     // note: no err_sb
-    return err;
+    cn->dwt += cur_lrate * err;
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<cg->cons.size; i++) {
-	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	if(!(su->in_subgp &&
-	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  C_Compute_dWt_NoHebb(cn, ru, C_Compute_Err_Delta(cn, ru, su));  
-	}
-      }
+    for(int i=0; i<cg->cons.size; i++) {
+      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      C_Compute_dWt_Delta(cn, ru, su);
     }
   }
 
@@ -204,26 +194,20 @@ private:
 //////////////////////////////////////////
 
 class LEABRA_API LVConSpec : public TrialSynDepConSpec {
-  // learned value connection spec: learns using delta rule from PVe - LV values; also does synaptic depression to do novelty filtering
+  // learned value connection spec: learns using delta rule from PVe - LV values; also does synaptic depression to do novelty filtering (NOTE: not used in current version of PVLV)
 INHERITED(TrialSynDepConSpec)
 public:
 
-  inline float C_Compute_Err_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    return (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
-    // note: no err_sb
+  inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    float err = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
+    cn->dwt += cur_lrate * err;
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<cg->cons.size; i++) {
-	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	if(!(su->in_subgp &&
-	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  C_Compute_dWt_NoHebb(cn, ru, C_Compute_Err_Delta(cn, ru, su));  
-	  C_Depress_Wt((TrialSynDepCon*)cn, ru, su);
-	}
-      }
+    for(int i=0; i<cg->cons.size; i++) {
+      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      C_Compute_dWt_Delta(cn, ru, su);  
     }
   }
 
