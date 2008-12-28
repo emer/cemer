@@ -253,7 +253,8 @@ install(FILES ${OUR_CMAKE_MOD_FILES}
 
 #plugin template files NOTE: prolly a more elegant way to make this list...
 set(PLT "plugins/template")
-install(FILES ${PLT}/CMakeLists.txt ${PLT}/NOBUILD ${PLT}/template_def.h
+install(FILES ${PLT}/CMakeLists.txt ${PLT}/NOBUILD ${PLT}/NOUNINSTALL 
+  ${PLT}/template_def.h
   ${PLT}/template.h ${PLT}/template.cpp
   ${PLT}/template_pl.h ${PLT}/template_pl.cpp
   ${PLT}/template_qtso.h ${PLT}/template_qtso.cpp
