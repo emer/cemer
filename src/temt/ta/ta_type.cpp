@@ -543,7 +543,9 @@ int	taMisc::jpeg_quality = 95;
 taMisc::ColorHints taMisc::color_hints = (taMisc::ColorHints)(taMisc::CH_EDITS | taMisc::CH_BROWSER);
 taMisc::ClickStyle taMisc::click_style = taMisc::CS_CONTEXT;
 //note: we actually init this in ta_project, the first time, for the user
-taMisc::ProjViewPref taMisc::proj_view_pref = (taMisc::ProjViewPref)-1;//taMisc::PVP_2x2;
+//taMisc::ProjViewPref taMisc::proj_view_pref = (taMisc::ProjViewPref)-1;//taMisc::PVP_2x2;
+// nobody besides Brad uses 2x2.. 
+taMisc::ProjViewPref taMisc::proj_view_pref = taMisc::PVP_3PANE;
 taMisc::ViewerOptions	taMisc::viewer_options = (taMisc::ViewerOptions)(taMisc::VO_DOUBLE_CLICK_EXP_ALL | taMisc::VO_AUTO_SELECT_NEW | taMisc::VO_AUTO_EXPAND_NEW);
 #ifndef NO_TA_BASE
 ViewColor_List* taMisc::view_colors = NULL;
