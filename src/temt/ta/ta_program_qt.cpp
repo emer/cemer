@@ -295,22 +295,7 @@ void iProgramEditor::Init() {
   
   items = new iTreeView(this, iTreeView::TV_AUTO_EXPAND);
   layOuter->addWidget(items, 1); // it gets the room
-/*  items->setColumnCount(3);
-  items->setSortingEnabled(false);// only 1 order possible
-  items->setSelectionMode(QAbstractItemView::ExtendedSelection);
-  items->setHeaderText(0, "Program Item");
-  items->setHeaderText(1, "Item Detail");
-  //  items->setColumnWidth(1, 160);
-  items->setColumnWidth(1, 220);
-  items->setHeaderText(2, "Item Description");
-  items->setColKey(1, taBase::key_disp_name); //note: ProgVars and Els have nice disp_name desc's
-  items->setColFormat(1, iTreeView::CF_ELIDE_TO_FIRST_LINE);
-  items->setColKey(2, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's
-  items->setColFormat(2, iTreeView::CF_ELIDE_TO_FIRST_LINE);
-  // adjunct data, tooltips, etc.
-  items->AddColDataKey(1, taBase::key_disp_name, Qt::ToolTipRole); 
-  items->AddColDataKey(2, taBase::key_desc, Qt::ToolTipRole);*/
-  
+
   items->setColumnCount(2);
   items->setSortingEnabled(false);// only 1 order possible
   items->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -889,6 +874,7 @@ void iProgramPanelBase::OnWindowBind_impl(iTabViewer* itv) {
   pe->items->Connect_SelectableHostNotifySignal(itv,
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
   pe->m_window = itv->viewerWindow();
+  pe->items->main_window = pe->m_window;
   // make sure the Program toolbar is created
   MainWindowViewer* mvw = itv->viewerWindow()->viewer();
   //ProgramToolBar* ptb = 

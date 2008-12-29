@@ -2654,6 +2654,7 @@ void iBrowseViewer::Init() {
   lay->setMargin(0);  lay->setSpacing(0);
   lvwDataTree = new iTreeView(this);
   lay->addWidget(lvwDataTree);
+  lvwDataTree->main_window = mainWindowViewer()->widget();
   lvwDataTree->setObjectName("lvwDataTree");
   lvwDataTree->setSortingEnabled(false); // preserve enumeration order of items
   lvwDataTree->setSelectionMode(QAbstractItemView::ExtendedSelection); // multiselect
@@ -4112,20 +4113,44 @@ void iMainWindowViewer::fileOptions() {
   tabMisc::root->Options();
 }
 
-iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link)
-{
+iTreeView* iMainWindowViewer::GetMainTreeView() {
   MainWindowViewer* db = viewer();
   if (!db) return NULL;
   BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
   if (!bv) return NULL;
+  iBrowseViewer* ibv = bv->widget();
+  if (!ibv) return NULL;
+  return ibv->lvwDataTree;
+}
+
+iTreeView* iMainWindowViewer::GetCurTreeView() {
+  if(cur_tree_view) return cur_tree_view;
+  return GetMainTreeView();
+}
+
+void iMainWindowViewer::FocusCurTreeView() {
+  iTreeView* itv = GetCurTreeView();
+  if(itv) itv->setFocus();
+}
+
+iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
+  iTreeView* itv = GetCurTreeView(); // note: use current
+  if(!itv) return NULL;
   // note: waitproc is now insulated against recurrent calls..
   // make sure previous operations are finished
   taiMiscCore::ProcessEvents();
-  iBrowseViewer* ibv = bv->widget();
-  iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
+  iTreeViewItem* rval = itv->AssertItem(link);
   if (rval) {
-    ibv->lvwDataTree->scrollTo(rval);
-    ibv->lvwDataTree->setCurrentItem(rval);
+    itv->scrollTo(rval);
+    itv->setCurrentItem(rval);
+  }
+  else if(itv == cur_tree_view) { // try again with main 
+    itv = GetMainTreeView();
+    rval = itv->AssertItem(link);
+    if (rval) {
+      itv->scrollTo(rval);
+      itv->setCurrentItem(rval);
+    }
   }
   // make sure our operations are finished
   taiMiscCore::ProcessEvents();
@@ -4133,17 +4158,21 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link)
 }
 
 iTreeViewItem* iMainWindowViewer::BrowserExpandAllItem(taiDataLink* link) {
-  MainWindowViewer* db = viewer();
-  if (!db) return NULL;
-  BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
-  if (!bv) return NULL;
+  iTreeView* itv = GetCurTreeView(); // note: use current
+  if(!itv) return NULL;
   // note: waitproc is now insulated against recurrent calls..
   // make sure previous operations are finished
   taiMiscCore::ProcessEvents();
-  iBrowseViewer* ibv = bv->widget();
-  iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
+  iTreeViewItem* rval = itv->AssertItem(link);
   if (rval) {
-    ibv->lvwDataTree->ExpandAllUnder(rval);
+    itv->ExpandAllUnder(rval);
+  }
+  else if(itv == cur_tree_view) { // try again with main 
+    itv = GetMainTreeView();
+    rval = itv->AssertItem(link);
+    if (rval) {
+      itv->CollapseAllUnder(rval);
+    }
   }
   // make sure our operations are finished
   taiMiscCore::ProcessEvents();
@@ -4151,16 +4180,20 @@ iTreeViewItem* iMainWindowViewer::BrowserExpandAllItem(taiDataLink* link) {
 }
 
 iTreeViewItem* iMainWindowViewer::BrowserCollapseAllItem(taiDataLink* link) {
-  MainWindowViewer* db = viewer();
-  if (!db) return NULL;
-  BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
-  if (!bv) return NULL;
+  iTreeView* itv = GetCurTreeView(); // note: use current
+  if(!itv) return NULL;
   // make sure previous operations are finished
   taiMiscCore::ProcessEvents();
-  iBrowseViewer* ibv = bv->widget();
-  iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
+  iTreeViewItem* rval = itv->AssertItem(link);
   if (rval) {
-    ibv->lvwDataTree->CollapseAllUnder(rval);
+    itv->CollapseAllUnder(rval);
+  }
+  else if(itv == cur_tree_view) { // try again with main 
+    itv = GetMainTreeView();
+    rval = itv->AssertItem(link);
+    if (rval) {
+      itv->CollapseAllUnder(rval);
+    }
   }
   // make sure our operations are finished
   taiMiscCore::ProcessEvents();
@@ -6525,6 +6558,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
 {
   focus_next_widget = NULL;
   focus_prev_widget = NULL;
+  main_window = NULL;
 
   tv_flags = tv_flags_;
   m_filters = NULL; // only created if needed
@@ -6815,6 +6849,10 @@ void iTreeView::ExpandDefault() {
 
 void iTreeView::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev); // prob does nothing
+  if(main_window) {
+    main_window->cur_tree_view = this; // always overwrite with current
+//     cerr << "focus itv: " << this << endl;
+  }
   Emit_GotFocusSignal();
 }
 

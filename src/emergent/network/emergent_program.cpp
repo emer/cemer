@@ -301,16 +301,17 @@ void GroupedDataLoop::ChangeToNetGroupedDataLoop() {
 //  Network Counters	//
 //////////////////////////
 
-void NetCounterInit::Initialize() {
+void NetCounterBase::Initialize() {
   network_type = &TA_Network;
   counter = NULL;
+  update_after = false;
 }
 
-void NetCounterInit::Destroy() {
+void NetCounterBase::Destroy() {
   CutLinks();
 }
 
-void NetCounterInit::UpdateAfterEdit_impl() {
+void NetCounterBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if((bool)network_var && ((bool)network_var->object_val)) {
     network_type = network_var->object_val->GetTypeDef();
@@ -321,7 +322,7 @@ void NetCounterInit::UpdateAfterEdit_impl() {
   GetLocalCtrVar();
 }
 
-void NetCounterInit::CheckThisConfig_impl(bool quiet, bool& rval) {
+void NetCounterBase::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!counter, quiet, rval, "counter is NULL");
   CheckError(!(bool)network_var, quiet, rval, "network_var = NULL");
@@ -330,13 +331,7 @@ void NetCounterInit::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(!local_ctr_var, quiet, rval, "local_ctr_var = NULL");
 }
 
-String NetCounterInit::GetDisplayName() const {
-  String rval = "Net Counter Init: ";
-  if(counter) rval += counter->name;
-  return rval;
-}
-
-void NetCounterInit::GetLocalCtrVar() {
+void NetCounterBase::GetLocalCtrVar() {
   if(!counter) return;
   if((bool)local_ctr_var && (local_ctr_var->name == counter->name)) return;
   Program* my_prog = program();
@@ -349,44 +344,26 @@ void NetCounterInit::GetLocalCtrVar() {
   local_ctr_var->var_type = ProgVar::T_Int;
 }
 
+//////////////////////////////////////
+// init
+
+String NetCounterInit::GetDisplayName() const {
+  String rval = "Net Counter Init: ";
+  if(counter) rval += counter->name;
+  return rval;
+}
+
 const String NetCounterInit::GenCssBody_impl(int indent_level) {
   if(!counter || !network_var) return "// NetCounterInit ERROR: vars not set!\n";
   String rval = cssMisc::Indent(indent_level) + counter->name + " = 0;\n";
   rval += cssMisc::Indent(indent_level) + network_var->name + "->" + counter->name + " = " + counter->name + ";\n";
+  if(update_after)
+    rval += cssMisc::Indent(indent_level) + network_var->name + "->UpdateAfterEdit();\n";
   return rval;
 }
 
 //////////////////////////////////////
 // incr
-
-void NetCounterIncr::Initialize() {
-  network_type = &TA_Network;
-  counter = NULL;
-}
-
-void NetCounterIncr::Destroy() {
-  CutLinks();
-}
-
-void NetCounterIncr::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  if((bool)network_var && ((bool)network_var->object_val)) {
-    network_type = network_var->object_val->GetTypeDef();
-  }
-  if(taMisc::is_loading) return;
-  Program* prg = GET_MY_OWNER(Program);
-  if(!prg || isDestroying() || prg->isDestroying()) return;
-  GetLocalCtrVar();
-}
-
-void NetCounterIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(!counter, quiet, rval, "counter is NULL");
-  CheckError(!network_var, quiet, rval, "network_var = NULL");
-  CheckError((bool)network_var && !network_var->object_val, quiet, rval,
-	     "network_var object = NULL");
-  CheckError(!local_ctr_var, quiet, rval, "local_ctr_var = NULL");
-}
 
 String NetCounterIncr::GetDisplayName() const {
   String rval = "Net Counter Incr: ";
@@ -394,23 +371,12 @@ String NetCounterIncr::GetDisplayName() const {
   return rval;
 }
 
-void NetCounterIncr::GetLocalCtrVar() {
-  if(!counter) return;
-  if((bool)local_ctr_var && (local_ctr_var->name == counter->name)) return;
-  Program* my_prog = program();
-  if(!my_prog) return;
-  if(!(local_ctr_var = my_prog->vars.FindName(counter->name))) {
-    local_ctr_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
-    local_ctr_var->name = counter->name;
-    local_ctr_var->DataChanged(DCR_ITEM_UPDATED);
-  }
-  local_ctr_var->var_type = ProgVar::T_Int;
-}
-
 const String NetCounterIncr::GenCssBody_impl(int indent_level) {
   if(!counter || !network_var) return "// NetCounterInit ERROR: vars not set!\n";
   String rval = cssMisc::Indent(indent_level) + counter->name + "++;\n";
   rval += cssMisc::Indent(indent_level) + network_var->name + "->" + counter->name + " = " + counter->name + ";\n";
+  if(update_after)
+    rval += cssMisc::Indent(indent_level) + network_var->name + "->UpdateAfterEdit();\n";
   return rval;
 }
 

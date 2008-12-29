@@ -3484,7 +3484,7 @@ void Layer::UpdateAfterEdit() {
 
   if(taMisc::is_loading) return;
   if (!own_net) return;
-  own_net->UpdtAfterNetMod();	// todo: is this a good idea??
+//   own_net->UpdtAfterNetMod();	// todo: is this a good idea??  no!
 }
 
 void Layer::UpdateAfterEdit_impl() {
@@ -4983,8 +4983,7 @@ void Network::UpdateAfterEdit_impl(){
     wt_save_fmt = TEXT;
 
   ClearNetFlag(SAVE_UNITS_FORCE); // might have been saved in on state from recover file or something!
-
-  UpdtAfterNetMod();
+//   UpdtAfterNetMod();
 }
 
 void Network::UpdtAfterNetMod() {

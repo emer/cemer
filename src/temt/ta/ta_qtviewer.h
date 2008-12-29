@@ -1041,19 +1041,27 @@ public:
   virtual void		AddDockViewer(iDockViewer* dv,
     Qt::DockWidgetArea in_area = Qt::BottomDockWidgetArea); 
   QPointer<iSearchDialog> search_dialog;
+  QPointer<iTreeView>	cur_tree_view;	// current tree viewer (set in focus event on iTreeView)
 
   void 			Find(taiDataLink* root, const String& find_str="");
   // common find called by main menu, and context menu finds
 #endif
+
+  iTreeView*		GetMainTreeView(); // the main one from the iBrowseViewer
+  iTreeView*		GetCurTreeView();
+  // the tree view can be a sub-viewer (e.g., program editor) instead of the main one
+  void			FocusCurTreeView();
+  // send focus back to current tree view
+
   iTreeViewItem* 	AssertBrowserItem(taiDataLink* link);
   iTreeViewItem* 	BrowserExpandAllItem(taiDataLink* link);
   iTreeViewItem* 	BrowserCollapseAllItem(taiDataLink* link);
+
   bool		 	AssertPanel(taiDataLink* link, bool new_tab = false,
 				    bool new_tab_lock = true); // used for things like wizards and edits; note: ntl ignored if !nt
   void			EditItem(taiDataLink* link, bool not_in_cur = false); // edit this guy in a new panel, making a tab viewer if necessary
   int			GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
   iTabViewer* 		GetTabViewer(bool force = false); // get the tab viewer, or make one if force
-
 
   void 			setFrameGeometry(const iRect& r);
   void			setFrameGeometry(int left, int top, int width, int height); //bogus: see Qt docs on geometry under X
@@ -1828,6 +1836,7 @@ public:
   static const String  	opt_treefilt; // "TREEFILT_"
 
 #ifndef __MAKETA__
+  QPointer<iMainWindowViewer> main_window; // set this to the main window we belong in
   QPointer<QWidget>	focus_next_widget; // if set, this is the widget to focus next on when tab pressed
   QPointer<QWidget>	focus_prev_widget;  // if set, this is the widget to focus on when shift-tab pressed
 #endif

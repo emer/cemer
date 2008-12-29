@@ -140,54 +140,57 @@ private:
   void	Destroy() { }
 };
 
-class EMERGENT_API NetCounterInit: public NetBaseProgEl { 
-  // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
+class EMERGENT_API NetCounterBase: public NetBaseProgEl { 
+  // #VIRT_BASE #NO_INSTANCE base for network counter manip prog els
 INHERITED(NetBaseProgEl)
 public:
   ProgVarRef	network_var;	// #ITEM_FILTER_NetProgVarFilter variable that points to the network 
   TypeDef*	network_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
   ProgVarRef 	local_ctr_var;	// #ITEM_FILTER_StdProgVarFilter local version of the counter variable, maintained by the program -- must have same name as the counter!  automatically created if not set
   MemberDef*	counter;	// #TYPE_ON_network_type #DEFCAT_Counter counter variable on network to operate on
+  bool		update_after;	// call UpdateAfterEdit on network after updating counter value -- not necessary except to trigger updating of various displays, etc
   
-  override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  PROGEL_SIMPLE_BASEFUNS(NetCounterInit);
+  PROGEL_SIMPLE_BASEFUNS(NetCounterBase);
 protected:
   override void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
-
-  override const String	GenCssBody_impl(int indent_level);
 
 private:
   void	Initialize();
   void	Destroy();
 };
 
-class EMERGENT_API NetCounterIncr: public NetBaseProgEl { 
+class EMERGENT_API NetCounterInit: public NetCounterBase { 
   // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
-INHERITED(NetBaseProgEl)
+INHERITED(NetCounterBase)
 public:
-  ProgVarRef	network_var;	// #ITEM_FILTER_NetProgVarFilter variable that points to the network (typically a global_var)
-  TypeDef*	network_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
-  ProgVarRef 	local_ctr_var;	// #ITEM_FILTER_StdProgVarFilter local version of the counter variable, maintained by the program -- must have same name as the counter! -- automatically created if not set
-  MemberDef*	counter;	// #TYPE_ON_network_type  #DEFCAT_Counter counter variable on network to operate on
-  
   override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  PROGEL_SIMPLE_BASEFUNS(NetCounterIncr);
+  PROGEL_SIMPLE_BASEFUNS(NetCounterInit);
 protected:
-  override void	UpdateAfterEdit_impl();
-  override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
-
   override const String	GenCssBody_impl(int indent_level);
 
 private:
-  void	Initialize();
-  void	Destroy();
+  void	Initialize() { };
+  void	Destroy() { };
+};
+
+class EMERGENT_API NetCounterIncr: public NetCounterBase { 
+  // increment a network counter: program keeps a local version of the counter, and updates both this and the network's copy
+INHERITED(NetCounterBase)
+public:
+  override String	GetDisplayName() const;
+
+  PROGEL_SIMPLE_BASEFUNS(NetCounterIncr);
+protected:
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize() { };
+  void	Destroy() { };
 };
 
 class EMERGENT_API NetUpdateView: public NetBaseProgEl { 

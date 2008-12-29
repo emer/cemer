@@ -1559,12 +1559,12 @@ int taiDataHost::AddNameData(int row, const String& name, const String& desc,
   layBody->addLayout(lay_dat, row, 1);
 #endif  
   
-  if(!first_tab_foc) {
-    if(data->focusPolicy() & Qt::TabFocus) {
-//       cerr << "setting first tab focus to row: " << row << " of type: " << data->metaObject()->className() << endl;
-      first_tab_foc = data;
-    }
-  }
+//   if(!first_tab_foc) {
+//     if(data->focusPolicy() & Qt::TabFocus) {
+// //       cerr << "setting first tab focus to row: " << row << " of type: " << data->metaObject()->className() << endl;
+//       first_tab_foc = data;
+//     }
+//   }
 
   label->show(); // needed for rebuilds, to make the widget show  
   data->show(); // needed for rebuilds, to make the widget show
@@ -1594,11 +1594,11 @@ int taiDataHost::AddData(int row, QWidget* data, bool fill_hor)
   layBody->addLayout(hbl, row, 0, 1, 2); // col 0, span 1 row, span 2 cols
 #endif  
 
-  if(!first_tab_foc) {
-    if(data->focusPolicy() & Qt::TabFocus) {
-      first_tab_foc = data;
-    }
-  }
+//   if(!first_tab_foc) {
+//     if(data->focusPolicy() & Qt::TabFocus) {
+//       first_tab_foc = data;
+//     }
+//   }
   
   data->show(); // needed for rebuilds, to make the widget show
   
@@ -2236,6 +2236,27 @@ void taiEditDataHost::GetImage_Membs() {
   } else {
     GetImage_Membs_def();
   }
+
+  // search through children to find first tab focus widget
+  // skip over flags
+  first_tab_foc = NULL;
+  QList<QWidget*> list = qFindChildren<QWidget*>(body);
+  for (int i=0; i<list.size(); ++i) {
+    QWidget* rep = list.at(i);
+//     cerr << i << "\t" << rep->metaObject()->className() << endl;
+    if(// rep->isVisible() &&
+       rep->isEnabled() &&
+       (rep->focusPolicy() & Qt::TabFocus) &&
+       !rep->inherits("QCheckBox")) {
+      if(rep->inherits("QLineEdit")) {
+	QLineEdit* qle = (QLineEdit*)rep;
+	if(qle->isReadOnly()) continue;
+      }
+      first_tab_foc = rep;
+//       cerr << "focused on: " << i << "\t" << rep->metaObject()->className() << endl;
+      break;
+    }
+  }
 }
 
 void taiEditDataHost::GetImageInline_impl(const void* base) {
@@ -2409,10 +2430,16 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
 #endif
     if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
       Apply();			// do it!
+      iMainWindowViewer* mvw = viewerWindow();
+      if(mvw)
+	mvw->FocusCurTreeView(); // return focus back to current browser
       return true;
     }
     if(e->key() == Qt::Key_Escape) {
       Revert();			// do it!
+      iMainWindowViewer* mvw = viewerWindow();
+      if(mvw)
+	mvw->FocusCurTreeView(); // return focus back to current browser
       return true;
     }
   }
