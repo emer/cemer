@@ -22,7 +22,6 @@
 #include <QColor>
 #include <QHeaderView>
 #include <QLayout>
-#include <QTableWidget>
 #include <QTextEdit>
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
@@ -643,6 +642,74 @@ bool SelectEditDelegate::IndexToMembBase(const QModelIndex& index,
   return false;
 }
 
+///////////////////////////////////////////////////////////////////////
+//		taiEditTableWidget
+
+taiEditTableWidget::taiEditTableWidget(QWidget* parent)
+:inherited(parent)
+{
+}
+
+void taiEditTableWidget::keyPressEvent(QKeyEvent* e) {
+  if((e->key() == Qt::Key_Tab) || (e->key() == Qt::Key_Backtab)) {
+    e->ignore();			// tell that we don't want this -- send to others
+    return;
+  }
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+  if(ctrl_pressed) {
+    QPersistentModelIndex newCurrent;
+    switch (e->key()) {
+    case Qt::Key_N:
+      newCurrent = moveCursor(MoveDown, e->modifiers());
+      break;
+    case Qt::Key_P:
+      newCurrent = moveCursor(MoveUp, e->modifiers());
+      break;
+    case Qt::Key_U:
+      newCurrent = moveCursor(MovePageUp, e->modifiers());
+      break;
+    case Qt::Key_V:
+      newCurrent = moveCursor(MovePageDown, e->modifiers());
+      break;
+    case Qt::Key_F:
+      newCurrent = moveCursor(MoveRight, e->modifiers());
+      break;
+    case Qt::Key_B:
+      newCurrent = moveCursor(MoveLeft, e->modifiers());
+      break;
+    }
+    // from qabstractitemview.cpp
+    QPersistentModelIndex oldCurrent = currentIndex();
+    if (newCurrent != oldCurrent && newCurrent.isValid()) {
+      QItemSelectionModel::SelectionFlags command = selectionCommand(newCurrent, e);
+      if (command != QItemSelectionModel::NoUpdate
+	  || style()->styleHint(QStyle::SH_ItemView_MovementWithoutUpdatingSelection, 0, this)) {
+	if (command & QItemSelectionModel::Current) {
+	  selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::NoUpdate);
+	  // 	  if (d->pressedPosition == QPoint(-1, -1))
+	  // 	    d->pressedPosition = visualRect(oldCurrent).center();
+	  // 	  QRect rect(d->pressedPosition - d->offset(), visualRect(newCurrent).center());
+	  // 	  setSelection(rect, command);
+	} else {
+// 	  selectionModel()->setCurrentIndex(newCurrent, command);
+ 	  selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::ClearAndSelect);
+	  // 	  d->pressedPosition = visualRect(newCurrent).center() + d->offset();
+	}
+	//	selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::SelectCurrent);
+	return;
+      }
+    }
+  }
+  inherited::keyPressEvent(e);
+}
+
 
 //////////////////////////
 //  iSelectEditDataHost2	//
@@ -671,7 +738,7 @@ void iSelectEditDataHost2::Initialize()
 
 void iSelectEditDataHost2::Constr_Body_impl() {
   if (tw) return;
-  tw = new QTableWidget(widget());
+  tw = new taiEditTableWidget(widget());
   tw->setColumnCount(2);
   tw->horizontalHeader()->setVisible(false);
   tw->horizontalHeader()->setStretchLastSection(true); // note: works if header invis

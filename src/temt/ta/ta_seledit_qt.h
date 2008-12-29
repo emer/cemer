@@ -27,6 +27,7 @@
 #ifndef __MAKETA__
 # include <QPointer>
 # include <QItemDelegate>
+# include <QTableWidget>
 #endif
 
 #include "ta_TA_type.h"
@@ -145,12 +146,25 @@ protected slots:
 
 class SelectEditDelegate; // #IGNORE
 
+class TA_API taiEditTableWidget: public QTableWidget {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER a table widget for an edit dialog
+INHERITED(QTableWidget)
+  Q_OBJECT
+public:
+
+  taiEditTableWidget(QWidget* parent = NULL);
+
+
+protected:
+  override void 	keyPressEvent(QKeyEvent* e);
+};
+
 class TA_API iSelectEditDataHost2 : public iSelectEditDataHostBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS alternative, using viewer
 INHERITED(iSelectEditDataHostBase)
   Q_OBJECT
 public:
-  QTableWidget*		tw;
+  taiEditTableWidget*	tw;
 
   override void		Constr_Box();
   
