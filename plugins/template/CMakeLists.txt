@@ -6,7 +6,7 @@
 # cd build;
 # cmake ../ [-G see cmake --help for options] [-DMPI_BUILD=true] \
 #  [-DCMAKE_BUILD_TYPE= Debug | Release | RelWithDebInfo | MinSizeRel]
-#  [-DEMERGENT_PLUGIN_TYPE= User | System] # where to install plugin
+#  [-DEMERGENT_PLUGIN_TYPE= User | System | Default] # where to install plugin
 #  [-DCMAKE_VERBOSE_MAKEFILE=ON | OFF] # useful for tracking down issues sometimes
 #
 # ccmake ./ to edit custom options

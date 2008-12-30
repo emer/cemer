@@ -14,18 +14,13 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-# whether User or System, controls default install prefix
-# TODO: we could try to get fancy, and deduce based on current src location
-if (NOT EMERGENT_PLUGIN_TYPE)
-  set(EMERGENT_PLUGIN_TYPE User)
-endif (NOT EMERGENT_PLUGIN_TYPE)
+if (WIN32 AND NOT MSVC)
+  message(FATAL_ERROR "Only Microsoft Visual C++ (nmake or IDE) is supported")
+endif (WIN32 AND NOT MSVC)
 
-# although we know the app folder, we need to extract install prefix
+# although we know the app folder, we need to extract app install prefix
 # note that on Windows, it is the actual app folder, contrary to cmake docs
 if (WIN32)
-  if (NOT MSVC)
-    message(FATAL_ERROR "Only Microsoft Visual C++ (nmake or IDE) is supported")
-  endif (NOT MSVC)
   #note: EMERGENTDIR var must exist...
   if (EMERGENTDIR)
     set(EMERGENT_INSTALL_PREFIX "${EMERGENTDIR}")
@@ -47,11 +42,20 @@ else (WIN32)
   endif (NOT "${EMERGENT_INSTALL_PREFIX}")
 endif (WIN32)
 
-# set the install prefix and actual install location
+################################################################
+# EMERGENT_PLUGIN_TYPE controls whether it is in-place 
+#  (i.e. already installed, or else located in-place) or is
+#  being staged somewhere else for installation:
+# Default: plugins located natively in the user or system
+#    area for plugins
+# User: staged somewhere, to be installed in the user area
+# System: stage somwhere, to be installed in the system area
 # see:
 # http://grey.colorado.edu/emergent/index.php/CMake#Key_CMake_variables
 # http://grey.colorado.edu/emergent/index.php/Plugin_design
-if (EMERGENT_PLUGIN_TYPE STREQUAL "System")
+
+# set the install prefix and actual install location
+if ("${EMERGENT_PLUGIN_TYPE}" STREQUAL "System")
   if (WIN32)
     set(CMAKE_INSTALL_PREFIX ${EMERGENT_INSTALL_PREFIX} CACHE INTERNAL "do not change")
     set(EMERGENT_PLUGIN_DEST plugins)
@@ -60,7 +64,7 @@ if (EMERGENT_PLUGIN_TYPE STREQUAL "System")
     set(CMAKE_INSTALL_PREFIX ${EMERGENT_INSTALL_PREFIX} CACHE INTERNAL "do not change")
     set(EMERGENT_PLUGIN_DEST lib/Emergent/plugins)
   endif (WIN32)
-elseif (EMERGENT_PLUGIN_TYPE STREQUAL "User")
+elseif ("${EMERGENT_PLUGIN_TYPE}" STREQUAL "User")
   # manual override 
   if ($ENV{EMERGENT_USER_PLUGIN_DIR})
     set(CMAKE_INSTALL_PREFIX $ENV{EMERGENT_USER_PLUGIN_DIR} CACHE INTERNAL "do not change")
@@ -77,9 +81,9 @@ elseif (EMERGENT_PLUGIN_TYPE STREQUAL "User")
       set(EMERGENT_PLUGIN_DEST lib/Emergent/plugins)
     endif (WIN32)
   endif ($ENV{EMERGENT_USER_PLUGIN_DIR})
-else (EMERGENT_PLUGIN_TYPE STREQUAL "User")
-  message(FATAL_ERROR "EMERGENT_PLUGIN_TYPE must be set to one of: User | System")
-endif (EMERGENT_PLUGIN_TYPE STREQUAL "System")
+elseif (NOT "${EMERGENT_PLUGIN_TYPE}" STREQUAL "Default")
+  message(FATAL_ERROR "EMERGENT_PLUGIN_TYPE must be set to one of: User | System | Default")
+endif ("${EMERGENT_PLUGIN_TYPE}" STREQUAL "System")
 
 set(mod_path "${EMERGENT_SHARE_DIR}/CMakeModules")
 set(CMAKE_MODULE_PATH ${mod_path})

@@ -16,9 +16,10 @@ if (WIN32)
 else (WIN32)
   FIND_PATH(EMERGENT_INCLUDE_DIR ta_type.h
     $ENV{EMERGENT_INCLUDE_DIR}
-    /usr/include/Emergent
     /usr/local/include/Emergent
+    /usr/include/Emergent
     /opt/local/include/Emergent
+    /opt/include/Emergent
   )
 endif (WIN32)
 
@@ -35,9 +36,10 @@ if (WIN32)
   add_definitions(-DEMERGENT_DLL)
 else (WIN32)
   FIND_LIBRARY(EMERGENT_LIBRARY NAMES "emergentlib${EMERGENT_SUFFIX}" PATH
-    /usr/lib
     /usr/local/lib
+    /usr/lib
     /opt/local/lib
+    /opt/lib
   )
 endif (WIN32)
 

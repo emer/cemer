@@ -14,9 +14,10 @@ if (WIN32)
 else (WIN32)
   FIND_PATH(TEMT_INCLUDE_DIR ta_type.h
     $ENV{EMERGENT_INCLUDE_DIR}
-    /usr/include/Emergent
     /usr/local/include/Emergent
+    /usr/include/Emergent
     /opt/local/include/Emergent
+    /opt/include/Emergent
   )
 endif (WIN32)
 
@@ -35,9 +36,10 @@ message(STATUS "TEMT_LIBRARY=${TEMT_LIBRARY}")
   add_definitions(-DTA_DLL)
 else (WIN32)
   FIND_LIBRARY(TEMT_LIBRARY NAMES "temt${EMERGENT_SUFFIX}" PATH
-    /usr/lib
     /usr/local/lib
+    /usr/lib
     /opt/local/lib
+    /opt/lib
   )
 endif (WIN32)
 

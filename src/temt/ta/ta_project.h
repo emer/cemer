@@ -445,7 +445,8 @@ protected:
   String_PArray 	files;
   override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& ok);
-  virtual void		AddFiles(bool upgrade_only); // populate the file list
+  virtual void		AddTemplatedFiles(bool upgrade_only); // populate the file list, for files to have their content templatized
+  virtual void		AddCopyFiles(bool upgrade_only); // populate the file list, for files merely to copy
   virtual void		CreateDestFile(const String& src_file, 
     const String& dst_file, bool& ok);	
   virtual void		TemplatizeFile(const String& src_file, 
