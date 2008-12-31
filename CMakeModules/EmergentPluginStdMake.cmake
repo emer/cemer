@@ -51,6 +51,30 @@ add_dependencies(${PROJECT_NAME} "${PROJECT_NAME}_TA")
 EMERGENT_PLUGIN_LINK_LIBRARIES(${PROJECT_NAME} 
   "${EMERGENT_PLUGIN_EXTRA_LIBRARIES}")
 
+
+####################################
+#  report on status after building
+
+message( STATUS )
+message( STATUS "----------------------------------------------------------------------------" )
+message( STATUS "******************* Summary of Key Build Parameters ************************" )
+message( STATUS "----------------------------------------------------------------------------" )
+message( STATUS "(Default values indicated by *" )
+message( STATUS "EMERGENT_PLUGIN_TYPE = ${EMERGENT_PLUGIN_TYPE}" )
+message( STATUS "    (Options are: User | System | Default)" )
+file(TO_NATIVE_PATH "${CMAKE_INSTALL_PREFIX}/${EMERGENT_PLUGIN_DEST}"
+  EMERGENT_PLUGIN_INSTALL_NATIVE)
+message( STATUS "Installation will be to: " ${EMERGENT_PLUGIN_INSTALL_NATIVE} )
+message( STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+message( STATUS "    (Options are: Debug | Release | RelWithDebInfo *)" )
+if (NOT WIN32)
+message( STATUS "MPI_BUILD = ${MPI_BUILD}   (true or false)" )
+endif (NOT WIN32)
+message( STATUS)
+message( STATUS "Change a value with: cmake -D<Variable>=<Value>" )
+message( STATUS "----------------------------------------------------------------------------" )
+
+
 ################################################################
 # Step 5: install/uninstall stuff -- only for non-default
 

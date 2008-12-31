@@ -8,12 +8,14 @@
 echo "Running simple configure script wrapper around cmake build system!"
 echo "args are (special for plugins):"
 echo "  --enable-debug (or --debug)  enable debug, non-optimized build"
-echo "  --prefix=user | system       where to install plugin: user's home dir, or system"
+echo "  --prefix=User|System|Default where to install plugin: user's home dir, or system;" 
+echo "      use 'Default' if already building in-place ('default location' option in Wizard)"
 echo "  --enable-mpi (or --mpi)      enable MPI distributed memory parallel build"
 echo "  --clean                      clean existing cmake cache etc first: start fresh"
 echo "  --build-dir=<name>           provide a custom build directory name (else auto)"
-echo "  --generator=<name>           use given code generator (-G in cmake, which also works)"
+echo "  --generator=\"<name>\"         use given code generator *IN QUOTES* (-G in cmake, which also works)"
 echo "  --verbose-build (or --verbose or -v) turn on verbose make output: for make probs"
+echo "  --yes (or --y or -y)         do not pause for confirmation before running cmake"
 echo " "
 echo "  (note: -- before args is optional, and - works too!)"
 echo " "
@@ -32,6 +34,7 @@ do
       build_dir="build_dbg"
       shift 1
     ;;
+    
     --prefix | -prefix | prefix | p | -p)
       prefix=${1##*=}		# get part after =
       cmake_cmd="$cmake_cmd -DEMERGENT_PLUGIN_TYPE=$prefix"
@@ -60,22 +63,43 @@ do
     ;;
 
     --generator | -generator | generator | --gen | -gen | gen | -G)
-      generator="-G ${1##*=}"		# get part after =
-      cmake_cmd="$cmake_cmd $generator"
+#      generator="-G ${1##*=}"		# get part after =
+#      cmake_cmd="$cmake_cmd $generator"
+#      shift 1
+echo "generator command is not working -- omit to use the default, 'Unix Makefiles'"
+exit 1
+    ;;
+
+    --help | -help | help)
+      help=true
+      shift 1
+    ;;
+
+    --yes | -yes | yes | -y)
+      yes=true
       shift 1
     ;;
 
     *)
-      echo "Invalid argument -- please see above list"
+      invalid=true
       shift 1
     ;;
   esac
 done
 
+if [[ $help == "true" ]]; then
+  exit
+fi
+
 if [[ $verbose_build == "true" ]]; then
     cmake_cmd="$cmake_cmd -DCMAKE_VERBOSE_MAKEFILE=ON"
 else 
     cmake_cmd="$cmake_cmd -DCMAKE_VERBOSE_MAKEFILE=OFF"
+fi
+
+if [[ $invalid == "true" ]]; then
+  echo "Invalid argument(s) encountered -- please see above list"
+  exit 1
 fi
 
 echo " "
@@ -91,9 +115,12 @@ echo "  verbose:      $verbose_build"
 echo " "
 echo "  cmake command: $cmake_cmd"
 echo " "
+if [[ $yes != "true" ]]; then
+  read -p "Press any key to continue (Ctrl-C to cancel)..."
+fi
 
-mkdir "$build_dir"
-cd "$build_dir" || exit 1
+# dir prolly exists, so try a gentle cd with mkdir if that fails
+cd "$build_dir" || { { mkdir "$build_dir" && cd "$build_dir"; } || exit 1; }
 if [[ $clean == "true" ]]; then
     echo "NOTE: Cleaning files now!"
     /bin/rm -rf *
@@ -102,6 +129,14 @@ $cmake_cmd
 
 echo " "
 echo "####################################################"
-echo "Now you must type: cd $build_dir; make; make install"
+if [[ $prefix == "Default" ]]; then
+  echo "Now you must type : cd $build_dir; make"
+elif [[ $prefix == "System" ]]; then
+  echo "Now you must type : $build_dir; make; sudo make install"
+elif [[ $prefix == "User" ]]; then
+  echo "Now you must type : $build_dir; make; make install"
+else
+  echo "WARNING: unknown prefix -- you may not be able"
+fi
 echo "to actually build and install the software"
 echo " "

@@ -274,9 +274,6 @@ public:
   taBase_List		objs;  // #SHOW_TREE #EXPERT_TREE #NO_SAVE misc place for app-global objs, usually for system use, ex. tcp server
   String_Array		recent_files; // #NO_SHOW recently loaded files
   String_Array		recent_paths; // #NO_SHOW recently used paths
-#ifdef DEBUG
-  taBase_Group		test_group; // #EXPERT #NO_SAVE #LINK_GROUP group for testing clip ops etc.
-#endif
   
   void		OpenRemoteServer(ushort port = 5360);
   // #MENU #MENU_ON_Server Open a Server for remote TCP-based control of this application

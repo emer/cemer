@@ -644,20 +644,27 @@ bool PluginWizard::MakePlugin() {
     );
   }
   
-  // files to just copy (no templating)
+  // files to just link or copy (no templating)
   files.Reset();
   AddCopyFiles(upgrade_only);
   
   // iterate files
   for (int i = 0; (i < files.size) && ok; ++i) {
     String src_file = src_dir + files[i];
-    String dst_file = plugin_location + PATH_SEP + dst_file;
+    String dst_file = plugin_location + PATH_SEP + files[i];
     // note: files like CMakeLists.txt keep their name
     dst_file.gsub("template", plugin_name);
-    ok = QFile::copy(src_file, dst_file);
+    // try linking first
+    if (!QFile::link(src_file, dst_file))
+      ok = QFile::copy(src_file, dst_file);
   }
   if (ok) {
     taMisc::Info("The plugin was created successfully! To build and install the plugin... TODO: instructions");
-  } 
+  } else {
+    taMisc::Error(
+      "PluginWizard::MakePlugin", 
+      "Could not copy and templatize files for plugin -- make sure the path is valid, and you have permission to create files in that location");
+    return false;
+  }
   return true;
 }

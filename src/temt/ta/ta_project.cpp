@@ -907,15 +907,9 @@ void taRootBase::InitLinks() {
   taBase::Own(recent_paths, this);
   taiMimeFactory_List::setInstance(&mime_factories);
   AddTemplates(); // note: ok that this will be called here, before subclass has finished its own
-#ifdef DEBUG
-  taBase::Own(test_group, this);
-#endif
 }
 
 void taRootBase::CutLinks() {
-#ifdef DEBUG
-  test_group.CutLinks();
-#endif
   recent_paths.CutLinks();
   recent_files.CutLinks();
   objs.CutLinks();
