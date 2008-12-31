@@ -5326,6 +5326,8 @@ NetViewObj* Network::NewGlassBrain() {
   return rh;
 }
 
+// PlaceNetText is in netstru_qtso.cpp
+
 Layer* Network::NewLayer() {
   return layers.NewEl(1);
 }
@@ -6271,6 +6273,20 @@ void Network::UpdateMonitors() {
     NetMonitor* nm = (NetMonitor*)ts.FastEl(i);
     if(nm->network.ptr() != this) continue;
     nm->UpdateDataTable();
+  }
+}
+
+void Network::NetControlPanel(SelectEdit* editor, const String& extra_label, const String& sub_gp_nm) {
+  if(!editor) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(TestError(!proj, "NetControlPanel", "cannot find project")) return;
+    editor = (SelectEdit*)proj->edits.New(1);
+  }
+  TypeDef* td = GetTypeDef();
+  for(int i=0; i<td->members.size; i++) {
+    MemberDef* md = td->members[i];
+    if(!md->HasOption("VIEW")) continue;
+    editor->SelectMember(this, md, extra_label, "", sub_gp_nm);
   }
 }
 

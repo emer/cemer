@@ -520,11 +520,11 @@ iUserDataPanel::iUserDataPanel(taiDataLink* dl_)
   UserDataItem_List* se_ = udil();
   se = NULL;
   if (se_) {
-    switch (taMisc::edit_style) {
-    case taMisc::ES_WIDGETS:
+    switch (taMisc::select_edit_style) { // NOTE: the two below look identical to me...
+    case taMisc::ES_ALL_CONTROLS:
       se = new iUserDataDataHost(se_, se_->GetTypeDef()); 
       break;
-    case taMisc::ES_TABLE:
+    case taMisc::ES_ACTIVE_CONTROL:
       se = new iUserDataDataHost(se_, se_->GetTypeDef()); 
       break;
     }

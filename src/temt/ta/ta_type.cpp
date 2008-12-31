@@ -524,6 +524,8 @@ String  taMisc::console_font_name = "LucidaTypewriter";
 int  	taMisc::console_font_size = 10;
 #endif
 
+String  taMisc::t3d_font_name = "Arial";
+
 // parameters that differ between win and unix
 #ifdef TA_OS_WIN
 taMisc::ConsoleType taMisc::console_type = CT_OS_SHELL;
@@ -550,6 +552,9 @@ taMisc::ViewerOptions	taMisc::viewer_options = (taMisc::ViewerOptions)(taMisc::V
 #ifndef NO_TA_BASE
 ViewColor_List* taMisc::view_colors = NULL;
 #endif
+taMisc::EditStyle	taMisc::select_edit_style = taMisc::ES_ACTIVE_CONTROL;
+taMisc::EditStyle	taMisc::std_edit_style = taMisc::ES_ALL_CONTROLS;
+
 int	taMisc::antialiasing_level = 4;
 float	taMisc::text_complexity = .5f;
 
@@ -559,7 +564,6 @@ taMisc::KeepTokens 	taMisc::keep_tokens = taMisc::Tokens;
 bool			taMisc::auto_edit = false;
 taMisc::AutoRevert 	taMisc::auto_revert = taMisc::AUTO_APPLY;
 taMisc::MatrixView	taMisc::matrix_view = taMisc::BOT_ZERO;	
-taMisc::EditStyle	taMisc::edit_style = taMisc::ES_WIDGETS;
 bool 			taMisc::beep_on_error = false;
 short			taMisc::num_recent_files = 10;
 short			taMisc::num_recent_paths = 10;

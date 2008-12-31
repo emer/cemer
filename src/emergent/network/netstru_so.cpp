@@ -648,6 +648,8 @@ T3NetViewObj::~T3NetViewObj()
 
 extern void T3NetNode_DragFinishCB(void* userData, SoDragger* dragger);
 // defined in qtso
+extern void T3NetText_DragFinishCB(void* userData, SoDragger* dragger);
+// defined in qtso
 
 SO_NODE_SOURCE(T3NetNode);
 
@@ -656,18 +658,21 @@ void T3NetNode::initClass()
   SO_NODE_INIT_CLASS(T3NetNode, T3NodeParent, "T3NodeParent");
 }
 
-T3NetNode::T3NetNode(void* dataView_, bool show_draggers)
+T3NetNode::T3NetNode(void* dataView_, float box_off,
+		     bool show_draggers, bool show_net_text, bool show_nt_drag)
 :inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3NetNode);
 
+  box_off_ = box_off;
   show_drag_ = show_draggers;
+  show_net_text_drag_ = show_nt_drag && show_net_text;
 
   if(show_drag_) {
     drag_ = new T3TransformBoxDragger(0.06f, .04f, .03f);
-    drag_->xf_->translation.setValue(0.0f, -.5f, 0.0f);
 
-    String expr = "oA = vec3f(.5 + A[0], -.5 + A[1], -.5 + A[2])";
+    drag_->xf_->translation.setValue(0.0f, -box_off_, 0.0f);
+    String expr = "oA = vec3f(.5 + A[0], -" + String(box_off_) + "+ A[1], -.5 + A[2])";
     drag_->trans_calc_->expression = expr.chars();
 
     txfm_shape()->translation.connectFrom(&drag_->trans_calc_->oA);
@@ -687,9 +692,36 @@ T3NetNode::T3NetNode(void* dataView_, bool show_draggers)
   float x = 1.0f;
   float y = 1.0f;
   // set size/pos of cube -- move down to -1 y
-  txfm_shape()->translation.setValue(.5f, .5f * h - .5f, -.5f);
+  txfm_shape()->translation.setValue(.5f, .5f * h - box_off_, -.5f);
   shape_->setDimensions(x, y, 0.02f, -0.02f);
   net_text_ = NULL;
+  net_text_drag_ = NULL;
+  net_text_xform_ = NULL;
+  net_text_drag_xform_ = NULL;
+  if(show_net_text) {
+    net_text_ = new SoSeparator;
+    addChild(net_text_);
+    net_text_xform_ = new SoTransform;
+    net_text_xform_->translation.setValue(0.0f, -box_off_, 0.0f);
+    net_text_->addChild(net_text_xform_);
+    if(show_net_text_drag_) {
+      net_text_drag_xform_ = new SoTransform;
+      net_text_drag_ = new T3TransformBoxDragger(0.04f, .03f, .02f);
+
+      net_text_drag_->xf_->translation.setValue(1.0f, 0.0f, 0.0f);
+      String expr = "oA = vec3f(1.0 + A[0], A[1], A[2])";
+      net_text_drag_->trans_calc_->expression = expr.chars();
+
+      net_text_drag_xform_->translation.connectFrom(&net_text_drag_->dragger_->translation);
+      net_text_drag_xform_->rotation.connectFrom(&net_text_drag_->dragger_->rotation);
+      net_text_drag_xform_->scaleFactor.connectFrom(&net_text_drag_->dragger_->scaleFactor);
+
+      net_text_drag_->dragger_->addFinishCallback(T3NetText_DragFinishCB, (void*)this);
+      net_text_->addChild(net_text_drag_); // dragger then the xform it affects
+      net_text_->addChild(net_text_drag_xform_);
+      // we then copy the drag_xform back into the main xform in the CB, to effect the change
+    }
+  }
   wt_lines_ = new SoSeparator;
   wt_lines_->setName("WtLines");
   wt_lines_draw_ = new SoDrawStyle;
@@ -706,13 +738,7 @@ T3NetNode::~T3NetNode()
 }
 
 void T3NetNode::setDefaultCaptionTransform() {
-  SbVec3f tran(0.0f, -.55f, 0.03f);
+  SbVec3f tran(0.0f, -.05f + -box_off_, 0.03f);
   transformCaption(tran);
-}
-
-SoSeparator* T3NetNode::getNetText() {
-  if(net_text_) return net_text_;
-  net_text_ = new SoSeparator;
-  return net_text_;
 }
 

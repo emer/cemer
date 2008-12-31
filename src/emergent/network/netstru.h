@@ -1841,6 +1841,14 @@ public:
     MANUAL_POS	 	= 0x0004, // disables the automatic cleanup/positioning of layers  (turn on to use Layer_Groups to position) 
   };
 
+  enum NetTextLoc {
+    NT_BOTTOM,			// standard bottom location below network -- extends network "foot" lower below to make text more visible
+    NT_TOP_BACK,		// above top-most layer, at the back of the network depth-wise -- foot is raised as when no net text is visible
+    NT_LEFT_BACK,		// at left of network, at the back of the network depth-wise -- foot is raised as when no net text is visible
+    NT_RIGHT_BACK,		// at right of network, at the back of the network depth-wise -- foot is raised as when no net text is visible
+    NT_LEFT_MID,		// at left of network, in the middle depth-wise -- foot is raised as when no net text is visible
+    NT_RIGHT_MID,		// at right of network, in the middle depth-wise -- foot is raised as when no net text is visible
+  };
 
   BaseSpec_Group specs; 	// #CAT_Structure Specifications for network parameters
   Layer_Group	layers;		// #CAT_Structure Layers or Groups of Layers
@@ -1939,11 +1947,11 @@ public:
   void  Build();
   // #BUTTON #CAT_Structure Build the network units and Connect them (calls BuildLayers/Units/Prjns and Connect)
   virtual void  BuildLayers();
-  // #MENU #MENU_ON_Actions #CAT_Structure Build any network layers that are dynamically constructed
+  // #MENU #MENU_ON_Structure #CAT_Structure Build any network layers that are dynamically constructed
   virtual void  BuildUnits();
-  // #MENU #MENU_ON_Actions #CAT_Structure Build the network units in layers according to geometry
+  // #MENU #CAT_Structure Build the network units in layers according to geometry
   virtual void  BuildPrjns();
-  // #MENU #MENU_ON_Actions #CAT_Structure Build any network prjns that are dynamically constructed
+  // #MENU #CAT_Structure Build any network prjns that are dynamically constructed
   void	Connect();
   // #MENU #CAT_Structure Connect this network according to projections on Layers
   virtual bool	CheckBuild(bool quiet=false);
@@ -1966,7 +1974,7 @@ public:
   // #CAT_Structure connect u1 so that it recieves from u2. Create projection if necessary
 
   virtual void	RemoveCons();
-  // #MENU #MENU_ON_Actions #CONFIRM #MENU_SEP_BEFORE #CAT_Structure Remove all connections in network
+  // #MENU #MENU_ON_Structure #CONFIRM #MENU_SEP_BEFORE #CAT_Structure Remove all connections in network
   virtual void	RemoveUnits();
   // #MENU #CONFIRM #CAT_Structure Remove all units in network (preserving unit groups)
   virtual void	RemoveUnitGroups();
@@ -1990,6 +1998,10 @@ public:
   // #CAT_ObjectMgmt Remove monitoring of all objects in all processes associated with parent project
   virtual void	UpdateMonitors();
   // #CAT_ObjectMgmt Update monitoring of all objects in all processes associated with parent project
+  virtual void	NetControlPanel(SelectEdit* editor, const String& extra_label = "",
+				const String& sub_gp_nm = "");
+  // #MENU #MENU_ON_SelectEdit #MENU_SEP_BEFORE #NULL_OK_0  #NULL_TEXT_0_NewEditor #CAT_Display add the key network counters and statistics to a select edit dialog (control panel) (if editor is NULL, a new one is created in .edits).  The extra label is prepended to each member name, and if sub_group, then all items are placed in a subgroup with the network's name.  NOTE: be sure to click update_after on NetCounterInit and Incr at Trial program level to trigger updates of select edit display!
+
   virtual bool	SnapVar();
   // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of currently selected variable in netview -- copies this value to the snap unit variable
   virtual bool	SnapAnd();
@@ -2016,6 +2028,8 @@ public:
   // #MENU_BUTTON #MENU_ON_NetView #MENU_SEP_BEFORE #CAT_Display add a new text label to the network view objects
   virtual NetViewObj* NewGlassBrain();
   // #MENU_BUTTON #MENU_ON_NetView #CAT_Display add a new glass brain (as two separate hemispheres) to netview objects -- useful for situating biologically-based network models
+  virtual void	PlaceNetText(NetTextLoc net_text_loc, float scale = 1.0f);
+  // #MENU_BUTTON #MENU_ON_NetView #CAT_Display locate the network text information (counters, statistics -- typically shown at bottom of network) in a new standard location (it can also be dragged anywhere in the net view, turn on lay_mv button and click on red arrow) -- can also change teh scaling
 
   virtual void  Init_InputData();
   // #CAT_Activation Initializes external and target inputs
@@ -2024,7 +2038,7 @@ public:
   virtual void  Init_NetinDelta();
   // #CAT_Activation Initialize the netinput variable(s) (prior to Send_Netin)
   virtual void  Init_Acts();
-  // #MENU #MENU_SEP_BEFORE #CAT_Activation initialize the unit activation state variables
+  // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_Activation initialize the unit activation state variables
   virtual void  Init_dWt();
   // #CAT_Learning Initialize the weight change variables
   virtual void  Init_Weights();
@@ -2077,32 +2091,32 @@ public:
   // #CAT_Statistic compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more
 
   virtual void	LayerZPos_Unitize();
-  // #CAT_Structure #MENU set layer z axis positions to unitary increments (0, 1, 2.. etc)
+  // #MENU #MENU_ON_Structure #CAT_Structure set layer z axis positions to unitary increments (0, 1, 2.. etc)
   virtual void	LayerPos_Cleanup();
-  // #CAT_Structure #MENU_BUTTON #MENU_ON_NetView cleanup the layer positions relative to each other (prevent overlap etc)
+  // #MENU_BUTTON #MENU_ON_NetView #CAT_Structure cleanup the layer positions relative to each other (prevent overlap etc)
 
   virtual void	Compute_LayerDistances();
-  // #MENU #CONFIRM #CAT_Structure compute distances between layers and input/output layers
+  // #MENU #MENU_ON_Structure #MENU_SEP_BEFORE #CONFIRM #CAT_Structure compute distances between layers and input/output layers
   virtual void	Compute_PrjnDirections();
   // #MENU #CONFIRM #CAT_Structure compute the directions of projections based on the relative distances from input/output layers (calls Compute_LayerDistances first)
 
   virtual void	SetUnitNames(bool force_use_unit_names = false);
-  // #MENU #MENU_SEP_BEFORE #CAT_Structure for all layers, set unit names from unit_names matrix (called automatically on Build) -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
+  // #CAT_Structure for all layers, set unit names from unit_names matrix (called automatically on Build) -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
   virtual void 	SetUnitNamesFromDataTable(DataTable* unit_names_table, int max_unit_chars=-1,
 					  bool propagate_names=false);
-  // #MENU #CAT_Structure label units in the network based on unit names table -- also sets the unit_names matrix in the layer so they are persistent -- max_unit_chars is max length of name to apply to unit (-1 = all) -- if propagate_names is set, then names will be propagated along one-to-one projections to other layers that do not have names in the table (GetLocalistName)
+  // #MENU #MENU_ON_State #CAT_Structure label units in the network based on unit names table -- also sets the unit_names matrix in the layer so they are persistent -- max_unit_chars is max length of name to apply to unit (-1 = all) -- if propagate_names is set, then names will be propagated along one-to-one projections to other layers that do not have names in the table (GetLocalistName)
   virtual void	GetUnitNames(bool force_use_unit_names = true);
-  // #MENU #CAT_Structure for all layers, get unit_names matrix values from current unit name values -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
+  // #CAT_Structure for all layers, get unit_names matrix values from current unit name values -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
   virtual void	GetLocalistName();
   // #CAT_Structure look for a receiving projection from a single unit, which has a name: if found, set our name to that name
 
   virtual void	TransformWeights(const SimpleMathSpec& trans);
-  // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights
+  // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights
   virtual void	AddNoiseToWeights(const Random& noise_spec);
   // #MENU #CAT_Learning add noise to weights using given noise specification
   virtual int	PruneCons(const SimpleMathSpec& pre_proc,
 			     Relation::Relations rel, float cmp_val);
-  // #MENU #USE_RVAL #CAT_Structure remove weights that (after pre-proc) meet relation to compare val
+  // #MENU #MENU_ON_Structure #MENU_SEP_BEFORE #USE_RVAL #CAT_Structure remove weights that (after pre-proc) meet relation to compare val
   virtual int	ProbAddCons(float p_add_con, float init_wt = 0.0);
   // #MENU #USE_RVAL #CAT_Structure probabilistically add new connections (assuming prior pruning), init_wt = initial weight value of new connection
   virtual int	LesionCons(float p_lesion, bool permute=true);
@@ -2111,10 +2125,10 @@ public:
   // #MENU #USE_RVAL #CAT_Structure remove units with prob p_lesion (permute = fixed no. lesioned)
 
   virtual void	TwoD_Or_ThreeD(LayerLayout layout_type);
-  // #MENU #MENU_SEP_BEFORE #CAT_Display Set 2d or 3d and reposition and redraw layers
+  // #MENU #MENU_ON_Structure #MENU_SEP_BEFORE #CAT_Display Set 2d or 3d and reposition and redraw layers
 
   virtual void	WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay);
-  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
+  // #MENU #MENU_ON_State #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
   virtual void	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (if a network, one col, if a layer, number of layers, etc).  for projection data, specify: prjns.xxx  for weight values, specify r. or s. (e.g., r.wt) -- this uses a NetMonitor internally (just does AddNetwork with variable, then gets data), so see documentation there for more information
 

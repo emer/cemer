@@ -351,7 +351,7 @@ public:
 
   virtual T* 	FindLeafName(const char* item_nm, int& idx=no_idx) const
   { return (T*)FindLeafName_(item_nm, idx); }
-  // #MENU #MENU_ON_Edit #USE_RVAL #ARGC_1 #LABEL_Find #CAT_Access Find element with given name (item_nm), sets idx to leaf idx or -1
+  // #CAT_Access Find element with given name (item_nm), sets idx to leaf idx or -1
   virtual T* 	FindLeafNameContains(const char* item_nm, int& idx=no_idx) const
   { return (T*)FindLeafNameContains_(item_nm, idx); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARGC_1 #LABEL_Find #CAT_Access Find first element whose name contains given name (item_nm), sets idx to leaf idx or -1

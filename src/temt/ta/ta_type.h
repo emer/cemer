@@ -619,8 +619,8 @@ public:
   };    
   
   enum EditStyle { // style of editor
-    ES_WIDGETS, // #LABEL_Widgets use the legacy style, that uses nested live widgets (slower)
-    ES_TABLE, // #LABEL_Table use the new tabular view style, that makes edit widgets on demand (much faster)
+    ES_ALL_CONTROLS,   // #LABEL_All_Controls all the edit controls are displayed at the same time, which is slower but can present the data in a somewhat more readable fashion -- this is the original default for all edit dialogs
+    ES_ACTIVE_CONTROL, // #LABEL_Active_Control only display the currently-active edit control, with the rest of the information displayed as formatted text values -- this is much faster and is preferred for the select edit (control panel) displays, which otherwise can really slow down the system
   };
   
   enum SimageAvail { // whether simage is available or not
@@ -649,6 +649,7 @@ public:
   static GuiStyle	gui_style;	// #SAVE #CAT_GUI #DEF_GS_DEFAULT style options provided by the gui system, affecting how the widgets are drawn, etc (not all are available on all platforms) -- change only takes effect on restarting the program
   static String		font_name;	// #SAVE #CAT_GUI default font name to use
   static int		font_size;	// #SAVE #CAT_GUI default font size to use
+  static String		t3d_font_name;	// #SAVE #CAT_GUI #EXPERT default font name to use in the 3D display (default is Arial -- not many options supported depending on platform -- set the environment variable COIN_DEBUG_FONTSUPPORT to debug)
   static ConsoleType	console_type; // #SAVE #CAT_GUI style of the console to display -- **REQUIRES APP RESTART
 #ifdef TA_OS_WIN // none on windows (yet), so we omit for clarity
   static ConsoleOptions	console_options; // #IGNORE #CAT_GUI options for the console **REQUIRES APP RESTART
@@ -661,7 +662,7 @@ public:
   
   static int		tree_indent; 	// #SAVE #CAT_GUI number of pixels to indent in the tree browser gui interface
 
-  static int		max_menu;	// #SAVE #CAT_GUI #EXPERT maximum number of items in a menu
+  static int		max_menu;	// #SAVE #CAT_GUI #EXPERT maximum number of items in a menu -- largely obsolete at this point
   static int		search_depth;   // #SAVE #CAT_GUI #EXPERT depth recursive find will search for a path object
   static int		color_scale_size; // #SAVE #CAT_GUI #EXPERT number of colors to put in a color scale
   static int		jpeg_quality; 	// #SAVE #CAT_GUI jpeg quality for dumping jpeg files (1-100; 95 default)
@@ -673,6 +674,9 @@ public:
 //NOTE: following not keeping tokens so cannot be viewed in any mode
   static ViewColor_List* view_colors; 	// #NO_SAVE #NO_SHOW colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
 #endif
+  static EditStyle	std_edit_style; // #SAVE #CAT_GUI style to use for standard edit dialogs (i.e., non select-edit dialogs)
+  static EditStyle	select_edit_style; // #SAVE #CAT_GUI style to use for select edit dialogs (which are typically used for control panels, etc)
+
   static int		antialiasing_level; // #SAVE #CAT_GUI level of smoothing to perform in the 3d display -- values depend on hardware acceleration, but 2 or 4 are typical values.  1 or lower disables entirely.  modern hardware can do typically do level 4 with little slowdown in speed.
   static float		text_complexity;     // #SAVE #CAT_GUI #EXPERT complexity value (between 0 and 1 for rendering text -- a lower number (e.g., .1) should make things faster, without much cost in the display quality
 
@@ -684,7 +688,6 @@ public:
   static bool		auto_edit; 	// #SAVE #CAT_GUI #EXPERT automatic edit dialog after creation?
   static AutoRevert	auto_revert;    // #SAVE #CAT_GUI #EXPERT when dialogs are automatically updated (reverted), what to do about changes?
   static MatrixView	matrix_view;	// #SAVE #CAT_GUI #EXPERT #DEF_BOT_ZERO whether to show matrices with 0 row at top or bottom of view
-  static EditStyle	edit_style;	// #SAVE #CAT_GUI #EXPERT #DEF_ES_WIDGETS style to use for edit dialogs
   static bool		beep_on_error; // #SAVE #DEF_false #CAT_GUI beep when an error message is printed on the console
   static short		num_recent_files; // #SAVE #DEF_10 #MIN_0 #MAX_50 number of recent files to save
   static short		num_recent_paths; // #SAVE #DEF_10 #MIN_0 #MAX_50 number of recent paths to save

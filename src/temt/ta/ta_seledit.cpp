@@ -470,30 +470,31 @@ int SelectEdit::SearchMembers(taNBase* obj, const String& memb_contains) {
 }
 
 bool SelectEdit::SelectMember(taBase* base, MemberDef* mbr,
-  const String& xtra_lbl, const String& desc) 
+  const String& xtra_lbl, const String& desc, const String& sub_gp_nm) 
 {
   if (!base) return false;
   String eff_desc = desc; // non-const
   String full_lbl;
   base->GetSelectText(mbr, xtra_lbl, full_lbl, eff_desc);
-  bool rval = SelectMember_impl(base, mbr, full_lbl, eff_desc);
+  bool rval = SelectMember_impl(base, mbr, full_lbl, eff_desc, sub_gp_nm);
   ReShowEdit(true); //forced
   return rval;
 }
 
 bool SelectEdit::SelectMemberNm(taBase* base, const String& md_nm,
-  const String& xtra_lbl, const String& desc) 
+  const String& xtra_lbl, const String& desc, const String& sub_gp_nm) 
 {
   if(base == NULL) return false;
   MemberDef* md = (MemberDef*)base->FindMember(md_nm);
   if (md == NULL) return false;
-  return SelectMember(base, md, xtra_lbl, desc);
+  return SelectMember(base, md, xtra_lbl, desc, sub_gp_nm);
 }
 
 bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
-  const String& full_lbl, const String& desc)
+	    const String& full_lbl, const String& desc, const String& sub_gp_nm)
 {
   int bidx = -1;
+  // this looks at the leaves:
   EditMbrItem* item = (EditMbrItem*)SelectEditItem::StatFindItemBase(&mbrs, base, md, bidx);
   bool rval = false;
   if (bidx < 0) {
@@ -503,33 +504,47 @@ bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
     item->item_nm = md->name;
     item->label = full_lbl;
     item->desc = desc; // even if empty
-    mbrs.Add(item); // will trigger BaseAdded
+    if(sub_gp_nm.nonempty()) {
+      EditMbrItem_Group* egp = (EditMbrItem_Group*)mbrs.FindMakeGpName(sub_gp_nm);
+      egp->Add(item);
+    }
+    else {
+      mbrs.Add(item); // will trigger BaseAdded
+    }
     rval = true;
+  }
+  else if(sub_gp_nm.nonempty()) {
+    EditMbrItem_Group* egp = (EditMbrItem_Group*)item->owner;
+    if(egp == &mbrs || egp->name != sub_gp_nm) {
+      EditMbrItem_Group* negp = (EditMbrItem_Group*)mbrs.FindMakeGpName(sub_gp_nm);
+      negp->Transfer(item);	// grab it
+    }
   }
   return rval;
 }
 
 bool SelectEdit::SelectMethod(taBase* base, MethodDef* md,
-  const String& xtra_lbl, const String& desc) 
+  const String& xtra_lbl, const String& desc, const String& sub_gp_nm) 
 {
-  bool rval = SelectMethod_impl(base, md, xtra_lbl, desc);
+  bool rval = SelectMethod_impl(base, md, xtra_lbl, desc, sub_gp_nm);
   ReShowEdit(true); //forced
   return rval;
 }
 
 bool SelectEdit::SelectMethodNm(taBase* base, const String& md_nm,
-  const String& xtra_lbl, const String& desc) 
+  const String& xtra_lbl, const String& desc, const String& sub_gp_nm) 
 {
   if(base == NULL) return false;
   MethodDef* md = (MethodDef*)base->GetTypeDef()->methods.FindName(md_nm);
   if (md == NULL) return false;
-  return SelectMethod(base, md, xtra_lbl, desc);
+  return SelectMethod(base, md, xtra_lbl, desc, sub_gp_nm);
 }
 
 bool SelectEdit::SelectMethod_impl(taBase* base, MethodDef* mth,
-  const String& xtra_lbl, const String& desc)
+  const String& xtra_lbl, const String& desc, const String& sub_gp_nm)
 {
   int bidx = -1;
+  // this looks at the leaves:
   EditMthItem* item = (EditMthItem*)SelectEditItem::StatFindItemBase(&mths, base, mth, bidx);
   bool rval = false;
   if (bidx < 0) {
@@ -543,8 +558,21 @@ bool SelectEdit::SelectMethod_impl(taBase* base, MethodDef* mth,
     item->label = xtra_lbl;
     if (item->label.nonempty()) item->label += " ";
     item->label += mth->GetLabel();
-    mths.Add(item); // will call BaseAdded
+    if(sub_gp_nm.nonempty()) {
+      EditMthItem_Group* egp = (EditMthItem_Group*)mths.FindMakeGpName(sub_gp_nm);
+      egp->Add(item);
+    }
+    else {
+      mths.Add(item); // will call BaseAdded
+    }
     rval = true;
+  }
+  else if(sub_gp_nm.nonempty()) {
+    EditMthItem_Group* egp = (EditMthItem_Group*)item->owner;
+    if(egp == &mths || egp->name != sub_gp_nm) {
+      EditMthItem_Group* negp = (EditMthItem_Group*)mths.FindMakeGpName(sub_gp_nm);
+      negp->Transfer(item);	// grab it
+    }
   }
   return rval;
 }

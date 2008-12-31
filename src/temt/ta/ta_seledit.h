@@ -211,18 +211,22 @@ public: // public API
   // #MENU #MENU_ON_SelectEdit search given object for member names that contain given string, and add them to this editor
   virtual int	CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs = true);
   // #MENU #TYPE_taNBase compare two objects (must be of same type) and add the differences in this select edit; no_ptrs = ignore pointer fields
-  bool		SelectMember(taBase* base, MemberDef* md,
-    const String& xtra_lbl = _nilString, const String& desc = _nilString);
-  // add new member to edit if it isn't already here (returns true)
+  virtual bool	SelectMember(taBase* base, MemberDef* md,
+		     const String& xtra_lbl = _nilString, const String& desc = _nilString,
+		     const String& sub_gp_nm = _nilString);
+  // add new member to edit if it isn't already here (returns true), optionally in a sub group
   virtual bool	SelectMemberNm(taBase* base, const String& md_nm,
-    const String& xtra_lbl, const String& desc = _nilString);
-  // add new member to edit if it isn't already here (returns true)
+			       const String& xtra_lbl, const String& desc = _nilString,
+			       const String& sub_gp_nm = _nilString);
+  // add new member to edit if it isn't already here (returns true), optionally in a sub group
   virtual bool	SelectMethod(taBase* base, MethodDef* md,
-    const String& xtra_lbl, const String& desc = _nilString);
-  // add new method to edit if it isn't already here (returns true)
+			     const String& xtra_lbl, const String& desc = _nilString,
+			     const String& sub_gp_nm = _nilString);
+  // add new method to edit if it isn't already here (returns true), optionally in a sub group
   virtual bool	SelectMethodNm(taBase* base, const String& md,
-    const String& xtra_lbl, const String& desc = _nilString);
-  // add new method to edit if it isn't already here (returns true)
+			       const String& xtra_lbl, const String& desc = _nilString,
+			       const String& sub_gp_nm = _nilString);
+  // add new method to edit if it isn't already here (returns true), optionally in a sub group
   
   virtual int	FindMbrBase(taBase* base, MemberDef* md);
   // find a given base and member, returns index
@@ -252,9 +256,10 @@ protected:
   virtual void		RemoveField_impl(int idx);
   virtual void		RemoveFun_impl(int idx);
   virtual bool		SelectMember_impl(taBase* base, MemberDef* md,
-    const String& lbl, const String& desc);
+		  const String& lbl, const String& desc, const String& sub_gp_nm = _nilString);
   virtual bool		SelectMethod_impl(taBase* base, MethodDef* md,
-    const String& lbl, const String& desc);
+					  const String& lbl, const String& desc,
+					  const String& sub_gp_nm = _nilString);
   bool			ReShowEdit(bool force = false); // this is just really a synonym for doing a DataChanged
   
 private:

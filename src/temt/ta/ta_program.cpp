@@ -4000,7 +4000,8 @@ Program* Program::MakeTemplate() {
   return prog;
 }
   
-bool Program::SelectCtrlFunsForEdit(SelectEdit* editor, const String& extra_label) {
+bool Program::SelectCtrlFunsForEdit(SelectEdit* editor, const String& extra_label,
+				    const String& sub_gp_nm) {
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "SelectFunForEdit", "cannot find project")) return false;
@@ -4008,14 +4009,14 @@ bool Program::SelectCtrlFunsForEdit(SelectEdit* editor, const String& extra_labe
   }
   TypeDef* td = GetTypeDef();
   bool rval = true;
-  MethodDef* md = td->methods.FindName("Init");
-  if(md) rval = editor->SelectMethod(this, md, extra_label);
+  MethodDef* md = td->methods.FindName("Init"); // "" = desc field
+  if(md) rval = editor->SelectMethod(this, md, extra_label, "", sub_gp_nm);
   md = td->methods.FindName("Run");
-  if(md) rval |= editor->SelectMethod(this, md, extra_label);
+  if(md) rval |= editor->SelectMethod(this, md, extra_label, "", sub_gp_nm);
   md = td->methods.FindName("Step");
-  if(md) rval |= editor->SelectMethod(this, md, extra_label);
+  if(md) rval |= editor->SelectMethod(this, md, extra_label, "", sub_gp_nm);
   md = td->methods.FindName("Stop");
-  if(md) rval |= editor->SelectMethod(this, md, extra_label);
+  if(md) rval |= editor->SelectMethod(this, md, extra_label, "", sub_gp_nm);
   return rval;
 }
 

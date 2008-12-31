@@ -971,11 +971,11 @@ iSelectEditPanel::iSelectEditPanel(taiDataLink* dl_)
   SelectEdit* se_ = sele();
   se = NULL;
   if (se_) {
-    switch (taMisc::edit_style) {
-    case taMisc::ES_WIDGETS:
+    switch (taMisc::select_edit_style) {
+    case taMisc::ES_ALL_CONTROLS:
       se = new iSelectEditDataHost(se_, se_->GetTypeDef()); 
       break;
-    case taMisc::ES_TABLE:
+    case taMisc::ES_ACTIVE_CONTROL:
       se = new iSelectEditDataHost2(se_, se_->GetTypeDef()); 
       break;
     }

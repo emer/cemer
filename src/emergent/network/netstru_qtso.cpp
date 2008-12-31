@@ -1808,6 +1808,47 @@ String Network::GetViewVar() {
   return nv->unit_disp_md->name;
 }
 
+void Network::PlaceNetText(NetTextLoc net_text_loc, float scale) {
+  NetView* nv = FindView();
+  if(!nv) return;
+
+  nv->net_text_xform.scale = scale;
+
+  switch(net_text_loc) {
+  case NT_BOTTOM:		// x, z, y from perspective of netview
+    nv->net_text_xform.translate.SetXYZ(0.0f, -0.5f, 0.0f);
+    nv->net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.0f);
+    nv->net_text_rot = 0.0f;
+    break;
+  case NT_TOP_BACK:
+    nv->net_text_xform.translate.SetXYZ(0.0f, 1.0f, -1.0f);
+    nv->net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi);
+    nv->net_text_rot = -90.0f;
+    break;
+  case NT_LEFT_BACK:
+    nv->net_text_xform.translate.SetXYZ(-1.0f, 0.0f, -1.0f);
+    nv->net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi);
+    nv->net_text_rot = -90.0f;
+    break;
+  case NT_RIGHT_BACK:
+    nv->net_text_xform.translate.SetXYZ(1.0f, 0.0f, -1.0f);
+    nv->net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi);
+    nv->net_text_rot = -90.0f;
+    break;
+  case NT_LEFT_MID:
+    nv->net_text_xform.translate.SetXYZ(-1.0f, 0.0f, -0.5f);
+    nv->net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi);
+    nv->net_text_rot = -90.0f;
+    break;
+  case NT_RIGHT_MID:
+    nv->net_text_xform.translate.SetXYZ(1.0f, 0.0f, -0.5f);
+    nv->net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi);
+    nv->net_text_rot = -90.0f;
+    break;
+  }
+  nv->Render();
+}
+
 void NetView::Initialize() {
   data_base = &TA_Network;
   unit_disp_md = NULL;
@@ -1816,6 +1857,10 @@ void NetView::Initialize() {
   nvp = NULL;
   display = true;
   lay_mv = true;
+  net_text = true;
+  net_text_xform.translate.SetXYZ(0.0f, -0.5f, 0.0f); // start at bottom 
+  net_text_rot = 0.0f;
+  net_box_offset = -0.5f;
   unit_disp_mode = UDM_BLOCK;
   unit_text_disp = UTD_NONE;
   unit_con_md = false;
@@ -1841,6 +1886,7 @@ void NetView::InitLinks() {
   taBase::Own(max_size, this);
   taBase::Own(font_sizes, this);
   taBase::Own(view_params, this);
+  taBase::Own(net_text_xform, this);
 }
 
 void NetView::CutLinks() {
@@ -1857,6 +1903,11 @@ void NetView::CutLinks() {
   scale.CutLinks();
   lay_disp_modes.CutLinks();
   inherited::CutLinks();
+}
+
+void NetView::CopyFromView(NetView* cp) {
+  Copy_(*cp);
+  // nothing else to do..
 }
 
 void NetView::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
@@ -2214,6 +2265,18 @@ void NetView::InitDisplay(bool init_panel) {
   // rebuilt later (requires full re-Render, not just Render_impl. not sure
   // why not just do that..  much more invasive I guess
 //   BuildAll();	// rebuild views
+
+  // figure out whether the net box footer should be lower or not
+  if(net_text) {
+    if(net_text_xform.translate.y < -0.1f) // positioned low, so keep box low
+      net_box_offset = .5f;
+    else
+      net_box_offset = 0.0f;
+  }
+  else {
+    net_box_offset = 0.0f;
+  }
+
   GetMembs();
   if (init_panel) {
     InitPanel();
@@ -2308,13 +2371,13 @@ const iColor NetView::bgColor(bool& ok) const {
 
 void NetView::Render_pre() {
   InitDisplay();
-
+  
   bool show_drag = true;;
   SoQtViewer* vw = GetViewer();
   if(vw)
     show_drag = !vw->isViewing();
 
-  setNode(new T3NetNode(this, show_drag));
+  setNode(new T3NetNode(this, net_box_offset, show_drag, net_text, show_drag && lay_mv));
   SoMaterial* mat = node_so()->material(); //cache
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
   mat->transparency.setValue(0.5f);
@@ -2365,10 +2428,59 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   float h = 0.04f; // nominal amount of height, so we don't vanish
   netnd->txfm_shape()->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
   netnd->txfm_shape()->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-  netnd->txfm_shape()->translation.setValue(.5f, .5f * h - .5f, -.5f);
-  dragger->translation.setValue(0.0f, -.5f, 0.0f);
+  netnd->txfm_shape()->translation.setValue(.5f, .5f * h - nv->net_box_offset, -.5f);
+  dragger->translation.setValue(0.0f, -nv->net_box_offset, 0.0f);
   dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
   dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+
+  nv->UpdateDisplay();
+}
+
+// callback for netview net text transformer dragger
+void T3NetText_DragFinishCB(void* userData, SoDragger* dragr) {
+  SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
+  T3NetNode* netnd = (T3NetNode*)userData;
+  NetView* nv = (NetView*)netnd->dataView();
+
+  SbRotation cur_rot;
+  cur_rot.setValue(SbVec3f(nv->net_text_xform.rotate.x, nv->net_text_xform.rotate.y, 
+			   nv->net_text_xform.rotate.z), nv->net_text_xform.rotate.rot);
+
+  SbVec3f trans = dragger->translation.getValue();
+//   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
+  cur_rot.multVec(trans, trans); // rotate the translation by current rotation
+  trans[0] *= nv->net_text_xform.scale.x;  trans[1] *= nv->net_text_xform.scale.y;
+  trans[2] *= nv->net_text_xform.scale.z;
+  FloatTDCoord tr(trans[0], trans[1], trans[2]);
+  nv->net_text_xform.translate += tr;
+
+  const SbVec3f& scale = dragger->scaleFactor.getValue();
+//   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
+  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
+  nv->net_text_xform.scale *= sc;
+
+  SbVec3f axis;
+  float angle;
+  dragger->rotation.getValue(axis, angle);
+//   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
+  if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
+    SbRotation rot;
+    rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
+    SbRotation nw_rot = rot * cur_rot;
+    nw_rot.getValue(axis, angle);
+
+    nv->net_text_xform.rotate.SetXYZR(axis[0], axis[1], axis[2], angle);
+  }
+
+  // reset the drag guy: note that drag is still connected to the drag xform so you
+  // need to reset dragger first, then the xform!
+  dragger->translation.setValue(0.0f, 0.0f, 0.0f);
+  dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+  dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+  netnd->netTextDragXform()->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+  netnd->netTextDragXform()->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+  netnd->netTextDragXform()->translation.setValue(0.0f, 0.0f, 0.0f);
 
   nv->UpdateDisplay();
 }
@@ -2376,7 +2488,6 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
 void NetView::Render_impl() {
   // font properties percolate down to all other elements, unless set there
   //  cerr << "nv render_impl" << endl;
-
   FloatTransform* ft = transform(true);
   *ft = main_xform;
 
@@ -2391,7 +2502,12 @@ void NetView::Render_impl() {
 
   node_so->setCaption(cap_txt.chars());
 
-  Render_net_text();
+  if(net_text) {
+    SoTransform* tx = node_so->netTextXform();
+    net_text_xform.CopyTo(tx);
+
+    Render_net_text();
+  }
   Render_wt_lines();
 
   inherited::Render_impl();
@@ -2403,10 +2519,9 @@ void NetView::Render_net_text() {
 
   bool build_text = false;
   SoSeparator* net_txt = node_so->netText();
-  if(!net_txt) {
-    net_txt = node_so->getNetText();
+  if(!net_txt) return;		// screwup
+  if(net_txt->getNumChildren() <= 4) {
     build_text = true;
-    node_so->addChild(net_txt);
     SoBaseColor* bc = new SoBaseColor;
     bc->rgb.setValue(0, 0, 0); //black is default for text
     net_txt->addChild(bc);
@@ -2416,14 +2531,41 @@ void NetView::Render_net_text() {
     net_txt->addChild(cplx);
     SoFont* fnt = new SoFont();
     fnt->size.setValue(font_sizes.net_vals);
-    fnt->name = "Arial";
+    fnt->name = (const char*)taMisc::t3d_font_name;
     net_txt->addChild(fnt);
   }
+
+  int txt_st_off = 3 + 1;	// 3 above + 1 transform
+  if(node_so->netTextDrag())
+    txt_st_off+=2;		// dragger + extra xform
+
+  float rot_rad = net_text_rot / taMath_float::deg_per_rad;
+
   TypeDef* td = net()->GetTypeDef();
-  int chld_idx = 0;
-  int disp_idx = 0;
   int per_row = 2;
-  int n_rows = 9;
+
+  int cur_row = 0;
+  int cur_col = 0;
+  for(int i=td->members.size-1; i>=0; i--) {
+    MemberDef* md = td->members[i];
+    if(!md->HasOption("VIEW")) continue;
+    if(md->type->InheritsFrom(&TA_taString)) {
+      cur_row++;
+      cur_col=1;
+    }
+    else {
+      cur_col++;
+      if(cur_col >= per_row) {
+	cur_col = 0;
+	cur_row++;
+      }
+    }
+  }
+  int n_rows = cur_row;
+
+  int chld_idx = 0;
+  cur_row = 0;
+  cur_col = 0;
   // todo: could optimize 1st 3 counters to be on 1 row to save a row..
   for(int i=td->members.size-1; i>=0; i--) {
     MemberDef* md = td->members[i];
@@ -2431,25 +2573,34 @@ void NetView::Render_net_text() {
     if(build_text) {
       SoSeparator* tsep = new SoSeparator;
       net_txt->addChild(tsep);
-      SoTranslation* tr = new SoTranslation;
+      SoTransform* tr = new SoTransform;
       tsep->addChild(tr);
-      int col_idx = disp_idx % per_row;
-      int disp_inc = 1;
-      if(md->type->InheritsFrom(&TA_taString)) {
-	if(col_idx != 0) disp_idx += per_row - col_idx;
-	col_idx = 0;
-	disp_inc = per_row;
+      bool cur_str = false;
+      if(md->type->InheritsFrom(&TA_taString) && cur_col > 0) { // go to next
+	cur_row++;
+	cur_col=0;
+	cur_str = true;
       }
-      float xv = 0.05f + (float)col_idx / (float)(per_row);
-      float yv = (float)((disp_idx / per_row)+1) / (float)(n_rows + 2.0f);
-      tr->translation.setValue(xv, -.5f, -yv);
+      float xv = 0.05f + (float)cur_col / (float)(per_row);
+      float yv = ((float)(cur_row+1.0f) / (float)(n_rows + 2.0f));
+      tr->translation.setValue(xv, 0.0f, -yv);
+      tr->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), rot_rad);
       SoAsciiText* txt = new SoAsciiText();
       txt->justification = SoAsciiText::LEFT;
       tsep->addChild(txt);
-      disp_idx += disp_inc;
+      if(cur_str) {
+	cur_row++;
+	cur_col=0;
+      }
+      else {
+	cur_col++;
+	if(cur_col >= per_row) {
+	  cur_col = 0;
+	  cur_row++;
+	}
+      }
     }
-    SoSeparator* tsep = (SoSeparator*)net_txt->getChild(chld_idx + 3);
-    // 3 = base color + cplx + font, 1 per guy
+    SoSeparator* tsep = (SoSeparator*)net_txt->getChild(chld_idx + txt_st_off);
     SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
     String el = md->name + ": " + md->type->GetValStr(md->GetOff((void*)net()));
     txt->string.setValue(el.chars());
@@ -2799,7 +2950,9 @@ void NetView::UpdateUnitValues() { // *actually* only does unit value updating
 void NetView::DataUpdateView_impl() {
   if (!display) return;
   UpdateUnitValues();
-  Render_net_text();
+  if(net_text) {
+    Render_net_text();
+  }
   Render_wt_lines();
 }
 
@@ -2850,13 +3003,26 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   chkDisplay = new QCheckBox("Display", widg);
   connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkDisplay);
-//   layDispCheck->addSpacing(taiM->hsep_c);
+  layDispCheck->addSpacing(taiM->hsep_c);
 
   chkLayMove = new QCheckBox("Lay\nMv", widg);
   chkLayMove->setToolTip("Turn on the layer moving controls when in the manipulation mode (red arrow) of viewer -- these can sometimes interfere with viewing weights, so you can turn them off here (but then you won't be able to move layers around in the GUI)");
   connect(chkLayMove, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkLayMove);
-//   layDispCheck->addSpacing(taiM->hsep_c);
+  layDispCheck->addSpacing(taiM->hsep_c);
+
+  chkNetText = new QCheckBox("Net\nTxt", widg);
+  chkNetText->setToolTip("Turn on the network text display at the base of the network, showing the current state of various counters and stats");
+  connect(chkNetText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layDispCheck->addWidget(chkNetText);
+  layDispCheck->addSpacing(taiM->hsep_c);
+
+  lblTextRot = taiM->NewLabel("Txt\nRot", widg, font_spec);
+  lblTextRot->setToolTip("Rotation of the network text in the Z axis -- set to -90 if text overall is rotated upright in the display");
+  layDispCheck->addWidget(lblTextRot);
+  fldTextRot = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  layDispCheck->addWidget(fldTextRot->GetRep());
+  layDispCheck->addSpacing(taiM->hsep_c);
 
   lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
   lblUnitText->setToolTip("What text to display for each unit (values, names)");
@@ -2864,7 +3030,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   cmbUnitText = dl.Add(new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
 				this, NULL, widg, taiData::flgAutoApply));
   layDispCheck->addWidget(cmbUnitText->GetRep());
-//   layDispCheck->addSpacing(taiM->hsep_c);
+  layDispCheck->addSpacing(taiM->hsep_c);
 
   lblDispMode = taiM->NewLabel("Style", widg, font_spec);
   lblDispMode->setToolTip("How to display unit values.  3d Block (default) is optimized\n\
@@ -2873,7 +3039,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   cmbDispMode = dl.Add(new taiComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
     this, NULL, widg, taiData::flgAutoApply));
   layDispCheck->addWidget(cmbDispMode->GetRep());
-  layDispCheck->addStretch();
+  layDispCheck->addSpacing(taiM->hsep_c);
   
   lblPrjnDisp = taiM->NewLabel("Prjn\nDisp", widg, font_spec);
   lblPrjnDisp->setToolTip("How to display projections between layers:\n\
@@ -2894,33 +3060,34 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layFontsEtc->addWidget(lblPrjnWdth);
   fldPrjnWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldPrjnWdth->GetRep());
-//   layDispCheck->addSpacing(taiM->hsep_c);
+  layFontsEtc->addSpacing(taiM->hsep_c);
 
   lblUnitTrans = taiM->NewLabel("Trans\nparency", widg, font_spec);
   lblUnitTrans->setToolTip("Unit maximum transparency level: 0 = all units opaque; 1 = inactive units are completely invisible.\n .6 = default; transparency is inversely related to value magnitude.");
   layFontsEtc->addWidget(lblUnitTrans);
   fldUnitTrans = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldUnitTrans->GetRep());
-//   layFontsEtc->addSpacing(taiM->hsep_c);
+  layFontsEtc->addSpacing(taiM->hsep_c);
 
   lblUnitFont = taiM->NewLabel("Font\nSize", widg, font_spec);
   lblUnitFont->setToolTip("Unit text font size (as a proportion of entire network display). .02 is default.");
   layFontsEtc->addWidget(lblUnitFont);
   fldUnitFont = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldUnitFont->GetRep());
-//   layFontsEtc->addSpacing(taiM->hsep_c);
+  layFontsEtc->addSpacing(taiM->hsep_c);
 
   lblLayFont = taiM->NewLabel("Layer\nFont Sz", widg, font_spec);
   lblLayFont->setToolTip("Layer name font size (as a proportion of entire network display). .04 is default.");
   layFontsEtc->addWidget(lblLayFont);
   fldLayFont = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldLayFont->GetRep());
-//   layFontsEtc->addSpacing(taiM->hsep_c);
+  layFontsEtc->addSpacing(taiM->hsep_c);
 
   chkXYSquare = new QCheckBox("XY\nSquare", widg);
   chkXYSquare->setToolTip("Make the X and Y size of network the same, so that unit cubes are always square (but can waste a certain amount of display space).");
   connect(chkXYSquare, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layFontsEtc->addWidget(chkXYSquare);
+  layFontsEtc->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
   layDisplayValues = new QVBoxLayout();  layTopCtrls->addLayout(layDisplayValues); //gbDisplayValues);
@@ -2931,40 +3098,47 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   chkSnapBord->setToolTip("Whether to display unit snapshot value snap as a border around units");
   connect(chkSnapBord, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScaleCtrls->addWidget(chkSnapBord);
+  layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblSnapBordWdth = taiM->NewLabel("Bord\nWdth", widg, font_spec);
   lblSnapBordWdth->setToolTip("Width of snap border lines"); 
   layColorScaleCtrls->addWidget(lblSnapBordWdth);
   fldSnapBordWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldSnapBordWdth->GetRep());
+  layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblUnitSpacing = taiM->NewLabel("Unit\nSpace", widg, font_spec);
   lblUnitSpacing->setToolTip("Spacing between units, as a proportion of the total width of the unit box"); 
   layColorScaleCtrls->addWidget(lblUnitSpacing);
   fldUnitSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldUnitSpacing->GetRep());
+  layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   chkWtLines = new QCheckBox("wt\nLines", widg);
   chkWtLines->setToolTip("Whether to display connection weight values as colored lines, with color and transparency varying as a function of magnitude");
   connect(chkWtLines, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScaleCtrls->addWidget(chkWtLines);
+  layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   chkWtLineSwt = new QCheckBox("s.wt", widg);
   chkWtLineSwt->setToolTip("Display the sending weights out of the unit instead of the receiving weights into it");
   connect(chkWtLineSwt, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScaleCtrls->addWidget(chkWtLineSwt);
+  layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblWtLineWdth = taiM->NewLabel("Wdth", widg, font_spec);
   lblWtLineWdth->setToolTip("Width of weight lines"); 
   layColorScaleCtrls->addWidget(lblWtLineWdth);
   fldWtLineWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtLineWdth->GetRep());
+  layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblWtLineThr = taiM->NewLabel("Thr", widg, font_spec);
   lblWtLineThr->setToolTip("Threshold for displaying weight lines: weight magnitudes below this value are not shown.");
   layColorScaleCtrls->addWidget(lblWtLineThr);
   fldWtLineThr = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtLineThr->GetRep());
+  layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   int list_flags = taiData::flgNullOk | taiData::flgAutoApply;
 
@@ -2973,6 +3147,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addWidget(lblWtPrjnLay);
   gelWtPrjnLay = dl.Add(new taiGroupElsButton(&TA_Layer_Group, this, NULL, widg, list_flags));
   layColorScaleCtrls->addWidget(gelWtPrjnLay->GetRep());
+  layColorScaleCtrls->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
   layColorBar = new QHBoxLayout();  layDisplayValues->addLayout(layColorBar);
@@ -3065,7 +3240,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   widCmdButtons = new QWidget(widg);
   iFlowLayout* fl = new iFlowLayout(widCmdButtons);
 //  layTopCtrls->addWidget(widCmdButtons);
-layOuter->addWidget(widCmdButtons);
+  layOuter->addWidget(widCmdButtons);
   
   meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons); 
   meth_but_mgr->Constr(nv()->net());
@@ -3095,6 +3270,8 @@ void NetViewPanel::UpdatePanel_impl() {
   
   chkDisplay->setChecked(nv->display);
   chkLayMove->setChecked(nv->lay_mv);
+  chkNetText->setChecked(nv->net_text);
+  fldTextRot->GetImage((String)nv->net_text_rot);
   cmbUnitText->GetEnumImage(nv->unit_text_disp);
   cmbDispMode->GetEnumImage(nv->unit_disp_mode);
   cmbPrjnDisp->GetEnumImage(nv->view_params.prjn_disp);
@@ -3144,6 +3321,8 @@ void NetViewPanel::GetValue_impl() {
 
   nv->display = chkDisplay->isChecked();
   nv->lay_mv = chkLayMove->isChecked();
+  nv->net_text = chkNetText->isChecked();
+  nv->net_text_rot = (float)fldTextRot->GetValue();
 
   int i; 
   cmbUnitText->GetEnumValue(i);
@@ -3156,10 +3335,7 @@ void NetViewPanel::GetValue_impl() {
   cmbPrjnDisp->GetEnumValue(i);
   nv->view_params.prjn_disp = (NetViewParams::PrjnDisp)i;
   
-  //note: we use a variant to get the fuzzy == operator
-  Variant f = (float)fldPrjnWdth->GetValue();
-//   req_full_redraw = req_full_redraw || (nv->view_params.prjn_width != f);
-  nv->view_params.prjn_width = f.toFloat();
+  nv->view_params.prjn_width = (float)fldPrjnWdth->GetValue();
 
   nv->view_params.unit_trans = (float)fldUnitTrans->GetValue();
   nv->font_sizes.unit = (float)fldUnitFont->GetValue();
@@ -3176,6 +3352,11 @@ void NetViewPanel::GetValue_impl() {
   nv->wt_prjn_lay = (Layer*)gelWtPrjnLay->GetValue();
 
   nv->SetScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max(), false);
+}
+
+void NetViewPanel::CopyFrom_impl() {
+  NetView* nv_; if (!(nv_ = nv())) return;
+  nv_->CallFun("CopyFromView");
 }
 
 void NetViewPanel::butNewLayer_pressed() {

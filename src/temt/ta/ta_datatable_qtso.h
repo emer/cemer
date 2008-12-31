@@ -292,6 +292,9 @@ public:
   override bool		hasViewProperties() const { return true; }
   override String	GetDisplayName() const;
 
+  void			CopyFromView(GridColView* cp);
+  // #BUTTON special copy function that just copies user view options in a robust manner
+
   DATAVIEW_PARENT(GridTableView)
   void	Copy_(const GridColView& cp);
   TA_BASEFUNS(GridColView);
@@ -375,6 +378,10 @@ public:
   const iColor 		bgColor(bool& ok) const {
     ok = true; return colorscale.background;
   } // #IGNORE
+
+
+  void			CopyFromView(GridTableView* cp);
+  // #BUTTON special copy function that just copies user view options in a robust manner
 
   void	InitLinks();
   void 	CutLinks();
@@ -509,6 +516,7 @@ protected:
   override void		InitPanel_impl(); // called on structural changes
   override void		UpdatePanel_impl(); // called on structural changes
   override void		GetValue_impl();
+  override void		CopyFrom_impl();
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
@@ -557,6 +565,9 @@ public:
 
   DATAVIEW_PARENT(GraphTableView)
 
+  void			CopyFromView(GraphColView* cp);
+  // #BUTTON special copy function that just copies user view options in a robust manner
+
   void InitLinks();
   SIMPLE_COPY(GraphColView);
   TA_BASEFUNS(GraphColView);
@@ -576,7 +587,7 @@ public:
 
   bool			on;		// is this axis active for displaying info
   AxisType		axis;		// #READ_ONLY #SHOW type of axis this is, for rendering purposes
-  GraphColView*		col_lookup; 	// #NULL_OK #FROM_GROUP_col_list #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER lookup a column of data for this axis -- only for lookup purposes -- fills in the name and is reset to NULL -- name is what is actually used
+  GraphColView*		col_lookup; 	// #NULL_OK #FROM_GROUP_col_list #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER #NO_COPY lookup a column of data for this axis -- only for lookup purposes -- fills in the name and is reset to NULL -- name is what is actually used
   String		col_name;	// name of column of data for this axis
   FixedMinMax		fixed_range;	// fixed min/max range values for display (if not fixed, automatically set to min/max of data)
 
@@ -586,13 +597,13 @@ public:
   MinMax		range;		// #READ_ONLY actual display range of the axis data
 
   int          		n_ticks;	// #DEF_10 number of ticks desired
-  float			axis_length; 	// #READ_ONLY in view units (width or depth)
-  float			start_tick;	// #READ_ONLY #NO_SAVE first tick mark here
-  float       		tick_incr;	// #READ_ONLY #NO_SAVE increment for tick marks
-  int			act_n_ticks;	// #READ_ONLY #NO_SAVE actual number of ticks
-  double		units;		// #READ_ONLY #NO_SAVE order of the units displayed (i.e. divide by this)
+  float			axis_length; 	// #READ_ONLY #NO_COPY in view units (width or depth)
+  float			start_tick;	// #READ_ONLY #NO_SAVE #NO_COPY first tick mark here
+  float       		tick_incr;	// #READ_ONLY #NO_SAVE #NO_COPY increment for tick marks
+  int			act_n_ticks;	// #READ_ONLY #NO_SAVE #NO_COPY actual number of ticks
+  double		units;		// #READ_ONLY #NO_SAVE #NO_COPY order of the units displayed (i.e. divide by this)
 
-  T3DataView_List*	col_list; 	// #READ_ONLY #NO_SAVE list of columns for the col_lookup
+  T3DataView_List*	col_list; 	// #READ_ONLY #NO_SAVE #NO_COPY list of columns for the col_lookup
 
   virtual void		SetColPtr(GraphColView* cgv);
   GraphColView* 	GetColPtr(); // get column pointer from col_name
@@ -634,6 +645,9 @@ public:
   // update the 'on' flag for this column, taking into account whether there is actually any data column set (if not, on must be false)
   virtual void		UpdateFmColLookup();
   // if col_lookup is set, update our values from it
+
+  void		CopyFromView_base(GraphAxisBase* cp);
+  // special copy function that just copies user view options in a robust manner
 
   void InitLinks();
   void CutLinks();
@@ -691,9 +705,12 @@ public:
   LineStyle	line_style;	// the style in which the line is drawn
   PointStyle	point_style;	// the style in which the points are drawn
   bool		alt_y;		// use the alternate (right hand side) y axis instead of default left axis
-  GraphPlotView* eff_y_axis;	// #NO_SAVE #READ_ONLY #NO_SET_POINTER effective y axis for this guy at this point in time
+  GraphPlotView* eff_y_axis;	// #NO_SAVE #READ_ONLY #NO_SET_POINTER #NO_COPY effective y axis for this guy at this point in time
 
   override void		UpdateOnFlag();
+
+  void		CopyFromView(GraphPlotView* cp);
+  // #BUTTON special copy function that just copies user view options in a robust manner
 
 //   void InitLinks();
 //   void CutLinks();
@@ -717,6 +734,9 @@ public:
   override void 	ComputeRange();
   override bool 	UpdateRange();
   override void		UpdateOnFlag();
+
+  void		CopyFromView(GraphAxisView* cp);
+  // #BUTTON special copy function that just copies user view options in a robust manner
 
   SIMPLE_COPY(GraphAxisView);
   T3_DATAVIEWFUNS(GraphAxisView, GraphAxisBase)
@@ -763,7 +783,8 @@ public:
     Z_INDEX,			// values in the matrix are drawn in the same graph, arrayed in depth along the z axis
   };
 
-  static const int	max_plots = 5; // maximum number of y axis data plots (fixed by plot_x guys below)
+  static const int	max_plots = 8; // maximum number of y axis data plots (fixed by plot_x guys below) 
+  // IMPORTANT: must sync one in panel to be same as this one!!
 
   GraphType		graph_type; 	// type of graph to draw
   PlotStyle		plot_style;	// how to plot the data
@@ -788,6 +809,9 @@ public:
   GraphPlotView		plot_3;		// third column of data to plot (optional)
   GraphPlotView		plot_4;		// fourth column of data to plot (optional)
   GraphPlotView		plot_5;		// fifth column of data to plot (optional)
+  GraphPlotView		plot_6;		// fifth column of data to plot (optional)
+  GraphPlotView		plot_7;		// fifth column of data to plot (optional)
+  GraphPlotView		plot_8;		// fifth column of data to plot (optional)
   bool			alt_y_1;	// #HIDDEN #READ_ONLY deprecated! plot 1 values on alt Y axis (else plot_1 axis)
   bool			alt_y_2;	// #HIDDEN #READ_ONLY deprecated! plot 2 values on alt Y axis (else plot_1 axis)
   bool			alt_y_3;	// #HIDDEN #READ_ONLY deprecated! plot 3 values on alt Y axis (else plot_1 axis)
@@ -799,6 +823,9 @@ public:
   GraphPlotView		err_3;		// data for error bars for plot_3 values
   GraphPlotView		err_4;		// data for error bars for plot_4 values
   GraphPlotView		err_5;		// data for error bars for plot_5 values
+  GraphPlotView		err_6;		// data for error bars for plot_5 values
+  GraphPlotView		err_7;		// data for error bars for plot_5 values
+  GraphPlotView		err_8;		// data for error bars for plot_5 values
   int			err_spacing;	// #CONDEDIT_ON_graph_type:XY_ERR spacing between
   float			err_bar_width;	// half-width of error bars, in view plot units
 
@@ -857,18 +884,25 @@ public:
   override const String	caption() const;
 
   override bool		hasViewProperties() const { return true; }
+
+  virtual void		CopyFromView(GraphTableView* cp);
+  // #BUTTON special copy function that just copies user view options in a robust manner
   
   void	InitLinks();
   void 	CutLinks();
   SIMPLE_COPY(GraphTableView);
   T3_DATAVIEWFUNS(GraphTableView, DataTableView)
 
+public:
+  // NOTE: following are for read-only access only!!
+
+  int			n_plots; 		// #IGNORE number of active plots
+  GraphPlotView*	all_plots[max_plots]; 	// #IGNORE just pointers to all the plot_ guys for ease
+  GraphPlotView*	all_errs[max_plots]; 	// #IGNORE just pointers to all the err_ guys for ease
+  int_Array		main_y_plots;		// #IGNORE indicies of active guys using main y axis
+  int_Array		alt_y_plots;		// #IGNORE indicies of active guys using alt y axis
+
 protected:
-  int			n_plots; 		// number of active plots
-  GraphPlotView*	all_plots[max_plots]; 	// just pointers to all the plot_ guys for ease
-  GraphPlotView*	all_errs[max_plots]; 	// just pointers to all the err_ guys for ease
-  int_Array		main_y_plots;		// indicies of active guys using main y axis
-  int_Array		alt_y_plots;		// indicies of active guys using alt y axis
   GraphPlotView*	mainy;			// main y axis guy (first main_y_plots)
   GraphPlotView*	alty;			// alt y axis guy (first alt_y_plots)
   bool			do_matrix_plot;		// if a data guy is a matrix, then find him
@@ -935,6 +969,9 @@ class TA_API iGraphTableView_Panel: public iDataTableView_Panel {
   Q_OBJECT
 INHERITED(iDataTableView_Panel)
 public:
+  static const int	max_plots = 8; // maximum number of y axis data plots (fixed by plot_x guys below) 
+  // IMPORTANT: above copied from GraphTableView -- must be same
+
   QHBoxLayout*		  layTopCtrls;
   QCheckBox*		    chkDisplay;
   QLabel*		    lblGraphType;
@@ -974,62 +1011,17 @@ public:
   QCheckBox*		    rncZAxis; // row number checkbox
   taiPolyData*	    	    pdtZAxis; // fixed_range polydata (inline)
 
-  QHBoxLayout*		  lay1Axis;
-  iCheckBox*		    onc1Axis; // on checkbox
-  QLabel*		    lbl1Axis;
-  taiListElsButton*	    lel1Axis; // list element chooser
-  taiPolyData*	    	    pdt1Axis; // fixed_range polydata (inline)
-  QCheckBox*		    chk1AltY;
+  QHBoxLayout*		  layYAxis[max_plots];
+  iCheckBox*		    oncYAxis[max_plots];
+  QLabel*		    lblYAxis[max_plots];
+  taiListElsButton*	    lelYAxis[max_plots]; // list element chooser
+  taiPolyData*	    	    pdtYAxis[max_plots]; // fixed_range polydata (inline)
+  QCheckBox*		    chkYAltY[max_plots];
 
-  QHBoxLayout*		  lay2Axis;
-  iCheckBox*		    onc2Axis; // on checkbox
-  QLabel*		    lbl2Axis;
-  taiListElsButton*	    lel2Axis; // list element chooser
-  taiPolyData*	    	    pdt2Axis; // fixed_range polydata (inline)
-  QCheckBox*		    chk2AltY;
-
-  QHBoxLayout*		  lay3Axis;
-  iCheckBox*		    onc3Axis; // on checkbox
-  QLabel*		    lbl3Axis;
-  taiListElsButton*	    lel3Axis; // list element chooser
-  taiPolyData*	    	    pdt3Axis; // fixed_range polydata (inline)
-  QCheckBox*		    chk3AltY;
-
-  QHBoxLayout*		  lay4Axis;
-  iCheckBox*		    onc4Axis; // on checkbox
-  QLabel*		    lbl4Axis;
-  taiListElsButton*	    lel4Axis; // list element chooser
-  taiPolyData*	    	    pdt4Axis; // fixed_range polydata (inline)
-  QCheckBox*		    chk4AltY;
-
-  QHBoxLayout*		  lay5Axis;
-  iCheckBox*		    onc5Axis; // on checkbox
-  QLabel*		    lbl5Axis;
-  taiListElsButton*	    lel5Axis; // list element chooser
-  taiPolyData*	    	    pdt5Axis; // fixed_range polydata (inline)
-  QCheckBox*		    chk5AltY;
-
-  QHBoxLayout*		  layErr1;
-  QLabel*		    lbl1Err;
-  taiListElsButton*	    lel1Err;
-  iCheckBox*		    onc1Err; // on checkbox
-
-  QLabel*		    lbl2Err;
-  taiListElsButton*	    lel2Err;
-  iCheckBox*		    onc2Err; // on checkbox
-
-  QLabel*		    lbl3Err;
-  taiListElsButton*	    lel3Err;
-  iCheckBox*		    onc3Err; // on checkbox
-
-  QHBoxLayout*		  layErr2;
-  QLabel*		    lbl4Err;
-  taiListElsButton*	    lel4Err;
-  iCheckBox*		    onc4Err; // on checkbox
-
-  QLabel*		    lbl5Err;
-  taiListElsButton*	    lel5Err;
-  iCheckBox*		    onc5Err; // on checkbox
+  QHBoxLayout*		  layErr[2]; // two rows
+  QLabel*		    lblErr[max_plots];
+  taiListElsButton*	    lelErr[max_plots];
+  iCheckBox*		    oncErr[max_plots]; // on checkbox
 
   QLabel*		    lblErrSpacing;
   taiField*		    fldErrSpacing;
@@ -1061,6 +1053,7 @@ protected:
   override void		InitPanel_impl(); // called on structural changes
   override void		UpdatePanel_impl(); // called on structural changes
   override void		GetValue_impl();
+  override void		CopyFrom_impl();
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}

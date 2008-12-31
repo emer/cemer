@@ -2514,7 +2514,7 @@ public:
   override void	SetProjectionDefaultTypes(Projection* prjn);
 
   virtual void	GraphInhibMod(bool flip_sign = true, DataTable* graph_data = NULL);
-  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the overall inhibitory modulation curve, including sinusoidal and final -- if flip_sign is true, then sign is reversed so that graph looks like the activation profile instead of the inhibition profile
+  // #MENU #MENU_SEP_BEFORE #NULL_OK #NULL_TEXT_NewGraphData graph the overall inhibitory modulation curve, including sinusoidal and final -- if flip_sign is true, then sign is reversed so that graph looks like the activation profile instead of the inhibition profile
 
   TA_SIMPLE_BASEFUNS(LeabraNetwork);
 protected:

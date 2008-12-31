@@ -2182,23 +2182,25 @@ Variant taBase::GetGuiArgVal(const String& fun_name, int arg_idx) {
   return Variant(GetStemBase()->name); // taiTypePtrArgType will convert from String
 }
 
-bool taBase::SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label) {
+bool taBase::SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label,
+			   const String& sub_gp_nm) {
   if(TestError(!member,"SelectForEdit", "member is null")) return false;
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "SelectForEdit", "cannot find project")) return false;
     editor = (SelectEdit*)proj->edits.New(1);
   }
-  return editor->SelectMember(this, member, extra_label);
+  return editor->SelectMember(this, member, extra_label, "", sub_gp_nm);
 }
 
-bool taBase::SelectForEditNm(const String& member, SelectEdit* editor, const String& extra_label) {
+bool taBase::SelectForEditNm(const String& member, SelectEdit* editor,
+			     const String& extra_label, const String& sub_gp_nm) {
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "SelectForEditNm", "cannot find project")) return false;
     editor = (SelectEdit*)proj->edits.New(1);
   }
-  return editor->SelectMemberNm(this, member, extra_label);
+  return editor->SelectMemberNm(this, member, extra_label, "", sub_gp_nm);
 }
 
 int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor) {
@@ -2246,23 +2248,25 @@ int taBase::SelectForEditCompare(taBase*cmp_obj, SelectEdit*& editor, bool no_pt
   return editor->CompareObjs(this, cmp_obj, no_ptrs);
 }
 
-bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label) {
+bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor,
+			      const String& extra_label, const String& sub_gp_nm) {
   if(TestError(!function, "SelectFunForEdit", "function is null")) return false;
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "SelectFunForEdit", "cannot find project")) return false;
     editor = (SelectEdit*)proj->edits.New(1);
   }
-  return editor->SelectMethod(this, function, extra_label);
+  return editor->SelectMethod(this, function, extra_label, "", sub_gp_nm);
 }
 
-bool taBase::SelectFunForEditNm(const String& function, SelectEdit* editor, const String& extra_label) {
+bool taBase::SelectFunForEditNm(const String& function, SelectEdit* editor,
+				const String& extra_label, const String& sub_gp_nm) {
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "SelectFunForEditNm", "cannot find project")) return false;
     editor = (SelectEdit*)proj->edits.New(1);
   }
-  return editor->SelectMethodNm(this, function, extra_label);
+  return editor->SelectMethodNm(this, function, extra_label, "", sub_gp_nm);
 }
 
 ///////////////////////////////////////////////////////////////////////////

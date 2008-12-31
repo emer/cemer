@@ -720,101 +720,6 @@ void DataTableView::ViewRow_At(int start) {
   UpdateDisplay();
 }
 
-/*obs
-void DataTableView::View_F() {
-  if(!taMisc::gui_active) return;
-  int shft = (int)((float)view_rows * view_shift);
-  if(shft < 1) shft = 1;
-  view_range.max += shft;
-  int log_max = MAX(log()->log_lines-1, log()->data_range.max);
-  view_range.MaxLT(log_max); // keep it less than max
-  view_range.min = view_range.max - view_rows +1; // always keep min and max valid
-  view_range.MinGT(0);
-  if(view_range.max > log()->data_range.max) {
-    log()->Buffer_F();
-  }
-  view_range.MaxLT(log()->data_range.max); // redo now that data_range.max is final
-  view_range.min = view_range.max - view_rows +1;
-  view_range.MinGT(log()->data_range.min);
-  UpdateFromBuffer();
-}
-
-void DataTableView::View_FSF() {
-  if(!taMisc::gui_active) return;
-  view_range.max += view_rows;
-  int log_max = MAX(log()->log_lines-1, log()->data_range.max);
-  view_range.MaxLT(log_max); // keep it less than max
-  view_range.min = view_range.max - view_rows +1; // always keep min and max valid
-  view_range.MinGT(0);
-  if(view_range.max > log()->data_range.max) {
-    log()->Buffer_F();
-  }
-  view_range.MaxLT(log()->data_range.max); // redo now that data_range.max is final
-  view_range.min = view_range.max - view_rows +1;
-  view_range.MinGT(log()->data_range.min);
-  UpdateFromBuffer();
-}
-
-void DataTableView::View_FF() {
-  if(!taMisc::gui_active) return;
-  view_range.max = MAX(log()->log_lines-1, log()->data_range.max);
-  view_range.min = view_range.max - view_rows +1; // always keep min and max valid
-  view_range.MinGT(0);
-  if(view_range.max > log()->data_range.max) {
-    log()->Buffer_FF();
-  }
-  view_range.MaxLT(log()->data_range.max); // redo now that data_range.max is final
-  view_range.min = view_range.max - view_rows +1;
-  view_range.MinGT(log()->data_range.min);
-  UpdateFromBuffer();
-}
-
-void DataTableView::View_R() {
-  if(!taMisc::gui_active) return;
-  int shft = (int)((float)view_rows * view_shift);
-  if(shft < 1) shft = 1;
-  view_range.min -= shft;
-  view_range.MinGT(0);
-  view_range.max = view_range.min + view_rows -1; // always keep min and max valid
-  int log_max = MAX(log()->log_lines-1, log()->data_range.max);
-  view_range.MaxLT(log_max); // keep it less than max
-  if(view_range.min < log()->data_range.min) {
-    log()->Buffer_R();
-  }
-  view_range.MinGT(log()->data_range.min); // redo now that data_range.min is final
-  view_range.max = view_range.min + view_rows -1;
-  view_range.MaxLT(log()->data_range.max);
-  UpdateFromBuffer();
-}
-
-void DataTableView::View_FSR() {
-  if(!taMisc::gui_active) return;
-  view_range.min -= view_rows;
-  view_range.MinGT(0);
-  view_range.max = view_range.min + view_rows -1; // always keep min and max valid
-  int log_max = MAX(log()->log_lines-1, log()->data_range.max);
-  view_range.MaxLT(log_max); // keep it less than max
-  if(view_range.min < log()->data_range.min) {
-    log()->Buffer_R();
-  }
-  view_range.MinGT(log()->data_range.min); // redo now that data_range.min is final
-  view_range.max = view_range.min + view_rows -1;
-  view_range.MaxLT(log()->data_range.max);
-  UpdateFromBuffer();
-}
-
-void DataTableView::View_FR() {
-  if(!taMisc::gui_active) return;
-  view_range.min = 0;
-  view_range.max = view_range.min + view_rows -1; // always keep min and max valid
-  view_range.MinGT(log()->data_range.min); // redo now that data_range.min is final
-  view_range.max = view_range.min + view_rows -1;
-  view_range.MaxLT(log()->data_range.max);
-  UpdateFromBuffer();
-}
-*/
-
-
 ///////////////////////////////////////////////////////////////////////////////
 //  	Grid View
 
@@ -839,6 +744,11 @@ void GridColView::Copy_(const GridColView& cp){
   mat_image = cp.mat_image;
   mat_odd_vert = cp.mat_odd_vert;
   // others recalced
+}
+
+void GridColView::CopyFromView(GridColView* cp){
+  Copy_(*cp);			// get per above
+  visible = cp->visible;		// from inh
 }
 
 void GridColView::Destroy() {
@@ -1038,6 +948,17 @@ void GridTableView::Copy_(const GridTableView& cp) {
 
   mat_size_range = cp.mat_size_range;
   text_size_range = cp.text_size_range;
+}
+
+void GridTableView::CopyFromView(GridTableView* cp) {
+  Copy_(*cp);			// get stuff as above
+  for(int i=0;i<children.size;i++) {
+    GridColView* cvs = (GridColView*)colView(i);
+    GridColView* cpvs = (GridColView*)cp->children.FindName(cvs->name);
+    if(cpvs) {
+      cvs->CopyFromView(cpvs);
+    }
+  }
 }
 
 void GridTableView::UpdateAfterEdit_impl(){
@@ -1502,7 +1423,7 @@ void GridTableView::RenderHeader() {
   hdr->addChild(cplx);
 
   SoFont* fnt = new SoFont();
-  fnt->name = "Arial";
+  fnt->name = (const char*)taMisc::t3d_font_name;
   if(two_d_font)
     fnt->size.setValue(two_d_font_scale * font_scale);
   else
@@ -1785,7 +1706,7 @@ void GridTableView::RenderLines(){
   body->addChild(cplx);
 
   SoFont* fnt = new SoFont();
-  fnt->name = "Arial";
+  fnt->name = (const char*)taMisc::t3d_font_name;
   if(two_d_font)
     fnt->size.setValue(two_d_font_scale * font_scale);
   else
@@ -2148,6 +2069,11 @@ void iGridTableView_Panel::GetValue_impl() {
   glv->UpdateDisplay(false); // don't update us, because logic will do that anyway
 }
 
+void iGridTableView_Panel::CopyFrom_impl() {
+  GridTableView* glv = this->glv(); //cache
+  if (!glv) return;
+  glv->CallFun("CopyFromView");
+}
 
 void iGridTableView_Panel::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
@@ -2241,6 +2167,10 @@ void GraphColView::InitLinks() {
   inherited::InitLinks();
 }
 
+void GraphColView::CopyFromView(GraphColView* cp){
+  fixed_range = cp->fixed_range;
+}
+
 String GraphColView::GetDisplayName() const {
   DataCol* dc = dataCol(); //note: exists, because we were called
   if(dc) return dc->GetDisplayName();
@@ -2292,6 +2222,14 @@ void GraphAxisBase::CutLinks() {
   range.CutLinks();
   color.CutLinks();
   inherited::CutLinks();
+}
+
+void GraphAxisBase::CopyFromView_base(GraphAxisBase* cp){
+  on = cp->on;
+  col_name = cp->col_name;
+  fixed_range= cp->fixed_range;
+  color= cp->color;
+  n_ticks = cp->n_ticks;
 }
 
 void GraphAxisBase::UpdateAfterEdit_impl() {
@@ -2768,6 +2706,13 @@ void GraphPlotView::Initialize() {
 //   inherited::CutLinks();
 // }
 
+void GraphPlotView::CopyFromView(GraphPlotView* cp){
+  CopyFromView_base(cp);	// get the base
+  line_style = cp->line_style;
+  point_style = cp->point_style;
+  alt_y = cp->alt_y;
+}
+
 void GraphPlotView::UpdateOnFlag() {
   if(on) {
     if(!GetColPtr()) on = false; // not actually on!
@@ -2795,6 +2740,11 @@ void GraphPlotView::UpdateAfterEdit_impl() {
 
 void GraphAxisView::Initialize() {
   row_num = false;
+}
+
+void GraphAxisView::CopyFromView(GraphAxisView* cp){
+  CopyFromView_base(cp);	// get the base
+  row_num = cp->row_num;
 }
 
 void GraphAxisView::UpdateOnFlag() {
@@ -2880,6 +2830,16 @@ void GraphTableView::Initialize() {
   plot_5.color.name = "purple";
   plot_5.point_style = GraphPlotView::PLUS;
   plot_5.color.UpdateAfterEdit();
+  plot_6.color.name = "orange";
+  plot_6.point_style = GraphPlotView::CROSS;
+  plot_6.color.UpdateAfterEdit();
+  plot_7.color.name = "brown";
+  plot_7.point_style = GraphPlotView::STAR;
+  plot_7.color.UpdateAfterEdit();
+  plot_8.color.name = "chartreuse";
+  plot_8.point_style = GraphPlotView::MINUS;
+  plot_8.color.UpdateAfterEdit();
+  // todo: following obsolete: nuke
   alt_y_1 = false;
   alt_y_2 = false;
   alt_y_3 = false;
@@ -2908,6 +2868,9 @@ void GraphTableView::Initialize() {
   err_3.axis = GraphAxisBase::Y;
   err_4.axis = GraphAxisBase::Y;
   err_5.axis = GraphAxisBase::Y;
+  err_6.axis = GraphAxisBase::Y;
+  err_7.axis = GraphAxisBase::Y;
+  err_8.axis = GraphAxisBase::Y;
   err_spacing = 1;
   err_bar_width = .02f;
 
@@ -2955,11 +2918,17 @@ void GraphTableView::InitLinks() {
   taBase::Own(plot_3, this);
   taBase::Own(plot_4, this);
   taBase::Own(plot_5, this);
+  taBase::Own(plot_6, this);
+  taBase::Own(plot_7, this);
+  taBase::Own(plot_8, this);
   taBase::Own(err_1, this);
   taBase::Own(err_2, this);
   taBase::Own(err_3, this);
   taBase::Own(err_4, this);
   taBase::Own(err_5, this);
+  taBase::Own(err_6, this);
+  taBase::Own(err_7, this);
+  taBase::Own(err_8, this);
   taBase::Own(color_axis, this);
   taBase::Own(raster_axis, this);
   taBase::Own(colorscale, this);
@@ -2973,12 +2942,18 @@ void GraphTableView::InitLinks() {
   all_plots[2] = &plot_3;
   all_plots[3] = &plot_4;
   all_plots[4] = &plot_5;
+  all_plots[5] = &plot_6;
+  all_plots[6] = &plot_7;
+  all_plots[7] = &plot_8;
 
   all_errs[0] = &err_1;
   all_errs[1] = &err_2;
   all_errs[2] = &err_3;
   all_errs[3] = &err_4;
   all_errs[4] = &err_5;
+  all_errs[5] = &err_6;
+  all_errs[6] = &err_7;
+  all_errs[7] = &err_8;
 }
 
 void GraphTableView::CutLinks() {
@@ -2989,15 +2964,69 @@ void GraphTableView::CutLinks() {
   plot_3.CutLinks();
   plot_4.CutLinks();
   plot_5.CutLinks();
+  plot_6.CutLinks();
+  plot_7.CutLinks();
+  plot_8.CutLinks();
   err_1.CutLinks();
   err_2.CutLinks();
   err_3.CutLinks();
   err_4.CutLinks();
   err_5.CutLinks();
+  err_6.CutLinks();
+  err_7.CutLinks();
+  err_8.CutLinks();
   color_axis.CutLinks();
   raster_axis.CutLinks();
   colorscale.CutLinks();
   inherited::CutLinks();
+}
+
+void GraphTableView::CopyFromView(GraphTableView* cp) {
+  graph_type = cp->graph_type;
+  plot_style = cp->plot_style;
+  negative_draw = cp->negative_draw;
+  negative_draw_z = cp->negative_draw_z;
+  line_width = cp->line_width;
+  point_size = cp->point_size;
+  point_spacing = cp->point_spacing;
+  bar_space = cp->bar_space;
+  label_spacing = cp->label_spacing;
+  width = cp->width;
+  depth = cp->depth;
+  axis_font_size = cp->axis_font_size;
+  label_font_size = cp->label_font_size;
+  
+  x_axis.CopyFromView(&(cp->x_axis));
+  z_axis.CopyFromView(&(cp->z_axis));
+  for(int i=0;i<max_plots;i++) {
+    all_plots[i]->CopyFromView(cp->all_plots[i]);
+    all_errs[i]->CopyFromView(cp->all_errs[i]);
+  }
+
+  err_spacing = cp->err_spacing;
+  err_bar_width = cp->err_bar_width;
+
+  color_mode = cp->color_mode;
+  color_axis.CopyFromView(&(cp->color_axis));
+  colorscale = cp->colorscale;
+
+  raster_axis.CopyFromView(&(cp->raster_axis));
+  thresh = cp->thresh;
+  thr_line_len= cp->thr_line_len;
+  matrix_mode = cp->matrix_mode;
+  mat_layout = cp->mat_layout;
+  mat_odd_vert = cp->mat_odd_vert;
+
+  two_d_font = cp->two_d_font;
+  two_d_font_scale = cp->two_d_font_scale;
+  
+  for(int i=0;i<children.size;i++) {
+    GraphColView* cvs = (GraphColView*)colView(i);
+    GraphColView* cpvs = (GraphColView*)cp->children.FindName(cvs->name);
+    if(cpvs) {
+      cvs->CopyFromView(cpvs);
+    }
+  }
 }
 
 void GraphTableView::UpdateAfterEdit_impl(){
@@ -3019,16 +3048,12 @@ void GraphTableView::UpdateAfterEdit_impl(){
   x_axis.on = true;		// try to keep it on
   x_axis.UpdateOnFlag();
   z_axis.UpdateOnFlag();
-  plot_1.UpdateOnFlag();
-  plot_2.UpdateOnFlag();
-  plot_3.UpdateOnFlag();
-  plot_4.UpdateOnFlag();
-  plot_5.UpdateOnFlag();
-  err_1.UpdateOnFlag();
-  err_2.UpdateOnFlag();
-  err_3.UpdateOnFlag();
-  err_4.UpdateOnFlag();
-  err_5.UpdateOnFlag();
+  for(int i=0;i<max_plots;i++) {
+    GraphPlotView* pl = all_plots[i];
+    pl->UpdateOnFlag();
+    GraphPlotView* epl = all_errs[i];
+    epl->UpdateOnFlag();
+  }
   color_axis.UpdateOnFlag();
   raster_axis.UpdateOnFlag();
 
@@ -3516,41 +3541,19 @@ void GraphTableView::InitFromUserData() {
   for(int i=0;i<children.size;i++) {
     GraphColView* cvs = (GraphColView*)colView(i);
     DataCol* da = cvs->dataCol();
-    if(da->HasUserData("PLOT_2")) {
-      plot_2.col_name = cvs->name;  plot_2.on = true;
-      plot_2.InitFromUserData();    plot_2.UpdateOnFlag();
+    for(int i=1; i<max_plots; i++) {
+      String pltst = "PLOT_" + String(i+1);
+      if(da->HasUserData(pltst)) {
+	all_plots[i]->col_name = cvs->name;  all_plots[i]->on = true;
+	all_plots[i]->InitFromUserData();    all_plots[i]->UpdateOnFlag();
+      }
     }
-    if(da->HasUserData("PLOT_3")) {
-      plot_3.col_name = cvs->name; plot_3.on = true;
-      plot_3.InitFromUserData();   plot_3.UpdateOnFlag();
-    }
-    if(da->HasUserData("PLOT_4")) {
-      plot_4.col_name = cvs->name; plot_4.on = true;
-      plot_4.InitFromUserData();   plot_4.UpdateOnFlag();
-    }
-    if(da->HasUserData("PLOT_5")) {
-      plot_5.col_name = cvs->name; plot_5.on = true;
-      plot_5.InitFromUserData();   plot_5.UpdateOnFlag();
-    }
-    if(da->HasUserData("ERR_1")) {
-      err_1.col_name = cvs->name;  err_1.on = true;
-      err_1.InitFromUserData();    err_1.UpdateOnFlag();
-    }
-    if(da->HasUserData("ERR_2")) {
-      err_2.col_name = cvs->name;  err_2.on = true;
-      err_2.InitFromUserData();    err_2.UpdateOnFlag();
-    }
-    if(da->HasUserData("ERR_3")) {
-      err_3.col_name = cvs->name;  err_3.on = true;
-      err_3.InitFromUserData();    err_3.UpdateOnFlag();
-    }
-    if(da->HasUserData("ERR_4")) {
-      err_4.col_name = cvs->name;  err_4.on = true;
-      err_4.InitFromUserData();    err_4.UpdateOnFlag();
-    }
-    if(da->HasUserData("ERR_5")) {
-      err_5.col_name = cvs->name;  err_5.on = true;
-      err_5.InitFromUserData();    err_5.UpdateOnFlag();
+    for(int i=0; i<max_plots; i++) {
+      String pltst = "ERR_" + String(i+1);
+      if(da->HasUserData(pltst)) {
+	all_errs[i]->col_name = cvs->name;  all_errs[i]->on = true;
+	all_errs[i]->InitFromUserData();    all_errs[i]->UpdateOnFlag();
+      }
     }
     if(da->HasUserData("COLOR_AXIS")) {
       color_axis.col_name = cvs->name;   color_axis.on = true;
@@ -4650,6 +4653,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   chkDisplay->setToolTip("Whether to update the display when the underlying data changes");
   connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkDisplay);
+  layTopCtrls->addSpacing(taiM->hsep_c);
 
   // todo: fix tool tips on all of these..
 
@@ -4659,7 +4663,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   cmbGraphType = dl.Add(new taiComboBox(true, TA_GraphTableView.sub_types.FindName("GraphType"),
 				 this, NULL, widg, taiData::flgAutoApply));
   layTopCtrls->addWidget(cmbGraphType->GetRep());
-  //  layTopCtrls->addSpacing(taiM->hsep_c);
+  layTopCtrls->addSpacing(taiM->hsep_c);
 
   lblPlotStyle = taiM->NewLabel("Style", widg, font_spec);
   lblPlotStyle->setToolTip("How to plot the lines");
@@ -4667,16 +4671,19 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   cmbPlotStyle = dl.Add(new taiComboBox(true, TA_GraphTableView.sub_types.FindName("PlotStyle"),
 				 this, NULL, widg, taiData::flgAutoApply));
   layTopCtrls->addWidget(cmbPlotStyle->GetRep());
-  //  layTopCtrls->addSpacing(taiM->hsep_c);
+  layTopCtrls->addSpacing(taiM->hsep_c);
 
   chkNegDraw =  new QCheckBox("Neg\nDraw", widg); chkNegDraw->setObjectName("chkNegDraw");
   chkNegDraw->setToolTip("Whether to draw a line when going in a negative direction (to the left), which may indicate a wrap-around to a new iteration of data");
   connect(chkNegDraw, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkNegDraw);
+  layTopCtrls->addSpacing(taiM->hsep_c);
+
   chkNegDrawZ =  new QCheckBox("Neg\nDraw Z", widg); chkNegDrawZ->setObjectName("chkNegDrawZ");
   chkNegDrawZ->setToolTip("Whether to draw a line when going in a negative direction of Z (to the front), which may indicate a wrap-around to a new channel of data");
   connect(chkNegDrawZ, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkNegDrawZ);
+  layTopCtrls->addSpacing(taiM->hsep_c);
 
   layTopCtrls->addStretch();
   butRefresh = new QPushButton("Refresh", widg);
@@ -4692,42 +4699,42 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layVals->addWidget(lblRows);
   fldRows = dl.Add(new taiIncrField(&TA_int, this, NULL, widg));
   layVals->addWidget(fldRows->GetRep());
-//   layVals->addSpacing(taiM->hsep_c);
+  layVals->addSpacing(taiM->hsep_c);
 
   lblLineWidth = taiM->NewLabel("Line\nWidth", widg, font_spec);
   lblLineWidth->setToolTip("Width to draw lines with.");
   layVals->addWidget(lblLineWidth);
   fldLineWidth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldLineWidth->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
+  layVals->addSpacing(taiM->hsep_c);
 
   lblPointSpacing = taiM->NewLabel("Pt\nSpc", widg, font_spec);
   lblPointSpacing->setToolTip("Spacing of points drawn relative to underlying data points.");
   layVals->addWidget(lblPointSpacing);
   fldPointSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldPointSpacing->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
+  layVals->addSpacing(taiM->hsep_c);
 
   lblLabelSpacing = taiM->NewLabel("Lbl\nSpc", widg, font_spec);
   lblLabelSpacing->setToolTip("Spacing of text labels of data point values. -1 means no text labels.");
   layVals->addWidget(lblLabelSpacing);
   fldLabelSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldLabelSpacing->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
+  layVals->addSpacing(taiM->hsep_c);
 
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
   lblWidth->setToolTip("Width of graph display, in normalized units (default is 1.0 = same as height).");
   layVals->addWidget(lblWidth);
   fldWidth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldWidth->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
+  layVals->addSpacing(taiM->hsep_c);
 
   lblDepth = taiM->NewLabel("Depth", widg, font_spec);
   lblDepth->setToolTip("Depth of graph display, in normalized units (default is 1.0 = same as height).");
   layVals->addWidget(lblDepth);
   fldDepth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldDepth->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
+  layVals->addSpacing(taiM->hsep_c);
 
   layVals->addStretch();
 
@@ -4751,6 +4758,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   rncXAxis->setToolTip("Use row number instead of column value for axis value");
   connect(rncXAxis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layXAxis->addWidget(rncXAxis);
+  layXAxis->addSpacing(taiM->hsep_c);
 
   pdtXAxis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
   layXAxis->addWidget(pdtXAxis->GetRep());
@@ -4766,17 +4774,19 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layZAxis->addWidget(lblZAxis);
   lelZAxis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layZAxis->addWidget(lelZAxis->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
+  layZAxis->addSpacing(taiM->hsep_c);
 
   oncZAxis = new iCheckBox("On", widg);
   oncZAxis->setToolTip("Display a Z axis?");
   connect(oncZAxis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layZAxis->addWidget(oncZAxis);
+  layZAxis->addSpacing(taiM->hsep_c);
 
   rncZAxis = new QCheckBox("Row\nNum", widg); rncZAxis->setObjectName("rncZAxis");
   rncZAxis->setToolTip("Use row number instead of column value for axis value");
   connect(rncZAxis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layZAxis->addWidget(rncZAxis);
+  layZAxis->addSpacing(taiM->hsep_c);
 
   pdtZAxis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
   layZAxis->addWidget(pdtZAxis->GetRep());
@@ -4784,211 +4794,63 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layZAxis->addStretch();
 
   ////////////////////////////////////////////////////////////////////
-  // 1 AXis
-  lay1Axis = new QHBoxLayout; layWidg->addLayout(lay1Axis);
+  // Y AXes
 
-  lbl1Axis = taiM->NewLabel("Y1:", widg, font_spec);
-  lbl1Axis->setToolTip("First column of data to plot (optional)");
-  lay1Axis->addWidget(lbl1Axis);
-  lel1Axis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
-  lay1Axis->addWidget(lel1Axis->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
+  for(int i=0;i<max_plots; i++) {
+    layYAxis[i] = new QHBoxLayout; layWidg->addLayout(layYAxis[i]);
 
-  onc1Axis = new iCheckBox("On", widg);
-  onc1Axis->setToolTip("Display this column's data or not?");
-  connect(onc1Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  lay1Axis->addWidget(onc1Axis);
+    String lbl = "Y" + String(i+1) + ":";
+    lblYAxis[i] = taiM->NewLabel(lbl, widg, font_spec);
+    lblYAxis[i]->setToolTip("Column of data to plot (optional)");
+    layYAxis[i]->addWidget(lblYAxis[i]);
+    lelYAxis[i] = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
+    layYAxis[i]->addWidget(lelYAxis[i]->GetRep());
+    layYAxis[i]->addSpacing(taiM->hsep_c);
 
-  chk1AltY =  new QCheckBox("Alt\nY", widg); chk1AltY->setObjectName("chk1AltY");
-  chk1AltY->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
-  connect(chk1AltY, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  //  layPlots->addWidget(chk1AltY);
-  lay1Axis->addWidget(chk1AltY);
+    oncYAxis[i] = new iCheckBox("On", widg);
+    oncYAxis[i]->setToolTip("Display this column's data or not?");
+    connect(oncYAxis[i], SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+    layYAxis[i]->addWidget(oncYAxis[i]);
+    layYAxis[i]->addSpacing(taiM->hsep_c);
 
-  pdt1Axis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
-  lay1Axis->addWidget(pdt1Axis->GetRep());
+    chkYAltY[i] =  new QCheckBox("Alt\nY", widg); chkYAltY[i]->setObjectName("chkYAltY");
+    chkYAltY[i]->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
+    connect(chkYAltY[i], SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+    layYAxis[i]->addWidget(chkYAltY[i]);
+    layYAxis[i]->addSpacing(taiM->hsep_c);
 
-  lay1Axis->addStretch();
+    pdtYAxis[i] = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
+    layYAxis[i]->addWidget(pdtYAxis[i]->GetRep());
 
-  ////////////////////////////////////////////////////////////////////
-  // 2 AXis
-  lay2Axis = new QHBoxLayout; layWidg->addLayout(lay2Axis);
-
-  lbl2Axis = taiM->NewLabel("Y2:", widg, font_spec);
-  lbl2Axis->setToolTip("Second column of data to plot (optional)");
-  lay2Axis->addWidget(lbl2Axis);
-  lel2Axis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
-  lay2Axis->addWidget(lel2Axis->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
-
-  onc2Axis = new iCheckBox("On", widg);
-  onc2Axis->setToolTip("Display this column's data or not?");
-  connect(onc2Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  lay2Axis->addWidget(onc2Axis);
-
-  chk2AltY =  new QCheckBox("Alt\nY", widg); chk2AltY->setObjectName("chk2AltY");
-  chk2AltY->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
-  connect(chk2AltY, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  //  layPlots->addWidget(chk2AltY);
-  lay2Axis->addWidget(chk2AltY);
-
-  pdt2Axis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
-  lay2Axis->addWidget(pdt2Axis->GetRep());
-
-  lay2Axis->addStretch();
-
-  ////////////////////////////////////////////////////////////////////
-  // 3 AXis
-  lay3Axis = new QHBoxLayout; layWidg->addLayout(lay3Axis);
-
-  lbl3Axis = taiM->NewLabel("Y3:", widg, font_spec);
-  lbl3Axis->setToolTip("Third column of data to plot (optional)");
-  lay3Axis->addWidget(lbl3Axis);
-  lel3Axis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
-  lay3Axis->addWidget(lel3Axis->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
-
-  onc3Axis = new iCheckBox("On", widg);
-  onc3Axis->setToolTip("Display this column's data or not?");
-  connect(onc3Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  lay3Axis->addWidget(onc3Axis);
-
-  chk3AltY =  new QCheckBox("Alt\nY", widg); chk3AltY->setObjectName("chk3AltY");
-  chk3AltY->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
-  connect(chk3AltY, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  //  layPlots->addWidget(chk3AltY);
-  lay3Axis->addWidget(chk3AltY);
-
-  pdt3Axis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
-  lay3Axis->addWidget(pdt3Axis->GetRep());
-
-  lay3Axis->addStretch();
-
-  ////////////////////////////////////////////////////////////////////
-  // 4 AXis
-  lay4Axis = new QHBoxLayout; layWidg->addLayout(lay4Axis);
-
-  lbl4Axis = taiM->NewLabel("Y4:", widg, font_spec);
-  lbl4Axis->setToolTip("Fourth column of data to plot (optional)");
-  lay4Axis->addWidget(lbl4Axis);
-  lel4Axis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
-  lay4Axis->addWidget(lel4Axis->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
-
-  onc4Axis = new iCheckBox("On", widg);
-  onc4Axis->setToolTip("Display this column's data or not?");
-  connect(onc4Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  lay4Axis->addWidget(onc4Axis);
-
-  chk4AltY =  new QCheckBox("Alt\nY", widg);
-  chk4AltY->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
-  connect(chk4AltY, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  //  layPlots->addWidget(chk4AltY);
-  lay4Axis->addWidget(chk4AltY);
-
-  pdt4Axis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
-  lay4Axis->addWidget(pdt4Axis->GetRep());
-
-  lay4Axis->addStretch();
-
-  ////////////////////////////////////////////////////////////////////
-  // 5 AXis
-  lay5Axis = new QHBoxLayout; layWidg->addLayout(lay5Axis);
-
-  lbl5Axis = taiM->NewLabel("Y5:", widg, font_spec);
-  lbl5Axis->setToolTip("Fifth column of data to plot (optional)");
-  lay5Axis->addWidget(lbl5Axis);
-  lel5Axis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
-  lay5Axis->addWidget(lel5Axis->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
-
-  onc5Axis = new iCheckBox("On", widg);
-  onc5Axis->setToolTip("Display this column's data or not?");
-  connect(onc5Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  lay5Axis->addWidget(onc5Axis);
-
-  chk5AltY =  new QCheckBox("Alt\nY", widg); chk5AltY->setObjectName("chk5AltY");
-  chk5AltY->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
-  connect(chk5AltY, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  //  layPlots->addWidget(chk5AltY);
-  lay5Axis->addWidget(chk5AltY);
-
-  pdt5Axis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
-  lay5Axis->addWidget(pdt5Axis->GetRep());
-
-  lay5Axis->addStretch();
+    layYAxis[i]->addStretch();
+  }
 
   ////////////////////////////////////////////////////////////////////
   // Error bars
-  layErr1 = new QHBoxLayout; layWidg->addLayout(layErr1);
+  layErr[0] = new QHBoxLayout; layWidg->addLayout(layErr[0]);
+  layErr[1] = new QHBoxLayout; layWidg->addLayout(layErr[1]);
   
-  // Err1
-  lbl1Err = taiM->NewLabel("1 Err:", widg, font_spec);
-  lbl1Err->setToolTip("Column of for the 1st column's error bar data");
-  layErr1->addWidget(lbl1Err);
-  lel1Err = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
-  layErr1->addWidget(lel1Err->GetRep());
-  onc1Err = new iCheckBox("On", widg);
-  onc1Err->setToolTip("Display error bars for 1st column's data?");
-  connect(onc1Err, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  layErr1->addWidget(onc1Err);
+  for(int i=0;i<max_plots; i++) {
+    int rw = (i < 4) ? 0 : 1;
+    String lbl = String(i+1) + " Err:";
+    lblErr[i] = taiM->NewLabel(lbl, widg, font_spec);
+    lblErr[i]->setToolTip("Column of for this column's error bar data");
+    layErr[rw]->addWidget(lblErr[i]);
+    layErr[rw]->addSpacing(taiM->hsep_c);
 
-  // Err2
-  lbl2Err = taiM->NewLabel("2 Err:", widg, font_spec);
-  lbl2Err->setToolTip("Column of for the 2nd column's error bar data");
-  layErr1->addWidget(lbl2Err);
-  lel2Err = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
-  layErr1->addWidget(lel2Err->GetRep());
-  onc2Err = new iCheckBox("On", widg);
-  onc2Err->setToolTip("Display error bars for 2nd column's data?");
-  connect(onc2Err, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  layErr1->addWidget(onc2Err);
+    lelErr[i] = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
+    layErr[rw]->addWidget(lelErr[i]->GetRep());
+    layErr[rw]->addSpacing(taiM->hsep_c);
 
-  // Err3
-  lbl3Err = taiM->NewLabel("3 Err:", widg, font_spec);
-  lbl3Err->setToolTip("Column of for the 3nd column's error bar data");
-  layErr1->addWidget(lbl3Err);
-  lel3Err = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
-  layErr1->addWidget(lel3Err->GetRep());
-  onc3Err = new iCheckBox("On", widg);
-  onc3Err->setToolTip("Display error bars for 3nd column's data?");
-  connect(onc3Err, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  layErr1->addWidget(onc3Err);
+    oncErr[i] = new iCheckBox("On", widg);
+    oncErr[i]->setToolTip("Display error bars for this column's data?");
+    connect(oncErr[i], SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+    layErr[rw]->addWidget(oncErr[i]);
+    layErr[rw]->addSpacing(taiM->hsep_c);
+  }
 
-  layErr1->addStretch();
-
-  layErr2 = new QHBoxLayout; layWidg->addLayout(layErr2);
-  // Err4
-  lbl4Err = taiM->NewLabel("4 Err:", widg, font_spec);
-  lbl4Err->setToolTip("Column of for the 4nd column's error bar data");
-  layErr2->addWidget(lbl4Err);
-  lel4Err = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
-  layErr2->addWidget(lel4Err->GetRep());
-  onc4Err = new iCheckBox("On", widg);
-  onc4Err->setToolTip("Display error bars for 4nd column's data?");
-  connect(onc4Err, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  layErr2->addWidget(onc4Err);
-
-  // Err5
-  lbl5Err = taiM->NewLabel("5 Err:", widg, font_spec);
-  lbl5Err->setToolTip("Column of for the 5nd column's error bar data");
-  layErr2->addWidget(lbl5Err);
-  lel5Err = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
-  layErr2->addWidget(lel5Err->GetRep());
-  onc5Err = new iCheckBox("On", widg);
-  onc5Err->setToolTip("Display error bars for 5nd column's data?");
-  connect(onc5Err, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  layErr2->addWidget(onc5Err);
-
-  // Err Spacing
-  lblErrSpacing = taiM->NewLabel("Err\nSpc", widg, font_spec);
-  lblErrSpacing->setToolTip("Spacing of error bars relative to data points.");
-  layErr2->addWidget(lblErrSpacing);
-  fldErrSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
-  layErr2->addWidget(fldErrSpacing->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
-
-  layErr2->addStretch();
+  layErr[0]->addStretch();
+  layErr[1]->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
   // 	Colors
@@ -5014,7 +4876,14 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layCAxis->addWidget(lblThresh);
   fldThresh = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layCAxis->addWidget(fldThresh->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
+  layVals->addSpacing(taiM->hsep_c);
+
+  // Err Spacing
+  lblErrSpacing = taiM->NewLabel("Err\nSpc", widg, font_spec);
+  lblErrSpacing->setToolTip("Spacing of error bars relative to data points.");
+  layCAxis->addWidget(lblErrSpacing);
+  fldErrSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  layCAxis->addWidget(fldErrSpacing->GetRep());
 
   layCAxis->addStretch();
 
@@ -5103,61 +4972,22 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
   rncZAxis->setAttribute(Qt::WA_Disabled, !glv->z_axis.on);
   pdtZAxis->SetFlag(taiData::flgReadOnly, !glv->z_axis.on);
 
-  lel1Axis->GetImage(&(glv->children), glv->plot_1.GetColPtr());
-  onc1Axis->setReadOnly(glv->plot_1.GetColPtr() == NULL);
-  onc1Axis->setChecked(glv->plot_1.on);
-  pdt1Axis->GetImage_(&(glv->plot_1.fixed_range));
-  lel1Axis->SetFlag(taiData::flgReadOnly, !glv->plot_1.on);
-  pdt1Axis->SetFlag(taiData::flgReadOnly, !glv->plot_1.on);
-  chk1AltY->setChecked(glv->plot_1.alt_y);
+  for(int i=0;i<max_plots; i++) {
+    lelYAxis[i]->GetImage(&(glv->children), glv->all_plots[i]->GetColPtr());
+    oncYAxis[i]->setReadOnly(glv->all_plots[i]->GetColPtr() == NULL);
+    oncYAxis[i]->setChecked(glv->all_plots[i]->on);
+    pdtYAxis[i]->GetImage_(&(glv->all_plots[i]->fixed_range));
+    lelYAxis[i]->SetFlag(taiData::flgReadOnly, !glv->all_plots[i]->on);
+    pdtYAxis[i]->SetFlag(taiData::flgReadOnly, !glv->all_plots[i]->on);
+    chkYAltY[i]->setChecked(glv->all_plots[i]->alt_y);
+  }
 
-  lel2Axis->GetImage(&(glv->children), glv->plot_2.GetColPtr());
-  onc2Axis->setReadOnly(glv->plot_2.GetColPtr() == NULL);
-  onc2Axis->setChecked(glv->plot_2.on);
-  pdt2Axis->GetImage_(&(glv->plot_2.fixed_range));
-  lel2Axis->SetFlag(taiData::flgReadOnly, !glv->plot_2.on);
-  pdt2Axis->SetFlag(taiData::flgReadOnly, !glv->plot_2.on);
-  chk2AltY->setChecked(glv->plot_2.alt_y);
+  for(int i=0;i<max_plots; i++) {
+    lelErr[i]->GetImage(&(glv->children), glv->all_errs[i]->GetColPtr());
+    oncErr[i]->setReadOnly(glv->all_errs[i]->GetColPtr() == NULL);
+    oncErr[i]->setChecked(glv->all_errs[i]->on);
+  }
 
-  lel3Axis->GetImage(&(glv->children), glv->plot_3.GetColPtr());
-  onc3Axis->setReadOnly(glv->plot_3.GetColPtr() == NULL);
-  onc3Axis->setChecked(glv->plot_3.on);
-  pdt3Axis->GetImage_(&(glv->plot_3.fixed_range));
-  lel3Axis->SetFlag(taiData::flgReadOnly, !glv->plot_3.on);
-  pdt3Axis->SetFlag(taiData::flgReadOnly, !glv->plot_3.on);
-  chk3AltY->setChecked(glv->plot_3.alt_y);
-
-  lel4Axis->GetImage(&(glv->children), glv->plot_4.GetColPtr());
-  onc4Axis->setReadOnly(glv->plot_4.GetColPtr() == NULL);
-  onc4Axis->setChecked(glv->plot_4.on);
-  pdt4Axis->GetImage_(&(glv->plot_4.fixed_range));
-  lel4Axis->SetFlag(taiData::flgReadOnly, !glv->plot_4.on);
-  pdt4Axis->SetFlag(taiData::flgReadOnly, !glv->plot_4.on);
-  chk4AltY->setChecked(glv->plot_4.alt_y);
-
-  lel5Axis->GetImage(&(glv->children), glv->plot_5.GetColPtr());
-  onc5Axis->setReadOnly(glv->plot_5.GetColPtr() == NULL);
-  onc5Axis->setChecked(glv->plot_5.on);
-  pdt5Axis->GetImage_(&(glv->plot_5.fixed_range));
-  lel5Axis->SetFlag(taiData::flgReadOnly, !glv->plot_5.on);
-  pdt5Axis->SetFlag(taiData::flgReadOnly, !glv->plot_5.on);
-  chk5AltY->setChecked(glv->plot_5.alt_y);
-
-  lel1Err->GetImage(&(glv->children), glv->err_1.GetColPtr());
-  onc1Err->setReadOnly(glv->err_1.GetColPtr() == NULL);
-  onc1Err->setChecked(glv->err_1.on);
-  lel2Err->GetImage(&(glv->children), glv->err_2.GetColPtr());
-  onc2Err->setReadOnly(glv->err_2.GetColPtr() == NULL);
-  onc2Err->setChecked(glv->err_2.on);
-  lel3Err->GetImage(&(glv->children), glv->err_3.GetColPtr());
-  onc3Err->setReadOnly(glv->err_3.GetColPtr() == NULL);
-  onc3Err->setChecked(glv->err_3.on);
-  lel4Err->GetImage(&(glv->children), glv->err_4.GetColPtr());
-  onc4Err->setReadOnly(glv->err_4.GetColPtr() == NULL);
-  onc4Err->setChecked(glv->err_4.on);
-  lel5Err->GetImage(&(glv->children), glv->err_5.GetColPtr());
-  onc5Err->setReadOnly(glv->err_5.GetColPtr() == NULL);
-  onc5Err->setChecked(glv->err_5.on);
   fldErrSpacing->GetImage((String)glv->err_spacing);
 
   cmbColorMode->GetImage(glv->color_mode);
@@ -5207,75 +5037,23 @@ void iGraphTableView_Panel::GetValue_impl() {
   glv->z_axis.row_num = rncZAxis->isChecked();
   glv->z_axis.SetColPtr(tcol);
 
-  tcol = (GraphColView*)lel1Axis->GetValue();
-  if (tcol && !glv->plot_1.GetColPtr())
-    onc1Axis->setChecked(true);
-  glv->plot_1.on = onc1Axis->isChecked();
-  pdt1Axis->GetValue_(&(glv->plot_1.fixed_range)); // this can change, so update
-  glv->plot_1.alt_y = chk1AltY->isChecked();
-  glv->plot_1.SetColPtr(tcol);
+  for(int i=0;i<max_plots; i++) {
+    tcol = (GraphColView*)lelYAxis[i]->GetValue();
+    if (tcol && !glv->all_plots[i]->GetColPtr())
+      oncYAxis[i]->setChecked(true);
+    glv->all_plots[i]->on = oncYAxis[i]->isChecked();
+    pdtYAxis[i]->GetValue_(&(glv->all_plots[i]->fixed_range)); // this can change, so update
+    glv->all_plots[i]->alt_y = chkYAltY[i]->isChecked();
+    glv->all_plots[i]->SetColPtr(tcol);
+  }  
   
-  tcol = (GraphColView*)lel2Axis->GetValue();
-  if (tcol && !glv->plot_2.GetColPtr())
-    onc2Axis->setChecked(true);
-  glv->plot_2.on = onc2Axis->isChecked();
-  pdt2Axis->GetValue_(&(glv->plot_2.fixed_range)); // this can change, so update
-  glv->plot_2.alt_y = chk2AltY->isChecked();
-  glv->plot_2.SetColPtr(tcol);
-  
-  tcol = (GraphColView*)lel3Axis->GetValue();
-  if (tcol && !glv->plot_3.GetColPtr())
-    onc3Axis->setChecked(true);
-  glv->plot_3.on = onc3Axis->isChecked();
-  pdt3Axis->GetValue_(&(glv->plot_3.fixed_range)); // this can change, so update
-  glv->plot_3.alt_y = chk3AltY->isChecked();
-  glv->plot_3.SetColPtr(tcol);
-  
-  tcol = (GraphColView*)lel4Axis->GetValue();
-  if (tcol && !glv->plot_4.GetColPtr())
-    onc4Axis->setChecked(true);
-  glv->plot_4.on = onc4Axis->isChecked();
-  pdt4Axis->GetValue_(&(glv->plot_4.fixed_range)); // this can change, so update
-  glv->plot_4.alt_y = chk4AltY->isChecked();
-  glv->plot_4.SetColPtr(tcol);
-  
-  tcol = (GraphColView*)lel5Axis->GetValue();
-  if (tcol && !glv->plot_5.GetColPtr())
-    onc5Axis->setChecked(true);
-  glv->plot_5.on = onc5Axis->isChecked();
-  pdt5Axis->GetValue_(&(glv->plot_5.fixed_range)); // this can change, so update
-  glv->plot_5.alt_y = chk5AltY->isChecked();
-  glv->plot_5.SetColPtr(tcol);
-  
-  tcol = (GraphColView*)lel1Err->GetValue();
-  if (tcol && !glv->err_1.GetColPtr())
-    onc1Err->setChecked(true);
-  glv->err_1.on = onc1Err->isChecked();
-  glv->err_1.SetColPtr(tcol);
-  
-  tcol = (GraphColView*)lel2Err->GetValue();
-  if (tcol && !glv->err_2.GetColPtr())
-    onc2Err->setChecked(true);
-  glv->err_2.on = onc2Err->isChecked();
-  glv->err_2.SetColPtr(tcol);
-  
-  tcol = (GraphColView*)lel3Err->GetValue();
-  if (tcol && !glv->err_3.GetColPtr())
-    onc3Err->setChecked(true);
-  glv->err_3.on = onc3Err->isChecked();
-  glv->err_3.SetColPtr(tcol);
-  
-  tcol = (GraphColView*)lel4Err->GetValue();
-  if (tcol && !glv->err_4.GetColPtr())
-    onc4Err->setChecked(true);
-  glv->err_4.on = onc4Err->isChecked();
-  glv->err_4.SetColPtr(tcol);
-  
-  tcol = (GraphColView*)lel5Err->GetValue();
-  if (tcol && !glv->err_5.GetColPtr())
-    onc5Err->setChecked(true);
-  glv->err_5.on = onc5Err->isChecked();
-  glv->err_5.SetColPtr(tcol);
+  for(int i=0;i<max_plots; i++) {
+    tcol = (GraphColView*)lelErr[i]->GetValue();
+    if (tcol && !glv->all_errs[i]->GetColPtr())
+      oncErr[i]->setChecked(true);
+    glv->all_errs[i]->on = oncErr[i]->isChecked();
+    glv->all_errs[i]->SetColPtr(tcol);
+  }
   
   glv->err_spacing = (int)fldErrSpacing->GetValue();
   
@@ -5291,6 +5069,12 @@ void iGraphTableView_Panel::GetValue_impl() {
   
   glv->UpdateAfterEdit(); // so many guys require this, we just always do it
   glv->UpdateDisplay(false); // don't update us, because logic will do that anyway
+}
+
+void iGraphTableView_Panel::CopyFrom_impl() {
+  GraphTableView* glv = this->glv(); //cache
+  if (!glv) return;
+  glv->CallFun("CopyFromView");
 }
 
 

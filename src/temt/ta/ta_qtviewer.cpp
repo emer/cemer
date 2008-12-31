@@ -5597,6 +5597,7 @@ iViewPanelFrame::iViewPanelFrame(taDataView* dv_)
   dl->AddDataClient(this);
   btnApply = NULL;
   btnRevert = NULL; 
+  btnCopyFrom = NULL;
   warn_clobber = false;
 }
 
@@ -5686,7 +5687,7 @@ void iViewPanelFrame::InitPanel() {
   if (updating) return;
   ++updating;
   InitPanel_impl();
-  if (!isVisible()) { // no update when hidden!
+  if (isVisible()) { // no update when hidden!
     UpdatePanel_impl();
   }
   --updating;
@@ -5710,6 +5711,10 @@ void iViewPanelFrame::MakeButtons(QBoxLayout* lay, QWidget* par) {
     layButtons = new QHBoxLayout(par);
   layButtons->setMargin(0);
   layButtons->setSpacing(0);
+  btnCopyFrom = new HiLightButton("&Copy From", par);
+  layButtons->addWidget(btnCopyFrom);
+  //  layButtons->addSpacing(4);
+
   layButtons->addStretch();
   btnApply = new HiLightButton("&Apply", par);
   layButtons->addWidget(btnApply);
@@ -5723,6 +5728,7 @@ void iViewPanelFrame::MakeButtons(QBoxLayout* lay, QWidget* par) {
   
   connect(btnApply, SIGNAL(clicked()), this, SLOT(Apply()) );
   connect(btnRevert, SIGNAL(clicked()), this, SLOT(Revert()) );
+  connect(btnCopyFrom, SIGNAL(clicked()), this, SLOT(CopyFrom()) );
   
   vp_flags |= VP_USE_BTNS;
   InternalSetModified(false);
@@ -5738,6 +5744,15 @@ void iViewPanelFrame::ResolveChanges_impl(CancelOp& cancel_op) {
 void iViewPanelFrame::Revert() {
   GetImage();
   InternalSetModified(false);
+}
+
+void iViewPanelFrame::CopyFrom() {
+  CopyFrom_impl();
+  UpdatePanel();
+  if(Base() && Base()->InheritsFrom(&TA_taDataView)) {
+    taDataView* dvm = (taDataView*)Base();
+    dvm->Render();
+  }
 }
 
 void iViewPanelFrame::UpdatePanel() {
@@ -5769,6 +5784,23 @@ void iViewPanelFrame::UpdateButtons() {
   }
 }
 
+void iViewPanelFrame::keyPressEvent(QKeyEvent* e) {
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+
+  if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
+    Apply();			// do it!
+  }
+  if(e->key() == Qt::Key_Escape) {
+    Revert();			// do it!
+  }
+}
 
 //////////////////////////
 //    iDataPanelSet 	//

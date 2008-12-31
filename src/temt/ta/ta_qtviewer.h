@@ -1492,6 +1492,7 @@ public:
 //QHBoxLayout*		layButtons;
   HiLightButton*	  btnApply; //note: only if created
   HiLightButton*	  btnRevert;
+  HiLightButton*	  btnCopyFrom;
   
   int			vp_flags;
   bool			read_only; // set true if we are
@@ -1520,6 +1521,7 @@ public:
 public slots:
   void			Apply();
   void			Revert();
+  void			CopyFrom();
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;} //
@@ -1554,7 +1556,9 @@ protected:
   bool			warn_clobber; // set if we get a notify and are already modified
   
   override void 	customEvent(QEvent* ev_);
+  override void 	keyPressEvent(QKeyEvent* e);
   
+  virtual void		CopyFrom_impl() {}
   virtual void		GetValue_impl() {}
   void			InternalSetModified(bool value); // does all the gui config
   override void 	ResolveChanges_impl(CancelOp& cancel_op); //generic behavior

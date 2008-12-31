@@ -137,7 +137,7 @@ void taiData::Destroy() {
   m_rep = NULL;
 //TEMP
 #ifdef DEBUG
-/*if (taMisc::edit_style == taMisc::ES_TABLE) {
+/*if (taMisc::edit_style == taMisc::ES_ACTIVE_CONTROL) {
   cerr << this->metaObject()->className() << " deleting\n";
 }*/
 #endif

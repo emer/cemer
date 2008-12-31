@@ -400,33 +400,38 @@ public:
   static NetView*	New(Network* net, T3DataViewFrame*& fr); // create a new instance and add to viewer
 
 
-  T3DataView_PtrList	layers; // #NO_SAVE
-  T3DataView_PtrList	prjns; // #NO_SAVE
-  NameVar_Array		lay_disp_modes; // layer display modes (not properly saved otherwise, due to reset construction of LayerViews)
-  ColorScale		scale; //contains current min,max,range,zero,auto_scale
-  ScaleRange_List 	scale_ranges;  // Auto ranges for member buttons
-  bool			display;       // whether to update the display when values change (under control of programs)
-  bool			lay_mv;       // whether to display layer move controls when the arrow button is pressed (can get in the way of viewing weights)
+  T3DataView_PtrList	layers; // #IGNORE
+  T3DataView_PtrList	prjns; // #IGNORE
+
+  bool			display;       	// whether to update the display when values change (under control of programs)
+  bool			lay_mv;       	// whether to display layer move controls when the arrow button is pressed (can get in the way of viewing weights)
+  bool			net_text;       // whether to display text box below network with counters etc
+  FloatTransform	net_text_xform;  // transform of coordinate system for the net text display element
+  float			net_text_rot;	 // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
+  float			net_box_offset;	 // #READ_ONLY negative offset of the network box, which typically contains the net_text_xform -- if the net_text is on, this is set to .5, if off, then 0
   MemberSpace		membs;		// #NO_SAVE #NO_COPY list of all the members possible in units; note: all items are new clones
   String_Array	  	ordered_uvg_list; // #HIDDEN #NO_COPY selected var buttons
   // unit display flags
-  UnitRef		unit_src; // #NO_SAVE #NO_COPY unit last picked (if any) for display
-  bool			unit_con_md;  // #NO_SAVE true if memberdef is from a connection as opposed to a direct unit var
-  MemberDef*		unit_disp_md; // #NO_SAVE memberdef (if any) of Unit (or Connection) to display
-  ScaleRange*		unit_sr; // #NO_SAVE #NO_COPY scalerange of disp_md
-  MDFlags		unit_md_flags; // #NO_SAVE type to display in units
+  UnitRef		unit_src; 	// #NO_SAVE #NO_COPY unit last picked (if any) for display
+  bool			unit_con_md;    // #NO_SAVE #NO_COPY true if memberdef is from a connection as opposed to a direct unit var
+  MemberDef*		unit_disp_md;   // #NO_SAVE #NO_COPY memberdef (if any) of Unit (or Connection) to display
+  ScaleRange*		unit_sr; 	// #NO_SAVE #NO_COPY scalerange of disp_md
+  MDFlags		unit_md_flags;  // #NO_SAVE type to display in units
   UnitDisplayMode	unit_disp_mode; // how to display unit values
   UnitTextDisplay	unit_text_disp; // what labels to display with units
-  FloatTDCoord		max_size;	// maximum size in each dimension of the net
+  FloatTDCoord		max_size;	// #NO_COPY maximum size in each dimension of the net
   NetViewFontSizes	font_sizes;	// font sizes for various items
   NetViewParams		view_params;	// misc view parameters 
   bool			wt_line_disp;	// display weights from selected unit as lines?
   float			wt_line_width;	// width of weight lines
   float			wt_line_thr;	// threshold on fabs(wt) value -- don't display below this value
   bool			wt_line_swt;	// plot sending weights instead of recv weights
-  LayerRef		wt_prjn_lay; 	// layer to display projected weights for
+  LayerRef		wt_prjn_lay; 	// #NO_COPY layer to display projected weights for
   bool			snap_bord_disp;	// display snapshot value snap as a border around units
   float			snap_bord_width; // width of snapshot border lines
+  ColorScale		scale;		// contains current min,max,range,zero,auto_scale
+  ScaleRange_List 	scale_ranges;  	// #NO_COPY Auto ranges for member buttons
+  NameVar_Array		lay_disp_modes; // layer display modes (not properly saved otherwise, due to reset construction of LayerViews)
 
   Network*		net() const {return (Network*)data();}
   T3NetNode*		node_so() const {return (T3NetNode*)inherited::node_so();}
@@ -481,6 +486,8 @@ public:
   override String	GetLabel() const;
   override String	GetName() const;
 
+  virtual void		CopyFromView(NetView* cp);
+  // #BUTTON special copy function that just copies user view options in a robust manner
 
   override void		Dump_Load_post();
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); 
@@ -534,6 +541,9 @@ public:
   QHBoxLayout*		  layDispCheck;
   QCheckBox*		    chkDisplay;
   QCheckBox*		    chkLayMove;
+  QCheckBox*		    chkNetText;
+  QLabel*		    lblTextRot;
+  taiField*		    fldTextRot;
   QLabel*		    lblUnitText;
   taiComboBox*		    cmbUnitText;
   QLabel*		    lblDispMode;
@@ -605,6 +615,7 @@ protected:
   bool			req_full_redraw;
   override void		UpdatePanel_impl();
   override void		GetValue_impl();
+  override void		CopyFrom_impl();
   void 			setHighlightSpec(BaseSpec* spec, bool force = false);
 
 public slots:

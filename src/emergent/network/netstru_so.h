@@ -380,13 +380,16 @@ public:
 
   SoFrame*		shape() {return shape_;}
   SoSeparator*		netText() {return net_text_;} // extra text of network vars etc
-  SoSeparator*		getNetText();		      // get a new net text separator
+  SoTransform* 		netTextXform() {return net_text_xform_;}
+  SoTransform* 		netTextDragXform() {return net_text_drag_xform_;}
+  bool			netTextDrag() {return show_net_text_drag_;}
   SoSeparator*		wtLinesSep() {return wt_lines_;}
   SoDrawStyle*		wtLinesDraw() {return wt_lines_draw_;}
   SoIndexedLineSet*	wtLinesSet() {return wt_lines_set_;}
   SoVertexProperty* 	wtLinesVtxProp() {return wt_lines_vtx_prop_;}
 
-  T3NetNode(void* dataView_ = NULL, bool show_draggers = true);
+  T3NetNode(void* dataView_ = NULL, float box_off = .5f, bool show_draggers = true,
+	    bool show_net_text = true, bool show_nt_drag = true);
 
 protected:
   void		setDefaultCaptionTransform(); // override
@@ -400,8 +403,13 @@ protected:
   SoIndexedLineSet*	wt_lines_set_;
   SoVertexProperty*	wt_lines_vtx_prop_;
 
+  float			box_off_;
   bool			show_drag_;
+  bool			show_net_text_drag_;
   T3TransformBoxDragger* drag_;	// my position dragger
+  T3TransformBoxDragger* net_text_drag_;	// my net text dragger
+  SoTransform*		net_text_xform_;
+  SoTransform*		net_text_drag_xform_;
 };
 
 
