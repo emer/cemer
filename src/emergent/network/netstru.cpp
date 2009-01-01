@@ -1075,9 +1075,12 @@ int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
       i++;
     }
   }
-
-  Unit* ru = GET_MY_OWNER(Unit);
-  Init_Weights_post(ru);	// update weights after loading
+  
+  if(prjn && prjn->con_spec.spec) {
+    SetConSpec(prjn->con_spec.spec); // must set conspec b/c not otherwise saved or set
+    Unit* ru = GET_MY_OWNER(Unit);
+    Init_Weights_post(ru);	// update weights after loading
+  }
   return true;
 }
 
