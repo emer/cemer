@@ -1651,7 +1651,7 @@ bool taRootBase::Startup_InitTA_InitUserAppDir() {
   // make sure the standard user subfolders exist:
   QDir dir(taMisc::user_app_dir);
   if (!dir.exists()) {
-    if (!dir.mkdir(taMisc::user_app_dir)) {
+    if (!dir.mkpath(taMisc::user_app_dir)) {
       taMisc::Error("Could not find or make the user dir:", taMisc::user_app_dir,
         "Please make sure this directory exists and is readable, and try again"
         " -- or use the -UserAppDir= command line option.");
@@ -1660,11 +1660,11 @@ bool taRootBase::Startup_InitTA_InitUserAppDir() {
   }
   //NOTE: we could get excessively anal, and check all of these, but if we
   // can make/read the user folder, then very unlikely will these fail
-  dir.mkdir(taMisc::user_app_dir + PATH_SEP + "css_lib");
-  dir.mkdir(taMisc::user_app_dir + PATH_SEP + "log");
-  dir.mkdir(taMisc::user_app_dir + PATH_SEP + "plugins");
-  dir.mkdir(taMisc::user_app_dir + PATH_SEP + "prefs");
-  dir.mkdir(taMisc::user_app_dir + PATH_SEP + "prog_lib");
+  dir.mkpath(taMisc::user_app_dir + PATH_SEP + "css_lib");
+  dir.mkpath(taMisc::user_app_dir + PATH_SEP + "log");
+  dir.mkpath(taMisc::user_app_dir + PATH_SEP + "plugins");
+  dir.mkpath(taMisc::user_app_dir + PATH_SEP + "prefs");
+  dir.mkpath(taMisc::user_app_dir + PATH_SEP + "prog_lib");
   return true;
 }
 
