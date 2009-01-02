@@ -4775,9 +4775,9 @@ void LeabraNetwork::SetLearnRule() {
     cycle_max = 60;
   }
   else {
-    if(phase_order == MINUS_PLUS) {
-      phase_order = MINUS_PLUS_NOTHING;
-    }
+//     if(phase_order == MINUS_PLUS) {
+//       phase_order = MINUS_PLUS_NOTHING;
+//     }
     maxda_stopcrit = -1;
     min_cycles = 0;
     min_cycles_phase2 = 0;
@@ -4789,8 +4789,7 @@ void LeabraNetwork::SetLearnRule() {
   LeabraLayer* lay;
   taLeafItr l;
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
-    if(!lay->lesioned())
-      lay->SetLearnRule(this);
+    lay->SetLearnRule(this);
   }
 }
 

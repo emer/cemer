@@ -2222,9 +2222,9 @@ class LEABRA_API CtTrialTiming : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra timing parameters for a single stimulus input trial of ct learning algorithm
 INHERITED(taOBase)
 public:
-  int		minus;		// [50] number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
-  int		plus;		// [20] number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
-  int		inhib;		// [1] number of cycles to run in the final inhibitory phase -- network can do MINUS_PLUS_PLUS, MINUS_PLUS_MINUS, or MINUS_PLUS_NOTHING for inputs on this phase
+  int		minus;		// #DEF_50:200 number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
+  int		plus;		// #DEF_20:200 number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
+  int		inhib;		// #DEF_0;1 number of cycles to run in the final inhibitory phase -- network can do MINUS_PLUS_PLUS, MINUS_PLUS_MINUS, or MINUS_PLUS_NOTHING for inputs on this phase
   int		n_avg_only_epcs; // #DEF_1 number of epochs during which time only sravg values are accumulated, and no learning occurs
 
   int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
@@ -2244,10 +2244,10 @@ class LEABRA_API CtSRAvgSpec : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of cycles 
 INHERITED(taOBase)
 public:
-  int		start;		// [30] number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
-  int		end;		// [1] number of cycles from the start of the final inhibitory phase to continue recording sravg
-  int		interval;	// [5] how frequently to compute sravg -- more infrequent updating saves computational costs as sravg is expensive
-  int		plus_s_st;	// [10] how many cycles into the plus phase should the short time scale sravg computation start (only for TRIAL sravg computation)
+  int		start;		// #DEF_30:60 number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
+  int		end;		// #DEF_0;1 number of cycles from the start of the final inhibitory phase to continue recording sravg
+  int		interval;	// #DEF_5 how frequently to compute sravg -- more infrequent updating saves computational costs as sravg is expensive
+  int		plus_s_st;	// [10 for spiking, else plus-1, typically 19] how many cycles into the plus phase should the short time scale sravg computation start (only for TRIAL sravg computation)
 
   SIMPLE_COPY(CtSRAvgSpec);
   TA_BASEFUNS(CtSRAvgSpec);
@@ -2263,11 +2263,11 @@ class LEABRA_API CtSineInhibMod : public taBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra sinusoidal inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
 INHERITED(taBase)
 public:
-  int		start;		// [30] number of cycles from onset of new input to start applying sinusoidal inhibitory modulation
-  int		duration;	// [20] number of cycles from start to apply modulation
-  float		n_pi;		// number of multiples of PI to produce within duration of modulation (1.0 = positive only wave, 2.0 = full pos/neg wave, 4.0 = two waves, etc)
-  float		burst_i;	// [.02] maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
-  float		trough_i;	// [.02] maximum extra inhibition as proportion of computed kwta value to add for negative activation (trough) phase of wave -- value shoudl be a positive number
+  int		start;		// #DEF_30:60 number of cycles from onset of new input to start applying sinusoidal inhibitory modulation
+  int		duration;	// #DEF_20 number of cycles from start to apply modulation
+  float		n_pi;		// #DEF_2 number of multiples of PI to produce within duration of modulation (1.0 = positive only wave, 2.0 = full pos/neg wave, 4.0 = two waves, etc)
+  float		burst_i;	// #DEF_0.02;0 maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
+  float		trough_i;	// #DEF_0.02;0 maximum extra inhibition as proportion of computed kwta value to add for negative activation (trough) phase of wave -- value shoudl be a positive number
 
   float		GetInhibMod(int ct_cycle, float bi, float ti) {
     if((ct_cycle < start) || (ct_cycle >= (start + duration))) return 0.0f;
