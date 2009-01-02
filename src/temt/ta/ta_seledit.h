@@ -233,9 +233,12 @@ public: // public API
 
   virtual int	FindMethBase(taBase* base, MethodDef* md);
   // find a given base and method, returns index
+
+  virtual void 	ResetDescs();
+  // #MENU #CONFIRM #MENU_SEP_BEFORE clear all desc (description) fields, which will cause the text to be reloaded from the hard-coded descriptions of the associated members and methods -- NOTE: this will delete any customized comments in the desc fields -- you can always do this on an item-by-item basis as well
  
   virtual void	Reset();
-  // #MENU #CONFIRM #MENU_SEP_BEFORE reset (remove all) current members and methods
+  // #MENU #CONFIRM reset (remove all) current members and methods
  
 public: // IRefListClient i/f
   override void*	This() {return this;}

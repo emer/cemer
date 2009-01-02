@@ -4303,9 +4303,23 @@ bool Layer::SetUnitNames(bool force_use_unit_names) {
   // first enforce geom, then do it.
   if(unit_groups) {
     if(unit_names.dims() == 2) {
-      unit_names.SetGeom(2, un_geom.x, un_geom.y);
-      if(units.gp.size > 0)
-	((Unit_Group*)units.gp[0])->SetUnitNames(&unit_names);
+      // if already populated and geom is larger than unit geom, go with flat geom
+      if(unit_names.dim(0) * unit_names.dim(1) > un_geom.x * un_geom.y) {
+	unit_names.SetGeom(2, flat_geom.x, flat_geom.y);
+	int x, y;
+	for (y = 0; y < flat_geom.y; ++y) {
+	  for (x = 0; x < flat_geom.x; ++x) {
+	    Unit* un = FindUnitFmCoord(x, y);
+	    if (!un) continue;
+	    un->SetName(unit_names.SafeElAsVar(x, y).toString());
+	  }
+	}
+      }
+      else {
+	unit_names.SetGeom(2, un_geom.x, un_geom.y);
+	if(units.gp.size > 0)
+	  ((Unit_Group*)units.gp[0])->SetUnitNames(&unit_names);
+      }
     }
     else { 
       unit_names.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);

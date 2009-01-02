@@ -90,18 +90,18 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 }
 
 void XCalLearnSpec::Initialize() {
-  lrn_var = XCAL;
+  lrn_var = XCAL_SR;
 
   mvl_mix = 0.002f;
 
   s_mix = 0.90f;
 
   l_dt = 0.005f;
-  l_gain = 1.8f;
+  l_gain = 1.5f;
 
   ml_dt = 0.4f;
 
-  d_rev = 0.05f;
+  d_rev = 0.10f;
 
   d_gain = 1.0f;
 
@@ -1659,7 +1659,7 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraLayer* lay, LeabraNetwor
 	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
 	if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
 	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-	if((cs->xcal.lrn_var == XCalLearnSpec::XCAL) ||
+	if((cs->xcal.lrn_var == XCalLearnSpec::XCAL_SEP) ||
 	   (cs->xcal.lrn_var == XCalLearnSpec::CHL)) continue;
 	recv_gp->Compute_SRAvg(u, do_s);
       }

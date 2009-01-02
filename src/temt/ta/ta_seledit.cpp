@@ -439,6 +439,19 @@ void SelectEdit::RemoveFun_impl(int idx) {
     item->Close();
 }
 
+void SelectEdit::ResetDescs() {
+  SelectEditItem* se = NULL;
+  taLeafItr itr;
+  FOR_ITR_EL(SelectEditItem, se, mbrs., itr) {
+    se->desc = _nilString;
+    se->UpdateAfterEdit();
+  }
+  FOR_ITR_EL(SelectEditItem, se, mths., itr) {
+    se->desc = _nilString;
+    se->UpdateAfterEdit();
+  }
+}
+
 void SelectEdit::Reset() {
   mbrs.Reset();
   mths.Reset();
