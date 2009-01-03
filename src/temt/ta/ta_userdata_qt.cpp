@@ -233,6 +233,8 @@ void iUserDataDataHost::Constr_Data_Labels() {
       tw->setRowCount(row + 1);
       QTableWidgetItem* twi = NULL;
       
+      // force span, in case this row had a group before
+      tw->setSpan(row, 0, 1, 1);
       //TODO: Modal, based on type
       // data item
       twi = new QTableWidgetItem;
