@@ -676,7 +676,7 @@ public:
 //NOTE: following not keeping tokens so cannot be viewed in any mode
   static ViewColor_List* view_colors; 	// #NO_SAVE #NO_SHOW colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
 #endif
-  static EditStyle	std_edit_style; // #SAVE #CAT_GUI style to use for standard edit dialogs (i.e., non select-edit dialogs)
+  static EditStyle	std_edit_style; // #SAVE #SHOW #READ_ONLY #CAT_GUI style to use for standard edit dialogs (i.e., non select-edit dialogs)
   static EditStyle	select_edit_style; // #SAVE #CAT_GUI style to use for select edit dialogs (which are typically used for control panels, etc)
 
   static int		antialiasing_level; // #SAVE #CAT_GUI level of smoothing to perform in the 3d display -- values depend on hardware acceleration, but 2 or 4 are typical values.  1 or lower disables entirely.  modern hardware can do typically do level 4 with little slowdown in speed.
