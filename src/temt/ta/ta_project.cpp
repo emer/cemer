@@ -1393,7 +1393,7 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
     // Vista style only available on Vista+, so force down if not
     // NOTE: this may not work with Windows 7 and Qt 4.5+ -- see QtSysInfo at that time
     if ((taMisc::gui_style == taMisc::GS_WINDOWSVISTA) && (
-      QSysInfo::WindowsVersion != WV_VISTA))
+      QSysInfo::WindowsVersion != QSysInfo::WV_VISTA))
       taMisc::gui_style = taMisc::GS_WINDOWSXP;
 # endif
     String gstyle;

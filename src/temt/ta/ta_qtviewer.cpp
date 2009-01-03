@@ -3230,9 +3230,9 @@ void iApplicationToolBar::Constr_post() {
   win->historyForwardAction->addTo(tb);
 //TEMP 
 QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(win->historyBackAction));
-if (but) but->setArrowType(Qt::LeftArrow);
+if (but) {but->setArrowType(Qt::LeftArrow); but->setText("");}
 but = qobject_cast<QToolButton*>(tb->widgetForAction(win->historyForwardAction));
-if (but) but->setArrowType(Qt::RightArrow);
+if (but) {but->setArrowType(Qt::RightArrow); but->setText("");}
   tb->addSeparator();
   win->fileNewAction->addTo(tb);
   win->fileOpenAction->addTo(tb);
