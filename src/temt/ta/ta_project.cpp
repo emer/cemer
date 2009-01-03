@@ -1389,6 +1389,13 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 #ifdef TA_GUI
   if(taMisc::use_gui) {
     // get optional style override
+# ifdef TA_OS_WIN
+    // Vista style only available on Vista+, so force down if not
+    // NOTE: this may not work with Windows 7 and Qt 4.5+ -- see QtSysInfo at that time
+    if ((taMisc::gui_style == taMisc::GS_WINDOWSVISTA) && (
+      QSysInfo::WindowsVersion != WV_VISTA))
+      taMisc::gui_style = taMisc::GS_WINDOWSXP;
+# endif
     String gstyle;
     if(taMisc::gui_style != taMisc::GS_DEFAULT) {
       gstyle = TA_taMisc.GetEnumString("GuiStyle", taMisc::gui_style).after("GS_").downcase();

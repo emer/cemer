@@ -613,8 +613,10 @@ public:
     GS_WINDOWS,		// #LABEL_Windows standard old-school Microsoft Windows (pre XP)
 #ifdef TA_OS_WIN
     GS_WINDOWSXP,	// #LABEL_WindowsXP Windows XP look -- only available on Windows XP or higher
+    GS_WINDOWSVISTA,	// #LABEL_WindowsVista Windows Vista look -- only available on Windows Vista or higher
 #else
     GS_WINDOWSXP,	// #NO_SHOW
+    GS_WINDOWSVISTA,	// #NO_SHOW
 #endif
   };    
   

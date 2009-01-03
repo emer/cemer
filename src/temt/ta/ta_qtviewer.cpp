@@ -3717,13 +3717,13 @@ void iMainWindowViewer::Constr_Menu_impl() {
   QString cmd_str = "Ctrl+";
 
   // forward/back guys -- note: on Win the icons don't show up if Action has text
-  historyBackAction = AddAction(new taiAction("", QKeySequence(), "historyBackAction" ));
+  historyBackAction = AddAction(new taiAction("Back", QKeySequence(), "historyBackAction" ));
   historyBackAction->setToolTip("Back");
   historyBackAction->setStatusTip(historyBackAction->toolTip());
   connect(historyBackAction, SIGNAL(triggered()), brow_hist, SLOT(back()) );
   connect(brow_hist, SIGNAL(back_enabled(bool)), 
     historyBackAction, SLOT(setEnabled(bool)) );
-  historyForwardAction = AddAction(new taiAction("", QKeySequence(), "historyForwardAction" ));
+  historyForwardAction = AddAction(new taiAction("Forward", QKeySequence(), "historyForwardAction" ));
   historyForwardAction->setToolTip("Forward");
   historyForwardAction->setStatusTip(historyForwardAction->toolTip());
   connect(historyForwardAction, SIGNAL(triggered()), brow_hist, SLOT(forward()) );

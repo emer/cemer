@@ -43,6 +43,9 @@ LeabraProject .projects[0] {
 	  EditMthItem @[2] { };
 	  EditMthItem @[3] { };
 	};
+	EditMthItem_Group @.gp[1] = [1] { 
+	  EditMthItem @[0] { };
+	};
       };
     };
   };
@@ -1090,6 +1093,18 @@ This is the details.
       mth=Program::Stop;
      };
     };
+    EditMthItem_Group @.gp[1] {
+     name="Network";
+     el_typ=EditMthItem;
+     el_def=0;
+     group_type=GT_MENU;
+     EditMthItem @[0] {
+      label="Build";
+      desc=" Build the network units and Connect them (calls BuildLayers/Units/Prjns and Connect)";
+      base=.projects[0].networks[0]$5$;
+      mth=Network::Build;
+     };
+    };
    };
   };
  };
@@ -1536,7 +1551,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      name="network";
      var_type=T_Object;
      object_type=LeabraNetwork;
-     object_val=.projects[0].networks[0]$5$;
+     object_val=$5$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
      reference=0;
@@ -2126,6 +2141,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       network_var=.projects[0].programs.gp[0][0].args[0]$17$;
       local_ctr_var=.projects[0].programs.gp[0][0].vars[0]$18$;
       counter=Network::batch;
+      update_after=0;
      };
     };
     prog_code {
@@ -2138,6 +2154,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       network_var=$17$;
       local_ctr_var=$18$;
       counter=Network::batch;
+      update_after=0;
      };
      WhileLoop @[1] {
       desc="the main loop over training runs";
@@ -2193,6 +2210,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	network_var=$17$;
 	local_ctr_var=$18$;
 	counter=Network::batch;
+	update_after=0;
        };
       };
       test {
@@ -2607,6 +2625,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	network_var=$23$;
 	local_ctr_var=$26$;
 	counter=Network::epoch;
+	update_after=0;
        };
        IfBreak @[2] {
 	desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here instead)";
@@ -2748,6 +2767,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       network_var=.projects[0].programs.gp[0][2].args[0]$29$;
       local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$30$;
       counter=Network::trial;
+      update_after=0;
      };
      AssignExpr @[1] {
       desc="get pointer to epoch timer object on network";
@@ -2768,6 +2788,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       network_var=$29$;
       local_ctr_var=$30$;
       counter=Network::trial;
+      update_after=0;
      };
      AssignExpr @[1] {
       desc="get pointer to epoch timer object on network";
@@ -3046,6 +3067,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       network_var=.projects[0].programs.gp[0][3].args[0]$38$;
       local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$39$;
       counter=LeabraNetwork::phase_no;
+      update_after=0;
      };
     };
     prog_code {
@@ -3058,6 +3080,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       network_var=$38$;
       local_ctr_var=$39$;
       counter=LeabraNetwork::phase_no;
+      update_after=0;
      };
      MethodCall @[1] {
       desc="initializes various counters at start of trial";
@@ -3115,6 +3138,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	network_var=$38$;
 	local_ctr_var=$39$;
 	counter=LeabraNetwork::phase_no;
+	update_after=0;
        };
        MethodCall @[2] {
 	desc="increments other phase state information to prepare for the next phase of settling";
@@ -3267,6 +3291,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       network_var=.projects[0].programs.gp[0][4].args[0]$42$;
       local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$43$;
       counter=Network::cycle;
+      update_after=0;
      };
     };
     prog_code {
@@ -3279,6 +3304,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       network_var=$42$;
       local_ctr_var=$43$;
       counter=Network::cycle;
+      update_after=0;
      };
      MethodCall @[1] {
       desc="resets input data, before getting new external inputs data from apply inputs call";
@@ -3403,6 +3429,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	network_var=$42$;
 	local_ctr_var=$43$;
 	counter=Network::cycle;
+	update_after=0;
        };
        IfContinue @[2] {
 	desc="avoid subsequent stopping criteria if below min_cycles";
@@ -5218,7 +5245,42 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	  m_data=$5$;
 FloatTransform @*(.m_transform) {scale={x=0.6753985: y=0.6753985: z=0.6753985: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=0.6753985: y=0.6753985: z=0.6753985: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
-	  lay_disp_modes{ Input=0;Hidden=0;Output=0;	  };
+	  display=1;
+	  lay_mv=1;
+	  net_text=1;
+	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
+	  net_text_rot=0;
+	  net_box_offset=0.5;
+	  ordered_uvg_list{ act;	  };
+	  unit_disp_mode=UDM_BLOCK;
+	  unit_text_disp=UTD_NONE;
+	  max_size {x=5: y=5: z=3: };
+	  font_sizes {
+	   net_name=0.05;
+	   net_vals=0.05;
+	   layer=0.04;
+	   layer_vals=0.03;
+	   prjn=0.01;
+	   unit=0.02;
+	   un_nm_len=3;
+	  };
+	  view_params {
+	   xy_square=0;
+	   unit_spacing=0.05;
+	   prjn_disp=L_R_F;
+	   prjn_name=0;
+	   prjn_width=0.002;
+	   prjn_trans=0.5;
+	   lay_trans=0.5;
+	   unit_trans=0.6;
+	  };
+	  wt_line_disp=0;
+	  wt_line_width=4;
+	  wt_line_thr=0.5;
+	  wt_line_swt=0;
+	  wt_prjn_lay=NULL;
+	  snap_bord_disp=0;
+	  snap_bord_width=4;
 	  scale {
 	   name=;
 	   chunks=133;
@@ -5270,38 +5332,7 @@ FloatTransform @*(.m_transform) {scale={x=0.6753985: y=0.6753985: z=0.6753985: }
 	    max=0.81;
 	   };
 	  };
-	  display=1;
-	  lay_mv=1;
-	  ordered_uvg_list{ act;	  };
-	  unit_disp_mode=UDM_BLOCK;
-	  unit_text_disp=UTD_NONE;
-	  max_size {x=5: y=5: z=3: };
-	  font_sizes {
-	   net_name=0.05;
-	   net_vals=0.05;
-	   layer=0.04;
-	   layer_vals=0.03;
-	   prjn=0.01;
-	   unit=0.02;
-	   un_nm_len=3;
-	  };
-	  view_params {
-	   xy_square=0;
-	   unit_spacing=0.05;
-	   prjn_disp=L_R_F;
-	   prjn_name=0;
-	   prjn_width=0.002;
-	   prjn_trans=0.5;
-	   lay_trans=0.5;
-	   unit_trans=0.6;
-	  };
-	  wt_line_disp=0;
-	  wt_line_width=4;
-	  wt_line_thr=0.5;
-	  wt_line_swt=0;
-	  wt_prjn_lay=NULL;
-	  snap_bord_disp=0;
-	  snap_bord_width=4;
+	  lay_disp_modes{ Input=0;Hidden=0;Output=0;	  };
 	 };
 	 GridTableView @[1] {
 	  m_data=$8$;
@@ -5802,6 +5833,54 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   point_style=PLUS;
 	   alt_y=0;
 	  };
+	  plot_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CROSS;
+	   alt_y=0;
+	  };
+	  plot_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=STAR;
+	   alt_y=0;
+	  };
+	  plot_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=MINUS;
+	   alt_y=0;
+	  };
 	  alt_y_1=0;
 	  alt_y_2=0;
 	  alt_y_3=0;
@@ -5872,6 +5951,54 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   alt_y=0;
 	  };
 	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_8 {
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6152,6 +6279,54 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   point_style=PLUS;
 	   alt_y=0;
 	  };
+	  plot_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CROSS;
+	   alt_y=0;
+	  };
+	  plot_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=STAR;
+	   alt_y=0;
+	  };
+	  plot_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=MINUS;
+	   alt_y=0;
+	  };
 	  alt_y_1=0;
 	  alt_y_2=0;
 	  alt_y_3=0;
@@ -6222,6 +6397,54 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_8 {
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6597,8 +6820,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
        wt_sig {gain=6: off=1.1: };
        lmix {hebb=0.1: err=0.9: err_sb=1: };
-       xcal {lrn_var=XCAL: dwt_norm=0: mvl_mix=0.05: svm_mix=0.95: s_mix=0.9: m_mix=0.1: l_dt=0.03: l_gain=1.8: ml_dt=0.4: d_gain=2.5: d_rev=0.15: d_rev_ratio=5.666667: };
-       xcalm {avg_updt=TRIAL: ml_mix=0: sm_mix=1: m_dt=0.03: s_dt=0.1: use_nd=0: avg_init=0.15: rnd_min_avg=-1: rnd_var=0.1: };
+       xcal {lrn_var=XCAL_SR: mvl_mix=0.05: svm_mix=0.95: s_mix=0.9: m_mix=0.1: l_dt=0.03: l_gain=1.8: ml_dt=0.4: d_rev=0.15: d_gain=2.5: d_rev_ratio=5.666667: };
+       xcalm {avg_updt=TRIAL: ml_mix=0: sm_mix=1: m_dt=0.03: s_dt=0.1: use_sb=1: use_nd=0: avg_init=0.15: rnd_min_avg=-1: rnd_var=0.1: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
        rel_net_adapt {
 	on=0;
@@ -6633,8 +6856,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      wt_sig {gain=6: off=1.1: };
      lmix {hebb=0.1: err=0.9: err_sb=1: };
-     xcal {lrn_var=XCAL: dwt_norm=0: mvl_mix=0.05: svm_mix=0.95: s_mix=0.9: m_mix=0.1: l_dt=0.03: l_gain=1.8: ml_dt=0.4: d_gain=2.5: d_rev=0.15: d_rev_ratio=5.666667: };
-     xcalm {avg_updt=TRIAL: ml_mix=0: sm_mix=1: m_dt=0.03: s_dt=0.1: use_nd=0: avg_init=0.15: rnd_min_avg=-1: rnd_var=0.1: };
+     xcal {lrn_var=XCAL_SR: mvl_mix=0.05: svm_mix=0.95: s_mix=0.9: m_mix=0.1: l_dt=0.03: l_gain=1.8: ml_dt=0.4: d_rev=0.15: d_gain=2.5: d_rev_ratio=5.666667: };
+     xcalm {avg_updt=TRIAL: ml_mix=0: sm_mix=1: m_dt=0.03: s_dt=0.1: use_sb=1: use_nd=0: avg_init=0.15: rnd_min_avg=-1: rnd_var=0.1: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
      rel_net_adapt {
       on=0;

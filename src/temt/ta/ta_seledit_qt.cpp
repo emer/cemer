@@ -62,6 +62,7 @@ iSelectEditDataHostBase::~iSelectEditDataHostBase() {
 
 void iSelectEditDataHostBase::Initialize()
 {
+  no_meth_menu = true; // only show them on outer menu, by way of Propertiesguy
   sele = NULL;
   sel_edit_mbrs = true; // note: we don't actually select members, just for removal
 }
@@ -78,12 +79,12 @@ void iSelectEditDataHostBase::Constr_Body() {
   }
 }
   
-void iSelectEditDataHostBase::Constr_Methods() {
-  inherited::Constr_Methods();
+void iSelectEditDataHostBase::Constr_Methods_impl() {
+  inherited::Constr_Methods_impl(); // note: typ=NULL means skipping native menus
   Insert_Methods();
-  if (cur_menu != NULL) {// for safety... cur_menu should be the SelectEdit menu
+/*obs  if (cur_menu != NULL) {// for safety... cur_menu should be the SelectEdit menu
     cur_menu->AddSep();
-  }
+  }*/
 
   taGroupItr itr;
   EditMthItem_Group* grp;
@@ -94,18 +95,19 @@ void iSelectEditDataHostBase::Constr_Methods() {
     EditMthItem_Group::MthGroupType group_type = grp->group_type;
     
     // make a menu or button group if needed
-    String men_nm = grp->GetDisplayName();
-    if (men_nm.empty()) // shouldn't happen
-      men_nm = "Actions";
+    String men_nm = grp->GetDisplayName(); // blank for default
     switch (group_type) {
     case EditMthItem_Group::GT_MENU: {
-      cur_menu = ta_menus.FindName(men_nm);
+      SetCurMenu_Name(men_nm); // default is "Actions"
+      /*cur_menu = ta_menus.FindName(men_nm);
       if (cur_menu == NULL) {
         cur_menu = menu->AddSubMenu(men_nm);
         ta_menus.Add(cur_menu);
-      }
+      }*/
     } break;
     case EditMthItem_Group::GT_MENU_BUTTON: { 
+      if (men_nm.empty()) // shouldn't happen
+        men_nm = "Actions";
       cur_menu_but = ta_menu_buttons.FindName(men_nm);
       if (cur_menu_but == NULL) {
         cur_menu_but = taiActions::New

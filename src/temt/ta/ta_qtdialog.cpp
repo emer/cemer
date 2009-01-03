@@ -1811,6 +1811,7 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
   
   
   inline_mode = false;
+  no_meth_menu = false;
   bgrp = new QButtonGroup(this);
   bgrp->setExclusive(false);
   connect(bgrp, SIGNAL(buttonClicked(int)),
@@ -2035,7 +2036,7 @@ void taiEditDataHost::Constr_Strings() {
 
 void taiEditDataHost::Constr_Methods_impl() {
   inherited::Constr_Methods_impl();
-  if (typ == NULL) return;
+  if ((typ == NULL) || no_meth_menu) return; 
 
   for (int i = 0; i < typ->methods.size; ++i) {
     MethodDef* md = typ->methods.FastEl(i);
@@ -2364,6 +2365,13 @@ bool taiEditDataHost::ShowMember(MemberDef* md) const {
 }
 
 void taiEditDataHost::SetCurMenu(MethodDef* md) {
+  // note: men_nm will be blank if implicit (i.e. last one)
+  // if no explicit name, and no menu yet, we use "Actions"
+  String men_nm = md->OptionAfter("MENU_ON_");
+  SetCurMenu_Name(men_nm);
+}
+
+void taiEditDataHost::SetCurMenu_Name(String men_nm) {
   if (!menu) {
     // we can't use QMainMenu on Mac, and QMenu doesn't work for some
     // reason (doesn't become visible, no matter what); but a toolbar works
@@ -2378,14 +2386,13 @@ void taiEditDataHost::SetCurMenu(MethodDef* md) {
     vblDialog->setMenuBar(menu->GetRep());
 #endif
   }
-  String men_nm = md->OptionAfter("MENU_ON_");
-  if (men_nm != "") {
+  if (men_nm.nonempty()) {
     cur_menu = ta_menus.FindName(men_nm);
     if (cur_menu != NULL)  return;
   }
   if (cur_menu != NULL) return;
 
-  if (men_nm == "")
+  if (men_nm.empty())
     men_nm = "Actions";
   cur_menu = menu->AddSubMenu(men_nm);
   ta_menus.Add(cur_menu);

@@ -64,7 +64,7 @@ public:
   ~iSelectEditDataHostBase();
 
 protected:
-  void 			Constr_Methods();
+  override void 	Constr_Methods_impl();
 
 protected slots:
   virtual void		DoRemoveSelEdit() = 0;
