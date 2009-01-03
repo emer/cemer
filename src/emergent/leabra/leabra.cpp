@@ -256,6 +256,12 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
   if((int)net->learn_rule == (int)learn_rule) return;
   learn_rule = (LeabraConSpec::LearnRule)net->learn_rule;
   // todo: could set come conflicting params..
+  if(learn_rule != LEABRA_CHL) {
+    if(wt_sig.off == 1.25)
+      wt_sig.off = 1.0;		// this is key
+    if(lrate == 0.01)
+      lrate = 0.02;		// also important
+  }
 }
 
 void LeabraConSpec::SetCurLrate(LeabraNetwork* net, int epoch) {

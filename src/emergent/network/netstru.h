@@ -119,6 +119,8 @@ public:
   float		GetVal(int ctr)  { return start_val + step * (float)(ctr - start_ctr); }
   // get value for given ctr value
 
+  override String	GetDesc() const;
+
   TA_SIMPLE_BASEFUNS(SchedItem);
 private:
   void	Initialize();

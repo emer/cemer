@@ -58,6 +58,11 @@ void SchedItem::Initialize() {
   step = .01f;
 }
 
+String SchedItem::GetDesc() const {
+  String rval = String(start_ctr) + ": " + String(start_val);
+  return rval;
+}
+
 void Schedule::Initialize() {
   last_ctr = -1;
   default_val = 1.0f;
