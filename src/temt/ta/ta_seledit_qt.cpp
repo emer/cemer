@@ -89,8 +89,8 @@ void iSelectEditDataHostBase::Constr_Methods_impl() {
   taGroupItr itr;
   EditMthItem_Group* grp;
   //int set_idx = 0;
+  // only iterates non-empty groups
   FOR_ITR_GP(EditMthItem_Group, grp, sele->mths., itr) {
-    if (grp->size == 0) continue;
     //note: root group uses only buttons (hard wired)
     EditMthItem_Group::MthGroupType group_type = grp->group_type;
     
@@ -221,12 +221,12 @@ void iSelectEditDataHost::Constr_Data_Labels() {
   String help_text;
   MembSet* memb_set = NULL;
   
-  bool def_grp = true; // first one
   taGroupItr itr;
   EditMbrItem_Group* grp;
   int set_idx = 0;
+  // note: iterates non-empty groups only
   FOR_ITR_GP(EditMbrItem_Group, grp, sele->mbrs., itr) {
-    if (grp->size == 0) {def_grp = false; continue; }
+    bool def_grp = (grp == &(sele->mbrs));// root group
     membs.SetMinSize(set_idx + 1);
     memb_set = membs.FastEl(set_idx);
     // make a group header
@@ -799,13 +799,13 @@ void iSelectEditDataHost2::Constr_Data_Labels() {
   String help_text;
   MembSet* ms = NULL;
   
-  bool def_grp = true; // first one
   taGroupItr itr;
   EditMbrItem_Group* grp;
   int set_idx = 0;
   int row = 0;
+  // note: iterates non-empty groups only
   FOR_ITR_GP(EditMbrItem_Group, grp, sele->mbrs., itr) {
-    if (grp->size == 0) {def_grp = false; continue; }
+    bool def_grp = (grp == &(sele->mbrs));// root group
     membs.SetMinSize(set_idx + 1);
     ms = membs.FastEl(set_idx);
     // make a group header

@@ -196,13 +196,13 @@ void iUserDataDataHost::Constr_Data_Labels() {
   String help_text;
   MembSet* ms = NULL;
   
-  bool def_grp = true; // first one
   taGroupItr itr;
   UserDataItem_List* grp;
   int set_idx = 0;
   int row = 0;
+  // iterates all non-empty groups...
   FOR_ITR_GP(UserDataItem_List, grp, udil->, itr) {
-    if (grp->size == 0) {def_grp = false; continue; }
+    bool def_grp = (grp == udil);// root group
     membs.SetMinSize(set_idx + 1);
     ms = membs.FastEl(set_idx);
     // make a group header
