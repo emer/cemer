@@ -833,10 +833,9 @@ void iSelectEditDataHost2::Constr_Data_Labels() {
       MemberDef* md = item->mbr;
       if (!md || (md->im == NULL)) continue; // shouldn't happen
       
-     // taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
       ms->memb_el.Add(md);
-     // ms->data_el.Add(mb_dat);
-     
+      // force span, in case this row had a group before
+      tw->setSpan(row, 0, 1, 1);
       // label item
       QTableWidgetItem* twi = new QTableWidgetItem;
       twi->setText(item->caption());
