@@ -5,17 +5,18 @@ Program .projects[0].programs.gp[0][3] {
     ProgVar @[1] { };
   };
 
-  ProgVar_List @.vars = [3] {
+  ProgVar_List @.vars = [4] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
+    ProgVar @[3] { };
   };
 
   ProgEl_List @.init_code = [1] {
     NetCounterInit @[0] { };
   };
 
-  ProgEl_List @.prog_code = [7] {
+  ProgEl_List @.prog_code = [8] {
     NetCounterInit @[0] { };
     MethodCall @[1] { };
     WhileLoop @[2] { 
@@ -36,12 +37,17 @@ Program .projects[0].programs.gp[0][3] {
 	MethodCall @[0] { };
       };
     };
-    ProgramCall @[5] { 
+    If @[5] { 
+      ProgEl_List @.true_code = [1] {
+	MethodCall @[0] { };
+      };
+    };
+    ProgramCall @[6] { 
       ProgArg_List @.prog_args = [1] {
 	ProgArg @[0] { };
       };
     };
-    NetUpdateView @[6] { };
+    NetUpdateView @[7] { };
   };
 };
 Program .projects[0].programs.gp[0][3] {
@@ -69,7 +75,8 @@ Program .projects[0].programs.gp[0][3] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED;
+   reference=0;
    desc="network to operate on -- typically set by higher-level calling programs";
   };
   ProgVar @[1] {
@@ -79,6 +86,7 @@ Program .projects[0].programs.gp[0][3] {
    object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
    flags=NULL_CHECK;
+   reference=0;
    desc="datatable containing training input/output patterns";
   };
  };
@@ -91,7 +99,8 @@ Program .projects[0].programs.gp[0][3] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+   reference=0;
    desc="local phase counting variable (0 is typically minus phase, 1 is typically plus -- depends on network settings)";
   };
   ProgVar @[1] {
@@ -99,7 +108,8 @@ Program .projects[0].programs.gp[0][3] {
    var_type=T_Bool;
    bool_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
+   reference=0;
    desc="determines whether to update any network view displays after trial is completed";
   };
   ProgVar @[2] {
@@ -108,7 +118,17 @@ Program .projects[0].programs.gp[0][3] {
    int_val=0;
    objs_ptr=0;
    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   reference=0;
    desc="current trial (event) within the epoch -- increments automatically";
+  };
+  ProgVar @[3] {
+   name="compute_rel_netin";
+   var_type=T_Bool;
+   bool_val=0;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   reference=0;
+   desc="call ComputeAbsRelNetin() function to collect relative net input information telling how much each layer receives from each of its receiving projections";
   };
  };
  functions {
@@ -131,6 +151,7 @@ Program .projects[0].programs.gp[0][3] {
    network_var=.projects[0].programs.gp[0][3].args[0]$2$;
    local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$3$;
    counter=LeabraNetwork::phase_no;
+   update_after=0;
   };
  };
  prog_code {
@@ -143,6 +164,7 @@ Program .projects[0].programs.gp[0][3] {
    network_var=$2$;
    local_ctr_var=$3$;
    counter=LeabraNetwork::phase_no;
+   update_after=1;
   };
   MethodCall @[1] {
    desc="initializes various counters at start of trial";
@@ -200,6 +222,7 @@ Program .projects[0].programs.gp[0][3] {
      network_var=$2$;
      local_ctr_var=$3$;
      counter=LeabraNetwork::phase_no;
+     update_after=1;
     };
     MethodCall @[2] {
      desc="increments other phase state information to prepare for the next phase of settling";
@@ -231,6 +254,30 @@ Program .projects[0].programs.gp[0][3] {
    };
   };
   If @[4] {
+   desc=;
+   flags=NEW_EL;
+   cond {
+    expr="compute_rel_netin";
+   };
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc="special for adapting netin";
+     flags=;
+     result_var=NULL;
+     obj=$2$;
+     method=LeabraNetwork::Compute_AbsRelNetin;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+  };
+  If @[5] {
    desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
    flags=;
    cond {
@@ -254,7 +301,7 @@ Program .projects[0].programs.gp[0][3] {
     };
    };
   };
-  ProgramCall @[5] {
+  ProgramCall @[6] {
    desc="records data about the trial-level processing to a datatable for graphing/processing";
    flags=;
    target=.projects[0].programs.gp[0][7]$5$;
@@ -275,7 +322,7 @@ Program .projects[0].programs.gp[0][3] {
     };
    };
   };
-  NetUpdateView @[6] {
+  NetUpdateView @[7] {
    desc="update the network view(s) (only if update_net_view is true)";
    flags=;
    network_var=$2$;
