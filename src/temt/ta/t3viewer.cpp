@@ -79,11 +79,37 @@ using namespace Qt;
 //	T3ExaminerViewer
 //////////////////////////
 
+void T3ExaminerViewer_qobj::interactbuttonClicked() {
+  s->interactbuttonClicked();
+}
+void T3ExaminerViewer_qobj::viewbuttonClicked() {
+  s->viewbuttonClicked();
+}
+void T3ExaminerViewer_qobj::homebuttonClicked() {
+  s->homebuttonClicked();
+}
+void T3ExaminerViewer_qobj::sethomebuttonClicked() {
+  s->sethomebuttonClicked();
+}
+void T3ExaminerViewer_qobj::viewallbuttonClicked() {
+  s->viewallbuttonClicked();
+}
+void T3ExaminerViewer_qobj::seekbuttonClicked() {
+  s->seekbuttonClicked();
+}
+void T3ExaminerViewer_qobj::snapshotbuttonClicked() {
+  s->snapshotbuttonClicked();
+}
+void T3ExaminerViewer_qobj::printbuttonClicked() {
+  s->printbuttonClicked();
+}
+
 SOQT_OBJECT_SOURCE(T3ExaminerViewer);
 
 T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget *parent, const char *name, bool embed)
  :inherited(parent, name, embed, SoQtFullViewer::BUILD_ALL, SoQtViewer::BROWSER, FALSE) // no build
 {
+  q = new T3ExaminerViewer_qobj(this);
   t3vw = parent;
   interactbutton = NULL;
   viewbutton = NULL;
@@ -132,6 +158,7 @@ do_inherited:
 
 T3ExaminerViewer::~T3ExaminerViewer() {
   // anything?
+  delete q; q = NULL;
   t3vw = NULL;
 }
 
@@ -183,8 +210,8 @@ T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
       p->setIcon(QPixmap((const char **)pick_xpm));
       p->setChecked(this->isViewing() ? FALSE : TRUE);
       p->setToolTip("Interact (ESC key): Allows you to select and manipulate objects in the display \n(ESC toggles between Interact and Camera View");
-      connect(p, SIGNAL(clicked()),
-	      this, SLOT(interactbuttonClicked()));
+      QObject::connect(p, SIGNAL(clicked()),
+	      q, SLOT(interactbuttonClicked()));
       break;
     case EXAMINE_BUTTON:
       viewbutton = p;
@@ -193,22 +220,22 @@ T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
       p->setChecked(this->isViewing());
       p->setToolTip("Camera View (ESC key): Allows you to move the view around (click and drag to move; \nshift = move in the plane; ESC toggles between Camera View and Interact)");
       QObject::connect(p, SIGNAL(clicked()),
-		       this, SLOT(viewbuttonClicked()));
+		       q, SLOT(viewbuttonClicked()));
       break;
     case HOME_BUTTON:
-      QObject::connect(p, SIGNAL(clicked()), this, SLOT(homebuttonClicked()));
+      QObject::connect(p, SIGNAL(clicked()), q, SLOT(homebuttonClicked()));
       p->setToolTip("Home View (Home key): Restores display to the 'home' viewing configuration\n(set by next button down, saved with the project)");
       p->setIcon(QPixmap((const char **)home_xpm));
       break;
     case SET_HOME_BUTTON:
       QObject::connect(p, SIGNAL(clicked()),
-		       this, SLOT(sethomebuttonClicked()));
+		       q, SLOT(sethomebuttonClicked()));
       p->setToolTip("Save Home: Saves the current 'home' viewing configuration \n(click button above to go back to this view) -- saved with the project");
       p->setIcon(QPixmap((const char **)set_home_xpm));
       break;
     case VIEW_ALL_BUTTON:
       QObject::connect(p, SIGNAL(clicked()),
-		       this, SLOT(viewallbuttonClicked()));
+		       q, SLOT(viewallbuttonClicked()));
       p->setToolTip("View All: repositions the camera view to the standard initial view with everything in view");
       p->setIcon(QPixmap((const char **)view_all_xpm));
       break;
@@ -216,19 +243,19 @@ T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
       seekbutton = p;
       p->setCheckable(TRUE);
       p->setChecked(isSeekMode());
-      QObject::connect(p, SIGNAL(clicked()), this, SLOT(seekbuttonClicked()));
+      QObject::connect(p, SIGNAL(clicked()), q, SLOT(seekbuttonClicked()));
       p->setToolTip("Seek: Click on objects (not text!) in the display and the camera will \nfocus in on the point where you click -- repeated clicks will zoom in further");
       p->setIcon(QPixmap((const char **)seek_xpm));
       break;
     case SNAPSHOT_BUTTON:
       QObject::connect(p, SIGNAL(clicked()),
-		       this, SLOT(snapshotbuttonClicked()));
+		       q, SLOT(snapshotbuttonClicked()));
       p->setToolTip("Snapshot: save the current image to a file\nEPS format gives best resolution but transparency etc not captured\n -- use EPS primarily for graphs and grids\n PNG is best for lossless compression \n JPEG is best for lossy compression (see jpeg_qualty in preferences)");
       p->setIcon(QPixmap((const char **)snapshot_xpm));
       break;
     case PRINT_BUTTON:
       QObject::connect(p, SIGNAL(clicked()),
-		       this, SLOT(printbuttonClicked()));
+		       q, SLOT(printbuttonClicked()));
       p->setToolTip("Print: print the current image to a printer -- uses the bitmap of screen image\n make window as large as possible for better quality");
       p->setIcon(QPixmap((const char **)print_xpm));
       break;
@@ -1266,6 +1293,11 @@ void iT3DataViewFrame::hideEvent(QHideEvent* ev) {
 void iT3DataViewFrame::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
   Refresh();
+#ifdef TA_OS_MAC
+  // this was needed on Mac as of 4.0.19 Qt 4.4.1+ to prevent
+  // the occasional "white screen of death" that was occurring
+  taiMiscCore::ProcessEvents();
+#endif
   Showing(true);
 }
 
@@ -1287,7 +1319,7 @@ void iT3DataViewFrame::Render_impl() {
 }
 
 void iT3DataViewFrame::Render_post() {
-//  m_ra->show();
+//  nothing
 }
 
 void iT3DataViewFrame::Reset_impl() {
@@ -1295,9 +1327,6 @@ void iT3DataViewFrame::Reset_impl() {
 }
 
 void iT3DataViewFrame::Refresh_impl() {
-/*obs  T3DataViewRoot* rt = root();
-  if (rt) 
-    rt->Refresh(); */
   viewRefresh();
 }
 

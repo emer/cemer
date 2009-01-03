@@ -64,6 +64,7 @@ class iT3DataViewFrame; // #IGNORE
 class iT3DataViewer; // #IGNORE
 class T3DataViewFrame;
 class T3DataViewer;
+class T3ExaminerViewer;
 
 SoPtr_Of(T3Node);
 
@@ -83,8 +84,26 @@ public:
 // goals: get rid of unused buttons, and add new ones(?)
 // fix view button to regularize the view as well.
 
-class TA_API T3ExaminerViewer : public QObject, public SoQtExaminerViewer {
+class TA_API T3ExaminerViewer_qobj : public QObject {
   Q_OBJECT
+  INHERITED(QObject)
+public:
+  T3ExaminerViewer*	s;
+  T3ExaminerViewer_qobj(T3ExaminerViewer* s_) {s = s_;}
+  ~T3ExaminerViewer_qobj() {s = NULL;}
+
+public slots:
+  void interactbuttonClicked();
+  void viewbuttonClicked();
+  void homebuttonClicked();
+  void sethomebuttonClicked();
+  void viewallbuttonClicked();
+  void seekbuttonClicked();
+  void snapshotbuttonClicked();
+  void printbuttonClicked();
+};
+
+class TA_API T3ExaminerViewer : public SoQtExaminerViewer {
   SOQT_OBJECT_HEADER(T3ExaminerViewer, SoQtExaminerViewer);
 public:
   T3ExaminerViewer(iT3ViewspaceWidget* parent = NULL,
@@ -106,7 +125,7 @@ public:
   override void resetToHomePosition();
   // use our saved values in frame dude
 
-public slots:
+public: // slot callbacks
   void interactbuttonClicked();
   void viewbuttonClicked();
   void homebuttonClicked();
@@ -117,6 +136,7 @@ public slots:
   void printbuttonClicked();
 
 protected:
+  T3ExaminerViewer_qobj*	q;
   QPushButton* interactbutton;
   QPushButton* viewbutton;
   QPushButton* seekbutton;
