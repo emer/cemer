@@ -34,6 +34,7 @@ bool NetBaseProgEl::NetProgVarFilter(void* base_, void* var_) {
 
 void NetDataLoop::Initialize() {
   order = SEQUENTIAL;
+  update_after = false;
 }
 
 const String NetDataLoop::GenCssPre_impl(int indent_level) {
@@ -67,6 +68,9 @@ const String NetDataLoop::GenCssPre_impl(int indent_level) {
   rval += id2 + "if(!" + data_nm + "->ReadItem(data_row_idx)) break;\n";
   rval += id2 + data_nm + "->WriteItem(data_row_idx); // set write to same as read, just in case some mods are happening along the way\n";
   rval += id2 + "trial = " + idx_nm + "; network.trial = " + idx_nm + ";\n";
+  if(update_after) {
+    rval += id2 + "network.UpdateAfterEdit();\n";
+  }
   return rval;
 }
 
@@ -100,6 +104,7 @@ void NetGroupedDataLoop::Initialize() {
   group_order = PERMUTED;
   item_order = SEQUENTIAL;
   group_col = 0;
+  update_after = false;
 }
 
 void NetGroupedDataLoop::GetOrderVals() {
@@ -239,6 +244,9 @@ const String NetGroupedDataLoop::GenCssPre_impl(int indent_level) {
   rval += id3 + "if(!" + data_nm + "->ReadItem(item_data_row_idx)) break;\n";
   rval += id3 + data_nm + "->WriteItem(item_data_row_idx); // set write to same as read, in case mods happening along the way\n";
   rval += id3 + "trial = " + it_idx_nm + "; network.trial = " + it_idx_nm + ";\n";
+  if(update_after) {
+    rval += id3 + "network.UpdateAfterEdit();\n";
+  }
   return rval;
 }
 
