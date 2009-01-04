@@ -294,6 +294,14 @@ void iUserDataDataHost::GetImage_Membs_def() {
       if (!mbr) continue; // shouldn't happen
       void* off = mbr->GetOff(item);
       String txt = mbr->type->GetValStr(off, item, mbr, TypeDef::SC_DISPLAY, true); 
+      // augment plain non-class vals with bg color
+      if(!txt.contains("<font style=\"background-color:")) {
+	if(mbr->type->DerivesFormal(TA_enum) || mbr->type->DerivesFrom(TA_taSmartPtr)
+	   || mbr->type->DerivesFrom(TA_taSmartRef) || mbr->type->ptr > 0)
+	  txt = "<font style=\"background-color: LightGrey\">&nbsp;&nbsp;" + txt + "&nbsp;&nbsp;</font>";
+	else
+	  txt = "<font style=\"background-color: white\">&nbsp;&nbsp;" + txt + "&nbsp;&nbsp;</font>";
+      }
       it->setText(txt);
       it->setToolTip(txt); // for when over
     

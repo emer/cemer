@@ -5101,18 +5101,24 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
       bool non_def = false;
       if(md->GetDefaultStatus(base) == MemberDef::NOT_DEF) {
 	non_def = true;
-	rval += "<font style=\"background-color: yellow\"><i>";
+	rval += "<font style=\"background-color: yellow\">&nbsp;";
       }
-      rval += "<b>";
-      rval += md->name + ":&nbsp;&nbsp;";
-      rval += "</b>";
+      rval += md->name + "&nbsp;";
       if(non_def) {
-	rval += "</i></font>";
+	rval += "</font>";
       }
+      if(md->type->DerivesFormal(TA_enum) || md->type->ptr > 0
+#ifndef NO_TA_BASE
+	 || md->type->DerivesFrom(TA_taSmartPtr) || md->type->DerivesFrom(TA_taSmartRef)
+#endif
+	 )
+	rval += "<font style=\"background-color: LightGrey\">&nbsp;&nbsp;";
+      else
+	rval += "<font style=\"background-color: white\">&nbsp;&nbsp;";
       if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
       rval += md->type->GetValStr(md->GetOff(base), base, md, sc, force_inline);
       if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
-      rval += "&nbsp;&nbsp;&nbsp;&nbsp;";
+      rval += "&nbsp;&nbsp;</font>&nbsp;&nbsp;&nbsp;&nbsp;";
     }
     else {
       rval += md->name + "=";
@@ -5152,13 +5158,10 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       bool b = *((bool*)base);
       switch (sc) {
       case SC_STREAMING: return (b) ? String::con_1 : String::con_0;
+      case SC_DISPLAY: return (b) ? String("+") : String("-");
       default:
         return String(b);
       }
-      if(*((bool*)base))
-	return String("true");
-      else
-	return String("false");
     }
     // note: char is generic, and typically we won't use signed char
     else if (DerivesFrom(TA_char)) {

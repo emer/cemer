@@ -878,6 +878,14 @@ void iSelectEditDataHost2::GetImage_Membs_def() {
     String txt = item->mbr->type->GetValStr(off, item->base,
 					    item->mbr, TypeDef::SC_DISPLAY, true); 
     // true = force inline
+    // augment plain non-class vals with bg color
+    if(!txt.contains("<font style=\"background-color:")) {
+      if(item->mbr->type->DerivesFormal(TA_enum) || item->mbr->type->DerivesFrom(TA_taSmartPtr)
+	 || item->mbr->type->DerivesFrom(TA_taSmartRef) || item->mbr->type->ptr > 0)
+	txt = "<font style=\"background-color: LightGrey\">&nbsp;&nbsp;" + txt + "&nbsp;&nbsp;</font>";
+      else
+	txt = "<font style=\"background-color: white\">&nbsp;&nbsp;" + txt + "&nbsp;&nbsp;</font>";
+    }
     it->setText(txt);
     it->setToolTip(txt); // for when over
     
