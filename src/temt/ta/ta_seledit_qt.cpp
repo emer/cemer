@@ -875,7 +875,7 @@ void iSelectEditDataHost2::GetImage_Membs_def() {
       (taBase*)(it->data(Qt::UserRole).value<ta_intptr_t>()));
     if ((item == NULL) || (item->base == NULL) ||  (item->mbr == NULL)) continue;
     void* off = item->mbr->GetOff(item->base);
-    String txt = item->mbr->type->GetValStr(off, item->base->GetOwner(),
+    String txt = item->mbr->type->GetValStr(off, item->base,
 					    item->mbr, TypeDef::SC_DISPLAY, true); 
     // true = force inline
     it->setText(txt);

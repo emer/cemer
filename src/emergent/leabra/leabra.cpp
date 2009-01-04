@@ -848,26 +848,6 @@ void LeabraUnitSpec::SetLearnRule(LeabraNetwork* net) {
 //	Stage 0: at start of settling	  // 
 ////////////////////////////////////////////
 
-/*was void LeabraUnitSpec::Init_Netin(LeabraUnit* u) {
-  if(act.send_delta) {
-    u->net_delta = 0.0f;
-    u->g_i_delta = 0.0f;
-    u->net = 0.0f;		// important for soft-clamped layers
-    u->gc.i = 0.0f;
-  }
-  else {
-    u->gc.i = 0.0f;
-    u->net = u->clmp_net;
-  }
-
-  // not initialized by default.
-//   LeabraRecvCons* recv_gp;
-//   int g;
-//   FOR_ITR_GP(LeabraRecvCons, recv_gp, u->recv., g) {
-//     recv_gp->net = 0.0f;
-//   } 
-} */
-
 void LeabraUnitSpec::Init_Acts(LeabraUnit* ru, LeabraLayer*) {
   inherited::Init_Acts(ru);
   //  ru->clmp_net = 0.0f;

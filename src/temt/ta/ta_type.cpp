@@ -24,6 +24,7 @@
 # include "ta_group.h"
 # include "ta_dump.h"
 # include "ta_project.h" // for taRootBase
+# include "ta_program.h"
 # include "colorscale.h"
 # ifdef DMEM_COMPILE
 #   include "ta_dmem.h"
@@ -5182,7 +5183,15 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       return String((uint)*((unsigned short*)base));
     }
     else if(DerivesFrom(TA_int)) {
-      return String(*((int*)base));
+#ifndef NO_TA_BASE
+      if(sc == SC_DISPLAY && par && memb_def && memb_def->HasOption("DYNENUM_ON_enum_type")) {
+	// shameless hack to get dyn enum to display text value
+	DynEnum* dye = (DynEnum*)par;
+	return dye->NameVal();
+      }
+      else
+#endif
+	return String(*((int*)base));
     }
     else if(DerivesFrom(TA_unsigned_int)) {
       return String(*((uint*)base));

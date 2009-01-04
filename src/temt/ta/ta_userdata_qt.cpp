@@ -293,8 +293,7 @@ void iUserDataDataHost::GetImage_Membs_def() {
       MemberDef* mbr = item->FindMember("value"); // better be found!
       if (!mbr) continue; // shouldn't happen
       void* off = mbr->GetOff(item);
-      String txt = mbr->type->GetValStr(off, item->GetOwner(),
-        mbr, TypeDef::SC_DISPLAY, true); 
+      String txt = mbr->type->GetValStr(off, item, mbr, TypeDef::SC_DISPLAY, true); 
       it->setText(txt);
       it->setToolTip(txt); // for when over
     

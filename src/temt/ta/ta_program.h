@@ -255,6 +255,9 @@ public:
   // only for bits type, clear bit with given name
 
   override String	GetDisplayName() const;
+  override String	GetValStr(void* par = NULL, MemberDef* md = NULL,
+				  TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+				  bool force_inline = false) const;
 
   TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DynEnum, Program);
 protected:
@@ -302,7 +305,7 @@ public:
   TypeDef*	object_type; 	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_Object #NO_NULL #TYPE_taBase #LABEL_min_type the minimum acceptable type of the object
   taBaseRef	object_val;	// #CONDSHOW_ON_var_type:T_Object #CONDEDIT_OFF_flags:LOCAL_VAR #TYPE_ON_object_type #SCOPE_taProject object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere.  if it is in this program's .objs, then the name will be automatically set
   TypeDef*	hard_enum_type;	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase #LABEL_enum_type type information for hard enum (value goes in int_val)
-  DynEnum 	dyn_enum_val; 	// #CONDSHOW_ON_var_type:T_DynEnum #LABEL_ dynamic enum value
+  DynEnum 	dyn_enum_val; 	// #CONDSHOW_ON_var_type:T_DynEnum #LABEL_enum_val dynamic enum value
   bool		objs_ptr;	// #HIDDEN this is a pointer to a variable in the objs list of a program
   VarFlags	flags;		// flags controlling various things about how the variable appears and is used
   bool		reference;	// #CONDSHOW_ON_flags:FUN_ARG make this a reference variable (only for function arguments) which allows the function to modify the argument value, making it in effect a return value from the function when you need multiple return values
