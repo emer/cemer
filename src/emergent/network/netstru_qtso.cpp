@@ -2549,9 +2549,14 @@ void NetView::Render_net_text() {
   for(int i=td->members.size-1; i>=0; i--) {
     MemberDef* md = td->members[i];
     if(!md->HasOption("VIEW")) continue;
-    if(md->type->InheritsFrom(&TA_taString)) {
+    if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
+    if(md->type->InheritsFrom(&TA_taString) || md->type->InheritsFormal(&TA_enum)) {
+      if(cur_col > 0) {
+	cur_row++;
+	cur_col=0;
+      }
       cur_row++;
-      cur_col=1;
+      cur_col=0;
     }
     else {
       cur_col++;
@@ -2570,16 +2575,19 @@ void NetView::Render_net_text() {
   for(int i=td->members.size-1; i>=0; i--) {
     MemberDef* md = td->members[i];
     if(!md->HasOption("VIEW")) continue;
+    if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
     if(build_text) {
       SoSeparator* tsep = new SoSeparator;
       net_txt->addChild(tsep);
       SoTransform* tr = new SoTransform;
       tsep->addChild(tr);
       bool cur_str = false;
-      if(md->type->InheritsFrom(&TA_taString) && cur_col > 0) { // go to next
-	cur_row++;
-	cur_col=0;
+      if((md->type->InheritsFrom(&TA_taString) || md->type->InheritsFormal(&TA_enum))) {
 	cur_str = true;
+	if(cur_col > 0) { // go to next
+	  cur_row++;
+	  cur_col=0;
+	}
       }
       float xv = 0.05f + (float)cur_col / (float)(per_row);
       float yv = ((float)(cur_row+1.0f) / (float)(n_rows + 2.0f));

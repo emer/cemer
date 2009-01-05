@@ -4910,6 +4910,9 @@ void Network::InitLinks() {
   taBase::Own(dmem_agg_sum, this);
   DMem_InitAggs();
 #endif
+
+  NetTextUserData();
+
   inherited::InitLinks();
 }
 
@@ -5349,6 +5352,18 @@ NetViewObj* Network::NewGlassBrain() {
 }
 
 // PlaceNetText is in netstru_qtso.cpp
+
+void Network::NetTextUserData() {
+  TypeDef* td = GetTypeDef();
+  Variant bool_on_val;
+  bool_on_val.setBool(true);
+  for(int i=td->members.size-1; i>=0; i--) {
+    MemberDef* md = td->members[i];
+    if(!md->HasOption("VIEW")) continue;
+    if(HasUserData(md->name)) continue;
+    SetUserData(md->name, bool_on_val);
+  }  
+}
 
 Layer* Network::NewLayer() {
   return layers.NewEl(1);
