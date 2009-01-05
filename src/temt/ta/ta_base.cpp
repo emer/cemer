@@ -2811,6 +2811,7 @@ UserDataItem_List* taOBase::GetUserDataList(bool force) const {
     user_data_ = new UserDataItem_List; 
     taOBase* ths =  const_cast<taOBase*>(this); // note: harmless const casts
     taBase::Own(user_data_, ths);
+    user_data_->el_typ = &TA_UserDataItem; // set default type to create
     ths->DataChanged(DCR_USER_DATA_UPDATED);
   } 
   return user_data_;

@@ -1792,7 +1792,7 @@ public:
 
   taBase* 	New_gui(int n_objs=1, TypeDef* typ=NULL,
     const String& name="(default name)");
-  // #BUTTON #MENU_CONTEXT #TYPE_ON_el_base #CAT_Modify #LABEL_New #NO_SAVE_ARG_VAL create n_objs new objects of given type in list (typ=NULL: default type, el_typ;)
+  // #BUTTON #MENU_CONTEXT #NO_SAVE_ARG_VAL #TYPE_ON_1_el_base #INIT_ARGVAL_ON_1_el_typ #LABEL_New #CAT_Modify create n_objs new objects of given type in list (typ=NULL: default type, el_typ;)
   virtual void	SetSize(int sz);
   // #MENU #MENU_ON_Edit #CAT_Modify add or remove elements to force list to be of given size
 
