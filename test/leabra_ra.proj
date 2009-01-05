@@ -721,14 +721,31 @@ LeabraProject .projects[0] {
 
   DataViewer_List @.viewers = [1] {
     MainWindowViewer @[0] { 
+   UserDataItem_List @*(.user_data_) { 
+	UserDataItem @[0] { };
+	UserDataItem @[1] { };
+	UserDataItem @[2] { };
+	UserDataItem @[3] { };
+	UserDataItem @[4] { };
+	UserDataItem @[5] { };
+   };
+
       ToolBar_List @.toolbars = [1] {
-	ToolBar @[0] { };
+	ToolBar @[0] { 
+     UserDataItem_List @*(.user_data_) { 
+	    UserDataItem @[0] { };
+     };
+};
       };
 
       FrameViewer_List @.frames = [3] {
 	tabBrowseViewer @[0] { };
 	PanelViewer @[1] { };
 	T3DataViewer @[2] { 
+     UserDataItem_List @*(.user_data_) { 
+	    UserDataItem @[0] { };
+     };
+
 	  T3DataViewFrame_List @.frames = [3] {
 	    T3DataViewFrame @[0] { 
 	      T3DataView_List @.children = [4] {
@@ -816,7 +833,16 @@ LeabraProject .projects[0] {
       };
 
       DockViewer_List @.docks = [1] {
-	ToolBoxDockViewer @[0] { };
+	ToolBoxDockViewer @[0] { 
+     UserDataItem_List @*(.user_data_) { 
+	    UserDataItem @[0] { };
+	    UserDataItem @[1] { };
+	    UserDataItem @[2] { };
+	    UserDataItem @[3] { };
+	    UserDataItem @[4] { };
+	    UserDataItem @[5] { };
+     };
+};
       };
     };
   };
@@ -5185,6 +5211,35 @@ presented in the minus phase -- if this is not the case (values are computed on 
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItemBase;
+    el_def=0;
+    UserDataItem @[0] {
+     name="view_win_lft";
+     value 6 0=0;
+    };
+    UserDataItem @[1] {
+     name="view_win_top";
+     value 6 0=0;
+    };
+    UserDataItem @[2] {
+     name="view_win_wd";
+     value 6 0=1;
+    };
+    UserDataItem @[3] {
+     name="view_win_ht";
+     value 6 0=0.7996604442596436;
+    };
+    UserDataItem @[4] {
+     name="view_win_iconified";
+     value 1 0=0;
+    };
+    UserDataItem @[5] {
+     name="view_splitter_state";
+     value 9 0="AAAA/wAAAAAAAAADAAABSgAAAo8AAANDAQAAAAcBAAAAAQ==";
+    };
+   };
    m_data=.projects[0]$67$;
    name="DefaultProjectBrowser";
    visible=1;
@@ -5197,6 +5252,15 @@ presented in the minus phase -- if this is not the case (values are computed on 
     el_typ=ToolBar;
     el_def=0;
     ToolBar @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItemBase;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_win_visible";
+       value 1 0=1;
+      };
+     };
      m_data=NULL;
      name="Application";
      visible=0;
@@ -5223,6 +5287,15 @@ presented in the minus phase -- if this is not the case (values are computed on 
      visible=1;
     };
     T3DataViewer @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItemBase;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_frame_selected";
+       value 1 0=1;
+      };
+     };
      m_data=NULL;
      name="DefaultViewer";
      visible=1;
@@ -6617,6 +6690,35 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_typ=DockViewer;
     el_def=0;
     ToolBoxDockViewer @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItemBase;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_win_lft";
+       value 6 0=0;
+      };
+      UserDataItem @[1] {
+       name="view_win_top";
+       value 6 0=0.009337861090898514;
+      };
+      UserDataItem @[2] {
+       name="view_win_wd";
+       value 6 0=0.03966597095131874;
+      };
+      UserDataItem @[3] {
+       name="view_win_ht";
+       value 6 0=0.7359932065010071;
+      };
+      UserDataItem @[4] {
+       name="view_win_iconified";
+       value 1 0=0;
+      };
+      UserDataItem @[5] {
+       name="view_visible";
+       value 1 0=1;
+      };
+     };
      m_data=NULL;
      name="Tools";
      visible=1;

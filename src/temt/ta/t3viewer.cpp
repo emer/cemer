@@ -2015,6 +2015,23 @@ void T3DataViewer::FrameChanged(T3DataViewFrame* frame) {
   }
 }
 
+void T3DataViewer::GetWinState_impl() {
+  inherited::GetWinState_impl();
+  iT3DataViewer* w = widget();
+  int view_frame_selected = w->tw->currentIndex();
+  SetUserData("view_frame_selected", widget()->isVisible());
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
+void T3DataViewer::SetWinState_impl() {
+  inherited::SetWinState_impl();
+  iT3DataViewer* w = widget();
+  int view_frame_selected = 
+    GetUserDataDef("view_frame_selected", 0).toInt();
+  if (view_frame_selected < w->tw->count())
+    w->tw->setCurrentIndex(view_frame_selected);
+}
+
 T3DataViewFrame* T3DataViewer::NewT3DataViewFrame() {
   T3DataViewFrame* fv = (T3DataViewFrame*)frames.New(1);
   iT3DataViewer* idv = widget(); //cache

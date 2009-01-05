@@ -781,6 +781,8 @@ protected:
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
 //override void 	ResolveChanges(CancelOp& cancel_op); // nn: no "dirty" for T3
   override void		Reset_impl(); //  #IGNORE
+  override void 	GetWinState_impl(); // set gui state; only called if mapped
+  override void 	SetWinState_impl(); // fetch gui state; only called if mapped
   
   virtual void 		ConstrFrames_impl();
 
