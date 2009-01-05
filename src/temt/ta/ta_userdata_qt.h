@@ -64,7 +64,6 @@ public:
   QTableWidget*		tw;
 
   override void		Constr_Box();
-  override void		Constr_Body();//
 //obs  override taBase*	GetMembBase_Flat(int idx); // these are overridden by userdata
 //obs  override taBase*	GetMethBase_Flat(int idx);
   
@@ -82,6 +81,7 @@ protected:
   
   UserDataItemBase*	GetUserDataItem(int row);
   
+  override void		Constr_impl();
   override void		Constr_Body_impl();
   override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
 
@@ -89,7 +89,7 @@ protected:
   override void		FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
   override void 	GetImage_Membs_def();
   override void 	GetValue_Membs_def();
-  override void 	Constr_Methods();
+  override void 	Constr_Methods_impl();
 
 protected slots:
   virtual void		DoDeleteUserDataItem();

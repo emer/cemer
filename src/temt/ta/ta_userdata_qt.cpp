@@ -128,6 +128,7 @@ iUserDataDataHost::~iUserDataDataHost() {
 
 void iUserDataDataHost::Initialize()
 {
+//  no_meth_menu = true; // only show them on outer menu, by way of Propertiesguy
   udil = NULL;
   sel_edit_mbrs = true; // note: we don't actually select members, just for removal
   tw = NULL;
@@ -135,16 +136,11 @@ void iUserDataDataHost::Initialize()
   sel_item_row = -1;
 }
 
-void iUserDataDataHost::Constr_Body() {
-  if (rebuild_body) {
-    meth_el.Reset();
-  }
-  inherited::Constr_Body();
-  // we deleted the normally not-deleted methods, so redo them here
-  if (rebuild_body) {
-    Constr_Methods();
-    frmMethButtons->setHidden(!showMethButtons());
-  }
+void iUserDataDataHost::Constr_impl() {
+  inherited::Constr_impl();
+  // we actually want methods...
+  Constr_Methods();
+  frmMethButtons->setHidden(!showMethButtons());
 }
   
 void iUserDataDataHost::Constr_Body_impl() {
@@ -183,7 +179,6 @@ void iUserDataDataHost::Constr_Box() {
 
 void iUserDataDataHost::ClearBody_impl() {
   // note: we don't nuke control, we just clear it
-  membs.ResetItems();
   tw->clear();
 }
 
@@ -328,83 +323,10 @@ void iUserDataDataHost::GetImage_Membs_def() {
   tw->resizeColumnsToContents(); // do all cols, because names could change
 }
 
-void iUserDataDataHost::Constr_Methods() {
-  inherited::Constr_Methods();
+void iUserDataDataHost::Constr_Methods_impl() {
+  inherited::Constr_Methods_impl();
   Insert_Methods();
 }
-/*na  if (cur_menu != NULL) {// for safety... cur_menu should be the UserDataItem_List menu
-    cur_menu->AddSep();
-  }
-
-  taGroupItr itr;
-  EditMthItem_Group* grp;
-  //int set_idx = 0;
-  FOR_ITR_GP(EditMthItem_Group, grp, udil->mths., itr) {
-    if (grp->size == 0) continue;
-    //note: root group uses only buttons (hard wired)
-    EditMthItem_Group::MthGroupType group_type = grp->group_type;
-    
-    // make a menu or button group if needed
-    String men_nm = grp->GetDisplayName();
-    if (men_nm.empty()) // shouldn't happen
-      men_nm = "Actions";
-    switch (group_type) {
-    case EditMthItem_Group::GT_MENU: {
-      cur_menu = ta_menus.FindName(men_nm);
-      if (cur_menu == NULL) {
-        cur_menu = menu->AddSubMenu(men_nm);
-        ta_menus.Add(cur_menu);
-      }
-    } break;
-    case EditMthItem_Group::GT_MENU_BUTTON: { 
-      cur_menu_but = ta_menu_buttons.FindName(men_nm);
-      if (cur_menu_but == NULL) {
-        cur_menu_but = taiActions::New
-          (taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
-                  NULL, this, NULL, widget());
-        cur_menu_but->setLabel(men_nm);
-        DoAddMethButton((QPushButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
-        ta_menu_buttons.Add(cur_menu_but);
-      }
-    } break;
-    default: break; // nothing for butts
-    } // switch group_type
-          
-    for (int i = 0; i < grp->size; ++i) {
-      EditMthItem* item = grp->FastEl(i);
-      MethodDef* md = item->mth;
-      taBase* base = item->base;
-      if (!md || (md->im == NULL) || (base == NULL)) continue;
-      taiMethodData* mth_rep = md->im->GetMethodRep(base, this, NULL, frmMethButtons);
-      if (mth_rep == NULL) continue;
-      meth_el.Add(mth_rep);
-  
-      //NOTE: for userdata functions, we never place them on the last menu or button, because that may
-      // make no sense -- the label specifies the place, or Actions if no label
-      String mth_cap = item->caption();
-      String statustip = item->desc;
-      switch (group_type) {
-      case EditMthItem_Group::GT_BUTTONS:  {
-        AddMethButton(mth_rep, mth_cap);
-      } break;
-      case EditMthItem_Group::GT_MENU: {
-//        mth_rep->AddToMenu(cur_menu);
-        taiAction* act = cur_menu->AddItem(mth_cap, taiMenu::use_default,
-              taiAction::action, mth_rep, SLOT(CallFun()) );
-        if (statustip.nonempty())
-          act->setStatusTip(statustip);
-      } break;
-      case EditMthItem_Group::GT_MENU_BUTTON: { 
-//        mth_rep->AddToMenu(cur_menu_but);
-        taiAction* act = cur_menu_but->AddItem(mth_cap, taiMenu::use_default,
-              taiAction::action, mth_rep, SLOT(CallFun()) );
-        if (statustip.nonempty())
-          act->setStatusTip(statustip);
-      } break;
-      } // switch group_type
-    }
-  } // groups
-}*/
 
 void iUserDataDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
 //note: we completely replace default, and basically rebuild on any Group notify,

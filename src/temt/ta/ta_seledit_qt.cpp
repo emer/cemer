@@ -80,11 +80,8 @@ void iSelectEditDataHostBase::Constr_Body() {
 }
   
 void iSelectEditDataHostBase::Constr_Methods_impl() {
-  inherited::Constr_Methods_impl(); // note: typ=NULL means skipping native menus
+  inherited::Constr_Methods_impl();
   Insert_Methods();
-/*obs  if (cur_menu != NULL) {// for safety... cur_menu should be the SelectEdit menu
-    cur_menu->AddSep();
-  }*/
 
   taGroupItr itr;
   EditMthItem_Group* grp;
@@ -99,11 +96,6 @@ void iSelectEditDataHostBase::Constr_Methods_impl() {
     switch (group_type) {
     case EditMthItem_Group::GT_MENU: {
       SetCurMenu_Name(men_nm); // default is "Actions"
-      /*cur_menu = ta_menus.FindName(men_nm);
-      if (cur_menu == NULL) {
-        cur_menu = menu->AddSubMenu(men_nm);
-        ta_menus.Add(cur_menu);
-      }*/
     } break;
     case EditMthItem_Group::GT_MENU_BUTTON: { 
       if (men_nm.empty()) // shouldn't happen
@@ -433,6 +425,7 @@ bool taiDataDelegate::eventFilter(QObject *object, QEvent *event)
     case Qt::Key_Escape:
       // don't commit data
       emit closeEditor(editor, QAbstractItemDelegate::RevertModelCache);
+      edh->Unchanged();
       break;
     default:
       return false;
@@ -481,6 +474,7 @@ void taiDataDelegate::GetImage() const {
     dat->GetImage_(dat->Base());
   }
   edh->Updating(false);
+  edh->Unchanged();
 }
 
 void taiDataDelegate::GetValue() const {
@@ -495,6 +489,7 @@ void taiDataDelegate::GetValue() const {
     dat->GetValue_(base);
   }
   base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
+  edh->Unchanged();
 }
 
 void taiDataDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option,
