@@ -55,6 +55,7 @@ void LeabraTdUnitSpec::Init_Acts(LeabraUnit* u, LeabraLayer* lay) {
 }
 
 void LeabraTdUnitSpec::Init_Weights(Unit* u) {
+  inherited::Init_Weights(u);
   ((LeabraTdUnit*)u)->trace = 0.0f;
 }
 
