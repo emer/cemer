@@ -659,7 +659,7 @@ bool PluginWizard::MakePlugin() {
       ok = QFile::copy(src_file, dst_file);
   }
   if (ok) {
-    taMisc::Info("The plugin was created successfully! To build and install the plugin... TODO: instructions");
+    taMisc::Info("The plugin was created successfully! See the CMakeLists.txt file in your plugin folder for build instructions");
   } else {
     taMisc::Error(
       "PluginWizard::MakePlugin", 
