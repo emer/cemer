@@ -1792,6 +1792,10 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
     inst->Load();
     --taFiler::no_save_last_fname;
   }
+
+  if(taMisc::default_proj_type)
+    inst->projects.el_typ = taMisc::default_proj_type;
+
   // make sure the app dir is on the recent paths
   if (instance()->recent_paths.FindEl(taMisc::app_dir) < 0) {
     instance()->AddRecentPath(taMisc::app_dir);

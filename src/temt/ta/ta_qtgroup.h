@@ -240,77 +240,9 @@ public:
   override void		GetMenu(taiActions* menu, taiMenuAction* nact = NULL);
 };
 
-class TA_API gpiNewFuns : public taiData {
-  // functions to call during New
-public:
-  static gpiNewFuns* 	CondNew(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_ = 0);
-      // return an instance if there are any functions, else returns NULL;
-
-  taiDataList	funs;
-
-  virtual void  	CallFuns(void* obj);
-
-  gpiNewFuns(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_ = 0); // no flags
-};
-
 //////////////////////////////////
 // 	 gpi Dialogs		//
 //////////////////////////////////
-
-class TA_API gpiListNew : public taiDataHost {
-INHERITED(taiDataHost)
-public:
-  // this is the function you actually call to create it..
-  static TAPtr 	New(TABLPtr the_lst, int n_els = 1, TypeDef* td = NULL, QObject* parent = NULL);
-
-  TABLPtr		ths;
-  int			num;
-  TypeDef*		typ;
-  taiIncrField*		num_rep;
-//   gpiElTypes* 		typ_rep;
-  taiTypeDefButton* 	typ_rep;
-  gpiNewFuns*		fun_list;
-
-  gpiListNew(TABLPtr lst, int n_els=1, TypeDef* td = NULL, bool read_only_ = false,
-      bool modal_ = true, QObject* parent = NULL);
-  ~gpiListNew();
-
-  override void	ClearBody_impl();	//
-
-public: // IDataHost
-  override void GetImage();
-  override void	GetValue();
-
-protected:
-  override void	Constr_Body();
-  virtual void	Constr_SubGpList()	{ }  // hook for group new
-  override void	Constr_Final();
-  
-};
-
-class TA_API gpiGroupNew : public gpiListNew {
-INHERITED(gpiListNew)
-public:
-  // this is the function you actually call..
-  static TAPtr 	New(TAGPtr the_gp, TAGPtr init_gp = NULL, int n_els=1,  TypeDef* td = NULL,
-      QObject* parent = NULL);
-  static TAPtr 	New(TAGPtr the_gp,  TypeDef* td, TAGPtr init_gp = NULL, int n_els=1,
-      QObject* parent = NULL) {return New(the_gp, NULL, 1, td, parent);} // compatability routine for netstru.cc
-
-  TAGPtr		in_gp;
-  gpiSubGroups*	subgp_list;
-
-  gpiGroupNew(TAGPtr gp, TAGPtr init_gp, int n_els=1, TypeDef* td = NULL,
-    bool read_only_ = false, bool modal_ = true, QObject* parent = NULL);
-  ~gpiGroupNew();
-
-  override void	ClearBody_impl();	//
-protected:
-  override void	Constr_SubGpList();
-  override void GetImage();
-  override void	GetValue();
-};
-
 
 class TA_API gpiMultiEditDataHost: public taiEditDataHost {
 INHERITED(taiEditDataHost)

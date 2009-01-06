@@ -121,7 +121,7 @@ public:
     SetColor(c->r, c->g, c->b, c->a, background);
   }
   void SetColor(float r,float g, float b, float a=1.0,	RGBA* background=NULL);
-  // #USE_RVAL #ARGC=4 #NEW_FUN
+  // #USE_RVAL #ARGC=4
   TA_BASEFUNS_LITE(TAColor);
 protected:
   iColor 	color_;		// #IGNORE
