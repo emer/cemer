@@ -167,6 +167,7 @@ public:
   taiEditTableWidget*	tw;
 
   override void		Constr_Box();
+  override void 	GetImage_Item(int row); // called from GetImage and ed->GetValue
   
   iSelectEditDataHost2(void* base, TypeDef* td, bool read_only_ = false,
   	QObject* parent = 0);

@@ -275,49 +275,53 @@ void iUserDataDataHost::Constr_Data_Labels() {
   tw->resizeColumnToContents(0); // note: don't do 1 here, do it in GetImage
 }
 
+void iUserDataDataHost::GetImage_Item(int row) {
+  QTableWidgetItem* it = tw->item(row, 1);
+  QTableWidgetItem* lbl = tw->item(row, 0); // not always needed
+  if (!it) return;
+  UserDataItemBase* item_ = dynamic_cast<UserDataItemBase*>(
+    (taBase*)(it->data(Qt::UserRole).value<ta_intptr_t>()));
+  if (item_ == NULL) return;
+  if (item_->isSimple()) {
+    UserDataItem* item = (UserDataItem*)item_;
+    MemberDef* mbr = item->FindMember("value"); // better be found!
+    if (!mbr) return; // shouldn't happen
+    void* off = mbr->GetOff(item);
+    String txt = mbr->type->GetValStr(off, item, mbr, TypeDef::SC_DISPLAY, true); 
+    // augment plain non-class vals with bg color
+    if(!txt.contains("<font style=\"background-color:")) {
+      if(mbr->type->DerivesFormal(TA_enum) || mbr->type->DerivesFrom(TA_taSmartPtr)
+          || mbr->type->DerivesFrom(TA_taSmartRef) || mbr->type->ptr > 0)
+        txt = "<font style=\"background-color: LightGrey\">&nbsp;&nbsp;" + txt + "&nbsp;&nbsp;</font>";
+      else
+        txt = "<font style=\"background-color: white\">&nbsp;&nbsp;" + txt + "&nbsp;&nbsp;</font>";
+    }
+    it->setText(txt);
+    it->setToolTip(txt); // for when over
+  
+    // default highlighting
+    switch (mbr->GetDefaultStatus(item)) {
+    case MemberDef::NOT_DEF: 
+      lbl->setData(Qt::BackgroundRole, QColor(Qt::yellow)); 
+      break;
+    case MemberDef::EQU_DEF:
+      //note: setting nil Variant will force it to ignore and use bg
+      lbl->setData(Qt::BackgroundRole, QVariant()); 
+      break;
+    default: break; // compiler food
+    }
+  } else {
+  //complex
+    String txt = item_->GetTypeDef()->GetValStr(item_, NULL,
+      NULL, TypeDef::SC_DISPLAY, true); 
+    it->setText(txt);
+    it->setToolTip(txt); // for when over
+  }
+}
+
 void iUserDataDataHost::GetImage_Membs_def() {
   for (int row = 0; row < tw->rowCount(); ++row) {
-    QTableWidgetItem* it = tw->item(row, 1);
-    QTableWidgetItem* lbl = tw->item(row, 0); // not always needed
-    if (!it) continue;
-    UserDataItemBase* item_ = dynamic_cast<UserDataItemBase*>(
-      (taBase*)(it->data(Qt::UserRole).value<ta_intptr_t>()));
-    if (item_ == NULL) continue;
-    if (item_->isSimple()) {
-      UserDataItem* item = (UserDataItem*)item_;
-      MemberDef* mbr = item->FindMember("value"); // better be found!
-      if (!mbr) continue; // shouldn't happen
-      void* off = mbr->GetOff(item);
-      String txt = mbr->type->GetValStr(off, item, mbr, TypeDef::SC_DISPLAY, true); 
-      // augment plain non-class vals with bg color
-      if(!txt.contains("<font style=\"background-color:")) {
-	if(mbr->type->DerivesFormal(TA_enum) || mbr->type->DerivesFrom(TA_taSmartPtr)
-	   || mbr->type->DerivesFrom(TA_taSmartRef) || mbr->type->ptr > 0)
-	  txt = "<font style=\"background-color: LightGrey\">&nbsp;&nbsp;" + txt + "&nbsp;&nbsp;</font>";
-	else
-	  txt = "<font style=\"background-color: white\">&nbsp;&nbsp;" + txt + "&nbsp;&nbsp;</font>";
-      }
-      it->setText(txt);
-      it->setToolTip(txt); // for when over
-    
-      // default highlighting
-      switch (mbr->GetDefaultStatus(item)) {
-      case MemberDef::NOT_DEF: 
-        lbl->setData(Qt::BackgroundRole, QColor(Qt::yellow)); 
-        break;
-      case MemberDef::EQU_DEF:
-        //note: setting nil Variant will force it to ignore and use bg
-        lbl->setData(Qt::BackgroundRole, QVariant()); 
-        break;
-      default: break; // compiler food
-      }
-    } else {
-    //complex
-      String txt = item_->GetTypeDef()->GetValStr(item_, NULL,
-        NULL, TypeDef::SC_DISPLAY, true); 
-      it->setText(txt);
-      it->setToolTip(txt); // for when over
-    }
+    GetImage_Item(row);
   }
   udd->GetImage(); // if a ctrl is active
   tw->resizeColumnsToContents(); // do all cols, because names could change

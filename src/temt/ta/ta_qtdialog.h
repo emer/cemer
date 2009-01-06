@@ -692,6 +692,10 @@ public:
   override void 	ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
     // check for unsaved changes and prompt to save/discard; called by several places prior to closing tab window, closing dialog, shutting down app, etc.
   override void 	Cancel_impl();
+  
+public: // routines for the taiDelegate style of edit host
+  virtual void 		GetImage_Item(int row) {} // called from GetImage and ed->GetValue
+
 public: // ITypedObject i/f (common to IDLC and IDH)
   override TypeDef* 	GetTypeDef() const {return &TA_taiEditDataHost;}
 public slots:

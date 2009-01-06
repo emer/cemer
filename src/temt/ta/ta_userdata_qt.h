@@ -66,6 +66,7 @@ public:
   override void		Constr_Box();
 //obs  override taBase*	GetMembBase_Flat(int idx); // these are overridden by userdata
 //obs  override taBase*	GetMethBase_Flat(int idx);
+  override void 	GetImage_Item(int row); // called from GetImage and ed->GetValue
   
   iUserDataDataHost(void* base, TypeDef* td, bool read_only_ = false,
   	QObject* parent = 0);
