@@ -6320,9 +6320,11 @@ void Network::NetControlPanel(SelectEdit* editor, const String& extra_label, con
     editor = (SelectEdit*)proj->edits.New(1);
   }
   TypeDef* td = GetTypeDef();
-  for(int i=0; i<td->members.size; i++) {
+  for(int i=td->members.size-1; i>=0; i--) {
     MemberDef* md = td->members[i];
     if(!md->HasOption("VIEW")) continue;
+    // filter by current guys..
+    if(HasUserData(md->name) && !GetUserDataAsBool(md->name)) continue;
     editor->SelectMember(this, md, extra_label, "", sub_gp_nm);
   }
 }

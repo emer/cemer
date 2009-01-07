@@ -2002,7 +2002,7 @@ public:
   // #CAT_ObjectMgmt Update monitoring of all objects in all processes associated with parent project
   virtual void	NetControlPanel(SelectEdit* editor, const String& extra_label = "",
 				const String& sub_gp_nm = "");
-  // #MENU #MENU_ON_SelectEdit #MENU_SEP_BEFORE #NULL_OK_0  #NULL_TEXT_0_NewEditor #CAT_Display add the key network counters and statistics to a select edit dialog (control panel) (if editor is NULL, a new one is created in .edits).  The extra label is prepended to each member name, and if sub_group, then all items are placed in a subgroup with the network's name.  NOTE: be sure to click update_after on NetCounterInit and Incr at Trial program level to trigger updates of select edit display!
+  // #MENU #MENU_ON_SelectEdit #MENU_SEP_BEFORE #NULL_OK_0  #NULL_TEXT_0_NewEditor #CAT_Display add the key network counters and statistics to a select edit dialog (control panel) (if editor is NULL, a new one is created in .edits).  The extra label is prepended to each member name, and if sub_group, then all items are placed in a subgroup with the network's name.  NOTE: be sure to click update_after on NetCounterInit and Incr at appropriate program level(s) to trigger updates of select edit display (typically in Train to update epoch -- auto update of all after Step so only needed for continuous update during runnign)
 
   virtual bool	SnapVar();
   // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of currently selected variable in netview -- copies this value to the snap unit variable
