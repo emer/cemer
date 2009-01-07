@@ -1,24 +1,12 @@
 CD = cd
 MKDIR = mkdir -p
 CP = cp
-QMAKE = $(QTDIR)/bin/qmake
 
-# standard autotools prefixes from configure
-#prefix = @PL_prefix@
-#exec_prefix = @PL_exec_prefix@
-#datadir = @PL_datadir@
-#includedir = @PL_includedir@
+ifndef BUILD_DIR
+  BUILD_DIR = build
+endif
 
-  prefix = /usr/local
-  bindir = ${prefix}/bin
-  datadir = ${prefix}/share
-  includedir = ${prefix}/include
-
-# we use config.pri as a dependent to trigger rebuild of things when configure changes
-CONFIG_PRI = @abs_srcdir@/config.pri
-EMERGENT_SYS_DIR = ${datadir}/pdp++
-
-all: qmake build
+all: build
 
 #TODO: should make sure qmake is run, although default for "all" is to run it
 build: 
@@ -30,9 +18,10 @@ build:
 	  if [ -d $$i ] ;\
 	  then \
 	    echo $$i; \
-	    $(CD) $$i;\
-	    if [ -f "NOBUILD" ]; then continue; fi; \
-	    if ( $(MAKE); ) then echo "* Successfully ran $@ in $$i";\
+	    if [ -f $$i/NOBUILD ]; then continue; fi; \
+	    if [ ! -d $$i/$$BUILD_DIR ]; then continue; fi; \
+	    $(CD) $$i/$$BUILD_DIR;\
+	    if ( $(MAKE); ) then echo "* Successfully ran $@ in $$i/$$BUILD_DIR";\
 	    else echo "*** Could not make $@ in $$i"; fi;\
 	    $(CD) ../../;\
 	  fi; \
@@ -41,8 +30,7 @@ build:
 	@echo "** Make $@ successfully completed! **"
 	@echo " "
 
-# note: clean does not check the NOBUILD guy, on purpose
-clean: 
+clean install: 
 	@echo " "
 	@echo "** Doing ($@) in all plugin directories**"
 	@echo " "
@@ -51,8 +39,10 @@ clean:
 	  if [ -d $$i ] ;\
 	  then \
 	    echo $$i; \
-	    $(CD) $$i;\
-	    if ( $(MAKE) $@; ) then echo "* Successfully made $@ in $$i";\
+	    if [ -f $$i/NOBUILD ]; then continue; fi; \
+	    if [ ! -d $$i/$$BUILD_DIR ]; then continue; fi; \
+	    $(CD) $$i/$$BUILD_DIR;\
+	    if ( $(MAKE) $@; ) then echo "* Successfully ran $@ in $$i/$$BUILD_DIR";\
 	    else echo "*** Could not make $@ in $$i"; fi;\
 	    $(CD) ../../;\
 	  fi; \
@@ -61,36 +51,3 @@ clean:
 	@echo "** Make $@ successfully completed! **"
 	@echo " "
 
-qmake: 
-	@echo " "
-	@echo "** Doing ($@) in all plugin directories**"
-	@echo " "
-	@for i in ./* ;\
-	do \
-	  if [ -d $$i ] ;\
-	  then \
-	    echo $$i; \
-	    $(CD) $$i;\
-	    if [ -f "NOBUILD" ]; then continue; fi; \
-	    if ( $(QMAKE); ) then echo "* Successfully ran $@ in $$i";\
-	    else echo "*** Could not make $@ in $$i"; fi;\
-	    $(CD) ../../;\
-	  fi; \
-	done
-	@echo " "
-	@echo "** Make $@ successfully completed! **"
-	@echo " "
-
-install: 
-	@echo " "
-	@echo "** Doing ($@) in all plugin directories**"
-	@echo " "
-	$(MKDIR) $(EMERGENT_SYS_DIR)/lib
-	$(CP) -Ru ../lib/plugins  $(EMERGENT_SYS_DIR)/lib
-	$(MKDIR) $(EMERGENT_SYS_DIR)/plugins
-	$(CP) -u config.pri shared_pre.pri shared.pri Makefile.plugin $(EMERGENT_SYS_DIR)/plugins
-	@echo " "
-	@echo "** Make $@ successfully completed! **"
-	@echo " "
-
-dist distdir:
