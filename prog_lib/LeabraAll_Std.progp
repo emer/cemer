@@ -1111,7 +1111,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       network_var=$10$;
       local_ctr_var=$13$;
       counter=Network::epoch;
-      update_after=0;
+      update_after=1;
      };
      IfBreak @[2] {
       desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here instead)";
@@ -1413,6 +1413,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     order_var=.projects[0].programs.gp[0][2].vars[0]$25$;
     order=PERMUTED;
     item_idx_list{ 2;1;4;3;5;0;    };
+    update_after=0;
     dmem_nprocs=1;
     dmem_this_proc=0;
    };
@@ -1666,7 +1667,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     network_var=$27$;
     local_ctr_var=$28$;
     counter=LeabraNetwork::phase_no;
-    update_after=1;
+    update_after=0;
    };
    MethodCall @[1] {
     desc="initializes various counters at start of trial";
@@ -1724,7 +1725,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       network_var=$27$;
       local_ctr_var=$28$;
       counter=LeabraNetwork::phase_no;
-      update_after=1;
+      update_after=0;
      };
      MethodCall @[2] {
       desc="increments other phase state information to prepare for the next phase of settling";

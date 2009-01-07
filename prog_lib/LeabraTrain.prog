@@ -144,7 +144,7 @@ Program .projects[0].programs.gp[0][1] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
    reference=0;
    desc="network to train";
   };
@@ -163,7 +163,7 @@ Program .projects[0].programs.gp[0][1] {
    var_type=T_Bool;
    bool_val=0;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED;
    reference=0;
    desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
   };
@@ -186,7 +186,7 @@ Program .projects[0].programs.gp[0][1] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
    reference=0;
    desc="current epoch -- local copy, which is used to update network's epoch counter";
   };
@@ -237,7 +237,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    object_type=RndSeed;
    object_val=.projects[0].programs.gp[0][1].objs[0]$3$;
    objs_ptr=1;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED;
    reference=0;
    desc="random seed that is used at start of training -- if OldSeed is called";
   };
@@ -247,7 +247,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    object_type=TimeUsed;
    object_val=.projects[0].networks[0].train_time$4$;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED;
    reference=0;
    desc="records time used to train network (object lives on network -- this is a pointer to it)";
   };
@@ -504,6 +504,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      network_var=$6$;
      local_ctr_var=$9$;
      counter=Network::epoch;
+     update_after=1;
     };
     IfBreak @[2] {
      desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here instead)";

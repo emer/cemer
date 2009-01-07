@@ -966,6 +966,28 @@ LeabraProject .projects[0] {
 
   Network_Group @.networks = [1] {
     LeabraNetwork @[0] { 
+   UserDataItem_List @*(.user_data_) { 
+	UserDataItem @[0] { };
+	UserDataItem @[1] { };
+	UserDataItem @[2] { };
+	UserDataItem @[3] { };
+	UserDataItem @[4] { };
+	UserDataItem @[5] { };
+	UserDataItem @[6] { };
+	UserDataItem @[7] { };
+	UserDataItem @[8] { };
+	UserDataItem @[9] { };
+	UserDataItem @[10] { };
+	UserDataItem @[11] { };
+	UserDataItem @[12] { };
+	UserDataItem @[13] { };
+	UserDataItem @[14] { };
+	UserDataItem @[15] { };
+	UserDataItem @[16] { };
+	UserDataItem @[17] { };
+	UserDataItem @[18] { };
+   };
+
       BaseSpec_Group @.specs = [4] {
 	LeabraUnitSpec @[0] { };
 	LeabraLayerSpec @[1] { 
@@ -1826,7 +1848,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	network_var=$10$;
 	local_ctr_var=$13$;
 	counter=Network::epoch;
-	update_after=0;
+	update_after=1;
        };
        IfBreak @[2] {
 	desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here instead)";
@@ -2128,6 +2150,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       order_var=.projects[0].programs.gp[0][2].vars[0]$25$;
       order=PERMUTED;
       item_idx_list{ 2;1;4;3;5;0;      };
+      update_after=0;
       dmem_nprocs=1;
       dmem_this_proc=0;
      };
@@ -2381,7 +2404,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       network_var=$27$;
       local_ctr_var=$28$;
       counter=LeabraNetwork::phase_no;
-      update_after=1;
+      update_after=0;
      };
      MethodCall @[1] {
       desc="initializes various counters at start of trial";
@@ -2439,7 +2462,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	network_var=$27$;
 	local_ctr_var=$28$;
 	counter=LeabraNetwork::phase_no;
-	update_after=1;
+	update_after=0;
        };
        MethodCall @[2] {
 	desc="increments other phase state information to prepare for the next phase of settling";
@@ -2992,7 +3015,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        LayerWriterEl @[2] {
 	chan_name="Name";
 	net_target=TRIAL_NAME;
-	layer_name=;
+	layer_name="Name";
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	na_by_range=0;
@@ -4730,6 +4753,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       order_var=.projects[0].programs.gp[1][0].vars[1]$64$;
       order=PERMUTED;
       item_idx_list{ 1;2;0;3;4;5;      };
+      update_after=0;
       dmem_nprocs=1;
       dmem_this_proc=0;
      };
@@ -5502,7 +5526,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        LayerWriterEl @[2] {
 	chan_name="Name";
 	net_target=TRIAL_NAME;
-	layer_name=;
+	layer_name="Name";
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	na_by_range=0;
@@ -6883,6 +6907,87 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
   el_typ=LeabraNetwork;
   el_def=0;
   LeabraNetwork @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="norm_err";
+     value 1 0=1;
+    };
+    UserDataItem @[1] {
+     name="ext_rew";
+     value 1 0=1;
+    };
+    UserDataItem @[2] {
+     name="maxda";
+     value 1 0=1;
+    };
+    UserDataItem @[3] {
+     name="minus_output_name";
+     value 1 0=1;
+    };
+    UserDataItem @[4] {
+     name="minus_cycles";
+     value 1 0=1;
+    };
+    UserDataItem @[5] {
+     name="ct_cycle";
+     value 1 0=1;
+    };
+    UserDataItem @[6] {
+     name="phase_no";
+     value 1 0=1;
+    };
+    UserDataItem @[7] {
+     name="phase";
+     value 1 0=1;
+    };
+    UserDataItem @[8] {
+     name="sse";
+     value 1 0=1;
+    };
+    UserDataItem @[9] {
+     name="output_name";
+     value 1 0=1;
+    };
+    UserDataItem @[10] {
+     name="trial_name";
+     value 1 0=1;
+    };
+    UserDataItem @[11] {
+     name="group_name";
+     value 1 0=1;
+    };
+    UserDataItem @[12] {
+     name="time";
+     value 1 0=1;
+    };
+    UserDataItem @[13] {
+     name="cycle";
+     value 1 0=1;
+    };
+    UserDataItem @[14] {
+     name="tick";
+     value 1 0=1;
+    };
+    UserDataItem @[15] {
+     name="trial";
+     value 1 0=1;
+    };
+    UserDataItem @[16] {
+     name="group";
+     value 1 0=1;
+    };
+    UserDataItem @[17] {
+     name="epoch";
+     value 1 0=1;
+    };
+    UserDataItem @[18] {
+     name="batch";
+     value 1 0=1;
+    };
+   };
    name="Network_0";
    desc=;
    specs {
