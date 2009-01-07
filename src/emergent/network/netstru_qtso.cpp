@@ -2516,40 +2516,20 @@ void NetView::Render_impl() {
 
 void NetView::Render_net_text() {
   T3NetNode* node_so = this->node_so(); //cache
-
-  bool build_text = false;
   SoSeparator* net_txt = node_so->netText();
   if(!net_txt) return;		// screwup
-  if(net_txt->getNumChildren() <= 4) {
-    build_text = true;
-    SoBaseColor* bc = new SoBaseColor;
-    bc->rgb.setValue(0, 0, 0); //black is default for text
-    net_txt->addChild(bc);
-    // doesn't seem to make much diff:
-    SoComplexity* cplx = new SoComplexity;
-    cplx->value.setValue(taMisc::text_complexity);
-    net_txt->addChild(cplx);
-    SoFont* fnt = new SoFont();
-    fnt->size.setValue(font_sizes.net_vals);
-    fnt->name = (const char*)taMisc::t3d_font_name;
-    net_txt->addChild(fnt);
-  }
-
-  int txt_st_off = 3 + 1;	// 3 above + 1 transform
-  if(node_so->netTextDrag())
-    txt_st_off+=2;		// dragger + extra xform
-
-  float rot_rad = net_text_rot / taMath_float::deg_per_rad;
 
   TypeDef* td = net()->GetTypeDef();
   int per_row = 2;
 
+  int chld_idx = 0;
   int cur_row = 0;
   int cur_col = 0;
   for(int i=td->members.size-1; i>=0; i--) {
     MemberDef* md = td->members[i];
     if(!md->HasOption("VIEW")) continue;
     if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
+    chld_idx++;
     if(md->type->InheritsFrom(&TA_taString) || md->type->InheritsFormal(&TA_enum)) {
       if(cur_col > 0) {
 	cur_row++;
@@ -2567,8 +2547,40 @@ void NetView::Render_net_text() {
     }
   }
   int n_rows = cur_row;
+  int n_texts = chld_idx;
 
-  int chld_idx = 0;
+  int txt_st_off = 3 + 1;	// 3 we add below + 1 transform
+  if(node_so->netTextDrag())
+    txt_st_off+=2;		// dragger + extra xform
+
+  bool build_text = false;
+
+  if(net_txt->getNumChildren() < txt_st_off) { // haven't made basic guys yet
+    build_text = true;
+    SoBaseColor* bc = new SoBaseColor;
+    bc->rgb.setValue(0, 0, 0); //black is default for text
+    net_txt->addChild(bc);
+    // doesn't seem to make much diff:
+    SoComplexity* cplx = new SoComplexity;
+    cplx->value.setValue(taMisc::text_complexity);
+    net_txt->addChild(cplx);
+    SoFont* fnt = new SoFont();
+    fnt->size.setValue(font_sizes.net_vals);
+    fnt->name = (const char*)taMisc::t3d_font_name;
+    net_txt->addChild(fnt);
+  }
+  else if(net_txt->getNumChildren() != txt_st_off + chld_idx) {
+    // if not adding up, nuke existing and rebuild
+    int nc = net_txt->getNumChildren();
+    for(int i=nc-1;i>=txt_st_off;i--) {
+      net_txt->removeChild(i);
+    }
+    build_text = true;
+  }
+
+  float rot_rad = net_text_rot / taMath_float::deg_per_rad;
+
+  chld_idx = 0;
   cur_row = 0;
   cur_col = 0;
   // todo: could optimize 1st 3 counters to be on 1 row to save a row..
