@@ -5834,7 +5834,9 @@ void Network::Init_Counters() {
 //   batch = 0;
   epoch = 0;
   group = 0;
+  group_name = "";
   trial = 0;
+  trial_name = "";
   tick = 0;
   cycle = 0;
   time = 0.0f;
@@ -5845,6 +5847,8 @@ void Network::Init_Stats() {
   sum_sse = 0.0f;
   avg_sse = 0.0f;
   cnt_err = 0.0f;
+
+  output_name = "";
 
   cur_sum_sse = 0.0f;
   avg_sse_n = 0;
