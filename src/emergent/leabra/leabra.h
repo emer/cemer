@@ -157,7 +157,7 @@ class LEABRA_API WtSigSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sigmoidal weight function specification
 INHERITED(taOBase)
 public:
-  float		gain;		// #DEF_6 gain (contrast, sharpness) of the weight contrast function (1 = linear)
+  float		gain;		// #DEF_1;6 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1;1.25 offset of the function (1=centered at .5, >1=higher, <1=lower)
 
   static inline float	SigFun(float w, float gn, float of) {
