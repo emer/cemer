@@ -764,20 +764,27 @@ void taProject::SaveRecoverFile() {
     saved = true;
   }
   else {
-    cerr << "Error saving recover file: " << fnm << endl;
-    String old_fnm = fnm;
-    String fnm = taMisc::user_dir + "/" + taMisc::GetFileFmPath(old_fnm);
+    // note: don't try printing until *after* saving the file
+    String old_fnm(fnm);
+    fnm = taMisc::user_dir + PATH_SEP + taMisc::GetFileFmPath(old_fnm);
     flr->setFileName(fnm);
     flr->Save();
     if(flr->ostrm) {
-      cerr << "Now saving in user directory: " << fnm << endl;
       use_change_log = false;
       SaveRecoverFile_strm(*flr->ostrm);
+#ifdef DEBUG // NOTE: really only works on Linux, and is so marginal...
+      cerr << "Error saving recover file: " << old_fnm << endl
+        << "Now saving in user directory: " << fnm << endl;
+#endif
       saved = true;
     }
   }
   flr->Close();
   taRefN::unRefDone(flr);
+  // log filename -- get abs path
+  if (saved) {
+    tabMisc::root->AddRecentFile(fnm); // note: absolutizes
+  }
 
   use_change_log = tmp_change_log;
 
