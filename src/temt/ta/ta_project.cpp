@@ -783,7 +783,8 @@ void taProject::SaveRecoverFile() {
   taRefN::unRefDone(flr);
   // log filename -- get abs path
   if (saved) {
-    tabMisc::root->AddRecentFile(fnm); // note: absolutizes
+    // save root, which wasn't saved
+    tabMisc::root->Save();
   }
 
   use_change_log = tmp_change_log;
