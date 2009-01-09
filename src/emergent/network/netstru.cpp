@@ -4469,7 +4469,9 @@ int Layer::LesionCons(float p_lesion, bool permute) {
 }
 
 int Layer::LesionUnits(float p_lesion, bool permute) {
+  StructUpdate(true);
   return units.LesionUnits(p_lesion, permute);
+  StructUpdate(false);
 }
 
 bool Layer::UpdateUnitSpecs(bool force) {

@@ -861,7 +861,10 @@ bool DataTable::AutoLoadData() {
 
 void DataTable::Dump_Load_post() {
   inherited::Dump_Load_post();
+  // this is an attempt to fix BugID:66, but it leads to problems when loading the project
+  //  StructUpdate(true);
   AutoLoadData();
+  //  StructUpdate(false);
 }
 
 void DataTable::Dump_Load_pre() {
