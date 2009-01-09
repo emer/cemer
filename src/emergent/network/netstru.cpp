@@ -3721,6 +3721,13 @@ void Layer::SetNUnits(int n_units) {
   UpdateAfterEdit();
 }
 
+void Layer::SetNUnitGroups(int n_groups) {
+  if(un_geom.n == n_groups || n_groups <= 0) return; // only if diff or sensible
+  unit_groups = true;		// presumably this is the point..
+  gp_geom.FitN(n_groups);
+  UpdateAfterEdit();
+}
+
 void Layer::BuildUnits() {
   taMisc::Busy();
   StructUpdate(true);

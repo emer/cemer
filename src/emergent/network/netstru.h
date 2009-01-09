@@ -1429,6 +1429,8 @@ public:
 
   virtual void	SetNUnits(int n_units);
   // #CAT_Structure set number of units in layer in the un_geom member -- attempts to lay out geometry in closest to a square that fits all the units evenly, if possible.  note: does NOT rebuild the network.  also does not make any changes if current number of units is same as arg, or arg <= 0 (e.g., for startup arg, just init n_units to -1 prior to getting arg val so it won't have any effect if arg not passed)
+  virtual void	SetNUnitGroups(int n_groups);
+  // #CAT_Structure set number of unit groups in layer in the gp_geom member -- attempts to lay out geometry in closest to a square that fits all the groups evenly, if possible.  note: does NOT rebuild the network.  also does not make any changes if current number of groups is same as arg, or arg <= 0 (e.g., for startup arg, just init n_groups to -1 prior to getting arg val so it won't have any effect if arg not passed)
   
   virtual void  BuildUnits();
   // #MENU #MENU_ON_Actions #CONFIRM #CAT_Structure build the units based current geometry configuration

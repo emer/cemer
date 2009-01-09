@@ -1519,8 +1519,8 @@ class LEABRA_API ClampSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		hard;		// #APPLY_IMMED #DEF_true whether to hard clamp inputs to this layer or not
-  float		gain;		// #CONDEDIT_OFF_hard:true #DEF_0.5 starting soft clamp gain factor (net = gain * ext)
-  float		d_gain;		// #CONDEDIT_OFF_hard:true [Default: 0] for soft clamp, delta to increase gain when target units not > .5 (0 = off, .1 std when used)
+  float		gain;		// #CONDEDIT_OFF_hard:true #DEF_0.2;0.5 starting soft clamp gain factor (net = gain * ext)
+  float		d_gain;		// #CONDEDIT_OFF_hard:true #DEF_0;0.1 for soft clamp, delta to increase gain when target units not > .5 (0 = off, .1 std when used)
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(ClampSpec);
@@ -3108,6 +3108,9 @@ public:
   virtual bool PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_layer,
 				 bool disconnect = false);
   // #MENU_BUTTON #NO_SCOPE_1 make (or break if disconnect = true) connections between given sending_layer in given network and the learning PVLV layers (PVr, PVi, LVe, LVi, NV), each of which should typically receive from the same sending layers
+  virtual bool PVLV_OutToPVe(LeabraNetwork* net, LeabraLayer* output_layer,
+				 bool disconnect = false);
+  // #MENU_BUTTON #NO_SCOPE_1 make (or break if disconnect = true) connection between given output_layer in given network and the PVe layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance
 
   virtual bool 	PBWM(LeabraNetwork* net, bool da_mod_all = false,
 		     int n_stripes=4, bool out_gate=false,

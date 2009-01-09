@@ -1682,41 +1682,28 @@ void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
 //			BgPFC
 ///////////////////////////////////////////////////////////////
 
-static void set_n_stripes(LeabraNetwork* net, const char* nm, int n_stripes,
-  int n_units, bool sp)
-{
-  LeabraLayer* lay = (LeabraLayer*)net->FindLayer(nm);
-  if(lay == NULL) return;
-  lay->gp_geom.n_not_xy = true;
-  lay->gp_geom.n = n_stripes;
-  lay->gp_geom.UpdateAfterEdit();
-  lay->unit_groups = true;
+static void lay_set_geom(LeabraLayer* lay, int n_stripes, int n_units = -1, bool sp = true) {
+  lay->SetNUnitGroups(n_stripes);
+  if(n_stripes <= 5) {
+    lay->gp_geom.x = n_stripes;
+    lay->gp_geom.y = 1;
+  }
   if(n_units > 0) {
-    lay->un_geom.n_not_xy = true;
-    lay->un_geom.n = n_units;
-    lay->un_geom.UpdateAfterEdit();
+    lay->SetNUnits(n_units);
   }
   if(sp) {
     lay->gp_spc.x = 1;
     lay->gp_spc.y = 1;
   }
   lay->UpdateAfterEdit();
-  if(n_stripes <= 5) {
-    lay->gp_geom.x = n_stripes;
-    lay->gp_geom.y = 1;
-  }
 }
 
-static void lay_set_geom(LeabraLayer* lay, int half_stripes) {
-  lay->unit_groups = true;
-  lay->gp_geom.n = half_stripes * 2;
-  if(half_stripes <= 2) {
-    lay->gp_geom.y = 1; lay->gp_geom.x = half_stripes * 2;
-  }
-  else {
-    lay->gp_geom.y = 2; lay->gp_geom.x = half_stripes;
-  }
-  lay->UpdateAfterEdit();
+static void set_n_stripes(LeabraNetwork* net, const char* nm, int n_stripes,
+  int n_units, bool sp)
+{
+  LeabraLayer* lay = (LeabraLayer*)net->FindLayer(nm);
+  if(lay == NULL) return;
+  lay_set_geom(lay, n_stripes, n_units, sp);
 }
 
 bool LeabraWizard::SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units) {
@@ -1764,10 +1751,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
  Re/New/Init on the control process these same checks will be performed, so you\
  can be sure everything is ok.";
   taMisc::Confirm(msg);
-
-  int half_stripes = n_stripes /2;
-  half_stripes = MAX(1, half_stripes);
-  n_stripes = half_stripes * 2;	// make it even
 
   net->RemoveUnits();
 
@@ -2159,11 +2142,14 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   pfc_selfps->self_con = true;
 
   // todo: out of date!
-  intra_pfcps->def_p_con = .4f;
-  intra_pfcps->recv_gp_n.y = 1;
-  intra_pfcps->recv_gp_group.x = half_stripes;
-  intra_pfcps->MakeRectangle(half_stripes, 1, 0, 1);
-  intra_pfcps->wrap = false;
+  {
+    int half_stripes = MAX(n_stripes / 2, 1);
+    intra_pfcps->def_p_con = .4f;
+    intra_pfcps->recv_gp_n.y = 1;
+    intra_pfcps->recv_gp_group.x = half_stripes;
+    intra_pfcps->MakeRectangle(half_stripes, 1, 0, 1);
+    intra_pfcps->wrap = false;
+  }
   
   matrixsp->bg_type = MatrixLayerSpec::MAINT;
   // set these to fix old projects..
@@ -2187,8 +2173,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   // set positions & geometries
 
   // LVe and LVi are now per-pfc stripe!
-  lay_set_geom(lve, half_stripes);
-  lay_set_geom(lvi, half_stripes);
+  lay_set_geom(lve, n_stripes+1); // default to n+1 -- one global and rest per-pfc
+  lay_set_geom(lvi, n_stripes+1);
   lvesp->SetUnique("inhib_group", true);
   lvesp->SetUnique("gp_kwta", true);
   lvisp->SetUnique("inhib_group", false);
@@ -2207,19 +2193,19 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
       pfc_m->un_geom.n = 30; pfc_m->un_geom.x = 5; pfc_m->un_geom.y = 6;
     }
   }
-  lay_set_geom(pfc_m, half_stripes);
+  lay_set_geom(pfc_m, n_stripes);
 
   if(matrix_m_new) { 
     matrix_m->pos.z = 1; matrix_m->pos.y = 0; matrix_m->pos.x = mx_z1 + 1; 
     matrix_m->un_geom.n = 28; matrix_m->un_geom.x = 4; matrix_m->un_geom.y = 7;
   }
-  lay_set_geom(matrix_m, half_stripes);
+  lay_set_geom(matrix_m, n_stripes);
 
   snrthal_m->un_geom.n = 1;
   if(snrthal_m_new) {
     snrthal_m->pos.z = 0; snrthal_m->pos.y = 4; snrthal_m->pos.x = lve->pos.x + 8;
   }
-  lay_set_geom(snrthal_m, half_stripes);
+  lay_set_geom(snrthal_m, n_stripes);
 
   // this is here, to allow it to get act_geom for laying out the pfc and matrix guys!
   SetPFCStripes(net, n_stripes);
@@ -2236,21 +2222,21 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
 	pfc_o->un_geom = pfc_m->un_geom;
       }
     }
-    lay_set_geom(pfc_o, half_stripes);
+    lay_set_geom(pfc_o, n_stripes);
 
     if(matrix_o_new) { 
       matrix_o->pos.z = matrix_m->pos.z; matrix_o->pos.y = matrix_m->pos.y;
       matrix_o->pos.x = matrix_m->pos.x + matrix_m->act_geom.x + 2; 
       matrix_o->un_geom.n = 28; matrix_o->un_geom.x = 4; matrix_o->un_geom.y = 7;
     }
-    lay_set_geom(matrix_o, half_stripes);
+    lay_set_geom(matrix_o, n_stripes);
 
     snrthal_o->un_geom.n = 1;
     if(snrthal_o_new) {
       snrthal_o->pos.z = 0; snrthal_o->pos.y = 4;
       snrthal_o->pos.x = snrthal_m->pos.x + snrthal_m->act_geom.x + 2;
     }
-    lay_set_geom(snrthal_o, half_stripes);
+    lay_set_geom(snrthal_o, n_stripes);
   }
 
   //////////////////////////////////////////////////////////////////////////////////

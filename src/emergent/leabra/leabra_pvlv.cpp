@@ -1222,7 +1222,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
  messages in the interim):\n\n";
 
   String man_msg = "1. Check that connection(s) were made from all appropriate output layers\
- to the ExtRew layer, using the MarkerConSpec (MarkerCons) Con spec.\
+ to the PVe (ExtRewLayerSpec) layer, using the MarkerConSpec (MarkerCons) Con spec.\
  This will provide the error signal to the system based on output error performance.\n\n";
 
   msg += man_msg + "\n\nThe configuration will now be checked and a number of default parameters\
@@ -1301,8 +1301,6 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   // make specs
 
   String gpprfx = "PFC_BG_";
-//   if(!bio_labels)
-//     gpprfx = "DA_";
 
   BaseSpec_Group* units = net->FindMakeSpecGp(gpprfx + "Units");
   BaseSpec_Group* cons = net->FindMakeSpecGp(gpprfx + "Cons");
@@ -1685,6 +1683,31 @@ bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_la
       net->FindMakePrjn(lvi, sending_layer, fullprjn, lvi_cons);
     if(nv && nv_cons)
       net->FindMakePrjn(nv,  sending_layer, fullprjn, nv_cons);
+  }
+  return true;
+}
+
+bool LeabraWizard::PVLV_OutToPVe(LeabraNetwork* net, LeabraLayer* output_layer,
+				     bool disconnect) {
+  if(TestError(!net || !output_layer, "PVLV_OutToPVe", "must specify a network and an output layer!")) return false;
+
+  String pvenm = "PVe";
+  LeabraLayer* pve = (LeabraLayer*)net->FindLayer(pvenm);
+
+  BaseSpec_Group* prjns = net->FindMakeSpecGp("PFC_BG_Prjns");
+  BaseSpec_Group* cons = net->FindMakeSpecGp("PFC_BG_Cons");
+
+  ProjectionSpec* onetoone = (ProjectionSpec*)prjns->FindMakeSpec("OneToOne", &TA_OneToOnePrjnSpec);
+
+  LeabraConSpec* marker_cons = (LeabraConSpec*)cons->FindMakeSpec("MarkerCons", &TA_MarkerConSpec);
+  if(TestError(!marker_cons || !onetoone, "PVLV_OutToPVe", "MarkerCons and/or OneToOne Prjn not found -- not properly configured for PVLV"))
+    return false;
+
+  if(disconnect) {
+    net->RemovePrjn(pve, output_layer);
+  }
+  else {
+    net->FindMakePrjn(pve, output_layer, onetoone, marker_cons);
   }
   return true;
 }
