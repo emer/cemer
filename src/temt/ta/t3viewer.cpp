@@ -113,6 +113,8 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget *parent, const char *name,
   t3vw = parent;
   interactbutton = NULL;
   viewbutton = NULL;
+  seekbutton = NULL;
+  priv_button_list = NULL;
   setClassName("T3ExaminerViewer");
   QWidget * widget = buildWidget(getParentWidget()); // build now so that stuff is there
   setBaseWidget(widget);
@@ -186,9 +188,36 @@ enum {
   PRINT_BUTTON,
 };
 
+QWidget *
+T3ExaminerViewer::buildRightTrim(QWidget * parent) {
+  QWidget* rval = inherited::buildRightTrim(parent);
+  fixViewerButtons();
+  return rval;
+}
+
+
+
+void T3ExaminerViewer::fixViewerButtons() {
+  // this is necessary because buildViewerButtons includes this little gem:
+  // b->setFixedSize(30, 30);
+  // which apparently doesn't work on macs anymore with Qt 4.4.x
+
+  if(priv_button_list) {
+    const int numViewerButtons = priv_button_list->getLength();
+    for (int i = 0; i < numViewerButtons; i++) {
+      QPushButton * b = (QPushButton *)priv_button_list->get(i);
+      b->setFixedSize(30, 40);	// make 'em bigger
+    }
+  }
+}
+
+// this is from SoQt/src/Inventor/Qt/viewers/FullViewer.cpp
+
 void
 T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
 {
+
+  priv_button_list = buttonlist; // need this for hack above to fix button sizes..
 
   // note that the parent of this guy has a gridlayout that is causing icons
   // to overlap in mac mode, most likely due to a mac bug in 4.3.1, that is due to
@@ -202,6 +231,7 @@ T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
     // extra frame around it, up to 3 pixels or more. This causes
     // pixmaps on buttons to look tiny, which is not what we want.
     p->setIconSize(QSize(24, 24));
+    //    p->setMinimumSize(QSize(24, 100));
 
     switch (i) {
     case INTERACT_BUTTON:

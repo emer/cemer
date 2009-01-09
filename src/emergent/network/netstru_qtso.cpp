@@ -478,6 +478,9 @@ void UnitGroupView::Render_impl_children() {
     return;			// don't render anything!
   }
 
+  T3UnitGroupNode* node_so = this->node_so(); // cache
+  if(!node_so) return;
+
   Render_impl_snap_bord();
 
   if(lv()->disp_mode == LayerView::DISP_OUTPUT_NAME) {
@@ -489,8 +492,6 @@ void UnitGroupView::Render_impl_children() {
     Render_impl_blocks();
     return;
   }
-
-  T3UnitGroupNode* node_so = this->node_so(); // cache
 
   // for efficiency we assume responsibility for the _impl of UnitViews
   T3UnitNode* unit_so;
@@ -842,6 +843,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   NetView* nv = this->nv(); //cache
   Unit_Group* ugrp = this->ugrp(); //cache
   T3UnitGroupNode* node_so = this->node_so(); // cache
+  if(!node_so) return;
   SoIndexedTriangleStripSet* sits = node_so->shape();
   SoVertexProperty* vtx_prop = node_so->vtxProp();
   if(!sits || !vtx_prop) return; // something wrong..
@@ -994,6 +996,8 @@ void UnitGroupView::UpdateUnitValues_outnm() {
   //  NetView* nv = this->nv(); //cache
   Unit_Group* ugrp = this->ugrp(); //cache
   T3UnitGroupNode* node_so = this->node_so(); // cache
+  if(!node_so) return;
+
   Layer* lay = ugrp->own_lay;
   if(!lay) return;
 
@@ -1010,6 +1014,8 @@ void UnitGroupView::UpdateUnitValues_outnm() {
 void UnitGroupView::Render_impl_snap_bord() {
   NetView* nv = this->nv(); //cache
   T3UnitGroupNode* node_so = this->node_so(); //cache
+  if(!node_so) return;
+
   Unit_Group* ugrp = this->ugrp(); //cache
 
   bool do_lines = nv->snap_bord_disp;

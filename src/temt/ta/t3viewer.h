@@ -84,6 +84,8 @@ public:
 // goals: get rid of unused buttons, and add new ones(?)
 // fix view button to regularize the view as well.
 
+class SbPList; // #IGNORE
+
 class TA_API T3ExaminerViewer_qobj : public QObject {
   Q_OBJECT
   INHERITED(QObject)
@@ -140,9 +142,12 @@ protected:
   QPushButton* interactbutton;
   QPushButton* viewbutton;
   QPushButton* seekbutton;
+  SbPList*     priv_button_list;
 
   override void processEvent(QEvent* ev_);
   override void createViewerButtons(QWidget* parent, SbPList* buttonlist);
+  override QWidget * buildRightTrim(QWidget * parent);
+  virtual void fixViewerButtons(); // fix the viewer buttons to actually fit..
 
 #ifndef __MAKETA__ // doesn't like SbBool..
   override void setSeekMode(SbBool enable); // #IGNORE override standard one to do nothing
