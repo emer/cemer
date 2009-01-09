@@ -147,7 +147,7 @@ void taPlugins::EnumeratePlugins() {
   for (int i = 0; i < plugin_folders.size; ++i) {
     folder = plugin_folders.FastEl(i);
     QDir pluginsDir(folder);
-    // enumerate all files in the folder, filter by build string, then try loading
+    // enumerate files in the folder, filter by build string (if any), then try loading
     // for platforms with known dylib suffixes, only look for those
     QString filt("*");
     if (taMisc::build_str.nonempty()) {
@@ -164,6 +164,11 @@ void taPlugins::EnumeratePlugins() {
 #endif
     pluginsDir.setNameFilter(filt);
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+      // if this is the default release build, then reject any others
+      if (taMisc::build_str.empty()) {
+        if (fileName.contains("_dbg") || fileName.contains("_mpi") ||
+          fileName.contains("_nogui")) continue;
+      }
       taPluginInst* pl = ProbePlugin(pluginsDir.absoluteFilePath(fileName));
       if (pl) {
         plugins.Add(pl);
@@ -317,11 +322,28 @@ void taPluginBase_List::ChildQueryEditActions_impl(const MemberDef* md, const ta
 //  taPlugin_List	//
 //////////////////////////
 
+void RootFilename(String& f) {
+  QFileInfo fi(f);
+  f = fi.baseName();
+  // just blindly remove any suffixes we use
+  f.gsub("_dbg", "");
+  f.gsub("_nogui", "");
+  f.gsub("_mpi", ""); 
+}
+bool RootFilenameEq(String f1, String f2) {
+//note: sleazy: we just see if either matches first part of other
+  RootFilename(f1);
+  RootFilename(f2);
+  return (f1 == f2);
+}
 taPlugin* taPlugin_List::FindFilename(const String& value) {
+  // we only look for a match to the un-path'ed, un-suffixed name
+  // ex /blah/myplugin.so == /foo/myplugin_dbg.so
   for (int i = 0; i < size; ++i) {
     taPlugin* rval = FastEl(i);
     if (!rval) continue;
-    if (rval->filename == value) return rval;
+    if (RootFilenameEq(rval->filename, value)) 
+      return rval;
   }
   return NULL;
 }
@@ -421,7 +443,7 @@ void taPlugin_List::ReconcilePlugins() {
       ip->GetVersion(ver);
       pl->version = ver.toString();
       
-    } else { // not loaded -- but match up the filename to a persistent guy if found
+    } else { // not loaded -- but match up the root filename to a persistent guy if found
       pl = FindFilename(pli->fileName());
       // we don't update anything, and we don't make a new guy if not found before,
       // since we only persistently track successful plugins, not failed ones
