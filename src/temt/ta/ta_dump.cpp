@@ -439,7 +439,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
       tap->Dump_Save_Value(strm, (TAPtr)base, indent);
 //NOTE: HACK ALERT...      
 // we only need the extra "};" when not saving a INLINE object 
-      if (!tap->HasOption("INLINE_DUMP"))
+      if (!(tap->HasOption("INLINE_DUMP") && !tap->HasUserDataList()))
         taMisc::indent(strm, indent, 1) << "};\n";
       return true;
     }
@@ -552,7 +552,7 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
         strm << "\n";			// actually saving a path: put a newline
         taMisc::indent(strm, indent, 1);
         tap->Dump_Save_Path(strm, (taBase*) base, indent);
-        strm << " { ";
+        strm << " {";
         if(tap->Dump_Save_PathR(strm, tap, indent+1))
           taMisc::indent(strm, indent, 1);
         strm << "};\n";
@@ -600,7 +600,12 @@ int TypeDef::Dump_Save_Value(ostream& strm, void* base, void* par, int indent) {
   }
   else */
   if (InheritsNonAtomicClass()) {
-    if(HasOption("INLINE_DUMP")) {
+    // semi-hack to not do INLINE if taBase has user data
+    bool inline_dump = HasOption("INLINE_DUMP");
+    if (inline_dump && DerivesFrom(&TA_taOBase) && (ptr == 0)) {
+      inline_dump = !((taOBase*)base)->HasUserDataList();
+    }
+    if(inline_dump) {
       strm << " " << GetValStr(base, par, NULL, TypeDef::SC_STREAMING) << ";\n";
     }
     else {
@@ -638,14 +643,20 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
     Dump_Save_Path(strm, base, par, indent);
     Dump_Save_Value(strm, base, par, indent);
   }
-  if(InheritsNonAtomicClass() && !HasOption("INLINE_DUMP")) {
-    if(InheritsFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)base;
-      rbase->Dump_SaveR(strm, rbase, indent+1);
+  if(InheritsNonAtomicClass()) {
+    bool inline_dump = HasOption("INLINE_DUMP");
+    if (inline_dump && DerivesFrom(&TA_taOBase) && (ptr == 0)) {
+      inline_dump = !((taOBase*)base)->HasUserDataList();
     }
-    else
-      Dump_SaveR(strm, base, base, indent+1);
-    taMisc::indent(strm, indent, 1) << "};\n";
+    if (!inline_dump) {
+      if(InheritsFrom(TA_taBase)) {
+        TAPtr rbase = (TAPtr)base;
+        rbase->Dump_SaveR(strm, rbase, indent+1);
+      }
+      else
+        Dump_SaveR(strm, base, base, indent+1);
+      taMisc::indent(strm, indent, 1) << "};\n";
+    }
   }
 //   if(InheritsFormal(TA_class) && !HasOption("INLINE_DUMP")) {
 //     members.Dump_SaveR(strm, base, par, indent+1);
@@ -673,6 +684,8 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
   else {
     Dump_Save_Value(strm, base, par, indent);
   }
+  // note: we don't do our INLINE hack here, because this code only looks
+  // for *non* INLINE guys in this context...
   if(InheritsNonAtomicClass() &&
      !HasOption("INLINE_DUMP"))
   {
@@ -1289,7 +1302,16 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
     return 2;
   }
 
-  if(HasOption("INLINE_DUMP")) {
+  // semi-hack to properly load taBase INLINE types that have user data
+  // in that case, we streamed out as if no INLINE, and the cheat to detect
+  // this is that the { doesn't have the member right after, but a newline
+  bool inline_dump = HasOption("INLINE_DUMP");
+  if (inline_dump) {
+    // note: pre 4.0.19 streams had a space after { in path sections
+    char c = strm.peek();
+    inline_dump = !((c == ' ') || (c == '\n'));
+  }
+  if(inline_dump) {
     if(c != '{') {
       taMisc::Warning("*** Missing '{' in dump file for inline type:", name);
       return false;
