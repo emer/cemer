@@ -716,6 +716,10 @@ private:
   void	Destroy()		{ };
 };
 
+
+/////////////////////////////////////////////////
+//	Activation Trace Hebbian learning (Foldiak, Rolls etc)
+
 class LEABRA_API ActAvgHebbMixSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra mixture of average activation hebbian learning and regular hebbian learning (on current act value)
 INHERITED(taOBase)
@@ -772,6 +776,9 @@ private:
   void	Destroy()		{ };
 };
 
+/////////////////////////////////////////////////
+//	Limited precision weights: for hardware impl testing
+
 class LEABRA_API LeabraLimPrecConSpec : public LeabraConSpec {
   // ##CAT_Leabra Leabra limited precision connection specs: limits weight values to specified level of precision between 0-1
 INHERITED(LeabraConSpec)
@@ -818,6 +825,9 @@ private:
   void 	Initialize();
   void	Destroy()		{ };
 };
+
+/////////////////////////////////////////////////
+//	dwt normalization -- enforced zero-sum learning
 
 class LEABRA_API LeabraDwtNorm : public taBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra renormalize weight changes -- makes zero sum
@@ -915,9 +925,6 @@ public:
     //  ApplyLimits(cg, ru); limits are automatically enforced anyway
   }
 
-
-  // NOTE: bias weights typically not subject to limited precision!
-
   SIMPLE_COPY(LeabraDwtNormConSpec);
   TA_BASEFUNS(LeabraDwtNormConSpec);
 // protected:
@@ -927,97 +934,99 @@ private:
   void	Destroy()		{ };
 };
 
+/////////////////////////////////////////////////
+//	da-noise modulated learning as in MazzoniAndersenJordan91
 
-// class LEABRA_API LeabraCtExptConSpec : public LeabraConSpec {
-//   // experimental variations of Ct learning rules
-// INHERITED(LeabraConSpec)
-// public:
-//   enum LearnVar {
-//     STD_CT,			// standard ct
-//     CHL,
-//     CHL_SUBPROD,		// CHL with subprod: (x+ - x-) * (y+ - y-)
-//     MINUS_INDEP_AVG, // use the independently computed average activations instead of sravg coproduct: x+ y+ - <x-> <y-> instead of - <x- y->
-//     MINUS_INDEP_AVG_SUBPROD, // compute product of sub terms: (x+ - <x->)(y+ - <y->)
-//     CT_DELTA_BCM,	     // delta-rule version of ct with BCM floating longer-term avg sub
-//     CT_DELTA_SAVG_BCM,	     // delta-rule version of ct with BCM floating longer-term avg sub - use avg of plus and minus for sending acts
-//   };
+class LEABRA_API LeabraDaNoise : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra da-noise modulated learning as in MazzoniAndersenJordan91
+INHERITED(taBase)
+public:
+  float		da_noise;	// #DEF_0:1 amount to add of additional reinforcement-learning term based on unit dopamine value (dav) and TRIAL_VM_NOISE noise value, as in MazzoniAndersenJordan91: dwt = dav * (ru_act_p+noise - ru_act_p-noise) * su_act -- activation with noise (std acts as computed) minus activation without noise (specially computed given noise value) times sending activation times dopamine value -- if it does better and noise made unit more active, then make it more active next time (and so on for all other permutations)
+  float		std_leabra;	// #DEF_0:1 how much of standard leabra learning to include in addition to the da_noise term
 
-//   LearnVar	learn_var;	// learning variant to implement
-//   float		bcm_pct;	// amount of bcm floating avg learnign to inject
+  SIMPLE_COPY(LeabraDaNoise);
+  TA_BASEFUNS(LeabraDaNoise);
+  //protected:
+  //  void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
 
-//   inline float C_Compute_Err_CtLeabraCAL(LeabraCon* cn, 
-// 					 float ru_act_p, float su_act_p, float avg_nrm, 
-// 					 LeabraCon* rbwt, LeabraCon* sbwt,
-// 					 float ru_act_m, float su_act_m,
-// 					 float ru_act_avg) {
-//     float err;
-//     if(learn_var == STD_CT) {
-//       err = (ru_act_p * su_act_p) - (avg_nrm * cn->sravg);
-//     }
-//     else if(learn_var == CHL) {
-//       err = (ru_act_p * su_act_p) - (ru_act_m * su_act_m);
-//     }
-//     else if(learn_var == CHL_SUBPROD) {
-//       err = (ru_act_p - ru_act_m) * (su_act_p - su_act_m);
-//     }
-//     else if(learn_var == MINUS_INDEP_AVG) {
-//       // using bias weight's sravg here!
-//       err = (ru_act_p * su_act_p) - ((avg_nrm * rbwt->sravg) * (avg_nrm * sbwt->sravg));
-//     }
-//     else if(learn_var == MINUS_INDEP_AVG_SUBPROD) {
-//       // using bias weight's sravg here!
-//       err = (ru_act_p - (avg_nrm * rbwt->sravg)) * (su_act_p - (avg_nrm * sbwt->sravg));
-//     }
-//     else if(learn_var == CT_DELTA_BCM) {
-//       err = (ru_act_p - (((1.0f - bcm_pct) * (avg_nrm * rbwt->sravg)) + (bcm_pct * ru_act_avg)))
-// 	* su_act_p;
-//     }
-//     else if(learn_var == CT_DELTA_SAVG_BCM) {
-//       err = (ru_act_p - (((1.0f - bcm_pct) * (avg_nrm * rbwt->sravg)) + (bcm_pct * ru_act_avg)))
-// 	* .5 * (su_act_p + su_act_m);
-//     }
-//     // note: sb now done in compute weights
-//     return err;
-//   }
+class LEABRA_API LeabraDaNoiseConSpec : public LeabraConSpec {
+  // ##CAT_Leabra da-noise modulated learning as in MazzoniAndersenJordan91
+INHERITED(LeabraConSpec)
+public:
+  LeabraDaNoise	da_noise;	// how much da_noise based learning to include relative to std leabra
 
-//   inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-//     // need to do recv layer here because savg_cor.thresh is only here.. could optimize this later
-//     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-//     if(rlay->acts_p.avg < savg_cor.thresh) return;
-//     LeabraLayer* lfm = (LeabraLayer*)cg->prjn->from.ptr();
-//     if(lfm->acts_p.avg < savg_cor.thresh) return;
-//     if(ru->in_subgp) {
-//       LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
-//       if(ogp->acts_p.avg < savg_cor.thresh) return;
-//     }
+  inline void C_Compute_dWt_DaNoise(LeabraCon* cn, float lin_wt, float dav,
+				    float ru_act, float ru_act_nonoise,
+				    float su_act) {
+    float err = dav * (ru_act - ru_act_nonoise) * su_act;
+    // std leabra requires separate softbounding on all terms.. see XCAL for its version
+    if(lmix.err_sb) {
+      if(err > 0.0f)	err *= (1.0f - lin_wt);
+      else		err *= lin_wt;
+    }
+    cn->dwt += cur_lrate * err;
+  }
 
-//     // only no hebb condition supported!!
+  inline void Compute_dWt_DaNoise(LeabraRecvCons* cg, LeabraUnit* ru) {
+    // compute what activation value would be if we subtract out noise -- note that
+    // we don't save v_m by phase so this is necessarily on the current v_m val, assumed
+    // to be plus-phase value
+    float ru_act_nonoise = ru->Compute_ActValFmVmVal(ru->v_m - ru->noise);
+    float dav = ru->dav * da_noise.da_noise;
 
-//     LeabraCon* rbwt = (LeabraCon*)ru->bias.Cn(0);
+    for(int i=0; i<cg->cons.size; i++) {
+      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      float lin_wt = LinFmSigWt(cn->wt);
+      C_Compute_dWt_DaNoise(cn, lin_wt, dav, ru->act_p, ru_act_nonoise, su->act_p);
+    }
+  }
 
-//     for(int i=0; i<cg->cons.size; i++) {
-//       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-//       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-//       if(su->in_subgp) {
-// 	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
-// 	if(ogp->acts_p.avg < savg_cor.thresh) continue; // critical: must reset!
-//       }
-//       LeabraCon* sbwt = (LeabraCon*)su->bias.Cn(0);
-//       C_Compute_dWt_NoHebb(cn, ru, 
-// 			   C_Compute_Err_CtLeabraCAL(cn, ru->act_p, su->act_p,
-// 						     rlay->sravg_nrm, rbwt, sbwt,
-// 						     ru->act_m, su->act_m, ru->act_avg));
-//     }
-//   }
+  inline void C_Compute_dWt(LeabraCon* cn, LeabraUnit*, float heb, float err) {
+    float dwt = lmix.err * err + lmix.hebb * heb;
+    cn->dwt += da_noise.std_leabra * cur_lrate * dwt;
+  }
 
-//   SIMPLE_COPY(LeabraCtExptConSpec);
-//   TA_BASEFUNS(LeabraCtExptConSpec);
-// // protected:
-// //   void	UpdateAfterEdit_impl();
-// private:
-//   void 	Initialize();
-//   void	Destroy()		{ };
-// };
+  inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    if(da_noise.std_leabra > 0.0f) {
+      // this is a copy of the main fun, but uses above C_Compute_dWt which mults dwt
+      Compute_SAvgCor(cg, ru);
+      if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
+	for(int i=0; i<cg->cons.size; i++) {
+	  LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+	  LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+	  if(!(su->in_subgp &&
+	       (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
+	    float lin_wt = LinFmSigWt(cn->wt);
+	    C_Compute_dWt(cn, ru, 
+			  C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p),
+			  C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m,
+						  su->act_p, su->act_m));  
+	  }
+	}
+      }
+    }
+    if(da_noise.da_noise > 0.0f) {
+      Compute_dWt_DaNoise(cg, ru);
+    }
+  }
+
+  // todo: add xcal version perhaps if promising..
+
+
+  SIMPLE_COPY(LeabraDaNoiseConSpec);
+  TA_BASEFUNS(LeabraDaNoiseConSpec);
+// protected:
+//   void	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
 
 //////////////////////////////////
 // 	Scalar Value Layer	//

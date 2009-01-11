@@ -291,10 +291,13 @@ void LeabraDwtNorm::Initialize() {
 void LeabraDwtNormConSpec::Initialize() {
 }
 
-// void LeabraCtExptConSpec::Initialize() {
-//   learn_var = STD_CT;
-//   bcm_pct = 0.0f;
-// }
+void LeabraDaNoise::Initialize() {
+  da_noise = 1.0f;
+  std_leabra = 1.0f;
+}
+
+void LeabraDaNoiseConSpec::Initialize() {
+}
 
 //////////////////////////////////
 // 	Scalar Value Layer	//

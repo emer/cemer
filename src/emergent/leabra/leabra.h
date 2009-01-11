@@ -942,7 +942,8 @@ public:
     NO_NOISE,			// no noise added to processing
     VM_NOISE,			// noise in the value of v_m (membrane potential)
     NETIN_NOISE,		// noise in the net input (g_e)
-    ACT_NOISE			// noise in the activations
+    ACT_NOISE,			// noise in the activations
+    TRIAL_VM_NOISE,		// a stable noise value computed at the start of the trial, added to the membrane potential (v_m)
   };
 
   ActFun	act_fun;	// #APPLY_IMMED #CAT_Activation activation function to use
@@ -1057,8 +1058,15 @@ public:
   // #CAT_Activation compute da modulation as plus-phase continuous gc.h/.a
   virtual void Compute_Conduct(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation compute input conductance values in the gc variables
+
+  virtual float Compute_EqVm(LeabraUnit* u);
+  // #CAT_Activation compute the equilibrium (asymptotic) membrante potential from input conductances (assuming they remain fixed as they are)
   virtual void Compute_Vm(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation compute the membrante potential from input conductances
+
+  virtual float Compute_ActValFmVmVal(float vm_val);
+  // #CAT_Activation raw activation function: computes an activation value given membrane potential value based on current activation function -- does not update state variables or anything
+
   virtual void Compute_ActFmVm(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation compute the activation from membrane potential
   virtual void Compute_ActFmVm_rate(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
@@ -1207,6 +1215,7 @@ public:
   LeabraUnitChans gc;		// #DMEM_SHARE_SET_1 #NO_SAVE #CAT_Activation current unit channel conductances
   float		I_net;		// #NO_SAVE #CAT_Activation net current produced by all channels
   float		v_m;		// #NO_SAVE #CAT_Activation membrane potential
+  float		noise;		// #NO_SAVE #CAT_Activation noise value added to unit (noise_type on unit spec determines where it is added) -- this can be used in learning in some cases
   float 	dav;		// #CAT_Activation dopamine value (da is delta activation) which modulates activations (e.g., via accom and hyst currents) to then drive learning
   float 	maint_h;	// #CAT_Activation maintained hysteresis current value (e.g., for PFC units)
 
@@ -1299,6 +1308,10 @@ public:
   void 		Compute_Act(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net) 
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_Act(this, lay, athr, net); }
   // #CAT_Activation compute the final activation: calls following function steps
+
+  float 	Compute_ActValFmVmVal(float vm_val)
+  { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_ActValFmVmVal(vm_val); }
+  // #CAT_Activation raw activation function: computes an activation value given membrane potential value based on current activation function -- does not update state variables or anything
 
   void 		Compute_MaxDa(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net) 
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_MaxDa(this, lay, athr, net); }

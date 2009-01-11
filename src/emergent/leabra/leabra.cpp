@@ -876,6 +876,7 @@ void LeabraUnitSpec::Init_Acts(LeabraUnit* ru, LeabraLayer*) {
   ru->act_p = ru->act_m = ru->act_dif = 0.0f;
   ru->act_m2 = ru->act_p2 = ru->act_dif2 = 0.0f;
   ru->dav = 0.0f;
+  ru->noise = 0.0f;
   ru->maint_h = 0.0f;
 
   ru->act_sent = 0.0f;
@@ -889,6 +890,11 @@ void LeabraUnitSpec::Init_Acts(LeabraUnit* ru, LeabraLayer*) {
     ru->spk_amp = act_range.max;
   ru->act_buf.Reset();
   ru->spike_buf.Reset();
+
+  if((noise_type == TRIAL_VM_NOISE) && (noise.type != Random::NONE))  {
+    // init_acts called at start of trial (or decay event)
+    ru->noise = noise.Gen();
+  }
 }
 
 void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
@@ -1097,7 +1103,8 @@ void LeabraUnitSpec::Compute_Netin_Spike(LeabraUnit* u, LeabraLayer* lay, Leabra
     u->prv_net = u->net;
   }
   if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    u->net += noise_sched.GetVal(net->cycle) * noise.Gen();
+    u->noise = noise.Gen();
+    u->net += noise_sched.GetVal(net->cycle) * u->noise;
   }
   u->i_thr = Compute_IThresh(u, lay, net);
 }
@@ -1218,12 +1225,17 @@ void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraLayer* lay, LeabraInhi
   u->gc.a = g_bar.a * u->vcb.g_a;
 }
 
+float LeabraUnitSpec::Compute_EqVm(LeabraUnit* u) {
+  float new_v_m = (((u->net * e_rev.e) + (u->gc.l * e_rev.l) + (u->gc.i * e_rev.i) +
+		   (u->gc.h * e_rev.h) + (u->gc.a * e_rev.a)) / 
+		  (u->net + u->gc.l + u->gc.i + u->gc.h + u->gc.a));
+  return new_v_m;
+}
+
 void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraLayer*, LeabraInhib*, LeabraNetwork* net) {
   if(net->cycle < dt.vm_eq_cyc) {
     // directly go to equilibrium value
-    float new_v_m= (((u->net * e_rev.e) + (u->gc.l * e_rev.l) + (u->gc.i * e_rev.i) +
-		     (u->gc.h * e_rev.h) + (u->gc.a * e_rev.a)) / 
-		    (u->net + u->gc.l + u->gc.i + u->gc.h + u->gc.a));
+    float new_v_m = Compute_EqVm(u);
     u->I_net = new_v_m - u->v_m; // time integrate: not really I_net but hey
     u->v_m += dt.vm_eq_dt * u->I_net;
   }
@@ -1247,7 +1259,11 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraLayer*, LeabraInhib*, Leabr
   }
 
   if((noise_type == VM_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    u->v_m += noise_sched.GetVal(net->cycle) * noise.Gen();
+    u->noise = noise.Gen();
+    u->v_m += noise_sched.GetVal(net->cycle) * u->noise;
+  }
+  if((noise_type == TRIAL_VM_NOISE) && (net->cycle >= 0)) {
+    u->v_m += noise_sched.GetVal(net->cycle) * u->noise;
   }
 
   u->v_m = vm_range.Clip(u->v_m);
@@ -1263,10 +1279,8 @@ void LeabraUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraLayer* lay, LeabraInhi
   }
 }
 
-void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
-					  LeabraNetwork* net) {
-
-  float thr_vm = u->v_m - act.thr; // thresholded vm
+float LeabraUnitSpec::Compute_ActValFmVmVal(float vm_val) {
+  float thr_vm = vm_val - act.thr; // thresholded vm
   float new_act = 0.0f;
   switch(act_fun) {
   case NOISY_XX1: {
@@ -1311,7 +1325,12 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraLayer* lay, Leabr
   case SPIKE:
     break;			// compiler food
   }
+  return new_act;
+}
 
+void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
+					  LeabraNetwork* net) {
+  float new_act = Compute_ActValFmVmVal(u->v_m);
   if(depress.on) {		     // synaptic depression
     u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
     new_act *= u->spk_amp;
@@ -1322,7 +1341,8 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraLayer* lay, Leabr
 
   u->da = new_act - u->act;
   if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    new_act += noise_sched.GetVal(net->cycle) * noise.Gen();
+    u->noise = noise.Gen();
+    new_act += noise_sched.GetVal(net->cycle) * u->noise;
   }
   u->act = act_range.Clip(new_act);
   u->act_eq =u->act;
@@ -1463,6 +1483,10 @@ void LeabraUnitSpec::DecayPhase(LeabraUnit* u, LeabraLayer*, LeabraNetwork*, flo
 void LeabraUnitSpec::DecayEvent(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net, float decay) {
   LeabraUnitSpec::DecayPhase(u, lay, net, decay);
   u->dav = 0.0f;
+  if((noise_type == TRIAL_VM_NOISE) && (noise.type != Random::NONE)) {
+    // decay event called at start of trial (or init acts)
+    u->noise = noise.Gen();
+  }
 }
 
 void LeabraUnitSpec::ExtToComp(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
@@ -1982,6 +2006,7 @@ void LeabraUnit::Initialize() {
   da = 0.0f;
   I_net = 0.0f;
   v_m = 0.0f;
+  noise = 0.0f;
   dav = 0.0f;
   maint_h = 0.0f;
 
@@ -2039,6 +2064,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   gc = cp.gc;
   I_net = cp.I_net;
   v_m = cp.v_m;
+  noise = cp.noise;
   dav = cp.dav;
   maint_h = cp.maint_h;
   // not: in_subgp

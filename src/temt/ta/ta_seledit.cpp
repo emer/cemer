@@ -407,8 +407,8 @@ int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs) {
     //    MemberDef* md = mds[i];
     taBase* itma = (taBase*)trg_bases[i];
     taBase* itmb = (taBase*)src_bases[i];
-    String nma = "A: " + itma->GetDisplayName().elidedTo(20);
-    String nmb = "B: " + itmb->GetDisplayName().elidedTo(20);
+    String nma = "A: " + itma->GetDisplayName().elidedTo(20) + "." + mds[i]->name;
+    String nmb = "B: " + itmb->GetDisplayName().elidedTo(20) + "." + mds[i]->name;
     SelectMember_impl(itma, mds[i], nma, _nilString);
     SelectMember_impl(itmb, mds[i], nmb, _nilString);
   }
