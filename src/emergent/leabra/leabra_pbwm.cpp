@@ -30,6 +30,10 @@ void MatrixConSpec::Initialize() {
   lmix.hebb = 0.0f;
   lmix.err = 1.0f;
 
+  SetUnique("wt_sig", true);
+  wt_sig.gain = 1.0f;
+  wt_sig.off = 1.0f;
+
   matrix_rule = MAINT;
 }
 
@@ -2085,7 +2089,10 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   pfc_self->wt_scale.rel = .1f;
 
   matrix_cons->SetUnique("lrate", true);
-  matrix_cons->lrate = .01f;
+  matrix_cons->lrate = .05f;
+  matrix_cons->SetUnique("wt_sig", true);
+  matrix_cons->wt_sig.gain = 1.0f;
+  matrix_cons->wt_sig.off = 1.0f;
 
   mfmpfc_cons->SetUnique("wt_scale", true);
   mfmpfc_cons->wt_scale.rel = .2f;
@@ -2102,7 +2109,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     matrixo_cons->matrix_rule = MatrixConSpec::OUTPUT;
     matrixo_cons->SetUnique("lmix", false);
     matrixo_cons->SetUnique("lrate", true);
-    matrixo_cons->lrate = .2f;
+    matrixo_cons->lrate = .1f;
     matrixo_cons->SetUnique("rnd", true);
     matrixo_cons->rnd.var = .2f;
     matrixo_cons->SetUnique("wt_sig", true);
