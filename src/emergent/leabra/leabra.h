@@ -940,10 +940,10 @@ public:
 
   enum NoiseType {
     NO_NOISE,			// no noise added to processing
+    TRIAL_VM_NOISE,		// a stable noise value computed at the start of the trial, added to the membrane potential (v_m) -- this is the best form to add during learning 
     VM_NOISE,			// noise in the value of v_m (membrane potential)
     NETIN_NOISE,		// noise in the net input (g_e)
     ACT_NOISE,			// noise in the activations
-    TRIAL_VM_NOISE,		// a stable noise value computed at the start of the trial, added to the membrane potential (v_m)
   };
 
   ActFun	act_fun;	// #APPLY_IMMED #CAT_Activation activation function to use

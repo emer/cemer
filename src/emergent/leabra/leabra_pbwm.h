@@ -36,18 +36,15 @@ class LEABRA_API MatrixConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   enum MatrixLearnRule {
-    OUTPUT,		// output/motor delta rule for: (bg+ - bg-) * s-
+    OUTPUT,		// output/motor delta rule for: (bg_p - bg_m) * s_m
     MAINT   		// maintenance learning rule: (bg_p2 - bg_p) * s_p
   };
 
   MatrixLearnRule	matrix_rule;	// learning rule to use
-  LeabraDaNoise		da_noise;	// how much da_noise to add relative to std leabra (std matrix learning)
 
-  inline void C_Compute_dWt_Matrix(LeabraCon* cn, float lin_wt, float dav,
-				   float ru_act_p, float ru_act_m, float ru_act_nonoise,
-				   float su_act) {
-    float err = da_noise.std_leabra * ((ru_act_p - ru_act_m) * su_act) + 
-      dav * (ru_act_p - ru_act_nonoise) * su_act;
+  inline void C_Compute_dWt_Matrix(LeabraCon* cn, float lin_wt, 
+				   float ru_act_p, float ru_act_m, float su_act) {
+    float err = (ru_act_p - ru_act_m) * su_act;
     // std leabra requires separate softbounding on all terms.. see XCAL for its version
     if(lmix.err_sb) {
       if(err > 0.0f)	err *= (1.0f - lin_wt);
@@ -56,47 +53,43 @@ public:
     cn->dwt += cur_lrate * err;
   }
 
-  inline void C_Compute_dWt_Matrix_NoSB(LeabraCon* cn, float dav,
-					float ru_act_p, float ru_act_m, float ru_act_nonoise,
+  inline void C_Compute_dWt_Matrix_NoSB(LeabraCon* cn, float ru_act_p, float ru_act_m,
 					float su_act) {
-    float err = da_noise.std_leabra * ((ru_act_p - ru_act_m) * su_act) + 
-      dav * (ru_act_p - ru_act_nonoise) * su_act;
+    float err = (ru_act_p - ru_act_m) * su_act;
     cn->dwt += cur_lrate * err;
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    // compute what activation value would be if we subtract out noise -- note that
-    // we don't save v_m by phase so this is necessarily on the current v_m val, assumed
-    // to be plus-phase value
-    float ru_act_nonoise = ru->Compute_ActValFmVmVal(ru->v_m - ru->noise);
-    float dav = ru->dav * da_noise.da_noise;
-
-    for(int i=0; i<cg->cons.size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-      if(matrix_rule == OUTPUT) 
-	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), dav, ru->act_p, ru->act_m, ru_act_nonoise, 
-			     su->act_m);
-      else
-	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), dav, ru->act_p2, ru->act_p, ru_act_nonoise, 
-			     su->act_p);
+    if(matrix_rule == OUTPUT) {
+      for(int i=0; i<cg->cons.size; i++) {
+	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p, ru->act_m, su->act_m);
+      }
+    }
+    else { // MAINT
+      for(int i=0; i<cg->cons.size; i++) {
+	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p2, ru->act_p, su->act_p);
+      }
     }
   }
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    // compute what activation value would be if we subtract out noise -- note that
-    // we don't save v_m by phase so this is necessarily on the current v_m val, assumed
-    // to be plus-phase value
-    float ru_act_nonoise = ru->Compute_ActValFmVmVal(ru->v_m - ru->noise);
-    float dav = ru->dav * da_noise.da_noise;
-
-    for(int i=0; i<cg->cons.size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-      if(matrix_rule == OUTPUT) 
-	C_Compute_dWt_Matrix_NoSB(cn, dav, ru->act_p, ru->act_m, ru_act_nonoise, su->act_m);
-      else
-	C_Compute_dWt_Matrix_NoSB(cn, dav, ru->act_p2, ru->act_p, ru_act_nonoise, su->act_p);
+    if(matrix_rule == OUTPUT) {
+      for(int i=0; i<cg->cons.size; i++) {
+	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p, ru->act_m, su->act_m);
+      }
+    }
+    else { // MAINT
+      for(int i=0; i<cg->cons.size; i++) {
+	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p2, ru->act_p, su->act_p);
+      }
     }
   }
 

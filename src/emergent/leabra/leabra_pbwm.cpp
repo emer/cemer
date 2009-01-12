@@ -35,9 +35,6 @@ void MatrixConSpec::Initialize() {
   wt_sig.off = 1.0f;
 
   matrix_rule = MAINT;
-
-  da_noise.da_noise = 0.0f;
-  da_noise.std_leabra = 1.0f;
 }
 
 void MatrixConSpec::UpdateAfterEdit_impl() {
