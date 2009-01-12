@@ -104,7 +104,7 @@ public:
     Compute_dWt_CtLeabraXCAL(cg, ru);
   }
 
-  TA_BASEFUNS(MatrixConSpec);
+  TA_SIMPLE_BASEFUNS(MatrixConSpec);
 protected:
   void	UpdateAfterEdit_impl();
 private:

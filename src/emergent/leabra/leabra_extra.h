@@ -925,8 +925,7 @@ public:
     //  ApplyLimits(cg, ru); limits are automatically enforced anyway
   }
 
-  SIMPLE_COPY(LeabraDwtNormConSpec);
-  TA_BASEFUNS(LeabraDwtNormConSpec);
+  TA_SIMPLE_BASEFUNS(LeabraDwtNormConSpec);
 // protected:
 //   void	UpdateAfterEdit_impl();
 private:
@@ -1018,8 +1017,7 @@ public:
   // todo: add xcal version perhaps if promising..
 
 
-  SIMPLE_COPY(LeabraDaNoiseConSpec);
-  TA_BASEFUNS(LeabraDaNoiseConSpec);
+  TA_SIMPLE_BASEFUNS(LeabraDaNoiseConSpec);
 // protected:
 //   void	UpdateAfterEdit_impl();
 private:
