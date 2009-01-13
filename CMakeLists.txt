@@ -251,6 +251,11 @@ install(FILES ${OUR_CMAKE_MOD_FILES}
   DESTINATION ${EMERGENT_SHARE_DEST}/CMakeModules
 )
 
+# plugin folder, so emergent doesn't complain
+install(DIRECTORY
+  DESTINATION lib/Emergent/plugins
+)
+
 #plugin template files NOTE: prolly a more elegant way to make this list...
 set(PLT "plugins/template")
 install(FILES ${PLT}/CMakeLists.txt ${PLT}/NOBUILD ${PLT}/configure 
