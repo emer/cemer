@@ -251,10 +251,6 @@ install(FILES ${OUR_CMAKE_MOD_FILES}
   DESTINATION ${EMERGENT_SHARE_DEST}/CMakeModules
 )
 
-# plugin folder, so emergent doesn't complain
-install(DIRECTORY
-  DESTINATION lib/Emergent/plugins
-)
 
 #plugin template files NOTE: prolly a more elegant way to make this list...
 set(PLT "plugins/template")
@@ -274,6 +270,11 @@ if (WIN32)
   )
   install(FILES ${OUR_3RDPARTY_FILES}
     DESTINATION bin
+  )
+else (WIN32)
+  # plugin folder, so emergent doesn't complain
+  install(DIRECTORY
+    DESTINATION lib/Emergent/plugins
   )
 endif (WIN32)
 
