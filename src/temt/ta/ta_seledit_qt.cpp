@@ -501,12 +501,6 @@ void taiDataDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
   if (dat && (m_dat_row == index.row())) {
     drawBackground(painter, option, index);
   } else { // normal, which also means interpret rich text!
-//     inherited::paint(painter, option, index);
-//     return;
-    QString text;
-//    QRect rect; 
-    QVariant value;
-
     // this stuff all from qitemdelegate.cpp
     QStyleOptionViewItemV4 opt = setOptions(index, option); // or V2 for Qt4.2
     const QStyleOptionViewItemV2 *v2 = qstyleoption_cast<const QStyleOptionViewItemV2 *>
@@ -524,20 +518,12 @@ void taiDataDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
     drawBackground(painter, option, index);
 
     QRect disp_rect = option.rect;
-     // rect(option, index, Qt::DisplayRole);
 
     // this does the rich text interp
     QTextDocument doc;
     doc.setHtml( index.data().toString() );
-//    QAbstractTextDocumentLayout::PaintContext context;
-//    doc.setPageSize( disp_rect.size());
     painter->setClipRect(disp_rect);
     painter->translate(disp_rect.x(), disp_rect.y()+2); // add a little border
-    
-    //if (option.state & QStyle::State_Selected)
-        //painter->setBrush(option.palette.highlightedText());
-    
-//    doc.documentLayout()->draw(painter, context);
     doc.drawContents(painter);
     painter->restore();
 
