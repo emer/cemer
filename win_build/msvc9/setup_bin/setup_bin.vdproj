@@ -381,6 +381,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_11947114B3294C20B36E7A74DD0250BF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_11A7A5FFFF47447F8C8B83A7643C2749"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1947,6 +1953,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_6BDA431B32AA49628337C427386217AE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_6BE99E81851C4743A9FFD8E0B43D88FB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2146,12 +2158,6 @@
         "Entry"
         {
         "MsmKey" = "8:_76B498675DC34327AD54E0ABFC520D30"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7702BF3F7ED14509906A8ABE935DAF94"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3243,6 +3249,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_A97D1943A9D94BB4A524B6CB70000EA5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_A9A0808127AE4A06AE87257F7A52E815"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3676,12 +3688,6 @@
         "Entry"
         {
         "MsmKey" = "8:_C1F63EB6305A47EA9DE63DEC2D2F548E"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C21548D6E0C248DD83E073A13CFE39FB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -4873,12 +4879,6 @@
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
-        "Entry"
-        {
-        "MsmKey" = "8:_FFBCA690F9704A9FB5642CD13BC53DDF"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
     }
     "Configurations"
     {
@@ -4906,10 +4906,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Net.Framework.3.5.SP1"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Visual.C++.9.0.x64"
                     {
-                    "Name" = "8:.NET Framework 3.5 SP1"
-                    "ProductCode" = "8:Microsoft.Net.Framework.3.5.SP1"
+                    "Name" = "8:Visual C++ Runtime Libraries (x64)"
+                    "ProductCode" = "8:Microsoft.Visual.C++.9.0.x64"
                     }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
                     {
@@ -6182,6 +6182,26 @@
             "TargetName" = "8:ta_qtdata.moc.cpp"
             "Tag" = "8:"
             "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_11947114B3294C20B36E7A74DD0250BF"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc_dbg.dll"
+            "TargetName" = "8:audioproc_dbg.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_61EBFCA0C7864353890091C330F974DD"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -11416,6 +11436,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6BDA431B32AA49628337C427386217AE"
+            {
+            "SourcePath" = "8:..\\..\\..\\plugins\\audioproc.dll"
+            "TargetName" = "8:audioproc.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_61EBFCA0C7864353890091C330F974DD"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6BE99E81851C4743A9FFD8E0B43D88FB"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\t3viewer.moc.cpp"
@@ -12082,26 +12122,6 @@
             "TargetName" = "8:maketa.cpp"
             "Tag" = "8:"
             "Folder" = "8:_DBAF0FD975DE407DA1FEC772DDE1E4A4"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7702BF3F7ED14509906A8ABE935DAF94"
-            {
-            "SourcePath" = "8:..\\..\\..\\cmake_custom_install.cmake.in"
-            "TargetName" = "8:cmake_custom_install.cmake.in"
-            "Tag" = "8:"
-            "Folder" = "8:_2CC1AE92E340477CBAE29B499B64198C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -15736,6 +15756,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A97D1943A9D94BB4A524B6CB70000EA5"
+            {
+            "SourcePath" = "8:..\\..\\..\\prog_lib\\MovieImageFrameSave.prog"
+            "TargetName" = "8:MovieImageFrameSave.prog"
+            "Tag" = "8:"
+            "Folder" = "8:_612BD7E23EAB4A64861742520DB7BE6D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A9A0808127AE4A06AE87257F7A52E815"
             {
             "SourcePath" = "8:..\\..\\..\\src\\emergent\\network\\emergent_program_qtso.cpp"
@@ -17182,26 +17222,6 @@
             "TargetName" = "8:css_parse.h"
             "Tag" = "8:"
             "Folder" = "8:_CB8336C6D5004C58B1398DE53EA42E5E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C21548D6E0C248DD83E073A13CFE39FB"
-            {
-            "SourcePath" = "8:..\\..\\..\\CMakeModules\\FindCoin.cmake.txt"
-            "TargetName" = "8:FindCoin.cmake.txt"
-            "Tag" = "8:"
-            "Folder" = "8:_871A9274ED0E4A379331E2FAF127A35C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -21176,26 +21196,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FFBCA690F9704A9FB5642CD13BC53DDF"
-            {
-            "SourcePath" = "8:..\\..\\..\\plugins\\template\\NOUNINSTALL"
-            "TargetName" = "8:NOUNINSTALL"
-            "Tag" = "8:"
-            "Folder" = "8:_EB06F47AD33D462898E5E34921FB9C2F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
         }
         "FileType"
         {
@@ -21854,14 +21854,14 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Emergent"
-        "ProductCode" = "8:{1DA97457-585B-4F94-BE19-840C88158B9B}"
-        "PackageCode" = "8:{85E8F65C-3653-4B42-9D7A-A39795C578CE}"
-        "UpgradeCode" = "8:{44D9DB79-4385-44C5-8AAE-9E349721CFFC}"
+        "ProductCode" = "8:{12A3E0D3-F1CC-4F17-8CF1-075AC461FB13}"
+        "PackageCode" = "8:{1F3D1FA0-B5BF-4EE9-9FD1-302D2C8BA39E}"
+        "UpgradeCode" = "8:{C7830BEC-3150-43C1-88E0-6E47FCCE3749}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:4.0.18"
+        "ProductVersion" = "8:4.0.19"
         "Manufacturer" = "8:CCN Lab"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://grey.colorado.edu/emergent/index.php/Main_Page"

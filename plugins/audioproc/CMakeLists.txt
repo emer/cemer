@@ -32,16 +32,17 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
 if (WIN32)
   file(TO_CMAKE_PATH "$ENV{EMERGENTDIR}" EMERGENTDIR)
   #note: on Windows the normal case is for the ENV var to exist...
-  if ("${EMERGENTDIR}")
+  if (EMERGENTDIR)
     set(EMERGENT_SHARE_DIR "${EMERGENTDIR}")
-  else ("${EMERGENTDIR}")
+  else (EMERGENTDIR)
     find_path(EMERGENT_SHARE_DIR README PATHS
+      "$ENV{EMERGENTDIR}"
       "C:/Program Files/Emergent"
       C:/Emergent
       "C:/Program Files (x86)/Emergent" # W32 on 64, should be rare
       NO_DEFAULT_PATH
     )
-  endif ("${EMERGENTDIR}")
+  endif (EMERGENTDIR)
 else (WIN32)
   if ("$ENV{EMERGENT_PREFIX_DIR}")
     set(EMERGENT_SHARE_DIR "$ENV{EMERGENT_PREFIX_DIR}/share/Emergent")
@@ -132,9 +133,16 @@ set(plugin_FILES ${plugin_HEADS} ${plugin_SRCS} CMakeLists.txt)
 # assuming it is on known path, 
 # else see {root}/CMakeModules/FindGSL.cmake for example
 
-find_library(SNDFILE_LIBRARY sndfile)
+if (WIN32)
+  IF (EXISTS "${EMERGENTDIR}/3rdparty/lib/libsndfile-1.lib")
+    SET(SNDFILE_LIBRARY "${EMERGENTDIR}/3rdparty/lib/libsndfile-1.lib")
+  ENDIF (EXISTS "${EMERGENTDIR}/3rdparty/lib/libsndfile-1.lib")
+  set(EMERGENT_PLUGIN_EXTRA_LIBRARIES ${SNDFILE_LIBRARY})
+else (WIN32)
+  find_library(SNDFILE_LIBRARY sndfile)
+endif (WIN32)
 message(STATUS SNDFILE_LIBRARY: ${SNDFILE_LIBRARY})
-set(EMERGENT_PLUGIN_EXTRA_LIBRARIES sndfile)
+#set(EMERGENT_PLUGIN_EXTRA_LIBRARIES sndfile)
 
 # NOTE to plugin programmer: you should be done now!  Everything below
 # is standard boilerplate code that you should not need to edit.

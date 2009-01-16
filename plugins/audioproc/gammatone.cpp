@@ -1046,14 +1046,14 @@ void TemporalWindowBlock::GraphFilter(DataTable* graph_data) {
   float vl_dur = l_dur + (Duration::StatGetDurationTime(v_flt_wd, Duration::UN_SAMPLES,
     src_buff->fs) * 1000.0f);
   for (int i = 0; i < v_flt_wd; ++i) {
-    float t = ( (((float)( -(l_flt_wd + v_flt_wd - 1) + i)) / (v_flt_wd + l_flt_wd)) * vl_dur);
+    t = ( (((float)( -(l_flt_wd + v_flt_wd - 1) + i)) / (v_flt_wd + l_flt_wd)) * vl_dur);
     graph_data->AddBlankRow();
     xda->SetValAsFloat(t, -1);
     valda->SetValAsFloat(val, -1);
   } 
   // lower real, idx0=time0
   for (int i = 0; i < l_flt_wd; ++i) {
-    float t = -( (((float)(l_flt_wd - i)) / l_flt_wd) * l_dur);
+    t = -( (((float)(l_flt_wd - i)) / l_flt_wd) * l_dur);
     val = mat->SafeEl(i);
     graph_data->AddBlankRow();
     xda->SetValAsFloat(t, -1);
@@ -1062,7 +1062,7 @@ void TemporalWindowBlock::GraphFilter(DataTable* graph_data) {
   
   // upper -- time is +ve
   for (int i = 0; i < u_flt_wd; ++i) {
-    float t = ( (((float) (i + 1)) / u_flt_wd) * u_dur);
+    t = ( (((float) (i + 1)) / u_flt_wd) * u_dur);
     val = mat->SafeEl(l_flt_wd + i);
     graph_data->AddBlankRow();
     xda->SetValAsFloat(t, -1);
@@ -1561,7 +1561,7 @@ void ANVal::UpdateParams()
     // a 90% confidence interval is 1.64485 sd's, so we normalize accordingly
     // divide by 2 because 2-tailed
     norm = 1.64485 / (width / 2);
-    f = 1.0f;1 / sqrt(2 * M_PI);
+    f = 1.0f;//1 / sqrt(2 * M_PI);
     } break;
   //no default -- must handle all, so let compiler warn
   }

@@ -11,12 +11,4 @@ tabbed-browser style interface with full 3D graphics (via OpenGL and
 Open Inventor/Coin3D), and powerful new GUI programming tools and data
 processing and analysis capabilities.
 
-4.0.3rc1 known issues
-
-* to build user plugins, you must set the environment variable
-  PDP4DIR to point to your pdp4 system folder, typically:
-  PDP4DIR = /usr/local/share/pdp++-4.0.3rc1
-
-* make distcheck was not run, and it is unlikely that VPATH
-  building works
 
