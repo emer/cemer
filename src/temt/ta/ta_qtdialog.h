@@ -750,13 +750,14 @@ protected slots:
 };
 
 
-class TA_API taiStringDataHost: public taiDataHostBase 
-{ // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class TA_API taiStringDataHost: public taiDataHostBase {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit dialog for displaying a single string value in an editor format
 INHERITED(taiDataHostBase)
   Q_OBJECT
 public:
   QTextEdit*		edit;
   MemberDef*		mbr; // the member being edited (doesn't have to be String)
+  bool			line_nos; // display line numbers in the editor view
   
   void 			Constr(const char* prompt = "", const char* win_title = "");
   override void		GetImage();
@@ -764,7 +765,8 @@ public:
   override void		Constr_Buttons();
   
   taiStringDataHost(MemberDef* mbr, void* base, TypeDef* typ_ = NULL, 
-   bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
+		    bool read_only_ = false, bool modal_ = false, QObject* parent = 0,
+		    bool line_nos_ = false);
   ~taiStringDataHost();
   
 

@@ -3911,7 +3911,8 @@ void Program::ViewScript_impl() {
   if(!host_) {
     TypeDef* td = GetTypeDef();
     MemberDef* md = td->members.FindName("view_script");
-    host_ = new taiStringDataHost(md, this, td, true); // true = read only
+    host_ = new taiStringDataHost(md, this, td, true, false, NULL, true);
+    // args are: read_only, modal, parent, line_nos
     host_->Constr("Css Script for program: " + name);
     host_->Edit(false);
   }
@@ -3934,7 +3935,8 @@ void Program::ViewListing() {
   if(!host_) {
     TypeDef* td = GetTypeDef();
     MemberDef* md = td->members.FindName("view_listing");
-    host_ = new taiStringDataHost(md, this, td, true); // true = read only
+    host_ = new taiStringDataHost(md, this, td, true, false, NULL, true);
+    // args are: read_only, modal, parent, line_nos
     host_->Constr("Listing of program elements for program: " + name);
     host_->Edit(false);
   }

@@ -66,6 +66,7 @@
 #include "iflowlayout.h"
 #include "iscrollarea.h"
 #include "itextedit.h"
+#include "numberedtextview.h"
 
 // TODO: why is String=osString in this file, unless I do this:
 #include "ta_string.h"
@@ -2456,14 +2457,17 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
 //////////////////////////////////////////////////
 //		StringDataHost
 
+
+
 taiStringDataHost::taiStringDataHost(MemberDef* mbr_, void* base_, TypeDef* typ_,
-  bool read_only_, bool modal_, QObject* parent)
+	     bool read_only_, bool modal_, QObject* parent, bool line_nos_)
 :inherited(typ_ ,read_only_, modal_, parent)
 {
   root = base_;
   mbr = mbr_;
   edit = NULL;
   btnPrint = NULL;
+  line_nos = line_nos_;
 }
 
 taiStringDataHost::~taiStringDataHost() {
@@ -2474,8 +2478,15 @@ void taiStringDataHost::Constr(const char* prompt, const char* win_title) {
 }
 
 void taiStringDataHost::Constr_Box() {
-  edit = new iTextEdit(widget());
-  vblDialog->addWidget(edit, 1);
+  if(line_nos) {
+    NumberedTextView* ntv = new NumberedTextView(widget());
+    edit = ntv->textEdit();
+    vblDialog->addWidget(ntv, 1);
+  }
+  else {
+    edit = new iTextEdit(widget());
+    vblDialog->addWidget(edit, 1);
+  }
 }
 
 void taiStringDataHost::Constr_RegNotifies() {

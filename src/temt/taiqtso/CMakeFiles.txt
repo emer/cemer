@@ -29,6 +29,7 @@ set(taiqtso_HEADS
     iscrollarea.h
     itextbrowser.h
     itextedit.h
+    numberedtextview.h
 )
 
 # headers that need Qt moc run
@@ -50,6 +51,7 @@ set(taiqtso_HEADS_MOC
     iscrollarea.h
     itextbrowser.h
     itextedit.h
+    numberedtextview.h
 )
 
 # source files to compile: NOTE: do NOT include .moc files -- auto generated
@@ -77,6 +79,7 @@ set(taiqtso_SRCS
     itextbrowser.cpp
     itextedit.cpp
     taiqtso_ti.cpp
+    numberedtextview.cpp
 )
 
 set(taiqtso_FILES ${taiqtso_HEADS} ${taiqtso_SRCS})
