@@ -729,9 +729,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API SpikeFunSpec : public taBase {
+class LEABRA_API SpikeFunSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		rise;		// #DEF_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is highly optimized (doesn't use window -- just uses recursive exp decay) and thus the default!
   float		decay;		// #DEF_5 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function (not very useful)
@@ -764,9 +764,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API DepressSpec : public taBase {
+class LEABRA_API DepressSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation/spiking conveyed to other units is subject to synaptic depression: depletes a given amount per spike, and recovers with exponential recovery rate (also subject to trial/phase decay = recovery proportion)
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		on;		// synaptic depression is in effect: multiplies normal activation computed by current activation function in effect
   float		rec;		// #CONDEDIT_ON_on #DEF_0.2 rate of recovery of spike amplitude (determines overall time constant of depression function)
@@ -784,9 +784,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API SynDelaySpec : public taBase {
+class LEABRA_API SynDelaySpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra synaptic delay -- activation sent to other units is delayed by a given number of cycles
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		on;		// is synaptic delay active?
   int		delay;		// #CONDEDIT_ON_on number of cycles to delay for
@@ -798,9 +798,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API OptThreshSpec : public taBase {
+class LEABRA_API OptThreshSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra optimization thresholds for faster processing
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		send;		// #DEF_0.1 don't send activation when act <= send -- greatly speeds processing
   float		delta;		// #DEF_0.005 don't send activation changes until they exceed this threshold: only for when LeabraNetwork::send_delta is on!
@@ -814,9 +814,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API DtSpec : public taBase {
+class LEABRA_API DtSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra time constants
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		vm;		// #DEF_0.1:0.3 membrane potential time constant -- if units oscillate too much, then this is too high (but see d_vm_max for another solution)
   float		net;		// #DEF_0.7 net input time constant -- how fast to update net input (damps oscillations)
@@ -832,9 +832,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API LeabraChannels : public taBase {
+class LEABRA_API LeabraChannels : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra channels used in Leabra
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		e;		// Excitatory (glutamatergic synaptic sodium (Na) channel)
   float		l;		// Constant leak (potassium, K+) channel 
@@ -849,9 +849,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API VChanSpec : public taBase {
+class LEABRA_API VChanSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra voltage gated channel specs
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		on;		// #APPLY_IMMED #DEF_false true if channel is on
   float		b_inc_dt;	// #CONDEDIT_ON_on:true #AKA_b_dt time constant for increases in basis variable (basis ~ intracellular calcium which builds up slowly as function of activation)
@@ -885,9 +885,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API MaxDaSpec : public taBase {
+class LEABRA_API MaxDaSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra how to compute the maxda value, which serves as a stopping criterion for settling
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum dAValue {
     DA_ONLY,			// just use da
@@ -906,9 +906,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API DaModSpec : public taBase {
+class LEABRA_API DaModSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for effects of da-based modulation: plus-phase = learning effects
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum ModType {
     PLUS_CONT,			// da modulates plus-phase activations (only) in a continuous manner
@@ -921,6 +921,47 @@ public:
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(DaModSpec);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API NoiseAdaptSpec : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for adapting the noise variance over time as a function of different variables
+INHERITED(taOBase)
+public:
+  enum AdaptMode {
+    FIXED_NOISE,		// no adaptation of noise: remains fixed at the noise.var value in the unit spec
+    SCHED_CYCLES,		// use noise_sched over cycles of settling
+    SCHED_EPOCHS,		// use noise_sched over epochs of learning
+    AVG_NORM_ERR,		// use epoch-wise average norm error, subject to min noise parameter
+    AVG_EXT_REW,		// use epoch-wise average external reward, subject to min noise parameter
+    SL_AVG_NORM_ERR,		// use short and long epoch-wise average norm error, subject to min noise parameter and other parameters
+    SL_AVG_EXT_REW,		// use short and long epoch-wise average external reward, subject to min noise parameter and other parameters
+  };
+
+  bool		trial_fixed;	// keep the same noise value over the entire trial -- prevents noise from being washed out and produces a stable effect that can be better used for learning -- this is strongly recommended for most learning situations
+  AdaptMode 	mode;		// how to adapt noise variance over time
+  float		min_pct;	// #CONDEDIT_OFF_mode:FIXED_NOISE,SCHED_CYCLES,SCHED_EPOCHS minimum noise as a percentage of overall maximum noise value (which is noise.var in unit spec)
+  float		st_mult;	// #CONDEDIT_ON_mode:SL_AVG_NORM_ERR,SL_AVG_EXT_REW multiplier on the short-term factor: how much it affects overall noise levels
+  float		lt_sig_gain;	// #CONDEDIT_ON_mode:SL_AVG_NORM_ERR,SL_AVG_EXT_REW gain on the ssigmoid function for long-term factor -- how sharply the curve inflects around 0.5
+  float		st_sig_gain;	// #CONDEDIT_ON_mode:SL_AVG_NORM_ERR,SL_AVG_EXT_REW gain on the ssigmoid function for short-term factor -- how sharply the curve inflects around 0.5
+
+  inline float	SigFun(float val, float gn) {
+    if(val <= 0.0f) return 0.0f;
+    if(val >= 1.0f) return 1.0f;
+    return (1.0f / (1.0f + powf((1.0f - val) / val, gn)));
+  }
+
+  inline float	SLNoiseFun(float norm_st_val, float norm_lt_val) {
+    return 1.0f - ((1.0f - min_pct) * SigFun(norm_lt_val, lt_sig_gain) 
+		   * (1.0f - st_mult * SigFun(norm_st_val, st_sig_gain)));
+  }
+  // compute short-long term noise function based on short and long term values normalized 0-1 where 1 is *best* performance and 0 is *worst* performance
+
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(NoiseAdaptSpec);
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -940,7 +981,6 @@ public:
 
   enum NoiseType {
     NO_NOISE,			// no noise added to processing
-    TRIAL_VM_NOISE,		// a stable noise value computed at the start of the trial, added to the membrane potential (v_m) -- this is the best form to add during learning 
     VM_NOISE,			// noise in the value of v_m (membrane potential)
     NETIN_NOISE,		// noise in the net input (g_e)
     ACT_NOISE,			// noise in the activations
@@ -963,9 +1003,10 @@ public:
   VChanSpec	acc;		// #CAT_Activation [Defaults: .01, .5, .1, .1] accomodation (inhibitory) v-gated chan (K+)
   DaModSpec	da_mod;		// #CAT_Learning da modulation of activations (for da-based learning, and other effects)
   MaxDaSpec	maxda;		// #CAT_Activation maximum change in activation (da) computation -- regulates settling
-  NoiseType	noise_type;	// #APPLY_IMMED #CAT_Activation where to add random noise in the processing (if at all)
+  NoiseType	noise_type;	// #CAT_Activation where to add random noise in the processing (if at all)
   Random	noise;		// #CONDEDIT_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
-  Schedule	noise_sched;	// #CONDEDIT_OFF_noise_type:NO_NOISE #CAT_Activation schedule of noise variance over settling cycles
+  NoiseAdaptSpec noise_adapt;	// #CONDEDIT_OFF_noise_type:NO_NOISE #CAT_Activation how to adapt the noise variance (var) value
+  Schedule	noise_sched;	// #CONDEDIT_OFF_noise_type:NO_NOISE #CAT_Activation schedule of noise variance -- time scale depends on noise_adapt parameter (cycles, epochs, etc)
 
   FunLookup	nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
   FunLookup	noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
@@ -1010,6 +1051,9 @@ public:
   ////////////////////////////////////////////////////////////////
   //	Stage 2: netinput averages and clamping (if necc)	//
   ////////////////////////////////////////////////////////////////
+
+  virtual float	Compute_Noise(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation generate and return the noise value based on current settings -- will set unit->noise value as appropriate (generally excludes effect of noise_sched schedule)
 
   virtual void Compute_Netin_Spike(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation compute actual netin conductance value for spiking units by integrating over spike
@@ -1091,6 +1135,9 @@ public:
   // #CAT_Activation decay activation states towards initial values: at phase-level boundary
   virtual void	DecayEvent(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net, float decay);
   // #CAT_Activation decay activation states towards initial values: at event-level boundary
+  virtual void	NoiseTrialInit(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation init trial-level noise -- ONLY called if noise_adapt.trial_fixed is set
+
   virtual void	ExtToComp(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation change external inputs to comparisons (remove input)
   virtual void	TargExtToComp(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
@@ -1136,15 +1183,17 @@ public:
   virtual void	Defaults();	// #BUTTON #CONFIRM #CAT_ObjectMgmt restores default parameter settings: warning -- you will lose any unique parameters you might have set!
 
   virtual void	GraphVmFun(DataTable* graph_data, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .01);
-  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph membrane potential (v_m) as a function of excitatory net input (net) for given inhib conductance (g_i) (NULL = new graph data)
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph membrane potential (v_m) as a function of excitatory net input (net) for given inhib conductance (g_i) (NULL = new graph data)
   virtual void	GraphActFmVmFun(DataTable* graph_data, float min = .15, float max = .50, float incr = .001);
-  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the activation function as a function of membrane potential (v_m) (NULL = new graph data)
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the activation function as a function of membrane potential (v_m) (NULL = new graph data)
   virtual void	GraphActFmNetFun(DataTable* graph_data, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .001);
-  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the activation function as a function of net input (projected through membrane potential) (NULL = new graph data)
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the activation function as a function of net input (projected through membrane potential) (NULL = new graph data)
   virtual void	GraphSpikeAlphaFun(DataTable* graph_data, bool force_alpha=false);
-  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the spike alpha function for conductance integration over time window given in spike parameters -- last data point is the sum over the whole window (total conductance of a single spike) -- force_alpha means use explicit alpha function even when rise=0 (otherewise it simulates actual recursive exp decay used in optimized code)
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the spike alpha function for conductance integration over time window given in spike parameters -- last data point is the sum over the whole window (total conductance of a single spike) -- force_alpha means use explicit alpha function even when rise=0 (otherewise it simulates actual recursive exp decay used in optimized code)
+  virtual void	GraphSLNoiseAdaptFun(DataTable* graph_data, float incr = 0.05f);
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the short and long-term noise adaptation function, which integrates both short-term and long-term performance values
   virtual void TimeExp(int mode, int nreps=100000000);
-  // #BUTTON time how long it takes to compute various forms of exp() function: mode=0 = double sum ctrl (baseline), mode=1 = std double exp(), mode=2 = taMath_double::exp_fast, mode=3 = float sum ctrl (float baseline), mode=4 = expf, mode=5 = taMath_float::exp_fast -- this is the dominant cost in spike alpha function computation, so we're interested in optimizing it..
+  // #MENU_BUTTON #MENU_ON_Graph ime how long it takes to compute various forms of exp() function: mode=0 = double sum ctrl (baseline), mode=1 = std double exp(), mode=2 = taMath_double::exp_fast, mode=3 = float sum ctrl (float baseline), mode=4 = expf, mode=5 = taMath_float::exp_fast -- this is the dominant cost in spike alpha function computation, so we're interested in optimizing it..
 
   override bool  CheckConfig_Unit(Unit* un, bool quiet=false);
 
@@ -1330,6 +1379,10 @@ public:
   void		DecayEvent(LeabraLayer* lay, LeabraNetwork* net, float decay)
   { ((LeabraUnitSpec*)GetUnitSpec())->DecayEvent(this, lay, net, decay); }
   // #CAT_Activation decay activation states towards initial values: at event-level boundary
+  void		NoiseTrialInit(LeabraLayer* lay, LeabraNetwork* net)
+  { ((LeabraUnitSpec*)GetUnitSpec())->NoiseTrialInit(this, lay, net); }
+  // #CAT_Activation initialize noise at trial level
+
   void		ExtToComp(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->ExtToComp(this, lay, net); }
   // #CAT_Activation change external inputs to comparisons (remove input)
@@ -1818,6 +1871,9 @@ public:
   virtual void	DecayPhase2(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation decay activations and other state between second phase
 
+  virtual void	NoiseTrialInit(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation initialize various noise factors at start of trial
+
   virtual void	ExtToComp(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation change external inputs to comparisons (remove input)
   virtual void	TargExtToComp(LeabraLayer* lay, LeabraNetwork* net);
@@ -1869,6 +1925,10 @@ public:
 
   virtual float	Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
+
+  virtual void	Compute_NetExtRew(LeabraLayer* lay, LeabraNetwork* net) { };
+  // #CAT_Statistic compute external reward value (should be between -1 and 1, typically 0-1) for the network -- the base version does nothing -- should be defined in a reward-computing layer spec, such as ExtRewLayerSpec -- directly sets the value on the network, which has been pre-initialized to -1.1 indicating no reward avail -- do not compute any other aggregated stats (*avg_ext_rew)
+
   virtual float	Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
 				    LeabraNetwork* net);
   // #CAT_Statistic compute normalized binary error for given unit group -- just gets the raw sum over unit group
@@ -2040,6 +2100,7 @@ public:
   AvgMaxVals	avg_netin_sum;	// #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM sum of net input values for the layer, for computing average over an epoch-level timescale
   int		avg_netin_n;	// #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
   float		norm_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic normalized binary error value for this layer, computed subject to the parameters on the network
+  float		noise_var;	// #GUI_READ_ONLY #SHOW #CAT_Activation noise variance multiplier value for the layer, computed by default as a function of the network short and long-term normalized error or external reward terms (this is multiplied times unit spec noise.var to get actual variance)
   int		da_updt;	// #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
   int_Array	misc_iar;	// #HIDDEN #CAT_Activation misc int array of data
 
@@ -2105,8 +2166,7 @@ public:
   float	Compute_TopKAvgNetin(LeabraNetwork* net)  { return spec->Compute_TopKAvgNetin(this, net); }
   // #CAT_Statistic compute the average netinput of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current act_eq values
 
-  void 	Compute_CycSynDep(LeabraNetwork* net) 
-  { ((LeabraLayerSpec*)spec.SPtr())->Compute_CycSynDep(this, net); }
+  void 	Compute_CycSynDep(LeabraNetwork* net)   { spec->Compute_CycSynDep(this, net); }
   // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
 
   void	Compute_ActMAvg(LeabraNetwork* net) { spec->Compute_ActMAvg(this, net); }
@@ -2123,6 +2183,9 @@ public:
   void	DecayPhase2(LeabraNetwork* net)  	{ spec->DecayPhase2(this, net); }
   // #CAT_Activation decay activations and other state between second phase
 
+  void	NoiseTrialInit(LeabraNetwork* net)	{ spec->NoiseTrialInit(this, net); }
+  // #CAT_Activation initialize various noise factors at start of trial
+
   void	ExtToComp(LeabraNetwork* net)		{ spec->ExtToComp(this, net); }
   // #CAT_Activation change external inputs to comparisons (remove input)
   void	TargExtToComp(LeabraNetwork* net)	{ spec->TargExtToComp(this, net); }
@@ -2136,20 +2199,17 @@ public:
   // #CAT_Activation update self-regulation (accommodation, hysteresis) at end of trial
 
   void 	Compute_SRAvg(LeabraNetwork* net) 
-  { ((LeabraLayerSpec*)spec.SPtr())->Compute_SRAvg(this, net); }
+  { spec->Compute_SRAvg(this, net); }
   // #CAT_Learning compute sending-receiving activation product averages (CtLeabra_X/CAL)
   void 	Init_SRAvg(LeabraNetwork* net) 
-  { ((LeabraLayerSpec*)spec.SPtr())->Init_SRAvg(this, net); }
+  { spec->Init_SRAvg(this, net); }
   // #CAT_Learning initialize sending-receiving activation product averages (CtLeabra_X/CAL)
 
-  void	Compute_dWt_FirstPlus(LeabraNetwork* net)
-  { ((LeabraLayerSpec*)spec.SPtr())->Compute_dWt_FirstPlus(this, net); }
+  void	Compute_dWt_FirstPlus(LeabraNetwork* net)  { spec->Compute_dWt_FirstPlus(this, net); }
   // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  void	Compute_dWt_SecondPlus(LeabraNetwork* net)
-  { ((LeabraLayerSpec*)spec.SPtr())->Compute_dWt_SecondPlus(this, net); }
+  void	Compute_dWt_SecondPlus(LeabraNetwork* net)  { spec->Compute_dWt_SecondPlus(this, net); }
   // #CAT_Learning compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
-  void	Compute_dWt_Nothing(LeabraNetwork* net)
-  { ((LeabraLayerSpec*)spec.SPtr())->Compute_dWt_Nothing(this, net); }
+  void	Compute_dWt_Nothing(LeabraNetwork* net)  { spec->Compute_dWt_Nothing(this, net); }
   // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
 
   override void	Compute_dWt() 	{ spec->Compute_dWt_impl(this, (LeabraNetwork*)own_net); }
@@ -2158,6 +2218,9 @@ public:
 
   override float Compute_SSE(int& n_vals, bool unit_avg = false, bool sqrt = false)
   { return spec->Compute_SSE(this, n_vals, unit_avg, sqrt); }
+
+  void Compute_NetExtRew(LeabraNetwork* net) { spec->Compute_NetExtRew(this, net); }
+  // #CAT_Statistic compute external reward value (should be between -1 and 1, typically 0-1) for the network
 
   virtual float Compute_NormErr(LeabraNetwork* net)
   { return spec->Compute_NormErr(this, net); }
@@ -2218,6 +2281,9 @@ class LEABRA_API LeabraNetMisc : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra misc network-level parameters for Leabra
 INHERITED(taOBase)
 public:
+  float		st_avg_dt;	// time constant for computing short-term averaging of various statistics, including st_avg_ext_rew and st_avg_norm_err
+  float		lt_avg_dt;	// time constant for computing long-term averaging of various statistics, including lt_avg_ext_rew and lt_avg_norm_err
+
   bool		cyc_syn_dep;	// if true, enable synaptic depression calculations at the synapse level (also need conspecs to implement this -- this just enables computation)
   int		syn_dep_int;	// [20] #CONDEDIT_ON_cyc_syn_dep synaptic depression interval -- how frequently to actually perform synaptic depression within a trial (uses ct_cycle variable which counts up continously through trial)
 
@@ -2272,9 +2338,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API CtSineInhibMod : public taBase {
+class LEABRA_API CtSineInhibMod : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra sinusoidal inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   int		start;		// #DEF_30:60 number of cycles from onset of new input to start applying sinusoidal inhibitory modulation
   int		duration;	// #DEF_20 number of cycles from start to apply modulation
@@ -2302,9 +2368,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API CtFinalInhibMod : public taBase {
+class LEABRA_API CtFinalInhibMod : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra extra inhibition to apply at end of stimulus processing during inhib phase, to clear out existing pattern
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   int		start;		// number of cycles into inhib phase for inhibition ramp to start
   int		end;		// number of cycles into inhib phase for inhibition ramp to end -- remains at full inhibition level from end to end of inhib phase
@@ -2411,8 +2477,10 @@ public:
   float		trg_max_act_stopcrit;	// #CAT_Statistic stopping criterion for target-layer maximum activation (can be used for stopping settling)
   float		trg_max_act;	// #GUI_READ_ONLY #SHOW #CAT_Statistic target-layer maximum activation (can be used for stopping settling)
 
-  float		ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW external reward value (on this trial)
+  float		ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW external reward value (on this trial) -- not available unless ExtRewLayerSpec or similar exists in network
   float		avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average external reward value (computed over previous epoch)
+  float		st_avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW short-term running average external reward value -- see st_avg_dt for time constant
+  float		lt_avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW long-term running average external reward value -- see lt_avg_dt for time constant
   float		avg_ext_rew_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average external reward value in this epoch
   int		avg_ext_rew_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average external reward value computation for this epoch
 
@@ -2420,6 +2488,8 @@ public:
   bool		on_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly on (should have been off but were actually on) -- either 1 or both of off_errs and on_errs must be set
   float		norm_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW normalized binary (Hamming) error on this trial: number of units that were incorrectly activated or incorrectly inactivated (see off_errs to exclude latter)
   float		avg_norm_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average normalized binary error value (computed over previous epoch)
+  float		st_avg_norm_err; // #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW short-term running average normalized binary error value -- see st_avg_dt for time constant
+  float		lt_avg_norm_err; // #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW long-term running average  normalized binary error value -- see lt_avg_dt for time constant
   float		avg_norm_err_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average norm err in this epoch
   int		avg_norm_err_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average norm err value computation for this epoch
 
@@ -2455,6 +2525,7 @@ public:
   virtual void	DecayPhase();	// #CAT_SettleInit decay activations and other state between minus-plus phases (called by Settle_Init)
   virtual void	DecayPhase2();	// #CAT_SettleInit decay activations and other state between second and third phase (if applicable) (called by Settle_Init)
   virtual void	PhaseInit();	// #CAT_SettleInit initialize at start of settling phase -- sets external input flags based on phase (called by Settle_Init)
+
   virtual void	ExtToComp();	// #CAT_SettleInit move external input values to comparison values (not currently used)
   virtual void	TargExtToComp(); // #CAT_SettleInit move target and external input values to comparison (for PLUS_NOTHING, called by Settle_Init)
   virtual void	Compute_HardClamp(); // #CAT_SettleInit compute hard clamping from external inputs (called by Settle_Init)
@@ -2475,6 +2546,8 @@ public:
   virtual void	DecayState();	// #CAT_TrialInit decay the state in between trials (params in LayerSpec)
 
   virtual void 	Trial_Init();	// #CAT_TrialInit initialize at start of trial (SetCurLrate, set phase_max, Decay state)
+  virtual void	NoiseTrialInit();
+  // #CAT_TrialInit initialize various noise factors at start of trial
 
   virtual void	Trial_UpdatePhase(); // #CAT_TrialInit update phase based on phase_no -- return false if no more phases need to be run
 

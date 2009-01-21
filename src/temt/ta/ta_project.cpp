@@ -42,6 +42,7 @@
 # include <QFileDialog>
 # include <QMessageBox>
 # include <QWidgetList>
+# include <QGLFormat>
 #endif
 
 #include <QCoreApplication>
@@ -1426,6 +1427,12 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
     QString app_ico_nm = ":/images/" + taMisc::app_name + "_32x32.png";
     QPixmap app_ico(app_ico_nm);
     QApplication::setWindowIcon(app_ico);
+
+    if(!QGLFormat::hasOpenGL()) {
+      cerr << "This display does NOT have OpenGL support, which is required -- exiting Now!\n"
+	   << "Please read the emergent manual for required 3D graphics driver information" << endl;
+      exit(1);
+    }
   } else 
 #endif
   {

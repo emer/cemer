@@ -17,6 +17,7 @@
 
 #include "ta_platform.h"
 #include "netstru_extra.h"
+#include "ta_dataanal.h"
 
 // todo: are these really necessary anymore!?
 #include <math.h>
@@ -610,6 +611,14 @@ void DaModSpec::Initialize() {
   gain = .1f;
 }
 
+void NoiseAdaptSpec::Initialize() {
+  mode = FIXED_NOISE;
+  min_pct = 0.1f;
+  st_mult = 0.2f;
+  lt_sig_gain = 3.0f;
+  st_sig_gain = 3.0f;
+}
+
 void MaxDaSpec::Initialize() {
   val = INET_DA;
   inet_scale = 1.0;
@@ -683,6 +692,7 @@ void LeabraUnitSpec::Defaults() {
   syn_delay.Defaults();
   opt_thresh.Defaults();
   dt.Defaults();
+  noise_adapt.Defaults();
   Initialize();
   //  bias_spec.SetSpec(bias_spec.SPtr());
 }
@@ -709,6 +719,7 @@ void LeabraUnitSpec::InitLinks() {
   taBase::Own(maxda, this);
   taBase::Own(noise, this);
   taBase::Own(noise_sched, this);
+  taBase::Own(noise_adapt, this);
   taBase::Own(nxx1_fun, this);
   taBase::Own(noise_conv, this);
 }
@@ -890,11 +901,6 @@ void LeabraUnitSpec::Init_Acts(LeabraUnit* ru, LeabraLayer*) {
     ru->spk_amp = act_range.max;
   ru->act_buf.Reset();
   ru->spike_buf.Reset();
-
-  if((noise_type == TRIAL_VM_NOISE) && (noise.type != Random::NONE))  {
-    // init_acts called at start of trial (or decay event)
-    ru->noise = noise.Gen();
-  }
 }
 
 void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
@@ -1025,6 +1031,24 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraLayer*, LeabraNetwork*
 //	Stage 2: netinput averages and clamping (if necc)	//
 //////////////////////////////////////////////////////////////////
 
+float LeabraUnitSpec::Compute_Noise(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
+  float rval = 0.0f;
+  if(noise_adapt.trial_fixed) {
+    rval = u->noise; // u->noise is trial-level generated value, pre-mult by lay->noise_var
+  }
+  else {
+    rval = lay->noise_var * noise.Gen();
+    u->noise = rval;
+  }
+  if(noise_adapt.mode == NoiseAdaptSpec::SCHED_CYCLES) {
+    rval *= noise_sched.GetVal(net->cycle);
+  }
+  else if(noise_adapt.mode == NoiseAdaptSpec::SCHED_EPOCHS) {
+    rval *= noise_sched.GetVal(net->epoch);
+  }
+  return rval;
+}
+
 void LeabraUnitSpec::Compute_HardClamp(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork*) {
   u->net = u->prv_net = u->ext * lay->stm_gain;
   u->act_eq = clamp_range.Clip(u->ext);
@@ -1103,8 +1127,7 @@ void LeabraUnitSpec::Compute_Netin_Spike(LeabraUnit* u, LeabraLayer* lay, Leabra
     u->prv_net = u->net;
   }
   if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    u->noise = noise.Gen();
-    u->net += noise_sched.GetVal(net->cycle) * u->noise;
+    u->net += Compute_Noise(u, lay, net);
   }
   u->i_thr = Compute_IThresh(u, lay, net);
 }
@@ -1232,7 +1255,7 @@ float LeabraUnitSpec::Compute_EqVm(LeabraUnit* u) {
   return new_v_m;
 }
 
-void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraLayer*, LeabraInhib*, LeabraNetwork* net) {
+void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*, LeabraNetwork* net) {
   if(net->cycle < dt.vm_eq_cyc) {
     // directly go to equilibrium value
     float new_v_m = Compute_EqVm(u);
@@ -1259,11 +1282,7 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraLayer*, LeabraInhib*, Leabr
   }
 
   if((noise_type == VM_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    u->noise = noise.Gen();
-    u->v_m += noise_sched.GetVal(net->cycle) * u->noise;
-  }
-  if((noise_type == TRIAL_VM_NOISE) && (net->cycle >= 0)) {
-    u->v_m += noise_sched.GetVal(net->cycle) * u->noise;
+    u->v_m += Compute_Noise(u, lay, net);
   }
 
   u->v_m = vm_range.Clip(u->v_m);
@@ -1341,8 +1360,7 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraLayer* lay, Leabr
 
   u->da = new_act - u->act;
   if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    u->noise = noise.Gen();
-    new_act += noise_sched.GetVal(net->cycle) * u->noise;
+    new_act += Compute_Noise(u, lay, net);
   }
   u->act = act_range.Clip(new_act);
   u->act_eq =u->act;
@@ -1483,9 +1501,11 @@ void LeabraUnitSpec::DecayPhase(LeabraUnit* u, LeabraLayer*, LeabraNetwork*, flo
 void LeabraUnitSpec::DecayEvent(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net, float decay) {
   LeabraUnitSpec::DecayPhase(u, lay, net, decay);
   u->dav = 0.0f;
-  if((noise_type == TRIAL_VM_NOISE) && (noise.type != Random::NONE)) {
-    // decay event called at start of trial (or init acts)
-    u->noise = noise.Gen();
+}
+
+void LeabraUnitSpec::NoiseTrialInit(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
+  if(noise_adapt.trial_fixed && (noise.type != Random::NONE)) {
+    u->noise = lay->noise_var * noise.Gen();
   }
 }
 
@@ -1977,6 +1997,41 @@ void LeabraUnitSpec::GraphSpikeAlphaFun(DataTable* graph_data, bool force_alpha)
   graph_data->FindMakeGraphView();
 }
 
+void LeabraUnitSpec::GraphSLNoiseAdaptFun(DataTable* graph_data, float incr) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_SLNoiseAdaptFun", true);
+  }
+  int idx;
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  DataCol* lt = graph_data->FindMakeColName("LongTerm", idx, VT_FLOAT);
+  lt->SetUserData("X_AXIS", true);
+  DataCol* st = graph_data->FindMakeColName("ShortTerm", idx, VT_FLOAT);
+  st->SetUserData("Z_AXIS", true);
+  DataCol* nv = graph_data->FindMakeColName("NoiseVarMult", idx, VT_FLOAT);
+  nv->SetUserData("PLOT_1", true);
+  nv->SetUserData("MIN", 0.0f);
+  nv->SetUserData("MAX", 1.0f);
+
+  LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
+
+  for(float ltv = 0.0f; ltv <= 1.0f; ltv += incr) {
+    for(float stv = 0.0f; stv <= 1.0f; stv += incr) {
+      float nvar = noise_adapt.SLNoiseFun(stv, ltv);
+      graph_data->AddBlankRow();
+      lt->SetValAsFloat(ltv, -1);
+      st->SetValAsFloat(stv, -1);
+      nv->SetValAsFloat(nvar, -1);
+    }
+  }
+  taDataAnal::Matrix3DGraph(graph_data, "LongTerm", "ShortTerm");
+  graph_data->SetUserData("NEG_DRAW", false);
+  graph_data->SetUserData("NEG_DRAW_Z", false);
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGraphView();
+}
+
 //////////////////////////
 //  	Unit 		//
 //////////////////////////
@@ -2383,6 +2438,7 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay) {
   lay->avg_netin_n = 0;
 
   lay->norm_err = 0.0f;
+  lay->noise_var = 0.0f;
 
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
@@ -3730,6 +3786,35 @@ void LeabraLayerSpec::DecayPhase2(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
   
+void LeabraLayerSpec::NoiseTrialInit(LeabraLayer* lay, LeabraNetwork* net) {
+  // compute adaptive stuff here -- before calling unit function which may depend..
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
+  if(us->noise_adapt.mode == NoiseAdaptSpec::AVG_NORM_ERR) {
+    lay->noise_var = 1.0f - ((1.0f - us->noise_adapt.min_pct) * (1.0f - net->avg_norm_err));
+  }
+  else if(us->noise_adapt.mode == NoiseAdaptSpec::AVG_EXT_REW) {
+    lay->noise_var = 1.0f - ((1.0f - us->noise_adapt.min_pct) * net->avg_ext_rew);
+  }
+  else if(us->noise_adapt.mode == NoiseAdaptSpec::SL_AVG_NORM_ERR) {
+    lay->noise_var = us->noise_adapt.SLNoiseFun(1.0f - net->st_avg_norm_err,
+						 1.0f - net->lt_avg_norm_err);
+  }
+  else if(us->noise_adapt.mode == NoiseAdaptSpec::SL_AVG_EXT_REW) {
+    lay->noise_var = us->noise_adapt.SLNoiseFun(net->st_avg_ext_rew, net->lt_avg_ext_rew);
+  }
+  else {
+    lay->noise_var = 1.0f;
+  }
+
+  if(us->noise_adapt.trial_fixed) {
+    LeabraUnit* u;
+    taLeafItr i;
+    FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+      u->NoiseTrialInit(lay, net);
+    }
+  }
+}
+  
 void LeabraLayerSpec::ExtToComp(LeabraLayer* lay, LeabraNetwork* net) {
   if(!(lay->ext_flag & Unit::EXT))	// only process ext
     return;
@@ -3966,7 +4051,6 @@ void LeabraLayerSpec::Compute_SelfReg_Trial(LeabraLayer* lay, LeabraNetwork* net
 float LeabraLayerSpec::Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg, bool sqrt) {
   return lay->Layer::Compute_SSE(n_vals, unit_avg, sqrt);
 }
-
 
 float LeabraLayerSpec::Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug,
 					   LeabraInhib* thr, LeabraNetwork* net) {
@@ -4409,6 +4493,7 @@ void LeabraLayer::Initialize() {
   sravg_m_nrm = 0.0f;
   ravg_l_avg = 0.15f;
   norm_err = 0.0f;
+  noise_var = 0.0f;
   da_updt = false;
   net_rescale = 1.0f;
 
@@ -4479,6 +4564,7 @@ void LeabraLayer::Copy_(const LeabraLayer& cp) {
   sravg_m_nrm = cp.sravg_m_nrm;
   ravg_l_avg = cp.ravg_l_avg;
   norm_err = cp.norm_err;
+  noise_var = cp.noise_var;
 
   // this will update spec pointer to new network if we are copied from other guy
   // only if the network is not otherwise already copying too!!
@@ -4561,6 +4647,9 @@ void LeabraUnit_Group::Copy_(const LeabraUnit_Group& cp) {
 //////////////////////////
 
 void LeabraNetMisc::Initialize() {
+  st_avg_dt = 0.1f;
+  lt_avg_dt = 0.005f;
+
   cyc_syn_dep = false;
   syn_dep_int = 20;
 }
@@ -4674,6 +4763,8 @@ void LeabraNetwork::Initialize() {
 
   ext_rew = 0.0f;
   avg_ext_rew = 0.0f;
+  st_avg_ext_rew = 0.0f;
+  lt_avg_ext_rew = 0.0f;
   avg_ext_rew_sum = 0.0f;
   avg_ext_rew_n = 0;
 
@@ -4681,7 +4772,9 @@ void LeabraNetwork::Initialize() {
   off_errs = true;
 
   norm_err = 0.0f;
-  avg_norm_err = 0.0f;
+  avg_norm_err = 1.0f;
+  st_avg_norm_err = 1.0f;
+  lt_avg_norm_err = 1.0f;
   avg_norm_err_sum = 0.0f;
   avg_norm_err_n = 0;
 }
@@ -4713,11 +4806,15 @@ void LeabraNetwork::Init_Stats() {
 
   ext_rew = 0.0f;
   avg_ext_rew = 0.0f;
+  st_avg_ext_rew = 0.0f;
+  lt_avg_ext_rew = 0.0f;
   avg_ext_rew_sum = 0.0f;
   avg_ext_rew_n = 0;
 
   norm_err = 0.0f;
-  avg_norm_err = 0.0f;
+  avg_norm_err = 1.0f;
+  st_avg_norm_err = 1.0f;
+  lt_avg_norm_err = 1.0f;
   avg_norm_err_sum = 0.0f;
   avg_norm_err_n = 0;
 }
@@ -5262,6 +5359,15 @@ void LeabraNetwork::Compute_dWt_Nothing() {
   }
 }
 
+void LeabraNetwork::NoiseTrialInit() {
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    lay->NoiseTrialInit(this);
+  }
+}
+
 void LeabraNetwork::Trial_Init() {
   SetCurLrate();
 
@@ -5313,6 +5419,7 @@ void LeabraNetwork::Trial_Init() {
     Init_Acts();
   else if(trial_init == DECAY_STATE)
     DecayState();
+  NoiseTrialInit();
   Init_SRAvg();			// 
 }
 
@@ -5383,20 +5490,19 @@ void LeabraNetwork::Trial_Final() {
 }
 
 void LeabraNetwork::Compute_ExtRew() {
+  ext_rew = -1.1f;
   LeabraLayer* lay;
   taLeafItr l;
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
     if(lay->lesioned())	continue;
-    if(lay->spec.SPtr()->GetTypeDef() != &TA_ExtRewLayerSpec) continue;
-    LeabraUnit* eru = (LeabraUnit*)lay->units.Leaf(0);
-    if(eru->misc_1 == 0.0f) { // indication of no reward available
-      ext_rew = -1.1f;
-    }
-    else {
-      ext_rew = eru->act_eq;	// just set it!
-      avg_ext_rew_sum += ext_rew;
-      avg_ext_rew_n++;
-    }
+    lay->Compute_NetExtRew(this);
+  }
+  if(ext_rew != -1.1f) {
+    avg_ext_rew_sum += ext_rew;
+    avg_ext_rew_n++;
+    
+    st_avg_ext_rew += net_misc.st_avg_dt * (ext_rew - st_avg_ext_rew);
+    lt_avg_ext_rew += net_misc.lt_avg_dt * (ext_rew - lt_avg_ext_rew);
   }
 }
 
@@ -5415,13 +5521,16 @@ void LeabraNetwork::Compute_NormErr() {
   }
   if(nerr_avail > 0.0f) {
     norm_err = nerr_sum / nerr_avail; // normalize contribution across layers
+
+    avg_norm_err_sum += norm_err;
+    avg_norm_err_n++;
+
+    st_avg_norm_err += net_misc.st_avg_dt * (norm_err - st_avg_norm_err);
+    lt_avg_norm_err += net_misc.lt_avg_dt * (norm_err - lt_avg_norm_err);
   }
   else {
     norm_err = 0.0f;
   }
-
-  avg_norm_err_sum += norm_err;
-  avg_norm_err_n++;
 }
 
 void LeabraNetwork::Compute_MinusCycles() {
@@ -5564,8 +5673,8 @@ void LeabraNetwork::Compute_AvgNormErr() {
 void LeabraNetwork::Compute_EpochStats() {
   inherited::Compute_EpochStats();
   Compute_AvgCycles();
-  Compute_AvgExtRew();
   Compute_AvgNormErr();
+  Compute_AvgExtRew();
   Compute_AvgSendPct();
 }
 

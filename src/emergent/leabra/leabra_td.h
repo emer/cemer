@@ -164,9 +164,10 @@ public:
   // clamp norew_val values for when no reward information is present
 
   // overrides:
-  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  void 	Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) { };
-  void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) { };
+  override void	 Compute_NetExtRew(LeabraLayer* lay, LeabraNetwork* net);
+  override void	 Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+  override void  Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) { };
+  override void	 Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) { };
   // never learns
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec

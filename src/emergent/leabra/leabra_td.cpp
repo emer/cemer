@@ -483,6 +483,14 @@ void ExtRewLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
+void ExtRewLayerSpec::Compute_NetExtRew(LeabraLayer* lay, LeabraNetwork* net) {
+  LeabraUnit* eru = (LeabraUnit*)lay->units.Leaf(0);
+  if(eru->misc_1 != 0.0f) { // indication of no reward available
+    net->ext_rew = eru->act_eq;	// just set it!
+  }
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////

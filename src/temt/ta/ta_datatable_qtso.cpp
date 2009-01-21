@@ -3606,6 +3606,12 @@ void GraphTableView::InitFromUserData() {
   if(dt->HasUserData("BAR_SPACE")) {
     bar_space = dt->GetUserDataAsFloat("BAR_SPACE");
   }
+  if(dt->HasUserData("NEG_DRAW")) {
+    negative_draw = dt->GetUserDataAsBool("NEG_DRAW");
+  }
+  if(dt->HasUserData("NEG_DRAW_Z")) {
+    negative_draw_z = dt->GetUserDataAsBool("NEG_DRAW_Z");
+  }
 }
 
 void GraphTableView::UpdateFromDataTable_this(bool first) {
