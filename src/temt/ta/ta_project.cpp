@@ -1391,6 +1391,38 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
 #endif
   return true;
 }
+
+// #include <GL/gl.h>
+
+static int isExtensionSupported(const char *extension) {
+  const GLubyte *extensions = NULL;
+  const GLubyte *start;
+  GLubyte *where, *terminator;
+  /* Extension names should not have spaces. */
+  where = (GLubyte *) strchr(extension, ' ');
+  if (where || *extension == '\0')
+    return 0;
+  extensions = glGetString(GL_EXTENSIONS);
+  /* It takes a bit of care to be fool-proof about parsing the
+     OpenGL extensions string. Don't be fooled by sub-strings,
+     etc. */
+  start = extensions;
+  for (;;) {
+    where = (GLubyte *) strstr((const char *) start, extension);
+    if (!where)
+      break;
+    terminator = where + strlen(extension);
+    if (where == start || *(where - 1) == ' ')
+      if (*terminator == ' ' || *terminator == '\0')
+        return 1;
+    start = terminator;
+  }
+  cerr << "This display does NOT have OpenGL support for the extension: "
+       << extension
+       << " which is required -- exiting Now!\n"
+       << "Please read the emergent manual for required 3D graphics driver information" << endl;
+  return 0;
+}
  	
 bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
   setlocale(LC_ALL, "");
@@ -1428,11 +1460,17 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
     QPixmap app_ico(app_ico_nm);
     QApplication::setWindowIcon(app_ico);
 
+    // test for various GL compatibilities now, before we get bitten later!
     if(!QGLFormat::hasOpenGL()) {
       cerr << "This display does NOT have OpenGL support, which is required -- exiting Now!\n"
 	   << "Please read the emergent manual for required 3D graphics driver information" << endl;
       exit(1);
     }
+
+    if(!isExtensionSupported("GL_TEXTURE_RECTANGLE_EXT")) {
+      exit(1);
+    }
+
   } else 
 #endif
   {
