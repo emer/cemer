@@ -1040,17 +1040,17 @@ void iT3ViewspaceWidget::resizeEvent(QResizeEvent* ev) {
 }
 
 // #include <GL/gl.h>
-static bool CheckExtension( char *extName ) {
+static bool CheckExtension(const char *extName ) {
   /*
   ** Search for extName in the extensions string.  Use of strstr()
   ** is not sufficient because extension names can be prefixes of
   ** other extension names.  Could use strtok() but the constant
   ** string returned by glGetString can be in read-only memory.
   */
-  char *exts = (char *) glGetString(GL_EXTENSIONS);
-  char *p = exts;
+  const char *exts = (char *) glGetString(GL_EXTENSIONS);
+  const char *p = exts;
 
-  char *end;
+  const char *end;
   int extNameLen;
 
   extNameLen = strlen(extName);
@@ -1112,9 +1112,28 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
       glDisable(GL_MULTISAMPLE);
     }
 
-    // this is needed by many items in Coin3d
-    CheckExtension("GL_EXT_texture_rectangle");
-    // not sure if we should exit or not..
+    // apparently the key problem e.g., with remote X into mac X server 
+    // is this code, GL_TEXTURE_3D:
+//     void
+//       SoGLTexture3EnabledElement::updategl(void)
+//     {
+//       const cc_glglue * glw = sogl_glue_instance(this->state);
+  
+//       if (SoGLDriverDatabase::isSupported(glw, SO_GL_3D_TEXTURES)) {
+// 	if (this->data) glEnable(GL_TEXTURE_3D);
+// 	else glDisable(GL_TEXTURE_3D);
+//       }
+//     }
+
+    // but the glxinfo suggests that it should be supported, and doing it 
+    // directly here does NOT cause a problem
+
+    // this extension is also used quite a bit, but apparently is not the problem:
+    //    CheckExtension("GL_EXT_texture_rectangle");
+
+    // this will tell you what version is running for debugging purposes:
+//     String gl_vers = (int)QGLFormat::openGLVersionFlags();
+//     taMisc::Error("GL version:", gl_vers); 
 
     if (m_selMode == SM_NONE)
       m_renderArea->setSceneGraph(m_root_so);
