@@ -1039,6 +1039,38 @@ void iT3ViewspaceWidget::resizeEvent(QResizeEvent* ev) {
   LayoutComponents();
 }
 
+// #include <GL/gl.h>
+static bool CheckExtension( char *extName ) {
+  /*
+  ** Search for extName in the extensions string.  Use of strstr()
+  ** is not sufficient because extension names can be prefixes of
+  ** other extension names.  Could use strtok() but the constant
+  ** string returned by glGetString can be in read-only memory.
+  */
+  char *exts = (char *) glGetString(GL_EXTENSIONS);
+  char *p = exts;
+
+  char *end;
+  int extNameLen;
+
+  extNameLen = strlen(extName);
+  end = p + strlen(p);
+    
+  while (p < end) {
+    int n = strcspn(p, " ");
+    if ((extNameLen == n) && (strncmp(extName, p, n) == 0)) {
+      return true;
+    }
+    p += (n + 1);
+  }
+  taMisc::Error("This display does NOT have OpenGL support for the extension:",
+		extName, "which is required -- your system will likely crash soon.",
+		"Please read the emergent manual for required 3D graphics driver information."
+		"Here is a list of your extensions:",
+		exts);
+  return false;
+}
+
 void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
   if (m_renderArea == value) return;
   if (value && (value->getParentWidget() != this))
@@ -1065,6 +1097,7 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
 
     QGLWidget* qglw = (QGLWidget*)m_renderArea->getGLWidget();
     QGLFormat fmt = qglw->format();
+
     if(taMisc::antialiasing_level > 1) {
       fmt.setSampleBuffers(true);
       fmt.setSamples(taMisc::antialiasing_level);
@@ -1078,6 +1111,10 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
       qglw->makeCurrent();
       glDisable(GL_MULTISAMPLE);
     }
+
+    // this is needed by many items in Coin3d
+    CheckExtension("GL_EXT_texture_rectangle");
+    // not sure if we should exit or not..
 
     if (m_selMode == SM_NONE)
       m_renderArea->setSceneGraph(m_root_so);
