@@ -245,6 +245,15 @@ void PViLayerSpec::Update_PVPrior(LeabraLayer* lay, bool er_avail, float pve_val
   }
 }
 
+
+void PViLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_Act(lay, net);
+  // take the 1st guy as the overall general guy
+  LeabraUnit* pvisu = (LeabraUnit*)lay->units.Leaf(0);
+  net->rew_pred = pvisu->act_eq;
+  // this is primarily used for noise modulation
+}
+
 void PViLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
 //   if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
 //     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!

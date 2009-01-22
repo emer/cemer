@@ -934,6 +934,7 @@ public:
     FIXED_NOISE,		// no adaptation of noise: remains fixed at the noise.var value in the unit spec
     SCHED_CYCLES,		// use noise_sched over cycles of settling
     SCHED_EPOCHS,		// use noise_sched over epochs of learning
+    REW_PRED,			// use reward prediction value for current trial (set on network, typically by PVLV or other RL-like learning) on a cycle-by-cycle basis (0-1; 0=no rew, 1=rew)
     AVG_NORM_ERR,		// use epoch-wise average norm error, subject to min noise parameter
     AVG_EXT_REW,		// use epoch-wise average external reward, subject to min noise parameter
     SL_AVG_NORM_ERR,		// use short and long epoch-wise average norm error, subject to min noise parameter and other parameters
@@ -2481,6 +2482,7 @@ public:
   float		avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average external reward value (computed over previous epoch)
   float		st_avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW short-term running average external reward value -- see st_avg_dt for time constant
   float		lt_avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW long-term running average external reward value -- see lt_avg_dt for time constant
+  float		rew_pred;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW reward prediction value for the current trial -- typically set by PVLV, TD or other RL-type learning mechanism -- updated on a cycle-by-cycle basis
   float		avg_ext_rew_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average external reward value in this epoch
   int		avg_ext_rew_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average external reward value computation for this epoch
 

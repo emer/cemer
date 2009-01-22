@@ -1040,12 +1040,17 @@ float LeabraUnitSpec::Compute_Noise(LeabraUnit* u, LeabraLayer* lay, LeabraNetwo
     rval = lay->noise_var * noise.Gen();
     u->noise = rval;
   }
+
   if(noise_adapt.mode == NoiseAdaptSpec::SCHED_CYCLES) {
     rval *= noise_sched.GetVal(net->cycle);
   }
   else if(noise_adapt.mode == NoiseAdaptSpec::SCHED_EPOCHS) {
     rval *= noise_sched.GetVal(net->epoch);
   }
+  else if(noise_adapt.mode == NoiseAdaptSpec::REW_PRED) {
+    rval *= 1.0f - ((1.0f - noise_adapt.min_pct) * net->rew_pred);
+  }
+
   return rval;
 }
 
@@ -4765,6 +4770,7 @@ void LeabraNetwork::Initialize() {
   avg_ext_rew = 0.0f;
   st_avg_ext_rew = 0.0f;
   lt_avg_ext_rew = 0.0f;
+  rew_pred = 0.0f;
   avg_ext_rew_sum = 0.0f;
   avg_ext_rew_n = 0;
 
@@ -4808,6 +4814,7 @@ void LeabraNetwork::Init_Stats() {
   avg_ext_rew = 0.0f;
   st_avg_ext_rew = 0.0f;
   lt_avg_ext_rew = 0.0f;
+  rew_pred = 0.0f;
   avg_ext_rew_sum = 0.0f;
   avg_ext_rew_n = 0;
 

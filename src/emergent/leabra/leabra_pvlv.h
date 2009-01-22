@@ -118,11 +118,12 @@ public:
   // update the prior PV value, stored in pv unit misc_1 values
 
   // overrides:
-  void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { };
-  void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt_Nothing(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { };
+  override void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_dWt_Nothing(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
