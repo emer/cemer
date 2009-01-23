@@ -51,10 +51,6 @@ class Layer;
 SmartRef_Of(Layer,TA_Layer); // LayerRef
 class Network;
 SmartRef_Of(Network,TA_Network); // NetworkRef
-class NetEngineInst; //
-TA_SMART_PTRS(NetEngineInst);//
-class NetEngine;
-TA_SMART_PTRS(NetEngine);//
 
 // externals
 class DataTable;
@@ -1703,6 +1699,65 @@ public:
   Layer_PtrList() {}
 };
 
+/////////////////////////////////////////////////////////////
+//		Threading code
+
+// todo: housekeeping for threads member of network
+// unit pointer list maintenance, and netinput matrix allocation
+// allocation of units to threads
+// add actual methods to call in leabra!
+
+// this is the standard unit function call taking a network pointer arg --
+// all threaded unit-level functions MUST use this call signature!
+#ifdef __MAKETA__
+typedef void* ThreadUnitCall;
+#else
+typedef taTaskMethCall1<Unit, void, Network*> ThreadUnitCall;
+#endif
+
+class EMERGENT_API UnitCallTask : public taTask {
+INHERITED(taTask)
+public:
+  NetworkRef	network;	// the network we're operating on
+  int		unit_st;	// unit list number to start on
+  int		unit_ed;	// unit number to end before
+  int		unit_mod;	// modulus to increment unit counter by
+  ThreadUnitCall* unit_call;	// method to call on the unit
+
+  override void run();
+
+  TA_BASEFUNS_NOCOPY(UnitCallTask);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+class EMERGENT_API UnitCallThreadMgr : public taThreadMgr {
+  // #INLINE thread manager for UnitCall tasks
+INHERITED(taThreadMgr)
+public:
+  float		thread_comp_thr;	// #MIN_0 #MAX_1 threshold value for amount of computation in a given function to actually deploy on threads, as opposed to just running it ourselves
+
+  void		InitAll();	// initialize threads and tasks
+
+  void		Run(ThreadUnitCall* unit_call, float comp_level);
+  // #IGNORE run given function on all units, with specified level of computational load (0-1)
+
+  void		RunThread0(ThreadUnitCall* unit_call);
+  // #IGNORE run only on thread 0 (the main thread)
+  void		RunThreads(ThreadUnitCall* unit_call);
+  // #IGNORE run on all threads
+  
+  TA_BASEFUNS_NOCOPY(UnitCallThreadMgr);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+
+/////////////////////////////////////////////////////////////
+//		Net View
+
 class EMERGENT_API NetViewFontSizes : public taOBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display network display font sizes
 INHERITED(taOBase)
@@ -1793,6 +1848,9 @@ private:
   void 	Destroy()		{ };
 };
 
+
+/////////////////////////////////////////////////////////////
+//		Network
 
 class EMERGENT_API Network : public taFBase {
   // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##DEF_NAME_ROOT_Network A network, containing layers, units, etc..
@@ -1900,6 +1958,8 @@ public:
   TimeUsed	wt_sync_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for the DMem_SumDWts operation (trial-level dmem, computed by network) 
   TimeUsed	misc_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic misc timer for ad-hoc use by programs
 
+  UnitCallThreadMgr threads;	// #CAT_Threads parallel threading of network computation
+
   DMem_SyncLevel dmem_sync_level; // #CAT_DMem at what level of network structure should information be synchronized across processes?
   int		dmem_nprocs;	// #CAT_DMem number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
   int		dmem_nprocs_actual; // #READ_ONLY #NO_SAVE actual number of processors being used
@@ -1916,9 +1976,6 @@ public:
   NetViewParams	view_params;   // #CAT_Display misc netview parameters
 
   ProjectBase*	proj;		// #IGNORE ProjectBase this network is in
-  TypeDef*	min_engine;	// #READ_ONLY #NO_SAVE the minimum type of the engine
-  NetEngineRef	net_engine; // #APPLY_IMMED #NO_SAVE #TYPE_ON_min_engine the engine being used for this net
-  NetEngineInstPtr net_inst; // #IGNORE the Inst created by the Engine 
 
   inline void		SetNetFlag(NetFlags flg)   { flags = (NetFlags)(flags | flg); }
   // set flag state on
@@ -2193,8 +2250,6 @@ public:
   virtual void	SetProjectionDefaultTypes(Projection* prjn);
   // #IGNORE this is called by the projection InitLinks to set its default types: overload in derived algorithm-specific networks to provide appropriate default types
 
-//  void		SetEngine(NetEngine* eng); // #NO_NULL #BUTTON set the engine for this network
-  
 #ifdef DMEM_COMPILE
   DMemComm	dmem_net_comm;	// #IGNORE the dmem communicator for the network-level dmem computations (the inner subgroup of units, each of size dmem_nprocs_actual)
   DMemComm	dmem_trl_comm;	// #IGNORE the dmem communicator for the trial-level (each node processes a different set of trials) -- this is the outer subgroup
@@ -2294,21 +2349,5 @@ private:
   void	Initialize();
   void	Destroy();
 };
-
-class EMERGENT_API NetEngine: public taEngine {
-// ##CAT_NetEngine abstract definition of NetEngine
-INHERITED(taEngine)
-public:
-  
-  NetEngineInst*	MakeEngineInst() const 
-    {return (NetEngineInst*)MakeEngineInst_impl();} // #IGNORE
-  TA_BASEFUNS_NOCOPY(NetEngine);
-protected:
-  virtual taEngineInst*	NewEngineInst_impl() const; // override to make exact type
-private:
-  void	Initialize();
-  void	Destroy();
-};
-
 
 #endif /* netstru_h */

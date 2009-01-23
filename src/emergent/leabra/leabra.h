@@ -48,10 +48,6 @@ class LeabraLayer;
 class LeabraNetwork;
 class LeabraProject; 
 
-class LeabraEngine;
-class LeabraTask;
-TA_SMART_PTRS(LeabraTask);//
-
 // _
 
 // The Leabra algorithm:
@@ -3210,6 +3206,10 @@ private:
 };
 
 
+/////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////  OLD THREAD CODE -- CUT !!!
+#if 0
+
 class LEABRA_API LeabraEngineInst: public NetEngineInst {
 INHERITED(NetEngineInst)
 public:
@@ -3282,8 +3282,6 @@ private:
   void	Initialize();
   void	Destroy();
 };
-
-#ifdef TA_USE_THREADS
 
 class LeabraThreadEngineTask;
 
@@ -3415,8 +3413,7 @@ private:
   void	Destroy() {}
 };
 
-
-#endif // TA_USE_THREADS
+#endif // if0 thread code cut!
 
 
 #endif // leabra_h

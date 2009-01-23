@@ -4709,7 +4709,7 @@ void LeabraNetwork::GraphInhibMod(bool flip_sign, DataTable* graph_data) {
 
 void LeabraNetwork::Initialize() {
   layers.SetBaseType(&TA_LeabraLayer);
-  min_engine = &TA_LeabraEngine;
+//   min_engine = &TA_LeabraEngine;
 
   learn_rule = LEABRA_CHL;
   prv_learn_rule = -1;
@@ -4891,9 +4891,9 @@ void LeabraNetwork::SetLearnRule() {
 void LeabraNetwork::Compute_Netin() {
   send_pct_n = send_pct_tot = 0;
   if (send_delta) {
-    if (!(net_inst.ptr() &&
-      ((LeabraEngineInst*)(net_inst.ptr()))->OnSend_NetinDelta())) 
-    {
+//     if (!(net_inst.ptr() &&
+//       ((LeabraEngineInst*)(net_inst.ptr()))->OnSend_NetinDelta())) 
+//     {
       Init_NetinDelta();	// this is done first because of sender-based net
       LeabraLayer* l;
       taLeafItr i;
@@ -4901,22 +4901,22 @@ void LeabraNetwork::Compute_Netin() {
         if(!l->lesioned())
           l->Send_NetinDelta(this);
       }
-    }
+//     }
 #ifdef DMEM_COMPILE
     dmem_share_units.Sync(3);
 #endif
   }
   else {
-    if (!(net_inst.ptr() &&
-      ((LeabraEngineInst*)(net_inst.ptr()))->OnSend_Netin())) 
-    {
+//     if (!(net_inst.ptr() &&
+//       ((LeabraEngineInst*)(net_inst.ptr()))->OnSend_Netin())) 
+//     {
       Init_Netin();		// this is done first because of sender-based net
       LeabraLayer* l;
       taLeafItr i;
       FOR_ITR_EL(LeabraLayer, l, layers., i) {
         if(!l->lesioned())
           l->Send_Netin(this);
-    }
+//     }
     }
 #ifdef DMEM_COMPILE
     DMem_SyncNet();
@@ -5910,6 +5910,11 @@ bool LeabraWizard::TestProgs(Program* call_test_from, bool call_in_loop, int cal
 }
 
 
+/////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////  OLD THREAD CODE -- CUT !!!
+#if 0
+
+
 //////////////////////////////////
 //  LeabraEngineInst		//
 //////////////////////////////////
@@ -6012,8 +6017,6 @@ void LeabraTask::run() {
   default: inherited::run(); break;
   }
 }
-
-#ifdef TA_USE_THREADS
 
 //////////////////////////////////
 //  LeabraThreadEngine		//
@@ -6723,4 +6726,4 @@ void LeabraThreadEngineTask::DoSend_NetinDelta_list() {
    //donzo! that's it
 }
 
-#endif // TA_USE_THREADS
+#endif // 0 thread code cut

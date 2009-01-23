@@ -4793,9 +4793,185 @@ void Layer_Group::Clean() {
   Clean_impl();
 }
 
+////////////////////////
+//	Threading     //
+////////////////////////
+
+//////////////////////////////////////////////////
+// old code
+
+#if 0
+
+class EMERGENT_API NetEngineInst: public taEngineInst { // ##NO_CSS extensible runtime-only structure that contains network-global data organized for efficient access by runtime Engines -- basically the core Unit values, plus c
+onvenience mgt functions -- all * are [size] arrays
+INHERITED(taEngineInst)
+public:
+  Unit**		units; // flat array of pointers to the network units -- index here is the canonical flat_idx in the Unit
+  Layer_PtrList		layers;
+  
+  inline Network* 	net() const {return (Network*)owner;} // lexically replaced in subclasses
+  inline int		unitSize() const {return unit_size;}
+  bool			setUnitSize(int val); // returns 'true' if size changed
+  
+  inline int		layerSize() const {return layers.size;}
+  inline Layer*		layer(int i) const {return layers.FastEl(i);}
+  
+  void			OnBuild() {OnBuild_impl();} // #IGNORE called on Network::Build() and also when we attach an engine to a net
+  
+  // engineable routines -- if false returned, then default net one is done
+  virtual bool		OnCompute_Act() {return false;}
+  virtual bool		OnCompute_dWt() {return false;}
+  virtual bool		OnCompute_Weights() {return false;}
+  
+  override taBase*	SetOwner(taBase* own);
+  TA_BASEFUNS_NOCOPY(NetEngineInst);
+protected:
+  int			unit_size;
+  virtual void		UnitSizeChanged_impl();
+  virtual void		OnBuild_impl(); // main build
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+void NetEngineInst::Initialize() {
+  unit_size = 0;
+  units = NULL;
+//  act = NULL;
+//  netin = NULL;
+}
+
+void NetEngineInst::Destroy() {
+  setUnitSize(0);
+}
+
+void NetEngineInst::OnBuild_impl() {
+  Network* net = this->net(); // cache
+  // set unit size, and init ptrs to Units
+  setUnitSize((uint)net->n_units);
+  layers.Reset();
+  int idx = 0;
+  Layer* lay;
+  taLeafItr li;
+  FOR_ITR_EL(Layer, lay, net->layers., li) {
+    layers.Add(lay);
+    Unit* un;
+    taLeafItr ui;
+    FOR_ITR_EL(Unit, un, lay->units., ui) {
+      un->flat_idx = idx;
+      units[idx] = un;
+      idx++;
+    }
+  }
+  AssertLogTable();
+}
+
+taBase* NetEngineInst::SetOwner(taBase* own) {
+  if (own && !own->InheritsFrom(&TA_Network)) return NULL;
+  return inherited::SetOwner(own);
+}
+
+bool NetEngineInst::setUnitSize(int val) {
+  if ((unit_size == val) || (val < 0)) return false;
+  unit_size = val;
+  UnitSizeChanged_impl();
+  return true;
+}
+
+void NetEngineInst::UnitSizeChanged_impl() {
+  units = (Unit**)realloc(units, sizeof(Unit*) * (uint)unit_size);
+//  act = (float*)realloc(act, sizeof(float) * (uint)unit_size);
+//  netin = (float*)realloc(netin, sizeof(float) * (uint)unit_size);
+}
+
+#endif 0 // old stuff cut
+////////////////////////////////////////////////
+
+void UnitCallTask::Initialize() {
+  unit_st = -1;
+  unit_ed = -1;
+  unit_mod = -1;
+  unit_call = NULL;
+}
+
+void UnitCallTask::Destroy() {
+  network.CutLinks();
+  unit_call = NULL;
+}
+
+void UnitCallTask::run() {
+  // loop over units and do something like this:
+  //  unit_call->call(unit_list[i], network);
+}
+
+void UnitCallThreadMgr::Initialize() {
+}
+
+void UnitCallThreadMgr::Destroy() {
+}
+
+void UnitCallThreadMgr::InitAll() {
+  InitThreads();
+  CreateTasks(&TA_UnitCallTask);
+  SetTasksToThreads();
+  Network* net = (Network*)owner;
+  for(int i=0;i<tasks.size;i++) {
+    UnitCallTask* uct = (UnitCallTask*)tasks[i];
+    uct->network = net;
+  }
+}
+
+void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level) {
+  if(comp_level < thread_comp_thr) {
+    RunThread0(unit_call);
+  }
+  else {
+    RunThreads(unit_call);
+  }
+}
+
+void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call) {
+  // todo: just loop over units and do unit_call on them directly!
+}
+
+void UnitCallThreadMgr::RunThreads(ThreadUnitCall* unit_call) {
+  for(int i=0;i<tasks.size;i++) {
+    UnitCallTask* uct = (UnitCallTask*)tasks[i];
+    uct->unit_call = unit_call;
+    // todo: set the index counters here!
+    // first pass: just make sure all units are accounted for in allocated even chunks
+  }
+  // then run the subsidiary guys
+  for(int i=0;i<threads.size;i++) {
+    threads[i]->runTask();
+  }
+  tasks[0]->run();		// run our own set..
+
+  // for more sophisticated stuff, do something like this
+#if 0
+  if(false) {
+    int n_done = 0;
+    for(int i=0;i<threads.size;i++) {
+      if(threads[i]->status == DONE) {
+	n_done++;
+      }
+    }
+    // then compute n of remaining units to allocate to tasks, and deploy
+    for(int i=0;i<threads.size;i++) {
+      threads[i]->runTask();
+    }
+    tasks[0]->run();		// run our own set..
+  }
+#endif
+
+  // finally, always need to sync at end to ensure that everyone is done!
+  for(int i=0;i<threads.size;i++) {
+    threads[i]->sync();
+  }
+}
 
 ////////////////////////
-//	Network	      //
+//	Network	 View //
 ////////////////////////
 
 void NetViewFontSizes::Initialize() {
@@ -4836,8 +5012,8 @@ void NetViewObj::UpdateAfterEdit_impl() {
 void Network::Initialize() {
   specs.SetBaseType(&TA_BaseSpec);
   layers.SetBaseType(&TA_Layer);
-  min_engine = &TA_NetEngine;
-  taBase::Own(net_engine, this);
+//   min_engine = &TA_NetEngine;
+//   taBase::Own(net_engine, this);
   
   flags = NF_NONE;
   auto_build = AUTO_BUILD;
@@ -4889,8 +5065,8 @@ void Network::Initialize() {
 }
 
 void Network::Destroy()	{ 
-  net_inst = NULL;
-  net_engine = NULL;
+//   net_inst = NULL;
+//   net_engine = NULL;
   CutLinks(); 
 }
 
@@ -5034,16 +5210,16 @@ void Network::SmartRef_DataRefChanging(taSmartRef* ref, taBase* obj,
   bool setting)
 {
   inherited::SmartRef_DataRefChanging(ref, obj, setting);
-  if (ref == &net_engine) {
-    if (setting) {
-      net_inst = net_engine->MakeEngineInst();
-      taBase::Own(net_inst, this); // also does InitLinks
-      taBase::UnRef(net_inst); // we just want 1 ref
-      net_inst->OnBuild(); // to initialize it
-    } else {
-      net_inst = NULL;
-    } 
-  }
+//   if (ref == &net_engine) {
+//     if (setting) {
+//       net_inst = net_engine->MakeEngineInst();
+//       taBase::Own(net_inst, this); // also does InitLinks
+//       taBase::UnRef(net_inst); // we just want 1 ref
+//       net_inst->OnBuild(); // to initialize it
+//     } else {
+//       net_inst = NULL;
+//     } 
+//   }
 }
 
 void Network::SetProjectionDefaultTypes(Projection* prjn) {
@@ -5119,9 +5295,9 @@ void Network::Build() {
   BuildPrjns(); // note: for Area constructs
   Connect();
   StructUpdate(false);
-  if (net_inst.ptr()) {
-    net_inst->OnBuild();
-  }
+//   if (net_inst.ptr()) {
+//     net_inst->OnBuild();
+//   }
   --taMisc::no_auto_expand;
   taMisc::DoneBusy();
 }
@@ -5908,29 +6084,29 @@ void Network::Send_Netin() {
 }
 
 void Network::Compute_Act_default() {
-  if (!((bool)net_inst &&
-      net_inst->OnCompute_Act())) 
-  {
+//   if (!((bool)net_inst &&
+//       net_inst->OnCompute_Act())) 
+//   {
     Layer* l;
     taLeafItr i;
     FOR_ITR_EL(Layer, l, layers., i) {
       if(!l->lesioned())
         l->Compute_Act();
     }
-  }
+//   }
 }
 
 void Network::Compute_dWt() {
-  if (!((bool)net_inst &&
-      net_inst->OnCompute_dWt())) 
-  {
+//   if (!((bool)net_inst &&
+//       net_inst->OnCompute_dWt())) 
+//   {
     Layer* l;
     taLeafItr i;
     FOR_ITR_EL(Layer, l, layers., i) {
       if(!l->lesioned())
         l->Compute_dWt();
     }
-  }
+//   }
 }
 
 bool Network::Compute_Weights_Test(int trial_no) {
@@ -5951,16 +6127,16 @@ bool Network::Compute_Weights_Test(int trial_no) {
 }
 
 void Network::Compute_Weights_impl() {
-  if (!((bool)net_inst &&
-      net_inst->OnCompute_Weights())) 
-  {
+//   if (!((bool)net_inst &&
+//       net_inst->OnCompute_Weights())) 
+//   {
     Layer* l;
     taLeafItr i;
     FOR_ITR_EL(Layer, l, layers., i) {
       if(!l->lesioned())
         l->Compute_Weights();
     }
-  }
+//   }
 }
 
 void Network::Compute_Weights() {
@@ -6908,6 +7084,12 @@ taiDataLink* Network::ConstrDataLink(DataViewer* viewer_, const TypeDef* link_ty
 */
 #endif
 
+
+///////////////////////////////////////////////////////////
+//		ENGINE NUKE
+
+#if 0
+
 //////////////////////////
 //  NetEngineInst	//
 //////////////////////////
@@ -6977,3 +7159,4 @@ taEngineInst* NetEngine::NewEngineInst_impl() const {
   return new NetEngineInst;
 }
 
+#endif // 0 engine nuke

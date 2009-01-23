@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-// ta_engine.h -- execution engines, and the threaded engine
+// ta_engine.h -- execution engines
 
 #ifndef TA_ENGINE_H
 #define TA_ENGINE_H
@@ -26,53 +26,13 @@
 #include "ta_def.h"
 #include "ta_TA_type.h"
 
-
 // external refs
 
 // forwards
 class taEngine;
 TA_SMART_PTRS(taEngine);
-class taTask;
-TA_SMART_PTRS(taTask);
 class taEngine_Group;
 class taEngineInst;
-
-
-class TA_API taTask: public taOBase {
-  // ##TOKENS ##INSTANCE ##CAT_Task a single processing instance for an engine
-INHERITED(taOBase)
-public:
-  int			task_id; // #READ_ONLY #SHOW #NO_COPY unique id per logical set, ex. one per thread
-  int			proc_id; // current proc being run
-  
-  inline taEngineInst*	inst() const {return m_inst;} // typically lex override
-  
-  virtual void		run() {} // must be overridden, to dispatch actual proc
-  
-  override int		GetIndex() const {return task_id;}
-  override void		SetIndex(int val) {task_id = val;}
-  override taBase*	SetOwner(taBase* own);
-  TA_BASEFUNS(taTask);
-protected:
-  taEngineInst*		m_inst; // set automatically in SetOwner
-private:
-  void	Copy_(const taTask& cp) {}
-  void	Initialize();
-  void	Destroy() {}
-};
-
-class TA_API taTask_List : public taList<taTask> {
-  // ##CAT_Task a list of tasks
-  INHERITED(taList<taTask>)
-public:
-  
-  override String 	GetTypeDecoKey() const { return "Task"; }
-  TA_BASEFUNS_NOCOPY(taTask_List);
-private:
-  void	Initialize() {SetBaseType(&TA_taTask);}
-  void 	Destroy()		{Reset(); }; //
-}; //
-
 
 class TA_API taEngineInst: public taOBase { // ##NO_INSTANCE #VIRT_BASE ##NO_TOKENS extensible runtime-only structure that contains client-global data and tasks organized for efficient access by runtime Engines
 INHERITED(taOBase)
@@ -134,80 +94,4 @@ private:
   void 	Destroy() {Reset(); };
 };
 
-
-#if defined(TA_USE_THREADS) && !defined(__MAKETA__)
-
-#include "ta_thread.h"
-
-#include <QtCore/QList>
-#include <QtCore/QThread>
-#include <QtCore/QMutex>
-#include <QtCore/QWaitCondition>
-
-#define AtomicFetchAdd(p_operand, incr) \
-   taAtomic::FetchAdd(p_operand, incr)
-
-//
-
-/* TaskThread
-  A task thread is a worker thread that is created once, and designed for
-  running a task in a "one-shot" manner, followed by syncronization.
-  
-  The usage is as follows:
-  
-  - create/start -- this puts the thread in the Blocked condition
-  - assign a task
-  - 'resume' -- this releases the thread to run the task
-  - thread is now running
-  - 'sync' -- this waits for the thread to finish the task -- the main thread
-      will block until the thread is finished
-
-*/
-class TA_API taTaskThread: public QThread {
-INHERITED(QThread)
-public:
-  enum ThreadState {
-    TS_BLOCKED, // waiting to be released (to run the task)
-    TS_RUNNING, // running the task
-    TS_DONE,    // finished running the task, waiting to sync
-  };
-  
-  static void		DeleteTaskThread(taTaskThread* tt); 
-   // use this to delete, do not delete directly!
-
-  TimeUsedHR		start_latency; // amount of time waiting to start
-  TimeUsedHR		run_time; // amount of time actually running jobs
-  
-  inline bool		isActive() const {return m_active;}
-//  inline bool		isSuspended() const {return m_suspended;}
-  inline bool		log() const {return m_log;} 
-  
-  taTask*		task() const {return m_task;}
-  void			setTask(taTask* t);
-  void 			sync(); // sync up with the thread after finished running task
-  void			release(); // release the task ready to run
-  void			terminate(); //note: lexical override only
-  
-  taTaskThread(bool log = false, int affinity = -1); // NEVER make static version, only via new, and always delete with Delete method
-
-protected:
-  ~taTaskThread(); // do not elevate to public, always delete through static guy
-  
-  QMutex		mutex;// #IGNORE
-  QWaitCondition 	released;// #IGNORE
-  QWaitCondition 	synced;// #IGNORE
-  taTaskRef		m_task;
-  const int		m_affinity; // -1-default; note: this may be ignored
-  const Qt::HANDLE	m_main_thread_id; // set on create (may be needed for affinity)
-  Qt::HANDLE		m_thread_id; // for the thread, set in run
-  volatile ThreadState	m_state;
-  volatile bool		m_active;
-  const bool		m_log;
-  
-  override void 	run();
-  void			SetAffinity(); // called from run() in thread
-};
-
-#endif // TA_USE_THREADS
- 
 #endif
