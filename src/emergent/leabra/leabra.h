@@ -934,35 +934,34 @@ public:
     FIXED_NOISE,		// no adaptation of noise: remains fixed at the noise.var value in the unit spec
     SCHED_CYCLES,		// use noise_sched over cycles of settling
     SCHED_EPOCHS,		// use noise_sched over epochs of learning
-    REW_PRED,			// use reward prediction value for current trial (set on network, typically by PVLV or other RL-like learning) on a cycle-by-cycle basis (0-1; 0=no rew, 1=rew)
-    AVG_NORM_ERR,		// use epoch-wise average norm error, subject to min noise parameter
-    AVG_EXT_REW,		// use epoch-wise average external reward, subject to min noise parameter
-    SL_AVG_NORM_ERR,		// use short and long epoch-wise average norm error, subject to min noise parameter and other parameters
-    SL_AVG_EXT_REW,		// use short and long epoch-wise average external reward, subject to min noise parameter and other parameters
+    PVLV,			// use PVLV reward prediction values (MIN(pvlv_pvi, pvlv_lve) -- worst case reward expectation) for current trial (set on network by PVLV layers) on a cycle-by-cycle basis
   };
 
   bool		trial_fixed;	// keep the same noise value over the entire trial -- prevents noise from being washed out and produces a stable effect that can be better used for learning -- this is strongly recommended for most learning situations
   AdaptMode 	mode;		// how to adapt noise variance over time
-  float		min_pct;	// #CONDEDIT_OFF_mode:FIXED_NOISE,SCHED_CYCLES,SCHED_EPOCHS minimum noise as a percentage of overall maximum noise value (which is noise.var in unit spec)
-  float		st_mult;	// #CONDEDIT_ON_mode:SL_AVG_NORM_ERR,SL_AVG_EXT_REW multiplier on the short-term factor: how much it affects overall noise levels
-  float		lt_sig_gain;	// #CONDEDIT_ON_mode:SL_AVG_NORM_ERR,SL_AVG_EXT_REW gain on the ssigmoid function for long-term factor -- how sharply the curve inflects around 0.5
-  float		st_sig_gain;	// #CONDEDIT_ON_mode:SL_AVG_NORM_ERR,SL_AVG_EXT_REW gain on the ssigmoid function for short-term factor -- how sharply the curve inflects around 0.5
+  float		min_pct;	// #CONDEDIT_OFF_mode:FIXED_NOISE,SCHED_CYCLES,SCHED_EPOCHS #DEF_0.5 minimum noise as a percentage (proportion) of overall maximum noise value (which is noise.var in unit spec)
+  float		min_pct_c;	// #READ_ONLY 1-min_pct
 
-  inline float	SigFun(float val, float gn) {
-    if(val <= 0.0f) return 0.0f;
-    if(val >= 1.0f) return 1.0f;
-    return (1.0f / (1.0f + powf((1.0f - val) / val, gn)));
-  }
+  // this gives the short-long integration function proposed by Aston-Jones & Cohen
+  // which turns out to not work very well at all: what matters is the specific 
+  // reward prediction on the current trial, given by the PVLV option currently
+//   inline float	SigFun(float val, float gn) {
+//     if(val <= 0.0f) return 0.0f;
+//     if(val >= 1.0f) return 1.0f;
+//     return (1.0f / (1.0f + powf((1.0f - val) / val, gn)));
+//   }
 
-  inline float	SLNoiseFun(float norm_st_val, float norm_lt_val) {
-    return 1.0f - ((1.0f - min_pct) * SigFun(norm_lt_val, lt_sig_gain) 
-		   * (1.0f - st_mult * SigFun(norm_st_val, st_sig_gain)));
-  }
-  // compute short-long term noise function based on short and long term values normalized 0-1 where 1 is *best* performance and 0 is *worst* performance
-
+//   inline float	SLNoiseFun(float norm_st_val, float norm_lt_val) {
+//     return 1.0f - ((1.0f - min_pct) * SigFun(norm_lt_val, lt_sig_gain) 
+// 		   * (1.0f - st_mult * SigFun(norm_st_val, st_sig_gain)));
+//   }
+//   // compute short-long term noise function based on short and long term values normalized 0-1 where 1 is *best* performance and 0 is *worst* performance
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(NoiseAdaptSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -1191,8 +1190,8 @@ public:
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the activation function as a function of net input (projected through membrane potential) (NULL = new graph data)
   virtual void	GraphSpikeAlphaFun(DataTable* graph_data, bool force_alpha=false);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the spike alpha function for conductance integration over time window given in spike parameters -- last data point is the sum over the whole window (total conductance of a single spike) -- force_alpha means use explicit alpha function even when rise=0 (otherewise it simulates actual recursive exp decay used in optimized code)
-  virtual void	GraphSLNoiseAdaptFun(DataTable* graph_data, float incr = 0.05f);
-  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the short and long-term noise adaptation function, which integrates both short-term and long-term performance values
+//   virtual void	GraphSLNoiseAdaptFun(DataTable* graph_data, float incr = 0.05f);
+//   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the short and long-term noise adaptation function, which integrates both short-term and long-term performance values
   virtual void TimeExp(int mode, int nreps=100000000);
   // #MENU_BUTTON #MENU_ON_Graph ime how long it takes to compute various forms of exp() function: mode=0 = double sum ctrl (baseline), mode=1 = std double exp(), mode=2 = taMath_double::exp_fast, mode=3 = float sum ctrl (float baseline), mode=4 = expf, mode=5 = taMath_float::exp_fast -- this is the dominant cost in spike alpha function computation, so we're interested in optimizing it..
 
@@ -2101,7 +2100,6 @@ public:
   AvgMaxVals	avg_netin_sum;	// #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM sum of net input values for the layer, for computing average over an epoch-level timescale
   int		avg_netin_n;	// #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
   float		norm_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic normalized binary error value for this layer, computed subject to the parameters on the network
-  float		noise_var;	// #GUI_READ_ONLY #SHOW #CAT_Activation noise variance multiplier value for the layer, computed by default as a function of the network short and long-term normalized error or external reward terms (this is multiplied times unit spec noise.var to get actual variance)
   int		da_updt;	// #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
   int_Array	misc_iar;	// #HIDDEN #CAT_Activation misc int array of data
 
@@ -2282,9 +2280,6 @@ class LEABRA_API LeabraNetMisc : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra misc network-level parameters for Leabra
 INHERITED(taOBase)
 public:
-  float		st_avg_dt;	// time constant for computing short-term averaging of various statistics, including st_avg_ext_rew and st_avg_norm_err
-  float		lt_avg_dt;	// time constant for computing long-term averaging of various statistics, including lt_avg_ext_rew and lt_avg_norm_err
-
   bool		cyc_syn_dep;	// if true, enable synaptic depression calculations at the synapse level (also need conspecs to implement this -- this just enables computation)
   int		syn_dep_int;	// [20] #CONDEDIT_ON_cyc_syn_dep synaptic depression interval -- how frequently to actually perform synaptic depression within a trial (uses ct_cycle variable which counts up continously through trial)
 
@@ -2480,9 +2475,8 @@ public:
 
   float		ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW external reward value (on this trial) -- not available unless ExtRewLayerSpec or similar exists in network
   float		avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average external reward value (computed over previous epoch)
-  float		st_avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW short-term running average external reward value -- see st_avg_dt for time constant
-  float		lt_avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW long-term running average external reward value -- see lt_avg_dt for time constant
-  float		rew_pred;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW reward prediction value for the current trial -- typically set by PVLV, TD or other RL-type learning mechanism -- updated on a cycle-by-cycle basis
+  float		pvlv_pvi;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW PVLV primary reward prediction value PVi for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
+  float		pvlv_lve;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW PVLV learned reward prediction value LVe for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
   float		avg_ext_rew_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average external reward value in this epoch
   int		avg_ext_rew_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average external reward value computation for this epoch
 
@@ -2490,8 +2484,6 @@ public:
   bool		on_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly on (should have been off but were actually on) -- either 1 or both of off_errs and on_errs must be set
   float		norm_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW normalized binary (Hamming) error on this trial: number of units that were incorrectly activated or incorrectly inactivated (see off_errs to exclude latter)
   float		avg_norm_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average normalized binary error value (computed over previous epoch)
-  float		st_avg_norm_err; // #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW short-term running average normalized binary error value -- see st_avg_dt for time constant
-  float		lt_avg_norm_err; // #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW long-term running average  normalized binary error value -- see lt_avg_dt for time constant
   float		avg_norm_err_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average norm err in this epoch
   int		avg_norm_err_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average norm err value computation for this epoch
 
