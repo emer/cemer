@@ -4850,7 +4850,7 @@ void UnitCallThreadMgr::InitAll() {
 
 void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level) {
   Network* net = network();
-  if(comp_level < thread_comp_thr || net->units_flat.size < min_units) {
+  if(n_threads == 1 || comp_level < thread_comp_thr || net->units_flat.size < min_units) {
     RunThread0(unit_call);
   }
   else {
@@ -4868,8 +4868,15 @@ void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call) {
 
 void UnitCallThreadMgr::RunThreads(ThreadUnitCall* unit_call) {
   Network* net = network();
-  int n_chunked = (int)((float)(net->units_flat.size) * chunk_pct);
+  const int nu = net->units_flat.size;
+  int n_chunked = (int)((float)nu * chunk_pct);
   n_chunked = MAX(n_chunked, min_units);
+
+  int chnks = n_chunked / tasks.size;
+  n_chunked = chnks * tasks.size; // must be even multiple of threads!
+  while(n_chunked > nu)
+    n_chunked -= tasks.size;
+
   for(int i=0;i<tasks.size;i++) {
     UnitCallTask* uct = (UnitCallTask*)tasks[i];
     uct->unit_call = unit_call;
