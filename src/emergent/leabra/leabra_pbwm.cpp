@@ -720,7 +720,8 @@ void MatrixLayerSpec::Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraI
       Compute_DaLearnMod(lay, mugp, thr, net);
     // don't do anything in 2nd plus!
   }
-  inherited::Compute_Act_impl(lay, ug, thr, net);
+  // todo: need to fix this!!!
+  //  inherited::Compute_Act_impl(lay, ug, thr, net);
 }
 
 void MatrixLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {

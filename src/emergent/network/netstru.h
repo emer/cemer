@@ -715,7 +715,7 @@ private:
 SpecPtr_of(UnitSpec);
 
 class EMERGENT_API Unit: public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##DMEM_SHARE_SETS_3 ##CAT_Network Generic unit
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##DMEM_SHARE_SETS_3 ##CAT_Network Generic unit -- basic computational unit of a neural network (e.g., a neuron-like processing unit)
 INHERITED(taOBase)
 protected:
   static RecvCons*	rcg_rval; // return value for connecting
@@ -774,8 +774,9 @@ public: //
   virtual void 	DMem_SetThisProc(int proc) 	{ dmem_this_proc = proc; } // #IGNORE
 #endif
 
-  bool			lesioned() const; // #IGNORE mainly used by engines when walking the flat list of units
-  inline Layer*		own_lay_() const;
+  inline bool		lesioned() const;
+  // #IGNORE refers to the layer-level LESIONED flag -- important for thread code
+  inline Layer*		own_lay() const;
   
   inline UnitSpec* GetUnitSpec() const { return m_unit_spec; }
   // #CAT_Structure get the unit spec for this unit -- this is controlled entirely by the layer and all units in the layer have the same unit spec
@@ -818,7 +819,7 @@ public: //
   // #MENU #CAT_Learning Initialize weight values
   void	Init_Weights_post() 	{ GetUnitSpec()->Init_Weights_post(this); }
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
-  void 	Compute_Netin()		{ GetUnitSpec()->Compute_Netin(this); }
+  void 	Compute_Netin(Network* net) { GetUnitSpec()->Compute_Netin(this); }
   // #CAT_Activation compute net input from other units
   void 	Send_Netin()		{ GetUnitSpec()->Send_Netin(this); }
   // #CAT_Activation send net input to other units
@@ -1297,8 +1298,6 @@ private:
   void 	Destroy()		{ CutLinks(); }
 };
 
-inline Layer* Unit::own_lay_() const {return ((Unit_Group*)owner)->own_lay;}
-
 class EMERGENT_API LayerSpec : public BaseSpec {
   // generic layer specification
 INHERITED(BaseSpec)
@@ -1657,6 +1656,9 @@ private:
   void 	Destroy()	{ CutLinks(); }
 };
 
+inline Layer* Unit::own_lay() const {return ((Unit_Group*)owner)->own_lay;}
+inline bool Unit::lesioned() const {return own_lay()->lesioned(); }
+
 class EMERGENT_API Layer_Group : public taGroup<Layer> {
   // ##CAT_Network ##SCOPE_Network group of layers 
 INHERITED(taGroup<Layer>)
@@ -1713,18 +1715,24 @@ public:
 typedef void* ThreadUnitCall;
 #else
 typedef taTaskMethCall1<Unit, void, Network*> ThreadUnitCall;
+typedef void (Unit::*ThreadUnitMethod)(Network*);
 #endif
+
+class UnitCallThreadMgr;
 
 class EMERGENT_API UnitCallTask : public taTask {
 INHERITED(taTask)
 public:
   NetworkRef	network;	// the network we're operating on
-  int		unit_st;	// unit list number to start on
-  int		unit_ed;	// unit number to end before
-  int		unit_mod;	// modulus to increment unit counter by
+  int		uidx_st;	// unit list number to start on
+  int		uidx_ed;	// unit number to end before
+  int		uidx_inc;	// how much to increment counter by
   ThreadUnitCall* unit_call;	// method to call on the unit
 
   override void run();
+  // runs specified chunks and then nibbles on remainder
+
+  UnitCallThreadMgr* mgr() { return (UnitCallThreadMgr*)owner->GetOwner(); }
 
   TA_BASEFUNS_NOCOPY(UnitCallTask);
 private:
@@ -1736,7 +1744,13 @@ class EMERGENT_API UnitCallThreadMgr : public taThreadMgr {
   // #INLINE thread manager for UnitCall tasks
 INHERITED(taThreadMgr)
 public:
+  int		min_units;		// #MIN_0 minimum number of units required to use threads at all
   float		thread_comp_thr;	// #MIN_0 #MAX_1 threshold value for amount of computation in a given function to actually deploy on threads, as opposed to just running it ourselves
+  float		chunk_pct;		// #MIN_0 #MAX_1 proportion (0-1) of units to process in a chunked fashion, where units are allocated in (interdigitated) chunks to threads to exclusively process -- after this, each available thread works nibbling a unit at a time on the remaining list of units
+  int		nibble_chunk;		// #MIN_1 how many units does each thread grab to process while nibbling?
+  int		nibble_i;		// #IGNORE current nibble index -- atomic incremented by working threads to nibble away the rest..
+
+  Network*	network() 	{ return (Network*)owner; }
 
   void		InitAll();	// initialize threads and tasks
 
@@ -1959,6 +1973,7 @@ public:
   TimeUsed	misc_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic misc timer for ad-hoc use by programs
 
   UnitCallThreadMgr threads;	// #CAT_Threads parallel threading of network computation
+  UnitPtrList	    units_flat;	// #READ_ONLY #NO_SAVE #CAT_Threads flat list of units for deploying in threads
 
   DMem_SyncLevel dmem_sync_level; // #CAT_DMem at what level of network structure should information be synchronized across processes?
   int		dmem_nprocs;	// #CAT_DMem number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
@@ -2011,6 +2026,8 @@ public:
   // #MENU #MENU_ON_Structure #CAT_Structure Build any network layers that are dynamically constructed
   virtual void  BuildUnits();
   // #MENU #CAT_Structure Build the network units in layers according to geometry
+  virtual void 	BuildUnits_FlatList();
+  // #IGNORE build flat list of units
   virtual void  BuildPrjns();
   // #MENU #CAT_Structure Build any network prjns that are dynamically constructed
   void	Connect();
@@ -2290,7 +2307,6 @@ public:
 
   override String 	GetTypeDecoKey() const { return "Network"; }
 
-  void	SmartRef_DataRefChanging(taSmartRef* ref, taBase* obj, bool setting);
   void 	InitLinks();
   void	CutLinks();
   void 	Copy_(const Network& cp);

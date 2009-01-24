@@ -1212,7 +1212,13 @@ float LeabraUnitSpec::Compute_IThresh(LeabraUnit* u, LeabraLayer* lay, LeabraNet
 //	Stage 4: the final activation 	//
 //////////////////////////////////////////
 
-void LeabraUnitSpec::Compute_Act(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net) {
+void LeabraUnitSpec::Compute_Act(LeabraUnit* u, LeabraNetwork* net) {
+  // todo: remove all (lay and ) thr args from all functions!!  for now, just go with flow..
+  LeabraLayer* lay = u->own_lay();
+  LeabraInhib* thr = u->own_thr();
+
+  if((net->cycle >= 0) && lay->hard_clamped) return; // don't re-compute
+
   Compute_Conduct(u, lay, thr, net);
   Compute_Vm(u, lay, thr, net);
   Compute_ActFmVm(u, lay, thr, net);
@@ -2162,6 +2168,19 @@ void LeabraUnit::Init_NetinDelta() {
   g_i_delta = 0.0f;
   net = 0.0f;		// important for soft-clamped layers
   gc.i = 0.0f;
+}
+
+
+LeabraInhib* LeabraUnit::own_thr() const {
+  LeabraLayer* ol = own_lay();
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)ol->GetLayerSpec();
+  if((ls->inhib_group != LeabraLayerSpec::ENTIRE_LAYER) && (ol->units.gp.size > 0)) {
+    LeabraUnit_Group* og = own_ugp();
+    return (LeabraInhib*)og;
+  }
+  else {
+    return (LeabraInhib*)ol;
+  }
 }
 
 
@@ -3582,16 +3601,13 @@ void LeabraLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
     return;			// don't do this during normal processing
   }
 
-  if((inhib_group != ENTIRE_LAYER) && (lay->units.gp.size > 0)) {
-    int g;
-    for(g=0; g<lay->units.gp.size; g++) {
-      LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
-      Compute_Act_impl(lay, rugp, (LeabraInhib*)rugp, net);
-    }
-  }
-  else {
-    Compute_Act_impl(lay, &(lay->units), (LeabraInhib*)lay, net);
-  }
+  // note: all the unit-level compute act is already done by the thread call!!
+
+  // note: maxda is updating network var -- cannot thread it as such!! 
+  // same with act avg, etc
+  // todo: pvlv and other guys that overload Compute_Act at layer level will need
+  // special something at unit level.  ScalarVal esp!!
+  // todo: look for other Compute_Act_impl guys!
 
   Compute_ActAvg(lay, net);
   Compute_MaxDa(lay, net);
@@ -3602,15 +3618,6 @@ void LeabraLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_OutputName(lay, net);
   if(lay->Iconified()) {
     lay->icon_value = lay->acts.avg;
-  }
-}
-
-void LeabraLayerSpec::Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net)
-{
-  LeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, ug->, i) {
-    u->Compute_Act(lay,thr,net);
   }
 }
 
@@ -4709,7 +4716,6 @@ void LeabraNetwork::GraphInhibMod(bool flip_sign, DataTable* graph_data) {
 
 void LeabraNetwork::Initialize() {
   layers.SetBaseType(&TA_LeabraLayer);
-//   min_engine = &TA_LeabraEngine;
 
   learn_rule = LEABRA_CHL;
   prv_learn_rule = -1;
@@ -5004,7 +5010,18 @@ void LeabraNetwork::Compute_Act() {
   output_name = "";		// this will be updated by layer compute_act
   maxda = 0.0f;		// initialize
   trg_max_act = 0.0f;
-  inherited::Compute_Act();
+
+  ThreadUnitCall un_act((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_Act);
+  threads.Run(&un_act, .5f);	// todo: .5 is just for testing -- get real val
+
+  // then go through layers and compute act ONLY at layer level and other cleanup: basic
+  // act was computed through call above
+  LeabraLayer* l;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraLayer, l, layers., i) {
+    if(!l->lesioned())
+      l->Compute_Act(this);
+  }
 }
 
 void LeabraNetwork::Compute_CycSynDep() {

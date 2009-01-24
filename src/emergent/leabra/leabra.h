@@ -1088,7 +1088,7 @@ public:
   ////////////////////////////////////////
 
   override void	Compute_Act(Unit* u)	{ UnitSpec::Compute_Act(u); }
-  virtual void 	Compute_Act(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
+  virtual void 	Compute_Act(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_Activation compute the final activation: calls following function steps
 
   virtual void	Compute_MaxDa(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
@@ -1290,7 +1290,9 @@ public:
   }
   // add current activation to act buf if synaptic delay is on
 
-  inline LeabraLayer*	own_lay() const {return (LeabraLayer*)own_lay_();}
+  inline LeabraLayer*	own_lay() const {return (LeabraLayer*)inherited::own_lay();}
+  inline LeabraUnit_Group* own_ugp() const {return (LeabraUnit_Group*)owner;}
+  LeabraInhib*		own_thr() const;
 
   void		Init_ActAvg()
   { ((LeabraUnitSpec*)GetUnitSpec())->Init_ActAvg(this); }
@@ -1350,8 +1352,8 @@ public:
   // #CAT_Activation compute inhibitory value that would place unit directly at threshold, excluding any gc.a, gc.h currents
 
   void		Compute_Act()	{ Unit::Compute_Act(); }
-  void 		Compute_Act(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_Act(this, lay, athr, net); }
+  void 		Compute_Act(LeabraNetwork* net) 
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_Act(this, net); }
   // #CAT_Activation compute the final activation: calls following function steps
 
   float 	Compute_ActValFmVmVal(float vm_val)
@@ -1423,6 +1425,10 @@ private:
   void	Destroy()		{ };
 };
 
+#ifndef __MAKETA__
+typedef void (LeabraUnit::*LeabraUnitMethod)(LeabraNetwork*);
+// this is required to disambiguate unit thread method guys -- double casting
+#endif 
 
 //////////////////////////////////////////////////////////////////////////
 //			Projection Level Code
@@ -1830,8 +1836,6 @@ public:
 
   virtual void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation stage three: compute final activation
-  virtual void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
-  // #CAT_Activation stage three: compute final activation
   virtual void 	Compute_NetinRescale(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation do net rescaling to prevent blowup based on netin.max
 
@@ -2154,7 +2158,8 @@ public:
   void	Compute_InhibAvg(LeabraNetwork* net)	{ spec->Compute_InhibAvg(this, net); }
   // #CAT_Activation compute average inhibition value (integrating unit inhib etc)
 
-  override void	Compute_Act()	{ spec->Compute_Act(this, (LeabraNetwork*)own_net); }
+  void	Compute_Act()	{ spec->Compute_Act(this, (LeabraNetwork*)own_net); }
+  void	Compute_Act(LeabraNetwork* net)	{ spec->Compute_Act(this, net); }
 
   float	Compute_TopKAvgAct(LeabraNetwork* net)  { return spec->Compute_TopKAvgAct(this, net); }
   // #CAT_Statistic compute the average activation of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current act_eq values

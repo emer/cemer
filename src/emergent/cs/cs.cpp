@@ -635,7 +635,7 @@ void CsNetwork::Compute_AsyncAct() {
       if(rnd_num < (lay_prob + total_prob)) {
 	int whichunitleaf = rnd_num - total_prob;
 	CsUnit* u = (CsUnit*) lay->units.Leaf(whichunitleaf);	
-	u->Compute_Netin();
+	u->Compute_Netin(this);
 	u->Compute_Act(cycle, phase, this); // update this one unit...
 	break;
       } else {

@@ -216,7 +216,7 @@ void SoLayerSpec::Compute_Netin(SoLayer* lay) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, lay->units., i)
-    u->Compute_Netin();
+    u->Compute_Netin(lay->own_net);
 }
 
 void SoLayerSpec::Compute_Act(SoLayer* lay) {

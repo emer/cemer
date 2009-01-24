@@ -863,7 +863,8 @@ void ScalarValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net)
 }
 
 void ScalarValLayerSpec::Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net) {
-  LeabraLayerSpec::Compute_Act_impl(lay, ug, thr, net);
+  // todo: need to fix this!!
+//   LeabraLayerSpec::Compute_Act_impl(lay, ug, thr, net);
   ReadValue(ug, net);		// always read out the value
 }
 
@@ -1798,7 +1799,8 @@ void TwoDValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void TwoDValLayerSpec::Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net) {
-  LeabraLayerSpec::Compute_Act_impl(lay, ug, thr, net);
+  // todo: need to fix this!!
+//   LeabraLayerSpec::Compute_Act_impl(lay, ug, thr, net);
   ReadValue(ug, net);		// always read out the value
 }
 

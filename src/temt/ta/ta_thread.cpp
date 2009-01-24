@@ -165,6 +165,7 @@ void taThreadMgr::Destroy() {
 
 void taThreadMgr::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(tasks, this);
 }
 
 void taThreadMgr::CutLinks() {
@@ -176,7 +177,6 @@ void taThreadMgr::InitThreads() {
   int n_to_make = n_threads-1;	// 0 = main guy!
   if (n_to_make < 0) n_to_make = 0;
   int old_cnt = threads.size;
-//   inherited::setTaskCount(n_to_make);
   if (old_cnt == n_to_make) return;
   if (old_cnt > n_to_make) {
     // remove excess
@@ -203,6 +203,7 @@ void taThreadMgr::RemoveThreads() {
 }
 
 void taThreadMgr::CreateTasks(TypeDef* task_type) {
+  if(tasks.size == n_threads && tasks.el_typ == task_type) return;
   tasks.Reset();
   tasks.el_typ = task_type;
   tasks.New(n_threads, task_type);
