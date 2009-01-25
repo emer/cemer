@@ -1580,13 +1580,22 @@ void UnitSpec::BuildBiasCons() {
   net->BuildUnits();
 }
 
-void UnitSpec::Init_Acts(Unit* u) {
+////////////////////////////////////////////////////////////////////////////////
+//	Below are the primary computational interface to the Network Objects
+//	for performing algorithm-specific activation and learning
+//	Many functions operate directly on the units via threads, and then
+//	call through to the layers for any layer-level subsequent processing
+// 	units typically call spec versions except for basic stuff
+
+// 	Init functions are NOT threaded, while Compute functions are
+
+void UnitSpec::Init_Acts(Unit* u, Network* net) {
   u->Init_InputData();
   u->Init_Netin();
   u->act = 0.0f;
 }
 
-void UnitSpec::Init_dWt(Unit* u) {
+void UnitSpec::Init_dWt(Unit* u, Network* net) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
     if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
@@ -1596,7 +1605,7 @@ void UnitSpec::Init_dWt(Unit* u) {
     bias_spec->C_Init_dWt(&u->bias, u->bias.Cn(0), u, NULL); // this is a virtual fun
 }
 
-void UnitSpec::Init_Weights(Unit* u) {
+void UnitSpec::Init_Weights(Unit* u, Network* net) {
 #ifdef DMEM_COMPILE
   if(!u->DMem_IsLocal()) {
     // make up for random numbers not being used for non-local connections.
@@ -1619,7 +1628,7 @@ void UnitSpec::Init_Weights(Unit* u) {
   }
 }
 
-void UnitSpec::Init_Weights_post(Unit* u) {
+void UnitSpec::Init_Weights_post(Unit* u, Network* net) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
     if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
@@ -1627,7 +1636,7 @@ void UnitSpec::Init_Weights_post(Unit* u) {
   }
 }
 
-void UnitSpec::Compute_Netin(Unit* u) {
+void UnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
   u->net = 0.0f;
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
@@ -1638,21 +1647,31 @@ void UnitSpec::Compute_Netin(Unit* u) {
     u->net += u->bias.Cn(0)->wt;
 }
 
-void UnitSpec::Send_Netin(Unit* u) {
+void UnitSpec::Send_Netin(Unit* u, Network* net, int thread_no) {
   // typically the whole point of using sender based net input is that you want to check
   // here if the sending unit's activation (i.e., this one) is above some threshold
   // so you don't send if it isn't above that threshold..  this isn't implemented here though.
-  for(int g = 0; g < u->send.size; g++) {
-    SendCons* send_gp = u->send.FastEl(g);
-    Layer* tol = send_gp->prjn->layer;
-    if(tol->lesioned() || !send_gp->cons.size) continue;
-    send_gp->Send_Netin(u);
+  if(thread_no >= 0) {		// actual threaded case
+    for(int g = 0; g < u->send.size; g++) {
+      SendCons* send_gp = u->send.FastEl(g);
+      Layer* tol = send_gp->prjn->layer;
+      if(tol->lesioned() || !send_gp->cons.size) continue;
+      send_gp->Send_Netin_Thread(net, thread_no, u);
+    }
+  }
+  else {			// non-threaded case
+    for(int g = 0; g < u->send.size; g++) {
+      SendCons* send_gp = u->send.FastEl(g);
+      Layer* tol = send_gp->prjn->layer;
+      if(tol->lesioned() || !send_gp->cons.size) continue;
+      send_gp->Send_Netin(u);
+    }
   }
   if(u->bias.cons.size)
     u->net += u->bias.Cn(0)->wt;
 }
 
-void UnitSpec::Send_NetinToLay(Unit* u, Layer* tolay) {
+void UnitSpec::Send_NetinToLay(Unit* u, Network* net, Layer* tolay) {
   // typically the whole point of using sender based net input is that you want to check
   // here if the sending unit's activation (i.e., this one) is above some threshold
   // so you don't send if it isn't above that threshold..  this isn't implemented here though.
@@ -1666,14 +1685,14 @@ void UnitSpec::Send_NetinToLay(Unit* u, Layer* tolay) {
     u->net += u->bias.Cn(0)->wt;
 }
 
-void UnitSpec::Compute_Act(Unit* u) {
+void UnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   if(u->ext_flag & Unit::EXT)
     u->act = u->ext;
   else
     u->act = u->net;
 }
 
-void UnitSpec::Compute_dWt(Unit* u) {
+void UnitSpec::Compute_dWt(Unit* u, Network* net, int thread_no) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
     if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
@@ -1684,7 +1703,7 @@ void UnitSpec::Compute_dWt(Unit* u) {
   // This is not true of Init_Weights and Init_dWt, which are virtual.
 }
 
-void UnitSpec::Compute_Weights(Unit* u) {
+void UnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
     if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
@@ -1695,7 +1714,7 @@ void UnitSpec::Compute_Weights(Unit* u) {
   // This is not true of Init_Weights and Init_dWt, which are virtual.
 }
 
-float UnitSpec::Compute_SSE(bool& has_targ, Unit* u) {
+float UnitSpec::Compute_SSE(Unit* u, Network* net, bool& has_targ) {
   float sse = 0.0f;
   has_targ = false;
   if(u->ext_flag & (Unit::TARG | Unit::COMP)) {
@@ -3970,60 +3989,6 @@ void Layer::LinkSendCons() {
     u->LinkSendCons();
 }
 
-void Layer::Init_InputData() {
-  if(ext_flag == Unit::NO_EXTERNAL)
-    return;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
-    u->Init_InputData();
-  ext_flag = Unit::NO_EXTERNAL;
-}
-
-void  Layer::Init_Netin() {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
-    u->Init_Netin();
-}
-
-void  Layer::Init_NetinDelta() {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
-    u->Init_NetinDelta();
-}
-
-void  Layer::Init_Acts() {
-  ext_flag = Unit::NO_EXTERNAL;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
-    u->Init_Acts();
-}
-
-void  Layer::Init_dWt() {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
-    u->Init_dWt();
-}
-
-void Layer::Init_Weights() {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
-    u->Init_Weights();
-  sse = 0.0f;
-}
-
-void Layer::Init_Weights_post() {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
-    u->Init_Weights_post();
-}
-
 void Layer::SetLayUnitExtFlags(int flg) {
   SetExtFlag(flg);
   Unit* u;
@@ -4120,31 +4085,87 @@ void Layer::ApplyLayerFlags(Unit::ExtType act_ext_flags) {
   SetExtFlag(act_ext_flags);
 }
 
-void Layer::Compute_Netin() {
-  if(projections.leaves == 0) return; // if no connections, don't do it!
+////////////////////////////////////////////////////////////////////////////////
+//	Below are the primary computational interface to the Network Objects
+//	for performing algorithm-specific activation and learning
+//	Many functions operate directly on the units via threads, with
+//	optional call through to the layers for any layer-level subsequent processing
+
+void Layer::Init_InputData(Network* net) {
+  if(ext_flag == Unit::NO_EXTERNAL)
+    return;
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, units., i)
-    u->Compute_Netin(own_net);
+    u->Init_InputData();
+  ext_flag = Unit::NO_EXTERNAL;
 }
 
-void Layer::Send_Netin() {
+void  Layer::Init_Netin(Network* net) {
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, units., i)
+    u->Init_Netin();
+}
+
+void  Layer::Init_NetinDelta(Network* net) {
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, units., i)
+    u->Init_NetinDelta();
+}
+
+void  Layer::Init_Acts(Network* net) {
+  ext_flag = Unit::NO_EXTERNAL;
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, units., i)
+    u->Init_Acts(net);
+}
+
+void  Layer::Init_dWt(Network* net) {
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, units., i)
+    u->Init_dWt(net);
+}
+
+void Layer::Init_Weights(Network* net) {
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, units., i)
+    u->Init_Weights(net);
+  sse = 0.0f;
+}
+
+void Layer::Init_Weights_post(Network* net) {
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, units., i)
+    u->Init_Weights_post(net);
+}
+
+// NOTE: the following functions are the layer-level versions
+// nothing to do in base case
+// units have already been computed directly via threads
+
+void Layer::Compute_Netin(Network* net) {
+}
+
+void Layer::Send_Netin(Network* net) {
+}
+
+void Layer::Send_NetinToLay(Network* net, Layer* tolay) {
+  // this one is not threaded
   if(send_prjns.leaves == 0) return; // no connections, don't do it!
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, units., i)
-    u->Send_Netin();
+    u->Send_NetinToLay(net, tolay);
 }
 
-void Layer::Send_NetinToLay(Layer* tolay) {
-  if(send_prjns.leaves == 0) return; // no connections, don't do it!
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
-    u->Send_NetinToLay(tolay);
-}
-
-void Layer::Send_NetinToMe() {
+void Layer::Send_NetinToMe(Network* net) {
+  // this one is not threaded
   sent_already.Reset();
   Projection* p;
   taLeafItr i;
@@ -4152,30 +4173,21 @@ void Layer::Send_NetinToMe() {
     if(p->from->lesioned()) continue;
     int addr = (int)(long)p->from;
     if(sent_already.FindEl(addr) >= 0) continue;
-    p->from->Send_NetinToLay(this);
+    p->from->Send_NetinToLay(net, this);
     sent_already.Add(addr);
   }
 }
 
-void Layer::Compute_Act() {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
-    u->Compute_Act();
+void Layer::Compute_Act(Network* net) {
 }
-void Layer::Compute_Weights() {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
-    u->Compute_Weights();
+
+void Layer::Compute_Weights(Network* net) {
 }
-void Layer::Compute_dWt() {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
-    u->Compute_dWt();
+
+void Layer::Compute_dWt(Network* net) {
 }
-float Layer::Compute_SSE(int& n_vals, bool unit_avg, bool sqrt) {
+
+float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
   sse = 0.0f;
   if(!(ext_flag & (Unit::TARG | Unit::COMP))) return 0.0f;
@@ -4183,7 +4195,7 @@ float Layer::Compute_SSE(int& n_vals, bool unit_avg, bool sqrt) {
   taLeafItr i;
   bool has_targ;
   FOR_ITR_EL(Unit, u, units., i) {
-    sse += u->Compute_SSE(has_targ);
+    sse += u->Compute_SSE(net, has_targ);
     if(has_targ) n_vals++;
   }
   float rval = sse;
@@ -4197,6 +4209,10 @@ float Layer::Compute_SSE(int& n_vals, bool unit_avg, bool sqrt) {
   }
   return rval;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+//	The following are misc functionality not required for primary computing
+
 void Layer::Copy_Weights(const Layer* src) {
   units.Copy_Weights(&(src->units));
 }
@@ -4204,9 +4220,11 @@ void Layer::SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt) {
   // name etc is saved & processed by network level guy -- this is equiv to unit group
   units.SaveWeights_strm(strm, fmt);
 }
+
 int Layer::LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
   return units.LoadWeights_strm(strm, fmt, quiet);
 }
+
 int Layer::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
   return Unit_Group::SkipWeights_strm(strm, fmt, quiet);
 }
@@ -4807,7 +4825,7 @@ void UnitCallTask::run() {
   for(int i=uidx_st; i<uidx_ed; i+=uidx_inc) {
     Unit* un = network->units_flat[i];
     if(un->lesioned()) continue;
-    unit_call->call(un, network);
+    unit_call->call(un, network, task_id); // task id indicates threading, and which thread
   }
   
   // then auto-nibble until done!
@@ -4819,8 +4837,7 @@ void UnitCallTask::run() {
     const int mx = MIN(nu, nxt_uidx + nib_chnk);
     for(int i=nxt_uidx; i <mx; i++) {
       Unit* un = network->units_flat[i];
-      if(un->lesioned()) continue;
-      unit_call->call(un, network);
+      unit_call->call(un, network, task_id); // task id indicates threading, and which thread
     }
     if(mx == nu) break;		// we're the last guy
   }
@@ -4832,12 +4849,22 @@ void UnitCallThreadMgr::Initialize() {
   chunk_pct = .9f;
   nibble_chunk = 2;
   nibble_i = -1;
+  using_threads = false;
+  n_threads_prev = n_threads;
 }
 
 void UnitCallThreadMgr::Destroy() {
 }
 
+void UnitCallThreadMgr::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(!taMisc::is_loading && n_threads != n_threads_prev) {
+    network()->BuildUnits_Threads(); // calls InitAll where n_threads_prev is set..
+  }
+}
+
 void UnitCallThreadMgr::InitAll() {
+  n_threads_prev = n_threads;
   InitThreads();
   CreateTasks(&TA_UnitCallTask);
   SetTasksToThreads();
@@ -4860,14 +4887,16 @@ void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level) {
 }
 
 void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call) {
+  using_threads = false;
   Network* net = network();
   const int nu = net->units_flat.size;
   for(int i=0;i<nu;i++) {
-    unit_call->call(net->units_flat[i], net);
+    unit_call->call(net->units_flat[i], net, -1); // -1 indicates no threading
   }
 }
 
 void UnitCallThreadMgr::RunThreads(ThreadUnitCall* unit_call) {
+  using_threads = true;
   Network* net = network();
   const int nu = net->units_flat.size;
   int n_chunked = (int)((float)nu * chunk_pct);
@@ -5017,6 +5046,7 @@ void Network::InitLinks() {
   taBase::Own(wt_sync_time, this); //wt_sync_time.name = "wt_sync_time";
   taBase::Own(misc_time, this);  //misc_time.name = "misc_time";
 
+  taBase::Own(send_netin_tmp, this);
   taBase::Own(threads, this);
 
 #ifdef DMEM_COMPILE
@@ -5039,6 +5069,7 @@ void Network::CutLinks() {
   dmem_trl_comm.FreeComm();
 #endif
   units_flat.Reset();
+  send_netin_tmp.CutLinks();
   threads.CutLinks();
   RemoveCons();			// do this first in optimized way!
   RemoveUnitGroups();		// then units
@@ -5113,7 +5144,7 @@ void Network::Copy_(const Network& cp) {
   FixPrjnIndexes();			     // fix the recv_idx and send_idx (not copied!)
   UpdateAllSpecs();
   LinkSendCons();		// set the send cons (not copied!)
-  BuildUnits_FlatList();
+  BuildUnits_Threads();
 #ifdef DMEM_COMPILE
   DMem_DistributeUnits();
 #endif
@@ -5132,7 +5163,7 @@ void Network::UpdateAfterEdit_impl(){
 void Network::UpdtAfterNetMod() {
   //  SyncSendPrjns();
   CountRecvCons();
-  BuildUnits_FlatList();
+  BuildUnits_Threads();
   small_batch_n_eff = small_batch_n;
 #ifdef DMEM_COMPILE
   DMem_SyncNRecvCons();
@@ -5161,7 +5192,7 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
 
   ClearNetFlag(SAVE_UNITS_FORCE);	// might have been saved in on state from recover file or something!
 
-  BuildUnits_FlatList();
+  BuildUnits_Threads();
 #ifdef DMEM_COMPILE
   DMem_DistributeUnits();
   DMem_PruneNonLocalCons();
@@ -5245,17 +5276,18 @@ void Network::BuildUnits() {
 #ifdef DMEM_COMPILE
   DMem_DistributeUnits();
 #endif
-  UpdtAfterNetMod();
+  UpdtAfterNetMod();		// calls BuildUnits_Threads
   if(!taMisc::gui_active)    return;
 }
 
-void Network::BuildUnits_FlatList() {
+void Network::BuildUnits_Threads() {
   threads.InitAll();
   units_flat.Reset();
   int idx = 0;
   Layer* lay;
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, layers., li) {
+    if(lay->lesioned()) continue; // don't even add units from lesioned layers!!
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
@@ -5264,6 +5296,8 @@ void Network::BuildUnits_FlatList() {
       idx++;
     }
   }
+  // temporary storage for sender-based netinput computation
+  send_netin_tmp.SetGeom(2, units_flat.size, threads.n_threads);
 }
 
 void Network::BuildPrjns() {
@@ -5541,25 +5575,29 @@ void Network::Init_InputData(){
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
     if(!l->lesioned())
-      l->Init_InputData();
+      l->Init_InputData(this);
   }
 }
 
 void Network::Init_Netin(){
+  // init tmp storage..
+  send_netin_tmp.InitVals(0.0f);
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
     if(!l->lesioned())
-      l->Init_Netin();
+      l->Init_Netin(this);
   }
 }
 
 void Network::Init_NetinDelta(){
+  // init tmp storage..
+  send_netin_tmp.InitVals(0.0f);
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
     if(!l->lesioned())
-      l->Init_NetinDelta();
+      l->Init_NetinDelta(this);
   }
 }
 
@@ -5568,9 +5606,269 @@ void Network::Init_Acts(){
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
     if(!l->lesioned())
-      l->Init_Acts();
+      l->Init_Acts(this);
   }
 }
+
+void Network::Init_dWt(){
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->Init_dWt(this);
+  }
+}
+
+void Network::Init_Weights() {
+  // do lots of checking here to make sure, cuz often 1st thing that happens
+  //NOTE: this will typically be nested inside a gui check
+  if (!CheckConfig(true)) return;
+
+  taMisc::Busy();
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->Init_Weights(this);
+  }
+  Init_Weights_post();		// done after all initialization (for scaling wts...)
+
+#ifdef DMEM_COMPILE
+  // do the dmem weight symmetrizing!
+  DMem_SymmetrizeWts();
+#endif
+
+  Init_Acts();			// also re-init state at this point..
+
+  Init_Metrics();
+
+  sse = 0;
+  UpdateAllViews();
+  taMisc::DoneBusy();
+}
+
+void Network::Init_Weights_post() {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->Init_Weights_post(this);
+  }
+}
+
+void Network::Init_Metrics() {
+  Init_Counters();
+  Init_Stats();
+  Init_Timers();
+}
+
+void Network::Init_Counters() {
+  // this is one you do not reinit: loops over inits!
+//   batch = 0;
+  epoch = 0;
+  group = 0;
+  group_name = "";
+  trial = 0;
+  trial_name = "";
+  tick = 0;
+  cycle = 0;
+  time = 0.0f;
+}
+
+void Network::Init_Stats() {
+  sse = 0.0f;
+  sum_sse = 0.0f;
+  avg_sse = 0.0f;
+  cnt_err = 0.0f;
+
+  output_name = "";
+
+  cur_sum_sse = 0.0f;
+  avg_sse_n = 0;
+  cur_cnt_err = 0.0f;
+}
+
+void Network::Init_Timers() {
+  train_time.ResetUsed();
+  epoch_time.ResetUsed();
+  trial_time.ResetUsed();
+  settle_time.ResetUsed();
+  cycle_time.ResetUsed();
+  wt_sync_time.ResetUsed();
+  misc_time.ResetUsed();
+}
+
+// NOTE on compute load levels for thread.Run function (2nd arg) --
+// the versions here are coarse estimates -- 
+// these should be more accurately computed for specific algorithms,
+// and the relevant functions overwritten
+
+void Network::Compute_Netin() {
+  ThreadUnitCall un_net(&Unit::Compute_Netin);
+  threads.Run(&un_net, .9f);
+
+#ifdef DMEM_COMPILE
+  DMem_SyncNet();
+#endif
+}
+
+void Network::Compute_Netin_layers() {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->Compute_Netin(this);
+  }
+}
+
+void Network::Send_Netin() {
+  ThreadUnitCall un_net(&Unit::Send_Netin);
+  threads.Run(&un_net, .9f);
+
+  if(threads.using_threads) {
+    // now need to roll up the netinput into unit vals
+    const int nu = units_flat.size;
+    const int nt = threads.tasks.size;
+    
+    for(int i=0;i<nu;i++) {
+      Unit* un = units_flat[i];
+      float nw_nt = 0.0f;
+      for(int j=0;j<nt;j++) {
+	nw_nt += send_netin_tmp.FastEl(i, j);
+      }
+      un->net += nw_nt;		// += cuz could have had other stuff in there too (e.g. bias wts)
+    }
+  }
+
+#ifdef DMEM_COMPILE
+  DMem_SyncNet();
+#endif
+}
+
+void Network::Send_Netin_layers() {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->Send_Netin(this);
+  }
+}
+
+void Network::Compute_Act() {
+  ThreadUnitCall un_net(&Unit::Compute_Act);
+  threads.Run(&un_net, .2f);
+}
+
+void Network::Compute_Act_layers() {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->Compute_Act(this);
+  }
+}
+
+void Network::Compute_dWt() {
+  ThreadUnitCall un_net(&Unit::Compute_dWt);
+  threads.Run(&un_net, .5f);
+}
+
+void Network::Compute_dWt_layers() {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->Compute_dWt(this);
+  }
+}
+
+bool Network::Compute_Weights_Test(int trial_no) {
+  if(train_mode == TEST) return false;
+  if(wt_update == ON_LINE) return true;
+  if(wt_update == BATCH) return false;
+  if(wt_update == SMALL_BATCH) {
+    int trial_no_eff = trial_no;
+#ifdef DMEM_COMPILE
+    if(dmem_trl_comm.nprocs > 1) {
+      trial_no_eff = ((trial_no_eff-1) / dmem_trl_comm.nprocs) + 1;
+      // subtract the 1 that was presumably added to trial_no, then add it back
+    }
+#endif
+    return (trial_no_eff % small_batch_n_eff == 0);
+  }
+  return false;
+}
+
+void Network::Compute_Weights() {
+#ifdef DMEM_COMPILE
+  DMem_SumDWts(dmem_trl_comm.comm);
+#endif
+  Compute_Weights_impl();
+}
+
+void Network::Compute_Weights_impl() {
+  ThreadUnitCall un_net(&Unit::Compute_Weights);
+  threads.Run(&un_net, .4f);
+}
+
+void Network::Compute_Weights_layers() {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->Compute_Weights(this);
+  }
+}
+
+void Network::Compute_SSE(bool unit_avg, bool sqrt) {
+  sse = 0.0f;
+  int n_vals = 0;
+  int lay_vals = 0;
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(l->lesioned()) continue;
+    sse += l->Compute_SSE(this, lay_vals, unit_avg, sqrt);
+    n_vals += lay_vals;
+  }
+  if(unit_avg && n_vals > 0)
+    sse /= (float)n_vals;
+  if(sqrt)
+    sse = sqrtf(sse);
+  cur_sum_sse += sse;
+  avg_sse_n++;
+  if(sse > cnt_err_tol)
+    cur_cnt_err += 1.0;
+}
+
+void Network::Compute_TrialStats() {
+  Compute_SSE(sse_unit_avg, sse_sqrt);
+}
+
+void Network::DMem_ShareTrialData(DataTable* dt, int n_rows) {
+#ifdef DMEM_COMPILE
+  dt->DMem_ShareRows(dmem_trl_comm.comm, n_rows);
+#endif  
+}
+
+void Network::Compute_EpochSSE() {
+  sum_sse = cur_sum_sse;
+  if(avg_sse_n > 0)
+    avg_sse = cur_sum_sse / (float)avg_sse_n;
+  cnt_err = cur_cnt_err;
+
+  cur_sum_sse = 0.0f;
+  avg_sse_n = 0;
+  cur_cnt_err = 0.0f;
+}
+
+void Network::Compute_EpochStats() {
+#ifdef DMEM_COMPILE
+  DMem_ComputeAggs(dmem_trl_comm.comm);
+#endif
+  Compute_EpochSSE();
+}
+
 
 #ifdef DMEM_COMPILE
 
@@ -5903,235 +6201,7 @@ void Network::DMem_SymmetrizeWts() {
 //     cerr << "---------- past sym_wts barrier ---------" << endl;
 }
 
-#endif
-
-void Network::Init_dWt(){
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesioned())
-      l->Init_dWt();
-  }
-}
-
-void Network::Init_Weights() {
-  // do lots of checking here to make sure, cuz often 1st thing that happens
-  //NOTE: this will typically be nested inside a gui check
-  if (!CheckConfig(true)) return;
-
-  taMisc::Busy();
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesioned())
-      l->Init_Weights();
-  }
-  Init_Weights_post();		// done after all initialization (for scaling wts...)
-
-#ifdef DMEM_COMPILE
-  // do the dmem weight symmetrizing!
-  DMem_SymmetrizeWts();
-#endif
-
-  Init_Acts();			// also re-init state at this point..
-
-  Init_Metrics();
-
-  sse = 0;
-  UpdateAllViews();
-  taMisc::DoneBusy();
-}
-
-void Network::Init_Metrics() {
-  Init_Counters();
-  Init_Stats();
-  Init_Timers();
-}
-
-void Network::Init_Counters() {
-  // this is one you do not reinit: loops over inits!
-//   batch = 0;
-  epoch = 0;
-  group = 0;
-  group_name = "";
-  trial = 0;
-  trial_name = "";
-  tick = 0;
-  cycle = 0;
-  time = 0.0f;
-}
-
-void Network::Init_Stats() {
-  sse = 0.0f;
-  sum_sse = 0.0f;
-  avg_sse = 0.0f;
-  cnt_err = 0.0f;
-
-  output_name = "";
-
-  cur_sum_sse = 0.0f;
-  avg_sse_n = 0;
-  cur_cnt_err = 0.0f;
-}
-
-void Network::Init_Timers() {
-  train_time.ResetUsed();
-  epoch_time.ResetUsed();
-  trial_time.ResetUsed();
-  settle_time.ResetUsed();
-  cycle_time.ResetUsed();
-  wt_sync_time.ResetUsed();
-  misc_time.ResetUsed();
-}
-
-void Network::Init_Weights_post() {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesioned())
-      l->Init_Weights_post();
-  }
-}
-
-void Network::Compute_Netin() {
-  ThreadUnitCall un_net(&Unit::Compute_Netin);
-  threads.Run(&un_net, .9f);	// todo: .9 is rough est -- most computationally demanding
-
-//   Layer* l;
-//   taLeafItr i;
-//   FOR_ITR_EL(Layer, l, layers., i) {
-//     if(!l->lesioned())
-//       l->Compute_Netin();
-//   }
-#ifdef DMEM_COMPILE
-  DMem_SyncNet();
-#endif
-}
-
-void Network::Send_Netin() {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesioned())
-      l->Send_Netin();
-  }
-#ifdef DMEM_COMPILE
-  DMem_SyncNet();
-#endif
-}
-
-void Network::Compute_Act_default() {
-//   if (!((bool)net_inst &&
-//       net_inst->OnCompute_Act())) 
-//   {
-    Layer* l;
-    taLeafItr i;
-    FOR_ITR_EL(Layer, l, layers., i) {
-      if(!l->lesioned())
-        l->Compute_Act();
-    }
-//   }
-}
-
-void Network::Compute_dWt() {
-//   if (!((bool)net_inst &&
-//       net_inst->OnCompute_dWt())) 
-//   {
-    Layer* l;
-    taLeafItr i;
-    FOR_ITR_EL(Layer, l, layers., i) {
-      if(!l->lesioned())
-        l->Compute_dWt();
-    }
-//   }
-}
-
-bool Network::Compute_Weights_Test(int trial_no) {
-  if(train_mode == TEST) return false;
-  if(wt_update == ON_LINE) return true;
-  if(wt_update == BATCH) return false;
-  if(wt_update == SMALL_BATCH) {
-    int trial_no_eff = trial_no;
-#ifdef DMEM_COMPILE
-    if(dmem_trl_comm.nprocs > 1) {
-      trial_no_eff = ((trial_no_eff-1) / dmem_trl_comm.nprocs) + 1;
-      // subtract the 1 that was presumably added to trial_no, then add it back
-    }
-#endif
-    return (trial_no_eff % small_batch_n_eff == 0);
-  }
-  return false;
-}
-
-void Network::Compute_Weights_impl() {
-//   if (!((bool)net_inst &&
-//       net_inst->OnCompute_Weights())) 
-//   {
-    Layer* l;
-    taLeafItr i;
-    FOR_ITR_EL(Layer, l, layers., i) {
-      if(!l->lesioned())
-        l->Compute_Weights();
-    }
-//   }
-}
-
-void Network::Compute_Weights() {
-#ifdef DMEM_COMPILE
-  DMem_SumDWts(dmem_trl_comm.comm);
-#endif
-  Compute_Weights_impl();
-}
-
-void Network::Compute_SSE(bool unit_avg, bool sqrt) {
-  sse = 0.0f;
-  int n_vals = 0;
-  int lay_vals = 0;
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
-    if(l->lesioned()) continue;
-    sse += l->Compute_SSE(lay_vals, unit_avg, sqrt);
-    n_vals += lay_vals;
-  }
-  if(unit_avg && n_vals > 0)
-    sse /= (float)n_vals;
-  if(sqrt)
-    sse = sqrtf(sse);
-  cur_sum_sse += sse;
-  avg_sse_n++;
-  if(sse > cnt_err_tol)
-    cur_cnt_err += 1.0;
-}
-
-void Network::Compute_TrialStats() {
-  Compute_SSE(sse_unit_avg, sse_sqrt);
-}
-
-void Network::DMem_ShareTrialData(DataTable* dt, int n_rows) {
-#ifdef DMEM_COMPILE
-  dt->DMem_ShareRows(dmem_trl_comm.comm, n_rows);
-#endif  
-}
-
-void Network::Compute_EpochSSE() {
-  sum_sse = cur_sum_sse;
-  if(avg_sse_n > 0)
-    avg_sse = cur_sum_sse / (float)avg_sse_n;
-  cnt_err = cur_cnt_err;
-
-  cur_sum_sse = 0.0f;
-  avg_sse_n = 0;
-  cur_cnt_err = 0.0f;
-}
-
-void Network::Compute_EpochStats() {
-#ifdef DMEM_COMPILE
-  DMem_ComputeAggs(dmem_trl_comm.comm);
-#endif
-  Compute_EpochSSE();
-}
-
+#endif	// DMEM
 
 void Network::Copy_Weights(const Network* src) {
   taMisc::Busy();
