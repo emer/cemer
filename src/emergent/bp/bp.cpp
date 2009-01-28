@@ -137,24 +137,32 @@ void BpUnitSpec::SetCurLrate(BpUnit* u, int epoch) {
   }
 }
 
-void BpUnitSpec::Init_Acts(Unit* u) {
-  UnitSpec::Init_Acts(u);
+void BpUnitSpec::Init_Acts(Unit* u, Network* net) {
+  UnitSpec::Init_Acts(u, net);
   BpUnit* bu = (BpUnit*)u;
   bu->err = bu->dEdA = bu->dEdNet = 0.0f;
 }
 
-void BpUnitSpec::Compute_Act(Unit* u) { // this does the sigmoid
+void BpUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
+  if(u->ext_flag & Unit::EXT) return; // don't compute on clamped inputs
+  inherited::Compute_Netin(u, net, thread_no);
+}
+
+void BpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
+  // this does the sigmoid
   if(u->ext_flag & Unit::EXT)
     u->act = u->ext;
   else
     u->act = act_range.Project(sig.Eval(u->net));
 }
 
-void BpUnitSpec::Compute_Error(BpUnit* u) {
+void BpUnitSpec::Compute_Error(BpUnit* u, BpNetwork* net, int thread_no) {
   if(u->ext_flag & Unit::TARG) (*err_fun)(this, u);
 }
 
-void BpUnitSpec::Compute_dEdA(BpUnit* u) {
+void BpUnitSpec::Compute_dEdA(BpUnit* u, BpNetwork* net, int thread_no) {
+  // don't compute to inputs by default
+  if(net->bp_to_inputs || (u->ext_flag & Unit::EXT)) return;
   u->dEdA = 0.0f;
   u->err = 0.0f;
   for(int g=0; g<u->send.size; g++) {
@@ -164,20 +172,20 @@ void BpUnitSpec::Compute_dEdA(BpUnit* u) {
   }
 }
 
-void BpUnitSpec::Compute_dEdNet(BpUnit* u) {
+void BpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no) {
   u->dEdNet = u->dEdA * sig.gain * (u->act - act_range.min) *
     (act_range.max - u->act) * act_range.scale;
 }
 
-void BpUnitSpec::Compute_dWt(Unit* u) {
+void BpUnitSpec::Compute_dWt(Unit* u, Network* net, int thread_no) {
   if(u->ext_flag & Unit::EXT)  return; // don't compute dwts for clamped units
-  UnitSpec::Compute_dWt(u);
+  UnitSpec::Compute_dWt(u, net, thread_no);
   ((BpConSpec*)bias_spec.SPtr())->B_Compute_dWt((BpCon*)u->bias.Cn(0), (BpUnit*)u);
 }
 
-void BpUnitSpec::Compute_Weights(Unit* u) {
+void BpUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
   if(u->ext_flag & Unit::EXT)  return; // don't update for clamped units
-  UnitSpec::Compute_Weights(u);
+  UnitSpec::Compute_Weights(u, net, thread_no);
   ((BpConSpec*)bias_spec.SPtr())->B_Compute_Weights((BpCon*)u->bias.Cn(0), (BpUnit*)u);
 }
 
@@ -196,7 +204,7 @@ void BpUnitSpec::GraphActFun(DataTable* graph_data, float min, float max) {
   float x;
   for(x = min; x <= max; x += .01f) {
     un.net = x;
-    Compute_Act(&un);
+    Compute_Act(&un, NULL, -1);
     graph_data->AddBlankRow();
     netin->SetValAsFloat(x, -1);
     act->SetValAsFloat(un.act, -1);
@@ -312,12 +320,12 @@ void BpContextSpec::UpdateAfterEdit_impl() {
   return true;
 } */
 
-void BpContextSpec::Init_Acts(Unit* u) {
-  BpUnitSpec::Init_Acts(u);
+void BpContextSpec::Init_Acts(Unit* u, Network* net) {
+  BpUnitSpec::Init_Acts(u, net);
   u->act = initial_act.Gen();
 }
 
-void BpContextSpec::Compute_Act(Unit* u) {
+void BpContextSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
 // todo: add a checkconfig to ensure this congroup exists!
   RecvCons* recv_gp = (RecvCons*)u->recv.SafeEl(0); // first group
   Unit* hu = (Unit*)recv_gp->Un(0);
@@ -346,14 +354,14 @@ void LinearBpUnitSpec::UpdateAfterEdit_impl() {
   }
 }
 
-void LinearBpUnitSpec::Compute_Act(Unit* u) {
+void LinearBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   if(u->ext_flag & Unit::EXT)
     u->act = act_range.Clip(u->ext);
   else
     u->act = act_range.Clip(u->net);
 }
 
-void LinearBpUnitSpec::Compute_dEdNet(BpUnit* u) {
+void LinearBpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no) {
   u->dEdNet = u->dEdA;		// that's pretty easy!
 }
 
@@ -377,14 +385,14 @@ void ThreshLinBpUnitSpec::UpdateAfterEdit_impl() {
   }
 }
 
-void ThreshLinBpUnitSpec::Compute_Act(Unit* u) {
+void ThreshLinBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   if(u->ext_flag & Unit::EXT)
     u->act = act_range.Clip(u->ext);
   else
     u->act = act_range.Clip((u->net > threshold) ? (u->net - threshold) : 0.0f);
 }
 
-void ThreshLinBpUnitSpec::Compute_dEdNet(BpUnit* u) {
+void ThreshLinBpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no) {
   // derivative is 1 in linear part, 0 elsewhere
   u->dEdNet = (u->net > threshold) ? u->dEdA : 0.0f;
 }
@@ -400,7 +408,7 @@ void NoisyBpUnitSpec::Initialize() {
   noise.var = .1f;
 }
 
-void NoisyBpUnitSpec::Compute_Act(Unit* u) {
+void NoisyBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   if(u->ext_flag & Unit::EXT)
     u->act = act_range.Clip(u->ext + noise.Gen());
   else   // need to keep in SigmoidSpec clipped range!
@@ -414,7 +422,8 @@ void NoisyBpUnitSpec::Compute_Act(Unit* u) {
 //////////////////////////
 
 
-void StochasticBpUnitSpec::Compute_Act(Unit* u) { // this does the probabiltiy on sigmoid
+void StochasticBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
+  // this does the probabiltiy on sigmoid
   if(u->ext_flag & Unit::EXT)
     u->act = u->ext;
   else {
@@ -441,23 +450,27 @@ void RBFBpUnitSpec::UpdateAfterEdit_impl() {
   denom_const = 0.5f / var;
 }
 
-void RBFBpUnitSpec::Compute_Netin(Unit* u) {
+void RBFBpUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
+  if(u->ext_flag & Unit::EXT) return; // don't compute on clamped inputs
   // do distance instead of net input
   u->net = 0.0f;
   for(int g=0; g<u->recv.size; g++) {
     RecvCons* recv_gp = (RecvCons*)u->recv.FastEl(g);
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
     u->net += recv_gp->Compute_Dist(u);
   }
+  if(u->bias.cons.size)
+    u->net += u->bias.Cn(0)->wt;
 }
 
-void RBFBpUnitSpec::Compute_Act(Unit* u) {
+void RBFBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   if(u->ext_flag & Unit::EXT)
     u->act = u->ext;
   else
     u->act = norm_const * expf(-denom_const * u->net);
 }
 
-void RBFBpUnitSpec::Compute_dEdNet(BpUnit* u) {
+void RBFBpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no) {
   u->dEdNet = - u->dEdA * u->act * denom_const;
 }
 
@@ -478,7 +491,7 @@ void BumpBpUnitSpec::UpdateAfterEdit_impl() {
 }
 
 
-void BumpBpUnitSpec::Compute_Act(Unit* u) {
+void BumpBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   if(u->ext_flag & Unit::EXT)
     u->act = u->ext;
   else {
@@ -487,7 +500,7 @@ void BumpBpUnitSpec::Compute_Act(Unit* u) {
   }
 }
 
-void BumpBpUnitSpec::Compute_dEdNet(BpUnit* u) {
+void BumpBpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no) {
   // dadnet = a * 2 * (net - mean) / std_dev
   u->dEdNet = - u->dEdA * u->act * 2.0f * (u->net - mean) * std_dev_r;
 }
@@ -496,18 +509,19 @@ void BumpBpUnitSpec::Compute_dEdNet(BpUnit* u) {
 //   Exp, SoftMax       //
 //////////////////////////
 
-void ExpBpUnitSpec::Compute_Act(Unit* u) {
-  float net = sig.gain * u->net;
-  net = MAX(net, -50.0f);
-  net = MIN(net, 50.0f);
-  u->act = expf(net);
+void ExpBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
+  float netin = sig.gain * u->net;
+  netin = MAX(netin, -50.0f);
+  netin = MIN(netin, 50.0f);
+  u->act = expf(netin);
 }
 
-void ExpBpUnitSpec::Compute_dEdNet(BpUnit* u) {
+void ExpBpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no) {
   u->dEdNet = u->dEdA * sig.gain * u->act;
 }
 
-void SoftMaxBpUnitSpec::Compute_Act(Unit* u) {
+void SoftMaxBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
+  // todo: move this to a check config:
   if((u->recv.size < 2) || (((RecvCons*)u->recv[0])->cons.size == 0)
      || (((RecvCons*)u->recv[1])->cons.size == 0)) {
     taMisc::Error("*** SoftMaxBpUnitSpec: expecting one one-to-one projection from",
@@ -525,7 +539,7 @@ void SoftMaxBpUnitSpec::Compute_Act(Unit* u) {
     u->act = FLT_MIN;
 }
 
-void SoftMaxBpUnitSpec::Compute_dEdNet(BpUnit* u) {
+void SoftMaxBpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no) {
   // effectively linear
   u->dEdNet = u->dEdA;
 }
@@ -548,6 +562,16 @@ void BpNetwork::Initialize() {
   bp_to_inputs = false;
 }
 
+void BpNetwork::UpdateAfterEdit_impl() {
+  if(TestWarning(dmem_nprocs > 1,
+	      "Note: you cannot currently use dmem (MPI) to compute in Bp networks,",
+	      "due to incompatibilities with the new threading mechanism.",
+		 "dmem_nprocs was set back to 1 for you.")) {
+    dmem_nprocs = 1;
+  }
+  inherited::UpdateAfterEdit_impl();
+}
+
 void BpNetwork::SetProjectionDefaultTypes(Projection* prjn) {
   inherited::SetProjectionDefaultTypes(prjn);
   prjn->con_type = &TA_BpCon;
@@ -568,54 +592,26 @@ void BpNetwork::SetCurLrate() {
   }
 }
 
-void BpNetwork::Compute_Act() {
-  // compute activations; replaces generic
-  Layer* lay;
-  taLeafItr l_itr;
-  FOR_ITR_EL(Layer, lay, layers., l_itr) {
-    if (lay->lesioned())	continue;
-    if (!(lay->ext_flag & Unit::EXT)) {
-      lay->Compute_Netin();
-#ifdef DMEM_COMPILE
-      lay->DMem_SyncNet();
-#endif
-    }
-    lay->Compute_Act();
-  }
-  taiMiscCore::RunPending();
-}
-
 void BpNetwork::Compute_dEdA_dEdNet() {
-  // send the error back
-  Layer* lay;
-  int i;//
-  for (i = layers.leaves-1; i>= 0; i--) {
-    lay = ((Layer*) layers.Leaf(i));
-    if(lay->lesioned() || (!bp_to_inputs && (lay->ext_flag & Unit::EXT))) // don't compute err on inputs
-      continue;
+  ThreadUnitCall un_call((ThreadUnitMethod)(BpUnitMethod)&BpUnit::Compute_dEdA_dEdNet);
+  threads.Run(&un_call, .2f, true, true); // backwards = true, implies layer_sync=true
 
-    BpUnit* u;
-    taLeafItr u_itr;
-#ifdef DMEM_COMPILE
-    // first compute dEdA from connections and share it
-    FOR_ITR_EL(BpUnit, u, lay->units., u_itr)
-      u->Compute_dEdA();
-    lay->dmem_share_units.Aggregate(3, MPI_SUM);
+// #ifdef DMEM_COMPILE
+//     // first compute dEdA from connections and share it
+//     FOR_ITR_EL(BpUnit, u, lay->units., u_itr)
+//       u->Compute_dEdA();
+//     lay->dmem_share_units.Aggregate(3, MPI_SUM);
 
-    // then compute error to add to dEdA, and dEdNet
-    FOR_ITR_EL(BpUnit, u, lay->units., u_itr) {
-      u->Compute_Error();
-      u->Compute_dEdNet();
-    }
-#else
-    FOR_ITR_EL(BpUnit, u, lay->units., u_itr)
-      u->Compute_dEdA_dEdNet();
-#endif
-  }
+//     // then compute error to add to dEdA, and dEdNet
+//     FOR_ITR_EL(BpUnit, u, lay->units., u_itr) {
+//       u->Compute_Error();
+//       u->Compute_dEdNet();
+//     }
+// #else
 }
 
 void BpNetwork::Compute_Error() {
-  // compute errors
+  // compute errors -- definitely not worth threading due to very limited units it run on
   Layer* lay;
   taLeafItr l_itr;
   FOR_ITR_EL(Layer, lay, layers., l_itr) {
@@ -626,7 +622,7 @@ void BpNetwork::Compute_Error() {
     taLeafItr u_itr;
     FOR_ITR_EL(BpUnit, u, lay->units., u_itr) {
       u->dEdA = 0.0f;		// must reset -- error is incremental!
-      u->Compute_Error();
+      u->Compute_Error(this);
     }
   }
 }
@@ -635,7 +631,7 @@ void BpNetwork::Trial_Run() {
   DataUpdate(true);
   SetCurLrate();
 
-  Compute_Act();
+  Compute_NetinAct();
   Compute_dEdA_dEdNet();
 
   // compute the weight err derivatives (only if not testing...)

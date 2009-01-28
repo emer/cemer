@@ -43,8 +43,8 @@ void RBpUnitSpec::Initialize() {
   fast_hard_clamp_net = false;
 }
 
-void RBpUnitSpec::Init_Acts(Unit* u) {
-  BpUnitSpec::Init_Acts(u);
+void RBpUnitSpec::Init_Acts(Unit* u, Network* net) {
+  BpUnitSpec::Init_Acts(u, net);
   RBpUnit* ru = (RBpUnit*)u;
   ru->act = initial_act.Gen();
   // set initial net value too..
@@ -72,21 +72,21 @@ void RBpUnitSpec::UpdateAfterEdit_impl() {
     taMisc::Error("Warning: dt must be in the [0..1] range!");
 }
 
-void RBpUnitSpec::ResetStored(RBpUnit* u) {
+void RBpUnitSpec::ResetStored(RBpUnit* u, BpNetwork* net, int thread_no) {
   u->ext_flags.Reset();
   u->targs.Reset();
   u->exts.Reset();
   u->acts.Reset();
 }
 
-void RBpUnitSpec::Compute_ClampExt(RBpUnit* u) {
+void RBpUnitSpec::Compute_ClampExt(RBpUnit* u, BpNetwork* net, int thread_no) {
   if(!soft_clamp && (u->ext_flag & Unit::EXT)) {
     u->act = u->act_raw = u->ext;
     u->net = sig.Inverse(SigmoidSpec::Clip(act_range.Normalize(u->act)));
   }
 }
 
-void RBpUnitSpec::Compute_HardClampNet(RBpUnit* ru) {
+void RBpUnitSpec::Compute_HardClampNet(RBpUnit* ru, BpNetwork* net, int thread_no) {
   ru->clmp_net = 0.0f;
   if(!fast_hard_clamp_net) return;
   for(int g=0; g<ru->recv.size; g++) {
@@ -100,7 +100,8 @@ void RBpUnitSpec::Compute_HardClampNet(RBpUnit* ru) {
     ru->clmp_net += ru->bias.Cn(0)->wt;
 }
 
-void RBpUnitSpec::Compute_Netin(Unit* u) {
+void RBpUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
+  if(u->ext_flag & Unit::EXT) return; // don't compute on clamped inputs
   RBpUnit* ru = (RBpUnit*)u;
   ru->prv_net = ru->net; // save current net as previous
   if(fast_hard_clamp_net) {
@@ -114,11 +115,11 @@ void RBpUnitSpec::Compute_Netin(Unit* u) {
     }
   }
   else {
-    BpUnitSpec::Compute_Netin(u);
+    BpUnitSpec::Compute_Netin(u, net, thread_no);
   }
 }
 
-void RBpUnitSpec::Compute_Act_impl(RBpUnit* u) {
+void RBpUnitSpec::Compute_Act_impl(RBpUnit* u, BpNetwork* net, int thread_no) {
   if(time_avg == ACTIVATION) {
     u->act_raw = act_range.Project(sig.Eval(u->net));
     u->da = u->act_raw - u->prv_act;
@@ -131,13 +132,13 @@ void RBpUnitSpec::Compute_Act_impl(RBpUnit* u) {
   }
 }
 
-void RBpUnitSpec::Compute_Act(Unit* u) {
+void RBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   RBpUnit* rbu = (RBpUnit*)u;
   rbu->prv_act = rbu->act;	// save current act as previous
   if(u->ext_flag & Unit::EXT) {
     if(soft_clamp) {
       rbu->net += soft_clamp_gain * rbu->ext;
-      Compute_Act_impl(rbu);
+      Compute_Act_impl(rbu, (BpNetwork*)net, thread_no);
     }
     else {
       rbu->act = rbu->act_raw = rbu->ext;
@@ -145,19 +146,19 @@ void RBpUnitSpec::Compute_Act(Unit* u) {
     }
   }
   else
-    Compute_Act_impl(rbu);
+    Compute_Act_impl(rbu, (BpNetwork*)net, thread_no);
 
   if(store_states)
     rbu->StoreState();
 }
 
-void RBpUnitSpec::Compute_dEdA(BpUnit* u) {
+void RBpUnitSpec::Compute_dEdA(BpUnit* u, BpNetwork* net, int thread_no) {
   RBpUnit* rbu = (RBpUnit*)u;
   rbu->prv_dEdA = rbu->dEdA;	// save current value
-  BpUnitSpec::Compute_dEdA(u);	// get new dEdA
+  BpUnitSpec::Compute_dEdA(u, net, thread_no);	// get new dEdA
 }
 
-void RBpUnitSpec::Compute_dEdNet(BpUnit* u) {
+void RBpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no) {
   RBpUnit* rbu = (RBpUnit*)u;
 
   if(time_avg == ACTIVATION) {
@@ -173,7 +174,7 @@ void RBpUnitSpec::Compute_dEdNet(BpUnit* u) {
     return;
   }
 
-  BpUnitSpec::Compute_dEdNet(u); // get new dEdNet
+  BpUnitSpec::Compute_dEdNet(u, net, thread_no); // get new dEdNet
 
   if(time_avg == NET_INPUT) {
     rbu->ddE = rbu->dEdNet - rbu->prv_dEdNet;
@@ -181,15 +182,15 @@ void RBpUnitSpec::Compute_dEdNet(BpUnit* u) {
   }
 }
 
-void RBpUnitSpec::Compute_dWt(Unit* u) {
+void RBpUnitSpec::Compute_dWt(Unit* u, Network* net, int thread_no) {
   if((u->ext_flag & Unit::EXT) && !soft_clamp && !updt_clamped_wts)  return; // don't compute dwts for clamped units
-  UnitSpec::Compute_dWt(u);
+  UnitSpec::Compute_dWt(u, net, thread_no);
   ((BpConSpec*)bias_spec.SPtr())->B_Compute_dWt((BpCon*)u->bias.Cn(0), (BpUnit*)u);
 }
 
-void RBpUnitSpec::Compute_Weights(Unit* u) {
+void RBpUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
   if((u->ext_flag & Unit::EXT) && !soft_clamp && !updt_clamped_wts) return; // don't update for clamped units
-  UnitSpec::Compute_Weights(u);
+  UnitSpec::Compute_Weights(u, net, thread_no);
   ((BpConSpec*)bias_spec.SPtr())->B_Compute_Weights((BpCon*)u->bias.Cn(0), (BpUnit*)u);
 }
 
@@ -343,7 +344,7 @@ void RBpContextSpec::CopyContext(RBpUnit* u) {
   u->SetExtFlag(unit_flags);
 }
 
-void RBpContextSpec::Compute_Act(Unit* u) {
+void RBpContextSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   if(store_states)
     ((RBpUnit*)u)->StoreState();
 }
@@ -368,7 +369,7 @@ void NoisyRBpUnitSpec::UpdateAfterEdit_impl() {
   sqrt_dt = sqrtf(dt);
 }
 
-void NoisyRBpUnitSpec::Compute_Act_impl(RBpUnit* u) {
+void NoisyRBpUnitSpec::Compute_Act_impl(RBpUnit* u, BpNetwork* net, int thread_no) {
   if(time_avg == ACTIVATION) {
     u->act_raw =
       act_range.Project(SigmoidSpec::Clip(sig.Eval(u->net) + noise.Gen()*sqrt_dt));

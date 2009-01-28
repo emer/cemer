@@ -3413,6 +3413,7 @@ void Layer::Initialize() {
 
   sse = 0.0f;
   icon_value = 0.0f;
+  units_flat_idx = -1;
 
   n_units = 0;			// note: v3compat obs
 }
@@ -4875,27 +4876,112 @@ void UnitCallThreadMgr::InitAll() {
   }
 }
 
-void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level) {
+void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level,
+			    bool backwards, bool layer_sync) {
   Network* net = network();
   if(n_threads == 1 || comp_level < thread_comp_thr || net->units_flat.size < min_units
      || net->units_flat.size < tasks.size) {
-    RunThread0(unit_call);
+    RunThread0(unit_call, backwards);
   }
   else {
-    RunThreads(unit_call);
+    if(backwards)
+      RunThreads_BkwdLaySync(unit_call); // implies lay sync
+    else if(layer_sync)
+      RunThreads_FwdLaySync(unit_call);
+    else
+      RunThreads_FwdNetSync(unit_call);
   }
 }
 
-void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call) {
+void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call, bool backwards) {
   using_threads = false;
   Network* net = network();
   const int nu = net->units_flat.size;
-  for(int i=0;i<nu;i++) {
-    unit_call->call(net->units_flat[i], net, -1); // -1 indicates no threading
+  if(backwards) {
+    for(int i=nu-1;i>=0;i--) {
+      unit_call->call(net->units_flat[i], net, -1); // -1 indicates no threading
+    }
+  }
+  else {			// forwards
+    for(int i=0;i<nu;i++) {
+      unit_call->call(net->units_flat[i], net, -1); // -1 indicates no threading
+    }
   }
 }
 
-void UnitCallThreadMgr::RunThreads(ThreadUnitCall* unit_call) {
+void UnitCallThreadMgr::RunThreads_FwdNetSync(ThreadUnitCall* unit_call) {
+  using_threads = true;
+  Network* net = network();
+  const int nu = net->units_flat.size;
+  int n_chunked = (int)((float)nu * chunk_pct);
+  n_chunked = MAX(n_chunked, tasks.size);
+
+  int chnks = n_chunked / tasks.size;
+  n_chunked = chnks * tasks.size; // must be even multiple of threads!
+  while(n_chunked > nu)
+    n_chunked -= tasks.size;
+
+  for(int i=0;i<tasks.size;i++) {
+    UnitCallTask* uct = (UnitCallTask*)tasks[i];
+    uct->unit_call = unit_call;
+    uct->uidx_st = i;
+    uct->uidx_ed = n_chunked - ((tasks.size-1) - i);
+    uct->uidx_inc = tasks.size;
+  }
+  nibble_i = n_chunked;
+
+  // then run the subsidiary guys
+  for(int i=0;i<threads.size;i++) {
+    threads[i]->runTask();
+  }
+  tasks[0]->run();		// run our own set..
+
+  // note: all the nibbling is automatic within the single run() deploy
+
+  // finally, always need to sync at end to ensure that everyone is done!
+  for(int i=0;i<threads.size;i++) {
+    threads[i]->sync();
+  }
+}
+
+void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
+  // todo: write this!!!!!!
+  using_threads = true;
+  Network* net = network();
+  const int nu = net->units_flat.size;
+  int n_chunked = (int)((float)nu * chunk_pct);
+  n_chunked = MAX(n_chunked, tasks.size);
+
+  int chnks = n_chunked / tasks.size;
+  n_chunked = chnks * tasks.size; // must be even multiple of threads!
+  while(n_chunked > nu)
+    n_chunked -= tasks.size;
+
+  for(int i=0;i<tasks.size;i++) {
+    UnitCallTask* uct = (UnitCallTask*)tasks[i];
+    uct->unit_call = unit_call;
+    uct->uidx_st = i;
+    uct->uidx_ed = n_chunked - ((tasks.size-1) - i);
+    uct->uidx_inc = tasks.size;
+  }
+  nibble_i = n_chunked;
+
+  // then run the subsidiary guys
+  for(int i=0;i<threads.size;i++) {
+    threads[i]->runTask();
+  }
+  tasks[0]->run();		// run our own set..
+
+  // note: all the nibbling is automatic within the single run() deploy
+
+  // finally, always need to sync at end to ensure that everyone is done!
+  for(int i=0;i<threads.size;i++) {
+    threads[i]->sync();
+  }
+}
+
+void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
+  // todo: write this!!!!!!
   using_threads = true;
   Network* net = network();
   const int nu = net->units_flat.size;
@@ -5288,6 +5374,7 @@ void Network::BuildUnits_Threads() {
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, layers., li) {
     if(lay->lesioned()) continue; // don't even add units from lesioned layers!!
+    lay->units_flat_idx = idx;
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
@@ -5704,8 +5791,8 @@ void Network::Init_Timers() {
 // and the relevant functions overwritten
 
 void Network::Compute_Netin() {
-  ThreadUnitCall un_net(&Unit::Compute_Netin);
-  threads.Run(&un_net, .9f);
+  ThreadUnitCall un_call(&Unit::Compute_Netin);
+  threads.Run(&un_call, .9f);
 
 #ifdef DMEM_COMPILE
   DMem_SyncNet();
@@ -5722,8 +5809,8 @@ void Network::Compute_Netin_layers() {
 }
 
 void Network::Send_Netin() {
-  ThreadUnitCall un_net(&Unit::Send_Netin);
-  threads.Run(&un_net, .9f);
+  ThreadUnitCall un_call(&Unit::Send_Netin);
+  threads.Run(&un_call, .9f);
 
   if(threads.using_threads) {
     // now need to roll up the netinput into unit vals
@@ -5755,8 +5842,8 @@ void Network::Send_Netin_layers() {
 }
 
 void Network::Compute_Act() {
-  ThreadUnitCall un_net(&Unit::Compute_Act);
-  threads.Run(&un_net, .2f);
+  ThreadUnitCall un_call(&Unit::Compute_Act);
+  threads.Run(&un_call, .2f);
 }
 
 void Network::Compute_Act_layers() {
@@ -5768,9 +5855,20 @@ void Network::Compute_Act_layers() {
   }
 }
 
+void Network::Compute_NetinAct() {
+  // important note: any algorithms using this for feedforward computation are not 
+  // compatible with dmem computation on the network level (over connections)
+  // because otherwise the netinput needs to be sync'd at the layer level prior to calling
+  // the activation function at the layer level.  Threading should be much faster than
+  // dmem in general so this takes precidence.  See BpNetwork::UpdateAfterEdit_impl for 
+  // a warning message that should be included.
+  ThreadUnitCall un_call(&Unit::Compute_NetinAct);
+  threads.Run(&un_call, .9f, false, true); // backwards = false, layer_sync=true
+}
+
 void Network::Compute_dWt() {
-  ThreadUnitCall un_net(&Unit::Compute_dWt);
-  threads.Run(&un_net, .5f);
+  ThreadUnitCall un_call(&Unit::Compute_dWt);
+  threads.Run(&un_call, .5f);
 }
 
 void Network::Compute_dWt_layers() {
@@ -5807,8 +5905,8 @@ void Network::Compute_Weights() {
 }
 
 void Network::Compute_Weights_impl() {
-  ThreadUnitCall un_net(&Unit::Compute_Weights);
-  threads.Run(&un_net, .4f);
+  ThreadUnitCall un_call(&Unit::Compute_Weights);
+  threads.Run(&un_call, .4f);
 }
 
 void Network::Compute_Weights_layers() {

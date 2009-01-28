@@ -105,20 +105,22 @@ public:
   Random	initial_act;	 // initial activation value
   bool		updt_clamped_wts; // update weights for clamped units: need this for symmetric cons!
 
-  virtual void	ResetStored(RBpUnit* u);
+  virtual void	ResetStored(RBpUnit* u, BpNetwork* net, int thread_no=-1);
   // reset the stored state values, which clears bp sequence and resets time, but leaves current state intact
-  virtual void  Compute_ClampExt(RBpUnit* u);
+  virtual void  Compute_ClampExt(RBpUnit* u, BpNetwork* net, int thread_no=-1);
   // compute activations resulting from clamped external input (for initial state)
 
-  void		Init_Acts(Unit* u);
-  virtual void	Compute_HardClampNet(RBpUnit* u); // for fast-hard-clamp-net: call this first
-  void		Compute_Netin(Unit* u);
-  virtual void	Compute_Act_impl(RBpUnit* u);
-  void		Compute_Act(Unit* u);
-  void		Compute_dEdA(BpUnit* u);
-  void 		Compute_dEdNet(BpUnit* u);
-  void 		Compute_dWt(Unit* u);
-  void 		Compute_Weights(Unit* u);
+  virtual void	Compute_HardClampNet(RBpUnit* u, BpNetwork* net, int thread_no=-1);
+  // for fast-hard-clamp-net: call this first
+  virtual void	Compute_Act_impl(RBpUnit* u, BpNetwork* net, int thread_no=-1);
+
+  override void	Init_Acts(Unit* u, Network* net);
+  override void	Compute_Netin(Unit* u, Network* net, int thread_no=-1);
+  override void	Compute_Act(Unit* u, Network* net, int thread_no=-1);
+  override void	Compute_dEdA(BpUnit* u, BpNetwork* net, int thread_no=-1);
+  override void Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1);
+  override void Compute_dWt(Unit* u, Network* net, int thread_no=-1);
+  override void Compute_Weights(Unit* u, Network* net, int thread_no=-1);
 
   TA_SIMPLE_BASEFUNS(RBpUnitSpec);
 protected:
@@ -163,9 +165,12 @@ public:
   // shift unit data buffers by given number of ticks
 
   // spec functions
-  void    ResetStored() { ((RBpUnitSpec*)GetUnitSpec())->ResetStored(this); }
-  void    Compute_ClampExt() { ((RBpUnitSpec*)GetUnitSpec())->Compute_ClampExt(this); }
-  void    Compute_HardClampNet() { ((RBpUnitSpec*)GetUnitSpec())->Compute_HardClampNet(this); }
+  void    ResetStored(BpNetwork* net, int thread_no=-1)
+  { ((RBpUnitSpec*)GetUnitSpec())->ResetStored(this, net, thread_no); }
+  void    Compute_ClampExt(BpNetwork* net, int thread_no=-1)
+  { ((RBpUnitSpec*)GetUnitSpec())->Compute_ClampExt(this, net, thread_no); }
+  void    Compute_HardClampNet(BpNetwork* net, int thread_no=-1)
+  { ((RBpUnitSpec*)GetUnitSpec())->Compute_HardClampNet(this, net, thread_no); }
 
   void	InitLinks();
   void	Copy_(const RBpUnit& cp);
@@ -207,20 +212,21 @@ public:
   Unit::ExtType	unit_flags;	 // flags to set on the unit after copying value
   MemberDef*	var_md;		 // #IGNORE memberdef of variable
 
-  virtual void	CopyContext(RBpUnit* u); // copy the values in to the context units: called by trial CopyContext under control of a script..
-  void 		Compute_Act(Unit* u);
+  virtual void	CopyContext(RBpUnit* u);
+  // copy the values in to the context units: called by trial CopyContext under control of a script..
+  override void 		Compute_Act(Unit* u, Network* net, int thread_no=-1);
 
   // nullify all other functions..
-  void 		Compute_Netin(Unit*) 	{ };
-  void 		Init_dWt(Unit*) 	{ };
-  void 		Compute_dWt(Unit*) 	{ };
-  void 		Compute_Weights(Unit*) 	{ };
+  override void 		Compute_Netin(Unit*, Network* net, int thread_no=-1) 	{ };
+  override void 		Init_dWt(Unit*, Network* net) 	{ };
+  override void 		Compute_dWt(Unit*, Network* net, int thread_no=-1) 	{ };
+  override void 		Compute_Weights(Unit*, Network* net, int thread_no=-1) 	{ };
 
   // bp special functions
-  void	Compute_HardClampNet(RBpUnit*) { };
-  void 	Compute_Error(BpUnit*)		{ };
-  void 	Compute_dEdA(BpUnit*)		{ };
-  void 	Compute_dEdNet(BpUnit*)		{ }; //
+  override void	Compute_HardClampNet(RBpUnit*, BpNetwork* net, int thread_no=-1) { };
+  override void Compute_Error(BpUnit*, BpNetwork* net, int thread_no=-1)	{ };
+  override void Compute_dEdA(BpUnit*, BpNetwork* net, int thread_no=-1)		{ };
+  override void Compute_dEdNet(BpUnit*, BpNetwork* net, int thread_no=-1)	{ }; //
 
 //obs  bool  CheckConfig(Unit* un, Layer* lay, TrialProcess* tp);
 
@@ -243,7 +249,7 @@ public:
   Random	noise;		// what kind of noise to add to activations
   float		sqrt_dt; 	// #HIDDEN square-root of dt for noise
 
-  void 		Compute_Act_impl(RBpUnit* u);
+  void 		Compute_Act_impl(RBpUnit* u, BpNetwork* net, int thread_no=-1);
 
   TA_SIMPLE_BASEFUNS(NoisyRBpUnitSpec);
 protected:

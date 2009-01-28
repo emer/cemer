@@ -887,6 +887,11 @@ public: //
   void 	Compute_Act(Network* net, int thread_no=-1)
   { GetUnitSpec()->Compute_Act(this, net, thread_no); }
   // #CAT_Activation compute activation value: what we send to others
+  void 	Compute_NetinAct(Network* net, int thread_no=-1)
+  { GetUnitSpec()->Compute_Netin(this, net, thread_no);
+    GetUnitSpec()->Compute_Act(this, net, thread_no); }
+  // #CAT_Activation compute net input from other units and then our own activation value based on that -- use this for feedforward networks to propagate activation through network in one compute cycle
+
   void 	Compute_dWt(Network* net, int thread_no=-1)
   { GetUnitSpec()->Compute_dWt(this, net, thread_no); }
   // #CAT_Learning compute weight changes: the essence of learning
@@ -1372,12 +1377,13 @@ public:
   String		output_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
   float			sse;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
   float			icon_value;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW value to display if layer is iconified (algorithmically determined)
+  int			units_flat_idx;	// #READ_ONLY #NO_SAVE starting index for this layer into the network units_flat list, used in threading
+  String_Matrix		unit_names; // #SHOW_TREE set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
 
   int			n_units;
   // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!
   bool			lesion_;	
   // #AKA_lesion #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 flag to inactivate this layer from processing (reversable)
-  String_Matrix		unit_names; // #SHOW_TREE set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
 
   ProjectBase*		project(); // #IGNORE this layer's project
   	
@@ -1500,6 +1506,7 @@ public:
   // #CAT_Activation tell all layers that I receive from to send their net input to me
   virtual void	Compute_Act(Network* net);
   // #CAT_Activation compute activation: the value I send to other units
+
   virtual void	Compute_dWt(Network* net);
   // #CAT_Learning compute weight changes: the essence of learning
   virtual void	Compute_Weights(Network* net);
@@ -1704,8 +1711,6 @@ public:
 /////////////////////////////////////////////////////////////
 //		Threading code
 
-// todo: netinput matrix allocation
-
 // this is the standard unit function call taking a network pointer arg 
 // and the thread number int value
 // all threaded unit-level functions MUST use this call signature!
@@ -1713,7 +1718,7 @@ public:
 typedef void* ThreadUnitCall;
 #else
 typedef taTaskMethCall2<Unit, void, Network*, int> ThreadUnitCall;
-typedef void (Unit::*ThreadUnitMethod)(Network*);
+typedef void (Unit::*ThreadUnitMethod)(Network*, int);
 #endif
 
 class UnitCallThreadMgr;
@@ -1753,13 +1758,18 @@ public:
 
   void		InitAll();	// initialize threads and tasks
 
-  void		Run(ThreadUnitCall* unit_call, float comp_level);
-  // #IGNORE run given function on all units, with specified level of computational load (0-1)
+  void		Run(ThreadUnitCall* unit_call, float comp_load,
+		    bool backwards=false, bool layer_sync=false);
+  // #IGNORE run given function on all units, with specified level of computational load (0-1), and flags controlling order of processing and syncing: backwards = go through units in reverse order (implies layer_sync=true, otherwise order shouldn't matter), and layer_sync = sync processing at each layer (else at network level) -- needed for feedforward network topologies (unfortunately)
 
-  void		RunThread0(ThreadUnitCall* unit_call);
-  // #IGNORE run only on thread 0 (the main thread) -- calls method with arg thread_no = -1
-  void		RunThreads(ThreadUnitCall* unit_call);
-  // #IGNORE run on all threads -- calls method with arg thread_no
+  void		RunThread0(ThreadUnitCall* unit_call, bool backwards=false);
+  // #IGNORE run only on thread 0 (the main thread) -- calls method with arg thread_no = -1 -- order matters but layer_sync is irrelevant here
+  void		RunThreads_FwdNetSync(ThreadUnitCall* unit_call);
+  // #IGNORE run on all threads -- calls method with arg thread_no -- forward order and network-level sync
+  void		RunThreads_FwdLaySync(ThreadUnitCall* unit_call);
+  // #IGNORE run on all threads -- calls method with arg thread_no -- forward order and layer-level sync
+  void		RunThreads_BkwdLaySync(ThreadUnitCall* unit_call);
+  // #IGNORE run on all threads -- calls method with arg thread_no -- backward order and layer-level sync
   
   TA_BASEFUNS_NOCOPY(UnitCallThreadMgr);
 protected:
@@ -2162,6 +2172,8 @@ public:
   // #CAT_Activation Compute Activation based on net input
   virtual void	Compute_Act_layers();
   // #CAT_Activation Compute Activation based on net input -- calls layer funs
+  virtual void	Compute_NetinAct();
+  // #CAT_Activation compute net input from other units and then our own activation value based on that -- use this for feedforward networks to propagate activation through network in one compute cycle
 
   virtual void	Compute_dWt();
   // #CAT_Learning compute weight changes -- the essence of learning

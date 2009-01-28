@@ -1426,7 +1426,7 @@ private:
 };
 
 #ifndef __MAKETA__
-typedef void (LeabraUnit::*LeabraUnitMethod)(LeabraNetwork*);
+typedef void (LeabraUnit::*LeabraUnitMethod)(LeabraNetwork*, int);
 // this is required to disambiguate unit thread method guys -- double casting
 #endif 
 

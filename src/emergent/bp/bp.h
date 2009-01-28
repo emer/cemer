@@ -31,7 +31,9 @@ class BpCon;
 class BpRecvCons;
 class BpSendCons;
 class BpUnit;
-class BpUnitSpec; //
+class BpUnitSpec;
+class BpNetwork;
+//
 
 // note: dwt is equivalent to the old dEdW and pdw = the old dwt
 
@@ -156,15 +158,19 @@ public:
   // #LIST_BpUnit_Error this points to the error fun, set appropriately
 
   // generic unit functions
-  void		Init_Acts(Unit* u);
-  void 		Compute_Act(Unit* u);		// activation from net input (sigmoid)
-  void 		Compute_dWt(Unit* u); 		// for all of my recv weights
-  void 		Compute_Weights(Unit* u);		// modify to update bias weight
+  override void	Init_Acts(Unit* u, Network* net);
+  override void Compute_Netin(Unit* u, Network* net, int thread_no=-1);
+  override void Compute_Act(Unit* u, Network* net, int thread_no=-1);
+  override void Compute_dWt(Unit* u, Network* net, int thread_no=-1);
+  override void Compute_Weights(Unit* u, Network* net, int thread_no=-1);
 
   // bp special functions
-  virtual void 	Compute_Error(BpUnit* u); 	// call the error function (testing only)
-  virtual void 	Compute_dEdA(BpUnit* u); 	// error wrt unit activation
-  virtual void 	Compute_dEdNet(BpUnit* u); 	// error wrt net input
+  virtual void 	Compute_Error(BpUnit* u, BpNetwork* net, int thread_no=-1);
+  // call the unit error function (only on target units)
+  virtual void 	Compute_dEdA(BpUnit* u, BpNetwork* net, int thread_no=-1);
+  // compute derivative of error with respect to unit activation
+  virtual void 	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1);
+  // compute derivative of error with respect to unit net input
 
   virtual void	SetCurLrate(BpUnit* u, int epoch);
   // set current learning rate based on epoch
@@ -202,10 +208,14 @@ public:
 
   // these are "convenience" functions for those defined in the spec
   void SetCurLrate(int epoch)   { ((BpUnitSpec*)GetUnitSpec())->SetCurLrate(this, epoch); }
-  void Compute_Error()		{ ((BpUnitSpec*)GetUnitSpec())->Compute_Error(this); }
-  void Compute_dEdA()		{ ((BpUnitSpec*)GetUnitSpec())->Compute_dEdA(this); }
-  void Compute_dEdNet()		{ ((BpUnitSpec*)GetUnitSpec())->Compute_dEdNet(this); }
-  void Compute_dEdA_dEdNet() 	{ Compute_dEdA(); Compute_Error(); Compute_dEdNet(); }
+  void Compute_Error(BpNetwork* net, int thread_no=-1)
+  { ((BpUnitSpec*)GetUnitSpec())->Compute_Error(this, net, thread_no); }
+  void Compute_dEdA(BpNetwork* net, int thread_no=-1)
+  { ((BpUnitSpec*)GetUnitSpec())->Compute_dEdA(this, net, thread_no); }
+  void Compute_dEdNet(BpNetwork* net, int thread_no=-1)
+  { ((BpUnitSpec*)GetUnitSpec())->Compute_dEdNet(this, net, thread_no); }
+  void Compute_dEdA_dEdNet(BpNetwork* net, int thread_no=-1)
+  { Compute_dEdA(net, thread_no); Compute_Error(net, thread_no); Compute_dEdNet(net, thread_no); }
 
   void	Copy_(const BpUnit& cp); // units need hi-performance custom copy
   TA_BASEFUNS(BpUnit);
@@ -213,6 +223,11 @@ private:
   void 	Initialize();
   void 	Destroy()		{ };
 };
+
+#ifndef __MAKETA__
+typedef void (BpUnit::*BpUnitMethod)(BpNetwork*, int);
+// this is required to disambiguate unit thread method guys -- double casting
+#endif 
 
 // inline functions (for speed)
 
@@ -224,7 +239,6 @@ inline float BpConSpec::Compute_dEdA(BpSendCons* cg, BpUnit* su) {
   CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->Cn(i), (BpUnit*)cg->Un(i), su));
   return rval;
 }
-
 
 inline void BpConSpec::C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su) {
   cn->dwt += su->act * ru->dEdNet;
@@ -456,22 +470,20 @@ public:
   Unit::ExtType	unit_flags;	 // flags to set on the unit after copying value
   MemberDef*	var_md;		 // #IGNORE memberdef of variable
 
-  void		Init_Acts(Unit* u);
-  void 		Compute_Act(Unit* u);
+  override void	Init_Acts(Unit* u, Network* net);
+  override void Compute_Act(Unit* u, Network* net, int thread_no=-1);
   // copy activation from corresponding unit in projection from layer
 
   // nullify all other functions..
-  void 		Compute_Netin(Unit*) 	{ };
-  void 		Init_dWt(Unit*) 	{ };
-  void 		Compute_dWt(Unit*) 	{ };
-  void 		Compute_Weights(Unit*) 	{ };
+  override void Compute_Netin(Unit*, Network* net, int thread_no=-1) 	{ };
+  override void Init_dWt(Unit*, Network* net, int thread_no=-1) 	{ };
+  override void Compute_dWt(Unit*, Network* net, int thread_no=-1) 	{ };
+  override void Compute_Weights(Unit*, Network* net, int thread_no=-1) 	{ };
 
   // bp special functions
-  void 	Compute_Error(BpUnit*)		{ };
-  void 	Compute_dEdA(BpUnit*)		{ };
-  void 	Compute_dEdNet(BpUnit*)		{ }; //
-
-//obs  bool  CheckConfig(Unit* un, Layer* lay, TrialProcess* tp);
+  override void Compute_Error(BpUnit*, BpNetwork* net, int thread_no=-1)  { };
+  override void Compute_dEdA(BpUnit*, BpNetwork* net, int thread_no=-1)	  { };
+  override void Compute_dEdNet(BpUnit*, BpNetwork* net, int thread_no=-1) { }; //
 
   TA_SIMPLE_BASEFUNS(BpContextSpec);
 protected:
@@ -485,8 +497,8 @@ class BP_API LinearBpUnitSpec : public BpUnitSpec {
   // linear unit in Bp
 INHERITED(BpUnitSpec)
 public:
-  void 		Compute_Act(Unit* u);
-  void		Compute_dEdNet(BpUnit* u);
+  override void Compute_Act(Unit* u, Network* net, int thread_no=-1);
+  override void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1);
 
   TA_BASEFUNS(LinearBpUnitSpec);
 protected:
@@ -502,8 +514,8 @@ INHERITED(BpUnitSpec)
 public:
   float		threshold;
 
-  void 		Compute_Act(Unit* u);
-  void		Compute_dEdNet(BpUnit* u);
+  override void Compute_Act(Unit* u, Network* net, int thread_no=-1);
+  override void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1);
 
   TA_SIMPLE_BASEFUNS(ThreshLinBpUnitSpec);
 protected:
@@ -519,7 +531,7 @@ INHERITED(BpUnitSpec)
 public:
   Random	noise;		// what kind of noise to add to activations
 
-  void 		Compute_Act(Unit* u);
+  override void Compute_Act(Unit* u, Network* net, int thread_no=-1);
 
   TA_SIMPLE_BASEFUNS(NoisyBpUnitSpec);
 private:
@@ -531,7 +543,7 @@ class BP_API StochasticBpUnitSpec : public BpUnitSpec {
   // Bp with a binary stochastic activation function
 INHERITED(BpUnitSpec)
 public:
-  void				Compute_Act(Unit* u);
+  override void Compute_Act(Unit* u, Network* net, int thread_no=-1);
 
   TA_BASEFUNS_NOCOPY(StochasticBpUnitSpec);
 private:
@@ -547,9 +559,9 @@ public:
   float         norm_const;     // #HIDDEN normalization const for Gaussian
   float         denom_const;    // #HIDDEN denominator const for Gaussian
 
-  void          Compute_Netin(Unit* u);
-  void          Compute_Act(Unit* u);
-  void          Compute_dEdNet(BpUnit* u);
+  override void Compute_Netin(Unit* u, Network* net, int thread_no=-1);
+  override void Compute_Act(Unit* u, Network* net, int thread_no=-1);
+  override void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1);
 
   TA_SIMPLE_BASEFUNS(RBFBpUnitSpec);
 protected:
@@ -567,8 +579,8 @@ public:
   float         std_dev;        // std deviation of Gaussian
   float         std_dev_r;      // #HIDDEN reciprocal of std_dev
 
-  void          Compute_Act(Unit* u);
-  void          Compute_dEdNet(BpUnit* u);
+  override void Compute_Act(Unit* u, Network* net, int thread_no=-1);
+  override void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1);
 
   TA_SIMPLE_BASEFUNS(BumpBpUnitSpec);
 protected:
@@ -582,8 +594,8 @@ class BP_API ExpBpUnitSpec : public BpUnitSpec {
   // exponential units in Bp: simple exponent of net input
 INHERITED(BpUnitSpec)
 public:
-  void          Compute_Act(Unit* u);
-  virtual void  Compute_dEdNet(BpUnit* u);      // error wrt unit activation
+  override void Compute_Act(Unit* u, Network* net, int thread_no=-1);
+  override void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1);
 
   TA_BASEFUNS_NOCOPY(ExpBpUnitSpec);
 private:
@@ -596,13 +608,14 @@ class BP_API SoftMaxBpUnitSpec : public BpUnitSpec {
 INHERITED(BpUnitSpec)
 public:
 
-  void		Compute_Netin(Unit*)	{ }; // do nothing
-  void          Compute_Act(Unit* u);
-  void          Compute_dEdNet(BpUnit* u);
+  override void Compute_Netin(Unit* u, Network* net, int thread_no=-1) { };
+  // do nothing
+  override void Compute_Act(Unit* u, Network* net, int thread_no=-1);
+  override void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1);
 
   // don't update my weights
-  void          Compute_dWt(Unit*)	{ };
-  void          Compute_Weights(Unit*)	{ };
+  override void Compute_dWt(Unit*, Network* net, int thread_no=-1)	{ };
+  override void Compute_Weights(Unit*, Network* net, int thread_no=-1)	{ };
 
   TA_BASEFUNS_NOCOPY(SoftMaxBpUnitSpec);
 private:
@@ -628,15 +641,18 @@ public:
   bool			bp_to_inputs;	// #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
 
   virtual void		SetCurLrate(); // #CAT_Learning set current learning rate, based on network epoch counter
-  override void 	Compute_Act(); // #CAT_Activation compute activations, based on external input data that has already been applied
-  virtual void		Compute_dEdA_dEdNet(); // #CAT_Learning compute derivatives of error with respect to activations & net inputs (backpropagate)
-  virtual void		Compute_Error(); //  #CAT_Learning compute local error values, for display purposes only (only call when testing, not training)
+  virtual void		Compute_dEdA_dEdNet();
+  // #CAT_Learning compute derivatives of error with respect to activations & net inputs (backpropagate)
+  virtual void		Compute_Error();
+  //  #CAT_Learning compute local error values, for display purposes only (only call when testing, not training)
   
-  virtual void		Trial_Run(); // #CAT_Bp run one trial of Bp: calls SetCurLrate, Compute_Act, Compute_dEdA_dEdNet, and, if train_mode == TRAIN, Compute_dWt.  If you want to save some speed just for testing, you can just call Compute_Act and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)
+  virtual void		Trial_Run(); // #CAT_Bp run one trial of Bp: calls SetCurLrate, Compute_NetinAct, Compute_dEdA_dEdNet, and, if train_mode == TRAIN, Compute_dWt.  If you want to save some speed just for testing, you can just call Compute_NetinAct and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)
   
   override void	SetProjectionDefaultTypes(Projection* prjn);
 
   TA_SIMPLE_BASEFUNS(BpNetwork);
+protected:
+  override void UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()		{}
