@@ -4823,24 +4823,46 @@ void UnitCallTask::Destroy() {
 
 void UnitCallTask::run() {
   const int nu = network->units_flat.size;
-  for(int i=uidx_st; i<uidx_ed; i+=uidx_inc) {
-    Unit* un = network->units_flat[i];
-    if(un->lesioned()) continue;
-    unit_call->call(un, network, task_id); // task id indicates threading, and which thread
-  }
-  
-  // then auto-nibble until done!
   UnitCallThreadMgr* mg = mgr();
-  const int nib_chnk = mg->nibble_chunk;
-  while(true) {
-    int nxt_uidx = AtomicFetchAdd(&mg->nibble_i, nib_chnk);
-    if(nxt_uidx >= nu) break;
-    const int mx = MIN(nu, nxt_uidx + nib_chnk);
-    for(int i=nxt_uidx; i <mx; i++) {
+  const int nib_stop = mg->nibble_stop;
+
+  if(uidx_inc > 0) {		// a forward run
+    for(int i=uidx_st; i<uidx_ed; i+=uidx_inc) {
       Unit* un = network->units_flat[i];
       unit_call->call(un, network, task_id); // task id indicates threading, and which thread
     }
-    if(mx == nu) break;		// we're the last guy
+  
+    // then auto-nibble until done!
+    const int nib_chnk = mg->nibble_chunk;
+    while(true) {
+      int nxt_uidx = AtomicFetchAdd(&mg->nibble_i, nib_chnk);
+      if(nxt_uidx >= nib_stop) break;
+      const int mx = MIN(nib_stop, nxt_uidx + nib_chnk);
+      for(int i=nxt_uidx; i <mx; i++) {
+	Unit* un = network->units_flat[i];
+	unit_call->call(un, network, task_id); // task id indicates threading, and which thread
+      }
+      if(mx == nib_stop) break;		// we're the last guy
+    }
+  }
+  else {			// backwards!
+    for(int i=uidx_st; i>=uidx_ed; i+=uidx_inc) {
+      Unit* un = network->units_flat[i];
+      unit_call->call(un, network, task_id); // task id indicates threading, and which thread
+    }
+  
+    // then auto-nibble until done!
+    const int nib_chnk = -mg->nibble_chunk;
+    while(true) {
+      int nxt_uidx = AtomicFetchAdd(&mg->nibble_i, nib_chnk);
+      if(nxt_uidx < nib_stop) break;
+      const int mx = MAX(nib_stop, nxt_uidx + nib_chnk);
+      for(int i=nxt_uidx; i>=mx; i--) {
+	Unit* un = network->units_flat[i];
+	unit_call->call(un, network, task_id); // task id indicates threading, and which thread
+      }
+      if(mx == nib_stop) break;		// we're the last guy
+    }
   }
 }
 
@@ -4849,7 +4871,9 @@ void UnitCallThreadMgr::Initialize() {
   thread_comp_thr = .5f;
   chunk_pct = .9f;
   nibble_chunk = 2;
+  ignore_lay_sync = false;
   nibble_i = -1;
+  nibble_stop = 0;
   using_threads = false;
   n_threads_prev = n_threads;
 }
@@ -4884,12 +4908,18 @@ void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level,
     RunThread0(unit_call, backwards);
   }
   else {
-    if(backwards)
-      RunThreads_BkwdLaySync(unit_call); // implies lay sync
-    else if(layer_sync)
-      RunThreads_FwdLaySync(unit_call);
-    else
-      RunThreads_FwdNetSync(unit_call);
+    if(backwards) {
+      if(layer_sync && !ignore_lay_sync)
+	RunThreads_BkwdLaySync(unit_call);
+      else
+	RunThreads_BkwdNetSync(unit_call);
+    }
+    else {
+      if(layer_sync && !ignore_lay_sync)
+	RunThreads_FwdLaySync(unit_call);
+      else
+	RunThreads_FwdNetSync(unit_call);
+    }
   }
 }
 
@@ -4921,14 +4951,65 @@ void UnitCallThreadMgr::RunThreads_FwdNetSync(ThreadUnitCall* unit_call) {
   while(n_chunked > nu)
     n_chunked -= tasks.size;
 
+  int end_base = 1 + n_chunked - tasks.size; // add 1 b/c uses < ed and not <= ed
+
+  // sample task allocation: chnks = 3, tasks.size = 2, n_chunked=15
+  // un: 0123456789012345...
+  // th  st       ed    nc
+  // 0   0    5   10
+  // 1	  1    6   11
+  // 2     2    7   12
+  // 3      3    8   13
+  // 4       4    9   14
+
   for(int i=0;i<tasks.size;i++) {
     UnitCallTask* uct = (UnitCallTask*)tasks[i];
     uct->unit_call = unit_call;
     uct->uidx_st = i;
-    uct->uidx_ed = n_chunked - ((tasks.size-1) - i);
+    uct->uidx_ed = end_base + i;
     uct->uidx_inc = tasks.size;
   }
   nibble_i = n_chunked;
+  nibble_stop = nu;
+
+  // then run the subsidiary guys
+  for(int i=0;i<threads.size;i++) {
+    threads[i]->runTask();
+  }
+  tasks[0]->run();		// run our own set..
+
+  // note: all the nibbling is automatic within the single run() deploy
+
+  // finally, always need to sync at end to ensure that everyone is done!
+  for(int i=0;i<threads.size;i++) {
+    threads[i]->sync();
+  }
+}
+
+void UnitCallThreadMgr::RunThreads_BkwdNetSync(ThreadUnitCall* unit_call) {
+  using_threads = true;
+  Network* net = network();
+  const int nu = net->units_flat.size;
+  int n_chunked = (int)((float)nu * chunk_pct);
+  n_chunked = MAX(n_chunked, tasks.size);
+
+  int chnks = n_chunked / tasks.size;
+  n_chunked = chnks * tasks.size; // must be even multiple of threads!
+  while(n_chunked > nu)
+    n_chunked -= tasks.size;
+
+  int st_base = nu-1;			     // starting index
+  int end_base = st_base - (n_chunked - tasks.size); // no -1 b/c >= end_base
+
+  for(int i=0;i<tasks.size;i++) {
+    UnitCallTask* uct = (UnitCallTask*)tasks[i];
+    uct->unit_call = unit_call;
+    uct->uidx_st = st_base - i;
+    uct->uidx_ed = end_base - i;
+    uct->uidx_inc = -tasks.size;
+  }
+  nibble_i = nu-1 - n_chunked;	// where to start nibbling
+  nibble_stop = 0;
 
   // then run the subsidiary guys
   for(int i=0;i<threads.size;i++) {
@@ -4945,74 +5026,115 @@ void UnitCallThreadMgr::RunThreads_FwdNetSync(ThreadUnitCall* unit_call) {
 }
 
 void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
-  // todo: write this!!!!!!
   using_threads = true;
   Network* net = network();
-  const int nu = net->units_flat.size;
-  int n_chunked = (int)((float)nu * chunk_pct);
-  n_chunked = MAX(n_chunked, tasks.size);
 
-  int chnks = n_chunked / tasks.size;
-  n_chunked = chnks * tasks.size; // must be even multiple of threads!
-  while(n_chunked > nu)
-    n_chunked -= tasks.size;
+  // note: this has same logic as net sync but all within each layer
 
-  for(int i=0;i<tasks.size;i++) {
-    UnitCallTask* uct = (UnitCallTask*)tasks[i];
-    uct->unit_call = unit_call;
-    uct->uidx_st = i;
-    uct->uidx_ed = n_chunked - ((tasks.size-1) - i);
-    uct->uidx_inc = tasks.size;
-  }
-  nibble_i = n_chunked;
+  Layer* lay;
+  taLeafItr li;
+  FOR_ITR_EL(Layer, lay, net->layers., li) {
+    if(lay->lesioned()) continue; // don't even add units from lesioned layers!!
+    int st_idx = lay->units_flat_idx;
+    const int nu = lay->units.leaves;
 
-  // then run the subsidiary guys
-  for(int i=0;i<threads.size;i++) {
-    threads[i]->runTask();
-  }
-  tasks[0]->run();		// run our own set..
+    if(nu < min_units || nu < tasks.size) {
+      // run locally
+      for(int i=0;i<nu;i++) {
+	unit_call->call(net->units_flat[st_idx + i], net, -1); // -1 indicates no threading
+      }
+    }
+    else {
+      int n_chunked = (int)((float)nu * chunk_pct);
+      n_chunked = MAX(n_chunked, tasks.size);
 
-  // note: all the nibbling is automatic within the single run() deploy
+      int chnks = n_chunked / tasks.size;
+      n_chunked = chnks * tasks.size; // must be even multiple of threads!
+      while(n_chunked > nu)
+	n_chunked -= tasks.size;
 
-  // finally, always need to sync at end to ensure that everyone is done!
-  for(int i=0;i<threads.size;i++) {
-    threads[i]->sync();
+      int end_base = st_idx + 1 + n_chunked - tasks.size; // add 1 b/c uses < ed and not <= ed
+
+      for(int i=0;i<tasks.size;i++) {
+	UnitCallTask* uct = (UnitCallTask*)tasks[i];
+	uct->unit_call = unit_call;
+	uct->uidx_st = st_idx + i;
+	uct->uidx_ed = end_base + i;
+	uct->uidx_inc = tasks.size;
+      }
+      nibble_i = n_chunked;
+      nibble_stop = st_idx + nu;
+
+      // then run the subsidiary guys
+      for(int i=0;i<threads.size;i++) {
+	threads[i]->runTask();
+      }
+      tasks[0]->run();		// run our own set..
+
+      // note: all the nibbling is automatic within the single run() deploy
+
+      // finally, always need to sync at end to ensure that everyone is done!
+      for(int i=0;i<threads.size;i++) {
+	threads[i]->sync();
+      }
+    }
   }
 }
 
 void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
-  // todo: write this!!!!!!
   using_threads = true;
   Network* net = network();
-  const int nu = net->units_flat.size;
-  int n_chunked = (int)((float)nu * chunk_pct);
-  n_chunked = MAX(n_chunked, tasks.size);
 
-  int chnks = n_chunked / tasks.size;
-  n_chunked = chnks * tasks.size; // must be even multiple of threads!
-  while(n_chunked > nu)
-    n_chunked -= tasks.size;
+  // note: this has same logic as net sync but all within each layer
 
-  for(int i=0;i<tasks.size;i++) {
-    UnitCallTask* uct = (UnitCallTask*)tasks[i];
-    uct->unit_call = unit_call;
-    uct->uidx_st = i;
-    uct->uidx_ed = n_chunked - ((tasks.size-1) - i);
-    uct->uidx_inc = tasks.size;
-  }
-  nibble_i = n_chunked;
+  Layer* lay;
+  taLeafItr li;
+  FOR_ITR_EL(Layer, lay, net->layers., li) {
+    if(lay->lesioned()) continue; // don't even add units from lesioned layers!!
+    int st_idx = lay->units_flat_idx;
+    const int nu = lay->units.leaves;
 
-  // then run the subsidiary guys
-  for(int i=0;i<threads.size;i++) {
-    threads[i]->runTask();
-  }
-  tasks[0]->run();		// run our own set..
+    if(nu < min_units || nu < tasks.size) {
+      // run locally
+      for(int i=nu-1;i>=0;i--) {
+	unit_call->call(net->units_flat[st_idx + i], net, -1); // -1 indicates no threading
+      }
+    }
+    else {
+      int n_chunked = (int)((float)nu * chunk_pct);
+      n_chunked = MAX(n_chunked, tasks.size);
 
-  // note: all the nibbling is automatic within the single run() deploy
+      int chnks = n_chunked / tasks.size;
+      n_chunked = chnks * tasks.size; // must be even multiple of threads!
+      while(n_chunked > nu)
+	n_chunked -= tasks.size;
 
-  // finally, always need to sync at end to ensure that everyone is done!
-  for(int i=0;i<threads.size;i++) {
-    threads[i]->sync();
+      int st_base = st_idx + nu-1;			     // starting index
+      int end_base = st_base - (n_chunked - tasks.size); // no -1 b/c >= end_base
+
+      for(int i=0;i<tasks.size;i++) {
+	UnitCallTask* uct = (UnitCallTask*)tasks[i];
+	uct->unit_call = unit_call;
+	uct->uidx_st = st_base - i;
+	uct->uidx_ed = end_base - i;
+	uct->uidx_inc = -tasks.size;
+      }
+      nibble_i = nu-1 - n_chunked;
+      nibble_stop = st_idx;
+
+      // then run the subsidiary guys
+      for(int i=0;i<threads.size;i++) {
+	threads[i]->runTask();
+      }
+      tasks[0]->run();		// run our own set..
+
+      // note: all the nibbling is automatic within the single run() deploy
+
+      // finally, always need to sync at end to ensure that everyone is done!
+      for(int i=0;i<threads.size;i++) {
+	threads[i]->sync();
+      }
+    }
   }
 }
 

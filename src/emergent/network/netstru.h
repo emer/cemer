@@ -1747,11 +1747,13 @@ class EMERGENT_API UnitCallThreadMgr : public taThreadMgr {
   // #INLINE thread manager for UnitCall tasks
 INHERITED(taThreadMgr)
 public:
-  int		min_units;		// #MIN_0 minimum number of units required to use threads at all
+  int		min_units;		// #MIN_0 minimum number of units required to use threads at all -- for feedforward algorithms requiring layer-level syncing, this applies to each layer
   float		thread_comp_thr;	// #MIN_0 #MAX_1 threshold value for amount of computation in a given function to actually deploy on threads, as opposed to just running it ourselves
   float		chunk_pct;		// #MIN_0 #MAX_1 proportion (0-1) of units to process in a chunked fashion, where units are allocated in (interdigitated) chunks to threads to exclusively process -- after this, each available thread works nibbling a unit at a time on the remaining list of units
   int		nibble_chunk;		// #MIN_1 how many units does each thread grab to process while nibbling?
+  bool		ignore_lay_sync;	// #DEF_false ignore need to sync at the layer level for feedforward algorithms that require this (e.g., backprop) -- results in faster but less accurate processing
   int		nibble_i;		// #IGNORE current nibble index -- atomic incremented by working threads to nibble away the rest..
+  int 		nibble_stop;		// #IGNORE nibble stopping value
   bool	       	using_threads;		// #READ_ONLY #NO_SAVE are we currently using threads for a computation or not -- also useful for just after a thread call to see if threads were used
 
   Network*	network() 	{ return (Network*)owner; }
@@ -1760,12 +1762,14 @@ public:
 
   void		Run(ThreadUnitCall* unit_call, float comp_load,
 		    bool backwards=false, bool layer_sync=false);
-  // #IGNORE run given function on all units, with specified level of computational load (0-1), and flags controlling order of processing and syncing: backwards = go through units in reverse order (implies layer_sync=true, otherwise order shouldn't matter), and layer_sync = sync processing at each layer (else at network level) -- needed for feedforward network topologies (unfortunately)
+  // #IGNORE run given function on all units, with specified level of computational load (0-1), and flags controlling order of processing and syncing: backwards = go through units in reverse order, and layer_sync = sync processing at each layer (else at network level) -- needed for feedforward network topologies (unfortunately)
 
   void		RunThread0(ThreadUnitCall* unit_call, bool backwards=false);
   // #IGNORE run only on thread 0 (the main thread) -- calls method with arg thread_no = -1 -- order matters but layer_sync is irrelevant here
   void		RunThreads_FwdNetSync(ThreadUnitCall* unit_call);
   // #IGNORE run on all threads -- calls method with arg thread_no -- forward order and network-level sync
+  void		RunThreads_BkwdNetSync(ThreadUnitCall* unit_call);
+  // #IGNORE run on all threads -- calls method with arg thread_no -- backward order and network-level sync
   void		RunThreads_FwdLaySync(ThreadUnitCall* unit_call);
   // #IGNORE run on all threads -- calls method with arg thread_no -- forward order and layer-level sync
   void		RunThreads_BkwdLaySync(ThreadUnitCall* unit_call);
