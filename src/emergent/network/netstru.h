@@ -248,12 +248,9 @@ public:
   inline virtual float 	Compute_Netin(RecvCons* cg, Unit* ru);
   // #CAT_Activation compute net input for weights in this con group
 
-  inline void 		C_Send_Netin(Connection* cn, Unit* ru, Unit* su);
-  inline virtual void 	Send_Netin(SendCons* cg, Unit* su);
-  // #CAT_Activation sender-based net input for con group (send net input to receivers) -- non-threaded version (goes straight into unit net variable)
-  inline void 		C_Send_Netin_Thread(Connection* cn, Network* net, int thread_no, Unit* ru, Unit* su);
-  inline virtual void 	Send_Netin_Thread(SendCons* cg, Network* net, int thread_no, Unit* su);
-  // #CAT_Activation sender-based net input for con group (send net input to receivers) -- threaded version (goes into tmp matrix)
+  inline void 		C_Send_Netin(Connection* cn, float* send_netin_vec, Unit* ru, Unit* su);
+  inline virtual void 	Send_Netin(SendCons* cg, Network* net, int thread_no, Unit* su);
+  // #CAT_Activation sender-based net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
 
   inline float 		C_Compute_Dist(Connection* cn, Unit* ru, Unit* su);
   inline virtual float 	Compute_Dist(RecvCons* cg, Unit* ru);
@@ -603,12 +600,9 @@ public:
   //	Below are the primary computational interface to the Network Objects
   //	for performing algorithm-specific activation and learning
 
-  void 	Send_Netin(Unit* su)
-  { GetConSpec()->Send_Netin(this, su); }
-  // #CAT_Activation send net input (sender based; send group) -- non-threaded version (goes straight into unit net variable)
-  void 	Send_Netin_Thread(Network* net, int thread_no, Unit* su)
-  { GetConSpec()->Send_Netin_Thread(this, net, thread_no, su); }
-  // #CAT_Activation send net input (sender based; send group) -- threaded version (goes into tmp matrix)
+  void 	Send_Netin(Network* net, int thread_no, Unit* su)
+  { GetConSpec()->Send_Netin(this, net, thread_no, su); }
+  // #CAT_Activation sender-based net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
   
   ////////////////////////////////////////////////////////////////////////////////
   //	The following are misc functionality not required for primary computing
@@ -716,8 +710,8 @@ public:
   // #CAT_Activation compute net input: activations times weights (receiver based)
   virtual void 	Send_Netin(Unit* u, Network* net, int thread_no=-1);
   // #CAT_Activation send net input to all units I send to (sender based)
-  virtual void 	Send_NetinToLay(Unit* u, Network* net, Layer* tolay);
-  // #CAT_Activation send net input only to units in given layer (not used by default)
+  virtual void 	Compute_SentNetin(Unit* u, Network* net, float sent_netin);
+  // #CAT_Activation called by network-level Send_Netin function to integrate sent netin value with current net input value -- default is just to set to net val + bias wt if avail
   virtual void 	Compute_Act(Unit* u, Network* net, int thread_no=-1);
   // #CAT_Activation compute the activation value of the unit: what it sends to other units
 
@@ -785,19 +779,21 @@ public: //
   float 	act;
   // #DMEM_SHARE_SET_2 #CAT_Activation activation value -- what the unit communicates to others
   float 	net;
-  // #DMEM_SHARE_SET_1 #CAT_Activation net input value -- what the unit receives from others
+  // #DMEM_SHARE_SET_1 #CAT_Activation net input value -- what the unit receives from others (typically sum of sending activations times the weights)
   float		wt_prjn;
   // #NO_SAVE #CAT_Statistic weight projection value -- computed by Network::ProjectUnitWeights (triggered in GUI by setting wt prjn variable in netview control panel to point to a layer instead of NULL) -- represents weight values projected through any intervening layers from source unit (selected unit in netview or passed to ProjectUnitWeights function directly)
   float		snap;
   // #NO_SAVE #CAT_Statistic current snapshot value, as computed by the Snapshot function -- this can be displayed as a border around the units in the netview
   float		tmp_calc1;
   // #NO_SAVE #READ_ONLY #HIDDEN #CAT_Statistic temporary calculation variable (used for computing wt_prjn and prossibly other things)
+
   RecvCons_List	recv;
   // #CAT_Structure Receiving connections, one set of connections for each projection (collection of connections) received from other units
   SendCons_List send;
   // #CAT_Structure Sending connections, one set of connections for each projection (collection of connections) sent from other units
   RecvCons	bias;
   // #CAT_Structure bias weight connection (type determined in unit spec) -- provides intrinsic activation in absence of other inputs
+
   int		n_recv_cons;
   // #DMEM_SHARE_SET_0 #READ_ONLY #EXPERT #CAT_Structure total number of receiving connections
   TDCoord       pos;
@@ -805,7 +801,7 @@ public: //
   int		idx;
   // #READ_ONLY #HIDDEN #NO_COPY #CAT_Structure index of this unit within containing unit group
   int		flat_idx;
-  // #READ_ONLY #HIDDEN #NO_COPY #CAT_Structure index of this unit in a flat array of units (used by some Engines)
+  // #READ_ONLY #HIDDEN #NO_COPY #CAT_Structure index of this unit in a flat array of units (used by parallel threading)
 
 #ifdef DMEM_COMPILE
   static int	dmem_this_proc;	// #IGNORE processor rank for this processor RELATIVE TO COMMUNICATOR for the network
@@ -861,10 +857,6 @@ public: //
 
   virtual void 	Init_InputData() { ext = targ = 0.0f; ext_flag = NO_EXTERNAL; }
   // #MENU #MENU_ON_Actions initialize unit external input data variables
-  virtual void 	Init_Netin()	{ net = 0.0f; }
-  // #CAT_Activation initialize netinput state prior to computing it (for sender-based)
-  virtual void 	Init_NetinDelta() { net = 0.0f; }
-  // #CAT_Activation initialize netinput state prior to computing it (for sender-delta-based)
 
   void 	Init_Acts(Network* net)	{ GetUnitSpec()->Init_Acts(this, net); }
   // #MENU #CAT_Activation initialize unit state variables
@@ -881,9 +873,9 @@ public: //
   void 	Send_Netin(Network* net, int thread_no=-1)
   { GetUnitSpec()->Send_Netin(this, net, thread_no); }
   // #CAT_Activation send net input to other units
-  void 	Send_NetinToLay(Network* net, Layer* tolay)
-  { GetUnitSpec()->Send_NetinToLay(this, net, tolay); }
-  // #CAT_Activation send net input to other units in given layer
+  void 	Compute_SentNetin(Network* net, float sent_netin)
+  { GetUnitSpec()->Compute_SentNetin(this, net, sent_netin); }
+  // #CAT_Activation compute net input for unit based on sent_netin value from Send_Netin
   void 	Compute_Act(Network* net, int thread_no=-1)
   { GetUnitSpec()->Compute_Act(this, net, thread_no); }
   // #CAT_Activation compute activation value: what we send to others
@@ -1369,7 +1361,6 @@ public:
   Unit_Group		units;		// #CAT_Structure #NO_SEARCH units or groups of units
   UnitSpec_SPtr 	unit_spec;	// #CAT_Structure default unit specification for units in this layer
   Unit::ExtType		ext_flag;	// #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received
-  int_Array		sent_already; 	// #CAT_Activation #READ_ONLY #NO_SAVE array of layer addresses for coordinating sending of net input to this layer
   DMemDist		dmem_dist; 	// #CAT_DMem how to distribute units across multiple distributed memory processors
 
   LayerDistances	dist;		// #CAT_Structure distances from closest input/output layers to this layer
@@ -1477,16 +1468,12 @@ public:
   //	Below are the primary computational interface to the Network Objects
   //	for performing algorithm-specific activation and learning
   //	Many functions operate directly on the units via threads, and then
-  //	call through to the layers for any layer-level subsequent prcessing
+  //	call through to the layers for any layer-level subsequent processing
   //	All functions take the pointer to the parent network, just for
   //	convenience and consistency with Unit levels etc
 
   virtual void  Init_InputData(Network* net);
   // #CAT_Activation Initializes external and target inputs
-  virtual void  Init_Netin(Network* net);
-  // #CAT_Activation Initialize the net-input state variable(s) (prior to Send_Netin)
-  virtual void  Init_NetinDelta(Network* net);
-  // #CAT_Activation Initialize the net-input state variable(s) (prior to Send_Netin)
   virtual void  Init_Acts(Network* net);
   // #CAT_Activation Initialize the unit state variables
   virtual void  Init_dWt(Network* net);
@@ -1495,22 +1482,6 @@ public:
   // #MENU #CONFIRM #CAT_Learning Initialize the weights
   virtual void	Init_Weights_post(Network* net);
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
-
-  virtual void	Compute_Netin(Network* net);
-  // #CAT_Activation Compute NetInput -- weighted activations from other units
-  virtual void	Send_Netin(Network* net);
-  // #CAT_Activation sender-based compute net-input sending to all layers
-  virtual void	Send_NetinToLay(Network* net, Layer* tolay);
-  // #CAT_Activation sender-based compute net-input sending only to tolay layer
-  virtual void	Send_NetinToMe(Network* net);
-  // #CAT_Activation tell all layers that I receive from to send their net input to me
-  virtual void	Compute_Act(Network* net);
-  // #CAT_Activation compute activation: the value I send to other units
-
-  virtual void	Compute_dWt(Network* net);
-  // #CAT_Learning compute weight changes: the essence of learning
-  virtual void	Compute_Weights(Network* net);
-  // #CAT_Learning update weights based on previous weight changes
 
   virtual float	Compute_SSE(Network* net, int& n_vals, bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
@@ -1991,8 +1962,8 @@ public:
   TimeUsed	misc_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic misc timer for ad-hoc use by programs
 
   UnitCallThreadMgr threads;	// #CAT_Threads parallel threading of network computation
-  UnitPtrList	    units_flat;	// #READ_ONLY #NO_SAVE #CAT_Threads flat list of units for deploying in threads
-  float_Matrix	    send_netin_tmp; // #READ_ONLY #NO_SAVE #CAT_Threads temporary storage for threaded sender-based netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
+  UnitPtrList	units_flat;	// #READ_ONLY #NO_SAVE #CAT_Threads flat list of units for deploying in threads
+  float_Matrix	send_netin_tmp; // #READ_ONLY #NO_SAVE #CAT_Threads temporary storage for threaded sender-based netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
 
   DMem_SyncLevel dmem_sync_level; // #CAT_DMem at what level of network structure should information be synchronized across processes?
   int		dmem_nprocs;	// #CAT_DMem number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
@@ -2138,10 +2109,6 @@ public:
 
   virtual void  Init_InputData();
   // #CAT_Activation Initializes external and target inputs
-  virtual void  Init_Netin();
-  // #CAT_Activation Initialize the netinput variable(s) (prior to Send_Netin)
-  virtual void  Init_NetinDelta();
-  // #CAT_Activation Initialize the netinput variable(s) (prior to Send_Netin)
   virtual void  Init_Acts();
   // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_Activation initialize the unit activation state variables
   virtual void  Init_dWt();
@@ -2166,22 +2133,14 @@ public:
   
   virtual void	Compute_Netin();
   // #CAT_Activation Compute NetInput: weighted activation from other units
-  virtual void	Compute_Netin_layers();
-  // #CAT_Activation Compute NetInput: weighted activation from other units -- calls layer funs
   virtual void	Send_Netin();
   // #CAT_Activation sender-based computation of net input: weighted activation from other units
-  virtual void	Send_Netin_layers();
-  // #CAT_Activation sender-based computation of net input: weighted activation from other units -- calls layer funs
   virtual void	Compute_Act();
   // #CAT_Activation Compute Activation based on net input
-  virtual void	Compute_Act_layers();
-  // #CAT_Activation Compute Activation based on net input -- calls layer funs
   virtual void	Compute_NetinAct();
   // #CAT_Activation compute net input from other units and then our own activation value based on that -- use this for feedforward networks to propagate activation through network in one compute cycle
 
   virtual void	Compute_dWt();
-  // #CAT_Learning compute weight changes -- the essence of learning
-  virtual void	Compute_dWt_layers();
   // #CAT_Learning compute weight changes -- the essence of learning
 
   virtual bool	Compute_Weights_Test(int trial_no);
@@ -2190,8 +2149,6 @@ public:
   // #CAT_Learning update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode
   virtual void	Compute_Weights_impl();
   // #CAT_Learning just the weight update routine: update weights from delta-weight changes
-  virtual void	Compute_Weights_layers();
-  // #CAT_Learning just the weight update routine: update weights from delta-weight changes -- cals layer funs
 
   virtual void	Compute_SSE(bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activations vs targets over the entire network -- optionally taking the average over units, and square root of the final results
@@ -2422,18 +2379,13 @@ inline float ConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {
   return rval;
 }
 
-inline void ConSpec::C_Send_Netin(Connection* cn, Unit* ru, Unit* su) {
-  ru->net += cn->wt * su->act;
+inline void ConSpec::C_Send_Netin(Connection* cn, float* send_netin_vec, Unit* ru, float su_act) {
+  send_netin_vec[ru->flat_idx] += cn->wt * su_ct;
 }
-inline void ConSpec::Send_Netin(SendCons* cg, Unit* su) {
-  CON_GROUP_LOOP(cg, C_Send_Netin(cg->Cn(i), cg->Un(i), su));
-}
-
-inline void ConSpec::C_Send_Netin_Thread(Connection* cn, Network* net, int thread_no, Unit* ru, Unit* su) {
-  net->send_netin_tmp.FastEl(su->flat_idx, thread_no) += cn->wt * su->act;
-}
-inline void ConSpec::Send_Netin_Thread(SendCons* cg, Network* net, int thread_no, Unit* su) {
-  CON_GROUP_LOOP(cg, C_Send_Netin_Thread(cg->Cn(i), net, thread_no, cg->Un(i), su));
+inline void ConSpec::Send_Netin(SendCons* cg, Network* net, int thread_no, Unit* su) {
+  const float su_act = su->act;
+  float* send_netin_vec = net->send_netin_tmp.el + net->send_netin_tmp.FastElIndex(0, thread_no);
+  CON_GROUP_LOOP(cg, C_Send_Netin(cg->Cn(i), send_netin_vec, cg->Un(i), su_act));
 }
 
 inline float ConSpec::C_Compute_Dist(Connection* cn, Unit*, Unit* su) {
