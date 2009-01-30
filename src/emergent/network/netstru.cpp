@@ -5816,7 +5816,7 @@ void Network::Init_Timers() {
 
 void Network::Compute_Netin() {
   ThreadUnitCall un_call(&Unit::Compute_Netin);
-  threads.Run(&un_call, .9f);
+  threads.Run(&un_call, 1.0f);
 
 #ifdef DMEM_COMPILE
   DMem_SyncNet();
@@ -5834,7 +5834,7 @@ void Network::Compute_Netin_layers() {
 
 void Network::Send_Netin() {
   ThreadUnitCall un_call(&Unit::Send_Netin);
-  threads.Run(&un_call, .9f);
+  threads.Run(&un_call, 1.0f);
 
   // now need to roll up the netinput into unit vals
   const int nu = units_flat.size;

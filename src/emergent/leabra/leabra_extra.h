@@ -974,7 +974,7 @@ public:
     // compute what activation value would be if we subtract out noise -- note that
     // we don't save v_m by phase so this is necessarily on the current v_m val, assumed
     // to be plus-phase value
-    float ru_act_nonoise = ru->Compute_ActValFmVmVal(ru->v_m - ru->noise);
+    float ru_act_nonoise = ru->Compute_ActValFmVmVal_rate(ru->v_m - ru->noise);
     float dav = ru->dav * da_noise.da_noise;
 
     for(int i=0; i<cg->cons.size; i++) {
