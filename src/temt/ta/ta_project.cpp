@@ -575,7 +575,9 @@ void taProject::OpenViewers() {
   for (int i = 0; i < viewers.size; ++i) {
     MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
     if (!vwr) continue;
-    vwr->ViewWindow(); // noop if already open
+    //TODO: add a auto_open flag to viewers, but allow prol UserData soln
+    if (vwr->GetUserDataDef("auto_open", true).toBool())
+      vwr->ViewWindow(); // noop if already open
   }
 }
 
