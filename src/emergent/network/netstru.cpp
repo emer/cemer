@@ -5823,15 +5823,6 @@ void Network::Compute_Netin() {
 #endif
 }
 
-void Network::Compute_Netin_layers() {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesioned())
-      l->Compute_Netin(this);
-  }
-}
-
 void Network::Send_Netin() {
   ThreadUnitCall un_call(&Unit::Send_Netin);
   threads.Run(&un_call, 1.0f);

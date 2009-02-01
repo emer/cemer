@@ -248,7 +248,8 @@ public:
   inline virtual float 	Compute_Netin(RecvCons* cg, Unit* ru);
   // #CAT_Activation compute net input for weights in this con group
 
-  inline void 		C_Send_Netin(Connection* cn, float* send_netin_vec, Unit* ru, Unit* su);
+  inline void 		C_Send_Netin(Connection* cn, float* send_netin_vec, Unit* ru,
+				     float su_act);
   inline virtual void 	Send_Netin(SendCons* cg, Network* net, int thread_no, Unit* su);
   // #CAT_Activation sender-based net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
 
@@ -2380,7 +2381,7 @@ inline float ConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {
 }
 
 inline void ConSpec::C_Send_Netin(Connection* cn, float* send_netin_vec, Unit* ru, float su_act) {
-  send_netin_vec[ru->flat_idx] += cn->wt * su_ct;
+  send_netin_vec[ru->flat_idx] += cn->wt * su_act;
 }
 inline void ConSpec::Send_Netin(SendCons* cg, Network* net, int thread_no, Unit* su) {
   const float su_act = su->act;
