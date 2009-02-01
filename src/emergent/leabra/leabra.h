@@ -18,7 +18,6 @@
 #ifndef leabra_h
 #define leabra_h
 
-#include "emergent_base.h"
 #include "netstru_extra.h"
 #include "emergent_project.h"
 
@@ -26,8 +25,6 @@
 
 #include "leabra_def.h"
 #include "leabra_TA_type.h"
-
-#include <float.h>
 
 // pre-declare
 
@@ -49,8 +46,7 @@ class LeabraLayer;
 
 class LeabraNetwork;
 class LeabraProject; 
-
-// _
+//
 
 // The Leabra algorithm:
 
@@ -1140,6 +1136,9 @@ public:
   virtual bool Compute_dWt_OptTest(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_Learning do optimization threshold test for whether to skip dwt compute or not
 
+  virtual void Compute_dWt_impl(LeabraUnit* u, LeabraNetwork* net);
+  // #CAT_Learning actually perform dwt computation on synapses -- does not test for anything, just does it
+
   override void	Compute_Weights(Unit* u, Network* net, int thread_no=-1);
 
   ///////////////////////////////////////////////////////////////////////
@@ -1336,6 +1335,9 @@ public:
   void	Compute_SentInhibDelta(LeabraNetwork* net, float new_inhib)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_SentInhibDelta(this, net, new_inhib); }
   // #CAT_Activation called by network-level Send_NetinDelta function to integrate sent inhib value with current inhib value
+  float Compute_IThresh(LeabraNetwork* net)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_IThresh(this, net); }
+  // #CAT_Activation called by Compute_SentNetinDelta: compute inhibitory value that would place unit directly at threshold -- computed in Compute_SentNetin.. function
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
@@ -1498,7 +1500,7 @@ public:
   float		max;		// #DMEM_AGG_SUM maximum value
   int 		max_i;		// index of unit with maximum value
 
-  inline void	InitVals()	{ avg = 0.0f; max = -FLT_MAX; max_i = -1; }
+  inline void	InitVals()	{ avg = 0.0f; max = -1.0e22; max_i = -1; }
   inline void	UpdtVals(float val, int idx)
   { avg += val; if(val > max) { max = val; max_i = idx; } }
   inline void	CalcAvg(int n) { if(n > 0) avg /= (float)n; }
@@ -1756,8 +1758,6 @@ public:
   // #CAT_Activation initialize various noise factors at start of trial
   virtual void	Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning reset the sender-receiver coproduct average (CtLeabra_X/CAL)
-  virtual void	Trial_Init_SRAvg_Layer(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning layer-level reset the sender-receiver coproduct average (CtLeabra_X/CAL)
 
   ///////////////////////////////////////////////////////////////////////
   //	SettleInit -- at start of settling
@@ -1952,7 +1952,8 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Trial-level Stats
 
-  virtual float	Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg = false, bool sqrt = false);
+  virtual float	Compute_SSE(LeabraLayer* lay, LeabraNetwork* net,
+			    int& n_vals, bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
 
   virtual void	Compute_NetExtRew(LeabraLayer* lay, LeabraNetwork* net) { };
@@ -2153,8 +2154,6 @@ public:
   // #CAT_Activation initialize various noise factors at start of trial
   void 	Trial_Init_SRAvg(LeabraNetwork* net)   	{ spec->Trial_Init_SRAvg(this, net); }
   // #CAT_Learning initialize sending-receiving activation product averages (CtLeabra_X/CAL)
-  void 	Trial_Init_SRAvg_Layer(LeabraNetwork* net) { spec->Trial_Init_SRAvg_Layer(this, net); }
-  // #CAT_Learning layer-level initialize sending-receiving activation product averages (CtLeabra_X/CAL)
 
   ///////////////////////////////////////////////////////////////////////
   //	SettleInit -- at start of settling
@@ -2258,8 +2257,9 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Trial-level Stats
 
-  override float Compute_SSE(int& n_vals, bool unit_avg = false, bool sqrt = false)
-  { return spec->Compute_SSE(this, n_vals, unit_avg, sqrt); }
+  override float Compute_SSE(Network* net, int& n_vals,
+			     bool unit_avg = false, bool sqrt = false)
+  { return spec->Compute_SSE(this, (LeabraNetwork*)net, n_vals, unit_avg, sqrt); }
 
   void Compute_NetExtRew(LeabraNetwork* net) { spec->Compute_NetExtRew(this, net); }
   // #CAT_Statistic compute external reward value (should be between -1 and 1, typically 0-1) for the network
@@ -2395,6 +2395,8 @@ public:
   float		m_sum;	// #READ_ONLY #EXPERT sum of sravg_m (medium time-scale, trial) weightings (count of number of times sravg has been computed) -- used for normalizing the overall average
   float		m_nrm;	// #READ_ONLY #EXPERT normalization term computed from sravg_m_sum -- multiply connection-level sravg_m by this value
   bool		do_s;	// #READ_ONLY #EXPERT flag set during Compute_SRAvg for whether to compute short-time scale (plus phase) sravg values now or not
+
+  void		InitVals() { s_sum = s_nrm = m_sum = m_nrm = 0.0f; do_s = false; }
 
   SIMPLE_COPY(CtSRAvgVals);
   TA_BASEFUNS(CtSRAvgVals);
@@ -2569,6 +2571,7 @@ public:
   override void	Init_Counters();
   override void	Init_Stats();
   override void	Init_Sequence();
+  override void Init_Weights();
 
   virtual void	SetLearnRule_ConSpecs(BaseSpec_Group* spgp);
   // #IGMORE set the current learning rule into all conspecs in given spec group (recursive)
