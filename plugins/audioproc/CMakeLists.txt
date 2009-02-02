@@ -140,9 +140,9 @@ if (WIN32)
   set(EMERGENT_PLUGIN_EXTRA_LIBRARIES ${SNDFILE_LIBRARY})
 else (WIN32)
   find_library(SNDFILE_LIBRARY sndfile)
+  set(EMERGENT_PLUGIN_EXTRA_LIBRARIES sndfile)
 endif (WIN32)
 message(STATUS SNDFILE_LIBRARY: ${SNDFILE_LIBRARY})
-#set(EMERGENT_PLUGIN_EXTRA_LIBRARIES sndfile)
 
 # NOTE to plugin programmer: you should be done now!  Everything below
 # is standard boilerplate code that you should not need to edit.
