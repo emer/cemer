@@ -3776,6 +3776,17 @@ void Layer::BuildUnits() {
   taMisc::DoneBusy();
 }
 
+void Layer::BuildUnits_Threads(Network* net, int& idx) {
+  units_flat_idx = idx;
+  Unit* un;
+  taLeafItr ui;
+  FOR_ITR_EL(Unit, un, units., ui) {
+    un->flat_idx = idx;
+    net->units_flat.Add(un);
+    idx++;
+  }
+}
+
 void Layer::LayoutUnitGroups() {
   if(units.gp.size == 0) return;
   StructUpdate(true);
@@ -5421,14 +5432,7 @@ void Network::BuildUnits_Threads() {
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, layers., li) {
     if(lay->lesioned()) continue; // don't even add units from lesioned layers!!
-    lay->units_flat_idx = idx;
-    Unit* un;
-    taLeafItr ui;
-    FOR_ITR_EL(Unit, un, lay->units., ui) {
-      un->flat_idx = idx;
-      units_flat.Add(un);
-      idx++;
-    }
+    lay->BuildUnits_Threads(this, idx);
   }
   // temporary storage for sender-based netinput computation
   send_netin_tmp.SetGeom(2, units_flat.size, threads.n_threads);

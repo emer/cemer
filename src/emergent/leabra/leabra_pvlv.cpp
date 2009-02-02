@@ -122,11 +122,6 @@ bool PViLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
-  if(lay->CheckError(net->trial_init != LeabraNetwork::DECAY_STATE, quiet, rval,
-		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
-    net->trial_init = LeabraNetwork::DECAY_STATE;
-  }
-
   SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
@@ -228,7 +223,7 @@ void PViLayerSpec::Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
     (lay, 
      LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
      u->ext = pve_val;		// clamp to pve value
-     ClampValue(ugp, net); 	// apply new value
+     ClampValue_ugp(ugp, net); 	// apply new value
      Compute_ExtToPlus(ugp, net); // copy ext values to act_p
      Compute_dWt_Ugp(ugp, lay, net);
      );
@@ -246,8 +241,8 @@ void PViLayerSpec::Update_PVPrior(LeabraLayer* lay, bool er_avail, float pve_val
 }
 
 
-void PViLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_Act(lay, net);
+void PViLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_CycleStats(lay, net);
   // take the 1st guy as the overall general guy
   LeabraUnit* pvisu = (LeabraUnit*)lay->units.Leaf(0);
   net->pvlv_pvi = pvisu->act_eq;
@@ -393,11 +388,6 @@ bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
-  if(lay->CheckError(net->trial_init != LeabraNetwork::DECAY_STATE, quiet, rval,
-		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
-    net->trial_init = LeabraNetwork::DECAY_STATE;
-  }
-
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
   decay.clamp_phase2 = false;
@@ -506,7 +496,7 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
      if(lv.syn_dep) {
        if(er_avail) {
 	 u->ext = pve_val;
-	 ClampValue(ugp, net); 		// apply new value
+	 ClampValue_ugp(ugp, net); 		// apply new value
 	 Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
 	 Compute_dWt_Ugp(ugp, lay, net);
        }
@@ -517,7 +507,7 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
      else {
        if(er_avail) {
 	 u->ext = pve_val;
-	 ClampValue(ugp, net); 		// apply new value
+	 ClampValue_ugp(ugp, net); 		// apply new value
 	 Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
 	 Compute_dWt_Ugp(ugp, lay, net);
        }
@@ -617,16 +607,16 @@ void LVeLayerSpec::Update_LVPrior(LeabraLayer* lve_lay, LeabraLayer* lvi_lay, bo
   }
 }
 
-void LVeLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_Act(lay, net);
+void LVeLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_CycleStats(lay, net);
   // take the 1st guy as the overall general guy
   LeabraUnit* lvesu = (LeabraUnit*)lay->units.Leaf(0);
   net->pvlv_lve = lvesu->act_eq;
   // this is primarily used for noise modulation
 }
 
-void LViLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
-  ScalarValLayerSpec::Compute_Act(lay, net);
+void LViLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  ScalarValLayerSpec::Compute_CycleStats(lay, net);
   // do NOT report lvi value!
 }
 
@@ -720,11 +710,6 @@ bool NVLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
-  if(lay->CheckError(net->trial_init != LeabraNetwork::DECAY_STATE, quiet, rval,
-		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
-    net->trial_init = LeabraNetwork::DECAY_STATE;
-  }
-
   SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
@@ -790,7 +775,7 @@ void NVLayerSpec::Compute_NVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) {
     (lay, 
      LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
      u->ext = 0.0f;		// clamp to pve value
-     ClampValue(ugp, net); 	// apply new value
+     ClampValue_ugp(ugp, net); 	// apply new value
      Compute_ExtToPlus(ugp, net); // copy ext values to act_p
      Compute_dWt_Ugp(ugp, lay, net);
      );
@@ -898,11 +883,6 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
-
-  if(lay->CheckError(net->trial_init != LeabraNetwork::DECAY_STATE, quiet, rval,
-		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
-    net->trial_init = LeabraNetwork::DECAY_STATE;
-  }
 
   // must have the appropriate ranges for unit specs..
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
@@ -1191,6 +1171,8 @@ void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
   }
 }
 
+// todo: this does not exist!!!
+
 void PVLVDaLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
   if((net->cycle >= 0) && lay->hard_clamped)
     return;			// don't do this during normal processing
@@ -1199,7 +1181,7 @@ void PVLVDaLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
   else
     Compute_Da_LvDelta(lay, net);
   Send_Da(lay, net);
-  Compute_ActAvg(lay, net);
+  //  Compute_ActAvg(lay, net);
 }
 
 void PVLVDaLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {

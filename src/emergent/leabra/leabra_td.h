@@ -66,13 +66,10 @@ INHERITED(LeabraUnitSpec)
 public:
   float		lambda;		// exponential decay parameter for updating activation trace values over time: these trace values are used in learning.  in principle this should also include the effects of the discount (gamma) parameter from the TdRewInteg layer
 
-  // overrides:
-  void		Init_Acts(LeabraUnit* u, LeabraLayer* lay);
-  void		Init_Acts(Unit* u)	{ LeabraUnitSpec::Init_Acts(u); }
-  void 		Init_Weights(Unit* u);
-  void		Compute_dWt(Unit*) { };
-  void 		Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  void 		EncodeState(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
+  override void	Init_Acts(Unit* u, Network* net);
+  override void Init_Weights(Unit* u, Network* net);
+  override bool Compute_dWt_OptTest(LeabraUnit* u, LeabraNetwork* net);
+  override void EncodeState(LeabraUnit* u, LeabraNetwork* net);
 
   void	Defaults();
   TA_SIMPLE_BASEFUNS(LeabraTdUnitSpec);
@@ -166,9 +163,14 @@ public:
   // overrides:
   override void	 Compute_NetExtRew(LeabraLayer* lay, LeabraNetwork* net);
   override void	 Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  override void  Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) { };
-  override void	 Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) { };
-  // never learns
+
+  // todo: override BuildUnits_Threads and exclude all units from any processing??? maybe!
+
+  // don't do any learning:
+  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -252,14 +254,13 @@ public:
   virtual void 	Compute_TdPlusPhase(LeabraLayer* lay, LeabraNetwork* net);
   // compute plus phase activations for learning including the td values
 
-  // overrides:
-  void	Init_Acts(LeabraLayer* lay);
-  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt_Nothing(LeabraLayer* lay, LeabraNetwork* net) { };
-  // don't learn on nothing
+  override void	Init_Acts(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -297,10 +298,14 @@ INHERITED(ScalarValLayerSpec)
 public:
   TDRewIntegSpec	rew_integ;	// misc specs for TDRewIntegLayerSpec
 
+  // todo: Compute_Act does not exist anymore!!!
   void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
-  void 	Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) { };
-  void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) { };
+
   // never learn
+  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -329,12 +334,16 @@ public:
   virtual void	Send_Td(LeabraLayer* lay, LeabraNetwork* net);
   // send the td value to sending projections: every cycle
 
-  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+
+  // todo: Compute_Act does not exist anymore!!!
   void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
 
-  void 	Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) { };
-  void	Compute_dWt_impl(LeabraLayer*, LeabraNetwork*) { };
-  // never learns
+  // never learn
+  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);

@@ -233,11 +233,6 @@ bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     return false;
   }
 
-  if(lay->CheckError(net->trial_init != LeabraNetwork::DECAY_STATE, quiet, rval,
-		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
-    net->trial_init = LeabraNetwork::DECAY_STATE;
-  }
-
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(lay->CheckError(!us->InheritsFrom(TA_MatrixUnitSpec), quiet, rval,
 		"UnitSpec must be MatrixUnitSpec!")) {
@@ -875,11 +870,6 @@ bool SNrThalLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     return false;
   }
 
-  if(lay->CheckError(net->trial_init != LeabraNetwork::DECAY_STATE, quiet, rval,
-		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
-    net->trial_init = LeabraNetwork::DECAY_STATE;
-  }
-
   // must have the appropriate ranges for unit specs..
   //  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
 
@@ -1040,11 +1030,6 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
   if(lay->CheckError(net->phase_order == LeabraNetwork::MINUS_PLUS, quiet, rval,
 		"requires LeabraNetwork phase_oder = MINUS_PLUS_PLUS, I just set it for you")) {
     net->phase_order = LeabraNetwork::MINUS_PLUS_PLUS;
-  }
-
-  if(lay->CheckError(net->trial_init != LeabraNetwork::DECAY_STATE, quiet, rval,
-		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
-    net->trial_init = LeabraNetwork::DECAY_STATE;
   }
 
   if(lay->CheckError(net->min_cycles_phase2 < 35, quiet, rval,

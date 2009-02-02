@@ -17,10 +17,6 @@
 
 #include "netstru_extra.h"
 
-#include <math.h>
-#include <limits.h>
-#include <float.h>
-
 //////////////////////////////////
 //  	MarkerConSpec   	//
 //////////////////////////////////
@@ -64,17 +60,12 @@ void LeabraContextLayerSpec::Initialize() {
 bool LeabraContextLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
-
-  if(lay->CheckError(net->trial_init != LeabraNetwork::DECAY_STATE, quiet, rval,
-		"requires trial_init = DECAY_STATE, I just set it for you")) {
-    net->trial_init = LeabraNetwork::DECAY_STATE;
-  }
+//   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   return rval;
 }
 
 void LeabraContextLayerSpec::Defaults() {
-  LeabraLayerSpec::Defaults();
+  inherited::Defaults();
   Initialize();
 }
 
@@ -94,7 +85,7 @@ void LeabraContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u, Le
     u->ext = updt.fm_prv * u->act_p + updt.fm_hid * su->act_p; // compute new value
   }
   u->SetExtFlag(Unit::EXT);
-  u->Compute_HardClamp(lay, net);
+  u->Compute_HardClamp(net);
 }
 
 void LeabraContextLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
@@ -107,7 +98,7 @@ void LeabraContextLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* 
   FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
     Compute_Context(lay, u, net);
   }
-  Compute_ActAvg(lay, net);
+  Compute_CycleStats(lay, net);
 }
 
 //////////////////////////////////////////
@@ -137,12 +128,12 @@ void LeabraLinUnitSpec::Defaults() {
   Initialize();
 }
 
-void LeabraLinUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraLayer*, LeabraInhib*, LeabraNetwork* net) {
+void LeabraLinUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
   float new_act = u->net * act.gain; // use linear netin as act
 
   u->da = new_act - u->act;
   if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    new_act += noise_sched.GetVal(net->cycle) * noise.Gen();
+    new_act += Compute_Noise(u, net);
   }
   u->act = u->act_nd = u->act_eq = act_range.Clip(new_act);
 }
@@ -309,7 +300,6 @@ void ScalarValSpec::Initialize() {
   norm_width = false;
   clamp_pat = false;
   min_sum_act = 0.2f;
-  val_mult_lrn = false;
   clip_val = true;
   send_thr = false;
   init_nms = true;
@@ -645,7 +635,7 @@ void ScalarValLayerSpec::Compute_UnBias_PosSlp(Unit_Group* ugp) {
   }
 }
 
-void ScalarValLayerSpec::Compute_BiasVal(LeabraLayer* lay) {
+void ScalarValLayerSpec::Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net) {
   if(bias_val.un != ScalarValBias::NO_UN) {
     if(bias_val.un_shp == ScalarValBias::VAL) {
       UNIT_GP_ITR(lay, Compute_UnBias_Val(ugp, bias_val.val););
@@ -662,83 +652,61 @@ void ScalarValLayerSpec::Compute_BiasVal(LeabraLayer* lay) {
   }
 }
 
-void ScalarValLayerSpec::Init_Weights(LeabraLayer* lay) {
-  LeabraLayerSpec::Init_Weights(lay);
-  Compute_BiasVal(lay);
-  if(scalar.init_nms)
-    LabelUnits(lay);
+void ScalarValLayerSpec::BuildUnits_Threads_ugp(LeabraLayer* lay, Unit_Group* ug, 
+						LeabraNetwork* net, int& idx) {
+  Unit* un;
+  taLeafItr ui;
+  int lf = 0;
+  FOR_ITR_EL(Unit, un, lay->units., ui) {
+    if(lf == 0) { lf++; continue; }
+    un->flat_idx = idx;
+    net->units_flat.Add(un);
+    idx++;
+    lf++;
+  }
 }
 
-void ScalarValLayerSpec::Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net) {
-  LeabraLayerSpec::Compute_NetinScale(lay, net);
+void ScalarValLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx) {
+  lay->units_flat_idx = idx;
+  UNIT_GP_ITR(lay, BuildUnits_Threads_ugp(lay, ugp, net, idx););
+}
+
+void ScalarValLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Init_Weights(lay, net);
+  Compute_BiasVal(lay, net);
+  if(scalar.init_nms)
+    LabelUnits(lay, net);
+}
+
+void ScalarValLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Settle_Init_Layer(lay, net);
   if(lay->hard_clamped) return;
+
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
     LeabraConSpec* bspec = (LeabraConSpec*)u->GetUnitSpec()->bias_spec.SPtr();
-    u->clmp_net -= u->bias_scale * u->bias.Cn(0)->wt;
-
     u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
     u->bias_scale /= 100.0f; 		  // keep a constant scaling so it doesn't depend on network size!
-    u->clmp_net += u->bias_scale * u->bias.Cn(0)->wt;
   }
 }
 
-void ScalarValLayerSpec::Compute_ActAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*) {
-  thr->acts.avg = 0.0f;
-  thr->acts.max = -FLT_MAX;
-  thr->acts.max_i = -1;
+void ScalarValLayerSpec::Compute_AvgMaxVals_ugp(LeabraLayer* lay, Unit_Group* ug,
+						AvgMaxVals& vals, ta_memb_ptr mb_off) {
+  vals.InitVals();
   LeabraUnit* u;
   taLeafItr i;
   int lf = 0;
   FOR_ITR_EL(LeabraUnit, u, ug->, i) {
-    if(lf == 0) { lf++; continue; }
-    thr->acts.avg += u->act_eq;
-    if(u->act_eq > thr->acts.max) {
-      thr->acts.max = u->act_eq;  thr->acts.max_i = lf;
-    }
+    if(lf == 0) { lf++; continue; } // skip first unit
+    float val = *((float*)MemberDef::GetOff_static((void*)u, 0, mb_off));
+    vals.UpdtVals(val, lf);
     lf++;
   }
-  if(ug->leaves > 1) thr->acts.avg /= (float)(ug->leaves - 1);
+  vals.CalcAvg(ug->leaves);
 }
 
-void ScalarValLayerSpec::Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*) {
-  thr->acts_m.avg = 0.0f;
-  thr->acts_m.max = -FLT_MAX;
-  thr->acts_m.max_i = -1;
-  LeabraUnit* u;
-  taLeafItr i;
-  int lf = 0;
-  FOR_ITR_EL(LeabraUnit, u, ug->, i) {
-    if(lf == 0) { lf++; continue; }
-    thr->acts_m.avg += u->act_m;
-    if(u->act_m > thr->acts_m.max) {
-      thr->acts_m.max = u->act_m;  thr->acts_m.max_i = lf;
-    }
-    lf++;
-  }
-  if(ug->leaves > 1) thr->acts_m.avg /= (float)(ug->leaves - 1);
-}
-
-void ScalarValLayerSpec::Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*) {
-  thr->acts_p.avg = 0.0f;
-  thr->acts_p.max = -FLT_MAX;
-  thr->acts_p.max_i = -1;
-  LeabraUnit* u;
-  taLeafItr i;
-  int lf = 0;
-  FOR_ITR_EL(LeabraUnit, u, ug->, i) {
-    if(lf == 0) { lf++; continue; }
-    thr->acts_p.avg += u->act_p;
-    if(u->act_p > thr->acts_p.max) {
-      thr->acts_p.max = u->act_p;  thr->acts_p.max_i = lf;
-    }
-    lf++;
-  }
-  if(ug->leaves > 1) thr->acts_p.avg /= (float)(ug->leaves - 1);
-}
-
-void ScalarValLayerSpec::ClampValue(Unit_Group* ugp, LeabraNetwork*, float rescale) {
+void ScalarValLayerSpec::ClampValue_ugp(Unit_Group* ugp, LeabraNetwork*, float rescale) {
   if(ugp->size < 3) return;	// must be at least a few units..
   LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
   LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
@@ -775,7 +743,7 @@ float ScalarValLayerSpec::ClampAvgAct(int ugp_size) {
   return sum;
 }
 
-float ScalarValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
+float ScalarValLayerSpec::ReadValue_ugp(LeabraLayer* lay, Unit_Group* ugp, LeabraNetwork*) {
   if(ugp->size < 3) return 0.0f;	// must be at least a few units..
 
   scalar.InitVal(0.0f, ugp->size, unit_range.min, unit_range.range);
@@ -803,7 +771,11 @@ float ScalarValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
   return u->act_eq;
 }
 
-void ScalarValLayerSpec::LabelUnits_impl(Unit_Group* ugp) {
+void ScalarValLayerSpec::ReadValue(LeabraLayer* lay, LeabraNetwork* net) {
+  UNIT_GP_ITR(lay, ReadValue_ugp(lay, ugp, net); );
+}
+
+void ScalarValLayerSpec::LabelUnits_ugp(Unit_Group* ugp) {
   if(ugp->size < 3) return;	// must be at least a few units..
   scalar.InitVal(0.0f, ugp->size, unit_range.min, unit_range.range);
   for(int i=1;i<ugp->size;i++) {
@@ -815,16 +787,16 @@ void ScalarValLayerSpec::LabelUnits_impl(Unit_Group* ugp) {
   u->name = "val";		// overall value
 }
 
-void ScalarValLayerSpec::LabelUnits(LeabraLayer* lay) {
-  UNIT_GP_ITR(lay, LabelUnits_impl(ugp); );
+void ScalarValLayerSpec::LabelUnits(LeabraLayer* lay, LeabraNetwork* net) {
+  UNIT_GP_ITR(lay, LabelUnits_ugp(ugp); );
 }
 
-void ScalarValLayerSpec::LabelUnitsNet(Network* net) {
+void ScalarValLayerSpec::LabelUnitsNet(LeabraNetwork* net) {
   LeabraLayer* l;
   taLeafItr li;
   FOR_ITR_EL(LeabraLayer, l, net->layers., li) {
     if(l->spec.SPtr() == this)
-      LabelUnits(l);
+      LabelUnits(l, net);
   }
 }
 
@@ -839,13 +811,13 @@ void ScalarValLayerSpec::ResetAfterClamp(LeabraLayer* lay, LeabraNetwork*) {
 }
 
 void ScalarValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
-  LeabraLayerSpec::Compute_HardClamp(lay, net);
+  inherited::Compute_HardClamp(lay, net);
   ResetAfterClamp(lay, net);
 }
 
 void ScalarValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   if(scalar.clamp_pat) {
-    LeabraLayerSpec::Compute_HardClamp(lay, net);
+    inherited::Compute_HardClamp(lay, net);
     return;
   }
   if(!(lay->ext_flag & Unit::EXT)) {
@@ -853,7 +825,7 @@ void ScalarValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net)
     return;
   }
   // allow for soft-clamping: translates pattern into exts first
-  UNIT_GP_ITR(lay, if(ugp->size > 2) { ClampValue(ugp, net); } );
+  UNIT_GP_ITR(lay, if(ugp->size > 2) { ClampValue_ugp(ugp, net); } );
   // now check for actual hard clamping
   if(!clamp.hard) {
     lay->hard_clamped = false;
@@ -862,48 +834,9 @@ void ScalarValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net)
   HardClampExt(lay, net);
 }
 
-void ScalarValLayerSpec::Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net) {
-  // todo: need to fix this!!
-//   LeabraLayerSpec::Compute_Act_impl(lay, ug, thr, net);
-  ReadValue(ug, net);		// always read out the value
-}
-
-void ScalarValLayerSpec::Compute_dWt_Ugp(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net) {
-  if(scalar.val_mult_lrn) {
-    // because it is very hard to actually change the lrate, we are just moving
-    // the act_m value toward act_p to decrease the effective lrate: this is equivalent
-    // for the delta-rule..
-    LeabraUnit* scu = (LeabraUnit*)ugp->FastEl(0);
-    float val_dif_mult = 1.0f - fabs(scu->act_p - scu->act_m);
-    if(val_dif_mult < 0.0f) val_dif_mult = 0.0f;
-    for(int i=1;i<ugp->size;i++) {
-      LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-      // if dif = 0, val_dif_mult = 1 = move all the way to act_p; else move just a bit..
-      u->act_m += val_dif_mult * (u->act_p - u->act_m);
-      u->Compute_dWt(lay, net);
-    }
-  }
-  else {
-    for(int i=1;i<ugp->size;i++) {
-      LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-      u->Compute_dWt(lay, net);
-    }
-  }
-}
-
-void ScalarValLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
-    if(lay->sravg_m_sum == 0.0f) return; // if nothing, nothing!
-    lay->sravg_m_nrm = 1.0f / lay->sravg_m_sum;
-    if(lay->sravg_s_sum > 0.0f) 
-      lay->sravg_s_nrm = 1.0f / lay->sravg_s_sum;
-    else
-      lay->sravg_s_nrm = 1.0f;	// whatever
-  }
-  UNIT_GP_ITR(lay, 
-	      Compute_dWt_Ugp(ugp, lay, net);
-	      );
-  AdaptKWTAPt(lay, net);
+void ScalarValLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_CycleStats(lay, net);
+  ReadValue(lay, net);		// always read out the value
 }
 
 float ScalarValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals) {
@@ -920,7 +853,8 @@ float ScalarValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int
   return 0.0f;
 }
 
-float ScalarValLayerSpec::Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg, bool sqrt) {
+float ScalarValLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork*, 
+				      int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
   if(!(lay->ext_flag & (Unit::TARG | Unit::COMP))) return 0.0f;
   lay->sse = 0.0f;
@@ -1177,7 +1111,7 @@ void MotorForceLayerSpec::ClampForce(LeabraLayer* lay, LeabraNetwork* net, float
       if(!ugp || ugp->size == 0) continue;
       LeabraUnit* un0 = (LeabraUnit*)ugp->FastEl(0);
       un0->ext = force;
-      ClampValue(ugp, net, wt);
+      ClampValue_ugp(ugp, net, wt);
     }
   }
   lay->SetExtFlag(Unit::EXT);
@@ -1190,7 +1124,7 @@ void MotorForceLayerSpec::ClampForce(LeabraLayer* lay, LeabraNetwork* net, float
 	      );
 }
 
-void MotorForceLayerSpec::Compute_BiasVal(LeabraLayer* lay) {
+void MotorForceLayerSpec::Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net) {
   float vel_mid = .5f * (float)(lay->gp_geom.y-1);
   float pos_mid = .5f * (float)(lay->gp_geom.x-1);
   for(int y=0; y<lay->gp_geom.y; y++) {
@@ -1540,7 +1474,7 @@ void TwoDValLayerSpec::Compute_UnBias_Val(Unit_Group* ugp, float x_val, float y_
   }
 }
 
-void TwoDValLayerSpec::Compute_BiasVal(LeabraLayer* lay) {
+void TwoDValLayerSpec::Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net) {
   if(bias_val.un != TwoDValBias::NO_UN) {
     UNIT_GP_ITR(lay, Compute_UnBias_Val(ugp, bias_val.x_val, bias_val.y_val););
   }
@@ -1549,81 +1483,59 @@ void TwoDValLayerSpec::Compute_BiasVal(LeabraLayer* lay) {
   }
 }
 
-void TwoDValLayerSpec::Init_Weights(LeabraLayer* lay) {
-  LeabraLayerSpec::Init_Weights(lay);
-  Compute_BiasVal(lay);
+void TwoDValLayerSpec::BuildUnits_Threads_ugp(LeabraLayer* lay, Unit_Group* ug, 
+						LeabraNetwork* net, int& idx) {
+  Unit* un;
+  taLeafItr ui;
+  int lf = 0;
+  FOR_ITR_EL(Unit, un, lay->units., ui) {
+    if(lf < lay->un_geom.x) { lf++; continue; }
+    un->flat_idx = idx;
+    net->units_flat.Add(un);
+    idx++;
+    lf++;
+  }
 }
 
-void TwoDValLayerSpec::Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net) {
-  LeabraLayerSpec::Compute_NetinScale(lay, net);
+void TwoDValLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx) {
+  lay->units_flat_idx = idx;
+  UNIT_GP_ITR(lay, BuildUnits_Threads_ugp(lay, ugp, net, idx););
+}
+
+void TwoDValLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Init_Weights(lay, net);
+  Compute_BiasVal(lay, net);
+}
+
+void TwoDValLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Settle_Init_Layer(lay, net);
   if(lay->hard_clamped) return;
+
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
     LeabraConSpec* bspec = (LeabraConSpec*)u->GetUnitSpec()->bias_spec.SPtr();
-    u->clmp_net -= u->bias_scale * u->bias.Cn(0)->wt;
-
     u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
     u->bias_scale /= 100.0f; 		  // keep a constant scaling so it doesn't depend on network size!
-    u->clmp_net += u->bias_scale * u->bias.Cn(0)->wt;
   }
 }
 
-void TwoDValLayerSpec::Compute_ActAvg_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*) {
-  thr->acts.avg = 0.0f;
-  thr->acts.max = -FLT_MAX;
-  thr->acts.max_i = -1;
+void TwoDValLayerSpec::Compute_AvgMaxVals_ugp(LeabraLayer* lay, Unit_Group* ug,
+					      AvgMaxVals& vals, ta_memb_ptr mb_off) {
+  vals.InitVals();
   LeabraUnit* u;
   taLeafItr i;
   int lf = 0;
   FOR_ITR_EL(LeabraUnit, u, ug->, i) {
     if(lf < lay->un_geom.x) { lf++; continue; }
-    thr->acts.avg += u->act_eq;
-    if(u->act_eq > thr->acts.max) {
-      thr->acts.max = u->act_eq;  thr->acts.max_i = lf;
-    }
+    float val = *((float*)MemberDef::GetOff_static((void*)u, 0, mb_off));
+    vals.UpdtVals(val, lf);
     lf++;
   }
-  if(ug->leaves > lay->un_geom.x) thr->acts.avg /= (float)(ug->leaves - lay->un_geom.x);
+  vals.CalcAvg(ug->leaves);
 }
 
-void TwoDValLayerSpec::Compute_ActMAvg_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*) {
-  thr->acts_m.avg = 0.0f;
-  thr->acts_m.max = -FLT_MAX;
-  thr->acts_m.max_i = -1;
-  LeabraUnit* u;
-  taLeafItr i;
-  int lf = 0;
-  FOR_ITR_EL(LeabraUnit, u, ug->, i) {
-    if(lf < lay->un_geom.x) { lf++; continue; }
-    thr->acts_m.avg += u->act_m;
-    if(u->act_m > thr->acts_m.max) {
-      thr->acts_m.max = u->act_m;  thr->acts_m.max_i = lf;
-    }
-    lf++;
-  }
-  if(ug->leaves > lay->un_geom.x) thr->acts.avg /= (float)(ug->leaves - lay->un_geom.x);
-}
-
-void TwoDValLayerSpec::Compute_ActPAvg_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*) {
-  thr->acts_p.avg = 0.0f;
-  thr->acts_p.max = -FLT_MAX;
-  thr->acts_p.max_i = -1;
-  LeabraUnit* u;
-  taLeafItr i;
-  int lf = 0;
-  FOR_ITR_EL(LeabraUnit, u, ug->, i) {
-    if(lf < lay->un_geom.x) { lf++; continue; }
-    thr->acts_p.avg += u->act_p;
-    if(u->act_p > thr->acts_p.max) {
-      thr->acts_p.max = u->act_p;  thr->acts_p.max_i = lf;
-    }
-    lf++;
-  }
-  if(ug->leaves > lay->un_geom.x) thr->acts.avg /= (float)(ug->leaves - lay->un_geom.x);
-}
-
-void TwoDValLayerSpec::ClampValue(Unit_Group* ugp, LeabraNetwork*, float rescale) {
+void TwoDValLayerSpec::ClampValue_ugp(Unit_Group* ugp, LeabraNetwork*, float rescale) {
   if(ugp->size < 3) return;	// must be at least a few units..
   Layer* lay = ugp->own_lay;
   // first initialize to zero
@@ -1654,9 +1566,12 @@ void TwoDValLayerSpec::ClampValue(Unit_Group* ugp, LeabraNetwork*, float rescale
   }
 }
 
-void TwoDValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
+void TwoDValLayerSpec::ReadValue(LeabraLayer* lay, LeabraNetwork* net) {
+  UNIT_GP_ITR(lay, ReadValue_ugp(lay, ugp, net); );
+}
+
+void TwoDValLayerSpec::ReadValue_ugp(LeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net) {
   if(ugp->size < 3) return;	// must be at least a few units..
-  Layer* lay = ugp->own_lay;
   twod.InitVal(0.0f, 0.0f, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
   if(twod.n_vals == 1) {	// special case
     float x_avg = 0.0f; float y_avg = 0.0f;
@@ -1738,7 +1653,7 @@ void TwoDValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
   }
 }
 
-void TwoDValLayerSpec::LabelUnits_impl(Unit_Group* ugp) {
+void TwoDValLayerSpec::LabelUnits_ugp(Unit_Group* ugp) {
   if(ugp->size < 3) return;	// must be at least a few units..
   Layer* lay = ugp->own_lay;
   twod.InitVal(0.0f, 0.0f, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
@@ -1749,16 +1664,16 @@ void TwoDValLayerSpec::LabelUnits_impl(Unit_Group* ugp) {
   }
 }
 
-void TwoDValLayerSpec::LabelUnits(LeabraLayer* lay) {
-  UNIT_GP_ITR(lay, LabelUnits_impl(ugp); );
+void TwoDValLayerSpec::LabelUnits(LeabraLayer* lay, LeabraNetwork* net) {
+  UNIT_GP_ITR(lay, LabelUnits_ugp(ugp); );
 }
 
-void TwoDValLayerSpec::LabelUnitsNet(Network* net) {
+void TwoDValLayerSpec::LabelUnitsNet(LeabraNetwork* net) {
   LeabraLayer* l;
   taLeafItr li;
   FOR_ITR_EL(LeabraLayer, l, net->layers., li) {
     if(l->spec.SPtr() == this)
-      LabelUnits(l);
+      LabelUnits(l, net);
   }
 }
 
@@ -1775,13 +1690,13 @@ void TwoDValLayerSpec::ResetAfterClamp(LeabraLayer* lay, LeabraNetwork*) {
 }
 
 void TwoDValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
-  LeabraLayerSpec::Compute_HardClamp(lay, net);
+  inherited::Compute_HardClamp(lay, net);
   ResetAfterClamp(lay, net);
 }
 
 void TwoDValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   if(twod.clamp_pat) {
-    LeabraLayerSpec::Compute_HardClamp(lay, net);
+    inherited::Compute_HardClamp(lay, net);
     return;
   }
   if(!(lay->ext_flag & Unit::EXT)) {
@@ -1789,7 +1704,7 @@ void TwoDValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
     return;
   }
   // allow for soft-clamping: translates pattern into exts first
-  UNIT_GP_ITR(lay, if(ugp->size > 2) { ClampValue(ugp, net); } );
+  UNIT_GP_ITR(lay, if(ugp->size > 2) { ClampValue_ugp(ugp, net); } );
   // now check for actual hard clamping
   if(!clamp.hard) {
     lay->hard_clamped = false;
@@ -1798,32 +1713,9 @@ void TwoDValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   HardClampExt(lay, net);
 }
 
-void TwoDValLayerSpec::Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net) {
-  // todo: need to fix this!!
-//   LeabraLayerSpec::Compute_Act_impl(lay, ug, thr, net);
-  ReadValue(ug, net);		// always read out the value
-}
-
-void TwoDValLayerSpec::Compute_dWtUgp(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net) {
-  for(int i=lay->un_geom.x;i<ugp->size;i++) {
-    LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-    u->Compute_dWt(lay, net);
-  }
-}
-
-void TwoDValLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
-    if(lay->sravg_m_sum == 0.0f) return; // if nothing, nothing!
-    lay->sravg_m_nrm = 1.0f / lay->sravg_m_sum;
-    if(lay->sravg_s_sum > 0.0f) 
-      lay->sravg_s_nrm = 1.0f / lay->sravg_s_sum;
-    else
-      lay->sravg_s_nrm = 1.0f;	// whatever
-  }
-  UNIT_GP_ITR(lay, 
-	      Compute_dWtUgp(ugp, lay, net);
-	      );
-  AdaptKWTAPt(lay, net);
+void TwoDValLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_CycleStats(lay, net);
+  ReadValue(lay, net);		// always read out the value
 }
 
 float TwoDValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals) {
@@ -1856,7 +1748,8 @@ float TwoDValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& 
   return rval;
 }
 
-float TwoDValLayerSpec::Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg, bool sqrt) {
+float TwoDValLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork*, 
+				    int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
   if(!(lay->ext_flag & (Unit::TARG | Unit::COMP))) return 0.0f;
   lay->sse = 0.0f;
@@ -1944,11 +1837,7 @@ void DecodeTwoDValLayerSpec::Compute_Inhib(LeabraLayer*, LeabraNetwork*) {
   return;			// do nothing!
 }
 
-void DecodeTwoDValLayerSpec::Compute_InhibAvg(LeabraLayer*, LeabraNetwork*) {
-  return;
-}
-
-void DecodeTwoDValLayerSpec::Compute_Act_impl(LeabraLayer*, Unit_Group* ug, LeabraInhib*, LeabraNetwork* net) {
+void DecodeTwoDValLayerSpec::ReadValue_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraNetwork* net) {
   LeabraUnit* u;
   taLeafItr ui;
   FOR_ITR_EL(LeabraUnit, u, ug->, ui) {
@@ -1961,7 +1850,7 @@ void DecodeTwoDValLayerSpec::Compute_Act_impl(LeabraLayer*, Unit_Group* ug, Leab
     u->act_eq = su->act_eq;
     u->act_nd = su->act_nd;
   }
-  ReadValue(ug, net);		// always read out the value
+  inherited::ReadValue_ugp(lay, ug, net);
 }
 
 ////////////////////////////////////////////////////////////
@@ -2501,7 +2390,7 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
 	}
       }
       float ival = gp_i * (1.0f + feat_inhib.feat_gain * sum_cost);
-      u->Compute_ApplyInhib(lay, (LeabraInhib*)u_own, net, ival);
+      u->Compute_ApplyInhib(net, ival);
     }    
   }
 }

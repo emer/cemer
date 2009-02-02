@@ -118,7 +118,7 @@ public:
   // update the prior PV value, stored in pv unit misc_1 values
 
   // overrides:
-  override void Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { };
   override void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
@@ -268,7 +268,7 @@ public:
   virtual void	Update_LVPrior(LeabraLayer* lve_lay, LeabraLayer* lvi_lay, bool er_avail);
   // update the prior Lv value, stored in lv unit misc_1 values
 
-  override void Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { };
   override void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
@@ -291,7 +291,7 @@ class LEABRA_API LViLayerSpec : public LVeLayerSpec {
   // inhibitory/slow version of LV layer spec: (just a marker for layer; same functionality as LVeLayerSpec)
 INHERITED(LVeLayerSpec)
 public:
-  override void Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
   TA_BASEFUNS_NOCOPY(LViLayerSpec);
 private:

@@ -47,33 +47,34 @@ void LeabraTdUnitSpec::Defaults() {
   Initialize();
 }
 
-void LeabraTdUnitSpec::Init_Acts(LeabraUnit* u, LeabraLayer* lay) {
-  inherited::Init_Acts(u, lay);
+void LeabraTdUnitSpec::Init_Acts(Unit* u, Network* net) {
+  inherited::Init_Acts(u, net);
   LeabraTdUnit* lu = (LeabraTdUnit*)u;
   lu->p_act_m = -.01f;
   lu->p_act_p = -.01f;
 }
 
-void LeabraTdUnitSpec::Init_Weights(Unit* u) {
-  inherited::Init_Weights(u);
+void LeabraTdUnitSpec::Init_Weights(Unit* u, Network* net) {
+  inherited::Init_Weights(u, net);
   ((LeabraTdUnit*)u)->trace = 0.0f;
 }
 
-void LeabraTdUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
+bool LeabraTdUnitSpec::Compute_dWt_OptTest(LeabraUnit* u, LeabraNetwork* net) {
+  LeabraLayer* lay = u->own_lay();
   LeabraTdUnit* lu = (LeabraTdUnit*)u;
   if((lu->act_p <= opt_thresh.learn) && (lu->act_m <= opt_thresh.learn)) {
     if((lu->p_act_p <= opt_thresh.learn) && (lu->p_act_m <= opt_thresh.learn)) {
-      return;
+      return false;
     }
   }
   if(lay->phase_dif_ratio < opt_thresh.phase_dif) {
-    return;
+    return false;
   }
-  Compute_dWt_impl(u, lay, net);
+  return true;
 }
 
-void LeabraTdUnitSpec::EncodeState(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::EncodeState(u, lay, net);
+void LeabraTdUnitSpec::EncodeState(LeabraUnit* u, LeabraNetwork* net) {
+  inherited::EncodeState(u, net);
   LeabraTdUnit* lu = (LeabraTdUnit*)u;
   if(net->phase_max >= 3)
     lu->p_act_p = lu->act_p2;
@@ -168,11 +169,6 @@ bool ExtRewLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
-  if(lay->CheckError(net->trial_init != LeabraNetwork::DECAY_STATE, quiet, rval,
-		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
-    net->trial_init = LeabraNetwork::DECAY_STATE;
-  }
-
   SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
@@ -249,7 +245,7 @@ void ExtRewLayerSpec::Compute_UnitDa(float er, LeabraUnit* u, Unit_Group* ugp, L
     lst_cor_cnt = err_cor_cnt;	// record last positive 
   }
 
-  ClampValue(ugp, net);
+  ClampValue_ugp(ugp, net);
 }
 
 bool ExtRewLayerSpec::OutErrRewAvail(LeabraLayer* lay, LeabraNetwork*) {
@@ -415,7 +411,7 @@ void ExtRewLayerSpec::Compute_ExtRew(LeabraLayer* lay, LeabraNetwork* net) {
      if(er == rew.norew_val) {
        u->misc_1 = 0.0f;	// indication of no reward!
        u->ext = rew.norew_val;	// this is appropriate to set here..
-       ClampValue(ugp, net);
+       ClampValue_ugp(ugp, net);
      }
      else {
        u->misc_1 = 1.0f;		// indication of reward!
@@ -432,7 +428,7 @@ void ExtRewLayerSpec::Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net) {
      if(er == rew.norew_val) {
        u->misc_1 = 0.0f;	// indication of no reward!
        u->ext = rew.norew_val;	// this is appropriate to set here..
-       ClampValue(ugp, net);
+       ClampValue_ugp(ugp, net);
      }
      else {
        u->misc_1 = 1.0f;		// indication of reward!
@@ -447,7 +443,7 @@ void ExtRewLayerSpec::Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork* net) {
      LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
      u->misc_1 = 0.0f;		// indication of no reward!
      u->ext = rew.norew_val;	// this is appropriate to set here..
-     ClampValue(ugp, net);
+     ClampValue_ugp(ugp, net);
      );
 }
 
@@ -457,7 +453,7 @@ void ExtRewLayerSpec::Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net) {
      LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
      u->misc_1 = 0.0f;		// indication of no reward!
      u->ext = rew.norew_val;
-     ClampValue(ugp, net);
+     ClampValue_ugp(ugp, net);
      );
 }
 
@@ -558,10 +554,6 @@ bool TDRewPredLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
-  if(lay->CheckError(net->trial_init != LeabraNetwork::DECAY_STATE, quiet, rval,
-		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
-    net->trial_init = LeabraNetwork::DECAY_STATE;
-  }
   if(lay->CheckError(!lay->units.el_typ->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
 		"must have LeabraTdUnits!")) {
     return false;
@@ -603,8 +595,8 @@ bool TDRewPredLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   return true;
 }
 
-void TDRewPredLayerSpec::Init_Acts(LeabraLayer* lay) {
-  inherited::Init_Acts(lay);
+void TDRewPredLayerSpec::Init_Acts(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Init_Acts(lay, net);
   // initialize the misc_1 variable to 0.0 -- no prior predictions!
   UNIT_GP_ITR(lay, 
       LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
@@ -652,7 +644,7 @@ void TDRewPredLayerSpec::Compute_TdPlusPhase_impl(Unit_Group* ugp, LeabraNetwork
 
   LeabraTdUnit* u = (LeabraTdUnit*)ugp->FastEl(0);
   u->ext = u->act_m + u->dav;
-  ClampValue(ugp, net);		// apply new value
+  ClampValue_ugp(ugp, net);		// apply new value
   Compute_ExtToPlus(ugp, net);	// copy ext values to act_p
 }
 
@@ -675,26 +667,26 @@ void TDRewPredLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net)
   }
   else {
     lay->hard_clamped = false;	// run free: generate prediction of future reward
-    lay->Init_InputData();
+    lay->Init_InputData(net);
   }
 }
 
-void TDRewPredLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net) {
+bool TDRewPredLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
   // doing second because act_p is computed only at end of settling!
   // this is better than clamping the value in the middle of everything
   // and then continuing with settling..
   if(net->phase_no < net->phase_max-1)
-    return; // only do FINAL dwt!
-  Compute_dWt_impl(lay, net);
+    return false; // only do FINAL dwt!
+  return true;
 }
 
-void TDRewPredLayerSpec::Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net) {
+bool TDRewPredLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
   // doing second because act_p is computed only at end of settling!
   // this is better than clamping the value in the middle of everything
   // and then continuing with settling..
   if(net->phase_no < net->phase_max-1)
-    return; // only do FINAL dwt!
-  Compute_dWt_impl(lay, net);
+    return false; // only do FINAL dwt!
+  return true;
 }
 
 //////////////////////////////////////////
@@ -756,10 +748,6 @@ bool TDRewIntegLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
-  if(lay->CheckError(net->trial_init != LeabraNetwork::DECAY_STATE, quiet, rval,
-		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
-    net->trial_init = LeabraNetwork::DECAY_STATE;
-  }
   if(lay->CheckError(!lay->units.el_typ->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
 		"must have LeabraTdUnits!")) {
     return false;
@@ -821,6 +809,8 @@ bool TDRewIntegLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 }
 
 void TDRewIntegLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
+  // todo: Compute_Act does not exist anymore!!!
+
   lay->SetExtFlag(Unit::EXT);
 
   float rew_pred_val = 0.0f;
@@ -863,7 +853,7 @@ void TDRewIntegLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR(lay, 
       LeabraTdUnit* u = (LeabraTdUnit*)ugp->FastEl(0);
       u->ext = new_val;
-      ClampValue(ugp, net);
+      ClampValue_ugp(ugp, net);
 	      );
   HardClampExt(lay, net);
 }
@@ -919,11 +909,6 @@ bool TdLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
-
-  if(lay->CheckError(net->trial_init != LeabraNetwork::DECAY_STATE, quiet, rval,
-		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
-    net->trial_init = LeabraNetwork::DECAY_STATE;
-  }
 
   // must have the appropriate ranges for unit specs..
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
@@ -1036,12 +1021,14 @@ void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork*) {
   }
 }
 
+// todo: this does not exist!!!
+
 void TdLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
   if((net->cycle >= 0) && lay->hard_clamped)
     return;			// don't do this during normal processing
   Compute_Td(lay, net);	// now get the td and clamp it to layer
   Send_Td(lay, net);
-  Compute_ActAvg(lay, net);
+  //  Compute_ActAvg(lay, net);
 }
 
 void TdLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {

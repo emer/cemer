@@ -29,16 +29,14 @@ class LEABRA_API MarkerConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   // don't send regular net inputs or learn!
-  inline float 	Compute_Netin(RecvCons*, Unit*) { return 0.0f; }
-  inline void 	Send_Netin(RecvCons*, float su_act) { };
-  inline void 	Send_NetinDelta(LeabraRecvCons*, float su_act_delta) { };
-  inline void 	Send_ClampNet(LeabraRecvCons*, float su_act) { };
+  inline void 	Send_NetinDelta(LeabraRecvCons*, LeabraNetwork* net, int thread_no, 
+				float su_act_delta_eff) { };
   inline void 	Compute_dWt(RecvCons*, Unit*) { };
   inline void 	Compute_dWt_LeabraCHL(LeabraRecvCons*, LeabraUnit*) { };
   inline void 	Compute_dWt_CtLeabraCAL(LeabraRecvCons*, LeabraUnit*) { };
   inline void 	Compute_dWt_CtLeabraXCAL(LeabraRecvCons*, LeabraUnit*) { };
   inline void 	Compute_SRAvg(LeabraRecvCons*, LeabraUnit*, bool do_s) { };
-  inline void 	Init_SRAvg(LeabraRecvCons*, LeabraUnit*) { };
+  inline void 	Trial_Init_SRAvg(LeabraRecvCons*, LeabraUnit*) { };
   inline void	Compute_Weights(RecvCons*, Unit*) { };
   inline void	Compute_Weights_LeabraCHL(LeabraRecvCons*, LeabraUnit*) { };
   inline void	Compute_Weights_CtLeabraCAL(LeabraRecvCons*, LeabraUnit*) { };
@@ -87,9 +85,11 @@ public:
 
   override bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
 
-  void	Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) { };
-  void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) { };
-  // no learn
+  // don't do any learning:
+  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
 
   void	Defaults();
 
@@ -107,7 +107,7 @@ class LEABRA_API LeabraLinUnitSpec : public LeabraUnitSpec {
   // a pure linear unit (suitable for an AC unit spec unit)
 INHERITED(LeabraUnitSpec)
 public:
-  void 	Compute_ActFmVm(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
+  void 	Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net);
   
   void	Defaults();
 
@@ -225,56 +225,31 @@ public:
     TrialSynDepCon* lcn = (TrialSynDepCon*)cn; lcn->effwt = lcn->wt;
   }
 
-  float C_Compute_Netin(TrialSynDepCon* cn, Unit*, Unit* su) {
-    return cn->effwt * su->act;
+  void C_Send_NetinDelta(TrialSynDepCon* cn, float* send_netin_vec,
+			 Unit* ru, float su_act_delta_eff) {
+    send_netin_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
   }
-  float Compute_Netin(RecvCons* cg, Unit* ru) {
-    float rval=0.0f;
-    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((TrialSynDepCon*)cg->Cn(i), ru, cg->Un(i)));
-    return ((LeabraRecvCons*)cg)->scale_eff * rval;
+  void C_Send_InhibDelta(TrialSynDepCon* cn, float* send_inhib_vec,
+			 Unit* ru, float su_act_delta_eff) {
+    send_inhib_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
   }
-  void C_Send_Inhib(LeabraSendCons* cg, TrialSynDepCon* cn, LeabraUnit* ru, float su_act_eff) {
-    ru->gc.i += su_act_eff * cn->effwt;
-  }
-  void C_Send_Netin(LeabraSendCons* cg, TrialSynDepCon* cn, Unit* ru, float su_act_eff) {
-    ru->net += su_act_eff * cn->effwt;
-  }
-  void Send_Netin(SendCons* cg, float su_act) {
-    // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
-    // LeabraUnitSpec::CheckConfig checks that this is ok.
+  override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+				int thread_no, float su_act_delta) {
     Unit* ru = cg->Un(0);
-    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act;
-    if(inhib) {
-      CON_GROUP_LOOP(cg, C_Send_Inhib((LeabraSendCons*)cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
+    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff
+      * su_act_delta;
+    if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
+      float* send_inhib_vec = net->send_inhib_tmp.el
+	+ net->send_inhib_tmp.FastElIndex(0, thread_no);
+      CON_GROUP_LOOP(cg, C_Send_InhibDelta((TrialSynDepCon*)cg->Cn(i), send_inhib_vec, cg->Un(i),
+					   su_act_delta_eff));
     }
     else {
-      CON_GROUP_LOOP(cg, C_Send_Netin((LeabraSendCons*)cg, (TrialSynDepCon*)cg->Cn(i), cg->Un(i), su_act_eff));
+      float* send_netin_vec = net->send_netin_tmp.el
+	+ net->send_netin_tmp.FastElIndex(0, thread_no);
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta((TrialSynDepCon*)cg->Cn(i), send_netin_vec, cg->Un(i),
+					   su_act_delta_eff));
     }
-  }
-
-  void C_Send_InhibDelta(LeabraSendCons* cg, TrialSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
-    ru->g_i_delta += su_act_delta_eff * cn->effwt;
-  }
-  void C_Send_NetinDelta(LeabraSendCons* cg, TrialSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
-    ru->net_delta += su_act_delta_eff * cn->effwt;
-  }
-  void Send_NetinDelta(LeabraSendCons* cg, float su_act_delta) {
-    Unit* ru = cg->Un(0);
-    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act_delta;
-    if(inhib) {
-      CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
-    }
-    else {
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
-    }
-  }
-  void C_Send_ClampNet(LeabraSendCons* cg, TrialSynDepCon* cn, LeabraUnit* ru, float su_act_eff) {
-    ru->clmp_net += su_act_eff * cn->effwt;
-  }
-  void Send_ClampNet(LeabraSendCons* cg, float su_act) {
-    Unit* ru = cg->Un(0);
-    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act;
-    CON_GROUP_LOOP(cg, C_Send_ClampNet(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
   }
 
   TA_SIMPLE_BASEFUNS(TrialSynDepConSpec);
@@ -285,8 +260,6 @@ private:
   void 	Initialize();
   void	Destroy()		{ };
 };
-
-// todo: the following functions need a hook to activate depression!
 
 ////////////////////////////////////////////////////////////////
 //      Synaptic Depression: Cycle Level, simple
@@ -354,56 +327,31 @@ public:
     CycleSynDepCon* lcn = (CycleSynDepCon*)cn; lcn->effwt = lcn->wt;
   }
 
-  float C_Compute_Netin(CycleSynDepCon* cn, Unit*, Unit* su) {
-    return cn->effwt * su->act;
+  void C_Send_NetinDelta(CycleSynDepCon* cn, float* send_netin_vec,
+			 Unit* ru, float su_act_delta_eff) {
+    send_netin_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
   }
-  float Compute_Netin(RecvCons* cg, Unit* ru) {
-    float rval=0.0f;
-    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((CycleSynDepCon*)cg->Cn(i), ru, cg->Un(i)));
-    return ((LeabraRecvCons*)cg)->scale_eff * rval;
+  void C_Send_InhibDelta(CycleSynDepCon* cn, float* send_inhib_vec,
+			 Unit* ru, float su_act_delta_eff) {
+    send_inhib_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
   }
-  void C_Send_Inhib(LeabraSendCons* cg, CycleSynDepCon* cn, LeabraUnit* ru, float su_act_eff) {
-    ru->gc.i += su_act_eff * cn->effwt;
-  }
-  void C_Send_Netin(LeabraSendCons* cg, CycleSynDepCon* cn, Unit* ru, float su_act_eff) {
-    ru->net += su_act_eff * cn->effwt;
-  }
-  void Send_Netin(SendCons* cg, float su_act) {
-    // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
-    // LeabraUnitSpec::CheckConfig checks that this is ok.
+  override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+				int thread_no, float su_act_delta) {
     Unit* ru = cg->Un(0);
-    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act;
-    if(inhib) {
-      CON_GROUP_LOOP(cg, C_Send_Inhib((LeabraSendCons*)cg, (CycleSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
+    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff
+      * su_act_delta;
+    if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
+      float* send_inhib_vec = net->send_inhib_tmp.el
+	+ net->send_inhib_tmp.FastElIndex(0, thread_no);
+      CON_GROUP_LOOP(cg, C_Send_InhibDelta((CycleSynDepCon*)cg->Cn(i), send_inhib_vec, cg->Un(i),
+					   su_act_delta_eff));
     }
     else {
-      CON_GROUP_LOOP(cg, C_Send_Netin((LeabraSendCons*)cg, (CycleSynDepCon*)cg->Cn(i), cg->Un(i), su_act_eff));
+      float* send_netin_vec = net->send_netin_tmp.el
+	+ net->send_netin_tmp.FastElIndex(0, thread_no);
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta((CycleSynDepCon*)cg->Cn(i), send_netin_vec, cg->Un(i),
+					   su_act_delta_eff));
     }
-  }
-
-  void C_Send_InhibDelta(LeabraSendCons* cg, CycleSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
-    ru->g_i_delta += su_act_delta_eff * cn->effwt;
-  }
-  void C_Send_NetinDelta(LeabraSendCons* cg, CycleSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
-    ru->net_delta += su_act_delta_eff * cn->effwt;
-  }
-  void Send_NetinDelta(LeabraSendCons* cg, float su_act_delta) {
-    Unit* ru = cg->Un(0);
-    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act_delta;
-    if(inhib) {
-      CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (CycleSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
-    }
-    else {
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta(cg, (CycleSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
-    }
-  }
-  void C_Send_ClampNet(LeabraSendCons* cg, CycleSynDepCon* cn, LeabraUnit* ru, float su_act_eff) {
-    ru->clmp_net += su_act_eff * cn->effwt;
-  }
-  void Send_ClampNet(LeabraSendCons* cg, float su_act) {
-    Unit* ru = cg->Un(0);
-    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act;
-    CON_GROUP_LOOP(cg, C_Send_ClampNet(cg, (CycleSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
   }
 
   TA_SIMPLE_BASEFUNS(CycleSynDepConSpec);
@@ -487,9 +435,6 @@ public:
   }
   // connection-group level synaptic depression
 
-  /////////////////////////////////////////////////////////////////////////////////////
-  // 		Following are all standard code revised to use effwt instead of wt
-  
   inline void C_Init_SdEffWt(CaiSynDepCon* cn) {
     cn->effwt = cn->wt; cn->cai = 0.0f; 
   }
@@ -508,56 +453,31 @@ public:
     lcn->cai = 0.0f; 
   }
 
-  float C_Compute_Netin(CaiSynDepCon* cn, Unit*, Unit* su) {
-    return cn->effwt * su->act;
+  void C_Send_NetinDelta(CaiSynDepCon* cn, float* send_netin_vec,
+			 Unit* ru, float su_act_delta_eff) {
+    send_netin_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
   }
-  float Compute_Netin(RecvCons* cg, Unit* ru) {
-    float rval=0.0f;
-    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((CaiSynDepCon*)cg->Cn(i), ru, cg->Un(i)));
-    return ((LeabraRecvCons*)cg)->scale_eff * rval;
+  void C_Send_InhibDelta(CaiSynDepCon* cn, float* send_inhib_vec,
+			 Unit* ru, float su_act_delta_eff) {
+    send_inhib_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
   }
-  void C_Send_Inhib(LeabraSendCons* cg, CaiSynDepCon* cn, LeabraUnit* ru, float su_act_eff) {
-    ru->gc.i += su_act_eff * cn->effwt;
-  }
-  void C_Send_Netin(LeabraSendCons* cg, CaiSynDepCon* cn, Unit* ru, float su_act_eff) {
-    ru->net += su_act_eff * cn->effwt;
-  }
-  void Send_Netin(SendCons* cg, float su_act) {
-    // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
-    // LeabraUnitSpec::CheckConfig checks that this is ok.
+  override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+				int thread_no, float su_act_delta) {
     Unit* ru = cg->Un(0);
-    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act;
-    if(inhib) {
-      CON_GROUP_LOOP(cg, C_Send_Inhib((LeabraSendCons*)cg, (CaiSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
+    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff
+      * su_act_delta;
+    if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
+      float* send_inhib_vec = net->send_inhib_tmp.el
+	+ net->send_inhib_tmp.FastElIndex(0, thread_no);
+      CON_GROUP_LOOP(cg, C_Send_InhibDelta((CaiSynDepCon*)cg->Cn(i), send_inhib_vec, cg->Un(i),
+					   su_act_delta_eff));
     }
     else {
-      CON_GROUP_LOOP(cg, C_Send_Netin((LeabraSendCons*)cg, (CaiSynDepCon*)cg->Cn(i), cg->Un(i), su_act_eff));
+      float* send_netin_vec = net->send_netin_tmp.el
+	+ net->send_netin_tmp.FastElIndex(0, thread_no);
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta((CaiSynDepCon*)cg->Cn(i), send_netin_vec, cg->Un(i),
+					   su_act_delta_eff));
     }
-  }
-
-  void C_Send_InhibDelta(LeabraSendCons* cg, CaiSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
-    ru->g_i_delta += su_act_delta_eff * cn->effwt;
-  }
-  void C_Send_NetinDelta(LeabraSendCons* cg, CaiSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
-    ru->net_delta += su_act_delta_eff * cn->effwt;
-  }
-  void Send_NetinDelta(LeabraSendCons* cg, float su_act_delta) {
-    Unit* ru = cg->Un(0);
-    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act_delta;
-    if(inhib) {
-      CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (CaiSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
-    }
-    else {
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta(cg, (CaiSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
-    }
-  }
-  void C_Send_ClampNet(LeabraSendCons* cg, CaiSynDepCon* cn, LeabraUnit* ru, float su_act_eff) {
-    ru->clmp_net += su_act_eff * cn->effwt;
-  }
-  void Send_ClampNet(LeabraSendCons* cg, float su_act) {
-    Unit* ru = cg->Un(0);
-    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act;
-    CON_GROUP_LOOP(cg, C_Send_ClampNet(cg, (CaiSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
   }
 
   TA_SIMPLE_BASEFUNS(CaiSynDepConSpec);
@@ -717,7 +637,7 @@ private:
 };
 
 
-/////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //	Activation Trace Hebbian learning (Foldiak, Rolls etc)
 
 class LEABRA_API ActAvgHebbMixSpec : public taOBase {
@@ -776,7 +696,7 @@ private:
   void	Destroy()		{ };
 };
 
-/////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 //	Limited precision weights: for hardware impl testing
 
 class LEABRA_API LeabraLimPrecConSpec : public LeabraConSpec {
@@ -826,7 +746,7 @@ private:
   void	Destroy()		{ };
 };
 
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
 //	dwt normalization -- enforced zero-sum learning
 
 class LEABRA_API LeabraDwtNorm : public taBase {
@@ -892,11 +812,12 @@ public:
   inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
     Compute_SAvgCor(cg, ru);
     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+    LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
     for(int i=0; i<cg->cons.size; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       C_Compute_dWt_CtLeabraCAL_hebb
-	(cn, rlay->sravg_s_nrm, rlay->sravg_m_nrm,
+	(cn, net->sravg_vals.s_nrm, net->sravg_vals.m_nrm,
 	 C_Compute_Hebb(cn, cg, cn->wt, ru->act_p, su->act_p));
     }
   }
@@ -933,7 +854,7 @@ private:
   void	Destroy()		{ };
 };
 
-/////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 //	da-noise modulated learning as in MazzoniAndersenJordan91
 
 class LEABRA_API LeabraDaNoise : public taBase {
@@ -1014,8 +935,7 @@ public:
     }
   }
 
-  // todo: add xcal version perhaps if promising..
-
+  // todo: add xcal version perhaps if promising..  not.. so maybe not..
 
   TA_SIMPLE_BASEFUNS(LeabraDaNoiseConSpec);
 // protected:
@@ -1055,7 +975,6 @@ public:
   bool		norm_width;	// un_width is specified in normalized 0-1 proportion of unit range
   bool		clamp_pat;	// #DEF_false if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)
   float		min_sum_act;	// #DEF_0.2 minimum total activity of all the units representing a value: when computing weighted average value, this is used as a minimum for the sum that you divide by
-  bool		val_mult_lrn;	// #DEF_false for learning, effectively multiply the learning rate by the minus-plus phase difference in overall represented value (i.e., if overall value is the same, no learning takes place)
   bool		clip_val;	// ensure that value remains within specified range
   bool		send_thr;	// use unitspec.opt_thresh.send threshold to cut off small activation contributions to overall average value (i.e., if unit's activation is below this threshold, it doesn't contribute to weighted average computation)
   bool		init_nms;	// initialize unit names when weights are initialized
@@ -1125,51 +1044,61 @@ public:
   ScalarValBias	 bias_val;	// specifies bias for given value (as gaussian bump) 
   MinMaxRange	 val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
-  virtual void	ClampValue(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
+  virtual void	ClampValue_ugp(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
   // #CAT_ScalarVal clamp value in the first unit's ext field to the units in the group
   virtual float	ClampAvgAct(int ugp_size);
   // #CAT_ScalarVal computes the average activation for a clamped unit pattern (for computing rescaling)
-  virtual float	ReadValue(Unit_Group* ugp, LeabraNetwork* net);
+  virtual void	ReadValue(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_ScalarVal read out current value represented by activations in layer
-  virtual void	ResetAfterClamp(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_ScalarVal reset activation of first unit(s) after hard clamping
-  virtual void	HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_ScalarVal hard clamp current ext values (on all units, after ClampValue called) to all the units
+    virtual float ReadValue_ugp(LeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
+    // #CAT_ScalarVal unit group version: read out current value represented by activations in layer
+  virtual void HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_ScalarVal hard clamp current ext values (on all units, after ClampValue called) to all the units (calls ResetAfterClamp)
+    virtual void ResetAfterClamp(LeabraLayer* lay, LeabraNetwork* net);
+    // #CAT_ScalarVal reset activation of first unit(s) after hard clamping
 
-  virtual void	LabelUnits_impl(Unit_Group* ugp);
-  // #CAT_ScalarVal label units with their underlying values
-  virtual void	LabelUnits(LeabraLayer* lay);
-  // #BUTTON #CAT_ScalarVal label units in given layer with their underlying values
-  virtual void	LabelUnitsNet(Network* net);
+  virtual void	LabelUnits(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_ScalarVal label units in given layer with their underlying values
+    virtual void	LabelUnits_ugp(Unit_Group* ugp);
+    // #CAT_ScalarVal label units with their underlying values
+  virtual void	LabelUnitsNet(LeabraNetwork* net);
   // #BUTTON #CAT_ScalarVal label all layers in given network using this spec
 
-  virtual void	Compute_WtBias_Val(Unit_Group* ugp, float val);
-  virtual void	Compute_UnBias_Val(Unit_Group* ugp, float val);
-  virtual void	Compute_UnBias_NegSlp(Unit_Group* ugp);
-  virtual void	Compute_UnBias_PosSlp(Unit_Group* ugp);
-  virtual void	Compute_BiasVal(LeabraLayer* lay);
+  virtual void	Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_ScalarVal initialize the bias value 
+    virtual void Compute_WtBias_Val(Unit_Group* ugp, float val);
+    // #IGNORE
+    virtual void Compute_UnBias_Val(Unit_Group* ugp, float val);
+    // #IGNORE
+    virtual void Compute_UnBias_NegSlp(Unit_Group* ugp);
+    // #IGNORE
+    virtual void Compute_UnBias_PosSlp(Unit_Group* ugp);
+    // #IGNORE
 
-  void 	Init_Weights(LeabraLayer* lay);
-  void	Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx);
+    void BuildUnits_Threads_ugp(LeabraLayer* lay, Unit_Group* ug, 
+				LeabraNetwork* net, int& idx);
+  override void Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
-  // don't include first unit in any of these computations!
-  void 	Compute_ActAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
-  void 	Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
-  void 	Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
+  // don't include first unit in averages..
+  override void Compute_AvgMaxVals_ugp(LeabraLayer* lay, Unit_Group* ug,
+				       AvgMaxVals& vals, ta_memb_ptr mb_off);
 
   virtual void 	Compute_dWt_Ugp(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net);
   // compute weight changes just for one unit group
   void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
 
-  virtual float Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
-  override float Compute_SSE(LeabraLayer* lay, int& n_vals,
+  override float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
 			     bool unit_avg = false, bool sqrt = false);
-  override float Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-				     LeabraNetwork* net);
+    virtual float Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
+    // #IGNORE
   override float Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
+    override float Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+				       LeabraNetwork* net);
+    // #IGNORE
 
   virtual void	ReConfig(Network* net, int n_units = -1);
   // #BUTTON #CAT_ScalarVal reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
@@ -1253,7 +1182,7 @@ public:
   virtual void	ClampForce(LeabraLayer* lay, LeabraNetwork* net, float force, float pos, float vel);
   // #CAT_MotorForce clamp the force value to the layer, as a gaussian weighted average over units near the current position and velocity values
 
-  override void	Compute_BiasVal(LeabraLayer* lay);
+  override void	Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net);
   
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
 
@@ -1357,47 +1286,51 @@ public:
   MinMaxRange	 x_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
   MinMaxRange	 y_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
-  virtual void	ClampValue(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
-  // clamp value in the first unit's ext field to the units in the group
-  virtual void	ReadValue(Unit_Group* ugp, LeabraNetwork* net);
-  // read out current value represented by activations in layer
-  virtual void	ResetAfterClamp(LeabraLayer* lay, LeabraNetwork* net);
-  // reset activation of first unit(s) after hard clamping
+  virtual void	ClampValue_ugp(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
+  // #CAT_TwoDVal clamp value in the first unit's ext field to the units in the group
+  virtual void	ReadValue(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_TwoDVal read out current value represented by activations in layer
+    virtual void ReadValue_ugp(LeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
+    // #CAT_TwoDVal unit group version: read out current value represented by activations in layer
   virtual void	HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
-  // hard clamp current ext values (on all units, after ClampValue called) to all the units
+  // #CAT_TwoDVal hard clamp current ext values (on all units, after ClampValue called) to all the units (calls ResetAfterClamp)
+    virtual void ResetAfterClamp(LeabraLayer* lay, LeabraNetwork* net);
+    // #CAT_TwoDVal reset activation of first unit(s) after hard clamping
 
-  virtual void	LabelUnits_impl(Unit_Group* ugp);
-  // label units with their underlying values
-  virtual void	LabelUnits(LeabraLayer* lay);
-  // #BUTTON label units in given layer with their underlying values
-  virtual void	LabelUnitsNet(Network* net);
-  // #BUTTON label all layers in given network using this spec
+  virtual void	LabelUnits(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_TwoDVal label units in given layer with their underlying values
+    virtual void LabelUnits_ugp(Unit_Group* ugp);
+    // #CAT_TwoDVal label units with their underlying values
+  virtual void	LabelUnitsNet(LeabraNetwork* net);
+  // #BUTTON #CAT_TwoDVal label all layers in given network using this spec
 
-  virtual void	Compute_WtBias_Val(Unit_Group* ugp, float x_val, float y_val);
-  virtual void	Compute_UnBias_Val(Unit_Group* ugp, float x_val, float y_val);
-  virtual void	Compute_BiasVal(LeabraLayer* lay);
-  // initialize the bias value 
+  virtual void	Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_TwoDVal initialize the bias value 
+    virtual void Compute_WtBias_Val(Unit_Group* ugp, float x_val, float y_val);
+    // #IGNORE
+    virtual void Compute_UnBias_Val(Unit_Group* ugp, float x_val, float y_val);
+    // #IGNORE
 
-  void 	Init_Weights(LeabraLayer* lay);
-  void	Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx);
+    void BuildUnits_Threads_ugp(LeabraLayer* lay, Unit_Group* ug, 
+				LeabraNetwork* net, int& idx);
+  override void Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
   // don't include first unit in any of these computations!
-  void 	Compute_ActAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
-  void 	Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
-  void 	Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
+  override void Compute_AvgMaxVals_ugp(LeabraLayer* lay, Unit_Group* ug,
+				       AvgMaxVals& vals, ta_memb_ptr mb_off);
 
-  virtual void 	Compute_dWtUgp(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net);
-  // compute weight changes just for one unit group
-  void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
-
-  virtual float Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
-  override float Compute_SSE(LeabraLayer* lay, int& n_vals,
+  override float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
 			     bool unit_avg = false, bool sqrt = false);
-  override float Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-				     LeabraNetwork* net);
+    virtual float Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
+    // #IGNORE
   override float Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
+    virtual float Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+				       LeabraNetwork* net);
+    // #IGNORE
 
   virtual void	ReConfig(Network* net, int n_units = -1);
   // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
@@ -1417,11 +1350,14 @@ class LEABRA_API DecodeTwoDValLayerSpec : public TwoDValLayerSpec {
   // a two-d-value layer spec that copies its activations from one-to-one input prjns, to act as a decoder of another layer
 INHERITED(TwoDValLayerSpec)
 public:
-  void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
-  void 	Compute_InhibAvg(LeabraLayer* lay, LeabraNetwork* net);
-  void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
-  void	Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) { };
-  void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) { };
+  override void ReadValue_ugp(LeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
+  override void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
+
+  // don't do any learning:
+  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
 
   TA_BASEFUNS_NOCOPY(DecodeTwoDValLayerSpec);
 private:

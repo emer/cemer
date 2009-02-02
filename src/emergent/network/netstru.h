@@ -1416,6 +1416,8 @@ public:
   
   virtual void  BuildUnits();
   // #MENU #MENU_ON_Actions #CONFIRM #CAT_Structure build the units based current geometry configuration
+  virtual void 	BuildUnits_Threads(Network* net, int& idx);
+  // #IGNORE build unit-level thread information: flat list of units, etc -- this is called by network BuildUnits_Threads so that layers (and layerspecs) can potentially modify which units get added to the compute lists, and thus which are subject to standard computations -- default is all units in the layer
   virtual void	RecomputeGeometry();
   // #CAT_Structure recompute the layer's geometry specifcations
   virtual void  LayoutUnits(Unit* u=NULL);
