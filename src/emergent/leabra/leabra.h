@@ -1953,6 +1953,9 @@ public:
   virtual void	AdaptKWTAPt(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation adapt the kwta point based on average activity
 
+  virtual void	Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) { };
+  // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
+
   virtual bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning test whether to compute sravg values -- default is true, but some layers might opt out for various reasons
   virtual bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
@@ -2267,6 +2270,9 @@ public:
   bool	Compute_SRAvg_Test(LeabraNetwork* net)
   { return spec->Compute_SRAvg_Test(this, net); }
   // #CAT_Learning test whether to compute sravg values -- default is true, but some layers might opt out for various reasons
+
+  void	Compute_dWt_Layer_pre(LeabraNetwork* net)  { spec->Compute_dWt_Layer_pre(this, net); }
+  // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
 
   bool	Compute_dWt_FirstPlus_Test(LeabraNetwork* net)
   { return spec->Compute_dWt_FirstPlus_Test(this, net); }
@@ -2727,8 +2733,11 @@ public:
   virtual void 	Compute_SRAvg();
   // #CAT_Learning compute sending-receiving activation coproduct averages (CtLeabra_X/CAL) -- called at the Cycle_Run level, and threaded down to unit level
 
-  virtual bool 	Compute_dWt_SRAvg();
-  // #CAT_Learning compute sravg vals at start of dwt computation (nrm terms) -- if false then don't go ahead with dwt computation
+  virtual void 	Compute_dWt_SRAvg();
+  // #CAT_Learning compute sravg vals at start of dwt computation (nrm terms)
+
+  virtual void	Compute_dWt_Layer_pre();
+  // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
 
   virtual void	Compute_dWt_FirstPlus();
   // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL

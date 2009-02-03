@@ -76,11 +76,17 @@ void MatrixUnitSpec::InitLinks() {
   bias_spec.type = &TA_MatrixBiasSpec;
 }
 
-void MatrixUnitSpec::Compute_NetAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*, LeabraNetwork* net) {
-  if(net->send_delta) {
-    u->net_raw += u->net_delta;
-    u->net += u->clmp_net + u->net_raw;
+void MatrixUnitSpec::Compute_SentNetinDelta(LeabraUnit* u, LeabraNetwork* net, float new_netin) {
+  LeabraLayer* lay = u->own_lay();
+  if(lay->hard_clamped) return;
+
+  u->net_raw += new_netin;
+  u->net += (u->bias_scale * u->bias.Cn(0)->wt) + u->net_raw;
+  if(u->ext_flag & Unit::EXT) {
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+    u->net += u->ext * ls->clamp.gain;
   }
+
   MatrixLayerSpec* mls = (MatrixLayerSpec*)lay->spec.SPtr();
   float eff_dt = dt.net;
   if(freeze_net) {
@@ -94,10 +100,7 @@ void MatrixUnitSpec::Compute_NetAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib
 
   u->net = u->prv_net + eff_dt * (u->net - u->prv_net);
   u->prv_net = u->net;
-  if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    u->net += noise_sched.GetVal(net->cycle) * noise.Gen();
-  }
-  u->i_thr = Compute_IThresh(u, lay, net);
+  u->i_thr = Compute_IThresh(u, net);
 }
 
 //////////////////////////////////
@@ -341,8 +344,8 @@ bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   return true;
 }
 
-void MatrixLayerSpec::Init_Weights(LeabraLayer* lay) {
-  inherited::Init_Weights(lay);
+void MatrixLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Init_Weights(lay, net);
   UNIT_GP_ITR(lay, 
 	      LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
 	      u->misc_1 = avgda_rnd_go.avgda_thr;	// initialize to above rnd go val..
@@ -564,7 +567,7 @@ void MatrixLayerSpec::Compute_DaMod_Contrast(LeabraUnit* u, float dav, float act
   }
 }
 
-void MatrixLayerSpec::Compute_DaTonicMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraInhib*, LeabraNetwork*) {
+void MatrixLayerSpec::Compute_DaTonicMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork*) {
   int da_prjn_idx;
   LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_PVLVDaLayerSpec);
   PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
@@ -580,7 +583,7 @@ void MatrixLayerSpec::Compute_DaTonicMod(LeabraLayer* lay, LeabraUnit_Group* mug
   }
 }
 
-void MatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraInhib*, LeabraNetwork*) {
+void MatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork*) {
   int da_prjn_idx;
   LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_PVLVDaLayerSpec);
   PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
@@ -603,7 +606,7 @@ void MatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mugp
   }
 }
 
-void MatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraInhib*, LeabraNetwork* net) {
+void MatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net) {
   int snr_prjn_idx = 0;
   FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
 
@@ -698,25 +701,27 @@ void MatrixLayerSpec::Compute_AvgGoDa(LeabraLayer* lay, LeabraNetwork*) {
   }
 }
 
-void MatrixLayerSpec::Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net) {
-  LeabraUnit_Group* mugp = (LeabraUnit_Group*)ug;
-  if(bg_type == MatrixLayerSpec::MAINT) {
-    if(net->phase_no == 0)
-      Compute_DaTonicMod(lay, mugp, thr, net);
-    else if(net->phase_no == 1)
-      Compute_DaPerfMod(lay, mugp, thr, net);
-    else if(net->phase_no == 2)
-      Compute_DaLearnMod(lay, mugp, thr, net);
+void MatrixLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_ApplyInhib(lay, net);
+  
+  for(int gi=0; gi<lay->units.gp.size; gi++) {
+    LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
+    if(bg_type == MatrixLayerSpec::MAINT) {
+      if(net->phase_no == 0)
+	Compute_DaTonicMod(lay, mugp, net);
+      else if(net->phase_no == 1)
+	Compute_DaPerfMod(lay, mugp, net);
+      else if(net->phase_no == 2)
+	Compute_DaLearnMod(lay, mugp, net);
+    }
+    else {			// OUTPUT
+      if(net->phase_no == 0)
+	Compute_DaTonicMod(lay, mugp, net);
+      else if(net->phase_no == 1)
+	Compute_DaLearnMod(lay, mugp, net);
+      // don't do anything in 2nd plus!
+    }
   }
-  else {			// OUTPUT
-    if(net->phase_no == 0)
-      Compute_DaTonicMod(lay, mugp, thr, net);
-    else if(net->phase_no == 1)
-      Compute_DaLearnMod(lay, mugp, thr, net);
-    // don't do anything in 2nd plus!
-  }
-  // todo: need to fix this!!!
-  //  inherited::Compute_Act_impl(lay, ug, thr, net);
 }
 
 void MatrixLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
@@ -760,32 +765,22 @@ void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void MatrixLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-//   if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
-//     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
-//     lay->sravg_nrm = 1.0f / lay->sravg_sum;
-//   }
-  LeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, lay->units., i)
-    u->Compute_dWt(lay, net);
-  AdaptKWTAPt(lay, net);
-}
-
-void MatrixLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net) {
+bool MatrixLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(bg_type == MatrixLayerSpec::OUTPUT) {
-    Compute_dWt_impl(lay, net);
+    return true;
   }
+  return false;
 }
 
-void MatrixLayerSpec::Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net) {
+bool MatrixLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(bg_type == MatrixLayerSpec::MAINT) {
-    Compute_dWt_impl(lay, net);
+    return true;
   }
+  return false;
 }
 
-void MatrixLayerSpec::Compute_dWt_Nothing(LeabraLayer* lay, LeabraNetwork* net) {
-  // don't learn on nothing..
+bool MatrixLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
+  return false;
 }
 
 void MatrixLayerSpec::LabelUnits_impl(Unit_Group* ugp) {
@@ -802,7 +797,6 @@ void MatrixLayerSpec::LabelUnits_impl(Unit_Group* ugp) {
 void MatrixLayerSpec::LabelUnits(LeabraLayer* lay) {
   UNIT_GP_ITR(lay, LabelUnits_impl(ugp); );
 }
-
 
 //////////////////////////////////
 //	SNrThal Layer Spec	//
@@ -949,9 +943,10 @@ void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void SNrThalLayerSpec::Compute_Clamp_NetAvg(LeabraLayer* lay, LeabraNetwork* net) {
+void SNrThalLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) {
+  // note: this no longer has dt.net in effect here!! hopefully not a huge diff..
   Compute_GoNogoNet(lay, net);
-  inherited::Compute_Clamp_NetAvg(lay, net);
+  inherited::Compute_NetinStats(lay, net);
 }
 
 
@@ -1040,6 +1035,11 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
   if(lay->CheckError(net->sequence_init != LeabraNetwork::DO_NOTHING, quiet, rval,
 		"requires network sequence_init = DO_NOTHING, I just set it for you")) {
     net->sequence_init = LeabraNetwork::DO_NOTHING;
+  }
+
+  if(lay->CheckError(gate.out_gate_learn_mod, quiet, rval,
+		"out_gate_learn_mod is not currently functional due to conflicts with the threading system -- sorry!  to avoid further warnings, please it is now turned off for time being")) {
+    gate.out_gate_learn_mod = false;
   }
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
@@ -1146,7 +1146,7 @@ void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct upd
       if(gate.off_accom > 0.0f)
 	u->vcb.g_a = 0.0f;
     }
-    us->Compute_Conduct(u, lay, (LeabraInhib*)ugp, net); // update displayed conductances!
+    us->Compute_Conduct(u, net); // update displayed conductances!
   }
   if(updt_act == STORE) ugp->misc_state = 1;
   else if(updt_act == CLEAR) ugp->misc_state = 0;
@@ -1247,7 +1247,7 @@ void PFCLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   else {
     // not to hard clamp: needs to update in 2nd plus phase!
     lay->hard_clamped = false;
-    lay->Init_InputData();
+    lay->Init_InputData(net);
   }
 }
 
@@ -1259,41 +1259,35 @@ void PFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void PFCLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-  if(!gate.out_gate_learn_mod) {
-    inherited::Compute_dWt_impl(lay, net);
-    return;
-  }
-  int pfcout_prjn_idx;
-  LeabraLayer* pfcout_lay = FindLayerFmSpec(lay, pfcout_prjn_idx, &TA_PFCOutLayerSpec);
-  if(!pfcout_lay) {
-    inherited::Compute_dWt_impl(lay, net);
-    return;
-  }
+// todo: this is no longer feasible -- would require a unit-level check function or something
+// could potentially impl as a post-hoc zero of activations for non-gated layers.
+// but overall, it seems a bit of a stretch in any case, and doesn't make a huge diff,
+// so probably better to just let it go..
 
-  if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
-    if(lay->sravg_m_sum == 0.0f) return; // if nothing, nothing!
-    lay->sravg_m_nrm = 1.0f / lay->sravg_m_sum;
-    if(lay->sravg_s_sum > 0.0f) 
-      lay->sravg_s_nrm = 1.0f / lay->sravg_s_sum;
-    else
-      lay->sravg_s_nrm = 1.0f;	// whatever
-  }
+// void PFCLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
+//   if(!gate.out_gate_learn_mod) {
+//     inherited::Compute_dWt_impl(lay, net);
+//     return;
+//   }
+//   int pfcout_prjn_idx;
+//   LeabraLayer* pfcout_lay = FindLayerFmSpec(lay, pfcout_prjn_idx, &TA_PFCOutLayerSpec);
+//   if(!pfcout_lay) {
+//     inherited::Compute_dWt_impl(lay, net);
+//     return;
+//   }
 
-  for(int mg=0;mg<lay->units.gp.size;mg++) {
-    LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
-    LeabraUnit_Group* outgp = (LeabraUnit_Group*)pfcout_lay->units.gp[mg];
+//   for(int mg=0;mg<lay->units.gp.size;mg++) {
+//     LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
+//     LeabraUnit_Group* outgp = (LeabraUnit_Group*)pfcout_lay->units.gp[mg];
 
-    if(outgp->misc_state2 != PFCGateSpec::GATE_NOGO) {
-      LeabraUnit* u;
-      taLeafItr i;
-      FOR_ITR_EL(LeabraUnit, u, ugp->, i)
-	u->Compute_dWt(lay, net);
-    }
-  }
-
-  AdaptKWTAPt(lay, net);
-}
+//     if(outgp->misc_state2 != PFCGateSpec::GATE_NOGO) {
+//       LeabraUnit* u;
+//       taLeafItr i;
+//       FOR_ITR_EL(LeabraUnit, u, ugp->, i)
+// 	u->Compute_dWt(lay, net);
+//     }
+//   }
+// }
 
 //////////////////////////////////
 //	PFCOut Layer Spec	//
@@ -1487,24 +1481,20 @@ void PFCOutLayerSpec::SetCurBaseGain(LeabraNetwork* net) {
   }
 }
 
+void PFCOutLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx) {
+  lay->units_flat_idx = idx;
+  // that's it: don't do any processing on this layer's units
+}
+
 void PFCOutLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   SetCurBaseGain(net);
 
   // not to hard clamp: needs to update in 2nd plus phase!
   lay->hard_clamped = false;
-  lay->Init_InputData();
-  return;
+  lay->Init_InputData(net);
 }
 
-void PFCOutLayerSpec::Compute_Inhib(LeabraLayer*, LeabraNetwork*) {
-  return;			// do nothing!
-}
-
-void PFCOutLayerSpec::Compute_InhibAvg(LeabraLayer*, LeabraNetwork*) {
-  return;
-}
-
-void PFCOutLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
+void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
   int snrthal_prjn_idx;
   LeabraLayer* snrthal_lay = FindLayerFmSpec(lay, snrthal_prjn_idx, &TA_SNrThalLayerSpec);
   SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_lay->spec.SPtr();
@@ -1560,7 +1550,10 @@ void PFCOutLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
       ru->AddToActBuf(rus->syn_delay);
     }
   }
-  Compute_ActAvg(lay, net);
+}
+
+void PFCOutLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
+  Compute_PfcOutAct(lay, net);
 }
 
 

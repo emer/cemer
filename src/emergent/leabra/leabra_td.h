@@ -298,8 +298,8 @@ INHERITED(ScalarValLayerSpec)
 public:
   TDRewIntegSpec	rew_integ;	// misc specs for TDRewIntegLayerSpec
 
-  // todo: Compute_Act does not exist anymore!!!
-  void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+  // this is last stage before compute_act, so doing computation here
 
   // never learn
   override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
@@ -336,8 +336,8 @@ public:
 
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
 
-  // todo: Compute_Act does not exist anymore!!!
-  void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+  // this is last stage before compute_act, so doing computation here
 
   // never learn
   override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }

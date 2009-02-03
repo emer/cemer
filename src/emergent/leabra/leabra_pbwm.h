@@ -148,7 +148,7 @@ INHERITED(LeabraUnitSpec)
 public:
   bool	freeze_net;		// #DEF_true freeze netinput (MAINT in 2+ phase, OUTPUT in 1+ phase) during learning modulation so that learning only reflects DA modulation and not other changes in netin
 
-  void 	Compute_NetAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
+  override void Compute_SentNetinDelta(LeabraUnit* u, LeabraNetwork* net, float new_netin);
 
   void	Defaults();
 
@@ -288,11 +288,11 @@ public:
   // apply given dopamine modulation value to the unit, based on whether it is a go (0) or nogo (1); no contrast enancement based on activation
   virtual void 	Compute_DaMod_Contrast(LeabraUnit* u, float dav, float gating_act, int go_no);
   // apply given dopamine modulation value to the unit, based on whether it is a go (0) or nogo (1); contrast enhancement based on activation (gating_act)
-  virtual void 	Compute_DaTonicMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraInhib* thr, LeabraNetwork* net);
+  virtual void 	Compute_DaTonicMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net);
   // compute tonic da modulation (for pfc gating units in first two phases)
-  virtual void 	Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraInhib* thr, LeabraNetwork* net);
+  virtual void 	Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net);
   // compute dynamic da modulation; performance modulation, not learning (second minus phase)
-  virtual void 	Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraInhib* thr, LeabraNetwork* net);
+  virtual void 	Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net);
   // compute dynamic da modulation: evaluation modulation, which is sensitive to GO/NOGO firing and activation in action phase
   virtual void 	Compute_AvgGoDa(LeabraLayer* lay, LeabraNetwork* net);
   // compute average da present when stripes fire a Go (stored in u->misc_1); used to modulate rnd_go firing
@@ -304,16 +304,16 @@ public:
   virtual void	LabelUnits(LeabraLayer* lay);
   // label units with Go/No -- auto done in InitWeights
 
-  // overrides:
-  void	Init_Weights(LeabraLayer* lay);
-  void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
-  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { };
-  void 	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt_Nothing(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+  // hook for da mod stuff
+  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+
+  override bool	Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -355,10 +355,14 @@ public:
   virtual void	Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net);
   // compute netinput as GO - NOGO on matrix layer
 
-  // overrides
-  void 	Compute_Clamp_NetAvg(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { };
-  void	Compute_dWt_impl(LeabraLayer*, LeabraNetwork*) { };
+  // hook for new netin goes here:
+  override void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
+
+  // don't do any learning:
+  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -438,7 +442,6 @@ public:
 
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
-  override void Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -495,15 +498,21 @@ public:
 
   virtual void	SetCurBaseGain(LeabraNetwork* net);
   // set current base gain based on gain_sched if in use
+  virtual void	Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net);
+  // compute PFC output layer activations -- replaces std act fun
 
-  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx);
 
-  void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
-  void 	Compute_InhibAvg(LeabraLayer* lay, LeabraNetwork* net);
-  void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) { };
-  void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) { };
-  // no learn
+  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+
+  override void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) { };
+  override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+
+  // don't do any learning:
+  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);

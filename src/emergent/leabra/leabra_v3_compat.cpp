@@ -156,13 +156,10 @@ bool V3LeabraProject::ConvertToV4_impl() {
   LeabraSettle* old_settle = (LeabraSettle*)processes.FindLeafType(&TA_LeabraSettle);
   if(old_settle && new_net) {
     new_net->cycle_max = old_settle->cycle.max;
-    new_net->send_delta = old_settle->send_delta;
-    new_net->netin_mod = old_settle->netin_mod;
   }
 
   LeabraTrial* old_trial = (LeabraTrial*)processes.FindLeafType(&TA_LeabraTrial);
   if(old_trial && new_net) {
-    new_net->trial_init = (LeabraNetwork::StateInit)old_trial->trial_init;
     new_net->phase_order = (LeabraNetwork::PhaseOrder)old_trial->phase_order;
     new_net->no_plus_test = old_trial->no_plus_test;
   }

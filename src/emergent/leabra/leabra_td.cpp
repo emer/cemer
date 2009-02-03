@@ -808,9 +808,8 @@ bool TDRewIntegLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   return true;
 }
 
-void TDRewIntegLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
-  // todo: Compute_Act does not exist anymore!!!
-
+// this is last stage before compute_act, so doing computation here
+void TDRewIntegLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
   lay->SetExtFlag(Unit::EXT);
 
   float rew_pred_val = 0.0f;
@@ -1021,14 +1020,9 @@ void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork*) {
   }
 }
 
-// todo: this does not exist!!!
-
-void TdLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
-  if((net->cycle >= 0) && lay->hard_clamped)
-    return;			// don't do this during normal processing
+void TdLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_Td(lay, net);	// now get the td and clamp it to layer
   Send_Td(lay, net);
-  //  Compute_ActAvg(lay, net);
 }
 
 void TdLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {

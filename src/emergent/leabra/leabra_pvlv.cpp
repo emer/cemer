@@ -225,7 +225,6 @@ void PViLayerSpec::Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
      u->ext = pve_val;		// clamp to pve value
      ClampValue_ugp(ugp, net); 	// apply new value
      Compute_ExtToPlus(ugp, net); // copy ext values to act_p
-     Compute_dWt_Ugp(ugp, lay, net);
      );
 }
 
@@ -249,34 +248,31 @@ void PViLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   // this is primarily used for noise modulation
 }
 
-void PViLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-//   if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
-//     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
-//     lay->sravg_nrm = 1.0f / lay->sravg_sum;
-//   }
+void PViLayerSpec::Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) {
+  if(net->phase_no < net->phase_max-1)
+    return;
   Compute_PVPlusPhaseDwt(lay, net);
-  AdaptKWTAPt(lay, net);
 }
 
-void PViLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net) {
+bool PViLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
   // only do FINAL dWt even though logically it should occur in first plus, because
   // if pbwm is used, then the clamped plus-phase value will be weird, and all the
   // state information should be available etc
   if(net->phase_no < net->phase_max-1)
-    return;
-  Compute_dWt_impl(lay,net);
+    return false;
+  return true;
 }
 
-void PViLayerSpec::Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net) {
+bool PViLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
-    return;
-  Compute_dWt_impl(lay,net);
+    return false;
+  return true;
 }
 
-void PViLayerSpec::Compute_dWt_Nothing(LeabraLayer* lay, LeabraNetwork* net) {
+bool PViLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
-    return;
-  Compute_dWt_impl(lay,net);
+    return false;
+  return true;
 }
 
 ////////////////////////////////////////////////////////
@@ -287,44 +283,6 @@ void PVrConSpec::Initialize() {
   wt_dec_mult = 0.01f;
 }
 
-
-//////////////////////////////////////////
-// 	LV Con Spec			//
-//////////////////////////////////////////
-
-void LVConSpec::Initialize() {
-//   min_con_type = &TA_PVLVCon;
-
-  SetUnique("lmix", true);
-  lmix.hebb = 0.0f;
-  lmix.err = 1.0f;
-  lmix.err_sb = false;
-
-  SetUnique("rnd", true);
-  rnd.mean = 0.1f;
-  rnd.var = 0.0f;
-
-  SetUnique("wt_limits", true);
-  wt_limits.sym = false;
-
-  SetUnique("wt_sig", true);
-  wt_sig.gain = 1.0f;  wt_sig.off = 1.0f;
-
-  SetUnique("xcalm", true);
-  xcalm.use_sb = false;
-
-  SetUnique("lrate", true);
-  lrate = .05f;
-  cur_lrate = .05f;
-
-//   decay = 0.0f;
-
-  syn_dep.depl = 1.1f;
-  SetUnique("lrate_sched", true); // not to have any lrate schedule!!
-  SetUnique("lrs_value", true); // not to have any lrate schedule!!
-  lrs_value = NO_LRS;
-}
-
 //////////////////////////////////////////
 //	LV Layer Spec: Perceived Value	//
 //////////////////////////////////////////
@@ -333,7 +291,6 @@ void LVSpec::Initialize() {
   delta_on_sum = false;
   use_actual_er = false;
   min_lvi = 0.0f;
-  syn_dep = false;
 }
 
 void LVeLayerSpec::Initialize() {
@@ -343,7 +300,7 @@ void LVeLayerSpec::Initialize() {
   decay.clamp_phase2 = false;
 
   bias_val.un = ScalarValBias::GC;
-  bias_val.val = 0.5f;		// 0.0 for old syn_dep
+  bias_val.val = 0.5f;
 
   SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
@@ -418,17 +375,9 @@ bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
       continue;
     }
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(lv.syn_dep) {		// old school syndep
-      if(lay->CheckError(!cs->InheritsFrom(TA_LVConSpec), quiet, rval,
-			 "requires recv connections to be of type LVConSpec")) {
-	return false;
-      }
-    }
-    else {
-      if(lay->CheckError(!cs->InheritsFrom(TA_PVConSpec), quiet, rval,
-			 "requires recv connections to be of type PVConSpec")) {
-	return false;
-      }
+    if(lay->CheckError(!cs->InheritsFrom(TA_PVConSpec), quiet, rval,
+		       "requires recv connections to be of type PVConSpec")) {
+      return false;
     }
   }
   
@@ -449,19 +398,6 @@ void LVeLayerSpec::Compute_ExtToPlus(Unit_Group* ugp, LeabraNetwork*) {
     if(i > 0) u->act_p = us->clamp_range.Clip(u->ext);
     else u->act_p = u->ext;
     u->act_dif = u->act_p - u->act_m;
-  }
-}
-
-void LVeLayerSpec::Compute_DepressWt(Unit_Group* ugp, LeabraLayer*, LeabraNetwork*) {
-  int ui;
-  for(ui=1;ui<ugp->size;ui++) {	// don't bother with first unit!
-    LeabraUnit* u = (LeabraUnit*)ugp->FastEl(ui);
-    for(int g=0; g<u->recv.size; g++) {
-      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      if(!recv_gp->GetConSpec()->InheritsFrom(TA_LVConSpec)) continue;
-      LVConSpec* cs = (LVConSpec*)recv_gp->GetConSpec();
-      cs->Depress_Wt(recv_gp, u);
-    }
   }
 }
 
@@ -493,24 +429,11 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
     (lay, 
      LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
 
-     if(lv.syn_dep) {
-       if(er_avail) {
-	 u->ext = pve_val;
-	 ClampValue_ugp(ugp, net); 		// apply new value
-	 Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
-	 Compute_dWt_Ugp(ugp, lay, net);
-       }
-       else {
-	 Compute_DepressWt(ugp, lay, net); // always depress!!
-       }
-     }
-     else {
-       if(er_avail) {
-	 u->ext = pve_val;
-	 ClampValue_ugp(ugp, net); 		// apply new value
-	 Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
-	 Compute_dWt_Ugp(ugp, lay, net);
-       }
+     if(er_avail) {
+       u->ext = pve_val;
+       ClampValue_ugp(ugp, net); 		// apply new value
+       Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
+       Compute_dWt_Ugp(ugp, lay, net);
      }
      );
 }
@@ -621,34 +544,31 @@ void LViLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 
-void LVeLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-//   if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
-//     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
-//     lay->sravg_nrm = 1.0f / lay->sravg_sum;
-//   }
+void LVeLayerSpec::Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) {
+  if(net->phase_no < net->phase_max-1)
+    return;
   Compute_LVPlusPhaseDwt(lay, net);
-  AdaptKWTAPt(lay, net);
 }
 
-void LVeLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net) {
+bool LVeLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
   // only do FINAL dWt even though logically it should occur in first plus, because
   // if pbwm is used, then the clamped plus-phase value will be weird, and all the
   // state information should be available etc
   if(net->phase_no < net->phase_max-1)
-    return;
-  Compute_dWt_impl(lay,net);
+    return false;
+  return true;
 }
 
-void LVeLayerSpec::Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net) {
+bool LVeLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
-    return;
-  Compute_dWt_impl(lay,net);
+    return false;
+  return true;
 }
 
-void LVeLayerSpec::Compute_dWt_Nothing(LeabraLayer* lay, LeabraNetwork* net) {
+bool LVeLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
-    return;
-  Compute_dWt_impl(lay,net);
+    return false;
+  return true;
 }
 
 
@@ -793,34 +713,31 @@ void NVLayerSpec::Update_NVPrior(LeabraLayer* lay, bool er_avail) {
   }
 }
 
-void NVLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-//   if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
-//     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
-//     lay->sravg_nrm = 1.0f / lay->sravg_sum;
-//   }
+void NVLayerSpec::Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) {
+  if(net->phase_no < net->phase_max-1)
+    return;
   Compute_NVPlusPhaseDwt(lay, net);
-  AdaptKWTAPt(lay, net);
 }
 
-void NVLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net) {
+bool NVLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
   // only do FINAL dWt even though logically it should occur in first plus, because
   // if pbwm is used, then the clamped plus-phase value will be weird, and all the
   // state information should be available etc
   if(net->phase_no < net->phase_max-1)
-    return;
-  Compute_dWt_impl(lay,net);
+    return false;
+  return true;
 }
 
-void NVLayerSpec::Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net) {
+bool NVLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
-    return;
-  Compute_dWt_impl(lay,net);
+    return false;
+  return true;
 }
 
-void NVLayerSpec::Compute_dWt_Nothing(LeabraLayer* lay, LeabraNetwork* net) {
+bool NVLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
-    return;
-  Compute_dWt_impl(lay,net);
+    return false;
+  return true;
 }
 
 
@@ -834,8 +751,6 @@ void PVLVDaSpec::Initialize() {
   tonic_da = 0.0f;
   min_pvi = 0.0f;
   use_actual_er = false;
-  syn_dep = false;
-  min_lvi = 0.1f;
 }
 
 void PVLVDaLayerSpec::Initialize() {
@@ -974,74 +889,6 @@ void PVLVDaLayerSpec::Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork*) {
   }      
 }
 
-void PVLVDaLayerSpec::Compute_Da_SynDep(LeabraLayer* lay, LeabraNetwork* net) {
-  int lve_prjn_idx;
-  FindLayerFmSpec(lay, lve_prjn_idx, &TA_LVeLayerSpec);
-  int lvi_prjn_idx;
-  FindLayerFmSpec(lay, lvi_prjn_idx, &TA_LViLayerSpec);
-  int pvi_prjn_idx;
-  LeabraLayer* pvi_lay = FindLayerFmSpec(lay, pvi_prjn_idx, &TA_PViLayerSpec);
-  PViLayerSpec* pvils = (PViLayerSpec*)pvi_lay->spec.SPtr();
-
-  int pvr_prjn_idx = 0;
-  LeabraLayer* pvr_lay = FindLayerFmSpec(lay, pvr_prjn_idx, &TA_PVrLayerSpec);
-  PVrLayerSpec* pvrls = NULL;
-  if(pvr_lay) pvrls = (PVrLayerSpec*)pvr_lay->spec.SPtr();
-
-  bool actual_er_avail = false;
-  bool pv_detected = false;
-  float pve_val = 0.0f;
-
-  if(pvr_lay) {			// if pvr avail, use it
-    pve_val = pvrls->Compute_PVe(pvr_lay, net, actual_er_avail, pv_detected);
-  }
-  else {
-    pve_val = pvils->Compute_PVe(pvi_lay, net, actual_er_avail, pv_detected);
-  }
-
-  bool er_avail = pv_detected;
-  if(da.use_actual_er) er_avail = actual_er_avail; // cheat..
-
-  lay->dav = 0.0f;
-  LeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
-    LeabraRecvCons* lvecg = (LeabraRecvCons*)u->recv[lve_prjn_idx];
-    LeabraUnit* lvesu = (LeabraUnit*)lvecg->Un(0);
-    LeabraRecvCons* lvicg = (LeabraRecvCons*)u->recv[lvi_prjn_idx];
-    LeabraUnit* lvisu = (LeabraUnit*)lvicg->Un(0);
-    LeabraRecvCons* pvicg = (LeabraRecvCons*)u->recv[pvi_prjn_idx];
-    LeabraUnit* pvisu = (LeabraUnit*)pvicg->Un(0);
-    float eff_lvi = MAX(lvisu->act_eq, da.min_lvi); // effective lvi value
-    float lv_da = lvesu->act_eq - eff_lvi; 
-    float pv_da = pve_val - pvisu->act_m; 
-
-    if(net->phase_no == 0) {	// not used at this point..
-      u->dav = da.da_gain * lv_da; 		// lviu->act_eq - avgbl;
-    }
-    else {
-//       if(da.mode == PVLVDaSpec::LV_PLUS_IF_PV) {
-	u->dav = da.da_gain * lv_da;
-	if(er_avail)
-	  u->dav += da.da_gain * pv_da;
-//       }
-//       else if(da.mode == PVLVDaSpec::IF_PV_ELSE_LV) {
-// 	if(er_avail)
-// 	  u->dav = pv_da;
-// 	else
-// 	  u->dav = lv_da;
-//       }
-//       else if(da.mode == PVLVDaSpec::PV_PLUS_LV) {
-// 	u->dav = pv_da + lv_da;
-//       }
-    }
-    u->ext = da.tonic_da + u->dav;
-    u->act_eq = u->act_nd = u->act = u->net = u->ext;
-    lay->dav += u->dav;
-  }
-  if(lay->units.leaves > 0) lay->dav /= (float)lay->units.leaves;
-}
-
 void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
   int lve_prjn_idx;
   LeabraLayer* lve_lay = FindLayerFmSpec(lay, lve_prjn_idx, &TA_LVeLayerSpec);
@@ -1171,17 +1018,14 @@ void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
   }
 }
 
-// todo: this does not exist!!!
+void PVLVDaLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx) {
+  lay->units_flat_idx = idx;
+  // that's it: don't do any processing on this unit!!
+}
 
-void PVLVDaLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
-  if((net->cycle >= 0) && lay->hard_clamped)
-    return;			// don't do this during normal processing
-  if(da.syn_dep)
-    Compute_Da_SynDep(lay, net);	// now get the da and clamp it to layer
-  else
-    Compute_Da_LvDelta(lay, net);
+void PVLVDaLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
+  Compute_Da_LvDelta(lay, net);
   Send_Da(lay, net);
-  //  Compute_ActAvg(lay, net);
 }
 
 void PVLVDaLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
@@ -1192,8 +1036,6 @@ void PVLVDaLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
 
 void PVLVDaLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::PostSettle(lay, net);
-
-  if(da.syn_dep) return;
 
   if(net->phase_no == net->phase_max-1) { // only at very end!
     Update_LvDelta(lay, net);
@@ -1401,8 +1243,6 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   lvisp->SetUnique("inhib", false);
 
   pv_units->SetUnique("g_bar", true);
-
-  lvesp->lv.syn_dep = false; // old_syn_dep;
 
   // setup localist values!
   ScalarValLayerSpec* valspecs[6] = {pvesp, pvisp, lvesp, lvisp, pvrsp, nvsp};

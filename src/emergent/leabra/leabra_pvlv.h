@@ -43,14 +43,6 @@
 //	PV: Primary Value Layer		//
 //////////////////////////////////////////
 
-// NOTE: the syndep in this code cannot be parallelized over dwt's because the dynamics will
-// be different!!!
-// need to have a dmem small_batch over sequences type mode that does a SyncWts using sum_dwts = false
-// and calls Compute_Weights after each trial..
-// problem is that this does averaging of dwts;  one soln is to keep the
-// orig wt from last wt change, apply dwt every trial, and then subtract wt - origwt ->dwt
-// aggretate these dwts as a SUM, apply to wts!
-
 class LEABRA_API PVConSpec : public LeabraConSpec {
   // primary value connection spec: learns using delta rule from PVe - PVi values -- does not use hebb or err_sb parameters
 INHERITED(LeabraConSpec)
@@ -119,11 +111,12 @@ public:
 
   // overrides:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
-  override void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { };
-  override void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
-  override void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
-  override void	Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net);
-  override void	Compute_dWt_Nothing(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
+
+  override void	Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -189,53 +182,13 @@ private:
   void	Destroy()		{ };
 };
 
-
-//////////////////////////////////////////
-//	LV: Learned Value Layer		//
-//////////////////////////////////////////
-
-class LEABRA_API LVConSpec : public TrialSynDepConSpec {
-  // learned value connection spec: learns using delta rule from PVe - LV values; also does synaptic depression to do novelty filtering (NOTE: not used in current version of PVLV)
-INHERITED(TrialSynDepConSpec)
-public:
-
-  inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    float err = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
-    cn->dwt += cur_lrate * err;
-  }
-
-  inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    for(int i=0; i<cg->cons.size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-      C_Compute_dWt_Delta(cn, ru, su);  
-    }
-  }
-
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    // no softbound so same as above
-    Compute_dWt_LeabraCHL(cg, ru);
-  }
-
-  inline override void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    // no softbound so same as above
-    Compute_dWt_LeabraCHL(cg, ru);
-  }
-
-  TA_SIMPLE_BASEFUNS(LVConSpec);
-private:
-  void 	Initialize();
-  void	Destroy()		{ };
-};
-
 class LEABRA_API LVSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for learned value layers
 INHERITED(taOBase)
 public:
   bool		delta_on_sum;	// #DEF_false if there are multiple lv subgroups, compute the temporal delta on the summed lv values (else deltas are per each sub-group, then summed)
-  bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when to learn (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
+  bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when to learn (cheating), otherwise use PVr/i's estimate of when primary value is avail (more realistic)
   float		min_lvi;	// minimum effective lvi value, for computing lv da
-  bool		syn_dep;	// #DEF_false #APPLY_IMMED use the old synaptic depression version of LV
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(LVSpec);
@@ -252,10 +205,8 @@ public:
 
   virtual void 	Compute_ExtToPlus(Unit_Group* ugp, LeabraNetwork* net);
   // copy ext values to act_p
-  virtual void 	Compute_DepressWt(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net);
-  // depress weights for units in unit group (only if not doing dwts!)
   virtual void 	Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
-  // if primary value detected (present/expected), compute plus phase activations for learning, and actually change weights; otherwise just depress weights
+  // if primary value detected (present/expected), compute plus phase activations for learning, and actually change weights
 
   virtual float	Compute_ActEqAvg(LeabraLayer* lay);
   // compute average over value representation subgroups of act_eq values
@@ -269,11 +220,12 @@ public:
   // update the prior Lv value, stored in lv unit misc_1 values
 
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
-  override void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { };
-  override void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
-  override void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
-  override void	Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net);
-  override void	Compute_dWt_Nothing(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
+
+  override void	Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -333,11 +285,11 @@ public:
   virtual void 	Compute_ExtToPlus(Unit_Group* ugp, LeabraNetwork* net);
   // copy ext values to act_p
 
-  void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { };
-  void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt_Nothing(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
+  override void	Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -363,8 +315,6 @@ public:
   float		tonic_da;	// #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
   float		min_pvi;	// minimum PVi value, so that a low PVe value (~0) makes for negative DA regardless of pvi learning: DA_pv = PVe - MAX(PVi, min_pvi) -- not that beneficial for PBWM gating, but can be useful for motor learning (e.g., .4)
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when PV is detected (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
-  bool		syn_dep;	// #DEF_false old synaptic depression-based mechanism: note that this uses LV_PLUS_IF_PV mode automatically (and otherwise lv_delta mode uses IV_PV_ELSE_LV)
-  float		min_lvi;	// #CONDEDIT_ON_syn_dep #DEF_0.1 minimum LVi value, so that a low LVe value (~0) makes for negative DA: DA_lv = LVe - MAX(LVi, min_lvi)
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(PVLVDaSpec);
@@ -374,7 +324,7 @@ private:
 };
 
 class LEABRA_API PVLVDaLayerSpec : public LeabraLayerSpec {
-  // computes PVLV 'Da' signal: typically if(ER), da = ER-PV, else LVe - LVs
+  // computes PVLV dopamine (Da) signal: typically if(ER), da = PVe-PVi, else LVe - LVi
 INHERITED(LeabraLayerSpec)
 public:
   PVLVDaSpec	da;		// parameters for the lvpv da computation
@@ -389,15 +339,19 @@ public:
   virtual void	Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net);
   // update the LV
 
-  virtual void	Compute_Da_SynDep(LeabraLayer* lay, LeabraNetwork* net);
-  // compute the da value based on recv projections: every cycle in 1+ phases (synaptic depression version)
+  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx);
 
-  // overrides:
-  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { };
-  void	Compute_dWt_impl(LeabraLayer*, LeabraNetwork*) { };
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) { };
+  override void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) { };
+  override void	Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+
+  // never learn
+  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);

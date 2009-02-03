@@ -3869,6 +3869,10 @@ bool LeabraLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork
      net->learn_rule != LeabraNetwork::LEABRA_CHL) {
     return false;
   }
+  if((net->learn_rule != LeabraNetwork::LEABRA_CHL) &&
+     (net->sravg_vals.m_sum == 0.0f)) return false;
+  // shouldn't happen, but just in case..
+
   return true;
 }
 
@@ -3877,6 +3881,9 @@ bool LeabraLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwor
 }
 
 bool LeabraLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
+  if((net->learn_rule != LeabraNetwork::LEABRA_CHL) &&
+     (net->sravg_vals.m_sum == 0.0f)) return false;
+  // shouldn't happen, but just in case..
   return true; 		// all types learn here..
 }
 
@@ -5316,32 +5323,45 @@ void LeabraNetwork::Compute_SRAvg() {
   }
 }
   
-bool LeabraNetwork::Compute_dWt_SRAvg() {
+void LeabraNetwork::Compute_dWt_SRAvg() {
   if(learn_rule != LEABRA_CHL) {
-    if(sravg_vals.m_sum == 0.0f) return false; // if nothing, nothing!
-    sravg_vals.m_nrm = 1.0f / sravg_vals.m_sum;
+    if(sravg_vals.m_sum > 0.0f)
+      sravg_vals.m_nrm = 1.0f / sravg_vals.m_sum;
+    else
+      sravg_vals.m_nrm = 1.0f;
     if(sravg_vals.s_sum > 0.0f) 
       sravg_vals.s_nrm = 1.0f / sravg_vals.s_sum;
     else
-      sravg_vals.s_nrm = 1.0f;	// whatever
+      sravg_vals.s_nrm = 1.0f;
   }
-  return true;
+}
+
+void LeabraNetwork::Compute_dWt_Layer_pre() {
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    lay->Compute_dWt_Layer_pre(this);
+  }
 }
 
 void LeabraNetwork::Compute_dWt_FirstPlus() {
-  if(!Compute_dWt_SRAvg()) return;
+  Compute_dWt_SRAvg();
+  Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_FirstPlus);
   threads.Run(&un_call, .8f);	// todo: update val
 }
 
 void LeabraNetwork::Compute_dWt_SecondPlus() {
-  if(!Compute_dWt_SRAvg()) return;
+  Compute_dWt_SRAvg();
+  Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_SecondPlus);
   threads.Run(&un_call, .8f);	// todo: update val
 }
 
 void LeabraNetwork::Compute_dWt_Nothing() {
-  if(!Compute_dWt_SRAvg()) return;
+  Compute_dWt_SRAvg();
+  Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_Nothing);
   threads.Run(&un_call, .8f);	// todo: update val
 }
