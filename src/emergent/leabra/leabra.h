@@ -1965,9 +1965,6 @@ public:
   virtual bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
 
-  virtual void	Compute_dWt_Layer(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning compute dWt functionality at layer level -- this must be called BEFORE the unit level threaded Compute_dWt Call
-
   ///////////////////////////////////////////////////////////////////////
   //	Trial-level Stats
 

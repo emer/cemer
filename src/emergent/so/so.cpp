@@ -101,12 +101,12 @@ void SoUnitSpec::InitLinks() {
   children.el_typ = GetTypeDef(); // but make the default to be me!
 }
 
-void SoUnitSpec::Init_Acts(Unit* u) {
-  inherited::Init_Acts(u);
+void SoUnitSpec::Init_Acts(Unit* u, Network* net) {
+  inherited::Init_Acts(u, net);
   ((SoUnit*)u)->act_i = 0.0f;
 }
 
-void SoUnitSpec::Compute_Act(Unit* u) {
+void SoUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   // simple linear function
   if(u->ext_flag & Unit::EXT)
     u->act = u->ext;
@@ -138,7 +138,7 @@ void SoUnitSpec::GraphActFun(DataTable* graph_data, float min, float max) {
   float x;
   for(x = min; x <= max; x += .01f) {
     un.net = x;
-    Compute_Act(&un);
+    Compute_Act(&un, NULL);
     graph_data->AddBlankRow();
     netin->SetValAsFloat(x, -1);
     act->SetValAsFloat(un.act, -1);
@@ -151,7 +151,7 @@ void ThreshLinSoUnitSpec::Initialize() {
   threshold = 0.0f;
 }
 
-void ThreshLinSoUnitSpec::Compute_Act(Unit* u) {
+void ThreshLinSoUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   if(u->ext_flag & Unit::EXT)
     u->act = u->ext;
   else
@@ -211,38 +211,11 @@ SoUnit* SoLayerSpec::FindWinner(SoLayer* lay) {
   return FindMinNetIn(lay);
 }
 
-// default layerspec just iterates over units
-void SoLayerSpec::Compute_Netin(SoLayer* lay) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, lay->units., i)
-    u->Compute_Netin(lay->own_net);
+void SoLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
+  Compute_AvgAct(lay, net);
 }
 
-void SoLayerSpec::Compute_Act(SoLayer* lay) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, lay->units., i)
-    u->Compute_Act();
-  
-  Compute_AvgAct(lay);		// always compute average layer act..
-}
-
-void SoLayerSpec::Compute_dWt(SoLayer* lay) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, lay->units., i)
-    u->Compute_dWt();
-}
-
-void SoLayerSpec::Compute_Weights(SoLayer* lay) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, lay->units., i)
-    u->Compute_Weights();
-}
-
-void SoLayerSpec::Compute_AvgAct(SoLayer* lay) {
+void SoLayerSpec::Compute_AvgAct(SoLayer* lay, SoNetwork* net) {
   lay->sum_act = 0.0f;
   if(lay->units.leaves == 0)	return;
   Unit* u;
@@ -295,9 +268,9 @@ void SoftMaxLayerSpec::Initialize() {
   softmax_gain = 1.0f;
 }
 
-void SoftMaxLayerSpec::Compute_Act(SoLayer* lay) {
+void SoftMaxLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
   if(lay->ext_flag & Unit::EXT) { // input layer
-    SoLayerSpec::Compute_Act(lay);
+    SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }
 
@@ -307,17 +280,18 @@ void SoftMaxLayerSpec::Compute_Act(SoLayer* lay) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, lay->units., i) {
-    u->Compute_Act();
     u->act = expf(softmax_gain * u->net); // e to the net
     sum += u->act;
   }
 
-  FOR_ITR_EL(Unit, u, lay->units., i) {
-    u->act = uspec->act_range.Project(u->act / sum);
-    // normalize by sum, rescale to act range range
+  if(sum > 0.0f) {
+    FOR_ITR_EL(Unit, u, lay->units., i) {
+      u->act = uspec->act_range.Project(u->act / sum);
+      // normalize by sum, rescale to act range range
+    }
   }
 
-  Compute_AvgAct(lay);
+  Compute_AvgAct(lay, net);
 }
 
 
@@ -338,23 +312,31 @@ void SoNetwork::SetProjectionDefaultTypes(Projection* prjn) {
   prjn->con_spec.type = &TA_HebbConSpec;
 }
 
-void SoNetwork::Compute_Act() {
-  // compute activations in feed-forward fashion
-  Layer* lay;
+void SoNetwork::Compute_NetinAct() {
+  // important note: any algorithms using this for feedforward computation are not 
+  // compatible with dmem computation on the network level (over connections)
+  // because otherwise the netinput needs to be sync'd at the layer level prior to calling
+  // the activation function at the layer level.  Threading should be much faster than
+  // dmem in general so this takes precidence.  See BpNetwork::UpdateAfterEdit_impl for 
+  // a warning message that should be included.
+  ThreadUnitCall un_call(&Unit::Compute_NetinAct);
+  threads.Run(&un_call, 1.0f, false, true); // backwards = false, layer_sync=true
+
+  // Important note: the Compute_Act_post call will NOT obey the cascade dynamic
+  // so anything relying on that (e.g., multilayer nets) will not work!  hmm.
+  // may need to change this to a pure non-thread call, or add a layer-level
+  // callback to occur with layer_sync mode
+  SoLayer* lay;
   taLeafItr l;
-  FOR_ITR_EL(Layer, lay, layers., l) {
-    lay->Compute_Netin();
-#ifdef DMEM_COMPILE    
-    lay->DMem_SyncNet();
-#endif
-    lay->Compute_Act();
+  FOR_ITR_EL(SoLayer, lay, layers., l) {
+    lay->Compute_Act_post(this);
   }
 }
 
 void SoNetwork::Trial_Run() {
   DataUpdate(true);
   
-  Compute_Act();
+  Compute_NetinAct();
 
   if(train_mode == TRAIN)
     Compute_dWt();

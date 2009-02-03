@@ -1087,10 +1087,6 @@ public:
   override void Compute_AvgMaxVals_ugp(LeabraLayer* lay, Unit_Group* ug,
 				       AvgMaxVals& vals, ta_memb_ptr mb_off);
 
-  virtual void 	Compute_dWt_Ugp(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net);
-  // compute weight changes just for one unit group
-  void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
-
   override float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
 			     bool unit_avg = false, bool sqrt = false);
     virtual float Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);

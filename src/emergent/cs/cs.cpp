@@ -130,10 +130,10 @@ void CsUnitSpec::UpdateAfterEdit_impl() {
   sqrt_step = sqrt(step);
 }
 
-void CsUnitSpec::Init_Acts(Unit* u) {
+void CsUnitSpec::Init_Acts(Unit* u, Network* net) {
   //  inherited::Init_Acts(u);  // this also initializes input data -- don't
   //  u->Init_InputData();
-  u->Init_Netin();
+  u->net = 0.0f;
   u->act = 0.0f;
   CsUnit* cu = (CsUnit*)u;
   cu->da = 0.0f;
@@ -142,9 +142,8 @@ void CsUnitSpec::Init_Acts(Unit* u) {
   cu->act = act_range.Clip(initial_act.Gen());
 }
 
-void CsUnitSpec::DecayState(CsUnit* u) {
+void CsUnitSpec::DecayState(CsUnit* u, CsNetwork* net) {
   //  u->Init_InputData();
-  u->Init_Netin();
   CsUnit* cu = (CsUnit*)u;
   float trgact = act_range.Clip(initial_act.Gen());
   cu->act -= state_decay * (cu->act - trgact);
@@ -154,21 +153,21 @@ void CsUnitSpec::DecayState(CsUnit* u) {
   cu->clmp_net = 0.0f;
 }
 
-void CsUnitSpec::Init_Weights(Unit* u) {
-  inherited::Init_Weights(u);
+void CsUnitSpec::Init_Weights(Unit* u, Network* net) {
+  inherited::Init_Weights(u, net);
   CsUnit* cu = (CsUnit*)u;
   cu->n_dwt_aggs = 0; // initialize it here
   cu->act_m = cu->act_p = 0.0f;
 }
 
-void CsUnitSpec::Compute_ClampAct(CsUnit* u) {
+void CsUnitSpec::Compute_ClampAct(CsUnit* u, CsNetwork* net) {
   if((clamp_type != HARD_FAST_CLAMP) || !(u->ext_flag & Unit::EXT))
     return;
   u->act = real_range.Clip(u->ext);	// keep everything in range
   u->da = 0.0f;
 }
 
-void CsUnitSpec::Compute_ClampNet(CsUnit* u) {
+void CsUnitSpec::Compute_ClampNet(CsUnit* u, CsNetwork* net) {
   u->clmp_net = 0.0f;
   if(clamp_type != HARD_FAST_CLAMP)
     return;
@@ -181,7 +180,7 @@ void CsUnitSpec::Compute_ClampNet(CsUnit* u) {
   }
 }
 
-void CsUnitSpec::Compute_Netin(Unit* u) {
+void CsUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
   CsUnit* cu = (CsUnit*)u;
   if(clamp_type == HARD_FAST_CLAMP) {
     if(cu->ext_flag & Unit::EXT)
@@ -199,15 +198,19 @@ void CsUnitSpec::Compute_Netin(Unit* u) {
   else if(clamp_type == HARD_CLAMP) {
     if(cu->ext_flag & Unit::EXT) // no point in computing net for clamped units!
       return;
-    inherited::Compute_Netin(u);
+    inherited::Compute_Netin(u, net, thread_no);
   }
   else {			// soft clamping (or soft-then-hard), always compute net
-    inherited::Compute_Netin(u);
+    inherited::Compute_Netin(u, net, thread_no);
   }
   cu->net += cu->clmp_net; // add in clamped input
 }
 
-void CsUnitSpec::Compute_Act(Unit* u, int cycle, int phase, CsNetwork* net) {
+void CsUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
+  CsNetwork* cnet = (CsNetwork*)net;
+  int cycle = cnet->cycle;
+  int phase = cnet->phase;
+
   CsUnit* cu = (CsUnit*)u;
   if(u->ext_flag & Unit::EXT) {	// receiving external input
     if(clamp_type == HARD_FAST_CLAMP) // already processed this one!
@@ -248,28 +251,25 @@ void CsUnitSpec::Compute_Act(Unit* u, int cycle, int phase, CsNetwork* net) {
     cu->da = 0.0f;		// ditto..
   }
 
-  net->maxda = MAX(fabsf(cu->da), net->maxda); // update network stat!
+  //  
 }
 
-void CsUnitSpec::Aggregate_dWt(Unit* u, int phase) {
-  CsUnit* cu = (CsUnit*)u;
+void CsUnitSpec::Aggregate_dWt(CsUnit* cu, CsNetwork* net, int thread_no) {
+  int phase = net->phase;
   ((CsConSpec*)bias_spec.SPtr())->B_Aggregate_dWt((CsCon*)cu->bias.Cn(0), cu, phase);
-  for(int g=0; g<u->recv.size; g++) {
-    CsRecvCons* recv_gp = (CsRecvCons*)u->recv.FastEl(g);
+  for(int g=0; g<cu->recv.size; g++) {
+    CsRecvCons* recv_gp = (CsRecvCons*)cu->recv.FastEl(g);
     if(!recv_gp->prjn->from->lesioned())
       recv_gp->Aggregate_dWt(cu,phase);
   }
   cu->n_dwt_aggs++;
 }
 
-void CsUnitSpec::PhaseInit(CsUnit* u, int phase) {
+void CsUnitSpec::PhaseInit(CsUnit* u, CsNetwork* net) {
   if(!(u->ext_flag & Unit::TARG))
     return;
 
-  if(phase == CsNetwork::MINUS_PHASE) {
-//     if(!(lay->ext_flag & Unit::TARG)) {	// layer isn't a target but unit is..
-//       u->targ = u->ext;
-//     }
+  if(net->phase == CsNetwork::MINUS_PHASE) {
     u->ext = 0.0f;
     u->UnSetExtFlag(Unit::EXT);
   }
@@ -279,22 +279,22 @@ void CsUnitSpec::PhaseInit(CsUnit* u, int phase) {
   }
 }
 
-void CsUnitSpec::PostSettle(CsUnit* u, int phase) {
-  if(phase == CsNetwork::MINUS_PHASE)
+void CsUnitSpec::PostSettle(CsUnit* u, CsNetwork* net) {
+  if(net->phase == CsNetwork::MINUS_PHASE)
     u->act_m = u->act;
   else
     u->act_p = u->act;
 }
 
-void CsUnitSpec::Compute_dWt(Unit* u) {
+void CsUnitSpec::Compute_dWt(Unit* u, Network* net, int thread_no) {
+  inherited::Compute_dWt(u, net, thread_no);
   CsUnit* cu = (CsUnit*)u;
-  inherited::Compute_dWt(cu);
   ((CsConSpec*)bias_spec.SPtr())->B_Compute_dWt((CsCon*)cu->bias.Cn(0), cu);
   cu->n_dwt_aggs = 0;		// reset after wts are aggd
 }
 
-void CsUnitSpec::Compute_Weights(Unit* u) {
-  inherited::Compute_Weights(u);
+void CsUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
+  inherited::Compute_Weights(u, net, thread_no);
   ((CsConSpec*)bias_spec.SPtr())->B_Compute_Weights((CsCon*)u->bias.Cn(0), u);
 }
 
@@ -422,37 +422,11 @@ void IACUnitSpec::Initialize() {
   rest = 0.0f;
   decay = .2f;
   gain = 5.0f;
-  use_send_thresh = false;
-  send_thresh = 0.0f;
 }
 
 void IACUnitSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   gain = 1.0f / decay;		// keep gain and decay aligned
-}
-
-void IACUnitSpec::Send_Netin(Unit* u, Layer* tolay) {
-  if(u->act > send_thresh) {	// send to others
-    if((clamp_type == HARD_FAST_CLAMP) || (clamp_type == HARD_CLAMP)) {
-      if((clamp_type == HARD_FAST_CLAMP) && (u->ext_flag & Unit::EXT))
-	return; // we have already sent!
-      for(int g=0; g<u->send.size; g++) {
-	CsSendCons* send_gp = (CsSendCons*)u->send.FastEl(g);
-	Layer* lay = send_gp->prjn->layer;
-	if(lay->lesioned() || (lay->ext_flag & Unit::EXT) || (lay != tolay)) // do not send to clamped!
-	  continue;
-	send_gp->Send_Netin(u);
-      }
-    }
-    else {			// soft clamping, always compute net
-      for(int g=0; g<u->send.size; g++) {
-	CsSendCons* send_gp = (CsSendCons*)u->send.FastEl(g);
-	Layer* lay = send_gp->prjn->layer;
-	if(lay->lesioned() || (lay != tolay))    continue;
-	send_gp->Send_Netin(u);
-      }
-    }
-  }
 }
 
 void IACUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
@@ -520,12 +494,13 @@ void CsLayer::Initialize() {
   unit_spec.SetBaseType(&TA_CsUnitSpec);
 }
 
-void CsLayer::Init_Acts() {
+void CsLayer::Init_Acts(Network* net) {	
+  // commenting this out is only diff from orig fun:
   //  ext_flag = Unit::NO_EXTERNAL;
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, units., i)
-    u->Init_Acts();
+    u->Init_Acts(net);
 }
 
 
@@ -605,57 +580,42 @@ void CsNetwork::Init_Stats() {
 ////////////////////////////////
 
 void CsNetwork::Compute_SyncAct() {
-  // netinput must already be computed in separate step
-  output_name = "";	// todo: update this
-  maxda = 0.0f;		// initialize
-  Layer* lay;
-  taLeafItr l_itr;
-  FOR_ITR_EL(Layer, lay, layers., l_itr) {
-    if(lay->lesioned()) continue;
-    CsUnit* u;
-    taLeafItr u_itr;
-    FOR_ITR_EL(CsUnit, u, lay->units., u_itr) {
-      u->Compute_Act(cycle, phase, this);
-    }
-  }
+  // same as the basic call: just add a diff cost 
+  ThreadUnitCall un_call(&Unit::Compute_Act);
+  threads.Run(&un_call, .2f);	// todo: get new cost!
 }
 
 void CsNetwork::Compute_AsyncAct() {
-  if(n_units == 0) return; // error check
-  output_name = "";	// todo: update this
-  maxda = 0.0f;		// initialize
+  if(units_flat.size == 0) return; // error check
   Layer* lay;
   taLeafItr l;
   for (int i=0; i < n_updates; i++) {	// do this n_updates times
-    int rnd_num = Random::IntZeroN(n_units);
-    int total_prob = 0;
-    FOR_ITR_EL(Layer,lay,layers.,l) {
-      if(lay->lesioned())	continue;
-      int lay_prob = lay->units.leaves;   // each layer gets prob in prop. to # units
-      if(rnd_num < (lay_prob + total_prob)) {
-	int whichunitleaf = rnd_num - total_prob;
-	CsUnit* u = (CsUnit*) lay->units.Leaf(whichunitleaf);	
-	u->Compute_Netin(this);
-	u->Compute_Act(cycle, phase, this); // update this one unit...
-	break;
-      } else {
-	total_prob += lay_prob;
-      }
+    int rnd_num = Random::IntZeroN(units_flat.size);
+    CsUnit* u = (CsUnit*) units_flat[rnd_num];
+    u->Compute_Netin(this);
+    u->Compute_Act(this); // update this one unit...
+  }
+}
+
+void CsNetwork::Compute_MaxDa() {
+  // this has to be a separate step due to threading
+  maxda = 0.0f;		// initialize
+  output_name = "";	// todo: update this
+  Layer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(Layer, lay, layers., l) {
+    if(lay->lesioned()) continue;
+    CsUnit* un;
+    taLeafItr u;
+    FOR_ITR_EL(CsUnit, un, lay->units., u) {
+      maxda = MAX(fabsf(un->da), maxda);
     }
   }
 }
 
 void CsNetwork::Aggregate_dWt() {
-  Layer* lay;
-  taLeafItr l_itr;
-  FOR_ITR_EL(Layer, lay, layers., l_itr) {
-    if(lay->lesioned()) continue;
-    CsUnit* u;
-    taLeafItr u_itr;
-    FOR_ITR_EL(CsUnit, u, lay->units., u_itr) {
-      u->Aggregate_dWt(phase);
-    }
-  }
+  ThreadUnitCall un_call((ThreadUnitMethod)(CsUnitMethod)&CsUnit::Aggregate_dWt);
+  threads.Run(&un_call, .5f);	// todo: update est
 }
 
 void CsNetwork::Cycle_Run() {
@@ -663,13 +623,10 @@ void CsNetwork::Cycle_Run() {
     Compute_Netin();	// two-stage update of nets and acts
     Compute_SyncAct();
   }
-  else if(update_mode == SYNC_SENDER_BASED) {
-    Init_Netin();	// initialize netin values
-    Send_Netin();	// send the netinput
-    Compute_SyncAct();
-  }
-  else
+  else {
     Compute_AsyncAct();
+  }
+  Compute_MaxDa();
 
   if(!deterministic && (cycle >= start_stats) && !(train_mode == Network::TEST))
     Aggregate_dWt();
@@ -678,6 +635,21 @@ void CsNetwork::Cycle_Run() {
 ////////////////////////////////
 //         Settle             //
 ////////////////////////////////
+
+void CsNetwork::Settle_Init() {
+  if(phase == PLUS_PHASE) {
+    if(between_phases == INIT_STATE)
+      Init_Acts();
+    else if(between_phases == DECAY_STATE)
+      DecayState();
+  }
+
+  PhaseInit();
+
+  // precompute clamping info so cycles aren't wasted during settling
+  Compute_ClampAct();
+  Compute_ClampNet();
+}
 
 void CsNetwork::Compute_ClampAct() {
   Layer* lay;
@@ -688,7 +660,7 @@ void CsNetwork::Compute_ClampAct() {
     CsUnit* un;
     taLeafItr u;
     FOR_ITR_EL(CsUnit, un, lay->units., u)
-      un->Compute_ClampAct();
+      un->Compute_ClampAct(this);
   }
 }
 
@@ -701,7 +673,7 @@ void CsNetwork::Compute_ClampNet() {
     CsUnit* un;
     taLeafItr u;
     FOR_ITR_EL(CsUnit, un, lay->units., u)
-      un->Compute_ClampNet();
+      un->Compute_ClampNet(this);
   }
 }
 
@@ -718,7 +690,7 @@ void CsNetwork::PhaseInit() {
     CsUnit* un;
     taLeafItr u;
     FOR_ITR_EL(CsUnit, un, lay->units., u)
-      un->PhaseInit(phase);
+      un->PhaseInit(this);
   }
 }
 
@@ -731,7 +703,7 @@ void CsNetwork::DecayState() {
     CsUnit* un;
     taLeafItr u;
     FOR_ITR_EL(CsUnit, un, lay->units., u)
-      un->DecayState();
+      un->DecayState(this);
   }
 }
 
@@ -743,24 +715,9 @@ void CsNetwork::PostSettle() {
       CsUnit* un;
       taLeafItr u;
       FOR_ITR_EL(CsUnit, un, lay->units., u)
-	un->PostSettle(phase);
+	un->PostSettle(this);
     }
   }
-}
-
-void CsNetwork::Settle_Init() {
-  if(phase == PLUS_PHASE) {
-    if(between_phases == INIT_STATE)
-      Init_Acts();
-    else if(between_phases == DECAY_STATE)
-      DecayState();
-  }
-
-  PhaseInit();
-
-  // precompute clamping info so cycles aren't wasted during settling
-  Compute_ClampAct();
-  Compute_ClampNet();
 }
 
 void CsNetwork::Settle_Final() {
@@ -819,34 +776,6 @@ void CsNetwork::Compute_EpochStats() {
   Compute_AvgCycles();
 }
 
-
-// todo: need to do this somewhere
-// // this will also have cs-level checks on it..
-// bool CsNetwork::CheckUnit(Unit* ck) {
-//   bool rval = TrialProcess::CheckUnit(ck);
-//   if(!rval) return rval;
-//   CsUnitSpec* usp = (CsUnitSpec*)ck->spec.SPtr();
-//   // check if using IAC send thresh
-//   if(usp == NULL)	return true;
-//   CsNetwork* cyc = (CsNetwork*)FindSubProc(&TA_CsNetwork);
-//   if(cyc == NULL)	return true;
-//   if(usp->InheritsFrom(TA_IACUnitSpec) && ((IACUnitSpec*)usp)->use_send_thresh) {
-//     if(cyc->update_mode != CsNetwork::SYNC_SENDER_BASED) {
-//       taMisc::Error("Using IACUnitSpec send_thresh without CsNetwork::SYNC_SENDER_BASED does not work:",
-// 		    "switching to that update_mode");
-//       cyc->update_mode = CsNetwork::SYNC_SENDER_BASED;
-//     }
-//   }
-//   else {
-//     if(cyc->update_mode == CsNetwork::SYNC_SENDER_BASED) {
-//       taMisc::Error("Using normal receiver based netin with CsNetwork::SYNC_SENDER_BASED is slow:",
-// 		    "switching to SYNCHRONOUS");
-//       cyc->update_mode = CsNetwork::SYNCHRONOUS;
-//     }
-//   }
-//   return true;
-// }
-
 // ////////////////////////////////
 // // 	    CsSample          //
 // ////////////////////////////////
@@ -864,32 +793,6 @@ void CsNetwork::Compute_EpochStats() {
 // void CsSample::InitLinks() {
 //   TrialProcess::InitLinks();
 //   taBase::Own(sample, this);
-// }
-
-// // this will be the first process with cs-level checks on it..
-// bool CsSample::CheckUnit(Unit* ck) {
-//   bool rval = TrialProcess::CheckUnit(ck);
-//   if(!rval) return rval;
-//   CsUnitSpec* usp = (CsUnitSpec*)ck->spec.SPtr();
-//   // check if using IAC send thresh
-//   if(usp == NULL)	return true;
-//   CsNetwork* cyc = (CsNetwork*)FindSubProc(&TA_CsNetwork);
-//   if(cyc == NULL)	return true;
-//   if(usp->InheritsFrom(TA_IACUnitSpec) && ((IACUnitSpec*)usp)->use_send_thresh) {
-//     if(cyc->update_mode != CsNetwork::SYNC_SENDER_BASED) {
-//       taMisc::Error("Using IACUnitSpec send_thresh without CsNetwork::SYNC_SENDER_BASED does not work:",
-// 		    "switching to that update_mode");
-//       cyc->update_mode = CsNetwork::SYNC_SENDER_BASED;
-//     }
-//   }
-//   else {
-//     if(cyc->update_mode == CsNetwork::SYNC_SENDER_BASED) {
-//       taMisc::Error("Using normal receiver based netin with CsNetwork::SYNC_SENDER_BASED is slow:",
-// 		    "switching to SYNCHRONOUS");
-//       cyc->update_mode = CsNetwork::SYNCHRONOUS;
-//     }
-//   }
-//   return true;
 // }
 
 // void CsSample::Init_impl() {

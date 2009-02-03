@@ -594,7 +594,7 @@ void BpNetwork::SetCurLrate() {
 
 void BpNetwork::Compute_dEdA_dEdNet() {
   ThreadUnitCall un_call((ThreadUnitMethod)(BpUnitMethod)&BpUnit::Compute_dEdA_dEdNet);
-  threads.Run(&un_call, .6f, true, true); // backwards = true, layer_sync=true
+  threads.Run(&un_call, 1.0f, true, true); // backwards = true, layer_sync=true
 
 // #ifdef DMEM_COMPILE
 //     // first compute dEdA from connections and share it

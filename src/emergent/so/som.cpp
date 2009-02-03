@@ -17,7 +17,7 @@
 
 #include "som.h"
 
-void SomUnitSpec::Compute_Netin(Unit* u) {
+void SomUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
   // Modified by Danke, Feb. 9, 2003
   if (u->ext_flag & Unit::EXT)
     u->net = u->ext;
@@ -186,16 +186,16 @@ int SomLayerSpec::WrapClip(int coord, int max_coord) {
 }
 
 
-void SomLayerSpec::Compute_Act(SoLayer* lay) {
+void SomLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
   if(lay->ext_flag & Unit::EXT) {  // input layer
-    SoLayerSpec::Compute_Act(lay);
+    SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }
 
   // Added by Danke, Feb. 9, 2003
   if(lay->units.leaves > 0 &&      // sync layer
      lay->units.FastEl(0)->ext_flag & Unit::EXT) {
-    SoLayerSpec::Compute_Act(lay);
+    SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }
 

@@ -21,9 +21,9 @@ void ClLayerSpec::Initialize() {
   netin_type = MAX_NETIN_WINS;
 }
 
-void ClLayerSpec::Compute_Act(SoLayer* lay) {
+void ClLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
   if(lay->ext_flag & Unit::EXT) { // input layer
-    SoLayerSpec::Compute_Act(lay);
+    SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }
   if(lay->units.leaves == 0)
@@ -54,7 +54,7 @@ void SoftClUnitSpec::UpdateAfterEdit_impl() {
   denom_const = 0.5f / var;
 }
 
-void SoftClUnitSpec::Compute_Netin(Unit* u) {
+void SoftClUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
   // do distance instead of net input
   if (u->ext_flag & Unit::EXT)
     u->net = u->ext;
@@ -69,7 +69,7 @@ void SoftClUnitSpec::Compute_Netin(Unit* u) {
   }
 }
 
-void SoftClUnitSpec::Compute_Act(Unit* u) {
+void SoftClUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   SoUnit* su = (SoUnit*)u;
   if(u->ext_flag & Unit::EXT)
     su->act = su->act_i = u->ext;
@@ -81,9 +81,9 @@ void SoftClLayerSpec::Initialize() {
   netin_type = MIN_NETIN_WINS;	// not that this is actually used..
 }
 
-void SoftClLayerSpec::Compute_Act(SoLayer* lay) {
+void SoftClLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
   if(lay->ext_flag & Unit::EXT) { // input layer
-    SoLayerSpec::Compute_Act(lay);
+    SoLayerSpec::Compute_Act_post(lay, net);
     return;
   }
 
@@ -93,14 +93,16 @@ void SoftClLayerSpec::Compute_Act(SoLayer* lay) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, lay->units., i) {
-    u->Compute_Act();
+    // act has already been computed..
     sum += u->act;
   }
 
-  FOR_ITR_EL(Unit, u, lay->units., i) {
-    u->act = uspec->act_range.Project(u->act / sum);
-    // normalize by sum, rescale to act range range
+  if(sum > 0.0f) {
+    FOR_ITR_EL(Unit, u, lay->units., i) {
+      u->act = uspec->act_range.Project(u->act / sum);
+      // normalize by sum, rescale to act range range
+    }
   }
 
-  Compute_AvgAct(lay);
+  Compute_AvgAct(lay, net);
 }

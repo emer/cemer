@@ -433,7 +433,6 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
        u->ext = pve_val;
        ClampValue_ugp(ugp, net); 		// apply new value
        Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
-       Compute_dWt_Ugp(ugp, lay, net);
      }
      );
 }
@@ -697,7 +696,6 @@ void NVLayerSpec::Compute_NVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) {
      u->ext = 0.0f;		// clamp to pve value
      ClampValue_ugp(ugp, net); 	// apply new value
      Compute_ExtToPlus(ugp, net); // copy ext values to act_p
-     Compute_dWt_Ugp(ugp, lay, net);
      );
 }
 

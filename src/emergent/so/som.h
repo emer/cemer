@@ -26,7 +26,8 @@ class SomUnitSpec : public SoUnitSpec {
   // self-organizing feature maps: net input is distance, not raw netin
 INHERITED(SoUnitSpec)
 public:
-  void 		Compute_Netin(Unit* u); // redefine to call compute_dist
+  override void Compute_Netin(Unit* u, Network* net, int thread_no=-1);
+  // redefine to call compute_dist
 
   TA_BASEFUNS_NOCOPY(SomUnitSpec);
 private:
@@ -85,7 +86,7 @@ public:
   int		WrapClip(int coord, int max_coord);
   // does coordinate wrapping
 
-  void		Compute_Act(SoLayer* lay);
+  override void	Compute_Act_post(SoLayer* lay, SoNetwork* net);
   // set activation as function of kernel
 
   TA_SIMPLE_BASEFUNS(SomLayerSpec);

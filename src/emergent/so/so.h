@@ -31,7 +31,9 @@ class SoRecvCons;
 class SoUnit;
 class SoUnitSpec;
 class SoLayer;
-class SoLayerSpec; //
+class SoLayerSpec;
+class SoNetwork;
+//
 
 class SO_API SoCon : public Connection {
   // #STEM_BASE ##CAT_So generic self-organizing algorithm connection
@@ -102,8 +104,8 @@ class SO_API SoUnitSpec : public UnitSpec {
   // #STEM_BASE ##CAT_So generic self-organizing unit spec: linear act of std dot-product netin
 INHERITED(UnitSpec)
 public:
-  void		Init_Acts(Unit* u);
-  void		Compute_Act(Unit* u);
+  override void	Init_Acts(Unit* u, Network* net);
+  override void	Compute_Act(Unit* u, Network* net, int thread_no=-1);
 
   virtual void	Compute_AvgInAct(Unit* u);
   // compute average input activations
@@ -123,7 +125,7 @@ INHERITED(SoUnitSpec)
 public:
   float		threshold;
 
-  void		Compute_Act(Unit* u);
+  override void	Compute_Act(Unit* u, Network* net, int thread_no=-1);
 
   TA_SIMPLE_BASEFUNS(ThreshLinSoUnitSpec);
 private:
@@ -167,11 +169,9 @@ public:
   virtual SoUnit*	FindWinner(SoLayer* lay);
   // finds the winning unit according to netin_type (clears acts too)
 
-  virtual void	Compute_Netin(SoLayer* lay);
-  virtual void	Compute_Act(SoLayer* lay);
-  virtual void	Compute_AvgAct(SoLayer* lay);
-  virtual void	Compute_dWt(SoLayer* lay);
-  virtual void	Compute_Weights(SoLayer* lay);
+  virtual void	Compute_Act_post(SoLayer* lay, SoNetwork* net);
+  // perform post-processing of activations, often amounting to full recomputing of them depending on layer-level constraints -- also calls AvgAct at the end
+  virtual void	Compute_AvgAct(SoLayer* lay, SoNetwork* net);
 
   TA_SIMPLE_BASEFUNS(SoLayerSpec);
 private:
@@ -190,12 +190,8 @@ public:
   float		sum_act;	// summed activation over layer
   Unit*		winner;		// #READ_ONLY #NO_SAVE winning unit
 
-  // the spec now does all of the updating..
-  void		Compute_Netin()		{ spec->Compute_Netin(this); }
-  void		Compute_Act()		{ spec->Compute_Act(this); }
-  void		Compute_AvgAct()	{ spec->Compute_AvgAct(this); }
-  void		Compute_dWt()		{ spec->Compute_dWt(this); }
-  void		Compute_Weights()		{ spec->Compute_Weights(this); }
+  void	Compute_Act_post(SoNetwork* net) { spec->Compute_Act_post(this, net); }
+  void	Compute_AvgAct(SoNetwork* net)	{ spec->Compute_AvgAct(this, net); }
 
   bool		SetLayerSpec(LayerSpec* sp);
   LayerSpec*	GetLayerSpec()		{ return (LayerSpec*)spec.spec; }
@@ -279,7 +275,7 @@ INHERITED(SoLayerSpec)
 public:
   float		softmax_gain;	// gain of the softmax function
 
-  void		Compute_Act(SoLayer* lay);
+  override void	Compute_Act_post(SoLayer* lay, SoNetwork* net);
   // set activation to be softmax of unit activations
 
   TA_SIMPLE_BASEFUNS(SoftMaxLayerSpec);
@@ -293,9 +289,9 @@ class SO_API SoNetwork : public Network {
 INHERITED(Network)
 public:
 
-  override void		Compute_Act();
+  override void	 Compute_NetinAct();
 
-  virtual void		Trial_Run(); // run one trial of So
+  virtual void	 Trial_Run(); // run one trial of So
   
   override void	SetProjectionDefaultTypes(Projection* prjn);
 

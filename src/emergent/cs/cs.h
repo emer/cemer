@@ -160,31 +160,29 @@ public:
   bool		use_sharp;		// true if gain sched is used to sharpen acts
   Schedule	gain_sched;		// #CONDEDIT_ON_use_sharp:true schedule of gain multipliers
 
-  override void	Init_Acts(Unit* u);
-  override void Init_Weights(Unit* u); 	// also init aggregation stuff
+  override void	Init_Acts(Unit* u, Network* net);
+  override void Init_Weights(Unit* u, Network* net); 	// also init aggregation stuff
 
-  virtual void 	Compute_ClampAct(CsUnit* u);
+  virtual void 	Compute_ClampAct(CsUnit* u, CsNetwork* net);
   // hard-fast-clamp inputs (at start of settling)
-  virtual void 	Compute_ClampNet(CsUnit* u);
+  virtual void 	Compute_ClampNet(CsUnit* u, CsNetwork* net);
   // compute net input from clamped inputs (at start of settling)
 
-  void 		Compute_Netin(Unit* u); 		// add bias
-  override void	Compute_Act(Unit* u)		// if no cycle is passed
-  { Compute_Act(u,-1, 0, NULL); }
-  virtual void 	Compute_Act(Unit* u, int cycle, int phase, CsNetwork* net);
+  override void Compute_Netin(Unit* u, Network* net, int thread_no=-1);
+  override void Compute_Act(Unit* u, Network* net, int thread_no=-1);
   virtual void	Compute_Act_impl(CsUnit* u, int cycle, int phase); 
   // actually computes specific activation function 
 
-  virtual void	DecayState(CsUnit* u);
+  virtual void	DecayState(CsUnit* u, CsNetwork* net);
   // decay activation state information
-  virtual void	PhaseInit(CsUnit* u, int phase);
+  virtual void	PhaseInit(CsUnit* u, CsNetwork* net);
   // initialize external inputs based on phase information
   
-  virtual void	Aggregate_dWt(Unit* u, int phase);
-  override void	Compute_dWt(Unit* u);
-  override void	Compute_Weights(Unit* u);		// add update bias weight
+  virtual void	Aggregate_dWt(CsUnit* u, CsNetwork* net, int thread_no=-1);
+  override void	Compute_dWt(Unit* u, Network* net, int thread_no=-1);
+  override void	Compute_Weights(Unit* u, Network* net, int thread_no=-1);
 
-  virtual void	PostSettle(CsUnit* u, int phase);
+  virtual void	PostSettle(CsUnit* u, CsNetwork* net);
   // set stuff after settling is over
 
   virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0, int ncycles=50);
@@ -240,11 +238,7 @@ INHERITED(CsUnitSpec)
 public:
   float		rest;		// rest level of activation
   float		decay;		// decay rate (1/gain) (continuous decay -- not between phases or trials, which is state_decay)
-  bool		use_send_thresh;
-  // pay attn to send_thresh? if so, need SYNC_SENDER_BASED in cycle proc, sender based netin
-  float		send_thresh;	// #CONDEDIT_ON_use_send_thresh:true threshold below which unit does not send act
 
-  void		Send_Netin(Unit* u, Layer* tolay);	// do sender-based stuff
   void		Compute_Act_impl(CsUnit* u, int cycle, int phase);
 
   TA_SIMPLE_BASEFUNS(IACUnitSpec);
@@ -292,23 +286,18 @@ public:
   float		act_p;		// plus phase activation
   int		n_dwt_aggs;	// number of delta-weight aggregations performed
 
-  void 		Init_Netin()	{ net = bias.Cn(0)->wt + clmp_net; } // for sender based
-  void		Compute_ClampAct() 
-  { ((CsUnitSpec*)GetUnitSpec())->Compute_ClampAct(this); }
-  void		Compute_ClampNet() 
-  { ((CsUnitSpec*)GetUnitSpec())->Compute_ClampNet(this); }
-  void		Compute_Act(int cycle, int phase, CsNetwork* net)
-  { ((CsUnitSpec*)GetUnitSpec())->Compute_Act(this, cycle, phase, net); }
-  void		Compute_Act()
-  { Compute_Act(-1, 0, NULL); }
-  void		DecayState()
-  { ((CsUnitSpec*)GetUnitSpec())->DecayState(this); }
-  void		PhaseInit(int phase)
-  { ((CsUnitSpec*)GetUnitSpec())->PhaseInit(this, phase); }
-  void		PostSettle(int phase)
-  { ((CsUnitSpec*)GetUnitSpec())->PostSettle(this, phase); }
-  void		Aggregate_dWt(int phase)
-  { ((CsUnitSpec*)GetUnitSpec())->Aggregate_dWt(this, phase); }
+  void	Compute_ClampAct(CsNetwork* net)
+  { ((CsUnitSpec*)GetUnitSpec())->Compute_ClampAct(this, net); }
+  void	Compute_ClampNet(CsNetwork* net)
+  { ((CsUnitSpec*)GetUnitSpec())->Compute_ClampNet(this, net); }
+  void	DecayState(CsNetwork* net)
+  { ((CsUnitSpec*)GetUnitSpec())->DecayState(this, net); }
+  void	PhaseInit(CsNetwork* net)
+  { ((CsUnitSpec*)GetUnitSpec())->PhaseInit(this, net); }
+  void	PostSettle(CsNetwork* net)
+  { ((CsUnitSpec*)GetUnitSpec())->PostSettle(this, net); }
+  void	Aggregate_dWt(CsNetwork* net, int thread_no=-1)
+  { ((CsUnitSpec*)GetUnitSpec())->Aggregate_dWt(this, net, thread_no); }
 
   void	Copy_(const CsUnit& cp);
   TA_BASEFUNS(CsUnit);
@@ -316,6 +305,12 @@ private:
   void 	Initialize();
   void	Destroy()		{ };
 };
+
+#ifndef __MAKETA__
+typedef void (CsUnit::*CsUnitMethod)(CsNetwork*, int);
+// this is required to disambiguate unit thread method guys -- double casting
+#endif 
+
 
 ////////////////////////////////
 // 	In-line functions     //
@@ -412,7 +407,7 @@ class CS_API CsLayer : public Layer {
   // #STEM_BASE ##CAT_Cs A constraint-satisfaction layer
 INHERITED(Layer)
 public:
-  override void  Init_Acts();
+  override void  Init_Acts(Network* net);
 
   TA_BASEFUNS_NOCOPY(CsLayer);
 private:
@@ -431,20 +426,21 @@ public:
   enum UpdateMode {
     SYNCHRONOUS,
     ASYNCHRONOUS,
-    SYNC_SENDER_BASED 		// needed for IAC send_thresh impl
   };
+
   enum StateInit {		// ways of initializing the state of the network
     DO_NOTHING,			// do nothing
     INIT_STATE,			// initialize the network state
     DECAY_STATE, 		// decay the activations from prior state
   };
+
   enum Phase {
     MINUS_PHASE = -1,
-    PLUS_PHASE = 1
+    PLUS_PHASE = 1,
   };
 
   UpdateMode 	update_mode;
-  // how to update: async = n_updates, sync = all units. sender_based is for IAC
+  // how to update: async = n_updates, sync = all units
   int		n_updates;
   // #CONDEDIT_ON_update_mode:ASYNCHRONOUS for ASYNC mode, number of updates (with replacement) to perform in one cycle
   StateInit	trial_init;	// how to initialize network at start of trial
@@ -495,6 +491,8 @@ public:
   // #CAT_Cycle compute synchronous activations: first pass is netin, second pass is activations, for all units
   virtual void	Compute_AsyncAct();
   // #CAT_Cycle compute asynchronous activations: select units at random to update
+  virtual void	Compute_MaxDa();
+  // #CAT_Cycle get maxda value from units
   virtual void	Aggregate_dWt();
   // #CAT_Cycle aggregate weight changes (for probabilistic sampling)
   virtual void	Cycle_Run();

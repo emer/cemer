@@ -5435,8 +5435,10 @@ void Network::BuildUnits_Threads() {
     lay->BuildUnits_Threads(this, idx);
   }
   // temporary storage for sender-based netinput computation
-  send_netin_tmp.SetGeom(2, units_flat.size, threads.n_threads);
-  send_netin_tmp.InitVals(0.0f);
+  if(units_flat.size > 0 && threads.n_threads > 0) {
+    send_netin_tmp.SetGeom(2, units_flat.size, threads.n_threads);
+    send_netin_tmp.InitVals(0.0f);
+  }
 }
 
 void Network::BuildPrjns() {
@@ -5814,9 +5816,8 @@ void Network::Init_Timers() {
 }
 
 // NOTE on compute load levels for thread.Run function (2nd arg) --
-// the versions here are coarse estimates -- 
-// these should be more accurately computed for specific algorithms,
-// and the relevant functions overwritten
+// any function that goes over all the cons gets a 1.0 (netin, dwt, wts)
+// others (Compute_Act) just have small guess value, which should be replaced
 
 void Network::Compute_Netin() {
   ThreadUnitCall un_call(&Unit::Compute_Netin);
@@ -5871,12 +5872,12 @@ void Network::Compute_NetinAct() {
   // dmem in general so this takes precidence.  See BpNetwork::UpdateAfterEdit_impl for 
   // a warning message that should be included.
   ThreadUnitCall un_call(&Unit::Compute_NetinAct);
-  threads.Run(&un_call, .9f, false, true); // backwards = false, layer_sync=true
+  threads.Run(&un_call, 1.0f, false, true); // backwards = false, layer_sync=true
 }
 
 void Network::Compute_dWt() {
   ThreadUnitCall un_call(&Unit::Compute_dWt);
-  threads.Run(&un_call, .5f);
+  threads.Run(&un_call, 1.0f);
 }
 
 bool Network::Compute_Weights_Test(int trial_no) {
@@ -5905,7 +5906,7 @@ void Network::Compute_Weights() {
 
 void Network::Compute_Weights_impl() {
   ThreadUnitCall un_call(&Unit::Compute_Weights);
-  threads.Run(&un_call, .4f);
+  threads.Run(&un_call, 1.0f);
 }
 
 void Network::Compute_SSE(bool unit_avg, bool sqrt) {
