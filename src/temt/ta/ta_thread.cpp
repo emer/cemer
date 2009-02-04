@@ -155,7 +155,7 @@ void taTaskThread::terminate() {
 // 	Thread manager
 
 void taThreadMgr::Initialize() {
-  n_threads = taMisc::cpus;
+  n_threads = taMisc::thread_defaults.n_threads;
   log_timing = false;
 }
 

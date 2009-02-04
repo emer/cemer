@@ -504,6 +504,17 @@ const String             taMisc::build_str;
 # endif
 #endif
 
+taThreadDefaults::taThreadDefaults() {
+  cpus = 1;
+  n_threads = -1;
+  min_units = 50;
+  compute_thr = 0.2f;
+  chunk_pct = 0.9f;
+  nibble_chunk = 4;
+}
+
+taThreadDefaults taMisc::thread_defaults;
+
 ////////////////////////////////////////////////////////
 // 	TA GUI parameters
 
@@ -634,7 +645,6 @@ String_PArray	taMisc::args_tmp;
 
 int	taMisc::dmem_proc = 0;
 int	taMisc::dmem_nprocs = 1;
-int	taMisc::cpus = 1;
 bool	taMisc::dmem_debug = false;
 
 ////////////////////////////////////////////////////////
@@ -1120,11 +1130,14 @@ void taMisc::Init_Hooks() {
 }
 
 void taMisc::Init_Defaults_PreLoadConfig() {
-  cpus = taPlatform::cpuCount();
+  thread_defaults.cpus = taPlatform::cpuCount();
   // max_cpu
   int max_cpus = FindArgByName("MaxCpus").toInt(); // 0 if doesn't exist
   if ((max_cpus > 0) && (max_cpus <= taPlatform::cpuCount()))
-    cpus = max_cpus;
+    thread_defaults.cpus = max_cpus;
+
+  if(thread_defaults.n_threads == -1)
+    thread_defaults.n_threads = thread_defaults.cpus;
 }
 
 void taMisc::Init_Defaults_PostLoadConfig() {

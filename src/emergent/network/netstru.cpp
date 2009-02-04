@@ -4803,10 +4803,10 @@ void UnitCallTask::run() {
 }
 
 void UnitCallThreadMgr::Initialize() {
-  min_units = 100;
-  thread_comp_thr = .5f;
-  chunk_pct = .9f;
-  nibble_chunk = 2;
+  min_units = taMisc::thread_defaults.min_units;
+  compute_thr = taMisc::thread_defaults.compute_thr;
+  chunk_pct = taMisc::thread_defaults.chunk_pct;
+  nibble_chunk = taMisc::thread_defaults.nibble_chunk;
   ignore_lay_sync = false;
   nibble_i = -1;
   nibble_stop = 0;
@@ -4839,7 +4839,7 @@ void UnitCallThreadMgr::InitAll() {
 void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level,
 			    bool backwards, bool layer_sync) {
   Network* net = network();
-  if(n_threads == 1 || comp_level < thread_comp_thr || net->units_flat.size < min_units
+  if(n_threads == 1 || comp_level < compute_thr || net->units_flat.size < min_units
      || net->units_flat.size < tasks.size) {
     RunThread0(unit_call, backwards);
   }
