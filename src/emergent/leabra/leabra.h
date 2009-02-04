@@ -1345,7 +1345,7 @@ public:
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_SentInhibDelta(this, net, new_inhib); }
   // #CAT_Activation called by network-level Send_NetinDelta function to integrate sent inhib value with current inhib value
   float Compute_IThresh(LeabraNetwork* net)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_IThresh(this, net); }
+  { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_IThresh(this, net); }
   // #CAT_Activation called by Compute_SentNetinDelta: compute inhibitory value that would place unit directly at threshold -- computed in Compute_SentNetin.. function
 
   ///////////////////////////////////////////////////////////////////////
@@ -2278,7 +2278,7 @@ public:
   { return spec->Compute_dWt_SecondPlus_Test(this, net); }
   // #CAT_Learning test whether to compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
   bool	Compute_dWt_Nothing_Test(LeabraNetwork* net)
-  { spec->Compute_dWt_Nothing_Test(this, net); }
+  { return spec->Compute_dWt_Nothing_Test(this, net); }
   // #CAT_Learning test whether to compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
 
   ///////////////////////////////////////////////////////////////////////

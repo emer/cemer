@@ -256,7 +256,7 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
     if(wt_sig.off == 1.25)
       wt_sig.off = 1.0;		// this is key
     if(lrate == 0.01)
-      lrate = 0.02;		// also important
+      lrate = 0.02f;		// also important
   }
 }
 
@@ -309,7 +309,7 @@ void LeabraConSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
 }
 
 void LeabraConSpec::LogLrateSched(int epcs_per_step, float n_steps) {
-  float log_ns[3] = {1, .5, .2};
+  float log_ns[3] = {1, .5f, .2f};
   
   lrate_sched.SetSize(n_steps);
   for(int i=0;i<n_steps;i++) {
