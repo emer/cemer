@@ -3,36 +3,32 @@
 # this is a script file for running various standard configurations of
 # leabra_bench.proj
 
+# required args are
+# tag=<tag> -- tag for config of cpu and run info for recording run data
+
 # optional args include:
 
-# send_delta=true/false (default = true) -- toggles use of delta-based netin
-
-# threads=
-
 # log_epc=true (default false) -- generate epoch log (for debugging)
-
 # log_trl=true (default false) -- generate trial log (for debugging)
 
-# tag=<tag> -- extra tag to apply to log file name (for debugging)
+# any args passed to this script are simply passed along to the run
 
-#set opts=""
-#set opts="send_delta=false"
-#set opts="threads=true max_cpus=2"
-set opts="threads=true"
+# name of executable to run
+set exe=emergent
 
 echo " "
 echo "=============================================================="
 echo "SMALL Network (5 x 25 units)"
-../../src/emergent/bin/.libs/emergent -nogui -ni -p leabra_bench.proj epochs=100 pats=10 units=25 $opts
+$exe -nogui -ni -p leabra_bench.proj epochs=10 pats=100 units=25 $*
 echo " "
 echo "=============================================================="
 echo "MEDIUM Network (5 x 100 units)"
-../../src/emergent/bin/.libs/emergent -nogui -ni -p leabra_bench.proj epochs=20 pats=10 units=100 $opts
+$exe -nogui -ni -p leabra_bench.proj epochs=3 pats=100 units=100 $*
 echo " "
 echo "=============================================================="
 echo "LARGE Network (5 x 625 units)"
-../../src/emergent/bin/.libs/emergent -nogui -ni -p leabra_bench.proj epochs=1 pats=10 units=625 $opts
+$exe -nogui -nogui -ni -p leabra_bench.proj epochs=1 pats=10 units=625 $*
 echo " "
 echo "=============================================================="
 echo "HUGE Network (5 x 1024 units)"
-../../src/emergent/bin/.libs/emergent -nogui -ni -p leabra_bench.proj epochs=1 pats=5 units=1024 $opts
+$exe -nogui -ni -p leabra_bench.proj epochs=1 pats=5 units=1024 $*
