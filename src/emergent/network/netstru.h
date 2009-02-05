@@ -800,9 +800,9 @@ public: //
   TDCoord       pos;
   // #CAT_Structure position in space relative to owning group, layer
   int		idx;
-  // #READ_ONLY #HIDDEN #NO_COPY #CAT_Structure index of this unit within containing unit group
+  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_Structure index of this unit within containing unit group
   int		flat_idx;
-  // #READ_ONLY #HIDDEN #NO_COPY #CAT_Structure index of this unit in a flat array of units (used by parallel threading)
+  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_Structure index of this unit in a flat array of units (used by parallel threading) -- 0 is special null case -- real idx's start at 1
 
 #ifdef DMEM_COMPILE
   static int	dmem_this_proc;	// #IGNORE processor rank for this processor RELATIVE TO COMMUNICATOR for the network
@@ -1416,7 +1416,7 @@ public:
   
   virtual void  BuildUnits();
   // #MENU #MENU_ON_Actions #CONFIRM #CAT_Structure build the units based current geometry configuration
-  virtual void 	BuildUnits_Threads(Network* net, int& idx);
+  virtual void 	BuildUnits_Threads(Network* net);
   // #IGNORE build unit-level thread information: flat list of units, etc -- this is called by network BuildUnits_Threads so that layers (and layerspecs) can potentially modify which units get added to the compute lists, and thus which are subject to standard computations -- default is all units in the layer
   virtual void	RecomputeGeometry();
   // #CAT_Structure recompute the layer's geometry specifcations

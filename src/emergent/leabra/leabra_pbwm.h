@@ -501,7 +501,7 @@ public:
   virtual void	Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net);
   // compute PFC output layer activations -- replaces std act fun
 
-  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx);
+  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
 
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
 

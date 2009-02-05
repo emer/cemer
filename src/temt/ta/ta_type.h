@@ -664,7 +664,7 @@ public:
   // 	User-tunable compute params
 
   static taThreadDefaults thread_defaults;
-  // #CAT_MultiProc defaults for parallel threading -- these are used to initialize values in any specific parallel threading context, as they should be specific to a given machine, not to a given model or project
+  // #SAVE #CAT_MultiProc defaults for parallel threading -- these are used to initialize values in any specific parallel threading context, as they should be specific to a given machine, not to a given model or project
   
   ////////////////////////////////////////////////////////
   // 	TA GUI parameters

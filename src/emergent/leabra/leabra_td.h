@@ -164,7 +164,7 @@ public:
   override void	 Compute_NetExtRew(LeabraLayer* lay, LeabraNetwork* net);
   override void	 Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
 
-  // todo: override BuildUnits_Threads and exclude all units from any processing??? maybe!
+  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
 
   // don't do any learning:
   override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }

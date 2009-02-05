@@ -653,22 +653,21 @@ void ScalarValLayerSpec::Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void ScalarValLayerSpec::BuildUnits_Threads_ugp(LeabraLayer* lay, Unit_Group* ug, 
-						LeabraNetwork* net, int& idx) {
+						LeabraNetwork* net) {
   Unit* un;
   taLeafItr ui;
   int lf = 0;
-  FOR_ITR_EL(Unit, un, lay->units., ui) {
-    if(lf == 0) { lf++; continue; }
-    un->flat_idx = idx;
+  FOR_ITR_EL(Unit, un, ug->, ui) {
+    if(lf == 0) { un->flat_idx = 0; lf++; continue; }
+    un->flat_idx = net->units_flat.size;
     net->units_flat.Add(un);
-    idx++;
     lf++;
   }
 }
 
-void ScalarValLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx) {
-  lay->units_flat_idx = idx;
-  UNIT_GP_ITR(lay, BuildUnits_Threads_ugp(lay, ugp, net, idx););
+void ScalarValLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->units_flat_idx = net->units_flat.size;
+  UNIT_GP_ITR(lay, BuildUnits_Threads_ugp(lay, ugp, net););
 }
 
 void ScalarValLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
@@ -815,7 +814,20 @@ void ScalarValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
   ResetAfterClamp(lay, net);
 }
 
+void ScalarValLayerSpec::Compute_NetinScale_Unit0(LeabraLayer* lay, LeabraNetwork* net) {
+  // very important: unit 0 in each layer is used for the netin scale parameter and
+  // it is otherwise not computed on this unit b/c it is excluded from units_flat!
+  // hardclamp is computed just after Settle_Init_Unit
+  UNIT_GP_ITR(lay, 
+	      if(ugp->size > 2) {
+		LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
+		u->Compute_NetinScale(net);
+	      }
+	      );
+}
+
 void ScalarValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
+  Compute_NetinScale_Unit0(lay, net);
   if(scalar.clamp_pat) {
     inherited::Compute_HardClamp(lay, net);
     return;
@@ -839,7 +851,7 @@ void ScalarValLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net
   ReadValue(lay, net);		// always read out the value
 }
 
-float ScalarValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals) {
+float ScalarValLayerSpec::Compute_SSE_ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals) {
   LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   // only count if target value is within range -- otherwise considered a non-target
@@ -859,7 +871,7 @@ float ScalarValLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork*,
   if(!(lay->ext_flag & (Unit::TARG | Unit::COMP))) return 0.0f;
   lay->sse = 0.0f;
   UNIT_GP_ITR(lay, 
-	      lay->sse += Compute_SSE_Ugp(ugp, lay, n_vals);
+	      lay->sse += Compute_SSE_ugp(ugp, lay, n_vals);
 	      );
   float rval = lay->sse;
   if(unit_avg && n_vals > 0)
@@ -1484,22 +1496,21 @@ void TwoDValLayerSpec::Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void TwoDValLayerSpec::BuildUnits_Threads_ugp(LeabraLayer* lay, Unit_Group* ug, 
-						LeabraNetwork* net, int& idx) {
+						LeabraNetwork* net) {
   Unit* un;
   taLeafItr ui;
   int lf = 0;
   FOR_ITR_EL(Unit, un, lay->units., ui) {
-    if(lf < lay->un_geom.x) { lf++; continue; }
-    un->flat_idx = idx;
+    if(lf < lay->un_geom.x) { un->flat_idx = 0; lf++; continue; }
+    un->flat_idx = net->units_flat.size;
     net->units_flat.Add(un);
-    idx++;
     lf++;
   }
 }
 
-void TwoDValLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx) {
-  lay->units_flat_idx = idx;
-  UNIT_GP_ITR(lay, BuildUnits_Threads_ugp(lay, ugp, net, idx););
+void TwoDValLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->units_flat_idx = net->units_flat.size;
+  UNIT_GP_ITR(lay, BuildUnits_Threads_ugp(lay, ugp, net););
 }
 
 void TwoDValLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
@@ -1694,7 +1705,21 @@ void TwoDValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
   ResetAfterClamp(lay, net);
 }
 
+void TwoDValLayerSpec::Compute_NetinScale_Unit0(LeabraLayer* lay, LeabraNetwork* net) {
+  // very important: unit 0 in each layer is used for the netin scale parameter and
+  // it is otherwise not computed on this unit b/c it is excluded from units_flat!
+  // hardclamp is computed just after Settle_Init_Unit
+  UNIT_GP_ITR(lay, 
+	      if(ugp->size > 2) {
+		LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
+		u->Compute_NetinScale(net);
+	      }
+	      );
+}
+
 void TwoDValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
+  Compute_NetinScale_Unit0(lay, net);
+
   if(twod.clamp_pat) {
     inherited::Compute_HardClamp(lay, net);
     return;
@@ -1718,7 +1743,7 @@ void TwoDValLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) 
   ReadValue(lay, net);		// always read out the value
 }
 
-float TwoDValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals) {
+float TwoDValLayerSpec::Compute_SSE_ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals) {
   float rval = 0.0f;
   for(int k=0;k<twod.n_vals;k++) { // first loop over and find potential target values
     LeabraUnit* x_tu = (LeabraUnit*)ugp->FastEl(k*2);
@@ -1754,7 +1779,7 @@ float TwoDValLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork*,
   if(!(lay->ext_flag & (Unit::TARG | Unit::COMP))) return 0.0f;
   lay->sse = 0.0f;
   UNIT_GP_ITR(lay, 
-	      lay->sse += Compute_SSE_Ugp(ugp, lay, n_vals);
+	      lay->sse += Compute_SSE_ugp(ugp, lay, n_vals);
 	      );
   float rval = lay->sse;
   if(unit_avg && n_vals > 0)

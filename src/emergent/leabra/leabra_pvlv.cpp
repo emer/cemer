@@ -1016,9 +1016,14 @@ void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
   }
 }
 
-void PVLVDaLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx) {
-  lay->units_flat_idx = idx;
-  // that's it: don't do any processing on this unit!!
+void PVLVDaLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
+  // that's it: don't do any processing on this layer: set all idx to 0
+  lay->units_flat_idx = 0;
+  Unit* un;
+  taLeafItr ui;
+  FOR_ITR_EL(Unit, un, lay->units., ui) {
+    un->flat_idx = 0;
+  }
 }
 
 void PVLVDaLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {

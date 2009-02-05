@@ -339,7 +339,7 @@ public:
   virtual void	Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net);
   // update the LV
 
-  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx);
+  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
 
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) { };

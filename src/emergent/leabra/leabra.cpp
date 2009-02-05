@@ -942,7 +942,7 @@ void LeabraUnitSpec::Trial_DecayState(LeabraUnit* u, LeabraNetwork* net) {
 }
 
 void LeabraUnitSpec::Trial_NoiseInit(LeabraUnit* u, LeabraNetwork* net) {
-  if(noise_adapt.trial_fixed && (noise.type != Random::NONE)) {
+  if(noise_type != NO_NOISE && noise_adapt.trial_fixed && (noise.type != Random::NONE)) {
     u->noise = noise.Gen();
   }
 }
@@ -1106,7 +1106,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thre
 	LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
 	LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
 	if(tol->lesioned() || tol->hard_clamped || !send_gp->cons.size)	continue;
-	send_gp->Send_NetinDelta(net, thread_no, act_delta);
+	send_gp->Send_NetinDelta(net, eff_thread, act_delta);
       }
       u->act_sent = act_ts;	// cache the last sent value
     }
@@ -1119,7 +1119,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thre
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesioned() || tol->hard_clamped || !send_gp->cons.size)	continue;
-      send_gp->Send_NetinDelta(net, thread_no, act_delta);
+      send_gp->Send_NetinDelta(net, eff_thread, act_delta);
     }
     u->act_sent = 0.0f;		// now it effectively sent a 0..
   }
@@ -2445,9 +2445,9 @@ LeabraLayer* LeabraLayerSpec::FindLayerFmSpecNet(Network* net, TypeDef* layer_sp
 //	General Init functions
 
 
-void LeabraLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx) {
+void LeabraLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
   // just call the default
-  lay->Layer::BuildUnits_Threads(net, idx);
+  lay->Layer::BuildUnits_Threads(net);
 }
 
 void LeabraLayer::CheckInhibCons(LeabraNetwork* net) {
@@ -4965,7 +4965,7 @@ void LeabraNetwork::Send_Netin() {
   const int nt = threads.tasks.size;
   if(threads.using_threads) {
     if(inhib_cons_used) {
-      for(int i=0;i<nu;i++) {
+      for(int i=1;i<nu;i++) {	// 0 = dummy idx
 	LeabraUnit* un = (LeabraUnit*)units_flat[i];
 	float nw_nt = 0.0f;
 	float nw_inhb = 0.0f;
@@ -4978,7 +4978,7 @@ void LeabraNetwork::Send_Netin() {
       }
     }
     else {
-      for(int i=0;i<nu;i++) {
+      for(int i=1;i<nu;i++) {	// 0 = dummy idx
 	LeabraUnit* un = (LeabraUnit*)units_flat[i];
 	float nw_nt = 0.0f;
 	for(int j=0;j<nt;j++) {
@@ -4990,7 +4990,7 @@ void LeabraNetwork::Send_Netin() {
   }
   else {
     if(inhib_cons_used) {
-      for(int i=0;i<nu;i++) {
+      for(int i=1;i<nu;i++) {	// 0 = dummy idx
 	LeabraUnit* un = (LeabraUnit*)units_flat[i];
 	float nw_nt = send_netin_tmp.FastEl(i, 0); // use 0 thread
 	float nw_inhb = send_inhib_tmp.FastEl(i, 0); // use 0 thread
@@ -4999,7 +4999,7 @@ void LeabraNetwork::Send_Netin() {
       }
     }
     else {
-      for(int i=0;i<nu;i++) {
+      for(int i=1;i<nu;i++) {	// 0 = dummy idx
 	LeabraUnit* un = (LeabraUnit*)units_flat[i];
 	float nw_nt = send_netin_tmp.FastEl(i, 0); // use 0 thread
 	un->Compute_SentNetinDelta(this, nw_nt);

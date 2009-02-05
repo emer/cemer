@@ -1740,7 +1740,7 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
 
-  virtual void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx);
+  virtual void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
   // #IGNORE build unit-level thread information: flat list of units, etc -- this is called by network BuildUnits_Threads so that layers (and layerspecs) can potentially modify which units get added to the compute lists, and thus which are subject to standard computations -- default is all units in the layer
 
   virtual void	SetLearnRule(LeabraLayer* lay, LeabraNetwork* net);
@@ -2137,8 +2137,8 @@ public:
 #endif
 
   override void	BuildUnits();
-  override void BuildUnits_Threads(Network* net, int& idx)
-  { spec->BuildUnits_Threads(this, (LeabraNetwork*)net, idx); }
+  override void BuildUnits_Threads(Network* net)
+  { spec->BuildUnits_Threads(this, (LeabraNetwork*)net); }
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions

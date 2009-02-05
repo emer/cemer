@@ -81,10 +81,10 @@ void MatrixUnitSpec::Compute_SentNetinDelta(LeabraUnit* u, LeabraNetwork* net, f
   if(lay->hard_clamped) return;
 
   u->net_raw += new_netin;
-  u->net += (u->bias_scale * u->bias.Cn(0)->wt) + u->net_raw;
+  float tot_net = (u->bias_scale * u->bias.Cn(0)->wt) + u->net_raw;
   if(u->ext_flag & Unit::EXT) {
     LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-    u->net += u->ext * ls->clamp.gain;
+    tot_net += u->ext * ls->clamp.gain;
   }
 
   MatrixLayerSpec* mls = (MatrixLayerSpec*)lay->spec.SPtr();
@@ -98,7 +98,7 @@ void MatrixUnitSpec::Compute_SentNetinDelta(LeabraUnit* u, LeabraNetwork* net, f
     }
   }
 
-  u->net = u->prv_net + eff_dt * (u->net - u->prv_net);
+  u->net = u->prv_net + eff_dt * (tot_net - u->prv_net);
   u->prv_net = u->net;
   u->i_thr = Compute_IThresh(u, net);
 }
@@ -937,6 +937,7 @@ void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
     for(int i=0;i<rugp->size;i++) {
       LeabraUnit* ru = (LeabraUnit*)rugp->FastEl(i);
       ru->net = net_eff;
+      ru->i_thr = ru->Compute_IThresh(net);
       if(net->phase == LeabraNetwork::MINUS_PHASE)
 	ru->misc_2 = net_eff;	// save this for err_rnd_go computation
     }
@@ -1481,9 +1482,14 @@ void PFCOutLayerSpec::SetCurBaseGain(LeabraNetwork* net) {
   }
 }
 
-void PFCOutLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx) {
-  lay->units_flat_idx = idx;
-  // that's it: don't do any processing on this layer's units
+void PFCOutLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
+  // that's it: don't do any processing on this layer: set all idx to 0
+  lay->units_flat_idx = 0;
+  Unit* un;
+  taLeafItr ui;
+  FOR_ITR_EL(Unit, un, lay->units., ui) {
+    un->flat_idx = 0;
+  }
 }
 
 void PFCOutLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
@@ -1553,6 +1559,13 @@ void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void PFCOutLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
+  // important note: compared to prior non-threaded version of the code, this will
+  // have a 1 cycle extra lag, because it is getting the activations of the maintenance 
+  // pfc units on the PREVIOUS cycle, whereas the old code would get the current cycle
+  // acts.  In many ways a one cycle delay is much more realistic, so it probably makes
+  // sense to keep it this way, at the cost of breaking 100% compatibility with prior
+  // versions.
+
   Compute_PfcOutAct(lay, net);
 }
 

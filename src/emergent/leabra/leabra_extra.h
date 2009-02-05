@@ -1044,6 +1044,9 @@ public:
   ScalarValBias	 bias_val;	// specifies bias for given value (as gaussian bump) 
   MinMaxRange	 val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
+  virtual void	Compute_NetinScale_Unit0(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_ScalarVal call Compute_NetinScale on first unit in each group (the value unit) -- this is necessary b/c unit 0 is excluded from units_flat list and thus Compute_NetinScale, but it is used for the global netin scale for the entire projection in Send_NetinDelta!
+
   virtual void	ClampValue_ugp(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
   // #CAT_ScalarVal clamp value in the first unit's ext field to the units in the group
   virtual float	ClampAvgAct(int ugp_size);
@@ -1075,9 +1078,8 @@ public:
     virtual void Compute_UnBias_PosSlp(Unit_Group* ugp);
     // #IGNORE
 
-  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx);
-    void BuildUnits_Threads_ugp(LeabraLayer* lay, Unit_Group* ug, 
-				LeabraNetwork* net, int& idx);
+  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
+    virtual void BuildUnits_Threads_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraNetwork* net);
   override void Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
   override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
@@ -1089,7 +1091,7 @@ public:
 
   override float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
 			     bool unit_avg = false, bool sqrt = false);
-    virtual float Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
+    virtual float Compute_SSE_ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
     // #IGNORE
   override float Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
     override float Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
@@ -1282,6 +1284,9 @@ public:
   MinMaxRange	 x_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
   MinMaxRange	 y_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
+  virtual void	Compute_NetinScale_Unit0(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_ScalarVal call Compute_NetinScale on first unit in each group (the value unit) -- this is necessary b/c unit 0 is excluded from units_flat list and thus Compute_NetinScale, but it is used for the global netin scale for the entire projection in Send_NetinDelta!
+
   virtual void	ClampValue_ugp(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
   // #CAT_TwoDVal clamp value in the first unit's ext field to the units in the group
   virtual void	ReadValue(LeabraLayer* lay, LeabraNetwork* net);
@@ -1307,9 +1312,8 @@ public:
     virtual void Compute_UnBias_Val(Unit_Group* ugp, float x_val, float y_val);
     // #IGNORE
 
-  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net, int& idx);
-    void BuildUnits_Threads_ugp(LeabraLayer* lay, Unit_Group* ug, 
-				LeabraNetwork* net, int& idx);
+  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
+    void BuildUnits_Threads_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraNetwork* net);
   override void Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
   override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
@@ -1321,7 +1325,7 @@ public:
 
   override float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
 			     bool unit_avg = false, bool sqrt = false);
-    virtual float Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
+    virtual float Compute_SSE_ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
     // #IGNORE
   override float Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
     virtual float Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,

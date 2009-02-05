@@ -1722,7 +1722,7 @@ void Unit::Initialize() {
   snap = 0.0f;
   n_recv_cons = 0;
   idx = -1;
-  flat_idx = -1;
+  flat_idx = 0;
   m_unit_spec = NULL;
 }
 
@@ -1749,7 +1749,7 @@ void Unit::CutLinks() {
   bias.CutLinks();
   m_unit_spec = NULL;
   idx = -1;
-  flat_idx = -1;
+  flat_idx = 0;
   inherited::CutLinks();
 }
 
@@ -3396,7 +3396,7 @@ void Layer::Initialize() {
 
   sse = 0.0f;
   icon_value = 0.0f;
-  units_flat_idx = -1;
+  units_flat_idx = 0;
 
   n_units = 0;			// note: v3compat obs
 }
@@ -3776,14 +3776,13 @@ void Layer::BuildUnits() {
   taMisc::DoneBusy();
 }
 
-void Layer::BuildUnits_Threads(Network* net, int& idx) {
-  units_flat_idx = idx;
+void Layer::BuildUnits_Threads(Network* net) {
+  units_flat_idx = net->units_flat.size;
   Unit* un;
   taLeafItr ui;
   FOR_ITR_EL(Unit, un, units., ui) {
-    un->flat_idx = idx;
+    un->flat_idx = net->units_flat.size;
     net->units_flat.Add(un);
-    idx++;
   }
 }
 
@@ -4758,7 +4757,6 @@ void UnitCallTask::Destroy() {
 }
 
 void UnitCallTask::run() {
-  const int nu = network->units_flat.size;
   UnitCallThreadMgr* mg = mgr();
   const int nib_stop = mg->nibble_stop;
 
@@ -4864,21 +4862,22 @@ void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call, bool backwards) {
   Network* net = network();
   const int nu = net->units_flat.size;
   if(backwards) {
-    for(int i=nu-1;i>=0;i--) {
+    for(int i=nu-1;i>=1;i--) {	// 0 = dummy idx
       unit_call->call(net->units_flat[i], net, -1); // -1 indicates no threading
     }
   }
   else {			// forwards
-    for(int i=0;i<nu;i++) {
+    for(int i=1;i<nu;i++) {	// 0 = dummy idx
       unit_call->call(net->units_flat[i], net, -1); // -1 indicates no threading
     }
   }
 }
 
 void UnitCallThreadMgr::RunThreads_FwdNetSync(ThreadUnitCall* unit_call) {
+  // note: units_flat[0] is a dummy so we have to add 1 to all idx's and skip over it
   using_threads = true;
   Network* net = network();
-  const int nu = net->units_flat.size;
+  const int nu = net->units_flat.size-1;	// 0 = dummy idx
   int n_chunked = (int)((float)nu * chunk_pct);
   n_chunked = MAX(n_chunked, tasks.size);
 
@@ -4887,7 +4886,7 @@ void UnitCallThreadMgr::RunThreads_FwdNetSync(ThreadUnitCall* unit_call) {
   while(n_chunked > nu)
     n_chunked -= tasks.size;
 
-  int end_base = 1 + n_chunked - tasks.size; // add 1 b/c uses < ed and not <= ed
+  int end_base = 2 + n_chunked - tasks.size; // add 1 b/c uses < ed and not <= ed, and 1 for dummy idx
 
   // sample task allocation: chnks = 3, tasks.size = 2, n_chunked=15
   // un: 0123456789012345...
@@ -4901,12 +4900,12 @@ void UnitCallThreadMgr::RunThreads_FwdNetSync(ThreadUnitCall* unit_call) {
   for(int i=0;i<tasks.size;i++) {
     UnitCallTask* uct = (UnitCallTask*)tasks[i];
     uct->unit_call = unit_call;
-    uct->uidx_st = i;
+    uct->uidx_st = 1+i;
     uct->uidx_ed = end_base + i;
     uct->uidx_inc = tasks.size;
   }
-  nibble_i = n_chunked;
-  nibble_stop = nu;
+  nibble_i = 1+n_chunked;
+  nibble_stop = 1+nu;
 
   // then run the subsidiary guys
   for(int i=0;i<threads.size;i++) {
@@ -4923,9 +4922,10 @@ void UnitCallThreadMgr::RunThreads_FwdNetSync(ThreadUnitCall* unit_call) {
 }
 
 void UnitCallThreadMgr::RunThreads_BkwdNetSync(ThreadUnitCall* unit_call) {
+  // note: units_flat[0] is a dummy so we have to add 1 to all idx's and skip over it
   using_threads = true;
   Network* net = network();
-  const int nu = net->units_flat.size;
+  const int nu = net->units_flat.size-1;	// 0 = dummy idx
   int n_chunked = (int)((float)nu * chunk_pct);
   n_chunked = MAX(n_chunked, tasks.size);
 
@@ -4934,7 +4934,7 @@ void UnitCallThreadMgr::RunThreads_BkwdNetSync(ThreadUnitCall* unit_call) {
   while(n_chunked > nu)
     n_chunked -= tasks.size;
 
-  int st_base = nu-1;			     // starting index
+  int st_base = nu;			     // starting index (-1 already taken above)
   int end_base = st_base - (n_chunked - tasks.size); // no -1 b/c >= end_base
 
   for(int i=0;i<tasks.size;i++) {
@@ -4944,8 +4944,8 @@ void UnitCallThreadMgr::RunThreads_BkwdNetSync(ThreadUnitCall* unit_call) {
     uct->uidx_ed = end_base - i;
     uct->uidx_inc = -tasks.size;
   }
-  nibble_i = nu-1 - n_chunked;	// where to start nibbling
-  nibble_stop = 0;
+  nibble_i = nu - n_chunked;	// where to start nibbling
+  nibble_stop = 1;	// 0 = dummy idx
 
   // then run the subsidiary guys
   for(int i=0;i<threads.size;i++) {
@@ -4966,6 +4966,8 @@ void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
   Network* net = network();
 
   // note: this has same logic as net sync but all within each layer
+  // IMPORTANT: lay sync guys MUST have all units.leaves units in units_flat --
+  // the run code assumes this is true
 
   Layer* lay;
   taLeafItr li;
@@ -5022,6 +5024,8 @@ void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
   Network* net = network();
 
   // note: this has same logic as net sync but all within each layer
+  // IMPORTANT: lay sync guys MUST have all units.leaves units in units_flat --
+  // the run code assumes this is true
 
   Layer* lay;
   taLeafItr li;
@@ -5427,12 +5431,17 @@ void Network::BuildUnits() {
 void Network::BuildUnits_Threads() {
   threads.InitAll();
   units_flat.Reset();
-  int idx = 0;
+  // real indexes start at 1, to allow 0 to be a dummy case for inactive units that may
+  // nevertheless get a send netin call to them -- all those just go to this 0 bin
+  units_flat.Add(NULL);		// add a dummy null 
   Layer* lay;
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, layers., li) {
-    if(lay->lesioned()) continue; // don't even add units from lesioned layers!!
-    lay->BuildUnits_Threads(this, idx);
+    if(lay->lesioned()) {
+      lay->units_flat_idx = 0;
+      continue; // don't even add units from lesioned layers!!
+    }
+    lay->BuildUnits_Threads(this);
   }
   // temporary storage for sender-based netinput computation
   if(units_flat.size > 0 && threads.n_threads > 0) {
@@ -5836,7 +5845,7 @@ void Network::Send_Netin() {
   const int nu = units_flat.size;
   const int nt = threads.tasks.size;
   if(threads.using_threads) {
-    for(int i=0;i<nu;i++) {
+    for(int i=1;i<nu;i++) {	// 0 = dummy idx
       Unit* un = units_flat[i];
       float nw_nt = 0.0f;
       for(int j=0;j<nt;j++) {
@@ -5846,7 +5855,7 @@ void Network::Send_Netin() {
     }
   }
   else {
-    for(int i=0;i<nu;i++) {
+    for(int i=1;i<nu;i++) {	// 0 = dummy idx
       Unit* un = units_flat[i];
       float nw_nt = send_netin_tmp.FastEl(i, 0); // use 0 thread
       un->Compute_SentNetin(this, nw_nt);
@@ -7154,109 +7163,4 @@ bool Network::RemovePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* 
   return false;
 }
 
-#ifdef TA_GUI
 
-//NOTE: we only look for T3DataLink, not the concrete type...
-/*obs
-taiDataLink* Projection::ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type) {
-  if (link_type->InheritsFrom(&TA_T3DataLink))
-    return PrjnDataLink::New(this, viewer_);
-  else return inherited::ConstrDataLink(viewer_, link_type);
-}
-
-taiDataLink* Unit_Group::ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type) {
-  if (link_type->InheritsFrom(&TA_T3DataLink))
-    return UnitGroupDataLink::New(this, viewer_);
-  else return taGroup_impl::ConstrDataLink(viewer_, link_type);
-}
-
-taiDataLink* Layer::ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type) {
-  if (link_type->InheritsFrom(&TA_T3DataLink))
-    return LayerDataLink::New(this, viewer_);
-  else return inherited::ConstrDataLink(viewer_, link_type);
-}
-
-taiDataLink* Network::ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type) {
-  if (link_type->InheritsFrom(&TA_T3DataLink))
-    return NetDataLink::New(this, viewer_);
-  else return inherited::ConstrDataLink(viewer_, link_type);
-}
-*/
-#endif
-
-
-///////////////////////////////////////////////////////////
-//		ENGINE NUKE
-
-#if 0
-
-//////////////////////////
-//  NetEngineInst	//
-//////////////////////////
-
-void NetEngineInst::Initialize() {
-  unit_size = 0;
-  units = NULL;
-//  act = NULL;
-//  netin = NULL;
-}
-
-void NetEngineInst::Destroy() {
-  setUnitSize(0);
-}
-
-void NetEngineInst::OnBuild_impl() {
-  Network* net = this->net(); // cache
-  // set unit size, and init ptrs to Units
-  setUnitSize((uint)net->n_units);
-  layers.Reset();
-  int idx = 0;
-  Layer* lay;
-  taLeafItr li;
-  FOR_ITR_EL(Layer, lay, net->layers., li) {
-    layers.Add(lay);
-    Unit* un;
-    taLeafItr ui;
-    FOR_ITR_EL(Unit, un, lay->units., ui) {
-      un->flat_idx = idx;
-      units[idx] = un;
-      idx++;
-    }
-  }
-  AssertLogTable();
-}
-
-taBase* NetEngineInst::SetOwner(taBase* own) {
-  if (own && !own->InheritsFrom(&TA_Network)) return NULL;
-  return inherited::SetOwner(own);
-}
-
-bool NetEngineInst::setUnitSize(int val) {
-  if ((unit_size == val) || (val < 0)) return false;
-  unit_size = val;
-  UnitSizeChanged_impl();
-  return true;
-}
-
-void NetEngineInst::UnitSizeChanged_impl() {
-  units = (Unit**)realloc(units, sizeof(Unit*) * (uint)unit_size);
-//  act = (float*)realloc(act, sizeof(float) * (uint)unit_size);
-//  netin = (float*)realloc(netin, sizeof(float) * (uint)unit_size);
-}
-
-
-//////////////////////////////////
-//  NetEngine		//
-//////////////////////////////////
-
-void NetEngine::Initialize() {
-}
-
-void NetEngine::Destroy() {
-}
-
-taEngineInst* NetEngine::NewEngineInst_impl() const {
-  return new NetEngineInst;
-}
-
-#endif // 0 engine nuke

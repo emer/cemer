@@ -248,6 +248,16 @@ void ExtRewLayerSpec::Compute_UnitDa(float er, LeabraUnit* u, Unit_Group* ugp, L
   ClampValue_ugp(ugp, net);
 }
 
+void ExtRewLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
+  // that's it: don't do any processing on this layer: set all idx to 0
+  lay->units_flat_idx = 0;
+  Unit* un;
+  taLeafItr ui;
+  FOR_ITR_EL(Unit, un, lay->units., ui) {
+    un->flat_idx = 0;
+  }
+}
+
 bool ExtRewLayerSpec::OutErrRewAvail(LeabraLayer* lay, LeabraNetwork*) {
   bool got_some = false;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
