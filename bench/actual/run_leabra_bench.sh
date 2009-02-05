@@ -14,7 +14,8 @@
 # any args passed to this script are simply passed along to the run
 
 # name of executable to run
-set exe=emergent
+#set exe=emergent
+set exe=../../build/bin/emergent
 
 echo " "
 echo "=============================================================="

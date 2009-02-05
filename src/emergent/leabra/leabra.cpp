@@ -4753,7 +4753,7 @@ void LeabraNetwork::SetCurLrate() {
 
 void LeabraNetwork::Trial_Init_Unit() {
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Trial_Init_Unit);
-  threads.Run(&un_call, .2f);	// todo: replace with real number
+  threads.Run(&un_call, .2f);
   // this calls the following three functions, at the unit level
 
   sravg_vals.InitVals();	// reset sravg vals, after Trial_Init_SRAvg!
@@ -4858,7 +4858,7 @@ void LeabraNetwork::Settle_Init_Unit() {
   }
 
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Settle_Init_Unit);
-  threads.Run(&un_call, .2f);	// todo: replace with real number
+  threads.Run(&un_call, .1f);
   // this calls the following functions, at the unit level
 
   Settle_Init_Layer();
@@ -4958,7 +4958,7 @@ void LeabraNetwork::Send_Netin() {
   // always use delta mode!
   send_pct_n = send_pct_tot = 0;
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Send_NetinDelta);
-  threads.Run(&un_call, 1.0f);	// todo: get real val
+  threads.Run(&un_call, 1.0f);
 
   // now need to roll up the netinput into unit vals
   const int nu = units_flat.size;
@@ -5093,16 +5093,7 @@ void LeabraNetwork::Compute_ApplyInhib() {
 
 void LeabraNetwork::Compute_Act() {
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_Act);
-  threads.Run(&un_call, .5f);	// todo: .5 is just for testing -- get real val
-
-  // then go through layers and compute act ONLY at layer level and other cleanup: basic
-  // act was computed through call above
-//   LeabraLayer* l;
-//   taLeafItr i;
-//   FOR_ITR_EL(LeabraLayer, l, layers., i) {
-//     if(!l->lesioned())
-//       l->Compute_Act(this);
-//   }
+  threads.Run(&un_call, 0.4f);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -5316,7 +5307,7 @@ void LeabraNetwork::Compute_SRAvg() {
 
     // do sravg here
     ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_SRAvg);
-    threads.Run(&un_call, .9f);	// todo: just for testing -- get real val
+    threads.Run(&un_call, 0.9f);
 
     sravg_vals.m_sum += 1.0f;	// normal weighting
     if(sravg_vals.do_s)
@@ -5350,21 +5341,21 @@ void LeabraNetwork::Compute_dWt_FirstPlus() {
   Compute_dWt_SRAvg();
   Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_FirstPlus);
-  threads.Run(&un_call, 1.0f);	// todo: update val
+  threads.Run(&un_call, 0.6f);
 }
 
 void LeabraNetwork::Compute_dWt_SecondPlus() {
   Compute_dWt_SRAvg();
   Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_SecondPlus);
-  threads.Run(&un_call, 1.0f);	// todo: update val
+  threads.Run(&un_call, 0.6f);
 }
 
 void LeabraNetwork::Compute_dWt_Nothing() {
   Compute_dWt_SRAvg();
   Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_Nothing);
-  threads.Run(&un_call, 1.0f);	// todo: update val
+  threads.Run(&un_call, 0.6f);
 }
 
 ///////////////////////////////////////////////////////////////////////
