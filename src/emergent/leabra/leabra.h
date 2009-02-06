@@ -390,7 +390,9 @@ public:
   ///////////////////////////////////////////////////////////////
   //	Activation: Netinput -- only NetinDelta is supported
 
-  inline void 		C_Send_NetinDelta(Connection* cn, float* send_netin_vec, Unit* ru, float su_act_delta_eff);
+  inline void 		C_Send_NetinDelta_Threads(Connection* cn, float* send_netin_vec,
+						  LeabraUnit* ru, float su_act_delta_eff);
+  inline void 		C_Send_NetinDelta0(Connection* cn, LeabraUnit* ru, float su_act_delta_eff);
   inline void 		C_Send_InhibDelta(Connection* cn, float* send_inhib_vec, Unit* ru, float su_act_delta_eff);
   inline virtual void 	Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net, int thread_no, float su_act_delta_eff);
   // #CAT_Activation sender-based delta-activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
@@ -1253,7 +1255,8 @@ public:
   float		prv_g_i;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation previous inhibitory conductance value (for time averaging)
 
   float		act_sent;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last activation value sent (only send when diff is over threshold)
-  float		net_raw;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (increments the deltas in send_delta)
+  float		net_raw;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (send delta delta's are added to this value)
+  float		net_delta;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation delta net input received from sending units -- only used for non-threaded case
   float		g_i_raw;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
 
   float		i_thr;		// #NO_SAVE #CAT_Activation inhibitory threshold value for computing kWTA
@@ -2529,6 +2532,18 @@ public:
     MINUS_PLUS_PLUS_MINUS,	// PBWM in CtLeabra_X/CAL mode, alternative final inhib stage
   };
 
+  enum ThreadFlags { // #BITS flags for controlling the parallel threading process (which functions are threaded)
+    TF_NONE	= 0x00,	// #NO_BIT no thread flags set
+    NETIN 	= 0x01,	// ~20% of compute time, norm comp val = 1.0, the net input computation (sender-based), computed per cycle
+    SRAVG 	= 0x02,	// ~12% of compute time, norm comp val = 0.9, the sender-receiver average activation (xcal only), computed per ct_sravg.interval (typically every 5 cycles)
+    ACT		= 0x04,	// ~7% of compute time, norm comp val = 0.4, activation, computed per cycle
+    WEIGHTS	= 0x08,	// ~7% of compute time, norm comp val = 1.0, weight update from dwt changes, computed per trial (and still that expensive)
+    DWT		= 0x10,	// ~3% of compute time, norm comp val = 0.6, delta-weight changes (learning), computed per trial
+    TRIAL_INIT	= 0x20,	// ~2% of compute time, norm comp val = 0.2, trial-level initialization -- includes SRAvg init over connections if using xcal, which can be expensive
+    SETTLE_INIT	= 0x40,	// ~.5% of compute time, norm comp val = 0.1, settle-level initialization -- only at unit level and the most lightweight function -- may not be worth it in general to parallelize
+    TF_ALL	= 0x7F,	// #NO_BIT all thread flags set
+  };
+
   LearnRule	learn_rule;	// The variant of Leabra learning rule to use 
   PhaseOrder	phase_order;	// [Default: MINUS_PLUS] #CAT_Counter number and order of phases to present
   bool		no_plus_test;	// #DEF_true #CAT_Counter don't run the plus phase when testing
@@ -2550,6 +2565,7 @@ public:
   CtSineInhibMod ct_sin_i;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL sinusoidal inhibition parameters for inhibitory modulations during trial, simulating oscillations resulting from imperfect inhibtory set point behavior
   CtFinalInhibMod ct_fin_i;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL final inhibition parameters for extra inhibition to apply during final inhib phase, simulating slow-onset GABA currents
   CtSRAvgVals	sravg_vals;	// #CAT_Learning #READ_ONLY #EXPERT sender-receiver average computation values, e.g., for normalizing sravg values
+  ThreadFlags	thread_flags;	// #CAT_Structure flags for controlling the parallel threading process (which functions are threaded)
 
   float		minus_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
   float		avg_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles in the minus phase (computed over previous epoch)
@@ -2590,6 +2606,20 @@ public:
   bool		inhib_cons_used; // #READ_ONLY #NO_SAVE #CAT_Threads inhibitory connections are being used in this network -- detected during buildunits_threads to determine if space should be allocated, etc for send_inhib vals
   float_Matrix	send_inhib_tmp; // #READ_ONLY #NO_SAVE #CAT_Threads temporary storage for threaded sender-based inhib netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
 
+  ///////////////////////////////////////////////////////////////////////
+  //	Thread Flags
+
+  inline void	SetThreadFlag(ThreadFlags flg)
+  { thread_flags = (ThreadFlags)(thread_flags | flg); }
+  // set flag state on
+  inline void	ClearThreadFlag(ThreadFlags flg)
+  { thread_flags = (ThreadFlags)(thread_flags & ~flg); }
+  // clear flag state (set off)
+  inline bool	HasThreadFlag(ThreadFlags flg) const { return (thread_flags & flg); }
+  // check if flag is set
+  inline void	SetThreadFlagState(ThreadFlags flg, bool on)
+  { if(on) SetThreadFlag(flg); else ClearThreadFlag(flg); }
+  // set flag state according to on bool (if true, set flag, if false, clear it)
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -2743,6 +2773,8 @@ public:
   virtual void	Compute_dWt_Nothing();
   // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
 
+  override void Compute_Weights_impl();
+
   ///////////////////////////////////////////////////////////////////////
   //	Stats
 
@@ -2810,9 +2842,14 @@ private:
 //      Netin
 
 
-inline void LeabraConSpec::C_Send_NetinDelta(Connection* cn, float* send_netin_vec,
-					     Unit* ru, float su_act_delta_eff) {
+inline void LeabraConSpec::C_Send_NetinDelta_Threads(Connection* cn, float* send_netin_vec,
+					     LeabraUnit* ru, float su_act_delta_eff) {
   send_netin_vec[ru->flat_idx] += cn->wt * su_act_delta_eff;
+}
+
+inline void LeabraConSpec::C_Send_NetinDelta0(Connection* cn, LeabraUnit* ru,
+					      float su_act_delta_eff) {
+  ru->net_delta += cn->wt * su_act_delta_eff;
 }
 
 inline void LeabraConSpec::C_Send_InhibDelta(Connection* cn, float* send_inhib_vec,
@@ -2826,16 +2863,24 @@ inline void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* ne
   float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff
     * su_act_delta;
   if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
+    thread_no = MAX(0, thread_no);    // rationalize
     float* send_inhib_vec = net->send_inhib_tmp.el
       + net->send_inhib_tmp.FastElIndex(0, thread_no);
-    CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg->Cn(i), send_inhib_vec, cg->Un(i),
+    CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg->Cn(i), send_inhib_vec, (LeabraUnit*)cg->Un(i),
 					 su_act_delta_eff));
   }
   else {
-    float* send_netin_vec = net->send_netin_tmp.el
-      + net->send_netin_tmp.FastElIndex(0, thread_no);
-    CON_GROUP_LOOP(cg, C_Send_NetinDelta(cg->Cn(i), send_netin_vec, cg->Un(i),
-					 su_act_delta_eff));
+    if(thread_no < 0) {
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta0(cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+    }
+    else {
+      thread_no = MAX(0, thread_no);    // rationalize
+      float* send_netin_vec = net->send_netin_tmp.el
+	+ net->send_netin_tmp.FastElIndex(0, thread_no);
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Threads(cg->Cn(i), send_netin_vec,
+						   (LeabraUnit*)cg->Un(i),
+						   su_act_delta_eff));
+    }
   }
 }
 

@@ -1718,13 +1718,14 @@ private:
 };
 
 class EMERGENT_API UnitCallThreadMgr : public taThreadMgr {
-  // #INLINE thread manager for UnitCall tasks
+  // #INLINE thread manager for UnitCall tasks -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)
 public:
   int		min_units;	// #MIN_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  minimum number of units required to use threads at all -- for feedforward algorithms requiring layer-level syncing, this applies to each layer -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute
   float		compute_thr;	// #MIN_0 #MAX_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  threshold value for amount of computation in a given function to actually deploy on threads, as opposed to just running it on main thread -- value is normalized (0-1) with 1 being the most computationally intensive task, and 0 being the least -- as with min_units, it may not be worth it to parallelize very lightweight computations.
   float		chunk_pct;	// #MIN_0 #MAX_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  proportion (0-1) of units to process in a chunked fashion, where units are allocated in (interdigitated) chunks to threads to exclusively process -- after this, each available thread works nibbling a unit at a time on the remaining list of units
   int		nibble_chunk;	// #MIN_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  how many units does each thread grab to process while nibbling?
+  bool		interleave;	// #DEF_true #EXPERT deploy threads in an interleaved fashion over units, which improves load balancing as neighboring units are likely to have similar compute demands, but it costs in cache coherency as the memory access per processor is more distributed -- only affects network level (non lay_sync) processes
   bool		ignore_lay_sync;// #DEF_false ignore need to sync at the layer level for feedforward algorithms that require this (e.g., backprop) -- results in faster but less accurate processing
   int		nibble_i;	// #IGNORE current nibble index -- atomic incremented by working threads to nibble away the rest..
   int 		nibble_stop;	// #IGNORE nibble stopping value

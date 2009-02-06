@@ -2306,6 +2306,7 @@ void Unit::VarToTable(DataTable* dt, const String& variable) {
   NetMonitor nm;
   taBase::Own(nm, this);
   nm.AddUnit(this, variable);
+  nm.items[0]->max_name_len = 20; // allow long names
   nm.SetDataNetwork(dt, net);
   nm.UpdateDataTable();
   dt->AddBlankRow();
@@ -2623,6 +2624,7 @@ void Projection::VarToTable(DataTable* dt, const String& variable) {
   NetMonitor nm;
   taBase::Own(nm, this);
   nm.AddProjection(this, variable);
+  nm.items[0]->max_name_len = 20; // allow long names
   nm.SetDataNetwork(dt, net);
   nm.UpdateDataTable();
   dt->AddBlankRow();
@@ -3272,6 +3274,7 @@ void Unit_Group::VarToTable(DataTable* dt, const String& variable) {
   NetMonitor nm;
   taBase::Own(nm, this);
   nm.AddUnitGroup(this, variable);
+  nm.items[0]->max_name_len = 20; // allow long names
   nm.SetDataNetwork(dt, net);
   nm.UpdateDataTable();
   dt->AddBlankRow();
@@ -4545,6 +4548,7 @@ void Layer::VarToTable(DataTable* dt, const String& variable) {
   NetMonitor nm;
   taBase::Own(nm, this);
   nm.AddLayer(this, variable);
+  nm.items[0]->max_name_len = 20; // allow long names
   nm.SetDataNetwork(dt, net);
   nm.UpdateDataTable();
   dt->AddBlankRow();
@@ -4764,6 +4768,8 @@ void UnitCallTask::run() {
     for(int i=uidx_st; i<uidx_ed; i+=uidx_inc) {
       Unit* un = network->units_flat[i];
       unit_call->call(un, network, task_id); // task id indicates threading, and which thread
+      // debugging:
+//       un->name = (String)task_id;
     }
   
     // then auto-nibble until done!
@@ -4775,6 +4781,8 @@ void UnitCallTask::run() {
       for(int i=nxt_uidx; i <mx; i++) {
 	Unit* un = network->units_flat[i];
 	unit_call->call(un, network, task_id); // task id indicates threading, and which thread
+	// debugging:
+// 	un->name = (String)task_id;
       }
       if(mx == nib_stop) break;		// we're the last guy
     }
@@ -4805,6 +4813,7 @@ void UnitCallThreadMgr::Initialize() {
   compute_thr = taMisc::thread_defaults.compute_thr;
   chunk_pct = taMisc::thread_defaults.chunk_pct;
   nibble_chunk = taMisc::thread_defaults.nibble_chunk;
+  interleave = true;
   ignore_lay_sync = false;
   nibble_i = -1;
   nibble_stop = 0;
@@ -4842,6 +4851,12 @@ void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level,
     RunThread0(unit_call, backwards);
   }
   else {
+//     { // debugging: clear names
+//       const int nu = net->units_flat.size;
+//       for(int i=1;i<nu;i++) {	// 0 = dummy idx
+// 	net->units_flat[i]->name = "";
+//       }
+//     }
     if(backwards) {
       if(layer_sync && !ignore_lay_sync)
 	RunThreads_BkwdLaySync(unit_call);
@@ -4878,32 +4893,45 @@ void UnitCallThreadMgr::RunThreads_FwdNetSync(ThreadUnitCall* unit_call) {
   using_threads = true;
   Network* net = network();
   const int nu = net->units_flat.size-1;	// 0 = dummy idx
+  const int nt = tasks.size;
   int n_chunked = (int)((float)nu * chunk_pct);
-  n_chunked = MAX(n_chunked, tasks.size);
+  n_chunked = MAX(n_chunked, nt);
 
-  int chnks = n_chunked / tasks.size;
-  n_chunked = chnks * tasks.size; // must be even multiple of threads!
+  int chnks = n_chunked / nt;
+  n_chunked = chnks * nt; // must be even multiple of threads!
   while(n_chunked > nu)
-    n_chunked -= tasks.size;
+    n_chunked -= nt;
+  chnks = n_chunked / nt;
 
-  int end_base = 2 + n_chunked - tasks.size; // add 1 b/c uses < ed and not <= ed, and 1 for dummy idx
+  if(interleave) {
+    // sample task allocation: chnks = 3, nt = 2, n_chunked=15
+    // un: 0123456789012345...
+    // th  st       ed    nc
+    // 0   0    5   10
+    // 1    1    6   11
+    // 2     2    7   12
+    // 3      3    8   13
+    // 4       4    9   14
 
-  // sample task allocation: chnks = 3, tasks.size = 2, n_chunked=15
-  // un: 0123456789012345...
-  // th  st       ed    nc
-  // 0   0    5   10
-  // 1	  1    6   11
-  // 2     2    7   12
-  // 3      3    8   13
-  // 4       4    9   14
-
-  for(int i=0;i<tasks.size;i++) {
-    UnitCallTask* uct = (UnitCallTask*)tasks[i];
-    uct->unit_call = unit_call;
-    uct->uidx_st = 1+i;
-    uct->uidx_ed = end_base + i;
-    uct->uidx_inc = tasks.size;
+    int end_base = 2 + n_chunked - nt; // add 1 b/c uses < ed and not <= ed, and 1 for dummy idx
+    for(int i=0;i<nt;i++) {
+      UnitCallTask* uct = (UnitCallTask*)tasks[i];
+      uct->unit_call = unit_call;
+      uct->uidx_st = 1+i;
+      uct->uidx_ed = end_base + i;
+      uct->uidx_inc = nt;
+    }
   }
+  else {
+    for(int i=0;i<nt;i++) {
+      UnitCallTask* uct = (UnitCallTask*)tasks[i];
+      uct->unit_call = unit_call;
+      uct->uidx_st = 1+i*chnks;
+      uct->uidx_ed = 1+(i+1)*chnks;
+      uct->uidx_inc = 1;
+    }
+  }
+
   nibble_i = 1+n_chunked;
   nibble_stop = 1+nu;
 
@@ -4926,23 +4954,25 @@ void UnitCallThreadMgr::RunThreads_BkwdNetSync(ThreadUnitCall* unit_call) {
   using_threads = true;
   Network* net = network();
   const int nu = net->units_flat.size-1;	// 0 = dummy idx
+  const int nt = tasks.size;
   int n_chunked = (int)((float)nu * chunk_pct);
-  n_chunked = MAX(n_chunked, tasks.size);
+  n_chunked = MAX(n_chunked, nt);
 
-  int chnks = n_chunked / tasks.size;
-  n_chunked = chnks * tasks.size; // must be even multiple of threads!
+  int chnks = n_chunked / nt;
+  n_chunked = chnks * nt; // must be even multiple of threads!
   while(n_chunked > nu)
-    n_chunked -= tasks.size;
+    n_chunked -= nt;
+  chnks = n_chunked / nt;
 
   int st_base = nu;			     // starting index (-1 already taken above)
-  int end_base = st_base - (n_chunked - tasks.size); // no -1 b/c >= end_base
+  int end_base = st_base - (n_chunked - nt); // no -1 b/c >= end_base
 
-  for(int i=0;i<tasks.size;i++) {
+  for(int i=0;i<nt;i++) {
     UnitCallTask* uct = (UnitCallTask*)tasks[i];
     uct->unit_call = unit_call;
     uct->uidx_st = st_base - i;
     uct->uidx_ed = end_base - i;
-    uct->uidx_inc = -tasks.size;
+    uct->uidx_inc = -nt;
   }
   nibble_i = nu - n_chunked;	// where to start nibbling
   nibble_stop = 1;	// 0 = dummy idx
@@ -4964,6 +4994,7 @@ void UnitCallThreadMgr::RunThreads_BkwdNetSync(ThreadUnitCall* unit_call) {
 void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
   using_threads = true;
   Network* net = network();
+  const int nt = tasks.size;
 
   // note: this has same logic as net sync but all within each layer
   // IMPORTANT: lay sync guys MUST have all units.leaves units in units_flat --
@@ -4976,7 +5007,7 @@ void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
     int st_idx = lay->units_flat_idx;
     const int nu = lay->units.leaves;
 
-    if(nu < min_units || nu < tasks.size) {
+    if(nu < min_units || nu < nt) {
       // run locally
       for(int i=0;i<nu;i++) {
 	unit_call->call(net->units_flat[st_idx + i], net, -1); // -1 indicates no threading
@@ -4984,21 +5015,21 @@ void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
     }
     else {
       int n_chunked = (int)((float)nu * chunk_pct);
-      n_chunked = MAX(n_chunked, tasks.size);
+      n_chunked = MAX(n_chunked, nt);
 
-      int chnks = n_chunked / tasks.size;
-      n_chunked = chnks * tasks.size; // must be even multiple of threads!
+      int chnks = n_chunked / nt;
+      n_chunked = chnks * nt; // must be even multiple of threads!
       while(n_chunked > nu)
-	n_chunked -= tasks.size;
+	n_chunked -= nt;
 
-      int end_base = st_idx + 1 + n_chunked - tasks.size; // add 1 b/c uses < ed and not <= ed
+      int end_base = st_idx + 1 + n_chunked - nt; // add 1 b/c uses < ed and not <= ed
 
-      for(int i=0;i<tasks.size;i++) {
+      for(int i=0;i<nt;i++) {
 	UnitCallTask* uct = (UnitCallTask*)tasks[i];
 	uct->unit_call = unit_call;
 	uct->uidx_st = st_idx + i;
 	uct->uidx_ed = end_base + i;
-	uct->uidx_inc = tasks.size;
+	uct->uidx_inc = nt;
       }
       nibble_i = n_chunked;
       nibble_stop = st_idx + nu;
@@ -5022,6 +5053,7 @@ void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
 void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
   using_threads = true;
   Network* net = network();
+  const int nt = tasks.size;
 
   // note: this has same logic as net sync but all within each layer
   // IMPORTANT: lay sync guys MUST have all units.leaves units in units_flat --
@@ -5034,7 +5066,7 @@ void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
     int st_idx = lay->units_flat_idx;
     const int nu = lay->units.leaves;
 
-    if(nu < min_units || nu < tasks.size) {
+    if(nu < min_units || nu < nt) {
       // run locally
       for(int i=nu-1;i>=0;i--) {
 	unit_call->call(net->units_flat[st_idx + i], net, -1); // -1 indicates no threading
@@ -5042,22 +5074,22 @@ void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
     }
     else {
       int n_chunked = (int)((float)nu * chunk_pct);
-      n_chunked = MAX(n_chunked, tasks.size);
+      n_chunked = MAX(n_chunked, nt);
 
-      int chnks = n_chunked / tasks.size;
-      n_chunked = chnks * tasks.size; // must be even multiple of threads!
+      int chnks = n_chunked / nt;
+      n_chunked = chnks * nt; // must be even multiple of threads!
       while(n_chunked > nu)
-	n_chunked -= tasks.size;
+	n_chunked -= nt;
 
       int st_base = st_idx + nu-1;			     // starting index
-      int end_base = st_base - (n_chunked - tasks.size); // no -1 b/c >= end_base
+      int end_base = st_base - (n_chunked - nt); // no -1 b/c >= end_base
 
-      for(int i=0;i<tasks.size;i++) {
+      for(int i=0;i<nt;i++) {
 	UnitCallTask* uct = (UnitCallTask*)tasks[i];
 	uct->unit_call = unit_call;
 	uct->uidx_st = st_base - i;
 	uct->uidx_ed = end_base - i;
-	uct->uidx_inc = -tasks.size;
+	uct->uidx_inc = -nt;
       }
       nibble_i = nu-1 - n_chunked;
       nibble_stop = st_idx;
@@ -6851,6 +6883,7 @@ void Network::VarToTable(DataTable* dt, const String& variable) {
   NetMonitor nm;
   taBase::Own(nm, this);
   nm.AddNetwork(this, variable);
+  nm.items[0]->max_name_len = 20; // allow long names
   nm.SetDataNetwork(dt, this);
   nm.UpdateDataTable();
   dt->AddBlankRow();

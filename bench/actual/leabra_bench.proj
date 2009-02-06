@@ -115,7 +115,7 @@ LeabraProject .projects[0] {
 	ProgVar @[1] { };
       };
 
-      ProgVar_List @.vars = [14] {
+      ProgVar_List @.vars = [15] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
 	ProgVar @[2] { };
@@ -130,9 +130,10 @@ LeabraProject .projects[0] {
 	ProgVar @[11] { };
 	ProgVar @[12] { };
 	ProgVar @[13] { };
+	ProgVar @[14] { };
       };
 
-      ProgEl_List @.prog_code = [36] {
+      ProgEl_List @.prog_code = [39] {
 	IfReturn @[0] { };
 	Comment @[1] { };
 	MiscCall @[2] { 
@@ -168,16 +169,24 @@ LeabraProject .projects[0] {
 	ProgVarFmArg @[14] { };
 	ProgVarFmArg @[15] { };
 	Comment @[16] { };
-	MemberFmArg @[17] { };
-	MemberFmArg @[18] { };
+	ProgVarFmArg @[17] { };
+	MethodCall @[18] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
 	MemberFmArg @[19] { };
 	MemberFmArg @[20] { };
 	MemberFmArg @[21] { };
-	Comment @[22] { };
-	AssignExpr @[23] { };
-	AssignExpr @[24] { };
+	MemberFmArg @[22] { };
+	MemberFmArg @[23] { };
+	MemberFmArg @[24] { };
 	Comment @[25] { };
-	MethodCall @[26] { 
+	AssignExpr @[26] { };
+	AssignExpr @[27] { };
+	Comment @[28] { };
+	MethodCall @[29] { 
 	  ProgArg_List @.meth_args = [4] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
@@ -185,62 +194,62 @@ LeabraProject .projects[0] {
 	    ProgArg @[3] { };
 	  };
 	};
-	OtherProgramVar @[27] { };
-	If @[28] { 
-	  ProgEl_List @.true_code = [2] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [4] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-		ProgArg @[2] { };
-		ProgArg @[3] { };
-	      };
-	    };
-	    MethodCall @[1] { 
-	      ProgArg_List @.meth_args = [3] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-		ProgArg @[2] { };
-	      };
-	    };
-	  };
-	};
-	If @[29] { 
-	  ProgEl_List @.true_code = [2] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [4] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-		ProgArg @[2] { };
-		ProgArg @[3] { };
-	      };
-	    };
-	    MethodCall @[1] { 
-	      ProgArg_List @.meth_args = [3] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-		ProgArg @[2] { };
-	      };
-	    };
-	  };
-	};
 	OtherProgramVar @[30] { };
-	PrintExpr @[31] { };
-	ProgramCall @[32] { 
+	If @[31] { 
+	  ProgEl_List @.true_code = [2] {
+	    MethodCall @[0] { 
+	      ProgArg_List @.meth_args = [4] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+		ProgArg @[3] { };
+	      };
+	    };
+	    MethodCall @[1] { 
+	      ProgArg_List @.meth_args = [3] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+	      };
+	    };
+	  };
+	};
+	If @[32] { 
+	  ProgEl_List @.true_code = [2] {
+	    MethodCall @[0] { 
+	      ProgArg_List @.meth_args = [4] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+		ProgArg @[3] { };
+	      };
+	    };
+	    MethodCall @[1] { 
+	      ProgArg_List @.meth_args = [3] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+	      };
+	    };
+	  };
+	};
+	OtherProgramVar @[33] { };
+	PrintExpr @[34] { };
+	ProgramCall @[35] { 
 	  ProgArg_List @.prog_args = [2] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
 	  };
 	};
-	ProgramCall @[33] { 
+	ProgramCall @[36] { 
 	  ProgArg_List @.prog_args = [3] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
 	    ProgArg @[2] { };
 	  };
 	};
-	MethodCall @[34] { };
-	ProgramCall @[35] { 
+	MethodCall @[37] { };
+	ProgramCall @[38] { 
 	  ProgArg_List @.prog_args = [3] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
@@ -1659,6 +1668,15 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      desc="how many epochs to run -- local copy";
     };
     ProgVar @[11] {
+     name="thread_netin";
+     var_type=T_Bool;
+     bool_val=1;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
+     desc="whether to run threading on the netin computation or not";
+    };
+    ProgVar @[12] {
      name="EpochOutputData";
      var_type=T_Object;
      object_type=DataTable;
@@ -1668,7 +1686,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      reference=0;
      desc=;
     };
-    ProgVar @[12] {
+    ProgVar @[13] {
      name="TrialOutputData";
      var_type=T_Object;
      object_type=DataTable;
@@ -1678,7 +1696,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      reference=0;
      desc=;
     };
-    ProgVar @[13] {
+    ProgVar @[14] {
      name="BenchTimeOut";
      var_type=T_Object;
      object_type=DataTable;
@@ -1900,16 +1918,55 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      desc="threading params";
      flags=;
     };
-    MemberFmArg @[17] {
+    ProgVarFmArg @[17] {
      desc=;
      flags=;
+     prog=$9$;
+     var_name="thread_netin";
+     arg_name="netin";
+    };
+    MethodCall @[18] {
+     desc=;
+     flags=;
+     result_var=NULL;
      obj=.projects[0].programs[0].args[0]$10$;
+     method=LeabraNetwork::SetThreadFlagState;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=LeabraNetwork::ThreadFlags;
+       type="LeabraNetwork::ThreadFlags";
+       name="flg";
+       required=0;
+       def_val=;
+       expr {
+	expr="LeabraNetwork::NETIN";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="on";
+       required=0;
+       def_val=;
+       expr {
+	expr="thread_netin";
+       };
+      };
+     };
+    };
+    MemberFmArg @[19] {
+     desc=;
+     flags=;
+     obj=$10$;
      path="threads.n_threads";
      arg_name="n_threads";
      update_after=1;
      quiet=0;
     };
-    MemberFmArg @[18] {
+    MemberFmArg @[20] {
      desc=;
      flags=;
      obj=$10$;
@@ -1918,7 +1975,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      update_after=1;
      quiet=0;
     };
-    MemberFmArg @[19] {
+    MemberFmArg @[21] {
      desc=;
      flags=;
      obj=$10$;
@@ -1927,7 +1984,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      update_after=1;
      quiet=0;
     };
-    MemberFmArg @[20] {
+    MemberFmArg @[22] {
      desc=;
      flags=;
      obj=$10$;
@@ -1936,7 +1993,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      update_after=1;
      quiet=0;
     };
-    MemberFmArg @[21] {
+    MemberFmArg @[23] {
      desc=;
      flags=;
      obj=$10$;
@@ -1945,11 +2002,20 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      update_after=1;
      quiet=0;
     };
-    Comment @[22] {
+    MemberFmArg @[24] {
+     desc=;
+     flags=;
+     obj=$10$;
+     path="threads.interleave";
+     arg_name="interleave";
+     update_after=1;
+     quiet=0;
+    };
+    Comment @[25] {
      desc="extra tag info";
      flags=;
     };
-    AssignExpr @[23] {
+    AssignExpr @[26] {
      desc=;
      flags=;
      result_var=.projects[0].programs[0].vars[2]$11$;
@@ -1957,7 +2023,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       expr="\"_un\" + n_units + \"_pat\" + n_patterns + \"_epc\" + epochs";
      };
     };
-    AssignExpr @[24] {
+    AssignExpr @[27] {
      desc=;
      flags=;
      result_var=$7$;
@@ -1965,15 +2031,15 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       expr="tag + extra_tag";
      };
     };
-    Comment @[25] {
+    Comment @[28] {
      desc="Set log files";
      flags=;
     };
-    MethodCall @[26] {
+    MethodCall @[29] {
      desc="last arg is to include dmem proc number";
      flags=;
      result_var=.projects[0].programs[0].vars[5]$12$;
-     obj=.projects[0].programs[0].vars[13]$13$;
+     obj=.projects[0].programs[0].vars[14]$13$;
      method=taBase::GetFileNameFmProject;
      meth_args {
       name=;
@@ -2021,7 +2087,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       };
      };
     };
-    OtherProgramVar @[27] {
+    OtherProgramVar @[30] {
      desc=;
      flags=;
      other_prog=.projects[0].programs[3]$14$;
@@ -2031,7 +2097,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      var_3=NULL;
      var_4=NULL;
     };
-    If @[28] {
+    If @[31] {
      desc=;
      flags=;
      cond {
@@ -2045,7 +2111,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        desc="last arg is to include dmem proc number";
        flags=;
        result_var=.projects[0].programs[0].vars[4]$15$;
-       obj=.projects[0].programs[0].vars[11]$16$;
+       obj=.projects[0].programs[0].vars[12]$16$;
        method=taBase::GetFileNameFmProject;
        meth_args {
 	name=;
@@ -2137,7 +2203,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       };
      };
     };
-    If @[29] {
+    If @[32] {
      desc=;
      flags=;
      cond {
@@ -2151,7 +2217,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        desc="last arg is to include dmem proc number";
        flags=;
        result_var=$15$;
-       obj=.projects[0].programs[0].vars[12]$17$;
+       obj=.projects[0].programs[0].vars[13]$17$;
        method=taBase::GetFileNameFmProject;
        meth_args {
 	name=;
@@ -2243,7 +2309,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       };
      };
     };
-    OtherProgramVar @[30] {
+    OtherProgramVar @[33] {
      desc=;
      flags=;
      other_prog=.projects[0].programs.gp[0][8]$18$;
@@ -2253,14 +2319,14 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      var_3=NULL;
      var_4=NULL;
     };
-    PrintExpr @[31] {
+    PrintExpr @[34] {
      desc=;
      flags=OFF;
      expr {
       expr="\"Running: \" << train.name";
      };
     };
-    ProgramCall @[32] {
+    ProgramCall @[35] {
      desc=;
      flags=;
      target=.projects[0].programs[1]$19$;
@@ -2291,7 +2357,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       };
      };
     };
-    ProgramCall @[33] {
+    ProgramCall @[36] {
      desc=;
      flags=;
      target=.projects[0].programs[2]$20$;
@@ -2332,7 +2398,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       };
      };
     };
-    MethodCall @[34] {
+    MethodCall @[37] {
      desc=;
      flags=;
      result_var=NULL;
@@ -2344,7 +2410,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       el_def=0;
      };
     };
-    ProgramCall @[35] {
+    ProgramCall @[38] {
      desc=;
      flags=;
      target=$2$;
@@ -6293,7 +6359,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=10;
-	  view_range {min=0: max=9: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  col_n=5;
@@ -6975,7 +7041,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        wt_sig {gain=6: off=1: };
        lmix {hebb=0.01: err=0.99: err_sb=1: };
@@ -7011,7 +7077,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      wt_sig {gain=6: off=1: };
      lmix {hebb=0.01: err=0.99: err_sb=1: };
@@ -7665,6 +7731,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    misc_time {name="TimeUsed_15": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    threads {
     log_timing=0;
+    interleave=1;
     ignore_lay_sync=0;
    };
    dmem_sync_level=DMEM_SYNC_NETWORK;
@@ -7739,6 +7806,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     m_nrm=0;
     do_s=0;
    };
+   thread_flags=NETIN|SRAVG|ACT|WEIGHTS|DWT|TRIAL_INIT|SETTLE_INIT;
    minus_cycles=0;
    avg_cycles=0;
    avg_cycles_sum=0;
