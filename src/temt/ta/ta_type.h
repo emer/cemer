@@ -458,13 +458,13 @@ private:
 class TA_API taThreadDefaults {
   // #EDIT_INLINE threading default parameters
 public:
-  int		cpus;		// #READ_ONLY #SHOW #NO_SAVE number of physical cpu's on this system -- typically you want to set n_threads equal to this, but not necessarily always -- may need to use fewer threads in some cases (almost never more)
-  int		n_threads;	// #MIN_1 number of threads to use for threading applications -- see the cpus field for the number of cpus on this system
-  int		min_units;	// #MIN_1 minimum number of computational units (e.g., network units) to apply parallel threading to -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute
-  float		compute_thr;	// #MIN_0 #MAX_1 threshold value for amount of computation in a given function to actually deploy on threads, as opposed to just running it on main thread -- value is normalized (0-1) with 1 being the most computationally intensive task, and 0 being the least -- as with min_units, it may not be worth it to parallelize very lightweight computations.
-  float		chunk_pct;	// #MIN_0 #MAX_1 proportion (0-1) of units to process in a chunked fashion, where units are allocated in (interdigitated) chunks to threads to exclusively process -- after this, each available thread works nibbling a unit at a time on the remaining list of units
-  int		nibble_chunk;	// #MIN_1 how many units does each thread grab to process while nibbling?
-  bool		send_netin;	// for network algorithms, should the Send_Netin call be threaded or not?  this can actually be slower on some machines
+  int		cpus;		// #READ_ONLY #SHOW #NO_SAVE number of physical processors (cores) on this system -- typically you want to set n_threads equal to this, but not necessarily always -- may need to use fewer threads in some cases (almost never more)
+  int		n_threads;	// #MIN_1 number of threads to actually use -- typically the number of physical processors (cores) available (see cpus), and is initialized to that.
+  float		chunk_pct;	// #MIN_0 #MAX_1 proportion (0-1) of units to process in a chunked fashion, where units are allocated in (interdigitated) chunks to threads to exclusively process -- after this, each available thread works nibbling a unit at a time on the remaining list of units.   A middle value around .5 is typically best, as it balances between the efficiency of pre-allocating the load, and the load balancing of the nibbling which adapts automatically to effective processor loads.
+  int		nibble_chunk;	// #MIN_1 how many units does each thread grab to process while nibbling?  Too small a value results in increased contention and inefficiency, while too large a value results in poor load balancing across processors.
+  float		compute_thr;	// #MIN_0 #MAX_1 threshold value for amount of computation in a given function to actually deploy on threads, as opposed to just running it on main thread -- value is normalized (0-1) with 1 being the most computationally intensive task, and 0 being the least -- as with min_units, it may not be worth it to parallelize very lightweight computations.  See Thread_Params page on emergent wiki for relevant comparison values.
+  int		min_units;	// #MIN_1 minimum number of computational units (e.g., network units) to apply parallel threading to -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.
+  bool		send_netin;	// for network algorithms, should the Send_Netin call be threaded or not?  this can actually be slower on some machiness due to memory dispersion issues, and it also results in small numerical differences from the single-threaded case.
   
   taThreadDefaults();
 // implicit copy and assign

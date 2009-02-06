@@ -233,8 +233,8 @@ class TA_API taThreadMgr : public taOBase {
   // ##CAT_Thread thread manager base class
 INHERITED(taOBase)
 public:
-  int			n_threads; // #MIN_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  desired number of threads to use -- typically==number of cores (initialized to that)
-  bool			log_timing; // whether to log the timing information about the threads
+  int			n_threads; // #MIN_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  desired number of threads to use -- typically the number of physical processors (cores) available, and is initialized to that.
+  bool			log_timing; // #EXPERT whether to log the timing information about the threads
 
   taTask_List		tasks;	 // #NO_SAVE #READ_ONLY the tasks for the threads to perform -- we manage these and allocate them to threads
   taTaskThread_PList	threads; // #NO_SAVE #READ_ONLY the threads -- memory managed by InitThreads and RemoveThreads

@@ -507,7 +507,7 @@ const String             taMisc::build_str;
 taThreadDefaults::taThreadDefaults() {
   cpus = 1;
   n_threads = -1;
-  min_units = 50;
+  min_units = 100;
   compute_thr = 0.5f;
   chunk_pct = 0.5f;
   nibble_chunk = 4;
