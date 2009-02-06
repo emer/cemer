@@ -884,6 +884,7 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->net_raw = 0.0f;
   lu->net_delta = 0.0f;
   lu->g_i_raw = 0.0f;
+  lu->g_i_delta = 0.0f;
 
   lu->i_thr = 0.0f;
   if(depress.on)
@@ -912,6 +913,7 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork*, float decay) {
   u->net_raw = 0.0f;
   u->net_delta = 0.0f;
   u->g_i_raw = 0.0f;
+  u->g_i_delta = 0.0f;
   
   u->net = 0.0f;
   u->net_scale = u->bias_scale = 0.0f;
@@ -2064,6 +2066,7 @@ void LeabraUnit::Initialize() {
   net_raw = 0.0f;
   net_delta = 0.0f;
   g_i_raw = 0.0f;
+  g_i_delta = 0.0f;
 
   i_thr = 0.0f;
   spk_amp = 1.0f;
@@ -2118,6 +2121,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   net_raw = cp.net_raw;
   net_delta = cp.net_delta;
   g_i_raw = cp.g_i_raw;
+  g_i_delta = cp.g_i_delta;
   i_thr = cp.i_thr;
   spk_amp = cp.spk_amp;
   misc_1 = cp.misc_1;
@@ -4967,7 +4971,7 @@ void LeabraNetwork::Send_Netin() {
   // always use delta mode!
   send_pct_n = send_pct_tot = 0;
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Send_NetinDelta);
-  if(thread_flags & NETIN)
+  if(threads.send_netin && (thread_flags & NETIN))
     threads.Run(&un_call, 1.0f);
   else
     threads.Run(&un_call, -1.0f); // -1 = always run localized
@@ -4988,6 +4992,7 @@ void LeabraNetwork::Send_Netin() {
 	un->Compute_SentNetinDelta(this, nw_nt);
 	un->Compute_SentInhibDelta(this, nw_inhb);
       }
+      send_inhib_tmp.InitVals(0.0f); // reset for next time around
     }
     else {
       for(int i=1;i<nu;i++) {	// 0 = dummy idx
@@ -4999,31 +5004,25 @@ void LeabraNetwork::Send_Netin() {
 	un->Compute_SentNetinDelta(this, nw_nt);
       }
     }
+    send_netin_tmp.InitVals(0.0f); // reset for next time around
   }
-  else {
+  else {			// NOT using threads: vars are now on the unit itself!
     if(inhib_cons_used) {
       for(int i=1;i<nu;i++) {	// 0 = dummy idx
 	LeabraUnit* un = (LeabraUnit*)units_flat[i];
-// 	float nw_nt = send_netin_tmp.FastEl(i, 0); // use 0 thread
-	float nw_inhb = send_inhib_tmp.FastEl(i, 0); // use 0 thread
 	un->Compute_SentNetinDelta(this, un->net_delta);
-	un->Compute_SentInhibDelta(this, nw_inhb);
+	un->Compute_SentInhibDelta(this, un->g_i_delta);
 	un->net_delta = 0.0f;	// clear for next use
+	un->g_i_delta = 0.0f;	// clear for next use
       }
     }
     else {
       for(int i=1;i<nu;i++) {	// 0 = dummy idx
 	LeabraUnit* un = (LeabraUnit*)units_flat[i];
-// 	float nw_nt = send_netin_tmp.FastEl(i, 0); // use 0 thread
 	un->Compute_SentNetinDelta(this, un->net_delta);
 	un->net_delta = 0.0f;	// clear for next use
       }
     }
-  }
-
-  send_netin_tmp.InitVals(0.0f); // reset for next time around
-  if(inhib_cons_used) {
-    send_inhib_tmp.InitVals(0.0f); // reset for next time around
   }
 
 #ifdef DMEM_COMPILE

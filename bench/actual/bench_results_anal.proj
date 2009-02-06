@@ -205,18 +205,20 @@ LeabraProject .projects[0] {
 	};
       };
 
-      ProgVar_List @.vars = [4] {
+      ProgVar_List @.vars = [5] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
 	ProgVar @[2] { };
 	ProgVar @[3] { };
+	ProgVar @[4] { };
       };
 
       ProgEl_List @.prog_code = [2] {
 	DataSelectRowsProg @[0] { 
-	  DataOpList @.ops = [2] {
+	  DataOpList @.ops = [3] {
 	    DataSelectEl @[0] { };
 	    DataSelectEl @[1] { };
+	    DataSelectEl @[2] { };
 	  };
 	};
 	DataCalcLoop @[1] { 
@@ -224,9 +226,10 @@ LeabraProject .projects[0] {
 	    DataOpEl @[0] { };
 	  };
 
-	  ProgEl_List @.loop_code = [2] {
+	  ProgEl_List @.loop_code = [3] {
 	    AssignExpr @[0] { };
-	    DataCalcSetSrcRow @[1] { };
+	    AssignExpr @[1] { };
+	    DataCalcSetSrcRow @[2] { };
 	  };
 
 	  ProgVar_List @.src_col_vars = [1] {
@@ -404,7 +407,7 @@ LeabraProject .projects[0] {
       };
       ar {
        name=;
-	    [56] 15.83;17.709999;16.82;17.52;17.73;16.879999;17.77;17.690001;17.99;64.830002;15.93;16.290001;21.719999;21.690001;9.8599997;9.9200001;8.9399996;8.9700003;8.9200001;9.3100004;9.3900003;9.75;11.27;51.439999;15.47;16.83;14.16;14.37;11.92;14.67;16.73;16.639999;15.71;16.889999;16.030001;16.799999;14.7;37.029999;17.620001;18.790001;14.28;14.08;13.1;17.049999;15.4;15.2;15.23;15.38;15.69;15.54;15.46;65.959999;25.969999;54.889999;31.98;32.16;      };
+	    [128] 15.83;16.209999;16.24;17.709999;16.49;16.82;16.700001;16.68;17.52;17.98;16.440001;16.57;17.639999;17.73;16.5;16.879999;17.77;16.48;17.690001;17.99;16.57;64.830002;15.93;16.290001;15.9;19.17;18.9;16.799999;21.049999;22.610001;21.719999;21.690001;9.8599997;9.6899996;9.6700001;9.9200001;8.6400003;8.9399996;8.6599998;8.71;8.9700003;8.6899996;8.6099997;8.6499996;8.7799997;8.9200001;8.6199999;9.3100004;9.3900003;8.6199999;9.75;11.27;8.9099998;51.439999;15.47;16.83;15.98;14.76;15.08;15.15;14.59;17.639999;14.16;14.37;11.92;11.79;11.93;14.67;10.74;16.73;10.67;10.69;16.639999;14.77;10.6;10.67;14.58;15.71;10.64;16.889999;16.030001;10.64;16.799999;14.7;10.63;37.029999;17.620001;18.790001;18.85;15.73;17.57;17.6;16.09;17.74;14.28;14.08;13.1;13.06;13.02;17.049999;11.5;15.4;11.65;11.53;15.2;15.77;11.64;11.65;15.46;15.23;11.62;15.38;15.69;11.64;15.54;15.46;11.83;65.959999;25.969999;54.889999;27.549999;26.360001;27.280001;25.030001;31.360001;39.369999;31.98;32.16;      };
      };
      float_Data @[1] {
       UserDataItem_List @*(.user_data_) {
@@ -425,7 +428,7 @@ LeabraProject .projects[0] {
       };
       ar {
        name=;
-	    [56] 14.92;16.34;16.09;16.15;16.09;15.98;16.110001;16.01;16.280001;60.18;15.04;15.43;18.68;18.629999;9.5900002;12.07;10.9;10.72;10.46;10.59;10.8;10.32;14.93;49.91;14.95;16.26;18.33;18.51;11.91;28.200001;28.139999;27.85;27.719999;28.25;28.209999;28.120001;28.15;36.970001;17.379999;18.42;25.25;25.379999;13.08;28.969999;29.889999;29.58;29.51;29.809999;29.82;30.08;29.9;65.940002;25.65;54.220001;54.25;53.75;      };
+	    [128] 14.92;15.42;15.47;16.34;15.57;16.09;15.69;16.030001;16.15;16.33;15.38;15.6;16.139999;16.09;15.53;15.98;16.110001;15.53;16.01;16.280001;15.46;60.18;15.04;15.43;15.11;17.74;17.540001;16.15;18.15;19.07;18.68;18.629999;9.5900002;9.4700003;9.4499998;12.07;9.8000002;10.9;9.9399996;10.03;10.72;10.59;9.71;9.75;10.68;10.46;9.7200003;10.59;10.8;9.7399998;10.32;14.93;9.7299995;49.91;14.95;16.26;15.48;18.67;18.700001;16.799999;18.27;19.4;18.33;18.51;11.91;11.76;11.86;28.200001;13.82;28.139999;13.9;14.03;27.85;27.58;13.76;13.85;27.83;27.719999;13.85;28.25;28.209999;13.79;28.120001;28.15;13.79;36.970001;17.379999;18.42;18.540001;27.09;29.889999;22.139999;26.98;27.530001;25.25;25.379999;13.08;13.04;13.01;28.969999;15.8;29.889999;16.07;16.309999;29.58;29.559999;16.07;16.07;29.889999;29.51;16.049999;29.809999;29.82;16.07;30.08;29.9;16.17;65.940002;25.65;54.220001;27.09;47.740002;50.130001;31.940001;54;56.75;54.25;53.75;      };
      };
      String_Data @[2] {
       UserDataItem_List @*(.user_data_) {
@@ -446,7 +449,7 @@ LeabraProject .projects[0] {
       };
       ar {
        name=;
-	    [56] "leabra_bench_E8400_3ghz_nothread_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_dream_24ghz_nothread_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_nothread_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_dream_24ghz_nothread_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_nothread_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_dream_24ghz_nothread_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_nothread_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_dream_24ghz_nothread_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un1024_pat5_epc1_time.dat";      };
+	    [128] "leabra_bench_E8400_3ghz_nothread_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr1r2_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr1r3_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch8thr5nonet_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5nonet_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr15nonet_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5contig_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonet_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonetr2_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5r2_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5nonet_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5nonet_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5nonet_un25_pat100_epc10_time.dat";"leabra_bench_dream_24ghz_nothread_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr1nw_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5contig_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5nonet_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch1thr5_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch4_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_nothread_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr1r2_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr1r3_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch8thr5nonet_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5nonet_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr15nonet_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5contig_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonet_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonetr2_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5r2_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5nonet_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5nonet_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5nonet_un100_pat100_epc3_time.dat";"leabra_bench_dream_24ghz_nothread_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr1nw_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5contig_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5nonet_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch1thr5_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch4_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_nothread_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr1r2_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr1r3_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch8thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr15nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5contig_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonetr2_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5r2_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_dream_24ghz_nothread_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr1nw_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5contig_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch1thr5_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch4_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_nothread_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr1r2_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr1r3_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch8thr5nonet_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5nonet_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr15nonet_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5contig_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonet_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonetr2_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5r2_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5nonet_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5nonet_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5nonet_un1024_pat5_epc1_time.dat";"leabra_bench_dream_24ghz_nothread_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr1nw_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5contig_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5nonet_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch1thr5_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch4_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un1024_pat5_epc1_time.dat";      };
      };
      String_Data @[3] {
       UserDataItem_List @*(.user_data_) {
@@ -467,7 +470,7 @@ LeabraProject .projects[0] {
       };
       ar {
        name=;
-	    [56] "E8400_3ghz_nothread";"E8400_3ghz_thr2pct20nch4thr5";"E8400_3ghz_thr2pct50nch2thr5";"E8400_3ghz_thr2pct50nch4thr5";"E8400_3ghz_thr2pct50nch8thr5";"E8400_3ghz_thr2pct70nch4thr5";"E8400_3ghz_thr2pct80nch4thr5";"E8400_3ghz_thr2pct90nch1thr5";"E8400_3ghz_thr2pct90nch4thr5";"dream_24ghz_nothread";"mac_mbp_216ghz_nothread";"mac_mbp_216ghz_thr1";"mac_mbp_216ghz_thr2pct90nch4";"mac_mbp_216ghz_thr2pct95nch4";"E8400_3ghz_nothread";"E8400_3ghz_thr2pct20nch4thr5";"E8400_3ghz_thr2pct50nch2thr5";"E8400_3ghz_thr2pct50nch4thr5";"E8400_3ghz_thr2pct50nch8thr5";"E8400_3ghz_thr2pct70nch4thr5";"E8400_3ghz_thr2pct80nch4thr5";"E8400_3ghz_thr2pct90nch1thr5";"E8400_3ghz_thr2pct90nch4thr5";"dream_24ghz_nothread";"mac_mbp_216ghz_nothread";"mac_mbp_216ghz_thr1";"mac_mbp_216ghz_thr2pct90nch4";"mac_mbp_216ghz_thr2pct95nch4";"E8400_3ghz_nothread";"E8400_3ghz_thr2pct20nch4thr5";"E8400_3ghz_thr2pct50nch2thr5";"E8400_3ghz_thr2pct50nch4thr5";"E8400_3ghz_thr2pct50nch8thr5";"E8400_3ghz_thr2pct70nch4thr5";"E8400_3ghz_thr2pct80nch4thr5";"E8400_3ghz_thr2pct90nch1thr5";"E8400_3ghz_thr2pct90nch4thr5";"dream_24ghz_nothread";"mac_mbp_216ghz_nothread";"mac_mbp_216ghz_thr1";"mac_mbp_216ghz_thr2pct90nch4";"mac_mbp_216ghz_thr2pct95nch4";"E8400_3ghz_nothread";"E8400_3ghz_thr2pct20nch4thr5";"E8400_3ghz_thr2pct50nch2thr5";"E8400_3ghz_thr2pct50nch4thr5";"E8400_3ghz_thr2pct50nch8thr5";"E8400_3ghz_thr2pct70nch4thr5";"E8400_3ghz_thr2pct80nch4thr5";"E8400_3ghz_thr2pct90nch1thr5";"E8400_3ghz_thr2pct90nch4thr5";"dream_24ghz_nothread";"mac_mbp_216ghz_nothread";"mac_mbp_216ghz_thr1";"mac_mbp_216ghz_thr2pct90nch4";"mac_mbp_216ghz_thr2pct95nch4";      };
+	    [128] "E8400_3ghz_nothread";"E8400_3ghz_thr1r2";"E8400_3ghz_thr1r3";"E8400_3ghz_thr2pct20nch4thr5";"E8400_3ghz_thr2pct20nch8thr5nonet";"E8400_3ghz_thr2pct50nch2thr5";"E8400_3ghz_thr2pct50nch2thr5nonet";"E8400_3ghz_thr2pct50nch4thr15nonet";"E8400_3ghz_thr2pct50nch4thr5";"E8400_3ghz_thr2pct50nch4thr5contig";"E8400_3ghz_thr2pct50nch4thr5nonet";"E8400_3ghz_thr2pct50nch4thr5nonetr2";"E8400_3ghz_thr2pct50nch4thr5r2";"E8400_3ghz_thr2pct50nch8thr5";"E8400_3ghz_thr2pct50nch8thr5nonet";"E8400_3ghz_thr2pct70nch4thr5";"E8400_3ghz_thr2pct80nch4thr5";"E8400_3ghz_thr2pct80nch4thr5nonet";"E8400_3ghz_thr2pct90nch1thr5";"E8400_3ghz_thr2pct90nch4thr5";"E8400_3ghz_thr2pct90nch4thr5nonet";"dream_24ghz_nothread";"mac_mbp_216ghz_nothread";"mac_mbp_216ghz_thr1";"mac_mbp_216ghz_thr1nw";"mac_mbp_216ghz_thr2pct50nch4thr5";"mac_mbp_216ghz_thr2pct50nch4thr5contig";"mac_mbp_216ghz_thr2pct50nch4thr5nonet";"mac_mbp_216ghz_thr2pct80nch1thr5";"mac_mbp_216ghz_thr2pct80nch4";"mac_mbp_216ghz_thr2pct90nch4";"mac_mbp_216ghz_thr2pct95nch4";"E8400_3ghz_nothread";"E8400_3ghz_thr1r2";"E8400_3ghz_thr1r3";"E8400_3ghz_thr2pct20nch4thr5";"E8400_3ghz_thr2pct20nch8thr5nonet";"E8400_3ghz_thr2pct50nch2thr5";"E8400_3ghz_thr2pct50nch2thr5nonet";"E8400_3ghz_thr2pct50nch4thr15nonet";"E8400_3ghz_thr2pct50nch4thr5";"E8400_3ghz_thr2pct50nch4thr5contig";"E8400_3ghz_thr2pct50nch4thr5nonet";"E8400_3ghz_thr2pct50nch4thr5nonetr2";"E8400_3ghz_thr2pct50nch4thr5r2";"E8400_3ghz_thr2pct50nch8thr5";"E8400_3ghz_thr2pct50nch8thr5nonet";"E8400_3ghz_thr2pct70nch4thr5";"E8400_3ghz_thr2pct80nch4thr5";"E8400_3ghz_thr2pct80nch4thr5nonet";"E8400_3ghz_thr2pct90nch1thr5";"E8400_3ghz_thr2pct90nch4thr5";"E8400_3ghz_thr2pct90nch4thr5nonet";"dream_24ghz_nothread";"mac_mbp_216ghz_nothread";"mac_mbp_216ghz_thr1";"mac_mbp_216ghz_thr1nw";"mac_mbp_216ghz_thr2pct50nch4thr5";"mac_mbp_216ghz_thr2pct50nch4thr5contig";"mac_mbp_216ghz_thr2pct50nch4thr5nonet";"mac_mbp_216ghz_thr2pct80nch1thr5";"mac_mbp_216ghz_thr2pct80nch4";"mac_mbp_216ghz_thr2pct90nch4";"mac_mbp_216ghz_thr2pct95nch4";"E8400_3ghz_nothread";"E8400_3ghz_thr1r2";"E8400_3ghz_thr1r3";"E8400_3ghz_thr2pct20nch4thr5";"E8400_3ghz_thr2pct20nch8thr5nonet";"E8400_3ghz_thr2pct50nch2thr5";"E8400_3ghz_thr2pct50nch2thr5nonet";"E8400_3ghz_thr2pct50nch4thr15nonet";"E8400_3ghz_thr2pct50nch4thr5";"E8400_3ghz_thr2pct50nch4thr5contig";"E8400_3ghz_thr2pct50nch4thr5nonet";"E8400_3ghz_thr2pct50nch4thr5nonetr2";"E8400_3ghz_thr2pct50nch4thr5r2";"E8400_3ghz_thr2pct50nch8thr5";"E8400_3ghz_thr2pct50nch8thr5nonet";"E8400_3ghz_thr2pct70nch4thr5";"E8400_3ghz_thr2pct80nch4thr5";"E8400_3ghz_thr2pct80nch4thr5nonet";"E8400_3ghz_thr2pct90nch1thr5";"E8400_3ghz_thr2pct90nch4thr5";"E8400_3ghz_thr2pct90nch4thr5nonet";"dream_24ghz_nothread";"mac_mbp_216ghz_nothread";"mac_mbp_216ghz_thr1";"mac_mbp_216ghz_thr1nw";"mac_mbp_216ghz_thr2pct50nch4thr5";"mac_mbp_216ghz_thr2pct50nch4thr5contig";"mac_mbp_216ghz_thr2pct50nch4thr5nonet";"mac_mbp_216ghz_thr2pct80nch1thr5";"mac_mbp_216ghz_thr2pct80nch4";"mac_mbp_216ghz_thr2pct90nch4";"mac_mbp_216ghz_thr2pct95nch4";"E8400_3ghz_nothread";"E8400_3ghz_thr1r2";"E8400_3ghz_thr1r3";"E8400_3ghz_thr2pct20nch4thr5";"E8400_3ghz_thr2pct20nch8thr5nonet";"E8400_3ghz_thr2pct50nch2thr5";"E8400_3ghz_thr2pct50nch2thr5nonet";"E8400_3ghz_thr2pct50nch4thr15nonet";"E8400_3ghz_thr2pct50nch4thr5";"E8400_3ghz_thr2pct50nch4thr5contig";"E8400_3ghz_thr2pct50nch4thr5nonet";"E8400_3ghz_thr2pct50nch4thr5nonetr2";"E8400_3ghz_thr2pct50nch4thr5r2";"E8400_3ghz_thr2pct50nch8thr5";"E8400_3ghz_thr2pct50nch8thr5nonet";"E8400_3ghz_thr2pct70nch4thr5";"E8400_3ghz_thr2pct80nch4thr5";"E8400_3ghz_thr2pct80nch4thr5nonet";"E8400_3ghz_thr2pct90nch1thr5";"E8400_3ghz_thr2pct90nch4thr5";"E8400_3ghz_thr2pct90nch4thr5nonet";"dream_24ghz_nothread";"mac_mbp_216ghz_nothread";"mac_mbp_216ghz_thr1";"mac_mbp_216ghz_thr1nw";"mac_mbp_216ghz_thr2pct50nch4thr5";"mac_mbp_216ghz_thr2pct50nch4thr5contig";"mac_mbp_216ghz_thr2pct50nch4thr5nonet";"mac_mbp_216ghz_thr2pct80nch1thr5";"mac_mbp_216ghz_thr2pct80nch4";"mac_mbp_216ghz_thr2pct90nch4";"mac_mbp_216ghz_thr2pct95nch4";      };
      };
      int_Data @[4] {
       UserDataItem_List @*(.user_data_) {
@@ -492,7 +495,7 @@ LeabraProject .projects[0] {
       };
       ar {
        name=;
-	    [56] 25;25;25;25;25;25;25;25;25;25;25;25;25;25;100;100;100;100;100;100;100;100;100;100;100;100;100;100;625;625;625;625;625;625;625;625;625;625;625;625;625;625;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;      };
+	    [128] 25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;25;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;100;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;625;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;1024;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -607,7 +610,7 @@ LeabraProject .projects[0] {
        };
        ar {
 	name=;
-	      [56] "leabra_bench_dream_24ghz_nothread_un100_pat100_epc3_time.dat";"leabra_bench_dream_24ghz_nothread_un1024_pat5_epc1_time.dat";"leabra_bench_dream_24ghz_nothread_un25_pat100_epc10_time.dat";"leabra_bench_dream_24ghz_nothread_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_nothread_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_nothread_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_nothread_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_nothread_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un625_pat10_epc1_time.dat";       };
+	      [128] "leabra_bench_dream_24ghz_nothread_un100_pat100_epc3_time.dat";"leabra_bench_dream_24ghz_nothread_un1024_pat5_epc1_time.dat";"leabra_bench_dream_24ghz_nothread_un25_pat100_epc10_time.dat";"leabra_bench_dream_24ghz_nothread_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_nothread_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_nothread_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_nothread_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_nothread_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr1r2_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr1r2_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr1r2_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr1r2_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr1r3_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr1r3_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr1r3_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr1r3_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch8thr5nonet_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch8thr5nonet_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch8thr5nonet_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch8thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5nonet_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5nonet_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5nonet_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr15nonet_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr15nonet_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr15nonet_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr15nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5contig_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5contig_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5contig_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5contig_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonet_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonet_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonet_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonetr2_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonetr2_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonetr2_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonetr2_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5r2_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5r2_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5r2_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5r2_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5nonet_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5nonet_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5nonet_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5nonet_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5nonet_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5nonet_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5nonet_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5nonet_un1024_pat5_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5nonet_un25_pat100_epc10_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_nothread_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr1_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr1nw_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr1nw_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr1nw_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr1nw_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5contig_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5contig_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5contig_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5contig_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5nonet_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5nonet_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5nonet_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch1thr5_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch1thr5_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch1thr5_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch1thr5_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch4_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch4_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch4_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct80nch4_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un625_pat10_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un100_pat100_epc3_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un1024_pat5_epc1_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un25_pat100_epc10_time.dat";"leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un625_pat10_epc1_time.dat";       };
       };
       String_Data @[1] {
        UserDataItem_List @*(.user_data_) {
@@ -628,7 +631,7 @@ LeabraProject .projects[0] {
        };
        ar {
 	name=;
-	      [56] "./results/leabra_bench_dream_24ghz_nothread_un100_pat100_epc3_time.dat";"./results/leabra_bench_dream_24ghz_nothread_un1024_pat5_epc1_time.dat";"./results/leabra_bench_dream_24ghz_nothread_un25_pat100_epc10_time.dat";"./results/leabra_bench_dream_24ghz_nothread_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_nothread_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_nothread_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_nothread_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_nothread_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_nothread_un100_pat100_epc3_time.dat";"./results/leabra_bench_mac_mbp_216ghz_nothread_un1024_pat5_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_nothread_un25_pat100_epc10_time.dat";"./results/leabra_bench_mac_mbp_216ghz_nothread_un625_pat10_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr1_un100_pat100_epc3_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr1_un1024_pat5_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr1_un25_pat100_epc10_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr1_un625_pat10_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un100_pat100_epc3_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un1024_pat5_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un25_pat100_epc10_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un625_pat10_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un100_pat100_epc3_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un1024_pat5_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un25_pat100_epc10_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un625_pat10_epc1_time.dat";       };
+	      [128] "./results/leabra_bench_dream_24ghz_nothread_un100_pat100_epc3_time.dat";"./results/leabra_bench_dream_24ghz_nothread_un1024_pat5_epc1_time.dat";"./results/leabra_bench_dream_24ghz_nothread_un25_pat100_epc10_time.dat";"./results/leabra_bench_dream_24ghz_nothread_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_nothread_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_nothread_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_nothread_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_nothread_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr1r2_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr1r2_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr1r2_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr1r2_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr1r3_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr1r3_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr1r3_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr1r3_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct20nch8thr5nonet_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct20nch8thr5nonet_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct20nch8thr5nonet_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct20nch8thr5nonet_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch2thr5nonet_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch2thr5nonet_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch2thr5nonet_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch2thr5nonet_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr15nonet_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr15nonet_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr15nonet_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr15nonet_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5contig_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5contig_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5contig_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5contig_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonet_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonet_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonet_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonet_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonetr2_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonetr2_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonetr2_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonetr2_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5r2_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5r2_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5r2_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch4thr5r2_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch8thr5nonet_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch8thr5nonet_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch8thr5nonet_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct50nch8thr5nonet_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct80nch4thr5nonet_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct80nch4thr5nonet_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct80nch4thr5nonet_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct80nch4thr5nonet_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch4thr5nonet_un100_pat100_epc3_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch4thr5nonet_un1024_pat5_epc1_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch4thr5nonet_un25_pat100_epc10_time.dat";"./results/leabra_bench_E8400_3ghz_thr2pct90nch4thr5nonet_un625_pat10_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_nothread_un100_pat100_epc3_time.dat";"./results/leabra_bench_mac_mbp_216ghz_nothread_un1024_pat5_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_nothread_un25_pat100_epc10_time.dat";"./results/leabra_bench_mac_mbp_216ghz_nothread_un625_pat10_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr1_un100_pat100_epc3_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr1_un1024_pat5_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr1_un25_pat100_epc10_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr1_un625_pat10_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr1nw_un100_pat100_epc3_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr1nw_un1024_pat5_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr1nw_un25_pat100_epc10_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr1nw_un625_pat10_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5contig_un100_pat100_epc3_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5contig_un1024_pat5_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5contig_un25_pat100_epc10_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5contig_un625_pat10_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5nonet_un100_pat100_epc3_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5nonet_un1024_pat5_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5nonet_un25_pat100_epc10_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct50nch4thr5nonet_un625_pat10_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct80nch1thr5_un100_pat100_epc3_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct80nch1thr5_un1024_pat5_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct80nch1thr5_un25_pat100_epc10_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct80nch1thr5_un625_pat10_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct80nch4_un100_pat100_epc3_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct80nch4_un1024_pat5_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct80nch4_un25_pat100_epc10_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct80nch4_un625_pat10_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un100_pat100_epc3_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un1024_pat5_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un25_pat100_epc10_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct90nch4_un625_pat10_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un100_pat100_epc3_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un1024_pat5_epc1_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un25_pat100_epc10_time.dat";"./results/leabra_bench_mac_mbp_216ghz_thr2pct95nch4_un625_pat10_epc1_time.dat";       };
       };
      };
      data_flags=SAVE_ROWS|AUTO_CALC;
@@ -885,7 +888,7 @@ LeabraProject .projects[0] {
        var_type=T_String;
        string_val=;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR;
+       flags=NULL_CHECK|LOCAL_VAR|USED;
        reference=0;
        desc=;
       };
@@ -956,7 +959,7 @@ LeabraProject .projects[0] {
        var_type=T_String;
        string_val=;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR;
+       flags=NULL_CHECK|LOCAL_VAR|USED;
        reference=0;
        desc=;
       };
@@ -965,7 +968,7 @@ LeabraProject .projects[0] {
        var_type=T_Int;
        int_val=0;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR;
+       flags=NULL_CHECK|LOCAL_VAR|USED;
        reference=0;
        desc=;
       };
@@ -974,7 +977,7 @@ LeabraProject .projects[0] {
        var_type=T_String;
        string_val=;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR;
+       flags=NULL_CHECK|LOCAL_VAR|USED;
        reference=0;
        desc=;
       };
@@ -1154,7 +1157,7 @@ LeabraProject .projects[0] {
        };
        ar {
 	name=;
-	      [9] 9.8599997;9.9200001;8.9399996;8.9700003;8.9200001;9.3100004;9.3900003;9.75;11.27;       };
+	      [8] 10.74;10.67;10.69;10.6;10.67;10.64;10.64;10.63;       };
       };
       float_Data @[1] {
        UserDataItem_List @*(.user_data_) {
@@ -1175,7 +1178,7 @@ LeabraProject .projects[0] {
        };
        ar {
 	name=;
-	      [9] 9.5900002;12.07;10.9;10.72;10.46;10.59;10.8;10.32;14.93;       };
+	      [8] 13.82;13.9;14.03;13.76;13.85;13.85;13.79;13.79;       };
       };
       String_Data @[2] {
        UserDataItem_List @*(.user_data_) {
@@ -1196,7 +1199,7 @@ LeabraProject .projects[0] {
        };
        ar {
 	name=;
-	      [9] "leabra_bench_E8400_3ghz_nothread_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct20nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct70nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch1thr5_un100_pat100_epc3_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5_un100_pat100_epc3_time.dat";       };
+	      [8] "leabra_bench_E8400_3ghz_thr2pct20nch8thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch2thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr15nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch4thr5nonetr2_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct50nch8thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct80nch4thr5nonet_un625_pat10_epc1_time.dat";"leabra_bench_E8400_3ghz_thr2pct90nch4thr5nonet_un625_pat10_epc1_time.dat";       };
       };
       String_Data @[3] {
        UserDataItem_List @*(.user_data_) {
@@ -1217,7 +1220,7 @@ LeabraProject .projects[0] {
        };
        ar {
 	name=;
-	      [9] "nothread";"thr2pct20nch4thr5";"thr2pct50nch2thr5";"thr2pct50nch4thr5";"thr2pct50nch8thr5";"thr2pct70nch4thr5";"thr2pct80nch4thr5";"thr2pct90nch1thr5";"thr2pct90nch4thr5";       };
+	      [8] "thr2pct20nch8thr5";"thr2pct50nch2thr5";"thr2pct50nch4thr15";"thr2pct50nch4thr5";"thr2pct50nch4thr5r2";"thr2pct50nch8thr5";"thr2pct80nch4thr5";"thr2pct90nch4thr5";       };
       };
       int_Data @[4] {
        UserDataItem_List @*(.user_data_) {
@@ -1242,7 +1245,7 @@ LeabraProject .projects[0] {
        };
        ar {
 	name=;
-	      [9] 100;100;100;100;100;100;100;100;100;       };
+	      [8] 625;625;625;625;625;625;625;625;       };
       };
      };
      data_flags=SAVE_ROWS|AUTO_CALC;
@@ -1278,7 +1281,7 @@ LeabraProject .projects[0] {
     ProgVar @[1] {
      name="Units";
      var_type=T_Int;
-     int_val=100;
+     int_val=625;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED;
      reference=0;
@@ -1294,6 +1297,15 @@ LeabraProject .projects[0] {
      desc="only get rows where Params has this string, and also set Params to be whatever is after this string";
     };
     ProgVar @[3] {
+     name="param_filter2";
+     var_type=T_String;
+     string_val="nonet";
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
+     desc="only get rows where Params has this string, and also set Params to be whatever is after this string";
+    };
+    ProgVar @[4] {
      name="AllResults";
      var_type=T_Object;
      object_type=DataTable;
@@ -1326,7 +1338,7 @@ LeabraProject .projects[0] {
     DataSelectRowsProg @[0] {
      desc=;
      flags=;
-     src_data_var=.projects[0].programs[1].vars[3]$7$;
+     src_data_var=.projects[0].programs[1].vars[4]$7$;
      dest_data_var=.projects[0].programs[1].vars[0]$8$;
      select_spec {
       name="select_spec";
@@ -1338,7 +1350,7 @@ LeabraProject .projects[0] {
 	col_name="Units";
 	rel=EQUAL;
 	use_var=1;
-	cmp 2 0=100;
+	cmp 2 0=625;
 	var=.projects[0].programs[1].vars[1]$9$;
        };
        DataSelectEl @[1] {
@@ -1347,6 +1359,13 @@ LeabraProject .projects[0] {
 	use_var=1;
 	cmp 9 0="E8400_3ghz_";
 	var=.projects[0].programs[1].vars[2]$10$;
+       };
+       DataSelectEl @[2] {
+	col_name="Params";
+	rel=CONTAINS;
+	use_var=1;
+	cmp 9 0="nonet";
+	var=.projects[0].programs[1].vars[3]$11$;
        };
       };
       comb_op=AND;
@@ -1377,12 +1396,20 @@ LeabraProject .projects[0] {
       AssignExpr @[0] {
        desc=;
        flags=;
-       result_var=.projects[0].programs[1].prog_code[1].src_col_vars[0]$11$;
+       result_var=.projects[0].programs[1].prog_code[1].src_col_vars[0]$12$;
        expr {
-	expr="s_Params.after(param_filter)";
+	expr="s_Params.repl(param_filter, \"\")";
        };
       };
-      DataCalcSetSrcRow @[1] {
+      AssignExpr @[1] {
+       desc=;
+       flags=;
+       result_var=$12$;
+       expr {
+	expr="s_Params.repl(param_filter2, \"\")";
+       };
+      };
+      DataCalcSetSrcRow @[2] {
        desc=;
        flags=;
        src_data_var=$8$;
@@ -1398,7 +1425,7 @@ LeabraProject .projects[0] {
        var_type=T_String;
        string_val=;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR;
+       flags=NULL_CHECK|LOCAL_VAR|USED;
        reference=0;
        desc=;
       };
@@ -1446,7 +1473,7 @@ LeabraProject .projects[0] {
      value 9 0="AAAA/wAAAAAAAAADAAABFwAAAikAAALCAQAAAAcBAAAAAQ==";
     };
    };
-   m_data=.projects[0]$12$;
+   m_data=.projects[0]$13$;
    name="Browser2";
    visible=1;
    m_is_root=0;
@@ -1485,7 +1512,7 @@ LeabraProject .projects[0] {
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$12$;
+     m_root=$13$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -1528,23 +1555,23 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].programs[1].objs[0].data[0]$13$;
+	    m_data=.projects[0].programs[1].objs[0].data[0]$14$;
 	    m_transform=NULL;
 	    name="epoch_time_tot";
 	    visible=1;
-	    fixed_range {fix_min=0: min=8.92: fix_max=0: max=11.27: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].programs[1].objs[0].data[1]$14$;
+	    m_data=.projects[0].programs[1].objs[0].data[1]$15$;
 	    m_transform=NULL;
 	    name="epoch_time_usr";
 	    visible=1;
-	    fixed_range {fix_min=0: min=9.59: fix_max=0: max=14.93: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].programs[1].objs[0].data[2]$15$;
+	    m_data=.projects[0].programs[1].objs[0].data[2]$16$;
 	    m_transform=NULL;
 	    name="Name";
 	    visible=1;
@@ -1552,7 +1579,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].programs[1].objs[0].data[3]$16$;
+	    m_data=.projects[0].programs[1].objs[0].data[3]$17$;
 	    m_transform=NULL;
 	    name="Params";
 	    visible=1;
@@ -1560,7 +1587,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].programs[1].objs[0].data[4]$17$;
+	    m_data=.projects[0].programs[1].objs[0].data[4]$18$;
 	    m_transform=NULL;
 	    name="Units";
 	    visible=1;
@@ -1570,7 +1597,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=10000;
-	  view_range {min=0: max=8: };
+	  view_range {min=0: max=7: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -1592,10 +1619,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=X;
 	   col_name="Units";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=8: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=7: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=8: };
-	   range {min=0: max=8: };
+	   data_range {min=0: max=7: };
+	   range {min=0: max=7: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=1;
@@ -1620,10 +1647,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=Y;
 	   col_name="epoch_time_tot";
-	   fixed_range {fix_min=0: min=8.92: fix_max=0: max=11.27: };
+	   fixed_range {fix_min=0: min=10.6: fix_max=0: max=10.74: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=8.92: max=14.93: };
-	   range {min=8: max=15: };
+	   data_range {min=10.6: max=10.74: };
+	   range {min=10.6: max=10.74: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -1633,13 +1660,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  plot_2 {
 	   m_data=NULL;
 	   m_transform=NULL;
-	   on=1;
+	   on=0;
 	   axis=Y;
 	   col_name="epoch_time_usr";
-	   fixed_range {fix_min=0: min=9.59: fix_max=0: max=14.93: };
+	   fixed_range {fix_min=0: min=13.76: fix_max=0: max=14.03: };
 	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
-	   data_range {min=9.59: max=14.93: };
-	   range {min=9.59: max=14.93: };
+	   data_range {min=13.76: max=14.03: };
+	   range {min=13.76: max=14.03: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -1899,7 +1926,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=.colorspecs[0]$18$;
+	   spec=.colorspecs[0]$19$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -1950,7 +1977,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=$13$;
+	    m_data=$14$;
 	    m_transform=NULL;
 	    name="epoch_time_tot";
 	    visible=1;
@@ -1961,7 +1988,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=$14$;
+	    m_data=$15$;
 	    m_transform=NULL;
 	    name="epoch_time_usr";
 	    visible=1;
@@ -1972,7 +1999,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    m_data=$15$;
+	    m_data=$16$;
 	    m_transform=NULL;
 	    name="Name";
 	    visible=1;
@@ -1983,7 +2010,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[3] {
-	    m_data=$16$;
+	    m_data=$17$;
 	    m_transform=NULL;
 	    name="Params";
 	    visible=1;
@@ -1994,7 +2021,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[4] {
-	    m_data=$17$;
+	    m_data=$18$;
 	    m_transform=NULL;
 	    name="Units";
 	    visible=1;
@@ -2007,7 +2034,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=10;
-	  view_range {min=0: max=8: };
+	  view_range {min=0: max=7: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  col_n=5;
@@ -2026,7 +2053,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$18$;
+	   spec=$19$;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;

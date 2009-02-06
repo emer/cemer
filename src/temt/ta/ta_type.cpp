@@ -508,9 +508,10 @@ taThreadDefaults::taThreadDefaults() {
   cpus = 1;
   n_threads = -1;
   min_units = 50;
-  compute_thr = 0.2f;
-  chunk_pct = 0.9f;
+  compute_thr = 0.5f;
+  chunk_pct = 0.5f;
   nibble_chunk = 4;
+  send_netin = false;
 }
 
 taThreadDefaults taMisc::thread_defaults;

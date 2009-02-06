@@ -464,6 +464,7 @@ public:
   float		compute_thr;	// #MIN_0 #MAX_1 threshold value for amount of computation in a given function to actually deploy on threads, as opposed to just running it on main thread -- value is normalized (0-1) with 1 being the most computationally intensive task, and 0 being the least -- as with min_units, it may not be worth it to parallelize very lightweight computations.
   float		chunk_pct;	// #MIN_0 #MAX_1 proportion (0-1) of units to process in a chunked fashion, where units are allocated in (interdigitated) chunks to threads to exclusively process -- after this, each available thread works nibbling a unit at a time on the remaining list of units
   int		nibble_chunk;	// #MIN_1 how many units does each thread grab to process while nibbling?
+  bool		send_netin;	// for network algorithms, should the Send_Netin call be threaded or not?  this can actually be slower on some machines
   
   taThreadDefaults();
 // implicit copy and assign

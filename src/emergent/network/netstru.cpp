@@ -4813,6 +4813,7 @@ void UnitCallThreadMgr::Initialize() {
   compute_thr = taMisc::thread_defaults.compute_thr;
   chunk_pct = taMisc::thread_defaults.chunk_pct;
   nibble_chunk = taMisc::thread_defaults.nibble_chunk;
+  send_netin = taMisc::thread_defaults.send_netin;
   interleave = true;
   ignore_lay_sync = false;
   nibble_i = -1;

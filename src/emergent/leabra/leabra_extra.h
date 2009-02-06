@@ -225,30 +225,53 @@ public:
     TrialSynDepCon* lcn = (TrialSynDepCon*)cn; lcn->effwt = lcn->wt;
   }
 
-  void C_Send_NetinDelta(TrialSynDepCon* cn, float* send_netin_vec,
-			 Unit* ru, float su_act_delta_eff) {
+  inline void C_Send_NetinDelta_Thrd(TrialSynDepCon* cn, float* send_netin_vec,
+				    LeabraUnit* ru, float su_act_delta_eff) {
     send_netin_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
   }
-  void C_Send_InhibDelta(TrialSynDepCon* cn, float* send_inhib_vec,
-			 Unit* ru, float su_act_delta_eff) {
+
+  inline void C_Send_NetinDelta_NoThrd(TrialSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->net_delta += cn->effwt * su_act_delta_eff;
+  }
+
+  inline void C_Send_InhibDelta_Thrd(TrialSynDepCon* cn, float* send_inhib_vec,
+				    LeabraUnit* ru, float su_act_delta_eff) {
     send_inhib_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
   }
-  override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-				int thread_no, float su_act_delta) {
+
+  inline void C_Send_InhibDelta_NoThrd(TrialSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->g_i_delta += cn->effwt * su_act_delta_eff;
+  }
+
+  inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+			      int thread_no, float su_act_delta) {
     Unit* ru = cg->Un(0);
     float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff
       * su_act_delta;
     if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
-      float* send_inhib_vec = net->send_inhib_tmp.el
-	+ net->send_inhib_tmp.FastElIndex(0, thread_no);
-      CON_GROUP_LOOP(cg, C_Send_InhibDelta((TrialSynDepCon*)cg->Cn(i), send_inhib_vec, cg->Un(i),
-					   su_act_delta_eff));
+      if(thread_no < 0) {
+	CON_GROUP_LOOP(cg, C_Send_InhibDelta_NoThrd((TrialSynDepCon*)cg->Cn(i),
+						   (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      }
+      else {
+	float* send_inhib_vec = net->send_inhib_tmp.el
+	  + net->send_inhib_tmp.FastElIndex(0, thread_no);
+	CON_GROUP_LOOP(cg, C_Send_InhibDelta_Thrd((TrialSynDepCon*)cg->Cn(i),
+						 send_inhib_vec, (LeabraUnit*)cg->Un(i),
+						 su_act_delta_eff));
+      }
     }
     else {
-      float* send_netin_vec = net->send_netin_tmp.el
-	+ net->send_netin_tmp.FastElIndex(0, thread_no);
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta((TrialSynDepCon*)cg->Cn(i), send_netin_vec, cg->Un(i),
-					   su_act_delta_eff));
+      if(thread_no < 0) {
+	CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThrd((TrialSynDepCon*)cg->Cn(i),
+						   (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      }
+      else {
+	float* send_netin_vec = net->send_netin_tmp.el
+	  + net->send_netin_tmp.FastElIndex(0, thread_no);
+	CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thrd((TrialSynDepCon*)cg->Cn(i), send_netin_vec,
+						 (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      }
     }
   }
 
@@ -327,30 +350,53 @@ public:
     CycleSynDepCon* lcn = (CycleSynDepCon*)cn; lcn->effwt = lcn->wt;
   }
 
-  void C_Send_NetinDelta(CycleSynDepCon* cn, float* send_netin_vec,
-			 Unit* ru, float su_act_delta_eff) {
+  inline void C_Send_NetinDelta_Thrd(CycleSynDepCon* cn, float* send_netin_vec,
+				    LeabraUnit* ru, float su_act_delta_eff) {
     send_netin_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
   }
-  void C_Send_InhibDelta(CycleSynDepCon* cn, float* send_inhib_vec,
-			 Unit* ru, float su_act_delta_eff) {
+
+  inline void C_Send_NetinDelta_NoThrd(CycleSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->net_delta += cn->effwt * su_act_delta_eff;
+  }
+
+  inline void C_Send_InhibDelta_Thrd(CycleSynDepCon* cn, float* send_inhib_vec,
+				    LeabraUnit* ru, float su_act_delta_eff) {
     send_inhib_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
   }
-  override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-				int thread_no, float su_act_delta) {
+
+  inline void C_Send_InhibDelta_NoThrd(CycleSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->g_i_delta += cn->effwt * su_act_delta_eff;
+  }
+
+  inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+			      int thread_no, float su_act_delta) {
     Unit* ru = cg->Un(0);
     float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff
       * su_act_delta;
     if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
-      float* send_inhib_vec = net->send_inhib_tmp.el
-	+ net->send_inhib_tmp.FastElIndex(0, thread_no);
-      CON_GROUP_LOOP(cg, C_Send_InhibDelta((CycleSynDepCon*)cg->Cn(i), send_inhib_vec, cg->Un(i),
-					   su_act_delta_eff));
+      if(thread_no < 0) {
+	CON_GROUP_LOOP(cg, C_Send_InhibDelta_NoThrd((CycleSynDepCon*)cg->Cn(i),
+						   (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      }
+      else {
+	float* send_inhib_vec = net->send_inhib_tmp.el
+	  + net->send_inhib_tmp.FastElIndex(0, thread_no);
+	CON_GROUP_LOOP(cg, C_Send_InhibDelta_Thrd((CycleSynDepCon*)cg->Cn(i),
+						 send_inhib_vec, (LeabraUnit*)cg->Un(i),
+						 su_act_delta_eff));
+      }
     }
     else {
-      float* send_netin_vec = net->send_netin_tmp.el
-	+ net->send_netin_tmp.FastElIndex(0, thread_no);
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta((CycleSynDepCon*)cg->Cn(i), send_netin_vec, cg->Un(i),
-					   su_act_delta_eff));
+      if(thread_no < 0) {
+	CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThrd((CycleSynDepCon*)cg->Cn(i),
+						   (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      }
+      else {
+	float* send_netin_vec = net->send_netin_tmp.el
+	  + net->send_netin_tmp.FastElIndex(0, thread_no);
+	CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thrd((CycleSynDepCon*)cg->Cn(i), send_netin_vec,
+						 (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      }
     }
   }
 
@@ -453,30 +499,53 @@ public:
     lcn->cai = 0.0f; 
   }
 
-  void C_Send_NetinDelta(CaiSynDepCon* cn, float* send_netin_vec,
-			 Unit* ru, float su_act_delta_eff) {
+  inline void C_Send_NetinDelta_Thrd(CaiSynDepCon* cn, float* send_netin_vec,
+				    LeabraUnit* ru, float su_act_delta_eff) {
     send_netin_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
   }
-  void C_Send_InhibDelta(CaiSynDepCon* cn, float* send_inhib_vec,
-			 Unit* ru, float su_act_delta_eff) {
+
+  inline void C_Send_NetinDelta_NoThrd(CaiSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->net_delta += cn->effwt * su_act_delta_eff;
+  }
+
+  inline void C_Send_InhibDelta_Thrd(CaiSynDepCon* cn, float* send_inhib_vec,
+				    LeabraUnit* ru, float su_act_delta_eff) {
     send_inhib_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
   }
-  override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-				int thread_no, float su_act_delta) {
+
+  inline void C_Send_InhibDelta_NoThrd(CaiSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->g_i_delta += cn->effwt * su_act_delta_eff;
+  }
+
+  inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+			      int thread_no, float su_act_delta) {
     Unit* ru = cg->Un(0);
     float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff
       * su_act_delta;
     if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
-      float* send_inhib_vec = net->send_inhib_tmp.el
-	+ net->send_inhib_tmp.FastElIndex(0, thread_no);
-      CON_GROUP_LOOP(cg, C_Send_InhibDelta((CaiSynDepCon*)cg->Cn(i), send_inhib_vec, cg->Un(i),
-					   su_act_delta_eff));
+      if(thread_no < 0) {
+	CON_GROUP_LOOP(cg, C_Send_InhibDelta_NoThrd((CaiSynDepCon*)cg->Cn(i),
+						   (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      }
+      else {
+	float* send_inhib_vec = net->send_inhib_tmp.el
+	  + net->send_inhib_tmp.FastElIndex(0, thread_no);
+	CON_GROUP_LOOP(cg, C_Send_InhibDelta_Thrd((CaiSynDepCon*)cg->Cn(i),
+						 send_inhib_vec, (LeabraUnit*)cg->Un(i),
+						 su_act_delta_eff));
+      }
     }
     else {
-      float* send_netin_vec = net->send_netin_tmp.el
-	+ net->send_netin_tmp.FastElIndex(0, thread_no);
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta((CaiSynDepCon*)cg->Cn(i), send_netin_vec, cg->Un(i),
-					   su_act_delta_eff));
+      if(thread_no < 0) {
+	CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThrd((CaiSynDepCon*)cg->Cn(i),
+						   (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      }
+      else {
+	float* send_netin_vec = net->send_netin_tmp.el
+	  + net->send_netin_tmp.FastElIndex(0, thread_no);
+	CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thrd((CaiSynDepCon*)cg->Cn(i), send_netin_vec,
+						 (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      }
     }
   }
 

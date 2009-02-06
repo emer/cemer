@@ -390,11 +390,16 @@ public:
   ///////////////////////////////////////////////////////////////
   //	Activation: Netinput -- only NetinDelta is supported
 
-  inline void 		C_Send_NetinDelta_Threads(Connection* cn, float* send_netin_vec,
-						  LeabraUnit* ru, float su_act_delta_eff);
-  inline void 		C_Send_NetinDelta0(Connection* cn, LeabraUnit* ru, float su_act_delta_eff);
-  inline void 		C_Send_InhibDelta(Connection* cn, float* send_inhib_vec, Unit* ru, float su_act_delta_eff);
-  inline virtual void 	Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net, int thread_no, float su_act_delta_eff);
+  inline void 		C_Send_NetinDelta_Thrd(Connection* cn, float* send_netin_vec,
+					      LeabraUnit* ru, float su_act_delta_eff);
+  inline void 		C_Send_NetinDelta_NoThrd(Connection* cn, LeabraUnit* ru,
+						float su_act_delta_eff);
+  inline void 		C_Send_InhibDelta_Thrd(Connection* cn, float* send_inhib_vec,
+					      LeabraUnit* ru, float su_act_delta_eff);
+  inline void 		C_Send_InhibDelta_NoThrd(Connection* cn, LeabraUnit* ru,
+						float su_act_delta_eff);
+  inline virtual void 	Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net, int thread_no,
+					float su_act_delta_eff);
   // #CAT_Activation sender-based delta-activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
 
   ///////////////////////////////////////////////////////////////
@@ -1258,6 +1263,7 @@ public:
   float		net_raw;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (send delta delta's are added to this value)
   float		net_delta;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation delta net input received from sending units -- only used for non-threaded case
   float		g_i_raw;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
+  float		g_i_delta;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation delta inhibitory net input received from sending units -- only used for non-threaded case
 
   float		i_thr;		// #NO_SAVE #CAT_Activation inhibitory threshold value for computing kWTA
   float		spk_amp;	// #CAT_Activation amplitude/probability of spiking output (for synaptic depression function if unit spec depress.on is on)
@@ -2565,7 +2571,7 @@ public:
   CtSineInhibMod ct_sin_i;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL sinusoidal inhibition parameters for inhibitory modulations during trial, simulating oscillations resulting from imperfect inhibtory set point behavior
   CtFinalInhibMod ct_fin_i;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL final inhibition parameters for extra inhibition to apply during final inhib phase, simulating slow-onset GABA currents
   CtSRAvgVals	sravg_vals;	// #CAT_Learning #READ_ONLY #EXPERT sender-receiver average computation values, e.g., for normalizing sravg values
-  ThreadFlags	thread_flags;	// #CAT_Structure flags for controlling the parallel threading process (which functions are threaded)
+  ThreadFlags	thread_flags;	// #CAT_Structure #EXPERT #NO_SAVE flags for controlling the parallel threading process (which functions are threaded) -- this is just for testing and debugging purposes, and not for general use
 
   float		minus_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
   float		avg_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles in the minus phase (computed over previous epoch)
@@ -2842,19 +2848,24 @@ private:
 //      Netin
 
 
-inline void LeabraConSpec::C_Send_NetinDelta_Threads(Connection* cn, float* send_netin_vec,
+inline void LeabraConSpec::C_Send_NetinDelta_Thrd(Connection* cn, float* send_netin_vec,
 					     LeabraUnit* ru, float su_act_delta_eff) {
   send_netin_vec[ru->flat_idx] += cn->wt * su_act_delta_eff;
 }
 
-inline void LeabraConSpec::C_Send_NetinDelta0(Connection* cn, LeabraUnit* ru,
-					      float su_act_delta_eff) {
+inline void LeabraConSpec::C_Send_NetinDelta_NoThrd(Connection* cn, LeabraUnit* ru,
+						   float su_act_delta_eff) {
   ru->net_delta += cn->wt * su_act_delta_eff;
 }
 
-inline void LeabraConSpec::C_Send_InhibDelta(Connection* cn, float* send_inhib_vec,
-					     Unit* ru, float su_act_delta_eff) {
+inline void LeabraConSpec::C_Send_InhibDelta_Thrd(Connection* cn, float* send_inhib_vec,
+						 LeabraUnit* ru, float su_act_delta_eff) {
   send_inhib_vec[ru->flat_idx] += cn->wt * su_act_delta_eff;
+}
+
+inline void LeabraConSpec::C_Send_InhibDelta_NoThrd(Connection* cn, LeabraUnit* ru,
+						   float su_act_delta_eff) {
+  ru->g_i_delta += cn->wt * su_act_delta_eff;
 }
 
 inline void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
@@ -2863,23 +2874,27 @@ inline void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* ne
   float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff
     * su_act_delta;
   if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
-    thread_no = MAX(0, thread_no);    // rationalize
-    float* send_inhib_vec = net->send_inhib_tmp.el
-      + net->send_inhib_tmp.FastElIndex(0, thread_no);
-    CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg->Cn(i), send_inhib_vec, (LeabraUnit*)cg->Un(i),
-					 su_act_delta_eff));
+    if(thread_no < 0) {
+      CON_GROUP_LOOP(cg, C_Send_InhibDelta_NoThrd(cg->Cn(i), (LeabraUnit*)cg->Un(i),
+						 su_act_delta_eff));
+    }
+    else {
+      float* send_inhib_vec = net->send_inhib_tmp.el
+	+ net->send_inhib_tmp.FastElIndex(0, thread_no);
+      CON_GROUP_LOOP(cg, C_Send_InhibDelta_Thrd(cg->Cn(i), send_inhib_vec, (LeabraUnit*)cg->Un(i),
+					   su_act_delta_eff));
+    }
   }
   else {
     if(thread_no < 0) {
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta0(cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThrd(cg->Cn(i), (LeabraUnit*)cg->Un(i),
+						 su_act_delta_eff));
     }
     else {
-      thread_no = MAX(0, thread_no);    // rationalize
       float* send_netin_vec = net->send_netin_tmp.el
 	+ net->send_netin_tmp.FastElIndex(0, thread_no);
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Threads(cg->Cn(i), send_netin_vec,
-						   (LeabraUnit*)cg->Un(i),
-						   su_act_delta_eff));
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thrd(cg->Cn(i), send_netin_vec,
+					       (LeabraUnit*)cg->Un(i), su_act_delta_eff));
     }
   }
 }
