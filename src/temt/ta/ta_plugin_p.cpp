@@ -120,9 +120,6 @@ void taPlugins::AppendLogEntry(const String& entry, bool warn) {
 taPluginInst* taPlugins::ProbePlugin(const String& fileName) {
   taPluginInst* rval = new taPluginInst(fileName);
   String log_entry = "Attempting to probe plugin: " + fileName;
-#ifdef DEBUG
-  taMisc::Info(log_entry);
-#endif
   AppendLogEntry(log_entry);
   // get the plugin object, and initialize types
   if (rval->load())  {
