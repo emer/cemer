@@ -1448,7 +1448,13 @@ float LeabraUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
   else if(noise_adapt.mode == NoiseAdaptSpec::SCHED_EPOCHS) {
     rval *= noise_sched.GetVal(net->epoch);
   }
-  else if(noise_adapt.mode == NoiseAdaptSpec::PVLV) {
+  else if(noise_adapt.mode == NoiseAdaptSpec::PVLV_PVI) {
+    rval *= (1.0f - (noise_adapt.min_pct_c * net->pvlv_pvi));
+  }
+  else if(noise_adapt.mode == NoiseAdaptSpec::PVLV_LVE) {
+    rval *= (1.0f - (noise_adapt.min_pct_c * net->pvlv_lve));
+  }
+  else if(noise_adapt.mode == NoiseAdaptSpec::PVLV_MIN) {
     float pvlv_val = MIN(net->pvlv_pvi, net->pvlv_lve);
     rval *= (1.0f - (noise_adapt.min_pct_c * pvlv_val));
   }

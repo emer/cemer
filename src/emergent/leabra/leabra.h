@@ -910,7 +910,9 @@ public:
     FIXED_NOISE,		// no adaptation of noise: remains fixed at the noise.var value in the unit spec
     SCHED_CYCLES,		// use noise_sched over cycles of settling
     SCHED_EPOCHS,		// use noise_sched over epochs of learning
-    PVLV,			// use PVLV reward prediction values (MIN(pvlv_pvi, pvlv_lve) -- worst case reward expectation) for current trial (set on network by PVLV layers) on a cycle-by-cycle basis
+    PVLV_PVI,			// use PVLV PVi reward prediction values -- predicts primary value (PV) and inhibits it (i) -- only if a PVLV config is in place -- appropriate for output-oriented layers that are important for generating responses associated with rewards
+    PVLV_LVE,			// use PVLV LVe reward prediction values -- learned value excitatory reward associations -- this can be active outside the time when primary rewards are expected, and is appropriate for working memory or other internal or sensory-oriented processing
+    PVLV_MIN,			// use the minimum of PVi and LVe values -- an overall worst case appraisal of the state of the system
   };
 
   bool		trial_fixed;	// keep the same noise value over the entire trial -- prevents noise from being washed out and produces a stable effect that can be better used for learning -- this is strongly recommended for most learning situations
