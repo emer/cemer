@@ -508,7 +508,7 @@ taThreadDefaults::taThreadDefaults() {
   cpus = 1;
   n_threads = -1;
   min_units = 100;
-  compute_thr = 0.5f;
+  compute_thr = 0.3f;
   chunk_pct = 0.5f;
   nibble_chunk = 4;
   send_netin = false;
