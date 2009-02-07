@@ -4782,7 +4782,7 @@ void UnitCallTask::run() {
 	Unit* un = network->units_flat[i];
 	unit_call->call(un, network, task_id); // task id indicates threading, and which thread
 	// debugging:
-// 	un->name = (String)task_id;
+// 	un->name = "n" + (String)task_id;
       }
       if(mx == nib_stop) break;		// we're the last guy
     }
@@ -4791,6 +4791,8 @@ void UnitCallTask::run() {
     for(int i=uidx_st; i>=uidx_ed; i+=uidx_inc) {
       Unit* un = network->units_flat[i];
       unit_call->call(un, network, task_id); // task id indicates threading, and which thread
+	// debugging:
+// 	un->name = (String)task_id;
     }
   
     // then auto-nibble until done!
@@ -4802,6 +4804,8 @@ void UnitCallTask::run() {
       for(int i=nxt_uidx; i>=mx; i--) {
 	Unit* un = network->units_flat[i];
 	unit_call->call(un, network, task_id); // task id indicates threading, and which thread
+// 	// debugging:
+//  	un->name = "n"+(String)task_id;
       }
       if(mx == nib_stop) break;		// we're the last guy
     }
@@ -4809,10 +4813,10 @@ void UnitCallTask::run() {
 }
 
 void UnitCallThreadMgr::Initialize() {
-  min_units = taMisc::thread_defaults.min_units;
-  compute_thr = taMisc::thread_defaults.compute_thr;
   chunk_pct = taMisc::thread_defaults.chunk_pct;
   nibble_chunk = taMisc::thread_defaults.nibble_chunk;
+  compute_thr = taMisc::thread_defaults.compute_thr;
+  min_units = taMisc::thread_defaults.min_units;
   send_netin = taMisc::thread_defaults.send_netin;
   interleave = true;
   ignore_lay_sync = false;
@@ -5032,7 +5036,7 @@ void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
 	uct->uidx_ed = end_base + i;
 	uct->uidx_inc = nt;
       }
-      nibble_i = n_chunked;
+      nibble_i = st_idx + n_chunked;
       nibble_stop = st_idx + nu;
 
       // then run the subsidiary guys
@@ -5060,9 +5064,9 @@ void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
   // IMPORTANT: lay sync guys MUST have all units.leaves units in units_flat --
   // the run code assumes this is true
 
-  Layer* lay;
-  taLeafItr li;
-  FOR_ITR_EL(Layer, lay, net->layers., li) {
+  int li;
+  for(li=net->layers.leaves-1; li>=0; li--) {
+    Layer* lay = net->layers.Leaf(li);
     if(lay->lesioned()) continue; // don't even add units from lesioned layers!!
     int st_idx = lay->units_flat_idx;
     const int nu = lay->units.leaves;
@@ -5092,7 +5096,7 @@ void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
 	uct->uidx_ed = end_base - i;
 	uct->uidx_inc = -nt;
       }
-      nibble_i = nu-1 - n_chunked;
+      nibble_i = st_idx + nu-1 - n_chunked;
       nibble_stop = st_idx;
 
       // then run the subsidiary guys

@@ -640,11 +640,18 @@ INHERITED(Network)
 public:
   bool			bp_to_inputs;	// #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
 
-  virtual void		SetCurLrate(); // #CAT_Learning set current learning rate, based on network epoch counter
-  virtual void		Compute_dEdA_dEdNet();
+  virtual void	SetCurLrate();
+  // #CAT_Learning set current learning rate, based on network epoch counter
+
+  override void	Compute_NetinAct();
+
+  virtual void	Compute_dEdA_dEdNet();
   // #CAT_Learning compute derivatives of error with respect to activations & net inputs (backpropagate)
-  virtual void		Compute_Error();
-  //  #CAT_Learning compute local error values, for display purposes only (only call when testing, not training)
+  virtual void	Compute_Error();
+  // #CAT_Learning compute local error values, for display purposes only (only call when testing, not training)
+
+  override void	Compute_dWt();
+  override void	Compute_Weights_impl();
   
   virtual void		Trial_Run(); // #CAT_Bp run one trial of Bp: calls SetCurLrate, Compute_NetinAct, Compute_dEdA_dEdNet, and, if train_mode == TRAIN, Compute_dWt.  If you want to save some speed just for testing, you can just call Compute_NetinAct and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)
   

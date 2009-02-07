@@ -592,9 +592,14 @@ void BpNetwork::SetCurLrate() {
   }
 }
 
+void BpNetwork::Compute_NetinAct() {
+  ThreadUnitCall un_call(&Unit::Compute_NetinAct);
+  threads.Run(&un_call, 0.7f, false, true); // backwards = false, layer_sync=true
+}
+
 void BpNetwork::Compute_dEdA_dEdNet() {
   ThreadUnitCall un_call((ThreadUnitMethod)(BpUnitMethod)&BpUnit::Compute_dEdA_dEdNet);
-  threads.Run(&un_call, 1.0f, true, true); // backwards = true, layer_sync=true
+  threads.Run(&un_call, 0.9f, true, true); // backwards = true, layer_sync=true
 
 // #ifdef DMEM_COMPILE
 //     // first compute dEdA from connections and share it
@@ -625,6 +630,16 @@ void BpNetwork::Compute_Error() {
       u->Compute_Error(this);
     }
   }
+}
+
+void BpNetwork::Compute_dWt() {
+  ThreadUnitCall un_call(&Unit::Compute_dWt);
+  threads.Run(&un_call, 0.8f);
+}
+
+void BpNetwork::Compute_Weights_impl() {
+  ThreadUnitCall un_call(&Unit::Compute_Weights);
+  threads.Run(&un_call, 1.0f);
 }
 
 void BpNetwork::Trial_Run() {

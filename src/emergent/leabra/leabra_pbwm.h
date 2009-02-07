@@ -148,7 +148,7 @@ INHERITED(LeabraUnitSpec)
 public:
   bool	freeze_net;		// #DEF_true freeze netinput (MAINT in 2+ phase, OUTPUT in 1+ phase) during learning modulation so that learning only reflects DA modulation and not other changes in netin
 
-  override void Compute_SentNetinDelta(LeabraUnit* u, LeabraNetwork* net, float new_netin);
+  override void Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no);
 
   void	Defaults();
 

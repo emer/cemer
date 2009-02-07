@@ -2,6 +2,10 @@
 SoProject .projects[0] { 
   Wizard_Group @.wizards = [1] {
     SoWizard @[0] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+
       LayerWizElList @.layer_cfg = [3] {
 	LayerWizEl @[0] { };
 	LayerWizEl @[1] { };
@@ -23,17 +27,17 @@ SoProject .projects[0] {
       DataTable @[0] { 
 	DataTableCols @.data = [6] {
 	  int_Data @[0] { 
-      UserDataItem_List @*(.user_data_) { 
+      UserDataItem_List @*(.user_data_) {
 	      UserDataItem @[0] { };
       };
 };
 	  int_Data @[1] { 
-      UserDataItem_List @*(.user_data_) { 
+      UserDataItem_List @*(.user_data_) {
 	      UserDataItem @[0] { };
       };
 };
 	  int_Data @[2] { 
-      UserDataItem_List @*(.user_data_) { 
+      UserDataItem_List @*(.user_data_) {
 	      UserDataItem @[0] { };
       };
 };
@@ -45,12 +49,12 @@ SoProject .projects[0] {
       DataTable @[1] { 
 	DataTableCols @.data = [6] {
 	  int_Data @[0] { 
-      UserDataItem_List @*(.user_data_) { 
+      UserDataItem_List @*(.user_data_) {
 	      UserDataItem @[0] { };
       };
 };
 	  int_Data @[1] { 
-      UserDataItem_List @*(.user_data_) { 
+      UserDataItem_List @*(.user_data_) {
 	      UserDataItem @[0] { };
       };
 };
@@ -72,10 +76,26 @@ SoProject .projects[0] {
   };
 
   taBase_Group @.data_proc = [4] {
-    taDataProc @[0] { };
-    taDataAnal @[1] { };
-    taDataGen @[2] { };
-    taImageProc @[3] { };
+    taDataProc @[0] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taDataAnal @[1] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taDataGen @[2] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taImageProc @[3] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
   };
 
   Program_Group @.programs = [0] {
@@ -507,6 +527,20 @@ SoProject .projects[0] {
 
   Network_Group @.networks = [1] {
     SoNetwork @[0] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+	UserDataItem @[1] { };
+	UserDataItem @[2] { };
+	UserDataItem @[3] { };
+	UserDataItem @[4] { };
+	UserDataItem @[5] { };
+	UserDataItem @[6] { };
+	UserDataItem @[7] { };
+	UserDataItem @[8] { };
+	UserDataItem @[9] { };
+	UserDataItem @[10] { };
+   };
+
       BaseSpec_Group @.specs = [5] {
 	SomLayerSpec @[0] { 
 	  NeighborEl_List @.neighborhood = [81] {
@@ -622,6 +656,7 @@ SoProject .projects[0] {
 
 
 ";
+ tags=;
  templates {
   name=;
   el_typ=taBase;
@@ -637,6 +672,15 @@ SoProject .projects[0] {
   el_typ=SoWizard;
   el_def=0;
   SoWizard @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
    name="SoWizard_0";
    auto_open=0;
    n_layers=3;
@@ -661,6 +705,7 @@ SoProject .projects[0] {
     };
    };
    connectivity=FEEDFORWARD;
+   default_net_type=SoNetwork;
   };
  };
  edits {
@@ -982,15 +1027,51 @@ SoProject .projects[0] {
   el_typ=taDataProc;
   el_def=0;
   taDataProc @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
    name="data_base";
   };
   taDataAnal @[1] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
    name="data_anal";
   };
   taDataGen @[2] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
    name="data_gen";
   };
   taImageProc @[3] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
    name="image_proc";
   };
  };
@@ -1033,7 +1114,8 @@ SoProject .projects[0] {
       object_type=SoNetwork;
       object_val=.projects[0].networks[0]$1$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="network to operate on -- updates batch counter on network and passes it to train program";
      };
      ProgVar @[1] {
@@ -1043,6 +1125,7 @@ SoProject .projects[0] {
       object_val=.projects[0].data.gp[0][0]$2$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="datatable with training patterns -- not used by this program, but passed to train program";
      };
      ProgVar @[2] {
@@ -1051,6 +1134,7 @@ SoProject .projects[0] {
       int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="maximum number of batch runs to perform";
      };
     };
@@ -1063,7 +1147,8 @@ SoProject .projects[0] {
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="batch counter";
      };
     };
@@ -1087,6 +1172,7 @@ SoProject .projects[0] {
       network_var=.projects[0].programs.gp[0][0].args[0]$3$;
       local_ctr_var=.projects[0].programs.gp[0][0].vars[0]$4$;
       counter=Network::batch;
+      update_after=0;
      };
     };
     prog_code {
@@ -1099,6 +1185,7 @@ SoProject .projects[0] {
       network_var=$3$;
       local_ctr_var=$4$;
       counter=Network::batch;
+      update_after=0;
      };
      WhileLoop @[1] {
       desc="the main loop over training runs";
@@ -1124,12 +1211,6 @@ SoProject .projects[0] {
 	  def_val=;
 	  expr {
 	   expr="network";
-	   flags=;
-	   var_expr="$#0#$";
-	   vars {
-	   };
-	   var_names{ network;	   };
-	   bad_vars{ 	   };
 	  };
 	 };
 	 ProgArg @[1] {
@@ -1140,12 +1221,6 @@ SoProject .projects[0] {
 	  def_val=;
 	  expr {
 	   expr="input_data";
-	   flags=;
-	   var_expr="$#0#$";
-	   vars {
-	   };
-	   var_names{ input_data;	   };
-	   bad_vars{ 	   };
 	  };
 	 };
 	};
@@ -1156,16 +1231,11 @@ SoProject .projects[0] {
 	network_var=$3$;
 	local_ctr_var=$4$;
 	counter=Network::batch;
+	update_after=0;
        };
       };
       test {
        expr="batch < max_batch";
-       flags=;
-       var_expr="$#0#$ < $#1#$";
-       vars {
-       };
-       var_names{ batch;max_batch;       };
-       bad_vars{        };
       };
      };
     };
@@ -1220,7 +1290,8 @@ SoProject .projects[0] {
       object_type=SoNetwork;
       object_val=$1$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="network to train";
      };
      ProgVar @[1] {
@@ -1229,7 +1300,8 @@ SoProject .projects[0] {
       object_type=DataTable;
       object_val=$2$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="datatable with training patterns";
      };
     };
@@ -1242,7 +1314,8 @@ SoProject .projects[0] {
       var_type=T_Int;
       int_val=500;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="maximum number of epochs to run";
      };
      ProgVar @[1] {
@@ -1251,7 +1324,8 @@ SoProject .projects[0] {
       int_val=1;
       hard_enum_type=Network::TrainMode;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="TRAIN = update weights (learn), TEST = just record network's responses but don't learn";
      };
      ProgVar @[2] {
@@ -1262,7 +1336,8 @@ SoProject .projects[0] {
        value=0;
       };
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="how to initialize the random numbers when the Init button is pressed";
      };
      ProgVar @[3] {
@@ -1270,7 +1345,8 @@ SoProject .projects[0] {
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="current epoch -- local copy, which is used to update network's epoch counter";
      };
      ProgVar @[4] {
@@ -1278,7 +1354,8 @@ SoProject .projects[0] {
       var_type=T_Real;
       real_val=-1;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="stopping criterion -- when error measure (average sum squared error by defult)
 goes <= this value, stop training (set to -1 to disable stopping criterion, and always train to max_epoch epochs)";
      };
@@ -1288,7 +1365,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=RndSeed;
       object_val=.projects[0].programs.gp[0][1].objs[0]$7$;
       objs_ptr=1;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="random seed that is used at start of training -- if OldSeed is called";
      };
      ProgVar @[6] {
@@ -1297,7 +1375,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=TimeUsed;
       object_val=.projects[0].networks[0].train_time$8$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="records time used to train network (object lives on network -- this is a pointer to it)";
      };
     };
@@ -1333,12 +1412,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val="false";
 	expr {
 	 expr="false";
-	 flags=;
-	 var_expr="false";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -1349,12 +1422,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       result_var=.projects[0].programs.gp[0][1].vars[6]$10$;
       expr {
        expr="network.train_time";
-       flags=;
-       var_expr="$#0#$.train_time";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
      NetCounterInit @[2] {
@@ -1363,18 +1430,13 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       network_var=$9$;
       local_ctr_var=.projects[0].programs.gp[0][1].vars[3]$11$;
       counter=Network::epoch;
+      update_after=0;
      };
      IfElse @[3] {
       desc="initialize random seed (either old or new)";
       flags=;
       cond {
        expr="rnd_init == OLD_SEED";
-       flags=;
-       var_expr="$#0#$ == OLD_SEED";
-       vars {
-       };
-       var_names{ rnd_init;       };
-       bad_vars{        };
       };
       true_code {
        name=;
@@ -1434,12 +1496,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       result_var=$10$;
       expr {
        expr="network.train_time";
-       flags=;
-       var_expr="$#0#$.train_time";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
      MethodCall @[1] {
@@ -1460,12 +1516,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val="true";
 	expr {
 	 expr="true";
-	 flags=;
-	 var_expr="true";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -1476,6 +1526,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       network_var=$9$;
       local_ctr_var=$11$;
       counter=Network::epoch;
+      update_after=0;
      };
      MemberAssign @[3] {
       desc="set network's training mode to our local value";
@@ -1484,12 +1535,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       path="train_mode";
       expr {
        expr="train_mode";
-       flags=;
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ train_mode;       };
-       bad_vars{        };
       };
       update_after=0;
      };
@@ -1529,12 +1574,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  def_val=;
 	  expr {
 	   expr="network";
-	   flags=;
-	   var_expr="$#0#$";
-	   vars {
-	   };
-	   var_names{ network;	   };
-	   bad_vars{ 	   };
 	  };
 	 };
 	 ProgArg @[1] {
@@ -1545,12 +1584,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  def_val=;
 	  expr {
 	   expr="input_data";
-	   flags=;
-	   var_expr="$#0#$";
-	   vars {
-	   };
-	   var_names{ input_data;	   };
-	   bad_vars{ 	   };
 	  };
 	 };
 	};
@@ -1561,29 +1594,18 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	network_var=$9$;
 	local_ctr_var=$11$;
 	counter=Network::epoch;
+	update_after=0;
        };
        IfBreak @[2] {
 	desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here instead)";
 	flags=;
 	cond {
 	 expr="network.avg_sse <= err_stopcrit";
-	 flags=;
-	 var_expr="$#0#$.avg_sse <= $#1#$";
-	 vars {
-	 };
-	 var_names{ network;err_stopcrit;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
       test {
        expr="epoch < max_epoch";
-       flags=;
-       var_expr="$#0#$ < $#1#$";
-       vars {
-       };
-       var_names{ epoch;max_epoch;       };
-       bad_vars{        };
       };
      };
      MethodCall @[6] {
@@ -1625,7 +1647,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=SoNetwork;
       object_val=$1$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="network to operate on";
      };
      ProgVar @[1] {
@@ -1634,7 +1657,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=$2$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="table of patterns to present to the network, one row at a time";
      };
     };
@@ -1648,7 +1672,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       int_val=1;
       hard_enum_type=DataLoop::Order;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="controls the order in which events (rows of the input data datatable) are presented to the network
 (SEQUENTIAL, PERMUTED, RANDOM)";
      };
@@ -1657,7 +1682,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
      };
      ProgVar @[2] {
@@ -1666,7 +1692,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=.projects[0].data.gp[1][0]$14$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
      };
      ProgVar @[3] {
@@ -1675,15 +1702,17 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=TimeUsed;
       object_val=.projects[0].networks[0].epoch_time$15$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
      };
      ProgVar @[4] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=22;
+      int_val=4;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
      };
     };
@@ -1707,6 +1736,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       network_var=.projects[0].programs.gp[0][2].args[0]$16$;
       local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$17$;
       counter=Network::trial;
+      update_after=0;
      };
      AssignExpr @[1] {
       desc="get pointer to epoch timer object on network";
@@ -1714,12 +1744,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       result_var=.projects[0].programs.gp[0][2].vars[3]$18$;
       expr {
        expr="network.epoch_time";
-       flags=;
-       var_expr="$#0#$.epoch_time";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
@@ -1733,6 +1757,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       network_var=$16$;
       local_ctr_var=$17$;
       counter=Network::trial;
+      update_after=0;
      };
      AssignExpr @[1] {
       desc="get pointer to epoch timer object on network";
@@ -1740,12 +1765,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       result_var=$18$;
       expr {
        expr="network.epoch_time";
-       flags=;
-       var_expr="$#0#$.epoch_time";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
      MethodCall @[2] {
@@ -1766,12 +1785,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val="true";
 	expr {
 	 expr="true";
-	 flags=;
-	 var_expr="true";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -1812,12 +1825,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  def_val=;
 	  expr {
 	   expr="network";
-	   flags=;
-	   var_expr="$#0#$";
-	   vars {
-	   };
-	   var_names{ network;	   };
-	   bad_vars{ 	   };
 	  };
 	 };
 	 ProgArg @[1] {
@@ -1828,12 +1835,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  def_val=;
 	  expr {
 	   expr="input_data";
-	   flags=;
-	   var_expr="$#0#$";
-	   vars {
-	   };
-	   var_names{ input_data;	   };
-	   bad_vars{ 	   };
 	  };
 	 };
 	};
@@ -1843,12 +1844,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=;
 	cond {
 	 expr="network.Compute_Weights_Test(trial+1)";
-	 flags=;
-	 var_expr="$#0#$.Compute_Weights_Test($#1#$+1)";
-	 vars {
-	 };
-	 var_names{ network;trial;	 };
-	 bad_vars{ 	 };
 	};
 	true_code {
 	 name=;
@@ -1878,7 +1873,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       index_var=.projects[0].programs.gp[0][2].vars[4]$21$;
       order_var=.projects[0].programs.gp[0][2].vars[0]$22$;
       order=PERMUTED;
-      item_idx_list{ 33;24;14;2;12;16;26;49;40;37;13;19;0;28;32;30;46;7;45;34;42;27;31;38;18;48;4;23;29;22;47;1;36;15;6;35;3;8;11;39;5;9;17;43;10;20;25;44;21;41;      };
+      item_idx_list{ 15;9;36;17;43;40;5;20;10;24;38;11;44;13;8;7;19;46;0;12;28;2;32;47;48;41;26;21;49;25;18;4;34;6;31;16;23;29;37;35;1;39;45;30;14;42;27;22;33;3;      };
+      update_after=0;
       dmem_nprocs=1;
       dmem_this_proc=0;
      };
@@ -1887,12 +1883,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       cond {
        expr="network.wt_update == Network::BATCH";
-       flags=;
-       var_expr="$#0#$.wt_update == Network::BATCH";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
       true_code {
        name=;
@@ -1946,12 +1936,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -1995,7 +1979,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=SoNetwork;
       object_val=$1$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="network to operate on -- typically set by higher-level calling programs";
      };
      ProgVar @[1] {
@@ -2004,7 +1989,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=$2$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="datatable containing training input/output patterns";
      };
     };
@@ -2017,7 +2003,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Bool;
       bool_val=1;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="determines whether to update any network view displays after trial is completed";
      };
     };
@@ -2070,12 +2057,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -2086,12 +2067,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="input_data";
-	 flags=;
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ input_data;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -2137,12 +2112,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -2178,6 +2147,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	layer_name="Input";
 	offset {x=0: y=0: };
 	use_layer_type=1;
+	na_by_range=0;
 	ext_flags=EXT;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
        };
@@ -2187,6 +2157,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	layer_name="Name";
 	offset {x=0: y=0: };
 	use_layer_type=1;
+	na_by_range=0;
 	ext_flags=;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
        };
@@ -2208,7 +2179,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=LeabraNetwork;
       object_val=$1$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="network to apply inputs to -- typically set by calling program";
      };
      ProgVar @[1] {
@@ -2217,7 +2189,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=DataTable;
       object_val=$2$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="input datatable containing input/output patterns";
      };
     };
@@ -2231,7 +2204,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=LayerWriter;
       object_val=.projects[0].programs.gp[0][4].objs[0]$28$;
       objs_ptr=1;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
      };
     };
@@ -2267,12 +2241,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="input_data";
-	 flags=;
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ input_data;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -2283,12 +2251,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -2311,12 +2273,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val="false";
 	expr {
 	 expr="false";
-	 flags=;
-	 var_expr="false";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -2367,6 +2323,20 @@ this program can be extended to do arbitrary things to generate data and apply i
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2383,6 +2353,20 @@ this program can be extended to do arbitrary things to generate data and apply i
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2399,6 +2383,20 @@ this program can be extended to do arbitrary things to generate data and apply i
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2415,6 +2413,20 @@ this program can be extended to do arbitrary things to generate data and apply i
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2431,6 +2443,20 @@ this program can be extended to do arbitrary things to generate data and apply i
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2447,6 +2473,20 @@ this program can be extended to do arbitrary things to generate data and apply i
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2472,7 +2512,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=Network;
       object_val=$1$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="network to record data from";
      };
     };
@@ -2486,7 +2527,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=DataTable;
       object_val=$14$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="data table to record trial-level data to (this program writes new data to this table!)";
      };
      ProgVar @[1] {
@@ -2495,7 +2537,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=NetMonitor;
       object_val=.projects[0].programs.gp[0][5].objs[0]$30$;
       objs_ptr=1;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
      };
     };
@@ -2531,12 +2574,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="trial_mon_data";
-	 flags=;
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ trial_mon_data;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -2547,12 +2584,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -2575,12 +2606,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val="false";
 	expr {
 	 expr="false";
-	 flags=;
-	 var_expr="false";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -2603,12 +2628,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val="false";
 	expr {
 	 expr="true";
-	 flags=;
-	 var_expr="true";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -2672,12 +2691,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="trial_mon_data";
-	 flags=;
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ trial_mon_data;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -2688,12 +2701,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val="1";
 	expr {
 	 expr="1";
-	 flags=;
-	 var_expr="1";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -2727,6 +2734,20 @@ this program can be extended to do arbitrary things to generate data and apply i
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2743,6 +2764,20 @@ this program can be extended to do arbitrary things to generate data and apply i
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2759,6 +2794,20 @@ this program can be extended to do arbitrary things to generate data and apply i
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2775,6 +2824,20 @@ this program can be extended to do arbitrary things to generate data and apply i
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2791,6 +2854,20 @@ this program can be extended to do arbitrary things to generate data and apply i
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2807,6 +2884,20 @@ this program can be extended to do arbitrary things to generate data and apply i
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2832,7 +2923,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=Network;
       object_val=$1$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="network to get data from";
      };
     };
@@ -2846,7 +2938,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=DataTable;
       object_val=$34$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="data table to write the epoch data to";
      };
      ProgVar @[1] {
@@ -2855,7 +2948,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=NetMonitor;
       object_val=.projects[0].programs.gp[0][6].objs[0]$35$;
       objs_ptr=1;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="network monitor object that contains full specs for what to record and where to get it";
      };
      ProgVar @[2] {
@@ -2864,7 +2958,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=TimeUsed;
       object_val=$15$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
      };
     };
@@ -2888,12 +2983,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       result_var=.projects[0].programs.gp[0][6].vars[2]$36$;
       expr {
        expr="network.epoch_time";
-       flags=;
-       var_expr="$#0#$.epoch_time";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
      MethodCall @[1] {
@@ -2914,12 +3003,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="epoch_mon_data";
-	 flags=;
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ epoch_mon_data;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -2930,12 +3013,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -2958,12 +3035,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val="false";
 	expr {
 	 expr="false";
-	 flags=;
-	 var_expr="false";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -2986,12 +3057,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val="false";
 	expr {
 	 expr="true";
-	 flags=;
-	 var_expr="true";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -3031,12 +3096,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       result_var=$36$;
       expr {
        expr="network.epoch_time";
-       flags=;
-       var_expr="$#0#$.epoch_time";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
      MethodCall @[3] {
@@ -3057,12 +3116,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="epoch_timer.used.GetTotSecs()";
-	 flags=;
-	 var_expr="$#0#$.used.GetTotSecs()";
-	 vars {
-	 };
-	 var_names{ epoch_timer;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -3073,12 +3126,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val="\"\"";
 	expr {
 	 expr="\"epoch_time_tot\"";
-	 flags=;
-	 var_expr="\"epoch_time_tot\"";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[2] {
@@ -3089,12 +3136,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="-1";
-	 flags=;
-	 var_expr="-1";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -3117,12 +3158,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="epoch_timer.used.GetUsrSecs()";
-	 flags=;
-	 var_expr="$#0#$.used.GetUsrSecs()";
-	 vars {
-	 };
-	 var_names{ epoch_timer;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -3133,12 +3168,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val="\"\"";
 	expr {
 	 expr="\"epoch_time_usr\"";
-	 flags=;
-	 var_expr="\"epoch_time_usr\"";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[2] {
@@ -3149,12 +3178,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="-1";
-	 flags=;
-	 var_expr="-1";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -3198,7 +3221,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=Network;
       object_val=$1$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc=;
      };
     };
@@ -3212,6 +3236,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       string_val=;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="user-provided tag (startup script will set this!)";
      };
      ProgVar @[1] {
@@ -3220,6 +3245,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       string_val=;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="user-provided subdirectory to save weights in";
      };
      ProgVar @[2] {
@@ -3227,7 +3253,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="final generated file name -- do not edit!";
      };
      ProgVar @[3] {
@@ -3235,7 +3262,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_String;
       string_val="0036";
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="string rep of epoch with leading zeros";
      };
      ProgVar @[4] {
@@ -3243,7 +3271,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_String;
       string_val="03";
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="string rep of batch with leading zeros";
      };
      ProgVar @[5] {
@@ -3251,7 +3280,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_String;
       string_val=".03_0036";
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="batch + epoch";
      };
     };
@@ -3279,12 +3309,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=;
       cond {
        expr="taMisc::dmem_proc > 0";
-       flags=;
-       var_expr="taMisc::dmem_proc > 0";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
      MiscCall @[1] {
@@ -3305,12 +3329,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="network.batch";
-	 flags=;
-	 var_expr="$#0#$.batch";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -3321,12 +3339,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="2";
-	 flags=;
-	 var_expr="2";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -3349,12 +3361,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="network.epoch";
-	 flags=;
-	 var_expr="$#0#$.epoch";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -3365,12 +3371,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="4";
-	 flags=;
-	 var_expr="4";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -3381,12 +3381,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       result_var=.projects[0].programs.gp[0][7].vars[5]$41$;
       expr {
        expr="tag + \".\" + batch_str + \"_\" + epoch_str";
-       flags=;
-       var_expr="$#0#$ + \".\" + batch_str + \"_\" + epoch_str";
-       vars {
-       };
-       var_names{ tag;       };
-       bad_vars{        };
       };
      };
      MethodCall @[4] {
@@ -3407,12 +3401,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="\".wts.gz\"";
-	 flags=;
-	 var_expr="\".wts.gz\"";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -3423,12 +3411,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val="\"\"";
 	expr {
 	 expr="final_tag";
-	 flags=;
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ final_tag;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[2] {
@@ -3439,12 +3421,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val="\"\"";
 	expr {
 	 expr="wts_subdir";
-	 flags=;
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ wts_subdir;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[3] {
@@ -3455,12 +3431,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val="false";
 	expr {
 	 expr="false";
-	 flags=;
-	 var_expr="false";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -3483,12 +3453,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val="\"\"";
 	expr {
 	 expr="fname";
-	 flags=;
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ fname;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -3499,12 +3463,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val="Network::NET_FMT";
 	expr {
 	 expr="Network::NET_FMT";
-	 flags=;
-	 var_expr="Network::NET_FMT";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -3522,7 +3480,9 @@ this program can be extended to do arbitrary things to generate data and apply i
    name="Browser";
    visible=1;
    m_is_root=0;
+   m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
+   m_is_dialog=0;
    toolbars {
     name=;
     el_typ=ToolBar;
@@ -3576,7 +3536,42 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  m_data=$1$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
-	  lay_disp_modes{ Input=0;Map=0;	  };
+	  display=1;
+	  lay_mv=0;
+	  net_text=1;
+	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
+	  net_text_rot=0;
+	  net_box_offset=0.5;
+	  ordered_uvg_list{ act;	  };
+	  unit_disp_mode=UDM_BLOCK;
+	  unit_text_disp=UTD_NONE;
+	  max_size {x=10: y=10: z=2: };
+	  font_sizes {
+	   net_name=0.05;
+	   net_vals=0.05;
+	   layer=0.04;
+	   layer_vals=0.03;
+	   prjn=0.01;
+	   unit=0.02;
+	   un_nm_len=3;
+	  };
+	  view_params {
+	   xy_square=0;
+	   unit_spacing=0.05;
+	   prjn_disp=L_R_F;
+	   prjn_name=0;
+	   prjn_width=0.002;
+	   prjn_trans=0.5;
+	   lay_trans=0.5;
+	   unit_trans=0.6;
+	  };
+	  wt_line_disp=0;
+	  wt_line_width=4;
+	  wt_line_thr=0.5;
+	  wt_line_swt=0;
+	  wt_prjn_lay=NULL;
+	  snap_bord_disp=0;
+	  snap_bord_width=4;
 	  scale {
 	   name="ColorScale";
 	   chunks=133;
@@ -3610,30 +3605,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	    max=1;
 	   };
 	  };
-	  display=1;
-	  ordered_uvg_list{ act;	  };
-	  unit_disp_mode=UDM_BLOCK;
-	  unit_text_disp=UTD_NONE;
-	  max_size {x=10: y=10: z=2: };
-	  font_sizes {
-	   net_name=0.05;
-	   net_vals=0.05;
-	   layer=0.04;
-	   layer_vals=0.03;
-	   prjn=0.01;
-	   unit=0.02;
-	   un_nm_len=3;
-	  };
-	  view_params {
-	   xy_square=0;
-	   unit_spacing=0.05;
-	   prjn_disp=L_R_F;
-	   prjn_name=0;
-	   prjn_width=0.002;
-	   prjn_trans=0.5;
-	   lay_trans=0.5;
-	   unit_trans=0.6;
-	  };
+	  lay_disp_modes{ Input=0;Map=0;	  };
 	 };
 	};
        };
@@ -3666,6 +3638,55 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
   el_typ=SoNetwork;
   el_def=0;
   SoNetwork @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="sse";
+     value 1 0=1;
+    };
+    UserDataItem @[1] {
+     name="output_name";
+     value 1 0=1;
+    };
+    UserDataItem @[2] {
+     name="trial_name";
+     value 1 0=1;
+    };
+    UserDataItem @[3] {
+     name="group_name";
+     value 1 0=1;
+    };
+    UserDataItem @[4] {
+     name="time";
+     value 1 0=1;
+    };
+    UserDataItem @[5] {
+     name="cycle";
+     value 1 0=1;
+    };
+    UserDataItem @[6] {
+     name="tick";
+     value 1 0=1;
+    };
+    UserDataItem @[7] {
+     name="trial";
+     value 1 0=1;
+    };
+    UserDataItem @[8] {
+     name="group";
+     value 1 0=1;
+    };
+    UserDataItem @[9] {
+     name="epoch";
+     value 1 0=1;
+    };
+    UserDataItem @[10] {
+     name="batch";
+     value 1 0=1;
+    };
+   };
    name="SoNetwork_0";
    desc=;
    specs {
@@ -4115,8 +4136,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      sse=0;
      icon_value=0;
      spec {type=SomLayerSpec: spec=.projects[0].networks[0].specs[0]$47$: };
-     avg_act=0.05880168;
-     sum_act=0.1176034;
+     avg_act=0.1252386;
+     sum_act=0.2504773;
     };
     SoLayer @[1] {
      name="Map";
@@ -4179,6 +4200,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      sum_act=0;
     };
    };
+   view_objs {
+    name=;
+    el_typ=NetViewObj;
+    el_def=0;
+   };
    flags=;
    auto_build=AUTO_BUILD;
    train_mode=TRAIN;
@@ -4186,7 +4212,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    small_batch_n=10;
    batch=0;
    epoch=0;
+   group=0;
    trial=0;
+   tick=0;
    cycle=0;
    time=0;
    group_name=;
@@ -4202,13 +4230,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="train_time": start={usr=36636: sys=3737: tot=2596422352: }: end={usr=3218: sys=738: tot=2191370784: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   epoch_time {name="epoch_time": start={usr=37883: sys=3834: tot=2596423699: }: end={usr=37883: sys=3834: tot=2596423699: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   wt_sync_time {name="wt_sync_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   misc_time {name="misc_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   train_time {name="train_time": start={usr=7752: sys=1153: tot=3136908121: }: end={usr=3218: sys=738: tot=2191370784: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   epoch_time {name="epoch_time": start={usr=7752: sys=1153: tot=3136908122: }: end={usr=7454: sys=1092: tot=3136901248: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   wt_sync_time {name="wt_sync_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   misc_time {name="misc_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    dmem_sync_level=DMEM_SYNC_NETWORK;
    dmem_nprocs=1;
    usr1_save_fmt=FULL_NET;

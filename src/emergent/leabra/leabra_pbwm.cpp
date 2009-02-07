@@ -76,17 +76,11 @@ void MatrixUnitSpec::InitLinks() {
   bias_spec.type = &TA_MatrixBiasSpec;
 }
 
-void MatrixUnitSpec::Compute_SentNetinDelta(LeabraUnit* u, LeabraNetwork* net, float new_netin) {
+void MatrixUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   LeabraLayer* lay = u->own_lay();
   if(lay->hard_clamped) return;
-
-  u->net_raw += new_netin;
-  float tot_net = (u->bias_scale * u->bias.Cn(0)->wt) + u->net_raw;
-  if(u->ext_flag & Unit::EXT) {
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-    tot_net += u->ext * ls->clamp.gain;
-  }
-
+  
+  // this is the new part of the code: getting the effective dt relative to the freeze net fun
   MatrixLayerSpec* mls = (MatrixLayerSpec*)lay->spec.SPtr();
   float eff_dt = dt.net;
   if(freeze_net) {
@@ -98,8 +92,34 @@ void MatrixUnitSpec::Compute_SentNetinDelta(LeabraUnit* u, LeabraNetwork* net, f
     }
   }
 
-  u->net = u->prv_net + eff_dt * (tot_net - u->prv_net);
-  u->prv_net = u->net;
+  // remainder below here should be same as original, except dt.net -> eff_dt
+  if(net->inhib_cons_used) {
+    u->g_i_raw += u->g_i_delta;
+    u->gc.i = u->g_i_raw;
+    u->gc.i = u->prv_g_i + eff_dt * (u->gc.i - u->prv_g_i);
+    u->prv_g_i = u->gc.i;
+  }
+
+  u->net_raw += u->net_delta;
+  float tot_net = (u->bias_scale * u->bias.Cn(0)->wt) + u->net_raw;
+  if(u->ext_flag & Unit::EXT) {
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+    tot_net += u->ext * ls->clamp.gain;
+  }
+
+  u->net_delta = 0.0f;	// clear for next use
+  u->g_i_delta = 0.0f;	// clear for next use
+
+  if(act_fun == SPIKE) {
+    // todo: need a mech for inhib spiking
+    u->net = tot_net;		// store directly for integration
+    Compute_NetinInteg_Spike(u,net);
+  }
+  else {
+    u->net = u->prv_net + eff_dt * (tot_net - u->prv_net);
+    u->prv_net = u->net;
+  }
+
   u->i_thr = Compute_IThresh(u, net);
 }
 

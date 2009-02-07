@@ -400,7 +400,11 @@ public:
 						float su_act_delta_eff);
   inline virtual void 	Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net, int thread_no,
 					float su_act_delta_eff);
-  // #CAT_Activation sender-based delta-activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
+  // #CAT_Activation sender-based delta-activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
+
+  // recv-based also needed for some statistics, but is NOT used for main compute code
+  inline float 		C_Compute_Netin(LeabraCon* cn, Unit*, Unit* su);
+  inline float 		Compute_Netin(RecvCons* cg, Unit* ru);
 
   ///////////////////////////////////////////////////////////////
   //	Learning
@@ -1042,15 +1046,13 @@ public:
 
   virtual void 	Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Activation send netinput; sender based and only when act changes above a threshold -- only this delta form is supported
-  virtual void	Compute_SentNetinDelta(LeabraUnit* u, LeabraNetwork* net, float new_netin);
-  // #CAT_Activation called by network-level Send_NetinDelta function to integrate sent netin value with current net input value
-  virtual void	Compute_SentInhibDelta(LeabraUnit* u, LeabraNetwork* net, float new_inhib);
-  // #CAT_Activation called by network-level Send_NetinDelta function to integrate sent inhib value with current inhib value
-    virtual void Compute_Netin_Spike(LeabraUnit* u, LeabraNetwork* net);
-    // #CAT_Activation called by Compute_SentNetinDelta: compute actual netin conductance value for spiking units by integrating over spike
+  virtual void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
+  // #CAT_Activation integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
+    virtual void Compute_NetinInteg_Spike(LeabraUnit* u, LeabraNetwork* net);
+    // #IGNORE called by Compute_NetinInteg for spiking units: compute actual netin conductance value for spiking units by integrating over spike
 
     virtual float Compute_IThresh(LeabraUnit* u, LeabraNetwork* net);
-    // #CAT_Activation called by Compute_SentNetinDelta: compute inhibitory value that would place unit directly at threshold -- computed in Compute_SentNetin.. function
+    // #CAT_Activation called by Compute_NetinInteg: compute inhibitory value that would place unit directly at threshold
       inline float Compute_IThreshStd(LeabraUnit* u, LeabraNetwork* net);
       // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, using all currents EXCEPT bias.wt
       inline float Compute_IThreshNoA(LeabraUnit* u, LeabraNetwork* net);
@@ -1347,15 +1349,12 @@ public:
   void	Send_NetinDelta(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Send_NetinDelta(this, net, thread_no); }
   // #CAT_Activation send netinput; sender based and only when act changes above a threshold -- only this delta form is supported
-  void	Compute_SentNetinDelta(LeabraNetwork* net, float new_netin)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_SentNetinDelta(this, net, new_netin); }
-  // #CAT_Activation called by network-level Send_NetinDelta function to integrate sent netin value with current net input value
-  void	Compute_SentInhibDelta(LeabraNetwork* net, float new_inhib)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_SentInhibDelta(this, net, new_inhib); }
-  // #CAT_Activation called by network-level Send_NetinDelta function to integrate sent inhib value with current inhib value
+  void	Compute_NetinInteg(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_NetinInteg(this, net, thread_no); }
+  // #CAT_Activation integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
   float Compute_IThresh(LeabraNetwork* net)
   { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_IThresh(this, net); }
-  // #CAT_Activation called by Compute_SentNetinDelta: compute inhibitory value that would place unit directly at threshold -- computed in Compute_SentNetin.. function
+  // #CAT_Activation called by Compute_NetinInteg: compute inhibitory value that would place unit directly at threshold
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
@@ -1816,6 +1815,7 @@ public:
   //	Cycle Step 1: Netinput 
 
   // main computation is direct Send_NetinDelta call on units through threading mechanism
+  // followed by Compute_NetinInteg on units
 
   virtual void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute AvgMax stats on netin and i_thr values computed during netin computation -- used for various regulatory and monitoring functions
@@ -2541,13 +2541,14 @@ public:
   enum ThreadFlags { // #BITS flags for controlling the parallel threading process (which functions are threaded)
     TF_NONE	= 0x00,	// #NO_BIT no thread flags set
     NETIN 	= 0x01,	// ~20% of compute time, norm comp val = 1.0, the net input computation (sender-based), computed per cycle
-    SRAVG 	= 0x02,	// ~12% of compute time, norm comp val = 0.9, the sender-receiver average activation (xcal only), computed per ct_sravg.interval (typically every 5 cycles)
-    ACT		= 0x04,	// ~7% of compute time, norm comp val = 0.4, activation, computed per cycle
-    WEIGHTS	= 0x08,	// ~7% of compute time, norm comp val = 1.0, weight update from dwt changes, computed per trial (and still that expensive)
-    DWT		= 0x10,	// ~3% of compute time, norm comp val = 0.6, delta-weight changes (learning), computed per trial
-    TRIAL_INIT	= 0x20,	// ~2% of compute time, norm comp val = 0.2, trial-level initialization -- includes SRAvg init over connections if using xcal, which can be expensive
-    SETTLE_INIT	= 0x40,	// ~.5% of compute time, norm comp val = 0.1, settle-level initialization -- only at unit level and the most lightweight function -- may not be worth it in general to parallelize
-    TF_ALL	= 0x7F,	// #NO_BIT all thread flags set
+    NETIN_INTEG	= 0x02,	// ~20% of compute time, norm comp val = 1.0, the net input computation (sender-based), computed per cycle
+    SRAVG 	= 0x04,	// ~12% of compute time, norm comp val = 0.9, the sender-receiver average activation (xcal only), computed per ct_sravg.interval (typically every 5 cycles)
+    ACT		= 0x08,	// ~7% of compute time, norm comp val = 0.4, activation, computed per cycle
+    WEIGHTS	= 0x10,	// ~7% of compute time, norm comp val = 1.0, weight update from dwt changes, computed per trial (and still that expensive)
+    DWT		= 0x20,	// ~3% of compute time, norm comp val = 0.6, delta-weight changes (learning), computed per trial
+    TRIAL_INIT	= 0x40,	// ~2% of compute time, norm comp val = 0.2, trial-level initialization -- includes SRAvg init over connections if using xcal, which can be expensive
+    SETTLE_INIT	= 0x80,	// ~.5% of compute time, norm comp val = 0.1, settle-level initialization -- only at unit level and the most lightweight function -- may not be worth it in general to parallelize
+    TF_ALL	= 0xFF,	// #NO_BIT all thread flags set
   };
 
   LearnRule	learn_rule;	// The variant of Leabra learning rule to use 
@@ -2571,7 +2572,7 @@ public:
   CtSineInhibMod ct_sin_i;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL sinusoidal inhibition parameters for inhibitory modulations during trial, simulating oscillations resulting from imperfect inhibtory set point behavior
   CtFinalInhibMod ct_fin_i;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL final inhibition parameters for extra inhibition to apply during final inhib phase, simulating slow-onset GABA currents
   CtSRAvgVals	sravg_vals;	// #CAT_Learning #READ_ONLY #EXPERT sender-receiver average computation values, e.g., for normalizing sravg values
-  ThreadFlags	thread_flags;	// #CAT_Structure #EXPERT #NO_SAVE flags for controlling the parallel threading process (which functions are threaded) -- this is just for testing and debugging purposes, and not for general use
+  ThreadFlags	thread_flags;	// #CAT_Structure #EXPERT #NO_SAVE flags for controlling the parallel threading process (which functions are threaded) -- this is just for testing and debugging purposes, and not for general use -- they are not saved
 
   float		minus_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
   float		avg_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles in the minus phase (computed over previous epoch)
@@ -2703,10 +2704,12 @@ public:
   //	Cycle Stage 1: netinput
 
   override void	Send_Netin();
-  // #CAT_Cycle compute netinputs (sender-delta based -- only send when sender activations change) -- also calls Compute_SentNetinDelta on units to integrate netin averages, and add soft clamp values
+  // #CAT_Cycle compute netinputs (sender-delta based -- only send when sender activations change) -- new values go in net_delta or g_i_delta (summed up from tmp array for threaded case)
+  virtual void Compute_NetinInteg();
+  // #CAT_Cycle Stage 1.2 integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
 
   virtual void Compute_NetinStats();
-  // #CAT_Cycle Stage 1.2 compute AvgMax stats on netin and i_thr values computed during netin computation -- used for various regulatory and monitoring functions -- not threadable
+  // #CAT_Cycle Stage 1.3 compute AvgMax stats on netin and i_thr values computed during netin computation -- used for various regulatory and monitoring functions -- not threadable
 
 
   ///////////////////////////////////////////////////////////////////////
@@ -2898,6 +2901,16 @@ inline void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* ne
     }
   }
 }
+
+float LeabraConSpec::C_Compute_Netin(LeabraCon* cn, Unit*, Unit* su) {
+  return cn->wt * su->act;
+}
+float LeabraConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {
+  float rval=0.0f;
+  CON_GROUP_LOOP(cg, rval += C_Compute_Netin((LeabraCon*)cg->Cn(i), ru, cg->Un(i)));
+  return ((LeabraRecvCons*)cg)->scale_eff * rval;
+}
+
 
 ////////////////////////////////////////////////////
 //     Computing dWt: LeabraCHL

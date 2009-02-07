@@ -2378,7 +2378,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      desc=;
      flags=;
      target=$2$;
-     targ_ld_init="*LeabraBatch*";
+     targ_ld_init="*LeabraTrain*";
      prog_args {
       name=;
       el_typ=ProgArg;

@@ -1128,39 +1128,41 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thre
   }
 }
 
-void LeabraUnitSpec::Compute_SentNetinDelta(LeabraUnit* u, LeabraNetwork* net, float new_netin) {
+void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   LeabraLayer* lay = u->own_lay();
   if(lay->hard_clamped) return;
 
-  u->net_raw += new_netin;
+  if(net->inhib_cons_used) {
+    u->g_i_raw += u->g_i_delta;
+    u->gc.i = u->g_i_raw;
+    u->gc.i = u->prv_g_i + dt.net * (u->gc.i - u->prv_g_i);
+    u->prv_g_i = u->gc.i;
+  }
+
+  u->net_raw += u->net_delta;
   float tot_net = (u->bias_scale * u->bias.Cn(0)->wt) + u->net_raw;
   if(u->ext_flag & Unit::EXT) {
     LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
     tot_net += u->ext * ls->clamp.gain;
   }
 
+  u->net_delta = 0.0f;	// clear for next use
+  u->g_i_delta = 0.0f;	// clear for next use
+
   if(act_fun == SPIKE) {
+    // todo: need a mech for inhib spiking
     u->net = tot_net;		// store directly for integration
-    Compute_Netin_Spike(u,net);
-    return;			// does everything
+    Compute_NetinInteg_Spike(u,net);
   }
-  u->net = u->prv_net + dt.net * (tot_net - u->prv_net);
-  u->prv_net = u->net;
+  else {
+    u->net = u->prv_net + dt.net * (tot_net - u->prv_net);
+    u->prv_net = u->net;
+  }
+
   u->i_thr = Compute_IThresh(u, net);
 }
 
-// todo: need a mech for inhib spiking
-void LeabraUnitSpec::Compute_SentInhibDelta(LeabraUnit* u, LeabraNetwork* net, float new_inhib) {
-  LeabraLayer* lay = u->own_lay();
-  if(lay->hard_clamped) return;
-
-  u->g_i_raw += new_inhib;
-  u->gc.i = u->g_i_raw;
-  u->gc.i = u->prv_g_i + dt.net * (u->gc.i - u->prv_g_i);
-  u->prv_g_i = u->gc.i;
-}
-
-void LeabraUnitSpec::Compute_Netin_Spike(LeabraUnit* u, LeabraNetwork* net) {
+void LeabraUnitSpec::Compute_NetinInteg_Spike(LeabraUnit* u, LeabraNetwork* net) {
   // netin gets added at the end of the spike_buf -- 0 time is the end
   u->spike_buf.CircAddLimit(u->net, spike.window); // add current net to buffer
   int mx = MAX(spike.window, u->spike_buf.length);
@@ -1186,7 +1188,6 @@ void LeabraUnitSpec::Compute_Netin_Spike(LeabraUnit* u, LeabraNetwork* net) {
     u->net = u->prv_net + dt.net * (u->net - u->prv_net);
     u->prv_net = u->net;
   }
-  u->i_thr = Compute_IThresh(u, net);
 }
 
 float LeabraUnitSpec::Compute_IThresh(LeabraUnit* u, LeabraNetwork* net) {
@@ -4950,6 +4951,7 @@ void LeabraNetwork::Cycle_Run() {
     ct_cycle = 0;
 
   Send_Netin();
+  Compute_NetinInteg();
   Compute_NetinStats();
 
   Compute_Inhib();
@@ -4989,8 +4991,8 @@ void LeabraNetwork::Send_Netin() {
 	  nw_nt += send_netin_tmp.FastEl(i, j);
 	  nw_inhb += send_inhib_tmp.FastEl(i, j);
 	}
-	un->Compute_SentNetinDelta(this, nw_nt);
-	un->Compute_SentInhibDelta(this, nw_inhb);
+	un->net_delta = nw_nt;
+	un->g_i_delta = nw_inhb;
       }
       send_inhib_tmp.InitVals(0.0f); // reset for next time around
     }
@@ -5001,38 +5003,28 @@ void LeabraNetwork::Send_Netin() {
 	for(int j=0;j<nt;j++) {
 	  nw_nt += send_netin_tmp.FastEl(i, j);
 	}
-	un->Compute_SentNetinDelta(this, nw_nt);
+	un->net_delta = nw_nt;
       }
     }
     send_netin_tmp.InitVals(0.0f); // reset for next time around
   }
-  else {			// NOT using threads: vars are now on the unit itself!
-    if(inhib_cons_used) {
-      for(int i=1;i<nu;i++) {	// 0 = dummy idx
-	LeabraUnit* un = (LeabraUnit*)units_flat[i];
-	un->Compute_SentNetinDelta(this, un->net_delta);
-	un->Compute_SentInhibDelta(this, un->g_i_delta);
-	un->net_delta = 0.0f;	// clear for next use
-	un->g_i_delta = 0.0f;	// clear for next use
-      }
-    }
-    else {
-      for(int i=1;i<nu;i++) {	// 0 = dummy idx
-	LeabraUnit* un = (LeabraUnit*)units_flat[i];
-	un->Compute_SentNetinDelta(this, un->net_delta);
-	un->net_delta = 0.0f;	// clear for next use
-      }
-    }
-  }
 
 #ifdef DMEM_COMPILE
-  dmem_share_units.Sync(3);	// todo: revisit
+  dmem_share_units.Sync(3);
 #endif
   if(send_pct_tot > 0) {	// only avail for non-threaded calls
     send_pct = (float)send_pct_n / (float)send_pct_tot;
     avg_send_pct_sum += send_pct;
     avg_send_pct_n++;
   }
+}
+
+void LeabraNetwork::Compute_NetinInteg() {
+  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_NetinInteg);
+  if(threads.send_netin && (thread_flags & NETIN_INTEG))
+    threads.Run(&un_call, 1.0f);
+  else
+    threads.Run(&un_call, -1.0f); // -1 = always run localized
 }
 
 void LeabraNetwork::Compute_NetinStats() {
