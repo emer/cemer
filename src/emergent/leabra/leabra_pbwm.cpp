@@ -1502,16 +1502,6 @@ void PFCOutLayerSpec::SetCurBaseGain(LeabraNetwork* net) {
   }
 }
 
-void PFCOutLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
-  // that's it: don't do any processing on this layer: set all idx to 0
-  lay->units_flat_idx = 0;
-  Unit* un;
-  taLeafItr ui;
-  FOR_ITR_EL(Unit, un, lay->units., ui) {
-    un->flat_idx = 0;
-  }
-}
-
 void PFCOutLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   SetCurBaseGain(net);
 
@@ -1578,15 +1568,9 @@ void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void PFCOutLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
-  // important note: compared to prior non-threaded version of the code, this will
-  // have a 1 cycle extra lag, because it is getting the activations of the maintenance 
-  // pfc units on the PREVIOUS cycle, whereas the old code would get the current cycle
-  // acts.  In many ways a one cycle delay is much more realistic, so it probably makes
-  // sense to keep it this way, at the cost of breaking 100% compatibility with prior
-  // versions.
-
+void PFCOutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_PfcOutAct(lay, net);
+  inherited::Compute_CycleStats(lay, net);
 }
 
 
