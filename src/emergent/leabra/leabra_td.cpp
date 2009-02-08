@@ -646,6 +646,9 @@ void TDRewPredLayerSpec::Compute_ExtToPlus(Unit_Group* ugp, LeabraNetwork*) {
     if(i > 0) u->act_p = us->clamp_range.Clip(u->ext);
     else u->act_p = u->ext;
     u->act_dif = u->act_p - u->act_m;
+    // important to clear ext stuff, otherwise it will get added into netin next time around!!
+    u->ext = 0.0f;
+    u->ext_flag = Unit::NO_EXTERNAL;
   }
 }
 
