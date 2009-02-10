@@ -613,6 +613,7 @@ public:
     VO_DOUBLE_CLICK_EXP_ALL = 0X001, // #LABEL_DoubleClickExpAll double click expands or contracts all tree items -- use at your own risk on big projects...
     VO_AUTO_SELECT_NEW	= 0x002, // #LABEL_AutoSelectNew automatically select (the first) of a new tree item that is made with New or similar menu commands
     VO_AUTO_EXPAND_NEW	= 0x004, // #LABEL_AutoExpandNew automatically expand new tree items that are made with New or similar menu commands
+    VO_USE_CHANGE_LOG	= 0x008, // #LABEL_UseChangeLog new projects use the Change Log by default
   };
 
   enum	GuiStyle {	// style options provided by the gui system (not all are available on all platforms)

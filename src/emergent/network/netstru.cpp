@@ -31,7 +31,11 @@
 #include "netstru_qtso.h"
 #endif
 
-
+// Static function -- could be put onto Network, but I didn't want to change header
+bool Network_InStructUpdate(Network* net) {
+  taDataLink* dl = net->data_link(); // doesn't autocreate
+  return (dl ? (dl->dbuCnt() > 0) : false);
+}
 
 //////////////////////////
 //  SigmoidSpec		//
@@ -3185,6 +3189,9 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
     ug->units_lesioned = true;
   }
   StructUpdate(false);
+  if (!Network_InStructUpdate(own_lay->own_net)) {
+    own_lay->own_net->UpdtAfterNetMod();
+  }
   return rval;
 }
 
@@ -4422,6 +4429,9 @@ int Layer::LesionUnits(float p_lesion, bool permute) {
   StructUpdate(true);
   return units.LesionUnits(p_lesion, permute);
   StructUpdate(false);
+  if (!Network_InStructUpdate(own_net)) {
+    own_net->UpdtAfterNetMod();
+  }
 }
 
 bool Layer::UpdateUnitSpecs(bool force) {

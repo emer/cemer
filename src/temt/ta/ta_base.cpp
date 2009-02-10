@@ -1434,7 +1434,7 @@ bool taBase::RemoveDataClient(IDataLinkClient* dlc) {
 }
 
 void taBase::BatchUpdate(bool begin, bool struc) {
-  taDataLink* dl = data_link();
+  taDataLink* dl = GetDataLink(); // force create
   if (!dl) return;
   if (begin) {
     if (struc)

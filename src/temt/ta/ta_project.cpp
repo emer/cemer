@@ -356,7 +356,7 @@ public:
 void taProject::Initialize() {
   m_dirty = false;
   m_no_save = false;
-  use_change_log = true;
+  use_change_log = (taMisc::viewer_options & taMisc::VO_USE_CHANGE_LOG);
   viewers.SetBaseType(&TA_TopLevelViewer);
 }
 
