@@ -459,7 +459,7 @@ public:
     const String& name="(default name)"); // #NO_MENU
 #endif
   override int		NumListCols() const {return 3;}
-  // name, val_type (float, etc.), disp_opts
+  // name, val_type (float, etc.), desc
   override String	GetColHeading(const KeyString& key) const;
   // header text for the indicated column
   override const KeyString GetListColKey(int col) const;
