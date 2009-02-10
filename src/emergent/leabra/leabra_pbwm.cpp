@@ -123,6 +123,32 @@ void MatrixUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   u->i_thr = Compute_IThresh(u, net);
 }
 
+float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
+  LeabraLayer* ol = u->own_lay();
+  MatrixLayerSpec* ls = (MatrixLayerSpec*)ol->GetLayerSpec();
+  if(!ls->avgda_rnd_go.mod_noise) {
+    return inherited::Compute_Noise(u, net);
+  }
+
+  float rval = 0.0f;
+  if(noise_adapt.trial_fixed) {
+    rval = u->noise; // u->noise is trial-level generated value
+  }
+  else {
+    rval = noise.Gen();
+    u->noise = rval;
+  }
+  
+  float avg_go_da = u->misc_1;
+  if(avg_go_da > ls->avgda_rnd_go.avgda_thr)
+    rval *= (1.0f - (noise_adapt.min_pct_c * net->pvlv_lve));
+  else
+    rval *= (1.0f - (noise_adapt.min_pct_c * (1.0f - (ls->avgda_rnd_go.avgda_thr - avg_go_da))));
+  return rval;
+}
+
+
+
 //////////////////////////////////
 //	Matrix Layer Spec	//
 //////////////////////////////////
@@ -167,6 +193,7 @@ void MatrixErrRndGoSpec::Initialize() {
 
 void MatrixAvgDaRndGoSpec::Initialize() {
   on = true;
+  mod_noise = false;
   avgda_p = 0.1f;
   gain = 0.5f;
   avgda_thr = 0.1f;
@@ -479,7 +506,7 @@ void MatrixLayerSpec::Compute_ErrRndGo(LeabraLayer* lay, LeabraNetwork*) {
 }
 
 void MatrixLayerSpec::Compute_AvgDaRndGo(LeabraLayer* lay, LeabraNetwork*) {
-  if(!avgda_rnd_go.on) return;
+  if(!avgda_rnd_go.on || avgda_rnd_go.mod_noise) return;
 
   if(Random::ZeroOne() > avgda_rnd_go.avgda_p) return;	// not this time..
 
