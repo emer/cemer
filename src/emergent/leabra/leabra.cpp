@@ -253,10 +253,16 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
   learn_rule = (LeabraConSpec::LearnRule)net->learn_rule;
   // todo: could set come conflicting params..
   if(learn_rule != LEABRA_CHL) {
-    if(wt_sig.off == 1.25)
-      wt_sig.off = 1.0;		// this is key
-    if(lrate == 0.01)
+    if(wt_sig.off == 1.25f)
+      wt_sig.off = 1.0f;	// this is key
+    if(lrate == 0.01f)
       lrate = 0.02f;		// also important
+  }
+  else {
+    if(wt_sig.off == 1.0f)
+      wt_sig.off = 1.25f;
+    if(lrate == 0.02f)
+      lrate = 0.01f;		// also important
   }
 }
 
@@ -2480,9 +2486,9 @@ void LeabraLayerSpec::SetLearnRule(LeabraLayer* lay, LeabraNetwork* net) {
     decay.phase = 0.0f;		// no phase decay -- these are not even called
     decay.phase2 = 0.0f;
 
-    if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
-      net->ct_sravg.interval = 1;
-    }
+//     if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
+//       net->ct_sravg.interval = 1;
+//     }
   }
 
   if(lay->unit_spec.SPtr()) {

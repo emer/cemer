@@ -690,6 +690,16 @@ void ScalarValLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net)
   }
 }
 
+void ScalarValLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Settle_Init_TargFlags_Layer(lay, net);
+  UNIT_GP_ITR(lay, 
+	      if(ugp->size > 2) {
+		LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
+		u->Settle_Init_TargFlags(net); // this guy is otherwise excluded from unit-level!!
+	      }
+	      );
+}
+
 void ScalarValLayerSpec::Compute_AvgMaxVals_ugp(LeabraLayer* lay, Unit_Group* ug,
 						AvgMaxVals& vals, ta_memb_ptr mb_off) {
   vals.InitVals();
