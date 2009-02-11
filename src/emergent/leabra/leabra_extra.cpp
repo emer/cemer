@@ -677,29 +677,6 @@ void ScalarValLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
     LabelUnits(lay, net);
 }
 
-void ScalarValLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Settle_Init_Layer(lay, net);
-  if(lay->hard_clamped) return;
-
-  LeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
-    LeabraConSpec* bspec = (LeabraConSpec*)u->GetUnitSpec()->bias_spec.SPtr();
-    u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
-    u->bias_scale /= 100.0f; 		  // keep a constant scaling so it doesn't depend on network size!
-  }
-}
-
-void ScalarValLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Settle_Init_TargFlags_Layer(lay, net);
-  UNIT_GP_ITR(lay, 
-	      if(ugp->size > 2) {
-		LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
-		u->Settle_Init_TargFlags(net); // this guy is otherwise excluded from unit-level!!
-	      }
-	      );
-}
-
 void ScalarValLayerSpec::Compute_AvgMaxVals_ugp(LeabraLayer* lay, Unit_Group* ug,
 						AvgMaxVals& vals, ta_memb_ptr mb_off) {
   vals.InitVals();
@@ -836,8 +813,33 @@ void ScalarValLayerSpec::Compute_NetinScale_Unit0(LeabraLayer* lay, LeabraNetwor
 	      );
 }
 
-void ScalarValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
+void ScalarValLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Settle_Init_Layer(lay, net);
+
   Compute_NetinScale_Unit0(lay, net);
+
+  if(lay->hard_clamped) return;
+
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+    LeabraConSpec* bspec = (LeabraConSpec*)u->GetUnitSpec()->bias_spec.SPtr();
+    u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
+    u->bias_scale /= 100.0f; 		  // keep a constant scaling so it doesn't depend on network size!
+  }
+}
+
+void ScalarValLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Settle_Init_TargFlags_Layer(lay, net);
+  UNIT_GP_ITR(lay, 
+	      if(ugp->size > 2) {
+		LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
+		u->Settle_Init_TargFlags(net); // this guy is otherwise excluded from unit-level!!
+	      }
+	      );
+}
+
+void ScalarValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   if(scalar.clamp_pat) {
     inherited::Compute_HardClamp(lay, net);
     return;
@@ -1528,19 +1530,6 @@ void TwoDValLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_BiasVal(lay, net);
 }
 
-void TwoDValLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Settle_Init_Layer(lay, net);
-  if(lay->hard_clamped) return;
-
-  LeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
-    LeabraConSpec* bspec = (LeabraConSpec*)u->GetUnitSpec()->bias_spec.SPtr();
-    u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
-    u->bias_scale /= 100.0f; 		  // keep a constant scaling so it doesn't depend on network size!
-  }
-}
-
 void TwoDValLayerSpec::Compute_AvgMaxVals_ugp(LeabraLayer* lay, Unit_Group* ug,
 					      AvgMaxVals& vals, ta_memb_ptr mb_off) {
   vals.InitVals();
@@ -1727,9 +1716,35 @@ void TwoDValLayerSpec::Compute_NetinScale_Unit0(LeabraLayer* lay, LeabraNetwork*
 	      );
 }
 
-void TwoDValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
-  Compute_NetinScale_Unit0(lay, net);
+void TwoDValLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Settle_Init_Layer(lay, net);
 
+  Compute_NetinScale_Unit0(lay, net); // called otherwise in settle_init_units
+
+  if(lay->hard_clamped) return;
+
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+    LeabraConSpec* bspec = (LeabraConSpec*)u->GetUnitSpec()->bias_spec.SPtr();
+    u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
+    u->bias_scale /= 100.0f; 		  // keep a constant scaling so it doesn't depend on network size!
+  }
+}
+
+void TwoDValLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Settle_Init_TargFlags_Layer(lay, net);
+  UNIT_GP_ITR(lay, 
+	      if(ugp->size > 2) {
+		for(int i=lay->un_geom.x;i<ugp->size;i++) {
+		  LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
+		  u->Settle_Init_TargFlags(net); // this guy is otherwise excluded from unit-level!!
+		}
+	      }
+	      );
+}
+
+void TwoDValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   if(twod.clamp_pat) {
     inherited::Compute_HardClamp(lay, net);
     return;
