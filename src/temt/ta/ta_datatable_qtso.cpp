@@ -205,18 +205,20 @@ Qt::ItemFlags DataTableModel::flags(const QModelIndex& index) const {
 QVariant DataTableModel::headerData(int section, Qt::Orientation orientation,
   int role) const 
 {
-  if (orientation == Qt::Horizontal) {
-    DataCol* col = m_dt->GetColData(section, true); // quiet
-    if (col) { 
+  if (m_dt) {
+    if (orientation == Qt::Horizontal) {
+      DataCol* col = m_dt->GetColData(section, true); // quiet
+      if (col) { 
+        if (role == Qt::DisplayRole)
+          return QString(col->GetDisplayName().chars());
+        else if (role == Qt::ToolTipRole)
+          return QString(col->GetDesc().chars());
+      } else 
+        return QString();
+    } else {
       if (role == Qt::DisplayRole)
-        return QString(col->GetDisplayName().chars());
-      else if (role == Qt::ToolTipRole)
-        return QString(col->GetDesc().chars());
-    } else 
-      return QString();
-  } else {
-    if (role == Qt::DisplayRole)
-      return QString::number(section);
+        return QString::number(section);
+    }
   }
   return QVariant();
 }
