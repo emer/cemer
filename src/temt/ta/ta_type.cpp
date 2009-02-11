@@ -2904,8 +2904,9 @@ PropertyDef* PropertySpace::AssertProperty_impl(const char* nm, bool& is_new,
   MemberDefBase* md = FindName(nm);
   PropertyDef* pd = dynamic_cast<PropertyDef*>(md);
   //note: following actually won't happen, because maketa doesn't add members
-  if (md && !pd) {"PropertySpace::AssertProperty: attempt to find PropertyDef '",
-    nm, "' but MemberDef already exists\n";
+  if (md && !pd) {
+    taMisc::Warning("PropertySpace::AssertProperty: attempt to find PropertyDef '",
+    nm, "' but MemberDef already exists\n");
     return NULL;
   }
   TypeItem* ti = NULL;

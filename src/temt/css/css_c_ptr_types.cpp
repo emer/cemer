@@ -834,6 +834,7 @@ cssEl::cssTypes cssCPtr_Variant::GetPtrType() const {
   case Variant::T_Base:
   case Variant::T_Matrix:
     return T_TA;
+  //TODO: handle T_TypeItem
   }
   return T_Variant;
 }
