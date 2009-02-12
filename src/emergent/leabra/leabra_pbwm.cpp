@@ -21,6 +21,182 @@
 #include <limits.h>
 #include <float.h>
 
+////////////////////////////////////////////////////////////////////
+//	Patch/Striosomes and SNc
+
+void PatchLayerSpec::Initialize() {
+}
+
+void PatchLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  ScalarValLayerSpec::Compute_CycleStats(lay, net);
+  // do NOT report lvi value!
+}
+
+
+
+void SNcLayerSpec::Initialize() {
+}
+
+void SNcLayerSpec::HelpConfig() {
+  String help = "SNcLayerSpec (DA value) Computation:\n\
+ - Computes DA value based on inputs from PVLV layers.\n\
+ - No Learning\n\
+ \nSNcLayerSpec Configuration:\n\
+ - Use the Wizard BG_PFC button to automatically configure BG_PFC layers.\n\
+ - Recv cons marked with a MarkerConSpec from PVLV LVe, LVi, PVi, PVe, PVr, NV (all!)\n\
+ - Recv cons marked with a MarkerConSpec from Patch layer, same number of units\n\
+ - Send cons marked with a MarkerConSpec to Matrix layers\n\
+ - This layer must be after recv layers in list of layers\n\
+ - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
+     (because negative da = negative activation signal here";
+  cerr << help << endl << flush;
+  taMisc::Confirm(help);
+}
+
+bool SNcLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
+
+  bool rval = true;
+  if(lay->CheckError(lay->units.gp.size == 0, quiet, rval,
+		     "requires unit groups, one per associated stripe")) {
+    return false;
+  }
+
+  int patch_prjn_idx;
+  LeabraLayer* patch_lay = FindLayerFmSpec(lay, patch_prjn_idx, &TA_PatchLayerSpec);
+  if(lay->CheckError(!patch_lay, quiet, rval,
+		"did not find Patch layer to get Da from!")) {
+    return false;
+  }
+
+  if(lay->CheckError(lay->units.gp.size != patch_lay->units.gp.size, quiet, rval,
+		     "our number of unit groups should equal those in the patch layer")) {
+    return false;
+  }
+
+  return true;
+}  
+
+void SNcLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
+  int lve_prjn_idx;
+  LeabraLayer* lve_lay = FindLayerFmSpec(lay, lve_prjn_idx, &TA_LVeLayerSpec);
+  LVeLayerSpec* lve_sp = (LVeLayerSpec*)lve_lay->GetLayerSpec();
+  int lvi_prjn_idx;
+  LeabraLayer* lvi_lay = FindLayerFmSpec(lay, lvi_prjn_idx, &TA_LViLayerSpec);
+//   LVeLayerSpec* lvi_sp = (LViLayerSpec*)lvi_lay->GetLayerSpec();
+
+  int pvi_prjn_idx;
+  LeabraLayer* pvi_lay = FindLayerFmSpec(lay, pvi_prjn_idx, &TA_PViLayerSpec);
+  PViLayerSpec* pvils = (PViLayerSpec*)pvi_lay->spec.SPtr();
+
+  int pvr_prjn_idx = 0;
+  LeabraLayer* pvr_lay = FindLayerFmSpec(lay, pvr_prjn_idx, &TA_PVrLayerSpec);
+  PVrLayerSpec* pvrls = NULL;
+  if(pvr_lay) pvrls = (PVrLayerSpec*)pvr_lay->spec.SPtr();
+
+  int nv_prjn_idx;
+  LeabraLayer* nv_lay = FindLayerFmSpec(lay, nv_prjn_idx, &TA_NVLayerSpec);
+  NVLayerSpec* nvls = NULL;
+  if(nv_lay) nvls = (NVLayerSpec*)nv_lay->spec.SPtr();
+
+  int patch_prjn_idx;
+  LeabraLayer* patch_lay = FindLayerFmSpec(lay, patch_prjn_idx, &TA_PatchLayerSpec);
+  PatchLayerSpec* patch_sp = (PatchLayerSpec*)patch_lay->GetLayerSpec();
+
+  bool actual_er_avail = false;
+  bool pv_detected = false;
+  float pve_val = 0.0f;
+
+  if(pvr_lay) {			// if pvr avail, use it
+    pve_val = pvrls->Compute_PVe(pvr_lay, net, actual_er_avail, pv_detected);
+  }
+  else {
+    pve_val = pvils->Compute_PVe(pvi_lay, net, actual_er_avail, pv_detected);
+  }
+
+  bool er_avail = pv_detected;
+  if(da.use_actual_er) er_avail = actual_er_avail; // cheat..
+
+  // this is the global da from LVe, not stripe-specific
+  float lv_da = lve_sp->Compute_LVDa(lve_lay, lvi_lay);
+
+  // nv only contributes to lv, not pv..
+  if(nv_lay) {
+    lv_da += nvls->Compute_NVDa(nv_lay);
+  }
+
+  // note that multiple LV subgroups are supported, but not multiple PV's (yet!)
+  LeabraUnit* pvisu = (LeabraUnit*)pvi_lay->units.Leaf(0);
+  float pvd = pve_val - MAX(pvisu->act_m, da.min_pvi); 
+  float pv_da = pvd - pvisu->misc_1;
+
+  Unit_Group* lvi_ugp;
+  if(lvi_lay->units.gp.size > 0)
+    lvi_ugp = (Unit_Group*)lvi_lay->units.gp[0];
+  else
+    lvi_ugp = (Unit_Group*)&(lvi_lay->units);
+  // assuming only one lvi group of units for time being
+
+  lay->dav = 0.0f;
+  for(int gi=0; gi < lay->units.gp.size; gi++) {
+    Unit_Group* snc_ugp = (Unit_Group*)lay->units.gp[gi];
+    Unit_Group* patch_ugp = (Unit_Group*)patch_lay->units.gp[gi];
+    LeabraUnit* snc_u = (LeabraUnit*)snc_ugp->FastEl(0);
+    LeabraUnit* patch_u = (LeabraUnit*)patch_ugp->FastEl(0);
+
+    if(net->phase_no == 0) {
+      snc_u->dav = 0.0f;
+    }
+    else {
+      float str_da = patch_sp->Compute_LVDa_ugp(patch_ugp, lvi_ugp); // per stripe
+      if(er_avail) {
+	snc_u->dav = da.da_gain * pv_da;
+      }
+      else {
+	snc_u->dav = da.da_gain * 0.5f * (lv_da + str_da); // simple additive model here (avg)
+      }
+    }
+    snc_u->ext = da.tonic_da + snc_u->dav;
+    snc_u->act_eq = snc_u->act_nd = snc_u->act = snc_u->net = snc_u->ext;
+    lay->dav += snc_u->dav;
+  }
+  lay->dav /= (float)lay->units.gp.size; // integrated average -- not really used
+}
+
+void SNcLayerSpec::Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
+  // we *only* update our patch/lve guy -- rest were updated by main DA layer
+  // (assuming that always exists)
+
+  int pvi_prjn_idx;
+  LeabraLayer* pvi_lay = FindLayerFmSpec(lay, pvi_prjn_idx, &TA_PViLayerSpec);
+  PViLayerSpec* pvils = (PViLayerSpec*)pvi_lay->spec.SPtr();
+
+  int pvr_prjn_idx = 0;
+  LeabraLayer* pvr_lay = FindLayerFmSpec(lay, pvr_prjn_idx, &TA_PVrLayerSpec);
+  PVrLayerSpec* pvrls = NULL;
+  if(pvr_lay) pvrls = (PVrLayerSpec*)pvr_lay->spec.SPtr();
+
+  int patch_prjn_idx;
+  LeabraLayer* patch_lay = FindLayerFmSpec(lay, patch_prjn_idx, &TA_PatchLayerSpec);
+  PatchLayerSpec* patch_sp = (PatchLayerSpec*)patch_lay->GetLayerSpec();
+
+  bool actual_er_avail = false;
+  bool pv_detected = false;
+  float pve_val = 0.0f;
+
+  if(pvr_lay) {			// if pvr avail, use it
+    pve_val = pvrls->Compute_PVe(pvr_lay, net, actual_er_avail, pv_detected);
+  }
+  else {
+    pve_val = pvils->Compute_PVe(pvi_lay, net, actual_er_avail, pv_detected);
+  }
+
+  bool er_avail = pv_detected;
+  if(da.use_actual_er) er_avail = actual_er_avail; // cheat..
+
+  patch_sp->Update_LVPrior(patch_lay, er_avail);
+}
+
 //////////////////////////////////
 //	MatrixConSpec		//
 //////////////////////////////////
@@ -64,6 +240,7 @@ void MatrixUnitSpec::Initialize() {
   act.i_thr = ActFunSpec::NO_AH; // key for dopamine effects
 
   freeze_net = true;
+  patch_noise = false;
 }
 
 void MatrixUnitSpec::Defaults() {
@@ -124,11 +301,26 @@ void MatrixUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
 }
 
 float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
-  LeabraLayer* ol = u->own_lay();
-  MatrixLayerSpec* ls = (MatrixLayerSpec*)ol->GetLayerSpec();
-  if(!ls->avgda_rnd_go.mod_noise) {
+  if(!patch_noise) {
     return inherited::Compute_Noise(u, net);
   }
+
+  LeabraLayer* ol = u->own_lay();
+  MatrixLayerSpec* ls = (MatrixLayerSpec*)ol->GetLayerSpec();
+
+  int patch_prjn_idx;
+  LeabraLayer* patch_lay = ls->FindLayerFmSpec(ol, patch_prjn_idx, &TA_PatchLayerSpec);
+  if(!patch_lay) {
+    return inherited::Compute_Noise(u, net);
+  }
+
+  LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(patch_prjn_idx);
+  if(!recv_gp) {
+    return inherited::Compute_Noise(u, net);
+  }
+  LeabraUnit* patch_u = (LeabraUnit*)recv_gp->Un(0);
+  LeabraUnit_Group* patch_ugp = patch_u->own_ugp();
+  patch_u = (LeabraUnit*)patch_ugp->FastEl(0); // get 1st unit always, just to be sure
 
   float rval = 0.0f;
   if(noise_adapt.trial_fixed) {
@@ -138,12 +330,8 @@ float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
     rval = noise.Gen();
     u->noise = rval;
   }
-  
-  float avg_go_da = u->misc_1;
-  if(avg_go_da > ls->avgda_rnd_go.avgda_thr)
-    rval *= (1.0f - (noise_adapt.min_pct_c * net->pvlv_lve));
-  else
-    rval *= (1.0f - (noise_adapt.min_pct_c * (1.0f - (ls->avgda_rnd_go.avgda_thr - avg_go_da))));
+
+  rval *= (1.0f - (noise_adapt.min_pct_c * patch_u->act_eq)); // lve value on patch
   return rval;
 }
 
@@ -193,7 +381,6 @@ void MatrixErrRndGoSpec::Initialize() {
 
 void MatrixAvgDaRndGoSpec::Initialize() {
   on = true;
-  mod_noise = false;
   avgda_p = 0.1f;
   gain = 0.5f;
   avgda_thr = 0.1f;
@@ -506,7 +693,7 @@ void MatrixLayerSpec::Compute_ErrRndGo(LeabraLayer* lay, LeabraNetwork*) {
 }
 
 void MatrixLayerSpec::Compute_AvgDaRndGo(LeabraLayer* lay, LeabraNetwork*) {
-  if(!avgda_rnd_go.on || avgda_rnd_go.mod_noise) return;
+  if(!avgda_rnd_go.on) return;
 
   if(Random::ZeroOne() > avgda_rnd_go.avgda_p) return;	// not this time..
 

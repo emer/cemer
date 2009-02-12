@@ -186,7 +186,6 @@ class LEABRA_API LVSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for learned value layers
 INHERITED(taOBase)
 public:
-  bool		delta_on_sum;	// #DEF_false if there are multiple lv subgroups, compute the temporal delta on the summed lv values (else deltas are per each sub-group, then summed)
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when to learn (cheating), otherwise use PVr/i's estimate of when primary value is avail (more realistic)
   float		min_lvi;	// minimum effective lvi value, for computing lv da
 
@@ -214,9 +213,9 @@ public:
   // compute da contribution from Lv, based on lve_layer and lvi_layer activations (multiple subgroups allowed)
   virtual float	Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay);
   // compute da contribution from Lv, based on lve_layer and lvi_layer activations (multiple subgroups allowed)
-  virtual void 	Update_LVPrior_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, bool er_avail);
+  virtual void 	Update_LVPrior_ugp(Unit_Group* lve_ugp, bool er_avail);
   // update the prior Lv value, stored in lv unit misc_1 values
-  virtual void	Update_LVPrior(LeabraLayer* lve_lay, LeabraLayer* lvi_lay, bool er_avail);
+  virtual void	Update_LVPrior(LeabraLayer* lve_lay, bool er_avail);
   // update the prior Lv value, stored in lv unit misc_1 values
 
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
@@ -327,7 +326,7 @@ class LEABRA_API PVLVDaLayerSpec : public LeabraLayerSpec {
   // computes PVLV dopamine (Da) signal: typically if(ER), da = PVe-PVi, else LVe - LVi
 INHERITED(LeabraLayerSpec)
 public:
-  PVLVDaSpec	da;		// parameters for the lvpv da computation
+  PVLVDaSpec	da;		// parameters for the pvlv da computation
 
   virtual void	Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork* net);
   // compute a zero da value: in minus phase -- not used!

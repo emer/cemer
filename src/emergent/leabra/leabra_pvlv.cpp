@@ -165,7 +165,7 @@ bool PViLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     }
   }
   
-  if(lay->CheckError(ext_rew_lay == NULL, quiet, rval,
+  if(lay->CheckError(!ext_rew_lay, quiet, rval,
 		"requires MarkerConSpec connection from PVe/ExtRewLayerSpec layer to get external rewards!")) {
     return false;
   }
@@ -291,7 +291,6 @@ void PVrConSpec::Initialize() {
 //////////////////////////////////////////
 
 void LVSpec::Initialize() {
-  delta_on_sum = false;
   use_actual_er = false;
   min_lvi = 0.0f;
 }
@@ -384,7 +383,7 @@ bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     }
   }
   
-  if(lay->CheckError(pvi_lay == NULL, quiet, rval,
+  if(lay->CheckError(!pvi_lay, quiet, rval,
 		"requires MarkerConSpec connection from PViLayerSpec layer to get DA values!")) {
     return false;
   }
@@ -462,77 +461,67 @@ float LVeLayerSpec::Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp) {
 
   float lvd = lveu->act_eq - MAX(lviu->act_eq, lv.min_lvi);
   float lv_da = lvd - lveu->misc_1;
+  lveu->dav = lv_da;		// store in this unit!
   return lv_da;
 }
 
 float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay) {
   float lv_da = 0.0f;
-  if(lv.delta_on_sum) { // note: this is not the default!  doesn't work as well as other
-    LeabraUnit* lveu = (LeabraUnit*)lve_lay->units.Leaf(0); // first guy holds prior val
-    float lve_avg = Compute_ActEqAvg(lve_lay);
-    float lvi_avg = Compute_ActEqAvg(lvi_lay);
-    float lvd = lve_avg - MAX(lvi_avg, lv.min_lvi);
-    lv_da = lvd - lveu->misc_1;
+  int gi = 0;
+  if((lve_lay->units.gp.size > 0) && (lve_lay->units.gp.size == lvi_lay->units.gp.size)) {
+    for(gi=0; gi<lve_lay->units.gp.size; gi++) {
+      Unit_Group* lve_ugp = (Unit_Group*)lve_lay->units.gp[gi];
+      Unit_Group* lvi_ugp = (Unit_Group*)lvi_lay->units.gp[gi];
+      lv_da += Compute_LVDa_ugp(lve_ugp, lvi_ugp);
+    }
+    lv_da /= (float)lve_lay->units.gp.size; // average!
+  }
+  else if(lve_lay->units.gp.size > 0) {
+    // one lvi and multiple lve's
+    Unit_Group* lvi_ugp;
+    if(lvi_lay->units.gp.size > 0)
+      lvi_ugp = (Unit_Group*)lvi_lay->units.gp[0];
+    else
+      lvi_ugp = (Unit_Group*)&(lvi_lay->units);
+    for(gi=0; gi<lve_lay->units.gp.size; gi++) {
+      Unit_Group* lve_ugp = (Unit_Group*)lve_lay->units.gp[gi];
+      lv_da += Compute_LVDa_ugp(lve_ugp, lvi_ugp);
+    }
+    lv_da /= (float)lve_lay->units.gp.size; // average!
   }
   else {
-    int gi = 0;
-    if(lve_lay->units.gp.size > 0) {
-      for(gi=0; gi<lve_lay->units.gp.size; gi++) {
-	Unit_Group* lve_ugp = (Unit_Group*)lve_lay->units.gp[gi];
-	Unit_Group* lvi_ugp = (Unit_Group*)lvi_lay->units.gp[gi];
-	lv_da += Compute_LVDa_ugp(lve_ugp, lvi_ugp);
-      }
-      lv_da /= (float)lve_lay->units.gp.size; // average!
-    }
-    else {
-      Unit_Group* lve_ugp = (Unit_Group*)&(lve_lay->units);
-      Unit_Group* lvi_ugp = (Unit_Group*)&(lvi_lay->units);
-      lv_da = Compute_LVDa_ugp(lve_ugp, lvi_ugp);
-    } 
-  }
+    Unit_Group* lve_ugp = (Unit_Group*)&(lve_lay->units);
+    Unit_Group* lvi_ugp;
+    if(lvi_lay->units.gp.size > 0)
+      lvi_ugp = (Unit_Group*)lvi_lay->units.gp[0];
+    else
+      lvi_ugp = (Unit_Group*)&(lvi_lay->units);
+    lv_da = Compute_LVDa_ugp(lve_ugp, lvi_ugp);
+  } 
   return lv_da;
 }
 
-void LVeLayerSpec::Update_LVPrior_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, bool er_avail) {
+void LVeLayerSpec::Update_LVPrior_ugp(Unit_Group* lve_ugp, bool er_avail) {
   LeabraUnit* lveu = (LeabraUnit*)lve_ugp->FastEl(0);
   if(er_avail) {
     lveu->misc_1 = 0.0f;
     return;
   }
-  
-  LeabraUnit* lviu = (LeabraUnit*)lvi_ugp->FastEl(0);
-  float lvd = lveu->act_eq - lviu->act_eq;
-  lveu->misc_1 = lvd;
+  lveu->misc_1 = lveu->dav;	// already stored in da value: note includes min_lvi, which is appropriate -- this was missing prior to 2/12/2009
 }
 
-void LVeLayerSpec::Update_LVPrior(LeabraLayer* lve_lay, LeabraLayer* lvi_lay, bool er_avail) {
-  if(lv.delta_on_sum) {
-    LeabraUnit* lveu = (LeabraUnit*)lve_lay->units.Leaf(0); // first guy holds prior val
-    if(er_avail) {
-      lveu->misc_1 = 0.0f;
-    }
-    else {
-      float lve_avg = Compute_ActEqAvg(lve_lay);
-      float lvi_avg = Compute_ActEqAvg(lvi_lay);
-      float lvd = lve_avg - lvi_avg;
-      lveu->misc_1 = lvd;
+void LVeLayerSpec::Update_LVPrior(LeabraLayer* lve_lay, bool er_avail) {
+  int gi = 0;
+  if(lve_lay->units.gp.size > 0) {
+    for(gi=0; gi<lve_lay->units.gp.size; gi++) {
+      Unit_Group* lve_ugp = (Unit_Group*)lve_lay->units.gp[gi];
+      Update_LVPrior_ugp(lve_ugp, er_avail);
     }
   }
   else {
-    int gi = 0;
-    if(lve_lay->units.gp.size > 0) {
-      for(gi=0; gi<lve_lay->units.gp.size; gi++) {
-	Unit_Group* lve_ugp = (Unit_Group*)lve_lay->units.gp[gi];
-	Unit_Group* lvi_ugp = (Unit_Group*)lvi_lay->units.gp[gi];
-	Update_LVPrior_ugp(lve_ugp, lvi_ugp, er_avail);
-      }
-    }
-    else {
-      Unit_Group* lve_ugp = (Unit_Group*)&(lve_lay->units);
-      Unit_Group* lvi_ugp = (Unit_Group*)&(lvi_lay->units);
-      Update_LVPrior_ugp(lve_ugp, lvi_ugp, er_avail);
-    } 
-  }
+    Unit_Group* lve_ugp = (Unit_Group*)&(lve_lay->units);
+    Update_LVPrior_ugp(lve_ugp, er_avail);
+  } 
 }
 
 void LVeLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
@@ -853,15 +842,15 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     }
   }
 
-  if(lay->CheckError(lve_lay == NULL, quiet, rval,
+  if(lay->CheckError(!lve_lay, quiet, rval,
 		"did not find LVe layer to get Da from!")) {
     return false;
   }
-  if(lay->CheckError(lvi_lay == NULL, quiet, rval,
+  if(lay->CheckError(!lvi_lay, quiet, rval,
 		"did not find LVi layer to get Da from!")) {
     return false;
   }
-  if(lay->CheckError(pvi_lay == NULL, quiet, rval,
+  if(lay->CheckError(!pvi_lay, quiet, rval,
 		"did not find PVi layer to get Da from!")) {
     return false;
   }
@@ -969,9 +958,6 @@ void PVLVDaLayerSpec::Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
   int lve_prjn_idx;
   LeabraLayer* lve_lay = FindLayerFmSpec(lay, lve_prjn_idx, &TA_LVeLayerSpec);
   LVeLayerSpec* lve_sp = (LVeLayerSpec*)lve_lay->GetLayerSpec();
-  int lvi_prjn_idx;
-  LeabraLayer* lvi_lay = FindLayerFmSpec(lay, lvi_prjn_idx, &TA_LViLayerSpec);
-//   LVeLayerSpec* lvi_sp = (LViLayerSpec*)lvi_lay->GetLayerSpec();
 
   int pvi_prjn_idx;
   LeabraLayer* pvi_lay = FindLayerFmSpec(lay, pvi_prjn_idx, &TA_PViLayerSpec);
@@ -1001,7 +987,7 @@ void PVLVDaLayerSpec::Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
   bool er_avail = pv_detected;
   if(da.use_actual_er) er_avail = actual_er_avail; // cheat..
 
-  lve_sp->Update_LVPrior(lve_lay, lvi_lay, er_avail);
+  lve_sp->Update_LVPrior(lve_lay, er_avail);
 
   if(nv_lay) {
     nvls->Update_NVPrior(nv_lay, er_avail);

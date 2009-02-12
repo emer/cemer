@@ -27,9 +27,41 @@
 // 	BG-based PFC Gating/RL learning Mechanism		//
 //////////////////////////////////////////////////////////////////
 
-//////////////////////////////////
-//	  Matrix Con/Units	//
-//////////////////////////////////
+////////////////////////////////////////////////////////////////////
+//	Patch/Striosomes and SNc
+
+class LEABRA_API PatchLayerSpec : public LVeLayerSpec {
+  // Patch version of the LVe layer -- functionally identical to LVe and just so-named so that other layers can use its functionality appropriately
+INHERITED(LVeLayerSpec)
+public:
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+
+  TA_SIMPLE_BASEFUNS(PatchLayerSpec);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
+class LEABRA_API SNcLayerSpec : public PVLVDaLayerSpec {
+  // implements a substantia-nigra pars compacta (SNc) version of the PVLVDaLayerSpec, which receives stripe-wise LVe inputs from a PatchLayerSpec layer
+INHERITED(PVLVDaLayerSpec)
+public:
+  virtual void	Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net);
+  // compute the da value based on recv projections: every cycle in 1+ phases (delta version)
+  virtual void	Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net);
+  // update the LV
+
+  void	HelpConfig();	// #BUTTON get help message for configuring this spec
+  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+
+  TA_SIMPLE_BASEFUNS(SNcLayerSpec);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
+////////////////////////////////////////////////////////////////////
+//	  Matrix Con/Units
 
 class LEABRA_API MatrixConSpec : public LeabraConSpec {
   // Learning of matrix input connections based on dopamine modulation of activation
@@ -147,6 +179,7 @@ class LEABRA_API MatrixUnitSpec : public LeabraUnitSpec {
 INHERITED(LeabraUnitSpec)
 public:
   bool	freeze_net;		// #DEF_true freeze netinput (MAINT in 2+ phase, OUTPUT in 1+ phase) during learning modulation so that learning only reflects DA modulation and not other changes in netin
+  bool  patch_noise;		// get noise value from patch units (overrides netin_adapt setting if set to true) -- must have a patch layer spec prjn with marker con specs
 
   override void Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no);
   override float Compute_Noise(LeabraUnit* u, LeabraNetwork* net);
@@ -244,7 +277,6 @@ class LEABRA_API MatrixAvgDaRndGoSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		on;		// #APPLY_IMMED [Default true for MAINT, false for OUTPUT] whether to use random go based on average dopamine values
-  bool		mod_noise;	// #CONDEDIT_ON_on:false if not doing rnd go based on avgda, should we instead modulate unit trial-level noise values (replaces any unitspec level setting of noise modulation factor, but otherwise uses those params)
   float		avgda_p;	// #CONDEDIT_ON_on:true #DEF_0.1 baseline probability of firing random Go for any stripe (first pass before doing softmax)
   float		gain;		// #CONDEDIT_ON_on:true #DEF_0.5 gain on softmax over avgda values on snrthal units for choosing the stripe to activate Go for (softmax = normalized exp(gain * (avgda_thr - avg_go_da))
   float		avgda_thr;	// #DEF_0.1 threshold on per stripe avg_go_da value (-1..1) below which the random Go starts happening (and is subtracted from avgda as the reference point for the softmax computation)
