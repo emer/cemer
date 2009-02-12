@@ -5224,6 +5224,7 @@ void Network::Destroy()	{
 }
 
 void Network::InitLinks() {
+  GetDataLink(); // forces creation, so we track Updates
   proj = GET_MY_OWNER(ProjectBase);
   taBase::Own(specs, this);
   taBase::Own(layers, this);
