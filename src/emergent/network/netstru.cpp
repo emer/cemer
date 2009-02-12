@@ -3619,8 +3619,7 @@ void Layer::RecomputeGeometry() {
       flat_geom.n_not_xy = true;
     // NOTE: act_geom must get computed later....
   } else {
-    flat_geom.x = un_geom.x;
-    flat_geom.y = un_geom.y;
+    flat_geom = un_geom;
     act_geom = un_geom;
   }
 }
