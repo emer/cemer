@@ -1141,8 +1141,8 @@ public:
   ScalarValBias	 bias_val;	// specifies bias for given value (as gaussian bump) 
   MinMaxRange	 val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
-  virtual void	Compute_NetinScale_Unit0(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_ScalarVal call Compute_NetinScale on first unit in each group (the value unit) -- this is necessary b/c unit 0 is excluded from units_flat list and thus Compute_NetinScale, but it is used for the global netin scale for the entire projection in Send_NetinDelta!
+  virtual void	Settle_Init_Unit0(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_ScalarVal call Settle_Init_Unit on first unit in each group (the value unit) -- this is necessary b/c it is excluded from units_flat list and thus Compute_NetinScale, which is used for the global netin scale for the entire projection in Send_NetinDelta, and Init_TargFlags
 
   virtual void	ClampValue_ugp(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
   // #CAT_ScalarVal clamp value in the first unit's ext field to the units in the group
@@ -1179,7 +1179,6 @@ public:
     virtual void BuildUnits_Threads_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraNetwork* net);
   override void Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
   override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
-  override void Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
@@ -1382,8 +1381,8 @@ public:
   MinMaxRange	 x_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
   MinMaxRange	 y_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
-  virtual void	Compute_NetinScale_Unit0(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_ScalarVal call Compute_NetinScale on first unit in each group (the value unit) -- this is necessary b/c unit 0 is excluded from units_flat list and thus Compute_NetinScale, but it is used for the global netin scale for the entire projection in Send_NetinDelta!
+  virtual void	Settle_Init_Unit0(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_ScalarVal call Settle_Init_Unit on first units in each group (the value units) -- this is necessary b/c they are excluded from units_flat list and thus Compute_NetinScale, which is used for the global netin scale for the entire projection in Send_NetinDelta, and Init_TargFlags
 
   virtual void	ClampValue_ugp(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
   // #CAT_TwoDVal clamp value in the first unit's ext field to the units in the group
@@ -1414,7 +1413,6 @@ public:
     void BuildUnits_Threads_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraNetwork* net);
   override void Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
   override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
-  override void Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
