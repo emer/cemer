@@ -48,6 +48,7 @@ void PatchLayerSpec::Send_PVeToMatrix(LeabraLayer* lay, LeabraNetwork* net) {
 void PatchLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   ScalarValLayerSpec::Compute_CycleStats(lay, net);
   // do NOT report lvi value!
+  Send_PVeToMatrix(lay, net);
 }
 
 
