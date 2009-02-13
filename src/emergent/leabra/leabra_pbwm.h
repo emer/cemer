@@ -177,12 +177,28 @@ private:
   void	Destroy()		{ };
 };
 
+class LEABRA_API MatrixNoiseSpec : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra unit noise specs for matrix units
+INHERITED(taOBase)
+public:
+  bool  patch_noise;		// get noise value from patch units (overrides netin_adapt setting if set to true) -- must have a patch layer spec prjn with marker con specs
+  int	nogo_thr;		// threshold number of sequential NOGO's per stripe before onset of nogo noise increment
+  float	nogo_gain;		// how much to increase noise amplitude per every trial beyond nogo_thr: noise_amp += nogo_gain * (nogos - nogo_thr)
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(MatrixNoiseSpec);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
+
 class LEABRA_API MatrixUnitSpec : public LeabraUnitSpec {
   // basal ganglia matrix units: fire actions or WM updates. modulated by da signals
 INHERITED(LeabraUnitSpec)
 public:
   bool	freeze_net;		// #DEF_true freeze netinput (MAINT in 2+ phase, OUTPUT in 1+ phase) during learning modulation so that learning only reflects DA modulation and not other changes in netin
-  bool  patch_noise;		// get noise value from patch units (overrides netin_adapt setting if set to true) -- must have a patch layer spec prjn with marker con specs
+  MatrixNoiseSpec matrix_noise;	// special noise parameters for matrix units
 
   override void Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no);
   override float Compute_Noise(LeabraUnit* u, LeabraNetwork* net);

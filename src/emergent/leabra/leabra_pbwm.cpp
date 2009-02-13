@@ -201,6 +201,12 @@ void MatrixBiasSpec::Initialize() {
   matrix_rule = MAINT;
 }
 
+void MatrixNoiseSpec::Initialize() {
+  patch_noise = true;
+  nogo_thr = 50;
+  nogo_gain = 2.0e-5f;
+}
+
 void MatrixUnitSpec::Initialize() {
   SetUnique("bias_spec", true);
   bias_spec.type = &TA_MatrixBiasSpec;
@@ -212,7 +218,6 @@ void MatrixUnitSpec::Initialize() {
   act.i_thr = ActFunSpec::NO_AH; // key for dopamine effects
 
   freeze_net = true;
-  patch_noise = false;
 }
 
 void MatrixUnitSpec::Defaults() {
@@ -273,8 +278,33 @@ void MatrixUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
 }
 
 float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
-  if(!patch_noise) {
-    return inherited::Compute_Noise(u, net);
+  float noise_amp = 1.0f;		// noise amplitude multiplier
+  if(matrix_noise.patch_noise) {
+    noise_amp = (1.0f - (noise_adapt.min_pct_c * u->misc_1)); // lve value on patch is in misc_1
+  }
+  else {
+    if(noise_adapt.mode == NoiseAdaptSpec::SCHED_CYCLES) {
+      noise_amp = noise_sched.GetVal(net->cycle);
+    }
+    else if(noise_adapt.mode == NoiseAdaptSpec::SCHED_EPOCHS) {
+      noise_amp = noise_sched.GetVal(net->epoch);
+    }
+    else if(noise_adapt.mode == NoiseAdaptSpec::PVLV_PVI) {
+      noise_amp = (1.0f - (noise_adapt.min_pct_c * net->pvlv_pvi));
+    }
+    else if(noise_adapt.mode == NoiseAdaptSpec::PVLV_LVE) {
+      noise_amp = (1.0f - (noise_adapt.min_pct_c * net->pvlv_lve));
+    }
+    else if(noise_adapt.mode == NoiseAdaptSpec::PVLV_MIN) {
+      float pvlv_val = MIN(net->pvlv_pvi, net->pvlv_lve);
+      noise_amp = (1.0f - (noise_adapt.min_pct_c * pvlv_val));
+    }
+  }
+
+  LeabraUnit_Group* mugp = u->own_ugp();
+  int nogos = (int)fabs((float)mugp->misc_state);
+  if(nogos > matrix_noise.nogo_thr) {
+    noise_amp += matrix_noise.nogo_gain * (float)(nogos - matrix_noise.nogo_thr);
   }
 
   float rval = 0.0f;
@@ -286,8 +316,7 @@ float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
     u->noise = rval;
   }
 
-  rval *= (1.0f - (noise_adapt.min_pct_c * u->misc_1)); // lve value on patch is in misc_1
-  return rval;
+  return noise_amp * rval;
 }
 
 
