@@ -1152,6 +1152,8 @@ public:
   // #CAT_ScalarVal read out current value represented by activations in layer
     virtual float ReadValue_ugp(LeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
     // #CAT_ScalarVal unit group version: read out current value represented by activations in layer
+  virtual void 	Compute_ExtToPlus_ugp(Unit_Group* ugp, LeabraNetwork* net);
+  // #CAT_ScalarVal copy ext values to act_p -- used for internally-generated training signals for learning in several subclasses
   virtual void HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_ScalarVal hard clamp current ext values (on all units, after ClampValue called) to all the units (calls ResetAfterClamp)
     virtual void ResetAfterClamp(LeabraLayer* lay, LeabraNetwork* net);

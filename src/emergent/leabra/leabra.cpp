@@ -839,8 +839,6 @@ void LeabraUnitSpec::Init_Weights(Unit* u, Network* net) {
   LeabraUnit* lu = (LeabraUnit*)u;
   lu->act_avg = act.avg_init;
   lu->misc_1 = 0.0f;
-  lu->misc_2 = 0.0f;
-  lu->misc_3 = 0.0f;
   lu->spk_amp = depress.max_amp;
   lu->vcb.hyst = lu->vcb.g_h = 0.0f;
   lu->vcb.hyst_on = false;
@@ -2084,8 +2082,6 @@ void LeabraUnit::Initialize() {
   i_thr = 0.0f;
   spk_amp = 1.0f;
   misc_1 = 0.0f;
-  misc_2 = 0.0f;
-  misc_3 = 0.0f;
 }
 
 void LeabraUnit::InitLinks() {
@@ -2138,8 +2134,6 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   i_thr = cp.i_thr;
   spk_amp = cp.spk_amp;
   misc_1 = cp.misc_1;
-  misc_2 = cp.misc_2;
-  misc_3 = cp.misc_3;
   act_buf = cp.act_buf;
   spike_buf = cp.spike_buf;
 }
@@ -4528,9 +4522,13 @@ void LeabraNetwork::Initialize() {
   trg_max_act = 0.0f;
 
   ext_rew = 0.0f;
+  ext_rew_avail = false;
+  norew_val = 0.5f;
   avg_ext_rew = 0.0f;
   pvlv_pvi = 0.0f;
   pvlv_lve = 0.0f;
+  pvlv_lvi = 0.0f;
+  pv_detected = false;
   avg_ext_rew_sum = 0.0f;
   avg_ext_rew_n = 0;
 
@@ -4609,9 +4607,13 @@ void LeabraNetwork::Init_Stats() {
   avg_send_pct_n = 0;
 
   ext_rew = 0.0f;
+  ext_rew_avail = false;
+  norew_val = 0.5f;
   avg_ext_rew = 0.0f;
   pvlv_pvi = 0.0f;
   pvlv_lve = 0.0f;
+  pvlv_lvi = 0.0f;
+  pv_detected = false;
   avg_ext_rew_sum = 0.0f;
   avg_ext_rew_n = 0;
 
@@ -5403,14 +5405,9 @@ void LeabraNetwork::Compute_Weights_impl() {
 //	Stats
 
 void LeabraNetwork::Compute_ExtRew() {
-  ext_rew = -1.1f;
-  LeabraLayer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
-    if(lay->lesioned())	continue;
-    lay->Compute_NetExtRew(this);
-  }
-  if(ext_rew != -1.1f) {
+  // assumes any ext rew computation has happened before this point, and set the
+  // network ext_rew and ext_rew_avail flags appropriately
+  if(ext_rew_avail) {
     avg_ext_rew_sum += ext_rew;
     avg_ext_rew_n++;
   }

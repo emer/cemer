@@ -761,6 +761,36 @@ void ScalarValLayerSpec::ReadValue(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR(lay, ReadValue_ugp(lay, ugp, net); );
 }
 
+void ScalarValLayerSpec::Compute_ExtToPlus_ugp(Unit_Group* ugp, LeabraNetwork*) {
+  if(ugp->size < 3) return;
+  int i;
+  for(i=0;i<ugp->size;i++) {
+    LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
+    LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
+    if(i > 0) u->act_p = us->clamp_range.Clip(u->ext);
+    else u->act_p = u->ext;
+    u->act_dif = u->act_p - u->act_m;
+    // important to clear ext stuff, otherwise it will get added into netin next time around!!
+    u->ext = 0.0f;
+    u->ext_flag = Unit::NO_EXTERNAL;
+  }
+}
+
+void ScalarValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_HardClamp(lay, net);
+  ResetAfterClamp(lay, net);
+}
+
+void ScalarValLayerSpec::ResetAfterClamp(LeabraLayer* lay, LeabraNetwork*) {
+  UNIT_GP_ITR(lay, 
+	      if(ugp->size > 2) {
+		LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
+		u->act = 0.0f;		// must reset so it doesn't contribute!
+		u->act_eq = u->act_nd = u->ext;	// avoid clamp_range!
+	      }
+	      );
+}
+
 void ScalarValLayerSpec::LabelUnits_ugp(Unit_Group* ugp) {
   if(ugp->size < 3) return;	// must be at least a few units..
   scalar.InitVal(0.0f, ugp->size, unit_range.min, unit_range.range);
@@ -784,21 +814,6 @@ void ScalarValLayerSpec::LabelUnitsNet(LeabraNetwork* net) {
     if(l->spec.SPtr() == this)
       LabelUnits(l, net);
   }
-}
-
-void ScalarValLayerSpec::ResetAfterClamp(LeabraLayer* lay, LeabraNetwork*) {
-  UNIT_GP_ITR(lay, 
-	      if(ugp->size > 2) {
-		LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
-		u->act = 0.0f;		// must reset so it doesn't contribute!
-		u->act_eq = u->act_nd = u->ext;	// avoid clamp_range!
-	      }
-	      );
-}
-
-void ScalarValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_HardClamp(lay, net);
-  ResetAfterClamp(lay, net);
 }
 
 void ScalarValLayerSpec::Settle_Init_Unit0(LeabraLayer* lay, LeabraNetwork* net) {

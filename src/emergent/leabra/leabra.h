@@ -1271,9 +1271,7 @@ public:
 
   float		i_thr;		// #NO_SAVE #CAT_Activation inhibitory threshold value for computing kWTA
   float		spk_amp;	// #CAT_Activation amplitude/probability of spiking output (for synaptic depression function if unit spec depress.on is on)
-  float		misc_1;		// #NO_VIEW #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
-  float		misc_2;		// #NO_VIEW #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
-  float		misc_3;		// #NO_VIEW #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
+  float		misc_1;		// #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   float_CircBuffer act_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of activation states for synaptic delay computation
   float_CircBuffer spike_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of net input from spikes for synaptic integration over discrete spikes
 
@@ -1983,9 +1981,6 @@ public:
 			    int& n_vals, bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
 
-  virtual void	Compute_NetExtRew(LeabraLayer* lay, LeabraNetwork* net) { };
-  // #CAT_Statistic compute external reward value (should be between -1 and 1, typically 0-1) for the network -- the base version does nothing -- should be defined in a reward-computing layer spec, such as ExtRewLayerSpec -- directly sets the value on the network, which has been pre-initialized to -1.1 indicating no reward avail -- do not compute any other aggregated stats (*avg_ext_rew)
-
   virtual float	Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
 				    LeabraNetwork* net);
   // #CAT_Statistic compute normalized binary error for given unit group -- just gets the raw sum over unit group
@@ -2299,9 +2294,6 @@ public:
 			     bool unit_avg = false, bool sqrt = false)
   { return spec->Compute_SSE(this, (LeabraNetwork*)net, n_vals, unit_avg, sqrt); }
 
-  void Compute_NetExtRew(LeabraNetwork* net) { spec->Compute_NetExtRew(this, net); }
-  // #CAT_Statistic compute external reward value (should be between -1 and 1, typically 0-1) for the network
-
   float Compute_NormErr(LeabraNetwork* net)
   { return spec->Compute_NormErr(this, net); }
   // #CAT_Statistic compute normalized binary error across layer (returns normalized value or -1 for not applicable, averaged at network level -- see layerspec for more info)
@@ -2598,10 +2590,14 @@ public:
   float		trg_max_act_stopcrit;	// #CAT_Statistic stopping criterion for target-layer maximum activation (can be used for stopping settling)
   float		trg_max_act;	// #GUI_READ_ONLY #SHOW #CAT_Statistic target-layer maximum activation (can be used for stopping settling)
 
-  float		ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW external reward value (on this trial) -- not available unless ExtRewLayerSpec or similar exists in network
+  float		ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW external reward value (on this trial) -- only computed if ExtRewLayerSpec or similar exists in network -- equals PVe value in PVLV framework
+  bool		ext_rew_avail; 	// #GUI_READ_ONLY #SHOW #CAT_Statistic actual external reward value is available (on this trial) -- only computed if ExtRewLayerSpec or similar exists in network -- if false then no feedback was provided on this trial
+  float		norew_val; 	// #GUI_READ_ONLY #CAT_Statistic no-reward value (serves as a baseline against which ext_rew can be compared against -- if greater, then positive reward, if less, then negative reward -- typically 0.5 but can vary
   float		avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average external reward value (computed over previous epoch)
-  float		pvlv_pvi;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW PVLV primary reward prediction value PVi for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
-  float		pvlv_lve;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW PVLV learned reward prediction value LVe for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
+  float		pvlv_pvi;	// #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV primary reward prediction value PVi for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
+  float		pvlv_lve;	// #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV learned reward prediction value LVe (excitatory, rapidly adapting) for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
+  float		pvlv_lvi;	// #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV learned reward prediction value LVi (inhibitory, slowly adapting) for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
+  bool		pv_detected;	// #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV detected a situation where primary reward value is expected to be available, based on learned encoding of similar such situations in the past -- computed by the PVrLayerSpec
   float		avg_ext_rew_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average external reward value in this epoch
   int		avg_ext_rew_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average external reward value computation for this epoch
 

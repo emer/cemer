@@ -103,7 +103,6 @@ public:
   float		err_tol;	// #DEF_0.5 error tolerance for counting an activation wrong
   bool		graded;		// #DEF_false #APPLY_IMMED compute a graded reward signal as a function of number of correct output values
   bool		no_off_err;	// #DEF_false do not count a unit wrong if it is off but target says on -- only count wrong units that are on but should be off
-  bool		seq_all_cor;	// #DEF_false require that all RewTarg events in a sequence be correct before giving reward (on the last event in sequence);  if graded is checked, this reward is a graded function of % correct
   float		scalar_val_max;	// #CONDEDIT_ON_graded maximum value for scalar value output layers when using a graded value -- reward is error normalized by this value, and clipped at min/max
 
   void 	Defaults()	{ Initialize(); }
@@ -135,7 +134,7 @@ public:
   enum RewardType {		// how do we get the reward values?
     OUT_ERR_REW,		// get rewards as a function of errors on the output layer ONLY WHEN RewTarg layer act > .5 -- get from markerconspec from output layer(s)
     EXT_REW,			// get rewards as external inputs marked as ext_flag = TARG to the first unit in the layer (if ext val == norew_val, then no ext rew signaled)
-    DA_REW			// get rewards from da values on first unit in layer  (if ext val == norew_val, then no ext rew signaled)
+    DA_REW			// get rewards from da values on first unit in layer (if ext val == norew_val, then no ext rew signaled)
   };
 
   RewardType	rew_type;	// #APPLY_IMMED how do we get the reward values?
@@ -143,27 +142,27 @@ public:
   OutErrSpec	out_err;	// #CONDEDIT_ON_rew_type:OUT_ERR_REW how to compute external rewards based on output performance
   ExtRewSpec	rew;		// misc reward computation specifications
 
-  virtual bool	OutErrRewAvail(LeabraLayer* lay, LeabraNetwork* net);
-  // figure out if reward is available on this trial (look if target signals are present)
-  virtual float	GetOutErrRew(LeabraLayer* lay, LeabraNetwork* net);
-  // get reward value based on error at layer with MarkerConSpec connection: 1 = rew (correct), 0 = err, -1 = no info
-  virtual void 	Compute_OutErrRew(LeabraLayer* lay, LeabraNetwork* net);
-  // get reward value based on external error (put in da val, clamp)
-  virtual void 	Compute_ExtRew(LeabraLayer* lay, LeabraNetwork* net);
-  // get external rewards from inputs (put in da val, clamp)
-  virtual void 	Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net);
-  // clamp external rewards as da values (put in da val, clamp)
-  virtual void 	Compute_UnitDa(float er, LeabraUnit* u, Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net);
-  // actually compute the unit da value based on external reward value er
-  virtual void	Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork* net);
-  // clamp zero activations, for minus phase
-  virtual void	Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net);
-  // clamp norew_val values for when no reward information is present
+
+  virtual void Compute_Rew(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_ExtRew overall compute reward function: calls appropriate sub-function based on rew_type
+    virtual void Compute_OutErrRew(LeabraLayer* lay, LeabraNetwork* net);
+    // #CAT_ExtRew get reward value based on external error (put in da val, clamp)
+      virtual bool OutErrRewAvail(LeabraLayer* lay, LeabraNetwork* net);
+      // #CAT_ExtRew figure out if reward is available on this trial (look if target signals are present)
+      virtual float GetOutErrRew(LeabraLayer* lay, LeabraNetwork* net);
+      // #CAT_ExtRew get reward value based on error at layer with MarkerConSpec connection: 1 = rew (correct), 0 = err, -1 = no info
+    virtual void Compute_ExtRew(LeabraLayer* lay, LeabraNetwork* net);
+    // #CAT_ExtRew get external rewards from inputs (put in da val, clamp)
+    virtual void Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net);
+    // #CAT_ExtRew clamp external rewards as da values (put in da val, clamp)
+
+    virtual void Compute_UnitDa(float er, LeabraUnit* u, Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net);
+    // #CAT_ExtRew used in above routines: actually compute the unit da value based on external reward value er
+    virtual void Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net);
+    // #CAT_ExtRew used in above routines: clamp norew_val values for when no reward information is present
 
   // overrides:
-  override void	 Compute_NetExtRew(LeabraLayer* lay, LeabraNetwork* net);
-  override void	 Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-
+  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
 
   // don't do any learning:

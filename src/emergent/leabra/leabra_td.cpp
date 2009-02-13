@@ -100,7 +100,6 @@ void OutErrSpec::Initialize() {
   err_tol = 0.5f;
   graded = false;
   no_off_err = false;
-  seq_all_cor = false;
   scalar_val_max = 1.0f;
 }
 
@@ -150,7 +149,6 @@ void ExtRewLayerSpec::HelpConfig() {
  Computes external rewards based on network performance on an output layer or directly provided rewards.\n\
  - Minus phase = zero reward represented\n\
  - Plus phase = external reward value (computed at start of 1+) is clamped as distributed scalar-val representation.\n\
- - misc_1 on units stores the average reward value, computed using rew.avg_dt.\n\
  \nExtRewLayerSpec Configuration:\n\
  - OUT_ERR_REW: A recv connection from the output layer(s) where error is computed (marked with MarkerConSpec)\n\
  AND a MarkerConSpec from a layer called RewTarg that signals (>.5 act) when output errors count\n\
@@ -221,33 +219,6 @@ bool ExtRewLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   return rval;
 }
 
-void ExtRewLayerSpec::Compute_UnitDa(float er, LeabraUnit* u, Unit_Group* ugp, LeabraLayer*,
-				     LeabraNetwork* net) {
-  u->dav = er;
-  if(avg_rew.sub_avg) u->dav -= u->act_avg;
-  u->ext = u->dav;
-  u->act_avg += avg_rew.avg_dt * (er - u->act_avg);
-
-  float err_thr = (rew.rew_val - rew.err_val) * .5f + rew.err_val;
-
-  float& err_cor_cnt = u->misc_2; // count of errors (-) and corrects (+)
-  float& lst_cor_cnt = u->misc_3; // last correct count
-
-  if(er < err_thr) {		// made an error
-    if(err_cor_cnt > 0.0f)	// had been correct
-      err_cor_cnt = 0.0f;
-    err_cor_cnt -= 1.0f;
-  }
-  else {			// no error
-    if(err_cor_cnt < 0.0f)	// had been errors
-      err_cor_cnt = 0.0f;
-    err_cor_cnt += 1.0f;	// increment count of correct
-    lst_cor_cnt = err_cor_cnt;	// record last positive 
-  }
-
-  ClampValue_ugp(ugp, net);
-}
-
 void ExtRewLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
   // that's it: don't do any processing on this layer: set all idx to 0
   lay->units_flat_idx = 0;
@@ -256,6 +227,15 @@ void ExtRewLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
   FOR_ITR_EL(Unit, un, lay->units., ui) {
     un->flat_idx = 0;
   }
+}
+
+void ExtRewLayerSpec::Compute_Rew(LeabraLayer* lay, LeabraNetwork* net) {
+  if(rew_type == OUT_ERR_REW)
+    Compute_OutErrRew(lay, net);
+  else if(rew_type == EXT_REW)
+    Compute_ExtRew(lay, net);
+  else if(rew_type == DA_REW)
+    Compute_DaRew(lay, net);
 }
 
 bool ExtRewLayerSpec::OutErrRewAvail(LeabraLayer* lay, LeabraNetwork*) {
@@ -306,46 +286,8 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
     if(rew_lay->name == "RewTarg") continue;
 
     if(!(rew_lay->ext_flag & rew_chk_flag)) continue; // only proceed if valid 
-
-    toterr += rew_lay->norm_err;	// now using norm err: todo: test this!!!
+    toterr += rew_lay->norm_err;	// now using norm err
     totposs += 1.0f;
-
-//     LeabraLayerSpec* rls = (LeabraLayerSpec*)rew_lay->spec.SPtr();
-//     if(rls->InheritsFrom(&TA_ScalarValLayerSpec)) {
-//       UNIT_GP_ITR(rew_lay,
-// 		  LeabraUnit* eu = (LeabraUnit*)ugp->Leaf(0);
-// 		  float err = fabsf(eu->act_m - eu->targ);
-// 		  if(err < out_err.err_tol) err = 0.0f;
-// 		  toterr += err;
-// 		  totposs += out_err.scalar_val_max;
-// 		  )
-//     }
-//     else {
-//       if(out_err.no_off_err) {
-// 	totposs += rew_lay->kwta.k; // only on units can make errors
-//       }
-//       else {
-// 	totposs += 2 * rew_lay->kwta.k; // both on and off units count
-//       }
-//       LeabraUnit* eu;
-//       taLeafItr i;
-//       FOR_ITR_EL(LeabraUnit, eu, rew_lay->units., i) {
-// 	if(out_err.no_off_err) {
-// 	  if(!(eu->ext_flag & rew_chk_flag)) continue;
-// 	  if(eu->act_m > 0.5f) {	// was active
-// 	    if(eu->targ < 0.5f)	// shouldn't have been
-// 	      toterr += 1.0f;
-// 	  }
-// 	}
-// 	else {
-// 	  if(!(eu->ext_flag & rew_chk_flag)) continue;
-// 	  float tmp = fabsf(eu->act_m - eu->targ);
-// 	  float err = 0.0f;
-// 	  if(tmp >= out_err.err_tol) err = 1.0f;
-// 	  toterr += err;
-// 	}
-//       }
-//     }
   }
   if(totposs == 0.0f)
     return -1.0f;		// -1 = no reward signal at all
@@ -364,104 +306,103 @@ void ExtRewLayerSpec::Compute_OutErrRew(LeabraLayer* lay, LeabraNetwork* net) {
     return;
   }
 
-  float er = 0.0f;
-  if(TestError(out_err.seq_all_cor, "Compute_OutErrRew", "out_err.seq_all_cor is not yet supported!")) {
-    return;
-    // todo!  not supported
-//     bool old_graded = out_err.graded;
-//     out_err.graded = false;		// prevent graded sig here!
-//     float itm_er = GetOutErrRew(lay, net);
-//     out_err.graded = old_graded;
-
-//     lay->misc_iar.SetSize(3); // 0 = addr of eg; 1 = # tot; 2 = # cor
-//     Event_Group* eg = net->GetMyCurEventGp();
-//     int eg_addr = (int)eg;
-//     if(lay->misc_iar[0] != eg_addr) { // new seq
-//       lay->misc_iar[0] = eg_addr;
-//       lay->misc_iar[1] = 1;
-//       lay->misc_iar[2] = (int)itm_er;
-//     }
-//     else {
-//       lay->misc_iar[1]++;
-//       lay->misc_iar[2] += (int)itm_er;
-//     }
-//     Event* ev = net->GetMyCurEvent();
-//     int idx = eg->Find(ev);
-//     if(idx < eg->size-1) {	// not last event: no reward!
-//       Compute_NoRewAct(lay, net);
-//       return;
-//     }
-//     er = (float)lay->misc_iar[2] / (float)lay->misc_iar[1];
-//     if(!out_err.graded && (er < 1.0f)) er = 0.0f; // didn't make it!
-  }
-  else {
-    er = GetOutErrRew(lay, net);
-  }
-
+  float er = GetOutErrRew(lay, net);
   // starts out 0-1, transform into correct range
   er = (rew.rew_val - rew.err_val) * er + rew.err_val;
 
   UNIT_GP_ITR
     (lay,
      LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
-     u->misc_1 = 1.0f;		// indication of reward!
      Compute_UnitDa(er, u, ugp, lay, net);
      );
+
+  net->ext_rew = er;
+  net->ext_rew_avail = true;
+  net->norew_val = rew.norew_val;
 }
 
 void ExtRewLayerSpec::Compute_ExtRew(LeabraLayer* lay, LeabraNetwork* net) {
   if(!(lay->ext_flag & Unit::TARG)) {
     Compute_NoRewAct(lay, net);	
     return;
-  }    
+  }
+
+  int n_rew = 0;
+  float er_avg = 0.0f;
+
   UNIT_GP_ITR
     (lay, 
      LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
      float er = u->ext;
      if(er == rew.norew_val) {
-       u->misc_1 = 0.0f;	// indication of no reward!
        u->ext = rew.norew_val;	// this is appropriate to set here..
        ClampValue_ugp(ugp, net);
      }
      else {
-       u->misc_1 = 1.0f;		// indication of reward!
+       er_avg += er;
+       n_rew++;
        Compute_UnitDa(er, u, ugp, lay, net);
      }
      );
+
+  if(n_rew > 0) {
+    net->ext_rew = er_avg / (float)n_rew;
+    net->ext_rew_avail = true;
+  }
+  else {
+    net->ext_rew = -1.1f;	// indicates no rew
+    net->ext_rew_avail = false;
+  }
+  net->norew_val = rew.norew_val;
 }
 
 void ExtRewLayerSpec::Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net) {
+  int n_rew = 0;
+  float er_avg = 0.0f;
+
   UNIT_GP_ITR
     (lay, 
      LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
      float er = u->dav;
      if(er == rew.norew_val) {
-       u->misc_1 = 0.0f;	// indication of no reward!
        u->ext = rew.norew_val;	// this is appropriate to set here..
        ClampValue_ugp(ugp, net);
      }
      else {
-       u->misc_1 = 1.0f;		// indication of reward!
+       er_avg += er;
+       n_rew++;
        Compute_UnitDa(er, u, ugp, lay, net);
      }
      );
+
+  if(n_rew > 0) {
+    net->ext_rew = er_avg / (float)n_rew;
+    net->ext_rew_avail = true;
+  }
+  else {
+    net->ext_rew = -1.1f;	// indicates no rew
+    net->ext_rew_avail = false;
+  }
+  net->norew_val = rew.norew_val;
 }
 
-void ExtRewLayerSpec::Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork* net) {
-  UNIT_GP_ITR
-    (lay,
-     LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
-     u->misc_1 = 0.0f;		// indication of no reward!
-     u->ext = rew.norew_val;	// this is appropriate to set here..
-     ClampValue_ugp(ugp, net);
-     );
+void ExtRewLayerSpec::Compute_UnitDa(float er, LeabraUnit* u, Unit_Group* ugp, LeabraLayer*,
+				     LeabraNetwork* net) {
+  u->dav = er;
+  if(avg_rew.sub_avg) u->dav -= u->act_avg;
+  u->ext = u->dav;
+  u->act_avg += avg_rew.avg_dt * (er - u->act_avg);
+  ClampValue_ugp(ugp, net);
 }
 
 void ExtRewLayerSpec::Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net) {
+  net->ext_rew = -1.1f;	// indicates no rew
+  net->ext_rew_avail = false;
+  net->norew_val = rew.norew_val;
+  
   UNIT_GP_ITR
     (lay,
      LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
-     u->misc_1 = 0.0f;		// indication of no reward!
      u->ext = rew.norew_val;
      ClampValue_ugp(ugp, net);
      );
@@ -470,17 +411,12 @@ void ExtRewLayerSpec::Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net) {
 void ExtRewLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no == 0) {
     lay->SetExtFlag(Unit::EXT);
-    Compute_ZeroAct(lay, net);	// zero reward in minus
+    Compute_NoRewAct(lay, net);	// no reward in minus
     HardClampExt(lay, net);
   }
   else if(net->phase_no == 1) {
     lay->SetExtFlag(Unit::EXT);
-    if(rew_type == OUT_ERR_REW)
-      Compute_OutErrRew(lay, net);
-    else if(rew_type == EXT_REW)
-      Compute_ExtRew(lay, net);
-    else if(rew_type == DA_REW)
-      Compute_DaRew(lay, net);
+    Compute_Rew(lay, net);
     HardClampExt(lay, net);
   }
   else {
@@ -488,14 +424,6 @@ void ExtRewLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
     HardClampExt(lay, net);
   }
 }
-
-void ExtRewLayerSpec::Compute_NetExtRew(LeabraLayer* lay, LeabraNetwork* net) {
-  LeabraUnit* eru = (LeabraUnit*)lay->units.Leaf(0);
-  if(eru->misc_1 != 0.0f) { // indication of no reward available
-    net->ext_rew = eru->act_eq;	// just set it!
-  }
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 

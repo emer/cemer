@@ -34,6 +34,9 @@ class LEABRA_API PatchLayerSpec : public LVeLayerSpec {
   // Patch version of the LVe layer -- functionally identical to LVe and just so-named so that other layers can use its functionality appropriately
 INHERITED(LVeLayerSpec)
 public:
+  virtual void	Send_PVeToMatrix(LeabraLayer* lay, LeabraNetwork* net);
+  // send the PVe value computed by the patch units to misc_1 field in any MarkerCons prjn to MatrixLayerSpec layers -- used for noise modulation
+
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
   TA_SIMPLE_BASEFUNS(PatchLayerSpec);
@@ -46,10 +49,10 @@ class LEABRA_API SNcLayerSpec : public PVLVDaLayerSpec {
   // implements a substantia-nigra pars compacta (SNc) version of the PVLVDaLayerSpec, which receives stripe-wise LVe inputs from a PatchLayerSpec layer
 INHERITED(PVLVDaLayerSpec)
 public:
-  virtual void	Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net);
+  float		stripe_da_gain;	// extra multiplier on the stripe-wise dopamine value relative to the global computed value (enters into weighted average with global value -- remains normalized)
+
+  override void	Compute_Da(LeabraLayer* lay, LeabraNetwork* net);
   // compute the da value based on recv projections: every cycle in 1+ phases (delta version)
-  virtual void	Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net);
-  // update the LV
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -233,64 +236,6 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API MatrixRndGoSpec : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc random go specifications (unconditional, nogo)
-INHERITED(taOBase)
-public:
-  float		avgrew;		// #DEF_0.9 threshold on global avg reward value (0..1) below which random GO can fire (uses ExtRew_Stat if avail, else avg value from ExtRewLayer) -- once network is doing well overall, shutdown the exploration.  This is true for all cases EXCEPT err rnd go
-
-  float		ucond_p;	// #DEF_0.0001 unconditional random go probability (on every trial, each stripe has this probability of firing a Go randomly, without conditions)
-  float		ucond_da;	// #DEF_1 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) for the unconditional random go
-
-  int		nogo_thr;	// #DEF_50 threshold of number of nogo firing in a row that will trigger NoGo random go firing
-  float		nogo_p;		// #DEF_0.1 probability of actually firing a nogo random Go once the threshold is exceeded
-  float		nogo_da;	// #DEF_10 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) for a nogo-driven random go firing
-
-  void 	Defaults()	{ Initialize(); }
-  TA_SIMPLE_BASEFUNS(MatrixRndGoSpec);
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-};
-
-class LEABRA_API MatrixErrRndGoSpec : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra matrix random Go firing to encourage exploration when (a series of) errors occur: a stripe is chosen from a softmax over the snrthal netinputs (closer to firing chosen with higher probability)
-INHERITED(taOBase)
-public:
-  bool		on;		// #APPLY_IMMED #DEF_true whether to use error-driven random go
-  int		min_cor;	// #CONDEDIT_ON_on:true [Default is 5 for MAINT, 1 for OUTPUT] minimum number of sequential correct to start counting errors and doing random go: need some amount of correct before errors count!
-  int		min_errs;	// #CONDEDIT_ON_on:true #DEF_1 minimum number of sequential errors to start this random go exploration
-  float		err_p;		// #CONDEDIT_ON_on:true #DEF_1 baseline probability of firing Go, once above min_cor and min_errs
-  float		gain;		// #CONDEDIT_ON_on:true [Default is 0 for MAINT, .5 for OUTPUT] gain on softmax over netinputs on snrthal units for choosing the stripe to activate Go for: softmax = normalized exp(gain * snrthal->net)
-  float		if_go_p;	// #CONDEDIT_ON_on:true #DEF_0 probability of firing a random Go if some stripes are actually currently firing a Go (i.e., the not-all-nogo case); by default, only fire Go if all stripes are firing nogo
-  float		err_da;		// #CONDEDIT_ON_on:true #DEF_10 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) when error Go is fired (for learning effect) -- this multiplies the actual DA value coming from the SNc, and is also weighted by the netinput of the snrthal stripe; da = -dav * err_da * (snrthal->net + 1)
-
-  void 	Defaults()	{ Initialize(); }
-  TA_SIMPLE_BASEFUNS(MatrixErrRndGoSpec);
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-};
-
-class LEABRA_API MatrixAvgDaRndGoSpec : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra matrix random Go firing to encourage exploration for non-productive stripes based on softmax of avg_go_da for that stripe (matrix_u->misc_1)
-INHERITED(taOBase)
-public:
-  bool		on;		// #APPLY_IMMED [Default true for MAINT, false for OUTPUT] whether to use random go based on average dopamine values
-  float		avgda_p;	// #CONDEDIT_ON_on:true #DEF_0.1 baseline probability of firing random Go for any stripe (first pass before doing softmax)
-  float		gain;		// #CONDEDIT_ON_on:true #DEF_0.5 gain on softmax over avgda values on snrthal units for choosing the stripe to activate Go for (softmax = normalized exp(gain * (avgda_thr - avg_go_da))
-  float		avgda_thr;	// #DEF_0.1 threshold on per stripe avg_go_da value (-1..1) below which the random Go starts happening (and is subtracted from avgda as the reference point for the softmax computation)
-  int		nogo_thr;	// #CONDEDIT_ON_on:true #DEF_10 minimum number of sequential nogos in a row for a stripe before a avg-da random Go will fire (not to be confused with nogo_thr, which is regardless of avgda -- this is specifically for avg-da random go)
-  float		avgda_da;	// #CONDEDIT_ON_on:true #DEF_10 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) when go is fired (for learning effect)
-  float		avgda_dt;	// #DEF_0.005 time constant for integrating the average DA value associated with Go firing for each stripe (stored in matrix_u->misc_1)
-
-  void 	Defaults()	{ Initialize(); }
-  TA_SIMPLE_BASEFUNS(MatrixAvgDaRndGoSpec);
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-};
-
 class LEABRA_API MatrixLayerSpec : public LeabraLayerSpec {
   // basal ganglia matrix layer: fire actions/WM updates, or nogo; MAINT = gate in 1+ and 2+, OUTPUT = gate in -
 INHERITED(LeabraLayerSpec)
@@ -303,20 +248,6 @@ public:
   BGType		bg_type;	// type of basal ganglia/frontal system: output gating (e.g., motor) or maintenance gating (e.g., pfc)
   MatrixMiscSpec 	matrix;		// misc parameters for the matrix layer
   ContrastSpec 	 	contrast;	// contrast enhancement effects of da/dopamine neuromodulation
-  MatrixRndGoSpec	rnd_go;		// matrix random Go firing for unconditional and nogo firing stripes cases
-  MatrixErrRndGoSpec	err_rnd_go;	// matrix random Go firing to encourage exploration when (a series of) errors are made: chooses stripe to Go at random using probabilities from a softmax over snrthal netinput values: stripes that are closer to firing fire more often
-  MatrixAvgDaRndGoSpec	avgda_rnd_go;	// matrix random Go firing based on average da to encourage exploration for non-productive stripes based on a softmax over the avg_go_da for that stripe (matrix_u->misc_1) 
-
-  virtual bool 	Check_RndGoAvgRew(LeabraLayer* lay, LeabraNetwork* net);
-  // check avg_rew levels to see whether we should compute random go (don't do when avg_rew is good!); false = don't do rnd go, true = do it
-  virtual void 	Compute_UCondNoGoRndGo(LeabraLayer* lay, LeabraNetwork* net);
-  // compute random Go for unconditional and nogo cases
-  virtual void 	Compute_ErrRndGo(LeabraLayer* lay, LeabraNetwork* net);
-  // compute random Go signal when errors have been made recently
-  virtual void 	Compute_AvgDaRndGo(LeabraLayer* lay, LeabraNetwork* net);
-  // compute random Go signal based on average da values for stripes 
-  virtual void 	Compute_ClearRndGo(LeabraLayer* lay, LeabraNetwork* net);
-  // clear the rnd go signal
 
   virtual void 	Compute_DaMod_NoContrast(LeabraUnit* u, float dav, int go_no);
   // apply given dopamine modulation value to the unit, based on whether it is a go (0) or nogo (1); no contrast enancement based on activation
@@ -328,8 +259,6 @@ public:
   // compute dynamic da modulation; performance modulation, not learning (second minus phase)
   virtual void 	Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net);
   // compute dynamic da modulation: evaluation modulation, which is sensitive to GO/NOGO firing and activation in action phase
-  virtual void 	Compute_AvgGoDa(LeabraLayer* lay, LeabraNetwork* net);
-  // compute average da present when stripes fire a Go (stored in u->misc_1); used to modulate rnd_go firing
   virtual void 	Compute_MotorGate(LeabraLayer* lay, LeabraNetwork* net);
   // compute gating signal for OUTPUT Matrix_out
 
@@ -340,8 +269,6 @@ public:
 
   override void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
-  // hook for da mod stuff
-  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
   override bool	Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
@@ -371,7 +298,6 @@ INHERITED(taOBase)
 public:
   float		net_off;	// [0.2 or 0] netinput offset -- how much to add to each unit's baseline netinput -- positive values make it more likely that some stripe will always fire, even if it has a net nogo activation state in the matrix -- very useful for preventing all nogo situations -- if net_off is .2 then act.gain should be 600, if net_off is 0 then act.gain should be 20 (dynamic range is diff)
   float		go_thr;		// #DEF_0.1 threshold in snrthal activation required to trigger a Go gating event
-  float		rnd_go_inc;	// #DEF_0.2 how much to add to the net input for a random-go signal triggered in corresponding matrix layer?
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(SNrThalMiscSpec);
@@ -428,15 +354,10 @@ public:
     LATCH_NOGO,			// stripe was already latched, got a NOGO
     LATCH_GOGO,			// stripe was already latched, got a GO then another GO
     NO_GATE,			// no gating took place
-    UCOND_RND_GO,		// unconditional random go: just fire random go with a given probability, 
-    NOGO_RND_GO,		// random go for stripes constantly firing nogo
-    ERR_RND_GO,			// random go when an error has just been made: explore on error (ACC/LC?)
-    AVGDA_RND_GO		// random go for stripes with consistently low average dopamine levels (under performers)
   };
 
   float		off_accom;	// #DEF_0 how much of the maintenance current to apply to accommodation after turning a unit off
   bool		out_gate_learn_mod; // modulate the learning as a function of whether the corresponding output gating layer fired Go, to enforce appropriate credit assignment to only learn when given stripe participated in output -- this is a discrete modulation (all or nothing)
-  bool		updt_reset_sd;	// #DEF_true reset synaptic depression when units are updated
   bool		allow_clamp;	// #DEF_false allow external hard clamp of layer (e.g., for testing)
 
   void 	Defaults()	{ Initialize(); }
@@ -461,8 +382,6 @@ public:
 
   PFCGateSpec	gate;		// parameters controlling the gating of pfc units
 
-  virtual void 	ResetSynDep(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // reset synaptic depression for sending cons from unit that was just toggled off in plus phase 1
   virtual void 	Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct updt_act, LeabraLayer* lay, LeabraNetwork* net);
   // update maintenance state variables (gc.h, misc_1) based on given action: ugp impl
   virtual void 	Compute_MaintUpdt(MaintUpdtAct updt_act, LeabraLayer* lay, LeabraNetwork* net);
