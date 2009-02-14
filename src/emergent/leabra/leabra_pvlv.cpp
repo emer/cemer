@@ -66,6 +66,7 @@ void PVConSpec::UpdateAfterEdit_impl() {
 
 void PViLayerSpec::Initialize() {
   min_pvi = 0.4f;
+  min_in_prior = false;
 
   SetUnique("decay", true);
   decay.phase = 0.0f;
@@ -200,12 +201,13 @@ void PViLayerSpec::Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
 float PViLayerSpec::Compute_PVDa_ugp(Unit_Group* pvi_ugp, float pve_val) {
   LeabraUnit* u = (LeabraUnit*)pvi_ugp->FastEl(0);
 
-  float pvd = pve_val - MAX(u->act_eq, min_pvi);
+  // note: da ONLY called in plus or later phase, so minus phase value is valid
+  float pvd = pve_val - MAX(u->act_m, min_pvi);
   float pv_da = pvd - u->misc_1; // delta relative to prior
 
   for(int i=0;i<pvi_ugp->size;i++) {
     LeabraUnit* du = (LeabraUnit*)pvi_ugp->FastEl(i);
-    du->dav = pv_da;		// store in all units for visualization etc
+    du->dav = pvd;		// store in all units for visualization & prior updating -- note: NOT the pv_da guy which already has prior delta subtracted!
   }
   return pv_da;
 }
@@ -592,7 +594,7 @@ float LVeLayerSpec::Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp) {
 
   for(int i=0;i<lve_ugp->size;i++) {
     LeabraUnit* du = (LeabraUnit*)lve_ugp->FastEl(i);
-    du->dav = lv_da;		// store in all units for visualization etc
+    du->dav = lvd;		// store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
   }
   return lv_da;
 }
@@ -816,7 +818,7 @@ float NVLayerSpec::Compute_NVDa(LeabraLayer* lay, LeabraNetwork* net) {
 
   for(int i=0;i<lay->units.leaves;i++) {
     LeabraUnit* du = (LeabraUnit*)lay->units.Leaf(i);
-    du->dav = nv_da;		// store in all units for visualization etc
+    du->dav = nvd;		// store in all units for visualization, updating -- NOT the nv_da which is already relative to prior
   }
   return nv.da_gain * nv_da;
 }

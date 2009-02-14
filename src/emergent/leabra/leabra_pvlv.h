@@ -78,6 +78,7 @@ class LEABRA_API PViLayerSpec : public ScalarValLayerSpec {
 INHERITED(ScalarValLayerSpec)
 public:
   float		min_pvi;	// minimum pvi value -- PVi is not allowed to go below this value for the purposes of computing the dopamine delta value: PVe - MAX(PVi,min_pvi)
+  bool		min_in_prior; // include min_pvi element in the prior da value
 
   virtual void 	Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   // compute plus phase activations as external rewards and change weights
