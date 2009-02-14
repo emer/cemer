@@ -134,7 +134,7 @@ void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
   if(nv_lay) {
     lv_da += nvls->Compute_NVDa(nv_lay, net);
   }
-  float pv_da = pvils->Compute_PVDa(lvi_lay, net);
+  float pv_da = pvils->Compute_PVDa(pvi_lay, net);
   bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
 
   Unit_Group* lvi_ugp;
