@@ -207,7 +207,10 @@ float PViLayerSpec::Compute_PVDa_ugp(Unit_Group* pvi_ugp, float pve_val) {
 
   for(int i=0;i<pvi_ugp->size;i++) {
     LeabraUnit* du = (LeabraUnit*)pvi_ugp->FastEl(i);
-    du->dav = pvd;		// store in all units for visualization & prior updating -- note: NOT the pv_da guy which already has prior delta subtracted!
+    if(min_in_prior)
+      du->dav = pvd;		// store in all units for visualization & prior updating -- note: NOT the pv_da guy which already has prior delta subtracted!
+    else
+      du->dav = pve_val - u->act_m;
   }
   return pv_da;
 }
