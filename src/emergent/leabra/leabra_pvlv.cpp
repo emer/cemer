@@ -476,6 +476,7 @@ bool PVrLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 
 void LVeLayerSpec::Initialize() {
   min_lvi = 0.1f;
+  delta_prior = false;
 
   SetUnique("decay", true);
   decay.phase = 0.0f;
@@ -594,7 +595,10 @@ float LVeLayerSpec::Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp) {
 
   for(int i=0;i<lve_ugp->size;i++) {
     LeabraUnit* du = (LeabraUnit*)lve_ugp->FastEl(i);
-    du->dav = lvd;		// store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
+    if(delta_prior)
+      du->dav = lv_da;		// store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
+    else
+      du->dav = lvd;		// store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
   }
   return lv_da;
 }
@@ -1027,11 +1031,6 @@ void PVLVDaLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
     int pvi_prjn_idx;
     LeabraLayer* pvi_lay = FindLayerFmSpec(lay, pvi_prjn_idx, &TA_PViLayerSpec);
     PViLayerSpec* pvils = (PViLayerSpec*)pvi_lay->spec.SPtr();
-
-    int pvr_prjn_idx = 0;
-    LeabraLayer* pvr_lay = FindLayerFmSpec(lay, pvr_prjn_idx, &TA_PVrLayerSpec);
-    PVrLayerSpec* pvrls = NULL;
-    if(pvr_lay) pvrls = (PVrLayerSpec*)pvr_lay->spec.SPtr();
 
     int nv_prjn_idx;
     LeabraLayer* nv_lay = FindLayerFmSpec(lay, nv_prjn_idx, &TA_NVLayerSpec);

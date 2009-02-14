@@ -207,6 +207,7 @@ class LEABRA_API LVeLayerSpec : public ScalarValLayerSpec {
 INHERITED(ScalarValLayerSpec)
 public:
   float		min_lvi;	// minimum effective lvi value, for computing lv da: da = LVe - MAX(LVi, min_lvi)
+  bool		delta_prior;	// include prior subtraction in delta for next prior
 
   virtual void 	Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   // if primary value detected (present/expected), compute plus phase activations for learning, and actually change weights
