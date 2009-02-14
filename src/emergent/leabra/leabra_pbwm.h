@@ -217,6 +217,21 @@ private:
 //	  Matrix Layer Spec	//
 //////////////////////////////////
 
+class LEABRA_API MatrixRndGoSpec : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc random go specifications (nogo)
+INHERITED(taOBase)
+public:
+  int		nogo_thr;	// #DEF_50 threshold of number of nogo firing in a row that will trigger NoGo random go firing
+  float		nogo_p;		// #DEF_0.1 probability of actually firing a nogo random Go once the threshold is exceeded
+  float		nogo_da;	// #DEF_10 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) for a nogo-driven random go firing
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(MatrixRndGoSpec);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 class LEABRA_API MatrixMiscSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
 INHERITED(taOBase)
@@ -224,7 +239,7 @@ public:
   float		neg_da_bl;	// #DEF_0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
   float		neg_gain;	// #DEF_1.5 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
   float		perf_gain;	// #DEF_0 performance effect da gain (in 2- phase for trans, 1+ for gogo)
-  bool		no_snr_mod;	// #DEF_false disable the Da learning modulation by SNrThal ativation (this is only to demonstrate how important it is)
+  bool		no_snr_mod;	// #DEF_false #EXPERT disable the Da learning modulation by SNrThal ativation (this is only to demonstrate how important it is)
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(MatrixMiscSpec);
@@ -264,6 +279,7 @@ public:
   BGType		bg_type;	// type of basal ganglia/frontal system: output gating (e.g., motor) or maintenance gating (e.g., pfc)
   MatrixMiscSpec 	matrix;		// misc parameters for the matrix layer
   ContrastSpec 	 	contrast;	// contrast enhancement effects of da/dopamine neuromodulation
+  MatrixRndGoSpec	rnd_go;		// matrix random Go firing for nogo firing stripes case
 
   virtual void 	Compute_DaMod_NoContrast(LeabraUnit* u, float dav, int go_no);
   // apply given dopamine modulation value to the unit, based on whether it is a go (0) or nogo (1); no contrast enancement based on activation
@@ -278,6 +294,11 @@ public:
   virtual void 	Compute_MotorGate(LeabraLayer* lay, LeabraNetwork* net);
   // compute gating signal for OUTPUT Matrix_out
 
+  virtual void 	Compute_NoGoRndGo(LeabraLayer* lay, LeabraNetwork* net);
+  // compute random Go for nogo case
+  virtual void 	Compute_ClearRndGo(LeabraLayer* lay, LeabraNetwork* net);
+  // clear the rnd go signals
+
   virtual void	LabelUnits_impl(Unit_Group* ugp);
   // label units with Go/No (unit group) -- auto done in InitWeights
   virtual void	LabelUnits(LeabraLayer* lay);
@@ -285,6 +306,7 @@ public:
 
   override void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
   override bool	Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
@@ -370,6 +392,7 @@ public:
     LATCH_NOGO,			// stripe was already latched, got a NOGO
     LATCH_GOGO,			// stripe was already latched, got a GO then another GO
     NO_GATE,			// no gating took place
+    NOGO_RND_GO,		// random go for stripes constantly firing nogo
   };
 
   float		off_accom;	// #DEF_0 how much of the maintenance current to apply to accommodation after turning a unit off

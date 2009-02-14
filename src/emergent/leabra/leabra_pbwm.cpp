@@ -342,6 +342,12 @@ void ContrastSpec::Initialize() {
   nogo_n = .5f;
 }
 
+void MatrixRndGoSpec::Initialize() {
+  nogo_thr = 50;
+  nogo_p = .1f;
+  nogo_da = 10.0f;
+}
+
 /////////////////////////////////////////////////////
 
 void MatrixLayerSpec::Initialize() {
@@ -648,6 +654,10 @@ void MatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mug
       snrthal_act = 1.0f;
 
     float dav = snrthal_act * u->dav - matrix.neg_da_bl; // da is modulated by snrthal; sub baseline
+    if(mugp->misc_state1 == PFCGateSpec::NOGO_RND_GO) {
+      dav += rnd_go.nogo_da; 
+    }
+
     u->dav = dav;		// make it show up in display
     Compute_DaMod_Contrast(u, dav, gating_act, go_no);
     idx++;
@@ -697,6 +707,43 @@ void MatrixLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
       // don't do anything in 2nd plus!
     }
   }
+}
+
+void MatrixLayerSpec::Compute_ClearRndGo(LeabraLayer* lay, LeabraNetwork*) {
+  for(int gi=0; gi<lay->units.gp.size; gi++) {
+    LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
+    if(mugp->misc_state1 >= PFCGateSpec::NOGO_RND_GO)
+      mugp->misc_state1 = PFCGateSpec::EMPTY_GO;
+  }
+}
+
+void MatrixLayerSpec::Compute_NoGoRndGo(LeabraLayer* lay, LeabraNetwork*) {
+  for(int gi=0; gi<lay->units.gp.size; gi++) {
+    LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
+    if((int)fabs((float)mugp->misc_state) > rnd_go.nogo_thr) {
+      if(Random::ZeroOne() < rnd_go.nogo_p) {
+	mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
+      }
+    }
+  }
+}
+
+void MatrixLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
+  if(net->phase_no == 0)
+    Compute_ClearRndGo(lay, net);
+
+  if(bg_type == MatrixLayerSpec::MAINT) {
+    if(net->phase_no == 1) {
+      Compute_NoGoRndGo(lay, net);
+    }
+  }
+  else {			// OUTPUT
+    if(net->phase_no == 0) {
+      Compute_NoGoRndGo(lay, net);
+    }
+  }
+
+  inherited::Compute_HardClamp(lay, net);
 }
 
 void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
