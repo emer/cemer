@@ -86,9 +86,14 @@ public:
   // compute da contribution from PV
     virtual float Compute_PVDa_ugp(Unit_Group* ugp, float pve_val);
     // #IGNORE
+  virtual void	Update_PVPrior(LeabraLayer* lay, LeabraNetwork* net);
+  // update the prior PV value, stored in pv unit misc_1 values -- at very end of trial
+    virtual void Update_PVPrior_ugp(Unit_Group* ugp, bool er_avail);
+    // #IGNORE
 
   // overrides:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
   override bool	Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
 
   override void	Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net);
