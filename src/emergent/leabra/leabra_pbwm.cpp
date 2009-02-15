@@ -720,6 +720,10 @@ void MatrixLayerSpec::Compute_ClearRndGo(LeabraLayer* lay, LeabraNetwork*) {
 void MatrixLayerSpec::Compute_NoGoRndGo(LeabraLayer* lay, LeabraNetwork*) {
   for(int gi=0; gi<lay->units.gp.size; gi++) {
     LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
+
+    // todo: nuke me!!!!
+    float rval = Random::ZeroOne(); // this is just to equate random sequence with old code
+
     if((int)fabs((float)mugp->misc_state) > rnd_go.nogo_thr) {
       if(Random::ZeroOne() < rnd_go.nogo_p) {
 	mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
@@ -795,6 +799,7 @@ void MatrixLayerSpec::LabelUnits(LeabraLayer* lay) {
 void SNrThalMiscSpec::Initialize() {
   go_thr = 0.1f;
   net_off = 0.2f;
+  rnd_go_inc = 0.2f;
 }
 
 void SNrThalLayerSpec::Initialize() {
@@ -906,6 +911,10 @@ void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
       }
       if(sum_go + sum_nogo > 0.0f) {
 	gonogo = (sum_go - sum_nogo) / (sum_go + sum_nogo);
+      }
+      if(mugp->misc_state1 >= PFCGateSpec::NOGO_RND_GO) {
+	gonogo += snrthal.rnd_go_inc;
+	if(gonogo > 1.0f) gonogo = 1.0f;
       }
     }
 
@@ -1194,7 +1203,9 @@ void PFCLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork*) {
     // everybody gets gate state info from PFC!
     snrgp->misc_state = mugp->misc_state = ugp->misc_state;
     snrgp->misc_state1 = ugp->misc_state1; 
-    mugp->misc_state1 = ugp->misc_state1;
+    if(mugp->misc_state1 < PFCGateSpec::NOGO_RND_GO) { // don't override random go signals
+      mugp->misc_state1 = ugp->misc_state1;
+    }
     snrgp->misc_state2 = mugp->misc_state2 = ugp->misc_state2;
   }
 }
