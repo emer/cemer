@@ -66,7 +66,6 @@ void PVConSpec::UpdateAfterEdit_impl() {
 
 void PViLayerSpec::Initialize() {
   min_pvi = 0.4f;
-  min_in_prior = false;
 
   SetUnique("decay", true);
   decay.phase = 0.0f;
@@ -203,16 +202,17 @@ float PViLayerSpec::Compute_PVDa_ugp(Unit_Group* pvi_ugp, float pve_val) {
 
   // note: da ONLY called in plus or later phase, so minus phase value is valid
   float pvd = pve_val - MAX(u->act_m, min_pvi);
-  float pv_da = pvd - u->misc_1; // delta relative to prior
+  // note: the notion of a pv prior doesn't really make sense, and in fact had no
+  // effect in previous implementation -- the time scale of this system is long
+  // enough that the bursting of a PV-level event is de-facto and if you have
+  // a second trial of stuff, it should be evaluated on its own terms
+  //  float pv_da = pvd - u->misc_1; // delta relative to prior
 
   for(int i=0;i<pvi_ugp->size;i++) {
     LeabraUnit* du = (LeabraUnit*)pvi_ugp->FastEl(i);
-    if(min_in_prior)
-      du->dav = pvd;		// store in all units for visualization & prior updating -- note: NOT the pv_da guy which already has prior delta subtracted!
-    else
-      du->dav = pve_val - u->act_m;
+    du->dav = pvd;		// store in all units for visualization
   }
-  return pv_da;
+  return pvd;
 }
 
 float PViLayerSpec::Compute_PVDa(LeabraLayer* lay, LeabraNetwork* net) {
@@ -234,35 +234,12 @@ float PViLayerSpec::Compute_PVDa(LeabraLayer* lay, LeabraNetwork* net) {
   return pv_da;
 }
 
-void PViLayerSpec::Update_PVPrior_ugp(Unit_Group* pvi_ugp, bool er_avail) {
-  LeabraUnit* u = (LeabraUnit*)pvi_ugp->FastEl(0);
-  if(er_avail) {
-    u->misc_1 = 0.0f;
-  }
-  else {
-    u->misc_1 = u->dav;	// already stored in da value: note includes min_pvi, which is appropriate -- this was missing prior to 2/12/2009
-  }
-}
-
-void PViLayerSpec::Update_PVPrior(LeabraLayer* lay, LeabraNetwork* net) {
-  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
-  UNIT_GP_ITR(lay, Update_PVPrior_ugp(ugp, er_avail); );
-}
-
 void PViLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_CycleStats(lay, net);
   // take the 1st guy as the overall general guy
   LeabraUnit* pvisu = (LeabraUnit*)lay->units.Leaf(0);
   net->pvlv_pvi = pvisu->act_eq;
   // this is primarily used for noise modulation
-}
-
-void PViLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::PostSettle(lay, net);
-
-  if(net->phase_no == net->phase_max-1) { // only at very end!
-    Update_PVPrior(lay, net);
-  }
 }
 
 void PViLayerSpec::Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) {
@@ -479,7 +456,6 @@ bool PVrLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 
 void LVeLayerSpec::Initialize() {
   min_lvi = 0.1f;
-  delta_prior = false;
 
   SetUnique("decay", true);
   decay.phase = 0.0f;
@@ -598,10 +574,7 @@ float LVeLayerSpec::Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp) {
 
   for(int i=0;i<lve_ugp->size;i++) {
     LeabraUnit* du = (LeabraUnit*)lve_ugp->FastEl(i);
-    if(delta_prior)
-      du->dav = lv_da;		// store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
-    else
-      du->dav = lvd;		// store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
+    du->dav = lvd;		// store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
   }
   return lv_da;
 }

@@ -78,7 +78,6 @@ class LEABRA_API PViLayerSpec : public ScalarValLayerSpec {
 INHERITED(ScalarValLayerSpec)
 public:
   float		min_pvi;	// minimum pvi value -- PVi is not allowed to go below this value for the purposes of computing the dopamine delta value: PVe - MAX(PVi,min_pvi)
-  bool		min_in_prior; // include min_pvi element in the prior da value
 
   virtual void 	Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   // compute plus phase activations as external rewards and change weights
@@ -87,14 +86,9 @@ public:
   // compute da contribution from PV
     virtual float Compute_PVDa_ugp(Unit_Group* ugp, float pve_val);
     // #IGNORE
-  virtual void	Update_PVPrior(LeabraLayer* lay, LeabraNetwork* net);
-  // update the prior PV value, stored in pv unit misc_1 values -- at very end of trial
-    virtual void Update_PVPrior_ugp(Unit_Group* ugp, bool er_avail);
-    // #IGNORE
 
   // overrides:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
-  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
   override bool	Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
 
   override void	Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net);
@@ -207,7 +201,6 @@ class LEABRA_API LVeLayerSpec : public ScalarValLayerSpec {
 INHERITED(ScalarValLayerSpec)
 public:
   float		min_lvi;	// minimum effective lvi value, for computing lv da: da = LVe - MAX(LVi, min_lvi)
-  bool		delta_prior;	// include prior subtraction in delta for next prior
 
   virtual void 	Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   // if primary value detected (present/expected), compute plus phase activations for learning, and actually change weights

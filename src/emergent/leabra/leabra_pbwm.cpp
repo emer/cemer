@@ -721,9 +721,6 @@ void MatrixLayerSpec::Compute_NoGoRndGo(LeabraLayer* lay, LeabraNetwork*) {
   for(int gi=0; gi<lay->units.gp.size; gi++) {
     LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
 
-    // todo: nuke me!!!!
-    float rval = Random::ZeroOne(); // this is just to equate random sequence with old code
-
     if((int)fabs((float)mugp->misc_state) > rnd_go.nogo_thr) {
       if(Random::ZeroOne() < rnd_go.nogo_p) {
 	mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
