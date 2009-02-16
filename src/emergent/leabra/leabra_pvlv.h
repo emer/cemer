@@ -77,7 +77,8 @@ class LEABRA_API PViLayerSpec : public ScalarValLayerSpec {
   // primary value inhibitory (PVi) layer: continously learns to expect primary reward values
 INHERITED(ScalarValLayerSpec)
 public:
-  float		min_pvi;	// minimum pvi value -- PVi is not allowed to go below this value for the purposes of computing the dopamine delta value: PVe - MAX(PVi,min_pvi)
+  float		min_pvi;	// #DEF_0.4 minimum pvi value -- PVi is not allowed to go below this value for the purposes of computing the dopamine delta value: PVe - MAX(PVi,min_pvi)
+  float		er_prior_decay;	// #MIN_0 #MAX_1 how much does external reward reset prior value for computing da delta 
 
   virtual void 	Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   // compute plus phase activations as external rewards and change weights
@@ -206,6 +207,7 @@ class LEABRA_API LVeLayerSpec : public ScalarValLayerSpec {
 INHERITED(ScalarValLayerSpec)
 public:
   float		min_lvi;	// minimum effective lvi value, for computing lv da: da = LVe - MAX(LVi, min_lvi)
+  float		er_prior_decay;	// #MIN_0 #MAX_1 how much does external reward reset prior value for computing da delta 
 
   virtual void 	Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   // if primary value detected (present/expected), compute plus phase activations for learning, and actually change weights
@@ -261,6 +263,7 @@ INHERITED(taOBase)
 public:
   float		da_gain;	// #DEF_1 gain for novelty value dopamine signal
   float		val_thr;	// #DEF_0.1 threshold for value (training value is 0) -- value is zero below this threshold
+  float		er_prior_decay;	// #MIN_0 #MAX_1 how much does external reward reset prior value for computing da delta 
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(NVSpec);

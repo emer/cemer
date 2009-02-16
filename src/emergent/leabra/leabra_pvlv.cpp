@@ -66,6 +66,7 @@ void PVConSpec::UpdateAfterEdit_impl() {
 
 void PViLayerSpec::Initialize() {
   min_pvi = 0.4f;
+  er_prior_decay = 1.0f;
 
   SetUnique("decay", true);
   decay.phase = 0.0f;
@@ -233,7 +234,7 @@ float PViLayerSpec::Compute_PVDa(LeabraLayer* lay, LeabraNetwork* net) {
 void PViLayerSpec::Update_PVPrior_ugp(Unit_Group* pvi_ugp, bool er_avail) {
   LeabraUnit* u = (LeabraUnit*)pvi_ugp->FastEl(0);
   if(er_avail) {
-    u->misc_1 = 0.0f;
+    u->misc_1 = (1.0f - er_prior_decay) * u->dav;
   }
   else {
     u->misc_1 = u->dav;	// already stored in da value: note includes min_pvi, which is appropriate -- this was missing prior to 2/12/2009
@@ -475,6 +476,7 @@ bool PVrLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 
 void LVeLayerSpec::Initialize() {
   min_lvi = 0.1f;
+  er_prior_decay = 1.0f;
 
   SetUnique("decay", true);
   decay.phase = 0.0f;
@@ -647,7 +649,7 @@ float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
 void LVeLayerSpec::Update_LVPrior_ugp(Unit_Group* lve_ugp, bool er_avail) {
   LeabraUnit* lveu = (LeabraUnit*)lve_ugp->FastEl(0);
   if(er_avail) {
-    lveu->misc_1 = 0.0f;
+    lveu->misc_1 = (1.0f - er_prior_decay) * lveu->dav;
   }
   else {
     lveu->misc_1 = lveu->dav;	// already stored in da value: note includes min_lvi, which is appropriate -- this was missing prior to 2/12/2009
@@ -718,6 +720,7 @@ bool LVeLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 void NVSpec::Initialize() {
   da_gain = 1.0f;
   val_thr = 0.1f;
+  er_prior_decay = 1.0f;
 }
 
 void NVLayerSpec::Initialize() {
@@ -836,7 +839,7 @@ void NVLayerSpec::Update_NVPrior(LeabraLayer* lay, LeabraNetwork* net) {
   bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
   LeabraUnit* nvsu = (LeabraUnit*)lay->units.Leaf(0);
   if(er_avail) {
-    nvsu->misc_1 = 0.0f;	// reset
+    nvsu->misc_1 = (1.0f - nv.er_prior_decay) * nvsu->dav;
   }
   else {
     nvsu->misc_1 = nvsu->dav;	// previous da value
