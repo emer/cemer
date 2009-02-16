@@ -73,12 +73,27 @@ private:
   void	Destroy()		{ };
 };
 
+
+class LEABRA_API PVMiscSpec : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PV layer spec
+INHERITED(taOBase)
+public:
+  float		min_pvi;	// #DEF_0.4 minimum pvi value -- PVi is not allowed to go below this value for the purposes of computing the PV delta value: pvd = PVe - MAX(PVi,min_pvi)
+  float		prior_discount;	// #MIN_0 #MAX_1 how much to discount the prior PV delta value (pvd = PVe - MAX(PVi,min_pvi)) in computing the net PV dopamine signal (PV DA = pvd_t - prior_discount * pvd_t-1)
+  bool		er_reset_prior;	// #DEF_true reset prior delta value (pvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(PVMiscSpec);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 class LEABRA_API PViLayerSpec : public ScalarValLayerSpec {
-  // primary value inhibitory (PVi) layer: continously learns to expect primary reward values
+  // primary value inhibitory (PVi) layer: continously learns to expect primary reward values, contribute to overall dopamine with PV delta pvd = PVe - PVi; PV DA = pvd_t - pvd_t-1
 INHERITED(ScalarValLayerSpec)
 public:
-  float		min_pvi;	// #DEF_0.4 minimum pvi value -- PVi is not allowed to go below this value for the purposes of computing the dopamine delta value: PVe - MAX(PVi,min_pvi)
-  float		er_prior_decay;	// #MIN_0 #MAX_1 how much does external reward reset prior value for computing da delta 
+  PVMiscSpec	pv;		// misc parameters for the PV computation
 
   virtual void 	Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   // compute plus phase activations as external rewards and change weights
@@ -202,12 +217,26 @@ private:
 ////////////////////////////////////////////////////////////////////////
 //		LV System: Learned Value
 
+class LEABRA_API LVMiscSpec : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PV layer spec
+INHERITED(taOBase)
+public:
+  float		min_lvi;	// #DEF_0.1 minimum lvi value -- LVi is not allowed to go below this value for the purposes of computing the LV delta value: lvd = LVe - MAX(LVi,min_lvi)
+  float		prior_discount;	// #MIN_0 #MAX_1 how much to discount the prior LV delta value (lvd = LVe - MAX(LVi,min_lvi)) in computing the net LV dopamine signal (LV DA = lvd_t - prior_discount * lvd_t-1)
+  bool		er_reset_prior;	// #DEF_true reset prior delta value (lvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(LVMiscSpec);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 class LEABRA_API LVeLayerSpec : public ScalarValLayerSpec {
-  // learns value based on inputs that are associated with rewards, only learns at time of primary rewards (filtered by PV system). This is excitatory version
+  // learns value based on inputs that are associated with rewards, only learns at time of primary rewards (filtered by PV system). This is excitatory version LVe.  LV contribution to dopamine is based on LV delta lvd = LVe - LVi; LV DA = lvd_t - lvd_t-1
 INHERITED(ScalarValLayerSpec)
 public:
-  float		min_lvi;	// minimum effective lvi value, for computing lv da: da = LVe - MAX(LVi, min_lvi)
-  float		er_prior_decay;	// #MIN_0 #MAX_1 how much does external reward reset prior value for computing da delta 
+  LVMiscSpec	lv;		// misc parameters controlling the LV computation (note: only the LVe instance of these parameters are used)
 
   virtual void 	Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   // if primary value detected (present/expected), compute plus phase activations for learning, and actually change weights
@@ -263,7 +292,8 @@ INHERITED(taOBase)
 public:
   float		da_gain;	// #DEF_1 gain for novelty value dopamine signal
   float		val_thr;	// #DEF_0.1 threshold for value (training value is 0) -- value is zero below this threshold
-  float		er_prior_decay;	// #MIN_0 #MAX_1 how much does external reward reset prior value for computing da delta 
+  float		prior_discount;	// #MIN_0 #MAX_1 how much to discount the prior NV delta value (nvd = NV - val_thr) in computing the net NV dopamine signal (NV DA = nvd_t - prior_discount * nvd_t-1)
+  bool		er_reset_prior;	// #DEF_true reset prior delta value (nvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(NVSpec);
@@ -273,7 +303,7 @@ private:
 };
 
 class LEABRA_API NVLayerSpec : public ScalarValLayerSpec {
-  // novelty value (NV) layer: starts with a bias of 1.0, and learns to activate 0.0 value -- value signal is how novel the stimulus is
+  // novelty value (NV) layer: starts with a bias of 1.0, and learns to activate 0.0 value -- value signal is how novel the stimulus is: NV delta nvd = NV - val_thr; NV DA = nvd_t - nvd_t-1
 INHERITED(ScalarValLayerSpec)
 public:
   NVSpec	nv;	// novelty value specs

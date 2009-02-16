@@ -64,10 +64,13 @@ void PVConSpec::UpdateAfterEdit_impl() {
 ////////////////////////////////////////////////////////////////////
 //	PVi (NAc) Layer Spec
 
-void PViLayerSpec::Initialize() {
+void PVMiscSpec::Initialize() {
   min_pvi = 0.4f;
-  er_prior_decay = 1.0f;
+  prior_discount = 1.0f;
+  er_reset_prior = true;
+}
 
+void PViLayerSpec::Initialize() {
   SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
@@ -85,6 +88,7 @@ void PViLayerSpec::Initialize() {
 void PViLayerSpec::Defaults() {
   inherited::Defaults();
   Initialize();
+  pv.Defaults();
 }
 
 void PViLayerSpec::HelpConfig() {
@@ -202,7 +206,7 @@ float PViLayerSpec::Compute_PVDa_ugp(Unit_Group* pvi_ugp, float pve_val) {
   LeabraUnit* u = (LeabraUnit*)pvi_ugp->FastEl(0);
 
   // note: da ONLY called in plus or later phase, so minus phase value is valid
-  float pvd = pve_val - MAX(u->act_m, min_pvi);
+  float pvd = pve_val - MAX(u->act_m, pv.min_pvi);
   float pv_da = pvd - u->misc_1; // delta relative to prior
 
   for(int i=0;i<pvi_ugp->size;i++) {
@@ -233,11 +237,11 @@ float PViLayerSpec::Compute_PVDa(LeabraLayer* lay, LeabraNetwork* net) {
 
 void PViLayerSpec::Update_PVPrior_ugp(Unit_Group* pvi_ugp, bool er_avail) {
   LeabraUnit* u = (LeabraUnit*)pvi_ugp->FastEl(0);
-  if(er_avail) {
-    u->misc_1 = (1.0f - er_prior_decay) * u->dav;
+  if(er_avail && pv.er_reset_prior) {
+    u->misc_1 = 0.0f;
   }
   else {
-    u->misc_1 = u->dav;	// already stored in da value: note includes min_pvi, which is appropriate -- this was missing prior to 2/12/2009
+    u->misc_1 = pv.prior_discount * u->dav;	// already stored in da value: note includes min_pvi, which is appropriate -- this was missing prior to 2/12/2009
   }
 }
 
@@ -474,10 +478,13 @@ bool PVrLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 //	LV Layer Spec: Perceived Value	//
 //////////////////////////////////////////
 
-void LVeLayerSpec::Initialize() {
+void LVMiscSpec::Initialize() {
   min_lvi = 0.1f;
-  er_prior_decay = 1.0f;
+  prior_discount = 1.0f;
+  er_reset_prior = true;
+}
 
+void LVeLayerSpec::Initialize() {
   SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
@@ -495,6 +502,7 @@ void LVeLayerSpec::Initialize() {
 void LVeLayerSpec::Defaults() {
   inherited::Defaults();
   Initialize();
+  lv.Defaults();
 }
 
 void LVeLayerSpec::HelpConfig() {
@@ -590,7 +598,7 @@ float LVeLayerSpec::Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp) {
   LeabraUnit* lveu = (LeabraUnit*)lve_ugp->FastEl(0);
   LeabraUnit* lviu = (LeabraUnit*)lvi_ugp->FastEl(0);
 
-  float lvd = lveu->act_eq - MAX(lviu->act_eq, min_lvi);
+  float lvd = lveu->act_eq - MAX(lviu->act_eq, lv.min_lvi);
   float lv_da = lvd - lveu->misc_1;
 
   for(int i=0;i<lve_ugp->size;i++) {
@@ -648,11 +656,11 @@ float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
 
 void LVeLayerSpec::Update_LVPrior_ugp(Unit_Group* lve_ugp, bool er_avail) {
   LeabraUnit* lveu = (LeabraUnit*)lve_ugp->FastEl(0);
-  if(er_avail) {
-    lveu->misc_1 = (1.0f - er_prior_decay) * lveu->dav;
+  if(er_avail && lv.er_reset_prior) {
+    lveu->misc_1 = 0.0f;
   }
   else {
-    lveu->misc_1 = lveu->dav;	// already stored in da value: note includes min_lvi, which is appropriate -- this was missing prior to 2/12/2009
+    lveu->misc_1 = lv.prior_discount * lveu->dav;	// already stored in da value: note includes min_lvi, which is appropriate -- this was missing prior to 2/12/2009
   }
 }
 
@@ -720,7 +728,8 @@ bool LVeLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 void NVSpec::Initialize() {
   da_gain = 1.0f;
   val_thr = 0.1f;
-  er_prior_decay = 1.0f;
+  prior_discount = 1.0f;
+  er_reset_prior = true;
 }
 
 void NVLayerSpec::Initialize() {
@@ -741,6 +750,7 @@ void NVLayerSpec::Initialize() {
 void NVLayerSpec::Defaults() {
   inherited::Defaults();
   Initialize();
+  nv.Defaults();
 }
 
 void NVLayerSpec::UpdateAfterEdit_impl() {
@@ -838,11 +848,11 @@ void NVLayerSpec::Compute_NVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) {
 void NVLayerSpec::Update_NVPrior(LeabraLayer* lay, LeabraNetwork* net) {
   bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
   LeabraUnit* nvsu = (LeabraUnit*)lay->units.Leaf(0);
-  if(er_avail) {
-    nvsu->misc_1 = (1.0f - nv.er_prior_decay) * nvsu->dav;
+  if(er_avail && nv.er_reset_prior) {
+    nvsu->misc_1 = 0.0f;
   }
   else {
-    nvsu->misc_1 = nvsu->dav;	// previous da value
+    nvsu->misc_1 = nv.prior_discount * nvsu->dav;	// previous da value
   }
 }
 
@@ -1188,6 +1198,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
        && !laysp->InheritsFrom(&TA_PFCLayerSpec) && !laysp->InheritsFrom(&TA_MatrixLayerSpec)
        && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
       other_lays.Link(lay);
+      if(lay->pos.z == 0) lay->pos.z = 2; // nobody allowed in 0!
       if(lay->layer_type == Layer::HIDDEN)
 	hidden_lays.Link(lay);
       else if(lay->layer_type == Layer::INPUT)
@@ -1216,10 +1227,16 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   LeabraConSpec* learn_cons = (LeabraConSpec*)cons->FindMakeSpec("LearnCons", &TA_LeabraConSpec);
   if(learn_cons == NULL) return false;
 
-  PVConSpec* pvi_cons = (PVConSpec*)learn_cons->FindMakeChild("PVi", &TA_PVConSpec);
-  PVConSpec* pvr_cons = (PVConSpec*)pvi_cons->FindMakeChild("PVr", &TA_PVConSpec);
-  LeabraConSpec* lve_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("LVe", &TA_PVConSpec);
-  LeabraConSpec* lvi_cons = (LeabraConSpec*)lve_cons->FindMakeChild("LVi", &TA_PVConSpec);
+  bool pvi_cons_new = false;
+  PVConSpec* pvi_cons = (PVConSpec*)learn_cons->FindMakeChild("PVi", &TA_PVConSpec, pvi_cons_new);
+//   LeabraConSpec* pvr_old = (LeabraConSpec*)pvi_cons->children.FindName("PVr");
+//   if(pvr_old && !pvr_old->InheritsFrom(&TA_PVrConSpec)) {
+//     pvi_cons->RemoveChild("PVr");
+//   }
+  bool pvr_cons_new = false;
+  PVConSpec* pvr_cons = (PVConSpec*)pvi_cons->FindMakeChild("PVr", &TA_PVrConSpec, pvr_cons_new);
+  PVConSpec* lve_cons = (PVConSpec*)pvi_cons->FindMakeChild("LVe", &TA_PVConSpec);
+  PVConSpec* lvi_cons = (PVConSpec*)lve_cons->FindMakeChild("LVi", &TA_PVConSpec);
   PVConSpec* nv_cons = (PVConSpec*)pvi_cons->FindMakeChild("NV", &TA_PVConSpec);
   LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
   if(bg_bias == NULL) return false;
@@ -1381,6 +1398,24 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   //////////////////////////////////////////////////////////////////////////////////
   // set positions & geometries
 
+  if(lve_new) {
+    pve->pos.SetXYZ(0,0,0);
+    pvi->pos.SetXYZ(0,2,0);
+
+    lve->pos.SetXYZ(6,0,0);
+    lvi->pos.SetXYZ(6,2,0);
+
+    vta->pos.SetXYZ(12,0,0);
+    rew_targ_lay->pos.SetXYZ(12,4,0);
+  }
+
+  if(pvr_new) {
+    pvr->pos.SetXYZ(0,4,0);
+  }
+  if(nv_new) {
+    nv->pos.SetXYZ(6,4,0);
+  }
+
   if(pvi->un_geom.n != n_lv_u) { pvi->un_geom.n = n_lv_u; pvi->un_geom.x = n_lv_u; pvi->un_geom.y = 1; }
   if(lve->un_geom.n != n_lv_u) { lve->un_geom.n = n_lv_u; lve->un_geom.x = n_lv_u; lve->un_geom.y = 1; }
   if(lvi->un_geom.n != n_lv_u) { lvi->un_geom.n = n_lv_u; lvi->un_geom.x = n_lv_u; lvi->un_geom.y = 1; }
@@ -1391,23 +1426,6 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   rew_targ_lay->un_geom.n = 1;
   rew_targ_lay->layer_type = Layer::INPUT;
 
-  if(lve_new) {
-    pve->pos.z = 0; pve->pos.y = 0; pve->pos.x = 0;
-    pvi->pos.z = 0; pvi->pos.y = 2; pvi->pos.x = 0;
-
-    vta->pos.z = 0; vta->pos.y = 4; vta->pos.x = 6;
-    rew_targ_lay->pos.z = 0; rew_targ_lay->pos.y = 4; rew_targ_lay->pos.x = 15;
-
-    lve->pos.z = 0; lve->pos.y = 0; lve->pos.x = 6;
-    lvi->pos.z = 0; lvi->pos.y = 2; lvi->pos.x = 6;
-  }
-
-  if(pvr_new) {
-    pvr->pos.z = 0; pvr->pos.y = 4; pvr->pos.x = 0;
-  }
-  if(nv_new) {
-    nv->pos.z = 0;  nv->pos.y = 4; nv->pos.x = 9;
-  }
 
   //////////////////////////////////////////////////////////////////////////////////
   // apply specs to objects
@@ -1451,6 +1469,16 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
       net->FindMakePrjn(nv,  il, fullprjn, nv_cons);
     }
   }
+
+  if(pvr_cons_new && !pvi_cons_new) {
+    // fix pvr cons because conspec was orig created as PV instead of PVr..
+    for(i=0; i<pvr->projections.size;i++) {
+      Projection* prjn = pvr->projections[i];
+      if(!prjn->con_spec.GetSpec())
+	prjn->SetConSpec(pvr_cons);
+    }
+  }
+
   if(da_mod_all) {
     for(i=0;i<other_lays.size;i++) {
       Layer* ol = (Layer*)other_lays[i];
@@ -1469,11 +1497,15 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   net->Build();
   net->LayerPos_Cleanup();
 
+  taMisc::CheckConfigStart(false, false);
+
   bool ok = pvisp->CheckConfig_Layer(pvi, true) && lvesp->CheckConfig_Layer(lve, true)
     && lvisp->CheckConfig_Layer(lve, true)
     && dasp->CheckConfig_Layer(vta, true) && pvesp->CheckConfig_Layer(pve, true)
     && pvrsp->CheckConfig_Layer(pvr, true) && nvsp->CheckConfig_Layer(nv, true);
-  
+
+  taMisc::CheckConfigEnd(ok);
+
   if(!ok) {
     msg =
       "PVLV: An error in the configuration has occurred (it should be the last message\
@@ -1512,8 +1544,10 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
     lvi_cons->SelectForEditNm("lrate", edit, "lvi");
     nv_cons->SelectForEditNm("lrate", edit, "nv");
     pvesp->SelectForEditNm("rew", edit, "pve");
-//     lvesp->SelectForEditNm("lv", edit, "lve");
+    pvisp->SelectForEditNm("pv", edit, "pvi");
+    lvesp->SelectForEditNm("lv", edit, "lve");
     pvrsp->SelectForEditNm("pv_detect", edit, "pvr");
+    nvsp->SelectForEditNm("nv", edit, "nv");
 //     pvisp->SelectForEditNm("scalar", edit, "pvi");
 //     lvesp->SelectForEditNm("scalar", edit, "lve");
 //     pvisp->SelectForEditNm("bias_val", edit, "pvi");
