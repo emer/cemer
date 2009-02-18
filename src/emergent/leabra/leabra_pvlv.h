@@ -79,6 +79,7 @@ class LEABRA_API PVMiscSpec : public taOBase {
 INHERITED(taOBase)
 public:
   float		min_pvi;	// #DEF_0.4 minimum pvi value -- PVi is not allowed to go below this value for the purposes of computing the PV delta value: pvd = PVe - MAX(PVi,min_pvi)
+  bool		min_in_prior;	// include the min_pvi value in the prior time step PV delta value?
   float		prior_discount;	// #MIN_0 #MAX_1 how much to discount the prior PV delta value (pvd = PVe - MAX(PVi,min_pvi)) in computing the net PV dopamine signal (PV DA = pvd_t - prior_discount * pvd_t-1)
   bool		er_reset_prior;	// #DEF_true reset prior delta value (pvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
 
@@ -222,7 +223,8 @@ class LEABRA_API LVMiscSpec : public taOBase {
 INHERITED(taOBase)
 public:
   float		min_lvi;	// #DEF_0.1 minimum lvi value -- LVi is not allowed to go below this value for the purposes of computing the LV delta value: lvd = LVe - MAX(LVi,min_lvi)
-  float		prior_discount;	// #MIN_0 #MAX_1 how much to discount the prior LV delta value (lvd = LVe - MAX(LVi,min_lvi)) in computing the net LV dopamine signal (LV DA = lvd_t - prior_discount * lvd_t-1)
+  bool		min_in_prior;	// include the min_lvi value in the prior time step LV delta value?
+  float		prior_discount;	// #MIN_0 #MAX_1 how much to discount the prior time step LV delta value (lvd = LVe - MAX(LVi,min_lvi)) in computing the net LV dopamine signal (LV DA = lvd_t - prior_discount * lvd_t-1)
   bool		er_reset_prior;	// #DEF_true reset prior delta value (lvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
 
   void 	Defaults()	{ Initialize(); }

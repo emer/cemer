@@ -598,7 +598,7 @@ void OptThreshSpec::Initialize() {
 }
 
 void DtSpec::Initialize() {
-  vm = 0.3f;
+  vm = 0.25f;			// .3 is too fast!
   net = 0.7f;
   d_vm_max = 0.025f;
   midpoint = false;

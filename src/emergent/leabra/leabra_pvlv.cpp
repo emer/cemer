@@ -66,6 +66,7 @@ void PVConSpec::UpdateAfterEdit_impl() {
 
 void PVMiscSpec::Initialize() {
   min_pvi = 0.4f;
+  min_in_prior = true;
   prior_discount = 1.0f;
   er_reset_prior = true;
 }
@@ -211,7 +212,10 @@ float PViLayerSpec::Compute_PVDa_ugp(Unit_Group* pvi_ugp, float pve_val) {
 
   for(int i=0;i<pvi_ugp->size;i++) {
     LeabraUnit* du = (LeabraUnit*)pvi_ugp->FastEl(i);
-    du->dav = pvd;		// store in all units for visualization & prior updating -- note: NOT the pv_da guy which already has prior delta subtracted!
+    if(pv.min_in_prior)
+      du->dav = pvd;		// store in all units for visualization & prior updating -- note: NOT the pv_da guy which already has prior delta subtracted!
+    else
+      du->dav = pve_val - u->act_m;
   }
   return pv_da;
 }
@@ -480,6 +484,7 @@ bool PVrLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 
 void LVMiscSpec::Initialize() {
   min_lvi = 0.1f;
+  min_in_prior = true;
   prior_discount = 1.0f;
   er_reset_prior = true;
 }
@@ -603,7 +608,10 @@ float LVeLayerSpec::Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp) {
 
   for(int i=0;i<lve_ugp->size;i++) {
     LeabraUnit* du = (LeabraUnit*)lve_ugp->FastEl(i);
-    du->dav = lvd;		// store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
+    if(lv.min_in_prior)
+      du->dav = lvd;		// store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
+    else
+      du->dav = lveu->act_eq - lviu->act_eq;
   }
   return lv_da;
 }
@@ -612,7 +620,7 @@ float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
 				 LeabraNetwork* net) {
   float lv_da = 0.0f;
   int gi = 0;
-  if((lve_lay->units.gp.size > 0) && (lve_lay->units.gp.size == lvi_lay->units.gp.size)) {
+  if((lve_lay->units.gp.size > 1) && (lve_lay->units.gp.size == lvi_lay->units.gp.size)) {
     for(gi=0; gi<lve_lay->units.gp.size; gi++) {
       Unit_Group* lve_ugp = (Unit_Group*)lve_lay->units.gp[gi];
       Unit_Group* lvi_ugp = (Unit_Group*)lvi_lay->units.gp[gi];
@@ -620,7 +628,7 @@ float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
     }
     lv_da /= (float)lve_lay->units.gp.size; // average!
   }
-  else if(lve_lay->units.gp.size > 0) {
+  else if(lve_lay->units.gp.size > 1) {
     // one lvi and multiple lve's
     Unit_Group* lvi_ugp;
     if(lvi_lay->units.gp.size > 0)    lvi_ugp = (Unit_Group*)lvi_lay->units.gp[0];
@@ -631,7 +639,7 @@ float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
     }
     lv_da /= (float)lve_lay->units.gp.size; // average!
   }
-  else if(lvi_lay->units.gp.size > 0) {
+  else if(lvi_lay->units.gp.size > 1) {
     // one lve and multiple lvi's
     Unit_Group* lve_ugp;
     if(lve_lay->units.gp.size > 0)    lve_ugp = (Unit_Group*)lve_lay->units.gp[0];
