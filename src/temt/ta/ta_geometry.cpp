@@ -107,11 +107,14 @@ void XYNGeom::Initialize() {
 
 void XYNGeom::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(n_not_xy && n > 0 && x*y > n) { // only if not fitting, expand
+  if(n_not_xy && n > x*y) { // only if not fitting, expand
     FitN(n);
   }
+  if(n_not_xy) {
+    if(x * y == n) n_not_xy = false; // no need for flag
+  }
   else {
-    n = x * y;
+    n = x * y;			// always keep n up-to-date
   }
 }
 

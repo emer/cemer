@@ -381,19 +381,19 @@ public:
   // #BUTTON #CAT_Monitor monitor a value in the Network or its subobjects
   void		AddLayer(Layer* lay, const String& variable)
   { AddObject(lay, variable);}
-  // #BUTTON #CAT_Monitor monitor a value in the Layer or its subobjects
+  // #BUTTON #CAT_Monitor #NO_SCOPE monitor a value in the Layer or its subobjects
   void		AddProjection(Projection* prj, const String& variable)
   { AddObject(prj, variable);}
-  // #BUTTON #CAT_Monitor monitor a value in the Projection or its subobjects
+  // #BUTTON #CAT_Monitor #NO_SCOPE monitor a value in the Projection or its subobjects
   void		AddUnitGroup(Unit_Group* ug, const String& variable)
   { AddObject(ug, variable);}
-  // #CAT_Monitor monitor a value in the UnitGroup or its subobjects
+  // #CAT_Monitor #NO_SCOPE monitor a value in the UnitGroup or its subobjects
   void		AddUnit(Unit* un, const String& variable)
   { AddObject(un, variable);}
-  // #CAT_Monitor monitor a value in the Unit or its subobjects
+  // #CAT_Monitor #NO_SCOPE monitor a value in the Unit or its subobjects
   
   void		AddObject(taBase* obj, const String& variable);
-  // #CAT_Monitor monitor a value in the object or its subobjects
+  // #CAT_Monitor #NO_SCOPE monitor a value in the object or its subobjects
 
   void 		UpdateDataTable(bool reset_first = false);
   // #BUTTON #CAT_Monitor update the datatable configuration to match current set of monitored items -- call this during Init. if reset_first, then existing data rows are removed first

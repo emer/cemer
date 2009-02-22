@@ -66,7 +66,6 @@ void PVConSpec::UpdateAfterEdit_impl() {
 
 void PVMiscSpec::Initialize() {
   min_pvi = 0.4f;
-  min_in_prior = true;
   prior_discount = 1.0f;
   er_reset_prior = true;
 }
@@ -212,10 +211,7 @@ float PViLayerSpec::Compute_PVDa_ugp(Unit_Group* pvi_ugp, float pve_val) {
 
   for(int i=0;i<pvi_ugp->size;i++) {
     LeabraUnit* du = (LeabraUnit*)pvi_ugp->FastEl(i);
-    if(pv.min_in_prior)
-      du->dav = pvd;		// store in all units for visualization & prior updating -- note: NOT the pv_da guy which already has prior delta subtracted!
-    else
-      du->dav = pve_val - u->act_m;
+    du->dav = pvd;		// store in all units for visualization & prior updating -- note: NOT the pv_da guy which already has prior delta subtracted!
   }
   return pv_da;
 }
@@ -484,7 +480,6 @@ bool PVrLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 
 void LVMiscSpec::Initialize() {
   min_lvi = 0.1f;
-  min_in_prior = true;
   prior_discount = 1.0f;
   er_reset_prior = true;
 }
@@ -608,10 +603,7 @@ float LVeLayerSpec::Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp) {
 
   for(int i=0;i<lve_ugp->size;i++) {
     LeabraUnit* du = (LeabraUnit*)lve_ugp->FastEl(i);
-    if(lv.min_in_prior)
-      du->dav = lvd;		// store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
-    else
-      du->dav = lveu->act_eq - lviu->act_eq;
+    du->dav = lvd;		// store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
   }
   return lv_da;
 }
