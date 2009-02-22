@@ -5341,16 +5341,14 @@ void LeabraNetwork::Compute_SRAvg() {
 }
   
 void LeabraNetwork::Compute_dWt_SRAvg() {
-  if(learn_rule != LEABRA_CHL) {
-    if(sravg_vals.m_sum > 0.0f)
-      sravg_vals.m_nrm = 1.0f / sravg_vals.m_sum;
-    else
-      sravg_vals.m_nrm = 1.0f;
-    if(sravg_vals.s_sum > 0.0f) 
-      sravg_vals.s_nrm = 1.0f / sravg_vals.s_sum;
-    else
-      sravg_vals.s_nrm = 1.0f;
-  }
+  if(sravg_vals.m_sum > 0.0f)
+    sravg_vals.m_nrm = 1.0f / sravg_vals.m_sum;
+  else
+    sravg_vals.m_nrm = 1.0f;
+  if(sravg_vals.s_sum > 0.0f) 
+    sravg_vals.s_nrm = 1.0f / sravg_vals.s_sum;
+  else
+    sravg_vals.s_nrm = 1.0f;
 }
 
 void LeabraNetwork::Compute_dWt_Layer_pre() {

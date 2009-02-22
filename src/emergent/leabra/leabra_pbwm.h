@@ -75,17 +75,23 @@ public:
     MAINT   		// maintenance learning rule: (bg_p2 - bg_p) * s_p
   };
 
+#ifdef __MAKETA__
+  XCalLearnSpec	xcal;		// #CAT_Learning XCAL learning parameters for matrix cons, used for keeping units from being either too active or not active enough
+#endif
   MatrixLearnRule	matrix_rule;	// learning rule to use
 
   inline void C_Compute_dWt_Matrix(LeabraCon* cn, float lin_wt, 
-				   float ru_act_p, float ru_act_m, float su_act) {
+				   float ru_act_p, float ru_act_m, float su_act, 
+				   float ru_thr) {
     float err = (ru_act_p - ru_act_m) * su_act;
+    float sm_mix = xcal.s_mix * ru_act_p * su_act + xcal.m_mix * ru_act_m * su_act;
+    float dwt = xcal.svm_mix * err + xcal.mvl_mix * xcal.dWtFun(sm_mix, ru_thr);
     // std leabra requires separate softbounding on all terms.. see XCAL for its version
     if(lmix.err_sb) {
-      if(err > 0.0f)	err *= (1.0f - lin_wt);
-      else		err *= lin_wt;
+      if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
+      else		dwt *= lin_wt;
     }
-    cn->dwt += cur_lrate * err;
+    cn->dwt += cur_lrate * dwt;
   }
 
   inline void C_Compute_dWt_Matrix_NoSB(LeabraCon* cn, float ru_act_p, float ru_act_m,
@@ -95,18 +101,22 @@ public:
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    // threshold is mix of l and ml terms:
+    float ru_thr = MAX(ru->ravg_l, ru->ravg_ml);
+    ru_thr *= xcal.l_gain;
+
     if(matrix_rule == OUTPUT) {
       for(int i=0; i<cg->cons.size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p, ru->act_m, su->act_m);
+	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p, ru->act_m, su->act_m, ru_thr);
       }
     }
     else { // MAINT
       for(int i=0; i<cg->cons.size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p2, ru->act_p, su->act_p);
+	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p2, ru->act_p, su->act_p, ru_thr);
       }
     }
   }
@@ -309,7 +319,7 @@ public:
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
-  override bool	Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
+  //  override bool	Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
   override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
