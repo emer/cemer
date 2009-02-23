@@ -76,7 +76,7 @@ public:
   };
 
 #ifdef __MAKETA__
-  XCalLearnSpec	xcal;		// #CAT_Learning XCAL learning parameters for matrix cons, used for keeping units from being either too active or not active enough
+  XCalLearnSpec	xcal;		// #CAT_Learning XCAL learning parameters for matrix cons, used for keeping units from being either too active or not active enough -- note that mvl_mix default value should be multiplied by da_gain
 #endif
   MatrixLearnRule	matrix_rule;	// learning rule to use
 
@@ -159,6 +159,9 @@ public:
     MAINT   		// maintenance learning rule: (bg_p2 - bg_p) * s_p
   };
 
+#ifdef __MAKETA__
+  XCalLearnSpec	xcal;		// #CAT_Learning XCAL learning parameters for matrix bias cons, used for keeping units from being either too active or not active enough -- note that the this contains the time constants for ravg_l ravg_ml
+#endif
   MatrixLearnRule	matrix_rule;	// learning rule to use
 
   inline override void B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru) {

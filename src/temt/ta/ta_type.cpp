@@ -1317,6 +1317,26 @@ void taMisc::AddArgNameDesc(const String& nm, const String& desc) {
   taMisc::arg_name_descs.Add(NameVar(nm, (Variant)desc));
 }
 
+String taMisc::FullArgString() {
+  return args_raw.AsString(" ");
+}
+
+bool taMisc::FullArgStringToFile(const String& fname) {
+  if(taMisc::dmem_proc != 0) return true;
+  String ars = args_raw.AsString(" ");
+  fstream strm;
+  strm.open(fname, ios::out);
+  if(strm.bad()) {
+    strm.close();
+    strm.clear();
+    return false;
+  }
+  strm << ars << endl;
+  strm.close();	strm.clear();
+  return true;
+}
+
+
 bool taMisc::CheckArgByName(const String& nm) {
   if(args.FindName(nm) < 0) return false;
   return true;

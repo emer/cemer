@@ -973,6 +973,11 @@ public:
   static void	UpdateArgs();
   // #CAT_Args update arg information after adding new arg names
 
+  static String	FullArgString();
+  // #CAT_Args return the full string of arguments passed to the program by the user
+  static bool	FullArgStringToFile(const String& fname);
+  // #CAT_Args write the full string of arguments passed to the program by the user to given file name
+
   static bool	CheckArgByName(const String& nm);
   // #CAT_Args was the given arg name set?
   static String	FindArgByName(const String& nm);
