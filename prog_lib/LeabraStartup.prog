@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-Program .projects[0].programs[0] { 
+Program .projects[2].programs[1] { 
   ProgVar_List @.args = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
@@ -14,7 +14,7 @@ Program .projects[0].programs[0] {
     ProgVar @[5] { };
   };
 
-  ProgEl_List @.prog_code = [20] {
+  ProgEl_List @.prog_code = [22] {
     IfReturn @[0] { };
     Comment @[1] { };
     MiscCall @[2] { 
@@ -54,11 +54,9 @@ Program .projects[0].programs[0] {
 	ProgArg @[3] { };
       };
     };
-    MethodCall @[14] { 
-      ProgArg_List @.meth_args = [3] {
+    MiscCall @[14] { 
+      ProgArg_List @.meth_args = [1] {
 	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
       };
     };
     MethodCall @[15] { 
@@ -76,17 +74,27 @@ Program .projects[0].programs[0] {
 	ProgArg @[2] { };
       };
     };
-    OtherProgramVar @[17] { };
-    PrintExpr @[18] { };
-    ProgramCall @[19] { 
-      ProgArg_List @.prog_args = [2] {
+    MethodCall @[17] { 
+      ProgArg_List @.meth_args = [4] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
       };
     };
+    MethodCall @[18] { 
+      ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+      };
+    };
+    OtherProgramVar @[19] { };
+    PrintExpr @[20] { };
+    ProgramCall @[21] { };
   };
 };
-Program .projects[0].programs[0] {
+Program .projects[2].programs[1] {
  name="LeabraStartup";
  tags="Leabra, Startup";
  desc="run project in the background (replaces leabra_startup.css)
@@ -113,6 +121,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
+   reference=0;
    desc="network to operate on -- updates batch counter on network and passes it to train program";
   };
   ProgVar @[1] {
@@ -122,6 +131,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
+   reference=0;
    desc="datatable with training patterns -- not used by this program, but passed to train program";
   };
  };
@@ -135,7 +145,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    object_type=Program;
    object_val=.projects[0].programs.gp[0][0]$2$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
+   reference=0;
    desc="set this to point to your batch process";
   };
   ProgVar @[1] {
@@ -143,7 +154,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    var_type=T_String;
    string_val=;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
+   reference=0;
    desc=;
   };
   ProgVar @[2] {
@@ -151,7 +163,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    var_type=T_String;
    string_val=;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
+   reference=0;
    desc="log file directory";
   };
   ProgVar @[3] {
@@ -159,7 +172,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    var_type=T_String;
    string_val=;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED;
+   reference=0;
    desc="name of log file";
   };
   ProgVar @[4] {
@@ -168,7 +182,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    object_type=DataTable;
    object_val=.projects[0].data.gp[1][1]$3$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
+   reference=0;
    desc=;
   };
   ProgVar @[5] {
@@ -177,7 +192,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    object_type=DataTable;
    object_val=.projects[0].data.gp[1][0]$4$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
+   reference=0;
    desc=;
   };
  };
@@ -205,11 +221,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    flags=;
    cond {
     expr="taMisc::gui_active";
-    var_expr="taMisc::gui_active";
-    vars {
-    };
-    var_names{     };
-    bad_vars{     };
    };
   };
   Comment @[1] {
@@ -234,11 +245,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="\"\"";
      expr {
       expr="\"tag=\"";
-      var_expr="\"tag=\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -249,11 +255,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="\"\"";
      expr {
       expr="\"FileTag\"";
-      var_expr="\"FileTag\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -276,11 +277,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="\"\"";
      expr {
       expr="\"logdir=\"";
-      var_expr="\"logdir=\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -291,11 +287,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="\"\"";
      expr {
       expr="\"LogDir\"";
-      var_expr="\"LogDir\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -313,18 +304,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    flags=;
    expr {
     expr="\"Loaded project: \" << .projects[0].file_name";
-    var_expr="\"Loaded project: \" << .projects[0].file_name";
-    vars {
-    };
-    var_names{     };
-    bad_vars{     };
    };
   };
   MethodCall @[7] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs[0].vars[0]$5$;
+   obj=.projects[2].programs[1].vars[0]$5$;
    method=Program::Init;
    meth_args {
     name=;
@@ -335,7 +321,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
   MiscCall @[8] {
    desc=;
    flags=;
-   result_var=.projects[0].programs[0].vars[1]$6$;
+   result_var=.projects[2].programs[1].vars[1]$6$;
    object_type=taMisc;
    method=taMisc::FindArgByName;
    meth_args {
@@ -350,11 +336,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="\"\"";
      expr {
       expr="\"FileTag\"";
-      var_expr="\"FileTag\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -362,7 +343,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
   MiscCall @[9] {
    desc=;
    flags=;
-   result_var=.projects[0].programs[0].vars[2]$7$;
+   result_var=.projects[2].programs[1].vars[2]$7$;
    object_type=taMisc;
    method=taMisc::FindArgByName;
    meth_args {
@@ -377,11 +358,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="\"\"";
      expr {
       expr="\"LogDir\"";
-      var_expr="\"LogDir\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -405,10 +381,84 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    flags=;
   };
   MethodCall @[13] {
+   desc="save args to file: last arg is to include dmem proc number";
+   flags=;
+   result_var=.projects[2].programs[1].vars[3]$9$;
+   obj=.projects[2].programs[1].vars[4]$10$;
+   method=taBase::GetFileNameFmProject;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_taString_ref;
+     type="const taString&";
+     name="ext";
+     required=1;
+     def_val=;
+     expr {
+      expr="\".args\"";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=const_taString_ref;
+     type="const taString&";
+     name="tag";
+     required=0;
+     def_val="\"\"";
+     expr {
+      expr="tag";
+     };
+    };
+    ProgArg @[2] {
+     arg_type=const_taString_ref;
+     type="const taString&";
+     name="subdir";
+     required=0;
+     def_val="\"\"";
+     expr {
+      expr="log_dir";
+     };
+    };
+    ProgArg @[3] {
+     arg_type=bool;
+     type="bool";
+     name="dmem_proc_no";
+     required=0;
+     def_val="false";
+     expr {
+      expr="false";
+     };
+    };
+   };
+  };
+  MiscCall @[14] {
+   desc=;
+   flags=;
+   result_var=NULL;
+   object_type=taMisc;
+   method=taMisc::FullArgStringToFile;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_taString_ref;
+     type="const taString&";
+     name="fname";
+     required=0;
+     def_val="\"\"";
+     expr {
+      expr="log_file_nm";
+     };
+    };
+   };
+  };
+  MethodCall @[15] {
    desc="last arg is to include dmem proc number";
    flags=;
-   result_var=.projects[0].programs[0].vars[3]$9$;
-   obj=.projects[0].programs[0].vars[4]$10$;
+   result_var=$9$;
+   obj=$10$;
    method=taBase::GetFileNameFmProject;
    meth_args {
     name=;
@@ -422,11 +472,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val=;
      expr {
       expr="\".epc.dat\"";
-      var_expr="\".epc.dat\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -437,11 +482,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="\"\"";
      expr {
       expr="tag";
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ tag;      };
-      bad_vars{       };
      };
     };
     ProgArg @[2] {
@@ -452,11 +492,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="\"\"";
      expr {
       expr="log_dir";
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ log_dir;      };
-      bad_vars{       };
      };
     };
     ProgArg @[3] {
@@ -467,16 +502,11 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="false";
      expr {
       expr="false";
-      var_expr="false";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
   };
-  MethodCall @[14] {
+  MethodCall @[16] {
    desc="last arg is to restrict log to dmem_proc = 0";
    flags=;
    result_var=NULL;
@@ -494,11 +524,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="\"\"";
      expr {
       expr="log_file_nm";
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ log_file_nm;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -509,11 +534,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="false";
      expr {
       expr="false";
-      var_expr="false";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
     ProgArg @[2] {
@@ -524,20 +544,15 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="true";
      expr {
       expr="true";
-      var_expr="true";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
   };
-  MethodCall @[15] {
+  MethodCall @[17] {
    desc="last arg is to include dmem proc number";
    flags=OFF;
    result_var=$9$;
-   obj=.projects[0].programs[0].vars[5]$11$;
+   obj=.projects[2].programs[1].vars[5]$11$;
    method=taBase::GetFileNameFmProject;
    meth_args {
     name=;
@@ -551,11 +566,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val=;
      expr {
       expr="\".trl.dat\"";
-      var_expr="\".trl.dat\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -566,11 +576,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="\"\"";
      expr {
       expr="tag";
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ tag;      };
-      bad_vars{       };
      };
     };
     ProgArg @[2] {
@@ -581,11 +586,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="\"\"";
      expr {
       expr="log_dir";
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ log_dir;      };
-      bad_vars{       };
      };
     };
     ProgArg @[3] {
@@ -596,16 +596,11 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="false";
      expr {
       expr="true";
-      var_expr="true";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
   };
-  MethodCall @[16] {
+  MethodCall @[18] {
    desc="last arg is to restrict log to dmem_proc = 0";
    flags=OFF;
    result_var=NULL;
@@ -623,11 +618,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="\"\"";
      expr {
       expr="log_file_nm";
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ log_file_nm;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -638,11 +628,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="false";
      expr {
       expr="false";
-      var_expr="false";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
     ProgArg @[2] {
@@ -653,16 +638,11 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      def_val="true";
      expr {
       expr="false";
-      var_expr="false";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
   };
-  OtherProgramVar @[17] {
+  OtherProgramVar @[19] {
    desc=;
    flags=;
    other_prog=.projects[0].programs.gp[0][9]$12$;
@@ -672,19 +652,14 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    var_3=NULL;
    var_4=NULL;
   };
-  PrintExpr @[18] {
+  PrintExpr @[20] {
    desc=;
    flags=;
    expr {
     expr="\"Running: \" << batch.name";
-    var_expr="\"Running: \" << $#0#$.name";
-    vars {
-    };
-    var_names{ batch;    };
-    bad_vars{     };
    };
   };
-  ProgramCall @[19] {
+  ProgramCall @[21] {
    desc=;
    flags=;
    target=$2$;
@@ -693,36 +668,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
     name=;
     el_typ=ProgArg;
     el_def=0;
-    ProgArg @[0] {
-     arg_type=LeabraNetwork;
-     type="LeabraNetwork*";
-     name="network";
-     required=1;
-     def_val=;
-     expr {
-      expr="network";
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[1] {
-     arg_type=DataTable;
-     type="DataTable*";
-     name="input_data";
-     required=1;
-     def_val=;
-     expr {
-      expr="input_data";
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ input_data;      };
-      bad_vars{       };
-     };
-    };
    };
   };
  };

@@ -342,7 +342,7 @@ class LEABRA_API PVLVDaSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PVLV da parameters
 INHERITED(taOBase)
 public:
-  float		da_gain;	// #DEF_1 multiplier for dopamine values
+  float		da_gain;	// #DEF_0.2:2 #MIN_0 multiplier for dopamine values
   float		tonic_da;	// #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
 
   void 	Defaults()	{ Initialize(); }

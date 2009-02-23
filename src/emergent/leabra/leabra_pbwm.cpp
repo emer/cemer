@@ -384,9 +384,9 @@ void MatrixLayerSpec::Initialize() {
 void MatrixLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(contrast.one_val) {
-    if(bg_type == OUTPUT && contrast.go_p == 1.0f && contrast.contrast == 0.5f) {
-      contrast.contrast = 1.0f;		// convert existing files
-    }
+//     if(bg_type == OUTPUT && contrast.go_p == 1.0f && contrast.contrast == 0.5f) {
+//       contrast.contrast = 1.0f;		// convert existing files
+//     }
     contrast.go_p = contrast.go_n = contrast.nogo_p = contrast.nogo_n = contrast.contrast;
     // set them all
   }
