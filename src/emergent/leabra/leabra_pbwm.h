@@ -95,9 +95,11 @@ public:
   }
 
   inline void C_Compute_dWt_Matrix_NoSB(LeabraCon* cn, float ru_act_p, float ru_act_m,
-					float su_act) {
+					float su_act, float ru_thr) {
     float err = (ru_act_p - ru_act_m) * su_act;
-    cn->dwt += cur_lrate * err;
+    float sm_mix = xcal.s_mix * ru_act_p * su_act + xcal.m_mix * ru_act_m * su_act;
+    float dwt = xcal.svm_mix * err + xcal.mvl_mix * xcal.dWtFun(sm_mix, ru_thr);
+    cn->dwt += cur_lrate * dwt;
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
@@ -122,18 +124,22 @@ public:
   }
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    // threshold is mix of l and ml terms:
+    float ru_thr = MAX(ru->ravg_l, ru->ravg_ml);
+    ru_thr *= xcal.l_gain;
+
     if(matrix_rule == OUTPUT) {
       for(int i=0; i<cg->cons.size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p, ru->act_m, su->act_m);
+	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p, ru->act_m, su->act_m, ru_thr);
       }
     }
     else { // MAINT
       for(int i=0; i<cg->cons.size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p2, ru->act_p, su->act_p);
+	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p2, ru->act_p, su->act_p, ru_thr);
       }
     }
   }
@@ -150,19 +156,11 @@ private:
   void	Destroy()		{ };
 };
 
-class LEABRA_API MatrixBiasSpec : public LeabraBiasSpec {
+class LEABRA_API MatrixBiasSpec : public MatrixConSpec {
   // Matrix bias spec: special learning parameters for matrix units
-INHERITED(LeabraBiasSpec)
+INHERITED(MatrixConSpec)
 public:
-  enum MatrixLearnRule {
-    OUTPUT,		// output/motor delta rule for: (bg+ - bg-) * s-
-    MAINT   		// maintenance learning rule: (bg_p2 - bg_p) * s_p
-  };
-
-#ifdef __MAKETA__
-  XCalLearnSpec	xcal;		// #CAT_Learning XCAL learning parameters for matrix bias cons, used for keeping units from being either too active or not active enough -- note that the this contains the time constants for ravg_l ravg_ml
-#endif
-  MatrixLearnRule	matrix_rule;	// learning rule to use
+  float		dwt_thresh;  // #DEF_0.1 #CAT_Learning don't change if dwt < thresh, prevents buildup of small changes
 
   inline override void B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru) {
     float err;

@@ -182,6 +182,10 @@ void MatrixConSpec::Initialize() {
   wt_sig.gain = 1.0f;
   wt_sig.off = 1.0f;
 
+  SetUnique("xcal", true);
+  xcal.mvl_mix = 0.005f;
+  xcal.s_mix = 0.8f;
+
   matrix_rule = MAINT;
 }
 
@@ -198,7 +202,22 @@ void MatrixConSpec::UpdateAfterEdit_impl() {
 //////////////////////////////////////////
 
 void MatrixBiasSpec::Initialize() {
+  SetUnique("rnd", true);
+  SetUnique("wt_limits", true);
+  SetUnique("wt_scale", true);
+  SetUnique("wt_scale_init", true);
+  rnd.mean = 0.0f;
+  rnd.var = 0.0f;
+  wt_limits.min = -1.0f;
+  wt_limits.max = 5.0f;
+  wt_limits.sym = false;
+  wt_limits.type = WeightLimits::NONE;
+  dwt_thresh = .1f;
+
   matrix_rule = MAINT;
+
+  SetUnique("lrate", true);
+  lrate = 0.0f;			// default is no lrate
 }
 
 void MatrixNoiseSpec::Initialize() {
@@ -209,6 +228,7 @@ void MatrixNoiseSpec::Initialize() {
 
 void MatrixUnitSpec::Initialize() {
   SetUnique("bias_spec", true);
+  bias_spec.SetBaseType(&TA_LeabraConSpec); // can't be bias spec b/c matrix derives from con
   bias_spec.type = &TA_MatrixBiasSpec;
   SetUnique("g_bar", true);
   g_bar.a = .03f;
@@ -384,9 +404,6 @@ void MatrixLayerSpec::Initialize() {
 void MatrixLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(contrast.one_val) {
-//     if(bg_type == OUTPUT && contrast.go_p == 1.0f && contrast.contrast == 0.5f) {
-//       contrast.contrast = 1.0f;		// convert existing files
-//     }
     contrast.go_p = contrast.go_n = contrast.nogo_p = contrast.nogo_n = contrast.contrast;
     // set them all
   }
@@ -1883,12 +1900,17 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     matrixo_cons = (MatrixConSpec*)matrix_cons->FindMakeChild("Matrix_out", &TA_MatrixConSpec);
     mofmpfc_cons = (MatrixConSpec*)matrixo_cons->FindMakeChild("Matrix_out_FmPFC", &TA_MatrixConSpec);
   }
+  MatrixBiasSpec* matrix_bias = (MatrixBiasSpec*)matrix_cons->FindMakeChild("MatrixBias", &TA_MatrixBiasSpec);
+
   LeabraConSpec* marker_cons = (LeabraConSpec*)cons->FindMakeSpec("MarkerCons", &TA_MarkerConSpec);
   LeabraConSpec* pfc_self = (LeabraConSpec*)cons->FindMakeSpec("PFCSelfCon", &TA_LeabraConSpec);
 
   LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
   if(bg_bias == NULL) return false;
-  LeabraConSpec* matrix_bias = (LeabraConSpec*)bg_bias->FindMakeChild("MatrixBias", &TA_MatrixBiasSpec);
+  LeabraConSpec* old_matrix_bias = (LeabraConSpec*)bg_bias->children.FindSpecName("MatrixCons");
+  if(old_matrix_bias) {
+    bg_bias->children.RemoveEl(old_matrix_bias);
+  }
   if(pfc_self == NULL || intra_pfc == NULL || matrix_cons == NULL || marker_cons == NULL 
      || matrix_bias == NULL)
     return false;
@@ -1979,8 +2001,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   net->FindMakePrjn(matrix_m, patch, gponetoone, marker_cons); // for noise
 
   if(out_gate) {
-    net->RemovePrjn(matrix_o, vta); // no more vta prjn!
-    net->FindMakePrjn(matrix_o, snc, gponetoone, marker_cons);
+    net->RemovePrjn(matrix_o, snc); // transiently made that so nuke it if there
+    net->FindMakePrjn(matrix_o, vta, fullprjn, marker_cons);
+    // output gets from vta, not snc
 
     net->FindMakePrjn(snrthal_o, matrix_o, gponetoone, marker_cons);
     net->FindMakePrjn(pfc_o, snrthal_o, gponetoone, marker_cons);
@@ -2099,10 +2122,17 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   matrix_cons->SetUnique("wt_sig", true);
   matrix_cons->wt_sig.gain = 1.0f;
   matrix_cons->wt_sig.off = 1.0f;
+  matrix_cons->SetUnique("xcal", true);
+  matrix_cons->xcal.mvl_mix = 0.005f;
+  matrix_cons->xcal.s_mix = 0.8f;
 
   mfmpfc_cons->SetUnique("wt_scale", true);
   mfmpfc_cons->wt_scale.rel = .2f;
   mfmpfc_cons->SetUnique("lmix", false);
+
+  matrix_bias->SetUnique("lrate", true);
+  matrix_bias->lrate = 0.0f;		// default is no bias learning
+  matrix_bias->SetUnique("xcal", false); // inherit
 
   matrix_units->g_bar.h = .01f; // old syn dep
   matrix_units->g_bar.a = .03f;
@@ -2136,6 +2166,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     matrixo_cons->SetUnique("wt_sig", true);
     matrixo_cons->wt_sig.gain = 1.0f;
     matrixo_cons->wt_sig.off = 1.0f;
+    matrixo_cons->SetUnique("xcal", false); // inherit
 
     mofmpfc_cons->SetUnique("wt_scale", true);
     mofmpfc_cons->wt_scale.rel = 1.0f; // works better with gp-one-to-one
@@ -2327,6 +2358,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     matrixsp->SelectForEditNm("contrast", edit, "matrix");
     matrix_units->SelectForEditNm("g_bar", edit, "matrix");
     matrix_cons->SelectForEditNm("lrate", edit, "matrix");
+    matrix_cons->SelectForEditNm("xcal", edit, "matrix");
     //    matrix_cons->SelectForEditNm("lmix", edit, "matrix");
     mfmpfc_cons->SelectForEditNm("wt_scale", edit, "mtx_fm_pfc");
     snrthalsp->SelectForEditNm("kwta", edit, "snr_thal");
