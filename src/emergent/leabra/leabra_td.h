@@ -247,11 +247,10 @@ public:
   virtual void 	Compute_ClampPred(Unit_Group* ugp, LeabraNetwork* net); // clamp misc_1 to ext 
   virtual void 	Compute_ClampPrev(LeabraLayer* lay, LeabraNetwork* net);
   // clamp minus phase to previous act value
-  virtual void 	Compute_ExtToPlus(Unit_Group* ugp, LeabraNetwork* net);
-  // copy ext values to act_p
-  virtual void 	Compute_TdPlusPhase_impl(Unit_Group* ugp, LeabraNetwork* net);
   virtual void 	Compute_TdPlusPhase(LeabraLayer* lay, LeabraNetwork* net);
   // compute plus phase activations for learning including the td values
+    virtual void Compute_TdPlusPhase_ugp(Unit_Group* ugp, LeabraNetwork* net);
+    // #IGNORE 
 
   override void	Init_Acts(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
@@ -298,7 +297,6 @@ public:
   TDRewIntegSpec	rew_integ;	// misc specs for TDRewIntegLayerSpec
 
   override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
-  // this is last stage before compute_act, so doing computation here
 
   // never learn
   override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
@@ -333,10 +331,9 @@ public:
   virtual void	Send_Td(LeabraLayer* lay, LeabraNetwork* net);
   // send the td value to sending projections: every cycle
 
+  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-
   override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
-  // this is last stage before compute_act, so doing computation here
 
   // never learn
   override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }

@@ -3365,8 +3365,6 @@ void LeabraLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
 void LeabraLayerSpec::Compute_ApplyInhib_ugp(LeabraLayer* lay, Unit_Group* ug,
 					     LeabraInhib* thr, LeabraNetwork* net)
 {
-  if(thr->i_val.g_i == 0.0f) return; // no apply if 0
-
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, ug->, i) {

@@ -565,32 +565,17 @@ void TDRewPredLayerSpec::Compute_ClampPrev(LeabraLayer* lay, LeabraNetwork* net)
   UNIT_GP_ITR(lay, Compute_ClampPred(ugp, net); );
 }
 
-void TDRewPredLayerSpec::Compute_ExtToPlus(Unit_Group* ugp, LeabraNetwork*) {
-  if(ugp->size < 3) return;
-  int i;
-  for(i=0;i<ugp->size;i++) {
-    LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-    LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
-    if(i > 0) u->act_p = us->clamp_range.Clip(u->ext);
-    else u->act_p = u->ext;
-    u->act_dif = u->act_p - u->act_m;
-    // important to clear ext stuff, otherwise it will get added into netin next time around!!
-    u->ext = 0.0f;
-    u->ext_flag = Unit::NO_EXTERNAL;
-  }
-}
-
-void TDRewPredLayerSpec::Compute_TdPlusPhase_impl(Unit_Group* ugp, LeabraNetwork* net) {
+void TDRewPredLayerSpec::Compute_TdPlusPhase_ugp(Unit_Group* ugp, LeabraNetwork* net) {
   Compute_SavePred(ugp, net);	// first, always save current predictions!
 
   LeabraTdUnit* u = (LeabraTdUnit*)ugp->FastEl(0);
   u->ext = u->act_m + u->dav;
   ClampValue_ugp(ugp, net);		// apply new value
-  Compute_ExtToPlus(ugp, net);	// copy ext values to act_p
+  Compute_ExtToPlus_ugp(ugp, net);	// copy ext values to act_p
 }
 
 void TDRewPredLayerSpec::Compute_TdPlusPhase(LeabraLayer* lay, LeabraNetwork* net) {
-  UNIT_GP_ITR(lay, Compute_TdPlusPhase_impl(ugp, net); );
+  UNIT_GP_ITR(lay, Compute_TdPlusPhase_ugp(ugp, net); );
 }
 
 void TDRewPredLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
@@ -958,6 +943,16 @@ void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork*) {
 	((LeabraTdUnit*)send_gp->Un(j))->dav = u->act;
       }
     }
+  }
+}
+
+void TdLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
+  // that's it: don't do any processing on this layer: set all idx to 0
+  lay->units_flat_idx = 0;
+  Unit* un;
+  taLeafItr ui;
+  FOR_ITR_EL(Unit, un, lay->units., ui) {
+    un->flat_idx = 0;
   }
 }
 
