@@ -6774,15 +6774,17 @@ void Network::UpdateMax() {
 
   Layer* l;
   taLeafItr i;
+  TDCoord l_pos; // for abs_pos
   FOR_ITR_EL(Layer, l, layers., i) {
-    max_size.z = MAX(max_size.z, 1 + l->pos.z);
+    l->GetAbsPos(l_pos);
+    max_size.z = MAX(max_size.z, 1 + l_pos.z);
     if(l->Iconified()) {
-      max_size.x = MAX(max_size.x, l->pos.x + 1);
-      max_size.y = MAX(max_size.y, l->pos.y + 1);
+      max_size.x = MAX(max_size.x, l_pos.x + 1);
+      max_size.y = MAX(max_size.y, l_pos.y + 1);
     }
     else {
-      max_size.x = MAX(max_size.x, l->act_geom.x + l->pos.x);
-      max_size.y = MAX(max_size.y, l->act_geom.y + l->pos.y);
+      max_size.x = MAX(max_size.x, l->act_geom.x + l_pos.x);
+      max_size.y = MAX(max_size.y, l->act_geom.y + l_pos.y);
     }
   }
 }
