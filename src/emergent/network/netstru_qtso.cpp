@@ -2508,6 +2508,13 @@ void NetView::Render_impl() {
 
   node_so->setCaption(cap_txt.chars());
 
+  if (scale.auto_scale) {
+    UpdateAutoScale();
+    if (nvp) {
+      nvp->ColorScaleFromData();
+    }
+  }
+
   if(net_text) {
     SoTransform* tx = node_so->netTextXform();
     net_text_xform.CopyTo(tx);
@@ -2631,14 +2638,6 @@ void NetView::Render_net_text() {
     String el = md->name + ": " + md->type->GetValStr(md->GetOff((void*)net()));
     txt->string.setValue(el.chars());
     chld_idx++;
-  }
-
-  if (scale.auto_scale) {
-    UpdateAutoScale();
-    if (nvp) {
-      nvp->ColorScaleFromData();
-//        taiMisc::RunPending(); // so that panel is correct if 3d rendering takes a long time
-    }
   }
 }
 
@@ -2929,7 +2928,6 @@ void NetView::setUnitDispMd(MemberDef* md) {
 void NetView::UpdateAutoScale() {
   LayerView* lv;
   taListItr i;
-  scale.SetMinMax(99999.0f, -99999.0f);
   bool updated = false;
   FOR_ITR_EL(LayerView, lv, layers., i) {
     UnitGroupView* ugrv;
@@ -2940,7 +2938,12 @@ void NetView::UpdateAutoScale() {
       for (co.y = 0; co.y < ugrp->geom.y; ++co.y) {
         for (co.x = 0; co.x < ugrp->geom.x; ++co.x) {
           float val = ugrv->GetUnitDisplayVal(co, unit_md_flags); // get val for unit at co
-          updated = scale.UpdateMinMax(val) || updated; //note: func call must come first!!
+	  if(!updated) {
+	    scale.SetMinMax(val, val);
+	    updated = true;
+	  }
+	  else
+	    scale.UpdateMinMax(val);
         }
       }
     }
