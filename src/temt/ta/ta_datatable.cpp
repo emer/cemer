@@ -861,6 +861,20 @@ bool DataTable::AutoLoadData() {
   return true;
 }
 
+bool DataTable::AutoSaveData() {
+  if(HasDataFlag(SAVE_ROWS) || !HasDataFlag(SAVE_FILE)) return false;
+  
+  if(TestError(auto_load_file.empty(), "AutoSaveData", "auto_load_file is empty!"))
+    return false;
+  // can't save to .dtbl type because that would recurse us -- TODO: could workaround somehow
+  if (TestError(auto_load_file.contains(".dtbl"), "AutoSaveData", "auto_load_file can only be of .dat type, not .dtbl type, sorry!")) {
+    return false;
+  } else {
+    SaveData(auto_load_file); // TODO: should really give error if fails...
+  }
+  return true;
+}
+
 void DataTable::Dump_Load_post() {
   inherited::Dump_Load_post();
   // this is an attempt to fix BugID:66, but it leads to problems when loading the project
@@ -887,6 +901,11 @@ int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
     rows = max((int)rows, frms);
   }
   return c;
+}
+
+void DataTable::Dump_Save_pre() {
+  inherited::Dump_Save_pre();
+  AutoSaveData();
 }
 
 DataCol* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {

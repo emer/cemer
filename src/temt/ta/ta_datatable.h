@@ -513,6 +513,7 @@ public:
     SAVE_ROWS 		= 0x0001, // save the row data associated with this table when saved with the project (column and other configuration information is always saved)
     HAS_CALCS 		= 0x0002, // #NO_SHOW at least one of the columns has CALC flag set
     AUTO_CALC		= 0x0004, // automatically calculate columns
+    SAVE_FILE		= 0x0008, // if an AUTO_LOAD file is set, automatically saves to the file when project is saved
   };
 
   enum AutoLoadMode {
@@ -1097,10 +1098,13 @@ public:
 
   virtual bool		AutoLoadData();
   // #IGNORE perform auto loading of data from file when data table is loaded (called by PostLoadAutos) -- true if loaded
+  bool			AutoSaveData();
+  // #IGNORE perform auto saving of data to file when project is saved
   override void		Dump_Load_post();
 
   override void		Dump_Load_pre();
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
+  override void		Dump_Save_pre();
   override String 	GetTypeDecoKey() const { return "DataTable"; }
 
   void	InitLinks();
