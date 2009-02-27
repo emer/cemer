@@ -5191,6 +5191,8 @@ void Network::Initialize() {
   sum_sse = 0.0f;
   avg_sse = 0.0f;
   cnt_err = 0.0f;
+  pct_err = 0.0f;
+  pct_cor = 0.0f;
 
   cnt_err_tol = 0.0f;
 
@@ -5316,7 +5318,9 @@ void Network::Copy_(const Network& cp) {
   avg_sse = cp.avg_sse;
   cnt_err_tol = cp.cnt_err_tol;
   cnt_err = cp.cnt_err;
-  
+  pct_err = cp.pct_err;
+  pct_cor = cp.pct_cor;
+
   cur_sum_sse = cp.cur_sum_sse;
   avg_sse_n = cp.avg_sse_n;
   cur_cnt_err = cp.cur_cnt_err;
@@ -5853,6 +5857,8 @@ void Network::Init_Stats() {
   sum_sse = 0.0f;
   avg_sse = 0.0f;
   cnt_err = 0.0f;
+  pct_err = 0.0f;
+  pct_cor = 0.0f;
 
   output_name = "";
 
@@ -5998,10 +6004,13 @@ void Network::DMem_ShareTrialData(DataTable* dt, int n_rows) {
 
 void Network::Compute_EpochSSE() {
   sum_sse = cur_sum_sse;
-  if(avg_sse_n > 0)
-    avg_sse = cur_sum_sse / (float)avg_sse_n;
   cnt_err = cur_cnt_err;
-
+  if(avg_sse_n > 0) {
+    avg_sse = cur_sum_sse / (float)avg_sse_n;
+    pct_err = cnt_err / (float)avg_sse_n;
+    pct_cor = 1.0f - pct_err;
+  }
+  
   cur_sum_sse = 0.0f;
   avg_sse_n = 0;
   cur_cnt_err = 0.0f;
