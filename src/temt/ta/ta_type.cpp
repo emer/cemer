@@ -26,6 +26,7 @@
 # include "ta_project.h" // for taRootBase
 # include "ta_program.h"
 # include "colorscale.h"
+# include "ta_thread.h"
 # ifdef DMEM_COMPILE
 #   include "ta_dmem.h"
 # endif
@@ -268,6 +269,8 @@ void taiMiscCore::Quit(CancelOp cancel_op) {
   // good place to save config, regardless what happens
   if (tabMisc::root)
     tabMisc::root->Save();
+
+  taThreadMgr::TerminateAllThreads(); // don't leave any active threads lying around
 
   taMisc::quitting = (cancel_op == CO_NOT_CANCELLABLE) ? 
     taMisc::QF_FORCE_QUIT : taMisc::QF_USER_QUIT;

@@ -22,6 +22,7 @@
 #include "ta_plugin.h"
 #include "ta_gendoc.h"
 #include "ta_server.h"
+#include "ta_thread.h"
 
 #include "css_ta.h"
 #include "css_console.h"
@@ -2391,6 +2392,8 @@ void taRootBase::SaveRecoverFileHandler(int err) {
     exit(err);
   }
   has_crashed = true;		// to prevent recursive crashing..
+
+  taThreadMgr::TerminateAllThreads(); // don't leave any active threads lying around
 
 #ifdef TA_GUI
   taiMisc::Cleanup(err);	// cleanup stuff in tai

@@ -1266,6 +1266,10 @@ cssEl::RunStat cssMbrCFun::Do(cssProg* prg) {
   for(int i=2;i<=act_argc;i++)
     args[i-1] = args[i];
   act_argc--;			// remove this
+  if(!ths) {
+    cssMisc::Error(prog, "Null 'this' object for member function call:", name);
+    return cssEl::ExecError;
+  }
   cssEl* tmp = (*funp)(ths, act_argc, args);
   prog = prg;                   // restore if recursive
   tmp->prog = prog;

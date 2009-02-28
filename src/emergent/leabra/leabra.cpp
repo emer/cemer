@@ -3365,6 +3365,14 @@ void LeabraLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
 void LeabraLayerSpec::Compute_ApplyInhib_ugp(LeabraLayer* lay, Unit_Group* ug,
 					     LeabraInhib* thr, LeabraNetwork* net)
 {
+  // weird issue here: seems to have improved pbwm performance to have this exclusion in here
+//   if(thr->i_val.g_i == 0.0f) { 
+//     if(lay->name != "PFC_out") {
+//       cerr << "lay: " << lay->name << " at: " << net->epoch << ", " << net->trial << ", " << net->phase_no << ", " << net->cycle << endl;
+//       taMisc::FlushConsole();
+//     }
+//   }
+
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, ug->, i) {

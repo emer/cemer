@@ -154,6 +154,8 @@ void taTaskThread::terminate() {
 ///////////////////////////////////////////////////////////////
 // 	Thread manager
 
+taTaskThread_PList taThreadMgr::all_threads;
+
 void taThreadMgr::Initialize() {
   n_threads = taMisc::thread_defaults.n_threads;
   log_timing = false;
@@ -182,6 +184,7 @@ void taThreadMgr::InitThreads() {
     // remove excess
     for (int i = old_cnt - 1; ((i >= 0 && (i >= n_to_make))); --i) {
       taTaskThread* tt = threads[i];
+      all_threads.RemoveEl(tt);
       taTaskThread::DeleteTaskThread(tt);
       threads.RemoveIdx(i);
     }
@@ -189,6 +192,7 @@ void taThreadMgr::InitThreads() {
     for (int i = old_cnt; i < n_to_make; ++i) {
       taTaskThread* tt = new taTaskThread(log_timing, i);
       threads.Add(tt);
+      all_threads.Add(tt);
     }
   }
 }
@@ -197,8 +201,22 @@ void taThreadMgr::RemoveThreads() {
   int old_cnt = threads.size;
   for (int i = old_cnt - 1; i >= 0; i--) {
     taTaskThread* tt = threads[i];
+    all_threads.RemoveEl(tt);
     taTaskThread::DeleteTaskThread(tt);
     threads.RemoveIdx(i);
+  }
+}
+
+void taThreadMgr::TerminateAllThreads() {
+  int old_cnt = all_threads.size;
+  for (int i = old_cnt - 1; i >= 0; i--) {
+    taTaskThread* tt = all_threads[i];
+    if (tt->isActive()) {
+      tt->terminate();
+    }
+    // note: spin-waiting seemed to be the only stable way to do this 
+    // do NOT use Wait() -- it seemed to lock up the app
+    while (!tt->isFinished());
   }
 }
 

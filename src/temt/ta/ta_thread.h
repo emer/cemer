@@ -223,7 +223,7 @@ protected:
 };
 
 class TA_API taTaskThread_PList : public taPtrList<taTaskThread> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Thread used for sorting units in kwta computation
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Thread list of task threads
   //INHERITED(taPtrList<taTaskThread>)
   public:
 };
@@ -239,11 +239,16 @@ public:
   taTask_List		tasks;	 // #NO_SAVE #READ_ONLY the tasks for the threads to perform -- we manage these and allocate them to threads
   taTaskThread_PList	threads; // #NO_SAVE #READ_ONLY the threads -- memory managed by InitThreads and RemoveThreads
 
+  static taTaskThread_PList all_threads; // #NO_SAVE #READ_ONLY all threads -- maintains a global list in addition to the local lists per mgr
+
   void		InitThreads();	// initialize (create) n_threads threads
   void		RemoveThreads();// remove all the threads
 
   void		CreateTasks(TypeDef* task_type); // create n_threads tasks of given type
   void		SetTasksToThreads(); // set the tasks to the threads
+
+  static void	TerminateAllThreads();
+  // static function for terminating all the threads, e.g., in the err signal handler or quit routine
   
   void 	InitLinks();
   void	CutLinks();
