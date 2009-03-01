@@ -72,6 +72,10 @@ extern "C" void moncontrol(int mode);
 #include <Saturn.h>
 #endif
 
+#ifndef TA_OS_WIN
+# include <fenv.h>
+#endif
+
 //////////////////////////
 //   taDoc		//
 //////////////////////////
@@ -877,9 +881,6 @@ taRootBase* taRootBase::instance() {
   }
   return tabMisc::root;
 }
-#ifdef DEBUG
-# include <fenv.h>
-#endif
 
 void taRootBase::Initialize() {
   version = taMisc::version;
