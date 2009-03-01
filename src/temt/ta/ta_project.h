@@ -398,12 +398,31 @@ protected:
   static bool 	Startup_InitTA_AppFolders();  // #IGNORE Share, Plugins
   static bool 	Startup_InitTA_InitUserAppDir();  // #IGNORE once found
   static void	Startup_EnumerateEnginesR(TypeDef* typ);
+  override void		UpdateAfterEdit_impl();
   // #IGNORE recursively enumerate from typ 
   bool		AddRecentFile_impl(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
   bool		AddRecentPath_impl(const String& value); // #IGNORE add this path to the recent list;
   virtual void		AddTemplates(); // called in InitLinks -- extend to add new templates
   virtual taBase* 	GetTemplateInstance_impl(TypeDef* typ, taBase* base);
   virtual void		MakeWizards_impl();
+  
+#ifndef TA_OS_WIN // "Micro-'we don't do C99 standard'-soft" 
+public: // debuggy stuff
+  enum FPExceptFlags { // #BITS floating point exception masks -- helps to debug nan issues etc.
+   FPE_0		= 0, // #IGNORE
+   FPE_INEXACT		= 0x001, // inexact result
+   FPE_DIVBYZERO	= 0x002, // division by zero
+   FPE_UNDERFLOW	= 0x004, // result not representable due to underflow
+   FPE_OVERFLOW		= 0x008, // result not representable due to overflow
+   FPE_INVALID		= 0x010, // invalid operation
+  };
+  
+  FPExceptFlags		fpe_enable; // #EXPERT #NO_SAVE (DEBUG builds only) enable floating point exceptions; useful to help locate nan and similar issues
+protected:
+  int			GetFEFlags(FPExceptFlags fpef); // convert FPE flags to FE flags
+  FPExceptFlags		GetFPEFlags(int fef); // convert FE flags to FPE flags
+#endif
+
 private:
   SIMPLE_COPY(taRootBase)
   void	Initialize();

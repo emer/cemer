@@ -877,6 +877,9 @@ taRootBase* taRootBase::instance() {
   }
   return tabMisc::root;
 }
+#ifdef DEBUG
+# include <fenv.h>
+#endif
 
 void taRootBase::Initialize() {
   version = taMisc::version;
@@ -884,6 +887,9 @@ void taRootBase::Initialize() {
   plugin_deps.SetBaseType(&TA_taPluginDep);
   console_type = taMisc::console_type;
   console_options = taMisc::console_options;
+#ifndef TA_OS_WIN // "Micro-'we don't do C99 standard'-soft" 
+  fpe_enable = GetFPEFlags(fegetexcept());
+#endif
 }
 
 void taRootBase::Destroy() {
@@ -937,6 +943,39 @@ void taRootBase::CutLinks() {
   wizards.CutLinks();
   templates.CutLinks();
   inherited::CutLinks();
+}
+
+#ifndef TA_OS_WIN // "Micro-'we don't do C99 standard'-soft" 
+int taRootBase::GetFEFlags(FPExceptFlags fpef) {
+  int rval = 0;
+  if (fpef & FPE_INEXACT) rval |= FE_INEXACT;
+  if (fpef & FPE_DIVBYZERO) rval |= FE_DIVBYZERO;
+  if (fpef & FPE_UNDERFLOW) rval |= FE_UNDERFLOW;
+  if (fpef & FPE_OVERFLOW) rval |= FE_OVERFLOW;
+  if (fpef & FPE_INVALID) rval |= FE_INVALID;
+  return rval;
+}
+
+taRootBase::FPExceptFlags taRootBase::GetFPEFlags(int fef) {
+  int rval = 0;
+  if (fef & FE_INEXACT) rval |= FPE_INEXACT;
+  if (fef & FE_DIVBYZERO) rval |= FPE_DIVBYZERO;
+  if (fef & FE_UNDERFLOW) rval |= FPE_UNDERFLOW;
+  if (fef & FE_OVERFLOW) rval |= FPE_OVERFLOW;
+  if (fef & FE_INVALID) rval |= FPE_INVALID;
+  return (FPExceptFlags)rval;
+}
+#endif
+
+void taRootBase::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+#ifndef TA_OS_WIN
+  // just remove all, then set selected ones
+  fedisableexcept(FE_ALL_EXCEPT);
+  if (fpe_enable) {
+    feenableexcept(GetFEFlags(fpe_enable));
+  }
+#endif
 }
 
 #ifdef GPROF			// turn on for profiling
