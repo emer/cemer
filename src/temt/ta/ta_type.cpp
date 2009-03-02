@@ -1083,6 +1083,7 @@ void taMisc::Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun)) {
   signal(SIGPIPE, fun); // 13
   signal(SIGALRM, fun); // 14
   signal(SIGTERM, fun); // 15
+  signal(SIGFPE, fun);
 #endif //!TA_OS_WIN
 }
 
@@ -1101,6 +1102,7 @@ void taMisc::Decode_Signal(int err) {
   case SIGPIPE:	cerr << "broken pipe"; break;
   case SIGALRM:	cerr << "alarm clock"; break;
   case SIGTERM:	cerr << "software termination signal"; break;
+  case SIGFPE:	cerr << "floating point exception"; break;
   case SIGUSR1:	cerr << "user signal 1"; break;
   case SIGUSR2:	cerr << "user signal 2"; break;
 #endif  //!TA_OS_WIN

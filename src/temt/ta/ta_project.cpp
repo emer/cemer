@@ -2457,7 +2457,7 @@ void taRootBase::SaveRecoverFileHandler(int err) {
 #ifdef TA_OS_WIN // MS CRT doesn't handle these signals...
   exit(err);
 #else // TA_OS_WIN // MS CRT doesn't handle these signals...
-  if((err == SIGALRM) || (err == SIGUSR1) || (err == SIGUSR2)) {
+  if((err == SIGALRM) || (err == SIGUSR1) || (err == SIGUSR2) || (err = SIGFPE)) {
     taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFileHandler);
     has_crashed = false;
   } else {

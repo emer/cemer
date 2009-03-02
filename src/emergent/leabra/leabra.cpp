@@ -2975,7 +2975,10 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Sort(Unit_Group* ug, LeabraInhib* thr,
 }
 
 void LeabraLayerSpec::Compute_Inhib_BreakTie(LeabraInhib* thr) {
-  thr->kwta.ithr_diff = (thr->kwta.k_ithr - thr->kwta.k1_ithr) / thr->kwta.k_ithr;
+  if(thr->kwta.k_ithr > 0.0f)
+    thr->kwta.ithr_diff = (thr->kwta.k_ithr - thr->kwta.k1_ithr) / thr->kwta.k_ithr;
+  else
+    thr->kwta.ithr_diff = 0.0f;
   thr->kwta.tie_brk = 0;
   if(tie_brk.on && (thr->kwta.k_ithr > tie_brk.k_thr)) {
     if(thr->kwta.ithr_diff < tie_brk.diff_thr) {
