@@ -776,6 +776,124 @@ void SoLineBox3d::render() {
   coordIndex.finishEditing();
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////
+// special Coin 3.0 code to set the read image callback so we can nuke simage for good!!!
+
+#include <Inventor/SbBasic.h>
+
+#if COIN_MAJOR_VERSION >= 3
+#include <Inventor/SbImage.h>
+
+// this code is essentially verbatim from Quarter
+// http://svn.coin3d.org/repos/Quarter/trunk/src/Quarter/ImageReader.cpp
+
+CoinImageReaderCB::CoinImageReaderCB(void)
+{
+  SbImage::addReadImageCB(CoinImageReaderCB::readImageCB, this);
+}
+
+CoinImageReaderCB::~CoinImageReaderCB(void)
+{
+  SbImage::removeReadImageCB(CoinImageReaderCB::readImageCB, this);
+}
+
+SbBool
+CoinImageReaderCB::readImage(const SbString & filename, SbImage & sbimage) const
+{
+  QImage image;
+  if (image.load(filename.getString())) {
+    int c;
+    int w = image.width();
+    int h = image.height();
+
+    // Keep in 8-bits mode if that was what we read
+    if (image.depth() != 8 || !image.isGrayscale()) {
+      // FIXME: consider if we should detect allGrayscale() and alpha (c = 2)
+      image = image.convertToFormat(image.hasAlphaChannel() ?
+                                    QImage::Format_ARGB32 : QImage::Format_RGB32);
+    }
+
+    { // QtCoinCompatibility::QImageToSbImage(const QImage & image, SbImage & sbimage)
+      // Keep in 8-bits mode if that was what we read
+      if (image.depth() == 8 && image.isGrayscale()) {
+	c = 1;
+      }
+      else {
+	// FIXME: consider if we should detect allGrayscale() and alpha (c = 2)
+	c = image.hasAlphaChannel() ? 4 : 3;
+      }
+
+      SbVec2s size((short) w, (short) h);
+      sbimage.setValue(size, c, NULL);
+      unsigned char * buffer = sbimage.getValue(size, c);
+
+      if (c == 1) {
+	for (int i = 0; i < h; i++) {
+	  memcpy(buffer + i*w, image.scanLine(h-(i+1)), w);
+	}
+      }
+      else { // (c == 3 || c == 4)
+	int max_idx = c * w * (h-1);
+	QRgb * bits = (QRgb*) image.bits();
+	for (int y = 0; y < h; y++) {
+	  int idx = c*w*(h-(y+1));
+	  if(idx > max_idx || idx < 0) {
+	    continue;
+	  }
+	  unsigned char * line = &buffer[idx];
+	  for (int x = 0; x < w; x++) {
+	    *line = qRed(*bits);  line++;
+	    *line = qGreen(*bits); line++;
+	    *line = qBlue(*bits); line++;
+	    if (c == 4) {
+	      *line = qAlpha(*bits); line++;
+	    }
+	    bits++;
+	  }
+	}
+      }
+    }
+    return TRUE;
+  }
+  return FALSE;
+}
+
+SbBool
+CoinImageReaderCB::readImageCB(const SbString & filename, SbImage * image, void * closure)
+{
+  return ((CoinImageReaderCB*)closure)->readImage(filename, *image);
+}
+
+
+static CoinImageReaderCB coin_img_reader_cb; // always have one statically -- does this work??
+
+#else // COIN_MAJOR_VERSION >= 3
+
+// no-ops
+
+CoinImageReaderCB::CoinImageReaderCB(void)
+{
+}
+
+CoinImageReaderCB::~CoinImageReaderCB(void)
+{
+}
+
+SbBool
+CoinImageReaderCB::readImage(const SbString & filename, SbImage & sbimage) const
+{
+  return FALSE;
+}
+
+SbBool
+CoinImageReaderCB::readImageCB(const SbString & filename, SbImage * image, void * closure)
+{
+  return FALSE;
+}
+
+#endif // COIN_MAJOR_VERSION >= 3
+
+
 //////////////////////////
 //   SoImageEx		//
 //////////////////////////

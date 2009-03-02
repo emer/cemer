@@ -27,7 +27,6 @@
 #include "css_ta.h"
 #include "css_console.h"
 
-
 #ifdef TA_GUI
 # include "ta_qt.h"
 # include "ta_qtdata.h" 
@@ -35,6 +34,7 @@
 # include "ta_qttype_def.h"
 # include "colorscale.h"
 # include "css_qt.h"
+# include "t3node_so.h"
 # ifdef HAVE_QT_CONSOLE
 #   include "css_qtconsole.h"
 # endif
@@ -888,7 +888,7 @@ void taRootBase::Initialize() {
   plugin_deps.SetBaseType(&TA_taPluginDep);
   console_type = taMisc::console_type;
   console_options = taMisc::console_options;
-#ifndef TA_OS_WIN // "Micro-'we don't do C99 standard'-soft" 
+#ifdef TA_OS_LINUX
   fpe_enable = FPE_0; //GetFPEFlags(fegetexcept());
 #endif
 }
@@ -1435,6 +1435,8 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
   return true;
 }
 
+static CoinImageReaderCB* coin_image_reader_cb_obj = NULL;
+
 bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
   setlocale(LC_ALL, "");
 
@@ -1477,8 +1479,17 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 	   << "Please read the emergent manual for required 3D graphics driver information.\n"
 	   << "If you open a project with a 3D display, or create one, the program will likely crash!" << endl;
     }
+
+#ifdef TA_USE_INVENTOR
+#if COIN_MAJOR_VERSION >= 3
+    // this installs the callback to eliminate dependency on simage 
+    coin_image_reader_cb_obj = new CoinImageReaderCB;
+#endif
+
   } else 
 #endif
+#endif
+
   {
     new QCoreApplication(argc, (char**)argv); // accessed as qApp
     QFileInfo fi(argv[0]);
@@ -2264,8 +2275,15 @@ void taRootBase::Cleanup_Main() {
     taMisc::types.RemoveAll();	// get rid of all the types before global dtor!
 
 #ifdef TA_USE_INVENTOR
-  if(taMisc::gui_active && (milestone & SM_SOQT_INIT))
+  if(taMisc::gui_active && (milestone & SM_SOQT_INIT)) {
+#if COIN_MAJOR_VERSION >= 3
+    if(coin_image_reader_cb_obj) {
+      delete coin_image_reader_cb_obj;
+      coin_image_reader_cb_obj= NULL;
+    }
+#endif
     SoQt::done();
+  }
 #endif
 #ifdef DMEM_COMPILE
   if (milestone & SM_MPI_INIT)
@@ -2457,7 +2475,7 @@ void taRootBase::SaveRecoverFileHandler(int err) {
 #ifdef TA_OS_WIN // MS CRT doesn't handle these signals...
   exit(err);
 #else // TA_OS_WIN // MS CRT doesn't handle these signals...
-  if((err == SIGALRM) || (err == SIGUSR1) || (err == SIGUSR2) || (err = SIGFPE)) {
+  if((err == SIGALRM) || (err == SIGUSR1) || (err == SIGUSR2)) {
     taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFileHandler);
     has_crashed = false;
   } else {

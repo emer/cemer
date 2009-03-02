@@ -419,6 +419,20 @@ protected:
 
 };
 
+#ifndef __MAKETA__
+class CoinImageReaderCB {
+  // ##IGNORE callback class for SbImage image reader callback function that eliminates any dependency on the simage library -- only avail in Coin >= 3.0 -- create this object statically somewhere after project initialization and it will install itself -- this is done in ta_project.cpp
+public:
+  CoinImageReaderCB(void);
+  ~CoinImageReaderCB(void);
+
+  SbBool readImage(const SbString & filename, SbImage & image) const;
+
+private:
+  static SbBool readImageCB(const SbString & filename, SbImage * image, void * closure);
+};
+#endif
+
 class TA_API SoImageEx: public SoSeparator { 
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS taImage-compatible image viewer -- width will always be 1; height will then be h/w ratio
 #ifndef __MAKETA__
