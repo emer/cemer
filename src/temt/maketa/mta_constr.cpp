@@ -692,10 +692,6 @@ void MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& strm) {
       strm << "(" << argt->Get_C_Name() << ")" << "*arg[" << j+1 << "]";
   }
   else if(argt->InheritsFormal(TA_class)) {
-//TEMP
-if (argt->Get_C_Name() == "taList::T") {
-  int i = 2;
-}
     strm << "*(" << argt->Get_C_Name() << "*)arg[" << j+1 << "]"
 	 << "->GetVoidPtrOfType(&TA_" << argt->name << ")";
   }
@@ -772,7 +768,7 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
 
   bool has_rval = ((md->type->ptr > 0) || (md->type != &TA_void));
   if (md->type->ptr == 0) {
-    bool has_rval = true;
+    has_rval = true;
     if (md->type == &TA_void) // explicitly not, so ok,
       has_rval = false;
     else if (md->type->DerivesFrom(TA_int) || md->type->DerivesFrom(TA_unsigned_int) ||
