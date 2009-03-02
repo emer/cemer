@@ -406,7 +406,7 @@ protected:
   virtual taBase* 	GetTemplateInstance_impl(TypeDef* typ, taBase* base);
   virtual void		MakeWizards_impl();
   
-#ifndef TA_OS_WIN // "Micro-'we don't do C99 standard'-soft" 
+#ifdef TA_OS_LINUX 
 public: // debuggy stuff
   enum FPExceptFlags { // #BITS floating point exception masks -- helps to debug nan issues etc.
    FPE_0		= 0, // #IGNORE

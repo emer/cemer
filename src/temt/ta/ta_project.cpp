@@ -72,7 +72,7 @@ extern "C" void moncontrol(int mode);
 #include <Saturn.h>
 #endif
 
-#ifndef TA_OS_WIN
+#ifdef TA_OS_LINUX
 # include <fenv.h>
 #endif
 
@@ -889,7 +889,7 @@ void taRootBase::Initialize() {
   console_type = taMisc::console_type;
   console_options = taMisc::console_options;
 #ifndef TA_OS_WIN // "Micro-'we don't do C99 standard'-soft" 
-  fpe_enable = GetFPEFlags(fegetexcept());
+  fpe_enable = FPE_0; //GetFPEFlags(fegetexcept());
 #endif
 }
 
@@ -946,7 +946,7 @@ void taRootBase::CutLinks() {
   inherited::CutLinks();
 }
 
-#ifndef TA_OS_WIN // "Micro-'we don't do C99 standard'-soft" 
+#ifdef TA_OS_LINUX  
 int taRootBase::GetFEFlags(FPExceptFlags fpef) {
   int rval = 0;
   if (fpef & FPE_INEXACT) rval |= FE_INEXACT;
@@ -970,7 +970,7 @@ taRootBase::FPExceptFlags taRootBase::GetFPEFlags(int fef) {
 
 void taRootBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-#ifndef TA_OS_WIN
+#ifdef TA_OS_LINUX
   // just remove all, then set selected ones
   fedisableexcept(FE_ALL_EXCEPT);
   if (fpe_enable) {
