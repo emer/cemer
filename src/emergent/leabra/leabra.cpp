@@ -4438,7 +4438,7 @@ void CtTrialTiming::UpdateAfterEdit_impl() {
 void CtSRAvgSpec::Initialize() {
   start = 30;
   end = 1;
-  interval = 1;
+  interval = 5;
   plus_s_st = 19;
 }
 
@@ -4454,8 +4454,8 @@ void CtSineInhibMod::Initialize() {
   start = 30;
   duration = 20;
   n_pi = 2.0f;
-  burst_i = 0.02f;
-  trough_i = 0.02f;
+  burst_i = 0.0f;
+  trough_i = 0.0f;
 }
 
 void CtFinalInhibMod::Initialize() {
