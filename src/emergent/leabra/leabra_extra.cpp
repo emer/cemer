@@ -1921,7 +1921,6 @@ void V1RFPrjnSpec::Connect_impl(Projection* prjn) {
     return;
   }
 
-  rf_spec.un_geom = prjn->layer->un_geom;
   rf_spec.InitFilters();	// this one call initializes all filter info once and for all!
   // renorm the dog net filter to 1 abs max!
   if(rf_spec.filter_type == GaborV1Spec::BLOB) {
@@ -1930,8 +1929,8 @@ void V1RFPrjnSpec::Connect_impl(Projection* prjn) {
       taMath_float::vec_norm_abs_max(&(df->net_filter));
     }
   }
-  TestWarning(rf_spec.un_geom != prjn->layer->un_geom,
-	      "number of filters from rf_spec:", (String)rf_spec.un_geom.n,
+  TestWarning(rf_spec.n_filters != prjn->layer->un_geom.n,
+	      "number of filters from rf_spec:", (String)rf_spec.n_filters,
 	      "does not match layer un_geom.n:", (String)prjn->layer->un_geom.n);
 
   TwoDCoord rf_width = rf_spec.rf_width;

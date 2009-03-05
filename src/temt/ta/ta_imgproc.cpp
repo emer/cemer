@@ -1076,14 +1076,14 @@ void RetinalSpacingSpec::UpdateSizes() {
   output_size = ((input_size - 1) / spacing) + 1;
   output_units = output_size.x * output_size.y;
 
-  if((input_size.x - 1) % spacing.x != 0) {
-    taMisc::Warning("Filter:",name,"x spacing:",String(spacing.x),
-		  "is not even multiple of input size:",String(input_size.x));
-  }
-  if((input_size.y - 1) % spacing.y != 0) {
-    taMisc::Warning("Filter:",name,"y spacing:",String(spacing.y),
-		  "is not even multiple of input size:",String(input_size.y));
-  }
+//   if((input_size.x - 1) % spacing.x != 0) {
+//     taMisc::Warning("Filter:",name,"x spacing:",String(spacing.x),
+// 		  "is not even multiple of input size:",String(input_size.x));
+//   }
+//   if((input_size.y - 1) % spacing.y != 0) {
+//     taMisc::Warning("Filter:",name,"y spacing:",String(spacing.y),
+// 		  "is not even multiple of input size:",String(input_size.y));
+//   }
 }
 
 void RetinalSpacingSpec::PlotSpacing(DataTable* graph_data, float val) {
@@ -1265,15 +1265,14 @@ DoGRetinaSpec* DoGRetinaSpecList::FindRetinalRegionRes(RetinalSpacingSpec::Regio
   return NULL;
 }
 
-
 ///////////////////////////////////////////////////////////
-// 		GaborV1Spec
+// 		GaborV1SpecBase
 
 void GaborRFSpec::Initialize() {
-  n_angles = 8;
-  freq = 1.0f;
+  n_angles = 4;
+  freq = 1.5f;
   width = 2.0f;
-  length = 4.0f;
+  length = 2.0f;
   amp = .9f;
 }
 
@@ -1283,57 +1282,34 @@ void BlobRFSpec::Initialize() {
   width_inc = 2.0;
 }
 
-
-void GaborV1Spec::Initialize() {
+void GaborV1SpecBase::Initialize() {
   gabor_specs.SetBaseType(&TA_GaborFilterSpec);
   blob_specs.SetBaseType(&TA_DoGFilterSpec);
-
+  rf_ovlp = 2;
+  rf_width = rf_ovlp * 2;
   filter_type = GABOR;
-  region = RetinalSpacingSpec::PARAFOVEA;
-  res = RetinalSpacingSpec::MED_RES;
+  n_filters = gabor_rf.n_angles * 2;
 }
 
-void GaborV1Spec::UpdateAfterEdit_impl() {
+void GaborV1SpecBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  un_geom.UpdateAfterEdit();
-  gp_geom.UpdateAfterEdit();
+  rf_ovlp = rf_width / 2;
+  rf_width = rf_ovlp * 2;	// ensure even
   InitFilters();
 }
 
-bool GaborV1Spec::SetRfWidthFmGpGeom(TwoDCoord& input_size) {
-  TwoDCoord rf_ovlp = input_size / (gp_geom + 1);
-  rf_width = rf_ovlp * 2;
-  TwoDCoord even_size = (gp_geom + 1) * rf_ovlp;
-  return input_size == even_size;
-}
-
-bool GaborV1Spec::SetGpGeomFmRfWidth(TwoDCoord& input_size) {
-  TwoDCoord rf_ovlp = rf_width / 2;
-  gp_geom = (input_size / rf_ovlp) - 1;
-
-  TwoDCoord even_size = (gp_geom + 1) * rf_ovlp;
-  return input_size == even_size;
-}
-
-bool GaborV1Spec::SetGpGeomFmRetSpec(DoGRetinaSpecList& dogs) {
-  DoGRetinaSpec* rs = dogs.FindRetinalRegionRes(region, res);
-  if(!rs) return false;
-  return SetGpGeomFmRfWidth(rs->spacing.output_size);
-}
-
-bool GaborV1Spec::InitFilters() {
+bool GaborV1SpecBase::InitFilters() {
   if(filter_type == GABOR)
     return InitFilters_Gabor();
   else
     return InitFilters_Blob();
 }
 
-bool GaborV1Spec::InitFilters_Gabor() {
-  int nfilt = gabor_rf.n_angles * 2;
-  un_geom.FitN(nfilt);
-  gabor_specs.SetSize(nfilt);
+bool GaborV1SpecBase::InitFilters_Gabor() {
+  n_filters = gabor_rf.n_angles * 2;
+  gabor_specs.SetSize(n_filters);
 
-  for(int i=0;i<nfilt;i++) {
+  for(int i=0;i<n_filters;i++) {
     float angle_dx = (float)(i % gabor_rf.n_angles); // angle is inner dim
     float phase_dx = (float)((i / gabor_rf.n_angles) % 2); // then phase
 
@@ -1354,13 +1330,12 @@ bool GaborV1Spec::InitFilters_Gabor() {
   return true;
 }
 
-bool GaborV1Spec::InitFilters_Blob() {
+bool GaborV1SpecBase::InitFilters_Blob() {
   // 2 for phase and 2 for color channel -- blobs are only relevant for color channels!
-  int nfilt = blob_rf.n_sizes * 4;
-  un_geom.FitN(nfilt);
-  blob_specs.SetSize(nfilt);
+  n_filters = blob_rf.n_sizes * 4;
+  blob_specs.SetSize(n_filters);
 
-  for(int i=0;i<nfilt;i++) {
+  for(int i=0;i<n_filters;i++) {
     float sz_dx = (float)(i % blob_rf.n_sizes); // size is inner dim
     int phase_dx = ((i / blob_rf.n_sizes) % 2); // then phase
     int clr_dx = (i / (blob_rf.n_sizes * 2) % 2); // then color
@@ -1391,7 +1366,7 @@ bool GaborV1Spec::InitFilters_Blob() {
   return true;
 }
 
-void GaborV1Spec::GraphFilter(DataTable* graph_data, int unit_no) {
+void GaborV1SpecBase::GraphFilter(DataTable* graph_data, int unit_no) {
   if(filter_type == GABOR) {
     GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs.SafeEl(unit_no);
     if(gf)
@@ -1404,7 +1379,7 @@ void GaborV1Spec::GraphFilter(DataTable* graph_data, int unit_no) {
   }
 }
 
-void GaborV1Spec::GridFilter(DataTable* graph_data) {
+void GaborV1SpecBase::GridFilter(DataTable* graph_data) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
@@ -1428,20 +1403,109 @@ void GaborV1Spec::GridFilter(DataTable* graph_data) {
   graph_data->FindMakeGridView();
 }
 
+///////////////////////////////////////////////////////////
+// 		GaborV1Spec
+
+void GaborV1Spec::Initialize() {
+  region = RetinalSpacingSpec::PARAFOVEA;
+  res = RetinalSpacingSpec::MED_RES;
+  un_geom.SetXY(4,4);
+  gp_geom.SetXY(8,8);
+  wrap = true;
+  n_filter_gps.SetXY(4,4);
+  n_filters_per_gp = 2;
+  gp_gauss_sigma = 0.5f;
+  UpdateGeoms();
+}
+
+void GaborV1Spec::UpdateGeoms() {
+  rf_ovlp = rf_width / 2;
+  rf_width = rf_ovlp * 2;	// ensure even
+  tot_filter_gps = n_filter_gps * n_filters_per_gp;
+  filter_gp_ovlp = tot_filter_gps / 2;
+  filter_gp_ovlp.SetGtEq(1);
+  input_ovlp = filter_gp_ovlp * rf_ovlp;
+  if(wrap)
+    trg_input_size = gp_geom * input_ovlp;
+  else
+    trg_input_size = (gp_geom -1)* input_ovlp;
+
+  rf_ovlp.UpdateAfterEdit();
+  rf_width.UpdateAfterEdit();
+  tot_filter_gps.UpdateAfterEdit();
+  filter_gp_ovlp.UpdateAfterEdit();
+  input_ovlp.UpdateAfterEdit();
+  trg_input_size.UpdateAfterEdit();
+
+  gp_gauss_mat.SetGeom(2, tot_filter_gps.x, tot_filter_gps.y);
+
+  if(tot_filter_gps.n > 1) {
+    float ctr_x = (float)tot_filter_gps.x * .5f;;
+    float ctr_y = (float)tot_filter_gps.y * .5f;;
+    float eff_sig_x = gp_gauss_sigma * ctr_x;
+    float eff_sig_y = gp_gauss_sigma * ctr_y;
+    for(int yi=0; yi< tot_filter_gps.y; yi++) {
+      float y = ((float)yi - ctr_y) / eff_sig_y;
+      for(int xi=0; xi< tot_filter_gps.x; xi++) {
+	float x = ((float)xi - ctr_y) / eff_sig_x;
+	float gv = expf(-(x*x + y*y)/2.0f);
+	gp_gauss_mat.FastEl(xi, yi) = gv;
+      }
+    }
+  }
+  else {
+    gp_gauss_mat.FastEl(0,0) = 1.0f;
+  }
+}
+
+void GaborV1Spec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  un_geom.UpdateAfterEdit();
+  gp_geom.UpdateAfterEdit();
+  UpdateGeoms();
+}
+
+bool GaborV1Spec::SetGpGeomFmInputSize(TwoDCoord& input_size) {
+  UpdateGeoms();
+  if(wrap) {
+    gp_geom = (input_size / input_ovlp);
+  }
+  else {
+    gp_geom = (input_size / input_ovlp) - 1;
+  }
+  UpdateGeoms();
+  return input_size == trg_input_size;
+}
+
+bool GaborV1Spec::SetGpGeomFmRetSpec(DoGRetinaSpecList& dogs) {
+  DoGRetinaSpec* rs = dogs.FindRetinalRegionRes(region, res);
+  if(!rs) return false;
+  return SetGpGeomFmInputSize(rs->spacing.output_size);
+}
+
+bool GaborV1Spec::InitFilters_Gabor() {
+  int n_filters = gabor_rf.n_angles * 2 * n_filters_per_gp;
+  un_geom.FitN(n_filters);
+  return inherited::InitFilters_Gabor();
+}
+
+bool GaborV1Spec::InitFilters_Blob() {
+  // 2 for phase and 2 for color channel -- blobs are only relevant for color channels!
+  int n_filters = blob_rf.n_sizes * 4 * n_filters_per_gp;
+  un_geom.FitN(n_filters);
+  return inherited::InitFilters_Gabor();
+}
+
 bool GaborV1Spec::FilterInput(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
 			      float_Matrix& on_input, float_Matrix& off_input,
 			      bool superimpose) {
-  InitFilters();
-
   TwoDCoord input_size;
   input_size.x = on_input.dim(0);
   input_size.y = on_input.dim(1);
 
-  TwoDCoord rf_ovlp = rf_width / 2;
-  TwoDCoord even_size = (gp_geom + 1) * rf_ovlp;
-  if(input_size != even_size) {
+  if(input_size != trg_input_size) {
     taMisc::Error("GaborV1Spec: input size",input_size.GetStr(),
-		  "is not correct size, should be:", even_size.GetStr());
+		  "is not correct size, should be:", trg_input_size.GetStr());
     return false;
   }
 
@@ -1460,33 +1524,60 @@ bool GaborV1Spec::FilterInput(float_Matrix& v1_output, DoGFilterSpec::ColorChann
 bool GaborV1Spec::FilterInput_Gabor(float_Matrix& v1_output,
 				    float_Matrix& on_input, float_Matrix& off_input,
 				    bool superimpose) {
-  TwoDCoord rf_ovlp = rf_width / 2;
-  int unx, uny;
-  int fidx = 0;
-  for(uny=0;uny<un_geom.y;uny++) {
-    for(unx=0;unx<un_geom.x;unx++,fidx++) {
+  TwoDCoord input_size;
+  input_size.x = on_input.dim(0);
+  input_size.y = on_input.dim(1);
+
+  TwoDCoord un;			// units within group
+  TwoDCoord ugp;		// unit groups
+  TwoDCoord fgp;		// filter groups
+  TwoDCoord ugpof;		// offset from ugps
+  TwoDCoord fgpof;		// offset from fgps
+  TwoDCoord fc;			// filter coords
+  TwoDCoord in;			// input coords
+  int uidx = 0;
+  for(un.y=0;un.y<un_geom.y;un.y++) {
+    for(un.x=0;un.x<un_geom.x;un.x++,uidx++) {
+      int fidx = uidx / n_filters_per_gp;
+      int fgpdx = uidx % n_filters_per_gp;
       GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs.SafeEl(fidx);
       if(!gf) break;			     // shouldn't happen
-      int gpx, gpy;
-      for(gpy=0;gpy<gp_geom.y;gpy++) {
-	int ofy = gpy * rf_ovlp.y;
-	for(gpx=0;gpx<gp_geom.x;gpx++) {
-	  int ofx = gpx * rf_ovlp.x;
-	  int inx, iny;
-	  float sum = 0.0f;
-	  for(iny=0;iny<rf_width.y;iny++) {
-	    for(inx=0;inx<rf_width.x;inx++) {
-	      float fval = gf->filter.FastEl(inx, iny);
-	      float oval;
-	      if(fval > 0.0f) oval = fval * on_input.FastEl(ofx + inx, ofy + iny);
-	      else	      oval = -fval * off_input.FastEl(ofx + inx, ofy + iny);
-	      sum += oval;
+      // for each unit, process entire input:
+      for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
+	for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
+	  if(wrap)
+	    ugpof = (ugp-1) * input_ovlp;
+	  else
+	    ugpof = ugp * input_ovlp;
+	  float sum = 0.0f;	// sum for this unit, this location
+	  // filter groups
+	  for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
+	    int ymod = fgp.y % n_filters_per_gp;
+	    for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
+	      int xmod = (fgp.x + ymod) % n_filters_per_gp;
+	      if(xmod != fgpdx) continue; // not our spot
+	      float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
+	      fgpof = ugpof + (fgp * rf_ovlp);
+	      // now actually apply the filter itself
+	      float flt_sum = 0.0f;
+	      for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+		for(fc.x=0;fc.x<rf_width.x;fc.x++) {
+		  in = fgpof + fc;
+		  if(in.WrapClip(wrap, input_size)) continue;
+		  float fval = gf->filter.FastEl(fc.x, fc.y);
+		  float oval;
+		  if(fval > 0.0f) oval = fval * on_input.FastEl(in.x, in.y);
+		  else	      oval = -fval * off_input.FastEl(in.x, in.y);
+		  flt_sum += oval;
+		}
+	      }
+	      sum += gmult * flt_sum;
 	    }
 	  }
 	  if(superimpose)
-	    v1_output.FastEl(unx, uny, gpx, gpy) += sum;
+	    v1_output.FastEl(un.x, un.y, ugp.x, ugp.y) += sum;
 	  else
-	    v1_output.FastEl(unx, uny, gpx, gpy) = sum;
+	    v1_output.FastEl(un.x, un.y, ugp.x, ugp.y) = sum;
 	}
       }
     }
@@ -1497,37 +1588,143 @@ bool GaborV1Spec::FilterInput_Gabor(float_Matrix& v1_output,
 bool GaborV1Spec::FilterInput_Blob(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
 				   float_Matrix& on_input, float_Matrix& off_input,
 				   bool superimpose) {
-  TwoDCoord rf_ovlp = rf_width / 2;
-  int unx, uny;
-  int fidx = 0;
-  for(uny=0;uny<un_geom.y;uny++) {
-    for(unx=0;unx<un_geom.x;unx++,fidx++) {
+  TwoDCoord input_size;
+  input_size.x = on_input.dim(0);
+  input_size.y = on_input.dim(1);
+
+  TwoDCoord un;			// units within group
+  TwoDCoord ugp;		// unit groups
+  TwoDCoord fgp;		// filter groups
+  TwoDCoord ugpof;		// offset from ugps
+  TwoDCoord fgpof;		// offset from fgps
+  TwoDCoord fc;			// filter coords
+  TwoDCoord in;			// input coords
+  int uidx = 0;
+  for(un.y=0;un.y<un_geom.y;un.y++) {
+    for(un.x=0;un.x<un_geom.x;un.x++,uidx++) {
+      int fidx = uidx / n_filters_per_gp;
+      int fgpdx = uidx % n_filters_per_gp;
       DoGFilterSpec* gf = (DoGFilterSpec*)blob_specs.SafeEl(fidx);
       if(!gf) break;			     // shouldn't happen
       if(gf->color_chan != c_chan) continue; // doesn't match
-      int gpx, gpy;
-      for(gpy=0;gpy<gp_geom.y;gpy++) {
-	int ofy = gpy * rf_ovlp.y;
-	for(gpx=0;gpx<gp_geom.x;gpx++) {
-	  int ofx = gpx * rf_ovlp.x;
-	  int inx, iny;
-	  float sum = 0.0f;
-	  for(iny=0;iny<rf_width.y;iny++) {
-	    for(inx=0;inx<rf_width.x;inx++) {
-	      float oval = (gf->on_filter.FastEl(inx, iny) * on_input.FastEl(ofx + inx, ofy + iny) - 
-			    gf->off_filter.FastEl(inx, iny) * off_input.FastEl(ofx + inx, ofy + iny));
-	      sum += oval;
+      // for each unit, process entire input:
+      for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
+	for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
+	  if(wrap)
+	    ugpof = (ugp-1) * input_ovlp;
+	  else
+	    ugpof = ugp * input_ovlp;
+	  float sum = 0.0f;	// sum for this unit, this location
+	  // filter groups
+	  for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
+	    int ymod = fgp.y % n_filters_per_gp;
+	    for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
+	      int xmod = (fgp.x + ymod) % n_filters_per_gp;
+	      if(xmod != fgpdx) continue; // not our spot
+	      float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
+	      fgpof = ugpof + (fgp * rf_ovlp);
+	      // now actually apply the filter itself
+	      float flt_sum = 0.0f;
+	      for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+		for(fc.x=0;fc.x<rf_width.x;fc.x++) {
+		  in = fgpof + fc;
+		  if(in.WrapClip(wrap, input_size)) continue;
+		  float oval = (gf->on_filter.FastEl(fc.x, fc.y) * on_input.FastEl(in.x, in.y) - 
+			gf->off_filter.FastEl(fc.x, fc.y) * off_input.FastEl(in.x, in.y));
+		  flt_sum += oval;
+		}
+	      }
+	      sum += gmult * flt_sum;
 	    }
 	  }
 	  if(superimpose)
-	    v1_output.FastEl(unx, uny, gpx, gpy) += sum;
+	    v1_output.FastEl(un.x, un.y, ugp.x, ugp.y) += sum;
 	  else
-	    v1_output.FastEl(unx, uny, gpx, gpy) = sum;
+	    v1_output.FastEl(un.x, un.y, ugp.x, ugp.y) = sum;
 	}
       }
     }
   }
   return true;
+}
+
+void GaborV1Spec::GridFilterInput(DataTable* graph_data, int unit_no, int gp_skip, bool ctrs_only) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilterInput", true);
+  }
+  graph_data->StructUpdate(true);
+  int idx;
+  DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2,
+					       trg_input_size.x, trg_input_size.y);
+  graph_data->EnforceRows(1);
+  float_Matrix* gmat = (float_Matrix*)matda->GetValAsMatrix(0);
+  taBase::Ref(gmat);
+  gmat->InitVals();
+
+  graph_data->SetUserData("N_ROWS", 1);
+//   graph_data->SetUserData("SCALE_MIN", -maxv);
+//   graph_data->SetUserData("SCALE_MAX", maxv);
+//   graph_data->SetUserData("BLOCK_HEIGHT", 2.0f);
+
+  TwoDCoord ugp;		// unit groups
+  TwoDCoord fgp;		// filter groups
+  TwoDCoord ugpof;		// offset from ugps
+  TwoDCoord fgpof;		// offset from fgps
+  TwoDCoord fc;			// filter coords
+  TwoDCoord in;			// input coords
+
+  int uidx = unit_no;
+  int fidx = uidx / n_filters_per_gp;
+  int fgpdx = uidx % n_filters_per_gp;
+  DoGFilterSpec* dgf = NULL;
+  GaborFilterSpec* ggf = NULL;
+  if(filter_type == GABOR)
+    ggf = (GaborFilterSpec*)gabor_specs.SafeEl(fidx);
+  else
+    dgf = (DoGFilterSpec*)blob_specs.SafeEl(fidx);
+  // for each unit, process entire input:
+  for(ugp.y=0;ugp.y<gp_geom.y;ugp.y+= gp_skip) {
+    for(ugp.x=0;ugp.x<gp_geom.x;ugp.x+= gp_skip) {
+      if(wrap)
+	ugpof = (ugp-1) * input_ovlp;
+      else
+	ugpof = ugp * input_ovlp;
+      // filter groups
+      for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
+	int ymod = fgp.y % n_filters_per_gp;
+	for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
+	  int xmod = (fgp.x + ymod) % n_filters_per_gp;
+	  if(xmod != fgpdx) continue; // not our spot
+	  float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
+	  fgpof = ugpof + (fgp * rf_ovlp);
+	  // now actually apply the filter itself
+	  for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+	    for(fc.x=0;fc.x<rf_width.x;fc.x++) {
+	      in = fgpof + fc;
+	      if(in.WrapClip(wrap, trg_input_size)) continue;
+	      float fval;
+	      if(filter_type == GABOR) {
+		fval = ggf->filter.FastEl(fc.x, fc.y);
+	      }
+	      else {
+		fval = (dgf->on_filter.FastEl(fc.x, fc.y) - 
+			dgf->off_filter.FastEl(fc.x, fc.y));
+	      }
+	      if(ctrs_only) {
+		if(fc == rf_ovlp) fval = 1.0f;
+		else fval = 0.0f;
+	      }
+	      gmat->FastEl(in.x, in.y) += gmult * fval;
+	    }
+	  }
+	}
+      }
+    }
+  }
+  taBase::unRefDone(gmat);
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGridView();
 }
 
 bool GaborV1SpecList::UpdateSizesFmRetina(DoGRetinaSpecList& dogs) {
@@ -2829,11 +3026,11 @@ void V1GaborSpec::DefaultFilters() {
   sp->filter_type = GaborV1Spec::GABOR;
   sp->region = RetinalSpacingSpec::FOVEA;
   sp->res = RetinalSpacingSpec::HI_RES;
-  sp->rf_width = 8;
-  sp->gabor_rf.n_angles = 8;
-  sp->gabor_rf.freq = 1.4f;
-  sp->gabor_rf.length = 3.0f;
-  sp->gabor_rf.width = 3.0f;
+  sp->rf_width = 4;
+  sp->gabor_rf.n_angles = 4;
+  sp->gabor_rf.freq = 1.5f;
+  sp->gabor_rf.length = 2.0f;
+  sp->gabor_rf.width = 2.0f;
   sp->gabor_rf.amp = .9f;
   sp->UpdateAfterEdit();
 
@@ -2842,11 +3039,11 @@ void V1GaborSpec::DefaultFilters() {
   sp->filter_type = GaborV1Spec::GABOR;
   sp->region = RetinalSpacingSpec::PARAFOVEA;
   sp->res = RetinalSpacingSpec::MED_RES;
-  sp->rf_width = 12;
-  sp->gabor_rf.n_angles = 8;
-  sp->gabor_rf.freq = 1.0f;
-  sp->gabor_rf.length = 4.0f;
-  sp->gabor_rf.width = 3.0f;
+  sp->rf_width = 4;
+  sp->gabor_rf.n_angles = 4;
+  sp->gabor_rf.freq = 1.5f;
+  sp->gabor_rf.length = 2.0f;
+  sp->gabor_rf.width = 2.0f;
   sp->gabor_rf.amp = .9f;
   sp->UpdateAfterEdit();
 
@@ -2855,11 +3052,11 @@ void V1GaborSpec::DefaultFilters() {
   sp->filter_type = GaborV1Spec::GABOR;
   sp->region = RetinalSpacingSpec::PARAFOVEA;
   sp->res = RetinalSpacingSpec::LOW_RES;
-  sp->rf_width = 6;
-  sp->gabor_rf.n_angles = 8;
-  sp->gabor_rf.freq = 1.8f;
+  sp->rf_width = 4;
+  sp->gabor_rf.n_angles = 4;
+  sp->gabor_rf.freq = 1.5f;
   sp->gabor_rf.length = 2.0f;
-  sp->gabor_rf.width = 3.0f;
+  sp->gabor_rf.width = 2.0f;
   sp->gabor_rf.amp = .9f;
   sp->UpdateAfterEdit();
 
@@ -2868,8 +3065,8 @@ void V1GaborSpec::DefaultFilters() {
     sp->name = "V1_hblob";
     sp->filter_type = GaborV1Spec::BLOB;
     sp->region = RetinalSpacingSpec::FOVEA;
-  sp->res = RetinalSpacingSpec::HI_RES;
-    sp->rf_width = 8;
+    sp->res = RetinalSpacingSpec::HI_RES;
+    sp->rf_width = 4;
     sp->blob_rf.n_sizes = 1;
     sp->blob_rf.width_st = 1.0f;
     sp->blob_rf.width_inc = 2.0f;
@@ -2880,7 +3077,7 @@ void V1GaborSpec::DefaultFilters() {
     sp->filter_type = GaborV1Spec::BLOB;
     sp->region = RetinalSpacingSpec::PARAFOVEA;
     sp->res = RetinalSpacingSpec::MED_RES;
-    sp->rf_width = 12;
+    sp->rf_width = 4;
     sp->blob_rf.n_sizes = 1;
     sp->blob_rf.width_st = 1.0f;
     sp->blob_rf.width_inc = 2.0f;

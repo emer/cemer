@@ -428,8 +428,8 @@ public:
   TA_BASEFUNS(BlobRFSpec);
 };
 
-class TA_API GaborV1Spec : public taNBase {
-  // #STEM_BASE ##CAT_Image specifies a Gabor-based filtering of an input image, as a model of V1
+class TA_API GaborV1SpecBase : public taNBase {
+  // #STEM_BASE ##CAT_Image basic V1 model as either blob (DOG) or gabor filters with a specified rf width -- used for generating connections or for explicit filter operation in GaborV1Spec
 INHERITED(taNBase)
 public:
   enum V1FilterType {
@@ -438,28 +438,78 @@ public:
   };
 
   V1FilterType	filter_type; 	// #APPLY_IMMED what type of filter to use?
-  RetinalSpacingSpec::Region region; // retinal region represented by this filter -- for matching up with associated retinal outputs
-  RetinalSpacingSpec::Resolution res; // resolution represented by this filter -- for matching up with associated retinal outputs
-
-  XYNGeom	un_geom;  	// size of one 'hypercolumn' unit of orientation detectors
-  XYNGeom	gp_geom;  	// size of full set of groups of hypercolumns to process entire set of inputs
-  TwoDCoord 	rf_width;	// width of the receptive field into the retinal inputs
-
+  TwoDCoord 	rf_width;	// width of the receptive field into the retinal inputs -- enforced to be even numbers, to enable the 1/2 overlap constraint for neighboring rf's
+  TwoDCoord 	rf_ovlp;	// #READ_ONLY #SHOW half-width of the receptive field into the retinal inputs, which is the amount that the receptive fields overlap
+  int		n_filters;	// #READ_ONLY #SHOW number of filters -- computed from appropriate _rf specifications in terms of number of angles/sizes etc.
   GaborRFSpec	gabor_rf;	// #CONDEDIT_ON_filter_type:GABOR parameters for gabor filter specs
   BlobRFSpec	blob_rf;	// #CONDEDIT_ON_filter_type:BLOB parameters for blob filter specs
 
   taBase_List 	gabor_specs; 	// #READ_ONLY #NO_SAVE underlying gabor generators (type GaborFilterSpec)
   taBase_List 	blob_specs; 	// #READ_ONLY #NO_SAVE underlying DoG generators (type DoGFilterSpec)
 
-  virtual bool	SetRfWidthFmGpGeom(TwoDCoord& input_size);
-  // set the rf_width based on the current gp_geom and the given input_size (size of input to filter)
-  virtual bool	SetGpGeomFmRfWidth(TwoDCoord& input_size);
-  // set the gp_geom based on the current rf_width the given input_size (size of input to filter)
-  virtual bool 	SetGpGeomFmRetSpec(DoGRetinaSpecList& dogs);
-  // set the gp_geom based on the current rf_width, looking up the input size on the given list of retinal dog filters by region and resolution
-
   virtual bool 	InitFilters();
   // initialize the filters based on the RF specs
+
+  virtual void	GraphFilter(DataTable* disp_data, int unit_no);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a graph of a given unit number's gabor / blob filter
+  virtual void	GridFilter(DataTable* disp_data);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a grid view of all the gabor or blob filters
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(GaborV1SpecBase);
+protected:
+  virtual bool 	InitFilters_Gabor();
+  virtual bool 	InitFilters_Blob();
+
+  void	UpdateAfterEdit_impl();
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+//	GaborV1Spec filter geometry
+//
+// ..vvVVvv..  gaussian weights
+//  3 filt gps     2 filt gps  2 filt gps
+// 2 filt per gp   2 per gp    3 per gp
+// 0 1 0 1 0 1     0 1 0 1     0 1 2 0 1 2
+// 1 0 1 0 1 0     1 0 1 0     1 2 0 1 2 0
+// 0 1 0 1 0 1     0 1 0 1     2 0 1 2 0 1
+// 1 0 1 0 1 0     1 0 1 0     0 1 2 0 1 2
+// 0 1 0 1 0 1                 1 2 0 1 2 0
+// 1 0 1 0 1 0                 2 0 1 2 0 1
+//
+// ordering within un_geom (filters_per_gp, angle, on/off):
+// -01 /01 |01 \01 recv, on
+// -01 /01 |01 \01 recv, off
+//
+// grid spacing is rf_ovlp
+// overall spacing between rfs is 1/2 * n_filter_gps * n_filters_per_gp * rf_ovlp
+
+class TA_API GaborV1Spec : public GaborV1SpecBase {
+  // implements Gabor or DoG (Blob) filtering of a DoG filtered input image, as a model of V1 -- supports integration of multiple filters per unit for greater effective resolution without additional network processing cost
+INHERITED(GaborV1SpecBase)
+public:
+  RetinalSpacingSpec::Region region; // retinal region represented by this filter -- for matching up with associated retinal outputs
+  RetinalSpacingSpec::Resolution res; // resolution represented by this filter -- for matching up with associated retinal outputs
+
+  XYNGeom	un_geom;  	// size of one 'hypercolumn' unit of orientation detectors -- sets the datatable geometry -- must include room for number of angles/sizes, on/off and n_filters_per_gp
+  XYNGeom	gp_geom;  	// size of full set of groups of hypercolumns to process entire set of inputs: with wrap, is input_size / rf_ovlp, subtract 1 for !wrap
+  bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -input_ovlp (wrapped to right/top) and goes +input_ovlp past the right/top edge (wrapped to left/bottom)
+  XYNGeom	n_filter_gps;	// number of groups of filters in each axis -- replicates filters (in interdigitated fashion if n_filters_per_gp > 1) across multiple adjacent locations and integrates into summary value (with gaussian weighting from center)
+  int		n_filters_per_gp; // number of filters per group -- when n_filter_gps > 1, may be useful to have multiple interdigitated filter units to reduce redundancy and produce better effective resolution
+  XYNGeom	tot_filter_gps;	// #READ_ONLY #SHOW n_filter_gps * n_filters_per_gp -- total number of filter groups per location
+  XYNGeom	filter_gp_ovlp;	// #READ_ONLY #SHOW tot_filter_gps / 2 -- overlap of filter groups, in terms of groups of filters
+  XYNGeom	input_ovlp;	// #READ_ONLY #SHOW filter_gp_ovlp * rf_ovlp + rf_ovlp -- overlap of filter groups, in terms of input coordinates -- how much to move over in input space when processing -- note that each subsequent group moves over an extra rf_ovlp
+  XYNGeom	trg_input_size;	// #READ_ONLY #SHOW target input size: gp_geom * input_ovlp for wrap; (gp_geom - 1) * input_ovlp for !wrap
+  float		gp_gauss_sigma;	  // width of gaussian weighting factor over the filter groups, in normalized terms relative to tot_filter_gps widths
+  float_Matrix	gp_gauss_mat;	  // #READ_ONLY #NO_SAVE #NO_COPY group gaussian vals 
+
+  virtual void	UpdateGeoms();	// update all the geometry values based on current setting
+
+  virtual bool	SetGpGeomFmInputSize(TwoDCoord& input_size);
+  // set the gp_geom based on the given input_size (size of input to filter) and existing filter parameters
+  virtual bool 	SetGpGeomFmRetSpec(DoGRetinaSpecList& dogs);
+  // set the gp_geom based on the input size on the given list of retinal dog filters by region and resolution
 
   virtual bool	FilterInput(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
 			    float_Matrix& on_input, float_Matrix& off_input,
@@ -474,17 +524,15 @@ public:
 				 bool superimpose);
   // actually perform the filtering operation on input patterns: Blobs
 
-  virtual void	GraphFilter(DataTable* disp_data, int unit_no);
-  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a graph of a given unit number's gabor / blob filter
-  virtual void	GridFilter(DataTable* disp_data);
-  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a grid view of all the gabor or blob filters
+  virtual void	GridFilterInput(DataTable* disp_data, int unit_no=0, int gp_skip=2, bool ctrs_only=false);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter for a given unit as it will be applied to the entire input data -- gp_skip specifies the number of unit groups to increment -- 2 is good to avoid complete overlap -- ctrs_only will only plot the centers of the filters, not the actual raw filters themselves
 
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(GaborV1Spec);
 protected:
-  virtual bool 	InitFilters_Gabor();
-  virtual bool 	InitFilters_Blob();
+  override bool 	InitFilters_Gabor();
+  override bool 	InitFilters_Blob();
 
   void	UpdateAfterEdit_impl();
 };
@@ -756,6 +804,7 @@ class TA_API V1GaborSpec : public taNBase {
 INHERITED(taNBase)
 public:
   GaborV1SpecList	gabors;		// the gabor (and blob) V1 filters
+  bool			wrap;		// if true, then filtering has a wrap-around structure, starting at -1/2 offset (wrapped to right/top) and goes +1/2 offset past the right/top edge (wrapped to left/bottom)
   RetinaSpecRef		retina;		// the specs for the retinal filter that we follow
   float			norm_max;	// #DEF_0.95 max value to normalize output activations to -- set to -1 to turn off normalization
 

@@ -1473,7 +1473,7 @@ class LEABRA_API V1RFPrjnSpec : public ProjectionSpec {
   // V1 receptive field projection spec: does overlapping tiled receptive fields with Gabor and Blob filter weights - rf_spec.rf_width specifies the width of the receptive field, and rf_move specifies how much to move in input coordinates per each recv group
 INHERITED(ProjectionSpec)
 public:
-  GaborV1Spec	rf_spec;	// #SHOW_TREE receptive field specs
+  GaborV1SpecBase rf_spec;	// #SHOW_TREE receptive field specs
   FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving layer group
   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
   float		dog_surr_mult;	// multiplier on surround weight values for DoG -- can be used to turn off surround entirely or to amplify it
