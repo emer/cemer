@@ -43,7 +43,7 @@ protected:
   void			InitChan(float cf, float ear_q, float min_bw,
      float fs);
   void 			DoFilter(int n, int in_stride, const float* x,
-    int out_stride, float* bm, float* env = NULL, float* instf = NULL);
+    int out_stride, float* bm, float* env = NULL);
 
 private:
   SIMPLE_COPY(GammatoneChan)
@@ -77,7 +77,7 @@ public:
   enum OutVals { // #BITS Output Values 
     OV_SIG	= 0x01, // #LABEL_Signal signal channel
     OV_ENV	= 0x02, // #LABEL_Envelope envelope
-    OV_FREQ	= 0x04, // #LABEL_InstFreq instantaneous frequency
+    OV_FREQ	= 0x04, // #IGNORE instantaneous frequency, no longer supported
     OV_DELTA_ENV = 0x08, // #LABEL_DeltaEnvelope 1st derivitive (per 100us) of envelope (requires Envelope)
     OV_SIG_ENV	= 0x03, // #NO_BIT signal + envelope
     OV_SIG_ENV_FREQ = 0x07 // #NO_BIT signal + envelope + instantaneous frequency
@@ -90,26 +90,24 @@ public:
   };
   
   DataBuffer		out_buff_env; //  #SHOW_TREE envelope output (if enabled)
-  DataBuffer		out_buff_freq; //  #SHOW_TREE frequency output (if enabled)
   DataBuffer		out_buff_delta_env; //  #SHOW_TREE delta envelope output (if enabled)
-  
-  ChanSpacing		chan_spacing; // how to space the channels
-  float			ear_q; // Moore and Glasberg def=9.26449 -- ERB is min_bw + (cf / ear_q)
-  float			min_bw;
-  float			cf_lo; // lower center frequency (Hz)
-  float			cf_hi; // upper center frequency (Hz)
-  int			n_chans; // #MIN_1 number of filter bands
   OutVals		out_vals; // the desired output values
+  ChanSpacing		chan_spacing; // how to space the channels
+  float			ear_q; // #EXPERT Moore and Glasberg def=9.26449 -- ERB is min_bw + (cf / ear_q)
+  float			min_bw; // #EXPERT minimum bandwidth
+  float			cf_lo; // lower center frequency (Hz)
+  float			cf_hi; // // #CONDEDIT_ON_chan_spacing:CS_MooreGlassberg upper center frequency (Hz)
+  float			chans_per_oct; // #MIN_0 #CONDSHOW_ON_chan_spacing:CS_LogLinear number of channels per octave
+  int			n_chans; // #MIN_1 number of filter bands
   
   GammatoneChan_List	chans; // #NO_SAVE the individual channels
   
   override taList_impl*  children_() {return &chans;} //note: required
-  override int		outBuffCount() const {return 4;}
+  override int		outBuffCount() const {return 3;}
   override DataBuffer* 	outBuff(int idx) {switch (idx) {
     case 0: return &out_buff; 
     case 1: return &out_buff_env;
-    case 2: return &out_buff_freq;
-    case 3: return &out_buff_delta_env;
+    case 2: return &out_buff_delta_env;
     default: return NULL;}}
   
   virtual void		GraphFilter(DataTable* disp_data,
@@ -457,6 +455,34 @@ private:
   void	Initialize();
   void	Destroy() {}
 };
+
+class AUDIOPROC_API HarmonicSieveBlock: public StdBlock
+{ // ##CAT_Audioproc #AKA_HarmonicSieveBlock measure the degree of harmonically related values to a fundamental -- usually used after Temporal or Gammatone.Env filter output
+INHERITED(StdBlock) 
+public: //
+  
+  float			chans_per_oct; // channels per octave -- normally looked up from an upstream GammatoneBlock
+  
+  
+  SIMPLE_LINKS(HarmonicSieveBlock);
+  TA_BASEFUNS(HarmonicSieveBlock) //
+  
+public: // DO NOT USE
+  float_Array		filter; // #READ_ONLY #EXPERT_TREE #EXPERT #NO_SAVE
+
+protected:
+  override void		UpdateAfterEdit_impl();
+  override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok); 
+  
+  override void		AcceptData_impl(SignalProcBlock* src_blk,
+    DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps);
+
+private:
+  void	Initialize();
+  void	Destroy() {CutLinks();}
+  SIMPLE_COPY(HarmonicSieveBlock)
+};
+
 
 
 #endif

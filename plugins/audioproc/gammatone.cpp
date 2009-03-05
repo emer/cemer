@@ -77,7 +77,7 @@ void GammatoneChan::InitChan(float cf_, float ear_q, float min_bw,
 }
   
 void GammatoneChan::DoFilter(int n, int in_stride, const float* x,
-  int out_stride, float* bm, float* env, float* instf)
+  int out_stride, float* bm, float* env)
 {
   double u0r, u0i, u1r, u1i;
   double oldcs, oldsn;
@@ -87,9 +87,10 @@ void GammatoneChan::DoFilter(int n, int in_stride, const float* x,
   // z = -j * tpt*i*cf, exp(z) = cos(tpt*i*cf) - j * sin(tpt*i*cf)
   //====================================================================================
   
-  for (int i=0; i<n; i++) {      
-    p0r = cs*(*x) + a1*p1r + a2*p2r + a3*p3r + a4*p4r;
-    p0i = sn*(*x) + a1*p1i + a2*p2i + a3*p3i + a4*p4i;
+  for (int i=0; i<n; i++, x+=in_stride) {
+    const float in_x = *x; 
+    p0r = cs*(in_x) + a1*p1r + a2*p2r + a3*p3r + a4*p4r;
+    p0i = sn*(in_x) + a1*p1i + a2*p2i + a3*p3i + a4*p4i;
 
     u0r = p0r + a1*p1r + a5*p2r;
     u0i = p0i + a1*p1i + a5*p2i;
@@ -107,36 +108,15 @@ void GammatoneChan::DoFilter(int n, int in_stride, const float* x,
       bm += out_stride;
     }
     
-    if (env || instf) {
-      //==========================================
-      // Instantaneous envelope 
-      //==========================================
+    //==========================================
+    // Instantaneous envelope 
+    //==========================================
+    
+    if (env) {
         
       double instp = u0r*u0r+u0i*u0i;
-      if (env) {
-        *env = sqrt(instp) * gain;
-        env += out_stride;
-      }
-
-      //==========================================
-      // Instantaneous freqency
-      //==========================================
-      
-      if (instf) {
-        u1r = p1i + a1*p2i + a5*p3i;
-        u1i = p1r + a1*p2r + a5*p3r;
-      
-        if (instp < 1.0e-20) {
-          *instf = cf;
-        }
-        else {
-          *instf = cf + (u1r*u0i - u0r*u1i)/(tpt*instp);
-          if (*instf < 10 || *instf > 10000) {
-            *instf = cf;
-          }
-        }
-        instf += out_stride;
-      }
+      *env = sqrt(instp) * gain;
+      env += out_stride;
     } // env
 
    //=========================================
@@ -147,9 +127,6 @@ void GammatoneChan::DoFilter(int n, int in_stride, const float* x,
     
     cs = (oldcs=cs)*coscf + (oldsn=sn)*sincf;
     sn = oldsn*coscf - oldcs*sincf;
-    
-    // update in ptr
-    x += in_stride;
   }
 }
   
@@ -186,11 +163,15 @@ int GammatoneChan_List::NumListCols() const {
 //////////////////////////////////
 
 void GammatoneBlock::Initialize() {
-  chan_spacing = CS_0;
+  chan_spacing = CS_LogLinear;
   ear_q = 9.26449f;
   min_bw = 24.7f;
-  cf_lo = 50.0f;
+  cf_lo = 110.0f;
   cf_hi = 9800.0f;
+  // legacy compat
+  if (taMisc::is_loading)
+    chans_per_oct = -1.0f; // sentinel, calc'ed in UAE
+  else chans_per_oct = 8.0f;
   n_chans = 32;
   out_vals = OV_SIG;
   num_out_vals = 1;
@@ -202,6 +183,10 @@ void GammatoneBlock::UpdateAfterEdit_impl() {
   // must always have ENV if DELTA_ENV
   if (out_vals & OV_DELTA_ENV) 
     out_vals = (OutVals)(out_vals | OV_ENV);
+  // calc chans for legacy projects
+  if ((chan_spacing == CS_LogLinear) && (chans_per_oct < 0)) {
+    chans_per_oct = (n_chans - 1)/(log(cf_hi/cf_lo)/log(2));
+  }
   
   // note: because of the codes used, there is always at least one val
   num_out_vals = 0;
@@ -257,6 +242,17 @@ void GammatoneBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
       return;
   }
   
+  switch (chan_spacing) {
+  case CS_MooreGlassberg: {
+    // calc equivalent cpo in case user switches mode
+    chans_per_oct = (n_chans - 1)/(log(cf_hi/cf_lo)/log(2));
+  } break;
+  case CS_LogLinear: {
+    // calc equivalent cf_hi in case user switches mode
+    cf_hi = exp((log(2)*(n_chans-1) / chans_per_oct) + log(cf_lo));
+  } break; 
+  default: break;// compiler food -- handle all cases above
+  }
 }
 
 void GammatoneBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
@@ -280,20 +276,11 @@ void GammatoneBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
         else 
           cf = cf_hi;
       } break;
-        if (i < (chans.size - 1))
-          cf = -(ear_q * min_bw) + exp((n_chans-i - 1) *
-          (-log(cf_hi + ear_q*min_bw) + log(cf_lo + ear_q*min_bw))/(n_chans-1)) *
-          (cf_hi + ear_q*min_bw);
-        else 
-          cf = cf_hi;
       case CS_LogLinear: {
         if (i == 0)
           cf = cf_lo;
-        else if (i < (chans.size - 1))
-          cf = exp((n_chans-i - 1) *
-          (-log(cf_hi) + log(cf_lo))/(n_chans-1)) * (cf_hi);
         else 
-          cf = cf_hi;
+          cf = exp((log(2)*(i) / chans_per_oct) + log(cf_lo));
       } break; 
       default: break;// compiler food -- handle all cases above
       }
@@ -336,19 +323,14 @@ SignalProcBlock::ProcStatus GammatoneBlock::AcceptData_GT(float_Matrix* in_mat, 
       // instf
       float* bm = NULL;
       float* env = NULL;
-      float* instf = NULL;
       if (out_vals & OV_SIG) {
         bm = &(out_buff.mat.FastEl(0, g_ch, f, 0, out_buff.stage));
       }
       if (out_vals & OV_ENV) {
         env =  &(out_buff_env.mat.FastEl(0, g_ch, f, 0, out_buff_env.stage));
       }
-      if (out_vals & OV_FREQ) {
-        instf =  &(out_buff_freq.mat.FastEl(0, g_ch, f, 0, out_buff_freq.stage));;
-      }
       
-      sc->DoFilter(in_items, in_stride, &dat, out_stride, bm,
-          env, instf);
+      sc->DoFilter(in_items, in_stride, &dat, out_stride, bm, env);
           
       if (out_vals & OV_DELTA_ENV) {
         float env_prev = out_buff_env.mat.FastEl(0, g_ch, f, 0, out_buff_env.prevStage());
@@ -1566,4 +1548,102 @@ void ANVal::UpdateParams()
   //no default -- must handle all, so let compiler warn
   }
 }
+
+
+//////////////////////////////////
+//  HarmonicSieveBlock		//
+//////////////////////////////////
+
+/*
+  The HarmonicSieve Block extracts a value indicating how likely that
+  a given fundamental has harmonically related components. It is used
+  to extract pitches (for musical processing) and to detect harmonic
+  sound sources for other uses, such as vowels in speech recognition.
+  
+  The sieve is based on the idea that if there are no harmonics to an f0,
+  then the other channels above it are basically random; however if there
+  are harmonics, then the n*f0 values should be higher than the average,
+  and therefore the sum of the remaining channels should be lower. By
+  subtracting sum(non) from sum(n*f0) we should have the excess  
+*/
+
+void HarmonicSieveBlock::Initialize() {
+  chans_per_oct = 12;
+}
+
+void HarmonicSieveBlock::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if (TestError((chans_per_oct <= 0), "UpdateAfterEdit",
+    "chans_per_octave cannot be <= 0 -- setting to 12, please set to correct value!"))
+    chans_per_oct = 12;
+}
+
+
+void HarmonicSieveBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
+{
+  inherited::InitThisConfig_impl(check, quiet, ok);
+  DataBuffer* src_buff = in_block.GetBuffer();
+  if (!src_buff) return;
+  float_Matrix* in_mat = &src_buff->mat;
+  // note: we can support any number of vals, chans, fields, or items
+  
+  if (check) return;
+  
+  out_buff.fs = src_buff->fs;
+  out_buff.fr_dur.Set(src_buff->items, Duration::UN_SAMPLES);
+  out_buff.fields = src_buff->fields;
+  out_buff.chans = src_buff->chans;
+  out_buff.vals = src_buff->vals;
+  
+  // filter
+  //TODO
+}
+
+void HarmonicSieveBlock::AcceptData_impl(SignalProcBlock* src_blk,
+    DataBuffer* src_buff, int buff_index, int in_stage, ProcStatus& ps)
+{
+  if (!src_buff) return;
+  float_Matrix* in_mat = &src_buff->mat;
+  float_Matrix* out_mat = &out_buff.mat;
+  
+  const int in_vals = in_mat->dim(VAL_DIM); 
+  const int in_items = in_mat->dim(ITEM_DIM);
+  const int in_fields = in_mat->dim(FIELD_DIM);
+  const int n_chans = in_mat->dim(CHAN_DIM); 
+  const int out_stage = out_buff.stage;
+//  float pow_gain_eff = pow_gain / dog.filter_size; 
+  
+  // note that there are small gain errors at the edges, but the lowest
+  // and highest freq channels are typically low information anyway
+  
+  for (int v = 0; ((ps == PS_OK) && (v < in_vals)); ++v)
+  for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i)
+  for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f)
+  for (int out_ch = 0; out_ch < n_chans; ++out_ch)
+  {
+    float out_val = 0.0f;
+/*TODO    for (int offs = -dog.half_width; offs <= dog.half_width; ++offs) {
+      int in_ch = out_ch + offs;
+      // check for under/overflow (edges)
+      if ((in_ch < 0) || (in_ch >= n_chans)) continue;
+      float val = in_mat->FastEl(v, in_ch, f, i, in_stage);
+      out_val += dog.FilterPoint(offs, val);
+    }
+    switch (out_fun) {
+    case OF_STRAIGHT: break; // out_val is our guy
+    case OF_POWER: {
+      // use out_val as a power to which to apply to this in val
+      float in_val = in_mat->FastEl(v, out_ch, f, i, in_stage);
+      out_val = in_val * pow(pow_base, (out_val * pow_gain_eff));
+      } break;
+    // no default, let compiler complain if unhandled
+    }
+    out_mat->FastEl(v, out_ch, f, i, out_stage) = out_val;*/
+  }
+  
+  // advance stage pointer, and notify clients
+  if (out_buff.NextIndex())
+    NotifyClientsBuffStageFull(&out_buff, 0, ps);
+}
+
 
