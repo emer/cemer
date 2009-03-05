@@ -480,6 +480,21 @@ void GammatoneBlock::MakeStdFilters(float cf_lo, float cf_hi, int n_chans) {
 
 
 //////////////////////////////////
+//  ChansPerOct		//
+//////////////////////////////////
+
+bool ChansPerOct::Lookup(SignalProcBlock* parent) {
+  GammatoneBlock* gtb = dynamic_cast<GammatoneBlock*>(
+    parent->GetUpstreamBlock(&TA_GammatoneBlock));
+  if (gtb) {
+    chans_per_oct = gtb->chans_per_oct;
+    return true;
+  }
+  return false;
+}
+
+
+//////////////////////////////////
 //  SharpenBlock		//
 //////////////////////////////////
 
@@ -514,7 +529,6 @@ void GammatoneBlock::MakeStdFilters(float cf_lo, float cf_hi, int n_chans) {
 */
 
 void SharpenBlock::Initialize() {
-  chans_per_oct = 12;
   out_fun = OF_STRAIGHT;
   pow_gain = 1.0f;
   pow_base = 20.0f;
@@ -523,9 +537,6 @@ void SharpenBlock::Initialize() {
 
 void SharpenBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if (TestError((chans_per_oct == 0), "UpdateAfterEdit",
-    "chans_per_octave cannot be 0 -- setting to 4, please set to correct value!"))
-    chans_per_oct = 4;
 }
 
 
@@ -538,6 +549,14 @@ void SharpenBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   // note: we can support any number of vals, chans, fields, or items
   
   if (check) return;
+  
+  // get cpo if enabled
+  if (chans_per_oct.auto_lookup) {
+    chans_per_oct.Lookup(this);
+  }
+  if (CheckError((chans_per_oct <= 0), quiet, ok,
+    "chans_per_oct must be > 0"))
+    return;
   
   out_buff.fs = src_buff->fs;
   out_buff.fr_dur.Set(src_buff->items, Duration::UN_SAMPLES);
@@ -1568,14 +1587,12 @@ void ANVal::UpdateParams()
 */
 
 void HarmonicSieveBlock::Initialize() {
-  chans_per_oct = 12;
+  out_octs = 2;
+  cpo_eff = 1; // set in config
 }
 
 void HarmonicSieveBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if (TestError((chans_per_oct <= 0), "UpdateAfterEdit",
-    "chans_per_octave cannot be <= 0 -- setting to 12, please set to correct value!"))
-    chans_per_oct = 12;
 }
 
 
@@ -1585,18 +1602,41 @@ void HarmonicSieveBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   DataBuffer* src_buff = in_block.GetBuffer();
   if (!src_buff) return;
   float_Matrix* in_mat = &src_buff->mat;
-  // note: we can support any number of vals, chans, fields, or items
+  // note: we can support any number of chans, fields, or items
+  // output: chan: pitch; val: octave
+  
+  if (CheckError((src_buff->vals > 1), quiet, ok,
+    "HarmonicSieveBlock only supports single val input"))
+    return;
   
   if (check) return;
+  
+  // get cpo if enabled
+  if (chans_per_oct.auto_lookup) {
+    chans_per_oct.Lookup(this);
+  }
+  if (CheckError((chans_per_oct < 1), quiet, ok,
+    "chans_per_oct must be >= 1"))
+    return;
+  cpo_eff = (int)chans_per_oct.chans_per_oct;
+  // octs must be within input
+  if (CheckError(((src_buff->chans / cpo_eff) >= octs), quiet, ok,
+    "octs must be < num octaves available in input"))
+    return;
+  
   
   out_buff.fs = src_buff->fs;
   out_buff.fr_dur.Set(src_buff->items, Duration::UN_SAMPLES);
   out_buff.fields = src_buff->fields;
-  out_buff.chans = src_buff->chans;
-  out_buff.vals = src_buff->vals;
+  out_buff.chans = cpo_eff;
+  out_buff.vals = out_octs;
   
-  // filter
-  //TODO
+  /* filter
+  // half-width covers < a full octave
+  dog.half_width = (cpo_eff / 2) - 1;
+  dog.on_sigma_norm = 1; // narrow
+  dog.off_sigma_norm = 4; // wide
+  dog.UpdateAfterEdit();*/
 }
 
 void HarmonicSieveBlock::AcceptData_impl(SignalProcBlock* src_blk,
@@ -1606,23 +1646,26 @@ void HarmonicSieveBlock::AcceptData_impl(SignalProcBlock* src_blk,
   float_Matrix* in_mat = &src_buff->mat;
   float_Matrix* out_mat = &out_buff.mat;
   
-  const int in_vals = in_mat->dim(VAL_DIM); 
+  const int out_vals = out_mat->dim(VAL_DIM); // octs
+  const int out_chans = out_mat->dim(CHAN_DIM); // chans/oct
+  
+  const int in_vals = 0; 
+  const int in_v = 0; // only one val
   const int in_items = in_mat->dim(ITEM_DIM);
   const int in_fields = in_mat->dim(FIELD_DIM);
-  const int n_chans = in_mat->dim(CHAN_DIM); 
+  const int in_chans = in_mat->dim(CHAN_DIM); 
   const int out_stage = out_buff.stage;
-//  float pow_gain_eff = pow_gain / dog.filter_size; 
   
-  // note that there are small gain errors at the edges, but the lowest
-  // and highest freq channels are typically low information anyway
-  
-  for (int v = 0; ((ps == PS_OK) && (v < in_vals)); ++v)
-  for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i)
+  // we process in terms of the output
   for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f)
-  for (int out_ch = 0; out_ch < n_chans; ++out_ch)
+  for (int out_v = 0; ((ps == PS_OK) && (out_v < out_vals)); ++out_v)
+  for (int out_ch = 0; out_ch < out_chans; ++out_ch)
   {
-    float out_val = 0.0f;
-/*TODO    for (int offs = -dog.half_width; offs <= dog.half_width; ++offs) {
+    // input fundamental (f0)
+    int in_fund = (out_v * out_chans) + out_ch;
+    float out_val = in_mat->FastEl(in_v, in_fund, f, i, in_stage);
+//TEMP -- first stab at filter, just does n*f0 as +1 and others as -1/?
+    for (int offs = -dog.half_width; offs <= dog.half_width; ++offs) {
       int in_ch = out_ch + offs;
       // check for under/overflow (edges)
       if ((in_ch < 0) || (in_ch >= n_chans)) continue;

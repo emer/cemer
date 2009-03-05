@@ -7,8 +7,9 @@
 
  
 class GammatoneChan;
-class GammatoneBlock;//
-//class SharpenBlock;
+class GammatoneBlock;
+class ChansPerOct;
+class SharpenBlock;
 class ANVal;
 class ANBlock;
 
@@ -140,6 +141,20 @@ private:
 }; //
 
 
+class AUDIOPROC_API ChansPerOct: public taBase { // #INLINE
+INHERITED(taBase)
+public:
+  bool		auto_lookup; // lookup the value from the appropriate previous block
+  float		chans_per_oct; // #CONDEDIT_OFF_auto_lookup the number of channels per octave
+  bool		Lookup(SignalProcBlock* parent); // #IGNORE looks up and sets value, true if found
+  operator float() const {return chans_per_oct;}
+  TA_BASEFUNS(ChansPerOct) //
+private:
+  void	Initialize() {auto_lookup = true; chans_per_oct = 0.0f;}
+  void	Destroy() {}
+  SIMPLE_COPY(ChansPerOct)
+};
+
 class AUDIOPROC_API SharpenBlock: public StdBlock
 { // ##CAT_Audioproc #AKA_SharpenBlock sharpen the frequency response, similar to the active mechanism of basilar membrane -- usually used after Gammatone.Env filter output
 INHERITED(StdBlock) 
@@ -149,7 +164,7 @@ public: //
     OF_POWER, // use a power function of the DoG output (output will stay positive, but be compressed)
   };
   
-  float			chans_per_oct; // channels per octave -- normally looked up from an upstream GammatoneBlock
+  ChansPerOct	chans_per_oct; // channels per octave -- normally looked up from an upstream GammatoneBlock
   OutputFunction	out_fun; // function (if any) to use on filtered  values prior to output to next stage
   float			pow_gain; // #CONDSHOW_ON_out_fun:OF_POWER multiply by value before power
   float			pow_base; // #CONDSHOW_ON_out_fun:OF_POWER power base for filter calc
@@ -461,16 +476,18 @@ class AUDIOPROC_API HarmonicSieveBlock: public StdBlock
 INHERITED(StdBlock) 
 public: //
   
-  float			chans_per_oct; // channels per octave -- normally looked up from an upstream GammatoneBlock
+  ChansPerOct	chans_per_oct; // channels per octave -- normally looked up from an upstream GammatoneBlock
+  int		out_octs; // #MIN_1 number of output octaves (generally <= 1/2 total)
   
   
   SIMPLE_LINKS(HarmonicSieveBlock);
   TA_BASEFUNS(HarmonicSieveBlock) //
   
 public: // DO NOT USE
-  float_Array		filter; // #READ_ONLY #EXPERT_TREE #EXPERT #NO_SAVE
+//  DoG1dFilterSpec	dog; // #EXPERT_TREE #NO_SAVE filter specs  
 
 protected:
+  int			cpo_eff;
   override void		UpdateAfterEdit_impl();
   override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok); 
   

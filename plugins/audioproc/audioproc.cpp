@@ -642,17 +642,25 @@ InputBlockBase* SignalProcBlock::GetInputBlock(int idx) {
 SignalProcBlock* SignalProcBlock::GetUpstreamBlock(TypeDef* typ) {
    if (!typ) return NULL;
    SignalProcBlock* rval = NULL;
+  // try our immediate src blocks first
+  for (int i = 0; (!rval && (i < srcBlockCount())); ++i) {
+    SourceBlockSpec* sbs = srcBlock(i); // note: can easily be NULL
+    if (!(sbs && (bool)sbs->src_block)) continue;
+    // tentatively grab, pending correct type...
+    SignalProcBlock* rval = rval = sbs->src_block;
+    if (rval->InheritsFrom(typ)) return rval;
+  }
   // iterate our src blocks, delegating to them, until found or fail
   for (int i = 0; (!rval && (i < srcBlockCount())); ++i) {
     SourceBlockSpec* sbs = srcBlock(i); // note: can easily be NULL
     if (!(sbs && (bool)sbs->src_block)) continue;
     // tentatively grab, pending correct type...
     SignalProcBlock* rval = rval = sbs->src_block;
-    if (rval->InheritsFrom(typ)) break;
-    // otherwise, delegate to that guy, and return if he succeeded
+    // delegate to that guy, and return if he succeeded
     rval = rval->GetUpstreamBlock(typ);
+    if (rval) return rval;
   }
-  return rval;
+  return NULL;
 }
 
 /*TEMP SignalProcSet* SignalProcBlock::GetParentSet() const {
