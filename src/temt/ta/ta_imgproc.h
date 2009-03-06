@@ -189,6 +189,78 @@ private:
   void Destroy();
 };
 
+/////////////////////////////////////////////////////////////
+//		Threading code
+
+#include "ta_thread.h"
+
+class ImgProcThreadBase;
+
+// this is the standard function call taking the thread number int value
+// all threaded functions MUST use this call signature!
+#ifdef __MAKETA__
+typedef void* ThreadImgProcCall;
+#else
+typedef taTaskMethCall2<ImgProcThreadBase, void, int, int> ThreadImgProcCall;
+typedef void (ImgProcThreadBase::*ThreadImgProcMethod)(int, int);
+#endif
+
+class ImgProcCallThreadMgr;
+
+class TA_API ImgProcCallTask : public taTask {
+INHERITED(taTask)
+public:
+  int		uidx_st;	// unit-of-computation number to start on
+  int		uidx_ed;	// unit-of-computation number to end before
+  int		uidx_inc;	// how much to increment counter by
+  ThreadImgProcCall* img_proc_call;	// method to call on the object
+
+  override void run();
+  // runs specified chunk of computation
+
+  ImgProcCallThreadMgr* mgr() { return (ImgProcCallThreadMgr*)owner->GetOwner(); }
+
+  TA_BASEFUNS_NOCOPY(ImgProcCallTask);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+class TA_API ImgProcCallThreadMgr : public taThreadMgr {
+  // #INLINE thread manager for ImgProcCall tasks -- manages threads and tasks, and coordinates threads running the tasks
+INHERITED(taThreadMgr)
+public:
+  int		min_units;	// #MIN_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  minimum number of computational units of work required to use threads at all -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.
+
+  ImgProcThreadBase*	img_proc() 	{ return (ImgProcThreadBase*)owner; }
+
+  void		InitAll();	// initialize threads and tasks
+
+  void		Run(ThreadImgProcCall* img_proc_call, int n_cmp_units);
+  // #IGNORE run given function, splitting n_cmp_units computational units evenly across the available threads
+  
+  TA_BASEFUNS_NOCOPY(ImgProcCallThreadMgr);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+class TA_API ImgProcThreadBase : public taNBase {
+  // #VIRT_BASE ##CAT_Image base class for image-processing code that uses threading -- defines a basic interface for thread calls to deploy filtering or other intensive computations
+  INHERITED(taNBase)
+public:
+  ImgProcCallThreadMgr threads; // #CAT_Threads parallel threading of image processing computation
+
+  virtual void Filter_Thread(int cmp_unit_index, int thread_no=-1) { };
+  // thread-wise filtering function, takes computation unit index (task-specific -- just defines what element of problem it is working on) and thread no -- all necc state should be on obj -- can actually call the function anything you want but this shows the basic format
+
+  void 	Initialize() { };
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(ImgProcThreadBase);
+};
+
+
+
 class TA_API DoGFilterSpec : public taNBase {
   // #STEM_BASE #INLINE ##CAT_Image defines a difference-of-gaussians (center minus surround or "mexican hat") filter that highlights contrast in an image
   INHERITED(taNBase)
@@ -428,9 +500,9 @@ public:
   TA_BASEFUNS(BlobRFSpec);
 };
 
-class TA_API GaborV1SpecBase : public taNBase {
+class TA_API GaborV1SpecBase : public ImgProcThreadBase {
   // #STEM_BASE ##CAT_Image basic V1 model as either blob (DOG) or gabor filters with a specified rf width -- used for generating connections or for explicit filter operation in GaborV1Spec
-INHERITED(taNBase)
+INHERITED(ImgProcThreadBase)
 public:
   enum V1FilterType {
     GABOR,			// filter using gabors (orientation tuned)
@@ -514,14 +586,14 @@ public:
   virtual bool	FilterInput(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
 			    float_Matrix& on_input, float_Matrix& off_input,
 			    bool superimpose = false);
-  // actually perform the filtering operation on input patterns
-  virtual bool	FilterInput_Gabor(float_Matrix& v1_output,
-				  float_Matrix& on_input, float_Matrix& off_input,
-				  bool superimpose);
+  // actually perform the filtering operation on input patterns: calls threading deploy
+
+  override void Filter_Thread(int cmp_unit_index, int thread_no=-1);
+  // this is thread target function, deploys to following based on type:
+
+  virtual bool	FilterInput_Gabor(int cmp_idx);
   // actually perform the filtering operation on input patterns: Gabors
-  virtual bool	FilterInput_Blob(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
-				 float_Matrix& on_input, float_Matrix& off_input,
-				 bool superimpose);
+  virtual bool	FilterInput_Blob(int cmp_idx);
   // actually perform the filtering operation on input patterns: Blobs
 
   virtual void	GridFilterInput(DataTable* disp_data, int unit_no=0, int gp_skip=2, bool ctrs_only=false);
@@ -535,6 +607,13 @@ protected:
   override bool 	InitFilters_Blob();
 
   void	UpdateAfterEdit_impl();
+
+  // cache of items for current function call
+  float_Matrix* cur_v1_output;
+  DoGFilterSpec::ColorChannel cur_c_chan;
+  float_Matrix* cur_on_input;
+  float_Matrix* cur_off_input;
+  bool 		cur_superimpose;
 };
 
 class TA_API GaborV1SpecList : public taList<GaborV1Spec> {
@@ -627,13 +706,12 @@ private:
   void	Destroy();
 };
 
-/////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
 //   special objects that specify full set of image processing operations
-/////////////////////////////////////////////////////////
 
-class TA_API RetinaSpec : public taNBase {
+class TA_API RetinaSpec : public ImgProcThreadBase {
   // #STEM_BASE ##CAT_Image ##DEF_CHILD_dogs ##DEF_CHILDNAME_DOG_Filters full specification of retinal filtering based on difference-of-gaussian filters
-INHERITED(taNBase)
+INHERITED(ImgProcThreadBase)
 public:
   enum ColorType {		// type of color processing to do (determines file loading)
     MONOCHROME,
@@ -680,7 +758,11 @@ public:
   // #CAT_Transform transform image data into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and move params applied after foveation scaling and offsets, if superimpose, only do for last one!)
 
   virtual bool	FilterImageData(DataTable* dt, bool superimpose = false, int renorm = 1);
-  // #CAT_Filter filter retinal image data in RetinaImage column produced by TransformImageData_impl or LookAtImageData_impl in given datatable -- superimpose = merge into filter values into last row of table; otherwise new row is added -- impl routine for other functions to call (doesn't do any display updating), renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!)
+  // #CAT_Filter filter retinal image data in RetinaImage column produced by TransformImageData_impl or LookAtImageData_impl in given datatable -- superimpose = merge into filter values into last row of table; otherwise writes over with new data -- impl routine for other functions to call (doesn't do any display updating), renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!)
+
+  virtual void	Filter_Thread(int cmp_unit_index, int thread_no=-1);
+  // threading function for doing filtering
+
 
   ///////////////////////////////////////////////////////////////////////
   // Transform Routines taking different sources for image input data
@@ -795,6 +877,15 @@ public:
 protected:
   void	UpdateAfterEdit_impl();
   override void CheckChildConfig_impl(bool quiet, bool& rval);
+
+  // tmp arg values for threading ops
+  DataTable*	cur_dt;
+  bool		cur_superimpose;
+  int 		cur_renorm;
+  float		cur_rescale;
+  float		cur_renorm_factor;
+  int		cur_phase;	// phase of processing -- multi-step!
+  float_Matrix	max_vals;
 };
 
 SmartRef_Of(RetinaSpec,TA_RetinaSpec); // RetinaSpecRef

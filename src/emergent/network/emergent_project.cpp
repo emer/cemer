@@ -291,6 +291,8 @@ bool Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
     net = proj->GetNewNetwork();
     if(TestError(!net, "RetinaSpecNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
   }
+  if(TestError(!retina_spec, "RetinaSpecNetwork", "retina_spec is NULL -- you need to create and configure this in advance, as it is then used to configure the network!")) return false;
+
   net->StructUpdate(true);
   for(int i=0;i<retina_spec->dogs.size; i++) {
     DoGRetinaSpec* sp = retina_spec->dogs[i];

@@ -528,6 +528,81 @@ void taCanvas::SetFont(const String& font_name, int point_size, int weight, bool
   q_painter.setFont(QFont(font_name, point_size, weight, italic));
 }
 
+////////////////////////////////////////////////////////
+//	Threading
+
+void ImgProcCallTask::Initialize() {
+  uidx_st = -1;
+  uidx_ed = -1;
+  uidx_inc = -1;
+  img_proc_call = NULL;
+}
+
+void ImgProcCallTask::Destroy() {
+  img_proc_call = NULL;
+}
+
+void ImgProcCallTask::run() {
+  ImgProcCallThreadMgr* mg = mgr();
+  ImgProcThreadBase* base = mg->img_proc();
+
+  for(int i=uidx_st; i<uidx_ed; i+=uidx_inc) {
+    img_proc_call->call(base, i, task_id); // task id indicates threading, and which thread
+  }
+}
+
+void ImgProcCallThreadMgr::Initialize() {
+  min_units = taMisc::thread_defaults.min_units;
+}
+
+void ImgProcCallThreadMgr::Destroy() {
+}
+
+void ImgProcCallThreadMgr::InitAll() {
+  InitThreads();
+  CreateTasks(&TA_ImgProcCallTask);
+  SetTasksToThreads();
+}
+
+void ImgProcCallThreadMgr::Run(ThreadImgProcCall* img_proc_call, int n_cmp_units) {
+  ImgProcThreadBase* base = img_proc();
+  if(n_threads == 1 || n_cmp_units < min_units || n_cmp_units < tasks.size) {
+    for(int i=0;i<n_cmp_units;i++) {
+      img_proc_call->call(base, i, -1); // -1 indicates no threading
+    }
+  }
+  else {
+    const int nt = tasks.size;
+    int chnk_size = n_cmp_units / nt;
+    int n_chunked = chnk_size * nt;
+    int last_chnk = chnk_size + (n_cmp_units - n_chunked);
+
+    int chk_dx = 0;
+
+    for(int i=0;i<nt;i++) {
+      ImgProcCallTask* uct = (ImgProcCallTask*)tasks[i];
+      uct->img_proc_call = img_proc_call;
+      uct->uidx_inc = 1;
+      uct->uidx_st = chk_dx;
+      if(i == nt-1)
+	uct->uidx_ed = chk_dx + last_chnk;
+      else
+	uct->uidx_ed = chk_dx + chnk_size;
+      chk_dx += chnk_size;
+    }
+
+    // then run the subsidiary guys
+    for(int i=0;i<threads.size;i++) {
+      threads[i]->runTask();
+    }
+    tasks[0]->run();		// run our own set..
+
+    // finally, always need to sync at end to ensure that everyone is done!
+    for(int i=0;i<threads.size;i++) {
+      threads[i]->sync();
+    }
+  }
+}
 
 ///////////////////////////////////////////
 //	DoG Filter
@@ -1407,14 +1482,15 @@ void GaborV1SpecBase::GridFilter(DataTable* graph_data) {
 // 		GaborV1Spec
 
 void GaborV1Spec::Initialize() {
-  region = RetinalSpacingSpec::PARAFOVEA;
+  region = RetinalSpacingSpec::FOVEA;
   res = RetinalSpacingSpec::MED_RES;
   un_geom.SetXY(4,4);
   gp_geom.SetXY(8,8);
   wrap = true;
-  n_filter_gps.SetXY(4,4);
-  n_filters_per_gp = 2;
+  n_filter_gps.SetXY(3,3);
+  n_filters_per_gp = 3;
   gp_gauss_sigma = 0.5f;
+  threads.min_units = 1;
   UpdateGeoms();
 }
 
@@ -1463,6 +1539,7 @@ void GaborV1Spec::UpdateAfterEdit_impl() {
   un_geom.UpdateAfterEdit();
   gp_geom.UpdateAfterEdit();
   UpdateGeoms();
+  threads.InitAll();
 }
 
 bool GaborV1Spec::SetGpGeomFmInputSize(TwoDCoord& input_size) {
@@ -1513,21 +1590,28 @@ bool GaborV1Spec::FilterInput(float_Matrix& v1_output, DoGFilterSpec::ColorChann
   if(!superimpose)
     v1_output.InitVals();		// reset all vals to 0
 
+  cur_v1_output = &v1_output;
+  cur_c_chan = c_chan;
+  cur_on_input = &on_input;
+  cur_off_input = &off_input;
+  cur_superimpose = cur_superimpose;
+
+  threads.InitAll();
+  threads.min_units = 1;
+  ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
+  threads.Run(&ip_call, un_geom.n);
+}
+
+void GaborV1Spec::Filter_Thread(int cmp_idx, int thread_no) {
   if(filter_type == GABOR) {
-    return FilterInput_Gabor(v1_output, on_input, off_input, superimpose);
+    FilterInput_Gabor(cmp_idx);
   }
   else {
-    return FilterInput_Blob(v1_output, c_chan, on_input, off_input, superimpose);
+    FilterInput_Blob(cmp_idx);
   }
 }
 
-bool GaborV1Spec::FilterInput_Gabor(float_Matrix& v1_output,
-				    float_Matrix& on_input, float_Matrix& off_input,
-				    bool superimpose) {
-  TwoDCoord input_size;
-  input_size.x = on_input.dim(0);
-  input_size.y = on_input.dim(1);
-
+bool GaborV1Spec::FilterInput_Gabor(int cmp_idx) {
   TwoDCoord un;			// units within group
   TwoDCoord ugp;		// unit groups
   TwoDCoord fgp;		// filter groups
@@ -1535,63 +1619,55 @@ bool GaborV1Spec::FilterInput_Gabor(float_Matrix& v1_output,
   TwoDCoord fgpof;		// offset from fgps
   TwoDCoord fc;			// filter coords
   TwoDCoord in;			// input coords
-  int uidx = 0;
-  for(un.y=0;un.y<un_geom.y;un.y++) {
-    for(un.x=0;un.x<un_geom.x;un.x++,uidx++) {
-      int fidx = uidx / n_filters_per_gp;
-      int fgpdx = uidx % n_filters_per_gp;
-      GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs.SafeEl(fidx);
-      if(!gf) break;			     // shouldn't happen
-      // for each unit, process entire input:
-      for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
-	for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
-	  if(wrap)
-	    ugpof = (ugp-1) * input_ovlp;
-	  else
-	    ugpof = ugp * input_ovlp;
-	  float sum = 0.0f;	// sum for this unit, this location
-	  // filter groups
-	  for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
-	    int ymod = fgp.y % n_filters_per_gp;
-	    for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
-	      int xmod = (fgp.x + ymod) % n_filters_per_gp;
-	      if(xmod != fgpdx) continue; // not our spot
-	      float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
-	      fgpof = ugpof + (fgp * rf_ovlp);
-	      // now actually apply the filter itself
-	      float flt_sum = 0.0f;
-	      for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-		for(fc.x=0;fc.x<rf_width.x;fc.x++) {
-		  in = fgpof + fc;
-		  if(in.WrapClip(wrap, input_size)) continue;
-		  float fval = gf->filter.FastEl(fc.x, fc.y);
-		  float oval;
-		  if(fval > 0.0f) oval = fval * on_input.FastEl(in.x, in.y);
-		  else	      oval = -fval * off_input.FastEl(in.x, in.y);
-		  flt_sum += oval;
-		}
-	      }
-	      sum += gmult * flt_sum;
+  int uidx = cmp_idx;
+  un.y = uidx / un_geom.x;
+  un.x = uidx % un_geom.x;
+  int fidx = uidx / n_filters_per_gp;
+  int fgpdx = uidx % n_filters_per_gp;
+  GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs.SafeEl(fidx);
+  if(!gf) return false;			     // shouldn't happen
+  // for each unit, process entire input:
+  for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
+    for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
+      if(wrap)
+	ugpof = (ugp-1) * input_ovlp;
+      else
+	ugpof = ugp * input_ovlp;
+      float sum = 0.0f;	// sum for this unit, this location
+      // filter groups
+      for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
+	int ymod = fgp.y % n_filters_per_gp;
+	for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
+	  int xmod = (fgp.x + ymod) % n_filters_per_gp;
+	  if(xmod != fgpdx) continue; // not our spot
+	  float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
+	  fgpof = ugpof + (fgp * rf_ovlp);
+	  // now actually apply the filter itself
+	  float flt_sum = 0.0f;
+	  for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+	    for(fc.x=0;fc.x<rf_width.x;fc.x++) {
+	      in = fgpof + fc;
+	      if(in.WrapClip(wrap, trg_input_size)) continue;
+	      float fval = gf->filter.FastEl(fc.x, fc.y);
+	      float oval;
+	      if(fval > 0.0f) oval = fval * cur_on_input->FastEl(in.x, in.y);
+	      else	      oval = -fval * cur_off_input->FastEl(in.x, in.y);
+	      flt_sum += oval;
 	    }
 	  }
-	  if(superimpose)
-	    v1_output.FastEl(un.x, un.y, ugp.x, ugp.y) += sum;
-	  else
-	    v1_output.FastEl(un.x, un.y, ugp.x, ugp.y) = sum;
+	  sum += gmult * flt_sum;
 	}
       }
+      if(cur_superimpose)
+	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += sum;
+      else
+	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = sum;
     }
   }
   return true;
 }
 
-bool GaborV1Spec::FilterInput_Blob(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
-				   float_Matrix& on_input, float_Matrix& off_input,
-				   bool superimpose) {
-  TwoDCoord input_size;
-  input_size.x = on_input.dim(0);
-  input_size.y = on_input.dim(1);
-
+bool GaborV1Spec::FilterInput_Blob(int cmp_idx) {
   TwoDCoord un;			// units within group
   TwoDCoord ugp;		// unit groups
   TwoDCoord fgp;		// filter groups
@@ -1599,50 +1675,48 @@ bool GaborV1Spec::FilterInput_Blob(float_Matrix& v1_output, DoGFilterSpec::Color
   TwoDCoord fgpof;		// offset from fgps
   TwoDCoord fc;			// filter coords
   TwoDCoord in;			// input coords
-  int uidx = 0;
-  for(un.y=0;un.y<un_geom.y;un.y++) {
-    for(un.x=0;un.x<un_geom.x;un.x++,uidx++) {
-      int fidx = uidx / n_filters_per_gp;
-      int fgpdx = uidx % n_filters_per_gp;
-      DoGFilterSpec* gf = (DoGFilterSpec*)blob_specs.SafeEl(fidx);
-      if(!gf) break;			     // shouldn't happen
-      if(gf->color_chan != c_chan) continue; // doesn't match
-      // for each unit, process entire input:
-      for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
-	for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
-	  if(wrap)
-	    ugpof = (ugp-1) * input_ovlp;
-	  else
-	    ugpof = ugp * input_ovlp;
-	  float sum = 0.0f;	// sum for this unit, this location
-	  // filter groups
-	  for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
-	    int ymod = fgp.y % n_filters_per_gp;
-	    for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
-	      int xmod = (fgp.x + ymod) % n_filters_per_gp;
-	      if(xmod != fgpdx) continue; // not our spot
-	      float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
-	      fgpof = ugpof + (fgp * rf_ovlp);
-	      // now actually apply the filter itself
-	      float flt_sum = 0.0f;
-	      for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-		for(fc.x=0;fc.x<rf_width.x;fc.x++) {
-		  in = fgpof + fc;
-		  if(in.WrapClip(wrap, input_size)) continue;
-		  float oval = (gf->on_filter.FastEl(fc.x, fc.y) * on_input.FastEl(in.x, in.y) - 
-			gf->off_filter.FastEl(fc.x, fc.y) * off_input.FastEl(in.x, in.y));
-		  flt_sum += oval;
-		}
-	      }
-	      sum += gmult * flt_sum;
+  int uidx = cmp_idx;
+  un.y = uidx / un_geom.x;
+  un.x = uidx % un_geom.x;
+  int fidx = uidx / n_filters_per_gp;
+  int fgpdx = uidx % n_filters_per_gp;
+  DoGFilterSpec* gf = (DoGFilterSpec*)blob_specs.SafeEl(fidx);
+  if(!gf) return false;			     // shouldn't happen
+  if(gf->color_chan != cur_c_chan) return false; // doesn't match
+  // for each unit, process entire input:
+  for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
+    for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
+      if(wrap)
+	ugpof = (ugp-1) * input_ovlp;
+      else
+	ugpof = ugp * input_ovlp;
+      float sum = 0.0f;	// sum for this unit, this location
+      // filter groups
+      for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
+	int ymod = fgp.y % n_filters_per_gp;
+	for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
+	  int xmod = (fgp.x + ymod) % n_filters_per_gp;
+	  if(xmod != fgpdx) continue; // not our spot
+	  float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
+	  fgpof = ugpof + (fgp * rf_ovlp);
+	  // now actually apply the filter itself
+	  float flt_sum = 0.0f;
+	  for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+	    for(fc.x=0;fc.x<rf_width.x;fc.x++) {
+	      in = fgpof + fc;
+	      if(in.WrapClip(wrap, trg_input_size)) continue;
+	      float oval = (gf->on_filter.FastEl(fc.x, fc.y) * cur_on_input->FastEl(in.x, in.y) - 
+			    gf->off_filter.FastEl(fc.x, fc.y) * cur_off_input->FastEl(in.x, in.y));
+	      flt_sum += oval;
 	    }
 	  }
-	  if(superimpose)
-	    v1_output.FastEl(un.x, un.y, ugp.x, ugp.y) += sum;
-	  else
-	    v1_output.FastEl(un.x, un.y, ugp.x, ugp.y) = sum;
+	  sum += gmult * flt_sum;
 	}
       }
+      if(cur_superimpose)
+	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += sum;
+      else
+	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = sum;
     }
   }
   return true;
@@ -2384,6 +2458,7 @@ void RetinaSpec::Initialize() {
   edge_mode = taImageProc::BORDER;
   fade_width = -1;
   retina_size.x = 321; retina_size.y = 241;
+  threads.min_units = 1;
 }
 
 void RetinaSpec::UpdateRetinaSize() {
@@ -2397,6 +2472,7 @@ void RetinaSpec::UpdateRetinaSize() {
 void RetinaSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateRetinaSize();
+  threads.InitAll();
 }
 
 void RetinaSpec::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -2422,7 +2498,7 @@ void RetinaSpec::DefaultFilters() {
     sp->dog.off_sigma = 4;
     sp->spacing.region = RetinalSpacingSpec::FOVEA;
     sp->spacing.res = RetinalSpacingSpec::HI_RES;
-    sp->spacing.border.x = 109; sp->spacing.border.y = 85;
+    sp->spacing.border.x = 0; sp->spacing.border.y = 0;
     sp->spacing.spacing.x = 2; sp->spacing.spacing.y = 2;
     sp->UpdateAfterEdit();
 
@@ -2432,7 +2508,7 @@ void RetinaSpec::DefaultFilters() {
     sp->dog.filter_width = 16;
     sp->dog.on_sigma = 4;
     sp->dog.off_sigma = 8;
-    sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
+    sp->spacing.region = RetinalSpacingSpec::FOVEA;
     sp->spacing.res = RetinalSpacingSpec::MED_RES;
     sp->spacing.border.x = 6; sp->spacing.border.y = 14;
     sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
@@ -2600,12 +2676,9 @@ bool RetinaSpec::TransformImageData(float_Matrix& img_data, DataTable* dt,
 {
   if(dogs.size == 0) return false;
   if (!dt) return false;
-  if(superimpose) {
-    if(dt->rows <= 0) superimpose = false; // can't do it!
-  }
-  if(!superimpose) {		// might have changed!
-    dt->AddBlankRow();
-  }
+  dt->EnforceRows(1);
+  dt->WriteItem(0);
+  dt->ReadItem(0);
 
   int eff_fd_wd = 0;
   if(edge_mode == taImageProc::BORDER) eff_fd_wd = EffFadeWidth();
@@ -2698,62 +2771,79 @@ bool RetinaSpec::FilterImageData(DataTable* dt, bool superimpose, int renorm) {
     if(dt->rows <= 0) superimpose = false; // can't do it!
   }
 
-  DataCol* da_ret = GetRetImageColumn(dt);
+  cur_dt = dt;
+  cur_superimpose = superimpose;
+  cur_renorm = renorm;
+
+  max_vals.SetGeom(1, dogs.size);
+  max_vals.InitVals();
+
+  threads.InitAll();
+  threads.min_units = 1;
+  ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
+
+  cur_phase = 0;
+  threads.Run(&ip_call, dogs.size);
+  if(renorm > 0) {
+    int idx;
+    float max_val = taMath_float::vec_max(&max_vals, idx);
+    if(max_val > 0.00001f) {
+      cur_rescale = 1.0f;
+      cur_renorm_factor = (float)(renorm - 1);
+      if(renorm >= 2)
+	cur_rescale = 1.0f / logf(1.0f + cur_renorm_factor * max_val);
+      else
+	cur_rescale = 1.0f / max_val;
+      cur_phase = 1;
+      threads.Run(&ip_call, dogs.size);
+    }
+  }
+}
+
+void RetinaSpec::Filter_Thread(int cmp_idx, int thread_no) {
+  DataCol* da_ret = GetRetImageColumn(cur_dt);
   float_MatrixPtr ret_img; ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
 
   int idx;
-  float max_val = 0.0f;
-  for(int i=0;i<dogs.size;i++) {
-    DoGRetinaSpec* sp = dogs[i];
-    DataCol* da_on = dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
-						sp->spacing.output_size.x, sp->spacing.output_size.y);
-    DataCol* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
-						 2, sp->spacing.output_size.x, sp->spacing.output_size.y);
+  if(cur_phase == 0) {
+    DoGRetinaSpec* sp = dogs[cmp_idx];
+    DataCol* da_on = cur_dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
+					 sp->spacing.output_size.x, sp->spacing.output_size.y);
+    DataCol* da_off = cur_dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
+					      2, sp->spacing.output_size.x, sp->spacing.output_size.y);
 
     float_MatrixPtr on_mat; on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
     float_MatrixPtr off_mat; off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
-    taImageProc::DoGFilterRetina(*on_mat, *off_mat, *ret_img, *sp, superimpose, edge_mode);
-    if(renorm > 0) {
+    taImageProc::DoGFilterRetina(*on_mat, *off_mat, *ret_img, *sp, cur_superimpose, edge_mode);
+    if(cur_renorm > 0) {
       int idx;
       float on_max = taMath_float::vec_max(on_mat, idx);
       float off_max = taMath_float::vec_max(off_mat, idx);
-      max_val = MAX(max_val, on_max);
-      max_val = MAX(max_val, off_max);
+      on_max = MAX(on_max, off_max);
+      max_vals.FastEl(cmp_idx) = on_max;
     }
   }
-
-  if(renorm > 0 && max_val > 0.00001f) {
-    float rescale = 1.0f;
-    float renorm_factor = (float)(renorm - 1);
-    if(renorm >= 2)
-      rescale = 1.0f / logf(1.0f + renorm_factor * max_val);
-    else
-      rescale = 1.0f / max_val;
-
+  else {
     // normalize with single max for all channels, so they are all on a comparable scale
-    for(int i=0;i<dogs.size;i++) {
-      DoGRetinaSpec* sp = dogs[i];
-      DataCol* da_on = dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
-					   sp->spacing.output_size.x, sp->spacing.output_size.y);
-      DataCol* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
-					    2, sp->spacing.output_size.x, sp->spacing.output_size.y);
+    DoGRetinaSpec* sp = dogs[cmp_idx];
+    DataCol* da_on = cur_dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
+					 sp->spacing.output_size.x, sp->spacing.output_size.y);
+    DataCol* da_off = cur_dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
+					  2, sp->spacing.output_size.x, sp->spacing.output_size.y);
 
-      float_MatrixPtr on_mat; on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
-      float_MatrixPtr off_mat; off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
-      if(renorm >= 2) {
-	for(int j=0;j<on_mat->size;j++)
-	  on_mat->FastEl_Flat(j) = logf(1.0f + renorm_factor * on_mat->FastEl_Flat(j)) * rescale;
-	for(int j=0;j<off_mat->size;j++)
-	  off_mat->FastEl_Flat(j) = logf(1.0f + renorm_factor * off_mat->FastEl_Flat(j)) * rescale;
-      }
-      else {
-	taMath_float::vec_mult_scalar(on_mat, rescale);
-	taMath_float::vec_mult_scalar(off_mat, rescale);
-      }
+    float_MatrixPtr on_mat; on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
+    float_MatrixPtr off_mat; off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
+    if(cur_renorm >= 2) {
+      for(int j=0;j<on_mat->size;j++)
+	on_mat->FastEl_Flat(j) = logf(1.0f + cur_renorm_factor * on_mat->FastEl_Flat(j)) * cur_rescale;
+      for(int j=0;j<off_mat->size;j++)
+	off_mat->FastEl_Flat(j) = logf(1.0f + cur_renorm_factor * off_mat->FastEl_Flat(j)) * cur_rescale;
+    }
+    else {
+      taMath_float::vec_mult_scalar(on_mat, cur_rescale);
+      taMath_float::vec_mult_scalar(off_mat, cur_rescale);
     }
   }
-
-  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -3132,7 +3222,9 @@ bool V1GaborSpec::FilterRetinaData(DataTable* v1_out_dt, DataTable* ret_in_dt) {
     return false;
   }
   v1_out_dt->StructUpdate(true);
-  v1_out_dt->AddBlankRow();
+  v1_out_dt->EnforceRows(1);
+  v1_out_dt->WriteItem(0);
+  v1_out_dt->ReadItem(0);
   for(int i=0;i<gabors.size; i++) {
     GaborV1Spec* sp = gabors[i];
     float_Matrix* out_mat = (float_Matrix*)v1_out_dt->GetSinkMatrixByName(sp->name);
