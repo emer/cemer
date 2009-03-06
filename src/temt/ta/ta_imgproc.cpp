@@ -1600,6 +1600,7 @@ bool GaborV1Spec::FilterInput(float_Matrix& v1_output, DoGFilterSpec::ColorChann
   threads.min_units = 1;
   ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
   threads.Run(&ip_call, un_geom.n);
+  return true;
 }
 
 void GaborV1Spec::Filter_Thread(int cmp_idx, int thread_no) {
@@ -2798,6 +2799,7 @@ bool RetinaSpec::FilterImageData(DataTable* dt, bool superimpose, int renorm) {
       threads.Run(&ip_call, dogs.size);
     }
   }
+  return true;
 }
 
 void RetinaSpec::Filter_Thread(int cmp_idx, int thread_no) {
