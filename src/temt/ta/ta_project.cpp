@@ -2451,6 +2451,9 @@ void taRootBase::SaveRecoverFileHandler(int err) {
   }
   has_crashed = true;		// to prevent recursive crashing..
 
+#ifdef DMEM_COMPILE
+  MPI_Finalize();
+#endif
   taThreadMgr::TerminateAllThreads(); // don't leave any active threads lying around
 
 #ifdef TA_GUI

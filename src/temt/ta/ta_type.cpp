@@ -53,6 +53,10 @@
 # include <sys/times.h>
 #endif
 
+#ifdef DMEM_COMPILE
+#include <mpi.h>
+#endif
+
 const String String_PArray::def_sep(", ");
 
 const String String_PArray::AsString(const String& sep) const {
@@ -270,6 +274,9 @@ void taiMiscCore::Quit(CancelOp cancel_op) {
   if (tabMisc::root)
     tabMisc::root->Save();
 
+#ifdef DMEM_COMPILE
+  MPI_Finalize();
+#endif
   taThreadMgr::TerminateAllThreads(); // don't leave any active threads lying around
 
   taMisc::quitting = (cancel_op == CO_NOT_CANCELLABLE) ? 
@@ -1245,10 +1252,6 @@ void taMisc::AddDeferredUserDataSchema() {
   delete deferred_schema_items;
   deferred_schema_items = NULL;
 }
-
-#ifdef DMEM_COMPILE
-#include <mpi.h>
-#endif
 
 void taMisc::Init_DMem(int& argc, const char* argv[]) {
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
