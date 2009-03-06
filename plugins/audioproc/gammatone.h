@@ -488,6 +488,8 @@ public: // DO NOT USE
 
 protected:
   int			cpo_eff;
+  int			in_octs; // how many input octaves there are
+  
   override void		UpdateAfterEdit_impl();
   override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok); 
   

@@ -1089,6 +1089,12 @@ class AUDIOPROC_API DoG1dFilterSpec : public taNBase {
   // #INLINE ##CAT_Audioproc defines a difference-of-gaussians (center minus surround or "mexican hat") filter that highlights contrast -- this is the 1d version
   INHERITED(taNBase)
 public:
+  enum FilterType {
+    FT_DOG, 	// standard DoG filter
+    FT_SIEVE,	// for the Harmonic Sieve
+  };
+  
+  FilterType	filter_type;
   int		half_width;	// #MIN_1 half-width of the filter (typically 2-4 semi-tones)
   int		filter_size;	// #READ_ONLY size of the filter: 2 * half_width + 1
   float		on_sigma_norm;	// width of the narrower central 'on' gaussian, normalized to half_width of 4 (typically 1)
@@ -1102,10 +1108,8 @@ public:
   float		GetFilterVal(int x) {return net_filter.FastEl(x+half_width);}
   // #CAT_DoG1dFilter apply filter at given x point to given value
 
-  virtual void	RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt, float_Matrix& net_flt);
+  void		RenderFilter();
   // #CAT_DoG1dFilter render filter into matrix
-  virtual void	UpdateFilter();
-  // #CAT_DoG1dFilter make our personal filter (RenderFilter(filter)) according to current params
 
   virtual void	GraphFilter(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a graph
@@ -1117,6 +1121,9 @@ public:
   TA_SIMPLE_BASEFUNS(DoG1dFilterSpec);
 protected:
   void	UpdateAfterEdit_impl();
+  virtual void	RenderFilter_impl();
+  void	RenderFilter_DoG_impl();
+  void	RenderFilter_Sieve_impl();
 };
 
 class AUDIOPROC_API LogLinearBlock: public StdBlock

@@ -1820,6 +1820,7 @@ void RampGen::UpdateState() {
 //	DoG Filter
 
 void DoG1dFilterSpec::Initialize() {
+  filter_type = FT_DOG;
   half_width = 4;
   filter_size = half_width * 2 + 1;
   on_sigma_norm = 1.0f;
@@ -1832,40 +1833,25 @@ void DoG1dFilterSpec::Initialize() {
 void DoG1dFilterSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   filter_size = half_width * 2 + 1;
-  UpdateFilter();
+  RenderFilter();
 }
 
 float DoG1dFilterSpec::FilterPoint(int x, float val) {
   return val * net_filter.FastEl(x+half_width);
 }
 
-void DoG1dFilterSpec::RenderFilter(float_Matrix& on_flt, 
-  float_Matrix& off_flt, float_Matrix& net_flt) 
+void DoG1dFilterSpec::RenderFilter() 
 {
-  // for convenience, 1 and 2 are considered "typical" values for half=4
-  float	on_sigma = (on_sigma_norm * half_width) * 0.25f;	
-  float	off_sigma = (off_sigma_norm * half_width) * 0.25f;
-  on_flt.SetGeom(1, filter_size);
-  off_flt.SetGeom(1, filter_size);
-  net_flt.SetGeom(1, filter_size);
-  int x;
-    for(x=-half_width; x<=half_width; x++) {
-      float dist = x;
-      float ong = 0.0f;
-      float offg = 0.0f;
-      // only set values inside of filter radius
-      ong = taMath_float::gauss_den_sig(dist, on_sigma);
-      offg = taMath_float::gauss_den_sig(dist, off_sigma);
-      on_flt.Set(ong, x+half_width);
-      off_flt.Set(offg, x+half_width);
-    }
+  on_filter.SetGeom(1, filter_size);
+  off_filter.SetGeom(1, filter_size);
+  net_filter.SetGeom(1, filter_size);
+  
+  RenderFilter_impl(); 
+  
 
-  taMath_float::vec_norm_sum(&on_flt); // make sure sums to 1.0
-  taMath_float::vec_norm_sum(&off_flt); // make sure sums to 1.0
-
-  for(int i=0;i<on_flt.size;i++) {
-    float net = on_flt.FastEl_Flat(i) - off_flt.FastEl_Flat(i);
-    net_flt.FastEl_Flat(i) = net;
+  for (int i=0; i < on_filter.size; i++) {
+    float net = on_filter.FastEl_Flat(i) - off_filter.FastEl_Flat(i);
+    net_filter.FastEl_Flat(i) = net;
   }
   
 /*  // now, shift the curve so it is entirely +ve, and then norm again
@@ -1887,20 +1873,44 @@ void DoG1dFilterSpec::RenderFilter(float_Matrix& on_flt,
   // to make each side have unity gain
   float pos_sum = 0.0f;
   for (int i=0; i<filter_size; i++) {
-    float val = net_flt.FastEl_Flat(i);
+    float val = net_filter.FastEl_Flat(i);
     if (val <= 0.0f) continue;
     pos_sum += val;
   }
   if (pos_sum == 0.0f) return;
   for (int i=0; i<filter_size; i++) {
-    float& val = net_flt.FastEl_Flat(i);
+    float& val = net_filter.FastEl_Flat(i);
     val /= pos_sum;
   }
 }
 
-void DoG1dFilterSpec::UpdateFilter() {
-  RenderFilter(on_filter, off_filter, net_filter);
+void DoG1dFilterSpec::RenderFilter_impl() 
+{
+  switch (filter_type) {
+  case FT_DOG: RenderFilter_DoG_impl(); break;
+  case FT_SIEVE: RenderFilter_Sieve_impl(); break;
+  }
 }
+ 
+void DoG1dFilterSpec::RenderFilter_DoG_impl() 
+{
+  // for convenience, 1 and 2 are considered "typical" values for half=4
+  float	on_sigma = (on_sigma_norm * half_width) * 0.25f;	
+  float	off_sigma = (off_sigma_norm * half_width) * 0.25f;
+  for (int x=-half_width; x<=half_width; x++) {
+    float dist = x;
+    float ong = 0.0f;
+    float offg = 0.0f;
+    // only set values inside of filter radius
+    ong = taMath_float::gauss_den_sig(dist, on_sigma);
+    offg = taMath_float::gauss_den_sig(dist, off_sigma);
+    on_filter.Set(ong, x+half_width);
+    off_filter.Set(offg, x+half_width);
+  }
+
+  taMath_float::vec_norm_sum(&on_filter); // make sure sums to 1.0
+  taMath_float::vec_norm_sum(&off_filter); // make sure sums to 1.0
+} 
 
 void DoG1dFilterSpec::GraphFilter(DataTable* graph_data) {
   taProject* proj = GET_MY_OWNER(taProject);

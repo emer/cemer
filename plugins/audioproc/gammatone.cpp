@@ -565,7 +565,7 @@ void SharpenBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   out_buff.vals = src_buff->vals;
   
   // filter
-  dog.UpdateFilter();
+  dog.UpdateAfterEdit();
 }
 
 void SharpenBlock::AcceptData_impl(SignalProcBlock* src_blk,
@@ -1589,6 +1589,7 @@ void ANVal::UpdateParams()
 void HarmonicSieveBlock::Initialize() {
   out_octs = 2;
   cpo_eff = 1; // set in config
+  in_octs = 0;
 }
 
 void HarmonicSieveBlock::UpdateAfterEdit_impl() {
@@ -1618,12 +1619,12 @@ void HarmonicSieveBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   if (CheckError((chans_per_oct < 1), quiet, ok,
     "chans_per_oct must be >= 1"))
     return;
+  in_octs = src_buff->chans / cpo_eff;
   cpo_eff = (int)chans_per_oct.chans_per_oct;
   // octs must be within input
-  if (CheckError(((src_buff->chans / cpo_eff) >= octs), quiet, ok,
-    "octs must be < num octaves available in input"))
+  if (CheckError((out_octs >= in_octs), quiet, ok,
+    "out_octs must be < num octaves available in input"))
     return;
-  
   
   out_buff.fs = src_buff->fs;
   out_buff.fr_dur.Set(src_buff->items, Duration::UN_SAMPLES);
@@ -1633,10 +1634,10 @@ void HarmonicSieveBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   
   /* filter
   // half-width covers < a full octave
-  dog.half_width = (cpo_eff / 2) - 1;
-  dog.on_sigma_norm = 1; // narrow
-  dog.off_sigma_norm = 4; // wide
-  dog.UpdateAfterEdit();*/
+  filter.half_width = (cpo_eff / 2) - 1;
+  filter.on_sigma_norm = 1; // narrow
+  filter.off_sigma_norm = 4; // wide
+  filter.UpdateAfterEdit();*/
 }
 
 void HarmonicSieveBlock::AcceptData_impl(SignalProcBlock* src_blk,
@@ -1649,39 +1650,42 @@ void HarmonicSieveBlock::AcceptData_impl(SignalProcBlock* src_blk,
   const int out_vals = out_mat->dim(VAL_DIM); // octs
   const int out_chans = out_mat->dim(CHAN_DIM); // chans/oct
   
-  const int in_vals = 0; 
-  const int in_v = 0; // only one val
   const int in_items = in_mat->dim(ITEM_DIM);
   const int in_fields = in_mat->dim(FIELD_DIM);
   const int in_chans = in_mat->dim(CHAN_DIM); 
   const int out_stage = out_buff.stage;
   
+  // let half_width just be 2/5 octave
+  const int half_width = (cpo_eff * 2) / 5;
+  const float neg_wt = 0.5f / half_width; 
   // we process in terms of the output
-  for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f)
-  for (int out_v = 0; ((ps == PS_OK) && (out_v < out_vals)); ++out_v)
+  for (int f = 0; (/*(ps == PS_OK) && */(f < in_fields)); ++f)
+  for (int i = 0; (/*(ps == PS_OK) && */(i < in_items)); ++i)
+  for (int out_v = 0; (/*(ps == PS_OK) && */(out_v < out_vals)); ++out_v)
   for (int out_ch = 0; out_ch < out_chans; ++out_ch)
   {
     // input fundamental (f0)
     int in_fund = (out_v * out_chans) + out_ch;
-    float out_val = in_mat->FastEl(in_v, in_fund, f, i, in_stage);
+    float out_val = in_mat->FastEl(0, in_fund, f, i, in_stage);
 //TEMP -- first stab at filter, just does n*f0 as +1 and others as -1/?
-    for (int offs = -dog.half_width; offs <= dog.half_width; ++offs) {
-      int in_ch = out_ch + offs;
-      // check for under/overflow (edges)
-      if ((in_ch < 0) || (in_ch >= n_chans)) continue;
-      float val = in_mat->FastEl(v, in_ch, f, i, in_stage);
-      out_val += dog.FilterPoint(offs, val);
+//    for (int offs = -dog.half_width; offs <= dog.half_width; ++offs) {
+    // harmonic (0-based) goes from 1 (2*f0) to max num avail
+    for (int harm = 1; harm < (in_octs - out_v - 1); ++harm) {
+      float sieve = 0; 
+      for (int offs = -half_width; offs <= half_width; ++offs) {
+        int in_ch = in_fund + (harm * cpo_eff) + offs;
+        float val = in_mat->FastEl(0, in_ch, f, i, in_stage);
+//TEMP this is the simple version of the filter 
+        if (offs == 0) 
+          sieve += val; // wt=1
+        else
+          sieve -= val * neg_wt;
+//        out_val += dog.FilterPoint(offs, val);
+      }
+      // TEMP -- we just weight each harm the same...
+      out_val += sieve;
     }
-    switch (out_fun) {
-    case OF_STRAIGHT: break; // out_val is our guy
-    case OF_POWER: {
-      // use out_val as a power to which to apply to this in val
-      float in_val = in_mat->FastEl(v, out_ch, f, i, in_stage);
-      out_val = in_val * pow(pow_base, (out_val * pow_gain_eff));
-      } break;
-    // no default, let compiler complain if unhandled
-    }
-    out_mat->FastEl(v, out_ch, f, i, out_stage) = out_val;*/
+    out_mat->FastEl(out_v, out_ch, f, i, out_stage) = out_val;
   }
   
   // advance stage pointer, and notify clients
