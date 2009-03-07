@@ -82,11 +82,15 @@ public:
     UN_DBP   // #LABEL_dB(P) scale by the given dB (Power: 20*log10)
   };
   
+  static float	ActualToLevel(float act_level, Units units); // converts the value to an encoded value
+  static float	LevelToActual(float level, Units units); // converts the value to a linear value
+  
   float		level; // the value to use, in the given units
   Units		units; // the units to use for the level value
   float		act_level; // #READ_ONLY #NO_SAVE
   
-  void		Set(float val, Units units);
+  void		Set(float new_level, Units new_units); // set a new level/units pair, and update act_level
+  void		Update(float in_level, Units in_units = UN_SCALE); // update level, keeping it in current units -- the value is specified in_units, but converted 
 
   operator float() const {return (float) act_level;} // #IGNORE simplifies equation
   
@@ -1161,6 +1165,8 @@ public:
   DataBuffer		out_buff_gain; //  #SHOW_TREE provides the gain values used: v0:cl, v1: (note: is always mono, even for stereo feeds)
   Level			dyn_range_out; // the desired output dynamic range
   Duration  		agc_dt; // the time constant of the gain integration -- try 50-100 ms
+  
+  Level			gain; // the current gain being applied -- you can select the units, but the value is controlled automatically
   
   ProcStatus 		AcceptData_AGC(float_Matrix* in_mat, int stage = 0);
     // #IGNORE mostly for proc

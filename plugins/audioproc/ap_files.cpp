@@ -368,7 +368,8 @@ void FileInput::ProcNext_Samples_impl(int n, ProcStatus& ps) {
       //chans, vals = 1
       for (int i = 0; ((ps == PS_OK) && (i < act)); ++i, samples += 1)
       for (int f = 0; ((ps == PS_OK) && (f < fields)); ++f) {
-        out_buff.mat.Set(buf[i*fields + f], 0, 0, f, out_buff.item, out_buff.stage);
+        float out_val = buf[i*fields + f] * gain;
+        out_buff.mat.Set(out_val, 0, 0, f, out_buff.item, out_buff.stage);
         if (out_buff.NextIndex()) {
           NotifyClientsBuffStageFull(&out_buff, buff_index, ps);
         }

@@ -263,24 +263,52 @@ void SampleFreq::Set(SampleFreqVal val, float act) {
 //  Level			//
 //////////////////////////////////
 
-void Level::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
+float Level::ActualToLevel(float act_level, Units units) {
+  float rval;
   switch (units) {
-  case UN_PERCENT: act_level = level / 100.0f; break;
-  case UN_SCALE: act_level = level; break;
+  case UN_PERCENT: rval = act_level * 100.0f; break;
+  case UN_SCALE: rval = act_level; break;
   case UN_DBI:
-    act_level = powf(10.0f, (level / 10.0f));
+    rval = log10(act_level) * 10.0f;
     break;
   case UN_DBP:
-    act_level = powf(10.0f, (level / 20.0f));
+    rval = log10(act_level) * 20.0f;
     break;
   }
+  return rval;
 }
 
-void Level::Set(float val, Units units_) {
-  level = val;
-  units = units_;
-  UpdateAfterEdit();
+float Level::LevelToActual(float level, Units units) {
+  float rval;
+  switch (units) {
+  case UN_PERCENT: rval = level / 100.0f; break;
+  case UN_SCALE: rval = level; break;
+  case UN_DBI:
+    rval = powf(10.0f, (level / 10.0f));
+    break;
+  case UN_DBP:
+    rval = powf(10.0f, (level / 20.0f));
+    break;
+  }
+  return rval;
+}
+
+void Level::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  act_level = LevelToActual(level, units);
+}
+
+void Level::Set(float new_level, Units new_units) {
+  level = new_level;
+  units = new_units;
+  act_level = LevelToActual(new_level, new_units);
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
+void Level::Update(float in_level, Units in_units) {
+  act_level = LevelToActual(in_level, in_units);
+  level = ActualToLevel(act_level, units);
+  DataChanged(DCR_ITEM_UPDATED);
 }
 
 //////////////////////////////////
@@ -2194,16 +2222,19 @@ SignalProcBlock::ProcStatus AGCBlock::AcceptData_AGC(float_Matrix* in_mat, int s
 }
 
 float AGCBlock::CalcValue(float in) {
-  if (in < 0) return 0; // only defined for non-neg values
+/*  if (in < 0) return 0; // only defined for non-neg values
   // transform to dB -- sh/be ~ -96 < in_db <= 0
   float in_db = 10 * log10(in); // note: the ref is 1, but ok if exceeded
   // translate so that cf is at 0, and normalize
   double rval = ((in_db - cl) / width) + 0.5; 
-  return rval;
+  return rval; */
+  
+//TEMP just gain for now
+  return in * gain;
 }
 
 void AGCBlock::UpdateAGC() {
-//TEMP, just apply it all now
+/*//TEMP, just apply it all now
 //  float 
   targ_width = 80;
 //  float 
@@ -2219,8 +2250,22 @@ void AGCBlock::UpdateAGC() {
   //TODO: apply exponential smoothing
   
   cl = targ_cl;
-  width = targ_width;
+  width = targ_width; */
+
+  //TODO: apply exponential smoothing
+  // if the peak input is too low, do nothing
+  if (ths_peak < 10e-6) return;
+  double targ_gain = 1 / ths_peak;
+  double delt_gain = targ_gain - gain;
+  // TODO: apply different dt whether attack/decay
 //TEMP
-DataChanged(DCR_ITEM_UPDATED);
+  const float dt_attack = 0.5f;
+  const float dt_decay = 0.2f;
+  if (delt_gain > 0.0) {
+   // delt_gain = 
+  } else {
+  }
+
+  DataChanged(DCR_ITEM_UPDATED);
 }
 
