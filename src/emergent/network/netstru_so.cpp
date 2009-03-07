@@ -80,14 +80,27 @@ T3UnitNode::~T3UnitNode()
 }
 
 void T3UnitNode::setAppearance(float act, const T3Color& color, float max_z, float trans) {
+  bool act_invalid = false;
+  if (isnan(act) || isinf(act)) {
+    act_invalid = true;
+    act = 0.0f;
+  }
+  else if (act < -1.0f) act = -1.0f;
+  else if (act > 1.0f) act = 1.0f;
+  setAppearance_impl(act, color, max_z, trans, act_invalid);
+}
+
+void T3UnitNode::setAppearance_impl(float act, const T3Color& color,
+  float max_z, float trans, bool act_invalid) 
+{
   material()->diffuseColor = (SbColor)color;
   //  material()->specularColor = (SbColor)color;
   //  material()->emissiveColor = (SbColor)color;
   //  material()->ambientColor = (SbColor)color;
-  if (act < -1.0f) act = -1.0f;
-  else if (act > 1.0f) act = 1.0f;
   material()->transparency = (1.0f - fabsf(act)) * trans;
 }
+
+
 
 void T3UnitNode::setDefaultCaptionTransform() {
   //note: this is the one for 3d objects -- 2d replace this
@@ -145,16 +158,15 @@ T3UnitNode_Cylinder::~T3UnitNode_Cylinder()
   shape_ = NULL;
 }
 
-void T3UnitNode_Cylinder::setAppearance(float act, const T3Color& color, float max_z,
-					float trans) {
-  if (act < -1.0f) act = -1.0f;
-  else if (act > 1.0f) act = 1.0f;
+void T3UnitNode_Cylinder::setAppearance_impl(float act, const T3Color& color, float max_z,
+  float trans, bool act_invalid) 
+{
   shape_->height = (base_height + ((max_height - base_height) * fabs(act))) / max_z;
   float dz; float x; float y;
   transform()->translation.getValue().getValue(x, dz, y);
   dz = (((max_height - base_height) * act) * 0.5f) / max_z;
   transform()->translation.setValue(x, dz, y);
-  inherited::setAppearance(act, color, max_z, trans);
+  inherited::setAppearance_impl(act, color, max_z, trans, act_invalid);
 }
 
 SO_NODE_SOURCE(T3UnitNode_Circle);
@@ -228,16 +240,15 @@ T3UnitNode_Block::~T3UnitNode_Block()
   shape_ = NULL;
 }
 
-void T3UnitNode_Block::setAppearance(float act, const T3Color& color, float max_z,
-				     float trans) {
-  if (act < -1.0f) act = -1.0f;
-  else if (act > 1.0f) act = 1.0f;
+void T3UnitNode_Block::setAppearance_impl(float act, const T3Color& color, float max_z,
+  float trans, bool act_invalid) 
+{
   shape_->height = (base_height + ((max_height - base_height) * fabs(act))) / max_z;
   float dz; float x; float y;
   transform()->translation.getValue().getValue(x, dz, y);
   dz = (((max_height - base_height) * act) * 0.5f) / max_z;
   transform()->translation.setValue(x, dz, y);
-  inherited::setAppearance(act, color, max_z, trans);
+  inherited::setAppearance_impl(act, color, max_z, trans, act_invalid);
 }
 
 //////////////////////////

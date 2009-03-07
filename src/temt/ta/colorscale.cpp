@@ -538,22 +538,28 @@ float ColorScale::GetAbsPercent(float val){
 const iColor ColorScale::GetColor(float val, iColor* maincolor,
     iColor* contrast, float& sc_val) 
 {
-  int idx;
   iColor m;
   iColor c;
-  if (range == 0.0f) {
-    m = GetColor((int) ((.5f * (float)(chunks-1)) + .5f));
-    c = GetContrastColor(chunks-1);
-  } else if(val > max) {
-    m = maxout.color();
-    c = maxout.contrastcolor(); // GetContrastColor(bar->scale->chunks -1);
-  } else if(val < min) {
-    m = minout.color();
-    c = minout.contrastcolor(); // GetContrastColor(0);
+  if (isnan(val) || isinf(val)) {
+    val = 0.0f;
+    m = iColor::black_;
+    c.setRgb(255,255,255);
   } else {
-    idx = GetIdx(val);
-    m = GetColor(idx);
-    c = GetContrastColor(idx);
+    int idx;
+    if (range == 0.0f) {
+      m = GetColor((int) ((.5f * (float)(chunks-1)) + .5f));
+      c = GetContrastColor(chunks-1);
+    } else if(val > max) {
+      m = maxout.color();
+      c = maxout.contrastcolor(); // GetContrastColor(bar->scale->chunks -1);
+    } else if(val < min) {
+      m = minout.color();
+      c = minout.contrastcolor(); // GetContrastColor(0);
+    } else {
+      idx = GetIdx(val);
+      m = GetColor(idx);
+      c = GetContrastColor(idx);
+    }
   }
   if (maincolor!= NULL) *maincolor = m;
   if (contrast != NULL) *contrast = c;

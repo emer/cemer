@@ -75,7 +75,7 @@ public:
 
   static void	initClass();
 
-  virtual void	setAppearance(float act, const T3Color& color, float max_z, float trans);
+  void		setAppearance(float act, const T3Color& color, float max_z, float trans);
   // act is -1:1; max_z is net->max_size.z; trans is transparency
   virtual void 	setPicked(bool value);
   T3UnitNode(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
@@ -84,6 +84,9 @@ public:
 protected:
   float			spacing;		      // unit spacing
   void			setDefaultCaptionTransform(); // override, sets text justif and transform for 3D
+  virtual void	setAppearance_impl(float act, const T3Color& color, float max_z,
+    float trans, bool act_invalid);
+  // act is -1:1; max_z is net->max_size.z; trans is transparency; act_invalid true for nan/inf -- act has been set to 0.0f
   ~T3UnitNode();
 };
 
@@ -127,12 +130,13 @@ public:
 
   SoCylinder*	shape() {return shape_;}
 
-  void		setAppearance(float act, const T3Color& color, float max_z, float trans);
 
   T3UnitNode_Cylinder(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
 		      float max_z = 1.0f, float un_spc = .01f);
 
 protected:
+  override void	 setAppearance_impl(float act, const T3Color& color,
+    float max_z, float trans, bool act_invalid);
   ~T3UnitNode_Cylinder();
 private:
   SoCylinder*		shape_; //#IGNORE
@@ -171,11 +175,12 @@ public:
 
   SoCube*	shape() {return shape_;}
 
-  void		setAppearance(float act, const T3Color& color, float max_z, float trans);
   T3UnitNode_Block(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
 		   float max_z = 1.0f, float un_spc = .01f);
 
 protected:
+  override void	 setAppearance_impl(float act, const T3Color& color,
+    float max_z, float trans, bool act_invalid);
   ~T3UnitNode_Block();
 private:
   SoCube*		shape_; //#IGNORE
