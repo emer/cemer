@@ -856,7 +856,7 @@ private:
 
 
 class AUDIOPROC_API StimChan: public SignalProcItem
-{ // #VIRT_BASE ##CAT_Audioproc base class for a stimulus generator channel
+{ // #VIRT_BASE ##CAT_Audioproc ##NO_UPDATE_AFTER base class for a stimulus generator channel
 INHERITED(SignalProcItem) 
 public:
   enum ChanFlags { // #CAT_Audioproc #BITS
@@ -902,12 +902,11 @@ public:
   enum WaveType {
     WT_SINE,	// #LABEL_Sine
     WT_COSINE,	// #LABEL_Cosine
-    WT_SQUARE	// #LABEL_Square
-  }; //
-/*TODO  
-    ,WT_TRIANGLE,	// #LABEL_Triangle
-    WT_SAWTOOTH// #LABEL_Sawtooth
-*/
+    WT_SQUARE,	// #LABEL_Square has only odd harmonics (1, 3, 5...), weighted as 1/n
+    WT_TRIANGLE,	// #LABEL_Triangle has only odd harmonics (1, 3, 5...), weighted as 1/n^2 (i.e. like a square wave, but harmonics fall off much faster)
+    WT_SAWTOOTH, // #LABEL_Sawtooth has all harmonics (1, 2, 3...), weighted as 1/n
+  };
+  
   enum FreqMode {
     FM_ABSOLUTE, // #LABEL_Absolute -- the freq value is the value in Hz
     FM_HARMONIC // #LABEL_Harmonic -- the freq value specifies a harmonic multiplier from the first channel (first channel must be Absolute)
@@ -1152,6 +1151,51 @@ private:
   void	Initialize();
   void	Destroy() {CutLinks();}
   SIMPLE_COPY(LogLinearBlock)
+};
+
+class AUDIOPROC_API AGCBlock: public StdBlock
+{ // ##CAT_Audioproc automatic gain control block -- intended for +ve signal values only (ex rectified)
+INHERITED(StdBlock) 
+public:
+  
+  DataBuffer		out_buff_gain; //  #SHOW_TREE provides the gain values used: v0:cl, v1: (note: is always mono, even for stereo feeds)
+  Level			dyn_range_out; // the desired output dynamic range
+  Duration  		agc_dt; // the time constant of the gain integration -- try 50-100 ms
+  
+  ProcStatus 		AcceptData_AGC(float_Matrix* in_mat, int stage = 0);
+    // #IGNORE mostly for proc
+  
+  override int		outBuffCount() const {return 2;}
+  override DataBuffer* 	outBuff(int idx) {switch (idx) {
+    case 0: return &out_buff; 
+    case 1: return &out_buff_gain;
+    default: return NULL;}}
+  
+  SIMPLE_LINKS(AGCBlock)
+  TA_BASEFUNS(AGCBlock)
+  
+public: // TEMP
+  float			ths_peak; // #NO_SAVE #EXPERT #READ_ONLY highest value in current stream
+  double		ths_avg; // #NO_SAVE #EXPERT #READ_ONLY avg value in current stream
+  float			cl; // #NO_SAVE #EXPERT #READ_ONLY current cl
+  float			width; // #NO_SAVE #EXPERT #READ_ONLY current width
+  
+  float targ_cl; // #NO_SAVE #EXPERT #READ_ONLY current width
+  float targ_width; // #NO_SAVE #EXPERT #READ_ONLY current width
+  
+protected:
+  
+  override void		UpdateAfterEdit_impl();
+  override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok);
+  override void		AcceptData_impl(SignalProcBlock* src_blk,
+    DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps);
+
+  virtual float		CalcValue(float in);
+  void			UpdateAGC();
+private:
+  void	Initialize();
+  void	Destroy() {CutLinks();}
+  SIMPLE_COPY(AGCBlock)
 };
 
 #endif

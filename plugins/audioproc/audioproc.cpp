@@ -772,8 +772,9 @@ double InputBlockBase::GetElapsedTime_impl() {
 }
 
 SignalProcBlock::ProcStatus InputBlockBase::ProcNext_Duration(float s) {
+   // round to nearest integer, prevents missing an update
   return ProcNext_Samples(Duration::StatGetDurationSamples(
-    s, Duration::UN_TIME_S, fs));
+    s, Duration::UN_TIME_S, fs) + 0.5);
 }
 
 SignalProcBlock::ProcStatus InputBlockBase::ProcNext_Samples(int n) {
@@ -1543,11 +1544,13 @@ void ToneChan::UpdateAfterEdit_impl() {
     freq = index + 1; // assume 2nd guy will be 2nd harmonic, etc.
   }
   bool ok = true; // ignored
-  InitThisConfig_impl(true, true, ok);
+  // force the config -- lets us dynamically change things while running
+  InitThisConfig_impl(false, true, ok);
 }
 
 float ToneChan::GetNext() {
   float unit_val; // value in a -1:1 range, scaled later
+  float cp_norm; // 0::2 normalize of cur_phase, if needed
   switch (wave_type) {
   case WT_SINE: 
     unit_val = sinf(cur_phase); 
@@ -1558,16 +1561,16 @@ float ToneChan::GetNext() {
   case WT_SQUARE: 
     unit_val = (cur_phase < M_PI) ? 1.0f : -1.0f;
     break;
-/*TODO  case WT_TRIANGLE: { // easier if we shift phase by -90deg
-    float shft_phase = cur_phase - (M_PI / 2.0f);
-    unit_val = (cur_phase < M_PI) ? 
-      (1.0f - (shft_phase / M_PI)) * 2.0f :
-      ((shft_phase / M_PI) - 1.0f) * 2.0f;
+  case WT_TRIANGLE: {
+    // easier if we shift phase by 2PI for first 1/4 of waveform
+    float cp_norm = cur_phase / M_PI; // .5::2.5 normalize of cur_phase
+    if (cp_norm < 0.5f) cp_norm += 2.0f;
+    unit_val = (cp_norm < 1.5f) ? 2.0f * (1.0f - cp_norm) : 2.0f * (cp_norm - 2.0f);
     } break;
-  case WT_SAWTOOTH: 
-//    unit_val = ((cur_phase / (2.0f * M_PI)) * 2.0f) - 1.0f;
-    unit_val = (cur_phase / M_PI) - 1.0f;
-    break; */
+  case WT_SAWTOOTH: {
+    float cp_norm = cur_phase / M_PI; // 0::2
+    unit_val = (cp_norm <= 1.0f) ? cp_norm : cp_norm - 2.0f;
+    } break;
   }
 
   // update phase, keeping it within 0 <= ph < 2*pi
@@ -2072,5 +2075,152 @@ float LogLinearBlock::CalcValue(float in) {
   //no default -- must handle all, so let compiler warn
   }*/
   return rval;
+}
+
+
+//////////////////////////////////
+//  AGCBlock			//
+//////////////////////////////////
+
+/*
+  This block provides both compression and automatic gain control. The purpose
+  is to bring the sound input into a range that can be handled by a neural
+  net, and that will dynamically adjust.
+  
+  Note that these functions are partially under top-down control in 
+  the vertebrate auditory system, so future work may include "soft" input
+  able to augment this automatic control. The amount of control applied 
+  can itself be monitored, to provide input into the net.
+  
+  For stereo feeds, the gain control applied to both fields is the same, so
+  the gain channel outputs are always mono.
+  
+References:
+  http://en.wikipedia.org/wiki/Audio_level_compression
+
+*/
+
+void AGCBlock::Initialize() {
+  dyn_range_out.Set(20, Level::UN_DBI); // 100:1, probably too much for neurons
+  agc_dt.Set(50, Duration::UN_TIME_MS);
+  ths_peak = 0.0;
+  ths_avg = 0.0;
+  cl = -48;
+  width = 80;
+//TEMP
+  targ_cl = cl;
+  targ_width = width;
+}
+
+void AGCBlock::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+}
+
+void AGCBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
+  inherited::InitThisConfig_impl(check, quiet, ok);
+  
+  DataBuffer* src_buff = in_block.GetBuffer();
+  if (!src_buff) return;
+  float_Matrix* in_mat = &src_buff->mat;
+  
+  if (CheckError((dyn_range_out <= 0), quiet, ok,
+    "dyn_range_out must be > 0")) return;
+    
+  if (check) return;
+  // TODO:
+  // calc the effective dt for the agc_dt
+  
+  out_buff.fs = src_buff->fs;
+  out_buff.fields = src_buff->fields;
+  out_buff.chans = src_buff->chans;
+  out_buff.vals = src_buff->vals;
+  
+  out_buff_gain.fs = src_buff->fs;
+  out_buff_gain.fields = 1;//src_buff->fields;
+  out_buff_gain.chans = 1;//src_buff->chans;
+  out_buff_gain.vals = 2;
+}
+
+void AGCBlock::AcceptData_impl(SignalProcBlock* src_blk,
+    DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps)
+{
+  float_Matrix* in_mat = &src_buff->mat;
+  ps = AcceptData_AGC(in_mat, stage);
+}
+
+SignalProcBlock::ProcStatus AGCBlock::AcceptData_AGC(float_Matrix* in_mat, int stage)
+{
+  ProcStatus ps = PS_OK;
+  float_Matrix* out_mat = &out_buff.mat;
+  const int in_items = in_mat->dim(ITEM_DIM);
+  const int in_fields = in_mat->dim(FIELD_DIM);
+  const int in_chans = in_mat->dim(CHAN_DIM);
+  const int in_vals = in_mat->dim(VAL_DIM);
+  
+  // gather stats on this batch
+  ths_peak = 0.0f;
+  ths_avg = 0.0; // accum, then we divide by n at end
+  for (int i = 0; i < in_items; ++i) {
+    for (int f = 0; f < in_fields; ++f) 
+    for (int chan = 0; chan < in_chans; ++chan) 
+    for (int val = 0; val < in_vals; ++val) 
+    {
+      float dat = in_mat->SafeEl(val, chan, f, i, stage);
+      ths_avg += dat;
+      if (ths_peak < dat) ths_peak = dat;
+    }
+    if (out_buff.NextIndex()) {
+      NotifyClientsBuffStageFull(&out_buff, 0, ps);
+    }
+  }
+  ths_avg /= (in_items * in_fields * in_chans * in_vals);
+  
+  UpdateAGC();
+  
+  for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) {
+    for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) 
+    for (int chan = 0; ((ps == PS_OK) && (chan < in_chans)); ++chan) 
+    for (int val = 0; ((ps == PS_OK) && (val < in_vals)); ++val) 
+    {
+      float dat = in_mat->SafeEl(val, chan, f, i, stage);
+      dat = CalcValue(dat);
+      out_mat->Set(dat, val, chan, f, out_buff.item, out_buff.stage);
+    }
+    if (out_buff.NextIndex()) {
+      NotifyClientsBuffStageFull(&out_buff, 0, ps);
+    }
+  }
+  return ps;
+}
+
+float AGCBlock::CalcValue(float in) {
+  if (in < 0) return 0; // only defined for non-neg values
+  // transform to dB -- sh/be ~ -96 < in_db <= 0
+  float in_db = 10 * log10(in); // note: the ref is 1, but ok if exceeded
+  // translate so that cf is at 0, and normalize
+  double rval = ((in_db - cl) / width) + 0.5; 
+  return rval;
+}
+
+void AGCBlock::UpdateAGC() {
+//TEMP, just apply it all now
+//  float 
+  targ_width = 80;
+//  float 
+  targ_cl = -48;
+  
+  // we consider width to be 2* diff from avg to peak
+  if (ths_avg > 0) {
+    double ths_ratio = ths_peak / ths_avg;
+    
+    targ_width = 10 * log10(2 * ths_ratio);
+    targ_cl = 10 * log10(ths_peak / ths_avg) ;
+  }
+  //TODO: apply exponential smoothing
+  
+  cl = targ_cl;
+  width = targ_width;
+//TEMP
+DataChanged(DCR_ITEM_UPDATED);
 }
 

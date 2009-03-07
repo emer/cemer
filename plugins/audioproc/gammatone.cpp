@@ -1619,8 +1619,8 @@ void HarmonicSieveBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   if (CheckError((chans_per_oct < 1), quiet, ok,
     "chans_per_oct must be >= 1"))
     return;
-  in_octs = src_buff->chans / cpo_eff;
   cpo_eff = (int)chans_per_oct.chans_per_oct;
+  in_octs = src_buff->chans / cpo_eff;
   // octs must be within input
   if (CheckError((out_octs >= in_octs), quiet, ok,
     "out_octs must be < num octaves available in input"))
@@ -1655,39 +1655,53 @@ void HarmonicSieveBlock::AcceptData_impl(SignalProcBlock* src_blk,
   const int in_chans = in_mat->dim(CHAN_DIM); 
   const int out_stage = out_buff.stage;
   
-  // let half_width just be 2/5 octave
-  const int half_width = (cpo_eff * 2) / 5;
-  const float neg_wt = 0.5f / half_width; 
+  int half_width = 1; // just use 1 -- will be fine for most sizes: 1/3 octave to 12/oct
+  const int num_on = 2*half_width + 1;
+  const float on_wt = 1.0f / num_on;
+  const int num_off = cpo_eff - num_on;
+  const float off_wt = 1.0f / num_off;
   // we process in terms of the output
+  // out_v is the output octave, 0..out_octs-1
+  // out_chan is the pitch (0..octave-1)
   for (int f = 0; (/*(ps == PS_OK) && */(f < in_fields)); ++f)
   for (int i = 0; (/*(ps == PS_OK) && */(i < in_items)); ++i)
-  for (int out_v = 0; (/*(ps == PS_OK) && */(out_v < out_vals)); ++out_v)
+  for (int out_v = 0; (/*(ps == PS_OK) && */(out_v < out_vals)); ++out_v) {
+    int max_harm = (in_octs - out_v) - 1;
   for (int out_ch = 0; out_ch < out_chans; ++out_ch)
   {
     // input fundamental (f0)
     int in_fund = (out_v * out_chans) + out_ch;
-    float out_val = in_mat->FastEl(0, in_fund, f, i, in_stage);
+    float fund_val = in_mat->FastEl(0, in_fund, f, i, in_stage);
+    float out_val = 0;
 //TEMP -- first stab at filter, just does n*f0 as +1 and others as -1/?
 //    for (int offs = -dog.half_width; offs <= dog.half_width; ++offs) {
     // harmonic (0-based) goes from 1 (2*f0) to max num avail
-    for (int harm = 1; harm < (in_octs - out_v - 1); ++harm) {
+    for (int harm = 1; harm <= max_harm; ++harm) {
       float sieve = 0; 
-      for (int offs = -half_width; offs <= half_width; ++offs) {
+      // offs from harm*f0 
+      float val = 0;
+      for (int offs = -(cpo_eff - (half_width + 1)); offs <= half_width; ++offs) {
         int in_ch = in_fund + (harm * cpo_eff) + offs;
-        float val = in_mat->FastEl(0, in_ch, f, i, in_stage);
+        if (in_ch >= in_chans) { // overflow: last +offs of last harm
+          // just add in the last val again, for balance
+          sieve += val * on_wt;
+          break; 
+        }
+        val = in_mat->SafeEl(0, in_ch, f, i, in_stage);
 //TEMP this is the simple version of the filter 
-        if (offs == 0) 
-          sieve += val; // wt=1
+        if (offs >= -half_width) 
+          sieve += val * on_wt;
         else
-          sieve -= val * neg_wt;
-//        out_val += dog.FilterPoint(offs, val);
+          sieve -= val * off_wt;
       }
       // TEMP -- we just weight each harm the same...
-      out_val += sieve;
-    }
+      out_val += sieve; // just the guy itself??? no fund component???
+    } //out_val = 0.0f/0.0f; //TEMP!!!!
     out_mat->FastEl(out_v, out_ch, f, i, out_stage) = out_val;
-  }
-  
+  }}
+//TEMP:
+//tabMisc::root->fpe_enable = taRootBase::FPE_INVALID;
+//tabMisc::root->UpdateAfterEdit();  
   // advance stage pointer, and notify clients
   if (out_buff.NextIndex())
     NotifyClientsBuffStageFull(&out_buff, 0, ps);
