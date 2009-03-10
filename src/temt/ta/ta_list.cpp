@@ -177,8 +177,9 @@ int taPtrList_impl::FindNameIdx(const String& nm) const {
 	}
 	goto slow_search;
       }
-      else {
+      else
 #endif
+	{
 	return i;
       }
     }
