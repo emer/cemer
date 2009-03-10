@@ -693,9 +693,12 @@ cssCPtr_String::operator bool() const {
 
 cssCPtr_String::operator taBase*() const {
   if(ptr_cnt > 0) { CvtErr("taBase*"); return NULL; }
-  void* rval = NULL;
-  if((tabMisc::root) && (tabMisc::root->FindMembeR(GetStringRef(), rval) != 0))
-    return (taBase*)rval;
+  if(tabMisc::root) {
+    MemberDef* md;
+    void* rval = tabMisc::root->FindMembeR(GetStringRef(), md);
+    if(rval)
+      return (taBase*)rval;
+  }
   return (taBase*)NULL;
 }
 

@@ -721,7 +721,8 @@ bool SetUnitsLit::GenCss_OneUnit(String& rval, DynEnum& un, const String& idnm,
   int colno;
   if(un.IsSet()) {
     DynEnumType* det = un.enum_type.ptr();
-    if(TestError(!idat->FindColName(det->name, colno, true), "GenCss",
+    colno = idat->FindColNameIdx(det->name, true);
+    if(TestError(colno < 0, "GenCss",
 		 "data table column:",det->name,"not found in input data table:",
 		 idat->name)) return false;
     if(un.NumVal() >= 0) {	// could be neg
@@ -731,7 +732,8 @@ bool SetUnitsLit::GenCss_OneUnit(String& rval, DynEnum& un, const String& idnm,
       else
 	rval += un.NameVal() + ");\n";
       if(set_nm) {
-	if(idat->FindColName("Name", colno, true)) {
+	colno = idat->FindColNameIdx("Name", true);
+	if(colno >= 0) {
 	  rval += il + "{ String nm = " + idnm + ".GetValAsString(" + String(colno)
 	    + ", -1); if(!nm.empty()) nm += \"_\"; nm += \"" + un.NameVal().after("_") + "\"; "
 	    + idnm + ".SetValAsString(nm, " + String(colno) + ", -1); }\n";
@@ -829,7 +831,8 @@ bool SetUnitsVar::GenCss_OneUnit(String& rval, ProgVarRef& un, const String& idn
   int colno;
   if((bool)un && (bool)un->dyn_enum_val.enum_type) {
     DynEnumType* det = un->dyn_enum_val.enum_type.ptr();
-    if(TestError(!idat->FindColName(det->name, colno, true), "GenCss",
+    colno = idat->FindColNameIdx(det->name, true);
+    if(TestError(colno < 0, "GenCss",
 		 "data table column:",det->name,"not found in input data table:",
 		 idat->name)) return false;
     // if var has ability to go negative, check..
@@ -844,7 +847,8 @@ bool SetUnitsVar::GenCss_OneUnit(String& rval, ProgVarRef& un, const String& idn
     else
       rval += un->name + ");\n";
     if(set_nm) {
-      if(idat->FindColName("Name", colno, true)) {
+      colno = idat->FindColNameIdx("Name", true);
+      if(colno >= 0) {
 	rval += il + "{ String nm = " + idnm + ".GetValAsString(" + String(colno)
 	  + ", -1); if(!nm.empty()) nm += \"_\"; String nwnm = " + un->name
 	  + "; nwnm = nwnm.after(\"_\"); nm += nwnm; "

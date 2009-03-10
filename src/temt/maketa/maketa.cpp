@@ -521,8 +521,7 @@ TypeDef* MTA::FindName(const char* nm, int& lex_token) {
 
 // sets the pre-parsed flag if item is on the pre_parse list...
 void MTA::SetPreParseFlag(TypeSpace& aspc, TypeSpace& pplist) {
-  int i;
-  for(i=0; i<aspc.size; i++) {
+  for(int i=0; i<aspc.size; i++) {
     TypeDef* td = aspc.FastEl(i);
     TypeDef* ttd;
     if((ttd = pplist.FindName(td->name)) != NULL)

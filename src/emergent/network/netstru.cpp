@@ -357,7 +357,8 @@ int UnitPtrList::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       taBase* old_own = itm->GetOwner(old_par->GetTypeDef());
       if(old_own != old_par) continue;
       String old_path = itm->GetPath(NULL, old_par);
-      Unit* nitm = (Unit*)new_par->FindFromPath(old_path);
+      MemberDef* md;
+      Unit* nitm = (Unit*)new_par->FindFromPath(old_path, md);
       if(nitm) {
 	ReplaceLinkIdx(i, nitm);
 	nchg++;
@@ -395,8 +396,6 @@ int UnitPtrList::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
 
 /////////////////////////////////////////////////////////////////////
 //	RecvCons
-
-int RecvCons::no_idx;
 
 void RecvCons::Initialize() {
   // derived classes need to set new basic con types
@@ -527,10 +526,11 @@ void RecvCons::LinkSendCons(Unit* ru) {
     if(!su) continue;
 
     SendCons* send_gp = NULL;
+    int sidx;
     if(send_idx >= 0)
       send_gp = su->send.SafeEl(send_idx);
     if(!send_gp)
-      send_gp = su->send.FindPrjn(prjn);
+      send_gp = su->send.FindPrjn(prjn, sidx);
     if(send_gp) {
       send_gp->units.LinkUnique(ru);
       send_gp->cons.LinkUnique(Cn(j));
@@ -584,22 +584,22 @@ Connection* RecvCons::FindConFrom(Unit* un, int& idx) const {
 }
 
 Connection* RecvCons::FindRecipRecvCon(Unit* su, Unit* ru, Layer* ru_lay) {
-  int g;
-  for(g=0; g<su->recv.size; g++) {
+  int idx;
+  for(int g=0; g<su->recv.size; g++) {
     RecvCons* cg = su->recv.FastEl(g);
     if(!cg->prjn || (cg->prjn->from.ptr() != ru_lay)) continue;
-    Connection* con = cg->FindConFrom(ru);
+    Connection* con = cg->FindConFrom(ru, idx);
     if(con) return con;
   }
   return NULL;
 }
 
 Connection* RecvCons::FindRecipSendCon(Unit* ru, Unit* su, Layer* su_lay) {
-  int g;
-  for(g=0; g<ru->send.size; g++) {
+  int idx;
+  for(int g=0; g<ru->send.size; g++) {
     SendCons* cg = ru->send.FastEl(g);
     if(!cg->prjn || (cg->prjn->layer != su_lay)) continue;
-    Connection* con = cg->FindConFrom(su);
+    Connection* con = cg->FindConFrom(su, idx);
     if(con) return con;
   }
   return NULL;
@@ -1199,8 +1199,6 @@ bool RecvCons_List::RemoveFrom(Layer* from) {
 
 /////////////////////////////////////////////////////////////////////
 //	SendCons
-
-int SendCons::no_idx = 0;
 
 void SendCons::Initialize() {
   // derived classes need to set new basic con types
@@ -2020,14 +2018,16 @@ bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
       return false;
   }
   else {
+    int sidx;
     Layer* su_lay = GET_OWNER(su,Layer);
-    if((recv_gp = recv.FindFrom(su_lay)) == NULL)	return false;
+    recv_gp = recv.FindFrom(su_lay, sidx);
+    if(!recv_gp)	return false;
     if(recv_gp->send_idx >= 0)
       send_gp = su->send.SafeEl(recv_gp->send_idx);
     else
       send_gp = NULL;
     if(send_gp == NULL)
-      send_gp = su->send.FindPrjn(recv_gp->prjn);
+      send_gp = su->send.FindPrjn(recv_gp->prjn, sidx);
     if(send_gp == NULL) return false;
     prjn = recv_gp->prjn;
   }
@@ -2040,6 +2040,7 @@ bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
 void Unit::DisConnectAll() {
   RecvCons* recv_gp;
   SendCons* send_gp;
+  int sidx;
   int g;
   int i;
   for(g=0; g<recv.size; g++) { // the removes cause the leaf_gp to crash..
@@ -2050,7 +2051,7 @@ void Unit::DisConnectAll() {
       else
 	send_gp = NULL;
       if(send_gp == NULL)
-	send_gp = recv_gp->Un(i)->send.FindPrjn(recv_gp->prjn);
+	send_gp = recv_gp->Un(i)->send.FindPrjn(recv_gp->prjn, sidx);
       if(send_gp)
 	send_gp->RemoveConUn(this);
       recv_gp->RemoveConIdx(i);
@@ -2065,7 +2066,7 @@ void Unit::DisConnectAll() {
       else
 	recv_gp = NULL;
       if(recv_gp == NULL)
-	recv_gp = send_gp->Un(i)->recv.FindPrjn(send_gp->prjn);
+	recv_gp = send_gp->Un(i)->recv.FindPrjn(send_gp->prjn, sidx);
       if(recv_gp)
 	recv_gp->RemoveConUn(this);
       send_gp->RemoveConIdx(i);
@@ -2168,13 +2169,14 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveForm
     int gi = (int)val.before(' ');
     String fm = val.after("Fm:");
     RecvCons* cg = NULL;
+    int idx;
     if(recv.size > gi) {
       cg = recv.FastEl(gi);
       if(cg->prjn->from->name != fm)
-	cg = recv.FindFromName(fm);
+	cg = recv.FindFromName(fm, idx);
     }
     else {
-      cg = recv.FindFromName(fm); 
+      cg = recv.FindFromName(fm, idx); 
     }
     if(cg) {		
       stat = cg->LoadWeights_strm(strm, this, fmt, quiet);
@@ -2604,7 +2606,7 @@ void Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
   taLeafItr ri;
   Unit* ru;
   FOR_ITR_EL(Unit, ru, layer->units., ri) {
-    RecvCons* cg = ru->recv.FindFrom(from);
+    RecvCons* cg = ru->recv.FindFrom(from, idx);
     if(cg == NULL)
       break;
     dt->AddBlankRow();
@@ -4753,9 +4755,8 @@ void Layer_Group::Clean() {
   Clean_impl();
 }
 
-////////////////////////
-//	Threading     //
-////////////////////////
+////////////////////////////////////////////////////////
+//	Threading
 
 void UnitCallTask::Initialize() {
   uidx_st = -1;

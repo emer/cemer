@@ -76,7 +76,6 @@ public:
 
   override String 	GetDesc() const { return desc; }
   override String 	GetTypeDecoKey() const { return "ProgType"; }
-  override bool	  	FindCheck(const String& nm) const { return (name == nm); }
   override void   	SetDefaultName() {} // make it local to list, set by list
   TA_SIMPLE_BASEFUNS(ProgType);
 protected:
@@ -140,9 +139,6 @@ public:
   override bool		BrowserExpandAll();
   override bool		BrowserCollapseAll();
 
-  override bool		FindCheck(const String& nm) const  { return (name == nm); }
-  // don't check inherits!!!
-
   inline void 	Initialize() 			{ value = 0; }
   inline void 	Destroy()			{ };
   inline void 	Copy_(const DynEnumItem& cp)	{ value = cp.value; desc = cp.desc; }
@@ -158,9 +154,6 @@ INHERITED(taList<DynEnumItem>)
 public:
 
   virtual int	FindNumIdx(int val) const; // find index of given numerical value
-  virtual int	FindNameIdx(const String& nm) const
-  { int rval=-1; FindName(nm, rval); return rval;}
-  // find index of given name value
 
   virtual void	OrderItems();
   // ensure that the item values are sequentially increasing
@@ -353,7 +346,6 @@ public:
   override String GetDesc() const { return desc; }
   override String GetDisplayName() const;
   override String GetTypeDecoKey() const { return "ProgVar"; }
-  override bool	  FindCheck(const String& nm) const { return (name == nm); }
 
   virtual TypeDef*	act_object_type() const; // #IGNORE the actual object type; never NULL (taBase min)
   virtual MemberDef* 	GetValMemberDef();
@@ -447,9 +439,9 @@ class TA_API ProgVarRef_List: public taPtrList<ProgVarRef> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of program variable references
 INHERITED(taList<ProgVarRef>)
 public:
-  ProgVarRef*	FindVar(ProgVar* var, int& idx = no_index) const;
+  ProgVarRef*	FindVar(ProgVar* var, int& idx) const;
   // return ref pointing to given var pointer (NULL if not found)
-  ProgVarRef*	FindVarName(const String& var_nm, int& idx = no_index) const;
+  ProgVarRef*	FindVarName(const String& var_nm, int& idx) const;
   // return ref pointing to given var name (NULL if not found)
 
   virtual int	UpdatePointers_NewPar(taBase* lst_own, taBase* old_par, taBase* new_par);

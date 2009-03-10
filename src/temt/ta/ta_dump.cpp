@@ -70,17 +70,18 @@ VPUnref::VPUnref(void* base_, TAPtr par, const String& p, MemberDef* md) {
 TAPtr VPUnref::Resolve() {
   MemberDef* md;
   TAPtr bs = tabMisc::root->FindFromPath(path, md);
-  if((md == NULL) || (bs == NULL))
+  if(!bs)
     return NULL;
-
-  if (md->type->ptr == 1) {
-    bs = *((TAPtr*)bs);
-    if(bs == NULL)
+  if(md) {
+    if(md->type->ptr == 1) {
+      bs = *((TAPtr*)bs);
+      if(!bs)
+	return NULL;
+    }
+    else if(md->type->ptr != 0) {
+      taMisc::Warning("*** ptr count != 0 in path:", path);
       return NULL;
-  }
-  else if(md->type->ptr != 0) {
-    taMisc::Warning("*** ptr count greater than 1 in path:", path);
-    return NULL;
+    }
   }
 
   if (memb_def && memb_def->type->InheritsFrom(&TA_taSmartRef)) {
@@ -296,23 +297,25 @@ TAPtr DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
   dumpMisc::path_subs.FixPath(td, tabMisc::root, pat);
   MemberDef* md = NULL;
   TAPtr rval = tabMisc::root->FindFromPath(pat, md);
-  if((md == NULL) || (rval == NULL)) {
+  if(!rval) {
     if(base != NULL)
       dumpMisc::vpus.Add(base, (TAPtr)par, pat, memb_def);
     return NULL;
   }
 
-  if(md->type->ptr == 1) {
-    rval = *((TAPtr*)rval);
-    if(rval == NULL) {
-      if(base != NULL)
-	dumpMisc::vpus.Add(base, (TAPtr)par, pat, memb_def);
+  if(md) {
+    if(md->type->ptr == 1) {
+      rval = *((TAPtr*)rval);
+      if(!rval) {
+	if(base != NULL)
+	  dumpMisc::vpus.Add(base, (TAPtr)par, pat, memb_def);
+	return NULL;
+      }
+    }
+    else if(md->type->ptr != 0) {
+      taMisc::Warning("*** ptr count greater than 0 in path:", pat);
       return NULL;
     }
-  }
-  else if(md->type->ptr != 0) {
-    taMisc::Warning("*** ptr count greater than 1 in path:", pat);
-    return NULL;
   }
   if(tok != NULL)
     tok->object = rval;
@@ -1175,28 +1178,24 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
     ppar_path = path.before(delim_pos);
 
   MemberDef* ppar_md = NULL;
-  TAPtr ppar = find_base->FindFromPath(ppar_path, ppar_md); // path-parent
+  taBase* ppar = find_base->FindFromPath(ppar_path, ppar_md); // path-parent
 
-  if(ppar == NULL) {
+  if(!ppar) {
     taMisc::Warning("*** Could not find a parent for:",el_path,"in",ppar_path);
     return false;
   }
 
-  if((ppar_md != NULL) && !(ppar_md->type->InheritsFrom(TA_taBase))) {
+  if(ppar_md && !ppar_md->type->InheritsFrom(TA_taBase)) {
     taMisc::Warning("*** Parent must be a taBase type for:",el_path,"in",ppar_path,
 	"type:",ppar_md->type->name);
     return false;
   }
 
-  void* tmp_ptr;
-  MemberDef* el_md = ppar->FindMembeR(el_path,tmp_ptr);
-  TAPtr el = (TAPtr)tmp_ptr;
+  MemberDef* el_md = NULL;
+  void* tmp_ptr = ppar->FindMembeR(el_path, el_md);
+  taBase* el = (TAPtr)tmp_ptr;
 
-// this is the original confusing logic
-//   if((el != NULL) && (el_md != NULL) && el_md->type->DerivesFrom(TA_taBase)
-//      && ((ptr_flag && ((el=(*(TAPtr *)el)) == NULL)) || (el->GetTypeDef() == this)))
-
-  if((el == NULL) || (el_md == NULL)) {   // did not find the thing
+  if(!el) {   // did not find the thing
     el = ppar->New(1,this);
     if(el == NULL) {
       taMisc::Warning("*** New: Could not make a token of:",name,"in:",ppar->GetPath(),

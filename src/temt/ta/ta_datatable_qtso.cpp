@@ -643,9 +643,10 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
 // items: add missing, order correctly, and update existing (will be only action 1st time)
   for (i = 0; i < cols->size; ++i) {
     dc = cols->FastEl(i);
-    int fm;
     bool first = false;
-    if ((dcs = (DataColView*)children.FindName(dc->GetName(), fm))) {
+    int fm = children.FindNameIdx(dc->GetName());
+    if (fm >= 0) {
+      dcs = (DataColView*)children.FastEl(fm);
       if (fm != i) children.MoveIdx(fm, i);
     } else {
       first = true;
@@ -3574,28 +3575,29 @@ void GraphTableView::InitFromUserData() {
   if(dt->HasUserData("NO_Z_AXIS")) {
     z_axis.on = false;
   }
+  String enum_tp_nm;
   if(dt->HasUserData("PLOT_STYLE")) {
-    int pstv = GetEnumVal(dt->GetUserDataAsString("PLOT_STYLE"));
+    int pstv = GetEnumVal(dt->GetUserDataAsString("PLOT_STYLE"), enum_tp_nm);
     if(pstv >= 0)
       plot_style = (PlotStyle)pstv;
   }
   if(dt->HasUserData("GRAPH_TYPE")) {
-    int pstv = GetEnumVal(dt->GetUserDataAsString("GRAPH_TYPE"));
+    int pstv = GetEnumVal(dt->GetUserDataAsString("GRAPH_TYPE"), enum_tp_nm);
     if(pstv >= 0)
       graph_type = (GraphType)pstv;
   }
   if(dt->HasUserData("POINT_SIZE")) {
-    int pstv = GetEnumVal(dt->GetUserDataAsString("POINT_SIZE"));
+    int pstv = GetEnumVal(dt->GetUserDataAsString("POINT_SIZE"), enum_tp_nm);
     if(pstv >= 0)
       point_size = (PointSize)pstv;
   }
   if(dt->HasUserData("COLOR_MODE")) {
-    int pstv = GetEnumVal(dt->GetUserDataAsString("COLOR_MODE"));
+    int pstv = GetEnumVal(dt->GetUserDataAsString("COLOR_MODE"), enum_tp_nm);
     if(pstv >= 0)
       color_mode = (ColorMode)pstv;
   }
   if(dt->HasUserData("MATRIX_MODE")) {
-    int pstv = GetEnumVal(dt->GetUserDataAsString("MATRIX_MODE"));
+    int pstv = GetEnumVal(dt->GetUserDataAsString("MATRIX_MODE"), enum_tp_nm);
     if(pstv >= 0)
       matrix_mode = (MatrixMode)pstv;
   }

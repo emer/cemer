@@ -382,8 +382,8 @@ void taGroup_impl::EnforceSameStru(const taGroup_impl& cp) {
 }
 
 int taGroup_impl::FindLeafEl(taBase* it) const {
-  int idx;
-  if((idx = FindEl(it)) >= 0)
+  int idx = FindEl(it);
+  if(idx >= 0)
     return idx;
 
   int new_idx = size;
@@ -391,70 +391,111 @@ int taGroup_impl::FindLeafEl(taBase* it) const {
   TAGPtr sbg;
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
-    if((idx = sbg->FindLeafEl(it)) >= 0)
+    idx = sbg->FindLeafEl(it);
+    if(idx >= 0)
       return idx + new_idx;
     new_idx += (int)sbg->leaves;
   }
   return -1;
 }
 
-taBase* taGroup_impl::FindLeafName_(const char* nm, int& idx) const {
-  taBase* rval;
-  if((rval = (taBase*)FindName_(nm,idx)))
-    return rval;
+int taGroup_impl::FindLeafNameIdx(const String& nm) const {
+  int idx = FindNameIdx(nm);
+  if(idx >= 0)
+    return idx;
 
   int new_idx = size;
   int i;
   TAGPtr sbg;
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
-    if((rval =(taBase*) sbg->FindLeafName_(nm, idx))) {
-      idx += new_idx;
-      return rval;
-    }
+    idx = sbg->FindLeafNameIdx(nm);
+    if(idx >= 0)
+      return idx + new_idx;
     new_idx += (int)sbg->leaves;
   }
-  idx = -1;
+  return -1;
+}
+
+taBase* taGroup_impl::FindLeafName_(const String& nm) const {
+  int idx = FindLeafNameIdx(nm);
+  if(idx >= 0)
+    return Leaf_(idx);
   return NULL;
 }
 
-taBase* taGroup_impl::FindLeafNameContains_(const String& nm, int& idx) const {
-  taBase* rval;
-  if((rval = (taBase*)FindNameContains_(nm,idx)))
-    return rval;
+int taGroup_impl::FindLeafNameContainsIdx(const String& nm) const {
+  int idx = FindNameContainsIdx(nm);
+  if(idx >= 0)
+    return idx;
 
   int new_idx = size;
   int i;
   TAGPtr sbg;
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
-    if((rval =(taBase*) sbg->FindNameContains_(nm, idx))) {
-      idx += new_idx;
-      return rval;
-    }
+    idx = sbg->FindLeafNameContainsIdx(nm);
+    if(idx >= 0)
+      return idx + new_idx;
     new_idx += (int)sbg->leaves;
   }
-  idx = -1;
+  return -1;
+}
+
+taBase* taGroup_impl::FindLeafNameContains_(const String& nm) const {
+  int idx = FindLeafNameContainsIdx(nm);
+  if(idx >= 0)
+    return Leaf_(idx);
   return NULL;
 }
 
-taBase* taGroup_impl::FindLeafType_(TypeDef* it, int& idx) const {
-  taBase* rval;
-  if((rval = FindType_(it,idx)))
-    return rval;
+int taGroup_impl::FindLeafNameTypeIdx(const String& nm) const {
+  int idx = FindNameTypeIdx(nm);
+  if(idx >= 0)
+    return idx;
 
   int new_idx = size;
   int i;
   TAGPtr sbg;
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
-    if((rval = sbg->FindType_(it, idx))) {
-      idx += new_idx;
-      return rval;
-    }
+    idx = sbg->FindLeafNameTypeIdx(nm);
+    if(idx >= 0)
+      return idx + new_idx;
     new_idx += (int)sbg->leaves;
   }
-  idx = -1;
+  return -1;
+}
+
+taBase* taGroup_impl::FindLeafNameType_(const String& nm) const {
+  int idx = FindLeafNameTypeIdx(nm);
+  if(idx >= 0)
+    return Leaf_(idx);
+  return NULL;
+}
+
+int taGroup_impl::FindLeafTypeIdx(TypeDef* it) const {
+  int idx = FindTypeIdx(it);
+  if(idx >= 0)
+    return idx;
+
+  int new_idx = size;
+  int i;
+  TAGPtr sbg;
+  for(i=0; i<gp.size; i++) {
+    sbg = FastGp_(i);
+    idx = sbg->FindLeafTypeIdx(it);
+    if(idx >= 0)
+      return idx + new_idx;
+    new_idx += (int)sbg->leaves;
+  }
+  return -1;
+}
+
+taBase* taGroup_impl::FindLeafType_(TypeDef* it) const {
+  int idx = FindLeafTypeIdx(it);
+  if(idx >= 0)
+    return Leaf_(idx);
   return NULL;
 }
 
@@ -469,58 +510,52 @@ TAGPtr taGroup_impl::FindMakeGpName(const String& nm, TypeDef* typ, bool& nw_ite
   return rval;
 }
 
-MemberDef* taGroup_impl::FindMembeR(const String& nm, void*& ptr) const {
+void* taGroup_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
+  ret_md = NULL;
+  
+  // first look for special list index syntax
   String idx_str = nm;
   idx_str = idx_str.before(']');
-  if(idx_str != "") {
+  if(idx_str.nonempty()) {
     idx_str = idx_str.after('[');
     int idx = atoi(idx_str);
-    if((size == 0) || (idx >= size)) {
-      ptr = NULL;
+    if((idx >= size) || (idx < 0)) {
       return NULL;
     }
-    ptr = el[idx];
-    return ReturnFindMd();
+    return el[idx];
   }
 
-  int i;
-  if((ptr = FindLeafName_(nm, i))) {
-    return ReturnFindMd();
-  }
+  // then look for items in the list itself, by name or type
+  taBase* fnd = FindLeafNameType_(nm);
+  if(fnd)
+    return fnd;
 
-  MemberDef* rval;
-  if((rval = GetTypeDef()->members.FindNameAddrR(nm, (void*)this, ptr)) != NULL)
+  // then look on members of list obj itself, recursively 
+  void* rval = taBase::FindMembeR(nm, ret_md); // don't call taList guy!
+  if(rval)
     return rval;
-  int max_srch = MIN(taMisc::search_depth, size);
-  for(i=0; i<max_srch; i++) {
-    taBase* first_el = (taBase*)FastEl_(i);
-    if((first_el != NULL) && // only search owned objects
-       ((first_el->GetOwner()==NULL) || (first_el->GetOwner() == (taBase *) this))) {
-      return first_el->FindMembeR(nm, ptr);
+
+  // finally, look recursively on owned objs on list
+  //  int max_srch = MIN(taMisc::search_depth, size);
+  // these days, it just doesn't make sense to restrict!
+  for(int i=0; i<size; i++) {
+    taBase* itm = (taBase*)FastEl_(i);
+    if(itm && itm->GetOwner() == this) {
+      rval = itm->FindMembeR(nm, ret_md);
+      if(rval)
+	return rval;
     }
   }
-  ptr = NULL;
-  return NULL;
-}
 
-MemberDef* taGroup_impl::FindMembeR(TypeDef* it, void*& ptr) const {
-  int i;
-  if((ptr = FindLeafType_(it, i))) {
-    return ReturnFindMd();
+  // for groups, then just try the subgroups -- this will be a tiny bit redundant, but ok..
+  TAGPtr sbg;
+  for(int i=0; i<gp.size; i++) {
+    sbg = FastGp_(i);
+    rval = sbg->FindMembeR(nm, ret_md);
+    if(rval)
+      return rval;
   }
 
-  MemberDef* rval;
-  if((rval = GetTypeDef()->members.FindTypeAddrR(it, (void*)this, ptr)) != NULL)
-    return rval;
-  int max_srch = MIN(taMisc::search_depth, size);
-  for(i=0; i<max_srch; i++) {
-    taBase* first_el = (taBase*)FastEl_(i);
-    if((first_el != NULL) && // only search owned objects
-       ((first_el->GetOwner()==NULL) || (first_el->GetOwner() == (taBase *) this))) {
-      return first_el->FindMembeR(it, ptr);
-    }
-  }
-  ptr = NULL;
   return NULL;
 }
 
@@ -542,9 +577,8 @@ taBase* taGroup_impl::Leaf_(int idx) const {
     return (taBase*)el[idx];
 
   int nw_idx = (int)idx - size;
-  int i;
   TAGPtr sbg;
-  for(i=0; i<gp.size; i++) {
+  for(int i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
     if(sbg->leaves && (sbg->leaves > nw_idx))
       return sbg->Leaf_(nw_idx);
@@ -699,8 +733,8 @@ bool taGroup_impl::RemoveLeafIdx(int idx) {
 }
 
 bool taGroup_impl::RemoveLeafName(const char* it) {
-  int i;
-  if((FindLeafName_(it, i)))
+  int i = FindLeafNameIdx(it);
+  if(i >= 0)
     return RemoveLeafIdx(i);
   return false;
 }

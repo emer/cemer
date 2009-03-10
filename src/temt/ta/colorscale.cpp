@@ -457,7 +457,6 @@ void ScaleRange::UpdateAfterEdit_impl() {
 //////////////////////////
 
 const iColor ColorScale::def_color;
-float ColorScale::sc_val_def = 0.0f;
 
 void ColorScale::Initialize() {
   chunks = 0;
@@ -535,8 +534,8 @@ float ColorScale::GetAbsPercent(float val){
     return ((zero - min) == 0.0f) ? 0.0f : fabs((zero - val) / (zero - min));
 }
 
-const iColor ColorScale::GetColor(float val, iColor* maincolor,
-    iColor* contrast, float& sc_val) 
+const iColor ColorScale::GetColor(float val, float& sc_val, iColor* maincolor,
+    iColor* contrast) 
 {
   iColor m;
   iColor c;
@@ -610,7 +609,7 @@ void ColorScale::NewDefaults() {
   String tmpath = ".ColorScaleSpec_Group";
   ColorScaleSpec_Group* gp =
     (ColorScaleSpec_Group*)tabMisc::root->FindFromPath(tmpath, md);
-  if((gp == NULL) || (md == NULL)) {
+  if(!gp) {
     taMisc::Error("ColorScaleSpec_Group not found from root in NewDefaults");
     return;
   }

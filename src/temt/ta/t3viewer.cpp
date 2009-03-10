@@ -1522,7 +1522,8 @@ IDataViewWidget* T3DataViewFrame::ConstrWidget_impl(QWidget* gui_parent) {
   iT3DataViewFrame* rval = new iT3DataViewFrame(this, gui_parent);
   // make the corresponding viewpanelset
   MainWindowViewer* mwv = GET_MY_OWNER(MainWindowViewer);
-  PanelViewer* pv = (PanelViewer*)mwv->FindFrameByType(&TA_PanelViewer);
+  int idx;
+  PanelViewer* pv = (PanelViewer*)mwv->FindFrameByType(&TA_PanelViewer, idx);
   iTabViewer* itv = pv->widget();
   taiDataLink* dl = (taiDataLink*)GetDataLink();
   iViewPanelSet* ivps = new iViewPanelSet(dl);
@@ -1991,7 +1992,8 @@ T3DataViewFrame* T3DataViewer::GetBlankOrNewT3DataViewFrame(taBase* obj) {
   taProject* proj = (taProject*)obj->GetOwner(&TA_taProject);
   MainWindowViewer* vw = MainWindowViewer::GetDefaultProjectViewer(proj);
   if (!vw) return NULL; // shouldn't happen
-  T3DataViewer* t3vw = (T3DataViewer*)vw->FindFrameByType(&TA_T3DataViewer);
+  int idx;
+  T3DataViewer* t3vw = (T3DataViewer*)vw->FindFrameByType(&TA_T3DataViewer, idx);
   if (!t3vw) return NULL; // shouldn't happen
   // make in default, if default is empty
   fr = t3vw->FirstEmptyT3DataViewFrame();

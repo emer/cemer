@@ -21,7 +21,6 @@
 // needed just for the taMisc::display_width variable..
 #include "ta_type.h"
 
-int taPtrList_impl::no_index;
 taPtrList_impl taPtrList_impl::scratch_list;
 
 taHashVal taPtrList_impl::HashCode_String(const String& string_) {
@@ -164,39 +163,45 @@ int taPtrList_impl::FindEl_(const void* it) const {
   return -1;
 }
 
-void* taPtrList_impl::FindName_(const String& nm, int& idx) const {
-  idx = -1;
+int taPtrList_impl::FindNameIdx(const String& nm) const {
   if (hash_table && (hash_table->key_type == taHashTable::KT_NAME)) {
-    idx = hash_table->FindListEl(HashCode_String(nm));
-    if(idx >=0) {
+    int i = hash_table->FindListEl(HashCode_String(nm));
+    if(i >=0) {
 #ifdef DEBUG
-      if(!El_FindCheck_(el[idx], nm)) { // sometimes the hash can be wrong!!!
-	cerr << "ERROR -- please report this bug!!!  Hash table error!: " << nm << " != " << El_GetName_(el[idx]) << endl;
-	if(HashCode_String(nm) != HashCode_String(El_GetName_(el[idx]))) {
+      if(!El_FindCheck_(el[i], nm)) { // sometimes the hash can be wrong!!!
+	cerr << "ERROR -- please report this bug!!!  Hash table error!: " << nm << " != " << El_GetName_(el[i]) << endl;
+	if(HashCode_String(nm) != HashCode_String(El_GetName_(el[i]))) {
 	  cerr << "Hash error is not because of code equality!  Must be overwriting item!"
 	       << endl;
 	  return NULL;		// not going to help to search
 	}
 	goto slow_search;
       }
-      else
+      else {
 #endif
-	return el[idx];
+	return i;
+      }
     }
     else
-      return NULL;
+      return -1;
   }
 #ifdef DEBUG
 slow_search:
 #endif
   for(int i=0; i < size; i++) {
     if(El_FindCheck_(el[i], nm)) {
-      idx = i;
-      return el[i];
+      return i;
     }
   }
+  return -1;
+}
+
+void* taPtrList_impl::FindName_(const String& nm) const {
+  int idx = FindNameIdx(nm);
+  if(idx >= 0) return el[idx];
   return NULL;
 }
+
 
 void taPtrList_impl::Hijack(taPtrList_impl& src) {
   // normally only used when already empty, but this guarantees it!
@@ -344,8 +349,8 @@ bool taPtrList_impl::AddUnique_(void* it) {
   return true;
 }
 bool taPtrList_impl::AddUniqNameNew_(void* it) {
-  int i;
-  if((FindName_(El_GetName_(it),i))) {
+  int i = FindNameIdx(El_GetName_(it));
+  if(i >= 0) {
     ReplaceIdx_(i,it);
     return false;
   }
@@ -353,8 +358,8 @@ bool taPtrList_impl::AddUniqNameNew_(void* it) {
   return true;
 }
 void* taPtrList_impl::AddUniqNameOld_(void* it) {
-  int i;
-  if((FindName_(El_GetName_(it),i))) {
+  int i = FindNameIdx(El_GetName_(it));
+  if(i >= 0) {
     return el[i];
   }
   Add_(it);
@@ -390,8 +395,8 @@ bool taPtrList_impl::RemoveEl_(void* it) {
   return RemoveIdx(i);
 }
 bool taPtrList_impl::RemoveName(const String& it) {
-  int i;
-  if(FindName_(it, i))
+  int i = FindNameIdx(it);
+  if(i >= 0)
     return RemoveIdx(i);
   return false;
 }
@@ -435,8 +440,8 @@ bool taPtrList_impl::ReplaceEl_(void* ol, void* nw) {
   return true;
 }
 bool taPtrList_impl::ReplaceName_(const String& ol, void* nw) {
-  int i;
-  if(FindName_(ol, i))
+  int i = FindNameIdx(ol);
+  if(i >= 0)
     return ReplaceIdx_(i, nw);
   return false;
 }
@@ -501,8 +506,8 @@ bool taPtrList_impl::LinkUnique_(void* it) {
 }
 
 bool taPtrList_impl::LinkUniqNameNew_(void* it) {
-  int i;
-  if(FindName_(El_GetName_(it),i)) {
+  int i = FindNameIdx(El_GetName_(it));
+  if(i >= 0) {
     ReplaceLinkIdx_(i,it);	// semantics of LinkUniqName is to update..
     return false;
   }
@@ -511,8 +516,8 @@ bool taPtrList_impl::LinkUniqNameNew_(void* it) {
 }
 
 void* taPtrList_impl::LinkUniqNameOld_(void* it) {
-  int i;
-  if(FindName_(El_GetName_(it),i)) {
+  int i = FindNameIdx(El_GetName_(it));
+  if(i >= 0) {
     return el[i];
   }
   Link_(it);
@@ -552,8 +557,8 @@ bool taPtrList_impl::ReplaceLinkEl_(void* ol, void* nw) {
 }
 
 bool taPtrList_impl::ReplaceLinkName_(const String& ol, void* nw) {
-  int i;
-  if(FindName_(ol, i))
+  int i = FindNameIdx(ol);
+  if(i >= 0)
     return ReplaceLinkIdx_(i, nw);
   return false;
 }

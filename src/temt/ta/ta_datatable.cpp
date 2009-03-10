@@ -676,8 +676,6 @@ const KeyString DataTableCols::GetListColKey(int col) const {
 //	DataTable	//
 //////////////////////////
 
-int DataTable::idx_def_arg = 0;
-
 void DataTable::Initialize() {
   rows = 0;
   data_flags = (DataFlags)(SAVE_ROWS | AUTO_CALC);
@@ -998,8 +996,7 @@ bool DataTable::SetMatrixFlatVal(const Variant& val, Variant col, int row, int c
 //	Column Name Access
 
 const Variant DataTable::GetValColName(const String& col_nm, int row) const {
-  int col;
-  DataCol* da = FindColName(col_nm, col, true);
+  DataCol* da = FindColName(col_nm, true);
   int i;
   if (da &&  idx_err(row, da->rows(), i))
     return da->GetValAsVar(i);
@@ -1007,8 +1004,7 @@ const Variant DataTable::GetValColName(const String& col_nm, int row) const {
 }
 
 bool DataTable::SetValColName(const Variant& val, const String& col_nm, int row) {
-  int col;
-  DataCol* da = FindColName(col_nm, col, true);
+  DataCol* da = FindColName(col_nm, true);
   if (!da) return false;
   if (da->is_matrix_err()) return false;
   int i;
@@ -1020,8 +1016,7 @@ bool DataTable::SetValColName(const Variant& val, const String& col_nm, int row)
 
 const Variant DataTable::GetMatrixValColName(const String& col_nm, int row,
 					     int d0, int d1, int d2, int d3) const {
-  int col;
-  DataCol* da = FindColName(col_nm, col, true);
+  DataCol* da = FindColName(col_nm, true);
   if (!da || da->not_matrix_err()) return false;
   int i;
   if (da &&  idx_err(row, da->rows(), i))
@@ -1031,8 +1026,7 @@ const Variant DataTable::GetMatrixValColName(const String& col_nm, int row,
 
 bool DataTable::SetMatrixValColName(const Variant& val, const String& col_nm,
 				    int row, int d0, int d1, int d2, int d3) {
-  int col;
-  DataCol* da = FindColName(col_nm, col, true);
+  DataCol* da = FindColName(col_nm, true);
   if (!da || da->not_matrix_err()) return false;
   int i;
   if (idx_err(row, da->rows(), i)) {
@@ -1043,8 +1037,7 @@ bool DataTable::SetMatrixValColName(const Variant& val, const String& col_nm,
 
 const Variant DataTable::GetMatrixFlatValColName(const String& col_nm, int row,
 						 int cell) const {
-  int col;
-  DataCol* da = FindColName(col_nm, col, true);
+  DataCol* da = FindColName(col_nm, true);
   if (!da || da->not_matrix_err()) return false;
   int i;
   if (da &&  idx_err(row, da->rows(), i))
@@ -1054,8 +1047,7 @@ const Variant DataTable::GetMatrixFlatValColName(const String& col_nm, int row,
 
 bool DataTable::SetMatrixFlatValColName(const Variant& val, const String& col_nm,
 					int row, int cell) {
-  int col;
-  DataCol* da = FindColName(col_nm, col, true);
+  DataCol* da = FindColName(col_nm, true);
   if (!da || da->not_matrix_err()) return false;
   int i;
   if (idx_err(row, da->rows(), i)) {
@@ -1068,11 +1060,9 @@ bool DataTable::SetMatrixFlatValColName(const Variant& val, const String& col_nm
 
 const Variant DataTable::GetValColRowName(const String& col_nm, const String& row_col_name,
 					  const Variant& row_value) const {
-  int col;
-  DataCol* cda = FindColName(col_nm, col, true);
+  DataCol* cda = FindColName(col_nm, true);
   if(!cda) return _nilVariant;
-  int rcol;
-  DataCol* rda = FindColName(row_col_name, rcol, true);
+  DataCol* rda = FindColName(row_col_name, true);
   if(!rda) return _nilVariant;
   int row = rda->FindVal(row_value);
   if(TestError(row < 0, "GetValColRowName", "value:", row_value.toString(),
@@ -1084,11 +1074,9 @@ const Variant DataTable::GetValColRowName(const String& col_nm, const String& ro
 bool DataTable::SetValColRowName(const Variant& val, const String& col_nm,
 				 const String& row_col_name,
 				 const Variant& row_value) {
-  int col;
-  DataCol* cda = FindColName(col_nm, col, true);
+  DataCol* cda = FindColName(col_nm, true);
   if(!cda || cda->is_matrix_err()) return false;
-  int rcol;
-  DataCol* rda = FindColName(row_col_name, rcol, true);
+  DataCol* rda = FindColName(row_col_name, true);
   if(!rda) return false;
   int row = rda->FindVal(row_value);
   if(TestError(row < 0, "SetValColRowName", "value:", row_value.toString(),
@@ -1102,11 +1090,9 @@ const Variant DataTable::GetMatrixValColRowName(const String& col_nm,
 						const String& row_col_name,
 						const Variant& row_value,
 						int d0, int d1, int d2, int d3) const {
-  int col;
-  DataCol* cda = FindColName(col_nm, col, true);
+  DataCol* cda = FindColName(col_nm, true);
   if(!cda || cda->not_matrix_err()) return _nilVariant;
-  int rcol;
-  DataCol* rda = FindColName(row_col_name, rcol, true);
+  DataCol* rda = FindColName(row_col_name, true);
   if(!rda) return _nilVariant;
   int row = rda->FindVal(row_value);
   if(TestError(row < 0, "GetMatrixValColRowName", "value:", row_value.toString(),
@@ -1119,11 +1105,9 @@ bool DataTable::SetMatrixValColRowName(const Variant& val, const String& col_nm,
 				       const String& row_col_name,
 				       const Variant& row_value,
 				       int d0, int d1, int d2, int d3) {
-  int col;
-  DataCol* cda = FindColName(col_nm, col, true);
+  DataCol* cda = FindColName(col_nm, true);
   if (!cda || cda->not_matrix_err()) return false;
-  int rcol;
-  DataCol* rda = FindColName(row_col_name, rcol, true);
+  DataCol* rda = FindColName(row_col_name, true);
   if(!rda) return false;
   int row = rda->FindVal(row_value);
   if(TestError(row < 0, "SetMatrixValColRowName", "value:", row_value.toString(),
@@ -1137,11 +1121,9 @@ const Variant DataTable::GetMatrixFlatValColRowName(const String& col_nm,
 						const String& row_col_name,
 						const Variant& row_value,
 						int cell) const {
-  int col;
-  DataCol* cda = FindColName(col_nm, col, true);
+  DataCol* cda = FindColName(col_nm, true);
   if(!cda || cda->not_matrix_err()) return _nilVariant;
-  int rcol;
-  DataCol* rda = FindColName(row_col_name, rcol, true);
+  DataCol* rda = FindColName(row_col_name, true);
   if(!rda) return _nilVariant;
   int row = rda->FindVal(row_value);
   if(TestError(row < 0, "GetMatrixFlatValColRowName", "value:", row_value.toString(),
@@ -1154,11 +1136,9 @@ bool DataTable::SetMatrixFlatValColRowName(const Variant& val, const String& col
 				       const String& row_col_name,
 				       const Variant& row_value,
 				       int cell) {
-  int col;
-  DataCol* cda = FindColName(col_nm, col, true);
+  DataCol* cda = FindColName(col_nm, true);
   if (!cda || cda->not_matrix_err()) return false;
-  int rcol;
-  DataCol* rda = FindColName(row_col_name, rcol, true);
+  DataCol* rda = FindColName(row_col_name, true);
   if(!rda) return false;
   int row = rda->FindVal(row_value);
   if(TestError(row < 0, "SetMatrixFlatValColRowName", "value:", row_value.toString(),
@@ -1185,16 +1165,14 @@ bool DataTable::InitValsToRowNo(Variant col) {
 }
 
 bool DataTable::InitValsColName(const Variant& init_val, const String& col_nm) {
-  int col;
-  DataCol* da = FindColName(col_nm, col, true);
+  DataCol* da = FindColName(col_nm, true);
   if (!da) return false;
   da->InitVals(init_val);
   return true;
 }
 
 bool DataTable::InitValsToRowNoColName(const String& col_nm) {
-  int col;
-  DataCol* da = FindColName(col_nm, col, true);
+  DataCol* da = FindColName(col_nm, true);
   if (!da) return false;
   da->InitValsToRowNo();
   return true;
@@ -1209,8 +1187,7 @@ int DataTable::FindVal(const Variant& val, Variant col, int st_row) const {
 }
 
 int DataTable::FindValColName(const Variant& val, const String& col_nm, int st_row) const {
-  int col;
-  DataCol* da = FindColName(col_nm, col, true);
+  DataCol* da = FindColName(col_nm, true);
   if (!da) return false;
   return da->FindVal(val, st_row);
 }
@@ -1244,14 +1221,13 @@ int DataTable::FindMultiValColName(int st_row, const Variant& val1, const String
   DataCol* col4=NULL;
   DataCol* col5=NULL;
   DataCol* col6=NULL;
-  int idx;
 
-  if(col_nm1.nonempty()) col1 = FindColName(col_nm1, idx, true);
-  if(col_nm2.nonempty()) col2 = FindColName(col_nm2, idx, true);
-  if(col_nm3.nonempty()) col3 = FindColName(col_nm3, idx, true);
-  if(col_nm4.nonempty()) col4 = FindColName(col_nm4, idx, true);
-  if(col_nm5.nonempty()) col5 = FindColName(col_nm5, idx, true);
-  if(col_nm6.nonempty()) col6 = FindColName(col_nm6, idx, true);
+  if(col_nm1.nonempty()) col1 = FindColName(col_nm1, true);
+  if(col_nm2.nonempty()) col2 = FindColName(col_nm2, true);
+  if(col_nm3.nonempty()) col3 = FindColName(col_nm3, true);
+  if(col_nm4.nonempty()) col4 = FindColName(col_nm4, true);
+  if(col_nm5.nonempty()) col5 = FindColName(col_nm5, true);
+  if(col_nm6.nonempty()) col6 = FindColName(col_nm6, true);
   
   return FindMultiValCol(st_row, val1, col1, val2, col2, val3, col3, val4, col4, 
 			 val5, col5, val6, col6); 
@@ -1341,8 +1317,7 @@ taMatrix* DataTable::GetValAsMatrix(int col, int row) {
 }
 
 taMatrix* DataTable::GetValAsMatrixColName(const String& col_nm, int row) {
-  int col;
-  DataCol* da = FindColName(col_nm, col, true);
+  DataCol* da = FindColName(col_nm, true);
   int i;
   if (da &&  idx_err(row, da->rows(), i))
     return da->GetValAsMatrix(i);
@@ -1352,11 +1327,9 @@ taMatrix* DataTable::GetValAsMatrixColName(const String& col_nm, int row) {
 taMatrix* DataTable::GetValAsMatrixColRowName(const String& col_nm, const String& row_col_name,
 	const Variant& row_value)
 {
-  int col;
-  DataCol* cda = FindColName(col_nm, col, true);
+  DataCol* cda = FindColName(col_nm, true);
   if(!cda) return NULL;
-  int rcol;
-  DataCol* rda = FindColName(row_col_name, rcol, true);
+  DataCol* rda = FindColName(row_col_name, true);
   if(!rda) return NULL;
   int row = rda->FindVal(row_value);
   if(row >= 0)
@@ -1436,8 +1409,7 @@ bool DataTable::SetValAsMatrix(const taMatrix* val, int col, int row) {
 }
 
 bool DataTable::SetValAsMatrixColName(const taMatrix* val, const String& col_nm, int row) {
-  int col;
-  DataCol* da = FindColName(col_nm, col, true);
+  DataCol* da = FindColName(col_nm, true);
   return SetValAsMatrix_impl(val, da, row);
 }
 
@@ -1684,7 +1656,8 @@ int DataTable::MinLength() {
 DataCol* DataTable::NewCol(DataCol::ValType val_type, const String& col_nm) {
   if (!NewColValid(col_nm)) return NULL;
   StructUpdate(true);
-  DataCol* rval = NewCol_impl(val_type, col_nm);
+  int idx;
+  DataCol* rval = NewCol_impl(val_type, col_nm, idx);
   rval->Init(); // asserts geom
   rval->EnforceRows(rows);	// new guys always get same # of rows as current table
   StructUpdate(false);
@@ -1743,8 +1716,9 @@ double_Data* DataTable::NewColDouble(const String& col_nm) {
 
 DataCol* DataTable::NewColFromChannelSpec_impl(ChannelSpec* cs) {
   DataCol* rval = NULL;
+  int idx;
   if (cs->isMatrix()) {
-    rval = NewColMatrixN(cs->val_type, cs->name, cs->cellGeom());
+    rval = NewColMatrixN(cs->val_type, cs->name, cs->cellGeom(), idx);
   } else {
     rval = NewCol(cs->val_type, cs->name); 
   }
@@ -1779,7 +1753,8 @@ DataCol* DataTable::NewColMatrix(DataCol::ValType val_type, const String& col_nm
     return NewCol(val_type, col_nm);
   }
   MatrixGeom geom(dims, d0, d1, d2, d3, d4, d5, d6);
-  DataCol* rval = NewColMatrixN(val_type, col_nm, geom);
+  int idx;
+  DataCol* rval = NewColMatrixN(val_type, col_nm, geom, idx);
   return rval;
 }
 
@@ -1799,7 +1774,8 @@ DataCol* DataTable::NewColMatrixN(DataCol::ValType val_type,
 
 DataCol* DataTable::NewColMatrixN_gui(DataCol::ValType val_type, const String& col_nm,
 				      const MatrixGeom& cell_geom) {
-  DataCol* rval = NewColMatrixN(val_type, col_nm, cell_geom);
+  int idx;
+  DataCol* rval = NewColMatrixN(val_type, col_nm, cell_geom, idx);
   if(rval && taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
   }
@@ -1822,31 +1798,40 @@ bool DataTable::RenameCol(const String& cur_nm, const String& new_nm) {
   return true;
 }
 
-DataCol* DataTable::FindColName(const String& col_nm, int& col_idx, bool err_msg) const {
+DataCol* DataTable::FindColName(const String& col_nm, bool err_msg) const {
   if(col_nm.empty()) return NULL;
-  DataCol* da = data.FindName(col_nm, col_idx);
+  DataCol* da = data.FindName(col_nm);
   TestError(!da && err_msg, "FindColName",  "could not find column named:", col_nm);
   return da;
+}
+
+int DataTable::FindColNameIdx(const String& col_nm, bool err_msg) const {
+  if(col_nm.empty()) return -1;
+  int idx = data.FindNameIdx(col_nm);
+  TestError(idx < 0 && err_msg, "FindColNameIdx",  "could not find column named:", col_nm);
+  return idx;
 }
 
 DataCol* DataTable::FindMakeCol(const String& col_nm,
   ValType val_type) 
 {
-  return FindMakeColName(col_nm, idx_def_arg, val_type, 0);
+  int idx;
+  return FindMakeColName(col_nm, idx, val_type, 0);
 }
 
 DataCol* DataTable::FindMakeColMatrix(const String& col_nm,
   ValType val_type, int dims,
   int d0, int d1, int d2, int d3, int d4, int d5, int d6)
 {
-  return FindMakeColName(col_nm, idx_def_arg, val_type,
+  int idx;
+  return FindMakeColName(col_nm, idx, val_type,
     dims, d0, d1, d2, d3, d4, d5, d6);
 }
 
 DataCol* DataTable::FindMakeColMatrixN(const String& col_nm,
   ValType val_type, const MatrixGeom& cell_geom, int& col_idx)
 {
-  DataCol* da = FindColName(col_nm, col_idx);
+  DataCol* da = FindColName(col_nm);
   if(da) {
     if(da->valType() != (ValType)val_type) {
       StructUpdate(true);
@@ -1883,12 +1868,13 @@ DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
   int d3, int d4, int d5, int d6) 
 {
   if (dims < 0) dims = 0; // causes invalid results if -ve; 0=flag for scalar
-  DataCol* da = FindColName(col_nm, col_idx);
-  if(da) {
+  col_idx = FindColNameIdx(col_nm);
+  if(col_idx >= 0) {
+    DataCol* da = data.FastEl(col_idx);
     if(da->valType() != (ValType)val_type) {
       StructUpdate(true);
       // need to remove old guy first, because validate doesn't permit dupl names
-      data.RemoveEl(da); // get rid of that guy
+      data.RemoveIdx(col_idx); // get rid of that guy
       if(dims > 0)
 	da = NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4, d5, d6);
       else
@@ -1959,8 +1945,7 @@ void DataTable::ChangeColTypeGeom_impl(DataCol* src, ValType new_type, const Mat
 void DataTable::ChangeColTypeGeom(const String& col_nm, ValType new_type,
 				  int dims, int d0, int d1, int d2, int d3,
 				  int d4, int d5, int d6) {
-  int col_idx;
-  DataCol* da = FindColName(col_nm, col_idx, true);
+  DataCol* da = FindColName(col_nm, true);
   if(!da) return;
   MatrixGeom mg;
   mg.SetGeom(dims, d0, d1, d2, d3, d4, d5, d6);
@@ -2446,19 +2431,21 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim) {
     MatrixGeom mat_geom;
     // val_typ =-1 means type not explicitly supplied -- we'll use existing if name found
     DataCol::DecodeHeaderName(str, base_nm, val_typ, mat_idx, mat_geom);
-    int idx;
-    DataCol* da = FindColName(base_nm, idx);
+    int idx = FindColNameIdx(base_nm);
+    DataCol* da = NULL;
+    if(idx >= 0) da = data.FastEl(idx);
     if (val_typ < 0) {
-     if (da) val_typ = da->valType(); // the actual type
-     else val_typ = VT_FLOAT; // the default type
+      if (da) val_typ = da->valType(); // the actual type
+      else val_typ = VT_FLOAT; // the default type
     }
     if(!da || (da->valType() != val_typ)) { // only make new one if val type doesn't match
       // mat_geom is only decorated onto first col and should not be remade...
       // if none was supplied, then set it for scalar col (the default)
-      if (mat_geom.size == 0)
-      da = FindMakeColName(base_nm, idx, (ValType)val_typ, mat_geom.size,
-			   mat_geom[0], mat_geom[1], mat_geom[2],
-			   mat_geom[3]);
+      if (mat_geom.size == 0) {
+	da = FindMakeColName(base_nm, idx, (ValType)val_typ, mat_geom.size,
+			     mat_geom[0], mat_geom[1], mat_geom[2],
+			     mat_geom[3]);
+      }
     }
     load_col_idx.Add(idx);
     if(mat_idx.size > 0) {
@@ -2985,8 +2972,7 @@ String DataTable::ColStatsCol(DataCol* col) {
 }
 
 String DataTable::ColStatsName(const String& col_nm) {
-  int col;
-  DataCol* cda = FindColName(col_nm, col, true);
+  DataCol* cda = FindColName(col_nm, true);
   if (!cda) return _nilString;
   return cda->ColStats();
 }

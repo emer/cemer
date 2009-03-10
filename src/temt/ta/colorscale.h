@@ -226,7 +226,6 @@ class TA_API ColorScale : public taNBase {
 INHERITED(taNBase)
 public:
   static const iColor	def_color; 
-  static float		sc_val_def; // #HIDDEN def arg for sc_val
 
   int			chunks;		// number of chunks to divide scale into
   float 		min;
@@ -250,8 +249,8 @@ public:
   virtual const iColor	Get_Background(); // #IGNORE
   float 		GetAbsPercent(float val);
   virtual const iColor	GetColor(int idx, bool* ok = NULL);
-  virtual const iColor GetColor(float val, iColor* maincolor=NULL,
-	iColor* contrast=NULL, float& sc_val = sc_val_def);
+  virtual const iColor  GetColor(float val, float& sc_val, iColor* maincolor=NULL,
+				 iColor* contrast=NULL);
   // #IGNORE
   virtual const iColor	GetContrastColor(int idx, bool* ok = NULL);
   int 			GetIdx(float val);

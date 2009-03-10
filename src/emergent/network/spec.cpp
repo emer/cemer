@@ -125,8 +125,7 @@ BaseSpec* BaseSpec_Group::FindSpecInheritsNotMe(TypeDef* td, BaseSpec* not_me, T
 
 
 BaseSpec* BaseSpec_Group::FindSpecName(const char* nm) {
-  int idx;
-  BaseSpec* rval = (BaseSpec*)FindLeafName((char*)nm, idx);
+  BaseSpec* rval = (BaseSpec*)FindLeafName((char*)nm);
   if(rval)
     return rval;
   BaseSpec* bs;
@@ -176,8 +175,7 @@ bool BaseSpec_Group::RemoveSpec(const char* nm, TypeDef* tp) {
   if(nm)
     return RemoveName(nm);
 
-  int idx;
-  FindType(tp, idx);
+  int idx = FindTypeIdx(tp);
   if(idx >= 0)
     return RemoveIdx(idx);
   return false;
@@ -458,7 +456,7 @@ BaseSubSpec* BaseSubSpec::FindParent() {
   String my_path = GetPath(NULL, bso); // get my path to owner..
   MemberDef* md;
   BaseSubSpec* from = (BaseSubSpec*)bsoo->FindFromPath(my_path, md);
-  if((from == NULL) || !from->InheritsFrom(TA_BaseSubSpec))
+  if(!from || !from->InheritsFrom(TA_BaseSubSpec))
     return NULL;			// corresponding subspec object not found..
   return from;
 }

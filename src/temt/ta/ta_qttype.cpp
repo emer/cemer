@@ -127,21 +127,6 @@ bool taiType::CheckProcessCondMembMeth(const String condkey,
       mbr_base = MemberDef::GetOff_static(base, net_base_off, net_mbr_off);
     }
     
-//     if (mbr.contains('.')) {
-//       String par_path = mbr.before('.', -1);
-//       MemberDef* par_md = NULL;
-//       TAPtr par_par = (TAPtr)tab->FindFromPath(par_path, par_md);
-//       if ((par_par == NULL) || !(par_md->type->InheritsFrom(&TA_taBase))) {
-// 	taMisc::Error("CONDEDIT: can't find parent of member:", par_path);
-// 	return false;
-//       }
-//       String subpth = mbr.after('.', -1);
-//       md = par_par->FindMembeR(subpth, mbr_base);
-//       mbr_par_base = (void*)par_par;
-//     } else {
-//       md = tab->FindMembeR(mbr, mbr_base);
-//     }
-
     if (!md || !mbr_base) {
       // this can happen in valid cases (selectedit), and the msg is annoying
       //    taMisc::Warning("taiType::CheckProcessCondMembMeth: conditionalizing member", mbr, "not found!");
@@ -1480,12 +1465,12 @@ TypeDef* taiMember::GetTargetType(const void* base) {
       if (tdmd && (tdmd->type == &TA_TypeDef_ptr)) {
 	targ_typ = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
       }
-      else {			// try fully dynamic
-	void* adr; // discarded
-	tdmd = ((taBase*)base)->FindMembeR(mb_nm, adr); //TODO: highly unsafe cast!!
-	if (tdmd && (tdmd->type == &TA_TypeDef_ptr))
-	  targ_typ = *((TypeDef **) tdmd->GetOff(base));
-      }
+//       else {			// try fully dynamic
+// 	void* adr; // discarded
+// 	tdmd = ((taBase*)base)->FindMembeR(mb_nm, adr); //TODO: highly unsafe cast!!
+// 	if (tdmd && (tdmd->type == &TA_TypeDef_ptr))
+// 	  targ_typ = *((TypeDef **) tdmd->GetOff(base)); // this is not legal getoff!
+//       }
     }
     return targ_typ;
   } 

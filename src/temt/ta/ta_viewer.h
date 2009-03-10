@@ -614,7 +614,7 @@ public:
   void 			AddDock(DockViewer* dv);
     // add the supplied dock 
   
-  FrameViewer*		FindFrameByType(TypeDef* typ, int& at_index = no_idx, int from_index = 0); 
+  FrameViewer*		FindFrameByType(TypeDef* typ, int& at_index, int from_index = 0); 
     // find the first frame and index of given type from the given starting index; 
   void 			AddFrame(FrameViewer* fv, int at_index);
     // add the supplied frame 

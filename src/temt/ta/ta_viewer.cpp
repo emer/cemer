@@ -1273,7 +1273,8 @@ void MainWindowViewer::WidgetDeleting_impl() {
 }
 
 bool MainWindowViewer::SelectPanelTabNo(int tab_no) {
-  PanelViewer* pv = (PanelViewer*)FindFrameByType(&TA_PanelViewer);
+  int idx;
+  PanelViewer* pv = (PanelViewer*)FindFrameByType(&TA_PanelViewer, idx);
   if (pv && pv->widget()) {
     iTabViewer* itv = pv->widget();
     return itv->tabView()->SetCurrentTab(tab_no);
@@ -1282,7 +1283,8 @@ bool MainWindowViewer::SelectPanelTabNo(int tab_no) {
 }
 
 bool MainWindowViewer::SelectPanelTabName(const String& tab_nm) {
-  PanelViewer* pv = (PanelViewer*)FindFrameByType(&TA_PanelViewer);
+  int idx;
+  PanelViewer* pv = (PanelViewer*)FindFrameByType(&TA_PanelViewer, idx);
   if (pv && pv->widget()) {
     iTabViewer* itv = pv->widget();
     return itv->tabView()->SetCurrentTabName(tab_nm);
@@ -1291,7 +1293,8 @@ bool MainWindowViewer::SelectPanelTabName(const String& tab_nm) {
 }
 
 bool MainWindowViewer::SelectT3ViewTabNo(int tab_no) {
-  T3DataViewer* pv = (T3DataViewer*)FindFrameByType(&TA_T3DataViewer);
+  int idx;
+  T3DataViewer* pv = (T3DataViewer*)FindFrameByType(&TA_T3DataViewer, idx);
   if (pv && pv->widget()) {
     iT3DataViewer* itv = pv->widget();
     return itv->SetCurrentTab(tab_no);
@@ -1300,7 +1303,8 @@ bool MainWindowViewer::SelectT3ViewTabNo(int tab_no) {
 }
 
 bool MainWindowViewer::SelectT3ViewTabName(const String& tab_nm) {
-  T3DataViewer* pv = (T3DataViewer*)FindFrameByType(&TA_T3DataViewer);
+  int idx;
+  T3DataViewer* pv = (T3DataViewer*)FindFrameByType(&TA_T3DataViewer, idx);
   if (pv && pv->widget()) {
     iT3DataViewer* itv = pv->widget();
     return itv->SetCurrentTabName(tab_nm);

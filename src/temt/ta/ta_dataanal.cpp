@@ -400,8 +400,7 @@ bool taDataAnal::GetDest(DataTable*& dest, const DataTable* src, const String& s
 }
 
 DataCol* taDataAnal::GetMatrixDataCol(DataTable* src_data, const String& data_col_nm) {
-  int idx;
-  DataCol* da = src_data->FindColName(data_col_nm, idx, true); // err msg
+  DataCol* da = src_data->FindColName(data_col_nm, true); // err msg
   if(!da)
     return NULL;
   if(!da->is_matrix) {
@@ -419,8 +418,7 @@ DataCol* taDataAnal::GetMatrixDataCol(DataTable* src_data, const String& data_co
 
 DataCol* taDataAnal::GetStringDataCol(DataTable* src_data, const String& name_col_nm) {
   if(name_col_nm.empty()) return NULL;
-  int idx;
-  DataCol* nmda = src_data->FindColName(name_col_nm, idx, true); // err msg
+  DataCol* nmda = src_data->FindColName(name_col_nm, true); // err msg
   if(!nmda)
     return NULL;
   if(nmda->is_matrix) {
@@ -438,8 +436,7 @@ DataCol* taDataAnal::GetStringDataCol(DataTable* src_data, const String& name_co
 
 DataCol* taDataAnal::GetNumDataCol(DataTable* src_data, const String& name_col_nm) {
   if(name_col_nm.empty()) return NULL;
-  int idx;
-  DataCol* nmda = src_data->FindColName(name_col_nm, idx, true); // err msg
+  DataCol* nmda = src_data->FindColName(name_col_nm, true); // err msg
   if(!nmda)
     return NULL;
   if(nmda->is_matrix) {

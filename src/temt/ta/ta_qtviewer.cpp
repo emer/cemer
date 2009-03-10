@@ -3591,7 +3591,8 @@ void iMainWindowViewer::AddPanel(iDataPanel* panel, bool new_tab) {
 } 
 
 iTabViewer* iMainWindowViewer::GetTabViewer(bool force) {
-  PanelViewer* tv = (PanelViewer*)viewer()->FindFrameByType(&TA_PanelViewer);
+  int idx;
+  PanelViewer* tv = (PanelViewer*)viewer()->FindFrameByType(&TA_PanelViewer, idx);
   if (!tv) {
     if (!force) return NULL;
     tv = (PanelViewer*)viewer()->AddFrameByType(&TA_PanelViewer);
@@ -3968,8 +3969,9 @@ void iMainWindowViewer::editFind() {
   
   MainWindowViewer* db = viewer();
   BrowseViewer* bv = NULL;
+  int idx;
   if (db) {
-    bv = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
+    bv = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer, idx);
     if (bv) root = bv->rootLink();
   }
   if (!root) root = (taiDataLink*)tabMisc::root->GetDataLink();
@@ -4112,7 +4114,8 @@ void iMainWindowViewer::fileOptions() {
 iTreeView* iMainWindowViewer::GetMainTreeView() {
   MainWindowViewer* db = viewer();
   if (!db) return NULL;
-  BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
+  int idx;
+  BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer, idx);
   if (!bv) return NULL;
   iBrowseViewer* ibv = bv->widget();
   if (!ibv) return NULL;
@@ -4289,14 +4292,15 @@ void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
       path = path.before(".",-1);	// get part before last call
     }
     taBase* tab = NULL;
+    MemberDef* md;
     if(path.startsWith(".projects")) {
-      tab = tabMisc::root->FindFromPath(path);
+      tab = tabMisc::root->FindFromPath(path, md);
     }
     else {
       if(path.startsWith("."))
 	path = path.after(".");
       if (proj)
-        tab = proj->FindFromPath(path);
+        tab = proj->FindFromPath(path, md);
     }
     if (!tab) {
       taMisc::Warning("ta: URL",path,"not found as a path to an object!");
@@ -7632,8 +7636,6 @@ QString taiListDataNode::text(int col) const {
 // 	taiTreeDataNode 	//
 //////////////////////////////////
 
-int taiTreeDataNode::no_idx; // dummy parameter
-
 taiTreeDataNode::taiTreeDataNode(taiDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
 :inherited(link_, md_, parent_, last_child_, tree_name, dn_flags_)
@@ -7786,7 +7788,8 @@ void tabParTreeDataNode::AssertLastListItem() {
     last_list_items_node = last_member_node;
     return;
   }
-  last_list_items_node = this->FindChildForData(el);
+  int idx;
+  last_list_items_node = this->FindChildForData(el, idx);
 }
 
 void tabParTreeDataNode::CreateChildren_impl() {
@@ -7847,10 +7850,11 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
       UpdateLazyChildren(); // updates
     return;
   }
+  int idx;
   switch (dcr) {
   case DCR_LIST_INIT: break;
   case DCR_LIST_ITEM_INSERT: {	// op1=item, op2=item_after, null=at beginning
-    taiTreeDataNode* after_node = this->FindChildForData(op2_); //null if not found
+    taiTreeDataNode* after_node = this->FindChildForData(op2_, idx); //null if not found
     if (!after_node) after_node = last_member_node; // insert, after
     taiTreeDataNode* new_node = CreateListItem(this, after_node, (taBase*)op1_);
     iTreeView* tv = treeView();
@@ -7859,7 +7863,7 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   }
     break;
   case DCR_LIST_ITEM_REMOVE: {	// op1=item -- note, item not DisOwned yet, but has been removed from list
-    taiTreeDataNode* gone_node = this->FindChildForData(op1_); //null if not found
+    taiTreeDataNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
     if (gone_node) delete gone_node; // goodbye!
   }
     break;
@@ -7923,7 +7927,8 @@ void tabParTreeDataNode::UpdateListNames() {
     if (tree_nm.empty()) {
       tree_nm = link()->AnonymousItemName(typ->name, i);
     }
-    taiTreeDataNode* node1 = this->FindChildForData(el); //null if not found
+    int idx;
+    taiTreeDataNode* node1 = this->FindChildForData(el, idx); //null if not found
     if (node1 != NULL)
 //TEMP      node1->setText(0, tree_nm);
 node1->DecorateDataNode();
@@ -8085,16 +8090,17 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     return;
   }
   AssertLastListItem();
+  int idx;
   switch (dcr) {
   case DCR_GROUP_INSERT: {	// op1=item, op2=item_after, null=at beginning
-    taiTreeDataNode* after_node = this->FindChildForData(op2_); //null if not found
+    taiTreeDataNode* after_node = this->FindChildForData(op2_, idx); //null if not found
     if (after_node == NULL) after_node = last_list_items_node; // insert, after lists
     taiTreeDataNode* new_node = CreateSubGroup(after_node, op1_);
     treeView()->scrollTo(new_node);
   }
     break;
   case DCR_GROUP_REMOVE: {	// op1=item -- note, item not DisOwned yet, but has been removed from list
-    taiTreeDataNode* gone_node = this->FindChildForData(op1_); //null if not found
+    taiTreeDataNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
     if (gone_node) delete gone_node; // goodbye!
   }
     break;
@@ -8160,7 +8166,8 @@ void tabGroupTreeDataNode::UpdateGroupNames() {
     } else {
       tree_nm = tree_nm + " subgroup";
     }
-    iTreeViewItem* node1 = this->FindChildForData(el); //null if not found
+    int idx;
+    iTreeViewItem* node1 = this->FindChildForData(el, idx); //null if not found
     if (node1 != NULL)
       node1->setText(0, tree_nm);
   }

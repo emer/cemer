@@ -847,8 +847,7 @@ cssEl* cssEl::GetVariantEl_impl(const Variant& val, Variant idx) const {
 
 int cssEl::GetMemberNo_impl(TypeDef* typ, const char* memb) const {
   if(!typ) return -1;
-  int mdx;
-  typ->members.FindName(memb, mdx);	// just 1st order search
+  int mdx = typ->members.FindNameIdx(memb);	// just 1st order search
   return mdx;
 }
 
@@ -870,8 +869,7 @@ cssEl* cssEl::GetMemberFmName_impl(TypeDef* typ, void* base, const char* memb) c
     cssMisc::Error(prog, "Type information is NULL in:", name);
     return &cssMisc::Void;
   }
-  int mdx;
-  MemberDef* md = typ->members.FindName(memb, mdx);	// just 1st order search
+  MemberDef* md = typ->members.FindName(memb);	// just 1st order search
 //   void* mbr = NULL;
 //   MemberDef* md = typ->members.FindNameAddrR(memb, base, mbr);	// skips paths!
   if(!md) {
@@ -895,8 +893,7 @@ cssEl* cssEl::GetMemberEl_impl(TypeDef* typ, void* base, MemberDef* md) const {
 
 Int cssEl::GetMethodNo_impl(TypeDef* typ, const char* meth) const {
   if(!typ) return -1;
-  int mdx;
-  typ->methods.FindName(meth, mdx);
+  int mdx = typ->methods.FindNameIdx(meth);
   return mdx;
 }
 
@@ -918,8 +915,7 @@ cssEl* cssEl::GetMethodFmName_impl(TypeDef* typ, void* base, const char* meth) c
     cssMisc::Error(prog, "GetMethod: Type information is NULL in:", name);
     return &cssMisc::Void;
   }
-  int mdx;
-  MethodDef* md = typ->methods.FindName(meth, mdx);
+  MethodDef* md = typ->methods.FindName(meth);
   if(!md) {
     cssMisc::Error(prog, "Member function not found:", String(meth), "in class of type: ", typ->name);
     return &cssMisc::Void;

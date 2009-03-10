@@ -99,9 +99,12 @@ cssEl* cssString::GetScoped(const char* memb) const {
 }
 
 cssString::operator taBase*() const {
-  void* rval = NULL;
-  if((tabMisc::root != NULL) && (tabMisc::root->FindMembeR(val, rval) != 0))
-    return (taBase*)rval;
+  if(tabMisc::root) {
+    MemberDef* md;
+    void* rval = tabMisc::root->FindMembeR(val, md);
+    if(rval)
+      return (taBase*)rval;
+  }
   return (taBase*)NULL;
 }
 

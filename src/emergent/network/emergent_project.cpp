@@ -835,10 +835,11 @@ TAPtr EmergentRoot::Browse(const char* init_path) {
   if(!taMisc::gui_active) return NULL;
 
   TAPtr iob = this;
+  MemberDef* md;
   if(init_path != NULL) {
     String ip = init_path;
-    iob = FindFromPath(ip);
-    if(iob == NULL) iob = this;
+    iob = FindFromPath(ip, md);
+    if(!iob) iob = this;
   }
 
   taiObjChooser* chs = new taiObjChooser((TAPtr)iob, "Browse for Object", false, NULL);

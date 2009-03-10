@@ -96,7 +96,7 @@ int QcssConsole::autocompletePath(String cmd_b4, String cmd, QStringList& lst) {
     parent = root->FindFromPath(par_path, md);
   }
 
-  if(parent == NULL) return 0;
+  if(!parent) return 0;
   TypeDef* par_td = parent->GetTypeDef();
 
   par_path = cmd_b4 + par_path + ".";		// add back for returning

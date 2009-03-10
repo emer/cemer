@@ -2123,7 +2123,7 @@ INHERITED(iTreeViewItem)
 public:
   taiTreeDataNode*	parent() const {return (taiTreeDataNode*) QTreeWidgetItem::parent();} //note: NULL for root item
 
-  taiTreeDataNode*	FindChildForData(void* data, int& idx = no_idx); // find the Child Node (if any) that has data as the data of its link; NULL/-1 if not found
+  taiTreeDataNode*	FindChildForData(void* data, int& idx); // find the Child Node (if any) that has data as the data of its link; NULL/-1 if not found
   virtual void		UpdateChildNames() {} // #IGNORE update child names of this node
 
   taiTreeDataNode(taiDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
@@ -2144,7 +2144,6 @@ protected:
   override void		willHaveChildren_impl(bool& will) const;
   override void 	CreateChildren_impl();
 private:
-  static int		no_idx; // dummy parameter
   void			init(taiDataLink* link_, int dn_flags_); // #IGNORE
 };
 

@@ -1601,7 +1601,7 @@ void SoMatrixGrid::renderValues() {
 	val = matrix->FastElAsFloat(pos.y);
 
       iColor fl;  iColor tx;
-      scale->GetColor(val,&fl,&tx,sc_val);
+      scale->GetColor(val,sc_val,&fl,&tx);
       float zp = sc_val * blk_ht;
       v_idx+=4;			// skip the _0 cases
       for(int i=0;i<4;i++)
@@ -1633,7 +1633,7 @@ void SoMatrixGrid::renderValues() {
 	else
 	  val = matrix->FastElAsFloat(pos.x, pos.y);
 	iColor fl;  iColor tx;
-	scale->GetColor(val,&fl,&tx,sc_val);
+	scale->GetColor(val,sc_val,&fl,&tx);
 	float zp = sc_val * blk_ht;
 	v_idx+=4;			// skip the _0 cases
 	for(int i=0;i<4;i++)
@@ -1670,7 +1670,7 @@ void SoMatrixGrid::renderValues() {
 	  else
 	    val = matrix->FastElAsFloat(pos.x, pos.y, z);
 	  iColor fl;  iColor tx;
-	  scale->GetColor(val,&fl,&tx,sc_val);
+	  scale->GetColor(val,sc_val,&fl,&tx);
 	  float zp = sc_val * blk_ht;
 	  v_idx+=4;			// skip the _0 cases
 	  for(int i=0;i<4;i++)
@@ -1711,7 +1711,7 @@ void SoMatrixGrid::renderValues() {
 	    else
 	      val = matrix->FastElAsFloat(pos.x, pos.y, opos.x, opos.y);
 	    iColor fl;  iColor tx;
-	    scale->GetColor(val,&fl,&tx,sc_val);
+	    scale->GetColor(val,sc_val,&fl,&tx);
 	    float zp = sc_val * blk_ht;
 	    v_idx+=4;			// skip the _0 cases
 	    for(int i=0;i<4;i++)
@@ -2108,7 +2108,7 @@ void So3DHeightField::renderValues() {
 	float val = matrix->FastElAsFloat(pos.x, pos.y, pos.z);
 
 	iColor fl;  iColor tx;
-	scale->GetColor(val,&fl,&tx,sc_val);
+	scale->GetColor(val,sc_val,&fl,&tx);
 	float zp = sc_val * eff_vht + (float)pos.z * cl_z;
 	vertex_dat[v_idx++][1] = zp;
 
@@ -2145,7 +2145,7 @@ void So3DHeightField::renderValues() {
 	float val = .25f * (val_00 + val_10 + val_01 + val_11);
 
 	iColor fl;  iColor tx;
-	scale->GetColor(val,&fl,&tx,sc_val);
+	scale->GetColor(val,sc_val,&fl,&tx);
 	float zp = sc_val * eff_vht + (float)pos.z * cl_z;
 	vertex_dat[v_idx++][1] = zp;
 	float alpha = max_alpha * (1.0f - ((1.0f - fabsf(sc_val)) * max_trans));
@@ -2407,7 +2407,7 @@ void So3DHeightField::renderVectorValues() {
 	}
 
 	iColor fl;  iColor tx;
-	scale->GetColor(val,&fl,&tx,sc_val);
+	scale->GetColor(val,sc_val,&fl,&tx);
 	sp.z += sc_val * eff_vht;
 	vertex_dat[v_idx][1] = sp.z;
 

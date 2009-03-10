@@ -2899,13 +2899,14 @@ void taiObjChooser::AddItem(const char* itm, const void* data_) {
 
 void taiObjChooser::UpdateFmSelStr() {
   msel_obj = NULL;
+  MemberDef* md;
   if(lst_par_obj != NULL) {
     if(msel_str == "root")
       msel_obj = tabMisc::root;
     else if(msel_str == "..")
       msel_obj = lst_par_obj->GetOwner();
     else
-      msel_obj = lst_par_obj->FindFromPath(msel_str);
+      msel_obj = lst_par_obj->FindFromPath(msel_str, md);
   }
   else if(reg_par_obj != NULL) {
     if(msel_str == "root")
@@ -2913,7 +2914,7 @@ void taiObjChooser::UpdateFmSelStr() {
     else if(msel_str == "..")
       msel_obj = reg_par_obj->GetOwner();
     else
-      msel_obj = reg_par_obj->FindFromPath(msel_str);
+      msel_obj = reg_par_obj->FindFromPath(msel_str, md);
   }
   else if(typ_par_obj != NULL) {
     if(!typ_par_obj->InheritsFrom(TA_taBase))
@@ -5246,18 +5247,22 @@ void taiTypeInfoBase::GetTarget() {
   String mb_nm = memb_md->OptionAfter("TYPE_ON_");
   if (!mb_nm.empty()) {
 //    taBase* base = (taBase*)host->cur_base; //TODO: highly unsafe cast -- should provide As_taBase() or such in taiDialog
-    if (menubase != NULL) {
+    if(menubase) {
       if (mb_nm == "this") {
         targ_typ = ((taBase*)menubase)->GetTypeDef();
-      } else {
-        void* adr; // discarded
-        MemberDef* tdmd = ((taBase*)menubase)->FindMembeR(mb_nm, adr); //TODO: highly unsafe cast!!
-        if (tdmd != NULL)
-          targ_typ = *((TypeDef **) tdmd->GetOff(menubase));
-        }
+      }
+      else {
+	TypeDef* own_td = typ;
+	ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+	MemberDef* tdmd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
+							mb_nm, false); // no warn
+	if (tdmd && (tdmd->type == &TA_TypeDef_ptr)) {
+	  targ_typ = *(TypeDef**)(MemberDef::GetOff_static(menubase, net_base_off, net_mbr_off));
+	}
+      }
     }
     return;
-  } 
+  }
   
   mb_nm = memb_md->OptionAfter("TYPE_");
   if (!mb_nm.empty()) {

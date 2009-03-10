@@ -295,7 +295,8 @@ void ColorPad::GetColors(){
   if (fill_type == COLOR){
     iColor tfg;
     iColor ttc;
-    scale->GetColor(padval,&tfg,&ttc);
+    float sc_val;
+    scale->GetColor(padval,sc_val,&tfg,&ttc);
     fg = tfg;
     tc = ttc;
     bg = tc;

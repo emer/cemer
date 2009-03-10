@@ -2675,35 +2675,13 @@ MemberDefBase_List::~MemberDefBase_List() {
   }
 }
 
-
-
-MemberDef* MemberSpace::FindCheck(const char* nm, void* base, void*& ptr) const {
-#ifndef NO_TA_BASE
-  int i;
-  for(i=0; i < size; i++) {
-    void* newbase = FastEl(i)->GetOff(base);
-    if(FastEl(i)->type->InheritsFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)newbase;
-      if(rbase->FindCheck(nm)) { // check name, etc.
-	ptr = newbase;
-	return FastEl(i);
-      }
-    }
-  }
-#endif
-  ptr = NULL;
-  return NULL;
-}
-
-
 //////////////////////////////////
 // MemberSpace: Find By Name	//
 //////////////////////////////////
 
 int MemberSpace::FindNameOrType(const char *nm) const {	// lookup by name
-  int rval = 0; //init just to keep msvc happy
-  // first check names
-  if(FindName(nm),rval)
+  int rval = FindNameIdx(nm);
+  if(rval >= 0)
     return rval;
 
   // then type names
@@ -2742,56 +2720,17 @@ MemberDef* MemberSpace::FindNameAddr(const char* nm, void* base, void*& ptr) con
   return NULL;
 }
 
-MemberDef* MemberSpace::FindNameAddrR(const char* nm, void* base, void*& ptr) const {
-  MemberDef* rval;
-
-  if((rval = FindNameAddr(nm, base, ptr)) != NULL) {
-    return rval;
-  }
-
-  // first do a breadth-first "FindCheck" search
-  if((rval = FindCheck(nm, base, ptr)) != NULL) {
-    return rval;
-  }
-
-  // then a depth-recursive search
-  int i;
-  for(i=0; i < size; i++) {
-    MemberDef* md = FastEl(i);
-    void* newbase = md->GetOff(base);
-    if((md->type->ptr == 0) && !(md->HasOption("NO_FIND"))) {
-#ifndef NO_TA_BASE
-      if(md->type->InheritsFrom(TA_taBase)) {
-	TAPtr rbase = (TAPtr)newbase;
-	if((rval = rbase->FindMembeR(nm, ptr)) != NULL)
-	  return rval;
-      }
-      else
-#endif
-      {
-	if((rval = md->type->members.FindNameAddrR(nm, newbase, ptr)) != NULL)
-	  return rval;
-      }
-    }
-  }
-  ptr = NULL;
-  return NULL;
-}
-
-
 //////////////////////////////////
 // MemberSpace: Find By Type	//
 //////////////////////////////////
 
-MemberDef* MemberSpace::FindType(TypeDef* it, int& idx) const {
+MemberDef* MemberSpace::FindType(TypeDef* it) const {
   int i;
   for(i=0; i<size; i++) {
     if(FastEl(i)->type->InheritsFrom(it)) {
-      idx = i;
       return FastEl(i);
     }
   }
-  idx = -1;
   return NULL;
 }
 
@@ -2819,37 +2758,6 @@ MemberDef* MemberSpace::FindTypeAddr(TypeDef* it, void* base, void*& ptr) const 
   return NULL;
 }
 
-MemberDef* MemberSpace::FindTypeAddrR(TypeDef* it, void* base, void*& ptr) const {
-  MemberDef* rval;
-
-  if((rval = FindTypeAddr(it, base, ptr)) != NULL) {
-    return rval;
-  }
-
-  int i;
-  for(i=0; i < size; i++) {
-    MemberDef* md = FastEl(i);
-    void* newbase = md->GetOff(base);
-    if((md->type->ptr == 0) && !(md->HasOption("NO_FIND"))) {
-#ifndef NO_TA_BASE
-      if(md->type->InheritsFrom(TA_taBase)) {
-	TAPtr rbase = (TAPtr)newbase;
-	if((rval = rbase->FindMembeR(it, ptr)) != NULL)
-	  return rval;
-      }
-      else
-#endif
-      {
-	if((rval = md->type->members.FindTypeAddrR(it, newbase, ptr)) != NULL)
-	  return rval;
-      }
-    }
-  }
-  ptr = NULL;
-  return NULL;
-}
-
-
 //////////////////////////////////
 // MemberSpace: other Find 	//
 //////////////////////////////////
@@ -2863,8 +2771,8 @@ int MemberSpace::FindDerives(TypeDef* it) const {
   return -1;
 }
 
-MemberDef* MemberSpace::FindTypeDerives(TypeDef* it, int& idx) const {
-  idx = FindDerives(it);
+MemberDef* MemberSpace::FindTypeDerives(TypeDef* it) const {
+  int idx = FindDerives(it);
   if(idx >= 0) return FastEl(idx);
   return NULL;
 }
@@ -3075,7 +2983,8 @@ bool MethodSpace::AddUniqNameNew(MethodDef *it) {
   } else {
     // ok, we are not a virtual override, but check if we are an overload or lexical hide
     // since we aren't an override, we are a new entity, so will replace
-    rval = FindName(it->name, idx);
+    idx = FindNameIdx(it->name);
+    if(idx >= 0) rval = FastEl(idx);
     if (rval) {
       replace = true; 
       if (it == rval) {result = false; goto end;}// could be the same one..
@@ -3145,6 +3054,7 @@ MethodDef* MethodSpace::FindOnListIdx(int lidx, const String_PArray& lst) const 
 }
 
 MethodDef* MethodSpace::FindVirtualBase(MethodDef* it, int& idx) {
+  idx = -1;
   for (int i = 0; i < size; ++i) {
     MethodDef* rval = FastEl(i);
     if (!rval->is_virtual) continue;
@@ -3153,7 +3063,6 @@ MethodDef* MethodSpace::FindVirtualBase(MethodDef* it, int& idx) {
     idx = i;
     return rval;
   }
-  idx = -1;
   return NULL;
 }
 
@@ -4712,8 +4621,8 @@ bool TypeDef::FindParent(const TypeDef* it) const {
 
 void* TypeDef::GetParAddr(const char* it, void* base) const {
   if(name == it) return base;	// you are it!
-  int anidx;
-  if((parents.FindName(it, anidx)))
+  int anidx = parents.FindNameIdx(it);
+  if(anidx >= 0)
     return (void*)((char*)base + par_off[anidx]);
   int i;
   for(i=0; i < parents.size; i++) {
@@ -4727,8 +4636,8 @@ void* TypeDef::GetParAddr(const char* it, void* base) const {
 
 void* TypeDef::GetParAddr(TypeDef* it, void* base) const {
   if(it==this) return base;	// you are it!
-  int anidx;
-  if((anidx = parents.FindEl(it)) >= 0)
+  int anidx = parents.FindEl(it);
+  if(anidx >= 0)
     return (void*)((char*)base + par_off[anidx]);
   int i;
   for(i=0; i < parents.size; i++) {
@@ -4949,8 +4858,8 @@ const String TypeDef::Get_C_EnumString(int enum_val) const {
 
 #ifndef NO_TA_BASE
 int TypeDef::FindTokenR(void* addr, TypeDef*& aptr) const {
-  int rval;
-  if((rval = tokens.FindEl(addr)) >= 0) {
+  int rval = tokens.FindEl(addr);
+  if(rval >= 0) {
     aptr = (TypeDef*)this;
     return rval;
   }
@@ -4966,8 +4875,8 @@ int TypeDef::FindTokenR(void* addr, TypeDef*& aptr) const {
 }
 
 int TypeDef::FindTokenR(const char* nm, TypeDef*& aptr) const {
-  int rval;
-  if((tokens.FindName(nm, rval))) {
+  int rval = tokens.FindNameIdx(nm);
+  if(rval >= 0) {
     aptr = (TypeDef*)this;
     return rval;
   }
@@ -5559,19 +5468,21 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 	} else {
 	  MemberDef* md = NULL;
 	  bs = tabMisc::root->FindFromPath(tmp_val, md);
-	  if((md == NULL) || (bs == NULL)) {
+	  if(!bs) {
 	    taMisc::Warning("*** Invalid Path in SetValStr:",val);
 	    return;
 	  }
-	  if (md->type->ptr == 1) {
-	    bs = *((TAPtr*)bs);
-	    if(bs == NULL) {
-	      taMisc::Warning("*** Null object at end of path in SetValStr:",val);
+	  if(md) {
+	    if (md->type->ptr == 1) {
+	      bs = *((TAPtr*)bs);
+	      if(bs == NULL) {
+		taMisc::Warning("*** Null object at end of path in SetValStr:",val);
+		return;
+	      }
+	    } else if(md->type->ptr != 0) {
+	      taMisc::Warning("*** ptr count greater than 1 in path:", val);
 	      return;
 	    }
-	  } else if(md->type->ptr != 0) {
-	    taMisc::Warning("*** ptr count greater than 1 in path:", val);
-	    return;
 	  }
 	}
       }

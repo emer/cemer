@@ -505,9 +505,6 @@ INHERITED(DataBlock_Idx)
 friend class DataTableCols;
 friend class DataTableModel;
 public:
-  static int		idx_def_arg;
-  // #HIDDEN #NO_SAVE default arg val for functions returning index
-
   enum DataFlags { // #BITS flags for data table
     DF_NONE		= 0, // #NO_BIT
     SAVE_ROWS 		= 0x0001, // save the row data associated with this table when saved with the project (column and other configuration information is always saved)
@@ -574,7 +571,7 @@ public:
   // #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   virtual DataCol* 	NewColMatrixN(DataCol::ValType val_type, 
 				      const String& col_nm,  const MatrixGeom& cell_geom,
-				      int& col_idx = idx_def_arg);
+				      int& col_idx);
   // #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   virtual DataCol* 	NewColMatrixN_gui(DataCol::ValType val_type, 
 					  const String& col_nm,  const MatrixGeom& cell_geom);
@@ -594,12 +591,12 @@ public:
   virtual bool		RenameCol(const String& cur_nm, const String& new_nm);
   // #CAT_Columns rename column with current name cur_nm to new name new_nm (returns false if ccur_nm not found)
 
-  virtual DataCol* 	FindColName(const String& col_nm, int& col_idx = idx_def_arg,
-    bool err_msg = false) const;
-  // #CAT_Columns #ARGC_1 find a column of the given name; if err_msg then generate an error if not found
+  virtual DataCol* 	FindColName(const String& col_nm, bool err_msg = false) const;
+  // #CAT_Columns find a column of the given name; if err_msg then generate an error if not found
+  virtual int 		FindColNameIdx(const String& col_nm, bool err_msg = false) const;
+  // #CAT_Columns find a column index of the given name; if err_msg then generate an error if not found
 
-  DataCol* 		FindMakeCol(const String& col_nm,
-	ValType val_type = VT_FLOAT);
+  DataCol* 		FindMakeCol(const String& col_nm, ValType val_type = VT_FLOAT);
   // #CAT_Columns insures that a scalar column of the given name and val type exists, and return that col. 
   DataCol* 		FindMakeColMatrix(const String& col_nm,
 	ValType val_type = VT_FLOAT, int dims = 1,
@@ -607,8 +604,8 @@ public:
   // #CAT_Columns insures that a matrix column of the given name, val type, and dimensions exists, and returns that col. 
   DataCol* 		FindMakeColMatrixN(const String& col_nm,
 	ValType val_type, const MatrixGeom& cell_geom,
-	int& col_idx = idx_def_arg); // #IGNORE
-  virtual DataCol* 	FindMakeColName(const String& col_nm, int& col_idx = idx_def_arg,
+	int& col_idx); // #IGNORE
+  virtual DataCol* 	FindMakeColName(const String& col_nm, int& col_idx,
 	ValType val_type = VT_FLOAT, int dims = 0,
 	int d0=0, int d1=0, int d2=0, int d3=0, int d4=0, int d5=0, int d6=0);
   // #EXPERT #CAT_Columns find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
@@ -623,7 +620,7 @@ public:
   // #CAT_Columns change type and/or geometry of column with given name 
   
   virtual DataCol* 	GetColData(Variant col, bool quiet = false) const {
-    if(col.isStringType()) return FindColName(col.toString(), idx_def_arg, !quiet);
+    if(col.isStringType()) return FindColName(col.toString(), !quiet);
     DataCol* rval = data.SafeEl(col.toInt());
     TestError(!quiet && !rval, "GetColData", "column number is out of range", col.toString());
     return rval;
@@ -1178,8 +1175,7 @@ protected:
   override void		WriteClose_impl();
 
 protected:
-  DataCol*	NewCol_impl(DataCol::ValType val_type, 
-    const String& col_nm, int& col_idx = idx_def_arg);
+  DataCol*	NewCol_impl(DataCol::ValType val_type, const String& col_nm, int& col_idx);
   // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate
   DataCol*	GetColForChannelSpec_impl(ChannelSpec* cs);
   DataCol*	NewColFromChannelSpec_impl(ChannelSpec* cs);

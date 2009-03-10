@@ -666,11 +666,11 @@ void cssTA_Base::operator=(const String& s) {
     if((tmp_val != String::con_NULL) && (tmp_val != "Null")) {
       MemberDef* md = NULL;
       bs = tabMisc::root->FindFromPath(tmp_val, md);
-      if(!md || !bs) {
+      if(!bs) {
 	taMisc::Warning("Invalid Path in cssTA_Base = String:",tmp_val);
 	return;
       }
-      if(md->type->ptr == 1) {
+      if(md && (md->type->ptr == 1)) {
 	bs = *((taBase**)bs);
 	if(!bs) {
 	  taMisc::Warning("Null object at end of path in cssTA_Base = String:",tmp_val);
@@ -721,15 +721,20 @@ cssEl* cssTA_Base::GetMemberFmName(const char* memb) const {
     return &cssMisc::Void;
   }
 
-  void* mbr;
-  MemberDef* md = ths->FindMembeR(memb, mbr);
-//   MemberDef* md = type_def->members.FindNameAddrR(memb, ths, mbr);
-  if(!md) {
+  MemberDef* md;
+  void* mbr = ths->FindMembeR(memb, md);
+  if(!mbr) {
     cssMisc::Error(prog, "MembeR not found:", memb, "in class of type:", (char*)type_def->name);
     return &cssMisc::Void;
   }
+  String mbnm;
+  TypeDef* mtd = &TA_taBase;
+  if(md) {
+    mbnm = md->name;
+    mtd = md->type;
+  }
 
-  return GetElFromTA(md->type, mbr, md->name, md, (cssEl*)this);
+  return GetElFromTA(mtd, mbr, mbnm, md, (cssEl*)this);
 }
 
 cssEl* cssTA_Base::NewOpr() {

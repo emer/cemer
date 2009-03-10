@@ -365,8 +365,6 @@ class EMERGENT_API RecvCons : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network receiving connections: owns all the connection objects
 INHERITED(taOBase)
 public:
-  static int	no_idx;			// #HIDDEN pass to find if you don't want one
-
   // note: follwing must be coordinated with the Network enum
   enum WtSaveFormat {
     TEXT,			// weights are saved as ascii text representation of digits (completely portable)
@@ -414,7 +412,7 @@ public:
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this set of receiving connections
 
-  virtual Connection*	FindConFrom(Unit* un, int& idx=no_idx) const;
+  virtual Connection*	FindConFrom(Unit* un, int& idx) const;
   // #MENU #MENU_ON_Actions #USE_RVAL #ARGC_1 #CAT_Structure find connection from given unit
   static Connection* 	FindRecipRecvCon(Unit* su, Unit* ru, Layer* ru_lay);
   // #CAT_Structure find the reciprocal for sending unit su to this receiving unit ru
@@ -521,15 +519,15 @@ INHERITED(taList<RecvCons>)
 public:
   virtual RecvCons*	NewPrjn(Projection* prjn);
   // #CAT_Structure create a new sub_group from given projection, with given ownership (own_cons)
-  virtual RecvCons*	FindPrjn(Projection* prjn, int& idx=no_idx) const;
+  virtual RecvCons*	FindPrjn(Projection* prjn, int& idx) const;
   // #CAT_Structure find sub group associated with given projection
-  virtual RecvCons*	FindFrom(Layer* from, int& idx=no_idx) const;
+  virtual RecvCons*	FindFrom(Layer* from, int& idx) const;
   // #MENU #USE_RVAL #ARGC_1 #CAT_Structure find sub group that receives from given layer
-  virtual RecvCons*	FindFromName(const String& fm_nm, int& idx=no_idx) const;
+  virtual RecvCons*	FindFromName(const String& fm_nm, int& idx) const;
   // #MENU #USE_RVAL #ARGC_1 #CAT_Structure find sub group that receives from given layer named fm_nm
-  virtual RecvCons*	FindTypeFrom(TypeDef* prjn_typ, Layer* from, int& idx=no_idx) const;
+  virtual RecvCons*	FindTypeFrom(TypeDef* prjn_typ, Layer* from, int& idx) const;
   // #MENU #USE_RVAL #ARGC_2 #CAT_Structure find sub group that recvs prjn of given type from layer
-  virtual RecvCons*	FindLayer(Layer* lay, int& idx=no_idx) const;
+  virtual RecvCons*	FindLayer(Layer* lay, int& idx) const;
   // #CAT_Structure find sub group where projection is in the given layer
   virtual bool		RemovePrjn(Projection* prjn);
   // #CAT_Structure remove sub group associated with given projection
@@ -559,8 +557,6 @@ class EMERGENT_API SendCons : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network sending connections: points to receiving connections
 INHERITED(taOBase)
 public:
-  static int	no_idx;			// #HIDDEN pass to find if you don't want one
-
   TypeDef*	con_type;
   // #CAT_Structure #AKA_el_typ type of connections to make
   ConPtrList	cons;
@@ -594,7 +590,7 @@ public:
   // #CAT_Structure remove all conections
   virtual void		Reset() { RemoveAll(); }
   // #CAT_Structure remove all conections
-  virtual Connection*	FindConFrom(Unit* un, int& idx=no_idx) const;
+  virtual Connection*	FindConFrom(Unit* un, int& idx) const;
   // #MENU #MENU_ON_Actions #USE_RVAL #ARGC_1 #CAT_Structure find connection from given unit
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -646,15 +642,15 @@ public:
   // projection-related functions for operations on sub-groups of the group
   virtual SendCons*	NewPrjn(Projection* prjn);
   // #CAT_Structure create a new sub_group from given projection, with given ownership (own_cons)
-  virtual SendCons*	FindPrjn(Projection* prjn, int& idx=no_idx) const;
+  virtual SendCons*	FindPrjn(Projection* prjn, int& idx) const;
   // #CAT_Structure find sending connections associated with given projection
-  virtual SendCons*	FindFrom(Layer* from, int& idx=no_idx) const;
+  virtual SendCons*	FindFrom(Layer* from, int& idx) const;
   // #MENU #USE_RVAL #ARGC_1 #CAT_Structure find sending connections that receive from given layer
-  virtual SendCons*	FindFromName(const String& fm_nm, int& idx=no_idx) const;
+  virtual SendCons*	FindFromName(const String& fm_nm, int& idx) const;
   // #MENU #USE_RVAL #ARGC_1 #CAT_Structure find sending connections that receive from given layer named fm_nm
-  virtual SendCons*	FindTypeFrom(TypeDef* prjn_typ, Layer* from, int& idx=no_idx) const;
+  virtual SendCons*	FindTypeFrom(TypeDef* prjn_typ, Layer* from, int& idx) const;
   // #MENU #USE_RVAL #ARGC_2 #CAT_Structure find sending connections that recvs prjn of given type from layer
-  virtual SendCons*	FindLayer(Layer* lay, int& idx=no_idx) const;
+  virtual SendCons*	FindLayer(Layer* lay, int& idx) const;
   // #CAT_Structure find sending connections where projection is in the given layer
   virtual bool		RemovePrjn(Projection* prjn);
   // #CAT_Structure remove sending connections associated with given projection

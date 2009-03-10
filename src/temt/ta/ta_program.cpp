@@ -1874,8 +1874,8 @@ bool ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
   // delete args not in target; freshen those that are
   for (i = size - 1; i >= 0; --i) {
     pa = FastEl(i);
-    pv = targ.FindName(pa->name, ti);
-    if (ti >= 0) {
+    pv = targ.FindName(pa->name);
+    if(pv) {
       any_changes |= pa->UpdateFromVar(*pv);
     } else {
       RemoveIdx(i);
@@ -1885,7 +1885,7 @@ bool ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
   // add non-result args in target not in us, and put in the right order
   for (ti = 0; ti < targ.size; ++ti) {
     pv =targ.FastEl(ti);
-    FindName(pv->name, i);
+    i = FindNameIdx(pv->name);
     if (i < 0) {
       pa = new ProgArg();
       pa->name = pv->name;
@@ -1920,7 +1920,7 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
   for (ti = 0; ti < md->arg_names.size; ++ti) {
     TypeDef* arg_typ = md->arg_types.FastEl(ti);
     String arg_nm = md->arg_names[ti];
-    pa = FindName(arg_nm, i);
+    i = FindNameIdx(arg_nm);
     if (i < 0) {
       pa = new ProgArg();
       pa->name = arg_nm;
@@ -1928,9 +1928,13 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
       Insert(pa, ti);
       any_changes = true;
       //pa->expr.SetExpr(def_val); // set to this expr
-    } else if (i != ti) {
-      MoveIdx(i, ti);
-      any_changes = true;
+    }
+    else {
+      pa = FastEl(i);
+      if (i != ti) {
+	MoveIdx(i, ti);
+	any_changes = true;
+      }
     }
     // have to do default for all, since it is not saved
     pa->required = (md->fun_argd > ti);
@@ -2164,11 +2168,12 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
   if(!myprg || !otprg || myprg == otprg || myprg->HasBaseFlag(taBase::COPYING)) return false; // not updated
   String var_nm = cur_ptr->name;
   String cur_path = cur_ptr->GetPath(NULL, otprg);
-  ProgVar* pv = (ProgVar*)myprg->FindFromPath(cur_path);
+  MemberDef* md;
+  ProgVar* pv = (ProgVar*)myprg->FindFromPath(cur_path, md);
   if(pv && (pv->name == var_nm)) { pvr.set(pv); return true; }
   // ok, this is where we find same name or make one
   String cur_own_path = cur_ptr->owner->GetPath(NULL, otprg);
-  taBase* pv_own_tab = myprg->FindFromPath(cur_own_path);
+  taBase* pv_own_tab = myprg->FindFromPath(cur_own_path, md);
   if(!pv_own_tab || !pv_own_tab->InheritsFrom(&TA_ProgVar_List)) {
     taMisc::Warning("Warning: could not find owner for program variable:", 
 		    var_nm, "in program:", myprg->name, "on path:",

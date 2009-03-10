@@ -81,8 +81,7 @@ public:
   bool		IsRoot() const	{ return (root_gp == this); } // 'true' if this is the root
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 
-  MemberDef* 	FindMembeR(const String& nm, void*& ptr) const;
-  MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const;
+  void* 	FindMembeR(const String& nm, MemberDef*& ret_md) const;
 
   // IO routines
   ostream& 	OutputR(ostream& strm, int indent = 0) const;
@@ -169,9 +168,19 @@ public:
     const String& name="");
   // #CAT_Modify #BUTTON #MENU_CONTEXT #TYPE_this #NULL_OK_typ #NULL_TEXT_SameType #LABEL_NewGroup #NO_SAVE_ARG_VAL Create and add n_gps new sub group(s) of given type (typ=NULL: same type as this group)
 
-  virtual taBase* FindLeafName_(const char* it, int& idx=no_idx) const; 	// #IGNORE
-  virtual taBase* FindLeafNameContains_(const String& it, int& idx=no_idx) const;	// #IGNORE
-  virtual taBase* FindLeafType_(TypeDef* it, int& idx=no_idx) const;	// #IGNORE
+  virtual taBase* FindLeafName_(const String& it) const; 	// #IGNORE
+  virtual taBase* FindLeafNameContains_(const String& it) const;	// #IGNORE
+  virtual taBase* FindLeafType_(TypeDef* it) const;	// #IGNORE
+  virtual taBase* FindLeafNameType_(const String& it) const;	// #IGNORE
+
+  virtual int 	FindLeafNameIdx(const String& item_nm) const;
+  // #CAT_Access Find element anywhere in full group and subgroups with given name (item_nm)
+  virtual int 	FindLeafNameContainsIdx(const String& item_nm) const;
+  // #MENU #MENU_ON_Edit #USE_RVAL #ARGC_1 #LABEL_Find #CAT_Access Find anywhere in full group and subgroups first element whose name contains given name (item_nm)
+  virtual int 	FindLeafTypeIdx(TypeDef* item_tp) const;
+  // #CAT_Access find anywhere in full group and subgroups given type leaf element (NULL = not here)
+  virtual int	FindLeafNameTypeIdx(const String& item_nm) const;
+  // #CAT_Access Find anywhere in full group and subgroups element with given object name or type name (item_nm)
 
   virtual TAGPtr FindMakeGpName(const String& gp_nm, TypeDef* typ=NULL,
     bool& nw_item=def_nw_item);
@@ -325,14 +334,18 @@ public:
     const String& name="") { return (taGroup<T>*)NewGp_(n_gps, typ, name);}
   // #CAT_Modify Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
 
-  T*		FindName(const char* item_nm, int& idx=no_idx)  const
-  { return (T*)FindName_(item_nm, idx); }
-  // #CAT_Access Find element with given name (nm) (NULL = not here), sets idx to leaf idx or -1
-  virtual T*	FindNameContains(const String& item_nm, int& idx=no_idx) const
-  { return (T*)FindNameContains_(item_nm, idx); }
-  // #CAT_Access Find (first) element whose name contains given string (NULL = not here), sets idx to leaf idx or -1 
-  virtual T* 	FindType(TypeDef* item_tp, int& idx=no_idx) const { return (T*)FindType_(item_tp, idx); }
-  // #CAT_Access find given type element (NULL = not here), sets idx to leaf idx or -1
+  T*		FindName(const String& item_nm)  const
+  { return (T*)FindName_(item_nm); }
+  // #CAT_Access Find element in top-level list with given name (nm) (NULL = not here)
+  virtual T*	FindNameContains(const String& item_nm) const
+  { return (T*)FindNameContains_(item_nm); }
+  // #CAT_Access Find (first) element in top-level list whose name contains given string (NULL = not here)
+  virtual T* 	FindType(TypeDef* item_tp) const
+  { return (T*)FindType_(item_tp); }
+  // #CAT_Access find in top-level list given type element (NULL = not here)
+  T*		FindNameType(const String& item_nm) const
+  { return (T*)FindNameType_(item_nm); }
+  // #CAT_Access Find element in top-level list with given object name or type name (item_nm)
 
   T*		Pop()				{ return (T*)Pop_(); }
   // #CAT_Modify pop the last element off the stack
@@ -349,26 +362,19 @@ public:
   virtual bool	MoveAfter(T* trg, T* item) { return MoveAfter_((void*)trg, (void*)item); }
   // #CAT_Modify move item so that it appears just after the target item trg in the list
 
-  virtual T* 	FindLeafName(const char* item_nm, int& idx=no_idx) const
-  { return (T*)FindLeafName_(item_nm, idx); }
-  // #CAT_Access Find element with given name (item_nm), sets idx to leaf idx or -1
-  virtual T* 	FindLeafNameContains(const char* item_nm, int& idx=no_idx) const
-  { return (T*)FindLeafNameContains_(item_nm, idx); }
-  // #MENU #MENU_ON_Edit #USE_RVAL #ARGC_1 #LABEL_Find #CAT_Access Find first element whose name contains given name (item_nm), sets idx to leaf idx or -1
-  virtual T* 	FindLeafType(TypeDef* item_tp, int& idx=no_idx) const { return (T*)FindLeafType_(item_tp, idx);}
-  // #CAT_Access find given type leaf element (NULL = not here), sets idx to leaf_idx or -1
+  T* 		FindLeafName(const String& item_nm) const
+  { return (T*)FindLeafName_(item_nm); }
+  // #CAT_Access Find element anywhere in full group and subgroups with given name (item_nm)
+  T* 		FindLeafNameContains(const String& item_nm) const
+  { return (T*)FindLeafNameContains_(item_nm); }
+  // #MENU #MENU_ON_Edit #USE_RVAL #ARGC_1 #LABEL_Find #CAT_Access Find anywhere in full group and subgroups first element whose name contains given name (item_nm)
+  T* 		FindLeafType(TypeDef* item_tp) const
+  { return (T*)FindLeafType_(item_tp);}
+  // #CAT_Access find anywhere in full group and subgroups given type leaf element (NULL = not here)
+  T*		FindLeafNameType(const String& item_nm) const
+  { return (T*)FindLeafNameType_(item_nm); }
+  // #CAT_Access Find anywhere in full group and subgroups element with given object name or type name (item_nm)
 
- 
-/*  taGroup() 				{ Register(); Initialize(); }
-  taGroup(const taGroup<T>& cp)		{ Register(); Initialize(); Copy(cp); }
-  ~taGroup() 				{ unRegister(); Destroy(); }
-  taBase* Clone() 			{ return new taGroup<T>(*this); }
-  void  UnSafeCopy(taBase* cp) 		{ if(cp->InheritsFrom(GetTypeDef())) Copy(*((taGroup<T>*)cp));
-                                          else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); }
-  void  CastCopyTo(taBase* cp)            { taGroup<T>& rf = *((taGroup<T>*)cp); rf.Copy(*this); }
-  taBase* MakeToken()			{ return (taBase*)(new taGroup<T>); }
-  taBase* MakeTokenAry(int no)		{ return (taBase*)(new taGroup<T>[no]); }
-  void operator=(const taGroup<T>& cp)	{ Copy(cp); } */
   TA_TMPLT_BASEFUNS(taGroup,T);
 protected:
   taGroup<T>* 	LeafGp(int leaf_idx) const		{ return (taGroup<T>*)LeafGp_(leaf_idx); }

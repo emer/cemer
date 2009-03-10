@@ -182,7 +182,6 @@ typedef unsigned long taHashVal;
 class TA_API  taPtrList_impl {
   // #NO_TOKENS implementation of the pointer list class
 protected:
-//  static String		 no_el_name;	// when the el has no name..
   static taPtrList_impl scratch_list;	// a list for any temporary processing needs
 
   static taHashVal	HashCode_String(const String& string);
@@ -253,8 +252,6 @@ public:
 
   static ostream& Indenter(ostream& strm, const String& itm, int no, int prln, int tabs);
   // #IGNORE
-  static int	no_index;			// #IGNORE passed to Find if you don't want one
-
 
   ////////////////////////////////////////////////
   // 	functions that return the type		//
@@ -269,7 +266,7 @@ public:
   { void* rval=NULL; if(InRange(i)) rval = el[i]; return rval; } 	
     // #IGNORE -- for internal use only, where you want NULL if i < 0
   void*		FastEl_(int i)	const	{ return el[i]; } 	// #IGNORE
-  virtual void*	FindName_(const String& it, int& idx=no_index) const;	// #IGNORE
+  virtual void*	FindName_(const String& it) const;	// #IGNORE
   virtual void*	Pop_();					// #IGNORE
   void*		First_() const
   { if (size > 0) return el[0]; else return NULL; }  // #IGNORE
@@ -318,6 +315,9 @@ public:
   ////////////////////////////////////////////////
   // functions that don't depend on the type	//
   ////////////////////////////////////////////////
+
+  virtual int	FindNameIdx(const String& it) const;
+  // #CAT_Access return the index of the item with given name on the list
 
   virtual TypeDef* 	GetElType() const {return NULL;}
   // #IGNORE Default type for objects in group
@@ -452,7 +452,8 @@ public:
   T*		Edit_El(T* item) const		{ return SafeEl(FindEl(item)); }
   // #CAT_Access #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ Edit given list item
 
-  T*		FindName(const String& item_nm, int& idx=no_index) const { return (T*)FindName_(item_nm, idx); }
+  T*		FindName(const String& item_nm) const
+  { return (T*)FindName_(item_nm); }
   // #CAT_Access find given named element (NULL = not here), sets idx
   T*		Pop()				{ return (T*)Pop_(); }
   // #CAT_Modify pop the last element off the stack

@@ -186,9 +186,9 @@ bool taImage::ImageToDataCellName(DataTable* dt, const String& col_nm, int row) 
   if(q_img.isNull() || !dt) {
     return false;
   }
-  int col;
-  DataCol* da = dt->FindColName(col_nm, col, true);
-  if(!da) return false;
+  int col= dt->FindColNameIdx(col_nm, true);
+  if(col < 0) return false;
+  DataCol* da = dt->data.FastEl(col);
   return ImageToDataCell(dt, col, row);
 }
 
@@ -1634,7 +1634,7 @@ bool GaborV1Spec::FilterInput_Gabor(int cmp_idx) {
 	ugpof = (ugp-1) * input_ovlp;
       else
 	ugpof = ugp * input_ovlp;
-      float sum = 0.0f;	// sum for this unit, this location
+      float max_val = 0.0f;	// output is max val
       // filter groups
       for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
 	int ymod = fgp.y % n_filters_per_gp;
@@ -1656,13 +1656,14 @@ bool GaborV1Spec::FilterInput_Gabor(int cmp_idx) {
 	      flt_sum += oval;
 	    }
 	  }
-	  sum += gmult * flt_sum;
+	  flt_sum *= gmult;
+	  max_val = MAX(max_val, flt_sum);
 	}
       }
       if(cur_superimpose)
-	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += sum;
+	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val;
       else
-	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = sum;
+	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val;
     }
   }
   return true;
@@ -1691,7 +1692,7 @@ bool GaborV1Spec::FilterInput_Blob(int cmp_idx) {
 	ugpof = (ugp-1) * input_ovlp;
       else
 	ugpof = ugp * input_ovlp;
-      float sum = 0.0f;	// sum for this unit, this location
+      float max_val = 0.0f;	// result is max over locs
       // filter groups
       for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
 	int ymod = fgp.y % n_filters_per_gp;
@@ -1711,13 +1712,14 @@ bool GaborV1Spec::FilterInput_Blob(int cmp_idx) {
 	      flt_sum += oval;
 	    }
 	  }
-	  sum += gmult * flt_sum;
+	  flt_sum *= gmult;
+	  max_val = MAX(max_val, flt_sum);
 	}
       }
       if(cur_superimpose)
-	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += sum;
+	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val;
       else
-	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = sum;
+	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val;
     }
   }
   return true;
@@ -2601,6 +2603,7 @@ void RetinaSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {
     else
       dt->name = "RetinaSpec_InputData";
   }
+  dt->ResetData();
   if(reset_cols) dt->Reset();
   dt->StructUpdate(true);
   int idx =0;
@@ -2779,6 +2782,11 @@ bool RetinaSpec::FilterImageData(DataTable* dt, bool superimpose, int renorm) {
   max_vals.SetGeom(1, dogs.size);
   max_vals.InitVals();
 
+  // this is shared across threads so needs to be setup in advance
+  DataCol* da_ret = GetRetImageColumn(cur_dt);
+  cur_ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
+  taBase::Ref(cur_ret_img);
+
   threads.InitAll();
   threads.min_units = 1;
   ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
@@ -2796,27 +2804,24 @@ bool RetinaSpec::FilterImageData(DataTable* dt, bool superimpose, int renorm) {
       else
 	cur_rescale = 1.0f / max_val;
       cur_phase = 1;
-      threads.Run(&ip_call, dogs.size);
+      ThreadImgProcCall ip_call2(&ImgProcThreadBase::Filter_Thread);
+      threads.Run(&ip_call2, dogs.size);
     }
   }
+
+  taBase::unRefDone(cur_ret_img);
   return true;
 }
 
 void RetinaSpec::Filter_Thread(int cmp_idx, int thread_no) {
-  DataCol* da_ret = GetRetImageColumn(cur_dt);
-  float_MatrixPtr ret_img; ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
-
-  int idx;
   if(cur_phase == 0) {
     DoGRetinaSpec* sp = dogs[cmp_idx];
-    DataCol* da_on = cur_dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
-					 sp->spacing.output_size.x, sp->spacing.output_size.y);
-    DataCol* da_off = cur_dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
-					      2, sp->spacing.output_size.x, sp->spacing.output_size.y);
-
-    float_MatrixPtr on_mat; on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
-    float_MatrixPtr off_mat; off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
-    taImageProc::DoGFilterRetina(*on_mat, *off_mat, *ret_img, *sp, cur_superimpose, edge_mode);
+    DataCol* da_on = cur_dt->FindColName(sp->name + "_on");
+    DataCol* da_off = cur_dt->FindColName(sp->name + "_off");
+    float_Matrix* on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
+    float_Matrix* off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
+    taBase::Ref(on_mat);    taBase::Ref(off_mat);
+    taImageProc::DoGFilterRetina(*on_mat, *off_mat, *cur_ret_img, *sp, cur_superimpose, edge_mode);
     if(cur_renorm > 0) {
       int idx;
       float on_max = taMath_float::vec_max(on_mat, idx);
@@ -2824,17 +2829,16 @@ void RetinaSpec::Filter_Thread(int cmp_idx, int thread_no) {
       on_max = MAX(on_max, off_max);
       max_vals.FastEl(cmp_idx) = on_max;
     }
+    taBase::unRefDone(on_mat);    taBase::unRefDone(off_mat);
   }
   else {
     // normalize with single max for all channels, so they are all on a comparable scale
     DoGRetinaSpec* sp = dogs[cmp_idx];
-    DataCol* da_on = cur_dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
-					 sp->spacing.output_size.x, sp->spacing.output_size.y);
-    DataCol* da_off = cur_dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
-					  2, sp->spacing.output_size.x, sp->spacing.output_size.y);
-
-    float_MatrixPtr on_mat; on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
-    float_MatrixPtr off_mat; off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
+    DataCol* da_on = cur_dt->FindColName(sp->name + "_on");
+    DataCol* da_off = cur_dt->FindColName(sp->name + "_off");
+    float_Matrix* on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
+    float_Matrix* off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
+    taBase::Ref(on_mat);    taBase::Ref(off_mat);
     if(cur_renorm >= 2) {
       for(int j=0;j<on_mat->size;j++)
 	on_mat->FastEl_Flat(j) = logf(1.0f + cur_renorm_factor * on_mat->FastEl_Flat(j)) * cur_rescale;
@@ -2845,6 +2849,7 @@ void RetinaSpec::Filter_Thread(int cmp_idx, int thread_no) {
       taMath_float::vec_mult_scalar(on_mat, cur_rescale);
       taMath_float::vec_mult_scalar(off_mat, cur_rescale);
     }
+    taBase::unRefDone(on_mat);    taBase::unRefDone(off_mat);
   }
 }
 
@@ -3129,7 +3134,7 @@ void V1GaborSpec::DefaultFilters() {
   sp = gabors[cnt++];
   sp->name = "V1_med";
   sp->filter_type = GaborV1Spec::GABOR;
-  sp->region = RetinalSpacingSpec::PARAFOVEA;
+  sp->region = RetinalSpacingSpec::FOVEA;
   sp->res = RetinalSpacingSpec::MED_RES;
   sp->rf_width = 4;
   sp->gabor_rf.n_angles = 4;
@@ -3142,7 +3147,7 @@ void V1GaborSpec::DefaultFilters() {
   sp = gabors[cnt++];
   sp->name = "V1_low";
   sp->filter_type = GaborV1Spec::GABOR;
-  sp->region = RetinalSpacingSpec::PARAFOVEA;
+  sp->region = RetinalSpacingSpec::FOVEA;
   sp->res = RetinalSpacingSpec::LOW_RES;
   sp->rf_width = 4;
   sp->gabor_rf.n_angles = 4;
@@ -3167,7 +3172,7 @@ void V1GaborSpec::DefaultFilters() {
     sp = gabors[cnt++];
     sp->name = "V1_mblob";
     sp->filter_type = GaborV1Spec::BLOB;
-    sp->region = RetinalSpacingSpec::PARAFOVEA;
+    sp->region = RetinalSpacingSpec::FOVEA;
     sp->res = RetinalSpacingSpec::MED_RES;
     sp->rf_width = 4;
     sp->blob_rf.n_sizes = 1;
@@ -3202,6 +3207,7 @@ void V1GaborSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {
     else
       dt->name = "V1GaborSpec_InputData";
   }
+  dt->ResetData();
   if(reset_cols) dt->Reset();
   dt->StructUpdate(true);
   int idx =0;

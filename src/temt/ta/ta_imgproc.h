@@ -880,6 +880,7 @@ protected:
 
   // tmp arg values for threading ops
   DataTable*	cur_dt;
+  float_Matrix* cur_ret_img;
   bool		cur_superimpose;
   int 		cur_renorm;
   float		cur_rescale;

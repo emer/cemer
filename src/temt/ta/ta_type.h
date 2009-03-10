@@ -1494,26 +1494,22 @@ public:
   // recursive find of name (or type name)
   MemberDef* 	FindNameAddr(const char* nm, void* base, void*& ptr) const;
   // find of name returning address of found member
-  MemberDef*	FindNameAddrR(const char* nm, void* base, void*& ptr) const;
-  // recursive find of name returning address of found member
 
-  MemberDef*	FindType(TypeDef* it, int& idx=no_index) const;
+  MemberDef*	FindType(TypeDef* it) const;
   // find by type, inherits from
   MemberDef*	FindTypeR(TypeDef* it) const;
   // recursive find of type
   MemberDef* 	FindTypeAddr(TypeDef* it, void* base, void*& ptr) const;
   // find of type returning address of found member
-  MemberDef*	FindTypeAddrR(TypeDef* it, void* base, void*& ptr) const;
-  // recursive find of type returning address of found member
 
   int		FindDerives(TypeDef* it) const;
-  MemberDef*	FindTypeDerives(TypeDef* it,  int& idx=no_index) const;
+  MemberDef*	FindTypeDerives(TypeDef* it) const;
   // find by type, derives from
 
-  MemberDef*	FindAddr(void* base, void* mbr, int& idx=no_index) const;
+  MemberDef*	FindAddr(void* base, void* mbr, int& idx) const;
   // find by address given base of class and address of member
   int		FindPtr(void* base, void* mbr) const;
-  MemberDef*	FindAddrPtr(void* base, void* mbr, int& idx=no_index) const;
+  MemberDef*	FindAddrPtr(void* base, void* mbr, int& idx) const;
   // find by address of a member that is a pointer given base and pointer addr
 
   void		CopyFromSameType(void* trg_base, void* src_base);
@@ -1549,8 +1545,8 @@ public: // lexical hacks
   inline MemberDef*	SafeEl(int i) {return (MemberDef*)inherited::SafeEl(i);}
   inline MemberDef*	PosSafeEl(int i) {return (MemberDef*)inherited::PosSafeEl(i);}
   //#IGNORE
-  inline MemberDef*	FindName(const String& item_nm, int& idx=no_index) const
-    {return (MemberDef*)inherited::FindName(item_nm, idx);}
+  inline MemberDef*	FindName(const String& item_nm) const
+    {return (MemberDef*)inherited::FindName(item_nm);}
 };
 
 

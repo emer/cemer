@@ -344,15 +344,7 @@ nel value. The debug
     Initialize. Own() can detect a change in owner, for objects that
     provide the owner -- this lets it skip the RefStatic() operation.
     The above semantics should cover all normal cases.
-    
-    
-    
 */
-
-bool 	taBase::no_new_itm; // for default arg
-String 	taBase::no_name;
-int	taBase::no_idx = -1;
-MemberDef* taBase::no_mdef = NULL;
 
 ///////////////////////////////////////////////////////////////////////////
 // 	Reference counting mechanisms, all static just for consistency..
@@ -789,9 +781,9 @@ TAPtr taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) co
     if((delim_pos < length) && (path[delim_pos] == '['))
       next_pos--;
 
-    void* tmp_ptr;
     MemberDef* md;
-    if(((md = FindMembeR(el_path, tmp_ptr)) != NULL) && md->type->InheritsFrom(TA_taBase)) {
+    void* tmp_ptr = FindMembeR(el_path, md);
+    if(tmp_ptr && (!md || md->type->InheritsFrom(TA_taBase))) { // null md = taBase
       TAPtr mbr = (TAPtr)tmp_ptr;
       if(delim_pos < length) {	// there's more to be done..
 	rval = mbr->FindFromPath(path, ret_md, next_pos); // start from after delim
@@ -1283,20 +1275,22 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
     else {
       MemberDef* md = NULL;
       bs = tabMisc::root->FindFromPath(tmp_val, md);
-      if(!md || !bs) {
+      if(!bs) {
 	taMisc::Warning("*** Invalid Path in SetValStr:",val);
 	return false;
       }
-      if (md->type->ptr == 1) {
-	bs = *((taBase**)bs);
-	if(bs == NULL) {
-	  taMisc::Warning("*** Null object at end of path in SetValStr:",val);
+      if(md) {			// otherwise it is a taBase* 
+	if(md->type->ptr == 1) {
+	  bs = *((taBase**)bs);
+	  if(bs == NULL) {
+	    taMisc::Warning("*** Null object at end of path in SetValStr:",val);
+	    return false;
+	  }
+	}
+	else if(md->type->ptr != 0) {
+	  taMisc::Warning("*** ptr count != 1 in path:", val);
 	  return false;
 	}
-      }
-      else if(md->type->ptr != 0) {
-	taMisc::Warning("*** ptr count greater than 1 in path:", val);
-	return false;
       }
     }
   }
@@ -1689,6 +1683,41 @@ TypeDef* taBase::GetStemBase() const {
   return rval;
 }
 
+
+void* taBase::FindMembeR(const String& nm, MemberDef*& ret_md) const {
+  ret_md = NULL;
+  TypeDef* td = GetTypeDef();
+
+  // first check directly in our members for member names
+  MemberDef* md = td->members.FindName(nm);
+  if(md) {
+    ret_md = md;
+    return md->GetOff((void*)this);
+  }
+
+  // then check for taBase items, checking object name and type (breadth first)
+  for(int i=0; i < td->members.size; i++) {
+    md = td->members[i];
+    if(!md->type->InheritsFrom(TA_taBase) || md->HasOption("NO_FIND")) continue;
+    taBase* mobj = (taBase*)md->GetOff((void*)this);
+    if(mobj->FindCheck(nm) || md->type->InheritsFromName(nm)) {
+      ret_md = md;
+      return mobj;
+    }
+  }
+
+  // then do a depth-recursive search
+  for(int i=0; i < td->members.size; i++) {
+    md = td->members[i];
+    if(!md->type->InheritsFrom(TA_taBase) || md->HasOption("NO_FIND")) continue;
+    taBase* mobj = (taBase*)md->GetOff((void*)this);
+    void* rval = mobj->FindMembeR(nm, ret_md);
+    if(rval)
+      return rval;
+  }
+  return NULL;
+}
+
 ///////////// Searching
 
 void taBase::Search(const String& srch, taBase_PtrList& items,
@@ -1922,9 +1951,8 @@ const Variant taBase::GetUserData(const String& key) const {
 }
 
 UserDataItemBase* taBase::GetUserDataOfType(TypeDef* typ,
-  const String& key, bool force_create, bool new_itm) 
+  const String& key, bool force_create) 
 {
-  new_itm = false;
   if (!typ) return NULL;
   typ = typ->GetNonPtrType();
   // need to verify, in case we have to create
@@ -1944,7 +1972,6 @@ UserDataItemBase* taBase::GetUserDataOfType(TypeDef* typ,
     rval = (UserDataItemBase*)ud->New(1, typ);
     rval->name = key;
     DataChanged(DCR_USER_DATA_UPDATED);
-    new_itm = true;
   }
   return rval;
 }
@@ -1952,8 +1979,7 @@ UserDataItemBase* taBase::GetUserDataOfType(TypeDef* typ,
 UserDataItemBase* taBase::GetUserDataOfTypeC(TypeDef* typ,
   const String& key) const
 {
-  return const_cast<taBase*>(this)->GetUserDataOfType(typ,
-    key, false);
+  return const_cast<taBase*>(this)->GetUserDataOfType(typ, key, false);
 }
 
 taDoc* taBase::GetDocLink() const {
@@ -2319,15 +2345,17 @@ void taBase::Help() {
 
 taBase* taBase::UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par, taBase* new_par) {
   String old_path = old_guy->GetPath(NULL, old_par);
-  taBase* new_guy = new_par->FindFromPath(old_path);
+  MemberDef* md;
+  taBase* new_guy = new_par->FindFromPath(old_path, md);
   String old_nm = old_guy->GetName();
   if(old_guy->GetOwner() && (!new_guy ||
 			     (old_nm != new_guy->GetName()))) {
     // path-based guy is NULL or not right -- try to lookup by name
     String old_own_path = old_guy->GetOwner()->GetPath(NULL, old_par);
-    taBase* new_own = new_par->FindFromPath(old_own_path);
+    taBase* new_own = new_par->FindFromPath(old_own_path, md);
     if(new_own && new_own->InheritsFrom(&TA_taList_impl)) {
       taList_impl* lst = (taList_impl*)new_own;
+      int idx;
       new_guy = (taBase*)lst->FindName_(old_nm);
     }
   }
@@ -2949,8 +2977,6 @@ void taBase_RefList::setOwner(IRefListClient* own_) {
 // 	taList_impl	//
 //////////////////////////
 
-MemberDef* taList_impl::find_md = NULL;
-
 void taList_impl::Initialize() {
   SetBaseType(&TA_taBase);
   el_def = 0;
@@ -3403,83 +3429,90 @@ void taList_impl::EnforceType() {
   }
 }
 
-MemberDef* taList_impl::FindMembeR(const String& nm, void*& ptr) const {
+void* taList_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
+  ret_md = NULL;
+  
+  // first look for special list index syntax
   String idx_str = nm;
   idx_str = idx_str.before(']');
-  if(idx_str != "") {
+  if(idx_str.nonempty()) {
     idx_str = idx_str.after('[');
     int idx = atoi(idx_str);
-    if((size == 0) || (idx >= size)) {
-      ptr = NULL;
+    if((idx >= size) || (idx < 0)) {
       return NULL;
     }
-    ptr = el[idx];
-    return ReturnFindMd();
+    return el[idx];		// don't have an md for this guy
   }
 
-  int i;
-  if((FindName_(nm, i))) {
-    ptr = el[i];
-    return ReturnFindMd();
-  }
+  // then look for items in the list itself, by name or type
+  taBase* fnd = FindNameType_(nm);
+  if(fnd)
+    return fnd;
 
-  MemberDef* rval;
-  if((rval = GetTypeDef()->members.FindNameAddrR(nm, (void*)this, ptr)) != NULL)
+  // then look on members of list obj itself, recursively 
+  void* rval = inherited::FindMembeR(nm, ret_md);
+  if(rval)
     return rval;
-  int max_srch = MIN(taMisc::search_depth, size);
-  for(i=0; i<max_srch; i++) {
-    TAPtr first_el = (TAPtr)FastEl_(i);
-    if((first_el != NULL) && // only search owned objects
-       ((first_el->GetOwner()==NULL) || (first_el->GetOwner() == ((TAPtr) this)))) {
-      first_el->FindMembeR(nm, ptr);
+
+  // finally, look recursively on owned objs on list
+  //  int max_srch = MIN(taMisc::search_depth, size);
+  // these days, it just doesn't make sense to restrict!
+  for(int i=0; i<size; i++) {
+    taBase* itm = (taBase*)FastEl_(i);
+    if(itm && itm->GetOwner() == this) {
+      rval = itm->FindMembeR(nm, ret_md);
+      if(rval)
+	return rval;
     }
   }
-  ptr = NULL;
   return NULL;
 }
 
-MemberDef* taList_impl::FindMembeR(TypeDef* it, void*& ptr) const {
-  int i;
-  if((FindType_(it,i))) {
-    ptr = el[i];
-    return ReturnFindMd();
-  }
-
-  MemberDef* rval;
-  if((rval = GetTypeDef()->members.FindTypeAddrR(it, (void*)this, ptr)) != NULL)
-    return rval;
-  int max_srch = MIN(taMisc::search_depth, size);
-  for(i=0; i<max_srch; i++) {
-    TAPtr first_el = (TAPtr)FastEl_(i);
-    if((first_el != NULL) && // only search owned objects
-       ((first_el->GetOwner()==NULL) || (first_el->GetOwner() == ((TAPtr) this)))) {
-      first_el->FindMembeR(it, ptr);
-    }
-  }
-  ptr = NULL;
-  return NULL;
-}
-
-taBase* taList_impl::FindType_(TypeDef* it, int& idx) const {
-  int i;
-  for(i=0; i < size; i++) {
-    if(((taBase*)el[i])->InheritsFrom(it)) {
-      idx = i;
-      return (taBase*)el[i];
-    }
-  }
-  idx = -1;
-  return NULL;
-}
-
-taBase* taList_impl::FindNameContains_(const String& item_nm, int& idx) const {
+int taList_impl::FindTypeIdx(TypeDef* it) const {
   for(int i=0; i < size; i++) {
-    if(((taBase*)el[i])->GetName().contains(item_nm)) {
-      idx = i;
-      return (taBase*)el[i];
+    taBase* tmp = (taBase*)el[i];
+    if(tmp && tmp->InheritsFrom(it)) {
+      return i;
     }
   }
-  idx = -1;
+  return -1;
+}
+
+taBase* taList_impl::FindType_(TypeDef* it) const {
+  int idx = FindTypeIdx(it);
+  if(idx >= 0) return (taBase*)el[idx];
+  return NULL;
+}
+
+int taList_impl::FindNameContainsIdx(const String& item_nm) const {
+  for(int i=0; i < size; i++) {
+    taBase* it = (taBase*)el[i];
+    if(it && it->GetName().contains(item_nm)) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+taBase* taList_impl::FindNameContains_(const String& item_nm) const {
+  int idx = FindNameContainsIdx(item_nm);
+  if(idx >= 0) return (taBase*)el[idx];
+  return NULL;
+}
+
+int taList_impl::FindNameTypeIdx(const String& item_nm) const {
+  for(int i=0; i < size; i++) {
+    taBase* it = (taBase*)el[i];
+    if(it && (it->FindCheck(item_nm) || it->InheritsFromName(item_nm))) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+taBase* taList_impl::FindNameType_(const String& item_nm) const {
+  int idx = FindNameTypeIdx(item_nm);
+  if(idx >= 0) return (taBase*)el[idx];
   return NULL;
 }
 
@@ -3639,12 +3672,6 @@ int taList_impl::ReplaceType(TypeDef* old_type, TypeDef* new_type) {
   return nchanged;
 }
 
-MemberDef* taList_impl::ReturnFindMd() const {
-  if(find_md != NULL) return find_md;
-  find_md = new MemberDef(&TA_taBase, "find_md", "return value", "", "", NULL);
-  return find_md;
-}
-
 void taList_impl::SetBaseType(TypeDef* it) {
   el_base = it;
   el_typ = it;
@@ -3657,15 +3684,13 @@ int taList_impl::SetDefaultEl(TAPtr it) {
 }
 
 int taList_impl::SetDefaultElName(const String& nm) {
-  int idx;
-  FindName_(nm, idx);
+  int idx = FindNameIdx(nm);
   if(idx >= 0)    el_def = idx;
   return idx;
 }
 
 int taList_impl::SetDefaultElType(TypeDef* it) {
-  int idx;
-  FindType_(it, idx);
+  int idx = FindTypeIdx(it);
   if(idx >= 0)    el_def = idx;
   return idx;
 }
@@ -3751,7 +3776,8 @@ int taList_impl::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       taBase* old_own = itm->GetOwner(old_par->GetTypeDef());
       if(old_own != old_par) continue;
       String old_path = itm->GetPath(NULL, old_par);
-      taBase* nitm = new_par->FindFromPath(old_path);
+      MemberDef* md;
+      taBase* nitm = new_par->FindFromPath(old_path, md);
       if(nitm) {
 	ReplaceLinkIdx_(i, nitm);
 	nchg++;
@@ -3775,7 +3801,8 @@ int taList_impl::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
     else {			// linked item: could be to something outside of scope!
       taBase* old_own = itm->GetOwner(par_typ);
       String old_path = itm->GetPath(NULL, old_own);
-      taBase* nitm = new_par->FindFromPath(old_path);
+      MemberDef* md;
+      taBase* nitm = new_par->FindFromPath(old_path, md);
       if(nitm) {
 	ReplaceLinkIdx_(i, nitm);
 	nchg++;

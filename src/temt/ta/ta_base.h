@@ -631,9 +631,9 @@ public:
   // #IGNORE get path from root (default), but stop at par_stop if non-null
   virtual String	GetPath(TAPtr ta=NULL, TAPtr par_stop=NULL) const;
   // #CAT_ObjectMgmt get path without name informtation, stop at par_stop if non-null
-  virtual TAPtr		FindFromPath(const String& path, MemberDef*& ret_md=no_mdef, int start=0) const;
-  // #CAT_ObjectMgmt find object from path (starting from this, and position start of the path)
-  virtual Variant	GetValFromPath(const String& path, MemberDef*& ret_md=no_mdef, bool warn_not_found=false) const;
+  virtual taBase*	FindFromPath(const String& path, MemberDef*& ret_md, int start=0) const;
+  // #CAT_ObjectMgmt find object from path (starting from this, and position start of the path -- ret_md is return member def: if NULL and return is !NULL, then it is a member of a list or group, not a member in object
+  virtual Variant	GetValFromPath(const String& path, MemberDef*& ret_md, bool warn_not_found=false) const;
   // #CAT_ObjectMgmt get a member value from given path -- only follows direct members (of members) of this object -- does not look into items in lists or groups
 
   // utility functions for doing path stuff
@@ -652,10 +652,6 @@ public:
   // #IGNORE number of tokens of taBase objects of given type in same scope as ref_obj
 
 protected: // Impl
-  static String		no_name; 	// return this for no names
-  static int		no_idx;		// return this for no index
-  static MemberDef*	no_mdef;	// return this for no memberdef ptr
-  static bool		no_new_itm; 	// for default arg
   
   ////////////////////////////////////////////////////////////////////// 
   // 	Saving and Loading to/from files
@@ -951,23 +947,20 @@ public:
   TypeDef*	GetStemBase() const;
   // #IGNORE get first (from me) parent with STEM_BASE directive -- defines equivalence class -- if not found, then taBase is returned
 
-  virtual MemberDef*	FindMember(const String& nm, int& idx=no_idx) const // #IGNORE
-  { return GetTypeDef()->members.FindName(nm, idx); }
-  virtual MemberDef*	FindMember(TypeDef* it, int& idx=no_idx) const 	// #IGNORE
-  { return GetTypeDef()->members.FindType(it, idx); }
-  virtual MemberDef* 	FindMember(void* mbr, int& idx=no_idx) const 	// #IGNORE
-  { return GetTypeDef()->members.FindAddr((void*)this, mbr, idx); }
-  virtual MemberDef* 	FindMemberPtr(void* mbr, int& idx=no_idx) const	// #IGNORE
-  { return GetTypeDef()->members.FindAddrPtr((void*)this, mbr, idx); }	// #IGNORE
+  virtual MemberDef*	FindMember(const String& nm) const // #IGNORE
+  { return GetTypeDef()->members.FindName(nm); }
+  virtual MemberDef*	FindMember(TypeDef* it) const 	// #IGNORE
+  { return GetTypeDef()->members.FindType(it); }
+  virtual MemberDef* 	FindMember(void* mbr) const 	// #IGNORE
+  { int idx; return GetTypeDef()->members.FindAddr((void*)this, mbr, idx); }
+  virtual MemberDef* 	FindMemberPtr(void* mbr) const	// #IGNORE
+  { int idx; return GetTypeDef()->members.FindAddrPtr((void*)this, mbr, idx); }	// #IGNORE
 
-  // these get overwritten by groups, lists, etc.
-  virtual MemberDef* 	FindMembeR(const String& nm, void*& ptr) const 	// #IGNORE
-  { return GetTypeDef()->members.FindNameAddrR(nm, (void*)this, ptr); }
-  virtual MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const	// #IGNORE
-  { return GetTypeDef()->members.FindTypeAddrR(it, (void*)this, ptr); }
+  virtual void* 	FindMembeR(const String& nm, MemberDef*& ret_md) const;
+  // #CAT_ObjectMgmt find member based on name or type, recursive -- does breadth-first then depth search -- returns pointer of member item, and ret_md is filled in if avail -- if NULL it indicates that it is an item in a list of type taBase and not a proper member
 
   virtual bool		FindCheck(const String& nm) const // #IGNORE check this for the name
-  { return ((GetName() == nm) || InheritsFromName(nm)); }
+  { return (GetName() == nm); }
 
   virtual void		Search(const String& srch, taBase_PtrList& items,
 			       taBase_PtrList* owners = NULL, 
@@ -1007,7 +1000,7 @@ public:
   virtual String	GetEnumString(const String& enum_tp_nm, int enum_val) const
   { return GetTypeDef()->GetEnumString(enum_tp_nm, enum_val); }
   // #CAT_ObjectMgmt get the name corresponding to given enum value in enum type enum_tp_nm
-  virtual int		GetEnumVal(const String& enum_nm, String& enum_tp_nm = no_name) const
+  virtual int		GetEnumVal(const String& enum_nm, String& enum_tp_nm) const
   { return GetTypeDef()->GetEnumVal(enum_nm, enum_tp_nm); }
   // #CAT_ObjectMgmt get the enum value corresponding to the given enum name (-1 if not found), and sets enum_tp_nm to name of type this enum belongs in (empty if not found)
   virtual uint		GetSize() const		{ return GetTypeDef()->size; }  // #IGNORE
@@ -1061,7 +1054,7 @@ public:
     {if (HasUserData(key)) return GetUserData(key); else return def;}
   // #CAT_UserData #EXPERT return value if exists, or default if doesn't
   UserDataItemBase* 	GetUserDataOfType(TypeDef* typ, const String& key,
-     bool force_create, bool new_itm=no_new_itm);
+					  bool force_create);
   // #CAT_UserData #EXPERT #ARGC_2 gets specified user data of given type, making one if doesn't exist and fc=true
   UserDataItemBase* 	GetUserDataOfTypeC(TypeDef* typ, const String& key) const;
   // #IGNORE const non-forced version, for convenience
@@ -1710,8 +1703,6 @@ typedef taOBase inherited_taBase;
 typedef taPtrList_ta_base inherited_taPtrList;
 #endif
 public:
-  static MemberDef* find_md;	// #HIDDEN #NO_SHOW_TREE #NO_SAVE return value for findmember of data
-
   String        name;           // #CONDEDIT_OFF_base_flags:NAME_READONLY name of the object 
   TypeDef*	el_base;	// #EXPERT #NO_SHOW_TREE #READ_ONLY_GUI #NO_SAVE Base type for objects in group
   TypeDef* 	el_typ;		// #TYPE_ON_el_base #NO_SHOW_TREE Default type for objects in group
@@ -1734,13 +1725,7 @@ public:
   String 	GetPath_Long(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
   String 	GetPath(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
 
-  bool 		FindCheck(const String& nm) const // also check for el_typ
-  { return ((name == nm) || InheritsFromName(nm) || el_typ->InheritsFromName(nm)); }
-
-  MemberDef* 	FindMembeR(const String& nm, void*& ptr) const;
-  // #CAT_Access extended to search in the list
-  MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const;
-  // #CAT_Access extended to search in the list
+  void* 	FindMembeR(const String& nm, MemberDef*& ret_md) const;
 
   override void	Close();
   override bool	Close_Child(TAPtr obj);
@@ -1811,14 +1796,21 @@ public:
   virtual int	ReplaceType(TypeDef* old_type, TypeDef* new_type);
   // #MENU #USE_RVAL #CAT_Modify #TYPE_ON_el_base replace all items of old type with new type (returns number changed)
 
-  virtual taBase* FindType_(TypeDef* item_tp, int& idx) const; 	// #IGNORE
-  virtual taBase* FindNameContains_(const String& item_nm, int& idx) const;
+  virtual int	FindTypeIdx(TypeDef* item_tp) const;
+  // #CAT_Access find index of (first) element that inherits from given type (-1 = not found)
+  virtual int	FindNameContainsIdx(const String& item_nm) const;
+  // #CAT_Access Find index of (first) element whose name contains given name sub-string (-1 = nonot found)
+  virtual int 	FindNameTypeIdx(const String& item_nm) const;
+  // #CAT_Access Find index of (first) element with given object name or type name (item_nm) (-1 if not found)
+
+  virtual taBase* FindType_(TypeDef* item_tp) const; 	// #IGNORE
+  virtual taBase* FindNameContains_(const String& item_nm) const;
+  // #IGNORE
+  virtual taBase* FindNameType_(const String& item_nm) const;
   // #IGNORE
 
   void	SetBaseType(TypeDef* it); // #CAT_Modify set base (and default) type to given td
 
-  MemberDef*	ReturnFindMd() const;
-  // #IGNORE return the find_md variable, initialized if necessary
 #if defined(TA_GUI) && !defined(__MAKETA__) 
   override const QPixmap* GetDataNodeBitmap(int bmf, int& flags_supported) const;
 #endif
@@ -1896,14 +1888,18 @@ public:
   T*		Edit_El(T* item) const		{ return SafeEl(FindEl((TAPtr)item)); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ #CAT_Access Edit given list item
 
-  T*		FindName(const String& item_nm, int& idx=no_idx) const
-  { return (T*)FindName_(item_nm, idx); }
+  T*		FindName(const String& item_nm) const
+  { return (T*)FindName_(item_nm); }
   // #MENU #USE_RVAL #ARGC_1 #CAT_Access Find element with given name (item_nm)
-  virtual T*	FindNameContains(const String& item_nm, int& idx=no_idx) const
-  { return (T*)FindNameContains_(item_nm, idx); }
+  T*		FindNameContains(const String& item_nm) const
+  { return (T*)FindNameContains_(item_nm); }
   // #MENU #USE_RVAL #ARGC_1 #CAT_Access Find element whose name contains given name sub-string
-  virtual T* 	FindType(TypeDef* item_tp, int& idx=no_idx) const { return (T*)FindType_(item_tp, idx); }
+  T* 		FindType(TypeDef* item_tp) const
+  { return (T*)FindType_(item_tp); }
   // #CAT_Access find given type element (NULL = not here), sets idx
+  T*		FindNameType(const String& item_nm) const
+  { return (T*)FindNameType_(item_nm); }
+  // #CAT_Access Find element with given object name or type name (item_nm)
 
   T*		First() const			{ return (T*)First_(); }
   // #CAT_Access look at the first element; NULL if none

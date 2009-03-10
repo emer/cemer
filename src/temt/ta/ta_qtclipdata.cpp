@@ -308,13 +308,14 @@ void taiObjectMimeItem::Initialize() {
 }
 
 bool taiObjectMimeItem::Constr_impl(const String&) {
-  m_td = taMisc::types.FindName(m_type_name.chars()); // note: could be NULL if, ex. decoding leabra object in instance of bp
+  m_td = taMisc::types.FindName(m_type_name); // note: could be NULL if, ex. decoding leabra object in instance of bp
   return (m_td);
 }
 
 void taiObjectMimeItem::DecodeData_impl() {
+  MemberDef* md;
   if (isThisProcess() && (!m_obj) && tabMisc::root) {
-    m_obj = tabMisc::root->FindFromPath(path());
+    m_obj = tabMisc::root->FindFromPath(path(), md);
   }
 }
 

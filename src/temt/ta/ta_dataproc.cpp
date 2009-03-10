@@ -65,8 +65,10 @@ void DataOpEl::SetDataTable(DataTable* dt) {
 
 void DataOpEl::GetColumns(DataTable* dt) {
   if(!dt) return;
-  DataCol* da = dt->FindColName(col_name, col_idx);
-  if(col_idx < 0) da = NULL;	// just to be sure..
+  col_idx = dt->FindColNameIdx(col_name);
+  DataCol* da = NULL;
+  if(col_idx >= 0)
+    da = dt->data[col_idx];
   taBase::SetPointer((taBase**)&col_lookup, da);
 }
 
@@ -313,12 +315,12 @@ bool taDataProc::GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest
   src_cols->GetColumns(src);
   for(int i=0; i<src_cols->size;i++) {
     DataOpEl* sop = src_cols->FastEl(i);
-    int d_idx;
-    DataCol* dda = dest->FindColName(sop->col_name, d_idx);
-    if(!dda) {
+    int d_idx = dest->FindColNameIdx(sop->col_name);
+    if(d_idx < 0) {
       src_cols->RemoveIdx(i); i--;
       continue;
     }
+    DataCol* dda = dest->data[d_idx];
     DataCol* sda = src->data[sop->col_idx];
     if(dda->cell_size() != sda->cell_size()) continue; // incompatible
     if(sda->cell_size() > 1) {
@@ -2110,7 +2112,7 @@ void DataCalcLoop::UpdateColVars() {
   int ti, i;
   for(i = src_col_vars.size - 1; i >= 0; --i) { // delete not used ones
     ProgVar* pv = src_col_vars.FastEl(i);
-    src_cols.FindName(pv->name.after(srcp), ti);
+    ti = src_cols.FindNameIdx(pv->name.after(srcp));
     if (ti >= 0) {
       SetColProgVarFmData(pv, src_cols.FastEl(ti));
       //      pa->UpdateFromVar(*pv);
@@ -2121,7 +2123,7 @@ void DataCalcLoop::UpdateColVars() {
   // add args in target not in us, and put in the right order
   for (ti = 0; ti < src_cols.size; ++ti) {
     DataOpEl* ds = src_cols.FastEl(ti);
-    src_col_vars.FindName(srcp + ds->col_name, i);
+    i = src_col_vars.FindNameIdx(srcp + ds->col_name);
     if(i < 0) {
       ProgVar* pv = new ProgVar();
       pv->name = srcp + ds->col_name;
@@ -2137,7 +2139,7 @@ void DataCalcLoop::UpdateColVars() {
   srcp = "d_";
   for(i = dest_col_vars.size - 1; i >= 0; --i) { // delete not used ones
     ProgVar* pv = dest_col_vars.FastEl(i);
-    dest_cols.FindName(pv->name.after(srcp), ti);
+    ti = dest_cols.FindNameIdx(pv->name.after(srcp));
     if (ti >= 0) {
       SetColProgVarFmData(pv, dest_cols.FastEl(ti));
     } else {
@@ -2147,7 +2149,7 @@ void DataCalcLoop::UpdateColVars() {
   // add args in target not in us, and put in the right order
   for (ti = 0; ti < dest_cols.size; ++ti) {
     DataOpEl* ds = dest_cols.FastEl(ti);
-    dest_col_vars.FindName(srcp + ds->col_name, i);
+    i = dest_col_vars.FindNameIdx(srcp + ds->col_name);
     if(i < 0) {
       ProgVar* pv = new ProgVar();
       pv->name = srcp + ds->col_name;

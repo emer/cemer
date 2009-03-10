@@ -32,8 +32,7 @@ bool taDataGen::CheckDims(float_Matrix* mat, int dims) {
 
 DataCol* taDataGen::GetFloatMatrixDataCol(const DataTable* src_data, const String& data_col_nm) {
   if(!src_data) return NULL;
-  int idx;
-  DataCol* da = src_data->FindColName(data_col_nm, idx, true); // err msg
+  DataCol* da = src_data->FindColName(data_col_nm, true); // err msg
   if(!da)
     return NULL;
   if(!da->is_matrix) {
@@ -51,8 +50,7 @@ DataCol* taDataGen::GetFloatMatrixDataCol(const DataTable* src_data, const Strin
 
 DataCol* taDataGen::GetFloatDataCol(const DataTable* src_data, const String& data_col_nm) {
   if(!src_data) return NULL;
-  int idx;
-  DataCol* da = src_data->FindColName(data_col_nm, idx, true); // err msg
+  DataCol* da = src_data->FindColName(data_col_nm, true); // err msg
   if(!da)
     return NULL;
   if(da->is_matrix) {
@@ -422,56 +420,56 @@ int taDataGen::ProbSelectColNo(DataTable* data_table, int row_no,
   if(colp1.nonempty()) {
     psum += data_table->GetValColName(colp1, row_no).toDouble();
     if(rndval < psum) {
-      data_table->FindColName(colval1, col_no, true);
+      col_no = data_table->FindColNameIdx(colval1, true);
       return col_no;
     }
   }
   if(colp2.nonempty()) {
     psum += data_table->GetValColName(colp2, row_no).toDouble();
     if(rndval < psum) {
-      data_table->FindColName(colval2, col_no, true);
+      col_no = data_table->FindColNameIdx(colval2, true);
       return col_no;
     }
   }
   if(colp3.nonempty()) {
     psum += data_table->GetValColName(colp3, row_no).toDouble();
     if(rndval < psum) {
-      data_table->FindColName(colval3, col_no, true);
+      col_no = data_table->FindColNameIdx(colval3, true);
       return col_no;
     }
   }
   if(colp4.nonempty()) {
     psum += data_table->GetValColName(colp4, row_no).toDouble();
     if(rndval < psum) {
-      data_table->FindColName(colval4, col_no, true);
+      col_no = data_table->FindColNameIdx(colval4, true);
       return col_no;
     }
   }
   if(colp5.nonempty()) {
     psum += data_table->GetValColName(colp5, row_no).toDouble();
     if(rndval < psum) {
-      data_table->FindColName(colval5, col_no, true);
+      col_no = data_table->FindColNameIdx(colval5, true);
       return col_no;
     }
   }
   if(colp6.nonempty()) {
     psum += data_table->GetValColName(colp6, row_no).toDouble();
     if(rndval < psum) {
-      data_table->FindColName(colval6, col_no, true);
+      col_no = data_table->FindColNameIdx(colval6, true);
       return col_no;
     }
   }
   if(colp7.nonempty()) {
     psum += data_table->GetValColName(colp7, row_no).toDouble();
     if(rndval < psum) {
-      data_table->FindColName(colval7, col_no, true);
+      col_no = data_table->FindColNameIdx(colval7, true);
       return col_no;
     }
   }
   if(colp8.nonempty()) {
     psum += data_table->GetValColName(colp8, row_no).toDouble();
     if(rndval < psum) {
-      data_table->FindColName(colval8, col_no, true);
+      col_no = data_table->FindColNameIdx(colval8, true);
       return col_no;
     }
   }
