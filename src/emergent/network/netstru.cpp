@@ -6327,7 +6327,8 @@ void Network::DMem_SymmetrizeWts() {
 	    for(int g = 0; g < fm->recv.size; g++) {
 	      RecvCons* fmg = fm->recv.FastEl(g);
 	      if(fmg->prjn->from != lay) continue;
-	      Connection* con = fmg->FindConFrom(un);
+	      int tmpdx;
+	      Connection* con = fmg->FindConFrom(un, tmpdx);
 	      if(con) {
 		unit_idxs.Add(uni);
 		wt_vals.Add(con->wt);
