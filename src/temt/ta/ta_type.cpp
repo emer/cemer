@@ -2274,6 +2274,13 @@ void taDataLink::DataDestroying() { //note: linklist will automatically remove u
 }
 
 void taDataLink::DoNotify(int dcr, void* op1_, void* op2_) {
+#if defined(DEBUG) && !defined(NO_TA_BASE)
+ // check for dispatch in a thread, which is Very Bad(TM)!!!
+  if (!taTaskThread::inMainThread()) {
+    taMisc::Error_nogui("A non-main thread has caused a taDataLink::DoNotify -- not allowed, notify will not be sent");
+    return;
+  }
+#endif
   for (int i = 0; i < clients.size; ++i) {
     IDataLinkClient* dlc = clients.FastEl(i);
     if ((dcr == DCR_REBUILD_VIEWS) && !dlc->isDataView()) continue;

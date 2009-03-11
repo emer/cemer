@@ -1148,20 +1148,20 @@ public:
 class TA_API taRefN {
   // #NO_TOKENS #NO_MEMBERS #NO_CSS reference counting base class
 public:
-  static uint		RefN(taRefN* it)	{ return it->refn; }
-  static void  		Ref(taRefN* it)	{ it->refn++; }
-  static void  		SafeRef(taRefN* it)	{ if(it) it->refn++; }
-  static void  		Ref(taRefN& it)	{ it.refn++; }
-  static void   	unRef(taRefN* it)	{ it->refn--; }
+  static void  		Ref(taRefN* it)	{ it->refn.ref(); }
+  static void  		SafeRef(taRefN* it)	{ if(it) it->refn.ref(); }
+  static void  		Ref(taRefN& it)	{ it.refn.ref(); }
+  static void   	unRef(taRefN* it)	{ it->refn.deref(); }
   static void   	Done(taRefN* it)	{ if(it->refn == 0) delete it; }
-  static void		unRefDone(taRefN* it)	{ unRef(it); Done(it); }
+  static void		unRefDone(taRefN* it)	
+    {if (!it->refn.deref()) delete it; }
   static void		SafeUnRefDone(taRefN* it) { if(it) unRefDone(it); }
   static void		SetRefDone(taRefN*& var, taRefN* it) // does it fast, but safe, even for var==it
     {if (it) Ref(it); if (var != NULL) unRefDone(var); var = it;}
 
-  taRefN()		{ refn = 0; }
+  taRefN()		{}
 protected:
-  mutable uint 		refn;
+  QAtomicInt 		refn;
   virtual ~taRefN()	{ }; // all instances should consistently use ref counting for lifetime management
 };
 

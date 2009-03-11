@@ -96,6 +96,7 @@ public:
     TS_DONE,    // finished running the task, waiting to sync
   };
   
+  static bool		inMainThread(); // return true for the caller if it is the main thread of the program
   static void		DeleteTaskThread(taTaskThread* tt); 
    // use this to delete, do not delete directly!
 
@@ -130,7 +131,7 @@ protected:
   taTaskRef		m_task;
   const int		m_affinity; // -1-default; note: this may be ignored
 #ifndef __MAKETA__
-  const Qt::HANDLE	m_main_thread_id; // set on create (may be needed for affinity)
+  static Qt::HANDLE	m_main_thread_id; // set on create (may be needed for affinity)
   Qt::HANDLE		m_thread_id; // for the thread, set in run
 #endif
   volatile ThreadState	m_state;

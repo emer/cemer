@@ -54,6 +54,8 @@ void taTask::Initialize() {
   Qt 4.3 Assistant
 */
 
+Qt::HANDLE taTaskThread::m_main_thread_id = QThread::currentThreadId();
+
 void taTaskThread::DeleteTaskThread(taTaskThread* tt) {
   if (tt->isActive()) {
     tt->terminate();
@@ -64,9 +66,13 @@ void taTaskThread::DeleteTaskThread(taTaskThread* tt) {
   delete tt;
 }
 
+bool taTaskThread::inMainThread() {
+  return (currentThreadId() == m_main_thread_id);
+}
+
 taTaskThread::taTaskThread(bool log_, int affinity_)
 : m_affinity(affinity_),
-  m_main_thread_id(currentThreadId()), 
+//  m_main_thread_id(currentThreadId()), 
   m_log(log_) 
 {
   m_thread_id = 0;
