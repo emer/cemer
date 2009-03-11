@@ -52,6 +52,8 @@
   #endif
 #endif // __MAKETA__
 
+#include "ta_atomic.h"
+
 #if (0 && defined(DEBUG) && defined(TA_OS_LINUX))
 void operator delete(void* ptr) throw();
 void operator delete[](void* ptr) throw();
@@ -70,12 +72,12 @@ friend class String;
 public:
   uint			len;    // string length (not including null terminator)
   uint			sz;     // allocated space ((not including null terminator)
-  uint			cnt;	// reference count (when goes to 0, instance is deleted)
+  QAtomicInt		cnt;	// reference count (when goes to 0, instance is deleted)
   char	     	s[1];   // the string starts here, null terminator always maintained
 protected:
   bool			canCat(uint xtra_len) {return ((cnt == 1) && ((sz - len) >= xtra_len));}  // true if ref==1, and enough space to add
-  void			ref() {++cnt;}
-  void 			unRef() {if (--cnt == 0) free(this);}
+  void			ref() {cnt.ref();}
+  void 			unRef() {if (!cnt.deref()) free(this);}
   void			cat(const char* str, uint slen); // note: slen must be set, and canCat must have been true
   void			upcase();	// convert all letters to upper case; only called if cnt<=1
   void			downcase();	// convert all letters to lower case; only called if cnt<=1

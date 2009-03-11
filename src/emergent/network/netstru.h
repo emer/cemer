@@ -1724,7 +1724,7 @@ public:
   bool		send_netin;	// #NO_SAVE NOTE: not saved -- initialized from user prefs.  should the Send_Netin call be threaded or not?  this can actually be slower on some machiness due to memory dispersion issues, and it also results in small numerical differences from the single-threaded case.
   bool		interleave;	// #DEF_true #EXPERT deploy threads in an interleaved fashion over units, which improves load balancing as neighboring units are likely to have similar compute demands, but it costs in cache coherency as the memory access per processor is more distributed -- only affects network level (non lay_sync) processes
   bool		ignore_lay_sync;// #DEF_false ignore need to sync at the layer level for feedforward algorithms that require this (e.g., backprop) -- results in faster but less accurate processing
-  int		nibble_i;	// #IGNORE current nibble index -- atomic incremented by working threads to nibble away the rest..
+  QAtomicInt	nibble_i;	// #IGNORE current nibble index -- atomic incremented by working threads to nibble away the rest..
   int 		nibble_stop;	// #IGNORE nibble stopping value
   bool	       	using_threads;	// #READ_ONLY #NO_SAVE are we currently using threads for a computation or not -- also useful for just after a thread call to see if threads were used
 

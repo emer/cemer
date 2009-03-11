@@ -228,7 +228,7 @@ TA_API StrRep* Snew(int slen, uint cap) {
   }
   rval->sz = cap;
   rval->len = slen;
-  rval->cnt = 0;
+  rval->cnt = 0; // necessary, because ctor does not run!
   rval->s[slen] = '\0';
   return rval;
 }

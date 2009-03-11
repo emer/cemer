@@ -4785,7 +4785,7 @@ void UnitCallTask::run() {
     // then auto-nibble until done!
     const int nib_chnk = mg->nibble_chunk;
     while(true) {
-      int nxt_uidx = AtomicFetchAdd(&mg->nibble_i, nib_chnk);
+      int nxt_uidx = mg->nibble_i.fetchAndAddOrdered(nib_chnk);
       if(nxt_uidx >= nib_stop) break;
       const int mx = MIN(nib_stop, nxt_uidx + nib_chnk);
       for(int i=nxt_uidx; i <mx; i++) {
@@ -4808,7 +4808,7 @@ void UnitCallTask::run() {
     // then auto-nibble until done!
     const int nib_chnk = -mg->nibble_chunk;
     while(true) {
-      int nxt_uidx = AtomicFetchAdd(&mg->nibble_i, nib_chnk);
+      int nxt_uidx = mg->nibble_i.fetchAndAddOrdered(nib_chnk);
       if(nxt_uidx < nib_stop) break;
       const int mx = MAX(nib_stop, nxt_uidx + nib_chnk);
       for(int i=nxt_uidx; i>=mx; i--) {

@@ -419,6 +419,7 @@ public:
   };
   
   enum BaseFlags { // #BITS control flags 
+    BF_0		= 0, // #IGNORE
     THIS_INVALID	= 0x0001, // CheckThisConfig_impl has detected a problem
     CHILD_INVALID	= 0x0002, // CheckChildConfig_impl returns issue with a child
     COPYING		= 0x0004, // this object is currently within a Copy function
@@ -450,8 +451,8 @@ public:
   static void  		Ref(taBase& it);	     // #IGNORE
   static void  		Ref(taBase* it);	     // #IGNORE
 #else
-  static void  		Ref(taBase& it)		{ it.refn++; }	     // #IGNORE
-  static void  		Ref(taBase* it) 	{ it->refn++; }	     // #IGNORE
+  static void  		Ref(taBase& it)		{ it.refn.ref(); }	     // #IGNORE
+  static void  		Ref(taBase* it) 	{ it->refn.ref(); }	     // #IGNORE
 #endif
   static void		UnRef(taBase* it) {unRef(it); Done(it);} // #IGNORE
   static void		Own(taBase& it, TAPtr onr);	// #IGNORE note: also does a RefStatic() on first ownership
@@ -465,13 +466,14 @@ protected:
   static void   	Done(taBase* it); // #IGNORE
 #else
   static void   	unRef(taBase* it) 
-    { if (it->refn > 0) it->refn--; }  // #IGNORE -- don't keep writing if <=0 since this could be a zombie/deleted object in some obscure scenarios
+    { it->refn.deref(); }  // #IGNORE 
   static void   	Done(taBase* it) 
     { if ((it->refn == 0) && (!it->HasBaseFlag(DESTROYED))) delete it;} 
     // #IGNORE -- we check the flag for similar reasons as given in unRef
 #endif
-  static void		unRefDone(taBase* it) 	{unRef(it); Done(it);}	 // #IGNORE
-
+  static void		unRefDone(taBase* it)
+    { if (!it->refn.deref() && (!it->HasBaseFlag(DESTROYED))) delete it;} 
+	 // #IGNORE
   ///////////////////////////////////////////////////////////////////////////
   // 	Pointer management routines (all pointers should be ref'd!!)
 public:
@@ -1301,24 +1303,12 @@ public:
   ///////////////////////////////////////////////////////////////////////////
   //		Misc Impl stuff
 
-#ifdef __MAKETA__
-  BaseFlags		base_flags; // #NO_SHOW #NO_SAVE #READ_ONLY fake base_flags for ta system, flags are actually in the lower short
-#else
-# if    (TA_BYTE_ORDER == TA_BIG_ENDIAN)
-  protected: short	refn;	// number of references to this object
-  public: mutable short	base_flags;
-# define refn_base refn
-# elif (TA_BYTE_ORDER == TA_LITTLE_ENDIAN)
-  mutable short		base_flags;
-  protected: short	refn;	// number of references to this object
-# define refn_base base_flags
-# else
-#   error "undefined byte order"
-# endif
-#endif
+  mutable BaseFlags	base_flags; // #NO_SHOW #NO_SAVE #READ_ONLY base_flags for ta system
+protected:
+  QAtomicInt		refn;	// number of references to this object
 private: 
 // Initialize and Destroy are always private because they should only be called in ctor/dtor
-  void			Initialize() { *reinterpret_cast<int*>(&refn_base) = 0; }
+  void			Initialize() {base_flags = BF_0;}
   // #IGNORE constructor implementation to initialize members of class.  every class should define this initializer.  cannot refer to anything outside of the object itself (use InitLinks for when it gets added into the object hierarchy)
   void			Destroy();
   // #IGNORE destructor implementation -- free any allocated memory and reset pointers to null, etc. -- set to null and check for null!

@@ -16,8 +16,9 @@ set(ta_HEADS_MAKETA
   maketa_fstream.h
   maketa_sstream.h
   ta_def.h
-  ta_platform.h
+  ta_atomic.h
   ta_string.h
+  ta_platform.h
   ta_stdef.h
   ta_variant.h
   ifont.h
@@ -93,9 +94,10 @@ set(ta_HEADS
   maketa_iostream.h
   maketa_fstream.h
   maketa_sstream.h
+  ta_atomic.h
+  ta_string.h
   ta_platform.h
   ta_thread.h
-  ta_string.h
   ta_stdef.h
   ta_variant.h
   ifont.h
@@ -224,9 +226,10 @@ set(ta_SRCS_GUI
 # but DO include _TA.cpp files
 set(ta_SRCS
   ta_TA.cpp
+  ta_atomic.cpp
+  ta_string.cpp
   ta_platform.cpp
   ta_thread.cpp
-  ta_string.cpp
   ta_variant.cpp
   ifont.cpp
   icolor.cpp

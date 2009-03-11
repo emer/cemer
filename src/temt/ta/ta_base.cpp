@@ -354,14 +354,14 @@ void taBase::Ref(taBase& it) {
   Ref(&it);
 }
 void taBase::Ref(taBase* it) {
-  it->refn++;
+  it->refn.ref();
 }
 
 void taBase::unRef(taBase* it) {
   if (it->refn <= 0) {
     cerr << "WARNING: taBase::unRef: taBase refn < 0 for item\n";
   } else
-    it->refn--;
+    it->refn.deref();
 }
 
 void taBase::Done(taBase* it) {
@@ -561,11 +561,11 @@ bool taBase::HasBaseFlag(int flag) const {
 }
 
 void taBase::SetBaseFlag(int flag) {
-  base_flags |= flag;
+  base_flags = (BaseFlags)(base_flags | flag);
 }
 
 void taBase::ClearBaseFlag(int flag) {
-  base_flags &= ~flag;
+  base_flags = (BaseFlags)(base_flags & ~flag);
 }
 
 int taBase::GetEditableState(int mask) const {
@@ -1589,7 +1589,7 @@ void taBase::CopyFromCustom(const taBase* cp_fm) {
 
 void taBase::Copy_impl(const taBase& cp) { // note: not a virtual method
   // just the flags
-  base_flags = (base_flags & ~COPY_MASK) | (cp.base_flags & COPY_MASK);
+  base_flags = (BaseFlags)((base_flags & ~COPY_MASK) | (cp.base_flags & COPY_MASK));
 }
 
 bool taBase::ChildCanDuplicate(const taBase* chld, bool quiet) const {
