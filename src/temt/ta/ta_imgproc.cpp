@@ -1225,23 +1225,29 @@ void DoGRetinaSpec::PlotSpacing(DataTable* graph_data, float val) {
 bool DoGRetinaSpec::FilterRetina(float_Matrix& on_output, float_Matrix& off_output,
 				 float_Matrix& retina_img, bool superimpose,
 				 EdgeMode edge) {
-  dog.UpdateFilter();		// just to be sure
 
   TwoDCoord img_size = spacing.retina_size;
 
-  if((retina_img.dim(0) != img_size.x) || 
-     (retina_img.dim(1) != img_size.y)) {
+  if((retina_img.dim(0) != img_size.x) || (retina_img.dim(1) != img_size.y)) {
     taMisc::Error("DoGFilterImage: retina_img is not appropriate size!");
     return false;
   }
 
-  on_output.SetGeom(2, spacing.output_size.x, spacing.output_size.y);
-  off_output.SetGeom(2, spacing.output_size.x, spacing.output_size.y);
+  if((on_output.dim(0) != spacing.output_size.x) || 
+     (on_output.dim(1) != spacing.output_size.y)) {
+    taMisc::Error("DoGFilterImage: on_output is not appropriate size: spacing.output_size!");
+    return false;
+  }
+  if((off_output.dim(0) != spacing.output_size.x) || 
+     (off_output.dim(1) != spacing.output_size.y)) {
+    taMisc::Error("DoGFilterImage: off_output is not appropriate size: spacing.output_size!");
+    return false;
+  }
 
   float_Matrix* on_out = &on_output;
   float_Matrix* off_out = &off_output;
-  static float_Matrix tmp_on_out;
-  static float_Matrix tmp_off_out;
+  float_Matrix tmp_on_out;  taBase::Ref(tmp_on_out);
+  float_Matrix tmp_off_out; taBase::Ref(tmp_off_out);
 
   if(superimpose) {
     tmp_on_out.SetGeom(2, spacing.output_size.x, spacing.output_size.y);
@@ -2804,8 +2810,7 @@ bool RetinaSpec::FilterImageData(DataTable* dt, bool superimpose, int renorm) {
       else
 	cur_rescale = 1.0f / max_val;
       cur_phase = 1;
-      ThreadImgProcCall ip_call2(&ImgProcThreadBase::Filter_Thread);
-      threads.Run(&ip_call2, dogs.size);
+      threads.Run(&ip_call, dogs.size);
     }
   }
 
