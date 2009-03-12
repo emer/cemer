@@ -84,16 +84,23 @@ public:
   
   static float	ActualToLevel(float act_level, Units units); // converts the value to an encoded value
   static float	LevelToActual(float level, Units units); // converts the value to a linear value
+  static float	Convert(float level, Units units, Units new_units);
+  // convert the given value into the new units
   
   float		level; // the value to use, in the given units
   Units		units; // the units to use for the level value
   float		act_level; // #READ_ONLY #NO_SAVE
   
   void		Set(float new_level, Units new_units); // set a new level/units pair, and update act_level
+  void		Set(float new_level) {Set(new_level, units);} 
+  // #IGNORE set a new level in current units, and update act_level
   void		Update(float in_level, Units in_units = UN_SCALE); // update level, keeping it in current units -- the value is specified in_units, but converted 
 
-  operator float() const {return (float) act_level;} // #IGNORE simplifies equation
+  operator float() const {return (float) act_level;} // #IGNORE returns the value in SCALE units
+//  operator =(float act_val) {Update(act_val); return *this;} // #IGNORE set value in SCALE units
   
+  explicit Level(Units init_units, float init_act_level = 1.0f);
+    // ctor that sets to use indicated units, and inits level to given SCALE value
   TA_BASEFUNS_LITE(Level)
 protected:
   void	UpdateAfterEdit_impl();
@@ -142,6 +149,8 @@ public:
     UN_SAMPLES  // #LABEL_samples in number of samples, regardless of time
   };
   
+  static double	StatGetDecayDt(double duration, Units units, float fs);
+   // get the exponential decay parameter dt/sample given the time constant
   static double	StatGetDurationTime(double duration, Units units, float fs); 
    // get the duration as an amount of time, < 0 if continuous
   static double	StatGetDurationSamples(double duration, Units units, float fs); 
@@ -158,6 +167,10 @@ public:
   double	GetDurationSamples(float fs) const 
     {return StatGetDurationSamples(duration, units, fs);}
    // get the duration as a number of samples, = 0 if continuous (note: could be fractional)
+  double	GetDecayDt(float fs) const 
+    {return StatGetDecayDt(duration, units, fs);}
+   // get the exponential decay parameter dt given the time constant (duration) for sampling rate 
+
   void		Set(double dur, Units uns) {duration = dur; units = uns;}
   void		AddTime(double dur, float fs);
    // add the duration in s
@@ -1133,10 +1146,9 @@ class AUDIOPROC_API LogLinearBlock: public StdBlock
 { // ##CAT_Audioproc auditory nerve block -- intended for +ve signal values only (ex rectified)
 INHERITED(StdBlock) 
 public:
-  float 		cl; // center level (in dB) of the block
-  float			width; // the ~90% (.05-.95) width in dB 
-  float			norm; // #EXPERT the normalization factor
   Level			in_gain; // a gain factor applied to the input values -- eff gain should result in values from 0-1
+  float 		zero_level; // #AKA_cl zero level (in dB) of the block, typically << 0 (since we measure from 0 downwards)
+  float			width; // #MIN_10 inverse of gain -- how many db will give the unity (0-1) output range 
   
   ProcStatus 		AcceptData_LL(float_Matrix* in_mat, int stage = 0);
     // #IGNORE mostly for proc
@@ -1158,15 +1170,26 @@ private:
 };
 
 class AUDIOPROC_API AGCBlock: public StdBlock
-{ // ##CAT_Audioproc automatic gain control block -- intended for +ve signal values only (ex rectified)
+{ // ##CAT_Audioproc automatic gain control block
 INHERITED(StdBlock) 
 public:
+  enum AGCFlags { // #BITS flags for the AGC block
+    AF_0	= 0, // #IGNORE
+    AF_AGC_ON	=0x001, // #LABEL_AgcOn use Automatic Gain Control
+  };
   
   DataBuffer		out_buff_gain; //  #SHOW_TREE provides the gain values used: v0:cl, v1: (note: is always mono, even for stereo feeds)
-  Level			dyn_range_out; // the desired output dynamic range
-  Duration  		agc_dt; // the time constant of the gain integration -- try 50-100 ms
+  AGCFlags		agc_flags; // flags to control features
+  Level::Units		gain_units; // the units for all gain parameters, and also the out_buff_gain:v0 value
   
-  Level			gain; // the current gain being applied -- you can select the units, but the value is controlled automatically
+//  Level			dyn_range_out; // the desired output dynamic range
+  float			init_gain; // initial gain (applied during init_config)
+  float			cur_gain; // #CONDEDIT_OFF_agc_flags:AF_AGC_ON #NO_SAVE the current gain being applied
+  float			gain_thresh; // threshold, below which no changes (avoids changes during silence)
+  MinMax		gain_limits; // the min and max gain, in same units as 'gain'
+  Duration  		agc_tc_attack; // the time constant of the gain integration for increases in the signal -- try 50-100 ms
+  Duration  		agc_tc_decay; // the time constant of the gain integration for decreases in the signal -- typically lower than attack, try 500 ms
+  
   
   ProcStatus 		AcceptData_AGC(float_Matrix* in_mat, int stage = 0);
     // #IGNORE mostly for proc
@@ -1181,21 +1204,23 @@ public:
   TA_BASEFUNS(AGCBlock)
   
 public: // TEMP
+  float 		agc_dt_attack; // #NO_SAVE #READ_ONLY #EXPERT 
+  float 		agc_dt_decay; // #NO_SAVE #READ_ONLY #EXPERT 
   float			ths_peak; // #NO_SAVE #EXPERT #READ_ONLY highest value in current stream
+  double		flt_peak; // #NO_SAVE #EXPERT #READ_ONLY integrated peak, used to set gain
   double		ths_avg; // #NO_SAVE #EXPERT #READ_ONLY avg value in current stream
-  float			cl; // #NO_SAVE #EXPERT #READ_ONLY current cl
-  float			width; // #NO_SAVE #EXPERT #READ_ONLY current width
   
   float targ_cl; // #NO_SAVE #EXPERT #READ_ONLY current width
   float targ_width; // #NO_SAVE #EXPERT #READ_ONLY current width
   
 protected:
-  
+  float			cur_gain_abs; // cur_gain, in Level::UN_SCALE
+  Level::Units		prev_gain_units; // prev units, so we can rescale all
   override void		UpdateAfterEdit_impl();
   override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok);
   override void		AcceptData_impl(SignalProcBlock* src_blk,
     DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps);
-
+  void			UpdateDerived(); // update derived values, called in ctor and UAE
   virtual float		CalcValue(float in);
   void			UpdateAGC();
 private:

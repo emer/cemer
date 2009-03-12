@@ -293,6 +293,17 @@ float Level::LevelToActual(float level, Units units) {
   return rval;
 }
 
+float Level::Convert(float level, Units units, Units new_units) {
+  return ActualToLevel(LevelToActual(level, units), new_units);
+}
+
+Level::Level(Units init_units, float init_act_level) 
+{
+  level = ActualToLevel(init_act_level, init_units);
+  units = init_units;
+  act_level = init_act_level;
+}
+
 void Level::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   act_level = LevelToActual(level, units);
@@ -339,6 +350,22 @@ int Duration::StatCompare(const Duration& a, const Duration& b, float fs) {
   int ia = a.GetDurationSamples(fs);
   int ib = b.GetDurationSamples(fs);
   return ia- ib;
+}
+
+double Duration::StatGetDecayDt(double duration, Units units, float fs)
+{
+  if (units == UN_CONT) 
+    return 1.0;
+  double samples = 0.0f;
+  if (units == UN_TIME_MS) 
+    duration /= 1000;
+  if (units != UN_SAMPLES) {
+    // requires a valid sample rate
+    if (fs <= 0) 
+      return 0.0f;
+    samples = fs * duration;
+  }
+  return exp(-samples);
 }
 
 double Duration::StatGetDurationTime(double duration, Units units, float fs) {
@@ -668,22 +695,21 @@ InputBlockBase* SignalProcBlock::GetInputBlock(int idx) {
 }
 
 SignalProcBlock* SignalProcBlock::GetUpstreamBlock(TypeDef* typ) {
-   if (!typ) return NULL;
-   SignalProcBlock* rval = NULL;
+  if (!typ) return NULL;
   // try our immediate src blocks first
-  for (int i = 0; (!rval && (i < srcBlockCount())); ++i) {
+  for (int i = 0; (i < srcBlockCount()); ++i) {
     SourceBlockSpec* sbs = srcBlock(i); // note: can easily be NULL
     if (!(sbs && (bool)sbs->src_block)) continue;
     // tentatively grab, pending correct type...
-    SignalProcBlock* rval = rval = sbs->src_block;
+    SignalProcBlock* rval = sbs->src_block;
     if (rval->InheritsFrom(typ)) return rval;
   }
   // iterate our src blocks, delegating to them, until found or fail
-  for (int i = 0; (!rval && (i < srcBlockCount())); ++i) {
+  for (int i = 0; (i < srcBlockCount()); ++i) {
     SourceBlockSpec* sbs = srcBlock(i); // note: can easily be NULL
     if (!(sbs && (bool)sbs->src_block)) continue;
     // tentatively grab, pending correct type...
-    SignalProcBlock* rval = rval = sbs->src_block;
+    SignalProcBlock* rval = sbs->src_block;
     // delegate to that guy, and return if he succeeded
     rval = rval->GetUpstreamBlock(typ);
     if (rval) return rval;
@@ -1239,8 +1265,8 @@ void SignalMonBlock::InitThisConfigDataOut_impl(bool check,
 
 void SignalMonBlock::Init_Common(bool check, bool quiet, bool& ok) 
 {
-  DataBuffer* db = in_block.GetBuffer();
-  float_Matrix* mat = &db->mat;
+//  DataBuffer* db = in_block.GetBuffer();
+//  float_Matrix* mat = &db->mat;
   
   DataCol* col = NULL;
   if (mon_flags & MF_USE_TRIAL) {
@@ -1337,7 +1363,7 @@ void SignalMonBlock::AcceptData_MT_VAL(DataBuffer* src_buff, float_Matrix* mat,
   DataCol* col_x = mon_data->FindMakeCol("X", VT_FLOAT);
   //note: had to use malloc because msvc won't allow runtime dim'ed arrays
   DataCol** col_y = (DataCol**)malloc(mat->dim(VAL_DIM) * mat->dim(FIELD_DIM) * sizeof(DataCol*));
-  DataCol* col_field = NULL;
+//  DataCol* col_field = NULL;
   
   int i = 0;
   for (int f = 0; f < mat->dim(FIELD_DIM); ++f) {
@@ -1403,21 +1429,20 @@ void SignalMonBlock::Init_MT_ITEM(bool check, bool quiet, bool& ok)
     cell_geom.Set(d, dest_sz); 
   }
  
-  int col_idx;
   DataCol* col = NULL;
   const int fields = mat->dim(FIELD_DIM);
+  int col_idx;
   if ((fields > 1) && (mon_flags & MF_SPLIT_FIELDS)) {
-    col = mon_data->FindMakeColMatrixN(item_col + "_L", VT_FLOAT, cell_geom);
-    col = mon_data->FindMakeColMatrixN(item_col + "_R", VT_FLOAT, cell_geom);
+    col = mon_data->FindMakeColMatrixN(item_col + "_L", VT_FLOAT, cell_geom, col_idx);
+    col = mon_data->FindMakeColMatrixN(item_col + "_R", VT_FLOAT, cell_geom, col_idx);
   } else {
-    col = mon_data->FindMakeColMatrixN(item_col, VT_FLOAT, cell_geom);
+    col = mon_data->FindMakeColMatrixN(item_col, VT_FLOAT, cell_geom, col_idx);
   }
 }
 
 void SignalMonBlock::AcceptData_MT_ITEM(DataBuffer* src_buff, float_Matrix* mat,
   int stage, ProcStatus& ps)
 {
-  int col_idx;
   DataCol* col_trial = NULL;
   if (mon_flags & MF_USE_TRIAL) {
     col_trial = mon_data->FindMakeCol("trial", VT_INT);
@@ -1428,10 +1453,10 @@ void SignalMonBlock::AcceptData_MT_ITEM(DataBuffer* src_buff, float_Matrix* mat,
   const int eff_fields = ((mat->dim(FIELD_DIM) > 1) && (mon_flags & MF_SPLIT_FIELDS)) ? 2 : 1;
   DataCol* col_y[2];
   if (eff_fields == 2) {
-    col_y[0] = mon_data->FindColName(item_col + "_L", col_idx, true);
-    col_y[1] = mon_data->FindColName(item_col + "_R", col_idx, true);
+    col_y[0] = mon_data->FindColName(item_col + "_L", true);
+    col_y[1] = mon_data->FindColName(item_col + "_R", true);
   } else {
-    col_y[0] = mon_data->FindColName(item_col, col_idx, true);
+    col_y[0] = mon_data->FindColName(item_col, true);
   }
   
   mon_data->DataUpdate(true);
@@ -1578,7 +1603,6 @@ void ToneChan::UpdateAfterEdit_impl() {
 
 float ToneChan::GetNext() {
   float unit_val; // value in a -1:1 range, scaled later
-  float cp_norm; // 0::2 normalize of cur_phase, if needed
   switch (wave_type) {
   case WT_SINE: 
     unit_val = sinf(cur_phase); 
@@ -1943,6 +1967,9 @@ void DoG1dFilterSpec::RenderFilter_DoG_impl()
   taMath_float::vec_norm_sum(&off_filter); // make sure sums to 1.0
 } 
 
+void DoG1dFilterSpec::RenderFilter_Sieve_impl() 
+{
+}
 void DoG1dFilterSpec::GraphFilter(DataTable* graph_data) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
@@ -1959,7 +1986,7 @@ void DoG1dFilterSpec::GraphFilter(DataTable* graph_data) {
 //  zda->SetUserData("Z_AXIS", true);
   valda->SetUserData("PLOT_1", true);
 
-  float_Matrix* mat = &net_filter;
+//  float_Matrix* mat = &net_filter;
   int x;
     for(x=-half_width; x<=half_width; x++) {
       float val = FilterPoint(x, 1.0f);
@@ -2019,16 +2046,13 @@ void DoG1dFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
 
 void LogLinearBlock::Initialize() {
   // note: following would be for only one channel, spanning ~96 dB
-  cl = -48;
-  width = 80;
-  norm = 0; // in UAE
-//  f = .3f; // determined empirically - gives ~ .5-.95 points for +-10dB
+  zero_level = -48;
+  width = 48;
 }
 
 void LogLinearBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if (width <= 0) width = 80;
-  norm = (96 / width);
+  if (width < 10) width = 10;
 }
 
 void LogLinearBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
@@ -2036,12 +2060,12 @@ void LogLinearBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   
   DataBuffer* src_buff = in_block.GetBuffer();
   if (!src_buff) return;
-  float_Matrix* in_mat = &src_buff->mat;
+//  float_Matrix* in_mat = &src_buff->mat;
   
-  if (CheckError(((cl < -120) || (cl >= 0)), quiet, ok,
-    "cl should be in range: -120:0")) return;
-  if (CheckError(((width <= 0) || (width > 120)), quiet, ok,
-    "width should be in range: 0:120")) return;
+  if (CheckError(((zero_level < -120) || (zero_level >= 0)), quiet, ok,
+    "zero_level should be in range: -120:0")) return;
+  if (CheckError(((width <= 10) || (width > 120)), quiet, ok,
+    "width should be in range: 10:120")) return;
     
   if (check) return;
   out_buff.fs = src_buff->fs;
@@ -2071,7 +2095,7 @@ SignalProcBlock::ProcStatus LogLinearBlock::AcceptData_LL(float_Matrix* in_mat, 
     for (int val = 0; ((ps == PS_OK) && (val < in_vals)); ++val) 
     {
       float dat = in_mat->SafeEl(val, chan, f, i, stage);
-      dat = CalcValue(dat) * in_gain;
+      dat = CalcValue(dat * in_gain);
       out_mat->Set(dat, val, chan, f, out_buff.item, out_buff.stage);
     }
     if (out_buff.NextIndex()) {
@@ -2085,9 +2109,10 @@ float LogLinearBlock::CalcValue(float in) {
   if (in < 0) return 0; // only defined for non-neg values
   // transform to dB -- sh/be ~ -96 < in_db <= 0
   float in_db = 10 * log10(in); // note: the ref is 1, but ok if exceeded
-  // translate so that cf is at 0, and normalize
+  // in_db will vary:  -120 << in_db ~=< 0 (but it can go a bit higher)
+  // translate so that cl is at 0, and normalize
 //AN  double rval = (in_db - cl) * norm; 
-  double rval = ((in_db - cl) / width) + 0.5; 
+  double rval = ((in_db - zero_level) / width); 
 /*from AN  switch (val_type) {
   case LogLinearBlock::AN_EXP: {  
     // do the exponential
@@ -2113,7 +2138,22 @@ float LogLinearBlock::CalcValue(float in) {
 /*
   This block provides both compression and automatic gain control. The purpose
   is to bring the sound input into a range that can be handled by a neural
-  net, and that will dynamically adjust.
+  net.
+  
+  There are two distinct transforms that are applied to the signal:
+   
+  gain: this adjusts the overall level of the signal so that the peak
+    channel(s) corresponds to an output of about 1.0
+  compression(or expansion): this adjusts the dynamic range of the signal
+    so that the ratio of the highest channel(s) to the lowest channel(s)
+    is in a range that a neural input can handle -- compression is
+    applied if there is too much difference between loudest/softest
+    channels, and expansion if there is too little
+     
+  gain is applied first, since this is a linear operation, and brings
+  the peak value towards the 
+    
+  
   
   Note that these functions are partially under top-down control in 
   the vertebrate auditory system, so future work may include "soft" input
@@ -2129,19 +2169,44 @@ References:
 */
 
 void AGCBlock::Initialize() {
-  dyn_range_out.Set(20, Level::UN_DBI); // 100:1, probably too much for neurons
-  agc_dt.Set(50, Duration::UN_TIME_MS);
+  agc_flags = AF_AGC_ON;
+  gain_units = Level::UN_DBI;
+  prev_gain_units = gain_units;
+//  dyn_range_out.Set(20, Level::UN_DBI); // 100:1, probably too much for neurons
+  agc_tc_attack.Set(50, Duration::UN_TIME_MS);
+  agc_tc_decay.Set(500, Duration::UN_TIME_MS);
+  init_gain = 0;
+  cur_gain = 0;
+  gain_thresh = -50;
+  gain_limits.Set(-10, 20);
   ths_peak = 0.0;
+  flt_peak = 1.0; // assume long term is 1
   ths_avg = 0.0;
-  cl = -48;
-  width = 80;
-//TEMP
-  targ_cl = cl;
-  targ_width = width;
+  UpdateDerived();
 }
 
+void AGCBlock::UpdateDerived() {
+  cur_gain_abs = Level::LevelToActual(cur_gain, gain_units);
+  // dt's are: exp(-(tc)) where tc is in samples
+  agc_dt_attack = agc_tc_attack.GetDecayDt(out_buff.fs);
+  agc_dt_decay = agc_tc_decay.GetDecayDt(out_buff.fs);
+}
+ 
 void AGCBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  // if user changes gain_units, rescale others
+  if (!taMisc::is_loading && (gain_units != prev_gain_units)) {
+    init_gain = Level::Convert(init_gain, prev_gain_units, gain_units);
+    cur_gain = Level::Convert(cur_gain, prev_gain_units, gain_units);
+    gain_thresh = Level::Convert(gain_thresh, prev_gain_units, gain_units);
+    gain_limits.Set(
+      Level::Convert(gain_limits.min, prev_gain_units, gain_units), 
+      Level::Convert(gain_limits.max, prev_gain_units, gain_units));
+  }
+  // enforce limits on init_gain
+  init_gain = gain_limits.Clip(init_gain);
+  UpdateDerived();
+  prev_gain_units = gain_units;
 }
 
 void AGCBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
@@ -2149,24 +2214,31 @@ void AGCBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   
   DataBuffer* src_buff = in_block.GetBuffer();
   if (!src_buff) return;
-  float_Matrix* in_mat = &src_buff->mat;
+//  float_Matrix* in_mat = &src_buff->mat;
   
-  if (CheckError((dyn_range_out <= 0), quiet, ok,
-    "dyn_range_out must be > 0")) return;
+//  if (CheckError((dyn_range_out <= 0), quiet, ok,
+//    "dyn_range_out must be > 0")) return;
     
   if (check) return;
-  // TODO:
-  // calc the effective dt for the agc_dt
+  
+  // init the cur_gain
+  cur_gain = init_gain;
+  cur_gain_abs = Level::LevelToActual(cur_gain, gain_units);
+  
   
   out_buff.fs = src_buff->fs;
   out_buff.fields = src_buff->fields;
   out_buff.chans = src_buff->chans;
   out_buff.vals = src_buff->vals;
   
-  out_buff_gain.fs = src_buff->fs;
-  out_buff_gain.fields = 1;//src_buff->fields;
-  out_buff_gain.chans = 1;//src_buff->chans;
-  out_buff_gain.vals = 2;
+  if (out_buff.enabled) {
+    out_buff_gain.fs = src_buff->fs;
+    out_buff_gain.fields = 1; // same for both fields
+    //note: we may add selective agc by banks, if so, we'll use chans
+    out_buff_gain.chans = 1;//src_buff->chans;
+    out_buff_gain.vals = 2; // 0=gain, in gain.units
+  }
+  UpdateDerived(); // mostly for tcs
 }
 
 void AGCBlock::AcceptData_impl(SignalProcBlock* src_blk,
@@ -2180,32 +2252,39 @@ SignalProcBlock::ProcStatus AGCBlock::AcceptData_AGC(float_Matrix* in_mat, int s
 {
   ProcStatus ps = PS_OK;
   float_Matrix* out_mat = &out_buff.mat;
+  float_Matrix* out_mat_gain = &out_buff_gain.mat;
   const int in_items = in_mat->dim(ITEM_DIM);
   const int in_fields = in_mat->dim(FIELD_DIM);
   const int in_chans = in_mat->dim(CHAN_DIM);
   const int in_vals = in_mat->dim(VAL_DIM);
   
-  // gather stats on this batch
-  ths_peak = 0.0f;
-  ths_avg = 0.0; // accum, then we divide by n at end
+  // gather stats on each items, then do it
   for (int i = 0; i < in_items; ++i) {
+    ths_peak = 0.0f;
+    ths_avg = 0.0; // accum, then we divide by n at end
+  
     for (int f = 0; f < in_fields; ++f) 
     for (int chan = 0; chan < in_chans; ++chan) 
     for (int val = 0; val < in_vals; ++val) 
     {
       float dat = in_mat->SafeEl(val, chan, f, i, stage);
-      ths_avg += dat;
+      ths_avg += abs(dat);
       if (ths_peak < dat) ths_peak = dat;
     }
-    if (out_buff.NextIndex()) {
-      NotifyClientsBuffStageFull(&out_buff, 0, ps);
+    
+    ths_avg /= (in_fields * in_chans * in_vals);
+  
+    UpdateAGC();
+    
+    // output secondary channel
+    if (out_buff_gain.enabled) {
+      float dat = cur_gain;
+      out_mat_gain->Set(dat, 0, 0, 0, out_buff_gain.item, out_buff_gain.stage);
+      if (out_buff_gain.NextIndex()) {
+        NotifyClientsBuffStageFull(&out_buff_gain, 1, ps);
+      }
     }
-  }
-  ths_avg /= (in_items * in_fields * in_chans * in_vals);
-  
-  UpdateAGC();
-  
-  for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) {
+
     for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) 
     for (int chan = 0; ((ps == PS_OK) && (chan < in_chans)); ++chan) 
     for (int val = 0; ((ps == PS_OK) && (val < in_vals)); ++val) 
@@ -2230,41 +2309,25 @@ float AGCBlock::CalcValue(float in) {
   return rval; */
   
 //TEMP just gain for now
-  return in * gain;
+  return in * cur_gain_abs;
 }
 
 void AGCBlock::UpdateAGC() {
-/*//TEMP, just apply it all now
-//  float 
-  targ_width = 80;
-//  float 
-  targ_cl = -48;
-  
-  // we consider width to be 2* diff from avg to peak
-  if (ths_avg > 0) {
-    double ths_ratio = ths_peak / ths_avg;
-    
-    targ_width = 10 * log10(2 * ths_ratio);
-    targ_cl = 10 * log10(ths_peak / ths_avg) ;
-  }
-  //TODO: apply exponential smoothing
-  
-  cl = targ_cl;
-  width = targ_width; */
-
-  //TODO: apply exponential smoothing
-  // if the peak input is too low, do nothing
-  if (ths_peak < 10e-6) return;
-  double targ_gain = 1 / ths_peak;
-  double delt_gain = targ_gain - gain;
-  // TODO: apply different dt whether attack/decay
-//TEMP
-  const float dt_attack = 0.5f;
-  const float dt_decay = 0.2f;
-  if (delt_gain > 0.0) {
-   // delt_gain = 
+  // if the input is too low, do nothing
+  if (ths_peak < Level::LevelToActual(gain_thresh, gain_units)) return;
+  if (ths_peak < 1e-6) return; // hard limit
+  // target for gain is for peak to be 1
+  Level targ_gain(gain_units, 1 / ths_peak);
+  // clip it *before* doing delta, integration etc.
+  targ_gain.Set(gain_limits.Clip(targ_gain));
+  double delta_gain = targ_gain.act_level - cur_gain_abs;
+  if (delta_gain > 0.0) {
+    cur_gain_abs += delta_gain * agc_dt_attack;
   } else {
+    cur_gain_abs += delta_gain * agc_dt_decay;
   }
+  //calculate and limit new gain in requested units
+  cur_gain = Level::ActualToLevel(cur_gain_abs, gain_units);
 
   DataChanged(DCR_ITEM_UPDATED);
 }

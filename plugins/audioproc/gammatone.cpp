@@ -79,7 +79,7 @@ void GammatoneChan::InitChan(float cf_, float ear_q, float min_bw,
 void GammatoneChan::DoFilter(int n, int in_stride, const float* x,
   int out_stride, float* bm, float* env)
 {
-  double u0r, u0i, u1r, u1i;
+  double u0r, u0i;
   double oldcs, oldsn;
 
   //====================================================================================
@@ -202,7 +202,7 @@ void GammatoneBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   
   DataBuffer* src_buff = in_block.GetBuffer();
   if (!src_buff) return;
-  float_Matrix* in_mat = &src_buff->mat;
+//  float_Matrix* in_mat = &src_buff->mat;
   
   if (CheckError((src_buff->chans > 1), quiet, ok,
     "GammatoneBlock only supports single channel input"))
@@ -545,7 +545,7 @@ void SharpenBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   inherited::InitThisConfig_impl(check, quiet, ok);
   DataBuffer* src_buff = in_block.GetBuffer();
   if (!src_buff) return;
-  float_Matrix* in_mat = &src_buff->mat;
+//  float_Matrix* in_mat = &src_buff->mat;
   // note: we can support any number of vals, chans, fields, or items
   
   if (check) return;
@@ -727,7 +727,7 @@ void TemporalWindowBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   inherited::InitThisConfig_impl(check, quiet, ok);
   DataBuffer* src_buff = in_block.GetBuffer();
   if (!src_buff || !ok) return;
-  float_Matrix* in_mat = &src_buff->mat;
+//  float_Matrix* in_mat = &src_buff->mat;
   float fs_in = src_buff->fs;
   // note: we can support any number of vals, chans, or items
   
@@ -937,8 +937,6 @@ void TemporalWindowBlock::AcceptData_impl(SignalProcBlock* src_blk,
   const int vals = in_mat->dim(VAL_DIM);
   float_Matrix* out_mat = &out_buff.mat;
   float_Matrix* out_mat_off = &out_buff_off.mat; // only if ot=ON_OFF
-  // note: critical this invariant is true:
-  bool ok = true;
   // we do one input item at a time, convolving with all our out guys
   for (int i = 0; ((ps == PS_OK) && (i < in_mat->dim(SignalProcBlock::ITEM_DIM))); ++i) {
   
@@ -1096,7 +1094,7 @@ void DeltaBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   inherited::InitThisConfig_impl(check, quiet, ok);
   DataBuffer* src_buff = in_block.GetBuffer();
   if (!src_buff) return;
-  float_Matrix* in_mat = &src_buff->mat;
+//  float_Matrix* in_mat = &src_buff->mat;
   // note: we can support any number of vals, chans, or items
   const int data_dims = degree + 2;
   // need enough prev stages to do the delta
@@ -1188,7 +1186,7 @@ void IIDBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   inherited::InitThisConfig_impl(check, quiet, ok);
   DataBuffer* src_buff = in_block.GetBuffer();
   if (!src_buff) return;
-  float_Matrix* in_mat = &src_buff->mat;
+//  float_Matrix* in_mat = &src_buff->mat;
   // note: we can support any number of vals, chans, or items
   
   if (CheckError((src_buff->fields > 2), quiet, ok,
@@ -1243,22 +1241,22 @@ SignalProcBlock::ProcStatus IIDBlock::AcceptData_IID(float_Matrix* in_mat, int s
   ProcStatus ps = PS_OK;
   const int in_items = in_mat->dim(ITEM_DIM);
   const int in_fields = in_mat->dim(FIELD_DIM); // needs to be 2 for meaningful output!
-  const int in_chans = in_mat->dim(CHAN_DIM); // typically many, but we only use range
+  int in_chan_max = in_mat->dim(CHAN_DIM) - 1; // typically many, but we only use range
+  in_chan_max = MIN(in_chan_max, chan_eff.max);
   const int in_vals = in_mat->dim(VAL_DIM); 
   
-  const int in_val = 0; // only 1 in allowed
   // we use this hack to do dummy processing when input is mono (r = l)
   // note that this hack is merely a convenience so stuff still works, but is
   // not usually used in practice, so don't worry that we repeat saves etc. below
   const int field_r = (in_fields == 2) ? 1 : 0;
   
-  for (int i = 0; ((ps == PS_OK) && (i < in_mat->dim(SignalProcBlock::ITEM_DIM))); ++i) 
+  for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) 
 //  for (int f = 0; ((ps == PS_OK) && (f < in_mat->dim(SignalProcBlock::FIELD_DIM))); ++f) 
-  for (int v = 0; ((ps == PS_OK) && (v < in_mat->dim(SignalProcBlock::VAL_DIM))); ++v)
+  for (int v = 0; ((ps == PS_OK) && (v < in_vals)); ++v)
   {
     int out_ch = 0;
     for (int in_ch = chan_eff.min;
-      ((ps == PS_OK) && (in_ch <= chan_eff.max)); ++in_ch, ++out_ch)
+      ((ps == PS_OK) && (in_ch <= in_chan_max)); ++in_ch, ++out_ch)
     {
       float dat_l = in_mat->SafeElAsFloat(v, in_ch, 0, i, stage);
       float dat_r =  in_mat->SafeElAsFloat(v, in_ch, field_r, i, stage);
@@ -1296,6 +1294,110 @@ void ITDBlock::Initialize() {
 
 
 //////////////////////////////////
+//  ANVal			//
+//////////////////////////////////
+
+void ANVal::Initialize() {
+  val_type = AN_EXP; // legacy default
+  units = Level::UN_DBI;
+  prev_units = units;
+  // note: following would be for only one channel, spanning 60 dB
+  cl = -30;
+  width = 60;
+  f = .3f; // determined empirically - gives ~ .5-.95 points for +-10dB
+}
+
+void ANVal::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if (val_type == AN_LIN)
+    units = Level::UN_SCALE;
+  else units = Level::UN_DBI;
+  if (!taMisc::is_loading && (units != prev_units)) {
+    cl = Level::Convert(cl, prev_units, units);
+    width = Level::Convert(width, prev_units, units);
+  }
+  UpdateParams();
+  prev_units = units;
+}
+
+void ANVal::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
+  inherited::InitThisConfig_impl(check, quiet, ok);
+  if (val_type == AN_LIN) {
+    if (CheckError(((cl < 0) || (cl >= 1)), quiet, ok,
+      "cl should be in range: 0:1, typically 0.5")) return;
+    if (CheckError(((width <= 0) || (width > 20)), quiet, ok,
+      "width should be in range: >0:20, typically 1")) return;
+  } else {
+    if (CheckError(((cl < -120) || (cl >= 0)), quiet, ok,
+      "cl should be in range: -120:0")) return;
+    if (CheckError(((width <= 0) || (width > 120)), quiet, ok,
+      "width should be in range: >0:120")) return;
+  } 
+    
+  if (check) return;
+}
+
+float ANVal::CalcValue(float in) {
+  if (val_type == AN_LIN) {
+    return (in - (cl - 0.5f)) / width;
+  }
+  
+  if (in < 0) return 0; // only defined for non-neg values
+  // transform to dB -- sh/be ~ -96 < in_db <= 0
+  float in_db = 10 * log10(in); // note: the ref is 1, but ok if exceeded
+  // translate so that cf is at 0, and normalize
+  double rval = (in_db - cl) * norm; 
+  switch (val_type) {
+  case AN_EXP: {  
+    // do the exponential
+    rval = 1 / (1 + exp(-(rval * f)));
+    } break;
+  case AN_SIG: {
+    //TODO:
+    } break;
+  case AN_GAUSS: {  
+    // do the guassian
+    rval = exp(-((rval * rval)/2)) * f;
+    } break;
+  //no actual default 
+  default: break; // compiler food, we handled all 
+  }
+  return rval;
+}
+
+void ANVal::SetParams(ANValType val_type_,
+    float cl_, float width_)
+{
+  val_type = val_type_;
+  cl = cl_;
+  width = width_;
+  UpdateAfterEdit();
+}
+
+void ANVal::UpdateParams()
+{
+  switch (val_type) {
+  case AN_EXP: {  
+    norm = (20 / width);
+    f = .3f; // determined empirically - gives ~ .5-.95 points for +-10dB
+    } break;
+  case AN_SIG: {
+    //TODO:
+    } break;
+  case AN_GAUSS: {  
+    // a 90% confidence interval is 1.64485 sd's, so we normalize accordingly
+    // divide by 2 because 2-tailed
+    norm = 1.64485 / (width / 2);
+    f = 1.0f;//1 / sqrt(2 * M_PI);
+    } break;
+  case AN_LIN:
+    break;
+  default: break;
+  }
+}
+
+
+//////////////////////////////////
 //  ANBlock			//
 //////////////////////////////////
 
@@ -1315,7 +1417,7 @@ void ANBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   
   DataBuffer* src_buff = in_block.GetBuffer();
   if (!src_buff) return;
-  float_Matrix* in_mat = &src_buff->mat;
+//  float_Matrix* in_mat = &src_buff->mat;
   
   if (CheckError((val_list.size < 1), quiet, ok,
     "You must have at least one output value"))
@@ -1348,7 +1450,6 @@ SignalProcBlock::ProcStatus ANBlock::AcceptData_AN(float_Matrix* in_mat, int sta
   const int in_items = in_mat->dim(ITEM_DIM);
   const int in_fields = in_mat->dim(FIELD_DIM);
   const int in_chans = in_mat->dim(CHAN_DIM);
-  const int in_vals = in_mat->dim(VAL_DIM);
   const int in_val = 0;
   for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) {
     for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) 
@@ -1370,7 +1471,7 @@ SignalProcBlock::ProcStatus ANBlock::AcceptData_AN(float_Matrix* in_mat, int sta
   return ps;
 }
 
-void ANBlock::MakeVals(ANBlock::ANValType val_type, int n_vals,
+void ANBlock::MakeVals(ANVal::ANValType val_type, int n_vals,
     float cl_min, float cl_max)
 {
   bool ok = true;
@@ -1384,7 +1485,7 @@ void ANBlock::MakeVals(ANBlock::ANValType val_type, int n_vals,
   float cl_step = (cl_max - cl_min) / (n_vals - 1);
   float l_wid = cl_step - (l_ovl / 2);
   // width is double for GAUSS
-  if (val_type == ANBlock::AN_GAUSS)
+  if (val_type == ANVal::AN_GAUSS)
     l_wid *= 2.0f;
    
   val_list.SetSize(n_vals);
@@ -1393,12 +1494,6 @@ void ANBlock::MakeVals(ANBlock::ANValType val_type, int n_vals,
     ANVal* val = val_list.FastEl(i);
     val->SetParams(val_type, cl, l_wid);
   }
-  /*nuke  float cl = l_max - (l_wid / 2);
-  do { // make at least one
-    ANVal* val = (ANVal*)val_list.New(1);
-    val->SetParams(val_type, cl, l_wid);
-    cl -= (l_wid - (l_ovl / 2));
-  } while ((cl - l_wid) >= l_min);*/
 }
 
 void ANBlock::GraphFilter(DataTable* graph_data, float l_min) {
@@ -1488,88 +1583,6 @@ exit:
 }
 
 //////////////////////////////////
-//  ANVal			//
-//////////////////////////////////
-
-void ANVal::Initialize() {
-  val_type = ANBlock::AN_EXP; // legacy default
-  // note: following would be for only one channel, spanning ~96 dB
-  cl = -48;
-  width = 80;
-  f = .3f; // determined empirically - gives ~ .5-.95 points for +-10dB
-}
-
-void ANVal::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  UpdateParams();
-}
-
-void ANVal::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
-  inherited::InitThisConfig_impl(check, quiet, ok);
-  
-  if (CheckError(((cl < -120) || (cl >= 0)), quiet, ok,
-    "cl should be in range: -120:0")) return;
-  if (CheckError(((width <= 0) || (width > 120)), quiet, ok,
-    "width should be in range: 0:120")) return;
-    
-    
-  if (check) return;
-}
-
-float ANVal::CalcValue(float in) {
-  if (in < 0) return 0; // only defined for non-neg values
-  // transform to dB -- sh/be ~ -96 < in_db <= 0
-  float in_db = 10 * log10(in); // note: the ref is 1, but ok if exceeded
-  // translate so that cf is at 0, and normalize
-  double rval = (in_db - cl) * norm; 
-  switch (val_type) {
-  case ANBlock::AN_EXP: {  
-    // do the exponential
-    rval = 1 / (1 + exp(-(rval * f)));
-    } break;
-  case ANBlock::AN_SIG: {
-    //TODO:
-    } break;
-  case ANBlock::AN_GAUSS: {  
-    // do the guassian
-    rval = exp(-((rval * rval)/2)) * f;
-    } break;
-  //no default -- must handle all, so let compiler warn
-  }
-  return rval;
-}
-
-void ANVal::SetParams(ANBlock::ANValType val_type_,
-    float cl_, float width_)
-{
-  val_type = val_type_;
-  cl = cl_;
-  width = width_;
-  UpdateParams();
-}
-
-void ANVal::UpdateParams()
-{
-  switch (val_type) {
-  case ANBlock::AN_EXP: {  
-    norm = (20 / width);
-    f = .3f; // determined empirically - gives ~ .5-.95 points for +-10dB
-    } break;
-  case ANBlock::AN_SIG: {
-    //TODO:
-    } break;
-  case ANBlock::AN_GAUSS: {  
-    // a 90% confidence interval is 1.64485 sd's, so we normalize accordingly
-    // divide by 2 because 2-tailed
-    norm = 1.64485 / (width / 2);
-    f = 1.0f;//1 / sqrt(2 * M_PI);
-    } break;
-  //no default -- must handle all, so let compiler warn
-  }
-}
-
-
-//////////////////////////////////
 //  HarmonicSieveBlock		//
 //////////////////////////////////
 
@@ -1602,7 +1615,7 @@ void HarmonicSieveBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   inherited::InitThisConfig_impl(check, quiet, ok);
   DataBuffer* src_buff = in_block.GetBuffer();
   if (!src_buff) return;
-  float_Matrix* in_mat = &src_buff->mat;
+//  float_Matrix* in_mat = &src_buff->mat;
   // note: we can support any number of chans, fields, or items
   // output: chan: pitch; val: octave
   
@@ -1671,7 +1684,7 @@ void HarmonicSieveBlock::AcceptData_impl(SignalProcBlock* src_blk,
   {
     // input fundamental (f0)
     int in_fund = (out_v * out_chans) + out_ch;
-    float fund_val = in_mat->FastEl(0, in_fund, f, i, in_stage);
+//    float fund_val = in_mat->FastEl(0, in_fund, f, i, in_stage);
     float out_val = 0;
 //TEMP -- first stab at filter, just does n*f0 as +1 and others as -1/?
 //    for (int offs = -dog.half_width; offs <= dog.half_width; ++offs) {

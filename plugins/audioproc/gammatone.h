@@ -386,6 +386,46 @@ private:
 };
 
 
+class AUDIOPROC_API ANVal: public SignalProcItem
+{ // ##CAT_Audioproc one value of an auditory nerve output
+INHERITED(SignalProcItem)
+friend class ANBlock; 
+public:
+  enum ANValType {
+    AN_EXP,	// #LABEL_Exponential
+    AN_SIG,	// #LABEL_Sigmoid #NO_SHOW TODO:finish (biologically realistic)
+    AN_GAUSS,	// #LABEL_Gaussian
+    AN_LIN,	// #LABEL_Linear linear is often best for already-compressed material like speech files
+  };
+  
+  ANValType		val_type;
+  Level::Units		units; // #NO_SAVE #SHOW #READ_ONLY units for cl and width
+  float 		cl; // center level (in dB) of this channel
+  float			width; // SIG: the ~90% (.05-.95) width in dB; GAUSS: ~1.6sds. ~90%; LIN:
+  float			norm; // #EXPERT the normalization factor
+  float			f; // #EXPERT the factor in the exponential term
+  
+  virtual float			CalcValue(float in); 
+    // #IGNORE return result based on parameters
+  void			SetParams(ANValType val_type,
+    float cl, float width);
+    
+  override void SetDefaultName() {name = _nilString;}
+  TA_BASEFUNS(ANVal)
+
+protected:
+  Level::Units		prev_units; 
+  
+  override void		UpdateAfterEdit_impl();
+  override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok);
+  void			UpdateParams();
+
+private:
+  SIMPLE_COPY(ANVal)
+  void	Initialize();
+  void	Destroy() {}
+};
+
 class AUDIOPROC_API ANVal_List: public taList<ANVal>
 { // ##CAT_Audioproc list of channels, that will operate in parallel
 INHERITED(taList<ANVal>) 
@@ -402,18 +442,12 @@ class AUDIOPROC_API ANBlock: public StdBlock
 { // ##CAT_Audioproc auditory nerve block -- intended for +ve signal values only (ex rectified)
 INHERITED(StdBlock) 
 public:
-  enum ANValType {
-    AN_EXP,	// #LABEL_Exponential
-    AN_SIG,	// #LABEL_Sigmoid (biologically realistic)
-    AN_GAUSS	// #LABEL_Gaussian (recommended for Leabra)
-  };
-  
   Level		in_gain; // a gain factor applied to the input values -- eff gain should result in values from 0-1
   ANVal_List	val_list; // the individual channels
   
   override taList_impl*  children_() {return &val_list;} //note: required
   
-  void			MakeVals(ANValType val_type = AN_SIG, int n_vals = 3,
+  void			MakeVals(ANVal::ANValType val_type, int n_vals = 3,
     float cl_min = -84, float cl_max = -12);
     // #BUTTON make vals to cover level space, with each val of l_wid, adjacent bands overlapping by l_ovl, and the min lower band at l_min, and max upper band at l_max)
     
@@ -440,36 +474,6 @@ private:
   SIMPLE_COPY(ANBlock)
 };
 
-
-class AUDIOPROC_API ANVal: public SignalProcItem
-{ // ##CAT_Audioproc one value of an auditory nerve output
-INHERITED(SignalProcItem)
-friend class ANBlock; 
-public:
-  ANBlock::ANValType	val_type;
-  float 		cl; // center level (in dB) of this channel
-  float			width; // the ~90% (.05-.95) width in dB; GAUSS: ~1.6sds. ~90% 
-  float			norm; // #EXPERT the normalization factor
-  float			f; // #EXPERT the factor in the exponential term
-  
-  virtual float			CalcValue(float in); 
-    // #IGNORE return result based on parameters
-  void			SetParams(ANBlock::ANValType val_type,
-    float cl, float width);
-    
-  override void SetDefaultName() {name = _nilString;}
-  TA_BASEFUNS(ANVal)
-
-protected:
-  override void		UpdateAfterEdit_impl();
-  override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok);
-  void			UpdateParams();
-
-private:
-  SIMPLE_COPY(ANVal)
-  void	Initialize();
-  void	Destroy() {}
-};
 
 class AUDIOPROC_API HarmonicSieveBlock: public StdBlock
 { // ##CAT_Audioproc #AKA_HarmonicSieveBlock measure the degree of harmonically related values to a fundamental -- usually used after Temporal or Gammatone.Env filter output
