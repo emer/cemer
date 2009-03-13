@@ -325,6 +325,8 @@ int taiIntType::BidForType(TypeDef* td){
     || td->DerivesFrom(&TA_signed_char) || td->DerivesFrom(&TA_unsigned_char)
   )
     return (taiType::BidForType(td) +1);
+  else if (td->DerivesFrom(&TA_QAtomicInt)) // needs higher bid to overcome class
+    return (taiType::BidForType(td) +10);
   return 0;
 }
 
@@ -350,7 +352,7 @@ taiData* taiIntType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gu
     it = val.toInt();
     max = MIN(max, it);
   }
-  if (typ->DerivesFrom(&TA_int)) {
+  if (typ->DerivesFrom(&TA_int) || typ->DerivesFrom(&TA_QAtomicInt)) {
     min = MAX(min, INT_MIN);  max = MIN(max, INT_MAX);
 //  } else if (typ->DerivesFrom(&TA_unsigned_int)) {
 //    min = 0;  max = INT_MAX;//NOTE: does not cover entire uint range
@@ -382,6 +384,8 @@ void taiIntType::GetImage_impl(taiData* dat, const void* base) {
     val = (int)*((signed char*)base); 
   } else if (typ->DerivesFrom(&TA_unsigned_char)) {
     val = (int)*((unsigned char*)base); 
+  } else if (typ->DerivesFrom(&TA_QAtomicInt)) {
+    val = (int)*((QAtomicInt*)base);
   } //note: should never not be one of these
   taiIncrField* rval = (taiIncrField*)dat;
   rval->GetImage(val);
@@ -402,6 +406,8 @@ void taiIntType::GetValue_impl(taiData* dat, void* base) {
     *((signed char*)base) = (signed char)val; 
   } else if (typ->DerivesFrom(&TA_unsigned_char)) {
     *((unsigned char*)base) = (unsigned char)val; 
+  } else if (typ->DerivesFrom(&TA_QAtomicInt)) {
+    *((QAtomicInt*)base) = val;
   } //note: should never not be one of these
 }
 

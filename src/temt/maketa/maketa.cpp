@@ -98,6 +98,7 @@ TypeDef TA_void_ptr		("void_ptr", 	1, 1, 0, 1, 1, 1, "void*");
 //NOTE: the actual versions generated into the target code dynamically compute their size in the runtime
 TypeDef TA_taString		("taString", "", "", "", "", 0, 0, 0, 1);
 TypeDef TA_Variant		("Variant", "", "", "", "", 0, 0, 0, 1);
+TypeDef TA_QAtomicInt		("QAtomicInt", "", "", "", "", 0, 0, 0, 1);
 //NOTE: taBase is never actually encountered while building maketa, so its size is irrelevant...
 // it is only here (and in ta_type.h header) because it is referenced in ta_type.cpp 
 TypeDef TA_taBase("taBase", " Base type for all type-aware classes",
@@ -365,6 +366,8 @@ void MTA::InitTypeSpace(TypeSpace& ts) {
   TA_taString.AddParFormal(&TA_class);
   ts.Add(&TA_Variant);
   TA_Variant.AddParFormal(&TA_class);
+  ts.Add(&TA_QAtomicInt);
+  TA_QAtomicInt.AddParFormal(&TA_class);
   ts.Add(&TA_void_ptr);
 }
 

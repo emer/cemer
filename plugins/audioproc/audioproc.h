@@ -1149,6 +1149,7 @@ public:
   Level			in_gain; // a gain factor applied to the input values -- eff gain should result in values from 0-1
   float 		zero_level; // #AKA_cl zero level (in dB) of the block, typically << 0 (since we measure from 0 downwards)
   float			width; // #MIN_10 inverse of gain -- how many db will give the unity (0-1) output range 
+  QAtomicInt		qai; // test
   
   ProcStatus 		AcceptData_LL(float_Matrix* in_mat, int stage = 0);
     // #IGNORE mostly for proc

@@ -4254,6 +4254,9 @@ bool TypeDef::InheritsNonAtomicClass() const {
 #ifndef NO_TA_BASE
         && !InheritsFrom(TA_taSmartPtr)
         && !InheritsFrom(TA_taSmartRef)
+# if TA_USE_QT
+        && !InheritsFrom(TA_QAtomicInt)
+# endif
 #endif
     ) ? 1 : -1;
   }
@@ -5234,6 +5237,11 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       return typ->GetValStr(var_base, NULL, memb_def, sc, force_inline);
     }
 #ifndef NO_TA_BASE
+# ifdef TA_USE_QT
+    else if(DerivesFrom(TA_QAtomicInt)) {
+      return String((int)(*((QAtomicInt*)base)));
+    }
+# endif
     else if(DerivesFrom(TA_taBase)) {
       TAPtr rbase = (TAPtr)base;
       if(rbase)
@@ -5486,6 +5494,11 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     else if(DerivesFrom(TA_double))
       *((double*)base) = val.toDouble();
 #ifndef NO_TA_BASE
+# ifdef TA_USE_QT
+    else if(DerivesFrom(TA_QAtomicInt)) {
+       (*((QAtomicInt*)base)) = val.toInt();
+    }
+# endif
     else if(DerivesFrom(TA_taBase)) {
       TAPtr rbase = (TAPtr)base;
       if(rbase)

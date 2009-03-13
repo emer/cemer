@@ -163,6 +163,7 @@ extern TA_API TypeDef   TA_MethodDef;
 extern TA_API TypeDef TA_ta_Globals;
 extern TA_API TypeDef TA_taString;
 extern TA_API TypeDef TA_Variant;
+extern TA_API TypeDef TA_QAtomicInt;
 #endif
 
 // externals
