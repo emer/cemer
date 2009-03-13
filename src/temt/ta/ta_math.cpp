@@ -1742,7 +1742,8 @@ bool taMath_double::mat_eigen_owrite(double_Matrix* a, double_Matrix* eigen_vals
 
 bool taMath_double::mat_eigen(const double_Matrix* a, double_Matrix* eigen_vals,
 				    double_Matrix* eigen_vecs) {
-  double_Matrix a_copy(false) = *a;
+  double_Matrix a_copy(false);
+  a_copy = *a;
   return mat_eigen_owrite(&a_copy, eigen_vals, eigen_vecs);
 }
 
@@ -1834,7 +1835,8 @@ bool taMath_double::mat_mds_owrite(double_Matrix* a, double_Matrix* xy_coords, i
 }
 
 bool taMath_double::mat_mds(const double_Matrix* a, double_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
-  double_Matrix a_copy(false) = *a;
+  double_Matrix a_copy(false);
+  a_copy = *a;
   return mat_mds_owrite(&a_copy, xy_coords, x_axis_c, y_axis_c);
 }
 
@@ -4020,7 +4022,7 @@ bool taMath_float::fft_real_transform(float_Matrix* out_mat, const float_Matrix*
 {
   if (!out_mat || !in_mat) return false;
   double_Matrix dout_mat(false);
-  double_Matrix din_maty(false);
+  double_Matrix din_mat(false);
   din_mat.Copy(in_mat);
   bool rval = taMath_double::fft_real_transform(&dout_mat, &din_mat,
     real_out, norm);
