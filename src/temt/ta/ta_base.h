@@ -151,31 +151,34 @@ public: \
   TAPtr MakeTokenAry(int n){ return (TAPtr)(new y<T>[n]); }  
 
 // ctors -- one size fits all (where used) thanks to Initialize__
-#ifndef __MAKETA__
+
+#ifdef __MAKETA__ // simplified versions for maketa
 #define TA_BASEFUNS_CTORS_(y) \
-  y () { Initialize__(); } \
-  y (const y& cp):inherited(cp) { Initialize__(); Copy__(cp);}
+  y (bool reg = true); \
+  y (const y& cp);
   
 #define TA_TMPLT_BASEFUNS_CTORS_(y,T) \
-  y () { Initialize__(); } \
-  y (const y<T>& cp):inherited(cp) { Initialize__(); Copy__(cp); }
+  y (); \
+  y (const y<T>& cp);
 
 #else
 
 #define TA_BASEFUNS_CTORS_(y) \
-  y () { Initialize__(); } \
-  y (const y& cp) { Initialize__(); Copy__(cp);}
+  explicit y (bool reg = true):inherited(false) { Initialize__(reg); } \
+  y (const y& cp):inherited(cp, false) { Initialize__(false); Copy__(cp);} \
+  y (const y& cp, bool reg):inherited(cp, reg) { Initialize__(reg); Copy__(cp);}
   
 #define TA_TMPLT_BASEFUNS_CTORS_(y,T) \
-  y () { Initialize__(); } \
-  y (const y<T>& cp) { Initialize__(); Copy__(cp); }
+  explicit y (bool reg = true):inherited(false) { Initialize__(reg); } \
+  y (const y<T>& cp):inherited(cp, false) { Initialize__(false); Copy__(cp); } \
+  y (const y<T>& cp, bool reg):inherited(cp, reg) { Initialize__(reg); Copy__(cp);}
 
 #endif
 
 // common dtor/init, when using tokens (same for TMPLT)
 #define TA_BASEFUNS_TOK_(y) \
   private: \
-  inline void Initialize__() {Register(); Initialize(); \
+  inline void Initialize__(bool reg) {if (reg) Register(); Initialize(); \
     if (!(taMisc::is_loading || taMisc::is_duplicating)) SetDefaultName();} \
   public: \
   ~y () { CheckDestroyed(); unRegister(); Destroying(); Destroy(); }
@@ -185,7 +188,7 @@ public: \
 // common dtor/init when not using tokens (the LITE guys)
 #define TA_BASEFUNS_NTOK_(y) \
   private: \
-  inline void Initialize__() {Initialize();}  \
+  inline void Initialize__(bool) {Initialize();}  \
   public: \
   ~y () { CheckDestroyed(); Destroying(); Destroy(); } 
 
@@ -428,9 +431,10 @@ public:
     BF_GUI_READ_ONLY	= 0x0020, // a less restrictive form of ro intended to prevent users from modifying an object, but still permit programmatic access; RO ==> GRO
     DESTROYING		= 0x0040, // Set in Destroying at the very beginning of destroy
     DESTROYED		= 0x0080,  // set in base destroy (DEBUG only); lets us detect multi destroys
-    NAME_READONLY	= 0x0100  // set to disable editing of name
+    NAME_READONLY	= 0x0100,  // set to disable editing of name
+    REGISTERED		= 0x0200, // set when registered (must unreg)
 #ifndef __MAKETA__
-    ,INVALID_MASK	= THIS_INVALID | CHILD_INVALID
+    INVALID_MASK	= THIS_INVALID | CHILD_INVALID
     ,COPY_MASK		= THIS_INVALID | CHILD_INVALID | NAME_READONLY // flags to copy when doing an object copy
     ,EDITABLE_MASK	= BF_READ_ONLY | BF_GUI_READ_ONLY // flags in the Editable group 
 #endif
@@ -497,10 +501,11 @@ public:
   // #IGNORE automatic TA-based cutlinks: goes through only my members & calls cutlinks and calls inherited
 
   void 			Register()
-  { if(!taMisc::not_constr) GetTypeDef()->Register((void*)this); }
+  { if(!taMisc::not_constr) GetTypeDef()->RegisterFinal((void*)this);
+    SetBaseFlag(REGISTERED); }
   // #IGNORE non-virtual, called in constructors to register token in token list
   void 			unRegister()
-  { CheckDestroyed(); if(!taMisc::not_constr) GetTypeDef()->unRegister((void*)this); }
+  { CheckDestroyed(); if(!taMisc::not_constr && HasBaseFlag(REGISTERED)) { GetTypeDef()->unRegisterFinal((void*)this); ClearBaseFlag(REGISTERED);}}
   // #IGNORE non-virtual, called in destructors to unregister token in token list
   virtual void		SetTypeDefaults();
   // #IGNORE initialize modifiable default initial values stored with the typedef -- see TypeDefault object in ta_defaults.  currently not used; was called in taBase::Own
@@ -525,8 +530,14 @@ public:
   static TAPtr 		MakeTokenAry(TypeDef* td, int no);
   // #IGNORE static version to make an array of tokens of the given type
 
-  taBase()			{ Register(); Initialize(); }
-  taBase(const taBase& cp)		{ Register(); Initialize(); Copy_impl(cp); }
+#ifdef __MAKETA__
+  taBase();
+  taBase(const taBase& cp);
+#else
+  explicit taBase(bool=false)	{ Register(); Initialize(); }
+  taBase(const taBase& cp, bool)	{ Register(); Initialize(); Copy_impl(cp); }
+  taBase(const taBase& cp)	{ Register(); Initialize(); Copy_impl(cp); }
+#endif
   virtual ~taBase() 		{ Destroy(); } //
 
   virtual TAPtr		Clone()			{ return new taBase(*this); } // #IGNORE

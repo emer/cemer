@@ -1425,7 +1425,7 @@ public:
   String 	name;		// of the space
   TypeDef*	owner;		// owner is a typedef
   bool		keep;		// true if tokens are kept
-  int		sub_tokens;	// number of tokens in sub-types
+  QAtomicInt	sub_tokens;	// number of tokens in sub-types
   taDataLink*	data_link;
 
   virtual void 	Initialize();
@@ -2252,8 +2252,10 @@ public:
   void		AddUserDataSchema(UserDataItemBase* item); // adds the item as schema
 #endif
   // for token management
-  void 		Register(void* it);
-  void 		unRegister(void* it);
+//  void 		Register(void* it); // legacy, typically called once per ctor in inheritance chain
+//  void 		unRegister(void* it); // legacy, typically called once per dtor in inheritance chain
+  void 		RegisterFinal(void* it); // call to just register the most derived (can only call once per it)
+  void 		unRegisterFinal(void* it); // call to just unregister the most derived (can only call once per it)
 
   /////////////////////////////////////////////////////////////
   //		Get/Set From String

@@ -1006,6 +1006,8 @@ public:
   
 public:
   override float	El_GetFloat_(const void* it) const { return (float)*((int*)it); } // #IGNORE
+  override double	El_GetDouble_(const void* it) const 
+    { return (double)*((int*)it); } // #IGNORE
   override const String	El_GetStr_(const void* it) const { return *((int*)it); } // #IGNORE note: implicit conversion avoids problems on some compilers
   override void		El_SetFmStr_(void* it, const String& str) {*((int*)it) = (int)str;}  // #IGNORE
   override const Variant El_GetVar_(const void* it) const {return Variant(*((int*)it));} // #IGNORE

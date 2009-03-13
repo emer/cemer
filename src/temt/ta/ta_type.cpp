@@ -4919,7 +4919,7 @@ bool TypeDef::HasSubTypes() const {
   return rval;
 }
 
-void TypeDef::Register(void* it) {
+/*obs void TypeDef::Register(void* it) {
   if(taMisc::in_init)		// don't register the instance tokens
     return;
   if((taMisc::keep_tokens != taMisc::ForceTokens) &&
@@ -4933,10 +4933,32 @@ void TypeDef::Register(void* it) {
      && ((pos = par->tokens.FindEl(it)) >= 0))
   {
     par->tokens.RemoveIdx(pos);
-    par->tokens.sub_tokens++;	// sub class got a new token..
+    par->tokens.sub_tokens.ref();	// sub class got a new token..
   }
   if(par)			// only register if you have a parent...
     tokens.Link(it);
+}*/
+
+void TypeDef::RegisterFinal(void* it) {
+  if(taMisc::in_init)		// don't register the instance tokens
+    return;
+  if((taMisc::keep_tokens != taMisc::ForceTokens) &&
+     (!tokens.keep || (taMisc::keep_tokens == taMisc::NoTokens)))
+    return;
+
+  TypeDef* par = GetParent();
+  if (!par) return; // we only register if have parent
+#ifndef NO_TA_BASE //TEMP
+if (par->tokens.FindEl(it) >= 0) {
+cerr << "attempt to reregister token of type(addr): " << ((taBase*)it)->GetTypeDef()->name << "(" << it << ")\n";
+return;
+}
+#endif
+  tokens.Link(it);
+  while (par) {
+    par->tokens.sub_tokens.ref();	// sub class got a new token..
+    par = par->GetParent();
+  }
 }
 
 bool TypeDef::ReplaceParent(TypeDef* old_tp, TypeDef* new_tp) {
@@ -4998,7 +5020,7 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
   UpdateMDTypes(templ_par->templ_pars, templ_pars);
 }
 
-void TypeDef::unRegister(void* it) {
+/*obs void TypeDef::unRegister(void* it) {
   if((taMisc::keep_tokens != taMisc::ForceTokens) &&
      (!tokens.keep || (taMisc::keep_tokens == taMisc::NoTokens)))
     return;
@@ -5006,6 +5028,20 @@ void TypeDef::unRegister(void* it) {
   if(!tokens.RemoveEl(it)) {	// if we couldn't find this one, must be a sub-tok..
     int subt = (int)(tokens.sub_tokens) - 1;
     tokens.sub_tokens = MAX(subt, 0); // might blow down..
+  }
+}*/
+
+void TypeDef::unRegisterFinal(void* it) {
+  if((taMisc::keep_tokens != taMisc::ForceTokens) &&
+     (!tokens.keep || (taMisc::keep_tokens == taMisc::NoTokens)))
+    return;
+
+  if (tokens.RemoveEl(it)) {
+    TypeDef* par = GetParent();
+    while (par) {
+      par->tokens.sub_tokens.deref();
+      par = par->GetParent();
+    }
   }
 }
 
