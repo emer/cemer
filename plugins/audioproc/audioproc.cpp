@@ -2039,10 +2039,10 @@ void DoG1dFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
   graph_data->FindMakeGridView();
 }
 
-
 //////////////////////////////////
 //  LogLinearBlock			//
 //////////////////////////////////
+/*obs
 
 void LogLinearBlock::Initialize() {
   // note: following would be for only one channel, spanning ~96 dB
@@ -2113,23 +2113,9 @@ float LogLinearBlock::CalcValue(float in) {
   // translate so that cl is at 0, and normalize
 //AN  double rval = (in_db - cl) * norm; 
   double rval = ((in_db - zero_level) / width); 
-/*from AN  switch (val_type) {
-  case LogLinearBlock::AN_EXP: {  
-    // do the exponential
-    rval = 1 / (1 + exp(-(rval * f)));
-    } break;
-  case LogLinearBlock::AN_SIG: {
-    //TODO:
-    } break;
-  case LogLinearBlock::AN_GAUSS: {  
-    // do the guassian
-    rval = exp(-((rval * rval)/2)) * f;
-    } break;
-  //no default -- must handle all, so let compiler warn
-  }*/
   return rval;
 }
-
+*/
 
 //////////////////////////////////
 //  AGCBlock			//

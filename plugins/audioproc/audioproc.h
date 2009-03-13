@@ -21,8 +21,7 @@ class StdBlock;
 class StimChan;
 class ToneChan;
 class StimGen;
-class DoG1dFilterSpec; 
-class LogLinearBlock; //
+class DoG1dFilterSpec; //
 
 /*
   Input data to processing blocks is always a whole matrix:
@@ -1140,9 +1139,9 @@ protected:
   virtual void	RenderFilter_impl();
   void	RenderFilter_DoG_impl();
   void	RenderFilter_Sieve_impl();
-};
+};//
 
-class AUDIOPROC_API LogLinearBlock: public StdBlock
+/*obs class AUDIOPROC_API LogLinearBlock: public StdBlock
 { // ##CAT_Audioproc auditory nerve block -- intended for +ve signal values only (ex rectified)
 INHERITED(StdBlock) 
 public:
@@ -1168,7 +1167,7 @@ private:
   void	Initialize();
   void	Destroy() {CutLinks();}
   SIMPLE_COPY(LogLinearBlock)
-};
+};*/
 
 class AUDIOPROC_API AGCBlock: public StdBlock
 { // ##CAT_Audioproc automatic gain control block
