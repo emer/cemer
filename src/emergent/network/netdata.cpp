@@ -1328,11 +1328,11 @@ void NetMonItem::GetMonVals_DataAgg(DataBlock* db) {
 	       "internal error: val_specs.size != 1 for computed val -- report as bug!"))
     return;
 
-  DataTable sel_out;
+  DataTable sel_out(false);
   bool use_sel_out = false;	// use sel_out instead of data_src
 
   if(select_rows && select_spec.col_name.nonempty()) {
-    DataSelectSpec selspec;
+    DataSelectSpec selspec(false);
     selspec.ops.Link(&select_spec);
     use_sel_out = taDataProc::SelectRows(&sel_out, data_src, &selspec);
     if(TestWarning(sel_out.rows == 0, "GetMonVals_DataAgg",

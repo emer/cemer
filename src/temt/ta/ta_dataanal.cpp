@@ -1151,7 +1151,7 @@ bool taDataAnal::Matrix3DGraph(DataTable* data, const String& x_axis_col, const 
 
   data->SortCol(xax, true, zax, true);
 
-  DataTable dupl;
+  DataTable dupl(false);
   dupl.CopyFrom(data);
   dupl.SortColName(z_axis_col, true, x_axis_col, true);
   taDataProc::AppendRows(data, &dupl);

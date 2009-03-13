@@ -511,7 +511,7 @@ bool taDataProc::Sort_impl(DataTable* dt, DataSortSpec* spec) {
   // but the tmp copy stuff isn't going to work.  
 
   dt->StructUpdate(true);
-  DataTable tmp_data;		// temporary buffer to hold vals during swap
+  DataTable tmp_data(false);		// temporary buffer to hold vals during swap
   taBase::Own(tmp_data, NULL);	// activates initlinks..
   tmp_data.Copy_NoData(*dt);		// give it same structure
   tmp_data.AddBlankRow();		// always just has one row
@@ -606,7 +606,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   dest->UniqueColNames();	// make them unique!
 
   // sort by grouped guys, in order (also add "LAST" and "FIRST" -- important to be sorted)
-  DataSortSpec sort_spec;
+  DataSortSpec sort_spec(false);
   taBase::Own(sort_spec, NULL);
   for(int i=0;i<spec->ops.size; i++) {
     DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
@@ -696,10 +696,10 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
 }
 
 bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, DataSortSpec* sort_spec) {
-  DataTable ssrc;
+  DataTable ssrc(false);
   taBase::Own(ssrc, NULL);	// activates initlinks, refs
 
-  DataSortSpec full_sort_spec;
+  DataSortSpec full_sort_spec(false);
   taBase::Own(full_sort_spec, NULL);
   full_sort_spec = *sort_spec;
 
@@ -1150,7 +1150,7 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
   }
   dest->UniqueColNames();	// make them unique!
 
-  DataSortSpec sort_spec_a;
+  DataSortSpec sort_spec_a(false);
   taBase::Own(sort_spec_a, NULL);
   {
     DataSortEl* ss = (DataSortEl*)sort_spec_a.ops.New(1, &TA_DataSortEl);
@@ -1160,7 +1160,7 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
     ss->order = DataSortEl::ASCENDING;
   }
   
-  DataSortSpec sort_spec_b;
+  DataSortSpec sort_spec_b(false);
   taBase::Own(sort_spec_b, NULL);
   {
     DataSortEl* ss = (DataSortEl*)sort_spec_b.ops.New(1, &TA_DataSortEl);
@@ -1170,11 +1170,11 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
     ss->order = DataSortEl::ASCENDING;
   }
 
-  DataTable ssrc_a;
+  DataTable ssrc_a(false);
   taBase::Own(ssrc_a, NULL);	// activates initlinks, refs
   taDataProc::Sort(&ssrc_a, src_a, &sort_spec_a);
 
-  DataTable ssrc_b;
+  DataTable ssrc_b(false);
   taBase::Own(ssrc_b, NULL);	// activates initlinks, refs
   taDataProc::Sort(&ssrc_b, src_b, &sort_spec_b);
 
