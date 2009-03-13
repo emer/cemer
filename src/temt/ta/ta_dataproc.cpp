@@ -630,7 +630,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
 }
 
 bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
-  float_Matrix float_tmp;
+  float_Matrix float_tmp(false);
   dest->AddBlankRow();
   int dest_idx = 0;
   for(int i=0;i<spec->ops.size; i++) {
@@ -732,7 +732,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 //     cerr << i << " init val: " << cur_vals[i] << " input: " << cval << endl;
   }
 
-  float_Matrix float_tmp;
+  float_Matrix float_tmp(false);
   int st_row = 0;
   int row = 1;
   while(row <= ssrc.rows) {

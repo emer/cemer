@@ -480,8 +480,8 @@ String taDataAnal::RegressLinear(DataTable* src_data, const String& x_data_col_n
     r = (double)taMath_float::vec_correl((float_Matrix*)xda->AR(), (float_Matrix*)yda->AR());
   }
   else {
-    double_Matrix xm;
-    double_Matrix ym;
+    double_Matrix xm(false);
+    double_Matrix ym(false);
     double_Matrix* xmp = &xm;
     double_Matrix* ymp = &ym;
     if(xda->valType() == VT_DOUBLE) {
@@ -543,7 +543,7 @@ bool taDataAnal::DistMatrix(float_Matrix* dist_mat, DataTable* src_data,
     rval = taMath_float::mat_dist(dist_mat, (float_Matrix*)da->AR(), metric, norm, tol);
   }
   else if(da->valType() == VT_DOUBLE) {
-    double_Matrix ddmat;
+    double_Matrix ddmat(false);
     rval = taMath_double::mat_dist(&ddmat, (double_Matrix*)da->AR(), metric, norm, tol);
     taMath::mat_cvt_double_to_float(dist_mat, &ddmat);
   }
@@ -554,7 +554,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
 				 const String& data_col_nm, const String& name_col_nm,
 				 taMath::DistMetric metric, bool norm, float tol) {
   if(!src_data) return false;
-  float_Matrix dmat;
+  float_Matrix dmat(false);
   bool rval = DistMatrix(&dmat, src_data, data_col_nm, metric, norm, tol);
   if(!rval) return false;
   GetDest(dist_mat, src_data, "DistMatrix");
@@ -616,7 +616,7 @@ bool taDataAnal::CrossDistMatrix(float_Matrix* dist_mat,
     rval = taMath_float::mat_cross_dist(dist_mat, (float_Matrix*)da_a->AR(), (float_Matrix*)da_b->AR(), metric, norm, tol);
   }
   else if(da_a->valType() == VT_DOUBLE) {
-    double_Matrix ddmat;
+    double_Matrix ddmat(false);
     rval = taMath_double::mat_cross_dist(&ddmat, (double_Matrix*)da_a->AR(), (double_Matrix*)da_b->AR(), metric, norm, tol);
     taMath::mat_cvt_double_to_float(dist_mat, &ddmat);
   }
@@ -630,7 +630,7 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
 				      const String& name_col_nm_b,
 				      taMath::DistMetric metric, bool norm, float tol) {
   if(!src_data_a || !src_data_b) return false;
-  float_Matrix dmat;
+  float_Matrix dmat(false);
   bool rval = CrossDistMatrix(&dmat, src_data_a, data_col_nm_a, src_data_b, data_col_nm_b, 
 			      metric, norm, tol);
   if(!rval) return false;
@@ -689,7 +689,7 @@ bool taDataAnal::CorrelMatrix(float_Matrix* correl_mat, DataTable* src_data,
     rval = taMath_float::mat_correl(correl_mat, (float_Matrix*)da->AR());
   }
   else if(da->valType() == VT_DOUBLE) {
-    double_Matrix ddmat;
+    double_Matrix ddmat(false);
     rval = taMath_double::mat_correl(&ddmat, (double_Matrix*)da->AR());
     taMath::mat_cvt_double_to_float(correl_mat, &ddmat);
   }
@@ -699,7 +699,7 @@ bool taDataAnal::CorrelMatrix(float_Matrix* correl_mat, DataTable* src_data,
 bool taDataAnal::CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* src_data,
 				   const String& data_col_nm) {
   if(!src_data) return false;
-  float_Matrix dmat;
+  float_Matrix dmat(false);
   bool rval = CorrelMatrix(&dmat, src_data, data_col_nm);
   if(!rval) return false;
   GetDest(correl_mat, src_data, "CorrelMatrix");
@@ -752,7 +752,7 @@ bool taDataAnal::Cluster(DataTable* clust_data, bool view, DataTable* src_data,
 bool taDataAnal::PCAEigens(float_Matrix* eigen_vals, float_Matrix* eigen_vecs,
 			   DataTable* src_data, const String& data_col_nm) {
   if(!src_data) return false;
-  float_Matrix correl_mat;
+  float_Matrix correl_mat(false);
   if(!CorrelMatrix(&correl_mat, src_data, data_col_nm))
     return false;
   return taMath_float::mat_eigen_owrite(&correl_mat, eigen_vals, eigen_vecs);
@@ -761,8 +761,8 @@ bool taDataAnal::PCAEigens(float_Matrix* eigen_vals, float_Matrix* eigen_vecs,
 bool taDataAnal::PCAEigenTable(DataTable* pca_data, bool view, DataTable* src_data,
 			       const String& data_col_nm) {
   if(!src_data) return false;
-  float_Matrix eigen_vals;
-  float_Matrix eigen_vecs;
+  float_Matrix eigen_vals(false);
+  float_Matrix eigen_vecs(false);
   if(!PCAEigens(&eigen_vals, &eigen_vecs, src_data, data_col_nm)) return false;
 
   GetDest(pca_data, src_data, "col_" + data_col_nm + "_PCAEigens");
@@ -806,23 +806,23 @@ bool taDataAnal::PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
     return false;
   }
 
-  float_Matrix eigen_vals;
-  float_Matrix eigen_vecs;
+  float_Matrix eigen_vals(false);
+  float_Matrix eigen_vecs(false);
   if(!PCAEigens(&eigen_vals, &eigen_vecs, src_data, data_col_nm)) return false;
 
-  float_Matrix xevec;		// x eigen vector
+  float_Matrix xevec(false);		// x eigen vector
   taMath_float::mat_col(&xevec, &eigen_vecs, x_axis_c); // eigen vector = column 
   cerr << "Component no: " << x_axis_c << " has eigenvalue: "
        << eigen_vals.FastEl(x_axis_c) << endl;
 
-  float_Matrix yevec;		// x eigen vector
+  float_Matrix yevec(false);		// x eigen vector
   taMath_float::mat_col(&yevec, &eigen_vecs, y_axis_c); // eigen vector = column 
   cerr << "Component no: " << y_axis_c << " has eigenvalue: "
        << eigen_vals.FastEl(y_axis_c) << endl;
 
-  float_Matrix xprjn;
+  float_Matrix xprjn(false);
   taMath_float::mat_prjn(&xprjn, (float_Matrix*)da->AR(), &xevec);
-  float_Matrix yprjn;
+  float_Matrix yprjn(false);
   taMath_float::mat_prjn(&yprjn, (float_Matrix*)da->AR(), &yevec);
 
   DataCol* nmda = GetStringDataCol(src_data, name_col_nm);
@@ -870,10 +870,10 @@ bool taDataAnal::MDS2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
     return false;
   }
 
-  float_Matrix dist_mat;
+  float_Matrix dist_mat(false);
   DistMatrix(&dist_mat, src_data, data_col_nm, metric, norm, tol);
 
-  float_Matrix xy_coords;
+  float_Matrix xy_coords(false);
   taMath_float::mat_mds_owrite(&dist_mat, &xy_coords, x_axis_c, y_axis_c);
 
   DataCol* nmda = GetStringDataCol(src_data, name_col_nm);
@@ -929,9 +929,9 @@ bool taDataAnal::RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_da
   float_Matrix* yrow = (float_Matrix*)da->GetValAsMatrix(y_row);
   taBase::Ref(yrow);
 
-  float_Matrix xprjn;
+  float_Matrix xprjn(false);
   taMath_float::mat_prjn(&xprjn, (float_Matrix*)da->AR(), xrow, metric, norm, tol);
-  float_Matrix yprjn;
+  float_Matrix yprjn(false);
   taMath_float::mat_prjn(&yprjn, (float_Matrix*)da->AR(), yrow, metric, norm, tol);
 
   taBase::UnRef(xrow);
@@ -971,7 +971,7 @@ bool taDataAnal::TimeAvg(DataTable* avg_data, bool view, DataTable* src_data,
 {
   if(!src_data) return false;
 
-  float_Matrix float_tmp;
+  float_Matrix float_tmp(false);
   GetDest(avg_data, src_data, "TimeAvg");
 
   avg_data->Reset();
@@ -1018,8 +1018,8 @@ bool taDataAnal::SmoothImpl(DataTable* smooth_data, bool view, DataTable* src_da
     keep_edges = true;
   }
 
-  float_Matrix float_tmp;
-  float_Matrix float_tmp2;
+  float_Matrix float_tmp(false);
+  float_Matrix float_tmp2(false);
   smooth_data->StructUpdate(true);
   smooth_data->Reset();
   String ad_nm = smooth_data->name;
@@ -1080,9 +1080,9 @@ bool taDataAnal::SmoothUniform(DataTable* smooth_data, bool view, DataTable* src
   if(!src_data) return false;
   GetDest(smooth_data, src_data, "SmoothUniform");
 
-  float_Matrix flt_kern;
+  float_Matrix flt_kern(false);
   taMath_float::vec_kern_uniform(&flt_kern, kern_half_wd, neg_tail, pos_tail);
-  double_Matrix dbl_kern;
+  double_Matrix dbl_kern(false);
   taMath_double::vec_kern_uniform(&dbl_kern, kern_half_wd, neg_tail, pos_tail);
 
   return SmoothImpl(smooth_data, view, src_data, &flt_kern, &dbl_kern,
@@ -1096,9 +1096,9 @@ bool taDataAnal::SmoothGauss(DataTable* smooth_data, bool view, DataTable* src_d
   if(!src_data) return false;
   GetDest(smooth_data, src_data, "SmoothGauss");
 
-  float_Matrix flt_kern;
+  float_Matrix flt_kern(false);
   taMath_float::vec_kern_gauss(&flt_kern, kern_half_wd, kern_sigma, neg_tail, pos_tail);
-  double_Matrix dbl_kern;
+  double_Matrix dbl_kern(false);
   taMath_double::vec_kern_gauss(&dbl_kern, kern_half_wd, kern_sigma, neg_tail, pos_tail);
 
   return SmoothImpl(smooth_data, view, src_data, &flt_kern, &dbl_kern,
@@ -1112,9 +1112,9 @@ bool taDataAnal::SmoothExp(DataTable* smooth_data, bool view, DataTable* src_dat
   if(!src_data) return false;
   GetDest(smooth_data, src_data, "SmoothExp");
 
-  float_Matrix flt_kern;
+  float_Matrix flt_kern(false);
   taMath_float::vec_kern_exp(&flt_kern, kern_half_wd, kern_exp, neg_tail, pos_tail);
-  double_Matrix dbl_kern;
+  double_Matrix dbl_kern(false);
   taMath_double::vec_kern_exp(&dbl_kern, kern_half_wd, kern_exp, neg_tail, pos_tail);
 
   return SmoothImpl(smooth_data, view, src_data, &flt_kern, &dbl_kern,
@@ -1132,9 +1132,9 @@ bool taDataAnal::SmoothPow(DataTable* smooth_data, bool view, DataTable* src_dat
     taMisc::Warning("Note: typically the power exponent is negative to produce an inverse relationship such that points further away are weighted lower");
   }
 
-  float_Matrix flt_kern;
+  float_Matrix flt_kern(false);
   taMath_float::vec_kern_pow(&flt_kern, kern_half_wd, kern_exp, neg_tail, pos_tail);
-  double_Matrix dbl_kern;
+  double_Matrix dbl_kern(false);
   taMath_double::vec_kern_pow(&dbl_kern, kern_half_wd, kern_exp, neg_tail, pos_tail);
 
   return SmoothImpl(smooth_data, view, src_data, &flt_kern, &dbl_kern,

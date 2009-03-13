@@ -345,7 +345,7 @@ String DataCol::ColStats() {
     return taMath_float::vec_stats((float_Matrix*)AR());
   }
   else if(valType() == VT_INT) {
-    float_Matrix float_tmp;
+    float_Matrix float_tmp(false);
     int_Matrix* mat = (int_Matrix*)AR();
     taMath_float::vec_fm_ints(&float_tmp, mat);
     return taMath_float::vec_stats(&float_tmp);

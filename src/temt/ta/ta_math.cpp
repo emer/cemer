@@ -1742,7 +1742,7 @@ bool taMath_double::mat_eigen_owrite(double_Matrix* a, double_Matrix* eigen_vals
 
 bool taMath_double::mat_eigen(const double_Matrix* a, double_Matrix* eigen_vals,
 				    double_Matrix* eigen_vecs) {
-  double_Matrix a_copy = *a;
+  double_Matrix a_copy(false) = *a;
   return mat_eigen_owrite(&a_copy, eigen_vals, eigen_vecs);
 }
 
@@ -1812,8 +1812,8 @@ bool taMath_double::mat_mds_owrite(double_Matrix* a, double_Matrix* xy_coords, i
 
   for(int i=0;i<a->size;i++) a->FastEl_Flat(i) *= -.5;
 
-  double_Matrix evals;
-  double_Matrix evecs;
+  double_Matrix evals(false);
+  double_Matrix evecs(false);
   mat_eigen_owrite(a, &evals, &evecs);
 
   xy_coords->SetGeom(2, 2, dim);
@@ -1834,7 +1834,7 @@ bool taMath_double::mat_mds_owrite(double_Matrix* a, double_Matrix* xy_coords, i
 }
 
 bool taMath_double::mat_mds(const double_Matrix* a, double_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
-  double_Matrix a_copy = *a;
+  double_Matrix a_copy(false) = *a;
   return mat_mds_owrite(&a_copy, xy_coords, x_axis_c, y_axis_c);
 }
 
@@ -2079,8 +2079,8 @@ bool taMath_double::mat_correl(double_Matrix* correl_mat, const double_Matrix* s
   int n = src_mat->frameSize();
   correl_mat->SetGeom(2, n, n);
 
-  double_Matrix p1vals;
-  double_Matrix p2vals;
+  double_Matrix p1vals(false);
+  double_Matrix p2vals(false);
 
   for(int i=0;i<n;i++) {
     mat_cell_to_vec(&p1vals, src_mat, i);
@@ -2561,7 +2561,7 @@ float taMath_float::deg_per_rad = (float)(180.0 / M_PI);
 // Probability distributions, etc
 
 float taMath_float::fact_ln(int n) {
-  static float_Array table;
+  static float_Array table(false);
 
   if(n < 0) { fprintf(stderr, "Negative factorial fact_ln()\n"); return 0; }
   if(n <= 1) return 0.0;
@@ -3337,7 +3337,7 @@ float taMath_float::vec_ss_mean(const float_Matrix* vec) {
 void taMath_float::vec_histogram(float_Matrix* vec, const float_Matrix* oth, float bin_size) {
   vec->Reset();
   if(oth->size == 0) return;
-  float_Array tmp;
+  float_Array tmp(false);
   tmp.SetSize(oth->size);
   for(int i=0;i<oth->size;i++)
     tmp[i] = oth->FastEl_Flat(i);
@@ -3369,7 +3369,7 @@ float taMath_float::vec_count(const float_Matrix* vec, Relation& rel) {
 
 float taMath_float::vec_median(const float_Matrix* vec) {
   if(vec->size == 0) return 0.0f;
-  float_Array tmp;
+  float_Array tmp(false);
   tmp.SetSize(vec->size);
   for(int i=0;i<vec->size;i++)
     tmp[i] = vec->FastEl_Flat(i);
@@ -3380,7 +3380,7 @@ float taMath_float::vec_median(const float_Matrix* vec) {
 
 float taMath_float::vec_quantile(const float_Matrix* vec, float quant_pos) {
   if(vec->size == 0) return 0.0f;
-  float_Array tmp;
+  float_Array tmp(false);
   tmp.SetSize(vec->size);
   for(int i=0;i<vec->size;i++)
     tmp[i] = vec->FastEl_Flat(i);
@@ -3393,7 +3393,7 @@ float taMath_float::vec_quantile(const float_Matrix* vec, float quant_pos) {
 
 float taMath_float::vec_mode(const float_Matrix* vec) {
   if(vec->size == 0) return 0.0f;
-  float_Array tmp;
+  float_Array tmp(false);
   tmp.SetSize(vec->size);
   for(int i=0;i<vec->size;i++)
     tmp[i] = vec->FastEl_Flat(i);
@@ -3479,9 +3479,9 @@ String taMath_float::vec_stats(const float_Matrix* vec) {
 bool taMath_float::vec_regress_lin(const float_Matrix* x_vec, const float_Matrix* y_vec,
 				      float& b, float& m, float& cov00, float& cov01,
 				      float& cov11, float& sum_sq) {
-  double_Matrix dx;
+  double_Matrix dx(false);
   mat_cvt_float_to_double(&dx, x_vec);
-  double_Matrix dy;
+  double_Matrix dy(false);
   mat_cvt_float_to_double(&dy, y_vec);
   double db, dm, dcov00, dcov01, dcov11, dsum_sq;
   bool rval = taMath_double::vec_regress_lin(&dx, &dy, db, dm, dcov00, dcov01, dcov11, dsum_sq);
@@ -3963,10 +3963,10 @@ bool taMath_float::mat_div_els(float_Matrix* a, const float_Matrix* b) {
 
 bool taMath_float::mat_eigen_owrite(float_Matrix* a, float_Matrix* eigen_vals,
 				    float_Matrix* eigen_vecs) {
-  double_Matrix da;
+  double_Matrix da(false);
   mat_cvt_float_to_double(&da, a);
-  double_Matrix deval;
-  double_Matrix devec;
+  double_Matrix deval(false);
+  double_Matrix devec(false);
   bool rval = taMath_double::mat_eigen_owrite(&da, &deval, &devec);
   mat_cvt_double_to_float(eigen_vals, &deval);
   mat_cvt_double_to_float(eigen_vecs, &devec);
@@ -3979,10 +3979,10 @@ bool taMath_float::mat_eigen(const float_Matrix* a, float_Matrix* eigen_vals,
 }
 
 bool taMath_float::mat_svd_owrite(float_Matrix* a, float_Matrix* s, float_Matrix* v) {
-  double_Matrix da;
+  double_Matrix da(false);
   mat_cvt_float_to_double(&da, a);
-  double_Matrix ds;
-  double_Matrix dv;
+  double_Matrix ds(false);
+  double_Matrix dv(false);
   bool rval = taMath_double::mat_svd_owrite(&da, &ds, &dv);
   mat_cvt_double_to_float(s, &ds);
   mat_cvt_double_to_float(v, &dv);
@@ -3990,11 +3990,11 @@ bool taMath_float::mat_svd_owrite(float_Matrix* a, float_Matrix* s, float_Matrix
 }
 
 bool taMath_float::mat_svd(const float_Matrix* a, float_Matrix* u, float_Matrix* s, float_Matrix* v) {
-  double_Matrix da;
+  double_Matrix da(false);
   mat_cvt_float_to_double(&da, a);
-  double_Matrix du;
-  double_Matrix ds;
-  double_Matrix dv;
+  double_Matrix du(false);
+  double_Matrix ds(false);
+  double_Matrix dv(false);
   bool rval = taMath_double::mat_svd(&da, &du, &ds, &dv);
   mat_cvt_double_to_float(u, &du);
   mat_cvt_double_to_float(s, &ds);
@@ -4003,9 +4003,9 @@ bool taMath_float::mat_svd(const float_Matrix* a, float_Matrix* u, float_Matrix*
 }
 
 bool taMath_float::mat_mds_owrite(float_Matrix* a, float_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
-  double_Matrix da;
+  double_Matrix da(false);
   mat_cvt_float_to_double(&da, a);
-  double_Matrix dxy;
+  double_Matrix dxy(false);
   bool rval = taMath_double::mat_mds_owrite(&da, &dxy, x_axis_c, y_axis_c);
   mat_cvt_double_to_float(xy_coords, &dxy);
   return rval;
@@ -4019,8 +4019,8 @@ bool taMath_float::fft_real_transform(float_Matrix* out_mat, const float_Matrix*
     bool real_out, bool norm)
 {
   if (!out_mat || !in_mat) return false;
-  double_Matrix dout_mat;
-  double_Matrix din_mat;
+  double_Matrix dout_mat(false);
+  double_Matrix din_maty(false);
   din_mat.Copy(in_mat);
   bool rval = taMath_double::fft_real_transform(&dout_mat, &din_mat,
     real_out, norm);
@@ -4161,8 +4161,8 @@ bool taMath_float::mat_correl(float_Matrix* correl_mat, const float_Matrix* src_
   int n = src_mat->frameSize();
   correl_mat->SetGeom(2, n, n);
 
-  float_Matrix p1vals;
-  float_Matrix p2vals;
+  float_Matrix p1vals(false);
+  float_Matrix p2vals(false);
 
   for(int i=0;i<n;i++) {
     mat_cell_to_vec(&p1vals, src_mat, i);
@@ -4507,7 +4507,7 @@ bool taMath_float::mat_frame_median(float_Matrix* out_mat, const float_Matrix* i
   int frn = in_mat->frames();
   int frs = in_mat->frameSize();
   int idx = frn / 2;
-  float_Array tmp;
+  float_Array tmp(false);
   tmp.SetSize(frn);
   for(int i=0;i<frs;i++) {
     for(int j=0;j<frn;j++) {
@@ -4523,7 +4523,7 @@ bool taMath_float::mat_frame_quantile(float_Matrix* out_mat, const float_Matrix*
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
   int frn = in_mat->frames();
   int frs = in_mat->frameSize();
-  float_Array tmp;
+  float_Array tmp(false);
   tmp.SetSize(frn);
   int idx = (int)(quant_pos * (float)tmp.size);
   if(idx >= tmp.size) idx = tmp.size-1;
@@ -4542,7 +4542,7 @@ bool taMath_float::mat_frame_mode(float_Matrix* out_mat, const float_Matrix* in_
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
   int frn = in_mat->frames();
   int frs = in_mat->frameSize();
-  float_Array tmp;
+  float_Array tmp(false);
   tmp.SetSize(frn);
   for(int i=0;i<frs;i++) {
     for(int j=0;j<frn;j++) {

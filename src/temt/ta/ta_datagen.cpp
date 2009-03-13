@@ -285,7 +285,7 @@ bool taDataGen::ReplicateByFrequency(DataTable* dest, const DataTable* data_in,
 
   dest->Copy_NoData(*data_in);		// give it same structure
 
-  float_Matrix norm_freq;
+  float_Matrix norm_freq(false);
   float_Matrix* freqs = (float_Matrix*)freq_col->AR();
   if(renorm_freqs) {
     norm_freq = *freqs;		// copy the data!
@@ -326,7 +326,7 @@ bool taDataGen::SampleByFrequency(DataTable* dest, const DataTable* data_in,
 
   dest->Copy_NoData(*data_in);		// give it same structure
 
-  float_Matrix norm_freq;
+  float_Matrix norm_freq(false);
   float_Matrix* freqs = (float_Matrix*)freq_col->AR();
   if(renorm_freqs) {
     norm_freq = *freqs;		// copy the data!
@@ -369,7 +369,7 @@ bool taDataGen::NsByFrequency(DataTable* dest, const DataTable* data_in,
   dest->Copy_NoData(*data_in);		// give it same structure
   DataCol* ns = dest->NewCol(DataCol::VT_INT, "n_repls");
 
-  float_Matrix norm_freq;
+  float_Matrix norm_freq(false);
   float_Matrix* freqs = (float_Matrix*)freq_col->AR();
   if(renorm_freqs) {
     norm_freq = *freqs;		// copy the data!
@@ -681,7 +681,7 @@ bool taDataGen::AddNoise(DataTable* data, const String& col_nm, const Random& rn
 }
 
 bool taDataGen::PermutedBinaryMat(float_Matrix* mat, int n_on, float on_val, float off_val) {
-  float_Array ary;
+  float_Array ary(false);
   ary.SetSize(mat->size);
   int n_max = MIN(mat->size, n_on);
   int i;
@@ -842,7 +842,7 @@ bool taDataGen::FlipBits_MinMax(DataTable* data, const String& col_nm, int n_off
   DataCol* da = GetFloatMatrixDataCol(data, col_nm);
   if(!da) return false;
   data->DataUpdate(true);
-  float_Matrix orig_pat;
+  float_Matrix orig_pat(false);
   int bogus_count = 0;
   for(int i=0;i<da->rows();i++) {
     float_Matrix* mat = (float_Matrix*)da->GetValAsMatrix(i);
