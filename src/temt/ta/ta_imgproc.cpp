@@ -1110,7 +1110,7 @@ float GaborFitter::ParamDist(const GaborFilterSpec& oth) {
 //   OutputParams();
 //   GridFilter(NULL);
 //   taivMisc::RunIVPending();
-//   float_Matrix data;
+//   float_Matrix data(false);
 //   RenderFilter(data);
 //   float min_d = FitData(data, false);
 //   cerr << "Min Dist: " << min_d << endl;
@@ -1246,8 +1246,8 @@ bool DoGRetinaSpec::FilterRetina(float_Matrix& on_output, float_Matrix& off_outp
 
   float_Matrix* on_out = &on_output;
   float_Matrix* off_out = &off_output;
-  float_Matrix tmp_on_out;  taBase::Ref(tmp_on_out);
-  float_Matrix tmp_off_out; taBase::Ref(tmp_off_out);
+  float_Matrix tmp_on_out(false);  taBase::Ref(tmp_on_out);
+  float_Matrix tmp_off_out(false); taBase::Ref(tmp_off_out);
 
   if(superimpose) {
     tmp_on_out.SetGeom(2, spacing.output_size.x, spacing.output_size.y);
@@ -2018,7 +2018,7 @@ bool taImageProc::ScaleImage_float(float_Matrix& scaled_img, float_Matrix& orig_
   float extra = half_sc - (float)half_int;
   int n_orig_pix = half_int + 1; // number of pixels to get from original image for each scaled pixel
   //    int tot_org_pix = 2 * n_orig_pix + 1;
-  float_Matrix sc_ary;
+  float_Matrix sc_ary(false);
   sc_ary.SetGeom(2, n_orig_pix*2 + 1, n_orig_pix*2 + 1);
   int x, y;
   for(y=-n_orig_pix; y<= n_orig_pix; y++) {
@@ -2118,7 +2118,7 @@ bool taImageProc::RotateImage_float(float_Matrix& rotated_img, float_Matrix& ori
 
   bool wrap = (edge == WRAP);
 
-  float_Matrix sc_ary;  sc_ary.SetGeom(2, 2, 2);
+  float_Matrix sc_ary(false);  sc_ary.SetGeom(2, 2, 2);
 
   int x,y;			// coords in new image
   for(y=0;y<img_size.y;y++) {
@@ -2226,9 +2226,9 @@ bool taImageProc::TransformImage_float(float_Matrix& xformed_img, float_Matrix& 
 				       EdgeMode edge)
 {
   float_Matrix* use_img = &orig_img;
-  float_Matrix xlate_img;     	taBase::Ref(xlate_img);
-  float_Matrix rot_img;		taBase::Ref(rot_img);
-  float_Matrix sc_img;		taBase::Ref(sc_img);
+  float_Matrix xlate_img(false);     	taBase::Ref(xlate_img);
+  float_Matrix rot_img(false);		taBase::Ref(rot_img);
+  float_Matrix sc_img(false);		taBase::Ref(sc_img);
 
   // render border after each xform to keep edges clean..
   if(edge == BORDER) taImageProc::RenderBorder_float(*use_img);
@@ -2298,7 +2298,7 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
   float extra = half_sc - (float)half_int;
   int n_orig_pix = half_int + 1; // number of pixels to get from original image for each scaled pixel
   //    int tot_org_pix = 2 * n_orig_pix + 1;
-  float_Matrix sc_ary;
+  float_Matrix sc_ary(false);
   sc_ary.SetGeom(2, n_orig_pix*2 + 1, n_orig_pix*2 + 1);
   int x, y;
   for(y=-n_orig_pix; y<= n_orig_pix; y++) {
@@ -2319,7 +2319,7 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
 
   int pcx[2];    int pcy[2];
   float pwx[2];  float pwy[2];
-  float_Matrix rot_ary;  rot_ary.SetGeom(2, 2, 2);
+  float_Matrix rot_ary(false);  rot_ary.SetGeom(2, 2, 2);
 
   TwoDCoord wc;
   for(wc.y=0; wc.y<win_size.y; wc.y++) {
@@ -2889,7 +2889,7 @@ bool RetinaSpec::TransformImage(taImage& img, DataTable* dt,
 				bool superimpose)
 {
   if (!dt) return false;
-  float_Matrix img_data;
+  float_Matrix img_data(false);
   taBase::Ref(img_data);	// make sure it isn't killed by some other ops..
   ConvertImageToMatrix(img, img_data);
 
@@ -2923,7 +2923,7 @@ bool RetinaSpec::LookAtImage(taImage& img, DataTable* dt,
 			     float move_x, float move_y,
 			     float scale, float rotate, 
 			     bool superimpose) {
-  float_Matrix img_data;
+  float_Matrix img_data(false);
   taBase::Ref(img_data);	// make sure it isn't killed by some other ops..
   ConvertImageToMatrix(img, img_data);
 
