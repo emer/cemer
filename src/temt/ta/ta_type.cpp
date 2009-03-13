@@ -4948,7 +4948,7 @@ void TypeDef::RegisterFinal(void* it) {
 
   TypeDef* par = GetParent();
   if (!par) return; // we only register if have parent
-#ifndef NO_TA_BASE //TEMP
+#if defined(DEBUG) && !defined(NO_TA_BASE) // semi-TEMP, until 100% verified
 if (par->tokens.FindEl(it) >= 0) {
 cerr << "attempt to reregister token of type(addr): " << ((taBase*)it)->GetTypeDef()->name << "(" << it << ")\n";
 return;

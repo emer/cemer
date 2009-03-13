@@ -3252,6 +3252,7 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
   connect(timFilter, SIGNAL(timeout()), this, SLOT(timFilter_timeout()) );
 
   m_client = NULL;
+  filter->setFocus();
 }
 
 void taiItemChooser::items_itemDoubleClicked(QTreeWidgetItem* itm, int col) {
