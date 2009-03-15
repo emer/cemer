@@ -703,20 +703,35 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   taBase::Own(full_sort_spec, NULL);
   full_sort_spec = *sort_spec;
 
-  // add [FIND_] LAST and FIRST to end of sort spec
+  // for [FIND_] LAST and FIRST: need to add a column that has the row index and add that
+  // to the sort, to preserve the current table order for these operations.
+  bool has_first_last = false;
   for(int i=0;i<spec->ops.size; i++) {
     DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
-    if((ds->agg.op != Aggregate::FIRST) && (ds->agg.op != Aggregate::LAST) &&
-       (ds->agg.op != Aggregate::FIND_FIRST) && (ds->agg.op != Aggregate::FIND_LAST)) continue;
+    if((ds->agg.op == Aggregate::FIRST) || (ds->agg.op == Aggregate::LAST) ||
+       (ds->agg.op == Aggregate::FIND_FIRST) || (ds->agg.op == Aggregate::FIND_LAST)) {
+      has_first_last = true;
+      break;
+    }
+  }
+  DataTable flsrc(false);
+  taBase::Own(flsrc, NULL);	// activates initlinks, refs
+  DataTable* use_src = src;	// source to actually use -- could be flsrc instead
+  if(has_first_last) {
+    flsrc = *src;
+    use_src = &flsrc;		// new src
+    //    sort_spec->GetColumns(&flsrc); // re-get columns for new guy, just to be sure
+    int_Data* rowno_col = flsrc.NewColInt("__fl_rowno");
+    rowno_col->InitValsToRowNo();
     DataSortEl* ss = (DataSortEl*)full_sort_spec.ops.New(1, &TA_DataSortEl);
-    ss->col_name = ds->col_name;
-    ss->col_idx = ds->col_idx;
-    taBase::SetPointer((taBase**)&ss->col_lookup, ds->col_lookup);
+    ss->col_name = rowno_col->name;
+    ss->col_idx = rowno_col->col_idx;
+    //    taBase::SetPointer((taBase**)&ss->col_lookup, ds->col_lookup);
     ss->order = DataSortEl::ASCENDING;
   }
 
-  taDataProc::Sort(&ssrc, src, &full_sort_spec);
+  taDataProc::Sort(&ssrc, use_src, &full_sort_spec);
 
   sort_spec->GetColumns(&ssrc);	// re-get columns -- they were nuked by Sort op!
 
