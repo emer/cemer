@@ -4999,7 +4999,7 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   // only add Close if on a tab
   if (tab_idx >= 0) {
     // always add for consistency, even if on an empty or locked guy
-    act = new taiAction(tab_idx, "&Close Tab");
+    act = new taiAction(tab_idx, "&Close Tab", QKeySequence());
     act->setParent(contextMenu);
     contextMenu->addAction(act);
     if (dp && dp->lockInPlace()) 
