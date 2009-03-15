@@ -5167,8 +5167,6 @@ void NetViewObj::UpdateAfterEdit_impl() {
 void Network::Initialize() {
   specs.SetBaseType(&TA_BaseSpec);
   layers.SetBaseType(&TA_Layer);
-//   min_engine = &TA_NetEngine;
-//   taBase::Own(net_engine, this);
   
   flags = NF_NONE;
   auto_build = AUTO_BUILD;

@@ -55,7 +55,6 @@ set(ta_HEADS_MAKETA
   ta_defaults.h
   ta_plugin.h
   ta_plugin_p.h
-  ta_engine.h
   ta_seledit.h
   ta_project.h
   ta_server.h
@@ -132,7 +131,6 @@ set(ta_HEADS
   ta_defaults.h
   ta_plugin.h
   ta_plugin_p.h
-  ta_engine.h
   ta_seledit.h
   ta_project.h
   ta_server.h
@@ -263,7 +261,6 @@ set(ta_SRCS
   ta_dump.cpp
   ta_defaults.cpp
   ta_plugin_p.cpp
-  ta_engine.cpp
   ta_seledit.cpp
   ta_project.cpp
   ta_server.cpp

@@ -164,10 +164,8 @@
 #  define TA_OS_UNIX
 #endif
 
-// we don't try using threaded engine on non-Intel platforms
-// esp legacy PPC Macs wherein xtremely unlikely to have multi threads
-//TODO: need to add NO_TA_USE_THREADS for config control
-#if (!defined(NO_TA_USE_THREADS) && (defined(QT_ARCH_I386) || defined(QT_ARCH_X86_64)) || defined(QT_ARCH_WINDOWS) || defined(QT_ARCH_MACOSX))
+// NO_TA_USE_THREADS only for config control
+#if (!defined(NO_TA_USE_THREADS))
 # define TA_USE_THREADS
 #endif
 
@@ -258,6 +256,7 @@ typedef unsigned char   byte;
 # define strtoll _strtoi64
 # define strtoull _strtoui64
 # define isnan(x) _isnan(x)
+# define isinf(x) (!_finite(x))
 # endif // intptr_t hacks
 #endif // skip over for maketa
 

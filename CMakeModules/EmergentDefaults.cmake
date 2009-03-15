@@ -31,10 +31,10 @@ if (WIN32)
   add_definitions(/wd4250 /wd4258 /wd4661 /wd4996)
   # enable multi-threaded compiling (always safe, will ignore and print warning when incompatible)
   add_definitions(/MP)
-  if (CMAKE_CL_64)
+#also needed for 32  if (CMAKE_CL_64)
     # need to set this so larger .cpp files don't error (what a stupid non-default!!!)
     add_definitions(/bigobj)
-  endif (CMAKE_CL_64)
+#  endif (CMAKE_CL_64)
 else (WIN32) # assume gcc!!!
   # a function with a non-void return-type that doesn't return a value s/b an error!!!
   if (APPLE) #grr... not working on Mac for some reason

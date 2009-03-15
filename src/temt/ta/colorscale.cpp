@@ -28,6 +28,7 @@
 # include <qpalette.h>
 #endif
 
+#include <float.h>
 
 //////////////////////////
 //  taColor		//

@@ -295,7 +295,7 @@ double taMath_double::e = M_E;
 typedef union {
   double d;
   struct {
-#ifdef LITTLE_ENDIAN
+#ifdef TA_LITTLE_ENDIAN
     int j, i;
 #else
     int i, j;

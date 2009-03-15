@@ -23,9 +23,11 @@
 #include "ta_group.h"
 #include "ta_math.h"
 #include "ta_geometry.h"
+#include "minmax.h"
 #include "ta_time.h"
 #include "ta_dmem.h"
-#include "ta_engine.h"
+#include "ta_thread.h"
+#include "ta_datatable.h"
 
 #include "emergent_base.h"
 #include "spec.h"

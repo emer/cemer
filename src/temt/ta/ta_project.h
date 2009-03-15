@@ -27,7 +27,6 @@
 #include "ta_plugin_p.h"
 #include "ta_qtclipdata.h"
 #include "colorscale.h"
-#include "ta_engine.h"
 #include "ta_seledit.h"
 
 class taDoc;
@@ -270,7 +269,6 @@ public:
   taPluginBase_List	plugin_deps; // #SHOW_TREE #EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
   taiMimeFactory_List	mime_factories; // #NO_SAVE #HIDDEN_TREE extensible list of mime factories
   ColorScaleSpec_Group 	colorspecs;	// Color Specs
-  taEngine_Group	engines; // #NO_SAVE calculation engines (highly machine-specific; some are added by plugins)
   taBase_List		objs;  // #SHOW_TREE #EXPERT_TREE #NO_SAVE misc place for app-global objs, usually for system use, ex. tcp server
   String_Array		recent_files; // #NO_SHOW recently loaded files
   String_Array		recent_paths; // #NO_SHOW recently used paths
@@ -323,8 +321,6 @@ public:
   // #IGNORE enumeration of plugins 
   static bool	Startup_LoadPlugins();
   // #IGNORE load and init types of plugins 
-  static bool	Startup_EnumerateEngines();
-  // #IGNORE make a list of all available engines, both native and plugins 
   static bool	Startup_InitCss();
   // #IGNORE initialize css script system
   static bool	Startup_InitGui();
