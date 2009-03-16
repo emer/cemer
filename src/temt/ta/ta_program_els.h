@@ -141,17 +141,24 @@ public:
   ProgExprBase		test; // a test expression for whether to continue looping (e.g., 'i < max')
   ProgExprBase	    	iter; // the iteration operation run after each loop (e.g., increment the loop variable; 'i++')
 
-  virtual void		ChangeLoopVar(const String& fm_var, const String& to_var);
-  // #BUTTON change looping variable name from given variable name to new variable name -- just does simple search & replace by text
+  void			GetLoopVar(String& loop_var, bool& is_local) const; // this is a fuzzy "best guess" at the loop var -- it is used esp for creating a new one (j,k, etc.) in new nested loops; is_local is true if the var is declared in the init
+  virtual void		ChangeLoopVar(const String& to_var);
+  // #BUTTON change looping variable name from its current name to new variable name -- just does simple search & replace by text
 
   override String	GetDisplayName() const;
   override void		SetProgExprFlags();
 
-  PROGEL_SIMPLE_BASEFUNS(ForLoop);
+  PROGEL_SIMPLE_COPY(ForLoop);
+  void InitLinks();
+  SIMPLE_CUTLINKS(ForLoop);
+  TA_BASEFUNS(ForLoop)
 protected:
   virtual void	GetIndexVar(); // make default 'i' variable in program.vars -- just makes it easier to deal with loops in default case..
 
   override void	UpdateAfterEdit_impl();
+  override void	UpdateOnInsert_impl(); // check for being nested, and update def var 
+  bool		ParentForLoopVarClashes(const String& loop_var); // true if a parent For loop is also using the loop_var
+  void		MorphVar(String& cur_loop_var); // typically i,j,k, etc. or var2, var3, etc
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
