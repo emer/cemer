@@ -7537,6 +7537,21 @@ void iTreeViewItem::moveChild(int fm_idx, int to_idx) {
   if (fm_idx < to_idx) --to_idx;
   QTreeWidgetItem* tak = takeChild(fm_idx);
   insertChild(to_idx, tak); 
+  // need to re-assert the hidden, because everything goes visible after the take
+  iTreeView* tv = treeView();
+  QTreeWidgetItemIterator it(this);
+  QTreeWidgetItem* item_;
+  while ( (item_ = *it) ) {
+    iTreeViewItem* item = dynamic_cast<iTreeViewItem*>(item_);
+    if (item) {
+      bool hide_it = !tv->ShowNode(item);
+      bool is_hid = item->isHidden();
+      if (hide_it != is_hid) {
+        item->setHidden(hide_it);
+      }
+    }
+    ++it;
+  }
 }
 
 ISelectable* iTreeViewItem::par() const {
