@@ -256,7 +256,6 @@ void UnitGroupView::UpdateUnitViewBase(MemberDef* disp_md, Unit* src_u, bool& co
 
 void UnitGroupView::UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* src_u) {
   Unit_Group* ugrp = this->ugrp(); //cache
-  int sidx;
   TwoDCoord coord;
   for(coord.y = 0; coord.y < ugrp->geom.y; coord.y++) {
     for(coord.x = 0; coord.x < ugrp->geom.x; coord.x++) {
@@ -270,7 +269,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* s
 	  RecvCons* tcong = unit->recv.FastEl(g);
 	  MemberDef* act_md = tcong->con_type->members.FindName(nm);
 	  if (!act_md)	continue;
-	  Connection* con = tcong->FindConFrom(src_u, sidx);
+	  Connection* con = tcong->FindConFrom(src_u);
 	  if (!con) continue;
 	  uvd.disp_base = act_md->GetOff(con);
 	  break; //TODO: is this right????
@@ -281,7 +280,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* s
 	  SendCons* tcong = unit->send.FastEl(g);
 	  MemberDef* act_md = tcong->con_type->members.FindName(nm);
 	  if (!act_md)	continue;
-	  Connection* con = tcong->FindConFrom(src_u, sidx);
+	  Connection* con = tcong->FindConFrom(src_u);
 	  if (!con) continue;
 	  uvd.disp_base = act_md->GetOff(con);
 	  break; //TODO: is this right????

@@ -577,29 +577,41 @@ void RecvCons::RemoveAll() {
   units.Reset();
 }
 
-Connection* RecvCons::FindConFrom(Unit* un, int& idx) const {
-  if((idx = units.FindEl(un)) < 0)
-    return NULL;
+int RecvCons::FindConFromIdx(Unit* un) const {
+  return units.FindEl(un);
+}
+
+int RecvCons::FindConFromNameIdx(const String& unit_nm) const {
+  return units.FindNameIdx(unit_nm);
+}
+
+Connection* RecvCons::FindConFrom(Unit* un) const {
+  int idx = FindConFromIdx(un);
+  if(idx < 0) return NULL;
+  return cons.SafeEl(idx);
+}
+
+Connection* RecvCons::FindConFromName(const String& unit_nm) const {
+  int idx = FindConFromNameIdx(unit_nm);
+  if(idx < 0) return NULL;
   return cons.SafeEl(idx);
 }
 
 Connection* RecvCons::FindRecipRecvCon(Unit* su, Unit* ru, Layer* ru_lay) {
-  int idx;
   for(int g=0; g<su->recv.size; g++) {
     RecvCons* cg = su->recv.FastEl(g);
     if(!cg->prjn || (cg->prjn->from.ptr() != ru_lay)) continue;
-    Connection* con = cg->FindConFrom(ru, idx);
+    Connection* con = cg->FindConFrom(ru);
     if(con) return con;
   }
   return NULL;
 }
 
 Connection* RecvCons::FindRecipSendCon(Unit* ru, Unit* su, Layer* su_lay) {
-  int idx;
   for(int g=0; g<ru->send.size; g++) {
     SendCons* cg = ru->send.FastEl(g);
     if(!cg->prjn || (cg->prjn->layer != su_lay)) continue;
-    Connection* con = cg->FindConFrom(su, idx);
+    Connection* con = cg->FindConFrom(su);
     if(con) return con;
   }
   return NULL;
@@ -1324,9 +1336,23 @@ void SendCons::RemoveAll() {
   units.Reset();
 }
 
-Connection* SendCons::FindConFrom(Unit* un, int& idx) const {
-  if((idx = units.FindEl(un)) < 0)
-    return NULL;
+int SendCons::FindConFromIdx(Unit* un) const {
+  return units.FindEl(un);
+}
+
+int SendCons::FindConFromNameIdx(const String& unit_nm) const {
+  return units.FindNameIdx(unit_nm);
+}
+
+Connection* SendCons::FindConFrom(Unit* un) const {
+  int idx = FindConFromIdx(un);
+  if(idx < 0) return NULL;
+  return cons.SafeEl(idx);
+}
+
+Connection* SendCons::FindConFromName(const String& unit_nm) const {
+  int idx = FindConFromNameIdx(unit_nm);
+  if(idx < 0) return NULL;
   return cons.SafeEl(idx);
 }
 
@@ -6325,8 +6351,7 @@ void Network::DMem_SymmetrizeWts() {
 	    for(int g = 0; g < fm->recv.size; g++) {
 	      RecvCons* fmg = fm->recv.FastEl(g);
 	      if(fmg->prjn->from != lay) continue;
-	      int tmpdx;
-	      Connection* con = fmg->FindConFrom(un, tmpdx);
+	      Connection* con = fmg->FindConFrom(un);
 	      if(con) {
 		unit_idxs.Add(uni);
 		wt_vals.Add(con->wt);

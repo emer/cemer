@@ -414,8 +414,16 @@ public:
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this set of receiving connections
 
-  virtual Connection*	FindConFrom(Unit* un, int& idx) const;
-  // #MENU #MENU_ON_Actions #USE_RVAL #ARGC_1 #CAT_Structure find connection from given unit
+  virtual int		FindConFromIdx(Unit* un) const;
+  // #CAT_Structure find index of connection from given unit
+  virtual int		FindConFromNameIdx(const String& unit_nm) const;
+  // #CAT_Structure find index of connection from given unit name
+
+  virtual Connection*	FindConFrom(Unit* un) const;
+  // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure find connection from given unit
+  virtual Connection*	FindConFromName(const String& unit_nm) const;
+  // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure find connection from given unit name
+
   static Connection* 	FindRecipRecvCon(Unit* su, Unit* ru, Layer* ru_lay);
   // #CAT_Structure find the reciprocal for sending unit su to this receiving unit ru
   static Connection* 	FindRecipSendCon(Unit* ru, Unit* su, Layer* su_lay);
@@ -592,8 +600,16 @@ public:
   // #CAT_Structure remove all conections
   virtual void		Reset() { RemoveAll(); }
   // #CAT_Structure remove all conections
-  virtual Connection*	FindConFrom(Unit* un, int& idx) const;
-  // #MENU #MENU_ON_Actions #USE_RVAL #ARGC_1 #CAT_Structure find connection from given unit
+
+  virtual int		FindConFromIdx(Unit* un) const;
+  // #CAT_Structure find index of connection from given unit
+  virtual int		FindConFromNameIdx(const String& unit_nm) const;
+  // #CAT_Structure find index of connection from given unit name
+
+  virtual Connection*	FindConFrom(Unit* un) const;
+  // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure find connection from given unit
+  virtual Connection*	FindConFromName(const String& unit_nm) const;
+  // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure find connection from given unit name
 
   ////////////////////////////////////////////////////////////////////////////////
   //	Below are the primary computational interface to the Network Objects
