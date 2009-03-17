@@ -6765,18 +6765,20 @@ void iTreeView::InsertEl() {
   td = typlkup->td();
   if(okc && td) {
     taBase* nwi = taBase::MakeToken(td);
-    int idx = 0;
-    if(sbo == sb) {		// it is the list
-      idx = sbo->size;
+    if(nwi) {
+      int idx = 0;
+      if(sbo == sb) {		// it is the list
+	idx = sbo->size;
+      }
+      else {
+	idx = sbo->FindEl(sb) + 1;
+      }
+      if(idx < 0) idx = 0;
+      if(idx > sbo->size) idx = sbo->size;
+      sbo->Insert(nwi, idx);
+      tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
+      tabMisc::DelayedFunCall_gui(nwi, "BrowserSelectMe");
     }
-    else {
-      idx = sbo->FindEl(sb) + 1;
-    }
-    if(idx < 0) idx = 0;
-    if(idx > sbo->size) idx = sbo->size;
-    sbo->Insert(nwi, idx);
-    tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
-    tabMisc::DelayedFunCall_gui(nwi, "BrowserSelectMe");
   }
   delete typlkup;
 }

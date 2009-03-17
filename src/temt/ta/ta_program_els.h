@@ -141,9 +141,11 @@ public:
   ProgExprBase		test; // a test expression for whether to continue looping (e.g., 'i < max')
   ProgExprBase	    	iter; // the iteration operation run after each loop (e.g., increment the loop variable; 'i++')
 
-  void			GetLoopVar(String& loop_var, bool& is_local) const; // this is a fuzzy "best guess" at the loop var -- it is used esp for creating a new one (j,k, etc.) in new nested loops; is_local is true if the var is declared in the init
   virtual void		ChangeLoopVar(const String& to_var);
   // #BUTTON change looping variable name from its current name to new variable name -- just does simple search & replace by text
+
+  virtual String	GetLoopVar(bool& is_local) const;
+  // this is a fuzzy "best guess" at the loop var -- it is used esp for creating a new one (j,k, etc.) in new nested loops; is_local is true if the var is declared in the init
 
   override String	GetDisplayName() const;
   override void		SetProgExprFlags();
@@ -153,7 +155,8 @@ public:
   SIMPLE_CUTLINKS(ForLoop);
   TA_BASEFUNS(ForLoop)
 protected:
-  virtual void	GetIndexVar(); // make default 'i' variable in program.vars -- just makes it easier to deal with loops in default case..
+  virtual void	MakeIndexVar(const String& var_nm);
+  // make default 'i' variable in program.vars -- just makes it easier to deal with loops in default case..
 
   override void	UpdateAfterEdit_impl();
   override void	UpdateOnInsert_impl(); // check for being nested, and update def var 

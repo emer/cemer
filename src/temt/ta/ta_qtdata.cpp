@@ -3112,13 +3112,22 @@ void taiItemChooser::ApplyFiltering() {
   QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::All);
   QTreeWidgetItem* item;
   QString s;
+  QTreeWidgetItem* first_item = NULL;
+  int n_items = 0;
   while ((item = *it)) { 
     // TODO (maybe): don't hide NULL item
     bool show = ShowItem(item);
     items->setItemHidden(item, !show);
+    if(show) {
+      if(n_items == 0)
+	first_item = item;
+      n_items++;
+    }
     ++it;
   }
   taMisc::DoneBusy();
+  if(n_items == 1 && first_item)
+    items->setCurrentItem(first_item); // auto-select only item
   --m_changing;
 }
 
@@ -3212,22 +3221,7 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
   } else cmbView = NULL;
   if (layFilter) layOuter->addLayout(layFilter);
   
-  items = new iTreeWidget(this);
-  items->setSortingEnabled(true);
-  layOuter->addWidget(items, 1); // list is item to expand in host
-  items->setFocus();		 // this is where the keyboard focus goes first!
-
   QHBoxLayout* lay = new QHBoxLayout();
-  lay->addStretch();
-  btnOk = new QPushButton("&Ok", this);
-  btnOk->setDefault(true);
-  lay->addWidget(btnOk);
-  lay->addSpacing(taiM->vsep_c);
-  btnCancel = new QPushButton("&Cancel", this);
-  lay->addWidget(btnCancel);
-  layOuter->addLayout(lay);
-
-  lay = new QHBoxLayout();
   lay->addSpacing(taiM->hspc_c); 
   lbl = new QLabel("search", this);
   lbl->setToolTip("Enter text that must appear in an item to keep it visible");
@@ -3239,6 +3233,20 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
   lay->addSpacing(taiM->hspc_c); 
   layOuter->addLayout(lay);
   
+  items = new iTreeWidget(this);
+  items->setSortingEnabled(true);
+  layOuter->addWidget(items, 1); // list is item to expand in host
+
+  lay = new QHBoxLayout();
+  lay->addStretch();
+  btnOk = new QPushButton("&Ok", this);
+  btnOk->setDefault(true);
+  lay->addWidget(btnOk);
+  lay->addSpacing(taiM->vsep_c);
+  btnCancel = new QPushButton("&Cancel", this);
+  lay->addWidget(btnCancel);
+  layOuter->addLayout(lay);
+
   timFilter = new QTimer(this);
   timFilter->setSingleShot(true);
   timFilter->setInterval(filt_delay);

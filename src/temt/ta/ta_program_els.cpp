@@ -237,10 +237,10 @@ void ForLoop::Initialize() {
 }
 
 void ForLoop::InitLinks() { 
- inherited::InitLinks(); 
- InitLinks_taAuto(&TA_ForLoop);
- if (taMisc::is_loading || taMisc::is_duplicating) return;
- UpdateOnInsert_impl();
+  inherited::InitLinks(); 
+  InitLinks_taAuto(&TA_ForLoop);
+  if (taMisc::is_loading || taMisc::is_duplicating) return;
+  UpdateOnInsert_impl();
 }
 
 void ForLoop::UpdateAfterEdit_impl() {
@@ -249,13 +249,15 @@ void ForLoop::UpdateAfterEdit_impl() {
   if(taMisc::is_loading) return;
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying() || prg->isDestroying()) return;
-  GetIndexVar();
+  bool is_local;
+  String loop_var = GetLoopVar(is_local);
+  if(!is_local)
+    MakeIndexVar(loop_var);	// make sure it exists
 }
 
 void ForLoop::UpdateOnInsert_impl() {
-  String loop_var;
   bool is_local;
-  GetLoopVar(loop_var, is_local);
+  String loop_var = GetLoopVar(is_local);
   if (is_local) return; // locals don't clash with above
   bool clashes = ParentForLoopVarClashes(loop_var);
   if (!clashes) return;
@@ -285,8 +287,8 @@ void ForLoop::MorphVar(String& cur_loop_var) {
 bool ForLoop::ParentForLoopVarClashes(const String& loop_var) {
   ForLoop* outer_loop = GET_MY_OWNER(ForLoop);
   while (outer_loop) {
-    String outer_loop_var; bool is_local;
-    outer_loop->GetLoopVar(outer_loop_var, is_local);
+    bool is_local;
+    String outer_loop_var = outer_loop->GetLoopVar(is_local);
     // note: is_local irrelevant because we will still clash
     if (loop_var == outer_loop_var) return true;
     outer_loop = (ForLoop*)outer_loop->GetOwner(&TA_ForLoop);
@@ -294,35 +296,32 @@ bool ForLoop::ParentForLoopVarClashes(const String& loop_var) {
   return false;
 }
 
-void ForLoop::GetLoopVar(String& loop_var, bool& is_local) const {
+String ForLoop::GetLoopVar(bool& is_local) const {
   // note: this heuristic is going to work 99.9% of the time
   // get trimmed part before first =
-  loop_var = trim(init.expr.before("="));
+  String loop_var = trim(init.expr.before("="));
   // there will only be any embedded spaces if there is a type declaration
   is_local = loop_var.contains(" ");
   if (is_local) {
     loop_var = trim(loop_var.after(" "));
   }
+  return loop_var;
 }
  
-void ForLoop::GetIndexVar() {
-  Program* my_prog = program();
+void ForLoop::MakeIndexVar(const String& var_nm) {
+  if(var_nm.empty()) return;
+  Program* my_prog = GET_MY_OWNER(Program);
   if(!my_prog) return;
-  String loop_var;
-  bool is_local;
-  GetLoopVar(loop_var, is_local);
-  if(loop_var.nonempty() && !is_local) {
-    if(!my_prog->vars.FindName(loop_var)) {
-      ProgVar* var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
-      var->name = loop_var;
-      var->SetInt(0);
-      var->ClearVarFlag(ProgVar::CTRL_PANEL);
-      var->DataChanged(DCR_ITEM_UPDATED);
-      // get the var ptrs in case someone changes them later!
-      init.ParseExpr();
-      test.ParseExpr();
-      iter.ParseExpr();
-    }
+  if(!my_prog->vars.FindName(var_nm)) {
+    ProgVar* var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+    var->name = var_nm;
+    var->SetInt(0);
+    var->ClearVarFlag(ProgVar::CTRL_PANEL);
+    var->DataChanged(DCR_ITEM_UPDATED);
+    // get the var ptrs in case someone changes them later!
+    init.ParseExpr();
+    test.ParseExpr();
+    iter.ParseExpr();
   }
 }
 
@@ -352,16 +351,17 @@ String ForLoop::GetDisplayName() const {
 }
 
 void ForLoop::ChangeLoopVar(const String& to_var) {
-  String fm_var; 
   bool is_local;
-  GetLoopVar(fm_var, is_local);
+  String fm_var = GetLoopVar(is_local);
   if (fm_var.empty()) return; // TODO: mebe should complain?
   init.expr.gsub(fm_var, to_var);
   test.expr.gsub(fm_var, to_var);
   iter.expr.gsub(fm_var, to_var);
-  init.ParseExpr();		// re-parse just to be sure!
-  test.ParseExpr();		// re-parse just to be sure!
-  iter.ParseExpr();		// re-parse just to be sure!
+  MakeIndexVar(to_var);      // have to make the new var *before* parsing!!
+  // this is possibly redundant with make index var but not always..
+  init.ParseExpr();
+  test.ParseExpr();
+  iter.ParseExpr();
   UpdateAfterEdit();
 }
 
