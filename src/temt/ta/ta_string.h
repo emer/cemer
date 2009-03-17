@@ -69,7 +69,9 @@ class TA_API String;
 
 class TA_API StrRep {
 friend class String;
+friend class NilStrInit;
 public:
+  static StrRep*	nilStrRep(); // makes and inits to ref=1 on first access
   uint			len;    // string length (not including null terminator)
   uint			sz;     // allocated space ((not including null terminator)
   QAtomicInt		cnt;	// reference count (when goes to 0, instance is deleted)
@@ -88,9 +90,11 @@ protected:
   int	      	search_ci(int, int, const char*, int = -1) const;
   int	      	search(int, int, char) const;
   int	      	match(int, int, int, const char*, int = -1) const;
+private:
+  static StrRep*	m_nilStrRep;
 };
 
-extern TA_API StrRep  _nilStrRep; // an empty StrRep, for convenience
+//extern TA_API StrRep  _nilStrRep; // an empty StrRep, for convenience
 
 // primitive ops on StrReps -- nearly all String fns go through these.
 
@@ -194,9 +198,9 @@ public:
   ////////////////////////////////////////////////
   // constructors & assignment
 
-  inline String() {newRep(&_nilStrRep);} // el blanco
+  inline String() {newRep(StrRep::nilStrRep());} // el blanco
   inline String(const String& x) {newRep(x.mrep);} // copy constructor -- only a ref on source! (fast!)
-  String(const String* x) {if (x) newRep(x->mrep); else newRep(&_nilStrRep);} 
+  String(const String* x) {if (x) newRep(x->mrep); else newRep(StrRep::nilStrRep());} 
   inline String(const char* s) {init(s, -1);} // s can be NULL
   String(const char* s, int slen) {init(s, slen);}
   String(StrRep* x) {newRep(x);} // typically only used internally
@@ -207,7 +211,7 @@ public:
   // conversion constructors
 
   explicit String(bool b); //note: implicit causes evil problems, esp. by converting pointers to strings
-  String(char c) {if (c == '\0') newRep(&_nilStrRep); else init(&c, 1);}
+  String(char c) {if (c == '\0') newRep(StrRep::nilStrRep()); else init(&c, 1);}
   String(int i, const char* format = "%d");
   String(uint u, const char* format = "%u");
   String(long i, const char* format = "%ld"); //note: don't use long any more, compatibility only
@@ -225,8 +229,11 @@ public:
   operator QVariant() const;  // #IGNORE
 #endif
 
+#ifdef DEBUG
+  ~String() {mrep->unRef(); mrep = NULL;}
+#else
   ~String() {mrep->unRef();}
-
+#endif
   ////////////////////////////////////////////////
   // basic resource allocation and infrastructure
 
@@ -311,7 +318,7 @@ public:
   String&		operator=(const String& y) {setRep(y.mrep); return *this;}
   String&		operator=(const char* s) {return set(s, -1);}
   String&		operator=(char c) {if (c == '\0') 
-    {setRep(&_nilStrRep); return *this;} else return set(&c, 1);} //
+    {setRep(StrRep::nilStrRep()); return *this;} else return set(&c, 1);} //
 
   String&	  set(const char* t, int len); 
   // #IGNORE parameterized set -- used in assigns

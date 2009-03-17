@@ -2355,7 +2355,6 @@ taBase* taBase::UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par, 
     taBase* new_own = new_par->FindFromPath(old_own_path, md);
     if(new_own && new_own->InheritsFrom(&TA_taList_impl)) {
       taList_impl* lst = (taList_impl*)new_own;
-      int idx;
       new_guy = (taBase*)lst->FindName_(old_nm);
     }
   }

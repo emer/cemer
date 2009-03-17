@@ -1421,7 +1421,6 @@ void TypeDef_Generate_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
   cnt = 0;
   for (i=0; i < ths->parents.size; ++i) {
     TypeDef* ptd = ths->parents.FastEl(i);
-    int idx;
     if ((ptd->owner != ths->owner) && !ptd->pre_parsed &&
 	(mta->spc_builtin.FindName(ptd->name) == NULL) &&
 	(mta->spc_pre_parse.FindName(ptd->name) == NULL)) {

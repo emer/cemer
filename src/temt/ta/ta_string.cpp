@@ -80,9 +80,6 @@ using namespace std;
 //	misc funcs	//
 //////////////////////////
 
-
-StrRep  _nilStrRep = { 0, 1, 1, { 0 } }; // nil StrReps point here; ref=1 so it can't be released
-
 // capitalize a string, in-place
 void _capitalize(char* p, int n) {
   char* e = &(p[n]);
@@ -195,7 +192,8 @@ inline static int ncmp(const char* a, int al, const char* b, int bl)
 #define MAXStrRep_SIZE   ((1 << (sizeof(short) * CHAR_BIT - 1)) - 1)
 
 // note: compilers may report the size of StrRep to be an even multiple of 4
-#define SIZE_OF_STRREP 13
+// QAtomicInt is only not 4 on PA RISC which is an obsolete server cpu
+#define SIZE_OF_STRREP (9 + sizeof(QAtomicInt))
 
 #ifdef TA_PROFILE
 class Cstring_prof {
@@ -211,10 +209,22 @@ long long Cstring_prof::tot_size = 0;
 Cstring_prof string_prof;
 #endif
 
+//StrRep _nilStrRep = { 0, 1, 1, { 0 } }; // nil StrReps point here; note: can't init class member so ref is 0
+StrRep* StrRep::m_nilStrRep;
+
+StrRep*	StrRep::nilStrRep() {
+  if (!m_nilStrRep) {
+    m_nilStrRep = (StrRep*)malloc(SIZE_OF_STRREP);
+    memset(m_nilStrRep, 0, SIZE_OF_STRREP);
+    m_nilStrRep->cnt = 1; // need the one extra ref so it never deletes
+  }
+  return m_nilStrRep;
+}
+
 // create an empty buffer -- called by routines that then fill the chars (ex. reverse, upcase, etc.)
 TA_API StrRep* Snew(int slen, uint cap) {
   if (cap == 0) cap = slen;
-  if (cap == 0) return &_nilStrRep;
+  if (cap == 0) return StrRep::nilStrRep();
   uint allocsize = (uint)tweak_alloc(SIZE_OF_STRREP + cap); // we tweak the alloc size to optimize -- may be larger
   cap = allocsize - SIZE_OF_STRREP; // in case we asked for more memory
 #ifdef TA_PROFILE
@@ -250,7 +260,7 @@ TA_API StrRep*	Scat(const char* s1, int slen1, const char* s2, int slen2) { // s
   if (slen1 < 0) slen1 = s1 ? (int)strlen(s1) : 0;
   if (slen2 < 0) slen2 = s2 ? (int)strlen(s2) : 0;
   uint newlen = slen1 + slen2;
-  if (newlen == 0) return &_nilStrRep;
+  if (newlen == 0) return StrRep::nilStrRep();
 
   StrRep* rval = Salloc(s1, slen1, newlen); //note: alloc failure returns _nilStrRep
   if (slen2) {
@@ -266,7 +276,7 @@ TA_API StrRep*	Scat(const char* s1, int slen1, const char* s2, int slen2) { // s
 // THE REP COUNT SHOULD BE ZERO --
 
 static StrRep* Sresize(StrRep* old, uint new_sz) {
-  if (old == &_nilStrRep) old = 0; // precaution
+  if (old == StrRep::nilStrRep()) old = 0; // precaution
   if (old && (old->cnt > 0)) {
     cerr << "Sresize: old rep should have cnt==0; was: " << old->cnt << "\n";
   }
@@ -829,7 +839,7 @@ bool String::startsWith(const char* t) const {
 
 void String::init(const char* s, int slen) {
   if (slen < 0)  slen = s ? (int)strlen(s) : 0;
-  if (slen == 0) newRep(&_nilStrRep);
+  if (slen == 0) newRep(StrRep::nilStrRep());
   else           newRep(Salloc(s, slen, slen));
 }
 
@@ -926,7 +936,7 @@ int String::Save_str(std::ostream& ostrm) {
 String& String::set(const char* s, int slen) {
   if (slen < 0)
     slen = s ? (int)strlen(s) : 0;
-  if (slen == 0) setRep(&_nilStrRep);
+  if (slen == 0) setRep(StrRep::nilStrRep());
   else           setRep(Salloc(s, slen, slen));
   return *this;
 }
