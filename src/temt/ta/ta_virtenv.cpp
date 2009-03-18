@@ -400,7 +400,9 @@ void VELight::GetValsFmODE(bool updt_disp) {
 void VEJointStops::Initialize() {
   lo = -3.1415f;
   hi = 3.1415f;
+  def = 0.0f;
   bounce = 0.0f;
+  def_force = 0.0f;
 }
 
 void VEJointMotor::Initialize() {
@@ -738,15 +740,33 @@ void VEJoint::ApplyForce(float force1, float force2) {
   case BALL:
     break;
   case HINGE:
+    if(HasJointFlag(USE_STOPS) && stops.def_force > 0.0f) {
+      force1 += -stops.def_force * (pos - stops.def);
+    }
     dJointAddHingeTorque(jid, force1);
     break;
   case SLIDER:
+    if(HasJointFlag(USE_STOPS) && stops.def_force > 0.0f) {
+      force1 += -stops.def_force * (pos - stops.def);
+    }
     dJointAddSliderForce(jid, force1);
     break;
   case UNIVERSAL:
+    if(HasJointFlag(USE_STOPS)) {
+      if(stops.def_force > 0.0f)
+	force1 += -stops.def_force * (pos - stops.def);
+      if(stops2.def_force > 0.0f)
+	force2 += -stops2.def_force * (pos2 - stops2.def);
+    }
     dJointAddUniversalTorques(jid, force1, force2);
     break;
   case HINGE2:
+    if(HasJointFlag(USE_STOPS)) {
+      if(stops.def_force > 0.0f)
+	force1 += -stops.def_force * (pos - stops.def);
+      if(stops2.def_force > 0.0f)
+	force2 += -stops2.def_force * (pos2 - stops2.def);
+    }
     dJointAddHinge2Torques(jid, force1, force2);
     break;
   case FIXED:

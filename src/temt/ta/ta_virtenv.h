@@ -380,7 +380,9 @@ INHERITED(taBase)
 public:
   float		lo;		// stop for low angle or position value of joint
   float		hi;		// stop for high angle or position value of joint
+  float		def;		// default angle or position value of joint -- where it likes to be
   float		bounce;		// how bouncy is the joint (0 = no bounce, 1 = maximum bounce)
+  float		def_force;	// how much force to apply to return joint to default position -- effectively adds springs to the joint that pull it back to the default position -- NOTE: must call ApplyForce to have this computed and updated
 
   void	Initialize();
   void	Destroy()	{ };
@@ -394,7 +396,7 @@ class TA_API VEJointMotor : public taBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint motor parameters
 INHERITED(taBase)
 public:
-  float		vel;		// target joint velocity to achieve (angular or linear)
+  float		vel;		// target joint velocity to achieve (angular or linear) -- set to 0 to provide a resistive damping force
   float		f_max;		// maximum force or torque to drive the joint to achieve desired velocity
 
   void	Initialize();

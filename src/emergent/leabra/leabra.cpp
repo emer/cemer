@@ -1138,8 +1138,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
 
   if(net->inhib_cons_used) {
     u->g_i_raw += u->g_i_delta;
-    u->gc.i = u->g_i_raw;
-    u->gc.i = u->prv_g_i + dt.net * (u->gc.i - u->prv_g_i);
+    u->gc.i = u->prv_g_i + dt.net * (u->g_i_raw - u->prv_g_i);
     u->prv_g_i = u->gc.i;
   }
 
@@ -3354,6 +3353,8 @@ void LeabraLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
   if((net->cycle >= 0) && lay->hard_clamped)
     return;			// don't do this during normal processing
 
+  if(inhib.type == LeabraInhibSpec::UNIT_INHIB) return; // otherwise overwrites!
+
   if((inhib_group != ENTIRE_LAYER) && (lay->units.gp.size > 0)) {
     for(int g=0; g<lay->units.gp.size; g++) {
       LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
@@ -3368,14 +3369,6 @@ void LeabraLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
 void LeabraLayerSpec::Compute_ApplyInhib_ugp(LeabraLayer* lay, Unit_Group* ug,
 					     LeabraInhib* thr, LeabraNetwork* net)
 {
-  // weird issue here: seems to have improved pbwm performance to have this exclusion in here
-//   if(thr->i_val.g_i == 0.0f) { 
-//     if(lay->name != "PFC_out") {
-//       cerr << "lay: " << lay->name << " at: " << net->epoch << ", " << net->trial << ", " << net->phase_no << ", " << net->cycle << endl;
-//       taMisc::FlushConsole();
-//     }
-//   }
-
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, ug->, i) {
