@@ -37,6 +37,11 @@
 // no Qt-dependencies -- note that on Mac/frameworks, it is in QtCore
 #include <qconfig.h>
 
+// we don't support PA RISC because of the nutty 5-int QAtomicInt
+#ifdef QT_ARCH_PARISC
+# error "Emergent is not supported on PA RISC architecture"
+#endif
+
 // define our own versions of stuff we need from qconfig.h, so remainder
 // of the file is independent of that stuff
 #define TA_LARGEFILE_SUPPORT QT_LARGEFILE_SUPPORT // usually 64

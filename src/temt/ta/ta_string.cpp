@@ -13,7 +13,6 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-
 /* HISTORICAL NOTE
 
 Earlier versions of this file were based on the GNU String class
@@ -40,39 +39,6 @@ software work for purposes of copyright.
 #include <ctype.h>
 #include <limits.h>
 #include <stdio.h>
-
-
-#if (0 && defined(DEBUG) && defined(TA_OS_LINUX))
-
-#if (TA_POINTER_SIZE == 4)
-# define MALLOC_MASK ~7
-#elif (TA_POINTER_SIZE == 8)
-# define MALLOC_MASK ~7LL
-#else
-# error "TA_POINTER_SIZE should be 4 or 8"
-#endif
-# define MALLOC_OVHD (2*sizeof(ta_intptr_t))
-
-void CleanChunk(void* ptr) {
-  // assume lea's malloc
-  size_t size = ((size_t*)ptr)[-1]; // note: has some ctrl bits in lsb's
-  size &= MALLOC_MASK;
-  size -= MALLOC_OVHD;
-  memset(ptr, 0, size);
-}
-
-void operator delete(void* ptr) throw() {
-  CleanChunk(ptr);
-  free(ptr);
-  //::delete(ptr);
-}
-
-void operator delete[](void* ptr) throw() {
-  CleanChunk(ptr);
-  free(ptr);
-  //  ::delete[](ptr);
-}
-#endif
 
 using namespace std;
 
@@ -189,10 +155,8 @@ inline static int ncmp(const char* a, int al, const char* b, int bl)
 //	SRep		//
 //////////////////////////
 
-#define MAXStrRep_SIZE   ((1 << (sizeof(short) * CHAR_BIT - 1)) - 1)
-
 // note: compilers may report the size of StrRep to be an even multiple of 4
-// QAtomicInt is only not 4 on PA RISC which is an obsolete server cpu
+// QAtomicInt is 4 on all the platforms we support
 #define SIZE_OF_STRREP (9 + sizeof(QAtomicInt))
 
 #ifdef TA_PROFILE
@@ -209,22 +173,12 @@ long long Cstring_prof::tot_size = 0;
 Cstring_prof string_prof;
 #endif
 
-//StrRep _nilStrRep = { 0, 1, 1, { 0 } }; // nil StrReps point here; note: can't init class member so ref is 0
-StrRep* StrRep::m_nilStrRep;
-
-StrRep*	StrRep::nilStrRep() {
-  if (!m_nilStrRep) {
-    m_nilStrRep = (StrRep*)malloc(SIZE_OF_STRREP);
-    memset(m_nilStrRep, 0, SIZE_OF_STRREP);
-    m_nilStrRep->cnt = 1; // need the one extra ref so it never deletes
-  }
-  return m_nilStrRep;
-}
+StrRep _nilStrRep = { 0, 1, 1, { 0 } }; // nil StrReps point here, we init cnt to 1 so never released
 
 // create an empty buffer -- called by routines that then fill the chars (ex. reverse, upcase, etc.)
 TA_API StrRep* Snew(int slen, uint cap) {
   if (cap == 0) cap = slen;
-  if (cap == 0) return StrRep::nilStrRep();
+  if (cap == 0) return ADDR_NIL_STR_REP;
   uint allocsize = (uint)tweak_alloc(SIZE_OF_STRREP + cap); // we tweak the alloc size to optimize -- may be larger
   cap = allocsize - SIZE_OF_STRREP; // in case we asked for more memory
 #ifdef TA_PROFILE
@@ -238,7 +192,7 @@ TA_API StrRep* Snew(int slen, uint cap) {
   }
   rval->sz = cap;
   rval->len = slen;
-  rval->cnt = 0; // necessary, because ctor does not run!
+  rval->cnt = 0; // necessary, because ctor does not run and QBasicAtomicInt is POD
   rval->s[slen] = '\0';
   return rval;
 }
@@ -260,7 +214,7 @@ TA_API StrRep*	Scat(const char* s1, int slen1, const char* s2, int slen2) { // s
   if (slen1 < 0) slen1 = s1 ? (int)strlen(s1) : 0;
   if (slen2 < 0) slen2 = s2 ? (int)strlen(s2) : 0;
   uint newlen = slen1 + slen2;
-  if (newlen == 0) return StrRep::nilStrRep();
+  if (newlen == 0) return ADDR_NIL_STR_REP;
 
   StrRep* rval = Salloc(s1, slen1, newlen); //note: alloc failure returns _nilStrRep
   if (slen2) {
@@ -270,32 +224,6 @@ TA_API StrRep*	Scat(const char* s1, int slen1, const char* s2, int slen2) { // s
   rval->s[newlen] = '\0';
   return rval;
 }
-
-/* nu
-// reallocate: NOTE: this is intended for inplace routines, such as gsub
-// THE REP COUNT SHOULD BE ZERO --
-
-static StrRep* Sresize(StrRep* old, uint new_sz) {
-  if (old == StrRep::nilStrRep()) old = 0; // precaution
-  if (old && (old->cnt > 0)) {
-    cerr << "Sresize: old rep should have cnt==0; was: " << old->cnt << "\n";
-  }
-  StrRep* rep;
-  if (old == 0)
-    rep = Snew(0, new_sz);
-  else if (new_sz > old->sz) {
-    uint allocsize = tweak_alloc(SIZE_OF_STRREP + new_sz);
-    new_sz = allocsize - SIZE_OF_STRREP; // in case we asked for more memory
-#ifdef TA_PROFILE
-  ++Cstring_prof::inst_cnt;
-  Cstring_prof::tot_size += allocsize;
-#endif
-    rep = (StrRep*)realloc(old, allocsize);
-    rep->sz = new_sz;
-  } else
-    rep = old;
-  return rep;
-} */
 
 TA_API StrRep* Sreverse(const StrRep* src)
 {
@@ -839,7 +767,7 @@ bool String::startsWith(const char* t) const {
 
 void String::init(const char* s, int slen) {
   if (slen < 0)  slen = s ? (int)strlen(s) : 0;
-  if (slen == 0) newRep(StrRep::nilStrRep());
+  if (slen == 0) newRep(ADDR_NIL_STR_REP);
   else           newRep(Salloc(s, slen, slen));
 }
 
@@ -936,7 +864,7 @@ int String::Save_str(std::ostream& ostrm) {
 String& String::set(const char* s, int slen) {
   if (slen < 0)
     slen = s ? (int)strlen(s) : 0;
-  if (slen == 0) setRep(StrRep::nilStrRep());
+  if (slen == 0) setRep(ADDR_NIL_STR_REP);
   else           setRep(Salloc(s, slen, slen));
   return *this;
 }
@@ -965,12 +893,9 @@ String& String::upcase() {
   return *this;
 }
 
-
-
 /*
  * substring extraction
  */
-
 
 // a helper needed by at, before, etc.
 

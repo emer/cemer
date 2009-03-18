@@ -54,11 +54,6 @@
 
 #include "ta_atomic.h"
 
-#if (0 && defined(DEBUG) && defined(TA_OS_LINUX))
-void operator delete(void* ptr) throw();
-void operator delete[](void* ptr) throw();
-#endif
-
 class TA_API StrRep;
 class TA_API String;
 
@@ -69,32 +64,36 @@ class TA_API String;
 
 class TA_API StrRep {
 friend class String;
-friend class NilStrInit;
 public:
-  static StrRep*	nilStrRep(); // makes and inits to ref=1 on first access
   uint			len;    // string length (not including null terminator)
   uint			sz;     // allocated space ((not including null terminator)
-  QAtomicInt		cnt;	// reference count (when goes to 0, instance is deleted)
+#ifdef __MAKETA__
+  QBasicAtomicInt	cnt;	// reference count (when goes to 0, instance is deleted)
+#else
+union { // this lets us use static init of cnt to 1 for _nilStrRep
+  QBasicAtomicInt	cnt;
+  int			cnt_int; // though shalt never use this!!!
+};
+#endif
   char	     	s[1];   // the string starts here, null terminator always maintained
 protected:
   bool			canCat(uint xtra_len) {return ((cnt == 1) && ((sz - len) >= xtra_len));}  // true if ref==1, and enough space to add
   void			ref() {cnt.ref();}
-  void 			unRef() {if (!cnt.deref()) free(this);}
+  static void 		unRef(StrRep* inst) {if (!inst->cnt.deref()) free(inst);}
   void			cat(const char* str, uint slen); // note: slen must be set, and canCat must have been true
   void			upcase();	// convert all letters to upper case; only called if cnt<=1
   void			downcase();	// convert all letters to lower case; only called if cnt<=1
   void			capitalize(); // capitalize the first letter of each word; only called if cnt<=1
   void			reverse();	// reverse order of string; only called if cnt<=1
   void			prepend(const char* str, uint slen); // note: slen must be set, and canCat must have been true
-  int	      	search(int, int, const char*, int = -1) const;
-  int	      	search_ci(int, int, const char*, int = -1) const;
-  int	      	search(int, int, char) const;
-  int	      	match(int, int, int, const char*, int = -1) const;
-private:
-  static StrRep*	m_nilStrRep;
+  int	      		search(int, int, const char*, int = -1) const;
+  int	      		search_ci(int, int, const char*, int = -1) const;
+  int	      		search(int, int, char) const;
+  int	      		match(int, int, int, const char*, int = -1) const;
 };
 
-//extern TA_API StrRep  _nilStrRep; // an empty StrRep, for convenience
+extern TA_API StrRep  _nilStrRep; // an empty StrRep, for convenience and efficiency
+#define ADDR_NIL_STR_REP &_nilStrRep
 
 // primitive ops on StrReps -- nearly all String fns go through these.
 
@@ -198,9 +197,9 @@ public:
   ////////////////////////////////////////////////
   // constructors & assignment
 
-  inline String() {newRep(StrRep::nilStrRep());} // el blanco
+  inline String() {newRep(ADDR_NIL_STR_REP);} // el blanco
   inline String(const String& x) {newRep(x.mrep);} // copy constructor -- only a ref on source! (fast!)
-  String(const String* x) {if (x) newRep(x->mrep); else newRep(StrRep::nilStrRep());} 
+  String(const String* x) {if (x) newRep(x->mrep); else newRep(ADDR_NIL_STR_REP);} 
   inline String(const char* s) {init(s, -1);} // s can be NULL
   String(const char* s, int slen) {init(s, slen);}
   String(StrRep* x) {newRep(x);} // typically only used internally
@@ -211,7 +210,7 @@ public:
   // conversion constructors
 
   explicit String(bool b); //note: implicit causes evil problems, esp. by converting pointers to strings
-  String(char c) {if (c == '\0') newRep(StrRep::nilStrRep()); else init(&c, 1);}
+  String(char c) {if (c == '\0') newRep(ADDR_NIL_STR_REP); else init(&c, 1);}
   String(int i, const char* format = "%d");
   String(uint u, const char* format = "%u");
   String(long i, const char* format = "%ld"); //note: don't use long any more, compatibility only
@@ -230,9 +229,9 @@ public:
 #endif
 
 #ifdef DEBUG
-  ~String() {mrep->unRef(); mrep = NULL;}
+  ~String() {StrRep::unRef(mrep); mrep = NULL;}
 #else
-  ~String() {mrep->unRef();}
+  ~String() {StrRep::unRef(mrep);}
 #endif
   ////////////////////////////////////////////////
   // basic resource allocation and infrastructure
@@ -318,7 +317,7 @@ public:
   String&		operator=(const String& y) {setRep(y.mrep); return *this;}
   String&		operator=(const char* s) {return set(s, -1);}
   String&		operator=(char c) {if (c == '\0') 
-    {setRep(StrRep::nilStrRep()); return *this;} else return set(&c, 1);} //
+    {setRep(ADDR_NIL_STR_REP); return *this;} else return set(&c, 1);} //
 
   String&	  set(const char* t, int len); 
   // #IGNORE parameterized set -- used in assigns
@@ -604,7 +603,7 @@ inline void String::newRep(StrRep* rep_) {
 
 inline void String::setRep(StrRep* rep_) {
   rep_->ref(); //note: implicitly handles rare case of mrep=rep_
-  mrep->unRef();
+  StrRep::unRef(mrep);
   mrep = rep_;
 }
 
