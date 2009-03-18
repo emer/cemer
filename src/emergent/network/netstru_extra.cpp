@@ -384,7 +384,6 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
       ru_list.Link(ru);			// on making a symmetric connection in first pass
     ru_list.Permute();
 
-    int idx;
     for(int i=0;i<ru_list.size; i++) {
       ru = ru_list.FastEl(i);
       perm_list.Reset();
@@ -392,7 +391,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
 	if(!self_con && (ru == su)) continue;
 	// don't connect to anyone who already recvs from me cuz that will make
 	// a symmetric connection which isn't good: symmetry will be enforced later
-	RecvCons* scg = su->recv.FindPrjn(prjn, idx);
+	RecvCons* scg = su->recv.FindPrjn(prjn);
 	if(scg->units.FindEl(ru) >= 0) continue;
 	perm_list.Link(su);
       }
@@ -403,7 +402,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
     }
     // now go thru and make the symmetric connections
     FOR_ITR_EL(Unit, ru, lay->units., ru_itr) {
-      SendCons* scg = ru->send.FindPrjn(prjn, idx);
+      SendCons* scg = ru->send.FindPrjn(prjn);
       if(scg == NULL) continue;
       int i;
       for(i=0;i<scg->cons.size;i++) {
@@ -719,17 +718,15 @@ void CustomPrjnSpec::Connect(Projection* prjn) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
-    int idx;
-    RecvCons* cg = u->recv.FindPrjn(prjn, idx);
-    if(cg != NULL) {
+    int idx = u->recv.FindPrjnIdx(prjn);
+    if(idx >= 0) {
       prjn->recv_idx = idx;
       break;
     }
   }
   FOR_ITR_EL(Unit, u, prjn->from->units., i) {
-    int idx;
-    SendCons* cg = u->send.FindPrjn(prjn, idx);
-    if(cg != NULL) {
+    int idx = u->send.FindPrjnIdx(prjn);
+    if(idx >= 0) {
       prjn->send_idx = idx;
       break;
     }
@@ -1198,16 +1195,14 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(Unit_Group* ru_gp, Unit_Group* s
     ru_list.Link(ru);			// on making a symmetric connection in first pass
   ru_list.Permute();
 
-  int idx;
-  int i;
-  for(i=0;i<ru_list.size; i++) {
+  for(int i=0;i<ru_list.size; i++) {
     ru = ru_list.FastEl(i);
     perm_list.Reset();
     FOR_ITR_EL(Unit, su, su_gp->, su_itr) {
       if(!self_con && (ru == su)) continue;
       // don't connect to anyone who already recvs from me cuz that will make
       // a symmetric connection which isn't good: symmetry will be enforced later
-      RecvCons* scg = su->recv.FindPrjn(prjn, idx);
+      RecvCons* scg = su->recv.FindPrjn(prjn);
       if(scg->units.FindEl(ru) >= 0) continue;
       perm_list.Link(su);
     }
@@ -1218,10 +1213,9 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(Unit_Group* ru_gp, Unit_Group* s
   }
   // now go thru and make the symmetric connections
   FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
-    SendCons* scg = ru->send.FindPrjn(prjn, idx);
+    SendCons* scg = ru->send.FindPrjn(prjn);
     if(scg == NULL) continue;
-    int i;
-    for(i=0;i<scg->cons.size;i++) {
+    for(int i=0;i<scg->cons.size;i++) {
       Unit* su = scg->Un(i);
       ru->ConnectFromCk(su, prjn);
     }
@@ -1235,15 +1229,14 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameLay(Unit_Group* ru_gp, Unit_Group* 
   // so I should just make symmetric versions of its connections
   // take first send unit and find if it recvs from anyone in this prjn yet
   Unit* su = (Unit*)su_gp->Leaf(0);
-  int idx;
-  RecvCons* scg = su->recv.FindPrjn(prjn, idx);
+  RecvCons* scg = su->recv.FindPrjn(prjn);
   if((scg != NULL) && (scg->cons.size > 0)) {	// sender has been connected already: try to connect me!
     int n_con = 0;		// number of actual connections made
 
     Unit* ru;
     taLeafItr ru_itr;
     FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
-      SendCons* scg = ru->send.FindPrjn(prjn, idx);
+      SendCons* scg = ru->send.FindPrjn(prjn);
       if(scg == NULL) continue;
       int i;
       for(i=0;i<scg->cons.size;i++) {

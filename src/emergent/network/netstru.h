@@ -528,21 +528,32 @@ class EMERGENT_API RecvCons_List: public taList<RecvCons> {
 INHERITED(taList<RecvCons>)
 public:
   virtual RecvCons*	NewPrjn(Projection* prjn);
-  // #CAT_Structure create a new sub_group from given projection, with given ownership (own_cons)
-  virtual RecvCons*	FindPrjn(Projection* prjn, int& idx) const;
-  // #CAT_Structure find sub group associated with given projection
-  virtual RecvCons*	FindFrom(Layer* from, int& idx) const;
-  // #MENU #USE_RVAL #ARGC_1 #CAT_Structure find sub group that receives from given layer
-  virtual RecvCons*	FindFromName(const String& fm_nm, int& idx) const;
-  // #MENU #USE_RVAL #ARGC_1 #CAT_Structure find sub group that receives from given layer named fm_nm
-  virtual RecvCons*	FindTypeFrom(TypeDef* prjn_typ, Layer* from, int& idx) const;
-  // #MENU #USE_RVAL #ARGC_2 #CAT_Structure find sub group that recvs prjn of given type from layer
-  virtual RecvCons*	FindLayer(Layer* lay, int& idx) const;
-  // #CAT_Structure find sub group where projection is in the given layer
+  // #CAT_Structure create a new recv cons from given projection, with given ownership (own_cons)
+
+  virtual int		FindPrjnIdx(Projection* prjn) const;
+  // #CAT_Structure find index of recv cons associated with given projection
+  virtual RecvCons*	FindPrjn(Projection* prjn) const;
+  // #CAT_Structure find recv cons associated with given projection
+
+  virtual int		FindFromIdx(Layer* from) const;
+  // #CAT_Structure find index of recv cons that receives from given layer
+  virtual RecvCons*	FindFrom(Layer* from) const;
+  // #CAT_Structure find recv cons that receives from given layer
+
+  virtual int		FindFromNameIdx(const String& fm_nm) const;
+  // #CAT_Structure find index of recv cons that receives from given layer named fm_nm
+  virtual RecvCons*	FindFromName(const String& fm_nm) const;
+  // #CAT_Structure find recv cons that receives from given layer named fm_nm
+
+  virtual int		FindTypeFromIdx(TypeDef* prjn_typ, Layer* from) const;
+  // #CAT_Structure find index of recv cons that recvs prjn of given type from layer
+  virtual RecvCons*	FindTypeFrom(TypeDef* prjn_typ, Layer* from) const;
+  // #CAT_Structure find recv cons that recvs prjn of given type from layer
+
   virtual bool		RemovePrjn(Projection* prjn);
-  // #CAT_Structure remove sub group associated with given projection
+  // #CAT_Structure remove recv cons associated with given projection
   virtual bool		RemoveFrom(Layer* from);
-  // #MENU #CAT_Structure remove sub group that receives from given layer
+  // #MENU #CAT_Structure remove recv cons that receives from given layer
 
   override String 	GetTypeDecoKey() const { return "Connection"; }
 
@@ -660,20 +671,31 @@ public:
   // projection-related functions for operations on sub-groups of the group
   virtual SendCons*	NewPrjn(Projection* prjn);
   // #CAT_Structure create a new sub_group from given projection, with given ownership (own_cons)
-  virtual SendCons*	FindPrjn(Projection* prjn, int& idx) const;
-  // #CAT_Structure find sending connections associated with given projection
-  virtual SendCons*	FindFrom(Layer* from, int& idx) const;
-  // #MENU #USE_RVAL #ARGC_1 #CAT_Structure find sending connections that receive from given layer
-  virtual SendCons*	FindFromName(const String& fm_nm, int& idx) const;
-  // #MENU #USE_RVAL #ARGC_1 #CAT_Structure find sending connections that receive from given layer named fm_nm
-  virtual SendCons*	FindTypeFrom(TypeDef* prjn_typ, Layer* from, int& idx) const;
-  // #MENU #USE_RVAL #ARGC_2 #CAT_Structure find sending connections that recvs prjn of given type from layer
-  virtual SendCons*	FindLayer(Layer* lay, int& idx) const;
-  // #CAT_Structure find sending connections where projection is in the given layer
+
+  virtual int		FindPrjnIdx(Projection* prjn) const;
+  // #CAT_Structure find index of send cons associated with given projection
+  virtual SendCons*	FindPrjn(Projection* prjn) const;
+  // #CAT_Structure find send cons associated with given projection
+
+  virtual int		FindToIdx(Layer* to) const;
+  // #CAT_Structure find index of send cons that sends to given layer
+  virtual SendCons*	FindTo(Layer* to) const;
+  // #CAT_Structure find send cons that sends to given layer
+
+  virtual int		FindToNameIdx(const String& to_nm) const;
+  // #CAT_Structure find index of send cons that sends to given layer named to_nm
+  virtual SendCons*	FindToName(const String& to_nm) const;
+  // #CAT_Structure find send cons that sends to given layer named to_nm
+
+  virtual int		FindTypeToIdx(TypeDef* prjn_typ, Layer* to) const;
+  // #CAT_Structure find index of send cons that sends prjn of given type to layer
+  virtual SendCons*	FindTypeTo(TypeDef* prjn_typ, Layer* to) const;
+  // #CAT_Structure find send cons that sends prjn of given type to layer
+
   virtual bool		RemovePrjn(Projection* prjn);
   // #CAT_Structure remove sending connections associated with given projection
-  virtual bool		RemoveFrom(Layer* from);
-  // #MENU #CAT_Structure remove sending connections from given layer
+  virtual bool		RemoveTo(Layer* to);
+  // #MENU #CAT_Structure remove sending connections to given layer
 
   override String 	GetTypeDecoKey() const { return "Connection"; }
 

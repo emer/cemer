@@ -526,11 +526,10 @@ void RecvCons::LinkSendCons(Unit* ru) {
     if(!su) continue;
 
     SendCons* send_gp = NULL;
-    int sidx;
     if(send_idx >= 0)
       send_gp = su->send.SafeEl(send_idx);
     if(!send_gp)
-      send_gp = su->send.FindPrjn(prjn, sidx);
+      send_gp = su->send.FindPrjn(prjn);
     if(send_gp) {
       send_gp->units.LinkUnique(ru);
       send_gp->cons.LinkUnique(Cn(j));
@@ -1116,70 +1115,73 @@ RecvCons* RecvCons_List::NewPrjn(Projection* aprjn) {
   return rval;
 }
 
-RecvCons* RecvCons_List::FindPrjn(Projection* aprjn, int& idx) const {
+int RecvCons_List::FindPrjnIdx(Projection* aprjn) const {
   for(int g=0; g<size; g++) {
     RecvCons* cg = FastEl(g);
     if(cg->prjn == aprjn) {
-      idx = g;
-      return cg;
+      return g;
     }
   }
-  idx = -1;
+  return -1;
+}
+
+RecvCons* RecvCons_List::FindPrjn(Projection* aprjn) const {
+  int idx = FindPrjnIdx(aprjn);
+  if(idx >= 0) return FastEl(idx);
   return NULL;
 }
 
-RecvCons* RecvCons_List::FindFrom(Layer* from, int& idx) const {
+int RecvCons_List::FindFromIdx(Layer* from) const {
   for(int g=0; g<size; g++) {
     RecvCons* cg = FastEl(g);
     if((cg->prjn) && (cg->prjn->from.ptr() == from)) {
-      idx = g;
-      return cg;
+      return g;
     }
   }
-  idx = -1;
+  return -1;
+}
+
+RecvCons* RecvCons_List::FindFrom(Layer* from) const {
+  int idx = FindFromIdx(from);
+  if(idx >= 0) return FastEl(idx);
   return NULL;
 }
 
-RecvCons* RecvCons_List::FindFromName(const String& fm_nm, int& idx) const {
+int RecvCons_List::FindFromNameIdx(const String& fm_nm) const {
   for(int g=0; g<size; g++) {
     RecvCons* cg = FastEl(g);
     if((cg->prjn) && (cg->prjn->from->name == fm_nm)) {
-      idx = g;
-      return cg;
+      return g;
     }
   }
-  idx = -1;
+  return -1;
+}
+
+RecvCons* RecvCons_List::FindFromName(const String& fm_nm) const {
+  int idx = FindFromNameIdx(fm_nm);
+  if(idx >= 0) return FastEl(idx);
   return NULL;
 }
 
-RecvCons* RecvCons_List::FindTypeFrom(TypeDef* prjn_td, Layer* from, int& idx) const {
-  int g;
-  for(g=0; g<size; g++) {
+
+int RecvCons_List::FindTypeFromIdx(TypeDef* prjn_td, Layer* from) const {
+  for(int g=0; g<size; g++) {
     RecvCons* cg = FastEl(g);
     if((cg->prjn) && (cg->prjn->from.ptr() == from) &&
        (cg->prjn->InheritsFrom(prjn_td)))
     {
-      idx = g;
-      return cg;
+      return g;
     }
   }
-  idx = -1;
+  return -1;
+}
+
+RecvCons* RecvCons_List::FindTypeFrom(TypeDef* prjn_td, Layer* from) const {
+  int idx = FindTypeFromIdx(prjn_td, from);
+  if(idx >= 0) return FastEl(idx);
   return NULL;
 }
 
-
-RecvCons* RecvCons_List::FindLayer(Layer* lay, int& idx) const {
-  int g;
-  for(g=0; g<size; g++) {
-    RecvCons* cg = FastEl(g);
-    if((cg->prjn) && (cg->prjn->layer == lay)) {
-      idx = g;
-      return cg;
-    }
-  }
-  idx = -1;
-  return NULL;
-}
 
 bool RecvCons_List::RemovePrjn(Projection* aprjn) {
   bool rval = false;
@@ -1422,7 +1424,7 @@ bool SendCons::ConValuesFromMatrix(float_Matrix& mat, const char* variable) {
 }
 
 /////////////////////////////////////////////////////////////////////
-//	RecvCons_List
+//	SendCons_List
 
 SendCons* SendCons_List::NewPrjn(Projection* aprjn) {
   SendCons* rval = (SendCons*)New(1, aprjn->sendcons_type);
@@ -1432,68 +1434,70 @@ SendCons* SendCons_List::NewPrjn(Projection* aprjn) {
   return rval;
 }
 
-SendCons* SendCons_List::FindPrjn(Projection* aprjn, int& idx) const {
+int SendCons_List::FindPrjnIdx(Projection* aprjn) const {
   for(int g=0; g<size; g++) {
     SendCons* cg = FastEl(g);
     if(cg->prjn == aprjn) {
-      idx = g;
-      return cg;
+      return g;
     }
   }
-  idx = -1;
+  return -1;
+}
+
+SendCons* SendCons_List::FindPrjn(Projection* aprjn) const {
+  int idx = FindPrjnIdx(aprjn);
+  if(idx >= 0) return FastEl(idx);
   return NULL;
 }
 
-SendCons* SendCons_List::FindFrom(Layer* from, int& idx) const {
+int SendCons_List::FindToIdx(Layer* to) const {
   for(int g=0; g<size; g++) {
     SendCons* cg = FastEl(g);
-    if((cg->prjn) && (cg->prjn->from.ptr() == from)) {
-      idx = g;
-      return cg;
+    if((cg->prjn) && (cg->prjn->layer == to)) {
+      return g;
     }
   }
-  idx = -1;
+  return -1;
+}
+
+SendCons* SendCons_List::FindTo(Layer* to) const {
+  int idx = FindToIdx(to);
+  if(idx >= 0) return FastEl(idx);
   return NULL;
 }
 
-SendCons* SendCons_List::FindFromName(const String& fm_nm, int& idx) const {
+int SendCons_List::FindToNameIdx(const String& to_nm) const {
   for(int g=0; g<size; g++) {
     SendCons* cg = FastEl(g);
-    if((cg->prjn) && (cg->prjn->from->name == fm_nm)) {
-      idx = g;
-      return cg;
+    if((cg->prjn) && (cg->prjn->layer->name == to_nm)) {
+      return g;
     }
   }
-  idx = -1;
+  return -1;
+}
+
+SendCons* SendCons_List::FindToName(const String& to_nm) const {
+  int idx = FindToNameIdx(to_nm);
+  if(idx >= 0) return FastEl(idx);
   return NULL;
 }
 
-SendCons* SendCons_List::FindTypeFrom(TypeDef* prjn_td, Layer* from, int& idx) const {
-  int g;
-  for(g=0; g<size; g++) {
+
+int SendCons_List::FindTypeToIdx(TypeDef* prjn_td, Layer* to) const {
+  for(int g=0; g<size; g++) {
     SendCons* cg = FastEl(g);
-    if((cg->prjn) && (cg->prjn->from.ptr() == from) &&
+    if((cg->prjn) && (cg->prjn->layer == to) &&
        (cg->prjn->InheritsFrom(prjn_td)))
     {
-      idx = g;
-      return cg;
+      return g;
     }
   }
-  idx = -1;
-  return NULL;
+  return -1;
 }
 
-
-SendCons* SendCons_List::FindLayer(Layer* lay, int& idx) const {
-  int g;
-  for(g=0; g<size; g++) {
-    SendCons* cg = FastEl(g);
-    if((cg->prjn) && (cg->prjn->layer == lay)) {
-      idx = g;
-      return cg;
-    }
-  }
-  idx = -1;
+SendCons* SendCons_List::FindTypeTo(TypeDef* prjn_td, Layer* to) const {
+  int idx = FindTypeToIdx(prjn_td, to);
+  if(idx >= 0) return FastEl(idx);
   return NULL;
 }
 
@@ -1511,12 +1515,12 @@ bool SendCons_List::RemovePrjn(Projection* aprjn) {
   return rval;
 }
 
-bool SendCons_List::RemoveFrom(Layer* from) {
+bool SendCons_List::RemoveTo(Layer* to) {
   bool rval = false;
   int g;
   for(g=size-1; g>=0; g--) {
     SendCons* cg = FastEl(g);
-    if((cg->prjn) && (cg->prjn->from.ptr() == from)) {
+    if((cg->prjn) && (cg->prjn->layer == to)) {
       cg->prjn->projected = false;
       RemoveEl(cg);
       rval = true;
@@ -2044,16 +2048,15 @@ bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
       return false;
   }
   else {
-    int sidx;
     Layer* su_lay = GET_OWNER(su,Layer);
-    recv_gp = recv.FindFrom(su_lay, sidx);
+    recv_gp = recv.FindFrom(su_lay);
     if(!recv_gp)	return false;
     if(recv_gp->send_idx >= 0)
       send_gp = su->send.SafeEl(recv_gp->send_idx);
     else
       send_gp = NULL;
     if(send_gp == NULL)
-      send_gp = su->send.FindPrjn(recv_gp->prjn, sidx);
+      send_gp = su->send.FindPrjn(recv_gp->prjn);
     if(send_gp == NULL) return false;
     prjn = recv_gp->prjn;
   }
@@ -2066,7 +2069,6 @@ bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
 void Unit::DisConnectAll() {
   RecvCons* recv_gp;
   SendCons* send_gp;
-  int sidx;
   int g;
   int i;
   for(g=0; g<recv.size; g++) { // the removes cause the leaf_gp to crash..
@@ -2077,7 +2079,7 @@ void Unit::DisConnectAll() {
       else
 	send_gp = NULL;
       if(send_gp == NULL)
-	send_gp = recv_gp->Un(i)->send.FindPrjn(recv_gp->prjn, sidx);
+	send_gp = recv_gp->Un(i)->send.FindPrjn(recv_gp->prjn);
       if(send_gp)
 	send_gp->RemoveConUn(this);
       recv_gp->RemoveConIdx(i);
@@ -2092,7 +2094,7 @@ void Unit::DisConnectAll() {
       else
 	recv_gp = NULL;
       if(recv_gp == NULL)
-	recv_gp = send_gp->Un(i)->recv.FindPrjn(send_gp->prjn, sidx);
+	recv_gp = send_gp->Un(i)->recv.FindPrjn(send_gp->prjn);
       if(recv_gp)
 	recv_gp->RemoveConUn(this);
       send_gp->RemoveConIdx(i);
@@ -2195,14 +2197,13 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveForm
     int gi = (int)val.before(' ');
     String fm = val.after("Fm:");
     RecvCons* cg = NULL;
-    int idx;
     if(recv.size > gi) {
       cg = recv.FastEl(gi);
       if(cg->prjn->from->name != fm)
-	cg = recv.FindFromName(fm, idx);
+	cg = recv.FindFromName(fm);
     }
     else {
-      cg = recv.FindFromName(fm, idx); 
+      cg = recv.FindFromName(fm); 
     }
     if(cg) {		
       stat = cg->LoadWeights_strm(strm, this, fmt, quiet);
@@ -2632,7 +2633,7 @@ void Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
   taLeafItr ri;
   Unit* ru;
   FOR_ITR_EL(Unit, ru, layer->units., ri) {
-    RecvCons* cg = ru->recv.FindFrom(from, idx);
+    RecvCons* cg = ru->recv.FindFrom(from);
     if(cg == NULL)
       break;
     dt->AddBlankRow();
@@ -2812,8 +2813,8 @@ void Projection::FixPrjnIndexes() {
   if((layer->units.leaves == 0) || (from->units.leaves == 0)) return;
   Unit* ru = layer->units.Leaf(0);
   Unit* su = from->units.Leaf(0);
-  ru->recv.FindPrjn(this, recv_idx);
-  su->send.FindPrjn(this, send_idx);
+  recv_idx = ru->recv.FindPrjnIdx(this);
+  send_idx = su->send.FindPrjnIdx(this);
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, layer->units., i) {
