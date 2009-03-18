@@ -1004,14 +1004,18 @@ taMatrix* taMatrix::GetFrameSlice_(int frame) {
   if(TestError(((frame < 0) || (frame >= frames_)), "GetFrameSlice_",
 	       "frame is out of bounds")) return NULL;
     
-  taMatrix* rval = (taMatrix*)MakeToken(); // an empty instance of our type
-  if(TestError((!rval), "GetFrameSlice_", "could not make token of matrix")) return NULL;
-  
   MatrixGeom slice_geom(dims_m1);
   for (int i = 0; i < dims_m1; ++i)
     slice_geom.Set(i, dim(i));
   int sl_i = FrameStartIdx(frame); //note: must be valid because of prior checks
-  rval->SetFixedData_(FastEl_Flat_(sl_i), slice_geom);
+  void* base_el = FastEl_Flat_(sl_i);
+  taMatrix* rval = FindSlice(base_el, slice_geom);
+  if (rval) return rval;
+  
+  rval = (taMatrix*)MakeToken(); // an empty instance of our type
+  if(TestError((!rval), "GetFrameSlice_", "could not make token of matrix")) return NULL;
+  
+  rval->SetFixedData_(base_el, slice_geom);
   // we do all the funky ref counting etc. in one place
   SliceInitialize(this, rval);
   return rval;
@@ -1045,10 +1049,14 @@ taMatrix* taMatrix::GetSlice_(const MatrixGeom& base,
   if(TestError(((sl_i + sl_tot) > size), "GetSlice_", "slice end is out of bounds"))
     return NULL;
     
-  taMatrix* rval = (taMatrix*)MakeToken(); // an empty instance of our type
+  void* base_el = FastEl_Flat_(sl_i);
+  taMatrix* rval = FindSlice(base_el, slice_geom);
+  if (rval) return rval;
+  
+  rval = (taMatrix*)MakeToken(); // an empty instance of our type
   if(TestError((!rval), "GetSlice_", "could not make token of matrix")) return NULL;
   
-  rval->SetFixedData_(FastEl_Flat_(sl_i), slice_geom);
+  rval->SetFixedData_(base_el, slice_geom);
   // we do all the funky ref counting etc. in one place
   SliceInitialize(this, rval);
   return rval;
@@ -1061,6 +1069,16 @@ taMatrix* taMatrix::GetFrameRangeSlice_(int st_frame, int n_frames) {
   base.Set(dims()-1, st_frame);
   return GetSlice_(base, dims()-1, n_frames);
 }
+
+taMatrix* taMatrix::FindSlice(void* el_, const MatrixGeom& geom_) {
+  if (slices) for (int i = 0; i < slices->size; ++i) {
+    taMatrix* mat = slices->FastEl(i);
+    if (!mat) continue; // shouldn't happen
+    if ((mat->data() == el_) && (mat->geom == geom_))
+      return mat;
+  }
+  return NULL;
+} 
 
 bool taMatrix::InRange(int d0, int d1, int d2, int d3, int d4, int d5, int d6) const {
   switch (geom.size) {

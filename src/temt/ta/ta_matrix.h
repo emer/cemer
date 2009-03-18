@@ -661,7 +661,8 @@ protected:
     
   void 			Slice_Collapse();
   void			Slice_Realloc(ta_intptr_t base_delta);
-  
+  taMatrix* 		FindSlice(void* el_, const MatrixGeom& geom_); 
+
   virtual void		UpdateGeom();
   // called to potentially update the allocation based on new geom info -- will fix if in error
   void			UpdateSlices_Collapse();
