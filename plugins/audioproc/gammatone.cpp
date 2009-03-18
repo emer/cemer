@@ -1633,6 +1633,10 @@ void HarmonicSieveBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
     "chans_per_oct must be >= 1"))
     return;
   cpo_eff = (int)chans_per_oct.chans_per_oct;
+  if (CheckError((((2 * on_half_width) + 1) >= cpo_eff), quiet, ok,
+    "(2 * on_half_width) + 1 must be less than chans_per_oct"))
+    return;
+
   in_octs = src_buff->chans / cpo_eff;
   // octs must be within input
   if (CheckError((out_octs >= in_octs), quiet, ok,
@@ -1645,12 +1649,7 @@ void HarmonicSieveBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   out_buff.chans = cpo_eff;
   out_buff.vals = out_octs;
   
-  /* filter
-  // half-width covers < a full octave
-  filter.half_width = (cpo_eff / 2) - 1;
-  filter.on_sigma_norm = 1; // narrow
-  filter.off_sigma_norm = 4; // wide
-  filter.UpdateAfterEdit();*/
+  CheckMakeFilter(quiet, ok);
 }
 
 void HarmonicSieveBlock::AcceptData_impl(SignalProcBlock* src_blk,
@@ -1668,11 +1667,6 @@ void HarmonicSieveBlock::AcceptData_impl(SignalProcBlock* src_blk,
   const int in_chans = in_mat->dim(CHAN_DIM); 
   const int out_stage = out_buff.stage;
   
-  int half_width = 1; // just use 1 -- will be fine for most sizes: 1/3 octave to 12/oct
-  const int num_on = 2*half_width + 1;
-  const float on_wt = 1.0f / num_on;
-  const int num_off = cpo_eff - num_on;
-  const float off_wt = 1.0f / num_off;
   // we process in terms of the output
   // out_v is the output octave, 0..out_octs-1
   // out_chan is the pitch (0..octave-1)
@@ -1684,40 +1678,54 @@ void HarmonicSieveBlock::AcceptData_impl(SignalProcBlock* src_blk,
   {
     // input fundamental (f0)
     int in_fund = (out_v * out_chans) + out_ch;
-//    float fund_val = in_mat->FastEl(0, in_fund, f, i, in_stage);
-    float out_val = 0;
-//TEMP -- first stab at filter, just does n*f0 as +1 and others as -1/?
-//    for (int offs = -dog.half_width; offs <= dog.half_width; ++offs) {
+    float fund_val = in_mat->FastEl(0, in_fund, f, i, in_stage);
+    double out_val = fund_val; // include the fund
+    float gain = 1.0f; // successively 2, 3, etc. so we divide
     // harmonic (0-based) goes from 1 (2*f0) to max num avail
     for (int harm = 1; harm <= max_harm; ++harm) {
+      //no! gain += (harm + 1);
       float sieve = 0; 
       // offs from harm*f0 
       float val = 0;
-      for (int offs = -(cpo_eff - (half_width + 1)); offs <= half_width; ++offs) {
+      for (int filt_idx = 0; filt_idx < cpo_eff; ++filt_idx) {
+        int offs = filt_idx + on_half_width + 1;
         int in_ch = in_fund + (harm * cpo_eff) + offs;
         if (in_ch >= in_chans) { // overflow: last +offs of last harm
-          // just add in the last val again, for balance
-          sieve += val * on_wt;
+          // just add in some of the last val again, for balance
+          sieve += val * 0.7f;
           break; 
         }
         val = in_mat->SafeEl(0, in_ch, f, i, in_stage);
-//TEMP this is the simple version of the filter 
-        if (offs >= -half_width) 
-          sieve += val * on_wt;
-        else
-          sieve -= val * off_wt;
+        sieve += val * filter.FastEl(filt_idx);
       }
-      // TEMP -- we just weight each harm the same...
-      out_val += sieve; // just the guy itself??? no fund component???
-    } //out_val = 0.0f/0.0f; //TEMP!!!!
+      out_val += sieve ;//* (harm + 1);
+    } 
+    out_val /= gain; // normalize
+#ifdef DEBUG
+    out_mat->Set(out_val, out_v, out_ch, f, i, out_stage);
+#else
     out_mat->FastEl(out_v, out_ch, f, i, out_stage) = out_val;
+#endif
   }}
-//TEMP:
-//tabMisc::root->fpe_enable = taRootBase::FPE_INVALID;
-//tabMisc::root->UpdateAfterEdit();  
   // advance stage pointer, and notify clients
   if (out_buff.NextIndex())
     NotifyClientsBuffStageFull(&out_buff, 0, ps);
 }
 
-
+void HarmonicSieveBlock::CheckMakeFilter(bool quiet, bool& ok) {
+  filter.SetGeom(1, cpo_eff);
+  const int off_width = cpo_eff - ((2 * on_half_width) + 1);
+  // indexes go from: fund + on_hw+1 .. 2*fund + on_hw
+  // "on" portion -- normalized to be 1 sd = +- 1/6 octave
+  for (int offs = -on_half_width; offs <= on_half_width; ++offs) {
+    float x = ((float)offs / cpo_eff) * 6.0f;
+    float val = taMath_float::gauss_den(x);
+    filter.Set(val, (off_width + on_half_width + offs));
+  }
+  // normalize that to sum=1, then we'll set others to 1/off_wdith
+  taMath_float::vec_norm_sum(&filter); // make sure sums to 1.0
+  const float val = -1.0f / off_width;
+  for (int offs = 0; offs < off_width; ++offs) {
+    filter.Set(val, offs);
+  }
+}

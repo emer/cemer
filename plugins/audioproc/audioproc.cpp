@@ -724,7 +724,7 @@ SignalProcBlock* SignalProcBlock::GetUpstreamBlock(TypeDef* typ) {
 
 bool SignalProcBlock::InitConfig() {
   bool ok = true;
-  InitConfig_Int(false, true, ok); // does DataChanged
+  InitConfig_Int(false, false/*true*/, ok); // does DataChanged
   return ok;
 }
 

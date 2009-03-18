@@ -482,6 +482,8 @@ public: //
   
   ChansPerOct	chans_per_oct; // channels per octave -- normally looked up from an upstream GammatoneBlock
   int		out_octs; // #MIN_1 number of output octaves (generally <= 1/2 total)
+  int		on_half_width; // #MIN_0 how many bands away from octave center to include, typ 1/12 to 1/6 octave
+  
   
   
   SIMPLE_LINKS(HarmonicSieveBlock);
@@ -489,17 +491,17 @@ public: //
   
 public: // DO NOT USE
 //  DoG1dFilterSpec	dog; // #EXPERT_TREE #NO_SAVE filter specs  
+  float_Matrix		filter; // #EXPERT_TREE #NO_SAVE in order from fund+on_hw+1 to 2*fund+hw
 
 protected:
   int			cpo_eff;
   int			in_octs; // how many input octaves there are
-  
   override void		UpdateAfterEdit_impl();
   override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok); 
   
   override void		AcceptData_impl(SignalProcBlock* src_blk,
     DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps);
-
+  virtual void		CheckMakeFilter(bool quiet, bool& ok);
 private:
   void	Initialize();
   void	Destroy() {CutLinks();}
