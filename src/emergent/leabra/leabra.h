@@ -271,11 +271,11 @@ public:
   AvgUpdt	avg_updt;	// #DEF_TRIAL how to update the relevant sr average variables -- CONT versions are still untested, and still use trial level timing, just cont updating
   float		ml_mix;		// #DEF_0 how much the medium-to-long time scale average activations contribute to synaptic activation -- useful for capturing sequential dependencies between events, when these are present in the simulation, but not appropriate for random event sequences
   float		sm_mix;		// #READ_ONLY #DEF_1 complement of ml_mix = 1-ml_mix -- how much the short & medium time scale average activations contribute to synaptic activation
-  float		m_dt;		// #CONDSHOW_ON_avg_updt:CONT time constant for updating the medium time-scale sravg_m value
-  float		s_dt;		// #CONDSHOW_ON_avg_updt:CONT time constant for updating the short time-scale sravg_s value
+  float		m_dt;		// #CONDSHOW_OFF_avg_updt:TRIAL time constant for updating the medium time-scale sravg_m value
+  float		s_dt;		// #CONDSHOW_OFF_avg_updt:TRIAL time constant for updating the short time-scale sravg_s value
   // todo: need some params like this for continuous mode -- currently still use trial-wise hooks
-//   float		lrn_thr;	// #CONDSHOW_ON_avg_updt:CONT threshold on sravg_m value to initiate learning, in continous mode
-//   int		lrn_delay;	// #CONDSHOW_ON_avg_updt:CONT delay after lrn_thr threshold has been crossed after which learning occurs
+//   float		lrn_thr;	// #CONDSHOW_OFF_avg_updt:TRIAL threshold on sravg_m value to initiate learning, in continous mode
+//   int		lrn_delay;	// #CONDSHOW_OFF_avg_updt:Trial delay after lrn_thr threshold has been crossed after which learning occurs
 
   bool		use_sb;		// #DEF_true use soft weight bounding -- this should almost always be used except in special experimental circumstances
   bool		use_nd;		// #DEF_false use the act_nd variables (non-depressed) for computing sravg/ravg terms (else use raw act, which is raw spikes in spiking mode, and subject to depression if in place)
@@ -439,6 +439,10 @@ public:
   /////////////////////////////////////
   // CtLeabraXCAL code
 
+  inline void C_Compute_SRAvg_cont(LeabraCon* cn, float ru_act, float su_act);
+  // accumulate sender-receiver activation product average -- 
+  inline void C_Compute_SRAvg_cont_casc(LeabraCon* cn, float ru_act, float su_act);
+  // accumulate sender-receiver activation product average -- 
   inline void C_Compute_SRAvg_m(LeabraCon* cn, float ru_act, float su_act);
   // accumulate sender-receiver activation product average -- medium (trial-level) time scale
   inline void C_Compute_SRAvg_ms(LeabraCon* cn, float ru_act, float su_act);
@@ -472,9 +476,11 @@ public:
 				float su_act_p, float su_act_m);
   // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- CHL trial-wise version (requires normalization factors) -- uses synapse sravg terms
 
-  inline void 	C_Compute_dWt_CtLeabraXCAL_cont(LeabraCon* cn,
-						LeabraCon* rbias, LeabraCon* sbias,
-						float ru_thr);
+  inline void 	C_Compute_dWt_CtLeabraXCAL_cont_sr(LeabraCon* cn, float ru_thr);
+  // #CAT_Learning compute eXtended Contrastive Attractor Learning (XCAL) -- continuous version (requires normalization factors) -- todo: experimental and needs a lot of work
+  inline void 	C_Compute_dWt_CtLeabraXCAL_cont_sep(LeabraCon* cn,
+						    LeabraCon* rbias, LeabraCon* sbias,
+						    float ru_thr);
   // #CAT_Learning compute eXtended Contrastive Attractor Learning (XCAL) -- continuous version (requires normalization factors) -- todo: experimental and needs a lot of work
 
   inline virtual void 	Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru);
@@ -2999,14 +3005,38 @@ inline void LeabraConSpec::C_Compute_SRAvg_ms(LeabraCon* cn, float ru_act, float
   cn->sravg_s += sr;
 }
 
+inline void LeabraConSpec::C_Compute_SRAvg_cont(LeabraCon* cn, float ru_act, float su_act) {
+  float sr = ru_act * su_act;
+  cn->sravg_s += xcalm.s_dt * (sr - cn->sravg_s);
+  cn->sravg_m += xcalm.m_dt * (sr - cn->sravg_m);
+}
+
+inline void LeabraConSpec::C_Compute_SRAvg_cont_casc(LeabraCon* cn, float ru_act, float su_act) {
+  float sr = ru_act * su_act;
+  cn->sravg_s += xcalm.s_dt * (sr - cn->sravg_s);
+  cn->sravg_m += xcalm.m_dt * (cn->sravg_s - cn->sravg_m);
+}
+
 inline void LeabraConSpec::Compute_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru, bool do_s) {
-  if(do_s) {
-    CON_GROUP_LOOP(cg, C_Compute_SRAvg_ms((LeabraCon*)cg->Cn(i), ru->act_nd,
-					  ((LeabraUnit*)cg->Un(i))->act_nd));
+  if(xcalm.avg_updt == XCalMiscSpec::TRIAL) {
+    if(do_s) {
+      CON_GROUP_LOOP(cg, C_Compute_SRAvg_ms((LeabraCon*)cg->Cn(i), ru->act_nd,
+					    ((LeabraUnit*)cg->Un(i))->act_nd));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Compute_SRAvg_m((LeabraCon*)cg->Cn(i), ru->act_nd, 
+					   ((LeabraUnit*)cg->Un(i))->act_nd));
+    }
   }
   else {
-    CON_GROUP_LOOP(cg, C_Compute_SRAvg_m((LeabraCon*)cg->Cn(i), ru->act_nd, 
-					 ((LeabraUnit*)cg->Un(i))->act_nd));
+    if(xcalm.avg_updt == XCalMiscSpec::CONT_CASC) {
+      CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont_casc((LeabraCon*)cg->Cn(i), ru->act_nd,
+						   ((LeabraUnit*)cg->Un(i))->act_nd));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont((LeabraCon*)cg->Cn(i), ru->act_nd, 
+					      ((LeabraUnit*)cg->Un(i))->act_nd));
+    }
   }
 }
 
@@ -3080,12 +3110,21 @@ C_Compute_dWt_CtLeabraXCAL_CHL_trial(LeabraCon* cn,
 			  xcal.mvl_mix * xcal.dWtFun(sm_mix, ru_thr));
 }
 
-inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_cont(LeabraCon* cn,
+inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_cont_sr(LeabraCon* cn, float ru_thr) {
+  float srs = cn->sravg_s;
+  float srm = cn->sravg_m;
+  float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
+  cn->dwt += cur_lrate * (xcal.svm_mix * xcal.dWtFun(sm_mix, srm) + 
+			  xcal.mvl_mix * xcal.dWtFun(sm_mix, ru_thr));
+}
+
+inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_cont_sep(LeabraCon* cn,
 					   LeabraCon* rbias, LeabraCon* sbias, float ru_thr) {
   float srs = rbias->sravg_s * sbias->sravg_s;
   float srm = rbias->sravg_m * sbias->sravg_m;
-  cn->dwt += cur_lrate * (xcal.svm_mix * xcal.dWtFun(srs, srm) + 
-			  xcal.mvl_mix * xcal.dWtFun(srs, ru_thr));
+  float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
+  cn->dwt += cur_lrate * (xcal.svm_mix * xcal.dWtFun(sm_mix, srm) + 
+			  xcal.mvl_mix * xcal.dWtFun(sm_mix, ru_thr));
 }
 
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
@@ -3140,11 +3179,18 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
     }
   }
   else {
-    // todo: this actually requires all the timing stuff too..
-    for(int i=0; i<cg->cons.size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      C_Compute_dWt_CtLeabraXCAL_cont((LeabraCon*)cg->Cn(i), rbias,
-				      (LeabraCon*)su->bias.Cn(0), ru_thr);
+    if(xcal.lrn_var == XCalLearnSpec::XCAL_SEP) {
+      for(int i=0; i<cg->cons.size; i++) {
+	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+	C_Compute_dWt_CtLeabraXCAL_cont_sep((LeabraCon*)cg->Cn(i), rbias,
+					    (LeabraCon*)su->bias.Cn(0), ru_thr);
+      }
+    }
+    else {			// otherwise do SR
+      for(int i=0; i<cg->cons.size; i++) {
+	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+	C_Compute_dWt_CtLeabraXCAL_cont_sr((LeabraCon*)cg->Cn(i), ru_thr);
+      }
     }
   }
 }
