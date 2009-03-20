@@ -1338,13 +1338,22 @@ void ANVal::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
 }
 
 float ANVal::CalcValue(float in) {
+#ifdef DEBUG
+  if (TestError((isnan(in) || isinf(in)), "CalcValue",
+    "nan or inf received -- converted to 0"))
+    return 0.0f;
+
+#endif
   if (val_type == AN_LIN) {
     return (in - (cl - 0.5f)) / width;
   }
   
-  if (in < 0) return 0; // only defined for non-neg values
-  // transform to dB -- sh/be ~ -96 < in_db <= 0
-  float in_db = 10 * log10(in); // note: the ref is 1, but ok if exceeded
+  // note: avoid bad log10 results for -ve (nan) or very small or denorm inputs (-inf)
+  // note: the ref max is 1, but entirely ok if exceeded
+  double in_db = 0;
+  if (in < 1e-12) in_db = -120; // pin at our design minimum
+  else            in_db = 10 * log10(in); 
+  
   // translate so that cf is at 0, and normalize
   double rval = (in_db - cl) * norm; 
   switch (val_type) {
