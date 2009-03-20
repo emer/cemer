@@ -5419,6 +5419,10 @@ void iDataTableEditor::tvTable_layoutChanged()
 {
   ConfigView();
 //no-causes recursive invocation!  Refresh();
+  if (m_cell) {
+    MatrixTableModel* mat_model = m_cell->GetTableModel();
+    mat_model->emit_layoutChanged(); // hacky but works
+  }
 }
 
 void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
