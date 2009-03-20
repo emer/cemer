@@ -2150,12 +2150,12 @@ public:
 
   override void	BuildUnits();
   override void BuildUnits_Threads(Network* net)
-  { spec->BuildUnits_Threads(this, (LeabraNetwork*)net); }
+  { if(spec) spec->BuildUnits_Threads(this, (LeabraNetwork*)net); }
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
 
-  void	SetLearnRule(LeabraNetwork* net) 	{ spec->SetLearnRule(this, net); }
+  void	SetLearnRule(LeabraNetwork* net) 	{ if(spec) spec->SetLearnRule(this, net); }
   // #CAT_Learning set current learning rule from the network
 
   override void	Init_Weights(Network* net)
