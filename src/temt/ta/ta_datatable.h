@@ -34,6 +34,7 @@
 #endif
 
 // externals
+class DataTableModel;
 class T3DataViewFrame;
 class GridTableView;
 class GraphTableView;
@@ -916,6 +917,7 @@ public:
   int 			GetMaxCellRows(int col_fr, int col_to); // #IGNORE get the max muber of cell rows in this col range (used for clip operations)
   void			GetFlatGeom(const CellRange& cr, int& tot_cols, 
    int& max_cell_rows); // #IGNORE get the total flat cols and max rows per cell; used for TSV output
+  DataTableModel*	GetTableModel(); // #IGNORE gets or makes the model -- kept around once made
 
   String		HeaderToTSV(); // #IGNORE for tsv save
   String		RangeToTSV(const CellRange& cr); // #IGNORE for clip operations
@@ -972,6 +974,8 @@ public:
 protected:
   static int_Array	load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
   static int_Array	load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info
+  
+  DataTableModel*	table_model;
 
   virtual bool 		CopyCell_impl(DataCol* dar, int dest_row,
     const DataTable& src, DataCol* sar, int src_row); // #IGNORE

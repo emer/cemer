@@ -35,6 +35,7 @@ friend class taMatrix;
 INHERITED(QAbstractTableModel)
   Q_OBJECT
 public:
+  int			col_idx; // when this is a DataTable mat cell, the view sets this, otherwise it is -1 -- used in cell updated signal to DataTableModel
 #ifndef __MAKETA__
   QPointer<QWidget>	gui_parent;
   int			matIndex(const QModelIndex& idx) const; // #IGNORE flat matrix data index
@@ -48,9 +49,12 @@ public:
   
   void			emit_dataChanged(int row_fr = 0, int col_fr = 0,
     int row_to = -1, int col_to = -1);// can be called w/o params to issue global change (for manual refresh)
+  void			emit_dataChanged(const QModelIndex& topLeft,
+    const QModelIndex& bottomRight); 
   void			emit_layoutChanged();
   
-  MatrixTableModel(taMatrix* mat_, QWidget* gui_parent = NULL); // note: mat is always valid, we destroy this on mat dest
+protected: // only from matrix
+  MatrixTableModel(taMatrix* mat_, QWidget* gui_parent = NULL);
   ~MatrixTableModel(); //
   
 public: // required implementations
@@ -64,6 +68,9 @@ public: // required implementations
   bool 			setData(const QModelIndex& index, const QVariant& value, 
     int role = Qt::EditRole); // override, for editing
 
+signals:
+  void			matDataChanged(int col_idx); // only emited during dataChanged if col_idx valid
+  
 public: // IDataLinkClient i/f
   override void*	This() {return this;}
   override TypeDef*	GetTypeDef() const {return &TA_MatrixTableModel;}
@@ -74,6 +81,7 @@ public: // IDataLinkClient i/f
 protected:
   taMatrix*		m_mat;
   taMisc::MatrixView	m_view_layout; //#IGNORE #DEF_TOP_ZERO
+  ContextFlag		notifying; // to avoid responding when we sent notify
   bool			m_pat_4d;
   
   bool			ValidateIndex(const QModelIndex& index) const;

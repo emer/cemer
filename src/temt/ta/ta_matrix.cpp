@@ -498,6 +498,7 @@ void taMatrix::Initialize()
   slices = NULL;
   slice_par = NULL;
   fixed_dealloc = NULL;
+  table_model = NULL;
 }
  
 void taMatrix::Destroy() {
@@ -516,6 +517,11 @@ void taMatrix::Destroy() {
   if (slices) {
     delete slices;
     slices = NULL;
+  }
+  if (table_model) {
+    //note: hopefully dudes won't call us back during this!
+    delete table_model;
+    table_model = NULL;
   }
 }
 
@@ -661,6 +667,13 @@ bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
   DataUpdate(false);
 
   return true;
+}
+
+void taMatrix::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  if (slice_par) {
+    slice_par->DataChanged(dcr, op1, op2);
+  }
 }
 
 int taMatrix::defAlignment() const {
@@ -960,12 +973,15 @@ const String taMatrix::FlatRangeToTSV(int row_fr, int col_fr, int row_to, int co
     return _nilString;
   // allocate a reasonable best-guess buffer
   STRING_BUF(rval, (col_to - col_fr + 1) * (row_to - row_fr + 1) * 10);
-  // to access in 2d, you just ignore the higher dimension
+  // to access in 2d, you just ignore the higher dimensions
   for (int row = row_fr; row <= row_to; ++row) {
     if (row > row_fr) rval.cat('\n');
-    int idx = (row * dim(0)) + col_fr; 
-    for (int col = col_fr; col <= col_to; ++col, ++idx) {
+    //int idx = (row * dim(0)) + col_fr; 
+    for (int col = col_fr; col <= col_to; ++col/*, ++idx*/) {
       if (col > col_fr) rval.cat('\t');
+      // note: we assume range must already have been converted from display to canonical
+      // so we explicitly request the TOP_ZERO (no conversion) format
+      int idx = geom.IndexFmDims2D(col, row, true, taMisc::TOP_ZERO);
       rval.cat(SafeElAsStr_Flat(idx));
     }
   }
@@ -1200,6 +1216,14 @@ bool taMatrix::InsertFrames(int st_fr, int n_fr) {
     El_Copy_(FastEl_Flat_(i), blank);
   }
   return true;
+}
+
+MatrixTableModel* taMatrix::GetTableModel() {
+  if (!table_model && !isDestroying()) {
+    table_model = new MatrixTableModel(this);
+    table_model->setPat4D(true); // always
+  }
+  return table_model;
 }
 
 void taMatrix::Reset() {

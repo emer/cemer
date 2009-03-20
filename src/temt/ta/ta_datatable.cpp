@@ -683,10 +683,15 @@ void DataTable::Initialize() {
   keygen.setType(Variant::T_Int64);
   calc_script = NULL;
   log_file = NULL;
+  table_model = NULL;
 }
 
 void DataTable::Destroy() {
   CutLinks();
+  if (table_model) {
+    delete table_model;
+    table_model = NULL;
+  }
 }
 
 void DataTable::InitLinks() {
@@ -1265,6 +1270,13 @@ int DataTable::FindMultiValCol(int st_row, const Variant& val1, DataCol* col1,
   return -1;
 }
 
+DataTableModel* DataTable::GetTableModel() {
+  if (!table_model && !isDestroying()) {
+    table_model = new DataTableModel(this);
+    //table_model->setPat4D(true); // always
+  }
+  return table_model;
+}
 
 /////////////////////
 

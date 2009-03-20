@@ -108,10 +108,11 @@ void DataTableModel::DataLinkDestroying(taDataLink* dl) {
 void DataTableModel::DataDataChanged(taDataLink* dl, int dcr,
   void* op1, void* op2)
 {
+  if (notifying) return;
   //this is primarily for code-driven changes
   if (dcr <= DCR_ITEM_UPDATED_ND) {
     emit_layoutChanged(); // need to update layout for when rows added/removed
-//nw    emit_dataChanged();
+//causes segfault    emit_dataChanged();
   }
   else if ((dcr == DCR_STRUCT_UPDATE_END)) { // for col insert/deletes
     emit_layoutChanged();
@@ -182,8 +183,20 @@ void DataTableModel::emit_dataChanged(int row_fr, int col_fr, int row_to, int co
   emit dataChanged(createIndex(row_fr, col_fr), createIndex(row_to, col_to));
 }
 
+void DataTableModel::emit_dataChanged(const QModelIndex& topLeft,
+    const QModelIndex& bottomRight)
+{
+  if (!m_dt) return;
+  ++notifying;
+  emit dataChanged(topLeft, bottomRight);
+  --notifying;
+}
+
 void DataTableModel::emit_layoutChanged() {
+  if (!m_dt) return;
+  ++notifying;
   emit layoutChanged();
+  --notifying;
 }
 
 Qt::ItemFlags DataTableModel::flags(const QModelIndex& index) const {
@@ -237,6 +250,17 @@ int DataTableModel::rowCount(const QModelIndex& parent) const {
   return (m_dt) ? m_dt->rows : 0;
 }
 
+void DataTableModel::matDataChanged(int col_idx) {
+  if (!m_dt) return;
+  
+  DataCol* col = m_dt->GetColData(col_idx, true); // quiet
+  // if no col, we really don't care about anything else...
+  if (!col) return; 
+  ++notifying;
+  col->DataChanged(DCR_ITEM_UPDATED); // for calc refresh and other clients
+  --notifying;
+}
+
 bool DataTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {
   if (!m_dt || !index.isValid()) return false;
   
@@ -250,8 +274,10 @@ bool DataTableModel::setData(const QModelIndex& index, const QVariant & value, i
   switch (role) {
   case Qt::EditRole:
     m_dt->SetValAsVar(value, index.column(), index.row());
-    emit dataChanged(index, index);
+    ++notifying;
+    emit_dataChanged(index, index);
     col->DataChanged(DCR_ITEM_UPDATED); // for calc refresh
+    --notifying;
     rval = true;
   default: break;
   }
@@ -5293,7 +5319,7 @@ iDataTableEditor::iDataTableEditor(QWidget* parent)
 
 iDataTableEditor::~iDataTableEditor() {
   if (m_model) { 
-    delete m_model;
+//    delete m_model;
     m_model = NULL;
   }
   if (m_cell_par) {
@@ -5315,8 +5341,8 @@ void iDataTableEditor::ConfigView() {
     }
   }
   tvCell->setVisible(show_cell);
-  
 }
+
 
 void iDataTableEditor::DataLinkDestroying(taDataLink* dl) {
   // note: following should always be true
@@ -5330,17 +5356,19 @@ void iDataTableEditor::DataLinkDestroying(taDataLink* dl) {
 void iDataTableEditor::Refresh() {
   if (m_model)
     m_model->refreshViews();
+  if (m_cell)
+    tvCell->Refresh();
 }
 
 void iDataTableEditor::setDataTable(DataTable* dt_) {
   if (dt_ == m_dt.ptr()) return;
   if (m_model) { // shouldn't really happen, we only assign one table
-    delete m_model;
+//    delete m_model;
     m_model = NULL;
   }
   if (dt_) {
 //nn    tv->setItemDelegate(new DataTableDelegate(dt_));
-    m_model = new DataTableModel(dt_, this);
+    m_model = dt_->GetTableModel();
     tvTable->setModel(m_model);
     connect(m_model, SIGNAL(layoutChanged()),
       this, SLOT(tvTable_layoutChanged()) );
@@ -5364,15 +5392,33 @@ void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index,
       m_cell_par->AddDataClient(this);
     }
   }
-  m_cell = mat; 
+/*  if (mat) {
+    disconnect(tvCell->model(), 
+      SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+      this,
+      SLOT(matModel_dataChanged(const QModelIndex&, const QModelIndex&))
+    );
+  }*/
+
+  m_cell = mat;
+   
   m_cell_index = index;
   // actually set mat last, because gui immediately calls back
   tvCell->setMatrix(mat, pat_4d);
+  if (mat) {
+    MatrixTableModel* mat_model = mat->GetTableModel();
+    mat_model->col_idx = index.column(); // ok if done repeatedly, is always the same
+    // connect the magic signal that updates the table -- note that there is just
+    // one of these, and it hangs around even when the cell isn't viewed
+    connect(mat_model, SIGNAL(matDataChanged(int)),
+      dtm(), SLOT(matDataChanged(int)) );
+  }
 }
 
 void iDataTableEditor::tvTable_layoutChanged()
 {
   ConfigView();
+//no-causes recursive invocation!  Refresh();
 }
 
 void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {

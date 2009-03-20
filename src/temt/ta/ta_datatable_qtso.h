@@ -74,17 +74,22 @@ public:
   QPointer<QWidget>	gui_parent;
 #endif
   DataTable*		dataTable() const {return m_dt;}
-  void			setDataTable(DataTable* value, bool notify = true);
   
   void			refreshViews(); // similar to matrix, issues dataChanged
   
   void			emit_dataChanged(int row_fr = 0, int col_fr = 0,
     int row_to = -1, int col_to = -1);// can be called w/o params to issue global change (for manual refresh)
-
+  void			emit_dataChanged(const QModelIndex& topLeft,
+    const QModelIndex& bottomRight); 
+    
+public slots:
+  void			matDataChanged(int col_idx); // mat editor calls when data changes
+  
+protected:
   DataTableModel(DataTable* dt, QWidget* gui_parent = NULL);
     // if has a single gui_parent you can pass it in, to suppress notifies when hidden
   ~DataTableModel(); //
-  
+
 public: // required implementations
 #ifndef __MAKETA__
   int 			columnCount(const QModelIndex& parent = QModelIndex()) const; // override
@@ -107,8 +112,10 @@ protected:
   bool			ValidateIndex(const QModelIndex& index) const;
 #endif
   void			emit_layoutChanged(); // we call this for most schema changes
+//  void			setDataTable(DataTable* value, bool notify = true);
 protected:
   DataTable*		m_dt;
+  ContextFlag		notifying; // to avoid responding when we sent notify
 };
 
 

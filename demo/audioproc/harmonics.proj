@@ -1260,7 +1260,7 @@ LeabraProject .projects[0] {
      };
      float_Data @[3] {
       name="A1_pitch";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+      col_flags=SAVE_ROWS|SAVE_DATA|PAT_4D;
       is_matrix=1;
       cell_geom{ 3;1;10;8;      };
       calc_expr {
@@ -1286,7 +1286,7 @@ LeabraProject .projects[0] {
       name="X";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
-      cell_geom{       };
+      cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
@@ -1663,7 +1663,7 @@ LeabraProject .projects[0] {
       name="X";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
-      cell_geom{       };
+      cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
@@ -5727,7 +5727,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
        chans_per_oct=8;
       };
       out_octs=3;
-      on_half_width=1;
      };
      SignalMonBlock @[12] {
       name="SignalMonBlock_pitch";
@@ -7220,7 +7219,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        wt_sig {gain=6: off=1.25: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -7256,7 +7255,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      wt_sig {gain=6: off=1.25: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };

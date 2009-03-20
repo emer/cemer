@@ -36,6 +36,7 @@
 MatrixTableModel::MatrixTableModel(taMatrix* mat_, QWidget* gui_parent_) 
 :inherited(NULL)
 {
+  col_idx = -1;
   m_mat = mat_;
   if (m_mat) {
     m_mat->AddDataClient(this);
@@ -91,15 +92,25 @@ void MatrixTableModel::DataLinkDestroying(taDataLink* dl) {
 void MatrixTableModel::DataDataChanged(taDataLink* dl, int dcr,
   void* op1, void* op2)
 {
+  if (notifying) return;
   //this is primarily for code-driven changes
-  if (dcr <= DCR_ITEM_UPDATED_ND) {
+/*NO  if (dcr <= DCR_ITEM_UPDATED_ND) {
     emit_dataChanged();
-  }
+  }*/
   else if ((dcr == DCR_STRUCT_UPDATE_END)) {
     emit_layoutChanged();
   }
 }
 
+
+void MatrixTableModel::emit_dataChanged(const QModelIndex& topLeft,
+    const QModelIndex& bottomRight)
+{
+  if (!m_mat) return;
+  emit dataChanged(topLeft, bottomRight);
+  if (col_idx >= 0)
+    emit matDataChanged(col_idx);
+}
 
 void MatrixTableModel::emit_dataChanged(int row_fr, int col_fr, int row_to, int col_to) {
   if (!m_mat) return;
@@ -107,10 +118,11 @@ void MatrixTableModel::emit_dataChanged(int row_fr, int col_fr, int row_to, int 
   if (row_to < 0) row_to = rowCount() - 1;
   if (col_to < 0) col_to = columnCount() - 1;  
   
-  emit dataChanged(createIndex(row_fr, col_fr), createIndex(row_to, col_to));
+  emit_dataChanged(createIndex(row_fr, col_fr), createIndex(row_to, col_to));
 }
 
 void MatrixTableModel::emit_layoutChanged() {
+  if (!m_mat) return;
   emit layoutChanged();
 }
 
@@ -218,7 +230,10 @@ bool MatrixTableModel::setData(const QModelIndex& index, const QVariant & value,
   if (!m_mat) return false;
   if (index.isValid() && role == Qt::EditRole) {
     m_mat->SetFmStr_Flat(value.toString(), matIndex(index));
-    emit dataChanged(index, index);
+    ++notifying;
+    emit_dataChanged(index, index);
+    m_mat->DataChanged(DCR_ITEM_UPDATED); // propagates up slice chain, but typically not used, i.e in particular, doesn't affect DataCol
+    --notifying;
     return true;
   }
   return false;
@@ -409,7 +424,7 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
     act->setEnabled(false);
   act = menu->AddItem("&Paste", taiMenu::normal,
       taiAction::int_act, this, SLOT(EditAction(int)), taiClipData::EA_PASTE);
-  act->setShortcut(QKeySequence("Ctrl+P"));
+  act->setShortcut(QKeySequence("Ctrl+V"));
   if (!(ea & taiClipData::EA_PASTE)) 
     act->setEnabled(false);
   act = menu->AddItem("Clear", taiMenu::normal,
@@ -524,7 +539,7 @@ iMatrixEditor::iMatrixEditor(QWidget* parent)
 
 iMatrixEditor::~iMatrixEditor() {
   if (m_model) {
-    delete m_model;
+//    delete m_model;
     m_model = NULL;
   }
 }
@@ -548,13 +563,14 @@ void iMatrixEditor::Refresh() {
 void iMatrixEditor::setMatrix(taMatrix* mat_, bool pat_4d) {
   if (m_mat == mat_) return;
   if (m_model) {
-    delete m_model;
+//    delete m_model;
     m_model = NULL;
   }
   m_mat = mat_;
-  if (mat_){
-    m_model = new MatrixTableModel(mat_, this);
-    m_model->setPat4D(pat_4d, false);
+  if (mat_) {
+//    m_model = new MatrixTableModel(mat_, this);
+//    m_model->setPat4D(pat_4d, false);
+    m_model = mat_->GetTableModel();
   }
   tv->setModel(m_model);
 }
