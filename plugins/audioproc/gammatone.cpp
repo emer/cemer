@@ -1677,13 +1677,13 @@ void HarmonicSieveBlock::AcceptData_impl(SignalProcBlock* src_blk,
   for (int out_ch = 0; out_ch < out_chans; ++out_ch)
   {
     // input fundamental (f0)
-    int in_fund = (out_v * out_chans) + out_ch;
+    int in_fund = (out_v * cpo_eff) + out_ch;
     float fund_val = in_mat->FastEl(0, in_fund, f, i, in_stage);
-    double out_val = fund_val; // include the fund
-    float gain = 1.0f; // successively 2, 3, etc. so we divide
+    double out_val = 0.0f; 
+    float gain = 0.0f; // successively 1, 2, 3, etc. so we divide
     // harmonic (0-based) goes from 1 (2*f0) to max num avail
     for (int harm = 1; harm <= max_harm; ++harm) {
-      //no! gain += (harm + 1);
+      gain += 1.0f;
       float sieve = 0; 
       // offs from harm*f0 
       float val = 0;
@@ -1699,8 +1699,10 @@ void HarmonicSieveBlock::AcceptData_impl(SignalProcBlock* src_blk,
         sieve += val * filter.FastEl(filt_idx);
       }
       out_val += sieve ;//* (harm + 1);
-    } 
-    out_val /= gain; // normalize
+    }
+    if (gain > 0.0f) // guard against doing nothing!
+      out_val /= gain; // normalize
+    out_val += fund_val; // note: don't normalize fund
 #ifdef DEBUG
     out_mat->Set(out_val, out_v, out_ch, f, i, out_stage);
 #else
@@ -1714,6 +1716,7 @@ void HarmonicSieveBlock::AcceptData_impl(SignalProcBlock* src_blk,
 
 void HarmonicSieveBlock::CheckMakeFilter(bool quiet, bool& ok) {
   filter.SetGeom(1, cpo_eff);
+  filter.Clear(); // for successive calls
   const int off_width = cpo_eff - ((2 * on_half_width) + 1);
   // indexes go from: fund + on_hw+1 .. 2*fund + on_hw
   // "on" portion -- normalized to be 1 sd = +- 1/6 octave
