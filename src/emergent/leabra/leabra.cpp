@@ -270,7 +270,7 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   }
   else if(learn_rule == CTLEABRA_XCAL_C) {
     xcalm.do_init_sravg = false;	// never init
-    xcalm.do_comp_sravg = true;
+    xcalm.do_comp_sravg = (xcal.lrn_var != XCalLearnSpec::XCAL_SEP);
   }
 }
 
