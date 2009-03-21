@@ -1191,7 +1191,7 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Stats
 
-  override float Compute_SSE(bool& has_targ, Unit* u);
+  override float Compute_SSE(Unit* u, Network* net, bool& has_targ);
   virtual float  Compute_NormErr(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_Statistic compute normalized binary error (0-1 as function of bits off from target) according to settings on the network (returns a 1 or 0)
 

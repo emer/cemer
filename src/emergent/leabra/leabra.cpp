@@ -1828,7 +1828,7 @@ void LeabraUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
 ///////////////////////////////////////////////////////////////////////
 //	Stats
 
-float LeabraUnitSpec::Compute_SSE(bool& has_targ, Unit* u) {
+float LeabraUnitSpec::Compute_SSE(Unit* u, Network* net, bool& has_targ) {
   has_targ = false;
   LeabraUnit* lu = (LeabraUnit*)u;
   if(lu->ext_flag & (Unit::TARG | Unit::COMP)) {
