@@ -115,16 +115,24 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
     d_rev_ratio = (1.0f - d_rev) / d_rev;
   else
     d_rev_ratio = 1.0f;
+
 }
 
-void XCalMiscSpec::Initialize() {
-  avg_updt = TRIAL;
-  ml_mix = 0.0f;
-  m_dt = 0.03f;
-  s_dt = 0.1f;
+void XCalContSpec::Initialize() {
+  m_dt = 0.1f;
+  s_dt = 0.2f;
 
 //   lrn_thr = 0.2f;
 //   lrn_delay = 200;
+}
+
+// void XCalContSpec::UpdateAfterEdit_impl() {
+//   inherited::UpdateAfterEdit_impl();
+// }
+
+
+void XCalMiscSpec::Initialize() {
+  ml_mix = 0.0f;
 
   use_sb = true;
   use_nd = false;
@@ -134,6 +142,9 @@ void XCalMiscSpec::Initialize() {
   rnd_var = 0.1f;
 
   sm_mix = 1.0f - ml_mix;
+
+  do_init_sravg = false;
+  do_comp_sravg = false;
 }
 
 void XCalMiscSpec::UpdateAfterEdit_impl() {
@@ -216,6 +227,7 @@ void LeabraConSpec::InitLinks() {
   taBase::Own(lrate_sched, this);
   taBase::Own(lmix, this);
   taBase::Own(xcal, this);
+  taBase::Own(xcal_c, this);
   taBase::Own(xcalm, this);
   taBase::Own(savg_cor, this);
   taBase::Own(rel_net_adapt, this);
@@ -236,7 +248,30 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   CreateWtSigFun();
   lmix.UpdateAfterEdit();
   xcal.UpdateAfterEdit();
+//   xcal_c.UpdateAfterEdit();
   xcalm.UpdateAfterEdit();
+
+  if(learn_rule == CTLEABRA_XCAL_C) {
+    if(TestWarning(xcal.lrn_var >= XCalLearnSpec::CAL,
+		   "UAE", "lrn_var of CAL or CHL are NOT supported by the CTLEABRA_XCAL_C algorithm -- reverting back to XCAL_SEP")) {
+      xcal.lrn_var = XCalLearnSpec::XCAL_SEP;
+    }
+  }
+
+  if(learn_rule == LEABRA_CHL) {
+    xcalm.do_init_sravg = xcalm.do_comp_sravg = false;
+  }
+  else if(learn_rule == CTLEABRA_CAL) {
+    xcalm.do_init_sravg = xcalm.do_comp_sravg = true;
+  }
+  else if(learn_rule == CTLEABRA_XCAL) {
+    xcalm.do_init_sravg = xcalm.do_comp_sravg = ((xcal.lrn_var != XCalLearnSpec::XCAL_SEP) &&
+				     (xcal.lrn_var != XCalLearnSpec::CHL));
+  }
+  else if(learn_rule == CTLEABRA_XCAL_C) {
+    xcalm.do_init_sravg = false;	// never init
+    xcalm.do_comp_sravg = true;
+  }
 }
 
 void LeabraConSpec::Defaults() {
@@ -264,6 +299,7 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
     if(lrate == 0.02f)
       lrate = 0.01f;		// also important
   }
+  UpdateAfterEdit();		// pick up flags
 }
 
 void LeabraConSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
@@ -829,7 +865,8 @@ void LeabraUnitSpec::CreateNXX1Fun() {
 void LeabraUnitSpec::SetLearnRule(LeabraNetwork* net) {
   if(bias_spec.SPtr())
     ((LeabraConSpec*)bias_spec.SPtr())->SetLearnRule(net);
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
+  if((net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) ||
+     (net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C)) {
     opt_thresh.learn = -1;	// some very tiny value could be used instead!
   }
 }
@@ -1660,20 +1697,10 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
   bias_sp->B_Compute_SRAvg((LeabraCon*)u->bias.Cn(0), u, do_s);
 
   if(net->train_mode != LeabraNetwork::TEST) {	// expensive con-level only for training
-    if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+    if(net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) {
       for(int g=0; g<u->recv.size; g++) {
 	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
 	if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
-	recv_gp->Compute_SRAvg(u, do_s);
-      }
-    }
-    else if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
-      for(int g=0; g<u->recv.size; g++) {
-	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-	if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
-	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-	if((cs->xcal.lrn_var == XCalLearnSpec::XCAL_SEP) ||
-	   (cs->xcal.lrn_var == XCalLearnSpec::CHL)) continue;
 	recv_gp->Compute_SRAvg(u, do_s);
       }
     }
@@ -1703,16 +1730,15 @@ void LeabraUnitSpec::Compute_dWt_Nothing(LeabraUnit* u, LeabraNetwork* net, int 
 
 bool LeabraUnitSpec::Compute_dWt_OptTest(LeabraUnit* u, LeabraNetwork* net) {
   LeabraLayer* lay = u->own_lay();
-  if(net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) {
+  if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C) {
     LeabraConSpec* bsp = (LeabraConSpec*)bias_spec.SPtr();
-    if(bsp->xcalm.avg_updt == XCalMiscSpec::TRIAL) {
-      if((net->sravg_vals.m_nrm * ((LeabraCon*)u->bias.Cn(0))->sravg_m) < opt_thresh.learn)
-	return false;
-    }
-    else {
-      if(((LeabraCon*)u->bias.Cn(0))->sravg_m < opt_thresh.learn)
-	return false;
-    }
+    if(((LeabraCon*)u->bias.Cn(0))->sravg_m < opt_thresh.learn)
+      return false;
+  }
+  else if(net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) {
+    LeabraConSpec* bsp = (LeabraConSpec*)bias_spec.SPtr();
+    if((net->sravg_vals.m_nrm * ((LeabraCon*)u->bias.Cn(0))->sravg_m) < opt_thresh.learn)
+      return false;
   }
   else {
     if((u->act_p <= opt_thresh.learn) && (u->act_m <= opt_thresh.learn))
@@ -1754,6 +1780,18 @@ void LeabraUnitSpec::Compute_dWt_impl(LeabraUnit* u, LeabraNetwork* net) {
     ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_dWt_CtLeabraXCAL((LeabraCon*)u->bias.Cn(0),
 								   u, lay);
   }
+  else if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C) {
+    if(net->epoch < net->ct_time.n_avg_only_epcs) { // no learning while gathering data!
+      return;
+    }
+    for(int g = 0; g < u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+      recv_gp->Compute_dWt_CtLeabraXCAL_C(u);
+    }
+    ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_dWt_CtLeabraXCAL_C((LeabraCon*)u->bias.Cn(0),
+								     u, lay);
+  }
 }
 
 void LeabraUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
@@ -1775,7 +1813,7 @@ void LeabraUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
       recv_gp->Compute_Weights_CtLeabraCAL(lu);
     }
   }
-  else if(lnet->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
+  else if(lnet->learn_rule >= LeabraNetwork::CTLEABRA_XCAL) {
     if(lnet->epoch < lnet->ct_time.n_avg_only_epcs) { // no learning while gathering data!
       return;
     }
@@ -2351,7 +2389,7 @@ bool LeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   bool rval = true;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
-  if(net && net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
+  if(net && net->learn_rule >= LeabraNetwork::CTLEABRA_XCAL) {
     LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
     if(lay->CheckError(us->opt_thresh.learn > 0.0f, quiet, rval,
 		       "LeabraUnitSpec opt_thresh.learn must be -1 for CTLEABRA_XCAL -- I just set it for you in spec:", us->name)) {
@@ -2478,10 +2516,6 @@ void LeabraLayerSpec::SetLearnRule(LeabraLayer* lay, LeabraNetwork* net) {
   else {
     decay.phase = 0.0f;		// no phase decay -- these are not even called
     decay.phase2 = 0.0f;
-
-//     if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
-//       net->ct_sravg.interval = 1;
-//     }
   }
 
   if(lay->unit_spec.SPtr()) {
@@ -3883,7 +3917,8 @@ bool LeabraLayerSpec::Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net) {
 bool LeabraLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if((net->phase_order == LeabraNetwork::MINUS_PLUS_NOTHING ||
       net->phase_order == LeabraNetwork::MINUS_PLUS_MINUS) && 
-     net->learn_rule != LeabraNetwork::LEABRA_CHL) {
+     (net->learn_rule != LeabraNetwork::LEABRA_CHL &&
+      net->learn_rule != LeabraNetwork::CTLEABRA_XCAL_C)) { // xcal_c learns on 1st plus!
     return false;
   }
   if((net->learn_rule != LeabraNetwork::LEABRA_CHL) &&
@@ -3901,6 +3936,7 @@ bool LeabraLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* 
   if((net->learn_rule != LeabraNetwork::LEABRA_CHL) &&
      (net->sravg_vals.m_sum == 0.0f)) return false;
   // shouldn't happen, but just in case..
+  if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C) return false; // only 1st plus
   return true; 		// all types learn here..
 }
 
@@ -4674,6 +4710,14 @@ void LeabraNetwork::SetLearnRule() {
 //     if(phase_order == MINUS_PLUS) {
 //       phase_order = MINUS_PLUS_NOTHING;
 //     }
+
+    if(learn_rule == CTLEABRA_XCAL) {
+      ct_sravg.interval = 5;
+    }
+    else if(learn_rule == CTLEABRA_XCAL_C) {
+      ct_sravg.interval = 1;
+    }
+
     maxda_stopcrit = -1;
     min_cycles = 0;
     min_cycles_phase2 = 0;
