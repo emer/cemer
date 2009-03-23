@@ -183,8 +183,8 @@ bool tabMisc::DoDelayedCloses() {
     // so if item is owned, we just defer to it, otherwise
     taBase* it = items.FastEl(0);
     items.RemoveIdx(0);
-    int refn = taBase::GetRefn(it); 
 #ifdef DEBUG
+    int refn = taBase::GetRefn(it); 
     if ((it->GetOwner() == NULL) && (refn != 1)) {
       taMisc::Warning("tabMisc::delayed_close: item had refn != 1, was=",
         String(refn), "type=", it->GetTypeDef()->name, "name=",

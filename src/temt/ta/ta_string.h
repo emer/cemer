@@ -22,7 +22,6 @@
 #undef String
 #endif
 #define String taString
-#define StrRep taStrRep
 
 #ifndef ta_string_h
 #define ta_string_h 1
@@ -54,15 +53,15 @@
 
 #include "ta_atomic.h"
 
-class TA_API StrRep;
+class TA_API taStrRep;
 class TA_API String;
 
-/* StrRep - internal String representation
+/* taStrRep - internal String representation
 
   Note: this structure is allocated via malloc(), so there must be no constructor/destructor.
 */
 
-class TA_API StrRep {
+class TA_API taStrRep {
 friend class String;
 public:
   uint			len;    // string length (not including null terminator)
@@ -79,7 +78,7 @@ union { // this lets us use static init of cnt to 1 for _nilStrRep
 protected:
   bool			canCat(uint xtra_len) {return ((cnt == 1) && ((sz - len) >= xtra_len));}  // true if ref==1, and enough space to add
   void			ref() {cnt.ref();}
-  static void 		unRef(StrRep* inst) {if (!inst->cnt.deref()) free(inst);}
+  static void 		unRef(taStrRep* inst) {if (!inst->cnt.deref()) free(inst);}
   void			cat(const char* str, uint slen); // note: slen must be set, and canCat must have been true
   void			upcase();	// convert all letters to upper case; only called if cnt<=1
   void			downcase();	// convert all letters to lower case; only called if cnt<=1
@@ -92,7 +91,7 @@ protected:
   int	      		match(int, int, int, const char*, int = -1) const;
 };
 
-extern TA_API StrRep  _nilStrRep; // an empty StrRep, for convenience and efficiency
+extern TA_API taStrRep  _nilStrRep; // an empty taStrRep, for convenience and efficiency
 #define ADDR_NIL_STR_REP &_nilStrRep
 
 // primitive ops on StrReps -- nearly all String fns go through these.
@@ -102,15 +101,15 @@ extern TA_API StrRep  _nilStrRep; // an empty StrRep, for convenience and effici
   slen -- len of the string if known; -1 means call strlen function
   cap -- capacity; 0 means use the string len
 */
-TA_API StrRep*		Snew(int slen, uint cap = 0); // for an empty rep, for filling by caller; len is set
-TA_API StrRep*		Salloc(const char* s, int slen = -1, uint cap = 0); // the most-used alloc
-TA_API StrRep*		Scat(StrRep* srep, const char* s, uint slen = -1);
-TA_API StrRep*		Scat(const char* s1, int slen1, const char* s2, int slen2); // slen can be -1
-TA_API StrRep*		Sreverse(const StrRep* x);
+TA_API taStrRep*		Snew(int slen, uint cap = 0); // for an empty rep, for filling by caller; len is set
+TA_API taStrRep*		Salloc(const char* s, int slen = -1, uint cap = 0); // the most-used alloc
+TA_API taStrRep*		Scat(taStrRep* srep, const char* s, uint slen = -1);
+TA_API taStrRep*		Scat(const char* s1, int slen1, const char* s2, int slen2); // slen can be -1
+TA_API taStrRep*		Sreverse(const taStrRep* x);
 
 class TA_API String {
   // string of characters with many useful methods for string manipulation
-friend class StrRep;
+friend class taStrRep;
 public:
   ////////////////////////////////////////////////
   // statics
@@ -202,7 +201,7 @@ public:
   String(const String* x) {if (x) newRep(x->mrep); else newRep(ADDR_NIL_STR_REP);} 
   inline String(const char* s) {init(s, -1);} // s can be NULL
   String(const char* s, int slen) {init(s, slen);}
-  String(StrRep* x) {newRep(x);} // typically only used internally
+  String(taStrRep* x) {newRep(x);} // typically only used internally
   String(uint slen, uint sz, char fill); // for allocating a writeable buffer; (1) if sz==0, then sz=slen; (2) if fill==0, then slen will be forced to 0
 
 
@@ -229,14 +228,14 @@ public:
 #endif
 
 #ifdef DEBUG
-  ~String() {StrRep::unRef(mrep); mrep = NULL;}
+  ~String() {taStrRep::unRef(mrep); mrep = NULL;}
 #else
-  ~String() {StrRep::unRef(mrep);}
+  ~String() {taStrRep::unRef(mrep);}
 #endif
   ////////////////////////////////////////////////
   // basic resource allocation and infrastructure
 
-  void			setRep(StrRep* rep_);
+  void			setRep(taStrRep* rep_);
   // #IGNORE for replacing rep (non-constructor) -- rep_ must be non-null
 
   inline int		length() const {return mrep->len;} 
@@ -480,9 +479,9 @@ protected:
   static void 		AppendCharToCppStringLiteral(String& str, char c, bool char_mode);
   // #IGNORE
   
-  StrRep*		mrep;   // Strings are pointers to their representations
+  taStrRep*		mrep;   // Strings are pointers to their representations
   void			init(const char* s, int slen = -1); // for calling in constructors
-  void			newRep(StrRep* rep_); // for setting rep in a constructor
+  void			newRep(taStrRep* rep_); // for setting rep in a constructor
   String&		cat(const char* s, int slen); // for internal use
 
   // some helper functions
@@ -596,14 +595,14 @@ inline std::ostream& operator<<(std::ostream& s, const String& x)
 }
 
 
-inline void String::newRep(StrRep* rep_) {
+inline void String::newRep(taStrRep* rep_) {
   rep_->ref();
   mrep = rep_;
 }
 
-inline void String::setRep(StrRep* rep_) {
+inline void String::setRep(taStrRep* rep_) {
   rep_->ref(); //note: implicitly handles rare case of mrep=rep_
-  StrRep::unRef(mrep);
+  taStrRep::unRef(mrep);
   mrep = rep_;
 }
 

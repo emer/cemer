@@ -155,7 +155,7 @@ inline static int ncmp(const char* a, int al, const char* b, int bl)
 //	SRep		//
 //////////////////////////
 
-// note: compilers may report the size of StrRep to be an even multiple of 4
+// note: compilers may report the size of taStrRep to be an even multiple of 4
 // QAtomicInt is 4 on all the platforms we support
 #define SIZE_OF_STRREP (9 + sizeof(QAtomicInt))
 
@@ -173,10 +173,10 @@ long long Cstring_prof::tot_size = 0;
 Cstring_prof string_prof;
 #endif
 
-StrRep _nilStrRep = { 0, 1, 1, { 0 } }; // nil StrReps point here, we init cnt to 1 so never released
+taStrRep _nilStrRep = { 0, 1, 1, { 0 } }; // nil StrReps point here, we init cnt to 1 so never released
 
 // create an empty buffer -- called by routines that then fill the chars (ex. reverse, upcase, etc.)
-TA_API StrRep* Snew(int slen, uint cap) {
+TA_API taStrRep* Snew(int slen, uint cap) {
   if (cap == 0) cap = slen;
   if (cap == 0) return ADDR_NIL_STR_REP;
   uint allocsize = (uint)tweak_alloc(SIZE_OF_STRREP + cap); // we tweak the alloc size to optimize -- may be larger
@@ -185,7 +185,7 @@ TA_API StrRep* Snew(int slen, uint cap) {
   ++Cstring_prof::inst_cnt;
   Cstring_prof::tot_size += allocsize;
 #endif
-  StrRep* rval = (StrRep*)malloc(allocsize);
+  taStrRep* rval = (taStrRep*)malloc(allocsize);
   if (!rval) {
     cerr << "Salloc: could not allocate memory for new string\n";
     return NULL; // note: best that we crash, since this is a serious error condition
@@ -197,26 +197,26 @@ TA_API StrRep* Snew(int slen, uint cap) {
   return rval;
 }
 
-// allocate a new StrRep by copying from a given string (can be NULL)
-TA_API StrRep* Salloc(const char* s, int slen, uint cap) {
+// allocate a new taStrRep by copying from a given string (can be NULL)
+TA_API taStrRep* Salloc(const char* s, int slen, uint cap) {
   if (slen < 0) slen = s ? (int)strlen(s) : 0;
-  StrRep* rval = Snew(slen, cap); //note: alloc failure returns NULL
+  taStrRep* rval = Snew(slen, cap); //note: alloc failure returns NULL
   if (slen && (rval->sz >= (uint)slen)) memcpy(rval->s, s, slen);
   return rval;
 }
 
 // allocate & concatenate
-TA_API StrRep* Scat(StrRep* srep, const char* s, int slen) {
+TA_API taStrRep* Scat(taStrRep* srep, const char* s, int slen) {
   return Scat(srep->s, srep->len, s, slen);
 }
 
-TA_API StrRep*	Scat(const char* s1, int slen1, const char* s2, int slen2) { // slen can be -1
+TA_API taStrRep*	Scat(const char* s1, int slen1, const char* s2, int slen2) { // slen can be -1
   if (slen1 < 0) slen1 = s1 ? (int)strlen(s1) : 0;
   if (slen2 < 0) slen2 = s2 ? (int)strlen(s2) : 0;
   uint newlen = slen1 + slen2;
   if (newlen == 0) return ADDR_NIL_STR_REP;
 
-  StrRep* rval = Salloc(s1, slen1, newlen); //note: alloc failure returns _nilStrRep
+  taStrRep* rval = Salloc(s1, slen1, newlen); //note: alloc failure returns _nilStrRep
   if (slen2) {
     memcpy(&(rval->s[slen1]), s2, slen2);
   }
@@ -225,9 +225,9 @@ TA_API StrRep*	Scat(const char* s1, int slen1, const char* s2, int slen2) { // s
   return rval;
 }
 
-TA_API StrRep* Sreverse(const StrRep* src)
+TA_API taStrRep* Sreverse(const taStrRep* src)
 {
-  StrRep* dest = Snew(src->len);
+  taStrRep* dest = Snew(src->len);
   char* a = dest->s;
   char* b = (char *)&(src->s[src->len]); // start at one past end; harmless if len=0 (safe deconstify)
   for (uint n = 0; n < src->len; ++n) {
@@ -236,24 +236,24 @@ TA_API StrRep* Sreverse(const StrRep* src)
   return dest;
 }
 
-void StrRep::capitalize() {//note: should only be called on cnt==1
+void taStrRep::capitalize() {//note: should only be called on cnt==1
   _capitalize(s, len);
 }
 
-void StrRep::cat(const char* str, uint slen) { // note: slen must be set, and canCat must have been true
+void taStrRep::cat(const char* str, uint slen) { // note: slen must be set, and canCat must have been true
   if (slen == 0) return;
   memcpy(&(s[len]), str, slen);
   len += slen;
   s[len] = '\0';
 }
 
-void StrRep::downcase() { //note: should only be called on cnt==1
+void taStrRep::downcase() { //note: should only be called on cnt==1
   for (uint n = 0; n < len; ++n) {
     if (isupper(s[n])) s[n] = tolower(s[n]);
   }
 }
 
-int StrRep::match(int start, int sl, int exact, const char* t, int tl) const {
+int taStrRep::match(int start, int sl, int exact, const char* t, int tl) const {
   if (tl < 0) tl =  t ? (int)strlen(t) : 0;
 
   if (start < 0) {
@@ -271,7 +271,7 @@ int StrRep::match(int start, int sl, int exact, const char* t, int tl) const {
   while (--n >= 0) if (*str++ != *t++) return -1;
   return tl;
 }
-void StrRep::prepend(const char* str, uint slen) { // note: slen must be set, and canCat must have been true
+void taStrRep::prepend(const char* str, uint slen) { // note: slen must be set, and canCat must have been true
   if (slen == 0) return;
   memmove(&(s[slen]), s, len);
   memcpy(s, str, slen);
@@ -279,7 +279,7 @@ void StrRep::prepend(const char* str, uint slen) { // note: slen must be set, an
   s[len] = '\0';
 }
 
-void StrRep::reverse() {//note: should only be called on cnt<=1
+void taStrRep::reverse() {//note: should only be called on cnt<=1
   char* a = s;
   char* b = &(s[len - 1]);
   while (a < b) {
@@ -289,19 +289,19 @@ void StrRep::reverse() {//note: should only be called on cnt<=1
   }
 }
 
-int StrRep::search(int start, int sl, char c) const {
+int taStrRep::search(int start, int sl, char c) const {
   return _search(s, start, sl, c);
 }
 
-int StrRep::search(int start, int sl, const char* t, int tl) const {
+int taStrRep::search(int start, int sl, const char* t, int tl) const {
   return _search(s, start, sl, t, tl);
 }
 
-int StrRep::search_ci(int start, int sl, const char* t, int tl) const {
+int taStrRep::search_ci(int start, int sl, const char* t, int tl) const {
   return _search_ci(s, start, sl, t, tl);
 }
 
-void StrRep::upcase() {//note: should only be called on cnt<=1
+void taStrRep::upcase() {//note: should only be called on cnt<=1
   for (uint n = 0; n < len; ++n) {
     if (islower(s[n])) s[n] = toupper(s[n]);
   }
