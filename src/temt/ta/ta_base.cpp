@@ -1428,8 +1428,8 @@ bool taBase::RemoveDataClient(IDataLinkClient* dlc) {
 }
 
 void taBase::BatchUpdate(bool begin, bool struc) {
-  taDataLink* dl = data_link(); // doesn't autocreate -- IMPORTANT!
-  if (!dl) return;
+//  taDataLink* dl = data_link(); // doesn't autocreate -- IMPORTANT!
+//  if (!dl) return;
   if (begin) {
     if (struc)
       DataChanged(DCR_STRUCT_UPDATE_BEGIN);

@@ -33,23 +33,16 @@
 //  The MatrixTableModel provides a 2-d table model for TA Matrix objects.
 //  For Gui editing, we map indexes in 2d flat table.
 
-MatrixTableModel::MatrixTableModel(taMatrix* mat_, QWidget* gui_parent_) 
+MatrixTableModel::MatrixTableModel(taMatrix* mat_) 
 :inherited(NULL)
 {
   col_idx = -1;
   m_mat = mat_;
-  if (m_mat) {
-    m_mat->AddDataClient(this);
-  }
-  gui_parent = gui_parent_;
   m_pat_4d = false;
 }
 
 MatrixTableModel::~MatrixTableModel() {
-  if (m_mat) {
-    m_mat->RemoveDataClient(this);
-    m_mat = NULL;
-  }
+  m_mat = NULL;
 }
 
 int MatrixTableModel::columnCount(const QModelIndex& parent) const {
@@ -85,19 +78,14 @@ Qt::CheckStateRole*/
   return QVariant();
 }
 
-void MatrixTableModel::DataLinkDestroying(taDataLink* dl) {
-  m_mat = NULL;
-}
-
-void MatrixTableModel::DataDataChanged(taDataLink* dl, int dcr,
+void MatrixTableModel::DataDataChanged(int dcr,
   void* op1, void* op2)
-{
+{ // called from Matrix::DataChanged
   if (notifying) return;
-  //this is primarily for code-driven changes
-/*NO  if (dcr <= DCR_ITEM_UPDATED_ND) {
-    emit_dataChanged();
-  }*/
-  else if ((dcr == DCR_STRUCT_UPDATE_END)) {
+  if ((dcr <= DCR_ITEM_UPDATED_ND) || // data itself updated
+    (dcr == DCR_STRUCT_UPDATE_END) ||  // for col insert/deletes
+    (dcr == DCR_DATA_UPDATE_END)) // for row insert/deletes
+  { 
     emit_layoutChanged();
   }
 }
@@ -195,10 +183,6 @@ QVariant MatrixTableModel::headerData(int section,
   }
 }
 
-bool MatrixTableModel::ignoreDataChanged() const {
-  return (gui_parent && !gui_parent->isVisible());
-}
-
 int MatrixTableModel::matIndex(const QModelIndex& idx) const {
   //note: we dimensionally reduce all dims >1 to 1
   return (m_mat) ? m_mat->geom.IndexFmDims2D(idx.column(), idx.row(), pat4D(), matView())
@@ -219,7 +203,6 @@ QStringList MatrixTableModel::mimeTypes () const {
   types << "text/plain";
   return types;
 }
-
 
 int MatrixTableModel::rowCount(const QModelIndex& parent) const {
   return (m_mat) ? m_mat->rowCount(pat4D()) : 0;
@@ -245,7 +228,6 @@ void MatrixTableModel::setPat4D(bool val, bool notify) {
   if (notify) 
     emit_layoutChanged();
 }
-
 
 bool MatrixTableModel::ValidateIndex(const QModelIndex& index) const {
   // TODO: maybe need to check bounds???
@@ -538,14 +520,11 @@ iMatrixEditor::iMatrixEditor(QWidget* parent)
 }
 
 iMatrixEditor::~iMatrixEditor() {
-  if (m_model) {
-//    delete m_model;
-    m_model = NULL;
-  }
+  m_mat = NULL;
 }
 
 void iMatrixEditor::init() {
-  m_model = NULL;
+  m_mat = NULL;
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2); layOuter->setSpacing(2);
 //  layDims = new QHBoxLayout(layOuter);
@@ -554,25 +533,34 @@ void iMatrixEditor::init() {
   layOuter->addWidget(tv);
 }
 
+/*taMatrix* iMatrixEditor::mat() const {
+  return m_mat;
+}
+
+MatrixTableModel* iMatrixEditor::model() const {
+  if (m_mat) 
+    return m_mat->GetTableModel();
+  return NULL;
+}*/
+
 void iMatrixEditor::Refresh() {
-  MatrixTableModel* mod = model();
+ // MatrixTableModel* mod = q_objectcast<>(model();
+  MatrixTableModel* mod = qobject_cast<MatrixTableModel*>(tv->model());
   if (mod)
     mod->emit_layoutChanged(); // default values mean entire table
 }
 
 void iMatrixEditor::setMatrix(taMatrix* mat_, bool pat_4d) {
-  if (m_mat == mat_) return;
-  if (m_model) {
-//    delete m_model;
-    m_model = NULL;
-  }
+/*  if (m_mat == mat_) return;
+
   m_mat = mat_;
+  
   if (mat_) {
-//    m_model = new MatrixTableModel(mat_, this);
-//    m_model->setPat4D(pat_4d, false);
-    m_model = mat_->GetTableModel();
+    //nothing
   }
-  tv->setModel(m_model);
+  tv->setModel(model()); // whether NULL or not*/
+  QAbstractItemModel* mod = (mat_) ? mat_->GetTableModel() : NULL;
+  tv->setModel(mod);
 }
 
 

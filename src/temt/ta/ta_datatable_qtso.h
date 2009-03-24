@@ -61,8 +61,7 @@ class T3GraphLine;
 class T3GraphViewNode;
 class taiListElsButton;
 
-class TA_API DataTableModel: public QAbstractTableModel,
-  public IDataLinkClient
+class TA_API DataTableModel: public QAbstractTableModel
 {
   // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
 INHERITED(QAbstractTableModel)
@@ -70,9 +69,6 @@ friend class DataTableCols;
 friend class DataTable;
   Q_OBJECT
 public:
-#ifndef __MAKETA__
-  QPointer<QWidget>	gui_parent;
-#endif
   DataTable*		dataTable() const {return m_dt;}
   
   void			refreshViews(); // similar to matrix, issues dataChanged
@@ -86,8 +82,7 @@ public slots:
   void			matDataChanged(int col_idx); // mat editor calls when data changes
   
 protected:
-  DataTableModel(DataTable* dt, QWidget* gui_parent = NULL);
-    // if has a single gui_parent you can pass it in, to suppress notifies when hidden
+  DataTableModel(DataTable* dt);
   ~DataTableModel(); //
 
 public: // required implementations
@@ -101,12 +96,8 @@ public: // required implementations
   bool 			setData(const QModelIndex& index, const QVariant& value, 
     int role = Qt::EditRole); // override, for editing
     
-public: // IDataLinkClient i/f
-  override void*	This() {return this;}
-  override TypeDef*	GetTypeDef() const {return &TA_DataTableModel;}
-  override bool		ignoreDataChanged() const;
-  override void		DataLinkDestroying(taDataLink* dl);
-  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); 
+public: // pseudo-IDataLinkClient i/f
+  override void		DataDataChanged(int dcr, void* op1, void* op2); 
     
 protected:
   bool			ValidateIndex(const QModelIndex& index) const;
@@ -1146,8 +1137,8 @@ public:
   iMatrixEditor*	  tvCell; // a matrix cell in the table (only shown if needed)
 
   DataTable*		dt() const {return m_dt;}
-  void			setDataTable(DataTable* dt);
-  DataTableModel*	dtm() const {return m_model;}
+  void			setDataTable(DataTable* dt); // only called once
+  DataTableModel*	dtm() const;
   
   void			Refresh(); // for manual refresh
   
@@ -1176,7 +1167,6 @@ public: // IDataLinkClient i/f
 
 protected:
   DataTableRef		m_dt;
-  DataTableModel*	m_model;
   taMatrix*		m_cell_par; // parent of cell -- we link to it
   taMatrixPtr		m_cell; // current cell 
   QModelIndex		m_cell_index; // we keep this to refresh cell if data changes

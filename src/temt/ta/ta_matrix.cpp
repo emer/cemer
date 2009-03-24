@@ -674,6 +674,14 @@ void taMatrix::DataChanged(int dcr, void* op1, void* op2) {
   if (slice_par) {
     slice_par->DataChanged(dcr, op1, op2);
   }
+  if (table_model) {
+    table_model->DataDataChanged(dcr, op1, op2);
+  }
+}
+
+TAPtr taMatrix::GetOwner() const { 
+  if (slice_par) return slice_par; 
+  return owner;
 }
 
 int taMatrix::defAlignment() const {

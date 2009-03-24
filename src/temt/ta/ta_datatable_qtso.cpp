@@ -80,41 +80,30 @@
 //   DataTableModel		//
 //////////////////////////////////
 
-DataTableModel::DataTableModel(DataTable* dt_, QWidget* gui_parent_) 
+DataTableModel::DataTableModel(DataTable* dt_) 
 :inherited(NULL)
 {
   m_dt = dt_;
-  if (m_dt) {
-    m_dt->AddDataClient(this);
-  }
-  gui_parent = gui_parent_;
 }
 
 DataTableModel::~DataTableModel() {
-  if (m_dt) {
-    m_dt->RemoveDataClient(this);
-    m_dt = NULL;
-  }
+  m_dt = NULL;
 }
 
 int DataTableModel::columnCount(const QModelIndex& parent) const {
   return (m_dt) ? m_dt->cols() : 0;
 }
 
-void DataTableModel::DataLinkDestroying(taDataLink* dl) {
-  m_dt = NULL;
-}
 
-void DataTableModel::DataDataChanged(taDataLink* dl, int dcr,
+void DataTableModel::DataDataChanged(int dcr,
   void* op1, void* op2)
-{
+{ // called from DataTable::DataChanged
   if (notifying) return;
   //this is primarily for code-driven changes
-  if (dcr <= DCR_ITEM_UPDATED_ND) {
-    emit_layoutChanged(); // need to update layout for when rows added/removed
-//causes segfault    emit_dataChanged();
-  }
-  else if ((dcr == DCR_STRUCT_UPDATE_END)) { // for col insert/deletes
+  if ((dcr <= DCR_ITEM_UPDATED_ND) || // data itself updated
+    (dcr == DCR_STRUCT_UPDATE_END) ||  // for col insert/deletes
+    (dcr == DCR_DATA_UPDATE_END)) // for row insert/deletes
+  { 
     emit_layoutChanged();
   }
 }
@@ -234,10 +223,6 @@ QVariant DataTableModel::headerData(int section, Qt::Orientation orientation,
     }
   }
   return QVariant();
-}
-
-bool DataTableModel::ignoreDataChanged() const {
-  return (gui_parent && !gui_parent->isVisible());
 }
 
 void DataTableModel::refreshViews() {
@@ -5298,7 +5283,6 @@ DataTableDelegate::~DataTableDelegate() {
 iDataTableEditor::iDataTableEditor(QWidget* parent) 
 :inherited(parent)
 {
-  m_model = NULL;
   m_cell_par = NULL;
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(0); layOuter->setSpacing(0);
@@ -5318,10 +5302,6 @@ iDataTableEditor::iDataTableEditor(QWidget* parent)
 }
 
 iDataTableEditor::~iDataTableEditor() {
-  if (m_model) { 
-//    delete m_model;
-    m_model = NULL;
-  }
   if (m_cell_par) {
     setCellMat(NULL, QModelIndex());
   }
@@ -5353,27 +5333,34 @@ void iDataTableEditor::DataLinkDestroying(taDataLink* dl) {
   }
 }
 
+DataTableModel* iDataTableEditor::dtm() const {
+  if (m_dt)
+    return m_dt->GetTableModel();
+  return NULL;
+}
+
 void iDataTableEditor::Refresh() {
-  if (m_model)
-    m_model->refreshViews();
+  DataTableModel* dtm = this->dtm();
+  if (dtm)
+    dtm->refreshViews();
   if (m_cell)
     tvCell->Refresh();
 }
 
 void iDataTableEditor::setDataTable(DataTable* dt_) {
   if (dt_ == m_dt.ptr()) return;
-  if (m_model) { // shouldn't really happen, we only assign one table
-//    delete m_model;
-    m_model = NULL;
-  }
-  if (dt_) {
+
+  m_dt = dt_;
+  
+  DataTableModel* mod = dtm();
+
+  if (mod) {
 //nn    tv->setItemDelegate(new DataTableDelegate(dt_));
-    m_model = dt_->GetTableModel();
-    tvTable->setModel(m_model);
-    connect(m_model, SIGNAL(layoutChanged()),
+    tvTable->setModel(mod);
+    connect(mod, SIGNAL(layoutChanged()),
       this, SLOT(tvTable_layoutChanged()) );
   }
-  m_dt = dt_;
+  
   ConfigView();
 }
 
@@ -5392,13 +5379,6 @@ void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index,
       m_cell_par->AddDataClient(this);
     }
   }
-/*  if (mat) {
-    disconnect(tvCell->model(), 
-      SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-      this,
-      SLOT(matModel_dataChanged(const QModelIndex&, const QModelIndex&))
-    );
-  }*/
 
   m_cell = mat;
    
@@ -6003,6 +5983,11 @@ next_row:
   }
 done:
   mat->DataUpdate(false);
+  //NOTE: this is VERY hacky, but easiest way to update tables...
+  DataCol* col = (DataCol*)mat->GetOwner(&TA_DataCol);
+  if (col) {
+    col->DataChanged(DCR_ITEM_UPDATED);
+  }
 }
 
 void taiTabularDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel) {

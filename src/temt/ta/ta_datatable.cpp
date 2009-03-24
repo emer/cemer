@@ -773,6 +773,13 @@ void DataTable::UpdateAfterEdit_impl() {
   CheckForCalcs();
 }
 
+void DataTable::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  if (table_model) {
+    table_model->DataDataChanged(dcr, op1, op2);
+  }
+}
+
 void DataTable::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   data.CheckConfig(quiet, rval);

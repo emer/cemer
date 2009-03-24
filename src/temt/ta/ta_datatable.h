@@ -1110,6 +1110,7 @@ public:
 
   void	InitLinks();
   void	CutLinks();
+  void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_BASEFUNS(DataTable); //
 
 protected: 

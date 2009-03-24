@@ -27,8 +27,7 @@
 class MatrixTableModel; //
 
 
-class TA_API MatrixTableModel: public QAbstractTableModel,
-  public IDataLinkClient
+class TA_API MatrixTableModel: public QAbstractTableModel
 {
   // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for matrices; we extend it to support N-d, but only 2-d cell display; if the model has a single gui client, then set it, to avoid doing refreshes when it isn't visible
 friend class taMatrix;
@@ -37,7 +36,6 @@ INHERITED(QAbstractTableModel)
 public:
   int			col_idx; // when this is a DataTable mat cell, the view sets this, otherwise it is -1 -- used in cell updated signal to DataTableModel
 #ifndef __MAKETA__
-  QPointer<QWidget>	gui_parent;
   int			matIndex(const QModelIndex& idx) const; // #IGNORE flat matrix data index
   override QMimeData* 	mimeData (const QModelIndexList& indexes) const;
   override QStringList	mimeTypes () const;
@@ -54,7 +52,7 @@ public:
   void			emit_layoutChanged();
   
 protected: // only from matrix
-  MatrixTableModel(taMatrix* mat_, QWidget* gui_parent = NULL);
+  MatrixTableModel(taMatrix* mat_);
   ~MatrixTableModel(); //
   
 public: // required implementations
@@ -71,12 +69,8 @@ public: // required implementations
 signals:
   void			matDataChanged(int col_idx); // only emited during dataChanged if col_idx valid
   
-public: // IDataLinkClient i/f
-  override void*	This() {return this;}
-  override TypeDef*	GetTypeDef() const {return &TA_MatrixTableModel;}
-  override bool		ignoreDataChanged() const;
-  override void		DataLinkDestroying(taDataLink* dl);
-  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); 
+public: // pseudo-IDataLinkClient i/f
+  override void		DataDataChanged(int dcr, void* op1, void* op2); 
   
 protected:
   taMatrix*		m_mat;
@@ -184,8 +178,8 @@ public:
   QHBoxLayout*		  layDims;
   iMatrixTableView*		  tv;
 
-  taMatrix*		mat() const {return m_mat;}
-  MatrixTableModel* 	model() const {return m_model;}
+ // taMatrix*		mat() const;
+ // MatrixTableModel* 	model() const;
   void			setMatrix(taMatrix* mat, bool pat_4d = false);
   
   void			Refresh(); // for manual refresh -- note, this also updates all other mat editors too
@@ -195,7 +189,6 @@ public:
   
 protected:
   taMatrix*		m_mat;
-  MatrixTableModel*	m_model;
   
 private:
   void		init();

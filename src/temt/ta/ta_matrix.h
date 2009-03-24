@@ -570,6 +570,8 @@ public:
 			   bool force_inline = false);
 
   void			SetDefaultName() { };
+  TAPtr 		GetOwner() const;
+  USING(inherited::GetOwner) 
   ostream& 		Output(ostream& strm, int indent = 0) const;
   ostream& 		OutputR(ostream& strm, int indent = 0) const
     { return Output(strm, indent); }
