@@ -607,6 +607,7 @@ void DepressSpec::Initialize() {
   rec = .2f;
   asymp_act = .5f;
   depl = rec * (1.0f - asymp_act) / (asymp_act * .95f);
+  interval = 1;
   max_amp = 1.0f;
   clamp_norm_max_amp = (.95f * depl + rec) / rec;
 }
@@ -1407,7 +1408,9 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
   if(depress.on) {		     // synaptic depression
     u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
     new_act *= u->spk_amp;
-    u->spk_amp += -new_act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
+    if((net->ct_cycle+1) % depress.interval == 0) {
+      u->spk_amp += -new_act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
+    }
     if(u->spk_amp < 0.0f) 			u->spk_amp = 0.0f;
     else if(u->spk_amp > depress.max_amp)	u->spk_amp = depress.max_amp;
   }
@@ -4536,11 +4539,14 @@ void LeabraNetwork::Initialize() {
   phase_no = 0;
   phase_max = 2;
 
-  thread_flags = TF_ALL;
+  ct_cycle = 0;
+  time_inc = 1.0f;		// just a simple counter by default
 
   cycle_max = 60;
   min_cycles = 15;
   min_cycles_phase2 = 35;
+
+  thread_flags = TF_ALL;
 
   minus_cycles = 0.0f;
   avg_cycles = 0.0f;
@@ -5024,6 +5030,7 @@ void LeabraNetwork::Cycle_Run() {
 
   Compute_SRAvg();		// note: only ctleabra variants do con-level compute here
   ct_cycle++;
+  time += time_inc;			// always increment time..
 }
 
 ///////////////////////////////////////////////////////

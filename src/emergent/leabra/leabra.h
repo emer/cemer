@@ -414,8 +414,8 @@ public:
 					float su_act_delta_eff);
   // #CAT_Activation sender-based delta-activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 
-  // recv-based also needed for some statistics, but is NOT used for main compute code
-  inline float 		C_Compute_Netin(LeabraCon* cn, Unit*, Unit* su);
+  // recv-based also needed for some statistics, but is NOT used for main compute code -- uses act_eq for sender act as well
+  inline float 		C_Compute_Netin(LeabraCon* cn, LeabraUnit*, LeabraUnit* su);
   inline float 		Compute_Netin(RecvCons* cg, Unit* ru);
 
   ///////////////////////////////////////////////////////////////
@@ -779,6 +779,7 @@ public:
   float		rec;		// #CONDEDIT_ON_on #DEF_0.2 rate of recovery of spike amplitude (determines overall time constant of depression function)
   float		asymp_act;	// #CONDEDIT_ON_on #DEF_0.5 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl value)
   float		depl;		// #CONDEDIT_ON_on #READ_ONLY #SHOW rate of depletion of spike amplitude as a function of activation output (computed from rec, asymp_act)
+  int		interval;	// #CONDEDIT_ON_on only update synaptic depression at given interval (in terms of cycles, using ct_cycle) -- this can be beneficial in producing a more delayed overall effect, as is observed with discrete spiking
   float		max_amp;	// #CONDEDIT_ON_on maximum spike amplitude -- this is the multiplier factor for activation values -- set to clamp_norm_max_amp to maintain asymptotic values at normal hard clamp levels, or set to 1 to retain usual normalized activation values (val is copied to act_range.max)
   float		clamp_norm_max_amp;	// #CONDEDIT_ON_on #READ_ONLY #SHOW maximum spike amplitude required to maintain asymptotic firing at normal clamp levels -- set max_amp to this value for delta-based learning rules to normalize against large diffs across phases
 
@@ -2588,6 +2589,7 @@ public:
   int		phase_max;	// #CAT_Counter maximum number of phases to run (note: this is set by Trial_Init depending on phase_order)
 
   int		ct_cycle;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from start of trial 
+  float		time_inc;	// how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset
 
   int		cycle_max;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_60 maximum number of cycles to settle for: note for CtLeabra_X/CAL this is overridden by phase specific settings by the settle process
   int		min_cycles;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_15 minimum number of cycles to settle for
@@ -2932,12 +2934,13 @@ inline void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* ne
   }
 }
 
-float LeabraConSpec::C_Compute_Netin(LeabraCon* cn, Unit*, Unit* su) {
-  return cn->wt * su->act;
+float LeabraConSpec::C_Compute_Netin(LeabraCon* cn, LeabraUnit*, LeabraUnit* su) {
+  return cn->wt * su->act_eq;
 }
 float LeabraConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {
   float rval=0.0f;
-  CON_GROUP_LOOP(cg, rval += C_Compute_Netin((LeabraCon*)cg->Cn(i), ru, cg->Un(i)));
+  CON_GROUP_LOOP(cg, rval += C_Compute_Netin((LeabraCon*)cg->Cn(i), (LeabraUnit*)ru,
+					     (LeabraUnit*)cg->Un(i)));
   return ((LeabraRecvCons*)cg)->scale_eff * rval;
 }
 

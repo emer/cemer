@@ -275,12 +275,13 @@ public:
     }
   }
 
-  float C_Compute_Netin(TrialSynDepCon* cn, Unit*, Unit* su) {
-    return cn->effwt * su->act;
+  float C_Compute_Netin(TrialSynDepCon* cn, LeabraUnit*, LeabraUnit* su) {
+    return cn->effwt * su->act_eq;
   }
   float Compute_Netin(RecvCons* cg, Unit* ru) {
     float rval=0.0f;
-    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((TrialSynDepCon*)cg->Cn(i), ru, cg->Un(i)));
+    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)ru,
+					       (LeabraUnit*)cg->Un(i)));
     return ((LeabraRecvCons*)cg)->scale_eff * rval;
   }
 
@@ -410,12 +411,13 @@ public:
     }
   }
 
-  float C_Compute_Netin(CycleSynDepCon* cn, Unit*, Unit* su) {
-    return cn->effwt * su->act;
+  float C_Compute_Netin(CycleSynDepCon* cn, LeabraUnit*, LeabraUnit* su) {
+    return cn->effwt * su->act_eq;
   }
   float Compute_Netin(RecvCons* cg, Unit* ru) {
     float rval=0.0f;
-    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((CycleSynDepCon*)cg->Cn(i), ru, cg->Un(i)));
+    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((CycleSynDepCon*)cg->Cn(i), (LeabraUnit*)ru,
+					       (LeabraUnit*)cg->Un(i)));
     return ((LeabraRecvCons*)cg)->scale_eff * rval;
   }
 
@@ -568,12 +570,13 @@ public:
     }
   }
 
-  float C_Compute_Netin(CaiSynDepCon* cn, Unit*, Unit* su) {
-    return cn->effwt * su->act;
+  float C_Compute_Netin(CaiSynDepCon* cn, LeabraUnit*, LeabraUnit* su) {
+    return cn->effwt * su->act_eq;
   }
   float Compute_Netin(RecvCons* cg, Unit* ru) {
     float rval=0.0f;
-    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((CaiSynDepCon*)cg->Cn(i), ru, cg->Un(i)));
+    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((CaiSynDepCon*)cg->Cn(i), 
+					       (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i)));
     return ((LeabraRecvCons*)cg)->scale_eff * rval;
   }
 
