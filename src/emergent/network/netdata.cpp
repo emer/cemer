@@ -387,6 +387,7 @@ void LayerReader_List::AutoConfig_impl(DataBlock* db, Network* net,
 //////////////////////////////////////////////////////////////////////////////
 
 void NetMonItem::Initialize() {
+  off = false;
   computed = false;
   object_type = NULL;
   lookup_var = NULL;
@@ -436,6 +437,7 @@ void NetMonItem::CutLinks() {
 
 void NetMonItem::Copy_(const NetMonItem& cp) {
   ResetMonVals(); // won't be valid anymore
+  off = cp.off;
   computed = cp.computed;
   object_type = cp.object_type;
   object = cp.object; // ptr only
@@ -510,7 +512,7 @@ String NetMonItem::GetAutoName(taBase* obj) {
 
 void NetMonItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  
+  if (off) return; // all stuff will run once turned on...
   if(computed) {
     name_style = MY_NAME;
     object = NULL;		// never have an obj for computed guy
@@ -1529,14 +1531,16 @@ void NetMonitor::UpdateDataTable(bool reset_first) {
     data->MarkCols();
   for (int i = 0; i < items.size; ++i) {
     NetMonItem* nmi = items.FastEl(i);
-    nmi->ScanObject();
+    if (!nmi->off)
+      nmi->ScanObject();
   }
   for (int i = 0; i < items.size; ++i) {
     NetMonItem* nmi = items.FastEl(i);
-    nmi->val_specs.UpdateDataBlockSchema(data);
+    if (!nmi->off)
+      nmi->val_specs.UpdateDataBlockSchema(data);
   }
   if (rmv_orphan_cols)
-    data->RemoveOrphanCols();
+    data->RemoveOrphanCols(); // note: will remove 'off' items
   data->StructUpdate(false);
 }
 
@@ -1555,7 +1559,8 @@ void NetMonitor::GetMonVals() {
     return;
   for (int i = 0; i < items.size; ++i) {
     NetMonItem* nmi = items.FastEl(i);
-    nmi->GetMonVals(data);
+    if (!nmi->off)
+      nmi->GetMonVals(data);
   }
 }
 

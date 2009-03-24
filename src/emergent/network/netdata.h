@@ -228,6 +228,7 @@ public:
     MY_NAME,			// always use my (net monitor item) name; if multiple columns, then add a subscript index for later ones (_1 _2, etc.)
   };
 
+  bool			off; // #NO_SAVE_EMPTY set this to not use this netmon item
   bool			computed;	// #APPLY_IMMED if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
   TypeDef*		object_type;	// #APPLY_IMMED #CONDSHOW_OFF_computed LAYER #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
   taSmartRef 		object;		// #CONDSHOW_OFF_computed #TYPE_ON_object_type #NO_SCOPE the network object being monitored
@@ -281,6 +282,8 @@ public:
   static const KeyString key_obj_var;
   String GetColText(const KeyString& key, int itm_idx = -1) const;
 
+  int		GetEnabled() const {return (off) ? 0 : 1;}
+  void		SetEnabled(bool value) {off = !value;}
   void  InitLinks();
   void	CutLinks();
   void 	Copy_(const NetMonItem& cp);
