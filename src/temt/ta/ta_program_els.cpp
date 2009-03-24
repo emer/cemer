@@ -249,6 +249,10 @@ void ForLoop::UpdateAfterEdit_impl() {
   if(taMisc::is_loading) return;
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying() || prg->isDestroying()) return;
+  if(init.expr == "_toolbox_tmp_") {
+    init.expr = "i = 0";
+    UpdateOnInsert_impl();
+  }
   bool is_local;
   String loop_var = GetLoopVar(is_local);
   if(!is_local)

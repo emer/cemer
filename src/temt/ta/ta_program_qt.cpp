@@ -1010,8 +1010,11 @@ void iProgramGroupPanel::items_CustomExpandFilter(iTreeViewItem* item,
 void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   int sec = tb->AssertSection("Ctrl"); //note: need to keep it short
 
+  ForLoop* forguy = (ForLoop*)tabMisc::root->GetTemplateInstance(&TA_ForLoop);
+  forguy->init.expr = "_toolbox_tmp_"; // flag for auto-updating of for loop var
+
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("for",
-    tabMisc::root->GetTemplateInstance(&TA_ForLoop)));
+    forguy));
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("do",
     tabMisc::root->GetTemplateInstance(&TA_DoLoop)));
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("while",
