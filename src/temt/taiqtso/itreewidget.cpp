@@ -428,9 +428,13 @@ void iTreeWidgetItem::CreateChildren() {
   children_created = true;
 }
 
-bool iTreeWidgetItem::isExpanded() const {
-  QTreeWidget* tw = treeWidget();
-  return (tw && tw->isItemExpanded(this));
+bool iTreeWidgetItem::isExpandedLeaf() const {
+  const QTreeWidgetItem* twi = this;
+  while (twi) {
+    if (!twi->isExpanded()) return false;
+    twi = twi->parent();
+  }
+  return true;
 }
 
 void iTreeWidgetItem::itemExpanded(bool expanded) {

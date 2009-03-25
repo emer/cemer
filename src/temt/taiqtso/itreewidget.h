@@ -89,7 +89,7 @@ public:
     WI_AT_END	// indicates the "at end" situation; item invoked is the *parent* item
   };
   
-  bool			isExpanded() const;
+  bool			isExpandedLeaf() const; // only true if all parents are also expanded
   inline bool		lazyChildren() const {return lazy_children;}
     // true while lc enabled, but not yet expanded
   void			enableLazyChildren(); // call on create or anytime when empty

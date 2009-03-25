@@ -7181,8 +7181,13 @@ void iTreeView::FillContextMenu_pre(ISelectable_PtrList& sel_items, taiActions* 
   emit FillContextMenuHookPre(sel_items, menu);
 } 
 
-void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos, int col ) {
+void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos,
+ int col ) {
   taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
+  // note: we must force the sel_item to be the item, otherwise we frequently
+  // are refering to the wrong item (not what user right clicked on)
+  // this seems to be the easiest way:
+  this_itemSelectionChanged();  
   FillContextMenu(menu);
   if (menu->count() > 0) { //only show if any items!
     menu->exec(pos);
@@ -7250,10 +7255,9 @@ void iTreeView::UpdateSelectedItems_impl() {
   ISelectable_PtrList sel_items = selItems(); // copies
   QTreeWidgetItemIterator it(this, QTreeWidgetItemIterator::Selected);
   QTreeWidgetItem* item;
-  ISelectable* si; 
   int lst_idx;
   while ( (item = *it) ) {
-  ISelectable* si = dynamic_cast<ISelectable*>(item);
+    ISelectable* si = dynamic_cast<ISelectable*>(item);
     if (si) {
       if ((lst_idx = sel_items.FindEl(si)) >= 0) 
         sel_items.RemoveIdx(lst_idx);
@@ -7263,7 +7267,7 @@ void iTreeView::UpdateSelectedItems_impl() {
   }
   // now, select any remaining
   for (int lst_idx = 0; lst_idx < sel_items.size; ++lst_idx) {
-    si = sel_items.FastEl(lst_idx);
+    ISelectable* si = sel_items.FastEl(lst_idx);
     if (si->GetTypeDef()->InheritsFrom(TA_iTreeViewItem)) { // should
       item = (iTreeViewItem*)(si->This());
       if (item) setItemSelected(item, true);
@@ -7876,7 +7880,9 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     taiTreeDataNode* new_node = CreateListItem(this, after_node, (taBase*)op1_);
     iTreeView* tv = treeView();
 //EVIL    tv->expandItem(new_node);
-    tv->scrollTo(new_node);
+    // only scroll to it if parent is visible
+    if (isExpandedLeaf())
+      tv->scrollTo(new_node);
   }
     break;
   case DCR_LIST_ITEM_REMOVE: {	// op1=item -- note, item not DisOwned yet, but has been removed from list
@@ -7893,7 +7899,9 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     if (!after_node) to_idx = indexOfChild(last_member_node); // insert, after
     ++to_idx; // after
     moveChild(fm_idx, to_idx);
-    treeView()->scrollTo(moved_node);
+    // only scroll to it if parent is visible
+    if (isExpandedLeaf())
+      treeView()->scrollTo(moved_node);
   }
     break;
   case DCR_LIST_ITEMS_SWAP: {	// op1=item1, op2=item2
@@ -8113,7 +8121,9 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     taiTreeDataNode* after_node = this->FindChildForData(op2_, idx); //null if not found
     if (after_node == NULL) after_node = last_list_items_node; // insert, after lists
     taiTreeDataNode* new_node = CreateSubGroup(after_node, op1_);
-    treeView()->scrollTo(new_node);
+    // only scroll to it if parent is visible
+    if (isExpandedLeaf())
+      treeView()->scrollTo(new_node);
   }
     break;
   case DCR_GROUP_REMOVE: {	// op1=item -- note, item not DisOwned yet, but has been removed from list
@@ -8130,7 +8140,9 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     if (!after_node) to_idx = indexOfChild(last_list_items_node); // insert, after
     ++to_idx; // after
     moveChild(fm_idx, to_idx);
-    treeView()->scrollTo(moved_node);
+    // only scroll to it if parent is visible
+    if (isExpandedLeaf())
+      treeView()->scrollTo(moved_node);
   }
     break;
   case DCR_GROUPS_SWAP: {	// op1=item1, op2=item2
