@@ -2149,14 +2149,25 @@ bool DataTable::DuplicateRow(int row_no, int n_copies) {
   DataUpdate(true);// only data because for views, no change in column structure
   for(int k=0;k<n_copies;k++) {
     AddBlankRow();
-    for(int j=0;j<data.size;j++) {
-      DataCol* sda = data[j];
-      sda->CopyFromRow(-1, *sda, row_no);
-    }
+    data.CopyFromRow(-1, data, row_no);
   }
   DataUpdate(false);
   return true;
 }
+
+bool DataTable::DuplicateRows(int st_row, int n_rows) {
+  DataUpdate(true);// only data because for views, no change in column structure
+  // first insert blank rows, then copy
+  bool rval = InsertRows(st_row + n_rows, n_rows);
+  if (rval) {
+    for (int i = 0; i < n_rows; i++) {
+      data.CopyFromRow(st_row + n_rows + i, data, st_row +i);
+    }
+  }
+  DataUpdate(false);
+  return rval;
+}
+
 
 bool DataTable::RowInRangeNormalize(int& row) {
   if (row < 0) row = rows + row;

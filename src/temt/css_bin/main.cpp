@@ -43,11 +43,11 @@ void css_cleanup(int err) {
 
 int main(int argc, const char *argv[]) {
   taMisc::app_name = "css";
-  taMisc::app_lib_name = "tacss";
-  cssMisc::prompt = "css";
+  taMisc::app_prefs_key = "emergent"; // we share prefs, etc.
+  //nn cssMisc::prompt = "css";
   taMisc::use_gui = true;	// set opposite default from normal
-  taMisc::default_app_install_folder_name = "css";
-
+//taMisc::default_app_install_folder_name = "Emergent";
+  taMisc::use_plugins = false;
   if(!taRootBase::Startup_Main(argc, argv, ta_Init_ta, &TA_taRootBase)) return 1;
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) css_cleanup);
   if(taRootBase::Startup_Run())

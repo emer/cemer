@@ -218,6 +218,16 @@ private:
 };
 TA_SMART_PTRS(taProject)
 
+class TA_API CssProject : public taProject {
+  // generic project -- can be used in css (has no network dependencies)
+INHERITED(taProject)
+public:
+  TA_BASEFUNS_NOCOPY(CssProject);
+private:
+  void	Initialize() {}
+  void 	Destroy() {}
+};
+
 class TA_API Project_Group : public taGroup<taProject> {
   //  ##CAT_Project group of projects
 INHERITED(taGroup<taProject>)

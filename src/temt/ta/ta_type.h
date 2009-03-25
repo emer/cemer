@@ -649,8 +649,8 @@ public:
     SA_UNAVAIL, // simage not available
   };
   
-  static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"
-  static String		app_lib_name; // #READ_ONLY #NO_SAVE #EXPERT the root name of the app's library, if any, ex. "pdp" (none for css)
+  static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "emergent" or "css"
+  static String		app_prefs_key; //  #READ_ONLY #NO_SAVE #HIDDEN the string used for the prefs folders etc. -- emergent and css should share this, but external apps (ex physics sim) should make a new one
   static String		default_app_install_folder_name; // #READ_ONLY #NO_SAVE #HIDDEN the default folder name for installation, ex. "Emergent"
   static String		org_name; // #READ_ONLY #NO_SAVE #SHOW the name of the organization, ex. ccnlab (used mostly in Windows paths)
   static String		version; // #READ_ONLY #NO_SAVE #SHOW version number of ta/css
@@ -810,6 +810,7 @@ public:
 
   static bool		use_gui;	// #READ_ONLY #NO_SAVE #NO_SHOW whether the user has specified to use the gui or not (default = true)
   static bool		gui_active;	// #READ_ONLY #NO_SAVE #NO_SHOW if gui has been started up or not
+  static bool		use_plugins;	// #READ_ONLY #NO_SAVE #NO_SHOW whether to use plugins
   static bool		server_active;	// #READ_ONLY #NO_SAVE #NO_SHOW if remote server has been started up or not
   static ContextFlag	is_loading;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading an object
   static ContextFlag	is_post_loading;// #READ_ONLY #NO_SAVE #NO_SHOW true if currently in the post load routine (DUMP_POST_LOAD)

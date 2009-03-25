@@ -18,6 +18,8 @@
 
 int main(int argc, const char* argv[]) {
   taMisc::app_name = "emergent";
-  taMisc::app_lib_name = "emergent";
+  taMisc::app_prefs_key = "emergent"; // note: we share prefs, etc. w/ css
+//taMisc::default_app_install_folder_name = "Emergent";
+  taMisc::use_plugins = true;
   return EmergentMisc::Main(argc, argv);
 }

@@ -1748,7 +1748,7 @@ void Startup_InitTA_MoveLegacyUserFiles() {
   String msg;
   // Preferences directory
   // 1. we check for an the old one (<= 4.0.18) -- we'll move contents silently...
-  String prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
+  String prefs_dir = taPlatform::getAppDataPath(taMisc::app_prefs_key);
   if (!taPlatform::fileExists(prefs_dir + "/options"))
     return;
 
@@ -1780,7 +1780,7 @@ prefs_move_failed:
   
 move_uad:
 
-  String user_app_dir = taPlatform::getAppDocPath(taMisc::app_name);
+  String user_app_dir = taPlatform::getAppDocPath(taMisc::app_prefs_key);
   taMisc::Info("Moving user data dir to new default location...");
   // note, Emergent folder shouldn't exist yet...
   if (QDir(user_app_dir).exists()) 
@@ -1822,10 +1822,10 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   
   // Application folder
   // env var overrides default
-  String user_app_dir_env_var = upcase(taMisc::app_name) + "_USER_APP_DIR";
+  String user_app_dir_env_var = upcase(taMisc::app_prefs_key) + "_USER_APP_DIR";
   String user_app_dir = getenv(user_app_dir_env_var);
   if (user_app_dir.empty()) {
-    user_app_dir = taPlatform::getAppDocPath(taMisc::app_name);
+    user_app_dir = taPlatform::getAppDocPath(taMisc::app_prefs_key);
   }
   taMisc::user_app_dir = user_app_dir;
   if (!Startup_InitTA_InitUserAppDir()) return false;
@@ -1872,6 +1872,7 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
 }
   	
 bool taRootBase::Startup_EnumeratePlugins() {
+  if (!taMisc::use_plugins) return true;
   String plug_log;
   if (taMisc::build_str.empty()) {
     plug_log = "plugins.log";
@@ -1972,6 +1973,7 @@ bool taRootBase::Startup_InitViewColors() {
   	
 bool taRootBase::Startup_LoadPlugins() {
   if (!tabMisc::root) return false; // should be made
+  if (!taMisc::use_plugins) return true;
   tabMisc::root->plugins.LoadPlugins();
   return true;
 }
@@ -2022,6 +2024,7 @@ bool taRootBase::Startup_MakeWizards() {
 }
 
 bool taRootBase::Startup_InitPlugins() {
+  if (!taMisc::use_plugins) return true;
   if (!tabMisc::root) return false; // should be made
   tabMisc::root->plugins.InitPlugins();
   return true;
@@ -2100,7 +2103,7 @@ bool taRootBase::Startup_ProcessArgs() {
   }
   if(taMisc::CheckArgByName("GenDoc")) {
     fstream gen_doc_xml;
-    gen_doc_xml.open(taMisc::app_name + "_TA_doc.xml", ios::out);
+    gen_doc_xml.open(taMisc::app_prefs_key + "_TA_doc.xml", ios::out);
     taGenDoc::GenDoc(&(taMisc::types), gen_doc_xml);
   }
 
@@ -2149,6 +2152,8 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   // just create the adapter obj, whether needed or not
   root_adapter = new taRootBaseAdapter;
   cssMisc::prompt = taMisc::app_name; // the same
+  if (taMisc::app_prefs_key.empty()) 
+    taMisc::app_prefs_key = taMisc::app_name;
   if(!Startup_InitDMem(argc, argv)) goto startup_failed;
   if(!Startup_InitArgs(argc, argv)) goto startup_failed;
   if(!Startup_ProcessGuiArg(argc, argv)) goto startup_failed;

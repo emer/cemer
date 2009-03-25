@@ -5214,12 +5214,14 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   if (!tab) return;
   if (op_code & OP_ROW) {
     // must have >=1 row selected to make sense
-    if ((op_code & (OP_APPEND | OP_INSERT | OP_DELETE))) {
+    if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE))) {
       if (sel.height() < 1) return;
       if (op_code & OP_APPEND) {
         tab->AddRows(sel.height());
       } else if (op_code & OP_INSERT) {
         tab->InsertRows(sel.row_fr, sel.height());
+      } else if (op_code & OP_DUPLICATE) {
+        tab->DuplicateRows(sel.row_fr, sel.height());
       } else if (op_code & OP_DELETE) {
         if (taMisc::Choice("Are you sure you want to delete the selected rows? (this operation cannot be undone!)", "Yes", "Cancel") != 0) return;
         tab->RemoveRows(sel.row_fr, sel.height());

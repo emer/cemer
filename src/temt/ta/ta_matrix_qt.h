@@ -128,8 +128,9 @@ signals:
 
 protected:
   enum RowColOpCode {
-    OP_APPEND		= 0x02,
-    OP_INSERT		= 0x04,
+    OP_APPEND		= 0x01,
+    OP_INSERT		= 0x02,
+    OP_DUPLICATE	= 0x04,
     OP_DELETE		= 0x08,
     OP_ROW		= 0x40, 
     OP_COL		= 0x80

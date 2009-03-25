@@ -689,6 +689,8 @@ public:
   // #CAT_Rows ensure that there are exactly n_rows in the table, removing or adding as needed
   virtual bool		DuplicateRow(int row_no, int n_copies=1);
   // #MENU #CAT_Rows duplicate given row number, making given number of copies of it (adds new rows at the end)
+  bool			DuplicateRows(int st_row, int n_rows=1);
+  // #CAT_Rows copy the n_rows starting from st_row and insert them immediately after selected rows
   const Variant		GetColUserData(const String& name, int col) const;
   // #CAT_Config gets user data from the col
   void			SetColUserData(const String& name, const Variant& value, int col);

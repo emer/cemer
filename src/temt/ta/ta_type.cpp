@@ -462,8 +462,8 @@ bool taVersion::GtEq(ushort mj, ushort mn, ushort st)
 // 	     taMisc		//
 //////////////////////////////////
 
-String	taMisc::app_name = "temt"; // replaced with actual name at startup
-String	taMisc::app_lib_name; // set in the main.cpp file
+String	taMisc::app_name = "temt"; // must be set in main.cpp
+String	taMisc::app_prefs_key; // must be set in main.cpp, else defaults to app_name
 String	taMisc::default_app_install_folder_name = "Emergent";
 
 String	taMisc::org_name = "ccnlab"; 
@@ -672,6 +672,7 @@ bool	taMisc::in_event_loop = false;
 signed char	taMisc::quitting = QF_RUNNING;
 bool	taMisc::not_constr = true;
 bool	taMisc::use_gui = false; // set to default in Init_Gui
+bool	taMisc::use_plugins; // set to default in Init_Gui
 bool 	taMisc::gui_active = false;
 bool 	taMisc::server_active = false; // true while connected
 ContextFlag	taMisc::is_loading;

@@ -389,6 +389,8 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_APPEND) );
       act = menu->AddItem("Insert Rows", taiMenu::normal, taiAction::int_act,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_INSERT) );
+      act = menu->AddItem("Duplicate Rows", taiMenu::normal, taiAction::int_act,
+        this, SLOT(RowColOp(int)), (OP_ROW | OP_DUPLICATE) );
       act = menu->AddItem("Delete Rows", taiMenu::normal, taiAction::int_act,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE) );
     }
