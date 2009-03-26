@@ -825,12 +825,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_2EFC4FB158A94DC49A50DE98262ED491"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_2F2CA2E293F5421F864FE88C4BEF653C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -964,6 +958,12 @@
         "Entry"
         {
         "MsmKey" = "8:_37BC3802C8D44F46AC19BB0E9A98E0F4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_37BF6AD8FC0D475AACC1FDB76E7D510A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -7664,26 +7664,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2EFC4FB158A94DC49A50DE98262ED491"
-            {
-            "SourcePath" = "8:..\\..\\..\\include\\ta_engine.h"
-            "TargetName" = "8:ta_engine.h"
-            "Tag" = "8:"
-            "Folder" = "8:_A75A0ED8BD3E4A73BC01DBCDFB4B18BD"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2F2CA2E293F5421F864FE88C4BEF653C"
             {
             "SourcePath" = "8:..\\..\\..\\src\\emergent\\leabra\\leabra_TA_inst.h"
@@ -8130,6 +8110,26 @@
             "TargetName" = "8:editcopy.png"
             "Tag" = "8:"
             "Folder" = "8:_7E8A5DCF8411429E98C0EA1B9ABE4C94"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_37BF6AD8FC0D475AACC1FDB76E7D510A"
+            {
+            "SourcePath" = "8:..\\..\\..\\include\\ta_atomic.h"
+            "TargetName" = "8:ta_atomic.h"
+            "Tag" = "8:"
+            "Folder" = "8:_A75A0ED8BD3E4A73BC01DBCDFB4B18BD"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -21802,14 +21802,14 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Emergent"
-        "ProductCode" = "8:{12A3E0D3-F1CC-4F17-8CF1-075AC461FB13}"
-        "PackageCode" = "8:{5F8D8B7C-B2EF-4ECE-B7A7-D885D755A3F5}"
+        "ProductCode" = "8:{B8BF9695-BAD0-4861-9198-2D2997B8E17C}"
+        "PackageCode" = "8:{9C5F8B92-F2B5-4C7D-B171-A8806ED24D41}"
         "UpgradeCode" = "8:{B1672FC2-321F-449F-A1C4-926E728B59CA}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:4.0.19"
+        "ProductVersion" = "8:4.0.21"
         "Manufacturer" = "8:CCN Lab"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://grey.colorado.edu/emergent/index.php/Main_Page"

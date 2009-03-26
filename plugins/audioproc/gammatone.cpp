@@ -4,6 +4,7 @@
 #include "ta_math.h"
 
 #include <math.h>
+#include <float.h>
 
 //////////////////////////////////
 //  GammatoneChan		//
@@ -185,7 +186,7 @@ void GammatoneBlock::UpdateAfterEdit_impl() {
     out_vals = (OutVals)(out_vals | OV_ENV);
   // calc chans for legacy projects
   if ((chan_spacing == CS_LogLinear) && (chans_per_oct < 0)) {
-    chans_per_oct = (n_chans - 1)/(log(cf_hi/cf_lo)/log(2));
+    chans_per_oct = (n_chans - 1)/(log(cf_hi/cf_lo)/log(2.0f));
   }
   
   // note: because of the codes used, there is always at least one val
@@ -245,11 +246,11 @@ void GammatoneBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   switch (chan_spacing) {
   case CS_MooreGlassberg: {
     // calc equivalent cpo in case user switches mode
-    chans_per_oct = (n_chans - 1)/(log(cf_hi/cf_lo)/log(2));
+    chans_per_oct = (n_chans - 1)/(log(cf_hi/cf_lo)/log(2.0f));
   } break;
   case CS_LogLinear: {
     // calc equivalent cf_hi in case user switches mode
-    cf_hi = exp((log(2)*(n_chans-1) / chans_per_oct) + log(cf_lo));
+    cf_hi = exp((log(2.0f)*(n_chans-1) / chans_per_oct) + log(cf_lo));
   } break; 
   default: break;// compiler food -- handle all cases above
   }
@@ -280,7 +281,7 @@ void GammatoneBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
         if (i == 0)
           cf = cf_lo;
         else 
-          cf = exp((log(2)*(i) / chans_per_oct) + log(cf_lo));
+          cf = exp((log(2.0f)*(i) / chans_per_oct) + log(cf_lo));
       } break; 
       default: break;// compiler food -- handle all cases above
       }

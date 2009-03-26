@@ -33,6 +33,10 @@ Release Steps
 
 * make the Release build, and make sure it works
 
+* Build the Release and Debug versions of any adjunct plugins (note: only need
+  to do 'nmake', no need to do 'install'):
+  * audioproc
+
 * the following need to be checked/updated in the setup_bin project -- open the 
   individual view panels, such as File System to add/change files -- note that you
   can look for new guys by sorting by date desc and comparing to last release date
@@ -56,15 +60,12 @@ Release Steps
     file that just replicates the stuff in the .msi, so if that is there
     then delete it before making the zip
 
-* Build the Release and Debug versions of any adjunct plugins:
-  * audioproc
-
 * Make a zip
 
   * use something like WinZip to make a .zip file of setup_bin\Release --
     don't make a folder, just put the files into a the root of a zip
   * rename the zip file like this (ex. for 4.0.9):
-    emergent-4.0.9-win32.zip (or "64" for 64 bit)
+    emergent-4.0.9-x86.zip (or "x64" for 64 bit)
   * make a self-extracting archive from that zip file -- it will have a .exe suffix --
     for the default extract folder, enter 'setup' so the files unpack to their own
     folder (so they are not mixed in with any other files anywhere)
