@@ -270,7 +270,8 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   }
   else if(learn_rule == CTLEABRA_XCAL_C) {
     xcalm.do_init_sravg = false;	// never init
-    xcalm.do_comp_sravg = (xcal.lrn_var != XCalLearnSpec::XCAL_SEP);
+    xcalm.do_comp_sravg = false; // (xcal.lrn_var != XCalLearnSpec::XCAL_SEP);
+    // always using sep in effect -- SR requires some kind of Ca trace and basically Urakubo
   }
 }
 

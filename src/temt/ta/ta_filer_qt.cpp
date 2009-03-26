@@ -95,10 +95,15 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   String eff_dir = m_dir;
   QStringList hist_paths;
   if (tabMisc::root) {
-    tabMisc::root->recent_paths.ToQStringList(hist_paths);
+    //    tabMisc::root->recent_paths.ToQStringList(hist_paths);
+    // note: filer seems to use reverse ordering: top in menu is last on this list:
+    String_Array& rpth = tabMisc::root->recent_paths;
+    for (int i = rpth.size-1; i >= 0; i--) {
+      hist_paths.append(rpth.FastEl(i).toQString());
+    }
     // if no path specified, start at most recent, and if none, we'll just use none
     if ((eff_dir.empty() || eff_dir == "."))
-      eff_dir = tabMisc::root->recent_paths.SafeEl(0);
+      eff_dir = rpth.SafeEl(0);
   }
   // if still none, use user's home
   if ((eff_dir.empty() || eff_dir == "."))

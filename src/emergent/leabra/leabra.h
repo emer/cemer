@@ -262,8 +262,8 @@ class LEABRA_API XCalContSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra eXtended Contrastive Attractor Learning (XCAL) fully continuous time specs (CTLEABRA_XCAL_C)
 INHERITED(taOBase)
 public:
-  float		m_dt;		// #DEF_0.1 time (only for XCAL_C) constant for continuous updating the medium time-scale sravg_m value
   float		s_dt;		// #DEF_0.2 time (only for XCAL_C) constant for continuously updating the short time-scale sravg_s value
+  float		m_dt;		// #DEF_0.1 time (only for XCAL_C) constant for continuous updating the medium time-scale sravg_m value
   // todo: need some params like this for continuous mode -- currently still use trial-wise hooks
 //   float		lrn_thr;	// threshold on sravg_m value to initiate learning, in continous mode
 //   int		lrn_delay;	// delay after lrn_thr threshold has been crossed after which learning occurs
@@ -486,12 +486,10 @@ public:
 				float su_act_p, float su_act_m);
   // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- CHL trial-wise version (requires normalization factors) -- uses synapse sravg terms
 
-  inline void 	C_Compute_dWt_CtLeabraXCAL_C_sr(LeabraCon* cn, float ru_thr);
-  // #CAT_Learning compute eXtended Contrastive Attractor Learning (XCAL) -- continuous version (requires normalization factors) -- todo: experimental and needs a lot of work
   inline void 	C_Compute_dWt_CtLeabraXCAL_C_sep(LeabraCon* cn,
 						 LeabraCon* rbias, LeabraCon* sbias,
 						 float ru_thr);
-  // #CAT_Learning compute eXtended Contrastive Attractor Learning (XCAL) -- continuous version (requires normalization factors) -- todo: experimental and needs a lot of work
+  // #CAT_Learning compute eXtended Contrastive Attractor Learning (XCAL) -- continuous version with separate post and pre factors (SR synapse one requires full learning algo practically)
 
   inline virtual void 	Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru);
   // #CAT_Learning CtLeabraXCAL weight changes
@@ -3181,14 +3179,6 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
 
 /////////////	XCAL_C
 
-inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_C_sr(LeabraCon* cn, float ru_thr) {
-  float srs = cn->sravg_s;
-  float srm = cn->sravg_m;
-  float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-  cn->dwt += cur_lrate * (xcal.svm_mix * xcal.dWtFun(sm_mix, srm) + 
-			  xcal.mvl_mix * xcal.dWtFun(sm_mix, ru_thr));
-}
-
 inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_C_sep(LeabraCon* cn,
 					   LeabraCon* rbias, LeabraCon* sbias, float ru_thr) {
   float srs = rbias->sravg_s * sbias->sravg_s;
@@ -3206,18 +3196,10 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_C(LeabraRecvCons* cg, Leabra
   ru_thr *= xcal.l_gain;
   LeabraCon* rbias = (LeabraCon*)ru->bias.Cn(0);
 
-  if(xcal.lrn_var == XCalLearnSpec::XCAL_SEP) {
-    for(int i=0; i<cg->cons.size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      C_Compute_dWt_CtLeabraXCAL_C_sep((LeabraCon*)cg->Cn(i), rbias,
-					  (LeabraCon*)su->bias.Cn(0), ru_thr);
-    }
-  }
-  else {			// otherwise do SR
-    for(int i=0; i<cg->cons.size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      C_Compute_dWt_CtLeabraXCAL_C_sr((LeabraCon*)cg->Cn(i), ru_thr);
-    }
+  for(int i=0; i<cg->cons.size; i++) {
+    LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+    C_Compute_dWt_CtLeabraXCAL_C_sep((LeabraCon*)cg->Cn(i), rbias,
+				     (LeabraCon*)su->bias.Cn(0), ru_thr);
   }
 }
 
