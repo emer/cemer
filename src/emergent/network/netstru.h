@@ -1564,7 +1564,9 @@ public:
   virtual void	DeIconify();
   // #MENU #DYN1 #CAT_Display #MENU_CONTEXT de-iconify this layer in the network display
   inline void	Lesion() 	{ SetLayerFlag(LESIONED); }
-  // #MENU #DYN1 #CAT_Structure #MENU_CONTEXT set the lesion flag on layer
+  // #MENU #DYN1 #CAT_Structure #MENU_CONTEXT set the lesion flag on layer -- removes it from all processing operations
+  inline void	UnLesion() 	{ ClearLayerFlag(LESIONED); }
+  // #MENU #DYN1 #CAT_Structure #MENU_CONTEXT un-set the lesion flag on layer -- restores it to engage in normal processing
 
   virtual bool	Iconified() const 	{ return HasLayerFlag(ICONIFIED); }
   // convenience function for checking iconified flag

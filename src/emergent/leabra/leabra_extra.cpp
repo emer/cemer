@@ -2446,6 +2446,61 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
 //		Wizard		//
 //////////////////////////////////
 
+bool LeabraWizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
+  if(TestError(!data_table || !net, "UpdateInputDataFmNet",
+	       "must specify both a network and a data table")) return false;
+  data_table->StructUpdate(true);
+  taLeafItr li;
+  LeabraLayer* lay;
+  FOR_ITR_EL(LeabraLayer, lay, net->layers., li) {
+    if(lay->layer_type == Layer::HIDDEN) continue;
+    int lay_idx = 0;
+
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+    if(ls->InheritsFrom(&TA_ScalarValLayerSpec)) {
+      if(lay->unit_groups) {
+	data_table->FindMakeColName
+	  (lay->name, lay_idx, DataTable::VT_FLOAT, 4, 1, 1,
+	   MAX(lay->gp_geom.x,1), MAX(lay->gp_geom.y,1));
+      }
+      else {
+	data_table->FindMakeColName
+	  (lay->name, lay_idx, DataTable::VT_FLOAT, 2, 1, 1);
+      }
+    }
+    else if(ls->InheritsFrom(&TA_TwoDValLayerSpec)) {
+      TwoDValLayerSpec* tdls = (TwoDValLayerSpec*)ls;
+      int nx = tdls->twod.n_vals * 2;
+      if(lay->unit_groups) {
+	data_table->FindMakeColName
+	  (lay->name, lay_idx, DataTable::VT_FLOAT, 4, nx, 1,
+	   MAX(lay->gp_geom.x,1), MAX(lay->gp_geom.y,1));
+      }
+      else {
+	data_table->FindMakeColName
+	  (lay->name, lay_idx, DataTable::VT_FLOAT, 2, nx, 1);
+      }
+    }
+    else {
+      if(lay->unit_groups) {
+	data_table->FindMakeColName
+	  (lay->name, lay_idx, DataTable::VT_FLOAT, 4,
+	   MAX(lay->un_geom.x,1), MAX(lay->un_geom.y,1),
+	   MAX(lay->gp_geom.x,1), MAX(lay->gp_geom.y,1));
+      }
+      else {
+	data_table->FindMakeColName
+	  (lay->name, lay_idx, DataTable::VT_FLOAT, 2,
+	   MAX(lay->un_geom.x,1), MAX(lay->un_geom.y,1));
+      }
+    }
+  }
+  data_table->StructUpdate(false);
+//   if(taMisc::gui_active) {
+//     tabMisc::DelayedFunCall_gui(data_table, "BrowserSelectMe");
+//   }
+  return true;
+}
 
 ///////////////////////////////////////////////////////////////
 //			SRN Context

@@ -3494,6 +3494,7 @@ class LEABRA_API LeabraWizard : public Wizard {
 INHERITED(Wizard)
 public:
   override bool StdNetwork(TypeDef* net_type = &TA_LeabraNetwork, Network* net = NULL);
+  override bool	UpdateInputDataFmNet(Network* net, DataTable* data_table);
 
   virtual bool	StdLayerSpecs(LeabraNetwork* net);
   // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_BEFORE make standard layer specs for a basic Leabra network (KWTA_AVG 25% for hiddens, KWTA PAT_K for input/output)
