@@ -1158,9 +1158,9 @@ public:
   // #CAT_Structure update con specs for all connection groups for this projection in the network to use con_spec (only if changed from last update -- force = do regardless); returns true if changed and all cons can use given spec
 
   virtual bool 	SetPrjnSpec(ProjectionSpec* sp);
-  // #BUTTON #CAT_Structure #INIT_ARGVAL_ON_spec.spec set the projection spec (connectivity pattern) for this projection
+  // #BUTTON #DROP1 #DYN1 #CAT_Structure #INIT_ARGVAL_ON_spec.spec set the projection spec (connectivity pattern) for this projection
   virtual bool 	SetConSpec(ConSpec* sp);
-  // #BUTTON #CAT_Structure #INIT_ARGVAL_ON_con_spec.spec set the con spec for all connections in this prjn
+  // #BUTTON #DROP1 #DYN1 #CAT_Structure #INIT_ARGVAL_ON_con_spec.spec set the con spec for all connections in this prjn
   virtual bool	CheckConnect(bool quiet=false) { return spec->CheckConnect(this, quiet); }
   // #CAT_Structure check if projection is connected
   virtual void	FixPrjnIndexes();
@@ -1172,14 +1172,14 @@ public:
   // #CAT_Structure switch any projections using old_sp to using new_sp
 
   virtual bool 	SetConType(TypeDef* td);
-  // #BUTTON #CAT_Structure #TYPE_Connection #INIT_ARGVAL_ON_con_type set the connection type for all connections in this prjn
+  // #BUTTON #DYN1 #CAT_Structure #TYPE_Connection #INIT_ARGVAL_ON_con_type set the connection type for all connections in this prjn
   virtual bool 	SetRecvConsType(TypeDef* td);
-  // #BUTTON #CAT_Structure #TYPE_RecvCons #INIT_ARGVAL_ON_recvcons_type set the receiving connection group type for all connections in this prjn
+  // #BUTTON #DYN1 #CAT_Structure #TYPE_RecvCons #INIT_ARGVAL_ON_recvcons_type set the receiving connection group type for all connections in this prjn
   virtual bool 	SetSendConsType(TypeDef* td);
-  // #BUTTON #CAT_Structure #TYPE_SendCons #INIT_ARGVAL_ON_sendcons_type set the connection group type for all connections in this prjn
+  // #BUTTON #DYN1 #CAT_Structure #TYPE_SendCons #INIT_ARGVAL_ON_sendcons_type set the connection group type for all connections in this prjn
 
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
-  // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this projection
+  // #BUTTON #DYN1 #CAT_Statistic monitor (record in a datatable) the given variable on this projection
 
   virtual void	WeightsToTable(DataTable* dt, const String& col_nm = "");
   // #MENU #NULL_OK  #NULL_TEXT_0_NewTable #CAT_Structure copy entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and one column (name is layer name if not otherwise specified) that has a float matrix cell of the geometry of the sending layer
@@ -1427,6 +1427,7 @@ public:
 
   inline bool		lesioned() const { return HasLayerFlag(LESIONED); }
   // check if this layer is lesioned -- use in function calls
+  
 
   virtual void	Copy_Weights(const Layer* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other layer (incl wts assoc with unit bias member)
@@ -1559,9 +1560,12 @@ public:
   // #MENU #USE_RVAL #CAT_Structure remove units with prob p_lesion (permute = fixed no. lesioned)
 
   virtual void	Iconify();
-  // #MENU #CAT_Display #MENU_CONTEXT iconify this layer in the network display
+  // #MENU #DYN1 #CAT_Display #MENU_CONTEXT iconify this layer in the network display
   virtual void	DeIconify();
-  // #MENU #CAT_Display #MENU_CONTEXT de-iconify this layer in the network display
+  // #MENU #DYN1 #CAT_Display #MENU_CONTEXT de-iconify this layer in the network display
+  inline void	Lesion() 	{ SetLayerFlag(LESIONED); }
+  // #MENU #DYN1 #CAT_Structure #MENU_CONTEXT set the lesion flag on layer
+
   virtual bool	Iconified() const 	{ return HasLayerFlag(ICONIFIED); }
   // convenience function for checking iconified flag
 
@@ -1576,18 +1580,18 @@ public:
   // #CAT_Structure update connection specs for all projections in the layer (only if changed from last update -- force = do regardless)
 
   virtual bool	SetLayerSpec(LayerSpec* layspec);
-  // #BUTTON #DROP1 #CAT_Structure #INIT_ARGVAL_ON_spec.spec set the layer specification
+  // #BUTTON #DROP1 #DYN1 #CAT_Structure #INIT_ARGVAL_ON_spec.spec set the layer specification
   virtual LayerSpec* GetLayerSpec()		{ return (LayerSpec*)NULL; }
   // #CAT_Structure get the layer spec for this layer (if used)
   virtual bool	SetUnitSpec(UnitSpec* unitspec);
-  // #BUTTON #DROP1 #CAT_Structure #INIT_ARGVAL_ON_unit_spec.spec set unit spec for all units in layer
+  // #BUTTON #DROP1 #DYN1 #CAT_Structure #INIT_ARGVAL_ON_unit_spec.spec set unit spec for all units in layer
   virtual void	SetUnitType(TypeDef* td);
-  // #BUTTON #TYPE_Unit #CAT_Structure #INIT_ARGVAL_ON_units.el_typ set unit type for all units in layer (created by Build)
+  // #BUTTON #DYN1 #TYPE_Unit #CAT_Structure #INIT_ARGVAL_ON_units.el_typ set unit type for all units in layer (created by Build)
   virtual void	FixPrjnIndexes();
   // #CAT_Structure fix the projection indicies of the connection groups (other_idx)
 
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
-  // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this layer (can be a variable on the units or connections as well)
+  // #BUTTON #DYN1 #CAT_Statistic monitor (record in a datatable) the given variable on this layer (can be a variable on the units or connections as well)
   virtual bool	Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap=true);
   // #BUTTON #CAT_Statistic take a snapshot of given variable: assign snap value on unit to given variable value, optionally using simple math operation on that value.  if arg_is_snap is true, then the 'arg' argument to the math operation is the current value of the snap variable.  for example, to compute intersection of variable with snap value, use MIN and arg_is_snap.  
 

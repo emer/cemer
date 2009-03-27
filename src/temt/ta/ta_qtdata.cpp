@@ -3126,8 +3126,8 @@ void taiItemChooser::ApplyFiltering() {
     ++it;
   }
   taMisc::DoneBusy();
-  if(n_items == 1 && first_item)
-    items->setCurrentItem(first_item); // auto-select only item
+  if(first_item)
+    items->setCurrentItem(first_item); // auto-select first item always
   --m_changing;
 }
 
