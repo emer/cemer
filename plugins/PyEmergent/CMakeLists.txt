@@ -157,7 +157,9 @@ set(plugin_FILES
 find_library(PYTHON_LIBRARY python2.5)
 message(STATUS PYTHON_LIBRARY: ${PYTHON_LIBRARY})
 set(EMERGENT_PLUGIN_EXTRA_LIBRARIES ${PYTHON_LIBRARY})
-set(CMAKE_SHARED_LINKER_FLAGS "-Xlinker -export-dynamic -Wl,-O1 -Wl,-Bsymbolic-functions")
+
+# OSX - works!
+#set(CMAKE_SHARED_LINKER_FLAGS "-u _PyMac_Error -framework Python")
 
 # NOTE to plugin programmer: you should be done now!  Everything below
 # is standard boilerplate code that you should not need to edit.

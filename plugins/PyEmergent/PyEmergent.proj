@@ -283,7 +283,7 @@ desc=;
 ProgVar @[1] {
 name="status";
 var_type=T_Int;
-int_val=1;
+int_val=0;
 objs_ptr=0;
 flags=CTRL_PANEL|NULL_CHECK|USED;
 reference=0;
@@ -292,7 +292,7 @@ desc=;
 ProgVar @[2] {
 name="module_name";
 var_type=T_String;
-string_val="\"time\"";
+string_val="PyEmergent";
 objs_ptr=0;
 flags=CTRL_PANEL|NULL_CHECK|USED;
 reference=0;
@@ -301,7 +301,7 @@ desc=;
 ProgVar @[3] {
 name="function_name";
 var_type=T_String;
-string_val="\"time\"";
+string_val="HelloPython";
 objs_ptr=0;
 flags=CTRL_PANEL|NULL_CHECK|USED;
 reference=0;
