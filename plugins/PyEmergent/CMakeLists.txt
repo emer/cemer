@@ -154,9 +154,10 @@ set(plugin_FILES
 # else see {root}/CMakeModules/FindGSL.cmake for example
 
 # the following lines, commented out, are examples from audioproc plugin
-find_library(PYTHON_LIBRARY python)
+find_library(PYTHON_LIBRARY python2.5)
 message(STATUS PYTHON_LIBRARY: ${PYTHON_LIBRARY})
-set(EMERGENT_PLUGIN_EXTRA_LIBRARIES python)
+set(EMERGENT_PLUGIN_EXTRA_LIBRARIES ${PYTHON_LIBRARY})
+set(CMAKE_SHARED_LINKER_FLAGS "-Xlinker -export-dynamic -Wl,-O1 -Wl,-Bsymbolic-functions")
 
 # NOTE to plugin programmer: you should be done now!  Everything below
 # is standard boilerplate code that you should not need to edit.

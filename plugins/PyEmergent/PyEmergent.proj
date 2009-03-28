@@ -57,15 +57,24 @@ UserDataItem @[0] { };
 Program_Group @.programs = [1] {
 Program @[0] { 
 ProgObjList @.objs = [1] {
-PyemergentPluginExampleClass @[0] { };
+PyEmergent @[0] { };
 };
 
-ProgVar_List @.vars = [1] {
+ProgVar_List @.vars = [4] {
 ProgVar @[0] { };
+ProgVar @[1] { };
+ProgVar @[2] { };
+ProgVar @[3] { };
 };
 
-ProgEl_List @.prog_code = [1] {
-MethodCall @[0] { };
+ProgEl_List @.prog_code = [2] {
+MethodCall @[0] { 
+ProgArg_List @.meth_args = [2] {
+ProgArg @[0] { };
+ProgArg @[1] { };
+};
+};
+PrintExpr @[1] { };
 };
 };
 };
@@ -239,18 +248,12 @@ desc=;
 flags=;
 objs {
 name=;
-el_typ=PyemergentPluginExampleClass;
+el_typ=PyEmergent;
 el_def=0;
-PyemergentPluginExampleClass @[0] {
-name="PyemergentPluginExampleClass_0";
-example_member1=;
-example_member2 0 1;
-a=2;
-b=4;
-argc=-1;
+PyEmergent @[0] {
+name="PyEmergent_0";
 module_name=;
 function_name=;
-i=99019312;
 };
 };
 types {
@@ -268,12 +271,39 @@ name=;
 el_typ=ProgVar;
 el_def=0;
 ProgVar @[0] {
-name="PyemergentPluginExampleClass_0";
+name="PyEmergent_0";
 var_type=T_Object;
-object_type=PyemergentPluginExampleClass;
+object_type=PyEmergent;
 object_val=.projects[0].programs[0].objs[0]$0$;
 objs_ptr=1;
-flags=NULL_CHECK;
+flags=NULL_CHECK|USED;
+reference=0;
+desc=;
+};
+ProgVar @[1] {
+name="status";
+var_type=T_Int;
+int_val=1;
+objs_ptr=0;
+flags=CTRL_PANEL|NULL_CHECK|USED;
+reference=0;
+desc=;
+};
+ProgVar @[2] {
+name="module_name";
+var_type=T_String;
+string_val="\"time\"";
+objs_ptr=0;
+flags=CTRL_PANEL|NULL_CHECK|USED;
+reference=0;
+desc=;
+};
+ProgVar @[3] {
+name="function_name";
+var_type=T_String;
+string_val="\"time\"";
+objs_ptr=0;
+flags=CTRL_PANEL|NULL_CHECK|USED;
 reference=0;
 desc=;
 };
@@ -300,13 +330,40 @@ el_def=0;
 MethodCall @[0] {
 desc=;
 flags=;
-result_var=NULL;
-obj=.projects[0].programs[0].vars[0]$1$;
-method=PyemergentPluginExampleClass::Hello;
+result_var=.projects[0].programs[0].vars[1]$1$;
+obj=.projects[0].programs[0].vars[0]$2$;
+method=PyEmergent::CallPythonFunNoArgs;
 meth_args {
 name=;
 el_typ=ProgArg;
 el_def=0;
+ProgArg @[0] {
+arg_type=taString;
+type="taString";
+name="module_name";
+required=0;
+def_val="\"\"";
+expr {
+expr="module_name";
+};
+};
+ProgArg @[1] {
+arg_type=taString;
+type="taString";
+name="function_name";
+required=0;
+def_val="\"\"";
+expr {
+expr="function_name";
+};
+};
+};
+};
+PrintExpr @[1] {
+desc=;
+flags=;
+expr {
+expr="status";
 };
 };
 };
@@ -317,7 +374,7 @@ name=;
 el_typ=TopLevelViewer;
 el_def=0;
 MainWindowViewer @[0] {
-m_data=.projects[0]$2$;
+m_data=.projects[0]$3$;
 name="Browser2";
 visible=1;
 m_is_root=0;
@@ -347,7 +404,7 @@ name="Tree";
 visible=1;
 root_typ=LeabraProject;
 root_md=NULL;
-m_root=$2$;
+m_root=$3$;
 };
 PanelViewer @[1] {
 m_data=NULL;
