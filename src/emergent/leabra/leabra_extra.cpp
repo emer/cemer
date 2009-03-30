@@ -2439,6 +2439,134 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
   }
 }
 
+////////////////////////////////////////////////
+//	Special VE stuff for robotic arm sims
+
+void VELambdaMuscle::Initialize() {
+  lambda_norm = 0.5f;
+  lambda = 5.0f;
+  moment_arm = .02f;
+  insert_point = .10f;
+  rest_len = 5.0f;
+
+  step_size = 0.005f;
+  vel_damp = 0.06f;
+  reflex_delay = .025f;
+  reflex_delay_idx = 5;
+  m_rec_grad = 0.112f;
+  m_mag = 2.1f;
+  ca_dt = 30.0f;
+  fv1 = 0.82f;
+  fv2 = 0.50f;
+  fv3 = 0.43f;
+  fv4 = 0.58f;
+  passive_k = 36.5f;
+
+  len= lambda;
+  dlen= 0.0f;
+  act = 0.0f;
+  m_act_force = 0.0f;
+  force = 0.0f;
+  torque = 0.0f;
+}
+
+void VELambdaMuscle::Init(float step_sz, float lo_stop, float hi_stop, 
+			  float rest_angle, float init_angle) {
+  step_size = step_size;
+  if(moment_arm > 0.0f) {
+    len_range.min = LenFmAngle(hi_stop, insert_point, moment_arm);
+    len_range.max = LenFmAngle(lo_stop, insert_point, moment_arm);
+  }
+  else {
+    len_range.min = LenFmAngle(lo_stop, insert_point, moment_arm);
+    len_range.max = LenFmAngle(hi_stop, insert_point, moment_arm);
+  }
+
+  rest_len = LenFmAngle(rest_angle, insert_point, moment_arm);
+  len = LenFmAngle(init_angle, insert_point, moment_arm);
+  lambda = rest_len;			// assume want to go to rest len!
+  lambda_norm = len_range.Normalize(lambda);
+
+  dlen = 0.0f;
+  act = 0.0f;
+  m_act_force = 0.0f;
+  m_force = 0.0f;
+  force = 0.0f;
+  torque = 0.0f;
+
+  len_buf.Reset();
+  dlen_buf.Reset();
+
+  UpdateAfterEdit();
+}
+
+void VELambdaMuscle::Compute_Force(float cur_angle, float cur_ang_vel) {
+  lambda = len_range.Project(lambda_norm); // project norm force value into real coords
+
+  float cur_len = LenFmAngle(cur_angle, insert_point, moment_arm);
+  dlen = (cur_len - len) / step_size;
+  len = cur_len;
+
+  len_buf.CircAddLimit(len, reflex_delay_idx);
+  dlen_buf.CircAddLimit(dlen, reflex_delay_idx);
+
+  if(len_buf.length < reflex_delay_idx) { // just starting out -- no history -- no activation
+    act = 0.0f;
+  }
+  else {
+    float del_len = len_buf.CircSafeEl(reflex_delay-1);
+    float del_dlen = dlen_buf.CircSafeEl(reflex_delay-1);
+    act = del_len - lambda + vel_damp * del_dlen;
+    if(act < 0.0f) act = 0.0f;
+  }
+  m_act_force = m_mag * (expf(m_rec_grad * act) - 1.0f);
+  m_force += ca_dt_cmp * (m_act_force - m_force); // first order low-pass filter, not 2nd order 
+  force = m_force * (fv1 + fv2 * atanf(fv3 + fv4 * dlen)) + passive_k * (len - rest_len);
+  torque = force * moment_arm;	// assume constant moment arm: could compute based on geom.
+
+  if(muscle_obj) {
+    muscle_obj->length = len;
+    muscle_obj->SetValsToODE();
+  }
+}
+
+void VELambdaMuscle::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(step_size > 0.0f) {
+    reflex_delay_idx = (int)(0.5f + (reflex_delay / step_size));
+    if(ca_dt > 0.0f)
+      ca_dt_cmp = step_size / ca_dt;
+  }
+}
+
+///////////////////////////////
+//	VELambdaArmJoint
+
+void VELambdaArmJoint::Initialize() {
+  flexor.moment_arm = -flexor.moment_arm;
+}
+
+void VELambdaArmJoint::SetValsToODE() {
+  inherited::SetValsToODE();
+
+  VEWorld* wld = GetWorld();
+  float step_sz = wld->stepsize;
+
+  extensor.Init(step_sz, stops.lo, stops.hi, stops.def, pos);
+  flexor.Init(step_sz, stops.lo, stops.hi, stops.def, pos);
+}
+
+void VELambdaArmJoint::GetValsFmODE(bool updt_disp) {
+  inherited::GetValsFmODE(updt_disp);
+
+  extensor.Compute_Force(pos, vel);
+  flexor.Compute_Force(pos, vel);
+
+  // apply force for next time around
+  ApplyForce(extensor.torque + flexor.torque); // simple sum of torques..
+  // todo: could do something with stiffness in terms of co-contraction..
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

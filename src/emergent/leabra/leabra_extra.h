@@ -21,6 +21,7 @@
 #include "leabra.h"
 #include "netstru_extra.h"
 #include "ta_imgproc.h"
+#include "ta_virtenv.h"
 
 // extra specialized classes for variations on the Leabra algorithm
 
@@ -1590,6 +1591,101 @@ private:
   void	Initialize();
   void 	Destroy()		{ };
 };
+
+
+////////////////////////////////////////////////
+//	Special VE stuff for robotic arm sims
+
+class LEABRA_API VELambdaMuscle : public taOBase {
+  // a Lambda-model (Gribble et al, 1998) muscle, used in context of a VE arm joint
+INHERITED(taOBase)
+public:
+
+  //////////////////////////////
+  //	Control signals
+
+  float		lambda_norm;	// normalized (0-1) desired length of the muscle: this is the only control signal
+  float		lambda;		// #READ_ONLY #SHOW desired length of the muscle in muscle-length units
+
+  //////////////////////////////
+  //	Parameters
+
+  // statics
+  float		moment_arm;		// (m, .02 for elbow, .04 for shoulder) moment arm length for applying force (assumed fixed) -- positive for flexors and negative for extensors (or vice-versa!)
+  float		insert_point;		// (m, .10 for shoulder, .30 for elbow) length from joint to place where muscle effectively attaches to arm -- used for computing angles
+  MinMaxRange	len_range;		// #READ_ONLY #SHOW effective length range of the muscle, in muscle coordinates (computed based on lo-hi joint stops and insertion point, moment arm)
+  float		rest_len;		// #READ_ONLY #SHOW resting length, computed during init from resting angle
+
+  // dynamics
+  float		step_size;		// #READ_ONLY (s) set in init -- world step size in seconds
+  float		vel_damp;		// #DEF_0.06 (mu, s) velocity damping
+  float		reflex_delay;		// #DEF_0.025 (d, s) reflex delay -- how slowly reflex control reacts to changes in muscle length and velocity
+  int		reflex_delay_idx;	// #READ_ONLY (d, steps) reflex delay, computed in units of step size
+  float		m_rec_grad;		// #DEF_0.112 (c, mm^-1) muscle MN recruitment gradient
+  float		m_mag;			// (rho, m^2) muscle force-generating magnitude (multiplier), related to cross-section of muscle size: biceps short head 2.1; biceps long head 11; deltoid 14.9; pectoralis 14.9; triceps lateral head 12.1; triceps long head 6.7;
+  float		ca_dt;			// #DEF_30 (tau, steps) calcium kinetics time constant -- note only using a first-order exponential time decay filter -- this value is in time steps, not time per se
+  float		ca_dt_cmp;		// #READ_ONLY (tau, 1/steps) calcium kinetics time constant actually used in cmputations -- note only using a first-order exponential time decay filter -- this value is in time steps, not time per se
+  float		fv1;			// #DEF_0.82 (f1, s/m) muscle force velocity dependence factor: constant offset
+  float		fv2;			// #DEF_0.5 (f2, s/m) muscle force velocity dependence factor: atan multiplier
+  float		fv3;			// #DEF_0.43 (f3, s/m) muscle force velocity dependence factor: atan constant offset
+  float		fv4;			// #DEF_0.58 (f4, s/m) muscle force velocity dependence factor: velocity multiplier
+  float		passive_k;		// (k, N/m) passive stiffness: biceps short head 36.5; biceps long head 190.9; deltoid 258.5; pectoralis 258.5; triceps lateral head 209.9; triceps long head 116.3;
+
+  //////////////////////////////
+  //	State values
+  float		len;		// #READ_ONLY #SHOW (l, cm) current muscle length
+  float		dlen;		// #READ_ONLY #SHOW (l-dot, cm/s) current muscle length velocity: rate of change of length
+  float		act;		// #READ_ONLY #SHOW (A, N?) current muscle activation value
+  float		m_act_force;	// #READ_ONLY #SHOW (~M, N) current muscle force from activation
+  float		m_force;	// #READ_ONLY #SHOW (M, N) current muscle force after low-pass filtering by ca_dt
+  float		force;		// #READ_ONLY #SHOW (N) final force value 
+  float		torque;		// #READ_ONLY #SHOW (N) final torque (force * moment_arm)
+
+  float_CircBuffer len_buf;	// #READ_ONLY #SHOW current muscle length buffer (for delays)
+  float_CircBuffer dlen_buf;	// #READ_ONLY #SHOW current muscle length velocity buffer (for delays)
+
+  VEBodyRef	muscle_obj;	// #SCOPE_VEObject if non-null, update this object with the new length information as the muscle changes (must be cylinder or capsule obj shape)
+
+  static inline float	LenFmAngle(float angle, float ins_pt, float mom_arm) {
+    return sqrtf(ins_pt * ins_pt + mom_arm * mom_arm -
+		 2.0f * ins_pt * mom_arm * sinf(angle));
+  }
+  // compute muscle length from joint angle, given insertion point and moment arm (two sides of a right triangle, in idealized form) where joint angle is 0 at this right angle point
+
+  virtual void	Init(float step_sz, float lo_stop, float hi_stop,
+		     float rest_angle, float init_angle);
+  // initialize all parameters back to initial values, compute params based on joint lo-hi stop angles, and set arm at initial angle (clear buffers, etc)
+  virtual void	Compute_Force(float cur_angle, float cur_ang_vel);
+  // compute force based on current parameters with given angle and angular velocity (given by ODE presumably)
+
+
+  TA_SIMPLE_BASEFUNS(VELambdaMuscle);
+protected:
+  void 	UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+// note on lengths and masses for typical arm: upper = .34m, 2.1kg; lower = .46m, 1.65kg
+
+class LEABRA_API VELambdaArmJoint : public VEJoint {
+  // a Lambda-model (Gribble et al, 1998) arm joint -- updates forces at every time step, in GetVAlsFromODE, applies them using SetForce
+INHERITED(VEJoint)
+public:
+  VELambdaMuscle	flexor; // #SHOW_TREE flexor muscle
+  VELambdaMuscle	extensor; // #SHOW_TREE extensor muscle
+
+  override void	SetValsToODE();
+  override void	GetValsFmODE(bool updt_disp = false);
+
+  TA_SIMPLE_BASEFUNS(VELambdaArmJoint);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 
 #endif // leabra_extra_h
 
