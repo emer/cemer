@@ -87,15 +87,22 @@ DataTableModel::DataTableModel(DataTable* dt_)
 }
 
 DataTableModel::~DataTableModel() {
-  m_dt = NULL;
+  // note: following shouldn't really execute since table manages our lifetime
+  if (m_dt) {
+    m_dt->RemoveDataClient(this);
+    m_dt = NULL;
+  }
 }
 
 int DataTableModel::columnCount(const QModelIndex& parent) const {
   return (m_dt) ? m_dt->cols() : 0;
 }
 
+void DataTableModel::DataLinkDestroying(taDataLink* dl) {
+  m_dt = NULL;
+}
 
-void DataTableModel::DataDataChanged(int dcr,
+void DataTableModel::DataDataChanged(taDataLink* dl, int dcr,
   void* op1, void* op2)
 { // called from DataTable::DataChanged
   if (notifying) return;

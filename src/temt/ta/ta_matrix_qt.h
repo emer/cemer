@@ -27,7 +27,8 @@
 class MatrixTableModel; //
 
 
-class TA_API MatrixTableModel: public QAbstractTableModel
+class TA_API MatrixTableModel: public QAbstractTableModel,
+  public IDataLinkClient
 {
   // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for matrices; we extend it to support N-d, but only 2-d cell display; if the model has a single gui client, then set it, to avoid doing refreshes when it isn't visible
 friend class taMatrix;
@@ -69,8 +70,12 @@ public: // required implementations
 signals:
   void			matDataChanged(int col_idx); // only emited during dataChanged if col_idx valid
   
-public: // pseudo-IDataLinkClient i/f
-  override void		DataDataChanged(int dcr, void* op1, void* op2); 
+public: // IDataLinkClient i/f
+  override void*	This() {return this;}
+  override TypeDef*	GetTypeDef() const {return &TA_MatrixTableModel;}
+//  override bool		ignoreDataChanged() const;
+  override void		DataLinkDestroying(taDataLink* dl);
+  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); 
   
 protected:
   taMatrix*		m_mat;

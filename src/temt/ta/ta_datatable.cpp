@@ -773,13 +773,6 @@ void DataTable::UpdateAfterEdit_impl() {
   CheckForCalcs();
 }
 
-void DataTable::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
-  if (table_model) {
-    table_model->DataDataChanged(dcr, op1, op2);
-  }
-}
-
 void DataTable::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   data.CheckConfig(quiet, rval);
@@ -1280,6 +1273,7 @@ int DataTable::FindMultiValCol(int st_row, const Variant& val1, DataCol* col1,
 DataTableModel* DataTable::GetTableModel() {
   if (!table_model && !isDestroying()) {
     table_model = new DataTableModel(this);
+    AddDataClient(table_model);
     //table_model->setPat4D(true); // always
   }
   return table_model;
@@ -2501,7 +2495,7 @@ int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str)
   int data_col = 0;		// data column (datacol index in data table)
   int c;
   while(true) {
-    String str;
+    STRING_BUF(str, 32); // provide a buff so numbers and short strings are efficient
     c = ReadTillDelim(strm, str, cdlm, quote_str);
     if(c == EOF) break;
     if(str == "_H:") {

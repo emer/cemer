@@ -42,7 +42,11 @@ MatrixTableModel::MatrixTableModel(taMatrix* mat_)
 }
 
 MatrixTableModel::~MatrixTableModel() {
-  m_mat = NULL;
+  // note: following shouldn't really execute since mat manages our lifetime
+  if (m_mat) {
+    m_mat->RemoveDataClient(this);
+    m_mat = NULL;
+  }
 }
 
 int MatrixTableModel::columnCount(const QModelIndex& parent) const {
@@ -78,9 +82,13 @@ Qt::CheckStateRole*/
   return QVariant();
 }
 
-void MatrixTableModel::DataDataChanged(int dcr,
+void MatrixTableModel::DataLinkDestroying(taDataLink* dl) {
+  m_mat = NULL;
+}
+
+void MatrixTableModel::DataDataChanged(taDataLink* dl, int dcr,
   void* op1, void* op2)
-{ // called from Matrix::DataChanged
+{
   if (notifying) return;
   if ((dcr <= DCR_ITEM_UPDATED_ND) || // data itself updated
     (dcr == DCR_STRUCT_UPDATE_END) ||  // for col insert/deletes

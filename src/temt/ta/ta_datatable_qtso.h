@@ -61,7 +61,8 @@ class T3GraphLine;
 class T3GraphViewNode;
 class taiListElsButton;
 
-class TA_API DataTableModel: public QAbstractTableModel
+class TA_API DataTableModel: public QAbstractTableModel,
+  public IDataLinkClient
 {
   // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
 INHERITED(QAbstractTableModel)
@@ -96,8 +97,12 @@ public: // required implementations
   bool 			setData(const QModelIndex& index, const QVariant& value, 
     int role = Qt::EditRole); // override, for editing
     
-public: // pseudo-IDataLinkClient i/f
-  override void		DataDataChanged(int dcr, void* op1, void* op2); 
+public: // IDataLinkClient i/f
+  override void*	This() {return this;}
+  override TypeDef*	GetTypeDef() const {return &TA_DataTableModel;}
+//  override bool		ignoreDataChanged() const;
+  override void		DataLinkDestroying(taDataLink* dl);
+  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); 
     
 protected:
   bool			ValidateIndex(const QModelIndex& index) const;
