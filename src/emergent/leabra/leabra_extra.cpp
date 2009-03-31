@@ -2557,6 +2557,11 @@ void VELambdaArmJoint::Initialize() {
   extensor.moment_arm = -extensor.moment_arm; // extensor is negative
   flexor.muscle_type = VELambdaMuscle::FLEXOR;
   extensor.muscle_type = VELambdaMuscle::EXTENSOR;
+
+  targ_norm_angle = 0.0f;
+  targ_angle = 0.0f;
+  cur_norm_angle = 0.0f;
+  co_contract_pct = 0.5f;
 }
 
 void VELambdaArmJoint::SetValsToODE() {
@@ -2568,6 +2573,10 @@ void VELambdaArmJoint::SetValsToODE() {
   float rest_norm_angle = stops.Normalize(stops.def); // def = rest
   float init_norm_angle = stops.Normalize(pos);	      // pos = cur position/angle
 
+  co_contract_pct = .5f;
+  targ_norm_angle = rest_norm_angle;
+  targ_angle = stops.def;
+
   extensor.Init(step_sz, rest_norm_angle, init_norm_angle);
   flexor.Init(step_sz, rest_norm_angle, init_norm_angle);
 }
@@ -2576,6 +2585,7 @@ void VELambdaArmJoint::GetValsFmODE(bool updt_disp) {
   inherited::GetValsFmODE(updt_disp);
 
   float norm_pos = stops.Normalize(pos);
+  cur_norm_angle = norm_pos;
 
   flexor.Compute_Force(norm_pos);
   extensor.Compute_Force(norm_pos);
@@ -2590,14 +2600,23 @@ void VELambdaArmJoint::GetValsFmODE(bool updt_disp) {
     ApplyMotor(0.0f, flexor.torque); // apply positive valued extensor torque to stop motor
 }
 
-void VELambdaArmJoint::SetTargAngle(float targ_angle, float co_contract_pct) {
+void VELambdaArmJoint::SetTargAngle(float trg_angle, float co_contract) {
+  co_contract_pct = co_contract;
   float norm_angle = stops.Normalize(targ_angle);
+
+  targ_norm_angle = norm_angle;
+  targ_angle = trg_angle;
 
   flexor.SetTargAngle(norm_angle, co_contract_pct);
   extensor.SetTargAngle(norm_angle, co_contract_pct);
 }
 
-void VELambdaArmJoint::SetTargNormAngle(float targ_norm_angle, float co_contract_pct) {
+void VELambdaArmJoint::SetTargNormAngle(float trg_norm_angle, float co_contract) {
+  co_contract_pct = co_contract;
+
+  targ_norm_angle = trg_norm_angle;
+  targ_angle = stops.Project(targ_norm_angle);
+
   flexor.SetTargAngle(targ_norm_angle, co_contract_pct);
   extensor.SetTargAngle(targ_norm_angle, co_contract_pct);
 }

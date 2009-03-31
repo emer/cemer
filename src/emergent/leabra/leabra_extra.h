@@ -1679,12 +1679,15 @@ INHERITED(VEJoint)
 public:
   VELambdaMuscle	flexor; // #SHOW_TREE flexor muscle
   VELambdaMuscle	extensor; // #SHOW_TREE extensor muscle
+  float			targ_norm_angle; // #READ_ONLY #SHOW current target normalized angle
+  float			targ_angle; // #READ_ONLY #SHOW current target raw angle
+  float			cur_norm_angle; // #READ_ONLY #SHOW current actual normalized angle (cur raw angle is pos)
+  float			co_contract_pct; // #READ_ONLY #SHOW current co-contraction pct
 
-
-  virtual void	SetTargAngle(float targ_angle, float co_contract_pct);
+  virtual void	SetTargAngle(float trg_angle, float co_contract);
   // #BUTTON #CAT_Force set target angle for the joint, which computes the lambdas (target lengths) for the individual muscles -- the co_contract_pct determines what percentage of co-contraction (stiffnes) to apply, where the lambdas are shorter than they should otherwise be by the given amount, such that both will pull from opposite directions to cause the muscle to stay put (at least around .2 is needed, with .5 being better, to prevent big oscillations)
 
-  virtual void	SetTargNormAngle(float targ_norm_angle, float co_contract_pct);
+  virtual void	SetTargNormAngle(float trg_norm_angle, float co_contract);
   // #BUTTON #CAT_Force set normalized target angle (0 = lo stop, 1 = hi stop) for the joint, which computes the lambdas (target lengths) for the individual muscles -- the co_contract_pct determines what percentage of co-contraction (stiffnes) to apply, where the lambdas are shorter than they should otherwise be by the given amount, such that both will pull from opposite directions to cause the muscle to stay put (at least around .2 is needed, with .5 being better, to prevent big oscillations)
 
   override void	SetValsToODE();
