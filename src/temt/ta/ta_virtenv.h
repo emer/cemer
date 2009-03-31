@@ -259,6 +259,7 @@ INHERITED(taGroup<VEBody>)
 public:
   virtual void	SetValsToODE();	// set the current values to ODE
   virtual void	GetValsFmODE(bool updt_disp = false);	// get the updated values from ODE after computing
+  virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
 
   TA_BASEFUNS_NOCOPY(VEBody_Group);
 private:
@@ -546,6 +547,7 @@ INHERITED(taGroup<VEJoint>)
 public:
   virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE
   virtual void	GetValsFmODE(bool updt_disp = false);	// #CAT_ODE get the updated values from ODE after computing
+  virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
 
   TA_BASEFUNS_NOCOPY(VEJoint_Group);
 private:
@@ -607,6 +609,7 @@ INHERITED(taGroup<VEObject>)
 public:
   virtual void	SetValsToODE();	// set the current values to ODE
   virtual void	GetValsFmODE(bool updt_disp = false);	// get the updated values from ODE after computing
+  virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
 
   TA_BASEFUNS_NOCOPY(VEObject_Group);
 private:
@@ -715,6 +718,7 @@ class TA_API VEStatic_Group : public taGroup<VEStatic> {
 INHERITED(taGroup<VEStatic>)
 public:
   virtual void	SetValsToODE();	// set the current values to ODE
+  virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
 
   TA_BASEFUNS_NOCOPY(VEStatic_Group);
 private:
@@ -794,7 +798,8 @@ class TA_API VESpace_Group : public taGroup<VESpace> {
   // ##CAT_VirtEnv a group of virtual environment objects
 INHERITED(taGroup<VESpace>)
 public:
-  virtual void	SetValsToODE();	// set the current values to ODE
+  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE
+  virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
 
   TA_BASEFUNS_NOCOPY(VESpace_Group);
 private:

@@ -323,6 +323,14 @@ void VEBody_Group::GetValsFmODE(bool updt_disp) {
   }
 }
 
+void VEBody_Group::DestroyODE() {
+  VEBody* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEBody, ob, this->, i) {
+    ob->DestroyODE();
+  }
+}
+
 /////////////////////////////////////////////
 //		Camera and Lights
 
@@ -902,6 +910,14 @@ void VEJoint_Group::GetValsFmODE(bool updt_disp) {
   }
 }
 
+void VEJoint_Group::DestroyODE() {
+  VEJoint* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEJoint, ob, this->, i) {
+    ob->DestroyODE();
+  }
+}
+
 ////////////////////////////////////////////////
 //	Object: collection of bodies and joints
 
@@ -999,6 +1015,16 @@ void VEObject_Group::GetValsFmODE(bool updt_disp) {
     ob->GetValsFmODE(updt_disp);
   }
 }
+
+void VEObject_Group::DestroyODE() {
+  VEObject* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEObject, ob, this->, i) {
+    ob->DestroyODE();
+  }
+}
+
+
 
 ////////////////////////////////////////////////
 //	Static bodies
@@ -1163,6 +1189,14 @@ void VEStatic_Group::SetValsToODE() {
   }
 }
 
+void VEStatic_Group::DestroyODE() {
+  VEStatic* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEStatic, ob, this->, i) {
+    ob->DestroyODE();
+  }
+}
+
 ////////////////////////////////////////////////
 //	Space: collection of static elements
 
@@ -1246,6 +1280,14 @@ void VESpace_Group::SetValsToODE() {
   }
 }
 
+void VESpace_Group::DestroyODE() {
+  VESpace* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VESpace, ob, this->, i) {
+    ob->DestroyODE();
+  }
+}
+
 
 ///////////////////////////////////////////////////////////////
 //	World!
@@ -1320,6 +1362,9 @@ bool VEWorld::CreateODE() {
 }
 
 void VEWorld::DestroyODE() {
+  objects.DestroyODE();
+  spaces.DestroyODE();
+
   if(cgp_id) dJointGroupDestroy((dJointGroupID)cgp_id);
   cgp_id = NULL;
   if(space_id) dSpaceDestroy((dSpaceID)space_id);
