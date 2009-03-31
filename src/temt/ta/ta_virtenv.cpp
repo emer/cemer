@@ -202,6 +202,7 @@ void VEBody::DestroyODE() {
 
 void VEBody::SetValsToODE() {
   if(HasBodyFlag(VEBody::OFF)) {
+    DestroyODE();
     return;
   }
   if(!body_id || !geom_id || cur_shape != shape) CreateODE();
@@ -210,15 +211,29 @@ void VEBody::SetValsToODE() {
   if(TestError(!wid, "SetValsToODE", "no valid world id -- cannot create stuff!"))
     return;
 
-  cur_pos = init_pos;
-  cur_rot = init_rot;
+  SetValsToODE_InitPos();
+  SetValsToODE_Rotation();
+  SetValsToODE_Velocity();
+  SetValsToODE_Mass();
+}
 
+void VEBody::SetValsToODE_InitPos() {
   dBodyID bid = (dBodyID)body_id;
+  cur_pos = init_pos;
   dBodySetPosition(bid, init_pos.x, init_pos.y, init_pos.z);
+}
+
+void VEBody::SetValsToODE_Rotation() {
+  dBodyID bid = (dBodyID)body_id;
+  cur_rot = init_rot;
 
   dMatrix3 R;
   dRFromAxisAndAngle(R, init_rot.x, init_rot.y, init_rot.z, init_rot.rot);
   dBodySetRotation(bid, R);
+}
+
+void VEBody::SetValsToODE_Velocity() {
+  dBodyID bid = (dBodyID)body_id;
 
   if(HasBodyFlag(FIXED)) {
     if(!fixed_joint_id) CreateODE();
@@ -231,11 +246,9 @@ void VEBody::SetValsToODE() {
     dBodySetLinearVel(bid, init_lin_vel.x, init_lin_vel.y, init_lin_vel.z);
     dBodySetAngularVel(bid, init_ang_vel.x, init_ang_vel.y, init_ang_vel.z);
   }
-
-  SetMassToODE();
 }
 
-void VEBody::SetMassToODE() {
+void VEBody::SetValsToODE_Mass() {
   if(HasBodyFlag(VEBody::OFF)) {
     return;
   }
@@ -452,9 +465,12 @@ bool VEJoint::CreateODE() {
   if(joint_id)
     DestroyODE();
 
-
   if(!body1 || !body1->body_id || body1->HasBodyFlag(VEBody::OFF)) return true;
   if(!body2 || !body2->body_id || body2->HasBodyFlag(VEBody::OFF)) return true;
+
+  if(HasJointFlag(OFF)) {
+    return true;
+  }
 
   switch(joint_type) {
   case BALL:
@@ -512,10 +528,25 @@ void VEJoint::SetValsToODE() {
 	       "SetValsToODE", "body2 of joint MUST be specified and already exist -- use fixed field on body to set fixed bodies!"))
     return;
 
-  if(body1->HasBodyFlag(VEBody::OFF) || body2->HasBodyFlag(VEBody::OFF)) return;
+  if(HasJointFlag(OFF) || body1->HasBodyFlag(VEBody::OFF) || body2->HasBodyFlag(VEBody::OFF)) {
+    DestroyODE();
+    return;
+  }
 
   dJointAttach(jid, (dBodyID)body1->body_id, (dBodyID)body2->body_id);
 
+  SetValsToODE_Anchor();
+  SetValsToODE_Stops();
+  SetValsToODE_Motor();
+  SetValsToODE_ODEParams();
+
+  if(HasJointFlag(FEEDBACK)) {
+    dJointSetFeedback(jid, &ode_fdbk_obj);
+  }
+}
+
+void VEJoint::SetValsToODE_Anchor() {
+  dJointID jid = (dJointID)joint_id;
   FloatTDCoord wanchor = body1->init_pos + anchor; // world anchor offset from body1 position
 
   switch(joint_type) {
@@ -549,6 +580,15 @@ void VEJoint::SetValsToODE() {
 //     break;
   case NO_JOINT:
     break;
+  }
+}
+
+void VEJoint::SetValsToODE_Stops() {
+  dJointID jid = (dJointID)joint_id;
+
+  if(joint_type == HINGE2) {
+    dJointSetHinge2Param(jid, dParamSuspensionERP, suspension.erp);
+    dJointSetHinge2Param(jid, dParamSuspensionCFM, suspension.cfm);
   }
 
   if(HasJointFlag(USE_STOPS)) {
@@ -587,11 +627,42 @@ void VEJoint::SetValsToODE() {
       break;
     }
   }
-
-  if(joint_type == HINGE2) {
-    dJointSetHinge2Param(jid, dParamSuspensionERP, suspension.erp);
-    dJointSetHinge2Param(jid, dParamSuspensionCFM, suspension.cfm);
+  else {
+    // dInfinity turns off..
+    switch(joint_type) {
+    case HINGE:
+      dJointSetHingeParam(jid, dParamLoStop, dInfinity);
+      dJointSetHingeParam(jid, dParamHiStop, dInfinity);
+      break;
+    case SLIDER:
+      dJointSetSliderParam(jid, dParamLoStop, dInfinity);
+      dJointSetSliderParam(jid, dParamHiStop, dInfinity);
+      break;
+    case UNIVERSAL:
+      dJointSetUniversalParam(jid, dParamLoStop, dInfinity);
+      dJointSetUniversalParam(jid, dParamHiStop, dInfinity);
+      dJointSetUniversalParam(jid, dParamLoStop2, dInfinity);
+      dJointSetUniversalParam(jid, dParamHiStop2, dInfinity);
+      break;
+    case HINGE2:
+      dJointSetHinge2Param(jid, dParamLoStop, dInfinity);
+      dJointSetHinge2Param(jid, dParamHiStop, dInfinity);
+      dJointSetHinge2Param(jid, dParamLoStop2, dInfinity);
+      dJointSetHinge2Param(jid, dParamHiStop2, dInfinity);
+      break;
+    case FIXED:
+      break;
+    case BALL:
+      break;
+    case NO_JOINT:
+      break;
+    }
   }
+}
+
+
+void VEJoint::SetValsToODE_Motor() {
+  dJointID jid = (dJointID)joint_id;
 
   if(HasJointFlag(USE_MOTOR)) {
     switch(joint_type) {
@@ -623,40 +694,21 @@ void VEJoint::SetValsToODE() {
       break;
     }
   }
-
-  if(HasJointFlag(USE_ODE_PARAMS)) {
+  else {			// setting to 0 turns off params
     switch(joint_type) {
     case HINGE:
-      dJointSetHingeParam(jid, dParamFudgeFactor, ode_params.fudge);
-      dJointSetHingeParam(jid, dParamCFM, ode_params.no_stop_cfm);
-      dJointSetHingeParam(jid, dParamStopERP, ode_params.erp);
-      dJointSetHingeParam(jid, dParamStopCFM, ode_params.cfm);
+      dJointSetHingeParam(jid, dParamFMax, 0.0f);
       break;
     case SLIDER:
-      dJointSetSliderParam(jid, dParamFudgeFactor, ode_params.fudge);
-      dJointSetSliderParam(jid, dParamCFM, ode_params.no_stop_cfm);
-      dJointSetSliderParam(jid, dParamStopERP, ode_params.erp);
-      dJointSetSliderParam(jid, dParamStopCFM, ode_params.cfm);
+      dJointSetSliderParam(jid, dParamFMax, 0.0f);
       break;
     case UNIVERSAL:
-      dJointSetUniversalParam(jid, dParamFudgeFactor, ode_params.fudge);
-      dJointSetUniversalParam(jid, dParamCFM, ode_params.no_stop_cfm);
-      dJointSetUniversalParam(jid, dParamStopERP, ode_params.erp);
-      dJointSetUniversalParam(jid, dParamStopCFM, ode_params.cfm);
-      dJointSetUniversalParam(jid, dParamFudgeFactor2, ode_params.fudge);
-      dJointSetUniversalParam(jid, dParamCFM2, ode_params.no_stop_cfm);
-      dJointSetUniversalParam(jid, dParamStopERP2, ode_params.erp);
-      dJointSetUniversalParam(jid, dParamStopCFM2, ode_params.cfm);
+      dJointSetUniversalParam(jid, dParamFMax, 0.0f);
+      dJointSetUniversalParam(jid, dParamFMax2, 0.0f);
       break;
     case HINGE2:
-      dJointSetHinge2Param(jid, dParamFudgeFactor, ode_params.fudge);
-      dJointSetHinge2Param(jid, dParamCFM, ode_params.no_stop_cfm);
-      dJointSetHinge2Param(jid, dParamStopERP, ode_params.erp);
-      dJointSetHinge2Param(jid, dParamStopCFM, ode_params.cfm);
-      dJointSetHinge2Param(jid, dParamFudgeFactor2, ode_params.fudge);
-      dJointSetHinge2Param(jid, dParamCFM2, ode_params.no_stop_cfm);
-      dJointSetHinge2Param(jid, dParamStopERP2, ode_params.erp);
-      dJointSetHinge2Param(jid, dParamStopCFM2, ode_params.cfm);
+      dJointSetHinge2Param(jid, dParamFMax, 0.0f);
+      dJointSetHinge2Param(jid, dParamFMax2, 0.0f);
       break;
     case FIXED:
       break;
@@ -666,9 +718,51 @@ void VEJoint::SetValsToODE() {
       break;
     }
   }
+}
 
-  if(HasJointFlag(FEEDBACK)) {
-    dJointSetFeedback(jid, &ode_fdbk_obj);
+void VEJoint::SetValsToODE_ODEParams() {
+  dJointID jid = (dJointID)joint_id;
+  if(!HasJointFlag(USE_ODE_PARAMS)) return;
+
+  switch(joint_type) {
+  case HINGE:
+    dJointSetHingeParam(jid, dParamFudgeFactor, ode_params.fudge);
+    dJointSetHingeParam(jid, dParamCFM, ode_params.no_stop_cfm);
+    dJointSetHingeParam(jid, dParamStopERP, ode_params.erp);
+    dJointSetHingeParam(jid, dParamStopCFM, ode_params.cfm);
+    break;
+  case SLIDER:
+    dJointSetSliderParam(jid, dParamFudgeFactor, ode_params.fudge);
+    dJointSetSliderParam(jid, dParamCFM, ode_params.no_stop_cfm);
+    dJointSetSliderParam(jid, dParamStopERP, ode_params.erp);
+    dJointSetSliderParam(jid, dParamStopCFM, ode_params.cfm);
+    break;
+  case UNIVERSAL:
+    dJointSetUniversalParam(jid, dParamFudgeFactor, ode_params.fudge);
+    dJointSetUniversalParam(jid, dParamCFM, ode_params.no_stop_cfm);
+    dJointSetUniversalParam(jid, dParamStopERP, ode_params.erp);
+    dJointSetUniversalParam(jid, dParamStopCFM, ode_params.cfm);
+    dJointSetUniversalParam(jid, dParamFudgeFactor2, ode_params.fudge);
+    dJointSetUniversalParam(jid, dParamCFM2, ode_params.no_stop_cfm);
+    dJointSetUniversalParam(jid, dParamStopERP2, ode_params.erp);
+    dJointSetUniversalParam(jid, dParamStopCFM2, ode_params.cfm);
+    break;
+  case HINGE2:
+    dJointSetHinge2Param(jid, dParamFudgeFactor, ode_params.fudge);
+    dJointSetHinge2Param(jid, dParamCFM, ode_params.no_stop_cfm);
+    dJointSetHinge2Param(jid, dParamStopERP, ode_params.erp);
+    dJointSetHinge2Param(jid, dParamStopCFM, ode_params.cfm);
+    dJointSetHinge2Param(jid, dParamFudgeFactor2, ode_params.fudge);
+    dJointSetHinge2Param(jid, dParamCFM2, ode_params.no_stop_cfm);
+    dJointSetHinge2Param(jid, dParamStopERP2, ode_params.erp);
+    dJointSetHinge2Param(jid, dParamStopCFM2, ode_params.cfm);
+    break;
+  case FIXED:
+    break;
+  case BALL:
+    break;
+  case NO_JOINT:
+    break;
   }
 }
 
@@ -774,6 +868,19 @@ void VEJoint::ApplyForce(float force1, float force2) {
   case NO_JOINT:
     break;
   }
+}
+
+void VEJoint::ApplyMotor(float vel1, float f_max1, float vel2, float f_max2) {
+  if(!joint_id) CreateODE();
+  if(!joint_id) return;
+  dJointID jid = (dJointID)joint_id;
+
+  motor.vel = vel1;
+  motor.f_max = f_max1;
+  motor2.vel = vel2;
+  motor2.f_max = f_max2;
+
+  SetValsToODE_Motor();
 }
 
 /////////////////////////////////////////////

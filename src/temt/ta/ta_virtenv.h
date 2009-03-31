@@ -230,9 +230,13 @@ public:
   virtual bool	CreateODE();	// #CAT_ODE create body in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy body in ode (if created)
   virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE (creates id's if not already done)
-  virtual void	SetMassToODE();	// #CAT_ODE set the mass of body in ODE
 
   virtual void	GetValsFmODE(bool updt_disp = false);	// #CAT_ODE get the updated values from ODE after computing
+
+  virtual void	SetValsToODE_InitPos();	// #CAT_ODE set initial position
+  virtual void	SetValsToODE_Rotation();// #CAT_ODE set rotation
+  virtual void	SetValsToODE_Velocity();// #CAT_ODE set velocity
+  virtual void	SetValsToODE_Mass();	// #CAT_ODE set the mass of body in ODE
 
   SIMPLE_COPY(VEBody);
   SIMPLE_INITLINKS(VEBody);
@@ -428,10 +432,11 @@ INHERITED(taNBase)
 public:	
   enum JointFlags { // #BITS flags for joints
     JF_NONE		= 0, // #NO_BIT
-    FEEDBACK		= 0x0001, // collect feedback information about the joint
-    USE_STOPS		= 0x0002, // set the lo and hi stop values and bounce 
-    USE_MOTOR		= 0x0004, // set the joint motor velocity and maximum force parameters
-    USE_ODE_PARAMS	= 0x0008, // use special ODE parameters for this joint (else uses world settings)
+    OFF			= 0x0001, // joint is not functional and turned off
+    FEEDBACK		= 0x0002, // collect feedback information about the joint
+    USE_STOPS		= 0x0004, // set the lo and hi stop values and bounce 
+    USE_MOTOR		= 0x0008, // set the joint motor velocity and maximum force parameters
+    USE_ODE_PARAMS	= 0x0010, // use special ODE parameters for this joint (else uses world settings)
   };
 
   enum JointType { 	// type of joint: Important -- must be sync'd with joint types in ode/common.h!!!
@@ -476,6 +481,7 @@ public:
   FloatTDCoord	cur_torque2;  	// #READ_ONLY #SHOW torque that joint applies to body 2
 
   override String	GetDesc() const { return desc; }
+  override int		GetEnabled() const {  return !HasJointFlag(OFF); }
 
   inline void		SetJointFlag(JointFlags flg)   { flags = (JointFlags)(flags | flg); }
   // set joint flag state on
@@ -497,6 +503,14 @@ public:
 
   virtual void	ApplyForce(float force1, float force2 = 0.0f);
   // #BUTTON #CAT_Force apply force(s) (or torque(s) as the case may be) to the joint (only good for next time step)
+  virtual void	ApplyMotor(float vel1, float f_max1, float vel2 = 0.0f, float f_max2 = 0.0f);
+  // #BUTTON #CAT_Force apply motor target velocity and max force parameters to joint (persist until further changes -- set f_max = 0 to turn off
+
+  virtual void	SetValsToODE_Anchor(); // #CAT_ODE set anchor(s)
+  virtual void	SetValsToODE_Stops(); // #CAT_ODE set stop(s) (including suspension for hinge 2)
+  virtual void	SetValsToODE_Motor(); // #CAT_ODE set motor params
+  virtual void	SetValsToODE_ODEParams(); // #CAT_ODE set ode integration parameters (erp, cfm)
+
 
   SIMPLE_COPY(VEJoint);
   SIMPLE_INITLINKS(VEJoint);

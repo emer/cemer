@@ -2567,37 +2567,7 @@ void VELambdaArmJoint::GetValsFmODE(bool updt_disp) {
   ApplyForce(extensor.torque + flexor.torque); // simple sum of torques..
   // todo: could do something with stiffness in terms of co-contraction..
 
-  // this will be dynamic.. fun will be separate..
-  if(HasJointFlag(USE_MOTOR)) {
-    switch(joint_type) {
-    case HINGE:
-      dJointSetHingeParam(jid, dParamVel, motor.vel);
-      dJointSetHingeParam(jid, dParamFMax, motor.f_max);
-      break;
-    case SLIDER:
-      dJointSetSliderParam(jid, dParamVel, motor.vel);
-      dJointSetSliderParam(jid, dParamFMax, motor.f_max);
-      break;
-    case UNIVERSAL:
-      dJointSetUniversalParam(jid, dParamVel, motor.vel);
-      dJointSetUniversalParam(jid, dParamFMax, motor.f_max);
-      dJointSetUniversalParam(jid, dParamVel2, motor2.vel);
-      dJointSetUniversalParam(jid, dParamFMax2, motor2.f_max);
-      break;
-    case HINGE2:
-      dJointSetHinge2Param(jid, dParamVel, motor.vel);
-      dJointSetHinge2Param(jid, dParamFMax, motor.f_max);
-      dJointSetHinge2Param(jid, dParamVel2, motor2.vel);
-      dJointSetHinge2Param(jid, dParamFMax2, motor2.f_max);
-      break;
-    case FIXED:
-      break;
-    case BALL:
-      break;
-    case NO_JOINT:
-      break;
-    }
-  }
+  // ApplyMotor..
 
 }
 
