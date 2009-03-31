@@ -1596,24 +1596,29 @@ private:
 ////////////////////////////////////////////////
 //	Special VE stuff for robotic arm sims
 
-class LEABRA_API VELambdaMuscle : public taOBase {
-  // a Lambda-model (Gribble et al, 1998) muscle, used in context of a VE arm joint
-INHERITED(taOBase)
+class LEABRA_API VELambdaMuscle : public taNBase {
+  // a Lambda-model (Gribble et al, 1998) muscle, used in context of a VE arm joint -- as a fairly accurate simplification, we assume a linear relationship between joint angle and muscle length, and a constant moment arm (accurate for extensors)
+INHERITED(taNBase)
 public:
+  enum MuscleType {
+    FLEXOR,			// pulls a joint closed -- toward hi stop -- pectoralis for shoulder, biceps long head for elbow
+    EXTENSOR,			// pulls a joint open -- toward lo stop -- deltoid for shoulder, triceps lateral head
+  };
 
   //////////////////////////////
   //	Control signals
 
   float		lambda_norm;	// normalized (0-1) desired length of the muscle: this is the only control signal
   float		lambda;		// #READ_ONLY #SHOW desired length of the muscle in muscle-length units
+  float		extra_force;	// a constant additional force value to apply to the muscle -- can be used for co-contraction or additional force commands beyond the equilibrium point specification
 
   //////////////////////////////
   //	Parameters
 
   // statics
-  float		moment_arm;		// (m, .02 for elbow, .04 for shoulder) moment arm length for applying force (assumed fixed) -- positive for flexors and negative for extensors (or vice-versa!)
-  float		insert_point;		// (m, .10 for shoulder, .30 for elbow) length from joint to place where muscle effectively attaches to arm -- used for computing angles
-  MinMaxRange	len_range;		// #READ_ONLY #SHOW effective length range of the muscle, in muscle coordinates (computed based on lo-hi joint stops and insertion point, moment arm)
+  MuscleType	muscle_type;		// what type of muscle is it -- controls relationship between angle and muscle length
+  float		moment_arm;		// (m, .02 for elbow, .04 for shoulder) moment arm length for applying force (assumed fixed) -- positive for flexors and negative for extensors
+  MinMaxRange	len_range;		// (m) effective length range of the muscle over which it can contract and expand -- this corresponds to the lo-hi stop range of angles of the joint -- for flexors, min = hi stop, max = lo stop, for extensors, min = lo stop, max = hi stop.  for elbow bicep/tricep, min=0.28 max=0.37, for shoulder pectoralis/deltoid min=0.05 max=0.15 (est)
   float		rest_len;		// #READ_ONLY #SHOW resting length, computed during init from resting angle
 
   // dynamics
@@ -1621,9 +1626,9 @@ public:
   float		vel_damp;		// #DEF_0.06 (mu, s) velocity damping
   float		reflex_delay;		// #DEF_0.025 (d, s) reflex delay -- how slowly reflex control reacts to changes in muscle length and velocity
   int		reflex_delay_idx;	// #READ_ONLY (d, steps) reflex delay, computed in units of step size
-  float		m_rec_grad;		// #DEF_0.112 (c, mm^-1) muscle MN recruitment gradient
+  float		m_rec_grad;		// #DEF_11.2 (c, mm^-1) muscle MN recruitment gradient
   float		m_mag;			// (rho, m^2) muscle force-generating magnitude (multiplier), related to cross-section of muscle size: biceps short head 2.1; biceps long head 11; deltoid 14.9; pectoralis 14.9; triceps lateral head 12.1; triceps long head 6.7;
-  float		ca_dt;			// #DEF_30 (tau, steps) calcium kinetics time constant -- note only using a first-order exponential time decay filter -- this value is in time steps, not time per se
+  float		ca_dt;			// #DEF_0.015 (tau, s) calcium kinetics time constant -- note only using a first-order exponential time decay filter
   float		ca_dt_cmp;		// #READ_ONLY (tau, 1/steps) calcium kinetics time constant actually used in cmputations -- note only using a first-order exponential time decay filter -- this value is in time steps, not time per se
   float		fv1;			// #DEF_0.82 (f1, s/m) muscle force velocity dependence factor: constant offset
   float		fv2;			// #DEF_0.5 (f2, s/m) muscle force velocity dependence factor: atan multiplier
@@ -1646,18 +1651,16 @@ public:
 
   VEBodyRef	muscle_obj;	// #SCOPE_VEObject if non-null, update this object with the new length information as the muscle changes (must be cylinder or capsule obj shape)
 
-  static inline float	LenFmAngle(float angle, float ins_pt, float mom_arm) {
-    return sqrtf(ins_pt * ins_pt + mom_arm * mom_arm -
-		 2.0f * ins_pt * mom_arm * sinf(angle));
-  }
-  // compute muscle length from joint angle, given insertion point and moment arm (two sides of a right triangle, in idealized form) where joint angle is 0 at this right angle point
+  virtual float	LenFmAngle(float norm_angle);
+  // #CAT_Muscle compute muscle length from *normalized* joint angle (0 = lo stop, 1 = hi stop) -- uses a simple linear projection onto len_range which is fairly accurate
 
-  virtual void	Init(float step_sz, float lo_stop, float hi_stop,
-		     float rest_angle, float init_angle);
-  // initialize all parameters back to initial values, compute params based on joint lo-hi stop angles, and set arm at initial angle (clear buffers, etc)
-  virtual void	Compute_Force(float cur_angle, float cur_ang_vel);
-  // compute force based on current parameters with given angle and angular velocity (given by ODE presumably)
+  virtual void	Init(float step_sz, float rest_norm_angle, float init_norm_angle);
+  // #CAT_Muscle initialize all parameters back to initial values, compute params, and set arm at initial angle (clear buffers, etc)
+  virtual void	Compute_Force(float cur_norm_angle);
+  // #CAT_Muscle compute force based on current parameters with given normalized angle (0 = lo stop, 1 = hi stop) (given by ODE presumably)
 
+  virtual void	SetTargAngle(float targ_norm_angle, float co_contract_pct);
+  // #BUTTON #CAT_Muscle set target *normalized* (0 = lo stop, 1 = hi stop) angle for the joint, which computes the lambdas (target lengths) for the individual muscles -- the co_contract_pct determines what percentage of co-contraction (stiffnes) to apply, where the lambdas are shorter than they should otherwise be by the given amount, such that both will pull from opposite directions to cause the muscle to stay put
 
   TA_SIMPLE_BASEFUNS(VELambdaMuscle);
 protected:
@@ -1676,6 +1679,13 @@ INHERITED(VEJoint)
 public:
   VELambdaMuscle	flexor; // #SHOW_TREE flexor muscle
   VELambdaMuscle	extensor; // #SHOW_TREE extensor muscle
+
+
+  virtual void	SetTargAngle(float targ_angle, float co_contract_pct);
+  // #BUTTON #CAT_Force set target angle for the joint, which computes the lambdas (target lengths) for the individual muscles -- the co_contract_pct determines what percentage of co-contraction (stiffnes) to apply, where the lambdas are shorter than they should otherwise be by the given amount, such that both will pull from opposite directions to cause the muscle to stay put (at least around .2 is needed, with .5 being better, to prevent big oscillations)
+
+  virtual void	SetTargNormAngle(float targ_norm_angle, float co_contract_pct);
+  // #BUTTON #CAT_Force set normalized target angle (0 = lo stop, 1 = hi stop) for the joint, which computes the lambdas (target lengths) for the individual muscles -- the co_contract_pct determines what percentage of co-contraction (stiffnes) to apply, where the lambdas are shorter than they should otherwise be by the given amount, such that both will pull from opposite directions to cause the muscle to stay put (at least around .2 is needed, with .5 being better, to prevent big oscillations)
 
   override void	SetValsToODE();
   override void	GetValsFmODE(bool updt_disp = false);

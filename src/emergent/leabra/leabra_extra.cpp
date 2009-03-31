@@ -2444,23 +2444,27 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
 
 void VELambdaMuscle::Initialize() {
   lambda_norm = 0.5f;
-  lambda = 5.0f;
-  moment_arm = .02f;
-  insert_point = .10f;
-  rest_len = 5.0f;
+  lambda = 0.10f;
+  extra_force = 0.0f;
+
+  muscle_type = FLEXOR;
+  moment_arm = .04f;
+  len_range.min = 0.05f;
+  len_range.max = 0.15f;
+  rest_len = 0.10f;
 
   step_size = 0.005f;
   vel_damp = 0.06f;
   reflex_delay = .025f;
   reflex_delay_idx = 5;
-  m_rec_grad = 0.112f;
+  m_rec_grad = 11.2f;
   m_mag = 2.1f;
-  ca_dt = 30.0f;
+  ca_dt = 0.015f;
   fv1 = 0.82f;
   fv2 = 0.50f;
   fv3 = 0.43f;
   fv4 = 0.58f;
-  passive_k = 36.5f;
+  passive_k = 0.0f;
 
   len= lambda;
   dlen= 0.0f;
@@ -2470,22 +2474,12 @@ void VELambdaMuscle::Initialize() {
   torque = 0.0f;
 }
 
-void VELambdaMuscle::Init(float step_sz, float lo_stop, float hi_stop, 
-			  float rest_angle, float init_angle) {
+void VELambdaMuscle::Init(float step_sz, float rest_norm_angle, float init_norm_angle) {
   step_size = step_size;
-  if(moment_arm > 0.0f) {
-    len_range.min = LenFmAngle(hi_stop, insert_point, moment_arm);
-    len_range.max = LenFmAngle(lo_stop, insert_point, moment_arm);
-  }
-  else {
-    len_range.min = LenFmAngle(lo_stop, insert_point, moment_arm);
-    len_range.max = LenFmAngle(hi_stop, insert_point, moment_arm);
-  }
-
-  rest_len = LenFmAngle(rest_angle, insert_point, moment_arm);
-  len = LenFmAngle(init_angle, insert_point, moment_arm);
-  lambda = rest_len;			// assume want to go to rest len!
-  lambda_norm = len_range.Normalize(lambda);
+  rest_len = LenFmAngle(rest_norm_angle);
+  len = LenFmAngle(init_norm_angle);
+  lambda_norm = .50f * len_range.Normalize(rest_len); // 50% co-contraction for starters
+  lambda = len_range.Project(lambda_norm); // project norm force value into real coords
 
   dlen = 0.0f;
   act = 0.0f;
@@ -2500,10 +2494,19 @@ void VELambdaMuscle::Init(float step_sz, float lo_stop, float hi_stop,
   UpdateAfterEdit();
 }
 
-void VELambdaMuscle::Compute_Force(float cur_angle, float cur_ang_vel) {
+float VELambdaMuscle::LenFmAngle(float norm_angle) {
+  // using a simple linear function here -- fairly accurate as shown in Andrew H. Fagg
+  // tech report #00-03: A Model of Muscle Geometry for a Two Degree-Of-Freedom Planar Arm
+  if(muscle_type == FLEXOR) {
+    return len_range.Project(1.0f - norm_angle); // reversed sense
+  }
+  return len_range.Project(norm_angle);
+}
+
+void VELambdaMuscle::Compute_Force(float cur_norm_angle) {
   lambda = len_range.Project(lambda_norm); // project norm force value into real coords
 
-  float cur_len = LenFmAngle(cur_angle, insert_point, moment_arm);
+  float cur_len = LenFmAngle(cur_norm_angle);
   dlen = (cur_len - len) / step_size;
   len = cur_len;
 
@@ -2516,19 +2519,26 @@ void VELambdaMuscle::Compute_Force(float cur_angle, float cur_ang_vel) {
   else {
     float del_len = len_buf.CircSafeEl(reflex_delay-1);
     float del_dlen = dlen_buf.CircSafeEl(reflex_delay-1);
-    act = del_len - lambda + vel_damp * del_dlen;
+    act = (del_len - lambda) + vel_damp * del_dlen;
     if(act < 0.0f) act = 0.0f;
   }
   m_act_force = m_mag * (expf(m_rec_grad * act) - 1.0f);
   m_force += ca_dt_cmp * (m_act_force - m_force); // first order low-pass filter, not 2nd order 
-  force = m_force * (fv1 + fv2 * atanf(fv3 + fv4 * dlen)) + passive_k * (len - rest_len);
+  force = extra_force + m_force * (fv1 + fv2 * atanf(fv3 + fv4 * dlen)) + passive_k * (len - rest_len);
   torque = force * moment_arm;	// assume constant moment arm: could compute based on geom.
 
   if(muscle_obj) {
     muscle_obj->length = len;
-    //    muscle_obj->SetValsToODE();
-    muscle_obj->UpdateAfterEdit();
+    muscle_obj->SetValsToODE();
+    muscle_obj->UpdateAfterEdit(); // update display
   }
+}
+
+void VELambdaMuscle::SetTargAngle(float targ_norm_angle, float co_contract_pct) {
+  lambda = LenFmAngle(targ_norm_angle);
+  lambda = len_range.Clip(lambda);					// keep in range
+  lambda_norm = (1.0f - co_contract_pct) * len_range.Normalize(lambda); // contract as pct in norm coords
+  lambda = len_range.Project(lambda_norm); // project norm force value into real coords
 }
 
 void VELambdaMuscle::UpdateAfterEdit_impl() {
@@ -2544,7 +2554,9 @@ void VELambdaMuscle::UpdateAfterEdit_impl() {
 //	VELambdaArmJoint
 
 void VELambdaArmJoint::Initialize() {
-  flexor.moment_arm = -flexor.moment_arm;
+  extensor.moment_arm = -extensor.moment_arm; // extensor is negative
+  flexor.muscle_type = VELambdaMuscle::FLEXOR;
+  extensor.muscle_type = VELambdaMuscle::EXTENSOR;
 }
 
 void VELambdaArmJoint::SetValsToODE() {
@@ -2553,22 +2565,41 @@ void VELambdaArmJoint::SetValsToODE() {
   VEWorld* wld = GetWorld();
   float step_sz = wld->stepsize;
 
-  extensor.Init(step_sz, stops.lo, stops.hi, stops.def, pos);
-  flexor.Init(step_sz, stops.lo, stops.hi, stops.def, pos);
+  float rest_norm_angle = stops.Normalize(stops.def); // def = rest
+  float init_norm_angle = stops.Normalize(pos);	      // pos = cur position/angle
+
+  extensor.Init(step_sz, rest_norm_angle, init_norm_angle);
+  flexor.Init(step_sz, rest_norm_angle, init_norm_angle);
 }
 
 void VELambdaArmJoint::GetValsFmODE(bool updt_disp) {
   inherited::GetValsFmODE(updt_disp);
 
-  extensor.Compute_Force(pos, vel);
-  flexor.Compute_Force(pos, vel);
+  float norm_pos = stops.Normalize(pos);
+
+  flexor.Compute_Force(norm_pos);
+  extensor.Compute_Force(norm_pos);
 
   // apply force for next time around
   ApplyForce(extensor.torque + flexor.torque); // simple sum of torques..
-  // todo: could do something with stiffness in terms of co-contraction..
 
-  // ApplyMotor..
+  // motor idea is that guy pulling in opposite direction opposes motion..
+  if(flexor.torque > -extensor.torque) // net flex dir
+    ApplyMotor(0.0f, -extensor.torque); // apply positive valued extensor torque to stop motor
+  else
+    ApplyMotor(0.0f, flexor.torque); // apply positive valued extensor torque to stop motor
+}
 
+void VELambdaArmJoint::SetTargAngle(float targ_angle, float co_contract_pct) {
+  float norm_angle = stops.Normalize(targ_angle);
+
+  flexor.SetTargAngle(norm_angle, co_contract_pct);
+  extensor.SetTargAngle(norm_angle, co_contract_pct);
+}
+
+void VELambdaArmJoint::SetTargNormAngle(float targ_norm_angle, float co_contract_pct) {
+  flexor.SetTargAngle(targ_norm_angle, co_contract_pct);
+  extensor.SetTargAngle(targ_norm_angle, co_contract_pct);
 }
 
 

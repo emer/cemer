@@ -388,6 +388,16 @@ public:
   float		bounce;		// how bouncy is the joint (0 = no bounce, 1 = maximum bounce)
   float		def_force;	// how much force to apply to return joint to default position -- effectively adds springs to the joint that pull it back to the default position -- NOTE: must call ApplyForce to have this computed and updated
 
+  inline float	Range()	const		{ return (hi - lo); }
+  inline float	Scale()	const
+  { float rval = Range(); if(rval != 0.0f) rval = 1.0f / rval; return rval; }
+
+  float	Normalize(float val) const	{ return (val - lo) * Scale(); }
+  // normalize given value to 0-1 range given current in hi
+
+  float	Project(float val) const	{ return lo + (val * Range()); }
+  // project a normalized value into the current lo-hi range
+
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(VEJointStops);
@@ -863,6 +873,8 @@ public:
   // #BUTTON #CAT_ODE initialize the virtual environment, placing all objects in their init configurations, updating with any added objects, etc
   virtual void	Step();		
   // #BUTTON #CAT_ODE take one step of integration, and get updated values
+  virtual void	Reset() { DestroyODE(); SetValsToODE(); }
+  // #BUTTON #CAT_ODE completely reset the ODE environment -- this is necessary if bad float numbers have been generated (nan, inf)
 
   VEWorldView*	NewView(T3DataViewFrame* fr = NULL);
   // #NULL_OK #NULL_TEXT_0_NewFrame #BUTTON #CAT_Display make a new viewer of this world (NULL=use existing empty frame if any, else make new frame)

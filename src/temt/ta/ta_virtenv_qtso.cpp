@@ -358,23 +358,69 @@ void VEBodyView::SetDraggerPos() {
 void VEBodyView::Render_impl() {
   inherited::Render_impl();
 
-  T3VEBody* node_so = (T3VEBody*)this->node_so(); // cache
-  if(!node_so) return;
+  T3VEBody* obv = (T3VEBody*)this->node_so(); // cache
+  if(!obv) return;
   VEBody* ob = Body();
   if(!ob) return;
 
-  SoTransform* tx = node_so->transform();
+  SoTransform* tx = obv->transform();
   tx->translation.setValue(ob->cur_pos.x, ob->cur_pos.y, ob->cur_pos.z);
   tx->rotation.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
 
   if(ob->set_color) {
-    SoMaterial* mat = node_so->material();
+    SoMaterial* mat = obv->material();
     mat->diffuseColor.setValue(ob->color.r, ob->color.g, ob->color.b);
     mat->transparency.setValue(1.0f - ob->color.a);
   }
   else {
-    SoMaterial* mat = node_so->material();
+    SoMaterial* mat = obv->material();
     mat->transparency.setValue(0.0f);
+  }
+
+  SoSeparator* ssep = obv->shapeSeparator();
+
+  switch(ob->shape) {
+  case VEBody::SPHERE: {
+    SoSphere* sp = (SoSphere*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+    sp->radius = ob->radius;
+    break;
+  }
+  case VEBody::CAPSULE: {
+    SoCapsule* sp = (SoCapsule*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+    sp->radius = ob->radius;
+    sp->height = ob->length;
+    SoTransform* tx = obv->txfm_shape();
+    if(ob->long_axis == VEBody::LONG_X)
+      tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+    else if(ob->long_axis == VEBody::LONG_Y)
+      tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+    else if(ob->long_axis == VEBody::LONG_Z)
+      tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+    break;
+  }
+  case VEBody::CYLINDER: {
+    SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+    sp->radius = ob->radius;
+    sp->height = ob->length;
+    SoTransform* tx = obv->txfm_shape();
+    if(ob->long_axis == VEBody::LONG_X)
+      tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+    else if(ob->long_axis == VEBody::LONG_Y)
+      tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+    else if(ob->long_axis == VEBody::LONG_Z)
+      tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+    break;
+  }
+  case VEBody::BOX: {
+    SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+    sp->width = ob->box.x;
+    sp->depth = ob->box.z;
+    sp->height = ob->box.y;
+    break;
+  }
+  case VEBody::NO_SHAPE: {
+    break;
+  }
   }
 }
 
