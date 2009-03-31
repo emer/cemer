@@ -392,14 +392,14 @@ public:
 
   //IMPORTANT: DO NOT CHANGE THE FOLLOWING METHODS TO VIRTUAL
   void		ChangeColType(ValType new_type);
-  // #CAT_ObjectMgmt #MENU change the type of the data in this col, without loss of data
+  // #CAT_ObjectMgmt #MENU #DYN1 change the type of the data in this col, without loss of data
   void		ChangeColCellGeom(const MatrixGeom& new_geom);
-  // #CAT_ObjectMgmt #MENU #INIT_ARGVAL_ON_cell_geom change the cell geom of a mat col, or change from scalar to mat, without loss of data
+  // #CAT_ObjectMgmt #MENU #DYN1 #INIT_ARGVAL_ON_cell_geom change the cell geom of a mat col, or change from scalar to mat, without loss of data
   void		ChangeColCellGeomNs(int dims = 1, int d0=0, int d1=0, int d2=0,
 				      int d3=0, int d4=0, int d5=0, int d6=0);
   // #CAT_ObjectMgmt change the cell geom of a mat col, or change from scalar to mat, without loss of data -- separate numbers input instead of overall geom object
   void		ChangeColMatToScalar();
-  // #CAT_ObjectMgmt #MENU #CONFIRM change from a mat col to a scalar col
+  // #CAT_ObjectMgmt #MENU #DYN1 #CONFIRM change from a mat col to a scalar col
   
   override String 	GetTypeDecoKey() const { return "DataTable"; }
 

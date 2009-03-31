@@ -27,7 +27,9 @@
 #include "ta_qtgroup.h"
 
 #include "css_qt.h"
+#include "css_qtdialog.h"
 #include "css_machine.h"
+#include "css_basic_types.h"
 
 #include "icolor.h"
 
@@ -2333,7 +2335,9 @@ void ISelectableHost::DoDynAction(int idx) {
   int hide_args = (dmd->dmd_type == DynMethod_PtrList::Type_1N) ? 0 : 1;
 
   if (meth->stubp == NULL) return;
-  TypeDef* typ = NULL; // type of calling method's class
+  // type of calling method's class
+  // NOTE: we may look up exact type for each inst later
+  TypeDef* typ = meth->owner->owner;
   void* base = NULL; // the object calling the method
 
 //TODO:  ApplyBefore();
@@ -2356,72 +2360,96 @@ void ISelectableHost::DoDynAction(int idx) {
     sel_items_cp = sel_items;
   }
 
-  // if no params to prompt for, and no confirmation required, just do it
-  if (((use_argc - hide_args) == 0) && !meth->HasOption("CONFIRM")) {
+  // if params to prompt for, do that now
+  // NOTE: if it is also CONFIRM, we implicitly use param collection as confirm
+  int prompt_argc = use_argc - hide_args;
+  cssiArgDialog* arg_dlg = NULL; // if needed 
+  cssEl** prompt_params = NULL; // if needed -- points inside arg_dlg
+  if( (prompt_argc != 0) || meth->HasOption("CONFIRM")) {
+    base = curItem()->taData();
+    arg_dlg = new cssiArgDialog(meth, typ, base, use_argc, hide_args);
+    //note: we don't have a base yet, so we can't do color...
+    if (base && typ->InheritsFrom(TA_taBase)) {
+      bool ok;
+      iColor bgclr = ((TAPtr)base)->GetEditColorInherit(ok);
+      if (ok) arg_dlg->setBgColor(bgclr);
+    }
+    arg_dlg->Constr("", "");
+    int ok_can = arg_dlg->Edit(true);	// true = wait for a response
+    if (!(ok_can && !arg_dlg->err_flag))
+      goto exit;
+    // args in dlg are now: arg[0] .. hide_args .. use_args
+    // need to have [0] be a dummy, since actual args are from [1]
+    prompt_params = &(arg_dlg->obj->members->els[hide_args]);
+    // make sure argc is now right
+    prompt_argc = arg_dlg->obj->members->size-(1+hide_args);
+  } else if (meth->HasOption("CONFIRM")) {
+  //TODO: confirmation dialog
+  }
 //TODO    GenerateScript();
 #ifdef DMEM_COMPILE
     // don't actually run the command when using gui in dmem mode: everything happens via the script!
-    if (taMisc::dmem_nprocs == 1) {
+    if (taMisc::dmem_nprocs == 1)
 #endif
+    { // block for jumps
       cssEl* rval = NULL; // ignored
       int i;
       ISelectable* itN;
       taiDataLink* link = NULL;
-      switch(dmd->dmd_type) {
-      case DynMethod_PtrList::Type_1N: { // same for all
+      if (dmd->dmd_type == DynMethod_PtrList::Type_1N) { // same for all
         for (i = 0; i < sel_items_cp.size; ++i) {
           itN = sel_items_cp.FastEl(i);
           typ = itN->GetEffDataTypeDef(gui_ctxt);
           link = itN->effLink(gui_ctxt);
-          if (!link) return;
+          if (!link) goto exit;
           base = link->data();
-          rval = (*(meth->stubp))(base, 0, (cssEl**)NULL);
+          rval = (*(meth->stubp))(base, prompt_argc, prompt_params);
         }
-      } break;
+        goto exit;
+      }
+      
+      // remaining types use more complicated params
+      { // for jumps    
+      cssEl** param = (cssEl**)calloc(2 + prompt_argc, sizeof(cssEl*));
+      param[0] = &cssMisc::Void;
+      param[1] = new cssCPtr();
+      for (i = 1; i <= prompt_argc; ++i)
+        param[1+i] = prompt_params[i]; 
+        
+      switch(dmd->dmd_type) {
       case DynMethod_PtrList::Type_1_2N: { // call 1 with 2:N as a param
-        cssEl* param[2];
-        param[0] = &cssMisc::Void;
-        param[1] = new cssCPtr();
         ISelectable* it1 = sel_items_cp.FastEl(0);
         typ = it1->GetEffDataTypeDef(gui_ctxt);
         link = it1->effLink(gui_ctxt);
-        if (!link) return;
+        if (!link) goto free_mem;
         base = link->data();
         for (i = 1; i < sel_items_cp.size; ++i) {
           itN = sel_items_cp.FastEl(i);
           link = itN->effLink(gui_ctxt); //note: prob can't be null, because we wouldn't get called
           if (!link) continue;
           *param[1] = (void*)link->data();
-          rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
+          rval = (*(meth->stubp))(base, 1 + prompt_argc, param); // note: "array" of 1 item
         }
-        delete param[1];
       } break;
       case DynMethod_PtrList::Type_2N_1: { // call 2:N with 1 as param
-        cssEl* param[2];
-        param[0] = &cssMisc::Void;
-        param[1] = new cssCPtr();
         ISelectable* it1 = sel_items_cp.FastEl(0);
         typ = it1->GetEffDataTypeDef(gui_ctxt);
         link = it1->effLink(gui_ctxt);
-        if (!link) return; //note: we prob wouldn't get called if any were null
+        if (!link) goto free_mem; //note: we prob wouldn't get called if any were null
         *param[1] = (void*)link->data();
         for (i = 1; i < sel_items_cp.size; ++i) {
           itN = sel_items_cp.FastEl(i);
           link = itN->effLink(gui_ctxt);
           if (!link) continue; // prob won't happen
           base = link->data();
-          rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
+          rval = (*(meth->stubp))(base, 1 + prompt_argc, param); // note: "array" of 1 item
         }
-        delete param[1];
       } break;
       case DynMethod_PtrList::Type_MimeN_N: { // call 1:N with ms_objs[1..N] as params
         //NOTE: sel_items actually contains the drop target item
         if (!ctxt_ms) { // ctxt (not drop) mode -- need to make it
           ctxt_ms =  taiMimeSource::NewFromClipboard(); // deleted in the destroyed() handler
         }
-        cssEl* param[2];
-        param[0] = &cssMisc::Void;
-        param[1] = new cssCPtr();
         ISelectable* it1 = sel_items_cp.FastEl(0);
         typ = it1->GetEffDataTypeDef(gui_ctxt);
         for (int j = 0; j < ctxt_ms->count(); ++j) {
@@ -2434,20 +2462,25 @@ void ISelectableHost::DoDynAction(int idx) {
             link = itN->effLink(gui_ctxt);
             if (!link) continue; // prob won't happen, because we wouldn't have been called
             base = link->data();
-            rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
+            rval = (*(meth->stubp))(base, 1 + prompt_argc, param); // note: "array" of 1 item
             if (link->isBase())
               ((taBase*)base)->UpdateAfterEdit();
           }
         }
-        delete param[1];
       } break;
+      default: break; // compiler food, we handled all cases
       }
+free_mem:
+      delete param[1];
+      free(param);
+      } // for jumps     
 //TODO:      UpdateAfter();
-#ifdef DMEM_COMPILE
     }
-#endif
-    return;
+exit:
+  if (arg_dlg) {
+    delete arg_dlg;
   }
+
 }
 
 iMainWindowViewer* ISelectableHost::mainWindow() const {
