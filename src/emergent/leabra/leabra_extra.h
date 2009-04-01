@@ -1646,8 +1646,8 @@ public:
   float		force;		// #READ_ONLY #SHOW (N) final force value 
   float		torque;		// #READ_ONLY #SHOW (N) final torque (force * moment_arm)
 
-  float_CircBuffer len_buf;	// #READ_ONLY #SHOW current muscle length buffer (for delays)
-  float_CircBuffer dlen_buf;	// #READ_ONLY #SHOW current muscle length velocity buffer (for delays)
+  float_CircBuffer len_buf;	// #READ_ONLY #NO_SAVE current muscle length buffer (for delays)
+  float_CircBuffer dlen_buf;	// #READ_ONLY #NO_SAVE current muscle length velocity buffer (for delays)
 
   VEBodyRef	muscle_obj;	// #SCOPE_VEObject if non-null, update this object with the new length information as the muscle changes (must be cylinder or capsule obj shape)
 

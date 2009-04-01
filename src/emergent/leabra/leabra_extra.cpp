@@ -2475,7 +2475,7 @@ void VELambdaMuscle::Initialize() {
 }
 
 void VELambdaMuscle::Init(float step_sz, float rest_norm_angle, float init_norm_angle) {
-  step_size = step_size;
+  step_size = step_sz;
   rest_len = LenFmAngle(rest_norm_angle);
   len = LenFmAngle(init_norm_angle);
   lambda_norm = .50f * len_range.Normalize(rest_len); // 50% co-contraction for starters
@@ -2504,9 +2504,14 @@ float VELambdaMuscle::LenFmAngle(float norm_angle) {
 }
 
 void VELambdaMuscle::Compute_Force(float cur_norm_angle) {
+  // ensure normalization
+  lambda_norm = MIN(1.0f, lambda_norm); lambda_norm = MAX(0.0f, lambda_norm);
+
   lambda = len_range.Project(lambda_norm); // project norm force value into real coords
 
   float cur_len = LenFmAngle(cur_norm_angle);
+  cur_len = len_range.Clip(cur_len); // keep it in range -- else nonsensical
+
   dlen = (cur_len - len) / step_size;
   len = cur_len;
 

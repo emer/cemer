@@ -977,6 +977,8 @@ bool VEObject::CreateODE() {
 }
 
 void VEObject::DestroyODE() {
+  bodies.DestroyODE();	// bodies first!
+  joints.DestroyODE();
   if(space_id) dSpaceDestroy((dSpaceID)space_id);
   space_id = NULL;
 }
@@ -1255,6 +1257,7 @@ bool VESpace::CreateODE() {
 }
 
 void VESpace::DestroyODE() {
+  static_els.DestroyODE();
   if(space_id) dSpaceDestroy((dSpaceID)space_id);
   space_id = NULL;
 }
@@ -1266,7 +1269,7 @@ void VESpace::SetValsToODE() {
   if(space_type == HASH_SPACE) {
     dHashSpaceSetLevels(sid, hash_levels.min, hash_levels.max);
   }
-  static_els.SetValsToODE();	// bodies first!
+  static_els.SetValsToODE();
 }
 
 /////////////////////////////////////////////
