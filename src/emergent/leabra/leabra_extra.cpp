@@ -2491,6 +2491,12 @@ void VELambdaMuscle::Init(float step_sz, float rest_norm_angle, float init_norm_
   len_buf.Reset();
   dlen_buf.Reset();
 
+  if(muscle_obj) {
+    muscle_obj->length = len;
+    muscle_obj->SetValsToODE();
+    muscle_obj->UpdateAfterEdit(); // update display
+  }
+
   UpdateAfterEdit();
 }
 
