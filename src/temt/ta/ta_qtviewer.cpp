@@ -2338,7 +2338,8 @@ void ISelectableHost::DoDynAction(int idx) {
   // type of calling method's class
   // NOTE: we may look up exact type for each inst later
   TypeDef* typ = meth->owner->owner;
-  void* base = NULL; // the object calling the method
+  // we use a smart ref in case anchor obj ever disappears in multi ops
+  void* base; // the object calling the method
 
 //TODO:  ApplyBefore();
   String argc_str = meth->OptionAfter("ARGC_");
@@ -2366,9 +2367,8 @@ void ISelectableHost::DoDynAction(int idx) {
   cssiArgDialog* arg_dlg = NULL; // if needed 
   cssEl** prompt_params = NULL; // if needed -- points inside arg_dlg
   if( (prompt_argc != 0) || meth->HasOption("CONFIRM")) {
-    base = curItem()->taData();
+    base = curItem()->effLink(gui_ctxt)->data();
     arg_dlg = new cssiArgDialog(meth, typ, base, use_argc, hide_args);
-    //note: we don't have a base yet, so we can't do color...
     if (base && typ->InheritsFrom(TA_taBase)) {
       bool ok;
       iColor bgclr = ((TAPtr)base)->GetEditColorInherit(ok);
@@ -2383,8 +2383,6 @@ void ISelectableHost::DoDynAction(int idx) {
     prompt_params = &(arg_dlg->obj->members->els[hide_args]);
     // make sure argc is now right
     prompt_argc = arg_dlg->obj->members->size-(1+hide_args);
-  } else if (meth->HasOption("CONFIRM")) {
-  //TODO: confirmation dialog
   }
 //TODO    GenerateScript();
 #ifdef DMEM_COMPILE
@@ -2397,12 +2395,13 @@ void ISelectableHost::DoDynAction(int idx) {
       ISelectable* itN;
       taiDataLink* link = NULL;
       if (dmd->dmd_type == DynMethod_PtrList::Type_1N) { // same for all
-        for (i = 0; i < sel_items_cp.size; ++i) {
-          itN = sel_items_cp.FastEl(i);
+        while (sel_items_cp.size > 0) {
+          itN = sel_items_cp.TakeItem(0);
           typ = itN->GetEffDataTypeDef(gui_ctxt);
           link = itN->effLink(gui_ctxt);
-          if (!link) goto exit;
+          if (!link) continue;
           base = link->data();
+          if (!base) continue;
           rval = (*(meth->stubp))(base, prompt_argc, prompt_params);
         }
         goto exit;
@@ -2416,19 +2415,25 @@ void ISelectableHost::DoDynAction(int idx) {
       for (i = 1; i <= prompt_argc; ++i)
         param[1+i] = prompt_params[i]; 
         
+      const int si_presize = sel_items_cp.size; // size before ops
       switch(dmd->dmd_type) {
       case DynMethod_PtrList::Type_1_2N: { // call 1 with 2:N as a param
-        ISelectable* it1 = sel_items_cp.FastEl(0);
+        //NOTE: we insist list size doesn't change, i.e. no deletions,
+        // else we bail!
+        ISelectable* it1 = sel_items_cp.FastEl(0); // the anchor item
         typ = it1->GetEffDataTypeDef(gui_ctxt);
         link = it1->effLink(gui_ctxt);
         if (!link) goto free_mem;
         base = link->data();
-        for (i = 1; i < sel_items_cp.size; ++i) {
-          itN = sel_items_cp.FastEl(i);
+        for (int i = 1; 
+          (i < sel_items_cp.size) && (sel_items_cp.size == si_presize);
+          ++i) 
+        {
+          itN = sel_items_cp.TakeItem(0);
           link = itN->effLink(gui_ctxt); //note: prob can't be null, because we wouldn't get called
           if (!link) continue;
           *param[1] = (void*)link->data();
-          rval = (*(meth->stubp))(base, 1 + prompt_argc, param); // note: "array" of 1 item
+          rval = (*(meth->stubp))(base, 1 + prompt_argc, param); 
         }
       } break;
       case DynMethod_PtrList::Type_2N_1: { // call 2:N with 1 as param
@@ -2437,8 +2442,11 @@ void ISelectableHost::DoDynAction(int idx) {
         link = it1->effLink(gui_ctxt);
         if (!link) goto free_mem; //note: we prob wouldn't get called if any were null
         *param[1] = (void*)link->data();
-        for (i = 1; i < sel_items_cp.size; ++i) {
-          itN = sel_items_cp.FastEl(i);
+        for (int i = 1; 
+          (i < sel_items_cp.size) && (sel_items_cp.size == si_presize);
+          ++i) 
+        {
+          itN = sel_items_cp.TakeItem(0);
           link = itN->effLink(gui_ctxt);
           if (!link) continue; // prob won't happen
           base = link->data();
@@ -2457,12 +2465,12 @@ void ISelectableHost::DoDynAction(int idx) {
           taBase* obj = ctxt_ms->tabObject();
           if (!obj) continue;
           *param[1] = (void*)obj;
-          for (i = 0; i < sel_items_cp.size; ++i) {
-            itN = sel_items_cp.FastEl(i);
+          while (sel_items_cp.size > 0) {
+            itN = sel_items_cp.TakeItem(0);
             link = itN->effLink(gui_ctxt);
             if (!link) continue; // prob won't happen, because we wouldn't have been called
             base = link->data();
-            rval = (*(meth->stubp))(base, 1 + prompt_argc, param); // note: "array" of 1 item
+            rval = (*(meth->stubp))(base, 1 + prompt_argc, param); 
             if (link->isBase())
               ((taBase*)base)->UpdateAfterEdit();
           }
@@ -2474,7 +2482,6 @@ free_mem:
       delete param[1];
       free(param);
       } // for jumps     
-//TODO:      UpdateAfter();
     }
 exit:
   if (arg_dlg) {

@@ -603,7 +603,7 @@ void taPtrList_impl::Push_(void* it) {
 }
 
 void* taPtrList_impl::Pop_() {
-  if(size==0) return NULL;
+  if (size == 0) return NULL;
   void* rval = el[--size];
   if(rval != NULL) {
     if(hash_table != NULL)
@@ -611,6 +611,13 @@ void* taPtrList_impl::Pop_() {
     DataChanged(DCR_LIST_ITEM_REMOVE, rval);
     El_unRef_(rval);
   }
+  return rval;
+}
+
+void* taPtrList_impl::TakeItem_(int idx) {
+  if ((idx < 0) || (idx >= size)) return NULL;
+  void* rval = el[idx];
+  RemoveIdx(idx);
   return rval;
 }
 

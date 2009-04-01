@@ -267,7 +267,8 @@ public:
     // #IGNORE -- for internal use only, where you want NULL if i < 0
   void*		FastEl_(int i)	const	{ return el[i]; } 	// #IGNORE
   virtual void*	FindName_(const String& it) const;	// #IGNORE
-  virtual void*	Pop_();					// #IGNORE
+  void*		Pop_();	// #IGNORE -- NOTE: non-standard semantics, does not do a disown
+  void*		TakeItem_(int idx); // #IGNORE -- WARNING: not for owned items!!!
   void*		First_() const
   { if (size > 0) return el[0]; else return NULL; }  // #IGNORE
   void*		Peek_() const
@@ -456,6 +457,10 @@ public:
   T*		FindName(const String& item_nm) const
   { return (T*)FindName_(item_nm); }
   // #CAT_Access find given named element (NULL = not here), sets idx
+  T*		First()				{ return (T*)First_(); }
+  // #CAT_Modify return first element, or NULL if list empty
+  T*		TakeItem(int idx)	{ return (T*)TakeItem_(idx); }
+  // #CAT_Modify remove the element from list, NULL if idx out of range -- ONLY FOR NON-OWNED ITEMS
   T*		Pop()				{ return (T*)Pop_(); }
   // #CAT_Modify pop the last element off the stack
   T*		Peek() const			{ return (T*)Peek_(); }
