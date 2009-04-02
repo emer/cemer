@@ -2429,7 +2429,7 @@ void ISelectableHost::DoDynAction(int idx) {
           (i < sel_items_cp.size) && (sel_items_cp.size == si_presize);
           ++i) 
         {
-          itN = sel_items_cp.TakeItem(0);
+          itN = sel_items_cp.FastEl(i);
           link = itN->effLink(gui_ctxt); //note: prob can't be null, because we wouldn't get called
           if (!link) continue;
           *param[1] = (void*)link->data();
@@ -2446,7 +2446,7 @@ void ISelectableHost::DoDynAction(int idx) {
           (i < sel_items_cp.size) && (sel_items_cp.size == si_presize);
           ++i) 
         {
-          itN = sel_items_cp.TakeItem(0);
+          itN = sel_items_cp.FastEl(i);
           link = itN->effLink(gui_ctxt);
           if (!link) continue; // prob won't happen
           base = link->data();
