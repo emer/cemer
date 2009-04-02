@@ -233,10 +233,14 @@ public:
 
   virtual void	GetValsFmODE(bool updt_disp = false);	// #CAT_ODE get the updated values from ODE after computing
 
+  virtual void	SetValsToODE_Shape();	// #CAT_ODE set shape information
   virtual void	SetValsToODE_InitPos();	// #CAT_ODE set initial position
   virtual void	SetValsToODE_Rotation();// #CAT_ODE set rotation
   virtual void	SetValsToODE_Velocity();// #CAT_ODE set velocity
   virtual void	SetValsToODE_Mass();	// #CAT_ODE set the mass of body in ODE
+
+  bool	IsCurShape()  { return shape == cur_shape; }
+  // #CAT_ODE is the ODE guy actually configured for the current shape or not?
 
   SIMPLE_COPY(VEBody);
   SIMPLE_INITLINKS(VEBody);
@@ -697,6 +701,12 @@ public:
   virtual bool	CreateODE();	// #CAT_ODE create static element in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy static element in ode (if created)
   virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE (creates id's if not already done)
+
+  virtual void	SetValsToODE_Shape();	// #CAT_ODE set shape information
+  virtual void	SetValsToODE_PosRot();	// #CAT_ODE set position and rotation
+
+  bool	IsCurShape()  { return shape == cur_shape; }
+  // #CAT_ODE is the ODE guy actually configured for the current shape or not?
 
   SIMPLE_COPY(VEStatic);
   SIMPLE_INITLINKS(VEStatic);

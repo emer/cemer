@@ -1610,6 +1610,7 @@ public:
 
   float		lambda_norm;	// normalized (0-1) desired length of the muscle: this is the only control signal
   float		lambda;		// #READ_ONLY #SHOW desired length of the muscle in muscle-length units
+  float		co_contract_pct; // normalized (0-1) percent of co-contraction to apply -- shortens lambda by a fixed proportion of the co_contract_len value (below)
   float		extra_force;	// a constant additional force value to apply to the muscle -- can be used for co-contraction or additional force commands beyond the equilibrium point specification
 
   //////////////////////////////
@@ -1619,6 +1620,7 @@ public:
   MuscleType	muscle_type;		// what type of muscle is it -- controls relationship between angle and muscle length
   float		moment_arm;		// (m, .02 for elbow, .04 for shoulder) moment arm length for applying force (assumed fixed) -- positive for flexors and negative for extensors
   MinMaxRange	len_range;		// (m) effective length range of the muscle over which it can contract and expand -- this corresponds to the lo-hi stop range of angles of the joint -- for flexors, min = hi stop, max = lo stop, for extensors, min = lo stop, max = hi stop.  for elbow bicep/tricep, min=0.28 max=0.37, for shoulder pectoralis/deltoid min=0.05 max=0.15 (est)
+  float		co_contract_len;	// maximum length available for co-contraction -- must be < .95 * len_range.min (i.e., if muscle is at its shortest length for the joint stop, this is how much extra shorter it can possibly command to be from there, and still be a positive number)
   float		rest_len;		// #READ_ONLY #SHOW resting length, computed during init from resting angle
 
   // dynamics
@@ -1654,10 +1656,15 @@ public:
   virtual float	LenFmAngle(float norm_angle);
   // #CAT_Muscle compute muscle length from *normalized* joint angle (0 = lo stop, 1 = hi stop) -- uses a simple linear projection onto len_range which is fairly accurate
 
-  virtual void	Init(float step_sz, float rest_norm_angle, float init_norm_angle);
+  virtual void	Init(float step_sz, float rest_norm_angle, float init_norm_angle,
+		     float co_contract);
   // #CAT_Muscle initialize all parameters back to initial values, compute params, and set arm at initial angle (clear buffers, etc)
+
   virtual void	Compute_Force(float cur_norm_angle);
   // #CAT_Muscle compute force based on current parameters with given normalized angle (0 = lo stop, 1 = hi stop) (given by ODE presumably)
+
+  virtual void	Compute_Lambda();
+  // #CAT_Muscle compute lambda value from lambda_norm and co_contract_pct
 
   virtual void	SetTargAngle(float targ_norm_angle, float co_contract_pct);
   // #BUTTON #CAT_Muscle set target *normalized* (0 = lo stop, 1 = hi stop) angle for the joint, which computes the lambdas (target lengths) for the individual muscles -- the co_contract_pct determines what percentage of co-contraction (stiffnes) to apply, where the lambdas are shorter than they should otherwise be by the given amount, such that both will pull from opposite directions to cause the muscle to stay put

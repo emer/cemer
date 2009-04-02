@@ -2445,12 +2445,14 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
 void VELambdaMuscle::Initialize() {
   lambda_norm = 0.5f;
   lambda = 0.10f;
+  co_contract_pct = 0.2f;
   extra_force = 0.0f;
 
   muscle_type = FLEXOR;
   moment_arm = .04f;
   len_range.min = 0.05f;
   len_range.max = 0.15f;
+  co_contract_len = 0.04f;
   rest_len = 0.10f;
 
   step_size = 0.005f;
@@ -2474,12 +2476,15 @@ void VELambdaMuscle::Initialize() {
   torque = 0.0f;
 }
 
-void VELambdaMuscle::Init(float step_sz, float rest_norm_angle, float init_norm_angle) {
+void VELambdaMuscle::Init(float step_sz, float rest_norm_angle, float init_norm_angle, 
+			  float co_contract) {
   step_size = step_sz;
+  lambda_norm = rest_norm_angle; // target is to go to rest
   rest_len = LenFmAngle(rest_norm_angle);
   len = LenFmAngle(init_norm_angle);
-  lambda_norm = .50f * len_range.Normalize(rest_len); // 50% co-contraction for starters
-  lambda = len_range.Project(lambda_norm); // project norm force value into real coords
+  co_contract_pct = co_contract;
+
+  Compute_Lambda();		// get lambda from params
 
   dlen = 0.0f;
   act = 0.0f;
@@ -2509,11 +2514,16 @@ float VELambdaMuscle::LenFmAngle(float norm_angle) {
   return len_range.Project(norm_angle);
 }
 
-void VELambdaMuscle::Compute_Force(float cur_norm_angle) {
+void VELambdaMuscle::Compute_Lambda() {
   // ensure normalization
   lambda_norm = MIN(1.0f, lambda_norm); lambda_norm = MAX(0.0f, lambda_norm);
-
+  co_contract_pct = MIN(1.0f, co_contract_pct); co_contract_pct = MAX(0.0f, co_contract_pct);
   lambda = len_range.Project(lambda_norm); // project norm force value into real coords
+  lambda -= co_contract_pct * co_contract_len;
+}
+
+void VELambdaMuscle::Compute_Force(float cur_norm_angle) {
+  Compute_Lambda();
 
   float cur_len = LenFmAngle(cur_norm_angle);
   cur_len = len_range.Clip(cur_len); // keep it in range -- else nonsensical
@@ -2545,11 +2555,12 @@ void VELambdaMuscle::Compute_Force(float cur_norm_angle) {
   }
 }
 
-void VELambdaMuscle::SetTargAngle(float targ_norm_angle, float co_contract_pct) {
+void VELambdaMuscle::SetTargAngle(float targ_norm_angle, float co_contract) {
+  co_contract_pct = co_contract;
   lambda = LenFmAngle(targ_norm_angle);
-  lambda = len_range.Clip(lambda);					// keep in range
-  lambda_norm = (1.0f - co_contract_pct) * len_range.Normalize(lambda); // contract as pct in norm coords
-  lambda = len_range.Project(lambda_norm); // project norm force value into real coords
+  lambda = len_range.Clip(lambda);		// keep in range
+  lambda_norm = len_range.Normalize(lambda); 	// this is still key command
+  Compute_Lambda();
 }
 
 void VELambdaMuscle::UpdateAfterEdit_impl() {
@@ -2559,6 +2570,9 @@ void VELambdaMuscle::UpdateAfterEdit_impl() {
     if(ca_dt > 0.0f)
       ca_dt_cmp = step_size / ca_dt;
   }
+  if(co_contract_len > .95f * len_range.min)
+    co_contract_len = .95f * len_range.min;
+  Compute_Lambda();
 }
 
 ///////////////////////////////
@@ -2584,12 +2598,12 @@ void VELambdaArmJoint::SetValsToODE() {
   float rest_norm_angle = stops.Normalize(stops.def); // def = rest
   float init_norm_angle = stops.Normalize(pos);	      // pos = cur position/angle
 
-  co_contract_pct = .5f;
   targ_norm_angle = rest_norm_angle;
   targ_angle = stops.def;
+  cur_norm_angle = init_norm_angle;
 
-  extensor.Init(step_sz, rest_norm_angle, init_norm_angle);
-  flexor.Init(step_sz, rest_norm_angle, init_norm_angle);
+  extensor.Init(step_sz, rest_norm_angle, init_norm_angle, co_contract_pct);
+  flexor.Init(step_sz, rest_norm_angle, init_norm_angle, co_contract_pct);
 }
 
 void VELambdaArmJoint::GetValsFmODE(bool updt_disp) {

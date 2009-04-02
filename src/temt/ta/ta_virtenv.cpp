@@ -132,8 +132,9 @@ bool VEBody::CreateODE() {
     return true;
   }
 
-  if(body_id && geom_id && cur_shape == shape && ((bool)fixed_joint_id == HasBodyFlag(FIXED)))
-     return true;
+  if(body_id)
+    return true;
+
   dWorldID wid = (dWorldID)GetWorldID();
   if(TestError(!wid, "CreateODE", "no valid world id -- cannot create body!"))
     return false;
@@ -142,53 +143,6 @@ bool VEBody::CreateODE() {
     body_id = (dBodyID)dBodyCreate(wid);
   if(TestError(!body_id, "CreateODE", "could not create body!"))
     return false;
-
-  dBodyID bid = (dBodyID)body_id;
-  if(HasBodyFlag(FIXED)) {
-    if(!fixed_joint_id) {
-      fixed_joint_id = dJointCreateFixed(wid, 0);
-    }
-    dJointAttach((dJointID)fixed_joint_id, bid, 0);	// 0 = attach to static object
-  }
-  else if(fixed_joint_id) {
-    dJointDestroy((dJointID)fixed_joint_id);
-    fixed_joint_id = NULL;
-  }
-
-  dSpaceID sid = (dSpaceID)GetObjSpaceID();
-  if(TestError(!sid, "CreateODE", "no valid space id -- cannot create body geom!"))
-    return false;
-
-  if(!geom_id || cur_shape != shape) {
-    if(geom_id) dGeomDestroy((dGeomID)geom_id);
-    geom_id = NULL;
-    switch(shape) {
-    case SPHERE:
-      geom_id = dCreateSphere(sid, radius);
-      break;
-    case CAPSULE:
-      geom_id = dCreateCapsule(sid, radius, MAX(0.001f,length-2.0f*radius));
-      break;
-    case CYLINDER:
-      geom_id = dCreateCylinder(sid, radius, length);
-      break;
-    case BOX:
-      geom_id = dCreateBox(sid, box.x, box.y, box.z);
-      break;
-    case NO_SHAPE:
-      break;
-    }
-  }
-  
-  if(TestError(!geom_id, "CreateODE", "could not create body geom!"))
-    return false;
-
-  cur_shape = shape;
-
-  dGeomSetBody((dGeomID)geom_id, (dBodyID)body_id);
-  dGeomSetData((dGeomID)geom_id, (void*)this);
-
-  return true;
 }
 
 void VEBody::DestroyODE() {
@@ -205,30 +159,100 @@ void VEBody::SetValsToODE() {
     DestroyODE();
     return;
   }
-  if(!body_id || !geom_id || cur_shape != shape) CreateODE();
+  if(!body_id) CreateODE();
   if(!body_id) return;
   dWorldID wid = (dWorldID)GetWorldID();
   if(TestError(!wid, "SetValsToODE", "no valid world id -- cannot create stuff!"))
     return;
 
+  SetValsToODE_Shape();
   SetValsToODE_InitPos();
   SetValsToODE_Rotation();
   SetValsToODE_Velocity();
   SetValsToODE_Mass();
 }
 
+void VEBody::SetValsToODE_Shape() {
+  dSpaceID sid = (dSpaceID)GetObjSpaceID();
+  if(TestError(!sid, "CreateODE", "no valid space id -- cannot create body geom!"))
+    return;
+
+  if(geom_id) dGeomDestroy((dGeomID)geom_id);
+  geom_id = NULL;
+
+  switch(shape) {
+  case SPHERE:
+    geom_id = dCreateSphere(sid, radius);
+    break;
+  case CAPSULE:
+    geom_id = dCreateCapsule(sid, radius, MAX(0.00001f,(length-(2.0f*radius))));
+    break;
+  case CYLINDER:
+    geom_id = dCreateCylinder(sid, radius, length);
+    break;
+  case BOX:
+    geom_id = dCreateBox(sid, box.x, box.y, box.z);
+    break;
+  case NO_SHAPE:
+    break;
+  }
+  
+  if(TestError(!geom_id, "CreateODE", "could not create body geom!"))
+    return;
+
+  cur_shape = shape;
+
+  dGeomSetBody((dGeomID)geom_id, (dBodyID)body_id);
+  dGeomSetData((dGeomID)geom_id, (void*)this);
+}
+
 void VEBody::SetValsToODE_InitPos() {
   dBodyID bid = (dBodyID)body_id;
   cur_pos = init_pos;
   dBodySetPosition(bid, init_pos.x, init_pos.y, init_pos.z);
+
+
+  if(HasBodyFlag(FIXED)) {
+    if(!fixed_joint_id) {
+      dWorldID wid = (dWorldID)GetWorldID();
+      if(TestError(!wid, "SetValsToODE", "no valid world id -- cannot create stuff!"))
+	return;
+      fixed_joint_id = dJointCreateFixed(wid, 0);
+    }
+    dJointAttach((dJointID)fixed_joint_id, bid, 0);	// 0 = attach to static object
+  }
+  else if(fixed_joint_id) {
+    dJointDestroy((dJointID)fixed_joint_id);
+    fixed_joint_id = NULL;
+  }
 }
 
 void VEBody::SetValsToODE_Rotation() {
   dBodyID bid = (dBodyID)body_id;
   cur_rot = init_rot;
 
+  // capsules and cylinders need to have extra rotation as they are always Z axis oriented!
   dMatrix3 R;
-  dRFromAxisAndAngle(R, init_rot.x, init_rot.y, init_rot.z, init_rot.rot);
+  if(shape == CAPSULE || shape == CYLINDER) {
+    SbRotation irot;
+    irot.setValue(SbVec3f(init_rot.x, init_rot.y, init_rot.z), init_rot.rot);
+    if(long_axis == LONG_X) {
+      SbRotation sbrot;
+      sbrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), 1.5708f);
+      irot *= sbrot;
+    }
+    else if(long_axis == LONG_Y) {
+      SbRotation sbrot;
+      sbrot.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+      irot *= sbrot;
+    }
+    SbVec3f rot_ax;    float rangle;
+    irot.getValue(rot_ax, rangle);
+    dRFromAxisAndAngle(R, rot_ax[0], rot_ax[1], rot_ax[2], rangle);
+  }
+  else {
+    dRFromAxisAndAngle(R, init_rot.x, init_rot.y, init_rot.z, init_rot.rot);
+  }
   dBodySetRotation(bid, R);
 }
 
@@ -260,8 +284,7 @@ void VEBody::SetValsToODE_Mass() {
     dMassSetSphereTotal(&mass_ode, mass, radius);
     break;
   case CAPSULE:
-    //    dMassSetCappedCylinderTotal(&mass_ode, mass, long_axis, radius, length);
-    dMassSetCapsuleTotal(&mass_ode, mass, long_axis, radius, MAX(0.001f,length-2.0*radius));
+    dMassSetCapsuleTotal(&mass_ode, mass, long_axis, radius, MAX(0.00001f,length-2.0f*radius));
     break;
   case CYLINDER:
     dMassSetCylinderTotal(&mass_ode, mass, long_axis, radius, length);
@@ -289,6 +312,20 @@ void VEBody::GetValsFmODE(bool updt_disp) {
   const dReal* quat = dBodyGetQuaternion(bid);
   SbRotation sbrot;
   sbrot.setValue(quat[1], quat[2], quat[3], quat[0]);
+
+  // capsules and cylinders need to have extra rotation as they are always Z axis oriented: undo!
+  if(shape == CAPSULE || shape == CYLINDER) {
+    if(long_axis == LONG_X) {
+      SbRotation ubrot;
+      ubrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), -1.5708f);
+      sbrot *= ubrot;
+    }
+    else if(long_axis == LONG_Y) {
+      SbRotation ubrot;
+      ubrot.setValue(SbVec3f(1.0f, 0.0f, 0.0f), -1.5708f);
+      sbrot *= ubrot;
+    }
+  }
   SbVec3f rot_ax;
   sbrot.getValue(rot_ax, cur_rot.rot);
   cur_rot.x = rot_ax[0]; cur_rot.y = rot_ax[1]; cur_rot.z = rot_ax[2];
@@ -1089,59 +1126,11 @@ bool VEStatic::CreateODE() {
     DestroyODE();
     return true;
   }
-  if(geom_id && cur_shape == shape)
-     return true;
   dWorldID wid = (dWorldID)GetWorldID();
   if(TestError(!wid, "CreateODE", "no valid world id -- cannot create static item!"))
     return false;
 
-  dSpaceID sid = (dSpaceID)GetSpaceID();
-  if(TestError(!sid, "CreateODE", "no valid space id -- cannot create static item geom!"))
-    return false;
-
-  if(!geom_id || cur_shape != shape) {
-    if(geom_id) dGeomDestroy((dGeomID)geom_id);
-    geom_id = NULL;
-    switch(shape) {
-    case SPHERE:
-      geom_id = dCreateSphere(sid, radius);
-      break;
-    case CAPSULE:
-      geom_id = dCreateCapsule(sid, radius, MAX(0.001f,length-2.0f*radius));
-      break;
-    case CYLINDER:
-      geom_id = dCreateCylinder(sid, radius, length);
-      break;
-    case BOX:
-      geom_id = dCreateBox(sid, box.x, box.y, box.z);
-      break;
-    case PLANE: {
-      switch(plane_norm) {
-      case NORM_X:
-	geom_id = dCreatePlane(sid, 1.0f, 0.0f, 0.0f, plane_height);
-	break;
-      case NORM_Y:
-	geom_id = dCreatePlane(sid, 0.0f, 1.0f, 0.0f, plane_height);
-	break;
-      case NORM_Z:
-	geom_id = dCreatePlane(sid, 0.0f, 0.0f, 1.0f, plane_height);
-	break;
-      }
-      break;
-    }
-    case NO_SHAPE:
-      break;
-    }
-  }
-  
-  if(TestError(!geom_id, "CreateODE", "could not create static item geom!"))
-    return false;
-
-  cur_shape = shape;
-
-  dGeomSetData((dGeomID)geom_id, (void*)this);
-
-  return true;
+  SetValsToODE_Shape();
 }
 
 void VEStatic::DestroyODE() {
@@ -1151,14 +1140,64 @@ void VEStatic::DestroyODE() {
 
 void VEStatic::SetValsToODE() {
   if(HasStaticFlag(VEStatic::OFF)) {
+    DestroyODE();
     return;
   }
-  if(!geom_id || cur_shape != shape) CreateODE();
-  if(!geom_id) return;
   dWorldID wid = (dWorldID)GetWorldID();
   if(TestError(!wid, "SetValsToODE", "no valid world id -- cannot create stuff!"))
     return;
 
+  SetValsToODE_Shape();
+  SetValsToODE_PosRot();
+}
+
+void VEStatic::SetValsToODE_Shape() {
+  dSpaceID sid = (dSpaceID)GetSpaceID();
+  if(TestError(!sid, "CreateODE", "no valid space id -- cannot create static item geom!"))
+    return;
+
+  if(geom_id) dGeomDestroy((dGeomID)geom_id);
+  geom_id = NULL;
+  switch(shape) {
+  case SPHERE:
+    geom_id = dCreateSphere(sid, radius);
+    break;
+  case CAPSULE:
+    geom_id = dCreateCapsule(sid, radius, MAX(0.00001f,length-2.0f*radius));
+    break;
+  case CYLINDER:
+    geom_id = dCreateCylinder(sid, radius, length);
+    break;
+  case BOX:
+    geom_id = dCreateBox(sid, box.x, box.y, box.z);
+    break;
+  case PLANE: {
+    switch(plane_norm) {
+    case NORM_X:
+      geom_id = dCreatePlane(sid, 1.0f, 0.0f, 0.0f, plane_height);
+      break;
+    case NORM_Y:
+      geom_id = dCreatePlane(sid, 0.0f, 1.0f, 0.0f, plane_height);
+      break;
+    case NORM_Z:
+      geom_id = dCreatePlane(sid, 0.0f, 0.0f, 1.0f, plane_height);
+      break;
+    }
+    break;
+  }
+  case NO_SHAPE:
+    break;
+  }
+  
+  if(TestError(!geom_id, "CreateODE", "could not create static item geom!"))
+    return;
+
+  cur_shape = shape;
+
+  dGeomSetData((dGeomID)geom_id, (void*)this);
+}
+
+void VEStatic::SetValsToODE_PosRot() {
   dGeomID gid = (dGeomID)geom_id;
 
   if(shape != PLANE) {

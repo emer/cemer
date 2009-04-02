@@ -379,48 +379,50 @@ void VEBodyView::Render_impl() {
 
   SoSeparator* ssep = obv->shapeSeparator();
 
-  switch(ob->shape) {
-  case VEBody::SPHERE: {
-    SoSphere* sp = (SoSphere*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-    sp->radius = ob->radius;
-    break;
-  }
-  case VEBody::CAPSULE: {
-    SoCapsule* sp = (SoCapsule*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-    sp->radius = ob->radius;
-    sp->height = ob->length;
-    SoTransform* tx = obv->txfm_shape();
-    if(ob->long_axis == VEBody::LONG_X)
-      tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-    else if(ob->long_axis == VEBody::LONG_Y)
-      tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-    else if(ob->long_axis == VEBody::LONG_Z)
-      tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
-    break;
-  }
-  case VEBody::CYLINDER: {
-    SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-    sp->radius = ob->radius;
-    sp->height = ob->length;
-    SoTransform* tx = obv->txfm_shape();
-    if(ob->long_axis == VEBody::LONG_X)
-      tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-    else if(ob->long_axis == VEBody::LONG_Y)
-      tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-    else if(ob->long_axis == VEBody::LONG_Z)
-      tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
-    break;
-  }
-  case VEBody::BOX: {
-    SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-    sp->width = ob->box.x;
-    sp->depth = ob->box.z;
-    sp->height = ob->box.y;
-    break;
-  }
-  case VEBody::NO_SHAPE: {
-    break;
-  }
+  if(ob->IsCurShape()) {	// only if we are currently the right shape
+    switch(ob->shape) {
+    case VEBody::SPHERE: {
+      SoSphere* sp = (SoSphere*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+      sp->radius = ob->radius;
+      break;
+    }
+    case VEBody::CAPSULE: {
+      SoCapsule* sp = (SoCapsule*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+      sp->radius = ob->radius;
+      sp->height = ob->length;
+      SoTransform* tx = obv->txfm_shape();
+      if(ob->long_axis == VEBody::LONG_X)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+      else if(ob->long_axis == VEBody::LONG_Y)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+      else if(ob->long_axis == VEBody::LONG_Z)
+	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+      break;
+    }
+    case VEBody::CYLINDER: {
+      SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+      sp->radius = ob->radius;
+      sp->height = ob->length;
+      SoTransform* tx = obv->txfm_shape();
+      if(ob->long_axis == VEBody::LONG_X)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+      else if(ob->long_axis == VEBody::LONG_Y)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+      else if(ob->long_axis == VEBody::LONG_Z)
+	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+      break;
+    }
+    case VEBody::BOX: {
+      SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+      sp->width = ob->box.x;
+      sp->depth = ob->box.z;
+      sp->height = ob->box.y;
+      break;
+    }
+    case VEBody::NO_SHAPE: {
+      break;
+    }
+    }
   }
 }
 
@@ -456,6 +458,7 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
   dragger->rotation.getValue(axis, angle);
 //   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
+    // todo: does this need to undo cylinder/capsule stuff???
     SbRotation rot;
     rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
     SbRotation nw_rot = rot * cur_rot;
