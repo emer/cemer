@@ -1950,6 +1950,16 @@ const Variant taBase::GetUserData(const String& key) const {
   return _nilVariant;
 }
 
+UserDataItemBase* taBase::GetUserDataItem(const String& key) const {
+  UserDataItemBase* rval = NULL;
+  UserDataItem_List* ud = GetUserDataList();
+  if (ud) {
+    rval = ud->FindLeafName(key);
+  }
+  return rval;
+}
+
+
 UserDataItemBase* taBase::GetUserDataOfType(TypeDef* typ,
   const String& key, bool force_create) 
 {

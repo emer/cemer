@@ -78,12 +78,8 @@ INHERITED(LeabraLayerSpec)
 public:
   CtxtUpdateSpec updt;		// ctxt updating constants: from hidden, from previous values (hysteresis), outputs from context (n/a on simple gate layer)
 
-  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   // clamp from act_p values of sending layer
-
-  virtual void Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net);
-  // get context source value for given context unit
-
   override bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
 
   // don't do any learning:
@@ -95,6 +91,11 @@ public:
   void	Defaults();
 
   TA_SIMPLE_BASEFUNS(LeabraContextLayerSpec);
+  
+protected:
+  virtual void Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net);
+  // get context source value for given context unit
+
 private:
   void 	Initialize();
   void	Destroy()		{ };

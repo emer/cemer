@@ -74,7 +74,7 @@ void LeabraContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u, Le
     u->ext = u->act_m;		// just use previous minus phase value!
   }
   else {
-    LeabraRecvCons* cg = (LeabraRecvCons*)u->recv[0];
+    LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
     if(TestError(!cg, "Compute_Context", "requires one recv projection!")) {
       return;
     }

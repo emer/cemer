@@ -318,6 +318,8 @@ protected:
   
   bool 	ScanObject_InObject(taBase* obj, String var, taBase* name_obj);
   // if name_obj == NULL, don't make a column for this guy
+  bool ScanObject_InUserData(taBase* obj, String var,
+    taBase* name_obj); // called when an InObject var is "user_data.xxx[.yyy]"
   void	ScanObject_Network(Network* net, String var);
   void	ScanObject_Layer(Layer* lay, String var);
   void	ScanObject_LayerUnits(Layer* lay, String var);

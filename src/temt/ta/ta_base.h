@@ -1071,6 +1071,8 @@ public:
   // #CAT_UserData #EXPERT #ARGC_2 gets specified user data of given type, making one if doesn't exist and fc=true
   UserDataItemBase* 	GetUserDataOfTypeC(TypeDef* typ, const String& key) const;
   // #IGNORE const non-forced version, for convenience
+  UserDataItemBase* 	GetUserDataItem(const String& key) const;
+  // #IGNORE const non-forced version, for convenience
   inline bool		GetUserDataAsBool(const String& key) const
     {return GetUserData(key).toBool();} // #CAT_UserData #EXPERT get specified user data as bool (see GetUserData)
   inline int		GetUserDataAsInt(const String& key) const

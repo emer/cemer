@@ -729,6 +729,56 @@ void NetMonItem::ScanObject() {
   }
 }
 
+bool NetMonItem::ScanObject_InUserData(taBase* obj, String var,
+  taBase* name_obj) 
+{
+  String key;
+  if (var.contains('.')) {
+    // udi should be a complex container
+    key = var.before('.');
+    var = var.after(".");
+  } else {
+    // udi should be a simple value
+    key = var;
+    var = _nilString;
+  }
+  UserDataItemBase* udi = obj->GetUserDataItem(key); 
+  if(TestError(!udi,"ScanObject_InUserData",
+                "UserDataItem: ", key, " not found"))
+    return true; //no mon, but we did handle it
+  
+  // note: we test for UserDataItem type, not isSimple because
+  // we need to link to the value member
+  if (udi->InheritsFrom(&TA_UserDataItem)) {
+    if(TestError(var.nonempty(),"ScanObject_InUserData",
+      "UserDataItem: ", key, " expected to be simple; can't resolve remaining var: ", var))
+      return true; //no mon, but we did handle it
+    MemberDef* md = udi->FindMember("value"); // should exist!
+    if(TestError(!md,"ScanObject_InUserData",
+      "unexpected: member 'value' supposed to exist"))
+      return true; //no mon, but we did handle it
+    if (name_obj) {
+      String valname = GetChanName(name_obj, val_specs.size);
+      AddScalarChan(valname, VT_VARIANT);
+      if(agg.op != Aggregate::NONE) {
+        AddScalarChan_Agg(valname, VT_VARIANT); // add the agg guy just to keep it consistent
+      }
+    }
+    // if not adding a column, it is part of a pre-allocated matrix; just add vars
+    ptrs.Add(udi);
+    members.Link(md);
+    return true;
+      
+  } else {
+    if(TestError(var.empty(),"ScanObject_InUserData",
+      "UserDataItem: ", key, " expected to be non-simple; additional .xxx member resolution required after item key"))
+      return true; //no mon, but we did handle it
+    // descend...
+    return ScanObject_InObject(udi, var, name_obj);
+  }
+  return false; // compiler food
+}
+
 bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) {
   if (!obj) return false; 
   MemberDef* md = NULL;
@@ -736,6 +786,11 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
   // first, try the recursive end, look for terminal member in ourself
   if (var.contains('.')) {
     String membname = var.before('.');
+    // user data is a special case
+    if (membname == "user_data") {
+      return ScanObject_InUserData(obj, var.after("."), name_obj);
+    }
+    
     md = obj->FindMember(membname);
     //note: if memb not found, then we assume it is in an iterated subobj...
     if (!md) return false;
