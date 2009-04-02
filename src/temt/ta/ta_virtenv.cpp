@@ -143,6 +143,7 @@ bool VEBody::CreateODE() {
     body_id = (dBodyID)dBodyCreate(wid);
   if(TestError(!body_id, "CreateODE", "could not create body!"))
     return false;
+  return true;
 }
 
 void VEBody::DestroyODE() {
@@ -1131,6 +1132,7 @@ bool VEStatic::CreateODE() {
     return false;
 
   SetValsToODE_Shape();
+  return true;
 }
 
 void VEStatic::DestroyODE() {
