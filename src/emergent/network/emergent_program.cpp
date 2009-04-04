@@ -615,7 +615,7 @@ bool InitNamedUnits::InitDynEnumFmUnitNames(DynEnumType* dyn_enum,
   for(i=0;i<unit_names_col->cell_size();i++) {
     String cnm = unit_names_col->GetValAsStringM(-1, i);
     if(cnm.empty()) continue;
-    cnm = prefix + "_" + cnm;
+    cnm = taMisc::StringCVar(prefix + "_" + cnm); // make it legal!
     dyn_enum->AddEnum(cnm, i);
   }
   String cnm = dyn_enum->name;

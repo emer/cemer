@@ -126,7 +126,7 @@ SmartRef_Of(ProgType,TA_ProgType); // ProgTypeRef
 ///////////////////////////////////////////////////////////
 
 class TA_API DynEnumItem : public taNBase {
-  // #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated type value (name and numerical int value)
+  // ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated type value (name and numerical int value)
 INHERITED(taNBase)
 public:
   int		value;		// numerical (integer) value of this enum
