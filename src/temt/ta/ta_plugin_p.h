@@ -115,7 +115,7 @@ public:
   
   bool			InitPlugin(); // #IGNORE initializes the plugin, including making/loading state object if any -- assumes it has been reconciled
   virtual void		PluginOptions(); // #BUTTON open the Options dialog for this plugin (if it has one)
-  int	GetEnabled() const {return enabled;}
+  int	GetEnabled() const {return enabled && loaded;}
   void	SetEnabled(bool value) {enabled = value;}
   void	Copy_(const taPlugin& cp); //note: we only use this for descs, not actual plugins
   TA_BASEFUNS(taPlugin);
