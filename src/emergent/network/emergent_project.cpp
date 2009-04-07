@@ -787,7 +787,7 @@ void ProjectBase::AutoBuildNets() {
   taLeafItr i;
   FOR_ITR_EL(Network, net, networks., i) {
     if(net->auto_build == Network::NO_BUILD) continue;
-    if(taMisc::use_gui && (net->auto_build == Network::PROMPT_BUILD)) {
+    if(taMisc::gui_active && (net->auto_build == Network::PROMPT_BUILD)) {
       int chs = taMisc::Choice("Build network: " + net->name, "Yes", "No");
       if(chs == 1) continue;
     }

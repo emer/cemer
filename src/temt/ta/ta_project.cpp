@@ -347,7 +347,7 @@ public:
     bool rval = (md->ShowMember(show()) && (md->im != NULL));
     if (!rval) return rval;
 // note: we also include a couple of members we know are in taProject
-    if (!(md->name.contains("desc") || (md->name == "use_change_log") || (md->name == "save_rmv_units")
+    if (!(md->name.contains("desc") || (md->name == "version") || (md->name == "save_rmv_units")
 	 || (md->name == "file_name"))) return false;
     return true;
   }
@@ -358,10 +358,24 @@ public:
 };
 #endif
 
+
+void taProjVersion::SetFromString(String ver) {
+  Clear();
+  // parse, mj.mn.st -- just blindly go through, harmless if missings
+  major = taVersion::BeforeOrOf('.', ver);
+  minor = taVersion::BeforeOrOf('.', ver);
+  step = taVersion::BeforeOrOf(' ', ver); // dummy
+}
+
+bool taProjVersion::GtEq(int mj, int mn, int st) {
+  return (major > mj) || 
+    ((major == mj) && (minor > mn)) ||
+     ((major == mj) && (minor == mn) && (step >= st));
+}
+
 void taProject::Initialize() {
   m_dirty = false;
   m_no_save = false;
-  use_change_log = (taMisc::viewer_options & taMisc::VO_USE_CHANGE_LOG);
   viewers.SetBaseType(&TA_TopLevelViewer);
 }
 
@@ -377,6 +391,7 @@ void taProject::InitLinks() {
 }
 
 void taProject::InitLinks_impl() {
+  taBase::Own(version, this);
   taBase::Own(templates, this);
   taBase::Own(docs, this);
   taBase::Own(wizards, this);
@@ -673,14 +688,26 @@ void taProject::Dump_Load_pre() {
   return rval;
 }*/
 
-int taProject::Save_strm(ostream& strm, TAPtr par, int indent) {
-#ifdef TA_GUI
-  if (use_change_log) {
-    UpdateChangeLog();
+int taProject::Save() { 
+  String fname = GetFileName(); // empty if 1st or not supported
+  if(fname.contains("_recover")) {
+    int chs = taMisc::Choice("This appears to be a recover file that was saved during a previous crash -- you may not want to save to this file name", "Save to this _recover file", "Let me choose a new name", "Save to non-_recover version of this file");
+    if(chs == 1) fname = "";	// this will prompt for name
+    else if(chs == 2) {
+      fname = fname.before("_recover") + fname.from(".",-1);
+    }
   }
-#endif
-  int rval = inherited::Save_strm(strm, par, indent);
-  return rval;
+  return SaveAs(fname);
+}
+
+int taProject::SaveNoteChanges() {
+  UpdateChangeLog();
+  return Save();
+}
+
+int taProject::SaveAsNoteChanges(const String& fname) {
+  UpdateChangeLog();
+  return SaveAs(fname);
 }
 
 void taProject::setDirty(bool value) {
@@ -693,14 +720,17 @@ void taProject::setDirty(bool value) {
 
 void taProject::UpdateChangeLog() {
 #ifdef TA_GUI
+  version.step++;		// increment the step always
   TypeDef* td = GetTypeDef();
   MemberDef* md = td->members.FindName("last_change_desc");
   taiStringDataHost* dlg = new taiStringDataHost(md, this, td, false); // false = not read only
-  dlg->Constr("Please enter a detailed description of the changes made to the project since it was last saved -- this will be recorded in a docs object called ChangeLog.  You can use self-contained HTML formatting tags.  To turn off this feature, toggle use_change_log on the Project.  <b>NOTE: Cancel</b> here is <i>only</i> for the change log entry -- not for the project save!");
+  dlg->Constr("Please enter a detailed description of the changes made to the project since it was last saved -- this will be recorded in a docs object called ChangeLog.  You can use self-contained HTML formatting tags.  <b>NOTE: Cancel</b> here is <i>only</i> for the change log entry -- not for the project save!");
   if(dlg->Edit(true)) {
     time_t tmp = time(NULL);
     String tstamp = ctime(&tmp);
     tstamp = tstamp.before('\n');
+
+    String vers = version.GetString();
 
     String user = taPlatform::userName();
     String host = taPlatform::hostName();
@@ -712,7 +742,7 @@ void taProject::UpdateChangeLog() {
     if(prv_fname == cur_fname) prv_fname = "";
     else prv_fname = "(was: <code>" + prv_fname + "</code>)";
 
-    String nw_txt = "\n<li>" + tstamp + " " + user + " <code>" + cur_fname
+    String nw_txt = "\n<li>" + tstamp + " " + vers + " " + user + " <code>" + cur_fname
       + "</code>" + prv_fname + "<br>\n";
     if(!last_change_desc.empty()) nw_txt += "  " + last_change_desc + "\n";
 
@@ -737,9 +767,6 @@ void taProject::UpdateChangeLog() {
 }
 
 void taProject::SaveRecoverFile() {
-  bool tmp_change_log = use_change_log;
-  use_change_log = false;		// don't pop up any dialogs..
-
   String prfx;
   String sufx = ".proj";
   String recv = "_recover";
@@ -778,7 +805,6 @@ void taProject::SaveRecoverFile() {
     flr->setFileName(fnm);
     flr->Save();
     if(flr->ostrm) {
-      use_change_log = false;
       SaveRecoverFile_strm(*flr->ostrm);
 #ifdef DEBUG // NOTE: really only works on Linux, and is so marginal...
       cerr << "Error saving recover file: " << old_fnm << endl
@@ -794,8 +820,6 @@ void taProject::SaveRecoverFile() {
     // save root, which wasn't saved
     tabMisc::root->Save();
   }
-
-  use_change_log = tmp_change_log;
 
 #ifdef HAVE_QT_CONSOLE
   // now try to save console
@@ -1293,6 +1317,11 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("Gui", "\
  -- Enables the GUI (graphical user interface) -- it is on by default in most programs except css");
 
+  taMisc::AddArgName("-nowin", "NoWin");
+  taMisc::AddArgName("--nowin", "NoWin");
+  taMisc::AddArgNameDesc("NoWin", "\
+ -- does not open any windows, but does start the basic GUI infrastructure, as a way of doing offscreen rendering");
+
   taMisc::AddArgName("-a", "AppDir");
   taMisc::AddArgName("--app_dir", "AppDir");
   taMisc::AddArgName("app_dir=", "AppDir");
@@ -1423,6 +1452,11 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
     taMisc::use_gui = false;
   else if(taMisc::CheckArgByName("Gui"))
     taMisc::use_gui = true;
+
+  if(taMisc::CheckArgByName("NoWin"))
+    taMisc::gui_no_win = true;
+  else 
+    taMisc::gui_no_win = false;
 
 #ifndef TA_GUI
   if(taMisc::use_gui) {
@@ -1907,7 +1941,11 @@ bool taRootBase::Startup_InitGui() {
 //     taiM->icon_bitmap = new QBitmap(emergent_bitmap_width,
 //     	emergent_bitmap_height, emergent_bitmap_bits);
 //    qApp->setWindowIcon(QIcon(*(taiM->icon_bitmap)));
-    taMisc::gui_active = true;	// officially active!
+
+    if(taMisc::gui_no_win)
+      taMisc::gui_active = false;	// in effect, we start as use_gui but never get to gui_active -- everything is initialized but no windows are created
+    else
+      taMisc::gui_active = true;	// officially active!
     Startup_InitViewColors();
   }
   else
@@ -1986,7 +2024,7 @@ bool taRootBase::Startup_ConsoleType() {
   //   it would also include contexts such as piping or other stdin/out redirects
   bool is_batch = !cssMisc::init_interactive;
 #ifdef DMEM_COMPILE
-  if(taMisc::use_gui) {
+  if(taMisc::gui_active) {
     if((taMisc::dmem_nprocs > 1) && (taMisc::dmem_proc > 0)) // non-first procs batch
       is_batch = true;
   }
@@ -1999,7 +2037,7 @@ bool taRootBase::Startup_ConsoleType() {
   if (is_batch) {
     console_type = taMisc::CT_NONE;
     console_options &= ~(taMisc::CO_USE_PAGING_GUI | taMisc::CO_USE_PAGING_NOGUI); // damn well better not use paging!!!
-  } else if (taMisc::use_gui) {
+  } else if (taMisc::gui_active) {
 #ifdef HAVE_QT_CONSOLE
     if (!((console_type == taMisc::CT_OS_SHELL) ||
          (console_type == taMisc::CT_GUI) ||
@@ -2063,7 +2101,7 @@ bool taRootBase::Startup_MakeMainWin() {
 
 bool taRootBase::Startup_Console() {
 #ifdef HAVE_QT_CONSOLE
-  if (console_type == taMisc::CT_GUI) {  
+  if(taMisc::gui_active && (console_type == taMisc::CT_GUI)) {  
     //note: nothing else to do here for gui_dockable
     if (console_options & taMisc::CO_GUI_TRACKING) {
       QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);

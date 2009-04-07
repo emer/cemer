@@ -674,6 +674,7 @@ bool	taMisc::not_constr = true;
 bool	taMisc::use_gui = false; // set to default in Init_Gui
 bool	taMisc::use_plugins; // set to default in Init_Gui
 bool 	taMisc::gui_active = false;
+bool 	taMisc::gui_no_win = false;
 bool 	taMisc::server_active = false; // true while connected
 ContextFlag	taMisc::is_loading;
 ContextFlag	taMisc::is_post_loading;

@@ -702,9 +702,9 @@ public:
     int compress=-1, String filetypes=_nilString);
   // #IGNORE get filer with ostrm opened for appending for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
   virtual int		Save(); 
-  // #MENU #MENU_ON_Object #ARGC_0 #CAT_File saves the object to a file using current file name (from GetFileName() function); if context="" then default is used
+  // #MENU #MENU_ON_Object #CAT_File saves the object to a file using current file name 
   virtual int		SaveAs(const String& fname = ""); 
-  // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user; if context="" then default is used
+  // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, the user is prompted with a file dialog
 
   virtual String	GetValStr(void* par = NULL, MemberDef* md = NULL,
 				  TypeDef::StrContext sc = TypeDef::SC_DEFAULT,

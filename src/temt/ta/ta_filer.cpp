@@ -320,7 +320,7 @@ void taFiler::Init(FilerFlags flags_) {
 
 taFiler::~taFiler() {
   Close();
-  if (save_paths && taMisc::use_gui && tabMisc::root) {
+  if (save_paths && taMisc::gui_active && tabMisc::root) {
     save_paths = false;
     tabMisc::root->Save();
   }

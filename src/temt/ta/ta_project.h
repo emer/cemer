@@ -135,11 +135,37 @@ private:
   void 	Destroy()		{ };
 };
 
+class TA_API taProjVersion : public taOBase {
+  // #EDIT_INLINE project version numbering information
+INHERITED(taOBase)
+public:
+  int	major;			// use for incompatible or other major changes
+  int	minor;			// use for compatible or minor incremental changes
+  int	step;			// use for incremental steps -- automatically incremented during SaveNoteChanges
+  
+  void		Set(int mj, int mn, int st = 0) { major = mj; minor = mn; step = st; }
+  void		SetFromString(String ver); // parse, mj.mn.st
+  const String	GetString() 
+  { return String(major).cat(".").cat(String(minor)).cat(".").cat(String(step)).cat(".");}
+
+  void		Clear() {major = minor = step = 0;} // reset version info to 0
+  bool		GtEq(int mj, int mn, int st = 0); // true if the version is greater than or equal to the indicated version
+
+  TA_SIMPLE_BASEFUNS(taProjVersion);
+private:
+  void	Initialize() { Clear(); }
+  void 	Destroy()    { };
+};
+
+
 class TA_API taProject : public taFBase {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##DUMP_LOAD_POST ##DEF_NAME_ROOT_Project ##CAT_Project Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
 INHERITED(taFBase)
 public:
   String 		tags;	   // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this project -- should be listed in hierarchical order, with most important/general tags first -- these are used for searching the online project library if this project is uploaded
+  taProjVersion 	version; 
+  // project version numbering information -- useful for keeping track of changes over time (recorded in change log automatically with SaveNoteChanges)
+
   taBase_Group		templates; // #HIDDEN templates for new objects -- copy new objects from here
   Doc_Group		docs; // documents, typically linked to other objects
   Wizard_Group    	wizards; // Wizards for automatically configuring simulation objects
@@ -151,7 +177,6 @@ public:
 
   bool			m_dirty; // #HIDDEN #READ_ONLY #NO_SAVE
   bool			m_no_save; // #HIDDEN #READ_ONLY #NO_SAVE -- flag to prevent double user query on exiting; cleared when undirtying
-  bool			use_change_log;  // #AKA_use_sim_log record project changes in a ChangeLog docs item -- you will be prompted whenver the project is saved to a different name, and can always use the UpdateChangeLog button to add a new entry prior to saving
   String		last_change_desc; // #EXPERT description of the last change made to the project -- used for change log
 
   override bool		isDirty() const {return m_dirty;}
@@ -191,7 +216,12 @@ public:
   // #IGNORE underlying save function to use when saving a recover file -- might want to do something special here
 
   override bool		SetFileName(const String& val);
-  override int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
+  override int		Save(); 
+
+  virtual int		SaveNoteChanges(); 
+  // #MENU #MENU_ON_Object #CAT_File saves the project to a file using current file name, but first prompts for a text note of changes that have been made, which are registered in the ChangeLog document within the project prior to saving
+  virtual int		SaveAsNoteChanges(const String& fname = ""); 
+  // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user, but first prompts for a text note of changes that have been made, which are registered in the ChangeLog document within the project prior to saving
 
   override void		Dump_Load_pre();
   override void		PostLoadAutos();

@@ -3278,6 +3278,8 @@ if (but) {but->setArrowType(Qt::RightArrow); but->setText("");}
   win->fileOpenAction->addTo(tb);
   win->fileSaveAction->addTo(tb);
   win->fileSaveAsAction->addTo(tb);
+  win->fileSaveNotesAction->addTo(tb);
+  win->fileSaveAsNotesAction->addTo(tb);
   win->fileCloseAction->addTo(tb);
   win->filePrintAction->addTo(tb);
   tb->addSeparator();
@@ -3565,6 +3567,8 @@ void iMainWindowViewer::Init() {
   fileOpenAction = NULL;
   fileSaveAction = NULL;
   fileSaveAsAction = NULL;
+  fileSaveNotesAction = NULL;
+  fileSaveAsNotesAction = NULL;
   fileSaveAllAction = NULL;
   fileCloseAction = NULL;
   fileCloseWindowAction = NULL;
@@ -3787,6 +3791,8 @@ void iMainWindowViewer::Constr_Menu_impl() {
   fileSaveAction = AddAction(new taiAction("&Save Project", QKeySequence(cmd_str+"S"), _fileSaveAction ));
   fileSaveAction->setIcon( QIcon( QPixmap(":/images/filesave.png") ) );
   fileSaveAsAction = AddAction(new taiAction("Save Project &As...", QKeySequence(), _fileSaveAsAction ));
+  fileSaveNotesAction = AddAction(new taiAction("Save Note &Changes", QKeySequence(), "fileSaveNotesAction"));
+  fileSaveAsNotesAction = AddAction(new taiAction("Save As &Note Changes...", QKeySequence(), "fileSaveAsNotesAction"));
   fileSaveAllAction = AddAction(new taiAction("Save A&ll Projects", QKeySequence(), _fileSaveAsAction ));
   fileCloseAction = AddAction(new taiAction("Close Project", QKeySequence(), "fileCloseAction" ));
   
@@ -3797,6 +3803,8 @@ void iMainWindowViewer::Constr_Menu_impl() {
     this, SLOT( fileOpenRecent_aboutToShow() ) );
   fileSaveAction->AddTo(fileMenu );
   fileSaveAsAction->AddTo(fileMenu);
+  fileSaveNotesAction->AddTo(fileMenu );
+  fileSaveAsNotesAction->AddTo(fileMenu );
   fileSaveAllAction->AddTo(fileMenu);
   fileCloseAction->AddTo(fileMenu);
   fileMenu->insertSeparator();
@@ -3816,12 +3824,16 @@ void iMainWindowViewer::Constr_Menu_impl() {
   if (isProjShower()) {
     connect( fileSaveAction, SIGNAL( Action() ), this, SLOT( fileSave() ) );
     connect( fileSaveAsAction, SIGNAL( Action() ), this, SLOT( fileSaveAs() ) );
+    connect( fileSaveNotesAction, SIGNAL( Action() ), this, SLOT( fileSaveNotes() ) );
+    connect( fileSaveAsNotesAction, SIGNAL( Action() ), this, SLOT( fileSaveAsNotes() ) );
     connect( fileCloseAction, SIGNAL( Action() ), this, SLOT( fileClose() ) );
     // disable the CloseWindow to help emphasize that Closing will close proj
 //no, not needed    fileCloseWindowAction->setEnabled(false);
   } else {
     fileSaveAction->setEnabled(false);
     fileSaveAsAction->setEnabled(false);
+    fileSaveNotesAction->setEnabled(false);
+    fileSaveAsNotesAction->setEnabled(false);
     fileCloseAction->setEnabled(false);
   }
 #ifndef TA_OS_MAC
@@ -4118,6 +4130,18 @@ void iMainWindowViewer::fileSaveAs() {
   taProject* proj = curProject();
   if (!proj) return;
   proj->SaveAs();
+}
+
+void iMainWindowViewer::fileSaveNotes() {
+  taProject* proj = curProject();
+  if (!proj) return;
+  proj->SaveNoteChanges();
+}
+
+void iMainWindowViewer::fileSaveAsNotes() {
+  taProject* proj = curProject();
+  if (!proj) return;
+  proj->SaveAsNoteChanges();
 }
 
 void iMainWindowViewer::fileSaveAll() {

@@ -836,7 +836,7 @@ bool DataTable::AutoLoadData() {
   if(HasDataFlag(SAVE_ROWS)) return false;
   if(auto_load == NO_AUTO_LOAD) return false;
   
-  if(taMisc::use_gui && (auto_load == PROMPT_LOAD)) {
+  if(taMisc::gui_active && (auto_load == PROMPT_LOAD)) {
     int chs = taMisc::Choice("Load data file: " + auto_load_file + " into data table: " + name, "Yes", "No");
     if(chs == 1) return false;
   }

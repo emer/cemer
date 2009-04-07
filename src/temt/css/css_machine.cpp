@@ -5165,7 +5165,7 @@ void cssCmdShell::UpdatePrompt(bool disp_prompt) {
 
 void cssCmdShell::Shell_OS_Console(const char* prmpt) {
   //WARNING: PAGING IS EVIL SINCE IT CONFLICTS WITH THE THREADED INPUT HANDLERS (in GUI ONLY?)
-  if(taMisc::use_gui)
+  if(taMisc::gui_active)
     pgout.no_page = !(taMisc::console_options & taMisc::CO_USE_PAGING_GUI);
   else
     pgout.no_page = !(taMisc::console_options & taMisc::CO_USE_PAGING_NOGUI);

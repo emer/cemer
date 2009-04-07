@@ -446,14 +446,14 @@ public:
   void		Clear() {major = minor = step = build = 0;} //
   bool		GtEq(ushort mj, ushort mn, ushort st = 0); // true if the version is greater than or equal to the indicated version
   
-  
   taVersion() {Clear();} //
   taVersion(ushort mj, ushort mn, ushort st = 0, ushort bld = 0) 
     {set(mj, mn, st, bld);} //
   taVersion(const String& ver) {setFromString(ver);}
-// implicit copy and assign
-private:
-  int		BeforeOrOf(char sep, String& in);
+  // implicit copy and assign
+
+  static int	BeforeOrOf(char sep, String& in);
+  // #IGNORE for parsing
 };
 
 class TA_API taThreadDefaults {
@@ -614,7 +614,6 @@ public:
     VO_DOUBLE_CLICK_EXP_ALL = 0X001, // #LABEL_DoubleClickExpAll double click expands or contracts all tree items -- use at your own risk on big projects...
     VO_AUTO_SELECT_NEW	= 0x002, // #LABEL_AutoSelectNew automatically select (the first) of a new tree item that is made with New or similar menu commands
     VO_AUTO_EXPAND_NEW	= 0x004, // #LABEL_AutoExpandNew automatically expand new tree items that are made with New or similar menu commands
-    VO_USE_CHANGE_LOG	= 0x008, // #LABEL_UseChangeLog new projects use the Change Log by default
   };
 
   enum	GuiStyle {	// style options provided by the gui system (not all are available on all platforms)
@@ -809,7 +808,8 @@ public:
   static bool		not_constr;	// #READ_ONLY #NO_SAVE #NO_SHOW true if ta types are not yet constructed (or are destructed)
 
   static bool		use_gui;	// #READ_ONLY #NO_SAVE #NO_SHOW whether the user has specified to use the gui or not (default = true)
-  static bool		gui_active;	// #READ_ONLY #NO_SAVE #NO_SHOW if gui has been started up or not
+  static bool		gui_active;	// #READ_ONLY #NO_SAVE #NO_SHOW if gui has actually been started up or not -- this is the one that should be checked for gui modality in all non-startup code
+  static bool		gui_no_win;	// #READ_ONLY #NO_SAVE #NO_SHOW an intermediate form of gui operation where the gui system is fully initialized, but no windows are created, and gui_active remains false -- this is useful for batch (background) jobs that need to do offscreen rendering or other gui-dependent functions
   static bool		use_plugins;	// #READ_ONLY #NO_SAVE #NO_SHOW whether to use plugins
   static bool		server_active;	// #READ_ONLY #NO_SAVE #NO_SHOW if remote server has been started up or not
   static ContextFlag	is_loading;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading an object
