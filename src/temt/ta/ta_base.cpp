@@ -4083,7 +4083,7 @@ void taDataView::DoActions(DataViewAction acts) {
   
   if (taMisc::is_loading || taMisc::is_duplicating) return; 
   // no rendering should ever get done if not in gui mode, incl during late shutdown
-  if (taMisc::gui_active) {
+  if (taMisc::gui_active || taMisc::gui_no_win) {
     if (acts & RENDER_PRE) {
 /*obs      // must not already be constructed
       if (!isMapped())*/

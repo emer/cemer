@@ -69,6 +69,8 @@ bool taImage::SaveImage(const String& fname) {
   }
   QString fn = (const char*)fnm;
   if(!q_img.save(fn)) {
+    int ht, wd;
+    GetImageSize(ht, wd);
     taMisc::Error("SaveImage: could not save image file:", fnm);
     return false;
   }

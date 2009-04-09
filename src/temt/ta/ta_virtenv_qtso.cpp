@@ -1154,7 +1154,7 @@ void VEWorldView::SetupCameras() {
 
   if(cam_light) {
     node_so->setCamLightOn(true);
-    node_so->setCamLightDir(-cam_light->dir_norm.x, -cam_light->dir_norm.y,
+    node_so->setCamLightDir(cam_light->dir_norm.x, cam_light->dir_norm.y,
 			    -cam_light->dir_norm.z);
   }
   else {
@@ -1239,7 +1239,18 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
   if(!wl) return img;
 
   T3VEWorld* node_so = (T3VEWorld*)this->node_so(); // cache
-  if(!node_so) return img;
+  if(!node_so) {
+    if(taMisc::gui_no_win) {	// offscreen rendering mode -- need to build a new worldview
+      BuildAll();
+      Render_pre();
+      Render_impl();
+      Render_post();
+      node_so = (T3VEWorld*)this->node_so(); // cache
+    }
+    if(!node_so) {		// still didn't work
+      return img;
+    }
+  }
 
   SoSwitch* cam_switch = node_so->getCameraSwitch();
   if(cam_switch->getNumChildren() <= cam_no) return img; // not ready yet

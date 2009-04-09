@@ -44,40 +44,38 @@ class VEWorldView;
 class taImage;
 
 
-class TA_API ODEIntParams : public taBase {
+class TA_API ODEIntParams : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		erp;		// #DEF_0.2 (0-1, .1-.8 useful range) error reduction parameter: how much of the joint error is reduced at the next time step
   float		cfm;		// #DEF_1e-05 (0-1, 1e-9 - 1 useful range) constraint force mixing parameter: how "soft" is the constraint (0 = hard, 1 = soft)
 
-  void	Initialize();
-  void	Destroy()	{ };
-  SIMPLE_COPY(ODEIntParams);
-  TA_BASEFUNS(ODEIntParams);
+  TA_SIMPLE_BASEFUNS(ODEIntParams);
 protected:
   void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
 };
 
 
 ////////////////////////////////////////////////
 //		Bodies
 
-class TA_API VESurface : public taBase {
+class TA_API VESurface : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv surface properties for collisions
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
 
   float		friction; 	// (0-1e22) coulomb friction coefficient (mu). 0 = frictionless, 1e22 = infinity = no slipping
   float		bounce;		// (0-1) how bouncy is the surface (0 = hard, 1 = maximum bouncyness) 
   float		bounce_vel;	// minimum incoming velocity necessary for bounce -- incoming velocities below this will have a bounce parameter of 0
 
+  TA_SIMPLE_BASEFUNS(VESurface);
+private:
   void	Initialize();
   void	Destroy()	{ };
-  SIMPLE_COPY(VESurface);
-  TA_BASEFUNS(VESurface);
-// protected:
-//   void	UpdateAfterEdit_impl();
 };
 
 class SoTexture2; // #IGNORE
@@ -275,34 +273,32 @@ private:
 ////////////////////////////////////////////////
 //		Camera & Lights
 
-class TA_API VELightParams : public taBase {
+class TA_API VELightParams : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env light parameters
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		on;		// is the light turned on?
   float		intensity;	// #CONDEDIT_ON_on (0-1) how bright is the light
   taColor	color; 		// #CONDEDIT_ON_on color of light
 
+  TA_SIMPLE_BASEFUNS(VELightParams);
+private:
   void	Initialize();
   void	Destroy()	{ };
-  TA_SIMPLE_BASEFUNS(VELightParams);
-// protected:
-//   void	UpdateAfterEdit_impl();
 };
 
-class TA_API VECameraDists : public taBase {
+class TA_API VECameraDists : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env camera distances
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		near;		// #DEF_0.1 near distance of camera -- closest things can be seen
   float		focal;		// focal distance of camera -- where is it focused on in scene?
   float		far;		// far distance of camera -- furthest things that can be seen
 
+  TA_SIMPLE_BASEFUNS(VECameraDists);
+private:
   void	Initialize();
   void	Destroy()	{ };
-  TA_SIMPLE_BASEFUNS(VECameraDists);
-// protected:
-//   void	UpdateAfterEdit_impl();
 };
 
 class SoPerspectiveCamera; // #IGNORE
@@ -383,15 +379,16 @@ SmartRef_Of(VELight,TA_VELight); // VELightRef
 ////////////////////////////////////////////////
 //		Joints
 
-class TA_API VEJointStops : public taBase {
+class TA_API VEJointStops : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint stop parameters
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
-  float		lo;		// stop for low angle or position value of joint
-  float		hi;		// stop for high angle or position value of joint
-  float		def;		// default angle or position value of joint -- where it likes to be
-  float		bounce;		// how bouncy is the joint (0 = no bounce, 1 = maximum bounce)
-  float		def_force;	// how much force to apply to return joint to default position -- effectively adds springs to the joint that pull it back to the default position -- NOTE: must call ApplyForce to have this computed and updated
+  bool		stops_on;	// turn on stops -- otherwise not used
+  float		lo;		// #CONDEDIT_ON_stops_on stop for low angle or position value of joint
+  float		hi;		// #CONDEDIT_ON_stops_on stop for high angle or position value of joint
+  float		def;		// #CONDEDIT_ON_stops_on default angle or position value of joint -- where it likes to be
+  float		bounce;		// #CONDEDIT_ON_stops_on how bouncy is the joint (0 = no bounce, 1 = maximum bounce)
+  float		def_force;	// #CONDEDIT_ON_stops_on how much force to apply to return joint to default position -- effectively adds springs to the joint that pull it back to the default position -- NOTE: must call ApplyForce to have this computed and updated
 
   inline float	Range()	const		{ return (hi - lo); }
   inline float	Scale()	const
@@ -403,27 +400,31 @@ public:
   float	Project(float val) const	{ return lo + (val * Range()); }
   // project a normalized value into the current lo-hi range
 
-  void	Initialize();
-  void	Destroy()	{ };
-  SIMPLE_COPY(VEJointStops);
-  TA_BASEFUNS(VEJointStops);
+  TA_SIMPLE_BASEFUNS(VEJointStops);
 // protected:
 //   void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
 };
 
-class TA_API VEJointMotor : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint motor parameters
-INHERITED(taBase)
+class TA_API VEJointMotor : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint motor parameters, including servo system -- drives joint into specified position -- forces computed and applied during the GetValsFmODE call, using the motor system (be sure to set f_max!)
+INHERITED(taOBase)
 public:
-  float		vel;		// target joint velocity to achieve (angular or linear) -- set to 0 to provide a resistive damping force
-  float		f_max;		// maximum force or torque to drive the joint to achieve desired velocity
+  bool		motor_on;	// turn on motor mechanism, defined by subsequent parameters
+  float		vel;		// #CONDEDIT_ON_motor_on target joint velocity to achieve (angular or linear) -- set to 0 to provide a resistive damping force
+  float		f_max;		// #CONDEDIT_ON_motor_on maximum force or torque to drive the joint to achieve desired velocity
+  bool		servo_on;	// #CONDEDIT_ON_motor_on turn on servo mechanism, defined by subsequent parameters
+  float		trg_pos;	// #CONDEDIT_ON_servo_on servo: target joint position to drive toward
+  float		gain;		// #CONDEDIT_ON_servo_on servo: how high to set the velocity on each step to move toward the target position: vel = gain * (trg_pos - pos)
 
+  TA_SIMPLE_BASEFUNS(VEJointMotor);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
   void	Initialize();
   void	Destroy()	{ };
-  SIMPLE_COPY(VEJointMotor);
-  TA_BASEFUNS(VEJointMotor);
-// protected:
-//   void	UpdateAfterEdit_impl();
 };
 
 class TA_API ODEJointParams : public ODEIntParams {
@@ -449,9 +450,7 @@ public:
     JF_NONE		= 0, // #NO_BIT
     OFF			= 0x0001, // joint is not functional and turned off
     FEEDBACK		= 0x0002, // collect feedback information about the joint
-    USE_STOPS		= 0x0004, // set the lo and hi stop values and bounce 
-    USE_MOTOR		= 0x0008, // set the joint motor velocity and maximum force parameters
-    USE_ODE_PARAMS	= 0x0010, // use special ODE parameters for this joint (else uses world settings)
+    USE_ODE_PARAMS	= 0x0004, // use special ODE parameters for this joint (else uses world settings)
   };
 
   enum JointType { 	// type of joint: Important -- must be sync'd with joint types in ode/common.h!!!
@@ -476,10 +475,10 @@ public:
   FloatTDCoord	anchor;  	// anchor location for joint, specified RELATIVE TO BODY1 (note this is different from ODE -- we just add body1's position to this anchor position)
   FloatTDCoord	axis;  		// #CONDEDIT_OFF_joint_type:BALL axis orientation vector
   FloatTDCoord	axis2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 second axis for universal joint and hinge2
-  VEJointStops	stops;		// #CONDEDIT_ON_flags:USE_STOPS stop parameters for first joint: where the joint will stop (specific meaning is joint-dependent)
-  VEJointStops	stops2;		// #CONDEDIT_ON_flags:USE_STOPS stop parameters for second joint: where the joint will stop (specific meaning is joint-dependent)
-  VEJointMotor	motor;		// #CONDEDIT_ON_flags:USE_MOTOR motor parameters that drive a powered joint
-  VEJointMotor	motor2;		// #CONDEDIT_ON_flags:USE_MOTOR motor parameters for second joint that drive a powered joint
+  VEJointStops	stops;		// stop parameters for first joint: where the joint will stop (specific meaning is joint-dependent)
+  VEJointStops	stops2;		// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 stop parameters for second joint: where the joint will stop (specific meaning is joint-dependent)
+  VEJointMotor	motor;		// motor parameters that drive a powered joint
+  VEJointMotor	motor2;		// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 motor parameters for second joint that drive a powered joint
   ODEJointParams ode_params;	// #CONDEDIT_ON_flags:USE_ODE_PARAMS ode integration parameters specifically for joints -- only used when USE_ODE_PARAMS is set
   ODEIntParams  suspension;	// #CONDEDIT_ON_joint_type:HINGE2 ode integration parameters for the hinge2 joint
 
@@ -492,8 +491,8 @@ public:
 
   FloatTDCoord	cur_force1;  	// #READ_ONLY #SHOW force that joint applies to body 1
   FloatTDCoord	cur_torque1;  	// #READ_ONLY #SHOW torque that joint applies to body 1
-  FloatTDCoord	cur_force2;  	// #READ_ONLY #SHOW force that joint applies to body 2
-  FloatTDCoord	cur_torque2;  	// #READ_ONLY #SHOW torque that joint applies to body 2
+  FloatTDCoord	cur_force2;  	// #READ_ONLY #SHOW #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 force that joint applies to body 2
+  FloatTDCoord	cur_torque2;  	// #READ_ONLY #SHOW #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 torque that joint applies to body 2
 
   override String	GetDesc() const { return desc; }
   override int		GetEnabled() const {  return !HasJointFlag(OFF); }
@@ -508,6 +507,10 @@ public:
   { if(on) SetJointFlag(flg); else ClearJointFlag(flg); }
   // set joint flag state according to on bool (if true, set flag, if false, clear it)
 
+  inline bool		HasTwoAxes()
+  { return (joint_type == UNIVERSAL || joint_type == HINGE2); }
+  // determine if joint has two axes of movement (else 1)
+
   virtual VEWorld* GetWorld();	// #CAT_ODE get world object (parent of this guy)
   virtual void*	GetWorldID();	// #CAT_ODE get world id value
 
@@ -519,7 +522,9 @@ public:
   virtual void	ApplyForce(float force1, float force2 = 0.0f);
   // #BUTTON #CAT_Force apply force(s) (or torque(s) as the case may be) to the joint (only good for next time step)
   virtual void	ApplyMotor(float vel1, float f_max1, float vel2 = 0.0f, float f_max2 = 0.0f);
-  // #BUTTON #CAT_Force apply motor target velocity and max force parameters to joint (persist until further changes -- set f_max = 0 to turn off
+  // #BUTTON #CAT_Force apply motor target velocity and max force parameters to joint (persist until further changes) -- set f_max = 0 to turn off -- automatically turns ON motor_on and OFF servo_on (servo otherwise takes control of motor parameters)
+  virtual void	ApplyServo(float trg_pos1, float trg_pos2 = 0.0f);
+  // #BUTTON #CAT_Force set servo_on and update target positions for the servos -- servo control automatically applied when the system is stepped
 
   virtual void	SetValsToODE_Anchor(); // #CAT_ODE set anchor(s)
   virtual void	SetValsToODE_Stops(); // #CAT_ODE set stop(s) (including suspension for hinge 2)
@@ -536,6 +541,8 @@ protected:
 #ifndef __MAKETA__
   dJointFeedback	ode_fdbk_obj;	// #IGNORE ode feedback object
 #endif
+protected:
+  void 	UpdateAfterEdit_impl();
 
   //  override CheckConfig_impl() // todo
 private:
@@ -558,6 +565,133 @@ private:
   void	Initialize() 		{ SetBaseType(&TA_VEJoint); }
   void 	Destroy()		{ };
 };
+
+
+////////////////////////////////////////////////
+//	Special VE stuff for robotic arm sims
+
+class TA_API VELambdaMuscle : public taNBase {
+  // a Lambda-model (Gribble et al, 1998) muscle, used in context of a VE arm joint -- as a fairly accurate simplification, we assume a linear relationship between joint angle and muscle length, and a constant moment arm (accurate for extensors)
+INHERITED(taNBase)
+public:
+  enum MuscleType {
+    FLEXOR,			// pulls a joint closed -- toward hi stop -- pectoralis for shoulder, biceps long head for elbow
+    EXTENSOR,			// pulls a joint open -- toward lo stop -- deltoid for shoulder, triceps lateral head
+  };
+
+  //////////////////////////////
+  //	Control signals
+
+  float		lambda_norm;	// normalized (0-1) desired length of the muscle: this is the only control signal
+  float		lambda;		// #READ_ONLY #SHOW desired length of the muscle in muscle-length units
+  float		co_contract_pct; // normalized (0-1) percent of co-contraction to apply -- shortens lambda by a fixed proportion of the co_contract_len value (below)
+  float		extra_force;	// a constant additional force value to apply to the muscle -- can be used for co-contraction or additional force commands beyond the equilibrium point specification
+
+  //////////////////////////////
+  //	Parameters
+
+  // statics
+  MuscleType	muscle_type;		// what type of muscle is it -- controls relationship between angle and muscle length
+  float		moment_arm;		// (m, .02 for elbow, .04 for shoulder) moment arm length for applying force (assumed fixed) -- positive for flexors and negative for extensors
+  MinMaxRange	len_range;		// (m) effective length range of the muscle over which it can contract and expand -- this corresponds to the lo-hi stop range of angles of the joint -- for flexors, min = hi stop, max = lo stop, for extensors, min = lo stop, max = hi stop.  for elbow bicep/tricep, min=0.28 max=0.37, for shoulder pectoralis/deltoid min=0.05 max=0.15 (est)
+  float		co_contract_len;	// maximum length available for co-contraction -- must be < .95 * len_range.min (i.e., if muscle is at its shortest length for the joint stop, this is how much extra shorter it can possibly command to be from there, and still be a positive number)
+  float		rest_len;		// #READ_ONLY #SHOW resting length, computed during init from resting angle
+
+  // dynamics
+  float		step_size;		// #READ_ONLY (s) set in init -- world step size in seconds
+  float		vel_damp;		// #DEF_0.06 (mu, s) velocity damping
+  float		reflex_delay;		// #DEF_0.025 (d, s) reflex delay -- how slowly reflex control reacts to changes in muscle length and velocity
+  int		reflex_delay_idx;	// #READ_ONLY (d, steps) reflex delay, computed in units of step size
+  float		m_rec_grad;		// #DEF_11.2 (c, mm^-1) muscle MN recruitment gradient
+  float		m_mag;			// (rho, m^2) muscle force-generating magnitude (multiplier), related to cross-section of muscle size: biceps short head 2.1; biceps long head 11; deltoid 14.9; pectoralis 14.9; triceps lateral head 12.1; triceps long head 6.7;
+  float		ca_dt;			// #DEF_0.015 (tau, s) calcium kinetics time constant -- note only using a first-order exponential time decay filter
+  float		ca_dt_cmp;		// #READ_ONLY (tau, 1/steps) calcium kinetics time constant actually used in cmputations -- note only using a first-order exponential time decay filter -- this value is in time steps, not time per se
+  float		fv1;			// #DEF_0.82 (f1, s/m) muscle force velocity dependence factor: constant offset
+  float		fv2;			// #DEF_0.5 (f2, s/m) muscle force velocity dependence factor: atan multiplier
+  float		fv3;			// #DEF_0.43 (f3, s/m) muscle force velocity dependence factor: atan constant offset
+  float		fv4;			// #DEF_0.58 (f4, s/m) muscle force velocity dependence factor: velocity multiplier
+  float		passive_k;		// (k, N/m) passive stiffness: biceps short head 36.5; biceps long head 190.9; deltoid 258.5; pectoralis 258.5; triceps lateral head 209.9; triceps long head 116.3;
+
+  //////////////////////////////
+  //	State values
+  float		len;		// #READ_ONLY #SHOW (l, cm) current muscle length
+  float		dlen;		// #READ_ONLY #SHOW (l-dot, cm/s) current muscle length velocity: rate of change of length
+  float		act;		// #READ_ONLY #SHOW (A, N?) current muscle activation value
+  float		m_act_force;	// #READ_ONLY #SHOW (~M, N) current muscle force from activation
+  float		m_force;	// #READ_ONLY #SHOW (M, N) current muscle force after low-pass filtering by ca_dt
+  float		force;		// #READ_ONLY #SHOW (N) final force value 
+  float		torque;		// #READ_ONLY #SHOW (N) final torque (force * moment_arm)
+
+  float_CircBuffer len_buf;	// #READ_ONLY #NO_SAVE current muscle length buffer (for delays)
+  float_CircBuffer dlen_buf;	// #READ_ONLY #NO_SAVE current muscle length velocity buffer (for delays)
+
+  VEBodyRef	muscle_obj;	// #SCOPE_VEObject if non-null, update this object with the new length information as the muscle changes (must be cylinder or capsule obj shape)
+
+  virtual float	LenFmAngle(float norm_angle);
+  // #CAT_Muscle compute muscle length from *normalized* joint angle (0 = lo stop, 1 = hi stop) -- uses a simple linear projection onto len_range which is fairly accurate
+
+  virtual void	Init(float step_sz, float rest_norm_angle, float init_norm_angle,
+		     float co_contract);
+  // #CAT_Muscle initialize all parameters back to initial values, compute params, and set arm at initial angle (clear buffers, etc)
+
+  virtual void	Compute_Force(float cur_norm_angle);
+  // #CAT_Muscle compute force based on current parameters with given normalized angle (0 = lo stop, 1 = hi stop) (given by ODE presumably)
+
+  virtual void	Compute_Lambda();
+  // #CAT_Muscle compute lambda value from lambda_norm and co_contract_pct
+
+  virtual void	SetTargAngle(float targ_norm_angle, float co_contract_pct);
+  // #BUTTON #CAT_Muscle set target *normalized* (0 = lo stop, 1 = hi stop) angle for the joint, which computes the lambdas (target lengths) for the individual muscles -- the co_contract_pct determines what percentage of co-contraction (stiffnes) to apply, where the lambdas are shorter than they should otherwise be by the given amount, such that both will pull from opposite directions to cause the muscle to stay put
+
+  TA_SIMPLE_BASEFUNS(VELambdaMuscle);
+protected:
+  void 	UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+// note on lengths and masses for typical arm: upper = .34m, 2.1kg; lower = .46m, 1.65kg
+
+class TA_API VEMuscleJoint : public VEJoint {
+  // a Lambda-model (Gribble et al, 1998) arm joint -- updates forces at every time step, in GetVAlsFromODE, applies them using SetForce
+INHERITED(VEJoint)
+public:
+  VELambdaMuscle	flexor; // #SHOW_TREE flexor muscle
+  VELambdaMuscle	extensor; // #SHOW_TREE extensor muscle
+  VELambdaMuscle	flexor2; // #SHOW_TREE flexor muscle for joint 2
+  VELambdaMuscle	extensor2; // #SHOW_TREE extensor muscle for joint 2
+
+  float			targ_norm_angle; // #READ_ONLY #SHOW current target normalized angle
+  float			targ_angle; // #READ_ONLY #SHOW current target raw angle
+  float			cur_norm_angle; // #READ_ONLY #SHOW current actual normalized angle (cur raw angle is pos)
+
+  float			targ_norm_angle2; // #READ_ONLY #SHOW #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 current target normalized angle 2
+  float			targ_angle2; // #READ_ONLY #SHOW #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 current target raw angle 2
+  float			cur_norm_angle2; // #READ_ONLY #SHOW #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 current actual normalized angle (cur raw angle is pos2) 2
+
+  float			co_contract_pct; // #READ_ONLY #SHOW current co-contraction pct
+
+  virtual void	SetTargAngle(float trg_angle, float co_contract, float trg_angle2 = 0.0f);
+  // #BUTTON #CAT_Force set target angle for the joint, which computes the lambdas (target lengths) for the individual muscles -- the co_contract_pct determines what percentage of co-contraction (stiffnes) to apply, where the lambdas are shorter than they should otherwise be by the given amount, such that both will pull from opposite directions to cause the muscle to stay put (at least around .2 is needed, with .5 being better, to prevent big oscillations)
+
+  virtual void	SetTargNormAngle(float trg_norm_angle, float co_contract,
+				 float trg_norm_angle2 = 0.0f);
+  // #BUTTON #CAT_Force set normalized target angle (0 = lo stop, 1 = hi stop) for the joint, which computes the lambdas (target lengths) for the individual muscles -- the co_contract_pct determines what percentage of co-contraction (stiffnes) to apply, where the lambdas are shorter than they should otherwise be by the given amount, such that both will pull from opposite directions to cause the muscle to stay put (at least around .2 is needed, with .5 being better, to prevent big oscillations)
+
+  override void	SetValsToODE();
+  override void	GetValsFmODE(bool updt_disp = false);
+
+  TA_SIMPLE_BASEFUNS(VEMuscleJoint);
+protected:
+  void 	UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 
 ////////////////////////////////////////////////
 //	Object: collection of bodies and joints

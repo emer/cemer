@@ -457,6 +457,7 @@ void VELight::GetValsFmODE(bool updt_disp) {
 //		Joints
 
 void VEJointStops::Initialize() {
+  stops_on = false;
   lo = -3.1415f;
   hi = 3.1415f;
   def = 0.0f;
@@ -465,9 +466,20 @@ void VEJointStops::Initialize() {
 }
 
 void VEJointMotor::Initialize() {
+  motor_on = false;
   vel = 0.0f;
-  f_max = 0.0f;
+  f_max = 1.0f;
+  servo_on = false;
+  trg_pos = 0.0f;
+  gain = 0.1f;
 }
+
+void VEJointMotor::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(gain <= 0.0f) gain = 0.01f;
+  if(!motor_on) servo_on = false;
+}
+
 
 void ODEJointParams::Initialize() {
   no_stop_cfm = 1.0e-5f;
@@ -491,6 +503,17 @@ void VEJoint::Destroy() {
 void VEJoint::CutLinks() {
   DestroyODE();
   inherited::CutLinks();
+}
+
+void VEJoint::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(!HasTwoAxes()) {
+    motor2.motor_on = false;
+    motor2.servo_on = false;
+  }
+  if(motor.servo_on || motor2.servo_on) {
+    SetJointFlag(FEEDBACK);
+  }
 }
 
 VEWorld* VEJoint::GetWorld() {
@@ -637,132 +660,146 @@ void VEJoint::SetValsToODE_Stops() {
     dJointSetHinge2Param(jid, dParamSuspensionCFM, suspension.cfm);
   }
 
-  if(HasJointFlag(USE_STOPS)) {
-    switch(joint_type) {
-    case HINGE:
+  // dInfinity turns off..
+  switch(joint_type) {
+  case HINGE:
+    if(stops.stops_on) {
       dJointSetHingeParam(jid, dParamLoStop, stops.lo);
       dJointSetHingeParam(jid, dParamHiStop, stops.hi);
       dJointSetHingeParam(jid, dParamBounce, stops.bounce);
-      break;
-    case SLIDER:
+    }
+    else {
+      dJointSetHingeParam(jid, dParamLoStop, dInfinity);
+      dJointSetHingeParam(jid, dParamHiStop, dInfinity);
+    }
+    break;
+  case SLIDER:
+    if(stops.stops_on) {
       dJointSetSliderParam(jid, dParamLoStop, stops.lo);
       dJointSetSliderParam(jid, dParamHiStop, stops.hi);
       dJointSetSliderParam(jid, dParamBounce, stops.bounce);
-      break;
-    case UNIVERSAL:
+    }
+    else {
+      dJointSetSliderParam(jid, dParamLoStop, dInfinity);
+      dJointSetSliderParam(jid, dParamHiStop, dInfinity);
+    }
+    break;
+  case UNIVERSAL:
+    if(stops.stops_on) {
       dJointSetUniversalParam(jid, dParamLoStop, stops.lo);
       dJointSetUniversalParam(jid, dParamHiStop, stops.hi);
       dJointSetUniversalParam(jid, dParamBounce, stops.bounce);
+    }
+    else {
+      dJointSetUniversalParam(jid, dParamLoStop, dInfinity);
+      dJointSetUniversalParam(jid, dParamHiStop, dInfinity);
+    }
+    if(stops2.stops_on) {
       dJointSetUniversalParam(jid, dParamLoStop2, stops2.lo);
       dJointSetUniversalParam(jid, dParamHiStop2, stops2.hi);
       dJointSetUniversalParam(jid, dParamBounce2, stops2.bounce);
-      break;
-    case HINGE2:
+    }
+    else {
+      dJointSetUniversalParam(jid, dParamLoStop2, dInfinity);
+      dJointSetUniversalParam(jid, dParamHiStop2, dInfinity);
+    }
+    break;
+  case HINGE2:
+    if(stops.stops_on) {
       dJointSetHinge2Param(jid, dParamLoStop, stops.lo);
       dJointSetHinge2Param(jid, dParamHiStop, stops.hi);
       dJointSetHinge2Param(jid, dParamBounce, stops.bounce);
+    }
+    else {
+      dJointSetHinge2Param(jid, dParamLoStop, dInfinity);
+      dJointSetHinge2Param(jid, dParamHiStop, dInfinity);
+    }
+    if(stops2.stops_on) {
       dJointSetHinge2Param(jid, dParamLoStop2, stops2.lo);
       dJointSetHinge2Param(jid, dParamHiStop2, stops2.hi);
       dJointSetHinge2Param(jid, dParamBounce2, stops2.bounce);
-      break;
-    case FIXED:
-      break;
-    case BALL:
-      break;
-    case NO_JOINT:
-      break;
     }
-  }
-  else {
-    // dInfinity turns off..
-    switch(joint_type) {
-    case HINGE:
-      dJointSetHingeParam(jid, dParamLoStop, dInfinity);
-      dJointSetHingeParam(jid, dParamHiStop, dInfinity);
-      break;
-    case SLIDER:
-      dJointSetSliderParam(jid, dParamLoStop, dInfinity);
-      dJointSetSliderParam(jid, dParamHiStop, dInfinity);
-      break;
-    case UNIVERSAL:
-      dJointSetUniversalParam(jid, dParamLoStop, dInfinity);
-      dJointSetUniversalParam(jid, dParamHiStop, dInfinity);
-      dJointSetUniversalParam(jid, dParamLoStop2, dInfinity);
-      dJointSetUniversalParam(jid, dParamHiStop2, dInfinity);
-      break;
-    case HINGE2:
-      dJointSetHinge2Param(jid, dParamLoStop, dInfinity);
-      dJointSetHinge2Param(jid, dParamHiStop, dInfinity);
+    else {
       dJointSetHinge2Param(jid, dParamLoStop2, dInfinity);
       dJointSetHinge2Param(jid, dParamHiStop2, dInfinity);
-      break;
-    case FIXED:
-      break;
-    case BALL:
-      break;
-    case NO_JOINT:
-      break;
     }
+    break;
+  case FIXED:
+    break;
+  case BALL:
+    break;
+  case NO_JOINT:
+    break;
   }
 }
-
 
 void VEJoint::SetValsToODE_Motor() {
   dJointID jid = (dJointID)joint_id;
 
-  if(HasJointFlag(USE_MOTOR)) {
-    switch(joint_type) {
-    case HINGE:
+  if(motor.motor_on && motor.servo_on) {
+    motor.vel = motor.gain * (motor.trg_pos - pos);
+  }
+  if(motor2.motor_on && motor2.servo_on) {
+    motor2.vel = motor2.gain * (motor2.trg_pos - pos2);
+  }
+
+  switch(joint_type) {
+  case HINGE:
+    if(motor.motor_on) {
       dJointSetHingeParam(jid, dParamVel, motor.vel);
       dJointSetHingeParam(jid, dParamFMax, motor.f_max);
-      break;
-    case SLIDER:
+    }
+    else {
+      dJointSetHingeParam(jid, dParamFMax, 0.0f);
+    }
+    break;
+  case SLIDER:
+    if(motor.motor_on) {
       dJointSetSliderParam(jid, dParamVel, motor.vel);
       dJointSetSliderParam(jid, dParamFMax, motor.f_max);
-      break;
-    case UNIVERSAL:
+    }
+    else {
+      dJointSetSliderParam(jid, dParamFMax, 0.0f);
+    }
+    break;
+  case UNIVERSAL:
+    if(motor.motor_on) {
       dJointSetUniversalParam(jid, dParamVel, motor.vel);
       dJointSetUniversalParam(jid, dParamFMax, motor.f_max);
+    }
+    else {
+      dJointSetUniversalParam(jid, dParamFMax, 0.0f);
+    }
+    if(motor2.motor_on) {
       dJointSetUniversalParam(jid, dParamVel2, motor2.vel);
       dJointSetUniversalParam(jid, dParamFMax2, motor2.f_max);
-      break;
-    case HINGE2:
+    }
+    else {
+      dJointSetUniversalParam(jid, dParamFMax2, 0.0f);
+    }
+    break;
+  case HINGE2:
+    if(motor.motor_on) {
       dJointSetHinge2Param(jid, dParamVel, motor.vel);
       dJointSetHinge2Param(jid, dParamFMax, motor.f_max);
+    }
+    else {
+      dJointSetHinge2Param(jid, dParamFMax, 0.0f);
+    }
+    if(motor2.motor_on) {
       dJointSetHinge2Param(jid, dParamVel2, motor2.vel);
       dJointSetHinge2Param(jid, dParamFMax2, motor2.f_max);
-      break;
-    case FIXED:
-      break;
-    case BALL:
-      break;
-    case NO_JOINT:
-      break;
     }
-  }
-  else {			// setting to 0 turns off params
-    switch(joint_type) {
-    case HINGE:
-      dJointSetHingeParam(jid, dParamFMax, 0.0f);
-      break;
-    case SLIDER:
-      dJointSetSliderParam(jid, dParamFMax, 0.0f);
-      break;
-    case UNIVERSAL:
-      dJointSetUniversalParam(jid, dParamFMax, 0.0f);
-      dJointSetUniversalParam(jid, dParamFMax2, 0.0f);
-      break;
-    case HINGE2:
-      dJointSetHinge2Param(jid, dParamFMax, 0.0f);
+    else {
       dJointSetHinge2Param(jid, dParamFMax2, 0.0f);
-      break;
-    case FIXED:
-      break;
-    case BALL:
-      break;
-    case NO_JOINT:
-      break;
     }
+    break;
+  case FIXED:
+    break;
+  case BALL:
+    break;
+  case NO_JOINT:
+    break;
   }
 }
 
@@ -867,6 +904,10 @@ void VEJoint::GetValsFmODE(bool updt_disp) {
     break;
   }
 
+  if((motor.motor_on && motor.servo_on) || (motor2.motor_on && motor2.servo_on)) {
+    SetValsToODE_Motor();	// update the motor each step..
+  }
+
   if(updt_disp)
     DataChanged(DCR_ITEM_UPDATED);
 }
@@ -876,37 +917,24 @@ void VEJoint::ApplyForce(float force1, float force2) {
   if(!joint_id) return;
   dJointID jid = (dJointID)joint_id;
 
+  if(stops.stops_on && stops.def_force > 0.0f)
+    force1 += -stops.def_force * (pos - stops.def);
+  if(stops2.stops_on && stops2.def_force > 0.0f)
+    force2 += -stops2.def_force * (pos2 - stops2.def);
+
   switch(joint_type) {
   case BALL:
     break;
   case HINGE:
-    if(HasJointFlag(USE_STOPS) && stops.def_force > 0.0f) {
-      force1 += -stops.def_force * (pos - stops.def);
-    }
     dJointAddHingeTorque(jid, force1);
     break;
   case SLIDER:
-    if(HasJointFlag(USE_STOPS) && stops.def_force > 0.0f) {
-      force1 += -stops.def_force * (pos - stops.def);
-    }
     dJointAddSliderForce(jid, force1);
     break;
   case UNIVERSAL:
-    if(HasJointFlag(USE_STOPS)) {
-      if(stops.def_force > 0.0f)
-	force1 += -stops.def_force * (pos - stops.def);
-      if(stops2.def_force > 0.0f)
-	force2 += -stops2.def_force * (pos2 - stops2.def);
-    }
     dJointAddUniversalTorques(jid, force1, force2);
     break;
   case HINGE2:
-    if(HasJointFlag(USE_STOPS)) {
-      if(stops.def_force > 0.0f)
-	force1 += -stops.def_force * (pos - stops.def);
-      if(stops2.def_force > 0.0f)
-	force2 += -stops2.def_force * (pos2 - stops2.def);
-    }
     dJointAddHinge2Torques(jid, force1, force2);
     break;
   case FIXED:
@@ -919,7 +947,23 @@ void VEJoint::ApplyForce(float force1, float force2) {
 void VEJoint::ApplyMotor(float vel1, float f_max1, float vel2, float f_max2) {
   if(!joint_id) CreateODE();
   if(!joint_id) return;
-  dJointID jid = (dJointID)joint_id;
+
+  SetJointFlag(FEEDBACK);
+
+  motor.servo_on = false;
+  if(f_max1 <= 0.0f) {
+    motor.motor_on = false;
+  }
+  else {
+    motor.motor_on = true;
+  }
+  motor2.servo_on = false;
+  if(f_max2 <= 0.0f) {
+    motor2.motor_on = false;
+  }
+  else {
+    motor2.motor_on = true;
+  }
 
   motor.vel = vel1;
   motor.f_max = f_max1;
@@ -928,6 +972,25 @@ void VEJoint::ApplyMotor(float vel1, float f_max1, float vel2, float f_max2) {
 
   SetValsToODE_Motor();
 }
+
+void VEJoint::ApplyServo(float trg_pos1, float trg_pos2) {
+  if(!joint_id) CreateODE();
+  if(!joint_id) return;
+
+  SetJointFlag(FEEDBACK);
+
+  motor.motor_on = true;
+  motor.servo_on = true;
+  motor.trg_pos = trg_pos1;
+  if(HasTwoAxes()) {
+    motor2.motor_on = true;
+    motor2.servo_on = true;
+    motor2.trg_pos = trg_pos2;
+  }
+
+  SetValsToODE_Motor();
+}
+
 
 /////////////////////////////////////////////
 //		Group
@@ -953,6 +1016,298 @@ void VEJoint_Group::DestroyODE() {
   taLeafItr i;
   FOR_ITR_EL(VEJoint, ob, this->, i) {
     ob->DestroyODE();
+  }
+}
+
+////////////////////////////////////////////////
+//	Special VE stuff for robotic arm sims
+
+void VELambdaMuscle::Initialize() {
+  lambda_norm = 0.5f;
+  lambda = 0.10f;
+  co_contract_pct = 0.2f;
+  extra_force = 0.0f;
+
+  muscle_type = FLEXOR;
+  moment_arm = .04f;
+  len_range.min = 0.05f;
+  len_range.max = 0.15f;
+  co_contract_len = 0.04f;
+  rest_len = 0.10f;
+
+  step_size = 0.005f;
+  vel_damp = 0.06f;
+  reflex_delay = .025f;
+  reflex_delay_idx = 5;
+  m_rec_grad = 11.2f;
+  m_mag = 2.1f;
+  ca_dt = 0.015f;
+  fv1 = 0.82f;
+  fv2 = 0.50f;
+  fv3 = 0.43f;
+  fv4 = 0.58f;
+  passive_k = 0.0f;
+
+  len= lambda;
+  dlen= 0.0f;
+  act = 0.0f;
+  m_act_force = 0.0f;
+  force = 0.0f;
+  torque = 0.0f;
+}
+
+void VELambdaMuscle::Init(float step_sz, float rest_norm_angle, float init_norm_angle, 
+			  float co_contract) {
+  step_size = step_sz;
+  lambda_norm = rest_norm_angle; // target is to go to rest
+  rest_len = LenFmAngle(rest_norm_angle);
+  len = LenFmAngle(init_norm_angle);
+  co_contract_pct = co_contract;
+
+  Compute_Lambda();		// get lambda from params
+
+  dlen = 0.0f;
+  act = 0.0f;
+  m_act_force = 0.0f;
+  m_force = 0.0f;
+  force = 0.0f;
+  torque = 0.0f;
+
+  len_buf.Reset();
+  dlen_buf.Reset();
+
+  if(muscle_obj) {
+    muscle_obj->length = len;
+    muscle_obj->SetValsToODE();
+    muscle_obj->UpdateAfterEdit(); // update display
+  }
+
+  UpdateAfterEdit();
+}
+
+float VELambdaMuscle::LenFmAngle(float norm_angle) {
+  // using a simple linear function here -- fairly accurate as shown in Andrew H. Fagg
+  // tech report #00-03: A Model of Muscle Geometry for a Two Degree-Of-Freedom Planar Arm
+  if(muscle_type == FLEXOR) {
+    return len_range.Project(1.0f - norm_angle); // reversed sense
+  }
+  return len_range.Project(norm_angle);
+}
+
+void VELambdaMuscle::Compute_Lambda() {
+  // ensure normalization
+  lambda_norm = MIN(1.0f, lambda_norm); lambda_norm = MAX(0.0f, lambda_norm);
+  co_contract_pct = MIN(1.0f, co_contract_pct); co_contract_pct = MAX(0.0f, co_contract_pct);
+  lambda = len_range.Project(lambda_norm); // project norm force value into real coords
+  lambda -= co_contract_pct * co_contract_len;
+}
+
+void VELambdaMuscle::Compute_Force(float cur_norm_angle) {
+  Compute_Lambda();
+
+  float cur_len = LenFmAngle(cur_norm_angle);
+  cur_len = len_range.Clip(cur_len); // keep it in range -- else nonsensical
+
+  dlen = (cur_len - len) / step_size;
+  len = cur_len;
+
+  len_buf.CircAddLimit(len, reflex_delay_idx);
+  dlen_buf.CircAddLimit(dlen, reflex_delay_idx);
+
+  if(len_buf.length < reflex_delay_idx) { // just starting out -- no history -- no activation
+    act = 0.0f;
+  }
+  else {
+    float del_len = len_buf.CircSafeEl(reflex_delay-1);
+    float del_dlen = dlen_buf.CircSafeEl(reflex_delay-1);
+    act = (del_len - lambda) + vel_damp * del_dlen;
+    if(act < 0.0f) act = 0.0f;
+  }
+  m_act_force = m_mag * (expf(m_rec_grad * act) - 1.0f);
+  m_force += ca_dt_cmp * (m_act_force - m_force); // first order low-pass filter, not 2nd order 
+  force = extra_force + m_force * (fv1 + fv2 * atanf(fv3 + fv4 * dlen)) + passive_k * (len - rest_len);
+  torque = force * moment_arm;	// assume constant moment arm: could compute based on geom.
+
+  if(muscle_obj) {
+    muscle_obj->length = len;
+    muscle_obj->SetValsToODE();
+    muscle_obj->UpdateAfterEdit(); // update display
+  }
+}
+
+void VELambdaMuscle::SetTargAngle(float targ_norm_angle, float co_contract) {
+  co_contract_pct = co_contract;
+  lambda = LenFmAngle(targ_norm_angle);
+  lambda = len_range.Clip(lambda);		// keep in range
+  lambda_norm = len_range.Normalize(lambda); 	// this is still key command
+  Compute_Lambda();
+}
+
+void VELambdaMuscle::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(step_size > 0.0f) {
+    reflex_delay_idx = (int)(0.5f + (reflex_delay / step_size));
+    if(ca_dt > 0.0f)
+      ca_dt_cmp = step_size / ca_dt;
+  }
+  if(co_contract_len > .95f * len_range.min)
+    co_contract_len = .95f * len_range.min;
+  Compute_Lambda();
+}
+
+///////////////////////////////
+//	VEMuscleJoint
+
+void VEMuscleJoint::Initialize() {
+  joint_type = HINGE;
+  SetJointFlag(FEEDBACK);
+
+  extensor.moment_arm = -extensor.moment_arm; // extensor is negative
+  flexor.muscle_type = VELambdaMuscle::FLEXOR;
+  extensor.muscle_type = VELambdaMuscle::EXTENSOR;
+
+  extensor2.moment_arm = -extensor2.moment_arm; // extensor is negative
+  flexor2.muscle_type = VELambdaMuscle::FLEXOR;
+  extensor2.muscle_type = VELambdaMuscle::EXTENSOR;
+
+  targ_norm_angle = 0.0f;
+  targ_angle = 0.0f;
+  cur_norm_angle = 0.0f;
+
+  targ_norm_angle2 = 0.0f;
+  targ_angle2 = 0.0f;
+  cur_norm_angle2 = 0.0f;
+
+  co_contract_pct = 0.5f;
+
+  motor.motor_on = true;
+  stops.stops_on = true;	// need stops
+}
+
+void VEMuscleJoint::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(joint_type == BALL || joint_type == NO_JOINT) {
+    taMisc::Warning("cannot use BALL or NO_JOINT joint_types for muscle joint -- setting to HINGE");
+    joint_type = HINGE;
+  }
+
+  SetJointFlag(FEEDBACK);	// definitely need this
+  if(HasTwoAxes()) {
+    motor2.motor_on = true;
+    stops2.stops_on = true;
+  }
+  else {
+    motor2.motor_on = false;
+    stops2.stops_on = false;
+  }
+}
+
+void VEMuscleJoint::SetValsToODE() {
+  inherited::SetValsToODE();
+
+  VEWorld* wld = GetWorld();
+  float step_sz = wld->stepsize;
+
+  float rest_norm_angle = stops.Normalize(stops.def); // def = rest
+  float init_norm_angle = stops.Normalize(pos);	      // pos = cur position/angle
+
+  targ_norm_angle = rest_norm_angle;
+  targ_angle = stops.def;
+  cur_norm_angle = init_norm_angle;
+
+  extensor.Init(step_sz, rest_norm_angle, init_norm_angle, co_contract_pct);
+  flexor.Init(step_sz, rest_norm_angle, init_norm_angle, co_contract_pct);
+
+  if(HasTwoAxes()) {
+    float rest_norm_angle2 = stops2.Normalize(stops2.def); // def = rest
+    float init_norm_angle2 = stops2.Normalize(pos2);	      // pos = cur position/angle
+
+    targ_norm_angle2 = rest_norm_angle2;
+    targ_angle2 = stops2.def;
+    cur_norm_angle2 = init_norm_angle2;
+
+    extensor2.Init(step_sz, rest_norm_angle2, init_norm_angle2, co_contract_pct);
+    flexor2.Init(step_sz, rest_norm_angle2, init_norm_angle2, co_contract_pct);
+  }
+}
+
+void VEMuscleJoint::GetValsFmODE(bool updt_disp) {
+  inherited::GetValsFmODE(updt_disp);
+
+  float norm_pos = stops.Normalize(pos);
+  cur_norm_angle = norm_pos;
+
+  flexor.Compute_Force(norm_pos);
+  extensor.Compute_Force(norm_pos);
+
+  float force1 = extensor.torque + flexor.torque;  // simple sum of torques..
+
+  float moto_fmax1 = 0.0f;
+  // motor idea is that guy pulling in opposite direction opposes motion..
+  if(flexor.torque > -extensor.torque) // net flex dir
+    moto_fmax1 = -extensor.torque; // apply positive valued extensor torque to stop motor
+  else
+    moto_fmax1 = flexor.torque; // apply positive valued extensor torque to stop motor
+
+  float force2 = 0.0f;
+  float moto_fmax2 = 0.0f;
+
+  if(HasTwoAxes()) {
+    float norm_pos2 = stops2.Normalize(pos2);
+    cur_norm_angle2 = norm_pos2;
+    flexor2.Compute_Force(norm_pos2);
+    extensor2.Compute_Force(norm_pos2);
+
+    float force2 = extensor2.torque + flexor2.torque;  // simple sum of torques..
+
+    // motor idea is that guy pulling in opposite direction opposes motion..
+    if(flexor2.torque > -extensor2.torque) // net flex dir
+      moto_fmax2 = -extensor2.torque; // apply positive valued extensor torque to stop motor
+    else
+      moto_fmax2 = flexor2.torque; // apply positive valued extensor torque to stop motor
+  }
+
+  ApplyForce(force1, force2);
+  ApplyMotor(0.0f, moto_fmax1, 0.0f, moto_fmax2);
+}
+
+void VEMuscleJoint::SetTargAngle(float trg_angle, float co_contract, float trg_angle2) {
+  co_contract_pct = co_contract;
+  float norm_angle = stops.Normalize(targ_angle);
+
+  targ_norm_angle = norm_angle;
+  targ_angle = trg_angle;
+
+  flexor.SetTargAngle(norm_angle, co_contract_pct);
+  extensor.SetTargAngle(norm_angle, co_contract_pct);
+
+  if(HasTwoAxes()) {
+    float norm_angle2 = stops2.Normalize(targ_angle2);
+
+    targ_norm_angle2 = norm_angle2;
+    targ_angle2 = trg_angle2;
+
+    flexor2.SetTargAngle(norm_angle2, co_contract_pct);
+    extensor2.SetTargAngle(norm_angle2, co_contract_pct);
+  }
+}
+
+void VEMuscleJoint::SetTargNormAngle(float trg_norm_angle, float co_contract,
+				     float trg_norm_angle2) {
+  co_contract_pct = co_contract;
+
+  targ_norm_angle = trg_norm_angle;
+  targ_angle = stops.Project(targ_norm_angle);
+
+  flexor.SetTargAngle(targ_norm_angle, co_contract_pct);
+  extensor.SetTargAngle(targ_norm_angle, co_contract_pct);
+
+  if(HasTwoAxes()) {
+    targ_norm_angle2 = trg_norm_angle2;
+    targ_angle2 = stops2.Project(targ_norm_angle2);
+
+    flexor2.SetTargAngle(targ_norm_angle2, co_contract_pct);
+    extensor2.SetTargAngle(targ_norm_angle2, co_contract_pct);
   }
 }
 
