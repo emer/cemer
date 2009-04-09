@@ -407,8 +407,8 @@ LeabraProject .projects[0] {
 		};
 
 		VEJoint_Group @.joints = [3] {
-		  VELambdaArmJoint @[0] { };
-		  VELambdaArmJoint @[1] { };
+		  VEMuscleJoint @[0] { };
+		  VEMuscleJoint @[1] { };
 		  VEJoint @[2] { };
 		};
 	      };
@@ -669,15 +669,17 @@ LeabraProject .projects[0] {
 		    };
 		  };
 		  MethodCall @[2] { 
-		    ProgArg_List @.meth_args = [2] {
+		    ProgArg_List @.meth_args = [3] {
 		      ProgArg @[0] { };
 		      ProgArg @[1] { };
+		      ProgArg @[2] { };
 		    };
 		  };
 		  MethodCall @[3] { 
-		    ProgArg_List @.meth_args = [2] {
+		    ProgArg_List @.meth_args = [3] {
 		      ProgArg @[0] { };
 		      ProgArg @[1] { };
+		      ProgArg @[2] { };
 		    };
 		  };
 		};
@@ -3440,7 +3442,7 @@ To see the model in action, go to the [[.PanelTab.ControlPanel]] and do Test Ini
       };
       ar {
        name=;
-	    [2 1 100] 0.19665708;0.7901715;0.6140182;0.68533528;0.79941487;0.82869101;0.84049416;0.40949988;0.40568668;0.60298586;0.65177774;0.33879003;0.64298534;0.46692687;0.62611669;0.49240154;0.10589781;0.61046731;0.36419725;0.67387527;0.49755368;0.56362641;0.77232653;0.86001927;0.65396196;0.42036194;0.69451696;0.40161514;0.72337395;0.48851725;0.16722202;0.45563528;0.59510946;0.86753702;0.53504902;0.94502527;0.77593899;0.39175177;0.055721026;0.55817986;0.76912719;0.60521084;0.15406744;0.38617209;0.68771052;0.90457058;0.41473883;0.50201088;0.46159142;0.83258247;0.74087495;0.40912715;0.22209851;0.57592362;0.62080115;0.6829434;0.68458277;0.37968892;0.26577711;0.5486412;0.18600233;0.44417879;0.62918895;0.38527739;0.67369902;0.43043107;0.41609621;0.68334472;0.78503472;0.46373248;0.85938126;0.37934557;0.65549701;0.7966314;0.3070685;0.84869391;0.17271174;0.4730536;0.72423249;0.7427395;0.35618114;0.92977798;0.75143653;0.49228841;0.26946703;0.48672944;0.70512521;0.8774302;0.93729329;0.35732841;0.76119065;0.53741747;0.72558057;0.35795769;0.84247386;0.40082079;0.58302736;0.46523982;0.64151734;0.32805493;0.42633787;0.68008733;0.77087384;0.55284303;0.22289036;0.44832906;0.40346217;0.44488695;0.78451931;0.78901994;0.52103305;0.74851406;0.37861365;0.47193089;0.73549497;0.69198096;0.55193758;0.64829367;0.74461359;0.51427573;0.81512225;0.49570349;0.067300409;0.56931776;0.38351902;0.57354468;0.63117981;0.49880913;0.65563881;0.37452793;0.50135928;0.61596459;0.64527547;0.58642077;0.82514;0.6882776;0.74336123;0.66930819;0.57331938;0.70874768;0.39407513;0.54827613;0.93712538;0.35966623;0.702977;0.51877594;0.34579659;0.45838252;0.90656084;0.37339517;0.6623323;0.32059482;0.67148358;0.78187573;0.6292637;0.38525692;0.44667214;0.54432893;0.61157447;0.9693262;0.27876702;0.56615394;0.35394427;0.47735307;0.18644217;0.43519992;0.23237337;0.51823032;0.71902317;0.64664662;0.90961134;0.43870768;0.77615476;0.56856972;0.59960818;0.5308587;0.71254903;0.48843366;0.59179509;0.62417668;0.38120377;0.72433585;0.53870034;0.58449441;0.34793618;0.45040271;0.57884002;0.63756591;0.35266355;0.60720509;0.81588876;0.40729013;0.3990199;0.4960404;0.29401901;0.41820204;0.50353712;0.50608188;0.37916866;0.64173567;      };
+	    [2 1 100] 0.6336056;0.381506;0.19212207;0.47674266;0.45480618;0.63574898;0.68411011;0.34526384;0.3673861;0.95758605;0.49934027;0.62310374;0.30858049;0.45482904;0.62344062;0.60906684;0.3546392;0.34763283;0.58985609;0.60494381;0.56341714;0.72186607;0.71139777;0.48734424;0.30177268;0.51411629;0.63448089;0.48403978;0.81237692;0.35475636;0.39546886;0.63182199;0.089052439;0.55259866;0.84011364;0.3247993;0.32462618;0.35630584;0.29692969;0.39685139;0.75928795;0.8380115;0.51888549;0.7382316;0.60671604;0.53868937;0.41988763;0.82268202;0.6690402;0.37703365;0.44840285;0.72020757;0.71444619;0.58435124;0.84395641;0.354958;0.3446092;0.40700743;0.18663271;0.51254344;0.46963421;0.89741856;0.75885034;0.33089694;0.70342636;0.62481111;0.83005041;0.42627472;0.40287772;0.86017674;0.56197679;0.75812209;0.63915247;0.36850646;0.5083977;0.8380177;0.66490084;0.92715776;0.41980731;0.73768085;0.14294857;0.43495899;0.70460784;0.47863373;0.50109148;0.71012092;0.22747505;0.54964882;0.92697418;0.42240578;0.45697609;0.53251356;0.39869159;0.48756835;0.56164908;0.70466065;0.3752628;0.52843368;0.40941221;0.6350078;0.42318469;0.59366012;0.21198468;0.67097402;0.20511946;0.39601415;0.099368848;0.70422935;0.54249036;0.71936744;0.67689681;0.6117174;0.42612571;0.61294514;0.31127587;0.59182793;0.60609812;0.46062922;0.72303349;0.71267039;0.90271288;0.66188353;0.24550124;0.65473992;0.66431379;0.93738419;0.40195602;0.63227701;0.74673641;0.71301913;0.49916708;0.92643237;0.7280637;0.38055778;0.39301357;0.45402834;0.56915718;0.53618252;0.63248372;0.7815575;0.52325636;0.51617473;0.66209692;0.60851455;0.74332511;0.78165805;0.65622264;0.62580591;0.29094926;0.40602547;0.64641118;0.33700565;0.3082726;0.90411121;0.59756744;0.56375813;0.62062371;0.85384011;0.59607577;0.86573851;0.45652893;0.8061676;0.29262054;0.87099296;0.60146707;0.82206792;0.20995142;0.73738742;0.30606884;0.3867999;0.85328168;0.3344194;0.39381295;0.77164513;0.89437735;0.60870862;0.47100952;0.52149117;0.55743057;0.81523222;0.34670317;0.5203048;0.54382783;0.58270752;0.47153965;0.79183394;0.56674802;0.51537073;0.054040093;0.4131926;0.038674194;0.4292576;0.53984952;0.5306226;0.68245184;0.46682531;0.38811493;0.9203285;0.41279697;0.74789113;      };
      };
      float_Data @[2] {
       name="VisHand_Cur";
@@ -3452,7 +3454,7 @@ To see the model in action, go to the [[.PanelTab.ControlPanel]] and do Test Ini
       };
       ar {
        name=;
-	    [2 1 100] 0.98657721;0.34101382;0.5782668;0.90517455;0.57822126;0.90515178;0.57817817;0.90513122;0.73585993;0.48570341;0.50823921;0.62537891;0.70339209;0.48954445;0.50823629;0.62984055;0.50820696;0.62977314;0.19205813;0.56343687;0.48276439;0.6117726;0.48276436;0.61176652;0.57598275;0.87077916;0.48440221;0.61895853;0.70249772;0.4957819;0.70249319;0.49577969;0.19447407;0.56886441;0.62259662;0.86311835;0.62259352;0.86311352;0.73762512;0.49422011;0.18965612;0.58750629;0.61657339;0.86532962;0.18319377;0.60891181;0.60866624;0.86688441;0.47792414;0.61580682;0.58070862;0.86947489;0.74190724;0.48620316;0.18995431;0.5894928;0.61703527;0.86508811;0.47618592;0.61489016;0.19577268;0.57684404;0.19577718;0.57684129;0.75266463;0.46803224;0.75261235;0.46805146;0.55818397;0.87134737;0.48811325;0.62059039;0.48811769;0.62058759;0.57355034;0.87088859;0.48494366;0.6192776;0.19481754;0.57293302;0.62340724;0.8627668;0.62339854;0.86276317;0.47477069;0.61419773;0.19583069;0.57722026;0.62461597;0.8622219;0.73765278;0.49411914;0.73764986;0.49411896;0.73764986;0.49411875;0.73764986;0.49411845;0.50642997;0.62627357;0.70287794;0.49061212;0.57297975;0.87057;0.57297975;0.87056327;0.17540871;0.58487219;0.4817259;0.60779214;0.5752905;0.87055153;0.57529229;0.87054533;0.48449993;0.61909252;0.57611537;0.87034017;0.48427844;0.61900902;0.48428294;0.6190064;0.48428297;0.6190064;0.19491842;0.57327026;0.48208013;0.6112864;0.48208007;0.61127955;0.70524961;0.49517262;0.57314157;0.87048787;0.57314152;0.87048066;0.57314157;0.8704806;0.74290687;0.48400009;0.56099916;0.87032938;0.48744652;0.62043226;0.70232391;0.49527177;0.50713044;0.62946659;0.50710618;0.62940866;0.70246851;0.49118096;0.70246404;0.49117848;0.57318813;0.8705222;0.48493323;0.61935848;0.48493722;0.61935616;0.57583982;0.87039828;0.17594986;0.58666784;0.48165259;0.60775775;0.19459078;0.57636613;0.19459496;0.57636368;0.62330669;0.86283892;0.73762077;0.49420413;0.50641859;0.62627411;0.50641853;0.62626696;0.50641823;0.62626612;0.50641793;0.62626541;0.56502908;0.87355787;0.48742667;0.62002528;0.48743066;0.62002289;0.57396197;0.87080413;0.48483726;0.61923444;0.70243651;0.49574134;0.50697809;0.62936062;0.19225544;0.56397909;0.4827292;0.6117655;      };
+	    [2 1 100] 0.98657721;0.34101382;0.5783124;0.90520144;0.17005095;0.56114054;0.59053242;0.87425572;0.73967254;0.48903823;0.56169403;0.87027073;0.48727998;0.62038982;0.19440091;0.57150507;0.62269974;0.86308718;0.47493324;0.61426854;0.47493729;0.61426646;0.58275408;0.86910915;0.48265335;0.6181832;0.48265773;0.61818075;0.48265773;0.61818075;0.70264256;0.49591571;0.50690103;0.6292575;0.19225937;0.56399834;0.7515921;0.46844935;0.51020569;0.62576312;0.19154523;0.56270659;0.61795551;0.86519128;0.61795324;0.86518568;0.47607222;0.61474413;0.58198565;0.86924559;0.48283455;0.6182847;0.57728285;0.8701154;0.74229676;0.48527873;0.74229157;0.48527765;0.50855029;0.62622136;0.19159721;0.56276751;0.61803418;0.86515641;0.47605228;0.61473632;0.58200026;0.86924279;0.48283106;0.61828279;0.57728517;0.8701148;0.5772869;0.87010872;0.74229628;0.48527968;0.56114066;0.87030774;0.56114084;0.87030166;0.56114107;0.87030166;0.17335223;0.57795852;0.75365919;0.46658066;0.51028198;0.62563974;0.19153379;0.56270319;0.75173968;0.46839878;0.51021278;0.62574404;0.51021302;0.62573671;0.18483105;0.61354876;0.47854564;0.60739893;0.57800579;0.86997455;0.48379841;0.61879563;0.19499029;0.5735181;0.19499448;0.57351571;0.19499461;0.57351565;0.62369931;0.862634;0.6236887;0.86263126;0.47470349;0.6141687;0.1958323;0.57723284;0.48154062;0.61093497;0.57670313;0.87054765;0.74227238;0.48512226;0.19004174;0.58972168;0.61716473;0.86503124;0.47615334;0.61487705;0.58193594;0.8692444;0.58193773;0.86923796;0.74176478;0.48653677;0.50824499;0.62625223;0.50824487;0.62624454;0.56400603;0.87391251;0.48765054;0.62007761;0.57378721;0.8708418;0.57378918;0.8708353;0.57378918;0.87083524;0.1754594;0.58507031;0.48171702;0.60778666;0.70670801;0.494589;0.50705761;0.62856138;0.56594849;0.87385309;0.56595069;0.87384689;0.56595081;0.87384689;0.74323767;0.48157078;0.5608508;0.87038499;0.1732742;0.57770586;0.48209423;0.60793716;0.70669585;0.49451816;0.57246572;0.87042117;0.57246572;0.87041509;0.48506114;0.61945868;0.57576358;0.87041408;0.48436904;0.61904627;0.48437354;0.61904371;0.57620847;0.87032002;0.48425442;0.61899924;0.19492219;0.57328242;0.1949265;0.57327986;0.48207954;0.61128587;0.48207954;0.61127907;0.57637429;0.87064856;      };
      };
      float_Data @[3] {
       name="SomaShoulderAngle_Cur";
@@ -3464,7 +3466,7 @@ To see the model in action, go to the [[.PanelTab.ControlPanel]] and do Test Ini
       };
       ar {
        name=;
-	    [1 1 100] 0.2178771;0.42136949;0.42136911;0.42136884;0.013285576;0.27904078;0.010489519;0.28179672;0.28179687;0.7059418;0.30671346;0.30671346;0.39255095;0.30794138;0.016811775;0.01681154;0.70198113;0.3667129;0.3667137;0.021722298;0.70401406;0.3707262;0.70863515;0.37498429;0.31572783;0.38918471;0.015479128;0.70334053;0.37035152;0.31784016;0.69885081;0.69885081;0.0026108001;0.0026107503;0.40225738;0.30354065;0.30354065;0.39384389;0.30733454;0.70073563;0.36613259;0.36613724;0.31960365;0.69870973;0.36525416;0.021635439;0.021635072;0.021634722;0.021634391;0.28194803;0.011528089;0.39386693;0.39386705;0.7210983;0.30628526;0.39270321;0.39270321;0.30787066;0.39212328;0.30814317;0.30814317;0.30814317;0.70055073;0.30747667;0.30747655;0.016485831;0.393718;0.393718;0.393718;0.013750443;0.39990824;0.30439401;0.016269455;0.28298816;0.28298816;0.012067427;0.012067244;0.39372346;0.30739102;0.30739102;0.3923068;0.72017753;0.30637702;0.70031005;0.70031005;0.36622953;0.021706132;0.28196323;0.28196335;0.28196335;0.28196335;0.4003844;0.30421087;0.30421087;0.39356908;0.30746377;0.016764024;0.28311989;0.70559376;0.30676156;      };
+	    [1 1 100] 0.2178771;0.42137483;0.73174495;0.38874105;0.017457036;0.39948666;0.30460578;0.70151001;0.36664978;0.31939653;0.31939653;0.38791165;0.31004894;0.31004894;0.31004894;0.016964266;0.28315651;0.70558524;0.0025771684;0.27673054;0.70669329;0.37011936;0.37011963;0.31794071;0.38838756;0.30984035;0.39136633;0.014742644;0.014742394;0.27915815;0.70662069;0.37006128;0.31796643;0.38837835;0.30984434;0.39136472;0.39136472;0.014743393;0.39981499;0.39981499;0.39981499;0.7246682;0.0016961518;0.27655539;0.70670712;0.0025872246;0.2767095;0.27670962;0.70619822;0.31085062;0.39089802;0.30871886;0.7004177;0.7004177;0.7004177;0.36591879;0.36592492;0.31968942;0.69870549;0.30809829;0.39200658;0.014591334;0.70320135;0.37025601;0.31788197;0.38841006;0.38841021;0.015744401;0.27957252;0.27957264;0.40121007;0.30392331;0.39368698;0.39368698;0.39368698;0.72100705;0.30629578;0.016067149;0.28252929;0.40014639;0.40014625;0.40014625;0.011617845;0.40003356;0.72480309;0.30580816;0.015993675;0.39400303;0.39400303;0.30725917;0.39235741;0.30803329;0.30803329;0.39206094;0.30817249;0.70054394;0.70054394;0.30747736;0.30747721;0.39225101;      };
      };
      float_Data @[4] {
       name="SomaElbowAngle_Cur";
@@ -3476,7 +3478,7 @@ To see the model in action, go to the [[.PanelTab.ControlPanel]] and do Test Ini
       };
       ar {
        name=;
-	    [1 1 100] 0.034482758;0.4608959;0.46095935;0.46102133;0.77886647;0.86558813;0.82465148;0.86053044;0.86060256;0.62847918;0.88068372;0.88068372;0.52366823;0.87277436;0.82248032;0.82248008;0.62896669;0.5077244;0.50772458;0.77191764;0.60712361;0.50849473;0.57879603;0.51142764;0.87554759;0.52354735;0.76936001;0.606152;0.50856531;0.87631261;0.62559003;0.62559003;0.76070625;0.76077414;0.53019202;0.87122852;0.87122852;0.52461994;0.87246412;0.62671977;0.50769562;0.50769579;0.87685603;0.62542129;0.50767511;0.77192754;0.77192783;0.77192801;0.77192819;0.8647207;0.82480192;0.52541721;0.52541703;0.58336163;0.88501799;0.52437687;0.52437687;0.87263232;0.52434123;0.87270576;0.87270576;0.87270576;0.62665582;0.88115317;0.88115317;0.81893396;0.52548182;0.52548164;0.52548164;0.76887411;0.53083801;0.87136185;0.82301074;0.86104602;0.86110634;0.82507116;0.82507092;0.52540195;0.87237185;0.87237185;0.52437407;0.5830195;0.88504916;0.62388998;0.62389016;0.50765157;0.77193314;0.86472088;0.86472142;0.86472219;0.86472297;0.52382523;0.87181914;0.87181914;0.52457255;0.87250322;0.8225891;0.86117786;0.62845808;0.88068777;      };
+	    [1 1 100] 0.034482758;0.46081993;0.59017283;0.51019806;0.77140546;0.53066802;0.87139797;0.62700099;0.50770026;0.87680423;0.87680423;0.52312052;0.8734715;0.8734715;0.8734715;0.8222006;0.86130053;0.62845135;0.76223689;0.86496824;0.62807661;0.50771749;0.50771767;0.87645763;0.52328545;0.87337643;0.52416015;0.7692064;0.76920658;0.86460674;0.62812513;0.50771832;0.87646312;0.52328277;0.87337822;0.52415985;0.52415985;0.76920676;0.53081864;0.53081828;0.53081799;0.58462083;0.75972658;0.86509889;0.62805903;0.76202458;0.8649891;0.86498976;0.57791334;0.88504332;0.5240469;0.87289995;0.62660486;0.62660486;0.62660486;0.50769353;0.50769365;0.87687707;0.62541509;0.88148308;0.52371407;0.76931804;0.6061331;0.50856644;0.87632203;0.52331287;0.52331257;0.76941901;0.86460006;0.86460066;0.52364141;0.87177569;0.52458996;0.52458996;0.52458996;0.58330768;0.88502312;0.81718594;0.86207902;0.52294934;0.52294916;0.52294898;0.76950997;0.53080106;0.58465898;0.8848989;0.81724203;0.52589881;0.52589864;0.87227094;0.5243836;0.87267226;0.87267226;0.52433085;0.87271452;0.62665385;0.62665385;0.88115364;0.88115364;0.52370161;      };
      };
      float_Data @[5] {
       name="MotorElbowForce";
@@ -3500,7 +3502,7 @@ To see the model in action, go to the [[.PanelTab.ControlPanel]] and do Test Ini
       };
       ar {
        name=;
-	    [1 1 100] 1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;      };
+	    [1 1 100] 0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;0;1;1;1;1;0;1;1;1;1;1;0;1;1;1;1;1;1;1;1;1;1;1;1;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -4993,14 +4995,14 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  name="Torso";
 	  desc=;
 	  flags=FIXED;
-	  init_pos {x=0: y=0: z=0: };
+	  init_pos {x=0: y=0.1: z=0: };
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0: y=0: z=0: };
+	  cur_pos {x=0: y=0.1: z=0: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=-4.516167e-07: y=1.192722e-09: z=3.92182e-07: };
-	  cur_ang_vel {x=7.286874e-08: y=-1.083734e-07: z=-7.672527e-07: };
+	  cur_lin_vel {x=-2.08968e-06: y=-5.342216e-11: z=-8.995955e-07: };
+	  cur_ang_vel {x=1.771707e-07: y=-6.149693e-07: z=2.116135e-07: };
 	  shape=BOX;
 	  mass=1;
 	  radius=0.5;
@@ -5026,14 +5028,14 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  name="Humerus";
 	  desc=;
 	  flags=;
-	  init_pos {x=0.42: y=0.1: z=0.03: };
+	  init_pos {x=0.42: y=0.2: z=0.03: };
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0.42: y=0.1: z=0.03: };
+	  cur_pos {x=0.42: y=0.2: z=0.03: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=-7.87757e-07: y=-2.563947e-07: z=2.83967e-07: };
-	  cur_ang_vel {x=1.241057e-08: y=7.956795e-07: z=-8.571152e-07: };
+	  cur_lin_vel {x=-3.973912e-06: y=1.234755e-07: z=-1.701992e-06: };
+	  cur_ang_vel {x=-2.383642e-07: y=-3.898079e-07: z=4.837818e-07: };
 	  shape=CAPSULE;
 	  mass=2.1;
 	  radius=0.03;
@@ -5059,14 +5061,14 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  name="Ulna";
 	  desc=;
 	  flags=;
-	  init_pos {x=0.77: y=0.1: z=0.03: };
+	  init_pos {x=0.77: y=0.2: z=0.03: };
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0.77: y=0.1: z=0.03: };
+	  cur_pos {x=0.77: y=0.2: z=0.03: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=-1.052455e-06: y=-3.441494e-07: z=-1.275232e-07: };
-	  cur_ang_vel {x=-1.049187e-09: y=-3.593599e-07: z=-7.702242e-07: };
+	  cur_lin_vel {x=1.014748e-05: y=3.45554e-07: z=-3.676635e-05: };
+	  cur_ang_vel {x=-1.628589e-07: y=1.013456e-06: z=4.006598e-07: };
 	  shape=CAPSULE;
 	  mass=1.65;
 	  radius=0.02;
@@ -5092,14 +5094,14 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  name="Hand";
 	  desc=;
 	  flags=;
-	  init_pos {x=0.98: y=0.1: z=0.03: };
+	  init_pos {x=0.98: y=0.2: z=0.03: };
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0.98: y=0.1: z=0.03: };
+	  cur_pos {x=0.98: y=0.2: z=0.03: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=-7.817922e-07: y=-2.22693e-07: z=-1.965344e-07: };
-	  cur_ang_vel {x=-1.445725e-09: y=2.238659e-07: z=-7.711576e-07: };
+	  cur_lin_vel {x=3.567022e-05: y=3.465248e-07: z=-7.525548e-05: };
+	  cur_ang_vel {x=-1.628806e-07: y=1.032393e-06: z=4.006517e-07: };
 	  shape=SPHERE;
 	  mass=0.05;
 	  radius=0.025;
@@ -5125,11 +5127,11 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  name="Head";
 	  desc=;
 	  flags=FIXED;
-	  init_pos {x=0: y=0.3: z=0: };
+	  init_pos {x=0: y=0.35: z=0: };
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0: y=0.3: z=0: };
+	  cur_pos {x=0: y=0.35: z=0: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
 	  cur_lin_vel {x=0: y=0: z=0: };
 	  cur_ang_vel {x=0: y=0: z=0: };
@@ -5158,11 +5160,11 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  name="LeftEye";
 	  desc=;
 	  flags=FIXED;
-	  init_pos {x=0.04: y=0.3: z=0.1: };
+	  init_pos {x=0.04: y=0.35: z=0.1: };
 	  init_rot {x=0: y=0.8: z=0.2: rot=3.14159: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0.04: y=0.3: z=0.1: };
+	  cur_pos {x=0.04: y=0.35: z=0.1: };
 	  cur_rot {x=0: y=0.8: z=0.2: rot=3.14159: };
 	  cur_lin_vel {x=0: y=0: z=0: };
 	  cur_ang_vel {x=7.766976e-19: y=-2.065683e-12: z=-8.322173e-13: };
@@ -5205,11 +5207,11 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  name="RightEye";
 	  desc=;
 	  flags=FIXED;
-	  init_pos {x=-0.04: y=0.3: z=0.1: };
+	  init_pos {x=-0.04: y=0.35: z=0.1: };
 	  init_rot {x=0: y=0.8: z=0.2: rot=3.14159: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=-0.04: y=0.3: z=0.1: };
+	  cur_pos {x=-0.04: y=0.35: z=0.1: };
 	  cur_rot {x=0: y=0.8: z=0.2: rot=3.14159: };
 	  cur_lin_vel {x=0: y=0: z=0: };
 	  cur_ang_vel {x=7.766976e-19: y=-2.065683e-12: z=-8.322173e-13: };
@@ -5252,11 +5254,11 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  name="Pectoralis";
 	  desc=;
 	  flags=;
-	  init_pos {x=0.3: y=0.15: z=0.05: };
+	  init_pos {x=0.3: y=0.25: z=0.05: };
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0.3: y=0.15: z=0.05: };
+	  cur_pos {x=0.3: y=0.25: z=0.05: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
 	  cur_lin_vel {x=0: y=0: z=0: };
 	  cur_ang_vel {x=0: y=0: z=0: };
@@ -5285,11 +5287,11 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  name="Deltoid";
 	  desc=;
 	  flags=;
-	  init_pos {x=0.3: y=0.15: z=-0.05: };
+	  init_pos {x=0.3: y=0.25: z=-0.05: };
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0.3: y=0.15: z=-0.05: };
+	  cur_pos {x=0.3: y=0.25: z=-0.05: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
 	  cur_lin_vel {x=0: y=0: z=0: };
 	  cur_ang_vel {x=0: y=0: z=0: };
@@ -5317,12 +5319,12 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	};
 	joints {
 	 name=;
-	 el_typ=VELambdaArmJoint;
+	 el_typ=VEMuscleJoint;
 	 el_def=0;
-	 VELambdaArmJoint @[0] {
+	 VEMuscleJoint @[0] {
 	  name="Shoulder";
 	  desc=;
-	  flags=FEEDBACK|USE_STOPS|USE_MOTOR;
+	  flags=FEEDBACK;
 	  body1=.projects[0].programs.gp[0][0].objs[0].objects[0].bodies[0]$48$;
 	  body2=$18$;
 	  joint_type=HINGE;
@@ -5330,6 +5332,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  axis {x=0: y=1: z=0: };
 	  axis2 {x=1: y=0: z=0: };
 	  stops {
+	   stops_on=1;
 	   lo=-0.78;
 	   hi=2.8;
 	   def=1;
@@ -5337,6 +5340,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   def_force=0;
 	  };
 	  stops2 {
+	   stops_on=0;
 	   lo=-3.1415;
 	   hi=3.1415;
 	   def=0;
@@ -5344,12 +5348,20 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   def_force=0;
 	  };
 	  motor {
+	   motor_on=1;
 	   vel=0;
-	   f_max=0.702148;
+	   f_max=0.7361736;
+	   servo_on=0;
+	   trg_pos=0;
+	   gain=0.1;
 	  };
 	  motor2 {
+	   motor_on=0;
 	   vel=0;
 	   f_max=0;
+	   servo_on=0;
+	   trg_pos=0;
+	   gain=0.1;
 	  };
 	  ode_params {
 	   erp=0.2;
@@ -5435,15 +5447,84 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   torque=0;
 	   muscle_obj=.projects[0].programs.gp[0][0].objs[0].objects[0].bodies[8]$50$;
 	  };
+	  flexor2 {
+	   name=;
+	   lambda_norm=0.5;
+	   lambda=0.09200001;
+	   co_contract_pct=0.2;
+	   extra_force=0;
+	   muscle_type=FLEXOR;
+	   moment_arm=0.04;
+	   len_range {min=0.05: max=0.15: range=0.1: scale=9.999999: };
+	   co_contract_len=0.04;
+	   rest_len=0.1;
+	   step_size=0.005;
+	   vel_damp=0.06;
+	   reflex_delay=0.025;
+	   reflex_delay_idx=5;
+	   m_rec_grad=11.2;
+	   m_mag=2.1;
+	   ca_dt=0.015;
+	   ca_dt_cmp=0.3333333;
+	   fv1=0.82;
+	   fv2=0.5;
+	   fv3=0.43;
+	   fv4=0.58;
+	   passive_k=0;
+	   len=0.1;
+	   dlen=0;
+	   act=0;
+	   m_act_force=0;
+	   m_force=2.802597e-45;
+	   force=0;
+	   torque=0;
+	   muscle_obj=NULL;
+	  };
+	  extensor2 {
+	   name=;
+	   lambda_norm=0.5;
+	   lambda=0.09200001;
+	   co_contract_pct=0.2;
+	   extra_force=0;
+	   muscle_type=EXTENSOR;
+	   moment_arm=-0.04;
+	   len_range {min=0.05: max=0.15: range=0.1: scale=9.999999: };
+	   co_contract_len=0.04;
+	   rest_len=0.1;
+	   step_size=0.005;
+	   vel_damp=0.06;
+	   reflex_delay=0.025;
+	   reflex_delay_idx=5;
+	   m_rec_grad=11.2;
+	   m_mag=2.1;
+	   ca_dt=0.015;
+	   ca_dt_cmp=0.3333333;
+	   fv1=0.82;
+	   fv2=0.5;
+	   fv3=0.43;
+	   fv4=0.58;
+	   passive_k=0;
+	   len=0.1;
+	   dlen=0;
+	   act=0;
+	   m_act_force=0;
+	   m_force=8.03246e+17;
+	   force=0;
+	   torque=0;
+	   muscle_obj=NULL;
+	  };
 	  targ_norm_angle=0.4972067;
 	  targ_angle=1;
 	  cur_norm_angle=0.2178771;
+	  targ_norm_angle2=0;
+	  targ_angle2=0;
+	  cur_norm_angle2=0;
 	  co_contract_pct=0.4;
 	 };
-	 VELambdaArmJoint @[1] {
+	 VEMuscleJoint @[1] {
 	  name="Elbow";
 	  desc=;
-	  flags=FEEDBACK|USE_STOPS|USE_MOTOR;
+	  flags=FEEDBACK;
 	  body1=$18$;
 	  body2=$19$;
 	  joint_type=HINGE;
@@ -5451,6 +5532,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  axis {x=0: y=1: z=0: };
 	  axis2 {x=1: y=0: z=0: };
 	  stops {
+	   stops_on=1;
 	   lo=-0.1;
 	   hi=2.8;
 	   def=1;
@@ -5458,6 +5540,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   def_force=0;
 	  };
 	  stops2 {
+	   stops_on=0;
 	   lo=-3.1415;
 	   hi=3.1415;
 	   def=0;
@@ -5465,12 +5548,20 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   def_force=0;
 	  };
 	  motor {
+	   motor_on=1;
 	   vel=0;
-	   f_max=0.3171537;
+	   f_max=0.3056457;
+	   servo_on=0;
+	   trg_pos=0;
+	   gain=0.1;
 	  };
 	  motor2 {
+	   motor_on=0;
 	   vel=0;
 	   f_max=0;
+	   servo_on=0;
+	   trg_pos=0;
+	   gain=0.1;
 	  };
 	  ode_params {
 	   erp=0.2;
@@ -5556,15 +5647,84 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   torque=0;
 	   muscle_obj=NULL;
 	  };
+	  flexor2 {
+	   name=;
+	   lambda_norm=0.5;
+	   lambda=0.09200001;
+	   co_contract_pct=0.2;
+	   extra_force=0;
+	   muscle_type=FLEXOR;
+	   moment_arm=0.04;
+	   len_range {min=0.05: max=0.15: range=0.1: scale=9.999999: };
+	   co_contract_len=0.04;
+	   rest_len=0.1;
+	   step_size=0.005;
+	   vel_damp=0.06;
+	   reflex_delay=0.025;
+	   reflex_delay_idx=5;
+	   m_rec_grad=11.2;
+	   m_mag=2.1;
+	   ca_dt=0.015;
+	   ca_dt_cmp=0.3333333;
+	   fv1=0.82;
+	   fv2=0.5;
+	   fv3=0.43;
+	   fv4=0.58;
+	   passive_k=0;
+	   len=0.1;
+	   dlen=0;
+	   act=0;
+	   m_act_force=0;
+	   m_force=5.240856e-43;
+	   force=0;
+	   torque=0;
+	   muscle_obj=NULL;
+	  };
+	  extensor2 {
+	   name=;
+	   lambda_norm=0.5;
+	   lambda=0.09200001;
+	   co_contract_pct=0.2;
+	   extra_force=0;
+	   muscle_type=EXTENSOR;
+	   moment_arm=-0.04;
+	   len_range {min=0.05: max=0.15: range=0.1: scale=9.999999: };
+	   co_contract_len=0.04;
+	   rest_len=0.1;
+	   step_size=0.005;
+	   vel_damp=0.06;
+	   reflex_delay=0.025;
+	   reflex_delay_idx=5;
+	   m_rec_grad=11.2;
+	   m_mag=2.1;
+	   ca_dt=0.015;
+	   ca_dt_cmp=0.3333333;
+	   fv1=0.82;
+	   fv2=0.5;
+	   fv3=0.43;
+	   fv4=0.58;
+	   passive_k=0;
+	   len=0.1;
+	   dlen=0;
+	   act=0;
+	   m_act_force=0;
+	   m_force=228.4352;
+	   force=0;
+	   torque=0;
+	   muscle_obj=NULL;
+	  };
 	  targ_norm_angle=0.3793104;
 	  targ_angle=1;
 	  cur_norm_angle=0.03448276;
+	  targ_norm_angle2=0;
+	  targ_angle2=0;
+	  cur_norm_angle2=0;
 	  co_contract_pct=0.4;
 	 };
 	 VEJoint @[2] {
 	  name="Wrist";
 	  desc=;
-	  flags=FEEDBACK|USE_STOPS;
+	  flags=FEEDBACK;
 	  body1=$19$;
 	  body2=$20$;
 	  joint_type=FIXED;
@@ -5572,6 +5732,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  axis {x=0: y=1: z=0: };
 	  axis2 {x=1: y=0: z=0: };
 	  stops {
+	   stops_on=0;
 	   lo=-3.1415;
 	   hi=3.1415;
 	   def=0;
@@ -5579,6 +5740,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   def_force=0;
 	  };
 	  stops2 {
+	   stops_on=0;
 	   lo=-3.1415;
 	   hi=3.1415;
 	   def=0;
@@ -5586,12 +5748,20 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   def_force=0;
 	  };
 	  motor {
+	   motor_on=0;
 	   vel=0;
 	   f_max=0;
+	   servo_on=0;
+	   trg_pos=0;
+	   gain=0.1;
 	  };
 	  motor2 {
+	   motor_on=0;
 	   vel=0;
 	   f_max=0;
+	   servo_on=0;
+	   trg_pos=0;
+	   gain=0.1;
 	  };
 	  ode_params {
 	   erp=0.2;
@@ -5627,11 +5797,11 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  name="TargetBody";
 	  desc=;
 	  flags=FIXED;
-	  init_pos {x=0.07496129: y=0.05: z=0.3562832: };
+	  init_pos {x=0.3468572: y=0.12: z=0.4245568: };
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0.07496129: y=0.05: z=0.3562832: };
+	  cur_pos {x=0.3468572: y=0.12: z=0.4245568: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
 	  cur_lin_vel {x=0: y=0: z=0: };
 	  cur_ang_vel {x=0: y=0: z=0: };
@@ -7350,7 +7520,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        NetMonItem @[12] {
 	name="Should_flexor_len";
 	computed=0;
-	object_type=VELambdaArmJoint;
+	object_type=VEMuscleJoint;
 	object=$52$;
 	variable="flexor.len";
 	var_label=;
@@ -7380,7 +7550,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        NetMonItem @[13] {
 	name="Should_flexor_dlen";
 	computed=0;
-	object_type=VELambdaArmJoint;
+	object_type=VEMuscleJoint;
 	object=$52$;
 	variable="flexor.dlen";
 	var_label=;
@@ -7410,7 +7580,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        NetMonItem @[14] {
 	name="Should_flexor_act";
 	computed=0;
-	object_type=VELambdaArmJoint;
+	object_type=VEMuscleJoint;
 	object=$52$;
 	variable="flexor.act";
 	var_label=;
@@ -7440,7 +7610,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        NetMonItem @[15] {
 	name="Should_flexor_m_act_force";
 	computed=0;
-	object_type=VELambdaArmJoint;
+	object_type=VEMuscleJoint;
 	object=$52$;
 	variable="flexor.m_act_force";
 	var_label=;
@@ -7470,7 +7640,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        NetMonItem @[16] {
 	name="Should_flexor_m_force";
 	computed=0;
-	object_type=VELambdaArmJoint;
+	object_type=VEMuscleJoint;
 	object=$52$;
 	variable="flexor.m_force";
 	var_label=;
@@ -7500,7 +7670,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        NetMonItem @[17] {
 	name="Should_flexor_force";
 	computed=0;
-	object_type=VELambdaArmJoint;
+	object_type=VEMuscleJoint;
 	object=$52$;
 	variable="flexor.force";
 	var_label=;
@@ -7530,7 +7700,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        NetMonItem @[18] {
 	name="Should_extensor_len";
 	computed=0;
-	object_type=VELambdaArmJoint;
+	object_type=VEMuscleJoint;
 	object=$52$;
 	variable="extensor.len";
 	var_label=;
@@ -7560,7 +7730,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        NetMonItem @[19] {
 	name="Should_extensor_dlen";
 	computed=0;
-	object_type=VELambdaArmJoint;
+	object_type=VEMuscleJoint;
 	object=$52$;
 	variable="extensor.dlen";
 	var_label=;
@@ -7590,7 +7760,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        NetMonItem @[20] {
 	name="Should_extensor_act";
 	computed=0;
-	object_type=VELambdaArmJoint;
+	object_type=VEMuscleJoint;
 	object=$52$;
 	variable="extensor.act";
 	var_label=;
@@ -7620,7 +7790,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        NetMonItem @[21] {
 	name="Should_extensor_m_act_force";
 	computed=0;
-	object_type=VELambdaArmJoint;
+	object_type=VEMuscleJoint;
 	object=$52$;
 	variable="extensor.m_act_force";
 	var_label=;
@@ -7650,7 +7820,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        NetMonItem @[22] {
 	name="Should_extensor_m_force";
 	computed=0;
-	object_type=VELambdaArmJoint;
+	object_type=VEMuscleJoint;
 	object=$52$;
 	variable="extensor.m_force";
 	var_label=;
@@ -7680,7 +7850,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        NetMonItem @[23] {
 	name="Should_extensor_force";
 	computed=0;
-	object_type=VELambdaArmJoint;
+	object_type=VEMuscleJoint;
 	object=$52$;
 	variable="extensor.force";
 	var_label=;
@@ -7710,7 +7880,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        NetMonItem @[24] {
 	name="should_cur_trg";
 	computed=1;
-	object_type=VELambdaArmJoint;
+	object_type=VEMuscleJoint;
 	object=NULL;
 	variable="extensor.force";
 	var_label=;
@@ -7830,7 +8000,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        NetMonItem @[28] {
 	name="elbow_cur_trg";
 	computed=1;
-	object_type=VELambdaArmJoint;
+	object_type=VEMuscleJoint;
 	object=NULL;
 	variable="extensor.force";
 	var_label=;
@@ -7884,7 +8054,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[1] {
       name="shoulder_trg_angle_norm";
       var_type=T_Real;
-      real_val=0.300000011920929;
+      real_val=0.4000000059604645;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED;
       reference=0;
@@ -7893,7 +8063,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[2] {
       name="elbow_trg_angle_norm";
       var_type=T_Real;
-      real_val=0.9000000357627869;
+      real_val=0.5;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED;
       reference=0;
@@ -7917,7 +8087,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[1] {
       name="Shoulder";
       var_type=T_Object;
-      object_type=VELambdaArmJoint;
+      object_type=VEMuscleJoint;
       object_val=$52$;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
@@ -7927,7 +8097,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[2] {
       name="Elbow";
       var_type=T_Object;
-      object_type=VELambdaArmJoint;
+      object_type=VEMuscleJoint;
       object_val=$53$;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
@@ -7989,7 +8159,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.4;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK;
       reference=0;
       desc="how much to co-contract the muscles for the movement";
      };
@@ -8032,7 +8202,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[13] {
       name="shoulder_pos_dir";
       var_type=T_Bool;
-      bool_val=0;
+      bool_val=1;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -8041,7 +8211,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[14] {
       name="shoulder_angle_err";
       var_type=T_Real;
-      real_val=0.006761550903320312;
+      real_val=0.001640439033508301;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
       reference=0;
@@ -8059,7 +8229,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[16] {
       name="elbow_pos_dir";
       var_type=T_Bool;
-      bool_val=1;
+      bool_val=0;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -8068,7 +8238,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[17] {
       name="elbow_angle_err";
       var_type=T_Real;
-      real_val=0.01931226253509521;
+      real_val=0.02346187829971313;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
       reference=0;
@@ -8077,7 +8247,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[18] {
       name="angle_err";
       var_type=T_Real;
-      real_val=0.01303690671920776;
+      real_val=0.01255115866661072;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
       reference=0;
@@ -8086,7 +8256,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[19] {
       name="hand_vel";
       var_type=T_Real;
-      real_val=8.363114716303244e-07;
+      real_val=8.328187686856836e-05;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -8097,14 +8267,14 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.0001;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK;
       reference=0;
       desc="threshold for stopping movement in hand velocity";
      };
      ProgVar @[21] {
       name="ve_step";
       var_type=T_Int;
-      int_val=21;
+      int_val=106;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -8115,7 +8285,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Int;
       int_val=500;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK;
       reference=0;
       desc="maximum number of ve steps to take per movement";
      };
@@ -8234,7 +8404,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[35] {
       name="hand_pos_x_norm";
       var_type=T_Real;
-      real_val=0.482729155119669;
+      real_val=0.5635284907049403;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -8243,7 +8413,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[36] {
       name="hand_pos_z_norm";
       var_type=T_Real;
-      real_val=0.611759571768709;
+      real_val=0.8741321287502831;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -8252,7 +8422,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[37] {
       name="targ_pos_x_norm";
       var_type=T_Real;
-      real_val=0.3791686560687568;
+      real_val=0.5616491042701031;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -8261,7 +8431,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[38] {
       name="targ_pos_z_norm";
       var_type=T_Real;
-      real_val=0.6417356537496294;
+      real_val=0.7046606611412765;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -8270,7 +8440,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[39] {
       name="trg_dist";
       var_type=T_Real;
-      real_val=0.1078116223216057;
+      real_val=0.1694819182157516;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -8675,7 +8845,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  flags=;
 	  result_var=NULL;
 	  obj=.projects[0].programs.gp[0][0].vars[1]$77$;
-	  method=VELambdaArmJoint::SetTargNormAngle;
+	  method=VEMuscleJoint::SetTargNormAngle;
 	  meth_args {
 	   name=;
 	   el_typ=ProgArg;
@@ -8684,7 +8854,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	    arg_type=float;
 	    type="float";
 	    name="trg_norm_angle";
-	    required=0;
+	    required=1;
 	    def_val=;
 	    expr {
 	     expr="shoulder_cur_trg_angle";
@@ -8694,10 +8864,20 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	    arg_type=float;
 	    type="float";
 	    name="co_contract";
-	    required=0;
+	    required=1;
 	    def_val=;
 	    expr {
 	     expr="co_contract_pct";
+	    };
+	   };
+	   ProgArg @[2] {
+	    arg_type=float;
+	    type="float";
+	    name="trg_norm_angle2";
+	    required=0;
+	    def_val="0.0f";
+	    expr {
+	     expr=;
 	    };
 	   };
 	  };
@@ -8707,7 +8887,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  flags=;
 	  result_var=NULL;
 	  obj=.projects[0].programs.gp[0][0].vars[2]$78$;
-	  method=VELambdaArmJoint::SetTargNormAngle;
+	  method=VEMuscleJoint::SetTargNormAngle;
 	  meth_args {
 	   name=;
 	   el_typ=ProgArg;
@@ -8716,7 +8896,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	    arg_type=float;
 	    type="float";
 	    name="trg_norm_angle";
-	    required=0;
+	    required=1;
 	    def_val=;
 	    expr {
 	     expr="elbow_cur_trg_angle";
@@ -8726,10 +8906,20 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	    arg_type=float;
 	    type="float";
 	    name="co_contract";
-	    required=0;
+	    required=1;
 	    def_val=;
 	    expr {
 	     expr="co_contract_pct";
+	    };
+	   };
+	   ProgArg @[2] {
+	    arg_type=float;
+	    type="float";
+	    name="trg_norm_angle2";
+	    required=0;
+	    def_val="0.0f";
+	    expr {
+	     expr=;
 	    };
 	   };
 	  };
@@ -9323,7 +9513,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[1] {
       name="targ_angle";
       var_type=T_Real;
-      real_val=2.038694631276928;
+      real_val=1.35772048985003;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED;
       reference=0;
@@ -9332,7 +9522,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[2] {
       name="targ_dist";
       var_type=T_Real;
-      real_val=0.3991887416086418;
+      real_val=0.4343803013047926;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED;
       reference=0;
@@ -9365,7 +9555,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[2] {
       name="targ_x";
       var_type=T_Real;
-      real_val=0.07496128830598869;
+      real_val=0.3468571682018919;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
       reference=0;
@@ -9374,7 +9564,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[3] {
       name="targ_z";
       var_type=T_Real;
-      real_val=0.3562831961584496;
+      real_val=0.424556834495158;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
       reference=0;
@@ -9638,7 +9828,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[2] {
       name="Shoulder";
       var_type=T_Object;
-      object_type=VELambdaArmJoint;
+      object_type=VEMuscleJoint;
       object_val=$52$;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
@@ -9648,7 +9838,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[3] {
       name="Elbow";
       var_type=T_Object;
-      object_type=VELambdaArmJoint;
+      object_type=VEMuscleJoint;
       object_val=$53$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED;
@@ -9721,7 +9911,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[11] {
       name="hand_pos_x_norm";
       var_type=T_Real;
-      real_val=0.4827292051235652;
+      real_val=0.5102129965589037;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -9730,7 +9920,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[12] {
       name="hand_pos_z_norm";
       var_type=T_Real;
-      real_val=0.6117655322331256;
+      real_val=0.6257366960200593;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -9739,7 +9929,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[13] {
       name="targ_pos_x_norm";
       var_type=T_Real;
-      real_val=0.3791686560687568;
+      real_val=0.5616491042701031;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -9748,7 +9938,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[14] {
       name="targ_pos_z_norm";
       var_type=T_Real;
-      real_val=0.6417356537496294;
+      real_val=0.7046606611412765;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -9757,7 +9947,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[15] {
       name="shoulder_ang_norm";
       var_type=T_Real;
-      real_val=0.3067615628242493;
+      real_val=0.2767096161842346;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -9766,7 +9956,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[16] {
       name="elbow_ang_norm";
       var_type=T_Real;
-      real_val=0.8806877732276917;
+      real_val=0.8649897575378418;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -10159,7 +10349,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[0] {
       name="Shoulder";
       var_type=T_Object;
-      object_type=VELambdaArmJoint;
+      object_type=VEMuscleJoint;
       object_val=$52$;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
@@ -10169,7 +10359,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[1] {
       name="Elbow";
       var_type=T_Object;
-      object_type=VELambdaArmJoint;
+      object_type=VEMuscleJoint;
       object_val=$53$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED;
@@ -10719,7 +10909,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[4] {
       name="trg_dist";
       var_type=T_Real;
-      real_val=0.1078116223216057;
+      real_val=0.1694819182157516;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -10748,7 +10938,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.4;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK;
       reference=0;
       desc="initial threshold on distance to get a reward at start of training";
      };
@@ -10757,7 +10947,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.01;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK;
       reference=0;
       desc="how much to change the distance threshold when network is doing well or poorly (see avg_rew_*_thr)";
      };
@@ -10766,7 +10956,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.8;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK;
       reference=0;
       desc="threshold on network avg_rew for decreasing the reward threshold (makes the task harder -- when doing well)";
      };
@@ -10775,7 +10965,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.2;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK;
       reference=0;
       desc="threshold on network avg_rew for increasing the reward threshold (makes task easier -- when doing poorly)";
      };
@@ -11715,7 +11905,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=DataTable;
       object_val=$34$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK;
       reference=0;
       desc="datatable with training patterns";
      };
@@ -15401,7 +15591,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @[5] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=100;
+      int_val=47;
       objs_ptr=0;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -23713,10 +23903,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	name=;
 	el_typ=SchedItem;
 	el_def=0;
-	last_ctr=0;
+	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
 	SchedItem @[0] {
 	 start_ctr=0;
 	 start_val=1;
@@ -23762,10 +23952,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       name=;
       el_typ=SchedItem;
       el_def=0;
-      last_ctr=0;
+      last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
       SchedItem @[0] {
        start_ctr=0;
        start_val=1;
@@ -24333,7 +24523,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   last_ctr=-1;
 	   default_val=1;
 	   interpolate=0;
-	   cur_val=1;
+	   cur_val=0;
 	  };
 	  wt_sig {gain=6: off=1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -24370,7 +24560,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 last_ctr=-1;
 	 default_val=1;
 	 interpolate=0;
-	 cur_val=1;
+	 cur_val=0;
 	};
 	wt_sig {gain=6: off=1: };
 	lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -24451,7 +24641,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        last_ctr=-1;
        default_val=1;
        interpolate=0;
-       cur_val=1;
+       cur_val=0;
       };
       wt_sig {gain=6: off=1: };
       lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -24867,19 +25057,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name=;
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.9916283: max=0.9916283: max_i=0: };
-     acts_m {cmpt=1: avg=0.990092: max=0.990092: max_i=0: };
-     phase_dif_ratio=0.9984506;
+     netin {cmpt=1: avg=0.0622335: max=0.0622335: max_i=0: };
+     i_thrs {cmpt=1: avg=-0.1: max=-0.1: max_i=0: };
+     acts {cmpt=1: avg=0.9911333: max=0.9911333: max_i=0: };
+     acts_p {cmpt=1: avg=0.9915214: max=0.9915214: max_i=0: };
+     acts_m {cmpt=1: avg=0.9896345: max=0.9896345: max_i=0: };
+     phase_dif_ratio=0.9984123;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=1: pct=1: pct_c=0: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=1: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
-     maxda=0;
+     maxda=5.745888e-05;
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[1].specs[1]$322$: };
      hard_clamped=0;
      ravg_l_avg=0;
@@ -24888,7 +25078,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      misc_iar{      };
     };
@@ -25069,7 +25259,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[1].specs.gp[0][0]$329$: };
-     ext_flag=;
+     ext_flag=TARG|EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -25080,26 +25270,26 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0.2375: max=0.95: max_i=3: };
      acts_p {cmpt=1: avg=0.2375: max=0.95: max_i=3: };
      acts_m {cmpt=1: avg=0.2375: max=0.95: max_i=2: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0.9: gp_g_i=0: g_i_orig=0.9: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ExtRewLayerSpec: spec=$27$: };
-     hard_clamped=0;
+     hard_clamped=1;
      ravg_l_avg=0.02325581;
      dav=0;
      net_rescale=1;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=0.5;
      da_updt=0;
      misc_iar{      };
     };
@@ -25266,16 +25456,16 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="1";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.3896576: max=0.7782556: max_i=3: };
-     acts_m {cmpt=1: avg=0.3896576: max=0.7782556: max_i=3: };
+     netin {cmpt=1: avg=0.3732117: max=0.7175975: max_i=3: };
+     i_thrs {cmpt=1: avg=15.41329: max=29.6803: max_i=3: };
+     acts {cmpt=1: avg=0.3896605: max=0.7782403: max_i=3: };
+     acts_p {cmpt=1: avg=0.3896759: max=0.7783015: max_i=3: };
+     acts_m {cmpt=1: avg=0.3896605: max=0.7782403: max_i=3: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=29.85887: k1_ithr=10.7208: ithr_r=1.024296: ithr_diff=0.6409509: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=29.6803: k1_ithr=10.65762: ithr_r=1.024209: ithr_diff=0.6409195: tie_brk=0: };
+     i_val {kwta=27.77803: g_i=27.77803: gp_g_i=0: g_i_orig=27.77803: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
@@ -25287,7 +25477,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      misc_iar{      };
     };
@@ -25452,16 +25642,16 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="0";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.3569309: max=0.7873409: max_i=3: };
-     acts_m {cmpt=1: avg=0.3569309: max=0.7873409: max_i=3: };
+     netin {cmpt=1: avg=0.0221742: max=0.05059822: max_i=3: };
+     i_thrs {cmpt=1: avg=0.8452295: max=1.999826: max_i=3: };
+     acts {cmpt=1: avg=0.2762447: max=0.8054465: max_i=3: };
+     acts_p {cmpt=1: avg=0.2246814: max=0.8341922: max_i=3: };
+     acts_m {cmpt=1: avg=0.2762447: max=0.8054465: max_i=3: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.013812: k1_ithr=0.5964134: ithr_r=1.216851: ithr_diff=0.7038386: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=1.999826: k1_ithr=0.460364: ithr_r=1.468798: ithr_diff=0.769798: tie_brk=0: };
+     i_val {kwta=1.84588: g_i=1.84588: gp_g_i=0: g_i_orig=1.84588: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
@@ -25473,7 +25663,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      misc_iar{      };
     };
@@ -25638,16 +25828,16 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="0";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.3895103: max=0.7821175: max_i=3: };
-     acts_m {cmpt=1: avg=0.3895103: max=0.7821175: max_i=3: };
+     netin {cmpt=1: avg=0.02466683: max=0.05336887: max_i=3: };
+     i_thrs {cmpt=1: avg=0.9486737: max=2.114809: max_i=3: };
+     acts {cmpt=1: avg=0.3121807: max=0.7964148: max_i=3: };
+     acts_p {cmpt=1: avg=0.2272066: max=0.8312052: max_i=3: };
+     acts_m {cmpt=1: avg=0.3121807: max=0.7964148: max_i=3: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.086905: k1_ithr=0.6603269: ithr_r=1.150702: ithr_diff=0.6835856: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.114809: k1_ithr=0.559962: ithr_r=1.328851: ithr_diff=0.7352186: tie_brk=0: };
+     i_val {kwta=1.959324: g_i=1.959324: gp_g_i=0: g_i_orig=1.959324: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
@@ -25659,7 +25849,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      misc_iar{      };
     };
@@ -25824,16 +26014,16 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="1";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.2934341: max=0.7989173: max_i=3: };
-     acts_m {cmpt=1: avg=0.2934341: max=0.7989173: max_i=3: };
+     netin {cmpt=1: avg=0.01554397: max=0.0357062: max_i=3: };
+     i_thrs {cmpt=1: avg=0.570075: max=1.381808: max_i=3: };
+     acts {cmpt=1: avg=0.2717415: max=0.80465: max_i=3: };
+     acts_p {cmpt=1: avg=0.230522: max=0.8262461: max_i=3: };
+     acts_m {cmpt=1: avg=0.2717415: max=0.80465: max_i=3: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=1.46241: k1_ithr=0.3520631: ithr_r=1.424031: ithr_diff=0.7592583: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=1.381808: k1_ithr=0.2994975: ithr_r=1.529042: ithr_diff=0.7832568: tie_brk=0: };
+     i_val {kwta=1.273577: g_i=1.273577: gp_g_i=0: g_i_orig=1.273577: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
@@ -25845,7 +26035,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      misc_iar{      };
     };
@@ -25986,16 +26176,16 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="0";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.2208522: max=0.8804677: max_i=1: };
-     acts_m {cmpt=1: avg=0.2208522: max=0.8804677: max_i=1: };
+     netin {cmpt=1: avg=0.1564869: max=0.5908578: max_i=1: };
+     i_thrs {cmpt=1: avg=6.419209: max=24.4206: max_i=1: };
+     acts {cmpt=1: avg=0.2208015: max=0.8802354: max_i=1: };
+     acts_p {cmpt=1: avg=0.2210258: max=0.8812628: max_i=1: };
+     acts_m {cmpt=1: avg=0.2208015: max=0.8802354: max_i=1: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=24.81243: k1_ithr=0.4094698: ithr_r=4.104237: ithr_diff=0.9834974: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=24.4206: k1_ithr=0.418744: ithr_r=4.065923: ithr_diff=0.9828529: tie_brk=0: };
+     i_val {kwta=22.02042: g_i=22.02042: gp_g_i=0: g_i_orig=22.02042: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
@@ -26007,7 +26197,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      misc_iar{      };
     };
@@ -26176,8 +26366,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.4481638: max=0.4481638: max_i=0: };
+     acts {cmpt=1: avg=0.2705969: max=0.2705969: max_i=0: };
+     acts_p {cmpt=1: avg=0.07121742: max=0.07121742: max_i=0: };
      acts_m {cmpt=1: avg=0: max=0: max_i=0: };
      phase_dif_ratio=0;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
@@ -26190,12 +26380,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      spec {type=PVLVDaLayerSpec: spec=$32$: };
      hard_clamped=0;
      ravg_l_avg=0.015;
-     dav=0.4481638;
+     dav=0.2705969;
      net_rescale=1;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      misc_iar{      };
     };
@@ -26280,31 +26470,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[1].specs[0].children[0]$348$: };
-     ext_flag=;
+     ext_flag=COMP;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
       fm_output=-1;
      };
-     output_name="0.9";
+     output_name="0.5";
      sse=0;
      icon_value=0;
      unit_names {
       name=;
 	  [12 1] "val";"0";"0.1";"0.2";"0.3";"0.4";"0.5";"0.6";"0.7";"0.8";"0.9";"1";     };
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.07383968: max=0.8860762: max_i=10: };
-     acts_m {cmpt=1: avg=0.0727722: max=0.8732663: max_i=10: };
-     phase_dif_ratio=0.9855433;
+     netin {cmpt=1: avg=0.1852929: max=0.3276006: max_i=6: };
+     i_thrs {cmpt=1: avg=1.314384: max=2.36361: max_i=6: };
+     acts {cmpt=1: avg=0.07051503: max=0.8461803: max_i=6: };
+     acts_p {cmpt=1: avg=0.07018798: max=0.8422557: max_i=10: };
+     acts_m {cmpt=1: avg=0.06961935: max=0.8354322: max_i=6: };
+     phase_dif_ratio=0.9957696;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.08333334: pct_c=0.9166667: adth_k=1: k_ithr=1.709248: k1_ithr=0.7934124: ithr_r=0.7674656: ithr_diff=0.535812: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.08333334: pct_c=0.9166667: adth_k=1: k_ithr=2.36361: k1_ithr=1.219: ithr_r=0.662159: ithr_diff=0.4842633: tie_brk=0: };
+     i_val {kwta=2.134688: g_i=2.134688: gp_g_i=0: g_i_orig=2.134688: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.08333334: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.1: };
-     maxda=0;
+     maxda=5.364418e-07;
      spec {type=ScalarValLayerSpec: spec=$11$: };
      hard_clamped=0;
      ravg_l_avg=0;
@@ -26404,25 +26594,25 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       fm_input=-1;
       fm_output=-1;
      };
-     output_name="0.3";
+     output_name="0.4";
      sse=0;
      icon_value=0;
      unit_names {
       name=;
 	  [12 1] "val";"0";"0.1";"0.2";"0.3";"0.4";"0.5";"0.6";"0.7";"0.8";"0.9";"1";     };
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.07291704: max=0.8750044: max_i=4: };
-     acts_m {cmpt=1: avg=0.07165102: max=0.8598122: max_i=4: };
-     phase_dif_ratio=0.9826376;
+     netin {cmpt=1: avg=0.1817258: max=0.3391376: max_i=5: };
+     i_thrs {cmpt=1: avg=1.287255: max=2.46262: max_i=5: };
+     acts {cmpt=1: avg=0.0696324: max=0.8355888: max_i=5: };
+     acts_p {cmpt=1: avg=0.06995287: max=0.8394344: max_i=4: };
+     acts_m {cmpt=1: avg=0.06854682: max=0.8225618: max_i=5: };
+     phase_dif_ratio=0.99546;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.08333334: pct_c=0.9166667: adth_k=1: k_ithr=1.809172: k1_ithr=0.7442291: ithr_r=0.8882755: ithr_diff=0.5886355: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.08333334: pct_c=0.9166667: adth_k=1: k_ithr=2.46262: k1_ithr=1.180404: ithr_r=0.7353693: ithr_diff=0.5206715: tie_brk=0: };
+     i_val {kwta=2.206177: g_i=2.206177: gp_g_i=0: g_i_orig=2.206177: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.08333334: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.1: };
-     maxda=0;
+     maxda=5.960464e-07;
      spec {type=ScalarValLayerSpec: spec=$11$: };
      hard_clamped=0;
      ravg_l_avg=0;
@@ -26431,7 +26621,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      misc_iar{      };
     };
@@ -26645,19 +26835,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name=;
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.07419055: max=0.9622533: max_i=45: };
-     acts_m {cmpt=1: avg=0.07210691: max=0.9605095: max_i=45: };
-     phase_dif_ratio=0.9719151;
+     netin {cmpt=1: avg=0.1553748: max=0.22989: max_i=42: };
+     i_thrs {cmpt=1: avg=1.071294: max=1.631386: max_i=42: };
+     acts {cmpt=1: avg=0.1083528: max=0.9372028: max_i=42: };
+     acts_p {cmpt=1: avg=0.07353696: max=0.9585061: max_i=45: };
+     acts_m {cmpt=1: avg=0.1067437: max=0.9343237: max_i=42: };
+     phase_dif_ratio=0.99575;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=1.458538: k1_ithr=1.018541: ithr_r=0.3590636: ithr_diff=0.3016701: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=1.481928: k1_ithr=1.002855: ithr_r=0.3904931: ithr_diff=0.3232769: tie_brk=0: };
+     i_val {kwta=1.290299: g_i=1.290299: gp_g_i=0: g_i_orig=1.290299: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.1428571: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
-     maxda=0;
+     maxda=2.026558e-05;
      spec {type=LeabraLayerSpec: spec=$322$: };
      hard_clamped=0;
      ravg_l_avg=0;
@@ -26666,7 +26856,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      misc_iar{      };
     };
@@ -26707,7 +26897,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=$6$: };
-     ext_flag=;
+     ext_flag=EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -26718,26 +26908,26 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.2156375: max=0.95: max_i=8: };
-     acts_m {cmpt=1: avg=0.2156375: max=0.95: max_i=8: };
+     acts {cmpt=1: avg=0.2146896: max=0.95: max_i=8: };
+     acts_p {cmpt=1: avg=0.2146896: max=0.95: max_i=8: };
+     acts_m {cmpt=1: avg=0.2146896: max=0.95: max_i=8: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0.6: gp_g_i=0: g_i_orig=0.6: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ScalarValLayerSpec: spec=.projects[0].networks[1].specs[4]$349$: };
-     hard_clamped=0;
+     hard_clamped=1;
      ravg_l_avg=0;
      dav=0;
      net_rescale=1;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      misc_iar{      };
     };
@@ -26844,7 +27034,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=$6$: };
-     ext_flag=;
+     ext_flag=EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -26855,26 +27045,26 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.2161839: max=0.95: max_i=5: };
-     acts_m {cmpt=1: avg=0.2161839: max=0.95: max_i=5: };
+     acts {cmpt=1: avg=0.2153546: max=0.95: max_i=5: };
+     acts_p {cmpt=1: avg=0.2153546: max=0.95: max_i=5: };
+     acts_m {cmpt=1: avg=0.2153546: max=0.95: max_i=5: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0.6: gp_g_i=0: g_i_orig=0.6: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ScalarValLayerSpec: spec=$349$: };
-     hard_clamped=0;
+     hard_clamped=1;
      ravg_l_avg=0;
      dav=0;
      net_rescale=1;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      misc_iar{      };
     };
@@ -26981,7 +27171,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=$6$: };
-     ext_flag=;
+     ext_flag=EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -26992,26 +27182,26 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.048705: max=0.8675267: max_i=60: };
-     acts_m {cmpt=1: avg=0.048705: max=0.8675267: max_i=60: };
+     acts {cmpt=1: avg=0.04873849: max=0.841365: max_i=71: };
+     acts_p {cmpt=1: avg=0.04873849: max=0.8413821: max_i=71: };
+     acts_m {cmpt=1: avg=0.04873849: max=0.841365: max_i=71: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=9: pct=0.08181818: pct_c=0.9181818: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0.6: gp_g_i=0: g_i_orig=0.6: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.08181818: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=TwoDValLayerSpec: spec=.projects[0].networks[1].specs[6]$350$: };
-     hard_clamped=0;
+     hard_clamped=1;
      ravg_l_avg=0;
      dav=0;
      net_rescale=1;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      misc_iar{      };
     };
@@ -27118,7 +27308,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=$6$: };
-     ext_flag=;
+     ext_flag=EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -27129,26 +27319,26 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.04623101: max=0.8188323: max_i=70: };
-     acts_m {cmpt=1: avg=0.04623101: max=0.8188323: max_i=70: };
+     acts {cmpt=1: avg=0.0453718: max=0.9370022: max_i=71: };
+     acts_p {cmpt=1: avg=0.04586294: max=0.8958881: max_i=59: };
+     acts_m {cmpt=1: avg=0.0453718: max=0.9370022: max_i=71: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=9: pct=0.08181818: pct_c=0.9181818: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0.6: gp_g_i=0: g_i_orig=0.6: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.08181818: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=TwoDValLayerSpec: spec=$350$: };
-     hard_clamped=0;
+     hard_clamped=1;
      ravg_l_avg=0;
      dav=0;
      net_rescale=1;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      misc_iar{      };
     };
@@ -27160,33 +27350,33 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    };
    flags=;
    auto_build=AUTO_BUILD;
-   train_mode=TRAIN;
+   train_mode=TEST;
    wt_update=ON_LINE;
    small_batch_n=10;
    batch=0;
-   epoch=0;
+   epoch=500;
    group=0;
    trial=0;
    tick=0;
    cycle=0;
-   time=0;
+   time=3357;
    group_name=;
    trial_name=;
-   output_name=;
+   output_name="0.5_0.4";
    sse_unit_avg=0;
    sse_sqrt=0;
-   sse=0;
+   sse=0.25;
    sum_sse=0;
    avg_sse=0;
    cnt_err_tol=0;
    cnt_err=0;
    pct_err=0;
    pct_cor=0;
-   cur_sum_sse=0;
-   avg_sse_n=0;
-   cur_cnt_err=0;
+   cur_sum_sse=14.41097;
+   avg_sse_n=48;
+   cur_cnt_err=48;
    train_time {name="": start={usr=12007: sys=1730: tot=3657791847: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
-   epoch_time {name="": start={usr=593: sys=114: tot=3658150280: }: end={usr=3619: sys=465: tot=3658153695: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   epoch_time {name="": start={usr=1016: sys=190: tot=3667534413: }: end={usr=18428: sys=2487: tot=3657807063: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    trial_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    settle_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    cycle_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
@@ -27228,11 +27418,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    phase_order=MINUS_PLUS;
    no_plus_test=0;
    sequence_init=DO_NOTHING;
-   phase=MINUS_PHASE;
+   phase=PLUS_PHASE;
    nothing_phase=0;
    phase_no=0;
    phase_max=2;
-   ct_cycle=70;
+   ct_cycle=67;
    time_inc=1;
    cycle_max=20;
    min_cycles=0;
@@ -27266,45 +27456,45 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    sravg_vals {
     s_sum=0;
     s_nrm=0;
-    m_sum=0;
+    m_sum=8;
     m_nrm=0;
     do_s=0;
    };
-   minus_cycles=0;
+   minus_cycles=50;
    avg_cycles=0;
-   avg_cycles_sum=0;
-   avg_cycles_n=0;
-   minus_output_name=;
+   avg_cycles_sum=2400;
+   avg_cycles_n=48;
+   minus_output_name="0.5_0.4";
    net_misc {
     cyc_syn_dep=0;
     syn_dep_int=20;
    };
    send_pct=0;
    send_pct_n=0;
-   send_pct_tot=0;
+   send_pct_tot=307;
    avg_send_pct=0;
-   avg_send_pct_sum=0;
-   avg_send_pct_n=0;
+   avg_send_pct_sum=44.10443;
+   avg_send_pct_n=3357;
    maxda_stopcrit=-1;
-   maxda=0;
+   maxda=5.745888e-05;
    trg_max_act_stopcrit=1;
    trg_max_act=0;
-   ext_rew=0;
-   ext_rew_avail=0;
+   ext_rew=1;
+   ext_rew_avail=1;
    norew_val=0.5;
    avg_ext_rew=0;
-   pvlv_pvi=0;
-   pvlv_lve=0;
-   pvlv_lvi=0;
+   pvlv_pvi=0.7294031;
+   pvlv_lve=0.6382067;
+   pvlv_lvi=0.7407578;
    pv_detected=0;
-   avg_ext_rew_sum=0;
-   avg_ext_rew_n=0;
+   avg_ext_rew_sum=46;
+   avg_ext_rew_n=47;
    off_errs=1;
    on_errs=1;
-   norm_err=0;
+   norm_err=0.25;
    avg_norm_err=1;
-   avg_norm_err_sum=0;
-   avg_norm_err_n=0;
+   avg_norm_err_sum=13.72093;
+   avg_norm_err_n=48;
   };
  };
 };
