@@ -313,6 +313,8 @@ public:
   // #CAT_Trigonometry #READ_ONLY pi: the ratio of circumference to diameter
   static double deg_per_rad;
   // #CAT_Trigonometry #READ_ONLY degrees per radian (180 / pi)
+  static double rad_per_deg;
+  // #CAT_Trigonometry #READ_ONLY radians per degree (pi / 180)
 
   static double  euc_dist_sq(double x1, double y1, double x2, double y2) 
   { return ((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)); }
@@ -335,17 +337,17 @@ public:
 
   static double  cos(double angle) { return std::cos(angle); }
   // #CAT_Trigonometry The cosine (x-axis component) of angle (given in radians)
-  static double  cos_deg(double angle) { return std::cos(angle / deg_per_rad); }
+  static double  cos_deg(double angle) { return std::cos(angle * rad_per_deg); }
   // #CAT_Trigonometry The cosine (x-axis component) of angle (given in degrees)
 
   static double  sin(double angle) { return std::sin(angle); }
   // #CAT_Trigonometry The sine (y-axis component) of angle (given in radians)
-  static double  sin_deg(double angle) { return std::sin(angle / deg_per_rad); }
+  static double  sin_deg(double angle) { return std::sin(angle * rad_per_deg); }
   // #CAT_Trigonometry The sine (y-axis component) of angle (given in degrees)
 
   static double  tan(double angle) { return std::tan(angle); }
   // #CAT_Trigonometry The tangent (slope y over x) of angle (given in radians)
-  static double  tan_deg(double angle) { return std::tan(angle / deg_per_rad); }
+  static double  tan_deg(double angle) { return std::tan(angle * rad_per_deg); }
   // #CAT_Trigonometry The tangent (slope y over x) of angle (given in degrees)
 
 //   static double  acosh(double X) { return std::acosh(X); }
@@ -413,6 +415,8 @@ public:
   // #CAT_Probability gaussian (normal) distribution with explicit sigma: 1 / (sigma * sqrt(2 * PI)) * exp(-x^2 / (2 * sigma^2))
   static double gauss_den_sq_sig(double x_sq, double sigma);
   // #CAT_Probability gaussian (normal) distribution with x already squared and explicit sigma: 1 / (sigma * sqrt(2 * PI)) * exp(-x_sq / (2 * sigma^2))
+  static double gauss_den_nonorm(double x, double sigma);
+  // #CAT_Probability non-normalized gaussian (normal) distribution with uniform standard deviation: exp(-x^2 / (2 * sigma^2))
   static double gauss_cum(double z);
   // #CAT_Probability cumulative gaussian (unit variance) to z 
   static double gauss_inv(double p);
@@ -848,6 +852,8 @@ public:
   // #CAT_Trigonometry #READ_ONLY pi: the ratio of circumference to diameter
   static float deg_per_rad;
   // #CAT_Trigonometry #READ_ONLY degrees per radian (180 / pi)
+  static float rad_per_deg;
+  // #CAT_Trigonometry #READ_ONLY radians per degree (pi / 180)
 
   static float  euc_dist_sq(float x1, float y1, float x2, float y2) 
   { return ((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)); }
@@ -871,17 +877,17 @@ public:
 
   static float  cos(float angle) { return std::cos(angle); }
   // #CAT_Trigonometry The cosine (x-axis component) of angle (given in radians)
-  static float  cos_deg(float angle) { return std::cos(angle / deg_per_rad); }
+  static float  cos_deg(float angle) { return std::cos(angle * rad_per_deg); }
   // #CAT_Trigonometry The cosine (x-axis component) of angle (given in degrees)
 
   static float  sin(float angle) { return std::sin(angle); }
   // #CAT_Trigonometry The sine (y-axis component) of angle (given in radians)
-  static float  sin_deg(float angle) { return std::sin(angle / deg_per_rad); }
+  static float  sin_deg(float angle) { return std::sin(angle * rad_per_deg); }
   // #CAT_Trigonometry The sine (y-axis component) of angle (given in degrees)
 
   static float  tan(float angle) { return std::tan(angle); }
   // #CAT_Trigonometry The tangent (slope y over x) of angle (given in radians)
-  static float  tan_deg(float angle) { return std::tan(angle / deg_per_rad); }
+  static float  tan_deg(float angle) { return std::tan(angle * rad_per_deg); }
   // #CAT_Trigonometry The tangent (slope y over x) of angle (given in degrees)
 
 //   static float  acosh(float X) { return acoshf(X); }
@@ -949,6 +955,8 @@ public:
   // #CAT_Probability gaussian (normal) distribution with explicit sigma: 1 / (sigma * sqrt(2 * PI)) * exp(-x^2 / (2 * sigma^2))
   static float gauss_den_sq_sig(float x_sq, float sigma);
   // #CAT_Probability gaussian (normal) distribution with x already squared and explicit sigma: 1 / (sigma * sqrt(2 * PI)) * exp(-x_sq / (2 * sigma^2))
+  static float gauss_den_nonorm(float x, float sigma);
+  // #CAT_Probability non-normalized gaussian (normal) distribution with uniform standard deviation: exp(-x^2 / (2 * sigma^2))
   static float gauss_cum(float z);
   // #CAT_Probability cumulative gaussian (unit variance) to z 
   static float gauss_inv(float p);

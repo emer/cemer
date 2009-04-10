@@ -394,7 +394,7 @@ void VECameraDists::Initialize() {
 void VECamera::Initialize() {
   img_size.x = 320;
   img_size.y = 240;
-  color = true;
+  color_cam = true;
   field_of_view = 90.0f;
   antialias_scale = 2;
   light.intensity = .2f;		// keep it not so bright relative to the sun..
@@ -1015,14 +1015,18 @@ void VEJoint::ApplyServo(float trg_pos1, float trg_pos2) {
   SetValsToODE_Motor();
 }
 
-void VEJoint::ApplyServoNorm(float trg_norm_pos1, float trg_norm_pos2) {
+void VEJoint::ApplyServoNorm(float trg_norm_pos1, float trg_norm_pos2, float stop_buffer) {
   float trg_pos1 = trg_norm_pos1;
   float trg_pos2 = trg_norm_pos2;
   if(stops.stops_on) {
     trg_pos1 = stops.Project(trg_norm_pos1);
+    trg_pos1 = MAX(stops.lo + stop_buffer, trg_pos1);
+    trg_pos1 = MIN(stops.hi - stop_buffer, trg_pos1);
   }
   if(HasTwoAxes() && stops2.stops_on) {
     trg_pos2 = stops2.Project(trg_norm_pos2);
+    trg_pos2 = MAX(stops2.lo + stop_buffer, trg_pos2);
+    trg_pos2 = MIN(stops2.hi - stop_buffer, trg_pos2);
   }
   ApplyServo(trg_pos1, trg_pos2);
 }
@@ -1071,7 +1075,7 @@ void VELambdaMuscle::Initialize() {
   co_contract_len = 0.04f;
   rest_len = 0.10f;
 
-  step_size = 0.005f;
+  step_size = 0.02f;
   vel_damp = 0.06f;
   reflex_delay = .025f;
   reflex_delay_idx = 5;

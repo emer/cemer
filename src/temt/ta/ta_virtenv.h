@@ -304,7 +304,7 @@ private:
 class SoPerspectiveCamera; // #IGNORE
 
 class TA_API VECamera : public VEBody {
-  // virtual environment camera -- a body that contains a camera -- position and orientation are used to point the camera -- body shape is not rendered, but mass/inertia etc is used if part of a non-fixed object -- camera must be selected in the VEWorld for it to actually be used to render images!
+  // virtual environment camera -- a body that contains a camera -- position and orientation are used to point the camera -- body shape always a cylinder, with LONG_Z axis, but mass/inertia etc is used if part of a non-fixed object -- camera must be selected in the VEWorld for it to actually be used to render images!
 INHERITED(VEBody)
 public:
 
@@ -315,7 +315,7 @@ public:
 #endif
 
   TwoDCoord	img_size;	// size of image to record from camera
-  bool		color;		// if true, get full color images (else greyscale)
+  bool		color_cam;	// if true, get full color images (else greyscale)
   VECameraDists	view_dist;	// distances that are in view of the camera
   float		field_of_view;	// field of view of camera (angle in degrees) -- how much of scene is it taking in
   int		antialias_scale; // #DEF_2 to achieve antialiasing, renders at a larger scale (determined by this parameter), and is then downscaled to target size
@@ -416,8 +416,8 @@ public:
   float		vel;		// #CONDEDIT_ON_motor_on target joint velocity to achieve (angular or linear) -- set to 0 to provide a resistive damping force
   float		f_max;		// #CONDEDIT_ON_motor_on maximum force or torque to drive the joint to achieve desired velocity
   bool		servo_on;	// #CONDEDIT_ON_motor_on turn on servo mechanism, defined by subsequent parameters
-  float		trg_pos;	// #CONDEDIT_ON_servo_on servo: target joint position to drive toward
-  float		gain;		// #CONDEDIT_ON_servo_on servo: how high to set the velocity on each step to move toward the target position: vel = gain * (trg_pos - pos)
+  float		trg_pos;	// #CONDEDIT_ON_servo_on servo: target joint position to drive toward -- IMPORTANT: do not get too close to the stops with this, as it can cause numerical problems -- leave a .02 or so buffer
+  float		gain;		// #CONDEDIT_ON_servo_on servo: how high to set the velocity on each step to move toward the target position: vel = gain * (trg_pos - pos) -- this can be quite high in fact: 20 or 50 have worked in various models, depending on the stepsize, masses involved, etc
 
   TA_SIMPLE_BASEFUNS(VEJointMotor);
 protected:
@@ -527,8 +527,8 @@ public:
   // #BUTTON #CAT_Force apply motor target velocity and max force parameters to joint (persist until further changes) -- set f_max = 0 to turn off -- automatically turns ON motor_on and OFF servo_on (servo otherwise takes control of motor parameters)
   virtual void	ApplyServo(float trg_pos1, float trg_pos2 = 0.0f);
   // #BUTTON #CAT_Force set servo_on and update target positions for the servos -- servo control automatically applied when the system is stepped
-  virtual void	ApplyServoNorm(float trg_norm_pos1, float trg_norm_pos2 = 0.0f);
-  // #BUTTON #CAT_Force set servo_on and update target positions for the servos using *normalized* values where 0 = lo and 1 = hi stop position value -- servo control automatically applied when the system is stepped
+  virtual void	ApplyServoNorm(float trg_norm_pos1, float trg_norm_pos2 = 0.0f, float stop_buffer=0.02f);
+  // #BUTTON #CAT_Force set servo_on and update target positions for the servos using *normalized* values relative to lo-hi joint stops, with stop_buffer bounds to prevent numerical errors, so it doesn't go lower than lo + stop_buffer and higher than hi - stop_buffer -- servo control automatically applied when the system is stepped
 
   virtual void	SetValsToODE_Anchor(); // #CAT_ODE set anchor(s)
   virtual void	SetValsToODE_Stops(); // #CAT_ODE set stop(s) (including suspension for hinge 2)

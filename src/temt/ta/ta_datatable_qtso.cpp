@@ -1560,7 +1560,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   float txt_base_adj = text_ht * t3Misc::char_base_fract;
 
   float row_ht = row_height - gr_mg_sz2;
-  float mat_rot_rad = mat_rot / taMath_float::deg_per_rad;
+  float mat_rot_rad = mat_rot * taMath_float::rad_per_deg;
 
   // render row_num cell, if on
   if (row_num_on) {

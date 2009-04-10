@@ -84,7 +84,7 @@ void VETexture::SetTexture(SoTexture2* sotx) {
 
 void VETexture::SetTransform(SoTexture2Transform* sotx) {
   sotx->translation.setValue(offset.x, offset.y);
-  sotx->rotation.setValue(rot * taMath_float::deg_per_rad);
+  sotx->rotation.setValue(rot * taMath_float::rad_per_deg);
   sotx->scaleFactor.setValue(scale.x, scale.y);
   sotx->center.setValue(center.x, center.y);
 }
@@ -124,7 +124,7 @@ void VECamera::ConfigCamera(SoPerspectiveCamera* cam) {
   cam->nearDistance = view_dist.near;
   cam->focalDistance = view_dist.focal;
   cam->farDistance = view_dist.far;
-  cam->heightAngle = field_of_view * taMath_float::deg_per_rad;
+  cam->heightAngle = field_of_view * taMath_float::rad_per_deg;
 }
 
 SoLight* VELight::CreateLight() {
@@ -160,7 +160,7 @@ void VELight::ConfigLight(SoLight* lgt) {
     sl->direction.setValue(dir_norm.x, dir_norm.y, dir_norm.z);
     sl->location.setValue(cur_pos.x, cur_pos.y, cur_pos.z);
     sl->dropOffRate = drop_off_rate;
-    sl->cutOffAngle = cut_off_angle * taMath_float::deg_per_rad;
+    sl->cutOffAngle = cut_off_angle * taMath_float::rad_per_deg;
     break;
   }
 }
@@ -1320,7 +1320,7 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
   uchar* gbuf = (uchar*)cam_renderer->getBuffer();
 
   int idx = 0;
-  if(vecam->color) {
+  if(vecam->color_cam) {
     for(int y=cur_img_sc.y-1; y>= 0; y--) {
       for(int x=0;x<cur_img_sc.x;x++) {
 	int r = gbuf[idx++]; int g = gbuf[idx++]; int b = gbuf[idx++];

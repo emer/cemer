@@ -318,6 +318,7 @@ double taMath_double::exp_fast(double x) {
 
 double taMath_double::pi = M_PI;
 double taMath_double::deg_per_rad = 180.0 / M_PI;
+double taMath_double::rad_per_deg = M_PI / 180.0;
 
 /////////////////////////////////////////////////////////////////////////////////
 // Probability distributions, etc
@@ -679,6 +680,11 @@ double taMath_double::gauss_den_sig(double x, double sig) {
 
 double taMath_double::gauss_den_sq_sig(double x_sq, double sig) {
   return 0.398942280 * exp(-0.5 * x_sq / (sig * sig)) / sig;
+}
+
+double taMath_double::gauss_den_nonorm(double x, double sig) {
+  x /= sig;
+  return exp(-0.5 * x * x);
 }
 
 double taMath_double::gauss_cum(double z) {
@@ -2557,7 +2563,7 @@ float taMath_float::e = (float)M_E;
 
 float taMath_float::pi = (float)M_PI;
 float taMath_float::deg_per_rad = (float)(180.0 / M_PI);
-
+float taMath_float::rad_per_deg = (float)(M_PI / 180.0);
 
 /////////////////////////////////////////////////////////////////////////////////
 // Probability distributions, etc
@@ -2919,6 +2925,11 @@ float taMath_float::gauss_den_sig(float x, float sig) {
 
 float taMath_float::gauss_den_sq_sig(float x_sq, float sig) {
   return 0.398942280 * exp(-0.5 * x_sq / (sig * sig)) / sig;
+}
+
+float taMath_float::gauss_den_nonorm(float x, float sig) {
+  x /= sig;
+  return exp(-0.5 * x * x);
 }
 
 float taMath_float::gauss_cum(float z) {
