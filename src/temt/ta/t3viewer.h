@@ -598,11 +598,21 @@ INHERITED(DataViewer)
 friend class T3DataView;
 friend class T3DataViewer;
 public:
+  enum StereoView {
+    STEREO_NONE,		// use monoscopic rendering (default)
+    STEREO_ANAGLYPH, 	 	// Render stereo by superimposing two images of the same scene, but with different color filters over the left and right view (or "eye").  This is a way of rendering stereo which works on any display, using color-filter glasses. Such glasses are usually cheap and easy to come by.
+    STERO_QUADBUFFER,		// Render stereo by using OpenGL quad-buffers. This is the most common interface for stereo rendering for more expensive hardware devices, such as shutter glasses and polarized glasses. The well known Crystal Eyes glasses are commonly used with this type of stereo display.
+    STEREO_INTERLEAVED_ROWS, 	// Interleaving / interlacing rows from the left and right eye is another stereo rendering method requiring special hardware. One example of a provider of shutter glasses working with interleaved glasses is VRex: http://www.vrex.com/
+    STEREO_INTERLEAVED_COLUMNS,  // Same basic technique as SoQtViewer::STEREO_INTERLEAVED_ROWS, only it is vertical lines that are interleaved / interlaced, instead of horizontal lines.
+  };
+
   T3DataViewRoot	root_view; // #SHOW_TREE placeholder item -- contains the actual root(s) DataView items as children
   FloatTDCoord		camera_pos;	// position of camera in view
   FloatRotation		camera_orient;	// orientation of camera in view
   float			camera_focdist; // focalDistance of camera in view
-  taColor		bg_color; // #NO_ALPHA background color of the frame (note: a not used)
+  taColor		bg_color; // #NO_ALPHA background color of the frame (note: alpha transparency value not used)
+  bool			headlight_on; // turn the camera headlight on for illuminating the scene -- turn off only if there is another source of light within the scenegraph -- otherwise it will be dark!
+  StereoView		stereo_view;  // what type of stereo display to render, if any
 
   bool			singleMode() const
     {return (root_view.children.size == 1);}
