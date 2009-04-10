@@ -1363,11 +1363,11 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
 
   ////////////////////////////////////////////////////////////////////////////
   layDispCheck = new QHBoxLayout; layOuter->addLayout(layDispCheck);
-  chkDisplay = new QCheckBox("Display!", widg);
+  chkDisplay = new QCheckBox("Display", widg);
   connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkDisplay);
 
-  chkDragObjs = new QCheckBox("Drag Objs!", widg);
+  chkDragObjs = new QCheckBox("Drag Objs", widg);
   connect(chkDragObjs, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkDragObjs);
 
