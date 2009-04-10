@@ -673,6 +673,59 @@ const KeyString DataTableCols::GetListColKey(int col) const {
 
 
 //////////////////////////
+//  FixedWidthColSpec	//
+//////////////////////////
+
+void FixedWidthColSpec::Initialize() {
+  start_col = 1;
+  col_width = 0;
+  col = NULL;
+}
+
+void FixedWidthColSpec::WriteData(const String& val) {
+  if (col)
+    col->SetValAsString(val, -1);
+}
+
+
+//////////////////////////
+//  FixedWidthSpec	//
+//////////////////////////
+
+void FixedWidthColSpec_List::Initialize() {
+  SetBaseType(&TA_FixedWidthColSpec);
+}
+
+void FixedWidthSpec::Load_Init(DataTable* dat_) {
+  dat = dat_;
+  for (int i = 0; i < col_specs.size; ++i) {
+    FixedWidthColSpec* fws = col_specs.FastEl(i);
+    fws->col = dat->FindColName(fws->name);
+    TestError(!fws->col, "Load_Init", "col name not in table:",
+      fws->name); 
+  }
+}
+
+void FixedWidthSpec::Initialize() {
+  n_skip_lines = 0;
+  dat = NULL;
+}
+
+void FixedWidthSpec::AddRow(const String& ln) {
+  dat->AddBlankRow();
+  for (int i = 0; i < col_specs.size; ++i) {
+    FixedWidthColSpec* fws = col_specs.FastEl(i);
+    if (!fws) continue;
+    String s = ln.from(fws->start_col - 1);
+    if (fws->col_width >= 0)
+      s.truncate(fws->col_width);
+    fws->WriteData(s); 
+  }
+}
+
+
+
+//////////////////////////
 //	DataTable	//
 //////////////////////////
 
@@ -2562,6 +2615,24 @@ int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str)
   return c;
 }
 
+int DataTable::LoadDataFixed_impl(istream& strm, FixedWidthSpec* fws) {
+  fws->Load_Init(this); // caches cols and indicates any missing cols
+  string line;
+  int n_skip = fws->n_skip_lines;
+  StructUpdate(true);
+  while (getline(strm, line)) {
+    if (n_skip > 0) {
+      --n_skip;
+      continue;
+    }
+    String ln(line.data());
+    fws->AddRow(ln);
+  }
+  
+  StructUpdate(false);
+  return true;
+}
+
 int DataTable::LoadHeader_strm(istream& strm, Delimiters delim) {
   return LoadHeader_impl(strm, delim);
 }
@@ -2624,6 +2695,20 @@ void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str, 
     if(reset_first)
       RemoveAllRows();
     LoadData_strm(*flr->istrm, delim, quote_str, max_recs);
+  }
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+void DataTable::LoadDataFixed(const String& fname, FixedWidthSpec* fws,
+  bool reset_first) 
+{
+  if (!fws) return;
+  taFiler* flr = GetLoadFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
+  if(flr->istrm) {
+    if(reset_first)
+      RemoveAllRows();
+    LoadDataFixed_impl(*flr->istrm, fws);
   }
   flr->Close();
   taRefN::unRefDone(flr);

@@ -481,6 +481,61 @@ private:
 };
 TA_SMART_PTRS(DataTableCols); //
 
+
+class TA_API FixedWidthColSpec : public taNBase {
+  // ##CAT_Data #STEM_BASE single column spec for fixed width loading of scalar cols
+INHERITED(taNBase)
+friend class FixedWidthSpec;
+public:
+  int		start_col; // #MIN_1 (1-based) starting column of the field
+  int		col_width; // width of the column -- use -1 for "rest of line"
+  TA_BASEFUNS(FixedWidthColSpec);
+protected:
+  DataCol*	col; // #IGNORE only valid during the load
+  virtual void	WriteData(const String& val); //writes to the col
+
+private:
+  SIMPLE_COPY(FixedWidthColSpec)
+  void	Initialize();
+  void	Destroy()		{}
+};
+TA_SMART_PTRS(FixedWidthColSpec); //
+
+class TA_API FixedWidthColSpec_List: public taList<FixedWidthColSpec> {
+  // ##CAT_Data 
+INHERITED(taList<FixedWidthColSpec>)
+public:  
+  TA_BASEFUNS_NOCOPY(FixedWidthColSpec_List);
+private:
+  void	Initialize();
+  void	Destroy() {}
+};
+
+
+class TA_API FixedWidthSpec: public taNBase {
+  // ##CAT_Data ##TOKENS spec for doing a Fixed Width import of text into a DataTable
+
+INHERITED(taNBase)
+public:
+  int		n_skip_lines; // #MIN_0 skip this many header lines
+  FixedWidthColSpec_List col_specs; // #SHOW_TREE
+  
+  void	Load_Init(DataTable* dat); // #IGNORE called once before load
+  void	AddRow(const String& ln); // add the row based on ln
+  
+  SIMPLE_LINKS(FixedWidthSpec);
+  TA_BASEFUNS(FixedWidthSpec);
+protected:
+  DataTable* dat; // only used/valid during a load
+private:
+  SIMPLE_COPY(FixedWidthSpec)
+  void	Initialize();
+  void	Destroy() {CutLinks();}
+};
+TA_SMART_PTRS(FixedWidthSpec); //
+
+
+
 /////////////////////////////////////////////////////////
 //   DataTable
 /////////////////////////////////////////////////////////
@@ -1002,6 +1057,8 @@ public:
   virtual void 		LoadData(const String& fname, Delimiters delim = TAB,
 				 bool quote_str = true, int max_recs = -1, bool reset_first=false);
   // #CAT_File #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings, reset_first = remove any existing data prior to loading
+  void 			LoadDataFixed(const String& fname, FixedWidthSpec* fws, bool reset_first=false);
+  // #CAT_File loads data, using the specified fixed-width spec (usually in a Program), reset_first = remove any existing data prior to loading
   virtual int 		LoadHeader(const String& fname, Delimiters delim = TAB);
   // #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
   virtual int 		LoadDataRow(const String& fname, Delimiters delim = TAB, bool quote_str = true);
@@ -1126,6 +1183,7 @@ protected:
   bool			NewColValid(const String& col_nm,
     const MatrixGeom* cell_geom = NULL);
   // returns true if valid new col spec; posts modal err dialog if in gui call; geom NULL if scalar col
+  int 			LoadDataFixed_impl(istream& strm, FixedWidthSpec* fws);
 
 public:
   /////////////////////////////////////////////////////////
