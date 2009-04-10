@@ -484,15 +484,17 @@ public:
 
   ////////////////////////////////////////////////////
   // feedback information -- only if feedback flag is set
-  float		pos;		// #SHOW probed position value (joint dependent; could be angle)
-  float		vel;		// #SHOW probed velocity value (joint dependent; could be angle)
-  float		pos2;		// #CONDSHOW_ON_joint_type:UNIVERSAL #SHOW probed position value (joint dependent; could be angle)
-  float		vel2;		// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #SHOW probed velocity value (joint dependent; could be angle)
+  float		pos;		// #READ_ONLY #SHOW probed position value (joint dependent; could be angle)
+  float		pos_norm; 	// #READ_ONLY #SHOW normalized position value (joint dependent; could be angle) -- if stops.stops_on, then 0 = lo stop, 1 = hi stop
+  float		vel;		// #READ_ONLY #SHOW probed velocity value (joint dependent; could be angle)
+  float		pos2;		// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW probed position value for 2nd axis (joint dependent; could be angle)
+  float		pos2_norm; 	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW normalized position value for 2nd axis (joint dependent; could be angle) -- if stops.stops_on, then 0 = lo stop, 1 = hi stop
+  float		vel2;		// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW probed velocity value for 2nd axis (joint dependent; could be angle)
 
   FloatTDCoord	cur_force1;  	// #READ_ONLY #SHOW force that joint applies to body 1
   FloatTDCoord	cur_torque1;  	// #READ_ONLY #SHOW torque that joint applies to body 1
-  FloatTDCoord	cur_force2;  	// #READ_ONLY #SHOW #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 force that joint applies to body 2
-  FloatTDCoord	cur_torque2;  	// #READ_ONLY #SHOW #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 torque that joint applies to body 2
+  FloatTDCoord	cur_force2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW force that joint applies to body 2
+  FloatTDCoord	cur_torque2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW torque that joint applies to body 2
 
   override String	GetDesc() const { return desc; }
   override int		GetEnabled() const {  return !HasJointFlag(OFF); }
@@ -525,6 +527,8 @@ public:
   // #BUTTON #CAT_Force apply motor target velocity and max force parameters to joint (persist until further changes) -- set f_max = 0 to turn off -- automatically turns ON motor_on and OFF servo_on (servo otherwise takes control of motor parameters)
   virtual void	ApplyServo(float trg_pos1, float trg_pos2 = 0.0f);
   // #BUTTON #CAT_Force set servo_on and update target positions for the servos -- servo control automatically applied when the system is stepped
+  virtual void	ApplyServoNorm(float trg_norm_pos1, float trg_norm_pos2 = 0.0f);
+  // #BUTTON #CAT_Force set servo_on and update target positions for the servos using *normalized* values where 0 = lo and 1 = hi stop position value -- servo control automatically applied when the system is stepped
 
   virtual void	SetValsToODE_Anchor(); // #CAT_ODE set anchor(s)
   virtual void	SetValsToODE_Stops(); // #CAT_ODE set stop(s) (including suspension for hinge 2)
@@ -665,11 +669,8 @@ public:
 
   float			targ_norm_angle; // #READ_ONLY #SHOW current target normalized angle
   float			targ_angle; // #READ_ONLY #SHOW current target raw angle
-  float			cur_norm_angle; // #READ_ONLY #SHOW current actual normalized angle (cur raw angle is pos)
-
   float			targ_norm_angle2; // #READ_ONLY #SHOW #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 current target normalized angle 2
   float			targ_angle2; // #READ_ONLY #SHOW #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 current target raw angle 2
-  float			cur_norm_angle2; // #READ_ONLY #SHOW #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 current actual normalized angle (cur raw angle is pos2) 2
 
   float			co_contract_pct; // #READ_ONLY #SHOW current co-contraction pct
 

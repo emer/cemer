@@ -493,7 +493,7 @@ void VEJoint::Initialize() {
   joint_type = HINGE;
   axis.x = 1.0f;
   axis2.x = 1.0f;
-  pos = vel = pos2 = vel2 = 0.0f;
+  pos = pos_norm = vel = pos2 = pos2_norm = vel2 = 0.0f;
 }
 
 void VEJoint::Destroy() {
@@ -582,13 +582,22 @@ void VEJoint::SetValsToODE() {
 
   // reset probe vals!
   pos = 0.0f;
+  pos_norm = 0.0f;
   vel = 0.0f;
   pos2 = 0.0f;
+  pos2_norm = 0.0f;
   vel2 = 0.0f;
   cur_force1 = 0.0f;
   cur_force2 = 0.0f;
   cur_torque1 = 0.0f;
   cur_torque2 = 0.0f;
+
+  if(stops.stops_on) {
+    pos_norm = stops.Normalize(pos);
+  }
+  if(HasTwoAxes() && stops2.stops_on) {
+    pos2_norm = stops2.Normalize(pos2);
+  }
 
   if(TestError(!body1 || !body1->body_id,
 	       "SetValsToODE", "body1 of joint MUST be specified and already exist!"))
@@ -904,6 +913,13 @@ void VEJoint::GetValsFmODE(bool updt_disp) {
     break;
   }
 
+  if(stops.stops_on) {
+    pos_norm = stops.Normalize(pos);
+  }
+  if(HasTwoAxes() && stops2.stops_on) {
+    pos2_norm = stops2.Normalize(pos2);
+  }
+
   if((motor.motor_on && motor.servo_on) || (motor2.motor_on && motor2.servo_on)) {
     SetValsToODE_Motor();	// update the motor each step..
   }
@@ -989,6 +1005,18 @@ void VEJoint::ApplyServo(float trg_pos1, float trg_pos2) {
   }
 
   SetValsToODE_Motor();
+}
+
+void VEJoint::ApplyServoNorm(float trg_norm_pos1, float trg_norm_pos2) {
+  float trg_pos1 = trg_norm_pos1;
+  float trg_pos2 = trg_norm_pos2;
+  if(stops.stops_on) {
+    trg_pos1 = stops.Project(trg_norm_pos1);
+  }
+  if(HasTwoAxes() && stops2.stops_on) {
+    trg_pos2 = stops2.Project(trg_norm_pos2);
+  }
+  ApplyServo(trg_pos1, trg_pos2);
 }
 
 
@@ -1172,11 +1200,9 @@ void VEMuscleJoint::Initialize() {
 
   targ_norm_angle = 0.0f;
   targ_angle = 0.0f;
-  cur_norm_angle = 0.0f;
 
   targ_norm_angle2 = 0.0f;
   targ_angle2 = 0.0f;
-  cur_norm_angle2 = 0.0f;
 
   co_contract_pct = 0.5f;
 
@@ -1213,7 +1239,7 @@ void VEMuscleJoint::SetValsToODE() {
 
   targ_norm_angle = rest_norm_angle;
   targ_angle = stops.def;
-  cur_norm_angle = init_norm_angle;
+  pos_norm = init_norm_angle;
 
   extensor.Init(step_sz, rest_norm_angle, init_norm_angle, co_contract_pct);
   flexor.Init(step_sz, rest_norm_angle, init_norm_angle, co_contract_pct);
@@ -1224,7 +1250,7 @@ void VEMuscleJoint::SetValsToODE() {
 
     targ_norm_angle2 = rest_norm_angle2;
     targ_angle2 = stops2.def;
-    cur_norm_angle2 = init_norm_angle2;
+    pos2_norm = init_norm_angle2;
 
     extensor2.Init(step_sz, rest_norm_angle2, init_norm_angle2, co_contract_pct);
     flexor2.Init(step_sz, rest_norm_angle2, init_norm_angle2, co_contract_pct);
@@ -1234,11 +1260,8 @@ void VEMuscleJoint::SetValsToODE() {
 void VEMuscleJoint::GetValsFmODE(bool updt_disp) {
   inherited::GetValsFmODE(updt_disp);
 
-  float norm_pos = stops.Normalize(pos);
-  cur_norm_angle = norm_pos;
-
-  flexor.Compute_Force(norm_pos);
-  extensor.Compute_Force(norm_pos);
+  flexor.Compute_Force(pos_norm);
+  extensor.Compute_Force(pos_norm);
 
   float force1 = extensor.torque + flexor.torque;  // simple sum of torques..
 
@@ -1253,10 +1276,8 @@ void VEMuscleJoint::GetValsFmODE(bool updt_disp) {
   float moto_fmax2 = 0.0f;
 
   if(HasTwoAxes()) {
-    float norm_pos2 = stops2.Normalize(pos2);
-    cur_norm_angle2 = norm_pos2;
-    flexor2.Compute_Force(norm_pos2);
-    extensor2.Compute_Force(norm_pos2);
+    flexor2.Compute_Force(pos2_norm);
+    extensor2.Compute_Force(pos2_norm);
 
     float force2 = extensor2.torque + flexor2.torque;  // simple sum of torques..
 
