@@ -474,7 +474,7 @@ public:
   JointType    	joint_type;	// #APPLY_IMMED type of joint
   FloatTDCoord	anchor;  	// anchor location for joint, specified RELATIVE TO BODY1 (note this is different from ODE -- we just add body1's position to this anchor position)
   FloatTDCoord	axis;  		// #CONDEDIT_OFF_joint_type:BALL axis orientation vector
-  FloatTDCoord	axis2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 second axis for universal joint and hinge2
+  FloatTDCoord	axis2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 second axis for universal joint and hinge2 -- for universal, the first axis should be 1,0,0 and second 0,1,0 if those are the two axes being used -- otherwise a dRFrom2Axes zero length vector error will occur!
   VEJointStops	stops;		// stop parameters for first joint: where the joint will stop (specific meaning is joint-dependent)
   VEJointStops	stops2;		// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 stop parameters for second joint: where the joint will stop (specific meaning is joint-dependent)
   VEJointMotor	motor;		// motor parameters that drive a powered joint

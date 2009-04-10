@@ -16,6 +16,9 @@
 #include "ta_virtenv.h"
 #include "ta_math.h"
 
+// all objs should set this pointer while setting vals, for better err msgs
+static taBase* VE_last_ve_set_vals_to_ode = NULL;
+
 ////////////////////////////////////////////////
 //	parameters
 
@@ -156,10 +159,13 @@ void VEBody::DestroyODE() {
 }
 
 void VEBody::SetValsToODE() {
+  VE_last_ve_set_vals_to_ode = this;
+
   if(HasBodyFlag(VEBody::OFF)) {
     DestroyODE();
     return;
   }
+
   if(!body_id) CreateODE();
   if(!body_id) return;
   dWorldID wid = (dWorldID)GetWorldID();
@@ -492,7 +498,7 @@ void VEJoint::Initialize() {
   cur_type = NO_JOINT;
   joint_type = HINGE;
   axis.x = 1.0f;
-  axis2.x = 1.0f;
+  axis2.y = 1.0f;
   pos = pos_norm = vel = pos2 = pos2_norm = vel2 = 0.0f;
 }
 
@@ -576,6 +582,8 @@ void VEJoint::DestroyODE() {
 }
 
 void VEJoint::SetValsToODE() {
+  VE_last_ve_set_vals_to_ode = this;
+
   if(!joint_id || joint_type != cur_type) CreateODE();
   if(!joint_id) return;
   dJointID jid = (dJointID)joint_id;
@@ -1517,6 +1525,8 @@ void VEStatic::DestroyODE() {
 }
 
 void VEStatic::SetValsToODE() {
+  VE_last_ve_set_vals_to_ode = this;
+
   if(HasStaticFlag(VEStatic::OFF)) {
     DestroyODE();
     return;
@@ -1708,6 +1718,78 @@ void VESpace_Group::DestroyODE() {
   }
 }
 
+///////////////////////////////////////////////////////////////
+//	Error handling!!
+
+#include <ode/error.h>
+
+static VEWorld* VE_last_ve_stepped = NULL;
+
+// this is the default message guy from ODE
+static void VE_Err_printMessage (int num, const char *msg1, const char *msg2,
+				 va_list ap)
+{
+  fflush (stderr);
+  fflush (stdout);
+  if (num) fprintf (stderr,"\n%s %d: ",msg1,num);
+  else fprintf (stderr,"\n%s: ",msg1);
+  vfprintf (stderr,msg2,ap);
+  fprintf (stderr,"\n");
+  fflush (stderr);
+}
+
+extern "C" void VE_ErrorHandler(int errnum, const char* msg, va_list ap) {
+  String step_nm = "n/a";
+  String set_vals_nm = "n/a";
+  if(VE_last_ve_stepped) {
+    step_nm = VE_last_ve_stepped->name;
+  }
+  if(VE_last_ve_set_vals_to_ode) {
+    set_vals_nm = VE_last_ve_set_vals_to_ode->GetName();
+  }
+
+  VE_Err_printMessage(errnum, "ODE Error", msg, ap); // provide ap stuff
+
+  taMisc::Error("ODE Fatal Error (details on console) number:", String(errnum), msg,
+		"last VEWorld Step'd:", step_nm,
+		"last VE item doing SetValsToODE:", set_vals_nm,
+		"DO NOT ATTEMPT TO RUN VIRTUAL ENV without restarting");
+}
+
+extern "C" void VE_DebugHandler(int errnum, const char* msg, va_list ap) {
+  String step_nm = "n/a";
+  String set_vals_nm = "n/a";
+  if(VE_last_ve_stepped) {
+    step_nm = VE_last_ve_stepped->name;
+  }
+  if(VE_last_ve_set_vals_to_ode) {
+    set_vals_nm = VE_last_ve_set_vals_to_ode->GetName();
+  }
+
+  VE_Err_printMessage(errnum, "ODE INTERNAL ERROR", msg, ap); // provide ap stuff
+
+  taMisc::Error("ODE Debug Error (details on console) number:", String(errnum), msg,
+		"last VEWorld Step'd:", step_nm,
+		"last VE item doing SetValsToODE:", set_vals_nm,
+		"DO NOT ATTEMPT TO RUN VIRTUAL ENV without restarting");
+}
+
+extern "C" void VE_MessageHandler(int errnum, const char* msg, va_list ap) {
+  String step_nm = "n/a";
+  String set_vals_nm = "n/a";
+  if(VE_last_ve_stepped) {
+    step_nm = VE_last_ve_stepped->name;
+  }
+  if(VE_last_ve_set_vals_to_ode) {
+    set_vals_nm = VE_last_ve_set_vals_to_ode->GetName();
+  }
+
+  VE_Err_printMessage(errnum, "ODE Message", msg, ap); // provide ap stuff
+
+  taMisc::Warning("ODE Message number:", String(errnum), msg,
+		"last VEWorld Step'd:", step_nm,
+		"last VE item doing SetValsToODE:", set_vals_nm);
+}
 
 ///////////////////////////////////////////////////////////////
 //	World!
@@ -1778,6 +1860,11 @@ bool VEWorld::CreateODE() {
     cgp_id = dJointGroupCreate(0); // 0 = max_size = not used
   if(TestError(!cgp_id, "CreateODE", "could not create contact group id!"))
     return false;
+
+  dSetErrorHandler(VE_ErrorHandler);
+  dSetDebugHandler(VE_DebugHandler);
+  dSetMessageHandler(VE_MessageHandler);
+
   return true;
 }
 
@@ -1794,10 +1881,13 @@ void VEWorld::DestroyODE() {
 }
 
 void VEWorld::SetValsToODE() {
+  VE_last_ve_set_vals_to_ode = this;
+
   if(!world_id || !space_id || space_type != cur_space_type || !cgp_id) CreateODE();
   if(!world_id || !space_id || !cgp_id) return;
   dWorldID wid = (dWorldID)world_id;
   dSpaceID sid = (dSpaceID)space_id;
+
   dWorldSetGravity(wid, gravity.x, gravity.y, gravity.z);
   dWorldSetERP(wid, ode_params.erp);
   dWorldSetCFM(wid, ode_params.cfm);
@@ -1812,6 +1902,8 @@ void VEWorld::SetValsToODE() {
   objects.SetValsToODE();
   spaces.SetValsToODE();
   StructUpdate(false);		// trigger full rebuild!
+
+  VE_last_ve_set_vals_to_ode = NULL; // turn off!
 }
 
 void VEWorld::GetValsFmODE() {
@@ -1822,7 +1914,7 @@ void VEWorld::GetValsFmODE() {
   if(updt_disp)
     DataChanged(DCR_ITEM_UPDATED); // update displays..
 
-  if(taMisc::gui_no_win) {
+  if(updt_display && taMisc::gui_no_win) {
     // normal data changed stuff doesn't work in gui_no_win, so we use a manual call
     // only if cameras are set
     if((bool)camera_0 || (bool)camera_1) {
@@ -1871,6 +1963,9 @@ void nearCallback(void *data, dGeomID o1, dGeomID o2) {
 
 void VEWorld::Step() {
   if(!world_id || !space_id || !cgp_id) return;
+
+  VE_last_ve_stepped = this;
+
   dWorldID wid = (dWorldID)world_id;
   dSpaceID sid = (dSpaceID)space_id;
   dJointGroupID gid = (dJointGroupID)cgp_id;
@@ -1887,6 +1982,9 @@ void VEWorld::Step() {
   dJointGroupEmpty(gid);
 
   GetValsFmODE();
+
+  VE_last_ve_stepped = NULL;
 }
 
 // in ta_virtenv_qtso.cpp:  QImage VEWorld::GetCameraImage(int cam_no)
+
