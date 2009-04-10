@@ -1794,13 +1794,23 @@ void VEWorld::SetValsToODE() {
 }
 
 void VEWorld::GetValsFmODE() {
-  objects.GetValsFmODE(updt_display);
-  if(updt_display)
+  bool updt_disp = updt_display;
+  if(!taMisc::gui_active)
+    updt_disp = false;
+  objects.GetValsFmODE();
+  if(updt_disp)
     DataChanged(DCR_ITEM_UPDATED); // update displays..
+
+  if(taMisc::gui_no_win) {
+    // normal data changed stuff doesn't work in gui_no_win, so we use a manual call
+    // only if cameras are set
+    if((bool)camera_0 || (bool)camera_1) {
+      UpdateView();
+    }
+  }
   // not really nec
   // void dWorldGetGravity (dWorldID, dVector3 gravity);
 }
-
 
 void VEWorld::CollisionCallback(dGeomID o1, dGeomID o2) {
   static dContactGeom cgs[64];

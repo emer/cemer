@@ -912,6 +912,12 @@ VEWorldView* VEWorld::FindView() {
   return NULL;
 }
 
+void VEWorld::UpdateView() {
+  VEWorldView* vew = FindView();
+  if(!vew) return;
+  vew->UpdateDisplay(false);	// no update panel
+}
+
 //////////////////////////
 //   VEWorldView	//
 //////////////////////////
