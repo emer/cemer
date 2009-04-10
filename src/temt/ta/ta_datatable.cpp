@@ -2625,7 +2625,8 @@ int DataTable::LoadDataFixed_impl(istream& strm, FixedWidthSpec* fws) {
       --n_skip;
       continue;
     }
-    String ln(line.data());
+    // note: data() is not null terminated!
+    String ln(line.data(), line.length());
     fws->AddRow(ln);
   }
   
