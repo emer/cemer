@@ -612,6 +612,7 @@ public:
   float			camera_focdist; // focalDistance of camera in view
   taColor		bg_color; // #NO_ALPHA background color of the frame (note: alpha transparency value not used)
   bool			headlight_on; // turn the camera headlight on for illuminating the scene -- turn off only if there is another source of light within the scenegraph -- otherwise it will be dark!
+  bool			fullscreen_on; // make this display take over the full screen
   StereoView		stereo_view;  // what type of stereo display to render, if any
 
   bool			singleMode() const

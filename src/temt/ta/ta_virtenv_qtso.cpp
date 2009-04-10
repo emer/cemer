@@ -1411,32 +1411,34 @@ void VEWorldViewPanel::UpdatePanel_impl() {
   chkDisplay->setChecked(wv_->display_on);
   chkDragObjs->setChecked(wv_->drag_objs);
 
-  if(wl->camera_0) {
-    QImage img = wv_->GetCameraImage(0);
-    if(!img.isNull()) {
-      QPixmap pm = QPixmap::fromImage(img);
-      labcam0->setPixmap(pm);
+  if(wv_->display_on) {
+    if(wl->camera_0) {
+      QImage img = wv_->GetCameraImage(0);
+      if(!img.isNull()) {
+	QPixmap pm = QPixmap::fromImage(img);
+	labcam0->setPixmap(pm);
+      }
+      else {
+	labcam0->setText("Render Failed!");
+      }
     }
     else {
-      labcam0->setText("Render Failed!");
+      labcam0->setText("Not Set");
     }
-  }
-  else {
-    labcam0->setText("Not Set");
-  }
 
-  if(wl->camera_1) {
-    QImage img = wv_->GetCameraImage(1);
-    if(!img.isNull()) {
-      QPixmap pm = QPixmap::fromImage(img);
-      labcam1->setPixmap(pm);
+    if(wl->camera_1) {
+      QImage img = wv_->GetCameraImage(1);
+      if(!img.isNull()) {
+	QPixmap pm = QPixmap::fromImage(img);
+	labcam1->setPixmap(pm);
+      }
+      else {
+	labcam1->setText("Render Failed!");
+      }
     }
     else {
-      labcam1->setText("Render Failed!");
+      labcam1->setText("Not Set");
     }
-  }
-  else {
-    labcam1->setText("Not Set");
   }
 }
 

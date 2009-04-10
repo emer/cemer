@@ -1466,6 +1466,7 @@ void T3DataViewFrame::Initialize() {
   bg_color.g = 0.8f;
   bg_color.b = 0.8f;
   headlight_on = true;
+  fullscreen_on = false;
   stereo_view = STEREO_NONE;
 }
 
@@ -1583,6 +1584,7 @@ void T3DataViewFrame::Render_pre() {
   if(viewer) {
     viewer->setStereoType((SoQtViewer::StereoType)stereo_view);
     viewer->setHeadlight(headlight_on);
+    viewer->setFullScreen(fullscreen_on);
   }
 }
 
