@@ -294,28 +294,24 @@ public:
 		return SetMatrixData_impl(data, chan); else return false;}
   // #CAT_SinkChannel set the data for given matrix channel -- must have done Write first! returns true if successful
     
-  bool			SetMatrixCellData(const Variant& data, int chan, int cell) 
-  { taMatrix* mat = GetSinkMatrix(chan);  if(mat) { mat->SetFmVar_Flat(data, cell);
-      return true; } else return false; }
+  bool			SetMatrixCellData(const Variant& data, int chan, int cell);
   // #CAT_SinkChannel set the data for given Matrix channel cell (flat index into matrix values) -- must have done Write first! returns true if successful
   bool			SetMatrixCellDataByName(const Variant& data, const String& ch_nm,
-						int cell) 
-  { taMatrix* mat = GetSinkMatrixByName(ch_nm);  if(mat) { mat->SetFmVar_Flat(data, cell);
-      return true; } else return false; }
+						int cell);
   // #CAT_SinkChannel set the data for given matrix channel cell (flat index into matrix values) -- must have done Write first! returns true if successful
-    
+ 
   taMatrix*		GetSinkMatrix(int chan)
   { if (WriteAvailable() && SinkChannelInRange(chan)) 
       {taMatrix* rval = GetSinkMatrix_impl(chan); if (rval) taBase::Ref(rval);
         return rval;} 
     else return NULL;}
-  // #CAT_SinkChannel gets a REF'ed matrix (you MUST UnRefDone when finished) that you can use to write to the channel; this is ONLY guaranteed to be valid until the next write operation
+  // #IGNORE #CAT_SinkChannel gets a REF'ed matrix (you MUST UnRefDone when finished) that you can use to write to the channel; this is ONLY guaranteed to be valid until the next write operation
   taMatrix*		GetSinkMatrixByName(const String& ch_nm)
   { int chan; if (WriteAvailable() && ((chan = GetSinkChannelByName(ch_nm)) >= 0)) 
       {taMatrix* rval = GetSinkMatrix_impl(chan); if (rval) taBase::Ref(rval);
         return rval;} 
     else return NULL;}
-  // #CAT_SinkChannel gets a REF'ed matrix (you MUST UnRefDone when finished) that you can use to write to the channel; this is ONLY guaranteed to be valid until the next write operation
+  // #IGNORE #CAT_SinkChannel gets a REF'ed matrix (you MUST UnRefDone when finished) that you can use to write to the channel; this is ONLY guaranteed to be valid until the next write operation
 
 protected:
   /////////////////////////////////////////////////////////

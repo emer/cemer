@@ -1503,6 +1503,7 @@ public:
   virtual void	ApplyInputData(taMatrix* data, Unit::ExtType ext_flags = Unit::NO_EXTERNAL,
       Random* ran = NULL, const PosTwoDCoord* offset = NULL, bool na_by_range=false);
   // #CAT_Activation apply the 2d or 4d external input pattern to the network, optional random additional values, and offsetting; uses a flat 2-d model where grouped layer or 4-d data are flattened to 2d; frame<0 means from end; na_by_range means that values are not applicable if they fall outside act_range on unit spec, and thus don't have flags or values set
+  virtual void	TriggerContextUpdate() {} // for algorithms/specs that suport context layers (copy of previous state) this manually triggers an update
 
   ////////////////////////////////////////////////////////////////////////////////
   //	Below are the primary computational interface to the Network Objects
@@ -1697,6 +1698,7 @@ public:
   virtual void		BuildPrjns(); // #CAT_Structure create any algorithmically specified prjns
   virtual void		Clean();
     // #MENU #MENU_CONTEXT #CAT_Structure remove any algorithmically specified layers/prjns etc.
+  void			TriggerContextUpdate(); // for context layers, manually triggers the update		
     
   override String GetTypeDecoKey() const { return "Layer"; }
 

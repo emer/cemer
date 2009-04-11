@@ -4782,6 +4782,14 @@ void Layer_Group::Clean() {
   Clean_impl();
 }
 
+void Layer_Group::TriggerContextUpdate() {
+  taLeafItr itr;
+  Layer* lay;
+  FOR_ITR_EL_REV(Layer, lay, this->, itr) {
+    lay->TriggerContextUpdate();
+  }
+}
+
 ////////////////////////////////////////////////////////
 //	Threading
 

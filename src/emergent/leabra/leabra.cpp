@@ -4402,6 +4402,8 @@ void LeabraLayer::BuildUnits() {
   inherited::BuildUnits();
 }
 
+// void LeabraLayer::TriggerContextUpdate() -- in leabra_extra.cpp
+
 #ifdef DMEM_COMPILE
 void LeabraLayer::DMem_InitAggs() {
   dmem_agg_sum.ScanMembers(GetTypeDef(), (void*)this);

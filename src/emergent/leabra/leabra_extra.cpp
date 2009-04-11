@@ -43,6 +43,9 @@ void CtxtUpdateSpec::Initialize() {
   to_out = 1.0f;
 }
 
+const String
+LeabraContextLayerSpec::do_update_key("LeabraContextLayerSpec__do_update");
+
 void LeabraContextLayerSpec::Initialize() {
   updt.fm_prv = 0.0f;
   updt.fm_hid = 1.0f;
@@ -50,6 +53,7 @@ void LeabraContextLayerSpec::Initialize() {
   SetUnique("decay", true);
   decay.event = 0.0f;
   decay.phase = 0.0f;
+  update_criteria = UC_TRIAL;
 }
 
 // void LeabraContextLayerSpec::UpdateAfterEdit-impl() {
@@ -91,6 +95,19 @@ void LeabraContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u, Le
 void LeabraContextLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   lay->hard_clamped = true;	// cache this flag
   lay->SetExtFlag(Unit::EXT);
+  bool do_update = lay->GetUserDataDef(do_update_key, false).toBool();
+  if (do_update) {
+    lay->SetUserData(do_update_key, false); // reset
+  } else { // not explicit triger, so try other conditions
+    switch (update_criteria) {
+    case UC_TRIAL:
+      do_update = true;
+      break;
+    case UC_MANUAL: break; // weren't triggered, so that's it
+    }
+  }
+  if (!do_update) return;
+  
   lay->Inhib_SetVals(inhib.kwta_pt);		// assume 0 - 1 clamped inputs
 
   LeabraUnit* u;
@@ -99,6 +116,22 @@ void LeabraContextLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* 
     Compute_Context(lay, u, net);
   }
   Compute_CycleStats(lay, net);
+}
+
+void LeabraContextLayerSpec::TriggerUpdate(LeabraLayer* lay) {
+  if (!lay) return;
+  if (TestError((lay->spec.spec.ptr() != this),
+    "TriggerUpdate", "Spec does not belong to the layer passed as arg"))
+    return;
+  lay->SetUserData(do_update_key, true);
+}
+
+void LeabraLayer::TriggerContextUpdate() {
+  LeabraContextLayerSpec* cls = dynamic_cast<LeabraContextLayerSpec*>
+    (spec.spec.ptr());
+  if (cls) {
+    cls->TriggerUpdate(this);
+  }
 }
 
 //////////////////////////////////////////

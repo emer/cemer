@@ -2350,6 +2350,7 @@ public:
   //	Misc structural routines
 
   virtual void	ResetSortBuf();
+  override void	TriggerContextUpdate();
 
   bool		SetLayerSpec(LayerSpec* sp);
   LayerSpec*	GetLayerSpec()		{ return (LayerSpec*)spec.SPtr(); }

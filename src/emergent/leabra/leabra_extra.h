@@ -75,8 +75,15 @@ class LEABRA_API LeabraContextLayerSpec : public LeabraLayerSpec {
   // context layer that copies from its recv projection (like an input layer)
 INHERITED(LeabraLayerSpec)
 public:
+  enum UpdateCriteria {
+    UC_TRIAL = 0, // updates every trial (traditional "ContextLayer" behavior)
+    UC_MANUAL, // manually updated via TriggerUpdate
+  };
+  
   CtxtUpdateSpec updt;		// ctxt updating constants: from hidden, from previous values (hysteresis), outputs from context (n/a on simple gate layer)
 
+  UpdateCriteria update_criteria; // #EXPERT #DEF_UC_TRIAL #NO_SAVE_EMPTY how to determine when to copy the sending layer
+  
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   // clamp from act_p values of sending layer
   override bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -87,11 +94,14 @@ public:
   override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
 
+  void TriggerUpdate(LeabraLayer* lay); // manually trigger an update of the context layer -- generally called at end of a Trial -- can always be called even if not on MANUAL
+  
   void	Defaults();
 
   TA_SIMPLE_BASEFUNS(LeabraContextLayerSpec);
   
 protected:
+  STATIC_CONST String do_update_key;
   virtual void Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net);
   // get context source value for given context unit
 
