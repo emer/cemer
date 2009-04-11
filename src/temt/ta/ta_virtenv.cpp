@@ -607,17 +607,17 @@ void VEJoint::SetValsToODE() {
     pos2_norm = stops2.Normalize(pos2);
   }
 
+  if(HasJointFlag(OFF) || body1->HasBodyFlag(VEBody::OFF) || body2->HasBodyFlag(VEBody::OFF)) {
+    DestroyODE();
+    return;
+  }
+
   if(TestError(!body1 || !body1->body_id,
 	       "SetValsToODE", "body1 of joint MUST be specified and already exist!"))
     return;
   if(TestError(!body2 || !body2->body_id,
 	       "SetValsToODE", "body2 of joint MUST be specified and already exist -- use fixed field on body to set fixed bodies!"))
     return;
-
-  if(HasJointFlag(OFF) || body1->HasBodyFlag(VEBody::OFF) || body2->HasBodyFlag(VEBody::OFF)) {
-    DestroyODE();
-    return;
-  }
 
   dJointAttach(jid, (dBodyID)body1->body_id, (dBodyID)body2->body_id);
 

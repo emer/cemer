@@ -188,10 +188,10 @@ public:
   float		mass;		// total mass of body (in kg)
   float		radius;		// #CONDEDIT_OFF_shape:BOX radius of body, for all but box
   float		length;		// #CONDEDIT_OFF_shape:BOX,SPHERE length of body, for all but box 
-  LongAxis	long_axis;	// #CONDEDIT_OFF_shape:BOX,SPHERE direction of the long axis of the body (where length is oriented)
-  FloatTDCoord	box;		// #CONDEDIT_ON_shape:BOX length of box in each axis for BOX-shaped body
+  LongAxis	long_axis;	// #CONDSHOW_OFF_shape:BOX,SPHERE direction of the long axis of the body (where length is oriented)
+  FloatTDCoord	box;		// #CONDSHOW_ON_shape:BOX length of box in each axis for BOX-shaped body
 
-  FloatTransform obj_xform;	// full transform to apply to body file to align/size/etc with body
+  FloatTransform obj_xform;	// #CONDSHOW_ON_flags:FM_FILE full transform to apply to body file to align/size/etc with body
   String	obj_fname;	// #CONDEDIT_ON_flags:FM_FILE #FILE_DIALOG_LOAD #EXT_iv,wrl #FILETYPE_OpenInventor file name of Inventor file that describes body appearance (if empty or FM_FILE flag is not on, basic shape will be rendered)
 
   bool		set_color;	// if true, we directly set our own color (otherwise it is whatever the object defaults to)
@@ -804,7 +804,7 @@ public:
   float		plane_height;	// #CONDEDIT_ON_shape:PLANE height of the plane above/below 0 in the plane norm axis
   FloatTwoDCoord plane_vis_size; // #CONDEDIT_ON_shape:PLANE extent of the plane to actually render in the display (displayed as a very thin box of this size, centered at 0,0,0) -- actual plane in physical system is of infinite extent!
 
-  FloatTransform obj_xform;	// full transform to apply to object file to align/size/etc with static item
+  FloatTransform obj_xform;	// #CONDSHOW_ON_flags:FM_FILE full transform to apply to object file to align/size/etc with static item
   String	obj_fname;	// #CONDEDIT_ON_flags:FM_FILE #FILE_DIALOG_LOAD #EXT_iv,wrl #FILETYPE_OpenInventor file name of Inventor file that describes static item appearance (if empty or FM_FILE flag is not on, basic shape will be rendered)
 
   bool		set_color;	// if true, we directly set our own color (otherwise it is whatever the object defaults to)
