@@ -1509,6 +1509,10 @@ String taMisc::GetHomePath() {
   return taPlatform::getHomePath();
 }
 
+bool taMisc::FileExists(const String& fname) {
+  return taPlatform::fileExists(fname);
+}
+
 #ifndef NO_TA_BASE
 String taMisc::GetCurrentPath() {
   return QDir::currentPath();

@@ -1034,6 +1034,8 @@ public:
   // #CAT_File get directory component from full path, n_up is number of directories to go up from the final directory
   static String GetHomePath();
   // #CAT_File get user's home directory path
+  static bool 	FileExists(const String& fname);
+  // #CAT_File returns true if the file exists (fname can have relative form)
 #ifndef NO_TA_BASE
   static String GetCurrentPath();
   // #CAT_File get current working directory path
