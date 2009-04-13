@@ -19,25 +19,22 @@ void PyEmergent::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-Variant PyEmergent::CallPythonFunNoArgs(String module_name, String function_name) {
-  PyObject *pName, *pModule, *pFunc;
-  PyObject *pValue;
+Variant PyEmergent::CallFunction(String module_name, String function_name, String format = NULL) {
+  PyObject *pModule, *pFunc, *pValue;
 
-  pName = PyString_FromString(module_name);
-  pModule = PyImport_Import(pName);
-  Py_DECREF(pName);
+  // This is probably getting imported on every function call - bad
+  pModule = PyImport_Import(PyString_FromString(module_name));
 
   if (pModule != NULL) {
     pFunc = PyObject_GetAttrString(pModule, function_name);
-    /* pFunc is a new reference */
 
     if (pFunc && PyCallable_Check(pFunc)) {
-      pValue = PyObject_CallObject(pFunc, NULL);
-      if (pValue != NULL) {
-	printf("%ld\n", PyInt_AsLong(pValue));
-	Py_DECREF(pValue);
-      }
-      else {
+      pValue = PyObject_CallFunction(pFunc, format);
+
+      //if (pValue != NULL) {
+      //Py_DECREF(pValue);
+      //}
+      if (pValue == NULL) {
 	Py_DECREF(pFunc);
 	Py_DECREF(pModule);
 	PyErr_Print();
@@ -60,8 +57,9 @@ Variant PyEmergent::CallPythonFunNoArgs(String module_name, String function_name
     return 1;
   }
 
-  return 0;
+  return pValue;
 }
+
 
 /////////////////////////////////////////////////////
 //  PyemergentPluginState	

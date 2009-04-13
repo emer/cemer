@@ -11,7 +11,7 @@ public:
   String module_name;
 
   String function_name;
-  Variant 			CallPythonFunNoArgs(String module_name, String function_name); // #MENU Hello Function!
+  Variant 			CallFunction(String module_name, String function_name, String format); // #MENU Hello Function!
 
   SIMPLE_LINKS(PyEmergent)
   TA_BASEFUNS(PyEmergent)
