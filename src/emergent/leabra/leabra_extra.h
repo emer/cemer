@@ -1310,6 +1310,32 @@ private:
 // 	TwoD Value Layer	//
 //////////////////////////////////
 
+class LEABRA_API TwoDValLeabraLayer : public LeabraLayer {
+  // represents one or more two-d value(s) using a coarse-coded distributed code over units.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid -- uses separate matrix storage of x,y values (prev impl used first row of layer)
+INHERITED(LeabraLayer)
+public:
+  enum TwoDValTypes {		// different values encoded in the twod_vals matrix
+    TWOD_ACT,			// current activation
+    TWOD_ACT_M,			// minus phase activations
+    TWOD_ACT_P,			// plus phase activations
+    TWOD_EXT,			// external inputs
+    TWOD_TARG,			// target values
+    TWOD_ERR,			// error from target: targ - act_m
+    TWOD_SQERR,			// squared error from target: (targ - act_m)^2
+    TWOD_N,			// number of val types to encode
+  };
+  
+  float_Matrix		twod_vals; // matrix of layer-encoded values, dimensions: [n_vals][TWOD_N][2=x,y] (outer to inner)
+
+  // todo: override the ApplyInputs functions
+
+
+  TA_SIMPLE_BASEFUNS(TwoDValLeabraLayer);
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
 class LEABRA_API TwoDValSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for two-dimensional values
 INHERITED(taOBase)
@@ -1387,7 +1413,7 @@ private:
 };
 
 class LEABRA_API TwoDValLayerSpec : public LeabraLayerSpec {
-  // represents one or more two-d value(s) using a coarse-coded distributed code over units.  first row represents scalar value(s).  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid
+  // represents one or more two-d value(s) using a coarse-coded distributed code over units.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid -- requires TwoDValLeabraLayer to encode values (no longer using first row of units)
 INHERITED(LeabraLayerSpec)
 public:
   TwoDValSpec	 twod;		// specifies how values are represented in terms of distributed patterns of activation across the layer
@@ -1396,9 +1422,6 @@ public:
   TwoDValBias	 bias_val;	// specifies bias values
   MinMaxRange	 x_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
   MinMaxRange	 y_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
-
-  virtual void	Settle_Init_Unit0(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_ScalarVal call Settle_Init_Unit on first units in each group (the value units) -- this is necessary b/c they are excluded from units_flat list and thus Compute_NetinScale, which is used for the global netin scale for the entire projection in Send_NetinDelta, and Init_TargFlags
 
   virtual void	ClampValue_ugp(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
   // #CAT_TwoDVal clamp value in the first unit's ext field to the units in the group

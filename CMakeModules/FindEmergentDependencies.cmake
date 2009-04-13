@@ -5,6 +5,9 @@ find_package(Coin REQUIRED)
 find_package(SoQt REQUIRED)
 if (NOT WIN32)
   find_package(Readline REQUIRED)
+  if (NOT APPLE)  
+    find_package(Termcap)
+  endif (NOT APPLE)
 endif (NOT WIN32)
 find_package(ODE)
 find_package(GSL)
@@ -33,7 +36,9 @@ if (WIN32)
 else (WIN32)
   include_directories(${READLINE_INCLUDE_DIR} )
   # Termcap on Fedora Core
-  include_directories(${TERMCAP_INCLUDE_DIR} )
+  if (NOT APPLE)  
+    include_directories(${TERMCAP_INCLUDE_DIR} )
+  endif (NOT APPLE)
 endif (WIN32)
 
 # Windows dll macros
@@ -47,16 +52,14 @@ set(EMERGENT_DEP_LIBRARIES ${COIN_LIBRARY} ${SOQT_LIBRARY} ${QT_LIBRARIES}
     ${ODE_LIBRARY}
     ${GSL_LIBRARIES}
 )
-
 if (NOT WIN32)
   set(EMERGENT_DEP_LIBRARIES ${EMERGENT_DEP_LIBRARIES}
     ${READLINE_LIBRARY}
     )
 
-  if (NOT APPLE)
-  # Termcap on Fedora Core
-  set(EMERGENT_DEP_LIBRARIES ${EMERGENT_DEP_LIBRARIES}
-    ${READLINE_LIBRARY} ${TERMCAP_LIBRARY}
-    )
+  if (NOT APPLE)  # Termcap on Fedora Core
+    set(EMERGENT_DEP_LIBRARIES ${EMERGENT_DEP_LIBRARIES}
+      ${READLINE_LIBRARY} ${TERMCAP_LIBRARY}
+      )
   endif (NOT APPLE)
 endif (NOT WIN32)

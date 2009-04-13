@@ -1,9 +1,6 @@
 # find Terrmcap (terminal input library) includes and library
 #
-# TERMCAP_INCLUDE_DIR - where the directory containing the TERMCAP
-
-headers can b
-e found
+# TERMCAP_INCLUDE_DIR - where the directory containing the TERMCAP headers can be found
 # TERMCAP_LIBRARY     - full path to the TERMCAP library
 # TERMCAP_FOUND       - TRUE if TERMCAP was found
 
@@ -21,8 +18,6 @@ FIND_LIBRARY(TERMCAP_LIBRARY NAMES termcap PATH
    /opt/local/lib
    /usr/lib64
 )
-
-
 
 # handle the QUIETLY and REQUIRED arguments and set COIN_FOUND to TRUE if
 

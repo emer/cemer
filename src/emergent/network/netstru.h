@@ -1382,6 +1382,7 @@ public:
     NO_SAVE_UNITS	= 0x0080,	// don't save this layer's units in the project file (even if Network::SAVE_UNITS on)
   };
 
+  String		desc;		// #EDIT_DIALOG Description of this layer -- what functional role it plays, how it maps onto the brain, etc
   Network*		own_net;        // #READ_ONLY #NO_SAVE #NO_SHOW #CAT_Structure #NO_SET_POINTER Network this layer is in
   LayerFlags		flags;		// flags controlling various aspects of layer funcdtion
   LayerType		layer_type;     // #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
@@ -1645,7 +1646,8 @@ public:
   virtual bool	DMem_DistributeUnits_impl(DMemShare&) { return false; } // #IGNORE to keep the ta file consistent..
 #endif
 
-  override int	GetEnabled() const { return !lesioned(); }
+  override String GetDesc() const 	{ return desc; }
+  override int	  GetEnabled() const 	{ return !lesioned(); }
   override String GetTypeDecoKey() const { return "Layer"; }
 
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md);

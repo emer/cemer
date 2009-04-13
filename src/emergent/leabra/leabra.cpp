@@ -4329,8 +4329,6 @@ void LeabraLayer::InitLinks() {
   taBase::Own(avg_netin, this);
   taBase::Own(avg_netin_sum, this);
 
-  taBase::Own(misc_iar, this);
-
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_agg_sum, this);
   DMem_InitAggs();
@@ -4342,7 +4340,6 @@ void LeabraLayer::InitLinks() {
 void LeabraLayer::CutLinks() {
   inherited::CutLinks();
   spec.CutLinks();
-  misc_iar.CutLinks();
 }
 
 void LeabraInhib::Inhib_Copy_(const LeabraInhib& cp) {
@@ -4363,7 +4360,6 @@ void LeabraLayer::Copy_(const LeabraLayer& cp) {
   Inhib_Copy_(cp);
   spec = cp.spec;
   hard_clamped = cp.hard_clamped;
-  misc_iar = cp.misc_iar;
   dav = cp.dav;
   norm_err = cp.norm_err;
 

@@ -2271,6 +2271,8 @@ void NetView::InitDisplay(bool init_panel) {
   // why not just do that..  much more invasive I guess
 //   BuildAll();	// rebuild views
 
+  GetMaxSize();
+
   // figure out whether the net box footer should be lower or not
   if(net_text) {
     if(net_text_xform.translate.y < -0.1f) // positioned low, so keep box low
@@ -3318,6 +3320,8 @@ void NetViewPanel::UpdatePanel_impl() {
   fldUnitTrans->GetImage((String)nv->view_params.unit_trans);
   fldUnitFont->GetImage((String)nv->font_sizes.unit);
   fldLayFont->GetImage((String)nv->font_sizes.layer);
+  chkXYSquare->setChecked(nv->view_params.xy_square);
+
   // update var selection
   int i = 0;
   QTreeWidgetItemIterator it(lvDisplayValues);
@@ -3378,6 +3382,7 @@ void NetViewPanel::GetValue_impl() {
   nv->wt_line_width = (float)fldWtLineWdth->GetValue();
   nv->wt_line_thr = (float)fldWtLineThr->GetValue();
   nv->wt_prjn_lay = (Layer*)gelWtPrjnLay->GetValue();
+  nv->view_params.xy_square = chkXYSquare->isChecked();
 
   nv->SetScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max(), false);
 }

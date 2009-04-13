@@ -1211,6 +1211,10 @@ void MotorForceLayerSpec::Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net) 
 // 	TwoD Value Layer	//
 //////////////////////////////////
 
+void TwoDValLeabraLayer::Initialize() {
+}
+
+
 void TwoDValSpec::Initialize() {
   rep = GAUSSIAN;
   n_vals = 1;
@@ -1742,24 +1746,11 @@ void TwoDValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
   ResetAfterClamp(lay, net);
 }
 
-void TwoDValLayerSpec::Settle_Init_Unit0(LeabraLayer* lay, LeabraNetwork* net) {
-  // very important: unit 0 in each layer is used for the netin scale parameter and
-  // it is otherwise not computed on this unit b/c it is excluded from units_flat!
-  // also the targflags need to be updated
-  UNIT_GP_ITR(lay, 
-	      if(ugp->size > 2) {
-		for(int i=0; i<lay->un_geom.x;i++) {
-		  LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-		  u->Settle_Init_Unit(net);
-		}
-	      }
-	      );
-}
-
 void TwoDValLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Settle_Init_Layer(lay, net);
 
-  Settle_Init_Unit0(lay, net);
+  TwoDValLeabraLayer* tdlay = (TwoDValLeabraLayer*)lay;
+  tdlay->twod_vals.SetGeom(3, twod.n_vals, TwoDValLeabraLayer::TWOD_N, 2);
 
   if(lay->hard_clamped) return;
 
