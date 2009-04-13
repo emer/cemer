@@ -32,6 +32,8 @@ if (WIN32)
   )
 else (WIN32)
   include_directories(${READLINE_INCLUDE_DIR} )
+  # Termcap on Fedora Core
+  include_directories(${TERMCAP_INCLUDE_DIR} )
 endif (WIN32)
 
 # Windows dll macros
@@ -47,6 +49,11 @@ set(EMERGENT_DEP_LIBRARIES ${COIN_LIBRARY} ${SOQT_LIBRARY} ${QT_LIBRARIES}
 )
 if (NOT WIN32)
   set(EMERGENT_DEP_LIBRARIES ${EMERGENT_DEP_LIBRARIES}
-	${READLINE_LIBRARY}
-  )
+    ${READLINE_LIBRARY}
+    )
+
+  # Termcap on Fedora Core
+  set(EMERGENT_DEP_LIBRARIES ${EMERGENT_DEP_LIBRARIES}
+    ${READLINE_LIBRARY} ${TERMCAP_LIBRARY}
+    )
 endif (NOT WIN32)
