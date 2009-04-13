@@ -1314,23 +1314,52 @@ class LEABRA_API TwoDValLeabraLayer : public LeabraLayer {
   // represents one or more two-d value(s) using a coarse-coded distributed code over units.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid -- uses separate matrix storage of x,y values (prev impl used first row of layer)
 INHERITED(LeabraLayer)
 public:
+  enum TwoDXY {			// x-y two-d vals
+    TWOD_X,			// the horizontal (X) value encoded in the layer
+    TWOD_Y,			// the vertical (Y) value encoded in the layer
+    TWOD_XY,			// number of xy vals (2)
+  };
+
   enum TwoDValTypes {		// different values encoded in the twod_vals matrix
+    TWOD_EXT,			// external inputs
+    TWOD_TARG,			// target values
     TWOD_ACT,			// current activation
     TWOD_ACT_M,			// minus phase activations
     TWOD_ACT_P,			// plus phase activations
-    TWOD_EXT,			// external inputs
-    TWOD_TARG,			// target values
+    TWOD_ACT_DIF,		// difference between plus and minus phase activations
+    TWOD_ACT_M2,		// second minus phase activations
+    TWOD_ACT_P2,		// second plus phase activations
+    TWOD_ACT_DIF2,		// difference between second plus and minus phase activations
     TWOD_ERR,			// error from target: targ - act_m
     TWOD_SQERR,			// squared error from target: (targ - act_m)^2
     TWOD_N,			// number of val types to encode
   };
   
-  float_Matrix		twod_vals; // matrix of layer-encoded values, dimensions: [n_vals][TWOD_N][2=x,y] (outer to inner)
+  float_Matrix		twod_vals; // #SHOW_TREE matrix of layer-encoded values, dimensions: [gp_y][gp_x][n_vals][TWOD_N][TWOD_XY] (outer to inner) -- gp_y and gp_x are group indices, size 1,1, for a layer with no unit groups
 
-  // todo: override the ApplyInputs functions
+  inline float	GetTwoDVal(TwoDXY xy, TwoDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+    return twod_vals.SafeElAsFloat(xy, val_typ, val_no, gp_x, gp_y);
+  }
+  // #CAT_TwoD get a two-d value encoded in the twod_vals data 
+  inline void	SetTwoDVal(Variant val, TwoDXY xy, TwoDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+    twod_vals.SetFmVar(val, xy, val_typ, val_no, gp_x, gp_y);
+  }
+  // #CAT_TwoD set a two-d value encoded in the twod_vals data 
 
+  virtual void		UpdateTwoDValsGeom();
+  // update the twod_vals geometry based on current layer and layer spec settings
 
   TA_SIMPLE_BASEFUNS(TwoDValLeabraLayer);
+protected:
+  override void	UpdateAfterEdit_impl();
+
+  override void	ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
+				  Random* ran, const TwoDCoord& offs, bool na_by_range=false);
+  override void	ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
+				      Random* ran, const TwoDCoord& offs, bool na_by_range=false);
+  override void	ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags,
+				    Random* ran, bool na_by_range=false);
+
 private:
   void	Initialize();
   void 	Destroy()		{ };
@@ -1346,7 +1375,7 @@ public:
   };
 
   RepType	rep;		// #APPLY_IMMED type of representation of scalar value to use
-  int		n_vals;		// number of values to represent in layer: layer geom.x must be >= 2 * n_vals because vals are represented in first row of layer!
+  int		n_vals;		// number of distinct sets of X,Y values to represent in layer (i.e., if > 1, then multiple bumps are encoded -- uses peaks to locate values for multiple, and full weighted average for single value
   float		un_width;	// #CONDEDIT_ON_rep:GAUSSIAN sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in unit_range min-max units, unless norm_width is true, meaning use normalized 0-1 proportion of unit range)
   bool		norm_width;	// un_width is specified in normalized 0-1 proportion of unit range
   bool		clamp_pat;	// #DEF_false if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)
@@ -1390,12 +1419,12 @@ public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
     GC,				// bias value enters as a conductance in gc.h or gc.a
-    BWT				// bias value enters as a bias.wt
+    BWT,			// bias value enters as a bias.wt
   };
 
   enum WeightBias {		// bias on weights into units
     NO_WT,			// no weight bias
-    WT				// input weights
+    WT,				// input weights
   };
 
   UnitBias	un;		// #APPLY_IMMED bias on individual units
@@ -1425,14 +1454,12 @@ public:
 
   virtual void	ClampValue_ugp(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
   // #CAT_TwoDVal clamp value in the first unit's ext field to the units in the group
-  virtual void	ReadValue(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void	ReadValue(TwoDValLeabraLayer* lay, LeabraNetwork* net);
   // #CAT_TwoDVal read out current value represented by activations in layer
-    virtual void ReadValue_ugp(LeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
+    virtual void ReadValue_ugp(TwoDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
     // #CAT_TwoDVal unit group version: read out current value represented by activations in layer
   virtual void	HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_TwoDVal hard clamp current ext values (on all units, after ClampValue called) to all the units (calls ResetAfterClamp)
-    virtual void ResetAfterClamp(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_TwoDVal reset activation of first unit(s) after hard clamping
 
   virtual void	LabelUnits(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_TwoDVal label units in given layer with their underlying values
@@ -1448,16 +1475,13 @@ public:
     virtual void Compute_UnBias_Val(Unit_Group* ugp, float x_val, float y_val);
     // #IGNORE
 
-  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
-    void BuildUnits_Threads_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraNetwork* net);
   override void Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
   override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
-
-  // don't include first unit in any of these computations!
-  override void Compute_AvgMaxVals_ugp(LeabraLayer* lay, Unit_Group* ug,
-				       AvgMaxVals& vals, ta_memb_ptr mb_off);
+  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+    virtual void PostSettle_ugp(TwoDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
+    // #CAT_TwoDVal unit group version: update variables based on phase
 
   override float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
 			     bool unit_avg = false, bool sqrt = false);
@@ -1486,7 +1510,7 @@ class LEABRA_API DecodeTwoDValLayerSpec : public TwoDValLayerSpec {
   // a two-d-value layer spec that copies its activations from one-to-one input prjns, to act as a decoder of another layer
 INHERITED(TwoDValLayerSpec)
 public:
-  override void ReadValue_ugp(LeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
+  override void ReadValue_ugp(TwoDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
   override void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
 
   // don't do any learning:
