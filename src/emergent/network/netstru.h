@@ -1024,7 +1024,7 @@ private:
 // ProjectionSpec does the connectivity, and optionally the weight init
 
 class EMERGENT_API ProjectionSpec : public BaseSpec {
-  // #STEM_BASE #VIRT_BASE ##CAT_Spec Specifies the connectivity between layers (ie. full vs. partial)
+  // #STEM_BASE #VIRT_BASE ##CAT_Projection Specifies the connectivity between layers (ie. full vs. partial)
 INHERITED(BaseSpec)
 public:
   bool		self_con;	// #CAT_Structure whether to create self-connections or not (if applicable)
