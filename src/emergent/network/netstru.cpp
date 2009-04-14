@@ -2347,6 +2347,10 @@ void Unit::VarToTable(DataTable* dt, const String& variable) {
   dt->WriteClose();
 }
 
+bool Unit::ChangeMyType(TypeDef*) {
+  TestError(true, "ChangeMyType", "Cannot change type of Units -- change el_typ in Layer units group  and rebuild network instead");
+  return false;
+}
 
 ////////////////////////////
 //	ProjectionSpec    //
@@ -2613,6 +2617,12 @@ void Projection::UpdateAfterEdit_impl() {
 //   if(!taMisc::gui_active) return;
 //   Network* net = GET_MY_OWNER(Network);
 //   if(!net) return;
+}
+
+bool Projection::ChangeMyType(TypeDef* new_typ) {
+  if(TestError(layer && layer->units.leaves > 0, "ChangeMyType", "You must first remove all units in the network before changing the Projection type -- otherwise it takes FOREVER -- do Network/Structure/Remove Units"))
+    return false;
+  return inherited::ChangeMyType(new_typ);
 }
 
 void Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
@@ -4636,6 +4646,12 @@ void Layer::AddRelPos(TDCoord& rel_pos) {
   }
 }
  
+bool Layer::ChangeMyType(TypeDef* new_typ) {
+  if(TestError(units.leaves > 0, "ChangeMyType", "You must first remove all units in the network before changing type of Layer -- otherwise it takes FOREVER -- do Network/Structure/Remove Units"))
+    return false;
+  return inherited::ChangeMyType(new_typ);
+}
+
 #ifdef DMEM_COMPILE
 void Layer::DMem_DistributeUnits() {
   dmem_share_units.Reset();
@@ -5407,6 +5423,12 @@ void Network::UpdtAfterNetMod() {
 void Network::SetProjectionDefaultTypes(Projection* prjn) {
   // noop for base case: algorithms must override!
   prjn->spec.type = &TA_FullPrjnSpec; 
+}
+
+bool Network::ChangeMyType(TypeDef* new_typ) {
+  if(TestError(n_units > 0, "ChangeMyType", "You must first remove all units in the network before changing its type -- otherwise it takes FOREVER -- do Network/Structure/Remove Units"))
+    return false;
+  return inherited::ChangeMyType(new_typ);
 }
 
 void Network::Dump_Load_pre() {

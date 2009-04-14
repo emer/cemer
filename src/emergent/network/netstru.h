@@ -502,10 +502,10 @@ public:
   virtual void 	LinkSendCons(Unit* ru);
   // #CAT_Structure make connection links in all the sending units (assumes that these are initially empty, as after loading or copying)
 
-  int 	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
-  int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
-  int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
-  bool	ChangeMyType(TypeDef* new_type);
+  override int 	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
+  override int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
+  override bool	ChangeMyType(TypeDef* new_type);
   
   override String 	GetTypeDecoKey() const { return "Connection"; }
 
@@ -645,8 +645,8 @@ public:
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this set of connections
 
-  int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
-  bool	ChangeMyType(TypeDef* new_type);
+  override int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
+  override bool	ChangeMyType(TypeDef* new_type);
   
   override String 	GetTypeDecoKey() const { return "Connection"; }
 
@@ -1002,6 +1002,8 @@ public: //
   override bool 	SetName(const String& nm)    	{ name = nm; return true; }
   override String	GetName() const			{ return name; }
 
+  override bool	ChangeMyType(TypeDef* new_type);
+
   void  InitLinks();
   void	CutLinks();
   void	Copy_(const Unit& cp);
@@ -1188,6 +1190,8 @@ public:
 
 
   override String 	GetTypeDecoKey() const { return "Projection"; }
+
+  override bool	ChangeMyType(TypeDef* new_type);
 
   void	InitLinks();
   void	CutLinks();
@@ -1650,7 +1654,10 @@ public:
   override int	  GetEnabled() const 	{ return !lesioned(); }
   override String GetTypeDecoKey() const { return "Layer"; }
 
+  override bool	ChangeMyType(TypeDef* new_type);
+
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md);
+
   void 	UpdateAfterEdit();
   void 	InitLinks();
   void	CutLinks();
@@ -2356,6 +2363,8 @@ public:
   override int 	Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
 
   override String 	GetTypeDecoKey() const { return "Network"; }
+
+  override bool	ChangeMyType(TypeDef* new_type);
 
   void 	InitLinks();
   void	CutLinks();

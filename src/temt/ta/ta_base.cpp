@@ -3140,12 +3140,9 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
   TAPtr rval = taBase::MakeToken(new_type);
   if(TestError(!rval, "ChangeType", "maketoken is null")) return false;
   Add(rval);		// add to end of list
-  String orgnm = rval->GetName();
+  String orgnm = itm->GetName();
   rval->UnSafeCopy(itm);	// do the copy!
-  // if new name is based on type def, give it the appropriate new type def name
-  String nwnm = rval->GetName();
-  if(nwnm.contains(itm->GetTypeDef()->name))
-    rval->SetName(orgnm);
+  rval->SetName(orgnm);		// also copy name -- otherwise not copied
   SwapIdx(idx, size-1);		// switch positions, so old guy is now at end!
   itm->UpdatePointersToMe(rval); // allow us to update all things that might point to us
   // then do a delayed remove of this object (in case called by itself!)
