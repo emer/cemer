@@ -939,11 +939,10 @@ void TemtClient::sock_readyRead() {
       ok = false;
       break;
     }
-    line.set(ba.data(), (int)line_len); // note: includes \n
-    // strip nl -- should be only one, because that's what a line is
-    line = line.before('\n');
-    // strip r, like from telnet
-    line = line.before('\r');
+    line.set(ba.data(), (int)line_len); // note: includes \n or platform separator
+    // strip cr/lf chars for client platform neutrality
+    line.gsub('\n', "");
+    line.gsub('\r', "");
     lines.Add(line);
   }
   HandleLines();
