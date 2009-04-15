@@ -278,6 +278,23 @@ private:
   void	Destroy()	{ };
 };
 
+class LEABRA_API MatrixGoNogoGainSpec : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
+INHERITED(taOBase)
+public:
+  bool		on;		// #DEF_false enable the application of these go and nogo gain factors
+  float		go_p;		// #CONDSHOW_ON_on #DEF_1 +DA gain for go neurons
+  float		go_n;		// #CONDSHOW_ON_on #DEF_1 -DA gain for go neurons
+  float		nogo_p;		// #CONDSHOW_ON_on #DEF_1 +DA gain for nogo neurons
+  float		nogo_n;		// #CONDSHOW_ON_on #DEF_1 -DA gain for nogo neurons
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(MatrixGoNogoGainSpec);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 class LEABRA_API MatrixLayerSpec : public LeabraLayerSpec {
   // basal ganglia matrix layer: fire actions/WM updates, or nogo; MAINT = gate in 1+ and 2+, OUTPUT = gate in -
 INHERITED(LeabraLayerSpec)
@@ -290,6 +307,7 @@ public:
   BGType		bg_type;	// type of basal ganglia/frontal system: output gating (e.g., motor) or maintenance gating (e.g., pfc)
   MatrixMiscSpec 	matrix;		// misc parameters for the matrix layer
   ContrastSpec 	 	contrast;	// contrast enhancement effects of da/dopamine neuromodulation
+  MatrixGoNogoGainSpec	go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
   MatrixRndGoSpec	rnd_go;		// matrix random Go firing for nogo firing stripes case
 
   virtual void 	Compute_DaMod_NoContrast(LeabraUnit* u, float dav, int go_no);

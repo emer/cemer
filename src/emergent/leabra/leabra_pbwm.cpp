@@ -370,6 +370,11 @@ void ContrastSpec::Initialize() {
   nogo_n = .5f;
 }
 
+void MatrixGoNogoGainSpec::Initialize() {
+  on = false;
+  go_p = go_n = nogo_p = nogo_n = 1.0f;
+}
+
 void MatrixRndGoSpec::Initialize() {
   nogo_thr = 50;
   nogo_p = .1f;
@@ -596,20 +601,24 @@ void MatrixLayerSpec::Compute_DaMod_Contrast(LeabraUnit* u, float dav, float act
   if(go_no == (int)PFCGateSpec::GATE_GO) {	// we are a GO gate unit
     if(dav >= 0.0f)  { 
       u->vcb.g_h = contrast.gain * dav * ((1.0f - contrast.go_p) + (contrast.go_p * act_val));
+      if(go_nogo_gain.on) u->vcb.g_h *= go_nogo_gain.go_p;
       u->vcb.g_a = 0.0f;
     }
     else {
       u->vcb.g_h = 0.0f;
       u->vcb.g_a = -matrix.neg_gain * contrast.gain * dav * ((1.0f - contrast.go_n) + (contrast.go_n * act_val));
+      if(go_nogo_gain.on) u->vcb.g_a *= go_nogo_gain.go_n;
     }
   }
   else {			// we are a NOGO gate unit
     if(dav >= 0.0f) {
       u->vcb.g_h = 0.0f;
       u->vcb.g_a = contrast.gain * dav * ((1.0f - contrast.nogo_p) + (contrast.nogo_p * act_val));
+      if(go_nogo_gain.on) u->vcb.g_a *= go_nogo_gain.nogo_p;
     }
     else {
       u->vcb.g_h = -matrix.neg_gain * contrast.gain * dav * ((1.0f - contrast.nogo_n) + (contrast.nogo_n * act_val));
+      if(go_nogo_gain.on) u->vcb.g_h *= go_nogo_gain.nogo_n;
       u->vcb.g_a = 0.0f;
     }
   }
