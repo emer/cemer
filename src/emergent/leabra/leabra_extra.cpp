@@ -2804,7 +2804,7 @@ bool LeabraWizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
     int lay_idx = 0;
 
     LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-    if(ls->InheritsFrom(&TA_ScalarValLayerSpec)) {
+    if(ls->InheritsFrom(&TA_ScalarValLayerSpec) && !((ScalarValLayerSpec*)ls)->scalar.clamp_pat) {
       if(lay->unit_groups) {
 	data_table->FindMakeColName
 	  (lay->name, lay_idx, DataTable::VT_FLOAT, 4, 1, 1,
@@ -2815,7 +2815,7 @@ bool LeabraWizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
 	  (lay->name, lay_idx, DataTable::VT_FLOAT, 2, 1, 1);
       }
     }
-    else if(ls->InheritsFrom(&TA_TwoDValLayerSpec)) {
+    else if(ls->InheritsFrom(&TA_TwoDValLayerSpec) && !((TwoDValLayerSpec*)ls)->twod.clamp_pat) {
       TwoDValLayerSpec* tdls = (TwoDValLayerSpec*)ls;
       int nx = tdls->twod.n_vals * 2;
       if(lay->unit_groups) {
