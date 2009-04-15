@@ -71,6 +71,19 @@ private:
   void 	Destroy()	{ };
 };
 
+class LEABRA_API CtxtNSpec : public taBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra context counting specifications
+INHERITED(taBase)
+public:
+  int		n_trials;	// #MIN_1 update every n trials
+  int		n_offs;		// #MIN_0 offset of n during count, ex using 2 lays with 0 and N/2 gives half alternating offset
+
+  TA_SIMPLE_BASEFUNS(CtxtNSpec);
+private:
+  void	Initialize() {n_trials = 2; n_offs = 0;}
+  void 	Destroy()	{ };
+};
+
 class LEABRA_API LeabraContextLayerSpec : public LeabraLayerSpec {
   // context layer that copies from its recv projection (like an input layer)
 INHERITED(LeabraLayerSpec)
@@ -78,11 +91,12 @@ public:
   enum UpdateCriteria {
     UC_TRIAL = 0, // updates every trial (traditional "ContextLayer" behavior)
     UC_MANUAL, // manually updated via TriggerUpdate
+    UC_N_TRIAL, // updates every n trials
   };
   
+  UpdateCriteria update_criteria; // #DEF_UC_TRIAL #NO_SAVE_EMPTY how to determine when to copy the sending layer
   CtxtUpdateSpec updt;		// ctxt updating constants: from hidden, from previous values (hysteresis), outputs from context (n/a on simple gate layer)
-
-  UpdateCriteria update_criteria; // #EXPERT #DEF_UC_TRIAL #NO_SAVE_EMPTY how to determine when to copy the sending layer
+  CtxtNSpec	n_spec; // #CONDSHOW_ON_update_criteria:UC_N_TRIAL trials per update and optional offset for multi
   
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   // clamp from act_p values of sending layer
@@ -98,6 +112,7 @@ public:
   
   void	Defaults();
 
+  DumpQueryResult Dump_QuerySaveMember(MemberDef* md);
   TA_SIMPLE_BASEFUNS(LeabraContextLayerSpec);
   
 protected:

@@ -73,6 +73,13 @@ void LeabraContextLayerSpec::Defaults() {
   Initialize();
 }
 
+taBase::DumpQueryResult LeabraContextLayerSpec::Dump_QuerySaveMember(MemberDef* md) {
+  // only save n_spec if needed (to ease backwards compat)
+  if (md->name != "n_spec") 
+    return inherited::Dump_QuerySaveMember(md);
+  return (update_criteria == UC_N_TRIAL) ? DQR_SAVE : DQR_NO_SAVE;
+}
+
 void LeabraContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net) {
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
     u->ext = u->act_m;		// just use previous minus phase value!
@@ -104,6 +111,10 @@ void LeabraContextLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* 
       do_update = true;
       break;
     case UC_MANUAL: break; // weren't triggered, so that's it
+    case UC_N_TRIAL: {
+      // do modulo the trial, adding offset -- add 1 so first trial is not trigger
+      do_update = (((net->trial + n_spec.n_offs + 1) % n_spec.n_trials) == 0);
+    } break;
     }
   }
   if (!do_update) return;
