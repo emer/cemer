@@ -128,6 +128,7 @@ public:
     MAX,			// maximum of value and arg: MAX(val,arg)
     MIN,			// minimum of value and arg: MIN(val,arg)
     MINMAX,			// minimum of value and hi, and maximum of value and lw (enforce val between lw-hi range)
+    REPLACE,			// replace value arg value with lw value
   };
 
 #ifdef __MAKETA__
@@ -135,8 +136,8 @@ public:
 #endif
 
   MathOpr 	opr;		// #APPLY_IMMED what math operator to use
-  double	arg;		// #CONDSHOW_ON_opr:THRESH,ADD,SUB,MUL,POWER,DIV,MIN,MAX argument for ops (threshold add/sub/mul/div,power,max,min arg)
-  double	lw;		// #CONDSHOW_ON_opr:THRESH,MINMAX the value to assign values below threshold for THRESH, or the low range for MINMAX
+  double	arg;		// #CONDSHOW_ON_opr:THRESH,ADD,SUB,MUL,POWER,DIV,MIN,MAX,REPLACE argument for ops (threshold add/sub/mul/div,power,max,min arg,replace)
+  double	lw;		// #CONDSHOW_ON_opr:THRESH,MINMAX,REPLACE the value to assign values below threshold for THRESH, or the low range for MINMAX, or value to replace with for REPLACE
   double	hi;		// #CONDSHOW_ON_opr:THRESH,MINMAX the value to assign values above threshold for THRESH, or the high range for MINMAX
 
   double	Evaluate(double val) const; // evaluate math operator on given value
@@ -591,6 +592,13 @@ public:
   static int	vec_threshold(double_Matrix* vec, double thresh=.5,
 			      double low=0.0, double high=1.0);
   // #CAT_Norm threshold values in the vector, low vals go to low, etc; returns number of high values
+  static int	vec_replace(double_Matrix* vec, double find1, double repl1,
+			    bool do2 = false, double find2=0.0, double repl2=0.0,
+			    bool do3 = false, double find3=0.0, double repl3=0.0,
+			    bool do4 = false, double find4=0.0, double repl4=0.0,
+			    bool do5 = false, double find5=0.0, double repl5=0.0,
+			    bool do6 = false, double find6=0.0, double repl6=0.0);
+  // #CAT_Norm find and replace values -- replace find val with repl replacement val -- do flags activate usage of multiple replacements -- more efficient to do in parallel -- returns number of replacments made
   static double	vec_aggregate(const double_Matrix* vec, Aggregate& agg);
   // #CAT_Aggregate compute aggregate of values in this vector using aggregation params of agg
 
@@ -1131,6 +1139,13 @@ public:
   static int	vec_threshold(float_Matrix* vec, float thresh=.5f,
 			      float low=0.0f, float high=1.0f);
   // #CAT_Norm threshold values in the vector, low vals go to low, etc; returns number of high values
+  static int	vec_replace(float_Matrix* vec, float find1, float repl1,
+			    bool do2 = false, float find2=0.0, float repl2=0.0,
+			    bool do3 = false, float find3=0.0, float repl3=0.0,
+			    bool do4 = false, float find4=0.0, float repl4=0.0,
+			    bool do5 = false, float find5=0.0, float repl5=0.0,
+			    bool do6 = false, float find6=0.0, float repl6=0.0);
+  // #CAT_Norm find and replace values -- replace find val with repl replacement val -- do flags activate usage of multiple replacements -- more efficient to do in parallel -- returns number of replacments made
   static float	vec_aggregate(const float_Matrix* vec, Aggregate& agg);
   // #CAT_Aggregate compute aggregate of values in this vector using aggregation params of agg
 

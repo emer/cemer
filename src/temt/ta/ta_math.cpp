@@ -202,6 +202,8 @@ double SimpleMathSpec::Evaluate(double val) const {
   case MINMAX:
     val = MIN(val, hi);
     return MAX(val, lw);
+  case REPLACE:
+    return (val == arg) ? lw : val;
   }
   return val;
 }
@@ -1448,6 +1450,26 @@ int taMath_double::vec_threshold(double_Matrix* vec, double thresh, double low, 
     }
     else
       vec->FastEl_Flat(i) = low;
+  }
+  return rval;
+}
+
+int taMath_double::vec_replace(double_Matrix* vec, double find1, double repl1,
+			       bool do2, double find2, double repl2,
+			       bool do3, double find3, double repl3,
+			       bool do4, double find4, double repl4,
+			       bool do5, double find5, double repl5,
+			       bool do6, double find6, double repl6) {
+  if(vec->size == 0)  return 0;
+  int rval = 0;
+  for(int i=0;i<vec->size;i++) {
+    double vl = vec->FastEl_Flat(i);
+    if(vl == find1) { vec->FastEl_Flat(i) = repl1; rval++; }
+    if(do2 && vl == find2) { vec->FastEl_Flat(i) = repl2; rval++; }
+    if(do3 && vl == find3) { vec->FastEl_Flat(i) = repl3; rval++; }
+    if(do4 && vl == find4) { vec->FastEl_Flat(i) = repl4; rval++; }
+    if(do5 && vl == find5) { vec->FastEl_Flat(i) = repl5; rval++; }
+    if(do6 && vl == find6) { vec->FastEl_Flat(i) = repl6; rval++; }
   }
   return rval;
 }
@@ -3697,6 +3719,26 @@ int taMath_float::vec_threshold(float_Matrix* vec, float thresh, float low, floa
     }
     else
       vec->FastEl_Flat(i) = low;
+  }
+  return rval;
+}
+
+int taMath_float::vec_replace(float_Matrix* vec, float find1, float repl1,
+			       bool do2, float find2, float repl2,
+			       bool do3, float find3, float repl3,
+			       bool do4, float find4, float repl4,
+			       bool do5, float find5, float repl5,
+			       bool do6, float find6, float repl6) {
+  if(vec->size == 0)  return 0;
+  int rval = 0;
+  for(int i=0;i<vec->size;i++) {
+    float vl = vec->FastEl_Flat(i);
+    if(vl == find1) { vec->FastEl_Flat(i) = repl1; rval++; }
+    if(do2 && vl == find2) { vec->FastEl_Flat(i) = repl2; rval++; }
+    if(do3 && vl == find3) { vec->FastEl_Flat(i) = repl3; rval++; }
+    if(do4 && vl == find4) { vec->FastEl_Flat(i) = repl4; rval++; }
+    if(do5 && vl == find5) { vec->FastEl_Flat(i) = repl5; rval++; }
+    if(do6 && vl == find6) { vec->FastEl_Flat(i) = repl6; rval++; }
   }
   return rval;
 }
