@@ -260,15 +260,16 @@ void TemtClient::cmdRunProgram(bool sync) {
   
   // check if a prog already running
   Program::RunState grs = Program::GetGlobalRunState();
+/* TEMP ignore global run state, assume synchronous dispatch  
   if (!((grs == Program::DONE) || (grs == Program::NOT_INIT))) {
     SendError("RunProgram " + pnm + ": program already running");
     return;
   }
-  
-  // check that not already running
+ */ 
+  // check that not already running! (but ok if it is Stopped)
   Program::RunState rs = prog->run_state;
-  if (!((rs == Program::DONE) || (rs == Program::NOT_INIT))) {
-    SendError("RunProgram " + pnm + ": already running");
+  if (rs == Program::RUN) {
+    SendError("RunProgram " + pnm + ": is already running");
     return;
   }
   
@@ -286,6 +287,12 @@ void TemtClient::cmdRunProgram(bool sync) {
   // run
   if (sync) {
     prog->Run();
+//TEMP: only way it can't be DONE is if a runtime error occurred
+    if (prog->run_state != Program::DONE) {
+      SendError("RunProgram " + pnm + "->Run() failed due to a runtime error");
+      return;
+    }
+// /TEMP
     if (prog->ret_val != Program::RV_OK) {
       SendError("RunProgram " + pnm + "->Run() failed with ret_val: "
         + String(prog->ret_val));
