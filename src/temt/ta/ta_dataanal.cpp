@@ -601,26 +601,68 @@ bool taDataAnal::CrossDistMatrix(float_Matrix* dist_mat,
 				 DataTable* src_data_a, const String& data_col_nm_a,
 				 DataTable* src_data_b, const String& data_col_nm_b,
 				 taMath::DistMetric metric, bool norm, float tol) {
-  DataCol* da_a = GetMatrixDataCol(src_data_a, data_col_nm_a);
-  if(!da_a)
-    return false;
-  DataCol* da_b = GetMatrixDataCol(src_data_b, data_col_nm_b);
-  if(!da_b)
-    return false;
-  if(da_a->valType() != da_b->valType()) {
-    taMisc::Error("CrossDistMatrix: matrix data types do not match!");
-    return false;
+  if(!src_data_a || !src_data_b) return false;
+  if(data_col_nm_a.empty() && data_col_nm_b.empty()) {
+    int n_rows = src_data_a->rows;
+    int n_cols = src_data_b->rows;
+    dist_mat->SetGeom(2, n_cols, n_rows);
+    for(int ar=0; ar<n_rows; ar++) {
+      for(int br=0; br<n_cols; br++) {
+	double cell_dist = 0.0;
+	for(int cl=0; cl<src_data_a->cols(); cl++) {
+	  DataCol* da_a = src_data_a->GetColData(cl);
+	  DataCol* da_b = src_data_b->GetColData(cl);
+	  if(!da_a || !da_b) return false;
+	  if(!da_a->isMatrix() || !da_b->isMatrix()) continue;
+	  if(da_a->valType() != da_b->valType()) continue;
+	  if(da_a->valType() != VT_FLOAT && da_a->valType() != VT_DOUBLE) continue;
+	  if(da_a->valType() == VT_FLOAT) {
+	    float_Matrix* ta = (float_Matrix*)src_data_a->GetValAsMatrix(cl, ar);
+	    taBase::Ref(ta);
+	    float_Matrix* tb = (float_Matrix*)src_data_b->GetValAsMatrix(cl, br);
+	    taBase::Ref(tb);
+	    float dist = taMath_float::vec_dist(ta, tb, metric, norm, tol);
+	    cell_dist += dist;
+	    taBase::unRefDone(ta);
+	    taBase::unRefDone(tb);
+	  }
+	  else {		// VT_DOUBLE
+	    double_Matrix* ta = (double_Matrix*)src_data_a->GetValAsMatrix(cl, ar);
+	    taBase::Ref(ta);
+	    double_Matrix* tb = (double_Matrix*)src_data_b->GetValAsMatrix(cl, br);
+	    taBase::Ref(tb);
+	    double dist = taMath_double::vec_dist(ta, tb, metric, norm, tol);
+	    cell_dist += dist;
+	    taBase::unRefDone(ta);
+	    taBase::unRefDone(tb);
+	  }
+	}
+	dist_mat->FastEl(br,ar) = cell_dist;
+      }
+    }
   }
-  bool rval = true;
-  if(da_a->valType() == VT_FLOAT) {
-    rval = taMath_float::mat_cross_dist(dist_mat, (float_Matrix*)da_a->AR(), (float_Matrix*)da_b->AR(), metric, norm, tol);
+  else {
+    DataCol* da_a = GetMatrixDataCol(src_data_a, data_col_nm_a);
+    if(!da_a)
+      return false;
+    DataCol* da_b = GetMatrixDataCol(src_data_b, data_col_nm_b);
+    if(!da_b)
+      return false;
+    if(da_a->valType() != da_b->valType()) {
+      taMisc::Error("CrossDistMatrix: matrix data types do not match!");
+      return false;
+    }
+    bool rval = true;
+    if(da_a->valType() == VT_FLOAT) {
+      rval = taMath_float::mat_cross_dist(dist_mat, (float_Matrix*)da_a->AR(), (float_Matrix*)da_b->AR(), metric, norm, tol);
+    }
+    else if(da_a->valType() == VT_DOUBLE) {
+      double_Matrix ddmat(false);
+      rval = taMath_double::mat_cross_dist(&ddmat, (double_Matrix*)da_a->AR(), (double_Matrix*)da_b->AR(), metric, norm, tol);
+      taMath::mat_cvt_double_to_float(dist_mat, &ddmat);
+    }
+    return rval;
   }
-  else if(da_a->valType() == VT_DOUBLE) {
-    double_Matrix ddmat(false);
-    rval = taMath_double::mat_cross_dist(&ddmat, (double_Matrix*)da_a->AR(), (double_Matrix*)da_b->AR(), metric, norm, tol);
-    taMath::mat_cvt_double_to_float(dist_mat, &ddmat);
-  }
-  return rval;
 }
 
 bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
