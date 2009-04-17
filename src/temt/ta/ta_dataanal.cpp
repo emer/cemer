@@ -640,6 +640,7 @@ bool taDataAnal::CrossDistMatrix(float_Matrix* dist_mat,
 	dist_mat->FastEl(br,ar) = cell_dist;
       }
     }
+    return true;
   }
   else {
     DataCol* da_a = GetMatrixDataCol(src_data_a, data_col_nm_a);
