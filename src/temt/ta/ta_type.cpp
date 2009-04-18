@@ -686,6 +686,9 @@ ContextFlag	taMisc::in_plugin_init;
 ContextFlag	taMisc::no_auto_expand;
 TypeDef*	taMisc::plugin_loading;
 
+String	taMisc::last_err_msg;
+String	taMisc::last_warn_msg;
+
 String	taMisc::last_check_msg;
 bool taMisc::check_quiet;
 bool taMisc::check_confirm_success;
@@ -755,13 +758,14 @@ void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
 //TODO: should provide a way to log these somehow
 //  if(taMisc::dmem_proc > 0) return;
 #endif
-  cerr << "***WARNING: " << SuperCat(a, b, c, d, e, f, g, h, i) << endl;
-  FlushConsole();
+  taMisc::last_warn_msg = SuperCat(a, b, c, d, e, f, g, h, i);
 #ifndef NO_TA_BASE
   if(cssMisc::cur_top) {
-    cssMisc::OutputSourceLoc(NULL);
+    taMisc::last_warn_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
   }
 #endif
+  cerr << "***WARNING: " << taMisc::last_warn_msg << endl;
+  FlushConsole();
 }
 
 void taMisc::Info(const char* a, const char* b, const char* c, const char* d,
@@ -874,12 +878,18 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
 //   if(taMisc::dmem_proc > 0) return;
 #endif
   if (beep_on_error) cerr << '\a'; // BEL character
-  cerr << "***ERROR: " << SuperCat(a, b, c, d, e, f, g, h, i)  << endl;
+  taMisc::last_err_msg = SuperCat(a, b, c, d, e, f, g, h, i);
+#if !defined(NO_TA_BASE) 
+  if(cssMisc::cur_top) {
+    taMisc::last_err_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
+  }
+#endif
+  cerr << "***ERROR: " << taMisc::last_err_msg  << endl;
   FlushConsole();
 #if !defined(NO_TA_BASE) 
   if(cssMisc::cur_top) {
-    cssMisc::OutputSourceLoc(NULL);
     cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
+    cssMisc::cur_top->exec_err_msg = taMisc::last_err_msg;
   }
 #endif
 }

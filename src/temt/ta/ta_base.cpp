@@ -16,6 +16,8 @@
 
 // ta_base.cc
 
+#include <sstream>
+
 #include "ta_base.h"
 #include "ta_defaults.h"
 #include "ta_dump.h"
@@ -1206,6 +1208,21 @@ int taBase::SaveAs(const String& fname) {
     taRefN::unRefDone(flr);
     DataChanged(DCR_ITEM_UPDATED_ND);
   }
+  return rval;
+}
+
+
+int taBase::Save_String(String& save_str, TAPtr par, int indent) {
+  ostringstream oss;
+  int rval = Save_strm(oss, par,indent);
+  save_str = oss.str().c_str();
+  return rval;
+}
+
+
+int taBase::Load_String(const String& load_str, TAPtr par, taBase** loaded_obj_ptr) {
+  istringstream iss(load_str.chars());
+  int rval = Load_strm(iss, par, loaded_obj_ptr);
   return rval;
 }
 

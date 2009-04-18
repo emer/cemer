@@ -1571,7 +1571,7 @@ bool ProgExprBase::ParseExpr() {
     parse_ve_off = 11;		// offset is 11 due to 'int _tmp= '
   }
   parse_ve_pos = parse_ve_off;
-  if(expr.empty()) return true;
+  if(expr.empty() || expr == "<no_arg>") return true; // <no_arg> is a special flag..
 
   parse_prog.SetName(pnm);
   parse_prog.ClearAll();
@@ -2579,7 +2579,7 @@ const String ProgramCall::GenCssBody_impl(int indent_level) {
     ProgVar* prg_var = target->args.FindName(nm);
     ths_arg->expr.ParseExpr();		// re-parse just to be sure!
     String argval = ths_arg->expr.GetFullExpr();
-    if (!prg_var || argval.empty()) continue; 
+    if (!prg_var || argval.empty() || argval == "<no_arg>") continue; 
     set_one = true;
     rval += cssMisc::Indent(indent_level+1);
     rval += "target->SetVar(\"" + prg_var->name + "\", " + argval + ");\n";
@@ -3066,6 +3066,8 @@ void* ProgObjList::El_Own_(void* it_) {
 ProgLib* Program::prog_lib = NULL;
 String_Array Program::forbidden_names;
 bool Program::stop_req = false;
+Program::StopReason Program::stop_reason = Program::SR_NONE;
+String Program::stop_msg;
 bool Program::step_mode = false;
 Program_Group* Program::step_gp = NULL;
 int Program::m_global_run_ct;
@@ -3231,6 +3233,7 @@ int Program::CallInit(Program* caller) {
 } 
 
 void Program::Init() {
+  ClearStopReq();		// NOTE: newly added 4/18/09 -- check for breakage..
   taMisc::Busy();
   setRunState(INIT);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
@@ -3258,6 +3261,7 @@ void Program::Init() {
     setRunState(NOT_INIT);
   else
     setRunState(DONE);
+  stop_req = false;  // this does not do full clear, so that information can be queried
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 } 
 
@@ -3334,7 +3338,7 @@ void Program::Run() {
 	       "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Run")) {
     return;
   }
-  stop_req = false;
+  ClearStopReq();
   step_mode = false;
   step_gp = NULL;
   taMisc::Busy();
@@ -3346,18 +3350,21 @@ void Program::Run() {
   // unless we were stopped, we are done
   if(stop_req) {
     setRunState(STOP);
+    if((stop_reason == SR_ERROR) && (ret_val == RV_OK)) {
+      ret_val = RV_RUNTIME_ERR;
+    }
   }
   else {
     script->Restart();
     setRunState(DONE);
   }
-  stop_req = false;
+  stop_req = false;  // this does not do full clear, so that information can be queried
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 } 
 
 void Program::ShowRunError() {
-  //note: if there was a ConfigCheck error, the user already got a dialog
-  if (ret_val == RV_CHECK_ERR) return;
+  //note: if there was a ConfigCheck or runtime error, the user already got a dialog
+  if (ret_val == RV_CHECK_ERR || ret_val == RV_RUNTIME_ERR) return;
   String err_str = "Error: The Program did not run -- ret_val=";
   err_str.cat( GetTypeDef()->GetEnumString("ReturnVal", ret_val));
   if (ret_val == RV_COMPILE_ERR) {
@@ -3379,7 +3386,7 @@ void Program::Step() {
   if(!prog_gp->step_prog) {
     prog_gp->step_prog = prog_gp->Peek(); // get last guy
   }
-  stop_req = false;
+  ClearStopReq();
   step_mode = true;
   step_gp = prog_gp;
   taMisc::Busy();
@@ -3396,12 +3403,15 @@ void Program::Step() {
   step_gp = NULL;
   if(stop_req) {
     setRunState(STOP);
+    if((stop_reason == SR_ERROR) && (ret_val == RV_OK)) {
+      ret_val = RV_RUNTIME_ERR;
+    }
   }
   else {
     script->Restart();
     setRunState(DONE);
   }
-  stop_req = false;
+  stop_req = false;		    // this does not do full clear, so that information can be queried
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
@@ -3410,16 +3420,28 @@ void Program::SetAsStep() {
   prog_gp->step_prog = this;
 }
 
+void Program::SetStopReq(StopReason stop_rsn, const String& stop_message) {
+  stop_req = true;
+  stop_reason = stop_rsn;
+  stop_msg = stop_message;
+}
+
+void Program::ClearStopReq() {
+  stop_req = false;
+  stop_reason = SR_NONE;
+  stop_msg = _nilString;
+}
+
 void Program::Stop() {
   if(TestError(run_state != RUN, "Stop",
 	       "Program is not running")) {
     return;
   }
-  stop_req = true;
+  SetStopReq(SR_USER_STOP, name);
 }
 
 void Program::Abort() {
-  stop_req = true;
+  SetStopReq(SR_USER_ABORT, name);
   Stop_impl();
 }
 
@@ -3445,7 +3467,7 @@ bool Program::StopCheck() {
     return true;
   }
   if((step_mode) && step_gp && (step_gp->step_prog.ptr() == this)) {
-    stop_req = true;			// stop everyone else
+    SetStopReq(SR_STEP_POINT, name);	// stop everyone else
     Stop_impl();			// time for us to stop
     return true;
   }

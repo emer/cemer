@@ -209,16 +209,21 @@ public:
   static cssElPtr 	ParseName(const String& nm);
   // lookup a name on any of the global lists of css names -- returns cssMisc::VoidElPtr if not found
 
+  static String		GetSourceLoc(cssProg* prg);
+  // get current source location information (for running program -- e.g., to report errs)
   static void 		OutputSourceLoc(cssProg* prg);
   // output current source location information (for running program -- e.g., to report errs)
 
+  static String		last_err_msg;
+  // last message from the Error function
   static void 		Error(cssProg* prg, const char* a, const char* b="", const char* c="", const char* d="",
 			      const char* e="", const char* f="", const char* g="", const char* h="",
-			      const char* i="", const char* j="", const char* k="", const char* l="");
-
+			      const char* i="");
+  static String		last_warn_msg;
+  // last message from the Warning function
   static void		Warning(cssProg* prg, const char* a, const char* b="", const char* c="", const char* d="",
 				const char* e="", const char* f="", const char* g="", const char* h="",
-				const char* i="", const char* j="", const char* k="", const char* l="");
+				const char* i="");
 
 public:
 #if (!defined(TA_OS_WIN))
@@ -1455,6 +1460,7 @@ public:
   cssProg*	last_bp_prog;		// last breakpoint prog
   css_progdx	last_bp_pc;		// last breakpoint pc
   cssWatchList	watchpoints;		// watch points
+  String	exec_err_msg;		// error message for when run_stat == ExecError
 
   istream*	src_fin;		// source input stream
   String	cur_fnm;		// current source file name

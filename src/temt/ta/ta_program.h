@@ -603,7 +603,7 @@ public:
   String                name; // #SHOW #READ_ONLY the name of the argument (automatically set from the target function)
   bool			required; // #SHOW #READ_ONLY if a value is required (i.e., it is not a default argument)
   String                def_val; // #SHOW #READ_ONLY for default arguments, what will get passed by default -- this is for reference only (leave expr blank for default)
-  ProgExpr		expr; // the expression to compute and pass as the argument
+  ProgExpr		expr; // the expression to compute and pass as the argument -- enter <no_arg> to specify a null or empty argument for program calls -- does not set this arg value
 
   virtual bool		UpdateFromVar(const ProgVar& cp); 
   // updates our type information given variable that we apply to -- returns true if any changes
@@ -1000,17 +1000,25 @@ public:
     RV_CHECK_ERR,	// program or its dependencies failed CheckConfig
     RV_INIT_ERR, 	// initialization failed (note: user prog may use its own value)
     RV_RUNTIME_ERR,	// misc runtime error (ex, null pointer ref, etc.)
-    RV_PROG_CALL_FAILED, // a program call failed (probably an error in that program)
-    RV_ALREADY_RUNNING, // attempt to run a new program chain when a program chain is already running
-    RV_NO_PROGRAM // no program was available to run
+    RV_NO_PROGRAM, 	// no program was available to run
   };
    
   enum RunState { // current run state for this program
     DONE = 0, 	// there is no program running or stopped; any previous run completed
     INIT,	// program is running its init_code
     RUN,	// program is running its prog_code
-    STOP,	// the program is stopped (note: NOT the same as "DONE")
+    STOP,	// the program is stopped (note: NOT the same as "DONE") -- check stop_reason etc for more information
     NOT_INIT,	// init has not yet been run
+  };
+
+  enum StopReason {		// reason why the program was stopped
+    SR_NONE,			// no stop reason set (initialized value)
+    SR_USER_STOP,		// Stop button was pressed by user -- stop_msg is name of program where Stop() was hit
+    SR_USER_ABORT,		// Abort button was pressed by user -- stop_msg is name of program where Abort() was hit
+    SR_USER_INTR,		// Ctrl-c was pressed in the console to interrupt processing -- stop_msg is name of css program space that was top at the time
+    SR_STEP_POINT,		// the program reached the stopping point associated with Step mode -- stop_msg has program name
+    SR_BREAKPOINT,		// a css breakpoint was reached -- stop_msg has info
+    SR_ERROR,			// some form of runtime error occurred -- stop_msg has text
   };
 
   enum ProgLibs {
@@ -1033,6 +1041,10 @@ public:
   // #READ_ONLY #NO_SAVE this program's run state
   static bool		stop_req;
   // #READ_ONLY #NO_SAVE a stop was requested by someone -- stop at next chance
+  static StopReason	stop_reason;
+  // #READ_ONLY #NO_SAVE reason for the stop request
+  static String		stop_msg;
+  // #READ_ONLY #NO_SAVE text message associated with stop reason (e.g., err msg, breakpoint info, etc)
   static bool		step_mode;
   // #READ_ONLY #NO_SAVE the program was run in step mode -- check for stepping
   static Program_Group*	step_gp;
@@ -1081,6 +1093,11 @@ public:
   inline void		SetProgFlagState(ProgFlags flg, bool on)
   { if(on) SetProgFlag(flg); else ClearProgFlag(flg); }
   // #CAT_Flags set flag state according to on bool (if true, set flag, if false, clear it)
+
+  static void		SetStopReq(StopReason stop_rsn, const String& stop_message = "");
+  // #CAT_Run request that the currently-running program stop at its earliest convenience..
+  static void		ClearStopReq();
+  // #CAT_Run reset the stop request information
 
   static const String	GetDescString(const String& dsc, int indent_level);
   // #IGNORE get an appropriately formatted version of the description string for css code

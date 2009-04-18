@@ -204,6 +204,21 @@ void cssMisc::CodeTop() {
   code_cur_top = NULL;
 }
 
+String cssMisc::GetSourceLoc(cssProg* prog) {
+  cssProgSpace* top;
+  if(prog)
+    top = prog->top;
+  else
+    top = cssMisc::cur_top;
+
+  if(top->state & (cssProg::State_Run)) {
+    return top->CurFullRunSrc();
+  }
+  else {			// parsing
+    return top->CurFullTokSrc();
+  }
+}
+
 void cssMisc::OutputSourceLoc(cssProg* prog) {
   cssProgSpace* top;
   if(prog)
@@ -215,23 +230,18 @@ void cssMisc::OutputSourceLoc(cssProg* prog) {
   if(top->cmd_shell)
     fh = top->cmd_shell->ferr;
 
-  if(top->state & (cssProg::State_Run)) {
-    if(taMisc::dmem_proc == 0) {
-      *(fh) << top->CurFullRunSrc();
-      taMisc::FlushConsole();
-    }
+  if(taMisc::dmem_proc == 0) {
+    *(fh) << GetSourceLoc(prog);
+    taMisc::FlushConsole();
+    fh->flush();
   }
-  else {			// parsing
-    if(taMisc::dmem_proc == 0) {
-      *(fh) << top->CurFullTokSrc();
-      taMisc::FlushConsole();
-    }
-  }
-  fh->flush();
 }
 
-void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c, const char* d, const char* e, const char* f,
-		  const char* g, const char* h, const char* i, const char* j, const char* k, const char* l)
+String cssMisc::last_err_msg;
+
+void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c,
+		    const char* d, const char* e, const char* f,
+		    const char* g, const char* h, const char* i)
 {
   cssProgSpace* top;
   if(prog)
@@ -239,21 +249,25 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c, 
   else
     top = cssMisc::cur_top;
 
-  ostream* fh = &cerr;
-  if(top->cmd_shell)
-    fh = top->cmd_shell->ferr;
+  cssMisc::last_err_msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i) + "\n" + GetSourceLoc(prog);
 
   if(taMisc::dmem_proc == 0) {
-    *(fh) << a << " " << b << " " << c << " " << d << " " << e << " " << f << " "
-	  << g << " " << h << " " << i << " " << j << " " << k << " " << l << endl;
+    ostream* fh = &cerr;
+    if(top->cmd_shell)
+      fh = top->cmd_shell->ferr;
+
+    *(fh) << cssMisc::last_err_msg << endl;
     taMisc::FlushConsole();
   }
-  OutputSourceLoc(prog);
   top->run_stat = cssEl::ExecError;
+  top->exec_err_msg = cssMisc::last_err_msg;
 }
 
-void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c, const char* d, const char* e, const char* f,
-		    const char* g, const char* h, const char* i, const char* j, const char* k, const char* l)
+String cssMisc::last_warn_msg;
+
+void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c,
+		      const char* d, const char* e, const char* f,
+		      const char* g, const char* h, const char* i)
 {
   cssProgSpace* top;
   if(prog)
@@ -261,15 +275,16 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
   else
     top = cssMisc::cur_top;
 
-  if(taMisc::dmem_proc > 0) return;
+  cssMisc::last_warn_msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i) + "\n" + GetSourceLoc(prog);
 
-  ostream* fh = &cerr;
-  if(top->cmd_shell)
-    fh = top->cmd_shell->ferr;
+  if(taMisc::dmem_proc == 0) {
+    ostream* fh = &cerr;
+    if(top->cmd_shell)
+      fh = top->cmd_shell->ferr;
 
-  *(fh) << a << " " << b << " " << c << " " << d << " " << e << " " << f << " "
-	<< g << " " << h << " " << i << " " << j << " " << k << " " << l << endl;
-  OutputSourceLoc(prog);
+    *(fh) << cssMisc::last_warn_msg << endl;
+    taMisc::FlushConsole();
+  }
 }
 
 String cssMisc::Indent(int indent_level, int indent_spc) {
@@ -348,9 +363,12 @@ void cssMisc::intrcatch(int) {
   signal(SIGINT, (SIGNAL_PROC_FUN_TYPE) cssMisc::intrcatch);
   cssMisc::Warning(NULL, "User Interrupt");
   cssProgSpace* top = cssMisc::cur_top;
-  if(top)
+  String stop_msg;
+  if(top) {
+    stop_msg = top->name;
     top->Stop();
-  Program::stop_req = true;	// notify any running programs to stop too
+  }
+  Program::SetStopReq(Program::SR_USER_INTR, stop_msg);
 }
 #endif
 
@@ -3134,7 +3152,9 @@ cssEl* cssProg::Cont() {
 	top->last_bp_prog = this;
 	top->last_bp_pc = PC();
 	top->run_stat = cssEl::BreakPoint;
-	Program::stop_req = true; // stop programs when this guy was stopped
+	Program::SetStopReq(Program::SR_BREAKPOINT, top->name + " prog: " + name + " pc: " +
+			    String(top->last_bp_pc));
+	// stop programs when this guy was stopped
       }
       else if(top->external_stop && !(state & State_NoBreak)) {
 	top->run_stat = cssEl::BreakPoint;
@@ -3145,10 +3165,11 @@ cssEl* cssProg::Cont() {
 	cssEl::RunStat rval = nxt->Do();
 	if((top->watchpoints.size > 0) && CheckWatch()) {
 	  top->run_stat = cssEl::BreakPoint;
-	  Program::stop_req = true; // stop programs when this guy was stopped
+	  Program::SetStopReq(Program::SR_BREAKPOINT, top->name + " prog: " + name + " pc: " +
+			      String(PC()));
 	}
 	else if(top->run_stat == cssEl::ExecError) // do could have triggered an exec error
-	  Program::stop_req = true; // stop programs when this guy was stopped
+	  Program::SetStopReq(Program::SR_ERROR, top->exec_err_msg);
 	else
 	  top->run_stat = rval;
       }
@@ -3172,7 +3193,8 @@ cssEl* cssProg::Cont() {
 	top->last_bp_prog = this;
 	top->last_bp_pc = PC();
 	top->run_stat = cssEl::BreakPoint;
-	Program::stop_req = true; // stop programs when this guy was stopped
+	Program::SetStopReq(Program::SR_BREAKPOINT, top->name + " prog: " + name + " pc: " +
+			    String(top->last_bp_pc));
       }
       else if(top->external_stop && !(state & State_NoBreak)) {
 	top->run_stat = cssEl::BreakPoint;
@@ -3183,10 +3205,11 @@ cssEl* cssProg::Cont() {
 	cssEl::RunStat rval = nxt->Do();
 	if((top->watchpoints.size > 0) && CheckWatch()) {
 	  top->run_stat = cssEl::BreakPoint;
-	  Program::stop_req = true; // stop programs when this guy was stopped
+	  Program::SetStopReq(Program::SR_BREAKPOINT, top->name + " prog: " + name + " pc: " +
+			      String(PC()));
 	}
 	else if(top->run_stat == cssEl::ExecError) 
-	  Program::stop_req = true; // stop programs when this guy was stopped
+	  Program::SetStopReq(Program::SR_ERROR, top->exec_err_msg);
 	else
 	  top->run_stat = rval;
 	if(top->debug < 2)
@@ -4351,6 +4374,7 @@ cssEl* cssProgSpace::Cont() {
       else {
 	cssMisc::Warning(NULL, "Error: continue without surrounding loop!");
 	run_stat = cssEl::ExecError;
+	exec_err_msg = cssMisc::last_warn_msg;
       }
     }
     if(run_stat == cssEl::Breaking) {
@@ -4360,6 +4384,7 @@ cssEl* cssProgSpace::Cont() {
       else {
 	cssMisc::Warning(NULL, "Error: break without surrounding loop!");
 	run_stat = cssEl::ExecError;
+	exec_err_msg = cssMisc::last_warn_msg;
       }
     }
   } while(run_stat == cssEl::NewProgShoved);

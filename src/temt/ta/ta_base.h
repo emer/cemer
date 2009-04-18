@@ -706,6 +706,11 @@ public:
   virtual int		SaveAs(const String& fname = ""); 
   // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, the user is prompted with a file dialog
 
+  virtual int 		Save_String(String& save_str, TAPtr par=NULL, int indent=0);
+  // #CAT_XpertFile dump full object save information to a string, which contains the exact information that would be saved to a file for Save_strm -- just a string-stream (sstream) wrapper around Save_strm
+  virtual int	 	Load_String(const String& load_str, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
+  // #CAT_XpertFile load full object information from a string, which should have been generated through a corresponding Save_String call -- must contain the exact information that would be saved to a file for Save_strm -- just a string-stream (sstream) wrapper around Load_strm
+
   virtual String	GetValStr(void* par = NULL, MemberDef* md = NULL,
 				  TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
 				  bool force_inline = false) const;

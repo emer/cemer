@@ -64,16 +64,21 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
 #endif
   // we always output to console
   if (beep_on_error) cerr << '\a'; // BEL character
-  String errmsg = SuperCat(a, b, c, d, e, f, g, h, i);
-  cerr << "***ERROR: " << errmsg << "\n";
-  FlushConsole();
+  taMisc::last_err_msg = SuperCat(a, b, c, d, e, f, g, h, i);
+#if !defined(NO_TA_BASE) 
   if(cssMisc::cur_top) {
-    cssMisc::OutputSourceLoc(NULL);
-    cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
+    taMisc::last_err_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
   }
-#if !defined(NO_TA_BASE)
+#endif
+  cerr << "***ERROR: " << taMisc::last_err_msg << endl;
+  FlushConsole();
+#if !defined(NO_TA_BASE) 
+  if(cssMisc::cur_top) {
+    cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
+    cssMisc::cur_top->exec_err_msg = taMisc::last_err_msg;
+  }
   if (taMisc::gui_active) {
-    bool cancel = taiChoiceDialog::ErrorDialog(NULL, errmsg);
+    bool cancel = taiChoiceDialog::ErrorDialog(NULL, taMisc::last_err_msg);
     if(cancel) {
       cancel_mode = true;
       prv_time = QTime::currentTime();

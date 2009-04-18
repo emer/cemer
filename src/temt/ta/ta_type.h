@@ -822,13 +822,19 @@ public:
   static ContextFlag	no_auto_expand;	// #READ_ONLY #NO_SAVE #NO_SHOW true to suppress auto-expanding (esp during code that makes a lot of objs)
   static TypeDef*	plugin_loading; // #READ_ONLY #NO_SAVE #NO_SHOW the TypeDef of the plugin currently loading -- we stamp this into all formal classes
 
+  static String		last_err_msg;
+  // #READ_ONLY #NO_SAVE #NO_SHOW last message from the taMisc::Error function
+  static String		last_warn_msg;
+  // #READ_ONLY #NO_SAVE #NO_SHOW last message from the taMisc::Warning function
+
   static String		last_check_msg; // #READ_ONLY #NO_SAVE #EDIT_DIALOG last error, or last batch of errors (if checking) by CheckConfig
   static bool		check_quiet; 	// #IGNORE mode we are in; set by CheckConfigStart
   static bool		check_confirm_success; // #IGNORE mode we are in; set by CheckConfigStart
   static bool		check_ok; 	// #IGNORE cumulative AND of all nested oks
   static int		err_cnt; //  #READ_ONLY #NO_SAVE cumulative error count; can be used/reset by Server to detect for errors after it calls a routine
   static int		CheckClearErrCnt(); // gets current value, and clears
-  
+
+
 #if (defined(TA_GUI) && !(defined(__MAKETA__) || defined(NO_TA_BASE)))
   static QPointer<QMainWindow>	console_win;	// #IGNORE the console window 
 #endif
