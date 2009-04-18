@@ -1727,7 +1727,7 @@ void ProgArg::Copy_(const ProgArg& cp) {
 void ProgArg::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError((required && expr.empty()), quiet, rval,
-    "An expression is required for this argument");
+    "An expression is required for this argument -- enter <no_arg> as the expression to explicitly not pass an argument for calling a Program (does not work for method or function calls)");
 }
 
 bool ProgArg::UpdateFromVar(const ProgVar& cp) {
