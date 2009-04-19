@@ -3846,10 +3846,10 @@ void iMainWindowViewer::Constr_Menu_impl() {
   }
   
   editUndoAction = AddAction(new taiAction("&Undo", QKeySequence(cmd_str+"Z"), _editUndoAction ));
-  editUndoAction->setEnabled( FALSE );
+  //  editUndoAction->setEnabled( FALSE );
   editUndoAction->setIcon( QIcon( QPixmap(":/images/editundo.png") ) );
   editRedoAction = AddAction(new taiAction("&Redo", QKeySequence(), _editRedoAction ));
-  editRedoAction->setEnabled( FALSE );
+  //  editRedoAction->setEnabled( FALSE );
   editRedoAction->setIcon( QIcon( QPixmap(":/images/editredo.png") ) );
   editCutAction = AddAction(new taiAction(taiClipData::EA_CUT, "Cu&t", QKeySequence(cmd_str+"X"), _editCutAction ));
   editCutAction->setIcon( QIcon( QPixmap(":/images/editcut.png") ) );
@@ -3889,8 +3889,8 @@ void iMainWindowViewer::Constr_Menu_impl() {
 //NOTE: undo currently not implemented
   editUndoAction->AddTo( editMenu ); 
   editRedoAction->AddTo( editMenu );
-  editUndoAction->setVisible(false);
-  editRedoAction->setVisible(false);
+//   editUndoAction->setVisible(false);
+//   editRedoAction->setVisible(false);
 //  editMenu->insertSeparator(); // renable if undo is made visible
   editCutAction->AddTo( editMenu );
   editCopyAction->AddTo( editMenu );
@@ -3942,8 +3942,8 @@ void iMainWindowViewer::Constr_Menu_impl() {
     // signals and slots connections
   connect( fileOptionsAction, SIGNAL( Action() ), this, SLOT( fileOptions() ) );
 //   connect( filePrintAction, SIGNAL( activated() ), this, SLOT( filePrint() ) ); */
-//    connect( editUndoAction, SIGNAL( activated() ), this, SLOT( editUndo() ) );
-//   connect( editRedoAction, SIGNAL( activated() ), this, SLOT( editRedo() ) );
+  connect( editUndoAction, SIGNAL( activated() ), this, SLOT( editUndo() ) );
+  connect( editRedoAction, SIGNAL( activated() ), this, SLOT( editRedo() ) );
   connect( editCutAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editCopyAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editDupeAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
@@ -4013,6 +4013,18 @@ void iMainWindowViewer::Find(taiDataLink* root, const String& find_str) {
   dlg->activateWindow();
   if(find_str.nonempty())
     dlg->setSearchStr(find_str);
+}
+
+void iMainWindowViewer::editUndo() {
+  taProject* proj = curProject();
+  if (!proj) return;
+  proj->undo_mgr.Undo();
+}
+
+void iMainWindowViewer::editRedo() {
+  taProject* proj = curProject();
+  if (!proj) return;
+  proj->undo_mgr.Redo();
 }
 
 void iMainWindowViewer::editFind() {

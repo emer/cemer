@@ -45,6 +45,7 @@
 #endif
 
 #include <QFileInfo>
+#include <QTemporaryFile>
 
 #ifdef TA_GUI
 static const char* folder_closed_xpm[]={
@@ -1195,19 +1196,24 @@ int taBase::Save() {
 
 int taBase::SaveAs(const String& fname) {
   int rval = false;
-  // we stream to a string first, in case there is a crash...
-  // we must do this first, because Filer clobers file when it opens
-  ostringstream oss;
-  if (Save_strm(oss)) {
-    taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString);
-    if (flr->ostrm) {
-      *(flr->ostrm) << oss.str();
-      flr->Close();
-      rval = true;
-    }
-    taRefN::unRefDone(flr);
-    DataChanged(DCR_ITEM_UPDATED_ND);
+  // none of the solns I can come up with work very well -- need to have the tmp file thing
+  // baked into the taFiler b/c the compression etc all depend on it.  will add a flag somewhere.
+  // meanwhile, when is the last time anything crashed during save!?  never!  so, just going
+  // back to the orig code at this point.
+
+//   QTemporaryFile tmpfile;
+//   tmpfile.open();
+//   String tmpfnm = tmpfile.fileName();
+//   tmpfile.close();
+  
+  taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString);
+  if (flr->ostrm) {
+    Save_strm(*(flr->ostrm));
+    flr->Close();
+    rval = true;
   }
+  taRefN::unRefDone(flr);
+  DataChanged(DCR_ITEM_UPDATED_ND);
   return rval;
 }
 

@@ -621,7 +621,7 @@ public:
   // #CAT_Columns create new scalar column of data of specified type
   virtual DataCol* 	NewCol_gui(DataCol::ValType val_type, 
 				   const String& col_nm);
-  // #BUTTON #LABEL_NewCol #CAT_Columns create new scalar column of data of specified type
+  // #BUTTON #MENU #MENU_ON_Columns #LABEL_NewCol #CAT_Columns create new scalar column of data of specified type
   virtual DataCol* 	NewColMatrix(DataCol::ValType val_type, const String& col_nm,
     int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0, int d5=0, int d6=0);
   // #CAT_Columns create new matrix column of data of specified type, with specified cell geom
@@ -631,7 +631,7 @@ public:
   // #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   virtual DataCol* 	NewColMatrixN_gui(DataCol::ValType val_type, 
 					  const String& col_nm,  const MatrixGeom& cell_geom);
-  // #BUTTON #LABEL_NewColMatrix #CAT_Columns create new matrix column of data of specified type, with specified cell geom
+  // #BUTTON #MENU #LABEL_NewColMatrix #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   
   virtual double_Data*	NewColDouble(const String& col_nm); 
   // #CAT_Columns create new column of double data
@@ -732,7 +732,7 @@ public:
   { if (AddRows(1)) {rd_itr = wr_itr = rows - 1; return wr_itr;} else return -1; }
   // #CAT_Rows add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row #
   virtual bool		AddRows(int n = 1);
-  // #BUTTON #CAT_Rows add n rows, returns true if successfully added
+  // #BUTTON #MENU #MENU_ON_Rows #CAT_Rows add n rows, returns true if successfully added
   virtual bool		InsertRows(int st_row, int n_rows=1);
   // #MENU #MENU_ON_Rows #CAT_Rows insert n rows at starting row number, returns true if succesfully inserted
   
@@ -1005,7 +1005,7 @@ public:
 
   virtual void 		SaveData(const String& fname="", Delimiters delim = TAB,
 				 bool quote_str = true, bool save_headers=true);
-  // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log #FILE_DIALOG_SAVE saves data, one line per rec, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser -- if save-headers then special _H: formatted column header information is saved and data rows are marked with _D:
+  // #CAT_File #BUTTON #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log #FILE_DIALOG_SAVE saves data, one line per rec, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser -- if save-headers then special _H: formatted column header information is saved and data rows are marked with _D:
   virtual void 		AppendData(const String& fname="", Delimiters delim = TAB,
 				   bool quote_str = true, bool row_mark=true); 
   // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_APPEND appends all of current datatable data to given file (does not output header; file assumed to be of same data structure -- if data_tag then mark data rows with _D: at start (to differentiate from _H: headers)
@@ -1056,7 +1056,7 @@ public:
     bool quote_str = true, bool reset_load_schema = true); // #IGNORE used by Server
   virtual void 		LoadData(const String& fname, Delimiters delim = TAB,
 				 bool quote_str = true, int max_recs = -1, bool reset_first=false);
-  // #CAT_File #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings, reset_first = remove any existing data prior to loading
+  // #CAT_File #BUTTON #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings, reset_first = remove any existing data prior to loading
   void 			LoadDataFixed(const String& fname, FixedWidthSpec* fws, bool reset_first=false);
   // #CAT_File loads data, using the specified fixed-width spec (usually in a Program), reset_first = remove any existing data prior to loading
   virtual int 		LoadHeader(const String& fname, Delimiters delim = TAB);
@@ -1080,7 +1080,7 @@ public:
   virtual bool		CalcAllRows_impl();
   // #IGNORE perform calculations for all rows of data (calls InitCalcScript to make sure)
   virtual bool		CalcAllRows();
-  // #CAT_Calc #BUTTON #GHOST_OFF_data_flags:HAS_CALCS perform calculations for all rows of data (updates after)
+  // #BUTTON #GHOST_OFF_data_flags:HAS_CALCS #CAT_Calc perform calculations for all rows of data (updates after)
   virtual void		CalcRowCodeGen(String& code_str);
   // #IGNORE generate code for computing one row worth of data, with assumed 'int row' variable specifying row
   virtual bool		CalcRow(int row);
@@ -1127,9 +1127,9 @@ public:
   // misc funs
 
   virtual GridTableView* NewGridView(T3DataViewFrame* fr = NULL);
-  // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU_ON_View #CAT_Display open a grid view (graphical rows and columns) of this table (NULL=use existing empty frame if any, else make new frame)
+  // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU #MENU_ON_View #CAT_Display open a grid view (graphical rows and columns) of this table (NULL=use existing empty frame if any, else make new frame)
   virtual GraphTableView* NewGraphView(T3DataViewFrame* fr = NULL);
-  // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU_ON_View #CAT_Display open a graph view of this table (NULL=use existing empty frame if any, else make new frame)
+  // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU #MENU_ON_View #CAT_Display open a graph view of this table (NULL=use existing empty frame if any, else make new frame)
 
   virtual GridTableView* FindMakeGridView(T3DataViewFrame* fr = NULL);
   // #CAT_Display find existing or make a new grid view (graphical rows and columns) of this table (NULL=use existing empty frame if any, else make new frame)

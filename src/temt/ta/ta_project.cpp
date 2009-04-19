@@ -334,6 +334,119 @@ void SelectEdit_Group::AutoEdit() {
   }
 }
 
+//////////////////////////////////
+//	Undo Stuff		//
+//////////////////////////////////
+
+void taUndoRec::Initialize() {
+}
+
+void taUndoRec_List::Initialize() {
+  SetBaseType(&TA_taUndoRec);
+  st_idx = 0;
+  length = 0;
+}
+
+void taUndoRec_List::Copy_(const taUndoRec_List& cp) {
+  st_idx = cp.st_idx;
+  length = cp.length;
+}
+
+void taUndoRec_List::Reset() {
+  inherited::Reset();
+  st_idx = 0;
+  length = 0;
+}
+
+void taUndoMgr::Initialize() {
+  cur_undo_idx = 0;
+  undo_depth = taMisc::undo_depth;
+}
+
+bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top) {
+  if(!owner) return false;
+  if(!save_top) save_top = owner;
+  taUndoRec* urec = new taUndoRec;
+  undo_recs.CircAddLimit(urec, undo_depth);
+  cur_undo_idx = undo_recs.length;
+  urec->mod_obj_path = mod_obj->GetPath(NULL, owner);
+  urec->action = action;
+  urec->mod_time.currentDateTime();
+  urec->save_top = save_top;
+  urec->save_top_path = save_top->GetPath(NULL, owner);
+  ++taMisc::is_undo_saving;
+  save_top->Save_String(urec->save_data);
+  --taMisc::is_undo_saving;
+#ifdef DEBUG
+  ReportStats();
+#endif
+  return true;			// todo: need to check result of Save_String presumably
+}
+
+bool taUndoMgr::Undo() {
+  if(!owner) return false;
+  if(TestWarning(cur_undo_idx <= 0, "Undo", "No more steps available to undo -- increase undo_depth in Preferences"))
+    return false;
+  taUndoRec* urec = undo_recs.CircSafeEl(cur_undo_idx-1); // anticipate decrement
+  if(!urec) return false;
+  if(!urec->save_top) {		// it was nuked -- try to reconstruct from path..
+    MemberDef* md;
+    taBase* st = owner->FindFromPath(urec->save_top_path, md);
+    if(st) urec->save_top = st;
+  }
+  if(TestError(!urec->save_top, "Undo", "Undo action:", urec->action, "on object at path:",
+	       urec->mod_obj_path,"cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path))
+    return false;
+  ++taMisc::is_undo_loading;
+  urec->save_top->Load_String(urec->save_data);
+  --taMisc::is_undo_loading;
+  --cur_undo_idx;		// only decrement on success
+#ifdef DEBUG
+  ReportStats();
+#endif
+  return true;
+}
+
+bool taUndoMgr::Redo() {
+  if(!owner) return false;
+  if(TestWarning(cur_undo_idx >= undo_recs.length, "Redo", "No more steps available to redo"))
+    return false;
+  taUndoRec* urec = undo_recs.CircSafeEl(cur_undo_idx); // always at current val for redo..
+  if(!urec) return false;
+  if(!urec->save_top) {		// it was nuked -- try to reconstruct from path..
+    MemberDef* md;
+    taBase* st = owner->FindFromPath(urec->save_top_path, md);
+    if(st) urec->save_top = st;
+  }
+  if(TestError(!urec->save_top, "Redo", "Redo action:", urec->action, "on object at path:",
+	       urec->mod_obj_path,"cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path))
+    return false;
+  ++taMisc::is_undo_loading;
+  urec->save_top->Load_String(urec->save_data);
+  --taMisc::is_undo_loading;
+  ++cur_undo_idx;		// only increment on success
+#ifdef DEBUG
+  ReportStats();
+#endif
+  return true;
+}
+
+void taUndoMgr::ReportStats() {
+  cout << "Total Undo records: " << undo_recs.length << " cur_undo_idx: " << cur_undo_idx << endl;
+  taMisc::FlushConsole();
+  int tot_size = 0;
+  for(int i=undo_recs.length-1; i>=0; i--) {
+    taUndoRec* urec = undo_recs.CircSafeEl(i);
+    if(!urec) continue;
+    cout << "  " << taMisc::LeadingZeros(i, 2) << " size: " << urec->save_data.length()
+	 << " action: " << urec->action << " on: " << urec->mod_obj_path << endl;
+    taMisc::FlushConsole();
+    tot_size += urec->save_data.length();
+  }
+  cout << "Total Undo Size: " << tot_size << endl;
+  taMisc::FlushConsole();
+}
+
 
 //////////////////////////
 //  taProject		//
@@ -400,6 +513,7 @@ void taProject::InitLinks_impl() {
   taBase::Own(data_proc, this);
   taBase::Own(programs, this);
   taBase::Own(viewers, this);
+  taBase::Own(undo_mgr, this);
 
   // note: any derived programs should install additional guys..
   // put in NO_CLIP to suppress clip ops, since we don't want any for these guys

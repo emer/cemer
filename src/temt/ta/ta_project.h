@@ -28,6 +28,7 @@
 #include "ta_qtclipdata.h"
 #include "colorscale.h"
 #include "ta_seledit.h"
+#include "ta_time.h"
 
 class taDoc;
 class taWizard;
@@ -135,6 +136,111 @@ private:
   void 	Destroy()		{ };
 };
 
+
+class TA_API taUndoRec : public taOBase {
+  // ##CAT_Undo one undo record -- saves all necessary state information
+INHERITED(taOBase)
+public:
+  String	mod_obj_path;	// path to the object that was just about to be modified, after this record was saved -- relative to owner of taUndoMgr (typically the project)
+  String	action;		// a brief description of the action performed
+  taDateTime	mod_time;	// time (to seconds level of resolution) when obj was modified
+  taBaseRef	save_top;	// top-level object under which the data was saved
+  String	save_top_path;	// path to the save_top -- in case it disappears -- again relative to mgr owner
+  String	save_data;	// dump-file save from the save_top object (save_top->Save_String)
+
+  TA_SIMPLE_BASEFUNS(taUndoRec);
+private:
+  void 	Initialize();
+  void 	Destroy()	{ CutLinks(); }
+};
+
+class TA_API taUndoRec_List : public taList<taUndoRec> {
+  // ##CAT_Undo list of undo records -- managed using circular buffer logic per new functions
+INHERITED(taList<taUndoRec>)
+public:
+  int		st_idx;		// #READ_ONLY index in underlying array where the list starts (i.e., the position of the logical 0 index) -- updated by functions and should not be set manually
+  int		length;		// #READ_ONLY logical length of the list -- is controlled by adding and shifting, and should NOT be set manually
+
+  int	CircIdx(int cidx) const
+  { int rval = cidx+st_idx; if(rval >= size) rval -= size; return rval; }
+  // #CAT_CircAccess gets physical index from logical circular index
+
+  bool 	CircIdxInRange(int cidx) const { return InRange(CircIdx(cidx)); }
+  // #CAT_CircAccess check if logical circular index is in range
+  
+  taUndoRec*	CircSafeEl(int cidx) const { return SafeEl(CircIdx(cidx)); }
+  // #CAT_CircAccess returns element at given logical circular index, or NULL if out of range
+
+  taUndoRec*	CircPeek() const {return SafeEl(CircIdx(length-1));}
+  // #CAT_CircAccess returns element at end of circular buffer
+
+  /////////////////////////////////////////////////////////
+  //	Special Modify Routines
+
+  void		CircShiftLeft(int nshift)
+  { st_idx = CircIdx(nshift); length -= nshift; }
+  // #CAT_CircModify shift the buffer to the left -- shift the first elements off the start of the list, making room at the end for more elements (decreasing length)
+
+  void		CircAddExpand(taUndoRec* item) {
+    if((st_idx == 0) && (length >= size)) {
+      inherited::Add(item); length++; 	// must be building up the list, so add it
+    }
+    else {
+      ReplaceIdx(CircIdx(length++), item);	// expand the buffer length and set to the element at the end
+    }
+  }
+  // #CAT_CircModify add a new item to the circular buffer, expanding the length of the list by 1 under all circumstances
+
+  void		CircAddLimit(taUndoRec* item, int max_length) {
+    if(length >= max_length) {
+      CircShiftLeft(1 + length - max_length); // make room
+      ReplaceIdx(CircIdx(length++), item);	// set to the element at the end
+    }
+    else {
+      CircAddExpand(item);
+    }
+  }
+  // #CAT_CircModify add a new item to the circular buffer, shifting it left if length is at or above max_length to ensure a fixed overall length list (otherwise expanding list up to max_length)
+
+  override void	Reset();
+
+  void 	Copy_(const taUndoRec_List& cp);
+  TA_BASEFUNS(taUndoRec_List);
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
+
+class TA_API taUndoMgr : public taOBase {
+  // ##CAT_Undo undo manager -- handles the basic undo functionality
+INHERITED(taOBase)
+public:
+  taUndoRec_List	undo_recs;    // #SHOW_TREE the undo records
+  int			cur_undo_idx;	// #READ_ONLY logical index into undo record list where the next undo/redo will operate -- actually +1 relative to index to undo -- 0 = no more undos -- goes to the end for each SaveUndo, moves back/forward for Undo/Redo
+  int			undo_depth;	// how many undo's to keep around
+
+  virtual bool	SaveUndo(taBase* mod_obj, const String& action, taBase* save_top = NULL);
+  // save data for purposes of later being able to undo it -- takes a pointer to object that is being modified, a brief description of the action being performed (e.g., "Edit", "Cut", etc), and the top-level object below which current state information will be saved -- this must be *known to encapsulate all changes* that result from the modification, and also be sufficiently persistent so as to be around when undoing and redoing might be requested -- it defaults to the owner of this mgr, which is typically the project
+
+  virtual bool	Undo();
+  // undo the most recent action
+  virtual bool	Redo();
+  // redo the most recent action that was undone
+
+  virtual void	ReportStats();
+  // report (on cout) the current undo statistics in terms of # of records and total amount of ram taken, etc
+
+  TA_SIMPLE_BASEFUNS(taUndoMgr);
+private:
+  void 	Initialize();
+  void 	Destroy()	{ CutLinks(); }
+};
+
+
+/////////////////////////////////////////////////
+// 		Project proper
+
 class TA_API taProjVersion : public taOBase {
   // #EDIT_INLINE project version numbering information
 INHERITED(taOBase)
@@ -174,6 +280,7 @@ public:
   taBase_Group		data_proc; // objects that perform data processing operations (functions collected on objects for different kinds of operations)
   Program_Group		programs; // Gui-based programs to run simulations and other processing
   DataViewer_List	viewers; // a list of the viewers that have been made and saved in the project; choose one, right click, and OpenViewer to view if not open
+  taUndoMgr		undo_mgr; // #READ_ONLY #HIDDEN #NO_SAVE undo manager
 
   bool			m_dirty; // #HIDDEN #READ_ONLY #NO_SAVE
   bool			m_no_save; // #HIDDEN #READ_ONLY #NO_SAVE -- flag to prevent double user query on exiting; cleared when undirtying

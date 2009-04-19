@@ -166,7 +166,7 @@ public:
 
   TAGPtr  		NewGp_gui(int n_gps=1, TypeDef* typ=NULL,
     const String& name="");
-  // #CAT_Modify #BUTTON #MENU_CONTEXT #TYPE_this #NULL_OK_typ #NULL_TEXT_SameType #LABEL_NewGroup #NO_SAVE_ARG_VAL Create and add n_gps new sub group(s) of given type (typ=NULL: same type as this group)
+  // #BUTTON #MENU #MENU_ON_Object #MENU_CONTEXT #TYPE_this #NULL_OK_typ #NULL_TEXT_SameType #LABEL_NewGroup #NO_SAVE_ARG_VAL #CAT_Modify Create and add n_gps new sub group(s) of given type (typ=NULL: same type as this group)
 
   virtual taBase* FindLeafName_(const String& it) const; 	// #IGNORE
   virtual taBase* FindLeafNameContains_(const String& it) const;	// #IGNORE
@@ -487,7 +487,8 @@ public:
   }
   // #CAT_CircModify add a new item to the circular buffer, shifting it left if length is at or above max_length to ensure a fixed overall length list (otherwise expanding list up to max_length)
 
-  void	Reset();
+  override void	Reset();
+
   void 	Copy_(const float_CircBuffer& cp);
   TA_BASEFUNS(float_CircBuffer);
 private:

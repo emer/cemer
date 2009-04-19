@@ -560,6 +560,7 @@ taMisc::ConsoleOptions taMisc::console_options = (taMisc::ConsoleOptions)(CO_USE
 
 taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
 int	taMisc::display_width = 80;
+int	taMisc::undo_depth = 10;
 int	taMisc::tree_indent = 12;
 int	taMisc::max_menu = 1000; // no cost now in QT for making it large..
 int 	taMisc::search_depth = 4;
@@ -679,6 +680,8 @@ bool 	taMisc::server_active = false; // true while connected
 ContextFlag	taMisc::is_loading;
 ContextFlag	taMisc::is_post_loading;
 ContextFlag	taMisc::is_saving;
+ContextFlag	taMisc::is_undo_loading;
+ContextFlag	taMisc::is_undo_saving;
 ContextFlag	taMisc::is_duplicating;
 ContextFlag	taMisc::is_checking;
 ContextFlag	taMisc::in_gui_call;

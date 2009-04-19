@@ -388,6 +388,8 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
   if (md->name == "ar") {
     // if no save, don't need to check DataTable global
     if (saveToDumpFile()) {
+      if(taMisc::is_undo_saving) return DQR_NO_SAVE; // don't save rows for general undo!
+      // todo: need a specific datatable row ops guy..
       DataTable* dt = dataTable();
       if (dt && dt->HasDataFlag(DataTable::SAVE_ROWS)) return DQR_SAVE;
     }

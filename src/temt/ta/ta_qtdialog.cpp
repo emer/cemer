@@ -2097,7 +2097,7 @@ void taiEditDataHost::DoRaise_Panel() {
 
 void taiEditDataHost::DoSelectForEdit(QAction* act){
 //note: this routine is duplicated in the ProgEditor
-  taProject* proj = (taProject*)((taBase*)root)->GetThisOrOwner(&TA_taProject);
+  taProject* proj = dynamic_cast<taProject*>(((taBase*)root)->GetThisOrOwner(&TA_taProject));
   if (!proj) return;
   
   int param = act->data().toInt();
@@ -2313,12 +2313,19 @@ void taiEditDataHost::GetValue() {
 }
 
 void taiEditDataHost::GetValue_Membs() {
+  TAPtr rbase = Base();
+  taProject* proj = dynamic_cast<taProject*>(((taBase*)root)->GetThisOrOwner(&TA_taProject));
+  if(rbase && proj) {
+    // TODO: could have an obj define for objs that are known to have non-local effects of 
+    // edits -- currently ONLY saving at the level of the obj itself!!
+    proj->undo_mgr.SaveUndo(rbase, "Edit", rbase);
+  }
+
   if (inline_mode) {
     GetValueInline_impl(root);
   } else {
     GetValue_Membs_def();
   }
-  TAPtr rbase = Base();
   if (rbase) {
     rbase->UpdateAfterEdit();	// hook to update the contents after an edit..
     taiMisc::Update(rbase);

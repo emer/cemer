@@ -25,6 +25,7 @@
 #endif // TA_GUI
 
 #include <QFileInfo>
+#include <QFile>
 
 #include <errno.h>
 #include <stdio.h>
@@ -365,6 +366,18 @@ String taFiler::fileName() const {
   if (m_dir.empty()) 
     return m_fname;
   else return m_dir + "/" + m_fname;
+}
+
+bool taFiler::renameFile(const String& new_fname, bool remove_existing) {
+  String cur_fnm = fileName();
+  if(remove_existing && fileExists()) {
+    if(!QFile::remove(cur_fnm.chars())) return false;
+  }
+  return QFile::rename(cur_fnm.chars(), new_fname.chars());
+}
+
+bool taFiler::fileExists() {
+  return QFile::exists(fileName().chars());
 }
 
 const String taFiler::filterText(bool incl_allfiles, QStringList* list) const {

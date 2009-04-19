@@ -1089,8 +1089,8 @@ public slots:
   virtual void 	filePrint(){}
   virtual void 	fileCloseWindow();// (non-root only)
   virtual void 	fileQuit(); // (root) or all on Mac (needed for App menu)
-/*  virtual void editUndo();
-  virtual void editRedo();*/
+  virtual void 	editUndo();
+  virtual void 	editRedo();
   virtual void 	editFind(); 
   virtual void 	editFindNext(); 
   virtual void	viewRefresh() {Refresh();} // manually rebuild/refresh the current view

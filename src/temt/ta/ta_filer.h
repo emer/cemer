@@ -105,8 +105,12 @@ public:
   inline String		dir() const {return m_dir;} // the directory path to the file
   inline String		fname() const {return m_fname;}	// the name (no path) of the file
   void			setFname(const String& val) {m_fname = val;}
+  bool			renameFile(const String& new_fname, bool remove_existing = false);
+  // rename current file name to given file -- uses QFile::rename (and remove before if currently exists and remove_existing = true) -- returns success in renaming (true = success)
+  bool			fileExists();
+  // check if the current file already exists -- true if yes, false if no
 
-    // the low-level api functions work directly on the fname
+  // the low-level api functions work directly on the fname
   virtual istream*	open_read();
   // #IGNORE 
   virtual ostream*	open_write();

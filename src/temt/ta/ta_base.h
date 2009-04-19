@@ -641,9 +641,9 @@ public:
 public:
 
   virtual String 	GetPath_Long(TAPtr ta=NULL, TAPtr par_stop=NULL) const;
-  // #IGNORE get path from root (default), but stop at par_stop if non-null
+  // #IGNORE get path from root (default), but stop at par_stop if non-null  -- ta is used for recursion and should be NULL for any end-user calls
   virtual String	GetPath(TAPtr ta=NULL, TAPtr par_stop=NULL) const;
-  // #CAT_ObjectMgmt get path without name informtation, stop at par_stop if non-null
+  // #CAT_ObjectMgmt get path without name information, stop at par_stop if non-null -- ta is used for recursion and should be NULL for any end-user calls
   virtual taBase*	FindFromPath(const String& path, MemberDef*& ret_md, int start=0) const;
   // #CAT_ObjectMgmt find object from path (starting from this, and position start of the path -- ret_md is return member def: if NULL and return is !NULL, then it is a member of a list or group, not a member in object
   virtual Variant	GetValFromPath(const String& path, MemberDef*& ret_md, bool warn_not_found=false) const;
@@ -1785,7 +1785,7 @@ public:
 
   taBase* 	New_gui(int n_objs=1, TypeDef* typ=NULL,
     const String& name="(default name)");
-  // #BUTTON #MENU_CONTEXT #NO_SAVE_ARG_VAL #TYPE_ON_1_el_base #INIT_ARGVAL_ON_1_el_typ #LABEL_New #CAT_Modify create n_objs new objects of given type in list (typ=NULL: default type, el_typ;)
+  // #BUTTON #MENU_CONTEXT #MENU #NO_SAVE_ARG_VAL #TYPE_ON_1_el_base #INIT_ARGVAL_ON_1_el_typ #LABEL_New #CAT_Modify create n_objs new objects of given type in list (typ=NULL: default type, el_typ;)
   virtual void	SetSize(int sz);
   // #MENU #MENU_ON_Edit #CAT_Modify add or remove elements to force list to be of given size
 
