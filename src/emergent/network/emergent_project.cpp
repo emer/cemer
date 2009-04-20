@@ -765,6 +765,13 @@ void ProjectBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
+void ProjectBase::Dump_Load_pre() {
+  inherited::Dump_Load_pre();
+  if(taMisc::is_undo_loading) return; // none of this.
+  // see comment in ta_project.cpp 
+//   networks.Reset();
+}
+
 void ProjectBase::Dump_Load_post() {
   inherited::Dump_Load_post();
   AutoBuildNets();

@@ -137,8 +137,9 @@ public:
   virtual void	AutoBuildNets();
   // build networks according to their own individual auto_bulid modes
   
+  override void Dump_Load_pre();
   override void	Dump_Load_post();
-  
+
   void	UpdateAfterEdit();
   void 	InitLinks_impl(); // special, for this class only
   void	CutLinks_impl(); // special, so we can do base class guys first (esp. viewers)

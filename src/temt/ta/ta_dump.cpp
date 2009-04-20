@@ -116,7 +116,7 @@ void VPUList::Resolve() {
       String par_path;
       if(vp->parent != NULL)
 	par_path = vp->parent->GetPath();
-      taMisc::Warning("*** Warning: Could not resolve following path:",vp->path,
+      taMisc::Warning("*** Could not resolve following path:",vp->path,
 		    "in object:",par_path);
       i++;
     }
@@ -1191,88 +1191,20 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
     return false;
   }
 
-  MemberDef* el_md = NULL;
-  void* tmp_ptr = ppar->FindMembeR(el_path, el_md);
-  taBase* el = (TAPtr)tmp_ptr;
+  // this is where the parent loads the child!  target type is this type
+  void* nw_base = NULL;
+  if(ptr_flag)
+    nw_base = ppar->Dump_Load_Path_ptr(el_path, this);
+  else
+    nw_base = ppar->Dump_Load_Path_parent(el_path, this);
 
-  if(!el) {   // did not find the thing
-    el = ppar->New(1,this);
-    if(el == NULL) {
-      taMisc::Warning("*** New: Could not make a token of:",name,"in:",ppar->GetPath(),
-		    path);
-      return false;
-    }
-    if(el->GetOwner() != NULL) {
-      String new_path = el->GetPath(NULL, find_base);
-      if(new_path != orig_path) {
-	dumpMisc::path_subs.Add(this, find_base, orig_path, new_path);
-      }
-    }
-    base = (void*)el; 	// reset the base to be the element
-    if(taMisc::verbose_load >= taMisc::TRACE) {
-      cerr << "el=NULL Leaving TypeDef::Dump_Load_Path_impl, type: " << name
-	   << ", path = " << path
-	   << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	   << "\n"; // endl;
-      taMisc::FlushConsole();
-    }
+  if(nw_base) {
+    base = nw_base;
     return true;
   }
-  if(ptr_flag) {		// if expecting a pointer
-    el = *((TAPtr*)el);
-    if(el == NULL) {
-      TAPtr* elp = (TAPtr*)tmp_ptr;
-      *elp = taBase::MakeToken(this);
-      el = *elp;
-      if(*elp == NULL) {
-	taMisc::Warning("*** MakeToken: Could not make a token of:",name,"in:", path);
-	return false;
-      }
-      taBase::Own(el,(TAPtr) par);
-      base = (void*)el; 	// reset the base to be the element
-      if(taMisc::verbose_load >= taMisc::TRACE) {
-	cerr << "ptr_flag Leaving TypeDef::Dump_Load_Path_impl, type: " << name
-	     << ", path = " << path
-	     << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	     << "\n"; // endl;
-	taMisc::FlushConsole();
-      }
-      return true;
-    }
+  else {
+    return false;
   }
-  // check for correct type, but allow a list to be created in a group
-  // for backwards compatibility with changes from groups to lists
-  if((el->GetTypeDef() != this) &&
-     !((el->GetTypeDef() == &TA_taBase_List) && (this == &TA_taBase_Group)))
-  {
-    // object not the right type, try to create new one..
-    if(taMisc::verbose_load >= taMisc::MESSAGES) {
-      taMisc::Warning("*** Object at path:",ppar->GetPath(),path,
-		    "of type:",el->GetTypeDef()->name,"is not the right type:",name,
-		    ", attempting to create new one");
-    }
-    el = ppar->New(1,this);
-    if(el == NULL) {
-      taMisc::Warning("*** Could not make a token of:",name,"in:",ppar->GetPath(),
-		    path);
-      return false;
-    }
-    if(el->GetOwner() != NULL) {
-      String new_path = el->GetPath(NULL, find_base);
-      if(new_path != orig_path) {
-	dumpMisc::path_subs.Add(this, find_base, orig_path, new_path);
-      }
-    }
-  }
-  base = (void*)el; 	// reset the base to be the element
-  if(taMisc::verbose_load >= taMisc::TRACE) {
-    cerr << "Leaving TypeDef::Dump_Load_Path_impl, type: " << name
-	 << ", path = " << path
-	 << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	 << "\n"; // endl;
-    taMisc::FlushConsole();
-  }
-  return true;
 }
 
 

@@ -289,36 +289,39 @@ public:
   override bool		isDirty() const {return m_dirty;}
   override void 	setDirty(bool value); 
 
-  MainWindowViewer*	GetDefaultProjectBrowser(); // gets one if there is, else NULL
-  MainWindowViewer*	GetDefaultProjectViewer(); // gets one if there is, else NULL
+  MainWindowViewer*	GetDefaultProjectBrowser();
+  // #CAT_Display gets one if there is, else NULL
+  MainWindowViewer*	GetDefaultProjectViewer();
+  // #CAT_Display gets one if there is, else NULL
   virtual MainWindowViewer* AssertDefaultProjectBrowser(bool auto_opn); 
-    // make sure the default project browser is made, and optionally open it
+    // #CAT_Display make sure the default project browser is made, and optionally open it
   virtual void 		AssertDefaultWiz(bool auto_opn) {} 
-    // make sure the default wizard(s) are made, and optionally open them
+    // #CAT_Display make sure the default wizard(s) are made, and optionally open them
   virtual void		OpenNewProjectBrowser(String proj_browser_name = "(default name)");
-    // #MENU #MENU_ON_View #MENU_CONTEXT open a new browser, either 3-pane or 2-2-pane (tree + viewer)
+    // #MENU #MENU_ON_View #MENU_CONTEXT #CAT_Display open a new browser, either 3-pane or 2-2-pane (tree + viewer)
   virtual void		OpenNewProjectViewer(String proj_browser_name = "(default name)");
-    // #MENU #MENU_ON_View #MENU_CONTEXT open a new 3D viewer (with panels)
-
-
-  virtual DataTable*	GetNewInputDataTable(const String& nw_nm="", bool msg=false);
-  // createa a new data table in data.InputData (used for data generation functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
-  virtual DataTable*	GetNewOutputDataTable(const String& nw_nm="", bool msg=false);
-  // createa a new data table in data.OutputData (used for monitoring and logging functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
-  virtual DataTable*	GetNewAnalysisDataTable(const String& nw_nm="", bool msg=false);
-  // createa a new data table in data.AnalysisData (used for various data processing and graphing functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
-  virtual taBase*	FindMakeNewDataProc(TypeDef* typ, const String& nm);
-  // find existing data processing object of given type, or else make one and give it nm
-  virtual SelectEdit* FindMakeSelectEdit(const String& seledit_name);
-  // get select edit object of given name, or make one if not found
-
+    // #MENU #MENU_ON_View #MENU_CONTEXT #CAT_Display open a new 3D viewer (with panels)
   virtual MainWindowViewer* NewProjectBrowser(); 
     // create a new, empty viewer -- note: window not opened yet
+  virtual void		RefreshAllViews();
+  // #CAT_Display manual refresh of all view information in the project -- equivalent to the View/Refresh (F5 key) menu -- should not be necessary but sometimes comes in handy..
+
+  virtual DataTable*	GetNewInputDataTable(const String& nw_nm="", bool msg=false);
+  // #CAT_Data create a new data table in data.InputData (used for data generation functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
+  virtual DataTable*	GetNewOutputDataTable(const String& nw_nm="", bool msg=false);
+  // #CAT_Data create a new data table in data.OutputData (used for monitoring and logging functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
+  virtual DataTable*	GetNewAnalysisDataTable(const String& nw_nm="", bool msg=false);
+  // #CAT_Data create a new data table in data.AnalysisData (used for various data processing and graphing functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
+  virtual taBase*	FindMakeNewDataProc(TypeDef* typ, const String& nm);
+  // #CAT_Data find existing data processing object of given type, or else make one and give it nm
+  virtual SelectEdit* FindMakeSelectEdit(const String& seledit_name);
+  // #CAT_Edit get select edit object of given name, or make one if not found
+
   virtual void		UpdateChangeLog();
-  // #BUTTON update change log for this project, stored as a ChangeLog item in docs on the project -- you will be prompted to enter a description of recent changes, and the date, user, and file names will be recorded
+  // #BUTTON #CAT_File update change log for this project, stored as a ChangeLog item in docs on the project -- you will be prompted to enter a description of recent changes, and the date, user, and file names will be recorded
 
   virtual void		SaveRecoverFile();
-  // Save a recover file of this project, usually called when a signal is received indicating a crash condition
+  // #CAT_File Save a recover file of this project, usually called when a signal is received indicating a crash condition
   virtual void		SaveRecoverFile_strm(ostream& strm) { Save_strm(strm); }
   // #IGNORE underlying save function to use when saving a recover file -- might want to do something special here
 

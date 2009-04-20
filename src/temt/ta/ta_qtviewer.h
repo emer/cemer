@@ -515,6 +515,8 @@ public:
   virtual bool 		hasMultiSelect() const = 0; // true if supports multi select
   SelectableHostHelper* helperObj() const {return helper;} // for attaching slots
   iMainWindowViewer*	mainWindow() const; // returns main window we are embedded in
+  taProject*		myProject() const; // project of which this viewer is a part
+  taProject*		curProject() const; // only if we are a projviewer
   virtual bool		selectionChanging() {return (m_sel_chg_cnt != 0);}
     // you can use this to escape from sundry gui notifies to yourself (to avoid recursion)
   virtual ISelectable_PtrList&	selItems() {return sel_items;} // currently selected items
@@ -1844,7 +1846,7 @@ public:
   static const String  	opt_treefilt; // "TREEFILT_"
 
 #ifndef __MAKETA__
-  QPointer<iMainWindowViewer> main_window; // set this to the main window we belong in
+  QPointer<iMainWindowViewer> main_window; // set this to the main window we belong in -- NOTE this is NOT always the same as mainWindow() and must be set specifically -- could be the program editor or another similar such thing..
   QPointer<QWidget>	focus_next_widget; // if set, this is the widget to focus next on when tab pressed
   QPointer<QWidget>	focus_prev_widget;  // if set, this is the widget to focus on when shift-tab pressed
 #endif

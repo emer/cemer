@@ -735,6 +735,10 @@ public:
 public:  
   virtual int	 	Dump_Load_impl(istream& strm, TAPtr par=NULL) // #IGNORE
   { return GetTypeDef()->Dump_Load_impl(strm, (void*)this, par); }
+  virtual taBase*	Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ);
+  // #IGNORE load a new object that is an owned pointer that lives on 'this' object, of given type and path -- returns ptr to new obj or NULL if failure
+  virtual taBase*	Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el_typ);
+  // #IGNORE 'this' is the parent, and el_path specifies path to child -- create appropriate obj -- returns ptr to new obj or NULL if failure -- only really defined for taList..
   virtual void		Dump_Load_pre() {};
   // #IGNORE -- called just before single-object Load_strm -- use to reset stuff prior to loading
   virtual int	 	Dump_Load_Value(istream& strm, TAPtr par=NULL) // #IGNORE
@@ -1755,6 +1759,7 @@ public:
   override int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0);
   virtual int 	Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent); // #IGNORE
   override void	Dump_Load_pre();
+  override taBase* Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el_typ);
   override int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
 
   override void	Search_impl(const String& srch, taBase_PtrList& items,
@@ -1838,6 +1843,8 @@ public:
   TA_BASEFUNS(taList_impl);
 
 protected:
+  int		m_trg_load_size; // #IGNORE target load size -- set during Dump_Load -- used to enforce size to that which was saved, in case of load-over
+
   String	GetListName_() const	{ return name; }
   void		El_SetIndex_(void* it, int idx) {((TAPtr)it)->SetIndex(idx);}
   void		El_SetDefaultName_(void*, int idx); // sets default name if child has DEF_NAME_LIST 

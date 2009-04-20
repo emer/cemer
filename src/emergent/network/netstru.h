@@ -433,12 +433,12 @@ public:
   //	Below are the primary computational interface to the Network Objects
   //	for performing algorithm-specific activation and learning
 
-  void 	Init_Weights(Unit* ru)	 	{ GetConSpec()->Init_Weights(this,ru); }
+  void 	Init_Weights(Unit* ru)	 	{ if(GetConSpec()) GetConSpec()->Init_Weights(this,ru); }
   // #CAT_Learning initialize weights for group
   void 	C_Init_Weights(Connection* cn, Unit* ru, Unit* su)
   { GetConSpec()->C_Init_Weights(this, cn, ru, su); }
   // #CAT_Learning initialize weights for single connection
-  void	Init_Weights_post(Unit* ru) 	{ GetConSpec()->Init_Weights_post(this,ru); }
+  void	Init_Weights_post(Unit* ru) 	{ if(GetConSpec()) GetConSpec()->Init_Weights_post(this,ru); }
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
   void 	Init_dWt(Unit* ru)	 	{ GetConSpec()->Init_dWt(this,ru); }
   // #CAT_Learning  initialize weight change variables
@@ -1652,6 +1652,7 @@ public:
 
   override String GetDesc() const 	{ return desc; }
   override int	  GetEnabled() const 	{ return !lesioned(); }
+  override void	  SetEnabled(bool value) { SetLayerFlagState(LESIONED, !value); }
   override String GetTypeDecoKey() const { return "Layer"; }
 
   override bool	ChangeMyType(TypeDef* new_type);

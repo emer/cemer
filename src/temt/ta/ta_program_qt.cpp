@@ -626,7 +626,14 @@ TypeDef* iProgramEditor::GetRootTypeDef() const {
 void iProgramEditor::GetValue() {
   TypeDef* typ = GetRootTypeDef();
   if (!typ) return; // shouldn't happen
-  
+
+  if(typ->InheritsFrom(TA_taBase) && base) {
+    taProject* proj = (taProject*)((taBase*)base)->GetOwner(&TA_taProject);
+    if(proj) {
+      proj->undo_mgr.SaveUndo(base, "Edit", base);
+    }
+  }
+
   ++m_changing;
   InternalSetModified(false); // do it first, so signals/updates etc. see us nonmodified
   bool first_diff = true;

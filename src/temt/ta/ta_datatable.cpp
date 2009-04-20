@@ -935,6 +935,7 @@ bool DataTable::AutoSaveData() {
 
 void DataTable::Dump_Load_post() {
   inherited::Dump_Load_post();
+  if(taMisc::is_undo_loading) return; // none of this.
   // this is an attempt to fix BugID:66, but it leads to problems when loading the project
   //  StructUpdate(true);
   AutoLoadData();
@@ -943,7 +944,8 @@ void DataTable::Dump_Load_post() {
 
 void DataTable::Dump_Load_pre() {
   inherited::Dump_Load_pre();
-  Reset();			// always reset prior to load because new data could be diff!
+  // todo: not necessary!?
+//   Reset();			// always reset prior to load because new data could be diff!
 }
 
 int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {

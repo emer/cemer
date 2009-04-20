@@ -208,6 +208,7 @@ public:
   void*		fixed_joint_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of joint used to fix a FIXED body
 
   override int		GetEnabled() const {  return !HasBodyFlag(OFF); }
+  override void		SetEnabled(bool value) { SetBodyFlagState(OFF, !value); }
   override String	GetDesc() const { return desc; }
   inline void		SetBodyFlag(BodyFlags flg)   { flags = (BodyFlags)(flags | flg); }
   // set body flag state on
@@ -498,6 +499,7 @@ public:
 
   override String	GetDesc() const { return desc; }
   override int		GetEnabled() const {  return !HasJointFlag(OFF); }
+  override void		SetEnabled(bool value) { SetJointFlagState(OFF, !value); }
 
   inline void		SetJointFlag(JointFlags flg)   { flags = (JointFlags)(flags | flg); }
   // set joint flag state on
@@ -817,6 +819,7 @@ public:
   //	Internal-ish stuff
 
   override int		GetEnabled() const {  return !HasStaticFlag(OFF); }
+  override void		SetEnabled(bool value) { SetStaticFlagState(OFF, !value); }
   override String	GetDesc() const { return desc; }
   inline void		SetStaticFlag(StaticFlags flg)   { flags = (StaticFlags)(flags | flg); }
   // set body flag state on

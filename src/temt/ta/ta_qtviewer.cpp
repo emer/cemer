@@ -2234,6 +2234,16 @@ void ISelectableHost::EditAction_Delete(ISelectable::GuiContext gc_typ) {
   }
   // now, just request deletion -- items could go missing
   // if we've selected items that will get deleted by other items 
+
+  taProject* proj = myProject();
+  if(proj) {
+    taBase* tab = ta_items.Peek();
+    if(ta_items.size > 1)
+      proj->undo_mgr.SaveUndo(tab, "Delete " + String(ta_items.size) + " items");
+    else
+      proj->undo_mgr.SaveUndo(tab, "Delete");
+  }
+
   for (int i = ta_items.size - 1; i >= 0; --i) {
     taBase* tab = ta_items.SafeEl(i);
     if (!tab) continue;
@@ -2498,6 +2508,17 @@ iMainWindowViewer* ISelectableHost::mainWindow() const {
   return rval;
 }
 
+taProject* ISelectableHost::myProject() const {
+  iMainWindowViewer* imwv = mainWindow();
+  if(!imwv) return NULL;
+  return imwv->myProject();
+}
+
+taProject* ISelectableHost::curProject() const {
+  iMainWindowViewer* imwv = mainWindow();
+  if(!imwv) return NULL;
+  return imwv->curProject();
+}
 
 bool ISelectableHost::RemoveSelectedItem(ISelectable* item,  bool forced) {
   bool rval = sel_items.RemoveEl(item); // use raw list, because we are building
@@ -3283,9 +3304,9 @@ if (but) {but->setArrowType(Qt::RightArrow); but->setText("");}
   win->fileCloseAction->addTo(tb);
   win->filePrintAction->addTo(tb);
   tb->addSeparator();
-//  win->editUndoAction->addTo(tb);
-//  win->editRedoAction->addTo(tb);
-//  tb->addSeparator();
+  win->editUndoAction->addTo(tb);
+  win->editRedoAction->addTo(tb);
+  tb->addSeparator();
   win->editCutAction->addTo(tb);
   win->editCopyAction->addTo(tb);
   win->editPasteAction->addTo(tb);
@@ -3846,10 +3867,8 @@ void iMainWindowViewer::Constr_Menu_impl() {
   }
   
   editUndoAction = AddAction(new taiAction("&Undo", QKeySequence(cmd_str+"Z"), _editUndoAction ));
-  //  editUndoAction->setEnabled( FALSE );
   editUndoAction->setIcon( QIcon( QPixmap(":/images/editundo.png") ) );
-  editRedoAction = AddAction(new taiAction("&Redo", QKeySequence(), _editRedoAction ));
-  //  editRedoAction->setEnabled( FALSE );
+  editRedoAction = AddAction(new taiAction("&Redo", QKeySequence(cmd_str+"Shift+Z"), _editRedoAction ));
   editRedoAction->setIcon( QIcon( QPixmap(":/images/editredo.png") ) );
   editCutAction = AddAction(new taiAction(taiClipData::EA_CUT, "Cu&t", QKeySequence(cmd_str+"X"), _editCutAction ));
   editCutAction->setIcon( QIcon( QPixmap(":/images/editcut.png") ) );
@@ -3886,12 +3905,9 @@ void iMainWindowViewer::Constr_Menu_impl() {
   fileOptionsAction->AddTo( fileMenu );
   fileMenu->insertSeparator();
   filePrintAction->AddTo( fileMenu );
-//NOTE: undo currently not implemented
   editUndoAction->AddTo( editMenu ); 
   editRedoAction->AddTo( editMenu );
-//   editUndoAction->setVisible(false);
-//   editRedoAction->setVisible(false);
-//  editMenu->insertSeparator(); // renable if undo is made visible
+  editMenu->insertSeparator(); // renable if undo is made visible
   editCutAction->AddTo( editMenu );
   editCopyAction->AddTo( editMenu );
   editDupeAction->AddTo( editMenu );
@@ -6840,6 +6856,10 @@ void iTreeView::InsertEl() {
   bool okc = typlkup->OpenChooser();
   td = typlkup->td();
   if(okc && td) {
+    taProject* proj = myProject();
+    if(proj) {
+      proj->undo_mgr.SaveUndo(sbo, "InsertEl"); // global save
+    }
     taBase* nwi = taBase::MakeToken(td);
     if(nwi) {
       int idx = 0;
@@ -7033,6 +7053,7 @@ QStringList iTreeView::mimeTypes () const {
 }
 
 void iTreeView::keyPressEvent(QKeyEvent* e) {
+  taProject* proj = myProject();
   bool ctrl_pressed = false;
   if(e->modifiers() & Qt::ControlModifier)
     ctrl_pressed = true;
@@ -7052,6 +7073,9 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
       if(si && si->link()) {
 	taBase* sb = si->link()->taData();
 	if(sb) {
+	  if(proj) {
+	    proj->undo_mgr.SaveUndo(sb, "Duplicate"); // global save
+	  }
 	  sb->DuplicateMe();
 	}
       }
@@ -7065,6 +7089,9 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
     if(si && si->link()) {
       taBase* sb = si->link()->taData();
       if(sb) {
+	if(proj) {
+	  proj->undo_mgr.SaveUndo(sb, "Delete"); // global save
+	}
 	sb->CloseLater();
       }
     }

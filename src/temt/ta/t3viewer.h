@@ -212,7 +212,7 @@ public:
   static T3DataView*	GetViewFromPath(const SoPath* path); // #IGNORE search path backwards to find the innermost T3DataView
 
   int			flags; // #READ_ONLY #NO_SAVE any of T3DataViewFlags TODO: tbd
-  FloatTransform*	m_transform;  // #READ_ONLY transform, created only if not unity
+  FloatTransform*	m_transform;  // #READ_ONLY #OWN_POINTER transform, created only if not unity
 
   virtual const iColor	bgColor(bool& ok) const {ok = false; return iColor();}
     // high-level items can optionally supply a bg color, for when they are singles

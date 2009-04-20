@@ -2264,6 +2264,11 @@ int ProgEl::GetEnabled() const {
   else return 0;
 }
 
+void ProgEl::SetEnabled(bool value) {
+  SetProgFlagState(OFF, !value);
+}
+
+
 String ProgEl::GetStateDecoKey() const {
   String rval = inherited::GetStateDecoKey();
   if(rval.empty()) {
@@ -2275,16 +2280,19 @@ String ProgEl::GetStateDecoKey() const {
   return rval;
 }
 
+void ProgEl::SetOffFlag(bool off) {
+  SetProgFlagState(OFF, off);
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
 void ProgEl::SetNonStdFlag(bool non_std) {
   SetProgFlagState(NON_STD, non_std);
   DataChanged(DCR_ITEM_UPDATED);
-  //UpdateAfterEdit();		// trigger update
 }
 
 void ProgEl::SetNewElFlag(bool new_el) {
   SetProgFlagState(NEW_EL, new_el);
   DataChanged(DCR_ITEM_UPDATED);
-  //  UpdateAfterEdit();
 }
 
 void ProgEl::PreGen(int& item_id) {
@@ -3199,7 +3207,9 @@ void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void Program::Dump_Load_pre() {
   inherited::Dump_Load_pre();
-  Reset();			// reset prior to loading!
+  if(taMisc::is_undo_loading) return; // none of this.
+  // todo: no longer necessary!?
+  //  Reset();			// reset prior to loading!
 }
 
 int Program::Call(Program* caller) {

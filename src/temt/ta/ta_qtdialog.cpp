@@ -2314,11 +2314,11 @@ void taiEditDataHost::GetValue() {
 
 void taiEditDataHost::GetValue_Membs() {
   TAPtr rbase = Base();
-  taProject* proj = dynamic_cast<taProject*>(((taBase*)root)->GetThisOrOwner(&TA_taProject));
-  if(rbase && proj) {
-    // TODO: could have an obj define for objs that are known to have non-local effects of 
-    // edits -- currently ONLY saving at the level of the obj itself!!
-    proj->undo_mgr.SaveUndo(rbase, "Edit", rbase);
+  if(rbase && root) {
+    taProject* proj = (taProject*)((taBase*)root)->GetOwner(&TA_taProject);
+    if(proj) {
+      proj->undo_mgr.SaveUndo(rbase, "Edit", rbase);
+    }
   }
 
   if (inline_mode) {

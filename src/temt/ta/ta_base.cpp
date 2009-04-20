@@ -1236,6 +1236,78 @@ taBase::DumpQueryResult taBase::Dump_QuerySaveMember(MemberDef* md) {
   return DQR_DEFAULT;
 }
 
+taBase* taBase::Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ) {
+  MemberDef* el_md = NULL;
+  taBase** nw_el_ptr = (taBase**)FindMembeR(el_path, el_md);
+  if(!nw_el_ptr) {
+    taMisc::Warning("*** Dump_Load_Path_ptr: Could not find pointer member at path:",
+		    el_path,"in parent object:",GetPath());
+    return NULL;
+  }
+  if(!el_md) {
+    taMisc::Warning("*** Dump_Load_Path_ptr: no el_md for item at path:",
+		    el_path,"in parent object:",GetPath(),
+		    "may not set pointers correctly!");
+  }
+  taBase* nw_el = *nw_el_ptr;
+
+  if(nw_el && (nw_el->GetTypeDef() != ld_el_typ) &&
+     !((nw_el->GetTypeDef() == &TA_taBase_List) && (ld_el_typ == &TA_taBase_Group)))
+  {
+    // object not the right type, try to create new one..
+    if(taMisc::verbose_load >= taMisc::MESSAGES) {
+      taMisc::Warning("*** Object in parent:",GetPath(),"at path", el_path,
+		    "of type:",nw_el->GetTypeDef()->name,"is not the right type:",
+		      ld_el_typ->name,", attempting to create new one");
+    }
+    if(el_md && (el_md->HasOption("OWN_POINTER") || !el_md->HasOption("NO_SET_POINTER"))) {
+      taBase::DelPointer(nw_el_ptr);
+    }
+    else {
+      nw_el_ptr = NULL;
+    }
+    nw_el = NULL;		// nuked it
+  }
+
+  if(!nw_el) {
+    *nw_el_ptr = taBase::MakeToken(ld_el_typ);
+    nw_el = *nw_el_ptr;
+    if(!nw_el) {
+      taMisc::Warning("*** Dump_Load_Path_ptr: Could not make new token of type:",
+		      ld_el_typ->name,"for pointer member at path:",
+		      el_path,"in parent object:",GetPath());
+      return NULL;
+    }
+    if(el_md && el_md->HasOption("OWN_POINTER")) { // note: this was not in original!
+      taBase::Own(nw_el,this);
+    }
+    else {
+      taMisc::Warning("*** Dump_Load_Path_ptr: NOT owning new element of type:",
+		      ld_el_typ->name,"for pointer member at path:",
+		      el_path,"in parent object:",GetPath());
+    }
+  }
+  if(taMisc::verbose_load >= taMisc::TRACE) {
+    cerr << "Success: Leaving TypeDef::Dump_Load_Path_ptr, type: " << ld_el_typ->name
+	 << ", parent path = " << GetPath()
+	 << ", el_path = " << el_path
+	 << "\n"; // endl;
+    taMisc::FlushConsole();
+  }
+  return nw_el;
+}
+
+taBase* taBase::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el_typ) {
+  MemberDef* el_md = NULL;
+  taBase* nw_el = (taBase*)FindMembeR(el_path, el_md);
+  if(nw_el) return nw_el;
+  taMisc::Warning("*** Object at path:",GetPath(),
+		  "is not capable of creating a new element with the path:",el_path,
+		  "of type:",ld_el_typ->name,
+		  "something is askew in the loading paths");
+  return NULL;
+}
+
 String taBase::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
 			 bool force_inline) const {
   if (sc == TypeDef::SC_DEFAULT) 
@@ -3012,6 +3084,7 @@ void taBase_RefList::setOwner(IRefListClient* own_) {
 void taList_impl::Initialize() {
   SetBaseType(&TA_taBase);
   el_def = 0;
+  m_trg_load_size = -1;
 }
 
 
@@ -3327,7 +3400,85 @@ void taList_impl::Dump_Load_pre() {
   // entire list/group as for one new element in the group.. hmm.
 }
 
+taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el_typ) {
+  if(el_path.firstchar() != '[' || el_path.lastchar() != ']') {
+    taMisc::Warning("*** Dump_Load_Path_parent: path is incorrectly formatted:",el_path,
+		    "for parent obj:",GetPath());
+    return NULL;
+  }
+  int idx = (int)el_path.between('[',']');
+  taBase* nw_el = NULL;
+  if(InRange(idx)) {
+    nw_el = (taBase*)FastEl_(idx);
+    if(!nw_el)	RemoveIdx(idx);	// somehow has a null guy on list.. nuke it
+  }
+  if(nw_el) {
+    // check for correct type, but allow a list to be created in a group
+    // for backwards compatibility with changes from groups to lists
+    if((nw_el->GetTypeDef() != ld_el_typ) &&
+       !((nw_el->GetTypeDef() == &TA_taBase_List) && (ld_el_typ == &TA_taBase_Group))) {
+      // object not the right type, try to create new one..
+      if(taMisc::verbose_load >= taMisc::MESSAGES) {
+	taMisc::Warning("*** Object at path:",GetPath(),
+			"of type:",nw_el->GetTypeDef()->name,"is not the right type:",
+			ld_el_typ->name,", attempting to create new one");
+      }
+      nw_el = taBase::MakeToken(ld_el_typ);
+      if(!nw_el) {
+	taMisc::Warning("*** Dump_Load_Path_parent: Could not make new token of type:",
+			ld_el_typ->name,"for child item at path:",
+			el_path,"in parent list:",GetPath());
+	return NULL;
+      }
+      ReplaceIdx(idx, nw_el);
+      // this should no longer be necc as any changes will be in the parent!
+      // todo: nuke me..
+//       if(nw_el->GetOwner() != NULL) {
+// 	String new_path = nw_el->GetPath(NULL, find_base);
+// 	if(new_path != orig_path) {
+// 	  dumpMisc::path_subs.Add(ld_el_typ, find_base, orig_path, new_path);
+// 	}
+//       }
+    }
+  }
+  else {
+    nw_el = New(1,ld_el_typ);
+    // assuming that these are saved in order so we just add sequentially w/out checking
+    // no clear action to take if this is not the case b/c we don't know how to
+    // create intervening types..
+    if(!nw_el) {
+      taMisc::Warning("*** New: Could not make a token of:",ld_el_typ->name,"in:",GetPath());
+      return NULL;
+    }
+    // this should no longer be necc as any changes will be in the parent!
+    // todo: nuke me..
+//     if(nw_el->GetOwner()) {
+//       String new_path = nw_el->GetPath(NULL, find_base);
+//       if(new_path != orig_path) {
+// 	dumpMisc::path_subs.Add(ld_el_typ, find_base, orig_path, new_path);
+//       }
+//     }
+  }
+  if(m_trg_load_size >= 0 && idx+1 == m_trg_load_size) {
+    // we are the last guy who is supposed to be loaded -- set the list size to be the 
+    // target size -- nukes any extra guys that might have been lingering!!
+    SetSize(m_trg_load_size);
+    m_trg_load_size = -1;	// reset for next time around
+  }
+
+  if(taMisc::verbose_load >= taMisc::TRACE) {
+    cerr << "Success: Leaving TypeDef::Dump_Load_Path_parent, type: " << ld_el_typ->name
+	 << ", parent path = " << GetPath()
+	 << ", el_path = " << el_path
+	 << "\n"; // endl;
+    taMisc::FlushConsole();
+  }
+  return nw_el;
+}
+
 int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
+  m_trg_load_size = -1;
+
   int c = taMisc::skip_white(strm);
   if(c == EOF)	return EOF;
   if(c == ';')	return 2;	// signal that its a path
@@ -3374,6 +3525,7 @@ int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
 	else if(c == '{') {	// no type information -- just the count
 	  strm.get();		// get the bracket
 	  Alloc(idx);		// just make sure we have the ptrs allocated to this size
+	  m_trg_load_size = idx; // target loading size
 	  return GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par);
 	}
 	else {			// type information -- create objects too!
@@ -3386,11 +3538,12 @@ int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
 			 el_base->name)) return false;
 	  el_typ = eltd;
 	  // ensure that enough items are present (don't do full enforce size)
- 	  if(size < idx)
-	    New(idx - size, el_typ);
+//  	  if(size < idx)
+// 	    New(idx - size, el_typ);
 	  // actually, probably much better to do full enforce size!  but this case is weird
 	  // not sure if it actually still gets processed -- why would it??
-	  //	  SetSize(idx);
+	  // actually very important to set the exact size
+	  SetSize(idx);
 	  c = taMisc::skip_white(strm);
 	  if(c == '{') {
 	    return GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par);

@@ -186,11 +186,13 @@ bool QConsole::stdDisplay(QTextStream* s) {
 	curOutputLn++;
 	if(curOutputLn >= maxLines) {
 	  append("---Press Return for More, q=quit displaying, c=continue without paging ---");
+	  viewport()->update();		// repaint the window, in case it is weird, as it has been..
 	  return true;
 	}
       }
     }
   }
+  viewport()->update();		// repaint the window, in case it is weird, as it has been..
   return false;
 }
 

@@ -364,8 +364,14 @@ void taUndoMgr::Initialize() {
 }
 
 bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top) {
-  if(!owner) return false;
+  if(!owner || !mod_obj) return false;
   if(!save_top) save_top = owner;
+  if(mod_obj == save_top && mod_obj->HasOption("UNDO_SAVE_ALL")) {
+    save_top = owner;		// save all instead..
+  }
+  if(cur_undo_idx < undo_recs.length) {
+    undo_recs.length = cur_undo_idx; // lop off all the changes that were previously undone
+  }
   taUndoRec* urec = new taUndoRec;
   undo_recs.CircAddLimit(urec, undo_depth);
   cur_undo_idx = undo_recs.length;
@@ -385,22 +391,52 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
 
 bool taUndoMgr::Undo() {
   if(!owner) return false;
-  if(TestWarning(cur_undo_idx <= 0, "Undo", "No more steps available to undo -- increase undo_depth in Preferences"))
+  if(cur_undo_idx <= 0) {
+    taMisc::Error("No more steps available to undo -- increase undo_depth in Preferences if you need more in general -- requires reload of project to take effect");
     return false;
+  }
   taUndoRec* urec = undo_recs.CircSafeEl(cur_undo_idx-1); // anticipate decrement
   if(!urec) return false;
+  bool first_undo = false;
+  if(cur_undo_idx == undo_recs.length) {
+    if(urec->action == "Undo") { // already the final undo guy -- skip to earlier one
+      --cur_undo_idx;
+      urec = undo_recs.CircSafeEl(cur_undo_idx-1); // anticipate decrement      
+    }
+    else {
+      // this is the first undo -- we need to save this current state so we can then redo it!
+      first_undo = true;
+      SaveUndo(owner, "Undo", owner);
+    }
+  }
   if(!urec->save_top) {		// it was nuked -- try to reconstruct from path..
     MemberDef* md;
     taBase* st = owner->FindFromPath(urec->save_top_path, md);
     if(st) urec->save_top = st;
   }
-  if(TestError(!urec->save_top, "Undo", "Undo action:", urec->action, "on object at path:",
-	       urec->mod_obj_path,"cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path))
+  if(!urec->save_top) {
+    taMisc::Error("Undo action:", urec->action, "on object at path:",
+		  urec->mod_obj_path,"cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path);
     return false;
+  }
+  cout << "Undoing action: " << urec->action << " on: " << urec->mod_obj_path << endl;
   ++taMisc::is_undo_loading;
   urec->save_top->Load_String(urec->save_data);
   --taMisc::is_undo_loading;
   --cur_undo_idx;		// only decrement on success
+  if(first_undo) {
+    --cur_undo_idx;		// need an extra because of extra saveundo.
+  }
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(proj) {
+    proj->RefreshAllViews();
+  }
+  // finally, try select the originally modified object so it is clear what is happening!
+  MemberDef* md;
+  taBase* modobj = owner->FindFromPath(urec->mod_obj_path, md);
+  if(modobj) {
+    modobj->BrowserSelectMe();
+  }
 #ifdef DEBUG
   ReportStats();
 #endif
@@ -409,8 +445,11 @@ bool taUndoMgr::Undo() {
 
 bool taUndoMgr::Redo() {
   if(!owner) return false;
-  if(TestWarning(cur_undo_idx >= undo_recs.length, "Redo", "No more steps available to redo"))
+  if(cur_undo_idx == 0) cur_undo_idx = 1;		// 0 is just err state
+  if(cur_undo_idx >= undo_recs.length) {
+    taMisc::Error("No more steps available to redo -- at end of undo list");
     return false;
+  }
   taUndoRec* urec = undo_recs.CircSafeEl(cur_undo_idx); // always at current val for redo..
   if(!urec) return false;
   if(!urec->save_top) {		// it was nuked -- try to reconstruct from path..
@@ -418,13 +457,26 @@ bool taUndoMgr::Redo() {
     taBase* st = owner->FindFromPath(urec->save_top_path, md);
     if(st) urec->save_top = st;
   }
-  if(TestError(!urec->save_top, "Redo", "Redo action:", urec->action, "on object at path:",
-	       urec->mod_obj_path,"cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path))
+  if(!urec->save_top) {
+    taMisc::Error("Redo action:", urec->action, "on object at path:",
+		  urec->mod_obj_path,"cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path);
     return false;
+  }
+  cout << "Redoing action: " << urec->action << " on: " << urec->mod_obj_path << endl;
   ++taMisc::is_undo_loading;
   urec->save_top->Load_String(urec->save_data);
   --taMisc::is_undo_loading;
   ++cur_undo_idx;		// only increment on success
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(proj) {
+    proj->RefreshAllViews();
+  }
+  // finally, try select the originally modified object so it is clear what is happening!
+  MemberDef* md;
+  taBase* modobj = owner->FindFromPath(urec->mod_obj_path, md);
+  if(modobj) {
+    modobj->BrowserSelectMe();
+  }
 #ifdef DEBUG
   ReportStats();
 #endif
@@ -528,6 +580,7 @@ void taProject::InitLinks_impl() {
 }
 
 void taProject::InitLinks_post() {
+  if(taMisc::is_undo_loading) return; // none of this.
   if (!taMisc::is_loading) {
     AssertDefaultProjectBrowser(true);
 #ifdef TA_OS_WIN
@@ -639,6 +692,7 @@ MainWindowViewer* taProject::GetDefaultProjectViewer() {
 }
 
 void taProject::PostLoadAutos() {
+  if(taMisc::is_undo_loading) return; // none of this.
   if (taMisc::gui_active) {
     MainWindowViewer* vwr = AssertDefaultProjectBrowser(true);
     // note: we want a doc to be the default item, if possible
@@ -715,6 +769,16 @@ void taProject::OpenViewers() {
   }
 }
 
+void taProject::RefreshAllViews() {
+  if(!taMisc::gui_active) return;
+  for (int i = 0; i < viewers.size; ++i) {
+    MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
+    if (!(vwr && vwr->isProjBrowser())) continue;
+    iMainWindowViewer* imwv = vwr->widget();
+    if(!imwv) continue;
+    imwv->Refresh();
+  }
+}
 
 DataTable* taProject::GetNewInputDataTable(const String& nw_nm, bool msg) {
   DataTable_Group* dgp = (DataTable_Group*)data.FindMakeGpName("InputData");
@@ -782,14 +846,18 @@ bool taProject::SetFileName(const String& val) {
 
 void taProject::Dump_Load_pre() {
   inherited::Dump_Load_pre();
-  viewers.Reset(); 
-  programs.Reset();
-  data_proc.Reset();
-  data.Reset();
-  edits.Reset();
-  wizards.Reset();
-  docs.Reset();
-  templates.Reset();
+  if(taMisc::is_undo_loading) return; // none of this.
+  // reset everything
+  // todo: this was previously necessary for Loading over an existing project
+  // not sure it is such a good idea now -- will comment out but revisit..
+//   viewers.Reset(); 
+//   programs.Reset();
+//   data_proc.Reset();
+//   data.Reset();
+//   edits.Reset();
+//   wizards.Reset();
+//   docs.Reset();
+//   templates.Reset();
 }
 
 /*int taProject::SaveAs(const String& fname) {
