@@ -33,7 +33,7 @@ bool taImage::LoadImage(const String& fname) {
   String fnm = fname;
   if (fname.empty()) {
     taFiler* flr = GetLoadFiler(fname);
-    fnm = flr->fileName();
+    fnm = flr->FileName();
     flr->Close();
     taRefN::unRefDone(flr);
   }
@@ -56,7 +56,7 @@ bool taImage::SaveImage(const String& fname) {
   String fnm = fname;
   if (fname.empty()) {
     taFiler* flr = GetLoadFiler(fname);
-    fnm = flr->fileName();
+    fnm = flr->FileName();
     flr->Close();
     taRefN::unRefDone(flr);
   }

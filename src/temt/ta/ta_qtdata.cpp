@@ -851,19 +851,19 @@ void taiFileDialogField::lookupKeyPressed() {
     if(file_act == FA_SAVE) {
       flr = base_obj->GetSaveFiler("", file_ext, file_cmprs, desc);
       if (flr->ostrm) {
-	rep()->setText(flr->fileName());
+	rep()->setText(flr->FileName());
       }
     }
     else if(file_act == FA_LOAD) {
       flr = base_obj->GetLoadFiler("", file_ext, file_cmprs, desc);
       if (flr->istrm) {
-	rep()->setText(flr->fileName());
+	rep()->setText(flr->FileName());
       }
     }
     else if(file_act == FA_APPEND) {
       flr = base_obj->GetAppendFiler("", file_ext, file_cmprs, desc);
       if (flr->ostrm) {
-	rep()->setText(flr->fileName());
+	rep()->setText(flr->FileName());
       }
     }
     flr->Close();
@@ -875,19 +875,19 @@ void taiFileDialogField::lookupKeyPressed() {
     if(file_act == FA_LOAD) {
       flr->Open();
       if (flr->istrm) {
-	rep()->setText(flr->fileName());
+	rep()->setText(flr->FileName());
       }
     }
     else if(file_act == FA_SAVE) {
       flr->SaveAs();
       if (flr->ostrm) {
-	rep()->setText(flr->fileName());
+	rep()->setText(flr->FileName());
       }
     }
     else if(file_act == FA_APPEND) {
       flr->Append();
       if (flr->ostrm) {
-	rep()->setText(flr->fileName());
+	rep()->setText(flr->FileName());
       }
     }
     flr->Close();
@@ -4798,10 +4798,10 @@ void taiFileButton::GetImage() {
 	taiAction::action, this, SLOT(Edit()) );
   }
 
-  if ((gf == NULL) || (!gf->select_only && !gf->open_file) || gf->fileName().empty() )
+  if ((gf == NULL) || (!gf->select_only && !gf->open_file) || gf->FileName().empty() )
     setLabel("------No File-----");
   else
-    setLabel(gf->fileName());
+    setLabel(gf->FileName());
 }
 
 void taiFileButton::GetGetFile() {
@@ -4842,13 +4842,13 @@ void taiFileButton::Close() {
   GetGetFile();
   gf->Close();
   if(gf->select_only)
-    gf->setFname("");		// reset file name on close
+    gf->SetFname("");		// reset file name on close
   GetImage();
 }
 
 void taiFileButton::Edit() {
   GetGetFile();
-  taMisc::EditFile(gf->fileName());
+  taMisc::EditFile(gf->FileName());
 }
 
 

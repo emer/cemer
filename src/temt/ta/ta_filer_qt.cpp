@@ -83,7 +83,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
     if (m_fname.empty()) {
       cout << "Please provide file name: ";
       cin >> tfname;
-      setFileName(tfname);
+      SetFileName(tfname);
     }
     return true;
   }
@@ -112,7 +112,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   // note: actual caption set later
 
   QStringList filter_list;
-  String filtext = filterText(true, &filter_list);
+  String filtext = FilterText(true, &filter_list);
 
   if(!fd) {
     fd = new QFileDialog(NULL, "", eff_dir, filtext);
@@ -129,7 +129,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   fd->setDirectory(eff_dir);
   fd->setFilters(filter_list);
 
-  if(compressEnabled() && (compressReq() || isCompressed()))
+  if(CompressEnabled() && (CompressReq() || IsCompressed()))
     fd->setDefaultSuffix(ext + taMisc::compress_sfx);
   else
     fd->setDefaultSuffix(ext);
@@ -172,8 +172,8 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   // todo: for some reason it is not using this arg if the file already exists!
   fd->selectFile(m_fname);
   // we always make and set the extension, but don't always show it
-  fde->cbCompress->setEnabled(compressEnabled());
-  fde->cbCompress->setChecked(compressEnabled() && (compressReq() || isCompressed()));
+  fde->cbCompress->setEnabled(CompressEnabled());
+  fde->cbCompress->setChecked(CompressEnabled() && (CompressReq() || IsCompressed()));
   //  fd->setOrientation(Qt::Vertical);
   fd->setViewMode(QFileDialog::Detail);
   fd->setHistory(hist_paths);
@@ -209,7 +209,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
     if (!file_exists && !compressed) {
       compressed = fde->cbCompress->isChecked();
     } 
-    setFileName(tfname);
+    SetFileName(tfname);
     //obs m_dir = fd->directory().absolutePath();
     result = true;
     }

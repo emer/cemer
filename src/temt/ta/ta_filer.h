@@ -64,6 +64,8 @@ public:
     COMPRESS_ENABLE		= 0x004, // enables use of compression/compressed files
     COMPRESS_REQ		= 0x008, // if compr enabled, requests it by default
     COMPRESS_REQ_DEF		= 0x100, // use taiMisc default for compression
+    TMP_SAVE_FILE		= 0x200, // save to a temporary file name if the save file exists
+    TMP_SAVE_FILE_USED		= 0x400, // a temporary save file was actually used on the last save -- Close function will rename
     
     DEF_FLAGS			= 0x007, // #NO_BIT default flags for no compression (compression is always enabled by default, just not requested)
     DEF_FLAGS_COMPRESS		= 0x107 // #NO_BIT default flags for compression w/ autocompress
@@ -87,28 +89,41 @@ public:
   bool		open_file;	// #READ_ONLY #NO_SAVE true if there is an open file somewhere
   bool		file_selected;	// #READ_ONLY #NO_SAVE true if a file was selected last time..
 
-  inline bool		compressEnabled() const {return (flags && COMPRESS_ENABLE);}
+  inline void		SetFilerFlag(FilerFlags flg)   { flags = (FilerFlags)(flags | flg); }
+  // set flag state on
+  inline void		ClearFilerFlag(FilerFlags flg) { flags = (FilerFlags)(flags & ~flg); }
+  // clear flag state (set off)
+  inline bool		HasFilerFlag(FilerFlags flg) const { return (flags & flg); }
+  // check if flag is set
+  inline void		SetFilerFlagState(FilerFlags flg, bool on)
+  { if(on) SetFilerFlag(flg); else ClearFilerFlag(flg); }
+  // set flag state according to on bool (if true, set flag, if false, clear it)
+
+  inline bool		CompressEnabled() const {return HasFilerFlag(COMPRESS_ENABLE);}
   // true if client enabled use of compression
-  inline bool		compressReq() const 
-    {return ((flags & (COMPRESS_REQ | COMPRESS_ENABLE)) == (COMPRESS_REQ | COMPRESS_ENABLE));}
+  inline bool		CompressReq() const 
+  { return HasFilerFlag(COMPRESS_REQ) && HasFilerFlag(COMPRESS_ENABLE);}
   // true if client requested compression AND it is enabled
-  bool			isOpen() const {return open_file;}
+  bool			IsOpen() const {return open_file;}
   // true if file is open
-  bool			isCompressed() const; 
+  bool			IsCompressed() const; 
   // if open, indicates actual compr status, else indicates .gz suffix on fname
 
-  const String		filterText(bool incl_allfiles = true, QStringList* list = NULL) const;
+  const String		FilterText(bool incl_allfiles = true, QStringList* list = NULL) const;
   // #IGNORE Qt-compatible filter text
   
-  String		fileName() const; // concats dir and fname
-  void			setFileName(const String& value); // parses out into dir and name, setting in us
+  String		FileName() const; // full file name: concats dir and fname
+  String		FileName_tmp() const; // full temporary file name: concats dir and tmp_fname
+  void			SetFileName(const String& value); // parses out into dir and name, setting in us
   inline String		dir() const {return m_dir;} // the directory path to the file
   inline String		fname() const {return m_fname;}	// the name (no path) of the file
-  void			setFname(const String& val) {m_fname = val;}
-  bool			renameFile(const String& new_fname, bool remove_existing = false);
+  void			SetFname(const String& val) {m_fname = val;}
+  bool			RenameFile(const String& new_fname, bool remove_existing = false);
   // rename current file name to given file -- uses QFile::rename (and remove before if currently exists and remove_existing = true) -- returns success in renaming (true = success)
-  bool			fileExists();
+  bool			FileExists();
   // check if the current file already exists -- true if yes, false if no
+  void			GetTmpFname();
+  // get a temporary file name into m_tmp_fname
 
   // the low-level api functions work directly on the fname
   virtual istream*	open_read();
@@ -122,23 +137,23 @@ public:
 
   virtual istream*	Open();
   // #MENU to open an existing file for reading; starts with curr filename if any
-  virtual ostream*	Save();
-  // #MENU to save to an existing file; requests a new filename if doesn't exist
-  virtual ostream*	SaveAs();
-  // #MENU to save to a new file
+  virtual ostream*	Save(bool tmp_fname_save = true);
+  // #MENU to save to an existing file; requests a new filename if doesn't exist  -- if tmp_fname_save is true, and chosen file name already exists, saves to a temporary file and is then renamed to target file on Close() -- provides safety in case of crashing
+  virtual ostream*	SaveAs(bool tmp_fname_save = true);
+  // #MENU to save to a new file -- if tmp_fname_save is true, and chosen file name already exists, saves to a temporary file and is then renamed to target file on Close() -- provides safety in case of crashing
   virtual ostream*	Append();
   // #MENU to open an existing file for appending
   virtual void		Close();
-  // #MENU close the stream
+  // #MENU close the stream (will also manage temporary file renaming if necessary)
 
   virtual bool		GetFileName(FileOperation filerOperation); // gui-dependent routine to get filename from user -- it is set in dir/fname; false if user cancels
   virtual void		FixFileName(); // make sure suffix is right
 
-
   virtual taFiler& operator=(const taFiler& cp); // copy operator used extensively in src/pdp files (copies very few props)
 protected:
   String	m_dir;		// the directory path to the file
-  String	m_fname;		// the name (no path) of the file
+  String	m_fname;	// the name (no path) of the file
+  String	m_tmp_fname;	// the name (no path) of the temporary file, if used
   FilerFlags 	flags;	
   fstream*	fstrm;		// #READ_ONLY the underlying file
   bool		compressed; // set when file has .gz suffix

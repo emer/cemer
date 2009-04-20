@@ -4087,7 +4087,7 @@ void iMainWindowViewer::fileOpen() {
   taRefN::Ref(flr);
 //TODO: context path  flr->setFileName(fname);
   if (flr->GetFileName(taFiler::foOpen)) {
-    String fname = flr->fileName();
+    String fname = flr->FileName();
     fileOpenFile(fname);
   }  
   taRefN::unRefDone(flr); 

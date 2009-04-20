@@ -1716,7 +1716,7 @@ bool T3DataViewFrame::SaveImageEPS(const String& fname) {
   SoVectorizePSAction * ps = new SoVectorizePSAction;
   SoVectorOutput * out = ps->getOutput();
 
-  if (!out->openFile(flr->fileName())) {
+  if (!out->openFile(flr->FileName())) {
     return false; // unable to open output file
   }
 
@@ -1781,7 +1781,7 @@ bool T3DataViewFrame::SaveImageIV(const String& fname) {
   flr->Close();
 
   SoOutput out;
-  if(!out.openFile(flr->fileName())) return false;
+  if(!out.openFile(flr->FileName())) return false;
   SoWriteAction wa(&out);
 
   wa.apply(root_view.node_so()); // just the data, not the whole camera

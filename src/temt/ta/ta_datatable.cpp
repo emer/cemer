@@ -2418,18 +2418,18 @@ void DataTable::AppendData(const String& fname, Delimiters delim, bool quote_str
 
 void DataTable::SaveDataLog(const String& fname, bool append, bool dmem_proc_0) {
   if(!log_file) return;		// shouldn't happen
-  if(log_file->isOpen())
+  if(log_file->IsOpen())
     log_file->Close();
 #ifdef DMEM_COMPILE
   if((taMisc::dmem_proc > 0) && dmem_proc_0) return; // don't open!
 #endif
-  log_file->setFileName(fname);
+  log_file->SetFileName(fname);
   if(fname.empty()) {
     if(append) 
       log_file->Append();
     else {
-      log_file->SaveAs();
-      if(log_file->isOpen())
+      log_file->SaveAs(false);	// no save to tmp
+      if(log_file->IsOpen())
 	SaveHeader_strm(*log_file->ostrm);
     }
   }
@@ -2438,7 +2438,7 @@ void DataTable::SaveDataLog(const String& fname, bool append, bool dmem_proc_0) 
       log_file->open_append();
     else {
       log_file->open_write();
-      if(log_file->isOpen())
+      if(log_file->IsOpen())
 	SaveHeader_strm(*log_file->ostrm);
     }
   }
@@ -2450,7 +2450,7 @@ void DataTable::CloseDataLog() {
 }
 
 bool DataTable::WriteDataLogRow() {
-  if(log_file && log_file->isOpen()) {
+  if(log_file && log_file->IsOpen()) {
     SaveDataRow_strm(*log_file->ostrm);
     return true;
   }

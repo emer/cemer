@@ -45,7 +45,6 @@
 #endif
 
 #include <QFileInfo>
-#include <QTemporaryFile>
 
 #ifdef TA_GUI
 static const char* folder_closed_xpm[]={
@@ -1032,17 +1031,17 @@ taFiler* taBase::GetLoadFiler(const String& fname, String exts,
   taRefN::Ref(flr);
    
   if(fname.nonempty()) {
-    flr->setFileName(fname);
+    flr->SetFileName(fname);
     flr->open_read();
   } else { 
     String tfname = GetFileName();
     if (tfname.empty())
       tfname = GetName();
-    flr->setFileName(tfname); // filer etc. does auto extension
+    flr->SetFileName(tfname); // filer etc. does auto extension
     flr->Open();
   }
   if(flr->istrm) {
-    SetFileName(flr->fileName());
+    SetFileName(flr->FileName());
   }
   return flr;
 }
@@ -1069,7 +1068,7 @@ int taBase::Load_cvt(taFiler*& flr) {
   DumpFileCvt* cvt = taMisc::file_converters[typ_id];
   taFiler* cvt_flr = taFiler::New(flr->filetype, flr->ext);
   taRefN::Ref(cvt_flr);
-  String cvt_fname = flr->fileName();
+  String cvt_fname = flr->FileName();
   QDir::setCurrent(taMisc::GetDirFmPath(cvt_fname));	
   String cvt_tag = "_v4precvt";
   if(!flr->ext.empty()) {
@@ -1084,7 +1083,7 @@ int taBase::Load_cvt(taFiler*& flr) {
     }
     cvt_fname += cvt_tag + "." + ex;
   }
-  cvt_flr->setFileName(cvt_fname);
+  cvt_flr->SetFileName(cvt_fname);
   cvt_flr->open_write();
   taMisc::replace_strings(*flr->istrm, *cvt_flr->ostrm, cvt->repl_strs);
   flr->Close();
@@ -1112,7 +1111,7 @@ int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
       if (loaded_obj_ptr)
 	*loaded_obj_ptr = lobj;
       if(rval && lobj) {
-	lobj->SetFileName(flr->fileName());
+	lobj->SetFileName(flr->FileName());
 	if(taMisc::gui_active) {
 	  if (lobj == this) { 
 	    tabMisc::DelayedFunCall_gui(lobj, "RebuildAllViews");
@@ -1148,18 +1147,18 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
   taRefN::Ref(flr);
    
   if (fname.nonempty()) {
-    flr->setFileName(fname);
+    flr->SetFileName(fname);
     flr->Save();
   } else { 
     String tfname = GetFileName();
     if (tfname.empty())
       tfname = GetName();
-    flr->setFileName(tfname); // filer etc. does auto extension
+    flr->SetFileName(tfname); // filer etc. does auto extension
     flr->SaveAs();
   }
   
   if (flr->ostrm) {
-    SetFileName(flr->fileName());
+    SetFileName(flr->FileName());
     // don't notify! very dangerous in middle of save, and also marks Dirty
    // DataChanged(DCR_ITEM_UPDATED);
   }
@@ -1173,18 +1172,18 @@ taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int comp
   taRefN::Ref(flr);
    
   if (fname.nonempty()) {
-    flr->setFileName(fname);
+    flr->SetFileName(fname);
     flr->open_append();
   } else { 
     String tfname = GetFileName();
     if (tfname.empty())
       tfname = GetName();
-    flr->setFileName(tfname); // filer etc. does auto extension
+    flr->SetFileName(tfname); // filer etc. does auto extension
     flr->Append();
   }
   
   if(flr->ostrm) {
-    SetFileName(flr->fileName());
+    SetFileName(flr->FileName());
   }
   return flr;
 }
@@ -1196,16 +1195,6 @@ int taBase::Save() {
 
 int taBase::SaveAs(const String& fname) {
   int rval = false;
-  // none of the solns I can come up with work very well -- need to have the tmp file thing
-  // baked into the taFiler b/c the compression etc all depend on it.  will add a flag somewhere.
-  // meanwhile, when is the last time anything crashed during save!?  never!  so, just going
-  // back to the orig code at this point.
-
-//   QTemporaryFile tmpfile;
-//   tmpfile.open();
-//   String tmpfnm = tmpfile.fileName();
-//   tmpfile.close();
-  
   taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString);
   if (flr->ostrm) {
     Save_strm(*(flr->ostrm));

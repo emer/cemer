@@ -169,7 +169,7 @@ void ScriptBase::LoadScript(const String& file_nm) {
 
 void ScriptBase::LoadScriptString(const String& string) {
   script_string = string;
-  script_file->setFname("");
+  script_file->SetFname("");
   script_filename = "";
   script_compiled = false;
   
@@ -177,13 +177,13 @@ void ScriptBase::LoadScriptString(const String& string) {
 }
 
 const String ScriptBase::scriptFilename() {
-  return script_file->fileName();
+  return script_file->FileName();
 }
 
 AbstractScriptBase::ScriptSource ScriptBase::scriptSource() {
   if (!script_string.empty()) 
     return ScriptString;
-  else  if (!script_file->fileName().empty())
+  else  if (!script_file->FileName().empty())
     return ScriptFile;
   else return NoScript;
 }
@@ -191,7 +191,7 @@ AbstractScriptBase::ScriptSource ScriptBase::scriptSource() {
 void ScriptBase::SetScript(const String& file_nm) {
   script_filename = file_nm;
   script_file->select_only = true;	// just selecting a file name here
-  script_file->setFileName(file_nm);
+  script_file->SetFileName(file_nm);
   script_string = _nilString; // either/or
   script_compiled = false;
 }
@@ -199,10 +199,10 @@ void ScriptBase::SetScript(const String& file_nm) {
 void ScriptBase::UpdateScriptFile() {
   if(taMisc::is_loading) {
     if(script_filename.nonempty())
-      script_file->setFileName(script_filename);
+      script_file->SetFileName(script_filename);
     script_compiled = false;
   }
   else {
-    script_filename = script_file->fileName();
+    script_filename = script_file->FileName();
   }
 }

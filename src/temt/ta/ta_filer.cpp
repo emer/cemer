@@ -334,6 +334,7 @@ taFiler& taFiler::operator=(const taFiler& cp) {
   ext = cp.ext;
   m_dir = cp.m_dir;
   m_fname = cp.m_fname;
+  m_tmp_fname = cp.m_fname;
   flags = cp.flags;
   select_only = cp.select_only;
   file_selected = cp.file_selected;
@@ -343,11 +344,13 @@ taFiler& taFiler::operator=(const taFiler& cp) {
 void taFiler::Close() {
   compressed = false;
   file_exists = false; // exists now, but could be deleted etc.
+  bool was_ostrm = false;
   if (fstrm) {
     fstrm->close();
     delete fstrm;
     fstrm = NULL;
     istrm = NULL;		// these are ptrs to fstrm
+    if(ostrm) was_ostrm = true;
     ostrm = NULL;
   }
   if (istrm) {
@@ -355,32 +358,52 @@ void taFiler::Close() {
     istrm = NULL;
   }
   if (ostrm) {
+    was_ostrm = true;
     delete ostrm;
     ostrm = NULL;
   }
   open_file = false;
   file_selected = true;		// closing a file is as good as opening one
+  if(was_ostrm && HasFilerFlag(TMP_SAVE_FILE) && HasFilerFlag(TMP_SAVE_FILE_USED)
+     && m_tmp_fname.nonempty()) {
+    String cur_fnm = FileName();
+    String tmp_fnm = FileName_tmp();
+    if(FileExists()) {
+      QFile::remove(cur_fnm.chars());
+    }
+    QFile::rename(tmp_fnm.chars(), cur_fnm.chars());
+  }
 }
 
-String taFiler::fileName() const {
+String taFiler::FileName() const {
   if (m_dir.empty()) 
     return m_fname;
   else return m_dir + "/" + m_fname;
 }
 
-bool taFiler::renameFile(const String& new_fname, bool remove_existing) {
-  String cur_fnm = fileName();
-  if(remove_existing && fileExists()) {
-    if(!QFile::remove(cur_fnm.chars())) return false;
+String taFiler::FileName_tmp() const {
+  if (m_dir.empty()) 
+    return m_tmp_fname;
+  else return m_dir + "/" + m_tmp_fname;
+}
+
+bool taFiler::RenameFile(const String& new_fname, bool remove_existing) {
+  String cur_fnm = FileName();
+  if(remove_existing && QFile::exists(new_fname)) {
+    if(!QFile::remove(new_fname.chars())) return false;
   }
   return QFile::rename(cur_fnm.chars(), new_fname.chars());
 }
 
-bool taFiler::fileExists() {
-  return QFile::exists(fileName().chars());
+bool taFiler::FileExists() {
+  return QFile::exists(FileName().chars());
 }
 
-const String taFiler::filterText(bool incl_allfiles, QStringList* list) const {
+void taFiler::GetTmpFname() {
+  m_tmp_fname = "savetmp_" + m_fname;
+}
+
+const String taFiler::FilterText(bool incl_allfiles, QStringList* list) const {
   STRING_BUF(rval, 80);
   String_PArray sa_ft;
   String_PArray sa_ex;
@@ -395,7 +418,7 @@ const String taFiler::filterText(bool incl_allfiles, QStringList* list) const {
     String itm = tft.cat(" files (");
     //note: ok if ext empty
     itm.cat("*").cat(tex);
-    if (compressEnabled()) {
+    if (CompressEnabled()) {
       itm.cat(" *").cat(tex).cat(taMisc::compress_sfx);
     }
     itm.cat(")");
@@ -464,43 +487,36 @@ void taFiler::GetDir() {
   }
 }*/
 
-bool taFiler::isCompressed() const {
-  if (isOpen()) return compressed;
+bool taFiler::IsCompressed() const {
+  if (IsOpen()) return compressed;
   else return m_fname.endsWith(taMisc::compress_sfx);
 } 
 
 istream* taFiler::open_read() {
   Close();
-/*  int acc = access(fileName(), R_OK);
-  if((acc != 0) && !select_only) {
-    taMisc::Error("File:", fileName(), "could not be opened for reading");
-    return NULL;
-  }
-  if ((acc != 0) && select_only)	// fix the file name for new files..
-    FixFileName(); */
   // note: it is the filename that determines compress, not the flag
   if (m_fname.endsWith(taMisc::compress_sfx)) {
     compressed = true;
-    istrm = new igzstream(fileName().chars(), ios::in);
+    istrm = new igzstream(FileName().chars(), ios::in);
   } else {
-    fstrm = new fstream(fileName().chars(), ios::in);
+    fstrm = new fstream(FileName().chars(), ios::in);
     istrm = (istream*)fstrm;
   }
   // note: check "good" rather than "bad" because good is proactive, bad is only reactive
   if (!istrm->good()) {
-    taMisc::Error("File:",fileName(),"could not be opened for reading");
+    taMisc::Error("File:",FileName(),"could not be opened for reading");
     Close();
     return NULL;
   }
   open_file = true;
   if (!no_save_last_fname)
-    last_fname = fileName();
+    last_fname = FileName();
   return istrm;
 }
 
 bool taFiler::open_write_exist_check() {
   Close();
-  int acc = access(fileName(), F_OK);
+  int acc = access(FileName(), F_OK);
   if (acc == 0)
     return true;
   return false;
@@ -508,59 +524,56 @@ bool taFiler::open_write_exist_check() {
 
 ostream* taFiler::open_write() {
   Close();
-/*nuke:flaky,not really needed  int acc = access(fileName(), W_OK);
-  //note: result s/b 0, otherwise no access; don't check errno!
-  if (acc != 0) {
-    perror("open_write: ");
-    taMisc::Error("File:", fileName(), "could not be opened for writing -- check that you have permission to write to that location");
-    return NULL;
-  } */
   bool hasfx = m_fname.endsWith(taMisc::compress_sfx);
+  String use_fnm = FileName();
+  if(HasFilerFlag(TMP_SAVE_FILE) && FileExists()) {
+    SetFilerFlag(TMP_SAVE_FILE_USED);
+    GetTmpFname();
+    use_fnm = FileName_tmp();
+  }
+  else {
+    ClearFilerFlag(TMP_SAVE_FILE_USED);
+    m_tmp_fname = "";		// clear this too for good measure
+  }
   if (hasfx) {
     compressed = true;
-    ostrm = new ogzstream(fileName().chars(), ios::out);
+    ostrm = new ogzstream(use_fnm, ios::out);
   } else {
-    fstrm = new fstream(fileName().chars(), ios::out);
+    fstrm = new fstream(use_fnm, ios::out);
     ostrm = (ostream*)fstrm;
   }
   // note: check "good" rather than "bad" because good is proactive, bad is only reactive
   if (!ostrm->good()) {
-    taMisc::Error("File",fileName(),"could not be opened for writing -- check that you have permission to write to that location");
+    taMisc::Error("File",use_fnm,"could not be opened for writing -- check that you have permission to write to that location");
     Close();
     return NULL;
   }
   // success, so save/cache stuff
   open_file = true;
   if (!no_save_last_fname)
-    last_fname = fileName();
+    last_fname = FileName();
   return ostrm;
 }
 
 ostream* taFiler::open_append() {
   Close();
-/*nuke  int acc = access(fileName(), W_OK);
-  if (acc != 0) {
-    perror("open_append: ");
-    taMisc::Error("File:", fileName(), "could not be opened for appending -- check that you have permission to write to that location");
-    return NULL;
-  }*/
   bool hasfx = (m_fname.endsWith(taMisc::compress_sfx));
   if (hasfx) {
     compressed = true;
-    ostrm = new ogzstream(fileName().chars(), ios::out | ios::app);
+    ostrm = new ogzstream(FileName().chars(), ios::out | ios::app);
   } else {
-    fstrm = new fstream(fileName().chars(), ios::out | ios::app);
+    fstrm = new fstream(FileName().chars(), ios::out | ios::app);
     ostrm = (ostream*)fstrm;
   }
   // note: check "good" rather than "bad" because good is proactive, bad is only reactive
   if (!ostrm->good()) {
-    taMisc::Error("File",fileName(),"could not be opened for appending -- check that you have permission to write to that location");
+    taMisc::Error("File",FileName(),"could not be opened for appending -- check that you have permission to write to that location");
     Close();
     return NULL;
   }
   open_file = true;
   if (!no_save_last_fname)
-    last_fname = fileName();
+    last_fname = FileName();
   return ostrm;
 }
 
@@ -582,18 +595,19 @@ istream* taFiler::Open() {
   return rstrm;
 }
 
-ostream* taFiler::Save() {
+ostream* taFiler::Save(bool tmp_fname_save) {
   if (m_fname.empty())
-    return SaveAs();
-
+    return SaveAs(tmp_fname_save);
+  SetFilerFlagState(TMP_SAVE_FILE, tmp_fname_save);
   if (!open_write()) {
-    return SaveAs();
+    return SaveAs(tmp_fname_save);
   }
   return ostrm;
 }
 
-ostream* taFiler::SaveAs() {
+ostream* taFiler::SaveAs(bool tmp_fname_save) {
   // do a first preliminary fix, which will, ex., add the default extension
+  SetFilerFlagState(TMP_SAVE_FILE, tmp_fname_save);
   FixFileName();
   bool wasFileChosen = GetFileName(foSaveAs);
 
@@ -629,7 +643,7 @@ ostream* taFiler::Append() {
   return rstrm;
 }
 
-void taFiler::setFileName(const String& value) {
+void taFiler::SetFileName(const String& value) {
   QFileInfo fi(value);
   m_fname = fi.fileName();
   String tdir = fi.path();

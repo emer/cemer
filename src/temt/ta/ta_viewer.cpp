@@ -204,8 +204,8 @@ bool DataViewer::SaveImageAs(const String& fname, ImageFormat img_fmt) {
       if (img_fmt == PNG) {
         quality = 0;
       }
-      pix.save(flr->fileName(), ext, quality);
-      cerr << "Saving image of size: " << pix.width() << " x " << pix.height() << " depth: " << pix.depth() << " to: " << flr->fileName() << endl;
+      pix.save(flr->FileName(), ext, quality);
+      cerr << "Saving image of size: " << pix.width() << " x " << pix.height() << " depth: " << pix.depth() << " to: " << flr->FileName() << endl;
     }
   }
   flr->Close();

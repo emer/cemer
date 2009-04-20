@@ -958,8 +958,8 @@ void taProject::SaveRecoverFile() {
     // note: don't try printing until *after* saving the file
     String old_fnm(fnm);
     fnm = taMisc::user_dir + PATH_SEP + taMisc::GetFileFmPath(old_fnm);
-    flr->setFileName(fnm);
-    flr->Save();
+    flr->SetFileName(fnm);
+    flr->Save(false);
     if(flr->ostrm) {
       SaveRecoverFile_strm(*flr->ostrm);
 #ifdef DEBUG // NOTE: really only works on Linux, and is so marginal...
