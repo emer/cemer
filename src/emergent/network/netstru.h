@@ -2359,7 +2359,6 @@ public:
   // #CAT_DMem distribute units to different nodes
 #endif
 
-  override void	Dump_Load_pre();
   override int	Dump_Load_Value(istream& strm, taBase* par=NULL);
   override int 	Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
 

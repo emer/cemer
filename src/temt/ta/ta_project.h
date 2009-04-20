@@ -333,7 +333,6 @@ public:
   virtual int		SaveAsNoteChanges(const String& fname = ""); 
   // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user, but first prompts for a text note of changes that have been made, which are registered in the ChangeLog document within the project prior to saving
 
-  override void		Dump_Load_pre();
   override void		PostLoadAutos();
   // perform post-loading automatic functions
   void			OpenViewers(); // open any yet unopen viewers

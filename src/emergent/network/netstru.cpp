@@ -5432,17 +5432,6 @@ bool Network::ChangeMyType(TypeDef* new_typ) {
   return inherited::ChangeMyType(new_typ);
 }
 
-void Network::Dump_Load_pre() {
-  inherited::Dump_Load_pre();
-  if(taMisc::is_undo_loading) return; // none of this.
-  // todo: no longer necessary!?
-//   SetBaseFlag(DESTROYING);	// needed to prevent specs from going crazy rebuilding
-//   layers.Reset();
-//   specs.Reset();
-//   view_objs.Reset();
-//   ClearBaseFlag(DESTROYING);
-}
-
 int Network::Dump_Load_Value(istream& strm, taBase* par) {
   int rval = inherited::Dump_Load_Value(strm, par);
   if(rval)

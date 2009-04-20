@@ -137,7 +137,6 @@ public:
   virtual void	AutoBuildNets();
   // build networks according to their own individual auto_bulid modes
   
-  override void Dump_Load_pre();
   override void	Dump_Load_post();
 
   void	UpdateAfterEdit();

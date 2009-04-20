@@ -844,32 +844,6 @@ bool taProject::SetFileName(const String& val) {
   return true;
 }
 
-void taProject::Dump_Load_pre() {
-  inherited::Dump_Load_pre();
-  if(taMisc::is_undo_loading) return; // none of this.
-  // reset everything
-  // todo: this was previously necessary for Loading over an existing project
-  // not sure it is such a good idea now -- will comment out but revisit..
-//   viewers.Reset(); 
-//   programs.Reset();
-//   data_proc.Reset();
-//   data.Reset();
-//   edits.Reset();
-//   wizards.Reset();
-//   docs.Reset();
-//   templates.Reset();
-}
-
-/*int taProject::SaveAs(const String& fname) {
-//hack, to save root if file changed (so we don't save it during save)
-  String old_fname = GetFileName();
-  int rval = inherited::SaveAs(fname);
-  if (rval && (old_fname != GetFileName() && taMisc::gui) {
-    taRoot::Save();
-  }
-  return rval;
-}*/
-
 int taProject::Save() { 
   String fname = GetFileName(); // empty if 1st or not supported
   if(fname.contains("_recover")) {
