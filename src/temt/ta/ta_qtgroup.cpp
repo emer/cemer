@@ -143,7 +143,7 @@ void gpiLinkEditButton::GetMethMenus() {
     if((md->name == "DuplicateEl") || (md->name == "Transfer"))
       continue;
     lst_men_nm = men_nm;
-    taiMethodData* mth_rep = md->im->GetMethodRep(cur_base, host, this, gui_parent);
+    taiMethodData* mth_rep = md->im->GetMenuMethodRep(cur_base, host, this, gui_parent);
     if(mth_rep == NULL)
       continue;
     meth_el.Add(mth_rep);
@@ -176,8 +176,7 @@ void gpiListLinkEditButton::GetMethMenus() {
     if ((md->name == "DuplicateEl") || (md->name == "Transfer"))
       continue;
     lst_men_nm = men_nm;
-//    taiMethodData* mth_rep = md->im->GetMethodRep(typ, cur_base, dialog, mgui_parent);
-    taiMethodData* mth_rep = md->im->GetMethodRep(cur_base, host, this, gui_parent);
+    taiMethodData* mth_rep = md->im->GetMenuMethodRep(cur_base, host, this, gui_parent);
     if(mth_rep == NULL)
       continue;
     meth_el.Add(mth_rep);

@@ -118,19 +118,21 @@ void iSelectEditDataHostBase::Constr_Methods_impl() {
       MethodDef* md = item->mth;
       taBase* base = item->base;
       if (!md || (md->im == NULL) || (base == NULL)) continue;
-      taiMethodData* mth_rep = md->im->GetMethodRep(base, this, NULL, frmMethButtons);
-      if (mth_rep == NULL) continue;
-      meth_el.Add(mth_rep);
+      taiMethod* im = md->im;
+      if (im == NULL) continue;
   
       //NOTE: for seledit functions, we never place them on the last menu or button, because that may
       // make no sense -- the label specifies the place, or Actions if no label
       String mth_cap = item->caption();
       String statustip = item->desc;
+      taiMethodData* mth_rep = NULL;
       switch (group_type) {
       case EditMthItem_Group::GT_BUTTONS:  {
+        mth_rep = im->GetButtonMethodRep(base, this, NULL, frmMethButtons);
         AddMethButton(mth_rep, mth_cap);
       } break;
       case EditMthItem_Group::GT_MENU: {
+        mth_rep = im->GetMenuMethodRep(base, this, NULL, NULL/*frmMethButtons*/);
 //        mth_rep->AddToMenu(cur_menu);
         taiAction* act = cur_menu->AddItem(mth_cap, taiMenu::use_default,
               taiAction::action, mth_rep, SLOT(CallFun()) );
@@ -138,6 +140,7 @@ void iSelectEditDataHostBase::Constr_Methods_impl() {
           act->setStatusTip(statustip);
       } break;
       case EditMthItem_Group::GT_MENU_BUTTON: { 
+        mth_rep = im->GetMenuMethodRep(base, this, NULL, NULL/*frmMethButtons*/);
 //        mth_rep->AddToMenu(cur_menu_but);
         taiAction* act = cur_menu_but->AddItem(mth_cap, taiMenu::use_default,
               taiAction::action, mth_rep, SLOT(CallFun()) );
@@ -145,6 +148,8 @@ void iSelectEditDataHostBase::Constr_Methods_impl() {
           act->setStatusTip(statustip);
       } break;
       } // switch group_type
+      if (mth_rep)
+        meth_el.Add(mth_rep);
     }
   } // groups
 }

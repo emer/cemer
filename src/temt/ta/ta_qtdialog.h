@@ -192,7 +192,7 @@ protected:
   override void		UpdatePanel_impl(); // the refresh guy!
   override void		Render_impl();
   override void		ResolveChanges_impl(CancelOp& cancel_op);
-};
+};//
 
 
 class TA_API iMethodButtonMgr: public QObject, virtual public IDataLinkClient
@@ -237,7 +237,7 @@ protected:
 
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*		This() {return this;} // override
-  TypeDef* 	GetTypeDef() const {return &TA_QWidget;/*&TA_iMethodButtonMgr;*/} // override
+  TypeDef* 	GetTypeDef() const {return &TA_QWidget;} // override
 public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
   void		DataLinkDestroying(taDataLink* dl); 
   void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);

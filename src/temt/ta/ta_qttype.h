@@ -588,8 +588,9 @@ private:
 // 	taiMethod	//
 //////////////////////////
 
-// the default method bids 0, so it doesn't get created, and is more of a virtual
-// type
+// the default method handles requests for Menu or Button instances
+// the client needs to check the MethodDef directives to decide if
+// the type is supposed to have buttons and/or menus in a given context
 
 class TA_API taiMethod : public taiType {
 public:
@@ -603,7 +604,10 @@ public:
   virtual int	BidForMethod(MethodDef*, TypeDef*) 	{ return 0; }
   // bid for (appropriateness) for given type of method (default is not at all approp.)
 
-  taiMethodData*	GetMethodRep(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_);
+
+  taiMethodData*	GetGenericMethodRep(void* base, taiData* par); // this is just for CallFun
+  taiMethodData*	GetButtonMethodRep(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_);
+  taiMethodData*	GetMenuMethodRep(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_); // covers MENU and MENU_BUTTON types
   override void		GetImage(taiData*, void*)	{ }
   override void		GetValue(taiData*, void*)	{ }
 
@@ -617,8 +621,10 @@ public:
   	{ return new taiMethod(md,td);}
   TypeDef*	GetTypeDef() const {return &TA_taiMethod;}
 protected:
-  virtual taiMethodData* GetMethodRep_impl(void* base, IDataHost* host_, taiData* par,
-      QWidget* gui_parent_, int flags_) {return NULL;}
+  virtual taiMethodData* GetButtonMethodRep_impl(void* base, IDataHost* host_,
+    taiData* par, QWidget* gui_parent_, int flags_) {return NULL;}
+  virtual taiMethodData* GetMenuMethodRep_impl(void* base, IDataHost* host_,
+    taiData* par, QWidget* gui_parent_, int flags_) {return NULL;}
 };
 
 #define TAQT_METHOD_INSTANCE(x,y) x(MethodDef* md,TypeDef*td)		\
@@ -630,38 +636,20 @@ taiMethod* 	MethInst(MethodDef* md,TypeDef*td) 			\
 TypeDef*	GetTypeDef() const {return &TA_ ## x;}
 
 
-
 //////////////////////////////
-//       taiMethods        //
+//  taiActuatorMethod       //
 //////////////////////////////
 
-class TA_API taiButtonMethod : public taiMethod {
+class TA_API taiActuatorMethod : public taiMethod {
+INHERITED(taiMethod)
 public:
   int			BidForMethod(MethodDef* md, TypeDef* td);
 
-  TAQT_METHOD_INSTANCE(taiButtonMethod, taiMethod);
+  TAQT_METHOD_INSTANCE(taiActuatorMethod, taiMethod);
 protected:
-  taiMethodData*	GetMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  taiMethodData*	GetButtonMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  taiMethodData*	GetMenuMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
-
-class TA_API taiMenuMethod : public taiMethod {
-  // covers MENU and MENU_BUTTON types
-public:
-  int 			BidForMethod(MethodDef* md, TypeDef* td);
-
-  TAQT_METHOD_INSTANCE(taiMenuMethod, taiMethod);
-protected:
-  taiMethodData*	GetMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-};
-
-/*class TA_API taiMenuButtonMethod : public taiMethod {
-public:
-  int			BidForMethod(MethodDef* md, TypeDef* td);
-
-  TAQT_METHOD_INSTANCE(taiMenuButtonMethod, taiMethod);
-protected:
-  taiMethodData*	GetMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-}; */
 
 
 //////////////////////////

@@ -822,7 +822,7 @@ void tabDataLink::FillContextMenu_impl(taiActions* menu) {
     if (!(md->HasOption("MENU_CONTEXT"))) continue;
     if (!md->ShowMethod()) continue;
     if (md->im == NULL)  continue;
-    taiMethodData* mth_rep = md->im->GetMethodRep(data(), NULL, NULL, NULL);
+    taiMethodData* mth_rep = md->im->GetMenuMethodRep(data(), NULL, NULL, NULL);
     if (mth_rep == NULL)  continue;
     if (cnt == 0) menu->AddSep();
     mth_rep->AddToMenu(menu); 
@@ -846,10 +846,12 @@ void tabDataLink::FillContextMenu_impl(taiActions* menu) {
         continue;
     if (!md->ShowMethod()) continue;
     if (md->im == NULL)  continue;
-    taiMethodData* mth_rep = md->im->GetMethodRep(data(), NULL, NULL, NULL);
+    //note: we request the Menu guy because we put it in menu even if BUTTON
+    taiMethodData* mth_rep = md->im->GetMenuMethodRep(data(), NULL, NULL, NULL);
     if (mth_rep == NULL)  continue;
     if (cnt == 0) menu->AddSep();
 
+    //note: both are allowed, but we give priority to BUTTON
     if (md->HasOption("BUTTON")) {
       mth_rep->AddToMenu(menu); 
     } else { // has to be "MENU_BUTTON"
@@ -881,7 +883,7 @@ void tabDataLink::FillContextMenu_impl(taiActions* menu) {
     // standard test
     if (!md->ShowMethod()) continue;
     if (md->im == NULL)  continue;
-    taiMethodData* mth_rep = md->im->GetMethodRep(data(), NULL, NULL, NULL);
+    taiMethodData* mth_rep = md->im->GetMenuMethodRep(data(), NULL, NULL, NULL);
     if (mth_rep == NULL)  continue;
     if (cnt == 0) menu->AddSep();
     // create the submenus when needed, and locate -- default is last created one

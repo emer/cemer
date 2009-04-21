@@ -3859,7 +3859,7 @@ void MethodDef::CallFun(void* base) const {
   taiMethodData* mth_rep = NULL;
   if (taMisc::gui_active && (im != NULL)) {
     //TODO: following may not work, because it doesn't have enough context to pass to the routine
-    mth_rep = im->GetMethodRep(base, NULL, NULL, NULL);
+    mth_rep = im->GetGenericMethodRep(base, NULL);
   }
   if(mth_rep != NULL) {
     ++taMisc::in_gui_call;

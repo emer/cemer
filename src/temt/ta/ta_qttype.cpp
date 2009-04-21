@@ -2115,42 +2115,45 @@ void taiMethod::AddMethod(MethodDef* md) {
   *ptr_to_im = this;
 }
 
-taiMethodData* taiMethod::GetMethodRep(void* base, IDataHost* host_, taiData* par, 
+taiMethodData* taiMethod::GetButtonMethodRep(void* base, IDataHost* host_, taiData* par, 
   QWidget* gui_parent_) 
 {
-  taiMethodData* rval = GetMethodRep_impl(base, host_, par, gui_parent_, 0); //TODO: may need to do more with the flags
+  taiMethodData* rval = GetButtonMethodRep_impl(base, host_, par, gui_parent_, 0); 
+  rval->SetBase((taBase*)base); // pray!
+  return rval;
+}
+
+taiMethodData* taiMethod::GetGenericMethodRep(void* base, taiData* par) {
+  taiMethodData* rval = new taiMethodData(base, NULL, NULL, NULL, par, NULL, 0);
+  return rval;
+}
+
+taiMethodData* taiMethod::GetMenuMethodRep(void* base, IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_) 
+{
+  taiMethodData* rval = GetMenuMethodRep_impl(base, host_, par, gui_parent_, 0); 
   rval->SetBase((taBase*)base); // pray!
   return rval;
 }
 
 
 /////////////////////////////
-//   taiButtonMethod     //
+//   taiActuatorMethod     //
 /////////////////////////////
 
-int taiButtonMethod::BidForMethod(MethodDef* md, TypeDef* td) {
-  if(md->HasOption("BUTTON"))
-    return (taiMethod::BidForMethod(md,td) + 1);
+int taiActuatorMethod::BidForMethod(MethodDef* md, TypeDef* td) {
+  if (md->HasOption("BUTTON") || (md->HasOption("MENU")) ||
+    (md->HasOption("MENU_BUTTON")))
+    return (inherited::BidForMethod(md,td) + 1);
   return 0;
 }
 
-taiMethodData* taiButtonMethod::GetMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiMethodData* taiActuatorMethod::GetButtonMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
   taiMethButton* rval = new taiMethButton(base, meth, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
-
-/////////////////////////////
-//     taiMenuMethod     //
-/////////////////////////////
-
-int taiMenuMethod::BidForMethod(MethodDef* md, TypeDef* td) {
-  if ((md->HasOption("MENU")) || (md->HasOption("MENU_BUTTON")))
-    return (taiMethod::BidForMethod(md,td) + 1);
-  return 0;
-}
-
-taiMethodData* taiMenuMethod::GetMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiMethodData* taiActuatorMethod::GetMenuMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
   taiMethMenu* rval = new taiMethMenu(base, meth, typ, host_, par, gui_parent_, flags_);
   return rval;
 }

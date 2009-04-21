@@ -1626,7 +1626,7 @@ class cssClass;			// #IGNORE
 class cssiArgDialog;		// #IGNORE
 
 class TA_API taiMethodData : public taiData {
-  // all representations of member functions must inherit from this one
+  // all representations of member functions must inherit from this one -- note, the CallFun calls can make an inst of this guy
   Q_OBJECT
 public:
   void*		base;		// base is of parent type

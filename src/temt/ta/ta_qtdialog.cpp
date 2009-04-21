@@ -558,11 +558,29 @@ void iMethodButtonMgr::Constr_Methods_impl() {
     if ((md->im == NULL) || (md->name == "Edit")) // don't put edit on edit dialogs..
       continue;
     if (!md->ShowMethod()) continue;
-    taiMethodData* mth_rep = md->im->GetMethodRep(base, host, NULL, widg); //buttons are in the frame
-    if (mth_rep == NULL)
+    taiMethod* im = md->im;
+    if (im == NULL)
       continue;
 
-    meth_el.Add(mth_rep);
+    taiMethodData* mth_rep = NULL;
+/*    if (md->HasOption("MENU_BUTTON")) {
+      SetCurMenuButton(md);
+      mth_rep = im->GetMenuMethodRep(base, host, NULL, NULL);
+      mth_rep->AddToMenu(cur_menu_but);
+      meth_el.Add(mth_rep);
+    }
+    if (md->HasOption("MENU")) {
+      SetCurMenu(md);
+      mth_rep = im->GetMenuMethodRep(base, host, NULL, NULL);
+      mth_rep->AddToMenu(cur_menu);
+      meth_el.Add(mth_rep);
+    }*/
+    if (md->HasOption("BUTTON")) {
+      mth_rep = im->GetButtonMethodRep(base, host, NULL, widg);
+      AddMethButton(mth_rep);
+      meth_el.Add(mth_rep);
+    }
+/*obs    meth_el.Add(mth_rep);
     // add to menu if a menu item
     if (mth_rep->is_menu_item) {
       // we only do the menu buttons
@@ -572,7 +590,7 @@ void iMethodButtonMgr::Constr_Methods_impl() {
       } 
     } else {
       AddMethButton(mth_rep);
-    }
+    }*/
   }
 }
 
@@ -2044,12 +2062,30 @@ void taiEditDataHost::Constr_Methods_impl() {
     if ((md->im == NULL) || (md->name == "Edit")) // don't put edit on edit dialogs..
       continue;
     if (!md->ShowMethod()) continue;
-    taiMethodData* mth_rep = md->im->GetMethodRep(root, this, NULL, frmMethButtons); //buttons are in the frame
-    if (mth_rep == NULL)
+    taiMethod* im = md->im;
+//    taiMethodData* mth_rep = md->im->GetMethodRep(root, this, NULL, frmMethButtons); //buttons are in the frame
+    if (im == NULL)
       continue;
 
-    meth_el.Add(mth_rep);
-    // add to menu if a menu item
+    taiMethodData* mth_rep = NULL;
+    if (md->HasOption("MENU_BUTTON")) {
+      SetCurMenuButton(md);
+      mth_rep = im->GetMenuMethodRep(root, this, NULL, NULL/*frmMethButtons*/);
+      mth_rep->AddToMenu(cur_menu_but);
+      meth_el.Add(mth_rep);
+    }
+    if (md->HasOption("MENU")) {
+      SetCurMenu(md);
+      mth_rep = im->GetMenuMethodRep(root, this, NULL, NULL/*frmMethButtons*/);
+      mth_rep->AddToMenu(cur_menu);
+      meth_el.Add(mth_rep);
+    }
+    if (md->HasOption("BUTTON")) {
+      mth_rep = im->GetButtonMethodRep(root, this, NULL, frmMethButtons);
+      AddMethButton(mth_rep);
+      meth_el.Add(mth_rep);
+    }
+/*obs    // add to menu if a menu item
     if (mth_rep->is_menu_item) {
       if(md->HasOption("MENU_BUTTON")) {
       	SetCurMenuButton(md);
@@ -2060,7 +2096,7 @@ void taiEditDataHost::Constr_Methods_impl() {
       }
     } else {
       AddMethButton(mth_rep);
-    }
+    }*/
   }
 }
 
