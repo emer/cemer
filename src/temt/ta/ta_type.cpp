@@ -1583,6 +1583,14 @@ int taMisc::GetUniqueFileNumber(int st_no, const String& prefix, const String& s
   return i;
 }
 
+String taMisc::FileDiff(const String& fname_a, const String& fname_b,
+			bool trimSpace, bool ignoreSpace, bool ignoreCase) {
+  String str_a, str_b;
+  taStringDiff diff;
+  diff.DiffFiles(fname_a, fname_b, str_a, str_b, trimSpace, ignoreSpace, ignoreCase);
+  return diff.GetDiffStr(str_a, str_b);
+}
+
 /////////////////////////////////////////////////
 //	Recording GUI actions to css script
 

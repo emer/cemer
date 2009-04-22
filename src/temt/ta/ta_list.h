@@ -1174,7 +1174,7 @@ public:
 
   String      GetLine(const String& str, int st_ln, int ed_ln=-1)
   { int st = line_st[st_ln];  if(ed_ln < 0) ed_ln = st_ln;
-    int ed; if(ed_ln == line_st.size-1) ed = str.length(); else ed = line_st[ed_ln+1]-1;
+    int ed; if(ed_ln == line_st.size-1) ed = str.length()-1; else ed = line_st[ed_ln+1]-1;
     return str.at(st, ed-st);
   }
 
@@ -1193,7 +1193,7 @@ public:
 
   String      GetLine(const String& str, int st_ln, int ed_ln=-1)
   { int st = line_st[st_ln];  if(ed_ln < 0) ed_ln = st_ln;
-    int ed; if(ed_ln == line_st.size-1) ed = str.length(); else ed = line_st[ed_ln+1]-1;
+    int ed; if(ed_ln == line_st.size-1) ed = str.length()-1; else ed = line_st[ed_ln+1]-1;
     return str.at(st, ed-st);
   }
 
@@ -1202,6 +1202,10 @@ public:
 
   String 	GetDiffStr(const String& str_a);
   // get a string representation of the diffs -- if str_a is passed, then it produces normal diff format, otherwise a bit more minimal
+
+  virtual int GetLinesChanged();
+  // get total count of lines changed (inserts + deletes) in the diffs
+
 };
 
 class TA_API taStringDiff {
@@ -1234,13 +1238,14 @@ public:
 	    bool trimSpace = false, bool ignoreSpace = false, bool ignoreCase = false); 
   // *after* running previously on str_a and an previous str_b, you can now run the diff again on a *new* str_b -- this will save a fair amount of setup computation on str_a and the hash code table -- str_a *must* be the same as last time obviously..
   virtual bool DiffFiles(const String& fname_a, const String& fname_b,
+			 String& str_a, String& str_b,
 	 bool trimSpace = false, bool ignoreSpace = false, bool ignoreCase = false);
-  // loads in two files based on the given file names, then runs DiffStrings on them -- trimSpace removes leading and trailing space from lines, ignoreSpace ignores all space chars entirely, and ignoreCase downcases everything before comparing
+  // loads in two files into the given str_a,b strings, based on the given file names, then runs DiffStrings on them -- trimSpace removes leading and trailing space from lines, ignoreSpace ignores all space chars entirely, and ignoreCase downcases everything before comparing
 
   virtual void	GetEdits(taStringDiffEdits& edits);
   // *after* running DiffStrings, call this to store the edits so that str_b can be reconstructed from str_b + the diffs..
 
-  virtual String GetDiffStr(OutputFmt fmt, const String& str_a, const String& str_b);
+  virtual String GetDiffStr(const String& str_a, const String& str_b, OutputFmt fmt = NORMAL);
   // *after* running DiffStrings, call this to get a string representation of the differences, using the specified format
 
   virtual String GetDiffStr_normal(const String& str_a, const String& str_b);

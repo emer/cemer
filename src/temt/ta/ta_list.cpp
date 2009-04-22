@@ -1734,9 +1734,9 @@ void taStringDiff::ReDiffB(const String& str_a, const String& str_b,
 }
 
 bool taStringDiff::DiffFiles(const String& fname_a, const String& fname_b,
+			     String& str_a, String& str_b,
 			     bool trimSpace, bool ignoreSpace, bool ignoreCase) {
   bool rval = false;
-  String str_a, str_b;
   fstream istrm;
   int err;
   istrm.open(fname_a.chars(), ios::in);
@@ -2011,7 +2011,7 @@ void taStringDiff::CreateDiffs(const String& str_a, const String& str_b) {
 	nw_itm.delete_a = line_a - start_a;
 	nw_itm.insert_b = line_b - start_b;
 	if(str_b.nonempty() && nw_itm.insert_b > 0) {
-	  nw_itm.insert_b_str = data_b.GetLine(start_b, line_b-1);
+	  nw_itm.insert_b_str = data_b.GetLine(str_b, start_b, line_b-1);
 	}
 	diffs.Add(nw_itm);
       } // if
@@ -2026,7 +2026,7 @@ void taStringDiff::GetEdits(taStringDiffEdits& edits) {
   edits.line_st = data_a.line_st;
 }
 
-String taStringDiff::GetDiffStr(OutputFmt fmt, const String& str_a, const String& str_b) {
+String taStringDiff::GetDiffStr(const String& str_a, const String& str_b, OutputFmt fmt) {
   if(diffs.size == 0) return "No differences found!\n";
   if(fmt == NORMAL) {
     return GetDiffStr_normal(str_a, str_b);
@@ -2036,29 +2036,39 @@ String taStringDiff::GetDiffStr(OutputFmt fmt, const String& str_a, const String
   }
 }
 
+static String string_diff_get_diff_range(int st, int rg) {
+  if(rg > 1)
+    return "," + String(st + rg);
+  return _nilString;
+}
+
 String taStringDiff::GetDiffStr_normal(const String& str_a, const String& str_b) {
   String rval;
   for(int i=0;i<diffs.size;i++) {
     taStringDiffItem& df = diffs[i];
+    bool chg = false;
     if(df.delete_a == df.insert_b) {
-      rval += String(df.start_a) + "c" + String(df.start_b) + ","
-	+ String(df.start_b + df.insert_b) + "\n";
-    }
-    else {
-      if(df.delete_a > 0) {
-	rval += String(df.start_a) + ","  + String(df.start_a + df.delete_a)
-	  + "d" + String(df.start_b) + "\n";
-      }
-      if(df.insert_b > 0) {
-	rval += String(df.start_a) + "a" + String(df.start_b) + ","
-	  + String(df.start_b + df.insert_b) + "\n";
-      }
+      rval += String(df.start_a+1) + "c" + String(df.start_b+1) +
+	string_diff_get_diff_range(df.start_b, df.insert_b) + "\n";
+      chg = true;
     }
     if(df.delete_a > 0) {
+      if(!chg) {
+	rval += String(df.start_a+1) +
+	  string_diff_get_diff_range(df.start_a, df.delete_a)
+	  + "d" + String(df.start_b+1) + "\n";
+      }
       for(int l=df.start_a; l<df.start_a + df.delete_a; l++)
 	rval += "< " + data_a.GetLine(str_a, l) + "\n";
+      if(chg) {
+	rval += "---\n";
+      }
     }
     if(df.insert_b > 0) {
+      if(!chg) {
+	rval += String(df.start_a+1) + "a" + String(df.start_b+1) +
+	  string_diff_get_diff_range(df.start_b, df.insert_b) + "\n";
+      }
       for(int l=df.start_b; l<df.start_b + df.insert_b; l++)
 	rval += "> " + data_b.GetLine(str_b, l) + "\n";
     }
@@ -2096,15 +2106,15 @@ String taStringDiffEdits::GenerateB(const String& str_a) {
   int last_b = 0;
   for(int i=0;i<diffs.size;i++) {
     taStringDiffItem& df = diffs[i];
-    String alns = GetLine(str_a, last_a, df.start_a);
-    rval.cat(alns);
+    String alns = GetLine(str_a, last_a, df.start_a-1);
+    rval.cat(alns).cat("\n");
     last_a = df.start_a + df.delete_a; // skip over deleted lines
     if(df.insert_b > 0)
-      rval.cat(df.insert_b_str);
+      rval.cat(df.insert_b_str).cat("\n");
   }
   if(last_a < line_st.size-1) {
     String alns = GetLine(str_a, last_a, line_st.size-1);
-    rval.cat(alns);
+    rval.cat(alns).cat("\n");
   }
   return rval;
 }
@@ -2113,29 +2123,44 @@ String taStringDiffEdits::GetDiffStr(const String& str_a) {
   String rval;
   for(int i=0;i<diffs.size;i++) {
     taStringDiffItem& df = diffs[i];
+    bool chg = false;
     if(df.delete_a == df.insert_b) {
-      rval += String(df.start_a) + "c" + String(df.start_b) + ","
-	+ String(df.start_b + df.insert_b) + "\n";
+      rval += String(df.start_a+1) + "c" + String(df.start_b+1) +
+	string_diff_get_diff_range(df.start_b, df.insert_b) + "\n";
+      chg = true;
     }
-    else {
-      if(df.delete_a > 0) {
-	rval += String(df.start_a) + ","  + String(df.start_a + df.delete_a)
-	  + "d" + String(df.start_b) + "\n";
+    if(df.delete_a > 0) {
+      if(!chg) {
+	rval += String(df.start_a+1) +
+	  string_diff_get_diff_range(df.start_a, df.delete_a)
+	  + "d" + String(df.start_b+1) + "\n";
       }
-      if(df.insert_b > 0) {
-	rval += String(df.start_a) + "a" + String(df.start_b) + ","
-	  + String(df.start_b + df.insert_b) + "\n";
+      if(str_a.nonempty()) {
+	for(int l=df.start_a; l<df.start_a + df.delete_a; l++)
+	  rval += "< " + GetLine(str_a, l) + "\n";
+	if(chg) {
+	  rval += "---\n";
+	}
       }
-    }
-    if(df.delete_a > 0 && str_a.nonempty()) {
-      for(int l=df.start_a; l<df.start_a + df.delete_a; l++)
-	rval += "< " + GetLine(str_a, l) + "\n";
     }
     if(df.insert_b > 0) {
+      if(!chg) {
+	rval += String(df.start_a+1) + "a" + String(df.start_b+1) +
+	  string_diff_get_diff_range(df.start_b, df.insert_b) + "\n";
+      }
       for(int l=df.start_b; l<df.start_b + df.insert_b; l++)
 	rval += "> " + df.insert_b_str + "\n"; // todo: need to line-a-fy with > 
     }
   }
   return rval;
+}
+
+int taStringDiffEdits::GetLinesChanged() {
+  int tot = 0;
+  for(int i=0;i<diffs.size;i++) {
+    taStringDiffItem& df = diffs[i];
+    tot += df.insert_b + df.delete_a;
+  }
+  return tot;
 }
 

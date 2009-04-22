@@ -3337,6 +3337,9 @@ void Program::Run() {
   if(run_state == NOT_INIT) {
     Init();			// auto-press Init button!
   }
+  if(run_state == STOP && stop_reason == SR_ERROR) {
+    Init();			// auto-reinit after errors!
+  }
   if(TestError(run_state != DONE && run_state != STOP, "Run",
 	       "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Run")) {
     return;

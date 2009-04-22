@@ -845,7 +845,7 @@ public:
   // #CAT_Dialog displays informative msg in a dialog -- use this instead of Choice for such confirmations
 
   static void	EditFile(const String& filename); 
-  // CATT_Dialog edit the file in the external editor
+  // #CAT_Dialog edit the file in the external editor
 
   /////////////////////////////////////////////////
   //	Global state management
@@ -992,7 +992,12 @@ public:
   // #CAT_File try to find file fnm in one of the load_include paths -- returns complete path to file  (or empty str if not found)
 
   static int 	GetUniqueFileNumber(int st_no, const String& prefix, const String& suffix);
-  // get a unique file number by adding numbers in between prefix and suffix until such a file does not exist
+  // #CAT_File get a unique file number by adding numbers in between prefix and suffix until such a file does not exist
+
+  static String FileDiff(const String& fname_a, const String& fname_b,
+			 bool trimSpace = false, bool ignoreSpace = false,
+			 bool ignoreCase = false);
+  // #CAT_File return a string showing the differences between two files -- uses taStringDiff
 
   /////////////////////////////////////////////////
   //	Recording GUI actions to css script

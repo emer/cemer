@@ -354,20 +354,42 @@ void taUndoDiffSrc::InitFmRec(taUndoRec* urec) {
 void taUndoDiffSrc::EncodeDiff(taUndoRec* rec) {
   rec->diff_src = this;		     // now points to us
   if(diff.data_a.line_st.size > 0) { // already done
-    diff.ReDiffB(save_data, rec->save_data, true, true, false); // trim, no ignore case
+    diff.ReDiffB(save_data, rec->save_data, false, false, false); // trim, no ignore case
   }
   else {			    // first time
-    diff.DiffStrings(save_data, rec->save_data, true, true, false); // trim, no ignore case
+    diff.DiffStrings(save_data, rec->save_data, false, false, false); // trim, no ignore case
   }
   diff.GetEdits(rec->diff_edits);	// save to guy
   last_diff_n = diff.GetLinesChanged(); // counts up total lines changed in diffs
   last_diff_pct = (float)last_diff_n / (float)diff.data_a.lines;
 #ifdef DEBUG	
+//   fstream ostrm;
+
+//   String lstdif = diff.GetDiffStr(save_data, rec->save_data);
+//   ostrm.open("rec_diff.txt", ios::out);
+//   lstdif.Save_str(ostrm);
+//   ostrm.close();
+
+//   String othdif = rec->diff_edits.GetDiffStr(save_data);
+//   ostrm.open("rec_diff_edits.txt", ios::out);
+//   othdif.Save_str(ostrm);
+//   ostrm.close();
+
+//   ostrm.open("rec_save_data.txt", ios::out);
+//   rec->save_data.Save_str(ostrm);
+//   ostrm.close();
+
+//   ostrm.open("src_save_data.txt", ios::out);
+//   save_data.Save_str(ostrm);
+//   ostrm.close();
+
   cout << "last_diff_n: " << last_diff_n << " pct: " << last_diff_pct << endl;
   taMisc::FlushConsole();
 #endif  
-  // todo: now nuke red's saved data!!
-  // rec->save_data = _nilString;
+  // now nuke red's saved data!!
+#ifndef DEBUG
+  rec->save_data = _nilString;
+#endif
 }
 
 int taUndoDiffSrc::UseCount() {
@@ -416,8 +438,17 @@ String taUndoRec::GetData() {
 #ifdef DEBUG
   int oops = compare(rval, save_data); // double check! 
   if(oops > 0) {
+    fstream ostrm;
+    ostrm.open("rec_regen.txt", ios::out);
+    rval.Save_str(ostrm);
+    ostrm.close();
+
+    ostrm.open("rec_save_data.txt", ios::out);
+    save_data.Save_str(ostrm);
+    ostrm.close();
+
     taMisc::Error("oops, taUndoRec GetData() did not recover original data -- n diffs:",
-		  String(oops));
+		  String(oops), "see rec_save_data.txt and rec_regen.txt for orig texts");
   }
 #endif
   return rval;
@@ -475,6 +506,10 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
       cur_src = new taUndoDiffSrc;
       undo_srcs.CircAddLimit(cur_src, undo_depth); // large depth
       cur_src->InitFmRec(urec);			   // init
+#ifdef DEBUG
+      cerr << "New source added!" << endl;
+      taMisc::FlushConsole();
+#endif
     }
     cur_src->EncodeDiff(urec);	// urec is now diffed
     PurgeUnusedSrcs();		// get rid of unused source datas
@@ -487,16 +522,20 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
 }
 
 void taUndoMgr::PurgeUnusedSrcs() {
+#ifdef DEBUG
   cout << "Purging Unused Srcs: " << undo_srcs.length << endl;
   taMisc::FlushConsole();
+#endif
   bool did_purge = false;
   int n_purges = 0;
   do {
     taUndoDiffSrc* urec = undo_srcs.CircSafeEl(0);
     if(!urec) continue;
     int cnt = urec->UseCount();
+#ifdef DEBUG
     cout << "first guy, size: " << urec->save_data.length() << " count: " << cnt << endl;
     taMisc::FlushConsole();
+#endif
     if(cnt == 0) {
       undo_srcs.CircShiftLeft(1);
       did_purge = true;
@@ -504,8 +543,10 @@ void taUndoMgr::PurgeUnusedSrcs() {
     }
   } while(did_purge);
 
+#ifdef DEBUG
   cout << "Total Purges: " << n_purges << " remaining length: " << undo_srcs.length << endl;
   taMisc::FlushConsole();
+#endif
 }
 
 bool taUndoMgr::Undo() {
@@ -608,6 +649,7 @@ void taUndoMgr::ReportStats(bool show_diffs) {
   cout << "Total Undo records: " << undo_recs.length << " cur_undo_idx: " << cur_undo_idx << endl;
   taMisc::FlushConsole();
   int tot_size = 0;
+  int tot_diff_lines = 0;
   for(int i=undo_recs.length-1; i>=0; i--) {
     taUndoRec* urec = undo_recs.CircSafeEl(i);
     if(!urec) continue;
@@ -615,13 +657,26 @@ void taUndoMgr::ReportStats(bool show_diffs) {
 	 << " action: " << urec->action << " on: " << urec->mod_obj_path << endl;
     taMisc::FlushConsole();
     tot_size += urec->save_data.length();
+    if(urec->diff_src) {
+      tot_diff_lines += urec->diff_edits.GetLinesChanged();
+    }
 
     if(show_diffs && (bool)urec->diff_src) {
       cout << urec->diff_edits.GetDiffStr(urec->diff_src->save_data);
       taMisc::FlushConsole();
     }
   }
-  cout << "Total Undo Size: " << tot_size << endl;
+
+  int tot_saved = 0;
+  for(int i=undo_srcs.length-1; i>=0; i--) {
+    taUndoDiffSrc* urec = undo_srcs.CircSafeEl(i);
+    tot_saved += urec->save_data.length();
+  }
+
+  cout << "Undo memory usage: small Edit saves: " << tot_size
+       << " full proj saves: " << tot_saved
+       << " in: " << undo_srcs.length << " recs, "
+       << " diff lines: " << tot_diff_lines << endl;
   taMisc::FlushConsole();
 }
 
