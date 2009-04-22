@@ -1738,9 +1738,10 @@ bool taStringDiff::DiffFiles(const String& fname_a, const String& fname_b,
   bool rval = false;
   String str_a, str_b;
   fstream istrm;
+  int err;
   istrm.open(fname_a.chars(), ios::in);
   if(!istrm.is_open()) goto exit;
-  int err = str_a.Load_str(istrm);
+  err = str_a.Load_str(istrm);
   if(err) goto exit;
 
   istrm.close();
