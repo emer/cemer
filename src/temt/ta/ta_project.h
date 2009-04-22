@@ -136,6 +136,91 @@ private:
   void 	Destroy()		{ };
 };
 
+class taUndoRec;
+
+class TA_API taUndoDiffSrc : public taOBase {
+  // ##CAT_Undo full source record for diff-based saving of undo save data -- diffs are computed against this guy
+INHERITED(taOBase)
+public:
+  taDateTime	mod_time;	// time (to seconds level of resolution) when obj was modified
+  taBaseRef	save_top;	// top-level object under which the data was saved
+  String	save_top_path;	// path to the save_top -- in case it disappears -- again relative to mgr owner
+  String	save_data;	// dump-file save from the save_top object (save_top->Save_String)
+  taStringDiff	diff;		// diff for this data -- save_data is string_a for this case
+  int		last_diff_n;	// raw number of diff records -- when this gets to be too large, then it is time to move on to a new src
+  float		last_diff_pct;	// percent diff records are of total save_data lines -- when this gets to be too large, then it is time to move on to a new src
+
+  virtual void	InitFmRec(taUndoRec* rec);
+  // initialize our vals from given record
+  virtual void	EncodeDiff(taUndoRec* rec);
+  // encode a new diff against given record, set rec to point to us
+  virtual int	UseCount();
+  // report how many undo recs are using this guy -- if none, then remove..
+
+  TA_SIMPLE_BASEFUNS(taUndoDiffSrc);
+private:
+  void 	Initialize();
+  void 	Destroy()	{ CutLinks(); }
+};
+
+TA_SMART_PTRS(taUndoDiffSrc);
+
+class TA_API taUndoDiffSrc_List : public taList<taUndoDiffSrc> {
+  // ##CAT_Undo list of full source records for diff-based saving of undo save data -- managed using circular buffer logic per new functions
+INHERITED(taList<taUndoDiffSrc>)
+public:
+  int		st_idx;		// #READ_ONLY index in underlying array where the list starts (i.e., the position of the logical 0 index) -- updated by functions and should not be set manually
+  int		length;		// #READ_ONLY logical length of the list -- is controlled by adding and shifting, and should NOT be set manually
+
+  int	CircIdx(int cidx) const
+  { int rval = cidx+st_idx; if(rval >= size) rval -= size; return rval; }
+  // #CAT_CircAccess gets physical index from logical circular index
+
+  bool 	CircIdxInRange(int cidx) const { return InRange(CircIdx(cidx)); }
+  // #CAT_CircAccess check if logical circular index is in range
+  
+  taUndoDiffSrc*	CircSafeEl(int cidx) const { return SafeEl(CircIdx(cidx)); }
+  // #CAT_CircAccess returns element at given logical circular index, or NULL if out of range
+
+  taUndoDiffSrc*	CircPeek() const {return SafeEl(CircIdx(length-1));}
+  // #CAT_CircAccess returns element at end of circular buffer
+
+  /////////////////////////////////////////////////////////
+  //	Special Modify Routines
+
+  void		CircShiftLeft(int nshift)
+  { st_idx = CircIdx(nshift); length -= nshift; }
+  // #CAT_CircModify shift the buffer to the left -- shift the first elements off the start of the list, making room at the end for more elements (decreasing length)
+
+  void		CircAddExpand(taUndoDiffSrc* item) {
+    if((st_idx == 0) && (length >= size)) {
+      inherited::Add(item); length++; 	// must be building up the list, so add it
+    }
+    else {
+      ReplaceIdx(CircIdx(length++), item);	// expand the buffer length and set to the element at the end
+    }
+  }
+  // #CAT_CircModify add a new item to the circular buffer, expanding the length of the list by 1 under all circumstances
+
+  void		CircAddLimit(taUndoDiffSrc* item, int max_length) {
+    if(length >= max_length) {
+      CircShiftLeft(1 + length - max_length); // make room
+      ReplaceIdx(CircIdx(length++), item);	// set to the element at the end
+    }
+    else {
+      CircAddExpand(item);
+    }
+  }
+  // #CAT_CircModify add a new item to the circular buffer, shifting it left if length is at or above max_length to ensure a fixed overall length list (otherwise expanding list up to max_length)
+
+  override void	Reset();
+
+  void 	Copy_(const taUndoDiffSrc_List& cp);
+  TA_BASEFUNS(taUndoDiffSrc_List);
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
 
 class TA_API taUndoRec : public taOBase {
   // ##CAT_Undo one undo record -- saves all necessary state information
@@ -147,6 +232,10 @@ public:
   taBaseRef	save_top;	// top-level object under which the data was saved
   String	save_top_path;	// path to the save_top -- in case it disappears -- again relative to mgr owner
   String	save_data;	// dump-file save from the save_top object (save_top->Save_String)
+  taUndoDiffSrcRef diff_src;	// if this is non-null, use it as the source for saving a diff against
+  taStringDiffEdits diff_edits;	// edit list for reconstructing original data from diff against diff_src
+
+  String	GetData();	// get the data for this save, either by diff or straight data
 
   TA_SIMPLE_BASEFUNS(taUndoRec);
 private:
@@ -216,20 +305,23 @@ class TA_API taUndoMgr : public taOBase {
   // ##CAT_Undo undo manager -- handles the basic undo functionality
 INHERITED(taOBase)
 public:
+  taUndoDiffSrc_List	undo_srcs;    // #SHOW_TREE diff source records
   taUndoRec_List	undo_recs;    // #SHOW_TREE the undo records
   int			cur_undo_idx;	// #READ_ONLY logical index into undo record list where the next undo/redo will operate -- actually +1 relative to index to undo -- 0 = no more undos -- goes to the end for each SaveUndo, moves back/forward for Undo/Redo
   int			undo_depth;	// how many undo's to keep around
 
   virtual bool	SaveUndo(taBase* mod_obj, const String& action, taBase* save_top = NULL);
   // save data for purposes of later being able to undo it -- takes a pointer to object that is being modified, a brief description of the action being performed (e.g., "Edit", "Cut", etc), and the top-level object below which current state information will be saved -- this must be *known to encapsulate all changes* that result from the modification, and also be sufficiently persistent so as to be around when undoing and redoing might be requested -- it defaults to the owner of this mgr, which is typically the project
+  virtual void	PurgeUnusedSrcs();
+  // remove any undo_srcs that are not currently being used
 
   virtual bool	Undo();
   // undo the most recent action
   virtual bool	Redo();
   // redo the most recent action that was undone
 
-  virtual void	ReportStats();
-  // report (on cout) the current undo statistics in terms of # of records and total amount of ram taken, etc
+  virtual void	ReportStats(bool show_diffs = false);
+  // #BUTTON report (on cout) the current undo statistics in terms of # of records and total amount of ram taken, etc -- if show_diffs, then show full diffs of changes from orig source data
 
   TA_SIMPLE_BASEFUNS(taUndoMgr);
 private:

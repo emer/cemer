@@ -181,13 +181,14 @@ typedef unsigned long taHashVal;
 
 class TA_API  taPtrList_impl {
   // #NO_TOKENS implementation of the pointer list class
+public:
+  static taHashVal	HashCode_String(const String& string);
+  // #CAT_XpertAccess get a hash code value from given string
+  static taHashVal	HashCode_Ptr(const void* ptr);
+  // #CAT_XpertAccess get a hash code value from given ptr
+
 protected:
   static taPtrList_impl scratch_list;	// a list for any temporary processing needs
-
-  static taHashVal	HashCode_String(const String& string);
-  // get a hash code value from given string
-  static taHashVal	HashCode_Ptr(const void* ptr);
-  // get a hash code value from given ptr
 
   // these define what to do with an individual item (overload them!)
   virtual String 	GetListName_() const 		{ return _nilString; }
@@ -615,12 +616,12 @@ public:
 class TA_API  taHashEl {
   // ##NO_TOKENS holds information for one entry of the hash table
 public:
-  taHashVal	hash_code;	// hash-coded value of name
-  int		list_idx;	// index of item in list
+  taHashVal	hash_code;	// hash-code for looking up
+  int		value;		// value associated with hash code (e.g., index of item in list)
 
-  void	Initialize()	{ hash_code = 0; list_idx = -1; }
+  void	Initialize()	{ hash_code = 0; value = -1; }
   taHashEl()		{ Initialize(); }
-  taHashEl(taHashVal hash, int idx)	{ hash_code = hash; list_idx = idx; }
+  taHashEl(taHashVal hash, int val)	{ hash_code = hash; value = val; }
 };
 
 class TA_API  taHashBucket : public taPtrList<taHashEl> {
@@ -628,11 +629,10 @@ class TA_API  taHashBucket : public taPtrList<taHashEl> {
 protected:
   void	El_Done_(void* it)	{ delete (taHashEl*)it; }
 public:
-  int		FindHashEl(taHashVal hash) const;
-  // find index of item (in the bucket) with given hash code value
-
-  int		FindListEl(taHashVal hash) const;
-  // find index of item (list_idx) with given hash code value
+  virtual int	FindBucketIndex(taHashVal hash) const;
+  // find index of item in the bucket with given hash code
+  virtual int	FindHashVal(taHashVal hash) const;
+  // find hash value associated with given hash code
 
   ~taHashBucket()               { Reset(); }
 };
@@ -647,37 +647,53 @@ public:
     KT_PTR 		// use the item pointer
   };
 
-  static int		n_bucket_primes[]; // prime numbers for number of buckets
-  static int		n_primes;	 // number of prime numbers (86)
+  static int	n_bucket_primes[]; // prime numbers for number of buckets
+  static int	n_primes;	 // number of prime numbers (86)
 
-  int			bucket_max;	// maximum size of any bucket
-  KeyType		key_type;
+  int		bucket_max;	// maximum size of any bucket
+  KeyType	key_type;	// type of key to use by default (name/string or pointer)
 
-  bool			Alloc(int sz);
   // allocate in prime-number increments
-  void			RemoveAll();
+  override bool Alloc(int sz);
+  override void	RemoveAll();
 
-  int			FindListEl(taHashVal hash) const;
-  // find index on list from given hash value of element (-1 if not found)
+  virtual int	FindHashVal(taHashVal hash) const;
+  // find value associated with given hash code (-1 if not found)
+  virtual int	FindHashValString(const String& str) const
+  { return FindHashVal(HashCode_String(str)); }
+  // find value associated with given string (-1 if not found)
+  virtual int	FindHashValPtr(const void* ptr) const
+  { return FindHashVal(HashCode_Ptr(ptr)); }
+  // find value associated with given pointer (-1 if not found)
 
-  bool			UpdateIndex(taHashVal hash, int index);
-  // update index associated with item
-  bool			UpdateIndex(const String& string, int index)
-  { return UpdateIndex(HashCode_String(string), index); }
-  // update index associated with item
-
-  void			Add(taHashBucket* itm)
-  { taPtrList<taHashBucket>::Add(itm); }
-  void 			Add(taHashVal hash, int index);
+  virtual void 	AddHash(taHashVal hash, int val);
   // add a new item to the hash table
+  virtual void 	AddHashString(const String& str, int val)
+  { AddHash(HashCode_String(str), val); }
+  // add a new string item to the hash table
+  virtual void 	AddHashPtr(const void* ptr, int val)
+  { AddHash(HashCode_Ptr(ptr), val); }
+  // add a new pointer item to the hash table
 
-  bool			RemoveHash(taHashVal hash);
+  virtual bool	RemoveHash(taHashVal hash);
   // remove given hash code from table
-  bool			RemoveString(const String& string)
-  { return RemoveHash(HashCode_String(string)); }
+  virtual bool	RemoveHashString(const String& str)
+  { return RemoveHash(HashCode_String(str)); }
   // remove given string from table
+  virtual bool	RemoveHashPtr(const void* ptr)
+  { return RemoveHash(HashCode_Ptr(ptr)); }
+  // remove given pointer from table
 
-  void			InitList_();
+  virtual bool	UpdateHashVal(taHashVal hash, int val);
+  // update value associated with hash item
+  virtual bool	UpdateHashValString(const String& string, int val)
+  { return UpdateHashVal(HashCode_String(string), val); }
+  // update value associated with string item
+  virtual bool	UpdateHasValPtr(const void* ptr, int val)
+  { return UpdateHashVal(HashCode_Ptr(ptr), val); }
+  // update value associated with ptr item
+
+  void		InitList_();
   taHashTable()			{ key_type = KT_NAME; InitList_(); }
   taHashTable(const taHashTable& cp)	{ key_type = cp.key_type; InitList_(); Duplicate(cp); }
   ~taHashTable()                { Reset(); }
@@ -1028,5 +1044,238 @@ class TA_API int_FixedArray: public taFixedArray<int> {
   // #INLINE #INLINE_DUMP #NO_TOKENS
   TA_FIXED_ARRAY_FUNS(int_FixedArray, int)
 };
+
+class TA_API String_PArray : public taPlainArray<String> {
+  // #NO_TOKENS a plain-array of strings
+INHERITED(taPlainArray<String>)
+public:
+  static const String	def_sep; // ", "
+  
+  int	FindContains(const String& op, int start=0) const;
+  // find item that contains string -- start < 0 = start from end of array (not strings!)
+  int	FindStartsWith(const String& op, int start=0) const;
+  // find item that starts with string -- start < 0 = start from end of array (not strings!)
+
+  const String 	AsString(const String& sep = def_sep) const;
+  void		SetFromString(String str, const String& sep = def_sep);
+  void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
+  String_PArray()				{ };
+  String_PArray(const String_PArray& cp)	{ Copy_Duplicate(cp); }
+  // returns first item which contains given string (-1 if none)
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((String*)a) > *((String*)b)) rval=1; else if(*((String*)a) == *((String*)b)) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((String*)a) == *((String*)b)); }
+  String	El_GetStr_(const void* it) const { return (*((String*)it)); }
+  void		El_SetFmStr_(void* it, const String& val)
+  {*((String*)it) = val; }
+};
+
+class TA_API int_PArray: public taPlainArray<int> {
+  // #NO_TOKENS a plain-array of ints
+public:
+  void	InitVals(int val = 0)
+  { for(int i=0; i<size; i++) FastEl(i) = val; }
+
+  void	operator=(const int_PArray& cp)	{ Copy_Duplicate(cp); }
+  int_PArray()				{ };
+  int_PArray(const int_PArray& cp)	{ Copy_Duplicate(cp); }
+
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((int*)a) > *((int*)b)) rval=1; else if(*((int*)a) == *((int*)b)) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((int*)a) == *((int*)b)); }
+  String	El_GetStr_(const void* it) const { return (*((int*)it)); }
+  void		El_SetFmStr_(void* it, const String& val)
+  { int tmp = (int)val; *((int*)it) = tmp; }
+};
+
+#ifdef __MAKETA__
+class TA_API void_PArray {
+#else
+class TA_API void_PArray: public taPlainArray<void*> {
+#endif
+  // #NO_TOKENS #NO_MEMBERS #NO_CSS a plain-array of void* pointers
+public:
+  void	operator=(const void_PArray& cp)	{ Copy_Duplicate(cp); }
+  void_PArray()				{ };
+  void_PArray(const void_PArray& cp)	{ Copy_Duplicate(cp); }
+
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((void**)a) > *((void**)b)) rval=1; else if(*((void**)a) == *((void**)b)) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((void**)a) == *((void**)b)); }
+  String	El_GetStr_(const void* it) const { return *((ta_uintptr_t*)it); }
+  void		El_SetFmStr_(void* it, const String& val)
+  { ta_uintptr_t tmp = (ta_uintptr_t)val; *((ta_uintptr_t*)it) = tmp; }
+  //note: dangerous, but needed to clear (if str empty)
+};
+
+/////////////////////////////////////////////// 
+// String-Based Text Diff Algorithm
+
+// C++ version of C# code by Matthias Hertel: 
+// http://www.mathertel.de/Diff
+// see .cpp file for more information
+
+class TA_API taStringDiffItem {
+  // ##NO_TOKENS one item of difference between the strings
+public:
+  int 		start_a;     	// start line number in string A
+  int 		start_b;     	// start line number in string B
+  int 		delete_a;    	// number of lines deleted in string A
+  int 		insert_b;    	// number of lines inserted in string B
+  String	insert_b_str;	// actual string value of lines inserted into string B
+
+  taStringDiffItem() { start_a = start_b = delete_a = insert_b = 0; }
+
+  bool operator==(taStringDiffItem& cmp) { return start_a == cmp.start_a; }
+  bool operator>(taStringDiffItem& cmp) { return start_a > cmp.start_a; }
+  bool operator<(taStringDiffItem& cmp) { return start_a < cmp.start_a; }
+};
+
+class TA_API taStringDiffItem_PArray : public taPlainArray<taStringDiffItem> {
+  // #NO_TOKENS a plain-array of string diff items
+INHERITED(taPlainArray<taStringDiffItem>)
+public:
+
+  void	operator=(const taStringDiffItem_PArray& cp)	{ Copy_Duplicate(cp); }
+  taStringDiffItem_PArray()				{ };
+  taStringDiffItem_PArray(const taStringDiffItem_PArray& cp)	{ Copy_Duplicate(cp); }
+protected:
+  String	El_GetStr_(const void* it) const { return _nilString; }
+  void		El_SetFmStr_(void* it, const String& val) {  };
+};
+
+class TA_API taStringDiffData {
+  // ##NO_TOKENS #IGNORE one data record for each String item being compared in taStringDiff
+public:
+  int 		lines;		// Number of elements (lines)
+  int_PArray 	data; 	 	// Buffer of numbers that will be compared (hash codes of items).
+  int_PArray 	modified;	// bit-mapped flags for modification, which is the basic result of the diff -- if set for dataA it means deleted and for dataB it means inserted -- has 2 extra bits in it.
+  int_PArray 	line_st; 	// starting position within data string for each line
+  
+  inline void SetModified(int idx, bool flag)
+  { int aidx = idx / sizeof(int);  int bit = idx % sizeof(int); int mask = 1 << bit;
+    int& curval = modified.FastEl(aidx); if(flag) curval |= mask; else curval &= ~mask; }
+
+  inline bool GetModified(int idx)
+  { int aidx = idx / sizeof(int);  int bit = idx % sizeof(int); int mask = 1 << bit;
+    int curval = modified.FastEl(aidx); return curval & mask; }
+
+  inline void AllocModified()
+  { int trg_n = (lines+2) / sizeof(int); modified.SetSize(trg_n+1); }
+
+  inline void InitFmData()
+  { lines = data.size; AllocModified(); modified.InitVals(0); }
+
+  String      GetLine(const String& str, int st_ln, int ed_ln=-1)
+  { int st = line_st[st_ln];  if(ed_ln < 0) ed_ln = st_ln;
+    int ed; if(ed_ln == line_st.size-1) ed = str.length(); else ed = line_st[ed_ln+1]-1;
+    return str.at(st, ed-st);
+  }
+
+  void	Reset()
+  { lines = 0; data.Reset(); modified.Reset(); line_st.Reset(); }
+
+
+  taStringDiffData() { lines = 0; }
+};
+
+class TA_API taStringDiffEdits {
+  // #NO_TOKENS a set of diffs between string A and string B -- can be used to convert string A into string B, given only string A and these edits
+public:
+  taStringDiffItem_PArray	diffs; 	// the raw diffs
+  int_PArray 			line_st; // line starting positions for string A
+
+  String      GetLine(const String& str, int st_ln, int ed_ln=-1)
+  { int st = line_st[st_ln];  if(ed_ln < 0) ed_ln = st_ln;
+    int ed; if(ed_ln == line_st.size-1) ed = str.length(); else ed = line_st[ed_ln+1]-1;
+    return str.at(st, ed-st);
+  }
+
+  String	GenerateB(const String& str_a);
+  // generate (return value) from str_a and the stored diff information
+
+  String 	GetDiffStr(const String& str_a);
+  // get a string representation of the diffs -- if str_a is passed, then it produces normal diff format, otherwise a bit more minimal
+};
+
+class TA_API taStringDiff {
+  // #NO_TOKENS computes differences between strings, on a line-by-line basis, using the SES/LCS algorithm of Myers (1986), which is used by diff -- converts strings to unique int hash codes first
+public:
+  enum	OutputFmt {		// format to output diff information ifor GetDiffStr function
+    NORMAL,			// default output of the unix diff utility
+    CONTEXT,			// context diff -- shows some preceeding and trailing lines
+  };
+
+  taStringDiffItem_PArray	diffs;
+  // #READ_ONLY the resulting differences, as a record of changes
+  taHashTable			hash_codes;
+  // #READ_ONLY hash codes used to convert lines into unique integer numbers, which are then used for diff op
+  int				cur_hash_idx;
+  // #READ_ONLY current hash value index -- just counts up as hash guys are added
+  taStringDiffData		data_a;
+  // #READ_ONLY data for first string
+  taStringDiffData		data_b;
+  // #READ_ONLY data for second string
+  int_PArray			down_vector;
+  // #READ_ONLY vector for the (0,0) to (x,y) search
+  int_PArray			up_vector;
+  // #READ_ONLY vector for the (u,v) to (N,M) search
+
+  virtual void	DiffStrings(const String& str_a, const String& str_b,
+	    bool trimSpace = false, bool ignoreSpace = false, bool ignoreCase = false); 
+  // computes the difference between two Strings, in terms of lines (as in the usual line-based diff utility) -- trimSpace removes leading and trailing space from lines, ignoreSpace ignores all space chars entirely, and ignoreCase downcases everything before comparing
+  virtual void ReDiffB(const String& str_a, const String& str_b,
+	    bool trimSpace = false, bool ignoreSpace = false, bool ignoreCase = false); 
+  // *after* running previously on str_a and an previous str_b, you can now run the diff again on a *new* str_b -- this will save a fair amount of setup computation on str_a and the hash code table -- str_a *must* be the same as last time obviously..
+  virtual bool DiffFiles(const String& fname_a, const String& fname_b,
+	 bool trimSpace = false, bool ignoreSpace = false, bool ignoreCase = false);
+  // loads in two files based on the given file names, then runs DiffStrings on them -- trimSpace removes leading and trailing space from lines, ignoreSpace ignores all space chars entirely, and ignoreCase downcases everything before comparing
+
+  virtual void	GetEdits(taStringDiffEdits& edits);
+  // *after* running DiffStrings, call this to store the edits so that str_b can be reconstructed from str_b + the diffs..
+
+  virtual String GetDiffStr(OutputFmt fmt, const String& str_a, const String& str_b);
+  // *after* running DiffStrings, call this to get a string representation of the differences, using the specified format
+
+  virtual String GetDiffStr_normal(const String& str_a, const String& str_b);
+  // #IGNORE
+  virtual String GetDiffStr_context(const String& str_a, const String& str_b);
+  // #IGNORE
+
+  virtual int GetLinesChanged();
+  // *after* running DiffStrings, call this to get total count of lines changed (inserts + deletes) in the diffs
+
+  virtual void	DiffInts(const int_PArray& array_a, const int_PArray& array_b); 
+  // computes the difference between two arrays of integers -- underlying algorithm uses ints so this is easy..
+
+  virtual void	GetLines(taStringDiffData& ddata, const String& str);
+  // find line starting positions in the text strings
+
+  virtual void DiffCodes(taStringDiffData& ddata, const String& str, 
+	 bool trimSpace = false, bool ignoreSpace = false, bool ignoreCase = false);
+  // convert text string into integer codes
+
+  virtual void 	Optimize(taStringDiffData& ddata);
+  // optimize sequences of modified strings to make more readable
+
+  virtual void	CreateDiffs(const String& str_a, const String& str_b);
+  // create diff list in diffs based on results of LCS/SMS computation, stored in data_a and B
+
+  virtual void	Reset();
+  // reset all the current data settings
+
+protected:
+  void SMS(int& sms_x, int& sms_y, int lower_a, int upper_a, int lower_b, int upper_b);
+  // This is the algorithm to find the Shortest Middle Snake (SMS).
+  void LCS(int lower_a, int upper_a, int lower_b, int upper_b);
+  // recursive divide-and-conquer routine -- operates on data_a,b and down/up_vector structures
+};
+
 
 #endif // ta_list_h

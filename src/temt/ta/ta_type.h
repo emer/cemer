@@ -200,50 +200,6 @@ typedef void (*ta_prop_set_fun)(void*, const Variant&);
 class taBase;
 typedef taBase* TAPtr;		// pointer to a taBase type
 
-class TA_API String_PArray : public taPlainArray<String> {
-  // #NO_TOKENS a plain-array of strings
-INHERITED(taPlainArray<String>)
-public:
-  static const String	def_sep; // ", "
-  
-  int	FindContains(const String& op, int start=0) const;
-  // find item that contains string -- start < 0 = start from end of array (not strings!)
-  int	FindStartsWith(const String& op, int start=0) const;
-  // find item that starts with string -- start < 0 = start from end of array (not strings!)
-
-  const String 	AsString(const String& sep = def_sep) const;
-  void		SetFromString(String str, const String& sep = def_sep);
-  void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
-  String_PArray()				{ };
-  String_PArray(const String_PArray& cp)	{ Copy_Duplicate(cp); }
-  // returns first item which contains given string (-1 if none)
-protected:
-  int		El_Compare_(const void* a, const void* b) const
-  { int rval=-1; if(*((String*)a) > *((String*)b)) rval=1; else if(*((String*)a) == *((String*)b)) rval=0; return rval; }
-  bool		El_Equal_(const void* a, const void* b) const
-    { return (*((String*)a) == *((String*)b)); }
-  String	El_GetStr_(const void* it) const { return (*((String*)it)); }
-  void		El_SetFmStr_(void* it, const String& val)
-  {*((String*)it) = val; }
-};
-
-class TA_API int_PArray: public taPlainArray<int> {
-  // #NO_TOKENS a plain-array of ints
-public:
-  void	operator=(const int_PArray& cp)	{ Copy_Duplicate(cp); }
-  int_PArray()				{ };
-  int_PArray(const int_PArray& cp)	{ Copy_Duplicate(cp); }
-
-protected:
-  int		El_Compare_(const void* a, const void* b) const
-  { int rval=-1; if(*((int*)a) > *((int*)b)) rval=1; else if(*((int*)a) == *((int*)b)) rval=0; return rval; }
-  bool		El_Equal_(const void* a, const void* b) const
-    { return (*((int*)a) == *((int*)b)); }
-  String	El_GetStr_(const void* it) const { return (*((int*)it)); }
-  void		El_SetFmStr_(void* it, const String& val)
-  { int tmp = (int)val; *((int*)it) = tmp; }
-};
-
 class TA_API NameVar_PArray : public taPlainArray<NameVar> {
   // #NO_TOKENS a plain-array of name value (variant) items
 INHERITED(taPlainArray<NameVar>)
@@ -269,9 +225,9 @@ public:
   // set value by name; if name already on list, it is updated (rval = true); else new item added
 
   const String 	AsString(const String& sep = def_sep) const;
-  void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
+  void	operator=(const NameVar_PArray& cp)	{ Copy_Duplicate(cp); }
   NameVar_PArray()				{ };
-  NameVar_PArray(const String_PArray& cp)	{ Copy_Duplicate(cp); }
+  NameVar_PArray(const NameVar_PArray& cp)	{ Copy_Duplicate(cp); }
 protected:
   int		El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(((NameVar*)a)->value > ((NameVar*)b)->value) rval=1; else if(((NameVar*)a)->value == ((NameVar*)b)->value) rval=0; return rval; }
@@ -279,28 +235,6 @@ protected:
   { return (((NameVar*)a)->value == ((NameVar*)b)->value); }
   String	El_GetStr_(const void* it) const { return ((NameVar*)it)->GetStr(); }
   void		El_SetFmStr_(void* it, const String& val) { ((NameVar*)it)->SetFmStr(val); }
-};
-
-#ifdef __MAKETA__
-class TA_API void_PArray {
-#else
-class TA_API void_PArray: public taPlainArray<void*> {
-#endif
-  // #NO_TOKENS #NO_MEMBERS #NO_CSS a plain-array of void* pointers
-public:
-  void	operator=(const void_PArray& cp)	{ Copy_Duplicate(cp); }
-  void_PArray()				{ };
-  void_PArray(const void_PArray& cp)	{ Copy_Duplicate(cp); }
-
-protected:
-  int		El_Compare_(const void* a, const void* b) const
-  { int rval=-1; if(*((void**)a) > *((void**)b)) rval=1; else if(*((void**)a) == *((void**)b)) rval=0; return rval; }
-  bool		El_Equal_(const void* a, const void* b) const
-    { return (*((void**)a) == *((void**)b)); }
-  String	El_GetStr_(const void* it) const { return *((ta_uintptr_t*)it); }
-  void		El_SetFmStr_(void* it, const String& val)
-  { ta_uintptr_t tmp = (ta_uintptr_t)val; *((ta_uintptr_t*)it) = tmp; }
-  //note: dangerous, but needed to clear (if str empty)
 };
 
 class TA_API DumpFileCvt {

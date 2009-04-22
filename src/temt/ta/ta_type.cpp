@@ -2123,7 +2123,8 @@ int taMisc::read_till_rangle(istream& strm, bool peek) {
 // 	File Parsing Stuff for Dump routines: Output
 
 ostream& taMisc::indent(ostream& strm, int indent, int tsp) {
-  if(is_saving && (save_format == PLAIN))	return strm;
+  // don't do any fancy things for undo saving -- just wastes space!
+  if(is_saving && ((save_format == PLAIN) || is_undo_saving)) return strm;
   int i;
   int itabs = (indent * tsp) / 8;
   int ispcs = (indent * tsp) % 8;
