@@ -82,6 +82,7 @@ set(PLUGIN_VERSION "${PLUGIN_VERSION_MAJOR}.${PLUGIN_VERSION_MINOR}.${PLUGIN_VER
 
 # this includes all necessary setup stuff to setup the make process
 include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginSetup.cmake)
+set(CMAKE_MODULE_PATH "${EMERGENT_SHARE_DIR}/CMakeModules")
 
 
 ################################################################
