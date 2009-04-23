@@ -2394,6 +2394,7 @@ String taBase::DiffCompare(taBase* cmp_obj, taDoc*& doc) {
   doc->text = "<html>\n<head></head>\n<body>\n== DiffCompare of: "
     + GetDisplayName() + " and: " + cmp_obj->GetDisplayName() + " ==\n<pre>\n"
     + html_safe + "\n</pre>\n</body>\n</html>\n";
+  doc->UpdateText();
   tabMisc::DelayedFunCall_gui(doc, "BrowserSelectMe");
   return rval;
 }
