@@ -560,7 +560,9 @@ taMisc::ConsoleOptions taMisc::console_options = (taMisc::ConsoleOptions)(CO_USE
 
 taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
 int	taMisc::display_width = 80;
-int	taMisc::undo_depth = 10;
+int	taMisc::undo_depth = 100;
+float	taMisc::undo_new_src_thr = 0.3f;
+bool	taMisc::delete_prompts = false;
 int	taMisc::tree_indent = 12;
 int	taMisc::max_menu = 1000; // no cost now in QT for making it large..
 int 	taMisc::search_depth = 4;

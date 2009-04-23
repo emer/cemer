@@ -2208,14 +2208,11 @@ void ISelectableHost::EditAction(int ea,
   if (!ci) return;
   // delete is a special case
   if (ea & taiClipData::EA_DELETE) {
-  // until/unless we add Undo, confirm deletes
-//TODO: maybe add a new option once Undo added, to continue prompting or not
-//     if (ea & taiClipData::EA_DELETE) {
-    int chs = taMisc::Choice("Are you sure you want to delete the selected object(s)?",
-			     "&No", "&Yes");
-    if (chs != 1) return;
-//     }
-  
+    if(taMisc::delete_prompts) {
+      int chs = taMisc::Choice("Are you sure you want to delete the selected object(s)?",
+			       "&No", "&Yes");
+      if (chs != 1) return;
+    }
     EditAction_Delete(gc_typ);
   } else {
     ISelectable_PtrList items(selItems());
@@ -3909,7 +3906,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   filePrintAction->AddTo( fileMenu );
   editUndoAction->AddTo( editMenu ); 
   editRedoAction->AddTo( editMenu );
-  editMenu->insertSeparator(); // renable if undo is made visible
+  editMenu->insertSeparator();
   editCutAction->AddTo( editMenu );
   editCopyAction->AddTo( editMenu );
   editDupeAction->AddTo( editMenu );
@@ -4772,7 +4769,15 @@ void iMainWindowViewer::UpdateUi() {
   }
   
   editUnlinkAction->setVisible(ea & taiClipData::EA_UNLINK);
-  
+
+  taProject* proj = myProject();
+  if(proj) {
+    // TODO: Brad -- help!!  these need to be updated whenver undo activity takes place
+    // can you do that 4 me?  Thanks!
+//     editUndoAction->setEnabled(proj->undo_mgr.UndosAvail() > 0);
+//     editRedoAction->setEnabled(proj->undo_mgr.RedosAvail() > 0);
+  }
+
   emit SetActionsEnabled();
 }
 

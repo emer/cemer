@@ -5594,6 +5594,15 @@ bool taiMethodData::CallFun_impl() {
        (meth->HasOption("USE_RVAL_RMB") && (arg_dlg->mouse_button == Qt::RightButton)) );
   IDataHost* thost = host; // in case we delete
   String meth_name = meth->name; // in case we delete
+
+  // save undo state!
+  if (typ->InheritsFrom(TA_taBase)) {
+    taBase* tab = (taBase*)base;
+    taProject* proj = (taProject*)tab->GetOwner(&TA_taProject);
+    if(proj) {
+      proj->undo_mgr.SaveUndo(tab, "Call Method: " + meth_name);
+    }
+  }
   
   use_argc = meth->fun_argc;
   String argc_str = meth->OptionAfter("ARGC_");

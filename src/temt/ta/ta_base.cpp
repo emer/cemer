@@ -2369,7 +2369,33 @@ int taBase::SelectForEditCompare(taBase*cmp_obj, SelectEdit*& editor, bool no_pt
     if(TestError(!proj, "SelectForEditCompare", "cannot find project")) return -1;
     editor = (SelectEdit*)proj->edits.New(1);
   }
-  return editor->CompareObjs(this, cmp_obj, no_ptrs);
+  int rval = editor->CompareObjs(this, cmp_obj, no_ptrs);
+  tabMisc::DelayedFunCall_gui(editor, "BrowserSelectMe");
+  return rval;
+}
+
+String taBase::DiffCompare(taBase* cmp_obj, taDoc*& doc) {
+  if(TestError(!cmp_obj, "DiffCompare", "cmp_obj is null")) return _nilString;
+  if(!doc) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(TestError(!proj, "DiffCompare", "cannot find project")) return _nilString;
+    doc = (taDoc*)proj->docs.New(1);
+    doc->name = "DiffCompare_" + GetDisplayName() + "_" + cmp_obj->GetDisplayName();
+  }
+  String str_a, str_b;
+  taStringDiff diff;
+  
+  Save_String(str_a);
+  cmp_obj->Save_String(str_b);
+  diff.DiffStrings(str_a, str_b);
+  String rval = diff.GetDiffStr(str_a, str_b);
+  String html_safe = rval;
+  html_safe.xml_esc();
+  doc->text = "<html>\n<head></head>\n<body>\n== DiffCompare of: "
+    + GetDisplayName() + " and: " + cmp_obj->GetDisplayName() + " ==\n<pre>\n"
+    + html_safe + "\n</pre>\n</body>\n</html>\n";
+  tabMisc::DelayedFunCall_gui(doc, "BrowserSelectMe");
+  return rval;
 }
 
 bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor,

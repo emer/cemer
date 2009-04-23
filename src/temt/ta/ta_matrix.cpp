@@ -804,6 +804,8 @@ int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
     for (i=0; i < size; ++i) {
       Dump_Save_Item(strm, i);
       strm <<  ';';
+      if((i+1) % 10 == 0)	// this helps a lot with readability and diffs..
+	strm << '\n';
     }
   }
  

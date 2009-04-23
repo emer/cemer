@@ -227,6 +227,7 @@ class TA_API taUndoRec : public taOBase {
 INHERITED(taOBase)
 public:
   String	mod_obj_path;	// path to the object that was just about to be modified, after this record was saved -- relative to owner of taUndoMgr (typically the project)
+  String 	mod_obj_name;	// name of modified object
   String	action;		// a brief description of the action performed
   taDateTime	mod_time;	// time (to seconds level of resolution) when obj was modified
   taBaseRef	save_top;	// top-level object under which the data was saved
@@ -308,7 +309,8 @@ public:
   taUndoDiffSrc_List	undo_srcs;    // #SHOW_TREE diff source records
   taUndoRec_List	undo_recs;    // #SHOW_TREE the undo records
   int			cur_undo_idx;	// #READ_ONLY logical index into undo record list where the next undo/redo will operate -- actually +1 relative to index to undo -- 0 = no more undos -- goes to the end for each SaveUndo, moves back/forward for Undo/Redo
-  int			undo_depth;	// how many undo's to keep around
+  int			undo_depth;	// #NO_SAVE how many undo's to keep around
+  float			new_src_thr; 	// threshold for how big (as a proportion of total file size) the diff's need to get before a new undo source record is created
 
   virtual bool	SaveUndo(taBase* mod_obj, const String& action, taBase* save_top = NULL);
   // save data for purposes of later being able to undo it -- takes a pointer to object that is being modified, a brief description of the action being performed (e.g., "Edit", "Cut", etc), and the top-level object below which current state information will be saved -- this must be *known to encapsulate all changes* that result from the modification, and also be sufficiently persistent so as to be around when undoing and redoing might be requested -- it defaults to the owner of this mgr, which is typically the project
@@ -320,8 +322,13 @@ public:
   virtual bool	Redo();
   // redo the most recent action that was undone
 
-  virtual void	ReportStats(bool show_diffs = false);
-  // #BUTTON report (on cout) the current undo statistics in terms of # of records and total amount of ram taken, etc -- if show_diffs, then show full diffs of changes from orig source data
+  virtual int	UndosAvail();
+  // return the number of undo actions currently available
+  virtual int	RedosAvail();
+  // return the number of redo actions currently available
+
+  virtual void	ReportStats(bool show_list = false, bool show_diffs = false);
+  // #BUTTON report (on cout) the current undo statistics in terms of # of records and total amount of ram taken, etc -- if show_list, show full list of current undo info, if show_diffs, then show full diffs of changes from orig source data (requires show_list too)
 
   TA_SIMPLE_BASEFUNS(taUndoMgr);
 private:
@@ -411,6 +418,8 @@ public:
 
   virtual void		UpdateChangeLog();
   // #BUTTON #CAT_File update change log for this project, stored as a ChangeLog item in docs on the project -- you will be prompted to enter a description of recent changes, and the date, user, and file names will be recorded
+  virtual void		UndoStats(bool show_list = false, bool show_diffs = false);
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_File report to css Console the current undo statistics in terms of # of records and total amount of RAM taken, etc -- if show_list, show full list of current undo info, if show_diffs, then show full diffs of changes from orig source data (requires show_list too)
 
   virtual void		SaveRecoverFile();
   // #CAT_File Save a recover file of this project, usually called when a signal is received indicating a crash condition
@@ -421,9 +430,9 @@ public:
   override int		Save(); 
 
   virtual int		SaveNoteChanges(); 
-  // #MENU #MENU_ON_Object #CAT_File saves the project to a file using current file name, but first prompts for a text note of changes that have been made, which are registered in the ChangeLog document within the project prior to saving
+  // #CAT_File saves the project to a file using current file name, but first prompts for a text note of changes that have been made, which are registered in the ChangeLog document within the project prior to saving
   virtual int		SaveAsNoteChanges(const String& fname = ""); 
-  // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user, but first prompts for a text note of changes that have been made, which are registered in the ChangeLog document within the project prior to saving
+  // #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user, but first prompts for a text note of changes that have been made, which are registered in the ChangeLog document within the project prior to saving
 
   override void		PostLoadAutos();
   // perform post-loading automatic functions

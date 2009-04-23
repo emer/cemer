@@ -1218,6 +1218,8 @@ public:
   // #MENU #NULL_OK_1 #NULL_TEXT_1_NewEditor #CAT_Display search among this object and any sub-objects for members containing given string, and add to given select editor (if NULL, a new one is created in .edits).  returns number found
   virtual int		SelectForEditCompare(taBase* cmp_obj, SelectEdit*& editor, bool no_ptrs = true);
   // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object, adding any differences to given select editor (if NULL, a new one is created in .edits).  returns number of differences.  no_ptrs = ignore differences in pointer fields
+  virtual String	DiffCompare(taBase* cmp_obj, taDoc*& doc);
+  // #MENU #NULL_OK_1  #NULL_TEXT_1_NewDoc  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object using a diff operation on their save file representations -- more robust to large differences than the select-for-edit version (if doc is NULL, a new one is created in .docs).  returns diff string as well.
   virtual bool		SelectFunForEdit(MethodDef* function, SelectEdit* editor,
 	 const String& extra_label = "", const String& sub_gp_nm = "");
   // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display select a given function (method) for calling in a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)

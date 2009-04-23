@@ -361,35 +361,15 @@ void taUndoDiffSrc::EncodeDiff(taUndoRec* rec) {
   }
   diff.GetEdits(rec->diff_edits);	// save to guy
   last_diff_n = diff.GetLinesChanged(); // counts up total lines changed in diffs
-  last_diff_pct = (float)last_diff_n / (float)diff.data_a.lines;
+  last_diff_pct = (.5f * (float)last_diff_n) / (float)diff.data_a.lines;
+  // lines changed tends to double-count..
 #ifdef DEBUG	
-//   fstream ostrm;
-
-//   String lstdif = diff.GetDiffStr(save_data, rec->save_data);
-//   ostrm.open("rec_diff.txt", ios::out);
-//   lstdif.Save_str(ostrm);
-//   ostrm.close();
-
-//   String othdif = rec->diff_edits.GetDiffStr(save_data);
-//   ostrm.open("rec_diff_edits.txt", ios::out);
-//   othdif.Save_str(ostrm);
-//   ostrm.close();
-
-//   ostrm.open("rec_save_data.txt", ios::out);
-//   rec->save_data.Save_str(ostrm);
-//   ostrm.close();
-
-//   ostrm.open("src_save_data.txt", ios::out);
-//   save_data.Save_str(ostrm);
-//   ostrm.close();
-
   cout << "last_diff_n: " << last_diff_n << " pct: " << last_diff_pct << endl;
   taMisc::FlushConsole();
 #endif  
-  // now nuke red's saved data!!
-#ifndef DEBUG
+  // now nuke rec's saved data!!
   rec->save_data = _nilString;
-#endif
+  // if need to debug, turn this off and turn on comparison below..
 }
 
 int taUndoDiffSrc::UseCount() {
@@ -435,7 +415,8 @@ String taUndoRec::GetData() {
     return save_data;		// easy
   }
   String rval = diff_edits.GenerateB(diff_src->save_data); // generate against A
-#ifdef DEBUG
+#if 0
+  // this is no longer enabled because we are nuking the save_data for all cases..
   int oops = compare(rval, save_data); // double check! 
   if(oops > 0) {
     fstream ostrm;
@@ -447,7 +428,7 @@ String taUndoRec::GetData() {
     save_data.Save_str(ostrm);
     ostrm.close();
 
-    taMisc::Error("oops, taUndoRec GetData() did not recover original data -- n diffs:",
+    taMisc::Error("taUndoRec GetData() did not recover original data -- n diffs:",
 		  String(oops), "see rec_save_data.txt and rec_regen.txt for orig texts");
   }
 #endif
@@ -474,6 +455,7 @@ void taUndoRec_List::Reset() {
 void taUndoMgr::Initialize() {
   cur_undo_idx = 0;
   undo_depth = taMisc::undo_depth;
+  new_src_thr = taMisc::undo_new_src_thr;
 }
 
 bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top) {
@@ -489,6 +471,7 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
   undo_recs.CircAddLimit(urec, undo_depth);
   cur_undo_idx = undo_recs.length;
   urec->mod_obj_path = mod_obj->GetPath(NULL, owner);
+  urec->mod_obj_name = mod_obj->GetName();
   urec->action = action;
   urec->mod_time.currentDateTime();
   urec->save_top = save_top;
@@ -502,7 +485,7 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
     taUndoDiffSrc* cur_src = NULL;
     if(undo_srcs.length > 0)
       cur_src = undo_srcs.CircPeek(); // always grab the last guy
-    if(!cur_src || cur_src->last_diff_pct > 0.1f) { // todo: 10% cutoff arbitrary
+    if(!cur_src || cur_src->last_diff_pct > new_src_thr) {
       cur_src = new taUndoDiffSrc;
       undo_srcs.CircAddLimit(cur_src, undo_depth); // large depth
       cur_src->InitFmRec(urec);			   // init
@@ -512,8 +495,9 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
 #endif
     }
     cur_src->EncodeDiff(urec);	// urec is now diffed
-    PurgeUnusedSrcs();		// get rid of unused source datas
   }
+
+  PurgeUnusedSrcs();		// get rid of unused source data
 
 #ifdef DEBUG
   ReportStats();
@@ -522,30 +506,30 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
 }
 
 void taUndoMgr::PurgeUnusedSrcs() {
-#ifdef DEBUG
-  cout << "Purging Unused Srcs: " << undo_srcs.length << endl;
-  taMisc::FlushConsole();
-#endif
   bool did_purge = false;
   int n_purges = 0;
   do {
     taUndoDiffSrc* urec = undo_srcs.CircSafeEl(0);
     if(!urec) continue;
     int cnt = urec->UseCount();
-#ifdef DEBUG
-    cout << "first guy, size: " << urec->save_data.length() << " count: " << cnt << endl;
-    taMisc::FlushConsole();
-#endif
     if(cnt == 0) {
+#ifdef DEBUG
+      cout << "purging unused save rec, size: " << urec->save_data.length() << endl;
+      taMisc::FlushConsole();
+#endif
       undo_srcs.CircShiftLeft(1);
       did_purge = true;
       n_purges++;
+      break;
+      // we actually need to bail now because UseCount hangs -- only get to do 1 at a time
     }
   } while(did_purge);
 
 #ifdef DEBUG
-  cout << "Total Purges: " << n_purges << " remaining length: " << undo_srcs.length << endl;
-  taMisc::FlushConsole();
+  if(n_purges > 0) {
+    cout << "Total Purges: " << n_purges << " remaining length: " << undo_srcs.length << endl;
+    taMisc::FlushConsole();
+  }
 #endif
 }
 
@@ -575,11 +559,14 @@ bool taUndoMgr::Undo() {
     if(st) urec->save_top = st;
   }
   if(!urec->save_top) {
-    taMisc::Error("Undo action:", urec->action, "on object at path:",
-		  urec->mod_obj_path,"cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path);
+    taMisc::Error("Undo action:", urec->action, "on object named:", urec->mod_obj_name,
+		  "at path:", urec->mod_obj_path,
+		  "cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path);
     return false;
   }
-  cout << "Undoing action: " << urec->action << " on: " << urec->mod_obj_path << endl;
+  cout << "Undoing action: " << urec->action << " on: " << urec->mod_obj_name
+       << " at path: " << urec->mod_obj_path << endl;
+  taMisc::FlushConsole();
   String udata = urec->GetData();
   ++taMisc::is_undo_loading;
   urec->save_top->Load_String(udata);
@@ -619,11 +606,14 @@ bool taUndoMgr::Redo() {
     if(st) urec->save_top = st;
   }
   if(!urec->save_top) {
-    taMisc::Error("Redo action:", urec->action, "on object at path:",
-		  urec->mod_obj_path,"cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path);
+    taMisc::Error("Redo action:", urec->action, "on object named: ", urec->mod_obj_name,
+		  "at path:", urec->mod_obj_path,
+		  "cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path);
     return false;
   }
-  cout << "Redoing action: " << urec->action << " on: " << urec->mod_obj_path << endl;
+  cout << "Redoing action: " << urec->action << " on: " << urec->mod_obj_name
+       << " at path: " << urec->mod_obj_path << endl;
+  taMisc::FlushConsole();
   String udata = urec->GetData();
   ++taMisc::is_undo_loading;
   urec->save_top->Load_String(udata);
@@ -645,7 +635,15 @@ bool taUndoMgr::Redo() {
   return true;
 }
 
-void taUndoMgr::ReportStats(bool show_diffs) {
+int taUndoMgr::UndosAvail() {
+  return cur_undo_idx;
+}
+
+int taUndoMgr::RedosAvail() {
+  return undo_recs.length - cur_undo_idx;
+}
+
+void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
   cout << "Total Undo records: " << undo_recs.length << " cur_undo_idx: " << cur_undo_idx << endl;
   taMisc::FlushConsole();
   int tot_size = 0;
@@ -653,17 +651,22 @@ void taUndoMgr::ReportStats(bool show_diffs) {
   for(int i=undo_recs.length-1; i>=0; i--) {
     taUndoRec* urec = undo_recs.CircSafeEl(i);
     if(!urec) continue;
-    cout << "  " << taMisc::LeadingZeros(i, 2) << " size: " << urec->save_data.length()
-	 << " action: " << urec->action << " on: " << urec->mod_obj_path << endl;
-    taMisc::FlushConsole();
     tot_size += urec->save_data.length();
-    if(urec->diff_src) {
-      tot_diff_lines += urec->diff_edits.GetLinesChanged();
+    int dif_lns = 0;
+    if((bool)urec->diff_src) {
+      dif_lns = urec->diff_edits.GetLinesChanged();
+      tot_diff_lines += dif_lns;
     }
-
-    if(show_diffs && (bool)urec->diff_src) {
-      cout << urec->diff_edits.GetDiffStr(urec->diff_src->save_data);
+    if(show_list) {
+      cout << "  " << taMisc::LeadingZeros(i, 2) << " size: " << urec->save_data.length()
+	   << " diffs: " << dif_lns
+	   << " action: " << urec->action << " on: " << urec->mod_obj_name
+	   << " at path: " << urec->mod_obj_path << endl;
       taMisc::FlushConsole();
+      if(show_diffs && (bool)urec->diff_src) {
+	cout << urec->diff_edits.GetDiffStr(urec->diff_src->save_data);
+	taMisc::FlushConsole();
+      }
     }
   }
 
@@ -1101,6 +1104,10 @@ void taProject::UpdateChangeLog() {
   }
   delete dlg;
 #endif
+}
+
+void taProject::UndoStats(bool show_list, bool show_diffs) {
+  undo_mgr.ReportStats(show_list, show_diffs);
 }
 
 void taProject::SaveRecoverFile() {

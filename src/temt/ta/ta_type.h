@@ -619,7 +619,9 @@ public:
   static int		console_font_size;	// #SAVE #CAT_GUI font size for the css console
   static int		display_width;	// #SAVE #HIDDEN #MIN_40 #MAX_132 #CAT_GUI width of console display (in chars) -- set automatically by gui console
   
-  static int		undo_depth; 	// #SAVE #CAT_GUI how many steps of undo are maintained -- this can potentially consume a lot of RAM if set to a large number with large projects
+  static int		undo_depth; 	// #SAVE #CAT_GUI how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics 
+  static float		undo_new_src_thr; // #SAVE #CAT_GUI #EXPERT threshold for how big (as a proportion of total file size) the diff's need to get before a new undo source record is created (default of around .3 is usually fine)
+  static bool		delete_prompts;	 //  #SAVE #CAT_GUI should a prompt be provided to confirm when deleting an item?  with the undo system available, this is not neccessary
   static int		tree_indent; 	// #SAVE #CAT_GUI number of pixels to indent in the tree browser gui interface
 
   static int		max_menu;	// #SAVE #CAT_GUI #EXPERT maximum number of items in a menu -- largely obsolete at this point

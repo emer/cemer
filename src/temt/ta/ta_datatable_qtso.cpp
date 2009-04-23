@@ -5230,7 +5230,9 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       } else if (op_code & OP_DUPLICATE) {
         tab->DuplicateRows(sel.row_fr, sel.height());
       } else if (op_code & OP_DELETE) {
-        if (taMisc::Choice("Are you sure you want to delete the selected rows? (this operation cannot be undone!)", "Yes", "Cancel") != 0) return;
+	if(taMisc::delete_prompts || !tab->HasDataFlag(DataTable::SAVE_ROWS)) {
+	  if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0) return;
+	}
         tab->RemoveRows(sel.row_fr, sel.height());
       }
     }
@@ -5244,7 +5246,9 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       if (op_code & OP_INSERT) {
       } else */
       if (op_code & OP_DELETE) {
-        if (taMisc::Choice("Are you sure you want to delete the selected columns? (this operation cannot be undone!)", "Yes", "Cancel") != 0) return;
+	if(taMisc::delete_prompts || !tab->HasDataFlag(DataTable::SAVE_ROWS)) {
+	  if (taMisc::Choice("Are you sure you want to delete the selected columns?", "Yes", "Cancel") != 0) return;
+	}
         tab->StructUpdate(true);
         for (int col = sel.col_to; col >= sel.col_fr; --col) {
           tab->RemoveCol(col);

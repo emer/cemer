@@ -1633,7 +1633,7 @@ void UnitSpec::Init_dWt(Unit* u, Network* net) {
     if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
     recv_gp->Init_dWt(u);
   }
-  if(u->bias.cons.size)
+  if(u->bias.cons.size && u->bias.Cn(0))
     bias_spec->C_Init_dWt(&u->bias, u->bias.Cn(0), u, NULL); // this is a virtual fun
 }
 
@@ -1654,7 +1654,7 @@ void UnitSpec::Init_Weights(Unit* u, Network* net) {
       }
     }
 
-  if(u->bias.cons.size) {
+  if(u->bias.cons.size && u->bias.Cn(0)) {
     bias_spec->C_Init_Weights(&u->bias, u->bias.Cn(0), u, NULL); // this is a virtual fun
     bias_spec->C_Init_dWt(&u->bias, u->bias.Cn(0), u, NULL); // don't forget delta too!!
   }
