@@ -260,7 +260,8 @@ void DumpPathTokenList::NewLoadToken(String& pat, String& tok_id) {
     tok->object = NULL;
     tok->path = "";
     String null_pat;
-    while(size <= tok_num) Add(NULL, null_pat);	// catch up if possible
+    while(size <= tok_num) 
+      Add(NULL, null_pat);	// catch up if possible
     tok = FastEl(tok_num);
     tok->path = pat;
   }

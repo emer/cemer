@@ -182,6 +182,11 @@ bool QConsole::stdDisplay(QTextStream* s) {
     if(!quitPager) {
       promptDisp = false;
       append(line);
+      if(logfile.isOpen()) {
+	logfile.write(line, line.length());
+	logfile.write("\n", strlen("\n"));
+	logfile.flush();
+      }
       if(!contPager && !noPager) {
 	curOutputLn++;
 	if(curOutputLn >= maxLines) {
@@ -467,6 +472,18 @@ int QConsole::loadScript(QString fileName) {
     execCommand(command, true, false);
   }
   f.close();
+  return 0;
+}
+
+int QConsole::setStdLogfile(QString fileName) {
+  if(logfile.isOpen()) {
+    if(fileName.isNull())
+      logfile.close();
+    return 1;
+  }
+  logfile.setFileName(fileName);
+  if (!logfile.open(QIODevice::WriteOnly))
+    return -1;
   return 0;
 }
 

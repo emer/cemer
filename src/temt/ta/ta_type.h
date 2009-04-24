@@ -617,6 +617,7 @@ public:
 #endif
   static String		console_font_name;	// #SAVE #CAT_GUI font name for the css console
   static int		console_font_size;	// #SAVE #CAT_GUI font size for the css console
+  static bool		log_console_out;	// #SAVE #CAT_GUI log the output of the console to the file "css_console_output.log" in current directory -- useful for debugging when console crashes and you can't read all the messages
   static int		display_width;	// #SAVE #HIDDEN #MIN_40 #MAX_132 #CAT_GUI width of console display (in chars) -- set automatically by gui console
   
   static int		undo_depth; 	// #SAVE #CAT_GUI how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics 

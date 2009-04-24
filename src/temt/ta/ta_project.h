@@ -306,11 +306,12 @@ class TA_API taUndoMgr : public taOBase {
   // ##CAT_Undo undo manager -- handles the basic undo functionality
 INHERITED(taOBase)
 public:
-  taUndoDiffSrc_List	undo_srcs;    // #SHOW_TREE diff source records
-  taUndoRec_List	undo_recs;    // #SHOW_TREE the undo records
-  int			cur_undo_idx;	// #READ_ONLY logical index into undo record list where the next undo/redo will operate -- actually +1 relative to index to undo -- 0 = no more undos -- goes to the end for each SaveUndo, moves back/forward for Undo/Redo
+  taUndoDiffSrc_List	undo_srcs;    // #SHOW_TREE #NO_SAVE diff source records
+  taUndoRec_List	undo_recs;    // #SHOW_TREE #NO_SAVE the undo records
+  int			cur_undo_idx;	// #READ_ONLY #NO_SAVE logical index into undo record list where the next undo/redo will operate -- actually +1 relative to index to undo -- 0 = no more undos -- goes to the end for each SaveUndo, moves back/forward for Undo/Redo
   int			undo_depth;	// #NO_SAVE how many undo's to keep around
-  float			new_src_thr; 	// threshold for how big (as a proportion of total file size) the diff's need to get before a new undo source record is created
+  float			new_src_thr; 	// #NO_SAVE threshold for how big (as a proportion of total file size) the diff's need to get before a new undo source record is created
+  bool			save_load_file; // #NO_SAVE save a copy of the file that is loaded during an undo or redo -- file name is "undo_load_file.txt" in cur directory -- useful for debugging issues
 
   virtual bool	SaveUndo(taBase* mod_obj, const String& action, taBase* save_top = NULL);
   // save data for purposes of later being able to undo it -- takes a pointer to object that is being modified, a brief description of the action being performed (e.g., "Edit", "Cut", etc), and the top-level object below which current state information will be saved -- this must be *known to encapsulate all changes* that result from the modification, and also be sufficiently persistent so as to be around when undoing and redoing might be requested -- it defaults to the owner of this mgr, which is typically the project
@@ -331,6 +332,9 @@ public:
   // #BUTTON report (on cout) the current undo statistics in terms of # of records and total amount of ram taken, etc -- if show_list, show full list of current undo info, if show_diffs, then show full diffs of changes from orig source data (requires show_list too)
 
   TA_SIMPLE_BASEFUNS(taUndoMgr);
+protected:
+  virtual bool	LoadFromRec_impl(taUndoRec* urec);
+
 private:
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
@@ -404,7 +408,8 @@ public:
     // create a new, empty viewer -- note: window not opened yet
   virtual void		RefreshAllViews();
   // #CAT_Display manual refresh of all view information in the project -- equivalent to the View/Refresh (F5 key) menu -- should not be necessary but sometimes comes in handy..
-
+  virtual void		UpdateUi();
+  // #CAT_Display manual call to update user interface enabled/disabled settings -- usually done through signals and slots, but this can be useful for non-gui driven changes that might affect enabling
   virtual DataTable*	GetNewInputDataTable(const String& nw_nm="", bool msg=false);
   // #CAT_Data create a new data table in data.InputData (used for data generation functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
   virtual DataTable*	GetNewOutputDataTable(const String& nw_nm="", bool msg=false);

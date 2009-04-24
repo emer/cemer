@@ -4772,10 +4772,8 @@ void iMainWindowViewer::UpdateUi() {
 
   taProject* proj = myProject();
   if(proj) {
-    // TODO: Brad -- help!!  these need to be updated whenver undo activity takes place
-    // can you do that 4 me?  Thanks!
-//     editUndoAction->setEnabled(proj->undo_mgr.UndosAvail() > 0);
-//     editRedoAction->setEnabled(proj->undo_mgr.RedosAvail() > 0);
+    editUndoAction->setEnabled(proj->undo_mgr.UndosAvail() > 0);
+    editRedoAction->setEnabled(proj->undo_mgr.RedosAvail() > 0);
   }
 
   emit SetActionsEnabled();

@@ -456,6 +456,11 @@ void taUndoMgr::Initialize() {
   cur_undo_idx = 0;
   undo_depth = taMisc::undo_depth;
   new_src_thr = taMisc::undo_new_src_thr;
+#ifdef DEBUG
+  save_load_file = false;	// can set to true if need to do debugging on undo
+#else
+  save_load_file = false;
+#endif
 }
 
 bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top) {
@@ -499,9 +504,12 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
 
   PurgeUnusedSrcs();		// get rid of unused source data
 
-#ifdef DEBUG
-  ReportStats();
-#endif
+  // tell project to refresh ui
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(proj) {
+    tabMisc::DelayedFunCall_gui(proj,"UpdateUi");
+  }
+
   return true;			// todo: need to check result of Save_String presumably
 }
 
@@ -567,27 +575,43 @@ bool taUndoMgr::Undo() {
   cout << "Undoing action: " << urec->action << " on: " << urec->mod_obj_name
        << " at path: " << urec->mod_obj_path << endl;
   taMisc::FlushConsole();
+
+  bool rval = LoadFromRec_impl(urec);
+  if(rval) {
+    --cur_undo_idx;		// only decrement on success
+    if(first_undo)
+      --cur_undo_idx;		// need an extra because of extra saveundo.
+  }
+  return rval;
+}
+
+bool taUndoMgr::LoadFromRec_impl(taUndoRec* urec) {
   String udata = urec->GetData();
+  if(save_load_file) {
+    fstream ostrm;
+    ostrm.open("undo_load_file.txt", ios::out);
+    udata.Save_str(ostrm);
+    ostrm.close();
+  }
+
+  // actually do the load..
   ++taMisc::is_undo_loading;
   urec->save_top->Load_String(udata);
   --taMisc::is_undo_loading;
-  --cur_undo_idx;		// only decrement on success
-  if(first_undo) {
-    --cur_undo_idx;		// need an extra because of extra saveundo.
-  }
+
+  // tell project to refresh
   taProject* proj = GET_MY_OWNER(taProject);
   if(proj) {
-    proj->RefreshAllViews();
+    tabMisc::DelayedFunCall_gui(proj,"RefreshAllViews");
   }
+
   // finally, try select the originally modified object so it is clear what is happening!
   MemberDef* md;
   taBase* modobj = owner->FindFromPath(urec->mod_obj_path, md);
   if(modobj) {
-    modobj->BrowserSelectMe();
+    tabMisc::DelayedFunCall_gui(modobj, "BrowserSelectMe");
   }
-#ifdef DEBUG
-  ReportStats();
-#endif
+
   return true;
 }
 
@@ -614,25 +638,12 @@ bool taUndoMgr::Redo() {
   cout << "Redoing action: " << urec->action << " on: " << urec->mod_obj_name
        << " at path: " << urec->mod_obj_path << endl;
   taMisc::FlushConsole();
-  String udata = urec->GetData();
-  ++taMisc::is_undo_loading;
-  urec->save_top->Load_String(udata);
-  --taMisc::is_undo_loading;
-  ++cur_undo_idx;		// only increment on success
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(proj) {
-    proj->RefreshAllViews();
+
+  bool rval = LoadFromRec_impl(urec);
+  if(rval) {
+    ++cur_undo_idx;		// only increment on success
   }
-  // finally, try select the originally modified object so it is clear what is happening!
-  MemberDef* md;
-  taBase* modobj = owner->FindFromPath(urec->mod_obj_path, md);
-  if(modobj) {
-    modobj->BrowserSelectMe();
-  }
-#ifdef DEBUG
-  ReportStats();
-#endif
-  return true;
+  return rval;
 }
 
 int taUndoMgr::UndosAvail() {
@@ -664,8 +675,12 @@ void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
 	   << " at path: " << urec->mod_obj_path << endl;
       taMisc::FlushConsole();
       if(show_diffs && (bool)urec->diff_src) {
-	cout << urec->diff_edits.GetDiffStr(urec->diff_src->save_data);
-	taMisc::FlushConsole();
+	String diffstr = urec->diff_edits.GetDiffStr(urec->diff_src->save_data);
+	for(int j=0; j<diffstr.length(); j++) {
+	  cout << diffstr[j];
+	  if(diffstr[j] == '\n')
+	    taMisc::FlushConsole();
+	}
       }
     }
   }
@@ -960,7 +975,18 @@ void taProject::RefreshAllViews() {
     if (!(vwr && vwr->isProjBrowser())) continue;
     iMainWindowViewer* imwv = vwr->widget();
     if(!imwv) continue;
-    imwv->Refresh();
+    imwv->viewRefresh();
+  }
+}
+
+void taProject::UpdateUi() {
+  if(!taMisc::gui_active) return;
+  for (int i = 0; i < viewers.size; ++i) {
+    MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
+    if (!(vwr && vwr->isProjBrowser())) continue;
+    iMainWindowViewer* imwv = vwr->widget();
+    if(!imwv) continue;
+    imwv->UpdateUi();
   }
 }
 
@@ -1623,6 +1649,15 @@ void taRootBase::Options() {
   taMisc* inst = (taMisc*)TA_taMisc.GetInstance();
   int accepted = ie->EditDialog(inst, false, true); // r/w, modal
   if (accepted) {
+    if(taMisc::gui_active && (console_type == taMisc::CT_GUI)) {  
+      QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
+      if(taMisc::log_console_out) {
+	con->setStdLogfile("css_console_output.log");
+      }
+      else {
+	con->setStdLogfile("");
+      }
+    }
     inst->SaveConfig();
   }
 #endif
@@ -2447,8 +2482,11 @@ bool taRootBase::Startup_Console() {
 #ifdef HAVE_QT_CONSOLE
   if(taMisc::gui_active && (console_type == taMisc::CT_GUI)) {  
     //note: nothing else to do here for gui_dockable
+    QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
+    if(taMisc::log_console_out) {
+      con->setStdLogfile("css_console_output.log");
+    }
     if (console_options & taMisc::CO_GUI_TRACKING) {
-      QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
       QMainWindow* cwin = new QMainWindow();
       cwin->setWindowTitle("css Console");
       cwin->setCentralWidget((QWidget*)con);

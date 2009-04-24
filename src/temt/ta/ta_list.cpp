@@ -24,16 +24,24 @@
 taPtrList_impl taPtrList_impl::scratch_list;
 
 taHashVal taPtrList_impl::HashCode_String(const String& string_) {
-  // from TCL, seems to be a tiny bit faster than COOL..
+  // now using the one that Qt uses, comment is:
+  // These functions are based on Peter J. Weinberger's hash function (from the
+  // Dragon Book). The constant 24 in the original function was replaced with 23
+  // to produce fewer collisions on input such as "a", "aa", "aaa", "aaaa", ...
+
   taHashVal hash = 0;
   const char* string = string_.chars();
+  taHashVal g;
   while (1) {
     unsigned int c = *string;
     string++;
     if (c == 0) {
       break;
     }
-    hash += (hash<<3) + c;
+    hash += (hash<<4) + c;
+    if ((g = (hash & 0xf0000000)) != 0)
+      hash ^= g >> 23;
+    hash &= ~g;
   }
   return hash;
 }
@@ -125,7 +133,7 @@ void taPtrList_impl::BuildHashTable(int sz) {
 
   if(!hash_table->Alloc(sz)) return;
   for(int i=0; i<size; i++)
-    hash_table->AddHash(El_GetHashVal_(el[i]), i);
+    hash_table->AddHash(El_GetHashVal_(el[i]), i, El_GetHashString_(el[i]));
 }
 
 taHashVal taPtrList_impl::El_GetHashVal_(void* it) const {
@@ -138,6 +146,10 @@ taHashVal taPtrList_impl::El_GetHashVal_(void* it) const {
   default:
     return HashCode_String(El_GetName_(it));
   }
+}
+
+String taPtrList_impl::El_GetHashString_(void* it) const {
+  return (hash_table->key_type == taHashTable::KT_NAME) ? El_GetName_(it) : _nilString;
 }
 
 void* taPtrList_impl::GetTA_Element_(Variant i, TypeDef*& eltd) const {
@@ -163,31 +175,9 @@ int taPtrList_impl::FindEl_(const void* it) const {
 }
 
 int taPtrList_impl::FindNameIdx(const String& nm) const {
-  if (hash_table && (hash_table->key_type == taHashTable::KT_NAME)) {
-    int i = hash_table->FindHashValString(nm);
-    if(i >=0) {
-#ifdef DEBUG
-      if(!El_FindCheck_(el[i], nm)) { // sometimes the hash can be wrong!!!
-	cerr << "ERROR -- please report this bug!!!  Hash table error!: " << nm << " != " << El_GetName_(el[i]) << endl;
-	if(HashCode_String(nm) != HashCode_String(El_GetName_(el[i]))) {
-	  cerr << "Hash error is not because of code equality!  Must be overwriting item!"
-	       << endl;
-	  return NULL;		// not going to help to search
-	}
-	goto slow_search;
-      }
-      else
-#endif
-	{
-	return i;
-      }
-    }
-    else
-      return -1;
-  }
-#ifdef DEBUG
-slow_search:
-#endif
+  if (hash_table && (hash_table->key_type == taHashTable::KT_NAME))
+    return hash_table->FindHashValString(nm);
+
   for(int i=0; i < size; i++) {
     if(El_FindCheck_(el[i], nm)) {
       return i;
@@ -224,7 +214,7 @@ void taPtrList_impl::UpdateIndex_(int idx) {
     El_SetIndex_(el[idx], idx);
   }
   if(hash_table)
-    hash_table->UpdateHashVal(El_GetHashVal_(el[idx]), idx);
+    hash_table->UpdateHashVal(El_GetHashVal_(el[idx]), idx, El_GetHashString_(el[idx]));
 }
 
 bool taPtrList_impl::MoveIdx(int fm, int to) {
@@ -334,7 +324,7 @@ void taPtrList_impl::Add_(void* it, bool no_notify) {
       El_SetDefaultName_(it, idx);
     }
     if(hash_table)
-      hash_table->AddHash(El_GetHashVal_(it), idx);
+      hash_table->AddHash(El_GetHashVal_(it), idx, El_GetHashString_(it));
   }
   if (no_notify) return;
   void* op2 = NULL;
@@ -373,7 +363,7 @@ bool taPtrList_impl::RemoveIdx(int i) {
   //note: change in 4.0 - don't disown until after removed from list
   if(tel != NULL) {
     if(hash_table)
-      hash_table->RemoveHash(El_GetHashVal_(tel));
+      hash_table->RemoveHash(El_GetHashVal_(tel), El_GetHashString_(tel));
   }
   int j;
   for(j=i; j < size-1; j++) {		// compact, if necc
@@ -425,7 +415,7 @@ bool taPtrList_impl::Insert_(void* it, int where, bool no_notify) {
   if(it != NULL) {
     El_SetIndex_(El_Own_(it), where);
     if(hash_table)
-      hash_table->AddHash(El_GetHashVal_(it), where);
+      hash_table->AddHash(El_GetHashVal_(it), where, El_GetHashString_(it));
     void* op2 = NULL;
     if (where > 0) op2 = FastEl_(where - 1);
     if (!no_notify) DataChanged(DCR_LIST_ITEM_INSERT, it, op2);
@@ -450,7 +440,7 @@ bool taPtrList_impl::ReplaceIdx_(int ol, void* nw, bool no_notify_insert) {
     return false;
   if(el[ol] != NULL) {
     if(hash_table)
-      hash_table->RemoveHash(El_GetHashVal_(el[ol]));
+      hash_table->RemoveHash(El_GetHashVal_(el[ol]), El_GetHashString_(el[ol]));
     DataChanged(DCR_LIST_ITEM_REMOVE, el[ol]);
     El_disOwn_(el[ol]);
   }
@@ -458,7 +448,7 @@ bool taPtrList_impl::ReplaceIdx_(int ol, void* nw, bool no_notify_insert) {
   if(nw != NULL) {
     El_SetIndex_(El_Own_(nw), ol);
     if(hash_table)
-      hash_table->AddHash(El_GetHashVal_(nw), ol);
+      hash_table->AddHash(El_GetHashVal_(nw), ol, El_GetHashString_(nw));
     if (!no_notify_insert) {
       void* op2 = NULL;
       if (ol > 0) op2 = FastEl_(ol - 1);
@@ -491,7 +481,7 @@ void taPtrList_impl::Link_(void* it) {
   if(it != NULL) {
     El_Ref_(it);
     if(hash_table)
-      hash_table->AddHash(El_GetHashVal_(it), size-1);
+      hash_table->AddHash(El_GetHashVal_(it), size-1, El_GetHashString_(it));
   }
   void* op2 = NULL;
   if (size > 1) op2 = FastEl_(size - 2); //for DataChanged
@@ -540,7 +530,7 @@ bool taPtrList_impl::InsertLink_(void* it, int where) {
   if(it != NULL) {
     El_Ref_(it);
     if(hash_table)
-      hash_table->AddHash(El_GetHashVal_(it), where);
+      hash_table->AddHash(El_GetHashVal_(it), where, El_GetHashString_(it));
     void* op2 = NULL;
     if (where > 0) op2 = FastEl_(where - 1);
     DataChanged(DCR_LIST_ITEM_INSERT, it, op2);
@@ -568,7 +558,7 @@ bool taPtrList_impl::ReplaceLinkIdx_(int ol, void* nw) {
     return false;
   if(el[ol] != NULL) {
     if(hash_table)
-      hash_table->RemoveHash(El_GetHashVal_(el[ol]));
+      hash_table->RemoveHash(El_GetHashVal_(el[ol]), El_GetHashString_(el[ol]));
     DataChanged(DCR_LIST_ITEM_REMOVE, el[ol]);
     El_disOwn_(el[ol]);
   }
@@ -576,7 +566,7 @@ bool taPtrList_impl::ReplaceLinkIdx_(int ol, void* nw) {
   if(nw != NULL) {
     El_Ref_(nw);
     if(hash_table)
-      hash_table->AddHash(El_GetHashVal_(nw), ol);
+      hash_table->AddHash(El_GetHashVal_(nw), ol, El_GetHashString_(nw));
     void* op2 = NULL;
     if (ol > 0) op2 = FastEl_(ol - 1);
     DataChanged(DCR_LIST_ITEM_INSERT, nw, op2);
@@ -594,7 +584,7 @@ void taPtrList_impl::Push_(void* it) {
   if(it != NULL) {
     El_Ref_(it);
     if(hash_table)
-      hash_table->AddHash(El_GetHashVal_(it), size-1);
+      hash_table->AddHash(El_GetHashVal_(it), size-1, El_GetHashString_(it));
   }
   void* op2 = NULL;
   if (size > 1) op2 = FastEl_(size - 2);
@@ -606,7 +596,7 @@ void* taPtrList_impl::Pop_() {
   void* rval = el[--size];
   if(rval != NULL) {
     if(hash_table)
-      hash_table->RemoveHash(El_GetHashVal_(rval));
+      hash_table->RemoveHash(El_GetHashVal_(rval), El_GetHashString_(rval));
     DataChanged(DCR_LIST_ITEM_REMOVE, rval);
     El_unRef_(rval);
   }
@@ -1028,7 +1018,7 @@ void taHashTable::InitList_() {
   Alloc(3);
 }
 
-void taHashTable::AddHash(taHashVal hash, int val) {
+void taHashTable::AddHash(taHashVal hash, int val, const String& str) {
   if (size == 0) return;		// this shouldn't happen, but justin case..
   int buck_no = (int)(hash % size);
   taHashBucket* bucket = FastEl(buck_no);
@@ -1036,7 +1026,7 @@ void taHashTable::AddHash(taHashVal hash, int val) {
     bucket = new taHashBucket();
     ReplaceIdx(buck_no, bucket);
   }
-  bucket->Add(new taHashEl(hash, val));
+  bucket->Add(new taHashEl(hash, val, str));
   bucket_max = MAX(bucket_max, bucket->size);
 }
 
@@ -1053,47 +1043,51 @@ bool taHashTable::Alloc(int sz) {
   return true;
 }
 
-int taHashBucket::FindBucketIndex(taHashVal hash) const {
+int taHashBucket::FindBucketIndex(taHashVal hash, const String& str) const {
   for(int i=0; i < size; i++) {
-    if(FastEl(i)->hash_code == hash)
+    taHashEl* hel = FastEl(i);
+    if(hel->hash_code == hash && hel->hashed_str == str) { // nil strs always match..
       return i;
+    }
   }
   return -1;
 }
 
-int taHashBucket::FindHashVal(taHashVal hash) const {
+int taHashBucket::FindHashVal(taHashVal hash, const String& str) const {
   for(int i=0; i < size; i++) {
-    if(FastEl(i)->hash_code == hash)
+    taHashEl* hel = FastEl(i);
+    if(hel->hash_code == hash && hel->hashed_str == str) { // nil strs always match..
       return FastEl(i)->value;
+    }
   }
   return -1;
 }
 
-int taHashTable::FindHashVal(taHashVal hash) const {
+int taHashTable::FindHashVal(taHashVal hash, const String& str) const {
   if(size == 0)	return -1;
   int buck_no = (int)(hash % size);
   taHashBucket* bucket = FastEl(buck_no);
   if(bucket == NULL) return -1;
-  return bucket->FindHashVal(hash);
+  return bucket->FindHashVal(hash, str);
 }
 
-bool taHashTable::UpdateHashVal(taHashVal hash, int val) {
+bool taHashTable::UpdateHashVal(taHashVal hash, int val, const String& str) {
   if(size == 0)	return false;
   int buck_no = (int)(hash % size);
   taHashBucket* bucket = FastEl(buck_no);
   if(bucket == NULL) return false;
-  int idx = bucket->FindBucketIndex(hash);
+  int idx = bucket->FindBucketIndex(hash, str);
   if(idx < 0)    return false;
   bucket->FastEl(idx)->value = val;
   return true;
 }
 
-bool taHashTable::RemoveHash(taHashVal hash) {
+bool taHashTable::RemoveHash(taHashVal hash, const String& str) {
   if(size == 0)	return false;
   int buck_no = (int)(hash % size);
   taHashBucket* bucket = FastEl(buck_no);
   if(bucket == NULL) return false;
-  int idx = bucket->FindBucketIndex(hash);
+  int idx = bucket->FindBucketIndex(hash, str);
   if(idx == -1)
     return false;
   return bucket->RemoveIdx(idx);

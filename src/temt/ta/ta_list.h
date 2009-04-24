@@ -201,6 +201,8 @@ protected:
     // if added item has empty name, this will get called, enabling a name to be set; index has been set
   virtual taHashVal 	El_GetHashVal_(void* it) const;
   // gets hash code based on key type in hash table; default is for string-key'ed lists (v3.2 default)
+  virtual String 	El_GetHashString_(void* it) const;
+  // gets hash string if using KT_NAME, else _nilString -- for passing string arg to hash funs
   virtual TALPtr	El_GetOwnerList_(void*) const	{ return (TALPtr)this; }
   // who owns the el? -- only returns a list if the owner is a list
   virtual void*		El_GetOwnerObj_(void*) const	{ return NULL; }
@@ -618,10 +620,12 @@ class TA_API  taHashEl {
 public:
   taHashVal	hash_code;	// hash-code for looking up
   int		value;		// value associated with hash code (e.g., index of item in list)
+  String	hashed_str;	// source value for the hash code if a string -- this is necessary because the hash code is not guaranteed to be unique..
 
   void	Initialize()	{ hash_code = 0; value = -1; }
   taHashEl()		{ Initialize(); }
-  taHashEl(taHashVal hash, int val)	{ hash_code = hash; value = val; }
+  taHashEl(taHashVal hash, int val, const String& str = _nilString)
+    { hash_code = hash; value = val; hashed_str = str; }
 };
 
 class TA_API  taHashBucket : public taPtrList<taHashEl> {
@@ -629,10 +633,10 @@ class TA_API  taHashBucket : public taPtrList<taHashEl> {
 protected:
   void	El_Done_(void* it)	{ delete (taHashEl*)it; }
 public:
-  virtual int	FindBucketIndex(taHashVal hash) const;
-  // find index of item in the bucket with given hash code
-  virtual int	FindHashVal(taHashVal hash) const;
-  // find hash value associated with given hash code
+  virtual int	FindBucketIndex(taHashVal hash, const String& str = _nilString) const;
+  // find index of item in the bucket with given hash code, and string if using
+  virtual int	FindHashVal(taHashVal hash, const String& str = _nilString) const;
+  // find hash value associated with given hash code, and string if using
 
   ~taHashBucket()               { Reset(); }
 };
@@ -657,37 +661,37 @@ public:
   override bool Alloc(int sz);
   override void	RemoveAll();
 
-  virtual int	FindHashVal(taHashVal hash) const;
+  virtual int	FindHashVal(taHashVal hash, const String& str = _nilString) const;
   // find value associated with given hash code (-1 if not found)
   virtual int	FindHashValString(const String& str) const
-  { return FindHashVal(HashCode_String(str)); }
+  { return FindHashVal(HashCode_String(str), str); }
   // find value associated with given string (-1 if not found)
   virtual int	FindHashValPtr(const void* ptr) const
   { return FindHashVal(HashCode_Ptr(ptr)); }
   // find value associated with given pointer (-1 if not found)
 
-  virtual void 	AddHash(taHashVal hash, int val);
+  virtual void 	AddHash(taHashVal hash, int val, const String& str = _nilString);
   // add a new item to the hash table
   virtual void 	AddHashString(const String& str, int val)
-  { AddHash(HashCode_String(str), val); }
+  { AddHash(HashCode_String(str), val, str); }
   // add a new string item to the hash table
   virtual void 	AddHashPtr(const void* ptr, int val)
   { AddHash(HashCode_Ptr(ptr), val); }
   // add a new pointer item to the hash table
 
-  virtual bool	RemoveHash(taHashVal hash);
+  virtual bool	RemoveHash(taHashVal hash, const String& str = _nilString);
   // remove given hash code from table
   virtual bool	RemoveHashString(const String& str)
-  { return RemoveHash(HashCode_String(str)); }
+  { return RemoveHash(HashCode_String(str), str); }
   // remove given string from table
   virtual bool	RemoveHashPtr(const void* ptr)
   { return RemoveHash(HashCode_Ptr(ptr)); }
   // remove given pointer from table
 
-  virtual bool	UpdateHashVal(taHashVal hash, int val);
+  virtual bool	UpdateHashVal(taHashVal hash, int val, const String& str = _nilString);
   // update value associated with hash item
-  virtual bool	UpdateHashValString(const String& string, int val)
-  { return UpdateHashVal(HashCode_String(string), val); }
+  virtual bool	UpdateHashValString(const String& str, int val)
+  { return UpdateHashVal(HashCode_String(str), val, str); }
   // update value associated with string item
   virtual bool	UpdateHasValPtr(const void* ptr, int val)
   { return UpdateHashVal(HashCode_Ptr(ptr), val); }

@@ -28,6 +28,7 @@
 #include <qtextedit.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <QFile>
 
 /**An abstract Qt console
  *@author Houssem BDIOUI, modified extensively by Randall O'Reilly
@@ -43,9 +44,11 @@ public:
   virtual void setPrompt(QString prompt, bool display = true);
   // executes the command and displays back its result
   virtual void execCommand(QString command, bool writeCommand = true, bool showPrompt = true);
-  virtual int saveContents(QString fileName); // save the entire contents of console window
-  virtual int saveScript(QString fileName); // loads a file script
-  virtual int loadScript(QString fileName);
+  virtual int saveContents(QString fileName); // save the entire contents of console window -- returns 0 on success, -1 on failure
+  virtual int saveScript(QString fileName); // save recorded script to file -- returns 0 on success, -1 on failure
+  virtual int loadScript(QString fileName); // load script and execute commands -- returns 0 on success, -1 on failure
+  virtual int setStdLogfile(QString fileName);
+  // log stdout and stderr to given log file name, as they come in -- useful for debugging if app itself crashes/goes to the debugger and you can't scroll the console! -- returns 0 on success, -1 on failure
   virtual void clear();	       // clear & reset the console (useful sometimes)
   virtual void reset();
   virtual void exit();		// exit shell
@@ -62,7 +65,6 @@ public:
   virtual void setFontNameSize(QString fnm, int sz);
   virtual void setPager(bool pager);
   // determines whether to use a pager mechanism to control the flow of text through the console (as in the unix more command)
-
 
 using inherited::setMinimumSize;
 using inherited::minimumSize;
@@ -124,6 +126,7 @@ protected:
   QStringList history;	// The commands history
   QStringList recordedScript; // commands that have succeeded
   int historyIndex; // Current history index (needed because afaik QStringList does not have such an index)
+  QFile	logfile;    // log std out/err msgs to this file if open
   Interceptor *stdoutInterceptor; // Stdout interceptor
   Interceptor *stderrInterceptor; // Stderr interceptor
 

@@ -1095,7 +1095,8 @@ public slots:
   virtual void 	editRedo();
   virtual void 	editFind(); 
   virtual void 	editFindNext(); 
-  virtual void	viewRefresh() {Refresh();} // manually rebuild/refresh the current view
+  virtual void	viewRefresh() { Refresh(); UpdateUi(); }
+  // manually rebuild/refresh the current view
   void		viewSaveView(); // save view state
   
   virtual void	showMenu_aboutToShow();
