@@ -3391,7 +3391,6 @@ bool Unit_Group::Dump_QuerySaveChildren() {
   if (!own_lay) return false; // huh? should always be valid...
   // always save if forced
   if (own_lay->own_net->HasNetFlag(Network::SAVE_UNITS_FORCE)) return true;
-  if(taMisc::is_undo_saving) return false; // don't save at unit level for global undo
   // else arbitrate: true if layer says SAVE, or net says SAVE and we don't override
   return (own_lay->HasLayerFlag(Layer::SAVE_UNITS) ||
     (own_lay->own_net->HasNetFlag(Network::SAVE_UNITS)
