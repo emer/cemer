@@ -535,19 +535,59 @@ String taDataAnal::RegressLinear(DataTable* src_data, const String& x_data_col_n
 bool taDataAnal::DistMatrix(float_Matrix* dist_mat, DataTable* src_data,
 			    const String& data_col_nm,
 			    taMath::DistMetric metric, bool norm, float tol) {
-  DataCol* da = GetMatrixDataCol(src_data, data_col_nm);
-  if(!da)
-    return false;
-  bool rval = true;
-  if(da->valType() == VT_FLOAT) {
-    rval = taMath_float::mat_dist(dist_mat, (float_Matrix*)da->AR(), metric, norm, tol);
+  if(!src_data) return false;
+  if(data_col_nm.empty()) {
+    int n_rows = src_data->rows;
+    dist_mat->SetGeom(2, n_rows, n_rows);
+    for(int ar=0; ar<n_rows; ar++) {
+      for(int br=0; br<n_rows; br++) {
+	double cell_dist = 0.0;
+	for(int cl=0; cl<src_data->cols(); cl++) {
+	  DataCol* da = src_data->GetColData(cl);
+	  if(!da) return false;
+	  if(!da->isMatrix()) continue;
+	  if(da->valType() != VT_FLOAT && da->valType() != VT_DOUBLE) continue;
+	  if(da->valType() == VT_FLOAT) {
+	    float_Matrix* ta = (float_Matrix*)src_data->GetValAsMatrix(cl, ar);
+	    taBase::Ref(ta);
+	    float_Matrix* tb = (float_Matrix*)src_data->GetValAsMatrix(cl, br);
+	    taBase::Ref(tb);
+	    float dist = taMath_float::vec_dist(ta, tb, metric, norm, tol);
+	    cell_dist += dist;
+	    taBase::unRefDone(ta);
+	    taBase::unRefDone(tb);
+	  }
+	  else {		// VT_DOUBLE
+	    double_Matrix* ta = (double_Matrix*)src_data->GetValAsMatrix(cl, ar);
+	    taBase::Ref(ta);
+	    double_Matrix* tb = (double_Matrix*)src_data->GetValAsMatrix(cl, br);
+	    taBase::Ref(tb);
+	    double dist = taMath_double::vec_dist(ta, tb, metric, norm, tol);
+	    cell_dist += dist;
+	    taBase::unRefDone(ta);
+	    taBase::unRefDone(tb);
+	  }
+	}
+	dist_mat->FastEl(br,ar) = cell_dist;
+      }
+    }
+    return true;
   }
-  else if(da->valType() == VT_DOUBLE) {
-    double_Matrix ddmat(false);
-    rval = taMath_double::mat_dist(&ddmat, (double_Matrix*)da->AR(), metric, norm, tol);
-    taMath::mat_cvt_double_to_float(dist_mat, &ddmat);
+  else {
+    DataCol* da = GetMatrixDataCol(src_data, data_col_nm);
+    if(!da)
+      return false;
+    bool rval = true;
+    if(da->valType() == VT_FLOAT) {
+      rval = taMath_float::mat_dist(dist_mat, (float_Matrix*)da->AR(), metric, norm, tol);
+    }
+    else if(da->valType() == VT_DOUBLE) {
+      double_Matrix ddmat(false);
+      rval = taMath_double::mat_dist(&ddmat, (double_Matrix*)da->AR(), metric, norm, tol);
+      taMath::mat_cvt_double_to_float(dist_mat, &ddmat);
+    }
+    return rval;
   }
-  return rval;
 }
 
 bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_data,
@@ -560,7 +600,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
   GetDest(dist_mat, src_data, "DistMatrix");
   dist_mat->StructUpdate(true);
   if(!name_col_nm.empty()) {
-    DataCol* nmda = GetStringDataCol(src_data, name_col_nm);
+    DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
     if(nmda) {
       dist_mat->Reset();	// nuke everything
       dist_mat->NewColString("Name");
@@ -680,8 +720,8 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
   GetDest(dist_mat, src_data_a, src_data_b->name + "_DistMatrix");
   dist_mat->StructUpdate(true);
   if(!name_col_nm_a.empty() && !name_col_nm_b.empty()) {
-    DataCol* nmda_a = GetStringDataCol(src_data_a, name_col_nm_a);
-    DataCol* nmda_b = GetStringDataCol(src_data_b, name_col_nm_b);
+    DataCol* nmda_a = src_data_a->FindColName(name_col_nm_a, true); // errmsg
+    DataCol* nmda_b = src_data_b->FindColName(name_col_nm_b, true); // errmsg
     if(nmda_a && nmda_b) {
       dist_mat->Reset();	// nuke everything
       dist_mat->NewColString("Name");
@@ -770,7 +810,7 @@ bool taDataAnal::Cluster(DataTable* clust_data, bool view, DataTable* src_data,
   DataCol* da = GetMatrixDataCol(src_data, data_col_nm);
   if(!da)
     return false;
-  DataCol* nmda = GetStringDataCol(src_data, name_col_nm);
+  DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
   if(!nmda)
     return false;
   
@@ -868,7 +908,7 @@ bool taDataAnal::PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
   float_Matrix yprjn(false);
   taMath_float::mat_prjn(&yprjn, (float_Matrix*)da->AR(), &yevec);
 
-  DataCol* nmda = GetStringDataCol(src_data, name_col_nm);
+  DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
 
   GetDest(prjn_data, src_data, "col_" + data_col_nm + "_PCA2dPrjn");
 
@@ -919,7 +959,7 @@ bool taDataAnal::MDS2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
   float_Matrix xy_coords(false);
   taMath_float::mat_mds_owrite(&dist_mat, &xy_coords, x_axis_c, y_axis_c);
 
-  DataCol* nmda = GetStringDataCol(src_data, name_col_nm);
+  DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
 
   GetDest(prjn_data, src_data, "col_" + data_col_nm + "_MDS2dPrjn");
 
@@ -980,7 +1020,7 @@ bool taDataAnal::RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_da
   taBase::UnRef(xrow);
   taBase::UnRef(yrow);
 
-  DataCol* nmda = GetStringDataCol(src_data, name_col_nm);
+  DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
 
   GetDest(prjn_data, src_data, "col_" + data_col_nm + "_RowPat2dPrjn");
 
