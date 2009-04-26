@@ -46,12 +46,12 @@ public:
   String	name;		// just for looking up purposes
   MemberDef*	memb_def;	// memberdef of the pointer
   void* 	base;		// location of ptr to set, usually TAPtr*, but could be taSmartRef*
-  TAPtr 	parent;		// location's parent to update
+  taBase* 	parent;		// location's parent to update
   String 	path;
 
-  TAPtr 	Resolve();
+  taBase* 	Resolve();
 
-  VPUnref(void* base, TAPtr par, const String& p, MemberDef* md = NULL);
+  VPUnref(void* base, taBase* par, const String& p, MemberDef* md = NULL);
 };
 
 // a list of unresolved variable pointers that are to be resolved later..
@@ -63,8 +63,8 @@ protected:
   String El_GetName_(void* it) const { return ((VPUnref*)it)->name; }
 public:
   void	Resolve();	// attempt to resolve references
-  void	Add(VPUnref* it)	{ taPtrList<VPUnref>::Add(it); }
-  void	Add(void* b, TAPtr par, const String& p, MemberDef* md = NULL);
+
+  virtual void	AddVPU(void* b, taBase* par, const String& p, MemberDef* md = NULL);
 
   ~VPUList()                            { Reset(); }
 };
@@ -73,24 +73,24 @@ class TA_API DumpPathSub {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS Path element substitution
 public:
   TypeDef*	type;
-  TAPtr		parent;		// for relative paths
+  taBase*	parent;		// for relative paths
   String	old_path;
   String	new_path;
 
-  DumpPathSub(TypeDef* td, TAPtr par, const String& o, const String& n);
+  DumpPathSub(TypeDef* td, taBase* par, const String& o, const String& n);
 };
 
 class TA_API DumpPathSubList : public taPtrList<DumpPathSub> {
   // ##NO_CSS ##NO_MEMBERS
+INHERITED(taPtrList<DumpPathSub>)
 protected:
   void		El_Done_(void* it)	{ delete (DumpPathSub*)it; }
   String	El_GetName_(void* it) const { return ((DumpPathSub*)it)->old_path; }
 public:
-  void	Add(DumpPathSub* it)	{ taPtrList<DumpPathSub>::Add(it); }
-  void	Add(TypeDef* td, TAPtr par, String& o, String& n);
-  void 	FixPath(TypeDef* td, TAPtr par, String& path);
+  void	AddPath(TypeDef* td, taBase* par, String& o, String& n);
+  void 	FixPath(TypeDef* td, taBase* par, String& path);
   // fixes given path (td and par are for scoping search)
-  void 	unFixPath(TypeDef* td, TAPtr par, String& path);
+  void 	unFixPath(TypeDef* td, taBase* par, String& path);
   // un-fixes given path to original path value
 
   ~DumpPathSubList()            { Reset(); }
@@ -99,34 +99,41 @@ public:
 class TA_API DumpPathToken {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS Path tokens for quicker loading
 public:
-  TAPtr		object;
+  taBase*	object;
   String	path;
   String	token_id;
 
-  DumpPathToken(TAPtr obj, const String& pat, const String& tok_id);
+  DumpPathToken(taBase* obj, const String& pat, const String& tok_id);
 };
 
 class TA_API DumpPathTokenList : public taPtrList<DumpPathToken> {
   // ##NO_CSS ##NO_MEMBERS
+INHERITED(taPtrList<DumpPathToken>)
 protected:
   void		El_Done_(void* it)	{ delete (DumpPathToken*)it; }
   String	El_GetName_(void* it) const { return ((DumpPathToken*)it)->path; }
 public:
-  void		Add(DumpPathToken* it)	{ taPtrList<DumpPathToken>::Add(it); }
-  void		Add(TAPtr obj, const String& pat);
+  taHashTable	obj_hash_table;	// optimized finding of objects
 
-  int		FindObj(TAPtr obj); // find path token for given object
-
-  String	GetPath(TAPtr obj);
+  // this is the interface that should be used:
+  virtual void	ReInit(int obj_hash_size = 1000);
+  // re-initialize for saving/loading, including resetting the hash table
+  virtual void	AddObjPath(taBase* obj, const String& pat);
+  // add object and path
+  virtual int	FindObj(taBase* obj);
+  // find path token for given object
+  virtual String GetPath(taBase* obj);
   // get path for this object (either a token path or its GetPath if new)
-
-  void		NewLoadToken(String& pat, String& tok_id);
+  virtual void	NewLoadToken(String& pat, String& tok_id);
   // just loaded a new token definition, make a path token out of it
-  TAPtr		FindFromPath(String& pat, TypeDef* td, void* base, void* par=NULL,
+  virtual taBase* FindFromPath(String& pat, TypeDef* td, void* base, void* par=NULL,
 			     MemberDef* memb_def=NULL);
   // find object from given path, where path could be a path token too
   // note: pat may be modified!
 
+  override void	Reset();
+  
+  DumpPathTokenList();
   ~DumpPathTokenList()          { Reset(); }
 };
 

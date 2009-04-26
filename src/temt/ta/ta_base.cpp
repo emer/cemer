@@ -127,6 +127,7 @@ const QPixmap* folder_open_pixmap() {
 //////////////////////////////////////////
 
 taRootBase* tabMisc::root = NULL;
+taBase*	    tabMisc::cur_undo_save_top = NULL;
 
 taBase_RefList 	tabMisc::delayed_close;
 taBase_RefList 	tabMisc::delayed_updateafteredit;
@@ -3534,7 +3535,7 @@ int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
 	    idx = size-1;
 	  }
 	  if(tp == NULL) {
-	    dumpMisc::vpus.Add((TAPtr*)&(el[idx]), (TAPtr)NULL, lnk_path);
+	    dumpMisc::vpus.AddVPU((TAPtr*)&(el[idx]), (TAPtr)NULL, lnk_path);
 	  }
 	  return true;
 	}

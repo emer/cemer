@@ -352,7 +352,6 @@ void taUndoDiffSrc::InitFmRec(taUndoRec* urec) {
 }
 
 void taUndoDiffSrc::EncodeDiff(taUndoRec* rec) {
-  rec->diff_src = this;		     // now points to us
   if(diff.data_a.line_st.size > 0) { // already done
     diff.ReDiffB(save_data, rec->save_data, false, false, false); // trim, no ignore case
   }
@@ -365,7 +364,6 @@ void taUndoDiffSrc::EncodeDiff(taUndoRec* rec) {
   // lines changed tends to double-count..
 #ifdef DEBUG	
   cout << "last_diff_n: " << last_diff_n << " pct: " << last_diff_pct << endl;
-  taMisc::FlushConsole();
 #endif  
   // now nuke rec's saved data!!
   rec->save_data = _nilString;
@@ -411,7 +409,7 @@ void taUndoRec::Initialize() {
 }
 
 String taUndoRec::GetData() {
-  if(!(bool)diff_src) {
+  if(save_data.nonempty()) {
     return save_data;		// easy
   }
   String rval = diff_edits.GenerateB(diff_src->save_data); // generate against A
@@ -452,6 +450,52 @@ void taUndoRec_List::Reset() {
   length = 0;
 }
 
+////////////////////////////
+// 	undo threading
+
+
+void UndoDiffTask::Initialize() {
+}
+
+void UndoDiffTask::Destroy() {
+}
+
+void UndoDiffTask::run() {
+  UndoDiffThreadMgr* udtmg = mgr();
+  if(!udtmg) return;
+  taUndoMgr* um = udtmg->undo_mgr();
+  if(!um) return;
+  if(!um->src_to_diff || !um->rec_to_diff) return;
+
+  um->src_to_diff->EncodeDiff(um->rec_to_diff);
+  um->src_to_diff = NULL;
+  um->rec_to_diff = NULL;	// done, reset!
+  um->diff_pending = 0;		// all done!
+}
+
+void UndoDiffThreadMgr::Initialize() {
+  n_threads = 2;		// don't use 0, just 1..
+}
+
+void UndoDiffThreadMgr::Destroy() {
+  n_threads = 2;		// don't use 0, just 1..
+}
+
+void UndoDiffThreadMgr::InitAll() {
+  n_threads = 2;		// don't use 0, just 1..
+  InitThreads();
+  CreateTasks(&TA_UndoDiffTask);
+  SetTasksToThreads();
+}
+
+void UndoDiffThreadMgr::Run() {
+  threads[0]->runTask();	// this is the 2nd task, 1st thread..
+}
+
+
+////////////////////////////
+// 	taUndoMgr
+
 void taUndoMgr::Initialize() {
   cur_undo_idx = 0;
   undo_depth = taMisc::undo_depth;
@@ -461,6 +505,9 @@ void taUndoMgr::Initialize() {
 #else
   save_load_file = false;
 #endif
+  diff_pending = 0;
+  src_to_diff = NULL;
+  rec_to_diff = NULL;
 }
 
 bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top) {
@@ -481,9 +528,17 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
   urec->mod_time.currentDateTime();
   urec->save_top = save_top;
   urec->save_top_path = save_top->GetPath(NULL, owner);
+
+#ifdef DEBUG
+  cout << "SaveUndo of action: " << urec->action << " on: " << urec->mod_obj_name
+       << " at path: " << urec->mod_obj_path << endl;
+#endif
+
+  tabMisc::cur_undo_save_top = save_top; // let others know who we're saving for..
   ++taMisc::is_undo_saving;
   save_top->Save_String(urec->save_data);
   --taMisc::is_undo_saving;
+  tabMisc::cur_undo_save_top = NULL;
 
   // now encode diff for big saves!
   if(save_top == owner) {
@@ -496,10 +551,21 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
       cur_src->InitFmRec(urec);			   // init
 #ifdef DEBUG
       cerr << "New source added!" << endl;
-      taMisc::FlushConsole();
 #endif
     }
-    cur_src->EncodeDiff(urec);	// urec is now diffed
+    if(!diff_pending && !src_to_diff && !rec_to_diff) {
+      if(diff_threads.tasks.size == 0) // need thread!
+        diff_threads.InitAll();
+      src_to_diff = cur_src;
+      rec_to_diff = urec;
+      diff_pending = true;	// now pending
+      diff_threads.Run();	// run diff in separate thread
+    }
+    else {
+      // do it ourselves because thread must still be busy
+      cur_src->EncodeDiff(urec);	// urec is now diffed
+    }
+    urec->diff_src = cur_src;	// this smartref ptr needs to be set in main task
   }
 
   PurgeUnusedSrcs();		// get rid of unused source data
@@ -597,6 +663,7 @@ bool taUndoMgr::LoadFromRec_impl(taUndoRec* urec) {
   // actually do the load..
   ++taMisc::is_undo_loading;
   urec->save_top->Load_String(udata);
+  taMisc::ProcessEvents();	// get any post-load things *before* turning off undo flag..
   --taMisc::is_undo_loading;
 
   // tell project to refresh
@@ -664,7 +731,7 @@ void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
     if(!urec) continue;
     tot_size += urec->save_data.length();
     int dif_lns = 0;
-    if((bool)urec->diff_src) {
+    if((bool)urec->diff_src && urec->save_data.empty()) { // empty is key flag for actually ready
       dif_lns = urec->diff_edits.GetLinesChanged();
       tot_diff_lines += dif_lns;
     }
@@ -674,7 +741,7 @@ void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
 	   << " action: " << urec->action << " on: " << urec->mod_obj_name
 	   << " at path: " << urec->mod_obj_path << endl;
       taMisc::FlushConsole();
-      if(show_diffs && (bool)urec->diff_src) {
+      if(show_diffs && (bool)urec->diff_src && urec->save_data.empty()) {
 	String diffstr = urec->diff_edits.GetDiffStr(urec->diff_src->save_data);
 	for(int j=0; j<diffstr.length(); j++) {
 	  cout << diffstr[j];

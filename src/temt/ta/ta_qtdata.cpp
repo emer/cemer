@@ -5553,7 +5553,7 @@ taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* 
   base = bs;
   meth = md;
   gui_parent = gui_parent_;
-  if ((base != NULL) && typ->InheritsFrom(TA_taBase)) {
+  if(base && typ && typ->InheritsFrom(TA_taBase)) {
     typ = ((TAPtr)base)->GetTypeDef(); // get the *actual* type def of this object!
   }
   is_menu_item = false;

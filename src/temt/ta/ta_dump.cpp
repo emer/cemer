@@ -49,7 +49,7 @@ VPUList 	dumpMisc::vpus;
 void dumpMisc::PostUpdateAfter() {
   taMisc::is_post_loading++;
   for (int i=0; i < dumpMisc::post_update_after.size; i++) {
-    TAPtr tmp = dumpMisc::post_update_after.FastEl(i);
+    taBase* tmp = dumpMisc::post_update_after.FastEl(i);
     tmp->Dump_Load_post();
   }
   dumpMisc::post_update_after.Reset();
@@ -62,19 +62,19 @@ void dumpMisc::PostUpdateAfter() {
 //////////////////////////
 
 
-VPUnref::VPUnref(void* base_, TAPtr par, const String& p, MemberDef* md) {
+VPUnref::VPUnref(void* base_, taBase* par, const String& p, MemberDef* md) {
   base = base_; parent = par; path = p; memb_def = md;
   name = String((intptr_t)base);
 }
 
-TAPtr VPUnref::Resolve() {
+taBase* VPUnref::Resolve() {
   MemberDef* md;
-  TAPtr bs = tabMisc::root->FindFromPath(path, md);
+  taBase* bs = tabMisc::root->FindFromPath(path, md);
   if(!bs)
     return NULL;
   if(md) {
     if(md->type->ptr == 1) {
-      bs = *((TAPtr*)bs);
+      bs = *((taBase**)bs);
       if(!bs)
 	return NULL;
     }
@@ -92,9 +92,9 @@ TAPtr VPUnref::Resolve() {
       if(parent == NULL)
         taMisc::Warning("*** NULL parent for owned pointer:",path);
       else
-        taBase::OwnPointer((TAPtr*)base, bs, parent);
+        taBase::OwnPointer((taBase**)base, bs, parent);
     } else 
-      taBase::SetPointer((TAPtr*)base, bs);
+      taBase::SetPointer((taBase**)base, bs);
   }
 
   if(taMisc::verbose_load >= taMisc::MESSAGES)
@@ -123,7 +123,7 @@ void VPUList::Resolve() {
   } while(i < size);
 }
 
-void VPUList::Add(void* b, TAPtr par, const String& p, MemberDef* md) {
+void VPUList::AddVPU(void* b, taBase* par, const String& p, MemberDef* md) {
   AddUniqNameOld(new VPUnref(b,par,p,md));
   if(taMisc::verbose_load >= taMisc::MESSAGES)
     taMisc::Warning("==> Unresolved Reference:",p);
@@ -135,12 +135,12 @@ void VPUList::Add(void* b, TAPtr par, const String& p, MemberDef* md) {
 //////////////////////////
 
 
-DumpPathSub::DumpPathSub(TypeDef* td, TAPtr par, const String& o, const String& n) {
+DumpPathSub::DumpPathSub(TypeDef* td, taBase* par, const String& o, const String& n) {
   type = td; parent = par;
   old_path = o; new_path = n;
 }
 
-void DumpPathSubList::Add(TypeDef* td, TAPtr par, String& o, String& n) {
+void DumpPathSubList::AddPath(TypeDef* td, taBase* par, String& o, String& n) {
   int o_i = o.length()-1;
   int n_i = n.length()-1;
   int o_last_sep = -1;		// position of last separator character
@@ -183,7 +183,7 @@ void DumpPathSubList::Add(TypeDef* td, TAPtr par, String& o, String& n) {
   }
 }
 
-void DumpPathSubList::FixPath(TypeDef*, TAPtr par, String& path) {
+void DumpPathSubList::FixPath(TypeDef*, taBase* par, String& path) {
   // search backwards to get latest fix
   int i;
   for(i=size-1; i>=0; i--) {
@@ -197,7 +197,7 @@ void DumpPathSubList::FixPath(TypeDef*, TAPtr par, String& path) {
   }
 }
 
-void DumpPathSubList::unFixPath(TypeDef*, TAPtr par, String& path) {
+void DumpPathSubList::unFixPath(TypeDef*, taBase* par, String& path) {
   // search backwards to get latest fix
   int i;
   for(i=size-1; i>=0; i--) {
@@ -216,35 +216,47 @@ void DumpPathSubList::unFixPath(TypeDef*, TAPtr par, String& path) {
 //	Path Token	//
 //////////////////////////
 
-DumpPathToken::DumpPathToken(TAPtr obj, const String& pat, const String& tok_id) {
+DumpPathToken::DumpPathToken(taBase* obj, const String& pat, const String& tok_id) {
   object = obj;
   path = pat;
   token_id = tok_id;
 }
 
-void DumpPathTokenList::Add(TAPtr obj, const String& pat) {
+void DumpPathTokenList::Reset() {
+  inherited::Reset();
+  obj_hash_table.Reset();
+}
+
+DumpPathTokenList::DumpPathTokenList() {
+  obj_hash_table.key_type = taHashTable::KT_PTR;
+}
+
+void DumpPathTokenList::ReInit(int obj_hash_size) {
+  Reset();
+  obj_hash_table.Alloc(obj_hash_size);
+}
+
+void DumpPathTokenList::AddObjPath(taBase* obj, const String& pat) {
   String tok_id = "$";
   tok_id += String(size) + "$";
+  int idx = size;
   DumpPathToken* tok = new DumpPathToken(obj, pat, tok_id);
   Add(tok);
+  if(obj)			// don't add for nulls!
+    obj_hash_table.AddHashPtr(obj, idx);
 }
 
-int DumpPathTokenList::FindObj(TAPtr obj) {
-  int i;
-  for(i=0; i<size; i++) {
-    if(FastEl(i)->object == obj)
-      return i;
-  }
-  return -1;
+int DumpPathTokenList::FindObj(taBase* obj) {
+  return obj_hash_table.FindHashValPtr(obj);
 }
 
-String DumpPathTokenList::GetPath(TAPtr obj) {
+String DumpPathTokenList::GetPath(taBase* obj) {
   int idx = FindObj(obj);
   if(idx >= 0)
     return FastEl(idx)->token_id;
 
   String path = obj->GetPath();
-  Add(obj, path);
+  AddObjPath(obj, path);
   DumpPathToken* tok = FastEl(size-1);
   path += tok->token_id;	// this marks the token right then and there..
   return path;
@@ -252,7 +264,7 @@ String DumpPathTokenList::GetPath(TAPtr obj) {
 
 void DumpPathTokenList::NewLoadToken(String& pat, String& tok_id) {
   int tok_num = (int)tok_id;
-  Add(NULL, pat);
+  AddObjPath(NULL, pat);
   DumpPathToken* tok = FastEl(size-1);
   if(tok_num != size-1) {
     taMisc::Warning("*** Path Tokens out of order, on list:", tok->token_id, "in file:",
@@ -261,7 +273,7 @@ void DumpPathTokenList::NewLoadToken(String& pat, String& tok_id) {
     tok->path = "";
     String null_pat;
     while(size <= tok_num) 
-      Add(NULL, null_pat);	// catch up if possible
+      AddObjPath(NULL, null_pat);	// catch up if possible
     tok = FastEl(tok_num);
     tok->path = pat;
   }
@@ -270,7 +282,7 @@ void DumpPathTokenList::NewLoadToken(String& pat, String& tok_id) {
   }
 }
 
-TAPtr DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
+taBase* DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
 				      void* par, MemberDef* memb_def)
 {
   if(pat[0] == '$') {		// its a token path, not a real one..
@@ -281,35 +293,37 @@ TAPtr DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
       return NULL;
     }
     if((tok->object == NULL) && (base != NULL)) {
-      dumpMisc::vpus.Add(base, (TAPtr)par, pat, memb_def);
+      dumpMisc::vpus.AddVPU(base, (taBase*)par, pat, memb_def);
       return NULL;
     }
     return tok->object;		// this is what we're looking for
   }
   DumpPathToken* tok = NULL;
+  int tok_idx = -1;
   if(pat.lastchar() == '$') {	// path contains definition of new token
     String token_id = pat.after('$');
     token_id = token_id.before('$');
     pat = pat.before('$');
     NewLoadToken(pat, token_id); // make the token
     tok = FastEl(size-1);
+    tok_idx = size-1;
   }
 
   dumpMisc::path_subs.FixPath(td, tabMisc::root, pat);
   MemberDef* md = NULL;
-  TAPtr rval = tabMisc::root->FindFromPath(pat, md);
+  taBase* rval = tabMisc::root->FindFromPath(pat, md);
   if(!rval) {
     if(base != NULL)
-      dumpMisc::vpus.Add(base, (TAPtr)par, pat, memb_def);
+      dumpMisc::vpus.AddVPU(base, (taBase*)par, pat, memb_def);
     return NULL;
   }
 
   if(md) {
     if(md->type->ptr == 1) {
-      rval = *((TAPtr*)rval);
+      rval = *((taBase**)rval);
       if(!rval) {
 	if(base != NULL)
-	  dumpMisc::vpus.Add(base, (TAPtr)par, pat, memb_def);
+	  dumpMisc::vpus.AddVPU(base, (taBase*)par, pat, memb_def);
 	return NULL;
       }
     }
@@ -318,8 +332,12 @@ TAPtr DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
       return NULL;
     }
   }
-  if(tok != NULL)
+  if(tok != NULL) {
+    if(!(tok->object) && rval) { // we're going to set this guy -- add to hash table!
+      obj_hash_table.AddHashPtr(rval, tok_idx); // only case for this is last guy
+    }
     tok->object = rval;
+  }
   return rval;
 }
 
@@ -412,8 +430,8 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   if (type->InheritsNonAtomicClass()) {
     taMisc::indent(strm, indent, 1) << name;
     if (type->InheritsFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)new_base;
-      rbase->Dump_Save_inline(strm, (TAPtr)base, indent);
+      taBase* rbase = (taBase*)new_base;
+      rbase->Dump_Save_inline(strm, (taBase*)base, indent);
     }
     else
       type->Dump_Save_inline(strm, new_base, base, indent);
@@ -434,13 +452,13 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   }
   
   if ((eff_type->ptr == 1) && (eff_type->DerivesFrom(TA_taBase))) {
-    TAPtr tap = *((TAPtr*)new_base);
+    taBase* tap = *((taBase**)new_base);
     if((tap != NULL) &&	(tap->GetOwner() == base)) { // wholly owned subsidiary
-      return tap->Dump_Save_impl(strm, (TAPtr)base, indent);
+      return tap->Dump_Save_impl(strm, (taBase*)base, indent);
     }
     if((tap != NULL) && (tap->GetOwner() == NULL)) { // no owner, fake path name
       strm << tap->GetTypeDef()->name << " @*(." << name << ")";
-      tap->Dump_Save_Value(strm, (TAPtr)base, indent);
+      tap->Dump_Save_Value(strm, (taBase*)base, indent);
 //NOTE: HACK ALERT...      
 // we only need the extra "};" when not saving a INLINE object 
       if (!(tap->HasOption("INLINE_DUMP") && !tap->HasUserDataList()))
@@ -485,8 +503,8 @@ int MemberDef::Dump_SaveR(ostream& strm, void* base, void* par, int indent) {
 
   if (type->InheritsNonAtomicClass()) {
     if(type->InheritsFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)new_base;
-      rval = rbase->Dump_SaveR(strm, (TAPtr)base, indent);
+      taBase* rbase = (taBase*)new_base;
+      rval = rbase->Dump_SaveR(strm, (taBase*)base, indent);
     }
     else
       rval = type->Dump_SaveR(strm, new_base, base, indent);
@@ -502,10 +520,10 @@ int MemberDef::Dump_SaveR(ostream& strm, void* base, void* par, int indent) {
     }
   
     if ((eff_type->ptr == 1) && (eff_type->DerivesFrom(TA_taBase))) {
-      TAPtr tap = *((taBase **)(new_base));
+      taBase* tap = *((taBase **)(new_base));
       if ((tap != NULL) && (tap->GetOwner() == base)) { // wholly owned subsidiary
-        tap->Dump_Save_impl(strm, (TAPtr) base, indent);
-        rval = tap->Dump_SaveR(strm, (TAPtr)base, indent);
+        tap->Dump_Save_impl(strm, (taBase*) base, indent);
+        rval = tap->Dump_SaveR(strm, (taBase*)base, indent);
       }
     }
   }
@@ -525,11 +543,11 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
   
   if (type->InheritsNonAtomicClass()) {
     if(type->InheritsFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)new_base;
-      rval = rbase->Dump_Save_PathR(strm, (TAPtr)base, indent);
+      taBase* rbase = (taBase*)new_base;
+      rval = rbase->Dump_Save_PathR(strm, (taBase*)base, indent);
     }
     else
-      rval = type->Dump_Save_PathR(strm, new_base, (TAPtr)base, indent);
+      rval = type->Dump_Save_PathR(strm, new_base, (taBase*)base, indent);
   }
   else {
     // if it is a Variant, we are only interested in non-null taBase ptrs
@@ -551,7 +569,7 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
     }
     
     if ((eff_type->ptr == 1) && (eff_type->DerivesFrom(TA_taBase))) {
-      TAPtr tap = *((taBase **)(new_base));
+      taBase* tap = *((taBase **)(new_base));
       if((tap != NULL) &&	(tap->GetOwner() == base)) { // wholly owned subsidiary
         strm << "\n";			// actually saving a path: put a newline
         taMisc::indent(strm, indent, 1);
@@ -569,14 +587,14 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
 int TypeDef::Dump_Save_Path(ostream& strm, void* base, void* par, int) {
   strm << name << " ";
   if(InheritsFrom(TA_taBase)) {
-    TAPtr rbase = (TAPtr)base;
+    taBase* rbase = (taBase*)base;
     if(rbase->GetOwner() == NULL)
       strm << "NULL";
     else {
       // its a relative path if you have a parent (period)
       if(par != NULL)
 	strm << "@";
-      strm << rbase->GetPath(NULL, (TAPtr)par);
+      strm << rbase->GetPath(NULL, (taBase*)par);
     }
   }
   return true;
@@ -630,18 +648,18 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
     return false;
 
   if((ptr == 1) && DerivesFrom(TA_taBase)) {
-    TAPtr tap = *((taBase **)(base));
+    taBase* tap = *((taBase **)(base));
     if((tap != NULL) &&	(tap->GetOwner() == par)) { // wholly owned subsidiary
-      return tap->Dump_Save_impl(strm, (TAPtr) par, indent);
+      return tap->Dump_Save_impl(strm, (taBase*) par, indent);
     }
     return false;
   }
 
   taMisc::indent(strm, indent, 1);
   if(InheritsFrom(TA_taBase)) {
-    TAPtr rbase = (TAPtr)base;
-    rbase->Dump_Save_Path(strm, (TAPtr)par, indent);
-    rbase->Dump_Save_Value(strm, (TAPtr)par, indent);
+    taBase* rbase = (taBase*)base;
+    rbase->Dump_Save_Path(strm, (taBase*)par, indent);
+    rbase->Dump_Save_Value(strm, (taBase*)par, indent);
   }
   else {
     Dump_Save_Path(strm, base, par, indent);
@@ -654,7 +672,7 @@ int TypeDef::Dump_Save_impl(ostream& strm, void* base, void* par, int indent) {
     }
     if (!inline_dump) {
       if(InheritsFrom(TA_taBase)) {
-        TAPtr rbase = (TAPtr)base;
+        taBase* rbase = (taBase*)base;
         rbase->Dump_SaveR(strm, rbase, indent+1);
       }
       else
@@ -674,16 +692,16 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
     return false;
 
   if((ptr == 1) && DerivesFrom(TA_taBase)) {
-    TAPtr tap = *((taBase **)(base));
+    taBase* tap = *((taBase **)(base));
     if((tap != NULL) &&	(tap->GetOwner() == par)) { // wholly owned subsidiary
-      return tap->Dump_Save_impl(strm, (TAPtr) par, indent);
+      return tap->Dump_Save_impl(strm, (taBase*) par, indent);
     }
     return false;
   }
 
   if(InheritsFrom(TA_taBase)) {
-    TAPtr rbase = (TAPtr)base;
-    rbase->Dump_Save_Value(strm, (TAPtr)par, indent);
+    taBase* rbase = (taBase*)base;
+    rbase->Dump_Save_Value(strm, (taBase*)par, indent);
   }
   else {
     Dump_Save_Value(strm, base, par, indent);
@@ -694,7 +712,7 @@ int TypeDef::Dump_Save_inline(ostream& strm, void* base, void* par, int indent) 
      !HasOption("INLINE_DUMP"))
   {
     if(InheritsFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)base;
+      taBase* rbase = (taBase*)base;
       rbase->Dump_SaveR(strm, rbase, indent+1);
     }
     else
@@ -713,13 +731,13 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     return false;
 
   ++taMisc::is_saving;
-  dumpMisc::path_tokens.Reset();
+  dumpMisc::path_tokens.ReInit();
   tabMisc::root->plugin_deps.Reset();
 
   strm << "// ta_Dump File v2.0\n";   // be sure to check version with Load
   taMisc::strm_ver = 2;
   if (InheritsFrom(TA_taBase)) {
-    TAPtr rbase = (TAPtr)base;
+    taBase* rbase = (taBase*)base;
     rbase->Dump_Save_pre();
     rbase->Dump_Save_GetPluginDeps();
     // if any plugins were used, write out the list of deps
@@ -731,16 +749,16 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
       if (plst->Dump_Save_PathR(strm, tabMisc::root, indent+1))
         taMisc::indent(strm, indent, 1);
       strm << "};\n";
-      plst->Dump_Save_impl(strm, (TAPtr)par, indent);
+      plst->Dump_Save_impl(strm, (taBase*)par, indent);
     }
     
     // now, write out the object itself
-    rbase->Dump_Save_Path(strm, (TAPtr)par, indent);
+    rbase->Dump_Save_Path(strm, (taBase*)par, indent);
     strm << " { ";
-    if(rbase->Dump_Save_PathR(strm, (TAPtr)par, indent+1))
+    if(rbase->Dump_Save_PathR(strm, (taBase*)par, indent+1))
       taMisc::indent(strm, indent, 1);
     strm << "};\n";
-    rbase->Dump_Save_impl(strm, (TAPtr)par, indent);
+    rbase->Dump_Save_impl(strm, (taBase*)par, indent);
   } else {
     Dump_Save_Path(strm, base, par, indent);
     if (InheritsNonAtomicClass()) {
@@ -755,6 +773,9 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     Dump_Save_impl(strm, base, par, indent);
   }
   --taMisc::is_saving;
+// #ifdef DEBUG
+//   cerr << "save path_tokens.size: " << dumpMisc::path_tokens.size << endl;
+// #endif
   dumpMisc::path_tokens.Reset();
   return true;
 }
@@ -921,8 +942,8 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
 
   if (type->InheritsNonAtomicClass()) {
     if(type->InheritsFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)new_base;
-      rval = rbase->Dump_Load_impl(strm, (TAPtr)base);
+      taBase* rbase = (taBase*)new_base;
+      rval = rbase->Dump_Load_impl(strm, (taBase*)base);
     }
     else
       rval = type->Dump_Load_impl(strm, new_base, base);
@@ -951,14 +972,14 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
       c = taMisc::skip_white(strm, true);
       if (c == '{') {
         // a taBase object that was saved as a member, but is now a pointer..
-        TAPtr rbase = *((TAPtr*)new_base);
+        taBase* rbase = *((taBase**)new_base);
         if(rbase == NULL) {	// it's a null object, can't load into it
           taMisc::Warning("*** Can't load into NULL pointer object for member:", name,
                         "in eff_type:",GetOwnerType()->name);
           return false;
         }
         // treat it as normal..
-        rval = rbase->Dump_Load_impl(strm, (TAPtr)base);
+        rval = rbase->Dump_Load_impl(strm, (taBase*)base);
         if(taMisc::verbose_load >= taMisc::TRACE) {
           cerr << "Leaving MemberDef::Dump_Load, member: " << name
               << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
@@ -1123,7 +1144,7 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
 int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) {
   bool ptr_flag = false;	// pointer was loaded
   String orig_path;
-  TAPtr find_base = NULL;	// where to find item from
+  taBase* find_base = NULL;	// where to find item from
   if(taMisc::verbose_load >= taMisc::TRACE) {
     cerr << "Entering TypeDef::Dump_Load_Path_impl, type: " << name
 	 << ", path = " << path
@@ -1138,7 +1159,7 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
       return false;
     }
     path = path.after('@');
-    find_base = (TAPtr)par;	// we better get a taBase
+    find_base = (taBase*)par;	// we better get a taBase
   }
 
   if(path.firstchar() == '*') {
@@ -1309,8 +1330,8 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
     cerr << "Loading: " << td->name << " " << path << " rval: " << rval << "\n";
   if((rval > 0) && (base != NULL)) {
     if(td->InheritsFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)base;
-      rval = rbase->Dump_Load_Value(strm, (TAPtr)par);
+      taBase* rbase = (taBase*)base;
+      rval = rbase->Dump_Load_Value(strm, (taBase*)par);
       if(rval==1) {
 	if (rbase->HasOption("IMMEDIATE_UPDATE"))
 	  rbase->UpdateAfterEdit();
@@ -1393,7 +1414,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
   }
 
   dumpMisc::path_subs.Reset();
-  dumpMisc::path_tokens.Reset();
+  dumpMisc::path_tokens.ReInit();
   dumpMisc::vpus.Reset();
   dumpMisc::update_after.Reset();
   // NOTE: post_update_after can include load commands so don't reset here
@@ -1454,10 +1475,10 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
 
 
   if(InheritsFrom(td)) {		// we are the same as load token
-    el = (TAPtr)base;			// so use the given base
+    el = (taBase*)base;			// so use the given base
   }
   else {
-    TAPtr par = (TAPtr)base;		// given base must be a parent
+    taBase* par = (taBase*)base;		// given base must be a parent
     el = par->New(1,td);		// create one of the saved type
     if(el == NULL) {
       taMisc::Warning("*** Could not make a:",td->name,"in:",par->GetPath());
@@ -1469,9 +1490,9 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
 
   new_path = el->GetPath();
   if(new_path != path)
-    dumpMisc::path_subs.Add(td, tabMisc::root, path, new_path);
+    dumpMisc::path_subs.AddPath(td, tabMisc::root, path, new_path);
 
-  rval = el->Dump_Load_Value(strm, (TAPtr)par); // read it
+  rval = el->Dump_Load_Value(strm, (taBase*)par); // read it
 
   while(rval != EOF) {
     rval = Dump_Load_impl(strm, NULL, par); 	// base is given by the path..
@@ -1480,7 +1501,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
   dumpMisc::vpus.Resolve(); 			// try to cache out references.
 
   for (int i=0; i<dumpMisc::update_after.size; i++) {
-    TAPtr tmp = dumpMisc::update_after.FastEl(i);
+    taBase* tmp = dumpMisc::update_after.FastEl(i);
     if(taBase::GetRefn(tmp) <= 1) {
       taMisc::Warning("*** Object: of type:",
 		      tmp->GetTypeDef()->name,"named:",tmp->GetName(),"is unowned!");
@@ -1495,6 +1516,9 @@ endload:
 
   dumpMisc::update_after.Reset(); //note: don't reset post list!
   dumpMisc::path_subs.Reset();
+// #ifdef DEBUG
+//   cerr << "load path_tokens.size: " << dumpMisc::path_tokens.size << endl;
+// #endif
   dumpMisc::path_tokens.Reset();
   dumpMisc::vpus.Reset();
   if (el_) *el_ = (void*)el;

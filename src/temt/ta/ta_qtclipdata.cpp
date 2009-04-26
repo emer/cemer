@@ -966,7 +966,7 @@ int taOBase::ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea
   switch (ea & taiClipData::EA_OP_MASK) {
   //note: COPY is handled by the child object itself, or outer controller if multi
   case taiClipData::EA_UNLINK: {
-    taProject* proj = dynamic_cast<taProject*>(list->GetThisOrOwner(&TA_taProject));
+    taProject* proj = (taProject*)list->GetOwner(&TA_taProject);
     if(proj) {
       proj->undo_mgr.SaveUndo(lst_itm, "Remove"); // project level scope
     }

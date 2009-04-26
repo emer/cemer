@@ -29,11 +29,15 @@
 #include "colorscale.h"
 #include "ta_seledit.h"
 #include "ta_time.h"
+#include "ta_thread.h"
 
 class taDoc;
 class taWizard;
 class taProject;
 class taRootBase;
+
+////////////////////////////////////////////////////////////////////////
+//		taDoc -- documents
 
 class TA_API taDoc : public taNBase {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 ##CAT_Docs document for providing information on projects and other objects
@@ -92,6 +96,9 @@ private:
   void 	Destroy()		{ };
 };
 
+////////////////////////////////////////////////////////////////////////
+//		taWizard -- wizards
+
 class TA_API taWizard : public taNBase {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 ##CAT_Wizard wizard for automating construction of simulation objects
 INHERITED(taNBase)
@@ -121,6 +128,9 @@ private:
   void 	Destroy()		{ };
 };
 
+////////////////////////////////////////////////////////////////////////
+//		SelectEdit -- control panels
+
 class TA_API SelectEdit_Group : public taGroup<SelectEdit> {
   // ##CAT_Display group of select edit dialog objects
 INHERITED(taGroup<SelectEdit>)
@@ -136,7 +146,13 @@ private:
   void 	Destroy()		{ };
 };
 
+////////////////////////////////////////////////////////////////////////
+//		Undo/Redo System
+
 class taUndoRec;
+class taUndoDiffSrc;
+class taUndoMgr;
+//
 
 class TA_API taUndoDiffSrc : public taOBase {
   // ##CAT_Undo full source record for diff-based saving of undo save data -- diffs are computed against this guy
@@ -301,17 +317,60 @@ private:
   void 	Destroy()		{ };
 };
 
+////////////////////////////////
+//	Undo Threading
+
+class UndoDiffThreadMgr;
+
+class TA_API UndoDiffTask : public taTask {
+  // threading task for computing the diff on undo save data -- fork this off to save time
+INHERITED(taTask)
+public:
+  override void run();
+  // runs specified chunk of computation (encode diff)
+
+  UndoDiffThreadMgr* mgr() { return (UndoDiffThreadMgr*)owner->GetOwner(); }
+
+  TA_BASEFUNS_NOCOPY(UndoDiffTask);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+class TA_API UndoDiffThreadMgr : public taThreadMgr {
+  // #INLINE thread manager for UndoDiff tasks -- manages threads and tasks, and coordinates threads running the tasks
+INHERITED(taThreadMgr)
+public:
+  taUndoMgr*	undo_mgr() 	{ return (taUndoMgr*)owner; }
+
+  void		InitAll();	// initialize threads and tasks
+
+  void		Run();
+  // #IGNORE run diff task
+  
+  TA_BASEFUNS_NOCOPY(UndoDiffThreadMgr);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+////////////////////////////////
+//	Undo Manager
 
 class TA_API taUndoMgr : public taOBase {
   // ##CAT_Undo undo manager -- handles the basic undo functionality
 INHERITED(taOBase)
 public:
+  UndoDiffThreadMgr	diff_threads; // #NO_SAVE #HIDDEN threading support for computing diffs
   taUndoDiffSrc_List	undo_srcs;    // #SHOW_TREE #NO_SAVE diff source records
   taUndoRec_List	undo_recs;    // #SHOW_TREE #NO_SAVE the undo records
   int			cur_undo_idx;	// #READ_ONLY #NO_SAVE logical index into undo record list where the next undo/redo will operate -- actually +1 relative to index to undo -- 0 = no more undos -- goes to the end for each SaveUndo, moves back/forward for Undo/Redo
   int			undo_depth;	// #NO_SAVE how many undo's to keep around
   float			new_src_thr; 	// #NO_SAVE threshold for how big (as a proportion of total file size) the diff's need to get before a new undo source record is created
   bool			save_load_file; // #NO_SAVE save a copy of the file that is loaded during an undo or redo -- file name is "undo_load_file.txt" in cur directory -- useful for debugging issues
+  QAtomicInt		diff_pending;	// #IGNORE -- set to 1 if a diff is pending, thread sets to 0 when it is done
+  taUndoDiffSrc*	src_to_diff;	// #IGNORE for threading system, src for diffing
+  taUndoRec*		rec_to_diff;	// #IGNORE for threading system, rec for diffing
 
   virtual bool	SaveUndo(taBase* mod_obj, const String& action, taBase* save_top = NULL);
   // save data for purposes of later being able to undo it -- takes a pointer to object that is being modified, a brief description of the action being performed (e.g., "Edit", "Cut", etc), and the top-level object below which current state information will be saved -- this must be *known to encapsulate all changes* that result from the modification, and also be sufficiently persistent so as to be around when undoing and redoing might be requested -- it defaults to the owner of this mgr, which is typically the project

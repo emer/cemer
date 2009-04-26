@@ -667,7 +667,7 @@ bool	taMisc::dmem_debug = false;
 // 	Global State, Flags Etc
 
 // give the main typespace a big hash table..
-TypeSpace taMisc::types("taMisc::types", 2000);
+TypeSpace taMisc::types("taMisc::types", 10000);
 TypeDef*	taMisc::default_scope = NULL;
 
 taPtrList_impl*	taMisc::init_hook_list = NULL;

@@ -386,11 +386,13 @@ int DataCol::displayWidth() const {
 
 taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
   if (md->name == "ar") {
+    DataTable* dt = dataTable();
     // if no save, don't need to check DataTable global
     if (saveToDumpFile()) {
-//       if(taMisc::is_undo_saving) return DQR_NO_SAVE; // don't save rows for general undo!
-      // with the super diff undo, we can now deal with data tables too!
-      DataTable* dt = dataTable();
+      if(taMisc::is_undo_saving) {
+	if(tabMisc::cur_undo_save_top != dt)
+	  return DQR_NO_SAVE; // don't save rows unless we are operating on this guy
+      }
       if (dt && dt->HasDataFlag(DataTable::SAVE_ROWS)) return DQR_SAVE;
     }
     return DQR_NO_SAVE;
@@ -888,7 +890,7 @@ bool DataTable::ColMatchesChannelSpec(const DataCol* da, const ChannelSpec* cs) 
 }
 
 bool DataTable::AutoLoadData() {
-  if(HasDataFlag(SAVE_ROWS)) return false;
+  if(HasDataFlag(SAVE_ROWS) || taMisc::is_undo_loading) return false;
   if(auto_load == NO_AUTO_LOAD) return false;
   
   if(taMisc::gui_active && (auto_load == PROMPT_LOAD)) {

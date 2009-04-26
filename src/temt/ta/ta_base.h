@@ -63,6 +63,8 @@ friend class taList_impl;
 public:
   static taRootBase*	root;
   // root of the structural object hierarchy
+  static taBase*	cur_undo_save_top;
+  // the object under which everything is being saved for the purposes of an undo record
 
   static taBase_RefList	delayed_updateafteredit;
   // list of objs to be update-after-edit'd in the wait process

@@ -25,6 +25,7 @@
 
 #include "ta_datatable_so.h"
 #include "ta_math.h"
+#include "ta_project.h"
 
 #include "ilineedit.h"
 #include "ispinbox.h"
@@ -5219,20 +5220,26 @@ void iDataTableView::GetEditActionsEnabled(int& ea) {
 void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   DataTable* tab = this->dataTable(); // may not exist
   if (!tab) return;
+  taProject* proj = (taProject*)tab->GetOwner(&TA_taProject);
+
   if (op_code & OP_ROW) {
     // must have >=1 row selected to make sense
     if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE))) {
       if (sel.height() < 1) return;
       if (op_code & OP_APPEND) {
+	if(proj) proj->undo_mgr.SaveUndo(tab, "AddRows", tab);
         tab->AddRows(sel.height());
       } else if (op_code & OP_INSERT) {
+	if(proj) proj->undo_mgr.SaveUndo(tab, "Insertows", tab);
         tab->InsertRows(sel.row_fr, sel.height());
       } else if (op_code & OP_DUPLICATE) {
+	if(proj) proj->undo_mgr.SaveUndo(tab, "DuplicateRows", tab);
         tab->DuplicateRows(sel.row_fr, sel.height());
       } else if (op_code & OP_DELETE) {
 	if(taMisc::delete_prompts || !tab->HasDataFlag(DataTable::SAVE_ROWS)) {
 	  if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0) return;
 	}
+	if(proj) proj->undo_mgr.SaveUndo(tab, "RemoveRows", tab);
         tab->RemoveRows(sel.row_fr, sel.height());
       }
     }
@@ -5250,6 +5257,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
 	  if (taMisc::Choice("Are you sure you want to delete the selected columns?", "Yes", "Cancel") != 0) return;
 	}
         tab->StructUpdate(true);
+	if(proj) proj->undo_mgr.SaveUndo(tab, "RemoveCols", tab);
         for (int col = sel.col_to; col >= sel.col_fr; --col) {
           tab->RemoveCol(col);
         }
