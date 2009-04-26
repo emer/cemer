@@ -492,7 +492,7 @@ public:
   
   enum ConsoleType { // the type of console window and how to show it; ignored in non-gui mode (either uses OS shell, or no console, depending on startup mode)
     CT_OS_SHELL = 0, // #LABEL_OS_Shell use the operating system's shell or console (with readline library on unix)
-#ifdef HAVE_QT_CONSOLE // qt console not supported on windows, needs to be ported to Win32
+#if defined(HAVE_QT_CONSOLE) && !defined(TA_OS_WIN) // qt console not supported on windows, needs to be ported to Win32
     CT_GUI = 1, // #LABEL_Gui uses a gui-based console, either docked in the main app window, or floating (see console_options)
 #else
     CT_GUI = 1, // #NO_SHOW uses a gui-based console, either docked in the main app window, or floating (see console_options)

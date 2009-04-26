@@ -8,7 +8,11 @@
 #include "interceptor.h"
 
 #ifdef HAVE_QT_CONSOLE
-#include <unistd.h>
+#ifdef TA_OS_WIN
+# include <io.h>
+#else
+# include <unistd.h>
+#endif
 #include <fcntl.h>
 #include <stdio.h>
 #include <iostream>
@@ -43,7 +47,11 @@ void Interceptor::initialize(int outFd)
     // Open a new pipe. We will pipe output file descriptor through the new pipe and
     // read it with a QTextStream object, using a QSocketNotifier to tell us when
     // something is waiting in the pipe.
+#ifdef TA_OS_WIN
+    int rc = ::_pipe(m_pipeFd, 1024, _O_TEXT);
+#else
     int rc = ::pipe(m_pipeFd);
+#endif
     assert (rc >= 0);
 
     // Save the original output descriptor.
@@ -56,10 +64,12 @@ void Interceptor::initialize(int outFd)
     ::close(m_pipeFd[1]); // close the write end of the pipe descriptor, it's redundant now
 
     // Open the pipe's read end non-blocking so that we can reliably get the data
+#ifndef TA_OS_WIN // ???? 
     rc = ::fcntl(m_pipeFd[0], F_GETFL);
     assert(rc != -1);
     rc = ::fcntl(m_pipeFd[0], F_SETFL, rc | O_NONBLOCK); // otherwise atEnd() will block!
     assert(rc != -1);
+#endif
     FILE * f = fdopen(m_pipeFd[0], "r");
     assert(f != 0);
 
@@ -81,7 +91,9 @@ void Interceptor::finish()
    
     std::cout.flush(); // flush standard output cout file descriptor
     ::fflush(NULL);    // flush all file buffers
+#ifndef TA_OS_WIN // ???? 
     ::fsync(1);        // syncronize standard output buffers -- may be unnessessery
+#endif
     received();        // process whatever data is left there
    
     // Restore original state
