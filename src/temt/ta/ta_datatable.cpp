@@ -390,7 +390,7 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
     // if no save, don't need to check DataTable global
     if (saveToDumpFile()) {
       if(taMisc::is_undo_saving) {
-	if(tabMisc::cur_undo_save_top != dt)
+	if((tabMisc::cur_undo_save_top != dt) && (tabMisc::cur_undo_mod_obj != dt))
 	  return DQR_NO_SAVE; // don't save rows unless we are operating on this guy
       }
       if (dt && dt->HasDataFlag(DataTable::SAVE_ROWS)) return DQR_SAVE;

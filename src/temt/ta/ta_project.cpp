@@ -535,10 +535,12 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
 #endif
 
   tabMisc::cur_undo_save_top = save_top; // let others know who we're saving for..
+  tabMisc::cur_undo_mod_obj = mod_obj; // let others know who we're saving for..
   ++taMisc::is_undo_saving;
   save_top->Save_String(urec->save_data);
   --taMisc::is_undo_saving;
   tabMisc::cur_undo_save_top = NULL;
+  tabMisc::cur_undo_mod_obj = NULL;
 
   // now encode diff for big saves!
   if(save_top == owner) {

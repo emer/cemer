@@ -64,7 +64,9 @@ public:
   static taRootBase*	root;
   // root of the structural object hierarchy
   static taBase*	cur_undo_save_top;
-  // the object under which everything is being saved for the purposes of an undo record
+  // #READ_ONLY the object under which everything is being saved for the purposes of an undo record -- only valid use is to determine if pointer is same as another one -- do NOT attempt to access the object pointed to -- don't want to change the save state
+  static taBase*	cur_undo_mod_obj;
+  // #READ_ONLY the object that is being directly modified, triggering an undo save -- only valid use is to determine if pointer is same as another one -- do NOT attempt to access the object pointed to -- don't want to change the save state, and it might have died or something
 
   static taBase_RefList	delayed_updateafteredit;
   // list of objs to be update-after-edit'd in the wait process
