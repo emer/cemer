@@ -1,7 +1,7 @@
 /usr/local/lib/python2.6/dist-packages/pyplusplus/function_transformers/function_transformation.py:8: DeprecationWarning: the md5 module is deprecated; use hashlib instead
   import md5
 INFO Parsing source file "ta_gendoc.h" ... 
-INFO gccxml cmd: /usr/bin/gccxml  -I"/usr/local/include/Emergent" -I"/usr/local/include/Emergent" -I"/usr/include/qt4" -I"/usr/include/qt4/Qt" -I"/usr/include/qt4/QtCore" -I"/usr/local/include/Emergent"   "ta_gendoc.h" -fxml="/tmp/tmpdgZ3tL.xml"
+INFO gccxml cmd: /usr/bin/gccxml  -I"/usr/local/include/Emergent" -I"/usr/local/include/Emergent" -I"/usr/include/qt4" -I"/usr/include/qt4/Qt" -I"/usr/include/qt4/QtCore" -I"/usr/local/include/Emergent"   "ta_gendoc.h" -fxml="/tmp/tmpxn3XAn.xml"
 /usr/local/lib/python2.6/dist-packages/pygccxml/parser/source_reader.py:151: DeprecationWarning: os.popen4 is deprecated.  Use the subprocess module.
   input_, output = os.popen4( command_line )
 INFO GCCXML version - 0.9 BUGGY( 1.121 )
@@ -13,13 +13,6 @@ WARNING: static String_PArray * taGenDoc::TypeDef_Get_Parents(TypeDef * td, Stri
 > You have to specify a call policies.Be sure to take a look on `Py++`
 > defined call policies
 
-WARNING: MemberDef [class]
-> execution error W1040: The declaration is unexposed, but there are
-> other declarations, which refer to it. This could cause "no to_python
-> converter found" run time error. Declarations:   static bool
-> taGenDoc::MemberSpace_Filter_Member(MemberSpace * ths, MemberDef * md)
-> [member function]
-
 WARNING: MemberSpace [class]
 > execution error W1040: The declaration is unexposed, but there are
 > other declarations, which refer to it. This could cause "no to_python
@@ -27,27 +20,20 @@ WARNING: MemberSpace [class]
 > taGenDoc::MemberSpace_Filter_Member(MemberSpace * ths, MemberDef * md)
 > [member function]
 
-WARNING: MethodSpace [class]
+WARNING: String_PArray [class]
 > execution error W1040: The declaration is unexposed, but there are
 > other declarations, which refer to it. This could cause "no to_python
-> converter found" run time error. Declarations:   static bool
-> taGenDoc::MethodSpace_Filter_Method(MethodSpace * ths, MethodDef * md)
-> [member function]
-
-WARNING: MethodDef [class]
-> execution error W1040: The declaration is unexposed, but there are
-> other declarations, which refer to it. This could cause "no to_python
-> converter found" run time error. Declarations:   static bool
-> taGenDoc::MethodSpace_Filter_Method(MethodSpace * ths, MethodDef * md)
-> [member function]
-
-WARNING: TypeDef [class]
-> execution error W1040: The declaration is unexposed, but there are
-> other declarations, which refer to it. This could cause "no to_python
-> converter found" run time error. Declarations:   static bool
-> taGenDoc::TypeDef_Filter_Type(TypeDef * td, TypeSpace * ts) [member
-> function]  static String_PArray *
+> converter found" run time error. Declarations:   static String_PArray
+> * taGenDoc::TypeDef_Get_Parents(TypeDef * td, String_PArray * bp)
+> [member function]  static String_PArray *
 > taGenDoc::TypeDef_Get_Parents(TypeDef * td, String_PArray * bp)
+> [member function]
+
+WARNING: MemberDef [class]
+> execution error W1040: The declaration is unexposed, but there are
+> other declarations, which refer to it. This could cause "no to_python
+> converter found" run time error. Declarations:   static bool
+> taGenDoc::MemberSpace_Filter_Member(MemberSpace * ths, MemberDef * md)
 > [member function]
 
 WARNING: TypeSpace [class]
@@ -58,14 +44,30 @@ WARNING: TypeSpace [class]
 > function]  static bool taGenDoc::TypeDef_Filter_Type(TypeDef * td,
 > TypeSpace * ts) [member function]
 
-WARNING: String_PArray [class]
+WARNING: TypeDef [class]
 > execution error W1040: The declaration is unexposed, but there are
 > other declarations, which refer to it. This could cause "no to_python
-> converter found" run time error. Declarations:   static String_PArray
-> * taGenDoc::TypeDef_Get_Parents(TypeDef * td, String_PArray * bp)
-> [member function]  static String_PArray *
+> converter found" run time error. Declarations:   static bool
+> taGenDoc::TypeDef_Filter_Type(TypeDef * td, TypeSpace * ts) [member
+> function]  static String_PArray *
 > taGenDoc::TypeDef_Get_Parents(TypeDef * td, String_PArray * bp)
 > [member function]
+
+WARNING: MethodDef [class]
+> execution error W1040: The declaration is unexposed, but there are
+> other declarations, which refer to it. This could cause "no to_python
+> converter found" run time error. Declarations:   static bool
+> taGenDoc::MethodSpace_Filter_Method(MethodSpace * ths, MethodDef * md)
+> [member function]
+
+WARNING: MethodSpace [class]
+> execution error W1040: The declaration is unexposed, but there are
+> other declarations, which refer to it. This could cause "no to_python
+> converter found" run time error. Declarations:   static bool
+> taGenDoc::MethodSpace_Filter_Method(MethodSpace * ths, MethodDef * md)
+> [member function]
+
+INFO: file "named_tuple.py" - updated( 0.000000 seconds )
 
 INFO: file "PyEmergent.cpp" - updated( 0.000000 seconds )
 Trying:

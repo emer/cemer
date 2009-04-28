@@ -4,14 +4,22 @@
 
 # Specify the path to the Boost project.  If you move this project,
 # adjust the path to refer to the Boost root directory.
+
+using gcc ;
+
 use-project boost 
   : /usr/local_local/boost_1_38_0/ ;
 
 # Set up the project-wide requirements that everything uses the
 # boost_python library defined in the project whose global ID is
 # /boost/python.
-project boost-python-quickstart
-  : requirements <library>/boost/python//boost_python 
+project PyEmergent
+  : requirements
+    <library>/boost/python//boost_python 
+    <include>/usr/local/include/Emergent
+    <include>/usr/include/qt4
+    <include>/usr/include/qt4/Qt
+    <include>/usr/include/qt4/QtCore
     ;
 
 # Make the definition of the python-extension rule available
@@ -20,9 +28,6 @@ import python ;
 # Declare a Python extension called PyEmergent
 # List new source files here next to PyEmergent.cpp
 python-extension PyEmergent : PyEmergent.cpp ;
-
-# Declare an executable called embedding that embeds Python
-# exe embedding : PyEmergent.cpp /python//python ;
 
 import testing ;
 
