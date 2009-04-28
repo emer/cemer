@@ -1207,7 +1207,7 @@ public:
   String 	GetDiffStr(const String& str_a);
   // get a string representation of the diffs -- if str_a is passed, then it produces normal diff format, otherwise a bit more minimal
 
-  virtual int GetLinesChanged();
+  int GetLinesChanged();
   // get total count of lines changed (inserts + deletes) in the diffs
 
 };
@@ -1235,48 +1235,48 @@ public:
   int_PArray			up_vector;
   // #READ_ONLY vector for the (u,v) to (N,M) search
 
-  virtual void	DiffStrings(const String& str_a, const String& str_b,
+  void	DiffStrings(const String& str_a, const String& str_b,
 	    bool trimSpace = false, bool ignoreSpace = false, bool ignoreCase = false); 
   // computes the difference between two Strings, in terms of lines (as in the usual line-based diff utility) -- trimSpace removes leading and trailing space from lines, ignoreSpace ignores all space chars entirely, and ignoreCase downcases everything before comparing
-  virtual void ReDiffB(const String& str_a, const String& str_b,
+  void ReDiffB(const String& str_a, const String& str_b,
 	    bool trimSpace = false, bool ignoreSpace = false, bool ignoreCase = false); 
   // *after* running previously on str_a and an previous str_b, you can now run the diff again on a *new* str_b -- this will save a fair amount of setup computation on str_a and the hash code table -- str_a *must* be the same as last time obviously..
-  virtual bool DiffFiles(const String& fname_a, const String& fname_b,
+  bool DiffFiles(const String& fname_a, const String& fname_b,
 			 String& str_a, String& str_b,
 	 bool trimSpace = false, bool ignoreSpace = false, bool ignoreCase = false);
   // loads in two files into the given str_a,b strings, based on the given file names, then runs DiffStrings on them -- trimSpace removes leading and trailing space from lines, ignoreSpace ignores all space chars entirely, and ignoreCase downcases everything before comparing
 
-  virtual void	GetEdits(taStringDiffEdits& edits);
+  void	GetEdits(taStringDiffEdits& edits);
   // *after* running DiffStrings, call this to store the edits so that str_b can be reconstructed from str_b + the diffs..
 
-  virtual String GetDiffStr(const String& str_a, const String& str_b, OutputFmt fmt = NORMAL);
+  String GetDiffStr(const String& str_a, const String& str_b, OutputFmt fmt = NORMAL);
   // *after* running DiffStrings, call this to get a string representation of the differences, using the specified format
 
-  virtual String GetDiffStr_normal(const String& str_a, const String& str_b);
+  String GetDiffStr_normal(const String& str_a, const String& str_b);
   // #IGNORE
-  virtual String GetDiffStr_context(const String& str_a, const String& str_b);
+  String GetDiffStr_context(const String& str_a, const String& str_b);
   // #IGNORE
 
-  virtual int GetLinesChanged();
+  int GetLinesChanged();
   // *after* running DiffStrings, call this to get total count of lines changed (inserts + deletes) in the diffs
 
-  virtual void	DiffInts(const int_PArray& array_a, const int_PArray& array_b); 
+  void	DiffInts(const int_PArray& array_a, const int_PArray& array_b); 
   // computes the difference between two arrays of integers -- underlying algorithm uses ints so this is easy..
 
-  virtual void	GetLines(taStringDiffData& ddata, const String& str);
+  void	GetLines(taStringDiffData& ddata, const String& str);
   // find line starting positions in the text strings
 
-  virtual void DiffCodes(taStringDiffData& ddata, const String& str, 
+  void DiffCodes(taStringDiffData& ddata, const String& str, 
 	 bool trimSpace = false, bool ignoreSpace = false, bool ignoreCase = false);
   // convert text string into integer codes
 
-  virtual void 	Optimize(taStringDiffData& ddata);
+  void 	Optimize(taStringDiffData& ddata);
   // optimize sequences of modified strings to make more readable
 
-  virtual void	CreateDiffs(const String& str_a, const String& str_b);
+  void	CreateDiffs(const String& str_a, const String& str_b);
   // create diff list in diffs based on results of LCS/SMS computation, stored in data_a and B
 
-  virtual void	Reset();
+  void	Reset();
   // reset all the current data settings
 
 protected:
