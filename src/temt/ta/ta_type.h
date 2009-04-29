@@ -680,11 +680,20 @@ public:
   // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of installed user plugins 
   static String		user_log_dir;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of log files, such as plugin log 
+
   static String		web_home;
-  // #SAVE #CAT_File url for location of web repository of package information
-//NOTE: help url is not saved, for the moment, but s/b for release
-  static String		web_help_url;
-  // #NO_SAVE #CAT_File url for base of web application help
+  // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url for location of main web home page for this application
+  static String		web_help_index;
+  // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url for web application help such that appending the name of the object in question will produce help for that specific object or topic
+  static String		web_help_general;
+  // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url for general web application help, not associated with a specific object
+
+  static String		wiki_url;
+  // #SAVE #CAT_File url for wiki project repository, for sync'ing local project and other information (just base address without index.php or anything like that) 
+  static String		wiki_index;
+  // #NO_SAVE #READ_ONLY #CAT_File wik_url/index.php -- how to get to actual sub-pages
+  static String		wiki_projspace;
+  // #NO_SAVE #READ_ONLY #CAT_File wik_index/Projects/ -- base url for project repository namespace
 
   // don't save these paths: they are generated from above which are saved, and can
   // be modified more reliably in a .cssinitrc or similar..
@@ -790,6 +799,8 @@ public:
   // #CAT_Config save configuration defaults to <appdata>/taconfig file that is loaded automatically at startup
   void	LoadConfig();
   // #CAT_Config load configuration defaults from <appdata>/.taconfig file (which is loaded automatically at startup)
+  void  UpdateAfterEdit();
+  // #CAT_Config called before saving and before loading -- updates any derived fields based on current settings
 
   /////////////////////////////////////////////////
   //	Errors, Warnings, Simple Dialogs

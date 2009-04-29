@@ -1017,12 +1017,14 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
     return 0;
 
   cssSpace* stack = prog->Stack();
+#ifdef DEBUG
   if(prog->top->debug >= 3) {
     cerr << "\n" << cssMisc::Indent(1) << "Stack at time of function call to: " << name;
     stack->List(cerr, 1);
     cerr << endl;
     taMisc::FlushConsole();
   }
+#endif
   if(argc == 0) {
     if(stack->Peek() == &cssMisc::Void)	// get rid of arg stop..
       stack->Pop();
@@ -1052,6 +1054,7 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
   }
   else {
     int max_stack = stack->size - argc;
+    // todo: this is a time sink!  need to fix this somehow..
     for(stack_start = stack->size-1; stack_start >= max_stack; stack_start--) {
       if(stack->FastEl(stack_start) == &cssMisc::Void)
 	break;
@@ -3161,7 +3164,9 @@ cssEl* cssProg::Cont() {
       }
       else {
 	cssInst* nxt = insts[Frame()->pc++];
+#ifdef DEBUG
 	if(top->debug > 0) RunDebugInfo(nxt);
+#endif
 	cssEl::RunStat rval = nxt->Do();
 	if((top->watchpoints.size > 0) && CheckWatch()) {
 	  top->run_stat = cssEl::BreakPoint;
@@ -3201,7 +3206,9 @@ cssEl* cssProg::Cont() {
       }
       else {
 	cssInst* nxt = insts[Frame()->pc++];
+#ifdef DEBUG
 	if(top->debug > 0) RunDebugInfo(nxt);
+#endif
 	cssEl::RunStat rval = nxt->Do();
 	if((top->watchpoints.size > 0) && CheckWatch()) {
 	  top->run_stat = cssEl::BreakPoint;

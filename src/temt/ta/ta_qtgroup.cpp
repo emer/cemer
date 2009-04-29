@@ -1412,9 +1412,10 @@ void DocEditDataHost::Constr_Body() {
 
 void DocEditDataHost::Constr_Box() {
   // Html tab
+  taDoc* doc_ = doc();
   tedHtml = new iTextEdit;
   tedHtml->setAcceptRichText(false); // is the raw html as text
-  if (read_only) {
+  if (read_only || (doc_ && doc_->web_doc)) {
     tedHtml->setReadOnly(true);
   } else { // r/w
     connect(tedHtml, SIGNAL(textChanged()), 

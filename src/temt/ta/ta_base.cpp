@@ -2449,19 +2449,28 @@ bool taBase::CloseLater_Child(TAPtr) {
 
 void taBase::Help() {
   TypeDef* mytd = GetTypeDef();
-  String full_file;
-  while((mytd != NULL) && full_file.empty()) {
-    String help_file = taMisc::help_file_tmplt;
-    help_file.gsub("%t", mytd->name);
-    full_file = taMisc::FindFileOnLoadPath(help_file);
-    mytd = mytd->parents.SafeEl(0);	// go with the parent
-  }
-  if(TestError(full_file.empty(), "Help",
-	       "Sorry, no help available")) return;
-  String help_cmd = taMisc::help_cmd;
-  help_cmd.gsub("%s", full_file);
-  int rval = system(help_cmd);	// rval is compiler food
+
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return;
+  String url = taMisc::web_help_index + mytd->name;
+  taDoc* help_doc = proj->FindMakeDoc("HelpDoc", true, url);
+  tabMisc::DelayedFunCall_gui(help_doc, "BrowserSelectMe");
 }
+
+// old help 
+//   String full_file;
+//   while((mytd != NULL) && full_file.empty()) {
+//     String help_file = taMisc::help_file_tmplt;
+//     help_file.gsub("%t", mytd->name);
+//     full_file = taMisc::FindFileOnLoadPath(help_file);
+//     mytd = mytd->parents.SafeEl(0);	// go with the parent
+//   }
+//   if(TestError(full_file.empty(), "Help",
+// 	       "Sorry, no help available")) return;
+//   String help_cmd = taMisc::help_cmd;
+//   help_cmd.gsub("%s", full_file);
+//   int rval = system(help_cmd);	// rval is compiler food
+//}
 
 ///////////////////////////////////////////////////////////////////////////
 //	Updating pointers (when objects change type or are copied)
@@ -4712,3 +4721,16 @@ UserDataItem::UserDataItem(const String& type_name, const String& key_,
   desc = desc_;
 }
 
+//////////////////////////
+// taWikiURL
+//////////////////////////
+
+void taWikiURL::Initialize() {
+  sync = false;
+}
+
+String taWikiURL::GetURL() {
+  if(!sync) return _nilString;
+  if(url.startsWith("http://")) return url;
+  return taMisc::wiki_projspace + "/" + url;
+}

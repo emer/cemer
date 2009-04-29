@@ -2628,7 +2628,7 @@ public:
   
   override String	GetDesc() const {return desc;}
   override bool		SetDesc(const String& d) {desc = d; return true;}
-  TA_BASEFUNS(UserDataItem)
+  TA_BASEFUNS(UserDataItem);
   UserDataItem(const String& type_name, const String& key, const Variant& value,
 	       const String& desc = _nilString);
   // #IGNORE constructor for creating static (compile-time) schema instances
@@ -2638,5 +2638,22 @@ private:
   void Destroy() {}
 };
 TA_SMART_PTRS(UserDataItem);
+
+
+class TA_API taWikiURL: public taOBase {
+  // ##INLINE ##NO_TOKENS wiki URL location information -- include in objects that can be sync'd with a wiki -- relative wiki links 
+INHERITED(taOBase)
+public://
+  bool		sync;		// enable synchronizing this object with the wiki
+  String	url;		// #CONDEDIT_ON_sync a URL location for this object -- if it doesn't start with http:// then it is considered relative to taMisc::wiki_projspace, which is based on wiki_url as specified in the preferences -- do not include a leading / for relative url's
+
+  String	GetURL();	// #CAT_URL gets the url, dealing with relative vs. absolute specification in url field
+  
+  TA_SIMPLE_BASEFUNS(taWikiURL);
+private:
+  void Initialize();
+  void Destroy() {}
+};
+
 
 #endif // ta_base_h

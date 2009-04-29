@@ -40,11 +40,12 @@ class taRootBase;
 //		taDoc -- documents
 
 class TA_API taDoc : public taNBase {
-  // ##BUTROWS_2 ##EDIT_WIDTH_60 ##CAT_Docs document for providing information on projects and other objects
+  // ##CAT_Docs document for providing information on projects and other objects
 INHERITED(taNBase)
 public:
   bool			auto_open;	// open this document upon startup
-  //note: a specialized taEdit is used to show this guy
+  bool			web_doc; // this document lives on the web, at the following URL, instead of being local text saved in the project -- the most recently viewed version of the document is cached into the local text, and is rendered if it is not possible to connect to the internet -- this is not editable however, as sync facilities with the web are not (currently) available
+  String		url;	 // #CONDEDIT_ON_web_doc a URL location for this document -- if it doesn't start with http:// then it is considered relative to taMisc::wiki_projspace, which is based on wiki_url as specified in the preferences -- do not include a leading / for relative url's
   String		text; // #NO_SHOW the text of the document (in html/mediawiki format)
   String		html_text; // #READ_ONLY #HIDDEN #NO_SAVE #EDIT_DIALOG wiki conversion of html text -- use this for actual display
 
@@ -53,6 +54,8 @@ public:
 
   virtual void		UpdateText();
   // update the html_text from the user-entered text with wiki syntax by calling WikiParse
+
+  virtual String	GetURL(); // get a full url based on url specified plus any absolute refs needed
 
   override String 	GetTypeDecoKey() const { return "Doc"; }
 
@@ -434,6 +437,7 @@ public:
   taProjVersion 	version; 
   // project version numbering information -- useful for keeping track of changes over time (recorded in change log automatically with SaveNoteChanges)
 
+  taWikiURL		wiki_url; // url to synchronize project to/from wiki -- see taMisc::wiki_url for base url in case of relative location
   taBase_Group		templates; // #HIDDEN templates for new objects -- copy new objects from here
   Doc_Group		docs; // documents, typically linked to other objects
   Wizard_Group    	wizards; // Wizards for automatically configuring simulation objects
@@ -449,7 +453,10 @@ public:
   String		last_change_desc; // #EXPERT description of the last change made to the project -- used for change log
 
   override bool		isDirty() const {return m_dirty;}
-  override void 	setDirty(bool value); 
+  override void 	setDirty(bool value);  //
+
+  ///////////////////////////////////////////////////////////////////
+  //	View/Browser Stuff
 
   MainWindowViewer*	GetDefaultProjectBrowser();
   // #CAT_Display gets one if there is, else NULL
@@ -469,6 +476,10 @@ public:
   // #CAT_Display manual refresh of all view information in the project -- equivalent to the View/Refresh (F5 key) menu -- should not be necessary but sometimes comes in handy..
   virtual void		UpdateUi();
   // #CAT_Display manual call to update user interface enabled/disabled settings -- usually done through signals and slots, but this can be useful for non-gui driven changes that might affect enabling
+
+  ///////////////////////////////////////////////////////////////////
+  //	Get new proj objects
+
   virtual DataTable*	GetNewInputDataTable(const String& nw_nm="", bool msg=false);
   // #CAT_Data create a new data table in data.InputData (used for data generation functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
   virtual DataTable*	GetNewOutputDataTable(const String& nw_nm="", bool msg=false);
@@ -477,8 +488,14 @@ public:
   // #CAT_Data create a new data table in data.AnalysisData (used for various data processing and graphing functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
   virtual taBase*	FindMakeNewDataProc(TypeDef* typ, const String& nm);
   // #CAT_Data find existing data processing object of given type, or else make one and give it nm
-  virtual SelectEdit* FindMakeSelectEdit(const String& seledit_name);
+  virtual SelectEdit* 	FindMakeSelectEdit(const String& seledit_name);
   // #CAT_Edit get select edit object of given name, or make one if not found
+  virtual taDoc* 	FindMakeDoc(const String& doc_name, bool web_doc = false,
+				    const String& web_url = "");
+  // #CAT_Doc get doc document object of given name, or make one if not found -- also set the web url if specified
+
+  ///////////////////////////////////////////////////////////////////
+  //	misc
 
   virtual void		UpdateChangeLog();
   // #BUTTON #CAT_File update change log for this project, stored as a ChangeLog item in docs on the project -- you will be prompted to enter a description of recent changes, and the date, user, and file names will be recorded

@@ -618,8 +618,15 @@ String	taMisc::prefs_dir; // this must be set at startup!
 String	taMisc::user_app_dir; 
 String	taMisc::user_plugin_dir; 
 String	taMisc::user_log_dir; 
-String	taMisc::web_home = "http://grey.colorado.edu/ta_css";
-String	taMisc::web_help_url; // note: set in main
+
+// note: app should set all these url's in its main or other app-specific code
+String	taMisc::web_home = "http://grey.colorado.edu/emergent"; 
+String	taMisc::web_help_index = "http://grey.colorado.edu/emergent/index.php/";
+String	taMisc::web_help_general = "http://grey.colorado.edu/emergent/index.php/User_hub";
+
+String	taMisc::wiki_url = "http://grey.colorado.edu/CompCogNeuro";
+String	taMisc::wiki_index = "http://grey.colorado.edu/CompCogNeuro/index.php";
+String	taMisc::wiki_projspace = "http://grey.colorado.edu/CompCogNeuro/index.php/Projects";
 
 String_PArray	taMisc::css_include_paths;
 String_PArray	taMisc::load_paths;
@@ -725,6 +732,7 @@ int taMisc::err_cnt;
 
 void taMisc::SaveConfig() {
 #ifndef NO_TA_BASE
+  UpdateAfterEdit();
   ++taFiler::no_save_last_fname;
   String cfgfn = prefs_dir + PATH_SEP + "options";
   fstream strm;
@@ -746,6 +754,14 @@ void taMisc::LoadConfig() {
   strm.close(); 
   strm.clear();
   --taFiler::no_save_last_fname;
+  UpdateAfterEdit();
+#endif
+}
+
+void taMisc::UpdateAfterEdit() {
+#ifndef NO_TA_BASE
+  wiki_index = wiki_url + "/index.php";
+  wiki_projspace = wiki_index+ "/Projects";
 #endif
 }
 

@@ -194,6 +194,12 @@ public:
 	int dummy; // #IGNORE
 };
 
+class QWebView: public QWidget  {
+//  
+public:
+	int dummy; // #IGNORE
+};
+
 
 template<class T>
 class QList {

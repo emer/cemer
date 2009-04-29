@@ -1376,16 +1376,21 @@ void GaborV1SpecBase::Initialize() {
 
 void GaborV1SpecBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  rf_ovlp = rf_width / 2;
-  rf_width = rf_ovlp * 2;	// ensure even
+  if(filter_type != COPY) {
+    rf_ovlp = rf_width / 2;
+    rf_width = rf_ovlp * 2;	// ensure even
+  }
+  rf_ovlp.SetGtEq(1);		// min 1.. if rf_width = 1, then just moves along
   InitFilters();
 }
 
 bool GaborV1SpecBase::InitFilters() {
   if(filter_type == GABOR)
     return InitFilters_Gabor();
-  else
+  else if(filter_type == BLOB)
     return InitFilters_Blob();
+  else // COPY
+    return InitFilters_Copy();
 }
 
 bool GaborV1SpecBase::InitFilters_Gabor() {
@@ -1449,16 +1454,25 @@ bool GaborV1SpecBase::InitFilters_Blob() {
   return true;
 }
 
+bool GaborV1SpecBase::InitFilters_Copy() {
+  return true;			// nothing to do
+}
+
 void GaborV1SpecBase::GraphFilter(DataTable* graph_data, int unit_no) {
   if(filter_type == GABOR) {
     GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs.SafeEl(unit_no);
     if(gf)
       gf->GraphFilter(graph_data);
   }
-  else {
+  else if(filter_type == BLOB) {
     DoGFilterSpec* df = (DoGFilterSpec*)blob_specs.SafeEl(unit_no);
     if(df)
       df->GraphFilter(graph_data);
+  }
+  else { // COPY
+//     DoGFilterSpec* df = (DoGFilterSpec*)blob_specs.SafeEl(unit_no);
+//     if(df)
+//       df->GraphFilter(graph_data);
   }
 }
 
@@ -1476,11 +1490,17 @@ void GaborV1SpecBase::GridFilter(DataTable* graph_data) {
       gf->GridFilter(graph_data, false); // don't reset!
     }
   }
-  else {
+  else if(filter_type == BLOB) {
     for(int i=0;i<blob_specs.size;i++) {
       DoGFilterSpec* df = (DoGFilterSpec*)blob_specs.SafeEl(i);
       df->GridFilter(graph_data, false); // don't reset!
     }
+  }
+  else {			// COPY
+//     for(int i=0;i<blob_specs.size;i++) {
+//       DoGFilterSpec* df = (DoGFilterSpec*)blob_specs.SafeEl(i);
+//       df->GridFilter(graph_data, false); // don't reset!
+//     }
   }
   graph_data->StructUpdate(false);
   graph_data->FindMakeGridView();
@@ -1503,16 +1523,36 @@ void GaborV1Spec::Initialize() {
 }
 
 void GaborV1Spec::UpdateGeoms() {
-  rf_ovlp = rf_width / 2;
-  rf_width = rf_ovlp * 2;	// ensure even
-  tot_filter_gps = n_filter_gps * n_filters_per_gp;
-  filter_gp_ovlp = tot_filter_gps / 2;
-  filter_gp_ovlp.SetGtEq(1);
-  input_ovlp = filter_gp_ovlp * rf_ovlp;
-  if(wrap)
-    trg_input_size = gp_geom * input_ovlp;
-  else
-    trg_input_size = (gp_geom -1)* input_ovlp;
+  if(filter_type == COPY) {
+    rf_ovlp.SetGtEq(1);		// min 1.. if rf_width = 1, then just moves along
+    if(wrap)
+      trg_input_size = gp_geom * input_ovlp;
+    else
+      trg_input_size = (gp_geom -1)* input_ovlp;
+    n_filters = 0;
+    n_filter_gps = 1;
+    n_filters_per_gp = 1;
+    tot_filter_gps = 1;
+    filter_gp_ovlp = 0;
+    input_ovlp = rf_ovlp;
+    if(wrap)
+      trg_input_size = un_geom * input_ovlp;
+    else
+      trg_input_size = (un_geom -1)* input_ovlp;
+  }
+  else {
+    rf_ovlp = rf_width / 2;
+    rf_ovlp.SetGtEq(1);		// min 1.. if rf_width = 1, then just moves along
+    rf_width = rf_ovlp * 2;	// ensure even
+    tot_filter_gps = n_filter_gps * n_filters_per_gp;
+    filter_gp_ovlp = tot_filter_gps / 2;
+    filter_gp_ovlp.SetGtEq(1);
+    input_ovlp = filter_gp_ovlp * rf_ovlp;
+    if(wrap)
+      trg_input_size = gp_geom * input_ovlp;
+    else
+      trg_input_size = (gp_geom -1)* input_ovlp;
+  }
 
   rf_ovlp.UpdateAfterEdit();
   rf_width.UpdateAfterEdit();
@@ -1521,24 +1561,26 @@ void GaborV1Spec::UpdateGeoms() {
   input_ovlp.UpdateAfterEdit();
   trg_input_size.UpdateAfterEdit();
 
-  gp_gauss_mat.SetGeom(2, tot_filter_gps.x, tot_filter_gps.y);
+  if(filter_type != COPY) {
+    gp_gauss_mat.SetGeom(2, tot_filter_gps.x, tot_filter_gps.y);
 
-  if(tot_filter_gps.n > 1) {
-    float ctr_x = (float)tot_filter_gps.x * .5f;;
-    float ctr_y = (float)tot_filter_gps.y * .5f;;
-    float eff_sig_x = gp_gauss_sigma * ctr_x;
-    float eff_sig_y = gp_gauss_sigma * ctr_y;
-    for(int yi=0; yi< tot_filter_gps.y; yi++) {
-      float y = ((float)yi - ctr_y) / eff_sig_y;
-      for(int xi=0; xi< tot_filter_gps.x; xi++) {
-	float x = ((float)xi - ctr_y) / eff_sig_x;
-	float gv = expf(-(x*x + y*y)/2.0f);
-	gp_gauss_mat.FastEl(xi, yi) = gv;
+    if(tot_filter_gps.n > 1) {
+      float ctr_x = (float)tot_filter_gps.x * .5f;;
+      float ctr_y = (float)tot_filter_gps.y * .5f;;
+      float eff_sig_x = gp_gauss_sigma * ctr_x;
+      float eff_sig_y = gp_gauss_sigma * ctr_y;
+      for(int yi=0; yi< tot_filter_gps.y; yi++) {
+	float y = ((float)yi - ctr_y) / eff_sig_y;
+	for(int xi=0; xi< tot_filter_gps.x; xi++) {
+	  float x = ((float)xi - ctr_y) / eff_sig_x;
+	  float gv = expf(-(x*x + y*y)/2.0f);
+	  gp_gauss_mat.FastEl(xi, yi) = gv;
+	}
       }
     }
-  }
-  else {
-    gp_gauss_mat.FastEl(0,0) = 1.0f;
+    else {
+      gp_gauss_mat.FastEl(0,0) = 1.0f;
+    }
   }
 }
 
@@ -1552,11 +1594,21 @@ void GaborV1Spec::UpdateAfterEdit_impl() {
 
 bool GaborV1Spec::SetGpGeomFmInputSize(TwoDCoord& input_size) {
   UpdateGeoms();
-  if(wrap) {
-    gp_geom = (input_size / input_ovlp);
+  if(filter_type == COPY) {
+    if(wrap) {
+      un_geom = (input_size / input_ovlp);
+    }
+    else {
+      un_geom = (input_size / input_ovlp) - 1;
+    }
   }
   else {
-    gp_geom = (input_size / input_ovlp) - 1;
+    if(wrap) {
+      gp_geom = (input_size / input_ovlp);
+    }
+    else {
+      gp_geom = (input_size / input_ovlp) - 1;
+    }
   }
   UpdateGeoms();
   return input_size == trg_input_size;
@@ -1594,7 +1646,12 @@ bool GaborV1Spec::FilterInput(float_Matrix& v1_output, DoGFilterSpec::ColorChann
     return false;
   }
 
-  v1_output.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
+  if(filter_type == COPY) {
+    v1_output.SetGeom(2, un_geom.x, un_geom.y);
+  }
+  else {
+    v1_output.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
+  }
   if(!superimpose)
     v1_output.InitVals();		// reset all vals to 0
 
@@ -1615,8 +1672,11 @@ void GaborV1Spec::Filter_Thread(int cmp_idx, int thread_no) {
   if(filter_type == GABOR) {
     FilterInput_Gabor(cmp_idx);
   }
-  else {
+  else if(filter_type == BLOB) {
     FilterInput_Blob(cmp_idx);
+  }
+  else { // COPY
+    FilterInput_Copy(cmp_idx);
   }
 }
 
@@ -1733,7 +1793,40 @@ bool GaborV1Spec::FilterInput_Blob(int cmp_idx) {
   return true;
 }
 
+bool GaborV1Spec::FilterInput_Copy(int cmp_idx) {
+  TwoDCoord un;			// units within group
+  TwoDCoord inof;		// offset to input layer from units
+  TwoDCoord in;			// input coords
+  TwoDCoord fc;			// "filter" coords
+  int uidx = cmp_idx;
+  un.y = uidx / un_geom.x;
+  un.x = uidx % un_geom.x;
+  if(wrap && rf_width.x > 1)	// only if has some width does this make sense
+    inof = (un-1) * input_ovlp;
+  else
+    inof = un * input_ovlp;
+
+  float flt_sum = 0.0f;
+  for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+    for(fc.x=0;fc.x<rf_width.x;fc.x++) {
+      in = inof + fc;
+      if(in.WrapClip(wrap, trg_input_size)) continue;
+      float oval = cur_on_input->FastEl(in.x, in.y) + cur_off_input->FastEl(in.x, in.y);
+      flt_sum += oval;
+    }
+  }
+
+  if(cur_superimpose)
+    cur_v1_output->FastEl(un.x, un.y) += flt_sum;
+  else
+    cur_v1_output->FastEl(un.x, un.y) = flt_sum;
+
+  return true;
+}
+
 void GaborV1Spec::GridFilterInput(DataTable* graph_data, int unit_no, int gp_skip, bool ctrs_only) {
+  if(filter_type == COPY) return; // not supported
+
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilterInput", true);
@@ -1766,8 +1859,9 @@ void GaborV1Spec::GridFilterInput(DataTable* graph_data, int unit_no, int gp_ski
   GaborFilterSpec* ggf = NULL;
   if(filter_type == GABOR)
     ggf = (GaborFilterSpec*)gabor_specs.SafeEl(fidx);
-  else
+  else if(filter_type == BLOB)
     dgf = (DoGFilterSpec*)blob_specs.SafeEl(fidx);
+  // nothing for COPY
   // for each unit, process entire input:
   for(ugp.y=0;ugp.y<gp_geom.y;ugp.y+= gp_skip) {
     for(ugp.x=0;ugp.x<gp_geom.x;ugp.x+= gp_skip) {
@@ -1792,9 +1886,12 @@ void GaborV1Spec::GridFilterInput(DataTable* graph_data, int unit_no, int gp_ski
 	      if(filter_type == GABOR) {
 		fval = ggf->filter.FastEl(fc.x, fc.y);
 	      }
-	      else {
+	      else if(filter_type == BLOB) {
 		fval = (dgf->on_filter.FastEl(fc.x, fc.y) - 
 			dgf->off_filter.FastEl(fc.x, fc.y));
+	      }
+	      else {		// COPY
+		fval = 1.0f;
 	      }
 	      if(ctrs_only) {
 		if(fc == rf_ovlp) fval = 1.0f;
@@ -3221,8 +3318,14 @@ void V1GaborSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {
   dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0);
   for(int i=0;i<gabors.size; i++) {
     GaborV1Spec* sp = gabors[i];
-    dt->FindMakeColName(sp->name, idx, DataTable::VT_FLOAT, 4,
-			sp->un_geom.x, sp->un_geom.y, sp->gp_geom.x, sp->gp_geom.y);
+    if(sp->filter_type == GaborV1Spec::COPY) {
+      dt->FindMakeColName(sp->name, idx, DataTable::VT_FLOAT, 2,
+			  sp->un_geom.x, sp->un_geom.y);
+    }
+    else {
+      dt->FindMakeColName(sp->name, idx, DataTable::VT_FLOAT, 4,
+			  sp->un_geom.x, sp->un_geom.y, sp->gp_geom.x, sp->gp_geom.y);
+    }
   }
   dt->StructUpdate(false);
 }

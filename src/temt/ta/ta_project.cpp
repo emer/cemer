@@ -90,6 +90,7 @@ const String taDoc::init_text(
 
 void taDoc::Initialize() {
   auto_open = false;
+  web_doc = false;
   if (!taMisc::is_loading && !taMisc::is_duplicating)
     text = init_text;
 }
@@ -98,9 +99,15 @@ void taDoc::UpdateText() {
   html_text = WikiParse(text);
 }
 
+String taDoc::GetURL() {
+  if(url.startsWith("http://")) return url;
+  return taMisc::wiki_projspace + "/" + url;
+}
+
 void taDoc::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  UpdateText();
+  if(!web_doc)			// only do this if not a web doc -- otherwise it saves web page directly to html_text and can display that when offline..
+    UpdateText();
 }
 
 static String wiki_parse_str_between(const String& cl, const String& sts, const String& eds) {
@@ -825,6 +832,7 @@ void taProject::InitLinks() {
 
 void taProject::InitLinks_impl() {
   taBase::Own(version, this);
+  taBase::Own(wiki_url, this);
   taBase::Own(templates, this);
   taBase::Own(docs, this);
   taBase::Own(wizards, this);
@@ -924,9 +932,27 @@ taBase* taProject::FindMakeNewDataProc(TypeDef* typ, const String& nm) {
 SelectEdit* taProject::FindMakeSelectEdit(const String& nm) {
   SelectEdit* rval = edits.FindName(nm);
   if(rval) return rval;
-  rval = (SelectEdit*)edits.New(1); // ControlEdit
+  rval = (SelectEdit*)edits.New(1);
   rval->SetName(nm);
   rval->DataChanged(DCR_ITEM_UPDATED);
+  return rval;
+}
+
+taDoc* taProject::FindMakeDoc(const String& nm, bool web_doc, const String& web_url) {
+  taDoc* rval = docs.FindName(nm);
+  bool chg = false;
+  if(!rval) {
+    rval = (taDoc*)docs.New(1);
+    rval->SetName(nm);
+    chg = true;
+  }
+  rval->web_doc = web_doc;
+  if(web_doc) {
+    rval->url = web_url;
+    chg = true;
+  }
+  if(chg)
+    rval->DataChanged(DCR_ITEM_UPDATED);
   return rval;
 }
 

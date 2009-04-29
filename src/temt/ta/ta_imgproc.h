@@ -507,11 +507,12 @@ public:
   enum V1FilterType {
     GABOR,			// filter using gabors (orientation tuned)
     BLOB,			// filter using blobs (color contrast tuned)
+    COPY,			// just copy from retinal inputs, summing over on and off fields
   };
 
   V1FilterType	filter_type; 	// #APPLY_IMMED what type of filter to use?
   TwoDCoord 	rf_width;	// width of the receptive field into the retinal inputs -- enforced to be even numbers, to enable the 1/2 overlap constraint for neighboring rf's
-  TwoDCoord 	rf_ovlp;	// #READ_ONLY #SHOW half-width of the receptive field into the retinal inputs, which is the amount that the receptive fields overlap
+  TwoDCoord 	rf_ovlp;	// #CONDEDIT_ON_filter_type:COPY half-width of the receptive field into the retinal inputs, which is the amount that the receptive fields overlap
   int		n_filters;	// #READ_ONLY #SHOW number of filters -- computed from appropriate _rf specifications in terms of number of angles/sizes etc.
   GaborRFSpec	gabor_rf;	// #CONDEDIT_ON_filter_type:GABOR parameters for gabor filter specs
   BlobRFSpec	blob_rf;	// #CONDEDIT_ON_filter_type:BLOB parameters for blob filter specs
@@ -533,6 +534,7 @@ public:
 protected:
   virtual bool 	InitFilters_Gabor();
   virtual bool 	InitFilters_Blob();
+  virtual bool 	InitFilters_Copy();
 
   void	UpdateAfterEdit_impl();
 };
@@ -564,7 +566,7 @@ public:
   RetinalSpacingSpec::Region region; // retinal region represented by this filter -- for matching up with associated retinal outputs
   RetinalSpacingSpec::Resolution res; // resolution represented by this filter -- for matching up with associated retinal outputs
 
-  XYNGeom	un_geom;  	// size of one 'hypercolumn' unit of orientation detectors -- sets the datatable geometry -- must include room for number of angles/sizes, on/off and n_filters_per_gp
+  XYNGeom	un_geom;  	// size of one 'hypercolumn' unit of orientation detectors -- sets the datatable geometry -- must include room for number of angles/sizes, on/off and n_filters_per_gp (for COPY mode, this is entire size of layer)
   XYNGeom	gp_geom;  	// size of full set of groups of hypercolumns to process entire set of inputs: with wrap, is input_size / rf_ovlp, subtract 1 for !wrap
   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -input_ovlp (wrapped to right/top) and goes +input_ovlp past the right/top edge (wrapped to left/bottom)
   XYNGeom	n_filter_gps;	// number of groups of filters in each axis -- replicates filters (in interdigitated fashion if n_filters_per_gp > 1) across multiple adjacent locations and integrates into summary value (with gaussian weighting from center)
@@ -595,6 +597,8 @@ public:
   // actually perform the filtering operation on input patterns: Gabors
   virtual bool	FilterInput_Blob(int cmp_idx);
   // actually perform the filtering operation on input patterns: Blobs
+  virtual bool	FilterInput_Copy(int cmp_idx);
+  // actually perform the filtering operation on input patterns: Copy
 
   virtual void	GridFilterInput(DataTable* disp_data, int unit_no=0, int gp_skip=2, bool ctrs_only=false);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter for a given unit as it will be applied to the entire input data -- gp_skip specifies the number of unit groups to increment -- 2 is good to avoid complete overlap -- ctrs_only will only plot the centers of the filters, not the actual raw filters themselves
