@@ -302,6 +302,7 @@ public:
   HiLightButton*  canbut;// is HilightButton for the special mouse button handling
   HiLightButton*  apply_but;	// only use for dialogs that wait around
   HiLightButton*  revert_but;
+  HiLightButton*  help_but;	// help button
 
   iColor		bgColor() const {return bg_color;}
   virtual void		setBgColor(const iColor& new_bg); 
@@ -367,6 +368,7 @@ public slots:
   virtual void		Revert(); 
   virtual void 		Ok(); // for dialogs
   void 			Cancel(); // mostly for dialogs, but also used internally to close a Panel (ex. when obj deleted)
+  virtual void 		Help();
 
 protected:
   ContextFlag		updating; // flag to indicate we are the instance that caused the update

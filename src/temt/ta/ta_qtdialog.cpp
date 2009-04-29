@@ -750,6 +750,7 @@ void taiDataHostBase::InitGuiFields(bool) {
   canbut = NULL;
   apply_but = NULL;
   revert_but = NULL;
+  help_but = NULL;
 }
 
 void taiDataHostBase::Apply() {
@@ -901,6 +902,11 @@ void taiDataHostBase::Constr_Prompt() {
 
 void taiDataHostBase::Constr_Buttons() {
   QWidget* par = widButtons;
+
+  help_but = new HiLightButton("&Help", par);
+  layButtons->addWidget(help_but, 0, (Qt::AlignVCenter));
+  connect(help_but, SIGNAL(clicked()), this, SLOT(Help()) );
+
   layButtons->addStretch();
   if (isDialog()) { // add dialog-like buttons
     if(!modal && no_ok_but) {
@@ -1012,6 +1018,12 @@ void taiDataHostBase::GetImage_PromptTitle() {
 void taiDataHostBase::setBgColor(const iColor& new_bg) {
   bg_color = new_bg;
   MakeDarkBgColor(bg_color, bg_color_dark);
+}
+
+void taiDataHostBase::Help() {
+  taBase* obj = Base_();
+  if(!obj) return;
+  obj->Help();
 }
 
 void taiDataHostBase::Ok() { //note: only used for Dialogs
