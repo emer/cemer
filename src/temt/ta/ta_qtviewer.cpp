@@ -6563,15 +6563,50 @@ String iTextDataPanel::panel_type() const {
 iDocDataPanel::iDocDataPanel()
 :inherited(NULL) // usual case: we dynamically set the link, via setDoc
 {
-  br = new iTextBrowser(this);	// initially default to local
-  setCentralWidget(br);
+  wb_widg = new QWidget();
+  wb_box = new QVBoxLayout(wb_widg);
+  wb_box->setMargin(0); wb_box->setSpacing(2);
 
-  webview = NULL;
-  wb_widg = NULL;
-  url_edit = NULL;
+  int font_spec = taiMisc::fonMedium;
 
-  connect(br, SIGNAL(setSourceRequest(iTextBrowser*, const QUrl&, bool&)),
-	  this, SLOT(doc_setSourceRequest(iTextBrowser*, const QUrl&, bool&)) );
+  url_box = new QHBoxLayout();    wb_box->addLayout(url_box);
+
+  bak_but = new QToolButton(Qt::LeftArrow, wb_widg, "");
+  url_box->addWidget(bak_but);
+  fwd_but = new QToolButton(Qt::RightArrow, wb_widg, "");
+  url_box->addWidget(fwd_but);
+  url_box->addSpacing(taiM->hsep_c);
+  go_but = new QPushButton("Go", wb_widg);
+  url_box->addWidget(go_but);
+  url_box->addSpacing(taiM->hsep_c);
+
+  url_label = taiM->NewLabel("URL:", wb_widg, font_spec);
+  url_box->addWidget(url_label);
+  url_box->addSpacing(taiM->hsep_c);
+  url_edit = new iLineEdit(wb_widg);
+  //  url_edit->setText(doc_->url);
+  url_box->addWidget(url_edit);
+  url_box->addSpacing(taiM->hsep_c);
+
+  seturl_but = new QPushButton("Set URL", wb_widg);
+  url_box->addWidget(seturl_but);
+
+  webview = new QWebView(wb_widg);
+  wb_box->addWidget(webview);
+
+  setCentralWidget(wb_widg);
+
+  connect(webview, SIGNAL(loadFinished(bool)),
+	  this, SLOT(doc_loadFinished(bool)) );
+
+  connect(go_but, SIGNAL(pressed()), this, SLOT(doc_goPressed()) );
+  connect(bak_but, SIGNAL(pressed()), this, SLOT(doc_bakPressed()) );
+  connect(fwd_but, SIGNAL(pressed()), this, SLOT(doc_fwdPressed()) );
+  connect(seturl_but, SIGNAL(pressed()), this, SLOT(doc_seturlPressed()) );
+
+  webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+  connect(webview->page(), SIGNAL(linkClicked(const QUrl&)),
+	  this, SLOT(doc_linkClicked(const QUrl&)) );
 
 //TODO  connect(txtText, SIGNAL(copyAvailable(bool)),
 //      this, SLOT(textText_copyAvailable(bool)) );
@@ -6583,14 +6618,20 @@ iDocDataPanel::~iDocDataPanel() {
 }
 
 QWidget* iDocDataPanel::firstTabFocusWidget() {
-  if(br) return br;
-  else return url_edit;
+  return url_edit;
 }
 
-void iDocDataPanel::doc_setSourceRequest(iTextBrowser* src,
-					 const QUrl& url, bool& cancel) 
-{
-  // embed our viewer id, so handler can find project, etc.
+void iDocDataPanel::doc_linkClicked(const QUrl& url) {
+  String path = url.path(); // will only be part before #, if any
+  if((path[0] != '.') && path.contains(':') && path.contains('/')) {
+    // a standard path:
+    webview->load(url);	
+    // todo: we could make a note of this somewhere, but key idea is that our URL
+    // is fixed!!!
+    return;
+  }
+
+  // handle it internally
   QUrl new_url(url);
   if (!url.hasFragment()) {
     if (viewerWindow())
@@ -6598,9 +6639,6 @@ void iDocDataPanel::doc_setSourceRequest(iTextBrowser* src,
   }
   // goes to: iMainWindowViewer::globalUrlHandler  in ta_qtviewer.cpp
   QDesktopServices::openUrl(new_url);
-  cancel = true;
-  //NOTE: we never let results call its own setSource because we don't want
-  // link clicking to cause us to change our source page
 }
 
 void iDocDataPanel::doc_loadFinished(bool ok) {
@@ -6621,6 +6659,29 @@ void iDocDataPanel::doc_goPressed() {
   webview->load(QUrl(doc_->GetURL()));
 }
 
+void iDocDataPanel::doc_bakPressed() {
+  // todo: could trap things here too
+  webview->back();
+}
+
+void iDocDataPanel::doc_fwdPressed() {
+  // todo: could trap things here too
+  webview->forward();
+}
+
+void iDocDataPanel::doc_seturlPressed() {
+  taDoc* doc_ = this->doc();
+  if(!doc_) return;
+
+  String url = webview->url().path();
+  String base_url = taMisc::wiki_projspace + "/";
+  if(url.contains(base_url))
+    doc_->url = url.after(base_url);
+  else
+    doc_->url = url;
+  url_edit->setText(doc_->url);
+}
+
 bool iDocDataPanel::ignoreDataChanged() const {
   return false;			
   //  return !isVisible(); -- this doesn't seem to be giving accurate results!!!
@@ -6630,58 +6691,9 @@ void iDocDataPanel::DataLinkDestroying(taDataLink* dl) {
   setDoc(NULL);
 }
 
-void iDocDataPanel::UpdateViewMode() {
-  taDoc* doc_ = this->doc();
-  // todo: need to detect whether we can connect to internet here and decide whether to 
-  // display cached text or not!
-  if(doc_ && doc_->web_doc) {
-    if(webview) return;		// already set to use that
-    br = NULL;			// will be auto deleted below..
-    wb_widg = new QWidget();
-    wb_box = new QVBoxLayout(wb_widg);
-    wb_box->setMargin(0); wb_box->setSpacing(2);
-
-    int font_spec = taiMisc::fonMedium;
-
-    url_box = new QHBoxLayout();    wb_box->addLayout(url_box);
-    url_label = taiM->NewLabel("URL:", wb_widg, font_spec);
-    url_box->addWidget(url_label);
-    url_box->addSpacing(taiM->hsep_c);
-    url_edit = new iLineEdit(wb_widg);
-    url_edit->setText(doc_->url);
-    url_box->addWidget(url_edit);
-    go_button = new QPushButton("Go", wb_widg);
-    url_box->addWidget(go_button);
-
-    webview = new QWebView(wb_widg);
-    wb_box->addWidget(webview);
-
-    setCentralWidget(wb_widg);
-
-    connect(webview, SIGNAL(loadFinished(bool)),
-	    this, SLOT(doc_loadFinished(bool)) );
-
-    connect(go_button, SIGNAL(pressed()), this, SLOT(doc_goPressed()) );
-
-//     connect(url_edit, SIGNAL(textChanged() ),
-// 	    this, SLOT(doc_urlChanged() ) );
-  }
-  else {
-    if(br) return;		// already set
-    webview = NULL;
-    wb_widg = NULL;
-    url_edit = NULL;
-    br = new iTextBrowser(this);	// initially default to local
-    setCentralWidget(br);
-    connect(br, SIGNAL(setSourceRequest(iTextBrowser*, const QUrl&, bool&)),
-	    this, SLOT(doc_setSourceRequest(iTextBrowser*, const QUrl&, bool&)) );
-  }
-}
-
 void iDocDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
   if (dcr <= DCR_ITEM_UPDATED_ND) {
-    UpdateViewMode();
     taDoc* doc_ = this->doc();
     if(!doc_) return;
     if(doc_->web_doc) {		// todo: check for internet connection here too..
@@ -6689,8 +6701,7 @@ void iDocDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
       webview->load(QUrl(doc_->GetURL()));
     }
     else {
-      br->clear();
-      br->setHtml(doc_->html_text);
+      webview->setHtml(doc_->html_text, QUrl(doc_->GetURL()));
     }
   }
 }
@@ -6724,19 +6735,15 @@ void iDocDataPanel::setDoc(taDoc* doc) {
     taDataLink* dl = doc->GetDataLink();
     if (!dl) return; // shouldn't happen!
     dl->AddDataClient(this);
-    UpdateViewMode();
-    if(doc->web_doc) {
-      if(webview)
-	webview->load(QUrl(doc->GetURL()));
+    if(doc->web_doc) {		// todo: check for internet connection here too..
+      url_edit->setText(doc->url);
+      webview->load(QUrl(doc->GetURL()));
     }
     else {
-      if(br)
-	br->setHtml(doc->html_text);
+      webview->setHtml(doc->html_text, QUrl(doc->GetURL()));
     }
   } else {
-    UpdateViewMode();		// will reset?
-    br->clear(); // TODO: since occurs after previous existence, maybe we should put
-    // something like "<no doc set>" or such
+    webview->setHtml("(no doc set)");
   }
 }
 
@@ -8731,6 +8738,14 @@ bool taBase::EditPanel(bool new_tab, bool pin_tab) {
 
 bool taBase::BrowserSelectMe() {
   if(!taMisc::gui_active) return false;
+
+  // first, check for an edit dialog and use that if found
+  MainWindowViewer* edlg = MainWindowViewer::FindEditDialog(this);
+  if(edlg) {
+    edlg->Show();		// focus on it
+    return true;
+  }
+
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
   taiDataLink* link = (taiDataLink*)GetDataLink();

@@ -304,7 +304,7 @@ class TA_API tabBrowseViewer : public BrowseViewer {
 INHERITED(BrowseViewer)
 friend class iDataBrowser;
 public:
-  static tabBrowseViewer*	New(TAPtr root, MemberDef* md = NULL);
+  static tabBrowseViewer*	New(taBase* root, MemberDef* md = NULL);
     // convenience function
 
   taSmartRef		m_root; 
@@ -568,7 +568,7 @@ public:
   static TypeDef*	def_browser_type; // type of the default browser, us unless replaced
   static TypeDef*	def_viewer_type; // type of the default viewer, us unless replaced
   
-  static MainWindowViewer* NewBrowser(TAPtr root, MemberDef* root_md = NULL, bool is_root = false); 
+  static MainWindowViewer* NewBrowser(taBase* root, MemberDef* root_md = NULL, bool is_root = false); 
     // makes a standard 2-pane taBase browser
   static MainWindowViewer* NewClassBrowser(void* root, TypeDef* root_typ, MemberDef* root_md = NULL); 
     // convenience class: makes a 2-pane class browser (browse+panels)
@@ -576,8 +576,10 @@ public:
     // makes a standard 3-pane project viewer (3-view) or 2 (2x2) -- returns the guy with tree
   static MainWindowViewer* NewProjectViewer(taProject* proj); 
     // makes a standard 3d viewer, with panel (useful for more graphs, etc.)
-  static MainWindowViewer* NewEditDialog(TAPtr root); 
+  static MainWindowViewer* NewEditDialog(taBase* root); 
     // makes a 1-pane taBase window only showing the edit panels
+  static MainWindowViewer* FindEditDialog(taBase* root); 
+    // find an existing edit dialog associated with given root item
 
   static MainWindowViewer* GetDefaultProjectBrowser(taProject* proj = NULL);
     // get the default pb for given project, or whatever one is current if NULL
@@ -668,7 +670,7 @@ public: // Action methods
 
 protected:
   // from taDataView 
-  override void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2);
+  override void		DataChanged_Child(taBase* child, int dcr, void* op1, void* op2);
   override void		DoActionChildren_impl(DataViewAction act); // just one act
   override void		CloseWindow_impl(); 
   

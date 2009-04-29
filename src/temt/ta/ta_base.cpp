@@ -2224,10 +2224,18 @@ bool taBase::EditDialog(bool modal) {
       return ie->EditDialog((void*)this, false, true); // r/w, modal
     }
   } else {
-    MainWindowViewer* wv = MainWindowViewer::NewEditDialog(this);
-    if (wv) {
-      wv->ViewWindow();
-      iMainWindowViewer* iwv = wv->widget();
+
+    // first, check for an edit dialog and use that if found
+    MainWindowViewer* edlg = MainWindowViewer::FindEditDialog(this);
+    if(edlg) {
+      edlg->Show();		// focus on it
+      return true;
+    }
+
+    edlg = MainWindowViewer::NewEditDialog(this);
+    if (edlg) {
+      edlg->ViewWindow();
+      iMainWindowViewer* iwv = edlg->widget();
       iwv->resize( taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgVer) );
       return iwv->AssertPanel((taiDataLink*)GetDataLink());
         //bool new_tab, bool new_tab_lock)

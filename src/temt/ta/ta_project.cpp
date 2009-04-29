@@ -106,6 +106,10 @@ String taDoc::GetURL() {
 
 void taDoc::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(url.empty() || url == "local")
+    web_doc = false;
+  else
+    web_doc = true;
   if(!web_doc)			// only do this if not a web doc -- otherwise it saves web page directly to html_text and can display that when offline..
     UpdateText();
 }

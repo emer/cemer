@@ -1776,17 +1776,16 @@ class TA_API iDocDataPanel: public iDataPanelFrame {
   Q_OBJECT
 INHERITED(iDataPanelFrame)
 public:
-  QTextBrowser*		br; 	// the local text view of doc
-
-  // todo: these should probably be encapsulated into a new minimal browser class in 
-  // taiqtso -- that is a good job for Brad :)
   QWidget*		wb_widg;  // overall widget for web browser case
   QVBoxLayout*		wb_box; // web browser vbox
   QWebView*		webview; // the web_doc case
   QHBoxLayout*		url_box; // the url editing box
   QLabel*		url_label; // url label
   iLineEdit*		url_edit; // editor for url
-  QPushButton*		go_button; // load web page
+  QToolButton*		fwd_but; // forward
+  QToolButton*		bak_but; // backward
+  QPushButton*		go_but; // load web page
+  QPushButton*		seturl_but; // save this location as our url!
   
   virtual void		setDoc(taDoc* doc); // only called if changes after creation
   
@@ -1795,9 +1794,6 @@ public:
 
 //  override int 		EditAction(int ea);
 //  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
-
-  virtual void		UpdateViewMode();
-  // update the display contents based on the modality of the doc -- web_doc vs. text doc..
 
   override QWidget*	firstTabFocusWidget();
 
@@ -1815,10 +1811,12 @@ protected:
 
 #ifndef __MAKETA__
 protected slots:
-  void			doc_setSourceRequest(iTextBrowser* src,
-					     const QUrl& url, bool& cancel);
+  void			doc_linkClicked(const QUrl& url);
   void			doc_loadFinished(bool ok);
   void			doc_goPressed();
+  void			doc_bakPressed();
+  void			doc_fwdPressed();
+  void			doc_seturlPressed();
 //  void 			br_copyAvailable (bool yes);
 #endif
 

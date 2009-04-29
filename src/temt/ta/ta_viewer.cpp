@@ -160,6 +160,7 @@ void DataViewer::Show() {
 
 void DataViewer::Show_impl() {
   widget()->show();
+  //  widget()->raise();
 }
 
 void DataViewer::setVisible(bool value, bool update_view) {
@@ -369,7 +370,7 @@ void BrowseViewer::Render_pre() {
 //  tabBrowseViewer	 	//
 //////////////////////////////////
 
-tabBrowseViewer* tabBrowseViewer::New(TAPtr root, MemberDef* root_md) {
+tabBrowseViewer* tabBrowseViewer::New(taBase* root, MemberDef* root_md) {
   if (!root) return NULL; // nice try, buster
   tabBrowseViewer* rval = new tabBrowseViewer;
   rval->m_root = root;
@@ -858,7 +859,7 @@ MainWindowViewer* MainWindowViewer::GetDefaultProjectViewer(taProject* proj) {
   return NULL;
 }
 
-MainWindowViewer* MainWindowViewer::NewBrowser(TAPtr root,
+MainWindowViewer* MainWindowViewer::NewBrowser(taBase* root,
   MemberDef* root_md, bool is_root)
 {
   if (!def_browser_type || !(def_browser_type->InheritsFrom(&TA_MainWindowViewer))) 
@@ -891,7 +892,7 @@ MainWindowViewer* MainWindowViewer::NewClassBrowser(void* root, TypeDef* root_ty
   return rval;
 }
 
-MainWindowViewer* MainWindowViewer::NewEditDialog(TAPtr root) {
+MainWindowViewer* MainWindowViewer::NewEditDialog(taBase* root) {
   if (!def_browser_type || !(def_browser_type->InheritsFrom(&TA_MainWindowViewer))) 
     def_browser_type = &TA_MainWindowViewer; // just in case
   
@@ -907,6 +908,17 @@ MainWindowViewer* MainWindowViewer::NewEditDialog(TAPtr root) {
     tabMisc::root->viewers.Add(rval); // does InitLinks
   return rval;
 } 
+
+MainWindowViewer* MainWindowViewer::FindEditDialog(taBase* root) {
+  if (!tabMisc::root) return NULL;
+  for(int i=0; i<tabMisc::root->viewers.size; i++) {
+    taDataView* dv = tabMisc::root->viewers[i];
+    taBase* dt = dv->data();
+    if((dt == root) && dv->InheritsFrom(&TA_MainWindowViewer))
+      return (MainWindowViewer*)dv;
+  }
+  return NULL;
+}
 
 MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   if (!proj) return NULL;
@@ -1155,7 +1167,7 @@ IDataViewWidget* MainWindowViewer::ConstrWidget_impl(QWidget* gui_parent) {
   return new iMainWindowViewer(this, gui_parent);
 }
 
-void MainWindowViewer::DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2) {
+void MainWindowViewer::DataChanged_Child(taBase* child, int dcr, void* op1, void* op2) {
   if (child == &frames) {
     // if reorder, then do a gui reorder
     //TODO:

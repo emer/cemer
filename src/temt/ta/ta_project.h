@@ -44,8 +44,8 @@ class TA_API taDoc : public taNBase {
 INHERITED(taNBase)
 public:
   bool			auto_open;	// open this document upon startup
-  bool			web_doc; // this document lives on the web, at the following URL, instead of being local text saved in the project -- the most recently viewed version of the document is cached into the local text, and is rendered if it is not possible to connect to the internet -- this is not editable however, as sync facilities with the web are not (currently) available
-  String		url;	 // #CONDEDIT_ON_web_doc a URL location for this document -- if it doesn't start with http:// then it is considered relative to taMisc::wiki_projspace, which is based on wiki_url as specified in the preferences -- do not include a leading / for relative url's
+  bool			web_doc; // #READ_ONLY this document lives on the web, at the following URL, instead of being local text saved in the project -- the most recently viewed version of the document is cached into the local text, and is rendered if it is not possible to connect to the internet -- this is not editable however, as sync facilities with the web are not (currently) available
+  String		url;	 // URL location for this document -- if blank or "local" then loal text field is used, otherwise if it doesn't start with http:// then it is considered relative to taMisc::wiki_projspace, which is based on wiki_url as specified in the preferences -- do not include a leading / for relative url's
   String		text; // #NO_SHOW the text of the document (in html/mediawiki format)
   String		html_text; // #READ_ONLY #HIDDEN #NO_SAVE #EDIT_DIALOG wiki conversion of html text -- use this for actual display
 
