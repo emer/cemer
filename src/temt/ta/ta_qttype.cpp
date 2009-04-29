@@ -2113,6 +2113,8 @@ void taiMethod::AddMethod(MethodDef* md) {
   taRefN::Ref(this);
   taRefN::SafeUnRefDone(*ptr_to_im);
   *ptr_to_im = this;
+//TEST:
+  meth = md;
 }
 
 taiMethodData* taiMethod::GetButtonMethodRep(void* base, IDataHost* host_, taiData* par, 
@@ -2124,7 +2126,7 @@ taiMethodData* taiMethod::GetButtonMethodRep(void* base, IDataHost* host_, taiDa
 }
 
 taiMethodData* taiMethod::GetGenericMethodRep(void* base, taiData* par) {
-  taiMethodData* rval = new taiMethodData(base, NULL, NULL, NULL, par, NULL, 0);
+  taiMethodData* rval = new taiMethodData(base, meth, meth->type, NULL, par, NULL, 0);
   return rval;
 }
 
