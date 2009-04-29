@@ -2518,7 +2518,7 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim) {
     if(!da || (da->valType() != val_typ)) { // only make new one if val type doesn't match
       // mat_geom is only decorated onto first col and should not be remade...
       // if none was supplied, then set it for scalar col (the default)
-      if (mat_geom.size == 0) {
+      if ((mat_idx.size == 0) || mat_geom.size != 0) {
 	da = FindMakeColName(base_nm, idx, (ValType)val_typ, mat_geom.size,
 			     mat_geom[0], mat_geom[1], mat_geom[2],
 			     mat_geom[3]);
