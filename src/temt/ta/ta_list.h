@@ -138,6 +138,8 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   DCR_ITEM_DELETING = 70,  // 70 NOTE: not used in standard DataChanged calls, but may be used by forwarders, ex. taDataMonitor
   
   DCR_USER_DATA_UPDATED	= 80, // called when we create user data, or when user data is updated -- helps gui snooping so it doesn't do detailed UserData checks on every ITEM_UPDATED or such
+  
+  DCR_RESOLVE_NOW = 90, // called ex by SomeMethod() buttons to request all gui clients of the guy to apply their outstanding changes
 
 #ifndef __MAKETA__
   DCR_LIST_MIN		= DCR_LIST_INIT,

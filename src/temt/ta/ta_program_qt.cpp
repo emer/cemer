@@ -857,8 +857,16 @@ iProgramPanelBase::iProgramPanelBase(taiDataLink* dl_)
 }
 
 void iProgramPanelBase::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  inherited::DataChanged_impl(dcr, op1_, op2_);
-  //NOTE: don't need to do anything because DataModel will handle it
+  if (dcr == DCR_RESOLVE_NOW)
+  {
+    if (pe->HasChanged()) {
+      pe->GetValue();
+      return;
+    }
+  }
+  else
+    inherited::DataChanged_impl(dcr, op1_, op2_);
+    //NOTE: don't need to do anything because DataModel will handle it
 }
 
 bool iProgramPanelBase::HasChanged_impl() {

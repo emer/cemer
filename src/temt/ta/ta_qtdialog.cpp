@@ -1314,6 +1314,12 @@ void taiDataHost_impl::DataDataChanged(taDataLink* dl, int dcr, void* op1, void*
   if (dcr == DCR_STRUCT_UPDATE_END) {
     Refresh_impl(true);
   } 
+  // RESOLVE_NOW is typically invoked by a button method
+  else if (dcr == DCR_RESOLVE_NOW)
+  {
+    CancelOp cancel_op = CO_PROCEED; //note: may make more sense to be CO_NOT_CANCELLABLE
+    ResolveChanges(cancel_op);
+  }
   // we really just want to ignore the BEGIN-type guys, otherwise accept all others
   else if (!((dcr == DCR_STRUCT_UPDATE_BEGIN) ||
     (dcr == DCR_DATA_UPDATE_BEGIN)))
@@ -2410,7 +2416,7 @@ void taiEditDataHost::GetValueInline_impl(void* base) const {
 }
 
 void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
-  // called by root on closing, dialog on closing, etc. etc.
+  // called by root on closing, dialog on closing, DCR_RESOLVE_NOW op, etc. etc.
   if (HasChanged()) {
     GetValue();
   }
