@@ -43,11 +43,14 @@ class TA_API taDoc : public taNBase {
   // ##CAT_Docs document for providing information on projects and other objects
 INHERITED(taNBase)
 public:
-  bool			auto_open;	// open this document upon startup
-  bool			web_doc; // #READ_ONLY this document lives on the web, at the following URL, instead of being local text saved in the project -- the most recently viewed version of the document is cached into the local text, and is rendered if it is not possible to connect to the internet -- this is not editable however, as sync facilities with the web are not (currently) available
-  String		url;	 // URL location for this document -- if blank or "local" then loal text field is used, otherwise if it doesn't start with http:// then it is considered relative to taMisc::wiki_projspace, which is based on wiki_url as specified in the preferences -- do not include a leading / for relative url's
-  String		text; // #NO_SHOW the text of the document (in html/mediawiki format)
-  String		html_text; // #READ_ONLY #HIDDEN #NO_SAVE #EDIT_DIALOG wiki conversion of html text -- use this for actual display
+  bool		auto_open;	// open this document upon startup
+  bool		web_doc; 	// #READ_ONLY this document lives on the web, at the following URL, instead of being local text saved in the project -- the most recently viewed version of the document is cached into the local text, and is rendered if it is not possible to connect to the internet -- this flag is automatically updated based on the url field
+  String	wiki;		// name of a wiki, as specified in global preferences, where this object should be stored -- this is used to lookup the wiki name -- if blank then url must be a full URL path
+  String	url;		// a URL location for this document -- if blank or "local" then text field is used as document text -- otherwise if wiki name is set, then this is relative to that wiki, as wiki_url/index.php/Projects/url, otherwise it is a full URL path to a valid location
+  float		text_size;	// #DEF_1 multiplier for text size on page (zoom factor) -- 1.0 is default -- this multiplies the global preferences/options font_size / 12.0 factor (i.e., 12.0 is assumed to be a normal baseline font size), to arrive at the overall font size scaling factor
+
+  String	text; 		// #HIDDEN #EDIT_DIALOG the text of the document for local docs (in html/mediawiki format)
+  String	html_text; 	// #READ_ONLY #HIDDEN #EDIT_DIALOG wiki conversion of html text -- use this for actual display
 
   static String		WikiParse(const String& in_str);
   // convert very basic wiki syntax to html format -- == headers ==, * bulleted lists, [[ ]] links, etc

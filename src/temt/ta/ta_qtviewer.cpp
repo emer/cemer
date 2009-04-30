@@ -32,6 +32,7 @@
 #include "css_basic_types.h"
 
 #include "icolor.h"
+#include "inetworkaccessmanager.h"
 
 #include <qaction.h>
 #include <qapplication.h>
@@ -3289,17 +3290,18 @@ void iApplicationToolBar::Constr_post() {
   tb->setIconSize(QSize(icon_sz, icon_sz));
   win->historyBackAction->addTo(tb);
   win->historyForwardAction->addTo(tb);
-//TEMP 
-QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(win->historyBackAction));
-if (but) {but->setArrowType(Qt::LeftArrow); but->setText("");}
-but = qobject_cast<QToolButton*>(tb->widgetForAction(win->historyForwardAction));
-if (but) {but->setArrowType(Qt::RightArrow); but->setText("");}
+  //TEMP 
+  QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(win->historyBackAction));
+  if (but) {but->setArrowType(Qt::LeftArrow); but->setText("");}
+  but = qobject_cast<QToolButton*>(tb->widgetForAction(win->historyForwardAction));
+  if (but) {but->setArrowType(Qt::RightArrow); but->setText("");}
+  win->editFindAction->addTo(tb);
   tb->addSeparator();
   win->fileNewAction->addTo(tb);
   win->fileOpenAction->addTo(tb);
   win->fileSaveAction->addTo(tb);
   win->fileSaveAsAction->addTo(tb);
-  win->fileSaveNotesAction->addTo(tb);
+//   win->fileSaveNotesAction->addTo(tb);
   win->fileUpdateChangeLogAction->addTo(tb);
   win->fileCloseAction->addTo(tb);
   win->filePrintAction->addTo(tb);
@@ -6572,19 +6574,31 @@ iDocDataPanel::iDocDataPanel()
   url_box = new QHBoxLayout();    wb_box->addLayout(url_box);
 
   bak_but = new QToolButton(Qt::LeftArrow, wb_widg, "");
+  bak_but->setToolTip("Go backward one step in browsing history");
   url_box->addWidget(bak_but);
   fwd_but = new QToolButton(Qt::RightArrow, wb_widg, "");
+  fwd_but->setToolTip("Go forward one step in browsing history");
   url_box->addWidget(fwd_but);
   url_box->addSpacing(taiM->hsep_c);
   go_but = new QPushButton("Go", wb_widg);
+  go_but->setToolTip("Go to currently specified URL (can also just press enter in URL field)");
   url_box->addWidget(go_but);
   url_box->addSpacing(taiM->hsep_c);
 
+  wiki_label = taiM->NewLabel("wiki:", wb_widg, font_spec);
+  wiki_label->setToolTip("name of a wiki, as specified in global preferences, where this object should be stored -- this is used to lookup the wiki name -- if blank then url must be a full URL path");
+  url_box->addWidget(wiki_label);
+  url_box->addSpacing(taiM->hsep_c);
+  wiki_edit = new iLineEdit(wb_widg);
+  wiki_edit->setCharWidth(12);	// make this guy shorter
+  url_box->addWidget(wiki_edit);
+  url_box->addSpacing(taiM->hsep_c);
+
   url_label = taiM->NewLabel("URL:", wb_widg, font_spec);
+  url_label->setToolTip("a URL location for this document -- if blank or 'local' then text field is used as document text -- otherwise if wiki name is set, then this is relative to that wiki, as wiki_url/index.php/Projects/url, otherwise it is a full URL path to a valid location");
   url_box->addWidget(url_label);
   url_box->addSpacing(taiM->hsep_c);
   url_edit = new iLineEdit(wb_widg);
-  //  url_edit->setText(doc_->url);
   url_box->addWidget(url_edit);
   url_box->addSpacing(taiM->hsep_c);
 
@@ -6594,6 +6608,8 @@ iDocDataPanel::iDocDataPanel()
   webview = new QWebView(wb_widg);
   wb_box->addWidget(webview);
 
+  webview->page()->setNetworkAccessManager(taiMisc::net_access_mgr);
+
   setCentralWidget(wb_widg);
 
   connect(webview, SIGNAL(loadFinished(bool)),
@@ -6602,6 +6618,8 @@ iDocDataPanel::iDocDataPanel()
   connect(go_but, SIGNAL(pressed()), this, SLOT(doc_goPressed()) );
   connect(bak_but, SIGNAL(pressed()), this, SLOT(doc_bakPressed()) );
   connect(fwd_but, SIGNAL(pressed()), this, SLOT(doc_fwdPressed()) );
+  connect(url_edit, SIGNAL(returnPressed()), this, SLOT(doc_goPressed()) );
+  connect(wiki_edit, SIGNAL(returnPressed()), this, SLOT(doc_goPressed()) );
   connect(seturl_but, SIGNAL(pressed()), this, SLOT(doc_seturlPressed()) );
 
   webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
@@ -6622,8 +6640,21 @@ QWidget* iDocDataPanel::firstTabFocusWidget() {
 }
 
 void iDocDataPanel::doc_linkClicked(const QUrl& url) {
-  String path = url.path(); // will only be part before #, if any
-  if((path[0] != '.') && path.contains(':') && path.contains('/')) {
+  String path = url.toString();
+  bool ta_path = false;
+  QUrl new_url(url);
+  if(path.startsWith("ta:") || path.startsWith("."))
+    ta_path = true;
+  if(!ta_path && url.hasQueryItem("title")) { // wiki versions of our action urls get translated into queries with title=...
+    String qry = url.queryItemValue("title");
+    if(qry.startsWith("ta:") || qry.startsWith(".")) {
+      if(!qry.startsWith("ta:"))
+	qry = "ta:"+qry;	// rectify
+      new_url.setUrl(qry);	// start from there.
+      ta_path = true;
+    }
+  }
+  if(!ta_path) {
     // a standard path:
     webview->load(url);	
     // todo: we could make a note of this somewhere, but key idea is that our URL
@@ -6632,8 +6663,7 @@ void iDocDataPanel::doc_linkClicked(const QUrl& url) {
   }
 
   // handle it internally
-  QUrl new_url(url);
-  if (!url.hasFragment()) {
+  if (!new_url.hasFragment()) {
     if (viewerWindow())
       new_url.setFragment("#" + QString::number(viewerWindow()->uniqueId()));
   }
@@ -6655,8 +6685,10 @@ void iDocDataPanel::doc_goPressed() {
   taDoc* doc_ = this->doc();
   if(!doc_) return;
   if(!url_edit) return;
+  doc_->wiki = wiki_edit->text();
   doc_->url = url_edit->text();
-  webview->load(QUrl(doc_->GetURL()));
+  doc_->UpdateAfterEdit();	// this will drive all the updating, including toggle from local etc
+  UpdatePanel();		// also update us..
 }
 
 void iDocDataPanel::doc_bakPressed() {
@@ -6673,13 +6705,14 @@ void iDocDataPanel::doc_seturlPressed() {
   taDoc* doc_ = this->doc();
   if(!doc_) return;
 
-  String url = webview->url().path();
-  String base_url = taMisc::wiki_projspace + "/";
-  if(url.contains(base_url))
+  String url = webview->url().toString();
+  String base_url = taMisc::GetWikiURL(doc_->wiki, true);
+  if(url.startsWith(base_url))
     doc_->url = url.after(base_url);
   else
     doc_->url = url;
-  url_edit->setText(doc_->url);
+  doc_->UpdateAfterEdit();	// this will drive all the updating, including toggle from local etc
+  UpdatePanel();		// also update us..
 }
 
 bool iDocDataPanel::ignoreDataChanged() const {
@@ -6691,18 +6724,32 @@ void iDocDataPanel::DataLinkDestroying(taDataLink* dl) {
   setDoc(NULL);
 }
 
-void iDocDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  inherited::DataChanged_impl(dcr, op1_, op2_);
-  if (dcr <= DCR_ITEM_UPDATED_ND) {
-    taDoc* doc_ = this->doc();
-    if(!doc_) return;
-    if(doc_->web_doc) {		// todo: check for internet connection here too..
-      url_edit->setText(doc_->url);
-      webview->load(QUrl(doc_->GetURL()));
-    }
-    else {
-      webview->setHtml(doc_->html_text, QUrl(doc_->GetURL()));
-    }
+void iDocDataPanel::UpdatePanel_impl() {
+  inherited::UpdatePanel_impl();
+  taDoc* doc_ = this->doc();
+  if(!doc_) return;
+
+  wiki_edit->setText(doc_->wiki);
+  url_edit->setText(doc_->url);
+
+  webview->setTextSizeMultiplier(doc_->text_size * ((float)taMisc::font_size / 12.0f));
+
+  if(doc_->web_doc && taMisc::InternetConnected()) {
+    String cur_url = webview->url().toString();
+    String nw_url = doc_->GetURL();
+    if(cur_url != nw_url)
+      webview->load(QUrl(nw_url));
+//     url_edit->setEnabled(true);
+    fwd_but->setEnabled(true);
+    bak_but->setEnabled(true);
+//     go_but->setEnabled(true);
+    seturl_but->setEnabled(true);
+  }
+  else {
+    webview->setHtml(doc_->html_text, QUrl(doc_->GetURL()));
+    fwd_but->setEnabled(false);
+    bak_but->setEnabled(false);
+    seturl_but->setEnabled(false);
   }
 }
 
@@ -6735,13 +6782,7 @@ void iDocDataPanel::setDoc(taDoc* doc) {
     taDataLink* dl = doc->GetDataLink();
     if (!dl) return; // shouldn't happen!
     dl->AddDataClient(this);
-    if(doc->web_doc) {		// todo: check for internet connection here too..
-      url_edit->setText(doc->url);
-      webview->load(QUrl(doc->GetURL()));
-    }
-    else {
-      webview->setHtml(doc->html_text, QUrl(doc->GetURL()));
-    }
+    UpdatePanel();
   } else {
     webview->setHtml("(no doc set)");
   }

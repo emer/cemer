@@ -30,6 +30,9 @@ set(taiqtso_HEADS
     itextbrowser.h
     itextedit.h
     numberedtextview.h
+    iautosaver.h
+    icookiejar.h
+    inetworkaccessmanager.h
 )
 
 # headers that need Qt moc run
@@ -52,6 +55,9 @@ set(taiqtso_HEADS_MOC
     itextbrowser.h
     itextedit.h
     numberedtextview.h
+    iautosaver.h
+    icookiejar.h
+    inetworkaccessmanager.h
 )
 
 # source files to compile: NOTE: do NOT include .moc files -- auto generated
@@ -80,6 +86,14 @@ set(taiqtso_SRCS
     itextedit.cpp
     taiqtso_ti.cpp
     numberedtextview.cpp
+    iautosaver.cpp
+    icookiejar.cpp
+    inetworkaccessmanager.cpp
+)
+
+# headers that need Qt ui compiler run
+set(taiqtso_SRCS_UI
+  passworddialog.ui
 )
 
 set(taiqtso_FILES ${taiqtso_HEADS} ${taiqtso_SRCS})

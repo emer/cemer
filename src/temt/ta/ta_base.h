@@ -2645,9 +2645,10 @@ class TA_API taWikiURL: public taOBase {
 INHERITED(taOBase)
 public://
   bool		sync;		// enable synchronizing this object with the wiki
-  String	url;		// #CONDEDIT_ON_sync a URL location for this object -- if it doesn't start with http:// then it is considered relative to taMisc::wiki_projspace, which is based on wiki_url as specified in the preferences -- do not include a leading / for relative url's
+  String	wiki;		// #CONDEDIT_ON_sync name of a wiki, as specified in global preferences, where this object should be stored -- this is used to lookup the wiki name -- if blank then url must be a full URL path
+  String	url;		// #CONDEDIT_ON_sync a URL location for this object -- if wiki name is set, then this is relative to that wiki, as wiki_url/index.php/Projects/url, otherwise it is a full URL path to a valid location
 
-  String	GetURL();	// #CAT_URL gets the url, dealing with relative vs. absolute specification in url field
+  String	GetURL();	// #CAT_URL gets the full url to sync to
   
   TA_SIMPLE_BASEFUNS(taWikiURL);
 private:

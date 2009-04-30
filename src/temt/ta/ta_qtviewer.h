@@ -1780,6 +1780,8 @@ public:
   QVBoxLayout*		wb_box; // web browser vbox
   QWebView*		webview; // the web_doc case
   QHBoxLayout*		url_box; // the url editing box
+  QLabel*		wiki_label;
+  iLineEdit*		wiki_edit;
   QLabel*		url_label; // url label
   iLineEdit*		url_edit; // editor for url
   QToolButton*		fwd_but; // forward
@@ -1807,7 +1809,7 @@ public: // IDataLinkClient interface
   override bool		ignoreDataChanged() const;
 protected:
   taDoc*		m_doc; // ref managed through link; we just put ptr here to detect change
-  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
+  override void 	UpdatePanel_impl();
 
 #ifndef __MAKETA__
 protected slots:

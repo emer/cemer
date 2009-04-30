@@ -14,7 +14,9 @@ set(mypath ${PROJECT_SOURCE_DIR}/src/temt)
 include(${PROJECT_SOURCE_DIR}/src/temt/taiqtso/CMakeFiles.txt)
 ADD_PATH_TO_FILES(temt_taiqtso_SRCS ${mypath}/taiqtso "${taiqtso_SRCS}")
 ADD_PATH_TO_FILES(temt_taiqtso_HEADS_MOC ${mypath}/taiqtso "${taiqtso_HEADS_MOC}")
+ADD_PATH_TO_FILES(temt_taiqtso_SRCS_UI ${mypath}/taiqtso "${taiqtso_SRCS_UI}")
 QT4_WRAP_CPP(temt_taiqtso_SRCS_MOC ${temt_taiqtso_HEADS_MOC})
+QT4_WRAP_UI(temt_taiqtso_SRCS_UIC ${temt_taiqtso_SRCS_UI})
 
 # ta
 include(${PROJECT_SOURCE_DIR}/src/temt/ta/CMakeFiles.txt)
@@ -32,7 +34,7 @@ QT4_WRAP_CPP(temt_css_SRCS_MOC ${temt_css_HEADS_MOC})
 
 # just list whole set of files here
 set(temtlib_SRCS
-	${temt_taiqtso_SRCS} ${temt_taiqtso_SRCS_MOC}
+	${temt_taiqtso_SRCS} ${temt_taiqtso_SRCS_MOC} ${temt_taiqtso_SRCS_UIC}
 	${temt_ta_SRCS} ${temt_ta_SRCS_MOC}
 	${temt_css_SRCS} ${temt_css_SRCS_MOC})
 

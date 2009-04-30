@@ -34,6 +34,10 @@
 # include <QDir>
 # include <QCoreApplication>
 # include <QTimer>
+# include <QNetworkInterface>
+# include <QNetworkAddressEntry>
+# include <QHostAddress>
+# include <QList>
 # include "css_machine.h"	// for setting error code in taMisc::Error
 # ifdef TA_GUI
 #   include "ta_qtdata.h"
@@ -624,9 +628,12 @@ String	taMisc::web_home = "http://grey.colorado.edu/emergent";
 String	taMisc::web_help_index = "http://grey.colorado.edu/emergent/index.php/";
 String	taMisc::web_help_general = "http://grey.colorado.edu/emergent/index.php/User_hub";
 
-String	taMisc::wiki_url = "http://grey.colorado.edu/CompCogNeuro";
-String	taMisc::wiki_index = "http://grey.colorado.edu/CompCogNeuro/index.php";
-String	taMisc::wiki_projspace = "http://grey.colorado.edu/CompCogNeuro/index.php/Projects";
+NamedURL	taMisc::wiki1_url("emergent", "http://grey.colorado.edu/emergent");
+NamedURL	taMisc::wiki2_url("CCN", "http://grey.colorado.edu/CompCogNeuro");
+NamedURL	taMisc::wiki3_url;
+NamedURL	taMisc::wiki4_url;
+NamedURL	taMisc::wiki5_url;
+NamedURL	taMisc::wiki6_url;
 
 String_PArray	taMisc::css_include_paths;
 String_PArray	taMisc::load_paths;
@@ -760,8 +767,6 @@ void taMisc::LoadConfig() {
 
 void taMisc::UpdateAfterEdit() {
 #ifndef NO_TA_BASE
-  wiki_index = wiki_url + "/index.php";
-  wiki_projspace = wiki_index+ "/Projects";
 #endif
 }
 
@@ -1609,6 +1614,49 @@ String taMisc::FileDiff(const String& fname_a, const String& fname_b,
   taStringDiff diff;
   diff.DiffFiles(fname_a, fname_b, str_a, str_b, trimSpace, ignoreSpace, ignoreCase);
   return diff.GetDiffStr(str_a, str_b);
+}
+
+String taMisc::GetWikiURL(const String& wiki_name, bool add_proj) {
+  String rval;
+  if(wiki1_url.name == wiki_name) rval = wiki1_url.url;
+  if(wiki2_url.name == wiki_name) rval = wiki2_url.url;
+  if(wiki3_url.name == wiki_name) rval = wiki3_url.url;
+  if(wiki4_url.name == wiki_name) rval = wiki4_url.url;
+  if(wiki5_url.name == wiki_name) rval = wiki5_url.url;
+  if(wiki6_url.name == wiki_name) rval = wiki6_url.url;
+  if(rval.nonempty() && add_proj)
+    rval += "/index.php/Projects";
+  return rval;
+}
+
+bool taMisc::InternetConnected() {
+#ifndef NO_TA_BASE
+  QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
+  for (int i = 0; i < ifaces.size(); ++i) {
+    const QNetworkInterface& ifc = ifaces.at(i);
+    if(!ifc.isValid()) continue;
+    if(ifc.flags() & (QNetworkInterface::IsLoopBack | QNetworkInterface::IsPointToPoint))
+      continue;
+    if(ifc.flags() & (QNetworkInterface::IsRunning | QNetworkInterface::IsUp)) {
+
+      QList<QNetworkAddressEntry> addrs = ifc.addressEntries();
+      if(addrs.size() == 0) continue;
+
+      String nm = ifc.name();
+      if(nm.startsWith("vm")) continue; // avoid virtual machine guys!
+      bool any_valid = false;
+      for (int j = 0; j < addrs.size(); ++j) {
+	QHostAddress ip = addrs.at(j).ip();
+	if(ip.isNull()) continue;
+	String adr = ip.toString();
+// 	cerr << nm << " has addr:" << adr << endl;
+      }
+//       cerr << nm << " is up and running" << endl;
+      return true;
+    }
+  }
+#endif
+  return false;
 }
 
 /////////////////////////////////////////////////

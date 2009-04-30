@@ -1,3 +1,4 @@
+
 // Copyright, 1995-2007, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -192,6 +193,9 @@ void iLineEdit::keyPressEvent(QKeyEvent* e) {
       e->accept();
       emit lookupKeyPressed();
     }
+//     else if((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter)) {
+//       emit returnPressed(); // ctrl same as not?
+//     }
     else {
       QLineEdit::keyPressEvent( e );
     }

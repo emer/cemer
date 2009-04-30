@@ -196,6 +196,17 @@ typedef int ta_memb_ptr_class::* ta_memb_ptr; //
 typedef Variant (*ta_prop_get_fun)(const void*);
 typedef void (*ta_prop_set_fun)(void*, const Variant&);
 
+class TA_API NamedURL {
+  // ##INLINE a named URL
+public:
+  String	name;		// the name of the website
+  String	url;		// the URL -- uniform resource location path
+
+  NamedURL()	{ };
+  NamedURL(const String& nm, const String& rl)	{ name = nm; url = rl; }
+  NamedURL(const NamedURL& cp)	{ name = cp.name; url = cp.url; }
+  ~NamedURL()	{ };
+};
 
 class taBase;
 typedef taBase* TAPtr;		// pointer to a taBase type
@@ -688,12 +699,18 @@ public:
   static String		web_help_general;
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url for general web application help, not associated with a specific object
 
-  static String		wiki_url;
-  // #SAVE #CAT_File url for wiki project repository, for sync'ing local project and other information (just base address without index.php or anything like that) 
-  static String		wiki_index;
-  // #NO_SAVE #READ_ONLY #CAT_File wik_url/index.php -- how to get to actual sub-pages
-  static String		wiki_projspace;
-  // #NO_SAVE #READ_ONLY #CAT_File wik_index/Projects/ -- base url for project repository namespace
+  static NamedURL	wiki1_url;
+  // #SAVE #CAT_File short name and url for wiki project repository, for sync'ing local project and other information (just base address without index.php or anything like that) -- full url is looked up by name to refer to specific sites
+  static NamedURL	wiki2_url;
+  // #SAVE #CAT_File short name and url for wiki project repository, for sync'ing local project and other information (just base address without index.php or anything like that) -- full url is looked up by name to refer to specific sites
+  static NamedURL	wiki3_url;
+  // #SAVE #CAT_File short name and url for wiki project repository, for sync'ing local project and other information (just base address without index.php or anything like that) -- full url is looked up by name to refer to specific sites
+  static NamedURL	wiki4_url;
+  // #SAVE #CAT_File short name and url for wiki project repository, for sync'ing local project and other information (just base address without index.php or anything like that) -- full url is looked up by name to refer to specific sites
+  static NamedURL	wiki5_url;
+  // #SAVE #CAT_File short name and url for wiki project repository, for sync'ing local project and other information (just base address without index.php or anything like that) -- full url is looked up by name to refer to specific sites
+  static NamedURL	wiki6_url;
+  // #SAVE #CAT_File short name and url for wiki project repository, for sync'ing local project and other information (just base address without index.php or anything like that) -- full url is looked up by name to refer to specific sites
 
   // don't save these paths: they are generated from above which are saved, and can
   // be modified more reliably in a .cssinitrc or similar..
@@ -1012,6 +1029,12 @@ public:
 			 bool trimSpace = false, bool ignoreSpace = false,
 			 bool ignoreCase = false);
   // #CAT_File return a string showing the differences between two files -- uses taStringDiff
+
+  static String	GetWikiURL(const String& wiki_name, bool add_proj=true);
+  // #CAT_File get the url for a given wiki name, optionally adding /index.php/Projects if add_proj is true (this is the namespace where emergent projects should be filed)
+
+  static bool	InternetConnected();
+  // #CAT_File determine if the system has at least one active network interface -- i.e., is it connected to the internet?
 
   /////////////////////////////////////////////////
   //	Recording GUI actions to css script

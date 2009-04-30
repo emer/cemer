@@ -30,6 +30,8 @@
 
 #include "icolor.h"
 #include "ilineedit.h"
+#include "inetworkaccessmanager.h"
+#include "icookiejar.h"
 
 #include <qapplication.h>
 #include <qbitmap.h>
@@ -130,6 +132,7 @@ TypeSpace		taiMisc::arg_types;
 QPointer<iMainWindowViewer> taiMisc::main_window;
 taBase_PtrList		taiMisc::unopened_windows;
 void (*taiMisc::Update_Hook)(TAPtr) = NULL;
+NetworkAccessManager*	taiMisc::net_access_mgr = NULL;
 
 int taiMisc::busy_count = 0;
 
@@ -176,6 +179,9 @@ void taiMisc::Init(bool gui) {
     this, SLOT(desktopWidget_resized(int)));
   connect(dw, SIGNAL(workAreaResized(int)), 
     this, SLOT(desktopWidget_workAreaResized(int)));
+
+  net_access_mgr = new NetworkAccessManager;
+  net_access_mgr->setCookieJar(new CookieJar);
 }
 
 int taiMisc::Exec_impl() {

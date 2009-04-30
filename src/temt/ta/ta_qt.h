@@ -36,6 +36,7 @@ class taiEditDataHost;
 class IDataViewWidget;
 class iMainWindowViewer;
 class iDockViewer;
+class NetworkAccessManager;	// #IGNORE
 
 typedef taPtrList<QWidget> 	Widget_List;  // #IGNORE list of widgets
 
@@ -141,6 +142,7 @@ public:
   static taiEditDataHost_List	active_edits;	// #IGNORE list of active edit dialogs
   static taiEditDataHost_List	css_active_edits; // #IGNORE list of css active edit dialogs (note: prev in cssiSession)
   static iTopLevelWindow_List	active_wins; // #IGNORE currently open windows
+  static NetworkAccessManager* 	net_access_mgr; // #IGNORE network access manager for web browser
 
   static int			busy_count; // levels of busy
 

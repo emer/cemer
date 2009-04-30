@@ -2462,7 +2462,7 @@ void taBase::Help() {
   if(!proj) return;
   String url = taMisc::web_help_index + mytd->name;
   taDoc* help_doc = proj->FindMakeDoc("HelpDoc", true, url);
-  tabMisc::DelayedFunCall_gui(help_doc, "BrowserSelectMe");
+  help_doc->EditDialog();
 }
 
 // old help 
@@ -4739,6 +4739,12 @@ void taWikiURL::Initialize() {
 
 String taWikiURL::GetURL() {
   if(!sync) return _nilString;
-  if(url.startsWith("http://")) return url;
-  return taMisc::wiki_projspace + "/" + url;
+  if(wiki.nonempty()) {
+    String wiki_url = taMisc::GetWikiURL(wiki, true); // true = add proj name
+    if(TestError(wiki_url.empty(), "GetURL", "wiki named:", wiki,
+		 "not found in global preferences/options under wiki_url settings"))
+      return _nilString;
+    return wiki_url + "/" + url;
+  }
+  return url;
 }

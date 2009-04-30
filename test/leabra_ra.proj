@@ -935,6 +935,7 @@ step=0;
 };
 wiki_url {
 sync=0;
+wiki=;
 url=;
 };
 templates {
@@ -950,6 +951,7 @@ taDoc @[0] {
 name="ProjectDocs";
 auto_open=1;
 web_doc=0;
+wiki=;
 url=;
 text="<html>
 <head>
@@ -985,11 +987,44 @@ This is the details.
 
 </body>
 ";
+html_text="<html><head>
+<title>Project Docs</title>
+</head><body>
+<p>
+</p><h1> Project Documentation </h1>
+<p>
+</p><h2> Overview </h2>
+This is an overview of the project.
+<p>
+</p><ul><li> It has many features
+</li><li> including some good stuff
+</li><li> and some test stuff
+<ul><li> this doc is a test
+</li><li> it does urls
+</li></ul> </li><li> and other things
+</li></ul>
+The <a href=\"ta:.wizards.LeabraWizard_0\">LeabraWizard_0</a> is important for doing various  <i>configuration</i>  things.
+The <a href=\"ta:.edits.ControlPanel\">ControlPanel</a> has all the main  <b>parameters</b>  and buttons at bottom for running the sim.
+<p>
+</p><ol><li> Explicit <a href=\"ta:.docs.ChangeLog\">ta:.docs.ChangeLog</a> syntax
+</li><li> Function calling! <a href=\"ta:.networks[0].Init_Weights()\">networks[0].Init_Weights()</a>
+</li><li> Tab viewing! <a href=\"ta:.T3Tab.EpochOutputData\">EpochOutputData</a>
+</li><li> Back to <a href=\"ta:.T3Tab.DefaultFrame\">DefaultFrame</a>
+</li><li> Panel viewing! <a href=\"ta:.PanelTab.ControlPanel\">ControlPanel</a>
+</li></ol>
+The <a href=\"http://grey.colorado.edu/emergent/index.php/Main_Page\">Emergent Wiki</a> has lots of info.
+<p>
+</p><h3> Some Details </h3>
+This is the details.
+<p>
+
+</p></body></html>";
 };
 taDoc @[1] {
 name="NetworkDocs";
 auto_open=0;
 web_doc=0;
+wiki=;
 url=;
 text="<html>
 <head></head>
@@ -1000,13 +1035,39 @@ This is an overview of the network.
 This is the details.
 </body>
 </html>";
+html_text="<html>
+<head></head>
+<body>
+<h2>Overview</h2>
+This is an overview of the network.
+<h2>Details</h2>
+This is the details.
+</body>
+";
 };
 taDoc @[2] {
 name="ChangeLog";
 auto_open=0;
 web_doc=0;
+wiki=;
 url=;
 text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+<li>Tue Jul 10 02:59:02 2007 oreilly <code>leabra_ra.proj</code><br>
+  Added test stuff to ProjectDocs, including Wiki formatting, some ta: links, and some external links.  very nice.  we need to figure out a syntax for downloaded wiki links..
+
+
+<li>Sun Jul  8 01:03:06 2007 oreilly <code>leabra_ra.proj</code><br>
+  Set the Doc link for Network, added this change log!
+</ul>
+</body>
+</html>
+";
+html_text="<html>
 <head>ChangeLog</head>
 <body>
 <h1>ChangeLog</h1>
@@ -1027,6 +1088,7 @@ taDoc @[3] {
 name="Webdoc";
 auto_open=0;
 web_doc=1;
+wiki="CCN";
 url="Testing/leabra_ra";
 text="<html>
 <head></head>
@@ -1035,6 +1097,227 @@ text="<html>
 </body>
 </html>
 ";
+html_text="<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\" dir=\"ltr\"><head>
+		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">
+		<meta http-equiv=\"Content-Style-Type\" content=\"text/css\">
+		<meta name=\"generator\" content=\"MediaWiki 1.15alpha\">
+		<meta name=\"keywords\" content=\"Projects/Testing/leabra ra,.wizards.LeabraWizard 0,.edits.ControlPanel,ta:.docs.ChangeLog,.T3Tab.EpochOutputData,.T3Tab.DefaultFrame,.PanelTab.ControlPanel\">
+		<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/CompCogNeuro/index.php?title=Projects/Testing/leabra_ra&amp;action=edit\">
+		<link rel=\"edit\" title=\"Edit\" href=\"/CompCogNeuro/index.php?title=Projects/Testing/leabra_ra&amp;action=edit\">
+		<link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
+		<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/CompCogNeuro/opensearch_desc.php\" title=\"Computational Cognitive Neuroscience Wiki (en)\">
+		<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Computational Cognitive Neuroscience Wiki RSS Feed\" href=\"/CompCogNeuro/index.php?title=Special:RecentChanges&amp;feed=rss\">
+		<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Computational Cognitive Neuroscience Wiki Atom Feed\" href=\"/CompCogNeuro/index.php?title=Special:RecentChanges&amp;feed=atom\">
+		<title>Projects/Testing/leabra ra - Computational Cognitive Neuroscience Wiki</title>
+		<link rel=\"stylesheet\" href=\"/CompCogNeuro/skins/common/shared.css?207\" type=\"text/css\" media=\"screen\">
+		<link rel=\"stylesheet\" href=\"/CompCogNeuro/skins/common/commonPrint.css?207\" type=\"text/css\" media=\"print\">
+		<link rel=\"stylesheet\" href=\"/CompCogNeuro/skins/monobook/main.css?207\" type=\"text/css\" media=\"screen\">
+		<!--[if lt IE 5.5000]><link rel=\"stylesheet\" href=\"/CompCogNeuro/skins/monobook/IE50Fixes.css?207\" type=\"text/css\" media=\"screen\" /><![endif]-->
+		<!--[if IE 5.5000]><link rel=\"stylesheet\" href=\"/CompCogNeuro/skins/monobook/IE55Fixes.css?207\" type=\"text/css\" media=\"screen\" /><![endif]-->
+		<!--[if IE 6]><link rel=\"stylesheet\" href=\"/CompCogNeuro/skins/monobook/IE60Fixes.css?207\" type=\"text/css\" media=\"screen\" /><![endif]-->
+		<!--[if IE 7]><link rel=\"stylesheet\" href=\"/CompCogNeuro/skins/monobook/IE70Fixes.css?207\" type=\"text/css\" media=\"screen\" /><![endif]-->
+		<link rel=\"stylesheet\" href=\"/CompCogNeuro/index.php?title=MediaWiki:Common.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" type=\"text/css\">
+		<link rel=\"stylesheet\" href=\"/CompCogNeuro/index.php?title=MediaWiki:Print.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" type=\"text/css\" media=\"print\">
+		<link rel=\"stylesheet\" href=\"/CompCogNeuro/index.php?title=MediaWiki:monobook.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" type=\"text/css\">
+		<link rel=\"stylesheet\" href=\"/CompCogNeuro/index.php?title=-&amp;action=raw&amp;maxage=18000&amp;smaxage=0&amp;ts=20090430081926&amp;gen=css\" type=\"text/css\">
+		<!--[if lt IE 7]><script type=\"text/javascript\" src=\"/CompCogNeuro/skins/common/IEFixes.js?207\"></script>
+		<meta http-equiv=\"imagetoolbar\" content=\"no\" /><![endif]-->
+
+		<script type=\"text/javascript\">/*<![CDATA[*/
+		var skin = \"monobook\";
+		var stylepath = \"/CompCogNeuro/skins\";
+		var wgArticlePath = \"/CompCogNeuro/index.php/$1\";
+		var wgScriptPath = \"/CompCogNeuro\";
+		var wgScript = \"/CompCogNeuro/index.php\";
+		var wgVariantArticlePath = false;
+		var wgActionPaths = {};
+		var wgServer = \"http://grey.colorado.edu\";
+		var wgCanonicalNamespace = \"\";
+		var wgCanonicalSpecialPageName = false;
+		var wgNamespaceNumber = 0;
+		var wgPageName = \"Projects/Testing/leabra_ra\";
+		var wgTitle = \"Projects/Testing/leabra ra\";
+		var wgAction = \"view\";
+		var wgArticleId = \"251\";
+		var wgIsArticle = true;
+		var wgUserName = \"Oreilly\";
+		var wgUserGroups = [\"*\", \"user\", \"autoconfirmed\"];
+		var wgUserLanguage = \"en\";
+		var wgContentLanguage = \"en\";
+		var wgBreakFrames = false;
+		var wgCurRevisionId = 440;
+		var wgVersion = \"1.15alpha\";
+		var wgEnableAPI = true;
+		var wgEnableWriteAPI = true;
+		var wgSeparatorTransformTable = [\"\", \"\"];
+		var wgDigitTransformTable = [\"\", \"\"];
+		var wgRestrictionEdit = [];
+		var wgRestrictionMove = [];
+		var wgAjaxWatch = {\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg\": \"Watching...\", \"unwatchingMsg\": \"Unwatching...\"};
+		/*]]>*/</script>
+
+		<script type=\"text/javascript\" src=\"/CompCogNeuro/skins/common/wikibits.js?207\"><!-- wikibits js --></script><style type=\"text/css\">@import \"/CompCogNeuro/skins/monobook/KHTMLFixes.css\";</style>
+		<!-- Head Scripts -->
+		<script type=\"text/javascript\" src=\"/CompCogNeuro/skins/common/ajax.js?207\"></script>
+		<script type=\"text/javascript\" src=\"/CompCogNeuro/skins/common/ajaxwatch.js?207\"></script>
+		<script type=\"text/javascript\" src=\"/CompCogNeuro/index.php?title=-&amp;action=raw&amp;smaxage=0&amp;gen=js&amp;useskin=monobook\"><!-- site js --></script>
+	</head><body class=\"mediawiki ltr ns-0 ns-subject page-Projects_Testing_leabra_ra skin-monobook\">
+	<div id=\"globalWrapper\">
+		<div id=\"column-content\">
+	<div id=\"content\">
+		<a name=\"top\" id=\"top\"></a>
+				<h1 id=\"firstHeading\" class=\"firstHeading\">Projects/Testing/leabra ra</h1>
+		<div id=\"bodyContent\">
+			<h3 id=\"siteSub\">From Computational Cognitive Neuroscience Wiki</h3>
+			<div id=\"contentSub\"></div>
+									<div id=\"jump-to-nav\">Jump to: <a href=\"#column-one\">navigation</a>, <a href=\"#searchInput\">search</a></div>			<!-- start content -->
+			<table id=\"toc\" class=\"toc\" summary=\"Contents\"><tbody><tr><td><div id=\"toctitle\"><h2>Contents</h2> <span class=\"toctoggle\">[<a id=\"togglelink\" class=\"internal\" href=\"javascript:toggleToc()\">hide</a>]</span></div>
+<ul>
+<li class=\"toclevel-1\"><a href=\"#Project_Documentation\"><span class=\"tocnumber\">1</span> <span class=\"toctext\">Project Documentation</span></a>
+<ul>
+<li class=\"toclevel-2\"><a href=\"#Added_from_project.21.21.21\"><span class=\"tocnumber\">1.1</span> <span class=\"toctext\">Added from project!!!</span></a></li>
+<li class=\"toclevel-2\"><a href=\"#Overview\"><span class=\"tocnumber\">1.2</span> <span class=\"toctext\">Overview</span></a>
+<ul>
+<li class=\"toclevel-3\"><a href=\"#Some_Details\"><span class=\"tocnumber\">1.2.1</span> <span class=\"toctext\">Some Details</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</td></tr></tbody></table><script type=\"text/javascript\"> if (window.showTocToggle) { var tocShowText = \"show\"; var tocHideText = \"hide\"; showTocToggle(); } </script>
+<a name=\"Project_Documentation\" id=\"Project_Documentation\"></a><h1><span class=\"editsection\">[<a href=\"/CompCogNeuro/index.php?title=Projects/Testing/leabra_ra&amp;action=edit&amp;section=1\" title=\"Edit section: Project Documentation\">edit</a>]</span> <span class=\"mw-headline\"> Project Documentation </span></h1>
+<a name=\"Added_from_project.21.21.21\" id=\"Added_from_project.21.21.21\"></a><h2><span class=\"editsection\">[<a href=\"/CompCogNeuro/index.php?title=Projects/Testing/leabra_ra&amp;action=edit&amp;section=2\" title=\"Edit section: Added from project!!!\">edit</a>]</span> <span class=\"mw-headline\"> Added from project!!! </span></h2>
+<ul><li> i did login on the wiki page
+</li><li> supplied my credentials
+</li><li> hide edit
+</li><li> did my edits
+</li><li> hit save
+</li></ul>
+<a name=\"Overview\" id=\"Overview\"></a><h2><span class=\"editsection\">[<a href=\"/CompCogNeuro/index.php?title=Projects/Testing/leabra_ra&amp;action=edit&amp;section=3\" title=\"Edit section: Overview\">edit</a>]</span> <span class=\"mw-headline\"> Overview </span></h2>
+<p>This is an overview of the project.
+</p>
+<ul><li> It has many features
+</li><li> including some good stuff
+</li><li> and some test stuff
+<ul><li> this doc is a test
+</li><li> it does urls
+</li></ul>
+</li><li> and other things
+</li></ul>
+<p>The <a href=\"/CompCogNeuro/index.php?title=.wizards.LeabraWizard_0&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".wizards.LeabraWizard 0 (page does not exist)\">.wizards.LeabraWizard_0</a> is important for doing various <i>configuration</i> things.
+The <a href=\"/CompCogNeuro/index.php?title=.edits.ControlPanel&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".edits.ControlPanel (page does not exist)\">.edits.ControlPanel</a> has all the main <b>parameters</b> and buttons at bottom for running the sim.
+</p>
+<ol><li> Explicit <a href=\"/CompCogNeuro/index.php?title=ta:.docs.ChangeLog&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"ta:.docs.ChangeLog (page does not exist)\">ta:.docs.ChangeLog</a> syntax
+</li><li> Function calling! [[.networks[0].Init_Weights()]]
+</li><li> Tab viewing! <a href=\"/CompCogNeuro/index.php?title=.T3Tab.EpochOutputData&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".T3Tab.EpochOutputData (page does not exist)\">.T3Tab.EpochOutputData</a>
+</li><li> Back to <a href=\"/CompCogNeuro/index.php?title=.T3Tab.DefaultFrame&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".T3Tab.DefaultFrame (page does not exist)\">.T3Tab.DefaultFrame</a>
+</li><li> Panel viewing! <a href=\"/CompCogNeuro/index.php?title=.PanelTab.ControlPanel&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".PanelTab.ControlPanel (page does not exist)\">.PanelTab.ControlPanel</a>
+</li></ol>
+<p>The [<a href=\"http://grey.colorado.edu/emergent/index.php/Main_Page|Emergent\" class=\"external text\" title=\"http://grey.colorado.edu/emergent/index.php/Main_Page|Emergent\" rel=\"nofollow\">Wiki</a>] has lots of info.
+</p>
+<a name=\"Some_Details\" id=\"Some_Details\"></a><h3><span class=\"editsection\">[<a href=\"/CompCogNeuro/index.php?title=Projects/Testing/leabra_ra&amp;action=edit&amp;section=4\" title=\"Edit section: Some Details\">edit</a>]</span> <span class=\"mw-headline\"> Some Details </span></h3>
+<p>This is the details.
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 5/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key compcogneuro:pcache:idhash:251-0!1!0!!en!2 and timestamp 20090429225825 -->
+<div class=\"printfooter\">
+Retrieved from \"<a href=\"http://grey.colorado.edu/CompCogNeuro/index.php/Projects/Testing/leabra_ra\">http://grey.colorado.edu/CompCogNeuro/index.php/Projects/Testing/leabra_ra</a>\"</div>
+						<!-- end content -->
+						<div class=\"visualClear\"></div>
+		</div>
+	</div>
+		</div>
+		<div id=\"column-one\">
+	<div id=\"p-cactions\" class=\"portlet\">
+		<h5>Views</h5>
+		<div class=\"pBody\">
+			<ul>
+	
+				 <li id=\"ca-nstab-main\" class=\"selected\"><a href=\"/CompCogNeuro/index.php/Projects/Testing/leabra_ra\" title=\"View the content page [ctrl-c]\" accesskey=\"c\">Page</a></li>
+				 <li id=\"ca-talk\" class=\"new\"><a href=\"/CompCogNeuro/index.php?title=Talk:Projects/Testing/leabra_ra&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [ctrl-t]\" accesskey=\"t\">Discussion</a></li>
+				 <li id=\"ca-edit\"><a href=\"/CompCogNeuro/index.php?title=Projects/Testing/leabra_ra&amp;action=edit\" title=\"You can edit this page.
+Please use the preview button before saving [ctrl-e]\" accesskey=\"e\">Edit</a></li>
+				 <li id=\"ca-history\"><a href=\"/CompCogNeuro/index.php?title=Projects/Testing/leabra_ra&amp;action=history\" title=\"Past versions of this page [ctrl-h]\" accesskey=\"h\">History</a></li>
+				 <li id=\"ca-move\"><a href=\"/CompCogNeuro/index.php/Special:MovePage/Projects/Testing/leabra_ra\" title=\"Move this page [ctrl-m]\" accesskey=\"m\">Move</a></li>
+				 <li id=\"ca-watch\"><a href=\"/CompCogNeuro/index.php?title=Projects/Testing/leabra_ra&amp;action=watch\" title=\"Add this page to your watchlist [ctrl-w]\" accesskey=\"w\">Watch</a></li>			</ul>
+		</div>
+	</div>
+	<div class=\"portlet\" id=\"p-personal\">
+		<h5>Personal tools</h5>
+		<div class=\"pBody\">
+			<ul>
+				<li id=\"pt-userpage\"><a href=\"/CompCogNeuro/index.php/User:Oreilly\" title=\"Your user page [ctrl-.]\" accesskey=\".\" class=\"new\">Oreilly</a></li>
+				<li id=\"pt-mytalk\"><a href=\"/CompCogNeuro/index.php/User_talk:Oreilly\" title=\"Your talk page [ctrl-n]\" accesskey=\"n\" class=\"new\">My talk</a></li>
+				<li id=\"pt-preferences\"><a href=\"/CompCogNeuro/index.php/Special:Preferences\" title=\"Your preferences\">My preferences</a></li>
+				<li id=\"pt-watchlist\"><a href=\"/CompCogNeuro/index.php/Special:Watchlist\" title=\"The list of pages you are monitoring for changes [ctrl-l]\" accesskey=\"l\">My watchlist</a></li>
+				<li id=\"pt-mycontris\"><a href=\"/CompCogNeuro/index.php/Special:Contributions/Oreilly\" title=\"List of your contributions [ctrl-y]\" accesskey=\"y\">My contributions</a></li>
+				<li id=\"pt-logout\"><a href=\"/CompCogNeuro/index.php?title=Special:UserLogout&amp;returnto=Projects/Testing/leabra_ra\" title=\"Log out\">Log out</a></li>
+			</ul>
+		</div>
+	</div>
+	<div class=\"portlet\" id=\"p-logo\">
+		<a style=\"background-image: url(/mediawiki/sites//CompCogNeuro/logo.png);\" href=\"/CompCogNeuro/index.php/Main_Page\" title=\"Visit the main page [ctrl-z]\" accesskey=\"z\"></a>
+	</div>
+	<script type=\"text/javascript\"> if (window.isMSIE55) fixalpha(); </script>
+	<div class=\"generated-sidebar portlet\" id=\"p-navigation\">
+		<h5>Navigation</h5>
+		<div class=\"pBody\">
+			<ul>
+				<li id=\"n-mainpage-description\"><a href=\"/CompCogNeuro/index.php/Main_Page\">Main Page</a></li>
+				<li id=\"n-portal\"><a href=\"/CompCogNeuro/index.php/Computational_Cognitive_Neuroscience_Wiki:Community_Portal\" title=\"About the project, what you can do, where to find things\">Community portal</a></li>
+				<li id=\"n-currentevents\"><a href=\"/CompCogNeuro/index.php/Computational_Cognitive_Neuroscience_Wiki:Current_events\" title=\"Find background information on current events\">Current events</a></li>
+				<li id=\"n-recentchanges\"><a href=\"/CompCogNeuro/index.php/Special:RecentChanges\" title=\"The list of recent changes in the wiki [ctrl-r]\" accesskey=\"r\">Recent changes</a></li>
+				<li id=\"n-randompage\"><a href=\"/CompCogNeuro/index.php/Special:Random\" title=\"Load a random page [ctrl-x]\" accesskey=\"x\">Random page</a></li>
+				<li id=\"n-help\"><a href=\"/CompCogNeuro/index.php/Help:Contents\" title=\"The place to find out\">Help</a></li>
+			</ul>
+		</div>
+	</div>
+	<div id=\"p-search\" class=\"portlet\">
+		<h5><label for=\"searchInput\">Search</label></h5>
+		<div id=\"searchBody\" class=\"pBody\">
+			<form action=\"/CompCogNeuro/index.php\" id=\"searchform\"><div>
+				<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
+				<input id=\"searchInput\" name=\"search\" type=\"text\" title=\"Search Computational Cognitive Neuroscience Wiki [ctrl-f]\" accesskey=\"f\" value=\"\">
+				<input type=\"submit\" name=\"go\" class=\"searchButton\" id=\"searchGoButton\" value=\"Go\" title=\"Go to a page with this exact name if exists\"> 
+				<input type=\"submit\" name=\"fulltext\" class=\"searchButton\" id=\"mw-searchButton\" value=\"Search\" title=\"Search the pages for this text\">
+			</div></form>
+		</div>
+	</div>
+	<div class=\"portlet\" id=\"p-tb\">
+		<h5>Toolbox</h5>
+		<div class=\"pBody\">
+			<ul>
+				<li id=\"t-whatlinkshere\"><a href=\"/CompCogNeuro/index.php/Special:WhatLinksHere/Projects/Testing/leabra_ra\" title=\"List of all wiki pages that link here [ctrl-j]\" accesskey=\"j\">What links here</a></li>
+				<li id=\"t-recentchangeslinked\"><a href=\"/CompCogNeuro/index.php/Special:RecentChangesLinked/Projects/Testing/leabra_ra\" title=\"Recent changes in pages linked from this page [ctrl-k]\" accesskey=\"k\">Related changes</a></li>
+<li id=\"t-upload\"><a href=\"/CompCogNeuro/index.php/Special:Upload\" title=\"Upload files [ctrl-u]\" accesskey=\"u\">Upload file</a></li>
+<li id=\"t-specialpages\"><a href=\"/CompCogNeuro/index.php/Special:SpecialPages\" title=\"List of all special pages [ctrl-q]\" accesskey=\"q\">Special pages</a></li>
+				<li id=\"t-print\"><a href=\"/CompCogNeuro/index.php?title=Projects/Testing/leabra_ra&amp;printable=yes\" rel=\"alternate\" title=\"Printable version of this page [ctrl-p]\" accesskey=\"p\">Printable version</a></li>				<li id=\"t-permalink\"><a href=\"/CompCogNeuro/index.php?title=Projects/Testing/leabra_ra&amp;oldid=440\" title=\"Permanent link to this version of the page\">Permanent link</a></li>			</ul>
+		</div>
+	</div>
+		</div><!-- end of the left (by default at least) column -->
+			<div class=\"visualClear\"></div>
+			<div id=\"footer\">
+				<div id=\"f-poweredbyico\"><a href=\"http://www.mediawiki.org/\"><img src=\"/CompCogNeuro/skins/common/images/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\"></a></div>
+			<ul id=\"f-list\">
+					<li id=\"lastmod\"> This page was last modified on 29 April 2009, at 22:58.</li>
+					<li id=\"viewcount\">This page has been accessed 43 times.</li>
+					<li id=\"privacy\"><a href=\"/CompCogNeuro/index.php/Computational_Cognitive_Neuroscience_Wiki:Privacy_policy\" title=\"Computational Cognitive Neuroscience Wiki:Privacy policy\">Privacy policy</a></li>
+					<li id=\"about\"><a href=\"/CompCogNeuro/index.php/Computational_Cognitive_Neuroscience_Wiki:About\" title=\"Computational Cognitive Neuroscience Wiki:About\">About Computational Cognitive Neuroscience Wiki</a></li>
+					<li id=\"disclaimer\"><a href=\"/CompCogNeuro/index.php/Computational_Cognitive_Neuroscience_Wiki:General_disclaimer\" title=\"Computational Cognitive Neuroscience Wiki:General disclaimer\">Disclaimers</a></li>
+			</ul>
+		</div>
+</div>
+
+		<script type=\"text/javascript\">if (window.runOnloadHook) runOnloadHook();</script>
+<!-- Served in 0.317 secs. -->
+</body></html>";
 };
 };
 wizards {

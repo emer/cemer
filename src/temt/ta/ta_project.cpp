@@ -46,6 +46,7 @@
 # include <QGLFormat>
 #endif
 
+#include "inetworkaccessmanager.h"
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
@@ -91,6 +92,8 @@ const String taDoc::init_text(
 void taDoc::Initialize() {
   auto_open = false;
   web_doc = false;
+  url = "local";
+  text_size = 1.0f;
   if (!taMisc::is_loading && !taMisc::is_duplicating)
     text = init_text;
 }
@@ -100,13 +103,19 @@ void taDoc::UpdateText() {
 }
 
 String taDoc::GetURL() {
-  if(url.startsWith("http://")) return url;
-  return taMisc::wiki_projspace + "/" + url;
+  if(wiki.nonempty()) {
+    String wiki_url = taMisc::GetWikiURL(wiki, true); // true = add proj name
+    if(TestError(wiki_url.empty(), "GetURL", "wiki named:", wiki,
+		 "not found in global preferences/options under wiki_url settings"))
+      return _nilString;
+    return wiki_url + "/" + url;
+  }
+  return url;
 }
 
 void taDoc::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(url.empty() || url == "local")
+  if(url.empty() || url == "local") 
     web_doc = false;
   else
     web_doc = true;
@@ -2568,6 +2577,7 @@ bool taRootBase::Startup_MakeMainWin() {
   if (bw) { //note: already constrained to max screen size, so we don't have to check
     // main win handle internal app urls
     taiMisc::main_window = bw;
+    taiMisc::net_access_mgr->setMainWindow(bw);
     QDesktopServices::setUrlHandler("ta", bw, "globalUrlHandler");
     bw->show(); // when we start event loop
   }

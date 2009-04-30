@@ -104,20 +104,21 @@ find_package(EmergentDependencies)
 include_directories(
   ${PROJECT_SOURCE_DIR}
   ${PROJECT_SOURCE_DIR}/include
+  ${PROJECT_BINARY_DIR}/src/temt/lib
 )
-if (false) # NUKE
-include_directories(
-  ${PROJECT_SOURCE_DIR}
-  ${PROJECT_SOURCE_DIR}/src/temt/ta
-  ${PROJECT_SOURCE_DIR}/src/temt/taiqtso
-  ${PROJECT_SOURCE_DIR}/src/temt/css
-  ${PROJECT_SOURCE_DIR}/src/emergent/network
-  ${PROJECT_SOURCE_DIR}/src/emergent/bp
-  ${PROJECT_SOURCE_DIR}/src/emergent/leabra
-  ${PROJECT_SOURCE_DIR}/src/emergent/so
-  ${PROJECT_SOURCE_DIR}/src/emergent/cs
-)
-endif (false)
+# if (false) # NUKE
+# include_directories(
+#   ${PROJECT_SOURCE_DIR}
+#   ${PROJECT_SOURCE_DIR}/src/temt/ta
+#   ${PROJECT_SOURCE_DIR}/src/temt/taiqtso
+#   ${PROJECT_SOURCE_DIR}/src/temt/css
+#   ${PROJECT_SOURCE_DIR}/src/emergent/network
+#   ${PROJECT_SOURCE_DIR}/src/emergent/bp
+#   ${PROJECT_SOURCE_DIR}/src/emergent/leabra
+#   ${PROJECT_SOURCE_DIR}/src/emergent/so
+#   ${PROJECT_SOURCE_DIR}/src/emergent/cs
+# )
+# endif (false)
 
 # install destinations
 if (WIN32)
