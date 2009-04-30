@@ -6706,13 +6706,12 @@ void iDocDataPanel::doc_seturlPressed() {
   if(!doc_) return;
 
   String url = webview->url().toString();
-  String base_url = taMisc::GetWikiURL(doc_->wiki, true);
+  String base_url = taMisc::GetWikiURL(doc_->wiki, true); // index.php
   if(url.startsWith(base_url))
     doc_->url = url.after(base_url);
   else
     doc_->url = url;
   doc_->UpdateAfterEdit();	// this will drive all the updating, including toggle from local etc
-  UpdatePanel();		// also update us..
 }
 
 bool iDocDataPanel::ignoreDataChanged() const {
@@ -6750,6 +6749,13 @@ void iDocDataPanel::UpdatePanel_impl() {
     fwd_but->setEnabled(false);
     bak_but->setEnabled(false);
     seturl_but->setEnabled(false);
+  }
+}
+
+void iDocDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+  if (dcr <= DCR_ITEM_UPDATED_ND) { // todo: not clear why this isn't standard..
+    UpdatePanel();
   }
 }
 

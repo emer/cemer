@@ -2646,7 +2646,7 @@ INHERITED(taOBase)
 public://
   bool		sync;		// enable synchronizing this object with the wiki
   String	wiki;		// #CONDEDIT_ON_sync name of a wiki, as specified in global preferences, where this object should be stored -- this is used to lookup the wiki name -- if blank then url must be a full URL path
-  String	url;		// #CONDEDIT_ON_sync a URL location for this object -- if wiki name is set, then this is relative to that wiki, as wiki_url/index.php/Projects/url, otherwise it is a full URL path to a valid location
+  String	url;		// #CONDEDIT_ON_sync a URL location for this object -- if wiki name is set, then this is relative to that wiki, as wiki_url/index.php/url (use Projects/ as start of url for storing project-related information), otherwise it is a full URL path to a valid location
 
   String	GetURL();	// #CAT_URL gets the full url to sync to
   

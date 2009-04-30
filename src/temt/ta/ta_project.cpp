@@ -104,11 +104,11 @@ void taDoc::UpdateText() {
 
 String taDoc::GetURL() {
   if(wiki.nonempty()) {
-    String wiki_url = taMisc::GetWikiURL(wiki, true); // true = add proj name
+    String wiki_url = taMisc::GetWikiURL(wiki, true); // true = add index.php
     if(TestError(wiki_url.empty(), "GetURL", "wiki named:", wiki,
 		 "not found in global preferences/options under wiki_url settings"))
       return _nilString;
-    return wiki_url + "/" + url;
+    return wiki_url + url;
   }
   return url;
 }
@@ -951,21 +951,15 @@ SelectEdit* taProject::FindMakeSelectEdit(const String& nm) {
   return rval;
 }
 
-taDoc* taProject::FindMakeDoc(const String& nm, bool web_doc, const String& web_url) {
+taDoc* taProject::FindMakeDoc(const String& nm, const String& wiki_nm, const String& web_url) {
   taDoc* rval = docs.FindName(nm);
-  bool chg = false;
   if(!rval) {
     rval = (taDoc*)docs.New(1);
     rval->SetName(nm);
-    chg = true;
   }
-  rval->web_doc = web_doc;
-  if(web_doc) {
-    rval->url = web_url;
-    chg = true;
-  }
-  if(chg)
-    rval->DataChanged(DCR_ITEM_UPDATED);
+  rval->wiki = wiki_nm;
+  rval->url = web_url;
+  rval->UpdateAfterEdit();
   return rval;
 }
 

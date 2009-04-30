@@ -81,7 +81,7 @@ static const unsigned char emergent_bitmap_bits[] = {
 
 int EmergentMisc::Main(int& argc, const char *argv[]) {
   taMisc::web_home = "http://grey.colorado.edu/emergent"; 
-  taMisc::web_help_index = "http://grey.colorado.edu/emergent/index.php/";
+  taMisc::web_help_wiki = "emergent";
   taMisc::web_help_general = "http://grey.colorado.edu/emergent/index.php/User_hub";
 
   taMisc::wiki1_url = NamedURL("emergent", "http://grey.colorado.edu/emergent");

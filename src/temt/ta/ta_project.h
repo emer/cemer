@@ -493,9 +493,9 @@ public:
   // #CAT_Data find existing data processing object of given type, or else make one and give it nm
   virtual SelectEdit* 	FindMakeSelectEdit(const String& seledit_name);
   // #CAT_Edit get select edit object of given name, or make one if not found
-  virtual taDoc* 	FindMakeDoc(const String& doc_name, bool web_doc = false,
+  virtual taDoc* 	FindMakeDoc(const String& doc_name, const String& wiki_nm = "",
 				    const String& web_url = "");
-  // #CAT_Doc get doc document object of given name, or make one if not found -- also set the web url if specified
+  // #CAT_Doc get doc document object of given name, or make one if not found -- also set the wiki name and web url if specified
 
   ///////////////////////////////////////////////////////////////////
   //	misc

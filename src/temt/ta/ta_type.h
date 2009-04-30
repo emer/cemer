@@ -694,8 +694,8 @@ public:
 
   static String		web_home;
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url for location of main web home page for this application
-  static String		web_help_index;
-  // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url for web application help such that appending the name of the object in question will produce help for that specific object or topic
+  static String		web_help_wiki;
+  // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File wiki name for web application help such that appending the name of the object in question will produce help for that specific object or topic
   static String		web_help_general;
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url for general web application help, not associated with a specific object
 
@@ -1030,8 +1030,8 @@ public:
 			 bool ignoreCase = false);
   // #CAT_File return a string showing the differences between two files -- uses taStringDiff
 
-  static String	GetWikiURL(const String& wiki_name, bool add_proj=true);
-  // #CAT_File get the url for a given wiki name, optionally adding /index.php/Projects if add_proj is true (this is the namespace where emergent projects should be filed)
+  static String	GetWikiURL(const String& wiki_name, bool add_index=true);
+  // #CAT_File get the url for a given wiki name, optionally adding /index.php/ if add_index is true
 
   static bool	InternetConnected();
   // #CAT_File determine if the system has at least one active network interface -- i.e., is it connected to the internet?

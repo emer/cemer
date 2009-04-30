@@ -625,7 +625,7 @@ String	taMisc::user_log_dir;
 
 // note: app should set all these url's in its main or other app-specific code
 String	taMisc::web_home = "http://grey.colorado.edu/emergent"; 
-String	taMisc::web_help_index = "http://grey.colorado.edu/emergent/index.php/";
+String	taMisc::web_help_wiki = "emergent";
 String	taMisc::web_help_general = "http://grey.colorado.edu/emergent/index.php/User_hub";
 
 NamedURL	taMisc::wiki1_url("emergent", "http://grey.colorado.edu/emergent");
@@ -1616,7 +1616,7 @@ String taMisc::FileDiff(const String& fname_a, const String& fname_b,
   return diff.GetDiffStr(str_a, str_b);
 }
 
-String taMisc::GetWikiURL(const String& wiki_name, bool add_proj) {
+String taMisc::GetWikiURL(const String& wiki_name, bool add_index) {
   String rval;
   if(wiki1_url.name == wiki_name) rval = wiki1_url.url;
   if(wiki2_url.name == wiki_name) rval = wiki2_url.url;
@@ -1624,8 +1624,8 @@ String taMisc::GetWikiURL(const String& wiki_name, bool add_proj) {
   if(wiki4_url.name == wiki_name) rval = wiki4_url.url;
   if(wiki5_url.name == wiki_name) rval = wiki5_url.url;
   if(wiki6_url.name == wiki_name) rval = wiki6_url.url;
-  if(rval.nonempty() && add_proj)
-    rval += "/index.php/Projects";
+  if(rval.nonempty() && add_index)
+    rval += "/index.php/";
   return rval;
 }
 
