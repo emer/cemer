@@ -151,6 +151,7 @@ bool taMediaWiki::SearchPages(DataTable* results, const String& wiki_name,
 		   read_ready, SLOT(finished(QNetworkReply*)));
 
   taiMisc::net_access_mgr->get( QNetworkRequest(url) );
+  return true;
 }
 
 bool taMediaWiki::SearchPages_read(DataTable* results, QNetworkReply* reply) {
