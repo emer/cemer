@@ -19,6 +19,7 @@
 #include "ta_qt.h"
 #include "ta_datatable.h"
 #include "inetworkaccessmanager.h"
+#include "ta_program.h"
 
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -39,17 +40,20 @@ taMediaWikiReadReady::~taMediaWikiReadReady() {
 
 void taMediaWikiReadReady::finished(QNetworkReply* reply) {
   if(reply->error() != QNetworkReply::NoError ) {
-    taMisc::Error("taMediaWiki Request failed:", reply->errorString());
+    taMediaWiki::wiki_error = true;
+    taMediaWiki::wiki_error_str = reply->errorString();
     delete reply;
     return;
   }
   (*cb_fun)(results, reply);
   delete reply;
-  taMediaWiki::read_ready = NULL;
-  delete this;			// kill us as our last step!!
+  taMediaWiki::action_finished = true;
 }
 
 taMediaWikiReadReady* taMediaWiki::read_ready = NULL;
+bool taMediaWiki::action_finished = false;
+bool taMediaWiki::wiki_error = false;
+String taMediaWiki::wiki_error_str;
 
 void taMediaWiki::Initialize() {
 }
@@ -62,6 +66,42 @@ String taMediaWiki::GetApiURL(const String& wiki_name) {
     return _nilString;
   }
   return wiki_url + "/api.php";
+}
+
+bool taMediaWiki::InitAtStart(taMediaWikiReadCB cb, DataTable* results) {
+  if(read_ready) {
+    taMisc::Error("taMediaWiki::InitAtStart -- read_ready is still set -- perhaps another wiki interaction is currently taking place -- cannot start a new one");
+    return false;
+  }
+  if(!taiMisc::net_access_mgr) {
+    taMisc::Error("taMediaWiki::InitAtStart -- net_access_mgr is NULL -- can only run in gui!");
+    return false;
+  }
+  // reserve the read_ready guy now just in case someone else jumps in..
+  read_ready = new taMediaWikiReadReady(cb, results);
+  action_finished = false;
+  wiki_error = false;
+  wiki_error_str = "";
+
+  QObject::connect(taiMisc::net_access_mgr, SIGNAL(finished(QNetworkReply*)),
+		   read_ready, SLOT(finished(QNetworkReply*)));
+}
+
+bool taMediaWiki::WaitForResults() {
+  while(!action_finished) {	// just sit and wait until the thing finshes!
+    taMisc::ProcessEvents();
+    if(Program::stop_req) {	// abort!
+      wiki_error = true;
+      wiki_error_str = "User Stop/Abort Before Results Obtained";
+      break;
+    }
+  }
+  delete read_ready;
+  read_ready = NULL;
+  if(wiki_error) {
+    taMisc::Warning("taMediaWiki -- an error occurred:", wiki_error_str);
+  }
+  return !wiki_error;
 }
 
 bool taMediaWiki::PageExists(const String& wiki_name, const String& page_name) {
@@ -128,9 +168,11 @@ bool taMediaWiki::SearchPages(DataTable* results, const String& wiki_name,
 			      const String& search_str, bool title_only,
 			      const String& name_space,
 			      int max_results) {
-  if(read_ready || !results || !taiMisc::net_access_mgr) return false; // all failures
-  // reserve the read_ready guy now just in case someone else jumps in..
-  read_ready = new taMediaWikiReadReady(&taMediaWiki::SearchPages_read, results);
+  if(!InitAtStart(&taMediaWiki::SearchPages_read, results)) return false;
+  if(!results) {
+    taMisc::Error("taMediaWiki::SearchPages -- results data table is NULL -- must supply a valid data table!");
+    return false;
+  }
 
   String wiurl = GetApiURL(wiki_name);
   if(wiurl.empty()) return false;
@@ -147,11 +189,9 @@ bool taMediaWiki::SearchPages(DataTable* results, const String& wiki_name,
   if(max_results > 0)
     url.addQueryItem( QString("srlimit"), QString::number(max_results) );
 
-  QObject::connect(taiMisc::net_access_mgr, SIGNAL(finished(QNetworkReply*)),
-		   read_ready, SLOT(finished(QNetworkReply*)));
-
   taiMisc::net_access_mgr->get( QNetworkRequest(url) );
-  return true;
+
+  return WaitForResults();
 }
 
 bool taMediaWiki::SearchPages_read(DataTable* results, QNetworkReply* reply) {

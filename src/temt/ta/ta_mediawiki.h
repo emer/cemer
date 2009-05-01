@@ -33,7 +33,7 @@ class TA_API taMediaWikiReadReady : public QObject {
   // need to create one of these for every action 
   Q_OBJECT
 public:
-  taMediaWikiReadReady(taMediaWikiReadCB cb, DataTable* res);
+  taMediaWikiReadReady(taMediaWikiReadCB cb, DataTable* res = NULL);
   ~taMediaWikiReadReady();
 
   taMediaWikiReadCB	cb_fun;
@@ -52,6 +52,9 @@ public:
 #ifndef __MAKETA__
   static taMediaWikiReadReady*	read_ready; // current read ready guy -- cannot do a new one until this guy is deleted!
 #endif  
+  static bool	action_finished;   // #READ_ONLY this is set to false after initiating an action, and true when it completes 
+  static bool	wiki_error; // #READ_ONLY if true, then an error occured on last operation
+  static String	wiki_error_str; // #READ_ONLY error string if wiki_error
 
   static String	GetApiURL(const String& wiki_name);
   // #CAT_Wiki gets the url for the wiki api
@@ -113,6 +116,14 @@ public:
   // put all the read guys in here to parse the results
   static bool	SearchPages_read(DataTable* results, QNetworkReply* reply);
 
+#endif
+
+protected:
+#ifndef __MAKETA__
+  static bool	InitAtStart(taMediaWikiReadCB cb, DataTable* results = NULL);
+  // #IGNORE initialize various things at the start of a function, including setup of ReadReady guy, which requires call-back function and results data table if applicable (not required) -- if this returns false, then the system is somehow not in a good state and fails immediately
+  static bool	WaitForResults();
+  // #IGNORE blocking wait for the results from the server
 #endif
 
   TA_BASEFUNS_NOCOPY(taMediaWiki);
