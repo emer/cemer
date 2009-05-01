@@ -903,9 +903,11 @@ void taiDataHostBase::Constr_Prompt() {
 void taiDataHostBase::Constr_Buttons() {
   QWidget* par = widButtons;
 
-  help_but = new HiLightButton("&Help", par);
-  layButtons->addWidget(help_but, 0, (Qt::AlignVCenter));
-  connect(help_but, SIGNAL(clicked()), this, SLOT(Help()) );
+  if(!isDialog()) {
+    help_but = new HiLightButton("&Help", par);
+    layButtons->addWidget(help_but, 0, (Qt::AlignVCenter));
+    connect(help_but, SIGNAL(clicked()), this, SLOT(Help()) );
+  }
 
   layButtons->addStretch();
   if (isDialog()) { // add dialog-like buttons

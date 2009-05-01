@@ -59,6 +59,7 @@ set(ta_HEADS_MAKETA
   ta_project.h
   ta_server.h
   ta_qt.h
+  ta_mediawiki.h
   ta_qtdata_def.h
   ta_qtdata.h
   ta_qtdialog.h
@@ -139,6 +140,7 @@ set(ta_HEADS
   ta_type_constr.h
   qtdefs.h
   ta_qt.h
+  ta_mediawiki.h
   ta_qtdata_def.h
   ta_qtdata.h
   ta_qtdialog.h
@@ -178,6 +180,7 @@ set(ta_HEADS_MOC
   ta_server.h
   # gui:
   ta_qt.h
+  ta_mediawiki.h
   ta_qtdata_def.h
   ta_qtdata.h
   ta_qtdialog.h
@@ -197,6 +200,7 @@ set(ta_HEADS_MOC
 # gui-related source files to compile: NOTE: do NOT include .moc files -- auto generated
 set(ta_SRCS_GUI
   ta_qt.cpp
+  ta_mediawiki.cpp
   ta_type_qt.cpp
   ta_qtdata.cpp
   ta_qtdialog.cpp

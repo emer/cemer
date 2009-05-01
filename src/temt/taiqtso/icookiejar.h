@@ -60,42 +60,40 @@
 **
 ****************************************************************************/
 
-#ifndef COOKIEJAR_H
-#define COOKIEJAR_H
+#ifndef ICOOKIEJAR_H
+#define ICOOKIEJAR_H
 
 #include <qnetworkcookie.h>
-
 #include <qstringlist.h>
 
-class NetworkCookieJarPrivate;
-class NetworkCookieJar : public QNetworkCookieJar {
-    Q_OBJECT
-public:
-    NetworkCookieJar(QObject *parent = 0);
-    ~NetworkCookieJar();
+class iNetworkCookieJarPrivate;
+class iNetworkCookieJar : public QNetworkCookieJar {
+  Q_OBJECT
+  public:
+  iNetworkCookieJar(QObject *parent = 0);
+  ~iNetworkCookieJar();
 
-    virtual QList<QNetworkCookie> cookiesForUrl(const QUrl & url) const;
-    virtual bool setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const QUrl &url);
+  virtual QList<QNetworkCookie> cookiesForUrl(const QUrl & url) const;
+  virtual bool setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const QUrl &url);
 
 protected:
-    QByteArray saveState() const;
-    bool restoreState(const QByteArray &state);
-    void endSession();
+  QByteArray saveState() const;
+  bool restoreState(const QByteArray &state);
+  void endSession();
 
-    QList<QNetworkCookie> allCookies() const;
-    void setAllCookies(const QList<QNetworkCookie> &cookieList);
-    void setSecondLevelDomains(const QStringList &secondLevelDomains);
+  QList<QNetworkCookie> allCookies() const;
+  void setAllCookies(const QList<QNetworkCookie> &cookieList);
+  void setSecondLevelDomains(const QStringList &secondLevelDomains);
 
 private:
-    NetworkCookieJarPrivate *d;
+  iNetworkCookieJarPrivate *d;
 };
 
 class AutoSaver;
-class CookieJar : public NetworkCookieJar
-{
-    friend class CookieModel;
-    Q_OBJECT
-    Q_PROPERTY(AcceptPolicy acceptPolicy READ acceptPolicy WRITE setAcceptPolicy)
+class iCookieJar : public iNetworkCookieJar {
+  friend class CookieModel;
+  Q_OBJECT
+  Q_PROPERTY(AcceptPolicy acceptPolicy READ acceptPolicy WRITE setAcceptPolicy)
     Q_PROPERTY(KeepPolicy keepPolicy READ keepPolicy WRITE setKeepPolicy)
     Q_PROPERTY(QStringList blockedCookies READ blockedCookies WRITE setBlockedCookies)
     Q_PROPERTY(QStringList allowedCookies READ allowedCookies WRITE setAllowedCookies)
@@ -103,62 +101,62 @@ class CookieJar : public NetworkCookieJar
     Q_ENUMS(KeepPolicy)
     Q_ENUMS(AcceptPolicy)
 
-signals:
+    signals:
     void cookiesChanged();
 
 public:
-    enum AcceptPolicy {
-        AcceptAlways,
-        AcceptNever,
-        AcceptOnlyFromSitesNavigatedTo
-    };
+  enum AcceptPolicy {
+    AcceptAlways,
+    AcceptNever,
+    AcceptOnlyFromSitesNavigatedTo
+  };
 
-    enum KeepPolicy {
-        KeepUntilExpire,
-        KeepUntilExit,
-        KeepUntilTimeLimit
-    };
+  enum KeepPolicy {
+    KeepUntilExpire,
+    KeepUntilExit,
+    KeepUntilTimeLimit
+  };
 
-    CookieJar(QObject *parent = 0);
-    ~CookieJar();
+  iCookieJar(QObject *parent = 0);
+  ~iCookieJar();
 
-    QList<QNetworkCookie> cookiesForUrl(const QUrl &url) const;
-    bool setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const QUrl &url);
+  QList<QNetworkCookie> cookiesForUrl(const QUrl &url) const;
+  bool setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const QUrl &url);
 
-    AcceptPolicy acceptPolicy() const;
-    void setAcceptPolicy(AcceptPolicy policy);
+  AcceptPolicy acceptPolicy() const;
+  void setAcceptPolicy(AcceptPolicy policy);
 
-    KeepPolicy keepPolicy() const;
-    void setKeepPolicy(KeepPolicy policy);
+  KeepPolicy keepPolicy() const;
+  void setKeepPolicy(KeepPolicy policy);
 
-    QStringList blockedCookies() const;
-    QStringList allowedCookies() const;
-    QStringList allowForSessionCookies() const;
+  QStringList blockedCookies() const;
+  QStringList allowedCookies() const;
+  QStringList allowForSessionCookies() const;
 
-    void setBlockedCookies(const QStringList &list);
-    void setAllowedCookies(const QStringList &list);
-    void setAllowForSessionCookies(const QStringList &list);
+  void setBlockedCookies(const QStringList &list);
+  void setAllowedCookies(const QStringList &list);
+  void setAllowForSessionCookies(const QStringList &list);
 
 public slots:
-    void clear();
-    void loadSettings();
+  void clear();
+  void loadSettings();
 
 private slots:
-    void save();
+  void save();
 
 private:
-    void purgeOldCookies();
-    void load();
-    bool m_loaded;
-    AutoSaver *m_saveTimer;
+  void purgeOldCookies();
+  void load();
+  bool m_loaded;
+  AutoSaver *m_saveTimer;
 
-    AcceptPolicy m_acceptCookies;
-    KeepPolicy m_keepCookies;
+  AcceptPolicy m_acceptCookies;
+  KeepPolicy m_keepCookies;
 
-    QStringList m_exceptions_block;
-    QStringList m_exceptions_allow;
-    QStringList m_exceptions_allowForSession;
+  QStringList m_exceptions_block;
+  QStringList m_exceptions_allow;
+  QStringList m_exceptions_allowForSession;
 };
 
-#endif // COOKIEJAR_H
+#endif // ICOOKIEJAR_H
 

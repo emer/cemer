@@ -2643,7 +2643,7 @@ TA_SMART_PTRS(UserDataItem);
 class TA_API taWikiURL: public taOBase {
   // ##INLINE ##NO_TOKENS wiki URL location information -- include in objects that can be sync'd with a wiki -- relative wiki links 
 INHERITED(taOBase)
-public://
+public:
   bool		sync;		// enable synchronizing this object with the wiki
   String	wiki;		// #CONDEDIT_ON_sync name of a wiki, as specified in global preferences, where this object should be stored -- this is used to lookup the wiki name -- if blank then url must be a full URL path
   String	url;		// #CONDEDIT_ON_sync a URL location for this object -- if wiki name is set, then this is relative to that wiki, as wiki_url/index.php/url (use Projects/ as start of url for storing project-related information), otherwise it is a full URL path to a valid location

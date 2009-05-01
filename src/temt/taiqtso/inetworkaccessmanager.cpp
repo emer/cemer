@@ -62,7 +62,6 @@
 
 #include "inetworkaccessmanager.h"
 
-//#include "acceptlanguagedialog.h"
 #include <ui_passworddialog.h>
 //#include "ui_proxy.h"
 
@@ -84,113 +83,107 @@
 // #include <qdesktopservices.h>
 // #endif
 
-NetworkAccessManager::NetworkAccessManager(QObject *parent)
-    : QNetworkAccessManager(parent)
+iNetworkAccessManager::iNetworkAccessManager(QObject *parent)
+  : QNetworkAccessManager(parent)
 {
-  main_win = NULL;		// must be set!
-    connect(this, SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)),
-            SLOT(authenticationRequired(QNetworkReply*, QAuthenticator*)));
+  m_main_win = NULL;		// must be set!
+  connect(this, SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)),
+	  SLOT(authenticationRequired(QNetworkReply*, QAuthenticator*)));
 #ifndef QT_NO_OPENSSL
-    connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
-            SLOT(sslErrors(QNetworkReply*, const QList<QSslError>&)));
+  connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
+	  SLOT(sslErrors(QNetworkReply*, const QList<QSslError>&)));
 #endif
-    loadSettings();
+  loadSettings();
 
-// #if QT_VERSION >= 0x040500
-//     QNetworkDiskCache *diskCache = new QNetworkDiskCache(this);
-//     QString location = QDesktopServices::storageLocation(QDesktopServices::CacheLocation)
-//                             + QLatin1String("/browser");
-//     diskCache->setCacheDirectory(location);
-//     setCache(diskCache);
-// #endif
+  // #if QT_VERSION >= 0x040500
+  //     QNetworkDiskCache *diskCache = new QNetworkDiskCache(this);
+  //     QString location = QDesktopServices::storageLocation(QDesktopServices::CacheLocation)
+  //                             + QLatin1String("/browser");
+  //     diskCache->setCacheDirectory(location);
+  //     setCache(diskCache);
+  // #endif
 }
 
-void NetworkAccessManager::loadSettings()
+void iNetworkAccessManager::loadSettings()
 {
-    QSettings settings;
-//     settings.beginGroup(QLatin1String("proxy"));
-//     QNetworkProxy proxy;
-//     if (settings.value(QLatin1String("enabled"), false).toBool()) {
-//         int proxyType = settings.value(QLatin1String("type"), 0).toInt();
-//         if (proxyType == 0)
-//             proxy = QNetworkProxy::Socks5Proxy;
-//         else if (proxyType == 1)
-//             proxy = QNetworkProxy::HttpProxy;
-//         else { // 2
-//             proxy.setType(QNetworkProxy::HttpCachingProxy);
-// #if QT_VERSION >= 0x040500
-//             proxy.setCapabilities(QNetworkProxy::CachingCapability | QNetworkProxy::HostNameLookupCapability);
-// #endif
-//         }
-//         proxy.setHostName(settings.value(QLatin1String("hostName")).toString());
-//         proxy.setPort(settings.value(QLatin1String("port"), 1080).toInt());
-//         proxy.setUser(settings.value(QLatin1String("userName")).toString());
-//         proxy.setPassword(settings.value(QLatin1String("password")).toString());
-//     }
-// #if QT_VERSION >= 0x040500
-//     NetworkProxyFactory *proxyFactory = new NetworkProxyFactory;
-//     if (proxy.type() == QNetworkProxy::HttpCachingProxy) {
-//       proxyFactory->setHttpProxy(proxy);
-//       proxyFactory->setGlobalProxy(QNetworkProxy::DefaultProxy);
-//     } else {
-//       proxyFactory->setHttpProxy(QNetworkProxy::DefaultProxy);
-//       proxyFactory->setGlobalProxy(proxy);
-//     }
-//     setProxyFactory(proxyFactory);
-// #else
-//     setProxy(proxy);
-// #endif
-//     settings.endGroup();
+  QSettings settings;
+  //     settings.beginGroup(QLatin1String("proxy"));
+  //     QNetworkProxy proxy;
+  //     if (settings.value(QLatin1String("enabled"), false).toBool()) {
+  //         int proxyType = settings.value(QLatin1String("type"), 0).toInt();
+  //         if (proxyType == 0)
+  //             proxy = QNetworkProxy::Socks5Proxy;
+  //         else if (proxyType == 1)
+  //             proxy = QNetworkProxy::HttpProxy;
+  //         else { // 2
+  //             proxy.setType(QNetworkProxy::HttpCachingProxy);
+  // #if QT_VERSION >= 0x040500
+  //             proxy.setCapabilities(QNetworkProxy::CachingCapability | QNetworkProxy::HostNameLookupCapability);
+  // #endif
+  //         }
+  //         proxy.setHostName(settings.value(QLatin1String("hostName")).toString());
+  //         proxy.setPort(settings.value(QLatin1String("port"), 1080).toInt());
+  //         proxy.setUser(settings.value(QLatin1String("userName")).toString());
+  //         proxy.setPassword(settings.value(QLatin1String("password")).toString());
+  //     }
+  // #if QT_VERSION >= 0x040500
+  //     NetworkProxyFactory *proxyFactory = new NetworkProxyFactory;
+  //     if (proxy.type() == QNetworkProxy::HttpCachingProxy) {
+  //       proxyFactory->setHttpProxy(proxy);
+  //       proxyFactory->setGlobalProxy(QNetworkProxy::DefaultProxy);
+  //     } else {
+  //       proxyFactory->setHttpProxy(QNetworkProxy::DefaultProxy);
+  //       proxyFactory->setGlobalProxy(proxy);
+  //     }
+  //     setProxyFactory(proxyFactory);
+  // #else
+  //     setProxy(proxy);
+  // #endif
+  //     settings.endGroup();
 
 #ifndef QT_NO_OPENSSL
-    QSslConfiguration sslCfg = QSslConfiguration::defaultConfiguration();
-    QList<QSslCertificate> ca_list = sslCfg.caCertificates();
-    QList<QSslCertificate> ca_new = QSslCertificate::fromData(settings.value(QLatin1String("CaCertificates")).toByteArray());
-    ca_list += ca_new;
+  QSslConfiguration sslCfg = QSslConfiguration::defaultConfiguration();
+  QList<QSslCertificate> ca_list = sslCfg.caCertificates();
+  QList<QSslCertificate> ca_new = QSslCertificate::fromData(settings.value(QLatin1String("CaCertificates")).toByteArray());
+  ca_list += ca_new;
 
-    sslCfg.setCaCertificates(ca_list);
-    QSslConfiguration::setDefaultConfiguration(sslCfg);
+  sslCfg.setCaCertificates(ca_list);
+  QSslConfiguration::setDefaultConfiguration(sslCfg);
 #endif
-
-//     settings.beginGroup(QLatin1String("network"));
-//     QStringList acceptList = settings.value(QLatin1String("acceptLanguages"),
-//             AcceptLanguageDialog::defaultAcceptList()).toStringList();
-//     acceptLanguage = AcceptLanguageDialog::httpString(acceptList);
-//     settings.endGroup();
 }
 
-void NetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthenticator *auth)
+void iNetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthenticator *auth)
 {
-    QDialog dialog(main_win);
-    dialog.setWindowFlags(Qt::Sheet);
+  QDialog dialog(m_main_win);
+  dialog.setWindowFlags(Qt::Sheet);
 
-    Ui::PasswordDialog passwordDialog;
-    passwordDialog.setupUi(&dialog);
+  Ui::PasswordDialog passwordDialog;
+  passwordDialog.setupUi(&dialog);
 
-    passwordDialog.iconLabel->setText(QString());
-    passwordDialog.iconLabel->setPixmap(main_win->style()->standardIcon(QStyle::SP_MessageBoxQuestion, 0, main_win).pixmap(32, 32));
+  passwordDialog.iconLabel->setText(QString());
+  passwordDialog.iconLabel->setPixmap(m_main_win->style()->standardIcon(QStyle::SP_MessageBoxQuestion, 0, m_main_win).pixmap(32, 32));
 
-    QString introMessage = tr("<qt>Enter username and password for \"%1\" at %2</qt>");
-    introMessage = introMessage.arg(Qt::escape(auth->realm())).arg(Qt::escape(reply->url().toString()));
-    passwordDialog.introLabel->setText(introMessage);
-    passwordDialog.introLabel->setWordWrap(true);
+  QString introMessage = tr("<qt>Enter username and password for \"%1\" at %2</qt>");
+  introMessage = introMessage.arg(Qt::escape(auth->realm())).arg(Qt::escape(reply->url().toString()));
+  passwordDialog.introLabel->setText(introMessage);
+  passwordDialog.introLabel->setWordWrap(true);
 
-    if (dialog.exec() == QDialog::Accepted) {
-        auth->setUser(passwordDialog.userNameLineEdit->text());
-        auth->setPassword(passwordDialog.passwordLineEdit->text());
-    }
+  if (dialog.exec() == QDialog::Accepted) {
+    auth->setUser(passwordDialog.userNameLineEdit->text());
+    auth->setPassword(passwordDialog.passwordLineEdit->text());
+  }
 }
 
-// void NetworkAccessManager::proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *auth)
+// void iNetworkAccessManager::proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *auth)
 // {
-//     QDialog dialog(main_win);
+//     QDialog dialog(m_main_win);
 //     dialog.setWindowFlags(Qt::Sheet);
 
 //     Ui::ProxyDialog proxyDialog;
 //     proxyDialog.setupUi(&dialog);
 
 //     proxyDialog.iconLabel->setText(QString());
-//     proxyDialog.iconLabel->setPixmap(main_win->style()->standardIcon(QStyle::SP_MessageBoxQuestion, 0, main_win).pixmap(32, 32));
+//     proxyDialog.iconLabel->setPixmap(m_main_win->style()->standardIcon(QStyle::SP_MessageBoxQuestion, 0, m_main_win).pixmap(32, 32));
 
 //     QString introMessage = tr("<qt>Connect to proxy \"%1\" using:</qt>");
 //     introMessage = introMessage.arg(Qt::escape(proxy.hostName()));
@@ -206,104 +199,90 @@ void NetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthent
 #ifndef QT_NO_OPENSSL
 static QString certToFormattedString(QSslCertificate cert)
 {
-    QString resultstring = QLatin1String("<p>");
-    QStringList tmplist;
+  QString resultstring = QLatin1String("<p>");
+  QStringList tmplist;
 
-    resultstring += cert.subjectInfo(QSslCertificate::CommonName);
+  resultstring += cert.subjectInfo(QSslCertificate::CommonName);
 
-    resultstring += QString::fromLatin1("<br/>Issuer: %1")
-        .arg(cert.issuerInfo(QSslCertificate::CommonName));
+  resultstring += QString::fromLatin1("<br/>Issuer: %1")
+    .arg(cert.issuerInfo(QSslCertificate::CommonName));
 
-    resultstring += QString::fromLatin1("<br/>Not valid before: %1<br/>Valid Until: %2")
-        .arg(cert.effectiveDate().toString(Qt::ISODate))
-        .arg(cert.expiryDate().toString(Qt::ISODate));
+  resultstring += QString::fromLatin1("<br/>Not valid before: %1<br/>Valid Until: %2")
+    .arg(cert.effectiveDate().toString(Qt::ISODate))
+    .arg(cert.expiryDate().toString(Qt::ISODate));
 
-    QMultiMap<QSsl::AlternateNameEntryType, QString> names = cert.alternateSubjectNames();
-    if (names.count() > 0) {
-        tmplist = names.values(QSsl::DnsEntry);
-        resultstring += QLatin1String("<br/>Alternate Names:<ul><li>")
-            + tmplist.join(QLatin1String("</li><li>"))
-            + QLatin1String("</li><</ul>");
-    }
+  QMultiMap<QSsl::AlternateNameEntryType, QString> names = cert.alternateSubjectNames();
+  if (names.count() > 0) {
+    tmplist = names.values(QSsl::DnsEntry);
+    resultstring += QLatin1String("<br/>Alternate Names:<ul><li>")
+      + tmplist.join(QLatin1String("</li><li>"))
+      + QLatin1String("</li><</ul>");
+  }
 
-    resultstring += QLatin1String("</p>");
+  resultstring += QLatin1String("</p>");
 
-    return resultstring;
+  return resultstring;
 }
 
-void NetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslError> &error)
+void iNetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslError> &error)
 {
-    QSettings settings;
-    QList<QSslCertificate> ca_merge = QSslCertificate::fromData(settings.value(QLatin1String("CaCertificates")).toByteArray());
+  QSettings settings;
+  QList<QSslCertificate> ca_merge = QSslCertificate::fromData(settings.value(QLatin1String("CaCertificates")).toByteArray());
 
-    QList<QSslCertificate> ca_new;
-    QStringList errorStrings;
-    for (int i = 0; i < error.count(); ++i) {
-        if (ca_merge.contains(error.at(i).certificate()))
-            continue;
-        errorStrings += error.at(i).errorString();
-        if (!error.at(i).certificate().isNull()) {
-            ca_new.append(error.at(i).certificate());
-        }
+  QList<QSslCertificate> ca_new;
+  QStringList errorStrings;
+  for (int i = 0; i < error.count(); ++i) {
+    if (ca_merge.contains(error.at(i).certificate()))
+      continue;
+    errorStrings += error.at(i).errorString();
+    if (!error.at(i).certificate().isNull()) {
+      ca_new.append(error.at(i).certificate());
     }
-    if (errorStrings.isEmpty()) {
-        reply->ignoreSslErrors();
-        return;
+  }
+  if (errorStrings.isEmpty()) {
+    reply->ignoreSslErrors();
+    return;
+  }
+
+  QString errors = errorStrings.join(QLatin1String("</li><li>"));
+  int ret = QMessageBox::warning(m_main_win,
+				 QCoreApplication::applicationName() + tr(" - SSL Errors"),
+				 tr("<qt>SSL Errors:"
+				    "<br/><br/>for: <tt>%1</tt>"
+				    "<ul><li>%2</li></ul>\n\n"
+				    "Do you want to ignore these errors?</qt>").arg(reply->url().toString()).arg(errors),
+				 QMessageBox::Yes | QMessageBox::No,
+				 QMessageBox::No);
+
+  if (ret == QMessageBox::Yes) {
+    if (ca_new.count() > 0) {
+      QStringList certinfos;
+      for (int i = 0; i < ca_new.count(); ++i)
+	certinfos += certToFormattedString(ca_new.at(i));
+      ret = QMessageBox::question(m_main_win, QCoreApplication::applicationName(),
+				  tr("<qt>Certifactes:<br/>"
+				     "%1<br/>"
+				     "Do you want to accept all these certificates?</qt>")
+				  .arg(certinfos.join(QString())),
+				  QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+      if (ret == QMessageBox::Yes) {
+	ca_merge += ca_new;
+
+	QSslConfiguration sslCfg = QSslConfiguration::defaultConfiguration();
+	QList<QSslCertificate> ca_list = sslCfg.caCertificates();
+	ca_list += ca_new;
+	sslCfg.setCaCertificates(ca_list);
+	QSslConfiguration::setDefaultConfiguration(sslCfg);
+	reply->setSslConfiguration(sslCfg);
+
+	QByteArray pems;
+	for (int i = 0; i < ca_merge.count(); ++i)
+	  pems += ca_merge.at(i).toPem() + '\n';
+	settings.setValue(QLatin1String("CaCertificates"), pems);
+      }
     }
-
-    QString errors = errorStrings.join(QLatin1String("</li><li>"));
-    int ret = QMessageBox::warning(main_win,
-                           QCoreApplication::applicationName() + tr(" - SSL Errors"),
-                           tr("<qt>SSL Errors:"
-                              "<br/><br/>for: <tt>%1</tt>"
-                              "<ul><li>%2</li></ul>\n\n"
-                              "Do you want to ignore these errors?</qt>").arg(reply->url().toString()).arg(errors),
-                           QMessageBox::Yes | QMessageBox::No,
-                           QMessageBox::No);
-
-    if (ret == QMessageBox::Yes) {
-        if (ca_new.count() > 0) {
-            QStringList certinfos;
-            for (int i = 0; i < ca_new.count(); ++i)
-                certinfos += certToFormattedString(ca_new.at(i));
-            ret = QMessageBox::question(main_win, QCoreApplication::applicationName(),
-                tr("<qt>Certifactes:<br/>"
-                   "%1<br/>"
-                   "Do you want to accept all these certificates?</qt>")
-                    .arg(certinfos.join(QString())),
-                QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
-            if (ret == QMessageBox::Yes) {
-                ca_merge += ca_new;
-
-                QSslConfiguration sslCfg = QSslConfiguration::defaultConfiguration();
-                QList<QSslCertificate> ca_list = sslCfg.caCertificates();
-                ca_list += ca_new;
-                sslCfg.setCaCertificates(ca_list);
-                QSslConfiguration::setDefaultConfiguration(sslCfg);
-                reply->setSslConfiguration(sslCfg);
-
-                QByteArray pems;
-                for (int i = 0; i < ca_merge.count(); ++i)
-                    pems += ca_merge.at(i).toPem() + '\n';
-                settings.setValue(QLatin1String("CaCertificates"), pems);
-            }
-        }
-        reply->ignoreSslErrors();
-    }
+    reply->ignoreSslErrors();
+  }
 }
 #endif
 
-// QNetworkReply *NetworkAccessManager::createRequest(QNetworkAccessManager::Operation op, const QNetworkRequest &request, QIODevice *outgoingData)
-// {
-//     QNetworkReply *reply;
-//     if (!acceptLanguage.isEmpty()) {
-//         QNetworkRequest req = request;
-//         req.setRawHeader("Accept-Language", acceptLanguage);
-//         reply = QNetworkAccessManager::createRequest(op, req, outgoingData);
-//         emit requestCreated(op, req, reply);
-//     } else {
-//         reply = QNetworkAccessManager::createRequest(op, request, outgoingData);
-//         emit requestCreated(op, request, reply);
-//     }
-//     return reply;
-// }

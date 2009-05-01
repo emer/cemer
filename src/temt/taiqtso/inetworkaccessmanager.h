@@ -60,41 +60,31 @@
 **
 ****************************************************************************/
 
-#ifndef NETWORKACCESSMANAGER_H
-#define NETWORKACCESSMANAGER_H
+#ifndef INETWORKACCESSMANAGER_H
+#define INETWORKACCESSMANAGER_H
 
 #include <qnetworkaccessmanager.h>
 
 class QMainWindow;
-class NetworkAccessManager : public QNetworkAccessManager
-{
-    Q_OBJECT
-
-// signals:
-//     void requestCreated(QNetworkAccessManager::Operation op, const QNetworkRequest &request, QNetworkReply *reply);
-
+class iNetworkAccessManager : public QNetworkAccessManager {
+  Q_OBJECT
 public:
-    NetworkAccessManager(QObject *parent = 0);
+  iNetworkAccessManager(QObject *parent = 0);
 
-  void  setMainWindow(QMainWindow* mw) { main_win = mw; }
+  void  setMainWindow(QMainWindow* mw) { m_main_win = mw; }
 
 protected:
-//     QNetworkReply *createRequest(QNetworkAccessManager::Operation op, const QNetworkRequest &request, QIODevice *outgoingData = 0);
-  QMainWindow* 	main_win;
-
+  QMainWindow* 	m_main_win;
 
 public slots:
-    void loadSettings();
+  void loadSettings();
 
 private slots:
-    void authenticationRequired(QNetworkReply *reply, QAuthenticator *auth);
-//     void proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *auth);
+  void authenticationRequired(QNetworkReply *reply, QAuthenticator *auth);
+  //     void proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *auth);
 #ifndef QT_NO_OPENSSL
-    void sslErrors(QNetworkReply *reply, const QList<QSslError> &error);
+  void sslErrors(QNetworkReply *reply, const QList<QSslError> &error);
 #endif
-
-// private:
-//     QByteArray acceptLanguage;
 };
 
-#endif // NETWORKACCESSMANAGER_H
+#endif // INETWORKACCESSMANAGER_H

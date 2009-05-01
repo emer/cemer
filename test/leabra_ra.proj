@@ -953,6 +953,7 @@ auto_open=1;
 web_doc=0;
 wiki=;
 url=;
+text_size=1;
 text="<html>
 <head>
 <title>Project Docs</title>
@@ -1026,6 +1027,7 @@ auto_open=0;
 web_doc=0;
 wiki=;
 url=;
+text_size=1;
 text="<html>
 <head></head>
 <body>
@@ -1051,6 +1053,7 @@ auto_open=0;
 web_doc=0;
 wiki=;
 url=;
+text_size=1;
 text="<html>
 <head>ChangeLog</head>
 <body>
@@ -1089,7 +1092,8 @@ name="Webdoc";
 auto_open=0;
 web_doc=1;
 wiki="CCN";
-url="Testing/leabra_ra";
+url="Projects/Testing/leabra_ra";
+text_size=1;
 text="<html>
 <head></head>
 <body>
@@ -1226,7 +1230,7 @@ Template argument size: 0/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key compcogneuro:pcache:idhash:251-0!1!0!!en!2 and timestamp 20090429225825 -->
+<!-- Saved in parser cache with key compcogneuro:pcache:idhash:251-0!1!0!!en!2 and timestamp 20090501051848 -->
 <div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/CompCogNeuro/index.php/Projects/Testing/leabra_ra\">http://grey.colorado.edu/CompCogNeuro/index.php/Projects/Testing/leabra_ra</a>\"</div>
 						<!-- end content -->
@@ -1307,7 +1311,7 @@ Please use the preview button before saving [ctrl-e]\" accesskey=\"e\">Edit</a><
 				<div id=\"f-poweredbyico\"><a href=\"http://www.mediawiki.org/\"><img src=\"/CompCogNeuro/skins/common/images/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\"></a></div>
 			<ul id=\"f-list\">
 					<li id=\"lastmod\"> This page was last modified on 29 April 2009, at 22:58.</li>
-					<li id=\"viewcount\">This page has been accessed 43 times.</li>
+					<li id=\"viewcount\">This page has been accessed 53 times.</li>
 					<li id=\"privacy\"><a href=\"/CompCogNeuro/index.php/Computational_Cognitive_Neuroscience_Wiki:Privacy_policy\" title=\"Computational Cognitive Neuroscience Wiki:Privacy policy\">Privacy policy</a></li>
 					<li id=\"about\"><a href=\"/CompCogNeuro/index.php/Computational_Cognitive_Neuroscience_Wiki:About\" title=\"Computational Cognitive Neuroscience Wiki:About\">About Computational Cognitive Neuroscience Wiki</a></li>
 					<li id=\"disclaimer\"><a href=\"/CompCogNeuro/index.php/Computational_Cognitive_Neuroscience_Wiki:General_disclaimer\" title=\"Computational Cognitive Neuroscience Wiki:General disclaimer\">Disclaimers</a></li>
@@ -1316,7 +1320,7 @@ Please use the preview button before saving [ctrl-e]\" accesskey=\"e\">Edit</a><
 </div>
 
 		<script type=\"text/javascript\">if (window.runOnloadHook) runOnloadHook();</script>
-<!-- Served in 0.317 secs. -->
+<!-- Served in 2.770 secs. -->
 </body></html>";
 };
 };

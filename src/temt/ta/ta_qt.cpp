@@ -132,7 +132,7 @@ TypeSpace		taiMisc::arg_types;
 QPointer<iMainWindowViewer> taiMisc::main_window;
 taBase_PtrList		taiMisc::unopened_windows;
 void (*taiMisc::Update_Hook)(TAPtr) = NULL;
-NetworkAccessManager*	taiMisc::net_access_mgr = NULL;
+iNetworkAccessManager*	taiMisc::net_access_mgr = NULL;
 
 int taiMisc::busy_count = 0;
 
@@ -180,8 +180,8 @@ void taiMisc::Init(bool gui) {
   connect(dw, SIGNAL(workAreaResized(int)), 
     this, SLOT(desktopWidget_workAreaResized(int)));
 
-  net_access_mgr = new NetworkAccessManager;
-  net_access_mgr->setCookieJar(new CookieJar);
+  net_access_mgr = new iNetworkAccessManager;
+  net_access_mgr->setCookieJar(new iCookieJar(net_access_mgr));
 }
 
 int taiMisc::Exec_impl() {
@@ -194,6 +194,8 @@ taiMisc::~taiMisc() {
   wait_cursor = NULL;
   delete record_cursor;
   record_cursor = NULL;
+  delete net_access_mgr;
+  net_access_mgr = NULL;
   if (taiM_ == this)
     taiM_ = NULL;
 }
