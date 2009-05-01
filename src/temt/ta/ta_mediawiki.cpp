@@ -85,6 +85,7 @@ bool taMediaWiki::InitAtStart(taMediaWikiReadCB cb, DataTable* results) {
 
   QObject::connect(taiMisc::net_access_mgr, SIGNAL(finished(QNetworkReply*)),
 		   read_ready, SLOT(finished(QNetworkReply*)));
+  return true;
 }
 
 bool taMediaWiki::WaitForResults() {
