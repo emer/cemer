@@ -6643,7 +6643,7 @@ QWidget* iDocDataPanel::firstTabFocusWidget() {
 
 void iDocDataPanel::doc_linkClicked(const QUrl& url) {
   String path = url.toString();
-  cerr << "path: " << path << endl;
+  //  cerr << "path: " << path << endl;
   bool ta_path = false;
   QUrl new_url(url);
   if(path.startsWith("ta:") || path.startsWith("."))
