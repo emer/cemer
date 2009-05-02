@@ -726,7 +726,7 @@ public:
   TwoDCoord		retina_size; 	// overall size of retina (auto copied to retina specs)
   taImageProc::EdgeMode	edge_mode;	// how to deal with edges
   int 			fade_width;	// #CONDEDIT_ON_edge_mode:BORDER for border mode -- how wide of a frame to fade in around the border at the end of all the operations (-1 = use width of max off-center DOG sigma, 0 = none)
-  float			renorm_thr;	// #DEF_1.0e-5 threshold overall maximum intensity value required to perform renormalization -- if below this value, no renorm is performed (i.e., it remains effectively blank)
+  float			renorm_thr;	// #DEF_1e-5 threshold overall maximum intensity value required to perform renormalization -- if below this value, no renorm is performed (i.e., it remains effectively blank)
   DoGRetinaSpecList	dogs;		// the difference-of-gaussian retinal filters
 
   virtual DoGRetinaSpec* AddFilter()	{ return (DoGRetinaSpec*)dogs.New(1); }
