@@ -2565,6 +2565,7 @@ void RetinaSpec::Initialize() {
   color_type = MONOCHROME;
   edge_mode = taImageProc::BORDER;
   fade_width = -1;
+  renorm_thr = 0.00001f;
   retina_size.x = 321; retina_size.y = 241;
   threads.min_units = 1;
 }
@@ -2901,7 +2902,7 @@ bool RetinaSpec::FilterImageData(DataTable* dt, bool superimpose, int renorm) {
   if(renorm > 0) {
     int idx;
     float max_val = taMath_float::vec_max(&max_vals, idx);
-    if(max_val > 0.00001f) {
+    if(max_val > renorm_thr) {
       cur_rescale = 1.0f;
       cur_renorm_factor = (float)(renorm - 1);
       if(renorm >= 2)
