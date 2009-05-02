@@ -2058,19 +2058,6 @@ public:
   virtual int	GetDefaultY();  // #IGNORE
   virtual int	GetDefaultZ();  // #IGNORE
 
-  virtual void	Copy_Weights(const Network* src);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other network (incl wts assoc with unit bias member)
-  virtual void	SaveWeights_strm(ostream& strm, WtSaveFormat fmt = NET_FMT);
-  // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual bool	LoadWeights_strm(istream& strm, bool quiet = false);
-  // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (fmt is read from file)
-  virtual void	SaveWeights(const String& fname="", WtSaveFormat fmt = NET_FMT);
-  // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
-  virtual bool	LoadWeights(const String& fname="", bool quiet = false);
-  // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
-//NOTE: if any of the Build or Connect are to be extended, the code must be rewritten by
-//  calling an inner extensible virtual _impl
-
   void  Build();
   // #BUTTON #CAT_Structure Build the network units and Connect them (calls BuildLayers/Units/Prjns and Connect)
   virtual void  BuildLayers();
@@ -2117,6 +2104,19 @@ public:
   // #IGNORE link the sending connections (after loading or copying)
   virtual void	FixPrjnIndexes();
   // #CAT_Structure fix the projection indicies of the connection groups (recv_idx, send_idx)
+
+  virtual void	Copy_Weights(const Network* src);
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other network (incl wts assoc with unit bias member)
+  virtual void	SaveWeights_strm(ostream& strm, WtSaveFormat fmt = NET_FMT);
+  // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  virtual bool	LoadWeights_strm(istream& strm, bool quiet = false);
+  // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (fmt is read from file)
+  virtual void	SaveWeights(const String& fname="", WtSaveFormat fmt = NET_FMT);
+  // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  virtual bool	LoadWeights(const String& fname="", bool quiet = false);
+  // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
+//NOTE: if any of the Build or Connect are to be extended, the code must be rewritten by
+//  calling an inner extensible virtual _impl
 
   virtual Layer* NewLayer();
   // #BUTTON create a new layer in the network, using default layer type

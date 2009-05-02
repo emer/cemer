@@ -655,9 +655,11 @@ bool taUndoMgr::Undo() {
     if(st) urec->save_top = st;
   }
   if(!urec->save_top) {
-    taMisc::Error("Undo action:", urec->action, "on object named:", urec->mod_obj_name,
-		  "at path:", urec->mod_obj_path,
-		  "cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path);
+    taMisc::Warning("Undo action:", urec->action, "on object named:", urec->mod_obj_name,
+		    "at path:", urec->mod_obj_path,
+		    "cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path);
+    --cur_undo_idx;		// need to skip past to get to other levels that might work..
+    if(first_undo) --cur_undo_idx;	// need an extra because of extra saveundo.
     return false;
   }
   cout << "Undoing action: " << urec->action << " on: " << urec->mod_obj_name
@@ -667,8 +669,7 @@ bool taUndoMgr::Undo() {
   bool rval = LoadFromRec_impl(urec);
   if(rval) {
     --cur_undo_idx;		// only decrement on success
-    if(first_undo)
-      --cur_undo_idx;		// need an extra because of extra saveundo.
+    if(first_undo) --cur_undo_idx;	// need an extra because of extra saveundo.
   }
   return rval;
 }
@@ -719,9 +720,10 @@ bool taUndoMgr::Redo() {
     if(st) urec->save_top = st;
   }
   if(!urec->save_top) {
-    taMisc::Error("Redo action:", urec->action, "on object named: ", urec->mod_obj_name,
-		  "at path:", urec->mod_obj_path,
-		  "cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path);
+    taMisc::Warning("Redo action:", urec->action, "on object named: ", urec->mod_obj_name,
+		    "at path:", urec->mod_obj_path,
+		    "cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path);
+    ++cur_undo_idx;		// need to skip past to get to other levels that might work..
     return false;
   }
   cout << "Redoing action: " << urec->action << " on: " << urec->mod_obj_name

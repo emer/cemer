@@ -3199,6 +3199,7 @@ bool RetinaSpec::RenderOccluder(DataTable* dt, float llx, float lly, float urx, 
 
 void V1GaborSpec::Initialize() {
   norm_max = .95f;
+  norm_thr = 0.01f;
 }
 
 void V1GaborSpec::UpdateAfterEdit_impl() {
@@ -3366,8 +3367,14 @@ bool V1GaborSpec::FilterRetinaData(DataTable* v1_out_dt, DataTable* ret_in_dt) {
       first = false;
     }
 
-    if(norm_max > 0.0f)
-      taMath_float::vec_norm_max(out_mat, norm_max);
+    if(norm_max > 0.0f) {
+      int idx;
+      float max_val = taMath_float::vec_max(out_mat, idx);
+      if(max_val > norm_thr) {
+	float rescale = norm_max / max_val;
+	taMath_float::vec_mult_scalar(out_mat, rescale);
+      }
+    }
     taBase::unRefDone(out_mat);
   }
   v1_out_dt->SetDataByName(ret_in_dt->GetDataByName("Name"), "Name"); // transfer over the name
