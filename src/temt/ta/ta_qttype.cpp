@@ -2126,7 +2126,12 @@ taiMethodData* taiMethod::GetButtonMethodRep(void* base, IDataHost* host_, taiDa
 }
 
 taiMethodData* taiMethod::GetGenericMethodRep(void* base, taiData* par) {
-  taiMethodData* rval = new taiMethodData(base, meth, meth->type, NULL, par, NULL, 0);
+  // this case is ONLY called by the CallFun() function, on methods, typically via
+  // a taBase->CallFun call
+//   taiMethodData* rval = new taiMethodData(base, meth, meth->type, NULL, par, NULL, 0);
+  // the above generic guy doesn't have all the right stuff -- use menu as default..
+  taiMethodData* rval = GetMenuMethodRep_impl(base, NULL, par, NULL, 0); 
+  rval->SetBase((taBase*)base); // pray!
   return rval;
 }
 

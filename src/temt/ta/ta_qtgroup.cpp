@@ -1422,7 +1422,7 @@ void DocEditDataHost::Constr_Box() {
 	    this, SLOT(Changed()) );
   }
   vblDialog->addWidget(tedHtml, 1); // gets all the space
-
+  tedHtml->installEventFilter(this); // this does the Ctrl+Enter = Apply stuff..
   //  inherited::Constr_Box();
 }
 

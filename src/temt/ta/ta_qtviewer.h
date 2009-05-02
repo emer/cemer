@@ -1811,6 +1811,8 @@ protected:
   taDoc*		m_doc; // ref managed through link; we just put ptr here to detect change
   override void		DataChanged_impl(int dcr, void* op1, void* op2);
   override void 	UpdatePanel_impl();
+  override bool 	eventFilter(QObject *obj, QEvent *event);
+  // translate emacs keys..
 
 #ifndef __MAKETA__
 protected slots:

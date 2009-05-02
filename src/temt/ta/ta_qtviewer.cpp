@@ -6612,6 +6612,8 @@ iDocDataPanel::iDocDataPanel()
 
   setCentralWidget(wb_widg);
 
+  webview->installEventFilter(this); // translate keys..
+
   connect(webview, SIGNAL(loadFinished(bool)),
 	  this, SLOT(doc_loadFinished(bool)) );
 
@@ -6641,6 +6643,7 @@ QWidget* iDocDataPanel::firstTabFocusWidget() {
 
 void iDocDataPanel::doc_linkClicked(const QUrl& url) {
   String path = url.toString();
+  cerr << "path: " << path << endl;
   bool ta_path = false;
   QUrl new_url(url);
   if(path.startsWith("ta:") || path.startsWith("."))
@@ -6745,7 +6748,7 @@ void iDocDataPanel::UpdatePanel_impl() {
     seturl_but->setEnabled(true);
   }
   else {
-    webview->setHtml(doc_->html_text, QUrl(doc_->GetURL()));
+    webview->setHtml(doc_->html_text);
     fwd_but->setEnabled(false);
     bak_but->setEnabled(false);
     seturl_but->setEnabled(false);
@@ -6794,6 +6797,74 @@ void iDocDataPanel::setDoc(taDoc* doc) {
   }
 }
 
+bool iDocDataPanel::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() != QEvent::KeyPress) {
+    return QObject::eventFilter(obj, event);
+  }
+
+  QKeyEvent* e = static_cast<QKeyEvent *>(event);
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+  // emacs keys!!
+  if(ctrl_pressed) {
+    QCoreApplication* app = QCoreApplication::instance();
+    if(e->key() == Qt::Key_P) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_N) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_A) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_E) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_F) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_B) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_D) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_K) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_Y) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_W) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_Slash) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_Minus) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+  }
+  return QObject::eventFilter(obj, event);
+}
   
 /*void iDocDataPanel::br_copyAvailable (bool) {
   viewerWindow()->UpdateUi();
