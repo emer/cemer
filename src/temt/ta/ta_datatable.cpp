@@ -928,7 +928,7 @@ bool DataTable::AutoSaveData() {
   if(TestError(auto_load_file.empty(), "AutoSaveData", "auto_load_file is empty!"))
     return false;
   // can't save to .dtbl type because that would recurse us -- TODO: could workaround somehow
-  if (TestError(auto_load_file.contains(".dtbl"), "AutoSaveData", "auto_load_file can only be of .dat type, not .dtbl type, sorry!")) {
+  if (TestError(!auto_load_file.contains(".dat"), "AutoSaveData", "auto_load_file can only be of .dat type, sorry!")) {
     return false;
   } else {
     SaveData(auto_load_file); // TODO: should really give error if fails...

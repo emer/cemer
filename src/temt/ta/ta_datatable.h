@@ -728,7 +728,7 @@ public:
     bool quote_str = true, bool headers = true);
   // #CAT_File #MENU #MENU_ON_Data #MENU_SEP_BEFORE #EXT_csv,tsv,txt,log #FILE_DIALOG_SAVE exports data in text file format
 
-  void 			ImportData(const String& fname="", LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO, bool headers = true)
+  void 			ImportData(const String& fname="", bool headers = true, LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO)
     {LoadDataEx(fname, headers ? LH_AUTO_YES : LH_NO, LD_AUTO, LQ_AUTO, -1, true);}
 // #CAT_File #MENU #MENU_ON_Data #EXT_csv,tsv,txt,log #FILE_DIALOG_LOAD imports data in delimited text file format
 
