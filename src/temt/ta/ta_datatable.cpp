@@ -577,7 +577,8 @@ String DataCol::EncodeHeaderName(const MatrixGeom& dims) const {
 }
 
 void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
-				      MatrixGeom& mat_idx, MatrixGeom& mat_geom) {
+  MatrixGeom& mat_idx, MatrixGeom& mat_geom) 
+{
   base_nm = nm;
   vt = -1; // unknown
   mat_idx.SetSize(0);
@@ -916,7 +917,7 @@ bool DataTable::AutoLoadData() {
     auto_load_file = cur_alf;
   }
   else {
-    LoadData(auto_load_file);
+    LoadDataEx(auto_load_file);
   }
   return true;
 }
@@ -2254,10 +2255,10 @@ void DataTable::RowsAdding(int n, bool begin) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-///		Saving / Loading from Plain Text Files
+///	Saving / Loading from Emergent or Plain Text Files
 
 /*
-  Header format: 
+  Emergent Header format: 
   $ = String
   % = float
   # = double
@@ -2267,10 +2268,30 @@ void DataTable::RowsAdding(int n, bool begin) {
 
   matrix: each cell has [dims:x,y..]
   first mat cell also has <dims:dx,dy..>
+  
+  Plain Header Format
 */
 
-void DataTable::SaveHeader_strm(ostream& strm, Delimiters delim,
-    bool row_mark, int col_fr, int col_to) 
+void DataTable::DecodeImportHeaderName(String nm, String& base_nm, 
+    int& cell_idx)
+{
+  int pos_und = nm.index('_', -1); // first from end
+  // note: must be at least one char before _ otherwise can't be a mat name
+  if (pos_und > 0) {
+    String sidx = nm.after(pos_und);
+    bool ok;
+    cell_idx = sidx.toInt(&ok);
+    if (ok) {
+      base_nm = nm.before(pos_und);
+      return;
+    } 
+  }
+  base_nm = nm;
+  cell_idx = -1;
+}
+
+void DataTable::SaveHeader_strm_impl(ostream& strm, Delimiters delim,
+    bool row_mark, int col_fr, int col_to, bool native, bool quote_str) 
 {
   char cdlm = GetDelim(delim);
   bool need_delim = false; // goes true after first col written
@@ -2293,17 +2314,28 @@ void DataTable::SaveHeader_strm(ostream& strm, Delimiters delim,
     if (need_delim)
       strm << cdlm;
     need_delim = true;
+    String hdnm;
     if(da->isMatrix()) {
       for(int j=0;j<da->cell_size(); j++) {
         if (j > 0)
 	  strm << cdlm;
-	da->cell_geom.DimsFmIndex(j, dims);
-	String hdnm = da->EncodeHeaderName(dims);
+        if (native) {
+	  da->cell_geom.DimsFmIndex(j, dims);
+          hdnm = da->EncodeHeaderName(dims);
+        } else {
+          hdnm = da->name + "_" + String(j);
+          // note: for Export, we enclose headers w/ quotes to be standard
+          if (quote_str)
+          hdnm = "\"" + hdnm + "\"";
+        }
 	strm << hdnm;
       }
     }
     else {
-      String hdnm = da->EncodeHeaderName(dims); //note: dims ignored
+      if (native) {
+        hdnm = da->EncodeHeaderName(dims); //note: dims ignored
+      } else 
+        hdnm = da->name;
       strm << hdnm;
     }
   }
@@ -2369,6 +2401,14 @@ void DataTable::SaveData_strm(ostream& strm, Delimiters delim, bool quote_str, b
   SaveDataRows_strm(strm, delim, quote_str, save_headers); // last arg is row mark -- only if headers
 }
 
+void DataTable::ExportData_strm(ostream& strm, Delimiters delim, 
+  bool quote_str, bool headers)
+{
+  if (headers)
+    ExportHeader_strm(strm, delim);
+  SaveDataRows_strm(strm, delim, quote_str, false); // last arg is row mark -- never 
+}
+
 void DataTable::SaveHeader(const String& fname, Delimiters delim) {
   taFiler* flr = GetSaveFiler(fname, ".dat,.tsv,.csv,.txt,.log", false);
   if(flr->ostrm)
@@ -2385,10 +2425,23 @@ void DataTable::SaveDataRow(const String& fname, int row, Delimiters delim, bool
   taRefN::unRefDone(flr);
 }
 
-void DataTable::SaveData(const String& fname, Delimiters delim, bool quote_str, bool save_headers) {
+void DataTable::SaveData(const String& fname, Delimiters delim,
+  bool quote_str, bool save_headers) 
+{
   taFiler* flr = GetSaveFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
   if (flr->ostrm) {
     SaveData_strm(*flr->ostrm, delim, quote_str, save_headers);
+  }
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+void DataTable::ExportData(const String& fname, Delimiters delim,
+  bool quote_str, bool save_headers) 
+{
+  taFiler* flr = GetSaveFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
+  if (flr->ostrm) {
+    ExportData_strm(*flr->ostrm, delim, quote_str, save_headers);
   }
   flr->Close();
   taRefN::unRefDone(flr);
@@ -2488,14 +2541,17 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool 
 int_Array DataTable::load_col_idx;
 int_Array DataTable::load_mat_idx;
 
-int DataTable::LoadHeader_impl(istream& strm, Delimiters delim) {
+int DataTable::LoadHeader_impl(istream& strm, Delimiters delim,
+  bool native, bool quote_str) 
+{
+  if (native) quote_str = false; // never quotes for native headers
   char cdlm = GetDelim(delim);
   load_col_idx.Reset();
   load_mat_idx.Reset();
   int c;
   while(true) {
     String str;
-    c = ReadTillDelim(strm, str, cdlm, false);
+    c = ReadTillDelim(strm, str, cdlm, quote_str);
     if(c == EOF) break;
     if(str.empty()) {
       if(c == '\n') break;
@@ -2504,38 +2560,75 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim) {
     }
     String base_nm;
     int val_typ;
-    MatrixGeom mat_idx;
-    MatrixGeom mat_geom;
-    // val_typ =-1 means type not explicitly supplied -- we'll use existing if name found
-    DataCol::DecodeHeaderName(str, base_nm, val_typ, mat_idx, mat_geom);
-    int idx = FindColNameIdx(base_nm);
+    int col_idx;
+    int cell_idx = -1; // mat cell index, or -1 if not a mat
     DataCol* da = NULL;
-    if(idx >= 0) da = data.FastEl(idx);
-    if (val_typ < 0) {
-      if (da) val_typ = da->valType(); // the actual type
-      else val_typ = VT_FLOAT; // the default type
-    }
-    if(!da || (da->valType() != val_typ)) { // only make new one if val type doesn't match
-      // mat_geom is only decorated onto first col and should not be remade...
-      // if none was supplied, then set it for scalar col (the default)
-      if ((mat_idx.size == 0) || mat_geom.size != 0) {
-	da = FindMakeColName(base_nm, idx, (ValType)val_typ, mat_geom.size,
-			     mat_geom[0], mat_geom[1], mat_geom[2],
-			     mat_geom[3]);
+    // Load vs. Import decoding is sufficiently different we use two subroutines below
+    if (native) {
+      MatrixGeom mat_idx;
+      MatrixGeom mat_geom;
+      // val_typ =-1 means type not explicitly supplied -- we'll use existing if name found
+      // for import cols, if nm is like <Name>_<int> and Name is a mat col, then assumed to
+      // be a mat column (ex. as previously Exported) otherwise a literal scalar column
+      DataCol::DecodeHeaderName(str, base_nm, val_typ, mat_idx, mat_geom);
+      col_idx = FindColNameIdx(base_nm);
+      if (col_idx >= 0) da = data.FastEl(col_idx);
+      if (val_typ < 0) {
+        if (da) val_typ = da->valType(); // the actual type
+        else  val_typ = VT_FLOAT; // default for Emergent-native
+      }
+      if(!da || (da->valType() != val_typ)) { // only make new one if val type doesn't match
+        // mat_geom is only decorated onto first col and should not be remade...
+        // if none was supplied, then set it for scalar col (the default)
+        if ((mat_idx.size == 0) || mat_geom.size != 0) {
+          da = FindMakeColName(base_nm, col_idx, (ValType)val_typ, mat_geom.size,
+                              mat_geom[0], mat_geom[1], mat_geom[2],
+                              mat_geom[3]);
+        }
+      }
+      if(mat_idx.size > 0) {
+        cell_idx = da->cell_geom.IndexFmDims(mat_idx[0], mat_idx[1], mat_idx[2], mat_idx[3]);
+      } // else is default=-1
+    } else { // Import
+      DecodeImportHeaderName(str, base_nm, cell_idx); // strips final _<int> leaves base_nm
+      col_idx = FindColNameIdx(base_nm);
+      if (col_idx >= 0) da = data.FastEl(col_idx);
+      // we only accept _xxx as mat col designator if col already a mat, and cell in bounds
+      if (!(da && (cell_idx >= 0) && (da->is_matrix) &&
+        (cell_idx < da->cell_geom.Product()))) 
+      {
+        da = FindMakeCol(str, VT_VARIANT);
+        col_idx = da->col_idx;
+        cell_idx = -1;
       }
     }
-    load_col_idx.Add(idx);
-    if(mat_idx.size > 0) {
-      int mdx = da->cell_geom.IndexFmDims(mat_idx[0], mat_idx[1], mat_idx[2], mat_idx[3]);
-      load_mat_idx.Add(mdx);
-    }
-    else {
-      load_mat_idx.Add(-1);	// no matrix info
-    }
+    load_col_idx.Add(col_idx);
+    load_mat_idx.Add(cell_idx);	// no matrix info
+    
     if(c == '\n') break;
     if(c == '\r') { if(strm.peek() == '\n') strm.get(); break; }
   }
   return c;
+}
+
+void DataTable::NoHeader_impl() {
+  load_col_idx.Reset();
+  load_mat_idx.Reset();
+  for (int i = 0; i < data.size; ++i) { 
+    DataCol* da = data.FastEl(i);
+    if (!da->HasColFlag(DataCol::SAVE_DATA)) continue;
+    
+    if (da->is_matrix) {
+      const int cells = da->cell_geom.Product();
+      for (int j = 0; j < cells; ++j) {
+        load_col_idx.Add(i);
+        load_mat_idx.Add(j);
+      }
+    } else {
+      load_col_idx.Add(i);
+      load_mat_idx.Add(-1);	// no matrix info
+    }
+  }
 }
 
 int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str) {
@@ -2552,7 +2645,7 @@ int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str)
     c = ReadTillDelim(strm, str, cdlm, quote_str);
     if(c == EOF) break;
     if(str == "_H:") {
-      c = LoadHeader_impl(strm, delim);
+      c = LoadHeader_impl(strm, delim, true);
       if(c == EOF) break;
       continue;
     }
@@ -2635,7 +2728,7 @@ int DataTable::LoadDataFixed_impl(istream& strm, FixedWidthSpec* fws) {
 }
 
 int DataTable::LoadHeader_strm(istream& strm, Delimiters delim) {
-  return LoadHeader_impl(strm, delim);
+  return LoadHeader_impl(strm, delim, true);
 }
 
 int DataTable::LoadDataRow_strm(istream& strm, Delimiters delim, bool quote_str) {
@@ -2656,7 +2749,9 @@ void DataTable::ResetLoadSchema() const {
   load_mat_idx.Reset();
 }
 
-void DataTable::LoadData_strm(istream& strm, Delimiters delim, bool quote_str, int max_recs) {
+void DataTable::LoadData_strm(istream& strm, Delimiters delim, bool quote_str,
+  int max_recs) 
+{
   StructUpdate(true);
   ResetLoadSchema();
   int st_row = rows;
@@ -2668,11 +2763,30 @@ void DataTable::LoadData_strm(istream& strm, Delimiters delim, bool quote_str, i
   StructUpdate(false);
 }
 
+void DataTable::ImportData_strm(istream& strm, bool headers, 
+    Delimiters delim, bool quote_str, int max_recs)
+{
+  StructUpdate(true);
+  ResetLoadSchema();
+  int c = ~EOF; // just set to something we know is not==EOF
+  int st_row = rows;
+  if (headers) {
+    c = LoadHeader_impl(strm, delim, false, quote_str);
+  } else {
+    NoHeader_impl(); // set up blindly -- all SAVE_DATA guys required, in order
+  }
+  while (c != EOF) {
+    c = LoadDataRow_impl(strm, delim, quote_str);
+    if ((max_recs > 0) && (rows - st_row >= max_recs)) break;
+  }
+  StructUpdate(false);
+}
+
 int DataTable::LoadHeader(const String& fname, Delimiters delim) {
   taFiler* flr = GetLoadFiler(fname, ".dat,.tsv,.csv,.txt,.log", false);
   int rval = 0;
   if(flr->istrm)
-    rval = LoadHeader_impl(*flr->istrm, delim);
+    rval = LoadHeader_impl(*flr->istrm, delim, true);
   flr->Close();
   taRefN::unRefDone(flr);
   return rval;
@@ -2690,7 +2804,9 @@ int DataTable::LoadDataRow(const String& fname, Delimiters delim, bool quote_str
   return rval;
 }
 
-void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str, int max_recs, bool reset_first) {
+void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str,
+  int max_recs, bool reset_first) 
+{
   taFiler* flr = GetLoadFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
   if(flr->istrm) {
     if(reset_first)
@@ -2699,6 +2815,83 @@ void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str, 
   }
   flr->Close();
   taRefN::unRefDone(flr);
+}
+
+void DataTable::LoadDataEx(const String& fname, LoadHeaders headers_req,
+    LoadDelimiters delim_req, LoadQuotes quote_str_req, int max_recs,
+    bool reset_first)
+{
+  taFiler* flr = GetLoadFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
+  if (flr->istrm) {
+    bool headers;
+    Delimiters delim;
+    bool quote_str;
+    bool native;
+    DetermineLoadDataParams(*flr->istrm, headers_req, delim_req, quote_str_req,
+      headers, delim, quote_str, native);
+
+    if (reset_first)
+      RemoveAllRows();
+    if (native) {
+      LoadData_strm(*flr->istrm, delim, quote_str, max_recs);
+    } else {
+      ImportData_strm(*flr->istrm, headers, delim, quote_str, max_recs);
+    }
+  }
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+void DataTable::DetermineLoadDataParams(istream& strm, 
+    LoadHeaders headers_req, LoadDelimiters delim_req, LoadQuotes quote_str_req,
+    bool& headers, Delimiters& delim, bool& quote_str, bool& native)
+{
+  // get first line -- always need this to differentiate Emergent vs. simple
+  String ln;
+  readline_auto(strm, ln);
+  native = ln.startsWith("_H:") ||  ln.startsWith("_D:");
+  
+  int todo = 0;
+  // headers is actually same as LH since the Emergent version is auto regardless
+  headers = (headers_req == LH_AUTO_YES);
+  
+  // for Emergent files, the default is TAB and will almost certainly be used
+  // but regardless, Emergent files have at least one delim
+  
+  // note: we guess the delims and quotes so we can warn if override seems wrong
+  // if it has TABS or COMMA then almost guaranteed that is delim, else assume SPACE
+  if (ln.contains('\t'))
+    delim = TAB;
+  else if (ln.contains(','))
+    delim = COMMA;
+  else {
+    // note: in rare case of only one col, the delim should NOT default to SPACE!
+    if (ln.contains(" "))
+      delim = SPACE;
+    else
+      // must be a simple file with only one col, so default to most likely ','
+      delim = COMMA;
+  }  
+  
+  if (delim_req != LD_AUTO) {
+    if ((int)delim != (int)delim_req) {
+      taMisc::Warning("requested delim and the delim in the file do not seem the same... consider using delim=AUTO");
+    }
+    delim = (Delimiters)delim_req;
+  }
+  // if any quote is present, assume quoted (since this is most likely header line)
+  int quo_cnt = ln.freq('"');
+  quote_str = (quo_cnt > 0);
+  
+  if (quote_str_req != LQ_AUTO) {
+    if (quote_str != (quote_str_req == LQ_YES)) {
+      taMisc::Warning("requested quotes and the quote status in the file do not seem the same... consider using quote_str=AUTO");
+    }
+    quote_str = (quote_str_req == LQ_YES);
+  }
+  // reset stream
+  streambuf* sb = strm.rdbuf();
+  sb->pubseekpos(0, ios_base::in);
 }
 
 void DataTable::LoadDataFixed(const String& fname, FixedWidthSpec* fws,

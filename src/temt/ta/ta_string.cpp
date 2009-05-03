@@ -1250,6 +1250,30 @@ TA_API int readline(istream& s, String& x, char terminator, int discard) {
   return i;
 }
 
+TA_API int readline_auto(istream& strm, String& x) {
+  int c;
+  uint i = 0;
+  x.makeUnique(x.mrep->len + ISTR_RESIZE_QUANTA);
+  
+  // read the characters, stopping at an eof or eol char
+  while (((c = strm.peek()) != EOF) && !((c == '\n') || (c == '\r'))) {
+    if (i >= x.mrep->sz - 1)
+      x.makeUnique(x.mrep->sz + ISTR_RESIZE_QUANTA);
+    x.mrep->s[i++] = (char)c;
+    strm.get();
+  }
+  
+  // discard the eol char(s)
+  strm.get();
+  // for Windows files, grab the extra cr
+  if ((c == '\r') && ((c = strm.peek()) == '\n'))
+    strm.get();
+  // terminate
+  x.mrep->s[i] = 0;
+  x.mrep->len = i;
+  return i;
+}
+
 
 // from John.Willis@FAS.RI.CMU.EDU
 

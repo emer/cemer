@@ -373,10 +373,10 @@ public:
   DataTable*		dataTable();
   // root data table this col belongs to
 
-  String	EncodeHeaderName(const MatrixGeom& dims) const;
+  String		EncodeHeaderName(const MatrixGeom& dims) const;
   // encode header information for saving to text files
-  static void 	DecodeHeaderName(String nm, String& base_nm, int& val_typ,
-				 MatrixGeom& mat_idx, MatrixGeom& mat_geom);
+  static void 		DecodeHeaderName(String nm, String& base_nm, int& val_typ,
+    MatrixGeom& mat_idx, MatrixGeom& mat_geom);
   // decode header information for loading from text files 
 
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); 
@@ -608,6 +608,163 @@ public:
   // #CAT_ObjectMgmt set data column flag state according to on bool (if true, set flag, if false, clear it)
 
   /////////////////////////////////////////////////////////
+  // saving/loading (file)
+
+  enum LoadHeaders { // type of headers
+    LH_AUTO_YES 	= -1, //  #LABEL_AUTO_YES auto for Emergent files, Yes for simple text files
+    LH_NO, // #LABEL_NO no headers (note: ignored if it is an Emergent file)
+  };
+
+  enum Delimiters {
+    TAB,
+    SPACE,
+    COMMA,
+  };
+
+  enum LoadDelimiters { // same as Delimiters, only for LoadData gui
+    LD_AUTO 	= -1, // #LABEL_AUTO
+    LD_TAB, // #LABEL_TAB
+    LD_SPACE, // #LABEL_SPACE
+    LD_COMMA, // #LABEL_COMMA
+  };
+
+  enum LoadQuotes { // same as Delimiters, only for LoadData gui
+    LQ_AUTO 	= -1, //  #LABEL_AUTO
+    LQ_NO, // #LABEL_NO
+    LQ_YES, // #LABEL_YES
+  };
+
+  static char		GetDelim(Delimiters delim);
+  // #IGNORE get delimiter from enum
+  static int		ReadTillDelim(istream& strm, String& str, const char delim,
+    bool quote_str);
+  // #IGNORE util function to read from stream into str until delim or newline or EOF
+
+  // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
+  virtual void 		SaveData_strm(ostream& strm, Delimiters delim = TAB,
+				      bool quote_str = true, bool save_headers=true);
+  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log saves data, one line per rec, with delimiter between columns, and optionally quoting strings -- if save-headers then special _H: formatted column header information is saved and data rows are marked with _D:
+  void 			SaveHeader_strm(ostream& strm, Delimiters delim = TAB,
+	bool row_mark = true, int col_fr = 0, int col_to = -1)
+    {SaveHeader_strm_impl(strm, delim, row_mark, col_fr, col_to, true, false);}
+  // #CAT_XpertFile #EXT_dat,txt,log saves header information, with delimiter between columns, and optional row_mark _H:
+  virtual void 		SaveDataRow_strm(ostream& strm, int row=-1,
+				 Delimiters delim = TAB, bool quote_str = true,
+				 bool row_mark = true, int col_fr = 0, int col_to = -1); 
+  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; -ve cols/rows are relative to end -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
+  virtual void 		SaveDataRows_strm(ostream& strm, Delimiters delim = TAB,
+					  bool quote_str = true, bool row_mark=true); 
+  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log saves all rows of data (no header) with delimiter between columns, and optionally quoting strings -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
+
+  virtual void 		SaveData(const String& fname="", Delimiters delim = TAB,
+    bool quote_str = true, bool save_headers=true);
+  // #CAT_File saves data, one line per rec, with delimiter between columns, and optionally quoting strings; if save_headers then the _H: header line is saved and data lines have _D:, else they are bare
+  void 			SaveData_Gui(const String& fname="")
+    {SaveData(fname, TAB, true, true);}
+  // #CAT_File #LABEL_Save_Data #BUTTON #MENU #MENU_ON_Data #MENU_SEP_BEFORE #EXT_dat,txt,log #FILE_DIALOG_SAVE saves data in the default Emergent file format
+  virtual void 		AppendData(const String& fname="", Delimiters delim = TAB,
+				   bool quote_str = true, bool row_mark=true); 
+  // #CAT_File appends all of current datatable data to given file (does not output header; file assumed to be of same data structure -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
+  void 			SaveAppendData_Gui(const String& fname="")
+    {AppendData(fname, TAB, true, true);}
+  // #CAT_File #LABEL_Save_Append_Data #MENU #EXT_dat,txt,log  #FILE_DIALOG_APPEND appends all of current datatable data to given file in Emergent file format (does not output header; file assumed to be of same data structure)
+  virtual void 		SaveHeader(const String& fname="", Delimiters delim = TAB);
+  // #CAT_File saves header information in Emergent file format, with delimiter between columns
+  void 			SaveHeader_Gui(const String& fname="")
+    {SaveHeader(fname, TAB);}
+  // #CAT_File #MENU #LABEL_Save_Header #EXT_dat,txt,log saves #FILE_DIALOG_SAVE saves header information in Emergent file format
+  virtual void 		SaveDataRow(const String& fname="", int row=-1, 
+    Delimiters delim = TAB, bool quote_str = true, bool row_mark=true); 
+  // #CAT_File saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
+
+  virtual void		SaveDataLog(const String& fname="", bool append=false,
+				    bool dmem_proc_0 = true);
+  // #CAT_File #EXT_dat,tsv,csv,txt,log #FILE_DIALOG_SAVE incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file.  writes the header first if not appending to existing file.  if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write
+  virtual void		CloseDataLog();
+  // #CAT_File close the data log file if it was previously open
+  virtual bool		WriteDataLogRow();
+  // #CAT_File write the current row to the data log, if it is open (returns true if successfully wrote) -- this is automatically called by WriteClose 
+
+  virtual void 		LoadData_strm(istream& strm, Delimiters delim = TAB,
+				 bool quote_str = true, int max_recs = -1);
+  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
+  virtual int 		LoadHeader_strm(istream& strm, Delimiters delim = TAB);
+  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end) -- note: Emergent-native does not use quotes in header line and quote_str is ignore when native=true
+  virtual int 		LoadDataRow_strm(istream& strm, Delimiters delim = TAB,
+    bool quote_str = true);
+  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
+  int 			LoadDataRowEx_strm(istream& strm, Delimiters delim = TAB,
+    bool quote_str = true, bool reset_load_schema = true); // #IGNORE used by Server
+  virtual void 		LoadData(const String& fname, Delimiters delim = TAB,
+	bool quote_str = true, int max_recs = -1, bool reset_first=false);
+  // #CAT_File load Emergent format data, up to max num of recs (-1 for all), with delimiter between columns and optionally quoting strings, reset_first = remove any existing data prior to loading
+  void 			LoadData_Gui(const String& fname)
+    {LoadDataEx(fname, LH_AUTO_YES, LD_AUTO, LQ_AUTO, -1, true);}
+  // #CAT_File #LABEL_Load_Data #BUTTON #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load data in default Emergent data format; removes all existing data
+  void 			LoadDataEx(const String& fname, LoadHeaders headers = LH_AUTO_YES,
+    LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO, int max_recs = -1,
+    bool reset_first=false);
+  // #CAT_File #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD loads data in Emergent file format OR delimited import formats, up to max num of recs (-1 for all), reset_first = remove any existing data prior to loading
+  void 			LoadAppendData_Gui(const String& fname)
+    {LoadDataEx(fname, LH_AUTO_YES, LD_AUTO, LQ_AUTO, -1, true);}
+  // #CAT_File #LABEL_Load_Append_Data #MENU  #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load data in default Emergent data format; appends to existing data in table (doesn't reset first)
+  
+  void 			LoadDataFixed(const String& fname, FixedWidthSpec* fws, bool reset_first=false);
+  // #CAT_File loads data, using the specified fixed-width spec (usually in a Program), reset_first = remove any existing data prior to loading
+  virtual int 		LoadHeader(const String& fname, Delimiters delim = TAB);
+  // #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
+  virtual int 		LoadDataRow(const String& fname, Delimiters delim = TAB, bool quote_str = true);
+  // #CAT_File #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
+  void			ResetLoadSchema() const; // #IGNORE can be used by ex Server to reset the load schema at beginning of a load
+ 
+ 
+  void 			ExportHeader_strm(ostream& strm, Delimiters delim = TAB,
+	bool quote_str = true, int col_fr = 0, int col_to = -1)
+    {SaveHeader_strm_impl(strm, delim, false, col_fr, col_to, false, quote_str);}
+  // #CAT_XpertFile #EXT_csv,tsv,txt,log saves header information, with delimiter between columns
+  void 			ExportData_strm(ostream& strm, Delimiters delim = COMMA,
+    bool quote_str = true, bool headers = true);
+  void 			ExportData(const String& fname="", Delimiters delim = COMMA,
+    bool quote_str = true, bool headers = true);
+  // #CAT_File #MENU #MENU_ON_Data #MENU_SEP_BEFORE #EXT_csv,tsv,txt,log #FILE_DIALOG_SAVE exports data in text file format
+
+  void 			ImportData(const String& fname="", LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO, bool headers = true)
+    {LoadDataEx(fname, headers ? LH_AUTO_YES : LH_NO, LD_AUTO, LQ_AUTO, -1, true);}
+// #CAT_File #MENU #MENU_ON_Data #EXT_csv,tsv,txt,log #FILE_DIALOG_LOAD imports data in delimited text file format
+
+protected: // protected Load/Save guys
+  static int_Array	load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
+  static int_Array	load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info
+  
+  DataTableModel*	table_model;
+
+  void 			DecodeImportHeaderName(String nm, String& base_nm, 
+    int& cell_idx);
+  // decode header information for importing from text files -- if cell_idx >= 0 then we found an approprite mat col when nm was <Name>_<int>
+  virtual bool 		CopyCell_impl(DataCol* dar, int dest_row,
+    const DataTable& src, DataCol* sar, int src_row); // #IGNORE
+  void 			SaveHeader_strm_impl(ostream& strm, Delimiters delim,
+	bool row_mark, int col_fr, int col_to, bool native, bool quote_str);
+  // #IGNORE
+  virtual int 		LoadHeader_impl(istream& strm, Delimiters delim,
+    bool native, bool quote_str = false);
+  // #IGNORE #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
+  void			NoHeader_impl(); // #IGNORE sets up load indexes for no header -- expects all SAVE DATA cols to exist, up to end of each line in file
+  virtual int 		LoadDataRow_impl(istream& strm, Delimiters delim = TAB,
+					 bool quote_str = true);
+  void 			ImportData_strm(istream& strm, bool headers = true, 
+    Delimiters delim = COMMA, bool quote_str = true, int max_recs = -1);
+  // #IGNORE loads simple delimited data with undecorated headers and rows (such as csv files from Excel etc.)
+					 
+  // #IGNORE #CAT_File #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
+  bool 			SetValAsMatrix_impl(const taMatrix* val, DataCol* da, int row);
+  void 			DetermineLoadDataParams(istream& strm, 
+    LoadHeaders headers_req, LoadDelimiters delim_req, LoadQuotes quote_str_req,
+    bool& headers, Delimiters& delim, bool& quote_str, bool& native);
+
+public:
+  
+  /////////////////////////////////////////////////////////
   // columns
 
   int			cols() const { return data.size; }
@@ -699,7 +856,7 @@ public:
   virtual void		RemoveCol(int col);
   // #CAT_Columns removes indicated column; 'true' if removed
   void			RemoveAllCols()	{ Reset(); }
-  // #CAT_Columns #MENU #MENU_ON_Columns #CONFIRM remove all columns (and data) -- this cannot be undone!
+  // #CAT_Columns #MENU #MENU_ON_Columns #CONFIRM remove all columns (and data)
   virtual void		Reset();
   // #CAT_Columns remove all columns (and data) -- this cannot be undone!
 
@@ -979,92 +1136,6 @@ public:
   String		HeaderToTSV(); // #IGNORE for tsv save
   String		RangeToTSV(const CellRange& cr); // #IGNORE for clip operations
 
-  /////////////////////////////////////////////////////////
-  // saving/loading (file)
-
-  enum Delimiters {
-    TAB,
-    SPACE,
-    COMMA,
-  };
-
-  // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
-  virtual void 		SaveData_strm(ostream& strm, Delimiters delim = TAB,
-				      bool quote_str = true, bool save_headers=true);
-  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log saves data, one line per rec, with delimiter between columns, and optionally quoting strings -- if save-headers then special _H: formatted column header information is saved and data rows are marked with _D:
-  virtual void 		SaveHeader_strm(ostream& strm, Delimiters delim = TAB,
-					bool row_mark = true, int col_fr = 0, int col_to = -1);
-  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log saves header information, with delimiter between columns, and optionally quoting strings
-  virtual void 		SaveDataRow_strm(ostream& strm, int row=-1,
-				 Delimiters delim = TAB, bool quote_str = true,
-				 bool row_mark = true, int col_fr = 0, int col_to = -1); 
-  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; -ve cols/rows are relative to end -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
-  virtual void 		SaveDataRows_strm(ostream& strm, Delimiters delim = TAB,
-					  bool quote_str = true, bool row_mark=true); 
-  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log saves all rows of data (no header) with delimiter between columns, and optionally quoting strings -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
-
-  virtual void 		SaveData(const String& fname="", Delimiters delim = TAB,
-				 bool quote_str = true, bool save_headers=true);
-  // #CAT_File #BUTTON #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log #FILE_DIALOG_SAVE saves data, one line per rec, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser -- if save-headers then special _H: formatted column header information is saved and data rows are marked with _D:
-  virtual void 		AppendData(const String& fname="", Delimiters delim = TAB,
-				   bool quote_str = true, bool row_mark=true); 
-  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_APPEND appends all of current datatable data to given file (does not output header; file assumed to be of same data structure -- if data_tag then mark data rows with _D: at start (to differentiate from _H: headers)
-  virtual void 		SaveHeader(const String& fname="", Delimiters delim = TAB);
-  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log saves #FILE_DIALOG_SAVE header information, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
-  virtual void 		SaveDataRow(const String& fname="", int row=-1, Delimiters delim = TAB,
-				    bool quote_str = true, bool row_mark=true); 
-  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log #FILE_DIALOG_SAVE saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
-
-  virtual void		SaveDataLog(const String& fname="", bool append=false,
-				    bool dmem_proc_0 = true);
-  // #CAT_File #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log #FILE_DIALOG_SAVE incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file.  writes the header first if not appending to existing file.  if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write
-  virtual void		CloseDataLog();
-  // #CAT_File #MENU close the data log file if it was previously open
-  virtual bool		WriteDataLogRow();
-  // #CAT_File write the current row to the data log, if it is open (returns true if successfully wrote) -- this is automatically called by WriteClose 
-
-  static char		GetDelim(Delimiters delim);
-  // #IGNORE get delimiter from enum
-  static int		ReadTillDelim(istream& strm, String& str, const char delim, bool quote_str);
-  // #IGNORE util function to read from stream into str until delim or newline or EOF
-
-protected:
-  static int_Array	load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
-  static int_Array	load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info
-  
-  DataTableModel*	table_model;
-
-  virtual bool 		CopyCell_impl(DataCol* dar, int dest_row,
-    const DataTable& src, DataCol* sar, int src_row); // #IGNORE
-  virtual int 		LoadHeader_impl(istream& strm, Delimiters delim = TAB);
-  // #IGNORE #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
-  virtual int 		LoadDataRow_impl(istream& strm, Delimiters delim = TAB,
-					 bool quote_str = true);
-  // #IGNORE #CAT_File #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
-  bool 			SetValAsMatrix_impl(const taMatrix* val, DataCol* da, int row);
-
-public:
-  virtual void 		LoadData_strm(istream& strm, Delimiters delim = TAB,
-				 bool quote_str = true, int max_recs = -1);
-  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
-  virtual int 		LoadHeader_strm(istream& strm, Delimiters delim = TAB);
-  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
-  virtual int 		LoadDataRow_strm(istream& strm, Delimiters delim = TAB,
-    bool quote_str = true);
-  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
-  int 			LoadDataRowEx_strm(istream& strm, Delimiters delim = TAB,
-    bool quote_str = true, bool reset_load_schema = true); // #IGNORE used by Server
-  virtual void 		LoadData(const String& fname, Delimiters delim = TAB,
-				 bool quote_str = true, int max_recs = -1, bool reset_first=false);
-  // #CAT_File #BUTTON #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings, reset_first = remove any existing data prior to loading
-  void 			LoadDataFixed(const String& fname, FixedWidthSpec* fws, bool reset_first=false);
-  // #CAT_File loads data, using the specified fixed-width spec (usually in a Program), reset_first = remove any existing data prior to loading
-  virtual int 		LoadHeader(const String& fname, Delimiters delim = TAB);
-  // #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
-  virtual int 		LoadDataRow(const String& fname, Delimiters delim = TAB, bool quote_str = true);
-  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
-  void			ResetLoadSchema() const; // #IGNORE can be used by ex Server to reset the load schema at beginning of a load
- 
   /////////////////////////////////////////////////////////
   // calculated column values
 
