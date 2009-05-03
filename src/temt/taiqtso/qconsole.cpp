@@ -183,7 +183,7 @@ bool QConsole::stdDisplay(QTextStream* s) {
       promptDisp = false;
       append(line);
       if(logfile.isOpen()) {
-	logfile.write(line, line.length());
+	logfile.write(line.toLocal8Bit());
 	logfile.write("\n", strlen("\n"));
 	logfile.flush();
       }

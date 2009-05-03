@@ -6573,10 +6573,12 @@ iDocDataPanel::iDocDataPanel()
 
   url_box = new QHBoxLayout();    wb_box->addLayout(url_box);
 
-  bak_but = new QToolButton(Qt::LeftArrow, wb_widg, "");
+  bak_but = new QToolButton(wb_widg);
+  bak_but->setArrowType(Qt::LeftArrow);
   bak_but->setToolTip("Go backward one step in browsing history");
   url_box->addWidget(bak_but);
-  fwd_but = new QToolButton(Qt::RightArrow, wb_widg, "");
+  fwd_but = new QToolButton(wb_widg);
+  fwd_but->setArrowType(Qt::RightArrow);
   fwd_but->setToolTip("Go forward one step in browsing history");
   url_box->addWidget(fwd_but);
   url_box->addSpacing(taiM->hsep_c);
@@ -6634,6 +6636,7 @@ iDocDataPanel::iDocDataPanel()
 }
 
 iDocDataPanel::~iDocDataPanel() {
+  taiMisc::net_access_mgr->setMainWindow(NULL); // not us anymore -- someone else will set..
   m_doc = NULL;
 }
 
@@ -6730,6 +6733,8 @@ void iDocDataPanel::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
   taDoc* doc_ = this->doc();
   if(!doc_) return;
+
+  taiMisc::net_access_mgr->setMainWindow(viewerWindow());
 
   wiki_edit->setText(doc_->wiki);
   url_edit->setText(doc_->url);

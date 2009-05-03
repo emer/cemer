@@ -472,7 +472,7 @@ QByteArray iNetworkCookieJar::saveState () const
 {
   int version = 1;
   QByteArray data;
-  QDataStream stream(&data, QIODevice::WriteOnly);
+  QDataStream stream(&data, (QIODevice::OpenMode)QIODevice::WriteOnly);
 
   stream << qint32(iNetworkCookieJarMagic);
   stream << qint32(version);
@@ -484,7 +484,7 @@ bool iNetworkCookieJar::restoreState(const QByteArray &state)
 {
   int version = 1;
   QByteArray sd = state;
-  QDataStream stream(&sd, QIODevice::ReadOnly);
+  QDataStream stream(&sd, (QIODevice::OpenMode)QIODevice::ReadOnly);
   if (stream.atEnd())
     return false;
   qint32 marker;

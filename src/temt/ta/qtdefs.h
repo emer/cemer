@@ -82,7 +82,6 @@ class	QListWidgetItem;	// #IGNORE
 class	QMainWindow;		// #IGNORE 
 class	QMenu;			// #IGNORE  Qt4
 class	QMenuBar;		// #IGNORE 
-class	QMenuItem;		// #IGNORE 
 class	QMessageBox;		// #IGNORE 
 //class	QMimeSource;		// #IGNORE 
 class	QMimeData;		// #IGNORE 

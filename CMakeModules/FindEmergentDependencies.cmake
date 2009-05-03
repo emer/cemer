@@ -18,7 +18,7 @@ find_package(GSL)
 # setup QT_LIBRARIES, defines, etc through options, and the QT_USE_FILE thing does automagic
 # TODO: can't figure out why it is still complaining about qt3 support but it is
 # need to fix that!
-set(QT_USE_QT3SUPPORT 1)
+set(QT_USE_QT3SUPPORT 0)
 set(QT_USE_QTOPENGL 1)
 set(QT_USE_QTXML 1)
 set(QT_USE_QTNETWORK 1)

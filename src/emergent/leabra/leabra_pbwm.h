@@ -426,7 +426,7 @@ public:
   };
 
   float		off_accom;	// #DEF_0 how much of the maintenance current to apply to accommodation after turning a unit off
-  bool		out_gate_learn_mod; // modulate the learning as a function of whether the corresponding output gating layer fired Go, to enforce appropriate credit assignment to only learn when given stripe participated in output -- this is a discrete modulation (all or nothing)
+  bool		out_gate_learn_mod; // #HIDDEN NOTE: not currently functional!  modulate the learning as a function of whether the corresponding output gating layer fired Go, to enforce appropriate credit assignment to only learn when given stripe participated in output -- this is a discrete modulation (all or nothing)
   bool		allow_clamp;	// #DEF_false allow external hard clamp of layer (e.g., for testing)
 
   void 	Defaults()	{ Initialize(); }

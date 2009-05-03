@@ -1110,7 +1110,7 @@ bool TemtServer::OpenServer() {
 void  TemtServer::server_newConnection() {
   // setup data writing for hello or error block
   QByteArray block;
-  QDataStream out(&block, QIODevice::WriteOnly);
+  QDataStream out(&block, (QIODevice::OpenMode)QIODevice::WriteOnly);
   out.setVersion(QDataStream::Qt_4_0);
   
   // get the latest connection, and always set it to self-destruct on close

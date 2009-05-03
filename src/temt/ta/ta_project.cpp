@@ -1212,8 +1212,9 @@ void taProject::UpdateChangeLog() {
     if(prv_fname == cur_fname) prv_fname = "";
     else prv_fname = "(was: <code>" + prv_fname + "</code>)";
 
-    String nw_txt = "\n<li>" + tstamp + " " + vers + " " + user + " <code>" + cur_fname
-      + "</code>" + prv_fname + "<br>\n";
+    String nw_txt = "\n<li>" + tstamp
+      + " version: " + vers + " user: " + user + " file_name: <code>" + cur_fname
+      + "</code> " + prv_fname + "<br>\n";
     if(!last_change_desc.empty()) nw_txt += "  " + last_change_desc + "\n";
 
     taDoc* doc = docs.FindName("ChangeLog");

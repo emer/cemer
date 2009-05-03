@@ -159,7 +159,10 @@ void taPlugins::EnumeratePlugins() {
 #else // huh??? what else?
     filt += ".*";
 #endif
-    pluginsDir.setNameFilter(filt);
+    QStringList fltrs;
+    fltrs.append(filt);
+
+    pluginsDir.setNameFilters(fltrs);
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
       // if this is the default release build, then reject any others
       if (taMisc::build_str.empty()) {
