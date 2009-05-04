@@ -65,6 +65,51 @@
 
 #include <qnetworkaccessmanager.h>
 
+class QDataStream;
+
+class iAuthRecord : public QObject { 
+  // #IGNORE one authentication record
+  Q_OBJECT
+public:
+  iAuthRecord(QObject* parent = NULL);
+  iAuthRecord(const iAuthRecord& cp);
+  ~iAuthRecord();
+
+  iAuthRecord& operator=(const iAuthRecord& cp) {
+    realm = cp.realm;  host = cp.host; user = cp.user; password = cp.password;
+  }
+
+  QString  realm;
+  QString  host;
+  QString  user;
+  QString  password;		
+
+  friend QDataStream &operator<<(QDataStream &, const iAuthRecord&);
+  friend QDataStream &operator>>(QDataStream &, iAuthRecord&);
+};
+
+class iAuthSaver : public QObject { 
+  // #IGNORE saves authentication data
+  Q_OBJECT
+public:
+  iAuthSaver(QObject* parent = NULL);
+  ~iAuthSaver();
+
+  QList<iAuthRecord>  savedAuths;
+
+  bool  findAuthRecord(QString& user, QString& password, const QString& realm,
+		       const QString& host) const;
+  // find authentication record based on realm and host, returning user and password into args -- returns false if not found, true if found
+  bool  saveAuthRecord(const QString& user, const QString& password, const QString& realm,
+		       const QString& host);
+  // save given authentication record, and save to disk too -- returns true if updating existing record, false if new record
+
+public slots:
+  void	load();			// save to persistent file storage
+  void	save();			// load from persistent file storage
+};
+
+
 class QMainWindow;
 class iNetworkAccessManager : public QNetworkAccessManager {
   Q_OBJECT
@@ -75,6 +120,7 @@ public:
 
 protected:
   QMainWindow* 	m_main_win;
+  iAuthSaver    m_auth_saver;			  
 
 public slots:
   void loadSettings();

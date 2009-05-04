@@ -892,6 +892,104 @@ protected: // impl
   // impl for checking children; only clear ok (if invalid), don't set
 
   ///////////////////////////////////////////////////////////////////////////
+  //   Clipboard Queries and Edit Actions (for drag-n-drop, cut/paste etc)
+  //   ms=NULL indicates SRC ops/context, else DST ops
+  //  child="item here" for item, else NULL for "into" parent
+#ifdef TA_GUI
+public:
+  void			QueryEditActions(taiMimeSource* ms, int& allowed, int& forbidden);
+  // #IGNORE
+  int			EditAction(taiMimeSource* ms, int ea); // #IGNORE 
+  
+  void			ChildQueryEditActions(const MemberDef* md, const taBase* child,
+	taiMimeSource* ms, int& allowed, int& forbidden);
+  // #IGNORE gives ops allowed on child, md valid if obj is a member of query parent, o/w NULL; child is sel item, or NULL if querying parent only; ms is clipboard or drop contents
+  virtual int		ChildEditAction(const MemberDef* md, taBase* child,
+        taiMimeSource* ms, int ea);
+  // #IGNORE note: multi source ops will have child=NULL
+  
+protected: //  note: all impl code is in ta_qtclipdata.cpp
+  virtual void		QueryEditActionsS_impl(int& allowed, int& forbidden);
+    // called once per src item, by controller
+  virtual void		QueryEditActionsD_impl(taiMimeSource* ms,
+    int& allowed, int& forbidden);
+    // gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL
+  virtual int		EditActionS_impl(int ea);
+    // called once per src item, by controller
+  virtual int		EditActionD_impl(taiMimeSource* ms, int ea);
+    // called once per ms item, in 0:N order, by ourself
+  
+  virtual void		ChildQueryEditActions_impl(const MemberDef* md,
+    const taBase* child, const taiMimeSource* ms,
+    int& allowed, int& forbidden);
+    // called in 
+  virtual int		ChildEditAction_impl(const MemberDef* md, taBase* child,
+	taiMimeSource* ms, int ea);
+    // op implementation (non-list/grp)
+#endif // TA_USE_GUI
+  ///////////////////////////////////////////////////////////////////////////
+  // 	Browser gui
+public:
+  static const KeyString key_name; // #IGNORE "name" -- Name, note: can easily be empty
+  static const KeyString key_type; // #IGNORE "type" -- def to typename, but some like progvar append their own subtype
+  static const KeyString key_type_desc; // #IGNORE "type_desc" -- static type description
+  static const KeyString key_desc; // #IGNORE "desc" -- per-instance desc if available (def to type)
+  static const KeyString key_disp_name; // #IGNORE "disp_name" -- DisplayName, never empty
+  static const KeyString key_unique_name; // #IGNORE "unique_name" -- DottedName, for token lists, DisplayName if empty
+  
+  virtual const String	statusTip(const KeyString& key = "") const;
+  // #IGNORE the default text returned for StatusTipRole (key usually not needed)
+  virtual const String	GetToolTip(const KeyString& key) const;
+  // #IGNORE the default text returned for ToolTipRole
+  virtual String	GetColText(const KeyString& key, int itm_idx = -1) const;
+  // #IGNORE default keys are: name, type, desc, disp_name
+  virtual const QVariant GetColData(const KeyString& key, int role) const;
+  // #IGNORE typ roles are ToolTipRole, StatusTipRole; key can be blank if not col-specific
+  
+protected:
+  virtual String 	ChildGetColText_impl(taBase* child, const KeyString& key, 
+    int itm_idx = -1) const {return _nilKeyString;}
+
+  ///////////////////////////////////////////////////////////////////////////
+  //	Edit Dialog gui
+public:  
+  // NOTE: this plain Edit seems weird and vestigial and should be nuked:
+  virtual bool		Edit();
+  // #CAT_Display Edit this object using the gui -- this will be an edit dialog or an edit panel depending on ...???
+  virtual bool		EditDialog(bool modal = false);
+  // #MENU #ARGC_0 #MENU_ON_Object #MENU_SEP_BEFORE #MENU_CONTEXT #NO_SCRIPT #CAT_Display Edit this object in a popup dialog using the gui (if modal == true, the edit dialog blocks all other gui operations until the user closes it)
+  virtual bool		EditPanel(bool new_tab = false, bool pin_tab = false);
+  // #MENU #ARGC_0 #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT #CAT_Display Edit this object in a panel in the gui browser (if new_tab == true, then a new edit panel tab is opened for it, if pin_tab == true then the new tab is pinned in place (option ignored for new_tab == false))
+  virtual bool		BrowserSelectMe();
+  // #CAT_Display select this item in the main project browser (only works if gui is active, etc) -- returns success
+  virtual bool		BrowserExpandAll();
+  // #CAT_Display expand all sub-leaves under this item in the browser
+  virtual bool		BrowserCollapseAll();
+  // #CAT_Display collapse all sub-leaves under this item in the browser
+  virtual void		BrowseMe();
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #CAT_Display show this object in its own browser 
+  virtual bool		GuiFindFromMe(const String& find_str="");
+  // #CAT_Display activate the gui find dialog starting from this object, with given find string
+  // #CAT_Display reshows any open edit dialogs for this object
+  virtual const iColor GetEditColor(bool& ok); // #IGNORE background color for edit dialog
+  virtual const iColor GetEditColorInherit(bool& ok);
+  // #IGNORE background color for edit dialog, include inherited colors from parents
+#if defined(TA_GUI) && !defined(__MAKETA__) 
+  virtual const QPixmap* GetDataNodeBitmap(int, int& flags_supported) const
+    {return NULL; } // #IGNORE gets the NodeBitmapFlags for the tree or list node -- see ta_qtbrowse_def.h
+#endif
+  virtual String	StringFieldLookupFun(const String& cur_txt, int cur_pos,
+					     const String& mbr_name, int& new_pos)
+  { return _nilString; } 
+  // #IGNORE special lookup function called when Ctrl-L is pressed for string members -- is passed current text and position of cursor, and name of member, and it must return the replacement text for the entire edit (if rval is empty, nothing happens)
+
+  virtual void		CallFun(const String& fun_name);
+  // #CAT_ObjectMgmt call function (method) of given name on this object, prompting for args using gui interface
+
+  virtual Variant	GetGuiArgVal(const String& fun_name, int arg_idx);
+  // #IGNORE overload this to get default initial arg values for given function and arg index -- function must be marked with ARG_VAL_FM_FUN[_n] comment directive, and _nilVariant rval will be ignored (NOTE: definitely call inherited:: because this is used for ChangeMyType!
+
+  ///////////////////////////////////////////////////////////////////////////
   //	Copying and changing type 
 public:
 
@@ -917,9 +1015,9 @@ public:
    // #IGNORE copy given member index no from source object of same type
 //note: CopyFrom/To should NOT be virtual -- specials should be handled in the impl routines, or the Copy_ routines
   bool			CopyFrom(TAPtr cpy_from);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #TYPE_ON_this #NO_SCOPE #CAT_ObjectMgmt Copy from given object into this object (this is a safe interface to UnSafeCopy)
+  // #TYPE_ON_this #NO_SCOPE #CAT_ObjectMgmt Copy from given object into this object (this is a safe interface to UnSafeCopy)
   bool			CopyTo(TAPtr cpy_to);
-  // #MENU #TYPE_ON_this #NO_SCOPE #CAT_ObjectMgmt Copy to given object from this object
+  // #TYPE_ON_this #NO_SCOPE #CAT_ObjectMgmt Copy to given object from this object
   // need both directions to more easily handle scoping of types on menus
   virtual bool		ChildCanDuplicate(const taBase* chld, bool quiet = true) const;
     // #IGNORE
@@ -927,9 +1025,9 @@ public:
     // #IGNORE duplicate given child, returning the new one (NULL if can't do it)
 
   bool			DuplicateMe();
-  // #MENU #CONFIRM #CAT_ObjectMgmt Make another copy of myself (done through owner)
+  // #CONFIRM #CAT_ObjectMgmt Make another copy of myself (done through owner)
   virtual bool		ChangeMyType(TypeDef* new_type);
-  // #MENU #TYPE_this #CAT_ObjectMgmt #ARG_VAL_FM_FUN Change me into a different type of object, copying current info (done through owner)
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #TYPE_this #CAT_ObjectMgmt #ARG_VAL_FM_FUN Change me into a different type of object, copying current info (done through owner)
   virtual void		UnSafeCopy(const taBase*) {} // #IGNORE custom version made for each class: if cp->Inherits(me) Copy(cp); else if me->Inherits(cp) cp.CastCopyTo(me) else CopyOther_impl(cp)
   virtual void		CastCopyTo(taBase*) const {}; // #IGNORE custom version made for every class, casts
   void			CopyToCustom(taBase* src) const; // #IGNORE DO NOT CALL -- this is only a public, static wrapper for the _impl
@@ -1063,6 +1161,31 @@ protected:  // Impl
   virtual String	GetStringRep_impl() const;
   // #IGNORE string representation, ex. for variants; default is typename:fullpath
 
+
+  /////////////////////////////////////////////////////////////////////
+  //		Select For Edit 
+public:  
+  virtual bool		SelectForEdit(MemberDef* member, SelectEdit* editor,
+      const String& extra_label = "", const String& sub_gp_nm = "");
+  // #MENU #MENU_ON_SelectEdit #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewEditor select a given member for editing in an edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits).  returns false if member was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
+  virtual bool		SelectForEditNm(const String& memb_nm, SelectEdit* editor,
+	const String& extra_label = _nilString, const String& sub_gp_nm = _nilString);
+  // #CAT_Display select a given member (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits).  returns false if member was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
+  virtual int		SelectForEditSearch(const String& memb_contains, SelectEdit*& editor);
+  // #MENU #NULL_OK_1 #NULL_TEXT_1_NewEditor #CAT_Display search among this object and any sub-objects for members containing given string, and add to given select editor (if NULL, a new one is created in .edits).  returns number found
+  virtual int		SelectForEditCompare(taBase* cmp_obj, SelectEdit*& editor, bool no_ptrs = true);
+  // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object, adding any differences to given select editor (if NULL, a new one is created in .edits).  returns number of differences.  no_ptrs = ignore differences in pointer fields
+  virtual String	DiffCompare(taBase* cmp_obj, taDoc*& doc);
+  // #MENU #NULL_OK_1  #NULL_TEXT_1_NewDoc  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object using a diff operation on their save file representations -- more robust to large differences than the select-for-edit version (if doc is NULL, a new one is created in .docs).  returns diff string as well.
+  virtual bool		SelectFunForEdit(MethodDef* function, SelectEdit* editor,
+	 const String& extra_label = "", const String& sub_gp_nm = "");
+  // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display select a given function (method) for calling in a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
+  virtual bool		SelectFunForEditNm(const String& function_nm, SelectEdit* editor,
+	   const String& extra_label = _nilString, const String& sub_gp_nm = _nilString);
+  // #CAT_Display select a given method (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits)  returns false if method was already selected.   extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
+  virtual void		GetSelectText(MemberDef* mbr, String extra_label,
+    String& lbl, String& desc) const; // #IGNORE supply extra_label (optional); provides the canonical lbl and (if empty) desc -- NOTE: routine is in ta_seledit.cpp
+  
   ///////////////////////////////////////////////////////////////////////////
   //	User Data: optional configuration settings for objects
 public:
@@ -1100,11 +1223,13 @@ public:
   // #CAT_UserData make new (or change existing) simple user data entry with given name and value; returns item, which can be ignored
   void			SetUserData_Gui(const String& key, const Variant& value,
     const String& desc);
-  // #CAT_UserData #MENU #MENU_CONTEXT #LABEL_SetUserData make new (or change existing) simple user data entry with given name and value (desc optional) -- this is how to get User Data editor panel to show up the first time
+  // #CAT_UserData #MENU #MENU_ON_Object #MENU_CONTEXT #LABEL_Set_User_Data make new (or change existing) simple user data entry with given name and value (desc optional) -- this is how to get User Data editor panel to show up the first time
   bool			RemoveUserData(const String& key);
   // #CAT_UserData removes data for indicated key; returns true if it existed
-  taDoc*		GetDocLink() const; // #CAT_UserData #EXPERT gets a linked Doc, if any; you can use this to test for existence
-  void			SetDocLink(taDoc* doc); // #CAT_UserData #MENU #MENU_CONTEXT #DROP1 #NULL_OK set a link to a doc from the .docs collection -- the doc will then show up automatically in a panel for this obj -- set to NULL to remove it
+  taDoc*		GetDocLink() const;
+  // #CAT_UserData #EXPERT gets a linked Doc, if any; you can use this to test for existence
+  void			SetDocLink(taDoc* doc);
+  // #CAT_UserData #MENU #MENU_CONTEXT #DROP1 #NULL_OK set a link to a doc from the .docs collection -- the doc will then show up automatically in a panel for this obj -- set to NULL to remove it
   
   bool		HasOption(const char* op) const
   { return GetTypeDef()->HasOption(op); }
@@ -1114,130 +1239,10 @@ public:
   // #IGNORE 
 
   ///////////////////////////////////////////////////////////////////////////
-  //   Clipboard Queries and Edit Actions (for drag-n-drop, cut/paste etc)
-  //   ms=NULL indicates SRC ops/context, else DST ops
-  //  child="item here" for item, else NULL for "into" parent
-#ifdef TA_GUI
-public:
-  void			QueryEditActions(taiMimeSource* ms, int& allowed, int& forbidden);
-  // #IGNORE
-  int			EditAction(taiMimeSource* ms, int ea); // #IGNORE 
-  
-  void			ChildQueryEditActions(const MemberDef* md, const taBase* child,
-	taiMimeSource* ms, int& allowed, int& forbidden);
-  // #IGNORE gives ops allowed on child, md valid if obj is a member of query parent, o/w NULL; child is sel item, or NULL if querying parent only; ms is clipboard or drop contents
-  virtual int		ChildEditAction(const MemberDef* md, taBase* child,
-        taiMimeSource* ms, int ea);
-  // #IGNORE note: multi source ops will have child=NULL
-  
-protected: //  note: all impl code is in ta_qtclipdata.cpp
-  virtual void		QueryEditActionsS_impl(int& allowed, int& forbidden);
-    // called once per src item, by controller
-  virtual void		QueryEditActionsD_impl(taiMimeSource* ms,
-    int& allowed, int& forbidden);
-    // gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL
-  virtual int		EditActionS_impl(int ea);
-    // called once per src item, by controller
-  virtual int		EditActionD_impl(taiMimeSource* ms, int ea);
-    // called once per ms item, in 0:N order, by ourself
-  
-  virtual void		ChildQueryEditActions_impl(const MemberDef* md,
-    const taBase* child, const taiMimeSource* ms,
-    int& allowed, int& forbidden);
-    // called in 
-  virtual int		ChildEditAction_impl(const MemberDef* md, taBase* child,
-	taiMimeSource* ms, int ea);
-    // op implementation (non-list/grp)
-#endif // TA_USE_GUI
-  ///////////////////////////////////////////////////////////////////////////
-  // 	Browser gui
-public:
-  static const KeyString key_name; // #IGNORE "name" -- Name, note: can easily be empty
-  static const KeyString key_type; // #IGNORE "type" -- def to typename, but some like progvar append their own subtype
-  static const KeyString key_type_desc; // #IGNORE "type_desc" -- static type description
-  static const KeyString key_desc; // #IGNORE "desc" -- per-instance desc if available (def to type)
-  static const KeyString key_disp_name; // #IGNORE "disp_name" -- DisplayName, never empty
-  static const KeyString key_unique_name; // #IGNORE "unique_name" -- DottedName, for token lists, DisplayName if empty
-  
-  virtual const String	statusTip(const KeyString& key = "") const;
-  // #IGNORE the default text returned for StatusTipRole (key usually not needed)
-  virtual const String	GetToolTip(const KeyString& key) const;
-  // #IGNORE the default text returned for ToolTipRole
-  virtual String	GetColText(const KeyString& key, int itm_idx = -1) const;
-  // #IGNORE default keys are: name, type, desc, disp_name
-  virtual const QVariant GetColData(const KeyString& key, int role) const;
-  // #IGNORE typ roles are ToolTipRole, StatusTipRole; key can be blank if not col-specific
-  
-protected:
-  virtual String 	ChildGetColText_impl(taBase* child, const KeyString& key, 
-    int itm_idx = -1) const {return _nilKeyString;}
-
-  ///////////////////////////////////////////////////////////////////////////
-  //	Edit Dialog gui
-public:  
-  // NOTE: this plain Edit seems weird and vestigial and should be nuked:
-  virtual bool		Edit();
-  // #CAT_Display Edit this object using the gui -- this will be an edit dialog or an edit panel depending on ...???
-  virtual bool		EditDialog(bool modal = false);
-  // #MENU #ARGC_0 #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT #CAT_Display Edit this object in a popup dialog using the gui (if modal == true, the edit dialog blocks all other gui operations until the user closes it)
-  virtual bool		EditPanel(bool new_tab = false, bool pin_tab = false);
-  // #MENU #ARGC_0 #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT #CAT_Display Edit this object in a panel in the gui browser (if new_tab == true, then a new edit panel tab is opened for it, if pin_tab == true then the new tab is pinned in place (option ignored for new_tab == false))
-  virtual bool		BrowserSelectMe();
-  // #CAT_Display select this item in the main project browser (only works if gui is active, etc) -- returns success
-  virtual bool		BrowserExpandAll();
-  // #CAT_Display expand all sub-leaves under this item in the browser
-  virtual bool		BrowserCollapseAll();
-  // #CAT_Display collapse all sub-leaves under this item in the browser
-  virtual void		BrowseMe();
-  // #MENU #MENU_ON_Object #MENU_SEP_AFTER #MENU_CONTEXT #CAT_Display show this object in its own browser 
-//obs  virtual bool		ReShowEdit(bool force = false);
-  virtual bool		GuiFindFromMe(const String& find_str="");
-  // #CAT_Display activate the gui find dialog starting from this object, with given find string
-  // #CAT_Display reshows any open edit dialogs for this object
-  virtual const iColor GetEditColor(bool& ok); // #IGNORE background color for edit dialog
-  virtual const iColor GetEditColorInherit(bool& ok);
-  // #IGNORE background color for edit dialog, include inherited colors from parents
-#if defined(TA_GUI) && !defined(__MAKETA__) 
-  virtual const QPixmap* GetDataNodeBitmap(int, int& flags_supported) const
-    {return NULL; } // #IGNORE gets the NodeBitmapFlags for the tree or list node -- see ta_qtbrowse_def.h
-#endif
-  virtual String	StringFieldLookupFun(const String& cur_txt, int cur_pos,
-					     const String& mbr_name, int& new_pos)
-  { return _nilString; } 
-  // #IGNORE special lookup function called when Ctrl-L is pressed for string members -- is passed current text and position of cursor, and name of member, and it must return the replacement text for the entire edit (if rval is empty, nothing happens)
-
-  virtual void		CallFun(const String& fun_name);
-  // #CAT_ObjectMgmt call function (method) of given name on this object, prompting for args using gui interface
-
-  virtual Variant	GetGuiArgVal(const String& fun_name, int arg_idx);
-  // #IGNORE overload this to get default initial arg values for given function and arg index -- function must be marked with ARG_VAL_FM_FUN[_n] comment directive, and _nilVariant rval will be ignored (NOTE: definitely call inherited:: because this is used for ChangeMyType!
-  
-  virtual bool		SelectForEdit(MemberDef* member, SelectEdit* editor,
-      const String& extra_label = "", const String& sub_gp_nm = "");
-  // #MENU #MENU_ON_SelectEdit #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewEditor select a given member for editing in an edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits).  returns false if member was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
-  virtual bool		SelectForEditNm(const String& memb_nm, SelectEdit* editor,
-	const String& extra_label = _nilString, const String& sub_gp_nm = _nilString);
-  // #CAT_Display select a given member (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits).  returns false if member was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
-  virtual int		SelectForEditSearch(const String& memb_contains, SelectEdit*& editor);
-  // #MENU #NULL_OK_1 #NULL_TEXT_1_NewEditor #CAT_Display search among this object and any sub-objects for members containing given string, and add to given select editor (if NULL, a new one is created in .edits).  returns number found
-  virtual int		SelectForEditCompare(taBase* cmp_obj, SelectEdit*& editor, bool no_ptrs = true);
-  // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object, adding any differences to given select editor (if NULL, a new one is created in .edits).  returns number of differences.  no_ptrs = ignore differences in pointer fields
-  virtual String	DiffCompare(taBase* cmp_obj, taDoc*& doc);
-  // #MENU #NULL_OK_1  #NULL_TEXT_1_NewDoc  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object using a diff operation on their save file representations -- more robust to large differences than the select-for-edit version (if doc is NULL, a new one is created in .docs).  returns diff string as well.
-  virtual bool		SelectFunForEdit(MethodDef* function, SelectEdit* editor,
-	 const String& extra_label = "", const String& sub_gp_nm = "");
-  // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display select a given function (method) for calling in a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
-  virtual bool		SelectFunForEditNm(const String& function_nm, SelectEdit* editor,
-	   const String& extra_label = _nilString, const String& sub_gp_nm = _nilString);
-  // #CAT_Display select a given method (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits)  returns false if method was already selected.   extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
-  virtual void		GetSelectText(MemberDef* mbr, String extra_label,
-    String& lbl, String& desc) const; // #IGNORE supply extra_label (optional); provides the canonical lbl and (if empty) desc -- NOTE: routine is in ta_seledit.cpp
-  
-  ///////////////////////////////////////////////////////////////////////////
   //	Closing 
 
   virtual void		CloseLater();
-  // #MENU #MENU_ON_Object #CONFIRM #NO_REVERT_AFTER #LABEL_Close_(Destroy) #NO_MENU_CONTEXT #CAT_ObjectMgmt PERMANENTLY Destroy this object!  This is not Iconify or close window..
+  // #NO_REVERT_AFTER #LABEL_Close_(Destroy) #CAT_ObjectMgmt PERMANENTLY Destroy this object!  This is not Iconify or close window..
   virtual void		Close();
   // #IGNORE an immediate version of Close for use in code (no waitproc delay)
   virtual bool		Close_Child(TAPtr obj);
@@ -1246,7 +1251,7 @@ public:
   // #IGNORE actually closes a child object (should be immediate child) but defers deletion to loop
 
   virtual void		Help();
-  // #MENU #CAT_Display get help on using this object
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_Display get help on using this object
 
   ///////////////////////////////////////////////////////////////////////////
   //	Updating pointers (when objects change type or are copied)

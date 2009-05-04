@@ -106,6 +106,7 @@ iNetworkAccessManager::iNetworkAccessManager(QObject *parent)
 
 void iNetworkAccessManager::loadSettings()
 {
+  m_auth_saver.load();
   QSettings settings;
   //     settings.beginGroup(QLatin1String("proxy"));
   //     QNetworkProxy proxy;
@@ -154,6 +155,27 @@ void iNetworkAccessManager::loadSettings()
 
 void iNetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthenticator *auth)
 {
+//   QString realm = Qt::escape(auth->realm());
+//   QString url_str = Qt::escape(reply->url().toString());
+//   QString host = Qt::escape(reply->url().host());
+  QString realm = auth->realm();
+  QString url_str = reply->url().toString();
+  QString host = reply->url().host();
+
+  static QString last_realm;
+  static QString last_host;
+
+  bool same_place = (realm == last_realm && host == last_host);
+  last_realm = realm;  last_host = host;
+
+  QString user; QString password;
+  bool found = m_auth_saver.findAuthRecord(user, password, realm, host);
+  if(found && !same_place) {
+    auth->setUser(user);
+    auth->setPassword(password);
+    return;
+  }
+
   QDialog dialog(m_main_win);
   dialog.setWindowFlags(Qt::Sheet);
 
@@ -164,13 +186,22 @@ void iNetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthen
   passwordDialog.iconLabel->setPixmap(m_main_win->style()->standardIcon(QStyle::SP_MessageBoxQuestion, 0, m_main_win).pixmap(32, 32));
 
   QString introMessage = tr("<qt>Enter username and password for \"%1\" at %2</qt>");
-  introMessage = introMessage.arg(Qt::escape(auth->realm())).arg(Qt::escape(reply->url().toString()));
+  introMessage = introMessage.arg(realm).arg(url_str);
   passwordDialog.introLabel->setText(introMessage);
   passwordDialog.introLabel->setWordWrap(true);
 
+  passwordDialog.userNameLineEdit->setText(user);
+  passwordDialog.passwordLineEdit->setText(password);
+
   if (dialog.exec() == QDialog::Accepted) {
-    auth->setUser(passwordDialog.userNameLineEdit->text());
-    auth->setPassword(passwordDialog.passwordLineEdit->text());
+    user = passwordDialog.userNameLineEdit->text();
+    password = passwordDialog.passwordLineEdit->text();
+    auth->setUser(user);
+    auth->setPassword(password);
+
+    if(passwordDialog.saveFlag->isChecked()) {
+      m_auth_saver.saveAuthRecord(user, password, realm, host);
+    }
   }
 }
 
@@ -286,3 +317,115 @@ void iNetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslErro
 }
 #endif
 
+/////////////////////////////////////////////////////////////////
+// 		AuthSaver
+
+#include <qdesktopservices.h>
+#include <qfile.h>
+#include <qdir.h>
+
+// tmp:
+#include <qdebug.h>
+
+QDataStream &operator<<(QDataStream &out, const iAuthRecord& aurec) {
+  out << aurec.realm << aurec.host << aurec.user << aurec.password;
+  return out;
+}
+
+QDataStream &operator>>(QDataStream &in, iAuthRecord& aurec) {
+  in >> aurec.realm >> aurec.host >> aurec.user >> aurec.password;
+  return in;
+}
+
+iAuthRecord::iAuthRecord(QObject* parent) : QObject(parent) {
+}
+
+iAuthRecord::iAuthRecord(const iAuthRecord& cp) {
+  realm = cp.realm;
+  host = cp.host;
+  user = cp.user;
+  password = cp.password;
+}
+
+iAuthRecord::~iAuthRecord() {
+}
+
+iAuthSaver::iAuthSaver(QObject* parent) : QObject(parent) {
+}
+
+iAuthSaver::~iAuthSaver() {
+}
+
+void iAuthSaver::save() {
+  QString directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+  if (directory.isEmpty())
+    directory = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
+  if (!QFile::exists(directory)) {
+    QDir dir;
+    dir.mkpath(directory);
+  }
+
+  QString fnm = directory + "/misc_net.ini";
+
+  QFile file(fnm);
+  if(!file.open(QIODevice::WriteOnly)) return; // todo: err
+  QDataStream stream(&file);
+  stream << savedAuths;
+  file.close();
+}
+
+void iAuthSaver::load() {
+  QString directory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+  if (directory.isEmpty())
+    directory = QDir::homePath() + QLatin1String("/.") + QCoreApplication::applicationName();
+  if (!QFile::exists(directory)) {
+    QDir dir;
+    dir.mkpath(directory);
+  }
+
+  QString fnm = directory + "/misc_net.ini";
+
+  QFile file(fnm);
+  if(!file.open(QIODevice::ReadOnly)) return; // todo: err
+  QDataStream stream(&file);
+  stream >> savedAuths;
+  file.close();
+}
+
+bool iAuthSaver::findAuthRecord(QString& user, QString& password, const QString& realm,
+				const QString& host) const {
+  user = "";
+  password = "";
+  for(int i=0;i<savedAuths.size(); i++) {
+    const iAuthRecord& aurec = savedAuths.at(i);
+    if(aurec.realm == realm && aurec.host == host) {
+      user = aurec.user;
+      password = aurec.password;
+      return true;
+    }
+  }
+  return false;
+}
+
+bool iAuthSaver::saveAuthRecord(const QString& user, const QString& password,
+				const QString& realm, const QString& host) {
+  bool rval = false;
+  for(int i=0;i<savedAuths.size(); i++) {
+    iAuthRecord& aurec = savedAuths[i];
+    if(aurec.realm == realm && aurec.host == host) {
+      aurec.user = user;
+      aurec.password = password;
+      rval = true;
+    }
+  }
+  if(!rval) {
+    iAuthRecord aurec;
+    aurec.realm = realm;
+    aurec.host = host;
+    aurec.user = user;
+    aurec.password = password;
+    savedAuths.append(aurec);
+  }
+  save();
+  return rval;
+}
