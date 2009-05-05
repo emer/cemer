@@ -77,6 +77,7 @@ public:
 
   iAuthRecord& operator=(const iAuthRecord& cp) {
     realm = cp.realm;  host = cp.host; user = cp.user; password = cp.password;
+    return *this;
   }
 
   QString  realm;
