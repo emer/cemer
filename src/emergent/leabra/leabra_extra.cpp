@@ -1819,6 +1819,34 @@ void TwoDValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_HardClamp(lay, net);
 }
 
+void TwoDValLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Settle_Init_TargFlags_Layer(lay, net);
+  // need to actually copy over targ to ext vals!
+  TwoDValLeabraLayer* tdlay = (TwoDValLeabraLayer*)lay;
+  if(lay->ext_flag & Unit::TARG) {	// only process target layers..
+    if(net->phase == LeabraNetwork::PLUS_PHASE) {
+      UNIT_GP_ITR(tdlay, 
+		  for(int k=0;k<twod.n_vals;k++) {
+		    TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+		    float x_val = tdlay->GetTwoDVal(TwoDValLeabraLayer::TWOD_X,
+						    TwoDValLeabraLayer::TWOD_TARG,
+						    k, gp_geom_pos.x, gp_geom_pos.y);
+		    float y_val = tdlay->GetTwoDVal(TwoDValLeabraLayer::TWOD_Y,
+						    TwoDValLeabraLayer::TWOD_TARG,
+						    k, gp_geom_pos.x, gp_geom_pos.y);
+		    tdlay->SetTwoDVal(x_val, TwoDValLeabraLayer::TWOD_X,
+				      TwoDValLeabraLayer::TWOD_EXT,
+				      k, gp_geom_pos.x, gp_geom_pos.y);
+		    tdlay->SetTwoDVal(y_val, TwoDValLeabraLayer::TWOD_Y,
+				      TwoDValLeabraLayer::TWOD_EXT,
+				      k, gp_geom_pos.x, gp_geom_pos.y);
+		  }
+		  );
+    }
+  }
+}
+
+
 void TwoDValLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Settle_Init_Layer(lay, net);
 

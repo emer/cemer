@@ -1599,7 +1599,7 @@ bool GaborV1Spec::SetGpGeomFmInputSize(TwoDCoord& input_size) {
       un_geom = (input_size / input_ovlp);
     }
     else {
-      un_geom = (input_size / input_ovlp) - 1;
+      un_geom = (input_size / input_ovlp) + 1;
     }
   }
   else {
@@ -1607,7 +1607,7 @@ bool GaborV1Spec::SetGpGeomFmInputSize(TwoDCoord& input_size) {
       gp_geom = (input_size / input_ovlp);
     }
     else {
-      gp_geom = (input_size / input_ovlp) - 1;
+      gp_geom = (input_size / input_ovlp) + 1;
     }
   }
   UpdateGeoms();
