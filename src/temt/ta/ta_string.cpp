@@ -1237,8 +1237,10 @@ TA_API int readline(istream& s, String& x, char terminator, int discard) {
   {
     if (ch != terminator || !discard)
     {
-      if (i >= x.mrep->sz - 1)
+      if (i >= x.mrep->sz - 1) {
+        x.mrep->len = i; // need to set length to this point, so resize works/copies
         x.makeUnique(x.mrep->sz + ISTR_RESIZE_QUANTA);
+      }
       x.mrep->s[i++] = ch;
     }
     if (ch == terminator)
@@ -1257,8 +1259,10 @@ TA_API int readline_auto(istream& strm, String& x) {
   
   // read the characters, stopping at an eof or eol char
   while (((c = strm.peek()) != EOF) && !((c == '\n') || (c == '\r'))) {
-    if (i >= x.mrep->sz - 1)
+    if (i >= x.mrep->sz - 1) {
+      x.mrep->len = i; // need to set length to this point, so resize works/copies
       x.makeUnique(x.mrep->sz + ISTR_RESIZE_QUANTA);
+    }
     x.mrep->s[i++] = (char)c;
     strm.get();
   }
