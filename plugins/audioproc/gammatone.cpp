@@ -1085,8 +1085,8 @@ void DeltaBlock::Initialize() {
 void DeltaBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   //note: these gains are just empirical
-  float gn = 2.0f; // at least, since we split signal in two
-  gn *= (degree+2);
+  float gn = 1.0f; 
+  gn *= (degree+2); // based on 1/n derivitive factor
   auto_gain.Set(gn, Level::UN_SCALE);
 }
 
@@ -1591,6 +1591,155 @@ exit:
   if (in_mat) delete in_mat;
   if (an) delete an;
 }
+
+
+//////////////////////////////////
+//  NormBlock			//
+//////////////////////////////////
+
+void NormBlock::Initialize() {
+  scale_type = NONE;
+  scale_factor = 1.0f;
+  norm_top_n = 1;
+  in_thresh.Set(-50, Level::UN_DBI); // good value for speech
+  norm_dt_out = 1.0f;
+  cur_norm_factor = 1.0;
+}
+
+void NormBlock::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+}
+
+void NormBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
+{
+  inherited::InitThisConfig_impl(check, quiet, ok);
+  switch (scale_type) {
+  case NONE: break;
+  case POWER:
+    if (CheckError((scale_factor <= 0), quiet, ok,
+    "NormBlock (scale_type=POWER): scale_factor must be > 0"))
+    return;
+    break;
+  }
+  
+  in_thresh_lin_scaled = Scale(in_thresh);
+  
+  DataBuffer* src_buff = in_block.GetBuffer();
+  if (!src_buff) return;
+//  float_Matrix* in_mat = &src_buff->mat;
+  // note: we can support any number of vals, chans, or items
+    
+  if (!ok) return;
+  
+  if (check) return;
+  cur_norm_factor = 1.0; // TODO: should we offer an init param???
+  const int in_fields = src_buff->fields; 
+  const int in_chans = src_buff->chans; 
+  const int in_vals = src_buff->vals; 
+  const int in_size = in_fields * in_chans * in_vals;
+  scaled.SetGeom(3, in_vals, in_chans, in_fields);
+  data.SetSize(in_size);
+  // have to restrict N to be <= in_size
+  norm_top_n = MIN(norm_top_n, in_size);
+  
+  // main normalized output data
+  DataBuffer* ob = &out_buff;
+  ob->fs = src_buff->fs;
+  ob->fr_dur.Set(src_buff->items, Duration::UN_SAMPLES);
+  ob->fields = src_buff->fields;
+  ob->chans = src_buff->chans;
+  ob->vals = src_buff->vals;
+  
+  // norm factor
+  ob = &out_buff_norm;
+  ob->fs = src_buff->fs;
+  ob->fr_dur.Set(src_buff->items, Duration::UN_SAMPLES);
+  ob->fields = 1;
+  ob->chans = 1;
+  ob->vals = 1;
+}
+
+void NormBlock::AcceptData_impl(SignalProcBlock* src_blk,
+    DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps)
+{
+  float_Matrix* in_mat = &src_buff->mat;
+  float_Matrix* out_mat = &out_buff.mat;
+  ps = PS_OK;
+  const int in_items = in_mat->dim(ITEM_DIM);
+  const int in_fields = in_mat->dim(FIELD_DIM); 
+  const int in_chans = in_mat->dim(CHAN_DIM); 
+  const int in_vals = in_mat->dim(VAL_DIM); 
+  
+  for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) { 
+    // first, get the incoming values, scale them, and put in topN buffer
+    data.Reset();
+    for (int f = 0; f < in_fields; ++f) 
+    for (int ch = 0; ch < in_chans; ++ch)
+    for (int v = 0; v < in_vals; ++v) {
+      float& val = scaled.FastEl(v, ch, f);
+      // retrieve the data for doing the delta calcs
+      val = Scale(in_mat->FastEl(v, ch, f, i, stage));
+      data.Add(val);
+    }
+    // do topN and calc scale value for this frame
+    data.Sort();
+    double topn_avg = 0;
+    for (int j = norm_top_n; j >= 1 ; --j)
+      topn_avg += data[data.size - j];
+    topn_avg /= norm_top_n;
+    double this_norm = 0; // if below thresh
+    // note: we don't update integrator when we fall below thresh because
+    // we assume sound already low and norm high, and will be needed likewise
+    // on next onset
+    if ((topn_avg < in_thresh_lin_scaled) ||
+      (topn_avg < 1e-12f)) // note: e-12 is arbitrary 0
+    { // "0" case
+      for (int f = 0; f < in_fields; ++f) 
+      for (int ch = 0; ch < in_chans; ++ch)
+      for (int v = 0; v < in_vals; ++v) {
+        out_mat->FastEl(v, ch, f, out_buff.item,
+          out_buff.stage) = 0;
+      }
+    } else { // normalize case
+      // apply the dt
+      cur_norm_factor = ((1.0 - norm_dt_out) * cur_norm_factor) +
+        (norm_dt_out / topn_avg); // note / inverts it to be scale
+      this_norm = cur_norm_factor;
+      for (int f = 0; f < in_fields; ++f) 
+      for (int ch = 0; ch < in_chans; ++ch)
+      for (int v = 0; v < in_vals; ++v) {
+        float val = scaled.FastEl(v, ch, f);
+        // retrieve the data for doing the delta calcs
+        val *= this_norm;
+        data.Add(val);
+        // output
+        out_mat->FastEl(v, ch, f, out_buff.item,
+          out_buff.stage) = val;
+      }
+    }
+    
+    if (out_buff.NextIndex()) {
+      NotifyClientsBuffStageFull(&out_buff, 0, ps);
+    }
+    
+    if (out_buff_norm.enabled) {
+      out_buff_norm.mat.FastEl(0, 0, 0, out_buff_norm.item,
+          out_buff_norm.stage) = this_norm;
+      if (out_buff_norm.NextIndex()) {
+        NotifyClientsBuffStageFull(&out_buff_norm, 1, ps);
+      }
+    }
+  }
+}
+
+float NormBlock::Scale(float val) {
+  switch (scale_type) {
+  NONE: return val;
+  POWER: return powf(val, scale_factor);
+  }
+  return val; // compiler food
+}
+
 
 //////////////////////////////////
 //  HarmonicSieveBlock		//

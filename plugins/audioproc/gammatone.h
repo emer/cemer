@@ -295,7 +295,7 @@ INHERITED(OutputBlock)
 public: //
   enum DerivDegree {
     FIRST,		// first derivative ("velocity")
-    SECOND		// second derivative ("acceleration")
+    //SECOND		// second derivative ("acceleration")
   };
   
   DerivDegree		degree; // type of delta to compute
@@ -472,6 +472,53 @@ private:
   void	Initialize();
   void	Destroy() {CutLinks();}
   SIMPLE_COPY(ANBlock)
+};
+
+
+class AUDIOPROC_API NormBlock: public StdBlock
+{ // ##CAT_Audioproc Norm Block -- normalizes a bank (chans/vals) of input values, with optional non-linear scaling, and threshold  
+INHERITED(StdBlock) 
+public: //
+  enum ScaleType {
+    NONE,	// no scale factor
+    POWER,	// scale_factor is the power (> 0) to which to raise input	
+  };
+  
+  DataBuffer		out_buff_norm; // #SHOW_TREE the normalization factor used -- this will be 0 if the input didn't meet threshold
+  
+  ScaleType		scale_type; //
+  float			scale_factor; // #CONDEDIT_OFF_scale_type:NONE the scale factor, as defined by the scale_type
+  int			norm_top_n; // #MIN_1 normalize to the average of the top N values
+  
+  Level			in_thresh; // this is the threshold of the topN avg (in input units) below which all data should be considered 0
+  
+  float			norm_dt_out; // #MIN_0 time constant of integration of norm, per output sample time period; 1.0 means update fully each item (note: we don't update when input falls below thresh)
+  
+  double		cur_norm_factor; // #READ_ONLY #NO_SAVE #SHOW the norm factor that was most recently applied
+  override int		outBuffCount() const {return 2;}
+  override DataBuffer* 	outBuff(int idx) {if (idx == 1)  
+    return &out_buff_norm; return inherited::outBuff(idx);}
+
+  
+  SIMPLE_LINKS(NormBlock);
+  TA_BASEFUNS(NormBlock) //
+
+public: //
+  float_Matrix		scaled; // #NO_SHOW  val, chan, field -- scaled
+  float_Array		data; // #NO_SHOW for topN sort
+protected:
+  float			in_thresh_lin_scaled; // linear and scaled
+  
+  override void		UpdateAfterEdit_impl();
+  override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok); 
+  
+  override void		AcceptData_impl(SignalProcBlock* src_blk,
+    DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps);
+  float			Scale(float val);
+private:
+  void	Initialize();
+  void	Destroy() {CutLinks();}
+  SIMPLE_COPY(NormBlock)
 };
 
 
