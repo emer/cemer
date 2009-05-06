@@ -1718,5 +1718,34 @@ private:
   void 	Destroy()		{ };
 };
 
+
+///////////////////////////////////////////////////////////////////
+//	Cerebellum-related special guys
+
+class LEABRA_API CerebConj2PrjnSpec : public ProjectionSpec {
+  // cerebellar-inspired conjunctive projection spec, 2nd order conjunctions between two topographic input maps -- first one in layer prjn is outer group (across unit groups), 2nd one is inner group (within unit groups)
+INHERITED(ProjectionSpec)
+public:
+  TwoDCoord 	 rf_width;	// size of the receptive field -- should be an even number
+  FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer)
+  float		gauss_sigma;	// gaussian width parameter for initial weight values to give a tuning curve
+  bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
+
+  virtual  void Connect_Inner(Projection* prjn);
+  // inner connect: unit position within the unit group determines sender location
+  virtual  void Connect_Outer(Projection* prjn);
+  // outer connect: unit_group position determines sender location
+
+  override void Connect_impl(Projection* prjn);
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+
+  TA_SIMPLE_BASEFUNS(CerebConj2PrjnSpec);
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
+
+
 #endif // leabra_extra_h
 

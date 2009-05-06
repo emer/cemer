@@ -2851,6 +2851,181 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
 }
 
 
+///////////////////////////////////////////////////////////////////
+//	Cerebellum-related special guys
+
+// todo: add a calc button for figuring out sizes!!
+
+void CerebConj2PrjnSpec::Initialize() {
+  init_wts = true;
+  rf_width = 6;
+  rf_move = 3.0f;
+  wrap = false;
+  gauss_sigma = 1.0f;
+}
+
+void CerebConj2PrjnSpec::Connect_impl(Projection* prjn) {
+  if(!(bool)prjn->from)	return;
+  if(prjn->layer->units.leaves == 0) // an empty layer!
+    return;
+  if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
+		 "requires recv layer to have unit groups!")) {
+    return;
+  }
+  if(prjn->recv_idx == 0)
+    Connect_Outer(prjn);
+  else
+    Connect_Inner(prjn);
+}
+
+void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn) {
+  int n_cons = rf_width.Product();
+  TwoDCoord rf_half_wd = rf_width / 2;
+  TwoDCoord rug_geo = prjn->layer->gp_geom;
+  TwoDCoord run_geo = prjn->layer->un_geom;
+  TwoDCoord su_geo = prjn->from->flat_geom;
+
+  TwoDCoord ruc;
+  for(ruc.y = 0; ruc.y < rug_geo.y; ruc.y++) {
+    for(ruc.x = 0; ruc.x < rug_geo.x; ruc.x++) {
+      Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+      if(!ru_gp) continue;
+
+      TwoDCoord su_st;
+      if(wrap) {
+	su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
+	su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
+      }
+      else {
+	su_st.x = (int)floor((float)ruc.x * rf_move.x);
+	su_st.y = (int)floor((float)ruc.y * rf_move.y);
+      }
+
+      su_st.WrapClip(wrap, su_geo);
+      TwoDCoord su_ed = su_st + rf_width;
+      if(wrap) {
+	su_ed.WrapClip(wrap, su_geo); // just wrap ends too
+      }
+      else {
+	if(su_ed.x > su_geo.x) {
+	  su_ed.x = su_geo.x; su_st.x = su_ed.x - rf_width.x;
+	}
+	if(su_ed.y > su_geo.y) {
+	  su_ed.y = su_geo.y; su_st.y = su_ed.y - rf_width.y;
+	}
+      }
+
+      for(int rui=0;rui<ru_gp->size;rui++) {
+	Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	ru_u->ConnectAlloc(n_cons, prjn);
+
+	TwoDCoord suc;
+	TwoDCoord suc_wrp;
+	for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
+	  for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
+	    suc_wrp = su_st + suc;
+	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+	      continue;
+	    Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
+	    if(su_u == NULL) continue;
+	    if(!self_con && (su_u == ru_u)) continue;
+
+	    ru_u->ConnectFrom(su_u, prjn); // don't check: saves lots of time!
+	  }
+	}
+      }
+    }
+  }
+}
+
+void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn) {
+  if(!(bool)prjn->from)	return;
+  if(prjn->layer->units.leaves == 0) // an empty layer!
+    return;
+  if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
+		 "requires recv layer to have unit groups!")) {
+    return;
+  }
+
+  int n_cons = rf_width.Product();
+  TwoDCoord rf_half_wd = rf_width / 2;
+  TwoDCoord rug_geo = prjn->layer->gp_geom;
+  TwoDCoord run_geo = prjn->layer->un_geom;
+  TwoDCoord su_geo = prjn->from->flat_geom;
+
+  for(int rug=0;rug<prjn->layer->units.gp.size;rug++) {
+    Unit_Group* ru_gp = (Unit_Group*)prjn->layer->units.gp[rug];
+    if(!ru_gp) continue;
+
+    TwoDCoord ruc;
+    for(ruc.y = 0; ruc.y < run_geo.y; ruc.y++) {
+      for(ruc.x = 0; ruc.x < run_geo.x; ruc.x++) {
+	Unit* ru_u = (Unit*)ru_gp->SafeEl(ruc.y * run_geo.x + ruc.x);
+	if(!ru_u) continue;
+	ru_u->ConnectAlloc(n_cons, prjn);
+
+	TwoDCoord su_st;
+	if(wrap) {
+	  su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
+	  su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
+	}
+	else {
+	  su_st.x = (int)floor((float)ruc.x * rf_move.x);
+	  su_st.y = (int)floor((float)ruc.y * rf_move.y);
+	}
+
+	su_st.WrapClip(wrap, su_geo);
+	TwoDCoord su_ed = su_st + rf_width;
+	if(wrap) {
+	  su_ed.WrapClip(wrap, su_geo); // just wrap ends too
+	}
+	else {
+	  if(su_ed.x > su_geo.x) {
+	    su_ed.x = su_geo.x; su_st.x = su_ed.x - rf_width.x;
+	  }
+	  if(su_ed.y > su_geo.y) {
+	    su_ed.y = su_geo.y; su_st.y = su_ed.y - rf_width.y;
+	  }
+	}
+
+	TwoDCoord suc;
+	TwoDCoord suc_wrp;
+	for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
+	  for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
+	    suc_wrp = su_st + suc;
+	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+	      continue;
+	    Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
+	    if(su_u == NULL) continue;
+	    if(!self_con && (su_u == ru_u)) continue;
+	    ru_u->ConnectFrom(su_u, prjn); // don't check: saves lots of time!
+	  }
+	}
+      }
+    }
+  }
+}
+
+void CerebConj2PrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
+  int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
+  
+  TwoDCoord rf_half_wd = rf_width / 2;
+  FloatTwoDCoord rf_ctr = rf_half_wd;
+  rf_ctr -= .5f;
+
+  for(int i=0; i<cg->cons.size; i++) {
+    int su_x = i % rf_width.x;
+    int su_y = i / rf_width.x;
+
+    float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
+    float wt = taMath_float::gauss_den_nonorm(dst, gauss_sigma);
+
+    cg->Cn(i)->wt = wt;
+  }
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////
