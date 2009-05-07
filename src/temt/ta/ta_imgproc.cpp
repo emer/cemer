@@ -1528,7 +1528,7 @@ void GaborV1Spec::UpdateGeoms() {
     if(wrap)
       trg_input_size = gp_geom * input_ovlp;
     else
-      trg_input_size = (gp_geom -1)* input_ovlp;
+      trg_input_size = (gp_geom+1)* input_ovlp;
     n_filters = 0;
     n_filter_gps = 1;
     n_filters_per_gp = 1;
@@ -1538,7 +1538,7 @@ void GaborV1Spec::UpdateGeoms() {
     if(wrap)
       trg_input_size = un_geom * input_ovlp;
     else
-      trg_input_size = (un_geom -1)* input_ovlp;
+      trg_input_size = (un_geom +1)* input_ovlp;
   }
   else {
     rf_ovlp = rf_width / 2;
@@ -1551,7 +1551,7 @@ void GaborV1Spec::UpdateGeoms() {
     if(wrap)
       trg_input_size = gp_geom * input_ovlp;
     else
-      trg_input_size = (gp_geom -1)* input_ovlp;
+      trg_input_size = (gp_geom +1)* input_ovlp;
   }
 
   rf_ovlp.UpdateAfterEdit();
@@ -1599,7 +1599,7 @@ bool GaborV1Spec::SetGpGeomFmInputSize(TwoDCoord& input_size) {
       un_geom = (input_size / input_ovlp);
     }
     else {
-      un_geom = (input_size / input_ovlp) + 1;
+      un_geom = (input_size / input_ovlp) - 1;
     }
   }
   else {
@@ -1607,7 +1607,7 @@ bool GaborV1Spec::SetGpGeomFmInputSize(TwoDCoord& input_size) {
       gp_geom = (input_size / input_ovlp);
     }
     else {
-      gp_geom = (input_size / input_ovlp) + 1;
+      gp_geom = (input_size / input_ovlp) - 1;
     }
   }
   UpdateGeoms();

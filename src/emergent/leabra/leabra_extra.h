@@ -1607,9 +1607,17 @@ public:
   FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving layer group
   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
   float		dog_surr_mult;	// multiplier on surround weight values for DoG -- can be used to turn off surround entirely or to amplify it
-  
+
+  TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  TwoDCoord 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+ 
   void 		Connect_impl(Projection* prjn);
   void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+
+  virtual bool	TrgRecvFmSend(int send_x, int send_y);
+  // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
+  virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
+  // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
 
   virtual void	GraphFilter(DataTable* disp_data, int recv_unit_no);
   // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a graph of a given unit number's gabor / blob filter
@@ -1727,9 +1735,12 @@ class LEABRA_API CerebConj2PrjnSpec : public ProjectionSpec {
 INHERITED(ProjectionSpec)
 public:
   TwoDCoord 	 rf_width;	// size of the receptive field -- should be an even number
-  FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer)
+  FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer) -- typically 1/2 rf_width
   float		gauss_sigma;	// gaussian width parameter for initial weight values to give a tuning curve
   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
+
+  TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  TwoDCoord 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
   virtual  void Connect_Inner(Projection* prjn);
   // inner connect: unit position within the unit group determines sender location
@@ -1739,12 +1750,16 @@ public:
   override void Connect_impl(Projection* prjn);
   override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
 
+  virtual bool	TrgRecvFmSend(int send_x, int send_y);
+  // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
+  virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
+  // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
+
   TA_SIMPLE_BASEFUNS(CerebConj2PrjnSpec);
 private:
   void	Initialize();
   void 	Destroy()		{ };
 };
-
 
 
 #endif // leabra_extra_h

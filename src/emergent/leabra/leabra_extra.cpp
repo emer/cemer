@@ -2467,6 +2467,44 @@ void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   }
 }
 
+bool V1RFPrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
+  trg_send_geom.x = send_x;
+  trg_send_geom.y = send_y;
+
+  if(wrap)
+    trg_recv_geom = (trg_send_geom / rf_move);
+  else
+    trg_recv_geom = (trg_send_geom / rf_move) - 1;
+
+  // now fix it the other way
+  if(wrap)
+    trg_send_geom = (trg_recv_geom * rf_move);
+  else
+    trg_send_geom = ((trg_recv_geom +1) * rf_move);
+
+  DataChanged(DCR_ITEM_UPDATED);
+  return (trg_send_geom.x == send_x && trg_send_geom.y == send_y);
+}
+
+bool V1RFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
+  trg_recv_geom.x = recv_x;
+  trg_recv_geom.y = recv_y;
+
+  if(wrap)
+    trg_send_geom = (trg_recv_geom * rf_move);
+  else
+    trg_send_geom = ((trg_recv_geom+1) * rf_move);
+
+  // now fix it the other way
+  if(wrap)
+    trg_recv_geom = (trg_send_geom / rf_move);
+  else
+    trg_recv_geom = (trg_send_geom / rf_move) - 1;
+
+  DataChanged(DCR_ITEM_UPDATED);
+  return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
+}
+
 void V1RFPrjnSpec::GraphFilter(DataTable* graph_data, int recv_unit_no) {
   rf_spec.GraphFilter(graph_data, recv_unit_no);
 }
@@ -2854,8 +2892,6 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
 ///////////////////////////////////////////////////////////////////
 //	Cerebellum-related special guys
 
-// todo: add a calc button for figuring out sizes!!
-
 void CerebConj2PrjnSpec::Initialize() {
   init_wts = true;
   rf_width = 6;
@@ -3012,17 +3048,56 @@ void CerebConj2PrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru
   
   TwoDCoord rf_half_wd = rf_width / 2;
   FloatTwoDCoord rf_ctr = rf_half_wd;
-  rf_ctr -= .5f;
+  if(rf_half_wd * 2 == rf_width) // even
+    rf_ctr -= .5f;
 
   for(int i=0; i<cg->cons.size; i++) {
     int su_x = i % rf_width.x;
     int su_y = i / rf_width.x;
 
     float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
-    float wt = taMath_float::gauss_den_nonorm(dst, gauss_sigma);
+    float wt = expf(-0.5 * dst / (gauss_sigma * gauss_sigma));
 
     cg->Cn(i)->wt = wt;
   }
+}
+
+bool CerebConj2PrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
+  trg_send_geom.x = send_x;
+  trg_send_geom.y = send_y;
+
+  if(wrap)
+    trg_recv_geom = (trg_send_geom / rf_move);
+  else
+    trg_recv_geom = (trg_send_geom / rf_move) - 1;
+
+  // now fix it the other way
+  if(wrap)
+    trg_send_geom = (trg_recv_geom * rf_move);
+  else
+    trg_send_geom = ((trg_recv_geom +1) * rf_move);
+
+  DataChanged(DCR_ITEM_UPDATED);
+  return (trg_send_geom.x == send_x && trg_send_geom.y == send_y);
+}
+
+bool CerebConj2PrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
+  trg_recv_geom.x = recv_x;
+  trg_recv_geom.y = recv_y;
+
+  if(wrap)
+    trg_send_geom = (trg_recv_geom * rf_move);
+  else
+    trg_send_geom = ((trg_recv_geom+1) * rf_move);
+
+  // now fix it the other way
+  if(wrap)
+    trg_recv_geom = (trg_send_geom / rf_move);
+  else
+    trg_recv_geom = (trg_send_geom / rf_move) - 1;
+
+  DataChanged(DCR_ITEM_UPDATED);
+  return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
 
 
