@@ -3738,6 +3738,24 @@ void iMainWindowViewer::resizeEvent(QResizeEvent* e) {
   taMisc::console_win->move(r.left(), nw_top);
 }
 
+void iMainWindowViewer::showEvent(QShowEvent* e) {
+  inherited::showEvent(e);
+  MainWindowViewer* db = viewer();
+  if (!db) return;
+  taBase* data = db->data();
+  if(!data) return;
+  tabMisc::DelayedFunCall_gui(data, "WindowShowHook"); // make it delayed so window should actuall show first!
+}
+
+void iMainWindowViewer::hideEvent(QHideEvent* e) {
+  inherited::hideEvent(e);
+  MainWindowViewer* db = viewer();
+  if (!db) return;
+  taBase* data = db->data();
+  if(!data) return;
+  tabMisc::DelayedFunCall_gui(data, "WindowHideHook");
+}
+
 void iMainWindowViewer::Constr_impl() {
   Constr_MainMenu_impl();
   Constr_Menu_impl();
@@ -5266,6 +5284,7 @@ bool iTabView::SetCurrentTab(int tab_idx) {
   iDataPanel* pan = tabPanel(tab_idx);
   tbPanels->setCurrentIndex(tab_idx);
   wsPanels->setCurrentWidget(pan);
+  pan->show();			// make it visible for sure!
   return true;
 }
 
@@ -6712,12 +6731,7 @@ void iDocDataPanel::doc_seturlPressed() {
   if(!doc_) return;
 
   String url = webview->url().toString();
-  String base_url = taMisc::GetWikiURL(doc_->wiki, true); // index.php
-  if(url.startsWith(base_url))
-    doc_->url = url.after(base_url);
-  else
-    doc_->url = url;
-  doc_->UpdateAfterEdit();	// this will drive all the updating, including toggle from local etc
+  doc_->SetURL(url);
 }
 
 bool iDocDataPanel::ignoreDataChanged() const {

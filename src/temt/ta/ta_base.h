@@ -974,6 +974,11 @@ public:
   virtual const iColor GetEditColor(bool& ok); // #IGNORE background color for edit dialog
   virtual const iColor GetEditColorInherit(bool& ok);
   // #IGNORE background color for edit dialog, include inherited colors from parents
+  virtual void		WindowShowHook() {};
+  // #CAT_Display #EXPERT this is called when a top-level window that represents this object becomes visible
+  virtual void		WindowHideHook() {};
+  // #CAT_Display #EXPERT this is called when a top-level window that represents this object becomes invisible
+
 #if defined(TA_GUI) && !defined(__MAKETA__) 
   virtual const QPixmap* GetDataNodeBitmap(int, int& flags_supported) const
     {return NULL; } // #IGNORE gets the NodeBitmapFlags for the tree or list node -- see ta_qtbrowse_def.h

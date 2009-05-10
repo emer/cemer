@@ -766,6 +766,9 @@ public:
   override void		GetValue();
   override void		Constr_Buttons();
   
+  override bool 	eventFilter(QObject *obj, QEvent *event);
+  // event filter to trigger apply button on Ctrl+Return
+
   taiStringDataHost(MemberDef* mbr, void* base, TypeDef* typ_ = NULL, 
 		    bool read_only_ = false, bool modal_ = false, QObject* parent = 0,
 		    bool line_nos_ = false);

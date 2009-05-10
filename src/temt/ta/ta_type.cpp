@@ -635,6 +635,8 @@ NamedURL	taMisc::wiki4_url;
 NamedURL	taMisc::wiki5_url;
 NamedURL	taMisc::wiki6_url;
 
+NameVar_PArray	taMisc::wikis;
+
 String_PArray	taMisc::css_include_paths;
 String_PArray	taMisc::load_paths;
 NameVar_PArray	taMisc::prog_lib_paths;
@@ -767,6 +769,25 @@ void taMisc::LoadConfig() {
 
 void taMisc::UpdateAfterEdit() {
 #ifndef NO_TA_BASE
+  wikis.Reset();
+  if(wiki1_url.name.nonempty() && wiki1_url.url.nonempty()) {
+    wikis.Add(NameVar(wiki1_url.name, wiki1_url.url));
+  }
+  if(wiki2_url.name.nonempty() && wiki2_url.url.nonempty()) {
+    wikis.Add(NameVar(wiki2_url.name, wiki2_url.url));
+  }
+  if(wiki3_url.name.nonempty() && wiki3_url.url.nonempty()) {
+    wikis.Add(NameVar(wiki3_url.name, wiki3_url.url));
+  }
+  if(wiki4_url.name.nonempty() && wiki4_url.url.nonempty()) {
+    wikis.Add(NameVar(wiki4_url.name, wiki4_url.url));
+  }
+  if(wiki5_url.name.nonempty() && wiki5_url.url.nonempty()) {
+    wikis.Add(NameVar(wiki5_url.name, wiki5_url.url));
+  }
+  if(wiki6_url.name.nonempty() && wiki6_url.url.nonempty()) {
+    wikis.Add(NameVar(wiki6_url.name, wiki6_url.url));
+  }
 #endif
 }
 
@@ -1184,13 +1205,6 @@ void taMisc::Init_Hooks() {
 
 void taMisc::Init_Defaults_PreLoadConfig() {
   thread_defaults.cpus = taPlatform::cpuCount();
-  // max_cpu
-  int max_cpus = FindArgByName("MaxCpus").toInt(); // 0 if doesn't exist
-  if ((max_cpus > 0) && (max_cpus <= taPlatform::cpuCount()))
-    thread_defaults.cpus = max_cpus;
-
-  if(thread_defaults.n_threads == -1)
-    thread_defaults.n_threads = thread_defaults.cpus;
 }
 
 void taMisc::Init_Defaults_PostLoadConfig() {
@@ -1209,6 +1223,40 @@ void taMisc::Init_Defaults_PostLoadConfig() {
 
   String curdir = GetCurrentPath();
   taMisc::load_paths.AddUnique(curdir);
+
+  // max_cpu
+  int max_cpus = FindArgByName("MaxCpus").toInt(); // 0 if doesn't exist
+  if ((max_cpus > 0) && (max_cpus <= taPlatform::cpuCount()))
+    thread_defaults.cpus = max_cpus;
+
+  if(thread_defaults.cpus > taPlatform::cpuCount())
+    thread_defaults.cpus = taPlatform::cpuCount();
+
+  if(thread_defaults.n_threads == -1)
+    thread_defaults.n_threads = thread_defaults.cpus;
+
+  int n_threads = FindArgByName("NThreads").toInt(); // 0 if doesn't exist
+  if(n_threads > 0) thread_defaults.n_threads = n_threads;
+  if(thread_defaults.n_threads > thread_defaults.cpus)
+    thread_defaults.n_threads = thread_defaults.cpus;
+
+  float chk_pct = FindArgByName("ThreadChunkPct").toFloat(); // 0 if doesn't exist
+  if(chk_pct > 0.0f) thread_defaults.chunk_pct = chk_pct;
+
+  int nib_chk = FindArgByName("ThreadNibbleChunk").toInt(); // 0 if doesn't exist
+  if(nib_chk > 0) thread_defaults.nibble_chunk = nib_chk;
+
+  int cmp_thr = FindArgByName("ThreadComputeThr").toFloat(); // 0 if doesn't exist
+  if(cmp_thr > 0.0f) thread_defaults.compute_thr = cmp_thr;
+
+  int min_un = FindArgByName("ThreadMinUnits").toInt(); // 0 if doesn't exist
+  if(min_un > 0) thread_defaults.min_units = min_un;
+
+  if(CheckArgByName("ThreadSendNetin")) {
+    thread_defaults.send_netin = FindArgByName("ThreadSendNetin").toBool();
+  }
+
+  UpdateAfterEdit();
 }
 
 void taMisc::Init_Args(int argc, const char* argv[]) {
@@ -1617,16 +1665,12 @@ String taMisc::FileDiff(const String& fname_a, const String& fname_b,
 }
 
 String taMisc::GetWikiURL(const String& wiki_name, bool add_index) {
-  String rval;
-  if(wiki1_url.name == wiki_name) rval = wiki1_url.url;
-  if(wiki2_url.name == wiki_name) rval = wiki2_url.url;
-  if(wiki3_url.name == wiki_name) rval = wiki3_url.url;
-  if(wiki4_url.name == wiki_name) rval = wiki4_url.url;
-  if(wiki5_url.name == wiki_name) rval = wiki5_url.url;
-  if(wiki6_url.name == wiki_name) rval = wiki6_url.url;
-  if(rval.nonempty() && add_index)
-    rval += "/index.php/";
-  return rval;
+  Variant rval = wikis.GetVal(wiki_name);
+  if(rval.isNull()) return _nilString;
+  String url = rval.toString();
+  if(add_index)
+    url += "/index.php/";
+  return url;
 }
 
 bool taMisc::InternetConnected() {

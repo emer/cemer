@@ -102,6 +102,36 @@ void taDoc::UpdateText() {
   html_text = WikiParse(text);
 }
 
+void taDoc::SetURL(const String& new_url) {
+  if(wiki.nonempty()) {
+    String base_url = taMisc::GetWikiURL(wiki, true); // index.php
+    if(new_url.startsWith(base_url))
+      url = new_url.after(base_url);
+    else {
+      wiki = _nilString;
+      url = url;
+    }
+  }
+  else {
+    bool got_one = false;
+    for(int i=0;i<taMisc::wikis.size; i++) {
+      String wiknm = taMisc::wikis[i].name;
+      String base_url = taMisc::GetWikiURL(wiknm, true); // index.php
+      if(new_url.startsWith(base_url)) {
+	wiki = wiknm;
+	url = new_url.after(base_url);
+	got_one = true;
+	break;
+      }
+    }
+    if(!got_one) {
+      wiki = _nilString;
+      url = new_url;
+    }
+  }
+  UpdateAfterEdit();
+}
+
 String taDoc::GetURL() {
   if(wiki.nonempty()) {
     String wiki_url = taMisc::GetWikiURL(wiki, true); // true = add index.php
@@ -1002,16 +1032,28 @@ void taProject::PostLoadAutos() {
     docs.AutoEdit();
     wizards.AutoEdit();
     edits.AutoEdit();
-    // this is very hacky... select the 2nd tab, which will 
-    // be the first auto guy if there were any
-    // make double sure..
-    taiMiscCore::ProcessEvents();
-    taiMiscCore::ProcessEvents();
-    vwr->SelectPanelTabNo(1);
   }
-  // this is done separately in startup code
-  //  programs.RunStartupProgs();	// only at last step!
 }
+
+void taProject::WindowShowHook() {
+  MainWindowViewer* vwr = AssertDefaultProjectBrowser(false);
+  taiMiscCore::ProcessEvents();
+  taiMiscCore::ProcessEvents();
+  taiMiscCore::ProcessEvents();
+  vwr->SelectT3ViewTabNo(1);	// select wrong guy
+  taiMiscCore::ProcessEvents();
+  taiMiscCore::ProcessEvents();
+  taiMiscCore::ProcessEvents();
+  vwr->SelectT3ViewTabNo(0);	// then select right guy..
+  // this is very hacky... select the 2nd tab, which will 
+  // be the first auto guy if there were any
+  taiMiscCore::ProcessEvents();
+  taiMiscCore::ProcessEvents();
+  taiMiscCore::ProcessEvents();
+  vwr->SelectPanelTabNo(1);
+  //  tabMisc::DelayedFunCall_gui(this,"RefreshAllViews");
+}
+
 
 MainWindowViewer* taProject::AssertDefaultProjectBrowser(bool auto_open) {
   MainWindowViewer* vwr = NULL;
@@ -1329,7 +1371,9 @@ int Project_Group::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) 
   int rval = inherited::Load_strm(strm, par, loaded_obj_ptr);
   for(int i=prj_sz;i<leaves;i++) {
     taProject* prj = Leaf(i);
-    prj->PostLoadAutos();
+    tabMisc::DelayedFunCall_gui(prj,"PostLoadAutos");
+    // do it delayed to allow everything to happen first
+    //    prj->PostLoadAutos();
   }
   return rval;
 }
@@ -1409,6 +1453,7 @@ void taRootBase::InitLinks() {
   inherited::InitLinks();
   version = taMisc::version;
   taBase::Own(templates, this);
+  taBase::Own(docs, this);
   taBase::Own(wizards, this);
   taBase::Own(projects, this);
   taBase::Own(viewers, this);
@@ -1424,6 +1469,7 @@ void taRootBase::InitLinks() {
   taBase::Own(recent_paths, this);
   taiMimeFactory_List::setInstance(&mime_factories);
   AddTemplates(); // note: ok that this will be called here, before subclass has finished its own
+  AddDocs(); // note: ok that this will be called here, before subclass has finished its own
 }
 
 void taRootBase::CutLinks() {
@@ -1666,6 +1712,12 @@ void taRootBase::AddTemplates() {
   templates.Add(Program::MakeTemplate());
 }
 
+void taRootBase::AddDocs() {
+  taDoc* doc = (taDoc*)docs.New(1);
+  doc->SetURL(taMisc::web_home);
+  doc->EditPanel(true, true); // true,true = new tab, pinned in place
+}
+
 taBase* taRootBase::FindGlobalObject(TypeDef* base_type, 
     const String& name)
 {
@@ -1898,13 +1950,48 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgName("--ref_count_trace", "CssRefCountTrace");
   taMisc::AddArgNameDesc("CssRefCountTrace", "\
  -- Specifies that css reference count tracing should be performed (debugging tool)");
+
+  ////////////////////////////////////////////////////
+  // 	All the multi-threading stuff has standard default startup args
   
   taMisc::AddArgName("--max_cpus", "MaxCpus");
   taMisc::AddArgName("max_cpus=", "MaxCpus");
   taMisc::AddArgNameDesc("MaxCpus", "\
- -- Maximum number of cpus (ex 2 typically faster than 4 on pseudo-quad core cpus)");
+ -- Maximum number of cpus -- this should normally be detected automatically, but in case it isn't -- see n_threads for the actual number to use");
   
-  // Server variables
+  taMisc::AddArgName("--n_threads", "NThreads");
+  taMisc::AddArgName("n_threads=", "NThreads");
+  taMisc::AddArgNameDesc("NThreads", "\
+ -- Target number of threads to use in multi-threaded code -- should be <= max_cpus and it often is more efficient to use less than what is maximally available");
+
+  taMisc::AddArgName("--thread_chunk_pct", "ThreadChunkPct");
+  taMisc::AddArgName("thread_chunk_pct=", "ThreadChunkPct");
+  taMisc::AddArgNameDesc("ThreadChunkPct", "\
+ -- proportion (0-1) of units to process in a chunked fashion, where units are allocated in (interdigitated) chunks to threads to exclusively process -- after this, each available thread works nibbling a unit at a time on the remaining list of units.   A middle value around .5 is typically best, as it balances between the efficiency of pre-allocating the load, and the load balancing of the nibbling which adapts automatically to effective processor loads.");
+
+  taMisc::AddArgName("--thread_nibble_chunk", "ThreadNibbleChunk");
+  taMisc::AddArgName("thread_nibble_chunk=", "ThreadNibbleChunk");
+  taMisc::AddArgNameDesc("ThreadNibbleChunk", "\
+ -- how many units does each thread grab to process while nibbling?  Too small a value results in increased contention and inefficiency, while too large a value results in poor load balancing across processors.");
+
+  taMisc::AddArgName("--thread_compute_thr", "ThreadComputeThr");
+  taMisc::AddArgName("thread_compute_thr=", "ThreadComputeThr");
+  taMisc::AddArgNameDesc("ThreadComputeThr", "\
+ -- threshold value for amount of computation in a given function to actually deploy on threads, as opposed to just running it on main thread -- value is normalized (0-1) with 1 being the most computationally intensive task, and 0 being the least -- as with min_units, it may not be worth it to parallelize very lightweight computations.  See Thread_Params page on emergent wiki for relevant comparison values.");
+
+  taMisc::AddArgName("--thread_min_units", "ThreadMinUnits");
+  taMisc::AddArgName("thread_min_units=", "ThreadMinUnits");
+  taMisc::AddArgNameDesc("ThreadMinUnits", "\
+ -- minimum number of computational units (e.g., network units) to apply parallel threading to -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.");
+  
+  taMisc::AddArgName("--thread_send_netin", "ThreadSendNetin");
+  taMisc::AddArgName("thread_send_netin=", "ThreadSendNetin");
+  taMisc::AddArgNameDesc("ThreadSendNetin", "\
+ -- for network algorithms, should the Send_Netin call be threaded or not?  this can actually be slower on some machiness due to memory dispersion issues, and it also results in small numerical differences from the single-threaded case.");
+  
+  ////////////////////////////////////////////////////
+  // 	Server variables
+  
   taMisc::AddArgName("--server", "Server");
   taMisc::AddArgNameDesc("Server", "\
  -- Run the app as a tcp server");
@@ -2582,6 +2669,11 @@ bool taRootBase::Startup_MakeMainWin() {
   if (taMisc::gui_active) taiMisc::OpenWindows();
 #endif // TA_GUI
   return true;
+}
+
+void taRootBase::WindowShowHook() {
+  if(docs.size > 0)
+    docs[0]->EditPanel(true, true); // pin, new tab
 }
 
 bool taRootBase::Startup_Console() {

@@ -34,8 +34,8 @@ iMenuButton::iMenuButton(const QString& text_, QWidget* parent)
 
 
 void iMenuButton::init() {
-  setPopupMode(InstantPopup); //note: Menu mode looks/behaves awful
   setArrowType(Qt::DownArrow);
+  setPopupMode(InstantPopup); //note: Menu mode looks/behaves awful
   setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 }
 

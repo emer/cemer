@@ -1172,6 +1172,9 @@ protected:
   bool			event(QEvent* ev);
   override void 	resizeEvent(QResizeEvent* ev);
   override void 	moveEvent(QMoveEvent* ev);
+  override void 	showEvent(QShowEvent* ev);
+  override void 	hideEvent(QHideEvent* ev);
+
   virtual void 		emit_EditAction(int param); // #IGNORE param is one of the taiClipData editAction values; desc can trap this and implement virtually, if desired
   override void 	windowActivationChange(bool oldActive); // we manage active_wins in order of activation
 

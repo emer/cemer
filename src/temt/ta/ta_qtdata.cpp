@@ -3646,7 +3646,11 @@ const String taiMemberDefButton::labelNameNonNull() const {
 }
 
 bool taiMemberDefButton::ShowMember(MemberDef* mbr) {
-  return (ShowItemFilter(NULL, mbr, mbr->name) && mbr->ShowMember());
+  // showing all members here, because this is used primarily in program lookups
+  // and often you need to see things that are otherwise hidden
+  // TODO: should have a ShowContext::SC_CHOOSER or something like that context
+  // where it adjudicates these things..
+  return (ShowItemFilter(NULL, mbr, mbr->name)); // && mbr->ShowMember());
 }
 
 
@@ -3927,7 +3931,11 @@ bool taiMemberMethodDefButton::ShowMethod(MethodDef* mth) {
 }
 
 bool taiMemberMethodDefButton::ShowMember(MemberDef* mbr) {
-  return (ShowItemFilter(NULL, mbr, mbr->name) &&  mbr->ShowMember());
+  // showing all members here, because this is used primarily in program lookups
+  // and often you need to see things that are otherwise hidden
+  // TODO: should have a ShowContext::SC_CHOOSER or something like that context
+  // where it adjudicates these things..
+  return (ShowItemFilter(NULL, mbr, mbr->name)); //  &&  mbr->ShowMember());
 }
 
 const String taiMemberMethodDefButton::viewText(int index) const {

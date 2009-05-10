@@ -543,7 +543,12 @@ void taiMisc::OnQuitting_impl(CancelOp& cancel_op) {
 }
 
 void taiMisc::Quit_impl(CancelOp cancel_op) {
-  qApp->closeAllWindows();
+  if(taMisc::gui_no_win) {
+    QCoreApplication::instance()->quit();
+  }
+  else {
+    qApp->closeAllWindows();
+  }
 }
 
 void taiMisc::ResolveEditChanges(CancelOp& cancel_op) {

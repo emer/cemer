@@ -712,6 +712,9 @@ public:
   static NamedURL	wiki6_url;
   // #SAVE #CAT_File short name and url for wiki project repository, for sync'ing local project and other information (just base address without index.php or anything like that) -- full url is looked up by name to refer to specific sites
 
+  static NameVar_PArray	wikis;
+  // #NO_SAVE #READ_ONLY #HIDDEN the non-empty wiki names and urls from the above set of wikis -- for actual programmatic use -- above list is just for simple gui editing in preferences/options
+
   // don't save these paths: they are generated from above which are saved, and can
   // be modified more reliably in a .cssinitrc or similar..
   static String_PArray 	css_include_paths;
@@ -816,7 +819,7 @@ public:
   // #CAT_Config save configuration defaults to <appdata>/taconfig file that is loaded automatically at startup
   void	LoadConfig();
   // #CAT_Config load configuration defaults from <appdata>/.taconfig file (which is loaded automatically at startup)
-  void  UpdateAfterEdit();
+  static void  UpdateAfterEdit();
   // #CAT_Config called before saving and before loading -- updates any derived fields based on current settings
 
   /////////////////////////////////////////////////

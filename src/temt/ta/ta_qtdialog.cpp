@@ -563,12 +563,13 @@ void iMethodButtonMgr::Constr_Methods_impl() {
       continue;
 
     taiMethodData* mth_rep = NULL;
-/*    if (md->HasOption("MENU_BUTTON")) {
+    if (md->HasOption("MENU_BUTTON")) {
       SetCurMenuButton(md);
       mth_rep = im->GetMenuMethodRep(base, host, NULL, NULL);
       mth_rep->AddToMenu(cur_menu_but);
       meth_el.Add(mth_rep);
     }
+    /*
     if (md->HasOption("MENU")) {
       SetCurMenu(md);
       mth_rep = im->GetMenuMethodRep(base, host, NULL, NULL);
@@ -580,17 +581,6 @@ void iMethodButtonMgr::Constr_Methods_impl() {
       AddMethButton(mth_rep);
       meth_el.Add(mth_rep);
     }
-/*obs    meth_el.Add(mth_rep);
-    // add to menu if a menu item
-    if (mth_rep->is_menu_item) {
-      // we only do the menu buttons
-      if(md->HasOption("MENU_BUTTON")) {
-      	SetCurMenuButton(md);
-        mth_rep->AddToMenu(cur_menu_but);
-      } 
-    } else {
-      AddMethButton(mth_rep);
-    }*/
   }
 }
 
@@ -2550,6 +2540,7 @@ void taiStringDataHost::Constr_Box() {
     edit = new iTextEdit(widget());
     vblDialog->addWidget(edit, 1);
   }
+  edit->installEventFilter(this); // hopefully everyone below body will get it too!
 }
 
 void taiStringDataHost::Constr_RegNotifies() {
@@ -2620,4 +2611,27 @@ void taiStringDataHost::Ok_impl() { //note: only used for Dialogs
     GetValue();
     Unchanged();
     //  }
+}
+
+bool taiStringDataHost::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() == QEvent::KeyPress) {
+    QKeyEvent* e = static_cast<QKeyEvent *>(event);
+    bool ctrl_pressed = false;
+    if(e->modifiers() & Qt::ControlModifier)
+      ctrl_pressed = true;
+#ifdef TA_OS_MAC
+    // ctrl = meta on apple
+    if(e->modifiers() & Qt::MetaModifier)
+      ctrl_pressed = true;
+#endif
+    if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
+      Ok();			// do it!
+      return true;
+    }
+    if(e->key() == Qt::Key_Escape) {
+      Cancel();			// do it!
+      return true;
+    }
+  }
+  return QObject::eventFilter(obj, event);
 }

@@ -58,7 +58,10 @@ public:
   virtual void		UpdateText();
   // update the html_text from the user-entered text with wiki syntax by calling WikiParse
 
-  virtual String	GetURL(); // get a full url based on url specified plus any absolute refs needed
+  virtual void		SetURL(const String& new_url);
+  // set a new url -- will parse into wiki and url if possible
+  virtual String	GetURL();
+  // get a full url based on url specified plus any absolute refs needed
 
   override String 	GetTypeDecoKey() const { return "Doc"; }
 
@@ -479,6 +482,7 @@ public:
   // #CAT_Display manual refresh of all view information in the project -- equivalent to the View/Refresh (F5 key) menu -- should not be necessary but sometimes comes in handy..
   virtual void		UpdateUi();
   // #CAT_Display manual call to update user interface enabled/disabled settings -- usually done through signals and slots, but this can be useful for non-gui driven changes that might affect enabling
+  override void		WindowShowHook();
 
   ///////////////////////////////////////////////////////////////////
   //	Get new proj objects
@@ -595,17 +599,18 @@ public:
   
   String		version; 	// #READ_ONLY #SHOW current version number
   taBase_List		templates;	// #NO_SAVE #READ_ONLY objects used as templates -- do not use or mess with these!
-  Wizard_Group		wizards; // #NO_SAVE global wizards -- see each project for project-specific wizards
+  Doc_Group		docs; 		// #NO_SAVE documents, typically linked to other objects
+  Wizard_Group		wizards; 	// #NO_SAVE global wizards -- see each project for project-specific wizards
   Project_Group		projects; 	// #NO_SAVE The projects
   DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
-  taPlugin_List		plugins; //  available plugins
-  taBase_List		plugin_state; // #NO_SAVE #HIDDEN #HIDDEN_TREE state objs of plugins -- created/managed by plugin system; state saved as {name}.state in user data
-  taPluginBase_List	plugin_deps; // #SHOW_TREE #EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
+  taPlugin_List		plugins; 	// available plugins
+  taBase_List		plugin_state; 	// #NO_SAVE #HIDDEN #HIDDEN_TREE state objs of plugins -- created/managed by plugin system; state saved as {name}.state in user data
+  taPluginBase_List	plugin_deps; 	// #SHOW_TREE #EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
   taiMimeFactory_List	mime_factories; // #NO_SAVE #HIDDEN_TREE extensible list of mime factories
-  ColorScaleSpec_Group 	colorspecs;	// Color Specs
-  taBase_List		objs;  // #SHOW_TREE #EXPERT_TREE #NO_SAVE misc place for app-global objs, usually for system use, ex. tcp server
-  String_Array		recent_files; // #NO_SHOW recently loaded files
-  String_Array		recent_paths; // #NO_SHOW recently used paths
+  ColorScaleSpec_Group 	colorspecs;	// global list of color specs for displaying values in terms of colors
+  taBase_List		objs;  		// #SHOW_TREE #EXPERT_TREE #NO_SAVE misc place for app-global objs, usually for system use, ex. tcp server
+  String_Array		recent_files; 	// #NO_SHOW recently loaded files
+  String_Array		recent_paths; 	// #NO_SHOW recently used paths
   
   void		OpenRemoteServer(ushort port = 5360);
   // #MENU #MENU_ON_Server Open a Server for remote TCP-based control of this application
@@ -618,6 +623,7 @@ public:
   // #MENU #MENU_ON_Object get information/copyright notice
   virtual void	SaveAll();
   // saves all the projects
+  override void	WindowShowHook();
   
   void		AddRecentFile(const String& value, bool no_save = false); // #IGNORE add this file to the recent list (also adds the path to recent paths)
   void		AddRecentPath(const String& value, bool no_save = false); // #IGNORE add this path to the recent list
@@ -733,6 +739,7 @@ protected:
   bool		AddRecentFile_impl(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
   bool		AddRecentPath_impl(const String& value); // #IGNORE add this path to the recent list;
   virtual void		AddTemplates(); // called in InitLinks -- extend to add new templates
+  virtual void		AddDocs(); // called in InitLinks -- extend to add new docs
   virtual taBase* 	GetTemplateInstance_impl(TypeDef* typ, taBase* base);
   virtual void		MakeWizards_impl();
   
