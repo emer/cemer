@@ -201,6 +201,7 @@ public: //
     FT_MG = 0, // #LABEL_Moore&Glasberg can do forward as well as back filtering (see Moore & Glasberg, 1987)
     FT_Exp = 1, // #HIDDEN TODO #LABEL_Exponential simple exponential (typical of many neural net and machine learning approaches)
     FT_DoG = 2, // #LABEL_DiffOfGaussian difference-of-gaussian -- enables on/off outputs
+    FT_Uniform = 3, // #LABEL_Uniform -- simply integrates the data uniformly over the integration window -- often used with half-overlapping output rates
   };
   
   enum OutputType {
@@ -280,6 +281,8 @@ protected:
   virtual void		CheckMakeFilter_Exponential(const SampleFreq& fs_in,
     bool check, bool quiet, bool& ok);
   virtual void		CheckMakeFilter_DoG(const SampleFreq& fs_in,
+    bool check, bool quiet, bool& ok);
+  virtual void		CheckMakeFilter_Uniform(const SampleFreq& fs_in,
     bool check, bool quiet, bool& ok);
 
 private:

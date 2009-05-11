@@ -758,9 +758,12 @@ void TemporalWindowBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   const int lu_flt_wd = l_flt_wd + u_flt_wd;
   
   // now, add additional v_wd to make out fit exactly in total flt_wd
-  if (out_wd <= lu_flt_wd) // typical case
-    v_flt_wd = lu_flt_wd % out_wd;
-  else // subsampling case -- v makes up empty space
+  if (out_wd <= lu_flt_wd) { // typical case
+    int rem = lu_flt_wd % out_wd; // fraction of out_wd 
+    if (rem == 0)
+      v_flt_wd = 0; // no padding needed
+    else v_flt_wd = out_wd - rem;
+  } else // subsampling case -- v makes up empty space
     v_flt_wd = out_wd - lu_flt_wd;
   flt_wd = v_flt_wd + l_flt_wd + u_flt_wd;
   // at this point, each flt_wd is >= 1 integral # of out_wd slices
@@ -831,6 +834,9 @@ void TemporalWindowBlock::CheckMakeFilter(const SampleFreq& fs_in,
     break;
   case FT_DoG:
     CheckMakeFilter_DoG(fs_in, check, quiet, ok);
+    break;
+  case FT_Uniform:
+    CheckMakeFilter_Uniform(fs_in, check, quiet, ok);
     break;
   }
   
@@ -926,6 +932,24 @@ void TemporalWindowBlock::CheckMakeFilter_DoG(const SampleFreq& fs_in,
   taMath_float::vec_norm_sum(&off_flt, sum);
   for (int i = 0; i < filter.size; ++i) {
     filter.FastEl(i) = on_flt.FastEl(i) - off_flt.FastEl(i);
+  } 
+}
+
+void TemporalWindowBlock::CheckMakeFilter_Uniform(const SampleFreq& fs_in,
+    bool check, bool quiet, bool& ok)
+{
+    
+  if (check) return;
+  
+  if ((l_flt_wd + u_flt_wd) <= 0) return; // huh?
+  float val = 1.0f / (l_flt_wd + u_flt_wd); 
+  for (int i = 0; i < l_flt_wd; ++i) {
+    filter.Set_Flat(val, i);
+  } 
+  
+  // upper -- time is +ve
+  for (int i = 0; i < u_flt_wd; ++i) {
+    filter.Set_Flat(val, l_flt_wd + i);
   } 
 }
 
