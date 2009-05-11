@@ -1676,6 +1676,29 @@ private:
   void 	Destroy()		{ };
 };
 
+class LEABRA_API VisDisparityPrjnSpec : public ProjectionSpec {
+  // visual disparity projection spec: receiving layer units within groups encode different offset disparities (near..far) from two sending layers (first prjn MUST be left eye, second is right eye) -- should have same gp_geom as sending layer geom -- if sending layers have subgroups, then each is replicated by number of disparities
+INHERITED(ProjectionSpec)
+public:
+  int		n_disparities;	// number of disparities on each side of zero -- total number of disparities encoded = 2 * n_disparities + 1 (near + far + zero) -- first units in unit groups are near then zero then far
+  int		disp_dist;	// distance of center of projection strength from sending layers as a function of disparity increment -- units recv from this range of sending units as well, resulting in half-overlap of neighboring disparities
+  float		gauss_sigma;	// gaussian width parameter for initial weight values to give a tuning curve as a function of disparity -- this is normalized as a function of disp_dist -- i.e., 1 = disp_dist
+  bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
+
+  virtual  void Connect_NoGps(Projection* prjn);
+  // connect -- case with no sending unit groups
+  virtual  void Connect_Gps(Projection* prjn);
+  // connect -- case with sending unit groups
+
+  override void Connect_impl(Projection* prjn);
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+
+  TA_SIMPLE_BASEFUNS(VisDisparityPrjnSpec);
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
 class LEABRA_API LeabraV1Layer : public LeabraLayer {
   // Specialized layer that implements competition both within unit groups and among features across the entire layer, where a feature is defined as a specific unit position within the unit groups (layer must have unit groups)
 INHERITED(LeabraLayer)

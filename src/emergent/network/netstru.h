@@ -2361,6 +2361,7 @@ public:
 
   override int	Dump_Load_Value(istream& strm, taBase* par=NULL);
   override int 	Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
+  override int 	Dump_Save_impl(ostream& strm, TAPtr par=NULL, int indent=0);
 
   override String 	GetTypeDecoKey() const { return "Network"; }
 

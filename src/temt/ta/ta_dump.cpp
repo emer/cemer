@@ -1526,7 +1526,14 @@ endload:
   // back when the eventloop gets processed next
   if (dumpMisc::post_update_after.size > 0) {
     if (!taMisc::is_post_loading) {
-      QTimer::singleShot(0, taiMC_, SLOT(PostUpdateAfter()) );
+      if(taMisc::is_undo_loading) {
+	// do them right away, so undo_loading is still present -- shouldn't be a prob
+	// because everything is already there..
+	dumpMisc::PostUpdateAfter();
+      }
+      else {
+	QTimer::singleShot(0, taiMC_, SLOT(PostUpdateAfter()) );
+      }
     } else { // shouldn't happen???
       dumpMisc::post_update_after.Reset(); // if it does happen, don't leave around
     }

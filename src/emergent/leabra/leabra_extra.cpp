@@ -2783,6 +2783,170 @@ void GpAggregatePrjnSpec::Connect_impl(Projection* prjn) {
 }
 
 ///////////////////////////////////////////////////////////////
+//			VisDisparityPrjnSpec 
+
+void VisDisparityPrjnSpec::Initialize() {
+  n_disparities = 2;
+  disp_dist = 5;
+  gauss_sigma = 1.0f;
+}
+
+void VisDisparityPrjnSpec::Connect_impl(Projection* prjn) {
+  if(!(bool)prjn->from)	return;
+  if(prjn->layer->units.leaves == 0) // an empty layer!
+    return;
+  if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
+		 "requires sending layer to have unit groups!")) {
+    return;
+  }
+
+  if(prjn->from->units.gp.size > 0)
+    Connect_Gps(prjn);
+  else
+    Connect_NoGps(prjn);
+}
+
+void VisDisparityPrjnSpec::Connect_Gps(Projection* prjn) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  TwoDCoord ru_gp_geo = recv_lay->gp_geom;
+  TwoDCoord su_gp_geo = send_lay->gp_geom;
+
+  if(TestWarning(ru_gp_geo != su_gp_geo, "Connect_Gps",
+		 "Recv layer does not have same gp geometry as sending layer -- cannot connect!")) {
+    return;
+  }
+  TwoDCoord ru_un_geo = recv_lay->un_geom;
+  TwoDCoord su_un_geo = send_lay->un_geom;
+
+  int su_n = su_un_geo.Product();
+  int ru_n = ru_un_geo.Product();
+
+  int tot_disp = n_disparities * 2 + 1;
+  if(TestWarning(ru_n != su_n * tot_disp, "Connect_Gps",
+		 "Recv layer unit groups must have n_disparities * 2 + 1=",
+		 String(tot_disp),"times number of units in send layer unit group=",
+		 String(su_n),"  should be:", String(su_n * tot_disp), "is:",
+		 String(ru_n))) {
+    return;
+  }
+
+  int lr_dir;			// direction multiplier on offset for left vs right
+  if(prjn->recv_idx == 0)	// left eye is first guy
+    lr_dir = -1;
+  else
+    lr_dir = 1;
+
+  int rf_width = 2 * disp_dist; // total receptive field width
+
+  TwoDCoord ruc;
+  for(ruc.x = 0; ruc.x < ru_gp_geo.x; ruc.x++) { // loop over receiving layer x
+    for(ruc.y = 0; ruc.y < ru_gp_geo.y; ruc.y++) { // loop over receiving layer y
+      // get each unit group in receiving layer
+      Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+      if(!ru_gp) continue;	// shouldn't happen
+
+      int rui_ctr = 0;
+      for(int disp=-n_disparities; disp <= n_disparities; disp++) {
+	int disp_off = disp_dist * disp;
+	int st_off = disp_off - disp_dist;
+	
+	for(int rui=0; rui<su_n; rui++) {
+	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui_ctr++);
+	  ru_u->ConnectAlloc(rf_width, prjn);
+
+	  TwoDCoord suc;
+	  for(int soff=0; soff < rf_width; soff++) {
+	    suc.y = ruc.y;
+	    suc.x = ruc.x + lr_dir * (st_off + soff);
+	    if(suc.WrapClip(wrap, su_gp_geo) && !wrap)
+	      continue;
+	    Unit_Group* su_gp = prjn->from->FindUnitGpFmCoord(suc);
+	    if(!su_gp) continue;	// shouldn't happen
+	    Unit* su_u = su_gp->SafeEl(rui);
+	    if(!su_u) continue;
+	    if(!self_con && (su_u == ru_u)) continue;
+
+	    ru_u->ConnectFrom(su_u, prjn); // don't check: saves lots of time!
+	  }
+	}
+      }
+    }
+  }
+}
+
+void VisDisparityPrjnSpec::Connect_NoGps(Projection* prjn) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  TwoDCoord ru_gp_geo = recv_lay->gp_geom;
+  TwoDCoord su_geo = send_lay->un_geom;
+
+  if(TestWarning(ru_gp_geo != su_geo, "Connect_Gps",
+		 "Recv layer does not have same gp geometry as sending layer -- cannot connect!")) {
+    return;
+  }
+  TwoDCoord ru_un_geo = recv_lay->un_geom;
+  int ru_n = ru_un_geo.Product();
+  int tot_disp = n_disparities * 2 + 1;
+  if(TestWarning(ru_n != tot_disp, "Connect_Gps",
+		 "Recv layer unit groups must have n_disparities * 2 + 1=",String(tot_disp),
+		 "units in it -- instead has:", String(ru_n))) {
+    return;
+  }
+
+  int lr_dir;			// multiplier on offset for left vs right
+  if(prjn->recv_idx == 0)	// left eye is first guy
+    lr_dir = -1;
+  else
+    lr_dir = 1;
+
+  int rf_width = 2 * disp_dist; // total receptive field width
+
+  TwoDCoord ruc;
+  for(ruc.x = 0; ruc.x < ru_gp_geo.x; ruc.x++) { // loop over receiving layer x
+    for(ruc.y = 0; ruc.y < ru_gp_geo.y; ruc.y++) { // loop over receiving layer y
+      // get each unit group in receiving layer
+      Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+      if(!ru_gp) continue;	// shouldn't happen
+
+      int rui_ctr = 0;
+      for(int disp=-n_disparities; disp <= n_disparities; disp++) {
+	int disp_off = disp_dist * disp;
+	int st_off = disp_off - disp_dist;
+	
+	Unit* ru_u = (Unit*)ru_gp->FastEl(rui_ctr++);
+	ru_u->ConnectAlloc(rf_width, prjn);
+
+	TwoDCoord suc;
+	for(int soff=0; soff < rf_width; soff++) {
+	  suc.y = ruc.y;
+	  suc.x = ruc.x + lr_dir * (st_off + soff);
+	  if(suc.WrapClip(wrap, su_geo) && !wrap)
+	    continue;
+	  Unit* su_u = prjn->from->FindUnitFmCoord(suc);
+	  if(!su_u) continue;
+	  if(!self_con && (su_u == ru_u)) continue;
+	  ru_u->ConnectFrom(su_u, prjn); // don't check: saves lots of time!
+	}
+      }
+    }
+  }
+}
+
+void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
+//   int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
+
+  float gaus_nrm = 1.0f / ((float)disp_dist * gauss_sigma);
+  float ctr = (float)disp_dist - .5f;	// even so put half way
+  for(int i=0; i<cg->cons.size; i++) {
+    float dst = gaus_nrm * (i - ctr);
+    float wt = expf(-0.5 * dst * dst);
+    cg->Cn(i)->wt = wt;
+  }
+}
+
+///////////////////////////////////////////////////////////////
 //			V1 Layer
 ///////////////////////////////////////////////////////////////
 
@@ -2963,7 +3127,7 @@ void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn) {
 	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 	      continue;
 	    Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
-	    if(su_u == NULL) continue;
+	    if(!su_u) continue;
 	    if(!self_con && (su_u == ru_u)) continue;
 
 	    ru_u->ConnectFrom(su_u, prjn); // don't check: saves lots of time!

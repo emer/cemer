@@ -624,7 +624,7 @@ String	taMisc::user_plugin_dir;
 String	taMisc::user_log_dir; 
 
 // note: app should set all these url's in its main or other app-specific code
-String	taMisc::web_home = "http://grey.colorado.edu/emergent"; 
+String	taMisc::web_home = "http://grey.colorado.edu/emergent/index.php/Main_Page"; 
 String	taMisc::web_help_wiki = "emergent";
 String	taMisc::web_help_general = "http://grey.colorado.edu/emergent/index.php/User_hub";
 

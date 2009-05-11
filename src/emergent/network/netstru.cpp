@@ -5448,6 +5448,14 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
   return rval;
 }
 
+int Network::Dump_Save_impl(ostream& strm, taBase* par, int indent) {
+  if(taMisc::is_undo_saving) {
+    if((tabMisc::cur_undo_save_top != this) && (tabMisc::cur_undo_mod_obj != this))
+      return 1;
+  }
+  return inherited::Dump_Save_impl(strm, par, indent);
+}
+
 int Network::Save_strm(ostream& strm, TAPtr par, int indent) {
   SetNetFlag(SAVE_UNITS_FORCE); // override if !SAVE_UNITS
   int rval = inherited::Save_strm(strm, par, indent);
