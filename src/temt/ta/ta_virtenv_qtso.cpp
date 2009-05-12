@@ -379,7 +379,7 @@ void VEBodyView::Render_impl() {
 
   SoSeparator* ssep = obv->shapeSeparator();
 
-  if(ob->IsCurShape()) {	// only if we are currently the right shape
+  if(ob->IsCurShape() && !ob->HasBodyFlag(VEBody::FM_FILE)) {	// only if we are currently the right shape
     switch(ob->shape) {
     case VEBody::SPHERE: {
       SoSphere* sp = (SoSphere*)ssep->getChild(ssep->getNumChildren()-1); // last thing
