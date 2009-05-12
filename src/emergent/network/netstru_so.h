@@ -79,45 +79,17 @@ public:
   // act is -1:1; max_z is net->max_size.z; trans is transparency
   virtual void 	setPicked(bool value);
   T3UnitNode(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
-	     float max_z = 1.0f, float un_spc = .01f);
+	     float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
 
 protected:
   float			spacing;		      // unit spacing
+  float			disp_scale;		      // overall scaling
   void			setDefaultCaptionTransform(); // override, sets text justif and transform for 3D
   virtual void	setAppearance_impl(float act, const T3Color& color, float max_z,
     float trans, bool act_invalid);
   // act is -1:1; max_z is net->max_size.z; trans is transparency; act_invalid true for nan/inf -- act has been set to 0.0f
   ~T3UnitNode();
 };
-
-/*TODO
-class EMERGENT_API T3UnitNode_Color: public T3UnitNode { // 2d color
-#ifndef __MAKETA__
-typedef T3NodeLeaf inherited;
-
-  SO_NODE_HEADER(T3UnitNode);
-#endif // def __MAKETA__
-friend class T3UnitGroupNode;
-public:
-  static float	base_height; // #DEF_0.1 height when not active or empty
-  static float	max_height; // #DEF_0.8 height when fully active
-
-  static void	initClass();
-
-  SoCylinder*	shape() {return shape_;}
-  void		getPos(int& x, int& y);
-  void 		setPos(int x, int y); // set relative position within unitgroup
-
-  void		setAppearance(float act, const T3Color& color, float max_z, float trans);
-  T3UnitNode(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
-  float max_z = 1.0f, float un_spc = .01f);
-
-protected:
-  ~T3UnitNode();
-private:
-  SoCylinder*		shape_; //#IGNORE
-}; */
-
 
 class EMERGENT_API T3UnitNode_Cylinder: public T3UnitNode { // 2d color
 #ifndef __MAKETA__
@@ -132,7 +104,7 @@ public:
 
 
   T3UnitNode_Cylinder(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
-		      float max_z = 1.0f, float un_spc = .01f);
+		      float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
 
 protected:
   override void	 setAppearance_impl(float act, const T3Color& color,
@@ -154,7 +126,7 @@ public:
   SoCylinder*	shape() {return shape_;}
 
   T3UnitNode_Circle(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
-		    float max_z = 1.0f, float un_spc = .01f);
+		    float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
 
 protected:
 //  void			setDefaultCaptionTransform(); // override
@@ -176,7 +148,7 @@ public:
   SoCube*	shape() {return shape_;}
 
   T3UnitNode_Block(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
-		   float max_z = 1.0f, float un_spc = .01f);
+		   float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
 
 protected:
   override void	 setAppearance_impl(float act, const T3Color& color,
@@ -198,7 +170,7 @@ public:
   SoCube*		shape() {return shape_;}
 
   T3UnitNode_Rect(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
-		  float max_z = 1.0f, float un_spc = .01f);
+		  float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
 
 protected:
 //  void			setDefaultCaptionTransform(); // override
@@ -230,7 +202,9 @@ public:
 //  void			addUnit(int x, int y); // remove all units
   SoFont*		unitCaptionFont(bool auto_create = false);
 
-  void 			setGeom(int px, int py, float max_x, float max_y, float max_z);
+  void 			setGeom(int px, int py, float max_x, float max_y, float max_z,
+				float disp_scale);
+
   // sets (actual) geom of group; creates/positions units; setes max_size
   SoIndexedTriangleStripSet* shape() {return shape_;}
   SoVertexProperty* 	vtxProp() {return vtx_prop_;}
@@ -247,6 +221,8 @@ public:
 
 protected:
   iVec2i		geom; //note, not a field
+  float			disp_scale;
+  iVec2i		scaled_geom; // layer disp_scale * geom
   iVec3f		max_size; // maximum size of network x,y,z
   SoFont*		unitCaptionFont_;
   bool			no_units; // summary mode: no unit objects exist
@@ -284,13 +260,15 @@ public:
 
   static void		initClass();
 
-  void 			setGeom(int px, int py, float max_x, float max_y, float max_z);
+  void 			setGeom(int px, int py, float max_x, float max_y, float max_z, float disp_scale);
 
   T3LayerNode(void* dataView_ = NULL, bool show_draggers = true);
 
 protected:
   
   iVec2i		geom; //note, not a field
+  float			disp_scale;
+  iVec2i		scaled_geom; // disp_scale * geom
   iVec3f		max_size; // maximum size of network x,y,z
   void			render(); // called after pos/geom changes
   ~T3LayerNode();

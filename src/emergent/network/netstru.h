@@ -1391,12 +1391,14 @@ public:
   LayerFlags		flags;		// flags controlling various aspects of layer funcdtion
   LayerType		layer_type;     // #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
   PosTDCoord		pos;		// #CAT_Structure position of layer relative to the overall network position (0,0,0 is lower left hand corner)
+  float			disp_scale;	// #DEF_1 #CAT_Structure display scale factor for layer -- multiplies overall layer size -- 1 is normal, < 1 is smaller and > 1 is larger -- can be especially useful for shrinking very large layers to better fit with other smaller layers
   XYNGeom		un_geom;        // #AKA_geom #CAT_Structure two-dimensional layout and number of units within the layer or each unit group within the layer 
   bool			unit_groups;	// #CAT_Structure organize units into subgroups within the layer, with each unit group having the geometry specified by un_geom
   XYNGeom		gp_geom;	// #CONDEDIT_ON_unit_groups:true #CAT_Structure geometry of sub-groups (if unit_groups)
   PosTwoDCoord		gp_spc;		// #CONDEDIT_ON_unit_groups:true #CAT_Structure spacing between sub-groups (if unit_groups)
   XYNGeom		flat_geom;	// #EXPERT #READ_ONLY #NO_SAVE #CAT_Structure geometry of the units flattening out over unit groups (same as un_geom if !unit_groups; un_geom * gp_geom otherwise)
   XYNGeom		act_geom;	// #HIDDEN #READ_ONLY #CAT_Structure actual view geometry, includes spaces and groups and everything: the full extent of units within the layer
+  XYNGeom		scaled_act_geom; // #HIDDEN #READ_ONLY #CAT_Structure scaled actual view geometry: disp_scale * act_geom -- use for view computations
 
   Projection_Group  	projections;	// #CAT_Structure group of receiving projections
   Projection_Group  	send_prjns;	// #CAT_Structure #HIDDEN #LINK_GROUP group of sending projections
@@ -1569,8 +1571,10 @@ public:
   // #MENU #DYN1 #CAT_Display #MENU_CONTEXT iconify this layer in the network display
   virtual void	DeIconify();
   // #MENU #DYN1 #CAT_Display #MENU_CONTEXT de-iconify this layer in the network display
+  inline void	SetDispScale(float disp_sc) 	{ disp_scale = disp_sc; UpdateAfterEdit(); }
+  // #MENU #DYN1 #CAT_Display #MENU_CONTEXT set the display scale for the layer -- can change how much space it takes up relative to other layers
   inline void	Lesion() 	{ SetLayerFlag(LESIONED); }
-  // #MENU #DYN1 #CAT_Structure #MENU_CONTEXT set the lesion flag on layer -- removes it from all processing operations
+  // #MENU #DYN1 #MENU_SEP_BEFORE #CAT_Structure #MENU_CONTEXT set the lesion flag on layer -- removes it from all processing operations
   inline void	UnLesion() 	{ ClearLayerFlag(LESIONED); }
   // #MENU #DYN1 #CAT_Structure #MENU_CONTEXT un-set the lesion flag on layer -- restores it to engage in normal processing
 
@@ -1659,7 +1663,6 @@ public:
 
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md);
 
-  void 	UpdateAfterEdit();
   void 	InitLinks();
   void	CutLinks();
   void	Copy_(const Layer& cp);

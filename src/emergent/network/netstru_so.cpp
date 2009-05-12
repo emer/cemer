@@ -69,11 +69,13 @@ void T3UnitNode::initClass()
   SO_NODE_INIT_ABSTRACT_CLASS(T3UnitNode, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3UnitNode::T3UnitNode(void* dataView_, float max_x, float max_y, float max_z, float un_spc)
+T3UnitNode::T3UnitNode(void* dataView_, float max_x, float max_y, float max_z,
+		       float un_spc, float disp_sc)
 :inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3UnitNode);
   spacing = un_spc;
+  disp_scale = disp_sc;
 }
 
 T3UnitNode::~T3UnitNode()
@@ -138,15 +140,15 @@ void T3UnitNode_Cylinder::initClass()
 }
 
 T3UnitNode_Cylinder::T3UnitNode_Cylinder(void* dataView_, float max_x, float max_y,
-					 float max_z, float un_spc)
-  :inherited(dataView_, max_x, max_y, max_z, un_spc)
+					 float max_z, float un_spc, float disp_sc)
+  :inherited(dataView_, max_x, max_y, max_z, un_spc, disp_sc)
 {
   SO_NODE_CONSTRUCTOR(T3UnitNode_Cylinder);
 
   float max_xy = MAX(max_x, max_y);
 
   shape_ = new SoCylinder; // note: same shape is used for both styles
-  shape_->radius = (.5f - spacing) / max_xy;
+  shape_->radius = disp_scale * ((.5f - spacing) / max_xy);
   shapeSeparator()->addChild(shape_);
 
   // bake in the shape offset right into our origin offset, to avoid an additional txfm
@@ -178,15 +180,15 @@ void T3UnitNode_Circle::initClass()
 }
 
 T3UnitNode_Circle::T3UnitNode_Circle(void* dataView_, float max_x, float max_y,
-				     float max_z, float un_spc)
-  :inherited(dataView_, max_x, max_y, max_z, un_spc)
+				     float max_z, float un_spc, float disp_sc)
+  :inherited(dataView_, max_x, max_y, max_z, un_spc, disp_sc)
 {
   SO_NODE_CONSTRUCTOR(T3UnitNode_Circle);
 
   float max_xy = MAX(max_x, max_y);
 
   shape_ = new SoCylinder; // note: same shape is used for both styles
-  shape_->radius = (.5f - spacing) / max_xy; // always the same radius
+  shape_->radius = disp_scale * ((.5f - spacing) / max_xy); // always the same radius
   shape_->height = 0.01f;
   shapeSeparator()->addChild(shape_);
 
@@ -221,14 +223,14 @@ void T3UnitNode_Block::initClass()
 }
 
 T3UnitNode_Block::T3UnitNode_Block(void* dataView_, float max_x, float max_y,
-				   float max_z, float un_spc)
-  :inherited(dataView_, max_x, max_y, max_z, un_spc)
+				   float max_z, float un_spc, float disp_sc)
+  :inherited(dataView_, max_x, max_y, max_z, un_spc, disp_sc)
 {
   SO_NODE_CONSTRUCTOR(T3UnitNode_Block);
 
   shape_ = new SoCube; // note: same shape is used for both styles
-  shape_->width = (1.0f - spacing) / max_x; 
-  shape_->depth = (1.0f - spacing) / max_y; 
+  shape_->width = disp_scale * ((1.0f - spacing) / max_x); 
+  shape_->depth = disp_scale * ((1.0f - spacing) / max_y); 
   shapeSeparator()->addChild(shape_);
 
   // bake in the shape offset right into our origin offset, to avoid an additional txfm
@@ -264,14 +266,14 @@ void T3UnitNode_Rect::initClass()
 }
 
 T3UnitNode_Rect::T3UnitNode_Rect(void* dataView_, float max_x, float max_y, float max_z,
-				 float un_spc)
-  :inherited(dataView_, max_x, max_y, max_z, un_spc)
+				 float un_spc, float disp_sc)
+  :inherited(dataView_, max_x, max_y, max_z, un_spc, disp_sc)
 {
   SO_NODE_CONSTRUCTOR(T3UnitNode_Rect);
 
   shape_ = new SoCube; // note: same shape is used for both styles
-  shape_->width = (1.0f - spacing) / max_x;
-  shape_->depth = (1.0f - spacing) / max_y;
+  shape_->width = disp_scale * ((1.0f - spacing) / max_x);
+  shape_->depth = disp_scale * ((1.0f - spacing) / max_y);
   shape_->height = 0.01f;
   shapeSeparator()->addChild(shape_);
 
@@ -313,8 +315,9 @@ void T3UnitGroupNode::shapeCallback(void* data, SoAction* act) {
 
 void T3UnitGroupNode::drawGrid(T3UnitGroupNode* node) {
   float sw = 0.02f; // strip width
-  float x_end = (float)node->geom.x / node->max_size.x;
-  float y_end = (float)(-node->geom.y) / node->max_size.y;
+  float disp_scale = node->disp_scale;
+  float x_end = disp_scale * ((float)node->geom.x / node->max_size.x);
+  float y_end = disp_scale * ((float)(-node->geom.y) / node->max_size.y);
   GLbitfield attribs = (GLbitfield)(GL_LIGHTING_BIT | GL_TRANSFORM_BIT);
   glPushMatrix();
   glPushAttrib(attribs); //note: doesn't seem to push matrix properly
@@ -323,13 +326,13 @@ void T3UnitGroupNode::drawGrid(T3UnitGroupNode* node) {
   glColor3f(0.4f, 0.4f, 0.4f);
   // vert lines
   for (int x = 1; x < node->geom.x; ++x) {
-    glRectf((float)(x - sw) / node->max_size.x, 0.0f,
-	    (float)(x + sw) / node->max_size.x, y_end);
+    glRectf((disp_scale * (float)(x - sw)) / node->max_size.x, 0.0f,
+	    (disp_scale * (float)(x + sw)) / node->max_size.x, y_end);
   }
   // hor lines
   for (int y = 1; y < node->geom.y; ++y) {
-    glRectf(0.0f, (float)-(y - sw) / node->max_size.y,
-	    x_end, (float)-(y + sw) / node->max_size.y);
+    glRectf(0.0f, (disp_scale * (float)-(y - sw)) / node->max_size.y,
+	    x_end, (disp_scale * (float)-(y + sw)) / node->max_size.y);
   }
   glPopAttrib();
   glPopMatrix();
@@ -378,10 +381,13 @@ T3UnitGroupNode::~T3UnitGroupNode()
   mat->transparency.setValue(1.0f);
 }
 
-void T3UnitGroupNode::setGeom(int x, int y, float max_x, float max_y, float max_z) {
-  if (geom.isEqual(x, y)) return; // nothing to do, not changed
+void T3UnitGroupNode::setGeom(int x, int y, float max_x, float max_y, float max_z,
+			      float disp_sc) {
+  //  if (geom.isEqual(x, y)) return; // nothing to do, not changed
   geom.setValue(x, y);
   max_size.setValue(max_x, max_y, max_z);
+  disp_scale = disp_sc;
+  scaled_geom.setValue((int)ceil(disp_scale * (float)x), (int)ceil(disp_scale * (float)y));
 }
 
 SoFont* T3UnitGroupNode::unitCaptionFont(bool auto_create) {
@@ -497,8 +503,8 @@ T3LayerNode::~T3LayerNode()
 }
 
 void T3LayerNode::render() {
-  float fx = (float)geom.x / max_size.x;
-  float fy = (float)geom.y / max_size.y;
+  float fx = disp_scale * ((float)geom.x / max_size.x);
+  float fy = disp_scale * ((float)geom.y / max_size.y);
   float max_xy = MAX(max_size.x, max_size.y);
   float lay_wd = width / max_xy;
   float xfrac = .5f * fx;
@@ -528,10 +534,13 @@ void T3LayerNode::render() {
   }
 }
 
-void T3LayerNode::setGeom(int x, int y, float max_x, float max_y, float max_z) {
+void T3LayerNode::setGeom(int x, int y, float max_x, float max_y, float max_z,
+			  float disp_sc) {
 //   if (geom.isEqual(x, y)) return; // nothing to do, not changed
   geom.setValue(x, y);
   max_size.setValue(max_x, max_y, max_z);
+  disp_scale = disp_sc;
+  scaled_geom.setValue((int)ceil(disp_scale * (float)x), (int)ceil(disp_scale * (float)y));
   render();
 }
 

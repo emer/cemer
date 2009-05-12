@@ -127,27 +127,30 @@ void UnitView::Render_pre() {
   float max_z = nv->max_size.z;
   float un_spc= nv->view_params.unit_spacing;
 
+  Unit* unit = this->unit(); //cache
+  Layer* lay = unit->own_lay();
+  float disp_scale = lay->disp_scale;
+
   switch (nv->unit_disp_mode) {
   case NetView::UDM_CIRCLE:
-    setNode(new T3UnitNode_Circle(this, max_x, max_y, max_z, un_spc));
+    setNode(new T3UnitNode_Circle(this, max_x, max_y, max_z, un_spc, disp_scale));
     break;
   case NetView::UDM_RECT:
-    setNode(new T3UnitNode_Rect(this, max_x, max_y, max_z, un_spc));
+    setNode(new T3UnitNode_Rect(this, max_x, max_y, max_z, un_spc, disp_scale));
     break;
   case NetView::UDM_BLOCK:
-    setNode(new T3UnitNode_Block(this, max_x, max_y, max_z, un_spc));
+    setNode(new T3UnitNode_Block(this, max_x, max_y, max_z, un_spc, disp_scale));
     break;
   case NetView::UDM_CYLINDER:
-    setNode(new T3UnitNode_Cylinder(this, max_x, max_y, max_z, un_spc));
+    setNode(new T3UnitNode_Cylinder(this, max_x, max_y, max_z, un_spc, disp_scale));
     break;
   }
 
-  Unit* unit = this->unit(); //cache
   // note: pos s/b invariant
   node_so()->transform()->translation.setValue
-    ((float)(unit->pos.x + 0.5f) / max_x,
+    (disp_scale * ((float)(unit->pos.x + 0.5f) / max_x),
      0.0f,
-     -((float)(unit->pos.y + 0.5f) / max_y));
+     -disp_scale * (((float)(unit->pos.y + 0.5f) / max_y)));
   inherited::Render_pre();
 }
 
@@ -423,7 +426,8 @@ void UnitGroupView::Render_pre() {
   //NOTE: we create/adjust the units in the Render_impl routine
   T3UnitGroupNode* ugrp_so = node_so(); // cache
 
-  ugrp_so->setGeom(ugrp->geom.x, ugrp->geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z);
+  ugrp_so->setGeom(ugrp->geom.x, ugrp->geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z, 
+		   ugrp->own_lay->disp_scale);
 
   inherited::Render_pre();
 }
@@ -434,10 +438,11 @@ void UnitGroupView::Render_impl() {
 
   //set origin: 0,0,0
   TDCoord& pos = ugrp->pos;
+  float disp_scale = ugrp->own_lay->disp_scale;
   FloatTransform* ft = transform(true);
-  ft->translate.SetXYZ((float)pos.x / nv->max_size.x,
-		       (float)pos.z / nv->max_size.z,
-		       (float)-pos.y / nv->max_size.y);
+  ft->translate.SetXYZ(disp_scale * ((float)pos.x / nv->max_size.x),
+		       disp_scale * ((float)pos.z / nv->max_size.z),
+		       disp_scale * ((float)-pos.y / nv->max_size.y));
 
   inherited::Render_impl();
 }
@@ -587,6 +592,8 @@ void UnitGroupView::Render_impl_blocks() {
   normal_dat[idx++].setValue(0.0f, 1.0f, 0.0f); // top = 4
   normal.finishEditing();
 
+  float disp_scale = ugrp->own_lay->disp_scale;
+
   int n_geom = ugrp->geom.Product();
   int n_per_vtx = 8;
   int tot_vtx =  n_geom * n_per_vtx;
@@ -645,10 +652,10 @@ void UnitGroupView::Render_impl_blocks() {
   for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
     for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
       Unit* unit = ugrp->FindUnitFmCoord(pos);
-      float xp = ((float)pos.x + spacing) / nv->max_size.x;
-      float yp = -((float)pos.y + spacing) / nv->max_size.y;
-      float xp1 = ((float)pos.x+1 - spacing) / nv->max_size.x;
-      float yp1 = -((float)pos.y+1 - spacing) / nv->max_size.y;
+      float xp = disp_scale * (((float)pos.x + spacing) / nv->max_size.x);
+      float yp = -disp_scale * (((float)pos.y + spacing) / nv->max_size.y);
+      float xp1 = disp_scale * (((float)pos.x+1 - spacing) / nv->max_size.x);
+      float yp1 = -disp_scale * (((float)pos.y+1 - spacing) / nv->max_size.y);
       float zp = .5f / max_z;
       vertex_dat[v_idx++].setValue(xp, 0.0f, yp); // 00_0 = 0
       vertex_dat[v_idx++].setValue(xp1, 0.0f, yp); // 10_0 = 0
@@ -1291,16 +1298,17 @@ void LayerView::Render_impl() {
   T3LayerNode* node_so = this->node_so(); // cache
   if(!node_so) return;
   if(lay->Iconified()) {
-    node_so->setGeom(1, 1, nv->max_size.x, nv->max_size.y, nv->max_size.z);
+    node_so->setGeom(1, 1, nv->max_size.x, nv->max_size.y, nv->max_size.z, 1.0f);
   }
   else {
-    node_so->setGeom(lay->act_geom.x, lay->act_geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z);
+    node_so->setGeom(lay->act_geom.x, lay->act_geom.y,
+		     nv->max_size.x, nv->max_size.y, nv->max_size.z, lay->disp_scale);
   }
   node_so->setCaption(data()->GetName().chars());
 
   float max_xy = MAX(nv->max_size.x, nv->max_size.y);
   float lay_wd = T3LayerNode::width / max_xy;
-  float fx = (float)lay->act_geom.x / nv->max_size.x;
+  float fx = (float)lay->scaled_act_geom.x / nv->max_size.x;
 
   // ensure that the layer label does not go beyond width of layer itself!
   float eff_lay_font_size = nv->font_sizes.layer;
@@ -1418,8 +1426,8 @@ void LayerView::UseViewer(T3DataViewMain* viewer) {
   cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y, 
 			   nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
 
-  float szx = ((float)lay->act_geom.x / nv->max_size.x);
-  float szy = ((float)lay->act_geom.y / nv->max_size.y);
+  float szx = ((float)lay->scaled_act_geom.x / nv->max_size.x);
+  float szy = ((float)lay->scaled_act_geom.y / nv->max_size.y);
 
   // translate to layer offset + indent into layer
   SbVec3f trans;
@@ -1530,11 +1538,11 @@ void PrjnView::Render_impl() {
 
   if(nv->view_params.prjn_disp == NetViewParams::B_F) {
     // origin is *back* center
-    src.x = ((float)lay_fr_pos.x + .5f * (float)lay_fr->act_geom.x) / nv->max_size.x;
-    src.z = -((float)(lay_fr_pos.y + lay_fr->act_geom.y) / nv->max_size.y) - lay_wd;
+    src.x = ((float)lay_fr_pos.x + .5f * (float)lay_fr->scaled_act_geom.x) / nv->max_size.x;
+    src.z = -((float)(lay_fr_pos.y + lay_fr->scaled_act_geom.y) / nv->max_size.y) - lay_wd;
 
     // dest is *front* *center*
-    dst.x = ((float)lay_to_pos.x + .5f * (float)lay_to->act_geom.x) / nv->max_size.x;
+    dst.x = ((float)lay_to_pos.x + .5f * (float)lay_to->scaled_act_geom.x) / nv->max_size.x;
     dst.z = -((float)lay_to_pos.y / nv->max_size.y) + lay_wd;
   }
   else if(nv->view_params.prjn_disp == NetViewParams::L_R_F) { // easier to see
@@ -1543,17 +1551,17 @@ void PrjnView::Render_impl() {
     src.z = -((float)(lay_fr_pos.y) / nv->max_size.y) + lay_wd;
 
     // dest is *front* right
-    dst.x = ((float)lay_to_pos.x + (float)lay_to->act_geom.x) / nv->max_size.x - lay_wd;
+    dst.x = ((float)lay_to_pos.x + (float)lay_to->scaled_act_geom.x) / nv->max_size.x - lay_wd;
     dst.z = -((float)lay_to_pos.y / nv->max_size.y) + lay_wd;
   }
   else if(nv->view_params.prjn_disp == NetViewParams::L_R_B) { // out of the way
     // origin is *back* left
     src.x = ((float)lay_fr_pos.x) / nv->max_size.x + lay_wd;
-    src.z = -((float)(lay_fr_pos.y + lay_fr->act_geom.y) / nv->max_size.y) - lay_wd;
+    src.z = -((float)(lay_fr_pos.y + lay_fr->scaled_act_geom.y) / nv->max_size.y) - lay_wd;
 
     // dest is *back* right
-    dst.x = ((float)lay_to_pos.x + (float)lay_to->act_geom.x) / nv->max_size.x - lay_wd;
-    dst.z = -((float)(lay_to_pos.y  + lay_to->act_geom.y) / nv->max_size.y) - lay_wd;
+    dst.x = ((float)lay_to_pos.x + (float)lay_to->scaled_act_geom.x) / nv->max_size.x - lay_wd;
+    dst.z = -((float)(lay_to_pos.y  + lay_to->scaled_act_geom.y) / nv->max_size.y) - lay_wd;
   }
 
   transform(true)->translate.SetXYZ(src.x, src.y, src.z);

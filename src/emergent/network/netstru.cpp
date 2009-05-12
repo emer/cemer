@@ -3433,6 +3433,7 @@ void Layer::Initialize() {
   lesion_ = false;
   flags = LF_NONE;
   layer_type = HIDDEN;
+  disp_scale = 1.0f;
   unit_groups = false;
   gp_spc.x = 1;  gp_spc.y = 1;
   projections.SetBaseType(&TA_Projection);
@@ -3440,6 +3441,7 @@ void Layer::Initialize() {
   units.SetBaseType(&TA_Unit);
   ext_flag = Unit::NO_EXTERNAL;
   act_geom = un_geom;
+  scaled_act_geom = act_geom;
   dmem_dist = DMEM_DIST_DEFAULT;
   m_prv_unit_spec = NULL;
 
@@ -3462,6 +3464,7 @@ void Layer::InitLinks() {
   taBase::Own(gp_spc, this);
   taBase::Own(flat_geom, this);
   taBase::Own(act_geom, this);
+  taBase::Own(scaled_act_geom, this);
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_share_units, this);
 #endif
@@ -3478,6 +3481,7 @@ void Layer::CutLinks() {
   DisConnect();
   unit_names.CutLinks();
   act_geom.CutLinks();
+  scaled_act_geom.CutLinks();
   flat_geom.CutLinks();
   gp_spc.CutLinks();
   gp_geom.CutLinks();
@@ -3502,6 +3506,7 @@ void Layer::Copy_(const Layer& cp) {
   gp_spc = cp.gp_spc;
   flat_geom = cp.flat_geom;
   act_geom = cp.act_geom;
+  scaled_act_geom = cp.scaled_act_geom;
   projections = cp.projections;
   units = cp.units;
   unit_spec = cp.unit_spec;
@@ -3530,12 +3535,6 @@ void Layer::UpdateAfterMove_impl(taBase* old_owner) {
   Network* otnet = (Network*)old_owner->GetOwner(&TA_Network);
   if(!mynet || !otnet || mynet == otnet) return;  // don't update if not relevant
   UpdatePointers_NewPar(otnet, mynet);
-}
-
-void Layer::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-
-  if(taMisc::is_loading) return;
 }
 
 void Layer::UpdateAfterEdit_impl() {
@@ -3661,6 +3660,8 @@ void Layer::RecomputeGeometry() {
     flat_geom = un_geom;
     act_geom = un_geom;
   }
+  scaled_act_geom.x = (int)ceil((float)act_geom.x * disp_scale);
+  scaled_act_geom.y = (int)ceil((float)act_geom.y * disp_scale);
 }
 
 ProjectBase* Layer::project() {
@@ -3753,6 +3754,8 @@ void Layer::LayoutUnits(Unit* u) {
       if(un==u) break;
     }
   }
+  scaled_act_geom.x = (int)ceil((float)act_geom.x * disp_scale);
+  scaled_act_geom.y = (int)ceil((float)act_geom.y * disp_scale);
   StructUpdate(false);
 }
 
@@ -3859,6 +3862,8 @@ void Layer::LayoutUnitGroups() {
   }
   act_geom.y -= gp_spc.y;	// no space at the end!
   act_geom.x -= gp_spc.x;
+  scaled_act_geom.x = (int)ceil((float)act_geom.x * disp_scale);
+  scaled_act_geom.y = (int)ceil((float)act_geom.y * disp_scale);
   StructUpdate(false);
 }
 
@@ -6532,10 +6537,10 @@ void Network::LayerPos_Cleanup() {
     moved = false;
     for(int i1=0;i1<layers.leaves;i1++) {
       Layer* l1 = layers.Leaf(i1);
-      TwoDCoord l1e = (TwoDCoord)l1->pos + (TwoDCoord)l1->act_geom;
+      TwoDCoord l1e = (TwoDCoord)l1->pos + (TwoDCoord)l1->scaled_act_geom;
       for(int i2 = i1+1; i2<layers.leaves;i2++) {
 	Layer* l2 = layers.Leaf(i2);
-	TwoDCoord l2e = (TwoDCoord)l2->pos + (TwoDCoord)l2->act_geom;
+	TwoDCoord l2e = (TwoDCoord)l2->pos + (TwoDCoord)l2->scaled_act_geom;
 	if(l2->pos.z != l1->pos.z) continue;
 	if(l2->pos.x >= l1->pos.x && l2->pos.x < l1e.x &&
 	    l2->pos.y >= l1->pos.y && l2->pos.y < l1e.y) { // l2 starts in l1; move l2 rt/back
@@ -6838,8 +6843,8 @@ void Network::UpdateMax() {
       max_size.y = MAX(max_size.y, l_pos.y + 1);
     }
     else {
-      max_size.x = MAX(max_size.x, l->act_geom.x + l_pos.x);
-      max_size.y = MAX(max_size.y, l->act_geom.y + l_pos.y);
+      max_size.x = MAX(max_size.x, l->scaled_act_geom.x + l_pos.x);
+      max_size.y = MAX(max_size.y, l->scaled_act_geom.y + l_pos.y);
     }
   }
 }
