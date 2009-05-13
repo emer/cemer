@@ -605,19 +605,16 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
       cerr << "New source added!" << endl;
 #endif
     }
-    if(!diff_pending && !src_to_diff && !rec_to_diff) {
-      if(diff_threads.tasks.size == 0) // need thread!
-        diff_threads.InitAll();
-      src_to_diff = cur_src;
-      rec_to_diff = urec;
-      diff_pending = true;	// now pending
-      diff_threads.Run();	// run diff in separate thread
-    }
-    else {
-      // do it ourselves because thread must still be busy
-      cur_src->EncodeDiff(urec);	// urec is now diffed
+    while(diff_pending) {
+      taPlatform::msleep(20);	// wait 20 msec and check again..
     }
     urec->diff_src = cur_src;	// this smartref ptr needs to be set in main task
+    if(diff_threads.tasks.size == 0) // need thread!
+      diff_threads.InitAll();
+    src_to_diff = cur_src;
+    rec_to_diff = urec;
+    diff_pending = true;	// now pending
+    diff_threads.Run();	// run diff in separate thread
   }
 
   PurgeUnusedSrcs();		// get rid of unused source data
