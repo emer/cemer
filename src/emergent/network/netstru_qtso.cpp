@@ -389,13 +389,16 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
 	}
       }
       UnitGroupView* act_ugv = (UnitGroupView*)((T3UnitGroupNode*)pobj)->dataView();
+      Unit_Group* ugrp = act_ugv->ugrp();
+      float disp_scale = ugrp->own_lay->disp_scale;
+
       SbVec3f pt = pp->getObjectPoint(pobj); 
       //   cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
-      int xp = (int)(pt[0] * tnv->max_size.x);
-      int yp = (int)-(pt[2] * tnv->max_size.y);
+      int xp = (int)((pt[0] * tnv->max_size.x) / disp_scale);
+      int yp = (int)(-(pt[2] * tnv->max_size.y) / disp_scale);
       //   cerr << xp << ", " << yp << endl;
-      Unit_Group* ugrp = act_ugv->ugrp();
       xp -= ugrp->pos.x; yp -= ugrp->pos.y;
+      
       if((xp >= 0) && (xp < ugrp->geom.x) && (yp >= 0) && (yp < ugrp->geom.y)) {
 	Unit* unit = ugrp->FindUnitFmCoord(xp, yp);
 	if(unit) tnv->setUnitSrc(NULL, unit);

@@ -154,6 +154,7 @@ public:
     FIXED 		= 0x0002, // body cannot move at all
     PLANE2D		= 0x0004, // body is constrained to the Z=0 plane
     FM_FILE		= 0x0008, // load object image features from Inventor (iv) object file
+    NO_COLLIDE		= 0x0010, // this body is not part of the collision detection system -- useful for light beams and other ephemera
   };
     //    COLLIDE_FM_FILE	= 0x0008, // use object shape from file for collision detection (NOTE: this is more computationally expensive and requires trimesh feature to be enabled in ode)
 
@@ -162,7 +163,7 @@ public:
     CAPSULE,			// a cylinder with half-spheres on each end -- preferred to standard cylinders for collision detection
     CYLINDER,
     BOX,
-    NO_SHAPE,			// no shape at all -- only for special classes light lights
+    NO_SHAPE,			// no shape at all -- only for special classes like lights
   };
   enum LongAxis {
     LONG_X=1,			// long axis is in X direction

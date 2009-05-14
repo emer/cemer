@@ -362,13 +362,13 @@ public:
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
   inline void	CtrlPanel() 	{ SetVarFlag(CTRL_PANEL); }
-  // #MENU #DYN1 #CAT_Display #MENU_CONTEXT put this variable in the control panel
+  // #MENU #DYN1 #CAT_Display put this variable in the control panel
   inline void	NoCtrlPanel() 	{ ClearVarFlag(CTRL_PANEL); }
-  // #MENU #DYN1 #CAT_Display #MENU_CONTEXT take this variable out of the control panel
+  // #MENU #DYN1 #CAT_Display take this variable out of the control panel
   inline void	CtrlReadOnly() 	{ SetVarFlag(CTRL_READ_ONLY); }
-  // #MENU #DYN1 #CAT_Display #MENU_CONTEXT make this variable read only in the control panel
+  // #MENU #DYN1 #CAT_Display make this variable read only in the control panel
   inline void	NoCtrlReadOnly() { ClearVarFlag(CTRL_READ_ONLY); }
-  // #MENU #DYN1 #CAT_Display #MENU_CONTEXT make this variable editable in the control panel
+  // #MENU #DYN1 #CAT_Display make this variable editable in the control panel
 
   virtual void		SetFlagsByOwnership();
   // #IGNORE auto-set the LOCAL_VAR and FUN_ARG flags based on my owners
@@ -718,11 +718,11 @@ public:
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
   void			SetOffFlag(bool off);
-  // #MENU #MENU_ON_Object #DYN1 #MENU_CONTEXT set the OFF flag to given state (i.e., turn OFF or ON this code element)
+  // #MENU #MENU_ON_Object #DYN1 set the OFF flag to given state (i.e., turn OFF or ON this code element)
   void			SetNonStdFlag(bool non_std);
-  // #MENU #MENU_ON_Object #DYN1 #MENU_CONTEXT set non standard flag to given state: indicates that this is not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
+  // #MENU #MENU_ON_Object #DYN1 set non standard flag to given state: indicates that this is not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
   void			SetNewElFlag(bool new_el);
-  // #MENU #MENU_ON_Object #DYN1 #MENU_CONTEXT set new element flag to given state: this element was recently added to the program (just for user information/highlighting)
+  // #MENU #MENU_ON_Object #DYN1 set new element flag to given state: this element was recently added to the program (just for user information/highlighting)
 
   virtual ProgVar*	FindVarName(const String& var_nm) const;
   // find given variable within this program element -- NULL if not found

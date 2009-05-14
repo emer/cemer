@@ -1568,15 +1568,15 @@ public:
   // #MENU #USE_RVAL #CAT_Structure remove units with prob p_lesion (permute = fixed no. lesioned)
 
   virtual void	Iconify();
-  // #MENU #DYN1 #CAT_Display #MENU_CONTEXT iconify this layer in the network display
+  // #MENU #DYN1 #CAT_Display iconify this layer in the network display
   virtual void	DeIconify();
-  // #MENU #DYN1 #CAT_Display #MENU_CONTEXT de-iconify this layer in the network display
+  // #MENU #DYN1 #CAT_Display de-iconify this layer in the network display
   inline void	SetDispScale(float disp_sc) 	{ disp_scale = disp_sc; UpdateAfterEdit(); }
-  // #MENU #DYN1 #CAT_Display #MENU_CONTEXT set the display scale for the layer -- can change how much space it takes up relative to other layers
+  // #MENU #DYN1 #CAT_Display set the display scale for the layer -- can change how much space it takes up relative to other layers
   inline void	Lesion() 	{ SetLayerFlag(LESIONED); }
-  // #MENU #DYN1 #MENU_SEP_BEFORE #CAT_Structure #MENU_CONTEXT set the lesion flag on layer -- removes it from all processing operations
+  // #MENU #DYN1 #MENU_SEP_BEFORE #CAT_Structure set the lesion flag on layer -- removes it from all processing operations
   inline void	UnLesion() 	{ ClearLayerFlag(LESIONED); }
-  // #MENU #DYN1 #CAT_Structure #MENU_CONTEXT un-set the lesion flag on layer -- restores it to engage in normal processing
+  // #MENU #DYN1 #CAT_Structure un-set the lesion flag on layer -- restores it to engage in normal processing
 
   virtual bool	Iconified() const 	{ return HasLayerFlag(ICONIFIED); }
   // convenience function for checking iconified flag

@@ -85,6 +85,7 @@ void VEBody::Initialize() {
   mass = 1.0f;
   radius = .2f;
   length = 1.0f;
+  long_axis = LONG_X;
   box = 1.0f;
   set_color = true;
   color.Set(0.2f, 0.2f, .5f, .5f);	// transparent blue.. why not..
@@ -187,6 +188,11 @@ void VEBody::SetValsToODE_Shape() {
   if(geom_id) dGeomDestroy((dGeomID)geom_id);
   geom_id = NULL;
 
+  if(shape == NO_SHAPE || HasBodyFlag(NO_COLLIDE)) {
+    cur_shape = shape;
+    return;
+  }
+
   switch(shape) {
   case SPHERE:
     geom_id = dCreateSphere(sid, radius);
@@ -200,7 +206,7 @@ void VEBody::SetValsToODE_Shape() {
   case BOX:
     geom_id = dCreateBox(sid, box.x, box.y, box.z);
     break;
-  case NO_SHAPE:
+  case NO_SHAPE:		// compiler food
     break;
   }
   
@@ -1550,6 +1556,9 @@ void VEStatic::SetValsToODE_Shape() {
 
   if(geom_id) dGeomDestroy((dGeomID)geom_id);
   geom_id = NULL;
+
+  if(shape == NO_SHAPE) return;
+
   switch(shape) {
   case SPHERE:
     geom_id = dCreateSphere(sid, radius);
