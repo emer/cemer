@@ -329,13 +329,19 @@ void VEBody::GetValsFmODE(bool updt_disp) {
   // capsules and cylinders need to have extra rotation as they are always Z axis oriented: undo!
   if(shape == CAPSULE || shape == CYLINDER) {
     if(long_axis == LONG_X) {
+      SbVec3f yaxis(0.0f, 1.0f, 0.0f);
+      SbVec3f new_yaxis;
+      sbrot.multVec(yaxis, new_yaxis);
       SbRotation ubrot;
-      ubrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), -1.5708f);
+      ubrot.setValue(new_yaxis, -1.5708f); // undo along the new yaxis, not the original one..
       sbrot *= ubrot;
     }
     else if(long_axis == LONG_Y) {
+      SbVec3f xaxis(1.0f, 0.0f, 0.0f);
+      SbVec3f new_xaxis;
+      sbrot.multVec(xaxis, new_xaxis);
       SbRotation ubrot;
-      ubrot.setValue(SbVec3f(1.0f, 0.0f, 0.0f), -1.5708f);
+      ubrot.setValue(new_xaxis, -1.5708f); // undo along the new xaxis, not the original one..
       sbrot *= ubrot;
     }
   }
