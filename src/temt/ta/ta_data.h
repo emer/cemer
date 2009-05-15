@@ -361,7 +361,7 @@ public:
      return WriteItem_impl();} 
   override bool		WriteItem(int idx) 
     {if ((idx == ItemCount()) && (isSinkGrowable())) {AddItem_impl(1);}
-     if ((idx < 0) || (idx >= ItemCount())) return false;
+     if(idx < 0) idx = ItemCount()-1; if ((idx < 0) || (idx >= ItemCount())) return false;
      wr_itr = idx;  return WriteItem_impl();} 
  
   override int		ReadIndex() const {return rd_itr;} 

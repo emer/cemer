@@ -1806,6 +1806,8 @@ bool GaborV1Spec::FilterInput_Copy(int cmp_idx) {
   else
     inof = un * input_ovlp;
 
+  float norm = rf_width.Product();
+
   float flt_sum = 0.0f;
   for(fc.y=0;fc.y<rf_width.y;fc.y++) {
     for(fc.x=0;fc.x<rf_width.x;fc.x++) {
@@ -1815,6 +1817,8 @@ bool GaborV1Spec::FilterInput_Copy(int cmp_idx) {
       flt_sum += oval;
     }
   }
+
+  flt_sum /= norm;
 
   if(cur_superimpose)
     cur_v1_output->FastEl(un.x, un.y) += flt_sum;
@@ -2902,6 +2906,8 @@ bool RetinaSpec::FilterImageData(DataTable* dt, bool superimpose, int renorm) {
   if(renorm > 0) {
     int idx;
     float max_val = taMath_float::vec_max(&max_vals, idx);
+//     cerr << "max val: " << max_val << endl;
+//     cerr << "vals: " << max_vals.GetValStr() << endl;
     if(max_val > renorm_thr) {
       cur_rescale = 1.0f;
       cur_renorm_factor = (float)(renorm - 1);

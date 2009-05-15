@@ -3500,6 +3500,7 @@ void Layer::Copy_(const Layer& cp) {
   layer_type = cp.layer_type;
   flags = cp.flags;
   pos = cp.pos;
+  disp_scale = cp.disp_scale;
   un_geom = cp.un_geom;
   unit_groups = cp.unit_groups;
   gp_geom = cp.gp_geom;
