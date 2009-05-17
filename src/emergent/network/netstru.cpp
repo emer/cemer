@@ -6452,26 +6452,28 @@ void Network::SaveWeights_strm(ostream& strm, Network::WtSaveFormat fmt) {
 }
 
 bool Network::LoadWeights_strm(istream& strm, bool quiet) {
+  bool rval = false;
+  String tag, val, enum_typ_nm;
+  int stat = 0;
+  RecvCons::WtSaveFormat fmt;
   taMisc::Busy();
   int c = strm.peek();
   if(TestError(c == '#', "LoadWeights_strm",
 	       "cannot read old formats from version 3.2 -- must use network save")) {
-    return false;
+    goto exit;
   }
-  String tag, val;
-  int stat = taMisc::read_tag(strm, tag, val);
-  if((stat != taMisc::TAG_GOT) || (tag != "Fmt")) return false;
+  stat = taMisc::read_tag(strm, tag, val);
+  if((stat != taMisc::TAG_GOT) || (tag != "Fmt")) goto exit;
 
-  String enum_typ_nm;
-  RecvCons::WtSaveFormat fmt = (RecvCons::WtSaveFormat)TA_RecvCons.GetEnumVal(val, enum_typ_nm);
+  fmt = (RecvCons::WtSaveFormat)TA_RecvCons.GetEnumVal(val, enum_typ_nm);
 
   stat = taMisc::read_tag(strm, tag, val);
-  if((stat != taMisc::TAG_GOT) || (tag != "Name")) return false;
+  if((stat != taMisc::TAG_GOT) || (tag != "Name")) goto exit;
   // don't set the name!!! this causes more trouble than it is worth!!
 //   name = val;
 
   stat = taMisc::read_tag(strm, tag, val);
-  if((stat != taMisc::TAG_GOT) || (tag != "Epoch")) return false;
+  if((stat != taMisc::TAG_GOT) || (tag != "Epoch")) goto exit;
   epoch = (int)val;
 
   while(true) {
@@ -6492,8 +6494,9 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
     if(stat != taMisc::TAG_END) break;
   }
   // could try to read end tag but what is the point?
-
+  rval = true;
   UpdateAllViews();
+exit:
   taMisc::DoneBusy();
   return true;
 }
