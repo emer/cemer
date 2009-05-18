@@ -1701,7 +1701,6 @@ void NormBlock::AcceptData_impl(SignalProcBlock* src_blk,
     for (int ch = 0; ch < in_chans; ++ch)
     for (int v = 0; v < in_vals; ++v) {
       float& val = scaled.FastEl(v, ch, f);
-      // retrieve the data for doing the delta calcs
       val = Scale(in_mat->FastEl(v, ch, f, i, stage));
       data.Add(val);
     }
@@ -1711,35 +1710,24 @@ void NormBlock::AcceptData_impl(SignalProcBlock* src_blk,
     for (int j = norm_top_n; j >= 1 ; --j)
       topn_avg += data[data.size - j];
     topn_avg /= norm_top_n;
-    double this_norm = 0; // if below thresh
     // note: we don't update integrator when we fall below thresh because
     // we assume sound already low and norm high, and will be needed likewise
     // on next onset
-    if ((topn_avg < in_thresh_lin_scaled) ||
-      (topn_avg < 1e-12f)) // note: e-12 is arbitrary 0
-    { // "0" case
-      for (int f = 0; f < in_fields; ++f) 
-      for (int ch = 0; ch < in_chans; ++ch)
-      for (int v = 0; v < in_vals; ++v) {
-        out_mat->FastEl(v, ch, f, out_buff.item,
-          out_buff.stage) = 0;
-      }
-    } else { // normalize case
+    if (!((topn_avg < in_thresh_lin_scaled) ||
+      (topn_avg < 1e-12f))) { // note: e-12 is arbitrary 0
       // apply the dt
       cur_norm_factor = ((1.0 - norm_dt_out) * cur_norm_factor) +
         (norm_dt_out / topn_avg); // note / inverts it to be scale
-      this_norm = cur_norm_factor;
-      for (int f = 0; f < in_fields; ++f) 
-      for (int ch = 0; ch < in_chans; ++ch)
-      for (int v = 0; v < in_vals; ++v) {
-        float val = scaled.FastEl(v, ch, f);
-        // retrieve the data for doing the delta calcs
-        val *= this_norm;
-        data.Add(val);
-        // output
-        out_mat->FastEl(v, ch, f, out_buff.item,
-          out_buff.stage) = val;
-      }
+    }
+    const double this_norm = cur_norm_factor;
+    for (int f = 0; f < in_fields; ++f) 
+    for (int ch = 0; ch < in_chans; ++ch)
+    for (int v = 0; v < in_vals; ++v) {
+      float val = scaled.FastEl(v, ch, f);
+      val *= this_norm;
+      // output
+      out_mat->FastEl(v, ch, f, out_buff.item,
+        out_buff.stage) = val;
     }
     
     if (out_buff.NextIndex()) {
@@ -1758,8 +1746,12 @@ void NormBlock::AcceptData_impl(SignalProcBlock* src_blk,
 
 float NormBlock::Scale(float val) {
   switch (scale_type) {
-  NONE: return val;
-  POWER: return powf(val, scale_factor);
+  case NONE: 
+    return val;
+  case POWER: 
+    return powf(val, scale_factor);
+  case LOG10_1P:
+    return log10f(1.0f + val);
   }
   return val; // compiler food
 }

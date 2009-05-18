@@ -484,7 +484,8 @@ INHERITED(StdBlock)
 public: //
   enum ScaleType {
     NONE,	// no scale factor
-    POWER,	// scale_factor is the power (> 0) to which to raise input	
+    POWER,	// scale_factor is the power (> 0) to which to raise input
+    LOG10_1P,	// log10(1+x)	
   };
   
   DataBuffer		out_buff_norm; // #SHOW_TREE the normalization factor used -- this will be 0 if the input didn't meet threshold
