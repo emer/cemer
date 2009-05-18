@@ -93,6 +93,7 @@ void taDoc::Initialize() {
   auto_open = false;
   web_doc = false;
   url = "local";
+  full_url = "local";
   text_size = 1.0f;
   if (!taMisc::is_loading && !taMisc::is_duplicating)
     text = init_text;
@@ -103,6 +104,7 @@ void taDoc::UpdateText() {
 }
 
 void taDoc::SetURL(const String& new_url) {
+  full_url = new_url;
   if(wiki.nonempty()) {
     String base_url = taMisc::GetWikiURL(wiki, true); // index.php
     if(new_url.startsWith(base_url))
@@ -135,9 +137,12 @@ void taDoc::SetURL(const String& new_url) {
 String taDoc::GetURL() {
   if(wiki.nonempty()) {
     String wiki_url = taMisc::GetWikiURL(wiki, true); // true = add index.php
-    if(TestError(wiki_url.empty(), "GetURL", "wiki named:", wiki,
-		 "not found in global preferences/options under wiki_url settings"))
-      return _nilString;
+    if(TestWarning(wiki_url.empty(), "GetURL", "wiki named:", wiki,
+		   "not found in global preferences/options under wiki_url settings -- using full url backup instead.")) {
+      wiki = _nilString;
+      url = full_url;
+      return url;
+    }
     return wiki_url + url;
   }
   return url;
@@ -149,8 +154,13 @@ void taDoc::UpdateAfterEdit_impl() {
     web_doc = false;
   else
     web_doc = true;
-  if(!web_doc)			// only do this if not a web doc -- otherwise it saves web page directly to html_text and can display that when offline..
+  if(web_doc) {
+    full_url = GetURL();
+  }
+  else {
+    // only do this if not a web doc -- otherwise it saves web page directly to html_text and can display that when offline..
     UpdateText();
+  }
 }
 
 static String wiki_parse_str_between(const String& cl, const String& sts, const String& eds) {

@@ -1051,6 +1051,8 @@ void UnitGroupView::Render_impl_snap_bord() {
   // FACE = polyline, PART = line segment!!
   vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_FACE_INDEXED);
 
+  float disp_scale = ugrp->own_lay->disp_scale;
+
   int n_geom = ugrp->geom.Product();
 
   vertex.setNum(n_geom * 4);	// 4 virtex per
@@ -1074,10 +1076,10 @@ void UnitGroupView::Render_impl_snap_bord() {
   TwoDCoord pos;
   for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
     for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
-      float xp = ((float)pos.x + spacing) / nv->max_size.x;
-      float yp = -((float)pos.y + spacing) / nv->max_size.y;
-      float xp1 = ((float)pos.x+1 - spacing) / nv->max_size.x;
-      float yp1 = -((float)pos.y+1 - spacing) / nv->max_size.y;
+      float xp = disp_scale * (((float)pos.x + spacing) / nv->max_size.x);
+      float yp = -disp_scale * (((float)pos.y + spacing) / nv->max_size.y);
+      float xp1 = disp_scale * (((float)pos.x+1 - spacing) / nv->max_size.x);
+      float yp1 = -disp_scale * (((float)pos.y+1 - spacing) / nv->max_size.y);
       coords_dat[cidx++] = v_idx; coords_dat[cidx++] = v_idx+1;
       coords_dat[cidx++] = v_idx+2; coords_dat[cidx++] = v_idx+3;
       coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;

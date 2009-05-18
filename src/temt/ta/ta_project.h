@@ -47,6 +47,7 @@ public:
   bool		web_doc; 	// #READ_ONLY this document lives on the web, at the following URL, instead of being local text saved in the project -- the most recently viewed version of the document is cached into the local text, and is rendered if it is not possible to connect to the internet -- this flag is automatically updated based on the url field
   String	wiki;		// name of a wiki, as specified in global preferences, where this object should be stored -- this is used to lookup the wiki name -- if blank then url must be a full URL path
   String	url;		// a URL location for this document -- if blank or "local" then text field is used as document text -- otherwise if wiki name is set, then this is relative to that wiki, as wiki_url/index.php/Projects/url, otherwise it is a full URL path to a valid location
+  String	full_url;	// #HIDDEN full URL location for this document -- always updated and used as a backup if loaded in a context where the wiki name is not recognized
   float		text_size;	// #DEF_1 multiplier for text size on page (zoom factor) -- 1.0 is default -- this multiplies the global preferences/options font_size / 12.0 factor (i.e., 12.0 is assumed to be a normal baseline font size), to arrive at the overall font size scaling factor
 
   String	text; 		// #HIDDEN #EDIT_DIALOG the text of the document for local docs (in html/mediawiki format)
