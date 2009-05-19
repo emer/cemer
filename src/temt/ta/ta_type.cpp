@@ -1226,8 +1226,10 @@ void taMisc::Init_Defaults_PostLoadConfig() {
 
   // max_cpu
   int max_cpus = FindArgByName("MaxCpus").toInt(); // 0 if doesn't exist
-  if ((max_cpus > 0) && (max_cpus <= taPlatform::cpuCount()))
+  if ((max_cpus > 0) && (max_cpus <= taPlatform::cpuCount())) {
     thread_defaults.cpus = max_cpus;
+    taMisc::Info("Set threads cpus:", String(max_cpus));
+  }
 
   if(thread_defaults.cpus > taPlatform::cpuCount())
     thread_defaults.cpus = taPlatform::cpuCount();
@@ -1236,24 +1238,40 @@ void taMisc::Init_Defaults_PostLoadConfig() {
     thread_defaults.n_threads = thread_defaults.cpus;
 
   int n_threads = FindArgByName("NThreads").toInt(); // 0 if doesn't exist
-  if(n_threads > 0) thread_defaults.n_threads = n_threads;
+  if(n_threads > 0) {
+    thread_defaults.n_threads = n_threads;
+    taMisc::Info("Set n_threads to:", String(n_threads));
+  }
   if(thread_defaults.n_threads > thread_defaults.cpus)
     thread_defaults.n_threads = thread_defaults.cpus;
 
   float chk_pct = FindArgByName("ThreadChunkPct").toFloat(); // 0 if doesn't exist
-  if(chk_pct > 0.0f) thread_defaults.chunk_pct = chk_pct;
+  if(chk_pct > 0.0f) {
+    thread_defaults.chunk_pct = chk_pct;
+    taMisc::Info("Set threads chunk_pct to:", String(chk_pct));
+  }
 
   int nib_chk = FindArgByName("ThreadNibbleChunk").toInt(); // 0 if doesn't exist
-  if(nib_chk > 0) thread_defaults.nibble_chunk = nib_chk;
+  if(nib_chk > 0) {
+    thread_defaults.nibble_chunk = nib_chk;
+    taMisc::Info("Set threads nibble_chunk to:", String(nib_chk));
+  }
 
   int cmp_thr = FindArgByName("ThreadComputeThr").toFloat(); // 0 if doesn't exist
-  if(cmp_thr > 0.0f) thread_defaults.compute_thr = cmp_thr;
+  if(cmp_thr > 0.0f) {
+    thread_defaults.compute_thr = cmp_thr;
+    taMisc::Info("Set threads compute_thr to:", String(cmp_thr));
+  }
 
   int min_un = FindArgByName("ThreadMinUnits").toInt(); // 0 if doesn't exist
-  if(min_un > 0) thread_defaults.min_units = min_un;
+  if(min_un > 0) {
+    thread_defaults.min_units = min_un;
+    taMisc::Info("Set threads min_units to:", String(min_un));
+  }
 
   if(CheckArgByName("ThreadSendNetin")) {
     thread_defaults.send_netin = FindArgByName("ThreadSendNetin").toBool();
+    taMisc::Info("Set threads send_netin to:", (thread_defaults.send_netin ? "true" : "false"));
   }
 
   UpdateAfterEdit();

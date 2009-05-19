@@ -216,6 +216,7 @@ void taThreadMgr::Initialize() {
   sync_sleep_usec = 1;
   task_type = NULL;
   get_timing = false;
+  n_wake_in_sync = 0;
   run_time_pct = 0.0;
   sync_time_pct = 0.0;
   n_to_run = 0;
@@ -230,6 +231,9 @@ void taThreadMgr::Destroy() {
 void taThreadMgr::InitLinks() {
   inherited::InitLinks();
   taBase::Own(tasks, this);
+  taBase::Own(run_time, this);
+  taBase::Own(sync_time, this);
+  taBase::Own(total_time, this);
   all_thread_mgrs.Add(this);	// we're real -- add to global list
 }
 
@@ -330,7 +334,11 @@ void taThreadMgr::SyncThreads() {
 
   if(n_started == n_to_run && n_running == 0) return;
 
-  if(get_timing)    sync_time.StartTimer(false); // don't reset
+  if(get_timing) {
+    sync_time.StartTimer(false); // don't reset
+    if(n_started < n_to_run)
+      n_wake_in_sync += n_to_run - n_started;
+  }
 
   while(n_started < n_to_run) { // wait for other guys to start
     wait.wakeAll();		// wake them in case they didn't get the message the first time!
@@ -363,6 +371,7 @@ void taThreadMgr::StartTimers() {
   run_time.ResetUsed();
   sync_time.ResetUsed();
   total_time.ResetUsed();
+  n_wake_in_sync = 0;
 }
 
 void taThreadMgr::EndTimers(bool print_report) {
@@ -370,15 +379,18 @@ void taThreadMgr::EndTimers(bool print_report) {
   if(total_time.s_used > 0.0) {
     run_time_pct = run_time.s_used / total_time.s_used;
     sync_time_pct = sync_time.s_used / total_time.s_used;
+    wake_in_sync_pct = (double)n_wake_in_sync / (double)(run_time.n_used * threads.size);
   }
   else {
     run_time_pct = 0.0;
     sync_time_pct = 0.0;
   }
+
   if(print_report) {
-    cout << GetTypeDef()->name << " thread report:" << endl;
-    cout << "total time: " << total_time.s_used << endl;  
-    cout << "run time:   " << run_time.s_used << " \t%: " << run_time_pct << endl;  
-    cout << "sync time:  " << sync_time.s_used << " \t%: " << sync_time_pct << endl;  
+    cout << GetTypeDef()->name << " thread report for n_threads: " << n_threads << endl;
+    cout << "total time:   " << total_time.s_used << endl;  
+    cout << "run time:     " << run_time.s_used << " \t%: " << run_time_pct << endl;  
+    cout << "sync time:    " << sync_time.s_used << " \t%: " << sync_time_pct << endl;  
+    cout << "wake in sync: " << n_wake_in_sync << " \t%: " << wake_in_sync_pct << endl;  
   }
 }

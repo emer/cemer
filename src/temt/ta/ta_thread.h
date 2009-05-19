@@ -216,17 +216,19 @@ public:
   TimeUsedHR		run_time; 	// #EXPERT total time (in secs and fractions thereof) from end of RunThreads() call (after telling threads to wake up) to start of SyncThreads() call
   TimeUsedHR		sync_time;	// #EXPERT total time (in secs and fractions thereof) in SyncThreads() waiting to sync up the threads
   TimeUsedHR		total_time;	// #EXPERT total time (in secs and fractions thereof) from start of RunThreads() to end of SyncThreads()
+  int			n_wake_in_sync; // #EXPERT number of threads that had to be woken in the sync process -- i.e., they hadn't even started running by the time the main thread finished!
 
   double		run_time_pct; 	// #EXPERT percent of total time spent running -- computed in EndTimers()
   double		sync_time_pct;	// #EXPERT percent of total time spent syncing -- computed in EndTimers()
+  double		wake_in_sync_pct; // #EXPERT percent of total threads run that had to be woken during the sync process
 
   //////////////////////////////////////////////////////
   //		These are used by the managed threads
 
+  int			n_to_run;
+  // #IGNORE number of threads that should start to run -- this is set to threads.size at start of run, and checked in sync threads
   QAtomicInt		n_running;
   // #IGNORE number of threads that are currently running -- atomically incremented and decremented by the threads as they run and finish their task
-  int			n_to_run;
-  // #IGNORE number of threads that should start to run -- this is set threads.size at start of run, and checked in sync threads
   QAtomicInt		n_started;
   // #IGNORE number of threads that actually started the task -- this is reset to 0 at start of run, and atomically incremented by the threads when they start running -- ensures that everyone runs..
   QWaitCondition 	wait;
