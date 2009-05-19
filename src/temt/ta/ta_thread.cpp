@@ -177,11 +177,10 @@ taManagedThread::~taManagedThread() {
 void taManagedThread::run() {
   if(!mgr) return;		// should not happen!
   m_active = true;
-  QMutex   mutex;
   while(!m_stop_req) {
-    mutex.lock();
-    mgr->wait.wait(&mutex);		// we wait until we get the go signal
-    mutex.unlock();
+    mgr->wait_mutex.lock();
+    mgr->wait.wait(&mgr->wait_mutex);		// we wait until we get the go signal
+    mgr->wait_mutex.unlock();
     
     if(m_stop_req) break;	// bail
  
@@ -332,7 +331,10 @@ void taThreadMgr::RunThreads() {
 void taThreadMgr::SyncThreads() {
   if(get_timing)    run_time.EndTimer();
 
-  if(n_started == n_to_run && n_running == 0) return;
+  if(n_started == n_to_run && n_running == 0) {
+    total_time.EndTimer();
+    return;
+  }
 
   if(get_timing) {
     sync_time.StartTimer(false); // don't reset

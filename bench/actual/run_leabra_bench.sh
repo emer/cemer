@@ -30,10 +30,10 @@
 set exe=emergent
 #set exe=../../build/bin/emergent
 
-echo " "
-echo "=============================================================="
-echo "SMALL Network (5 x 25 units)"
-$exe -nogui -ni -p leabra_bench.proj epochs=10 pats=100 units=25 $*
+# echo " "
+# echo "=============================================================="
+# echo "SMALL Network (5 x 25 units)"
+# $exe -nogui -ni -p leabra_bench.proj epochs=10 pats=100 units=25 $*
 echo " "
 echo "=============================================================="
 echo "MEDIUM Network (5 x 100 units)"
