@@ -332,7 +332,7 @@ void taThreadMgr::SyncThreads() {
   if(get_timing)    run_time.EndTimer();
 
   if(n_started == n_to_run && n_running == 0) {
-    total_time.EndTimer();
+    if(get_timing)	total_time.EndTimer();
     return;
   }
 
