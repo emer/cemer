@@ -1257,7 +1257,7 @@ void taMisc::Init_Defaults_PostLoadConfig() {
     taMisc::Info("Set threads nibble_chunk to:", String(nib_chk));
   }
 
-  int cmp_thr = FindArgByName("ThreadComputeThr").toFloat(); // 0 if doesn't exist
+  float cmp_thr = FindArgByName("ThreadComputeThr").toFloat(); // 0 if doesn't exist
   if(cmp_thr > 0.0f) {
     thread_defaults.compute_thr = cmp_thr;
     taMisc::Info("Set threads compute_thr to:", String(cmp_thr));

@@ -386,6 +386,7 @@ void taThreadMgr::EndTimers(bool print_report) {
   else {
     run_time_pct = 0.0;
     sync_time_pct = 0.0;
+    wake_in_sync_pct = 0.0;
   }
 
   if(print_report) {
