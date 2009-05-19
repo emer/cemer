@@ -184,14 +184,14 @@ void taManagedThread::run() {
     
     if(m_stop_req) break;	// bail
  
-    mgr->n_running.fetchAndAddRelaxed(1); // add one to the running list -- order doesn't matter
-    mgr->n_started.fetchAndAddRelaxed(1); // add one to the running list -- order doesn't matter
+    mgr->n_running.fetchAndAddOrdered(1); // add one to the running list -- order doesn't matter
+    mgr->n_started.fetchAndAddOrdered(1); // add one to the running list -- order doesn't matter
     m_running = true;
     if(m_task) {
       m_task->run();
     }
     m_running = false;
-    mgr->n_running.fetchAndAddRelaxed(-1); // subtract one from running list -- order doesn't matter
+    mgr->n_running.fetchAndAddOrdered(-1); // subtract one from running list -- order doesn't matter
   }
   m_active = false;
 }
@@ -322,7 +322,7 @@ void taThreadMgr::RunThreads() {
   if(get_timing)    total_time.StartTimer(false); // don't reset
 
   n_to_run = threads.size;
-  n_started.fetchAndStoreRelaxed(0);		// reset here
+  n_started.fetchAndStoreOrdered(0);		// reset here
   wait.wakeAll();
 
   if(get_timing)    run_time.StartTimer(false); // don't reset
