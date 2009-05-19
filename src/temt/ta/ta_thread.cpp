@@ -333,6 +333,7 @@ void taThreadMgr::SyncThreads() {
   if(get_timing)    sync_time.StartTimer(false); // don't reset
 
   while(n_started < n_to_run) { // wait for other guys to start
+    wait.wakeAll();		// wake them in case they didn't get the message the first time!
     usleep(sync_sleep_usec*10);	    // this is going to be slower, so wait longer
   }
   while(n_running > 0) {	// then wait for everyone to finish
