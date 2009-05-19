@@ -609,7 +609,8 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
       cerr << "New source added!" << endl;
 #endif
     }
-    diff_threads.SyncThreads();	// sync now before running again..
+    if(diff_threads.n_running > 0)
+      diff_threads.SyncThreads();	// sync now before running again..
     urec->diff_src = cur_src;	// this smartref ptr needs to be set in main task
     rec_to_diff = urec;
     diff_threads.Run();	// run diff in separate thread
