@@ -13,8 +13,18 @@
 
 # any args passed to this script are simply passed along to the run
 
+# here are the threading params, along with current defaults
+#
+# n_threads=2  -- number of threads to use
+# thread_chunk_pct=0.5   -- what percent of total computation should be in the chunks
+# thread_nibble_chunk=4  -- how big of a chunk of units should be nibbled by threads at a time
+# thread_compute_thr=0.5 -- threshold for actually threading a given task -- all connection-level
+#                           code is >= .5    
+# thread_min_units=100   -- minimum number of units in net to engage threading at all
+# thread_send_netin=false -- thread the Send_Netin call -- often not worth it..
+
 # e.g., a thread testing run would be:
-# ./run_leabra_bench.sh n_threads=2 chunk_pct=0.5 nibble_chunk=4 compute_thr=0.5 netin=false  tag=_mac_mbp_216ghz_thr2pct50nch4thr5nonet
+# ./run_leabra_bench.sh n_threads=2 thread_chunk_pct=0.5 thread_nibble_chunk=4 thread_compute_thr=0.5 thread_min_units=10 thread_send_netin=false tag=_mac_mbp_216ghz_thr2pct50nch4thr5nonet
 
 # name of executable to run
 set exe=emergent
