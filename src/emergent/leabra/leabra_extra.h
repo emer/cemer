@@ -1409,10 +1409,21 @@ public:
     return twod_vals.SafeElAsFloat(xy, val_typ, val_no, gp_x, gp_y);
   }
   // #CAT_TwoD get a two-d value encoded in the twod_vals data 
+  inline void	GetTwoDVals(float& x_val, float& y_val, TwoDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+    x_val = twod_vals.SafeElAsFloat(TWOD_X, val_typ, val_no, gp_x, gp_y);
+    y_val = twod_vals.SafeElAsFloat(TWOD_Y, val_typ, val_no, gp_x, gp_y);
+  }
+  // #CAT_TwoD get a two-d value encoded in the twod_vals data 
+
   inline void	SetTwoDVal(Variant val, TwoDXY xy, TwoDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
     twod_vals.SetFmVar(val, xy, val_typ, val_no, gp_x, gp_y);
   }
   // #CAT_TwoD set a two-d value encoded in the twod_vals data 
+  inline void	SetTwoDVals(Variant x_val, Variant y_val, TwoDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+    twod_vals.SetFmVar(x_val, TWOD_X, val_typ, val_no, gp_x, gp_y);
+    twod_vals.SetFmVar(y_val, TWOD_Y, val_typ, val_no, gp_x, gp_y);
+  }
+  // #CAT_TwoD set both two-d values encoded in the twod_vals data 
 
   virtual void		UpdateTwoDValsGeom();
   // update the twod_vals geometry based on current layer and layer spec settings
@@ -1594,6 +1605,229 @@ private:
   void	Destroy()		{ CutLinks(); }
 };
 
+
+/*
+
+//////////////////////////////////
+// 	FourD Value Layer	//
+//////////////////////////////////
+
+class LEABRA_API FourDValLeabraLayer : public LeabraLayer {
+  // represents one or more four-d value(s) using a coarse-coded distributed code over units, with units within unit groups representing the Z,W coords and overall unit groups themselves representing X,Y coords.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid -- uses separate matrix storage of values 
+INHERITED(LeabraLayer)
+public:
+  enum FourDXYZW {			// x-y two-d vals
+    FOURD_X,			// the horizontal (X) value encoded in the layer
+    FOURD_Y,			// the vertical (Y) value encoded in the layer
+    FOURD_Z,			// the unit group (Z) value encoded in the layer
+    FOURD_W,			// the unit group (w) value encoded in the layer
+    FOURD_XYZW,			// number of xyzw vals (4)
+  };
+
+  enum FourDValTypes {		// different values encoded in the twod_vals matrix
+    FOURD_EXT,			// external inputs
+    FOURD_TARG,			// target values
+    FOURD_ACT,			// current activation
+    FOURD_ACT_M,		// minus phase activations
+    FOURD_ACT_P,		// plus phase activations
+    FOURD_ACT_DIF,		// difference between plus and minus phase activations
+    FOURD_ACT_M2,		// second minus phase activations
+    FOURD_ACT_P2,		// second plus phase activations
+    FOURD_ACT_DIF2,		// difference between second plus and minus phase activations
+    FOURD_ERR,			// error from target: targ - act_m
+    FOURD_SQERR,		// squared error from target: (targ - act_m)^2
+    FOURD_N,			// number of val types to encode
+  };
+  
+  float_Matrix		fourd_vals; // #SHOW_TREE matrix of layer-encoded values, dimensions: [gp_y][gp_x][n_vals][FOURD_N][FOURD_XYZW] (outer to inner) -- gp_y and gp_x are group indices -- 0,0 always used for global layer vals, groups encoded as 1+gp_idx
+
+  inline float	GetFourDVal(FourDXYZW xyzw, FourDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+    return fourd_vals.SafeElAsFloat(xyzw, val_typ, val_no, gp_x, gp_y);
+  }
+  // #CAT_FourD get a two-d value encoded in the twod_vals data 
+  inline void	GetFourDVals(float& x_val, float& y_val, float& z_val, float& w_val,
+			     FourDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+    x_val = fourd_vals.SafeElAsFloat(FOURD_X, val_typ, val_no, gp_x, gp_y);
+    y_val = fourd_vals.SafeElAsFloat(FOURD_Y, val_typ, val_no, gp_x, gp_y);
+    z_val = fourd_vals.SafeElAsFloat(FOURD_Z, val_typ, val_no, gp_x, gp_y);
+    w_val = fourd_vals.SafeElAsFloat(FOURD_W, val_typ, val_no, gp_x, gp_y);
+  }
+
+  inline void	SetFourDVal(Variant val, FourDXYZW xyzw, FourDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+    fourd_vals.SetFmVar(val, xyzw, val_typ, val_no, gp_x, gp_y);
+  }
+  // #CAT_FourD set a four-d value encoded in the fourd_vals data 
+  inline void	SetFourDVals(Variant x_val, Variant y_val, Variant z_val, Variant w_val,
+			     FourDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+    fourd_vals.SetFmVar(x_val, FOURD_X, val_typ, val_no, gp_x, gp_y);
+    fourd_vals.SetFmVar(y_val, FOURD_X, val_typ, val_no, gp_x, gp_y);
+    fourd_vals.SetFmVar(z_val, FOURD_Z, val_typ, val_no, gp_x, gp_y);
+    fourd_vals.SetFmVar(w_val, FOURD_W, val_typ, val_no, gp_x, gp_y);
+  }
+  // #CAT_FourD set four-d values encoded in the fourd_vals data 
+
+  virtual void		UpdateFourDValsGeom();
+  // update the fourd_vals geometry based on current layer and layer spec settings
+
+  TA_SIMPLE_BASEFUNS(FourDValLeabraLayer);
+protected:
+  override void	UpdateAfterEdit_impl();
+
+  override void	ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
+				  Random* ran, const TwoDCoord& offs, bool na_by_range=false);
+  override void	ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
+				      Random* ran, const TwoDCoord& offs, bool na_by_range=false);
+  override void	ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags,
+				    Random* ran, bool na_by_range=false);
+
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
+class LEABRA_API FourDValSpec : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for four-dimensional values
+INHERITED(taOBase)
+public:
+  enum	RepType {
+    GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
+    LOCALIST			// each unit represents a distinct value; intermediate values represented by graded activity of neighbors; overall activity is weighted-average across all units
+  };
+
+  RepType	rep;		// #APPLY_IMMED type of representation of scalar value to use
+  int		n_vals;		// number of distinct sets of X,Y values to represent in layer (i.e., if > 1, then multiple bumps are encoded -- uses peaks to locate values for multiple, and full weighted average for single value
+  float		un_width;	// #CONDEDIT_ON_rep:GAUSSIAN sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in unit_range min-max units, unless norm_width is true, meaning use normalized 0-1 proportion of unit range)
+  bool		norm_width;	// un_width is specified in normalized 0-1 proportion of unit range
+  bool		clamp_pat;	// #DEF_false if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)
+  float		min_sum_act;	// #DEF_0.2 minimum total activity of all the units representing a value: when computing weighted average value, this is used as a minimum for the sum that you divide by
+  float		mn_dst;		// #DEF_0.5 minimum distance factor for reading out multiple bumps: must be at least this times un_width far away from other bumps
+  bool		clip_val;	// #DEF_true ensure that value remains within specified range
+
+  float		x_min;		// #READ_ONLY #NO_SAVE #NO_INHERIT minimum unit value
+  float		x_range;	// #READ_ONLY #NO_SAVE #NO_INHERIT range of unit values
+  float		y_min;		// #READ_ONLY #NO_SAVE #NO_INHERIT minimum unit value
+  float		y_range;	// #READ_ONLY #NO_SAVE #NO_INHERIT range of unit values
+  float		x_val;		// #READ_ONLY #NO_SAVE #NO_INHERIT current val being represented (implementational, computed in InitVal())
+  float		y_val;		// #READ_ONLY #NO_SAVE #NO_INHERIT current val being represented (implementational, computed in InitVal())
+  float		x_incr;		// #READ_ONLY #NO_SAVE #NO_INHERIT increment per unit (implementational, computed in InitVal())
+  float		y_incr;		// #READ_ONLY #NO_SAVE #NO_INHERIT increment per unit (implementational, computed in InitVal())
+  int		x_size;		// #READ_ONLY #NO_SAVE #NO_INHERIT size of axis
+  int		y_size;		// #READ_ONLY #NO_SAVE #NO_INHERIT size of axis
+  float		un_width_x;	// #READ_ONLY #NO_SAVE #NO_INHERIT unit width, x axis (use for all computations -- can be normalized)
+  float		un_width_y;	// #READ_ONLY #NO_SAVE #NO_INHERIT unit width, y axis (use for all computations -- can be normalized)
+
+  virtual void	InitRange(float xmin, float xrng, float ymin, float yrng);
+  // initialize range values, including normalized unit width values per axis
+  virtual void	InitVal(float xval, float yval, int xsize, int ysize, float xmin, float xrng, float ymin, float yrng);
+  // initialize implementational values for subsequently computing GetUnitAct to represent scalar val sval over unit group of ugp_size
+  virtual float	GetUnitAct(int unit_idx);
+  // get activation under current representation for unit at given index: MUST CALL InitVal first!
+  virtual void	GetUnitVal(int unit_idx, float& x_cur, float& y_cur);
+  // get target values associated with unit at given index: MUST CALL InitVal first!
+
+  SIMPLE_COPY(FourDValSpec);
+  TA_BASEFUNS(FourDValSpec);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API FourDValBias : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for four-d value units
+INHERITED(taOBase)
+public:
+  enum UnitBias {		// bias on individual units
+    NO_UN,			// no unit bias
+    GC,				// bias value enters as a conductance in gc.h or gc.a
+    BWT,			// bias value enters as a bias.wt
+  };
+
+  enum WeightBias {		// bias on weights into units
+    NO_WT,			// no weight bias
+    WT,				// input weights
+  };
+
+  UnitBias	un;		// #APPLY_IMMED bias on individual units
+  float		un_gain;	// #CONDEDIT_OFF_un:NO_UN #DEF_1 gain multiplier (strength) of bias to apply for units.  WT = .03 as basic weight multiplier
+  WeightBias	wt;		// #APPLY_IMMED bias on weights: always uses a val-shaped bias
+  float		wt_gain;	// #CONDEDIT_OFF_wt:NO_WT #DEF_1 gain multiplier (strength) of bias to apply for weights (gain 1 = .03 wt value)
+  float		x_val;		// X axis value location (center of gaussian bump)
+  float		y_val;		// Y axis value location (center of gaussian bump)
+
+  SIMPLE_COPY(FourDValBias);
+  TA_BASEFUNS(FourDValBias);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API FourDValLayerSpec : public LeabraLayerSpec {
+  // represents one or more four-d value(s) using a coarse-coded distributed code over units, with units within unit groups representing the Z,W coords and overall unit groups themselves representing X,Y coords.  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid -- requires FourDValLeabraLayer to encode values (no longer using first row of units)
+INHERITED(LeabraLayerSpec)
+public:
+  FourDValSpec	 fourd;		// specifies how values are represented in terms of distributed patterns of activation across the layer
+  MinMaxRange	 x_range;	// range of values represented across the X (horizontal) axis; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
+  MinMaxRange	 y_range;	// range of values represented across the Y (vertical) axis; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
+  FourDValBias	 bias_val;	// specifies bias values
+  MinMaxRange	 x_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
+  MinMaxRange	 y_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
+
+  virtual void	ClampValue_ugp(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
+  // #CAT_FourDVal clamp value in the first unit's ext field to the units in the group
+  virtual void	ReadValue(FourDValLeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_FourDVal read out current value represented by activations in layer
+    virtual void ReadValue_ugp(FourDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
+    // #CAT_FourDVal unit group version: read out current value represented by activations in layer
+  virtual void	HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_FourDVal hard clamp current ext values (on all units, after ClampValue called) to all the units (calls ResetAfterClamp)
+
+  virtual void	LabelUnits(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_FourDVal label units in given layer with their underlying values
+    virtual void LabelUnits_ugp(Unit_Group* ugp);
+    // #CAT_FourDVal label units with their underlying values
+  virtual void	LabelUnitsNet(LeabraNetwork* net);
+  // #BUTTON #CAT_FourDVal label all layers in given network using this spec
+
+  virtual void	Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_FourDVal initialize the bias value 
+    virtual void Compute_WtBias_Val(Unit_Group* ugp, float x_val, float y_val);
+    // #IGNORE
+    virtual void Compute_UnBias_Val(Unit_Group* ugp, float x_val, float y_val);
+    // #IGNORE
+
+  override void Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
+    override void Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+    virtual void PostSettle_ugp(FourDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
+    // #CAT_FourDVal unit group version: update variables based on phase
+
+  override float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
+			     bool unit_avg = false, bool sqrt = false);
+    virtual float Compute_SSE_ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
+    // #IGNORE
+  override float Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
+    virtual float Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+				       LeabraNetwork* net);
+    // #IGNORE
+
+  virtual void	ReConfig(Network* net, int n_units = -1);
+  // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
+
+  void	HelpConfig();	// #BUTTON get help message for configuring this spec
+  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+
+  TA_SIMPLE_BASEFUNS(FourDValLayerSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
+*/
 
 //////////////////////////////////////
 // 	V1RF Prjn Spec

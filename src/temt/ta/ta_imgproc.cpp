@@ -555,18 +555,15 @@ void ImgProcCallTask::run() {
 
 void ImgProcCallThreadMgr::Initialize() {
   min_units = taMisc::thread_defaults.min_units;
+  task_type = &TA_ImgProcCallTask;
 }
 
 void ImgProcCallThreadMgr::Destroy() {
 }
 
-void ImgProcCallThreadMgr::InitAll() {
-  InitThreads();
-  CreateTasks(&TA_ImgProcCallTask);
-  SetTasksToThreads();
-}
-
 void ImgProcCallThreadMgr::Run(ThreadImgProcCall* img_proc_call, int n_cmp_units) {
+  InitAll();			// make sure
+
   ImgProcThreadBase* base = img_proc();
   if(n_threads == 1 || n_cmp_units < min_units || n_cmp_units < tasks.size) {
     for(int i=0;i<n_cmp_units;i++) {
@@ -594,15 +591,12 @@ void ImgProcCallThreadMgr::Run(ThreadImgProcCall* img_proc_call, int n_cmp_units
     }
 
     // then run the subsidiary guys
-    for(int i=0;i<threads.size;i++) {
-      threads[i]->runTask();
-    }
+    RunThreads();
+
     tasks[0]->run();		// run our own set..
 
     // finally, always need to sync at end to ensure that everyone is done!
-    for(int i=0;i<threads.size;i++) {
-      threads[i]->sync();
-    }
+    SyncThreads();
   }
 }
 

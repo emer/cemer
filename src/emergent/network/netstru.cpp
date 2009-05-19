@@ -4891,6 +4891,7 @@ void UnitCallThreadMgr::Initialize() {
   nibble_stop = 0;
   using_threads = false;
   n_threads_prev = n_threads;
+  task_type = &TA_UnitCallTask;
 }
 
 void UnitCallThreadMgr::Destroy() {
@@ -4904,10 +4905,9 @@ void UnitCallThreadMgr::UpdateAfterEdit_impl() {
 }
 
 void UnitCallThreadMgr::InitAll() {
+  if((threads.size == n_threads-1) && (tasks.size == n_threads)) return; // fast bail if same
   n_threads_prev = n_threads;
-  InitThreads();
-  CreateTasks(&TA_UnitCallTask);
-  SetTasksToThreads();
+  inherited::InitAll();
   Network* net = network();
   for(int i=0;i<tasks.size;i++) {
     UnitCallTask* uct = (UnitCallTask*)tasks[i];
@@ -5007,18 +5007,13 @@ void UnitCallThreadMgr::RunThreads_FwdNetSync(ThreadUnitCall* unit_call) {
   nibble_i = 1+n_chunked;
   nibble_stop = 1+nu;
 
-  // then run the subsidiary guys
-  for(int i=0;i<threads.size;i++) {
-    threads[i]->runTask();
-  }
-  tasks[0]->run();		// run our own set..
+  RunThreads(); 	// then run the subsidiary guys
+
+  tasks[0]->run();	// run our own set..
 
   // note: all the nibbling is automatic within the single run() deploy
-
   // finally, always need to sync at end to ensure that everyone is done!
-  for(int i=0;i<threads.size;i++) {
-    threads[i]->sync();
-  }
+  SyncThreads();
 }
 
 void UnitCallThreadMgr::RunThreads_BkwdNetSync(ThreadUnitCall* unit_call) {
@@ -5049,18 +5044,13 @@ void UnitCallThreadMgr::RunThreads_BkwdNetSync(ThreadUnitCall* unit_call) {
   nibble_i = nu - n_chunked;	// where to start nibbling
   nibble_stop = 1;	// 0 = dummy idx
 
-  // then run the subsidiary guys
-  for(int i=0;i<threads.size;i++) {
-    threads[i]->runTask();
-  }
-  tasks[0]->run();		// run our own set..
+  RunThreads();		// then run the subsidiary guys
+
+  tasks[0]->run();	// run our own set..
 
   // note: all the nibbling is automatic within the single run() deploy
-
   // finally, always need to sync at end to ensure that everyone is done!
-  for(int i=0;i<threads.size;i++) {
-    threads[i]->sync();
-  }
+  SyncThreads();
 }
 
 void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
@@ -5105,19 +5095,14 @@ void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
       }
       nibble_i = st_idx + n_chunked;
       nibble_stop = st_idx + nu;
+      
+      RunThreads();	// then run the subsidiary guys
 
-      // then run the subsidiary guys
-      for(int i=0;i<threads.size;i++) {
-	threads[i]->runTask();
-      }
       tasks[0]->run();		// run our own set..
 
       // note: all the nibbling is automatic within the single run() deploy
-
       // finally, always need to sync at end to ensure that everyone is done!
-      for(int i=0;i<threads.size;i++) {
-	threads[i]->sync();
-      }
+      SyncThreads();
     }
   }
 }
@@ -5166,18 +5151,13 @@ void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
       nibble_i = st_idx + nu-1 - n_chunked;
       nibble_stop = st_idx;
 
-      // then run the subsidiary guys
-      for(int i=0;i<threads.size;i++) {
-	threads[i]->runTask();
-      }
+      RunThreads();	// then run the subsidiary guys
+
       tasks[0]->run();		// run our own set..
 
       // note: all the nibbling is automatic within the single run() deploy
-
       // finally, always need to sync at end to ensure that everyone is done!
-      for(int i=0;i<threads.size;i++) {
-	threads[i]->sync();
-      }
+      SyncThreads();
     }
   }
 }

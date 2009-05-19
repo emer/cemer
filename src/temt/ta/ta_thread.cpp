@@ -91,7 +91,7 @@ taTaskThread::~taTaskThread() {
 
 void taTaskThread::runTask() {
   mutex.lock();
-  if (m_log) start_latency.StartTimer(); // reset
+  if (m_log) start_latency.StartTimer(false); // don't reset
   m_state = TS_RUNNING;
   mutex.unlock();
 //note: unlock mutex BEFORE run to avoid spurious context switches
@@ -101,7 +101,7 @@ void taTaskThread::runTask() {
 // this is the QThread run state
 void taTaskThread::run() {
   m_thread_id = currentThreadId();
-  SetAffinity();
+//   SetAffinity();
 
   while (m_active) {
     mutex.lock();
@@ -111,7 +111,7 @@ void taTaskThread::run() {
     
     if (m_log) start_latency.EndTimer();
     if (m_task) {
-      if (m_log) run_time.StartTimer(); // reset
+      if (m_log) run_time.StartTimer(false); // don't reset
       m_task->run();
      if (m_log) run_time.EndTimer();
     }
@@ -155,16 +155,69 @@ void taTaskThread::terminate() {
   mutex.unlock();
 //  QThread::terminate(); //WARNING: including this causes the dude to hang
 }
+
  
+///////////////////////////////////////////////////////////////
+// 	Managed Thread
+
+taManagedThread::taManagedThread(taThreadMgr* mg)
+  : mgr(mg)
+{
+  //  m_task = NULL;
+  m_active = false;
+  m_running = false;
+  m_stop_req = false;
+}
+
+taManagedThread::~taManagedThread() {
+  m_task.CutLinks();
+}
+
+// this is the QThread run state
+void taManagedThread::run() {
+  if(!mgr) return;		// should not happen!
+  m_active = true;
+  QMutex   mutex;
+  while(!m_stop_req) {
+    mutex.lock();
+    mgr->wait.wait(&mutex);		// we wait until we get the go signal
+    mutex.unlock();
+    
+    if(m_stop_req) break;	// bail
+ 
+    mgr->n_running.fetchAndAddOrdered(1); // add one to the running list
+    m_running = true;
+    if(m_task) {
+      m_task->run();
+    }
+    m_running = false;
+    mgr->n_running.fetchAndAddOrdered(-1); // subtract one from running list
+  }
+  m_active = false;
+}
+
+void taManagedThread::setTask(taTask* t) {
+  if (m_task.ptr() == t) return;
+  m_task = t;
+}
+
+void taManagedThread::stopMe() {
+  m_stop_req = true;
+}
 
 ///////////////////////////////////////////////////////////////
 // 	Thread manager
 
-taTaskThread_PList taThreadMgr::all_threads;
+taThreadMgr_PList taThreadMgr::all_thread_mgrs;
 
 void taThreadMgr::Initialize() {
   n_threads = taMisc::thread_defaults.n_threads;
-  log_timing = false;
+  sync_sleep_usec = 1;
+  task_type = NULL;
+  get_timing = false;
+  run_time_pct = 0.0;
+  sync_time_pct = 0.0;
+  n_running = 0;
 }
 
 void taThreadMgr::Destroy() {
@@ -174,59 +227,75 @@ void taThreadMgr::Destroy() {
 void taThreadMgr::InitLinks() {
   inherited::InitLinks();
   taBase::Own(tasks, this);
+  all_thread_mgrs.Add(this);	// we're real -- add to global list
 }
 
 void taThreadMgr::CutLinks() {
+  all_thread_mgrs.RemoveEl(this); // get off global list
   RemoveThreads();
   tasks.CutLinks();
 }
 
+void taThreadMgr::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  n_threads = MAX(n_threads, 1);
+  TestWarning(!task_type, "UAE", "task_type is still NULL -- this should have been set in the code -- please file a bug report");
+}
+
+void taThreadMgr::InitAll() {
+  if((threads.size == n_threads-1) && (tasks.size == n_threads)) return; // fast bail if same
+  InitThreads();
+  CreateTasks();
+  SetTasksToThreads();
+}
+
+void taThreadMgr::RemoveAll() {
+  RemoveThreads();
+  tasks.Reset();
+}
+
 void taThreadMgr::InitThreads() {
+  if(threads.size == n_threads-1) return;
   int n_to_make = n_threads-1;	// 0 = main guy!
-  if (n_to_make < 0) n_to_make = 0;
-  int old_cnt = threads.size;
-  if (old_cnt == n_to_make) return;
-  if (old_cnt > n_to_make) {
-    // remove excess
-    for (int i = old_cnt - 1; ((i >= 0 && (i >= n_to_make))); --i) {
-      taTaskThread* tt = threads[i];
-      all_threads.RemoveEl(tt);
-      taTaskThread::DeleteTaskThread(tt);
-      threads.RemoveIdx(i);
-    }
-  } else { // need new
-    for (int i = old_cnt; i < n_to_make; ++i) {
-      taTaskThread* tt = new taTaskThread(log_timing, i);
-      threads.Add(tt);
-      all_threads.Add(tt);
-    }
+
+  // have to create and destroy wholesale, because they are all waiting on the same signal
+  RemoveThreads();
+  for(int i = 0; i < n_to_make; ++i) {
+    taManagedThread* tt = new taManagedThread(this);
+    threads.Add(tt);
   }
 }
 
 void taThreadMgr::RemoveThreads() {
+  SyncThreads();		// make sure all done running!
   int old_cnt = threads.size;
   for (int i = old_cnt - 1; i >= 0; i--) {
-    taTaskThread* tt = threads[i];
-    all_threads.RemoveEl(tt);
-    taTaskThread::DeleteTaskThread(tt);
+    taManagedThread* tt = threads[i];
+    tt->stopMe();		// tell them to stop
+  }
+
+  wait.wakeAll();		// now wake them up, where they meet certain death..
+  
+  for (int i = old_cnt - 1; i >= 0; i--) {
+    taManagedThread* tt = threads[i];
+    if(!tt->wait(100))		// wait 100msec before terminating..
+      tt->terminate();		// nuke with vengance..
     threads.RemoveIdx(i);
+    delete tt;			// nuke..
   }
 }
 
 void taThreadMgr::TerminateAllThreads() {
-  int old_cnt = all_threads.size;
+  int old_cnt = all_thread_mgrs.size;
   for (int i = old_cnt - 1; i >= 0; i--) {
-    taTaskThread* tt = all_threads[i];
-    if (tt->isActive()) {
-      tt->terminate();
-    }
-    // note: spin-waiting seemed to be the only stable way to do this 
-    // do NOT use Wait() -- it seemed to lock up the app
-    while (!tt->isFinished());
+    taThreadMgr* tt = all_thread_mgrs[i];
+    tt->RemoveThreads();
   }
 }
 
-void taThreadMgr::CreateTasks(TypeDef* task_type) {
+void taThreadMgr::CreateTasks() {
+  if(TestError(!task_type, "CreateTasks", "task_type is NULL -- this is a programmer error -- please file a bug report"))
+    return;
   if(tasks.size == n_threads && tasks.el_typ == task_type) return;
   tasks.Reset();
   tasks.el_typ = task_type;
@@ -234,11 +303,67 @@ void taThreadMgr::CreateTasks(TypeDef* task_type) {
 }
 
 void taThreadMgr::SetTasksToThreads() {
-  if(TestError(threads.size+1 != tasks.size, "SetTasksToThreads",
-	       "threads and tasks not the same size!")) return;
+  if(TestError(!task_type, "SetTasksToThreads", "task_type is NULL -- this is a programmer error -- please file a bug report"))
+    return;
   for(int i=0;i<threads.size;i++) {
-    taTaskThread* tt = threads[i];
+    taManagedThread* tt = threads[i];
     tt->setTask(tasks[i+1]);
-    tt->start(); // starts paused
+    tt->start(); // starts paused -- now actually start the thread!
+  }
+}
+
+void taThreadMgr::RunThreads() {
+  if(get_timing)
+    total_time.StartTimer(false); // don't reset
+  wait.wakeAll();
+  if(get_timing)
+    run_time.StartTimer(false); // don't reset
+}
+
+void taThreadMgr::SyncThreads() {
+  if(get_timing)    run_time.EndTimer();
+  if(n_running == 0) return;
+
+  if(get_timing)    sync_time.StartTimer(false); // don't reset
+  while(n_running > 0) {
+    usleep(sync_sleep_usec);
+  }
+  if(get_timing) {
+    sync_time.EndTimer();
+    total_time.EndTimer();
+  }
+}
+
+void taThreadMgr::Run() {
+  InitAll();			// fast if no diff
+  if(tasks.size == 0) return;
+  RunThreads();
+  tasks[0]->run();		// task 0 run in main thread
+  SyncThreads();
+}
+
+
+void taThreadMgr::StartTimers() {
+  get_timing = true;
+  run_time.ResetUsed();
+  sync_time.ResetUsed();
+  total_time.ResetUsed();
+}
+
+void taThreadMgr::EndTimers(bool print_report) {
+  get_timing = false;
+  if(total_time.s_used > 0.0) {
+    run_time_pct = run_time.s_used / total_time.s_used;
+    sync_time_pct = sync_time.s_used / total_time.s_used;
+  }
+  else {
+    run_time_pct = 0.0;
+    sync_time_pct = 0.0;
+  }
+  if(print_report) {
+    cout << GetTypeDef()->name << " thread report:" << endl;
+    cout << "total time: " << total_time.s_used << endl;  
+    cout << "run time:   " << run_time.s_used << " \t%: " << run_time_pct << endl;  
+    cout << "sync time:  " << sync_time.s_used << " \t%: " << sync_time_pct << endl;  
   }
 }

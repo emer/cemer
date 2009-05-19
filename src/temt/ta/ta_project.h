@@ -262,6 +262,8 @@ public:
   taUndoDiffSrcRef diff_src;	// if this is non-null, use it as the source for saving a diff against
   taStringDiffEdits diff_edits;	// edit list for reconstructing original data from diff against diff_src
 
+  void		EncodeMyDiff();
+
   String	GetData();	// get the data for this save, either by diff or straight data
 
   TA_SIMPLE_BASEFUNS(taUndoRec);
@@ -353,10 +355,7 @@ INHERITED(taThreadMgr)
 public:
   taUndoMgr*	undo_mgr() 	{ return (taUndoMgr*)owner; }
 
-  void		InitAll();	// initialize threads and tasks
-
-  void		Run();
-  // #IGNORE run diff task
+  override void	Run();
   
   TA_BASEFUNS_NOCOPY(UndoDiffThreadMgr);
 private:
@@ -378,8 +377,6 @@ public:
   int			undo_depth;	// #NO_SAVE how many undo's to keep around
   float			new_src_thr; 	// #NO_SAVE threshold for how big (as a proportion of total file size) the diff's need to get before a new undo source record is created
   bool			save_load_file; // #NO_SAVE save a copy of the file that is loaded during an undo or redo -- file name is "undo_load_file.txt" in cur directory -- useful for debugging issues
-  QAtomicInt		diff_pending;	// #IGNORE -- set to 1 if a diff is pending, thread sets to 0 when it is done
-  taUndoDiffSrc*	src_to_diff;	// #IGNORE for threading system, src for diffing
   taUndoRec*		rec_to_diff;	// #IGNORE for threading system, rec for diffing
 
   virtual bool	SaveUndo(taBase* mod_obj, const String& action, taBase* save_top = NULL);

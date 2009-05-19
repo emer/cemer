@@ -493,6 +493,10 @@ String taUndoRec::GetData() {
   return rval;
 }
 
+void taUndoRec::EncodeMyDiff() {
+  diff_src->EncodeDiff(this);
+}
+
 void taUndoRec_List::Initialize() {
   SetBaseType(&TA_taUndoRec);
   st_idx = 0;
@@ -525,33 +529,25 @@ void UndoDiffTask::run() {
   if(!udtmg) return;
   taUndoMgr* um = udtmg->undo_mgr();
   if(!um) return;
-  if(!um->src_to_diff || !um->rec_to_diff) return;
+  if(!um->rec_to_diff) return;
 
-  um->src_to_diff->EncodeDiff(um->rec_to_diff);
-  um->src_to_diff = NULL;
+  um->rec_to_diff->EncodeMyDiff();
   um->rec_to_diff = NULL;	// done, reset!
-  um->diff_pending = 0;		// all done!
 }
 
 void UndoDiffThreadMgr::Initialize() {
   n_threads = 2;		// don't use 0, just 1..
+  task_type = &TA_UndoDiffTask;
 }
 
 void UndoDiffThreadMgr::Destroy() {
-  n_threads = 2;		// don't use 0, just 1..
-}
-
-void UndoDiffThreadMgr::InitAll() {
-  n_threads = 2;		// don't use 0, just 1..
-  InitThreads();
-  CreateTasks(&TA_UndoDiffTask);
-  SetTasksToThreads();
 }
 
 void UndoDiffThreadMgr::Run() {
-  threads[0]->runTask();	// this is the 2nd task, 1st thread..
+  n_threads = 2;		// don't use 0, just 1..
+  InitAll();
+  RunThreads();			// just run the thread, not main guy
 }
-
 
 ////////////////////////////
 // 	taUndoMgr
@@ -565,8 +561,6 @@ void taUndoMgr::Initialize() {
 #else
   save_load_file = false;
 #endif
-  diff_pending = 0;
-  src_to_diff = NULL;
   rec_to_diff = NULL;
 }
 
@@ -615,15 +609,9 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
       cerr << "New source added!" << endl;
 #endif
     }
-    while(diff_pending) {
-      taPlatform::msleep(20);	// wait 20 msec and check again..
-    }
+    diff_threads.SyncThreads();	// sync now before running again..
     urec->diff_src = cur_src;	// this smartref ptr needs to be set in main task
-    if(diff_threads.tasks.size == 0) // need thread!
-      diff_threads.InitAll();
-    src_to_diff = cur_src;
     rec_to_diff = urec;
-    diff_pending = true;	// now pending
     diff_threads.Run();	// run diff in separate thread
   }
 

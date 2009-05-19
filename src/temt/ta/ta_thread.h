@@ -68,6 +68,7 @@ private:
 };
 
 //
+class taThreadMgr;
 
 /* TaskThread
   A task thread is a worker thread that remains persistent over a long
@@ -84,10 +85,10 @@ private:
   - thread is now running
   - 'sync' -- this waits for the thread to finish the task -- the main thread
       will block until the thread is finished
-
 */
+
 class TA_API taTaskThread: public QThread {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Thread our thread object
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Thread a stand-alone persisent worker thread that can be started and stopped without having to create and destroy the thread object itself.  see taManagedThread for a similar thread object designed to work in concert with other threads more efficiently
 INHERITED(QThread)
 public:
   enum ThreadState {
@@ -148,24 +149,100 @@ class TA_API taTaskThread_PList : public taPtrList<taTaskThread> {
   public:
 };
 
+////////////////////////////////////////////////////////////////////////////
+//	A Managed Thread -- everything is controlled by the taThreadMgr 
+
+class TA_API taManagedThread: public QThread {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Thread a fully managed thread -- controlled by the taThreadMgr and not capable of operating without it, but much more efficient for collective operations than the taTaskThread object
+INHERITED(QThread)
+public:
+  taThreadMgr*		mgr;
+  // our manager -- controls everything
+  
+  inline bool		isActive() const { return m_active; }
+  // currently alive -- means it is somewhere in the run() function
+  void			stopMe();
+  // stop this thread -- just sets m_stop_req = true -- manager needs to start tasks to get them to actually see the new signal and then stop -- all tasks must be stopped at the same time!
+  inline bool		isRunning() const { return m_running; }
+  // is actually running a task at this time -- otherwise it is waiting on the mgr->wait wait condition
+
+  taTask*		task() const {return m_task;}
+  // current task we're associated with
+  void			setTask(taTask* t);
+  // assign a task for this thread
+
+  taManagedThread(taThreadMgr* mg);
+  // should only be called by the mgr..
+  ~taManagedThread();
+protected:
+  taTaskRef		m_task;
+  bool			m_active;  // set to true when in run() state
+  bool			m_running; // set to true when running
+  bool			m_stop_req; // set to true to signal that this thread should exit
+  
+  override void 	run();
+};
+
+class TA_API taManagedThread_PList : public taPtrList<taManagedThread> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Thread list of task threads
+  //INHERITED(taPtrList<taManagedThread>)
+  public:
+};
+
+class TA_API taThreadMgr_PList : public taPtrList<taThreadMgr> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Thread list of thread managers
+  //INHERITED(taPtrList<taManagedThread>)
+  public:
+};
+
 
 class TA_API taThreadMgr : public taOBase {
-  // ##CAT_Thread thread manager base class
+  // ##CAT_Thread thread manager base class -- controls a set of taManagedThread objects that are all deployed and synchronized together to perform a specific task that is determined by a taTask object type -- there are n_threads tasks and n_threads-1 sub-threads, with the main thread running task 0
 INHERITED(taOBase)
 public:
-  int			n_threads; // #MIN_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  desired number of threads to use -- typically the number of physical processors (cores) available, and is initialized to that.
-  bool			log_timing; // #EXPERT whether to log the timing information about the threads
+  static taThreadMgr_PList all_thread_mgrs; // #NO_SAVE #READ_ONLY all thread managers -- used for global termination as they must all be terminated through the manager -- managers automatically add and remove themselves from this list
 
-  taTask_List		tasks;	 // #NO_SAVE #READ_ONLY the tasks for the threads to perform -- we manage these and allocate them to threads
-  taTaskThread_PList	threads; // #NO_SAVE #READ_ONLY the threads -- memory managed by InitThreads and RemoveThreads
+  int			n_threads; 	// #MIN_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  desired number of threads to use -- typically the number of physical processors (cores) available -- see preferences/options thread_defaults field for details.
+  int			sync_sleep_usec; // #EXPERT #NO_SAVE microseconds to sleep while waiting for threads to synchronize -- not typically adjusted by the user, and not saved, but availble for testing purposes
+  TypeDef*		task_type;	 // #NO_SAVE #READ_ONLY the type of task object to create -- this should be set *prior* to calling InitAll() and should NOT change during the lifetime of the manager, unless an explicit RemoveAll() call is made first
 
-  static taTaskThread_PList all_threads; // #NO_SAVE #READ_ONLY all threads -- maintains a global list in addition to the local lists per mgr
+  taTask_List		tasks;	 // #NO_SAVE #READ_ONLY the tasks for the threads to perform -- we manage these and allocate them to threads -- all are of type task_type
+  taManagedThread_PList	threads; // #NO_SAVE #READ_ONLY the threads -- we manage them completely
 
-  void		InitThreads();	// initialize (create) n_threads threads
-  void		RemoveThreads();// remove all the threads
+  ///////////////////////////////////////////
+  // Stats on the overhead of the system
 
-  void		CreateTasks(TypeDef* task_type); // create n_threads tasks of given type
-  void		SetTasksToThreads(); // set the tasks to the threads
+  bool			get_timing;	// #NO_SAVE #READ_ONLY collect timing information as the system runs -- this is set by StartTimers and turned off by EndTimers
+  TimeUsedHR		run_time; 	// #EXPERT total time (in secs and fractions thereof) from end of RunThreads() call (after telling threads to wake up) to start of SyncThreads() call
+  TimeUsedHR		sync_time;	// #EXPERT total time (in secs and fractions thereof) in SyncThreads() waiting to sync up the threads
+  TimeUsedHR		total_time;	// #EXPERT total time (in secs and fractions thereof) from start of RunThreads() to end of SyncThreads()
+
+  double		run_time_pct; 	// #EXPERT percent of total time spent running -- computed in EndTimers()
+  double		sync_time_pct;	// #EXPERT percent of total time spent syncing -- computed in EndTimers()
+
+  //////////////////////////////////////////////////////
+  //		These are used by the managed threads
+
+  QAtomicInt		n_running;
+  // #IGNORE number of threads that are currently running -- atomically incremented and decremented by the threads as the run and finish their task
+  QWaitCondition 	wait;
+  // #IGNORE overall wait condition -- all threads are waiting for the wakeAll from this condition, unless they are actually running
+
+  //////////////////////////////////////////////////////
+  //		Main interface for users
+
+  virtual void	InitAll();	// initialize the threads and tasks -- this checks for current sizes and is very fast if nothing has changed, so is safe to insert at start of computation just to be sure -- can be overloaded with other initialization functionality too though..
+  virtual void	RemoveAll();	// remove all the threads and tasks -- generally only called if task_type is changed, such that a subsequent InitAll will create all new guys
+
+  virtual void 	Run();		// actually run the overall set of tasks -- this is a sample basic function that calls InitAll(), RunThreads() then runs task[0] on the main thread, then calls SyncThreads() -- subclasses can provide customized functions that initialize task parameters etc
+
+  virtual void	RunThreads();	// start the threads running their current task: NOTE this is ONLY called on the actual threads, and does not run the main thread
+  virtual void	SyncThreads();	// synchronize the threads at the end of running to ensure everyone has finished their task and is ready to move on
+
+  virtual void	StartTimers();
+  // Start accumulating timing information on all threads -- must be called *after* everything is initialized and ready to run
+  virtual void	EndTimers(bool print_report = true);
+  // Finish accumulating timing information on all threads, compute summary information, and optionally report that to cout
 
   static void	TerminateAllThreads();
   // static function for terminating all the threads, e.g., in the err signal handler or quit routine
@@ -173,6 +250,20 @@ public:
   void 	InitLinks();
   void	CutLinks();
   TA_BASEFUNS_NOCOPY(taThreadMgr);
+protected:
+  void	UpdateAfterEdit_impl();
+
+  // these are the basic housekeeping functions that are called by InitAll and RemoveAll
+
+  void	InitThreads();
+  // initialize (create) n_threads-1 threads -- checks for size first and returns quickly if correct
+  void	RemoveThreads();
+  // remove all the threads -- tells them to stop, then waits for them to actually stop, then deletes them
+
+  void	CreateTasks();
+  // create n_threads tasks of given type
+  void	SetTasksToThreads(); // set the tasks to the threads
+
 private:
   void	Initialize();
   void	Destroy();

@@ -234,9 +234,7 @@ public:
 
   ImgProcThreadBase*	img_proc() 	{ return (ImgProcThreadBase*)owner; }
 
-  void		InitAll();	// initialize threads and tasks
-
-  void		Run(ThreadImgProcCall* img_proc_call, int n_cmp_units);
+  override void		Run(ThreadImgProcCall* img_proc_call, int n_cmp_units);
   // #IGNORE run given function, splitting n_cmp_units computational units evenly across the available threads
   
   TA_BASEFUNS_NOCOPY(ImgProcCallThreadMgr);

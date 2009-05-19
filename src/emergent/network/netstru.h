@@ -1791,9 +1791,9 @@ public:
 
   Network*	network() 	{ return (Network*)owner; }
 
-  void		InitAll();	// initialize threads and tasks
+  override void	InitAll();	// initialize threads and tasks
 
-  void		Run(ThreadUnitCall* unit_call, float comp_load,
+  override void	Run(ThreadUnitCall* unit_call, float comp_load,
 		    bool backwards=false, bool layer_sync=false);
   // #IGNORE run given function on all units, with specified level of computational load (0-1), and flags controlling order of processing and syncing: backwards = go through units in reverse order, and layer_sync = sync processing at each layer (else at network level) -- needed for feedforward network topologies (unfortunately)
 
