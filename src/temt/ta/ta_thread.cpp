@@ -348,10 +348,7 @@ void taThreadMgr::SyncThreads() {
   }
 
   while(n_started < n_to_run) { // wait for other guys to start
-    wait_mutex.lock();
-    wait.wakeAll();		// wake them in case they didn't get the message the first time!
-    wait_mutex.unlock();
-    usleep(sync_sleep_usec*10);	    // this is going to be slower, so wait longer
+    usleep(sync_sleep_usec*10);    // this is going to be slower, so wait longer
   }
   while(n_running > 0) {	// then wait for everyone to finish
     usleep(sync_sleep_usec);
