@@ -176,24 +176,32 @@ taManagedThread::~taManagedThread() {
 // this is the QThread run state
 void taManagedThread::run() {
   if(!mgr) return;		// should not happen!
+
+  mgr->wait_mutex.lock();	// expects to be in lock at start of loop
   m_active = true;
   while(!m_stop_req) {
-    mgr->wait_mutex.lock();
-    mgr->wait.wait(&mgr->wait_mutex);		// we wait until we get the go signal
-    mgr->wait_mutex.unlock();
-    
-    if(m_stop_req) break;	// bail
+    mgr->wait.wait(&mgr->wait_mutex); // we wait until we get the go signal
+    // note: comes out of the wait with mutex locked
+
+    if(m_stop_req) break;	// bail -- still locked!
  
-    mgr->n_running.fetchAndAddOrdered(1); // add one to the running list -- order doesn't matter
-    mgr->n_started.fetchAndAddOrdered(1); // add one to the running list -- order doesn't matter
+    // update all state info here while still under mutex -- keeps it fully sane
     m_running = true;
+    mgr->n_running++; // add one to the running list
+    mgr->n_started++; // add one to the started list
+
+    mgr->wait_mutex.unlock();	// now finally ready to let go and run free
+
     if(m_task) {
       m_task->run();
     }
+
+    mgr->wait_mutex.lock();	// lock at this point, so the full trip into wait is deterministic
     m_running = false;
-    mgr->n_running.fetchAndAddOrdered(-1); // subtract one from running list -- order doesn't matter
+    mgr->n_running--;   // subtract one from running list
   }
   m_active = false;
+  mgr->wait_mutex.unlock();	// only unlock at final exit
 }
 
 void taManagedThread::setTask(taTask* t) {
@@ -274,6 +282,7 @@ void taThreadMgr::InitThreads() {
 
 void taThreadMgr::RemoveThreads() {
   SyncThreads();		// make sure all done running!
+
   int old_cnt = threads.size;
   for (int i = old_cnt - 1; i >= 0; i--) {
     taManagedThread* tt = threads[i];
@@ -323,10 +332,10 @@ void taThreadMgr::SetTasksToThreads() {
 void taThreadMgr::RunThreads() {
   if(get_timing)    total_time.StartTimer(false); // don't reset
 
-  n_to_run = threads.size;
-  n_started.fetchAndStoreOrdered(0);		// reset here
-
+  // do all this under the mutex, so we know that everyone is fully back in wait
   wait_mutex.lock();
+  n_to_run = threads.size;
+  n_started = 0;
   wait.wakeAll();
   wait_mutex.unlock();
 

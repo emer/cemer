@@ -227,9 +227,9 @@ public:
 
   int			n_to_run;
   // #IGNORE number of threads that should start to run -- this is set to threads.size at start of run, and checked in sync threads
-  QAtomicInt		n_running;
+  int			n_running;
   // #IGNORE number of threads that are currently running -- atomically incremented and decremented by the threads as they run and finish their task
-  QAtomicInt		n_started;
+  int			n_started;
   // #IGNORE number of threads that actually started the task -- this is reset to 0 at start of run, and atomically incremented by the threads when they start running -- ensures that everyone runs..
   QMutex		wait_mutex;
   // #IGNORE mutex for guarding the wait guy
