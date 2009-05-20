@@ -96,9 +96,12 @@ protected:
   int			last_spc;	// space after last widget, -1 = none
   LayoutType		lay_type;
   mutable taBase*	m_child_base; // typically set in PolyData GetImage
-  inline QHBoxLayout*	layHBox() const {return (QHBoxLayout*)lay;} // only if !hasFlow
-  inline iFlowLayout*	layFlow() const {return (iFlowLayout*)lay;} // only if hasFlow
-  inline QStackedLayout* layStacked() const {return (QStackedLayout*)lay;} // only if hasFlow
+  inline QHBoxLayout*	layHBox() const 
+    {return (QHBoxLayout*)lay;} // only if !hasFlow
+  inline iFlowLayout*	layFlow() const 
+    {return (iFlowLayout*)lay;} // only if hasFlow
+  inline QStackedLayout* layStacked() const 
+    {return (QStackedLayout*)lay;} // only if hasFlow
   override void		ChildAdd(taiData* child);
   override void		ChildRemove(taiData* child);
   virtual void		AddChildWidget_impl(QWidget* child_widget, int spacing,
