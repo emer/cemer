@@ -280,7 +280,9 @@ void taThreadMgr::RemoveThreads() {
     tt->stopMe();		// tell them to stop
   }
 
+  wait_mutex.lock();
   wait.wakeAll();		// now wake them up, where they meet certain death..
+  wait_mutex.unlock();
   
   for (int i = old_cnt - 1; i >= 0; i--) {
     taManagedThread* tt = threads[i];
@@ -323,7 +325,10 @@ void taThreadMgr::RunThreads() {
 
   n_to_run = threads.size;
   n_started.fetchAndStoreOrdered(0);		// reset here
+
+  wait_mutex.lock();
   wait.wakeAll();
+  wait_mutex.unlock();
 
   if(get_timing)    run_time.StartTimer(false); // don't reset
 }
@@ -343,7 +348,9 @@ void taThreadMgr::SyncThreads() {
   }
 
   while(n_started < n_to_run) { // wait for other guys to start
+    wait_mutex.lock();
     wait.wakeAll();		// wake them in case they didn't get the message the first time!
+    wait_mutex.unlock();
     usleep(sync_sleep_usec*10);	    // this is going to be slower, so wait longer
   }
   while(n_running > 0) {	// then wait for everyone to finish
