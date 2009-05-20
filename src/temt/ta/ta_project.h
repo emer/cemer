@@ -379,6 +379,7 @@ public:
   bool			save_load_file; // #NO_SAVE save a copy of the file that is loaded during an undo or redo -- file name is "undo_load_file.txt" in cur directory -- useful for debugging issues
   taUndoRec*		rec_to_diff;	// #IGNORE for threading system, rec for diffing
 
+  void			Nest(bool nest); // call in pairs, to indicate nested contexts
   virtual bool	SaveUndo(taBase* mod_obj, const String& action, taBase* save_top = NULL);
   // save data for purposes of later being able to undo it -- takes a pointer to object that is being modified, a brief description of the action being performed (e.g., "Edit", "Cut", etc), and the top-level object below which current state information will be saved -- this must be *known to encapsulate all changes* that result from the modification, and also be sufficiently persistent so as to be around when undoing and redoing might be requested -- it defaults to the owner of this mgr, which is typically the project
   virtual void	PurgeUnusedSrcs();
@@ -399,6 +400,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(taUndoMgr);
 protected:
+  int			nest_count; // #IGNORE -- +/- before after nesting contexts
+  int			loop_count; // 
   virtual bool	LoadFromRec_impl(taUndoRec* urec);
 
 private:

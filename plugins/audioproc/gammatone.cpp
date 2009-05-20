@@ -7,23 +7,31 @@
 #include <float.h>
 
 //////////////////////////////////
-//  GammatoneChan		//
+//  FilterChan			//
 //////////////////////////////////
 
-const KeyString GammatoneChan::key_on("on");
-const KeyString GammatoneChan::key_cf("cf");
-const KeyString GammatoneChan::key_erb("erb");
-const KeyString GammatoneChan::key_gain("gain");
+const KeyString FilterChan::key_on("on");
+const KeyString FilterChan::key_cf("cf");
+const KeyString FilterChan::key_erb("erb");
+const KeyString FilterChan::key_gain("gain");
 
-void GammatoneChan::Initialize() {
+void FilterChan::Initialize() {
   on = true; // assumed
   cf = 0;
-  tpt = 0;
   gain = 0;
   erb = 0;
 }
 
-String GammatoneChan::GetColText(const KeyString& key, int itm_idx) const {
+bool FilterChan::ChanFreqOk(float cf, float ear_q, float min_bw,
+   float fs)
+{
+  double erb = min_bw + (cf / ear_q);
+  // if 2 bandwidths (2*.5*erb) above cf exceeds nyquist, then shut us off
+  bool rval = (cf + erb) < (fs / 2);
+  return rval;
+}
+
+String FilterChan::GetColText(const KeyString& key, int itm_idx) const {
   if (key == key_on) return String(GetEnabled());
   else if (key == key_cf) return String(cf);
   else if (key == key_erb) return  String(erb);
@@ -31,13 +39,47 @@ String GammatoneChan::GetColText(const KeyString& key, int itm_idx) const {
   else return inherited::GetColText(key, itm_idx);
 }
 
-bool GammatoneChan::ChanFreqOk(float cf, float ear_q, float min_bw,
-   float fs)
-{
-  double erb = min_bw + (cf / ear_q);
-  // if 2 bandwidths (2*.5*erb) above cf exceeds nyquist, then shut us off
-  bool rval = (cf + erb) < (fs / 2);
-  return rval;
+void FilterChan::InitChan(float cf_, float gain_, double erb_) {
+  cf = cf_;
+  gain = gain_;
+  erb = erb_;
+}
+
+  
+//////////////////////////////////
+//  FilterChan_List		//
+//////////////////////////////////
+
+String FilterChan_List::GetColHeading(const KeyString& key) const {
+  if (key == FilterChan::key_on) return "On";
+  else if (key == FilterChan::key_cf) return "CF";
+  else if (key == FilterChan::key_erb) return "ERB";
+  else if (key == FilterChan::key_gain) return "Gain";
+  else return inherited::GetColHeading(key);
+}
+
+const KeyString FilterChan_List::GetListColKey(int col) const {
+  switch (col) {
+  case 0: return FilterChan::key_on;
+  case 1: return FilterChan::key_cf;
+  case 2: return FilterChan::key_erb;
+  case 3: return FilterChan::key_gain;
+  default: return _nilKeyString;
+  }
+}
+
+int FilterChan_List::NumListCols() const {
+  return 4;
+}
+
+
+//////////////////////////////////
+//  GammatoneChan		//
+//////////////////////////////////
+
+
+void GammatoneChan::Initialize() {
+  tpt = 0;
 }
 
 void GammatoneChan::InitChan(float cf_, float ear_q, float min_bw,
@@ -131,33 +173,6 @@ void GammatoneChan::DoFilter(int n, int in_stride, const float* x,
   }
 }
   
-
-
-//////////////////////////////////
-//  GammatoneChan_List		//
-//////////////////////////////////
-
-String GammatoneChan_List::GetColHeading(const KeyString& key) const {
-  if (key == GammatoneChan::key_on) return "On";
-  else if (key == GammatoneChan::key_cf) return "CF";
-  else if (key == GammatoneChan::key_erb) return "ERB";
-  else if (key == GammatoneChan::key_gain) return "Gain";
-  else return inherited::GetColHeading(key);
-}
-
-const KeyString GammatoneChan_List::GetListColKey(int col) const {
-  switch (col) {
-  case 0: return GammatoneChan::key_on;
-  case 1: return GammatoneChan::key_cf;
-  case 2: return GammatoneChan::key_erb;
-  case 3: return GammatoneChan::key_gain;
-  default: return _nilKeyString;
-  }
-}
-
-int GammatoneChan_List::NumListCols() const {
-  return 4;
-}
 
 //////////////////////////////////
 //  GammatoneBlock		//
@@ -470,6 +485,293 @@ exit:
 
 
 void GammatoneBlock::MakeStdFilters(float cf_lo, float cf_hi, int n_chans) {
+  this->cf_lo = cf_lo;
+  this->cf_hi = cf_hi;
+  this->n_chans = n_chans;
+  chan_spacing = CS_LogLinear;
+  ear_q = 9.26449f;
+  min_bw = 24.7f;
+  UpdateAfterEdit();
+}
+
+
+//////////////////////////////////
+//  MelCepstraBlock		//
+//////////////////////////////////
+
+void MelCepstraBlock::Initialize() {
+  cf_lo = 100.0f;
+  cf_bw_lin = 100.0f;
+  cf_log_factor = 1.1f;
+  n_lin_chans = 10;
+  n_log_chans = 22;
+}
+
+void MelCepstraBlock::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+}
+
+void MelCepstraBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
+  inherited::InitThisConfig_impl(check, quiet, ok);
+  
+  DataBuffer* src_buff = in_block.GetBuffer();
+  if (!src_buff) return;
+//  float_Matrix* in_mat = &src_buff->mat;
+
+  if (CheckError((src_buff->chans > 1), quiet, ok,
+    "MelCepstraBlock only supports single channel input"))
+    return;
+    
+  if (CheckError((src_buff->vals > 1), quiet, ok,
+    "MelCepstraBlock only supports single val input"))
+    return;
+    
+/*TODO  // warn about nyquist violations -- some upper chans will be disabled
+  bool on_hi = MelCepstraChan::ChanFreqOk(cf_hi, ear_q, min_bw, src_buff->fs.fs_act);
+  if ((!on_hi) && check && !quiet) {
+    taMisc::Warning("MelCepstraBlock: some hi freq chans will be disabled to prevent aliasing");
+  }*/
+  
+  if (check) return;
+  
+  // just init all chans, whether enabled or not
+  int buff_bit = 1;
+  for (int obi = 0; obi < outBuffCount(); ++obi, buff_bit<<=1) {
+    DataBuffer* ob = outBuff(obi);
+    ob->enabled = (out_vals & buff_bit);
+    if (!ob->enabled) continue; // will have mat set to zero 
+    ob->fs = src_buff->fs;
+    ob->fr_dur.Set(src_buff->items, Duration::UN_SAMPLES);
+    ob->fields = src_buff->fields;
+    ob->chans = n_chans;
+    ob->vals = 1;
+  }
+  // if using delta_env, need min of 2 env stages
+  if (out_vals & OV_DELTA_ENV) {
+    out_buff_env.min_stages = 2;
+    // 1/dt value, in 1/100us based on env guy
+    delta_env_dt_inv = out_buff_env.fs / 100.0f;
+    if (CheckError((delta_env_dt_inv <= 0), quiet, ok,
+      "delta_env_dt value was <= 0 -- sampling rate must be bad!"))
+      return;
+  }
+  
+}
+
+void MelCepstraBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
+//TODO: when sharpening, correct the gain of the edge channels to compensate
+// for the loss caused by not integrating the full DoG filter width
+
+  chans.SetSize(n_chans);
+  for (int i = 0; i < chans.size; ++i) {
+    // don't move on to next child, if prev step didn't succeed
+    if (!check && !ok) return;
+    MelCepstraChan* gc = chans.FastEl(i);
+    if (!check) {
+      // center frequency
+      float cf;
+      switch (chan_spacing) {
+      case CS_MooreGlassberg: {
+        if (i < (chans.size - 1))
+          cf = -(ear_q * min_bw) + exp((n_chans-i - 1) *
+          (-log(cf_hi + ear_q*min_bw) + log(cf_lo + ear_q*min_bw))/(n_chans-1)) *
+          (cf_hi + ear_q*min_bw);
+        else 
+          cf = cf_hi;
+      } break;
+      case CS_LogLinear: {
+        if (i == 0)
+          cf = cf_lo;
+        else 
+          cf = exp((log(2.0f)*(i) / chans_per_oct) + log(cf_lo));
+      } break; 
+      default: break;// compiler food -- handle all cases above
+      }
+      gc->InitChan(cf, ear_q, min_bw, out_buff.fs);
+    }
+  }
+  // do the default, which calls all the items, prob does nothing
+  inherited::InitChildConfig_impl(check, quiet, ok);
+}
+
+void MelCepstraBlock::AcceptData_impl(SignalProcBlock* src_blk,
+    DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps)
+{
+  float_Matrix* in_mat = &src_buff->mat;
+  ps = AcceptData_GT(in_mat, stage);
+}
+
+SignalProcBlock::ProcStatus MelCepstraBlock::AcceptData_GT(float_Matrix* in_mat, int stage)
+{
+  ProcStatus ps = PS_OK;
+  const int in_items = in_mat->dim(ITEM_DIM);
+  const int in_fields = in_mat->dim(FIELD_DIM);
+  const int in_chans = in_mat->dim(CHAN_DIM); // only 1 in allowed!!!
+  const int in_vals = in_mat->dim(VAL_DIM); // only 1 in allowed!!!
+  const int in_chan = 0; // only 1 in allowed
+  const int in_val = 0; // only 1 in allowed
+  
+  // in_stride: the num items between each x in a channel
+  const int in_stride = in_vals * in_chans * in_fields;
+  // out_stride: the num items between each y in an output channel
+  const int out_stride =  n_chans * in_fields;
+  
+  // note: we only support 1 chan, 1 val input, so don't iterate those
+  for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) {
+    for (int g_ch = 0; g_ch < n_chans; ++g_ch) {
+      MelCepstraChan* sc = chans.FastEl(g_ch);
+      if (!sc->on) continue; // will just leave 0;s everywhere
+      float& dat = in_mat->FastEl(in_val, in_chan, f, 0, stage);
+      // we only pass buffer addresses for values actually used
+      // instf
+      float* bm = NULL;
+      float* env = NULL;
+      if (out_vals & OV_SIG) {
+        bm = &(out_buff.mat.FastEl(0, g_ch, f, 0, out_buff.stage));
+      }
+      if (out_vals & OV_ENV) {
+        env =  &(out_buff_env.mat.FastEl(0, g_ch, f, 0, out_buff_env.stage));
+      }
+      
+      sc->DoFilter(in_items, in_stride, &dat, out_stride, bm, env);
+          
+      if (out_vals & OV_DELTA_ENV) {
+        float env_prev = out_buff_env.mat.FastEl(0, g_ch, f, 0, out_buff_env.prevStage());
+        out_buff_delta_env.mat.FastEl(0, g_ch, f, 0, out_buff_delta_env.stage) =
+          (*env - env_prev) * delta_env_dt_inv;
+      }
+    }
+  } // field
+  
+  // advance index pointer, and notify clients
+  for (int obi = 0; ((ps != PS_ERROR) && (obi < outBuffCount())); ++obi) {
+    DataBuffer* ob = outBuff(obi);
+    if (!ob->enabled) continue; // will have mat set to zero 
+    if (ob->NextIndex())
+      NotifyClientsBuffStageFull(ob, obi, ps);
+  }
+  
+  return ps;
+}
+
+void MelCepstraBlock::GraphFilter(DataTable* graph_data,
+  bool log_freq, MelCepstraBlock::OutVals response) 
+{
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_MelCepstraFilter");
+    graph_data->ClearDataFlag(DataTable::SAVE_ROWS); // don't save by default!
+    newguy = true;
+  }
+  
+  // we will set params to make nice output
+  
+  const int n = 1024; 
+  // need vars here so we can goto
+  bool ok = true;
+  int idx = -1;
+  ProcStatus ps = PS_OK;
+  int anali = 0;
+  
+  // to plot the filter, we make a copy of ourself and plot the impulse response
+  MelCepstraBlock* gb = new MelCepstraBlock;
+  float_Matrix* in_mat = new float_Matrix;
+  
+  gb->InitLinks();
+  gb->Copy(*this);
+  if ((response != OV_SIG) && (response != OV_ENV) && (response != OV_FREQ))
+    response = OV_SIG;
+  gb->out_vals = response;
+
+  if (!ok) goto exit;
+  // need to configure, and check it is valid, ex. fs set, etc.
+  
+  if (!gb->InitConfig()) goto exit;
+  
+{ int buff_bit = 1;
+  // note: we only analyze one channel -- whatever is highest user selected
+  for (int obi = 0; ((ps != PS_ERROR) && (obi <= 2)); ++obi, buff_bit<<=1) {
+    DataBuffer* ob = gb->outBuff(obi);
+    if (!ob->enabled) continue; // will have mat set to zero 
+    anali = obi;
+    ob->fr_dur.Set(n, Duration::UN_SAMPLES);
+    ob->InitConfig(false, false, ok);
+    if (!ok) goto exit;
+  }
+}  
+  in_mat->SetGeom(5, 1,1,1,n,1); //val,ch,f,it,st
+  in_mat->Set(1.0f, 0); // the impulse!
+  
+  // ok, run one round
+  ps = gb->AcceptData_GT(in_mat);
+  if (CheckError((ps != PS_OK), false, ok,
+    "ProcNextFrame did not complete ok")) goto exit;
+  // NOTE: we only analyze one of the outputs
+{     
+  DataBuffer* ob = gb->outBuff(anali);
+  // do an fft on it -- have to invert the data
+  float_Matrix fft_in(2, n, gb->n_chans);
+  for (int chan = 0; chan < gb->n_chans; ++chan)
+  for (int i = 0; i < n; ++i) {
+    fft_in.FastEl(i, chan) = ob->mat.SafeEl(0, chan, 0, i);
+  }
+  float_Matrix fft;
+  // get the real (power) only
+  ok = taMath_float::fft_real_transform(&fft, &fft_in,
+    true, false);
+  if (CheckError((!ok), false, ok,
+    "fft did not complete ok")) goto exit;
+{
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  DataCol* xda = graph_data->FindMakeColName("X", idx, VT_FLOAT);
+  xda->SetUserData("X_AXIS", true);
+  DataCol* valda = graph_data->FindMakeColName("Y", idx, VT_FLOAT);
+  valda->SetUserData("PLOT_1", true);
+  DataCol* zda = graph_data->FindMakeColName("Z", idx, VT_FLOAT);
+  zda->SetUserData("Z_AXIS", true);
+  graph_data->StructUpdate(false);
+  
+  float_Matrix* mat = &fft;
+  //NOTE: find the peak value of all the filters, for 0db point
+  float peak = mat->SafeEl(0);
+  for (int i = 1; i < mat->size; ++i) {
+    float val = mat->FastEl_Flat(i);
+    if (val > peak) peak = val;
+  }
+  taMisc::Info("MelCepstra filter peak (for normalization) was:", String(peak));
+  float fs = ob->fs;
+  graph_data->DataUpdate(true);
+  graph_data->AllocRows(mat->dim(1) * ((mat->dim(0) / 2)));
+  for (int ch = 0; ch < mat->dim(1); ++ch) {
+    // note: we omit DC, and the aliased freq's above 1/2 fs
+    for (int i = 1; i < (mat->dim(0) / 2); ++i) {
+      float freq = i * (fs / mat->dim(0));//gb->chans.SafeEl(i);
+      if (log_freq) freq = log10(freq);
+      float val = mat->FastEl(i, ch);
+      float val_db;
+      if (peak <= 0) val_db = -120; // shouldn't really happen
+      else val_db = 10 * log10(val/peak);
+      if (val_db < -120) val_db = -120; // floor for the graph
+      graph_data->AddBlankRow();
+      zda->SetValAsFloat(ch, -1);
+      xda->SetValAsFloat(freq, -1);
+      valda->SetValAsFloat(val_db, -1);
+    } 
+  }
+  graph_data->SetUserData("VIEW_ROWS", graph_data->rows);
+  graph_data->DataUpdate(false);
+  if(newguy)
+    graph_data->NewGraphView();
+}}
+exit:
+  if (in_mat) delete in_mat;
+  if (gb) delete gb;
+}
+
+
+void MelCepstraBlock::MakeStdFilters(float cf_lo, float cf_hi, int n_chans) {
   this->cf_lo = cf_lo;
   this->cf_hi = cf_hi;
   this->n_chans = n_chans;

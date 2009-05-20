@@ -562,9 +562,20 @@ void taUndoMgr::Initialize() {
   save_load_file = false;
 #endif
   rec_to_diff = NULL;
+  nest_count = 0;
+  loop_count = 0;
+}
+
+void taUndoMgr::Nest(bool nest) {
+  if (nest) {
+    if (nest_count++ == 0)
+      loop_count = 0;
+  } else --nest_count;
 }
 
 bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top) {
+  // only do the undo guy for first call when nested
+  if ((nest_count > 0) && (loop_count++ > 0)) return false;
   if(!owner || !mod_obj) return false;
   if(!save_top) save_top = owner;
   if(mod_obj == save_top && mod_obj->HasOption("UNDO_SAVE_ALL")) {

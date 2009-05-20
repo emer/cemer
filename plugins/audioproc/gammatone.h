@@ -5,18 +5,20 @@
 
 #include "minmax.h"
 
- 
+class FilterChan;
+class FilterChan_List;
 class GammatoneChan;
+class GammatoneChan_List;
 class GammatoneBlock;
 class ChansPerOct;
 class SharpenBlock;
 class ANVal;
 class ANBlock;
 
-class AUDIOPROC_API GammatoneChan: public SignalProcItem
-{ // #NO_SHOW ##CAT_Audioproc one channel of a gammatone filter
+
+class AUDIOPROC_API FilterChan: public SignalProcItem
+{ // #NO_SHOW ##CAT_Audioproc one channel of a filter
 INHERITED(SignalProcItem)
-friend class GammatoneBlock; 
 public:
   static bool		ChanFreqOk(float cf, float ear_q, float min_bw,
    float fs); // common routine for determining when a band is "safely" within nyquist limits
@@ -24,6 +26,8 @@ public:
   float 		cf; // #READ_ONLY #SHOW center frequency of this channel
   float			gain; // #READ_ONLY #SHOW the gain of this channel
   double		erb; // #READ_ONLY #SHOW the equivalent rectangular bandwidth of this channel
+  
+  void			InitChan(float cf, float gain, double erb); // #IGNORE
   
   static const KeyString key_on; // "on"
   static const KeyString key_cf; // "cf"
@@ -33,28 +37,17 @@ public:
   
   override void SetDefaultName() {name = _nilString;}
   override int	GetEnabled() const {return on ? 1 : 0;} // for items that support an enabled/disabled state; -1=n/a, 0=disabled, 1=enabled (note: (bool)-1 = true)
-  TA_BASEFUNS(GammatoneChan)
-
-protected:
-  double tpt;
-  double a1, a2, a3, a4, a5;
-  double p0r, p1r, p2r, p3r, p4r, p0i, p1i, p2i, p3i, p4i;
-  double coscf, sincf, cs, sn;
-  
-  void			InitChan(float cf, float ear_q, float min_bw,
-     float fs);
-  void 			DoFilter(int n, int in_stride, const float* x,
-    int out_stride, float* bm, float* env = NULL);
+  TA_BASEFUNS(FilterChan)
 
 private:
-  SIMPLE_COPY(GammatoneChan)
+  SIMPLE_COPY(FilterChan)
   void	Initialize();
   void	Destroy() {}
 };
 
-class AUDIOPROC_API GammatoneChan_List: public taList<GammatoneChan>
+class AUDIOPROC_API FilterChan_List: public taList<FilterChan>
 { // ##CAT_Audioproc list of channels, that will operate in parallel
-INHERITED(taList<GammatoneChan>) 
+INHERITED(taList<FilterChan>) 
 public:
 
   override int		NumListCols() const;
@@ -62,6 +55,45 @@ public:
   override String	GetColHeading(const KeyString& key) const;
   // header text for the indicated column
   override const KeyString GetListColKey(int col) const;
+  
+  TA_BASEFUNS_NOCOPY(FilterChan_List)
+
+private:
+  void	Initialize() {SetBaseType(&TA_FilterChan);}
+  void	Destroy() {}
+};
+
+
+class AUDIOPROC_API GammatoneChan: public FilterChan
+{ // #NO_SHOW ##CAT_Audioproc one channel of a gammatone filter
+INHERITED(FilterChan)
+friend class GammatoneBlock; 
+public:
+  void			InitChan(float cf, float ear_q, float min_bw,
+     float fs); // #IGNORE
+  
+  TA_BASEFUNS_NOCOPY(GammatoneChan)
+
+protected:
+  double tpt;
+  double a1, a2, a3, a4, a5;
+  double p0r, p1r, p2r, p3r, p4r, p0i, p1i, p2i, p3i, p4i;
+  double coscf, sincf, cs, sn;
+  
+  void 			DoFilter(int n, int in_stride, const float* x,
+    int out_stride, float* bm, float* env = NULL);
+
+private:
+  void	Initialize();
+  void	Destroy() {}
+};
+
+class AUDIOPROC_API GammatoneChan_List: public FilterChan_List
+{ // ##CAT_Audioproc list of channels, that will operate in parallel
+INHERITED(FilterChan_List) 
+public:
+  GammatoneChan*	FastEl(int idx) const
+    {return (GammatoneChan*)el[i];} 
   
   TA_BASEFUNS_NOCOPY(GammatoneChan_List)
 
@@ -138,6 +170,53 @@ private:
   void	Initialize();
   void	Destroy() {CutLinks();}
   SIMPLE_COPY(GammatoneBlock)
+}; //
+
+
+class AUDIOPROC_API MelCepstraBlock: public StdBlock
+{ // ##CAT_Audioproc gammatone filter bank
+INHERITED(StdBlock) 
+public:
+//  DataBuffer		out_buff_env; //  #SHOW_TREE envelope output (if enabled)
+//  DataBuffer		out_buff_delta_env; //  #SHOW_TREE delta envelope output (if enabled)
+  float			cf_lo; // lower center frequency (Hz)
+  float			cf_lin_bw; // linear range bandwidth
+  float			cf_log_factor; // how much to multiple to get next log channel 
+  int			n_lin_chans; // #MIN_1 number of linear bands
+  int			n_log_chans; // #MIN_0 number of log bands
+  
+  FilterChan_List	chans; // #NO_SAVE the individual channels
+  
+  override taList_impl*  children_() {return &chans;} //note: required
+//  override int		outBuffCount() const {return 3;}
+/*  override DataBuffer* 	outBuff(int idx) {switch (idx) {
+    case 0: return &out_buff; 
+    case 1: return &out_buff_env;
+    case 2: return &out_buff_delta_env;
+    default: return NULL;}}*/
+  
+  virtual void		GraphFilter(DataTable* disp_data,
+    bool log_freq = true, OutVals response = OV_SIG);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter response into a data table and generate a graph; if log_freq then log10 of freq is output; CHOOSE ONLY 1 RESPONSE
+  ProcStatus 		AcceptData_MC(float_Matrix* in_mat, int stage = 0);
+    // #IGNORE mostly for proc
+
+  SIMPLE_LINKS(MelCepstraBlock)
+  TA_BASEFUNS(MelCepstraBlock) //
+  
+protected:
+  int			num_out_vals;
+  override void		UpdateAfterEdit_impl();
+  
+  override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok);
+  override void 	InitChildConfig_impl(bool check, bool quiet, bool& ok); 
+  override void		AcceptData_impl(SignalProcBlock* src_blk,
+    DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps);
+
+private:
+  void	Initialize();
+  void	Destroy() {CutLinks();}
+  SIMPLE_COPY(MelCepstraBlock)
 }; //
 
 

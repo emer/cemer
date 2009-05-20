@@ -794,12 +794,21 @@ int taBase::ChildEditAction(const MemberDef* md, taBase* child,
   if (ms->isThisProcess()) {
     ms->ResolveObjects();
   }
+  
+  taProject* proj = (taProject*)GetThisOrOwner(&TA_taProject);
+  if (proj) {
+    proj->undo_mgr.Nest(true); 
+  }
   for (int i = 0; i < ms->count(); ++i) {
     ms->setIndex(i);
     rval = ChildEditAction_impl(md, child, ms, ea);
     // keep looping as long as stuff ok
     if (rval != taiClipData::ER_OK)
-      return rval;
+      goto exit;
+  }
+exit:
+  if (proj) {
+    proj->undo_mgr.Nest(false); 
   }
   return rval;
 }
