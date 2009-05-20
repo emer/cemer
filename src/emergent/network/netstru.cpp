@@ -4946,7 +4946,7 @@ void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level,
 
 void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call, bool backwards) {
   using_threads = false;
-  if(get_timing) {
+  if(n_threads == 1 && get_timing) { // only include if running in 1 thread only
     total_time.StartTimer(false);	// don't reset
     run_time.StartTimer(false);		// don't reset
   }
@@ -4964,7 +4964,7 @@ void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call, bool backwards) {
     }
   }
 
-  if(get_timing) {
+  if(n_threads == 1 && get_timing) { // only include if running in 1 thread only
     total_time.EndTimer();
     run_time.EndTimer();
   }
