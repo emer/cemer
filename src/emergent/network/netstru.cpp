@@ -4918,9 +4918,23 @@ void UnitCallThreadMgr::InitAll() {
 void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level,
 			    bool backwards, bool layer_sync) {
   Network* net = network();
-  if(n_threads == 1 || comp_level < compute_thr || net->units_flat.size < min_units
-     || net->units_flat.size < tasks.size) {
+
+  bool other_reasons = (comp_level < compute_thr || net->units_flat.size < min_units
+			|| net->units_flat.size < tasks.size);
+
+  if(n_threads == 1 || other_reasons) {
+
+    if(get_timing && n_threads == 1 && !other_reasons) { // only include if running in 1 thread only, and if n_threads was larger, it would not have been run in thread0
+      total_time.StartTimer(false);	// don't reset
+      run_time.StartTimer(false);		// don't reset
+    }
+
     RunThread0(unit_call, backwards);
+
+    if(get_timing && n_threads == 1 && !other_reasons) { // only include if running in 1 thread only, and if n_threads was larger, it would not have been run in thread0
+      total_time.EndTimer();
+      run_time.EndTimer();
+    }
   }
   else {
 //     { // debugging: clear names
@@ -4946,11 +4960,6 @@ void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level,
 
 void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call, bool backwards) {
   using_threads = false;
-  if(n_threads == 1 && get_timing) { // only include if running in 1 thread only
-    total_time.StartTimer(false);	// don't reset
-    run_time.StartTimer(false);		// don't reset
-  }
-
   Network* net = network();
   const int nu = net->units_flat.size;
   if(backwards) {
@@ -4962,11 +4971,6 @@ void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call, bool backwards) {
     for(int i=1;i<nu;i++) {	// 0 = dummy idx
       unit_call->call(net->units_flat[i], net, -1); // -1 indicates no threading
     }
-  }
-
-  if(n_threads == 1 && get_timing) { // only include if running in 1 thread only
-    total_time.EndTimer();
-    run_time.EndTimer();
   }
 }
 
