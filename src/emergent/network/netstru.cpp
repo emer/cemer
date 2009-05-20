@@ -4946,6 +4946,11 @@ void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level,
 
 void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call, bool backwards) {
   using_threads = false;
+  if(get_timing) {
+    total_time.StartTimer(false);	// don't reset
+    run_time.StartTimer(false);		// don't reset
+  }
+
   Network* net = network();
   const int nu = net->units_flat.size;
   if(backwards) {
@@ -4957,6 +4962,11 @@ void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call, bool backwards) {
     for(int i=1;i<nu;i++) {	// 0 = dummy idx
       unit_call->call(net->units_flat[i], net, -1); // -1 indicates no threading
     }
+  }
+
+  if(get_timing) {
+    total_time.EndTimer();
+    run_time.EndTimer();
   }
 }
 
