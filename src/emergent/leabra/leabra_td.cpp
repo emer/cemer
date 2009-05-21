@@ -866,7 +866,7 @@ bool TdLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)
 	&& fmlay->spec.SPtr()->InheritsFrom(TA_TDRewIntegLayerSpec)) {
       rewinteg_lay = fmlay;
-      if(lay->CheckError(recv_gp->cons.size <= 0, quiet, rval,
+      if(lay->CheckError(recv_gp->size <= 0, quiet, rval,
 		    "requires one recv projection with at least one unit!")) {
 	return false;
       }
@@ -939,7 +939,7 @@ void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork*) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesioned())	continue;
-      for(int j=0;j<send_gp->cons.size; j++) {
+      for(int j=0;j<send_gp->size; j++) {
 	((LeabraTdUnit*)send_gp->Un(j))->dav = u->act;
       }
     }

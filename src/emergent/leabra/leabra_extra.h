@@ -272,7 +272,7 @@ public:
   inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
 			      int thread_no, float su_act_delta) {
     Unit* ru = cg->Un(0);
-    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff
+    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx()))->scale_eff
       * su_act_delta;
     if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
       if(thread_no < 0) {
@@ -408,7 +408,7 @@ public:
   inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
 			      int thread_no, float su_act_delta) {
     Unit* ru = cg->Un(0);
-    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff
+    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx()))->scale_eff
       * su_act_delta;
     if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
       if(thread_no < 0) {
@@ -567,7 +567,7 @@ public:
   inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
 			      int thread_no, float su_act_delta) {
     Unit* ru = cg->Un(0);
-    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff
+    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx()))->scale_eff
       * su_act_delta;
     if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
       if(thread_no < 0) {
@@ -718,7 +718,7 @@ public:
   inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
     Compute_SAvgCor(cg, ru);
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<cg->cons.size; i++) {
+      for(int i=0; i<cg->size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	FastWtCon* cn = (FastWtCon*)cg->Cn(i);
 	if(!(su->in_subgp &&
@@ -800,7 +800,7 @@ public:
   inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
     Compute_SAvgCor(cg, ru);
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<cg->cons.size; i++) {
+      for(int i=0; i<cg->size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
 	if(!(su->in_subgp &&
@@ -843,7 +843,7 @@ public:
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       C_Compute_dWt_Delta(cn, ru, su);  
@@ -851,7 +851,7 @@ public:
   }
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       C_Compute_dWt_Delta_CAL(cn, ru, su);  
@@ -859,7 +859,7 @@ public:
   }
 
   inline override void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       C_Compute_dWt_Delta_CAL(cn, ru, su);  
@@ -958,7 +958,7 @@ public:
   inline float	Compute_dWtMean(LeabraRecvCons* cg, LeabraUnit* ru) {
     float dwt_mean = 0.0f;
     CON_GROUP_LOOP(cg, dwt_mean += ((LeabraCon*)cg->Cn(i))->dwt);
-    return dwt_mean / (float)cg->cons.size;
+    return dwt_mean / (float)cg->size;
   }
   // #CAT_Learning compute dwt_mean -- mean of all weight changes, for dwt_norm
 
@@ -992,7 +992,7 @@ public:
     Compute_SAvgCor(cg, ru);
     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
     LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       C_Compute_dWt_CtLeabraCAL_hebb
@@ -1077,7 +1077,7 @@ public:
     float ru_act_nonoise = ru->Compute_ActValFmVmVal_rate(ru->v_m - ru->noise);
     float dav = ru->dav * da_noise.da_noise;
 
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       float lin_wt = LinFmSigWt(cn->wt);
@@ -1095,7 +1095,7 @@ public:
       // this is a copy of the main fun, but uses above C_Compute_dWt which mults dwt
       Compute_SAvgCor(cg, ru);
       if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-	for(int i=0; i<cg->cons.size; i++) {
+	for(int i=0; i<cg->size; i++) {
 	  LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	  LeabraCon* cn = (LeabraCon*)cg->Cn(i);
 	  if(!(su->in_subgp &&

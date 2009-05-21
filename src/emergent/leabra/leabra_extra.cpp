@@ -651,7 +651,7 @@ void ScalarValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float val) {
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
 	 cs->InheritsFrom(TA_MarkerConSpec)) continue;
-      for(int ci=0;ci<recv_gp->cons.size;ci++) {
+      for(int ci=0;ci<recv_gp->size;ci++) {
 	LeabraCon* cn = (LeabraCon*)recv_gp->Cn(ci);
 	cn->wt += act;
 	if(cn->wt < cs->wt_limits.min) cn->wt = cs->wt_limits.min;
@@ -1047,12 +1047,12 @@ void ScalarValSelfPrjnSpec::Connect_UnitGroup(Unit_Group* gp, Projection* prjn) 
       if((sidx < 0) || (sidx >= gp->size)) continue;
       Unit* su = (Unit*)gp->FastEl(sidx);
       if(!self_con && (ru == su)) continue;
-      Connection* cn = ru->ConnectFromCk(su, prjn);
-      if(cn != NULL) {
-	float dist = (float)j / wt_width;
-	float wtval = scale_val * expf(-(dist * dist));
-	cn->wt = wtval;
-      }
+      ru->ConnectFromCk(su, prjn);
+//       if(cn != NULL) {
+// 	float dist = (float)j / wt_width;
+// 	float wtval = scale_val * expf(-(dist * dist));
+// 	cn->wt = wtval;
+//       }
     }
   }
 }
@@ -1074,7 +1074,7 @@ void ScalarValSelfPrjnSpec::C_Init_Weights(Projection*, RecvCons* cg, Unit* ru) 
 
   int ru_idx = ((Unit_Group*)ru->owner)->FindEl(ru);
 
-  for(int i=0; i<cg->cons.size; i++) {
+  for(int i=0; i<cg->size; i++) {
     Unit* su = cg->Un(i);
     int su_idx = ((Unit_Group*)su->owner)->FindEl(su);
     float dist = (float)(ru_idx - su_idx) / wt_width;
@@ -1639,7 +1639,7 @@ void TwoDValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float x_val, float y_
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
 	 cs->InheritsFrom(TA_MarkerConSpec)) continue;
-      for(int ci=0;ci<recv_gp->cons.size;ci++) {
+      for(int ci=0;ci<recv_gp->size;ci++) {
 	LeabraCon* cn = (LeabraCon*)recv_gp->Cn(ci);
 	cn->wt += act;
 	if(cn->wt < cs->wt_limits.min) cn->wt = cs->wt_limits.min;
@@ -2201,7 +2201,7 @@ void DecodeTwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay, Unit_Group* 
   FOR_ITR_EL(LeabraUnit, u, ug->, ui) {
     if(u->recv.size == 0) continue;
     LeabraRecvCons* cg = (LeabraRecvCons*)u->recv[0];
-    if(cg->cons.size == 0) continue;
+    if(cg->size == 0) continue;
     LeabraUnit* su = (LeabraUnit*)cg->Un(0);
     u->net = su->net;
     u->act = su->act;
@@ -2609,7 +2609,7 @@ void FourDValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float x_val, float y
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
 	 cs->InheritsFrom(TA_MarkerConSpec)) continue;
-      for(int ci=0;ci<recv_gp->cons.size;ci++) {
+      for(int ci=0;ci<recv_gp->size;ci++) {
 	LeabraCon* cn = (LeabraCon*)recv_gp->Cn(ci);
 	cn->wt += act;
 	if(cn->wt < cs->wt_limits.min) cn->wt = cs->wt_limits.min;
@@ -3266,12 +3266,12 @@ void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
       // outer-most mod is color, after phases (2) and sizes (inner)
       if((clr_dx == 0 && col_chan == DoGFilterSpec::BLUE_YELLOW) ||
 	 (clr_dx == 1 && col_chan == DoGFilterSpec::RED_GREEN)) {
-	for(int i=0; i<cg->cons.size; i++)
+	for(int i=0; i<cg->size; i++)
 	  cg->Cn(i)->wt = 0.0f;
 	return;			// bail if not our channel.
       }
     }
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       int su_x = i % send_x;
       int su_y = i / send_x;
       float val = rf_spec.gabor_rf.amp * df->net_filter.SafeEl(su_x, su_y);
@@ -3290,7 +3290,7 @@ void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   else {			// GABOR
     GaborFilterSpec* gf = (GaborFilterSpec*)rf_spec.gabor_specs.SafeEl(recv_idx);
     if(!gf) return;		// oops
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       int su_x = i % send_x;
       int su_y = i / send_x;
       float val = gf->filter.SafeEl(su_x, su_y);
@@ -3778,7 +3778,7 @@ void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
 
   float gaus_nrm = 1.0f / ((float)disp_dist * gauss_sigma);
   float ctr = (float)disp_dist - .5f;	// even so put half way
-  for(int i=0; i<cg->cons.size; i++) {
+  for(int i=0; i<cg->size; i++) {
     float dst = gaus_nrm * (i - ctr);
     float wt = expf(-0.5 * dst * dst);
     cg->Cn(i)->wt = wt;
@@ -4054,7 +4054,7 @@ void CerebConj2PrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru
   if(rf_half_wd * 2 == rf_width) // even
     rf_ctr -= .5f;
 
-  for(int i=0; i<cg->cons.size; i++) {
+  for(int i=0; i<cg->size; i++) {
     int su_x = i % rf_width.x;
     int su_y = i / rf_width.x;
 

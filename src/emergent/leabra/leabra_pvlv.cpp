@@ -983,7 +983,7 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.SPtr();
     if(cs->InheritsFrom(TA_MarkerConSpec)) {
-      if(lay->CheckError(recv_gp->cons.size <= 0, quiet, rval,
+      if(lay->CheckError(recv_gp->size <= 0, quiet, rval,
 		    "requires one recv projection with at least one unit!")) {
 	return false;
       }
@@ -1077,7 +1077,7 @@ void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesioned())	continue;
-      for(int j=0;j<send_gp->cons.size; j++) {
+      for(int j=0;j<send_gp->size; j++) {
 	((LeabraUnit*)send_gp->Un(j))->dav = snd_val;
       }
     }

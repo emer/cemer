@@ -2904,7 +2904,7 @@ inline void LeabraConSpec::C_Send_InhibDelta_NoThrd(Connection* cn, LeabraUnit* 
 inline void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
 					   int thread_no, float su_act_delta) {
   Unit* ru = cg->Un(0);
-  float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff
+  float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx()))->scale_eff
     * su_act_delta;
   if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
     if(thread_no < 0) {
@@ -2987,7 +2987,7 @@ inline void LeabraConSpec::C_Compute_dWt_NoHebb(LeabraCon* cn, LeabraUnit*,
 inline void LeabraConSpec::Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
   Compute_SAvgCor(cg, ru);
   if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       if(!(su->in_subgp &&
@@ -3137,14 +3137,14 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
   float sravg_s_nrm = net->sravg_vals.s_nrm;
   float sravg_m_nrm = net->sravg_vals.m_nrm;
   if(xcal.lrn_var == XCalLearnSpec::XCAL_SR) {
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       C_Compute_dWt_CtLeabraXCAL_SR_trial((LeabraCon*)cg->Cn(i),
 					  ru_thr, sravg_s_nrm, sravg_m_nrm);
     }
   }
   else if(xcal.lrn_var == XCalLearnSpec::XCAL_SEP) {
     if(xcalm.ml_mix > 0.0f) {
-      for(int i=0; i<cg->cons.size; i++) {
+      for(int i=0; i<cg->size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	C_Compute_dWt_CtLeabraXCAL_SEP_trial_ml((LeabraCon*)cg->Cn(i), rbias,
 						(LeabraCon*)su->bias.Cn(0), ru, su,
@@ -3152,7 +3152,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
       }
     }
     else {
-      for(int i=0; i<cg->cons.size; i++) {
+      for(int i=0; i<cg->size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	C_Compute_dWt_CtLeabraXCAL_SEP_trial((LeabraCon*)cg->Cn(i), rbias,
 					     (LeabraCon*)su->bias.Cn(0),
@@ -3161,13 +3161,13 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
     }
   }
   else if(xcal.lrn_var == XCalLearnSpec::CAL) {
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       C_Compute_dWt_CtLeabraXCAL_CAL_trial((LeabraCon*)cg->Cn(i),
 					   ru_thr, sravg_s_nrm, sravg_m_nrm);
     }
   }
   else if(xcal.lrn_var == XCalLearnSpec::CHL) {
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
       C_Compute_dWt_CtLeabraXCAL_CHL_trial((LeabraCon*)cg->Cn(i),
 					   ru_thr, sravg_s_nrm, sravg_m_nrm,
@@ -3196,7 +3196,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_C(LeabraRecvCons* cg, Leabra
   ru_thr *= xcal.l_gain;
   LeabraCon* rbias = (LeabraCon*)ru->bias.Cn(0);
 
-  for(int i=0; i<cg->cons.size; i++) {
+  for(int i=0; i<cg->size; i++) {
     LeabraUnit* su = (LeabraUnit*)cg->Un(i);
     C_Compute_dWt_CtLeabraXCAL_C_sep((LeabraCon*)cg->Cn(i), rbias,
 				     (LeabraCon*)su->bias.Cn(0), ru_thr);
@@ -3213,7 +3213,7 @@ inline void LeabraConSpec::C_Compute_dWt_Rnd_XCAL(LeabraCon* cn, float rnd_var) 
 
 inline void LeabraConSpec::Compute_dWt_Rnd_XCAL(LeabraRecvCons* cg, LeabraUnit* ru,
 						float rnd_var) {
-  for(int i=0; i<cg->cons.size; i++) {
+  for(int i=0; i<cg->size; i++) {
     C_Compute_dWt_Rnd_XCAL((LeabraCon*)cg->Cn(i), rnd_var);
   }
 }
@@ -3221,7 +3221,7 @@ inline void LeabraConSpec::Compute_dWt_Rnd_XCAL(LeabraRecvCons* cg, LeabraUnit* 
 inline float LeabraConSpec::Compute_dWtMean(LeabraRecvCons* cg, LeabraUnit* ru) {
   float dwt_mean = 0.0f;
   CON_GROUP_LOOP(cg, dwt_mean += ((LeabraCon*)cg->Cn(i))->dwt);
-  return dwt_mean / (float)cg->cons.size;
+  return dwt_mean / (float)cg->size;
 }
 
 inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn) {
@@ -3433,7 +3433,7 @@ inline void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraNetwork*, fl
 
 inline float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraNetwork* net) {
   float non_bias_net = u->net;
-  if(u->bias.cons.size)		// subtract out bias weights so they can change k
+  if(u->bias.size)		// subtract out bias weights so they can change k
     non_bias_net -= u->bias_scale * u->bias.Cn(0)->wt;
   // including the ga and gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
@@ -3443,7 +3443,7 @@ inline float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraNetwork* ne
 
 inline float LeabraUnitSpec::Compute_IThreshNoA(LeabraUnit* u, LeabraNetwork* net) {
   float non_bias_net = u->net;
-  if(u->bias.cons.size)		// subtract out bias weights so they can change k
+  if(u->bias.size)		// subtract out bias weights so they can change k
     non_bias_net -= u->bias_scale * u->bias.Cn(0)->wt;
   // NOT including the ga term
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
@@ -3453,7 +3453,7 @@ inline float LeabraUnitSpec::Compute_IThreshNoA(LeabraUnit* u, LeabraNetwork* ne
 
 inline float LeabraUnitSpec::Compute_IThreshNoH(LeabraUnit* u, LeabraNetwork* net) {
   float non_bias_net = u->net;
-  if(u->bias.cons.size)		// subtract out bias weights so they can change k
+  if(u->bias.size)		// subtract out bias weights so they can change k
     non_bias_net -= u->bias_scale * u->bias.Cn(0)->wt;
   // NOT including the gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
@@ -3463,7 +3463,7 @@ inline float LeabraUnitSpec::Compute_IThreshNoH(LeabraUnit* u, LeabraNetwork* ne
 
 inline float LeabraUnitSpec::Compute_IThreshNoAH(LeabraUnit* u, LeabraNetwork* net) {
   float non_bias_net = u->net;
-  if(u->bias.cons.size)		// subtract out bias weights so they can change k
+  if(u->bias.size)		// subtract out bias weights so they can change k
     non_bias_net -= u->bias_scale * u->bias.Cn(0)->wt;
   // NOT including the ga and gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l) /

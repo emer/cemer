@@ -209,7 +209,7 @@ public:
   // this computes weight changes based on sender at time t-1
   inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
     LeabraTdUnit* lru = (LeabraTdUnit*)ru;
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       C_Compute_dWt_Delta(cn, LinFmSigWt(cn->wt), lru, su);
@@ -218,7 +218,7 @@ public:
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
     LeabraTdUnit* lru = (LeabraTdUnit*)ru;
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       C_Compute_dWt_Delta_NoSB(cn, lru, su);

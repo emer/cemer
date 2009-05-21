@@ -48,7 +48,7 @@ public:
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       C_Compute_dWt_Delta(cn, ru, su);  
@@ -144,7 +144,7 @@ public:
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    for(int i=0; i<cg->cons.size; i++) {
+    for(int i=0; i<cg->size; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       C_Compute_dWt_Delta(cn, ru, su);

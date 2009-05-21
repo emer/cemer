@@ -38,7 +38,7 @@ void PatchLayerSpec::Send_PVeToMatrix(LeabraLayer* lay, LeabraNetwork* net) {
        if(tol->lesioned())	continue;
        LeabraLayerSpec* tols = (LeabraLayerSpec*)tol->GetLayerSpec();
        if(tols->GetTypeDef() != &TA_MatrixLayerSpec) continue; // only to matrix
-       for(int j=0;j<send_gp->cons.size; j++) {
+       for(int j=0;j<send_gp->size; j++) {
 	 ((LeabraUnit*)send_gp->Un(j))->misc_1 = snd_val;
        }
      }
