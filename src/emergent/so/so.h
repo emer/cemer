@@ -225,12 +225,12 @@ inline void SoConSpec::Compute_AvgInAct(SoRecvCons* cg, Unit*) {
     cg->avg_in_act = ((SoLayer*)cg->prjn->from.ptr())->avg_act;
     cg->sum_in_act = ((SoLayer*)cg->prjn->from.ptr())->sum_act;
   }
-  else if(cg->cons.size > 0) {
+  else if(cg->size > 0) {
     cg->sum_in_act = 0.0f;
     int i;
-    for(i=0; i<cg->cons.size; i++)
+    for(i=0; i<cg->size; i++)
       cg->sum_in_act += ((Unit*)cg->Un(i))->act;
-    cg->avg_in_act = cg->sum_in_act / (float)cg->cons.size;
+    cg->avg_in_act = cg->sum_in_act / (float)cg->size;
   }
 }
 
