@@ -1048,7 +1048,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
     if(recv) {
       RecvCons* cg = u->recv.SafeEl(prjn->recv_idx);
       if(!cg) continue;
-      for(int j=0; j<cg->cons.size; ++j) {
+      for(int j=0; j<cg->size; ++j) {
 	Unit* su = cg->Un(j);
 	if(!su) continue;
 	TwoDCoord upos;  su->GetLayerAbsPos(upos);
@@ -1059,7 +1059,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
     else {			// send
       SendCons* cg = u->send.SafeEl(prjn->send_idx);
       if(!cg) continue;
-      for(int j=0; j<cg->cons.size; ++j) {
+      for(int j=0; j<cg->size; ++j) {
 	Unit* su = cg->Un(j);
 	if(!su) continue;
 	TwoDCoord upos; su->GetLayerAbsPos(upos);
@@ -1087,7 +1087,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
     if(recv) {
       RecvCons* cg = u->recv.SafeEl(prjn->recv_idx);
       if(!cg) continue;
-      for(int j=0; j<cg->cons.size; ++j) {
+      for(int j=0; j<cg->size; ++j) {
 	Unit* su = cg->Un(j);
 	if(!su) continue;
 	TwoDCoord upos;  su->GetLayerAbsPos(upos);
@@ -1099,7 +1099,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
     else {			// send
       SendCons* cg = u->send.SafeEl(prjn->send_idx);
       if(!cg) continue;
-      for(int j=0; j<cg->cons.size; ++j) {
+      for(int j=0; j<cg->size; ++j) {
 	Unit* su = cg->Un(j);
 	if(!su) continue;
 	TwoDCoord upos;  su->GetLayerAbsPos(upos);
@@ -1202,7 +1202,7 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
   // find the geometry span of the cons
   TwoDCoord con_geom_max;
   TwoDCoord con_geom_min(INT_MAX, INT_MAX);
-  for(int j=0; j<cg->cons.size; ++j) {
+  for(int j=0; j<cg->size; ++j) {
     Unit* su = cg->Un(j);
     if(!su) continue;
     TwoDCoord upos;  su->GetLayerAbsPos(upos);
@@ -1222,7 +1222,7 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
   for(int j=0;j<n_cons;j++) {	// add blanks -- set them later
     ptrs.Add(NULL); members.Link(con_md);
   }
-  for(int j=0; j<cg->cons.size; ++j) {
+  for(int j=0; j<cg->size; ++j) {
     Unit* su = cg->Un(j);
     if(!su) continue;
     TwoDCoord upos;  su->GetLayerAbsPos(upos);
@@ -1240,7 +1240,7 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
   // find the geometry span of the cons
   TwoDCoord con_geom_max;
   TwoDCoord con_geom_min(INT_MAX, INT_MAX);
-  for(int j=0; j<cg->cons.size; ++j) {
+  for(int j=0; j<cg->size; ++j) {
     Unit* su = cg->Un(j);
     if(!su) continue;
     TwoDCoord upos;  su->GetLayerAbsPos(upos);
@@ -1260,7 +1260,7 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
   for(int j=0;j<n_cons;j++) {	// add blanks -- set them later
     ptrs.Add(NULL); members.Link(con_md);
   }
-  for(int j=0; j<cg->cons.size; ++j) {
+  for(int j=0; j<cg->size; ++j) {
     Unit* su = cg->Un(j);
     if(!su) continue;
     TwoDCoord upos;  su->GetLayerAbsPos(upos);

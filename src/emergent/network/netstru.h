@@ -35,16 +35,15 @@
 // pre-declare:
 class Connection;
 class ConSpec;
-class ConArray;
-class UnitPtrList;
+class BaseCons;
 class RecvCons;
 class RecvCons_List;
-class ConPtrList;
 class SendCons;
 class SendCons_List;
 class UnitSpec;
 class Unit;
 SmartRef_Of(Unit,TA_Unit); // UnitRef
+class UnitPtrList;
 class ProjectionSpec;
 class Projection;
 SmartRef_Of(Projection,TA_Projection); // ProjectionRef
@@ -178,7 +177,7 @@ public:
 // The following macro makes this process easier:
 
 #define	CON_GROUP_LOOP(cg, expr) \
-  for(int i=0; i<cg->cons.size; i++) \
+  for(int i=0; i<cg->size; i++) \
     expr
 
 class EMERGENT_API WeightLimits : public taOBase {
@@ -236,9 +235,9 @@ public:
   inline virtual void	C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su);
   inline virtual void 	Init_Weights(RecvCons* cg, Unit* ru);
   // #CAT_Learning initialize state variables (ie. at beginning of training)
-  inline virtual void	C_Init_Weights_post(RecvCons*, Connection*, Unit*, Unit*) { };
+  inline virtual void	C_Init_Weights_post(BaseCons*, Connection*, Unit*, Unit*) { };
   // #IGNORE
-  inline virtual void 	Init_Weights_post(RecvCons* cg, Unit* ru);
+  inline virtual void 	Init_Weights_post(BaseCons* cg, Unit* ru);
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
   inline virtual void 	C_Init_dWt(RecvCons*, Connection* cn, Unit*, Unit*)
   { cn->dwt=0.0f; }
@@ -294,77 +293,11 @@ private:
 SpecPtr_of(ConSpec);
 
 
-/////////////////////////////////////////////////////////////////////////////////
-//		RecvCons
+//////////////////////////////////////////////////////////////////////////////////////
+//	Base Cons -- fully integrated connection management with dynamic con ownership
 
-
-class EMERGENT_API  ConArray : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network a physically contiguous array of connections, for receiving con group -- only one alloc of connections is allowed (to preserve validity of links to existing connections)
-INHERITED(taOBase)
-public:
-  int		con_size;	// #READ_ONLY #EXPERT #NO_SAVE sizeof() connection object being stored
-  TypeDef*	con_type;	// type of connection object being stored
-  int 		size;		// #NO_SAVE #READ_ONLY #SHOW number of elements in the array
-  int		alloc_size;	// #READ_ONLY #NO_SAVE #EXPERT allocated (physical) size, in con_size units -- this is not incrementally allocated -- must be done in advance of making connections!
-  char*		cons;		// #IGNORE the connection memory, alloc_size * con_size
-
-  inline bool		InRange(int idx) const {return ((idx < size) && (idx >= 0));}
-  // #CAT_Access is index in range?
-  inline Connection*	SafeEl(int idx) const
-  { if(!InRange(idx)) return NULL; return (Connection*)&(cons[con_size * idx]); }
-  // #CAT_Access safely access connection at given index, consumer must cast to appropriate sub-type (for type safety, check con_type)
-  inline Connection*	FastEl(int idx) const
-  { return (Connection*)&(cons[con_size * idx]); }
-  // #CAT_Access fast access (no range checking) connection at given index, consumer must cast to appropriate type (for type safety, check con_type)
-
-  void			SetType(TypeDef* cn_tp);
-  // #CAT_Modify set new connection type -- resets any existing conections
-  void			Alloc(int n);
-  // #CAT_Modify allocate storage for exactly the given size -- frees any existing connections!
-  void			Free();
-  // #CAT_Modify deallocate all storage
-  void			SetSize(int sz);
-  // #CAT_Modify set size of array to given number of elements, with new items initialized to zero
-  inline void		New(int n) { SetSize(size + n); }
-  // #CAT_Modify add n new connections (initialized to all zeros)
-  inline void		Reset()	{ SetSize(0); }
-  // #CAT_Modify reset size of array to zero (does not free underlying memory)
-
-  inline void		Add(const Connection* it)
-  { SetSize(size + 1); memcpy((void*)FastEl(size-1), (void*)it, con_size); }
-  // #CAT_Modify add a connection 
-  bool			RemoveIdx(int i);
-  // #CAT_Modify remove connection at given index, moving others down to fill in
-
-  inline void		CopyCons_impl(const ConArray& cp)
-  { SetSize(cp.size); if(size > 0) memcpy(cons, (char*)cp.cons, size * con_size); }
-  // #IGNORE copy connections from other con array, ASSUMES they are both of same type
-  inline bool		CopyCons(const ConArray& cp)
-  { if(con_type != cp.con_type) return false; CopyCons_impl(cp); return true; }
-  // #CAt_Modify copy connections from other con array, checking to make sure they are the same type (false if not)
-
-  override String 	GetTypeDecoKey() const { return "Connection"; }
-
-  void	CutLinks();
-  void	Copy_(const ConArray& cp);
-  TA_BASEFUNS(ConArray);
-private:
-  void 	Initialize();
-  void 	Destroy();
-};
-
-class EMERGENT_API UnitPtrList: public taPtrList<Unit> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of unit pointers, for sending connections
-public:
-  int UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
-  int UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
-  int UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
-
-  ~UnitPtrList()             { Reset(); }
-};
-
-class EMERGENT_API RecvCons : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network receiving connections: owns all the connection objects
+class EMERGENT_API BaseCons : public taOBase {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #VIRT_BASE ##CAT_Network base connection manager class -- manages one projection's worth of connections at a unit level -- inherited by RecvCons and SendCons
 INHERITED(taOBase)
 public:
   // note: follwing must be coordinated with the Network enum
@@ -373,45 +306,105 @@ public:
     BINARY,			// weights are written directly to the file in binary format (no loss in accuracy and more space efficient, but possibly non-portable)
   };
 
-  // note: the cons and units are saved in an optimized fashion
+  // note: following use base_flags so have high values to avoid conflicts
+  enum BaseConsFlags {
+    OWN_CONS = 0x01000000,	// this guy owns the connections -- else gets links to others
+    RECV_CONS = 0x02000000,	// we are a recv con group -- else a send con group
+  };
 
-  TypeDef*	con_type;
-  // #CAT_Structure #AKA_el_typ type of connections to make
-  ConArray	cons;
-  // #NO_FIND #NO_SAVE #CAT_Structure the array of connections, in index correspondence with units
-  UnitPtrList	units;
-  // #NO_FIND #NO_SAVE #CAT_Structure pointers to the sending units of this connection (in index correspondence with cons)
-  Projection*	prjn;
-  // #CAT_Structure pointer the the projection which created this Group
-  int		send_idx;
-  // #READ_ONLY index into sending unit's send. list of SendCons
+  int 		size;		// #CAT_Structure #READ_ONLY #NO_SAVE #SHOW number of connections currently active
+  int		alloc_size;	// #CAT_Structure #READ_ONLY #NO_SAVE #SHOW allocated size -- no more than this number of connections may be created -- it is a hard limit set by the alloc function
+  TypeDef*	con_type;  	// #CAT_Structure #READ_ONLY #SHOW type of connection objects to make -- this can only be set before things have been allocated
+  Projection*	prjn; 		// #CAT_Structure #READ_ONLY #SHOW #NO_SET_POINTER pointer the the projection which created this Group
+  int		other_idx;      // #CAT_Structure #READ_ONLY #SHOW index into other direction's list of cons objects (i.e., send_idx for RecvCons and recv_idx for SendCons)
 
-  Connection* 	Cn(int i) const { return cons.FastEl(i); }
-  // #CAT_Structure gets the connection at the given index
-  Unit*		Un(int i) const { return units.FastEl(i); }
-  // #CAT_Structure gets the unit at the given index
+protected:
+  ConSpec* 	m_con_spec;	// con spec that we use: controlled entirely by the projection!
 
-  inline ConSpec* GetConSpec() const { return m_con_spec; }
+  int		con_size;	// size of the connection object -- set if we own cons and built them
+#ifndef __MAKETA__
+  union {
+    char*		cons_own;	// if we own the cons, this is their physical memory: alloc_size * con_size
+    Connection**	cons_ptr;	// if we don't own the cons, these are pointers to the cons (alloc_size)
+  };
+#endif
+  Unit**		units;		// list of units on the other side of the connection, in index association with the connections
+
+public:
+
+  ////////////////////////////////////////////////////////////////////////////////
+  //	Primary infrastructure management routines
+
+  bool	OwnCons() const	{ return HasBaseFlag(OWN_CONS); }
+  // #CAT_Structure do we own the connections?  else just point to them
+  bool	PtrCons() const	{ return !HasBaseFlag(OWN_CONS); }
+  // #CAT_Structure do we have pointers to connections?  else we own them
+  bool	IsRecv() const	{ return HasBaseFlag(RECV_CONS); }
+  // #CAT_Structure is this a receiving con group?  else sending
+  bool	IsSend() const	{ return !HasBaseFlag(RECV_CONS); }
+  // #CAT_Structure is this a sending con group?  else receiving
+
+  inline bool		InRange(int idx) const {return ((idx < size) && (idx >= 0));}
+  // #CAT_Access is index in range?
+
+  inline Connection*	OwnCn(int idx) const
+  { return (Connection*)&(cons_own[con_size * idx]); }
+  // #CAT_Access fast access (no range or own_cons checking) to owned connection at given index, consumer must cast to appropriate type (for type safety, check con_type) -- compute algorithms should use this, as they know whether the connections are owned
+  inline Connection*	PtrCn(int idx) const  { return cons_ptr[idx]; }
+  // #CAT_Access fast access (no range or own_cons checking) to connection pointer at given index, consumer must cast to appropriate type (for type safety, check con_type) -- compute algorithms should use this, as they know whether the connections are owned
+  inline bool		SetPtrCn(int idx, Connection* cn)
+  { if(!InRange(idx) || OwnCons()) return false; cons_ptr[idx] = cn; return true; }
+  // #CAT_Modify set unit pointer at given index -- returns false if out of range
+
+  inline Connection*	Cn(int idx) const
+  { if(OwnCons()) return OwnCn(idx); return PtrCn(idx); }
+  // #CAT_Access generic access of connection at given index, regardless of whether it is owned or a pointer -- no range checking -- consumer must cast to appropriate sub-type (for type safety, check con_type) -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn or PtrCn)
+  inline Connection*	SafeCn(int idx) const
+  { if(!InRange(idx)) return NULL; return Cn(idx); }
+  // #CAT_Access fully safe generic access of connection at given index, regardless of whether it is owned or a pointer -- consumer must cast to appropriate sub-type (for type safety, check con_type) -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn or PtrCn)
+
+  inline Unit*		Un(int idx) const  { return units[idx]; }
+  // #CAT_Access fast access (no range checking) to unit pointer at given index
+  inline bool		SetUn(int idx, Unit* un)
+  { if(!InRange(idx)) return false; units[idx] = un; return true; }
+  // #CAT_Modify set unit pointer at given index -- returns false if out of range
+
+  virtual bool		ConnectUn(Unit* un);
+  // #CAT_Modify add a new connection from given unit -- returns false if no more room, else true -- nothing is done with the Connection objects: if OwnCons, then it already exists through allocation, else it needs to be created through the LinkToOtherCons function
+  virtual bool		ConnectUnPtrCn(Unit* un, Connection* cn);
+  // #CAT_Modify add a new connection from given unit and connection pointer (only if !OwnCons()) -- returns false if no more room, else true 
+  virtual void		ConnectAllocInc();
+  // #CAT_Modify use this for dynamically figuring out how many connections to allocate, if it is not possible to compute directly -- increments size by one -- later call AllocConsFmSize to allocate connections based on the size value
+  virtual void		AllocConsFmSize();
+  // #CAT_Structure allocate storage for given number of connections (and Unit pointers) based on the size value, and reset size to 0 -- for dynamic allocation with ConnectAllocInc
+
+  virtual bool		SetConType(TypeDef* cn_tp);
+  // #CAT_Structure set new connection type -- will fail (err msg, return false) if connections are already allocated -- can only set prior to allocation
+  virtual void		AllocCons(int n);
+  // #CAT_Structure allocate storage for given number of connections (and Unit pointers) -- this MUST be called prior to making any new connections
+  virtual void		FreeCons();
+  // #CAT_Structure deallocate all connection-level storage (cons and units)
+  virtual bool		CopyCons(const BaseCons& cp);
+  // #CAT_Structure copy connections (unit ptrs and cons) from other con array, checking to make sure they are the same type (false if not) -- does not do any alloc -- just copies values -- source must have same OwnCons status as us
+
+  virtual bool 		LinkToOtherCons(Unit* own_un);
+  // #CAT_Structure fill in our cons_ptr list from the units that send to us -- this is only applicable if we do not OwnCons -- does a full overwrite of whatever cons_ptr might be there now -- this is called en-masse after doing initial connections
+
+  virtual bool		RemoveConIdx(int i);
+  // #CAT_Modify remove connection (cons and units) at given index, moving others down to fill in
+  virtual bool		RemoveConUn(Unit* un);
+  // #CAT_Modify remove connection from given unit
+  virtual void		RemoveAll() 	{ FreeCons(); }
+  // #CAT_Modify remove all conections -- frees all associated memory
+  virtual void		Reset() 	{ FreeCons(); }
+  // #CAT_Modify remove all conections -- frees all associated memory
+
+  inline ConSpec* 	GetConSpec() const { return m_con_spec; }
   // #CAT_Structure get the con spec for this connection group -- this is controlled entirely by the projection con_spec
-  inline void	SetConSpec(ConSpec* cs) { m_con_spec = cs; }
+  inline void		SetConSpec(ConSpec* cs) { m_con_spec = cs; }
   // #CAT_Structure set the con spec to given value -- no ref counting or other checking is done -- should generally only be called by the Projection
 
-  virtual void		SetConType(TypeDef* cn_tp);
-  // #CAT_Structure set the type of connection to make
-  virtual void		AllocCons(int no);
-  // #CAT_Structure allocate given number of new connections (if projection knows this in advance, it is more efficient than doing them incrementally)
-  virtual Connection*	NewCon(Unit* un);
-  // #CAT_Structure create a connection to given unit
-  virtual bool		RemoveConIdx(int i);
-  // #CAT_Structure remove connection at given index
-  virtual bool		RemoveConUn(Unit* un);
-  // #CAT_Structure remove connection from given unit
-  virtual void		RemoveAll();
-  // #CAT_Structure remove all conections
-  virtual void		Reset() { RemoveAll(); }
-  // #CAT_Structure remove all conections
-
-  virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
+  virtual void		MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this set of receiving connections
 
   virtual int		FindConFromIdx(Unit* un) const;
@@ -430,29 +423,11 @@ public:
   // #CAT_Structure find the reciprocal for receiving unit ru from this sending unit su
 
   ////////////////////////////////////////////////////////////////////////////////
-  //	Below are the primary computational interface to the Network Objects
-  //	for performing algorithm-specific activation and learning
+  //	The following are computational functions needed for basic infrastructure
 
-  void 	Init_Weights(Unit* ru)	 	{ if(GetConSpec()) GetConSpec()->Init_Weights(this,ru); }
-  // #CAT_Learning initialize weights for group
-  void 	C_Init_Weights(Connection* cn, Unit* ru, Unit* su)
-  { GetConSpec()->C_Init_Weights(this, cn, ru, su); }
-  // #CAT_Learning initialize weights for single connection
   void	Init_Weights_post(Unit* ru) 	{ if(GetConSpec()) GetConSpec()->Init_Weights_post(this,ru); }
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
-  void 	Init_dWt(Unit* ru)	 	{ GetConSpec()->Init_dWt(this,ru); }
-  // #CAT_Learning  initialize weight change variables
 
-  float Compute_Netin(Unit* ru)	 	{ return GetConSpec()->Compute_Netin(this,ru); }
-  // #CAT_Activation compute net input (receiver based; recv group)
-  float Compute_Dist(Unit* ru)	 	{ return GetConSpec()->Compute_Dist(this,ru); }
-  // #CAT_Activation compute net input as distance between activation and weights
-  void  Compute_dWt(Unit* ru)	 	{ GetConSpec()->Compute_dWt(this,ru); }
-  // #CAT_Learning compute weight changes (the fundamental learning problem)
-  void 	Compute_Weights(Unit* ru)	{ GetConSpec()->Compute_Weights(this,ru); }
-  // #CAT_Learning update weight values from deltas
-
-  
   ////////////////////////////////////////////////////////////////////////////////
   //	The following are misc functionality not required for primary computing
 
@@ -480,27 +455,21 @@ public:
   static int	LoadWeights_EndTag(istream& strm, const String& trg_tag, String& cur_tag, int& stat, bool quiet);
   // #IGNORE read in an end tag -- makes sure it matches trg_tag, cur_tag, stat are current read_tag & status (if !END_TAG, will try to read end)
 
-  virtual void	SaveWeights_strm(ostream& strm, Unit* ru, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
+  virtual void	SaveWeights_strm(ostream& strm, Unit* ru, BaseCons::WtSaveFormat fmt = BaseCons::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int	LoadWeights_strm(istream& strm, Unit* ru, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
+  virtual int	LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat fmt = BaseCons::TEXT, bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary format) -- rval is taMisc::ReadTagStatus, TAG_END if successful
-  static int 	SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
+  static int 	SkipWeights_strm(istream& strm, BaseCons::WtSaveFormat fmt = BaseCons::TEXT,
 				 bool quiet = false);
   // #IGNORE skip over saved weights (to keep the file in sync) -- rval is taMisc::ReadTagStatus, TAG_END if successful
 
-  virtual void	SaveWeights(const String& fname="", Unit* ru = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
+  virtual void	SaveWeights(const String& fname="", Unit* ru = NULL, BaseCons::WtSaveFormat fmt = BaseCons::TEXT);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
-  virtual int	LoadWeights(const String& fname="", Unit* ru = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
+  virtual int	LoadWeights(const String& fname="", Unit* ru = NULL, BaseCons::WtSaveFormat fmt = BaseCons::TEXT, bool quiet = false);
   // #MENU #EXT_wts #COMPRESS #CAT_File  #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (optionally in binary format) (leave fname empty to pull up file chooser)
 
-  int 	Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
-  int	Dump_Load_Value(istream& strm, taBase* par=NULL);
-
-  virtual void	Copy_Weights(const RecvCons* src);
+  virtual void	Copy_Weights(const BaseCons* src);
   // #CAT_ObjectMgmt copies weights from other con_group
-
-  virtual void 	LinkSendCons(Unit* ru);
-  // #CAT_Structure make connection links in all the sending units (assumes that these are initially empty, as after loading or copying)
 
   override int 	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
@@ -509,18 +478,62 @@ public:
   
   override String 	GetTypeDecoKey() const { return "Connection"; }
 
-  void 	InitLinks();
   void	CutLinks();
-  void	Copy_(const RecvCons& cp);
-  TA_BASEFUNS(RecvCons);
+  void	Copy_(const BaseCons& cp);
+  TA_BASEFUNS(BaseCons);
 protected:
-  ConSpec* 	m_con_spec;	// con spec that we use: controlled entirely by the projection!
-
-  override void UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
 private:
   void 	Initialize();
-  void 	Destroy()	{ CutLinks(); }
+  void 	Destroy();
+};
+
+
+/////////////////////////////////////
+
+class EMERGENT_API RecvCons : public BaseCons {
+  // receiving connections base class -- one projection's worth of receiving connections 
+INHERITED(BaseCons)
+public:
+  inline int		send_idx() { return other_idx; }
+  // #READ_ONLY index into sending unit's send. list of SendCons
+
+  ////////////////////////////////////////////////////////////////////////////////
+  //	Below are the primary computational interface to the Network Objects
+  //	for performing algorithm-specific activation and learning
+
+  void 	Init_Weights(Unit* ru)	 	{ if(GetConSpec()) GetConSpec()->Init_Weights(this,ru); }
+  // #CAT_Learning initialize weights for group
+  void 	C_Init_Weights(Connection* cn, Unit* ru, Unit* su)
+  { GetConSpec()->C_Init_Weights(this, cn, ru, su); }
+  // #CAT_Learning initialize weights for single connection
+  void	Init_Weights_post(Unit* ru) 	{ if(GetConSpec()) GetConSpec()->Init_Weights_post(this,ru); }
+  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
+  void 	Init_dWt(Unit* ru)	 	{ GetConSpec()->Init_dWt(this,ru); }
+  // #CAT_Learning  initialize weight change variables
+
+  float Compute_Netin(Unit* ru)	 	{ return GetConSpec()->Compute_Netin(this,ru); }
+  // #CAT_Activation compute net input (receiver based; recv group)
+  float Compute_Dist(Unit* ru)	 	{ return GetConSpec()->Compute_Dist(this,ru); }
+  // #CAT_Activation compute net input as distance between activation and weights
+  void  Compute_dWt(Unit* ru)	 	{ GetConSpec()->Compute_dWt(this,ru); }
+  // #CAT_Learning compute weight changes (the fundamental learning problem)
+  void 	Compute_Weights(Unit* ru)	{ GetConSpec()->Compute_Weights(this,ru); }
+  // #CAT_Learning update weight values from deltas
+
+
+  int 	Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
+  int	Dump_Load_Value(istream& strm, taBase* par=NULL);
+
+  virtual void 	LinkSendCons(Unit* ru);
+  // #CAT_Structure make connection links in all the sending units (assumes that these are initially empty, as after loading or copying)
+
+  TA_BASEFUNS_NOCOPY(RecvCons);
+protected:
+  override void  CheckThisConfig_impl(bool quiet, bool& rval);
+private:
+  void 	Initialize();
+  void 	Destroy()	{ };
 };
 
 class EMERGENT_API RecvCons_List: public taList<RecvCons> {
@@ -567,101 +580,30 @@ private:
 /////////////////////////////////////////////////////////////////////////////////
 //		SendCons
 
-class EMERGENT_API ConPtrList: public taPtrList<Connection> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of connection pointers, for sending connections
+class EMERGENT_API SendCons : public BaseCons {
+  // sending connections base class -- one projection's worth of sending connections 
+INHERITED(BaseCons)
 public:
-  ~ConPtrList()             { Reset(); }
-};
-
-
-class EMERGENT_API SendCons : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network sending connections: points to receiving connections
-INHERITED(taOBase)
-public:
-  TypeDef*	con_type;
-  // #CAT_Structure #AKA_el_typ type of connections to make
-  ConPtrList	cons;
-  // #NO_FIND #NO_SAVE #CAT_Structure list of pointers to receiving connections, in index correspondence with units;
-  UnitPtrList	units;
-  // #NO_FIND #NO_SAVE #CAT_Structure pointers to the receiving units of this connection, in index correspondence with cons
-  Projection*	prjn;
-  // #CAT_Structure pointer the the projection which created this Group
-  int		recv_idx;
-  // #READ_ONLY index into recv unit's list of RecvCons for this projection
-
-  Connection* 	Cn(int i) const { return cons.FastEl(i); }
-  // #CAT_Structure gets the connection at the given index
-  Unit*		Un(int i) const { return units.FastEl(i); }
-  // #CAT_Structure gets the unit at the given index
-
-  inline ConSpec* GetConSpec() const { return m_con_spec; }
-  // #CAT_Structure get the con spec for this connection group -- this is controlled entirely by the projection con_spec
-  inline void	SetConSpec(ConSpec* cs) { m_con_spec = cs; }
-  // #CAT_Structure set the con spec to given value -- no ref counting or other checking is done -- should generally only be called by the Projection
-
-  virtual void		SetConType(TypeDef* cn_tp);
-  // #CAT_Structure set the type of connection to make
-  virtual void		LinkCon(Connection* cn, Unit* un);
-  // #CAT_Structure make a link connection from given connection, unit (for sending groups)
-  virtual bool		RemoveConIdx(int i);
-  // #CAT_Structure remove connection at given index
-  virtual bool		RemoveConUn(Unit* un);
-  // #CAT_Structure remove connection from given unit
-  virtual void		RemoveAll();
-  // #CAT_Structure remove all conections
-  virtual void		Reset() { RemoveAll(); }
-  // #CAT_Structure remove all conections
-
-  virtual int		FindConFromIdx(Unit* un) const;
-  // #CAT_Structure find index of connection from given unit
-  virtual int		FindConFromNameIdx(const String& unit_nm) const;
-  // #CAT_Structure find index of connection from given unit name
-
-  virtual Connection*	FindConFrom(Unit* un) const;
-  // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure find connection from given unit
-  virtual Connection*	FindConFromName(const String& unit_nm) const;
-  // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure find connection from given unit name
+  inline int		recv_idx() { return other_idx; }
+  // #READ_ONLY index into recv unit's recv. list of RecvCons
 
   ////////////////////////////////////////////////////////////////////////////////
   //	Below are the primary computational interface to the Network Objects
   //	for performing algorithm-specific activation and learning
 
+  // note: if using send_netin, it probably makes sense to have the sender own the connections
+  // and add all the basic functionality from the sender perspective -- see Leabra for example
+
   void 	Send_Netin(Network* net, int thread_no, Unit* su)
   { GetConSpec()->Send_Netin(this, net, thread_no, su); }
   // #CAT_Activation sender-based net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
   
-  ////////////////////////////////////////////////////////////////////////////////
-  //	The following are misc functionality not required for primary computing
-
-  virtual bool	ConValuesToArray(float_Array& ary, const char* variable);
-  // #CAT_Structure adds values of variable from the connections into the given array (false if var not found)
-  virtual bool	ConValuesToMatrix(float_Matrix& mat, const char* variable);
-  // #CAT_Structure sets values of variable from the connections into the given matrix (uses flat index of cons to set: 0..size-1), returns false if matrix is not appropriately sized
-  virtual bool	ConValuesFromArray(float_Array& ary, const char* variable);
-  // #CAT_Structure sets values of variable in the connections from the given array (false if var not found)
-  virtual bool	ConValuesFromMatrix(float_Matrix& mat, const char* variable);
-  // #CAT_Structure sets values of variable in the connections from the given array (false if var not found) -- uses flat index of cons to set: 0..size-1
-
-  virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
-  // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this set of connections
-
-  override int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
-  override bool	ChangeMyType(TypeDef* new_type);
-  
-  override String 	GetTypeDecoKey() const { return "Connection"; }
-
-  void 	InitLinks();
-  void	CutLinks();
-  void	Copy_(const SendCons& cp);
-  TA_BASEFUNS(SendCons);
+  TA_BASEFUNS_NOCOPY(SendCons);
 protected:
-  ConSpec* 	m_con_spec;	// con spec that we use: controlled entirely by the projection!
-
-  override void  UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
 private:
   void 	Initialize();
-  void 	Destroy()	{ CutLinks(); }
+  void 	Destroy()	{ }
 };
 
 class EMERGENT_API SendCons_List: public taList<SendCons> {
@@ -704,6 +646,12 @@ private:
   void	Initialize() 		{ SetBaseType(&TA_SendCons); }
   void 	Destroy()		{ };
 };
+
+
+
+//   ConPtrList	cons;
+  // #NO_FIND #NO_SAVE #CAT_Structure list of pointers to receiving connections, in index correspondence with units;
+
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -941,16 +889,19 @@ public: //
   virtual bool	CheckBuild(bool quiet=false);
   // #CAT_Structure check if network is built 
   virtual void	RemoveCons();
-  // #IGNORE remove all of unit's sending and receiving connections
-  // since this doesn't affect other units, it should not be called individually
-  virtual void		ConnectAlloc(int no, Projection* prjn, RecvCons*& cgp = rcg_rval);
-  // #CAT_Structure pre-allocate given no of connections (for better memory layout)
-  virtual Connection* 	ConnectFrom(Unit* su, Projection* prjn, RecvCons*& recv_gp = rcg_rval,
-				    SendCons*& send_gp = scg_rval);
-  // #CAT_Structure make a recv connection from given unit to this unit using given projection
-  virtual Connection* 	ConnectFromCk(Unit* su, Projection* prjn, RecvCons*& recv_gp = rcg_rval,
-				      SendCons*& send_gp = scg_rval);
-  // #CAT_Structure does ConnectFrom but checks for an existing connection to prevent double-connections! -- note that this is expensive!
+  // #IGNORE remove all of unit's sending and receiving connections -- since this doesn't affect other units, it should not be called individually
+  virtual void	RecvConsPreAlloc(int no, Projection* prjn, RecvCons*& cgp = rcg_rval);
+  // #CAT_Structure pre-allocate given no of receiving connections -- sufficient connections must be allocated in advance of making specific connections
+  virtual void	SendConsPreAlloc(int no, Projection* prjn, SendCons*& cgp = scg_rval);
+  // #CAT_Structure pre-allocate given no of sending connections -- sufficient connections must be allocated in advance of making specific connections
+  virtual void	SendConsPostAlloc(int no, Projection* prjn, SendCons*& cgp = scg_rval);
+  // #CAT_Structure post-allocate given no of sending connections -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
+  virtual bool	ConnectFrom(Unit* su, Projection* prjn, bool alloc_send = false, 
+			    RecvCons*& recv_gp = rcg_rval, SendCons*& send_gp = scg_rval);
+  // #CAT_Structure make a recv connection from given unit to this unit using given projection -- if alloc_send is true, then it only allocates connections on the sender -- does NOT make any connection on the receiver -- use this in a loop that runs connections twice, with first pass as allocation and second pass as actual connection making
+  virtual bool 	ConnectFromCk(Unit* su, Projection* prjn, 
+			      RecvCons*& recv_gp = rcg_rval, SendCons*& send_gp = scg_rval);
+  // #CAT_Structure does ConnectFrom but checks for an existing connection to prevent double-connections! -- note that this is expensive!  also, REQUIRES that sender connections are pre-allocated!
   virtual bool	DisConnectFrom(Unit* su, Projection* prjn=NULL);
   // #CAT_Structure remove connection from given unit (projection is optional)
   virtual void	DisConnectAll();
@@ -1019,6 +970,18 @@ private:
   void	Initialize();
   void 	Destroy();
 };
+
+
+class EMERGENT_API UnitPtrList: public taPtrList<Unit> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of unit pointers, for sending connections
+public:
+  int UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  int UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
+  int UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
+
+  ~UnitPtrList()             { Reset(); }
+};
+
 
 // Projections are abrevieated prjn (as a oppesed to proj = project or proc = process)
 // ProjectionSpec does the connectivity, and optionally the weight init
@@ -2401,6 +2364,8 @@ private:
 // 	Inline Connection-level functions (fast)	//
 //////////////////////////////////////////////////////////
 
+// todo: rewrite these all as BaseCons!
+
 inline void ConSpec::ApplyLimits(RecvCons* cg, Unit* ru) {
   if(wt_limits.type != WeightLimits::NONE) {
     CON_GROUP_LOOP(cg, C_ApplyLimits(cg->Cn(i), ru, cg->Un(i)));
@@ -2428,7 +2393,7 @@ inline void ConSpec::Init_Weights(RecvCons* cg, Unit* ru) {
   ApplySymmetry(cg,ru);
 }
 
-inline void ConSpec::Init_Weights_post(RecvCons* cg, Unit* ru) {
+inline void ConSpec::Init_Weights_post(BaseCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg, C_Init_Weights_post(cg, cg->Cn(i), ru, cg->Un(i)));
 }
 

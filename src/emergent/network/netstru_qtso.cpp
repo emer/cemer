@@ -303,7 +303,7 @@ void UnitGroupView::UpdateUnitViewBase_Bias_impl(MemberDef* disp_md) {
     if (++(coord.x) >= ugrp->geom.x) {coord.x = 0; ++(coord.y);}
     uvd.disp_base = NULL;
     if (!unit) continue;  // rest will be null too, but we loop to null disp_base
-    if(unit->bias.cons.size == 0) continue;
+    if(unit->bias.size == 0) continue;
     Connection* con = unit->bias.Cn(0);
     uvd.disp_base = disp_md->GetOff(con);
   }
@@ -2140,7 +2140,7 @@ void NetView::GetMembs() {
       if(td == prv_td) continue; // don't re-scan!
       prv_td = td;
 
-      if(u->bias.cons.size) {
+      if(u->bias.size) {
 	TypeDef* td = u->bias.con_type;
 	for(int k=0; k<td->members.size; k++) {
 	  MemberDef* smd = td->members.FastEl(k);
@@ -2702,7 +2702,7 @@ void NetView::Render_wt_lines() {
 
     n_prjns++;
     int n_con = 0;
-    for(int i=0;i<(swt ? ((SendCons*)cg)->cons.size : ((RecvCons*)cg)->cons.size); i++) {
+    for(int i=0;i<(swt ? ((SendCons*)cg)->size : ((RecvCons*)cg)->size); i++) {
       float wt = (swt ? ((SendCons*)cg)->Cn(i)->wt : ((RecvCons*)cg)->Cn(i)->wt);
       if(wt >= wt_line_thr) n_con++;
     }
@@ -2779,7 +2779,7 @@ void NetView::Render_wt_lines() {
     int ru_idx = v_idx;
     vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
 
-    for(int i=0;i<(swt ? ((SendCons*)cg)->cons.size : ((RecvCons*)cg)->cons.size); i++) {
+    for(int i=0;i<(swt ? ((SendCons*)cg)->size : ((RecvCons*)cg)->size); i++) {
       Unit* su = (swt ? ((SendCons*)cg)->Un(i) : ((RecvCons*)cg)->Un(i));
       float wt = (swt ? ((SendCons*)cg)->Cn(i)->wt : ((RecvCons*)cg)->Cn(i)->wt);
       if(fabsf(wt) < wt_line_thr) continue;

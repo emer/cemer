@@ -70,11 +70,12 @@ int FullPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt) 
     new_idxs.Permute();
     for(int i=0;i<n_new_cons;i++) {
       Unit* su = (Unit*)prjn->from->units.Leaf(new_idxs[i]);
-      Connection* cn = ru->ConnectFromCk(su, prjn); // check means that it won't add any new connections if already there!
-      if(cn != NULL) {
-	cn->wt = init_wt;
+      if(ru->ConnectFromCk(su, prjn)) // check means that it won't add any new connections if already there!
 	rval++;
-      }
+//       if(cn != NULL) {
+// 	cn->wt = init_wt;
+// 	rval++;
+//       }
     }
   }
   return rval;
@@ -254,7 +255,7 @@ void TesselPrjnSpec::WeightsFromGausDist(float scale, float sigma) {
 // todo: this assumes that things are in order.. (can't really check otherwise)
 // which breaks for clipped patterns
 void TesselPrjnSpec::C_Init_Weights(Projection*, RecvCons* cg, Unit*) {
-  int mxi = MIN(cg->cons.size, send_offs.size);
+  int mxi = MIN(cg->size, send_offs.size);
   int i;
   for(i=0; i<mxi; i++) {
     TessEl* te = (TessEl*)send_offs.FastEl(i);
@@ -290,9 +291,9 @@ void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projecti
     Unit* su_u = prjn->from->FindUnitFmCoord(suc);
     if((su_u == NULL) || (!self_con && (su_u == ru_u)))
       continue;
-    Connection* cn = ru_u->ConnectFromCk(su_u, prjn);
-    if(cn != NULL)
-      cn->wt = te->wt_val;
+    ru_u->ConnectFromCk(su_u, prjn);
+//     if(cn != NULL)
+//       cn->wt = te->wt_val;
   }
 }
 
@@ -392,7 +393,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
 	// don't connect to anyone who already recvs from me cuz that will make
 	// a symmetric connection which isn't good: symmetry will be enforced later
 	RecvCons* scg = su->recv.FindPrjn(prjn);
-	if(scg->units.FindEl(ru) >= 0) continue;
+	if(scg->FindConFromIdx(ru) >= 0) continue;
 	perm_list.Link(su);
       }
       perm_list.Permute();
@@ -405,7 +406,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
       SendCons* scg = ru->send.FindPrjn(prjn);
       if(scg == NULL) continue;
       int i;
-      for(i=0;i<scg->cons.size;i++) {
+      for(i=0;i<scg->size;i++) {
 	Unit* su = scg->Un(i);
 	ru->ConnectFromCk(su, prjn);
       }
@@ -599,7 +600,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
 	n_retry++;
 	continue;
       }
-      if(ru->ConnectFromCk(su, prjn, recv_gp) != NULL)
+      if(ru->ConnectFromCk(su, prjn, recv_gp))
 	n_con++;
       else {
 	n_retry++;		// already connected, retry
@@ -614,7 +615,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
 
 void PolarRndPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   int i;
-  for(i=0; i<cg->cons.size; i++) {
+  for(i=0; i<cg->size; i++) {
     cg->Cn(i)->wt = GetDistProb(prjn, ru, cg->Un(i));
   }
 }
@@ -641,7 +642,7 @@ void SymmetricPrjnSpec::Connect_impl(Projection* prjn) {
   FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr) {
     FOR_ITR_EL(Unit, su, prjn->from->units., su_itr) {
       if(RecvCons::FindRecipRecvCon(su, ru, prjn->layer))
-	if(ru->ConnectFrom(su, prjn) != NULL)
+	if(ru->ConnectFrom(su, prjn))
 	  cnt++;
     }
   }
@@ -921,8 +922,8 @@ void GpOneToManyPrjnSpec::PreConnect(Projection* prjn) {
   SendCons* send_gp = first_su->send.NewPrjn(prjn);
   prjn->send_idx = first_su->send.size - 1;
   // set reciprocal indicies
-  recv_gp->send_idx = prjn->send_idx;
-  send_gp->recv_idx = prjn->recv_idx;
+  recv_gp->other_idx = prjn->send_idx;
+  send_gp->other_idx = prjn->recv_idx;
 
   // use basic connectivity routine to set indicies..
   int r, s;
@@ -952,12 +953,12 @@ void GpOneToManyPrjnSpec::PreConnect(Projection* prjn) {
       FOR_ITR_EL(Unit, u, rgp->, u_itr) {
 	if((u == first_ru) && (s == 0))	continue; // skip this one
 	recv_gp = u->recv.NewPrjn(prjn);
-	recv_gp->send_idx = send_idx;
+	recv_gp->other_idx = send_idx;
       }
       FOR_ITR_EL(Unit, u, sgp->, u_itr) {
 	if((u == first_su) && (r == 0))	continue; // skip this one
 	send_gp = u->send.NewPrjn(prjn);
-	send_gp->recv_idx = recv_idx;
+	send_gp->other_idx = recv_idx;
       }
     }
   }
@@ -1162,7 +1163,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_Sym(Unit_Group* ru_gp, Unit_Group* su_gp, 
       SendCons* scg = ru->send.FastEl(g);
       if((scg->prjn->layer != scg->prjn->from.ptr()) || (scg->prjn->layer != prjn->layer))
 	continue;		// only deal with self projections to this same layer
-      for(int i=0;i<scg->cons.size;i++) {
+      for(int i=0;i<scg->size;i++) {
 	Unit* su = scg->Un(i);
 	if(GET_OWNER(su, Unit_Group) == su_gp) { // this sender is in actual group I'm trying to connect
 	  ru->ConnectFromCk(su, prjn);
@@ -1203,7 +1204,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(Unit_Group* ru_gp, Unit_Group* s
       // don't connect to anyone who already recvs from me cuz that will make
       // a symmetric connection which isn't good: symmetry will be enforced later
       RecvCons* scg = su->recv.FindPrjn(prjn);
-      if(scg->units.FindEl(ru) >= 0) continue;
+      if(scg->FindConFromIdx(ru) >= 0) continue;
       perm_list.Link(su);
     }
     perm_list.Permute();
@@ -1215,7 +1216,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(Unit_Group* ru_gp, Unit_Group* s
   FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
     SendCons* scg = ru->send.FindPrjn(prjn);
     if(scg == NULL) continue;
-    for(int i=0;i<scg->cons.size;i++) {
+    for(int i=0;i<scg->size;i++) {
       Unit* su = scg->Un(i);
       ru->ConnectFromCk(su, prjn);
     }
@@ -1230,7 +1231,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameLay(Unit_Group* ru_gp, Unit_Group* 
   // take first send unit and find if it recvs from anyone in this prjn yet
   Unit* su = (Unit*)su_gp->Leaf(0);
   RecvCons* scg = su->recv.FindPrjn(prjn);
-  if((scg != NULL) && (scg->cons.size > 0)) {	// sender has been connected already: try to connect me!
+  if((scg != NULL) && (scg->size > 0)) {	// sender has been connected already: try to connect me!
     int n_con = 0;		// number of actual connections made
 
     Unit* ru;
@@ -1239,10 +1240,10 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameLay(Unit_Group* ru_gp, Unit_Group* 
       SendCons* scg = ru->send.FindPrjn(prjn);
       if(scg == NULL) continue;
       int i;
-      for(i=0;i<scg->cons.size;i++) {
+      for(i=0;i<scg->size;i++) {
 	Unit* su = scg->Un(i);
 	if(GET_OWNER(su, Unit_Group) == su_gp) { // this sender is in actual group I'm trying to connect
-	  if(ru->ConnectFromCk(su, prjn) != NULL)
+	  if(ru->ConnectFromCk(su, prjn))
 	    n_con++;
 	}
       }
@@ -1481,11 +1482,11 @@ int TiledRFPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_w
 	  Unit* su_u = prjn->from->FindUnitFmCoord(suc);
 	  if(su_u == NULL) continue;
 	  if(!self_con && (su_u == ru_u)) continue;
-	  Connection* cn = ru_u->ConnectFromCk(su_u, prjn); // gotta check!
-	  if(cn != NULL) {
-	    cn->wt = init_wt;
+	  if(ru_u->ConnectFromCk(su_u, prjn)) // gotta check!
 	    rval++;
-	  }
+// 	  if(cn != NULL) {
+// 	    cn->wt = init_wt;
+// 	  }
 	}
       }
     }
@@ -1740,13 +1741,13 @@ int TiledGpRFPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init
 	      // just do a basic probabilistic version: too hard to permute..
 	      if(Random::ZeroOne() > p_add_con) continue; // no-go
 
-	      Connection* cn;
+	      bool con;
 	      if(!reciprocal)
-		cn = ru_u->ConnectFromCk(su_u, prjn); // gotta check!
+		con = ru_u->ConnectFromCk(su_u, prjn); // gotta check!
 	      else
-		cn = su_u->ConnectFromCk(ru_u, prjn);
-	      if(cn != NULL) {
-		cn->wt = init_wt;
+		con = su_u->ConnectFromCk(ru_u, prjn);
+	      if(con) {
+// 		cn->wt = init_wt;
 		rval++;
 	      }
 	    }
@@ -2021,7 +2022,7 @@ void GaussRFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   if(rf_half_wd * 2 == rf_width) // even
     rf_ctr -= .5f;
 
-  for(int i=0; i<cg->cons.size; i++) {
+  for(int i=0; i<cg->size; i++) {
     int su_x = i % rf_width.x;
     int su_y = i / rf_width.x;
 
