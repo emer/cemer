@@ -92,7 +92,7 @@ class AUDIOPROC_API GammatoneChan_List: public FilterChan_List
 { // ##CAT_Audioproc list of channels, that will operate in parallel
 INHERITED(FilterChan_List) 
 public:
-  GammatoneChan*	FastEl(int idx) const
+  GammatoneChan*	FastEl(int i) const
     {return (GammatoneChan*)el[i];} 
   
   TA_BASEFUNS_NOCOPY(GammatoneChan_List)
@@ -120,6 +120,7 @@ public:
     CS_0		= 0, // #IGNORE
     CS_MooreGlassberg	= 0, // #LABEL_MooreGlassberg equal ERB crossings
     CS_LogLinear	= 1, // #LABEL_LogLinear simple log linear
+    CS_MelCepstra	= 2, // #LABEL_MelCepstra uses spacing equivalent to std Mel Cepstra filters NOTE: filter response itself is NOT MC, only chan ctr freqs
   };
   
   DataBuffer		out_buff_env; //  #SHOW_TREE envelope output (if enabled)
@@ -128,8 +129,8 @@ public:
   ChanSpacing		chan_spacing; // how to space the channels
   float			ear_q; // #EXPERT Moore and Glasberg def=9.26449 -- ERB is min_bw + (cf / ear_q)
   float			min_bw; // #EXPERT minimum bandwidth
-  float			cf_lo; // lower center frequency (Hz)
-  float			cf_hi; // // #CONDEDIT_ON_chan_spacing:CS_MooreGlassberg upper center frequency (Hz)
+  float			cf_lo; // #CONDEDIT_OFF_chan_spacing:CS_MelCepstra lower center frequency (Hz)
+  float			cf_hi; // #CONDEDIT_ON_chan_spacing:CS_MooreGlassberg upper center frequency (Hz)
   float			chans_per_oct; // #MIN_0 #CONDSHOW_ON_chan_spacing:CS_LogLinear number of channels per octave
   int			n_chans; // #MIN_1 number of filter bands
   
@@ -177,8 +178,15 @@ class AUDIOPROC_API MelCepstraBlock: public StdBlock
 { // ##CAT_Audioproc gammatone filter bank
 INHERITED(StdBlock) 
 public:
-//  DataBuffer		out_buff_env; //  #SHOW_TREE envelope output (if enabled)
-//  DataBuffer		out_buff_delta_env; //  #SHOW_TREE delta envelope output (if enabled)
+  enum OutVals { // #BITS Output Values 
+    OV_MEL	= 0x01, // #LABEL_MelCepstra basic output channel (required)
+    OV_DELTA1   = 0x02, // #LABEL_DeltaMel 1st derivitive (per out) of Mel
+    OV_DELTA2   = 0x04, // #LABEL_Delta2Mel 2ndt derivitive (per out) of Mel
+  };
+  
+  DataBuffer		out_buff_delta1; //  #SHOW_TREE delta output (if enabled)
+  DataBuffer		out_buff_delta2; //  #SHOW_TREE delta2 output (if enabled)
+  OutVals		out_vals; // the desired output values
   float			cf_lo; // lower center frequency (Hz)
   float			cf_lin_bw; // linear range bandwidth
   float			cf_log_factor; // how much to multiple to get next log channel 
@@ -188,15 +196,15 @@ public:
   FilterChan_List	chans; // #NO_SAVE the individual channels
   
   override taList_impl*  children_() {return &chans;} //note: required
-//  override int		outBuffCount() const {return 3;}
-/*  override DataBuffer* 	outBuff(int idx) {switch (idx) {
+  override int		outBuffCount() const {return 3;}
+  override DataBuffer* 	outBuff(int idx) {switch (idx) {
     case 0: return &out_buff; 
-    case 1: return &out_buff_env;
-    case 2: return &out_buff_delta_env;
-    default: return NULL;}}*/
+    case 1: return &out_buff_delta1;
+    case 2: return &out_buff_delta2;
+    default: return NULL;}}
   
   virtual void		GraphFilter(DataTable* disp_data,
-    bool log_freq = true, OutVals response = OV_SIG);
+    bool log_freq = true, MelCepstraBlock::OutVals response = OV_MEL);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter response into a data table and generate a graph; if log_freq then log10 of freq is output; CHOOSE ONLY 1 RESPONSE
   ProcStatus 		AcceptData_MC(float_Matrix* in_mat, int stage = 0);
     // #IGNORE mostly for proc
@@ -565,6 +573,7 @@ public: //
     NONE,	// no scale factor
     POWER,	// scale_factor is the power (> 0) to which to raise input
     LOG10_1P,	// log10(1+x)	
+    LN_1P,	// ln(1+x)	
   };
   
   DataBuffer		out_buff_norm; // #SHOW_TREE the normalization factor used -- this will be 0 if the input didn't meet threshold

@@ -203,6 +203,12 @@ void GammatoneBlock::UpdateAfterEdit_impl() {
   if ((chan_spacing == CS_LogLinear) && (chans_per_oct < 0)) {
     chans_per_oct = (n_chans - 1)/(log(cf_hi/cf_lo)/log(2.0f));
   }
+  // certain values are fixed (in current impl) for MelCepstra
+  if (chan_spacing == CS_MelCepstra) {
+    cf_lo = 100;
+    //n_chans = 30;
+  }
+  
   
   // note: because of the codes used, there is always at least one val
   num_out_vals = 0;
@@ -267,6 +273,9 @@ void GammatoneBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
     // calc equivalent cf_hi in case user switches mode
     cf_hi = exp((log(2.0f)*(n_chans-1) / chans_per_oct) + log(cf_lo));
   } break; 
+  case CS_MelCepstra: {
+    cf_hi = powf(1.1f, (n_chans-1) - 9) * 1000.0f;
+  } break; 
   default: break;// compiler food -- handle all cases above
   }
 }
@@ -297,6 +306,14 @@ void GammatoneBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
           cf = cf_lo;
         else 
           cf = exp((log(2.0f)*(i) / chans_per_oct) + log(cf_lo));
+      } break; 
+      case CS_MelCepstra: {
+        // linear range is 100-1000
+        if (i < 10)
+          cf = cf_lo + (i * 100.0f);
+        // log range is 1.1*prev
+        else 
+          cf = powf(1.1f, i - 9) * 1000.0f;
       } break; 
       default: break;// compiler food -- handle all cases above
       }
@@ -500,8 +517,9 @@ void GammatoneBlock::MakeStdFilters(float cf_lo, float cf_hi, int n_chans) {
 //////////////////////////////////
 
 void MelCepstraBlock::Initialize() {
+   out_vals = OV_MEL;
   cf_lo = 100.0f;
-  cf_bw_lin = 100.0f;
+  cf_lin_bw = 100.0f;
   cf_log_factor = 1.1f;
   n_lin_chans = 10;
   n_log_chans = 22;
@@ -509,6 +527,7 @@ void MelCepstraBlock::Initialize() {
 
 void MelCepstraBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  out_vals = (OutVals)(out_vals | OV_MEL); // required
 }
 
 void MelCepstraBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
@@ -535,9 +554,10 @@ void MelCepstraBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   if (check) return;
   
   // just init all chans, whether enabled or not
+  const int n_chans = n_lin_chans + n_log_chans;
   int buff_bit = 1;
   for (int obi = 0; obi < outBuffCount(); ++obi, buff_bit<<=1) {
-    DataBuffer* ob = outBuff(obi);
+    DataBuffer* ob = outBuff(0);
     ob->enabled = (out_vals & buff_bit);
     if (!ob->enabled) continue; // will have mat set to zero 
     ob->fs = src_buff->fs;
@@ -546,14 +566,12 @@ void MelCepstraBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
     ob->chans = n_chans;
     ob->vals = 1;
   }
-  // if using delta_env, need min of 2 env stages
-  if (out_vals & OV_DELTA_ENV) {
-    out_buff_env.min_stages = 2;
-    // 1/dt value, in 1/100us based on env guy
-    delta_env_dt_inv = out_buff_env.fs / 100.0f;
-    if (CheckError((delta_env_dt_inv <= 0), quiet, ok,
-      "delta_env_dt value was <= 0 -- sampling rate must be bad!"))
-      return;
+  // if using delta or delta2, need min of 2/3 env stages
+  int min_stages = 1;
+  if (out_vals & OV_DELTA1) min_stages = 2;
+  if (out_vals & OV_DELTA2) min_stages = 3;
+  if (min_stages > 1) {
+    out_buff.min_stages = min_stages;
   }
   
 }
@@ -562,32 +580,22 @@ void MelCepstraBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
 //TODO: when sharpening, correct the gain of the edge channels to compensate
 // for the loss caused by not integrating the full DoG filter width
 
+  const int n_chans = n_lin_chans + n_log_chans;
   chans.SetSize(n_chans);
+  float cf = cf_lo;
   for (int i = 0; i < chans.size; ++i) {
     // don't move on to next child, if prev step didn't succeed
     if (!check && !ok) return;
-    MelCepstraChan* gc = chans.FastEl(i);
+    FilterChan* gc = chans.FastEl(i);
+    
     if (!check) {
-      // center frequency
-      float cf;
-      switch (chan_spacing) {
-      case CS_MooreGlassberg: {
-        if (i < (chans.size - 1))
-          cf = -(ear_q * min_bw) + exp((n_chans-i - 1) *
-          (-log(cf_hi + ear_q*min_bw) + log(cf_lo + ear_q*min_bw))/(n_chans-1)) *
-          (cf_hi + ear_q*min_bw);
-        else 
-          cf = cf_hi;
-      } break;
-      case CS_LogLinear: {
-        if (i == 0)
-          cf = cf_lo;
-        else 
-          cf = exp((log(2.0f)*(i) / chans_per_oct) + log(cf_lo));
-      } break; 
-      default: break;// compiler food -- handle all cases above
+      gc->InitChan(cf, 1.0f, 0); //TODO: erb
+      // next cf
+      if (i < n_lin_chans) {
+        cf += cf_lin_bw;
+      } else {
+        cf *= cf_log_factor;
       }
-      gc->InitChan(cf, ear_q, min_bw, out_buff.fs);
     }
   }
   // do the default, which calls all the items, prob does nothing
@@ -598,10 +606,10 @@ void MelCepstraBlock::AcceptData_impl(SignalProcBlock* src_blk,
     DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps)
 {
   float_Matrix* in_mat = &src_buff->mat;
-  ps = AcceptData_GT(in_mat, stage);
+  ps = AcceptData_MC(in_mat, stage);
 }
 
-SignalProcBlock::ProcStatus MelCepstraBlock::AcceptData_GT(float_Matrix* in_mat, int stage)
+SignalProcBlock::ProcStatus MelCepstraBlock::AcceptData_MC(float_Matrix* in_mat, int stage)
 {
   ProcStatus ps = PS_OK;
   const int in_items = in_mat->dim(ITEM_DIM);
@@ -610,7 +618,7 @@ SignalProcBlock::ProcStatus MelCepstraBlock::AcceptData_GT(float_Matrix* in_mat,
   const int in_vals = in_mat->dim(VAL_DIM); // only 1 in allowed!!!
   const int in_chan = 0; // only 1 in allowed
   const int in_val = 0; // only 1 in allowed
-  
+/*TODO  
   // in_stride: the num items between each x in a channel
   const int in_stride = in_vals * in_chans * in_fields;
   // out_stride: the num items between each y in an output channel
@@ -650,7 +658,7 @@ SignalProcBlock::ProcStatus MelCepstraBlock::AcceptData_GT(float_Matrix* in_mat,
     if (ob->NextIndex())
       NotifyClientsBuffStageFull(ob, obi, ps);
   }
-  
+  */
   return ps;
 }
 
@@ -680,8 +688,8 @@ void MelCepstraBlock::GraphFilter(DataTable* graph_data,
   
   gb->InitLinks();
   gb->Copy(*this);
-  if ((response != OV_SIG) && (response != OV_ENV) && (response != OV_FREQ))
-    response = OV_SIG;
+  if ((response != OV_MEL) && (response != OV_DELTA1) && (response != OV_DELTA2))
+    response = OV_MEL;
   gb->out_vals = response;
 
   if (!ok) goto exit;
@@ -704,15 +712,15 @@ void MelCepstraBlock::GraphFilter(DataTable* graph_data,
   in_mat->Set(1.0f, 0); // the impulse!
   
   // ok, run one round
-  ps = gb->AcceptData_GT(in_mat);
+  ps = gb->AcceptData_MC(in_mat);
   if (CheckError((ps != PS_OK), false, ok,
     "ProcNextFrame did not complete ok")) goto exit;
   // NOTE: we only analyze one of the outputs
 {     
   DataBuffer* ob = gb->outBuff(anali);
   // do an fft on it -- have to invert the data
-  float_Matrix fft_in(2, n, gb->n_chans);
-  for (int chan = 0; chan < gb->n_chans; ++chan)
+  float_Matrix fft_in(2, n, gb->chans.size);
+  for (int chan = 0; chan < gb->chans.size; ++chan)
   for (int i = 0; i < n; ++i) {
     fft_in.FastEl(i, chan) = ob->mat.SafeEl(0, chan, 0, i);
   }
@@ -770,16 +778,6 @@ exit:
   if (gb) delete gb;
 }
 
-
-void MelCepstraBlock::MakeStdFilters(float cf_lo, float cf_hi, int n_chans) {
-  this->cf_lo = cf_lo;
-  this->cf_hi = cf_hi;
-  this->n_chans = n_chans;
-  chan_spacing = CS_LogLinear;
-  ear_q = 9.26449f;
-  min_bw = 24.7f;
-  UpdateAfterEdit();
-}
 
 
 //////////////////////////////////
@@ -2054,6 +2052,8 @@ float NormBlock::Scale(float val) {
     return powf(val, scale_factor);
   case LOG10_1P:
     return log10f(1.0f + val);
+  case LN_1P:
+    return logf(1.0f + val);
   }
   return val; // compiler food
 }
