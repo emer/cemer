@@ -1561,13 +1561,15 @@ void PFCOutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
 //////////////////////////////////////////
 
 void PFCLVPrjnSpec::Connect_Gp(Projection* prjn, Unit_Group* rugp, Unit_Group* sugp) {
-  int no = sugp->leaves;
-
   // pre-allocate connections!
   Unit* ru, *su;
   taLeafItr ru_itr, su_itr;
   FOR_ITR_EL(Unit, ru, rugp->, ru_itr) {
-    ru->ConnectAlloc(no, prjn);
+    ru->RecvConsPreAlloc(sugp->leaves, prjn);
+  }
+  // todo: this may not be right for fuller connectivity..
+  FOR_ITR_EL(Unit, su, sugp->, su_itr) {
+    su->SendConsPreAlloc(rugp->leaves, prjn);
   }
 
   FOR_ITR_EL(Unit, ru, rugp->, ru_itr) {

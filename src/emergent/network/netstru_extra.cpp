@@ -41,14 +41,11 @@ void FullPrjnSpec::Connect_impl(Projection* prjn) {
     send_no--;
 
   // pre-allocate connections!
+  prjn->layer->RecvConsPreAlloc(recv_no, prjn);
+  prjn->from->SendConsPreAlloc(send_no, prjn);
+
   Unit* ru, *su;
   taLeafItr ru_itr, su_itr;
-  FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr)
-    ru->RecvConsPreAlloc(recv_no, prjn);
-
-  FOR_ITR_EL(Unit, su, prjn->from->units., su_itr)
-    su->SendConsPreAlloc(send_no, prjn);
-
   FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr) {
     FOR_ITR_EL(Unit, su, prjn->from->units., su_itr) {
       if(self_con || (ru != su))
@@ -79,10 +76,6 @@ int FullPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
       Unit* su = (Unit*)prjn->from->units.Leaf(new_idxs[i]);
       if(ru->ConnectFromCk(su, prjn)) // check means that it won't add any new connections if already there!
 	rval++;
-//       if(cn != NULL) {
-// 	cn->wt = init_wt;
-// 	rval++;
-//       }
     }
   }
   return rval;
@@ -114,6 +107,7 @@ void OneToOnePrjnSpec::Connect_impl(Projection* prjn) {
     Unit* su = (Unit*)prjn->from->units.Leaf(send_start + i);
     if(self_con || (ru != su)) {
       ru->RecvConsPreAlloc(1, prjn);
+      su->SendConsPreAlloc(1, prjn);
       ru->ConnectFrom(su, prjn);
     }
   }
@@ -280,9 +274,11 @@ void TesselPrjnSpec::GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc) {
   sctr = scruc;		// take int part at the end
 }
 
-void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projection* prjn) {
+void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projection* prjn,
+				      bool send_alloc) {
   // allocate cons
-  ru_u->RecvConsPreAlloc(send_offs.size, prjn);
+  if(!send_alloc)
+    ru_u->RecvConsPreAlloc(send_offs.size, prjn);
 
   PosTwoDCoord su_geo;  prjn->from->GetActGeomNoSpc(su_geo);
   // positions of center of recv in sending layer
@@ -298,9 +294,10 @@ void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projecti
     Unit* su_u = prjn->from->FindUnitFmCoord(suc);
     if((su_u == NULL) || (!self_con && (su_u == ru_u)))
       continue;
-    ru_u->ConnectFromCk(su_u, prjn);
-//     if(cn != NULL)
-//       cn->wt = te->wt_val;
+    if(send_alloc)
+      ru_u->ConnectFrom(su_u, prjn, send_alloc);
+    else
+      ru_u->ConnectFromCk(su_u, prjn); // check on 2nd pass
   }
 }
 
@@ -322,16 +319,22 @@ void TesselPrjnSpec::Connect_impl(Projection* prjn) {
     use_recv_n.y = ru_geo.y;
 
   TwoDCoord ruc, nuc;
-  for(ruc.y = recv_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_n.y);
-      ruc.y += recv_skip.y, nuc.y++)
-  {
-    for(ruc.x = recv_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_n.x);
-	ruc.x += recv_skip.x, nuc.x++)
-    {
-      Unit* ru_u = prjn->layer->FindUnitFmCoord(ruc);
-      if(ru_u == NULL)
-	continue;
-      Connect_RecvUnit(ru_u, ruc, prjn);
+  for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
+    for(ruc.y = recv_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_n.y);
+	ruc.y += recv_skip.y, nuc.y++)
+      {
+	for(ruc.x = recv_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_n.x);
+	    ruc.x += recv_skip.x, nuc.x++)
+	  {
+	    Unit* ru_u = prjn->layer->FindUnitFmCoord(ruc);
+	    if(ru_u == NULL)
+	      continue;
+	    Connect_RecvUnit(ru_u, ruc, prjn, alloc_loop);
+	  }
+      }
+
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
     }
   }
 }
@@ -359,19 +362,25 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
   if(same_seed)
     rndm_seed.OldSeed();
 
-  int no;
+  int recv_no;
   if(!self_con && (prjn->from.ptr() == prjn->layer))
-    no = (int) (p_con * (float)(prjn->from->units.leaves-1));
+    recv_no = (int) (p_con * (float)(prjn->from->units.leaves-1));
   else
-    no = (int) (p_con * (float)prjn->from->units.leaves);
-  if(no <= 0) no = 1;
+    recv_no = (int) (p_con * (float)prjn->from->units.leaves);
+  if(recv_no <= 0) recv_no = 1;
+
+  // sending number is even distribution across senders plus some imbalance factor
+  float send_no_flt = (float)(prjn->layer->units.leaves * recv_no) / (float)prjn->from->units.leaves;
+  // add SEM as corrective factor
+  float send_sem = send_no_flt / sqrtf(send_no_flt);
+  int send_no = (int)(send_no_flt + 2.0f * send_sem + 1.0f);
 
   // pre-allocate connections!
+  prjn->layer->RecvConsPreAlloc(recv_no, prjn);
+  prjn->from->SendConsPreAlloc(send_no, prjn);
+
   Unit* ru, *su;
   taLeafItr ru_itr, su_itr;
-  FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr)
-    ru->RecvConsPreAlloc(no, prjn);
-
   if((prjn->from.ptr() == prjn->layer) && sym_self) {
     Layer* lay = prjn->layer;
     // trick is to divide cons in half, choose recv, send at random
@@ -428,7 +437,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
 	perm_list.Link(su);
       }
       perm_list.Permute();
-      for(int i=0; i<no && i<perm_list.size; i++)
+      for(int i=0; i<recv_no && i<perm_list.size; i++)
 	ru->ConnectFrom((Unit*)perm_list[i], prjn);
     }
   }
@@ -573,19 +582,26 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
   if(same_seed)
     rndm_seed.OldSeed();
 
-  int trg_con;
+  int recv_no;
   if(!self_con && (prjn->from.ptr() == prjn->layer))
-    trg_con = (int) (p_con * (float)(prjn->from->units.leaves-1));
+    recv_no = (int) (p_con * (float)(prjn->from->units.leaves-1));
   else
-    trg_con = (int) (p_con * (float)prjn->from->units.leaves);
-  if(trg_con <= 0) trg_con = 1;
+    recv_no = (int) (p_con * (float)prjn->from->units.leaves);
+  if(recv_no <= 0) recv_no = 1;
+
+  // sending number is even distribution across senders plus some imbalance factor
+  float send_no_flt = (float)(prjn->layer->units.leaves * recv_no) / (float)prjn->from->units.leaves;
+  // add SEM as corrective factor
+  float send_sem = send_no_flt / sqrtf(send_no_flt);
+  int send_no = (int)(send_no_flt + 2.0f * send_sem + 1.0f);
+
 
   // pre-allocate connections!
-  Unit* ru, *su;
-  taLeafItr ru_itr;
-  FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr)
-    ru->RecvConsPreAlloc(trg_con, prjn);
+  prjn->layer->RecvConsPreAlloc(recv_no, prjn);
+  prjn->from->SendConsPreAlloc(send_no, prjn);
 
+  Unit* ru, *su;
+  taLeafItr ru_itr, su_itr;
   PosTwoDCoord ru_geom; prjn->layer->GetActGeomNoSpc(ru_geom);
   TwoDCoord ru_pos;		// do this according to act_geom..
   int cnt = 0;
@@ -597,7 +613,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
     FloatTwoDCoord suc;
     int n_con = 0;
     int n_retry = 0;
-    while((n_con < trg_con) && (n_retry < max_retries)) { // limit number of retries
+    while((n_con < recv_no) && (n_retry < max_retries)) { // limit number of retries
       float dist = rnd_dist.Gen();		// just get random deviate from distribution
       float angle = 2.0 * 3.14159265 * rnd_angle.Gen(); // same for angle
       suc.x = dist * cos(angle);
@@ -614,8 +630,8 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
 	continue;
       }
     }
-    TestWarning(n_con < trg_con, "Connect_impl",
-		"target number of connections:",String(trg_con),
+    TestWarning(n_con < recv_no, "Connect_impl",
+		"target number of connections:",String(recv_no),
 		"not made, only made:",String(n_con));
   }
 }
@@ -642,7 +658,17 @@ void SymmetricPrjnSpec::Connect_impl(Projection* prjn) {
       if(RecvCons::FindRecipRecvCon(su, ru, prjn->layer))
 	n_cons++;
     }
-    ru->RecvConsPreAlloc(n_cons, prjn); // todo: allow some kind of extra??
+    ru->RecvConsPreAlloc(n_cons, prjn); 
+  }
+ 
+  // todo: not 100% sure this is correct!!!
+  FOR_ITR_EL(Unit, su, prjn->from->units., su_itr) {
+    int n_cons = 0;
+    FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr) {
+      if(RecvCons::FindRecipSendCon(ru, su, prjn->from))
+	n_cons++;
+    }
+    su->SendConsPreAlloc(n_cons, prjn);
   }
 
   int cnt = 0;
@@ -781,6 +807,9 @@ void GpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
     FOR_ITR_EL(Unit, ru, rgp->, ru_itr) {
       ru->RecvConsPreAlloc(sgp->leaves, prjn);
     }
+    FOR_ITR_EL(Unit, su, sgp->, su_itr) {
+      su->SendConsPreAlloc(rgp->leaves, prjn);
+    }
       
     FOR_ITR_EL(Unit, ru, rgp->, ru_itr) {
       FOR_ITR_EL(Unit, su, sgp->, su_itr) {
@@ -836,17 +865,25 @@ void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
     else
       sgp = su_gp;
 
-    int no = (int) (p_con * (float)sgp->leaves);
+    int recv_no = (int) (p_con * (float)sgp->leaves);
     if(!self_con && (rgp == sgp))
-      no--;
-    if(no <= 0)
-      no = 1;
+      recv_no--;
+    if(recv_no <= 0)
+      recv_no = 1;
+
+    // sending number is even distribution across senders plus some imbalance factor
+    float send_no_flt = (float)(rgp->leaves * recv_no) / (float)sgp->leaves;
+    // add SEM as corrective factor
+    float send_sem = send_no_flt / sqrtf(send_no_flt);
+    int send_no = (int)(send_no_flt + 2.0f * send_sem + 1.0f);
 
     // pre-allocate connections!
     Unit* ru, *su;
     taLeafItr ru_itr, su_itr;
     FOR_ITR_EL(Unit, ru, rgp->, ru_itr)
-      ru->RecvConsPreAlloc(no, prjn);
+      ru->RecvConsPreAlloc(recv_no, prjn);
+    FOR_ITR_EL(Unit, su, sgp->, su_itr)
+      su->SendConsPreAlloc(send_no, prjn);
 
     taPtrList<Unit> perm_list;	// permution list
     FOR_ITR_EL(Unit, ru, rgp->, ru_itr) {
@@ -857,7 +894,7 @@ void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
       }
       perm_list.Permute();
       int i;
-      for(i=0; i<no; i++)
+      for(i=0; i<recv_no; i++)
 	ru->ConnectFrom((Unit*)perm_list[i], prjn);
     }
   }
@@ -1006,6 +1043,12 @@ void GpOneToManyPrjnSpec::Connect_impl(Projection* prjn) {
       taLeafItr ru_itr, su_itr;
       FOR_ITR_EL(Unit, ru, rgp->, ru_itr) {
 	ru->RecvConsPreAlloc(sgp->leaves, prjn);
+      }
+      FOR_ITR_EL(Unit, su, sgp->, su_itr) {
+	su->SendConsPreAlloc(rgp->leaves, prjn);
+      }
+
+      FOR_ITR_EL(Unit, ru, rgp->, ru_itr) {
 	FOR_ITR_EL(Unit, su, sgp->, su_itr) {
 	  if(self_con || (ru != su))
 	    ru->ConnectFrom(su, prjn);
@@ -1285,7 +1328,8 @@ void GpRndTesselPrjnSpec::Connect_Gps_Std(Unit_Group* ru_gp, Unit_Group* su_gp,
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc, Projection* prjn) {
+void GpRndTesselPrjnSpec::Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc,
+					 Projection* prjn) {
 
   TwoDCoord& su_geo = prjn->from->gp_geom;
   Unit_Group* su_gp0 = (Unit_Group*)prjn->from->units.gp[0]; // take first gp as representative
@@ -1326,6 +1370,11 @@ void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
   }
   if(TestWarning(prjn->from->units.gp.size == 0,  "Connect_impl",
 		 "requires send layer to have unit groups!")) {
+    return;
+  }
+
+  // todo: fixme!!
+  if(TestWarning(true,  "Connect_impl",  "TODO: THIS IS NOT YET FUNCTIONAL!")) {
     return;
   }
 
@@ -1419,35 +1468,42 @@ void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
   if(!InitRFSizes(prjn)) return;
   int n_cons = rf_width.Product();
   TwoDCoord ruc;
-  for(ruc.y = recv_gp_border.y; ruc.y < recv_gp_ed.y; ruc.y++) {
-    for(ruc.x = recv_gp_border.x; ruc.x < recv_gp_ed.x; ruc.x++) {
 
-      if((ruc.y >= recv_gp_ex_st.y) && (ruc.y < recv_gp_ex_ed.y) &&
-	 (ruc.x >= recv_gp_ex_st.x) && (ruc.x < recv_gp_ex_ed.x)) continue;
+  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    for(ruc.y = recv_gp_border.y; ruc.y < recv_gp_ed.y; ruc.y++) {
+      for(ruc.x = recv_gp_border.x; ruc.x < recv_gp_ed.x; ruc.x++) {
 
-      Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
-      if(ru_gp == NULL) continue;
+	if((ruc.y >= recv_gp_ex_st.y) && (ruc.y < recv_gp_ex_ed.y) &&
+	   (ruc.x >= recv_gp_ex_st.x) && (ruc.x < recv_gp_ex_ed.x)) continue;
 
-      TwoDCoord su_st;
-      su_st.x = send_border.x + (int)floor((float)(ruc.x - recv_gp_border.x) * rf_move.x);
-      su_st.y = send_border.y + (int)floor((float)(ruc.y - recv_gp_border.y) * rf_move.y);
+	Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+	if(ru_gp == NULL) continue;
 
-      TwoDCoord su_ed = su_st + rf_width;
+	TwoDCoord su_st;
+	su_st.x = send_border.x + (int)floor((float)(ruc.x - recv_gp_border.x) * rf_move.x);
+	su_st.y = send_border.y + (int)floor((float)(ruc.y - recv_gp_border.y) * rf_move.y);
 
-      for(int rui=0;rui<ru_gp->size;rui++) {
-	Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
-	ru_u->RecvConsPreAlloc(n_cons, prjn);
+	TwoDCoord su_ed = su_st + rf_width;
 
-	TwoDCoord suc;
-	for(suc.y = su_st.y; suc.y < su_ed.y; suc.y++) {
-	  for(suc.x = su_st.x; suc.x < su_ed.x; suc.x++) {
-	    Unit* su_u = prjn->from->FindUnitFmCoord(suc);
-	    if(su_u == NULL) continue;
-	    if(!self_con && (su_u == ru_u)) continue;
-	    ru_u->ConnectFrom(su_u, prjn); // don't check: saves lots of time!
+	for(int rui=0;rui<ru_gp->size;rui++) {
+	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	  if(!alloc_loop)
+	    ru_u->RecvConsPreAlloc(n_cons, prjn);
+
+	  TwoDCoord suc;
+	  for(suc.y = su_st.y; suc.y < su_ed.y; suc.y++) {
+	    for(suc.x = su_st.x; suc.x < su_ed.x; suc.x++) {
+	      Unit* su_u = prjn->from->FindUnitFmCoord(suc);
+	      if(su_u == NULL) continue;
+	      if(!self_con && (su_u == ru_u)) continue;
+	      ru_u->ConnectFrom(su_u, prjn, alloc_loop);
+	    }
 	  }
 	}
       }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
     }
   }
 }
@@ -1491,9 +1547,6 @@ int TiledRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
 	  if(!self_con && (su_u == ru_u)) continue;
 	  if(ru_u->ConnectFromCk(su_u, prjn)) // gotta check!
 	    rval++;
-// 	  if(cn != NULL) {
-// 	    cn->wt = init_wt;
-// 	  }
 	}
       }
     }
@@ -1503,6 +1556,7 @@ int TiledRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
 
 void TiledRFPrjnSpec::SelectRF(Projection* prjn) {
   if(!InitRFSizes(prjn)) return;
+  // todo: fixme
 
   /*  Network* net = prjn->layer->own_net;
   if(net == NULL) return;
@@ -1579,37 +1633,43 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
   int alloc_no = sg_sz_tot * su_gp0->size;
 
   TwoDCoord ruc;
-  for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-      Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
-      if(ru_gp == NULL) continue;
+  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
+      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
+	Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
+	if(ru_gp == NULL) continue;
 
-      TwoDCoord su_st;
-      if(wrap)	su_st = (ruc-1) * send_gp_skip;
-      else	su_st = ruc * send_gp_skip;
+	TwoDCoord su_st;
+	if(wrap)	su_st = (ruc-1) * send_gp_skip;
+	else	su_st = ruc * send_gp_skip;
 
-      for(int rui=0;rui<ru_gp->size;rui++) {
-	Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
-	ru_u->RecvConsPreAlloc(alloc_no, prjn);
+	for(int rui=0;rui<ru_gp->size;rui++) {
+	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	  if(!alloc_loop)
+	    ru_u->RecvConsPreAlloc(alloc_no, prjn);
 
-	TwoDCoord suc;
-	TwoDCoord suc_wrp;
-	for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
-	  for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
-	    suc_wrp = suc;
-	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
-	      continue;
-	    Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc_wrp);
-	    if(!su_gp) continue;
+	  TwoDCoord suc;
+	  TwoDCoord suc_wrp;
+	  for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
+	    for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
+	      suc_wrp = suc;
+	      if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+		continue;
+	      Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc_wrp);
+	      if(!su_gp) continue;
 
-	    for(int sui=0;sui<su_gp->size;sui++) {
-	      Unit* su_u = (Unit*)su_gp->FastEl(sui);
-	      if(!self_con && (su_u == ru_u)) continue;
-	      ru_u->ConnectFrom(su_u, prjn);
+	      for(int sui=0;sui<su_gp->size;sui++) {
+		Unit* su_u = (Unit*)su_gp->FastEl(sui);
+		if(!self_con && (su_u == ru_u)) continue;
+		ru_u->ConnectFrom(su_u, prjn, alloc_loop);
+	      }
 	    }
 	  }
 	}
       }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
     }
   }
 }
@@ -1661,35 +1721,40 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   }
 
   // then connect
-  for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-      Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
-      if(ru_gp == NULL) continue;
+  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
+      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
+	Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
+	if(ru_gp == NULL) continue;
 
-      TwoDCoord su_st;
-      if(wrap)	su_st = (ruc-1) * send_gp_skip;
-      else	su_st = ruc * send_gp_skip;
+	TwoDCoord su_st;
+	if(wrap)	su_st = (ruc-1) * send_gp_skip;
+	else	su_st = ruc * send_gp_skip;
 
-      TwoDCoord suc;
-      TwoDCoord suc_wrp;
-      for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
-	for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
-	  suc_wrp = suc;
-	  if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
-	    continue;
-	  Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc_wrp);
-	  if(su_gp == NULL) continue;
+	TwoDCoord suc;
+	TwoDCoord suc_wrp;
+	for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
+	  for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
+	    suc_wrp = suc;
+	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+	      continue;
+	    Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc_wrp);
+	    if(su_gp == NULL) continue;
 
-	  for(int sui=0;sui<su_gp->size;sui++) {
-	    Unit* su_u = (Unit*)su_gp->FastEl(sui);
-	    for(int rui=0;rui<ru_gp->size;rui++) {
-	      Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
-	      if(!self_con && (su_u == ru_u)) continue;
-	      su_u->ConnectFrom(ru_u, prjn); // recip!
+	    for(int sui=0;sui<su_gp->size;sui++) {
+	      Unit* su_u = (Unit*)su_gp->FastEl(sui);
+	      for(int rui=0;rui<ru_gp->size;rui++) {
+		Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+		if(!self_con && (su_u == ru_u)) continue;
+		su_u->ConnectFrom(ru_u, prjn, alloc_loop); // recip!
+	      }
 	    }
 	  }
 	}
       }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
     }
   }
 }
@@ -1754,7 +1819,6 @@ int TiledGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
 	      else
 		con = su_u->ConnectFromCk(ru_u, prjn);
 	      if(con) {
-// 		cn->wt = init_wt;
 		rval++;
 	      }
 	    }
@@ -1850,31 +1914,37 @@ void TiledNovlpPrjnSpec::Connect_impl(Projection* prjn) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
   TwoDCoord ruc;
-  for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-      Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
-      if(ru_gp == NULL) continue;
+  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
+      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
+	Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
+	if(ru_gp == NULL) continue;
 
-      TwoDCoord su_st;
-      su_st.x = (int)((float)ruc.x * rf_width.x);
-      su_st.y = (int)((float)ruc.y * rf_width.y);
+	TwoDCoord su_st;
+	su_st.x = (int)((float)ruc.x * rf_width.x);
+	su_st.y = (int)((float)ruc.y * rf_width.y);
 
-      for(int rui=0;rui<ru_gp->size;rui++) {
-	Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
-	int alloc_sz = ((int)(rf_width.x) + 1) * ((int)(rf_width.y) + 1);
-	ru_u->RecvConsPreAlloc(alloc_sz, prjn);	
+	for(int rui=0;rui<ru_gp->size;rui++) {
+	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	  int alloc_sz = ((int)(rf_width.x) + 1) * ((int)(rf_width.y) + 1);
+	  if(!alloc_loop)
+	    ru_u->RecvConsPreAlloc(alloc_sz, prjn);	
 
-	TwoDCoord suc;
-	for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
-	  for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
-	    Unit* su_u = send_lay->FindUnitFmCoord(suc);
-	    if(su_u == NULL) continue;
+	  TwoDCoord suc;
+	  for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
+	    for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
+	      Unit* su_u = send_lay->FindUnitFmCoord(suc);
+	      if(su_u == NULL) continue;
 
-	    if(!self_con && (su_u == ru_u)) continue;
-	    ru_u->ConnectFrom(su_u, prjn);
+	      if(!self_con && (su_u == ru_u)) continue;
+	      ru_u->ConnectFrom(su_u, prjn, alloc_loop);
+	    }
 	  }
 	}
       }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
     }
   }
 }
@@ -1922,28 +1992,33 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   }
 
   // then make the connections!
-  for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-      Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
-      if(ru_gp == NULL) continue;
+  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
+      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
+	Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
+	if(ru_gp == NULL) continue;
 
-      TwoDCoord su_st;
-      su_st.x = (int)((float)ruc.x * rf_width.x);
-      su_st.y = (int)((float)ruc.y * rf_width.y);
+	TwoDCoord su_st;
+	su_st.x = (int)((float)ruc.x * rf_width.x);
+	su_st.y = (int)((float)ruc.y * rf_width.y);
 
-      TwoDCoord suc;
-      for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
-	for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
-	  Unit* su_u = send_lay->FindUnitFmCoord(suc);
-	  if(su_u == NULL) continue;
+	TwoDCoord suc;
+	for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
+	  for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
+	    Unit* su_u = send_lay->FindUnitFmCoord(suc);
+	    if(su_u == NULL) continue;
 
-	  for(int rui=0;rui<ru_gp->size;rui++) {
-	    Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
-	    if(!self_con && (su_u == ru_u)) continue;
-	    su_u->ConnectFrom(ru_u, prjn);
+	    for(int rui=0;rui<ru_gp->size;rui++) {
+	      Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	      if(!self_con && (su_u == ru_u)) continue;
+	      su_u->ConnectFrom(ru_u, prjn, alloc_loop);
+	    }
 	  }
 	}
       }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
     }
   }
 }
@@ -1970,52 +2045,58 @@ void GaussRFPrjnSpec::Connect_impl(Projection* prjn) {
   TwoDCoord su_geo = prjn->from->flat_geom;
 
   TwoDCoord ruc;
-  for(ruc.y = 0; ruc.y < rug_geo.y; ruc.y++) {
-    for(ruc.x = 0; ruc.x < rug_geo.x; ruc.x++) {
-      Unit* ru_u = prjn->layer->FindUnitFmCoord(ruc);
-      if(!ru_u) continue;
+  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    for(ruc.y = 0; ruc.y < rug_geo.y; ruc.y++) {
+      for(ruc.x = 0; ruc.x < rug_geo.x; ruc.x++) {
+	Unit* ru_u = prjn->layer->FindUnitFmCoord(ruc);
+	if(!ru_u) continue;
 
-      ru_u->RecvConsPreAlloc(n_cons, prjn);
+	if(!alloc_loop)
+	  ru_u->RecvConsPreAlloc(n_cons, prjn);
 
-      TwoDCoord su_st;
-      if(wrap) {
-	su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
-	su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
-      }
-      else {
-	su_st.x = (int)floor((float)ruc.x * rf_move.x);
-	su_st.y = (int)floor((float)ruc.y * rf_move.y);
-      }
-
-      su_st.WrapClip(wrap, su_geo);
-      TwoDCoord su_ed = su_st + rf_width;
-      if(wrap) {
-	su_ed.WrapClip(wrap, su_geo); // just wrap ends too
-      }
-      else {
-	if(su_ed.x > su_geo.x) {
-	  su_ed.x = su_geo.x; su_st.x = su_ed.x - rf_width.x;
+	TwoDCoord su_st;
+	if(wrap) {
+	  su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
+	  su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
 	}
-	if(su_ed.y > su_geo.y) {
-	  su_ed.y = su_geo.y; su_st.y = su_ed.y - rf_width.y;
+	else {
+	  su_st.x = (int)floor((float)ruc.x * rf_move.x);
+	  su_st.y = (int)floor((float)ruc.y * rf_move.y);
+	}
+
+	su_st.WrapClip(wrap, su_geo);
+	TwoDCoord su_ed = su_st + rf_width;
+	if(wrap) {
+	  su_ed.WrapClip(wrap, su_geo); // just wrap ends too
+	}
+	else {
+	  if(su_ed.x > su_geo.x) {
+	    su_ed.x = su_geo.x; su_st.x = su_ed.x - rf_width.x;
+	  }
+	  if(su_ed.y > su_geo.y) {
+	    su_ed.y = su_geo.y; su_st.y = su_ed.y - rf_width.y;
+	  }
+	}
+
+
+	TwoDCoord suc;
+	TwoDCoord suc_wrp;
+	for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
+	  for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
+	    suc_wrp = su_st + suc;
+	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+	      continue;
+	    Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
+	    if(su_u == NULL) continue;
+	    if(!self_con && (su_u == ru_u)) continue;
+
+	    ru_u->ConnectFrom(su_u, prjn, alloc_loop); // don't check: saves lots of time!
+	  }
 	}
       }
-
-
-      TwoDCoord suc;
-      TwoDCoord suc_wrp;
-      for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
-	for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
-	  suc_wrp = su_st + suc;
-	  if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
-	    continue;
-	  Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
-	  if(su_u == NULL) continue;
-	  if(!self_con && (su_u == ru_u)) continue;
-
-	  ru_u->ConnectFrom(su_u, prjn); // don't check: saves lots of time!
-	}
-      }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
     }
   }
 }

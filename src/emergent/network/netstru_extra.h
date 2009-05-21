@@ -81,8 +81,9 @@ public:
 
   virtual void	GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc);
   // get center of sender coords from receiving coords
-  virtual void	Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projection* prjn);
-  // connects one recv unit to all senders (doesn't check for linking..)
+  virtual void	Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projection* prjn,
+				 bool send_alloc);
+  // connects one recv unit to all senders
 
   virtual void	MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y);
   // #BUTTON #MENU_SEP_BEFORE make a connection pattern in the form of an elipse: center is located at ctr_x,y and extends half_width and half_height therefrom

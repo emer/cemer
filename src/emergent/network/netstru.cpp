@@ -2552,12 +2552,12 @@ void ProjectionSpec::PostConnect(Projection* prjn) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
-    recv_gp = u->recv.FastEl(prjn->recv_idx);
+    RecvCons* recv_gp = u->recv.FastEl(prjn->recv_idx);
     if(recv_gp->PtrCons())
       recv_gp->LinkFromOtherCons(u);
   }
   FOR_ITR_EL(Unit, u, prjn->from->units., i) {
-    send_gp = u->send.FastEl(prjn->send_idx);
+    SendCons* send_gp = u->send.FastEl(prjn->send_idx);
     if(send_gp->PtrCons())
       send_gp->LinkFromOtherCons(u);
   }
@@ -2568,8 +2568,9 @@ int ProjectionSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
 }
 
 int ProjectionSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt) {
-  ProbAddCons_impl(pr
-  return 0;
+  int rval = ProbAddCons_impl(prjn, p_add_con);
+  PostConnect(prjn); 		// note: needs to have mechanism for setting init wt here!!
+  return rval;
 }
 
 void ProjectionSpec::Init_Weights(Projection* prjn) {
@@ -3767,6 +3768,27 @@ taBase::DumpQueryResult Layer::Dump_QuerySaveMember(MemberDef* md) {
   if (md->name != "unit_names") 
     return inherited::Dump_QuerySaveMember(md);
   return (unit_names.dims()) ? DQR_SAVE : DQR_NO_SAVE;
+}
+
+void Layer::RecvConsPreAlloc(int alloc_no, Projection* prjn) {
+  Unit* ru;
+  taLeafItr ru_itr;
+  FOR_ITR_EL(Unit, ru, units., ru_itr)
+    ru->RecvConsPreAlloc(alloc_no, prjn);
+}
+
+void Layer::SendConsPreAlloc(int alloc_no, Projection* prjn) {
+  Unit* su;
+  taLeafItr su_itr;
+  FOR_ITR_EL(Unit, su, units., su_itr)
+    su->SendConsPreAlloc(alloc_no, prjn);
+}
+
+void Layer::SendConsPostAlloc(Projection* prjn) {
+  Unit* su;
+  taLeafItr su_itr;
+  FOR_ITR_EL(Unit, su, units., su_itr)
+    su->SendConsPostAlloc(prjn);
 }
 
 void Layer::SyncSendPrjns() {

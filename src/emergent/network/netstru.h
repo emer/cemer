@@ -1007,7 +1007,7 @@ public:
 
   virtual int 	ProbAddCons(Projection* prjn, float p_add_con, float init_wt = 0.0);
   // #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection -- NOTE: not fully functional yet -- do not use!
-    virtual int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0);
+    virtual int	ProbAddCons_impl(Projection* prjn, float p_add_con);
     // #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
 
 
@@ -1463,6 +1463,12 @@ public:
   // #CAT_XpertStructure prepare to connect the layer (create con_groups)
   virtual void	SyncSendPrjns();
   // #CAT_XpertStructure synchronize sending projections with the recv projections so everyone's happy
+  virtual void	RecvConsPreAlloc(int alloc_no, Projection* prjn);
+  // #CAT_XpertStructure allocate given number of recv connections for all units in layer, for given projection
+  virtual void	SendConsPreAlloc(int alloc_no, Projection* prjn);
+  // #CAT_XpertStructure allocate given number of send connections for all units in layer, for given projection
+  virtual void	SendConsPostAlloc(Projection* prjn);
+  // #CAT_XpertStructure allocate sending connections based on those allocated previously 
   virtual void  LinkSendCons();
   // #IGNORE re-connect the layer after loading
   virtual void	DisConnect();

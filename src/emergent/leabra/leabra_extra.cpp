@@ -1035,24 +1035,24 @@ void ScalarValSelfPrjnSpec::Connect_UnitGroup(Unit_Group* gp, Projection* prjn) 
 
   int n_cons = 2*width + 1;
 
-  int i;
-  for(i=0;i<gp->size;i++) {
-    Unit* ru = (Unit*)gp->FastEl(i);
+  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    for(int i=0;i<gp->size;i++) {
+      Unit* ru = (Unit*)gp->FastEl(i);
 
-    ru->ConnectAlloc(n_cons, prjn);
+      if(!alloc_loop)
+	ru->RecvConsPreAlloc(n_cons, prjn);
 
-    int j;
-    for(j=-width;j<=width;j++) {
-      int sidx = i+j;
-      if((sidx < 0) || (sidx >= gp->size)) continue;
-      Unit* su = (Unit*)gp->FastEl(sidx);
-      if(!self_con && (ru == su)) continue;
-      ru->ConnectFromCk(su, prjn);
-//       if(cn != NULL) {
-// 	float dist = (float)j / wt_width;
-// 	float wtval = scale_val * expf(-(dist * dist));
-// 	cn->wt = wtval;
-//       }
+      int j;
+      for(j=-width;j<=width;j++) {
+	int sidx = i+j;
+	if((sidx < 0) || (sidx >= gp->size)) continue;
+	Unit* su = (Unit*)gp->FastEl(sidx);
+	if(!self_con && (ru == su)) continue;
+	ru->ConnectFromCk(su, prjn);
+      }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
     }
   }
 }
@@ -3191,54 +3191,60 @@ void V1RFPrjnSpec::Connect_impl(Projection* prjn) {
   TwoDCoord su_geo = prjn->from->un_geom;
 
   TwoDCoord ruc;
-  for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
+  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
+      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
 
-      Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
-      if(ru_gp == NULL) continue;
+	Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+	if(ru_gp == NULL) continue;
 
-      TwoDCoord su_st;
-      if(wrap) {
-	su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
-	su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
-      }
-      else {
-	su_st.x = (int)floor((float)ruc.x * rf_move.x);
-	su_st.y = (int)floor((float)ruc.y * rf_move.y);
-      }
-
-      su_st.WrapClip(wrap, su_geo);
-      TwoDCoord su_ed = su_st + rf_width;
-      if(wrap) {
-	su_ed.WrapClip(wrap, su_geo); // just wrap ends too
-      }
-      else {
-	if(su_ed.x > su_geo.x) {
-	  su_ed.x = su_geo.x; su_st.x = su_ed.x - rf_width.x;
+	TwoDCoord su_st;
+	if(wrap) {
+	  su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
+	  su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
 	}
-	if(su_ed.y > su_geo.y) {
-	  su_ed.y = su_geo.y; su_st.y = su_ed.y - rf_width.y;
+	else {
+	  su_st.x = (int)floor((float)ruc.x * rf_move.x);
+	  su_st.y = (int)floor((float)ruc.y * rf_move.y);
 	}
-      }
 
-      for(int rui=0;rui<ru_gp->size;rui++) {
-	Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
-	ru_u->ConnectAlloc(n_cons, prjn);
+	su_st.WrapClip(wrap, su_geo);
+	TwoDCoord su_ed = su_st + rf_width;
+	if(wrap) {
+	  su_ed.WrapClip(wrap, su_geo); // just wrap ends too
+	}
+	else {
+	  if(su_ed.x > su_geo.x) {
+	    su_ed.x = su_geo.x; su_st.x = su_ed.x - rf_width.x;
+	  }
+	  if(su_ed.y > su_geo.y) {
+	    su_ed.y = su_geo.y; su_st.y = su_ed.y - rf_width.y;
+	  }
+	}
 
-	TwoDCoord suc;
-	TwoDCoord suc_wrp;
-	for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
-	  for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
-	    suc_wrp = su_st + suc;
-	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
-	      continue;
-	    Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
-	    if(su_u == NULL) continue;
-	    if(!self_con && (su_u == ru_u)) continue;
-	    ru_u->ConnectFrom(su_u, prjn); // don't check: saves lots of time!
+	for(int rui=0;rui<ru_gp->size;rui++) {
+	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	  if(!alloc_loop)
+	    ru_u->RecvConsPreAlloc(n_cons, prjn);
+
+	  TwoDCoord suc;
+	  TwoDCoord suc_wrp;
+	  for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
+	    for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
+	      suc_wrp = su_st + suc;
+	      if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+		continue;
+	      Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
+	      if(su_u == NULL) continue;
+	      if(!self_con && (su_u == ru_u)) continue;
+	      ru_u->ConnectFrom(su_u, prjn, alloc_loop); // don't check: saves lots of time!
+	    }
 	  }
 	}
       }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
     }
   }
 }
@@ -3400,7 +3406,7 @@ void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn) {
     Unit* su;
     taLeafItr su_itr;
     FOR_ITR_EL(Unit, su, send_lay->units., su_itr) {
-      su->ConnectAlloc(1, prjn); // only ever have 1!
+      su->RecvConsPreAlloc(1, prjn); // only ever have 1!
     }
   }
 
@@ -3413,41 +3419,46 @@ void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn) {
 
   int feat_no = 0;
   TwoDCoord rug;
-  for(rug.y = 0; rug.y < rug_geo.y; rug.y++) {
-    for(rug.x = 0; rug.x < rug_geo.x; rug.x++, feat_no++) {
-      Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(rug);
-      if(!ru_gp) continue;
+  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    for(rug.y = 0; rug.y < rug_geo.y; rug.y++) {
+      for(rug.x = 0; rug.x < rug_geo.x; rug.x++, feat_no++) {
+	Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(rug);
+	if(!ru_gp) continue;
 
-      int rui = 0;
-      TwoDCoord ruc;
-      for(ruc.y = 0; ruc.y < ruu_geo.y; ruc.y++) {
-	for(ruc.x = 0; ruc.x < ruu_geo.x; ruc.x++, rui++) {
+	int rui = 0;
+	TwoDCoord ruc;
+	for(ruc.y = 0; ruc.y < ruu_geo.y; ruc.y++) {
+	  for(ruc.x = 0; ruc.x < ruu_geo.x; ruc.x++, rui++) {
 
-	  TwoDCoord su_st = ruc*convergence;
+	    TwoDCoord su_st = ruc*convergence;
 
-	  Unit* ru_u = (Unit*)ru_gp->SafeEl(rui);
-	  if(!ru_u) break;
-	  if(!reciprocal)
-	    ru_u->ConnectAlloc(sg_sz_tot, prjn);
+	    Unit* ru_u = (Unit*)ru_gp->SafeEl(rui);
+	    if(!ru_u) break;
+	    if(!reciprocal && !alloc_loop)
+	      ru_u->RecvConsPreAlloc(sg_sz_tot, prjn);
 
-	  TwoDCoord suc;
-	  for(suc.y = 0; suc.y < fltsz; suc.y++) {
-	    for(suc.x = 0; suc.x < fltsz; suc.x++) {
-	      TwoDCoord sugc = su_st + suc;
-	      Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(sugc);
-	      if(!su_gp) continue;
+	    TwoDCoord suc;
+	    for(suc.y = 0; suc.y < fltsz; suc.y++) {
+	      for(suc.x = 0; suc.x < fltsz; suc.x++) {
+		TwoDCoord sugc = su_st + suc;
+		Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(sugc);
+		if(!su_gp) continue;
 
-	      Unit* su_u = (Unit*)su_gp->SafeEl(feat_no);
-	      if(su_u) {
-		if(reciprocal)
-		  su_u->ConnectFrom(ru_u, prjn);
-		else
-		  ru_u->ConnectFrom(su_u, prjn);
+		Unit* su_u = (Unit*)su_gp->SafeEl(feat_no);
+		if(su_u) {
+		  if(reciprocal)
+		    su_u->ConnectFrom(ru_u, prjn, alloc_loop);
+		  else
+		    ru_u->ConnectFrom(su_u, prjn, alloc_loop);
+		}
 	      }
 	    }
 	  }
 	}
       }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
     }
   }
 }
@@ -3489,7 +3500,7 @@ void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn) {
 
 	  Unit* ru_u = (Unit*)ru_gp->SafeEl(rui);
 	  if(!ru_u) break;
-	  ru_u->ConnectAlloc(alloc_no, prjn);
+	  ru_u->RecvConsPreAlloc(alloc_no, prjn);
 
 	  TwoDCoord suc;
 	  for(suc.y = 0; suc.y < fltsz; suc.y++) {
@@ -3602,10 +3613,16 @@ void GpAggregatePrjnSpec::Connect_impl(Projection* prjn) {
 
   int alloc_no = n_su_gps; 	// number of cons per recv unit
 
+  // pre-alloc senders -- only 1
+  Unit* su;
+  taLeafItr su_itr;
+  FOR_ITR_EL(Unit, su, prjn->from->units., su_itr)
+    su->SendConsPreAlloc(1, prjn);
+
   for(int ri = 0; ri<recv_lay->units.leaves; ri++) {
     Unit* ru_u = (Unit*)recv_lay->units.Leaf(ri);
     if(!ru_u) break;
-    ru_u->ConnectAlloc(alloc_no, prjn);
+    ru_u->RecvConsPreAlloc(alloc_no, prjn);
     
     TwoDCoord suc;
     for(suc.y = 0; suc.y <= su_geo.y; suc.y++) {
@@ -3679,37 +3696,43 @@ void VisDisparityPrjnSpec::Connect_Gps(Projection* prjn) {
   int rf_width = 2 * disp_dist; // total receptive field width
 
   TwoDCoord ruc;
-  for(ruc.x = 0; ruc.x < ru_gp_geo.x; ruc.x++) { // loop over receiving layer x
-    for(ruc.y = 0; ruc.y < ru_gp_geo.y; ruc.y++) { // loop over receiving layer y
-      // get each unit group in receiving layer
-      Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
-      if(!ru_gp) continue;	// shouldn't happen
+  for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
+    for(ruc.x = 0; ruc.x < ru_gp_geo.x; ruc.x++) { // loop over receiving layer x
+      for(ruc.y = 0; ruc.y < ru_gp_geo.y; ruc.y++) { // loop over receiving layer y
+	// get each unit group in receiving layer
+	Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+	if(!ru_gp) continue;	// shouldn't happen
 
-      int rui_ctr = 0;
-      for(int disp=-n_disparities; disp <= n_disparities; disp++) {
-	int disp_off = disp_dist * disp;
-	int st_off = disp_off - disp_dist;
+	int rui_ctr = 0;
+	for(int disp=-n_disparities; disp <= n_disparities; disp++) {
+	  int disp_off = disp_dist * disp;
+	  int st_off = disp_off - disp_dist;
 	
-	for(int rui=0; rui<su_n; rui++) {
-	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui_ctr++);
-	  ru_u->ConnectAlloc(rf_width, prjn);
+	  for(int rui=0; rui<su_n; rui++) {
+	    Unit* ru_u = (Unit*)ru_gp->FastEl(rui_ctr++);
+	    if(!alloc_loop)
+	      ru_u->RecvConsPreAlloc(rf_width, prjn);
 
-	  TwoDCoord suc;
-	  for(int soff=0; soff < rf_width; soff++) {
-	    suc.y = ruc.y;
-	    suc.x = ruc.x + lr_dir * (st_off + soff);
-	    if(suc.WrapClip(wrap, su_gp_geo) && !wrap)
-	      continue;
-	    Unit_Group* su_gp = prjn->from->FindUnitGpFmCoord(suc);
-	    if(!su_gp) continue;	// shouldn't happen
-	    Unit* su_u = su_gp->SafeEl(rui);
-	    if(!su_u) continue;
-	    if(!self_con && (su_u == ru_u)) continue;
+	    TwoDCoord suc;
+	    for(int soff=0; soff < rf_width; soff++) {
+	      suc.y = ruc.y;
+	      suc.x = ruc.x + lr_dir * (st_off + soff);
+	      if(suc.WrapClip(wrap, su_gp_geo) && !wrap)
+		continue;
+	      Unit_Group* su_gp = prjn->from->FindUnitGpFmCoord(suc);
+	      if(!su_gp) continue;	// shouldn't happen
+	      Unit* su_u = su_gp->SafeEl(rui);
+	      if(!su_u) continue;
+	      if(!self_con && (su_u == ru_u)) continue;
 
-	    ru_u->ConnectFrom(su_u, prjn); // don't check: saves lots of time!
+	      ru_u->ConnectFrom(su_u, prjn, alloc_loop); // don't check: saves lots of time!
+	    }
 	  }
 	}
       }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
     }
   }
 }
@@ -3754,7 +3777,7 @@ void VisDisparityPrjnSpec::Connect_NoGps(Projection* prjn) {
 	int st_off = disp_off - disp_dist;
 	
 	Unit* ru_u = (Unit*)ru_gp->FastEl(rui_ctr++);
-	ru_u->ConnectAlloc(rf_width, prjn);
+	ru_u->RecvConsPreAlloc(rf_width, prjn);
 
 	TwoDCoord suc;
 	for(int soff=0; soff < rf_width; soff++) {
@@ -3925,83 +3948,11 @@ void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn) {
   TwoDCoord su_geo = prjn->from->flat_geom;
 
   TwoDCoord ruc;
-  for(ruc.y = 0; ruc.y < rug_geo.y; ruc.y++) {
-    for(ruc.x = 0; ruc.x < rug_geo.x; ruc.x++) {
-      Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
-      if(!ru_gp) continue;
-
-      TwoDCoord su_st;
-      if(wrap) {
-	su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
-	su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
-      }
-      else {
-	su_st.x = (int)floor((float)ruc.x * rf_move.x);
-	su_st.y = (int)floor((float)ruc.y * rf_move.y);
-      }
-
-      su_st.WrapClip(wrap, su_geo);
-      TwoDCoord su_ed = su_st + rf_width;
-      if(wrap) {
-	su_ed.WrapClip(wrap, su_geo); // just wrap ends too
-      }
-      else {
-	if(su_ed.x > su_geo.x) {
-	  su_ed.x = su_geo.x; su_st.x = su_ed.x - rf_width.x;
-	}
-	if(su_ed.y > su_geo.y) {
-	  su_ed.y = su_geo.y; su_st.y = su_ed.y - rf_width.y;
-	}
-      }
-
-      for(int rui=0;rui<ru_gp->size;rui++) {
-	Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
-	ru_u->ConnectAlloc(n_cons, prjn);
-
-	TwoDCoord suc;
-	TwoDCoord suc_wrp;
-	for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
-	  for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
-	    suc_wrp = su_st + suc;
-	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
-	      continue;
-	    Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
-	    if(!su_u) continue;
-	    if(!self_con && (su_u == ru_u)) continue;
-
-	    ru_u->ConnectFrom(su_u, prjn); // don't check: saves lots of time!
-	  }
-	}
-      }
-    }
-  }
-}
-
-void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn) {
-  if(!(bool)prjn->from)	return;
-  if(prjn->layer->units.leaves == 0) // an empty layer!
-    return;
-  if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
-		 "requires recv layer to have unit groups!")) {
-    return;
-  }
-
-  int n_cons = rf_width.Product();
-  TwoDCoord rf_half_wd = rf_width / 2;
-  TwoDCoord rug_geo = prjn->layer->gp_geom;
-  TwoDCoord run_geo = prjn->layer->un_geom;
-  TwoDCoord su_geo = prjn->from->flat_geom;
-
-  for(int rug=0;rug<prjn->layer->units.gp.size;rug++) {
-    Unit_Group* ru_gp = (Unit_Group*)prjn->layer->units.gp[rug];
-    if(!ru_gp) continue;
-
-    TwoDCoord ruc;
-    for(ruc.y = 0; ruc.y < run_geo.y; ruc.y++) {
-      for(ruc.x = 0; ruc.x < run_geo.x; ruc.x++) {
-	Unit* ru_u = (Unit*)ru_gp->SafeEl(ruc.y * run_geo.x + ruc.x);
-	if(!ru_u) continue;
-	ru_u->ConnectAlloc(n_cons, prjn);
+  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    for(ruc.y = 0; ruc.y < rug_geo.y; ruc.y++) {
+      for(ruc.x = 0; ruc.x < rug_geo.x; ruc.x++) {
+	Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+	if(!ru_gp) continue;
 
 	TwoDCoord su_st;
 	if(wrap) {
@@ -4027,20 +3978,104 @@ void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn) {
 	  }
 	}
 
-	TwoDCoord suc;
-	TwoDCoord suc_wrp;
-	for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
-	  for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
-	    suc_wrp = su_st + suc;
-	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
-	      continue;
-	    Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
-	    if(su_u == NULL) continue;
-	    if(!self_con && (su_u == ru_u)) continue;
-	    ru_u->ConnectFrom(su_u, prjn); // don't check: saves lots of time!
+	for(int rui=0;rui<ru_gp->size;rui++) {
+	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	  if(!alloc_loop)
+	    ru_u->RecvConsPreAlloc(n_cons, prjn);
+
+	  TwoDCoord suc;
+	  TwoDCoord suc_wrp;
+	  for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
+	    for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
+	      suc_wrp = su_st + suc;
+	      if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+		continue;
+	      Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
+	      if(!su_u) continue;
+	      if(!self_con && (su_u == ru_u)) continue;
+
+	      ru_u->ConnectFrom(su_u, prjn, alloc_loop); // don't check: saves lots of time!
+	    }
 	  }
 	}
       }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
+    }
+  }
+}
+
+void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn) {
+  if(!(bool)prjn->from)	return;
+  if(prjn->layer->units.leaves == 0) // an empty layer!
+    return;
+  if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
+		 "requires recv layer to have unit groups!")) {
+    return;
+  }
+
+  int n_cons = rf_width.Product();
+  TwoDCoord rf_half_wd = rf_width / 2;
+  TwoDCoord rug_geo = prjn->layer->gp_geom;
+  TwoDCoord run_geo = prjn->layer->un_geom;
+  TwoDCoord su_geo = prjn->from->flat_geom;
+
+  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    for(int rug=0;rug<prjn->layer->units.gp.size;rug++) {
+      Unit_Group* ru_gp = (Unit_Group*)prjn->layer->units.gp[rug];
+      if(!ru_gp) continue;
+
+      TwoDCoord ruc;
+      for(ruc.y = 0; ruc.y < run_geo.y; ruc.y++) {
+	for(ruc.x = 0; ruc.x < run_geo.x; ruc.x++) {
+	  Unit* ru_u = (Unit*)ru_gp->SafeEl(ruc.y * run_geo.x + ruc.x);
+	  if(!ru_u) continue;
+	  if(!alloc_loop)
+	    ru_u->RecvConsPreAlloc(n_cons, prjn);
+
+	  TwoDCoord su_st;
+	  if(wrap) {
+	    su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
+	    su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
+	  }
+	  else {
+	    su_st.x = (int)floor((float)ruc.x * rf_move.x);
+	    su_st.y = (int)floor((float)ruc.y * rf_move.y);
+	  }
+
+	  su_st.WrapClip(wrap, su_geo);
+	  TwoDCoord su_ed = su_st + rf_width;
+	  if(wrap) {
+	    su_ed.WrapClip(wrap, su_geo); // just wrap ends too
+	  }
+	  else {
+	    if(su_ed.x > su_geo.x) {
+	      su_ed.x = su_geo.x; su_st.x = su_ed.x - rf_width.x;
+	    }
+	    if(su_ed.y > su_geo.y) {
+	      su_ed.y = su_geo.y; su_st.y = su_ed.y - rf_width.y;
+	    }
+	  }
+
+	  TwoDCoord suc;
+	  TwoDCoord suc_wrp;
+	  for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
+	    for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
+	      suc_wrp = su_st + suc;
+	      if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+		continue;
+	      Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
+	      if(su_u == NULL) continue;
+	      if(!self_con && (su_u == ru_u)) continue;
+	      ru_u->ConnectFrom(su_u, prjn, alloc_loop); // don't check: saves lots of time!
+	    }
+	  }
+	}
+      }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
     }
   }
 }
