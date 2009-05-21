@@ -456,10 +456,10 @@ void RBFBpUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
   u->net = 0.0f;
   for(int g=0; g<u->recv.size; g++) {
     RecvCons* recv_gp = (RecvCons*)u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
     u->net += recv_gp->Compute_Dist(u);
   }
-  if(u->bias.cons.size)
+  if(u->bias.size)
     u->net += u->bias.Cn(0)->wt;
 }
 
@@ -522,8 +522,8 @@ void ExpBpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no) {
 
 void SoftMaxBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   // todo: move this to a check config:
-  if((u->recv.size < 2) || (((RecvCons*)u->recv[0])->cons.size == 0)
-     || (((RecvCons*)u->recv[1])->cons.size == 0)) {
+  if((u->recv.size < 2) || (((RecvCons*)u->recv[0])->size == 0)
+     || (((RecvCons*)u->recv[1])->size == 0)) {
     taMisc::Error("*** SoftMaxBpUnitSpec: expecting one one-to-one projection from",
 		  "exponential units (in first projection) and from linear sum unit (in second), did not find these.");
     return;

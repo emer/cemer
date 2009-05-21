@@ -96,7 +96,7 @@ void RBpUnitSpec::Compute_HardClampNet(RBpUnit* ru, BpNetwork* net, int thread_n
       continue;		// don't get from the non-clamped layers!
     ru->clmp_net += recv_gp->Compute_Netin(ru);
   }
-  if(ru->bias.cons.size)
+  if(ru->bias.size)
     ru->clmp_net += ru->bias.Cn(0)->wt;
 }
 
