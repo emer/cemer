@@ -542,7 +542,7 @@ bool BaseCons::CopyCons(const BaseCons& cp) {
   memcpy(units, (char*)cp.units, size * sizeof(Unit*));
 }
 
-bool BaseCons::LinkToOtherCons(Unit* our_un) {
+bool BaseCons::LinkFromOtherCons(Unit* our_un) {
   if(OwnCons()) return false;	// should not be called on this!
 
   for(int j=0; j< size; j++) {
@@ -2070,7 +2070,7 @@ void Unit::LinkSendCons() {
 RecvCons* Unit::rcg_rval = NULL;
 SendCons* Unit::scg_rval = NULL;
 
-void Unit::ConnectRecvAlloc(int no, Projection* prjn, RecvCons*& cgp) {
+void Unit::RecvConsPreAlloc(int no, Projection* prjn, RecvCons*& cgp) {
 #ifdef DMEM_COMPILE
   if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return;
 #endif
@@ -2081,12 +2081,20 @@ void Unit::ConnectRecvAlloc(int no, Projection* prjn, RecvCons*& cgp) {
   cgp->AllocCons(no);
 }
 
-void Unit::ConnectSendAlloc(int no, Projection* prjn, SendCons*& cgp) {
+void Unit::SendConsPreAlloc(int no, Projection* prjn, SendCons*& cgp) {
   if((prjn->send_idx < 0) || ((cgp = send.SafeEl(prjn->send_idx)) == NULL)) {
     cgp = send.NewPrjn(prjn); // sets the type
     prjn->send_idx = send.size-1;
   }
   cgp->AllocCons(no);
+}
+
+void Unit::SendConsPostAlloc(Projection* prjn, SendCons*& cgp) {
+  if((prjn->send_idx < 0) || ((cgp = send.SafeEl(prjn->send_idx)) == NULL)) {
+    cgp = send.NewPrjn(prjn); // sets the type
+    prjn->send_idx = send.size-1;
+  }
+  cgp->AllocConsFmSize();
 }
 
 bool Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
@@ -2107,10 +2115,16 @@ bool Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
   if(send_gp->recv_idx() < 0)
     send_gp->other_idx = prjn->recv_idx;
 
-  bool rval = recv_gp->ConnectUn(su);
-  //  send_gp->LinkCon(con, this);	// todo: oops.. send needs to grow!  yikes!
-  n_recv_cons++;
-  return rval;
+  if(alloc_send) {
+    send_gp->ConnectAllocInc();	// just do alloc increment
+    return true;
+  }
+
+  if(recv_gp->ConnectUn(su)) {
+    n_recv_cons++;
+    return true;
+  }
+  return false;
 }
 
 bool Unit::ConnectFromCk(Unit* su, Projection* prjn, RecvCons*& recv_gp,
@@ -2134,10 +2148,11 @@ bool Unit::ConnectFromCk(Unit* su, Projection* prjn, RecvCons*& recv_gp,
   if(recv_gp->FindConFromIdx(su) >= 0) // already connected!
     return NULL;
 
-  bool rval = recv_gp->ConnectUn(su);
-//   send_gp->LinkCon(con, this);
-  n_recv_cons++;
-  return rval;
+  if(recv_gp->ConnectUn(su)) {
+    n_recv_cons++;
+    return true;
+  }
+  return false;
 }
 
 bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
@@ -2490,16 +2505,70 @@ void ProjectionSpec::RemoveCons(Projection* prjn) {
   prjn->projected = false;
 }
 
+void ProjectionSpec::PreConnect(Projection* prjn) {
+  if(!(bool)prjn->from)	return;
+
+  // make first set of congroups to get indicies
+  Unit* first_ru = (Unit*)prjn->layer->units.Leaf(0);
+  Unit* first_su = (Unit*)prjn->from->units.Leaf(0);
+  if((first_ru == NULL) || (first_su == NULL))
+    return;
+  RecvCons* recv_gp = first_ru->recv.NewPrjn(prjn);
+  prjn->recv_idx = first_ru->recv.size - 1;
+  SendCons* send_gp = first_su->send.NewPrjn(prjn);
+  prjn->send_idx = first_su->send.size - 1;
+  // set reciprocal indicies
+  recv_gp->other_idx = prjn->send_idx;
+  send_gp->other_idx = prjn->recv_idx;
+
+  // then crank out for remainder of units..
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
+    if(u == first_ru)	continue; // skip over first one..
+    recv_gp = u->recv.NewPrjn(prjn);
+    recv_gp->other_idx = prjn->send_idx;
+  }
+  FOR_ITR_EL(Unit, u, prjn->from->units., i) {
+    if(u == first_su)	continue; // skip over first one..
+    send_gp = u->send.NewPrjn(prjn);
+    send_gp->other_idx = prjn->recv_idx;
+  }
+}
+
 void ProjectionSpec::Connect(Projection* prjn) {
   RemoveCons(prjn);
   prjn->SetFrom();
   PreConnect(prjn);
   Connect_impl(prjn);
+  PostConnect(prjn);
   Init_Weights(prjn);
   prjn->projected = true;
 }
 
-int ProjectionSpec::ProbAddCons(Projection*, float, float) {
+void ProjectionSpec::PostConnect(Projection* prjn) {
+  if(!(bool)prjn->from)	return;
+
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
+    recv_gp = u->recv.FastEl(prjn->recv_idx);
+    if(recv_gp->PtrCons())
+      recv_gp->LinkFromOtherCons(u);
+  }
+  FOR_ITR_EL(Unit, u, prjn->from->units., i) {
+    send_gp = u->send.FastEl(prjn->send_idx);
+    if(send_gp->PtrCons())
+      send_gp->LinkFromOtherCons(u);
+  }
+}
+
+int ProjectionSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
+  return 0;
+}
+
+int ProjectionSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt) {
+  ProbAddCons_impl(pr
   return 0;
 }
 
@@ -2542,37 +2611,6 @@ void ProjectionSpec::Init_dWt(Projection* prjn) {
       if(cg->prjn == prjn)
 	cg->Init_dWt(u);
     }
-  }
-}
-
-void ProjectionSpec::PreConnect(Projection* prjn) {
-  if(!(bool)prjn->from)	return;
-
-  // make first set of congroups to get indicies
-  Unit* first_ru = (Unit*)prjn->layer->units.Leaf(0);
-  Unit* first_su = (Unit*)prjn->from->units.Leaf(0);
-  if((first_ru == NULL) || (first_su == NULL))
-    return;
-  RecvCons* recv_gp = first_ru->recv.NewPrjn(prjn);
-  prjn->recv_idx = first_ru->recv.size - 1;
-  SendCons* send_gp = first_su->send.NewPrjn(prjn);
-  prjn->send_idx = first_su->send.size - 1;
-  // set reciprocal indicies
-  recv_gp->other_idx = prjn->send_idx;
-  send_gp->other_idx = prjn->recv_idx;
-
-  // then crank out for remainder of units..
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
-    if(u == first_ru)	continue; // skip over first one..
-    recv_gp = u->recv.NewPrjn(prjn);
-    recv_gp->other_idx = prjn->send_idx;
-  }
-  FOR_ITR_EL(Unit, u, prjn->from->units., i) {
-    if(u == first_su)	continue; // skip over first one..
-    send_gp = u->send.NewPrjn(prjn);
-    send_gp->other_idx = prjn->recv_idx;
   }
 }
 
@@ -5667,13 +5705,6 @@ void Network::BuildPrjns() {
   taMisc::DoneBusy();
   --taMisc::no_auto_expand;
   if(!taMisc::gui_active)    return;
-}
-
-void Network::PreConnect() {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i)
-    l->PreConnect();
 }
 
 void Network::Connect() {

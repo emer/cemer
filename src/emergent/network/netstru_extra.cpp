@@ -32,15 +32,22 @@
 void FullPrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from)	return;
 
-  int no = prjn->from->units.leaves;
+  int recv_no = prjn->from->units.leaves;
   if(!self_con && (prjn->from.ptr() == prjn->layer))
-    no--;
+    recv_no--;
+
+  int send_no = prjn->layer->units.leaves;
+  if(!self_con && (prjn->from.ptr() == prjn->layer))
+    send_no--;
 
   // pre-allocate connections!
   Unit* ru, *su;
   taLeafItr ru_itr, su_itr;
   FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr)
-    ru->ConnectAlloc(no, prjn);
+    ru->RecvConsPreAlloc(recv_no, prjn);
+
+  FOR_ITR_EL(Unit, su, prjn->from->units., su_itr)
+    su->SendConsPreAlloc(send_no, prjn);
 
   FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr) {
     FOR_ITR_EL(Unit, su, prjn->from->units., su_itr) {
@@ -50,7 +57,7 @@ void FullPrjnSpec::Connect_impl(Projection* prjn) {
   }
 }
 
-int FullPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt) {
+int FullPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
   if(!(bool)prjn->from)	return 0;
 
   int rval = 0;
@@ -106,7 +113,7 @@ void OneToOnePrjnSpec::Connect_impl(Projection* prjn) {
     Unit* ru = (Unit*)prjn->layer->units.Leaf(recv_start + i);
     Unit* su = (Unit*)prjn->from->units.Leaf(send_start + i);
     if(self_con || (ru != su)) {
-      ru->ConnectAlloc(1, prjn);
+      ru->RecvConsPreAlloc(1, prjn);
       ru->ConnectFrom(su, prjn);
     }
   }
@@ -275,7 +282,7 @@ void TesselPrjnSpec::GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc) {
 
 void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projection* prjn) {
   // allocate cons
-  ru_u->ConnectAlloc(send_offs.size, prjn);
+  ru_u->RecvConsPreAlloc(send_offs.size, prjn);
 
   PosTwoDCoord su_geo;  prjn->from->GetActGeomNoSpc(su_geo);
   // positions of center of recv in sending layer
@@ -363,7 +370,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
   Unit* ru, *su;
   taLeafItr ru_itr, su_itr;
   FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr)
-    ru->ConnectAlloc(no, prjn);
+    ru->RecvConsPreAlloc(no, prjn);
 
   if((prjn->from.ptr() == prjn->layer) && sym_self) {
     Layer* lay = prjn->layer;
@@ -577,7 +584,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
   Unit* ru, *su;
   taLeafItr ru_itr;
   FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr)
-    ru->ConnectAlloc(trg_con, prjn);
+    ru->RecvConsPreAlloc(trg_con, prjn);
 
   PosTwoDCoord ru_geom; prjn->layer->GetActGeomNoSpc(ru_geom);
   TwoDCoord ru_pos;		// do this according to act_geom..
@@ -635,7 +642,7 @@ void SymmetricPrjnSpec::Connect_impl(Projection* prjn) {
       if(RecvCons::FindRecipRecvCon(su, ru, prjn->layer))
 	n_cons++;
     }
-    ru->ConnectAlloc(n_cons, prjn); // todo: allow some kind of extra??
+    ru->RecvConsPreAlloc(n_cons, prjn); // todo: allow some kind of extra??
   }
 
   int cnt = 0;
@@ -772,7 +779,7 @@ void GpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
     Unit* ru, *su;
     taLeafItr ru_itr, su_itr;
     FOR_ITR_EL(Unit, ru, rgp->, ru_itr) {
-      ru->ConnectAlloc(sgp->leaves, prjn);
+      ru->RecvConsPreAlloc(sgp->leaves, prjn);
     }
       
     FOR_ITR_EL(Unit, ru, rgp->, ru_itr) {
@@ -839,7 +846,7 @@ void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
     Unit* ru, *su;
     taLeafItr ru_itr, su_itr;
     FOR_ITR_EL(Unit, ru, rgp->, ru_itr)
-      ru->ConnectAlloc(no, prjn);
+      ru->RecvConsPreAlloc(no, prjn);
 
     taPtrList<Unit> perm_list;	// permution list
     FOR_ITR_EL(Unit, ru, rgp->, ru_itr) {
@@ -998,7 +1005,7 @@ void GpOneToManyPrjnSpec::Connect_impl(Projection* prjn) {
       Unit* ru, *su;
       taLeafItr ru_itr, su_itr;
       FOR_ITR_EL(Unit, ru, rgp->, ru_itr) {
-	ru->ConnectAlloc(sgp->leaves, prjn);
+	ru->RecvConsPreAlloc(sgp->leaves, prjn);
 	FOR_ITR_EL(Unit, su, sgp->, su_itr) {
 	  if(self_con || (ru != su))
 	    ru->ConnectFrom(su, prjn);
@@ -1290,7 +1297,7 @@ void GpRndTesselPrjnSpec::Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc
   Unit* ru;
   taLeafItr ru_itr;
   FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr)
-    ru->ConnectAlloc(alloc_sz, prjn);
+    ru->RecvConsPreAlloc(alloc_sz, prjn);
 
   TwoDCoord sctr;
   GetCtrFmRecv(sctr, ruc);  // positions of center of recv in sending layer
@@ -1429,7 +1436,7 @@ void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
 
       for(int rui=0;rui<ru_gp->size;rui++) {
 	Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
-	ru_u->ConnectAlloc(n_cons, prjn);
+	ru_u->RecvConsPreAlloc(n_cons, prjn);
 
 	TwoDCoord suc;
 	for(suc.y = su_st.y; suc.y < su_ed.y; suc.y++) {
@@ -1445,7 +1452,7 @@ void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
   }
 }
 
-int TiledRFPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt) {
+int TiledRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
   if(!InitRFSizes(prjn)) return 0;
   int rval = 0;
 
@@ -1583,7 +1590,7 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
 
       for(int rui=0;rui<ru_gp->size;rui++) {
 	Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
-	ru_u->ConnectAlloc(alloc_no, prjn);
+	ru_u->RecvConsPreAlloc(alloc_no, prjn);
 
 	TwoDCoord suc;
 	TwoDCoord suc_wrp;
@@ -1649,7 +1656,7 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
     Unit_Group* su_gp = (Unit_Group*)send_lay->units.gp[i];
     for(int sui=0;sui<su_gp->size;sui++) {
       Unit* su_u = (Unit*)su_gp->FastEl(sui);
-      su_u->ConnectAlloc(alloc_sz[i], prjn);
+      su_u->RecvConsPreAlloc(alloc_sz[i], prjn);
     }
   }
 
@@ -1687,15 +1694,15 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   }
 }
 
-int TiledGpRFPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt) {
+int TiledGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
   if(!(bool)prjn->from)	return 0;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return 0;
-  if(TestWarning(prjn->layer->units.gp.size == 0, "ProbAddCons",
+  if(TestWarning(prjn->layer->units.gp.size == 0, "ProbAddCons_impl",
 		 "requires recv layer to have unit groups!")) {
     return 0;
   }
-  if(TestWarning(prjn->from->units.gp.size == 0, "ProbAddCons",
+  if(TestWarning(prjn->from->units.gp.size == 0, "ProbAddCons_impl",
 		 "requires send layer to have unit groups!")) {
     return 0;
   }
@@ -1855,7 +1862,7 @@ void TiledNovlpPrjnSpec::Connect_impl(Projection* prjn) {
       for(int rui=0;rui<ru_gp->size;rui++) {
 	Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
 	int alloc_sz = ((int)(rf_width.x) + 1) * ((int)(rf_width.y) + 1);
-	ru_u->ConnectAlloc(alloc_sz, prjn);	
+	ru_u->RecvConsPreAlloc(alloc_sz, prjn);	
 
 	TwoDCoord suc;
 	for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
@@ -1910,7 +1917,7 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
       Unit* su_u = send_lay->FindUnitFmCoord(suc);
       if(su_u == NULL) continue;
       int sugp_idx = suc.y * send_lay->flat_geom.x + suc.x;
-      su_u->ConnectAlloc(alloc_sz[sugp_idx], prjn);
+      su_u->RecvConsPreAlloc(alloc_sz[sugp_idx], prjn);
     }
   }
 
@@ -1968,7 +1975,7 @@ void GaussRFPrjnSpec::Connect_impl(Projection* prjn) {
       Unit* ru_u = prjn->layer->FindUnitFmCoord(ruc);
       if(!ru_u) continue;
 
-      ru_u->ConnectAlloc(n_cons, prjn);
+      ru_u->RecvConsPreAlloc(n_cons, prjn);
 
       TwoDCoord su_st;
       if(wrap) {

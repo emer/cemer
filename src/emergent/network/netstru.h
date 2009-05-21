@@ -387,8 +387,8 @@ public:
   virtual bool		CopyCons(const BaseCons& cp);
   // #CAT_Structure copy connections (unit ptrs and cons) from other con array, checking to make sure they are the same type (false if not) -- does not do any alloc -- just copies values -- source must have same OwnCons status as us
 
-  virtual bool 		LinkToOtherCons(Unit* own_un);
-  // #CAT_Structure fill in our cons_ptr list from the units that send to us -- this is only applicable if we do not OwnCons -- does a full overwrite of whatever cons_ptr might be there now -- this is called en-masse after doing initial connections
+  virtual bool 		LinkFromOtherCons(Unit* own_un);
+  // #CAT_Structure fill in our cons_ptr list of connections from the units that send to us -- this is only applicable if we do not OwnCons -- does a full overwrite of whatever cons_ptr might be there now -- this is called en-masse after doing initial connections
 
   virtual bool		RemoveConIdx(int i);
   // #CAT_Modify remove connection (cons and units) at given index, moving others down to fill in
@@ -995,14 +995,22 @@ public:
 
   virtual void 	RemoveCons(Projection* prjn);
   // #CAT_Structure deletes any existing connections
-  virtual void	PreConnect(Projection* prjn);
-  // #CAT_Structure Prepare to connect (init con_groups)
-  virtual void	Connect_impl(Projection*) { };
-  // #CAT_Structure actually implements specific connection code
+
   virtual void 	Connect(Projection* prjn);
-  // #CAT_Structure connects the network, first removing existing cons, and inits weights
+  // #CAT_Structure connects the network, doing PreConnect, Connect_impl, then PostConnect, then Init_Weights -- generally do not override this function
+    virtual void	PreConnect(Projection* prjn);
+    // #CAT_Structure Prepare to connect (init con_groups)
+    virtual void	Connect_impl(Projection*) { };
+    // #CAT_Structure actually implements specific connection code
+    virtual void	PostConnect(Projection* prjn);
+    // #CAT_Structure Prepare to connect (init con_groups)
+
   virtual int 	ProbAddCons(Projection* prjn, float p_add_con, float init_wt = 0.0);
-  // #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
+  // #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection -- NOTE: not fully functional yet -- do not use!
+    virtual int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0);
+    // #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
+
+
   virtual void 	Init_dWt(Projection* prjn);
   // #CAT_Weights initializes the weight change variables
   virtual void 	Init_Weights(Projection* prjn);
@@ -2063,8 +2071,6 @@ public:
   // #MENU #CONFIRM #CAT_Structure Remove all unit groups in network
   virtual void	LayoutUnitGroups();
   // #MENU #CONFIRM #CAT_Structure layout all the layer's unit groups according to layer group geometry and spacing
-  virtual void	PreConnect();
-  // #CAT_Structure Prepare to connect this network (make con_groups)
 
   virtual void	LinkSendCons();
   // #IGNORE link the sending connections (after loading or copying)
