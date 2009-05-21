@@ -894,7 +894,7 @@ public: //
   // #CAT_Structure pre-allocate given no of receiving connections -- sufficient connections must be allocated in advance of making specific connections
   virtual void	SendConsPreAlloc(int no, Projection* prjn, SendCons*& cgp = scg_rval);
   // #CAT_Structure pre-allocate given no of sending connections -- sufficient connections must be allocated in advance of making specific connections
-  virtual void	SendConsPostAlloc(int no, Projection* prjn, SendCons*& cgp = scg_rval);
+  virtual void	SendConsPostAlloc(Projection* prjn, SendCons*& cgp = scg_rval);
   // #CAT_Structure post-allocate given no of sending connections -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
   virtual bool	ConnectFrom(Unit* su, Projection* prjn, bool alloc_send = false, 
 			    RecvCons*& recv_gp = rcg_rval, SendCons*& send_gp = scg_rval);
