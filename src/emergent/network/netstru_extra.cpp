@@ -54,7 +54,7 @@ void FullPrjnSpec::Connect_impl(Projection* prjn) {
   }
 }
 
-int FullPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
+int FullPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt) {
   if(!(bool)prjn->from)	return 0;
 
   int rval = 0;
@@ -74,8 +74,11 @@ int FullPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
     new_idxs.Permute();
     for(int i=0;i<n_new_cons;i++) {
       Unit* su = (Unit*)prjn->from->units.Leaf(new_idxs[i]);
-      if(ru->ConnectFromCk(su, prjn)) // check means that it won't add any new connections if already there!
+      Connection* cn = ru->ConnectFromCk(su, prjn); // check means that it won't add any new connections if already there!
+      if(cn) {
+	cn->wt = init_wt;
 	rval++;
+      }
     }
   }
   return rval;
@@ -1508,7 +1511,7 @@ void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
   }
 }
 
-int TiledRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
+int TiledRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt) {
   if(!InitRFSizes(prjn)) return 0;
   int rval = 0;
 
@@ -1545,8 +1548,11 @@ int TiledRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
 	  Unit* su_u = prjn->from->FindUnitFmCoord(suc);
 	  if(su_u == NULL) continue;
 	  if(!self_con && (su_u == ru_u)) continue;
-	  if(ru_u->ConnectFromCk(su_u, prjn)) // gotta check!
+	  Connection* cn = ru_u->ConnectFromCk(su_u, prjn); // gotta check!
+	  if(cn) {
+	    cn->wt = init_wt;
 	    rval++;
+	  }
 	}
       }
     }
@@ -1759,7 +1765,7 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   }
 }
 
-int TiledGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
+int TiledGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt) {
   if(!(bool)prjn->from)	return 0;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return 0;
@@ -1813,12 +1819,13 @@ int TiledGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
 	      // just do a basic probabilistic version: too hard to permute..
 	      if(Random::ZeroOne() > p_add_con) continue; // no-go
 
-	      bool con;
+	      Connection* con;
 	      if(!reciprocal)
 		con = ru_u->ConnectFromCk(su_u, prjn); // gotta check!
 	      else
 		con = su_u->ConnectFromCk(ru_u, prjn);
 	      if(con) {
+		con->wt = init_wt;
 		rval++;
 	      }
 	    }

@@ -297,7 +297,7 @@ SpecPtr_of(ConSpec);
 //	Base Cons -- fully integrated connection management with dynamic con ownership
 
 class EMERGENT_API BaseCons : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #VIRT_BASE ##CAT_Network base connection manager class -- manages one projection's worth of connections at a unit level -- inherited by RecvCons and SendCons
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #STEM_BASE #VIRT_BASE ##CAT_Network base connection manager class -- manages one projection's worth of connections at a unit level -- inherited by RecvCons and SendCons
 INHERITED(taOBase)
 public:
   // note: follwing must be coordinated with the Network enum
@@ -369,10 +369,13 @@ public:
   { if(!InRange(idx)) return false; units[idx] = un; return true; }
   // #CAT_Modify set unit pointer at given index -- returns false if out of range
 
-  virtual bool		ConnectUn(Unit* un);
-  // #CAT_Modify add a new connection from given unit -- returns false if no more room, else true -- nothing is done with the Connection objects: if OwnCons, then it already exists through allocation, else it needs to be created through the LinkToOtherCons function
-  virtual bool		ConnectUnPtrCn(Unit* un, Connection* cn);
-  // #CAT_Modify add a new connection from given unit and connection pointer (only if !OwnCons()) -- returns false if no more room, else true 
+  Connection*	ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons);
+  // #CAT_Modify add a new connection betwee our unit and an other unit and its appropriate cons -- does appropriate things depending on who owns the connects, etc.  enough room must already be allocated on both sides.
+    Connection*		ConnectUnOwnCn(Unit* un);
+    // #CAT_Modify add a new connection from given unit for OwnCons case -- returns NULL if no more room relative to alloc_size
+    bool		ConnectUnPtrCn(Unit* un, Connection* cn);
+    // #CAT_Modify add a new connection from given unit and connection pointer for PtrCons case -- returns false if no more room, else true 
+
   virtual void		ConnectAllocInc();
   // #CAT_Modify use this for dynamically figuring out how many connections to allocate, if it is not possible to compute directly -- increments size by one -- later call AllocConsFmSize to allocate connections based on the size value
   virtual void		AllocConsFmSize();
@@ -386,9 +389,6 @@ public:
   // #CAT_Structure deallocate all connection-level storage (cons and units)
   virtual bool		CopyCons(const BaseCons& cp);
   // #CAT_Structure copy connections (unit ptrs and cons) from other con array, checking to make sure they are the same type (false if not) -- does not do any alloc -- just copies values -- source must have same OwnCons status as us
-
-  virtual bool 		LinkFromOtherCons(Unit* own_un);
-  // #CAT_Structure fill in our cons_ptr list of connections from the units that send to us -- this is only applicable if we do not OwnCons -- does a full overwrite of whatever cons_ptr might be there now -- this is called en-masse after doing initial connections
 
   virtual bool		RemoveConIdx(int i);
   // #CAT_Modify remove connection (cons and units) at given index, moving others down to fill in
@@ -896,12 +896,12 @@ public: //
   // #CAT_Structure pre-allocate given no of sending connections -- sufficient connections must be allocated in advance of making specific connections
   virtual void	SendConsPostAlloc(Projection* prjn, SendCons*& cgp = scg_rval);
   // #CAT_Structure post-allocate given no of sending connections -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
-  virtual bool	ConnectFrom(Unit* su, Projection* prjn, bool alloc_send = false, 
+  virtual Connection*	ConnectFrom(Unit* su, Projection* prjn, bool alloc_send = false, 
 			    RecvCons*& recv_gp = rcg_rval, SendCons*& send_gp = scg_rval);
-  // #CAT_Structure make a recv connection from given unit to this unit using given projection -- if alloc_send is true, then it only allocates connections on the sender -- does NOT make any connection on the receiver -- use this in a loop that runs connections twice, with first pass as allocation and second pass as actual connection making
-  virtual bool 	ConnectFromCk(Unit* su, Projection* prjn, 
+  // #CAT_Structure make a recv connection from given unit to this unit using given projection -- requires both recv and sender to have sufficient connections allocated already, unless alloc_send is true, then it only allocates connections on the sender -- does NOT make any connection on the receiver -- use this in a loop that runs connections twice, with first pass as allocation (then call SendConstPostAlloc) and second pass as actual connection making
+  virtual Connection* 	ConnectFromCk(Unit* su, Projection* prjn, 
 			      RecvCons*& recv_gp = rcg_rval, SendCons*& send_gp = scg_rval);
-  // #CAT_Structure does ConnectFrom but checks for an existing connection to prevent double-connections! -- note that this is expensive!  also, REQUIRES that sender connections are pre-allocated!
+  // #CAT_Structure does ConnectFrom but checks for an existing connection to prevent double-connections -- note that this is expensive -- only use if there is a risk of multiple connections.  This does not support alloc_send option -- can call in 2nd pass if needed
   virtual bool	DisConnectFrom(Unit* su, Projection* prjn=NULL);
   // #CAT_Structure remove connection from given unit (projection is optional)
   virtual void	DisConnectAll();
@@ -997,18 +997,16 @@ public:
   // #CAT_Structure deletes any existing connections
 
   virtual void 	Connect(Projection* prjn);
-  // #CAT_Structure connects the network, doing PreConnect, Connect_impl, then PostConnect, then Init_Weights -- generally do not override this function
+  // #CAT_Structure connects the network, doing PreConnect, Connect_impl, then Init_Weights -- generally do not override this function
     virtual void	PreConnect(Projection* prjn);
     // #CAT_Structure Prepare to connect (init con_groups)
     virtual void	Connect_impl(Projection*) { };
     // #CAT_Structure actually implements specific connection code
-    virtual void	PostConnect(Projection* prjn);
-    // #CAT_Structure Prepare to connect (init con_groups)
 
   virtual int 	ProbAddCons(Projection* prjn, float p_add_con, float init_wt = 0.0);
-  // #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection -- NOTE: not fully functional yet -- do not use!
-    virtual int	ProbAddCons_impl(Projection* prjn, float p_add_con);
-    // #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
+  // #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
+    virtual int	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0);
+    // #CAT_Structure actual implementation: probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
 
 
   virtual void 	Init_dWt(Projection* prjn);

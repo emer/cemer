@@ -30,7 +30,7 @@ INHERITED(ProjectionSpec)
 public:
   void 	Connect_impl(Projection* prjn);
   // Connection function for full connectivity
-  int 	ProbAddCons_impl(Projection* prjn, float p_add_con);
+  int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
 
   TA_BASEFUNS_NOCOPY(FullPrjnSpec);
 private:
@@ -398,7 +398,7 @@ public:
   virtual bool	InitRFSizes(Projection* prjn); // initialize sending receptive field sizes
 
   void 	Connect_impl(Projection* prjn);
-  int 	ProbAddCons_impl(Projection* prjn, float p_add_con);
+  int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
 
   virtual void	SelectRF(Projection* prjn);
   // #BUTTON select all sending and receiving units in the receptive field of this projection
@@ -423,7 +423,7 @@ public:
 
   void 	Connect_impl(Projection* prjn);
   virtual void 	Connect_Reciprocal(Projection* prjn);
-  int 	ProbAddCons_impl(Projection* prjn, float p_add_con);
+  int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
 
   virtual bool	TrgRecvFmSend(int send_x, int send_y);
   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
@@ -450,7 +450,7 @@ public:
 
   void 	Connect_impl(Projection* prjn);
   virtual void 	Connect_Reciprocal(Projection* prjn);
-//   int 	ProbAddCons_impl(Projection* prjn, float p_add_con);
+//   int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
 
 //   virtual void	SelectRF(Projection* prjn);
   // #BUTTON select all sending and receiving units in the receptive field of this projection

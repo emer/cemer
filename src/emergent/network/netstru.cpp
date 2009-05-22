@@ -371,18 +371,25 @@ void BaseCons::CheckThisConfig_impl(bool quiet, bool& rval) {
   if(CheckError(!prjn, quiet, rval, "null projection! (Connect will fix)")) {
     return; 			// fatal!
   }
-  if(CheckError((GetTypeDef() != prjn->recvcons_type), quiet, rval,
-		"type does not match recvcons_type for projection -- should be:",
-		prjn->recvcons_type->name)) {
-    prjn->projected = false;
+  if(IsRecv()) {
+    if(CheckError((GetTypeDef() != prjn->recvcons_type), quiet, rval,
+		  "type does not match recvcons_type for projection -- should be:",
+		  prjn->recvcons_type->name)) {
+      prjn->projected = false;
+    }
+  }
+  else {
+    if(CheckError((GetTypeDef() != prjn->sendcons_type), quiet, rval,
+		  "type does not match sendcons_type for projection -- should be:",
+		  prjn->recvcons_type->name)) {
+      prjn->projected = false;
+    }
   }
   if(CheckError((con_type != prjn->con_type), quiet, rval,
 		"connection type does not match prjn con_type -- should be:",
 		prjn->con_type->name)) {
     prjn->projected = false;
   }
-//   if(!GetConSpec()->CheckConfig_BaseCons(this, quiet)) 
-//     rval = false; 
 }
 
 int BaseCons::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) { 
@@ -469,16 +476,45 @@ bool BaseCons::ChangeMyType(TypeDef*) {
   return false;
 }
 
-bool BaseCons::ConnectUn(Unit* un) {
-  if(size == alloc_size) return false;
+Connection* BaseCons::ConnectUnOwnCn(Unit* un) {
+  if(!OwnCons() || size >= alloc_size) return NULL;
+  Connection* rval = OwnCn(size);
   units[size++] = un;
+  return rval;
 }
 
 bool BaseCons::ConnectUnPtrCn(Unit* un, Connection* cn) {
-  if(OwnCons()) return false;	// not applicable!
-  if(size == alloc_size) return false;
+  if(OwnCons() || size >= alloc_size) return false;
+  cons_ptr[size] = cn;
   units[size++] = un;
-  SetPtrCn(size-1, cn);
+  return true;
+}
+
+Connection* BaseCons::ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons) {
+  Connection* con = NULL;
+  if(OwnCons()) {
+    con = ConnectUnOwnCn(oth_un);
+    if(con) {
+      if(oth_cons->ConnectUnPtrCn(our_un, con)) {
+	return con;
+      }
+      else {
+	con = NULL;
+      }
+    }
+  }
+  else {
+    con = oth_cons->ConnectUnOwnCn(our_un);
+    if(con) {
+      if(ConnectUnPtrCn(oth_un, con)) {
+	return con;
+      }
+      else {
+	con = NULL;
+      }
+    }
+  }
+  return con;
 }
 
 void BaseCons::ConnectAllocInc() {
@@ -540,41 +576,6 @@ bool BaseCons::CopyCons(const BaseCons& cp) {
   }
 
   memcpy(units, (char*)cp.units, size * sizeof(Unit*));
-}
-
-bool BaseCons::LinkFromOtherCons(Unit* our_un) {
-  if(OwnCons()) return false;	// should not be called on this!
-
-  for(int j=0; j< size; j++) {
-    Unit* su = Un(j);
-    if(!su) continue;
-
-    if(IsRecv()) {
-      SendCons* send_gp = NULL;
-      if(other_idx >= 0)
-	send_gp = su->send.SafeEl(other_idx);
-      if(!send_gp)
-	send_gp = su->send.FindPrjn(prjn);
-      if(send_gp) {
-	Connection* cn = send_gp->FindConFrom(our_un);
-	if(cn)
-	  SetPtrCn(j, cn);
-      }
-    }
-    else {			// sending
-      RecvCons* recv_gp = NULL;
-      if(other_idx >= 0)
-	recv_gp = su->recv.SafeEl(other_idx);
-      if(!recv_gp)
-	recv_gp = su->recv.FindPrjn(prjn);
-      if(recv_gp) {
-	Connection* cn = recv_gp->FindConFrom(our_un);
-	if(cn)
-	  SetPtrCn(j, cn);
-      }
-    }
-  }
-  return true;
 }
 
 bool BaseCons::RemoveConIdx(int i) {
@@ -896,8 +897,8 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
       continue;
     }
     if(size <= i) {
-      ConnectUn(su);
-      int sidx = send_gp->FindConFromIdx(ru); // todo: yikes!
+//       ConnectUn(su);
+//       int sidx = send_gp->FindConFromIdx(ru); // todo: yikes!
 //       if(sidx >= 0) {
 // 	send_gp->cons.ReplaceLinkIdx(sidx, Cn(i));
 //       }
@@ -1306,10 +1307,11 @@ int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
 	continue;
       }
     }
-    if(size > c_count)
-      SetUn(c_count, un);
-    else
-      ConnectUn(un);
+    // todo!
+//     if(size > c_count)
+//       SetUn(c_count, un);
+//     else
+//       ConnectUn(un);
     c_count++;
   }
 
@@ -1489,15 +1491,18 @@ void SendCons::Initialize() {
 void SendCons::CheckThisConfig_impl(bool quiet, bool& rval) { 
   inherited::CheckThisConfig_impl(quiet, rval);
 
-  // todo: see if this is same as other side
   if(size > 0) {		// connections exist
     if(CheckError((recv_idx() < 0) || (recv_idx() != prjn->recv_idx), quiet, rval,
 		  "unset recv_idx, do FixPrjnIndexes or Connect")) {
       prjn->projected = false;
     }
     Unit* ru = Un(0);
-    if(CheckError((ru->recv.size <= recv_idx()), quiet, rval,
-		  "recv_idx is out of range on recv unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
+    if(CheckError(!ru, quiet, rval,
+		  "recv unit is null when it should not be!  rebuild network!")) {
+      prjn->projected = false;
+    }
+    else if(CheckError((ru->recv.size <= recv_idx()), quiet, rval,
+		       "recv_idx is out of range on recv unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
       prjn->projected = false;
     }
     else {
@@ -1987,7 +1992,7 @@ bool Unit::BuildUnits() {
     bias.SetConType(bstd);
     if(bias.size == 0) {
       bias.AllocCons(1);
-      bias.ConnectUn(this);
+      bias.ConnectUnOwnCn(this);
     }
     bias.SetConSpec(GetUnitSpec()->bias_spec.SPtr()); // not generally used, but could be!
   }
@@ -2097,10 +2102,10 @@ void Unit::SendConsPostAlloc(Projection* prjn, SendCons*& cgp) {
   cgp->AllocConsFmSize();
 }
 
-bool Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
-		       RecvCons*& recv_gp, SendCons*& send_gp) {
+Connection* Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
+			      RecvCons*& recv_gp, SendCons*& send_gp) {
 #ifdef DMEM_COMPILE
-  if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return false;
+  if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
 #endif
   if((prjn->recv_idx < 0) || ((recv_gp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
     recv_gp = recv.NewPrjn(prjn);
@@ -2117,20 +2122,19 @@ bool Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
 
   if(alloc_send) {
     send_gp->ConnectAllocInc();	// just do alloc increment
-    return true;
+    return NULL;
   }
 
-  if(recv_gp->ConnectUn(su)) {
+  Connection* con = recv_gp->ConnectUnits(this, su, send_gp);
+  if(con) 
     n_recv_cons++;
-    return true;
-  }
-  return false;
+  return con;
 }
 
-bool Unit::ConnectFromCk(Unit* su, Projection* prjn, RecvCons*& recv_gp,
+Connection* Unit::ConnectFromCk(Unit* su, Projection* prjn, RecvCons*& recv_gp,
 			      SendCons*& send_gp) {
 #ifdef DMEM_COMPILE
-  if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return false;
+  if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
 #endif
   if((prjn->recv_idx < 0) || ((recv_gp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
     recv_gp = recv.NewPrjn(prjn);
@@ -2148,11 +2152,10 @@ bool Unit::ConnectFromCk(Unit* su, Projection* prjn, RecvCons*& recv_gp,
   if(recv_gp->FindConFromIdx(su) >= 0) // already connected!
     return NULL;
 
-  if(recv_gp->ConnectUn(su)) {
+  Connection* con = recv_gp->ConnectUnits(this, su, send_gp);
+  if(con) 
     n_recv_cons++;
-    return true;
-  }
-  return false;
+  return con;
 }
 
 bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
@@ -2541,35 +2544,16 @@ void ProjectionSpec::Connect(Projection* prjn) {
   prjn->SetFrom();
   PreConnect(prjn);
   Connect_impl(prjn);
-  PostConnect(prjn);
   Init_Weights(prjn);
   prjn->projected = true;
 }
 
-void ProjectionSpec::PostConnect(Projection* prjn) {
-  if(!(bool)prjn->from)	return;
-
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
-    RecvCons* recv_gp = u->recv.FastEl(prjn->recv_idx);
-    if(recv_gp->PtrCons())
-      recv_gp->LinkFromOtherCons(u);
-  }
-  FOR_ITR_EL(Unit, u, prjn->from->units., i) {
-    SendCons* send_gp = u->send.FastEl(prjn->send_idx);
-    if(send_gp->PtrCons())
-      send_gp->LinkFromOtherCons(u);
-  }
-}
-
-int ProjectionSpec::ProbAddCons_impl(Projection* prjn, float p_add_con) {
+int ProjectionSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt) {
   return 0;
 }
 
 int ProjectionSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt) {
   int rval = ProbAddCons_impl(prjn, p_add_con);
-  PostConnect(prjn); 		// note: needs to have mechanism for setting init wt here!!
   return rval;
 }
 
