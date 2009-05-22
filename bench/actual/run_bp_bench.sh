@@ -17,13 +17,13 @@
 #./run_bp_bench.sh n_threads=2 chunk_pct=0.5 nibble_chunk=4 compute_thr=0.5 tag=_mac_mbp_216ghz_thr2pct50nch4thr5
 
 # name of executable to run
-set exe=emergent
-#set exe=../../build/bin/emergent
+#set exe=emergent
+set exe=../../build/bin/emergent
 
-echo " "
-echo "=============================================================="
-echo "SMALL Network (5 x 25 units)"
-$exe -nogui -ni -p bp_bench.proj epochs=30 pats=1000 units=25 $*
+# echo " "
+# echo "=============================================================="
+# echo "SMALL Network (5 x 25 units)"
+# $exe -nogui -ni -p bp_bench.proj epochs=30 pats=1000 units=25 $*
 echo " "
 echo "=============================================================="
 echo "MEDIUM Network (5 x 100 units)"

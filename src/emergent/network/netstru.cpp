@@ -477,14 +477,22 @@ bool BaseCons::ChangeMyType(TypeDef*) {
 }
 
 Connection* BaseCons::ConnectUnOwnCn(Unit* un) {
-  if(!OwnCons() || size >= alloc_size) return NULL;
+  if(TestError(!OwnCons(), "ConnectUnOwnCn", "does not own cons!"))
+    return NULL;
+  if(TestError(size >= alloc_size, "ConnectUnOwnCn", "size already at maximum allocated of",
+	       String(alloc_size),"this is a programmer error -- please report the bug"))
+    return NULL;
   Connection* rval = OwnCn(size);
   units[size++] = un;
   return rval;
 }
 
 bool BaseCons::ConnectUnPtrCn(Unit* un, Connection* cn) {
-  if(OwnCons() || size >= alloc_size) return false;
+  if(TestError(OwnCons(), "ConnectUnPtrCn", "is not a ptr cons!"))
+    return false;
+  if(TestError(size >= alloc_size, "ConnectUnPtrCn", "size already at maximum allocated of",
+	       String(alloc_size),"this is a programmer error -- please report the bug"))
+    return false;
   cons_ptr[size] = cn;
   units[size++] = un;
   return true;
@@ -539,6 +547,7 @@ bool BaseCons::SetConType(TypeDef* cn_tp) {
 void BaseCons::AllocCons(int sz) {
   if(sz == alloc_size) return;
   FreeCons();
+  con_size = con_type->size;
   alloc_size = sz;
   if(alloc_size == 0) return;
   if(OwnCons()) {
@@ -1528,7 +1537,7 @@ void SendCons::CheckThisConfig_impl(bool quiet, bool& rval) {
 SendCons* SendCons_List::NewPrjn(Projection* aprjn) {
   SendCons* rval = (SendCons*)New(1, aprjn->sendcons_type);
   rval->prjn = aprjn;
-  rval->con_type = aprjn->con_type; // set type of connection to this type..
+  rval->SetConType(aprjn->con_type); // set type of connection to this type..
   rval->SetConSpec(aprjn->con_spec.SPtr());
   return rval;
 }
