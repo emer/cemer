@@ -185,7 +185,7 @@ inline void RBpConSpec::C_Compute_dWt(BpCon* cn, RBpUnit* ru, RBpUnit* su) {
   cn->dwt += su->prv_act * ru->dEdNet;
 }
 inline void RBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->Cn(i), (RBpUnit*)ru, (RBpUnit*)cg->Un(i)));
+  CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->OwnCn(i), (RBpUnit*)ru, (RBpUnit*)cg->Un(i)));
 }
 
 // use previous activation value
@@ -195,10 +195,10 @@ inline void SymRBpConSpec::C_Compute_dWt_Sym(BpCon* cn, RBpUnit* ru, RBpUnit* su
 }
 inline void SymRBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   if(sym_wt_updt) {
-    CON_GROUP_LOOP(cg,C_Compute_dWt_Sym((BpCon*)cg->Cn(i), (RBpUnit*)ru, (RBpUnit*)cg->Un(i)));
+    CON_GROUP_LOOP(cg,C_Compute_dWt_Sym((BpCon*)cg->OwnCn(i), (RBpUnit*)ru, (RBpUnit*)cg->Un(i)));
   }
   else {
-    CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->Cn(i), (RBpUnit*)ru, (RBpUnit*)cg->Un(i)));
+    CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->OwnCn(i), (RBpUnit*)ru, (RBpUnit*)cg->Un(i)));
   }
 }
 

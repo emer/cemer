@@ -283,7 +283,7 @@ void MatrixUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   }
 
   u->net_raw += u->net_delta;
-  float tot_net = (u->bias_scale * u->bias.Cn(0)->wt) + u->net_raw;
+  float tot_net = (u->bias_scale * u->bias.OwnCn(0)->wt) + u->net_raw;
   if(u->ext_flag & Unit::EXT) {
     LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
     tot_net += u->ext * ls->clamp.gain;

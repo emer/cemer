@@ -347,10 +347,21 @@ public:
   inline bool		InRange(int idx) const {return ((idx < size) && (idx >= 0));}
   // #CAT_Access is index in range?
 
+#ifdef DEBUG
   inline Connection*	OwnCn(int idx) const
-  { return (Connection*)&(cons_own[con_size * idx]); }
+  { if(!OwnCons()) { taMisc::Error("owncn err"); return NULL; } 
+    return (Connection*)&(cons_own[con_size * idx]); }
+#else
+  inline Connection*	OwnCn(int idx) const { return (Connection*)&(cons_own[con_size * idx]); }
+#endif
   // #CAT_Access fast access (no range or own_cons checking) to owned connection at given index, consumer must cast to appropriate type (for type safety, check con_type) -- compute algorithms should use this, as they know whether the connections are owned
+#ifdef DEBUG
+  inline Connection*	PtrCn(int idx) const
+  { if(!PtrCons()) { taMisc::Error("ptrcn err"); return NULL; }
+    return cons_ptr[idx]; }
+#else
   inline Connection*	PtrCn(int idx) const  { return cons_ptr[idx]; }
+#endif
   // #CAT_Access fast access (no range or own_cons checking) to connection pointer at given index, consumer must cast to appropriate type (for type safety, check con_type) -- compute algorithms should use this, as they know whether the connections are owned
   inline bool		SetPtrCn(int idx, Connection* cn)
   { if(!InRange(idx) || OwnCons()) return false; cons_ptr[idx] = cn; return true; }
@@ -993,9 +1004,6 @@ public:
   bool		self_con;	// #CAT_Structure whether to create self-connections or not (if applicable)
   bool		init_wts;	// #CAT_Structure whether this projection spec does weight init (else conspec)
 
-  virtual void 	RemoveCons(Projection* prjn);
-  // #CAT_Structure deletes any existing connections
-
   virtual void 	Connect(Projection* prjn);
   // #CAT_Structure connects the network, doing PreConnect, Connect_impl, then Init_Weights -- generally do not override this function
     virtual void	PreConnect(Projection* prjn);
@@ -1081,6 +1089,9 @@ public:
   virtual void	SetCustomFrom(Layer* from_lay);
   // #CAT_Structure set a CUSTOM projection from given layer (if from_lay == layer, turns into SELF)
 
+  virtual void 	RemoveCons();
+  // #MENU #MENU_ON_Actions #CONFIRM #CAT_Structure Reset all connections for this projection
+
   virtual void	Copy_Weights(const Projection* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_Weights copies weights from other projection
   virtual void	SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
@@ -1095,8 +1106,6 @@ public:
   // #MENU #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   // convenience functions for those defined in the spec
-  void 	RemoveCons()		{ if((bool)spec) spec->RemoveCons(this); }
-  // #MENU #MENU_ON_Actions #CONFIRM #CAT_Structure Reset all connections for this projection
   void 	PreConnect()		{ spec->PreConnect(this); }
   // #CAT_Structure pre-configure connection state
   void 	Connect()		{ spec->Connect(this); }
@@ -1104,7 +1113,7 @@ public:
   void 	Connect_impl()		{ spec->Connect_impl(this); }
   // #CAT_Structure actually do the connecting
   int 	ProbAddCons(float p_add_con, float init_wt = 0.0) { return spec->ProbAddCons(this, p_add_con, init_wt); }
-  // #MENU #USE_RVAL #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
+  // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
   void 	Init_dWt()		{ spec->Init_dWt(this); }
   // #MENU #MENU_SEP_BEFORE #CAT_Weights Initialize weight changes for this projection
   void 	Init_Weights()		{ spec->Init_Weights(this); }
@@ -2374,7 +2383,10 @@ private:
 // 	Inline Connection-level functions (fast)	//
 //////////////////////////////////////////////////////////
 
-// todo: rewrite these all as BaseCons!
+// NOTE: most computationally intensive of these are written in
+// optimized form assuming that the recv group owns the connections
+// which is the default for most algos -- if using sender-own, then
+// DEFINITELY need to re-write!!
 
 inline void ConSpec::ApplyLimits(RecvCons* cg, Unit* ru) {
   if(wt_limits.type != WeightLimits::NONE) {
@@ -2416,7 +2428,7 @@ inline float ConSpec::C_Compute_Netin(Connection* cn, Unit*, Unit* su) {
 }
 inline float ConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {
   float rval=0.0f;
-  CON_GROUP_LOOP(cg, rval += C_Compute_Netin(cg->Cn(i), ru, cg->Un(i)));
+  CON_GROUP_LOOP(cg, rval += C_Compute_Netin(cg->OwnCn(i), ru, cg->Un(i)));
   return rval;
 }
 
@@ -2426,7 +2438,7 @@ inline void ConSpec::C_Send_Netin(Connection* cn, float* send_netin_vec, Unit* r
 inline void ConSpec::Send_Netin(SendCons* cg, Network* net, int thread_no, Unit* su) {
   const float su_act = su->act;
   float* send_netin_vec = net->send_netin_tmp.el + net->send_netin_tmp.FastElIndex(0, thread_no);
-  CON_GROUP_LOOP(cg, C_Send_Netin(cg->Cn(i), send_netin_vec, cg->Un(i), su_act));
+  CON_GROUP_LOOP(cg, C_Send_Netin(cg->OwnCn(i), send_netin_vec, cg->Un(i), su_act));
 }
 
 inline float ConSpec::C_Compute_Dist(Connection* cn, Unit*, Unit* su) {
@@ -2435,17 +2447,17 @@ inline float ConSpec::C_Compute_Dist(Connection* cn, Unit*, Unit* su) {
 }
 inline float ConSpec::Compute_Dist(RecvCons* cg, Unit* ru) {
   float rval=0.0f;
-  CON_GROUP_LOOP(cg, rval += C_Compute_Dist(cg->Cn(i), ru, cg->Un(i)));
+  CON_GROUP_LOOP(cg, rval += C_Compute_Dist(cg->OwnCn(i), ru, cg->Un(i)));
   return rval;
 }
 
 inline void ConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_Compute_Weights(cg->Cn(i), ru, cg->Un(i)));
+  CON_GROUP_LOOP(cg, C_Compute_Weights(cg->OwnCn(i), ru, cg->Un(i)));
   ApplyLimits(cg,ru); // ApplySymmetry(cg,ru);  don't apply symmetry during learning..
 }
 
 inline void ConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_Compute_dWt(cg->Cn(i), ru, cg->Un(i)));
+  CON_GROUP_LOOP(cg, C_Compute_dWt(cg->OwnCn(i), ru, cg->Un(i)));
 }
 
 

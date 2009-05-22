@@ -652,7 +652,7 @@ void ScalarValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float val) {
       if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
 	 cs->InheritsFrom(TA_MarkerConSpec)) continue;
       for(int ci=0;ci<recv_gp->size;ci++) {
-	LeabraCon* cn = (LeabraCon*)recv_gp->Cn(ci);
+	LeabraCon* cn = (LeabraCon*)recv_gp->PtrCn(ci);
 	cn->wt += act;
 	if(cn->wt < cs->wt_limits.min) cn->wt = cs->wt_limits.min;
 	if(cn->wt > cs->wt_limits.max) cn->wt = cs->wt_limits.max;
@@ -672,7 +672,7 @@ void ScalarValLayerSpec::Compute_UnBias_Val(Unit_Group* ugp, float val) {
     if(bias_val.un == ScalarValBias::GC)
       u->vcb.g_h = act;
     else if(bias_val.un == ScalarValBias::BWT)
-      u->bias.Cn(0)->wt = act;
+      u->bias.OwnCn(0)->wt = act;
   }
 }
 
@@ -686,7 +686,7 @@ void ScalarValLayerSpec::Compute_UnBias_NegSlp(Unit_Group* ugp) {
     if(bias_val.un == ScalarValBias::GC)
       u->vcb.g_a = val;
     else if(bias_val.un == ScalarValBias::BWT)
-      u->bias.Cn(0)->wt = -val;
+      u->bias.OwnCn(0)->wt = -val;
   }
 }
 
@@ -700,7 +700,7 @@ void ScalarValLayerSpec::Compute_UnBias_PosSlp(Unit_Group* ugp) {
     if(bias_val.un == ScalarValBias::GC)
       u->vcb.g_h = val;
     else if(bias_val.un == ScalarValBias::BWT)
-      u->bias.Cn(0)->wt = val;
+      u->bias.OwnCn(0)->wt = val;
   }
 }
 
@@ -1079,7 +1079,7 @@ void ScalarValSelfPrjnSpec::C_Init_Weights(Projection*, RecvCons* cg, Unit* ru) 
     int su_idx = ((Unit_Group*)su->owner)->FindEl(su);
     float dist = (float)(ru_idx - su_idx) / wt_width;
     float wtval = scale_val * expf(-(dist * dist));
-    cg->Cn(i)->wt = wtval;
+    cg->PtrCn(i)->wt = wtval;
   }
 }
 
@@ -1640,7 +1640,7 @@ void TwoDValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float x_val, float y_
       if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
 	 cs->InheritsFrom(TA_MarkerConSpec)) continue;
       for(int ci=0;ci<recv_gp->size;ci++) {
-	LeabraCon* cn = (LeabraCon*)recv_gp->Cn(ci);
+	LeabraCon* cn = (LeabraCon*)recv_gp->PtrCn(ci);
 	cn->wt += act;
 	if(cn->wt < cs->wt_limits.min) cn->wt = cs->wt_limits.min;
 	if(cn->wt > cs->wt_limits.max) cn->wt = cs->wt_limits.max;
@@ -1660,7 +1660,7 @@ void TwoDValLayerSpec::Compute_UnBias_Val(Unit_Group* ugp, float x_val, float y_
     if(bias_val.un == TwoDValBias::GC)
       u->vcb.g_h = act;
     else if(bias_val.un == TwoDValBias::BWT)
-      u->bias.Cn(0)->wt = act;
+      u->bias.OwnCn(0)->wt = act;
   }
 }
 
@@ -2630,7 +2630,7 @@ void FourDValLayerSpec::Compute_UnBias_Val(Unit_Group* ugp, float x_val, float y
     if(bias_val.un == FourDValBias::GC)
       u->vcb.g_h = act;
     else if(bias_val.un == FourDValBias::BWT)
-      u->bias.Cn(0)->wt = act;
+      u->bias.OwnCn(0)->wt = act;
   }
 }
 

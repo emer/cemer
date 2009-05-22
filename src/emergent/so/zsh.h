@@ -84,7 +84,7 @@ C_Compute_dWt(SoCon* cn, SoRecvCons* cg, Unit* ru, Unit* su) {
 
 inline void ZshConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   Compute_AvgInAct((SoRecvCons*)cg, ru);
-  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->Cn(i), 
+  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->OwnCn(i), 
 				   (SoRecvCons*)cg, ru, cg->Un(i)));
 }
 
@@ -103,7 +103,7 @@ C_Compute_dWt(SoCon* cn, SoRecvCons* cg, Unit* ru, Unit* su) {
 
 inline void MaxInConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   Compute_AvgInAct((SoRecvCons*)cg, ru);
-  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->Cn(i), 
+  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->OwnCn(i), 
 				   (SoRecvCons*)cg, ru, cg->Un(i)));
 }
 

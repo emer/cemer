@@ -119,7 +119,7 @@ C_Compute_dWt(SoCon* cn, SoRecvCons* cg, Unit* ru, Unit* su)
 
 inline void ClConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   Compute_AvgInAct((SoRecvCons*)cg, ru);
-  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->Cn(i), 
+  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->OwnCn(i), 
 				   (SoRecvCons*)cg, ru, cg->Un(i)));
 }
 
@@ -130,7 +130,7 @@ C_Compute_dWt(SoCon* cn, SoRecvCons*, Unit* ru, Unit* su)
 }
 
 inline void SoftClConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->Cn(i), 
+  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->OwnCn(i), 
 				   (SoRecvCons*)cg, ru, cg->Un(i)));
 }
 

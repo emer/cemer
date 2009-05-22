@@ -180,13 +180,13 @@ void BpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no) {
 void BpUnitSpec::Compute_dWt(Unit* u, Network* net, int thread_no) {
   if(u->ext_flag & Unit::EXT)  return; // don't compute dwts for clamped units
   UnitSpec::Compute_dWt(u, net, thread_no);
-  ((BpConSpec*)bias_spec.SPtr())->B_Compute_dWt((BpCon*)u->bias.Cn(0), (BpUnit*)u);
+  ((BpConSpec*)bias_spec.SPtr())->B_Compute_dWt((BpCon*)u->bias.OwnCn(0), (BpUnit*)u);
 }
 
 void BpUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
   if(u->ext_flag & Unit::EXT)  return; // don't update for clamped units
   UnitSpec::Compute_Weights(u, net, thread_no);
-  ((BpConSpec*)bias_spec.SPtr())->B_Compute_Weights((BpCon*)u->bias.Cn(0), (BpUnit*)u);
+  ((BpConSpec*)bias_spec.SPtr())->B_Compute_Weights((BpCon*)u->bias.OwnCn(0), (BpUnit*)u);
 }
 
 void BpUnitSpec::GraphActFun(DataTable* graph_data, float min, float max) {
@@ -460,7 +460,7 @@ void RBFBpUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
     u->net += recv_gp->Compute_Dist(u);
   }
   if(u->bias.size)
-    u->net += u->bias.Cn(0)->wt;
+    u->net += u->bias.OwnCn(0)->wt;
 }
 
 void RBFBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {

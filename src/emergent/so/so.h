@@ -216,7 +216,7 @@ inline void SoConSpec::C_Compute_Weights(SoCon* cn, Unit*, Unit*) {
   cn->dwt = 0.0f;
 }
 inline void SoConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_Compute_Weights((SoCon*)cg->Cn(i), ru, cg->Un(i)));
+  CON_GROUP_LOOP(cg, C_Compute_Weights((SoCon*)cg->OwnCn(i), ru, cg->Un(i)));
   ApplyLimits(cg, ru);
 }
 
@@ -261,7 +261,7 @@ C_Compute_dWt(SoCon* cn, SoRecvCons*, Unit* ru, Unit* su)
 }
 
 inline void HebbConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->Cn(i), 
+  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->OwnCn(i), 
 				   (SoRecvCons*)cg, ru, cg->Un(i)));
 }
 

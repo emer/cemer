@@ -211,7 +211,7 @@ public:
     LeabraTdUnit* lru = (LeabraTdUnit*)ru;
     for(int i=0; i<cg->size; i++) {
       LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
       C_Compute_dWt_Delta(cn, LinFmSigWt(cn->wt), lru, su);
     }
   }
@@ -220,7 +220,7 @@ public:
     LeabraTdUnit* lru = (LeabraTdUnit*)ru;
     for(int i=0; i<cg->size; i++) {
       LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
       C_Compute_dWt_Delta_NoSB(cn, lru, su);
     }
   }

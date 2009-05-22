@@ -236,7 +236,7 @@ inline float BpConSpec::C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit*) {
 }
 inline float BpConSpec::Compute_dEdA(BpSendCons* cg, BpUnit* su) {
   float rval = 0.0f;
-  CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->Cn(i), (BpUnit*)cg->Un(i), su));
+  CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->PtrCn(i), (BpUnit*)cg->Un(i), su));
   return rval;
 }
 
@@ -244,7 +244,7 @@ inline void BpConSpec::C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su) {
   cn->dwt += su->act * ru->dEdNet;
 }
 inline void BpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->Cn(i), (BpUnit*)ru, (BpUnit*)cg->Un(i)));
+  CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->OwnCn(i), (BpUnit*)ru, (BpUnit*)cg->Un(i)));
 }
 inline void BpConSpec::B_Compute_dWt(BpCon* cn, BpUnit* ru) {
   cn->dwt += ru->dEdNet;
@@ -275,15 +275,15 @@ inline void BpConSpec::C_NRM_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su) 
 
 inline void BpConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
   if(momentum_type == AFTER_LRATE) {
-    CON_GROUP_LOOP(cg, C_AFT_Compute_Weights((BpCon*)cg->Cn(i),
+    CON_GROUP_LOOP(cg, C_AFT_Compute_Weights((BpCon*)cg->OwnCn(i),
 					   (BpUnit*)ru, (BpUnit*)cg->Un(i)));
   }
   else if(momentum_type == BEFORE_LRATE) {
-    CON_GROUP_LOOP(cg, C_BEF_Compute_Weights((BpCon*)cg->Cn(i),
+    CON_GROUP_LOOP(cg, C_BEF_Compute_Weights((BpCon*)cg->OwnCn(i),
 					   (BpUnit*)ru, (BpUnit*)cg->Un(i)));
   }
   else {
-    CON_GROUP_LOOP(cg, C_NRM_Compute_Weights((BpCon*)cg->Cn(i),
+    CON_GROUP_LOOP(cg, C_NRM_Compute_Weights((BpCon*)cg->OwnCn(i),
 					   (BpUnit*)ru, (BpUnit*)cg->Un(i)));
   }
   ApplyLimits(cg, ru);
@@ -323,7 +323,7 @@ inline void HebbBpConSpec::C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su) {
 }
 
 inline void HebbBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->Cn(i), (BpUnit*)ru, (BpUnit*)cg->Un(i)));
+  CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->OwnCn(i), (BpUnit*)ru, (BpUnit*)cg->Un(i)));
 }
 
 inline void HebbBpConSpec::B_Compute_dWt(BpCon* cn, BpUnit* ru) {
@@ -350,7 +350,7 @@ inline float ErrScaleBpConSpec::C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit*) {
 }
 inline float ErrScaleBpConSpec::Compute_dEdA(BpRecvCons* cg, BpUnit* su) {
   float rval = 0.0f;
-  CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->Cn(i), (BpUnit*)cg->Un(i), su));
+  CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->OwnCn(i), (BpUnit*)cg->Un(i), su));
   return rval;
 }
 
@@ -430,15 +430,15 @@ inline void DeltaBarDeltaBpConSpec::C_NRM_Compute_Weights
 
 inline void DeltaBarDeltaBpConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
   if(momentum_type == AFTER_LRATE) {
-    CON_GROUP_LOOP(cg, C_AFT_Compute_Weights((DeltaBarDeltaBpCon*)cg->Cn(i),
+    CON_GROUP_LOOP(cg, C_AFT_Compute_Weights((DeltaBarDeltaBpCon*)cg->OwnCn(i),
 					   (BpUnit*)ru, (BpUnit*)cg->Un(i)));
   }
   else if(momentum_type == BEFORE_LRATE) {
-    CON_GROUP_LOOP(cg, C_BEF_Compute_Weights((DeltaBarDeltaBpCon*)cg->Cn(i),
+    CON_GROUP_LOOP(cg, C_BEF_Compute_Weights((DeltaBarDeltaBpCon*)cg->OwnCn(i),
 					   (BpUnit*)ru, (BpUnit*)cg->Un(i)));
   }
   else {
-    CON_GROUP_LOOP(cg, C_NRM_Compute_Weights((DeltaBarDeltaBpCon*)cg->Cn(i),
+    CON_GROUP_LOOP(cg, C_NRM_Compute_Weights((DeltaBarDeltaBpCon*)cg->OwnCn(i),
 					   (BpUnit*)ru, (BpUnit*)cg->Un(i)));
   }
   ApplyLimits(cg, ru);

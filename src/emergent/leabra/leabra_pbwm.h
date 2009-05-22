@@ -110,14 +110,14 @@ public:
     if(matrix_rule == OUTPUT) {
       for(int i=0; i<cg->size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+	LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
 	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p, ru->act_m, su->act_m, ru_thr);
       }
     }
     else { // MAINT
       for(int i=0; i<cg->size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+	LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
 	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p2, ru->act_p, su->act_p, ru_thr);
       }
     }
@@ -131,14 +131,14 @@ public:
     if(matrix_rule == OUTPUT) {
       for(int i=0; i<cg->size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+	LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
 	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p, ru->act_m, su->act_m, ru_thr);
       }
     }
     else { // MAINT
       for(int i=0; i<cg->size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+	LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
 	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p2, ru->act_p, su->act_p, ru_thr);
       }
     }

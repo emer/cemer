@@ -2908,25 +2908,25 @@ inline void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* ne
     * su_act_delta;
   if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
     if(thread_no < 0) {
-      CON_GROUP_LOOP(cg, C_Send_InhibDelta_NoThrd(cg->Cn(i), (LeabraUnit*)cg->Un(i),
+      CON_GROUP_LOOP(cg, C_Send_InhibDelta_NoThrd(cg->OwnCn(i), (LeabraUnit*)cg->Un(i),
 						 su_act_delta_eff));
     }
     else {
       float* send_inhib_vec = net->send_inhib_tmp.el
 	+ net->send_inhib_tmp.FastElIndex(0, thread_no);
-      CON_GROUP_LOOP(cg, C_Send_InhibDelta_Thrd(cg->Cn(i), send_inhib_vec, (LeabraUnit*)cg->Un(i),
-					   su_act_delta_eff));
+      CON_GROUP_LOOP(cg, C_Send_InhibDelta_Thrd(cg->OwnCn(i), send_inhib_vec,
+					(LeabraUnit*)cg->Un(i), su_act_delta_eff));
     }
   }
   else {
     if(thread_no < 0) {
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThrd(cg->Cn(i), (LeabraUnit*)cg->Un(i),
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThrd(cg->OwnCn(i), (LeabraUnit*)cg->Un(i),
 						 su_act_delta_eff));
     }
     else {
       float* send_netin_vec = net->send_netin_tmp.el
 	+ net->send_netin_tmp.FastElIndex(0, thread_no);
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thrd(cg->Cn(i), send_netin_vec,
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec,
 					       (LeabraUnit*)cg->Un(i), su_act_delta_eff));
     }
   }
@@ -2937,7 +2937,7 @@ float LeabraConSpec::C_Compute_Netin(LeabraCon* cn, LeabraUnit*, LeabraUnit* su)
 }
 float LeabraConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {
   float rval=0.0f;
-  CON_GROUP_LOOP(cg, rval += C_Compute_Netin((LeabraCon*)cg->Cn(i), (LeabraUnit*)ru,
+  CON_GROUP_LOOP(cg, rval += C_Compute_Netin((LeabraCon*)cg->PtrCn(i), (LeabraUnit*)ru,
 					     (LeabraUnit*)cg->Un(i)));
   return ((LeabraRecvCons*)cg)->scale_eff * rval;
 }
@@ -2989,7 +2989,7 @@ inline void LeabraConSpec::Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit*
   if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
       if(!(su->in_subgp &&
 	   (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
  	float lin_wt = LinFmSigWt(cn->wt);
@@ -3015,7 +3015,7 @@ inline void LeabraConSpec::C_Compute_Weights_LeabraCHL(LeabraCon* cn)
 }
 
 inline void LeabraConSpec::Compute_Weights_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-  CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->Cn(i)));
+  CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->PtrCn(i)));
   //  ApplyLimits(cg, ru); limits are automatically enforced anyway
 }
 
@@ -3042,16 +3042,16 @@ inline void LeabraConSpec::Compute_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru, boo
   if(!xcalm.do_comp_sravg) return;
 
   if(learn_rule == CTLEABRA_XCAL_C) {
-    CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont((LeabraCon*)cg->Cn(i), ru->act_nd,
+    CON_GROUP_LOOP(cg, C_Compute_SRAvg_cont((LeabraCon*)cg->PtrCn(i), ru->act_nd,
 					    ((LeabraUnit*)cg->Un(i))->act_nd));
   }
   else {
     if(do_s) {
-      CON_GROUP_LOOP(cg, C_Compute_SRAvg_ms((LeabraCon*)cg->Cn(i), ru->act_nd,
+      CON_GROUP_LOOP(cg, C_Compute_SRAvg_ms((LeabraCon*)cg->PtrCn(i), ru->act_nd,
 					    ((LeabraUnit*)cg->Un(i))->act_nd));
     }
     else {
-      CON_GROUP_LOOP(cg, C_Compute_SRAvg_m((LeabraCon*)cg->Cn(i), ru->act_nd, 
+      CON_GROUP_LOOP(cg, C_Compute_SRAvg_m((LeabraCon*)cg->PtrCn(i), ru->act_nd, 
 					   ((LeabraUnit*)cg->Un(i))->act_nd));
     }
   }
@@ -3065,7 +3065,7 @@ inline void LeabraConSpec::C_Trial_Init_SRAvg(LeabraCon* cn) {
 inline void LeabraConSpec::Trial_Init_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru) {
   if(!xcalm.do_init_sravg) return;
 
-  CON_GROUP_LOOP(cg, C_Trial_Init_SRAvg((LeabraCon*)cg->Cn(i)));
+  CON_GROUP_LOOP(cg, C_Trial_Init_SRAvg((LeabraCon*)cg->PtrCn(i)));
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -3132,13 +3132,13 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
   // threshold is mix of l and ml terms:
   float ru_thr = MAX(ru->ravg_l, ru->ravg_ml);
   ru_thr *= xcal.l_gain;
-  LeabraCon* rbias = (LeabraCon*)ru->bias.Cn(0);
+  LeabraCon* rbias = (LeabraCon*)ru->bias.OwnCn(0);
 
   float sravg_s_nrm = net->sravg_vals.s_nrm;
   float sravg_m_nrm = net->sravg_vals.m_nrm;
   if(xcal.lrn_var == XCalLearnSpec::XCAL_SR) {
     for(int i=0; i<cg->size; i++) {
-      C_Compute_dWt_CtLeabraXCAL_SR_trial((LeabraCon*)cg->Cn(i),
+      C_Compute_dWt_CtLeabraXCAL_SR_trial((LeabraCon*)cg->PtrCn(i),
 					  ru_thr, sravg_s_nrm, sravg_m_nrm);
     }
   }
@@ -3146,30 +3146,30 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUn
     if(xcalm.ml_mix > 0.0f) {
       for(int i=0; i<cg->size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	C_Compute_dWt_CtLeabraXCAL_SEP_trial_ml((LeabraCon*)cg->Cn(i), rbias,
-						(LeabraCon*)su->bias.Cn(0), ru, su,
+	C_Compute_dWt_CtLeabraXCAL_SEP_trial_ml((LeabraCon*)cg->PtrCn(i), rbias,
+						(LeabraCon*)su->bias.OwnCn(0), ru, su,
 						ru_thr, sravg_s_nrm, sravg_m_nrm);
       }
     }
     else {
       for(int i=0; i<cg->size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	C_Compute_dWt_CtLeabraXCAL_SEP_trial((LeabraCon*)cg->Cn(i), rbias,
-					     (LeabraCon*)su->bias.Cn(0),
+	C_Compute_dWt_CtLeabraXCAL_SEP_trial((LeabraCon*)cg->PtrCn(i), rbias,
+					     (LeabraCon*)su->bias.OwnCn(0),
 					     ru_thr, sravg_s_nrm, sravg_m_nrm);
       }
     }
   }
   else if(xcal.lrn_var == XCalLearnSpec::CAL) {
     for(int i=0; i<cg->size; i++) {
-      C_Compute_dWt_CtLeabraXCAL_CAL_trial((LeabraCon*)cg->Cn(i),
+      C_Compute_dWt_CtLeabraXCAL_CAL_trial((LeabraCon*)cg->PtrCn(i),
 					   ru_thr, sravg_s_nrm, sravg_m_nrm);
     }
   }
   else if(xcal.lrn_var == XCalLearnSpec::CHL) {
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      C_Compute_dWt_CtLeabraXCAL_CHL_trial((LeabraCon*)cg->Cn(i),
+      C_Compute_dWt_CtLeabraXCAL_CHL_trial((LeabraCon*)cg->PtrCn(i),
 					   ru_thr, sravg_s_nrm, sravg_m_nrm,
 					   ru->act_p, ru->act_m,
 					   su->act_p, su->act_m);
@@ -3194,12 +3194,12 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_C(LeabraRecvCons* cg, Leabra
   // threshold is mix of l and ml terms:
   float ru_thr = MAX(ru->ravg_l, ru->ravg_ml);
   ru_thr *= xcal.l_gain;
-  LeabraCon* rbias = (LeabraCon*)ru->bias.Cn(0);
+  LeabraCon* rbias = (LeabraCon*)ru->bias.OwnCn(0);
 
   for(int i=0; i<cg->size; i++) {
     LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-    C_Compute_dWt_CtLeabraXCAL_C_sep((LeabraCon*)cg->Cn(i), rbias,
-				     (LeabraCon*)su->bias.Cn(0), ru_thr);
+    C_Compute_dWt_CtLeabraXCAL_C_sep((LeabraCon*)cg->PtrCn(i), rbias,
+				     (LeabraCon*)su->bias.OwnCn(0), ru_thr);
   }
 }
 
@@ -3214,13 +3214,13 @@ inline void LeabraConSpec::C_Compute_dWt_Rnd_XCAL(LeabraCon* cn, float rnd_var) 
 inline void LeabraConSpec::Compute_dWt_Rnd_XCAL(LeabraRecvCons* cg, LeabraUnit* ru,
 						float rnd_var) {
   for(int i=0; i<cg->size; i++) {
-    C_Compute_dWt_Rnd_XCAL((LeabraCon*)cg->Cn(i), rnd_var);
+    C_Compute_dWt_Rnd_XCAL((LeabraCon*)cg->PtrCn(i), rnd_var);
   }
 }
 
 inline float LeabraConSpec::Compute_dWtMean(LeabraRecvCons* cg, LeabraUnit* ru) {
   float dwt_mean = 0.0f;
-  CON_GROUP_LOOP(cg, dwt_mean += ((LeabraCon*)cg->Cn(i))->dwt);
+  CON_GROUP_LOOP(cg, dwt_mean += ((LeabraCon*)cg->PtrCn(i))->dwt);
   return dwt_mean / (float)cg->size;
 }
 
@@ -3243,7 +3243,7 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL(LeabraRecvCons* cg, Leab
   if(ru->ravg_l < xcalm.rnd_min_avg) {
     Compute_dWt_Rnd_XCAL(cg, ru, xcalm.rnd_var);
   }
-  CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL((LeabraCon*)cg->Cn(i)));
+  CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL((LeabraCon*)cg->PtrCn(i)));
   //  ApplyLimits(cg, ru); limits are automatically enforced anyway
 }
 
@@ -3261,7 +3261,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUni
   LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
   LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
   CON_GROUP_LOOP(cg,
-		 C_Compute_dWt_CtLeabraCAL((LeabraCon*)cg->Cn(i),
+		 C_Compute_dWt_CtLeabraCAL((LeabraCon*)cg->PtrCn(i),
 			   net->sravg_vals.s_nrm, net->sravg_vals.m_nrm));
 }
 
@@ -3283,7 +3283,7 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraCAL(LeabraCon* cn)
 }
 
 inline void LeabraConSpec::Compute_Weights_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-  CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraCAL((LeabraCon*)cg->Cn(i)));
+  CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraCAL((LeabraCon*)cg->PtrCn(i)));
   //  ApplyLimits(cg, ru); limits are automatically enforced anyway
 }
 
@@ -3434,7 +3434,7 @@ inline void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraNetwork*, fl
 inline float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraNetwork* net) {
   float non_bias_net = u->net;
   if(u->bias.size)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias.Cn(0)->wt;
+    non_bias_net -= u->bias_scale * u->bias.OwnCn(0)->wt;
   // including the ga and gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h) /
@@ -3444,7 +3444,7 @@ inline float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraNetwork* ne
 inline float LeabraUnitSpec::Compute_IThreshNoA(LeabraUnit* u, LeabraNetwork* net) {
   float non_bias_net = u->net;
   if(u->bias.size)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias.Cn(0)->wt;
+    non_bias_net -= u->bias_scale * u->bias.OwnCn(0)->wt;
   // NOT including the ga term
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.h * e_rev_sub_thr.h) /
@@ -3454,7 +3454,7 @@ inline float LeabraUnitSpec::Compute_IThreshNoA(LeabraUnit* u, LeabraNetwork* ne
 inline float LeabraUnitSpec::Compute_IThreshNoH(LeabraUnit* u, LeabraNetwork* net) {
   float non_bias_net = u->net;
   if(u->bias.size)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias.Cn(0)->wt;
+    non_bias_net -= u->bias_scale * u->bias.OwnCn(0)->wt;
   // NOT including the gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.a * e_rev_sub_thr.a) /
@@ -3464,7 +3464,7 @@ inline float LeabraUnitSpec::Compute_IThreshNoH(LeabraUnit* u, LeabraNetwork* ne
 inline float LeabraUnitSpec::Compute_IThreshNoAH(LeabraUnit* u, LeabraNetwork* net) {
   float non_bias_net = u->net;
   if(u->bias.size)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias.Cn(0)->wt;
+    non_bias_net -= u->bias_scale * u->bias.OwnCn(0)->wt;
   // NOT including the ga and gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l) /
 	  (act.thr - e_rev.i));

@@ -193,7 +193,7 @@ void CsUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
 	continue;
       u->net += recv_gp->Compute_Netin(u);
     }
-    u->net += u->bias.Cn(0)->wt;
+    u->net += u->bias.OwnCn(0)->wt;
   }
   else if(clamp_type == HARD_CLAMP) {
     if(cu->ext_flag & Unit::EXT) // no point in computing net for clamped units!
@@ -256,7 +256,7 @@ void CsUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
 
 void CsUnitSpec::Aggregate_dWt(CsUnit* cu, CsNetwork* net, int thread_no) {
   int phase = net->phase;
-  ((CsConSpec*)bias_spec.SPtr())->B_Aggregate_dWt((CsCon*)cu->bias.Cn(0), cu, phase);
+  ((CsConSpec*)bias_spec.SPtr())->B_Aggregate_dWt((CsCon*)cu->bias.OwnCn(0), cu, phase);
   for(int g=0; g<cu->recv.size; g++) {
     CsRecvCons* recv_gp = (CsRecvCons*)cu->recv.FastEl(g);
     if(!recv_gp->prjn->from->lesioned())
@@ -289,13 +289,13 @@ void CsUnitSpec::PostSettle(CsUnit* u, CsNetwork* net) {
 void CsUnitSpec::Compute_dWt(Unit* u, Network* net, int thread_no) {
   inherited::Compute_dWt(u, net, thread_no);
   CsUnit* cu = (CsUnit*)u;
-  ((CsConSpec*)bias_spec.SPtr())->B_Compute_dWt((CsCon*)cu->bias.Cn(0), cu);
+  ((CsConSpec*)bias_spec.SPtr())->B_Compute_dWt((CsCon*)cu->bias.OwnCn(0), cu);
   cu->n_dwt_aggs = 0;		// reset after wts are aggd
 }
 
 void CsUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
   inherited::Compute_Weights(u, net, thread_no);
-  ((CsConSpec*)bias_spec.SPtr())->B_Compute_Weights((CsCon*)u->bias.Cn(0), u);
+  ((CsConSpec*)bias_spec.SPtr())->B_Compute_Weights((CsCon*)u->bias.OwnCn(0), u);
 }
 
 void CsUnitSpec::GraphActFun(DataTable* graph_data, float min, float max, int ncycles) {
@@ -1147,7 +1147,7 @@ void CsNetwork::Compute_EpochStats() {
 //   if(use_netin)    return;
 //   Stat::RecvCon_Run(unit);
 //   netin_hrmny *= unit->act * 0.5f;
-//   netin_hrmny += unit->act * (unit->bias.Cn(0)->wt + unit->ext);
+//   netin_hrmny += unit->act * (unit->bias.OwnCn(0)->wt + unit->ext);
 //   // netinput+external input+ bias
 //   net_agg.ComputeAggNoUpdt(hrmny.val, netin_hrmny);
 // }
@@ -1164,7 +1164,7 @@ void CsNetwork::Compute_EpochStats() {
 //     // since everything is being mult by .5, but bias and ext
 //     // were already included in the net, so they are added again giving 1
 //     net_agg.ComputeAggNoUpdt(hrmny.val, 0.5f * csun->act *
-// 			     (csun->net + csun->bias.Cn(0)->wt + csun->ext));
+// 			     (csun->net + csun->bias.OwnCn(0)->wt + csun->ext));
 // 			// don't update because update happens on stress
 //   }
 //   // todo: this assumes a logistic-style activation function..

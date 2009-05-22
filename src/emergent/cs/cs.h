@@ -322,7 +322,7 @@ inline void CsConSpec::C_Aggregate_dWt(CsCon* cn, CsUnit* ru, CsUnit* su,
 }
 inline void CsConSpec::Aggregate_dWt(CsRecvCons* cg, CsUnit* ru,
 				      float phase) {
-  CON_GROUP_LOOP(cg, C_Aggregate_dWt((CsCon*)cg->Cn(i), ru, (CsUnit*)cg->Un(i),
+  CON_GROUP_LOOP(cg, C_Aggregate_dWt((CsCon*)cg->OwnCn(i), ru, (CsUnit*)cg->Un(i),
 				   phase));
 }
 inline void CsConSpec::B_Aggregate_dWt(CsCon* cn, CsUnit* ru, float phase) {
@@ -336,7 +336,7 @@ inline void CsConSpec::C_Compute_dWt(CsCon* cn, CsUnit* ru, CsUnit*) {
 }
 
 inline void CsConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_Compute_dWt((CsCon*)cg->Cn(i), (CsUnit*)ru,
+  CON_GROUP_LOOP(cg, C_Compute_dWt((CsCon*)cg->OwnCn(i), (CsUnit*)ru,
 				   (CsUnit*)cg->Un(i)));
 }
 inline void CsConSpec::B_Compute_dWt(CsCon* cn, CsUnit* ru) {
@@ -358,7 +358,7 @@ inline void CsConSpec::C_Compute_Weights(CsCon* cn, Unit* ru, Unit* su) {
   cn->dwt = 0.0f;
 }
 inline void CsConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_Compute_Weights((CsCon*)cg->Cn(i), ru, cg->Un(i)));
+  CON_GROUP_LOOP(cg, C_Compute_Weights((CsCon*)cg->OwnCn(i), ru, cg->Un(i)));
   ApplyLimits(cg, ru);
 }
 inline void CsConSpec::B_Compute_Weights(CsCon* cn, Unit* ru) {
@@ -394,7 +394,7 @@ inline void HebbCsConSpec::C_Compute_dWt(CsCon* cn, CsUnit* ru, CsUnit* su) {
 }
 
 inline void HebbCsConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg,C_Compute_dWt((CsCon*)cg->Cn(i), (CsUnit*)ru, (CsUnit*)cg->Un(i)));
+  CON_GROUP_LOOP(cg,C_Compute_dWt((CsCon*)cg->OwnCn(i), (CsUnit*)ru, (CsUnit*)cg->Un(i)));
 }
 
 inline void HebbCsConSpec::B_Compute_dWt(CsCon* cn, CsUnit* ru) {
