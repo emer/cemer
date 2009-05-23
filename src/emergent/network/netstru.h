@@ -2071,6 +2071,8 @@ public:
   // #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
   virtual void 	CountRecvCons();
   // #CAT_Structure count recv connections for all units in network
+  virtual bool 	RecvOwnsCons() { return true; }
+  // #CAT_Structure does the receiver own the connections (default) or does the sender?
 
   virtual void	ConnectUnits(Unit* u_to, Unit* u_from=NULL, bool record=true,
 			     ConSpec* conspec=NULL);

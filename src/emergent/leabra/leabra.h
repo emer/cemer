@@ -2628,6 +2628,7 @@ public:
 
   virtual void	CheckInhibCons();
   override void	BuildUnits_Threads();
+  override bool RecvOwnsCons() { return false; }
 
   ///////////////////////////////////////////////////////////////////////
   //	TrialInit -- at start of trial

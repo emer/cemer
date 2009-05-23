@@ -918,7 +918,7 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
     }
     else if(su != Un(i)) {
       SetUn(i, su);
-      int sidx = send_gp->FindConFromIdx(ru); // todo: yikes!
+//       int sidx = send_gp->FindConFromIdx(ru); // todo: yikes!
 //       if(sidx >= 0) {
 // 	send_gp->cons.ReplaceLinkIdx(sidx, Cn(i));
 //       }
@@ -6359,10 +6359,19 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
     FOR_ITR_EL(Unit, un, lay->units., ui) {
       if(un->bias.size)
 	values.FastEl(cidx++) = un->bias.OwnCn(0)->dwt;
-      for(int g = 0; g < un->recv.size; g++) {
-	RecvCons* cg = un->recv.FastEl(g);
-	for(int i = 0;i<cg->size;i++)
-	  values.FastEl(cidx++) = cg->Cn(i)->dwt;
+      if(RecvOwnsCons()) {
+	for(int g = 0; g < un->recv.size; g++) {
+	  RecvCons* cg = un->recv.FastEl(g);
+	  for(int i = 0;i<cg->size;i++)
+	    values.FastEl(cidx++) = cg->Cn(i)->dwt;
+	}
+      }
+      else {
+	for(int g = 0; g < un->send.size; g++) {
+	  SendCons* cg = un->send.FastEl(g);
+	  for(int i = 0;i<cg->size;i++)
+	    values.FastEl(cidx++) = cg->Cn(i)->dwt;
+	}
       }
     }
   }
@@ -6379,10 +6388,19 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
     FOR_ITR_EL(Unit, un, lay->units., ui) {
       if(un->bias.size)
 	un->bias.OwnCn(0)->dwt = results.FastEl(cidx++);
-      for(int g = 0; g < un->recv.size; g++) {
-	RecvCons* cg = un->recv.FastEl(g);
-	for(int i = 0;i<cg->size;i++)
-	  cg->Cn(i)->dwt = results.FastEl(cidx++);
+      if(RecvOwnsCons()) {
+	for(int g = 0; g < un->recv.size; g++) {
+	  RecvCons* cg = un->recv.FastEl(g);
+	  for(int i = 0;i<cg->size;i++)
+	    cg->Cn(i)->dwt = results.FastEl(cidx++);
+	}
+      }
+      else {
+	for(int g = 0; g < un->send.size; g++) {
+	  SendCons* cg = un->send.FastEl(g);
+	  for(int i = 0;i<cg->size;i++)
+	    cg->Cn(i)->dwt = results.FastEl(cidx++);
+	}
       }
     }
   }
@@ -6408,10 +6426,19 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
     FOR_ITR_EL(Unit, un, lay->units., ui) {
       if(un->bias.size)
 	values.FastEl(cidx++) = un->bias.OwnCn(0)->wt;
-      for(int g = 0; g < un->recv.size; g++) {
-	RecvCons* cg = un->recv.FastEl(g);
-	for(int i = 0;i<cg->size;i++)
-	  values.FastEl(cidx++) = cg->Cn(i)->wt;
+      if(RecvOwnsCons()) {
+	for(int g = 0; g < un->recv.size; g++) {
+	  RecvCons* cg = un->recv.FastEl(g);
+	  for(int i = 0;i<cg->size;i++)
+	    values.FastEl(cidx++) = cg->Cn(i)->wt;
+	}
+      }
+      else {
+	for(int g = 0; g < un->send.size; g++) {
+	  SendCons* cg = un->send.FastEl(g);
+	  for(int i = 0;i<cg->size;i++)
+	    values.FastEl(cidx++) = cg->Cn(i)->wt;
+	}
       }
     }
   }
@@ -6429,10 +6456,19 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
     FOR_ITR_EL(Unit, un, lay->units., ui) {
       if(un->bias.size)
 	un->bias.OwnCn(0)->wt = avg_mult * results.FastEl(cidx++);
-      for(int g = 0; g < un->recv.size; g++) {
-	RecvCons* cg = un->recv.FastEl(g);
-	for(int i = 0;i<cg->size;i++)
-	  cg->Cn(i)->wt = avg_mult * results.FastEl(cidx++);
+      if(RecvOwnsCons()) {
+	for(int g = 0; g < un->recv.size; g++) {
+	  RecvCons* cg = un->recv.FastEl(g);
+	  for(int i = 0;i<cg->size;i++)
+	    cg->Cn(i)->wt = avg_mult * results.FastEl(cidx++);
+	}
+      }
+      else {
+	for(int g = 0; g < un->send.size; g++) {
+	  SendCons* cg = un->send.FastEl(g);
+	  for(int i = 0;i<cg->size;i++)
+	    cg->Cn(i)->wt = avg_mult * results.FastEl(cidx++);
+	}
       }
     }
   }
