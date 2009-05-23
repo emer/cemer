@@ -102,50 +102,42 @@ public:
     cn->dwt += cur_lrate * dwt;
   }
 
-  inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    // threshold is mix of l and ml terms:
-    float ru_thr = MAX(ru->ravg_l, ru->ravg_ml);
-    ru_thr *= xcal.l_gain;
-
+  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     if(matrix_rule == OUTPUT) {
       for(int i=0; i<cg->size; i++) {
-	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
-	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p, ru->act_m, su->act_m, ru_thr);
+	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p, ru->act_m, su->act_m, ru->l_thr);
       }
     }
     else { // MAINT
       for(int i=0; i<cg->size; i++) {
-	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
-	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p2, ru->act_p, su->act_p, ru_thr);
+	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p2, ru->act_p, su->act_p, ru->l_thr);
       }
     }
   }
 
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    // threshold is mix of l and ml terms:
-    float ru_thr = MAX(ru->ravg_l, ru->ravg_ml);
-    ru_thr *= xcal.l_gain;
-
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
     if(matrix_rule == OUTPUT) {
       for(int i=0; i<cg->size; i++) {
-	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
-	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p, ru->act_m, su->act_m, ru_thr);
+	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p, ru->act_m, su->act_m, ru->l_thr);
       }
     }
     else { // MAINT
       for(int i=0; i<cg->size; i++) {
-	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
-	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p2, ru->act_p, su->act_p, ru_thr);
+	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p2, ru->act_p, su->act_p, ru->l_thr);
       }
     }
   }
 
-  inline override void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    Compute_dWt_CtLeabraXCAL(cg, ru);
+  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    Compute_dWt_CtLeabraXCAL(cg, su);
   }
 
   TA_SIMPLE_BASEFUNS(MatrixConSpec);

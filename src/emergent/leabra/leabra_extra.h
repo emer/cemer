@@ -29,18 +29,18 @@ class LEABRA_API MarkerConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   // don't send regular net inputs or learn!
-  inline void 	Send_NetinDelta(LeabraRecvCons*, LeabraNetwork* net, int thread_no, 
+  inline void 	Send_NetinDelta(LeabraSendCons*, LeabraNetwork* net, int thread_no, 
 				float su_act_delta_eff) { };
   inline void 	Compute_dWt(RecvCons*, Unit*) { };
-  inline void 	Compute_dWt_LeabraCHL(LeabraRecvCons*, LeabraUnit*) { };
-  inline void 	Compute_dWt_CtLeabraCAL(LeabraRecvCons*, LeabraUnit*) { };
-  inline void 	Compute_dWt_CtLeabraXCAL(LeabraRecvCons*, LeabraUnit*) { };
-  inline void 	Compute_SRAvg(LeabraRecvCons*, LeabraUnit*, bool do_s) { };
-  inline void 	Trial_Init_SRAvg(LeabraRecvCons*, LeabraUnit*) { };
+  inline void 	Compute_dWt_LeabraCHL(LeabraSendCons*, LeabraUnit*) { };
+  inline void 	Compute_dWt_CtLeabraCAL(LeabraSendCons*, LeabraUnit*) { };
+  inline void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons*, LeabraUnit*) { };
+  inline void 	Compute_SRAvg(LeabraSendCons*, LeabraUnit*, bool do_s) { };
+  inline void 	Trial_Init_SRAvg(LeabraSendCons*, LeabraUnit*) { };
   inline void	Compute_Weights(RecvCons*, Unit*) { };
-  inline void	Compute_Weights_LeabraCHL(LeabraRecvCons*, LeabraUnit*) { };
-  inline void	Compute_Weights_CtLeabraCAL(LeabraRecvCons*, LeabraUnit*) { };
-  inline void	Compute_Weights_CtLeabraXCAL(LeabraRecvCons*, LeabraUnit*) { };
+  inline void	Compute_Weights_LeabraCHL(LeabraSendCons*, LeabraUnit*) { };
+  inline void	Compute_Weights_CtLeabraCAL(LeabraSendCons*, LeabraUnit*) { };
+  inline void	Compute_Weights_CtLeabraXCAL(LeabraSendCons*, LeabraUnit*) { };
 
   bool	 DMem_AlwaysLocal() { return true; }
   // these connections always need to be there on all nodes..
@@ -219,21 +219,21 @@ public:
     if(cn->effwt > cn->wt) cn->effwt = cn->wt;
     if(cn->effwt < wt_limits.min) cn->effwt = wt_limits.min;
   }
-  virtual void Depress_Wt(LeabraRecvCons* cg, LeabraUnit* ru) {
-    CON_GROUP_LOOP(cg, C_Depress_Wt((TrialSynDepCon*)cg->PtrCn(i), ru, (LeabraUnit*)cg->Un(i)));
+  virtual void Depress_Wt(LeabraSendCons* cg, LeabraUnit* su) {
+    CON_GROUP_LOOP(cg, C_Depress_Wt((TrialSynDepCon*)cg->OwnCn(i), (LeabraUnit*)cg->Un(i), su));
   }
 
-  void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    inherited::Compute_dWt_LeabraCHL(cg, ru);
-    Depress_Wt(cg, ru);
+  void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    inherited::Compute_dWt_LeabraCHL(cg, su);
+    Depress_Wt(cg, su);
   }
-  void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    inherited::Compute_dWt_CtLeabraXCAL(cg, ru);
-    Depress_Wt(cg, ru);
+  void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    inherited::Compute_dWt_CtLeabraXCAL(cg, su);
+    Depress_Wt(cg, su);
   }
-  void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    inherited::Compute_dWt_CtLeabraCAL(cg, ru);
-    Depress_Wt(cg, ru);
+  void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    inherited::Compute_dWt_CtLeabraCAL(cg, su);
+    Depress_Wt(cg, su);
   }
 
   void C_Reset_EffWt(TrialSynDepCon* cn) {
@@ -271,9 +271,7 @@ public:
 
   inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
 			      int thread_no, float su_act_delta) {
-    Unit* ru = cg->Un(0);
-    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx()))->scale_eff
-      * su_act_delta;
+    float su_act_delta_eff = cg->scale_eff * su_act_delta;
     if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
       if(thread_no < 0) {
 	CON_GROUP_LOOP(cg, C_Send_InhibDelta_NoThrd((TrialSynDepCon*)cg->OwnCn(i),
@@ -368,8 +366,9 @@ public:
   inline void C_Compute_CycSynDep(CycleSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     syn_dep.Depress(cn->effwt, cn->wt, ru->act_eq, su->act_eq);
   }
-  inline override void Compute_CycSynDep(LeabraRecvCons* cg, LeabraUnit* ru) {
-    CON_GROUP_LOOP(cg, C_Compute_CycSynDep((CycleSynDepCon*)cg->PtrCn(i), ru, (LeabraUnit*)cg->Un(i)));
+  inline override void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su) {
+    CON_GROUP_LOOP(cg, C_Compute_CycSynDep((CycleSynDepCon*)cg->OwnCn(i),
+					   (LeabraUnit*)cg->Un(i), su));
   }
 
   void C_Reset_EffWt(CycleSynDepCon* cn) {
@@ -407,9 +406,7 @@ public:
 
   inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
 			      int thread_no, float su_act_delta) {
-    Unit* ru = cg->Un(0);
-    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx()))->scale_eff
-      * su_act_delta;
+    float su_act_delta_eff = cg->scale_eff * su_act_delta;
     if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
       if(thread_no < 0) {
 	CON_GROUP_LOOP(cg, C_Send_InhibDelta_NoThrd((CycleSynDepCon*)cg->OwnCn(i),
@@ -513,8 +510,8 @@ public:
     ca_dep.CaUpdt(cn->cai, ru->act_eq, su->act_eq);
   }
   // connection-level Cai update
-  inline void Compute_Cai(LeabraRecvCons* cg, LeabraUnit* ru) {
-    CON_GROUP_LOOP(cg, C_Compute_Cai((CaiSynDepCon*)cg->PtrCn(i), ru, (LeabraUnit*)cg->Un(i)));
+  inline void Compute_Cai(LeabraSendCons* cg, LeabraUnit* su) {
+    CON_GROUP_LOOP(cg, C_Compute_Cai((CaiSynDepCon*)cg->OwnCn(i), (LeabraUnit*)cg->Un(i), su));
   }
 
   // connection-level synaptic depression: syn dep direct
@@ -522,9 +519,10 @@ public:
     cn->effwt = cn->wt * ca_dep.SynDep(cn->cai);
   }
   // connection-level synaptic depression: ca mediated
-  inline override void Compute_CycSynDep(LeabraRecvCons* cg, LeabraUnit* ru) {
-    Compute_Cai(cg, ru);
-    CON_GROUP_LOOP(cg, C_Compute_CycSynDep((CaiSynDepCon*)cg->PtrCn(i), ru, (LeabraUnit*)cg->Un(i)));
+  inline override void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su) {
+    Compute_Cai(cg, su);
+    CON_GROUP_LOOP(cg, C_Compute_CycSynDep((CaiSynDepCon*)cg->OwnCn(i),
+					   (LeabraUnit*)cg->Un(i), su));
   }
   // connection-group level synaptic depression
 
@@ -566,9 +564,7 @@ public:
 
   inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
 			      int thread_no, float su_act_delta) {
-    Unit* ru = cg->Un(0);
-    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx()))->scale_eff
-      * su_act_delta;
+    float su_act_delta_eff = cg->scale_eff * su_act_delta;
     if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
       if(thread_no < 0) {
 	CON_GROUP_LOOP(cg, C_Send_InhibDelta_NoThrd((CaiSynDepCon*)cg->OwnCn(i),
@@ -676,7 +672,7 @@ public:
 
   override void SetCurLrate(LeabraNetwork* net, int epoch);
 
-  inline float C_Compute_SlowHebb(FastWtCon* cn, LeabraRecvCons* cg,
+  inline float C_Compute_SlowHebb(FastWtCon* cn, LeabraSendCons* cg,
 				  float lin_wt, float ru_act, float su_act)
   {
     float swt_eff = (fast_wt.slw_sat) ? lin_wt : cn->swt;
@@ -715,24 +711,21 @@ public:
 
   // todo: do CtLeabra_XCal and cal
 
-  inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    Compute_SAvgCor(cg, ru);
-    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<cg->size; i++) {
-	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	FastWtCon* cn = (FastWtCon*)cg->PtrCn(i);
-	if(!(su->in_subgp &&
-	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  C_Compute_FastDecay(cn, ru, su);
-	  float lin_wt = LinFmSigWt(cn->wt);
-	  C_Compute_dWt(cn, ru, 
-			C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p),
-			C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m, su->act_p, su->act_m));  
-	  C_Compute_SlowdWt(cn, ru, 
-			    C_Compute_SlowHebb(cn, cg, lin_wt, ru->act_p, su->act_p),
-			    C_Compute_SlowErr(cn, lin_wt, ru->act_p, ru->act_m, su->act_p, su->act_m));  
-	}
-      }
+  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    Compute_SAvgCor(cg, su);
+    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
+
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      FastWtCon* cn = (FastWtCon*)cg->OwnCn(i);
+      C_Compute_FastDecay(cn, ru, su);
+      float lin_wt = LinFmSigWt(cn->wt);
+      C_Compute_dWt(cn, ru, 
+		    C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p),
+		    C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m, su->act_p, su->act_m));  
+      C_Compute_SlowdWt(cn, ru, 
+			C_Compute_SlowHebb(cn, cg, lin_wt, ru->act_p, su->act_p),
+			C_Compute_SlowErr(cn, lin_wt, ru->act_p, ru->act_m, su->act_p, su->act_m));  
     }
   }
 
@@ -751,8 +744,8 @@ public:
     cn->sdwt = 0.0f;
   }
 
-  inline void Compute_Weights_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((FastWtCon*)cg->PtrCn(i)));
+  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((FastWtCon*)cg->OwnCn(i)));
     //  ApplyLimits(cg, ru); limits are automatically enforced anyway
   }
 
@@ -788,7 +781,7 @@ INHERITED(LeabraConSpec)
 public:
   ActAvgHebbMixSpec	act_avg_hebb; // mixture of current and average activations to use in hebbian learning
 
- inline float C_Compute_Hebb(LeabraCon* cn, LeabraRecvCons* cg, float lin_wt,
+ inline float C_Compute_Hebb(LeabraCon* cn, LeabraSendCons* cg, float lin_wt,
 			     float ru_act, float su_act, float ru_avg_act)
   {
     // wt is negative in linear form, so using opposite sign of usual here
@@ -797,20 +790,17 @@ public:
   }
 
   // this computes weight changes based on sender at time t-1
-  inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    Compute_SAvgCor(cg, ru);
-    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<cg->size; i++) {
-	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
-	if(!(su->in_subgp &&
-	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  float lin_wt = LinFmSigWt(cn->wt);
-	  C_Compute_dWt(cn, ru, 
-			C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p, ru->act_avg),
-			C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m, su->act_p, su->act_m));  
-	}
-      }
+  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    Compute_SAvgCor(cg, su);
+    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
+
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+      float lin_wt = LinFmSigWt(cn->wt);
+      C_Compute_dWt(cn, ru, 
+		    C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p, ru->act_avg),
+		    C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m, su->act_p, su->act_m));  
     }
   }
 
@@ -842,26 +832,26 @@ public:
     // soft bounding is managed in the weight update phase, not in dwt
   }
 
-  inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       C_Compute_dWt_Delta(cn, ru, su);  
     }
   }
 
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       C_Compute_dWt_Delta_CAL(cn, ru, su);  
     }
   }
 
-  inline override void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       C_Compute_dWt_Delta_CAL(cn, ru, su);  
     }
   }
@@ -895,137 +885,29 @@ public:
   inline void C_Compute_LimPrecWts(LeabraCon* cn) {
     cn->wt = PrecLimitVal(cn->wt);
   }
-  inline void Compute_LimPrecWts(LeabraRecvCons* cg, LeabraUnit* ru) {
-    CON_GROUP_LOOP(cg, C_Compute_LimPrecWts((LeabraCon*)cg->PtrCn(i)));
+  inline void Compute_LimPrecWts(LeabraSendCons* cg, LeabraUnit* su) {
+    CON_GROUP_LOOP(cg, C_Compute_LimPrecWts((LeabraCon*)cg->OwnCn(i)));
   }
 
-  inline override void	Compute_Weights_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    inherited::Compute_Weights_LeabraCHL(cg, ru);
-    Compute_LimPrecWts(cg, ru);
+  inline override void	Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    inherited::Compute_Weights_LeabraCHL(cg, su);
+    Compute_LimPrecWts(cg, su);
   }
 
-  inline override void	Compute_Weights_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    inherited::Compute_Weights_CtLeabraXCAL(cg, ru);
-    Compute_LimPrecWts(cg, ru);
+  inline override void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    inherited::Compute_Weights_CtLeabraXCAL(cg, su);
+    Compute_LimPrecWts(cg, su);
   }
 
-  inline override void	Compute_Weights_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    inherited::Compute_Weights_CtLeabraCAL(cg, ru);
-    Compute_LimPrecWts(cg, ru);
+  inline override void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    inherited::Compute_Weights_CtLeabraCAL(cg, su);
+    Compute_LimPrecWts(cg, su);
   }
 
   // NOTE: bias weights typically not subject to limited precision!
 
   SIMPLE_COPY(LeabraLimPrecConSpec);
   TA_BASEFUNS(LeabraLimPrecConSpec);
-// protected:
-//   void	UpdateAfterEdit_impl();
-private:
-  void 	Initialize();
-  void	Destroy()		{ };
-};
-
-///////////////////////////////////////////////////////////////////////
-//	dwt normalization -- enforced zero-sum learning
-
-class LEABRA_API LeabraDwtNorm : public taBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra renormalize weight changes -- makes zero sum
-INHERITED(taBase)
-public:
-  bool		on;		// whether to do normalized dwt Compute_Weights function: makes weight changes zero sum
-  float		norm_pct;	// #CONDEDIT_ON_on what proportion of full normalization to apply to the delta weights (0 = no norm, 1 = full norm)
-
-  SIMPLE_COPY(LeabraDwtNorm);
-  TA_BASEFUNS(LeabraDwtNorm);
-  //protected:
-  //  void UpdateAfterEdit_impl();
-
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-class LEABRA_API LeabraDwtNormConSpec : public LeabraConSpec {
-  // ##CAT_Leabra delta-weight normalization: weight changes are zero-sum.  also includes hebbian learning for CtLeabraCAL learning rule
-INHERITED(LeabraConSpec)
-public:
-#ifdef __MAKETA__
-  LearnMixSpec	lmix;		// #CAT_Learning #CONDSHOW_OFF_learn_rule:CTLEABRA_XCAL mixture of hebbian & err-driven learning (note: no hebbian for CTLEABRA_XCAL, but yes for CTLEABRA_CAL)
-#endif
-
-  LeabraDwtNorm	dwt_norm;	// renormalize weight changes to compensate for overal mean changes (zero sum weight changes)
-
-  inline float	Compute_dWtMean(LeabraRecvCons* cg, LeabraUnit* ru) {
-    float dwt_mean = 0.0f;
-    CON_GROUP_LOOP(cg, dwt_mean += ((LeabraCon*)cg->PtrCn(i))->dwt);
-    return dwt_mean / (float)cg->size;
-  }
-  // #CAT_Learning compute dwt_mean -- mean of all weight changes, for dwt_norm
-
-  inline void C_Compute_Weights_Norm_LeabraCHL(LeabraCon* cn, float dwnorm) {
-    float eff_dw = cn->dwt + dwnorm;
-    if(eff_dw != 0.0f) {
-      // weight increment happens in linear weights
-      cn->wt = SigFmLinWt(LinFmSigWt(cn->wt) + eff_dw);
-    }
-    cn->pdw = cn->dwt;
-    cn->dwt = 0.0f;
-  }
-
-  inline void Compute_Weights_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    if(dwt_norm.on) {
-      float dwnorm = -dwt_norm.norm_pct * Compute_dWtMean(cg, ru);
-      CON_GROUP_LOOP(cg, C_Compute_Weights_Norm_LeabraCHL((LeabraCon*)cg->PtrCn(i), dwnorm));
-    }
-    else {
-      CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->PtrCn(i)));
-    }
-  }
-
-  inline void C_Compute_dWt_CtLeabraCAL_hebb(LeabraCon* cn,
-					     float sravg_s_nrm, float sravg_m_nrm, float hebb) {
-    cn->dwt += cur_lrate * (lmix.err * (sravg_s_nrm * cn->sravg_s - sravg_m_nrm * cn->sravg_m)
-			    + lmix.hebb * hebb);
-  }
-
-  inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    Compute_SAvgCor(cg, ru);
-    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-    LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
-      C_Compute_dWt_CtLeabraCAL_hebb
-	(cn, net->sravg_vals.s_nrm, net->sravg_vals.m_nrm,
-	 C_Compute_Hebb(cn, cg, cn->wt, ru->act_p, su->act_p));
-    }
-  }
-
-  inline void C_Compute_Weights_Norm_CtLeabraCAL(LeabraCon* cn, float dwnorm) {
-    // do soft bounding now so it can include actreg, agg from dm, dwtnorm, 
-    cn->dwt += dwnorm;
-    if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - cn->wt);
-    else		cn->dwt *= cn->wt;
-
-    cn->wt += cn->dwt;	// weights always linear
-    // optimize: don't bother with this if always doing soft bounding above
-    //     wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
-    cn->pdw = cn->dwt;
-    cn->dwt = 0.0f;
-  }
-
-  inline void Compute_Weights_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    if(dwt_norm.on) {
-      float dwnorm = -dwt_norm.norm_pct * Compute_dWtMean(cg, ru);
-      CON_GROUP_LOOP(cg, C_Compute_Weights_Norm_CtLeabraCAL((LeabraCon*)cg->PtrCn(i), dwnorm));
-    }
-    else {
-      CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraCAL((LeabraCon*)cg->PtrCn(i)));
-    }
-    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
-  }
-
-  TA_SIMPLE_BASEFUNS(LeabraDwtNormConSpec);
 // protected:
 //   void	UpdateAfterEdit_impl();
 private:
@@ -1070,16 +952,20 @@ public:
     cn->dwt += cur_lrate * err;
   }
 
-  inline void Compute_dWt_DaNoise(LeabraRecvCons* cg, LeabraUnit* ru) {
+  inline void Compute_dWt_DaNoise(LeabraSendCons* cg, LeabraUnit* su) {
     // compute what activation value would be if we subtract out noise -- note that
     // we don't save v_m by phase so this is necessarily on the current v_m val, assumed
     // to be plus-phase value
-    float ru_act_nonoise = ru->Compute_ActValFmVmVal_rate(ru->v_m - ru->noise);
-    float dav = ru->dav * da_noise.da_noise;
 
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+
+      // note: with switch to sender-based, this is very expensive -- fortunately it doesn't
+      // really work so we don't care.. :)
+      float ru_act_nonoise = ru->Compute_ActValFmVmVal_rate(ru->v_m - ru->noise);
+      float dav = ru->dav * da_noise.da_noise;
+
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       float lin_wt = LinFmSigWt(cn->wt);
       C_Compute_dWt_DaNoise(cn, lin_wt, dav, ru->act_p, ru_act_nonoise, su->act_p);
     }
@@ -1090,27 +976,24 @@ public:
     cn->dwt += da_noise.std_leabra * cur_lrate * dwt;
   }
 
-  inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     if(da_noise.std_leabra > 0.0f) {
       // this is a copy of the main fun, but uses above C_Compute_dWt which mults dwt
-      Compute_SAvgCor(cg, ru);
+      Compute_SAvgCor(cg, su);
       if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
 	for(int i=0; i<cg->size; i++) {
-	  LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	  LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
-	  if(!(su->in_subgp &&
-	       (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	    float lin_wt = LinFmSigWt(cn->wt);
-	    C_Compute_dWt(cn, ru, 
-			  C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p),
-			  C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m,
-						  su->act_p, su->act_m));  
-	  }
+	  LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	  LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+	  float lin_wt = LinFmSigWt(cn->wt);
+	  C_Compute_dWt(cn, ru, 
+			C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p),
+			C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m,
+						su->act_p, su->act_m));  
 	}
       }
     }
     if(da_noise.da_noise > 0.0f) {
-      Compute_dWt_DaNoise(cg, ru);
+      Compute_dWt_DaNoise(cg, su);
     }
   }
 

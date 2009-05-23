@@ -207,26 +207,26 @@ public:
 
 
   // this computes weight changes based on sender at time t-1
-  inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    LeabraTdUnit* lru = (LeabraTdUnit*)ru;
+  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    LeabraTdUnit* lsu = (LeabraTdUnit*)su;
     for(int i=0; i<cg->size; i++) {
-      LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
-      C_Compute_dWt_Delta(cn, LinFmSigWt(cn->wt), lru, su);
+      LeabraTdUnit* ru = (LeabraTdUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+      C_Compute_dWt_Delta(cn, LinFmSigWt(cn->wt), ru, lsu);
     }
   }
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    LeabraTdUnit* lru = (LeabraTdUnit*)ru;
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    LeabraTdUnit* lsu = (LeabraTdUnit*)su;
     for(int i=0; i<cg->size; i++) {
-      LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
-      C_Compute_dWt_Delta_NoSB(cn, lru, su);
+      LeabraTdUnit* ru = (LeabraTdUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+      C_Compute_dWt_Delta_NoSB(cn, ru, lsu);
     }
   }
 
-  inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    Compute_dWt_CtLeabraXCAL(cg, ru);
+  inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    Compute_dWt_CtLeabraXCAL(cg, su);
   }
 
   TA_BASEFUNS_NOCOPY(TDRewPredConSpec);

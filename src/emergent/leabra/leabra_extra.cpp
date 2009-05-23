@@ -343,14 +343,6 @@ void LeabraLimPrecConSpec::Initialize() {
   prec_levels = 1024;
 }
 
-void LeabraDwtNorm::Initialize() {
-  on = false;
-  norm_pct = 1.0f;
-}
-
-void LeabraDwtNormConSpec::Initialize() {
-}
-
 void LeabraDaNoise::Initialize() {
   da_noise = 1.0f;
   std_leabra = 1.0f;

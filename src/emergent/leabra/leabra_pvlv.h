@@ -47,22 +47,22 @@ public:
     cn->dwt += cur_lrate * err;
   }
 
-  inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       C_Compute_dWt_Delta(cn, ru, su);  
     }
   }
 
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
     // no softbound so same as above
-    Compute_dWt_LeabraCHL(cg, ru);
+    Compute_dWt_LeabraCHL(cg, su);
   }
 
-  inline override void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
     // no softbound so same as above
-    Compute_dWt_LeabraCHL(cg, ru);
+    Compute_dWt_LeabraCHL(cg, su);
   }
 
   TA_SIMPLE_BASEFUNS(PVConSpec);
@@ -143,22 +143,22 @@ public:
     cn->dwt += cur_lrate * err;
   }
 
-  inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       C_Compute_dWt_Delta(cn, ru, su);
     }
   }
 
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
     // no softbound so same as above
-    Compute_dWt_LeabraCHL(cg, ru);
+    Compute_dWt_LeabraCHL(cg, su);
   }
 
-  inline override void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
     // no softbound so same as above
-    Compute_dWt_LeabraCHL(cg, ru);
+    Compute_dWt_LeabraCHL(cg, su);
   }
 
 
