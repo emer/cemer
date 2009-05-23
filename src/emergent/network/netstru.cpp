@@ -585,6 +585,7 @@ bool BaseCons::CopyCons(const BaseCons& cp) {
   }
 
   memcpy(units, (char*)cp.units, size * sizeof(Unit*));
+  return true;
 }
 
 bool BaseCons::RemoveConIdx(int i) {
