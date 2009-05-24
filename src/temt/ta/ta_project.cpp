@@ -1971,10 +1971,10 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("NThreads", "\
  -- Target number of threads to use in multi-threaded code -- should be <= max_cpus and it often is more efficient to use less than what is maximally available");
 
-  taMisc::AddArgName("--thread_chunk_pct", "ThreadChunkPct");
-  taMisc::AddArgName("thread_chunk_pct=", "ThreadChunkPct");
-  taMisc::AddArgNameDesc("ThreadChunkPct", "\
- -- proportion (0-1) of units to process in a chunked fashion, where units are allocated in (interdigitated) chunks to threads to exclusively process -- after this, each available thread works nibbling a unit at a time on the remaining list of units.   A middle value around .5 is typically best, as it balances between the efficiency of pre-allocating the load, and the load balancing of the nibbling which adapts automatically to effective processor loads.");
+  taMisc::AddArgName("--thread_alloc_pct", "ThreadAllocPct");
+  taMisc::AddArgName("thread_alloc_pct=", "ThreadAllocPct");
+  taMisc::AddArgNameDesc("ThreadAllocPct", "\
+ -- proportion (0-1) of total to process by pre-allocating a set of computations to a given thread -- the remainder of the load is allocated dynamically through a nibbling mechanism, where each thread takes a nibble_chunk at a time until the job is done.  current experience is that this should be no greater than .2, unless the load is quite large, as there is a high degree of variability in thread start times, so the automatic load balancing of nibbling is important, and it has very little additional overhead.");
 
   taMisc::AddArgName("--thread_nibble_chunk", "ThreadNibbleChunk");
   taMisc::AddArgName("thread_nibble_chunk=", "ThreadNibbleChunk");
@@ -1990,11 +1990,6 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgName("thread_min_units=", "ThreadMinUnits");
   taMisc::AddArgNameDesc("ThreadMinUnits", "\
  -- minimum number of computational units (e.g., network units) to apply parallel threading to -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.");
-  
-  taMisc::AddArgName("--thread_send_netin", "ThreadSendNetin");
-  taMisc::AddArgName("thread_send_netin=", "ThreadSendNetin");
-  taMisc::AddArgNameDesc("ThreadSendNetin", "\
- -- for network algorithms, should the Send_Netin call be threaded or not?  this can actually be slower on some machiness due to memory dispersion issues, and it also results in small numerical differences from the single-threaded case.");
   
   ////////////////////////////////////////////////////
   // 	Server variables

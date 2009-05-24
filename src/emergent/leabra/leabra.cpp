@@ -5016,7 +5016,7 @@ void LeabraNetwork::Send_Netin() {
   // always use delta mode!
   send_pct_n = send_pct_tot = 0;
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Send_NetinDelta);
-  if(threads.send_netin && (thread_flags & NETIN))
+  if(thread_flags & NETIN)
     threads.Run(&un_call, 1.0f);
   else
     threads.Run(&un_call, -1.0f); // -1 = always run localized
@@ -5064,7 +5064,7 @@ void LeabraNetwork::Send_Netin() {
 
 void LeabraNetwork::Compute_NetinInteg() {
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_NetinInteg);
-  if(threads.send_netin && (thread_flags & NETIN_INTEG))
+  if(thread_flags & NETIN_INTEG)
     threads.Run(&un_call, 1.0f);
   else
     threads.Run(&un_call, -1.0f); // -1 = always run localized

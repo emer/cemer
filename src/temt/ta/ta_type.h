@@ -390,6 +390,10 @@ public:
 
   void		Clear() {major = minor = step = build = 0;} //
   bool		GtEq(ushort mj, ushort mn, ushort st = 0); // true if the version is greater than or equal to the indicated version
+
+  bool		operator>=(taVersion& cmp) { return GtEq(cmp.major, cmp.minor, cmp.step); }
+  bool		operator==(taVersion& cmp)
+  { return (major == cmp.major && minor == cmp.minor && step == cmp.step); }
   
   taVersion() {Clear();} //
   taVersion(ushort mj, ushort mn, ushort st = 0, ushort bld = 0) 
@@ -406,11 +410,10 @@ class TA_API taThreadDefaults {
 public:
   int		cpus;		// #READ_ONLY #SHOW #NO_SAVE number of physical processors (cores) on this system -- typically you want to set n_threads equal to this, but not necessarily always -- may need to use fewer threads in some cases (almost never more)
   int		n_threads;	// #MIN_1 number of threads to actually use -- typically the number of physical processors (cores) available (see cpus), and is initialized to that.
-  float		chunk_pct;	// #MIN_0 #MAX_1 proportion (0-1) of units to process in a chunked fashion, where units are allocated in (interdigitated) chunks to threads to exclusively process -- after this, each available thread works nibbling a unit at a time on the remaining list of units.   A middle value around .5 is typically best, as it balances between the efficiency of pre-allocating the load, and the load balancing of the nibbling which adapts automatically to effective processor loads.
-  int		nibble_chunk;	// #MIN_1 how many units does each thread grab to process while nibbling?  Too small a value results in increased contention and inefficiency, while too large a value results in poor load balancing across processors.
+  float		alloc_pct;	// #MIN_0 #MAX_1 proportion (0-1) of total to process by pre-allocating a set of computations to a given thread -- the remainder of the load is allocated dynamically through a nibbling mechanism, where each thread takes a nibble_chunk at a time until the job is done.  current experience is that this should be no greater than .2, unless the load is quite large, as there is a high degree of variability in thread start times, so the automatic load balancing of nibbling is important, and it has very little additional overhead.
+  int		nibble_chunk;	// #MIN_1 how many units does each thread grab to process while nibbling?  Too small a value results in increased contention and inefficiency, while too large a value results in poor load balancing across processors.  roughly 8 seems good in many cases
   float		compute_thr;	// #MIN_0 #MAX_1 threshold value for amount of computation in a given function to actually deploy on threads, as opposed to just running it on main thread -- value is normalized (0-1) with 1 being the most computationally intensive task, and 0 being the least -- as with min_units, it may not be worth it to parallelize very lightweight computations.  See Thread_Params page on emergent wiki for relevant comparison values.
   int		min_units;	// #MIN_1 minimum number of computational units (e.g., network units) to apply parallel threading to -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.
-  bool		send_netin;	// for network algorithms, should the Send_Netin call be threaded or not?  this can actually be slower on some machiness due to memory dispersion issues, and it also results in small numerical differences from the single-threaded case.
   
   taThreadDefaults();
 // implicit copy and assign
@@ -607,6 +610,7 @@ public:
   static const BuildType build_type; // #READ_ONLY #NO_SAVE #SHOW build type, mostly for determining plugin subfolders to search
   static const String	build_str; // #READ_ONLY #NO_SAVE #EXPERT an extension string based on build type, mostly for plugin subfolders (none for release gui no-dmem) 
 
+
   ////////////////////////////////////////////////////////
   // 	User-tunable compute params
 
@@ -780,6 +784,8 @@ public:
   static bool		use_plugins;	// #READ_ONLY #NO_SAVE #NO_SHOW whether to use plugins
   static bool		server_active;	// #READ_ONLY #NO_SAVE #NO_SHOW if remote server has been started up or not
   static ContextFlag	is_loading;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading an object
+  static taVersion 	loading_version; 
+  //  #READ_ONLY #NO_SAVE #EXPERT version number associated with file currently being loaded 
   static ContextFlag	is_post_loading;// #READ_ONLY #NO_SAVE #NO_SHOW true if currently in the post load routine (DUMP_POST_LOAD)
   static ContextFlag	is_saving;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently saving an object
   static ContextFlag	is_undo_saving;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently saving an object for undo data -- objects with extensive "leaf" level data (i.e., having no signficant undoable data under them, e.g., data table rows) should NOT save that data in this context

@@ -380,16 +380,16 @@ public:
   { if(!InRange(idx)) return false; units[idx] = un; return true; }
   // #CAT_Modify set unit pointer at given index -- returns false if out of range
 
-  Connection*	ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons);
+  Connection*		ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons);
   // #CAT_Modify add a new connection betwee our unit and an other unit and its appropriate cons -- does appropriate things depending on who owns the connects, etc.  enough room must already be allocated on both sides.
     Connection*		ConnectUnOwnCn(Unit* un);
     // #CAT_Modify add a new connection from given unit for OwnCons case -- returns NULL if no more room relative to alloc_size
     bool		ConnectUnPtrCn(Unit* un, Connection* cn);
     // #CAT_Modify add a new connection from given unit and connection pointer for PtrCons case -- returns false if no more room, else true 
 
-  virtual void		ConnectAllocInc();
+  void			ConnectAllocInc();
   // #CAT_Modify use this for dynamically figuring out how many connections to allocate, if it is not possible to compute directly -- increments size by one -- later call AllocConsFmSize to allocate connections based on the size value
-  virtual void		AllocConsFmSize();
+  void			AllocConsFmSize();
   // #CAT_Structure allocate storage for given number of connections (and Unit pointers) based on the size value, and reset size to 0 -- for dynamic allocation with ConnectAllocInc
 
   virtual bool		SetConType(TypeDef* cn_tp);
@@ -469,7 +469,7 @@ public:
   virtual void	SaveWeights_strm(ostream& strm, Unit* ru, BaseCons::WtSaveFormat fmt = BaseCons::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
   virtual int	LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat fmt = BaseCons::TEXT, bool quiet = false);
-  // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary format) -- rval is taMisc::ReadTagStatus, TAG_END if successful
+  // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary format) -- rval is taMisc::ReadTagStatus, TAG_END if successful -- the connections for both sides must already be allocated, but it can rearrange connections based on save unit indexes for random connectivity etc
   static int 	SkipWeights_strm(istream& strm, BaseCons::WtSaveFormat fmt = BaseCons::TEXT,
 				 bool quiet = false);
   // #IGNORE skip over saved weights (to keep the file in sync) -- rval is taMisc::ReadTagStatus, TAG_END if successful
@@ -488,6 +488,14 @@ public:
   override bool	ChangeMyType(TypeDef* new_type);
   
   override String 	GetTypeDecoKey() const { return "Connection"; }
+
+  override int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0);
+  override int	Dump_Load_Value(istream& strm, taBase* par=NULL);
+
+  virtual int 	Dump_Save_Cons(ostream& strm, int indent);
+  // #CAT_FILE save just the connection values out to given stream -- call this in Dump_Save_Value after default guy to actually save connections (in RecvCons)
+  virtual int 	Dump_Load_Cons(istream& strm, bool old_2nd_load = false);
+  // #CAT_FILE load just the connection values from given stream -- call this in Dump_Load_Value to actually load connections (in RecvCons)
 
   void	CutLinks();
   void	Copy_(const BaseCons& cp);
@@ -533,8 +541,11 @@ public:
   // #CAT_Learning update weight values from deltas
 
 
-  int 	Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
-  int	Dump_Load_Value(istream& strm, taBase* par=NULL);
+  override int 	Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
+  override int	Dump_Load_Value(istream& strm, taBase* par=NULL);
+
+  virtual int	Dump_Load_Old_Cons(Unit* ru, int recv_gp_idx);
+  // #IGNORE load old connection values if a user-data string is present to this effect -- removes the user data after loading!
 
   virtual void 	LinkSendCons(Unit* ru);
   // #CAT_Structure make connection links in all the sending units (assumes that these are initially empty, as after loading or copying)
@@ -1762,11 +1773,10 @@ class EMERGENT_API UnitCallThreadMgr : public taThreadMgr {
   // #INLINE thread manager for UnitCall tasks -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)
 public:
-  float		chunk_pct;	// #MIN_0 #MAX_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  proportion (0-1) of units to process in a chunked fashion, where units are allocated in (interdigitated) chunks to threads to exclusively process -- after this, each available thread works nibbling a unit at a time on the remaining list of units.  A middle value around .5 is typically best, as it balances between the efficiency of pre-allocating the load, and the load balancing of the nibbling which adapts automatically to effective processor loads.
-  int		nibble_chunk;	// #MIN_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  how many units does each thread grab to process while nibbling?  Too small a value results in increased contention and inefficiency, while too large a value results in poor load balancing across processors.
-  float		compute_thr;	// #MIN_0 #MAX_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  threshold value for amount of computation in a given function to actually deploy on threads, as opposed to just running it on main thread -- value is normalized (0-1) with 1 being the most computationally intensive task, and 0 being the least -- as with min_units, it may not be worth it to parallelize very lightweight computations.  See Thread_Params page on emergent wiki for relevant comparison values.
-  int		min_units;	// #MIN_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  minimum number of units required to use threads at all -- for feedforward algorithms requiring layer-level syncing, this applies to each layer -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.
-  bool		send_netin;	// #NO_SAVE NOTE: not saved -- initialized from user prefs.  should the Send_Netin call be threaded or not?  this can actually be slower on some machiness due to memory dispersion issues, and it also results in small numerical differences from the single-threaded case.
+  float		alloc_pct;	// #MIN_0 #MAX_1 #DEF_0 #NO_SAVE NOTE: not saved -- initialized from user prefs.  proportion (0-1) of total to process by pre-allocating a set of computations to a given thread -- the remainder of the load is allocated dynamically through a nibbling mechanism, where each thread takes a nibble_chunk at a time until the job is done.  current experience is that this should be no greater than .2, unless the load is quite large, as there is a high degree of variability in thread start times, so the automatic load balancing of nibbling is important, and it has very little additional overhead.
+  int		nibble_chunk;	// #MIN_1 #DEF_8 #NO_SAVE NOTE: not saved -- initialized from user prefs.  how many units does each thread grab to process while nibbling?  Too small a value results in increased contention and inefficiency, while too large a value results in poor load balancing across processors.
+  float		compute_thr;	// #MIN_0 #MAX_1 #DEF_0.5 #NO_SAVE NOTE: not saved -- initialized from user prefs.  threshold value for amount of computation in a given function to actually deploy on threads, as opposed to just running it on main thread -- value is normalized (0-1) with 1 being the most computationally intensive task, and 0 being the least -- as with min_units, it may not be worth it to parallelize very lightweight computations.  See Thread_Params page on emergent wiki for relevant comparison values.
+  int		min_units;	// #MIN_1 #DEF_1000 #NO_SAVE NOTE: not saved -- initialized from user prefs.  minimum number of units required to use threads at all -- for feedforward algorithms requiring layer-level syncing, this applies to each layer -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.
   bool		interleave;	// #DEF_true #EXPERT deploy threads in an interleaved fashion over units, which improves load balancing as neighboring units are likely to have similar compute demands, but it costs in cache coherency as the memory access per processor is more distributed -- only affects network level (non lay_sync) processes
   bool		ignore_lay_sync;// #DEF_false ignore need to sync at the layer level for feedforward algorithms that require this (e.g., backprop) -- results in faster but less accurate processing
   QAtomicInt	nibble_i;	// #IGNORE current nibble index -- atomic incremented by working threads to nibble away the rest..
@@ -1950,7 +1960,7 @@ public:
     SAVE_UNITS		= 0x0001, // save units with the project or other saves (specificaly saving just the network always saves the units)
     SAVE_UNITS_FORCE 	= 0x0002, // #NO_SHOW internal flag that forces the saving of units in cases where it is important to do so (e.g., saving just the network, or for a crash recover file)
     MANUAL_POS	 	= 0x0004, // disables the automatic cleanup/positioning of layers  (turn on to use Layer_Groups to position) 
-  };
+  }; 
 
   enum NetTextLoc {
     NT_BOTTOM,			// standard bottom location below network -- extends network "foot" lower below to make text more visible
@@ -2029,6 +2039,7 @@ public:
   NetViewParams	view_params;   // #CAT_Display misc netview parameters
 
   ProjectBase*	proj;		// #IGNORE ProjectBase this network is in
+  bool		old_load_cons;	// #IGNORE #NO_SAVE special flag (can't use flags b/c it is saved, loaded!) for case when loading a project with old cons file format (no pre-alloc of cons)
 
   inline void		SetNetFlag(NetFlags flg)   { flags = (NetFlags)(flags | flg); }
   // set flag state on

@@ -734,7 +734,8 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   dumpMisc::path_tokens.ReInit();
   tabMisc::root->plugin_deps.Reset();
 
-  strm << "// ta_Dump File v2.0\n";   // be sure to check version with Load
+  // saving both dump file version and now the actual code version string
+  strm << "// ta_Dump File v2.0 -- code v" + taMisc::version_bin.toString() + "\n";
   taMisc::strm_ver = 2;
   if (InheritsFrom(TA_taBase)) {
     taBase* rbase = (taBase*)base;
@@ -1427,8 +1428,17 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
   if(c == EOF) return EOF;
   if (taMisc::LexBuf.contains("// ta_Dump File v1.0")) {
     taMisc::strm_ver = 1;
+    taMisc::loading_version.set(3,2,0); // old pdp++ guy
   } else if(taMisc::LexBuf.contains("// ta_Dump File v2.0")) {
     taMisc::strm_ver = 2;
+
+    if(taMisc::LexBuf.contains(" -- code v")) { // code version stamped into file
+      String ldver = taMisc::LexBuf.after(" -- code v");
+      taMisc::loading_version.setFromString(ldver);
+    }
+    else {
+      taMisc::loading_version.set(4,0,19); // last version without explicit versioning
+    }
   } else {
     taMisc::Warning("*** Dump file does not have proper format id:", taMisc::LexBuf);
     return false;

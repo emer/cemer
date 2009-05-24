@@ -876,55 +876,83 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
     TestWarning(!quiet, "LoadWeights_strm", "read size < 0");
     return taMisc::TAG_NONE;
   }
-  ru->n_recv_cons += sz - size;
-  if(alloc_size == 0) AllocCons(sz); // loading into empty group: make room
-  for(int i=0; i < size; i++) {
+  if(sz < size) {
+    TestWarning(!quiet, "LoadWeights_strm", "weights file has fewer connections:", String(sz),
+		"than existing group size of:",
+		String(size), "-- eliminating extra connections");
+    for(int i=size-1; i >= sz; i--) {
+      Unit* su = Un(i);
+      ru->DisConnectFrom(su, prjn);
+    }
+  }
+  else if(sz > size) {
+    if(sz > alloc_size) {
+      TestWarning(!quiet, "LoadWeights_strm", "weights file has more connections:", String(sz),
+		  "than allocated size:",
+		  String(alloc_size), "-- only alloc_size will be loaded");
+      sz = alloc_size;
+    }
+    else {
+      TestWarning(!quiet, "LoadWeights_strm", "weights file has more connections:", String(sz),
+		  "than existing group size of:",
+		  String(size), "-- but these will fit within alloc_size and will be loaded");
+    }
+  }
+  for(int i=0; i < sz; i++) {	// using load size as key factor
     int lidx;
+    float wtval;
     if(fmt == BaseCons::TEXT) {
       taMisc::read_till_eol(strm);
       lidx = (int)taMisc::LexBuf.before(' ');
-      Cn(i)->wt = (float)taMisc::LexBuf.after(' ');
+      wtval = (float)taMisc::LexBuf.after(' ');
     }
     else {			// binary
       strm.read((char*)&(lidx), sizeof(lidx));
-      strm.read((char*)&(Cn(i)->wt), sizeof(Cn(i)->wt));
+      strm.read((char*)&(wtval), sizeof(wtval));
     }
-
     Unit* su = prjn->from->units.Leaf(lidx);
     if(!su) {
       TestWarning(!quiet, "LoadWeights_strm", "unit at leaf index: ",
-		  String(lidx), "not found in layer:", prjn->from->name);
-      i--; 
-      ru->n_recv_cons--;
+		  String(lidx), "not found in layer:", prjn->from->name,
+		  "removing this connection");
+      if(size > i)
+	ru->DisConnectFrom(Un(i), prjn); // remove this guy to keep total size straight
+      sz--;			       // now doing less..
+      i--;
       continue;
     }
     SendCons* send_gp = su->send.SafeEl(prjn->send_idx);
     if(!send_gp) {
       TestWarning(!quiet, "LoadWeights_strm", "unit at leaf index: ",
 		  String(lidx), "does not have proper send group:", String(prjn->send_idx));
-      i--; 
-      ru->n_recv_cons--;
+      if(size > i)
+	ru->DisConnectFrom(Un(i), prjn); // remove this guy to keep total size straight
+      sz--;			       // now doing less..
+      i--;
       continue;
     }
-    if(size <= i) {
-//       ConnectUn(su);
-//       int sidx = send_gp->FindConFromIdx(ru); // todo: yikes!
-//       if(sidx >= 0) {
-// 	send_gp->cons.ReplaceLinkIdx(sidx, Cn(i));
-//       }
-//       else {
-// 	send_gp->LinkCon(Cn(i), ru);
-//       }
+    if(i >= size) {		// new connection
+      Connection* cn = ru->ConnectFromCk(su, prjn);
+      if(cn)
+	cn->wt = wtval;
     }
     else if(su != Un(i)) {
-      SetUn(i, su);
-//       int sidx = send_gp->FindConFromIdx(ru); // todo: yikes!
-//       if(sidx >= 0) {
-// 	send_gp->cons.ReplaceLinkIdx(sidx, Cn(i));
-//       }
-//       else {
-// 	send_gp->LinkCon(Cn(i), ru);
-//       }
+      // not same unit -- note that at this point, the only viable strategy is to discon
+      // all existing cons and start over, as otherwise everything will be hopelessly out
+      // of whack
+      TestWarning(!quiet, "LoadWeights_strm", "unit at index:", String(i),
+		  "in cons group does not match the loaded unit",
+		  "-- removing all subsequent units and reconnecting");
+      for(int j=size-1; j >= i; j--) {
+	Unit* su = Un(j);
+	ru->DisConnectFrom(su, prjn);
+      }
+      Connection* cn = ru->ConnectFromCk(su, prjn);
+      if(cn)
+	cn->wt = wtval;
+    }
+    else {			// all good normal case, just set the weights!
+      Cn(i)->wt = wtval;
     }
   }
   BaseCons::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
@@ -975,6 +1003,253 @@ int BaseCons::LoadWeights(const String& fname, Unit* ru, BaseCons::WtSaveFormat 
   taRefN::unRefDone(flr);
   return rval;
 }
+
+int BaseCons::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) {
+  // first save any sub-members (there usually aren't any)
+//   int rval = GetTypeDef()->Dump_Save_PathR(strm, (void*)this, (void*)par, indent);
+
+  if(this == par) {		   // hack signal to just save as a sub-guy
+    strm << "\n";
+    taMisc::indent(strm, indent+1, 1) << "[" << size << "]"; // just add the size here
+  }
+  return true;
+}
+
+int BaseCons::Dump_Load_Value(istream& strm, TAPtr par) {
+  int c = taMisc::skip_white(strm);
+  if(c == EOF)	return EOF;
+  if(c == ';')	return 2;	// signal that its a path
+  if(c == '}') {
+    if(strm.peek() == ';') strm.get();
+    return 2;
+  }
+
+  if (c != '{') {
+    taMisc::Error("Missing '{' in dump file for type:",GetTypeDef()->name,"\n");
+    return false;
+  }
+  // now, load members (if we have dims, will exit at that point)
+  int rval = GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par);
+  // 3 is a hacky code to tell us that it got the [ 
+  if ((rval != 3) || (rval == EOF)) return rval;
+
+  c = taMisc::read_word(strm);
+  if(c == '[') {
+    c = taMisc::read_word(strm);
+    if(c == ']') {
+      int sz = atoi(taMisc::LexBuf);
+      FreeCons();		// need to explicitly nuke old guys!
+      AllocCons(sz);
+    }
+  }
+  c = taMisc::read_till_rbracket(strm);
+  if (c==EOF)	return EOF;
+  c = taMisc::read_till_semi(strm);
+  if (c==EOF)	return EOF;
+  return 2;			// path signal -- if we got this!
+}
+
+/////////////////////////////////////////////////////////////
+// 	Dump Load/Save
+
+int BaseCons::Dump_Save_Cons(ostream& strm, int indent) {
+  // output the units
+  taMisc::indent(strm, indent, 1) << "{ con_alloc = " << alloc_size << ";\n";
+  taMisc::indent(strm, indent+1, 1) << "units = {";
+  for(int i=0; i<size; i++) {
+    if(Un(i))
+      strm << Un(i)->GetMyLeafIndex() << "; ";
+    else
+      strm << -1 << "; ";	// null..
+  }
+  strm << "};\n";
+
+  // output the connection values
+  for(int j=0; j<con_type->members.size; j++) {
+    MemberDef* md = con_type->members.FastEl(j);
+    if((md->type->ptr > 0) || (md->HasOption("NO_SAVE")))
+      continue;
+    taMisc::indent(strm, indent+1,1) << md->name << " = {";
+    for(int i=0; i<size; i++) {
+      strm << md->type->GetValStr(md->GetOff((void*)Cn(i))) << "; ";
+    }
+    strm << "};\n";
+  }
+  return true;
+}
+
+int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
+  Unit* own_ru = GET_MY_OWNER(Unit);
+  if(TestWarning(!own_ru, "Dump_Load_Cons","NULL own_ru -- should not happen")) {
+    return false;
+  }
+
+  int c = taMisc::read_till_lbracket(strm);	// get past opening bracket
+  if(c == EOF) return EOF;
+  c = taMisc::read_word(strm);
+  if(TestWarning(taMisc::LexBuf != "con_alloc", "Dump_Load_Cons",
+		 "Expecting: 'con_alloc' in load file, got:",
+		 taMisc::LexBuf,"instead")) {
+    return false;
+  }
+  // skip =
+  c = taMisc::skip_white(strm);
+  if(TestWarning(c != '=', "Dump_Load_Cons",
+		 "Missing '=' in dump file for con_alloc in RecvCons")) {
+    return false;
+  }
+  c = taMisc::read_till_semi(strm);
+  int con_alloc = (int)taMisc::LexBuf;
+
+  bool old_load = false;
+  if(!prjn) {  // if prjn = NULL, then probably bias con -- just allocate cons
+    AllocCons(con_alloc);
+  }
+  else {
+    if(alloc_size != con_alloc) {
+      // if not allocated yet, we have an old-style dump file that we need to postpone loading
+      // otherwise, we might be doing a load-over in which case it is fine, hopefully..
+      old_load = true;
+    }
+  }
+  String load_str;		// this will be the load string 
+  if(old_load) {
+    cerr << "old load: con_alloc: " << con_alloc << " alloc_size: " << alloc_size << endl;
+    load_str += "{ con_alloc = " + String(con_alloc) + ";\n";
+  }
+  c = taMisc::read_word(strm);
+  if(TestWarning(taMisc::LexBuf != "units",
+		 "Dump_Load_Cons", "Expecting 'units' in load file, got:",
+		 taMisc::LexBuf,"instead")) {
+    return false;
+  }
+  // skip =
+  c = taMisc::skip_white(strm);
+  if(TestWarning(c != '=', "Dump_Load_Cons", "Missing '=' in dump file for unit")) {
+    return false;
+  }
+  // skip {
+  c = taMisc::skip_white(strm);
+  if(TestWarning(c != '{', "Dump_Load_Cons", "Missing '{' in dump file for unit")) {
+    return false;
+  }
+
+  if(old_load) {
+    load_str += "units = {";
+  }
+
+  // first read in the units
+  Unit_Group* ug = NULL;
+  if(prjn && prjn->from.ptr()) 
+    ug = &(prjn->from->units);
+  int c_count = 0;		// number of connections
+  while(true) {
+    c = taMisc::read_till_rb_or_semi(strm);
+    if(c == EOF) return EOF;
+    if(c == '}') {
+      if(old_load)	load_str += "};\n";
+      break;
+    }
+    if(old_load) {
+      load_str += taMisc::LexBuf + "; ";
+      continue;			// just load and save
+    }
+    Unit* un = NULL;
+    int lfidx = (int)taMisc::LexBuf;
+    if(ug && (lfidx >= 0)) {
+      un = (Unit*)ug->Leaf(lfidx);
+      if(TestWarning(!un, "Dump_Load_Cons", "Connection unit not found")) {
+	continue;
+      }
+    }
+    if(!old_2nd_load) {	// all existing cons nuked in path alloc..
+      if(un)
+	own_ru->ConnectFrom(un, prjn);
+    }
+    c_count++;
+  }
+
+  if(!old_load && c_count > alloc_size) {
+    TestWarning(true, "Dump_Load_Cons", "More connections read:", String(c_count),
+		"than allocated:", String(alloc_size),
+		"-- weights will be incomplete");
+  }
+
+  // now read in the values
+  while(true) {
+    c = taMisc::read_word(strm);
+    if(c == EOF) return EOF;
+    if(c == '}') {
+      if(strm.peek() == ';') strm.get(); // get the semi
+      break;		// done
+    }
+    MemberDef* md = con_type->members.FindName(taMisc::LexBuf);
+    if(TestWarning(!md, "Dump_Load_Cons",
+		   "Connection member not found:", taMisc::LexBuf)) {
+      c = taMisc::skip_past_err(strm);
+      if(c == '}') break;
+      continue;
+    }
+    // skip =
+    c = taMisc::skip_white(strm);
+    if(TestWarning(c != '=', "Dump_Load_Cons",
+		   "Missing '=' in dump file for unit")) {
+      c = taMisc::skip_past_err(strm);
+      continue;
+    }
+    // skip {
+    c = taMisc::skip_white(strm);
+    if(TestWarning(c != '{', "Dump_Load_Cons",
+		   "Missing '{' in dump file for unit")) {
+      c = taMisc::skip_past_err(strm);
+      continue;
+    }
+
+    if(old_load) load_str += md->name + " = {";
+
+    int i = 0;
+    while(true) {
+      c = taMisc::read_till_rb_or_semi(strm);
+      if(c == EOF) return EOF;
+      if(c == '}') {
+	if(old_load)	load_str += "};\n";
+	break;
+      }
+      if(old_load) {		// just save it up..
+	load_str += taMisc::LexBuf + "; ";
+	continue;
+      }
+      if(i >= size) {
+	c = taMisc::skip_past_err_rb(strm); // bail to ending rb
+	if(old_load)	load_str += "};\n";
+	break;
+      }
+      Connection* cn = Cn(i);
+      md->type->SetValStr(taMisc::LexBuf, md->GetOff((void*)cn));
+      i++;
+    }
+  }
+  
+  if(prjn && prjn->con_spec.spec) {
+    SetConSpec(prjn->con_spec.spec); // must set conspec b/c not otherwise saved or set
+    if(!old_load)
+      Init_Weights_post(own_ru);	// update weights after loading
+  }
+
+  if(old_load) {
+    if(own_ru->own_lay() && own_ru->own_lay()->own_net) {
+      int my_idx = own_ru->recv.FindEl(this);
+      own_ru->SetUserData("OldLoadCons_" + String(my_idx), load_str);
+      // save in user data for loading later -- important: can't save in this because we 
+      // have to do a Connect later and that nukes us! :(  So, we use the unit instead
+      Network* net = own_ru->own_lay()->own_net;
+      net->old_load_cons = true; // tell network to load later
+    }
+  }
+  return true;
+}
+
+
 
 
 /////////////////////////////////////////////////////////////////////
@@ -1039,189 +1314,6 @@ void RecvCons::LinkSendCons(Unit* ru) {
 }
 
 /////////////////////////////////////////////////////////////
-// 	Save/Load Weights
-
-// void RecvCons::SaveWeights_strm(ostream& strm, Unit*, RecvCons::WtSaveFormat fmt) {
-//   if((prjn == NULL) || (!(bool)prjn->from)) {
-//     strm << "<Cn 0>\n";
-//     goto end_tag;		// don't do anything
-//   }
-//   strm << "<Cn " << size << ">\n";
-//   switch(fmt) {
-//   case RecvCons::TEXT:
-//     for(int i=0; i < size; i++) {
-//       int lidx = Un(i)->GetMyLeafIndex();
-//       if(TestWarning(lidx < 0, "SaveWeights_strm", "can't find unit")) {
-// 	lidx = 0;
-//       }
-//       strm << lidx << " " << Cn(i)->wt << "\n";
-//     }
-//     break;
-//   case RecvCons::BINARY:
-//     for(int i=0; i < size; i++) {
-//       int lidx = Un(i)->GetMyLeafIndex();
-//       if(TestWarning(lidx < 0, "SaveWeights_strm", "can't find unit")) {
-// 	lidx = 0;
-//       }
-//       strm.write((char*)&(lidx), sizeof(lidx));
-//       strm.write((char*)&(Cn(i)->wt), sizeof(Cn(i)->wt));
-//     }
-//     strm << "\n";
-//     break;
-//   }
-//  end_tag:
-//   strm << "</Cn>\n";
-// }
-
-// // return values:
-// // TAG_END = successfully got to end of thing;
-// // TAG_NONE = some kind of error
-// // TAG_EOF = EOF
-
-// int RecvCons::LoadWeights_StartTag(istream& strm, const String& tag, String& val, bool quiet) {
-//   String in_tag;
-//   int stat = taMisc::read_tag(strm, in_tag, val);
-//   if(stat == taMisc::TAG_END) return taMisc::TAG_NONE; // some other end -- not good
-//   if(stat != taMisc::TAG_GOT) {
-//     if(!quiet) taMisc::Warning("RecvCons::LoadWeights: bad read of start tag:", tag);
-//     return stat;
-//   }
-//   if(in_tag != tag) {
-//     if(!quiet) taMisc::Warning("RecvCons::LoadWeights: read different start tag:", in_tag,
-// 			       "expecting:", tag);
-//     return taMisc::TAG_NONE; // bumping up against some other tag
-//   }
-//   return stat;
-// }
-
-// int RecvCons::LoadWeights_EndTag(istream& strm, const String& trg_tag, String& cur_tag, int& stat, bool quiet) {
-//   String val;
-//   if(stat != taMisc::TAG_END)	// haven't already hit the end
-//     stat = taMisc::read_tag(strm, cur_tag, val);
-//   if((stat != taMisc::TAG_END) || (cur_tag != trg_tag)) {
-//     if(!quiet) taMisc::Warning("RecvCons::LoadWeights: bad read of end tag:", trg_tag, "got:",
-// 			       cur_tag, "stat:", String(stat));
-//     if(stat == taMisc::TAG_END) stat = taMisc::TAG_NONE;
-//   }
-//   return stat;
-// }
-
-// int RecvCons::LoadWeights_strm(istream& strm, Unit* ru, RecvCons::WtSaveFormat fmt, bool quiet) {
-//   if((prjn == NULL) || (!(bool)prjn->from)) {
-//     return SkipWeights_strm(strm, fmt, quiet); // bail
-//   }
-//   String tag, val;
-//   int stat = RecvCons::LoadWeights_StartTag(strm, "Cn", val, quiet);
-//   if(stat != taMisc::TAG_GOT) return stat;
-
-//   int sz = (int)val;
-//   if(sz < 0) {
-//     TestWarning(!quiet, "LoadWeights_strm", "read size < 0");
-//     return taMisc::TAG_NONE;
-//   }
-//   ru->n_recv_cons += sz - size;
-//   if(cons.alloc_size == 0) cons.Alloc(sz); // loading into empty group: make room
-//   cons.SetSize(sz);			   // this will give an error if sz > alloc_size
-
-//   for(int i=0; i < size; i++) {
-//     int lidx;
-//     if(fmt == RecvCons::TEXT) {
-//       taMisc::read_till_eol(strm);
-//       lidx = (int)taMisc::LexBuf.before(' ');
-//       Cn(i)->wt = (float)taMisc::LexBuf.after(' ');
-//     }
-//     else {			// binary
-//       strm.read((char*)&(lidx), sizeof(lidx));
-//       strm.read((char*)&(Cn(i)->wt), sizeof(Cn(i)->wt));
-//     }
-
-//     Unit* su = prjn->from->units.Leaf(lidx);
-//     if(!su) {
-//       TestWarning(!quiet, "LoadWeights_strm", "unit at leaf index: ",
-// 		  String(lidx), "not found in layer:", prjn->from->name);
-//       i--; cons.SetSize(size-1);
-//       ru->n_recv_cons--;
-//       continue;
-//     }
-//     SendCons* send_gp = su->send.SafeEl(prjn->send_idx);
-//     if(!send_gp) {
-//       TestWarning(!quiet, "LoadWeights_strm", "unit at leaf index: ",
-// 		  String(lidx), "does not have proper send group:", String(prjn->send_idx));
-//       i--; cons.SetSize(size-1);
-//       ru->n_recv_cons--;
-//       continue;
-//     }
-//     if(units.size <= i) {
-//       units.Link(su);
-//       int sidx = send_gp->units.FindEl(ru);
-//       if(sidx >= 0) {
-// 	send_gp->cons.ReplaceLinkIdx(sidx, Cn(i));
-//       }
-//       else {
-// 	send_gp->LinkCon(Cn(i), ru);
-//       }
-//     }
-//     else if(su != Un(i)) {
-//       units.ReplaceLinkIdx(i, su);
-//       int sidx = send_gp->units.FindEl(ru);
-//       if(sidx >= 0) {
-// 	send_gp->cons.ReplaceLinkIdx(sidx, Cn(i));
-//       }
-//       else {
-// 	send_gp->LinkCon(Cn(i), ru);
-//       }
-//     }
-//   }
-//   RecvCons::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
-
-//   Init_Weights_post(ru);	// update weights after loading
-//   return stat;			// should be tag end!
-// }
-
-// int RecvCons::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
-//   String tag, val;
-//   int stat = RecvCons::LoadWeights_StartTag(strm, "Cn", val, quiet);
-//   if(stat != taMisc::TAG_GOT) return stat;
-
-//   int sz = (int)val;
-//   if(sz < 0) {
-//     return taMisc::TAG_NONE;
-//   }
-
-//   for(int i=0; i < sz; i++) {
-//     int lidx;
-//     float wt;
-//     if(fmt == RecvCons::TEXT) {
-//       taMisc::read_till_eol(strm);
-//     }
-//     else {			// binary
-//       strm.read((char*)&(lidx), sizeof(lidx));
-//       strm.read((char*)&(wt), sizeof(wt));
-//     }
-//   }
-//   RecvCons::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
-//   return stat;
-// }
-
-// void RecvCons::SaveWeights(const String& fname, Unit* ru, RecvCons::WtSaveFormat fmt) {
-//   taFiler* flr = GetSaveFiler(fname, ".wts", true);
-//   if(flr->ostrm)
-//     SaveWeights_strm(*flr->ostrm, ru, fmt);
-//   flr->Close();
-//   taRefN::unRefDone(flr);
-// }
-
-// int RecvCons::LoadWeights(const String& fname, Unit* ru, RecvCons::WtSaveFormat fmt, bool quiet) {
-//   taFiler* flr = GetLoadFiler(fname, ".wts", true);
-//   int rval = 0;
-//   if(flr->istrm)
-//     rval = LoadWeights_strm(*flr->istrm, ru, fmt, quiet);
-//   flr->Close();
-//   taRefN::unRefDone(flr);
-//   return rval;
-// }
-
-/////////////////////////////////////////////////////////////
 // 	Dump Load/Save
 
 // have to implement after save_value because we're not saving a real
@@ -1235,29 +1327,7 @@ int RecvCons::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
   // close off the regular members
   taMisc::indent(strm, indent,1) << "};\n";
 
-  // output the units
-  taMisc::indent(strm, indent, 1) << "{ con_alloc = " << alloc_size << ";\n";
-  taMisc::indent(strm, indent+1, 1) << "units = {";
-  for(int i=0; i<size; i++) {
-    if(Un(i))
-      strm << Un(i)->GetMyLeafIndex() << "; ";
-    else
-      strm << -1 << "; ";	// null..
-  }
-  strm << "};\n";
-
-  // output the connection values
-  for(int j=0; j<con_type->members.size; j++) {
-    MemberDef* md = con_type->members.FastEl(j);
-    if((md->type->ptr > 0) || (md->HasOption("NO_SAVE")))
-      continue;
-    taMisc::indent(strm, indent+1,1) << md->name << " = {";
-    for(int i=0; i<size; i++) {
-      strm << md->type->GetValStr(md->GetOff((void*)Cn(i))) << "; ";
-    }
-    strm << "};\n";
-  }
-  return true;
+  return Dump_Save_Cons(strm, indent);
 }
 
 int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
@@ -1265,122 +1335,17 @@ int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
   if((rval == EOF) || (rval == 2))
     return rval;
 
-  int c = taMisc::read_till_lbracket(strm);	// get past opening bracket
-  if(c == EOF) return EOF;
-  c = taMisc::read_word(strm);
-  if(TestWarning(taMisc::LexBuf != "con_alloc", "Dump_Load_Value",
-		 "Expecting: 'con_alloc' in load file, got:",
-		 taMisc::LexBuf,"instead")) {
-    return false;
-  }
-  // skip =
-  c = taMisc::skip_white(strm);
-  if(TestWarning(c != '=', "Dump_Load_Value",
-		 "Missing '=' in dump file for con_alloc in RecvCons")) {
-    return false;
-  }
-  c = taMisc::read_till_semi(strm);
-  int con_alloc = (int)taMisc::LexBuf;
-  AllocCons(con_alloc);
+  return Dump_Load_Cons(strm);
+}
 
-  c = taMisc::read_word(strm);
-  if(TestWarning(taMisc::LexBuf != "units",
-		 "Dump_Load_Value", "Expecting 'units' in load file, got:",
-		 taMisc::LexBuf,"instead")) {
-    return false;
-  }
-  // skip =
-  c = taMisc::skip_white(strm);
-  if(TestWarning(c != '=', "Dump_Load_Value", "Missing '=' in dump file for unit")) {
-    return false;
-  }
-  // skip {
-  c = taMisc::skip_white(strm);
-  if(TestWarning(c != '{', "Dump_Load_Value", "Missing '{' in dump file for unit")) {
-    return false;
-  }
-
-  // first read in the units
-  Unit_Group* ug = NULL;
-  if(prjn && prjn->from.ptr()) 
-    ug = &(prjn->from->units);
-  int c_count = 0;		// number of connections
-  while(true) {
-    c = taMisc::read_till_rb_or_semi(strm);
-    if(c == EOF) return EOF;
-    if(c == '}') break;
-    Unit* un = NULL;
-    int lfidx = (int)taMisc::LexBuf;
-    if(ug && (lfidx >= 0)) {
-      un = (Unit*)ug->Leaf(lfidx);
-      if(TestWarning(!un, "Dump_Load_Value", "Connection unit not found")) {
-	continue;
-      }
-    }
-    // todo!
-//     if(size > c_count)
-//       SetUn(c_count, un);
-//     else
-//       ConnectUn(un);
-    c_count++;
-  }
-
-  if(c_count > alloc_size) {
-    TestWarning(true, "Dump_Load_Value", "More connections read than allocated.",
-		"weights will be incomplete");
-  }
-
-  // now read in the values
-  while(true) {
-    c = taMisc::read_word(strm);
-    if(c == EOF) return EOF;
-    if(c == '}') {
-      if(strm.peek() == ';') strm.get(); // get the semi
-      break;		// done
-    }
-    MemberDef* md = con_type->members.FindName(taMisc::LexBuf);
-    if(TestWarning(!md, "Dump_Load_Value",
-		   "Connection member not found:", taMisc::LexBuf)) {
-      c = taMisc::skip_past_err(strm);
-      if(c == '}') break;
-      continue;
-    }
-    // skip =
-    c = taMisc::skip_white(strm);
-    if(TestWarning(c != '=', "Dump_Load_Value",
-		   "Missing '=' in dump file for unit")) {
-      c = taMisc::skip_past_err(strm);
-      continue;
-    }
-    // skip {
-    c = taMisc::skip_white(strm);
-    if(TestWarning(c != '{', "Dump_Load_Value",
-		   "Missing '{' in dump file for unit")) {
-      c = taMisc::skip_past_err(strm);
-      continue;
-    }
-
-    int i = 0;
-    while(true) {
-      c = taMisc::read_till_rb_or_semi(strm);
-      if(c == EOF) return EOF;
-      if(c == '}') break;
-      if(i >= size) {
-	c = taMisc::skip_past_err_rb(strm); // bail to ending rb
-	break;
-      }
-      Connection* cn = Cn(i);
-      md->type->SetValStr(taMisc::LexBuf, md->GetOff((void*)cn));
-      i++;
-    }
-  }
-  
-  if(prjn && prjn->con_spec.spec) {
-    SetConSpec(prjn->con_spec.spec); // must set conspec b/c not otherwise saved or set
-    Unit* ru = GET_MY_OWNER(Unit);
-    Init_Weights_post(ru);	// update weights after loading
-  }
-  return true;
+int RecvCons::Dump_Load_Old_Cons(Unit* ru, int recv_gp_idx) {
+  String key = "OldLoadCons_" + String(recv_gp_idx);
+  if(!ru->HasUserData(key)) return false;
+  String load_str = ru->GetUserData(key).toString();
+  istringstream iss(load_str.chars());
+  int rval = Dump_Load_Cons(iss, true); // old_2nd_load = true
+  ru->RemoveUserData(key);
+  return rval;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -5031,11 +4996,10 @@ void UnitCallTask::run() {
 }
 
 void UnitCallThreadMgr::Initialize() {
-  chunk_pct = taMisc::thread_defaults.chunk_pct;
+  alloc_pct = taMisc::thread_defaults.alloc_pct;
   nibble_chunk = taMisc::thread_defaults.nibble_chunk;
   compute_thr = taMisc::thread_defaults.compute_thr;
   min_units = taMisc::thread_defaults.min_units;
-  send_netin = taMisc::thread_defaults.send_netin;
   interleave = true;
   ignore_lay_sync = false;
   nibble_i = -1;
@@ -5131,7 +5095,7 @@ void UnitCallThreadMgr::RunThreads_FwdNetSync(ThreadUnitCall* unit_call) {
   Network* net = network();
   const int nu = net->units_flat.size-1;	// 0 = dummy idx
   const int nt = tasks.size;
-  int n_chunked = (int)((float)nu * chunk_pct);
+  int n_chunked = (int)((float)nu * alloc_pct);
   n_chunked = MAX(n_chunked, nt);
 
   int chnks = n_chunked / nt;
@@ -5187,7 +5151,7 @@ void UnitCallThreadMgr::RunThreads_BkwdNetSync(ThreadUnitCall* unit_call) {
   Network* net = network();
   const int nu = net->units_flat.size-1;	// 0 = dummy idx
   const int nt = tasks.size;
-  int n_chunked = (int)((float)nu * chunk_pct);
+  int n_chunked = (int)((float)nu * alloc_pct);
   n_chunked = MAX(n_chunked, nt);
 
   int chnks = n_chunked / nt;
@@ -5241,7 +5205,7 @@ void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
       }
     }
     else {
-      int n_chunked = (int)((float)nu * chunk_pct);
+      int n_chunked = (int)((float)nu * alloc_pct);
       n_chunked = MAX(n_chunked, nt);
 
       int chnks = n_chunked / nt;
@@ -5295,7 +5259,7 @@ void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
       }
     }
     else {
-      int n_chunked = (int)((float)nu * chunk_pct);
+      int n_chunked = (int)((float)nu * alloc_pct);
       n_chunked = MAX(n_chunked, nt);
 
       int chnks = n_chunked / nt;
@@ -5415,6 +5379,8 @@ void Network::Initialize() {
   max_size.z = 1;
 
   proj = NULL;
+  old_load_cons = false;
+
 #ifdef DMEM_COMPILE
   dmem_share_units.comm = (MPI_Comm)MPI_COMM_WORLD;
   dmem_agg_sum.agg_op = MPI_SUM;
@@ -5583,9 +5549,28 @@ bool Network::ChangeMyType(TypeDef* new_typ) {
 }
 
 int Network::Dump_Load_Value(istream& strm, taBase* par) {
+  old_load_cons = false;
   int rval = inherited::Dump_Load_Value(strm, par);
-  if(rval)
-    LinkSendCons();
+
+  if(old_load_cons) { // old dump format
+    Connect();			  // needs an explicit connect to make everything
+    Layer* lay;
+    taLeafItr li;
+    FOR_ITR_EL(Layer, lay, layers., li) {
+      Unit* u;
+      taLeafItr ui;
+      FOR_ITR_EL(Unit, u, lay->units., ui) {
+	for(int g=0; g<u->recv.size; g++) {
+	  RecvCons* cg = u->recv.FastEl(g);
+	  cg->Dump_Load_Old_Cons(u, g);
+	}
+      }
+    }
+    old_load_cons = false;
+  }
+
+//   if(rval)
+//     LinkSendCons();
 
   ClearNetFlag(SAVE_UNITS_FORCE);	// might have been saved in on state from recover file or something!
 
