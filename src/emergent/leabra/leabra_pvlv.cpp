@@ -123,13 +123,6 @@ bool PViLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   decay.clamp_phase2 = false;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  if(lay->CheckError((us->opt_thresh.learn >= 0.0f), quiet, rval,
-		"UnitSpec opt_thresh.learn must be -1 to allow proper learning of all units",
-		"I just set it for you in spec:", us->name,
-		"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("opt_thresh", true);
-    us->opt_thresh.learn = -1.0f;
-  }
   if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
 		"requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
 		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
@@ -359,13 +352,6 @@ bool PVrLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   decay.clamp_phase2 = false;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  if(lay->CheckError((us->opt_thresh.learn >= 0.0f), quiet, rval,
-		"UnitSpec opt_thresh.learn must be -1 to allow proper learning of all units",
-		"I just set it for you in spec:", us->name,
-		"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("opt_thresh", true);
-    us->opt_thresh.learn = -1.0f;
-  }
   if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
 		"requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
 		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
@@ -537,13 +523,6 @@ bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   decay.clamp_phase2 = false;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  if(lay->CheckError((us->opt_thresh.learn >= 0.0f), quiet, rval,
-		"UnitSpec opt_thresh.learn must be -1 to allow proper learning of all units",
-		"I just set it for you in spec:", us->name,
-		"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("opt_thresh", true);
-    us->opt_thresh.learn = -1.0f;
-  }
   us->UpdateAfterEdit();
 
   // check for conspecs with correct params
@@ -788,13 +767,6 @@ bool NVLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   decay.clamp_phase2 = false;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  if(lay->CheckError((us->opt_thresh.learn >= 0.0f), quiet, rval,
-		"UnitSpec opt_thresh.learn must be -1 to allow proper learning of all units",
-		"I just set it for you in spec:", us->name,
-		"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("opt_thresh", true);
-    us->opt_thresh.learn = -1.0f;
-  }
   if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
 		"requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
 		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
@@ -1346,7 +1318,6 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   pv_units->SetUnique("act", true);
   pv_units->SetUnique("act_fun", true);
   pv_units->SetUnique("dt", true);
-  //    pv_units->SetUnique("opt_thresh", true);
   pv_units->act_fun = LeabraUnitSpec::NOISY_LINEAR;
   pv_units->act.thr = .17f;
   pv_units->act.gain = 220.0f;
@@ -1355,7 +1326,6 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   pv_units->g_bar.h = .03f;  pv_units->g_bar.a = .09f;
   pv_units->dt.vm = .05f;
   pv_units->dt.vm_eq_cyc = 100; // go straight to equilibrium!
-  //    pv_units->opt_thresh.send = 0.0f; // scalar val may use this -- don't let it!
 
   pvi_cons->SetUnique("lmix", true);
   pvi_cons->lmix.err_sb = false; 

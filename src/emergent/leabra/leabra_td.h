@@ -68,7 +68,6 @@ public:
 
   override void	Init_Acts(Unit* u, Network* net);
   override void Init_Weights(Unit* u, Network* net);
-  override bool Compute_dWt_OptTest(LeabraUnit* u, LeabraNetwork* net);
   override void EncodeState(LeabraUnit* u, LeabraNetwork* net);
 
   void	Defaults();

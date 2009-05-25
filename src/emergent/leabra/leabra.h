@@ -514,6 +514,16 @@ public:
   // #CAT_Learning overall compute weights for CtLeabraCAL learning rule
 
   /////////////////////////////////////
+  // Master dWt, Weights functions
+
+  inline void	Compute_Leabra_dWt(LeabraSendCons* cg, LeabraUnit* su);
+  // #CAT_Learning overall compute delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
+
+  inline void	Compute_Leabra_Weights(LeabraSendCons* cg, LeabraUnit* su);
+  // #CAT_Learning overall compute weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
+
+
+  /////////////////////////////////////
   // 	Bias Weights
 
   virtual void	B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru);
@@ -537,6 +547,9 @@ public:
   virtual void	B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
 					  LeabraLayer* rlay);
   // #CAT_Learning compute bias weight change for CAL rule
+
+  inline void	B_Compute_Leabra_dWt(LeabraCon* cn, LeabraUnit* ru, LeabraLayer* rlay);
+  // #CAT_Learning overall compute bias delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
 
   virtual void	B_Compute_Weights(LeabraCon* cn, LeabraUnit* ru);
   // #CAT_Learning update weights for bias connection (same for all algos)
@@ -627,40 +640,47 @@ public:
   { ((LeabraConSpec*)GetConSpec())->Send_NetinDelta(this, net, thread_no, su_act_delta); }
   // #CAT_Activation send delta-netin
 
-  void	Compute_dWt_LeabraCHL(LeabraUnit* ru)
-  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_LeabraCHL(this, ru); }
+  void	Compute_dWt_LeabraCHL(LeabraUnit* su)
+  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_LeabraCHL(this, su); }
   // #CAT_Learning compute weight changes: Leabra CHL version
-  void	Compute_Weights_LeabraCHL(LeabraUnit* ru)
-  { ((LeabraConSpec*)GetConSpec())->Compute_Weights_LeabraCHL(this, ru); }
+  void	Compute_Weights_LeabraCHL(LeabraUnit* su)
+  { ((LeabraConSpec*)GetConSpec())->Compute_Weights_LeabraCHL(this, su); }
   // #CAT_Learning compute weights: Leabra CHL version
 
-  void	Compute_SRAvg(LeabraUnit* ru, bool do_s)
-  { ((LeabraConSpec*)GetConSpec())->Compute_SRAvg(this, ru, do_s); }
+  void	Compute_SRAvg(LeabraUnit* su, bool do_s)
+  { ((LeabraConSpec*)GetConSpec())->Compute_SRAvg(this, su, do_s); }
   // #CAT_Learning compute sending-receiving activation product averages
-  void	Trial_Init_SRAvg(LeabraUnit* ru)
-  { ((LeabraConSpec*)GetConSpec())->Trial_Init_SRAvg(this, ru); }
+  void	Trial_Init_SRAvg(LeabraUnit* su)
+  { ((LeabraConSpec*)GetConSpec())->Trial_Init_SRAvg(this, su); }
   // #CAT_Learning initialize sending-receiving activation product averages
 
-  void	Compute_dWt_CtLeabraXCAL(LeabraUnit* ru)
-  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraXCAL(this, ru); }
+  void	Compute_dWt_CtLeabraXCAL(LeabraUnit* su)
+  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraXCAL(this, su); }
   // #CAT_Learning compute weight changes: CtLeabra XCAL version
-  void	Compute_Weights_CtLeabraXCAL(LeabraUnit* ru)
-  { ((LeabraConSpec*)GetConSpec())->Compute_Weights_CtLeabraXCAL(this, ru); }
+  void	Compute_Weights_CtLeabraXCAL(LeabraUnit* su)
+  { ((LeabraConSpec*)GetConSpec())->Compute_Weights_CtLeabraXCAL(this, su); }
   // #CAT_Learning compute weights: CtLeabra XCAL version
 
-  void	Compute_dWt_CtLeabraXCAL_C(LeabraUnit* ru)
-  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraXCAL_C(this, ru); }
+  void	Compute_dWt_CtLeabraXCAL_C(LeabraUnit* su)
+  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraXCAL_C(this, su); }
   // #CAT_Learning compute weight changes: CtLeabra XCAL_C version
 
-  void	Compute_dWt_CtLeabraCAL(LeabraUnit* ru)
-  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraCAL(this, ru); }
+  void	Compute_dWt_CtLeabraCAL(LeabraUnit* su)
+  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraCAL(this, su); }
   // #CAT_Learning compute weight changes: CtLeabra CAL version
-  void	Compute_Weights_CtLeabraCAL(LeabraUnit* ru)
-  { ((LeabraConSpec*)GetConSpec())->Compute_Weights_CtLeabraCAL(this, ru); }
+  void	Compute_Weights_CtLeabraCAL(LeabraUnit* su)
+  { ((LeabraConSpec*)GetConSpec())->Compute_Weights_CtLeabraCAL(this, su); }
   // #CAT_Learning compute weights: CtLeabra CAL version
 
-  void	Compute_CycSynDep(LeabraUnit* ru)
-  { ((LeabraConSpec*)GetConSpec())->Compute_CycSynDep(this, ru); }
+  void	Compute_Leabra_dWt(LeabraUnit* su)
+  { ((LeabraConSpec*)GetConSpec())->Compute_Leabra_dWt(this, su); }
+  // #CAT_Learning overall compute delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
+  void	Compute_Leabra_Weights(LeabraUnit* su)
+  { ((LeabraConSpec*)GetConSpec())->Compute_Leabra_Weights(this, su); }
+  // #CAT_Learning overall compute weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
+
+  void	Compute_CycSynDep(LeabraUnit* su)
+  { ((LeabraConSpec*)GetConSpec())->Compute_CycSynDep(this, su); }
   // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
 
   void	Copy_(const LeabraSendCons& cp);
@@ -778,7 +798,6 @@ INHERITED(taOBase)
 public:
   float		send;		// #DEF_0.1 don't send activation when act <= send -- greatly speeds processing
   float		delta;		// #DEF_0.005 don't send activation changes until they exceed this threshold: only for when LeabraNetwork::send_delta is on!
-  float		learn;		// #DEF_0.01;-1 don't learn on recv unit weights when both phase acts (or bias.sravg_m for Ct) <= learn
   float		phase_dif;	// #DEF_0 don't learn when +/- phase difference ratio (- / +) < phase_dif (.8 when used, but off by default)
 
   void 	Defaults()	{ Initialize(); }
@@ -1147,12 +1166,6 @@ public:
   // #CAT_TrialFinal compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
   virtual void	Compute_dWt_Nothing(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_TrialFinal compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
-
-  virtual bool Compute_dWt_OptTest(LeabraUnit* u, LeabraNetwork* net);
-  // #CAT_Learning do optimization threshold test for whether to skip dwt compute or not
-
-  virtual void Compute_dWt_impl(LeabraUnit* u, LeabraNetwork* net);
-  // #CAT_Learning actually perform dwt computation on synapses -- does not test for anything, just does it
 
   override void	Compute_Weights(Unit* u, Network* net, int thread_no=-1);
 
@@ -2886,11 +2899,11 @@ inline void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* ne
   }
 }
 
-float LeabraConSpec::C_Compute_Netin(LeabraCon* cn, LeabraUnit*, LeabraUnit* su) {
+inline float LeabraConSpec::C_Compute_Netin(LeabraCon* cn, LeabraUnit*, LeabraUnit* su) {
   return cn->wt * su->act_eq;
 }
 
-float LeabraConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {
+inline float LeabraConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {
   float rval=0.0f;
   CON_GROUP_LOOP(cg, rval += C_Compute_Netin((LeabraCon*)cg->PtrCn(i), (LeabraUnit*)ru,
 					     (LeabraUnit*)cg->Un(i)));
@@ -3215,6 +3228,44 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, Leabr
   //  ApplyLimits(cg, ru); limits are automatically enforced anyway
 }
 
+
+/////////////////////////////////////
+// Master dWt function
+
+inline void LeabraConSpec::Compute_Leabra_dWt(LeabraSendCons* cg, LeabraUnit* su) {
+  switch(learn_rule) {
+  case LEABRA_CHL:
+    Compute_dWt_LeabraCHL(cg, su);
+    break;
+  case CTLEABRA_CAL:
+    Compute_dWt_CtLeabraCAL(cg, su);
+    break;
+  case CTLEABRA_XCAL:
+    Compute_dWt_CtLeabraXCAL(cg, su);
+    break;
+  case CTLEABRA_XCAL_C:
+    Compute_dWt_CtLeabraXCAL_C(cg, su);
+    break;
+  }
+}
+
+inline void LeabraConSpec::Compute_Leabra_Weights(LeabraSendCons* cg, LeabraUnit* su) {
+  switch(learn_rule) {
+  case LEABRA_CHL:
+    Compute_Weights_LeabraCHL(cg, su);
+    break;
+  case CTLEABRA_CAL:
+    Compute_Weights_CtLeabraCAL(cg, su);
+    break;
+  case CTLEABRA_XCAL:
+    Compute_Weights_CtLeabraXCAL(cg, su);
+    break;
+  case CTLEABRA_XCAL_C:
+    Compute_Weights_CtLeabraXCAL(cg, su);
+    break;
+  }
+}
+
 //////////////////////////////////////////////////////////////////////
 //	Bias Weights: threshold dwt versions in LeabraBiasSpec
 
@@ -3306,6 +3357,25 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* 
   cn->dwt += cur_lrate * dw;
 }
 
+/////////////////////////////////////
+// Master Bias dWt function
+
+inline void LeabraConSpec::B_Compute_Leabra_dWt(LeabraCon* cn, LeabraUnit* ru, LeabraLayer* rlay) {
+  switch(learn_rule) {
+  case LEABRA_CHL:
+    B_Compute_dWt_LeabraCHL(cn, ru);
+    break;
+  case CTLEABRA_CAL:
+    B_Compute_dWt_CtLeabraCAL(cn, ru, rlay);
+    break;
+  case CTLEABRA_XCAL:
+    B_Compute_dWt_CtLeabraXCAL(cn, ru, rlay);
+    break;
+  case CTLEABRA_XCAL_C:
+    B_Compute_dWt_CtLeabraXCAL_C(cn, ru, rlay);
+    break;
+  }
+}
 
 /////////////////////////////////////////
 //	LeabraBiasSpec real ones

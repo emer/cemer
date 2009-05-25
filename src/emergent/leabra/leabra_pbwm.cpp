@@ -461,13 +461,6 @@ bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 		"UnitSpec must be MatrixUnitSpec!")) {
     return false;
   }
-  if(lay->CheckError((us->opt_thresh.learn >= 0.0f), quiet, rval,
-		"UnitSpec opt_thresh.learn must be -1 to allow proper learning of all units",
-		"I just set it for you in spec:", us->name,
-		"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("opt_thresh", true);
-    us->opt_thresh.learn = -1.0f;
-  }
   if(lay->CheckError(us->act.avg_dt <= 0.0f, quiet, rval,
 		"requires UnitSpec act.avg_dt > 0, I just set it to .005 for you in spec:",
 		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {

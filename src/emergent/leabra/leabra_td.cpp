@@ -59,20 +59,6 @@ void LeabraTdUnitSpec::Init_Weights(Unit* u, Network* net) {
   ((LeabraTdUnit*)u)->trace = 0.0f;
 }
 
-bool LeabraTdUnitSpec::Compute_dWt_OptTest(LeabraUnit* u, LeabraNetwork* net) {
-  LeabraLayer* lay = u->own_lay();
-  LeabraTdUnit* lu = (LeabraTdUnit*)u;
-  if((lu->act_p <= opt_thresh.learn) && (lu->act_m <= opt_thresh.learn)) {
-    if((lu->p_act_p <= opt_thresh.learn) && (lu->p_act_m <= opt_thresh.learn)) {
-      return false;
-    }
-  }
-  if(lay->phase_dif_ratio < opt_thresh.phase_dif) {
-    return false;
-  }
-  return true;
-}
-
 void LeabraTdUnitSpec::EncodeState(LeabraUnit* u, LeabraNetwork* net) {
   inherited::EncodeState(u, net);
   LeabraTdUnit* lu = (LeabraTdUnit*)u;
