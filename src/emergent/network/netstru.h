@@ -380,11 +380,12 @@ public:
   { if(!InRange(idx)) return false; units[idx] = un; return true; }
   // #CAT_Modify set unit pointer at given index -- returns false if out of range
 
-  Connection*		ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons);
-  // #CAT_Modify add a new connection betwee our unit and an other unit and its appropriate cons -- does appropriate things depending on who owns the connects, etc.  enough room must already be allocated on both sides.
-    Connection*		ConnectUnOwnCn(Unit* un);
-    // #CAT_Modify add a new connection from given unit for OwnCons case -- returns NULL if no more room relative to alloc_size
-    bool		ConnectUnPtrCn(Unit* un, Connection* cn);
+  Connection*		ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons,
+				     bool ignore_alloc_errs = false);
+  // #CAT_Modify add a new connection betwee our unit and an other unit and its appropriate cons -- does appropriate things depending on who owns the connects, etc.  enough room must already be allocated on both sides  (flag will turn off err msg)
+    Connection*		ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs = false);
+    // #CAT_Modify add a new connection from given unit for OwnCons case -- returns NULL if no more room relative to alloc_size (flag will turn off err msg)
+    bool		ConnectUnPtrCn(Unit* un, Connection* cn, bool ignore_alloc_errs = false);
     // #CAT_Modify add a new connection from given unit and connection pointer for PtrCons case -- returns false if no more room, else true 
 
   void			ConnectAllocInc();
@@ -779,9 +780,6 @@ SpecPtr_of(UnitSpec);
 class EMERGENT_API Unit: public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##DMEM_SHARE_SETS_3 ##CAT_Network Generic unit -- basic computational unit of a neural network (e.g., a neuron-like processing unit)
 INHERITED(taOBase)
-protected:
-  static RecvCons*	rcg_rval; // return value for connecting
-  static SendCons*	scg_rval; // return value for connecting
 public: //
   enum ExtType {// #BITS indicates type of external input; some flags used in Layer to control usage
     NO_EXTERNAL 	= 0x00,	// #NO_BIT no input
@@ -930,17 +928,17 @@ public: //
   // #CAT_Structure check if network is built 
   virtual void	RemoveCons();
   // #IGNORE remove all of unit's sending and receiving connections -- since this doesn't affect other units, it should not be called individually
-  virtual void	RecvConsPreAlloc(int no, Projection* prjn, RecvCons*& cgp = rcg_rval);
+  virtual void	RecvConsPreAlloc(int no, Projection* prjn);
   // #CAT_Structure pre-allocate given no of receiving connections -- sufficient connections must be allocated in advance of making specific connections
-  virtual void	SendConsPreAlloc(int no, Projection* prjn, SendCons*& cgp = scg_rval);
+  virtual void	SendConsPreAlloc(int no, Projection* prjn);
   // #CAT_Structure pre-allocate given no of sending connections -- sufficient connections must be allocated in advance of making specific connections
-  virtual void	SendConsPostAlloc(Projection* prjn, SendCons*& cgp = scg_rval);
+  virtual void	SendConsPostAlloc(Projection* prjn);
   // #CAT_Structure post-allocate given no of sending connections -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
   virtual Connection*	ConnectFrom(Unit* su, Projection* prjn, bool alloc_send = false, 
-			    RecvCons*& recv_gp = rcg_rval, SendCons*& send_gp = scg_rval);
+				    bool ignore_alloc_errs = false);
   // #CAT_Structure make a recv connection from given unit to this unit using given projection -- requires both recv and sender to have sufficient connections allocated already, unless alloc_send is true, then it only allocates connections on the sender -- does NOT make any connection on the receiver -- use this in a loop that runs connections twice, with first pass as allocation (then call SendConstPostAlloc) and second pass as actual connection making
   virtual Connection* 	ConnectFromCk(Unit* su, Projection* prjn, 
-			      RecvCons*& recv_gp = rcg_rval, SendCons*& send_gp = scg_rval);
+				      bool ignore_alloc_errs = false);
   // #CAT_Structure does ConnectFrom but checks for an existing connection to prevent double-connections -- note that this is expensive -- only use if there is a risk of multiple connections.  This does not support alloc_send option -- can call in 2nd pass if needed
   virtual bool	DisConnectFrom(Unit* su, Projection* prjn=NULL);
   // #CAT_Structure remove connection from given unit (projection is optional)

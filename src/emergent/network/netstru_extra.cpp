@@ -140,6 +140,10 @@ void TesselPrjnSpec::UpdateAfterEdit_impl() {
 }
 
 void TesselPrjnSpec::MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y) {
+  last_make_cmd = "MakeEllipse( half_width=" + String(half_width)
+    + ", half_height=" + String(half_height)
+    + ", ctr_x=" + String(ctr_x) + ", ctr_y=" + String(ctr_y) + ")";
+  DataChanged(DCR_ITEM_UPDATED);
   send_offs.Reset();
   int strt_x = ctr_x - half_width;
   int end_x = ctr_x + half_width;
@@ -198,6 +202,9 @@ void TesselPrjnSpec::MakeEllipse(int half_width, int half_height, int ctr_x, int
 }
 
 void TesselPrjnSpec::MakeRectangle(int width, int height, int left, int bottom) {
+  last_make_cmd = "MakeRectangle(width=" + String(width) + ", height=" + String(height)
+    + ", left=" + String(left) + ", bottom=" + String(bottom) + ")";
+  DataChanged(DCR_ITEM_UPDATED);
   send_offs.Reset();
   int y;
   for(y = bottom; y < bottom + height; y++) {
@@ -235,6 +242,8 @@ void TesselPrjnSpec::MakeFromNetView(NetView* view) {
 }*/
 
 void TesselPrjnSpec::WeightsFromDist(float scale) {
+  last_weights_cmd = "WeightsFromDist(scale=" + String(scale) + ")";
+  DataChanged(DCR_ITEM_UPDATED);
   TwoDCoord zero;
   int i;
   TessEl* te;
@@ -246,6 +255,9 @@ void TesselPrjnSpec::WeightsFromDist(float scale) {
 }
 
 void TesselPrjnSpec::WeightsFromGausDist(float scale, float sigma) {
+  last_weights_cmd = "WeightsFromGausDist(scale=" + String(scale) 
+    + ", sigma=" + String(sigma) + ")";
+  DataChanged(DCR_ITEM_UPDATED);
   TwoDCoord zero;
   int i;
   TessEl* te;
@@ -273,7 +285,7 @@ void TesselPrjnSpec::GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc) {
   ruc += recv_off;	// then re-add offset
   FloatTwoDCoord scruc = ruc;
   scruc *= send_scale;
-  scruc += send_border;
+  scruc += send_off;
   sctr = scruc;		// take int part at the end
 }
 
@@ -310,8 +322,8 @@ void TesselPrjnSpec::Connect_impl(Projection* prjn) {
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
 
-  TestWarning(!wrap && init_wts, "Connect_impl",
-	      "non-wrapped tessel prjn spec with init_wts does not usually work!");
+//   TestWarning(!wrap && init_wts, "Connect_impl",
+// 	      "non-wrapped tessel prjn spec with init_wts does not usually work!");
   PosTwoDCoord ru_geo;  prjn->layer->GetActGeomNoSpc(ru_geo);
 
   TwoDCoord use_recv_n = recv_n;
@@ -418,7 +430,8 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
       perm_list.Permute();
       int j;
       for(j=0; j<first && j<perm_list.size; j++)	// only connect 1/2 of the units
-	ru->ConnectFrom((Unit*)perm_list[j], prjn);
+	ru->ConnectFrom((Unit*)perm_list[j], prjn, false, true);
+      // true = ignore errs -- to be expected
     }
     // now go thru and make the symmetric connections
     FOR_ITR_EL(Unit, ru, lay->units., ru_itr) {
@@ -427,7 +440,8 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
       int i;
       for(i=0;i<scg->size;i++) {
 	Unit* su = scg->Un(i);
-	ru->ConnectFromCk(su, prjn);
+	ru->ConnectFromCk(su, prjn, true);
+	// true = ignore errs -- to be expected
       }
     }
   }
@@ -441,7 +455,8 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
       }
       perm_list.Permute();
       for(int i=0; i<recv_no && i<perm_list.size; i++)
-	ru->ConnectFrom((Unit*)perm_list[i], prjn);
+	ru->ConnectFrom((Unit*)perm_list[i], prjn, false, true);
+      // true = ignore errs -- to be expected
     }
   }
 }

@@ -62,18 +62,20 @@ private:
 };
 
 class EMERGENT_API TesselPrjnSpec : public ProjectionSpec {
-  // arbitrary tesselations (repeating patterns) of connectivity
+  // arbitrary tesselations (repeating patterns) of connectivity -- sweeps over receiving units and connects with sending units based on projection of recv unit position into sending layer, plus sending offsets that specify the connectivity pattern
 INHERITED(ProjectionSpec)
 public:
-  TwoDCoord	recv_off;	// offset in layer for start of recv units to begin connecting
+  TwoDCoord	recv_off;	// offset in layer for start of recv units to begin connecting -- can leave some unconnected units around the edges if desired
   TwoDCoord	recv_n;		// number of receiving units to connect in each dimension (-1 for all)
   TwoDCoord	recv_skip;	// increment for recv units in each dimension -- 1 = connect all units; 2 = skip every other unit, etc
-  TwoDCoord	recv_group;	// group together this many units under the same starting coord, resulting in a tile pattern
-  bool		wrap;		// whether to wrap coordinates around (else clip)
-  FloatTwoDCoord send_scale;	// scale to apply to transform receiving unit coords into sending unit coords
-  FloatTwoDCoord send_border;	// border size around sending layer (constant offset to add to sending offsets)
+  TwoDCoord	recv_group;	// group together this many units under the same starting coord, resulting in a tile pattern -- each member of the group (which needn't correspond to an actual unit group in the recv layer) gets the same effective location as the first member of the group
+  bool		wrap;		// whether to wrap coordinates around in the sending layer (e.g., if it goes past the right side, then it continues back on the left).  otherwise it will clip off connections at the edges.  Any clipping will affect the ability to initialize weight patterns properly, so it is best to avoid that.
+  FloatTwoDCoord send_scale;	// scale to apply to transform receiving unit coords into sending unit coords -- can use this to compensate for differences in the sizes between the two layers
+  FloatTwoDCoord send_off;	// #AKA_send_border constant offset to add to sending offsets relative to the position of the receiving unit -- this just adds a constant to the specific send_offs that specify the detailed pattern of connectivity
+  TessEl_List	send_offs;	// offsets of the sending units -- these are added to the location of the recv unit to determine which sending units to receive from -- can create any arbitrary patterns here, or use the MakeEllipse or MakeRectangle buttons to create those std patterns
 
-  TessEl_List	send_offs;	// offsets of the sending units
+  String	last_make_cmd; // #READ_ONLY #SHOW shows the last Make.. command that was run (if blank, none or it was done prior to the addition of this feature in version 4.1.0) -- useful for modifying later
+  String	last_weights_cmd; // #READ_ONLY #SHOW shows the last Weights.. command that was run (if blank, none or it was done prior to the addition of this feature in version 4.1.0) -- useful for modifying later
 
   void		Connect_impl(Projection* prjn);
   void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);

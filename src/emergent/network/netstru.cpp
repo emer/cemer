@@ -475,49 +475,56 @@ bool BaseCons::ChangeMyType(TypeDef*) {
   return false;
 }
 
-Connection* BaseCons::ConnectUnOwnCn(Unit* un) {
+Connection* BaseCons::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs) {
   if(TestError(!OwnCons(), "ConnectUnOwnCn", "does not own cons!"))
     return NULL;
-  if(TestError(size >= alloc_size, "ConnectUnOwnCn", "size already at maximum allocated of",
-	       String(alloc_size),"this is a programmer error -- please report the bug"))
+  if(size >= alloc_size) {
+    TestError(!ignore_alloc_errs, "ConnectUnOwnCn", "size already at maximum allocated of",
+	      String(alloc_size),"this is a programmer error -- please report the bug");
     return NULL;
+  }
   Connection* rval = OwnCn(size);
   units[size++] = un;
   return rval;
 }
 
-bool BaseCons::ConnectUnPtrCn(Unit* un, Connection* cn) {
+bool BaseCons::ConnectUnPtrCn(Unit* un, Connection* cn, bool ignore_alloc_errs) {
   if(TestError(OwnCons(), "ConnectUnPtrCn", "is not a ptr cons!"))
     return false;
-  if(TestError(size >= alloc_size, "ConnectUnPtrCn", "size already at maximum allocated of",
-	       String(alloc_size),"this is a programmer error -- please report the bug"))
+  if(size >= alloc_size) {
+    TestError(!ignore_alloc_errs, "ConnectUnPtrCn", "size already at maximum allocated of",
+	      String(alloc_size),"this is a programmer error -- please report the bug");
     return false;
+  }
   cons_ptr[size] = cn;
   units[size++] = un;
   return true;
 }
 
-Connection* BaseCons::ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons) {
+Connection* BaseCons::ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons, 
+				   bool ignore_alloc_errs) {
   Connection* con = NULL;
   if(OwnCons()) {
-    con = ConnectUnOwnCn(oth_un);
+    con = ConnectUnOwnCn(oth_un, ignore_alloc_errs);
     if(con) {
-      if(oth_cons->ConnectUnPtrCn(our_un, con)) {
+      if(oth_cons->ConnectUnPtrCn(our_un, con, ignore_alloc_errs)) {
 	return con;
       }
       else {
 	con = NULL;
+	RemoveConIdx(size-1);	// remove last guy!  otherwise it is a dangler
       }
     }
   }
   else {
-    con = oth_cons->ConnectUnOwnCn(our_un);
+    con = oth_cons->ConnectUnOwnCn(our_un, ignore_alloc_errs);
     if(con) {
-      if(ConnectUnPtrCn(oth_un, con)) {
+      if(ConnectUnPtrCn(oth_un, con, ignore_alloc_errs)) {
 	return con;
       }
       else {
 	con = NULL;
+	oth_cons->RemoveConIdx(size-1);	// remove last guy!  otherwise it is a dangler
       }
     }
   }
@@ -2085,13 +2092,11 @@ void Unit::LinkPtrCons() {
   }
 }
 
-RecvCons* Unit::rcg_rval = NULL;
-SendCons* Unit::scg_rval = NULL;
-
-void Unit::RecvConsPreAlloc(int no, Projection* prjn, RecvCons*& cgp) {
+void Unit::RecvConsPreAlloc(int no, Projection* prjn) {
 #ifdef DMEM_COMPILE
   if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return;
 #endif
+  RecvCons* cgp = NULL;
   if((prjn->recv_idx < 0) || ((cgp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
     cgp = recv.NewPrjn(prjn); // sets the type
     prjn->recv_idx = recv.size-1;
@@ -2099,7 +2104,8 @@ void Unit::RecvConsPreAlloc(int no, Projection* prjn, RecvCons*& cgp) {
   cgp->AllocCons(no);
 }
 
-void Unit::SendConsPreAlloc(int no, Projection* prjn, SendCons*& cgp) {
+void Unit::SendConsPreAlloc(int no, Projection* prjn) {
+  SendCons* cgp = NULL;
   if((prjn->send_idx < 0) || ((cgp = send.SafeEl(prjn->send_idx)) == NULL)) {
     cgp = send.NewPrjn(prjn); // sets the type
     prjn->send_idx = send.size-1;
@@ -2107,7 +2113,8 @@ void Unit::SendConsPreAlloc(int no, Projection* prjn, SendCons*& cgp) {
   cgp->AllocCons(no);
 }
 
-void Unit::SendConsPostAlloc(Projection* prjn, SendCons*& cgp) {
+void Unit::SendConsPostAlloc(Projection* prjn) {
+  SendCons* cgp = NULL;
   if((prjn->send_idx < 0) || ((cgp = send.SafeEl(prjn->send_idx)) == NULL)) {
     cgp = send.NewPrjn(prjn); // sets the type
     prjn->send_idx = send.size-1;
@@ -2116,10 +2123,12 @@ void Unit::SendConsPostAlloc(Projection* prjn, SendCons*& cgp) {
 }
 
 Connection* Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
-			      RecvCons*& recv_gp, SendCons*& send_gp) {
+			      bool ignore_alloc_errs) {
 #ifdef DMEM_COMPILE
   if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
 #endif
+  RecvCons* recv_gp = NULL;
+  SendCons* send_gp = NULL;
   if((prjn->recv_idx < 0) || ((recv_gp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
     recv_gp = recv.NewPrjn(prjn);
     prjn->recv_idx = recv.size-1;
@@ -2138,17 +2147,19 @@ Connection* Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
     return NULL;
   }
 
-  Connection* con = recv_gp->ConnectUnits(this, su, send_gp);
+  Connection* con = recv_gp->ConnectUnits(this, su, send_gp, ignore_alloc_errs);
   if(con) 
     n_recv_cons++;
   return con;
 }
 
-Connection* Unit::ConnectFromCk(Unit* su, Projection* prjn, RecvCons*& recv_gp,
-			      SendCons*& send_gp) {
+Connection* Unit::ConnectFromCk(Unit* su, Projection* prjn,
+				bool ignore_alloc_errs) {
 #ifdef DMEM_COMPILE
   if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
 #endif
+  RecvCons* recv_gp = NULL;
+  SendCons* send_gp = NULL;
   if((prjn->recv_idx < 0) || ((recv_gp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
     recv_gp = recv.NewPrjn(prjn);
     prjn->recv_idx = recv.size-1;
@@ -2165,7 +2176,7 @@ Connection* Unit::ConnectFromCk(Unit* su, Projection* prjn, RecvCons*& recv_gp,
   if(recv_gp->FindConFromIdx(su) >= 0) // already connected!
     return NULL;
 
-  Connection* con = recv_gp->ConnectUnits(this, su, send_gp);
+  Connection* con = recv_gp->ConnectUnits(this, su, send_gp, ignore_alloc_errs);
   if(con) 
     n_recv_cons++;
   return con;
