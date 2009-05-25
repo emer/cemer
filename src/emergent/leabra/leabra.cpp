@@ -969,7 +969,6 @@ void LeabraUnitSpec::Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thre
   Trial_DecayState(u, net);
   Trial_NoiseInit(u, net);
   Trial_Init_SRAvg(u, net);
-  Compute_NetinScale(u, net);
 }
 
 void LeabraUnitSpec::Trial_DecayState(LeabraUnit* u, LeabraNetwork* net) {
@@ -1004,6 +1003,7 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
 void LeabraUnitSpec::Settle_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   Settle_Init_TargFlags(u, net);
   Settle_DecayState(u, net);
+  Compute_NetinScale(u, net);
 }
 
 void LeabraUnitSpec::Settle_Init_TargFlags(LeabraUnit* u, LeabraNetwork* net) {

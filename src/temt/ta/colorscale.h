@@ -148,7 +148,7 @@ class TA_API ColorScaleSpec : public taNBase {
 INHERITED(taNBase)
 public:
   RGBA		background;	// background color
-  RGBA_List	clr;		// #HIDDEN_TREE group of colors
+  RGBA_List	clr;		// #SHOW_TREE group of colors
 
   virtual void	GenRanges(TAColor_List* cl, int chunks);
 

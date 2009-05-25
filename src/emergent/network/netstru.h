@@ -428,6 +428,11 @@ public:
   virtual Connection*	FindConFromName(const String& unit_nm) const;
   // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure find connection from given unit name
 
+  virtual SendCons*	GetPrjnSendCons(Unit* su) const;
+  // #CAT_Structure safely and robustly get the SendCons from given sending unit that belongs to the same projection as this recv cons (only applicable if this IsRecv())
+  virtual RecvCons*	GetPrjnRecvCons(Unit* ru) const;
+  // #CAT_Structure safely and robustly get the RecvCons from given recv unit that belongs to the same projection as this send cons (only applicable if this IsSend())
+
   static Connection* 	FindRecipRecvCon(Unit* su, Unit* ru, Layer* ru_lay);
   // #CAT_Structure find the reciprocal for sending unit su to this receiving unit ru
   static Connection* 	FindRecipSendCon(Unit* ru, Unit* su, Layer* su_lay);
@@ -486,11 +491,17 @@ public:
   override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   override int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   override bool	ChangeMyType(TypeDef* new_type);
+
+  virtual void 	LinkPtrCons(Unit* ru);
+  // #IGNORE link pointer connections from the corresponding owned connections -- only needed after a Copy -- this requires that the unit pointers are updated and set properly (through UpdatePointers), and just does the connections which cannot otherwise be updated
   
-  override String 	GetTypeDecoKey() const { return "Connection"; }
+  override String GetTypeDecoKey() const { return "Connection"; }
 
   override int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0);
   override int	Dump_Load_Value(istream& strm, taBase* par=NULL);
+  // the dump system saves the alloc_size during the first 'path' stage of dumping, and then during loading does a full AllocCons for everything, building it all anew prior to the second 'value' stage of loading, which can then do ConnectFrom to setup connections, and set weights etc
+
+  // the cons versions below have support for loading an "old" format file (prior to 4.1.0), which does not have the pre-alloc during the first path load phase: they save the load string into user data on the Unit, and then the Network::Dump_Load_Value goes through and reads those in after doing a manual Connect, so that everything is allocated
 
   virtual int 	Dump_Save_Cons(ostream& strm, int indent);
   // #CAT_FILE save just the connection values out to given stream -- call this in Dump_Save_Value after default guy to actually save connections (in RecvCons)
@@ -514,6 +525,11 @@ class EMERGENT_API RecvCons : public BaseCons {
   // receiving connections base class -- one projection's worth of receiving connections 
 INHERITED(BaseCons)
 public:
+  // following is for backward compatibility with 4.0.x -- todo remove at some point?
+#ifdef __MAKETA__
+  int		other_idx;      // #AKA_send_idx #CAT_Structure #READ_ONLY #SHOW index into other direction's list of cons objects (i.e., send_idx for RecvCons and recv_idx for SendCons)
+#endif
+
   inline int		send_idx() { return other_idx; }
   // #READ_ONLY index into sending unit's send. list of SendCons
 
@@ -546,9 +562,6 @@ public:
 
   virtual int	Dump_Load_Old_Cons(Unit* ru, int recv_gp_idx);
   // #IGNORE load old connection values if a user-data string is present to this effect -- removes the user data after loading!
-
-  virtual void 	LinkSendCons(Unit* ru);
-  // #CAT_Structure make connection links in all the sending units (assumes that these are initially empty, as after loading or copying)
 
   TA_BASEFUNS_NOCOPY(RecvCons);
 protected:
@@ -606,6 +619,11 @@ class EMERGENT_API SendCons : public BaseCons {
   // sending connections base class -- one projection's worth of sending connections 
 INHERITED(BaseCons)
 public:
+  // following is for backward compatibility with 4.0.x -- todo remove at some point?
+#ifdef __MAKETA__
+  int		other_idx;      // #AKA_recv_idx #CAT_Structure #READ_ONLY #SHOW index into other direction's list of cons objects (i.e., send_idx for RecvCons and recv_idx for SendCons)
+#endif
+
   inline int		recv_idx() { return other_idx; }
   // #READ_ONLY index into recv unit's recv. list of RecvCons
 
@@ -952,8 +970,8 @@ public: //
   virtual void	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
 
-  virtual void 	LinkSendCons();
-  // #CAT_Structure link sending connections based on recv cons (after load, copy)
+  virtual void 	LinkPtrCons();
+  // #IGNORE link pointer connections from the corresponding owned connections -- only needed after a Copy
 
   override int	GetIndex() { return idx; }
   override void	SetIndex(int i) { idx = i; }
@@ -1487,8 +1505,8 @@ public:
   // #CAT_XpertStructure allocate given number of send connections for all units in layer, for given projection
   virtual void	SendConsPostAlloc(Projection* prjn);
   // #CAT_XpertStructure allocate sending connections based on those allocated previously 
-  virtual void  LinkSendCons();
-  // #IGNORE re-connect the layer after loading
+  virtual void  LinkPtrCons();
+  // #IGNORE link pointer connections from the corresponding owned connections -- only needed after a Copy
   virtual void	DisConnect();
   // #MENU #CONFIRM #CAT_Structure disconnect layer from all others
   virtual int 	CountRecvCons();
@@ -2098,8 +2116,8 @@ public:
   virtual void	LayoutUnitGroups();
   // #MENU #CONFIRM #CAT_Structure layout all the layer's unit groups according to layer group geometry and spacing
 
-  virtual void	LinkSendCons();
-  // #IGNORE link the sending connections (after loading or copying)
+  virtual void	LinkPtrCons();
+  // #IGNORE link pointer connections from the corresponding owned connections -- only needed after a Copy
   virtual void	FixPrjnIndexes();
   // #CAT_Structure fix the projection indicies of the connection groups (recv_idx, send_idx)
 

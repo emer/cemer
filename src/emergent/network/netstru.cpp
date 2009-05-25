@@ -355,11 +355,10 @@ void BaseCons::Copy_(const BaseCons& cp) {
   SetConType(cp.con_type);
   m_con_spec = cp.m_con_spec;
   prjn = cp.prjn;
+  other_idx = cp.other_idx;
 
   AllocCons(cp.alloc_size);
   CopyCons(cp);
-
-//   other_idx = cp.other_idx;	// do not copy: updated in FixPrjnIndexes after network copy
 }
 
 void BaseCons::CheckThisConfig_impl(bool quiet, bool& rval) { 
@@ -581,6 +580,7 @@ bool BaseCons::CopyCons(const BaseCons& cp) {
     memcpy(cons_own, (char*)cp.cons_own, size * con_size);
   }
   else {
+    // note: this makes little sense for most cases and must be fixed with a subsequent re-link
     memcpy(cons_ptr, (char*)cp.cons_ptr, size * sizeof(Connection*));
   }
 
@@ -638,6 +638,26 @@ Connection* BaseCons::FindConFromName(const String& unit_nm) const {
   int idx = FindConFromNameIdx(unit_nm);
   if(idx < 0) return NULL;
   return SafeCn(idx);
+}
+
+SendCons* BaseCons::GetPrjnSendCons(Unit* su) const {
+  if(!IsRecv()) return NULL;
+  SendCons* send_gp = NULL;
+  if(other_idx >= 0)
+    send_gp = su->send.SafeEl(other_idx);
+  if(!send_gp)
+    send_gp = su->send.FindPrjn(prjn);
+  return send_gp;
+}
+
+RecvCons* BaseCons::GetPrjnRecvCons(Unit* ru) const {
+  if(!IsSend()) return NULL;
+  RecvCons* recv_gp = NULL;
+  if(other_idx >= 0)
+    recv_gp = ru->recv.SafeEl(other_idx);
+  if(!recv_gp)
+    recv_gp = ru->recv.FindPrjn(prjn);
+  return recv_gp;
 }
 
 // static
@@ -1102,8 +1122,13 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
   int con_alloc = (int)taMisc::LexBuf;
 
   bool old_load = false;
-  if(!prjn) {  // if prjn = NULL, then probably bias con -- just allocate cons
-    AllocCons(con_alloc);
+  bool bias_con = false;
+  if(!prjn && con_alloc == 1) {  // if prjn = NULL, then probably bias con -- just allocate cons
+    bias_con = true;
+    if(alloc_size != 1)
+      AllocCons(con_alloc);
+    if(size != 1)
+      ConnectUnOwnCn(own_ru);
   }
   else {
     if(alloc_size != con_alloc) {
@@ -1162,9 +1187,8 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
 	continue;
       }
     }
-    if(!old_2nd_load) {	// all existing cons nuked in path alloc..
-      if(un)
-	own_ru->ConnectFrom(un, prjn);
+    if(!old_2nd_load && un && size <= c_count) {
+      own_ru->ConnectFrom(un, prjn);
     }
     c_count++;
   }
@@ -1249,7 +1273,33 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
   return true;
 }
 
+void BaseCons::LinkPtrCons(Unit* my_u) {
+  if(OwnCons()) return;		// only for ptr cons
 
+  for(int j=0; j< size; j++) {
+    Unit* fmu = Un(j);
+    if(!fmu) continue;
+
+    if(IsRecv()) {
+      SendCons* send_gp = GetPrjnSendCons(fmu);
+      if(send_gp) {
+	int myi = FindConFromIdx(my_u);
+	if(myi >= 0) {
+	  SetPtrCn(j, send_gp->Cn(myi));
+	}
+      }
+    }
+    else {
+      RecvCons* recv_gp = GetPrjnRecvCons(fmu);
+      if(recv_gp) {
+	int myi = FindConFromIdx(my_u);
+	if(myi >= 0) {
+	  SetPtrCn(j, recv_gp->Cn(myi));
+	}
+      }
+    }
+  }
+}
 
 
 /////////////////////////////////////////////////////////////////////
@@ -1294,23 +1344,6 @@ void RecvCons::CheckThisConfig_impl(bool quiet, bool& rval) {
   }
   if(!GetConSpec()->CheckConfig_RecvCons(this, quiet)) 
     rval = false; 
-}
-
-void RecvCons::LinkSendCons(Unit* ru) {
-  // todo: this whole thing needs to be rethought
-  for(int j=0; j< size; j++) {
-    Unit* su = Un(j);
-    if(!su) continue;
-
-    SendCons* send_gp = NULL;
-    if(send_idx() >= 0)
-      send_gp = su->send.SafeEl(send_idx());
-    if(!send_gp)
-      send_gp = su->send.FindPrjn(prjn);
-    if(send_gp) {
-      send_gp->ConnectUnPtrCn(ru, Cn(j)); // not necc a PtrCons guy!
-    }
-  }
 }
 
 /////////////////////////////////////////////////////////////
@@ -2040,10 +2073,15 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
   return true;
 }
 
-void Unit::LinkSendCons() {
+void Unit::LinkPtrCons() {
+  // its going to be one or the other of these two depending on who has OwnCons -- just do both
   for(int g=0; g<recv.size; g++) {
     RecvCons* recv_gp = recv.FastEl(g);
-    recv_gp->LinkSendCons(this);
+    recv_gp->LinkPtrCons(this);
+  }
+  for(int g=0; g<send.size; g++) {
+    SendCons* send_gp = send.FastEl(g);
+    send_gp->LinkPtrCons(this);
   }
 }
 
@@ -3592,6 +3630,11 @@ void Layer::CutLinks() {
 
 
 void Layer::Copy_(const Layer& cp) {
+  if(own_net && !own_net->HasBaseFlag(COPYING)) {
+    // if we're the only guy copying, then all connections are invalid now -- just nuke
+    own_net->RemoveCons();	
+  }
+
   layer_type = cp.layer_type;
   flags = cp.flags;
   pos = cp.pos;
@@ -4144,11 +4187,11 @@ int Layer::CountRecvCons() {
   return n_cons;
 }
 
-void Layer::LinkSendCons() {
+void Layer::LinkPtrCons() {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, units., i)
-    u->LinkSendCons();
+    u->LinkPtrCons();
 }
 
 void Layer::SetLayUnitExtFlags(int flg) {
@@ -5509,7 +5552,7 @@ void Network::Copy_(const Network& cp) {
   SyncSendPrjns();
   FixPrjnIndexes();			     // fix the recv_idx and send_idx (not copied!)
   UpdateAllSpecs();
-  LinkSendCons();		// set the send cons (not copied!)
+  LinkPtrCons();		// set the pointer cons, which are not updatable by the UpdatePointers function
   BuildUnits_Threads();
 #ifdef DMEM_COMPILE
   DMem_DistributeUnits();
@@ -5570,7 +5613,7 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
   }
 
 //   if(rval)
-//     LinkSendCons();
+//     LinkPtrCons();
 
   ClearNetFlag(SAVE_UNITS_FORCE);	// might have been saved in on state from recover file or something!
 
@@ -5843,11 +5886,11 @@ void Network::ConnectUnits(Unit* u_to, Unit* u_from, bool record, ConSpec* consp
   lay->UpdateAfterEdit();
 }
 
-void Network::LinkSendCons() {
+void Network::LinkPtrCons() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i)
-    l->LinkSendCons();
+    l->LinkPtrCons();
 }
 
 #ifdef TA_GUI
