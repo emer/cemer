@@ -1680,18 +1680,21 @@ void LeabraUnitSpec::Compute_DaMod_PlusPost(LeabraUnit* u, LeabraNetwork* net) {
 
 void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   LeabraLayer* lay = u->own_lay();
-  if(!lay->Compute_SRAvg_Test(net)) return;
 
   bool do_s = net->sravg_vals.do_s; // set on net at start of call..
-  // always do bias b/c it is cheap, might be useful..
-  LeabraConSpec* bias_sp = (LeabraConSpec*)bias_spec.SPtr();
-  bias_sp->B_Compute_SRAvg((LeabraCon*)u->bias.OwnCn(0), u, do_s);
+
+  if(lay->Compute_SRAvg_Test(net)) {
+    // always do bias b/c it is cheap, might be useful..
+    LeabraConSpec* bias_sp = (LeabraConSpec*)bias_spec.SPtr();
+    bias_sp->B_Compute_SRAvg((LeabraCon*)u->bias.OwnCn(0), u, do_s);
+  }
 
   if(net->train_mode != LeabraNetwork::TEST) {	// expensive con-level only for training
     if(net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) {
       for(int g=0; g<u->send.size; g++) {
 	LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
-	if(send_gp->prjn->layer->lesioned() || !send_gp->size) continue;
+	LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
+	if(rlay->lesioned() || !send_gp->size || !rlay->Compute_SRAvg_Test(net)) continue;
 	send_gp->Compute_SRAvg(u, do_s);
       }
     }
