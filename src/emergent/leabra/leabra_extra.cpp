@@ -3717,7 +3717,7 @@ void VisDisparityPrjnSpec::Connect_Gps(Projection* prjn) {
 	      if(!su_u) continue;
 	      if(!self_con && (su_u == ru_u)) continue;
 
-	      ru_u->ConnectFrom(su_u, prjn, alloc_loop); // don't check: saves lots of time!
+	      ru_u->ConnectFrom(su_u, prjn, alloc_loop);
 	    }
 	  }
 	}
@@ -3757,32 +3757,38 @@ void VisDisparityPrjnSpec::Connect_NoGps(Projection* prjn) {
   int rf_width = 2 * disp_dist; // total receptive field width
 
   TwoDCoord ruc;
-  for(ruc.x = 0; ruc.x < ru_gp_geo.x; ruc.x++) { // loop over receiving layer x
-    for(ruc.y = 0; ruc.y < ru_gp_geo.y; ruc.y++) { // loop over receiving layer y
-      // get each unit group in receiving layer
-      Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
-      if(!ru_gp) continue;	// shouldn't happen
+  for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
+    for(ruc.x = 0; ruc.x < ru_gp_geo.x; ruc.x++) { // loop over receiving layer x
+      for(ruc.y = 0; ruc.y < ru_gp_geo.y; ruc.y++) { // loop over receiving layer y
+	// get each unit group in receiving layer
+	Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+	if(!ru_gp) continue;	// shouldn't happen
 
-      int rui_ctr = 0;
-      for(int disp=-n_disparities; disp <= n_disparities; disp++) {
-	int disp_off = disp_dist * disp;
-	int st_off = disp_off - disp_dist;
+	int rui_ctr = 0;
+	for(int disp=-n_disparities; disp <= n_disparities; disp++) {
+	  int disp_off = disp_dist * disp;
+	  int st_off = disp_off - disp_dist;
 	
-	Unit* ru_u = (Unit*)ru_gp->FastEl(rui_ctr++);
-	ru_u->RecvConsPreAlloc(rf_width, prjn);
+	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui_ctr++);
+	  if(!alloc_loop)
+	    ru_u->RecvConsPreAlloc(rf_width, prjn);
 
-	TwoDCoord suc;
-	for(int soff=0; soff < rf_width; soff++) {
-	  suc.y = ruc.y;
-	  suc.x = ruc.x + lr_dir * (st_off + soff);
-	  if(suc.WrapClip(wrap, su_geo) && !wrap)
-	    continue;
-	  Unit* su_u = prjn->from->FindUnitFmCoord(suc);
-	  if(!su_u) continue;
-	  if(!self_con && (su_u == ru_u)) continue;
-	  ru_u->ConnectFrom(su_u, prjn); // don't check: saves lots of time!
+	  TwoDCoord suc;
+	  for(int soff=0; soff < rf_width; soff++) {
+	    suc.y = ruc.y;
+	    suc.x = ruc.x + lr_dir * (st_off + soff);
+	    if(suc.WrapClip(wrap, su_geo) && !wrap)
+	      continue;
+	    Unit* su_u = prjn->from->FindUnitFmCoord(suc);
+	    if(!su_u) continue;
+	    if(!self_con && (su_u == ru_u)) continue;
+	    ru_u->ConnectFrom(su_u, prjn, alloc_loop);
+	  }
 	}
       }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
     }
   }
 }
