@@ -4867,9 +4867,10 @@ void LeabraNetwork::Settle_Init_Unit() {
   else
     threads.Run(&un_call, -1.0f); // -1 = always run localized
 
-  Compute_NetinScale_Senders();	// second phase after recv-based NetinScale
-
   Settle_Init_Layer();
+
+  Compute_NetinScale_Senders();	// second phase after recv-based NetinScale
+  // put it after Settle_Init_Layer to allow for mods to netin scale in that guy..
 }
 
 void LeabraNetwork::Settle_Init_Layer() {
