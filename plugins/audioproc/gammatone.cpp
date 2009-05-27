@@ -203,8 +203,8 @@ void GammatoneBlock::UpdateAfterEdit_impl() {
   if ((chan_spacing == CS_LogLinear) && (chans_per_oct < 0)) {
     chans_per_oct = (n_chans - 1)/(log(cf_hi/cf_lo)/log(2.0f));
   }
-  // certain values are fixed (in current impl) for MelCepstra
-  if (chan_spacing == CS_MelCepstra) {
+  // certain values are fixed (in current impl) for MelCepstrum
+  if (chan_spacing == CS_MelCepstrum) {
     cf_lo = 100;
     //n_chans = 30;
   }
@@ -273,7 +273,7 @@ void GammatoneBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
     // calc equivalent cf_hi in case user switches mode
     cf_hi = exp((log(2.0f)*(n_chans-1) / chans_per_oct) + log(cf_lo));
   } break; 
-  case CS_MelCepstra: {
+  case CS_MelCepstrum: {
     cf_hi = powf(1.1f, (n_chans-1) - 9) * 1000.0f;
   } break; 
   default: break;// compiler food -- handle all cases above
@@ -307,7 +307,7 @@ void GammatoneBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
         else 
           cf = exp((log(2.0f)*(i) / chans_per_oct) + log(cf_lo));
       } break; 
-      case CS_MelCepstra: {
+      case CS_MelCepstrum: {
         // linear range is 100-1000
         if (i < 10)
           cf = cf_lo + (i * 100.0f);
@@ -513,24 +513,27 @@ void GammatoneBlock::MakeStdFilters(float cf_lo, float cf_hi, int n_chans) {
 
 
 //////////////////////////////////
-//  MelCepstraBlock		//
+//  MelCepstrumBlock		//
 //////////////////////////////////
 
-void MelCepstraBlock::Initialize() {
-   out_vals = OV_MEL;
+void MelCepstrumBlock::Initialize() {
+  out_vals = OV_MEL;
   cf_lo = 100.0f;
   cf_lin_bw = 100.0f;
   cf_log_factor = 1.1f;
   n_lin_chans = 10;
   n_log_chans = 22;
+  dct = true;
+  n_cepstrum = 10;
+  out_rate = 10.0f;
 }
 
-void MelCepstraBlock::UpdateAfterEdit_impl() {
+void MelCepstrumBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   out_vals = (OutVals)(out_vals | OV_MEL); // required
 }
 
-void MelCepstraBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
+void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   inherited::InitThisConfig_impl(check, quiet, ok);
   
   DataBuffer* src_buff = in_block.GetBuffer();
@@ -538,17 +541,17 @@ void MelCepstraBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
 //  float_Matrix* in_mat = &src_buff->mat;
 
   if (CheckError((src_buff->chans > 1), quiet, ok,
-    "MelCepstraBlock only supports single channel input"))
+    "MelCepstrumBlock only supports single channel input"))
     return;
     
   if (CheckError((src_buff->vals > 1), quiet, ok,
-    "MelCepstraBlock only supports single val input"))
+    "MelCepstrumBlock only supports single val input"))
     return;
     
 /*TODO  // warn about nyquist violations -- some upper chans will be disabled
-  bool on_hi = MelCepstraChan::ChanFreqOk(cf_hi, ear_q, min_bw, src_buff->fs.fs_act);
+  bool on_hi = MelCepstrumChan::ChanFreqOk(cf_hi, ear_q, min_bw, src_buff->fs.fs_act);
   if ((!on_hi) && check && !quiet) {
-    taMisc::Warning("MelCepstraBlock: some hi freq chans will be disabled to prevent aliasing");
+    taMisc::Warning("MelCepstrumBlock: some hi freq chans will be disabled to prevent aliasing");
   }*/
   
   if (check) return;
@@ -563,7 +566,7 @@ void MelCepstraBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
     ob->fs = src_buff->fs;
     ob->fr_dur.Set(src_buff->items, Duration::UN_SAMPLES);
     ob->fields = src_buff->fields;
-    ob->chans = n_chans;
+    ob->chans = n_cepstrum;
     ob->vals = 1;
   }
   // if using delta or delta2, need min of 2/3 env stages
@@ -574,9 +577,26 @@ void MelCepstraBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
     out_buff.min_stages = min_stages;
   }
   
+  // rate counters
+  in_count = 0;
+  out_size = (int)Duration::StatGetDurationSamples(out_rate, Duration::UN_TIME_MS, src_buff->fs);
+  if (CheckError((out_size == 0), quiet, ok,
+		 "MelCepstrumBlock out_rate must give out_size > 0"))
+    return;
+  
+  frame_size = out_size * 2;
+  // filters/buffers
+  in_buff.SetGeom(1, frame_size);
+  fft_buff.SetGeom(1, frame_size);
+  window_filt.SetGeom(1, frame_size);
+  // hamming filter
+  // from Lyons, "Understanding Signal Processing", p. 77
+  for (int i = 0; i < frame_size; ++i)
+    window_filt.Set((float)(0.54 - (0.46 * cos(M_PI * ((double)i / frame_size)))), i);
+  
 }
 
-void MelCepstraBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
+void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
 //TODO: when sharpening, correct the gain of the edge channels to compensate
 // for the loss caused by not integrating the full DoG filter width
 
@@ -602,14 +622,14 @@ void MelCepstraBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
   inherited::InitChildConfig_impl(check, quiet, ok);
 }
 
-void MelCepstraBlock::AcceptData_impl(SignalProcBlock* src_blk,
+void MelCepstrumBlock::AcceptData_impl(SignalProcBlock* src_blk,
     DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps)
 {
   float_Matrix* in_mat = &src_buff->mat;
   ps = AcceptData_MC(in_mat, stage);
 }
 
-SignalProcBlock::ProcStatus MelCepstraBlock::AcceptData_MC(float_Matrix* in_mat, int stage)
+SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat, int stage)
 {
   ProcStatus ps = PS_OK;
   const int in_items = in_mat->dim(ITEM_DIM);
@@ -627,7 +647,7 @@ SignalProcBlock::ProcStatus MelCepstraBlock::AcceptData_MC(float_Matrix* in_mat,
   // note: we only support 1 chan, 1 val input, so don't iterate those
   for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) {
     for (int g_ch = 0; g_ch < n_chans; ++g_ch) {
-      MelCepstraChan* sc = chans.FastEl(g_ch);
+      MelCepstrumChan* sc = chans.FastEl(g_ch);
       if (!sc->on) continue; // will just leave 0;s everywhere
       float& dat = in_mat->FastEl(in_val, in_chan, f, 0, stage);
       // we only pass buffer addresses for values actually used
@@ -662,13 +682,13 @@ SignalProcBlock::ProcStatus MelCepstraBlock::AcceptData_MC(float_Matrix* in_mat,
   return ps;
 }
 
-void MelCepstraBlock::GraphFilter(DataTable* graph_data,
-  bool log_freq, MelCepstraBlock::OutVals response) 
+void MelCepstrumBlock::GraphFilter(DataTable* graph_data,
+  bool log_freq, MelCepstrumBlock::OutVals response) 
 {
   taProject* proj = GET_MY_OWNER(taProject);
   bool newguy = false;
   if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_MelCepstraFilter");
+    graph_data = proj->GetNewAnalysisDataTable(name + "_MelCepstrumFilter");
     graph_data->ClearDataFlag(DataTable::SAVE_ROWS); // don't save by default!
     newguy = true;
   }
@@ -683,7 +703,7 @@ void MelCepstraBlock::GraphFilter(DataTable* graph_data,
   int anali = 0;
   
   // to plot the filter, we make a copy of ourself and plot the impulse response
-  MelCepstraBlock* gb = new MelCepstraBlock;
+  MelCepstrumBlock* gb = new MelCepstrumBlock;
   float_Matrix* in_mat = new float_Matrix;
   
   gb->InitLinks();
@@ -748,7 +768,7 @@ void MelCepstraBlock::GraphFilter(DataTable* graph_data,
     float val = mat->FastEl_Flat(i);
     if (val > peak) peak = val;
   }
-  taMisc::Info("MelCepstra filter peak (for normalization) was:", String(peak));
+  taMisc::Info("MelCepstrum filter peak (for normalization) was:", String(peak));
   float fs = ob->fs;
   graph_data->DataUpdate(true);
   graph_data->AllocRows(mat->dim(1) * ((mat->dim(0) / 2)));

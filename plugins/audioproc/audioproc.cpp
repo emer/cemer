@@ -1845,7 +1845,7 @@ float RampGen::GetRampGain() {
     rval = (float)(ramp_cnt_samp / ramp_dur_samp);
     break;
   case RT_RAISED_COSINE:
-    // from Lyons, "Understand Signal Processing", p. 77
+    // from Lyons, "Understanding Signal Processing", p. 77
     rval = 0.5 - (0.5 * cos(M_PI * (ramp_cnt_samp / ramp_dur_samp)));
     break;
   case RT_HAMMING:

@@ -120,7 +120,7 @@ public:
     CS_0		= 0, // #IGNORE
     CS_MooreGlassberg	= 0, // #LABEL_MooreGlassberg equal ERB crossings
     CS_LogLinear	= 1, // #LABEL_LogLinear simple log linear
-    CS_MelCepstra	= 2, // #LABEL_MelCepstra uses spacing equivalent to std Mel Cepstra filters NOTE: filter response itself is NOT MC, only chan ctr freqs
+    CS_MelCepstrum	= 2, // #LABEL_MelCepstrum uses spacing equivalent to std Mel Cepstrum filters NOTE: filter response itself is NOT MC, only chan ctr freqs
   };
   
   DataBuffer		out_buff_env; //  #SHOW_TREE envelope output (if enabled)
@@ -129,7 +129,7 @@ public:
   ChanSpacing		chan_spacing; // how to space the channels
   float			ear_q; // #EXPERT Moore and Glasberg def=9.26449 -- ERB is min_bw + (cf / ear_q)
   float			min_bw; // #EXPERT minimum bandwidth
-  float			cf_lo; // #CONDEDIT_OFF_chan_spacing:CS_MelCepstra lower center frequency (Hz)
+  float			cf_lo; // #CONDEDIT_OFF_chan_spacing:CS_MelCepstrum lower center frequency (Hz)
   float			cf_hi; // #CONDEDIT_ON_chan_spacing:CS_MooreGlassberg upper center frequency (Hz)
   float			chans_per_oct; // #MIN_0 #CONDSHOW_ON_chan_spacing:CS_LogLinear number of channels per octave
   int			n_chans; // #MIN_1 number of filter bands
@@ -174,12 +174,12 @@ private:
 }; //
 
 
-class AUDIOPROC_API MelCepstraBlock: public StdBlock
+class AUDIOPROC_API MelCepstrumBlock: public StdBlock
 { // ##CAT_Audioproc gammatone filter bank
 INHERITED(StdBlock) 
 public:
   enum OutVals { // #BITS Output Values 
-    OV_MEL	= 0x01, // #LABEL_MelCepstra basic output channel (required)
+    OV_MEL	= 0x01, // #LABEL_MelCepstrum basic output channel (required)
     OV_DELTA1   = 0x02, // #LABEL_DeltaMel 1st derivitive (per out) of Mel
     OV_DELTA2   = 0x04, // #LABEL_Delta2Mel 2ndt derivitive (per out) of Mel
   };
@@ -192,6 +192,9 @@ public:
   float			cf_log_factor; // how much to multiple to get next log channel 
   int			n_lin_chans; // #MIN_1 number of linear bands
   int			n_log_chans; // #MIN_0 number of log bands
+  bool			dct; // #DEF_true apply Discrete Cosine Transform and create cepstrum coefficients
+  int			n_cepstrum; // #CONDEDIT_ON_dct #MIN_4 number of cepstrum output coefficients
+  float			out_rate; // output rate, in ms (frames will be 1/2 this rate)
   
   FilterChan_List	chans; // #NO_SAVE the individual channels
   
@@ -204,16 +207,25 @@ public:
     default: return NULL;}}
   
   virtual void		GraphFilter(DataTable* disp_data,
-    bool log_freq = true, MelCepstraBlock::OutVals response = OV_MEL);
+    bool log_freq = true, MelCepstrumBlock::OutVals response = OV_MEL);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter response into a data table and generate a graph; if log_freq then log10 of freq is output; CHOOSE ONLY 1 RESPONSE
   ProcStatus 		AcceptData_MC(float_Matrix* in_mat, int stage = 0);
     // #IGNORE mostly for proc
 
-  SIMPLE_LINKS(MelCepstraBlock)
-  TA_BASEFUNS(MelCepstraBlock) //
+  SIMPLE_LINKS(MelCepstrumBlock)
+  TA_BASEFUNS(MelCepstrumBlock) //
+
+public: // DO NOT USE
+  float_Matrix		in_buff; // #IGNORE #NO_SAVE buffer input values
+  float_Matrix		window_filt; // #IGNORE #NO_SAVE hamming window filter
+  float_Matrix		fft_buff; // buffer used for fft
   
 protected:
   int			num_out_vals;
+  int			num_out_chans; // will depend on whether dct enabled or not
+  int			out_size; // output size, in samples, =1/2 frame size
+  int			frame_size; // frame size, in samples
+  int			in_count; // counts input values received
   override void		UpdateAfterEdit_impl();
   
   override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok);
@@ -224,7 +236,7 @@ protected:
 private:
   void	Initialize();
   void	Destroy() {CutLinks();}
-  SIMPLE_COPY(MelCepstraBlock)
+  SIMPLE_COPY(MelCepstrumBlock)
 }; //
 
 
