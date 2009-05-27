@@ -2509,8 +2509,7 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
 
 //////////////////////////////////////////////////
 //		StringDataHost
-
-
+//////////////////////////////////////////////////
 
 taiStringDataHost::taiStringDataHost(MemberDef* mbr_, void* base_, TypeDef* typ_,
 	     bool read_only_, bool modal_, QObject* parent, bool line_nos_)
@@ -2635,3 +2634,87 @@ bool taiStringDataHost::eventFilter(QObject* obj, QEvent* event) {
   }
   return QObject::eventFilter(obj, event);
 }
+
+
+//////////////////////////////////////////////////
+//  taiWizardDataHost
+//////////////////////////////////////////////////
+
+taiWizardDataHost::taiWizardDataHost(taWizard* base_, TypeDef* typ_,
+	     bool read_only_, bool modal_, QObject* parent, bool line_nos_)
+:inherited(typ_ ,read_only_, modal_, parent)
+{
+  root = base_;
+//  edit = NULL;
+}
+
+taiWizardDataHost::~taiWizardDataHost() {
+}
+
+/*void taiWizardDataHost::Constr(const char* prompt, const char* win_title) {
+  inherited::Constr(prompt, win_title);
+}*/
+
+void taiWizardDataHost::Constr_Box() {
+/*TODO    edit = new iTextEdit(widget());
+    vblDialog->addWidget(edit, 1);
+  }
+  edit->installEventFilter(this); // hopefully everyone below body will get it too!
+  */
+}
+
+void taiWizardDataHost::Constr_RegNotifies() {
+/*TODO  taBase* rbase = Base_(); // cache
+  if (rbase) {
+    rbase->AddDataClient(this);
+  }*/
+}
+
+
+void taiWizardDataHost::Constr_Buttons() {
+  inherited::Constr_Buttons();
+/*TODO  btnPrint = new QPushButton("&Print", widget());
+  layButtons->addSpacing(16);
+  layButtons->addWidget(btnPrint, 0, (Qt::AlignVCenter));
+  connect(btnPrint, SIGNAL(clicked()), this, SLOT(btnPrint_clicked()) );*/
+}
+
+void taiWizardDataHost::Constr_Strings() {
+/*TODO*/
+}
+
+
+
+/*void taiWizardDataHost::btnPrint_clicked() {
+  QPrinter pr;
+  QPrintDialog pd(&pr, widget());
+  if (pd.exec() != iDialog::Accepted) return;
+  // print ...
+  edit->document()->print(&pr);
+}*/
+
+void taiWizardDataHost::GetImage() {
+/*TODO  Wizard val = mbr->type->GetValStr(mbr->GetOff(root), root, mbr);
+  edit->setPlainText(val);*/
+}
+
+void taiWizardDataHost::GetValue() {
+/*TODO  Wizard val = edit->toPlainText();
+  mbr->type->SetValStr(val, mbr->GetOff(root), root, mbr);*/
+}
+
+void taiWizardDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
+  // called by root on closing, dialog on closing, etc. etc.
+  if (modified) {
+    GetValue();
+  }
+}
+
+void taiWizardDataHost::Ok_impl() { //note: only used for Dialogs
+  inherited::Ok_impl();
+  //  if (modified) {
+    GetValue();
+    Unchanged();
+    //  }
+}
+

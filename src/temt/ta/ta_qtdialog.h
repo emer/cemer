@@ -36,6 +36,7 @@
 // externals
 class taiDataLink;  //
 class iDataPanel; //
+class taWizard; //
 
 // forwards
 class taiDataHostBase;
@@ -786,6 +787,34 @@ protected:
   override void  	Constr_Box();
   override void 	Constr_RegNotifies();
   override void 	DoConstr_Dialog(iHostDialog*& dlg);
+  override void 	ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
+  override void 	Ok_impl();
+};
+
+class TA_API taiWizardDataHost : public taiDataHost {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for Wizards -- uses tab pages
+  Q_OBJECT
+INHERITED(taiDataHost)
+public:
+  MembSet_List		membs; // one set per page
+  
+  override void		GetImage();
+  override void		GetValue();
+  override void		Constr_Buttons();//
+  
+//  override bool 	eventFilter(QObject *obj, QEvent *event);
+  // event filter to trigger apply button on Ctrl+Return
+
+  taiWizardDataHost(taWizard* base, TypeDef* typ_ = NULL, 
+    bool read_only_ = false, bool modal_ = false, QObject* parent = 0,
+    bool line_nos_ = false);
+  ~taiWizardDataHost();
+  
+protected:
+  override void		Constr_Strings();
+  override void  	Constr_Box();
+  override void 	Constr_RegNotifies();
+//  override void 	DoConstr_Dialog(iHostDialog*& dlg);
   override void 	ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
   override void 	Ok_impl();
 };
