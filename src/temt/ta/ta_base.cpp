@@ -3168,6 +3168,7 @@ void* taList_impl::El_CopyN_(void* to_, void* fm) {
 
 void taList_impl::UpdateAfterEdit(){
   inherited_taBase::UpdateAfterEdit();
+  if(!el_typ->InheritsFrom(el_base)) el_typ = el_base;
 }
 
 void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -3829,6 +3830,7 @@ taBase* taList_impl::New_impl(int no, TypeDef* typ, const String& name_) {
 }
 
 taBase* taList_impl::New_gui(int no, TypeDef* typ, const String& name_) {
+  if(!el_typ->InheritsFrom(el_base)) el_typ = el_base;
   taBase* rval = New(no, typ, name_);
   if (rval) {
     if (taMisc::gui_active && !taMisc::no_auto_expand) {

@@ -1,12 +1,13 @@
-// ta_Dump File v2.0
-Program .projects[0].programs.gp[0][13] { 
-  ProgVar_List @.vars = [6] {
+// ta_Dump File v2.0 -- code v4.0.21.0
+Program .projects[0].programs.gp[0][1] { 
+  ProgVar_List @.vars = [7] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
     ProgVar @[3] { };
     ProgVar @[4] { };
     ProgVar @[5] { };
+    ProgVar @[6] { };
   };
 
   ProgEl_List @.init_code = [2] {
@@ -19,18 +20,27 @@ Program .projects[0].programs.gp[0][13] {
     AssignExpr @[1] { };
   };
 
-  ProgEl_List @.prog_code = [3] {
+  ProgEl_List @.prog_code = [4] {
     AssignExpr @[0] { };
-    MethodCall @[1] { 
+    IfElse @[1] { 
+      ProgEl_List @.true_code = [1] {
+	AssignExpr @[0] { };
+      };
+
+      ProgEl_List @.false_code = [1] {
+	AssignExpr @[0] { };
+      };
+    };
+    MethodCall @[2] { 
       ProgArg_List @.meth_args = [2] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
       };
     };
-    VarIncr @[2] { };
+    VarIncr @[3] { };
   };
 };
-Program .projects[0].programs.gp[0][13] {
+Program .projects[0].programs.gp[0][1] {
  name="MovieImageFrameSave";
  tags="View, Image, Movie";
  desc="saves an image from a view using an incrementing counter value to name the image -- useful for then making a movie";
@@ -66,7 +76,7 @@ Program .projects[0].programs.gp[0][13] {
   ProgVar @[1] {
    name="img_ctr";
    var_type=T_Int;
-   int_val=0;
+   int_val=1;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED;
    reference=0;
@@ -75,7 +85,7 @@ Program .projects[0].programs.gp[0][13] {
   ProgVar @[2] {
    name="image_fname";
    var_type=T_String;
-   string_val="movie_img_00070.jpg";
+   string_val="movie_img_00000";
    objs_ptr=0;
    flags=NULL_CHECK|USED;
    reference=0;
@@ -92,6 +102,16 @@ Program .projects[0].programs.gp[0][13] {
    desc="DataViewFrame containing the view to record";
   };
   ProgVar @[4] {
+   name="img_fmt";
+   var_type=T_HardEnum;
+   int_val=2;
+   hard_enum_type=DataViewer::ImageFormat;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
+   reference=0;
+   desc="format of image to save -- must be either PNG or JPEG";
+  };
+  ProgVar @[5] {
    name="img_width";
    var_type=T_Int;
    int_val=640;
@@ -100,7 +120,7 @@ Program .projects[0].programs.gp[0][13] {
    reference=0;
    desc="desired width of the images (sets this during Init)";
   };
-  ProgVar @[5] {
+  ProgVar @[6] {
    name="img_height";
    var_type=T_Int;
    int_val=480;
@@ -128,7 +148,7 @@ Program .projects[0].programs.gp[0][13] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][13].vars[3]$1$;
+   obj=.projects[0].programs.gp[0][1].vars[3]$1$;
    method=T3DataViewFrame::SetImageSize;
    meth_args {
     name=;
@@ -159,7 +179,7 @@ Program .projects[0].programs.gp[0][13] {
   AssignExpr @[1] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][13].vars[1]$2$;
+   result_var=.projects[0].programs.gp[0][1].vars[1]$2$;
    expr {
     expr="0";
    };
@@ -172,12 +192,45 @@ Program .projects[0].programs.gp[0][13] {
   AssignExpr @[0] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][13].vars[2]$3$;
+   result_var=.projects[0].programs.gp[0][1].vars[2]$3$;
    expr {
-    expr="image_fname_base + \"_\" + taMisc::LeadingZeros(img_ctr,5) + \".jpg\"";
+    expr="image_fname_base + \"_\" + taMisc::LeadingZeros(img_ctr,5)";
    };
   };
-  MethodCall @[1] {
+  IfElse @[1] {
+   desc=;
+   flags=;
+   cond {
+    expr="img_fmt == DataViewer::PNG";
+   };
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    AssignExpr @[0] {
+     desc=;
+     flags=;
+     result_var=$3$;
+     expr {
+      expr="image_fname + \".png\"";
+     };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    AssignExpr @[0] {
+     desc=;
+     flags=;
+     result_var=$3$;
+     expr {
+      expr="image_fname + \".jpg\"";
+     };
+    };
+   };
+  };
+  MethodCall @[2] {
    desc=;
    flags=;
    result_var=NULL;
@@ -204,12 +257,12 @@ Program .projects[0].programs.gp[0][13] {
      required=0;
      def_val="DataViewer::EPS";
      expr {
-      expr="DataViewer::JPEG";
+      expr="img_fmt";
      };
     };
    };
   };
-  VarIncr @[2] {
+  VarIncr @[3] {
    desc=;
    flags=;
    var=$2$;

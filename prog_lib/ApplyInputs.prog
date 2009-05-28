@@ -1,4 +1,4 @@
-// ta_Dump File v2.0
+// ta_Dump File v2.0 -- code v4.0.21.0
 Program .projects[0].programs.gp[0][6] { 
   ProgObjList @.objs = [1] {
     LayerWriter @[0] { 
@@ -66,7 +66,8 @@ Program .projects[0].programs.gp[0][6] {
      layer_name="Input";
      offset {x=0: y=0: };
      use_layer_type=1;
-     ext_flags=EXT;
+     na_by_range=0;
+     ext_flags=;
      noise {name="": type=NONE: mean=0: var=0.5: par=1: };
     };
     LayerWriterEl @[1] {
@@ -75,7 +76,8 @@ Program .projects[0].programs.gp[0][6] {
      layer_name="Output";
      offset {x=0: y=0: };
      use_layer_type=1;
-     ext_flags=TARG;
+     na_by_range=0;
+     ext_flags=;
      noise {name="": type=NONE: mean=0: var=0.5: par=1: };
     };
     LayerWriterEl @[2] {
@@ -84,6 +86,7 @@ Program .projects[0].programs.gp[0][6] {
      layer_name="Name";
      offset {x=0: y=0: };
      use_layer_type=1;
+     na_by_range=0;
      ext_flags=;
      noise {name="": type=NONE: mean=0: var=0.5: par=1: };
     };
@@ -106,6 +109,7 @@ Program .projects[0].programs.gp[0][6] {
    object_val=$1$;
    objs_ptr=0;
    flags=NULL_CHECK;
+   reference=0;
    desc="network to apply inputs to -- typically set by calling program";
   };
   ProgVar @[1] {
@@ -115,6 +119,7 @@ Program .projects[0].programs.gp[0][6] {
    object_val=$0$;
    objs_ptr=0;
    flags=NULL_CHECK;
+   reference=0;
    desc="input datatable containing input/output patterns";
   };
  };
@@ -128,13 +133,14 @@ Program .projects[0].programs.gp[0][6] {
    object_type=LayerWriter;
    object_val=.projects[0].programs.gp[0][6].objs[0]$2$;
    objs_ptr=1;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED;
+   reference=0;
    desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
   };
  };
  functions {
   name=;
-  el_typ=ProgEl;
+  el_typ=Function;
   el_def=0;
  };
  load_code {

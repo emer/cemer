@@ -1,4 +1,4 @@
-// ta_Dump File v2.0
+// ta_Dump File v2.0 -- code v4.0.21.0
 Program .projects[0].programs.gp[0][2] { 
   ProgVar_List @.args = [2] {
     ProgVar @[0] { };
@@ -89,7 +89,7 @@ Program .projects[0].programs.gp[0][2] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
    reference=0;
    desc="network to operate on";
   };
@@ -99,7 +99,7 @@ Program .projects[0].programs.gp[0][2] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
    reference=0;
    desc="table of patterns to present to the network, one row at a time";
   };
@@ -114,7 +114,7 @@ Program .projects[0].programs.gp[0][2] {
    int_val=1;
    hard_enum_type=DataLoop::Order;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
    reference=0;
    desc="controls the order in which events (rows of the input data datatable) are presented to the network
 (SEQUENTIAL, PERMUTED, RANDOM)";
@@ -124,7 +124,7 @@ Program .projects[0].programs.gp[0][2] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
    reference=0;
    desc="current trial (event) within the epoch -- increments automatically";
   };
@@ -134,7 +134,7 @@ Program .projects[0].programs.gp[0][2] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[1][0]$2$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
    reference=0;
    desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
   };
@@ -144,7 +144,7 @@ Program .projects[0].programs.gp[0][2] {
    object_type=TimeUsed;
    object_val=.projects[0].networks[0].epoch_time$3$;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED;
    reference=0;
    desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
   };
@@ -153,7 +153,7 @@ Program .projects[0].programs.gp[0][2] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED;
    reference=0;
    desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
   };
@@ -178,7 +178,7 @@ Program .projects[0].programs.gp[0][2] {
  };
  functions {
   name=;
-  el_typ=ProgEl;
+  el_typ=Function;
   el_def=0;
  };
  load_code {
@@ -196,6 +196,7 @@ Program .projects[0].programs.gp[0][2] {
    network_var=.projects[0].programs.gp[0][2].args[0]$4$;
    local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$5$;
    counter=Network::trial;
+   update_after=0;
   };
   AssignExpr @[1] {
    desc="get pointer to epoch timer object on network";
@@ -216,6 +217,7 @@ Program .projects[0].programs.gp[0][2] {
    network_var=$4$;
    local_ctr_var=$5$;
    counter=Network::trial;
+   update_after=0;
   };
   AssignExpr @[1] {
    desc="get pointer to epoch timer object on network";
@@ -303,6 +305,7 @@ Program .projects[0].programs.gp[0][2] {
    order_var=.projects[0].programs.gp[0][2].vars[0]$11$;
    order=PERMUTED;
    item_idx_list{ 2;1;4;3;5;0;   };
+   update_after=0;
    dmem_nprocs=1;
    dmem_this_proc=0;
   };

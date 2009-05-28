@@ -1,4 +1,4 @@
-// ta_Dump File v2.0
+// ta_Dump File v2.0 -- code v4.0.21.0
 Program .projects[0].programs.gp[0][7] { 
   ProgObjList @.objs = [1] {
     NetMonitor @[0] { 
@@ -83,6 +83,20 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -99,6 +113,20 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -115,6 +143,20 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -131,6 +173,20 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -147,6 +203,20 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -163,6 +233,20 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -179,6 +263,20 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -195,6 +293,20 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -211,6 +323,20 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -236,7 +362,8 @@ Program .projects[0].programs.gp[0][7] {
    object_type=Network;
    object_val=$0$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
+   reference=0;
    desc="network to record data from";
   };
  };
@@ -250,7 +377,8 @@ Program .projects[0].programs.gp[0][7] {
    object_type=DataTable;
    object_val=$1$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
+   reference=0;
    desc="data table to record trial-level data to (this program writes new data to this table!)";
   };
   ProgVar @[1] {
@@ -259,13 +387,14 @@ Program .projects[0].programs.gp[0][7] {
    object_type=NetMonitor;
    object_val=.projects[0].programs.gp[0][7].objs[0]$2$;
    objs_ptr=1;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED;
+   reference=0;
    desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
   };
  };
  functions {
   name=;
-  el_typ=ProgEl;
+  el_typ=Function;
   el_def=0;
  };
  load_code {
@@ -295,12 +424,6 @@ Program .projects[0].programs.gp[0][7] {
      def_val=;
      expr {
       expr="trial_mon_data";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ trial_mon_data;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -311,12 +434,6 @@ Program .projects[0].programs.gp[0][7] {
      def_val=;
      expr {
       expr="network";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
    };
@@ -339,12 +456,6 @@ Program .projects[0].programs.gp[0][7] {
      def_val="false";
      expr {
       expr="false";
-      flags=;
-      var_expr="false";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -367,12 +478,6 @@ Program .projects[0].programs.gp[0][7] {
      def_val="false";
      expr {
       expr="true";
-      flags=;
-      var_expr="true";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -436,12 +541,6 @@ Program .projects[0].programs.gp[0][7] {
      def_val=;
      expr {
       expr="trial_mon_data";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ trial_mon_data;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -452,12 +551,6 @@ Program .projects[0].programs.gp[0][7] {
      def_val="1";
      expr {
       expr="1";
-      flags=;
-      var_expr="1";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };

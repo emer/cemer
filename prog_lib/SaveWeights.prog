@@ -1,4 +1,4 @@
-// ta_Dump File v2.0
+// ta_Dump File v2.0 -- code v4.0.21.0
 Program .projects[0].programs.gp[0][9] { 
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
@@ -69,7 +69,8 @@ Program .projects[0].programs.gp[0][9] {
    object_type=Network;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
+   reference=0;
    desc=;
   };
  };
@@ -83,6 +84,7 @@ Program .projects[0].programs.gp[0][9] {
    string_val=;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
+   reference=0;
    desc="user-provided tag (startup script will set this!)";
   };
   ProgVar @[1] {
@@ -91,6 +93,7 @@ Program .projects[0].programs.gp[0][9] {
    string_val=;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
+   reference=0;
    desc="user-provided subdirectory to save weights in";
   };
   ProgVar @[2] {
@@ -98,7 +101,8 @@ Program .projects[0].programs.gp[0][9] {
    var_type=T_String;
    string_val=;
    objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+   reference=0;
    desc="final generated file name -- do not edit!";
   };
   ProgVar @[3] {
@@ -106,7 +110,8 @@ Program .projects[0].programs.gp[0][9] {
    var_type=T_String;
    string_val="0036";
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED;
+   reference=0;
    desc="string rep of epoch with leading zeros";
   };
   ProgVar @[4] {
@@ -114,7 +119,8 @@ Program .projects[0].programs.gp[0][9] {
    var_type=T_String;
    string_val="03";
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED;
+   reference=0;
    desc="string rep of batch with leading zeros";
   };
   ProgVar @[5] {
@@ -122,13 +128,14 @@ Program .projects[0].programs.gp[0][9] {
    var_type=T_String;
    string_val=".03_0036";
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED;
+   reference=0;
    desc="batch + epoch";
   };
  };
  functions {
   name=;
-  el_typ=ProgEl;
+  el_typ=Function;
   el_def=0;
  };
  load_code {
@@ -150,12 +157,6 @@ Program .projects[0].programs.gp[0][9] {
    flags=;
    cond {
     expr="taMisc::dmem_proc > 0";
-    flags=;
-    var_expr="taMisc::dmem_proc > 0";
-    vars {
-    };
-    var_names{     };
-    bad_vars{     };
    };
   };
   MiscCall @[1] {
@@ -176,12 +177,6 @@ Program .projects[0].programs.gp[0][9] {
      def_val=;
      expr {
       expr="network.batch";
-      flags=;
-      var_expr="$#0#$.batch";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -192,12 +187,6 @@ Program .projects[0].programs.gp[0][9] {
      def_val=;
      expr {
       expr="2";
-      flags=;
-      var_expr="2";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -220,12 +209,6 @@ Program .projects[0].programs.gp[0][9] {
      def_val=;
      expr {
       expr="network.epoch";
-      flags=;
-      var_expr="$#0#$.epoch";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -236,12 +219,6 @@ Program .projects[0].programs.gp[0][9] {
      def_val=;
      expr {
       expr="4";
-      flags=;
-      var_expr="4";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -252,12 +229,6 @@ Program .projects[0].programs.gp[0][9] {
    result_var=.projects[0].programs.gp[0][9].vars[5]$3$;
    expr {
     expr="tag + \".\" + batch_str + \"_\" + epoch_str";
-    flags=;
-    var_expr="$#0#$ + \".\" + batch_str + \"_\" + epoch_str";
-    vars {
-    };
-    var_names{ tag;    };
-    bad_vars{     };
    };
   };
   MethodCall @[4] {
@@ -278,12 +249,6 @@ Program .projects[0].programs.gp[0][9] {
      def_val=;
      expr {
       expr="\".wts.gz\"";
-      flags=;
-      var_expr="\".wts.gz\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -294,12 +259,6 @@ Program .projects[0].programs.gp[0][9] {
      def_val="\"\"";
      expr {
       expr="final_tag";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ final_tag;      };
-      bad_vars{       };
      };
     };
     ProgArg @[2] {
@@ -310,12 +269,6 @@ Program .projects[0].programs.gp[0][9] {
      def_val="\"\"";
      expr {
       expr="wts_subdir";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ wts_subdir;      };
-      bad_vars{       };
      };
     };
     ProgArg @[3] {
@@ -326,12 +279,6 @@ Program .projects[0].programs.gp[0][9] {
      def_val="false";
      expr {
       expr="false";
-      flags=;
-      var_expr="false";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -354,12 +301,6 @@ Program .projects[0].programs.gp[0][9] {
      def_val="\"\"";
      expr {
       expr="fname";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ fname;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -370,12 +311,6 @@ Program .projects[0].programs.gp[0][9] {
      def_val="Network::NET_FMT";
      expr {
       expr="Network::NET_FMT";
-      flags=;
-      var_expr="Network::NET_FMT";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };

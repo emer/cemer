@@ -1,4 +1,4 @@
-// ta_Dump File v2.0
+// ta_Dump File v2.0 -- code v4.0.21.0
 Program_Group .projects[0].programs.gp[0] { 
   Program_Group .projects[0].programs.gp[0] = [10] {
     Program @[0] { 
@@ -605,7 +605,7 @@ Program_Group .projects[0].programs.gp[0] {
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
@@ -861,7 +861,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
@@ -1286,7 +1286,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
@@ -1636,7 +1636,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
@@ -1908,7 +1908,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
@@ -2201,7 +2201,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
@@ -2335,7 +2335,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
@@ -2790,7 +2790,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
@@ -3271,7 +3271,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
@@ -3593,7 +3593,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
