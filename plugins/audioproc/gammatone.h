@@ -218,14 +218,15 @@ public:
 public: // DO NOT USE
   float_Matrix		in_buff; // #IGNORE #NO_SAVE buffer input values
   float_Matrix		window_filt; // #IGNORE #NO_SAVE hamming window filter
-  float_Matrix		fft_buff; // buffer used for fft
+  float_Matrix		fft_in; // buffer used for fft
+  float_Matrix		fft_out; // buffer used for fft
   
 protected:
   int			num_out_vals;
   int			num_out_chans; // will depend on whether dct enabled or not
   int			out_size; // output size, in samples, =1/2 frame size
   int			frame_size; // frame size, in samples
-  int			in_count; // counts input values received
+  int			in_idx; // input values received, 0..frame_size-1
   override void		UpdateAfterEdit_impl();
   
   override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok);

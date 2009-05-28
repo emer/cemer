@@ -578,16 +578,16 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   }
   
   // rate counters
-  in_count = 0;
   out_size = (int)Duration::StatGetDurationSamples(out_rate, Duration::UN_TIME_MS, src_buff->fs);
   if (CheckError((out_size == 0), quiet, ok,
 		 "MelCepstrumBlock out_rate must give out_size > 0"))
     return;
   
   frame_size = out_size * 2;
+  in_idx = 0;
   // filters/buffers
-  in_buff.SetGeom(1, frame_size);
-  fft_buff.SetGeom(1, frame_size);
+  in_buff.SetGeom(2, frame_size, src_buff->fields); // field has to be outer, for efficient copying
+  fft_in.SetGeom(1, frame_size);
   window_filt.SetGeom(1, frame_size);
   // hamming filter
   // from Lyons, "Understanding Signal Processing", p. 77
@@ -634,10 +634,37 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
   ProcStatus ps = PS_OK;
   const int in_items = in_mat->dim(ITEM_DIM);
   const int in_fields = in_mat->dim(FIELD_DIM);
-  const int in_chans = in_mat->dim(CHAN_DIM); // only 1 in allowed!!!
-  const int in_vals = in_mat->dim(VAL_DIM); // only 1 in allowed!!!
-  const int in_chan = 0; // only 1 in allowed
-  const int in_val = 0; // only 1 in allowed
+  for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) { 
+    for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) {
+      float dat = in_mat->FastEl(0, 0, f, i, stage);
+      in_buff.Set(dat, in_idx, f);
+    } // field
+    // we output every 1/2 frame size
+    if (in_idx++ >= frame_size)
+      in_idx = 0;
+    if ((in_idx % out_size) == 0) {
+      for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) {
+	//TODO: factor fields in to calcs
+	// copy to fft buffer -- 2 cases: end is 1/2 way, or end is end
+	const int n_half_frame_bytes = in_fields * out_size * sizeof(float);
+	if (in_idx == 0) {
+	  memcpy(fft_in.data(), in_buff.data(), 2*n_half_frame_bytes);
+	} else {
+	  memcpy(fft_in.data(), (const char*)in_buff.data() + n_half_frame_bytes, n_half_frame_bytes);
+	  memcpy((char*)fft_in.data() + n_half_frame_bytes, in_buff.data(), n_half_frame_bytes);
+	}
+	// window filter
+	//TODO
+	// do fft, get the real (power) only
+	bool ok = taMath_float::fft_real_transform(&fft_out, &fft_in,
+	  true, false);
+	if (CheckError((!ok), false, ok,
+	  "fft did not complete ok")) return PS_ERROR;
+        // log transform
+	//TODO:
+      }
+    }
+  }
 /*TODO  
   // in_stride: the num items between each x in a channel
   const int in_stride = in_vals * in_chans * in_fields;
