@@ -534,9 +534,6 @@ void taCanvas::SetFont(const String& font_name, int point_size, int weight, bool
 //	Threading
 
 void ImgProcCallTask::Initialize() {
-  uidx_st = -1;
-  uidx_ed = -1;
-  uidx_inc = -1;
   img_proc_call = NULL;
 }
 
@@ -548,21 +545,34 @@ void ImgProcCallTask::run() {
   ImgProcCallThreadMgr* mg = mgr();
   ImgProcThreadBase* base = mg->img_proc();
 
-  for(int i=uidx_st; i<uidx_ed; i+=uidx_inc) {
-    img_proc_call->call(base, i, task_id); // task id indicates threading, and which thread
+  // all nibbling all the time
+  const int nib_chnk = mg->nibble_chunk;
+  const int nib_stop = mg->n_cmp_units;
+
+  while(true) {
+    int nxt_uidx = mg->nibble_i.fetchAndAddOrdered(nib_chnk);
+    if(nxt_uidx >= nib_stop) break;
+    const int mx = MIN(nib_stop, nxt_uidx + nib_chnk);
+    for(int i=nxt_uidx; i <mx; i++) {
+      img_proc_call->call(base, i, task_id); // task id indicates threading, and which thread
+    }
+    if(mx == nib_stop) break;		// we're the last guy
   }
 }
 
 void ImgProcCallThreadMgr::Initialize() {
   min_units = taMisc::thread_defaults.min_units;
+  nibble_chunk = taMisc::thread_defaults.nibble_chunk;
   task_type = &TA_ImgProcCallTask;
 }
 
 void ImgProcCallThreadMgr::Destroy() {
 }
 
-void ImgProcCallThreadMgr::Run(ThreadImgProcCall* img_proc_call, int n_cmp_units) {
+void ImgProcCallThreadMgr::Run(ThreadImgProcCall* img_proc_call, int n_cmp_un) {
   InitAll();			// make sure
+
+  n_cmp_units = n_cmp_un;
 
   ImgProcThreadBase* base = img_proc();
   if(n_threads == 1 || n_cmp_units < min_units || n_cmp_units < tasks.size) {
@@ -571,23 +581,13 @@ void ImgProcCallThreadMgr::Run(ThreadImgProcCall* img_proc_call, int n_cmp_units
     }
   }
   else {
-    const int nt = tasks.size;
-    int chnk_size = n_cmp_units / nt;
-    int n_chunked = chnk_size * nt;
-    int last_chnk = chnk_size + (n_cmp_units - n_chunked);
+    // everything is done with nibbling -- so much more effective at load balancing
+    nibble_i = 0;
 
-    int chk_dx = 0;
-
-    for(int i=0;i<nt;i++) {
+    // set the call
+    for(int i=0;i<tasks.size;i++) {
       ImgProcCallTask* uct = (ImgProcCallTask*)tasks[i];
       uct->img_proc_call = img_proc_call;
-      uct->uidx_inc = 1;
-      uct->uidx_st = chk_dx;
-      if(i == nt-1)
-	uct->uidx_ed = chk_dx + last_chnk;
-      else
-	uct->uidx_ed = chk_dx + chnk_size;
-      chk_dx += chnk_size;
     }
 
     // then run the subsidiary guys
@@ -1583,7 +1583,6 @@ void GaborV1Spec::UpdateAfterEdit_impl() {
   un_geom.UpdateAfterEdit();
   gp_geom.UpdateAfterEdit();
   UpdateGeoms();
-  threads.InitAll();
 }
 
 bool GaborV1Spec::SetGpGeomFmInputSize(TwoDCoord& input_size) {
@@ -1655,8 +1654,9 @@ bool GaborV1Spec::FilterInput(float_Matrix& v1_output, DoGFilterSpec::ColorChann
   cur_off_input = &off_input;
   cur_superimpose = cur_superimpose;
 
-  threads.InitAll();
+  threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
   threads.min_units = 1;
+  threads.nibble_chunk = 1;
   ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
   threads.Run(&ip_call, un_geom.n);
   return true;
@@ -2579,7 +2579,6 @@ void RetinaSpec::UpdateRetinaSize() {
 void RetinaSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateRetinaSize();
-  threads.InitAll();
 }
 
 void RetinaSpec::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -2891,8 +2890,9 @@ bool RetinaSpec::FilterImageData(DataTable* dt, bool superimpose, int renorm) {
   cur_ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
   taBase::Ref(cur_ret_img);
 
-  threads.InitAll();
+  threads.n_threads = MIN(dogs.size, taMisc::thread_defaults.n_threads); // keep in range..
   threads.min_units = 1;
+  threads.nibble_chunk = 1;
   ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
 
   cur_phase = 0;
