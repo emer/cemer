@@ -1,0 +1,658 @@
+// ta_Dump File v2.0 -- code v4.0.21.0
+taPluginBase_List .plugin_deps { 
+  taPluginBase_List @.plugin_deps = [1] {
+    taPluginDep @[0] { };
+  };
+};
+taPluginBase_List .plugin_deps {
+ name=;
+ el_typ=taPluginDep;
+ el_def=0;
+ taPluginDep @[0] {
+  name="AudioProc";
+  desc="Audio processing for tacss";
+  unique_id="audioproc.plugins.brad-aisa.com";
+  version="1.0.0.0";
+  url=;
+ };
+};
+LeabraProject .projects[0] { 
+  Wizard_Group @.wizards = [1] {
+    LeabraWizard @[0] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+
+      LayerWizElList @.layer_cfg = [3] {
+	LayerWizEl @[0] { };
+	LayerWizEl @[1] { };
+	LayerWizEl @[2] { };
+      };
+    };
+  };
+
+  taBase_Group @.data_proc = [4] {
+    taDataProc @[0] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taDataAnal @[1] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taDataGen @[2] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taImageProc @[3] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+  };
+
+  Program_Group @.programs = [0] {
+    Program_Group @.gp[0] = [1] { 
+      Program @[0] { 
+	ProgObjList @.objs = [3] {
+	  InputBlockSet @[0] { 
+	    SignalProcBlock_List @.blocks = [1] {
+	      StimGen @[0] { 
+		StimChan_List @.chans = [1] {
+		  ToneChan @[0] { };
+		};
+	      };
+	    };
+	  };
+	  ListenerBlock @[1] { };
+	  MelCepstrumBlock @[2] { };
+	};
+
+	ProgVar_List @.vars = [5] {
+	  ProgVar @[0] { };
+	  ProgVar @[1] { };
+	  ProgVar @[2] { };
+	  ProgVar @[3] { };
+	  ProgVar @[4] { };
+	};
+
+	ProgEl_List @.init_code = [1] {
+	  MethodCall @[0] { };
+	};
+
+	ProgEl_List @.prog_code = [1] {
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	};
+      };
+    };
+  };
+
+  DataViewer_List @.viewers = [1] {
+    MainWindowViewer @[0] { 
+      ToolBar_List @.toolbars = [1] {
+	ToolBar @[0] { };
+      };
+
+      FrameViewer_List @.frames = [3] {
+	tabBrowseViewer @[0] { };
+	PanelViewer @[1] { };
+	T3DataViewer @[2] { 
+	  T3DataViewFrame_List @.frames = [1] {
+	    T3DataViewFrame @[0] { };
+	  };
+	};
+      };
+
+      DockViewer_List @.docks = [1] {
+	ToolBoxDockViewer @[0] { };
+      };
+    };
+  };
+};
+LeabraProject .projects[0] {
+ name="TestMelCepstrum";
+ desc=;
+ tags=;
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ wiki_url {
+  sync=0;
+  wiki=;
+  url=;
+ };
+ templates {
+  name=;
+  el_typ=taBase;
+  el_def=0;
+ };
+ docs {
+  name=;
+  el_typ=taDoc;
+  el_def=0;
+ };
+ wizards {
+  name=;
+  el_typ=LeabraWizard;
+  el_def=0;
+  LeabraWizard @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="LeabraWizard_0";
+   auto_open=1;
+   n_layers=3;
+   layer_cfg {
+    name=;
+    el_typ=LayerWizEl;
+    el_def=0;
+    LayerWizEl @[0] {
+     name="Input";
+     n_units=25;
+     io_type=INPUT;
+    };
+    LayerWizEl @[1] {
+     name="Hidden";
+     n_units=25;
+     io_type=HIDDEN;
+    };
+    LayerWizEl @[2] {
+     name="Output";
+     n_units=25;
+     io_type=OUTPUT;
+    };
+   };
+   connectivity=BIDIRECTIONAL;
+   default_net_type=LeabraNetwork;
+  };
+ };
+ edits {
+  name=;
+  el_typ=SelectEdit;
+  el_def=0;
+ };
+ data {
+  name=;
+  el_typ=DataTable;
+  el_def=0;
+  DataTable_Group @.gp[0] {
+   name="InputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp[1] {
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp[2] {
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+ };
+ data_proc {
+  name=;
+  el_typ=taDataProc;
+  el_def=0;
+  taDataProc @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_base";
+  };
+  taDataAnal @[1] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_anal";
+  };
+  taDataGen @[2] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_gen";
+  };
+  taImageProc @[3] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="image_proc";
+  };
+ };
+ programs {
+  name=;
+  el_typ=Program;
+  el_def=0;
+  step_prog=NULL;
+  tags=;
+  desc=;
+  Program_Group @.gp[0] {
+   name="Audioproc";
+   el_typ=Program;
+   el_def=0;
+   step_prog=NULL;
+   tags=;
+   desc=;
+   Program @[0] {
+    name="Audioproc";
+    tags=;
+    desc=;
+    flags=;
+    objs {
+     name=;
+     el_typ=SourceBlock;
+     el_def=0;
+     InputBlockSet @[0] {
+      name="InputBlockSet_0";
+      desc=;
+      flags=;
+      gain {
+       level=1;
+       units=UN_SCALE;
+      };
+      fs {
+       fs_val=SF_16000;
+       fs_act=16000;
+      };
+      max_dur {
+       duration=0;
+       units=UN_CONT;
+      };
+      blocks {
+       name=;
+       el_typ=InputBlockBase;
+       el_def=0;
+       StimGen @[0] {
+	name="StimGen_0";
+	desc=;
+	flags=;
+	gain {
+	 level=1;
+	 units=UN_SCALE;
+	};
+	fs {
+	 fs_val=SF_16000;
+	 fs_act=16000;
+	};
+	max_dur {
+	 duration=1;
+	 units=UN_TIME_S;
+	};
+	out_buff {
+	 fs {
+	  fs_val=SF_16000;
+	  fs_act=16000;
+	 };
+	 fr_dur {
+	  duration=1;
+	  units=UN_SAMPLES;
+	 };
+	 stages=10;
+	 fields=1;
+	};
+	pos {x=0: y=0.2332381: z=0: };
+	chans {
+	 name=;
+	 el_typ=ToneChan;
+	 el_def=0;
+	 ToneChan @[0] {
+	  name="Tone0";
+	  chan_flags=;
+	  wave_type=WT_SINE;
+	  freq_mode=FM_ABSOLUTE;
+	  freq=1000;
+	  level {
+	   level=1;
+	   units=UN_SCALE;
+	  };
+	  starting_phase {
+	   phase=0;
+	   units=UN_DEGREES;
+	  };
+	 };
+	};
+       };
+      };
+      stages=10;
+     };
+     ListenerBlock @[1] {
+      name="ListenerBlock_0";
+      desc=;
+      flags=;
+      in_block {
+       src_block=.projects[0].programs.gp[0][0].objs[0]$0$;
+       buff_index=0;
+      };
+      out_buff {
+       fs {
+	fs_val=SF_16000;
+	fs_act=16000;
+       };
+       fr_dur {
+	duration=1;
+	units=UN_SAMPLES;
+       };
+       stages=1;
+       fields=1;
+      };
+      head_radius=0.09;
+      pos {x=0: y=0: z=0: };
+      pos_ear_L {x=-0.09: y=0: z=0: };
+      pos_ear_R {x=0.09: y=0: z=0: };
+      norm_by_n=0;
+      output_mode=OM_Mono;
+      speed_sound=344;
+      dist_min=0.03;
+      dist_atten=16;
+     };
+     MelCepstrumBlock @[2] {
+      name="MelCepstrumBlock_0";
+      desc=;
+      flags=;
+      in_block {
+       src_block=.projects[0].programs.gp[0][0].objs[1]$1$;
+       buff_index=0;
+      };
+      out_buff {
+       fs {
+	fs_val=SF_16000;
+	fs_act=16000;
+       };
+       fr_dur {
+	duration=1;
+	units=UN_SAMPLES;
+       };
+       stages=1;
+       fields=1;
+      };
+      out_buff_delta1 {
+       fs {
+	fs_val=SF_AUTO;
+	fs_act=0;
+       };
+       fr_dur {
+	duration=1;
+	units=UN_SAMPLES;
+       };
+       stages=1;
+       fields=1;
+      };
+      out_buff_delta2 {
+       fs {
+	fs_val=SF_AUTO;
+	fs_act=0;
+       };
+       fr_dur {
+	duration=1;
+	units=UN_SAMPLES;
+       };
+       stages=1;
+       fields=1;
+      };
+      out_vals=OV_MEL;
+      cf_lo=100;
+      cf_lin_bw=100;
+      cf_log_factor=1.1;
+      n_lin_chans=10;
+      n_log_chans=20;
+      dct=0;
+      n_cepstrum=10;
+      out_rate=10;
+     };
+    };
+    types {
+     name=;
+     el_typ=ProgType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="InputBlockSet_0";
+      var_type=T_Object;
+      object_type=InputBlockSet;
+      object_val=$0$;
+      objs_ptr=1;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc=;
+     };
+     ProgVar @[1] {
+      name="ListenerBlock_0";
+      var_type=T_Object;
+      object_type=ListenerBlock;
+      object_val=$1$;
+      objs_ptr=1;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc=;
+     };
+     ProgVar @[2] {
+      name="MelCepstrumBlock_0";
+      var_type=T_Object;
+      object_type=MelCepstrumBlock;
+      object_val=.projects[0].programs.gp[0][0].objs[2]$2$;
+      objs_ptr=1;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc=;
+     };
+     ProgVar @[3] {
+      name="ps";
+      var_type=T_HardEnum;
+      int_val=1;
+      hard_enum_type=SignalProcBlock::ProcStatus;
+      objs_ptr=0;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
+      desc="processing status";
+     };
+     ProgVar @[4] {
+      name="dur";
+      var_type=T_Real;
+      real_val=0.01;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="duration to process, in ms";
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    load_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+     MethodCall @[0] {
+      desc=;
+      flags=;
+      result_var=NULL;
+      obj=.projects[0].programs.gp[0][0].vars[0]$3$;
+      method=SignalProcBlock::InitConfig;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+    };
+    prog_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+     MethodCall @[0] {
+      desc=;
+      flags=;
+      result_var=.projects[0].programs.gp[0][0].vars[3]$4$;
+      obj=$3$;
+      method=InputBlockBase::ProcNext_Duration;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=float;
+	type="float";
+	name="s";
+	required=0;
+	def_val=;
+	expr {
+	 expr="dur";
+	};
+       };
+      };
+     };
+    };
+   };
+  };
+ };
+ viewers {
+  name=;
+  el_typ=TopLevelViewer;
+  el_def=0;
+  MainWindowViewer @[0] {
+   m_data=.projects[0]$5$;
+   name="Browser2";
+   visible=1;
+   m_is_root=0;
+   m_is_viewer_xor_browser=0;
+   m_is_proj_viewer=1;
+   m_is_dialog=0;
+   toolbars {
+    name=;
+    el_typ=ToolBar;
+    el_def=0;
+    ToolBar @[0] {
+     m_data=NULL;
+     name="Application";
+     visible=0;
+     lft=0;
+     top=0;
+     o=Horizontal;
+    };
+   };
+   frames {
+    name=;
+    el_typ=FrameViewer;
+    el_def=0;
+    tabBrowseViewer @[0] {
+     m_data=NULL;
+     name="Tree";
+     visible=1;
+     root_typ=LeabraProject;
+     root_md=NULL;
+     m_root=$5$;
+    };
+    PanelViewer @[1] {
+     m_data=NULL;
+     name="Panels";
+     visible=1;
+    };
+    T3DataViewer @[2] {
+     m_data=NULL;
+     name="T3Frames";
+     visible=1;
+     frames {
+      name=;
+      el_typ=T3DataViewFrame;
+      el_def=0;
+      T3DataViewFrame @[0] {
+       m_data=NULL;
+       name="Frame1";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	};
+       };
+       camera_pos {x=0: y=0: z=-0.4765596: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=3.52344;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       headlight_on=1;
+       fullscreen_on=0;
+       stereo_view=STEREO_NONE;
+      };
+     };
+    };
+   };
+   docks {
+    name=;
+    el_typ=DockViewer;
+    el_def=0;
+    ToolBoxDockViewer @[0] {
+     m_data=NULL;
+     name="Tools";
+     visible=1;
+     dock_flags=DV_MOVABLE|DV_FLOATABLE;
+     dock_area=1;
+    };
+   };
+  };
+ };
+ last_change_desc=;
+ networks {
+  name=;
+  el_typ=LeabraNetwork;
+  el_def=0;
+ };
+};

@@ -526,6 +526,7 @@ void MelCepstrumBlock::Initialize() {
   dct = true;
   n_cepstrum = 10;
   out_rate = 10.0f;
+  fft_band = 0;
 }
 
 void MelCepstrumBlock::UpdateAfterEdit_impl() {
@@ -548,6 +549,10 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
     "MelCepstrumBlock only supports single val input"))
     return;
     
+  if (CheckError((out_rate <= 0), quiet, ok,
+    "MelCepstrumBlock out_rate must be > 0"))
+    return;
+
 /*TODO  // warn about nyquist violations -- some upper chans will be disabled
   bool on_hi = MelCepstrumChan::ChanFreqOk(cf_hi, ear_q, min_bw, src_buff->fs.fs_act);
   if ((!on_hi) && check && !quiet) {
@@ -587,13 +592,19 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   in_idx = 0;
   // filters/buffers
   in_buff.SetGeom(2, frame_size, src_buff->fields); // field has to be outer, for efficient copying
-  fft_in.SetGeom(1, frame_size);
+  in_buff.Clear(); // in case reusing
   window_filt.SetGeom(1, frame_size);
+  fft_in.SetGeom(1, frame_size);
   // hamming filter
   // from Lyons, "Understanding Signal Processing", p. 77
-  for (int i = 0; i < frame_size; ++i)
-    window_filt.Set((float)(0.54 - (0.46 * cos(M_PI * ((double)i / frame_size)))), i);
-  
+  // but note that the window should be symmetric, which isn't clear in that text
+  for (int i = 0; i < out_size; ++i)
+    window_filt.Set((float)(0.54 - (0.46 * cos(M_PI * ((double)i / (out_size - 1))))), i);
+  for (int i = out_size, j = out_size - 1; i < frame_size; ++i, --j)
+    window_filt.Set(window_filt.FastEl_Flat(j), i);
+  // mel output
+  fft_band = 1000.0f / (2 * out_rate);
+  mel_out.SetGeom(1, n_chans);
 }
 
 void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
@@ -640,26 +651,77 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
       in_buff.Set(dat, in_idx, f);
     } // field
     // we output every 1/2 frame size
-    if (in_idx++ >= frame_size)
+    if (++in_idx >= frame_size)
       in_idx = 0;
     if ((in_idx % out_size) == 0) {
       for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) {
-	//TODO: factor fields in to calcs
 	// copy to fft buffer -- 2 cases: end is 1/2 way, or end is end
-	const int n_half_frame_bytes = in_fields * out_size * sizeof(float);
+	const int n_half_frame_bytes = out_size * sizeof(float);
 	if (in_idx == 0) {
-	  memcpy(fft_in.data(), in_buff.data(), 2*n_half_frame_bytes);
+	  // the logical and physical end of the buffer is same
+	  memcpy(
+	    fft_in.data(), 
+	    (const char*)in_buff.data() + (f * 2 * n_half_frame_bytes),
+	    2 * n_half_frame_bytes);
 	} else {
-	  memcpy(fft_in.data(), (const char*)in_buff.data() + n_half_frame_bytes, n_half_frame_bytes);
-	  memcpy((char*)fft_in.data() + n_half_frame_bytes, in_buff.data(), n_half_frame_bytes);
+	  // the logical end of buffer is half-way, so need to copy halves
+	  memcpy(
+	    fft_in.data(), 
+	    (const char*)in_buff.data() + (f * 2 * n_half_frame_bytes) + n_half_frame_bytes,
+	    n_half_frame_bytes);
+	  memcpy(
+	    (char*)fft_in.data() + n_half_frame_bytes,
+	    (const char*)in_buff.data() + (f * 2 * n_half_frame_bytes), 
+	    n_half_frame_bytes);
 	}
+	
 	// window filter
-	//TODO
+	bool ok = taMath_float::vec_mult_els(&fft_in, &window_filt);
+	if (TestError((!ok), "AcceptData_MC",
+	  "vec_mult_els did not complete ok")) return PS_ERROR;
 	// do fft, get the real (power) only
-	bool ok = taMath_float::fft_real_transform(&fft_out, &fft_in,
+	ok = taMath_float::fft_real_transform(&fft_out, &fft_in,
 	  true, false);
-	if (CheckError((!ok), false, ok,
+	if (TestError((!ok), "AcceptData_MC",
 	  "fft did not complete ok")) return PS_ERROR;
+	  
+	// collapse freq bands
+	for (int ch = 0; ch < chans.size; ++ch) {
+	  FilterChan* fc = chans.FastEl(ch);
+	  double out = 0;
+	  // lower sideband -- interpolate lowest
+	  float lower = (ch > 0) ?
+	    chans.FastEl(ch - 1)->cf :
+	    cf_lo - cf_lin_bw;
+	  // find nearest index in fft
+	  int fft_ctr = fc->cf / fft_band;
+	  MinMax mm; // easy way to compute the wt
+	  mm.Set(lower, fc->cf);
+	  double wt_tot = 0;
+	  for (int fft_idx = lower / fft_band; fft_idx <= fft_ctr; ++fft_idx) {
+	    // the weight is the value between 0 and 1 of the line from low to cf
+	    float wt = mm.Normalize(fft_idx * fft_band);
+	    wt_tot += wt;
+	    out += wt * fft_out.FastEl_Flat(fft_idx);
+	  }
+	  
+	  // upper sideband -- interpolate highest
+	  float higher = (ch < (chans.size - 1)) ?
+	    chans.FastEl(ch + 1)->cf :
+	    fc->cf * cf_log_factor;
+	    
+	  mm.Set(fc->cf, higher);
+	  int fft_hi = higher / fft_band;
+	  for (int fft_idx = fft_ctr + 1;  fft_idx <= fft_hi; ++fft_idx) {
+	    // the weight is the value between 0 and 1 of the line from cf to high
+	    float wt = 1.0f - mm.Normalize(fft_idx * fft_band);
+	    wt_tot += wt;
+	    out += wt * fft_out.FastEl_Flat(fft_idx);
+	  }
+	  out /= wt_tot; // normalizes everyone
+	  mel_out.FastEl_Flat(ch) = (float)out;
+	}
+	
         // log transform
 	//TODO:
       }
