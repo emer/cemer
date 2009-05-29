@@ -1004,7 +1004,7 @@ void ListenerBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   int min_stages = CalcMinInputStages((float)src_ib->fs, head_radius, speed_sound);
     
   if (CheckError((src_ib->stages < min_stages), quiet, ok,
-    "InputBLockSet for ListenerBlock will require ", String(min_stages),
+    "InputBlockSet for ListenerBlock will require ", String(min_stages),
     " stages at current fs, speed_sound, and head_radius -- this value has been updated, rerun InitConfig"))
   {
     src_ib->stages = min_stages;

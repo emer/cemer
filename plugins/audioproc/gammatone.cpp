@@ -523,6 +523,8 @@ void MelCepstrumBlock::Initialize() {
   cf_log_factor = 1.1f;
   n_lin_chans = 10;
   n_log_chans = 22;
+  compress = true;
+  comp_thresh.Set(-90, Level::UN_DBI);
   dct = true;
   n_cepstrum = 10;
   out_rate = 10.0f;
@@ -541,6 +543,11 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   if (!src_buff) return;
 //  float_Matrix* in_mat = &src_buff->mat;
 
+  if (comp_thresh < 1e-12f) {
+    comp_thresh.Set(1e-12f);
+    taMisc::Warning("MelCepstrumBlock: comp_thresh was limited to 1e-12");
+  }
+  
   if (CheckError((src_buff->chans > 1), quiet, ok,
     "MelCepstrumBlock only supports single channel input"))
     return;
@@ -704,12 +711,12 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
 	    wt_tot += wt;
 	    out += wt * fft_out.FastEl_Flat(fft_idx);
 	  }
-	  
+ 
 	  // upper sideband -- interpolate highest
 	  float higher = (ch < (chans.size - 1)) ?
 	    chans.FastEl(ch + 1)->cf :
 	    fc->cf * cf_log_factor;
-	    
+
 	  mm.Set(fc->cf, higher);
 	  int fft_hi = higher / fft_band;
 	  for (int fft_idx = fft_ctr + 1;  fft_idx <= fft_hi; ++fft_idx) {
@@ -718,12 +725,22 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
 	    wt_tot += wt;
 	    out += wt * fft_out.FastEl_Flat(fft_idx);
 	  }
-	  out /= wt_tot; // normalizes everyone
+//no,don't	  out /= wt_tot; // normalizes everyone
+          // compress
+          if (compress) {
+            if (out < comp_thresh) out = comp_thresh;
+            out = log(out);
+          }
 	  mel_out.FastEl_Flat(ch) = (float)out;
 	}
-	
-        // log transform
-	//TODO:
+      } // for each field
+      if (dct) {
+      } else {
+        // straight mel out
+	for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) {
+	  for (int ch = 0; ch < chans.size; ++ch) {
+	  }
+	}
       }
     }
   }

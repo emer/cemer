@@ -192,6 +192,8 @@ public:
   float			cf_log_factor; // how much to multiple to get next log channel 
   int			n_lin_chans; // #MIN_1 number of linear bands
   int			n_log_chans; // #MIN_0 number of log bands
+  bool			compress; // compress logarithmically
+  Level			comp_thresh; // #CONDEDIT_ON_compress lower threshold (clamped at this)
   bool			dct; // #DEF_true apply Discrete Cosine Transform and create cepstrum coefficients
   int			n_cepstrum; // #CONDEDIT_ON_dct #MIN_4 number of cepstrum output coefficients
   float			out_rate; // output rate, in ms (frames will be 1/2 this rate)
