@@ -283,7 +283,7 @@ static cssEl* cssElCFun_de_array_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_points_at_stub(int, cssEl* arg[]) {
   if(arg[2]->GetType() == cssEl::T_String)
-    return (arg[1])->GetMemberFmName((const char*)*arg[2]);
+    return (arg[1])->GetMemberFmName(arg[2]->GetStr());
   else
     return (arg[1])->GetMemberFmNo((int)*arg[2]);
 }
@@ -295,7 +295,7 @@ static cssEl* cssElCFun_member_fun_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   cssEl* mbfun;
   if(arg[2]->GetType() == cssEl::T_String)
-    mbfun = (arg[1])->GetMethodFmName((const char*)*arg[2]);
+    mbfun = (arg[1])->GetMethodFmName(arg[2]->GetStr());
   else
     mbfun = (arg[1])->GetMethodFmNo((int)*arg[2]);
   if((mbfun->GetType() != cssEl::T_MbrCFun) && (mbfun->GetType() != cssEl::T_MbrScriptFun)) {
@@ -505,7 +505,7 @@ static cssEl* cssElCFun_switch_jump_stub(int, cssEl* arg[]) {
     return &cssMisc::Void;
   }
 
-  ptr = val_ary->items->FindName((const char*)*sval);
+  ptr = val_ary->items->FindName(sval->GetStr());
   cssEl* jmp_to = ptr.El();
   if(jmp_to == &cssMisc::Void) { // not found
     ptr = val_ary->items->FindName(cssSwitchDefault_Name);
@@ -608,7 +608,7 @@ static cssEl* cssElCFun_push_cur_this_stub(int, cssEl* arg[]) {
 
 static cssEl* cssElCFun_include_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  cp->top->SetInclude((const char*)*(arg[1]));
+  cp->top->SetInclude(arg[1]->GetStr());
   return &cssMisc::Void;
 }
 
@@ -725,7 +725,7 @@ static void Install_Internals() {
 
 static cssEl* cssElCFun_alias_stub(int, cssEl* arg[]) {
   cssElCFun* tmp = (cssElCFun *)((cssRef*)arg[2])->ptr.El();
-  cssMisc::Commands.Push(new cssElCFun(tmp->argc, tmp->funp, (const char*)*(arg[1]),
+  cssMisc::Commands.Push(new cssElCFun(tmp->argc, tmp->funp, arg[1]->GetStr(),
 				 tmp->parse));
   return &cssMisc::Void;
 }
@@ -858,10 +858,10 @@ static cssEl* cssElCFun_info_stub(int na, cssEl* arg[]) {
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
   if(na >= 2) {
-    csh->src_prog->Info((const char*)*arg[1], arg[2]);
+    csh->src_prog->Info(arg[1]->GetStr(), arg[2]);
   }
   else if(na == 1) {
-    csh->src_prog->Info((const char*)*arg[1]);
+    csh->src_prog->Info(arg[1]->GetStr());
   }
   else {
     csh->src_prog->Info();
@@ -920,7 +920,7 @@ static cssEl* cssElCFun_load_stub(int, cssEl* arg[]) {
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
   csh->src_prog->ClearAll();
-  csh->src_prog->Compile((const char*)*(arg[1]));
+  csh->src_prog->Compile(arg[1]->GetStr());
   return &cssMisc::Void;
 }
 
@@ -1023,7 +1023,7 @@ static cssEl* cssElCFun_source_stub(int, cssEl* arg[]) {
 //   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
 //   cssCmdShell* csh = cp->top->cmd_shell;
 //   if(csh->src_prog == NULL) return &cssMisc::Void;
-//   csh->src_prog->Source((const char*)*(arg[1]));
+//   csh->src_prog->Source(arg[1]->GetStr());
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_step_stub(int na, cssEl* arg[]) {
@@ -1040,7 +1040,7 @@ static cssEl* cssElCFun_step_stub(int na, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_system_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
-  rval->val = system((const char*)*arg[1]); // rval is compiler food
+  rval->val = system(arg[1]->GetStr()); // rval is compiler food
   return rval;
 }
 static cssEl* cssElCFun_type_stub(int na, cssEl* arg[]) {
@@ -1401,7 +1401,7 @@ static cssEl* cssElCFun_CancelEditObj_stub(int, cssEl* arg[]) {
 }
 
 static cssEl* cssElCFun_Extern_stub(int, cssEl* arg[]) {
-  cssElPtr ptr = cssMisc::Externs.FindName((const char*)*arg[1]);
+  cssElPtr ptr = cssMisc::Externs.FindName(arg[1]->GetStr());
   return ptr.El();
 }
 
@@ -1410,9 +1410,9 @@ static cssEl* cssElCFun_Token_stub(int, cssEl* arg[]) {
 }
 
 static cssEl* cssElCFun_Type_stub(int, cssEl* arg[]) {
-  TypeDef* td = taMisc::types.FindName((const char*)*arg[1]);
+  TypeDef* td = taMisc::types.FindName(arg[1]->GetStr());
   if(td == NULL) {
-    cssMisc::Error(arg[0]->prog, "Could not find type:", (const char*)*arg[1]);
+    cssMisc::Error(arg[0]->prog, "Could not find type:", arg[1]->GetStr());
     return &cssMisc::Void;
   }
   return new cssTypeDef(td, 1, &TA_TypeDef);
@@ -1421,8 +1421,8 @@ static cssEl* cssElCFun_Type_stub(int, cssEl* arg[]) {
 static cssEl* cssElCFun_Dir_stub(int na, cssEl* arg[]) {
   String dir_nm = ".";
   if(na > 0)
-    dir_nm = (const char*)*(arg[1]);
-  String_Array& rval = Dir((const char*)dir_nm);
+    dir_nm = arg[1]->GetStr();
+  String_Array& rval = Dir(dir_nm);
   static cssTA_Base* rv_ta = NULL;
   if(rv_ta == NULL) {
     rv_ta = new cssTA_Base(NULL, 1, &TA_String_Array);
@@ -1504,7 +1504,7 @@ static cssEl* cssElCFun_printf_stub(int na, cssEl* arg[]) {
 #if (!defined(TA_OS_WIN))
 static cssEl* cssElCFun_access_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
-  rval->val = access((const char*)*arg[1], (int)*arg[2]);
+  rval->val = access(arg[1]->GetStr(), (int)*arg[2]);
   return rval;
 }
 static cssEl* cssElCFun_alarm_stub(int, cssEl* arg[]) {
@@ -1514,12 +1514,12 @@ static cssEl* cssElCFun_alarm_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_chdir_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
-  rval->val = chdir((const char*)*arg[1]);
+  rval->val = chdir(arg[1]->GetStr());
   return rval;
 }
 static cssEl* cssElCFun_chown_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
-  rval->val = chown((const char*)*arg[1], (int)*arg[2], (int)*arg[3]);
+  rval->val = chown(arg[1]->GetStr(), (int)*arg[2], (int)*arg[3]);
   return rval;
 }
 static cssEl* cssElCFun_ctermid_stub(int, cssEl**) {
@@ -1544,7 +1544,7 @@ static cssEl* cssElCFun_getcwd_stub(int, cssEl**) {
 }
 static cssEl* cssElCFun_getenv_stub(int, cssEl* arg[]) {
   cssString* rval = new cssString();
-  char* env_val = getenv((const char*)*arg[1]);
+  char* env_val = getenv(arg[1]->GetStr());
   if(env_val != NULL)
     rval->val = env_val;
   return rval;
@@ -1600,7 +1600,7 @@ static cssEl* cssElCFun_isatty_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_link_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
-  rval->val = (int)link((const char*)*arg[1], (const char*)*arg[2]);
+  rval->val = (int)link(arg[1]->GetStr(), arg[2]->GetStr());
   return rval;
 }
 
@@ -1611,12 +1611,12 @@ extern "C" int rename(const char*, const char*);
 
 static cssEl* cssElCFun_symlink_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
-  rval->val = (int)symlink((const char*)*arg[1], (const char*)*arg[2]);
+  rval->val = (int)symlink(arg[1]->GetStr(), arg[2]->GetStr());
   return rval;
 }
 static cssEl* cssElCFun_unlink_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
-  rval->val = (int)unlink((const char*)*arg[1]);
+  rval->val = (int)unlink(arg[1]->GetStr());
   return rval;
 }
 static cssEl* cssElCFun_pause_stub(int, cssEl**) {
@@ -1626,12 +1626,12 @@ static cssEl* cssElCFun_pause_stub(int, cssEl**) {
 }
 static cssEl* cssElCFun_rename_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
-  rval->val = (int)rename((const char*)*arg[1], (const char*)*arg[2]);
+  rval->val = (int)rename(arg[1]->GetStr(), arg[2]->GetStr());
   return rval;
 }
 static cssEl* cssElCFun_rmdir_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
-  rval->val = (int)rmdir((const char*)*arg[1]);
+  rval->val = (int)rmdir(arg[1]->GetStr());
   return rval;
 }
 static cssEl* cssElCFun_setgid_stub(int, cssEl* arg[]) {
@@ -1677,13 +1677,13 @@ static cssEl* cssElCFun_ttyname_stub(int, cssEl* arg[]) {
   return rval;
 }
 static cssEl* cssElCFun_perror_stub(int, cssEl* arg[]) {
-  perror((const char*)*arg[1]);
+  perror(arg[1]->GetStr());
   return &cssMisc::Void;
 }
 
 static cssEl* cssElCFun_putenv_stub(int, cssEl* arg[]) {
   static String_Array env_vals;	// need to keep strings around since putenv uses it..
-  String env_val = (const char*)*arg[1];
+  String env_val = arg[1]->GetStr();
   String env_cue = env_val.through('=');	// must have an equals..
 
   int i;
@@ -2127,7 +2127,7 @@ static void Install_Types() {
 	MethodDef* md = tmp->methods.FastEl(j);
 	if(md->stubp != NULL)
 	  cssMisc::HardFuns.Push(new cssMbrCFun(md->fun_argc, NULL, md->stubp,
-					     (const char*)md->name));
+						md->name));
       }
     }
   }

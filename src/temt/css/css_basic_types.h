@@ -37,13 +37,14 @@ public:
   String	PrintFStr() const { return String(val); }
 
   // constructors
-  void 		Constr()		{ Register(); val = 0; }
+  void 		Constr()		{ val = 0; }
   void		Copy(const cssInt& cp)	{ cssEl::Copy(cp); val = cp.val; }
+
   cssInt()				{ Constr(); }
   cssInt(Int vl)			{ Constr(); val = vl; }
-  cssInt(Int vl, const char* nm) 	{ Constr(); name = nm;  val = vl; }
-  cssInt(const cssInt& cp)		{ Constr(); Copy(cp); }
-  cssInt(const cssInt& cp, const char* nm)  { Constr(); Copy(cp); name = nm; }
+  cssInt(Int vl, const String& nm) 	{ Constr(); name = nm;  val = vl; }
+  cssInt(const cssInt& cp)		{ Copy(cp); name = cp.name; }
+  cssInt(const cssInt& cp, const String& nm)  { Copy(cp); name = nm; }
 
   cssCloneFuns(cssInt, 0);
 
@@ -54,7 +55,7 @@ public:
   operator Int() const	 	{ return val; }
   operator bool() const	 	{ return val; }
 
-  void* 	NullPtrCvt(const char* typ_nm)	const { if(val != 0) CvtErr(typ_nm); return NULL; }
+  void* 	NullPtrCvt(const String& typ_nm)	const { if(val != 0) CvtErr(typ_nm); return NULL; }
 
   operator void*() const	{ return NullPtrCvt("(void*)"); }
   operator void**() const	{ return (void**)NullPtrCvt("(void**)"); }
@@ -162,9 +163,9 @@ public:
 
   cssChar()                      : cssInt()		{ };
   cssChar(Int vl)                : cssInt(vl)		{ };
-  cssChar(Int vl, const char* nm)      : cssInt(vl, nm)	{ };
+  cssChar(Int vl, const String& nm)      : cssInt(vl, nm)	{ };
   cssChar(const cssChar& cp)           : cssInt(cp)		{ };
-  cssChar(const cssChar& cp, const char* nm) : cssInt(cp, nm) 	{ };
+  cssChar(const cssChar& cp, const String& nm) : cssInt(cp, nm) 	{ };
   cssCloneFuns(cssChar, *this);
 
   String GetStr() const	{ return (String)(char)val; }
@@ -202,13 +203,13 @@ public:
   String	PrintFStr() const { return String(val); }
 
   // constructors
-  void 		Constr()		{ Register(); val = 0LL; }
+  void 		Constr()		{ val = 0LL; }
   void		Copy(const cssInt64& cp)	{ cssEl::Copy(cp); val = cp.val; }
   cssInt64()				{ Constr(); }
   cssInt64(Int vl)			{ Constr(); val = vl; }
-  cssInt64(Int vl, const char* nm) 	{ Constr(); name = nm;  val = vl; }
-  cssInt64(const cssInt64& cp)		{ Constr(); Copy(cp); }
-  cssInt64(const cssInt64& cp, const char* nm)  { Constr(); Copy(cp); name = nm; }
+  cssInt64(Int vl, const String& nm) 	{ Constr(); name = nm;  val = vl; }
+  cssInt64(const cssInt64& cp)		{ Copy(cp); name = cp.name; }
+  cssInt64(const cssInt64& cp, const String& nm)  { Copy(cp); name = nm; }
 
   cssCloneFuns(cssInt64, 0);
 
@@ -307,13 +308,13 @@ public:
   String	PrintFStr() const { return String(val); }
 
   // constructors
-  void 		Constr()		{ Register(); val = 0; }
+  void 		Constr()		{ val = 0; }
   void		Copy(const cssReal& cp)	{ cssEl::Copy(cp); val = cp.val; }
   cssReal()				{ Constr(); }
   cssReal(Real vl)			{ Constr(); val = vl; }
-  cssReal(Real vl, const char* nm)	{ Constr(); val = vl; name = nm; }
-  cssReal(const cssReal& cp)		{ Constr(); Copy(cp); }
-  cssReal(const cssReal& cp, const char* nm){ Constr(); Copy(cp); name = nm; }
+  cssReal(Real vl, const String& nm)	{ Constr(); val = vl; name = nm; }
+  cssReal(const cssReal& cp)		{ Copy(cp); name = cp.name; }
+  cssReal(const cssReal& cp, const String& nm){ Copy(cp); name = nm; }
 
   cssCloneFuns(cssReal, 0.0);
 
@@ -392,7 +393,6 @@ class CSS_API cssString : public cssEl {
   // a character-string value
 public:
   String	val;
-  taFiler*	gf;		// this allows strings to be converted into filenames
 
   int		GetParse() const	{ return CSS_VAR; }
   uint		GetSize() const		{ return sizeof(*this); }
@@ -413,16 +413,14 @@ public:
   virtual String GetVal() 	 { return val; }
 
   // constructors
-  void		Constr();
+  void		Constr() { };
   void		Copy(const cssString& cp)	 { cssEl::Copy(cp); val = cp.val; }
   cssString()					 { Constr(); }
-  cssString(String vl)				 { Constr(); val = vl; }
-  cssString(const char* vl)			 { Constr(); val = vl; }
-  cssString(String vl, const char* nm)		 { Constr(); name = nm; val = vl; }
-  cssString(const char* vl, const char* nm)	 { Constr(); name = nm; val = vl; }
-  cssString(const cssString& cp)	 	 { Constr(); Copy(cp); }
-  cssString(const cssString& cp, const char* nm) { Constr(); Copy(cp); name = nm; }
-  ~cssString();
+  cssString(const String& vl)			 { Constr(); val = vl; }
+  cssString(const String& vl, const String& nm)	 { Constr(); name = nm; val = vl; }
+  cssString(const cssString& cp)	 	 { Copy(cp); name = cp.name; }
+  cssString(const cssString& cp, const String& nm) { Copy(cp); name = nm; }
+  ~cssString() { };
 
   cssCloneFuns(cssString, "");
 
@@ -437,8 +435,6 @@ public:
   operator TypeDef*() const;	// lookup as name
   operator MemberDef*() const;
   operator MethodDef*() const;  
-  operator ostream*() const; // convert to stream as file-name of a file
-  operator istream*() const;
 
   void operator=(Real cp) 		{ val = String(cp); }
   void operator=(Int cp)		{ val = String(cp); }
@@ -470,10 +466,10 @@ public:
 
   // these use the TA info to perform actions
   cssEl* operator[](Variant idx) const;
-  int	 GetMethodNo(const char* method) const;
+  int	 GetMethodNo(const String& method) const;
   cssEl* GetMethodFmNo(int memb) const;
-  cssEl* GetMethodFmName(const char* memb) const;
-  cssEl* GetScoped(const char* nm) const;
+  cssEl* GetMethodFmName(const String& memb) const;
+  cssEl* GetScoped(const String& nm) const;
 };
 
 #define cssString_inst(l,n,x)		l .Push(new cssString(n, #x))
@@ -496,19 +492,20 @@ public:
   String	PrintFStr() const { return GetStr(); }
 
   // constructors
-  void 		Constr()			{ Register(); val = false; }
+  void 		Constr()			{ val = false; }
   void		Copy(const cssBool& cp)		{ cssEl::Copy(cp); val = cp.val; }
+
   cssBool()					{ Constr(); }
   cssBool(bool vl)				{ Constr(); val = vl; }
-  cssBool(bool vl, const char* nm) 		{ Constr(); name = nm;  val = vl; }
-  cssBool(const cssBool& cp)			{ Constr(); Copy(cp); }
-  cssBool(const cssBool& cp, const char* nm)  	{ Constr(); Copy(cp); name = nm; }
+  cssBool(bool vl, const String& nm) 		{ Constr(); name = nm;  val = vl; }
+  cssBool(const cssBool& cp)			{ Copy(cp); name = cp.name; }
+  cssBool(const cssBool& cp, const String& nm)  { Copy(cp); name = nm; }
 
   cssCloneFuns(cssBool, false);
 
   // converters
   String GetStr() const;
-  Variant GetVar() const { return Variant(val); }
+  Variant GetVar() const 	{ return Variant(val); }
   operator Real() const	 	{ return (Real)val; }
   operator Int() const	 	{ return val; }
   operator bool() const	 	{ return val; }
@@ -559,13 +556,13 @@ public:
   void		InheritInfo(ostream& fh = cout) const;
 
   // constructors
-  void 		Constr()		{ Register(); } // default is Invalid
+  void 		Constr()		{ } // default is Invalid
   void		Copy(const cssVariant& cp) { cssEl::Copy(cp); val = cp.val; }
   cssVariant()				{ Constr(); }
   cssVariant(const Variant& vl)		{ Constr(); val = vl; }
-  cssVariant(const Variant& vl, const char* nm) { Constr(); val = vl; name = nm; }
-  cssVariant(const cssVariant& cp)		{ Constr(); Copy(cp); }
-  cssVariant(const cssVariant& cp, const char* nm){ Constr(); Copy(cp); name = nm; }
+  cssVariant(const Variant& vl, const String& nm) { Constr(); val = vl; name = nm; }
+  cssVariant(const cssVariant& cp)		{ Copy(cp); name = cp.name; }
+  cssVariant(const cssVariant& cp, const String& nm){ Copy(cp); name = nm; }
 
   cssCloneFuns(cssVariant, _nilVariant);
 
@@ -592,7 +589,7 @@ public:
   void operator=(const Variant& cp)	{ val = cp;}
 
   void operator=(void* ptr)	 	{ val = ptr; }
-  void operator=(void**)	{ CvtErr("(void**)"); }
+  void operator=(void**)		{ CvtErr("(void**)"); }
 
   // operators
   void operator=(const cssEl& s)	{ val = s.GetVar(); }
@@ -623,13 +620,13 @@ public:
   // these delegate to the string, base or variant
   cssEl* operator[](Variant idx) const; // only valid for Matrixes, gets flat el
   bool	 MembersDynamic()	{ return true; }
-  int	 GetMemberNo(const char* memb) const { return -1; } // don't do any advance lookup: always dynamic
+  int	 GetMemberNo(const String& memb) const { return -1; } // don't do any advance lookup: always dynamic
   cssEl* GetMemberFmNo(int memb) const;
-  cssEl* GetMemberFmName(const char* memb) const;
-  int	 GetMethodNo(const char* meth) const { return -1; } // keep it dynamic
+  cssEl* GetMemberFmName(const String& memb) const;
+  int	 GetMethodNo(const String& meth) const { return -1; } // keep it dynamic
   cssEl* GetMethodFmNo(int meth) const;
-  cssEl* GetMethodFmName(const char* meth) const;
-  cssEl* GetScoped(const char* nm) const;
+  cssEl* GetMethodFmName(const String& meth) const;
+  cssEl* GetScoped(const String& nm) const;
 };
 
 #define cssVariant_inst(l,n,x)		l .Push(new cssVariant(n, #x))
@@ -670,29 +667,32 @@ public:
   void		SetElType(cssEl* typ) 	{ cssEl::SetRefPointer(&el_type, typ); }
 
   // constructors
-  void		Constr();
-  void		Copy(const cssPtr& cp);
+  void		Constr()		{ el_type = &cssMisc::Void; }
+
+  void		Copy(const cssPtr& cp) 	{ cssEl::Copy(cp); SetPtr(cp.ptr); SetElType(cp.el_type); }
+  void		CopyType(const cssPtr& cp) { cssEl::CopyType(cp); SetElType(cp.el_type); }
+
   cssPtr();
   cssPtr(const cssElPtr& it);	// this sets the pointer
   cssPtr(cssEl* typ);		// this sets the type
-  cssPtr(cssEl* typ, const char* nm); // sets type
-  cssPtr(cssEl* typ, const cssElPtr& it, const char* nm);
+  cssPtr(cssEl* typ, const String& nm); // sets type
+  cssPtr(cssEl* typ, const cssElPtr& it, const String& nm);
   cssPtr(const cssPtr& cp);
-  cssPtr(const cssPtr& cp, const char* nm);
+  cssPtr(const cssPtr& cp, const String& nm);
   ~cssPtr();
 
   cssCloneOnly(cssPtr);
   cssEl*	MakeToken_stub(int, cssEl* arg[])
-  { return new cssPtr(el_type, (const char*)*(arg[1])); }
+  { return new cssPtr(el_type, arg[1]->GetStr()); }
 
   bool	 MembersDynamic()	{ return true; }
-  int    GetMemberNo(const char* s) const; // check type even if ptr is null
+  int    GetMemberNo(const String& s) const; // check type even if ptr is null
   cssEl* GetMemberFmNo(int s) const  		{ return ptr.El()->GetMemberFmNo(s); }
-  cssEl* GetMemberFmName(const char* s) const  	{ return ptr.El()->GetMemberFmName(s); }
-  int	 GetMethodNo(const char* s) const; // check type even if ptr is null
+  cssEl* GetMemberFmName(const String& s) const  	{ return ptr.El()->GetMemberFmName(s); }
+  int	 GetMethodNo(const String& s) const; // check type even if ptr is null
   cssEl* GetMethodFmNo(int s) const; // check for virtual funs
-  cssEl* GetMethodFmName(const char* s) const;
-  cssEl* GetScoped(const char* s) const  	{ return ptr.El()->GetScoped(s); }
+  cssEl* GetMethodFmName(const String& s) const;
+  cssEl* GetScoped(const String& s) const  	{ return ptr.El()->GetScoped(s); }
 
   // converters
   Int		GetIntVal() const	// get integer value of pointer
@@ -773,11 +773,11 @@ public:
   cssArray();
   cssArray(int no);
   cssArray(int no, cssEl* it);
-  cssArray(int no, const char* nm);
-  cssArray(int no, cssEl* it, const char* nm);
+  cssArray(int no, const String& nm);
+  cssArray(int no, cssEl* it, const String& nm);
   cssArray(const cssArray& cp);
-  cssArray(const cssArray& cp, const char* nm);
-  cssArray(const cssArrayType& cp, const char* nm);
+  cssArray(const cssArray& cp, const String& nm);
+  cssArray(const cssArrayType& cp, const String& nm);
   ~cssArray();
 
   cssCloneOnly(cssArray);
@@ -826,6 +826,7 @@ public:
 
   void          Constr();
   void          Copy(const cssArrayType& cp);
+  void          CopyType(const cssArrayType& cp);
 
   virtual void  Fill(cssEl*) {};             // nop
   virtual int   Alloc(int no) { size = no; return true; }   // just set size
@@ -833,9 +834,9 @@ public:
 
   cssArrayType();
   cssArrayType(int no, cssEl* it);
-  cssArrayType(int no, cssEl* it, const char* nm);
+  cssArrayType(int no, cssEl* it, const String& nm);
   cssArrayType(const cssArrayType& cp);
-  cssArrayType(const cssArrayType& cp, const char* nm);
+  cssArrayType(const cssArrayType& cp, const String& nm);
   ~cssArrayType();
 
   cssCloneOnly(cssArrayType);
@@ -909,19 +910,19 @@ public:
   cssEl*	GetToken(int idx) const			{ return ptr.El()->GetToken(idx); }
 
   // constructors
-  void		Constr()			{ Register(); }
+  void		Constr()			{ }
   void		Copy(const cssRef& cp) 		{ cssEl::Copy(cp); ptr = cp.ptr; }
   cssRef()					{ Constr(); }
   cssRef(const cssElPtr& it)			{ Constr(); ptr = it; }
   cssRef(cssEl* it)				{ Constr(); ptr.SetDirect(it); }
-  cssRef(cssEl* it, const char* nm)		{ Constr(); name = nm; ptr.SetDirect(it); }
-  cssRef(const cssElPtr& it, const char* nm)	{ Constr(); name = nm; ptr = it; }
-  cssRef(const cssRef& cp)			{ Constr(); Copy(cp); }
-  cssRef(const cssRef& cp, const char* nm)	{ Constr(); Copy(cp); name = nm; }
+  cssRef(cssEl* it, const String& nm)		{ Constr(); name = nm; ptr.SetDirect(it); }
+  cssRef(const cssElPtr& it, const String& nm)	{ Constr(); name = nm; ptr = it; }
+  cssRef(const cssRef& cp)			{ Copy(cp); name = cp.name; }
+  cssRef(const cssRef& cp, const String& nm)	{ Copy(cp); name = nm; }
 
   cssCloneOnly(cssRef);
   cssEl*	MakeToken_stub(int, cssEl* arg[])
-  { return new cssRef(ptr, (const char*)*(arg[1])); }
+  { return new cssRef(ptr, arg[1]->GetStr()); }
 
   // converters
   String GetStr() const 	{ return ptr.El()->GetStr(); }
@@ -934,7 +935,7 @@ public:
 
   void* GetVoidPtrOfType(TypeDef* td) const
   { return ptr.El()->GetVoidPtrOfType(td); }
-  void* GetVoidPtrOfType(const char* td) const
+  void* GetVoidPtrOfType(const String& td) const
   { return ptr.El()->GetVoidPtrOfType(td); }
 
   operator int*() const	 	{ return (int*)*(ptr.El()); }
@@ -981,7 +982,7 @@ public:
   void operator=(void** cp)	{ ptr.El()->operator=(cp); }
 
   void AssignFromType(TypeDef* td, void* bs)  	{ ptr.El()->AssignFromType(td, bs); }
-  void AssignFromType(const char* td, void* bs) { ptr.El()->AssignFromType(td, bs); }
+  void AssignFromType(const String& td, void* bs) { ptr.El()->AssignFromType(td, bs); }
 
   // operators
   void operator=(const cssEl& cp);
@@ -1004,13 +1005,13 @@ public:
   cssEl* operator[](Variant i) const	{ return ptr.El()->operator[](i); }
 
   bool	 MembersDynamic()	{ return true; }
-  int    GetMemberNo(const char* s) const; // emit errorless -1 for void
+  int    GetMemberNo(const String& s) const; // emit errorless -1 for void
   cssEl* GetMemberFmNo(int s) const  		{ return ptr.El()->GetMemberFmNo(s); }
-  cssEl* GetMemberFmName(const char* s) const  	{ return ptr.El()->GetMemberFmName(s); }
-  int	 GetMethodNo(const char* s) const; // emit errorless -1 for void
+  cssEl* GetMemberFmName(const String& s) const { return ptr.El()->GetMemberFmName(s); }
+  int	 GetMethodNo(const String& s) const; // emit errorless -1 for void
   cssEl* GetMethodFmNo(int s) const		{ return ptr.El()->GetMethodFmNo(s); }
-  cssEl* GetMethodFmName(const char* s) const	{ return ptr.El()->GetMethodFmName(s); }
-  cssEl* GetScoped(const char* s) const  	{ return ptr.El()->GetScoped(s); }
+  cssEl* GetMethodFmName(const String& s) const	{ return ptr.El()->GetMethodFmName(s); }
+  cssEl* GetScoped(const String& s) const  	{ return ptr.El()->GetScoped(s); }
   cssEl* NewOpr()   				{ return ptr.El()->NewOpr(); }
   void	 DelOpr() 				{ ptr.El()->DelOpr(); }
 
@@ -1052,23 +1053,25 @@ public:
   const char*	GetTypeName() const	{ return (const char*)type_name; }
   cssEl*	GetTypeObject() const	{ return (cssEl*)this; }
 
-  virtual void	SetTypeName(const char* nm);
+  virtual void	SetTypeName(const String& nm);
 
   void		TypeInfo(ostream& fh = cout) const;
 
   // constructors
   void 		Constr();
   void		Copy(const cssEnumType& cp);
+  void		CopyType(const cssEnumType& cp);
+
   cssEnumType()				{ Constr(); }
-  cssEnumType(const char* nm)		{ Constr(); SetTypeName(nm); }
+  cssEnumType(const String& nm)		{ Constr(); SetTypeName(nm); }
   cssEnumType(const cssEnumType& cp);
-  cssEnumType(const cssEnumType& cp, const char* nm);
+  cssEnumType(const cssEnumType& cp, const String& nm);
   ~cssEnumType();
 
   cssCloneOnly(cssEnumType);
   cssEl* 	MakeToken_stub(int, cssEl* arg[]); // make an instance instead
 
-  cssEl* 	GetScoped(const char* memb) const;
+  cssEl* 	GetScoped(const String& memb) const;
   cssEl*	FindValue(int val) const;
 };
 
@@ -1090,13 +1093,15 @@ public:
 
   void		Constr();
   void		Copy(const cssEnum& cp);
+  void		CopyType(const cssEnum& cp);
+
   cssEnum()                      : cssInt()		{ Constr(); }
   cssEnum(Int vl)                : cssInt(vl)		{ Constr(); }
-  cssEnum(Int vl, const char* nm ) : cssInt(vl, nm)	{ Constr(); }
-  cssEnum(cssEnumType* cp, Int vl, const char* nm);
+  cssEnum(Int vl, const String& nm ) : cssInt(vl, nm)	{ Constr(); }
+  cssEnum(cssEnumType* cp, Int vl, const String& nm);
   // this is how it should be created..
   cssEnum(const cssEnum& cp);
-  cssEnum(const cssEnum& cp, const char* nm);
+  cssEnum(const cssEnum& cp, const String& nm);
   ~cssEnum();
   cssCloneFuns(cssEnum, *this);
 
@@ -1142,21 +1147,23 @@ public:
 
   void		Constr();
   void		Copy(const cssClassMember& cp);
+  void		CopyType(const cssClassMember& cp);
+  
   cssClassMember()  : cssEl()		{ Constr(); }
   cssClassMember(cssEl* mbtp);
-  cssClassMember(cssEl* mbtp, const char* mbnm);
+  cssClassMember(cssEl* mbtp, const String& mbnm);
   cssClassMember(const cssClassMember& cp);
-  cssClassMember(const cssClassMember& cp, const char* nm);
+  cssClassMember(const cssClassMember& cp, const String& nm);
   ~cssClassMember();
   cssCloneFuns(cssClassMember, *this);
 
-  int    GetMemberNo(const char* s) const	{ return mbr_type->GetMemberNo(s); }
+  int    GetMemberNo(const String& s) const	{ return mbr_type->GetMemberNo(s); }
   cssEl* GetMemberFmNo(int s) const  		{ return mbr_type->GetMemberFmNo(s); }
-  cssEl* GetMemberFmName(const char* s) const  	{ return mbr_type->GetMemberFmName(s); }
-  int	 GetMethodNo(const char* s) const	{ return mbr_type->GetMethodNo(s); }
+  cssEl* GetMemberFmName(const String& s) const  	{ return mbr_type->GetMemberFmName(s); }
+  int	 GetMethodNo(const String& s) const	{ return mbr_type->GetMethodNo(s); }
   cssEl* GetMethodFmNo(int s) const		{ return mbr_type->GetMethodFmNo(s); }
-  cssEl* GetMethodFmName(const char* s) const	{ return mbr_type->GetMethodFmName(s); }
-  cssEl* GetScoped(const char* s) const  	{ return mbr_type->GetScoped(s); }
+  cssEl* GetMethodFmName(const String& s) const	{ return mbr_type->GetMethodFmName(s); }
+  cssEl* GetScoped(const String& s) const  	{ return mbr_type->GetScoped(s); }
 };
 
 class CSS_API cssClassType : public cssEl {
@@ -1180,7 +1187,7 @@ public:
   const char*	GetTypeName() const	{ return (const char*)type_name; }
   cssEl*	GetTypeObject() const	{ return (cssEl*)this; }
 
-  void		SetTypeName(const char* nm);
+  void		SetTypeName(const String& nm);
   void  	AddParent(cssClassType* par);
 
   String 	PrintStr() const;
@@ -1201,16 +1208,18 @@ public:
   void		AddBuiltins();			// add builtin members/methods
 
   void		Copy(const cssClassType& cp);
+  void		CopyType(const cssClassType& cp);
+
   cssClassType()			{ Constr(); AddBuiltins(); }
-  cssClassType(const char* nm)		{ Constr(); SetTypeName(nm); AddBuiltins(); }
+  cssClassType(const String& nm)		{ Constr(); SetTypeName(nm); AddBuiltins(); }
   cssClassType(const cssClassType& cp);
-  cssClassType(const cssClassType& cp, const char* nm);
+  cssClassType(const cssClassType& cp, const String& nm);
   ~cssClassType();
   cssCloneOnly(cssClassType);
 
   cssEl* 	MakeToken_stub(int, cssEl* arg[]); // make an instance instead
 
-  void	CallVoidMethod(cssClassInst* tok, const char* meth_nm);	// call a method taking no args & returning nothing..
+  void	CallVoidMethod(cssClassInst* tok, const String& meth_nm);	// call a method taking no args & returning nothing..
 
   void	ConstructToken(cssClassInst* tok);	// call all constructors on this class
   void	DestructToken(cssClassInst* tok);	// call all destructors on this class
@@ -1221,18 +1230,18 @@ public:
   void	UpdateAfterEdit_impl(cssClassInst* tok);
   // call updateafteredit function on token if it is defined
 
-  void		SetDesc_impl(String& dsc, String& opt, const char* des);
+  void		SetDesc_impl(String& dsc, String& opt, const String& des);
   // set given description and opts strings based on des input string
-  String	OptionAfter_impl(const String& optns, const char* opt) const;
+  String	OptionAfter_impl(const String& optns, const String& opt) const;
 
-  void		SetDesc(const char* des)	   { SetDesc_impl(desc, opts, des); }
-  String	OptionAfter(const char* opt) const { return OptionAfter_impl(opts, opt); }
-  bool		HasOption(const char* opt) const   { return opts.contains(opt); }
+  void		SetDesc(const String& des)	   { SetDesc_impl(desc, opts, des); }
+  String	OptionAfter(const String& opt) const { return OptionAfter_impl(opts, opt); }
+  bool		HasOption(const String& opt) const   { return opts.contains(opt); }
 
-  void		MbrSetDesc(int mbr, const char* des);
-  String	MbrOptionAfter(int mbr, const char* opt) const
+  void		MbrSetDesc(int mbr, const String& des);
+  String	MbrOptionAfter(int mbr, const String& opt) const
   { return OptionAfter_impl(member_opts.SafeEl(mbr), opt); }
-  bool		MbrHasOption(int mbr, const char* opt) const
+  bool		MbrHasOption(int mbr, const String& opt) const
   { return member_opts.SafeEl(mbr).contains(opt); }
 
   void          GetComments(cssEl* obj, cssElPtr cmt);
@@ -1244,13 +1253,13 @@ public:
   operator 	Real() const		{ CvtErr("(Real)"); return 0; }
   operator 	Int() const		{ CvtErr("(Int)"); return 0; }
 
-  int 	 GetMemberNo(const char* memb) const;
+  int 	 GetMemberNo(const String& memb) const;
   cssEl* GetMemberFmNo(int memb) const;
-  cssEl* GetMemberFmName(const char* memb) const;
-  int 	 GetMethodNo(const char* memb) const;
+  cssEl* GetMemberFmName(const String& memb) const;
+  int 	 GetMethodNo(const String& memb) const;
   cssEl* GetMethodFmNo(int memb) const;
-  cssEl* GetMethodFmName(const char* memb) const;
-  cssEl* GetScoped(const char* memb) const;
+  cssEl* GetMethodFmName(const String& memb) const;
+  cssEl* GetScoped(const String& memb) const;
   cssEl* NewOpr();
 };
 
@@ -1285,12 +1294,14 @@ public:
   // constructors
   void 		Constr();
   void		Copy(const cssClassInst& cp);
+  void		CopyType(const cssClassInst& cp);
+
   cssClassInst()			{ Constr(); }
-  cssClassInst(const char* nm)		{ Constr(); name = nm; }
-  cssClassInst(cssClassType* cp, const char* nm);
+  cssClassInst(const String& nm)		{ Constr(); name = nm; }
+  cssClassInst(cssClassType* cp, const String& nm);
   // use this to create from type
   cssClassInst(const cssClassInst& cp);
-  cssClassInst(const cssClassInst& cp, const char* nm);
+  cssClassInst(const cssClassInst& cp, const String& nm);
   ~cssClassInst();
 
   cssCloneFuns(cssClassInst, *this);
@@ -1316,13 +1327,13 @@ public:
 
   void	UpdateAfterEdit();
 
-  int 	 GetMemberNo(const char* memb) const;
+  int 	 GetMemberNo(const String& memb) const;
   cssEl* GetMemberFmNo(int memb) const;
-  cssEl* GetMemberFmName(const char* memb) const;
-  int 	 GetMethodNo(const char* memb) const;
+  cssEl* GetMemberFmName(const String& memb) const;
+  int 	 GetMethodNo(const String& memb) const;
   cssEl* GetMethodFmNo(int memb) const;
-  cssEl* GetMethodFmName(const char* memb) const;
-  cssEl* GetScoped(const char* memb) const;
+  cssEl* GetMethodFmName(const String& memb) const;
+  cssEl* GetScoped(const String& memb) const;
 };
 
 class CSS_API cssSubShell : public cssEl {
@@ -1339,12 +1350,12 @@ public:
   String	PrintFStr() const;
 
   cssSubShell();
-  cssSubShell(const char* nm);
+  cssSubShell(const String& nm);
   cssSubShell(const cssSubShell& cp);
-  cssSubShell(const cssSubShell& cp, const char* nm);
+  cssSubShell(const cssSubShell& cp, const String& nm);
 
   cssEl*	MakeToken_stub(int, cssEl* arg[])
-  { return new cssSubShell((const char*)*(arg[1])); }
+  { return new cssSubShell(arg[1]->GetStr()); }
 
   cssCloneOnly(cssSubShell);
 };

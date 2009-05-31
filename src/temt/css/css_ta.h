@@ -63,18 +63,21 @@ public:
 
   // constructors
   void		Constr();
+  void		Copy(const cssTA& cp) { cssCPtr::Copy(cp); type_def = cp.type_def; }
+  void		CopyType(const cssTA& cp) { cssCPtr::CopyType(cp); type_def = cp.type_def; }
+
   cssTA();
-  cssTA(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL, bool ro = false);
+  cssTA(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL, bool ro = false);
   cssTA(const cssTA& cp);
-  cssTA(const cssTA& cp, const char* nm);
+  cssTA(const cssTA& cp, const String& nm);
 
   cssCloneOnly(cssTA);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
-  { return new cssTA((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
+  { return new cssTA((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
   // converters
   void* 	GetVoidPtrOfType(TypeDef* td) const;
-  void* 	GetVoidPtrOfType(const char* td) const;
+  void* 	GetVoidPtrOfType(const String& td) const;
   // these are type-safe ways to convert a cssEl into a ptr to object of given type
 
   String GetStr() const;
@@ -98,13 +101,13 @@ public:
 
   virtual cssEl*	GetElement_impl(taBase* ths, Variant i) const;
 
-  int	 GetMemberNo(const char* memb) const;
-  cssEl* GetMemberFmName(const char* memb) const;
+  int	 GetMemberNo(const String& memb) const;
+  cssEl* GetMemberFmName(const String& memb) const;
   cssEl* GetMemberFmNo(int memb) const;
-  int	 GetMethodNo(const char* memb) const;
-  cssEl* GetMethodFmName(const char* memb) const;
+  int	 GetMethodNo(const String& memb) const;
+  cssEl* GetMethodFmName(const String& memb) const;
   cssEl* GetMethodFmNo(int memb) const;
-  cssEl* GetScoped(const char*) const;
+  cssEl* GetScoped(const String&) const;
 };
 
 #define cssTA_inst(l,n,c,t)		l .Push(new cssTA(n, c, t, #n))
@@ -127,16 +130,19 @@ public:
 
   // constructors
   void 		Constr();
+  void		Copy(const cssTA_Base& cp);
+  void		CopyType(const cssTA_Base& cp);
+
   cssTA_Base() 						: cssTA()	    { Constr();}
-  cssTA_Base(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL,
+  cssTA_Base(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
 	     bool ro=false) : cssTA(it,pc,td,nm,cls_par,ro)	{ Constr(); }
   cssTA_Base(const cssTA_Base& cp);
-  cssTA_Base(const cssTA_Base& cp, const char* nm);
+  cssTA_Base(const cssTA_Base& cp, const String& nm);
   ~cssTA_Base();
 
   cssCloneOnly(cssTA_Base);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
-  { return new cssTA_Base((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
+  { return new cssTA_Base((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
   // converters
   taBase*  GetTAPtr() const 	{ return (taBase*)GetVoidPtr(); }
@@ -162,7 +168,7 @@ public:
   void UpdateAfterEdit();
 
   cssEl* operator[](Variant) const;
-  cssEl* GetMemberFmName(const char* memb) const; // use recursive path!
+  cssEl* GetMemberFmName(const String& memb) const; // use recursive path!
   cssEl* NewOpr();		// only ta_base get a new operator..
   void 	 DelOpr();		// and a del operator
 
@@ -193,17 +199,17 @@ public:
 
   // constructors
   cssSmartRef() : cssTA() { };
-  cssSmartRef(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL,
+  cssSmartRef(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
 	      bool ro = false) : cssTA(it, pc, td, nm, cls_par, ro) { };
   cssSmartRef(const cssSmartRef& cp) : cssTA(cp) { };
-  cssSmartRef(const cssSmartRef& cp, const char* nm) : cssTA(cp, nm) { };
+  cssSmartRef(const cssSmartRef& cp, const String& nm) : cssTA(cp, nm) { };
   cssCloneOnly(cssSmartRef);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
-  { return new cssSmartRef((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
+  { return new cssSmartRef((void*)NULL, ptr_cnt, type_def, (const String&)*(arg[1])); }
 
   // converters
   void* 	GetVoidPtrOfType(TypeDef* td) const;
-  void* 	GetVoidPtrOfType(const char* td) const;
+  void* 	GetVoidPtrOfType(const String& td) const;
   // these are type-safe ways to convert a cssEl into a ptr to object of given type
 
   Variant GetVar() const;
@@ -223,13 +229,13 @@ public:
 
   cssEl* operator[](Variant) const;
   bool	MembersDynamic()	{ return true; }
-  int	 GetMemberNo(const char* memb) const { return -1; } // never static lookup
-  cssEl* GetMemberFmName(const char* memb) const;
+  int	 GetMemberNo(const String& memb) const { return -1; } // never static lookup
+  cssEl* GetMemberFmName(const String& memb) const;
   cssEl* GetMemberFmNo(int memb) const;
-  int	 GetMethodNo(const char* memb) const { return -1; }
-  cssEl* GetMethodFmName(const char* memb) const;
+  int	 GetMethodNo(const String& memb) const { return -1; }
+  cssEl* GetMethodFmName(const String& memb) const;
   cssEl* GetMethodFmNo(int memb) const;
-  cssEl* GetScoped(const char*) const;
+  cssEl* GetScoped(const String&) const;
 };
 
 class CSS_API cssIOS : public cssTA {
@@ -240,13 +246,13 @@ public:
 
   // constructors
   cssIOS() : cssTA() { };
-  cssIOS(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL,
+  cssIOS(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
 	 bool ro=false) : cssTA(it, pc, td, nm, cls_par, ro) { };
   cssIOS(const cssIOS& cp) : cssTA(cp) { };
-  cssIOS(const cssIOS& cp, const char* nm) : cssTA(cp, nm) { };
+  cssIOS(const cssIOS& cp, const String& nm) : cssTA(cp, nm) { };
   cssCloneOnly(cssIOS);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
-  { return new cssIOS((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
+  { return new cssIOS((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
   void PtrAssignPtr(const cssEl& s); // use type casts to make it work right for diff offsets
 
@@ -278,14 +284,14 @@ public:
   // constructors
   void		Constr()	{ ptr = new fstream; }
   cssFStream() 				: cssIOS(NULL, 1, TA_TypeDef())	   { Constr(); }
-  cssFStream(const char* nm)			: cssIOS(NULL, 1, TA_TypeDef(), nm)  { Constr(); }
+  cssFStream(const String& nm)			: cssIOS(NULL, 1, TA_TypeDef(), nm)  { Constr(); }
   cssFStream(const cssFStream& cp)		: cssIOS(cp) 	{ Constr(); }
-  cssFStream(const cssFStream& cp, const char*)	: cssIOS(cp)	{ Constr(); }
+  cssFStream(const cssFStream& cp, const String&)	: cssIOS(cp)	{ Constr(); }
   ~cssFStream()			{ fstream* str = (fstream*)ptr; delete str; }
 
   cssCloneOnly(cssFStream);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
-  { return new cssFStream((const char*)*(arg[1])); }
+  { return new cssFStream(arg[1]->GetStr()); }
 
   void operator=(Real) 		{ CvtErr("(Real)"); }
   void operator=(Int)		{ CvtErr("(Int)"); }
@@ -305,14 +311,14 @@ public:
   // constructors
   void		Constr();
   cssSStream();
-  cssSStream(const char* nm);
+  cssSStream(const String& nm);
   cssSStream(const cssSStream& cp);
-  cssSStream(const cssSStream& cp, const char*);
+  cssSStream(const cssSStream& cp, const String&);
   ~cssSStream();
 
   cssCloneOnly(cssSStream);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
-  { return new cssSStream((const char*)*(arg[1])); }
+  { return new cssSStream((const String&)*(arg[1])); }
 
   void operator=(Real) 		{ CvtErr("(Real)"); }
   void operator=(Int)		{ CvtErr("(Int)"); }
@@ -333,14 +339,14 @@ public:
   // constructors
   void		Constr();
   cssLeafItr() 			: cssTA(NULL, 1, TA_TypeDef())   { Constr(); }
-  cssLeafItr(const char* nm)		: cssTA(NULL, 1, TA_TypeDef(), nm)  { Constr(); }
+  cssLeafItr(const String& nm)		: cssTA(NULL, 1, TA_TypeDef(), nm)  { Constr(); }
   cssLeafItr(const cssLeafItr& cp)	: cssTA(cp) 	{ Constr(); }
-  cssLeafItr(const cssLeafItr& cp, const char*)	: cssTA(cp)	{ Constr(); }
+  cssLeafItr(const cssLeafItr& cp, const String&)	: cssTA(cp)	{ Constr(); }
   ~cssLeafItr();
 
   cssCloneOnly(cssLeafItr);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
-  { return new cssLeafItr((const char*)*(arg[1])); }
+  { return new cssLeafItr(arg[1]->GetStr()); }
 
   void operator=(Real) 		{ CvtErr("(Real)"); }
   void operator=(Int)		{ CvtErr("(Int)"); }
@@ -364,13 +370,13 @@ public:
 
   // constructors
   cssTypeDef() : cssTA() { };
-  cssTypeDef(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL,
+  cssTypeDef(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
 	     bool ro=false) : cssTA(it, pc, td, nm, cls_par, ro) { };
   cssTypeDef(const cssTypeDef& cp) : cssTA(cp) { };
-  cssTypeDef(const cssTypeDef& cp, const char* nm) : cssTA(cp, nm) { };
+  cssTypeDef(const cssTypeDef& cp, const String& nm) : cssTA(cp, nm) { };
   cssCloneOnly(cssTypeDef);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
-  { return new cssTypeDef((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
+  { return new cssTypeDef((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
   operator TypeDef*() const;
   String GetStr() const;
@@ -383,13 +389,13 @@ class CSS_API cssMemberDef : public cssTA {
 public:
   // constructors
   cssMemberDef() : cssTA() { };
-  cssMemberDef(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL,
+  cssMemberDef(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
 	       bool ro=false) : cssTA(it, pc, td, nm, cls_par, ro) { };
   cssMemberDef(const cssMemberDef& cp) : cssTA(cp) { };
-  cssMemberDef(const cssMemberDef& cp, const char* nm) : cssTA(cp, nm) { };
+  cssMemberDef(const cssMemberDef& cp, const String& nm) : cssTA(cp, nm) { };
   cssCloneOnly(cssMemberDef);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
-  { return new cssMemberDef((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
+  { return new cssMemberDef((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
   operator MemberDef*() const;
   String GetStr() const;
@@ -402,13 +408,13 @@ class CSS_API cssMethodDef : public cssTA {
 public:
   // constructors
   cssMethodDef() : cssTA() { };
-  cssMethodDef(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL,
+  cssMethodDef(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
 	       bool ro=false) : cssTA(it, pc, td, nm, cls_par, ro) { };
   cssMethodDef(const cssMethodDef& cp) : cssTA(cp) { };
-  cssMethodDef(const cssMethodDef& cp, const char* nm) : cssTA(cp, nm) { };
+  cssMethodDef(const cssMethodDef& cp, const String& nm) : cssTA(cp, nm) { };
   cssCloneOnly(cssMethodDef);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
-  { return new cssMethodDef((void*)NULL, ptr_cnt, type_def, (const char*)*(arg[1])); }
+  { return new cssMethodDef((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
   operator MethodDef*() const;
   String GetStr() const;

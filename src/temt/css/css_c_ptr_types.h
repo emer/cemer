@@ -36,10 +36,10 @@ public:
 
   // constructors
   cssCPtr_int() 				: cssCPtr(){};
-  cssCPtr_int(void* it, int pc, const char* nm = NULL, cssEl* cls_par = NULL, bool ro = false)
+  cssCPtr_int(void* it, int pc, const String& nm = _nilString, cssEl* cls_par = NULL, bool ro = false)
   : cssCPtr(it,pc,nm,cls_par,ro) {};
   cssCPtr_int(const cssCPtr_int& cp) 		: cssCPtr(cp){};
-  cssCPtr_int(const cssCPtr_int& cp, const char* nm) 	: cssCPtr(cp,nm){};
+  cssCPtr_int(const cssCPtr_int& cp, const String& nm) 	: cssCPtr(cp,nm){};
 
   cssCPtr_CloneFuns(cssCPtr_int, (void*)NULL);
 
@@ -121,10 +121,10 @@ public:
 
   // constructors
   cssCPtr_bool() 				: cssCPtr(){};
-  cssCPtr_bool(void* it, int pc, const char* nm=NULL, cssEl* cp=NULL, bool ro=false)
+  cssCPtr_bool(void* it, int pc, const String& nm=_nilString, cssEl* cp=NULL, bool ro=false)
   : cssCPtr(it,pc,nm,cp,ro){};
   cssCPtr_bool(const cssCPtr_bool& cp) 		: cssCPtr(cp){};
-  cssCPtr_bool(const cssCPtr_bool& cp, const char* nm) 	: cssCPtr(cp,nm){};
+  cssCPtr_bool(const cssCPtr_bool& cp, const String& nm) 	: cssCPtr(cp,nm){};
 
   cssCPtr_CloneFuns(cssCPtr_bool, (void*)NULL);
 
@@ -171,10 +171,10 @@ public:
 
   // constructors
   cssCPtr_short() 				: cssCPtr(){};
-  cssCPtr_short(void* it, int pc, const char* nm=NULL, cssEl* cp=NULL, bool ro=false)
+  cssCPtr_short(void* it, int pc, const String& nm=_nilString, cssEl* cp=NULL, bool ro=false)
   : cssCPtr(it,pc,nm,cp,ro){};
   cssCPtr_short(const cssCPtr_short& cp) 		: cssCPtr(cp){};
-  cssCPtr_short(const cssCPtr_short& cp, const char* nm) 	: cssCPtr(cp,nm){};
+  cssCPtr_short(const cssCPtr_short& cp, const String& nm) 	: cssCPtr(cp,nm){};
 
   cssCPtr_CloneFuns(cssCPtr_short, (void*)NULL);
 
@@ -251,10 +251,10 @@ public:
 
   // constructors
   cssCPtr_long() 				: cssCPtr(){};
-  cssCPtr_long(void* it, int pc, const char* nm=NULL, cssEl* cp=NULL, bool ro=false)
+  cssCPtr_long(void* it, int pc, const String& nm=_nilString, cssEl* cp=NULL, bool ro=false)
   : cssCPtr(it,pc,nm,cp,ro){};
   cssCPtr_long(const cssCPtr_long& cp) 		: cssCPtr(cp){};
-  cssCPtr_long(const cssCPtr_long& cp, const char* nm) 	: cssCPtr(cp,nm){};
+  cssCPtr_long(const cssCPtr_long& cp, const String& nm) 	: cssCPtr(cp,nm){};
 
   cssCPtr_CloneFuns(cssCPtr_long, (void*)NULL);
 
@@ -330,10 +330,10 @@ public:
 
   // constructors
   cssCPtr_long_long() 				: cssCPtr(){};
-  cssCPtr_long_long(void* it, int pc, const char* nm=NULL, cssEl* cp=NULL, bool ro=false)
+  cssCPtr_long_long(void* it, int pc, const String& nm=_nilString, cssEl* cp=NULL, bool ro=false)
   : cssCPtr(it,pc,nm,cp,ro){};
   cssCPtr_long_long(const cssCPtr_long_long& cp) 		: cssCPtr(cp){};
-  cssCPtr_long_long(const cssCPtr_long_long& cp, const char* nm) 	: cssCPtr(cp,nm){};
+  cssCPtr_long_long(const cssCPtr_long_long& cp, const String& nm) 	: cssCPtr(cp,nm){};
 
   cssCPtr_CloneFuns(cssCPtr_long_long, (void*)NULL);
 
@@ -407,10 +407,10 @@ public:
 
   // constructors
   cssCPtr_char() 				: cssCPtr(){};
-  cssCPtr_char(void* it, int pc, const char* nm=NULL, cssEl* cp=NULL, bool ro=false)
+  cssCPtr_char(void* it, int pc, const String& nm=_nilString, cssEl* cp=NULL, bool ro=false)
   : cssCPtr(it,pc,nm,cp,ro){};
   cssCPtr_char(const cssCPtr_char& cp) 		: cssCPtr(cp){};
-  cssCPtr_char(const cssCPtr_char& cp, const char* nm) 	: cssCPtr(cp,nm){};
+  cssCPtr_char(const cssCPtr_char& cp, const String& nm) 	: cssCPtr(cp,nm){};
 
   cssCPtr_CloneFuns(cssCPtr_char, (void*)NULL);
 
@@ -485,14 +485,19 @@ public:
   TypeDef*	GetEnumType() const;
   // if enum_type not present, attempts to get member def info from class_parent (use md to get type def)
 
+  void		Copy(const cssCPtr_enum& cp)
+  { cssCPtr_int::Copy(cp); enum_type = cp.enum_type; }
+  void		CopyType(const cssCPtr_enum& cp)
+  { cssCPtr_int::CopyType(cp); enum_type = cp.enum_type; }
+
   // constructors
   cssCPtr_enum() 				: cssCPtr_int() { enum_type = NULL; }
-  cssCPtr_enum(void* it, int pc, const char* nm=NULL, cssEl* cp=NULL, bool ro=false)
+  cssCPtr_enum(void* it, int pc, const String& nm=_nilString, cssEl* cp=NULL, bool ro=false)
     : cssCPtr_int(it,pc,nm,cp,ro) { enum_type = NULL; }
-  cssCPtr_enum(void* it, int pc, const char* nm, TypeDef* et)
+  cssCPtr_enum(void* it, int pc, const String& nm, TypeDef* et)
     : cssCPtr_int(it,pc,nm) { enum_type = et; }
   cssCPtr_enum(const cssCPtr_enum& cp) 		: cssCPtr_int(cp) { enum_type = cp.enum_type; }
-  cssCPtr_enum(const cssCPtr_enum& cp, const char* nm)
+  cssCPtr_enum(const cssCPtr_enum& cp, const String& nm)
     : cssCPtr_int(cp,nm) { enum_type = cp.enum_type; }
 
   cssCPtr_CloneFuns(cssCPtr_enum, (void*)NULL);
@@ -522,10 +527,10 @@ public:
 
   // constructors
   cssCPtr_double() 				: cssCPtr(){};
-  cssCPtr_double(void* it, int pc, const char* nm=NULL, cssEl* cp=NULL, bool ro=false)
+  cssCPtr_double(void* it, int pc, const String& nm=_nilString, cssEl* cp=NULL, bool ro=false)
   : cssCPtr(it,pc,nm,cp,ro){};
   cssCPtr_double(const cssCPtr_double& cp) 		: cssCPtr(cp){};
-  cssCPtr_double(const cssCPtr_double& cp, const char* nm) : cssCPtr(cp,nm){};
+  cssCPtr_double(const cssCPtr_double& cp, const String& nm) : cssCPtr(cp,nm){};
 
   cssCPtr_CloneFuns(cssCPtr_double, (void*)NULL);
 
@@ -587,10 +592,10 @@ public:
 
   // constructors
   cssCPtr_float() 				: cssCPtr(){};
-  cssCPtr_float(void* it, int pc, const char* nm=NULL, cssEl* cp=NULL, bool ro=false)
+  cssCPtr_float(void* it, int pc, const String& nm=_nilString, cssEl* cp=NULL, bool ro=false)
   : cssCPtr(it,pc,nm,cp,ro){};
   cssCPtr_float(const cssCPtr_float& cp) 		: cssCPtr(cp){};
-  cssCPtr_float(const cssCPtr_float& cp, const char* nm) : cssCPtr(cp,nm){};
+  cssCPtr_float(const cssCPtr_float& cp, const String& nm) : cssCPtr(cp,nm){};
 
   cssCPtr_CloneFuns(cssCPtr_float, (void*)NULL);
 
@@ -643,7 +648,6 @@ public:
 class CSS_API cssCPtr_String : public cssCPtr {
 public:
   static String	null_string;	// for null pointers
-  taFiler*	gf;		// this allows strings to be converted into filenames
 
   String&	GetStringRef(const char* opr="") const;
 
@@ -652,12 +656,11 @@ public:
   const char*	GetTypeName() const  	{ return "(c_String)"; }
 
   // constructors
-  void		Constr();
-  cssCPtr_String() 				: cssCPtr() { Constr(); }
-  cssCPtr_String(void* it, int pc, const char* nm=NULL, cssEl* cp=NULL, bool ro=false)
-    : cssCPtr(it,pc,nm,cp,ro) { Constr(); }
-  cssCPtr_String(const cssCPtr_String& cp) 		: cssCPtr(cp) { Constr(); }
-  cssCPtr_String(const cssCPtr_String& cp, const char* nm) : cssCPtr(cp,nm) { Constr(); }
+  cssCPtr_String() 				: cssCPtr() {  }
+  cssCPtr_String(void* it, int pc, const String& nm=_nilString, cssEl* cp=NULL, bool ro=false)
+    : cssCPtr(it,pc,nm,cp,ro) {  }
+  cssCPtr_String(const cssCPtr_String& cp) 		: cssCPtr(cp) {  }
+  cssCPtr_String(const cssCPtr_String& cp, const String& nm) : cssCPtr(cp,nm) {  }
   ~cssCPtr_String();
 
   cssCPtr_CloneFuns(cssCPtr_String, (void*)NULL);
@@ -675,8 +678,6 @@ public:
   operator TypeDef*() const;	// lookup as name
   operator MemberDef*() const;
   operator MethodDef*() const;
-  operator ostream*() const; // convert to stream as file-name of a file
-  operator istream*() const;
 
   void operator=(Real cp) 	{ GetStringRef("=") = String(cp); }
   void operator=(Int cp)	{ GetStringRef("=") = String(cp); }
@@ -705,10 +706,10 @@ public:
 
   // these use the TA info to perform actions
   cssEl* operator[](Variant idx) const;
-  int	 GetMethodNo(const char*) const;
-  cssEl* GetMethodFmName(const char* memb) const;
+  int	 GetMethodNo(const String&) const;
+  cssEl* GetMethodFmName(const String& memb) const;
   cssEl* GetMethodFmNo(int memb) const;
-  cssEl* GetScoped(const char* nm) const;
+  cssEl* GetScoped(const String& nm) const;
 };
 
 
@@ -728,10 +729,10 @@ public:
 
   // constructors
   cssCPtr_Variant() 				: cssCPtr(){};
-  cssCPtr_Variant(void* it, int pc, const char* nm=NULL, cssEl* cp=NULL, bool ro=false)
+  cssCPtr_Variant(void* it, int pc, const String& nm=_nilString, cssEl* cp=NULL, bool ro=false)
   : cssCPtr(it,pc,nm,cp,ro){};
   cssCPtr_Variant(const cssCPtr_Variant& cp) 		: cssCPtr(cp){};
-  cssCPtr_Variant(const cssCPtr_Variant& cp, const char* nm) : cssCPtr(cp,nm){};
+  cssCPtr_Variant(const cssCPtr_Variant& cp, const String& nm) : cssCPtr(cp,nm){};
 
   cssCPtr_CloneFuns(cssCPtr_Variant, (void*)NULL);
 
@@ -779,13 +780,13 @@ public:
   // these use the TA info to perform actions
   cssEl* operator[](Variant idx) const;
   bool	 MembersDynamic()	{ return true; }
-  int	 GetMemberNo(const char* memb) const { return -1; } // never do static lookup!
+  int	 GetMemberNo(const String& memb) const { return -1; } // never do static lookup!
   cssEl* GetMemberFmNo(int memb) const;
-  cssEl* GetMemberFmName(const char* memb) const;
-  int	 GetMethodNo(const char*) const { return -1; }
+  cssEl* GetMemberFmName(const String& memb) const;
+  int	 GetMethodNo(const String&) const { return -1; }
   cssEl* GetMethodFmNo(int memb) const;
-  cssEl* GetMethodFmName(const char* memb) const;
-  cssEl* GetScoped(const char* nm) const;
+  cssEl* GetMethodFmName(const String& memb) const;
+  cssEl* GetScoped(const String& nm) const;
 };
 
 class CSS_API cssCPtr_DynEnum : public cssCPtr {
@@ -802,10 +803,10 @@ public:
 
   // constructors
   cssCPtr_DynEnum() 				: cssCPtr(){};
-  cssCPtr_DynEnum(void* it, int pc, const char* nm=NULL, cssEl* cp=NULL, bool ro=false)
+  cssCPtr_DynEnum(void* it, int pc, const String& nm=_nilString, cssEl* cp=NULL, bool ro=false)
   : cssCPtr(it,pc,nm,cp,ro){};
   cssCPtr_DynEnum(const cssCPtr_DynEnum& cp) 		: cssCPtr(cp){};
-  cssCPtr_DynEnum(const cssCPtr_DynEnum& cp, const char* nm) 	: cssCPtr(cp,nm){};
+  cssCPtr_DynEnum(const cssCPtr_DynEnum& cp, const String& nm) 	: cssCPtr(cp,nm){};
 
   cssCPtr_CloneFuns(cssCPtr_DynEnum, (void*)NULL);
 

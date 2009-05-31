@@ -50,16 +50,6 @@ void cssChar::operator=(const cssEl& t) {
 // 	cssString	//
 //////////////////////////
 
-cssString::~cssString() {
-  if(gf != NULL)
-    taRefN::unRefDone(gf);
-  gf = NULL;
-}
-
-void cssString::Constr() {
-  Register();
-  gf = NULL;
-}
 void cssString::TypeInfo(ostream& fh) const {
   TA_taString.OutputType(fh);
 }
@@ -82,7 +72,7 @@ cssString::operator bool() const {
     return (Int)*this;
 }
 
-int cssString::GetMethodNo(const char* memb) const {
+int cssString::GetMethodNo(const String& memb) const {
   return GetMethodNo_impl(&TA_taString, memb);
 }
 
@@ -90,11 +80,11 @@ cssEl* cssString::GetMethodFmNo(int memb) const {
   return GetMethodFmNo_impl(&TA_taString, (void*)&val, memb);
 }
 
-cssEl* cssString::GetMethodFmName(const char* memb) const {
+cssEl* cssString::GetMethodFmName(const String& memb) const {
   return GetMethodFmName_impl(&TA_taString, (void*)&val, memb);
 }
 
-cssEl* cssString::GetScoped(const char* memb) const {
+cssEl* cssString::GetScoped(const String& memb) const {
   return GetScoped_impl(&TA_taString, (void*)&val, memb);
 }
 
@@ -135,36 +125,6 @@ cssString::operator MethodDef*() const {
     return NULL;
   }
   return md;
-}
-
-cssString::operator ostream*() const {
-  cssString* ths = (cssString*)this;
-  if(ths->gf == NULL) {
-    ths->gf = taFiler::New();
-    taRefN::Ref(ths->gf);
-  }
-  ths->gf->SetFileName(val);
-  ostream* strm = ths->gf->open_write();
-  if((strm == NULL) || !(ths->gf->open_file)) {
-    cssMisc::Error(prog, "String -> ostream*: could not open file", val);
-    return (ostream*)NULL;
-  }
-  return strm;
-}
-
-cssString::operator istream*() const {
-  cssString* ths = (cssString*)this;
-  if(ths->gf == NULL) {
-    ths->gf = taFiler::New();
-    taRefN::Ref(ths->gf);
-  }
-  ths->gf->SetFileName(val);
-  istream* strm = ths->gf->open_read();
-  if((strm == NULL) || !(ths->gf->open_file)) {
-    cssMisc::Error(prog, "String -> istream*: could not open file", val);
-    return (istream*)NULL;
-  }
-  return strm;
 }
 
 void cssString::Save(ostream& strm) {
@@ -389,7 +349,7 @@ cssEl* cssVariant::GetMemberFmNo(int memb) const {
   return GetMemberFmNo_impl(&TA_Variant, &val_r, memb);
 }
 
-cssEl* cssVariant::GetMemberFmName(const char* memb) const {
+cssEl* cssVariant::GetMemberFmName(const String& memb) const {
   TypeDef* typ = NULL;  void* base = NULL;
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
@@ -415,7 +375,7 @@ cssEl* cssVariant::GetMethodFmNo(int memb) const {
   return GetMethodFmNo_impl(&TA_Variant, &val_r, memb);
 }
 
-cssEl* cssVariant::GetMethodFmName(const char* memb) const {
+cssEl* cssVariant::GetMethodFmName(const String& memb) const {
   TypeDef* typ = NULL;  void* base = NULL;
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
@@ -428,7 +388,7 @@ cssEl* cssVariant::GetMethodFmName(const char* memb) const {
   return GetMethodFmName_impl(&TA_Variant, &val_r, memb);
 }
 
-cssEl* cssVariant::GetScoped(const char* memb) const {
+cssEl* cssVariant::GetScoped(const String& memb) const {
   TypeDef* typ = NULL;  void* base = NULL;
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
@@ -451,17 +411,6 @@ cssEl* cssVariant::operator[](Variant idx) const {
 //////////////////////////////////
 
 
-void cssPtr::Constr() {
-  el_type = &cssMisc::Void;
-  Register();
-}
-
-void cssPtr::Copy(const cssPtr& cp) {
-  cssEl::Copy(cp);
-  SetPtr(cp.ptr);
-  SetElType(cp.el_type);
-}
-
 cssPtr::cssPtr() {
   Constr();
 }
@@ -471,16 +420,16 @@ cssPtr::cssPtr(const cssElPtr& it) {
 cssPtr::cssPtr(cssEl* typ) {
   Constr(); SetElType(typ);
 }
-cssPtr::cssPtr(cssEl* typ, const char* nm) {
+cssPtr::cssPtr(cssEl* typ, const String& nm) {
   Constr(); name = nm; SetElType(typ);
 }
-cssPtr::cssPtr(cssEl* typ, const cssElPtr& it, const char* nm) {
+cssPtr::cssPtr(cssEl* typ, const cssElPtr& it, const String& nm) {
   Constr(); name = nm; SetElType(typ); SetPtr(it);
 }
 cssPtr::cssPtr(const cssPtr& cp) {
-  Constr(); Copy(cp);
+  Constr(); Copy(cp); name = cp.name; // needs constr prior to copy to init typ info
 }
-cssPtr::cssPtr(const cssPtr& cp, const char* nm) {
+cssPtr::cssPtr(const cssPtr& cp, const String& nm) {
   Constr(); Copy(cp); name = nm;
 }
 cssPtr::~cssPtr() {
@@ -568,7 +517,7 @@ cssElPtr& cssPtr::GetOprPtr() const {
     return (cssElPtr&)ptr;
 }
 
-int cssPtr::GetMemberNo(const char* memb) const {
+int cssPtr::GetMemberNo(const String& memb) const {
   // even if ptr is null, check type
   if(ptr.El() == &cssMisc::Void) {
     if(el_type->GetType() == T_ClassType)
@@ -578,7 +527,7 @@ int cssPtr::GetMemberNo(const char* memb) const {
   return ptr.El()->GetMemberNo(memb);
 }
 
-int cssPtr::GetMethodNo(const char* memb) const {
+int cssPtr::GetMethodNo(const String& memb) const {
   // even if ptr is null, check type
   if(ptr.El() == &cssMisc::Void) {
     if(el_type->GetType() == T_ClassType)
@@ -588,7 +537,7 @@ int cssPtr::GetMethodNo(const char* memb) const {
   return ptr.El()->GetMethodNo(memb);
 }
 
-cssEl* cssPtr::GetMethodFmName(const char* memb) const {
+cssEl* cssPtr::GetMethodFmName(const String& memb) const {
   if(el_type->GetType() == T_ClassType) {
     cssEl* rval = el_type->GetMethodFmName(memb);
     if(rval->GetType() == T_MbrScriptFun) {
@@ -622,7 +571,6 @@ cssEl* cssPtr::GetMethodFmNo(int memb) const {
 
 void cssArray::Constr() {
   items = NULL;
-  Register();
 }
 
 void cssArray::Constr(int no) {
@@ -659,23 +607,23 @@ cssArray::cssArray(int no, cssEl* it) {
   prog = el_type->prog;
   Fill(el_type);
 }
-cssArray::cssArray(int no, const char* nm) {
+cssArray::cssArray(int no, const String& nm) {
   Constr(); Constr(no); name = nm;
 }
-cssArray::cssArray(int no, cssEl* it, const char* nm) {
+cssArray::cssArray(int no, cssEl* it, const String& nm) {
   Constr(); Constr(no); name = nm;
   SetElType(it);
   prog = el_type->prog;
   Fill(el_type);
 }
 cssArray::cssArray(const cssArray& cp) {
-  Constr(); Copy(cp);
+  Copy(cp); name = cp.name;
 }
-cssArray::cssArray(const cssArray& cp, const char* nm) {
-  Constr(); Copy(cp);
+cssArray::cssArray(const cssArray& cp, const String& nm) {
+  Copy(cp);
   name = nm;
 }
-cssArray::cssArray(const cssArrayType& cp, const char* nm) {
+cssArray::cssArray(const cssArrayType& cp, const String& nm) {
   Constr();
   prog = cp.prog;
   name = nm;
@@ -768,7 +716,7 @@ cssEl* cssArray::MakeToken_stub(int, cssEl* arg[]) {
   int n_dims = (int)*(arg[3]);
   int i;
   for(i=0; i<n_dims; i++)
-    artyp = new cssArray(0, artyp, (const char*)*(arg[1]));
+    artyp = new cssArray(0, artyp, arg[1]->GetStr());
   return artyp;
 }
 
@@ -860,13 +808,17 @@ void cssArray::Load(istream& strm) {
 
 void cssArrayType::Constr() {
   size = 0;
-  Register();
 }
 void cssArrayType::Copy(const cssArrayType& cp) {
-  cssEl::Copy(cp);
+  cssEl::Copy(cp);		// note: skips copying array itself..
   SetSize(cp.size);
   SetElType(cp.el_type);
 }
+void cssArrayType::CopyType(const cssArrayType& cp) {
+  cssArray::CopyType(cp);	// copy type shoudl be good all the way thru
+  SetSize(cp.size);
+}
+
 cssArrayType::cssArrayType() {
    Constr();
    SetElType(&cssMisc::Void);
@@ -877,7 +829,7 @@ cssArrayType::cssArrayType(int no, cssEl* it)
   SetSize(no);
   SetElType(it);
 }
-cssArrayType::cssArrayType(int no, cssEl* it, const char* nm)
+cssArrayType::cssArrayType(int no, cssEl* it, const String& nm)
 {
   Constr();
   name = nm;
@@ -888,8 +840,9 @@ cssArrayType::cssArrayType(const cssArrayType& cp)
 {
   Constr();
   Copy(cp);
+  name = cp.name;
 }
-cssArrayType::cssArrayType(const cssArrayType& cp, const char* nm)
+cssArrayType::cssArrayType(const cssArrayType& cp, const String& nm)
 {
   Constr();
   Copy(cp);
@@ -913,7 +866,7 @@ cssEl* cssArrayType::MakeToken_stub(int na, cssEl* arg[]) {
   int n_dims = (int)*(arg[na-1]);
   int i;
   for(i=0; i<n_dims; i++) {
-    artyp = new cssArrayType((int)*(arg[na-2-i]), artyp, (const char*)*(arg[1]));
+    artyp = new cssArrayType((int)*(arg[na-2-i]), artyp, arg[1]->GetStr());
   }
   return artyp;
 }
@@ -960,14 +913,14 @@ void cssRef::InitAssign(const cssEl& cp) {
 }
 
 // todo: ref needs base class type to perform correctly for non-virt functions!!
-int cssRef::GetMemberNo(const char* memb) const {
+int cssRef::GetMemberNo(const String& memb) const {
   if(ptr.El() == &cssMisc::Void) {
     return -1;
   }
   return ptr.El()->GetMemberNo(memb);
 }
 
-int cssRef::GetMethodNo(const char* memb) const {
+int cssRef::GetMethodNo(const String& memb) const {
   if(ptr.El() == &cssMisc::Void) {
     return -1;
   }
@@ -979,11 +932,10 @@ int cssRef::GetMethodNo(const char* memb) const {
 //////////////////////////
 
 void cssEnumType::Constr() {
-  type_name = "(Enum)";
+//   type_name = "(Enum)";
   enums = new cssSpace;
-  enums->name = "enums";
+  //  enums->name = "enums";
   enum_cnt = 0;
-  Register();
 }
 
 void cssEnumType::Copy(const cssEnumType& cp) {
@@ -992,10 +944,16 @@ void cssEnumType::Copy(const cssEnumType& cp) {
   enums->Copy(*(cp.enums));
 }
 
-cssEnumType::cssEnumType(const cssEnumType& cp) {
-  Constr(); Copy(cp);
+void cssEnumType::CopyType(const cssEnumType& cp) {
+  cssEl::CopyType(cp);
+  type_name = cp.type_name;
+  enums->Copy(*(cp.enums));
 }
-cssEnumType::cssEnumType(const cssEnumType& cp, const char* nm) {
+
+cssEnumType::cssEnumType(const cssEnumType& cp) {
+  Constr(); Copy(cp); name = cp.name;
+}
+cssEnumType::cssEnumType(const cssEnumType& cp, const String& nm) {
   Constr(); Copy(cp);
   name = nm;
 }
@@ -1003,7 +961,7 @@ cssEnumType::~cssEnumType() {
   delete enums;
 }
 
-void cssEnumType::SetTypeName(const char* nm) {
+void cssEnumType::SetTypeName(const String& nm) {
   name = nm; type_name = String("(") + nm + ")";
   enums->name = name + "::enums";
 }
@@ -1015,7 +973,7 @@ void cssEnumType::TypeInfo(ostream& fh) const {
   fh.flush();
 }
 
-cssEl* cssEnumType::GetScoped(const char* memb) const {
+cssEl* cssEnumType::GetScoped(const String& memb) const {
   cssElPtr rval = enums->FindName(memb);
   if(rval == 0) {
     cssMisc::Error(prog, "Scoped type not found:", memb, "in enum:",GetTypeName());
@@ -1026,7 +984,7 @@ cssEl* cssEnumType::GetScoped(const char* memb) const {
 
 // the enum type makes an enum instance of itself..
 cssEl* cssEnumType::MakeToken_stub(int, cssEl* arg[]) {
-  return new cssEnum(this, 0, (const char*)*arg[1]);
+  return new cssEnum(this, 0, arg[1]->GetStr());
 }
 
 cssEl* cssEnumType::FindValue(int val) const {
@@ -1054,18 +1012,24 @@ void cssEnum::Copy(const cssEnum& cp) {
   SetEnumType(cp.type_def);
 }
 
+void cssEnum::CopyType(const cssEnum& cp) {
+  cssInt::CopyType(cp);
+  SetEnumType(cp.type_def);
+}
+
 cssEnum::cssEnum(const cssEnum& cp) {
   Constr();
   Copy(cp);
+  name = cp.name;
 }
 
-cssEnum::cssEnum(const cssEnum& cp, const char* nm) {
+cssEnum::cssEnum(const cssEnum& cp, const String& nm) {
   Constr();
   Copy(cp);
   name = nm;
 }
 
-cssEnum::cssEnum(cssEnumType* cp, Int vl, const char* nm) {
+cssEnum::cssEnum(cssEnumType* cp, Int vl, const String& nm) {
   Constr();
   val = vl;
   name = nm;
@@ -1104,7 +1068,7 @@ String cssEnum::GetStr() const {
 }
 
 void cssEnum::operator=(const String& cp) {
-  cssElPtr val_ptr = type_def->enums->FindName((const char*)cp);
+  cssElPtr val_ptr = type_def->enums->FindName(cp);
   if(val_ptr == 0)
     val = (int)strtol((const char*)cp, NULL, 0);
   else
@@ -1119,7 +1083,7 @@ void cssEnum::operator=(const cssEl& s) {
 }
 
 bool cssEnum::operator==(cssEl& s) {
-  cssElPtr val_ptr = type_def->enums->FindName((const char*)s);
+  cssElPtr val_ptr = type_def->enums->FindName(s.GetStr());
   if(val_ptr == 0)
     return (val == (Int)s);
   else
@@ -1127,7 +1091,7 @@ bool cssEnum::operator==(cssEl& s) {
 }
 
 bool cssEnum::operator!=(cssEl& s) {
-  cssElPtr val_ptr = type_def->enums->FindName((const char*)s);
+  cssElPtr val_ptr = type_def->enums->FindName(s.GetStr());
   if(val_ptr == 0)
     return (val != (Int)s);
   else
@@ -1148,12 +1112,17 @@ void cssClassMember::Copy(const cssClassMember& cp) {
   SetMbrType(cp.mbr_type);
 }
 
+void cssClassMember::CopyType(const cssClassMember& cp) {
+  cssEl::CopyType(cp);
+  SetMbrType(cp.mbr_type);
+}
+
 cssClassMember::cssClassMember(cssEl* mbtp) {
   Constr();
   SetMbrType(mbtp);
 }
 
-cssClassMember::cssClassMember(cssEl* mbtp, const char* mbnm) {
+cssClassMember::cssClassMember(cssEl* mbtp, const String& mbnm) {
   Constr();
   SetMbrType(mbtp);
   name = mbnm;
@@ -1162,9 +1131,10 @@ cssClassMember::cssClassMember(cssEl* mbtp, const char* mbnm) {
 cssClassMember::cssClassMember(const cssClassMember& cp) {
   Constr();
   Copy(cp);
+  name = cp.name;
 }
 
-cssClassMember::cssClassMember(const cssClassMember& cp, const char* nm) {
+cssClassMember::cssClassMember(const cssClassMember& cp, const String& nm) {
   Constr();
   Copy(cp);
   name = nm;
@@ -1201,7 +1171,6 @@ void cssClassType::Constr() {
   types->name = "types";
   members->el_retv.SetClassMember(this); // any reference to a class member needs updated..
   methods->el_retv.SetNVirtMethod(this); // non-virtual is default assumption
-  Register();
 }
 
 void cssClassType::AddBuiltins() {
@@ -1228,11 +1197,17 @@ void cssClassType::Copy(const cssClassType& cp) {
   multi_space = cp.multi_space;
 }
 
+void cssClassType::CopyType(const cssClassType& cp) {
+  Copy(cp);
+}
+
 cssClassType::cssClassType(const cssClassType& cp) {
   Constr();
   Copy(cp);
+  name = cp.name;
 }
-cssClassType::cssClassType(const cssClassType& cp, const char* nm) {
+
+cssClassType::cssClassType(const cssClassType& cp, const String& nm) {
   Constr();
   Copy(cp);
   name = nm;
@@ -1249,7 +1224,7 @@ cssEl* cssClassType::MakeToken_stub(int, cssEl* arg[]) {
   if(cssMisc::parsing_membdefn)
     return Clone();
   else
-    return new cssClassInst(this, (const char*)*arg[1]);
+    return new cssClassInst(this, arg[1]->GetStr());
 }
 
 // invoke the constructor
@@ -1286,13 +1261,13 @@ void cssClassType::DestructToken(cssClassInst* tok) {
   }
 }
 
-void cssClassType::CallVoidMethod(cssClassInst* tok, const char* meth_nm) {
+void cssClassType::CallVoidMethod(cssClassInst* tok, const String& meth_nm) {
   String nm = meth_nm;
   if(nm.contains(')')) {
     nm = nm.before(')');
     nm = nm.after('(');
   }
-  cssElPtr ptr = methods->FindName((const char*)nm); // find name of this type..
+  cssElPtr ptr = methods->FindName(nm); // find name of this type..
   if(ptr == 0) return;				       // didn't find it..
   cssMbrScriptFun* meth = (cssMbrScriptFun*)methods->FastEl(ptr.dx);
   if(meth->GetSubProg() != NULL) {
@@ -1365,7 +1340,7 @@ void cssClassType::UpdateAfterEdit_impl(cssClassInst* tok) {
   CallVoidMethod(tok, "UpdateAfterEdit");
 }
 
-void cssClassType::SetTypeName(const char* nm) {
+void cssClassType::SetTypeName(const String& nm) {
   name = nm; type_name = String("(") + nm + ")";
   members->name = name + "::members";
   methods->name = name + "::methods";
@@ -1423,9 +1398,9 @@ cssEl* cssClassType::InheritsFrom_stub(void*, int, cssEl* arg[]) {
   else {
     cssElPtr tp_ptr;
     if((ths->prog != NULL) && (ths->prog->top != NULL))
-      tp_ptr = ths->prog->top->FindTypeName((const char*)*arg2);
+      tp_ptr = ths->prog->top->FindTypeName(arg2->GetStr());
     else
-      tp_ptr = ths->last_top->FindTypeName((const char*)*arg2);
+      tp_ptr = ths->last_top->FindTypeName(arg2->GetStr());
     if((tp_ptr == 0) || (tp_ptr.El()->GetType() != T_ClassType)) {
       cssMisc::Error(ths->prog, "argument is not a class, class object, or class type name");
       return &cssMisc::Void;
@@ -1452,7 +1427,7 @@ cssEl* cssClassType::Load_stub(void*, int, cssEl* arg[]) {
   return &cssMisc::Void;
 }
 
-void cssClassType::MbrSetDesc(int mbr, const char* des) {
+void cssClassType::MbrSetDesc(int mbr, const String& des) {
   if (member_desc.InRange(mbr) && member_opts.InRange(mbr)) {
     SetDesc_impl(member_desc.FastEl(mbr), member_opts.FastEl(mbr), des); 
   }
@@ -1579,7 +1554,7 @@ void cssClassType::TypeInfo(ostream& fh) const {
   fh.flush();
 }
 
-void cssClassType::SetDesc_impl(String& dsc, String& opt, const char* des) {
+void cssClassType::SetDesc_impl(String& dsc, String& opt, const String& des) {
   dsc = "";
   String tmp = des;
   tmp.gsub("\"", "'");		// don't let any quotes get through
@@ -1599,7 +1574,7 @@ void cssClassType::SetDesc_impl(String& dsc, String& opt, const char* des) {
   dsc += tmp;
 }
 
-String cssClassType::OptionAfter_impl(const String& optns, const char* opt) const {
+String cssClassType::OptionAfter_impl(const String& optns, const String& opt) const {
   if(!optns.contains(opt))
     return "";
   String rval = ((String&)optns).after(opt);
@@ -1629,13 +1604,13 @@ void cssClassType::GetComments(cssEl* obj, cssElPtr cmt) {
   }
 }
 
-int cssClassType::GetMemberNo(const char* memb) const {
+int cssClassType::GetMemberNo(const String& memb) const {
   cssElPtr rval = members->FindName(memb);
   if(rval == 0)
     return -1;
   return rval.dx;
 }
-cssEl* cssClassType::GetMemberFmName(const char* memb) const {
+cssEl* cssClassType::GetMemberFmName(const String& memb) const {
   cssMisc::Warning(prog, "Getting member:",memb,"from class type (not inst)", GetTypeName());
   cssElPtr rval = members->FindName(memb);
   if(rval == 0) {
@@ -1655,13 +1630,13 @@ cssEl* cssClassType::GetMemberFmNo(int memb) const {
   return rval;
 }
 
-int cssClassType::GetMethodNo(const char* memb) const {
+int cssClassType::GetMethodNo(const String& memb) const {
   cssElPtr rval = methods->FindName(memb);
   if(rval == 0)
     return -1;
   return rval.dx;
 }
-cssEl* cssClassType::GetMethodFmName(const char* memb) const {
+cssEl* cssClassType::GetMethodFmName(const String& memb) const {
   cssElPtr rval = methods->FindName(memb);
   if(rval == 0) {
     cssMisc::Error(prog, "Member function not found:", memb, "in class:", name, "of type:",
@@ -1691,7 +1666,7 @@ cssEl* cssClassType::GetMethodFmNo(int memb) const {
   }
   return rval;
 }
-cssEl* cssClassType::GetScoped(const char* memb) const {
+cssEl* cssClassType::GetScoped(const String& memb) const {
   cssElPtr rval = types->FindName(memb);
   if(rval == 0) {
     rval = methods->FindName(memb);
@@ -1718,7 +1693,6 @@ void cssClassInst::Constr() {
   members = new cssSpace;
   members->name = "members";
   type_def = &cssMisc::VoidClassType;
-  Register();
 }
 
 void cssClassInst::Copy(const cssClassInst& cp) {
@@ -1727,17 +1701,24 @@ void cssClassInst::Copy(const cssClassInst& cp) {
   members->Copy(*(cp.members));
 }
 
+void cssClassInst::CopyType(const cssClassInst& cp) {
+  cssEl::CopyType(cp);
+  SetClassType(cp.type_def);
+  members->Copy(*(cp.members));
+}
+
 cssClassInst::cssClassInst(const cssClassInst& cp) {
   Constr();
   Copy(cp);
+  name = cp.name;
 }
-cssClassInst::cssClassInst(const cssClassInst& cp, const char* nm) {
+cssClassInst::cssClassInst(const cssClassInst& cp, const String& nm) {
   Constr();
   Copy(cp);
   name = nm;
 }
 
-cssClassInst::cssClassInst(cssClassType* cp, const char* nm) {
+cssClassInst::cssClassInst(cssClassType* cp, const String& nm) {
   Constr();
   name = nm;
   SetClassType(cp);
@@ -1825,13 +1806,13 @@ void cssClassInst::TypeInfo(ostream& fh) const {
   type_def->TypeInfo(fh);
 }
 
-int cssClassInst::GetMemberNo(const char* memb) const {
+int cssClassInst::GetMemberNo(const String& memb) const {
   cssElPtr rval = members->FindName(memb);
   if(rval == 0)
     return -1;
   return rval.dx;
 }
-cssEl* cssClassInst::GetMemberFmName(const char* memb) const {
+cssEl* cssClassInst::GetMemberFmName(const String& memb) const {
   cssElPtr rval = members->FindName(memb);
   if(rval == 0) {
     cssMisc::Error(prog, "Member not found:", memb, "in class:", name, "of type:",
@@ -1850,12 +1831,12 @@ cssEl* cssClassInst::GetMemberFmNo(int memb) const {
   return rval;
 }
 
-int cssClassInst::GetMethodNo(const char* memb) const {
+int cssClassInst::GetMethodNo(const String& memb) const {
   if(type_def != &cssMisc::VoidClassType)
     return type_def->GetMethodNo(memb);
   return -1;
 }
-cssEl* cssClassInst::GetMethodFmName(const char* memb) const {
+cssEl* cssClassInst::GetMethodFmName(const String& memb) const {
   if(type_def != &cssMisc::VoidClassType)
     return type_def->GetMethodFmName(memb);
   cssMisc::Error(prog, "Member function not found:", memb, "in class:", name, "of type:",
@@ -1869,7 +1850,7 @@ cssEl* cssClassInst::GetMethodFmNo(int memb) const {
 		 GetTypeName());
   return &cssMisc::Void;
 }
-cssEl* cssClassInst::GetScoped(const char* memb) const {
+cssEl* cssClassInst::GetScoped(const String& memb) const {
   if(type_def != &cssMisc::VoidClassType)
     return type_def->GetScoped(memb);
   cssMisc::Error(prog, "Scoped type not found:", memb, "in class:", name, "of type:",
@@ -1936,7 +1917,7 @@ void cssClassInst::Load(istream& strm) {
       c = taMisc::skip_white(strm, true); // then skip past any new whitespace
     }
 
-    cssElPtr mb_ptr = members->FindName((const char*)mb_name);
+    cssElPtr mb_ptr = members->FindName(mb_name);
     if(mb_ptr == 0) {
       taMisc::Error("*** Member:", mb_name, "not found in type:", type_def->name);
       taMisc::skip_past_err(strm);
@@ -1979,14 +1960,14 @@ String cssSubShell::PrintFStr() const {
 cssSubShell::cssSubShell() {
   Constr();
 }
-cssSubShell::cssSubShell(const char* nm) {
+cssSubShell::cssSubShell(const String& nm) {
   name = nm; Constr();
   prog_space.name = nm;
 }
 cssSubShell::cssSubShell(const cssSubShell& cp) {
-  Constr(); Copy(cp);
+  Constr(); Copy(cp); name = cp.name;
 }
-cssSubShell::cssSubShell(const cssSubShell& cp, const char* nm) {
+cssSubShell::cssSubShell(const cssSubShell& cp, const String& nm) {
   Constr(); Copy(cp); name = nm;
   prog_space.name = nm;
 }

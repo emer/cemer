@@ -39,15 +39,14 @@ void cssTA::Constr() {
 cssTA::cssTA() : cssCPtr() {
   Constr();
 }
-cssTA::cssTA(void* it, int pc, TypeDef* td, const char* nm, cssEl* cls_par, bool ro)
+cssTA::cssTA(void* it, int pc, TypeDef* td, const String& nm, cssEl* cls_par, bool ro)
 : cssCPtr(it,pc,nm,cls_par,ro) {
-  Constr();
   type_def = td;
 }
 cssTA::cssTA(const cssTA& cp) : cssCPtr(cp) {
   type_def = cp.type_def;
 }
-cssTA::cssTA(const cssTA& cp, const char* nm) : cssCPtr(cp,nm) {
+cssTA::cssTA(const cssTA& cp, const String& nm) : cssCPtr(cp,nm) {
   type_def = cp.type_def;
 }
 
@@ -161,7 +160,7 @@ void* cssTA::GetVoidPtrOfType(TypeDef* td) const {
   return rval;
 }
 
-void* cssTA::GetVoidPtrOfType(const char* td) const {
+void* cssTA::GetVoidPtrOfType(const String& td) const {
   void* bptr = GetVoidPtr();
   if(!bptr) {
     cssMisc::Error(prog, "Null pointer for conversion to:",td,"from:",type_def->name);
@@ -353,11 +352,11 @@ cssEl* cssTA::GetElement_impl(taBase* ths, Variant i) const {
   return GetElFromTA(eltd, el, nm, (MemberDef*)NULL, (cssEl*)this);
 }
 
-int cssTA::GetMemberNo(const char* memb) const {
+int cssTA::GetMemberNo(const String& memb) const {
   return GetMemberNo_impl(type_def, memb);
 }
 
-cssEl* cssTA::GetMemberFmName(const char* memb) const {
+cssEl* cssTA::GetMemberFmName(const String& memb) const {
   return GetMemberFmName_impl(type_def, GetVoidPtr(), memb);
 }
 
@@ -365,11 +364,11 @@ cssEl* cssTA::GetMemberFmNo(int memb) const {
   return GetMemberFmNo_impl(type_def, GetVoidPtr(), memb);
 }
 
-int cssTA::GetMethodNo(const char* memb) const {
+int cssTA::GetMethodNo(const String& memb) const {
   return GetMethodNo_impl(type_def, memb);
 }
 
-cssEl* cssTA::GetMethodFmName(const char* memb) const {
+cssEl* cssTA::GetMethodFmName(const String& memb) const {
   return GetMethodFmName_impl(type_def, GetVoidPtr(), memb);
 }
 
@@ -377,7 +376,7 @@ cssEl* cssTA::GetMethodFmNo(int memb) const {
   return GetMethodFmNo_impl(type_def, GetVoidPtr(), memb);
 }
 
-cssEl* cssTA::GetScoped(const char* memb) const {
+cssEl* cssTA::GetScoped(const String& memb) const {
   return GetScoped_impl(type_def, GetVoidPtr(), memb);
 }
 
@@ -410,7 +409,8 @@ void cssTA_Base::Constr() {
   }
 }
 
-cssTA_Base::cssTA_Base(const cssTA_Base& cp) : cssTA(cp) {
+void cssTA_Base::Copy(const cssTA_Base& cp) {
+  cssTA::Copy(cp);
   if(ptr_cnt == 0 && ptr) {	// we copied from other guy
     ptr = NULL;			// nullify, so it will be created in Constr()
   }
@@ -422,7 +422,8 @@ cssTA_Base::cssTA_Base(const cssTA_Base& cp) : cssTA(cp) {
   }
 }
 
-cssTA_Base::cssTA_Base(const cssTA_Base& cp, const char* nm) : cssTA(cp,nm) {
+void cssTA_Base::CopyType(const cssTA_Base& cp) {
+  cssTA::CopyType(cp);
   if(ptr_cnt == 0 && ptr) {	// we copied from other guy
     ptr = NULL;			// nullify, so it will be created in Constr()
   }
@@ -432,6 +433,16 @@ cssTA_Base::cssTA_Base(const cssTA_Base& cp, const char* nm) : cssTA(cp,nm) {
     taBase* oth = (taBase*)cp.ptr;
     obj->UnSafeCopy(oth);
   }
+}
+
+cssTA_Base::cssTA_Base(const cssTA_Base& cp) {
+  Copy(cp);
+  name = cp.name;
+}
+
+cssTA_Base::cssTA_Base(const cssTA_Base& cp, const String& nm) {
+  Copy(cp);
+  name = nm;
 }
 
 cssTA_Base::~cssTA_Base() {
@@ -714,7 +725,7 @@ cssEl* cssTA_Base::operator[](Variant i) const {
   return &cssMisc::Void;
 }
 
-cssEl* cssTA_Base::GetMemberFmName(const char* memb) const {
+cssEl* cssTA_Base::GetMemberFmName(const String& memb) const {
   taBase* ths = GetTAPtr();
   if(!ths) {
     cssMisc::Error(prog, "GetMember: NULL pointer");
@@ -884,7 +895,7 @@ void* cssSmartRef::GetVoidPtrOfType(TypeDef* td) const {
   return cssTA::GetVoidPtrOfType(td);
 }
 
-void* cssSmartRef::GetVoidPtrOfType(const char* td) const {
+void* cssSmartRef::GetVoidPtrOfType(const String& td) const {
   taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(!sr) return NULL;
   if(sr->ptr()) {
@@ -965,7 +976,7 @@ cssEl* cssSmartRef::operator[](Variant i) const {
   return cssTA::operator[](i);
 }
 
-cssEl* cssSmartRef::GetMemberFmName(const char* memb) const {
+cssEl* cssSmartRef::GetMemberFmName(const String& memb) const {
   taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(sr->ptr())
     return GetMemberFmName_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
@@ -979,7 +990,7 @@ cssEl* cssSmartRef::GetMemberFmNo(int memb) const {
   return cssTA::GetMemberFmNo(memb);
 }
 
-cssEl* cssSmartRef::GetMethodFmName(const char* memb) const {
+cssEl* cssSmartRef::GetMethodFmName(const String& memb) const {
   taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(sr->ptr())
     return GetMethodFmName_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
@@ -993,7 +1004,7 @@ cssEl* cssSmartRef::GetMethodFmNo(int memb) const {
   return cssTA::GetMethodFmNo(memb);
 }
 
-cssEl* cssSmartRef::GetScoped(const char* memb) const {
+cssEl* cssSmartRef::GetScoped(const String& memb) const {
   taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(sr->ptr())
     return GetScoped_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
@@ -1294,13 +1305,13 @@ void cssSStream::Constr() {
 cssSStream::cssSStream()
   : cssIOS(NULL, 1, &TA_stringstream)
 { Constr(); }
-cssSStream::cssSStream(const char* nm)
+cssSStream::cssSStream(const String& nm)
   : cssIOS(NULL, 1, &TA_stringstream, nm)
 { Constr(); }
 cssSStream::cssSStream(const cssSStream& cp)
   : cssIOS(cp)
 { Constr(); }
-cssSStream::cssSStream(const cssSStream& cp, const char*)
+cssSStream::cssSStream(const cssSStream& cp, const String&)
   : cssIOS(cp)
 { Constr(); }
 cssSStream::~cssSStream()
@@ -1381,7 +1392,7 @@ String cssTypeDef::GetStr() const {
 
 void cssTypeDef::operator=(const String& s) {
   if(ptr_cnt == 1) {
-    TypeDef* td = taMisc::types.FindName((const char*)s);
+    TypeDef* td = taMisc::types.FindName(s);
     if(td)
       ptr = (void*)td;
   }

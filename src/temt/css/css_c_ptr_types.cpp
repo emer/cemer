@@ -641,14 +641,8 @@ String cssCPtr_String::null_string;
 
 
 cssCPtr_String::~cssCPtr_String() {
-  if(gf != NULL)
-    taRefN::unRefDone(gf);
-  gf = NULL;
 }
 
-void cssCPtr_String::Constr() {
-  gf = NULL;
-}
 String& cssCPtr_String::GetStringRef(const char* opr) const {
   if(ptr_cnt == 0) {
     void* nnp = GetNonNullVoidPtr(opr);
@@ -737,43 +731,11 @@ cssCPtr_String::operator MethodDef*() const {
   return md;
 }
 
-cssCPtr_String::operator ostream*() const {
-  String& nm = GetStringRef();
-  cssCPtr_String* ths = (cssCPtr_String*)this;
-  if(ths->gf == NULL) {
-    ths->gf = taFiler::New();
-    taRefN::Ref(ths->gf);
-  }
-  ths->gf->SetFileName(nm);
-  ostream* strm = ths->gf->open_write();
-  if((strm == NULL) || !(ths->gf->open_file)) {
-    cssMisc::Error(prog, "String -> ostream*: could not open file", nm);
-    return (ostream*)NULL;
-  }
-  return strm;
-}
-
-cssCPtr_String::operator istream*() const {
-  String& nm = GetStringRef();
-  cssCPtr_String* ths = (cssCPtr_String*)this;
-  if(ths->gf == NULL) {
-    ths->gf = taFiler::New();
-    taRefN::Ref(ths->gf);
-  }
-  ths->gf->SetFileName(nm);
-  istream* strm = ths->gf->open_read();
-  if((strm == NULL) || !(ths->gf->open_file)) {
-    cssMisc::Error(prog, "String -> istream*: could not open file", nm);
-    return (istream*)NULL;
-  }
-  return strm;
-}
-
-int cssCPtr_String::GetMethodNo(const char* memb) const {
+int cssCPtr_String::GetMethodNo(const String& memb) const {
   return GetMethodNo_impl(&TA_taString, memb);
 }
 
-cssEl* cssCPtr_String::GetMethodFmName(const char* memb) const {
+cssEl* cssCPtr_String::GetMethodFmName(const String& memb) const {
   void* sp = GetNonNullVoidPtr("->()");
   if(!sp) return &cssMisc::Void;
   String& val = *((String*)sp);
@@ -787,7 +749,7 @@ cssEl* cssCPtr_String::GetMethodFmNo(int memb) const {
   return GetMethodFmNo_impl(&TA_taString, (void*)&val, memb);
 }
 
-cssEl* cssCPtr_String::GetScoped(const char* memb) const {
+cssEl* cssCPtr_String::GetScoped(const String& memb) const {
   void* sp = GetNonNullVoidPtr("::");
   if(!sp) return &cssMisc::Void;
   String& val = *((String*)sp);
@@ -953,7 +915,7 @@ cssEl* cssCPtr_Variant::GetMemberFmNo(int memb) const {
   return GetMemberFmNo_impl(&TA_Variant, &val, memb);
 }
 
-cssEl* cssCPtr_Variant::GetMemberFmName(const char* memb) const {
+cssEl* cssCPtr_Variant::GetMemberFmName(const String& memb) const {
   void* sp = GetNonNullVoidPtr("->");
   if(!sp) return &cssMisc::Void;
   Variant& val = *((Variant*)sp);
@@ -983,7 +945,7 @@ cssEl* cssCPtr_Variant::GetMethodFmNo(int memb) const {
   return GetMethodFmNo_impl(&TA_Variant, &val, memb);
 }
 
-cssEl* cssCPtr_Variant::GetMethodFmName(const char* memb) const {
+cssEl* cssCPtr_Variant::GetMethodFmName(const String& memb) const {
   void* sp = GetNonNullVoidPtr("->()");
   if(!sp) return &cssMisc::Void;
   Variant& val = *((Variant*)sp);
@@ -998,7 +960,7 @@ cssEl* cssCPtr_Variant::GetMethodFmName(const char* memb) const {
   return GetMethodFmName_impl(&TA_Variant, &val, memb);
 }
 
-cssEl* cssCPtr_Variant::GetScoped(const char* memb) const {
+cssEl* cssCPtr_Variant::GetScoped(const String& memb) const {
   void* sp = GetNonNullVoidPtr("::");
   if(!sp) return &cssMisc::Void;
   Variant& val = *((Variant*)sp);

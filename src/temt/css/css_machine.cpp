@@ -576,7 +576,7 @@ void cssEl::Register() {
 #endif
 
 void cssEl::Constr() {
-  addr = NULL; refn = 0; prog = 0;
+  addr = NULL; refn = 0; prog = NULL;
 #ifdef CSS_DEBUG_REGISTER
   if(cssEl_alloc_debug) {
     cssEl_alloc_count++;
@@ -584,6 +584,10 @@ void cssEl::Constr() {
     Register();
   }
 #endif
+}
+
+void cssEl::Copy(const cssEl& cp) {
+  prog = cp.prog;
 }
 
 cssEl* cssEl::GetTypeObject() const {
@@ -627,10 +631,6 @@ cssEl::RunStat cssEl::Do(cssProg* prg) {
 cssEl::RunStat cssEl::FunDone(cssProg*) {
   cssMisc::Warning(NULL, "Internal error: Function or code block ended without finding proper start of block!");
   return cssEl::Running;
-}
-
-void cssEl::Copy(const cssEl& cp) {
-  name = cp.name;  prog = cp.prog;
 }
 
 cssEl* cssEl::MakePtrType(int ptrs) {
@@ -780,7 +780,7 @@ void cssEl::operator=(const Variant& val) {
   }
 }
 
-cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const char* nm, MemberDef* md,
+cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const String& nm, MemberDef* md,
 			  cssEl* class_parent) {
   TypeDef* nptd = td->GetNonPtrType(); // always create one of these
 
@@ -863,7 +863,7 @@ cssEl* cssEl::GetVariantEl_impl(const Variant& val, Variant idx) const {
   return &cssMisc::Void;
 }
 
-int cssEl::GetMemberNo_impl(TypeDef* typ, const char* memb) const {
+int cssEl::GetMemberNo_impl(TypeDef* typ, const String& memb) const {
   if(!typ) return -1;
   int mdx = typ->members.FindNameIdx(memb);	// just 1st order search
   return mdx;
@@ -882,7 +882,7 @@ cssEl* cssEl::GetMemberFmNo_impl(TypeDef* typ, void* base, int memb) const {
   return GetMemberEl_impl(typ, base, md);
 }
 
-cssEl* cssEl::GetMemberFmName_impl(TypeDef* typ, void* base, const char* memb) const {
+cssEl* cssEl::GetMemberFmName_impl(TypeDef* typ, void* base, const String& memb) const {
   if(!typ) {
     cssMisc::Error(prog, "Type information is NULL in:", name);
     return &cssMisc::Void;
@@ -909,7 +909,7 @@ cssEl* cssEl::GetMemberEl_impl(TypeDef* typ, void* base, MemberDef* md) const {
 
 ////////////////
 
-Int cssEl::GetMethodNo_impl(TypeDef* typ, const char* meth) const {
+Int cssEl::GetMethodNo_impl(TypeDef* typ, const String& meth) const {
   if(!typ) return -1;
   int mdx = typ->methods.FindNameIdx(meth);
   return mdx;
@@ -928,7 +928,7 @@ cssEl* cssEl::GetMethodFmNo_impl(TypeDef* typ, void* base, int meth) const {
   return GetMethodEl_impl(typ, base, md);
 }
 
-cssEl* cssEl::GetMethodFmName_impl(TypeDef* typ, void* base, const char* meth) const {
+cssEl* cssEl::GetMethodFmName_impl(TypeDef* typ, void* base, const String& meth) const {
   if(!typ) {
     cssMisc::Error(prog, "GetMethod: Type information is NULL in:", name);
     return &cssMisc::Void;
@@ -955,7 +955,7 @@ cssEl* cssEl::GetMethodEl_impl(TypeDef* typ, void* base, MethodDef* md) const {
   }
 }
 
-cssEl* cssEl::GetScoped_impl(TypeDef* typ, void* base, const char* memb) const {
+cssEl* cssEl::GetScoped_impl(TypeDef* typ, void* base, const String& memb) const {
   if(!typ) {
     cssMisc::Error(prog, "GetScoped: Type information is NULL in:", name);
     return &cssMisc::Void;
@@ -1032,7 +1032,10 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
   }
 
   int stack_start;		// where to start getting things off of the stack
-  if(argc == VarArg) {		// variable numbers of arguments
+  if(argc == VarArg) {
+    ///////////////////////////////////////////////////////////////////////////
+    // 		variable numbers of arguments
+
     for(stack_start = stack->size-1; stack_start >= 0; stack_start--) {
       if(stack->FastEl(stack_start) == &cssMisc::Void)
 	break;
@@ -1052,9 +1055,29 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
     if(stack->Peek() == &cssMisc::Void)	// get rid of arg stop..
       stack->Pop();
   }
+  else if(arg_defs.size == 0) {
+    ///////////////////////////////////////////////////////////////////////////
+    // 		no default args -- must have correct number!
+
+    if(stack->size < argc) {
+      cssMisc::Error(prog, "Incomplete argument list for:", (const char*)name,
+		     "should have at least:", String((int)argc), "got:",
+		     String((int)stack->size));
+      act_argc = -1;
+      return -1;
+    }
+    act_argc = argc;
+    for(int i=act_argc; i>0; i--) { // todo: get rid of this copy too!
+      args[i] = stack->Pop();
+    }
+    if(stack->Peek() == &cssMisc::Void)	// get rid of arg stop..
+      stack->Pop();
+  }
   else {
+    ///////////////////////////////////////////////////////////////////////////
+    // 		has default args -- need to search for how many args we got
+
     int max_stack = stack->size - argc;
-    // todo: this is a time sink!  need to fix this somehow..
     for(stack_start = stack->size-1; stack_start >= max_stack; stack_start--) {
       if(stack->FastEl(stack_start) == &cssMisc::Void)
 	break;
@@ -1072,7 +1095,6 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
 
     for(int i=act_argc; i>0; i--) {
       args[i] = stack->Pop();
-//       args[i] = stack->Pop_NoUnRef();
     }
 
     if(stack->Peek() == &cssMisc::Void)	// get rid of arg stop..
@@ -1120,7 +1142,6 @@ void cssElFun::GetArgDefs() {
 //////////////////////////////////
 
 void cssElCFun::Constr() {
-  Register();
   parse = CSS_FUN;
 }
 
@@ -1130,26 +1151,30 @@ void cssElCFun::Copy(const cssElCFun& cp) {
   parse = cp.parse;
 }
 
+cssElCFun::cssElCFun() {
+  Constr(); funp = NULL;
+}
+
 cssElCFun::cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[])) {
   Constr(); argc = ac;  funp = fp;
 }
-cssElCFun::cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const char* nm) {
+cssElCFun::cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm) {
   Constr(); name = nm;  argc = ac;  funp = fp;
 }
-cssElCFun::cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const char* nm, int pt, const char* hstr) {
+cssElCFun::cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm, int pt, const String& hstr) {
   Constr(); name = nm;  argc = ac;  funp = fp;  parse = pt;
-  if(hstr) help_str = hstr;
+  if(hstr.nonempty()) help_str = hstr;
 }
 cssElCFun::cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]),
-			 const char* nm, cssEl* rtype, const char* hstr) {
+			 const String& nm, cssEl* rtype, const String& hstr) {
   Constr(); name = nm;  argc = ac;  funp = fp;  parse = CSS_FUN;
   SetRetvType(rtype);
-  if(hstr) help_str = hstr;
+  if(hstr.nonempty()) help_str = hstr;
 }
 cssElCFun::cssElCFun(const cssElCFun& cp) {
-  Constr(); Copy(cp);
+  Constr(); Copy(cp); name = cp.name;
 }
-cssElCFun::cssElCFun(const cssElCFun& cp, const char* nm) {
+cssElCFun::cssElCFun(const cssElCFun& cp, const String& nm) {
   Constr(); Copy(cp); name = nm;
 }
 cssElCFun::~cssElCFun() {
@@ -1182,20 +1207,25 @@ cssEl::RunStat cssElCFun::Do(cssProg* prg) {
 //	internal fixed arg C functions	//
 //////////////////////////////////////////
 
+cssElInCFun::cssElInCFun()
+  : cssElCFun()
+{
+}
+
 cssElInCFun::cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]))
   : cssElCFun(ac, fp)
 {
 }
-cssElInCFun::cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const char* nm)
+cssElInCFun::cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm)
   : cssElCFun(ac, fp, nm)
 {
 }
-cssElInCFun::cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const char* nm, int pt)
+cssElInCFun::cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm, int pt)
   : cssElCFun(ac, fp, nm, pt)
 {
 }
 cssElInCFun::cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]),
-			 const char* nm, cssEl* rtype)
+			 const String& nm, cssEl* rtype)
   : cssElCFun(ac, fp, nm, rtype)
 {
 }
@@ -1203,7 +1233,7 @@ cssElInCFun::cssElInCFun(const cssElInCFun& cp)
   : cssElCFun(cp)
 {
 }
-cssElInCFun::cssElInCFun(const cssElInCFun& cp, const char* nm)
+cssElInCFun::cssElInCFun(const cssElInCFun& cp, const String& nm)
   : cssElCFun(cp, nm)
 {
 }
@@ -1227,7 +1257,6 @@ int cssElInCFun::BindArgs(cssEl** args, int& act_argc) {
   act_argc = argc;
   for(int i=act_argc; i>0; i--) {
     args[i] = stack->Pop();
-  //    args[i] = stack->Pop_NoUnRef();
   }
 
   return act_argc;
@@ -1239,8 +1268,8 @@ int cssElInCFun::BindArgs(cssEl** args, int& act_argc) {
 //////////////////////////////////////////
 
 void cssMbrCFun::Constr() {
-  Register();
 }
+
 void cssMbrCFun::Copy(const cssMbrCFun& cp) {
   cssElFun::Copy(cp);
   funp = cp.funp; ths = cp.ths;
@@ -1251,14 +1280,14 @@ cssMbrCFun::cssMbrCFun() {
 cssMbrCFun::cssMbrCFun(int ac, void* th, cssEl* (*fp)(void*, int, cssEl**)) {
   Constr(); argc = ac;  ths = th; funp = fp;
 }
-cssMbrCFun::cssMbrCFun(int ac, void* th, cssEl* (*fp)(void*, int, cssEl**), const char* nm)
+cssMbrCFun::cssMbrCFun(int ac, void* th, cssEl* (*fp)(void*, int, cssEl**), const String& nm)
 {
   Constr(); name = nm;  argc = ac;  ths = th; funp = fp;
 }
 cssMbrCFun::cssMbrCFun(const cssMbrCFun& cp) {
-  Constr(); Copy(cp);
+  Constr(); Copy(cp); name = cp.name;
 }
-cssMbrCFun::cssMbrCFun(const cssMbrCFun& cp, const char* nm) {
+cssMbrCFun::cssMbrCFun(const cssMbrCFun& cp, const String& nm) {
   Constr(); Copy(cp); name = nm;
 }
 cssMbrCFun::~cssMbrCFun() {
@@ -1267,7 +1296,7 @@ cssMbrCFun::~cssMbrCFun() {
 
 
 cssEl* cssMbrCFun::MakeToken_stub(int, cssEl* arg[]) {
-  return new cssTA((void*)NULL, 1, &TA_int, (const char*)*(arg[1]));
+  return new cssTA((void*)NULL, 1, &TA_int, arg[1]->GetStr());
 }
 
 cssEl::RunStat cssMbrCFun::Do(cssProg* prg) {
@@ -1344,7 +1373,7 @@ cssCodeBlock::cssCodeBlock() {
   Constr();
 }
 
-cssCodeBlock::cssCodeBlock(const char* nm) {
+cssCodeBlock::cssCodeBlock(const String& nm) {
   Constr();
   name = nm;
   code->name = name;
@@ -1353,8 +1382,9 @@ cssCodeBlock::cssCodeBlock(const cssCodeBlock& cp) {
   code = NULL;
   //  Constr();
   Copy(cp);
+  name = cp.name;
 }
-cssCodeBlock::cssCodeBlock(const cssCodeBlock& cp, const char* nm) {
+cssCodeBlock::cssCodeBlock(const cssCodeBlock& cp, const String& nm) {
   //  Constr();
   code = NULL;
   Copy(cp);
@@ -1472,7 +1502,7 @@ cssScriptFun::cssScriptFun() {
   argc = 0;
 }
 
-cssScriptFun::cssScriptFun(const char* nm) {
+cssScriptFun::cssScriptFun(const String& nm) {
   Constr();
   argc = 0;
   name = nm;
@@ -1483,8 +1513,9 @@ cssScriptFun::cssScriptFun(const cssScriptFun& cp) {
   fun = NULL;
   //  Constr();
   Copy(cp);
+  name = cp.name;
 }
-cssScriptFun::cssScriptFun(const cssScriptFun& cp, const char* nm) {
+cssScriptFun::cssScriptFun(const cssScriptFun& cp, const String& nm) {
   argv = new cssElPtr[ArgMax + 1];
   fun = NULL;
   //  Constr();
@@ -1498,8 +1529,8 @@ cssScriptFun::~cssScriptFun() {
     cssProg::unRefDone(fun);
 }
 
-void cssScriptFun::Define(cssProg* prg, bool, const char* nm) {
-  if(nm)
+void cssScriptFun::Define(cssProg* prg, bool, const String& nm) {
+  if(nm.nonempty())
     name = nm;
   cssProgSpace* old_top = fun->SetTop(prg->top); // propagate top
   fun->name = name;
@@ -1590,6 +1621,9 @@ String cssScriptFun::PrintStr() const {
 //////////////////////////////////////////////////////////////////
 
 void cssMbrScriptFun::Constr() {
+  type_def = NULL;
+  is_tor = false;
+  is_virtual = false;
 }
 
 void cssMbrScriptFun::Copy(const cssMbrScriptFun& cp) {
@@ -1603,21 +1637,23 @@ void cssMbrScriptFun::Copy(const cssMbrScriptFun& cp) {
   is_virtual = cp.is_virtual;
 }
 
-cssMbrScriptFun::cssMbrScriptFun(const char* nm, cssClassType* cls)
+cssMbrScriptFun::cssMbrScriptFun() 
+  : cssScriptFun() {
+  Constr();
+}
+
+cssMbrScriptFun::cssMbrScriptFun(const String& nm, cssClassType* cls)
 : cssScriptFun(nm) {
   Constr();
   type_def = cls;
   if(type_def)
     cssEl::Ref(type_def);
-  is_tor = false;
-  is_virtual = false;
 }
 cssMbrScriptFun::cssMbrScriptFun(const cssMbrScriptFun& cp) {
-  Constr();
   Copy(cp);
+  name = cp.name;
 }
-cssMbrScriptFun::cssMbrScriptFun(const cssMbrScriptFun& cp, const char* nm) {
-  Constr();
+cssMbrScriptFun::cssMbrScriptFun(const cssMbrScriptFun& cp, const String& nm) {
   Copy(cp);
   name = nm;
 }
@@ -1634,8 +1670,8 @@ cssMbrScriptFun::~cssMbrScriptFun() {
 // 	- cssMbrScriptFun is different, but its argv's are initialized to point
 //		into the same fun auto's
 
-void cssMbrScriptFun::Define(cssProg* prg, bool decl, const char* nm) {
-  if(nm)
+void cssMbrScriptFun::Define(cssProg* prg, bool decl, const String& nm) {
+  if(nm.nonempty())
     name = nm;
   // code was previously defined, and needs to be overwritten
   if((fun->size > 0) || (decl && (fun->Autos()->size > 0))) {
@@ -1816,7 +1852,7 @@ String cssMbrScriptFun::PrintStr() const {
   return str;
 }
 
-void cssMbrScriptFun::SetDesc(const char* des) {
+void cssMbrScriptFun::SetDesc(const String& des) {
   desc = "";
   String tmp = des;
   tmp.gsub("\"", "'");		// don't let any quotes get through
@@ -1836,7 +1872,7 @@ void cssMbrScriptFun::SetDesc(const char* des) {
   desc += tmp;
 }
 
-String cssMbrScriptFun::OptionAfter(const char* opt) {
+String cssMbrScriptFun::OptionAfter(const String& opt) {
   if(!opts.contains(opt))
     return "";
   String rval = opts.after(opt);
@@ -1852,36 +1888,39 @@ void cssCPtr::Constr() {
   class_parent = NULL; ptr = NULL;
   ptr_cnt = 1;
   flags = NO_PTR_FLAGS;
-  Register();
+}
+
+void cssCPtr::Copy(const cssCPtr& cp) {
+  cssEl::Copy(cp);
+  ptr_cnt = cp.ptr_cnt;
+  flags = cp.flags;
+  if(!(flags & OWN_OBJ))
+    ptr = cp.ptr;
+  if(cp.class_parent) SetClassParent(cp.class_parent);
+}
+
+void cssCPtr::CopyType(const cssCPtr& cp) {
+  ptr_cnt = cp.ptr_cnt;
+  flags = cp.flags;
+  if(cp.class_parent) SetClassParent(cp.class_parent);
 }
 
 cssCPtr::cssCPtr() {
   Constr();
 }
-cssCPtr::cssCPtr(void* it, int pc, const char* nm, cssEl* cp, bool ro) {
+cssCPtr::cssCPtr(void* it, int pc, const String& nm, cssEl* cp, bool ro) {
   Constr();
-  if(nm) name = nm;
+  if(nm.nonempty()) name = nm;
   ptr = it;
   ptr_cnt = pc;
   if(cp) SetClassParent(cp);
   if(ro) flags = (PtrFlags)(flags | READ_ONLY);
 }
 cssCPtr::cssCPtr(const cssCPtr& cp) {
-  Constr(); Copy(cp);
-  ptr_cnt = cp.ptr_cnt;
-  flags = cp.flags;
-  if(!(flags & OWN_OBJ))
-    ptr = cp.ptr;
-  if(cp.class_parent) SetClassParent(cp.class_parent);
+  Constr(); Copy(cp); name = cp.name;
 }
-cssCPtr::cssCPtr(const cssCPtr& cp, const char* nm) 	{
-  Constr(); Copy(cp);
-  ptr_cnt = cp.ptr_cnt;
-  flags = cp.flags;
-  if(!(flags & OWN_OBJ))
-    ptr = cp.ptr;
-  if(cp.class_parent) SetClassParent(cp.class_parent);
-  name = nm;
+cssCPtr::cssCPtr(const cssCPtr& cp, const String& nm) {
+  Constr(); Copy(cp);  name = nm;
 }
 cssCPtr::~cssCPtr()		   	   	{
   if(class_parent) cssEl::unRefDone(class_parent);
@@ -2077,21 +2116,24 @@ int cssLex::readword(cssProg* prog, int c) {
   return c;
 }
 
-
 void cssDef::Constr() {
-  Register();
+}
+
+cssDef::cssDef() {
+  Constr();
+  argc = 0;
 }
 
 cssDef::cssDef(int ac) {
   Constr(); argc = ac;
 }
-cssDef::cssDef(int ac, const char* nm) {
+cssDef::cssDef(int ac, const String& nm) {
   Constr(); name = nm;  argc = ac;
 }
 cssDef::cssDef(const cssDef& cp) {
   Constr(); Copy(cp); val = cp.val; which_arg = cp.which_arg;
 }
-cssDef::cssDef(const cssDef& cp, const char* nm) {
+cssDef::cssDef(const cssDef& cp, const String& nm) {
   Constr(); Copy(cp); val = cp.val; which_arg = cp.which_arg; name = nm;
 }
 
@@ -2143,7 +2185,7 @@ void cssSpace::Alloc(int sz) {
 }
 
 void cssSpace::Constr() {
-  els = (cssEl**)calloc(alloc_size, sizeof(cssEl*));
+  els = (cssEl**)malloc(alloc_size * sizeof(cssEl*));
   size = 0;
   el_retv.SetSpace(this);
 }
@@ -2152,6 +2194,18 @@ void cssSpace::Copy(const cssSpace &cp) {
   int i;
   for(i=0; i < cp.size; i++)
     Push(cp.els[i]->Clone());
+}
+
+void cssSpace::Copy_NoNames(const cssSpace &cp) {
+  int i;
+  for(i=0; i < cp.size; i++)
+    Push(cp.els[i]->AnonClone());
+}
+
+void cssSpace::Copy_Blanks(const cssSpace &cp) {
+  int i;
+  for(i=0; i < cp.size; i++)
+    Push(cp.els[i]->BlankClone());
 }
 
 void cssSpace::CopyUniqNameNew(const cssSpace &cp) {
@@ -2226,7 +2280,7 @@ bool cssSpace::Remove(cssEl* it) { // this is very dangerous, as the ptrs are id
   return rval;
 }
 
-cssElPtr& cssSpace::FindName(const char* nm) {	// lookup by name
+cssElPtr& cssSpace::FindName(const String& nm) {	// lookup by name
   for(el_retv.dx=0; el_retv.dx<size; el_retv.dx++) {
     if(els[el_retv.dx]->name == nm)
       return el_retv;
@@ -2694,8 +2748,8 @@ cssFrame::cssFrame(cssProg* prg) {
   prog = prg;
   fr_no = 0;
   pc = 0;
-  stack.name = "Stack";
-  autos.name = "Autos";
+//   stack.name = "Stack";
+//   autos.name = "Autos";
   autos.el_retv.SetProgAuto(prg);
   args = NULL;
   act_argc = 0;
@@ -2777,7 +2831,7 @@ void cssProg::Copy(const cssProg& cp) {
 cssProg::cssProg() {
   Constr();
 }
-cssProg::cssProg(const char* nm) {
+cssProg::cssProg(const String& nm) {
   Constr();
   name = nm;
 }
@@ -2820,8 +2874,10 @@ int cssProg::AddFrame() {
     AllocFrame(fr_size+1);
   frame[fr_size++] = new cssFrame(this);
   SetPC(0);
-  if(fr_size > 1)
-    Autos()->Copy(frame[0]->autos);
+  if(fr_size > 1) {
+    Autos()->Alloc(frame[0]->autos.size); // pre-alloc once..
+    Autos()->Copy_Blanks(frame[0]->autos); // just need the blank vars here..
+  }
   return fr_size-1;
 }
 int cssProg::DelFrame() {
@@ -2975,7 +3031,7 @@ int cssProg::Code(cssElPtr& it) {
   tmp->idx = AddCode(tmp);
   return tmp->idx;
 }
-int cssProg::Code(const char* nm) {
+int cssProg::Code(const String& nm) {
   if((cssMisc::code_cur_top) && (cssMisc::code_cur_top->Prog() != this))
     return cssMisc::code_cur_top->Prog()->Code(nm);
   cssElPtr tmp;
@@ -3054,7 +3110,7 @@ int cssProg::Undo(int srcln) {
 //   return bppc;
 }
 
-cssElPtr& cssProg::FindAutoName(const char* nm) {	// lookup by name
+cssElPtr& cssProg::FindAutoName(const String& nm) {	// lookup by name
   if((el_retv = Autos()->FindName(nm)) != 0)
     return el_retv;
   if((el_retv = statics.FindName(nm)) != 0)
@@ -3414,7 +3470,7 @@ cssProgSpace::cssProgSpace() {
   Constr();
 }
 
-cssProgSpace::cssProgSpace(const char* nm) {
+cssProgSpace::cssProgSpace(const String& nm) {
   alloc_size = 2;
   name = nm;
   Constr();
@@ -3447,7 +3503,7 @@ cssProgSpace* cssProgSpace::GetSrcProg() {
 // 	cssProgSpace: Internal, Programs	//
 //////////////////////////////////////////////////
 
-void cssProgSpace::SetName(const char* nm) {
+void cssProgSpace::SetName(const String& nm) {
   name = nm;
   prog_vars.name = name + ".prog_vars";
   hard_vars.name = name + ".hard_vars";
@@ -3864,7 +3920,7 @@ bool cssProgSpace::RemoveVar(cssEl* old) {
   return false;
 }
 
-cssElPtr& cssProgSpace::FindName(const char* nm) {	// lookup by name
+cssElPtr& cssProgSpace::FindName(const String& nm) {	// lookup by name
   int i;
   for(i=size-1; i>= 0; i--) {
     if((el_retv = Prog(i)->FindAutoName(nm)) != 0)
@@ -3960,7 +4016,7 @@ cssSpace* cssProgSpace::GetParseSpace(int idx) {
     return NULL;
 }
 
-cssElPtr& cssProgSpace::ParseName(const char* nm) {
+cssElPtr& cssProgSpace::ParseName(const String& nm) {
 //   cerr << "searching for: " << nm << endl;
   int i = 0;
   cssSpace* spc=NULL;
@@ -3988,7 +4044,7 @@ cssElPtr& cssProgSpace::ParseName(const char* nm) {
   return cssMisc::VoidElPtr;
 }
 
-cssElPtr& cssProgSpace::FindTypeName(const char* nm) {
+cssElPtr& cssProgSpace::FindTypeName(const String& nm) {
   cssElPtr& tp_ptr = types.FindName(nm);
   if(tp_ptr != 0)
     return tp_ptr;
@@ -4041,7 +4097,7 @@ cssElPtr& cssProgSpace::GetRefType(cssEl* base_type) {
 // 	cssProgSpace: Compiling			//
 //////////////////////////////////////////////////
 
-int cssProgSpace::GetFile(fstream& fh, const char* fname) {
+int cssProgSpace::GetFile(fstream& fh, const String& fname) {
   fh.open(fname, ios::in);
   if(fh.good())
     return true;
@@ -4109,7 +4165,7 @@ bool cssProgSpace::Compile(istream& fh) {
   return !err;
 }
 
-bool cssProgSpace::Compile(const char* fname) {
+bool cssProgSpace::Compile(const String& fname) {
   bool rval = false;
   String fnm = fname;
   if (fnm == "-") {
@@ -4142,7 +4198,7 @@ bool cssProgSpace::CompileCode(const String& code) {
   return Compile(fh);
 }
 
-void cssProgSpace::Include(const char* fname) {
+void cssProgSpace::Include(const String& fname) {
   String save_name = name;
   String save_fnm = cur_fnm;
   int save_lno = cur_fnm_lno;
@@ -4154,7 +4210,7 @@ void cssProgSpace::Include(const char* fname) {
   cur_fnm_lno = save_lno;
 }
 
-void cssProgSpace::CompileRunClear(const char* fname) {
+void cssProgSpace::CompileRunClear(const String& fname) {
   String old_nm = name;
   Compile(fname);
   Run();
@@ -4164,7 +4220,7 @@ void cssProgSpace::CompileRunClear(const char* fname) {
 
 void cssProgSpace::reCompile() {
   ClearAll();
-  Compile((const char*)name);
+  Compile(name);
 }
 
 void cssProgSpace::Undo(int st) {
@@ -4998,7 +5054,7 @@ cssCmdShell::cssCmdShell() {
   Constr();
 }
 
-cssCmdShell::cssCmdShell(const char* nm) {
+cssCmdShell::cssCmdShell(const String& nm) {
   name = nm;
   Constr();
 }
@@ -5123,7 +5179,7 @@ bool cssCmdShell::RunStartupScript() {
   bool ran = false;
   if(cssMisc::startup_file != "") {
     src_prog->Reset();
-    src_prog->Compile((const char*)cssMisc::startup_file);
+    src_prog->Compile(cssMisc::startup_file);
     if(cssMisc::init_bpoint >= 0)
       src_prog->SetBreak(cssMisc::init_bpoint);
     src_prog->Run();
@@ -5142,8 +5198,8 @@ bool cssCmdShell::RunStartupScript() {
   return ran;
 }
 
-void cssCmdShell::SetPrompt(const char* prmpt, bool disp_prompt) {
-  if(prmpt)
+void cssCmdShell::SetPrompt(const String& prmpt, bool disp_prompt) {
+  if(prmpt.nonempty())
     prompt = prmpt;
   else
     prompt = cssMisc::prompt;
@@ -5195,7 +5251,7 @@ void cssCmdShell::UpdatePrompt(bool disp_prompt) {
   }
 }
 
-void cssCmdShell::Shell_OS_Console(const char* prmpt) {
+void cssCmdShell::Shell_OS_Console(const String& prmpt) {
   //WARNING: PAGING IS EVIL SINCE IT CONFLICTS WITH THE THREADED INPUT HANDLERS (in GUI ONLY?)
   if(taMisc::gui_active)
     pgout.no_page = !(taMisc::console_options & taMisc::CO_USE_PAGING_GUI);
@@ -5219,7 +5275,7 @@ void cssCmdShell::Shell_OS_Console(const char* prmpt) {
 }
 
 #ifdef HAVE_QT_CONSOLE
-void cssCmdShell::Shell_Gui_Console(const char* prmpt) {
+void cssCmdShell::Shell_Gui_Console(const String& prmpt) {
   qcss_console = QcssConsole::getInstance();
 
   if(!qcss_console) {
@@ -5236,7 +5292,7 @@ void cssCmdShell::Shell_Gui_Console(const char* prmpt) {
   qcss_console->flushOutput();	// get it flushed to start up
 }
 #endif
-void cssCmdShell::Shell_No_Console(const char* prmpt) {
+void cssCmdShell::Shell_No_Console(const String& prmpt) {
   rl_done = false;
   pgout.no_page = true; // default
   console_type = taMisc::CT_NONE;

@@ -306,13 +306,15 @@ public:
 // macros for defining the cloning functions
 #define cssCloneFuns(x, init) \
   cssEl* 	Clone()		{ return new x (*this); }	      \
-  cssEl* 	AnonClone()  	{ return new x (*this, ""); }	      \
+  cssEl* 	AnonClone()  	{ return new x (*this, _nilString); }	      \
+  cssEl* 	BlankClone() 	{ x* rval = new x; rval->CopyType(*this); return rval; } \
   cssEl*	MakeToken_stub(int, cssEl* arg[])		      \
-  { return new x ( init , (const char*)*(arg[1])); }		      \
+  { return new x ( init , arg[1]->GetStr()); }		      \
 
 #define cssCloneOnly(x) \
-  cssEl* 	Clone()		  { return new x (*this); }	      \
-  cssEl* 	AnonClone() 	  { return new x (*this, ""); }	      \
+  cssEl* 	Clone()		{ return new x (*this); }	      \
+  cssEl* 	AnonClone() 	{ return new x (*this, _nilString); }	      \
+  cssEl* 	BlankClone() 	{ x* rval = new x(); rval->CopyType(*this); return rval; } \
 
 
 class CSS_API cssEl {
@@ -460,24 +462,30 @@ public:
   // after function has been run, do final stuff
 
   // constructors
-  void 			Constr();
+  void 		Constr();
 #ifdef CSS_DEBUG_REGISTER
-  virtual void		Register(); 	// for debugging purposes
+  void		Register(); 	// for debugging purposes
+#define CSS_REGISTER  Register();
 #else
-  virtual void		Register()	{ };  // when not debugging
+#define CSS_REGISTER 
 #endif
 
-  cssEl()			{ name = ""; Constr(); }
-  cssEl(const char* nm) { name = nm; Constr();}
-  cssEl(const cssEl& cp)	{ Constr(); Copy(cp); }
-  cssEl(const cssEl& cp, const char* nm) { Constr(); Copy(cp); name = nm; }
+  cssEl()			{ Constr(); }
+  cssEl(const String& nm) 	{ Constr(); name = nm; }
+  cssEl(const cssEl& cp)	{ Constr(); Copy(cp); name = cp.name; }
+  cssEl(const cssEl& cp, const String& nm) { Constr(); Copy(cp); name = nm; }
 
   virtual ~cssEl();
 
-  void   		Copy(const cssEl& cp);		// for copying to existing structs
+  void   		Copy(const cssEl& cp);
+  // for copying to existing structs -- does NOT copy name -- must call inherited
+  void   		CopyType(const cssEl& cp) { };
+  // only copies type-level information, not value-level information (for els that carry type information around)
 
   virtual cssEl* 	Clone() 			{ return new cssEl(*this); }
-  virtual cssEl* 	AnonClone() 			{ return new cssEl(*this, ""); }
+  virtual cssEl* 	AnonClone() 			{ return new cssEl(*this, _nilString); }
+  virtual cssEl* 	BlankClone() 			{ return new cssEl; }
+
   virtual cssEl*	MakeToken_stub(int, cssEl**) 	{ return &cssMisc::Void; }
   virtual cssEl*	MakePtrType(int ptrs);
   virtual cssEl*	MakeRefType();
@@ -530,7 +538,7 @@ public:
 
   // pointer types
   virtual void* GetVoidPtrOfType(TypeDef* td) const 	{ CvtErr(td->name); return NULL; }
-  virtual void* GetVoidPtrOfType(const char* td) const 	{ CvtErr(td); return NULL; }
+  virtual void* GetVoidPtrOfType(const String& td) const 	{ CvtErr(td); return NULL; }
   // these are type-safe ways to convert a cssEl into a ptr to object of given type
 
   virtual operator void*() const		{ CvtErr("(void*)"); return NULL; }
@@ -612,25 +620,25 @@ public:
   virtual cssEl* operator*()	   { NopErr("*"); return &cssMisc::Void; } // unary de-ptr
   virtual cssEl* operator[](Variant) const { NopErr("[]"); return &cssMisc::Void; }
 
-  static cssEl* GetElFromTA(TypeDef* td, void* itm, const char* nm, 
+  static cssEl* GetElFromTA(TypeDef* td, void* itm, const String& nm, 
 			    MemberDef* md = NULL, cssEl* class_parent = NULL);
   // Call this function to get an appropriate cssEl object based on typedef information
 
   virtual bool	MembersDynamic()	{ return false; }
   // are members always dynamically looked up?  if so, don't issue warnings about this
-  virtual int	GetMemberNo(const char*) const { NopErr(".,->"); return -1; }
+  virtual int	GetMemberNo(const String&) const { NopErr(".,->"); return -1; }
   // this is called during parsing to compile in an index for the member, instead of looking up by name -- return -1 if member lookup should be dynamic (e.g., if a pointer and type might change later)
   virtual cssEl* GetMemberFmNo(int) const  { NopErr(".,->"); return &cssMisc::Void; }
   // subsequent function to actually get the member el from the number
-  virtual cssEl* GetMemberFmName(const char* nm) const  { NopErr(".,->"); return &cssMisc::Void; }
+  virtual cssEl* GetMemberFmName(const String& nm) const  { NopErr(".,->"); return &cssMisc::Void; }
   // dynamic version that takes the name and gets the el
 
-  virtual int	 GetMethodNo(const char*) const { NopErr(".,->()"); return -1; }
+  virtual int	 GetMethodNo(const String&) const { NopErr(".,->()"); return -1; }
   // see above for members: get index to method for strong types
   virtual cssEl* GetMethodFmNo(int) const { NopErr(".,->()"); return &cssMisc::Void; }
-  virtual cssEl* GetMethodFmName (const char* nm) const { NopErr(".,->()"); return &cssMisc::Void; }
+  virtual cssEl* GetMethodFmName (const String& nm) const { NopErr(".,->()"); return &cssMisc::Void; }
 
-  virtual cssEl* GetScoped(const char* nm) const { NopErr("::"); return &cssMisc::Void; }
+  virtual cssEl* GetScoped(const String& nm) const { NopErr("::"); return &cssMisc::Void; }
   // get  a scoped type element (type::thing)
 
   virtual cssEl* NewOpr();
@@ -660,17 +668,17 @@ public:
   virtual void operator|=(cssEl&) { NopErr("|="); }
 
 protected:
-  int	 GetMemberNo_impl(TypeDef* typ, const char*) const;
+  int	 GetMemberNo_impl(TypeDef* typ, const String&) const;
   cssEl* GetMemberFmNo_impl(TypeDef* typ, void* base, int memb) const;
-  cssEl* GetMemberFmName_impl(TypeDef* typ, void* base, const char* memb) const;
+  cssEl* GetMemberFmName_impl(TypeDef* typ, void* base, const String& memb) const;
   cssEl* GetMemberEl_impl(TypeDef* typ, void* base, MemberDef* md) const;
 
-  int	 GetMethodNo_impl(TypeDef* typ, const char* meth) const;
+  int	 GetMethodNo_impl(TypeDef* typ, const String& meth) const;
   cssEl* GetMethodFmNo_impl(TypeDef* typ, void* base, int meth) const;
-  cssEl* GetMethodFmName_impl(TypeDef* typ, void* base, const char* meth) const;
+  cssEl* GetMethodFmName_impl(TypeDef* typ, void* base, const String& meth) const;
   cssEl* GetMethodEl_impl(TypeDef* typ, void* base, MethodDef* md) const;
 
-  cssEl* GetScoped_impl(TypeDef* typ, void* base, const char* nm) const;
+  cssEl* GetScoped_impl(TypeDef* typ, void* base, const String& nm) const;
 
   cssEl* GetVariantEl_impl(const Variant& val, Variant idx) const; // helper for operator[]
 };
@@ -704,16 +712,19 @@ public:
 
   void 		Constr();
   cssSpace()				{ alloc_size = 2;  Constr(); }
-  cssSpace(const char* nm)		{ alloc_size = 2;  name = nm;  Constr(); }
-  cssSpace(int no, const char* nm)	{ alloc_size = no;  name = nm;  Constr(); }
-  cssSpace(const cssSpace& cp)		{ alloc_size = 2; Constr();  Copy(cp); }
+  cssSpace(const String& nm)		{ alloc_size = 2;  name = nm;  Constr(); }
+  cssSpace(int no, const String& nm)	{ alloc_size = no; name = nm;  Constr(); }
+  cssSpace(const cssSpace& cp)		{ alloc_size = cp.alloc_size; Constr();  Copy(cp); }
   virtual ~cssSpace()			{ Reset();  free(els); }
 
   void Copy(const cssSpace& cp);
+  void Copy_NoNames(const cssSpace& cp);    // copy items but not any names
+  void Copy_Blanks(const cssSpace& cp);	    // copy item types but no content
+
   void CopyUniqNameNew(const cssSpace& cp); // copy only unique items, keep new one
   void CopyUniqNameOld(const cssSpace& cp); // copy only unique items, keep old one
 
-  cssElPtr&	FindName(const char* nm); // lookup by name
+  cssElPtr&	FindName(const String& nm); // lookup by name
   cssElPtr&	Find(Int nm);		// lookup by number value
   cssElPtr&	Find(Real nm);		// lookup by number value
   cssElPtr&	Find(const String& nm); // lookup by string value
@@ -782,6 +793,7 @@ public:
   virtual void	GetArgDefs();	// get argument defaults
 
   void		Copy(const cssElFun& cp);
+  void		CopyType(const cssElFun& cp) { Copy(cp); }
   cssElFun();
   ~cssElFun();
 };
@@ -804,12 +816,15 @@ public:
   // constructors
   void 		Constr();
   void		Copy(const cssElCFun& cp);
+  void		CopyType(const cssElCFun& cp) { Copy(cp); }
+
+  cssElCFun();
   cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]));
-  cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const char* nm);
-  cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const char* nm, int pt, const char* hstr=NULL);
-  cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const char* nm, cssEl* rtype, const char* hstr=NULL);
+  cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm);
+  cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm, int pt, const String& hstr=NULL);
+  cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm, cssEl* rtype, const String& hstr=NULL);
   cssElCFun(const cssElCFun& cp);
-  cssElCFun(const cssElCFun& cp, const char* nm);
+  cssElCFun(const cssElCFun& cp, const String& nm);
   ~cssElCFun();
 
   cssCloneOnly(cssElCFun);
@@ -832,12 +847,13 @@ public:
   // has a simpler, faster version of bind args for internal functions
 
   // constructors
+  cssElInCFun();
   cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]));
-  cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const char* nm);
-  cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const char* nm, int pt);
-  cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const char* nm, cssEl* rtype);
+  cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm);
+  cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm, int pt);
+  cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm, cssEl* rtype);
   cssElInCFun(const cssElInCFun& cp);
-  cssElInCFun(const cssElInCFun& cp, const char* nm);
+  cssElInCFun(const cssElInCFun& cp, const String& nm);
 
   cssCloneOnly(cssElInCFun);
 };
@@ -862,11 +878,13 @@ public:
   // constructors
   void		Constr();
   void		Copy(const cssMbrCFun& cp);
+  void		CopyType(const cssMbrCFun& cp) { Copy(cp); }
+
   cssMbrCFun();
   cssMbrCFun(int ac, void* th, cssEl* (*fp)(void*, int, cssEl**));
-  cssMbrCFun(int ac, void* th, cssEl* (*fp)(void*, int, cssEl**), const char* nm);
+  cssMbrCFun(int ac, void* th, cssEl* (*fp)(void*, int, cssEl**), const String& nm);
   cssMbrCFun(const cssMbrCFun& cp);
-  cssMbrCFun(const cssMbrCFun& cp, const char* nm);
+  cssMbrCFun(const cssMbrCFun& cp, const String& nm);
   ~cssMbrCFun();
 
   cssCloneOnly(cssMbrCFun);
@@ -908,7 +926,7 @@ public:
     JUST_CODE,			// don't do anything special; just a regular code block
     PUSH_RVAL,			// push return value on stack (for conditional expression)
     IF_TRUE,			// only run if stack value evaluates to non-0
-    ELSE			// only run if stack value evaluates to 0 (else)
+    ELSE,			// only run if stack value evaluates to 0 (else)
   };
 
   enum LoopType {
@@ -916,7 +934,7 @@ public:
     WHILE,
     DO,
     FOR,
-    SWITCH			// not a loop technically, but processes break
+    SWITCH,			// not a loop technically, but processes break
   };
 
   cssProg*	owner_prog;	// next higher prog that I belong to
@@ -943,10 +961,12 @@ public:
   // constructors
   void		Constr();
   void		Copy(const cssCodeBlock& cp);
+  void		CopyType(const cssCodeBlock& cp) { Copy(cp); }
+
   cssCodeBlock();
-  cssCodeBlock(const char* nm);
+  cssCodeBlock(const String& nm);
   cssCodeBlock(const cssCodeBlock& cp);
-  cssCodeBlock(const cssCodeBlock& cp, const char* nm);
+  cssCodeBlock(const cssCodeBlock& cp, const String& nm);
   ~cssCodeBlock();
 
   cssCloneOnly(cssCodeBlock);
@@ -973,16 +993,18 @@ public:
   String	PrintStr() const;
   String	PrintFStr() const		{ return PrintStr(); }
 
-  virtual void	Define(cssProg* prg, bool decl = false, const char* nm = NULL);
+  virtual void	Define(cssProg* prg, bool decl = false, const String& nm = _nilString);
   // initialize the function (decl = true if in declaration, not definition)
 
   // constructors
   void		Constr();
   void		Copy(const cssScriptFun& cp);
+  void		CopyType(const cssScriptFun& cp) { Copy(cp); }
+
   cssScriptFun();
-  cssScriptFun(const char* nm);
+  cssScriptFun(const String& nm);
   cssScriptFun(const cssScriptFun& cp);
-  cssScriptFun(const cssScriptFun& cp, const char* nm);
+  cssScriptFun(const cssScriptFun& cp, const String& nm);
   ~cssScriptFun();
 
   cssCloneOnly(cssScriptFun);
@@ -1008,18 +1030,21 @@ public:
 
   String	PrintStr() const;
 
-  void		Define(cssProg* prg, bool decl = false, const char* nm = NULL);
+  void		Define(cssProg* prg, bool decl = false, const String& nm = _nilString);
   // initialize the function
 
-  void		SetDesc(const char* des); // get options from desc
-  bool		HasOption(const char* opt) { return opts.contains(opt); }
-  String	OptionAfter(const char* opt);
+  void		SetDesc(const String& des); // get options from desc
+  bool		HasOption(const String& opt) { return opts.contains(opt); }
+  String	OptionAfter(const String& opt);
 
   void		Constr();
   void		Copy(const cssMbrScriptFun& cp);
-  cssMbrScriptFun(const char* nm, cssClassType* cls);
+  void		CopyType(const cssMbrScriptFun& cp) { Copy(cp); }
+
+  cssMbrScriptFun();
+  cssMbrScriptFun(const String& nm, cssClassType* cls);
   cssMbrScriptFun(const cssMbrScriptFun& cp);
-  cssMbrScriptFun(const cssMbrScriptFun& cp, const char* nm);
+  cssMbrScriptFun(const cssMbrScriptFun& cp, const String& nm);
   ~cssMbrScriptFun();
 
   cssCloneOnly(cssMbrScriptFun);
@@ -1029,9 +1054,10 @@ public:
 
 #define cssCPtr_CloneFuns(x, init) \
   cssEl* 	Clone()		{ return new x (*this); }	      \
-  cssEl* 	AnonClone() 	{ return new x (*this, ""); }	      \
+  cssEl* 	AnonClone() 	{ return new x (*this, _nilString); }	      \
+  cssEl* 	BlankClone() 	{ x* rval = new x; rval->CopyType(*this); return rval; } \
   cssEl*	MakeToken_stub(int, cssEl* arg[])		      \
-    { return new x ( init, ptr_cnt, (const char*)*(arg[1])); }	      \
+    { return new x ( init, ptr_cnt, arg[1]->GetStr()); }	      \
 
 
 class CSS_API cssCPtr : public cssEl {
@@ -1058,10 +1084,13 @@ public:
 
   // constructors
   void		Constr();
+  void		Copy(const cssCPtr& cp);
+  void		CopyType(const cssCPtr& cp);
+
   cssCPtr();
-  cssCPtr(void* it, int pc, const char* nm = NULL, cssEl* cls_par = NULL, bool ro = false);
+  cssCPtr(void* it, int pc, const String& nm = _nilString, cssEl* cls_par = NULL, bool ro = false);
   cssCPtr(const cssCPtr& cp);
-  cssCPtr(const cssCPtr& cp, const char* nm);
+  cssCPtr(const cssCPtr& cp, const String& nm);
   ~cssCPtr();
 
   cssCPtr_CloneFuns(cssCPtr, (void*)NULL);
@@ -1146,10 +1175,11 @@ public:
 
   void	Constr();
 
+  cssDef();
   cssDef(int ac);
-  cssDef(int ac, const char* nm);
+  cssDef(int ac, const String& nm);
   cssDef(const cssDef& cp);
-  cssDef(const cssDef& cp, const char* nm);
+  cssDef(const cssDef& cp, const String& nm);
 
   cssCloneFuns(cssDef, 0);
 };
@@ -1303,7 +1333,7 @@ public:
   void 		Constr();
   void		Copy(const cssProg& cp);
   cssProg();
-  cssProg(const char* nm);
+  cssProg(const String& nm);
   cssProg(const cssProg& cp);
   virtual ~cssProg();
 
@@ -1365,7 +1395,7 @@ public:
 
   int 		Code(cssEl* it);
   int 		Code(cssElPtr &it);
-  int 		Code(const char* nm);
+  int 		Code(const String& nm);
   int 		Code(css_progdx it);
   int 		Code(cssIJump* it);
   int		ReplaceCode(int idx, cssEl* it);
@@ -1374,7 +1404,7 @@ public:
   int		Undo(int srcln);      // undo coding of given source line
   void		ZapFrom(int zp_size); // zap (remove) program code from zp_size to end of current size
 
-  cssElPtr&	FindAutoName(const char* nm);	// lookup by name
+  cssElPtr&	FindAutoName(const String& nm);	// lookup by name
   cssElPtr&	FindLiteral(Int it)	{ return literals.Find(it); }
   cssElPtr&	FindLiteral(Real it)	{ return literals.Find(it); }
   cssElPtr&	FindLiteral(const String& it) { return literals.Find(it); }
@@ -1495,7 +1525,7 @@ public:
 
   void Constr();
   cssProgSpace();
-  cssProgSpace(const char* nm);
+  cssProgSpace(const String& nm);
   virtual ~cssProgSpace();
 
   bool		AmCmdProg();		// am I a cmd shell cmd_prog?
@@ -1511,7 +1541,7 @@ public:
   cssProg*	PrvProg() const		{ if(size <= 1) return NULL; return ProgStack(size-2)->prog; }
 
   // internal coding, programs
-  void		SetName(const char* nm); 		// updates all names
+  void		SetName(const String& nm); 		// updates all names
   void 		Reset();
   void		ClearAll();
   void		AllocProg(int sz);
@@ -1557,23 +1587,23 @@ public:
   bool		ReplaceVar(cssEl* old, cssEl* nw);
   bool		RemoveVar(cssEl* it);	// this is somewhat dangerous..
   bool		DelVar(cssEl* it)	{ return ReplaceVar(it, &cssMisc::Void); }
-  cssElPtr&	FindName(const char* nm); // lookup object by name (in autos, static, hards)
+  cssElPtr&	FindName(const String& nm); // lookup object by name (in autos, static, hards)
   cssSpace*	GetParseSpace(int idx);		// get parse spaces in order by index, NULL if over
-  cssElPtr&	ParseName(const char* nm);	// parse name in all spaces (in order)
+  cssElPtr&	ParseName(const String& nm);	// parse name in all spaces (in order)
 
-  cssElPtr&	FindTypeName(const char* nm); // find name based on type
+  cssElPtr&	FindTypeName(const String& nm); // find name based on type
   cssElPtr&	GetPtrType(cssEl* base_type, int ptrs); // get pointer type of base_type
   cssElPtr&	GetRefType(cssEl* base_type); // get reference type of base_type
 
   // compiling
-  static  int	GetFile(fstream& fh, const char* fname); // get the file
+  static  int	GetFile(fstream& fh, const String& fname); // get the file
 
   int		CompileLn(istream& fh = cin, bool* err = NULL);	// parse next line of stream, set optional err if error
   bool 		Compile(istream& fh = cin);	// parse a stream and produce a program, 'true' if successful
-  bool 		Compile(const char* fname);	// parse a file and produce a program, 'true' if successful
+  bool 		Compile(const String& fname);	// parse a file and produce a program, 'true' if successful
   bool 		CompileCode(const String& code);// parse a string and produce a program, 'true' if successful
-  void		Include(const char* fname);	// include a file
-  void		CompileRunClear(const char* fname); // compile a file, run, then clearall
+  void		Include(const String& fname);	// include a file
+  void		CompileRunClear(const String& fname); // compile a file, run, then clearall
   void 		reCompile();			// parse same file and produce a program
   void		Undo(int st);
   void		Undo()			{ Undo(src_ln-2); }
@@ -1583,7 +1613,7 @@ public:
   void		ClearCompileCtrl()	{ compile_ctrl = CC_None; }
   void		SetPop()		{ compile_ctrl = CC_Pop; }
   void		SetPush(cssProg* it)	{ compile_ctrl = CC_Push; cc_push_this = it; }
-  void		SetInclude(const char* it) { compile_ctrl = CC_Include; cc_include_this = it; }
+  void		SetInclude(const String& it) { compile_ctrl = CC_Include; cc_include_this = it; }
   bool		DoCompileCtrl(); 	// do compile control action based on flag
   bool		ParseElseCheck();	// check if next input token is the word 'else' -- needed for parsing if..else constructs
   bool 		PopElseBlocks();	// pop any remaining 'else' blocks off the stack
@@ -1675,7 +1705,7 @@ public:
 
   void Constr();
   cssCmdShell();
-  cssCmdShell(const char* nm);
+  cssCmdShell(const String& nm);
   virtual ~cssCmdShell();
 
   // manage the src_prog_stack
@@ -1692,9 +1722,9 @@ public:
   // run any startup scripts that might have been specified by startup args
 
   void		FlushConsole();	// flush the console output
-  void		SetPrompt(const char* prmpt, bool disp_prompt = false);
+  void		SetPrompt(const String& prmpt, bool disp_prompt = false);
   void		UpdatePrompt(bool disp_prompt = false);
-  //  void 		Source(const char* fname);	// run a file as if in a shell
+  //  void 		Source(const String& fname);	// run a file as if in a shell
 
   void		Exit();		// exit from the shell
 
@@ -1709,12 +1739,12 @@ protected:
 
   void		AcceptNewLine(const String& ln, bool eof); 
   // impl for slot
-  void		Shell_No_Console(const char* prmpt);
+  void		Shell_No_Console(const String& prmpt);
   // configure a nogui readline-based shell
-  void		Shell_OS_Console(const char* prmpt);
+  void		Shell_OS_Console(const String& prmpt);
   // configure a quick-and-dirty shell 
 #ifdef HAVE_QT_CONSOLE
-  void		Shell_Gui_Console(const char* prmpt);
+  void		Shell_Gui_Console(const String& prmpt);
   // configure qt gui-based shell that links with QcssConsole
 #endif
 };
