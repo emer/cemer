@@ -223,6 +223,7 @@ public: // DO NOT USE
   float_Matrix		fft_in; // #EXPERT_TREE #NO_SAVE buffer used for fft
   float_Matrix		fft_out; // #EXPERT_TREE #NO_SAVE buffer used for fft
   float_Matrix		mel_out; // #EXPERT_TREE #NO_SAVE buffer used for mel spectrum
+  float_Matrix		dct_filt; // #EXPERT_TREE #NO_SAVE dct filter coefficients 
 protected:
   int			num_out_vals;
   int			num_out_chans; // will depend on whether dct enabled or not
@@ -588,8 +589,8 @@ public: //
   enum ScaleType {
     NONE,	// no scale factor
     POWER,	// scale_factor is the power (> 0) to which to raise input
-    LOG10_1P,	// log10(1+x)	
-    LN_1P,	// ln(1+x)	
+    LOG10,	// log10(x) (with threshold)	
+    LN,		// ln(x)	
   };
   
   DataBuffer		out_buff_norm; // #SHOW_TREE the normalization factor used -- this will be 0 if the input didn't meet threshold
@@ -598,7 +599,8 @@ public: //
   float			scale_factor; // #CONDEDIT_OFF_scale_type:NONE the scale factor, as defined by the scale_type
   int			norm_top_n; // #MIN_1 normalize to the average of the top N values
   
-  Level			in_thresh; // this is the threshold of the topN avg (in input units) below which all data should be considered 0
+  Level			in_thresh; // this is the threshold of the topN avg (in input units) below which all data should be considered 0; also the ln and log10 thresholds
+  float			offset; // #READ_ONLY #NO_SAVE offset, used for LOG and LN 
   
   float			norm_dt_out; // #MIN_0 time constant of integration of norm, per output sample time period; 1.0 means update fully each item (note: we don't update when input falls below thresh)
   

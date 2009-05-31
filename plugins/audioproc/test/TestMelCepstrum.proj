@@ -31,6 +31,32 @@ LeabraProject .projects[0] {
     };
   };
 
+  DataTable_Group @.data = [0] {
+    DataTable_Group @.gp[0] { };
+    DataTable_Group @.gp[1] { };
+    DataTable_Group @.gp[2] = [1] { 
+      DataTable @[0] { 
+	DataTableCols @.data = [3] {
+	  float_Data @[0] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @[0] { };
+      };
+};
+	  float_Data @[1] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @[0] { };
+      };
+};
+	  float_Data @[2] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @[0] { };
+      };
+};
+	};
+      };
+    };
+  };
+
   taBase_Group @.data_proc = [4] {
     taDataProc @[0] { 
    UserDataItem_List @*(.user_data_) {
@@ -57,7 +83,7 @@ LeabraProject .projects[0] {
   Program_Group @.programs = [0] {
     Program_Group @.gp[0] = [1] { 
       Program @[0] { 
-	ProgObjList @.objs = [3] {
+	ProgObjList @.objs = [4] {
 	  InputBlockSet @[0] { 
 	    SignalProcBlock_List @.blocks = [1] {
 	      StimGen @[0] { 
@@ -69,14 +95,16 @@ LeabraProject .projects[0] {
 	  };
 	  ListenerBlock @[1] { };
 	  MelCepstrumBlock @[2] { };
+	  SignalMonBlock @[3] { };
 	};
 
-	ProgVar_List @.vars = [5] {
+	ProgVar_List @.vars = [6] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
 	  ProgVar @[2] { };
 	  ProgVar @[3] { };
 	  ProgVar @[4] { };
+	  ProgVar @[5] { };
 	};
 
 	ProgEl_List @.init_code = [1] {
@@ -105,7 +133,17 @@ LeabraProject .projects[0] {
 	PanelViewer @[1] { };
 	T3DataViewer @[2] { 
 	  T3DataViewFrame_List @.frames = [1] {
-	    T3DataViewFrame @[0] { };
+	    T3DataViewFrame @[0] { 
+	      T3DataView_List @.children = [1] {
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [3] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		  };
+		};
+	      };
+	    };
 	  };
 	};
       };
@@ -204,6 +242,109 @@ LeabraProject .projects[0] {
    name="AnalysisData";
    el_typ=DataTable;
    el_def=0;
+   DataTable @[0] {
+    name="Mon_mel";
+    desc=;
+    data {
+     name="data";
+     el_typ=float_Data;
+     el_def=0;
+     float_Data @[0] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="X_AXIS";
+	value 1 0=1;
+       };
+      };
+      name="X";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [96] 0;0;0;0;0;0;0;0;0;0;
+0;0;1;1;1;1;1;1;1;1;
+1;1;1;1;2;2;2;2;2;2;
+2;2;2;2;2;2;3;3;3;3;
+3;3;3;3;3;3;3;3;4;4;
+4;4;4;4;4;4;4;4;4;4;
+5;5;5;5;5;5;5;5;5;5;
+5;5;6;6;6;6;6;6;6;6;
+6;6;6;6;7;7;7;7;7;7;
+7;7;7;7;7;7;      };
+     };
+     float_Data @[1] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="PLOT_1";
+	value 1 0=1;
+       };
+      };
+      name="Y";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [96] 45.206345;17.182554;-6.6002917;-9.6123352;-4.9478655;1.3766131;4.6348329;3.0404634;-0.30744779;-2.7502697;
+-2.2131391;0.0031334534;-164.85446;39.089046;-27.650642;-34.976566;-21.660959;5.1664677;18.991873;14.073173;
+-2.7823167;-14.374636;-12.362818;-0.94474089;-164.85329;39.086399;-27.647842;-34.981892;-21.655626;5.16254;
+18.989834;14.082281;-2.7981777;-14.35603;-12.380303;-0.931858;-164.85747;39.091057;-27.654545;-34.973709;
+-21.665407;5.1719189;18.982321;14.085852;-2.7992468;-14.355901;-12.382774;-0.92592496;-164.85518;39.088692;
+-27.651058;-34.977882;-21.660973;5.1697078;18.981302;14.089466;-2.8018436;-14.355965;-12.380261;-0.92870522;
+-164.84775;39.080158;-27.640482;-34.990906;-21.647228;5.1564913;18.992977;14.078507;-2.7907858;-14.368138;
+-12.366671;-0.94371116;-164.85602;39.08852;-27.649162;-34.981251;-21.657415;5.1658502;18.986057;14.08261;
+-2.7930863;-14.366613;-12.368257;-0.94247472;-164.85455;39.087738;-27.649357;-34.979511;-21.65959;5.1687775;
+18.982193;14.090165;-2.8048022;-14.350565;-12.384967;-0.92669165;      };
+     };
+     float_Data @[2] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="Z_AXIS";
+	value 1 0=1;
+       };
+      };
+      name="Z";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [96] 0;1;2;3;4;5;6;7;8;9;
+10;11;0;1;2;3;4;5;6;7;
+8;9;10;11;0;1;2;3;4;5;
+6;7;8;9;10;11;0;1;2;3;
+4;5;6;7;8;9;10;11;0;1;
+2;3;4;5;6;7;8;9;10;11;
+0;1;2;3;4;5;6;7;8;9;
+10;11;0;1;2;3;4;5;6;7;
+8;9;10;11;0;1;2;3;4;5;
+6;7;8;9;10;11;      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
   };
  };
  data_proc {
@@ -435,9 +576,35 @@ LeabraProject .projects[0] {
       cf_log_factor=1.1;
       n_lin_chans=10;
       n_log_chans=20;
-      dct=0;
-      n_cepstrum=10;
+      compress=1;
+      comp_thresh {
+       level=-90;
+       units=UN_DBI;
+      };
+      dct=1;
+      n_cepstrum=12;
       out_rate=10;
+     };
+     SignalMonBlock @[3] {
+      name="Mon_Mel";
+      desc=;
+      flags=;
+      in_block {
+       src_block=.projects[0].programs.gp[0][0].objs[2]$2$;
+       buff_index=0;
+      };
+      mon_flags=MF_ACCUM|MF_RESET_ON_INIT|MF_FOR_PLOT;
+      mon_type=MT_VAL;
+      mon_data=.projects[0].data.gp[2][0]$3$;
+      x_units=UN_SAMPLES;
+      item_col="item";
+      item_dims=2;
+      item_dim0=DIM_VAL;
+      item_dim1=DIM_CHAN;
+      item_dim2=DIM_OFF;
+      item_dim3=DIM_OFF;
+      item_dim4=DIM_OFF;
+      item_dim5=DIM_OFF;
      };
     };
     types {
@@ -478,7 +645,7 @@ LeabraProject .projects[0] {
       name="MelCepstrumBlock_0";
       var_type=T_Object;
       object_type=MelCepstrumBlock;
-      object_val=.projects[0].programs.gp[0][0].objs[2]$2$;
+      object_val=$2$;
       objs_ptr=1;
       flags=NULL_CHECK|USED;
       reference=0;
@@ -503,6 +670,16 @@ LeabraProject .projects[0] {
       reference=0;
       desc="duration to process, in ms";
      };
+     ProgVar @[5] {
+      name="Mon_Mel";
+      var_type=T_Object;
+      object_type=SignalMonBlock;
+      object_val=.projects[0].programs.gp[0][0].objs[3]$4$;
+      objs_ptr=1;
+      flags=NULL_CHECK;
+      reference=0;
+      desc=;
+     };
     };
     functions {
      name=;
@@ -522,7 +699,7 @@ LeabraProject .projects[0] {
       desc=;
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][0].vars[0]$3$;
+      obj=.projects[0].programs.gp[0][0].vars[0]$5$;
       method=SignalProcBlock::InitConfig;
       meth_args {
        name=;
@@ -538,8 +715,8 @@ LeabraProject .projects[0] {
      MethodCall @[0] {
       desc=;
       flags=;
-      result_var=.projects[0].programs.gp[0][0].vars[3]$4$;
-      obj=$3$;
+      result_var=.projects[0].programs.gp[0][0].vars[3]$6$;
+      obj=$5$;
       method=InputBlockBase::ProcNext_Duration;
       meth_args {
        name=;
@@ -566,7 +743,7 @@ LeabraProject .projects[0] {
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$5$;
+   m_data=.projects[0]$7$;
    name="Browser2";
    visible=1;
    m_is_root=0;
@@ -596,7 +773,7 @@ LeabraProject .projects[0] {
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$5$;
+     m_root=$7$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -622,11 +799,399 @@ LeabraProject .projects[0] {
 	 name=;
 	 el_typ=T3DataViewMain;
 	 el_def=0;
+	 GraphTableView @[0] {
+	  m_data=$3$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].data.gp[2][0].data[0]$8$;
+	    m_transform=NULL;
+	    name="X";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=2: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].data.gp[2][0].data[1]$9$;
+	    m_transform=NULL;
+	    name="Y";
+	    visible=1;
+	    fixed_range {fix_min=0: min=-8.88409: fix_max=0: max=4.81474: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].data.gp[2][0].data[2]$10$;
+	    m_transform=NULL;
+	    name="Z";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=29: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10000;
+	  view_range {min=0: max=95: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=0;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="X";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=7: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=7: };
+	   range {min=0: max=7: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Z;
+	   col_name="Z";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=11: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=11: };
+	   range {min=0: max=11: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="Y";
+	   fixed_range {fix_min=0: min=-164.8575: fix_max=0: max=45.20634: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=-164.8575: max=45.20634: };
+	   range {min=-164.8575: max=45.20634: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  plot_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	   alt_y=0;
+	  };
+	  plot_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	   alt_y=0;
+	  };
+	  plot_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	   alt_y=0;
+	  };
+	  plot_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	   alt_y=0;
+	  };
+	  plot_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CROSS;
+	   alt_y=0;
+	  };
+	  plot_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=STAR;
+	   alt_y=0;
+	  };
+	  plot_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=MINUS;
+	   alt_y=0;
+	  };
+	  alt_y_1=0;
+	  alt_y_2=0;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  err_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=VALUE_COLOR;
+	  color_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=.colorspecs[0]$11$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
 	};
        };
-       camera_pos {x=0: y=0: z=-0.4765596: };
+       camera_pos {x=1.4275: y=0.445: z=1.376934: };
        camera_orient {x=0: y=0: z=1: rot=0: };
-       camera_focdist=3.52344;
+       camera_focdist=1.866934;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        headlight_on=1;
        fullscreen_on=0;

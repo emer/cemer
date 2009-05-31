@@ -572,13 +572,13 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   const int n_chans = n_lin_chans + n_log_chans;
   int buff_bit = 1;
   for (int obi = 0; obi < outBuffCount(); ++obi, buff_bit<<=1) {
-    DataBuffer* ob = outBuff(0);
+    DataBuffer* ob = outBuff(obi);
     ob->enabled = (out_vals & buff_bit);
     if (!ob->enabled) continue; // will have mat set to zero 
     ob->fs = src_buff->fs;
-    ob->fr_dur.Set(src_buff->items, Duration::UN_SAMPLES);
+    ob->fr_dur.Set(1, Duration::UN_SAMPLES); // we just output one item at a time
     ob->fields = src_buff->fields;
-    ob->chans = n_cepstrum;
+    ob->chans = (dct) ? n_cepstrum : n_chans;
     ob->vals = 1;
   }
   // if using delta or delta2, need min of 2/3 env stages
@@ -602,6 +602,7 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   in_buff.Clear(); // in case reusing
   window_filt.SetGeom(1, frame_size);
   fft_in.SetGeom(1, frame_size);
+  
   // hamming filter
   // from Lyons, "Understanding Signal Processing", p. 77
   // but note that the window should be symmetric, which isn't clear in that text
@@ -609,9 +610,22 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
     window_filt.Set((float)(0.54 - (0.46 * cos(M_PI * ((double)i / (out_size - 1))))), i);
   for (int i = out_size, j = out_size - 1; i < frame_size; ++i, --j)
     window_filt.Set(window_filt.FastEl_Flat(j), i);
+    
   // mel output
   fft_band = 1000.0f / (2 * out_rate);
   mel_out.SetGeom(1, n_chans);
+  
+  // dct filter, if applicable
+  if (dct) {
+    dct_filt.SetGeom(2, n_chans, n_cepstrum);
+    for (int n = 0; n < n_cepstrum; ++n) 
+    for (int i = 0; i < n_chans; ++i)
+    {
+      dct_filt.FastEl(i, n) = cosf( ( (M_PI * n) * (2 * i + 1)) / (2 * n_chans) );
+    }
+  } else {
+    dct_filt.Reset();
+  }
 }
 
 void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
@@ -733,58 +747,34 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
           }
 	  mel_out.FastEl_Flat(ch) = (float)out;
 	}
+	// Discrete Cosine transform (if enabled) and output, but no notify yet
+        if (dct) {
+          for (int ch = 0; ch < n_cepstrum; ++ch) {
+            double out = 0; 
+            for (int mel = 0; mel < chans.size; ++mel) {
+             out += mel_out.FastEl_Flat(mel) * dct_filt.FastEl(mel, ch);
+            }
+            out_buff.mat.FastEl(0, ch, f, 0, out_buff.stage) = (float)out;
+          }
+        
+        } else {
+          // straight mel out
+          for (int ch = 0; ch < chans.size; ++ch) {
+            out_buff.mat.FastEl(0, ch, f, 0, out_buff.stage) = 
+              mel_out.FastEl_Flat(ch);
+          }
+        }
       } // for each field
-      if (dct) {
-      } else {
-        // straight mel out
-	for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) {
-	  for (int ch = 0; ch < chans.size; ++ch) {
-	  }
-	}
+      // notifies
+      // advance index pointer, and notify clients
+      for (int obi = 0; ((ps != PS_ERROR) && (obi < outBuffCount())); ++obi) {
+        DataBuffer* ob = outBuff(obi);
+        if (!ob->enabled) continue; // will have mat set to zero 
+        if (ob->NextIndex())
+          NotifyClientsBuffStageFull(ob, obi, ps);
       }
     }
   }
-/*TODO  
-  // in_stride: the num items between each x in a channel
-  const int in_stride = in_vals * in_chans * in_fields;
-  // out_stride: the num items between each y in an output channel
-  const int out_stride =  n_chans * in_fields;
-  
-  // note: we only support 1 chan, 1 val input, so don't iterate those
-  for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) {
-    for (int g_ch = 0; g_ch < n_chans; ++g_ch) {
-      MelCepstrumChan* sc = chans.FastEl(g_ch);
-      if (!sc->on) continue; // will just leave 0;s everywhere
-      float& dat = in_mat->FastEl(in_val, in_chan, f, 0, stage);
-      // we only pass buffer addresses for values actually used
-      // instf
-      float* bm = NULL;
-      float* env = NULL;
-      if (out_vals & OV_SIG) {
-        bm = &(out_buff.mat.FastEl(0, g_ch, f, 0, out_buff.stage));
-      }
-      if (out_vals & OV_ENV) {
-        env =  &(out_buff_env.mat.FastEl(0, g_ch, f, 0, out_buff_env.stage));
-      }
-      
-      sc->DoFilter(in_items, in_stride, &dat, out_stride, bm, env);
-          
-      if (out_vals & OV_DELTA_ENV) {
-        float env_prev = out_buff_env.mat.FastEl(0, g_ch, f, 0, out_buff_env.prevStage());
-        out_buff_delta_env.mat.FastEl(0, g_ch, f, 0, out_buff_delta_env.stage) =
-          (*env - env_prev) * delta_env_dt_inv;
-      }
-    }
-  } // field
-  
-  // advance index pointer, and notify clients
-  for (int obi = 0; ((ps != PS_ERROR) && (obi < outBuffCount())); ++obi) {
-    DataBuffer* ob = outBuff(obi);
-    if (!ob->enabled) continue; // will have mat set to zero 
-    if (ob->NextIndex())
-      NotifyClientsBuffStageFull(ob, obi, ps);
-  }
-  */
   return ps;
 }
 
@@ -800,8 +790,7 @@ void MelCepstrumBlock::GraphFilter(DataTable* graph_data,
   }
   
   // we will set params to make nice output
-  
-  const int n = 1024; 
+  const int n = frame_size; 
   // need vars here so we can goto
   bool ok = true;
   int idx = -1;
@@ -829,7 +818,7 @@ void MelCepstrumBlock::GraphFilter(DataTable* graph_data,
     DataBuffer* ob = gb->outBuff(obi);
     if (!ob->enabled) continue; // will have mat set to zero 
     anali = obi;
-    ob->fr_dur.Set(n, Duration::UN_SAMPLES);
+    ob->fr_dur.Set(1, Duration::UN_SAMPLES); // we just look at the second 1/2 frame
     ob->InitConfig(false, false, ok);
     if (!ok) goto exit;
   }
@@ -837,7 +826,7 @@ void MelCepstrumBlock::GraphFilter(DataTable* graph_data,
   in_mat->SetGeom(5, 1,1,1,n,1); //val,ch,f,it,st
   in_mat->Set(1.0f, 0); // the impulse!
   
-  // ok, run one round
+  // ok, run one round, 2 1/2 frames
   ps = gb->AcceptData_MC(in_mat);
   if (CheckError((ps != PS_OK), false, ok,
     "ProcNextFrame did not complete ok")) goto exit;
@@ -2051,7 +2040,8 @@ void NormBlock::Initialize() {
   scale_type = NONE;
   scale_factor = 1.0f;
   norm_top_n = 1;
-  in_thresh.Set(-50, Level::UN_DBI); // good value for speech
+  in_thresh.Set(-70, Level::UN_DBI); // good value for speech
+  offset = 0;
   norm_dt_out = 1.0f;
   cur_norm_factor = 1.0;
 }
@@ -2070,7 +2060,15 @@ void NormBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
     "NormBlock (scale_type=POWER): scale_factor must be > 0"))
     return;
     break;
+  case LOG10:
+  case LN:
+    if (in_thresh < 1e-12) {
+      taMisc::Warning("NormBlock in_thresh must be > 0 for Log/Ln; was set to -120 dbI");
+      in_thresh.Set(-120, Level::UN_DBI);
+    }
+    break;
   }
+  
   
   in_thresh_lin_scaled = Scale(in_thresh);
   
@@ -2082,6 +2080,16 @@ void NormBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   if (!ok) return;
   
   if (check) return;
+  
+  switch (scale_type) {
+  case LOG10:
+    offset = -log10f(in_thresh);
+    break;
+  case LN:
+    offset = -logf(in_thresh);
+    break;
+  default: break;
+  }
   cur_norm_factor = 1.0; // TODO: should we offer an init param???
   const int in_fields = src_buff->fields; 
   const int in_chans = src_buff->chans; 
@@ -2176,10 +2184,12 @@ float NormBlock::Scale(float val) {
     return val;
   case POWER: 
     return powf(val, scale_factor);
-  case LOG10_1P:
-    return log10f(1.0f + val);
-  case LN_1P:
-    return logf(1.0f + val);
+  case LOG10:
+    if (val < in_thresh) val = in_thresh;
+    return log10f(val) + offset;
+  case LN:
+    if (val < in_thresh) val = in_thresh;
+    return logf(val) + offset;
   }
   return val; // compiler food
 }
