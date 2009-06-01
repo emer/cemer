@@ -180,13 +180,13 @@ INHERITED(StdBlock)
 public:
   enum OutVals { // #BITS Output Values 
     OV_MEL	= 0x01, // #LABEL_MelCepstrum basic output channel (required)
-    OV_DELTA1   = 0x02, // #LABEL_DeltaMel 1st derivitive (per out) of Mel
-    OV_DELTA2   = 0x04, // #LABEL_Delta2Mel 2ndt derivitive (per out) of Mel
+    OV_DELTA    = 0x02, // #LABEL_DeltaMel 1st derivitive (per out) of Mel
   };
   
-  DataBuffer		out_buff_delta1; //  #SHOW_TREE delta output (if enabled)
-  DataBuffer		out_buff_delta2; //  #SHOW_TREE delta2 output (if enabled)
+  DataBuffer		out_buff_delta; //  #SHOW_TREE delta output (if enabled)
   OutVals		out_vals; // the desired output values
+  float			out_rate; // output rate, in ms (frames will be 1/2 this rate)
+  Level			auto_gain; // #READ_ONLY #SHOW #NO_SAVE an automatically applied gain adjustment based on the output type selected; crudely makes 1Khz sine wave have ~1 output (linear) in peak channel of mel fft
   float			cf_lo; // lower center frequency (Hz)
   float			cf_lin_bw; // linear range bandwidth
   float			cf_log_factor; // how much to multiple to get next log channel 
@@ -196,16 +196,14 @@ public:
   Level			comp_thresh; // #CONDEDIT_ON_compress lower threshold (clamped at this)
   bool			dct; // #DEF_true apply Discrete Cosine Transform and create cepstrum coefficients
   int			n_cepstrum; // #CONDEDIT_ON_dct #MIN_4 number of cepstrum output coefficients
-  float			out_rate; // output rate, in ms (frames will be 1/2 this rate)
   
   FilterChan_List	chans; // #NO_SAVE the individual channels
   
   override taList_impl*  children_() {return &chans;} //note: required
-  override int		outBuffCount() const {return 3;}
+  override int		outBuffCount() const {return 2;}
   override DataBuffer* 	outBuff(int idx) {switch (idx) {
     case 0: return &out_buff; 
-    case 1: return &out_buff_delta1;
-    case 2: return &out_buff_delta2;
+    case 1: return &out_buff_delta;
     default: return NULL;}}
   
   virtual void		GraphFilter(DataTable* disp_data,
@@ -583,7 +581,7 @@ private:
 
 
 class AUDIOPROC_API NormBlock: public StdBlock
-{ // ##CAT_Audioproc Norm Block -- normalizes a bank (chans/vals) of input values, with optional non-linear scaling, and threshold  
+{ // ##CAT_Audioproc Norm Block -- normalizes a bank (chans/vals) of input values, with optional non-linear scaling, and threshold -- calculates slope and offset by using avg of top and bottom half of signal values 
 INHERITED(StdBlock) 
 public: //
   enum ScaleType {
@@ -597,7 +595,7 @@ public: //
   
   ScaleType		scale_type; //
   float			scale_factor; // #CONDEDIT_OFF_scale_type:NONE the scale factor, as defined by the scale_type
-  int			norm_top_n; // #MIN_1 normalize to the average of the top N values
+  float			norm_split; // #MIN_0 #MAX_1 #DEF_0.5 split the sorted values at this point and assign avg of top to be at .75 point and avg of bottom to be at .25 point
   
   Level			in_thresh; // this is the threshold of the topN avg (in input units) below which all data should be considered 0; also the ln and log10 thresholds
   float			offset; // #READ_ONLY #NO_SAVE offset, used for LOG and LN 
@@ -605,6 +603,7 @@ public: //
   float			norm_dt_out; // #MIN_0 time constant of integration of norm, per output sample time period; 1.0 means update fully each item (note: we don't update when input falls below thresh)
   
   double		cur_norm_factor; // #READ_ONLY #NO_SAVE #SHOW the norm factor that was most recently applied
+  double		cur_norm_offset; // #READ_ONLY #NO_SAVE #SHOW the offset factor that was most recently applied
   override int		outBuffCount() const {return 2;}
   override DataBuffer* 	outBuff(int idx) {if (idx == 1)  
     return &out_buff_norm; return inherited::outBuff(idx);}
@@ -618,6 +617,7 @@ public: //
   float_Array		data; // #NO_SHOW for topN sort
 protected:
   float			in_thresh_lin_scaled; // linear and scaled
+  int			n_bottom; // we set it min 1
   
   override void		UpdateAfterEdit_impl();
   override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok); 
@@ -625,6 +625,7 @@ protected:
   override void		AcceptData_impl(SignalProcBlock* src_blk,
     DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps);
   float			Scale(float val);
+  float			Norm(float val);
 private:
   void	Initialize();
   void	Destroy() {CutLinks();}

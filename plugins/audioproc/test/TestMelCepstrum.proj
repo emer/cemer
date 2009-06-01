@@ -268,16 +268,11 @@ LeabraProject .projects[0] {
       };
       ar {
        name=;
-	    [96] 0;0;0;0;0;0;0;0;0;0;
+	    [48] 0;0;0;0;0;0;0;0;0;0;
 0;0;1;1;1;1;1;1;1;1;
 1;1;1;1;2;2;2;2;2;2;
 2;2;2;2;2;2;3;3;3;3;
-3;3;3;3;3;3;3;3;4;4;
-4;4;4;4;4;4;4;4;4;4;
-5;5;5;5;5;5;5;5;5;5;
-5;5;6;6;6;6;6;6;6;6;
-6;6;6;6;7;7;7;7;7;7;
-7;7;7;7;7;7;      };
+3;3;3;3;3;3;3;3;      };
      };
      float_Data @[1] {
       UserDataItem_List @*(.user_data_) {
@@ -298,16 +293,11 @@ LeabraProject .projects[0] {
       };
       ar {
        name=;
-	    [96] 45.206345;17.182554;-6.6002917;-9.6123352;-4.9478655;1.3766131;4.6348329;3.0404634;-0.30744779;-2.7502697;
--2.2131391;0.0031334534;-164.85446;39.089046;-27.650642;-34.976566;-21.660959;5.1664677;18.991873;14.073173;
--2.7823167;-14.374636;-12.362818;-0.94474089;-164.85329;39.086399;-27.647842;-34.981892;-21.655626;5.16254;
-18.989834;14.082281;-2.7981777;-14.35603;-12.380303;-0.931858;-164.85747;39.091057;-27.654545;-34.973709;
--21.665407;5.1719189;18.982321;14.085852;-2.7992468;-14.355901;-12.382774;-0.92592496;-164.85518;39.088692;
--27.651058;-34.977882;-21.660973;5.1697078;18.981302;14.089466;-2.8018436;-14.355965;-12.380261;-0.92870522;
--164.84775;39.080158;-27.640482;-34.990906;-21.647228;5.1564913;18.992977;14.078507;-2.7907858;-14.368138;
--12.366671;-0.94371116;-164.85602;39.08852;-27.649162;-34.981251;-21.657415;5.1658502;18.986057;14.08261;
--2.7930863;-14.366613;-12.368257;-0.94247472;-164.85455;39.087738;-27.649357;-34.979511;-21.65959;5.1687775;
-18.982193;14.090165;-2.8048022;-14.350565;-12.384967;-0.92669165;      };
+	    [48] 0.36751997;0.13970526;-0.053665452;-0.078146912;-0.040227592;0.011192551;0.037681237;0.024719438;-0.002499731;-0.022359826;
+-0.017993107;2.5582412e-05;-1.3403912;0.3178924;-0.22488289;-0.28434026;-0.17609243;0.041978415;0.15439425;0.11445538;
+-0.022687234;-0.11679952;-0.10057378;-0.0076422556;-1.3403151;0.31781024;-0.22478475;-0.28442448;-0.17603993;0.041965622;
+0.15439181;0.11444764;-0.02264473;-0.1168704;-0.10049858;-0.0077043576;-1.3404179;0.31791639;-0.22490047;-0.28432602;
+-0.17610684;0.041998047;0.15436792;0.11449487;-0.022736417;-0.1167473;-0.1006116;-0.0076263696;      };
      };
      float_Data @[2] {
       UserDataItem_List @*(.user_data_) {
@@ -328,16 +318,11 @@ LeabraProject .projects[0] {
       };
       ar {
        name=;
-	    [96] 0;1;2;3;4;5;6;7;8;9;
+	    [48] 0;1;2;3;4;5;6;7;8;9;
 10;11;0;1;2;3;4;5;6;7;
 8;9;10;11;0;1;2;3;4;5;
 6;7;8;9;10;11;0;1;2;3;
-4;5;6;7;8;9;10;11;0;1;
-2;3;4;5;6;7;8;9;10;11;
-0;1;2;3;4;5;6;7;8;9;
-10;11;0;1;2;3;4;5;6;7;
-8;9;10;11;0;1;2;3;4;5;
-6;7;8;9;10;11;      };
+4;5;6;7;8;9;10;11;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -536,8 +521,8 @@ LeabraProject .projects[0] {
       };
       out_buff {
        fs {
-	fs_val=SF_16000;
-	fs_act=16000;
+	fs_val=SF_CUSTOM;
+	fs_act=100;
        };
        fr_dur {
 	duration=1;
@@ -546,19 +531,7 @@ LeabraProject .projects[0] {
        stages=1;
        fields=1;
       };
-      out_buff_delta1 {
-       fs {
-	fs_val=SF_AUTO;
-	fs_act=0;
-       };
-       fr_dur {
-	duration=1;
-	units=UN_SAMPLES;
-       };
-       stages=1;
-       fields=1;
-      };
-      out_buff_delta2 {
+      out_buff_delta {
        fs {
 	fs_val=SF_AUTO;
 	fs_act=0;
@@ -571,6 +544,7 @@ LeabraProject .projects[0] {
        fields=1;
       };
       out_vals=OV_MEL;
+      out_rate=10;
       cf_lo=100;
       cf_lin_bw=100;
       cf_log_factor=1.1;
@@ -578,12 +552,11 @@ LeabraProject .projects[0] {
       n_log_chans=20;
       compress=1;
       comp_thresh {
-       level=-90;
+       level=-60;
        units=UN_DBI;
       };
       dct=1;
       n_cepstrum=12;
-      out_rate=10;
      };
      SignalMonBlock @[3] {
       name="Mon_Mel";
@@ -811,7 +784,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    m_transform=NULL;
 	    name="X";
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=2: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=7: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
@@ -819,7 +792,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    m_transform=NULL;
 	    name="Y";
 	    visible=1;
-	    fixed_range {fix_min=0: min=-8.88409: fix_max=0: max=4.81474: };
+	    fixed_range {fix_min=0: min=-164.857: fix_max=0: max=45.2063: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
@@ -827,13 +800,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    m_transform=NULL;
 	    name="Z";
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=29: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=11: };
 	    data_range {min=0: max=0: };
 	   };
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=10000;
-	  view_range {min=0: max=95: };
+	  view_range {min=0: max=47: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -855,10 +828,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=X;
 	   col_name="X";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=7: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=3: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=7: };
-	   range {min=0: max=7: };
+	   data_range {min=0: max=3: };
+	   range {min=0: max=3: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -883,10 +856,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=Y;
 	   col_name="Y";
-	   fixed_range {fix_min=0: min=-164.8575: fix_max=0: max=45.20634: };
+	   fixed_range {fix_min=0: min=-1.340418: fix_max=0: max=0.36752: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=-164.8575: max=45.20634: };
-	   range {min=-164.8575: max=45.20634: };
+	   data_range {min=-1.340418: max=0.36752: };
+	   range {min=-1.340418: max=0.36752: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;

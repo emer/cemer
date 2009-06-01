@@ -516,6 +516,18 @@ void GammatoneBlock::MakeStdFilters(float cf_lo, float cf_hi, int n_chans) {
 //  MelCepstrumBlock		//
 //////////////////////////////////
 
+/* auto level was estimated from this empirical result, indicating linear
+  relation between window size and output level:
+  rate  max level of 1Khz sine wave
+  10	123
+  16	219.4
+  20	283
+  
+  ~ 14.15
+  (283-123) / 10 = 16/ms; therefore, divide by this to equalize
+  att = 16*ms - 37; 
+*/
+
 void MelCepstrumBlock::Initialize() {
   out_vals = OV_MEL;
   cf_lo = 100.0f;
@@ -568,6 +580,8 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   
   if (check) return;
   
+  // crudely set gain based on an empirically derived constants to get peak mel~=1 for 1Khz sine
+  auto_gain.Set(1.0f / ((16.0f * out_rate) - 37.0f), Level::UN_SCALE);
   // just init all chans, whether enabled or not
   const int n_chans = n_lin_chans + n_log_chans;
   int buff_bit = 1;
@@ -575,7 +589,7 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
     DataBuffer* ob = outBuff(obi);
     ob->enabled = (out_vals & buff_bit);
     if (!ob->enabled) continue; // will have mat set to zero 
-    ob->fs = src_buff->fs;
+    ob->fs.SetCustom((float)src_buff->fs / out_size);
     ob->fr_dur.Set(1, Duration::UN_SAMPLES); // we just output one item at a time
     ob->fields = src_buff->fields;
     ob->chans = (dct) ? n_cepstrum : n_chans;
@@ -583,8 +597,7 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   }
   // if using delta or delta2, need min of 2/3 env stages
   int min_stages = 1;
-  if (out_vals & OV_DELTA1) min_stages = 2;
-  if (out_vals & OV_DELTA2) min_stages = 3;
+  if (out_vals & OV_DELTA) min_stages = 2;
   if (min_stages > 1) {
     out_buff.min_stages = min_stages;
   }
@@ -632,22 +645,35 @@ void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
 //TODO: when sharpening, correct the gain of the edge channels to compensate
 // for the loss caused by not integrating the full DoG filter width
 
+  if (check) return;
+  
+  DataBuffer* src_buff = in_block.GetBuffer();
+  if (!src_buff) return;
+  
+  const float nyquist = src_buff->fs / 2.0f;
   const int n_chans = n_lin_chans + n_log_chans;
   chans.SetSize(n_chans);
   float cf = cf_lo;
+  float cf_last = cf_lo - cf_lin_bw;
   for (int i = 0; i < chans.size; ++i) {
     // don't move on to next child, if prev step didn't succeed
     if (!check && !ok) return;
     FilterChan* gc = chans.FastEl(i);
-    
     if (!check) {
-      gc->InitChan(cf, 1.0f, 0); //TODO: erb
+      gc->InitChan(cf, 1.0f, 0); //note: erb is below
       // next cf
       if (i < n_lin_chans) {
         cf += cf_lin_bw;
       } else {
         cf *= cf_log_factor;
       }
+      // since we use triangular filter, estimate erb as 1/2 entire band
+      // via: h*w = 1/2*b*h, therefore, w=1/2*b
+      gc->erb = .5f * (cf - cf_last);
+      cf_last = gc->cf;
+      // we know chan spills over past nyquist if next cf is above nyquist
+      if (cf > nyquist)
+        gc->on = false;
     }
   }
   // do the default, which calls all the items, prob does nothing
@@ -709,6 +735,7 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
 	// collapse freq bands
 	for (int ch = 0; ch < chans.size; ++ch) {
 	  FilterChan* fc = chans.FastEl(ch);
+	  if (!fc->on) break;
 	  double out = 0;
 	  // lower sideband -- interpolate lowest
 	  float lower = (ch > 0) ?
@@ -745,7 +772,7 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
             if (out < comp_thresh) out = comp_thresh;
             out = log(out);
           }
-	  mel_out.FastEl_Flat(ch) = (float)out;
+	  mel_out.FastEl_Flat(ch) = (float)(out * auto_gain);
 	}
 	// Discrete Cosine transform (if enabled) and output, but no notify yet
         if (dct) {
@@ -803,7 +830,7 @@ void MelCepstrumBlock::GraphFilter(DataTable* graph_data,
   
   gb->InitLinks();
   gb->Copy(*this);
-  if ((response != OV_MEL) && (response != OV_DELTA1) && (response != OV_DELTA2))
+  if ((response != OV_MEL) && (response != OV_DELTA))
     response = OV_MEL;
   gb->out_vals = response;
 
@@ -2039,11 +2066,12 @@ exit:
 void NormBlock::Initialize() {
   scale_type = NONE;
   scale_factor = 1.0f;
-  norm_top_n = 1;
+  norm_split = 0.5f;
   in_thresh.Set(-70, Level::UN_DBI); // good value for speech
   offset = 0;
   norm_dt_out = 1.0f;
   cur_norm_factor = 1.0;
+  cur_norm_offset = 0;
 }
 
 void NormBlock::UpdateAfterEdit_impl() {
@@ -2097,8 +2125,10 @@ void NormBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   const int in_size = in_fields * in_chans * in_vals;
   scaled.SetGeom(3, in_vals, in_chans, in_fields);
   data.SetSize(in_size);
-  // have to restrict N to be <= in_size
-  norm_top_n = MIN(norm_top_n, in_size);
+  // make sure we have at least 1 chan in both top and bottom
+  n_bottom = in_chans * norm_split; // number to avg for bottom
+  if (n_bottom < 1) n_bottom = 1;
+  else if (n_bottom == in_chans) --n_bottom;
   
   // main normalized output data
   DataBuffer* ob = &out_buff;
@@ -2108,13 +2138,13 @@ void NormBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   ob->chans = src_buff->chans;
   ob->vals = src_buff->vals;
   
-  // norm factor
+  // norm factor: v0=slope, v1=offset
   ob = &out_buff_norm;
   ob->fs = src_buff->fs;
   ob->fr_dur.Set(src_buff->items, Duration::UN_SAMPLES);
   ob->fields = 1;
   ob->chans = 1;
-  ob->vals = 1;
+  ob->vals = 2;
 }
 
 void NormBlock::AcceptData_impl(SignalProcBlock* src_blk,
@@ -2127,38 +2157,74 @@ void NormBlock::AcceptData_impl(SignalProcBlock* src_blk,
   const int in_fields = in_mat->dim(FIELD_DIM); 
   const int in_chans = in_mat->dim(CHAN_DIM); 
   const int in_vals = in_mat->dim(VAL_DIM); 
+  const int in_tot = in_fields + in_chans + in_vals;
   
   for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) { 
     // first, get the incoming values, scale them, and put in topN buffer
     data.Reset();
+    double avg = 0;
     for (int f = 0; f < in_fields; ++f) 
     for (int ch = 0; ch < in_chans; ++ch)
     for (int v = 0; v < in_vals; ++v) {
       float& val = scaled.FastEl(v, ch, f);
       val = Scale(in_mat->FastEl(v, ch, f, i, stage));
       data.Add(val);
+      avg += val;
     }
-    // do topN and calc scale value for this frame
+    avg /= in_tot; 
+    float std_dev = taMath_float::vec_std_dev(&scaled, avg, true);
+    // offset so mean is at .5, and +-1 stdev is 66% of range
+ //   if (top_avg > in_thresh_lin_scaled) {
+      double tcur_norm_offset = .5 - avg;
+      // we can only update scale if there is a sufficient range
+      // calc current factor and offset
+      double tcur_norm_factor = (std_dev >= 1e-9) ? 
+        (0.33 / std_dev) : cur_norm_factor; 
+      // m*x + b = .25 for bottom
+      // apply the dt
+      cur_norm_factor = ((1.0 - norm_dt_out) * cur_norm_factor) +
+        (norm_dt_out * tcur_norm_factor);
+      cur_norm_offset = ((1.0 - norm_dt_out) * cur_norm_offset) +
+        (norm_dt_out * tcur_norm_offset);
+//    }
+    
+/*    
+    // do the top and bot averages and calc scale value for this frame
     data.Sort();
-    double topn_avg = 0;
-    for (int j = norm_top_n; j >= 1 ; --j)
-      topn_avg += data[data.size - j];
-    topn_avg /= norm_top_n;
+    double top_avg = 0;
+    double bot_avg = 0;
+    for (int j = 0; j < n_bottom; ++j)
+      bot_avg += data[j];
+    if (n_bottom > 0)
+      bot_avg /= n_bottom;
+    for (int j = n_bottom; j < in_chans; ++j)
+      top_avg += data[j];
+    if ((in_chans - n_bottom) > 0)
+      top_avg /= (in_chans - n_bottom);
+    // ok, now calc slope and intercept to put bot/top at .25/.75 in output range
+    double top_bot_range = top_avg - bot_avg; // note: necessarily >= 0
+    // we can only update if top is above thresh
+    if (top_avg > in_thresh_lin_scaled) {
+      // we can only update scale if there is a sufficient range
+      // calc current factor and offset
+      double tcur_norm_factor = (top_bot_range >= 1e-12) ? 
+        (0.5 / top_bot_range) : cur_norm_factor; 
+      // m*x + b = .25 for bottom
+      double tcur_norm_offset = .25 - (tcur_norm_factor * bot_avg);
+      // apply the dt
+      cur_norm_factor = ((1.0 - norm_dt_out) * cur_norm_factor) +
+        (norm_dt_out * tcur_norm_factor);
+      cur_norm_offset = ((1.0 - norm_dt_out) * cur_norm_offset) +
+        (norm_dt_out * tcur_norm_offset);
+    }*/
     // note: we don't update integrator when we fall below thresh because
     // we assume sound already low and norm high, and will be needed likewise
     // on next onset
-    if (!((topn_avg < in_thresh_lin_scaled) ||
-      (topn_avg < 1e-12f))) { // note: e-12 is arbitrary 0
-      // apply the dt
-      cur_norm_factor = ((1.0 - norm_dt_out) * cur_norm_factor) +
-        (norm_dt_out / topn_avg); // note / inverts it to be scale
-    }
-    const double this_norm = cur_norm_factor;
     for (int f = 0; f < in_fields; ++f) 
     for (int ch = 0; ch < in_chans; ++ch)
     for (int v = 0; v < in_vals; ++v) {
       float val = scaled.FastEl(v, ch, f);
-      val *= this_norm;
+      val = (val * cur_norm_factor) + cur_norm_offset;
       // output
       out_mat->FastEl(v, ch, f, out_buff.item,
         out_buff.stage) = val;
@@ -2170,7 +2236,9 @@ void NormBlock::AcceptData_impl(SignalProcBlock* src_blk,
     
     if (out_buff_norm.enabled) {
       out_buff_norm.mat.FastEl(0, 0, 0, out_buff_norm.item,
-          out_buff_norm.stage) = this_norm;
+          out_buff_norm.stage) = cur_norm_factor;
+      out_buff_norm.mat.FastEl(1, 0, 0, out_buff_norm.item,
+          out_buff_norm.stage) = cur_norm_offset;
       if (out_buff_norm.NextIndex()) {
         NotifyClientsBuffStageFull(&out_buff_norm, 1, ps);
       }
@@ -2192,6 +2260,10 @@ float NormBlock::Scale(float val) {
     return logf(val) + offset;
   }
   return val; // compiler food
+}
+
+float NormBlock::Norm(float val) {
+  return (val * cur_norm_factor) + cur_norm_offset;
 }
 
 
