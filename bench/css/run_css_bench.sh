@@ -6,9 +6,10 @@
 # name of executable to run
 #set exe=emergent
 set exe=../../build/bin/emergent
+#set exe=/home/oreilly/emergent_test/build/bin/emergent
 
 echo " "
 echo "=============================================================="
-echo "Running css_bench.proj"
+echo "Running css_bench.proj with $exe"
 
 $exe -nogui -ni -p css_bench.proj

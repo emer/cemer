@@ -8,6 +8,7 @@
 echo "Running simple configure script wrapper around cmake build system!"
 echo "args are:"
 echo "  --enable-debug (or --debug)  enable debug, non-optimized build"
+echo "  --enable-release (or --release)  enable release, maximum optimized build (-O3 on gcc)"
 echo "  --prefix=<path>              set the install prefix to path"
 echo "  --enable-mpi (or --mpi)      enable MPI distributed memory parallel build"
 echo "  --clean                      clean existing cmake cache etc first: start fresh"
@@ -30,6 +31,11 @@ do
       debug=true
       cmake_cmd="$cmake_cmd -DCMAKE_BUILD_TYPE=Debug"
       build_dir="build_dbg"
+      shift 1
+    ;;
+    --release | --enable-release | release | enable-release | -release | -enable-release | r | -r)
+      cmake_cmd="$cmake_cmd -DCMAKE_BUILD_TYPE=Release"
+      build_dir="build"
       shift 1
     ;;
     --prefix | -prefix | prefix | p | -p)

@@ -2389,8 +2389,8 @@ void ISelectableHost::DoDynAction(int idx) {
     int ok_can = arg_dlg->Edit(true);	// true = wait for a response
     if (!(ok_can && !arg_dlg->err_flag))
       goto exit;
-    // args in dlg are now: arg[0] .. hide_args .. use_args
-    // need to have [0] be a dummy, since actual args are from [1]
+    // args in dlg are now: arg[0] arg[1] .. hide_args .. use_args
+    // need to have [0] [1] be a dummy, since actual args are from [2]
     prompt_params = &(arg_dlg->obj->members->els[hide_args]);
     // make sure argc is now right
     prompt_argc = arg_dlg->obj->members->size-(1+hide_args);
@@ -2420,10 +2420,11 @@ void ISelectableHost::DoDynAction(int idx) {
       
       // remaining types use more complicated params
       { // for jumps    
-      cssEl** param = (cssEl**)calloc(2 + prompt_argc, sizeof(cssEl*));
-      param[0] = &cssMisc::Void;
-      param[1] = new cssCPtr();
-      for (i = 1; i <= prompt_argc; ++i)
+      cssEl** param = (cssEl**)calloc(3 + prompt_argc, sizeof(cssEl*));
+      param[0] = &cssMisc::Void; // method*
+      param[1] = &cssMisc::Void; // this*
+      param[2] = new cssCPtr();
+      for (i = 2; i <= prompt_argc; ++i)
         param[1+i] = prompt_params[i]; 
         
       const int si_presize = sel_items_cp.size; // size before ops
@@ -2443,7 +2444,7 @@ void ISelectableHost::DoDynAction(int idx) {
           itN = sel_items_cp.FastEl(i);
           link = itN->effLink(gui_ctxt); //note: prob can't be null, because we wouldn't get called
           if (!link) continue;
-          *param[1] = (void*)link->data();
+          *param[2] = (void*)link->data();
           rval = (*(meth->stubp))(base, 1 + prompt_argc, param); 
         }
       } break;
@@ -2452,7 +2453,7 @@ void ISelectableHost::DoDynAction(int idx) {
         typ = it1->GetEffDataTypeDef(gui_ctxt);
         link = it1->effLink(gui_ctxt);
         if (!link) goto free_mem; //note: we prob wouldn't get called if any were null
-        *param[1] = (void*)link->data();
+        *param[2] = (void*)link->data();
         for (int i = 1; 
           (i < sel_items_cp.size) && (sel_items_cp.size == si_presize);
           ++i) 
@@ -2475,7 +2476,7 @@ void ISelectableHost::DoDynAction(int idx) {
           ctxt_ms->setIndex(j);
           taBase* obj = ctxt_ms->tabObject();
           if (!obj) continue;
-          *param[1] = (void*)obj;
+          *param[2] = (void*)obj;
           while (sel_items_cp.size > 0) {
             itN = sel_items_cp.TakeItem(0);
             link = itN->effLink(gui_ctxt);
@@ -2490,7 +2491,7 @@ void ISelectableHost::DoDynAction(int idx) {
       default: break; // compiler food, we handled all cases
       }
 free_mem:
-      delete param[1];
+      delete param[2];
       free(param);
       } // for jumps     
     }

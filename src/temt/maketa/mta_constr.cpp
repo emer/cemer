@@ -21,6 +21,13 @@
 #include "ta_platform.h"
 #include "ta_type.h"
 
+// this is the offset of arg indexes into css-passed arg strings relative to the actual
+// type scanned arg values, which start at 0
+// 0 = instruction element??
+// 1 = 'this' pointer for methods
+// 2+ = actual args
+static const int stub_arg_off = 2;
+
 //////////////////////////////////
 // 	Link Resolution		//
 //////////////////////////////////
@@ -539,18 +546,20 @@ void MethodDef_InitTempArgVars(MethodDef* md, ostream& strm, int act_argc) {
       continue;
     }
 
+    int args_idx = j + stub_arg_off;
+
     if((nrt->ptr == 0) &&
 	 !(nrt->DerivesFrom(TA_taString) || !nrt->InheritsFormal(TA_class))) {
       // a non-ptr class reference: create a ref variable that doesn't get
       // assigned later (just to get around compiler warnings)
       got_one = true;
-      strm << "    " << argt->Get_C_Name() << " refarg_" << j << "=";
+      strm << "    " << argt->Get_C_Name() << " refarg_" << args_idx << "=";
       MethodDef_GenArgCast(md, nrt, j, strm);
       strm << ";";
     }
     else {
       got_one = true;
-      strm << "    " << nrt->Get_C_Name() << " refarg_" << j << "=";
+      strm << "    " << nrt->Get_C_Name() << " refarg_" << args_idx << "=";
       MethodDef_GenArgCast(md, nrt, j, strm);
       strm << ";";
     }
@@ -572,23 +581,26 @@ void MethodDef_AssgnTempArgVars(TypeDef* ownr, MethodDef* md, ostream& strm, int
       taMisc::Error("Null NonRefType in GenTempArgVars()", argt->name);
       continue;
     }
+
+    int args_idx = j + stub_arg_off;
+
     bool not_mod = true;
     if(nrt->ptr == 0) {	// harder to do the non-ptr refs
       if(nrt->DerivesFrom(TA_taString) || !nrt->InheritsFormal(TA_class)) {
-	strm << "    *arg[" << j+1 << "]=" << MethodDef_GetCSSType(nrt);
-	strm << "refarg_" << j << ";";
+	strm << "    *arg[" << args_idx << "]=" << MethodDef_GetCSSType(nrt);
+	strm << "refarg_" << args_idx << ";";
 	not_mod = false;	got_one = true;
       }
     }
     else if(nrt->DerivesFrom(TA_taBase)) {
       // need to use taBase* to preserve reffing sanity!
-      strm << "    *arg[" << j+1 << "]=(taBase" << nrt->GetPtrString() << ")";
-      strm << "refarg_" << j << ";";
+      strm << "    *arg[" << args_idx << "]=(taBase" << nrt->GetPtrString() << ")";
+      strm << "refarg_" << args_idx << ";";
       not_mod = false;		got_one = true;
     }
     else {			// all ptrs just done through (void*)..
-      strm << "    *arg[" << j+1 << "]=(void" << nrt->GetPtrString() << ")";
-      strm << "refarg_" << j << ";";
+      strm << "    *arg[" << args_idx << "]=(void" << nrt->GetPtrString() << ")";
+      strm << "refarg_" << args_idx << ";";
       not_mod = false;		got_one = true;
     }
     //TODO: seems to be a conceptual bug, since we should be able to pass
@@ -641,9 +653,10 @@ String MethodDef_GetCSSType(TypeDef* td) {
 
 
 void MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& strm) {
+  int args_idx = j + stub_arg_off;
   if(argt->ref) {
     if(!argt->InheritsFrom(TA_const)) { // non-const reference arg!
-      strm << "refarg_" << j;
+      strm << "refarg_" << args_idx;
     }
     else {
       TypeDef* nrt = argt->GetNonRefType();
@@ -661,59 +674,59 @@ void MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& strm) {
   else if(argt->DerivesFrom(TA_TypeDef)) { // we convert these now
     strm << "(TypeDef";
     strm << argt->GetPtrString() << ")";
-    strm << "*arg[" << j+1 << "]";
+    strm << "*arg[" << args_idx << "]";
   }
   else if(argt->DerivesFrom(TA_MemberDef)) { // we convert these now
     strm << "(MemberDef";
     strm << argt->GetPtrString() << ")";
-    strm << "*arg[" << j+1 << "]";
+    strm << "*arg[" << args_idx << "]";
   }
   else if(argt->DerivesFrom(TA_MethodDef)) { // we convert these now
     strm << "(MethodDef";
     strm << argt->GetPtrString() << ")";
-    strm << "*arg[" << j+1 << "]";
+    strm << "*arg[" << args_idx << "]";
   }
   else if(argt->DerivesFrom(TA_taString)) {
     if(argt->ptr == 0)
-      strm << "arg[" << j+1 << "]->GetStr()";
+      strm << "arg[" << args_idx << "]->GetStr()";
     else
-      strm << "(String" << argt->GetPtrString() << ")*arg[" << j+1 << "]";
+      strm << "(String" << argt->GetPtrString() << ")*arg[" << args_idx << "]";
   }
   else if(argt->DerivesFrom(TA_Variant)) {
     if(argt->ptr == 0)
-      strm << "arg[" << j+1 << "]->GetVar()";
+      strm << "arg[" << args_idx << "]->GetVar()";
     else
-      strm << "(Variant" << argt->GetPtrString() << ")*arg[" << j+1 << "]";
+      strm << "(Variant" << argt->GetPtrString() << ")*arg[" << args_idx << "]";
   }
   else if(argt->DerivesFromName("ios")) { // cssEl's can cast these directly
     if(argt->ptr == 0)
-      strm << "*(" << argt->Get_C_Name() << "*)" << "*arg[" << j+1 << "]";
+      strm << "*(" << argt->Get_C_Name() << "*)" << "*arg[" << args_idx << "]";
     else
-      strm << "(" << argt->Get_C_Name() << ")" << "*arg[" << j+1 << "]";
+      strm << "(" << argt->Get_C_Name() << ")" << "*arg[" << args_idx << "]";
   }
   else if(argt->InheritsFormal(TA_class)) {
-    strm << "*(" << argt->Get_C_Name() << "*)arg[" << j+1 << "]"
+    strm << "*(" << argt->Get_C_Name() << "*)arg[" << args_idx << "]"
 	 << "->GetVoidPtrOfType(&TA_" << argt->name << ")";
   }
   else if((argt->ptr == 1) && (argt->DerivesFrom(TA_char))) {
-    strm << "(" << argt->Get_C_Name() << ")" << "*arg[" << j+1 << "]";
+    strm << "(" << argt->Get_C_Name() << ")" << "*arg[" << args_idx << "]";
   }
   else if(argt->InheritsFormal(TA_enum)) {
     strm << "(" << argt->Get_C_Name() << ")"; // always cast the args
-    strm << "(int)*arg[" << j+1 << "]";		    // use int conversion
+    strm << "(int)*arg[" << args_idx << "]";		    // use int conversion
   }
   else if((argt->ptr == 1) && argt->DerivesFormal(TA_class)) {
-    strm << "(" << argt->Get_C_Name() << ")arg[" << j+1 << "]"
+    strm << "(" << argt->Get_C_Name() << ")arg[" << args_idx << "]"
 	 << "->GetVoidPtrOfType(&TA_" << argt->name << ")";
   }
   else if(argt->ptr > 0) {
     strm << "(" << argt->Get_C_Name() << ")(void";
     strm << argt->GetPtrString() << ")";
-    strm << "*arg[" << j+1 << "]";
+    strm << "*arg[" << args_idx << "]";
   }
   else {
     strm << "(" << argt->Get_C_Name() << ")"; // always cast the args
-    strm << "*arg[" << j+1 << "]";
+    strm << "*arg[" << args_idx << "]";
   }
 }
 
@@ -761,7 +774,7 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
   String cmd;
 
   if(md->fun_argd >= 0) {
-    strm << "    if(na == " << act_argc << ") {\n  ";
+    strm << "    if(na == " << act_argc+1 << ") {\n  ";
     MethodDef_InitTempArgVars(md, strm, act_argc); // declare and init temp arg vars
   }
   strm << "    ";

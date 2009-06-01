@@ -1307,11 +1307,11 @@ cssEl::RunStat cssMbrCFun::Do(cssProg* prg) {
   BindArgs(args, act_argc);
   if(act_argc < 0)
     return cssEl::ExecError;
-  cssEl* ths_arg = args[1];
-  // need to get rid of the 'this' pointer, which is now args[1] -- pack down list
-  for(int i=2;i<=act_argc;i++)
-    args[i-1] = args[i];
-  act_argc--;			// remove this
+//   cssEl* ths_arg = args[1];
+//   // need to get rid of the 'this' pointer, which is now args[1] -- pack down list
+//   for(int i=2;i<=act_argc;i++)
+//     args[i-1] = args[i];
+//   act_argc--;			// remove this
   if(!ths) {
     cssMisc::Error(prog, "Null 'this' object for member function call:", name);
     return cssEl::ExecError;
@@ -1335,7 +1335,7 @@ cssEl::RunStat cssMbrCFun::Do(cssProg* prg) {
 //     taMisc::FlushConsole();
 //   }
   DoneArgs(args, act_argc);
-  cssEl::Done(ths_arg);		// not in args list so do it separately
+//   cssEl::Done(ths_arg);		// not in args list so do it separately
   //  cssEl::unRefDone(ths_arg);
   return dostat;
 }
@@ -1396,9 +1396,8 @@ cssCodeBlock::~cssCodeBlock() {
     cssProg::unRefDone(code);
 }
 
-// todo: need to call this in a post-processing optimization step
 bool cssCodeBlock::CleanDoubleBlock() {
-  if(code->size > 1) return false;
+  if(code->size != 1) return false;
   cssEl* el = code->insts[0]->inst.El();
   if(el->GetType() != T_CodeBlock) return false;
   cssCodeBlock* sub_guy = (cssCodeBlock*)el;
@@ -1793,10 +1792,6 @@ cssEl::RunStat cssMbrScriptFun::Do(cssProg* prg) {
   // only set new cur_this after copying the args..
   fun->SetCurThis(cur_ths);
 
-  // todo: hopefully this is not critical! if so, add to Frame
-//   cssClassType* old_cls = cssMisc::cur_class;
-//   cssMbrScriptFun* old_meth = cssMisc::cur_method;
-
   cssMisc::cur_class = type_def;	// set the current class while in here..
   cssMisc::cur_method = this;
 
@@ -1812,10 +1807,6 @@ cssEl::RunStat cssMbrScriptFun::FunDone(cssProg* prg) {
   cssPtr* ths_ptr = (cssPtr*)(argv[1].El());
 
   ths_ptr->DelOpr();		// get rid of pointer to this object
-
-  // again, hopefully not needed
-//   cssMisc::cur_class = old_cls;	// no longer in class..
-//   cssMisc::cur_method = old_meth;
 
   cssEl* tmp = (argv[0].El())->AnonClone(); // create clone of retval
   tmp->prog = prg;
@@ -3118,6 +3109,20 @@ cssElPtr& cssProg::FindAutoName(const String& nm) {	// lookup by name
   return cssMisc::VoidElPtr;
 }
 
+int cssProg::OptimizeCode() {
+  int nopt = 0;
+  for(int i=0; i < size; i++) {
+    cssEl* el = insts[i]->inst.El();
+    if(el->GetType() == cssEl::T_CodeBlock) {
+      cssCodeBlock* cb = (cssCodeBlock*)el;
+      if(cb->CleanDoubleBlock()) nopt++;
+      if(cb->code)
+	nopt += cb->code->OptimizeCode();
+    }
+  }
+  return nopt;
+}
+
 
 //////////////////////////////////////////
 //	cssProg: Execution	 	//
@@ -4161,6 +4166,9 @@ bool cssProgSpace::Compile(istream& fh) {
 
   state = old_state;
   src_fin = old_fh;		// this is key for include -- not sure why it was removed..
+
+  OptimizeCode();
+
   cssMisc::PopCurTop(old_top);
   return !err;
 }
@@ -4298,6 +4306,33 @@ bool cssProgSpace::PopElseBlocks() {
   }
   return popped;
 }
+
+int cssProgSpace::OptimizeCode() {
+  int nopt = 0;
+  for(int i=0;i<types.size;i++) {
+    cssEl* el = types[i];
+    if(el->GetType() == cssEl::T_ClassType) {
+      cssClassType* cl = (cssClassType*)el->GetNonRefObj();
+      for(int j=0;j<cl->methods->size;j++) {
+	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
+	if(fun) {
+	  nopt += fun->OptimizeCode();
+	}
+      }
+    }
+  }
+
+  for(int i=0;i<statics.size;i++) {
+    cssEl* el = statics[i];
+    if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
+      nopt += el->GetSubProg()->OptimizeCode();
+    }
+  }
+  nopt += Prog(0)->OptimizeCode();
+//   if(nopt > 0)
+//     cerr << name << " optimized: " << nopt << " times" << endl;
+}
+
 
 //////////////////////////////////////////////////
 // 	cssProgSpace:    Execution 		//

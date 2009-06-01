@@ -1403,6 +1403,7 @@ public:
   void		ResetLasts() 		{ lastif = -1; lastelseif = false; }
   int		Undo(int srcln);      // undo coding of given source line
   void		ZapFrom(int zp_size); // zap (remove) program code from zp_size to end of current size
+  int		OptimizeCode();	      // 2nd pass that optimizes code -- returns # of optimizations
 
   cssElPtr&	FindAutoName(const String& nm);	// lookup by name
   cssElPtr&	FindLiteral(Int it)	{ return literals.Find(it); }
@@ -1608,6 +1609,7 @@ public:
   void		Undo(int st);
   void		Undo()			{ Undo(src_ln-2); }
   void		ResetParseFlags();
+  int		OptimizeCode();	      // 2nd pass that optimizes code -- returns # of optimizations
 
   // compile control actions
   void		ClearCompileCtrl()	{ compile_ctrl = CC_None; }

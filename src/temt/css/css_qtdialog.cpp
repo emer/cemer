@@ -315,6 +315,13 @@ void cssiEditDialog::GetMenuRep(cssMbrScriptFun* md) {
 //    cssiArgDialog       //
 ///////////////////////////
 
+// this is the offset of arg indexes into css-passed arg strings relative to the actual
+// type scanned arg values, which start at 0
+// 0 = instruction element??
+// 1 = 'this' pointer for methods
+// 2+ = actual args
+static const int stub_arg_off = 2;
+
 cssiArgDialog::cssiArgDialog(MethodDef* md_, TypeDef* typ_, void* base_, int use_argc_, int hide_args_,
   bool read_only_, bool modal_, QObject* parent)
 : cssiEditDialog(new cssClassInst(md_->name), NULL, read_only_, modal_, parent)
@@ -363,6 +370,7 @@ void cssiArgDialog::Constr_ArgTypes() {
   obj->name = String("(") + md->type->name + ") " + md->name +
     ": " + md->desc;
   obj->members->Push(&cssMisc::Void); // this is just a place-holder for arg[0]
+  obj->members->Push(&cssMisc::Void); // this is just a place-holder for arg[1]
   // note: constr all args, even if any leading hidden
   for (int i = 0; i < use_argc; ++i) {
     String arg_name = md->arg_names.FastEl(i);
@@ -444,7 +452,7 @@ void cssiArgDialog::Constr_Data_Labels() {
     QWidget* rep = mb_dat->GetRep();
     //int row = AddData(-1, rep);
     
-    cssEl* md = obj->members->FastEl(i+1); // need to add 1 here to skip over arg[0]
+    cssEl* md = obj->members->FastEl(i+stub_arg_off); // need to skip over arg[0] arg[1]
     GetName(j, md, name, desc);
     AddNameData(-1, name, desc, rep, mb_dat);
   }

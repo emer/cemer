@@ -39,17 +39,42 @@ LeabraProject .projects[0] {
 
   Program_Group @.programs = [1] {
     Program @[0] { 
-      ProgObjList @.objs = [1] {
+      ProgObjList @.objs = [2] {
 	TimeUsedHR @[0] { };
+	LeabraNetwork @[1] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @[0] { };
+	    UserDataItem @[1] { };
+	    UserDataItem @[2] { };
+	    UserDataItem @[3] { };
+	    UserDataItem @[4] { };
+	    UserDataItem @[5] { };
+	    UserDataItem @[6] { };
+	    UserDataItem @[7] { };
+	    UserDataItem @[8] { };
+	    UserDataItem @[9] { };
+	    UserDataItem @[10] { };
+	    UserDataItem @[11] { };
+	    UserDataItem @[12] { };
+	    UserDataItem @[13] { };
+	    UserDataItem @[14] { };
+	    UserDataItem @[15] { };
+	    UserDataItem @[16] { };
+	    UserDataItem @[17] { };
+	    UserDataItem @[18] { };
+     };
+};
       };
 
-      ProgVar_List @.vars = [6] {
+      ProgVar_List @.vars = [8] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
 	ProgVar @[2] { };
 	ProgVar @[3] { };
 	ProgVar @[4] { };
 	ProgVar @[5] { };
+	ProgVar @[6] { };
+	ProgVar @[7] { };
       };
 
       Function_List @.functions = [1] {
@@ -82,8 +107,19 @@ LeabraProject .projects[0] {
 	ForLoop @[2] { 
 	  ProgEl_List @.loop_code = [1] {
 	    ForLoop @[0] { 
-	      ProgEl_List @.loop_code = [1] {
-		FunctionCall @[0] { 
+	      ProgEl_List @.loop_code = [2] {
+		IfElse @[0] { 
+		  ProgEl_List @.true_code = [2] {
+		    AssignExpr @[0] { };
+		    MethodCall @[1] { };
+		  };
+
+		  ProgEl_List @.false_code = [2] {
+		    AssignExpr @[0] { };
+		    MethodCall @[1] { };
+		  };
+		};
+		FunctionCall @[1] { 
 		  ProgArg_List @.fun_args = [1] {
 		    ProgArg @[0] { };
 		  };
@@ -280,7 +316,261 @@ LeabraProject .projects[0] {
     name=;
     el_typ=TimeUsedHR;
     el_def=0;
-    TimeUsedHR @[0] {name="css_timer": s_used=7.875377: n_used=1: };
+    TimeUsedHR @[0] {name="css_timer": s_used=7.588735: n_used=1: };
+    LeabraNetwork @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="norm_err";
+       value 1 0=1;
+      };
+      UserDataItem @[1] {
+       name="ext_rew";
+       value 1 0=1;
+      };
+      UserDataItem @[2] {
+       name="maxda";
+       value 1 0=1;
+      };
+      UserDataItem @[3] {
+       name="minus_output_name";
+       value 1 0=1;
+      };
+      UserDataItem @[4] {
+       name="minus_cycles";
+       value 1 0=1;
+      };
+      UserDataItem @[5] {
+       name="ct_cycle";
+       value 1 0=1;
+      };
+      UserDataItem @[6] {
+       name="phase_no";
+       value 1 0=1;
+      };
+      UserDataItem @[7] {
+       name="phase";
+       value 1 0=1;
+      };
+      UserDataItem @[8] {
+       name="sse";
+       value 1 0=1;
+      };
+      UserDataItem @[9] {
+       name="output_name";
+       value 1 0=1;
+      };
+      UserDataItem @[10] {
+       name="trial_name";
+       value 1 0=1;
+      };
+      UserDataItem @[11] {
+       name="group_name";
+       value 1 0=1;
+      };
+      UserDataItem @[12] {
+       name="time";
+       value 1 0=1;
+      };
+      UserDataItem @[13] {
+       name="cycle";
+       value 1 0=1;
+      };
+      UserDataItem @[14] {
+       name="tick";
+       value 1 0=1;
+      };
+      UserDataItem @[15] {
+       name="trial";
+       value 1 0=1;
+      };
+      UserDataItem @[16] {
+       name="group";
+       value 1 0=1;
+      };
+      UserDataItem @[17] {
+       name="epoch";
+       value 1 0=1;
+      };
+      UserDataItem @[18] {
+       name="batch";
+       value 1 0=1;
+      };
+     };
+     name="Network_0";
+     desc=;
+     specs {
+      name=;
+      el_typ=BaseSpec;
+      el_def=0;
+     };
+     layers {
+      name=;
+      el_typ=LeabraLayer;
+      el_def=0;
+      pos {x=0: y=0: z=0: };
+     };
+     view_objs {
+      name=;
+      el_typ=NetViewObj;
+      el_def=0;
+     };
+     flags=;
+     auto_build=AUTO_BUILD;
+     train_mode=TRAIN;
+     wt_update=ON_LINE;
+     small_batch_n=10;
+     batch=0;
+     epoch=0;
+     group=0;
+     trial=0;
+     tick=0;
+     cycle=0;
+     time=0;
+     group_name=;
+     trial_name=;
+     output_name=;
+     sse_unit_avg=0;
+     sse_sqrt=0;
+     sse=0;
+     sum_sse=0;
+     avg_sse=0;
+     cnt_err_tol=0;
+     cnt_err=0;
+     pct_err=0;
+     pct_cor=0;
+     cur_sum_sse=0;
+     avg_sse_n=0;
+     cur_cnt_err=0;
+     train_time {name="TimeUsed_0": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     epoch_time {name="TimeUsed_1": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     trial_time {name="TimeUsed_3": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     settle_time {name="TimeUsed_4": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     cycle_time {name="TimeUsed_5": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     wt_sync_time {name="TimeUsed_6": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     misc_time {name="TimeUsed_7": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     threads {
+      run_time {name="TimeUsedHR_4": s_used=0: n_used=0: };
+      sync_time {name="TimeUsedHR_5": s_used=0: n_used=0: };
+      total_time {name="TimeUsedHR_6": s_used=0: n_used=0: };
+      n_wake_in_sync=0;
+      run_time_pct=0;
+      sync_time_pct=0;
+      wake_in_sync_pct=0;
+      interleave=1;
+      ignore_lay_sync=0;
+     };
+     dmem_sync_level=DMEM_SYNC_NETWORK;
+     dmem_nprocs=1;
+     usr1_save_fmt=FULL_NET;
+     wt_save_fmt=TEXT;
+     lay_layout=THREE_D;
+     n_units=0;
+     n_cons=0;
+     max_size {x=1: y=1: z=1: };
+     font_sizes {
+      net_name=0.05;
+      net_vals=0.05;
+      layer=0.04;
+      layer_vals=0.03;
+      prjn=0.01;
+      unit=0.02;
+      un_nm_len=3;
+     };
+     view_params {
+      xy_square=0;
+      unit_spacing=0.05;
+      prjn_disp=L_R_F;
+      prjn_name=0;
+      prjn_width=0.002;
+      prjn_trans=0.5;
+      lay_trans=0.5;
+      unit_trans=0.6;
+     };
+     learn_rule=LEABRA_CHL;
+     phase_order=MINUS_PLUS;
+     no_plus_test=1;
+     sequence_init=DO_NOTHING;
+     phase=MINUS_PHASE;
+     nothing_phase=0;
+     phase_no=0;
+     phase_max=2;
+     ct_cycle=0;
+     time_inc=1;
+     cycle_max=60;
+     min_cycles=15;
+     min_cycles_phase2=35;
+     ct_time {
+      minus=50;
+      plus=20;
+      inhib=1;
+      n_avg_only_epcs=1;
+      total_cycles=71;
+      inhib_start=70;
+     };
+     ct_sravg {
+      start=30;
+      end=1;
+      interval=5;
+      plus_s_st=19;
+     };
+     ct_sin_i {
+      start=30;
+      duration=20;
+      n_pi=2;
+      burst_i=0;
+      trough_i=0;
+     };
+     ct_fin_i {
+      start=20;
+      end=25;
+      inhib_i=0;
+     };
+     sravg_vals {
+      s_sum=0;
+      s_nrm=1;
+      m_sum=0;
+      m_nrm=1;
+      do_s=0;
+     };
+     minus_cycles=0;
+     avg_cycles=0;
+     avg_cycles_sum=0;
+     avg_cycles_n=0;
+     minus_output_name=;
+     net_misc {
+      cyc_syn_dep=0;
+      syn_dep_int=20;
+     };
+     send_pct=0;
+     send_pct_n=0;
+     send_pct_tot=0;
+     avg_send_pct=0;
+     avg_send_pct_sum=0;
+     avg_send_pct_n=0;
+     maxda_stopcrit=0.005;
+     maxda=0;
+     trg_max_act_stopcrit=1;
+     trg_max_act=0;
+     ext_rew=0;
+     ext_rew_avail=0;
+     norew_val=0.5;
+     avg_ext_rew=0;
+     pvlv_pvi=0;
+     pvlv_lve=0;
+     pvlv_lvi=0;
+     pv_detected=0;
+     avg_ext_rew_sum=0;
+     avg_ext_rew_n=0;
+     off_errs=1;
+     on_errs=1;
+     norm_err=0;
+     avg_norm_err=1;
+     avg_norm_err_sum=0;
+     avg_norm_err_n=0;
+    };
    };
    types {
     name=;
@@ -299,7 +589,7 @@ LeabraProject .projects[0] {
     ProgVar @[0] {
      name="n_outer_itr";
      var_type=T_Int;
-     int_val=400;
+     int_val=300;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED;
      reference=0;
@@ -317,7 +607,7 @@ LeabraProject .projects[0] {
     ProgVar @[2] {
      name="i";
      var_type=T_Int;
-     int_val=400;
+     int_val=100;
      objs_ptr=0;
      flags=NULL_CHECK|USED;
      reference=0;
@@ -335,17 +625,36 @@ LeabraProject .projects[0] {
     ProgVar @[4] {
      name="dummy_val";
      var_type=T_Int;
-     int_val=9303;
+     int_val=81;
      objs_ptr=0;
      flags=NULL_CHECK|USED;
      reference=0;
      desc=;
     };
     ProgVar @[5] {
+     name="dummy2";
+     var_type=T_Real;
+     real_val=0;
+     objs_ptr=0;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[6] {
      name="css_timer";
      var_type=T_Object;
      object_type=TimeUsedHR;
      object_val=.projects[0].programs[0].objs[0]$0$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[7] {
+     name="Network_0";
+     var_type=T_Object;
+     object_type=LeabraNetwork;
+     object_val=.projects[0].programs[0].objs[1]$1$;
      objs_ptr=1;
      flags=NULL_CHECK|USED;
      reference=0;
@@ -409,7 +718,7 @@ LeabraProject .projects[0] {
       AssignExpr @[1] {
        desc=;
        flags=;
-       result_var=.projects[0].programs[0].functions[0].fun_code[0].local_vars[0]$1$;
+       result_var=.projects[0].programs[0].functions[0].fun_code[0].local_vars[0]$2$;
        expr {
 	expr="(cur_val * 117) % 17502";
        };
@@ -417,7 +726,7 @@ LeabraProject .projects[0] {
       AssignExpr @[2] {
        desc=;
        flags=;
-       result_var=.projects[0].programs[0].functions[0].fun_code[0].local_vars[1]$2$;
+       result_var=.projects[0].programs[0].functions[0].fun_code[0].local_vars[1]$3$;
        expr {
 	expr="taMath_float::cos(tmpval)";
        };
@@ -449,7 +758,7 @@ LeabraProject .projects[0] {
     AssignExpr @[0] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[4]$3$;
+     result_var=.projects[0].programs[0].vars[4]$4$;
      expr {
       expr="1";
      };
@@ -458,7 +767,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[5]$4$;
+     obj=.projects[0].programs[0].vars[6]$5$;
      method=TimeUsedHR::StartTimer;
      meth_args {
       name=;
@@ -490,11 +799,68 @@ LeabraProject .projects[0] {
 	name=;
 	el_typ=ProgEl;
 	el_def=0;
-	FunctionCall @[0] {
+	IfElse @[0] {
 	 desc=;
 	 flags=;
-	 result_var=$3$;
-	 fun=.projects[0].programs[0].functions[0]$5$;
+	 cond {
+	  expr="dummy_val > 1000";
+	 };
+	 true_code {
+	  name=;
+	  el_typ=ProgEl;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   desc=;
+	   flags=;
+	   result_var=.projects[0].programs[0].vars[5]$6$;
+	   expr {
+	    expr="css_timer.s_used";
+	   };
+	  };
+	  MethodCall @[1] {
+	   desc=;
+	   flags=;
+	   result_var=NULL;
+	   obj=.projects[0].programs[0].vars[7]$7$;
+	   method=Network::Build;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	   };
+	  };
+	 };
+	 false_code {
+	  name=;
+	  el_typ=ProgEl;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   desc=;
+	   flags=;
+	   result_var=$6$;
+	   expr {
+	    expr="css_timer.s_used";
+	   };
+	  };
+	  MethodCall @[1] {
+	   desc=;
+	   flags=;
+	   result_var=NULL;
+	   obj=$7$;
+	   method=Network::Build;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	   };
+	  };
+	 };
+	};
+	FunctionCall @[1] {
+	 desc=;
+	 flags=;
+	 result_var=$4$;
+	 fun=.projects[0].programs[0].functions[0]$8$;
 	 fun_args {
 	  name=;
 	  el_typ=ProgArg;
@@ -537,7 +903,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=;
      result_var=NULL;
-     obj=$4$;
+     obj=$5$;
      method=TimeUsedHR::EndTimer;
      meth_args {
       name=;
@@ -555,8 +921,8 @@ LeabraProject .projects[0] {
     PrintVar @[5] {
      desc=;
      flags=;
-     message="dummy val should be 9303: ";
-     print_var=$3$;
+     message="dummy val should be 6381: ";
+     print_var=$4$;
      print_var2=NULL;
      print_var3=NULL;
      print_var4=NULL;
@@ -571,7 +937,7 @@ LeabraProject .projects[0] {
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$6$;
+   m_data=.projects[0]$9$;
    name="Browser2";
    visible=1;
    m_is_root=0;
@@ -601,7 +967,7 @@ LeabraProject .projects[0] {
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$6$;
+     m_root=$9$;
     };
     PanelViewer @[1] {
      m_data=NULL;
