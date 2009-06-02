@@ -962,9 +962,8 @@ switchblock:            /* switch is like a little function with one arg */
         ;
 
 switch:   CSS_SWITCH 			{ 
-            cssCodeBlock* blk = new cssCodeBlock(cssSwitchBlock_Name);
+            cssCodeBlock* blk = new cssCodeBlock(cssSwitchBlock_Name, cssMisc::cur_top->Prog());
 	    blk->loop_type = cssCodeBlock::SWITCH;
-	    blk->owner_prog = cssMisc::cur_top->Prog();
 	    cssMisc::cur_top->AddStatic(blk);
 	    $$ = Code1(blk); cssMisc::cur_top->Push(blk->code); }
         ;
@@ -1009,8 +1008,7 @@ forloop: for '(' for_cond for_incr for_end_paren stmt {
 /* todo: manage missing things in these sub-cases, not above */
 
 for:   	  CSS_FOR		{ /* for loop contained within own block */
-            cssCodeBlock* blk = new cssCodeBlock(cssForLoop_Name);
-	    blk->owner_prog = cssMisc::cur_top->Prog();
+            cssCodeBlock* blk = new cssCodeBlock(cssForLoop_Name, cssMisc::cur_top->Prog());
 	    cssMisc::cur_top->AddStatic(blk);
 	    $$ = Code1(blk); cssMisc::cur_top->Push(blk->code); }
         ;
@@ -1021,8 +1019,7 @@ for_cond:
         ;
 
 for_cond_sc:	  ';'			{
-            cssCodeBlock* blk = new cssCodeBlock(cssCondBlock_Name);
-	    blk->owner_prog = cssMisc::cur_top->Prog();
+            cssCodeBlock* blk = new cssCodeBlock(cssCondBlock_Name, cssMisc::cur_top->Prog());
 	    blk->action = cssCodeBlock::PUSH_RVAL; /* start conditional */
 	    cssMisc::cur_top->AddStatic(blk);
 	    $$ = Code1(blk); cssMisc::cur_top->Push(blk->code); }
@@ -1035,8 +1032,7 @@ for_incr:   for_incr_sc
 for_incr_sc: ';' {
               cssMisc::cur_top->Pop(); /* get rid of cond, push incr */
 	      cssMisc::cur_top->ResetParseFlags();
-	      cssCodeBlock* blk = new cssCodeBlock(cssForIncr_Name);
-	      blk->owner_prog = cssMisc::cur_top->Prog();
+	      cssCodeBlock* blk = new cssCodeBlock(cssForIncr_Name, cssMisc::cur_top->Prog());
   	      blk->action = cssCodeBlock::IF_TRUE; /* start block of if-true */
 	      blk->loop_back = 3; /* go back 3 to the cond */
 	      cssMisc::cur_top->AddStatic(blk);
@@ -1045,8 +1041,7 @@ for_incr_sc: ';' {
 
 for_end_paren: ')' {
               cssMisc::cur_top->Pop(); /* get rid of incr */
-	      cssCodeBlock* blk = new cssCodeBlock(cssForLoopStmt_Name);
-	      blk->owner_prog = cssMisc::cur_top->Prog();
+	      cssCodeBlock* blk = new cssCodeBlock(cssForLoopStmt_Name, cssMisc::cur_top->Prog());
   	      blk->action = cssCodeBlock::IF_TRUE; /* start block of if-true */
 	      blk->loop_type = cssCodeBlock::FOR;
 	      cssMisc::cur_top->AddStatic(blk);
@@ -1058,8 +1053,7 @@ doloop:   do stmt
         ;
 
 do:   	 CSS_DO 	 	{ 
-            cssCodeBlock* blk = new cssCodeBlock(cssDoLoop_Name);
-	    blk->owner_prog = cssMisc::cur_top->Prog();
+            cssCodeBlock* blk = new cssCodeBlock(cssDoLoop_Name, cssMisc::cur_top->Prog());
 	    blk->loop_type = cssCodeBlock::DO;
 	    cssMisc::cur_top->AddStatic(blk); /* while is all inside this do! */
 	    $$ = Code1(blk); cssMisc::cur_top->Push(blk->code); }
@@ -1158,8 +1152,7 @@ else:	  CSS_ELSE			{
 	      }
 	    }
 	    cssMisc::cur_top->Prog()->lastif = -1; /* reset it */
-            cssCodeBlock* blk = new cssCodeBlock(cssElseBlock_Name);
-	    blk->owner_prog = cssMisc::cur_top->Prog();
+            cssCodeBlock* blk = new cssCodeBlock(cssElseBlock_Name, cssMisc::cur_top->Prog());
 	    blk->action = cssCodeBlock::ELSE; /* start block of else */
 	    cssMisc::cur_top->AddStatic(blk);
 	    $$ = Code2(blk, cssBI::pop); /* pop after else to get rid of prev if cond */
@@ -1167,16 +1160,14 @@ else:	  CSS_ELSE			{
         ;
 
 cond: 	  cond_paren expr cond_end_paren		{ 
-            cssCodeBlock* blk = new cssCodeBlock(cssIfTrueBlock_Name);
-	    blk->owner_prog = cssMisc::cur_top->Prog();
+            cssCodeBlock* blk = new cssCodeBlock(cssIfTrueBlock_Name, cssMisc::cur_top->Prog());
 	    blk->action = cssCodeBlock::IF_TRUE; /* start block of if-true */
 	    cssMisc::cur_top->AddStatic(blk);
 	    Code1(blk); cssMisc::cur_top->Push(blk->code); $$ = $1; }
         ;
 
 cond_paren:	  '('			{
-            cssCodeBlock* blk = new cssCodeBlock(cssCondBlock_Name);
-	    blk->owner_prog = cssMisc::cur_top->Prog();
+            cssCodeBlock* blk = new cssCodeBlock(cssCondBlock_Name, cssMisc::cur_top->Prog());
 	    blk->action = cssCodeBlock::PUSH_RVAL; /* start conditional */
 	    cssMisc::cur_top->AddStatic(blk);
 	    $$ = Code1(blk); cssMisc::cur_top->Push(blk->code); }
@@ -1187,8 +1178,7 @@ cond_end_paren: ')' {
         ;
 
 bra:	  '{'			{
-            cssCodeBlock* blk = new cssCodeBlock(cssBlock_Name);
-	    blk->owner_prog = cssMisc::cur_top->Prog();
+            cssCodeBlock* blk = new cssCodeBlock(cssBlock_Name, cssMisc::cur_top->Prog());
 	    cssMisc::cur_top->AddStatic(blk);
 	    $$ = Code1(blk); cssMisc::cur_top->SetPush(blk->code); }
         ;

@@ -404,6 +404,7 @@ cssEl* cssElPtr::El() const {
   }
   case PROG_AUTO:
     if(dx < 0)	return &cssMisc::Void;
+//     if(!((cssProg*)ptr)->Autos()) return &cssMisc::Void; // shouldn't happen
     return ((cssProg*)ptr)->Autos()->El(dx);
   case SPACE:
     if(dx < 0)	return &cssMisc::Void;
@@ -468,9 +469,6 @@ void cssElPtr::operator-=(int indx) {
     cssMisc::Warning(NULL, "Array bounds exceeded");
   }
 }
-
-// this is needed early on
-const int cssElFun::ArgMax = 64;
 
 //////////////////////////
 // 	cssEl    	//
@@ -691,7 +689,7 @@ cssEl::RunStat cssEl::MakeToken(cssProg* prg) {
   cssEl* tmp;
   if((tmp = MakeToken_stub(act_argc, args)) != 0) {
     if(prg == cssMisc::ConstExpr)
-      prg->Stack()->Push(new cssRef(prg->Autos()->Push(tmp)));
+      prg->Stack()->Push(new cssRef(prg->Autos(0)->Push(tmp)));
     else if(tmp_str == "extern")
       prg->Stack()->Push(new cssRef(cssMisc::Externs.PushUniqNameOld(tmp)));
     else if(tmp_str == "static")
@@ -724,7 +722,7 @@ cssEl::RunStat cssEl::MakeTempToken(cssProg* prg) {
   arg_holder.prog = prg;
   cssEl* args[cssElFun::ArgMax + 1];
   int act_argc;
-  arg_holder.BindArgs(args, act_argc);
+  arg_holder.BindArgs(args, act_argc); // could be var arg
   cssEl* tmp;
   if((tmp = MakeToken_stub(act_argc, args)) != 0) {
     tmp->prog = prg;
@@ -1023,48 +1021,39 @@ void cssElFun::Copy(const cssElFun& cp) {
   SetRetvType(cp.retv_type);
 }
 
-int cssElFun::BindArgs(cssEl** args, int& act_argc) {
+///////////////////////////////////////////////////////////////////////////
+// 		no args
+
+void cssElFun::BindArgs(cssEl** args, int& act_argc) {
   args[0] = this;		// first argument is always selfptr
   act_argc = 0;
-
-  if(argc == NoArg)
-    return 0;
+  if(argc == NoArg) return;
 
   cssSpace* stack = prog->Stack();
-#ifdef DEBUG
-  if(prog->top->debug >= 3) {
-    cerr << "\n" << cssMisc::Indent(1) << "Stack at time of function call to: " << name;
-    stack->List(cerr, 1);
-    cerr << endl;
-    taMisc::FlushConsole();
-  }
-#endif
+  int stack_start;		// where to start getting things off of the stack
+
   if(argc == 0) {
     if(stack->Peek() == &cssMisc::Void)	// get rid of arg stop..
       stack->Pop();
-    return act_argc;
+    return;
   }
 
-  int stack_start;		// where to start getting things off of the stack
   if(argc == VarArg) {
     ///////////////////////////////////////////////////////////////////////////
     // 		variable numbers of arguments
-
     for(stack_start = stack->size-1; stack_start >= 0; stack_start--) {
       if(stack->FastEl(stack_start) == &cssMisc::Void)
 	break;
     }
     act_argc = ((int)stack->size - stack_start) - 1;
     if(act_argc >= ArgMax) {
-      cssMisc::Error(prog, "Arg count greater than max (64) in:", (const char*)name,
+      cssMisc::Error(prog, "Arg count greater than max (32) in:", (const char*)name,
 		     String((int)act_argc));
       act_argc = -1;
-      return -1;
+      return;
     }
-    for(int i=act_argc; i>0; i--) {
+    for(int i=act_argc; i>0; i--)
       args[i] = stack->Pop();
-//       args[i] = stack->Pop_NoUnRef();
-    }
 
     if(stack->Peek() == &cssMisc::Void)	// get rid of arg stop..
       stack->Pop();
@@ -1078,19 +1067,19 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
 		     "should have at least:", String((int)argc), "got:",
 		     String((int)stack->size));
       act_argc = -1;
-      return -1;
+      return;
     }
+
     act_argc = argc;
-    for(int i=act_argc; i>0; i--) { // todo: get rid of this copy too!
+    for(int i=act_argc; i>0; i--)
       args[i] = stack->Pop();
-    }
+
     if(stack->Peek() == &cssMisc::Void)	// get rid of arg stop..
       stack->Pop();
   }
   else {
     ///////////////////////////////////////////////////////////////////////////
     // 		has default args -- need to search for how many args we got
-
     int max_stack = stack->size - argc;
     for(stack_start = stack->size-1; stack_start >= max_stack; stack_start--) {
       if(stack->FastEl(stack_start) == &cssMisc::Void)
@@ -1104,12 +1093,11 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
 		     "should have at least:", String((int)(argc-arg_defs.size)), "got:",
 		     String((int)act_argc));
       act_argc = -1;		// err msg indication
-      return -1;
+      return;
     }
 
-    for(int i=act_argc; i>0; i--) {
+    for(int i=act_argc; i>0; i--)
       args[i] = stack->Pop();
-    }
 
     if(stack->Peek() == &cssMisc::Void)	// get rid of arg stop..
       stack->Pop();
@@ -1121,7 +1109,6 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
     }
     act_argc = argc;		// we always get the right number...
   }
-  return act_argc;
 }
 
 void cssElFun::DoneArgs(cssEl** args, int& act_argc) {
@@ -1201,11 +1188,10 @@ cssEl* cssElCFun::MakeToken_stub(int na, cssEl* arg[]) {
 cssEl::RunStat cssElCFun::Do(cssProg* prg) {
   prog = prg;
   dostat = cssEl::Running;
-  cssEl* args[cssElFun::ArgMax + 1];
   int act_argc;
+  cssEl* args[cssElFun::ArgMax + 1];
   BindArgs(args, act_argc);
-  if(act_argc < 0)
-    return cssEl::ExecError;
+  if(act_argc < 0) return cssEl::ExecError;
 
   cssEl* tmp = (*funp)(act_argc, args);
   prog = prg;                   // restore if recursive
@@ -1214,6 +1200,7 @@ cssEl::RunStat cssElCFun::Do(cssProg* prg) {
     prog->Stack()->Push(tmp);
   }
   DoneArgs(args, act_argc);
+
   return dostat;
 }
 
@@ -1252,13 +1239,11 @@ cssElInCFun::cssElInCFun(const cssElInCFun& cp, const String& nm)
 {
 }
 
-// this assumes fixed argc, and does not assume a void pointer exists for marking args!
-int cssElInCFun::BindArgs(cssEl** args, int& act_argc) {
+void cssElInCFun::BindArgs(cssEl** args, int& act_argc) {
   args[0] = this;		// first argument is always selfptr
   act_argc = 0;
-
-  if((argc == NoArg) || (argc == 0))
-    return act_argc;
+  if(argc == NoArg || argc == 0)
+    return;
 
   cssSpace* stack = prog->Stack();
   if(stack->size < argc) {
@@ -1266,15 +1251,33 @@ int cssElInCFun::BindArgs(cssEl** args, int& act_argc) {
 		   "should have:", String((int)argc), "got:",
 		   String((int)stack->size));
     act_argc = -1;
-    return -1;
-  }
-  act_argc = argc;
-  for(int i=act_argc; i>0; i--) {
-    args[i] = stack->Pop();
+    return;
   }
 
-  return act_argc;
+  act_argc = argc;
+  for(int i=act_argc; i>0; i--)
+    args[i] = stack->Pop();
+  // no void check
 }
+
+cssEl::RunStat cssElInCFun::Do(cssProg* prg) {
+  prog = prg;
+  dostat = cssEl::Running;
+  int act_argc;
+  cssEl* args[argc + 1];	// only need fixed amount
+  BindArgs(args, act_argc);
+
+  cssEl* tmp = (*funp)(act_argc, args);
+  prog = prg;                   // restore if recursive
+  if(!prog->top->external_stop && (tmp) && (tmp != &cssMisc::Void)) {
+    tmp->prog = prog;
+    prog->Stack()->Push(tmp);
+  }
+  DoneArgs(args, act_argc);
+
+  return dostat;
+}
+
 
 
 //////////////////////////////////////////
@@ -1316,41 +1319,21 @@ cssEl* cssMbrCFun::MakeToken_stub(int, cssEl* arg[]) {
 cssEl::RunStat cssMbrCFun::Do(cssProg* prg) {
   prog = prg;
   dostat = cssEl::Running;
-  cssEl* args[cssElFun::ArgMax + 1];
   int act_argc;
+  cssEl* args[cssElFun::ArgMax + 1];
   BindArgs(args, act_argc);
-  if(act_argc < 0)
-    return cssEl::ExecError;
-//   cssEl* ths_arg = args[1];
-//   // need to get rid of the 'this' pointer, which is now args[1] -- pack down list
-//   for(int i=2;i<=act_argc;i++)
-//     args[i-1] = args[i];
-//   act_argc--;			// remove this
+  if(act_argc < 0) return cssEl::ExecError;
   if(!ths) {
-    cssMisc::Error(prog, "Null 'this' object for member function call:", name);
+    cssMisc::Error(prog, "Null 'this' object for member function call:", name);    
     return cssEl::ExecError;
   }
   cssEl* tmp = (*funp)(ths, act_argc, args);
   prog = prg;                   // restore if recursive
   tmp->prog = prog;
-//   if(prog->top->debug >= 3) {
-//     cerr << "\n" << cssMisc::Indent(1) << "Stack prior to rval push from mbrcfun: " << name;
-//     prog->Stack()->List(cerr, 1);
-//     cerr << endl;
-//     taMisc::FlushConsole();
-//   }
   if(!prog->top->external_stop && (tmp)) {
     prog->Stack()->Push(tmp);
   }
-//   if(prog->top->debug >= 3) {
-//     cerr << "\n" << cssMisc::Indent(1) << "Stack after rval push from mbrcfun: " << name;
-//     prog->Stack()->List(cerr, 1);
-//     cerr << endl;
-//     taMisc::FlushConsole();
-//   }
   DoneArgs(args, act_argc);
-//   cssEl::Done(ths_arg);		// not in args list so do it separately
-  //  cssEl::unRefDone(ths_arg);
   return dostat;
 }
 
@@ -1387,10 +1370,15 @@ cssCodeBlock::cssCodeBlock() {
   Constr();
 }
 
-cssCodeBlock::cssCodeBlock(const String& nm) {
+cssCodeBlock::cssCodeBlock(const String& nm, cssProg* ownr_prog) {
   Constr();
   name = nm;
   code->name = name;
+  owner_prog = ownr_prog;
+  if(owner_prog->master_prog)
+    code->master_prog = owner_prog->master_prog; // hand-me-down
+  else
+    code->master_prog = owner_prog; // this must be our master too!
 }
 cssCodeBlock::cssCodeBlock(const cssCodeBlock& cp) {
   code = NULL;
@@ -1687,7 +1675,7 @@ void cssMbrScriptFun::Define(cssProg* prg, bool decl, const String& nm) {
   if(nm.nonempty())
     name = nm;
   // code was previously defined, and needs to be overwritten
-  if((fun->size > 0) || (decl && (fun->Autos()->size > 0))) {
+  if((fun->size > 0) || (decl && (fun->Autos(0)->size > 0))) {
     cssProg* old_fun = fun;
     fun = new cssProg(old_fun->name);
     cssProg::Ref(fun);
@@ -1715,7 +1703,7 @@ void cssMbrScriptFun::Define(cssProg* prg, bool decl, const String& nm) {
     }
   }
 
-  if(fun->Autos()->size > 0) {	// already defined
+  if(fun->Autos(0)->size > 0) {	// already defined
     if(actual_argc != argc) {
       cssMisc::Warning(NULL, "Function definition arg count (", String(actual_argc),
 		       ") does not match declaration:", String(argc));
@@ -2749,29 +2737,6 @@ cssIJump::cssIJump(const cssIJump& cp) {
   Copy(cp);
 }
 
-cssFrame::cssFrame(cssProg* prg) {
-  prog = prg;
-  fr_no = 0;
-  pc = 0;
-//   stack.name = "Stack";
-//   autos.name = "Autos";
-  autos.el_retv.SetProgAuto(prg);
-  args = NULL;
-  act_argc = 0;
-  cur_this = NULL;
-}
-
-void cssFrame::AllocArgs() {
-  args = new cssEl*[cssElFun::ArgMax + 1];
-}
-
-cssFrame::~cssFrame() {
-  if(args)
-    delete [] args;
-  args = NULL;
-  stack.Reset();
-  autos.Reset();
-}
 
 //////////////////////////////////
 // 	cssProg: Programs	//
@@ -2786,6 +2751,7 @@ void cssProg::Constr() {
   owner_fun = NULL;
   owner_blk = NULL;
   top = cssMisc::Top;
+  master_prog = NULL;
 
   insts = (cssInst**)malloc(alloc_size * sizeof(cssInst*));
   size = 0;
@@ -2804,12 +2770,15 @@ void cssProg::Constr() {
   lastif = -1;
   lastelseif = false;
   AddFrame();			// always start off with one
+
+  Frame(0)->autos = new cssSpace("autos"); // always have autos in base frame;
+  Frame(0)->autos->el_retv.SetProgAuto(this);
 }
 
 void cssProg::Copy(const cssProg& cp) {
   literals.Copy(cp.literals);
   statics.Copy(cp.statics);
-  Autos()->Copy(cp.frame[0]->autos);
+  Autos(0)->Copy(*(cp.Autos(0)));
 
   AllocInst(cp.size+1);
   for(int i=0; i<cp.size; i++) {
@@ -2877,14 +2846,21 @@ void cssProg::AllocFrame(int sz) {
 int cssProg::AddFrame() {
   if(fr_size+1 >= fr_alloc_size)
     AllocFrame(fr_size+1);
-  frame[fr_size++] = new cssFrame(this);
-  SetPC(0);
+  cssFrame* nwfr = new cssFrame(this);
+  frame[fr_size++] = nwfr;
   if(fr_size > 1) {
-    Autos()->Alloc(frame[0]->autos.size); // pre-alloc once..
-    Autos()->Copy_Blanks(frame[0]->autos); // just need the blank vars here..
+    if(Autos(0)->size > 0) {
+      nwfr->autos = new cssSpace(Autos(0)->size, _nilString);
+      nwfr->autos->el_retv.SetProgAuto(this);
+      nwfr->autos->Copy_Blanks(*(Autos(0))); // just need the blank vars here..
+    }
   }
+//   if(!master_prog) {		// only if we are the master do we get a stack
+    nwfr->stack = new cssSpace();
+//   }
   return fr_size-1;
 }
+
 int cssProg::DelFrame() {
   if(fr_size <= 0)
     return 0;
@@ -2898,7 +2874,7 @@ void cssProg::Reset() {
   saved_stack.Reset();
   while(fr_size > 1)	DelFrame();
   ResetCode();
-  Autos()->Reset();
+  Autos(0)->Reset();
   literals.Reset();
   statics.Reset();
 }
@@ -2985,7 +2961,8 @@ void cssProg::ListLocals(pager_ostream& fh, int frdx, int indent) {
   if(inst) {
     fh << cssMisc::Indent(indent + 1) << inst->PrintStr() << "\n";
   }
-  Autos(frdx)->List(fh, indent+1, 1);
+  if(Autos(frdx))
+     Autos(frdx)->List(fh, indent+1, 1);
   statics.List(fh, indent+1, 1);
   Stack(frdx)->List(fh, indent+1, 1);
   if(top->debug >= 1)
@@ -3004,9 +2981,9 @@ int cssProg::AddCode(cssInst* it) {
 }
 
 cssElPtr& cssProg::AddAuto(cssEl* it) {
-  el_retv = Autos()->FindName(it->name);
+  el_retv = Autos(0)->FindName(it->name);
   if(it->name.empty() || (el_retv == 0))
-    el_retv = Autos()->Push(it);
+    el_retv = Autos(0)->Push(it);
   else {
     cssMisc::Warning(this, "Warning: attempt to redefine variable in same scope:",it->name);
     cssEl::Done(it);
@@ -3116,7 +3093,7 @@ int cssProg::Undo(int srcln) {
 }
 
 cssElPtr& cssProg::FindAutoName(const String& nm) {	// lookup by name
-  if((el_retv = Autos()->FindName(nm)) != 0)
+  if((el_retv = Autos(0)->FindName(nm)) != 0)
     return el_retv;
   if((el_retv = statics.FindName(nm)) != 0)
     return el_retv;
@@ -3920,7 +3897,7 @@ cssElPtr& cssProgSpace::AddStaticVar(cssEl* it) {
 }
 bool cssProgSpace::ReplaceVar(cssEl* old, cssEl* nw) {
   if(size > 1) {
-    if(Prog()->Autos()->Replace(old, nw))  return true;
+    if(Prog()->Autos(0)->Replace(old, nw))  return true;
     if(Prog()->statics.Replace(old, nw))   return true;
   }
   if(statics.Replace(old, nw))	return true;
@@ -3930,7 +3907,7 @@ bool cssProgSpace::ReplaceVar(cssEl* old, cssEl* nw) {
 }
 bool cssProgSpace::RemoveVar(cssEl* old) {
   if(size > 1) {
-    if(Prog()->Autos()->Remove(old))	return true;
+    if(Prog()->Autos(0)->Remove(old))	return true;
     if(Prog()->statics.Remove(old))	return true;
   }
   if(statics.Remove(old))	return true;
@@ -3986,7 +3963,7 @@ cssSpace* cssProgSpace::GetParseSpace(int idx) {
     }
     if((n_above > 0) && (cp->owner_fun))
       n_above++;
-    return Prog()->Autos();
+    return Prog()->Autos(0);
   }
   else if(idx == after_class+1)
     return &(Prog()->statics);
@@ -4001,7 +3978,7 @@ cssSpace* cssProgSpace::GetParseSpace(int idx) {
       if(cur_idx == prog_idx) break;
     }
     if(stat_auto)
-      return cp->Autos();
+      return cp->Autos(0);
     else
       return &(cp->statics);
   }
@@ -4766,8 +4743,10 @@ void cssProgSpace::BackTrace(int levels_back) {
       fh << cssMisc::Indent(1) << inst->PrintStr() << "\n";
     }
     if(debug >= 2) {
-      cp->Stack(Prog_Fr(i))->List(fh, 2, 1);
-      cp->Autos(Prog_Fr(i))->List(fh, 2, 1);
+      int fr = Prog_Fr(i);
+      cp->Stack(fr)->List(fh, 2, 1);
+      if(cp->Autos(fr))
+	cp->Autos(fr)->List(fh, 2, 1);
     }
   }
 }

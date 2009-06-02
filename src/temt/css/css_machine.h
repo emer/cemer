@@ -775,7 +775,7 @@ public:
 class CSS_API cssElFun : public cssEl {
   // basic things for function-type objects (this is a base type for other classes)
 public:
-  static const int ArgMax;      // maximum number of arguments
+  static const int ArgMax = 32; // maximum number of arguments
   cssSpace	arg_defs;	// default values for arguments
   String_Array	arg_vals;	// current arg values (as strings), for gui stuff
   int		def_start;	// where in args do the defaults start
@@ -788,9 +788,11 @@ public:
   int		GetParse() const	{ return CSS_FUN; }
   cssEl*	GetTypeObject() const	{ return (cssEl*)this; }
 
-  virtual int   BindArgs(cssEl** args, int& act_argc);     // returns actual no of args
-  virtual void  DoneArgs(cssEl** args, int& act_argc);     // Done with args
-  virtual void	GetArgDefs();	// get argument defaults
+  void  	BindArgs(cssEl** args, int& act_argc);
+  // bind arguments -- decides which of the above to use based on situation
+
+  void  	DoneArgs(cssEl** args, int& act_argc);     // Done with args
+  void		GetArgDefs();	// get argument defaults
 
   void		Copy(const cssElFun& cp);
   void		CopyType(const cssElFun& cp) { Copy(cp); }
@@ -811,7 +813,7 @@ public:
   const char*	GetTypeName() const	{ return "(ElCFun)"; }
   cssEl*	GetTypeObject() const	{ return (cssEl*)this; }
 
-  cssEl::RunStat 	Do(cssProg* prog);
+  cssEl::RunStat 	Do(cssProg* prg);
 
   // constructors
   void 		Constr();
@@ -843,8 +845,10 @@ public:
 class CSS_API cssElInCFun : public cssElCFun {
   // a simple internal C function (having fixed number of parameters)
 public:
-  int		BindArgs(cssEl** args, int& act_argc);
-  // has a simpler, faster version of bind args for internal functions
+
+  // funs are optimized to not check for void argstop marker
+  void   		BindArgs(cssEl** args, int& act_argc);
+  cssEl::RunStat 	Do(cssProg* prog);
 
   // constructors
   cssElInCFun();
@@ -964,7 +968,7 @@ public:
   void		CopyType(const cssCodeBlock& cp) { Copy(cp); }
 
   cssCodeBlock();
-  cssCodeBlock(const String& nm);
+  cssCodeBlock(const String& nm, cssProg* ownr_prog);
   cssCodeBlock(const cssCodeBlock& cp);
   cssCodeBlock(const cssCodeBlock& cp, const String& nm);
   ~cssCodeBlock();
@@ -1241,19 +1245,29 @@ public:
 class CSS_API cssFrame {
 public:
   cssProg*	prog;			// program I belong to
-  int		fr_no;		        // frame number
   css_progdx 	pc;			// program counter
-  cssSpace	stack;			// current stack
-  cssSpace	autos;			// current autos
+  cssSpace*	stack;			// current stack
+  cssSpace*	autos;			// current autos
   cssEl**	args; 			// args for function ([size = cssElFun::ArgMax + 1])
   int 		act_argc;		// actual number of args received
   cssClassInst*	cur_this;		// current this pointer
 
-  cssFrame(cssProg* prg);
+  cssFrame(cssProg* prg) {
+    prog = prg;    pc = 0;
+    stack = NULL; autos = NULL;
+    args = NULL;    act_argc = 0;
+    cur_this = NULL;
+  }
   
-  void	AllocArgs();		// allocate args
+  void	AllocArgs() {
+    args = new cssEl*[cssElFun::ArgMax + 1];
+  }
 
-  virtual ~cssFrame();
+  ~cssFrame() {
+    if(args) delete [] args;
+    if(stack) delete stack;
+    if(autos) delete autos;
+  }
 };
 
 class CSS_API cssWatchPoint {
@@ -1310,6 +1324,7 @@ public:
   cssScriptFun*	owner_fun;		// if owned by a cssScriptFun
   cssCodeBlock*	owner_blk;		// if owned by a cssCodeBlock
   cssProgSpace* top;			// top-level space holding this one
+  cssProg*	master_prog;		// highest-level prog that we live within (e.g., script fun, script method, top-level prog) -- NULL only if we are the master prog
 
   cssInst**	insts;			// the instructions themselves
   css_progdx 	size;			// number of instructions
@@ -1352,10 +1367,17 @@ public:
 
   cssFrame*	Frame() const 		{ return frame[fr_size-1]; }
   cssFrame*	Frame(int frdx) const 	{ return frame[frdx]; }
-  cssSpace*	Autos() const		{ return &(Frame()->autos); }
-  cssSpace*	Autos(int frdx) const	{ return &(Frame(frdx)->autos); }
-  cssSpace*	Stack() const		{ return &(Frame()->stack); }
-  cssSpace*	Stack(int frdx) const 	{ return &(Frame(frdx)->stack); }
+  cssSpace*	Autos() const		{ return Frame()->autos; }
+  cssSpace*	Autos(int frdx) const	{ return Frame(frdx)->autos; }
+
+  cssSpace*	Stack() const  		{ return Frame()->stack; }
+  cssSpace*	Stack(int frdx) const	{ return Frame(frdx)->stack; }
+
+//   cssSpace*	Stack() const
+//   { if(master_prog) return master_prog->Frame()->stack; return Frame()->stack; }
+//   cssSpace*	Stack(int frdx) const
+//   { if(master_prog) return master_prog->Frame(frdx)->stack; return Frame(frdx)->stack; }
+
   css_progdx 	PC() const	     	{ return Frame()->pc; }
   css_progdx	PC(int frdx) const     	{ return Frame(frdx)->pc; }
   cssEl**	Args() const		{ return Frame()->args; }
@@ -1366,7 +1388,7 @@ public:
   cssClassInst* CurThis(int frdx) const	{ return Frame(frdx)->cur_this; }
   void		SetCurThis(cssClassInst* ths)	{ Frame()->cur_this = ths; }
 
-  int 		AddFrame();		// copies autos to new frame
+  int 		AddFrame();		// copies autos to new frame if they exist
   int		DelFrame();		// removes a frame
   void 		Reset();		// reset code, autos, frames, etc
   void		ResetCode();		// get rid of all insts and source

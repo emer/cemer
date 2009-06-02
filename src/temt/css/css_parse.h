@@ -190,14 +190,14 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef struct YYSTYPE
-#line 59 "css_parse.y"
+#line 51 "css_parse.y"
 {
   cssElPlusIVal el_ival;
   cssElPtr     	el;		/* for coding */
   int		ival;		/* for program indexes (progdx) and other ints */
   char*        	nm;
 }
-/* Line 1529 of yacc.c.  */
+/* Line 1489 of yacc.c.  */
 #line 202 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
