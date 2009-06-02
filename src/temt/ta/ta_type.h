@@ -1484,7 +1484,7 @@ public:
   MemberDef*	FindCheck(const char* nm, void* base, void*& ptr) const;
   // breadth-first find pass for the recursive procedures
 
-  int			FindNameOrType(const char* nm) const;
+  int		FindNameOrType(const char* nm) const;
   // checks name and type name in 2 passes
   int		FindTypeName(const char* nm) const;
   // find by name of type
@@ -2158,27 +2158,46 @@ public:
   bool			HasEnumDefs() const; // true if any subtypes are enums
   bool			HasSubTypes() const; // true if any non-enum subtypes
 
+  bool	 		FindParentName(const char* nm) const {
+    if(par_cache.size) return (par_cache.FindNameIdx(nm) >= 0); // if cache active, use it exclusively
+    if(parents.FindNameIdx(nm) >= 0) return true;
+    for(int i=0; i < parents.size; i++)
+      if(parents.FastEl(i)->FindParentName(nm))	return true;
+    return false;
+  }
+  bool 			FindParent(const TypeDef* it) const {
+    if(par_cache.size) return (par_cache.FindEl(it) >= 0); // if cache active use it exclusively
+    if(parents.FindEl(it) >= 0) return true;
+    for(int i=0; i < parents.size; i++)
+      if(parents.FastEl(i)->FindParent(it))	return true;
+    return false;
+  }
+
   // you inherit from yourself.  This ensures that you are a "base" class (ptr == 0)
   bool 			InheritsFromName(const char *nm) const
-  { bool rval=0; if((ptr == 0) && ((name == nm) || (par_cache.FindName(nm)) || FindParentName(nm))) rval=1; return rval; }
+  { if((ptr == 0) && ((name == nm) || FindParentName(nm))) return true; return false; }
   bool			InheritsFrom(const TypeDef* td) const
-  { bool rval=0; if((ptr == 0) && ((this == td) || (par_cache.FindEl(td)>=0) || FindParent(td))) rval=1; return rval; }
-  bool 			InheritsFrom(const TypeDef& it) const { return InheritsFrom((TypeDef*)&it); }
+  { if((ptr == 0) && ((this == td) || FindParent(td))) return true; return false; }
+  bool 			InheritsFrom(const TypeDef& it) const
+  { return InheritsFrom((TypeDef*)&it); }
 
   // pointers to a type, etc, can be Derives from a given type (looser than inherits)
   bool 			DerivesFromName(const char *nm) const
-  { bool rval=0; if((name == nm) || (par_cache.FindName(nm)) || FindParentName(nm)) rval=1; return rval; }
+  { if((name == nm) || FindParentName(nm)) return true; return false; }
   bool 			DerivesFrom(TypeDef* td) const
-  { bool rval=0; if((this == td) || (par_cache.FindEl(td)>=0) || FindParent(td)) rval=1; return rval; }
-  bool 			DerivesFrom(const TypeDef& it) const { return DerivesFrom((TypeDef*)&it); }
+  { if((this == td) || FindParent(td)) return true; return false; }
+  bool 			DerivesFrom(const TypeDef& it) const
+  { return DerivesFrom((TypeDef*)&it); }
 
   // inheritance from a formal class (e.g. const, static, class)
   bool			InheritsFormal(TypeDef* it) const
-  { bool rval=0; if((ptr == 0) && (par_formal.FindEl(it)>=0)) rval=1; return rval; }
-  bool 			InheritsFormal(const TypeDef& it) const { return InheritsFormal((TypeDef*)&it); }
+  { if((ptr == 0) && (par_formal.FindEl(it)>=0)) return true; return false; }
+  bool 			InheritsFormal(const TypeDef& it) const
+  { return InheritsFormal((TypeDef*)&it); }
   bool			DerivesFormal(TypeDef* it) const
-  { bool rval=0; if(par_formal.FindEl(it)>=0) rval=1; return rval; }
-  bool 			DerivesFormal(const TypeDef& it) const { return DerivesFormal((TypeDef*)&it); }
+  { if(par_formal.FindEl(it)>=0) return true; return false; }
+  bool 			DerivesFormal(const TypeDef& it) const
+  { return DerivesFormal((TypeDef*)&it); }
 
   bool			InheritsNonAtomicClass() const; // true *only* for classes that are not considered atoms by the streaming system, i.e. does not include taString and Variant 
 
@@ -2198,18 +2217,17 @@ public:
   void		AddParFormal(TypeDef* p1=NULL, TypeDef* p2=NULL,
 			     TypeDef* p3=NULL, TypeDef* p4=NULL,
 			     TypeDef* p5=NULL, TypeDef* p6=NULL);
-  void		AddParCache(TypeDef* p1=NULL, TypeDef* p2=NULL,
-			    TypeDef* p3=NULL, TypeDef* p4=NULL,
-			    TypeDef* p5=NULL, TypeDef* p6=NULL);
+
+  void		CacheParents();
+  // populate par_cache with *all* the parents and set hash table -- call this after all types are loaded etc -- in InitializeTypes
+  void		CacheParents_impl(TypeDef* src_typ);
+  // recursive impl for loading parents into src_typ
 
   void		ComputeMembBaseOff();
   // only for MI types, after adding parents, get new members & compute base_off
   bool		IgnoreMeth(const String& nm) const;
   // check if given method should be ignored (also checks parents, etc)
 
-  bool	 	FindParentName(const char* nm) const;
-  bool 		FindParent(const TypeDef* it) const;
-  // recursively tries to find parent, returns true if successful
   void*		GetParAddr(const char* par, void* base) const;
   void*		GetParAddr(TypeDef* par, void* base) const;
   // return the given parent's address given the base address (par must be a parent!)

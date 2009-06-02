@@ -800,44 +800,58 @@ cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const String& nm, MemberDef* m
     return &cssMisc::Void;
   }
 
-  if(nptd->DerivesFrom(TA_bool))
-    return new cssCPtr_bool(itm, new_ptr, nm, class_parent, ro);
-  else if(nptd->DerivesFormal(TA_enum))
-    return new cssCPtr_enum(itm, new_ptr, nm, class_parent, ro);
-  else if ((nptd->DerivesFrom(TA_int) || nptd->DerivesFrom(TA_unsigned_int)))
-    return new cssCPtr_int(itm, new_ptr, nm, class_parent, ro);
-  else if(nptd->DerivesFrom(TA_short) || (nptd->DerivesFrom(TA_unsigned_short)))
-    return new cssCPtr_short(itm, new_ptr, nm, class_parent, ro);
-  else if (nptd->DerivesFrom(TA_long) || nptd->DerivesFrom(TA_unsigned_long))
-    return new cssCPtr_long(itm, new_ptr, nm, class_parent, ro);
-  else if (nptd->DerivesFrom(TA_char) || nptd->DerivesFrom(TA_unsigned_char)
-    || nptd->DerivesFrom(TA_signed_char))
-    return new cssCPtr_char(itm, new_ptr, nm, class_parent, ro);
-  else if(nptd->DerivesFrom(TA_int64_t) || nptd->DerivesFrom(TA_uint64_t))
-    return new cssCPtr_long_long(itm, new_ptr, nm, class_parent, ro);
-  else if(nptd->DerivesFrom(TA_float))
-    return new cssCPtr_float(itm, new_ptr, nm, class_parent, ro);
-  else if(nptd->DerivesFrom(TA_double))
-    return new cssCPtr_double(itm, new_ptr, nm, class_parent, ro);
-  else if(nptd->DerivesFrom(TA_taString))
-    return new cssCPtr_String(itm, new_ptr, nm, class_parent, ro);
-  else if(nptd->DerivesFrom(TA_Variant))
-    return new cssCPtr_Variant(itm, new_ptr, nm, class_parent, ro);
-  else if(nptd->DerivesFrom(TA_taSmartRef))
-    return new cssSmartRef(itm, new_ptr, nptd, nm, class_parent, ro);
-  else if(nptd->DerivesFrom(&TA_ios) || nptd->DerivesFrom(&TA_istream)
-	  || nptd->DerivesFrom(&TA_ostream) || nptd->DerivesFrom(&TA_iostream))
-    return new cssIOS(itm, new_ptr, nptd, nm, class_parent, ro);
-  else if(nptd->DerivesFrom(&TA_TypeDef))
-    return new cssTypeDef(itm, new_ptr, nptd, nm, class_parent, ro);
-  else if(nptd->DerivesFrom(&TA_MemberDef))
-    return new cssMemberDef(itm, new_ptr, nptd, nm, class_parent, ro);
-  else if(nptd->DerivesFrom(&TA_MethodDef))
-    return new cssMethodDef(itm, new_ptr, nptd, nm, class_parent, ro);
-  else if(nptd->DerivesFrom(TA_taBase))
-    return new cssTA_Base(itm, new_ptr, nptd, nm, class_parent, ro);
-
-  return new cssTA(itm, new_ptr, nptd, nm, class_parent, ro);
+  if(nptd->InheritsNonAtomicClass()) {
+    if(nptd->DerivesFrom(&TA_ios) || nptd->DerivesFrom(&TA_istream)
+       || nptd->DerivesFrom(&TA_ostream) || nptd->DerivesFrom(&TA_iostream))
+      return new cssIOS(itm, new_ptr, nptd, nm, class_parent, ro);
+    else if(nptd->DerivesFrom(TA_taBase))
+      return new cssTA_Base(itm, new_ptr, nptd, nm, class_parent, ro);
+    else
+      return new cssTA(itm, new_ptr, nptd, nm, class_parent, ro);
+  }
+  else {
+    if(nptd->InheritsFormal(TA_class)) {
+      if(nptd == &TA_taString)
+	return new cssCPtr_String(itm, new_ptr, nm, class_parent, ro);
+      else if(nptd == &TA_Variant)
+	return new cssCPtr_Variant(itm, new_ptr, nm, class_parent, ro);
+      else if(nptd == &TA_TypeDef)
+	return new cssTypeDef(itm, new_ptr, nptd, nm, class_parent, ro);
+      else if(nptd == &TA_MemberDef)
+	return new cssMemberDef(itm, new_ptr, nptd, nm, class_parent, ro);
+      else if(nptd == &TA_MethodDef)
+	return new cssMethodDef(itm, new_ptr, nptd, nm, class_parent, ro);
+      else if(nptd->DerivesFrom(TA_taSmartRef))
+	return new cssSmartRef(itm, new_ptr, nptd, nm, class_parent, ro);
+      else
+	return new cssTA(itm, new_ptr, nptd, nm, class_parent, ro);
+    }
+    else {
+      if(nptd->DerivesFrom(TA_bool))
+	return new cssCPtr_bool(itm, new_ptr, nm, class_parent, ro);
+      else if(nptd->DerivesFormal(TA_enum))
+	return new cssCPtr_enum(itm, new_ptr, nm, class_parent, ro);
+      else if ((nptd->DerivesFrom(TA_int) || nptd->DerivesFrom(TA_unsigned_int)))
+	return new cssCPtr_int(itm, new_ptr, nm, class_parent, ro);
+      else if(nptd->DerivesFrom(TA_short) || (nptd->DerivesFrom(TA_unsigned_short)))
+	return new cssCPtr_short(itm, new_ptr, nm, class_parent, ro);
+      else if (nptd->DerivesFrom(TA_long) || nptd->DerivesFrom(TA_unsigned_long))
+	return new cssCPtr_long(itm, new_ptr, nm, class_parent, ro);
+      else if (nptd->DerivesFrom(TA_char) || nptd->DerivesFrom(TA_unsigned_char)
+	       || nptd->DerivesFrom(TA_signed_char))
+	return new cssCPtr_char(itm, new_ptr, nm, class_parent, ro);
+      else if(nptd->DerivesFrom(TA_int64_t) || nptd->DerivesFrom(TA_uint64_t))
+	return new cssCPtr_long_long(itm, new_ptr, nm, class_parent, ro);
+      else if(nptd->DerivesFrom(TA_float))
+	return new cssCPtr_float(itm, new_ptr, nm, class_parent, ro);
+      else if(nptd->DerivesFrom(TA_double))
+	return new cssCPtr_double(itm, new_ptr, nm, class_parent, ro);
+      else {
+	cssMisc::Error(NULL, "GetElFromTA -- atomic class not managed in case:", nptd->name);
+	return &cssMisc::Void;
+      }
+    }
+  }
 }
 
 cssEl* cssEl::GetVariantEl_impl(const Variant& val, Variant idx) const {

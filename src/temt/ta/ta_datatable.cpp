@@ -109,6 +109,7 @@ void DataCol::Initialize() {
   // default initialize to scalar
   cell_geom.SetSize(1);
   cell_geom.Set(0, 1);
+  hash_table = NULL;
 }
 
 void DataCol::InitLinks() {
@@ -123,10 +124,12 @@ void DataCol::InitLinks() {
 void DataCol::CutLinks() {
   cell_geom.CutLinks();
   calc_expr.CutLinks();
+  RemoveHashTable();
   inherited::CutLinks();
 }
 
 void DataCol::Copy_Common_(const DataCol& cp) {
+  RemoveHashTable();
   // things common to full and schema-only copy
   name = cp.name; // this is the default we want for DataCol
   desc = cp.desc;
@@ -141,6 +144,7 @@ void DataCol::Copy_(const DataCol& cp) {
 }
 
 void DataCol::CopyFromCol_Robust(const DataCol& cp) {
+  RemoveHashTable();
   // note: caller has asserted Struct guys, but ok for us to do it again
   // assumes copy has been validated
   StructUpdate(true);
@@ -163,6 +167,7 @@ void DataCol::CopyFromCol_Robust(const DataCol& cp) {
 }
 
 void DataCol::Copy_NoData(const DataCol& cp) {
+  RemoveHashTable();
   StructUpdate(true);
   inherited::Copy_impl(cp);
   SetBaseFlag(COPYING);
@@ -173,6 +178,7 @@ void DataCol::Copy_NoData(const DataCol& cp) {
 }
 
 void DataCol::CopyFromRow(int dest_row, const DataCol& src, int src_row) {
+  RemoveHashTable();
   if (dest_row < 0) dest_row = rows() + dest_row; // abs row, if request was from end
   if (src_row < 0) src_row = src.rows() + src_row; // abs row, if request was from end
   if(src.is_matrix) {
@@ -189,6 +195,7 @@ void DataCol::CopyFromRow(int dest_row, const DataCol& src, int src_row) {
 }
 
 void DataCol::CopyFromRow_Robust(int dest_row, const DataCol& src, int src_row) {
+  RemoveHashTable();
   if(src.is_matrix) {
     if(is_matrix) {
       int mx_sz = MIN(cell_size(), src.cell_size());
@@ -244,6 +251,7 @@ void DataCol::UpdateAfterEdit_impl() {
 }
 
 void DataCol::DataChanged(int dcr, void* op1, void* op2) {
+  RemoveHashTable();
   inherited::DataChanged(dcr, op1, op2);
   //  cerr << name << " dcr: " << dcr << endl;
   // treat item changes here as struct changes to the table
@@ -259,6 +267,7 @@ void DataCol::DataChanged(int dcr, void* op1, void* op2) {
 
 void DataCol::ChangeColType(ValType new_type) {
   if (valType() == new_type) return;
+  RemoveHashTable();
   MatrixGeom cell_geom;
   if (is_matrix) cell_geom = this->cell_geom; // because we will be nuked
   dataTable()->ChangeColTypeGeom_impl(this, new_type, cell_geom);
@@ -268,6 +277,7 @@ void DataCol::ChangeColType(ValType new_type) {
 void DataCol::ChangeColCellGeom(const MatrixGeom& new_geom) {
   if ((!is_matrix && (new_geom.dims() == 0)) ||
     cell_geom.Equal(new_geom)) return;
+  RemoveHashTable();
   dataTable()->ChangeColTypeGeom_impl(this, valType(), new_geom);
   //NOTE: no more code here, because we may have been deleted/replaced
 }
@@ -281,6 +291,7 @@ void DataCol::ChangeColCellGeomNs(int dims, int d0, int d1, int d2, int d3,
 
 void DataCol::ChangeColMatToScalar() {
   if (!is_matrix) return;
+  RemoveHashTable();
   MatrixGeom new_geom; //note: 0 dims is key to change to scalar
   dataTable()->ChangeColTypeGeom_impl(this, valType(), new_geom);
   //NOTE: no more code here, because we may have been deleted/replaced
@@ -292,6 +303,7 @@ DataTable* DataCol::dataTable() {
 }
 
 bool DataCol::EnforceRows(int rws) {
+  RemoveHashTable();
   taMatrix* mat = AR();
   if (!mat) return false;
   bool rval = false;
@@ -309,6 +321,7 @@ bool DataCol::EnforceRows(int rws) {
 }
 
 bool DataCol::InsertRows(int st_row, int n_rows) {
+  RemoveHashTable();
   taMatrix* mat = AR();
   if (!mat) return false;
   bool rval = mat->InsertFrames(st_row, n_rows);
@@ -323,6 +336,9 @@ bool DataCol::InsertRows(int st_row, int n_rows) {
 
 int DataCol::FindVal(const Variant& val, int st_row) const {
   if(TestError(isMatrix(), "FindVal", "column must be scalar, not matrix")) return -1;
+  if(st_row == 0 && hash_table) {
+    return hash_table->FindHashValString(val.toString());
+  }
   if(st_row >= 0) {
     for(int i=st_row; i<rows(); i++) {
       if(GetVal(i) == val) return i;
@@ -334,6 +350,24 @@ int DataCol::FindVal(const Variant& val, int st_row) const {
       if(GetVal(i) == val) return i;
     }
     return -1;
+  }
+}
+
+void DataCol::BuildHashTable() {
+  RemoveHashTable();
+  if(TestError(isMatrix(), "BuildHashTable", "column must be scalar, not matrix")) return;
+  hash_table = new taHashTable;
+  if(!hash_table->Alloc(rows() + 10)) return;
+  for(int i=0; i<rows(); i++) {
+    String strval = GetVal(i).toString();
+    hash_table->AddHash(taHashTable::HashCode_String(strval), i, strval);
+  }
+}
+
+void DataCol::RemoveHashTable() {
+  if(hash_table) {
+    delete hash_table;
+    hash_table = NULL;
   }
 }
 

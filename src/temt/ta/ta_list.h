@@ -184,6 +184,11 @@ typedef unsigned long taHashVal;
 class TA_API  taPtrList_impl {
   // #NO_TOKENS implementation of the pointer list class
 public:
+  enum KeyType {
+    KT_NAME,			// use item name or string value -- the default
+    KT_PTR,			// use the item pointer
+  };
+
   static taHashVal	HashCode_String(const String& string);
   // #CAT_XpertAccess get a hash code value from given string
   static taHashVal	HashCode_Ptr(const void* ptr);
@@ -325,7 +330,7 @@ public:
   virtual int	FindNameIdx(const String& it) const;
   // #CAT_Access return the index of the item with given name on the list
 
-  virtual TypeDef* 	GetElType() const {return NULL;}
+  virtual TypeDef* GetElType() const {return NULL;}
   // #IGNORE Default type for objects in group
   virtual void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL) {}
   // #IGNORE called when list has changed -- more fine-grained than Dirty(), and may be multiple calls per event
@@ -343,8 +348,8 @@ public:
   virtual bool	IsEmpty() const	{ return (size == 0) ? true : false; }
   // #CAT_Access is the list empty of elements (i.e., size == 0)
 
-  virtual void	BuildHashTable(int n_buckets);
-  // #CAT_Modify build a hash table with given number of buckets (not dynamic, so make it big)
+  virtual void	BuildHashTable(int n_buckets, KeyType key_typ = KT_NAME);
+  // #CAT_Modify build a hash table with given number of buckets and key type (not dynamic, so make it big)
 
   virtual bool	RemoveName(const String& item_nm);
   // #CAT_Modify remove (and delete) named element from list
@@ -648,11 +653,6 @@ class TA_API  taHashTable : public taPtrList<taHashBucket> {
 protected:
   void	El_Done_(void* it)	{ delete (taHashBucket*)it; }
 public:
-  enum KeyType {
-    KT_NAME  = 0, 	// use item name; the legacy default
-    KT_PTR 		// use the item pointer
-  };
-
   static int	n_bucket_primes[]; // prime numbers for number of buckets
   static int	n_primes;	 // number of prime numbers (86)
 

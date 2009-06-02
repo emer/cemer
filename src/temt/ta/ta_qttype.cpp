@@ -3654,6 +3654,11 @@ void taiTypeBase::InitializeTypes(bool gui) {
   for (i=0; i < taMisc::types.size; ++i) {
     td = taMisc::types.FastEl(i);
 
+    // make the hash tables to optimize css ops, path finding, etc
+    td->CacheParents();
+    td->members.BuildHashTable(td->members.size + td->members.size / 4);
+    td->methods.BuildHashTable(td->methods.size + td->methods.size / 4);
+
     // generate a list of all the qt types
     if (gui && td->InheritsFrom(TA_taiType) && (td->instance != NULL)
        && !(td->InheritsFrom(TA_taiMember) || td->InheritsFrom(TA_taiMethod) ||

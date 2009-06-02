@@ -156,12 +156,10 @@ typedsub: TYPEDEF defn			{ $$ = $2; }
 defn:     type tyname term		{
             $$ = $2; $2->AddParent($1); $2->ptr = $1->ptr;
 	    $2->par_formal.BorrowUnique($1->par_formal);
-	    $2->par_cache.BorrowUnique($1->par_cache);
 	    mta->type_stack.Pop(); }
         | type COMMENT tyname term	{ /* annoying place for a comment, but.. */
             $$ = $3; $3->AddParent($1); $3->ptr = $1->ptr;
 	    $3->par_formal.BorrowUnique($1->par_formal);
-	    $3->par_cache.BorrowUnique($1->par_cache);
 	    mta->type_stack.Pop(); }
         /* predeclared type, which gets sucked in by the combtype list
 	   the second parent of the new type is the actual new type */
@@ -305,10 +303,8 @@ classnm:  classkeyword tyname			{
 
 /* class inheritance */
 classinh: classpar			{
-            if($1->InheritsFrom(TA_taBase)) mta->cur_class->AddParCache(&TA_taBase);
 	    mta->cur_class->AddParent($1); }
         | classinh ',' classpar		{
-            if($3->InheritsFrom(&TA_taBase)) mta->cur_class->AddParCache(&TA_taBase);
 	    mta->cur_class->AddParent($3);
 	    if(!mta->cur_class->HasOption("MULT_INHERIT"))
 	      mta->cur_class->opts.Add("MULT_INHERIT"); }

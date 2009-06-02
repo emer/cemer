@@ -4707,14 +4707,19 @@ void TypeDef::AddParFormal(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
   if(p6 != NULL)    par_formal.LinkUnique(p6);
 }
 
-void TypeDef::AddParCache(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
-			  TypeDef* p5, TypeDef* p6) {
-  if(p1 != NULL)    par_cache.LinkUnique(p1);
-  if(p2 != NULL)    par_cache.LinkUnique(p2);
-  if(p3 != NULL)    par_cache.LinkUnique(p3);
-  if(p4 != NULL)    par_cache.LinkUnique(p4);
-  if(p5 != NULL)    par_cache.LinkUnique(p5);
-  if(p6 != NULL)    par_cache.LinkUnique(p6);
+void TypeDef::CacheParents() {
+  par_cache.Reset();		// justin case
+  for(int i=0; i<parents.size; i++) {
+    parents.FastEl(i)->CacheParents_impl(this);
+  }
+  par_cache.BuildHashTable(par_cache.size + 2, taHashTable::KT_PTR); // little extra, cache on pointer vals
+}
+
+void TypeDef::CacheParents_impl(TypeDef* src_typ) {
+  src_typ->par_cache.LinkUnique(this);
+  for(int i=0; i<parents.size; i++) {
+    parents.FastEl(i)->CacheParents_impl(src_typ);
+  }
 }
 
 void TypeDef::ComputeMembBaseOff() {
@@ -4755,28 +4760,6 @@ bool TypeDef::FindChild(TypeDef* it) const {
   int i;
   for(i=0; i < children.size; i++) {
     if(children.FastEl(i)->FindChild(it))
-      return true;
-  }
-  return false;
-}
-
-bool TypeDef::FindParentName(const char* nm) const {
-  if(parents.FindName(nm))
-    return true;
-  int i;
-  for(i=0; i < parents.size; i++) {
-    if(parents.FastEl(i)->FindParentName(nm))
-      return true;
-  }
-  return false;
-}
-
-bool TypeDef::FindParent(const TypeDef* it) const {
-  if(parents.FindEl(it) >= 0)
-    return true;
-  int i;
-  for(i=0; i < parents.size; i++) {
-    if(parents.FastEl(i)->FindParent(it))
       return true;
   }
   return false;

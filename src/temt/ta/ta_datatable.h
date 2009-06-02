@@ -141,6 +141,7 @@ public:
   MatrixGeom		cell_geom;
   // #READ_ONLY #SAVE #SHOW for matrix cols, the geom of each cell
   ColCalcExpr		calc_expr; // #CONDEDIT_ON_col_flags:CALC expression for computing value of this column (only used if CALC flag is set)
+  taHashTable*		hash_table; // #READ_ONLY #NO_SAVE #NO_COPY hash table of column (scalar only) values to speed up finding in large fixed tables -- this is created by BuildHashTable() function, and destroyed after any insertion or removal of rows -- it is up to the user to call this when relevant data is all in place -- cannot track value changes
   
   virtual taMatrix* 	AR() = 0;
   // #CAT_Access the matrix pointer -- NOTE: actual member should be called 'ar'
@@ -221,6 +222,11 @@ public:
 
   int 		FindVal(const Variant& val, int st_row = 0) const;
   // #CAT_Access find row number for given value within column of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+
+  void		BuildHashTable();
+  // #CAT_Access build a hash table of column (scalar only) values to speed up finding in large fixed tables -- table is destroyed after any insertion or removal of rows -- it is up to the user to call this when relevant data is all in place -- system cannot track value changes
+  void		RemoveHashTable();
+  // #CAT_Access remove a hash table for this column (see BuildHashTable)
 
   /////////////////////////////////////////////
   // Get and Set access

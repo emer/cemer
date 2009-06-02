@@ -1484,17 +1484,6 @@ void TypeDef_Generate_AddOtherParents(TypeDef* ths, char* typ_ref, ostream& strm
     }
     strm << ");\n";
   }
-
-  if(ths->par_cache.size > 0) {
-    strm << "    " << typ_ref << "AddParCache(";
-    for(i=0; i < ths->par_cache.size; i++) {
-      TypeDef* ptd = ths->par_cache.FastEl(i);
-      strm << "&TA_" << ptd->name;
-      if(i < ths->par_cache.size-1)
-	strm << ", ";
-    }
-    strm << ");\n";
-  }
 }
 
 // this one is for subtypes

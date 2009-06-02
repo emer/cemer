@@ -127,9 +127,10 @@ bool taPtrList_impl::AllocExact(int sz) {
   return true;
 }
 
-void taPtrList_impl::BuildHashTable(int sz) {
+void taPtrList_impl::BuildHashTable(int sz, KeyType key_typ) {
   if(!hash_table)
     hash_table = new taHashTable();
+  hash_table->key_type = key_typ;
 
   if(!hash_table->Alloc(sz)) return;
   for(int i=0; i<size; i++)
