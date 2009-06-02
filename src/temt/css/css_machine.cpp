@@ -4322,6 +4322,7 @@ int cssProgSpace::OptimizeCode() {
   nopt += Prog(0)->OptimizeCode();
 //   if(nopt > 0)
 //     cerr << name << " optimized: " << nopt << " times" << endl;
+  return nopt;
 }
 
 
