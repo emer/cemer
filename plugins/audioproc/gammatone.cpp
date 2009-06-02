@@ -2069,13 +2069,18 @@ void NormBlock::Initialize() {
   norm_split = 0.5f;
   in_thresh.Set(-70, Level::UN_DBI); // good value for speech
   offset = 0;
+  agc = true;
+  init_norm_factor = 1.0f;
+  init_norm_offset = 0;
   norm_dt_out = 1.0f;
-  cur_norm_factor = 1.0;
-  cur_norm_offset = 0;
+  norm_factor = init_norm_factor;
+  norm_offset = init_norm_offset;
 }
 
 void NormBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  norm_factor = init_norm_factor;
+  norm_offset = init_norm_offset;
 }
 
 void NormBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
@@ -2118,7 +2123,9 @@ void NormBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
     break;
   default: break;
   }
-  cur_norm_factor = 1.0; // TODO: should we offer an init param???
+  norm_factor = init_norm_factor;
+  norm_offset = init_norm_offset;
+  
   const int in_fields = src_buff->fields; 
   const int in_chans = src_buff->chans; 
   const int in_vals = src_buff->vals; 
@@ -2140,6 +2147,7 @@ void NormBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   
   // norm factor: v0=slope, v1=offset
   ob = &out_buff_norm;
+  ob->enabled = agc; // pointless if manual
   ob->fs = src_buff->fs;
   ob->fr_dur.Set(src_buff->items, Duration::UN_SAMPLES);
   ob->fields = 1;
@@ -2161,33 +2169,36 @@ void NormBlock::AcceptData_impl(SignalProcBlock* src_blk,
   
   for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) { 
     // first, get the incoming values, scale them, and put in topN buffer
-    data.Reset();
+    if (agc) data.Reset();
     double avg = 0;
     for (int f = 0; f < in_fields; ++f) 
     for (int ch = 0; ch < in_chans; ++ch)
     for (int v = 0; v < in_vals; ++v) {
       float& val = scaled.FastEl(v, ch, f);
       val = Scale(in_mat->FastEl(v, ch, f, i, stage));
-      data.Add(val);
-      avg += val;
+      if (agc) {
+        data.Add(val);
+        avg += val;
+      }
     }
+    if (agc) {
     avg /= in_tot; 
     float std_dev = taMath_float::vec_std_dev(&scaled, avg, true);
     // offset so mean is at .5, and +-1 stdev is 66% of range
  //   if (top_avg > in_thresh_lin_scaled) {
-      double tcur_norm_offset = .5 - avg;
+      double tnorm_offset = .5 - avg;
       // we can only update scale if there is a sufficient range
       // calc current factor and offset
-      double tcur_norm_factor = (std_dev >= 1e-9) ? 
-        (0.33 / std_dev) : cur_norm_factor; 
+      double tnorm_factor = (std_dev >= 1e-9) ? 
+        (0.33 / std_dev) : norm_factor; 
       // m*x + b = .25 for bottom
       // apply the dt
-      cur_norm_factor = ((1.0 - norm_dt_out) * cur_norm_factor) +
-        (norm_dt_out * tcur_norm_factor);
-      cur_norm_offset = ((1.0 - norm_dt_out) * cur_norm_offset) +
-        (norm_dt_out * tcur_norm_offset);
+      norm_factor = ((1.0 - norm_dt_out) * norm_factor) +
+        (norm_dt_out * tnorm_factor);
+      norm_offset = ((1.0 - norm_dt_out) * norm_offset) +
+        (norm_dt_out * tnorm_offset);
 //    }
-    
+    }
 /*    
     // do the top and bot averages and calc scale value for this frame
     data.Sort();
@@ -2207,15 +2218,15 @@ void NormBlock::AcceptData_impl(SignalProcBlock* src_blk,
     if (top_avg > in_thresh_lin_scaled) {
       // we can only update scale if there is a sufficient range
       // calc current factor and offset
-      double tcur_norm_factor = (top_bot_range >= 1e-12) ? 
-        (0.5 / top_bot_range) : cur_norm_factor; 
+      double tnorm_factor = (top_bot_range >= 1e-12) ? 
+        (0.5 / top_bot_range) : norm_factor; 
       // m*x + b = .25 for bottom
-      double tcur_norm_offset = .25 - (tcur_norm_factor * bot_avg);
+      double tnorm_offset = .25 - (tnorm_factor * bot_avg);
       // apply the dt
-      cur_norm_factor = ((1.0 - norm_dt_out) * cur_norm_factor) +
-        (norm_dt_out * tcur_norm_factor);
-      cur_norm_offset = ((1.0 - norm_dt_out) * cur_norm_offset) +
-        (norm_dt_out * tcur_norm_offset);
+      norm_factor = ((1.0 - norm_dt_out) * norm_factor) +
+        (norm_dt_out * tnorm_factor);
+      norm_offset = ((1.0 - norm_dt_out) * norm_offset) +
+        (norm_dt_out * tnorm_offset);
     }*/
     // note: we don't update integrator when we fall below thresh because
     // we assume sound already low and norm high, and will be needed likewise
@@ -2224,7 +2235,7 @@ void NormBlock::AcceptData_impl(SignalProcBlock* src_blk,
     for (int ch = 0; ch < in_chans; ++ch)
     for (int v = 0; v < in_vals; ++v) {
       float val = scaled.FastEl(v, ch, f);
-      val = (val * cur_norm_factor) + cur_norm_offset;
+      val = (val * norm_factor) + norm_offset;
       // output
       out_mat->FastEl(v, ch, f, out_buff.item,
         out_buff.stage) = val;
@@ -2236,9 +2247,9 @@ void NormBlock::AcceptData_impl(SignalProcBlock* src_blk,
     
     if (out_buff_norm.enabled) {
       out_buff_norm.mat.FastEl(0, 0, 0, out_buff_norm.item,
-          out_buff_norm.stage) = cur_norm_factor;
+          out_buff_norm.stage) = norm_factor;
       out_buff_norm.mat.FastEl(1, 0, 0, out_buff_norm.item,
-          out_buff_norm.stage) = cur_norm_offset;
+          out_buff_norm.stage) = norm_offset;
       if (out_buff_norm.NextIndex()) {
         NotifyClientsBuffStageFull(&out_buff_norm, 1, ps);
       }
@@ -2254,16 +2265,16 @@ float NormBlock::Scale(float val) {
     return powf(val, scale_factor);
   case LOG10:
     if (val < in_thresh) val = in_thresh;
-    return log10f(val) + offset;
+    return log10f(val) /*+ offset*/;
   case LN:
     if (val < in_thresh) val = in_thresh;
-    return logf(val) + offset;
+    return logf(val) /*+ offset*/;
   }
   return val; // compiler food
 }
 
 float NormBlock::Norm(float val) {
-  return (val * cur_norm_factor) + cur_norm_offset;
+  return (val * norm_factor) + norm_offset;
 }
 
 

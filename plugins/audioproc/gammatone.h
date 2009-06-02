@@ -581,7 +581,7 @@ private:
 
 
 class AUDIOPROC_API NormBlock: public StdBlock
-{ // ##CAT_Audioproc Norm Block -- normalizes a bank (chans/vals) of input values, with optional non-linear scaling, and threshold -- calculates slope and offset by using avg of top and bottom half of signal values 
+{ // ##CAT_Audioproc Norm Block -- normalizes a bank (chans/vals) of input values, with optional non-linear scaling, and threshold
 INHERITED(StdBlock) 
 public: //
   enum ScaleType {
@@ -591,7 +591,7 @@ public: //
     LN,		// ln(x)	
   };
   
-  DataBuffer		out_buff_norm; // #SHOW_TREE the normalization factor used -- this will be 0 if the input didn't meet threshold
+  DataBuffer		out_buff_norm; // #SHOW_TREE the normalization factor used
   
   ScaleType		scale_type; //
   float			scale_factor; // #CONDEDIT_OFF_scale_type:NONE the scale factor, as defined by the scale_type
@@ -600,10 +600,13 @@ public: //
   Level			in_thresh; // this is the threshold of the topN avg (in input units) below which all data should be considered 0; also the ln and log10 thresholds
   float			offset; // #READ_ONLY #NO_SAVE offset, used for LOG and LN 
   
-  float			norm_dt_out; // #MIN_0 time constant of integration of norm, per output sample time period; 1.0 means update fully each item (note: we don't update when input falls below thresh)
+  float			init_norm_factor; // the initial norm factor
+  float			init_norm_offset; // the initial norm offset
+  bool			agc; // when on, automatically adjusts factor and offset
+  float			norm_dt_out; // #CONDEDIT_ON_agc #MIN_0 time constant of integration of norm, per output sample time period; 1.0 means update fully each item (note: we don't update when input falls below thresh)
   
-  double		cur_norm_factor; // #READ_ONLY #NO_SAVE #SHOW the norm factor that was most recently applied
-  double		cur_norm_offset; // #READ_ONLY #NO_SAVE #SHOW the offset factor that was most recently applied
+  double		norm_factor; // #READ_ONLY #NO_SAVE #SHOW the norm factor that was most recently applied
+  double		norm_offset; // #READ_ONLY #NO_SAVE #SHOW the norm offset that was most recently applied
   override int		outBuffCount() const {return 2;}
   override DataBuffer* 	outBuff(int idx) {if (idx == 1)  
     return &out_buff_norm; return inherited::outBuff(idx);}
