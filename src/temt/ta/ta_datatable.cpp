@@ -245,8 +245,6 @@ int DataCol::imageComponents() const {
 
 void DataCol::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if (is_matrix) // autokey only allowed on scalar cols
-    col_flags = (ColFlags)(col_flags & ~AUTO_KEY);
   Init();
 }
 
@@ -307,16 +305,7 @@ bool DataCol::EnforceRows(int rws) {
   taMatrix* mat = AR();
   if (!mat) return false;
   bool rval = false;
-  if (col_flags & AUTO_KEY) {
-    int a_rows = mat->frames();
-    rval = mat->EnforceFrames(rws);
-    int b_rows = mat->frames();
-    for (int i = a_rows; i < b_rows; ++i) {
-      SetVal(++(dataTable()->keygen), i);
-    }
-  } else {
-    rval = mat->EnforceFrames(rws);
-  }
+  rval = mat->EnforceFrames(rws);
   return rval;
 }
 
@@ -326,11 +315,6 @@ bool DataCol::InsertRows(int st_row, int n_rows) {
   if (!mat) return false;
   bool rval = mat->InsertFrames(st_row, n_rows);
   if (!rval) return rval;
-  if (col_flags & AUTO_KEY) {
-    for (int i = st_row; i < st_row + n_rows; ++i) {
-      SetVal(++(dataTable()->keygen), i);
-    }
-  }
   return rval;
 }  
 

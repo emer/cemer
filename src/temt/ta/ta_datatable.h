@@ -127,10 +127,8 @@ public:
     SAVE_ROWS 		= 0x0004, // save the row data for this column in the internal format used when the entire object is saved (e.g., along with a project or whatever).  the column configuration etc is always saved, just not the rows of data if not on.
     SAVE_DATA 		= 0x0008, // save this column in the 'data' export format used by the SaveData and associated functions (e.g., as recorded in 'logs' of data from running programs)
     CALC 		= 0x0010, // #APPLY_IMMED calculate value of this column based on calc_expr expression
-    KEY			= 0x0020, // indicates this is a key column; a table could have a compound key: set all that apply (note: currently not used by pdp, but may in the future)
-    AUTO_KEY		= 0x0040, // automatically set a key from next keygen value when a row is added (scalar cols only) -- you will usually set KEY as well
-    READ_ONLY		= 0x0080, // this column is read-only in the gui (helps protect keys or programmatically generated data items)
-    PAT_4D		= 0x0100, // (4d cells only) displays cells in the same geometry as grouped network layers -- NOTE: data is still copied/pasted in clipboard in a 2d format
+    READ_ONLY		= 0x0020, // this column is read-only in the gui (helps protect keys or programmatically generated data items)
+    PAT_4D		= 0x0040, // (4d cells only) displays cells in the same geometry as grouped network layers -- NOTE: data is still copied/pasted in clipboard in a 2d format
   };
 
   String		desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column
