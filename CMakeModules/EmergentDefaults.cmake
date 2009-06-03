@@ -37,7 +37,8 @@ if (WIN32)
 #  endif (CMAKE_CL_64)
 else (WIN32) # assume gcc!!!
   # a function with a non-void return-type that doesn't return a value s/b an error!!!
-  add_definitions(-Woverloaded-virtual -ftree-vectorizer-verbose=2)
+  # NOTE:  -ftree-vectorizer-verbose=1 can be interesting but not worth it for a default param -- users may add at own discretion 
+  add_definitions(-Woverloaded-virtual)
   if (APPLE) #grr... not working on Mac for some reason
     message(STATUS "note: '-Werror=return-type' not working on Mac: suggest fixing") 
     add_definitions(-Wreturn-type) # at least get a warning!
