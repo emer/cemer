@@ -160,7 +160,7 @@ public:
 
   override void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 
-  override int	El_Compare_(const void* a, const void* b) const
+  override int	El_Compare_(void* a, void* b) const
   { int rval=-1; if(((DynEnumItem*)a)->value > ((DynEnumItem*)b)->value) rval=1;
     else if(((DynEnumItem*)a)->value == ((DynEnumItem*)b)->value) rval=0; return rval; }
 
@@ -195,7 +195,7 @@ public:
   virtual int	FindNameIdx(const String& nm) const { return enums.FindNameIdx(nm); }
   // find index of given name value
 
-  virtual ostream& OutputType(ostream& fh, int indent = 0) const;
+  virtual ostream& OutputType(ostream& fh) const;
   // output type information in C++ syntax
 
   override taList_impl*	children_() {return &enums;}	
@@ -1114,7 +1114,7 @@ public:
   static const String	GetDescString(const String& dsc, int indent_level);
   // #IGNORE get an appropriately formatted version of the description string for css code
 
-  bool			isStale() {return m_stale;}
+  bool			isStale() const {return m_stale;}
   override void		setStale(); // indicates a component has changed
   void			setRunState(RunState value); // sets and updates gui
   override ScriptSource	scriptSource() {return ScriptString;}

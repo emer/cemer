@@ -357,10 +357,10 @@ public:
   virtual T*	LinkUniqNameOld(T* item)	{ return (T*)LinkUniqNameOld_((void*)item); }
   // #CAT_Modify link so that name is unique, old used if dupl, returns one used
 
-  virtual bool	MoveBefore(T* trg, T* item) { return MoveBefore_((void*)trg, (void*)item); }
-  // #CAT_Modify move item so that it appears just before the target item trg in the list
-  virtual bool	MoveAfter(T* trg, T* item) { return MoveAfter_((void*)trg, (void*)item); }
-  // #CAT_Modify move item so that it appears just after the target item trg in the list
+//   virtual bool	MoveBefore(T* trg, T* item) { return MoveBefore_((void*)trg, (void*)item); }
+//   // #CAT_Modify move item so that it appears just before the target item trg in the list
+//   virtual bool	MoveAfter(T* trg, T* item) { return MoveAfter_((void*)trg, (void*)item); }
+//   // #CAT_Modify move item so that it appears just after the target item trg in the list
 
   T* 		FindLeafName(const String& item_nm) const
   { return (T*)FindLeafName_(item_nm); }

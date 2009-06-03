@@ -807,7 +807,7 @@ public:
   // #CAT_Copy copy values from other array at given start and end points, and putting at given point in this
   virtual void	List(ostream& strm = cout) const;
   // #CAT_Display print out all of the elements in the array
-  virtual String GetValStr() const;
+  virtual String GetArrayStr() const;
   // #CAT_Display get a string representation of the value of the array (list of items)
   virtual void	InitFromString(const String& val);
   // #CAT_Modify initialize an array from given string (does reset first)
@@ -820,7 +820,7 @@ protected:
   virtual void*		MakeArray_(int i) const	{ return NULL; } // #IGNORE make a new array of item type
   virtual void		SetArray_(void* nw) {}
   virtual void		ReclaimOrphans_(int start, int end) {}// #IGNORE called when array is shortened, leaving orphaned values; note 'size' may already be trimmed: NOT called when el[] is replaced
-  virtual void		Copy_(const taArray_impl& cp);
+  void			Copy_(const taArray_impl& cp);
   // replace our array with the source items -- note: added in 4.0 for new uses, ex. in Matrix_Array
 };
 
@@ -847,7 +847,9 @@ public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
   T		err;		// #HIDDEN what is returned when out of range -- MUST INIT IN CONSTRUCTOR
 
-  void*		FastEl_(int i)		{ return &(el[i]); } // #IGNORE
+  void* 	FastEl_(int i)		{ return &(el[i]); } // #IGNORE
+  const void*	FastEl_(int i) const  	{ return (const void*)&(el[i]); } // #IGNORE
+
   int		El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(*((T*)a) > *((T*)b)) rval=1; else if(*((T*)a) == *((T*)b)) rval=0; return rval; }
   // #IGNORE
@@ -966,7 +968,7 @@ protected:
   
   virtual void		Add_(const void* it); // #IGNORE
   virtual bool		AddUnique_(const void* it);		// #IGNORE
-  virtual void		Copy_(const taFixedArray_impl& cp);
+  void			Copy_(const taFixedArray_impl& cp);
   // replace our array with the source items
   virtual void		Insert_(const void* it, int where, int n=1); // #IGNORE
   virtual bool		Equal_(const taFixedArray_impl& src) const; 
@@ -1037,6 +1039,7 @@ public:
   // #MENU #USE_RVAL Find item starting from idx in the array (-1 if not there)
 public:
   override void*	FastEl_(int i)		{ return &(el[i]); } 
+  override const void*	FastEl_(int i) const  	{ return (const void*)&(el[i]); }
 protected:
   override void*	MakeArray_(int n) const	{ return new T[n]; }
   override void		SetArray_(void* nw) {if (el) delete [] el; el = (T*)nw;}

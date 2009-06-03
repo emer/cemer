@@ -2342,7 +2342,8 @@ void LeabraLayerSpec::InitLinks() {
   taBase::Own(abs_net_adapt, this);
 }
 
-bool LeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool LeabraLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   bool rval = true;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;

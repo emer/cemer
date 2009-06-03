@@ -91,6 +91,7 @@ public:
   void operator=(const String& s);
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+  USING(cssCPtr::operator=)
 
   // copying: uses typedef auto copy function for ptr_cnt = 0
   void operator=(const cssEl& s);
@@ -159,6 +160,7 @@ public:
   void operator=(taBase**);
   void operator=(void* cp);	// these are very bad because of the ref counting but we just have to assume the pointer is a taBase*!
   void operator=(void** cp);
+  USING(cssTA::operator=)
 
   void PtrAssignPtr(const cssEl& s);
   override bool PtrAssignPtrPtr(void* new_ptr_val);
@@ -222,6 +224,7 @@ public:
   void operator=(const cssEl& s);
   void operator=(taBase*);
   void operator=(taBase**);
+  USING(cssTA::operator=)
 
   // operators
   void PtrAssignPtr(const cssEl& s);
@@ -298,6 +301,7 @@ public:
   void operator=(const String&)	{ CvtErr("(String)"); }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+  USING(cssIOS::operator=)
 
   // operators
   void operator=(const cssEl&)		{ NopErr("="); }
@@ -325,6 +329,7 @@ public:
   void operator=(const String&)	{ CvtErr("(String)"); }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+  USING(cssIOS::operator=)
 
   // operators
   void operator=(const cssEl&)		{ NopErr("="); }
@@ -353,6 +358,7 @@ public:
   void operator=(const String&)	{ CvtErr("(String)"); }
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+  USING(cssTA::operator=)
 
   // operators
   void operator=(const cssEl&)		{ NopErr("="); }
@@ -382,6 +388,7 @@ public:
   String GetStr() const;
   void operator=(const String& s);
   void operator=(const cssEl& s);
+  USING(cssTA::operator=)
 };
 
 class CSS_API cssMemberDef : public cssTA {
@@ -401,6 +408,7 @@ public:
   String GetStr() const;
   void operator=(const String& s);
   void operator=(const cssEl& s);
+  USING(cssTA::operator=)
 };
 
 class CSS_API cssMethodDef : public cssTA {
@@ -420,6 +428,7 @@ public:
   String GetStr() const;
   void operator=(const String& s);
   void operator=(const cssEl& s);
+  USING(cssTA::operator=)
 };
 
 

@@ -61,7 +61,8 @@ void LeabraContextLayerSpec::Initialize() {
 //   hysteresis_c = 1.0f - hysteresis;
 // }
 
-bool LeabraContextLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool LeabraContextLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
 //   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
@@ -490,7 +491,8 @@ void ScalarValLayerSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool ScalarValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool ScalarValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
   if(lay->CheckError(lay->un_geom.n < 3, quiet, rval,
@@ -1140,7 +1142,8 @@ void MotorForceLayerSpec::UpdateAfterEdit_impl() {
   force_noise.UpdateAfterEdit();
 }
 
-bool MotorForceLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool MotorForceLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
   if(!rval) return rval;
   
@@ -1473,7 +1476,8 @@ void TwoDValLayerSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool TwoDValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool TwoDValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
   if(lay->CheckError(lay->un_geom.n < 3, quiet, rval,
@@ -2443,7 +2447,8 @@ void FourDValLayerSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool FourDValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool FourDValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
   if(lay->CheckError(lay->un_geom.n < 3, quiet, rval,
@@ -3847,7 +3852,8 @@ void LeabraV1LayerSpec::Initialize() {
   min_obj_type = &TA_LeabraV1Layer;
 }
 
-bool LeabraV1LayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool LeabraV1LayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
   LeabraV1Layer* vlay = (LeabraV1Layer*)lay;
 

@@ -971,7 +971,7 @@ public: //
   virtual void 	LinkPtrCons();
   // #IGNORE link pointer connections from the corresponding owned connections -- only needed after a Copy
 
-  override int	GetIndex() { return idx; }
+  override int	GetIndex() const { return idx; }
   override void	SetIndex(int i) { idx = i; }
   virtual int	GetMyLeafIndex();
   // compute leaf index from my individual index in an efficient manner

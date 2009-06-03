@@ -100,7 +100,7 @@ public:
   
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   // clamp from act_p values of sending layer
-  override bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  override bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
   // don't do any learning:
   override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
@@ -246,7 +246,7 @@ public:
     CON_GROUP_LOOP(cg, C_Reset_EffWt((TrialSynDepCon*)cg->OwnCn(i)));
   }
 
-  void 	C_Init_Weights_post(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
+  void 	C_Init_Weights_post(BaseCons* cg, Connection* cn, Unit* ru, Unit* su) {
     inherited::C_Init_Weights_post(cg, cn, ru, su);
     TrialSynDepCon* lcn = (TrialSynDepCon*)cn; lcn->effwt = lcn->wt;
   }
@@ -381,7 +381,7 @@ public:
     CON_GROUP_LOOP(cg, C_Reset_EffWt((CycleSynDepCon*)cg->OwnCn(i)));
   }
 
-  void 	C_Init_Weights_post(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
+  void 	C_Init_Weights_post(BaseCons* cg, Connection* cn, Unit* ru, Unit* su) {
     inherited::C_Init_Weights_post(cg, cn, ru, su);
     CycleSynDepCon* lcn = (CycleSynDepCon*)cn; lcn->effwt = lcn->wt;
   }
@@ -538,7 +538,7 @@ public:
   }
   // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
 
-  override void C_Init_Weights_post(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
+  override void C_Init_Weights_post(BaseCons* cg, Connection* cn, Unit* ru, Unit* su) {
     inherited::C_Init_Weights_post(cg, cn, ru, su);
     CaiSynDepCon* lcn = (CaiSynDepCon*)cn; lcn->effwt = lcn->wt;
     lcn->cai = 0.0f; 
@@ -662,7 +662,7 @@ INHERITED(LeabraConSpec)
 public:
   FastWtSpec	fast_wt;	// fast weight specs: fast weights are added in separately to overall weight value as an increment (
 
-  void 		C_Init_Weights_post(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
+  void 		C_Init_Weights_post(BaseCons* cg, Connection* cn, Unit* ru, Unit* su) {
     inherited::C_Init_Weights_post(cg, cn, ru, su);
     FastWtCon* lcn = (FastWtCon*)cn; lcn->swt = lcn->wt;
   }
@@ -1166,7 +1166,7 @@ public:
   // #BUTTON #CAT_ScalarVal reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(ScalarValLayerSpec);
 protected:
@@ -1246,7 +1246,7 @@ public:
 
   override void	Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net);
   
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(MotorForceLayerSpec);
 protected:
@@ -1459,7 +1459,7 @@ public:
   // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(TwoDValLayerSpec);
 protected:
@@ -1700,7 +1700,7 @@ public:
   // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(FourDValLayerSpec);
 protected:
@@ -1858,7 +1858,7 @@ public:
 
   override void	Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
 
-  override bool CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
   
   TA_SIMPLE_BASEFUNS(LeabraV1LayerSpec);
 private:

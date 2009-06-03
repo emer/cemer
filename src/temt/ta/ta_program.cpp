@@ -365,8 +365,8 @@ const String DynEnumType::GenCssPost_impl(int indent_level) {
   return rval;
 }
 
-ostream& DynEnumType::OutputType(ostream& strm, int indent) const {
-  String rval = ((DynEnumType*)this)->GenCss(indent);
+ostream& DynEnumType::OutputType(ostream& strm) const {
+  String rval = ((DynEnumType*)this)->GenCss(0);
   strm << rval;
   return strm;
 }

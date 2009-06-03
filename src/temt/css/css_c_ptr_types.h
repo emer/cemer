@@ -55,6 +55,7 @@ public:
   void operator=(Real cp) 	{ GetIntRef("=(Real)") = (int)cp; }
   void operator=(Int cp)	{ GetIntRef("=(Int)") = cp; }
   void operator=(const String& cp) { GetIntRef("=(String)") = (int)cp; }
+  USING(cssCPtr::operator=)
 
   // operators
   void operator=(const cssEl& t);
@@ -140,6 +141,7 @@ public:
   void operator=(Real cp) 	{ GetBoolRef("=") = (bool)cp; }
   void operator=(Int cp)	{ GetBoolRef("=") = (bool)cp; }
   void operator=(const String& cp);
+  USING(cssCPtr::operator=)
 
   cssEl* operator&(cssEl &t)
   { cssBool *r = new cssBool(GetBoolRef("&")); r->val &= (bool)t; return r; }
@@ -191,6 +193,7 @@ public:
   void operator=(Real cp) 	{ GetShortRef("=") = (short)cp; }
   void operator=(Int cp)	{ GetShortRef("=") = (short)cp; }
   void operator=(const String& cp) { GetShortRef("=") = (short)(int)cp; }
+  USING(cssCPtr::operator=)
 
   cssEl* operator+(cssEl &t)
   { cssInt *r = new cssInt(GetShortRef("+")); r->val += (Int)t; return r; }
@@ -271,6 +274,7 @@ public:
   void operator=(Real cp) 	{ GetLongRef("=") = (long)cp; }
   void operator=(Int cp)	{ GetLongRef("=") = (long)cp; }
   void operator=(const String& cp) { GetLongRef("=") = (long)(int)cp; }
+  USING(cssCPtr::operator=)
 
   cssEl* operator+(cssEl &t)
   { cssInt *r = new cssInt(GetLongRef("+")); r->val += (Int)t; return r; }
@@ -347,6 +351,7 @@ public:
   void operator=(Real cp) 	{ GetLongLongRef("=") = (int64_t)cp; }
   void operator=(Int cp)	{ GetLongLongRef("=") = (int64_t)cp; }
   void operator=(const String& cp) { GetLongLongRef("=") = (int64_t)cp; }
+  USING(cssCPtr::operator=)
 
   cssEl* operator+(cssEl &t)
   { cssInt *r = new cssInt(GetLongLongRef("+")); r->val += (Int)t; return r; }
@@ -427,6 +432,7 @@ public:
   void operator=(Real cp) 	{ GetCharRef("=") = (char)cp; }
   void operator=(Int cp)	{ GetCharRef("=") = (char)cp; }
   void operator=(const String& cp) { GetCharRef("=") = (char)cp[0]; }
+  USING(cssCPtr::operator=)
 
   cssEl* operator+(cssEl &t)
   { cssInt *r = new cssInt(GetCharRef("+")); r->val += (Int)t; return r; }
@@ -508,6 +514,7 @@ public:
   void operator=(Real cp) 	{ GetIntRef("=") = (int)cp; }
   void operator=(Int cp)	{ GetIntRef("=") = cp; }
   void operator=(const String& cp);
+  USING(cssCPtr_int::operator=)
 
   // operators
   void operator=(const cssEl& t);
@@ -546,6 +553,7 @@ public:
   void operator=(Real cp) 	{ GetDoubleRef("=") = (double)cp; }
   void operator=(Int cp)	{ GetDoubleRef("=") = (double)cp; }
   void operator=(const String& cp) { GetDoubleRef("=") = atof((const char*)cp); }
+  USING(cssCPtr::operator=)
 
   // operators
   void operator=(const cssEl& t);
@@ -611,6 +619,7 @@ public:
   void operator=(Real cp) 	{ GetFloatRef("=") = (float)cp; }
   void operator=(Int cp)	{ GetFloatRef("=") = (float)cp; }
   void operator=(const String& cp) { GetFloatRef("=") = atof((const char*)cp); }
+  USING(cssCPtr::operator=)
 
   // operators
   void operator=(const cssEl& t);
@@ -682,6 +691,7 @@ public:
   void operator=(Real cp) 	{ GetStringRef("=") = String(cp); }
   void operator=(Int cp)	{ GetStringRef("=") = String(cp); }
   void operator=(const String& cp) { GetStringRef("=") = cp; }
+  USING(cssCPtr::operator=)
 
   // operators
   void operator=(const cssEl& t);
@@ -747,6 +757,7 @@ public:
   void operator=(Int cp)	{ GetVarRef("=") = cp; }
   void operator=(const String& cp) { GetVarRef("=") = cp; }
   void operator=(const Variant& val); 
+  USING(cssCPtr::operator=)
 
   // operators
   void operator=(const cssEl& t);
@@ -819,6 +830,7 @@ public:
   void operator=(Real cp) 	{ GetEnumRef("=").SetNumVal((int)cp); }
   void operator=(Int cp)	{ GetEnumRef("=").SetNumVal(cp); }
   void operator=(const String& cp);
+  USING(cssCPtr::operator=)
 
   // operators
   void operator=(const cssEl& t);

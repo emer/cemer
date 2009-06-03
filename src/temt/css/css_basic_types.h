@@ -102,6 +102,7 @@ public:
 
   void operator=(void*)	 	{ CvtErr("(void*)"); }
   void operator=(void**)	{ CvtErr("(void**)"); }
+  USING(cssEl::operator=)
 
   // operators
   void operator=(const cssEl& s) { val = (Int)s; }
@@ -177,6 +178,7 @@ public:
 
   void operator=(void*)	 	{ CvtErr("(void*)"); }
   void operator=(void**)	{ CvtErr("(void**)"); }
+  USING(cssInt::operator=)
 
   // operators
   void operator=(const cssEl& s);
@@ -238,6 +240,7 @@ public:
 
   void operator=(void*)	 	{ CvtErr("(void*)"); }
   void operator=(void**)	{ CvtErr("(void**)"); }
+  USING(cssEl::operator=)
 
   // operators
   void operator=(const cssEl& s) { val = (ta_int64_t)s; }
@@ -333,6 +336,7 @@ public:
 
   void operator=(void*)	 	{ CvtErr("(void*)"); }
   void operator=(void**)	{ CvtErr("(void**)"); }
+  USING(cssEl::operator=)
 
   // operators
   void operator=(const cssEl& s)	{ val = (Real)s; }
@@ -444,6 +448,7 @@ public:
 
   void operator=(void*)	 	{ CvtErr("(void*)"); }
   void operator=(void**)	{ CvtErr("(void**)"); }
+  USING(cssEl::operator=)
 
   // operators
   void operator=(const cssEl& s)	{ val = s.GetStr(); }
@@ -516,6 +521,7 @@ public:
 
   void operator=(void*)	 	{ CvtErr("(void*)"); }
   void operator=(void**)	{ CvtErr("(void**)"); }
+  USING(cssEl::operator=)
 
   // operators
   void operator=(const cssEl& s);
@@ -590,6 +596,7 @@ public:
 
   void operator=(void* ptr)	 	{ val = ptr; }
   void operator=(void**)		{ CvtErr("(void**)"); }
+  USING(cssEl::operator=)
 
   // operators
   void operator=(const cssEl& s)	{ val = s.GetVar(); }
@@ -714,6 +721,7 @@ public:
 
   void operator=(void*)	 	{ CvtErr("(void*)"); }
   void operator=(void**)	{ CvtErr("(void**)"); }
+  USING(cssEl::operator=)
 
   // operators
   void operator=(const cssElPtr& s)	{ SetPtr(s); }
@@ -798,6 +806,7 @@ public:
   void operator=(const String&)	{ CvtErr("(String)"); }
   void operator=(void*)	 	{ CvtErr("(void*)"); }
   void operator=(void**)	{ CvtErr("(void**)"); }
+  USING(cssPtr::operator=)
 
   // operators
   cssElPtr& GetOprPtr()	const 	{ return (cssElPtr&)ptr; } // our ptr is always ours!
@@ -848,6 +857,7 @@ public:
   void operator=(const String&) { CvtErr("(String)"); }
   void operator=(void*)         { CvtErr("(void*)"); }
   void operator=(void**)        { CvtErr("(void**)"); }
+  USING(cssArray::operator=)
 
   // operators
   cssEl* operator+(cssEl&)      { NopErr("+"); return &cssMisc::Void; }
@@ -980,6 +990,7 @@ public:
 
   void operator=(void* cp) 	{ ptr.El()->operator=(cp); }
   void operator=(void** cp)	{ ptr.El()->operator=(cp); }
+  USING(cssEl::operator=)
 
   void AssignFromType(TypeDef* td, void* bs)  	{ ptr.El()->AssignFromType(td, bs); }
   void AssignFromType(const String& td, void* bs) { ptr.El()->AssignFromType(td, bs); }
@@ -1115,6 +1126,7 @@ public:
 
   void operator=(void*)	 		{ CvtErr("(void*)"); }
   void operator=(void**)		{ CvtErr("(void**)"); }
+  USING(cssInt::operator=)
 
   // operators
   void operator=(const cssEl& s);
@@ -1321,6 +1333,7 @@ public:
   void operator=(const String&)	{ CvtErr("(String)"); }
   void operator=(void*)		{ CvtErr("(void*)"); }
   void operator=(void**)	{ CvtErr("(void**)"); }
+  USING(cssEl::operator=)
 
   // operators
   void operator=(const cssEl& s);

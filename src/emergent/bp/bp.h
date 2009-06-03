@@ -337,7 +337,7 @@ public:
   float		err_scale;	// the scaling parameter
 
   inline float 		C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit* su);
-  inline float 		Compute_dEdA(BpRecvCons* cg, BpUnit* su);
+  inline float 		Compute_dEdA(BpSendCons* cg, BpUnit* su);
 
   TA_SIMPLE_BASEFUNS(ErrScaleBpConSpec);
 private:
@@ -348,9 +348,9 @@ private:
 inline float ErrScaleBpConSpec::C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit*) {
   return err_scale * cn->wt * ru->dEdNet;
 }
-inline float ErrScaleBpConSpec::Compute_dEdA(BpRecvCons* cg, BpUnit* su) {
+inline float ErrScaleBpConSpec::Compute_dEdA(BpSendCons* cg, BpUnit* su) {
   float rval = 0.0f;
-  CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->OwnCn(i), (BpUnit*)cg->Un(i), su));
+  CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->PtrCn(i), (BpUnit*)cg->Un(i), su));
   return rval;
 }
 
@@ -476,7 +476,7 @@ public:
 
   // nullify all other functions..
   override void Compute_Netin(Unit*, Network* net, int thread_no=-1) 	{ };
-  override void Init_dWt(Unit*, Network* net, int thread_no=-1) 	{ };
+  override void Init_dWt(Unit*, Network* net) 	{ };
   override void Compute_dWt(Unit*, Network* net, int thread_no=-1) 	{ };
   override void Compute_Weights(Unit*, Network* net, int thread_no=-1) 	{ };
 

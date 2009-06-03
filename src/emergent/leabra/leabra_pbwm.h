@@ -55,7 +55,7 @@ public:
   // compute the da value based on recv projections: every cycle in 1+ phases (delta version)
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(SNcLayerSpec);
 private:
@@ -336,7 +336,7 @@ public:
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
   void	Defaults();
 
   TA_SIMPLE_BASEFUNS(MatrixLayerSpec);
@@ -385,7 +385,7 @@ public:
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
   void	Defaults();
 
   TA_SIMPLE_BASEFUNS(SNrThalLayerSpec);
@@ -458,7 +458,7 @@ public:
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
   void	Defaults();
 
   TA_SIMPLE_BASEFUNS(PFCLayerSpec);
@@ -527,7 +527,7 @@ public:
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
   void	Defaults();
 
   TA_SIMPLE_BASEFUNS(PFCOutLayerSpec);

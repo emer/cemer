@@ -685,8 +685,6 @@ private:
   void 			Destroy() {}
 };
 
-// TODO: Brad -- you might need to update this with system-wide constructor changes, etc
-
 class TA_API ValIdx : public taBase {
   // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a float value and an index: very useful for sorting!
   INHERITED(taBase)
@@ -699,19 +697,20 @@ public:
 
   inline void 	Initialize() 			{ val = 0.0; idx = 0; }
   inline void 	Destroy()			{ };
-  inline void 	Copy(const ValIdx& cp)	{ val = cp.val; idx = cp.idx; }
+  void 	Copy(const ValIdx& cp)	{ val = cp.val; idx = cp.idx; }
+  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
 
   ValIdx() 				{ Initialize(); }
   ValIdx(const ValIdx& cp) 		{ Copy(cp); }
   ValIdx(float v, int i) 		{ SetValIdx(v, i); }
-  ValIdx(const String& str) 			{ val = (float)str; }
+  ValIdx(const String& str) 		{ val = (float)str; }
   ~ValIdx() 				{ };
   TAPtr Clone() 			{ return new ValIdx(*this); }
-  void  UnSafeCopy(TAPtr cp) {
+  void  UnSafeCopy(const taBase* cp) {
     if(cp->InheritsFrom(&TA_ValIdx)) Copy(*((ValIdx*)cp));
     if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this);
   }
-  void  CastCopyTo(TAPtr cp) 	{ ValIdx& rf = *((ValIdx*)cp); rf.Copy(*this); }
+  void  CastCopyTo(taBase* cp) const 	{ ValIdx& rf = *((ValIdx*)cp); rf.Copy(*this); }
   TAPtr MakeToken()			{ return (TAPtr)(new ValIdx); }
   TAPtr MakeTokenAry(int no)		{ return (TAPtr)(new ValIdx[no]); }
   TypeDef* GetTypeDef() const 		{ return &TA_ValIdx; }
@@ -797,8 +796,8 @@ class TA_API ValIdx_Array : public taArray<ValIdx> {
 INHERITED(taArray<ValIdx>)
 public:
   STATIC_CONST ValIdx blank; // #HIDDEN #READ_ONLY 
-  String	El_GetStr_(void* it) const { return (String)((ValIdx*)it); } // #IGNORE
-  void		El_SetFmStr_(void* it, String& val)
+  String	El_GetStr_(const void* it) const { return (String)((ValIdx*)it); } // #IGNORE
+  void		El_SetFmStr_(void* it, const String& val)
   { ((ValIdx*)it)->val = (float)val; } // #IGNORE
   virtual void*		GetTA_Element(Variant i, TypeDef*& eltd)
   { eltd = &TA_ValIdx; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }

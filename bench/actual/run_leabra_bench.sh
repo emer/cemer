@@ -26,8 +26,8 @@
 # ./run_leabra_bench.sh n_threads=2 thread_alloc_pct=0 thread_nibble_chunk=8 thread_compute_thr=0.5 thread_min_units=1000 tag=_mac_mbp_216ghz_thr2alc0nib8thr5
 
 # name of executable to run
-set exe=emergent
-#set exe=../../build/bin/emergent
+#set exe=emergent
+set exe=../../build/bin/emergent
 
 # echo " "
 # echo "=============================================================="

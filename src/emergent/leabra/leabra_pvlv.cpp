@@ -110,7 +110,8 @@ void PViLayerSpec::HelpConfig() {
   inherited::HelpConfig();
 }
 
-bool PViLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool PViLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
@@ -339,7 +340,8 @@ void PVrLayerSpec::HelpConfig() {
   inherited::HelpConfig();
 }
 
-bool PVrLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool PVrLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
@@ -511,7 +513,8 @@ void LVeLayerSpec::HelpConfig() {
   inherited::HelpConfig();
 }
 
-bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool LVeLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
@@ -754,7 +757,8 @@ void NVLayerSpec::HelpConfig() {
   inherited::HelpConfig();
 }
 
-bool NVLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool NVLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
@@ -909,7 +913,8 @@ void PVLVDaLayerSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool PVLVDaLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool PVLVDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
   SetUnique("decay", true);

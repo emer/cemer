@@ -601,7 +601,7 @@ public:
   virtual void CastFm(const cssEl& cp)	{ operator=(cp); } // default cast is a copy
   virtual void InitAssign(const cssEl& cp) { operator=(cp); } // default initial assign is cpy
   virtual void AssignFromType(TypeDef* td, void*)	{ CvtErr(td->name); }
-  virtual void AssignFromType(const char* td, void*)	{ CvtErr(td); }
+  virtual void AssignFromType(const String& td, void*)	{ CvtErr(td); }
   // type-safe way to assign a void ptr of given type to a cssEl
 
   virtual void UpdateAfterEdit() { };
@@ -1121,6 +1121,7 @@ public:
 
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
+  USING(cssEl::operator=)
 
   // operators
   virtual bool	ROCheck();	// do read_only check, true if ok to modify, else err

@@ -86,7 +86,7 @@ set(mod_path "${PROJECT_SOURCE_DIR}/CMakeModules")
 set(CMAKE_MODULE_PATH ${mod_path})
 
 # turn this on for debugging new things
-#set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # set the lib and executable suffix based on build type
 include(${mod_path}/SetBuildSuffix.cmake)

@@ -118,7 +118,7 @@ public:
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
   void	Defaults();
 
   TA_SIMPLE_BASEFUNS(PViLayerSpec);
@@ -204,7 +204,7 @@ public:
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
   void	Defaults();
 
   TA_BASEFUNS_NOCOPY(PVrLayerSpec);
@@ -261,7 +261,7 @@ public:
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
   void	Defaults();
 
   TA_SIMPLE_BASEFUNS(LVeLayerSpec);
@@ -323,7 +323,7 @@ public:
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
   void	Defaults();
 
   TA_SIMPLE_BASEFUNS(NVLayerSpec);
@@ -377,7 +377,7 @@ public:
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
   void	Defaults();
 
   TA_SIMPLE_BASEFUNS(PVLVDaLayerSpec);

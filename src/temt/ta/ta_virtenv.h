@@ -121,7 +121,7 @@ public:
   // configure the transform based on values
   
   override String	GetDesc() const { return desc; }
-  override int	GetIndex() { return idx; }
+  override int	GetIndex() const { return idx; }
   override void	SetIndex(int i) { idx = i; }
 
   void	Initialize();

@@ -72,7 +72,8 @@ void SNcLayerSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool SNcLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool SNcLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
   bool rval = true;
@@ -439,7 +440,8 @@ void MatrixLayerSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
@@ -869,7 +871,8 @@ void SNrThalLayerSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool SNrThalLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
   SetUnique("decay", true);
@@ -1012,7 +1015,8 @@ void PFCLayerSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
+bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
   if(decay.clamp_phase2) {
@@ -1354,7 +1358,8 @@ void PFCOutLayerSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool PFCOutLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool PFCOutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
   if(decay.clamp_phase2) {

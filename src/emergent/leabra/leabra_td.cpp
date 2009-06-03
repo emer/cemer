@@ -148,7 +148,8 @@ void ExtRewLayerSpec::HelpConfig() {
   inherited::HelpConfig();
 }
 
-bool ExtRewLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool ExtRewLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
@@ -471,7 +472,8 @@ void TDRewPredLayerSpec::HelpConfig() {
   inherited::HelpConfig();
 }
 
-bool TDRewPredLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool TDRewPredLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
@@ -653,7 +655,8 @@ void TDRewIntegLayerSpec::HelpConfig() {
   inherited::HelpConfig();
 }
 
-bool TDRewIntegLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool TDRewIntegLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
@@ -812,7 +815,8 @@ void TdLayerSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool TdLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+bool TdLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
   SetUnique("decay", true);

@@ -103,7 +103,7 @@ extern TA_API taStrRep  _nilStrRep; // an empty taStrRep, for convenience and ef
 */
 TA_API taStrRep*		Snew(int slen, uint cap = 0); // for an empty rep, for filling by caller; len is set
 TA_API taStrRep*		Salloc(const char* s, int slen = -1, uint cap = 0); // the most-used alloc
-TA_API taStrRep*		Scat(taStrRep* srep, const char* s, uint slen = -1);
+TA_API taStrRep*		Scat(taStrRep* srep, const char* s, int slen = -1);
 TA_API taStrRep*		Scat(const char* s1, int slen1, const char* s2, int slen2); // slen can be -1
 TA_API taStrRep*		Sreverse(const taStrRep* x);
 

@@ -1944,10 +1944,10 @@ public:
   virtual T*	LinkUniqNameOld(T* item)	{ return (T*)LinkUniqNameOld_((void*)item); }
   // #CAT_Modify link so that name is unique, old used if dupl, returns one used
 
-  virtual bool	MoveBefore(T* trg, T* item) { return MoveBefore_((void*)trg, (void*)item); }
-  // #CAT_Modify move item so that it appears just before the target item trg in the list
-  virtual bool	MoveAfter(T* trg, T* item) { return MoveAfter_((void*)trg, (void*)item); }
-  // #CAT_Modify move item so that it appears just after the target item trg in the list
+//   virtual bool	MoveBefore(T* trg, T* item) { return MoveBefore_((void*)trg, (void*)item); }
+//   // #CAT_Modify move item so that it appears just before the target item trg in the list
+//   virtual bool	MoveAfter(T* trg, T* item) { return MoveAfter_((void*)trg, (void*)item); }
+//   // #CAT_Modify move item so that it appears just after the target item trg in the list
 
   TA_TMPLT_BASEFUNS(taList,T);
 private:
@@ -2300,7 +2300,8 @@ public:
   void  CastCopyTo(TAPtr cp)            { taArray<T>& rf = *((taArray<T>*)cp); rf.Copy(*this); } //*/
   TA_TMPLT_BASEFUNS_NOCOPY(taArray,T); //
 public:
-  void*		FastEl_(int i)			{ return &(el[i]); }// #IGNORE
+  void*		FastEl_(int i)		{ return &(el[i]); }// #IGNORE
+  const void*	FastEl_(int i) const  	{ return (const void*)&(el[i]); } // #IGNORE
 protected:
   mutable T		tmp; // #IGNORE temporary item
   

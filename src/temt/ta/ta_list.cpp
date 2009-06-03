@@ -1539,7 +1539,7 @@ void taArray_impl::List(ostream& strm) const {
   strm << "}";
 }
 
-String taArray_impl::GetValStr() const {
+String taArray_impl::GetArrayStr() const {
   String rval = "[" + String(size) + "] {";
   for(int i=0;i<size;i++) {
     rval += " " + El_GetStr_(FastEl_(i)) + ",";

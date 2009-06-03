@@ -2008,7 +2008,7 @@ public:
   // #CAT_Structure find a layer in network based on the type of layer spec
 
   virtual void	HelpConfig();	// #BUTTON #CAT_Structure get help message for configuring this spec
-  override bool CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
   // check for for misc configuration settings required by different algorithms, including settings on the processes NOTE: this routine augments the default layer checks, it doesn't replace them
 
   virtual void	Defaults();	// #BUTTON #CONFIRM #CAT_ObjectMgmt restores default parameter settings: warning -- you will lose any unique parameters you might have set!
