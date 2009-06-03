@@ -3361,6 +3361,20 @@ taiEditDataHost* SArgEdit::CreateDataHost(void* base, bool readonly) {
   return new SArgEditDataHost(base, typ, readonly);
 }
 
+//////////////////////////
+// 	WizardEdit	//
+//////////////////////////
+
+int WizardEdit::BidForEdit(TypeDef* td){
+  if(td->InheritsFrom(TA_TestWizard)) //TODO: change to taWizard once working
+    return (inherited::BidForType(td) +1);
+  return 0;
+}
+
+taiEditDataHost* WizardEdit::CreateDataHost(void* base, bool readonly) {
+  return new taiWizardDataHost((taWizard*)base, typ, readonly);
+}
+
 
 //////////////////////////
 //   taiViewType	//

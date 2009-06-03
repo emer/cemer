@@ -791,32 +791,39 @@ protected:
   override void 	Ok_impl();
 };
 
-class TA_API taiWizardDataHost : public taiDataHost {
+class TA_API taiWizardDataHost : public taiEditDataHost {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for Wizards -- uses tab pages
   Q_OBJECT
-INHERITED(taiDataHost)
+INHERITED(taiEditDataHost)
 public:
   MembSet_List		membs; // one set per page
   
-  override void		GetImage();
-  override void		GetValue();
+  QTabWidget*		tabs;
+  
+//  override void		GetImage();
+//  override void		GetValue();
   override void		Constr_Buttons();//
   
 //  override bool 	eventFilter(QObject *obj, QEvent *event);
   // event filter to trigger apply button on Ctrl+Return
 
   taiWizardDataHost(taWizard* base, TypeDef* typ_ = NULL, 
-    bool read_only_ = false, bool modal_ = false, QObject* parent = 0,
-    bool line_nos_ = false);
+    bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
   ~taiWizardDataHost();
   
 protected:
+  String_PArray		page_names; // stores names, or blank if none
   override void		Constr_Strings();
   override void  	Constr_Box();
+  override void		Constr_Data_Labels();
+  override void		Constr_Data_Labels_impl(int& idx, Member_List* ms,
+     taiDataList* dl);
   override void 	Constr_RegNotifies();
 //  override void 	DoConstr_Dialog(iHostDialog*& dlg);
+  override void		Enum_Members(); // called by Constr_impl to fill memb_el[]
   override void 	ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
   override void 	Ok_impl();
 };
+
 
 #endif // tai_dialog_h

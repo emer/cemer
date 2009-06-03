@@ -2641,11 +2641,10 @@ bool taiStringDataHost::eventFilter(QObject* obj, QEvent* event) {
 //////////////////////////////////////////////////
 
 taiWizardDataHost::taiWizardDataHost(taWizard* base_, TypeDef* typ_,
-	     bool read_only_, bool modal_, QObject* parent, bool line_nos_)
-:inherited(typ_ ,read_only_, modal_, parent)
+	     bool read_only_, bool modal_, QObject* parent)
+:inherited(base_, typ_ ,read_only_, modal_, parent)
 {
-  root = base_;
-//  edit = NULL;
+  tabs = NULL;
 }
 
 taiWizardDataHost::~taiWizardDataHost() {
@@ -2656,11 +2655,8 @@ taiWizardDataHost::~taiWizardDataHost() {
 }*/
 
 void taiWizardDataHost::Constr_Box() {
-/*TODO    edit = new iTextEdit(widget());
-    vblDialog->addWidget(edit, 1);
-  }
-  edit->installEventFilter(this); // hopefully everyone below body will get it too!
-  */
+  tabs = new QTabWidget(widget());
+  vblDialog->addWidget(tabs, 1);
 }
 
 void taiWizardDataHost::Constr_RegNotifies() {
@@ -2679,11 +2675,69 @@ void taiWizardDataHost::Constr_Buttons() {
   connect(btnPrint, SIGNAL(clicked()), this, SLOT(btnPrint_clicked()) );*/
 }
 
+void taiWizardDataHost::Constr_Data_Labels()
+{
+  // assert all the tabs -- note that the number can never change
+  if (tabs->count() == 0) {
+    for (int i = 0; i < membs.size; ++i) {
+      iStripeWidget* tab = new iStripeWidget();
+      tabs->addTab(tab, page_names.SafeEl(i));
+      SET_PALETTE_BACKGROUND_COLOR(tab, bg_color);
+      tab->setHiLightColor(bg_color_dark);
+      tab->setStripeHeight(row_height + (2 * LAYBODY_MARGIN));
+    }
+  }
+}
+
+void taiWizardDataHost::Constr_Data_Labels_impl(int& idx, Member_List* ms,
+     taiDataList* dl)
+{
+}
+
 void taiWizardDataHost::Constr_Strings() {
 /*TODO*/
 }
 
-
+void taiWizardDataHost::Enum_Members() {
+  if (!typ) return; // class browser or such
+  page_names.Reset();
+  membs.Reset();
+  
+  MemberSpace& ms = typ->members;
+  int page_no = 0; // always contains the most recent explicitly marked page
+  for (int i = 0; i < ms.size; ++i) {
+    MemberDef* md = ms.FastEl(i);
+    if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
+    // we skip the normal taNBase members
+    if ((md->name == "name") || (md->name == "auto_open")) 
+      continue;
+    
+    // we only show Normal guys in Wizards, sorry charlie!
+    if (!md->ShowMember(~taMisc::IS_NORMAL, TypeItem::SC_EDIT, taMisc::IS_NORMAL)) {
+      continue;
+    } 
+    
+    // parse page directive -- if none, values are 0, ""
+    String pd = md->OptionAfter("PAGE_");
+    String page_name; // we only set if included
+    if (pd.nonempty()) {
+      if (pd.contains("_")) {
+        page_name = pd.after("_"); // "" if empty
+        pd = pd.before("_");
+      }
+      page_no = pd.toInt();
+    }
+    // add to lists if needed -- both have same counts
+    if (page_no >= page_names.size) {
+      page_names.SetSize(page_no + 1);
+      membs.SetMinSize(page_no + 1);
+    }
+    if (page_name.nonempty()) {
+      page_names[page_no] = page_name;
+    }
+    memb_el(page_no).Add(md);
+  }
+}
 
 /*void taiWizardDataHost::btnPrint_clicked() {
   QPrinter pr;
@@ -2693,15 +2747,11 @@ void taiWizardDataHost::Constr_Strings() {
   edit->document()->print(&pr);
 }*/
 
-void taiWizardDataHost::GetImage() {
-/*TODO  Wizard val = mbr->type->GetValStr(mbr->GetOff(root), root, mbr);
-  edit->setPlainText(val);*/
+/*void taiWizardDataHost::GetImage() {
 }
 
 void taiWizardDataHost::GetValue() {
-/*TODO  Wizard val = edit->toPlainText();
-  mbr->type->SetValStr(val, mbr->GetOff(root), root, mbr);*/
-}
+}*/
 
 void taiWizardDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
   // called by root on closing, dialog on closing, etc. etc.

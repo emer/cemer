@@ -810,5 +810,20 @@ private:
   void 	Destroy()	{ };
 };
 
+class TestWizard:  public taWizard {
+  // test wizard -- during devel, all Wizards must inherit from this
+INHERITED(taWizard)
+public:
+  int		inty; // #PAGE_0_Start
+  float		floaty;
+  String	outputy; // #PAGE_1_Output
+
+  TA_BASEFUNS(TestWizard);
+private:
+  SIMPLE_COPY(TestWizard);
+  void 	Initialize() {inty=0; floaty=1;}
+  void 	Destroy()	{ CutLinks(); }
+};
+
 
 #endif
