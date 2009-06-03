@@ -529,7 +529,6 @@ void GammatoneBlock::MakeStdFilters(float cf_lo, float cf_hi, int n_chans) {
 */
 
 void MelCepstrumBlock::Initialize() {
-  out_vals = OV_MEL;
   cf_lo = 100.0f;
   cf_lin_bw = 100.0f;
   cf_log_factor = 1.1f;
@@ -545,7 +544,6 @@ void MelCepstrumBlock::Initialize() {
 
 void MelCepstrumBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  out_vals = (OutVals)(out_vals | OV_MEL); // required
 }
 
 void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
@@ -584,23 +582,14 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   auto_gain.Set(1.0f / ((16.0f * out_rate) - 37.0f), Level::UN_SCALE);
   // just init all chans, whether enabled or not
   const int n_chans = n_lin_chans + n_log_chans;
-  int buff_bit = 1;
-  for (int obi = 0; obi < outBuffCount(); ++obi, buff_bit<<=1) {
-    DataBuffer* ob = outBuff(obi);
-    ob->enabled = (out_vals & buff_bit);
-    if (!ob->enabled) continue; // will have mat set to zero 
-    ob->fs.SetCustom((float)src_buff->fs / out_size);
-    ob->fr_dur.Set(1, Duration::UN_SAMPLES); // we just output one item at a time
-    ob->fields = src_buff->fields;
-    ob->chans = (dct) ? n_cepstrum : n_chans;
-    ob->vals = 1;
-  }
-  // if using delta or delta2, need min of 2/3 env stages
-  int min_stages = 1;
-  if (out_vals & OV_DELTA) min_stages = 2;
-  if (min_stages > 1) {
-    out_buff.min_stages = min_stages;
-  }
+  DataBuffer* ob = &out_buff;
+  ob->enabled = true;
+  ob->fs.SetCustom((float)src_buff->fs / out_size);
+  ob->fr_dur.Set(1, Duration::UN_SAMPLES); // we just output one item at a time
+  ob->fields = src_buff->fields;
+  ob->chans = (dct) ? n_cepstrum : n_chans;
+  ob->vals = 1;
+  
   
   // rate counters
   out_size = (int)Duration::StatGetDurationSamples(out_rate, Duration::UN_TIME_MS, src_buff->fs);
@@ -629,12 +618,14 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   mel_out.SetGeom(1, n_chans);
   
   // dct filter, if applicable
+  // ex. from Zheng et al. 2001 
   if (dct) {
     dct_filt.SetGeom(2, n_chans, n_cepstrum);
     for (int n = 0; n < n_cepstrum; ++n) 
     for (int i = 0; i < n_chans; ++i)
     {
-      dct_filt.FastEl(i, n) = cosf( ( (M_PI * n) * (2 * i + 1)) / (2 * n_chans) );
+      //dct_filt.FastEl(i, n) = cosf( ( (M_PI * n) * (2 * i + 1)) / (2 * n_chans) );
+      dct_filt.FastEl(i, n) = cosf( (M_PI * n * (i - 0.5f)) / n_chans );
     }
   } else {
     dct_filt.Reset();
@@ -693,6 +684,7 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
   const int in_items = in_mat->dim(ITEM_DIM);
   const int in_fields = in_mat->dim(FIELD_DIM);
   for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) { 
+    const int out_stage = out_buff.stage;
     for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) {
       float dat = in_mat->FastEl(0, 0, f, i, stage);
       in_buff.Set(dat, in_idx, f);
@@ -787,7 +779,7 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
         } else {
           // straight mel out
           for (int ch = 0; ch < chans.size; ++ch) {
-            out_buff.mat.FastEl(0, ch, f, 0, out_buff.stage) = 
+            out_buff.mat.FastEl(0, ch, f, 0, out_stage) = 
               mel_out.FastEl_Flat(ch);
           }
         }
@@ -806,7 +798,7 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
 }
 
 void MelCepstrumBlock::GraphFilter(DataTable* graph_data,
-  bool log_freq, MelCepstrumBlock::OutVals response) 
+  bool log_freq) 
 {
   taProject* proj = GET_MY_OWNER(taProject);
   bool newguy = false;
@@ -830,9 +822,6 @@ void MelCepstrumBlock::GraphFilter(DataTable* graph_data,
   
   gb->InitLinks();
   gb->Copy(*this);
-  if ((response != OV_MEL) && (response != OV_DELTA))
-    response = OV_MEL;
-  gb->out_vals = response;
 
   if (!ok) goto exit;
   // need to configure, and check it is valid, ex. fs set, etc.
@@ -1551,9 +1540,6 @@ void DeltaBlock::Initialize() {
 void DeltaBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   //note: these gains are just empirical
-  float gn = 1.0f; 
-  gn *= (degree+2); // based on 1/n derivitive factor
-  auto_gain.Set(gn, Level::UN_SCALE);
 }
 
 void DeltaBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
@@ -1563,7 +1549,7 @@ void DeltaBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   if (!src_buff) return;
 //  float_Matrix* in_mat = &src_buff->mat;
   // note: we can support any number of vals, chans, or items
-  const int data_dims = degree + 2;
+  const int data_dims = degree + 1;
   // need enough prev stages to do the delta
   if (CheckError((src_buff->stages < data_dims), quiet, ok,
     "DeltaBlock: input requires degree+1 input stages"))
@@ -1574,6 +1560,10 @@ void DeltaBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   if (check) return;
   data.SetSize(data_dims);
   
+  float gn = 1.0f; 
+  gn *= (degree+1); // based on 1/n derivitive factor
+  auto_gain.Set(gn, Level::UN_SCALE);
+
   for (int obi = 0; obi <= 1; ++obi) {
     DataBuffer* ob = outBuff(obi);
     ob->fs = src_buff->fs;
@@ -1602,18 +1592,24 @@ void DeltaBlock::AcceptData_impl(SignalProcBlock* src_blk,
       for (int ch = 0;
         ((ps == PS_OK) && (ch < in_chans)); ++ch)
       {
-        // retrieve the data for doing the delta calcs
-        data[0] = in_mat->SafeElAsFloat(v, ch, f, i, stage);
-        for (int d = 1; d < data_dims; ++d) {
-          int dstage = src_buff->GetRelStage(stage, -d);
-          data[d] = in_mat->SafeElAsFloat(v, ch, f, i, dstage);
+	float val;
+	if (degree == ZERO) {
+	  val = in_mat->SafeElAsFloat(v, ch, f, i, stage);
+	} else {
+	  // retrieve the data for doing the delta calcs
+	  data[0] = in_mat->SafeElAsFloat(v, ch, f, i, stage);
+	  for (int d = 1; d < data_dims; ++d) {
+	    int dstage = src_buff->GetRelStage(stage, -d);
+	    data[d] = in_mat->SafeElAsFloat(v, ch, f, i, dstage);
+	  }
+	  val = CalcDelta();
         }
-        float delt = CalcDelta();
+	    
         float pl, mi;
-        if (delt >= 0.0f) {
-          pl = delt; mi = 0.0f;
+        if (val >= 0.0f) {
+          pl = val; mi = 0.0f;
         } else {
-          pl = 0.0f; mi = -delt;
+          pl = 0.0f; mi = -val;
         }
         // output
         out_buff_pl.mat.FastEl(v, ch, f, out_buff_pl.item,

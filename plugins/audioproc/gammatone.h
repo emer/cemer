@@ -178,14 +178,7 @@ class AUDIOPROC_API MelCepstrumBlock: public StdBlock
 { // ##CAT_Audioproc gammatone filter bank
 INHERITED(StdBlock) 
 public:
-  enum OutVals { // #BITS Output Values 
-    OV_MEL	= 0x01, // #LABEL_MelCepstrum basic output channel (required)
-    OV_DELTA    = 0x02, // #LABEL_DeltaMel 1st derivitive (per out) of Mel
-  };
-  
-  DataBuffer		out_buff_delta; //  #SHOW_TREE delta output (if enabled)
-  OutVals		out_vals; // the desired output values
-  float			out_rate; // output rate, in ms (frames will be 1/2 this rate)
+  float			out_rate; // output rate, in ms (frames will be 2x this duration, i.e. half-overlapping)
   Level			auto_gain; // #READ_ONLY #SHOW #NO_SAVE an automatically applied gain adjustment based on the output type selected; crudely makes 1Khz sine wave have ~1 output (linear) in peak channel of mel fft
   float			cf_lo; // lower center frequency (Hz)
   float			cf_lin_bw; // linear range bandwidth
@@ -200,14 +193,9 @@ public:
   FilterChan_List	chans; // #NO_SAVE the individual channels
   
   override taList_impl*  children_() {return &chans;} //note: required
-  override int		outBuffCount() const {return 2;}
-  override DataBuffer* 	outBuff(int idx) {switch (idx) {
-    case 0: return &out_buff; 
-    case 1: return &out_buff_delta;
-    default: return NULL;}}
   
   virtual void		GraphFilter(DataTable* disp_data,
-    bool log_freq = true, MelCepstrumBlock::OutVals response = OV_MEL);
+    bool log_freq = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter response into a data table and generate a graph; if log_freq then log10 of freq is output; CHOOSE ONLY 1 RESPONSE
   ProcStatus 		AcceptData_MC(float_Matrix* in_mat, int stage = 0);
     // #IGNORE mostly for proc
@@ -223,10 +211,9 @@ public: // DO NOT USE
   float_Matrix		mel_out; // #EXPERT_TREE #NO_SAVE buffer used for mel spectrum
   float_Matrix		dct_filt; // #EXPERT_TREE #NO_SAVE dct filter coefficients 
 protected:
-  int			num_out_vals;
   int			num_out_chans; // will depend on whether dct enabled or not
-  int			out_size; // output size, in samples, =1/2 frame size
-  int			frame_size; // frame size, in samples
+  int			out_size; // output size, in samples (= fs*out_rate)
+  int			frame_size; // frame size, in samples = 2* out_size
   int			in_idx; // input values received, 0..frame_size-1
   float			fft_band; // width of each fft band, in Hz
   override void		UpdateAfterEdit_impl();
@@ -395,12 +382,12 @@ private:
 
 
 class AUDIOPROC_API DeltaBlock: public OutputBlock
-{ // ##CAT_Audioproc Delta Block -- provides a delta+ (0) and - (1) channel, usually used after a TemporalWindowBlock 
+{ // ##CAT_Audioproc Delta Block -- provides a bipolar split, or delta+ (0) and - (1) channel, usually used after a TemporalWindowBlock 
 INHERITED(OutputBlock) 
 public: //
   enum DerivDegree {
-    FIRST,		// first derivative ("velocity")
-    //SECOND		// second derivative ("acceleration")
+    ZERO,		// just splits a bipolar signal
+    FIRST,		// first derivative
   };
   
   DerivDegree		degree; // type of delta to compute
