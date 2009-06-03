@@ -1072,6 +1072,7 @@ public:
   void 		Constr();
   void		Copy(const cssEnumType& cp);
   void		CopyType(const cssEnumType& cp);
+  USING(cssEl::operator=)
 
   cssEnumType()				{ Constr(); }
   cssEnumType(const String& nm)		{ Constr(); SetTypeName(nm); }
@@ -1160,6 +1161,7 @@ public:
   void		Constr();
   void		Copy(const cssClassMember& cp);
   void		CopyType(const cssClassMember& cp);
+  USING(cssEl::operator=)
   
   cssClassMember()  : cssEl()		{ Constr(); }
   cssClassMember(cssEl* mbtp);
@@ -1221,6 +1223,7 @@ public:
 
   void		Copy(const cssClassType& cp);
   void		CopyType(const cssClassType& cp);
+  USING(cssEl::operator=)
 
   cssClassType()			{ Constr(); AddBuiltins(); }
   cssClassType(const String& nm)		{ Constr(); SetTypeName(nm); AddBuiltins(); }
@@ -1361,6 +1364,8 @@ public:
 
   String	PrintStr() const;
   String	PrintFStr() const;
+
+  USING(cssEl::operator=)
 
   cssSubShell();
   cssSubShell(const String& nm);

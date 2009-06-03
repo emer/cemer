@@ -878,18 +878,18 @@ void VEJoint::SetValsToODE_ODEParams() {
   }
 }
 
-#ifdef 0 // __GNUC__
+// #ifdef 0 // __GNUC__
+// static inline float get_val_no_nan(float val) {
+//   // note: this may not be sufficiently cross-platform (e.g., windows)
+//   // could potentially try this: if(val != val) return 0.0f;  // supposed to be true of nans
+//   if(isnan(val)) return 0.0f;
+//   return val;
+// }
+// #else
 static inline float get_val_no_nan(float val) {
-  // note: this may not be sufficiently cross-platform (e.g., windows)
-  // could potentially try this: if(val != val) return 0.0f;  // supposed to be true of nans
-  if(isnan(val)) return 0.0f;
   return val;
 }
-#else
-static inline float get_val_no_nan(float val) {
-  return val;
-}
-#endif
+// #endif
 
 void VEJoint::GetValsFmODE(bool updt_disp) {
   if(!HasJointFlag(FEEDBACK)) return;

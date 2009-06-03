@@ -257,6 +257,8 @@ public:
   cssEl*	MakeToken_stub(int, cssEl *arg[])
   { return new cssIOS((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
+  USING(cssTA::operator=)
+
   void PtrAssignPtr(const cssEl& s); // use type casts to make it work right for diff offsets
 
   operator Real() const;
