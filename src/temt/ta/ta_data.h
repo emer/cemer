@@ -28,7 +28,7 @@
 #include "ta_TA_type.h"
 
 // forwards
-class DataBlock;
+class DataBlock;//
 
 class TA_API ChannelSpec: public taNBase {
   // ##CAT_Data describes a channel of data in a DataBlock (e.g., a column of a datatable)
@@ -41,9 +41,9 @@ public:
   virtual bool		isMatrix() const {return false;}
   virtual const MatrixGeom& cellGeom() const;
   virtual bool		usesCellNames() const {return false;}
-  virtual const String_Matrix& cellNames() const;
+  virtual const String_Matrix& cellNames() const;//
   
-  String GetColText(int col, int);
+//obs  String GetColText(int col, int);
   TA_BASEFUNS(ChannelSpec);
 private:
   void 	Copy_(const ChannelSpec& cp);
@@ -86,8 +86,10 @@ INHERITED(taList<ChannelSpec>)
 public:
   void		UpdateDataBlockSchema(DataBlock* db);
 
-  int		NumListCols() const {return 6;}
-  String 	GetColHeading(int col);
+  override int		NumListCols() const {return 6;}
+  override const 	KeyString GetListColKey(int col) const;
+  override String	GetColHeading(const KeyString& key) const;
+  String GetColHeadingIdx(int col) const;
 
   TA_BASEFUNS_NOCOPY(ChannelSpec_List);
 private:

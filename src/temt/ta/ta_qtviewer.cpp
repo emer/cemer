@@ -8400,10 +8400,10 @@ tabGroupTreeDataNode::~tabGroupTreeDataNode()
 void tabGroupTreeDataNode::CreateChildren_impl() {
   inherited::CreateChildren_impl();
   String tree_nm;
-  for (int i = 0; i < data()->gp.size; ++i) {
+  for (int i = 0; i < tadata()->gp.size; ++i) {
     // the subgroups are themselves taGroup items
     TypeDef* typ;
-    void* el = data()->gp.GetTA_Element(i, typ); // gets the item, and its TypeDef
+    void* el = tadata()->gp.GetTA_Element(i, typ); // gets the item, and its TypeDef
     if (!typ) continue; //TODO: maybe we should put a marker item in list???
     // if we get a taBase item, the type might only be the base type, not the derived type of the item
     // so we cast the item, and then grab the exact type right from the item
@@ -8429,7 +8429,7 @@ void tabGroupTreeDataNode::CreateChildren_impl() {
 taiTreeDataNode* tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_node,
   void* el) 
 {
-  taSubGroup* gp = &data()->gp;
+  taSubGroup* gp = &tadata()->gp;
   TypeDef* typ = gp->GetElType();
   // the subgroups are themselves taGroup items
   if (!typ) return NULL; //TODO: maybe we should put a marker item in list???
@@ -8496,7 +8496,7 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   case DCR_GROUPS_SORTED: {	// no ops
     int gp0_idx = indexOfChild(last_list_items_node) + 1; // valid if llin=NULL
     int nd_idx; // index of the node
-    taGroup_impl* gp = this->data(); // cache
+    taGroup_impl* gp = this->tadata(); // cache
     for (int i = 0; i < gp->gp.size; ++i) {
       TAPtr tab = (TAPtr)gp->FastGp_(i);
       FindChildForData(tab, nd_idx);
@@ -8516,10 +8516,10 @@ void tabGroupTreeDataNode::UpdateChildNames() {
 
 void tabGroupTreeDataNode::UpdateGroupNames() {
   String tree_nm;
-  for (int i = 0; i < data()->gp.size; ++i) {
+  for (int i = 0; i < tadata()->gp.size; ++i) {
     // the subgroups are themselves taGroup items
     TypeDef* typ;
-    void* el = data()->gp.GetTA_Element(i, typ); // gets the item, and its TypeDef
+    void* el = tadata()->gp.GetTA_Element(i, typ); // gets the item, and its TypeDef
     if (!typ) continue; //TODO: maybe we should put a marker item in list???
     // if we get a taBase item, the type might only be the base type, not the derived type of the item
     // so we cast the item, and then grab the exact type right from the item
@@ -8543,7 +8543,7 @@ void tabGroupTreeDataNode::UpdateGroupNames() {
 }
 
 void tabGroupTreeDataNode::willHaveChildren_impl(bool& will) const {
-  if (data()->gp.size > 0) will = true;
+  if (tadata()->gp.size > 0) will = true;
   if (!will)
     inherited::willHaveChildren_impl(will);
 }

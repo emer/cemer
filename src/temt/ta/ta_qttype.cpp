@@ -1674,7 +1674,7 @@ void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
   }
     
   taiTokenPtrButton* tpb = (taiTokenPtrButton*)dat;
-  tpb->GetImage(tok_ptr, targ_typ, scope, scope_type);
+  tpb->GetImageScoped(tok_ptr, targ_typ, scope, scope_type);
   GetOrigVal(dat, base);
 }
 
@@ -2538,7 +2538,7 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
       taBase::SetPointer((taBase**)arg_base, val.toBase());
     }
   }
-  rval->GetImage(*((TAPtr*)arg_base), npt, scope, scope_type);
+  rval->GetImageScoped(*((TAPtr*)arg_base), npt, scope, scope_type);
 }
 
 void taiTokenPtrArgType::GetValue_impl(taiData* dat, void*) {

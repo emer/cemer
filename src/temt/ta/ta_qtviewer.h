@@ -1927,6 +1927,7 @@ public:
   virtual void		Refresh() {Refresh_impl();} // manually refresh
   virtual bool		ShowNode(iTreeViewItem* item) const;
     // whether the node is visible in this show context
+  USING(inherited::scrollTo)
 #ifndef __MAKETA__
   void			scrollTo(QTreeWidgetItem* item, ScrollHint hint = EnsureVisible);
     // convenience static override, to work directly with items
@@ -2180,7 +2181,7 @@ private:
 class TA_API tabTreeDataNode: public taiTreeDataNode {
 INHERITED(taiTreeDataNode)
 public:
-  taBase* 		data() {return ((tabDataLink*)m_link)->data();}
+  taBase* 		tadata() {return ((tabDataLink*)m_link)->data();}
   tabDataLink* 		link() const {return (tabDataLink*)m_link;}
 
   tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
@@ -2296,7 +2297,7 @@ private:
 class TA_API tabGroupTreeDataNode: public tabListTreeDataNode {
 INHERITED(tabListTreeDataNode)
 public:
-  taGroup_impl* 	data() const {return ((tabGroupDataLink*)m_link)->data();}
+  taGroup_impl* 	tadata() const {return ((tabGroupDataLink*)m_link)->data();}
   tabGroupDataLink* 	link() const {return (tabGroupDataLink*)m_link;}
 
   taiTreeDataNode*	CreateSubGroup(taiTreeDataNode* after, void* el); 

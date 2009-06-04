@@ -75,7 +75,7 @@ public:
 
   void		GenerateScript(); // output script code equivalent if recording
 
-  void		AddToMenu(taiMenu* menu);
+  override void		AddToMenu(taiActions* menu);
 
 public slots:
   void		CallFun();	// (override) call the function..

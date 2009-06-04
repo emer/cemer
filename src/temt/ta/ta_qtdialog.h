@@ -685,6 +685,7 @@ public:
   EditDataPanel* 	EditPanelDeferred(taiDataLink* link); // for panels
 //  void		 	ConstrEditControl(); 
     // for controls -- construct then edit 
+  USING(inherited::GetImage)
   void			GetImage(bool force); //override
   void			GetValue(); //override
   virtual bool		ShowMember(MemberDef* md) const; // #OBS
@@ -763,6 +764,7 @@ public:
   bool			line_nos; // display line numbers in the editor view
   
   void 			Constr(const char* prompt = "", const char* win_title = "");
+  USING(inherited::GetImage)
   override void		GetImage();
   override void		GetValue();
   override void		Constr_Buttons();

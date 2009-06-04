@@ -60,6 +60,7 @@ public:
   override bool		HasChildItems();
   override String	GetName() const;
   override String	GetDisplayName() const;
+  USING(inherited::ShowMember)
   override bool		ShowMember(MemberDef* md); // asks this type if we should show the md member
 
   taTypeInfoDataLink(taMisc::TypeInfoKind tik_, TypeItem* data_);  //
@@ -120,6 +121,7 @@ public:
   
   DisplayMode		dm;
   TypeSpace*		data() {return (TypeSpace*)m_data;}
+  USING(inherited::GetListChild)
   override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
   override int		NumListCols() const;
   override const KeyString GetListColKey(int col) const;
@@ -139,6 +141,7 @@ class TA_API taMethodSpaceDataLink: public taTypeSpaceDataLink_Base {
 INHERITED(taTypeSpaceDataLink_Base)
 public:
   MethodSpace*		data() {return (MethodSpace*)m_data;}
+  USING(inherited::GetListChild)
   override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
   override int		NumListCols() const;
   static const KeyString key_rval;
@@ -158,6 +161,7 @@ class TA_API taMemberSpaceDataLink: public taTypeSpaceDataLink_Base {
 INHERITED(taTypeSpaceDataLink_Base)
 public:
   MemberSpace*		data() {return (MemberSpace*)m_data;}
+  USING(inherited::GetListChild)
   override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
   override int		NumListCols() const;
   override const KeyString GetListColKey(int col) const;
@@ -175,6 +179,7 @@ class TA_API taPropertySpaceDataLink: public taTypeSpaceDataLink_Base {
 INHERITED(taTypeSpaceDataLink_Base)
 public:
   PropertySpace*		data() {return (PropertySpace*)m_data;}
+  USING(inherited::GetListChild)
   override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
   override int		NumListCols() const;
   override const KeyString GetListColKey(int col) const;
@@ -192,6 +197,7 @@ INHERITED(taiTreeDataNode)
 public:
   const taMisc::TypeInfoKind	tik;
   
+  USING(inherited::data)
   TypeItem* 		data() {return ((taTypeInfoDataLink*)m_link)->data();}
   taTypeInfoDataLink* 	link() const {return (taTypeInfoDataLink*)m_link;}
 
@@ -220,6 +226,7 @@ public:
 //  taMisc::TypeInfoKind		child_tik() const {return m_child_tik;}
 //  TypeDef*		child_type() const {return m_child_type;}
   
+  USING(inherited::data)
   taPtrList_impl* 	data() {return ((taTypeSpaceDataLink_Base*)m_link)->data();}
   taTypeInfoDataLink* 	child_link(int idx);
   taTypeSpaceDataLink_Base* 	link() const {return (taTypeSpaceDataLink_Base*)m_link;}

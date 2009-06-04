@@ -475,9 +475,8 @@ protected:
 
 class TA_API SoMatrixGrid: public SoSeparator {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS renders a matrix as a grid of 3d blocks, in X-Y plane, with block height = Z axis.  size = 1x1 unit
+INHERITED(SoSeparator)
 #ifndef __MAKETA__
-typedef SoSeparator inherited;
-
   SO_NODE_HEADER(SoMatrixGrid);
 #endif // def __MAKETA__
 public:
@@ -515,6 +514,7 @@ public:
 
   SoTransform*	transform() const { return transform_; }
   // the master transform, for the whole entity
+  USING(inherited::getMatrix)
   taMatrix*	getMatrix() const { return matrix; }
 
   SoMatrixGrid(taMatrix* mat = NULL, bool oddy = true, ColorScale* cs = NULL, MatrixLayout layout = BOT_ZERO, bool val_txt = false);

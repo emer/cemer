@@ -175,7 +175,7 @@ protected:
 class TA_API taiColorType : public taiClassType { // special editor for colors, add dialog
 INHERITED(taiClassType)
 public:
-  bool		handlesReadOnly() const {return true;}
+  bool		handlesReadOnly() {return true;}
   bool		requiresInline() const {return true;}
   int 		BidForType(TypeDef* td);
 
@@ -569,7 +569,8 @@ INHERITED(taiMember)
 public:
   TypeDefault*	tpdflt;
 
-  virtual int	BidForMember(MemberDef* md, TypeDef* td);
+  virtual int	BidForMember(MemberDef* md, TypeDef* td);//
+  USING(inherited::GetDataRep) // WARNING: following is NOT the standard api sig -- might be bug???
   taiData*	GetDataRep(IDataHost* host_, taiData* par,
    QWidget* gui_parent_, int flags_, MemberDef* mbr);
   override void	GetImage(taiData* dat, const void* base);
@@ -593,6 +594,7 @@ private:
 // the type is supposed to have buttons and/or menus in a given context
 
 class TA_API taiMethod : public taiType {
+INHERITED(taiType)
 public:
   MethodDef*	meth;
 
@@ -608,6 +610,7 @@ public:
   taiMethodData*	GetGenericMethodRep(void* base, taiData* par); // this is just for CallFun
   taiMethodData*	GetButtonMethodRep(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_);
   taiMethodData*	GetMenuMethodRep(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_); // covers MENU and MENU_BUTTON types
+  USING(inherited::GetImage)
   override void		GetImage(taiData*, void*)	{ }
   override void		GetValue(taiData*, void*)	{ }
 

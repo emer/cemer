@@ -118,7 +118,7 @@ cssiMethMenu::cssiMethMenu(cssClassInst* ob, cssProgSpace* tp, cssMbrScriptFun* 
   }
 }
 
-void cssiMethMenu::AddToMenu(taiMenu* menu) {
+void cssiMethMenu::AddToMenu(taiActions* menu) {
   if (css_fun->HasOption("MENU_SEP_BEFORE"))
     menu->AddSep();
   menu->AddItem(css_fun->name, taiMenu::use_default,

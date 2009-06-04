@@ -4590,10 +4590,19 @@ int taiTokenPtrButton::columnCount(int view) const {
   }
 }
 
-void taiTokenPtrButton::GetImage(TAPtr ths, TypeDef* targ_typ_, TAPtr scope_, TypeDef* scope_type_) {
+void taiTokenPtrButton::GetImage(void* cur_sel_, TypeDef* targ_typ_)
+{//NOTE: this routine is needed in case clients call the old GetImage renamed to GetImageScoped
+  scope_ref = NULL;
+  scope_typ = NULL;
+  inherited::GetImage(cur_sel_, targ_typ_);
+}
+
+void taiTokenPtrButton::GetImageScoped(TAPtr ths, TypeDef* targ_typ_,
+  TAPtr scope_, TypeDef* scope_type_) 
+{
   scope_ref = scope_;
   scope_typ = scope_type_;
-  inherited::GetImage((void*)ths, targ_typ_);
+  GetImage((void*)ths, targ_typ_);
 }
 
 const String taiTokenPtrButton::headerText(int index, int view) const {
@@ -4725,7 +4734,16 @@ int taiTokenPtrMultiTypeButton::columnCount(int view) const {
   return 4;
 }
 
-void taiTokenPtrMultiTypeButton::GetImage(TAPtr ths, TypeDef* targ_typ_, TAPtr scope_, TypeDef* scope_type_) {
+void taiTokenPtrMultiTypeButton::GetImage(void* cur_sel_, TypeDef* targ_typ_)
+{//NOTE: this routine is needed in case clients call the old GetImage renamed to GetImageScoped
+  scope_ref = NULL;
+  scope_typ = NULL;
+  inherited::GetImage(cur_sel_, targ_typ_);
+}
+
+void taiTokenPtrMultiTypeButton::GetImageScoped(TAPtr ths, TypeDef* targ_typ_,
+  TAPtr scope_, TypeDef* scope_type_) 
+{
   scope_ref = scope_;
   scope_typ = scope_type_;
   inherited::GetImage((void*)ths, targ_typ_);

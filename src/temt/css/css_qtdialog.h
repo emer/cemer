@@ -67,6 +67,7 @@ private:
 
 class CSS_API cssiArgDialog : public cssiEditDialog {
   // #IGNORE edit dialog for editing function arguments
+INHERITED(cssiEditDialog)
 public:
   bool		err_flag; 	// true if an arg was improperly set
   MethodDef*	md;
@@ -80,6 +81,7 @@ public:
   ~cssiArgDialog();
 
   void		Constr_ArgTypes();
+  USING(inherited::GetImage)
   void		GetImage(bool force); // force ignored
   void		GetValue();
   int		Edit(bool modal_); // ati is for when n leading args are predetermined by context, and so shouldn't be shown to the user

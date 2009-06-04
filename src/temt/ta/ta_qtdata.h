@@ -154,6 +154,7 @@ private:
 
 
 class TA_API taiField : public taiData {
+INHERITED(taiData)
   Q_OBJECT
 friend class iFieldEditDialog;
 public:
@@ -192,6 +193,7 @@ protected:
 };
 
 class TA_API taiFileDialogField : public taiData {
+INHERITED(taiData)
   // for FILE_DIALOG_xxx strings
   Q_OBJECT
 public:
@@ -420,6 +422,7 @@ public:
   void 			GetValue(MatrixGeom* arr) const;
 
 protected:
+  USING(inherited::GetImage_impl)
   override void		GetImage_impl(const void* base) {GetImage((const MatrixGeom*)base);}
   override void		GetValue_impl(void* base) const {GetValue((MatrixGeom*)base);} 
 private:
@@ -457,6 +460,7 @@ protected:
   void			Constr(QWidget* gui_parent_);
   void			AddTypeMembers(); // called to add all typ members
   override void		ChildRemove(taiData* child); // remove from memb_el too
+  USING(inherited::GetImage_impl)
   override void		GetImage_impl(const void* base);
   override void		GetValue_impl(void* base) const; 
   virtual bool		ShowMember(MemberDef* md) const;
@@ -761,6 +765,7 @@ protected:
   taiActions*	par_menu; // parent menu, if any -- many methods delegate their calls upward if there is a parent
   taiSubMenuEl*		par_menu_el; // parent submenu element, if any
   void 			emitLabelChanged(const String& val); // #IGNORE
+  USING(inherited::GetImage_impl)
   virtual bool 		GetImage_impl(const Variant& usr);  // #IGNORE set to this usr item, returns false if not found -- recursive for hiermenus
   virtual void 		ActionAdded(taiAction* it); // add to rep, def adds to mrep, but overridden for menubutton type
   virtual void 		ActionRemoving(taiAction* it); // remove from rep, def removes from mrep, but overridden for menubutton type
@@ -804,10 +809,8 @@ private:
 //////////////////////////////////
 
 class TA_API taiButtonMenu: public taiActions { // a button, in which the actions appear as a popup menu; can also just be an Edit button, with no menu (pass flgEditOnly)
+INHERITED(taiActions)
   Q_OBJECT
-#ifndef __MAKETA__
-typedef taiActions inherited;
-#endif
 public:
   inline QAbstractButton* rep() {return (QAbstractButton*)(QWidget*)m_rep;}
   
@@ -883,6 +886,7 @@ public:
 
 class TA_API taiEditButton : public taiButtonMenu {
   // actually an edit menu... -- flgReadOnly creates menu which only allows for #EDIT_READ_ONLY members
+INHERITED(taiButtonMenu)
   Q_OBJECT
 public:
   static taiEditButton*	New(void* base, taiEdit *taie, TypeDef* typ_, IDataHost* host_, taiData* par,
@@ -898,6 +902,7 @@ protected:
   taiEdit*	ie;
   taiDataList 	meth_el;	// method elements
 
+  USING(inherited::GetImage_impl)
   override void		GetImage_impl(const void* base); 
   virtual void		GetMethMenus();
   virtual void		SetLabel();
@@ -1070,6 +1075,7 @@ typedef bool (*item_filter_fun)(void*, void*); // optional filter, spec'ed in IT
 
 class TA_API taiItemPtrBase : public taiData {
 // common base for MemberDefs, MethodDefs, TypeDefs, Enums, and tokens, that use the ItemChooser
+INHERITED(taiData)
   Q_OBJECT
 public:
   item_filter_fun	item_filter; // #IGNORE optional filter, in ITEM_FILTER_xxx
@@ -1146,6 +1152,7 @@ public:
   int			viewCount() const {return 1;} // override
   const String		viewText(int index) const; // override
 
+  USING(inherited::GetImage)
   void			GetImage(MemberDef* cur_sel, TypeDef* targ_typ) 
     {taiItemPtrBase::GetImage((void*)cur_sel, targ_typ);}
   MemberDef*		GetValue() {return md();}
@@ -1176,6 +1183,7 @@ public:
   int			viewCount() const {return 2;} // override
   const String		viewText(int index) const; // override
 
+  USING(inherited::GetImage)
   void			GetImage(MethodDef* cur_sel, TypeDef* targ_typ) 
     {taiItemPtrBase::GetImage((void*)cur_sel, targ_typ);}
   MethodDef*		GetValue() {return md();}
@@ -1209,6 +1217,7 @@ public:
   int			viewCount() const {return 3;} // override
   const String		viewText(int index) const; // override
 
+  USING(inherited::GetImage)
   void			GetImage(MemberDef* cur_sel, TypeDef* targ_typ) 
     {taiItemPtrBase::GetImage((void*)cur_sel, targ_typ);}
   TypeItem*		GetValue() {return md();}
@@ -1243,6 +1252,7 @@ public:
   int			viewCount() const {return 4;} // override
   const String		viewText(int index) const; // override
 
+  USING(inherited::GetImage)
   void			GetImage(MemberDef* cur_sel, TypeDef* targ_typ) 
     {taiItemPtrBase::GetImage((void*)cur_sel, targ_typ);}
   TypeItem*		GetValue() {return md();}
@@ -1279,6 +1289,7 @@ public:
   override bool		hasNoItems();
   override bool		hasOnlyOneItem();
 
+  USING(inherited::GetImage)
   void			GetImage(TypeDef* cur_sel, TypeDef* targ_typ) 
     {taiItemPtrBase::GetImage((void*)cur_sel, targ_typ);}
   TypeDef*		GetValue() {return td();}
@@ -1339,9 +1350,9 @@ public:
   override bool		hasOnlyOneItem();
   virtual bool		countTokensToN(int& cnt, TypeDef* td, int n, void*& last_itm);
   // recursively count valid (in scope etc) tokens of type until reaching n, at which point a true is returned -- if n is not reached, return false -- used for above two routines
-
-  virtual void		GetImage(TAPtr ths, TypeDef* targ_typ, TAPtr scope = NULL,
-				 TypeDef* scope_type = NULL);
+  override void 	GetImage(void* cur_sel, TypeDef* targ_typ);
+  virtual void		GetImageScoped(TAPtr ths, TypeDef* targ_typ, TAPtr scope = NULL,
+	TypeDef* scope_type = NULL);
   // get image, using the new type and scope params supplied
   virtual taBase*	GetValue() {return token();}
   
@@ -1378,8 +1389,9 @@ public:
   override int		viewCount() const; // n = size of type_list + 1
   override const String	viewText(int index) const;
 
-  virtual void		GetImage(TAPtr ths, TypeDef* targ_typ, TAPtr scope = NULL,
-				 TypeDef* scope_type = NULL);
+  override void 	GetImage(void* cur_sel, TypeDef* targ_typ);
+  virtual void		GetImageScoped(TAPtr ths, TypeDef* targ_typ, TAPtr scope = NULL,
+	TypeDef* scope_type = NULL);
   // get image, using the new type and scope params supplied
   virtual taBase*	GetValue() {return token();}
   
@@ -1463,6 +1475,7 @@ protected:
 
 class TA_API taiToken : public taiElBase {
   // for making menus of tokens
+INHERITED(taiElBase)
   Q_OBJECT
 public:
 //  bool		over_max;	// over max_menu
@@ -1497,12 +1510,14 @@ protected slots:
 
 class TA_API taiSubToken : public taiElBase {
   // Menu for sub tokens of a giventype
+INHERITED(taiElBase)
   Q_OBJECT
 public:
   void*		menubase;
 
   QWidget*	GetRep();
 
+  USING(inherited::GetMenu)
   virtual void	GetMenu(taiMenuAction* actn = NULL);
   virtual void	UpdateMenu(taiMenuAction* actn = NULL);
   virtual void	GetMenuImpl(void* base, taiMenuAction* actn = NULL);
@@ -1522,6 +1537,7 @@ public slots:
 
 class TA_API taiTypeInfoBase : public taiData {
 // common base for MemberDefs, MethodDefs, TypeDefs, and Enums of a typedef in the object with a MDTYPE_xxx option
+INHERITED(taiData)
 public:
   MemberDef*	memb_md; // MemberDef of the member that will get the target pointer
   TypeDef*	targ_typ;	// target type from which to get list of items -- may be same as typ, but could differ

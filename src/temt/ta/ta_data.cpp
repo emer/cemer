@@ -42,7 +42,7 @@ const String_Matrix& ChannelSpec::cellNames() const {
   return no_names;
 }
 
-String ChannelSpec::GetColText(int col, int) {
+/*obs??? String ChannelSpec::GetColText(int col, int) {
   switch (col) {
   case 0: return chan_num;
   case 1: return name;
@@ -52,7 +52,7 @@ String ChannelSpec::GetColText(int col, int) {
   case 5: return isMatrix() ? String(usesCellNames()) : _nilString;
   default: return _nilString; // compiler food
   }
-}
+}*/
 
 //////////////////////////
 //  MatrixChannelSpec	//
@@ -117,11 +117,17 @@ void MatrixChannelSpec::SetCellGeomN(bool uses_names, const MatrixGeom& geom) {
 //  ChannelSpec_List	//
 //////////////////////////
 
-/*void ChannelSpec_List::El_SetIndex_(void* it, int idx) {
-  ((ChannelSpec*)it)->chan_num = idx;
-}*/
+//NOTE: following are hacks to keep code working
 
-String ChannelSpec_List::GetColHeading(int col) {
+const KeyString ChannelSpec_List::GetListColKey(int col) const 
+{
+  return (KeyString)col;
+}
+String ChannelSpec_List::GetColHeading(const KeyString& key) const {
+  return GetColHeadingIdx(key.toInt());
+}
+
+String ChannelSpec_List::GetColHeadingIdx(int col) const {
   static String hd_num("Chan #");
   static String hd_nm("Chan Name");
   static String hd_vt("Val Type");

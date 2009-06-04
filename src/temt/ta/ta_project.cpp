@@ -834,7 +834,7 @@ void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
 #ifdef TA_GUI
 class SimLogEditDialog: public taiEditDataHost {
 public:
-  bool	ShowMember(MemberDef* md) {
+  override bool	ShowMember(MemberDef* md) const {
     // just show a small subset of the members
     bool rval = (md->ShowMember(show()) && (md->im != NULL));
     if (!rval) return rval;

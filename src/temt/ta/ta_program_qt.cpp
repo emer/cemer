@@ -1925,7 +1925,7 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
     varlkup->item_filter = (item_filter_fun)ProgExpr::StdProgVarFilter;
     varlkup->type_list.Link(&TA_ProgVar);
     varlkup->type_list.Link(&TA_DynEnumItem);
-    varlkup->GetImage(NULL, &TA_ProgVar, this, &TA_Program); // scope_token is this!
+    varlkup->GetImageScoped(NULL, &TA_ProgVar, this, &TA_Program); // scope_token is this!
     bool okc = varlkup->OpenChooser();
     if(okc && varlkup->token()) {
       rval = prepend_before + varlkup->token()->GetName();
@@ -2033,7 +2033,7 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 //       cerr << "lookup from type: " << lookup_td->name << endl;
       taiMemberMethodDefButton* mdlkup =  new taiMemberMethodDefButton(lookup_td, NULL, NULL,
 								       NULL, 0, lookup_seed);
-      mdlkup->GetImage(NULL, lookup_td);
+      mdlkup->GetImage((MemberDef*)NULL, lookup_td);
       bool okc = mdlkup->OpenChooser();
       if(okc && mdlkup->md()) {
 	rval = txt.through(delim_pos[0]) + mdlkup->md()->name;
@@ -2052,7 +2052,7 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 //       cerr << "lookup from type: " << lookup_td->name << endl;
       taiEnumStaticButton* eslkup =  new taiEnumStaticButton(lookup_td, NULL, NULL,
 							     NULL, 0, lookup_seed);
-      eslkup->GetImage(NULL, lookup_td);
+      eslkup->GetImage((MemberDef*)NULL, lookup_td);
       bool okc = eslkup->OpenChooser();
       if(okc && eslkup->md()) {
 	rval = txt.through(delim_pos[0]) + eslkup->md()->name;
@@ -2066,7 +2066,7 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
       if(pt && pt->InheritsFrom(&TA_DynEnumType)) {
 	taiTokenPtrButton* varlkup =  new taiTokenPtrButton(&TA_DynEnumItem, NULL, NULL,
 							    NULL, 0, lookup_seed);
-	varlkup->GetImage(NULL, &TA_DynEnumItem, pt, &TA_DynEnumType); // scope to this guy
+	varlkup->GetImageScoped(NULL, &TA_DynEnumItem, pt, &TA_DynEnumType); // scope to this guy
 	bool okc = varlkup->OpenChooser();
 	if(okc && varlkup->token()) {
 	  rval = prepend_before + varlkup->token()->GetName();
@@ -2130,7 +2130,7 @@ String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 
   taiMemberDefButton* mdlkup = new taiMemberDefButton(lookup_td, NULL, NULL,
 						      NULL, 0, seed_path);
-  mdlkup->GetImage(NULL, lookup_td);
+  mdlkup->GetImage((MemberDef*)NULL, lookup_td);
   bool okc = mdlkup->OpenChooser();
   MemberDef* md = mdlkup->md();
   if(okc && md) {

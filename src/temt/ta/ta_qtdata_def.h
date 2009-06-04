@@ -238,8 +238,10 @@ private:
 
 class TA_API taiDataList : public taPtrList<taiData> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS taiData list, OBJECTS ARE DELETED ON REMOVAL
+INHERITED(taPtrList<taiData>)
 public:
 #ifndef __MAKETA__
+  USING(inherited::Add)
   template<class T>
   T*			Add(T* it) {Add_((void*)it); return it;}
     // convenience method, returns strongly typed guy that it adds

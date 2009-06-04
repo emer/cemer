@@ -122,6 +122,7 @@ public:
   
   override const String	titleText();
 
+  USING(inherited::GetImage)
   void			GetImage(TABLPtr base_lst, TAPtr it);
   
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
@@ -139,6 +140,7 @@ public:
   taGroup_impl* 	grp;
   
   override const String	titleText();
+  USING(inherited::GetImage)
   void			GetImage(taGroup_impl* base_grp, TAPtr it);
   
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
@@ -228,6 +230,7 @@ protected:
 
 // TypeHier provides the guts, we just replace the NULL default with "Group"
 class TA_API gpiElTypes : public taiTypeHier {
+INHERITED(taiTypeHier)
 public:
   TypeDef*	lst_typd;	// typedef of the list
 
@@ -236,6 +239,7 @@ public:
   gpiElTypes(taiMenu* existing_menu, TypeDef* lstd, TypeDef* typ_, IDataHost* host_,
       taiData* par, QWidget* gui_parent_, int flags_ = 0); // no flags
 
+  USING(inherited::GetMenu)
   void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
   override void		GetMenu(taiActions* menu, taiMenuAction* nact = NULL);
 };

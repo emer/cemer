@@ -835,7 +835,7 @@ public:
 					  int d0=0, int d1=0, int d2=0, int d3=0,
 					  int d4=0, int d5=0, int d6=0);
   // #CAT_Columns change type and/or geometry of column with given name 
-  
+  USING(inherited::GetColData)
   virtual DataCol* 	GetColData(Variant col, bool quiet = false) const {
     if(col.isStringType()) return FindColName(col.toString(), !quiet);
     DataCol* rval = data.SafeEl(col.toInt());
