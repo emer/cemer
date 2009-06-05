@@ -2576,7 +2576,7 @@ void NetView::Render_net_text() {
     }
   }
   int n_rows = cur_row;
-  int n_texts = chld_idx;
+//  int n_texts = chld_idx;
 
   int txt_st_off = 3 + 1;	// 3 we add below + 1 transform
   if(node_so->netTextDrag())

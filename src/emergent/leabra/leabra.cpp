@@ -803,7 +803,7 @@ bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   //  Network* net = GET_MY_OWNER(Network);
   bool rval = true;
  
-  return true;
+  return rval;
 }
 
 void LeabraUnitSpec::CreateNXX1Fun() {

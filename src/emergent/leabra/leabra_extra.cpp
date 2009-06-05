@@ -1024,7 +1024,7 @@ void ScalarValSelfPrjnSpec::Initialize() {
 void ScalarValSelfPrjnSpec::Connect_UnitGroup(Unit_Group* gp, Projection* prjn) {
   float neigh1 = 1.0f / wt_width;
   float val1 = expf(-(neigh1 * neigh1));
-  float scale_val = wt_max / val1;
+//  float scale_val = wt_max / val1;
 
 
   int n_cons = 2*width + 1;
@@ -3799,7 +3799,7 @@ void VisDisparityPrjnSpec::Connect_NoGps(Projection* prjn) {
 }
 
 void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
+//  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
 //   int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
 
   float gaus_nrm = 1.0f / ((float)disp_dist * gauss_sigma);
@@ -4085,8 +4085,8 @@ void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn) {
 }
 
 void CerebConj2PrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
-  int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
+//  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
+//  int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
   
   TwoDCoord rf_half_wd = rf_width / 2;
   FloatTwoDCoord rf_ctr = rf_half_wd;

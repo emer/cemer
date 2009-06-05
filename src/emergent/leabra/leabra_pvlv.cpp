@@ -518,7 +518,7 @@ bool LVeLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
   decay.phase = 0.0f;
@@ -762,7 +762,7 @@ bool NVLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
   SetUnique("decay", true);
@@ -920,7 +920,7 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
 
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
   // must have the appropriate ranges for unit specs..

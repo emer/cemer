@@ -2869,7 +2869,7 @@ void DataTable::DetermineLoadDataParams(istream& strm,
   readline_auto(strm, ln);
   native = ln.startsWith("_H:") ||  ln.startsWith("_D:");
   
-  int todo = 0;
+//  int todo = 0;
   // headers is actually same as LH since the Emergent version is auto regardless
   headers = (headers_req == LH_AUTO_YES);
   

@@ -259,7 +259,7 @@ void TemtClient::cmdRunProgram(bool sync) {
   if (!prog) return;
   
   // check if a prog already running
-  Program::RunState grs = Program::GetGlobalRunState();
+//  Program::RunState grs = Program::GetGlobalRunState();
 /* TEMP ignore global run state, assume synchronous dispatch  
   if (!((grs == Program::DONE) || (grs == Program::NOT_INIT))) {
     SendError("RunProgram " + pnm + ": program already running");

@@ -2097,8 +2097,8 @@ void T3DataViewer::FrameChanged(T3DataViewFrame* frame) {
 
 void T3DataViewer::GetWinState_impl() {
   inherited::GetWinState_impl();
-  iT3DataViewer* w = widget();
-  int view_frame_selected = w->tw->currentIndex();
+//  iT3DataViewer* w = widget();
+//  int view_frame_selected = w->tw->currentIndex();
   SetUserData("view_frame_selected", widget()->isVisible());
   DataChanged(DCR_ITEM_UPDATED);
 }

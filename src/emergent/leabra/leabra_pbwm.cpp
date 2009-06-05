@@ -152,7 +152,7 @@ void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
     Unit_Group* snc_ugp = (Unit_Group*)lay->units.gp[gi];
     Unit_Group* patch_ugp = (Unit_Group*)patch_lay->units.gp[gi];
     LeabraUnit* snc_u = (LeabraUnit*)snc_ugp->FastEl(0);
-    LeabraUnit* patch_u = (LeabraUnit*)patch_ugp->FastEl(0);
+//    LeabraUnit* patch_u = (LeabraUnit*)patch_ugp->FastEl(0);
 
     float str_da = patch_sp->Compute_LVDa_ugp(patch_ugp, lvi_ugp); // per stripe
     if(er_avail) {
@@ -445,7 +445,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
   SetUnique("decay", true);
@@ -878,7 +878,7 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
 
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
   if(lay->CheckError(!lay->unit_groups, quiet, rval,
@@ -918,7 +918,7 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
   int mtx_prjn_idx = 0;
   LeabraLayer* matrix_lay = FindLayerFmSpec(lay, mtx_prjn_idx, &TA_MatrixLayerSpec);
-  MatrixLayerSpec* mls = (MatrixLayerSpec*)matrix_lay->spec.SPtr();
+//  MatrixLayerSpec* mls = (MatrixLayerSpec*)matrix_lay->spec.SPtr();
 
   float net_off_rescale = 1.0f / (1.0f + snrthal.net_off);
 

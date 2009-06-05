@@ -1342,7 +1342,7 @@ void VEMuscleJoint::GetValsFmODE(bool updt_disp) {
     flexor2.Compute_Force(pos2_norm);
     extensor2.Compute_Force(pos2_norm);
 
-    float force2 = extensor2.torque + flexor2.torque;  // simple sum of torques..
+    force2 = extensor2.torque + flexor2.torque;  // simple sum of torques..
 
     // motor idea is that guy pulling in opposite direction opposes motion..
     if(flexor2.torque > -extensor2.torque) // net flex dir

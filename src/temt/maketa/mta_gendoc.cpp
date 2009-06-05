@@ -44,7 +44,7 @@ bool MTA::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
   /////////////////////////////////////////////////////////////
   // 	Filters! Returns true if you should filter this TypeDef
 
-  TypeDef* ta_base_def = ts->FindName("taBase");
+//  TypeDef* ta_base_def = ts->FindName("taBase");
   TypeDef* ta_smartref_def = ts->FindName("taSmartRef");
   TypeDef* ta_smartptr_def = ts->FindName("taSmartPtr");
 
@@ -98,8 +98,8 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
   strm << " <Name>" << ts->name.xml_esc() << "</Name>\n";
 
   TypeDef* ta_base_def = ts->FindName("taBase");
-  TypeDef* ta_smartref_def = ts->FindName("taSmartRef");
-  TypeDef* ta_smartptr_def = ts->FindName("taSmartPtr");
+//  TypeDef* ta_smartref_def = ts->FindName("taSmartRef");
+//  TypeDef* ta_smartptr_def = ts->FindName("taSmartPtr");
 
   for(int i=0;i<ts->size;i++) {
   

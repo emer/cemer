@@ -1169,51 +1169,102 @@ private:
   SIMPLE_COPY(LogLinearBlock)
 };*/
 
+/*
+class AUDIOPROC_API AGCProfile: public SignalProcItem
+{ // ##CAT_Audioproc a set of AGC parameters for a single context (input source or type)
+  INHERITED(SignalProcItem) 
+public:
+  
+  
+  override void SetDefaultName() {name = _nilString;}
+  override TAPtr SetOwner(TAPtr own);
+  TA_BASEFUNS(AGCProfile)
+  
+protected:
+  
+private:
+  void	Initialize();
+  void	Destroy() {}
+  SIMPLE_COPY(AGCProfile)
+};
+
+
+class AUDIOPROC_API AGCProfile_List: public taList<AGCProfile>
+{ // ##CAT_Audioproc list of AGCProfiles
+  INHERITED(taList<AGCProfile>) 
+public:
+  
+  TA_BASEFUNS_NOCOPY(AGCProfile_List)
+private:
+  void	Initialize() {SetBaseType(&TA_AGCProfile);}
+  void	Destroy() {}
+};*/
+
+
 class AUDIOPROC_API AGCBlock: public StdBlock
-{ // ##CAT_Audioproc automatic gain control block
+{ // ##CAT_Audioproc automatic gain control block, supporting multiple profiles
 INHERITED(StdBlock) 
 public:
   enum AGCFlags { // #BITS flags for the AGC block
     AF_0	= 0, // #IGNORE
-    AF_AGC_ON	=0x001, // #LABEL_AgcOn use Automatic Gain Control
+    AGC_BYPASS  = 0x001, // bypass the AGC block (i.e. gain of 1)
+    AGC_ON	= 0x002, // use Automatic Gain Control, else use current gain setting
+    AGC_UPDATE_INIT = 0x004, // continuously update the initial value with current value
   };
   
-  DataBuffer		out_buff_gain; //  #SHOW_TREE provides the gain values used: v0:cl, v1: (note: is always mono, even for stereo feeds)
-  AGCFlags		agc_flags; // flags to control features
-  Level::Units		gain_units; // the units for all gain parameters, and also the out_buff_gain:v0 value
+  enum AGCType { // how to calculate the gain
+    AGC_AVG, // based on the average level of the signal, peaks will then typically saturate
+    AGC_PEAK, // based on the peak level of the signal, stays in range, but details may be lost
+  };
   
-//  Level			dyn_range_out; // the desired output dynamic range
-  float			init_gain; // initial gain (applied during init_config)
-  float			cur_gain; // #CONDEDIT_OFF_agc_flags:AF_AGC_ON #NO_SAVE the current gain being applied
-  float			gain_thresh; // threshold, below which no changes (avoids changes during silence)
+  DataBuffer		out_buff_params; //  #SHOW_TREE provides the gain values used: v0:cl, v1: (note: is always mono, even for stereo feeds)
+  AGCFlags		agc_flags; // flags to control features
+  AGCType		agc_type; // how to calculate the gain
+  float 		update_rate; // #DEF_10 the rate at which we update the AGC and output the params; frame size will be 2* this
+  
+  Level::Units		gain_units; // the units for all gain parameters, and also the out_buff_gain:v0 value
+  float			output_level; // the desired output level, usually 0dB for 
+  float			init_gain; // initial gain (applied during init_config) -- updated with cur_gain if UPDATE_INIT flag set
+  float			cur_gain; // #READONLY #SHOW #NO_SAVE the current gain being applied
+  float			gain_thresh; // threshold *relative to peak*, below which no changes (avoids changes during silence)
   MinMax		gain_limits; // the min and max gain, in same units as 'gain'
+  
+  Duration  		in_tc; // the time constant of the average input integration -- try 200 ms
   Duration  		agc_tc_attack; // the time constant of the gain integration for increases in the signal -- try 50-100 ms
   Duration  		agc_tc_decay; // the time constant of the gain integration for decreases in the signal -- typically lower than attack, try 500 ms
   
   
-  ProcStatus 		AcceptData_AGC(float_Matrix* in_mat, int stage = 0);
+  ProcStatus 		AcceptData_bypass(float_Matrix* in_mat, int stage = 0);
     // #IGNORE mostly for proc
+  ProcStatus 		AcceptData_AGC(float_Matrix* in_mat, int stage = 0);
+  // #IGNORE mostly for proc
   
   override int		outBuffCount() const {return 2;}
   override DataBuffer* 	outBuff(int idx) {switch (idx) {
     case 0: return &out_buff; 
-    case 1: return &out_buff_gain;
+    case 1: return &out_buff_params;
     default: return NULL;}}
   
   SIMPLE_LINKS(AGCBlock)
   TA_BASEFUNS(AGCBlock)
   
-public: // TEMP
+public:
+  float 		in_dt; // #NO_SAVE #READ_ONLY #EXPERT 
   float 		agc_dt_attack; // #NO_SAVE #READ_ONLY #EXPERT 
   float 		agc_dt_decay; // #NO_SAVE #READ_ONLY #EXPERT 
   float			ths_peak; // #NO_SAVE #EXPERT #READ_ONLY highest value in current stream
-  double		flt_peak; // #NO_SAVE #EXPERT #READ_ONLY integrated peak, used to set gain
-  double		ths_avg; // #NO_SAVE #EXPERT #READ_ONLY avg value in current stream
+  double		in_peak; // #NO_SAVE #EXPERT #READ_ONLY integrated peak, used to set gain
+  double		in_avg; // #NO_SAVE #EXPERT #READ_ONLY avg value in current stream
   
   float targ_cl; // #NO_SAVE #EXPERT #READ_ONLY current width
   float targ_width; // #NO_SAVE #EXPERT #READ_ONLY current width
   
+  double_Matrix		accum; // 0:even/odd, 1:field
 protected:
+  int			out_size; // output size, in samples (= fs*out_rate) -- we output out_buff_params at this rate
+  int			frame_size; // frame size, in samples = 2* out_size
+  int			in_idx;
+  float			output_level_abs;
   float			cur_gain_abs; // cur_gain, in Level::UN_SCALE
   Level::Units		prev_gain_units; // prev units, so we can rescale all
   override void		UpdateAfterEdit_impl();
@@ -1221,8 +1272,7 @@ protected:
   override void		AcceptData_impl(SignalProcBlock* src_blk,
     DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps);
   void			UpdateDerived(); // update derived values, called in ctor and UAE
-  virtual float		CalcValue(float in);
-  void			UpdateAGC();
+  void			UpdateAGC(int eo);
 private:
   void	Initialize();
   void	Destroy() {CutLinks();}

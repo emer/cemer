@@ -540,7 +540,8 @@ void mta_cleanup(int err) {
   cerr << endl;
   String tmp_file = String("/tmp/mta_tmp.") + String(getpid());
   String rm_tmp = String("/bin/rm ") + tmp_file + " >/dev/null 2>&1";
-  int res = system(rm_tmp);
+//  int res = 
+  system(rm_tmp);
   kill(getpid(), err);		// activate signal
 }
 #endif
@@ -817,7 +818,8 @@ int main(int argc, char* argv[])
     mta->fh.close(); mta->fh.clear();
     mta->included.DupeUnique(mta->tmp_include); // copy over
     if (!keep_tmp) {
-      int res = system(rm + tmp_file);
+//      int res = 
+      system(rm + tmp_file);
     }
   }
 

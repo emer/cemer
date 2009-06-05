@@ -2098,7 +2098,7 @@ void taStringDiff::Reset() {
 String taStringDiffEdits::GenerateB(const String& str_a) {
   String rval(0, str_a.length(), '\0'); // pre-alloc buffer
   int last_a = 0;
-  int last_b = 0;
+//  int last_b = 0;
   for(int i=0;i<diffs.size;i++) {
     taStringDiffItem& df = diffs[i];
     String alns = GetLine(str_a, last_a, df.start_a-1);

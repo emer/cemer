@@ -2122,22 +2122,25 @@ float LogLinearBlock::CalcValue(float in) {
 //////////////////////////////////
 
 /*
-  This block provides both compression and automatic gain control. The purpose
-  is to bring the sound input into a range that can be handled by a neural
-  net.
-  
-  There are two distinct transforms that are applied to the signal:
+  This block provides automatic gain control. The purpose is to normalize
+  the sound input so that subsequent stages can use normalized values for
+  things like level limiting, compression, and so on. (The block applies
+  the same gain to both fields when operating in stereo.)
+ 
+  The block can be operated in two modes:
+    online: the values are continuously updated according to the control
+      paramters
+    offline: an online training period is used to gather statistics and
+      determine optimum consensus parameters, which are then applied
+ 
+ The block measures the following parameters of the input (for each field):
+   peak: the highest (rms) value encountered "recently"
+   avg: the average value of the signal, with given time constant
+ 
+ There are two distinct transforms that are applied to the signal:
    
   gain: this adjusts the overall level of the signal so that the peak
     channel(s) corresponds to an output of about 1.0
-  compression(or expansion): this adjusts the dynamic range of the signal
-    so that the ratio of the highest channel(s) to the lowest channel(s)
-    is in a range that a neural input can handle -- compression is
-    applied if there is too much difference between loudest/softest
-    channels, and expansion if there is too little
-     
-  gain is applied first, since this is a linear operation, and brings
-  the peak value towards the 
     
   
   
@@ -2155,27 +2158,34 @@ References:
 */
 
 void AGCBlock::Initialize() {
-  agc_flags = AF_AGC_ON;
+  agc_flags = AGC_ON;
   gain_units = Level::UN_DBI;
   prev_gain_units = gain_units;
-//  dyn_range_out.Set(20, Level::UN_DBI); // 100:1, probably too much for neurons
-  agc_tc_attack.Set(50, Duration::UN_TIME_MS);
-  agc_tc_decay.Set(500, Duration::UN_TIME_MS);
+  output_level = 0;
   init_gain = 0;
   cur_gain = 0;
   gain_thresh = -50;
   gain_limits.Set(-10, 20);
+  in_tc.Set(200, Duration::UN_TIME_MS);
+  agc_tc_attack.Set(50, Duration::UN_TIME_MS);
+  agc_tc_decay.Set(500, Duration::UN_TIME_MS);
+
   ths_peak = 0.0;
-  flt_peak = 1.0; // assume long term is 1
-  ths_avg = 0.0;
+  in_peak = .01; // just start with fairly small value
+  out_size = 0;
+  frame_size = 0;
+  in_idx = 0;
   UpdateDerived();
 }
 
 void AGCBlock::UpdateDerived() {
+  output_level_abs = Level::LevelToActual(output_level, gain_units);
   cur_gain_abs = Level::LevelToActual(cur_gain, gain_units);
   // dt's are: exp(-(tc)) where tc is in samples
-  agc_dt_attack = agc_tc_attack.GetDecayDt(out_buff.fs);
-  agc_dt_decay = agc_tc_decay.GetDecayDt(out_buff.fs);
+  const float fs_update = 1000 / update_rate;
+  in_dt = in_tc.GetDecayDt(fs_update);
+  agc_dt_attack = agc_tc_attack.GetDecayDt(fs_update);
+  agc_dt_decay = agc_tc_decay.GetDecayDt(fs_update);
 }
  
 void AGCBlock::UpdateAfterEdit_impl() {
@@ -2207,22 +2217,31 @@ void AGCBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
     
   if (check) return;
   
+  out_size = (int)Duration::StatGetDurationSamples(update_rate, Duration::UN_TIME_MS, src_buff->fs);
+  if (CheckError((out_size == 0), quiet, ok,
+		 "AGCBlock out_rate must give out_size > 0"))
+    return;
+  frame_size = out_size * 2;
+  in_idx = 0;
   // init the cur_gain
   cur_gain = init_gain;
   cur_gain_abs = Level::LevelToActual(cur_gain, gain_units);
-  
   
   out_buff.fs = src_buff->fs;
   out_buff.fields = src_buff->fields;
   out_buff.chans = src_buff->chans;
   out_buff.vals = src_buff->vals;
   
-  if (out_buff.enabled) {
-    out_buff_gain.fs = src_buff->fs;
-    out_buff_gain.fields = 1; // same for both fields
-    //note: we may add selective agc by banks, if so, we'll use chans
-    out_buff_gain.chans = 1;//src_buff->chans;
-    out_buff_gain.vals = 2; // 0=gain, in gain.units
+  accum.SetGeom(2, 2, src_buff->fields);
+  accum.Clear();
+  in_peak = 0;
+  in_avg = 0;
+  
+  if (out_buff_params.enabled) {
+    out_buff_params.fs.SetCustom(1000.0f/update_rate);
+    out_buff_params.fields = 1; // same for both fields
+    out_buff_params.chans = 1;//src_buff->chans;
+    out_buff_params.vals = 2; // 0=gain, in gain.units
   }
   UpdateDerived(); // mostly for tcs
 }
@@ -2231,52 +2250,93 @@ void AGCBlock::AcceptData_impl(SignalProcBlock* src_blk,
     DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps)
 {
   float_Matrix* in_mat = &src_buff->mat;
-  ps = AcceptData_AGC(in_mat, stage);
+  if (agc_flags & AGC_BYPASS) 
+    ps = AcceptData_bypass(in_mat, stage);
+  else
+    ps = AcceptData_AGC(in_mat, stage);
+}
+
+SignalProcBlock::ProcStatus AGCBlock::AcceptData_bypass(float_Matrix* in_mat, int stage)
+{
+  ProcStatus ps = PS_OK;
+  float_Matrix* out_mat = &out_buff.mat;
+  const int in_items = in_mat->dim(ITEM_DIM);
+  const int in_fields = in_mat->dim(FIELD_DIM);
+  const int in_chans = in_mat->dim(CHAN_DIM);
+  const int in_vals = in_mat->dim(VAL_DIM);
+  
+  for (int i = 0; i < in_items; ++i) {
+    for (int f = 0; f < in_fields; ++f) 
+    for (int chan = 0; chan < in_chans; ++chan) 
+    for (int v = 0; v < in_vals; ++v) {
+      float val = in_mat->FastEl(v, chan, f, i, stage);
+      out_mat->Set(val, v, chan, f, out_buff.item, out_buff.stage);
+    }
+    if (out_buff.NextIndex()) {
+      NotifyClientsBuffStageFull(&out_buff, 0, ps);
+    }
+  }
+
+  return ps;
 }
 
 SignalProcBlock::ProcStatus AGCBlock::AcceptData_AGC(float_Matrix* in_mat, int stage)
 {
   ProcStatus ps = PS_OK;
   float_Matrix* out_mat = &out_buff.mat;
-  float_Matrix* out_mat_gain = &out_buff_gain.mat;
+    float_Matrix* out_mat_gain = &out_buff_params.mat;
   const int in_items = in_mat->dim(ITEM_DIM);
   const int in_fields = in_mat->dim(FIELD_DIM);
   const int in_chans = in_mat->dim(CHAN_DIM);
   const int in_vals = in_mat->dim(VAL_DIM);
   
   // gather stats on each items, then do it
-  for (int i = 0; i < in_items; ++i) {
-    ths_peak = 0.0f;
-    ths_avg = 0.0; // accum, then we divide by n at end
-  
-    for (int f = 0; f < in_fields; ++f) 
-    for (int chan = 0; chan < in_chans; ++chan) 
-    for (int val = 0; val < in_vals; ++val) 
-    {
-      float dat = in_mat->SafeEl(val, chan, f, i, stage);
-      ths_avg += abs(dat);
-      if (ths_peak < dat) ths_peak = dat;
-    }
+  for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) {
+ 
     
-    ths_avg /= (in_fields * in_chans * in_vals);
-  
-    UpdateAGC();
-    
-    // output secondary channel
-    if (out_buff_gain.enabled) {
-      float dat = cur_gain;
-      out_mat_gain->Set(dat, 0, 0, 0, out_buff_gain.item, out_buff_gain.stage);
-      if (out_buff_gain.NextIndex()) {
-        NotifyClientsBuffStageFull(&out_buff_gain, 1, ps);
-      }
-    }
+    if (agc_flags & AGC_ON) {
+      // accumulate the current dat^2 for each field, for each frame
+      for (int f = 0; f < in_fields; ++f)
+      for (int chan = 0; chan < in_chans; ++chan) 
+      for (int v = 0; v < in_vals; ++v) {
+	double dat = in_mat->FastEl(v, chan, f, i, stage);
+	dat *= dat;
+	for (int eo = 0; eo < 2; ++eo) {
+	  accum.FastEl(eo, f) += dat;
+	}
+      } // field
 
+      // we update AGC and output params every 1/2 frame size (typ 10 ms)
+      if (++in_idx >= frame_size)
+	in_idx = 0;
+      if ((in_idx % out_size) == 0) {
+	const int N = (frame_size * in_vals * in_chans);
+	int eo = (in_idx == 0) ? 0 : 1; // even/odd is totally arbitray
+	for (int f = 0; f < in_fields; ++f) {
+	  double& dat = accum.FastEl(eo, f);
+	  // compute energy
+	  dat = sqrt(dat / N);
+        }
+	UpdateAGC(eo);
+	
+	// output secondary channel
+	if (out_buff_params.enabled) {
+	  float dat = cur_gain;
+	  out_mat_gain->Set(dat, 0, 0, 0, out_buff_params.item, out_buff_params.stage);
+	  if (out_buff_params.NextIndex()) {
+	    NotifyClientsBuffStageFull(&out_buff_params, 1, ps);
+	  }
+	}
+      }
+    } // AGC_ON	
+        
+    // now output all data, applying current gain
     for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) 
     for (int chan = 0; ((ps == PS_OK) && (chan < in_chans)); ++chan) 
     for (int val = 0; ((ps == PS_OK) && (val < in_vals)); ++val) 
     {
       float dat = in_mat->SafeEl(val, chan, f, i, stage);
-      dat = CalcValue(dat);
+      dat *= cur_gain_abs;
       out_mat->Set(dat, val, chan, f, out_buff.item, out_buff.stage);
     }
     if (out_buff.NextIndex()) {
@@ -2286,35 +2346,48 @@ SignalProcBlock::ProcStatus AGCBlock::AcceptData_AGC(float_Matrix* in_mat, int s
   return ps;
 }
 
-float AGCBlock::CalcValue(float in) {
-/*  if (in < 0) return 0; // only defined for non-neg values
-  // transform to dB -- sh/be ~ -96 < in_db <= 0
-  float in_db = 10 * log10(in); // note: the ref is 1, but ok if exceeded
-  // translate so that cf is at 0, and normalize
-  double rval = ((in_db - cl) / width) + 0.5; 
-  return rval; */
+void AGCBlock::UpdateAGC(int eo) {
+  // NOTE: the caller has calculated the avg energy for the frame/field in accum(eo, *)
+  // find highest value -- that's always what we use
+  double dat = accum.FastEl(eo, 0);
+  for (int f = 1; f < accum.dim(1); ++f)
+    dat = max(dat, accum.FastEl(eo, f));
   
-//TEMP just gain for now
-  return in * cur_gain_abs;
-}
-
-void AGCBlock::UpdateAGC() {
+  //TODO: need to decay peak somehow!
+  // update peak
+  if (dat > in_peak) in_peak = dat;
+  
+  float gain_floor = in_peak * Level::LevelToActual(gain_thresh, gain_units);
   // if the input is too low, do nothing
-  if (ths_peak < Level::LevelToActual(gain_thresh, gain_units)) return;
-  if (ths_peak < 1e-6) return; // hard limit
+  if (dat < gain_floor) return;
+  if (dat < 1e-6) return; // hard limit
+  
+  //TODO: we really need to do this by field, not in aggregate
+  // integrate avg input level
+  in_avg = ((1 - in_dt) * in_avg) + (in_dt * dat);
+  float source; 
+  switch (agc_type) {
+  case AGC_AVG:
+    source = in_avg; break;
+  case AGC_PEAK:
+    source = in_peak; break;
+  }; // no default, must handle all cases
+  
   // target for gain is for peak to be 1
-  Level targ_gain(gain_units, 1 / ths_peak);
+  Level targ_gain(gain_units, output_level_abs / source);
   // clip it *before* doing delta, integration etc.
   targ_gain.Set(gain_limits.Clip(targ_gain));
   double delta_gain = targ_gain.act_level - cur_gain_abs;
   if (delta_gain > 0.0) {
-    cur_gain_abs += delta_gain * agc_dt_attack;
+    cur_gain_abs = ((1 - agc_dt_attack) * cur_gain_abs) + (delta_gain * agc_dt_attack);
   } else {
-    cur_gain_abs += delta_gain * agc_dt_decay;
+    cur_gain_abs = ((1 - agc_dt_decay) * cur_gain_abs) + (delta_gain * agc_dt_decay);
   }
   //calculate and limit new gain in requested units
   cur_gain = Level::ActualToLevel(cur_gain_abs, gain_units);
-
+  if (agc_flags & AGC_UPDATE_INIT) {
+    init_gain = cur_gain;
+  }
   DataChanged(DCR_ITEM_UPDATED);
 }
 

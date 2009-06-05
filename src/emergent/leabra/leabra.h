@@ -3155,8 +3155,8 @@ inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_C_sep(LeabraCon* cn,
 }
 
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_C(LeabraSendCons* cg, LeabraUnit* su) {
-  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-  LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
+//  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+//  LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
 
   for(int i=0; i<cg->size; i++) {
     LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
@@ -3344,7 +3344,7 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit*
 
 inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL_C(LeabraCon* cn, LeabraUnit* ru,
 							LeabraLayer* rlay) {
-  LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
+//  LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
   // cal only for bias weights: only err is useful contributor to this learning
   float dw = (cn->sravg_s - cn->sravg_m);
   cn->dwt += cur_lrate * dw;
@@ -3405,7 +3405,7 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit
 
 inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL_C(LeabraCon* cn, LeabraUnit* ru,
 							 LeabraLayer* rlay) {
-  LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
+//  LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
   // cal only for bias weights: only err is useful contributor to this learning
   float dw = (cn->sravg_s - cn->sravg_m);
   if(fabsf(dw) >= dwt_thresh)

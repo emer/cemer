@@ -1701,7 +1701,7 @@ bool taMisc::InternetConnected() {
 
       String nm = ifc.name();
       if(nm.startsWith("vm")) continue; // avoid virtual machine guys!
-      bool any_valid = false;
+//      bool any_valid = false;
       for (int j = 0; j < addrs.size(); ++j) {
 	QHostAddress ip = addrs.at(j).ip();
 	if(ip.isNull()) continue;

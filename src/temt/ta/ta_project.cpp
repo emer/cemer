@@ -1034,7 +1034,8 @@ MainWindowViewer* taProject::GetDefaultProjectViewer() {
 void taProject::PostLoadAutos() {
   if(taMisc::is_undo_loading) return; // none of this.
   if (taMisc::gui_active) {
-    MainWindowViewer* vwr = AssertDefaultProjectBrowser(true);
+//    MainWindowViewer* vwr = 
+    AssertDefaultProjectBrowser(true);
     // note: we want a doc to be the default item, if possible
     docs.AutoEdit();
     wizards.AutoEdit();

@@ -587,8 +587,6 @@ void CsNetwork::Compute_SyncAct() {
 
 void CsNetwork::Compute_AsyncAct() {
   if(units_flat.size == 0) return; // error check
-  Layer* lay;
-  taLeafItr l;
   for (int i=0; i < n_updates; i++) {	// do this n_updates times
     int rnd_num = Random::IntZeroN(units_flat.size);
     CsUnit* u = (CsUnit*) units_flat[rnd_num];

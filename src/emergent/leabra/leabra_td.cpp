@@ -152,7 +152,7 @@ bool ExtRewLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraLayer* lay = (LeabraLayer*)ly;
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   SetUnique("decay", true);
   decay.phase = 0.0f;
@@ -477,7 +477,7 @@ bool TDRewPredLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
   if(lay->CheckError(!lay->units.el_typ->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
@@ -660,7 +660,7 @@ bool TDRewIntegLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
   if(lay->CheckError(!lay->units.el_typ->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
@@ -822,7 +822,7 @@ bool TdLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
 
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
   // must have the appropriate ranges for unit specs..

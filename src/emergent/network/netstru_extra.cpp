@@ -619,7 +619,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
   prjn->from->SendConsPreAlloc(send_no, prjn);
 
   Unit* ru, *su;
-  taLeafItr ru_itr, su_itr;
+  taLeafItr ru_itr;
   PosTwoDCoord ru_geom; prjn->layer->GetActGeomNoSpc(ru_geom);
   TwoDCoord ru_pos;		// do this according to act_geom..
   int cnt = 0;
@@ -2124,8 +2124,8 @@ void GaussRFPrjnSpec::Connect_impl(Projection* prjn) {
 }
 
 void GaussRFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
-  int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
+//  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
+//  int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
   
   TwoDCoord rf_half_wd = rf_width / 2;
   FloatTwoDCoord rf_ctr = rf_half_wd;

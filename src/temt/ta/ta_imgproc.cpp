@@ -190,7 +190,7 @@ bool taImage::ImageToDataCellName(DataTable* dt, const String& col_nm, int row) 
   }
   int col= dt->FindColNameIdx(col_nm, true);
   if(col < 0) return false;
-  DataCol* da = dt->data.FastEl(col);
+//  DataCol* da = dt->data.FastEl(col);
   return ImageToDataCell(dt, col, row);
 }
 
