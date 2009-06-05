@@ -1249,23 +1249,21 @@ public:
   TA_BASEFUNS(AGCBlock)
   
 public:
-  float 		in_dt; // #NO_SAVE #READ_ONLY #EXPERT 
-  float 		agc_dt_attack; // #NO_SAVE #READ_ONLY #EXPERT 
-  float 		agc_dt_decay; // #NO_SAVE #READ_ONLY #EXPERT 
-  float			ths_peak; // #NO_SAVE #EXPERT #READ_ONLY highest value in current stream
   double		in_peak; // #NO_SAVE #EXPERT #READ_ONLY integrated peak, used to set gain
   double		in_avg; // #NO_SAVE #EXPERT #READ_ONLY avg value in current stream
+  double_Matrix		accum; // // #NO_SAVE #READ_ONLY #HIDDEN 0:even/odd, 1:field
   
-  float targ_cl; // #NO_SAVE #EXPERT #READ_ONLY current width
-  float targ_width; // #NO_SAVE #EXPERT #READ_ONLY current width
-  
-  double_Matrix		accum; // 0:even/odd, 1:field
+public: // TEMP 
+  float 		in_dt; // #NO_SAVE #READ_ONLY #HIDDEN 
+  float 		agc_dt_attack; // #NO_SAVE #READ_ONLY #HIDDEN 
+  float 		agc_dt_decay; // #NO_SAVE #READ_ONLY #HIDDEN 
+  float			output_level_abs; // #NO_SAVE #HIDDEN #READ_ONLY
+  float			cur_gain_abs; // #NO_SAVE #HIDDEN #READ_ONLY cur_gain, in Level::UN_SCALE
+
 protected:
   int			out_size; // output size, in samples (= fs*out_rate) -- we output out_buff_params at this rate
   int			frame_size; // frame size, in samples = 2* out_size
   int			in_idx;
-  float			output_level_abs;
-  float			cur_gain_abs; // cur_gain, in Level::UN_SCALE
   Level::Units		prev_gain_units; // prev units, so we can rescale all
   override void		UpdateAfterEdit_impl();
   override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok);

@@ -365,7 +365,8 @@ double Duration::StatGetDecayDt(double duration, Units units, float fs)
       return 0.0f;
     samples = fs * duration;
   }
-  return exp(-samples);
+  //note: dt is 1 - tc
+  return 1.0 - exp(-1.0/samples);
 }
 
 double Duration::StatGetDurationTime(double duration, Units units, float fs) {
@@ -2159,6 +2160,8 @@ References:
 
 void AGCBlock::Initialize() {
   agc_flags = AGC_ON;
+  agc_type = AGC_AVG;
+  update_rate = 10.0f;
   gain_units = Level::UN_DBI;
   prev_gain_units = gain_units;
   output_level = 0;
@@ -2170,8 +2173,8 @@ void AGCBlock::Initialize() {
   agc_tc_attack.Set(50, Duration::UN_TIME_MS);
   agc_tc_decay.Set(500, Duration::UN_TIME_MS);
 
-  ths_peak = 0.0;
-  in_peak = .01; // just start with fairly small value
+  in_peak = 0;
+  in_avg = 0;
   out_size = 0;
   frame_size = 0;
   in_idx = 0;
@@ -2192,6 +2195,7 @@ void AGCBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   // if user changes gain_units, rescale others
   if (!taMisc::is_loading && (gain_units != prev_gain_units)) {
+    output_level = Level::Convert(output_level, prev_gain_units, gain_units);
     init_gain = Level::Convert(init_gain, prev_gain_units, gain_units);
     cur_gain = Level::Convert(cur_gain, prev_gain_units, gain_units);
     gain_thresh = Level::Convert(gain_thresh, prev_gain_units, gain_units);
@@ -2225,17 +2229,18 @@ void AGCBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   in_idx = 0;
   // init the cur_gain
   cur_gain = init_gain;
-  cur_gain_abs = Level::LevelToActual(cur_gain, gain_units);
+  UpdateDerived(); // mostly for tcs
+  
+  accum.SetGeom(2, 2, src_buff->fields);
+  accum.Clear();
+  // init peak to lowest value, and avg to neutral based on current params
+  in_peak = output_level_abs *  Level::LevelToActual(gain_thresh, gain_units);
+  in_avg =  output_level_abs / cur_gain_abs;
   
   out_buff.fs = src_buff->fs;
   out_buff.fields = src_buff->fields;
   out_buff.chans = src_buff->chans;
   out_buff.vals = src_buff->vals;
-  
-  accum.SetGeom(2, 2, src_buff->fields);
-  accum.Clear();
-  in_peak = 0;
-  in_avg = 0;
   
   if (out_buff_params.enabled) {
     out_buff_params.fs.SetCustom(1000.0f/update_rate);
@@ -2243,7 +2248,6 @@ void AGCBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
     out_buff_params.chans = 1;//src_buff->chans;
     out_buff_params.vals = 2; // 0=gain, in gain.units
   }
-  UpdateDerived(); // mostly for tcs
 }
 
 void AGCBlock::AcceptData_impl(SignalProcBlock* src_blk,
@@ -2374,14 +2378,15 @@ void AGCBlock::UpdateAGC(int eo) {
   }; // no default, must handle all cases
   
   // target for gain is for peak to be 1
-  Level targ_gain(gain_units, output_level_abs / source);
-  // clip it *before* doing delta, integration etc.
-  targ_gain.Set(gain_limits.Clip(targ_gain));
+  Level targ_gain(gain_units, (output_level_abs / source)); // init to units/act level
+  // clip it *before* doing delta, integration etc. -- we clip in gain_units space
+  targ_gain.Set(gain_limits.Clip(targ_gain.level));
   double delta_gain = targ_gain.act_level - cur_gain_abs;
+  // note: (1 - dt) * cur + (dt * new) -> cur + (delta * dt)
   if (delta_gain > 0.0) {
-    cur_gain_abs = ((1 - agc_dt_attack) * cur_gain_abs) + (delta_gain * agc_dt_attack);
+    cur_gain_abs += (delta_gain * agc_dt_attack);
   } else {
-    cur_gain_abs = ((1 - agc_dt_decay) * cur_gain_abs) + (delta_gain * agc_dt_decay);
+    cur_gain_abs += (delta_gain * agc_dt_decay);
   }
   //calculate and limit new gain in requested units
   cur_gain = Level::ActualToLevel(cur_gain_abs, gain_units);
