@@ -59,6 +59,29 @@ protected:
   override void		Render_impl();
 };
 
+class TA_API VEObjCarouselView: public VEBodyView {
+  // view of VEObjCarousel
+INHERITED(VEBodyView)
+friend class VEWorldView;
+public:
+  String	name;		// name of body this one is associated with
+
+  VEObjCarousel*	ObjCarousel() const { return (VEObjCarousel*)data();}
+  virtual void		SetObjCarousel(VEObjCarousel* ob);
+
+  virtual bool		LoadObjs();
+  // load the objects -- called during Render_pre but can be called again later
+  
+  void	Copy_(const VEObjCarouselView& cp);
+  TA_BASEFUNS(VEObjCarouselView);
+protected:
+  void	Initialize();
+  void	Destroy();
+
+  override void		Render_pre();
+  override void		Render_impl();
+};
+
 class TA_API VEObjectView: public T3DataViewPar {
   // view of one object: a group of bodies
 INHERITED(T3DataViewPar)

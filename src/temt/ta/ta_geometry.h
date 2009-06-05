@@ -698,7 +698,7 @@ public:
   inline void 	Initialize() 			{ val = 0.0; idx = 0; }
   inline void 	Destroy()			{ };
   void 	Copy(const ValIdx& cp)	{ val = cp.val; idx = cp.idx; }
-  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
+  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);}
 
   ValIdx() 				{ Initialize(); }
   ValIdx(const ValIdx& cp) 		{ Copy(cp); }

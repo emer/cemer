@@ -97,6 +97,24 @@ protected:
   ~T3VEBody();
 };
 
+class TA_API T3VEObjCarousel : public T3VEBody {
+  // obj carousel body for virtual environment 
+#ifndef __MAKETA__
+typedef T3VEBody inherited;
+  SO_NODE_HEADER(T3VEObjCarousel);
+#endif // def __MAKETA__
+public:
+  static void	initClass();
+
+  T3VEObjCarousel(void* bod = NULL, bool show_drag = false);
+
+  SoSwitch*		getObjSwitch() { return obj_switch_; }
+protected:
+  SoSwitch* 		obj_switch_;
+
+  ~T3VEObjCarousel();
+};
+
 class TA_API T3VESpace : public T3NodeParent {
   // space parent for virtual environment 
 #ifndef __MAKETA__

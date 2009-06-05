@@ -378,6 +378,37 @@ private:
 
 SmartRef_Of(VELight,TA_VELight); // VELightRef
 
+class TA_API VEObjCarousel : public VEBody {
+  // virtual environment object carousel -- contains a number of different objects that are pre-loaded and then selectable by name or number (info is contained in a DataTable)
+INHERITED(VEBody)
+public:
+#ifdef __MAKETA__
+  Shape		shape;		// #READ_ONLY #HIDDEN shape is not relevant -- determined by body
+  LongAxis	long_axis;	// #READ_ONLY #HIDDEN direction of the long axis of the body (where length is oriented)
+  FloatTDCoord	box;		// #READ_ONLY #HIDDEN not relevant
+  String	obj_fname;	// #READ_ONLY #HIDDEN not relevant
+  bool		set_color;	// #READ_ONLY #HIDDEN not relevant
+  taColor	color; 		// #READ_ONLY #HIDDEN not relevant
+  VETextureRef	texture;	// #READ_ONLY #HIDDEN not relevant
+#endif
+
+  DataTableRef	obj_table;	// the data table containing FileName, FilePath columns (other columns can be present but are ignored) -- objects are loaded from FilePath and can be selected by FileName or row number
+  int		cur_obj_no;	// #READ_ONLY #SHOW current object number to view -- select using ViewObjNo button/function, which drives the view update as well
+  String	cur_obj_name;	// #READ_ONLY #SHOW current object name to view -- select using ViewObjName button/function, which drives the view update as well
+
+
+  virtual bool	ViewObjNo(int obj_no);
+  // #BUTTON select object to view by number, corresponding to the rows of the obj_table data table
+  virtual bool	ViewObjName(const String& obj_name);
+  // #BUTTON select object to view by FileName value in the obj_table data table
+
+  TA_SIMPLE_BASEFUNS(VEObjCarousel);
+private:
+  void 	Initialize();
+  void  Destroy() { };
+};
+
+
 ////////////////////////////////////////////////
 //		Joints
 

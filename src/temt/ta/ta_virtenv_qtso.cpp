@@ -478,6 +478,114 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
   wv->UpdateDisplay();
 }
 
+//////////////////////////////////////////////////////////
+//		VEObjCarousel
+
+void VEObjCarouselView::Initialize(){
+  data_base = &TA_VEObjCarousel;
+}
+
+void VEObjCarouselView::Copy_(const VEObjCarouselView& cp) {
+  name = cp.name;
+}
+
+void VEObjCarouselView::Destroy() {
+  CutLinks();
+}
+
+void VEObjCarouselView::SetObjCarousel(VEObjCarousel* ob) {
+  if (ObjCarousel() == ob) return;
+  SetData(ob);
+  if(ob) {
+    if (name != ob->name) {
+      name = ob->name;
+    }
+  }
+}
+
+bool VEObjCarouselView::LoadObjs() {
+  VEObjCarousel* ob = ObjCarousel();
+  if(!ob || !ob->obj_table) return false;
+
+  T3VEObjCarousel* obv = (T3VEObjCarousel*)this->node_so(); // cache
+  if(!obv) return false;
+
+  SoSwitch* sw = obv->getObjSwitch();
+  sw->removeAllChildren();
+
+  DataCol* fpathcol = ob->obj_table->FindColName("FilePath", true); // yes err msg
+  if(!fpathcol) return false;
+
+  cout << "Loading ObjCarousel files -- can take a long time" << endl;
+  taMisc::FlushConsole();
+
+  sw->whichChild = -1;
+
+  for(int i=0; i< ob->obj_table->rows; i++) {
+    String fpath = fpathcol->GetValAsString(i);
+
+    SoInput in;
+    if((access(fpath, F_OK) == 0) && in.openFile(fpath)) {
+      cout << "Loading " << fpath << "..." << endl;
+      taMisc::FlushConsole();
+      SoSeparator* root = SoDB::readAll(&in);
+      if (root) {
+	sw->addChild(root);
+	continue;
+      }
+    }
+    taMisc::Warning("object file:", fpath, "at row:", String(i), "not found");
+  }
+  return true;
+}
+
+void VEObjCarouselView::Render_pre() {
+  bool show_drag = true;;
+  SoQtViewer* vw = GetViewer();
+  if(vw)
+    show_drag = !vw->isViewing();
+  VEWorldView* wv = parent();
+  if(!wv->drag_objs) show_drag = false;
+
+  T3VEObjCarousel* obv = new T3VEObjCarousel(this, show_drag);
+  setNode(obv);
+  SoSeparator* ssep = obv->shapeSeparator();
+
+  VEObjCarousel* ob = ObjCarousel();
+  if(ob) {
+    ssep->addChild(obv->getObjSwitch());
+
+    SoTransform* tx = obv->txfm_shape();
+    ob->obj_xform.CopyTo(tx);
+
+    LoadObjs();
+  }
+
+  SetDraggerPos();
+
+  inherited::Render_pre();
+}
+
+void VEObjCarouselView::Render_impl() {
+  inherited::Render_impl();
+
+  T3VEObjCarousel* obv = (T3VEObjCarousel*)this->node_so(); // cache
+  if(!obv) return;
+  VEObjCarousel* ob = ObjCarousel();
+  if(!ob || !ob->obj_table) return;
+
+  SoTransform* tx = obv->transform();
+  tx->translation.setValue(ob->cur_pos.x, ob->cur_pos.y, ob->cur_pos.z);
+  tx->rotation.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
+
+  SoSwitch* sw = obv->getObjSwitch();
+  if(sw->getNumChildren() != ob->obj_table->rows) {
+    LoadObjs();			// update to current count
+  }
+  sw->whichChild = ob->cur_obj_no;
+}
+
+
 //////////////////////////
 //   VEObjectView	//
 //////////////////////////
@@ -518,10 +626,18 @@ void VEObjectView::BuildAll() {
   taLeafItr i;
   FOR_ITR_EL(VEBody, bod, obj->bodies., i) {
     if(bod->HasBodyFlag(VEBody::OFF)) continue;
-    VEBodyView* ov = new VEBodyView();
-    ov->SetBody(bod);
-    children.Add(ov);
-    ov->BuildAll();
+    if(bod->InheritsFrom(&TA_VEObjCarousel)) {
+      VEObjCarouselView* ov = new VEObjCarouselView();
+      ov->SetObjCarousel((VEObjCarousel*)bod);
+      children.Add(ov);
+      ov->BuildAll();
+    }
+    else {
+      VEBodyView* ov = new VEBodyView();
+      ov->SetBody(bod);
+      children.Add(ov);
+      ov->BuildAll();
+    }
   }
 }
 
