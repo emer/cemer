@@ -4602,7 +4602,7 @@ void taiTokenPtrButton::GetImageScoped(TAPtr ths, TypeDef* targ_typ_,
 {
   scope_ref = scope_;
   scope_typ = scope_type_;
-  GetImage((void*)ths, targ_typ_);
+  inherited::GetImage((void*)ths, targ_typ_);
 }
 
 const String taiTokenPtrButton::headerText(int index, int view) const {
