@@ -190,6 +190,7 @@ void VEBody::SetValsToODE_Shape() {
 
   if(shape == NO_SHAPE || HasBodyFlag(NO_COLLIDE)) {
     cur_shape = shape;
+    SetBodyFlagState(CUR_FM_FILE, HasBodyFlag(FM_FILE));
     return;
   }
 
@@ -214,6 +215,7 @@ void VEBody::SetValsToODE_Shape() {
     return;
 
   cur_shape = shape;
+  SetBodyFlagState(CUR_FM_FILE, HasBodyFlag(FM_FILE));
 
   dGeomSetBody((dGeomID)geom_id, (dBodyID)body_id);
   dGeomSetData((dGeomID)geom_id, (void*)this);
@@ -476,7 +478,11 @@ void VELight::GetValsFmODE(bool updt_disp) {
 
 void VEObjCarousel::Initialize() {
   cur_obj_no = -1;
+  SetBodyFlag(FM_FILE);
+  obj_switch = NULL;
 }
+
+// Destroy, LoadObjs are in in ta_virtenv_qtso
 
 bool VEObjCarousel::ViewObjNo(int obj_no) {
   if(TestError(!(bool)obj_table, "ViewObjNo", "no obj_table data table set -- must set this first!"))
@@ -485,7 +491,7 @@ bool VEObjCarousel::ViewObjNo(int obj_no) {
 	       String(obj_table->rows), "rows in the obj_table data table"))
     return false;
   cur_obj_no = obj_no;
-  cur_obj_name = obj_table->GetVal("FileName", cur_obj_no);
+  obj_fname = obj_table->GetVal("FileName", cur_obj_no);
   DataChanged(DCR_ITEM_UPDATED); // update displays..
   return true;
 }
@@ -498,7 +504,7 @@ bool VEObjCarousel::ViewObjName(const String& obj_nm) {
 	       "not found in the obj_table data table"))
     return false;
   cur_obj_no = obj_no;
-  cur_obj_name = obj_nm;
+  obj_fname = obj_nm;
   DataChanged(DCR_ITEM_UPDATED); // update displays..
   return true;
 }

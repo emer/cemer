@@ -69,9 +69,6 @@ public:
   VEObjCarousel*	ObjCarousel() const { return (VEObjCarousel*)data();}
   virtual void		SetObjCarousel(VEObjCarousel* ob);
 
-  virtual bool		LoadObjs();
-  // load the objects -- called during Render_pre but can be called again later
-  
   void	Copy_(const VEObjCarouselView& cp);
   TA_BASEFUNS(VEObjCarouselView);
 protected:

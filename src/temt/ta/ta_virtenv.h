@@ -43,6 +43,7 @@ class VEWorldView;
 
 class taImage;
 
+class SoSwitch;			// #IGNORE
 
 class TA_API ODEIntParams : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
@@ -155,6 +156,7 @@ public:
     PLANE2D		= 0x0004, // body is constrained to the Z=0 plane
     FM_FILE		= 0x0008, // load object image features from Inventor (iv) object file
     NO_COLLIDE		= 0x0010, // this body is not part of the collision detection system -- useful for light beams and other ephemera
+    CUR_FM_FILE		= 0x0020, // #NO_SHOW #READ_ONLY current flag setting load object image features from Inventor (iv) object file
   };
     //    COLLIDE_FM_FILE	= 0x0008, // use object shape from file for collision detection (NOTE: this is more computationally expensive and requires trimesh feature to be enabled in ode)
 
@@ -239,7 +241,8 @@ public:
   virtual void	SetValsToODE_Velocity();// #CAT_ODE set velocity
   virtual void	SetValsToODE_Mass();	// #CAT_ODE set the mass of body in ODE
 
-  bool	IsCurShape()  { return shape == cur_shape; }
+  bool	IsCurShape()  { return ((shape == cur_shape) &&
+				(HasBodyFlag(FM_FILE) == HasBodyFlag(CUR_FM_FILE))); }
   // #CAT_ODE is the ODE guy actually configured for the current shape or not?
 
   SIMPLE_COPY(VEBody);
@@ -383,29 +386,25 @@ class TA_API VEObjCarousel : public VEBody {
 INHERITED(VEBody)
 public:
 #ifdef __MAKETA__
-  Shape		shape;		// #READ_ONLY #HIDDEN shape is not relevant -- determined by body
-  LongAxis	long_axis;	// #READ_ONLY #HIDDEN direction of the long axis of the body (where length is oriented)
-  FloatTDCoord	box;		// #READ_ONLY #HIDDEN not relevant
-  String	obj_fname;	// #READ_ONLY #HIDDEN not relevant
-  bool		set_color;	// #READ_ONLY #HIDDEN not relevant
-  taColor	color; 		// #READ_ONLY #HIDDEN not relevant
-  VETextureRef	texture;	// #READ_ONLY #HIDDEN not relevant
+  String	obj_fname;	// #READ_ONLY #HIDDEN object FileName corresponding to given object number
 #endif
-
   DataTableRef	obj_table;	// the data table containing FileName, FilePath columns (other columns can be present but are ignored) -- objects are loaded from FilePath and can be selected by FileName or row number
   int		cur_obj_no;	// #READ_ONLY #SHOW current object number to view -- select using ViewObjNo button/function, which drives the view update as well
-  String	cur_obj_name;	// #READ_ONLY #SHOW current object name to view -- select using ViewObjName button/function, which drives the view update as well
-
+  SoSwitch*	obj_switch;	// #IGNORE saved switch, to minimize reloading
 
   virtual bool	ViewObjNo(int obj_no);
   // #BUTTON select object to view by number, corresponding to the rows of the obj_table data table
   virtual bool	ViewObjName(const String& obj_name);
   // #BUTTON select object to view by FileName value in the obj_table data table
+  virtual bool	LoadObjs(bool force = false);
+  // #BUTTON load the objects listed in the obj_table -- if not forcing, checks to see if count is the same as number of rows in obj_table and does not reload if so (and returns false)
+
+  virtual void	MakeSwitch();	// #IGNORE make the switch obj if it doesn't yet exist
 
   TA_SIMPLE_BASEFUNS(VEObjCarousel);
 private:
   void 	Initialize();
-  void  Destroy() { };
+  void  Destroy();
 };
 
 

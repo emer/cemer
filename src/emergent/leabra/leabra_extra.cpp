@@ -1022,10 +1022,9 @@ void ScalarValSelfPrjnSpec::Initialize() {
 }
 
 void ScalarValSelfPrjnSpec::Connect_UnitGroup(Unit_Group* gp, Projection* prjn) {
-  float neigh1 = 1.0f / wt_width;
-  float val1 = expf(-(neigh1 * neigh1));
+//   float neigh1 = 1.0f / wt_width;
+//   float val1 = expf(-(neigh1 * neigh1));
 //  float scale_val = wt_max / val1;
-
 
   int n_cons = 2*width + 1;
 

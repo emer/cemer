@@ -17,6 +17,7 @@
 
 #include "ta_math.h"
 #include "ta_imgproc.h"
+#include "ta_platform.h"
 
 #include <QImage>
 #include <QGroupBox>
@@ -379,49 +380,55 @@ void VEBodyView::Render_impl() {
 
   SoSeparator* ssep = obv->shapeSeparator();
 
-  if(ob->IsCurShape() && !ob->HasBodyFlag(VEBody::FM_FILE)) {	// only if we are currently the right shape
-    switch(ob->shape) {
-    case VEBody::SPHERE: {
-      SoSphere* sp = (SoSphere*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-      sp->radius = ob->radius;
-      break;
+  if(ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
+    if(ob->HasBodyFlag(VEBody::FM_FILE)) {
+      SoTransform* tx = node_so()->txfm_shape();
+      ob->obj_xform.CopyTo(tx);
     }
-    case VEBody::CAPSULE: {
-      SoCapsule* sp = (SoCapsule*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-      sp->radius = ob->radius;
-      sp->height = ob->length;
-      SoTransform* tx = obv->txfm_shape();
-      if(ob->long_axis == VEBody::LONG_X)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-      else if(ob->long_axis == VEBody::LONG_Y)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-      else if(ob->long_axis == VEBody::LONG_Z)
-	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
-      break;
-    }
-    case VEBody::CYLINDER: {
-      SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-      sp->radius = ob->radius;
-      sp->height = ob->length;
-      SoTransform* tx = obv->txfm_shape();
-      if(ob->long_axis == VEBody::LONG_X)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-      else if(ob->long_axis == VEBody::LONG_Y)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-      else if(ob->long_axis == VEBody::LONG_Z)
-	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
-      break;
-    }
-    case VEBody::BOX: {
-      SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-      sp->width = ob->box.x;
-      sp->depth = ob->box.z;
-      sp->height = ob->box.y;
-      break;
-    }
-    case VEBody::NO_SHAPE: {
-      break;
-    }
+    else {
+      switch(ob->shape) {
+      case VEBody::SPHERE: {
+	SoSphere* sp = (SoSphere*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+	sp->radius = ob->radius;
+	break;
+      }
+      case VEBody::CAPSULE: {
+	SoCapsule* sp = (SoCapsule*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+	sp->radius = ob->radius;
+	sp->height = ob->length;
+	SoTransform* tx = obv->txfm_shape();
+	if(ob->long_axis == VEBody::LONG_X)
+	  tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+	else if(ob->long_axis == VEBody::LONG_Y)
+	  tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+	else if(ob->long_axis == VEBody::LONG_Z)
+	  tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+	break;
+      }
+      case VEBody::CYLINDER: {
+	SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+	sp->radius = ob->radius;
+	sp->height = ob->length;
+	SoTransform* tx = obv->txfm_shape();
+	if(ob->long_axis == VEBody::LONG_X)
+	  tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+	else if(ob->long_axis == VEBody::LONG_Y)
+	  tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+	else if(ob->long_axis == VEBody::LONG_Z)
+	  tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+	break;
+      }
+      case VEBody::BOX: {
+	SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+	sp->width = ob->box.x;
+	sp->depth = ob->box.z;
+	sp->height = ob->box.y;
+	break;
+      }
+      case VEBody::NO_SHAPE: {
+	break;
+      }
+      }
     }
   }
 }
@@ -481,6 +488,59 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
 //////////////////////////////////////////////////////////
 //		VEObjCarousel
 
+void VEObjCarousel::Destroy() {
+  if(obj_switch) {
+    obj_switch->unref();
+    obj_switch = NULL;
+  }
+}
+
+void VEObjCarousel::MakeSwitch() {
+  if(!obj_switch) {
+    obj_switch = new SoSwitch;
+    obj_switch->ref();	// ref it so it hangs around 
+  }
+}
+
+bool VEObjCarousel::LoadObjs(bool force) {
+  if(TestError(!(bool)obj_table, "LoadObjs", "obj_table is not set -- cannot load objs!"))
+    return false;
+
+  MakeSwitch();
+  SoSwitch* sw = obj_switch;
+
+  if(!force && (sw->getNumChildren() == obj_table->rows))
+    return false;		// already good
+
+  sw->removeAllChildren();
+
+  DataCol* fpathcol = obj_table->FindColName("FilePath", true); // yes err msg
+  if(!fpathcol) return false;
+
+  cout << "Loading ObjCarousel " << name << " object files, total n = " << obj_table->rows
+       << " -- can take a long time for a large number." << endl;
+  taMisc::FlushConsole();
+
+  sw->whichChild = -1;
+
+  for(int i=0; i< obj_table->rows; i++) {
+    String fpath = fpathcol->GetValAsString(i);
+
+    SoInput in;
+    if((access(fpath, F_OK) == 0) && in.openFile(fpath)) {
+      cout << "Loading " << fpath << "..." << endl;
+      taMisc::FlushConsole();
+      SoSeparator* root = SoDB::readAll(&in);
+      if (root) {
+	sw->addChild(root);
+	continue;
+      }
+    }
+    taMisc::Warning("object file:", fpath, "at row:", String(i), "not found");
+  }
+  return true;
+}
+
 void VEObjCarouselView::Initialize(){
   data_base = &TA_VEObjCarousel;
 }
@@ -503,42 +563,6 @@ void VEObjCarouselView::SetObjCarousel(VEObjCarousel* ob) {
   }
 }
 
-bool VEObjCarouselView::LoadObjs() {
-  VEObjCarousel* ob = ObjCarousel();
-  if(!ob || !ob->obj_table) return false;
-
-  T3VEObjCarousel* obv = (T3VEObjCarousel*)this->node_so(); // cache
-  if(!obv) return false;
-
-  SoSwitch* sw = obv->getObjSwitch();
-  sw->removeAllChildren();
-
-  DataCol* fpathcol = ob->obj_table->FindColName("FilePath", true); // yes err msg
-  if(!fpathcol) return false;
-
-  cout << "Loading ObjCarousel files -- can take a long time" << endl;
-  taMisc::FlushConsole();
-
-  sw->whichChild = -1;
-
-  for(int i=0; i< ob->obj_table->rows; i++) {
-    String fpath = fpathcol->GetValAsString(i);
-
-    SoInput in;
-    if((access(fpath, F_OK) == 0) && in.openFile(fpath)) {
-      cout << "Loading " << fpath << "..." << endl;
-      taMisc::FlushConsole();
-      SoSeparator* root = SoDB::readAll(&in);
-      if (root) {
-	sw->addChild(root);
-	continue;
-      }
-    }
-    taMisc::Warning("object file:", fpath, "at row:", String(i), "not found");
-  }
-  return true;
-}
-
 void VEObjCarouselView::Render_pre() {
   bool show_drag = true;;
   SoQtViewer* vw = GetViewer();
@@ -547,29 +571,27 @@ void VEObjCarouselView::Render_pre() {
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
-  T3VEObjCarousel* obv = new T3VEObjCarousel(this, show_drag);
+  T3VEBody* obv = new T3VEBody(this, show_drag);
   setNode(obv);
   SoSeparator* ssep = obv->shapeSeparator();
 
   VEObjCarousel* ob = ObjCarousel();
   if(ob) {
-    ssep->addChild(obv->getObjSwitch());
-
+    ob->MakeSwitch();		// ensures
+    ssep->addChild(ob->obj_switch);
     SoTransform* tx = obv->txfm_shape();
     ob->obj_xform.CopyTo(tx);
-
-    LoadObjs();
   }
 
   SetDraggerPos();
 
-  inherited::Render_pre();
+  T3DataView::Render_pre();	// note: skipping over VEBodyView render!
 }
 
 void VEObjCarouselView::Render_impl() {
-  inherited::Render_impl();
+  T3DataView::Render_impl();	// note: skipping over VEBodyView render!
 
-  T3VEObjCarousel* obv = (T3VEObjCarousel*)this->node_so(); // cache
+  T3VEBody* obv = (T3VEBody*)this->node_so(); // cache
   if(!obv) return;
   VEObjCarousel* ob = ObjCarousel();
   if(!ob || !ob->obj_table) return;
@@ -578,11 +600,16 @@ void VEObjCarouselView::Render_impl() {
   tx->translation.setValue(ob->cur_pos.x, ob->cur_pos.y, ob->cur_pos.z);
   tx->rotation.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
 
-  SoSwitch* sw = obv->getObjSwitch();
-  if(sw->getNumChildren() != ob->obj_table->rows) {
-    LoadObjs();			// update to current count
+  SoTransform* shtx = obv->txfm_shape();
+  ob->obj_xform.CopyTo(shtx);
+
+  SoSwitch* sw = ob->obj_switch;
+  if(sw->getNumChildren() > 0) {
+    sw->whichChild = ob->cur_obj_no;
   }
-  sw->whichChild = ob->cur_obj_no;
+  else {
+    sw->whichChild = -1;
+  }
 }
 
 
@@ -627,6 +654,7 @@ void VEObjectView::BuildAll() {
   FOR_ITR_EL(VEBody, bod, obj->bodies., i) {
     if(bod->HasBodyFlag(VEBody::OFF)) continue;
     if(bod->InheritsFrom(&TA_VEObjCarousel)) {
+      taMisc::FlushConsole();
       VEObjCarouselView* ov = new VEObjCarouselView();
       ov->SetObjCarousel((VEObjCarousel*)bod);
       children.Add(ov);

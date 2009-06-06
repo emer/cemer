@@ -1621,18 +1621,7 @@ bool taMisc::SetCurrentPath(const String& path) {
   return QDir::setCurrent(path);
 }
 #endif
-/*
-String taMisc::GetCurrentPath() {
-  return QDir::currentPath();
-  return ".";
-}
 
-bool taMisc::SetCurrentPath(const String& path) {
-  return QDir::setCurrent(path);
-  return false;		// todo support?
-}
-
-*/
 // try to find file fnm in one of the include paths -- returns complete path to file
 String taMisc::FindFileOnPath(String_PArray& paths, const char* fname) {
   int acc = access(fname, F_OK);

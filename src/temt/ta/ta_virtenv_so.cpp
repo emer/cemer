@@ -138,30 +138,6 @@ T3VEBody::~T3VEBody()
 }
 
 /////////////////////////////////////////////
-//	ObjCarousel
-
-SO_NODE_SOURCE(T3VEObjCarousel);
-
-void T3VEObjCarousel::initClass()
-{
-  SO_NODE_INIT_CLASS(T3VEObjCarousel, T3VEBody, "T3VEBody");
-}
-
-T3VEObjCarousel::T3VEObjCarousel(void* bod, bool show_drag)
- :inherited(bod, show_drag)
-{
-  SO_NODE_CONSTRUCTOR(T3VEObjCarousel);
-
-  obj_switch_ = new SoSwitch;
-  obj_switch_->whichChild = -1; // no cameras!
-}
-
-T3VEObjCarousel::~T3VEObjCarousel()
-{
-  
-}
-
-/////////////////////////////////////////////
 //	Space
 
 SO_NODE_SOURCE(T3VESpace);
