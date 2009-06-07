@@ -1,0 +1,1871 @@
+// ta_Dump File v2.0 -- code v4.0.21.0
+taPluginBase_List .plugin_deps { 
+  taPluginBase_List @.plugin_deps = [1] {
+    taPluginDep @[0] { };
+  };
+};
+taPluginBase_List .plugin_deps {
+ name=;
+ el_typ=taPluginDep;
+ el_def=0;
+ taPluginDep @[0] {
+  name="AudioProc";
+  desc="Audio processing for tacss";
+  unique_id="audioproc.plugins.brad-aisa.com";
+  version="1.0.0.0";
+  url=;
+ };
+};
+LeabraProject .projects[0] { 
+  Wizard_Group @.wizards = [1] {
+    LeabraWizard @[0] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+
+      LayerWizElList @.layer_cfg = [3] {
+	LayerWizEl @[0] { };
+	LayerWizEl @[1] { };
+	LayerWizEl @[2] { };
+      };
+    };
+  };
+
+  DataTable_Group @.data = [0] {
+    DataTable_Group @.gp[0] { };
+    DataTable_Group @.gp[1] { };
+    DataTable_Group @.gp[2] = [2] { 
+      DataTable @[0] { 
+	DataTableCols @.data = [3] {
+	  float_Data @[0] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @[0] { };
+      };
+};
+	  float_Data @[1] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @[0] { };
+      };
+};
+	  float_Data @[2] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @[0] { };
+      };
+};
+	};
+      };
+      DataTable @[1] { 
+	DataTableCols @.data = [3] {
+	  float_Data @[0] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @[0] { };
+      };
+};
+	  float_Data @[1] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @[0] { };
+      };
+};
+	  float_Data @[2] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @[0] { };
+      };
+};
+	};
+      };
+    };
+  };
+
+  taBase_Group @.data_proc = [4] {
+    taDataProc @[0] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taDataAnal @[1] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taDataGen @[2] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taImageProc @[3] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+  };
+
+  Program_Group @.programs = [0] {
+    Program_Group @.gp[0] = [1] { 
+      Program @[0] { 
+	ProgObjList @.objs = [6] {
+	  InputBlockSet @[0] { 
+	    SignalProcBlock_List @.blocks = [1] {
+	      StimGen @[0] { 
+		StimChan_List @.chans = [1] {
+		  ToneChan @[0] { };
+		};
+	      };
+	    };
+	  };
+	  ListenerBlock @[1] { };
+	  AGCBlock @[2] { };
+	  SignalMonBlock @[3] { };
+	  MelCepstrumBlock @[4] { };
+	  SignalMonBlock @[5] { };
+	};
+
+	ProgVar_List @.vars = [8] {
+	  ProgVar @[0] { };
+	  ProgVar @[1] { };
+	  ProgVar @[2] { };
+	  ProgVar @[3] { };
+	  ProgVar @[4] { };
+	  ProgVar @[5] { };
+	  ProgVar @[6] { };
+	  ProgVar @[7] { };
+	};
+
+	ProgEl_List @.init_code = [1] {
+	  MethodCall @[0] { };
+	};
+
+	ProgEl_List @.prog_code = [1] {
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	};
+      };
+    };
+  };
+
+  DataViewer_List @.viewers = [1] {
+    MainWindowViewer @[0] { 
+      ToolBar_List @.toolbars = [1] {
+	ToolBar @[0] { };
+      };
+
+      FrameViewer_List @.frames = [3] {
+	tabBrowseViewer @[0] { };
+	PanelViewer @[1] { };
+	T3DataViewer @[2] { 
+	  T3DataViewFrame_List @.frames = [2] {
+	    T3DataViewFrame @[0] { 
+	      T3DataView_List @.children = [1] {
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [3] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[1] { 
+	      T3DataView_List @.children = [1] {
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [3] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		  };
+		};
+	      };
+	    };
+	  };
+	};
+      };
+
+      DockViewer_List @.docks = [1] {
+	ToolBoxDockViewer @[0] { };
+      };
+    };
+  };
+};
+LeabraProject .projects[0] {
+ name="TestMelCepstrum";
+ desc=;
+ tags=;
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ wiki_url {
+  sync=0;
+  wiki=;
+  url=;
+ };
+ templates {
+  name=;
+  el_typ=taBase;
+  el_def=0;
+ };
+ docs {
+  name=;
+  el_typ=taDoc;
+  el_def=0;
+ };
+ wizards {
+  name=;
+  el_typ=LeabraWizard;
+  el_def=0;
+  LeabraWizard @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="LeabraWizard_0";
+   auto_open=1;
+   n_layers=3;
+   layer_cfg {
+    name=;
+    el_typ=LayerWizEl;
+    el_def=0;
+    LayerWizEl @[0] {
+     name="Input";
+     n_units=25;
+     io_type=INPUT;
+    };
+    LayerWizEl @[1] {
+     name="Hidden";
+     n_units=25;
+     io_type=HIDDEN;
+    };
+    LayerWizEl @[2] {
+     name="Output";
+     n_units=25;
+     io_type=OUTPUT;
+    };
+   };
+   connectivity=BIDIRECTIONAL;
+   default_net_type=LeabraNetwork;
+  };
+ };
+ edits {
+  name=;
+  el_typ=SelectEdit;
+  el_def=0;
+ };
+ data {
+  name=;
+  el_typ=DataTable;
+  el_def=0;
+  DataTable_Group @.gp[0] {
+   name="InputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp[1] {
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp[2] {
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+   DataTable @[0] {
+    name="Mon_mel";
+    desc=;
+    data {
+     name="data";
+     el_typ=float_Data;
+     el_def=0;
+     float_Data @[0] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="X_AXIS";
+	value 1 0=1;
+       };
+      };
+      name="X";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [264] 0;0;0;0;0;0;0;0;0;0;
+0;0;1;1;1;1;1;1;1;1;
+1;1;1;1;2;2;2;2;2;2;
+2;2;2;2;2;2;3;3;3;3;
+3;3;3;3;3;3;3;3;4;4;
+4;4;4;4;4;4;4;4;4;4;
+5;5;5;5;5;5;5;5;5;5;
+5;5;6;6;6;6;6;6;6;6;
+6;6;6;6;7;7;7;7;7;7;
+7;7;7;7;7;7;8;8;8;8;
+8;8;8;8;8;8;8;8;9;9;
+9;9;9;9;9;9;9;9;9;9;
+10;10;10;10;10;10;10;10;10;10;
+10;10;11;11;11;11;11;11;11;11;
+11;11;11;11;12;12;12;12;12;12;
+12;12;12;12;12;12;13;13;13;13;
+13;13;13;13;13;13;13;13;14;14;
+14;14;14;14;14;14;14;14;14;14;
+15;15;15;15;15;15;15;15;15;15;
+15;15;16;16;16;16;16;16;16;16;
+16;16;16;16;17;17;17;17;17;17;
+17;17;17;17;17;17;18;18;18;18;
+18;18;18;18;18;18;18;18;19;19;
+19;19;19;19;19;19;19;19;19;19;
+20;20;20;20;20;20;20;20;20;20;
+20;20;21;21;21;21;21;21;21;21;
+21;21;21;21;      };
+     };
+     float_Data @[1] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="PLOT_1";
+	value 1 0=1;
+       };
+      };
+      name="Y";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [264] 0.44923455;0.17144684;-0.019979773;-0.052128583;-0.044009611;0.0059067206;0.033614509;0.051388569;0.028740164;0.014410025;
+-0.0096998019;0.00089973817;-0.7661742;0.11227185;-0.04835102;-0.26926392;-0.17436531;-0.11312968;0.094842508;0.078962959;
+0.089053698;-0.079748318;-0.092803083;-0.14719997;-0.80754864;0.11564087;-0.050282657;-0.27927807;-0.17935379;-0.11748931;
+0.097041339;0.078444891;0.090477966;-0.08307033;-0.093773872;-0.15096979;-0.84956932;0.11995769;-0.052568533;-0.29001215;
+-0.1843853;-0.12195668;0.099046893;0.077388667;0.09167286;-0.086481981;-0.094450638;-0.15464231;-0.89159846;0.12536444;
+-0.055289682;-0.30132094;-0.18922043;-0.1265243;0.10075285;0.075715981;0.092620596;-0.08997263;-0.094846092;-0.15820706;
+-0.93284696;0.13192198;-0.058522034;-0.3129172;-0.19359623;-0.13115925;0.10205555;0.073447734;0.09330526;-0.093502149;
+-0.095034003;-0.16168505;-0.97334081;0.13979605;-0.062407739;-0.32465678;-0.19732948;-0.13593936;0.1029317;0.070585087;
+0.093830317;-0.097197443;-0.095044091;-0.16516735;-1.0129582;0.14908141;-0.067117132;-0.33626318;-0.20024642;-0.14098549;
+0.10344072;0.067236751;0.094215259;-0.10106707;-0.094946019;-0.16871484;-1.0517018;0.15992059;-0.072908297;-0.34738234;
+-0.20221549;-0.14651422;0.10380475;0.063445821;0.094538234;-0.10516967;-0.094749905;-0.17236124;-1.0895913;0.17245314;
+-0.080082498;-0.35752162;-0.20328286;-0.15265833;0.10430939;0.05921391;0.094913289;-0.10954184;-0.094406694;-0.176165;
+-1.1266736;0.18678905;-0.088943727;-0.3660734;-0.20376632;-0.15937337;0.10532245;0.054333579;0.095639661;-0.11427923;
+-0.093828574;-0.18019073;-1.1629398;0.20300001;-0.10005525;-0.37202474;-0.20448761;-0.16634502;0.1071355;0.048512705;
+0.097161911;-0.11967004;-0.09268415;-0.18463829;-1.1979468;0.22076291;-0.1135586;-0.37437567;-0.20687734;-0.17209229;
+0.10893062;0.04209381;0.099826388;-0.12622377;-0.090253651;-0.19017886;-1.2283266;0.23687267;-0.12717545;-0.3739301;
+-0.21157898;-0.17492931;0.10857373;0.037523858;0.10145967;-0.13212459;-0.08768981;-0.19610655;-1.2463671;0.24345616;
+-0.13336912;-0.37739328;-0.21335356;-0.17847104;0.10810562;0.034295872;0.10137268;-0.13552046;-0.087677695;-0.19901769;
+-1.2562315;0.24453349;-0.1357958;-0.38162336;-0.21449448;-0.1812398;0.10701202;0.0323334;0.10035541;-0.13746093;
+-0.088789649;-0.20044203;-1.2532381;0.2415967;-0.1340245;-0.38274568;-0.21434841;-0.18123779;0.10649445;0.032791708;
+0.099532954;-0.13679226;-0.089684062;-0.19977465;-1.2508408;0.23978633;-0.13291663;-0.38313043;-0.21417131;-0.18119541;
+0.10637567;0.033009447;0.099210501;-0.13636562;-0.090132542;-0.19931169;-1.248369;0.23786464;-0.13169754;-0.38353649;
+-0.21411662;-0.18094444;0.10604756;0.033377949;0.098830894;-0.13597071;-0.090506487;-0.19892892;-1.2464598;0.23648389;
+-0.13093443;-0.38365558;-0.21415646;-0.18075156;0.10586844;0.033551849;0.098648824;-0.13573226;-0.090761654;-0.19864701;
+-1.244542;0.2350063;-0.13000701;-0.38397282;-0.21407525;-0.18059322;0.10561419;0.033888876;0.098297119;-0.13537754;
+-0.091066204;-0.19833644;-1.2428936;0.23379685;-0.12931201;-0.38410211;-0.21412061;-0.18037356;0.10538429;0.034126796;
+0.098054677;-0.13510011;-0.091335177;-0.19807814;      };
+     };
+     float_Data @[2] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="Z_AXIS";
+	value 1 0=1;
+       };
+      };
+      name="Z";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [264] 0;1;2;3;4;5;6;7;8;9;
+10;11;0;1;2;3;4;5;6;7;
+8;9;10;11;0;1;2;3;4;5;
+6;7;8;9;10;11;0;1;2;3;
+4;5;6;7;8;9;10;11;0;1;
+2;3;4;5;6;7;8;9;10;11;
+0;1;2;3;4;5;6;7;8;9;
+10;11;0;1;2;3;4;5;6;7;
+8;9;10;11;0;1;2;3;4;5;
+6;7;8;9;10;11;0;1;2;3;
+4;5;6;7;8;9;10;11;0;1;
+2;3;4;5;6;7;8;9;10;11;
+0;1;2;3;4;5;6;7;8;9;
+10;11;0;1;2;3;4;5;6;7;
+8;9;10;11;0;1;2;3;4;5;
+6;7;8;9;10;11;0;1;2;3;
+4;5;6;7;8;9;10;11;0;1;
+2;3;4;5;6;7;8;9;10;11;
+0;1;2;3;4;5;6;7;8;9;
+10;11;0;1;2;3;4;5;6;7;
+8;9;10;11;0;1;2;3;4;5;
+6;7;8;9;10;11;0;1;2;3;
+4;5;6;7;8;9;10;11;0;1;
+2;3;4;5;6;7;8;9;10;11;
+0;1;2;3;4;5;6;7;8;9;
+10;11;0;1;2;3;4;5;6;7;
+8;9;10;11;      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   DataTable @[1] {
+    name="MON_AGC";
+    desc=;
+    data {
+     name="data";
+     el_typ=float_Data;
+     el_def=0;
+     float_Data @[0] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="X_AXIS";
+	value 1 0=1;
+       };
+      };
+      name="X";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [22] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;      };
+     };
+     float_Data @[1] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="PLOT_1";
+	value 1 0=1;
+       };
+      };
+      name="Y1";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [22] 1.4665316;1.4759749;1.4835125;1.4894797;1.494174;1.4978379;1.5006683;1.5028253;1.5044401;1.5056181;
+1.506446;1.5069938;1.5073191;1.5074683;1.5074791;1.5074683;1.5074468;1.5074153;1.5073743;1.5073251;
+1.5072675;1.5072029;      };
+     };
+     float_Data @[2] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="PLOT_2";
+	value 1 0=1;
+       };
+      };
+      name="Y2";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [22] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+  };
+ };
+ data_proc {
+  name=;
+  el_typ=taDataProc;
+  el_def=0;
+  taDataProc @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_base";
+  };
+  taDataAnal @[1] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_anal";
+  };
+  taDataGen @[2] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_gen";
+  };
+  taImageProc @[3] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="image_proc";
+  };
+ };
+ programs {
+  name=;
+  el_typ=Program;
+  el_def=0;
+  step_prog=NULL;
+  tags=;
+  desc=;
+  Program_Group @.gp[0] {
+   name="Audioproc";
+   el_typ=Program;
+   el_def=0;
+   step_prog=.projects[0].programs.gp[0][0]$0$;
+   tags=;
+   desc=;
+   Program @[0] {
+    name="Audioproc";
+    tags=;
+    desc=;
+    flags=;
+    objs {
+     name=;
+     el_typ=SourceBlock;
+     el_def=0;
+     InputBlockSet @[0] {
+      name="InputBlockSet_0";
+      desc=;
+      flags=;
+      gain {
+       level=1;
+       units=UN_SCALE;
+      };
+      fs {
+       fs_val=SF_16000;
+       fs_act=16000;
+      };
+      max_dur {
+       duration=0;
+       units=UN_CONT;
+      };
+      blocks {
+       name=;
+       el_typ=InputBlockBase;
+       el_def=0;
+       StimGen @[0] {
+	name="StimGen_0";
+	desc=;
+	flags=;
+	gain {
+	 level=1;
+	 units=UN_SCALE;
+	};
+	fs {
+	 fs_val=SF_16000;
+	 fs_act=16000;
+	};
+	max_dur {
+	 duration=1;
+	 units=UN_TIME_S;
+	};
+	out_buff {
+	 fs {
+	  fs_val=SF_16000;
+	  fs_act=16000;
+	 };
+	 fr_dur {
+	  duration=1;
+	  units=UN_SAMPLES;
+	 };
+	 stages=10;
+	 fields=1;
+	};
+	pos {x=0: y=0.2332381: z=0: };
+	chans {
+	 name=;
+	 el_typ=ToneChan;
+	 el_def=0;
+	 ToneChan @[0] {
+	  name="Tone0";
+	  chan_flags=;
+	  wave_type=WT_SINE;
+	  freq_mode=FM_ABSOLUTE;
+	  freq=1000;
+	  level {
+	   level=1;
+	   units=UN_SCALE;
+	  };
+	  starting_phase {
+	   phase=0;
+	   units=UN_DEGREES;
+	  };
+	 };
+	};
+       };
+      };
+      stages=10;
+     };
+     ListenerBlock @[1] {
+      name="ListenerBlock_0";
+      desc=;
+      flags=;
+      in_block {
+       src_block=.projects[0].programs.gp[0][0].objs[0]$1$;
+       buff_index=0;
+      };
+      out_buff {
+       fs {
+	fs_val=SF_16000;
+	fs_act=16000;
+       };
+       fr_dur {
+	duration=1;
+	units=UN_SAMPLES;
+       };
+       stages=1;
+       fields=1;
+      };
+      head_radius=0.09;
+      pos {x=0: y=0: z=0: };
+      pos_ear_L {x=-0.09: y=0: z=0: };
+      pos_ear_R {x=0.09: y=0: z=0: };
+      norm_by_n=0;
+      output_mode=OM_Mono;
+      speed_sound=344;
+      dist_min=0.03;
+      dist_atten=16;
+     };
+     AGCBlock @[2] {
+      name="AGCBlock_0";
+      desc=;
+      flags=;
+      in_block {
+       src_block=.projects[0].programs.gp[0][0].objs[1]$2$;
+       buff_index=0;
+      };
+      out_buff {
+       fs {
+	fs_val=SF_16000;
+	fs_act=16000;
+       };
+       fr_dur {
+	duration=1;
+	units=UN_SAMPLES;
+       };
+       stages=1;
+       fields=1;
+      };
+      out_buff_params {
+       fs {
+	fs_val=SF_CUSTOM;
+	fs_act=100;
+       };
+       fr_dur {
+	duration=1;
+	units=UN_SAMPLES;
+       };
+       stages=1;
+       fields=1;
+      };
+      agc_flags=AGC_ON|AGC_UPDATE_INIT;
+      agc_type=AGC_AVG;
+      update_rate=10;
+      gain_units=UN_DBI;
+      output_level=0;
+      init_gain=1.507203;
+      gain_thresh=-50;
+      gain_limits {min=-10: max=20: };
+      in_tc {
+       duration=200;
+       units=UN_TIME_MS;
+      };
+      agc_tc_attack {
+       duration=50;
+       units=UN_TIME_MS;
+      };
+      agc_tc_decay {
+       duration=500;
+       units=UN_TIME_MS;
+      };
+      accum {
+       name=;
+	    [2 1] 0.7086707833374662;80.70861993850386;      };
+     };
+     SignalMonBlock @[3] {
+      name="MON_AGC";
+      desc=;
+      flags=;
+      in_block {
+       src_block=.projects[0].programs.gp[0][0].objs[2]$3$;
+       buff_index=1;
+      };
+      mon_flags=MF_ACCUM|MF_RESET_ON_INIT|MF_FOR_PLOT;
+      mon_type=MT_VAL;
+      mon_data=.projects[0].data.gp[2][1]$4$;
+      x_units=UN_SAMPLES;
+      item_col="item";
+      item_dims=2;
+      item_dim0=DIM_VAL;
+      item_dim1=DIM_CHAN;
+      item_dim2=DIM_OFF;
+      item_dim3=DIM_OFF;
+      item_dim4=DIM_OFF;
+      item_dim5=DIM_OFF;
+     };
+     MelCepstrumBlock @[4] {
+      name="MelCepstrumBlock_0";
+      desc=;
+      flags=;
+      in_block {
+       src_block=$3$;
+       buff_index=0;
+      };
+      out_buff {
+       fs {
+	fs_val=SF_CUSTOM;
+	fs_act=100;
+       };
+       fr_dur {
+	duration=1;
+	units=UN_SAMPLES;
+       };
+       stages=1;
+       fields=1;
+      };
+      out_rate=10;
+      cf_lo=100;
+      cf_lin_bw=100;
+      cf_log_factor=1.1;
+      n_lin_chans=10;
+      n_log_chans=20;
+      compress=1;
+      comp_thresh {
+       level=-60;
+       units=UN_DBI;
+      };
+      dct=1;
+      n_cepstrum=12;
+     };
+     SignalMonBlock @[5] {
+      name="Mon_Mel";
+      desc=;
+      flags=;
+      in_block {
+       src_block=.projects[0].programs.gp[0][0].objs[4]$5$;
+       buff_index=0;
+      };
+      mon_flags=MF_ACCUM|MF_RESET_ON_INIT|MF_FOR_PLOT;
+      mon_type=MT_VAL;
+      mon_data=.projects[0].data.gp[2][0]$6$;
+      x_units=UN_SAMPLES;
+      item_col="item";
+      item_dims=2;
+      item_dim0=DIM_VAL;
+      item_dim1=DIM_CHAN;
+      item_dim2=DIM_OFF;
+      item_dim3=DIM_OFF;
+      item_dim4=DIM_OFF;
+      item_dim5=DIM_OFF;
+     };
+    };
+    types {
+     name=;
+     el_typ=ProgType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="InputBlockSet_0";
+      var_type=T_Object;
+      object_type=InputBlockSet;
+      object_val=$1$;
+      objs_ptr=1;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc=;
+     };
+     ProgVar @[1] {
+      name="ListenerBlock_0";
+      var_type=T_Object;
+      object_type=ListenerBlock;
+      object_val=$2$;
+      objs_ptr=1;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc=;
+     };
+     ProgVar @[2] {
+      name="MelCepstrumBlock_0";
+      var_type=T_Object;
+      object_type=MelCepstrumBlock;
+      object_val=$5$;
+      objs_ptr=1;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc=;
+     };
+     ProgVar @[3] {
+      name="ps";
+      var_type=T_HardEnum;
+      int_val=1;
+      hard_enum_type=SignalProcBlock::ProcStatus;
+      objs_ptr=0;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
+      desc="processing status";
+     };
+     ProgVar @[4] {
+      name="dur";
+      var_type=T_Real;
+      real_val=0.01;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="duration to process, in ms";
+     };
+     ProgVar @[5] {
+      name="Mon_Mel";
+      var_type=T_Object;
+      object_type=SignalMonBlock;
+      object_val=.projects[0].programs.gp[0][0].objs[5]$7$;
+      objs_ptr=1;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc=;
+     };
+     ProgVar @[6] {
+      name="AGCBlock_0";
+      var_type=T_Object;
+      object_type=AGCBlock;
+      object_val=$3$;
+      objs_ptr=1;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc=;
+     };
+     ProgVar @[7] {
+      name="MON_AGC";
+      var_type=T_Object;
+      object_type=SignalMonBlock;
+      object_val=.projects[0].programs.gp[0][0].objs[3]$8$;
+      objs_ptr=1;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc=;
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    load_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+     MethodCall @[0] {
+      desc=;
+      flags=;
+      result_var=NULL;
+      obj=.projects[0].programs.gp[0][0].vars[0]$9$;
+      method=SignalProcBlock::InitConfig;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+    };
+    prog_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+     MethodCall @[0] {
+      desc=;
+      flags=;
+      result_var=.projects[0].programs.gp[0][0].vars[3]$10$;
+      obj=$9$;
+      method=InputBlockBase::ProcNext_Duration;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=float;
+	type="float";
+	name="s";
+	required=0;
+	def_val=;
+	expr {
+	 expr="dur";
+	};
+       };
+      };
+     };
+    };
+   };
+  };
+ };
+ viewers {
+  name=;
+  el_typ=TopLevelViewer;
+  el_def=0;
+  MainWindowViewer @[0] {
+   m_data=.projects[0]$11$;
+   name="Browser2";
+   visible=1;
+   m_is_root=0;
+   m_is_viewer_xor_browser=0;
+   m_is_proj_viewer=1;
+   m_is_dialog=0;
+   toolbars {
+    name=;
+    el_typ=ToolBar;
+    el_def=0;
+    ToolBar @[0] {
+     m_data=NULL;
+     name="Application";
+     visible=0;
+     lft=0;
+     top=0;
+     o=Horizontal;
+    };
+   };
+   frames {
+    name=;
+    el_typ=FrameViewer;
+    el_def=0;
+    tabBrowseViewer @[0] {
+     m_data=NULL;
+     name="Tree";
+     visible=1;
+     root_typ=LeabraProject;
+     root_md=NULL;
+     m_root=$11$;
+    };
+    PanelViewer @[1] {
+     m_data=NULL;
+     name="Panels";
+     visible=1;
+    };
+    T3DataViewer @[2] {
+     m_data=NULL;
+     name="T3Frames";
+     visible=1;
+     frames {
+      name=;
+      el_typ=T3DataViewFrame;
+      el_def=0;
+      T3DataViewFrame @[0] {
+       m_data=NULL;
+       name="Frame1";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GraphTableView @[0] {
+	  m_data=$6$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].data.gp[2][0].data[0]$12$;
+	    m_transform=NULL;
+	    name="X";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].data.gp[2][0].data[1]$13$;
+	    m_transform=NULL;
+	    name="Y";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].data.gp[2][0].data[2]$14$;
+	    m_transform=NULL;
+	    name="Z";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10000;
+	  view_range {min=0: max=-1: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=0;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="X";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-19: max=6e-19: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Z;
+	   col_name="Z";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-19: max=6e-19: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="Y";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-19: max=6e-19: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  plot_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	   alt_y=0;
+	  };
+	  plot_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	   alt_y=0;
+	  };
+	  plot_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	   alt_y=0;
+	  };
+	  plot_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	   alt_y=0;
+	  };
+	  plot_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CROSS;
+	   alt_y=0;
+	  };
+	  plot_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=STAR;
+	   alt_y=0;
+	  };
+	  plot_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=MINUS;
+	   alt_y=0;
+	  };
+	  alt_y_1=0;
+	  alt_y_2=0;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  err_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=VALUE_COLOR;
+	  color_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=.colorspecs[0]$15$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       camera_pos {x=1.4275: y=0.445: z=1.376934: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=1.866934;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       headlight_on=1;
+       fullscreen_on=0;
+       stereo_view=STEREO_NONE;
+      };
+      T3DataViewFrame @[1] {
+       m_data=NULL;
+       name="MON_AGC";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GraphTableView @[0] {
+	  m_data=$4$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].data.gp[2][1].data[0]$16$;
+	    m_transform=NULL;
+	    name="X";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].data.gp[2][1].data[1]$17$;
+	    m_transform=NULL;
+	    name="Y1";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].data.gp[2][1].data[2]$18$;
+	    m_transform=NULL;
+	    name="Y2";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10000;
+	  view_range {min=0: max=21: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="X";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=21: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=21: };
+	   range {min=0: max=21: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name="Z";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-19: max=6e-19: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="Y1";
+	   fixed_range {fix_min=0: min=1.466532: fix_max=0: max=1.507479: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=1.466532: max=1.507479: };
+	   range {min=1.466532: max=1.507479: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  plot_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name="Y2";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-19: max=6e-19: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	   alt_y=0;
+	  };
+	  plot_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	   alt_y=0;
+	  };
+	  plot_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	   alt_y=0;
+	  };
+	  plot_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	   alt_y=0;
+	  };
+	  plot_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CROSS;
+	   alt_y=0;
+	  };
+	  plot_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=STAR;
+	   alt_y=0;
+	  };
+	  plot_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=MINUS;
+	   alt_y=0;
+	  };
+	  alt_y_1=0;
+	  alt_y_2=0;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  err_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=VALUE_COLOR;
+	  color_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=$15$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       camera_pos {x=1.465: y=0.445: z=1.506229: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=2.016229;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       headlight_on=1;
+       fullscreen_on=0;
+       stereo_view=STEREO_NONE;
+      };
+     };
+    };
+   };
+   docks {
+    name=;
+    el_typ=DockViewer;
+    el_def=0;
+    ToolBoxDockViewer @[0] {
+     m_data=NULL;
+     name="Tools";
+     visible=1;
+     dock_flags=DV_MOVABLE|DV_FLOATABLE;
+     dock_area=1;
+    };
+   };
+  };
+ };
+ last_change_desc=;
+ networks {
+  name=;
+  el_typ=LeabraNetwork;
+  el_def=0;
+ };
+};
