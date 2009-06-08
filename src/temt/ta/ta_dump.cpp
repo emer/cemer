@@ -79,7 +79,7 @@ taBase* VPUnref::Resolve() {
 	return NULL;
     }
     else if(md->type->ptr != 0) {
-      taMisc::Warning("*** ptr count != 0 in path:", path);
+      taMisc::Warning("ptr count != 0 in path:", path);
       return NULL;
     }
   }
@@ -90,7 +90,7 @@ taBase* VPUnref::Resolve() {
   } else {// assume it is taBase_ptr or (binary-compat) taBasePtr
     if((memb_def != NULL) && memb_def->HasOption("OWN_POINTER")) {
       if(parent == NULL)
-        taMisc::Warning("*** NULL parent for owned pointer:",path);
+        taMisc::Warning("NULL parent for owned pointer:",path);
       else
         taBase::OwnPointer((taBase**)base, bs, parent);
     } else 
@@ -116,7 +116,7 @@ void VPUList::Resolve() {
       String par_path;
       if(vp->parent != NULL)
 	par_path = vp->parent->GetPath();
-      taMisc::Warning("*** Could not resolve following path:",vp->path,
+      taMisc::Warning("Could not resolve following path:",vp->path,
 		    "in object:",par_path);
       i++;
     }
@@ -267,7 +267,7 @@ void DumpPathTokenList::NewLoadToken(String& pat, String& tok_id) {
   AddObjPath(NULL, pat);
   DumpPathToken* tok = FastEl(size-1);
   if(tok_num != size-1) {
-    taMisc::Warning("*** Path Tokens out of order, on list:", tok->token_id, "in file:",
+    taMisc::Warning("Path Tokens out of order, on list:", tok->token_id, "in file:",
 		   tok_id);
     tok->object = NULL;
     tok->path = "";
@@ -289,7 +289,7 @@ taBase* DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
     String num = pat(1,pat.index('$',-1)-1); // get the number
     DumpPathToken* tok = SafeEl((int)num);
     if(tok == NULL) {
-      taMisc::Warning("*** Path Token Not Created Yet:", pat);
+      taMisc::Warning("Path Token Not Created Yet:", pat);
       return NULL;
     }
     if((tok->object == NULL) && (base != NULL)) {
@@ -328,7 +328,7 @@ taBase* DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
       }
     }
     else if(md->type->ptr != 0) {
-      taMisc::Warning("*** ptr count greater than 0 in path:", pat);
+      taMisc::Warning("ptr count greater than 0 in path:", pat);
       return NULL;
     }
   }
@@ -885,7 +885,7 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
           // a non-variant member was changed to be a variant -- however, the loading
           // could fail because it may not be set to the the correct type
           if (!var.Dump_Load_Type(strm, c)) {
-            taMisc::Warning("*** expected variant type information for member:", md->name,
+            taMisc::Warning("expected variant type information for member:", md->name,
               "in type:", md->GetOwnerType()->name);
           }
         }
@@ -899,7 +899,7 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
 	  taMisc::skip_past_err(strm);
       }
       else {
-	taMisc::Warning("*** Member:",mb_name,"not found in type:",
+	taMisc::Warning("Member:",mb_name,"not found in type:",
 			owner->name, "(this is likely just harmless version skew)");
 	int sv_vld = taMisc::verbose_load;
 	taMisc::verbose_load = taMisc::SOURCE;
@@ -975,7 +975,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
         // a taBase object that was saved as a member, but is now a pointer..
         taBase* rbase = *((taBase**)new_base);
         if(rbase == NULL) {	// it's a null object, can't load into it
-          taMisc::Warning("*** Can't load into NULL pointer object for member:", name,
+          taMisc::Warning("Can't load into NULL pointer object for member:", name,
                         "in eff_type:",GetOwnerType()->name);
           return false;
         }
@@ -999,7 +999,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
       return true;
     // otherwise, it better be an = 
     if (c != '=') {
-      taMisc::Warning("*** Missing '=' in dump file for member:", name,
+      taMisc::Warning("Missing '=' in dump file for member:", name,
                     "in eff_type:",GetOwnerType()->name);
       return false;
     }
@@ -1017,7 +1017,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
     }
   
     if(c != ';') {
-      taMisc::Warning("*** Missing ';' in dump file for member:", name,
+      taMisc::Warning("Missing ';' in dump file for member:", name,
                     "in eff_type:",GetOwnerType()->name);
       return true;		// don't scan any more after this err..
     }*/
@@ -1033,7 +1033,7 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
     }
   
     if (c != ';') {
-      taMisc::Warning("*** Missing ';' in dump file for member:", name,
+      taMisc::Warning("Missing ';' in dump file for member:", name,
                     "in eff_type:",GetOwnerType()->name);
       return true;		// don't scan any more after this err..
     }
@@ -1103,13 +1103,13 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
   else {
     td = taMisc::types.FindName(tpnm);
     if(td == NULL) {
-      taMisc::Warning("*** Unknown type:",tpnm,"in Dump_Load_Path");
+      taMisc::Warning("Unknown type:",tpnm,"in Dump_Load_Path");
       return false;
     }
 
     if(!DerivesFrom(TA_taBase)) {
       if(!DerivesFrom(td)) {
-	taMisc::Warning("*** Type mismatch, expecting:",name,"Got:",td->name);
+	taMisc::Warning("Type mismatch, expecting:",name,"Got:",td->name);
 	return false;
       }
     }
@@ -1156,7 +1156,7 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
 
   if(path.firstchar() == '@') {		// relative to current parent..
     if(par == NULL) {
-      taMisc::Warning("*** Relative path with NULL parent:", path);
+      taMisc::Warning("Relative path with NULL parent:", path);
       return false;
     }
     path = path.after('@');
@@ -1204,12 +1204,12 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
   taBase* ppar = find_base->FindFromPath(ppar_path, ppar_md); // path-parent
 
   if(!ppar) {
-    taMisc::Warning("*** Could not find a parent for:",el_path,"in",ppar_path);
+    taMisc::Warning("Could not find a parent for:",el_path,"in",ppar_path);
     return false;
   }
 
   if(ppar_md && !ppar_md->type->InheritsFrom(TA_taBase)) {
-    taMisc::Warning("*** Parent must be a taBase type for:",el_path,"in",ppar_path,
+    taMisc::Warning("Parent must be a taBase type for:",el_path,"in",ppar_path,
 	"type:",ppar_md->type->name);
     return false;
   }
@@ -1267,12 +1267,12 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
   }
   if(inline_dump) {
     if(c != '{') {
-      taMisc::Warning("*** Missing '{' in dump file for inline type:", name);
+      taMisc::Warning("Missing '{' in dump file for inline type:", name);
       return false;
     }
     c = taMisc::read_till_rb_or_semi(strm);
     if(c != '}') {
-      taMisc::Warning("*** Missing '}' in dump file for inline type:", name);
+      taMisc::Warning("Missing '}' in dump file for inline type:", name);
       return false;
     }
     taMisc::LexBuf = String("{") + taMisc::LexBuf; // put lb back in..
@@ -1280,7 +1280,7 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
   }
   else if(InheritsFormal(TA_class)) {
     if(c != '{') {
-      taMisc::Warning("*** Missing '{' in dump file for type:",name);
+      taMisc::Warning("Missing '{' in dump file for type:",name);
       return false;
     }
     return members.Dump_Load(strm, base, par);
@@ -1293,7 +1293,7 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
       return EOF;
     }
     if(c != '=') {
-      taMisc::Warning("*** Missing '=' in dump file for type:",name);
+      taMisc::Warning("Missing '=' in dump file for type:",name);
       return false;
     }
 
@@ -1410,7 +1410,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
 //WARNING: DO NOT put any calls to eventloop in the load code -- it will cause crashes
   if (el_) *el_ = NULL; //default if error
   if(base == NULL) {
-    taMisc::Warning("*** Cannot load into NULL");
+    taMisc::Warning("Cannot load into NULL");
     return false;
   }
 
@@ -1440,20 +1440,33 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
       taMisc::loading_version.set(4,0,19); // last version without explicit versioning
     }
   } else {
-    taMisc::Warning("*** Dump file does not have proper format id:", taMisc::LexBuf);
+    taMisc::Warning("Dump file does not have proper format id:", taMisc::LexBuf);
     return false;
+  }
+
+  if(taMisc::loading_version < taMisc::version_bin) {
+    taMisc::Warning("Loading a file saved in an earlier version of the software:",
+		    taMisc::loading_version.toString(),"  Current version is:",
+		    taMisc::version_bin.toString(),
+		    "there are likely to be version skew warnings -- see the current ChangeLog info on the emergent wiki for things you should be looking for");
+  }
+  else if(taMisc::loading_version > taMisc::version_bin) {
+    taMisc::Warning("Loading a file saved in a *LATER* version of the software:",
+		    taMisc::loading_version.toString(),"  Current version is:",
+		    taMisc::version_bin.toString(),
+		    "this is not likely to end well, as the software is generally only backwards compatible, but it might work..");
   }
 
   TypeDef* td;
   String path;
   int rval = Dump_Load_Path(strm, base, par, td, path); // non-null base just gets type
   if(rval <= 0) {
-    taMisc::Warning("*** Dump load aborted due to errors");
+    taMisc::Warning("Dump load aborted due to errors");
     return false;
   }
   
   if(!td->InheritsFrom(TA_taBase)) {
-    taMisc::Warning("*** Only taBase objects may be loaded, not:", td->name);
+    taMisc::Warning("Only taBase objects may be loaded, not:", td->name);
     return false;
   }
 
@@ -1491,7 +1504,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     taBase* par = (taBase*)base;		// given base must be a parent
     el = par->New(1,td);		// create one of the saved type
     if(el == NULL) {
-      taMisc::Warning("*** Could not make a:",td->name,"in:",par->GetPath());
+      taMisc::Warning("Could not make a:",td->name,"in:",par->GetPath());
       rval = false;
       goto endload;
     }
@@ -1513,7 +1526,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
   for (int i=0; i<dumpMisc::update_after.size; i++) {
     taBase* tmp = dumpMisc::update_after.FastEl(i);
     if(taBase::GetRefn(tmp) <= 1) {
-      taMisc::Warning("*** Object: of type:",
+      taMisc::Warning("Object: of type:",
 		      tmp->GetTypeDef()->name,"named:",tmp->GetName(),"is unowned!");
       taBase::Ref(tmp);
     }

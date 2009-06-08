@@ -86,9 +86,8 @@ protected:
   override void* 	El_unRef_(void* it);	// when popped
 } */
 
-//////////////////////////
-//   nvDataView		//
-//////////////////////////
+////////////////////////////////////////////////////
+//   nvDataView	
 
 class EMERGENT_API nvDataView: public T3DataViewPar { // #VIRT_BASE most children of NetView
 INHERITED(T3DataViewPar)
@@ -112,9 +111,8 @@ private:
 };
 
 
-//////////////////////////
-//   UnitView	//
-//////////////////////////
+////////////////////////////////////////////////////
+//   UnitView	
 
 // Note that UnitGroupView takes care of rendering all the Units;
 // UnitView objects are only created and associated with a T3Unit object
@@ -170,9 +168,8 @@ protected:
 };
 
 
-//////////////////////////
-//   UnitGroupView	//
-//////////////////////////
+////////////////////////////////////////////////////
+//   UnitGroupView
 
 // Note that UnitGroupView takes care of rendering all the Units;
 // UnitView objects are only created and associated with a T3Unit object
@@ -253,10 +250,8 @@ private:
 };
 
 
-
-//////////////////////////
-//     LayerView	//
-//////////////////////////
+////////////////////////////////////////////////////
+//     LayerView
 
 class EMERGENT_API LayerView: public nvhDataView {
 INHERITED(nvhDataView)
@@ -268,8 +263,6 @@ public:
   };
 
   DispMode		disp_mode; // how to display layer information
-
-  T3DataView_PtrList	ugrps; // #NO_SAVE #HIDDEN
 
   Layer*		layer() const {return (Layer*)data();}
   T3LayerNode*		node_so() const {return (T3LayerNode*)inherited::node_so();}
@@ -294,12 +287,10 @@ public:
   T3_DATAVIEWFUNS(LayerView, nvhDataView)
 protected:
   override void		UpdateAfterEdit_impl();
-  override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
   override void		DoHighlightColor(bool apply); 
   override void		DataUpdateAfterEdit_impl(); // also invoke for the connected prjns
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
-  override void		Reset_impl(); // #IGNORE
 private:
   NOCOPY(LayerView)
   void			Initialize();
@@ -307,9 +298,8 @@ private:
 };
 
 
-//////////////////////////
-//   PrjnView		//
-//////////////////////////
+////////////////////////////////////////////////////
+//   PrjnView	
 
 class EMERGENT_API PrjnView: public nvhDataView {
 INHERITED(nvhDataView)
@@ -330,9 +320,38 @@ private:
   void			Destroy();
 };
 
-//////////////////////////
-//   NetViewObj		//
-//////////////////////////
+
+////////////////////////////////////////////////////
+//     LayerGroupView
+
+class EMERGENT_API LayerGroupView: public nvhDataView {
+INHERITED(nvhDataView)
+public:
+  bool			root_laygp; // true if this is network.layers root layer group
+
+  Layer_Group*		layer_group() const {return (Layer_Group*)data();}
+  T3LayerGroupNode*	node_so() const {return (T3LayerGroupNode*)inherited::node_so();}
+
+  override void		BuildAll(); // creates fully populated subviews
+  virtual void		UpdateUnitValues();
+  // *only* updates unit values 
+
+  override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save ugs and lower
+  T3_DATAVIEWFUNS(LayerGroupView, nvhDataView)
+protected:
+  override void		DoHighlightColor(bool apply); 
+  override void		DataUpdateAfterEdit_impl(); // also invoke for the connected prjns
+  override void		Render_pre(); // #IGNORE
+  override void		Render_impl(); // #IGNORE
+private:
+  NOCOPY(LayerGroupView)
+  void			Initialize();
+  void			Destroy();
+};
+
+
+////////////////////////////////////////////////////
+//   NetViewObj	
 
 class EMERGENT_API NetViewObjView: public T3DataView {
   // view of net view object
@@ -360,9 +379,57 @@ protected:
 };
 
 
-//////////////////////////
-//   NetView		//
-//////////////////////////
+/////////////////////////////////////////////////////////////
+//		Net View
+
+class EMERGENT_API NetViewFontSizes : public taOBase {
+  // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display network display font sizes
+INHERITED(taOBase)
+public:
+  float	 net_name;	// #DEF_0.05 network name
+  float	 net_vals;	// #DEF_0.05 network values (counters, stats)
+  float	 layer;		// #DEF_0.04 layer names
+  float	 layer_vals;	// #DEF_0.03 layer values (stats)
+  float  prjn;		// #DEF_0.01 projection names and values
+  float	 unit;		// #DEF_0.02 unit names and values
+  int	 un_nm_len;	// #DEF_3 unit name length -- used to compute output name font size
+
+  override String 	GetTypeDecoKey() const { return "Network"; }
+
+  SIMPLE_COPY(NetViewFontSizes);
+  TA_BASEFUNS(NetViewFontSizes);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
+class EMERGENT_API NetViewParams : public taOBase {
+  // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display misc parameters for the network display
+INHERITED(taOBase)
+public:
+  enum PrjnDisp {		// how to display projections
+    L_R_F,			// all in front: sender is at left of layer, receiver is right
+    L_R_B,			// all in back: sender is at left of layer, receiver is right
+    B_F,			// sender is at back of layer, receiver is front
+  };
+
+  bool		xy_square;	// keep the x and y dimensions of the network square (same) -- makes the units square
+  float		unit_spacing;	// #DEF_0.05 spacing between units (as a proportion of total space available to render the unit)
+  PrjnDisp	prjn_disp;	// how to arrange projection arrows to convey sender/receiver info
+  bool		prjn_name;	// #DEF_false whether to display the projection name
+  float		prjn_width;	// #DEF_0.002 width of the projection arrows
+  float		prjn_trans;	// #DEF_0.5 transparency of the projection arrows
+  float		lay_trans;	// #DEF_0.5 transparency of the layer border
+  float		unit_trans;	// #DEF_0.6 transparency of the units
+  float		laygp_width;	// #DEF_1 width of the layer group lines (as a line width, not as a geometry size relative to normalized network size)
+
+  override String 	GetTypeDecoKey() const { return "Network"; }
+
+  TA_SIMPLE_BASEFUNS(NetViewParams);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
 
 /*
  * Note that we keep simple ptr lists separately of the Layers, Prjns, etc., for ease

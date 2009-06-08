@@ -974,16 +974,12 @@ public: //
   override int	GetIndex() const { return idx; }
   override void	SetIndex(int i) { idx = i; }
   virtual int	GetMyLeafIndex();
-  // compute leaf index from my individual index in an efficient manner
-  TwoDCoord 		GetMyAbsPos()
-    {TwoDCoord r; GetLayerAbsPos(r); return r;}
-  // #NO_SHOW #OBSOLETE *use GetLayerAbsPos* get the absolute position of this unit relative to the layer, taking into account any unit groups
-  void			GetAbsPos(TDCoord& abs_pos)
-    {abs_pos = pos; AddRelPos(abs_pos);}
-    // get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
-  void			GetLayerAbsPos(TwoDCoord& lay_abs_pos); 
-  // get coords of this Unit in the Layer (NOT for any kind of layout/3D use, only for Unit-in-Layer usage)
-  void			AddRelPos(TDCoord& rel_pos); 
+  // #CAT_Structure compute leaf index from my individual index in an efficient manner
+  void		GetAbsPos(TDCoord& abs_pos)  { abs_pos = pos; AddRelPos(abs_pos); }
+  // #CAT_Structure get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
+  void		GetLayerAbsPos(TwoDCoord& lay_abs_pos); 
+  // #CAT_Structure get coords of this Unit in the Layer (NOT for any kind of layout/3D use, only for Unit-in-Layer usage)
+  void		AddRelPos(TDCoord& rel_pos); 
   // #IGNORE add relative pos, which factors in offsets from above
   
   override String 	GetTypeDecoKey() const { return "Unit"; }
@@ -1303,10 +1299,10 @@ public:
   // #CAT_Structure find unit from given set of x and y coordinates
   TwoDCoord	GetGpGeomPos();
   // #CAT_Structure returns unit group position in terms of layer unit group geometry gp_geom (pos is in unit coordinates and not unit group geometry)
-  void		GetAbsPos(TDCoord& abs_pos)
-    {abs_pos = pos; AddRelPos(abs_pos);}
-    // get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
-  void		AddRelPos(TDCoord& rel_pos); //  #IGNORE add relative pos, which factors in offsets from above
+  void		GetAbsPos(TDCoord& abs_pos) { abs_pos = pos; AddRelPos(abs_pos); }
+  // #CAT_Structure get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
+  void		AddRelPos(TDCoord& rel_pos);
+  //  #IGNORE add relative pos, which factors in offsets from above
   virtual bool	SetUnitNames(taMatrix* mat);
   // #CAT_XpertStructure sets the unit names from the matrix mat -- should generally be 2d but we are permissive about dims, size, etc.
   virtual bool	GetUnitNames(taMatrix* mat);
@@ -1579,9 +1575,9 @@ public:
   // #MENU #USE_RVAL #CAT_Structure remove units with prob p_lesion (permute = fixed no. lesioned)
 
   virtual void	Iconify();
-  // #MENU #DYN1 #CAT_Display iconify this layer in the network display
+  // #MENU #DYN1 #CAT_Display iconify this layer in the network display (shrink to size of 1 unit)
   virtual void	DeIconify();
-  // #MENU #DYN1 #CAT_Display de-iconify this layer in the network display
+  // #MENU #DYN1 #CAT_Display de-iconify this layer in the network display (make full size)
   inline void	SetDispScale(float disp_sc) 	{ disp_scale = disp_sc; UpdateAfterEdit(); }
   // #MENU #DYN1 #CAT_Display set the display scale for the layer -- can change how much space it takes up relative to other layers
   inline void	Lesion() 	{ SetLayerFlag(LESIONED); }
@@ -1647,10 +1643,10 @@ public:
   // #CAT_Structure get unit group from group coordinates (i.e., within gp_geom, not unit coordinates)
   virtual void	GetActGeomNoSpc(TwoDCoord& nospc_geom);
   // #CAT_Structure get the actual geometry of the layer, subtracting any gp_spc that might be present (as if there were no spaces between unit groups)
-  void		GetAbsPos(TDCoord& abs_pos)
-    {abs_pos = pos; AddRelPos(abs_pos);}
-    // get absolute pos, which factors in offsets from layer groups
-  void		AddRelPos(TDCoord& rel_pos); //  #IGNORE add relative pos, which factors in offsets from above
+  void		GetAbsPos(TDCoord& abs_pos) { abs_pos = pos; AddRelPos(abs_pos); }
+  // #CAT_Structure get absolute pos, which factors in offsets from layer groups
+  void		AddRelPos(TDCoord& rel_pos);
+  //  #IGNORE add relative pos, which factors in offsets from above
   void		SetDefaultPos();
   // #IGNORE initialize position of layer
 
@@ -1708,21 +1704,41 @@ inline Layer* Unit::own_lay() const {return ((Unit_Group*)owner)->own_lay;}
 inline bool Unit::lesioned() const {return own_lay()->lesioned(); }
 
 class EMERGENT_API Layer_Group : public taGroup<Layer> {
-  // ##CAT_Network ##SCOPE_Network group of layers 
+  // ##CAT_Network ##SCOPE_Network group of layers -- this should be used in larger networks to organize subnetworks (e.g., in brain models, different brain areas)
 INHERITED(taGroup<Layer>)
 public:
   TDCoord	pos;		// Position of Group of layers relative to network
+  PosTDCoord	max_size;	// #READ_ONLY #SHOW #CAT_Structure maximum size of the layer group -- computed automatically from the layers within the group
 
   void		GetAbsPos(TDCoord& abs_pos)
-    {abs_pos = pos; AddRelPos(abs_pos);}
-    // get absolute pos, which factors in offsets from layer groups
-  void		AddRelPos(TDCoord& rel_pos); // add relative pos, which factors in offsets from layer groups
+  { abs_pos = pos; AddRelPos(abs_pos); }
+  // #CAT_Structure get absolute pos, which factors in offsets from layer groups
+  void		AddRelPos(TDCoord& rel_pos);
+  // #CAT_Structure add relative pos from layer groups, which factors in offsets from layer groups
   
-  virtual void		BuildLayers(); // #CAT_Structure create any algorithmically specified layers
-  virtual void		BuildPrjns(); // #CAT_Structure create any algorithmically specified prjns
-  virtual void		Clean();
-    // #MENU #MENU_CONTEXT #CAT_Structure remove any algorithmically specified layers/prjns etc.
-  void			TriggerContextUpdate(); // for context layers, manually triggers the update		
+  virtual void	BuildLayers();
+  // #CAT_Structure create any algorithmically specified layers
+  virtual void	BuildPrjns();
+  // #CAT_Structure create any algorithmically specified prjns
+  virtual void	UpdateMaxSize();
+  // #IGNORE update max_size of layer group based on current layer layout
+
+  virtual void	LesionLayers();
+  // #BUTTON #DYN1 #CAT_Structure set the lesion flag on all the layers within this group -- removes them from all processing operations
+  virtual void	UnLesionLayers();
+  // #BUTTON #DYN1 #CAT_Structure un-set the lesion flag on all the layers within this group -- restores them to engage in normal processing
+  virtual void	IconifyLayers();
+  // #BUTTON #DYN1 #CAT_Structure iconi
+  virtual void	DeIconifyLayers();
+  // #BUTTON #DYN1 #CAT_Structure un-set the lesion flag on all the layers within this group
+
+  virtual void	Clean();
+  // #MENU #MENU_CONTEXT #CAT_Structure remove any algorithmically specified layers/prjns etc.
+
+  virtual void	LayerPos_Cleanup();
+  // #MENU #MENU_CONTEXT #CAT_Structure cleanup the layer positions relative to each other (prevent overlap etc)
+
+  void		TriggerContextUpdate(); // for context layers, manually triggers the update		
     
   override String GetTypeDecoKey() const { return "Layer"; }
 
@@ -1738,7 +1754,7 @@ protected:
 private:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
-  void  Copy_(const Layer_Group& cp)	{ pos = cp.pos; }
+  void  Copy_(const Layer_Group& cp)	{ pos = cp.pos; max_size = cp.max_size; }
 };
 
 TA_SMART_PTRS(Layer_Group)
@@ -1831,55 +1847,7 @@ private:
 
 
 /////////////////////////////////////////////////////////////
-//		Net View
-
-class EMERGENT_API NetViewFontSizes : public taOBase {
-  // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display network display font sizes
-INHERITED(taOBase)
-public:
-  float	 net_name;	// #DEF_0.05 network name
-  float	 net_vals;	// #DEF_0.05 network values (counters, stats)
-  float	 layer;		// #DEF_0.04 layer names
-  float	 layer_vals;	// #DEF_0.03 layer values (stats)
-  float  prjn;		// #DEF_0.01 projection names and values
-  float	 unit;		// #DEF_0.02 unit names and values
-  int	 un_nm_len;	// #DEF_3 unit name length -- used to compute output name font size
-
-  override String 	GetTypeDecoKey() const { return "Network"; }
-
-  SIMPLE_COPY(NetViewFontSizes);
-  TA_BASEFUNS(NetViewFontSizes);
-private:
-  void 	Initialize();
-  void	Destroy()		{ };
-};
-
-class EMERGENT_API NetViewParams : public taOBase {
-  // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display misc parameters for the network display
-INHERITED(taOBase)
-public:
-  enum PrjnDisp {		// how to display projections
-    L_R_F,			// all in front: sender is at left of layer, receiver is right
-    L_R_B,			// all in back: sender is at left of layer, receiver is right
-    B_F,			// sender is at back of layer, receiver is front
-  };
-
-  bool		xy_square;	// keep the x and y dimensions of the network square (same) -- makes the units square
-  float		unit_spacing;	// #DEF_0.05 spacing between units (as a proportion of total space available to render the unit)
-  PrjnDisp	prjn_disp;	// how to arrange projection arrows to convey sender/receiver info
-  bool		prjn_name;	// #DEF_false whether to display the projection name
-  float		prjn_width;	// #DEF_0.002 width of the projection arrows
-  float		prjn_trans;	// #DEF_0.5 transparency of the projection arrows
-  float		lay_trans;	// #DEF_0.5 transparency of the layer border
-  float		unit_trans;	// #DEF_0.6 transparency of the units
-
-  override String 	GetTypeDecoKey() const { return "Network"; }
-
-  TA_SIMPLE_BASEFUNS(NetViewParams);
-private:
-  void 	Initialize();
-  void	Destroy()		{ };
-};
+//		Net View Objs
 
 class EMERGENT_API NetViewObj : public taNBase {
   // ##CAT_Network ##EXT_nvobj network view object (3d object or text) -- is displayed in network view
@@ -1975,7 +1943,7 @@ public:
     NF_NONE		= 0, 	// #NO_BIT
     SAVE_UNITS		= 0x0001, // save units with the project or other saves (specificaly saving just the network always saves the units)
     SAVE_UNITS_FORCE 	= 0x0002, // #NO_SHOW internal flag that forces the saving of units in cases where it is important to do so (e.g., saving just the network, or for a crash recover file)
-    MANUAL_POS	 	= 0x0004, // disables the automatic cleanup/positioning of layers  (turn on to use Layer_Groups to position) 
+    MANUAL_POS	 	= 0x0004, // disables the automatic cleanup/positioning of layers
   }; 
 
   enum NetTextLoc {
@@ -2050,9 +2018,6 @@ public:
   int		n_units;	// #READ_ONLY #EXPERT #CAT_Structure total number of units in the network
   int		n_cons;		// #READ_ONLY #EXPERT #CAT_Structure total number of connections in the network
   PosTDCoord	max_size;	// #READ_ONLY #EXPERT #CAT_Structure maximum size in each dimension of the net
-
-  NetViewFontSizes font_sizes;   // #CAT_Display default size of display labels when a new view is made (can be overriden in specific views)
-  NetViewParams	view_params;   // #CAT_Display misc netview parameters
 
   ProjectBase*	proj;		// #IGNORE ProjectBase this network is in
   bool		old_load_cons;	// #IGNORE #NO_SAVE special flag (can't use flags b/c it is saved, loaded!) for case when loading a project with old cons file format (no pre-alloc of cons)
@@ -2334,7 +2299,8 @@ public:
   virtual bool   RemoveLayer(const char* nm) { return layers.RemoveName(nm); }
   // #CAT_Structure remove layer with given name, if it exists
 
-  virtual void	UpdateMax();	// #IGNORE
+  virtual void	UpdateMaxSize();
+  // #IGNORE update max_size of network based on current layer layout
 
   virtual void	SetProjectionDefaultTypes(Projection* prjn);
   // #IGNORE this is called by the projection InitLinks to set its default types: overload in derived algorithm-specific networks to provide appropriate default types

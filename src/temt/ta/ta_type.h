@@ -389,11 +389,23 @@ public:
        cat(String(step)).cat(".").cat(String(build));}
 
   void		Clear() {major = minor = step = build = 0;} //
-  bool		GtEq(ushort mj, ushort mn, ushort st = 0); // true if the version is greater than or equal to the indicated version
+  bool		GtEq(ushort mj, ushort mn, ushort st = 0) {
+    return (major > mj) || ((major == mj) && (minor > mn)) ||
+      ((major == mj) && (minor == mn) && (step >= st));
+  }
+  // true if the version is greater than or equal to the indicated version
 
-  bool		operator>=(taVersion& cmp) { return GtEq(cmp.major, cmp.minor, cmp.step); }
+  bool		operator>=(taVersion& cmp)
+  { return GtEq(cmp.major, cmp.minor, cmp.step); }
   bool		operator==(taVersion& cmp)
   { return (major == cmp.major && minor == cmp.minor && step == cmp.step); }
+  bool		operator!=(taVersion& cmp)
+  { return (major != cmp.major || minor != cmp.minor || step == cmp.step); }
+  bool		operator>(taVersion& cmp)
+  { return (major > cmp.major) || ((major == cmp.major) && (minor > cmp.minor)) ||
+      ((major == cmp.major) && (minor == cmp.minor) && (step > cmp.step)); }
+  bool		operator<(taVersion& cmp)
+  { return !GtEq(cmp.major, cmp.minor, cmp.step); }
   
   taVersion() {Clear();} //
   taVersion(ushort mj, ushort mn, ushort st = 0, ushort bld = 0) 

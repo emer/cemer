@@ -4910,18 +4910,6 @@ void Layer_Group::CutLinks() {
 
 void Layer_Group::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  // hack to disable the auto pos for nets
-  if (!pos.isZero()) {
-    Network* net = GET_MY_OWNER(Network);
-    if (net && TestWarning(!(net->flags & Network::MANUAL_POS),
-      "UpdateAfterEdit", 
-      "Using Layer_Group.pos requires Network to use manual positioning of layers; so Network.MANUAL_POS has been set; you can reverse this by setting all Layer_Group.pos to 0 and then unchecking Network.MANUAL_POS")) 
-    {
-      net->flags = (Network::NetFlags)(net->flags | Network::MANUAL_POS);
-      // don't do a UAE that is way too invasive
-      net->DataChanged(DCR_ITEM_UPDATED);
-    }
-  }
 }
 
 void Layer_Group::AddRelPos(TDCoord& rel_pos) {
@@ -4938,6 +4926,52 @@ void Layer_Group::DataChanged(int dcr, void* op1, void* op2) {
     Network* net = GET_MY_OWNER(Network);
     if (net) 
       net->RebuildAllViews();
+  }
+}
+
+void Layer_Group::UpdateMaxSize() {
+  max_size.x = 1;  max_size.y = 1;  max_size.z = 1;
+
+  TDCoord min_size;
+  bool first_min = true;
+
+  Layer* l;
+  taLeafItr i;
+  TDCoord l_pos; // for abs_pos
+  FOR_ITR_EL(Layer, l, this->, i) {
+    l->GetAbsPos(l_pos);
+    TDCoord lrelpos = l_pos - pos; // subtract us
+    max_size.z = MAX(max_size.z, 1 + lrelpos.z);
+    if(l->Iconified()) {
+      max_size.x = MAX(max_size.x, lrelpos.x + 1);
+      max_size.y = MAX(max_size.y, lrelpos.y + 1);
+    }
+    else {
+      max_size.x = MAX(max_size.x, l->scaled_act_geom.x + lrelpos.x);
+      max_size.y = MAX(max_size.y, l->scaled_act_geom.y + lrelpos.y);
+    }
+    if(first_min)
+      min_size = l_pos;
+    else {
+      first_min = false;
+      min_size.Min(l_pos);	// min of each coord
+    }
+  }
+
+  // todo: need to fix this -- z axis is off by 1 for some reason..
+#if 0
+  if(!owner->InheritsFrom(&TA_Network)) {
+    if(min_size != pos) {
+      max_size -= min_size - pos;	// reduce by amount moving
+      pos = min_size;		// new position
+    }
+  }
+#endif
+
+  // iterate on subgroups
+  for(int gi=0; gi<gp.size; gi++) {
+    Layer_Group* lgp = (Layer_Group*)gp[gi];
+    lgp->UpdateMaxSize();
   }
 }
 
@@ -4974,6 +5008,52 @@ void Layer_Group::Clean() {
   Clean_impl();
 }
 
+void Layer_Group::LayerPos_Cleanup() {
+  bool moved = false;
+  int n_itr = 0;
+  do {
+    moved = false;
+    for(int i1=0;i1<leaves;i1++) {
+      Layer* l1 = Leaf(i1);
+      TDCoord l1abs;
+      l1->GetAbsPos(l1abs);
+      TwoDCoord l1s = (TwoDCoord)l1abs;
+      TwoDCoord l1e = l1s + (TwoDCoord)l1->scaled_act_geom;
+      for(int i2 = i1+1; i2<leaves;i2++) {
+	Layer* l2 = Leaf(i2);
+	TDCoord l2abs;
+	l2->GetAbsPos(l2abs);
+	TwoDCoord l2s = (TwoDCoord)l2abs;
+	TwoDCoord l2e = l2s + (TwoDCoord)l2->scaled_act_geom;
+	if(l2abs.z != l1abs.z) continue;
+	if(l2s.x >= l1s.x && l2s.x < l1e.x &&
+	    l2s.y >= l1s.y && l2s.y < l1e.y) { // l2 starts in l1; move l2 rt/back
+	  if(l1e.x - l2s.x <= l1e.y - l2s.y) {	  // closer to x than y
+	    l2->pos.x += (l1e.x + 2) - l2s.x;
+	  }
+	  else {
+	    l2->pos.y += (l1e.y + 2) - l2s.y;
+	  }
+	  l2->DataChanged(DCR_ITEM_UPDATED);
+	  moved = true;
+	}
+	else if(l1s.x >= l2s.x && l1s.x < l2e.x &&
+		l1s.y >= l2s.y && l1s.y < l2e.y) { // l1 starts in l2; move l1 rt/back
+	  if(l2e.x - l1s.x <= l2e.y - l1s.y) {	  // closer to x than y
+	    l1->pos.x += (l2e.x + 2) - l1s.x;
+	  }
+	  else {
+	    l1->pos.y += (l2e.y + 2) - l1s.y;
+	  }
+	  l1->DataChanged(DCR_ITEM_UPDATED);
+	  moved = true;
+	}
+      }
+    }
+    n_itr++;
+  } while(moved && n_itr < 10);
+}
+
 void Layer_Group::TriggerContextUpdate() {
   taLeafItr itr;
   Layer* lay;
@@ -4981,6 +5061,39 @@ void Layer_Group::TriggerContextUpdate() {
     lay->TriggerContextUpdate();
   }
 }
+
+void Layer_Group::LesionLayers() {
+  taLeafItr itr;
+  Layer* lay;
+  FOR_ITR_EL(Layer, lay, this->, itr) {
+    lay->Lesion();
+  }
+}
+
+void Layer_Group::UnLesionLayers() {
+  taLeafItr itr;
+  Layer* lay;
+  FOR_ITR_EL(Layer, lay, this->, itr) {
+    lay->UnLesion();
+  }
+}
+
+void Layer_Group::IconifyLayers() {
+  taLeafItr itr;
+  Layer* lay;
+  FOR_ITR_EL(Layer, lay, this->, itr) {
+    lay->Iconify();
+  }
+}
+
+ void Layer_Group::DeIconifyLayers() {
+  taLeafItr itr;
+  Layer* lay;
+  FOR_ITR_EL(Layer, lay, this->, itr) {
+    lay->DeIconify();
+  }
+}
+
 
 ////////////////////////////////////////////////////////
 //	Threading
@@ -5349,27 +5462,6 @@ void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
 //	Network	 View //
 ////////////////////////
 
-void NetViewFontSizes::Initialize() {
-  net_name = .05f;
-  net_vals = .05f;
-  layer = .04f;
-  layer_vals = .03f;
-  prjn = .01f;
-  unit = .02f;
-  un_nm_len = 3;
-}
-
-void NetViewParams::Initialize() {
-  xy_square = false;
-  unit_spacing = .05f;
-  prjn_disp = L_R_F;
-  prjn_name = false;
-  prjn_width = .002f;
-  prjn_trans = .5f;
-  lay_trans = .5f;
-  unit_trans = 0.6f;
-}
-
 void NetViewObj::Initialize() {
   obj_type = TEXT;
   text = "Select, Context Menu to Edit";
@@ -5452,8 +5544,6 @@ void Network::InitLinks() {
   taBase::Own(layers, this);
   taBase::Own(view_objs, this);
   taBase::Own(max_size, this);
-  taBase::Own(font_sizes, this);
-  taBase::Own(view_params, this);
 
   taBase::Own(train_time, this);  //train_time.name = "train_time";
   taBase::Own(epoch_time, this);  //epoch_time.name = "epoch_time";
@@ -5499,8 +5589,6 @@ void Network::CutLinks() {
   group_time.CutLinks();
   epoch_time.CutLinks();
   train_time.CutLinks();
-  view_params.CutLinks();
-  font_sizes.CutLinks();
   max_size.CutLinks();
   view_objs.CutLinks();
   layers.CutLinks();		// then std kills
@@ -5555,9 +5643,6 @@ void Network::Copy_(const Network& cp) {
   lay_layout = cp.lay_layout;
 
   max_size = cp.max_size;
-
-  font_sizes = cp.font_sizes;
-  view_params = cp.view_params;
 
   UpdatePointers_NewPar((taBase*)&cp, this); // update all the pointers
   SyncSendPrjns();
@@ -5700,6 +5785,7 @@ void Network::BuildLayers() {
   taMisc::Busy();
   ++taMisc::no_auto_expand;
   StructUpdate(true);
+  LayerPos_Cleanup();
   layers.BuildLayers(); // recurses
   StructUpdate(false);
   --taMisc::no_auto_expand;
@@ -5710,7 +5796,6 @@ void Network::BuildLayers() {
 void Network::BuildUnits() {
   taMisc::Busy();
   StructUpdate(true);
-  UpdateMax();
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i)
@@ -6743,50 +6828,14 @@ void Network::LayerZPos_Unitize() {
   FOR_ITR_EL(Layer, l, layers., i) {
     l->pos.z = zvals.FindEl(l->pos.z); // replace with its index on sorted list..
   }
-  UpdateMax();
+  UpdateMaxSize();
 }
 
 void Network::LayerPos_Cleanup() {
   if (flags & MANUAL_POS) return;
-  bool moved = false;
-  int n_itr = 0;
-  do {
-    moved = false;
-    for(int i1=0;i1<layers.leaves;i1++) {
-      Layer* l1 = layers.Leaf(i1);
-      TwoDCoord l1e = (TwoDCoord)l1->pos + (TwoDCoord)l1->scaled_act_geom;
-      for(int i2 = i1+1; i2<layers.leaves;i2++) {
-	Layer* l2 = layers.Leaf(i2);
-	TwoDCoord l2e = (TwoDCoord)l2->pos + (TwoDCoord)l2->scaled_act_geom;
-	if(l2->pos.z != l1->pos.z) continue;
-	if(l2->pos.x >= l1->pos.x && l2->pos.x < l1e.x &&
-	    l2->pos.y >= l1->pos.y && l2->pos.y < l1e.y) { // l2 starts in l1; move l2 rt/back
-	  if(l1e.x - l2->pos.x <= l1e.y - l2->pos.y) {	  // closer to x than y
-	    l2->pos.x = l1e.x + 2;
-	  }
-	  else {
-	    l2->pos.y = l1e.y + 2;
-	  }
-	  l2->DataChanged(DCR_ITEM_UPDATED);
-	  moved = true;
-	}
-	else if(l1->pos.x >= l2->pos.x && l1->pos.x < l2e.x &&
-		l1->pos.y >= l2->pos.y && l1->pos.y < l2e.y) { // l1 starts in l2; move l1 rt/back
-	  if(l2e.x - l1->pos.x <= l2e.y - l1->pos.y) {	  // closer to x than y
-	    l1->pos.x = l2e.x + 2;
-	  }
-	  else {
-	    l1->pos.y = l2e.y + 2;
-	  }
-	  l1->DataChanged(DCR_ITEM_UPDATED);
-	  moved = true;
-	}
-      }
-    }
-    n_itr++;
-  } while(moved && n_itr < 10);
+  layers.LayerPos_Cleanup();
+  UpdateMaxSize();		// must do that in case something moves
 }
-
 
 void Network::Compute_LayerDistances() {
   // first reset all 
@@ -7046,24 +7095,9 @@ int Network::LesionUnits(float p_lesion, bool permute) {
   return rval;
 }
 
-void Network::UpdateMax() {
-  max_size.x = 1;  max_size.y = 1;  max_size.z = 1;
-
-  Layer* l;
-  taLeafItr i;
-  TDCoord l_pos; // for abs_pos
-  FOR_ITR_EL(Layer, l, layers., i) {
-    l->GetAbsPos(l_pos);
-    max_size.z = MAX(max_size.z, 1 + l_pos.z);
-    if(l->Iconified()) {
-      max_size.x = MAX(max_size.x, l_pos.x + 1);
-      max_size.y = MAX(max_size.y, l_pos.y + 1);
-    }
-    else {
-      max_size.x = MAX(max_size.x, l->scaled_act_geom.x + l_pos.x);
-      max_size.y = MAX(max_size.y, l->scaled_act_geom.y + l_pos.y);
-    }
-  }
+void Network::UpdateMaxSize() {
+  layers.UpdateMaxSize();
+  max_size = layers.max_size;
 }
 
 void Network::TwoD_Or_ThreeD(LayerLayout lo){

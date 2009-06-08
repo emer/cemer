@@ -47,12 +47,12 @@ class T3UnitNode;
 class T3UnitGroupNode;
 class T3LayerNode;
 class T3PrjnNode;
+class T3LayerGroupNode;
 class T3NetNode;
 
 
-//////////////////////////
-//   T3UnitNode		//
-//////////////////////////
+////////////////////////////////////////////////////
+//   T3UnitNode	
 
 /*
     this: SoSeparator - the object itself
@@ -180,9 +180,8 @@ private:
 };
 
 
-//////////////////////////
-//   T3UnitGroupNode	//
-//////////////////////////
+////////////////////////////////////////////////////
+//   T3UnitGroupNode	
 
 class EMERGENT_API T3UnitGroupNode: public T3NodeParent {
 #ifndef __MAKETA__
@@ -241,11 +240,8 @@ protected:
 };
 
 
-
-//////////////////////////
-//   T3LayerNode	//
-//////////////////////////
-
+////////////////////////////////////////////////////
+//   T3LayerNode
 
 class EMERGENT_API T3LayerNode: public T3NodeParent {
 #ifndef __MAKETA__
@@ -255,8 +251,8 @@ typedef T3NodeParent inherited;
 #endif // def __MAKETA__
 
 public:
-  static float 		height; // = .05 height of layer frame shape itself (in fractions of a unit)
-  static float 		width; // = .5 width of layer frame shape (in frac of unit)
+  static const float 	height; // = 0.05f height of layer frame shape itself (in fractions of a unit)
+  static const float 	width; // = 0.5f width of layer frame shape (in frac of unit)
 
   static void		initClass();
 
@@ -289,9 +285,9 @@ private:
   SoCalculator*		z_drag_calc_;
 };
 
-//////////////////////////
-//   T3PrjnNode		//
-//////////////////////////
+
+////////////////////////////////////////////////////
+//   T3PrjnNode	
 
 class EMERGENT_API T3PrjnNode: public T3NodeParent {
 #ifndef __MAKETA__
@@ -324,9 +320,59 @@ private:
   void			init();
 };
 
-//////////////////////////
-//   T3NetViewObjNode	//
-//////////////////////////
+
+////////////////////////////////////////////////////
+//   T3LayerGroupNode
+
+class EMERGENT_API T3LayerGroupNode: public T3NodeParent {
+#ifndef __MAKETA__
+typedef T3NodeParent inherited;
+
+  SO_NODE_HEADER(T3LayerGroupNode);
+#endif // def __MAKETA__
+
+public:
+  static void		initClass();
+
+  void 			setGeom(int px, int py, int pz, 
+				float lg_max_x, float lg_max_y, float lg_max_z,
+				float max_x, float max_y, float max_z);
+
+  SoDrawStyle* 		drawStyle() { return drw_styl_; }
+  SoVertexProperty* 	vertexProperty() { return vtx_prop_; }
+
+  T3LayerGroupNode(void* dataView_ = NULL, bool show_draggers = true, bool root_lg = false);
+
+protected:
+  
+  iVec3i		pos; 	// starting position
+  iVec3i		lgp_max_size; 	// layer group max_size
+  iVec3f		max_size; // maximum size of network x,y,z
+  void			render(); // called after pos/geom changes
+  ~T3LayerGroupNode();
+
+private:
+  SoIndexedLineSet*	shape_;
+  SoDrawStyle*		drw_styl_;
+  SoVertexProperty*	vtx_prop_;
+
+  bool			show_drag_;
+  bool			root_lg_; // root layer group: no shape
+
+  SoSeparator*		xy_drag_sep_;
+  SoTransform*		xy_drag_xf_;
+  SoTranslate2Dragger*	xy_dragger_;
+  SoCalculator*		xy_drag_calc_;
+
+  SoSeparator*		z_drag_sep_;
+  SoTransform*		z_drag_xf_;
+  SoTranslate1Dragger*	z_dragger_;
+  SoCalculator*		z_drag_calc_;
+};
+
+
+////////////////////////////////////////////////////
+//   T3NetViewObjNode
 
 class EMERGENT_API T3NetViewObj : public T3NodeLeaf {
   // network view object
@@ -346,9 +392,9 @@ protected:
   ~T3NetViewObj();
 };
 
-//////////////////////////
-//   T3NetNode		//
-//////////////////////////
+
+////////////////////////////////////////////////////
+//   T3NetNode
 
 class EMERGENT_API T3NetNode: public T3NodeParent {
 #ifndef __MAKETA__

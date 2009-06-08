@@ -411,12 +411,12 @@ void T3UnitGroupNode::removeUnitText() {
   unit_text_ = NULL;
 }
 
-//////////////////////////
-//   T3LayerNode	//
-//////////////////////////
 
-float T3LayerNode::height = 0.05f;
-float T3LayerNode::width = 0.5f;
+////////////////////////////////////////////////////
+//   T3LayerNode
+
+const float T3LayerNode::height = 0.05f;
+const float T3LayerNode::width = 0.5f;
 
 SO_NODE_SOURCE(T3LayerNode);
 
@@ -625,6 +625,202 @@ void T3PrjnNode::setArrowColor(const SbColor& clr, float transp) {
   arr_mat->diffuseColor.setValue(clr);
   arr_mat->transparency.setValue(transp);
 }
+
+
+////////////////////////////////////////////////////
+//   T3LayerGroupNode
+
+SO_NODE_SOURCE(T3LayerGroupNode);
+
+void T3LayerGroupNode::initClass()
+{
+  SO_NODE_INIT_CLASS(T3LayerGroupNode, T3NodeParent, "T3NodeParent");
+}
+
+extern void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragger);
+extern void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragger);
+// defined in qtso
+
+T3LayerGroupNode::T3LayerGroupNode(void* dataView_, bool show_draggers, bool root_lg)
+:inherited(dataView_)
+{
+  SO_NODE_CONSTRUCTOR(T3LayerGroupNode);
+
+  show_drag_ = show_draggers;
+  root_lg_ = root_lg;
+
+  if(show_drag_) {
+    const float len = .08f;	// bar_len
+    const float wd = .1f * len;	// bar_width
+    const float cr = .2f * len;	// cone radius
+    const float ch = .4f * len;	// cone height
+
+    // XY dragger
+    xy_drag_sep_ = new SoSeparator;
+    xy_drag_xf_ = new SoTransform;
+    xy_drag_xf_->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
+    xy_drag_sep_->addChild(xy_drag_xf_);
+    xy_dragger_ = new SoTranslate2Dragger;
+    xy_dragger_->setPart("translator", new T3Translate2Translator(false, len, wd, cr, ch));
+    xy_dragger_->setPart("translatorActive", new T3Translate2Translator(true, len, wd, cr, ch));
+    xy_drag_sep_->addChild(xy_dragger_);
+
+    topSeparator()->addChild(xy_drag_sep_);
+
+    // A = XY
+    xy_drag_calc_ = new SoCalculator;
+    xy_drag_calc_->ref();
+    xy_drag_calc_->A.connectFrom(&xy_dragger_->translation);
+
+    xy_dragger_->addFinishCallback(T3LayerGroupNode_XYDragFinishCB, (void*)this);
+
+    // Z dragger
+    z_drag_sep_ = new SoSeparator;
+    z_drag_xf_ = new SoTransform;
+    z_drag_xf_->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5707963f);
+    z_drag_sep_->addChild(z_drag_xf_);
+    z_dragger_ = new SoTranslate1Dragger;
+    z_dragger_->setPart("translator", new T3Translate1Translator(false, len, wd, cr, ch));
+    z_dragger_->setPart("translatorActive", new T3Translate1Translator(true, len, wd, cr, ch));
+    z_drag_sep_->addChild(z_dragger_);
+
+    topSeparator()->addChild(z_drag_sep_);
+
+    // B = Z
+    xy_drag_calc_->B.connectFrom(&z_dragger_->translation);
+    //    xy_drag_calc_->expression = "oA = vec3f(.5 + A[0], B[0], -(.5 + A[1]))";
+    txfm_shape()->translation.connectFrom(&xy_drag_calc_->oA);
+
+    z_dragger_->addFinishCallback(T3LayerGroupNode_ZDragFinishCB, (void*)this);
+  }
+  else {
+    xy_drag_sep_ = NULL;
+    xy_drag_xf_ = NULL;
+    xy_dragger_ = NULL;
+    xy_drag_calc_ = NULL;
+
+    z_drag_sep_ = NULL;
+    z_drag_xf_ = NULL;
+    z_dragger_ = NULL;
+    z_drag_calc_ = NULL;
+  }
+
+  if(!root_lg_) {
+    SoSeparator* ss = shapeSeparator(); // cache
+    drw_styl_ = new SoDrawStyle;
+    drw_styl_->style = SoDrawStyle::LINES;
+    ss->addChild(drw_styl_);
+    SoMaterial* mat = material();
+    mat->diffuseColor.setValue(0.8f, 0.5f, 0.8f); // lighter violet than draggers
+    mat->transparency.setValue(0.3f);		// less transparent
+    shape_ = new SoIndexedLineSet;
+    vtx_prop_ = new SoVertexProperty;
+    shape_->vertexProperty.setValue(vtx_prop_); // note: vp refs/unrefs automatically
+    ss->addChild(shape_);
+
+    SoMFVec3f& vertex = vtx_prop_->vertex;
+    vertex.setNum(8);
+
+    SoMFInt32& coords = shape_->coordIndex;
+    vtx_prop_->materialBinding.setValue(SoMaterialBinding::OVERALL);
+    coords.setNum(20);
+    int32_t* coords_dat = coords.startEditing();
+
+    //    2 -+-  ++- 4
+    //    0 ---  +-- 1
+
+    //  6 -++  +++ 7
+    //  3 --+  +-+ 5
+
+    int cidx = 0;
+    coords_dat[cidx++] = 0; coords_dat[cidx++] = 1;
+    coords_dat[cidx++] = 4; coords_dat[cidx++] = 2;
+    coords_dat[cidx++] = 0;
+    coords_dat[cidx++] = 3; coords_dat[cidx++] = 5;
+    coords_dat[cidx++] = 7; coords_dat[cidx++] = 6;
+    coords_dat[cidx++] = 3; coords_dat[cidx++] = -1;
+
+    coords_dat[cidx++] = 2; coords_dat[cidx++] = 6; coords_dat[cidx++] = -1;
+    coords_dat[cidx++] = 4; coords_dat[cidx++] = 7; coords_dat[cidx++] = -1;
+    coords_dat[cidx++] = 1; coords_dat[cidx++] = 5; coords_dat[cidx++] = -1;
+
+    coords.finishEditing();
+  }
+  else {
+    drw_styl_ = NULL;		// no shape
+    shape_ = NULL;		// no shape
+    vtx_prop_ = NULL;
+  }
+}
+
+T3LayerGroupNode::~T3LayerGroupNode()
+{
+//  shape_ = NULL;
+}
+
+void T3LayerGroupNode::render() {
+  if(!shape_) return;
+
+  float fx = ((float)lgp_max_size.x + 2.0f * T3LayerNode::width) / max_size.x;
+  float fy = ((float)lgp_max_size.y + 2.0f * T3LayerNode::width) / max_size.y;
+  float fz = ((float)(lgp_max_size.z-1) + 2.0f * T3LayerNode::height) / max_size.z;
+  float lay_wd_x = (T3LayerNode::width / max_size.x);
+  float lay_wd_y = (T3LayerNode::width / max_size.y);
+  float lay_ht_z = (T3LayerNode::height / max_size.z);
+  float xfrac = (.5f * fx) - lay_wd_x;
+  float yfrac = (.5f * fy) - lay_wd_y;
+  float zfrac = (.5f * fz) - lay_ht_z;
+
+  SoMFVec3f& vertex = vtx_prop_->vertex;
+  SbVec3f* vertex_dat = vertex.startEditing();
+
+  int v_idx = 0;
+  vertex_dat[v_idx++].setValue(-.5f * fx, -.5f * fz, -.5f * fy); // 0 = ---
+  vertex_dat[v_idx++].setValue(.5f * fx, -.5f * fz, -.5f * fy); // 1 = +--
+  vertex_dat[v_idx++].setValue(-.5f * fx, .5f * fz, -.5f * fy); // 2 = -+-
+  vertex_dat[v_idx++].setValue(-.5f * fx, -.5f * fz, .5f * fy); // 3 = --+
+  vertex_dat[v_idx++].setValue(.5f * fx, .5f * fz, -.5f * fy); // 4 = ++-
+  vertex_dat[v_idx++].setValue(.5f * fx, -.5f * fz, .5f * fy); // 5 = +-+
+  vertex_dat[v_idx++].setValue(-.5f * fx, .5f * fz, .5f * fy); // 6 = -++
+  vertex_dat[v_idx++].setValue(.5f * fx, .5f * fz, .5f * fy); // 7 = +++
+
+  vertex.finishEditing();
+
+  txfm_shape()->translation.setValue(xfrac, zfrac, -yfrac); // move to 0,0
+
+  if(show_drag_) {
+    float len = .08f;	// bar_len
+    len = MIN(len, .5f * fx);
+
+    float wd = .1f * len;	// bar_width
+    float cr = .2f * len;	// cone radius
+    float ch = .4f * len;	// cone height
+
+    String expr = "oA = vec3f(" + String(xfrac) + " + A[0], "
+      + String(zfrac) + " + B[0], -(" + String(yfrac) + " + A[1]))";
+    xy_drag_calc_->expression = expr.chars();
+
+    xy_drag_xf_->translation.setValue(-lay_wd_x, -lay_ht_z, lay_wd_y);
+    z_drag_xf_->translation.setValue(-lay_wd_x, -lay_ht_z, lay_wd_y);
+
+    if(len != .08f) {
+      xy_dragger_->setPart("translator", new T3Translate2Translator(false, len, wd, cr, ch));
+      xy_dragger_->setPart("translatorActive", new T3Translate2Translator(true, len, wd, cr, ch));
+      z_dragger_->setPart("translator", new T3Translate1Translator(false, len, wd, cr, ch));
+      z_dragger_->setPart("translatorActive", new T3Translate1Translator(true, len, wd, cr, ch));
+    }
+  }
+}
+
+void T3LayerGroupNode::setGeom(int px, int py, int pz,
+			       float lg_max_x, float lg_max_y, float lg_max_z,
+			       float max_x, float max_y, float max_z) {
+  pos.setValue(px, py, pz);
+  max_size.setValue(max_x, max_y, max_z);
+  lgp_max_size.setValue(lg_max_x, lg_max_y, lg_max_z);
+  render();
+}
+
 
 /////////////////////////////////////////////
 //	NetViewObj
