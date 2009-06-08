@@ -2060,15 +2060,17 @@ exit:
 //////////////////////////////////
 
 void NormBlock::Initialize() {
+  agc_flags = AGC_ON;
   scale_type = NONE;
   scale_factor = 1.0f;
-  norm_split = 0.5f;
+  std_devs = 2.0f;
   in_thresh.Set(-70, Level::UN_DBI); // good value for speech
-  offset = 0;
-  agc = true;
+  out_center = 0.5f;
+  out_range = 1.0f;
   init_norm_factor = 1.0f;
-  init_norm_offset = 0;
-  norm_dt_out = 1.0f;
+  init_norm_offset = -0.5f;
+  norm_tc.Set(100, Duration::UN_TIME_MS);
+  norm_dt = 1.0f;
   norm_factor = init_norm_factor;
   norm_offset = init_norm_offset;
 }
@@ -2110,15 +2112,6 @@ void NormBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   
   if (check) return;
   
-  switch (scale_type) {
-  case LOG10:
-    offset = -log10f(in_thresh);
-    break;
-  case LN:
-    offset = -logf(in_thresh);
-    break;
-  default: break;
-  }
   norm_factor = init_norm_factor;
   norm_offset = init_norm_offset;
   
@@ -2127,12 +2120,12 @@ void NormBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   const int in_vals = src_buff->vals; 
   const int in_size = in_fields * in_chans * in_vals;
   scaled.SetGeom(3, in_vals, in_chans, in_fields);
-  data.SetSize(in_size);
-  // make sure we have at least 1 chan in both top and bottom
-  n_bottom = in_chans * norm_split; // number to avg for bottom
-  if (n_bottom < 1) n_bottom = 1;
-  else if (n_bottom == in_chans) --n_bottom;
   
+  if (norm_tc.duration == 0)
+    norm_dt = 1.0f;
+  else
+    norm_dt = norm_tc.GetDecayDt(src_buff->fs);
+
   // main normalized output data
   DataBuffer* ob = &out_buff;
   ob->fs = src_buff->fs;
@@ -2143,7 +2136,7 @@ void NormBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   
   // norm factor: v0=slope, v1=offset
   ob = &out_buff_norm;
-  ob->enabled = agc; // pointless if manual
+  ob->enabled = (agc_flags & AGC_ON); // pointless if manual
   ob->fs = src_buff->fs;
   ob->fr_dur.Set(src_buff->items, Duration::UN_SAMPLES);
   ob->fields = 1;
@@ -2161,77 +2154,42 @@ void NormBlock::AcceptData_impl(SignalProcBlock* src_blk,
   const int in_fields = in_mat->dim(FIELD_DIM); 
   const int in_chans = in_mat->dim(CHAN_DIM); 
   const int in_vals = in_mat->dim(VAL_DIM); 
-  const int in_tot = in_fields + in_chans + in_vals;
+  const int in_tot = in_fields * in_chans * in_vals;
   
   for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) { 
-    // first, get the incoming values, scale them, and put in topN buffer
-    if (agc) data.Reset();
+    // first, get the incoming values, scale them
+    
     double avg = 0;
     for (int f = 0; f < in_fields; ++f) 
     for (int ch = 0; ch < in_chans; ++ch)
     for (int v = 0; v < in_vals; ++v) {
       float& val = scaled.FastEl(v, ch, f);
       val = Scale(in_mat->FastEl(v, ch, f, i, stage));
-      if (agc) {
-        data.Add(val);
-        avg += val;
-      }
+      // note: we do sum for avg even if no agc -- probably just as fast as adding a test
+      avg += val;
     }
-    if (agc) {
-    avg /= in_tot; 
-    float std_dev = taMath_float::vec_std_dev(&scaled, avg, true);
-    // offset so mean is at .5, and +-1 stdev is 66% of range
- //   if (top_avg > in_thresh_lin_scaled) {
-      double tnorm_offset = .5 - avg;
+    if (agc_flags & AGC_ON) {
+      avg /= in_tot; 
+      float std_dev = taMath_float::vec_std_dev(&scaled, avg, true);
+      // offset so mean is at 0, and n std_devs is out_range
+
+      double tnorm_offset = 0 - avg;
       // we can only update scale if there is a sufficient range
       // calc current factor and offset
       double tnorm_factor = (std_dev >= 1e-9) ? 
-        (0.33 / std_dev) : norm_factor; 
-      // m*x + b = .25 for bottom
+        (1.0 / (std_devs * std_dev)) : norm_factor; 
       // apply the dt
-      norm_factor = ((1.0 - norm_dt_out) * norm_factor) +
-        (norm_dt_out * tnorm_factor);
-      norm_offset = ((1.0 - norm_dt_out) * norm_offset) +
-        (norm_dt_out * tnorm_offset);
-//    }
+      norm_factor = ((1.0 - norm_dt) * norm_factor) +
+        (norm_dt * tnorm_factor);
+      norm_offset = ((1.0 - norm_dt) * norm_offset) +
+        (norm_dt * tnorm_offset);
     }
-/*    
-    // do the top and bot averages and calc scale value for this frame
-    data.Sort();
-    double top_avg = 0;
-    double bot_avg = 0;
-    for (int j = 0; j < n_bottom; ++j)
-      bot_avg += data[j];
-    if (n_bottom > 0)
-      bot_avg /= n_bottom;
-    for (int j = n_bottom; j < in_chans; ++j)
-      top_avg += data[j];
-    if ((in_chans - n_bottom) > 0)
-      top_avg /= (in_chans - n_bottom);
-    // ok, now calc slope and intercept to put bot/top at .25/.75 in output range
-    double top_bot_range = top_avg - bot_avg; // note: necessarily >= 0
-    // we can only update if top is above thresh
-    if (top_avg > in_thresh_lin_scaled) {
-      // we can only update scale if there is a sufficient range
-      // calc current factor and offset
-      double tnorm_factor = (top_bot_range >= 1e-12) ? 
-        (0.5 / top_bot_range) : norm_factor; 
-      // m*x + b = .25 for bottom
-      double tnorm_offset = .25 - (tnorm_factor * bot_avg);
-      // apply the dt
-      norm_factor = ((1.0 - norm_dt_out) * norm_factor) +
-        (norm_dt_out * tnorm_factor);
-      norm_offset = ((1.0 - norm_dt_out) * norm_offset) +
-        (norm_dt_out * tnorm_offset);
-    }*/
-    // note: we don't update integrator when we fall below thresh because
-    // we assume sound already low and norm high, and will be needed likewise
-    // on next onset
+    
     for (int f = 0; f < in_fields; ++f) 
     for (int ch = 0; ch < in_chans; ++ch)
     for (int v = 0; v < in_vals; ++v) {
       float val = scaled.FastEl(v, ch, f);
-      val = (val * norm_factor) + norm_offset;
+      val = (((val + norm_offset) * norm_factor) * out_range) + out_center;
       // output
       out_mat->FastEl(v, ch, f, out_buff.item,
         out_buff.stage) = val;
@@ -2251,6 +2209,12 @@ void NormBlock::AcceptData_impl(SignalProcBlock* src_blk,
       }
     }
   }
+  if (agc_flags & (AGC_ON & AGC_UPDATE_INIT)) {
+    init_norm_offset = norm_offset;
+    init_norm_factor = norm_factor;
+  }
+  if (taMisc::use_gui) 
+    DataChanged(DCR_ITEM_UPDATED);
 }
 
 float NormBlock::Scale(float val) {
@@ -2261,10 +2225,10 @@ float NormBlock::Scale(float val) {
     return powf(val, scale_factor);
   case LOG10:
     if (val < in_thresh) val = in_thresh;
-    return log10f(val) /*+ offset*/;
+    return log10f(val);
   case LN:
     if (val < in_thresh) val = in_thresh;
-    return logf(val) /*+ offset*/;
+    return logf(val);
   }
   return val; // compiler food
 }

@@ -1225,7 +1225,7 @@ public:
   Level::Units		gain_units; // the units for all gain parameters, and also the out_buff_gain:v0 value
   float			output_level; // the desired output level, usually 0dB for 
   float			init_gain; // initial gain (applied during init_config) -- updated with cur_gain if UPDATE_INIT flag set
-  float			cur_gain; // #READONLY #SHOW #NO_SAVE the current gain being applied
+  float			cur_gain; // #READ_ONLY #SHOW #NO_SAVE the current gain being applied
   float			gain_thresh; // threshold *relative to peak*, below which no changes (avoids changes during silence)
   MinMax		gain_limits; // the min and max gain, in same units as 'gain'
   

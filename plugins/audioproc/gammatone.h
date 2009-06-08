@@ -568,9 +568,15 @@ private:
 
 
 class AUDIOPROC_API NormBlock: public StdBlock
-{ // ##CAT_Audioproc Norm Block -- normalizes a bank (chans/vals) of input values, with optional non-linear scaling, and threshold
+{ // ##CAT_Audioproc Norm Block -- normalizes a bank (chans/vals) of input values to uniformly fill the 0..1 activation range, with optional non-linear scaling, and threshold
 INHERITED(StdBlock) 
 public: //
+  enum AGCFlags { // #BITS flags for the AGC block
+    AF_0	= 0, // #IGNORE
+    AGC_ON	= 0x002, // use Automatic Gain Control, else use current norm setting
+    AGC_UPDATE_INIT = 0x004, // continuously update the initial value with current value
+  };
+  
   enum ScaleType {
     NONE,	// no scale factor
     POWER,	// scale_factor is the power (> 0) to which to raise input
@@ -580,20 +586,22 @@ public: //
   
   DataBuffer		out_buff_norm; // #SHOW_TREE the normalization factor used
   
+  AGCFlags		agc_flags; // flags to control features
   ScaleType		scale_type; //
-  float			scale_factor; // #CONDEDIT_OFF_scale_type:NONE the scale factor, as defined by the scale_type
-  float			norm_split; // #MIN_0 #MAX_1 #DEF_0.5 split the sorted values at this point and assign avg of top to be at .75 point and avg of bottom to be at .25 point
+  float			scale_factor; // #CONDEDIT_ON_scale_type:POWER the scale factor, if defined by the scale_type
+  float			std_devs; // #MIN_.25 #MAX_3 #DEF_2 number of standard deviations in input to use for the out_range
   
-  Level			in_thresh; // this is the threshold of the topN avg (in input units) below which all data should be considered 0; also the ln and log10 thresholds
-  float			offset; // #READ_ONLY #NO_SAVE offset, used for LOG and LN 
+  Level			in_thresh; // this is the threshold of the avg below which all data should be considered 0; also the ln and log10 thresholds
   
-  float			init_norm_factor; // the initial norm factor
-  float			init_norm_offset; // the initial norm offset
-  bool			agc; // when on, automatically adjusts factor and offset
-  float			norm_dt_out; // #CONDEDIT_ON_agc #MIN_0 time constant of integration of norm, per output sample time period; 1.0 means update fully each item (note: we don't update when input falls below thresh)
+  float			out_center; // #DEF_0.5 center of output signal, usually 0.5 for Leabra networks
+  float			out_range; // #DEF_1 range of output signal, typically 1 for Leabra networks
   
-  double		norm_factor; // #READ_ONLY #NO_SAVE #SHOW the norm factor that was most recently applied
+  float			init_norm_offset; // the initial norm offset to make the avg input be 0
+  float			init_norm_factor; // the initial norm factor to make N std_devs of input fit range of 1 
+  Duration		norm_tc; // #CONDEDIT_ON_agc_flags:AGC_ON time constant of integration of norm_xxx; 0 means update fully each item (note: we don't update when input falls below thresh)
+  
   double		norm_offset; // #READ_ONLY #NO_SAVE #SHOW the norm offset that was most recently applied
+  double		norm_factor; // #READ_ONLY #NO_SAVE #SHOW the norm factor that was most recently applied
   override int		outBuffCount() const {return 2;}
   override DataBuffer* 	outBuff(int idx) {if (idx == 1)  
     return &out_buff_norm; return inherited::outBuff(idx);}
@@ -603,8 +611,9 @@ public: //
   TA_BASEFUNS(NormBlock) //
 
 public: //
-  float_Matrix		scaled; // #NO_SHOW  val, chan, field -- scaled
-  float_Array		data; // #NO_SHOW for topN sort
+  float			norm_dt; // #READ_ONLY #EXPERT time constant of integration of norm_xxx, per output sample time period;
+  float_Matrix		scaled; // #NO_SHOW #NO_SAVE val, chan, field -- scaled
+//  float_Array		data; // #NO_SHOW for topN sort
 protected:
   float			in_thresh_lin_scaled; // linear and scaled
   int			n_bottom; // we set it min 1

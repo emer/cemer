@@ -2393,6 +2393,7 @@ void AGCBlock::UpdateAGC(int eo) {
   if (agc_flags & AGC_UPDATE_INIT) {
     init_gain = cur_gain;
   }
-  DataChanged(DCR_ITEM_UPDATED);
+  if (taMisc::use_gui) 
+    DataChanged(DCR_ITEM_UPDATED);
 }
 
