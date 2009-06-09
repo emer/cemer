@@ -154,19 +154,6 @@ bool PViLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     }
   }
   
-//   if(lay->CheckError(!ext_rew_lay, quiet, rval,
-// 		"requires MarkerConSpec connection from PVe/ExtRewLayerSpec layer to get external rewards!")) {
-//     return false;
-//   }
-//   if(ext_rew_lay) {
-//     int myidx = net->layers.FindLeafEl(lay);
-//     int eridx = net->layers.FindLeafEl(ext_rew_lay);
-//     if(lay->CheckError(eridx > myidx, quiet, rval,
-// 		       "PVe/ExtRew layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-//       return false;
-//     }
-//   }
-
   LeabraLayer* pvr_lay = FindLayerFmSpecNet(net, &TA_PVrLayerSpec);
   if(lay->CheckError(!pvr_lay, quiet, rval,
 		"PVLV requires a PVrLayerSpec layer to detect when primary rewards are avail -- run wizard or create manually!")) {
@@ -384,18 +371,6 @@ bool PVrLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     }
   }
   
-//   if(lay->CheckError(!ext_rew_lay, quiet, rval,
-// 		     "requires MarkerConSpec connection from PVe/ExtRewLayerSpec layer to get external rewards!")) {
-//     return false;
-//   }
-//   if(ext_rew_lay) {
-//     int myidx = net->layers.FindLeafEl(lay);
-//     int eridx = net->layers.FindLeafEl(ext_rew_lay);
-//     if(lay->CheckError(eridx > myidx, quiet, rval,
-// 		       "PVe/ExtRew layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-//       return false;
-//     }
-//   }
   return true;
 }
 
@@ -982,24 +957,6 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 		"did not find PVi layer to get Da from!")) {
     return false;
   }
-
-  // order should no longer matter at all..
-//   int myidx = lay->own_net->layers.FindLeafEl(lay);
-//   int lvidx = lay->own_net->layers.FindLeafEl(lve_lay);
-//   if(lay->CheckError(lvidx > myidx, quiet, rval,
-// 		"LVe layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-//     return false;
-//   }
-//   lvidx = lay->own_net->layers.FindLeafEl(lvi_lay);
-//   if(lay->CheckError(lvidx > myidx, quiet, rval,
-// 		"LVi layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-//     return false;
-//   }
-//   lvidx = lay->own_net->layers.FindLeafEl(pvi_lay);
-//   if(lay->CheckError(lvidx > myidx, quiet, rval,
-// 		"PVi layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-//     return false;
-//   }
 
   return true;
 }

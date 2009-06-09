@@ -549,13 +549,6 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 		"Could not find SNrThal layer -- must receive MarkerConSpec projection from one!")) {
     return false;
   }
-  // vta must be before matrix!  good.
-//   int myidx = lay->own_net->layers.FindLeafEl(lay);
-//   int daidx = lay->own_net->layers.FindLeafEl(da_lay);
-//   if(lay->CheckError(daidx > myidx, quiet, rval,
-// 		"DA layer (PVLVDaLayerSpec) must be *before* this layer in list of layers -- it is now after, won't work")) {
-//     return false;
-//   }
   return true;
 }
 
@@ -906,12 +899,6 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     return false;
   }
 
-//   int myidx = lay->own_net->layers.FindLeafEl(lay);
-//   int matidx = lay->own_net->layers.FindLeafEl(matrix_lay);
-//   if(lay->CheckError(matidx > myidx, quiet, rval,
-// 		"Matrix layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-//     return false;
-//   }
   return true;
 }
 
@@ -1104,14 +1091,6 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
     snrthal_lay->gp_geom.n = lay->units.gp.size;
     return false;
   }
-
-  // check for ordering of layers!
-//   int myidx = lay->own_net->layers.FindLeafEl(lay);
-//   int gateidx = lay->own_net->layers.FindLeafEl(snrthal_lay);
-//   if(lay->CheckError(gateidx > myidx, quiet, rval,
-// 		"SNrThal Layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-//     return false;
-//   }
 
   return true;
 }
@@ -1428,22 +1407,6 @@ bool PFCOutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   inhib_group = pfcsp->inhib_group;
   inhib.type = pfcsp->inhib.type;
   inhib.kwta_pt = pfcsp->inhib.kwta_pt;
-
-  // check for ordering of layers!
-//   int myidx = lay->own_net->layers.FindLeafEl(lay);
-//   int gateidx = lay->own_net->layers.FindLeafEl(snrthal_lay);
-//   if(lay->CheckError(gateidx > myidx, quiet, rval,
-// 		"SNrThal Layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-//     return false;
-//   }
-
-//   // check for ordering of layers!
-//   int pfcidx = lay->own_net->layers.FindLeafEl(pfc_lay);
-//   if(lay->CheckError(pfcidx > myidx, quiet, rval,
-// 		"PFC Layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-//     return false;
-//   }
-
   return true;
 }
 
