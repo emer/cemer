@@ -242,7 +242,7 @@ add_dependencies(emergent emergentlib)
 
 ########### install files ###############
 
-install(FILES AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
+install(FILES AUTHORS ChangeLog COPYING COPYING.LIB
   cmake_uninstall.cmake.in
   DESTINATION ${EMERGENT_SHARE_DEST}
 )
