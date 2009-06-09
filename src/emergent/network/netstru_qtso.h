@@ -194,6 +194,8 @@ public:
 
   void			AllocUnitViewData(); // make sure we have correct space in uvd array
   override void		BuildAll(); // creates fully populated subviews
+  virtual void		InitDisplay();
+
   float 		GetUnitDisplayVal(const TwoDCoord& co, int unit_md_flags); // get val for unit at co
   void 			UpdateUnitViewBase(MemberDef* disp_md, Unit* src_u, bool& con_md);
   // set the base for the given md; src_u only used for s./r. values (sets con_md true if con)
@@ -205,6 +207,8 @@ public:
   // output name mode update
   virtual void		UpdateUnitValues_snap_bord();
   // snap border
+  virtual void		UpdateAutoScale(bool& updated);
+  // update autoscale values
 
   T3_DATAVIEWFUNS(UnitGroupView, nvDataView)
 protected:
@@ -268,8 +272,8 @@ public:
   T3LayerNode*		node_so() const {return (T3LayerNode*)inherited::node_so();}
 
   override void		BuildAll(); // creates fully populated subviews
-  virtual void		UpdateUnitValues();
-  // *only* updates unit values 
+  virtual void		UpdateUnitValues(); // *only* updates unit values 
+  virtual void		InitDisplay();
 
   virtual void	UpdateNetLayDispMode();
   // update network's storing of the layer display mode value
@@ -280,6 +284,9 @@ public:
   // #BUTTON #VIEWMENU display contents of output_name on layer instead of unit values
   virtual void	UseViewer(T3DataViewMain* viewer);
   // #BUTTON #VIEWMENU #SCOPE_T3DataViewFrame replace usual unit view display with display from viewer (only displays frame of layer, and aligns given viewer with layer)
+
+  virtual void		UpdateAutoScale(bool& updated);
+  virtual void		SetHighlightSpec(BaseSpec* spec);
 
   override bool		hasViewProperties() const { return true; }
 
@@ -308,6 +315,8 @@ public:
   Projection*		prjn() const {return (Projection*)data();}
   T3PrjnNode*		node_so() const {return (T3PrjnNode*)inherited::node_so();}
 
+  virtual void		SetHighlightSpec(BaseSpec* spec);
+
   T3_DATAVIEWFUNS(PrjnView, nvhDataView)
 protected:
   override void		DoHighlightColor(bool apply); 
@@ -333,8 +342,11 @@ public:
   T3LayerGroupNode*	node_so() const {return (T3LayerGroupNode*)inherited::node_so();}
 
   override void		BuildAll(); // creates fully populated subviews
-  virtual void		UpdateUnitValues();
-  // *only* updates unit values 
+  virtual void		UpdateUnitValues(); // *only* updates unit values 
+  virtual void		InitDisplay();
+
+  virtual void		UpdateAutoScale(bool& updated);
+  virtual void		SetHighlightSpec(BaseSpec* spec);
 
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save ugs and lower
   T3_DATAVIEWFUNS(LayerGroupView, nvhDataView)
@@ -467,8 +479,7 @@ public:
   static NetView*	New(Network* net, T3DataViewFrame*& fr); // create a new instance and add to viewer
 
 
-  T3DataView_PtrList	layers; // #IGNORE
-  T3DataView_PtrList	prjns; // #IGNORE
+  T3DataView_PtrList	prjns; 		// #IGNORE list of prjn objects under us
 
   bool			display;       	// whether to update the display when values change (under control of programs)
   bool			lay_mv;       	// whether to display layer move controls when the arrow button is pressed (can get in the way of viewing weights)
@@ -513,8 +524,6 @@ public:
   // creates fully populated subviews (but not So -- that is done in Render)
   virtual void		InitDisplay(bool init_panel = true);
   // hard reset of display, esp. Unit values -- also calls BuildAll.  Note this does not call Render -- that is done by UpdateDisplay, so a full reset is InitDisplay followed by UpdateDisplay
-  virtual void		InitDisplay_Layer(LayerView* lv, bool check_build = true);
-  virtual void		InitDisplay_UnitGroup(UnitGroupView* ugrv, bool check_build = true);
   virtual void		InitPanel();
   // hard reset of panel, esp. membr vars
 
@@ -547,8 +556,14 @@ public:
 
   virtual void		SetLayDispMode(const String& lay_nm, int disp_md);
   // set the layer display mode value for given layer name (called by LayerView UAE)
+  virtual int		GetLayDispMode(const String& lay_nm);
+  // get the layer display mode value for given layer name (called by LayerView BuildAll)
+  virtual void		SetHighlightSpec(BaseSpec* spec);
+  static bool		UsesSpec(taBase* obj, BaseSpec* spec);
+
   virtual void		NewLayer(int x = 3, int y = 3);
-  virtual void		Layer_DataUAE(LayerView* lv); // send a DataUAE for all prjns for this layer
+  virtual void		Layer_DataUAE(LayerView* lv);
+  // send a DataUAE for all prjns for this layer
 
   override String	GetLabel() const;
   override String	GetName() const;
@@ -585,7 +600,7 @@ protected:
   void 			UpdateAutoScale(); // #IGNORE prepass updates scale from values
   void			viewWin_NotifySignal(ISelectableHost* src, int op);
 private:
-  SIMPLE_COPY(NetView) // 4/12/07 added for consistency, but may need testing
+  SIMPLE_COPY(NetView)
   void			Initialize();
   void			Destroy();
 };

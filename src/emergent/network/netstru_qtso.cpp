@@ -212,6 +212,12 @@ void UnitGroupView::BuildAll() {
   }
 }
 
+void UnitGroupView::InitDisplay() {
+  AllocUnitViewData(); // make sure we have correct space in uvd array
+  NetView* nv = this->nv();
+  UpdateUnitViewBase(nv->unit_disp_md, nv->unit_src, nv->unit_con_md);
+}
+
 float UnitGroupView::GetUnitDisplayVal(const TwoDCoord& co, int unit_md_flags) {
   NetView* nv = this->nv();
   float val = nv->scale.zero;
@@ -348,6 +354,23 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(MemberDef* disp_md) {
     MemberDef* smd = nptd->members.FindName(nm);
     if (smd == NULL)  continue;
     uvd.disp_base = smd->GetOff(par_base);
+  }
+}
+
+void UnitGroupView::UpdateAutoScale(bool& updated) {
+  NetView* nv = this->nv();
+  TwoDCoord co;
+  Unit_Group* ugrp = this->ugrp(); //cache
+  for (co.y = 0; co.y < ugrp->geom.y; ++co.y) {
+    for (co.x = 0; co.x < ugrp->geom.x; ++co.x) {
+      float val = GetUnitDisplayVal(co, nv->unit_md_flags); // get val for unit at co
+      if(!updated) {
+	nv->scale.SetMinMax(val, val);
+	updated = true;
+      }
+      else
+	nv->scale.UpdateMinMax(val);
+    }
   }
 }
 
@@ -1177,9 +1200,13 @@ void LayerView::UpdateNetLayDispMode() {
 }
 
 void LayerView::BuildAll() {
-  Reset(); //for when we are invoked after initial construction
-//  String node_nm;
+  NetView* n = nv();
   Layer* lay = layer(); //cache
+
+  int dspmd = n->GetLayDispMode(lay->name);
+  if(dspmd >= 0) disp_mode = (LayerView::DispMode)dspmd;
+
+  Reset(); //for when we are invoked after initial construction
   Unit_Group* ugrp;
   UnitGroupView* ugv;
   if (!lay->unit_groups) { // single ugrp
@@ -1208,6 +1235,14 @@ void LayerView::BuildAll() {
   }
 }
 
+void LayerView::InitDisplay() {
+  UnitGroupView* ugrv;
+  taListItr j;
+  FOR_ITR_EL(UnitGroupView, ugrv, children., j) {
+    ugrv->InitDisplay();
+  }
+}
+
 void LayerView::UpdateUnitValues() { // *actually* only does unit value updating
   int ch_idx = 0;
   Layer* lay = layer(); //cache
@@ -1223,6 +1258,14 @@ void LayerView::UpdateUnitValues() { // *actually* only does unit value updating
       UnitGroupView* ugv = (UnitGroupView*)children.SafeEl(ch_idx++);
       if(ugv) ugv->UpdateUnitValues();
     }
+  }
+}
+
+void LayerView::UpdateAutoScale(bool& updated) {
+  UnitGroupView* ugrv;
+  taListItr j;
+  FOR_ITR_EL(UnitGroupView, ugrv, children., j) {
+    ugrv->UpdateAutoScale(updated);
   }
 }
 
@@ -1447,6 +1490,20 @@ void LayerView::UseViewer(T3DataViewMain* viewer) {
   if(fr) fr->Render();
 }
 
+void LayerView::SetHighlightSpec(BaseSpec* spec) {
+  Layer* lay = layer();
+  if(lay && NetView::UsesSpec(lay, spec)) {
+    bool ok;
+    iColor hc = spec->GetEditColorInherit(ok);
+    if (ok) { 
+      setHighlightColor(T3Color(hc));
+    }
+  }
+  else {
+    setDefaultColor();
+  }
+}
+
 
 //////////////////////////
 //   PrjnView		//
@@ -1570,6 +1627,19 @@ void PrjnView::Reset_impl() {
   inherited::Reset_impl();
 }
 
+void PrjnView::SetHighlightSpec(BaseSpec* spec) {
+  Projection* prjn = this->prjn();
+  if(prjn && NetView::UsesSpec(prjn, spec)) {
+    bool ok;
+    iColor hc = spec->GetEditColorInherit(ok);
+    if (ok) { 
+      setHighlightColor(T3Color(hc));
+    }
+  }
+  else {
+    setDefaultColor();
+  }
+}
 
 ////////////////////////////////////////////////////
 //   LayerGroupView
@@ -1613,6 +1683,42 @@ void LayerGroupView::UpdateUnitValues() { // *actually* only does unit value upd
     }
     else if(chld->InheritsFrom(&TA_LayerGroupView)) {
       ((LayerGroupView*)chld)->UpdateUnitValues();
+    }
+  }
+}
+
+void LayerGroupView::InitDisplay() {
+  for(int i=0; i<children.size; i++) {
+    T3DataView* chld = (T3DataView*)children.FastEl(i);
+    if(chld->InheritsFrom(&TA_LayerView)) {
+      ((LayerView*)chld)->InitDisplay();
+    }
+    else if(chld->InheritsFrom(&TA_LayerGroupView)) {
+      ((LayerGroupView*)chld)->InitDisplay();
+    }
+  }
+}
+
+void LayerGroupView::UpdateAutoScale(bool& updated) {
+  for(int i=0; i<children.size; i++) {
+    T3DataView* chld = (T3DataView*)children.FastEl(i);
+    if(chld->InheritsFrom(&TA_LayerView)) {
+      ((LayerView*)chld)->UpdateAutoScale(updated);
+    }
+    else if(chld->InheritsFrom(&TA_LayerGroupView)) {
+      ((LayerGroupView*)chld)->UpdateAutoScale(updated);
+    }
+  }
+}
+
+void LayerGroupView::SetHighlightSpec(BaseSpec* spec) {
+  for(int i=0; i<children.size; i++) {
+    T3DataView* chld = (T3DataView*)children.FastEl(i);
+    if(chld->InheritsFrom(&TA_LayerView)) {
+      ((LayerView*)chld)->SetHighlightSpec(spec);
+    }
+    else if(chld->InheritsFrom(&TA_LayerGroupView)) {
+      ((LayerGroupView*)chld)->SetHighlightSpec(spec);
     }
   }
 }
@@ -1706,7 +1812,7 @@ void LayerGroupView::Render_impl() {
     }
     node_so->resizeCaption(eff_lay_font_size);
 
-    SbVec3f tran(0.0f, -eff_lay_font_size - lay_ht_z, lay_wd_y);
+    SbVec3f tran(0.0f, -eff_lay_font_size - 3.0f * lay_ht_z, lay_wd_y);
     node_so->transformCaption(tran);
   }
 
@@ -1723,10 +1829,10 @@ void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
 
   float fx = ((float)lgp->max_size.x + 2.0f * T3LayerNode::width) / nv->max_size.x;
   float fy = ((float)lgp->max_size.y + 2.0f * T3LayerNode::width) / nv->max_size.y;
-  float fz = ((float)(lgp->max_size.z-1) + 2.0f * T3LayerNode::height) / nv->max_size.z;
+  float fz = ((float)(lgp->max_size.z-1) + 4.0f * T3LayerNode::height) / nv->max_size.z;
   float xfrac = (.5f * fx) - (T3LayerNode::width / nv->max_size.x);
   float yfrac = (.5f * fy) - (T3LayerNode::width / nv->max_size.y);
-  float zfrac = (.5f * fz) - (T3LayerNode::height / nv->max_size.z);
+  float zfrac = (.5f * fz) - 2.0f * (T3LayerNode::height / nv->max_size.z);
 
   const SbVec3f& trans = dragger->translation.getValue();
   float new_x = trans[0] * nv->max_size.x;
@@ -2193,6 +2299,31 @@ void NetView::BuildAll() { // populates all T3 guys
 
   Network* nt = net();
 
+  // cannot preserve LayerView objects, so recording disp_mode info separately
+  // layers grab from us when made, instead of pushing on them.
+  // first pass is to fix things up based on layer names only
+  for(int i = lay_disp_modes.size - 1; i >= 0; --i) {
+    NameVar dmv = lay_disp_modes.FastEl(i);
+    int li = nt->layers.FindLeafNameIdx(dmv.name);
+    if (li < 0) {
+      lay_disp_modes.RemoveIdx(i);
+    }
+  }
+  // add layers not in us, move in position
+  for(int li = 0; li < nt->layers.leaves; ++li) {
+    Layer* ly = nt->layers.Leaf(li);
+    int i = lay_disp_modes.FindName(ly->name);
+    if(i < 0) {
+      NameVar dmv;
+      dmv.name = ly->name;
+      dmv.value = -1;		// uninit val
+      lay_disp_modes.Insert(dmv, li);
+    } 
+    else if(i != li) {
+      lay_disp_modes.MoveIdx(i, li);
+    }
+  }
+
   { // delegate everything to the layers group
     LayerGroupView* lv = new LayerGroupView();
     lv->SetData(&nt->layers);
@@ -2208,45 +2339,11 @@ void NetView::BuildAll() { // populates all T3 guys
     taLeafItr j;
     FOR_ITR_EL(Projection, prjn, lay->projections., j) {
       PrjnView* pv = new PrjnView();
-      pv->SetData(prjn);//obs prjn->AddDataView(pv);
-      //nn prjns.Add(pv); // no side-effects -- better to add to this first
+      pv->SetData(prjn);
+      //nn prjns.Add(pv); // this is automatic from the childadding thing
       children.Add(pv);
     }
   }
-
-  // todo: have the layers grab from us when made, instead of pushing on them.
-  // first pass is to fix things up based on layer names only
-
-  // cannot preserve LayerView objects, so recording disp_mode info separately
-  // first pass: delete non-existing ones, and apply existing ones
-  // todo: need to re-do this!
-//   for(int i = lay_disp_modes.size - 1; i >= 0; --i) {
-//     NameVar dmv = lay_disp_modes.FastEl(i);
-//     int li = nt->layers.FindLeafNameIdx(dmv.name);
-//     if (li >= 0) {
-//       LayerView* lv = (LayerView*)children.FastEl(li); // 1-to-1 with layers
-//       lv->disp_mode = (LayerView::DispMode)dmv.value.toInt();
-//     } else {
-//       lay_disp_modes.RemoveIdx(i);
-//     }
-//   }
-
-  // add layers not in us, move in position
-//   for(int li = 0; li < nt->layers.leaves; ++li) {
-//     Layer* ly = nt->layers.Leaf(li);
-//     LayerView* lv = (LayerView*)children.FastEl(li);
-//     int i = lay_disp_modes.FindName(ly->name);
-//     if(i < 0) {
-//       NameVar dmv;
-//       dmv.name = ly->name;
-//       dmv.value = (int)lv->disp_mode;
-//       lay_disp_modes.Insert(dmv, li);
-//     } 
-//     else if(i != li) {
-//       lay_disp_modes.MoveIdx(i, li);
-//       lay_disp_modes.FastEl(li).value = (int)lv->disp_mode;
-//     }
-//   }
 
   NetViewObj* obj;
   taLeafItr oi;
@@ -2263,24 +2360,27 @@ void NetView::SetLayDispMode(const String& lay_nm, int disp_md) {
   lay_disp_modes.FastEl(i).value = disp_md;
 }
 
+int NetView::GetLayDispMode(const String& lay_nm) {
+  int i = lay_disp_modes.FindName(lay_nm);
+  if(i < 0) return -1;
+  return lay_disp_modes.FastEl(i).value.toInt();
+}
+
 void NetView::ChildAdding(taDataView* child_) {
   inherited::ChildAdding(child_);
   T3DataView* child = dynamic_cast<T3DataView*>(child_);
   if (!child) return;
   TypeDef* typ = child->GetTypeDef();
-  if (typ->InheritsFrom(&TA_LayerView)) {
-    layers.AddUnique(child);
-  } else if (typ->InheritsFrom(&TA_PrjnView)) {
+  if(typ->InheritsFrom(&TA_PrjnView)) {
     prjns.AddUnique(child);
   }
 }
 
 void NetView::ChildRemoving(taDataView* child_) {
   T3DataView* child = dynamic_cast<T3DataView*>(child_);
-  if (!child) goto done;
-  if (layers.RemoveEl(child)) goto done;
-  if (prjns.RemoveEl(child)) goto done;
-done:
+  if(child) {
+    prjns.RemoveEl(child);	// just try it
+  }
   inherited::ChildRemoving(child_);
 }
 
@@ -2539,26 +2639,11 @@ void NetView::InitDisplay(bool init_panel) {
       SelectVar("act", false, false);
     }
   }
-  
-  // descend into sub items
-  LayerView* lv;
-  taListItr i;
-  FOR_ITR_EL(LayerView, lv, layers., i) {
-    InitDisplay_Layer(lv, false);
-  }
-}
 
-void NetView::InitDisplay_Layer(LayerView* lv, bool check_build) {
-  UnitGroupView* ugrv;
-  taListItr j;
-  FOR_ITR_EL(UnitGroupView, ugrv, lv->children., j) {
-    InitDisplay_UnitGroup(ugrv, false);
+  if(children.size > 0) {
+    LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
+    lv->InitDisplay();
   }
-}
-
-void NetView::InitDisplay_UnitGroup(UnitGroupView* ugrv, bool check_build) {
-  ugrv->AllocUnitViewData(); // make sure we have correct space in uvd array
-  ugrv->UpdateUnitViewBase(unit_disp_md, unit_src, unit_con_md);
 }
 
 void NetView::InitPanel() {
@@ -3074,7 +3159,6 @@ void NetView::Render_wt_lines() {
 
 void NetView::Reset_impl() {
   prjns.Reset();
-  layers.Reset();
   inherited::Reset_impl();
 }
 
@@ -3164,28 +3248,37 @@ void NetView::setUnitDispMd(MemberDef* md) {
 
 }
 
-void NetView::UpdateAutoScale() {
-  LayerView* lv;
-  taListItr i;
-  bool updated = false;
-  FOR_ITR_EL(LayerView, lv, layers., i) {
-    UnitGroupView* ugrv;
-    taListItr j;
-    FOR_ITR_EL(UnitGroupView, ugrv, lv->children., j) {
-      TwoDCoord co;
-      Unit_Group* ugrp = ugrv->ugrp(); //cache
-      for (co.y = 0; co.y < ugrp->geom.y; ++co.y) {
-        for (co.x = 0; co.x < ugrp->geom.x; ++co.x) {
-          float val = ugrv->GetUnitDisplayVal(co, unit_md_flags); // get val for unit at co
-	  if(!updated) {
-	    scale.SetMinMax(val, val);
-	    updated = true;
-	  }
-	  else
-	    scale.UpdateMinMax(val);
-        }
-      }
+void NetView::SetHighlightSpec(BaseSpec* spec) {
+  if(children.size > 0) {
+    LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
+    lv->SetHighlightSpec(spec);
+  }
+  // check projections
+  for(int i = 0; i < prjns.size; ++i) {
+    PrjnView* pv = (PrjnView*)prjns.FastEl(i);
+    pv->SetHighlightSpec(spec);
+  }
+}
+
+bool NetView::UsesSpec(taBase* obj, BaseSpec* spec) {
+  if(!spec) return false;
+  TypeDef* otyp = obj->GetTypeDef();
+  for (int i = 0; i < otyp->members.size; ++i) {
+    MemberDef* md = otyp->members.FastEl(i);
+    //note: specs stored in specptr objs, which are inline objs
+    if (md->type->DerivesFrom(&TA_SpecPtr_impl)) {
+      SpecPtr_impl* sptr = (SpecPtr_impl*)md->GetOff(obj);
+      if (sptr->GetSpec() == spec) return true;
     }
+  }
+  return false;
+}
+
+void NetView::UpdateAutoScale() {
+  bool updated = false;
+  if(children.size > 0) {
+    LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
+    lv->UpdateAutoScale(updated);
   }
   if (updated) { //note: could really only not be updated if there were no items
     scale.SymRange();		// keep it symmetric
@@ -3205,14 +3298,9 @@ void NetView::UpdateDisplay(bool update_panel) { // redoes everything
 }
 
 void NetView::UpdateUnitValues() { // *actually* only does unit value updating
-  int ch_idx = 0;
-  Layer* lay;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, lay, net()->layers., i) {
-    LayerView* lv = (LayerView*)children.FastEl(ch_idx++);
-    lv->UpdateUnitValues();
-  }
-  //  taiMisc::RunPending();
+  if(children.size == 0) return;
+  LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
+  lv->UpdateUnitValues();
 }
 
 void NetView::DataUpdateView_impl() {
@@ -3720,58 +3808,11 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   nv_->UpdateDisplay(false);
 }
 
-bool UsesSpec(taBase* obj, BaseSpec* spec) {
-  TypeDef* otyp = obj->GetTypeDef();
-  for (int i = 0; i < otyp->members.size; ++i) {
-    MemberDef* md = otyp->members.FastEl(i);
-    //note: specs stored in specptr objs, which are inline objs
-    if (md->type->DerivesFrom(&TA_SpecPtr_impl)) {
-      SpecPtr_impl* sptr = (SpecPtr_impl*)md->GetOff(obj);
-      if (sptr->GetSpec() == spec) return true;
-    }
-  }
-  return false;
-}
-
 void NetViewPanel::setHighlightSpec(BaseSpec* spec, bool force) {
   if ((spec == m_cur_spec) && !force) return;
   m_cur_spec = spec;
-  // We use a completely generic mechanism, that looks for
-  // the spec being assigned to a SpecPtr_impl member of the object
-  // check layers
   NetView* nv = this->nv(); // cache
-  for (int i = 0; i < nv->layers.size; ++i) {
-    LayerView* lv = (LayerView*)nv->layers.FastEl(i);
-    if (m_cur_spec) {
-      Layer* lay = lv->layer();
-      if (lay && UsesSpec(lay, m_cur_spec)) {
-        bool ok;
-        iColor hc = m_cur_spec->GetEditColorInherit(ok);
-        if (ok) { 
-          lv->setHighlightColor(T3Color(hc));
-          continue;
-        }
-      }
-    }
-    lv->setDefaultColor();
-  }
-  // check projections
-  for (int i = 0; i < nv->prjns.size; ++i) {
-    PrjnView* pv = (PrjnView*)nv->prjns.FastEl(i);
-    if (m_cur_spec) {
-      Projection* prjn = pv->prjn();
-      if (prjn && UsesSpec(prjn, m_cur_spec)) {
-        bool ok;
-        iColor hc = m_cur_spec->GetEditColorInherit(ok);
-        if (ok) { 
-          pv->setHighlightColor(T3Color(hc));
-          continue;
-        }
-      }
-    }
-    pv->setDefaultColor();
-  }
-  
+  nv->SetHighlightSpec(spec);
 }
 
 void NetViewPanel::tvSpecs_CustomExpandFilter(iTreeViewItem* item,

@@ -130,11 +130,11 @@ LeabraProject .projects[0] {
 	};
 	Layer_Group @.gp[0] = [2] { 
 	  LeabraLayer @[0] { 
-	    Unit_Group @.units = [1] {
+	    Unit_Group @.units = [100] {
 	    };
 	  };
 	  LeabraLayer @[1] { 
-	    Unit_Group @.units = [1] {
+	    Unit_Group @.units = [100] {
 	    };
 	  };
 	};
@@ -367,7 +367,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  ordered_uvg_list{ act;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
-	  max_size {x=7: y=5: z=3: };
+	  max_size {x=17: y=10: z=3: };
 	  font_sizes {
 	   net_name=0.05;
 	   net_vals=0.05;
@@ -386,6 +386,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   prjn_trans=0.5;
 	   lay_trans=0.5;
 	   unit_trans=0.6;
+	   laygp_width=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
@@ -765,7 +766,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
     el_typ=LeabraLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
-    max_size {x=7: y=5: z=3: };
+    max_size {x=17: y=10: z=3: };
     LeabraLayer @[0] {
      name="Input";
      desc=;
@@ -1043,8 +1044,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      name="GpA";
      el_typ=LeabraLayer;
      el_def=0;
-     pos {x=6: y=0: z=1: };
-     max_size {x=1: y=1: z=2: };
+     pos {x=7: y=0: z=1: };
+     max_size {x=10: y=10: z=2: };
      LeabraLayer @[0] {
       name="LeabraLayer_3";
       desc=;
@@ -1052,12 +1053,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       layer_type=HIDDEN;
       pos {x=0: y=0: z=0: };
       disp_scale=1;
-      un_geom {x=1: y=1: n_not_xy=0: n=1: };
+      un_geom {x=10: y=10: n_not_xy=0: n=100: };
       unit_groups=0;
       gp_geom {x=1: y=1: n_not_xy=0: n=1: };
       gp_spc {x=1: y=1: };
-      act_geom {x=1: y=1: n_not_xy=0: n=1: };
-      scaled_act_geom {x=1: y=1: n_not_xy=0: n=1: };
+      act_geom {x=10: y=10: n_not_xy=0: n=100: };
+      scaled_act_geom {x=10: y=10: n_not_xy=0: n=1: };
       projections {
        name=;
        el_typ=LeabraPrjn;
@@ -1074,7 +1075,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        el_def=0;
        pos {x=0: y=0: z=0: };
        unique_geom=0;
-       geom {x=1: y=1: n_not_xy=0: n=1: };
+       geom {x=10: y=10: n_not_xy=0: n=100: };
        units_lesioned=0;
        output_name=;
       };
@@ -1118,12 +1119,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       layer_type=HIDDEN;
       pos {x=0: y=0: z=1: };
       disp_scale=1;
-      un_geom {x=1: y=1: n_not_xy=0: n=1: };
+      un_geom {x=10: y=10: n_not_xy=0: n=100: };
       unit_groups=0;
       gp_geom {x=1: y=1: n_not_xy=0: n=1: };
       gp_spc {x=1: y=1: };
-      act_geom {x=1: y=1: n_not_xy=0: n=1: };
-      scaled_act_geom {x=1: y=1: n_not_xy=0: n=1: };
+      act_geom {x=10: y=10: n_not_xy=0: n=100: };
+      scaled_act_geom {x=10: y=10: n_not_xy=0: n=1: };
       projections {
        name=;
        el_typ=LeabraPrjn;
@@ -1140,7 +1141,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        el_def=0;
        pos {x=0: y=0: z=0: };
        unique_geom=0;
-       geom {x=1: y=1: n_not_xy=0: n=1: };
+       geom {x=10: y=10: n_not_xy=0: n=100: };
        units_lesioned=0;
        output_name=;
       };
@@ -1234,9 +1235,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    lay_layout=THREE_D;
-   n_units=77;
+   n_units=275;
    n_cons=1875;
-   max_size {x=7: y=5: z=3: };
+   max_size {x=17: y=10: z=3: };
    learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;
    no_plus_test=1;

@@ -1580,9 +1580,9 @@ public:
   // #MENU #DYN1 #CAT_Display de-iconify this layer in the network display (make full size)
   inline void	SetDispScale(float disp_sc) 	{ disp_scale = disp_sc; UpdateAfterEdit(); }
   // #MENU #DYN1 #CAT_Display set the display scale for the layer -- can change how much space it takes up relative to other layers
-  inline void	Lesion() 	{ SetLayerFlag(LESIONED); }
+  virtual void	Lesion();
   // #MENU #DYN1 #MENU_SEP_BEFORE #CAT_Structure set the lesion flag on layer -- removes it from all processing operations
-  inline void	UnLesion() 	{ ClearLayerFlag(LESIONED); }
+  virtual void	UnLesion();
   // #MENU #DYN1 #CAT_Structure un-set the lesion flag on layer -- restores it to engage in normal processing
 
   virtual bool	Iconified() const 	{ return HasLayerFlag(ICONIFIED); }
@@ -1731,6 +1731,8 @@ public:
   // #BUTTON #DYN1 #CAT_Structure iconi
   virtual void	DeIconifyLayers();
   // #BUTTON #DYN1 #CAT_Structure un-set the lesion flag on all the layers within this group
+  virtual void	DispScaleLayers(float disp_scale = 1.0f);
+  // #BUTTON #DYN1 #CAT_Structure set the display scale on all the layers in the group (scales the size of the units -- 1 = normal, lower = smaller units, higher = larger units.
 
   virtual void	Clean();
   // #MENU #MENU_CONTEXT #CAT_Structure remove any algorithmically specified layers/prjns etc.

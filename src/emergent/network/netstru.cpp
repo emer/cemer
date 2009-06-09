@@ -3715,9 +3715,23 @@ void Layer::UpdateAfterEdit_impl() {
     }
     un_geom.z = 0;
   }
-  RecomputeGeometry();
-  if(own_net)
-    own_net->LayerPos_Cleanup();
+  if(!taMisc::is_loading) {
+    RecomputeGeometry();
+    if(own_net)
+      own_net->LayerPos_Cleanup();
+  }
+}
+
+void Layer::Lesion() {
+  StructUpdate(true);
+  SetLayerFlag(LESIONED);
+  StructUpdate(false);
+}
+
+void Layer::UnLesion()	{
+  StructUpdate(true);
+  ClearLayerFlag(LESIONED);
+  StructUpdate(false);
 }
 
 void Layer::Iconify() {
@@ -4950,23 +4964,25 @@ void Layer_Group::UpdateMaxSize() {
       max_size.x = MAX(max_size.x, l->scaled_act_geom.x + lrelpos.x);
       max_size.y = MAX(max_size.y, l->scaled_act_geom.y + lrelpos.y);
     }
-    if(first_min)
-      min_size = l_pos;
-    else {
+    if(first_min) {
       first_min = false;
+      min_size = l_pos;
+    }
+    else {
       min_size.Min(l_pos);	// min of each coord
     }
   }
 
-  // todo: need to fix this -- z axis is off by 1 for some reason..
-#if 0
   if(!owner->InheritsFrom(&TA_Network)) {
     if(min_size != pos) {
-      max_size -= min_size - pos;	// reduce by amount moving
+      TDCoord pos_chg = min_size - pos;
+      FOR_ITR_EL(Layer, l, this->, i) {
+	l->pos -= pos_chg;	// fix up all the layer rels to be less.
+      }
+      max_size -= pos_chg;	// reduce by amount moving
       pos = min_size;		// new position
     }
   }
-#endif
 
   // iterate on subgroups
   for(int gi=0; gi<gp.size; gi++) {
@@ -5084,16 +5100,29 @@ void Layer_Group::IconifyLayers() {
   FOR_ITR_EL(Layer, lay, this->, itr) {
     lay->Iconify();
   }
+  UpdateMaxSize();
+  UpdateAfterEdit();
 }
 
- void Layer_Group::DeIconifyLayers() {
+void Layer_Group::DeIconifyLayers() {
   taLeafItr itr;
   Layer* lay;
   FOR_ITR_EL(Layer, lay, this->, itr) {
     lay->DeIconify();
   }
+  UpdateMaxSize();
+  UpdateAfterEdit();
 }
 
+void Layer_Group::DispScaleLayers(float disp_scale) {
+  taLeafItr itr;
+  Layer* lay;
+  FOR_ITR_EL(Layer, lay, this->, itr) {
+    lay->SetDispScale(disp_scale);
+  }
+  UpdateMaxSize();
+  UpdateAfterEdit();
+}
 
 ////////////////////////////////////////////////////////
 //	Threading

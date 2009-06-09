@@ -763,10 +763,10 @@ void T3LayerGroupNode::render() {
 
   float fx = ((float)lgp_max_size.x + 2.0f * T3LayerNode::width) / max_size.x;
   float fy = ((float)lgp_max_size.y + 2.0f * T3LayerNode::width) / max_size.y;
-  float fz = ((float)(lgp_max_size.z-1) + 2.0f * T3LayerNode::height) / max_size.z;
+  float fz = ((float)(lgp_max_size.z-1) + 4.0f * T3LayerNode::height) / max_size.z;
   float lay_wd_x = (T3LayerNode::width / max_size.x);
   float lay_wd_y = (T3LayerNode::width / max_size.y);
-  float lay_ht_z = (T3LayerNode::height / max_size.z);
+  float lay_ht_z = 2.0f * (T3LayerNode::height / max_size.z);
   float xfrac = (.5f * fx) - lay_wd_x;
   float yfrac = (.5f * fy) - lay_wd_y;
   float zfrac = (.5f * fz) - lay_ht_z;
