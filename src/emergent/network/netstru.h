@@ -1707,6 +1707,8 @@ class EMERGENT_API Layer_Group : public taGroup<Layer> {
   // ##CAT_Network ##SCOPE_Network group of layers -- this should be used in larger networks to organize subnetworks (e.g., in brain models, different brain areas)
 INHERITED(taGroup<Layer>)
 public:
+  static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
+
   TDCoord	pos;		// Position of Group of layers relative to network
   PosTDCoord	max_size;	// #READ_ONLY #SHOW #CAT_Structure maximum size of the layer group -- computed automatically from the layers within the group
 
@@ -1740,7 +1742,15 @@ public:
   virtual void	LayerPos_Cleanup();
   // #MENU #MENU_CONTEXT #CAT_Structure cleanup the layer positions relative to each other (prevent overlap etc)
 
-  void		TriggerContextUpdate(); // for context layers, manually triggers the update		
+  virtual Layer* FindMakeLayer(const char* nm, TypeDef* td = NULL,
+			       bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
+  // #CAT_Structure find a given layer and if not found, make it (of default type if NULL) (if nm is not found and alt_nm != NULL, it is searched for)
+  virtual Layer_Group* FindMakeLayerGroup(const char* nm, TypeDef* td = NULL,
+			  bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
+  // #CAT_Structure find a given layer group and if not found, make it (of default type if NULL) (if nm is not found and alt_nm != NULL, it is searched for)
+
+  void		TriggerContextUpdate();
+  // #CAT_Activation for context layers, manually triggers the update		
     
   override String GetTypeDecoKey() const { return "Layer"; }
 
@@ -2284,8 +2294,12 @@ public:
   virtual BaseSpec* FindSpecType(TypeDef* td);
   // #CAT_Structure find a given spec by type
 
-  virtual Layer* FindMakeLayer(const char* nm, TypeDef* td = NULL, bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
+  virtual Layer* FindMakeLayer(const char* nm, TypeDef* td = NULL,
+			       bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
   // #CAT_Structure find a given layer and if not found, make it (of default type if NULL) (if nm is not found and alt_nm != NULL, it is searched for)
+  virtual Layer_Group* FindMakeLayerGroup(const char* nm, TypeDef* td = NULL,
+			    bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
+  // #CAT_Structure find a given layer group and if not found, make it (of default type if NULL) (if nm is not found and alt_nm != NULL, it is searched for)
   virtual Layer* FindLayer(const char* nm) { return (Layer*)layers.FindName(nm); }
   // #CAT_Structure find layer by name
   virtual Projection* FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps = NULL, ConSpec* cs = NULL, bool& nw_itm = nw_itm_def_arg);

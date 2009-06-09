@@ -1812,7 +1812,7 @@ void LayerGroupView::Render_impl() {
     }
     node_so->resizeCaption(eff_lay_font_size);
 
-    SbVec3f tran(0.0f, -eff_lay_font_size - 3.0f * lay_ht_z, lay_wd_y);
+    SbVec3f tran(0.0f, -eff_lay_font_size - 2.0f * lay_ht_z, lay_wd_y);
     node_so->transformCaption(tran);
   }
 

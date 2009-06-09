@@ -550,12 +550,12 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     return false;
   }
   // vta must be before matrix!  good.
-  int myidx = lay->own_net->layers.FindLeafEl(lay);
-  int daidx = lay->own_net->layers.FindLeafEl(da_lay);
-  if(lay->CheckError(daidx > myidx, quiet, rval,
-		"DA layer (PVLVDaLayerSpec) must be *before* this layer in list of layers -- it is now after, won't work")) {
-    return false;
-  }
+//   int myidx = lay->own_net->layers.FindLeafEl(lay);
+//   int daidx = lay->own_net->layers.FindLeafEl(da_lay);
+//   if(lay->CheckError(daidx > myidx, quiet, rval,
+// 		"DA layer (PVLVDaLayerSpec) must be *before* this layer in list of layers -- it is now after, won't work")) {
+//     return false;
+//   }
   return true;
 }
 
@@ -906,12 +906,12 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     return false;
   }
 
-  int myidx = lay->own_net->layers.FindLeafEl(lay);
-  int matidx = lay->own_net->layers.FindLeafEl(matrix_lay);
-  if(lay->CheckError(matidx > myidx, quiet, rval,
-		"Matrix layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-    return false;
-  }
+//   int myidx = lay->own_net->layers.FindLeafEl(lay);
+//   int matidx = lay->own_net->layers.FindLeafEl(matrix_lay);
+//   if(lay->CheckError(matidx > myidx, quiet, rval,
+// 		"Matrix layer must be *before* this layer in list of layers -- it is now after, won't work")) {
+//     return false;
+//   }
   return true;
 }
 
@@ -1106,12 +1106,12 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
   }
 
   // check for ordering of layers!
-  int myidx = lay->own_net->layers.FindLeafEl(lay);
-  int gateidx = lay->own_net->layers.FindLeafEl(snrthal_lay);
-  if(lay->CheckError(gateidx > myidx, quiet, rval,
-		"SNrThal Layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-    return false;
-  }
+//   int myidx = lay->own_net->layers.FindLeafEl(lay);
+//   int gateidx = lay->own_net->layers.FindLeafEl(snrthal_lay);
+//   if(lay->CheckError(gateidx > myidx, quiet, rval,
+// 		"SNrThal Layer must be *before* this layer in list of layers -- it is now after, won't work")) {
+//     return false;
+//   }
 
   return true;
 }
@@ -1430,19 +1430,19 @@ bool PFCOutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   inhib.kwta_pt = pfcsp->inhib.kwta_pt;
 
   // check for ordering of layers!
-  int myidx = lay->own_net->layers.FindLeafEl(lay);
-  int gateidx = lay->own_net->layers.FindLeafEl(snrthal_lay);
-  if(lay->CheckError(gateidx > myidx, quiet, rval,
-		"SNrThal Layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-    return false;
-  }
+//   int myidx = lay->own_net->layers.FindLeafEl(lay);
+//   int gateidx = lay->own_net->layers.FindLeafEl(snrthal_lay);
+//   if(lay->CheckError(gateidx > myidx, quiet, rval,
+// 		"SNrThal Layer must be *before* this layer in list of layers -- it is now after, won't work")) {
+//     return false;
+//   }
 
-  // check for ordering of layers!
-  int pfcidx = lay->own_net->layers.FindLeafEl(pfc_lay);
-  if(lay->CheckError(pfcidx > myidx, quiet, rval,
-		"PFC Layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-    return false;
-  }
+//   // check for ordering of layers!
+//   int pfcidx = lay->own_net->layers.FindLeafEl(pfc_lay);
+//   if(lay->CheckError(pfcidx > myidx, quiet, rval,
+// 		"PFC Layer must be *before* this layer in list of layers -- it is now after, won't work")) {
+//     return false;
+//   }
 
   return true;
 }
@@ -1661,8 +1661,41 @@ void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
 //////////////////////////////////
 
 ///////////////////////////////////////////////////////////////
-//			BgPFC
+//			PBWM
 ///////////////////////////////////////////////////////////////
+
+bool LeabraWizard::PBWM_ToLayerGroups(LeabraNetwork* net) {
+  if(TestError(!net, "PBWM_ToLayerGroup", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
+    return false;
+
+  PVLV_ToLayerGroup(net);	// do the pvlv version
+
+  bool new_bg_laygp = false;
+  Layer_Group* bg_laygp = net->FindMakeLayerGroup("PBWM_BG", NULL, new_bg_laygp);
+  bool new_pfc_laygp = false;
+  Layer_Group* pfc_laygp = net->FindMakeLayerGroup("PBWM_PFC", NULL, new_pfc_laygp);
+
+  Layer* lay;
+  if(lay = net->FindLayer("Patch")) bg_laygp->Transfer(lay);
+  if(lay = net->FindLayer("SNc")) bg_laygp->Transfer(lay);
+  if(lay = net->FindLayer("Matrix")) bg_laygp->Transfer(lay);
+  if(lay = net->FindLayer("Matrix_mnt")) bg_laygp->Transfer(lay);
+  if(lay = net->FindLayer("Matrix_out")) bg_laygp->Transfer(lay);
+  if(lay = net->FindLayer("SNrThal")) bg_laygp->Transfer(lay);
+  if(lay = net->FindLayer("SNrThal_out")) bg_laygp->Transfer(lay);
+  if(lay = net->FindLayer("SNrThal_mnt")) bg_laygp->Transfer(lay);
+  if(lay = net->FindLayer("PFC")) pfc_laygp->Transfer(lay);
+  if(lay = net->FindLayer("PFC_mnt")) pfc_laygp->Transfer(lay);
+  if(lay = net->FindLayer("PFC_out")) pfc_laygp->Transfer(lay);
+
+  if(new_bg_laygp || new_pfc_laygp) {
+    bg_laygp->pos.z = 0;
+    pfc_laygp->pos.z = 2;
+    net->RebuildAllViews();	// trigger update
+  }
+
+  return true;
+}
 
 static void lay_set_geom(LeabraLayer* lay, int n_stripes, int n_units = -1, bool sp = true) {
   lay->unit_groups = true;
@@ -1689,7 +1722,7 @@ static void set_n_stripes(LeabraNetwork* net, const char* nm, int n_stripes,
   lay_set_geom(lay, n_stripes, n_units, sp);
 }
 
-bool LeabraWizard::SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units) {
+bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int n_stripes, int n_units) {
   set_n_stripes(net, "PFC", n_stripes, n_units, true);
   set_n_stripes(net, "PFC_mnt", n_stripes, n_units, true);
   set_n_stripes(net, "PFC_out", n_stripes, n_units, true);
@@ -1746,18 +1779,28 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   //////////////////////////////////////////////////////////////////////////////////
   // make layers
 
-  // get these from the DA function..
-  LeabraLayer* rew_targ_lay = (LeabraLayer*)net->FindLayer("RewTarg");
-  LeabraLayer* pve = (LeabraLayer*)net->FindLayer(pvenm);
-  LeabraLayer* pvr = (LeabraLayer*)net->FindLayer(pvrnm);
-  LeabraLayer* pvi = (LeabraLayer*)net->FindLayer(pvinm);
-  LeabraLayer* lve = (LeabraLayer*)net->FindLayer(lvenm);
-  LeabraLayer* lvi = (LeabraLayer*)net->FindLayer(lvinm);
-  LeabraLayer* nv =  (LeabraLayer*)net->FindLayer(nvnm);
-  LeabraLayer* vta = (LeabraLayer*)net->FindLayer(vtanm);
+  // Harvest from the PVLV function..
+  Layer_Group* pvlv_laygp = net->FindMakeLayerGroup("PVLV");
+  LeabraLayer* rew_targ_lay = (LeabraLayer*)pvlv_laygp->FindName("RewTarg");
+  LeabraLayer* pve = (LeabraLayer*)pvlv_laygp->FindName(pvenm);
+  LeabraLayer* pvr = (LeabraLayer*)pvlv_laygp->FindName(pvrnm);
+  LeabraLayer* pvi = (LeabraLayer*)pvlv_laygp->FindName(pvinm);
+  LeabraLayer* lve = (LeabraLayer*)pvlv_laygp->FindName(lvenm);
+  LeabraLayer* lvi = (LeabraLayer*)pvlv_laygp->FindName(lvinm);
+  LeabraLayer* nv =  (LeabraLayer*)pvlv_laygp->FindName(nvnm);
+  LeabraLayer* vta = (LeabraLayer*)pvlv_laygp->FindName(vtanm);
   if(!vta)
-    vta = (LeabraLayer*)net->FindLayer("DA");
+    vta = (LeabraLayer*)pvlv_laygp->FindName("DA");
   if(!rew_targ_lay || !lve || !pve || !pvi || !vta) return false;
+
+  bool new_bg_laygp = false;
+  Layer_Group* bg_laygp = net->FindMakeLayerGroup("PBWM_BG", NULL, new_bg_laygp);
+  bool new_pfc_laygp = false;
+  Layer_Group* pfc_laygp = net->FindMakeLayerGroup("PBWM_PFC", NULL, new_pfc_laygp);
+  
+  if(new_bg_laygp || new_pfc_laygp) {
+    PBWM_ToLayerGroups(net);	// doesn't hurt to just do this..
+  }
 
   // if not new layers, don't make prjns into them!
   bool patch_new = false;     bool snc_new = false;
@@ -1775,66 +1818,26 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   LeabraLayer* snrthal_o = NULL;
   LeabraLayer* pfc_o = NULL;
 
-  patch = (LeabraLayer*)net->FindMakeLayer("Patch", NULL, patch_new, "Patch");
-  snc = (LeabraLayer*)net->FindMakeLayer("SNc", NULL, snc_new, "SNc");
+  patch = (LeabraLayer*)bg_laygp->FindMakeLayer("Patch", NULL, patch_new, "Patch");
+  snc = (LeabraLayer*)bg_laygp->FindMakeLayer("SNc", NULL, snc_new, "SNc");
 
   if(out_gate) {
-    matrix_m = (LeabraLayer*)net->FindMakeLayer("Matrix_mnt", NULL, matrix_m_new, "Matrix");
-    matrix_o = (LeabraLayer*)net->FindMakeLayer("Matrix_out", NULL, matrix_o_new);
+    matrix_m = (LeabraLayer*)bg_laygp->FindMakeLayer("Matrix_mnt", NULL, matrix_m_new, "Matrix");
+    matrix_o = (LeabraLayer*)bg_laygp->FindMakeLayer("Matrix_out", NULL, matrix_o_new);
 
-    snrthal_m = (LeabraLayer*)net->FindMakeLayer("SNrThal_mnt", NULL, snrthal_m_new, "SNrThal");
-    snrthal_o = (LeabraLayer*)net->FindMakeLayer("SNrThal_out", NULL, snrthal_o_new);
+    snrthal_m = (LeabraLayer*)bg_laygp->FindMakeLayer("SNrThal_mnt", NULL, snrthal_m_new, "SNrThal");
+    snrthal_o = (LeabraLayer*)bg_laygp->FindMakeLayer("SNrThal_out", NULL, snrthal_o_new);
 
-    pfc_m = (LeabraLayer*)net->FindMakeLayer("PFC_mnt", NULL, pfc_m_new, "PFC");
-    pfc_o = (LeabraLayer*)net->FindMakeLayer("PFC_out", NULL, pfc_o_new);
+    pfc_m = (LeabraLayer*)pfc_laygp->FindMakeLayer("PFC_mnt", NULL, pfc_m_new, "PFC");
+    pfc_o = (LeabraLayer*)pfc_laygp->FindMakeLayer("PFC_out", NULL, pfc_o_new);
   }
   else {
-    matrix_m = (LeabraLayer*)net->FindMakeLayer("Matrix", NULL, matrix_m_new, "Matrix");
-    snrthal_m = (LeabraLayer*)net->FindMakeLayer("SNrThal", NULL, snrthal_m_new, "SNrThal");
-    pfc_m = (LeabraLayer*)net->FindMakeLayer("PFC", NULL, pfc_m_new);
+    matrix_m = (LeabraLayer*)bg_laygp->FindMakeLayer("Matrix", NULL, matrix_m_new, "Matrix");
+    snrthal_m = (LeabraLayer*)bg_laygp->FindMakeLayer("SNrThal", NULL, snrthal_m_new, "SNrThal");
+    pfc_m = (LeabraLayer*)pfc_laygp->FindMakeLayer("PFC", NULL, pfc_m_new);
   }
 
   if(!patch || !snc || !matrix_m || !snrthal_m || !pfc_m) return false;
-
-  //////////////////////////////////////////////////////////////////////////////////
-  // sort layers
-
-  rew_targ_lay->name = "0000";  pve->name = "0001";
-  pvr->name = "0002";  pvi->name = "0003";  
-  lve->name = "0005";  lvi->name = "0006";
-  nv->name =  "0008"; vta->name = "0009";
-  patch->name = "00010"; snc->name = "0011";
-
-  matrix_m->name = "ZZZ4";  
-  snrthal_m->name = "ZZZ6";
-  pfc_m->name = "ZZZ8";
-  if(out_gate) {
-    matrix_o->name = "ZZZ5";  
-    snrthal_o->name = "ZZZ7";
-    pfc_o->name = "ZZZ9";
-  }
-
-  net->layers.Sort();
-
-  rew_targ_lay->name = "RewTarg";  pve->name = pvenm;
-  pvr->name = pvrnm;  pvi->name = pvinm; 
-  lve->name = lvenm; lvi->name = lvinm;
-  nv->name = nvnm;   vta->name = vtanm;
-  patch->name = "Patch"; snc->name = "SNc";
-
-  if(out_gate) {
-    snrthal_m->name = "SNrThal_mnt";
-    snrthal_o->name = "SNrThal_out";
-    matrix_m->name = "Matrix_mnt";
-    matrix_o->name = "Matrix_out";
-    pfc_m->name = "PFC_mnt";
-    pfc_o->name = "PFC_out";
-  }
-  else {
-    snrthal_m->name = "SNrThal";
-    matrix_m->name = "Matrix";
-    pfc_m->name = "PFC";
-  }
 
   //////////////////////////////////////////////////////////////////////////////////
   // collect layer groups
@@ -1843,19 +1846,21 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   int mx_z2 = 0;		// z=2
   Layer_Group other_lays;  Layer_Group hidden_lays;
   Layer_Group output_lays;  Layer_Group input_lays;
+  TDCoord lpos;
   int i;
-  for(i=0;i<net->layers.size;i++) {
-    LeabraLayer* lay = (LeabraLayer*)net->layers[i];
+  for(i=0;i<net->layers.leaves;i++) {
+    LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
     if(lay != rew_targ_lay && lay != pve && lay != pvr && lay != pvi
        && lay != lve && lay != lvi && lay != nv && lay != vta
        && lay != patch && lay != snc
        && lay != snrthal_m && lay != matrix_m && lay != pfc_m
        && lay != snrthal_o && lay != matrix_o && lay != pfc_o) {
       other_lays.Link(lay);
-      if(lay->pos.z == 0) lay->pos.z = 2; // nobody allowed in 0!
-      int xm = lay->pos.x + lay->act_geom.x + 1;
-      if(lay->pos.z == 1) mx_z1 = MAX(mx_z1, xm);
-      if(lay->pos.z == 2) mx_z2 = MAX(mx_z2, xm);
+      lay->GetAbsPos(lpos);
+      if(lpos.z == 0) lay->pos.z+=2; // nobody allowed in 0!
+      int xm = lpos.x + lay->scaled_act_geom.x + 1;
+      if(lpos.z == 1) mx_z1 = MAX(mx_z1, xm);
+      if(lpos.z == 2) mx_z2 = MAX(mx_z2, xm);
       if(lay->layer_type == Layer::HIDDEN)
 	hidden_lays.Link(lay);
       else if(lay->layer_type == Layer::INPUT)
@@ -2286,7 +2291,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   lay_set_geom(snrthal_m, n_stripes, 1);
 
   // this is here, to allow it to get act_geom for laying out the pfc and matrix guys!
-  SetPFCStripes(net, n_stripes);
+  PBWM_SetNStripes(net, n_stripes);
 
   if(out_gate) {
     if(pfc_o_new) {
@@ -2316,12 +2321,26 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     lay_set_geom(snrthal_o, n_stripes);
   }
 
+  if(new_bg_laygp) {
+    bg_laygp->pos.z = 0;
+  }
+  if(new_pfc_laygp) {
+    pfc_laygp->pos.z = 2;
+  }
+
   //////////////////////////////////////////////////////////////////////////////////
   // build and check
 
-  SetPFCStripes(net, n_stripes);
+  PBWM_SetNStripes(net, n_stripes);
 
   net->LayerPos_Cleanup();
+
+  // move back!
+  if(new_bg_laygp || new_pfc_laygp) {
+    bg_laygp->pos.z = 0;
+    pfc_laygp->pos.z = 2;
+    net->RebuildAllViews();	// trigger update
+  }
 
   taMisc::CheckConfigStart(false, false);
 

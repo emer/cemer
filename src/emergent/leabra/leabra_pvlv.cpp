@@ -158,14 +158,14 @@ bool PViLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 // 		"requires MarkerConSpec connection from PVe/ExtRewLayerSpec layer to get external rewards!")) {
 //     return false;
 //   }
-  if(ext_rew_lay) {
-    int myidx = net->layers.FindLeafEl(lay);
-    int eridx = net->layers.FindLeafEl(ext_rew_lay);
-    if(lay->CheckError(eridx > myidx, quiet, rval,
-		       "PVe/ExtRew layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-      return false;
-    }
-  }
+//   if(ext_rew_lay) {
+//     int myidx = net->layers.FindLeafEl(lay);
+//     int eridx = net->layers.FindLeafEl(ext_rew_lay);
+//     if(lay->CheckError(eridx > myidx, quiet, rval,
+// 		       "PVe/ExtRew layer must be *before* this layer in list of layers -- it is now after, won't work")) {
+//       return false;
+//     }
+//   }
 
   LeabraLayer* pvr_lay = FindLayerFmSpecNet(net, &TA_PVrLayerSpec);
   if(lay->CheckError(!pvr_lay, quiet, rval,
@@ -388,14 +388,14 @@ bool PVrLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 // 		     "requires MarkerConSpec connection from PVe/ExtRewLayerSpec layer to get external rewards!")) {
 //     return false;
 //   }
-  if(ext_rew_lay) {
-    int myidx = net->layers.FindLeafEl(lay);
-    int eridx = net->layers.FindLeafEl(ext_rew_lay);
-    if(lay->CheckError(eridx > myidx, quiet, rval,
-		       "PVe/ExtRew layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-      return false;
-    }
-  }
+//   if(ext_rew_lay) {
+//     int myidx = net->layers.FindLeafEl(lay);
+//     int eridx = net->layers.FindLeafEl(ext_rew_lay);
+//     if(lay->CheckError(eridx > myidx, quiet, rval,
+// 		       "PVe/ExtRew layer must be *before* this layer in list of layers -- it is now after, won't work")) {
+//       return false;
+//     }
+//   }
   return true;
 }
 
@@ -983,22 +983,23 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     return false;
   }
 
-  int myidx = lay->own_net->layers.FindLeafEl(lay);
-  int lvidx = lay->own_net->layers.FindLeafEl(lve_lay);
-  if(lay->CheckError(lvidx > myidx, quiet, rval,
-		"LVe layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-    return false;
-  }
-  lvidx = lay->own_net->layers.FindLeafEl(lvi_lay);
-  if(lay->CheckError(lvidx > myidx, quiet, rval,
-		"LVi layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-    return false;
-  }
-  lvidx = lay->own_net->layers.FindLeafEl(pvi_lay);
-  if(lay->CheckError(lvidx > myidx, quiet, rval,
-		"PVi layer must be *before* this layer in list of layers -- it is now after, won't work")) {
-    return false;
-  }
+  // order should no longer matter at all..
+//   int myidx = lay->own_net->layers.FindLeafEl(lay);
+//   int lvidx = lay->own_net->layers.FindLeafEl(lve_lay);
+//   if(lay->CheckError(lvidx > myidx, quiet, rval,
+// 		"LVe layer must be *before* this layer in list of layers -- it is now after, won't work")) {
+//     return false;
+//   }
+//   lvidx = lay->own_net->layers.FindLeafEl(lvi_lay);
+//   if(lay->CheckError(lvidx > myidx, quiet, rval,
+// 		"LVi layer must be *before* this layer in list of layers -- it is now after, won't work")) {
+//     return false;
+//   }
+//   lvidx = lay->own_net->layers.FindLeafEl(pvi_lay);
+//   if(lay->CheckError(lvidx > myidx, quiet, rval,
+// 		"PVi layer must be *before* this layer in list of layers -- it is now after, won't work")) {
+//     return false;
+//   }
 
   return true;
 }
@@ -1092,6 +1093,37 @@ void PVLVDaLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
 //			PVLV
 ///////////////////////////////////////////////////////////////
 
+
+bool LeabraWizard::PVLV_ToLayerGroup(LeabraNetwork* net) {
+  if(TestError(!net, "PVLV_ToLayerGroup", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
+    return false;
+
+  String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
+  String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
+  String vtanm = "VTA";
+
+  bool new_laygp = false;
+  Layer_Group* laygp = net->FindMakeLayerGroup("PVLV", NULL, new_laygp);
+
+  Layer* lay;
+  if(lay = net->FindLayer("RewTarg")) laygp->Transfer(lay);
+  if(lay = net->FindLayer(pvenm)) laygp->Transfer(lay);
+  if(lay = net->FindLayer(pvinm)) laygp->Transfer(lay);
+  if(lay = net->FindLayer(pvrnm)) laygp->Transfer(lay);
+  if(lay = net->FindLayer(lvenm)) laygp->Transfer(lay);
+  if(lay = net->FindLayer(lvinm)) laygp->Transfer(lay);
+  if(lay = net->FindLayer(nvnm)) laygp->Transfer(lay);
+  if(lay = net->FindLayer(vtanm)) laygp->Transfer(lay);
+  if(lay = net->FindLayer("DA")) laygp->Transfer(lay);
+
+  if(new_laygp) {
+    laygp->pos.z = 0;
+    net->RebuildAllViews();	// trigger update
+  }
+
+  return true;
+}
+
 // todo: set td_mod.on = true for td_mod_all; need to get UnitSpec..
 
 bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
@@ -1130,33 +1162,29 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   bool	nv_new = false;
   String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
   String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
-  String vtanm = "DA";
+  String vtanm = "VTA";
+
+  bool new_laygp = false;
+  Layer_Group* laygp = net->FindMakeLayerGroup("PVLV", NULL, new_laygp);
+
+  LeabraLayer* rew_targ_lay;
+  LeabraLayer* pve;  LeabraLayer* pvr; LeabraLayer* pvi; LeabraLayer* lve; LeabraLayer* lvi;
+  LeabraLayer* nv;   LeabraLayer* vta;
+
+  if(new_laygp) {
+    PVLV_ToLayerGroup(net);	// doesn't hurt to just do this..
+  }
 
   bool dumbo;
-  LeabraLayer* rew_targ_lay = (LeabraLayer*)net->FindMakeLayer("RewTarg");
-  LeabraLayer* pve = (LeabraLayer*)net->FindMakeLayer(pvenm, NULL, dumbo);
-  LeabraLayer* pvr = (LeabraLayer*)net->FindMakeLayer(pvrnm, NULL, pvr_new);
-  LeabraLayer* pvi = (LeabraLayer*)net->FindMakeLayer(pvinm, NULL, dumbo);
-  LeabraLayer* lve = (LeabraLayer*)net->FindMakeLayer(lvenm, NULL, lve_new);
-  LeabraLayer* lvi = (LeabraLayer*)net->FindMakeLayer(lvinm, NULL, dumbo);
-  LeabraLayer* nv =  (LeabraLayer*)net->FindMakeLayer(nvnm, NULL, nv_new);
-  LeabraLayer* vta = (LeabraLayer*)net->FindMakeLayer(vtanm, NULL, dumbo);
+  rew_targ_lay = (LeabraLayer*)laygp->FindMakeLayer("RewTarg");
+  pve = (LeabraLayer*)laygp->FindMakeLayer(pvenm, NULL, dumbo);
+  pvr = (LeabraLayer*)laygp->FindMakeLayer(pvrnm, NULL, pvr_new);
+  pvi = (LeabraLayer*)laygp->FindMakeLayer(pvinm, NULL, dumbo);
+  lve = (LeabraLayer*)laygp->FindMakeLayer(lvenm, NULL, lve_new);
+  lvi = (LeabraLayer*)laygp->FindMakeLayer(lvinm, NULL, dumbo);
+  nv =  (LeabraLayer*)laygp->FindMakeLayer(nvnm, NULL, nv_new);
+  vta = (LeabraLayer*)laygp->FindMakeLayer(vtanm, NULL, dumbo, "DA");
   if(rew_targ_lay == NULL || lve == NULL || pve == NULL || pvi == NULL || vta == NULL) return false;
-
-  //////////////////////////////////////////////////////////////////////////////////
-  // sort layers
-
-  rew_targ_lay->name = "0000";  pve->name = "0001";
-  pvr->name = "0002";  pvi->name = "0003";  
-  lve->name = "0005";  lvi->name = "0006";
-  nv->name =  "0008"; vta->name = "0009";
-
-  net->layers.Sort();
-
-  rew_targ_lay->name = "RewTarg";  pve->name = pvenm;
-  pvr->name = pvrnm;  pvi->name = pvinm; 
-  lve->name = lvenm; lvi->name = lvinm;
-  nv->name = nvnm;   vta->name = vtanm;
 
   //////////////////////////////////////////////////////////////////////////////////
   // collect layer groups
@@ -1166,8 +1194,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   Layer_Group output_lays;
   Layer_Group input_lays;
   int i;
-  for(i=0;i<net->layers.size;i++) {
-    LeabraLayer* lay = (LeabraLayer*)net->layers[i];
+  for(i=0;i<net->layers.leaves;i++) {
+    LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
     LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
     // todo: add any new bg layer exclusions here!
     if(lay != rew_targ_lay && lay != lve && lay != pve && lay != pvr && lay != pvi &&
@@ -1401,6 +1429,9 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   rew_targ_lay->un_geom.n = 1;
   rew_targ_lay->layer_type = Layer::INPUT;
 
+  if(new_laygp) {
+    laygp->pos.z = 0;
+  }
 
   //////////////////////////////////////////////////////////////////////////////////
   // apply specs to objects
@@ -1471,6 +1502,11 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
 
   net->Build();
   net->LayerPos_Cleanup();
+
+  if(new_laygp) {
+    laygp->pos.z = 0;		// move back!
+    net->RebuildAllViews();	// trigger update
+  }
 
   taMisc::CheckConfigStart(false, false);
 

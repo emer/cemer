@@ -4912,6 +4912,8 @@ void Layer::DMem_SyncAct() {
 //  Layer_Group	      //
 ////////////////////////
 
+bool Layer_Group::nw_itm_def_arg = false;
+
 void Layer_Group::InitLinks() { 
   inherited::InitLinks(); 
   taBase::Own(pos,this);
@@ -5122,6 +5124,50 @@ void Layer_Group::DispScaleLayers(float disp_scale) {
   }
   UpdateMaxSize();
   UpdateAfterEdit();
+}
+
+Layer* Layer_Group::FindMakeLayer(const char* nm, TypeDef* td, bool& nw_itm,
+				  const char* alt_nm) {
+  nw_itm = false;
+  Layer* lay = (Layer*)FindName(nm);
+  if(!lay && (alt_nm)) {
+    lay = (Layer*)FindName(alt_nm);
+    if(lay) lay->name = nm;
+  }
+  if(!lay) {
+    lay = (Layer*)NewEl(1, td);
+    lay->name = nm;
+    nw_itm = true;
+  }
+  if((td) && !lay->InheritsFrom(td)) {
+    RemoveEl(lay);
+    lay = (Layer*)NewEl(1, td);
+    lay->name = nm;
+    nw_itm = true;
+  }
+  return lay;
+}
+
+Layer_Group* Layer_Group::FindMakeLayerGroup(const char* nm, TypeDef* td, bool& nw_itm,
+				       const char* alt_nm) {
+  nw_itm = false;
+  Layer_Group* lay = (Layer_Group*)gp.FindName(nm);
+  if(!lay && (alt_nm)) {
+    lay = (Layer_Group*)gp.FindName(alt_nm);
+    if(lay) lay->name = nm;
+  }
+  if(!lay) {
+    lay = (Layer_Group*)NewGp(1, td);
+    lay->name = nm;
+    nw_itm = true;
+  }
+  if((td) && !lay->InheritsFrom(td)) {
+    gp.RemoveEl(lay);
+    lay = (Layer_Group*)NewGp(1, td);
+    lay->name = nm;
+    nw_itm = true;
+  }
+  return lay;
 }
 
 ////////////////////////////////////////////////////////
@@ -7403,24 +7449,11 @@ BaseSpec* Network::FindSpecType(TypeDef* td) {
 }
 
 Layer* Network::FindMakeLayer(const char* nm, TypeDef* td, bool& nw_itm, const char* alt_nm) {
-  nw_itm = false;
-  Layer* lay = (Layer*)layers.FindName(nm);
-  if((lay == NULL) && (alt_nm)) {
-    lay = (Layer*)layers.FindName(alt_nm);
-    if(lay) lay->name = nm;
-  }
-  if(lay == NULL) {
-    lay = (Layer*)layers.NewEl(1, td);
-    lay->name = nm;
-    nw_itm = true;
-  }
-  if((td) && !lay->InheritsFrom(td)) {
-    layers.RemoveEl(lay);
-    lay = (Layer*)layers.NewEl(1, td);
-    lay->name = nm;
-    nw_itm = true;
-  }
-  return lay;
+  return layers.FindMakeLayer(nm, td, nw_itm, alt_nm);
+}
+
+Layer_Group* Network::FindMakeLayerGroup(const char* nm, TypeDef* td, bool& nw_itm, const char* alt_nm) {
+  return layers.FindMakeLayerGroup(nm, td, nw_itm, alt_nm);
 }
 
 Projection* Network::FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* cs, bool& nw_itm) 
