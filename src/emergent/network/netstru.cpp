@@ -6894,14 +6894,17 @@ bool Network::LoadWeights(const String& fname, bool quiet) {
 
 void Network::LayerZPos_Unitize() {
   int_Array zvals;
+  TDCoord lpos;
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    zvals.AddUnique(l->pos.z);
+    l->GetAbsPos(lpos);
+    zvals.AddUnique(lpos.z);
   }
   zvals.Sort();
   FOR_ITR_EL(Layer, l, layers., i) {
-    l->pos.z = zvals.FindEl(l->pos.z); // replace with its index on sorted list..
+    int nw_z = zvals.FindEl(l->pos.z); // replace with its index on sorted list..
+    l->pos.z += nw_z - l->pos.z;
   }
   UpdateMaxSize();
 }

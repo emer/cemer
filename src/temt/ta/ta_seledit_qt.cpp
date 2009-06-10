@@ -864,6 +864,12 @@ void iSelectEditDataHost2::GetImage_Item(int row) {
   EditMbrItem* item = dynamic_cast<EditMbrItem*>(
     (taBase*)(it->data(Qt::UserRole).value<ta_intptr_t>()));
   if ((item == NULL) || (item->base == NULL) ||  (item->mbr == NULL)) return;
+  if(!item->base->InheritsFrom((TypeDef*)item->mbr->owner->owner)) {
+    taMisc::Warning("type mismatch in select edit", item->label, "-- should be removed asap",
+		    ((TypeDef*)item->mbr->owner->owner)->name, "!=",
+		    item->base->GetTypeDef()->name);
+    return;
+  }
   void* off = item->mbr->GetOff(item->base);
   String txt = item->mbr->type->GetValStr(off, item->base,
                                           item->mbr, TypeDef::SC_DISPLAY, true); 
