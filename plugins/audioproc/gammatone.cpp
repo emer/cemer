@@ -529,15 +529,14 @@ void GammatoneBlock::MakeStdFilters(float cf_lo, float cf_hi, int n_chans) {
 */
 
 void MelCepstrumBlock::Initialize() {
+  mel_flags = (MelFlags)(MF_COMPRESS & MF_DCT);
   cf_lo = 100.0f;
   cf_lin_bw = 100.0f;
   cf_log_factor = 1.1f;
   n_lin_chans = 10;
   n_log_chans = 22;
-  compress = true;
-  comp_thresh.Set(-90, Level::UN_DBI);
-  dct = true;
-  n_cepstrum = 10;
+  comp_thresh.Set(-60, Level::UN_DBI);
+  n_cepstrum = 12;
   out_rate = 10.0f;
   fft_band = 0;
 }
@@ -580,16 +579,22 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   
   // crudely set gain based on an empirically derived constants to get peak mel~=1 for 1Khz sine
   auto_gain.Set(1.0f / ((16.0f * out_rate) - 37.0f), Level::UN_SCALE);
+  
   // just init all chans, whether enabled or not
   const int n_chans = n_lin_chans + n_log_chans;
-  DataBuffer* ob = &out_buff;
-  ob->enabled = true;
-  ob->fs.SetCustom((float)src_buff->fs / out_size);
-  ob->fr_dur.Set(1, Duration::UN_SAMPLES); // we just output one item at a time
-  ob->fields = src_buff->fields;
-  ob->chans = (dct) ? n_cepstrum : n_chans;
-  ob->vals = 1;
-  
+  for (int i = 0; i < 2; ++i) {
+    // stuff common to both outputs
+    DataBuffer* ob = outBuff(i);
+    ob->enabled = true; // energy may get disabled
+    ob->fs.SetCustom((float)src_buff->fs / out_size);
+    ob->fr_dur.Set(1, Duration::UN_SAMPLES); // we just output one item at a time
+    ob->fields = src_buff->fields;
+    ob->vals = 1;
+  }
+  if (mel_flags & MF_DCT) 
+    out_buff.chans = (mel_flags & MF_USE_MFCC0) ? n_cepstrum : n_cepstrum - 1;
+  else out_buff.chans = n_chans;
+  out_buff_energy.enabled = (mel_flags & MF_ENERGY);
   
   // rate counters
   out_size = (int)Duration::StatGetDurationSamples(out_rate, Duration::UN_TIME_MS, src_buff->fs);
@@ -617,9 +622,9 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   fft_band = 1000.0f / (2 * out_rate);
   mel_out.SetGeom(1, n_chans);
   
-  // dct filter, if applicable
+  // dct filter, if applicable -- filter always defines MFCC0 even if we don't use it
   // ex. from Zheng et al. 2001 
-  if (dct) {
+  if (mel_flags & MF_DCT) {
     dct_filt.SetGeom(2, n_chans, n_cepstrum);
     for (int n = 0; n < n_cepstrum; ++n) 
     for (int i = 0; i < n_chans; ++i)
@@ -683,10 +688,12 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
   ProcStatus ps = PS_OK;
   const int in_items = in_mat->dim(ITEM_DIM);
   const int in_fields = in_mat->dim(FIELD_DIM);
+  const bool use_energy = (mel_flags & MF_ENERGY);
+  
   for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) { 
     const int out_stage = out_buff.stage;
     for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) {
-      float dat = in_mat->FastEl(0, 0, f, i, stage);
+      float dat = in_mat->FastEl(0, 0, f, i, stage) * auto_gain;
       in_buff.Set(dat, in_idx, f);
     } // field
     // we output every 1/2 frame size
@@ -724,10 +731,13 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
 	if (TestError((!ok), "AcceptData_MC",
 	  "fft did not complete ok")) return PS_ERROR;
 	  
-	// collapse freq bands
+	// collapse freq bands into a still-linear mel_out, and accum energy
+	double energy = 0;
+	int n_active_chans = 0;
 	for (int ch = 0; ch < chans.size; ++ch) {
 	  FilterChan* fc = chans.FastEl(ch);
 	  if (!fc->on) break;
+	  ++n_active_chans;
 	  double out = 0;
 	  // lower sideband -- interpolate lowest
 	  float lower = (ch > 0) ?
@@ -758,22 +768,44 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
 	    wt_tot += wt;
 	    out += wt * fft_out.FastEl_Flat(fft_idx);
 	  }
-//no,don't	  out /= wt_tot; // normalizes everyone
-          // compress
-          if (compress) {
+	  
+	  // accumulate the RMS energy, if that is enabled
+	  if (mel_flags && MF_ENERGY) {
+	    energy += (out * out); 
+	  }
+	  
+          // compress, if enabled
+          if (mel_flags && MF_COMPRESS) {
             if (out < comp_thresh) out = comp_thresh;
             out = log(out);
           }
-	  mel_out.FastEl_Flat(ch) = (float)(out * auto_gain);
+	  mel_out.FastEl_Flat(ch) = (float)(out);
 	}
+	
+	// calculate the RMS energy, if that is enabled (but don't notify yet)
+	if (use_energy) {
+	  energy /= n_active_chans;
+	  energy = sqrt(energy);
+          if (mel_flags && MF_COMPRESS) {
+	    if (energy < comp_thresh) energy = comp_thresh;
+	    energy = log(energy);
+	  }
+	  out_buff_energy.mat.FastEl(0, 0, f, 0, out_buff_energy.stage) = (float)energy;
+	}
+	
 	// Discrete Cosine transform (if enabled) and output, but no notify yet
-        if (dct) {
-          for (int ch = 0; ch < n_cepstrum; ++ch) {
+        if (mel_flags && MF_DCT) {
+	  // determine if we need to calc MFCC0
+	  const int cep_base = (mel_flags & MF_USE_MFCC0) ? 0 : 1;
+	  int ch = 0;
+	  // cep is the raw cepstrum coefficient, 
+          for (int cep = cep_base; cep < n_cepstrum; ++cep) {
             double out = 0; 
             for (int mel = 0; mel < chans.size; ++mel) {
-             out += mel_out.FastEl_Flat(mel) * dct_filt.FastEl(mel, ch);
+             out += mel_out.FastEl_Flat(mel) * dct_filt.FastEl(mel, cep);
             }
             out_buff.mat.FastEl(0, ch, f, 0, out_buff.stage) = (float)out;
+	    ++ch;
           }
         
         } else {
@@ -2118,7 +2150,6 @@ void NormBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   const int in_fields = src_buff->fields; 
   const int in_chans = src_buff->chans; 
   const int in_vals = src_buff->vals; 
-  const int in_size = in_fields * in_chans * in_vals;
   scaled.SetGeom(3, in_vals, in_chans, in_fields);
   
   if (norm_tc.duration == 0)
@@ -2134,7 +2165,7 @@ void NormBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   ob->chans = src_buff->chans;
   ob->vals = src_buff->vals;
   
-  // norm factor: v0=slope, v1=offset
+  // norm: v0=factor, v1=offset
   ob = &out_buff_norm;
   ob->enabled = (agc_flags & AGC_ON); // pointless if manual
   ob->fs = src_buff->fs;
