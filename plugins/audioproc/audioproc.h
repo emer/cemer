@@ -1210,6 +1210,7 @@ public:
     AGC_BYPASS  = 0x001, // bypass the AGC block (i.e. gain of 1)
     AGC_ON	= 0x002, // use Automatic Gain Control, else use current gain setting
     AGC_UPDATE_INIT = 0x004, // continuously update the initial value with current value
+    AGC_ENERGY		= 0x008, // calculate the rms energy output to the out_buff_energy (will be log if COMPRESS on)
   };
   
   enum AGCType { // how to calculate the gain
@@ -1218,6 +1219,8 @@ public:
   };
   
   DataBuffer		out_buff_params; //  #SHOW_TREE provides the gain values used: v0:cl, v1: (note: is always mono, even for stereo feeds)
+  DataBuffer		out_buff_energy; //  #SHOW_TREE #CONDEDIT_ON_agc_flags:AGC_ENERGY rms energy output (if enabled)
+
   AGCFlags		agc_flags; // flags to control features
   AGCType		agc_type; // how to calculate the gain
   float 		update_rate; // #DEF_10 the rate at which we update the AGC and output the params; frame size will be 2* this
@@ -1234,15 +1237,14 @@ public:
   Duration  		agc_tc_decay; // the time constant of the gain integration for decreases in the signal -- typically lower than attack, try 500 ms
   
   
-  ProcStatus 		AcceptData_bypass(float_Matrix* in_mat, int stage = 0);
-    // #IGNORE mostly for proc
   ProcStatus 		AcceptData_AGC(float_Matrix* in_mat, int stage = 0);
   // #IGNORE mostly for proc
   
-  override int		outBuffCount() const {return 2;}
+  override int		outBuffCount() const {return 3;}
   override DataBuffer* 	outBuff(int idx) {switch (idx) {
     case 0: return &out_buff; 
     case 1: return &out_buff_params;
+    case 2: return &out_buff_energy;
     default: return NULL;}}
   
   SIMPLE_LINKS(AGCBlock)
@@ -1251,7 +1253,7 @@ public:
 public:
   double		in_peak; // #NO_SAVE #EXPERT #READ_ONLY integrated peak, used to set gain
   double		in_avg; // #NO_SAVE #EXPERT #READ_ONLY avg value in current stream
-  double_Matrix		accum; // // #NO_SAVE #READ_ONLY #HIDDEN 0:even/odd, 1:field
+  double_Matrix		accum; // // #NO_SAVE #READ_ONLY #HIDDEN energy 0:even/odd, 1:field
   
 public: // TEMP 
   float 		in_dt; // #NO_SAVE #READ_ONLY #HIDDEN 

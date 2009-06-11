@@ -183,11 +183,8 @@ public:
     MF_COMPRESS		= 0x001, // compress mel outputs logarithmically (using natural log)
     MF_DCT		= 0x002, // apply Discrete Cosine Transform and create cepstrum coefficients
     MF_USE_MFCC0	= 0x004, // output the channel 0 DCT (typically not used)
-    MF_ENERGY		= 0x008, // calculate the rms energy output to the out_buff_energy (will be log if COMPRESS on)
   };
   
-  DataBuffer		out_buff_energy; //  #SHOW_TREE #CONDEDIT_ON_mel_flags:MF_ENERGY rms energy output (if enabled)
-
   MelFlags		mel_flags; // flags that control what type of processing and output
   float			out_rate; // output rate, in ms (frames will be 2x this duration, i.e. half-overlapping)
   Level			auto_gain; // #READ_ONLY #SHOW #NO_SAVE an automatically applied gain adjustment based on the output type selected; crudely makes 1Khz sine wave have ~1 output (linear) in peak channel of mel fft
@@ -202,11 +199,6 @@ public:
   FilterChan_List	chans; // #NO_SAVE the individual channels
   
   override taList_impl*  children_() {return &chans;} //note: required
-  override int		outBuffCount() const {return 2;}
-  override DataBuffer* 	outBuff(int idx) {switch (idx) {
-    case 0: return &out_buff; 
-    case 1: return &out_buff_energy;
-    default: return NULL;}}
   
   virtual void		GraphFilter(DataTable* disp_data,
     bool log_freq = true);

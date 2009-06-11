@@ -2232,7 +2232,7 @@ void AGCBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   UpdateDerived(); // mostly for tcs
   
   accum.SetGeom(2, 2, src_buff->fields);
-  accum.Clear();
+  accum.Clear(); // for reconfigs
   // init peak to lowest value, and avg to neutral based on current params
   in_peak = output_level_abs *  Level::LevelToActual(gain_thresh, gain_units);
   in_avg =  output_level_abs / cur_gain_abs;
@@ -2244,9 +2244,19 @@ void AGCBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   
   if (out_buff_params.enabled) {
     out_buff_params.fs.SetCustom(1000.0f/update_rate);
+    out_buff_params.fr_dur.Set(1, Duration::UN_SAMPLES); // we just output one item at a time
     out_buff_params.fields = 1; // same for both fields
     out_buff_params.chans = 1;//src_buff->chans;
     out_buff_params.vals = 2; // 0=gain, in gain.units
+  }
+  
+  out_buff_energy.enabled = (agc_flags & AGC_ENERGY);
+  if (out_buff_energy.enabled) {
+    out_buff_energy.fs.SetCustom(1000.0f/update_rate);
+    out_buff_energy.fr_dur.Set(1, Duration::UN_SAMPLES); // we just output one item at a time
+    out_buff_energy.fields = 1; // same for both fields
+    out_buff_energy.chans = 1;//src_buff->chans;
+    out_buff_energy.vals = 2; // 0=gain, in gain.units
   }
 }
 
@@ -2254,34 +2264,7 @@ void AGCBlock::AcceptData_impl(SignalProcBlock* src_blk,
     DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps)
 {
   float_Matrix* in_mat = &src_buff->mat;
-  if (agc_flags & AGC_BYPASS) 
-    ps = AcceptData_bypass(in_mat, stage);
-  else
-    ps = AcceptData_AGC(in_mat, stage);
-}
-
-SignalProcBlock::ProcStatus AGCBlock::AcceptData_bypass(float_Matrix* in_mat, int stage)
-{
-  ProcStatus ps = PS_OK;
-  float_Matrix* out_mat = &out_buff.mat;
-  const int in_items = in_mat->dim(ITEM_DIM);
-  const int in_fields = in_mat->dim(FIELD_DIM);
-  const int in_chans = in_mat->dim(CHAN_DIM);
-  const int in_vals = in_mat->dim(VAL_DIM);
-  
-  for (int i = 0; i < in_items; ++i) {
-    for (int f = 0; f < in_fields; ++f) 
-    for (int chan = 0; chan < in_chans; ++chan) 
-    for (int v = 0; v < in_vals; ++v) {
-      float val = in_mat->FastEl(v, chan, f, i, stage);
-      out_mat->Set(val, v, chan, f, out_buff.item, out_buff.stage);
-    }
-    if (out_buff.NextIndex()) {
-      NotifyClientsBuffStageFull(&out_buff, 0, ps);
-    }
-  }
-
-  return ps;
+  ps = AcceptData_AGC(in_mat, stage);
 }
 
 SignalProcBlock::ProcStatus AGCBlock::AcceptData_AGC(float_Matrix* in_mat, int stage)
@@ -2298,7 +2281,7 @@ SignalProcBlock::ProcStatus AGCBlock::AcceptData_AGC(float_Matrix* in_mat, int s
   for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i) {
  
     
-    if (agc_flags & AGC_ON) {
+    if (agc_flags & (AGC_ON | AGC_ENERGY)) {
       // accumulate the current dat^2 for each field, for each frame
       for (int f = 0; f < in_fields; ++f)
       for (int chan = 0; chan < in_chans; ++chan) 
@@ -2316,14 +2299,27 @@ SignalProcBlock::ProcStatus AGCBlock::AcceptData_AGC(float_Matrix* in_mat, int s
       if ((in_idx % out_size) == 0) {
 	const int N = (frame_size * in_vals * in_chans);
 	int eo = (in_idx == 0) ? 0 : 1; // even/odd is totally arbitray
-	for (int f = 0; f < in_fields; ++f) {
-	  double& dat = accum.FastEl(eo, f);
-	  // compute energy
-	  dat = sqrt(dat / N);
-        }
-	UpdateAGC(eo);
+	// compute each field energy, and accum for total energy (applicable for stereo)
+        double tot_energy = 0;
+	if (in_fields == 1) {
+          double& dat = accum.FastEl(eo, 0);
+          // compute field energy
+          dat = sqrt(dat / N);
+          tot_energy = dat;
+	} else {
+          for (int f = 0; f < in_fields; ++f) {
+            double& dat = accum.FastEl(eo, f);
+            tot_energy += dat; 
+            // compute field energy
+            dat = sqrt(dat / N);
+          }
+          tot_energy = sqrt(tot_energy / (N * in_fields));
+	}
+        if (agc_flags & AGC_ON) {
+	  UpdateAGC(eo);
+	}
 	
-	// output secondary channel
+	// output secondary channels
 	if (out_buff_params.enabled) {
 	  float dat = cur_gain;
 	  out_mat_gain->Set(dat, 0, 0, 0, out_buff_params.item, out_buff_params.stage);
@@ -2331,8 +2327,15 @@ SignalProcBlock::ProcStatus AGCBlock::AcceptData_AGC(float_Matrix* in_mat, int s
 	    NotifyClientsBuffStageFull(&out_buff_params, 1, ps);
 	  }
 	}
+	if (out_buff_energy.enabled) {
+	  out_mat_gain->Set(tot_energy, 0, 0, 0, out_buff_energy.item, out_buff_energy.stage);
+	  if (out_buff_energy.NextIndex()) {
+	    NotifyClientsBuffStageFull(&out_buff_energy, 2, ps);
+	  }
+	}
+	
       }
-    } // AGC_ON	
+    } // AGC_ON	etc.
         
     // now output all data, applying current gain
     for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f) 
@@ -2340,7 +2343,8 @@ SignalProcBlock::ProcStatus AGCBlock::AcceptData_AGC(float_Matrix* in_mat, int s
     for (int val = 0; ((ps == PS_OK) && (val < in_vals)); ++val) 
     {
       float dat = in_mat->SafeEl(val, chan, f, i, stage);
-      dat *= cur_gain_abs;
+      if (!(agc_flags & AGC_BYPASS))
+        dat *= cur_gain_abs;
       out_mat->Set(dat, val, chan, f, out_buff.item, out_buff.stage);
     }
     if (out_buff.NextIndex()) {
