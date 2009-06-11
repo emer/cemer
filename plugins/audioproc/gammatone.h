@@ -178,11 +178,11 @@ class AUDIOPROC_API MelCepstrumBlock: public StdBlock
 { // ##CAT_Audioproc gammatone filter bank
 INHERITED(StdBlock) 
 public:
-  enum MelFlags {
+  enum MelFlags { // #BITS
     MF_0		= 0, // #IGNORE
-    MF_COMPRESS		= 0x001, // compress mel outputs logarithmically (using natural log)
-    MF_DCT		= 0x002, // apply Discrete Cosine Transform and create cepstrum coefficients
-    MF_USE_MFCC0	= 0x004, // output the channel 0 DCT (typically not used)
+    MF_COMPRESS		= 0x001, //  #LABEL_Compress compress mel outputs logarithmically (using natural log)
+    MF_DCT		= 0x002, //  #LABEL_DCT apply Discrete Cosine Transform and create cepstrum coefficients
+    MF_USE_MFCC0	= 0x004, //  #LABEL_Use_MFCC0 output the channel 0 DCT (typically not used)
   };
   
   MelFlags		mel_flags; // flags that control what type of processing and output

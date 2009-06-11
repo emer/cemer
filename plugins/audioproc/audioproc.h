@@ -1207,10 +1207,10 @@ INHERITED(StdBlock)
 public:
   enum AGCFlags { // #BITS flags for the AGC block
     AF_0	= 0, // #IGNORE
-    AGC_BYPASS  = 0x001, // bypass the AGC block (i.e. gain of 1)
-    AGC_ON	= 0x002, // use Automatic Gain Control, else use current gain setting
-    AGC_UPDATE_INIT = 0x004, // continuously update the initial value with current value
-    AGC_ENERGY		= 0x008, // calculate the rms energy output to the out_buff_energy (will be log if COMPRESS on)
+    AGC_BYPASS  = 0x001, // #LABEL_Bypass bypass the AGC block (i.e. gain of 1)
+    AGC_ON	= 0x002, // #LABEL_Agc_On use Automatic Gain Control, else use current gain setting
+    AGC_UPDATE_INIT = 0x004, // #LABEL_Update_Init continuously update the initial value with current value
+    AGC_ENERGY		= 0x008, // #LABEL_Energy calculate the rms energy output to the out_buff_energy (will be log if COMPRESS on)
   };
   
   enum AGCType { // how to calculate the gain
