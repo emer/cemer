@@ -285,6 +285,7 @@ public:
   TypeDef*		typ;		// type of object (if relevant)
   void*			root;	// current root pointer of object (if relevant)
   int		ctrl_size;	// a taiMisc::SizeSpec-compatible value (ie, from FontSpec) -- def is taiM->ctrl_size
+  int		row_height;	// height of edit rows, not including margins and spaces (= max_control_height(def_size)) -- set in Constr_impl
   bool          read_only;	// cannot change data
   int		state;		// Dlg_State value -- indicates state of construction of dialog
   bool		modal;	// true if dialog is of the modal variety, always false for edit panels
@@ -529,7 +530,6 @@ public:
     QObject* ctx_obj = NULL, const char* ctx_slot = NULL, int row = 0); 
     // helper used by AddName, and in ProgEditor (and elsewhere, ex inlines)
   
-  int		row_height;	// height of edit rows, not including margins and spaces (= max_control_height(def_size)) -- set in Constr
   int		cur_row;	// #IGNORE marks row num of ctrl being added to grid or matrix (for groups) -- child can read this to determine its background color, by calling colorOfRow()
   int		dat_cnt; // count of actual data controls added -- used to mark flat data index of control for right click menu
 
@@ -793,15 +793,18 @@ protected:
   override void 	Ok_impl();
 };
 
-class TA_API taiWizardDataHost : public taiEditDataHost {
+class TA_API taiWizardDataHost : public taiDataHost_impl {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for Wizards -- uses tab pages
   Q_OBJECT
-INHERITED(taiEditDataHost)
+INHERITED(taiDataHost_impl)
 public:
   MembSet_List		membs; // one set per page
   
   QTabWidget*		tabs;
   
+  Member_List&		memb_el(int i) // the member defs, typically enumerated once
+    {return membs.FastEl(i)->memb_el;}
+
 //  override void		GetImage();
 //  override void		GetValue();
   override void		Constr_Buttons();//

@@ -3080,3 +3080,11 @@ void taRootBase::SaveRecoverFileHandler(int err) {
 // NOTE: PluginWizard code is in ta_plugin_p.cpp
 
 
+void TestWizard::LaunchWizard() {
+  
+  TypeDef* td = GetTypeDef();
+  taiWizardDataHost* dlg = new taiWizardDataHost(this, td, false); // false = not read only
+  dlg->Constr("Wizard");
+  if(dlg->Edit(true)) {
+  }
+}

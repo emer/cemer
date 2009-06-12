@@ -956,16 +956,6 @@ protected:
   override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
 };
 
-class TA_API WizardEdit : public taiEdit {
-INHERITED(taiEdit)
-public:
-  int		BidForEdit(TypeDef* td);
-  TAQT_EDIT_INSTANCE(WizardEdit, taiEdit);
-protected:
-  override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
-};
-
-
 
 //////////////////////////
 //   Viewer Types 	//

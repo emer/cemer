@@ -817,6 +817,8 @@ public:
   int		inty; // #PAGE_0_Start
   float		floaty;
   String	outputy; // #PAGE_1_Output
+  
+  void		LaunchWizard(); // #BUTTON launch the wizard
 
   TA_BASEFUNS(TestWizard);
 private:

@@ -712,6 +712,7 @@ taiDataHostBase::taiDataHostBase(TypeDef* typ_, bool read_only_,
 
   if (taiM == NULL) ctrl_size = taiMisc::sizMedium;
   else              ctrl_size = taiM->ctrl_size; // for early type system instance when no taiM yet
+  row_height = 1; // actual value set in Constr
   mouse_button = 0;
   no_ok_but = false;
   dialog = NULL;
@@ -839,6 +840,7 @@ void taiDataHostBase::ConstrDeferred() {
 }
 
 void taiDataHostBase::Constr_impl() {
+  row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if using even/odd shading
   widget()->setUpdatesEnabled(false);
   Constr_Prompt();
   Constr_Box();
@@ -1494,7 +1496,6 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
 {
   InitGuiFields(false);
 
-  row_height = 1; // actual value set in Constr
   cur_row = 0;
   dat_cnt = 0;
   first_tab_foc = NULL;
@@ -1670,7 +1671,6 @@ void taiDataHost::AddMultiData(iEditGrid* multi_body, int row, int col, QWidget*
 }
 
 void taiDataHost::Constr_Box() {
-  row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if using even/odd shading
   //note: see also gpiMultiEditDialog::Constr_Box, if changes made to this implementation
   //note: see ClearBody for guards against deleting the structural widgets when clearing
   QWidget* scr_par = (splBody == NULL) ? widget() : splBody;
@@ -2642,8 +2642,9 @@ bool taiStringDataHost::eventFilter(QObject* obj, QEvent* event) {
 
 taiWizardDataHost::taiWizardDataHost(taWizard* base_, TypeDef* typ_,
 	     bool read_only_, bool modal_, QObject* parent)
-:inherited(base_, typ_ ,read_only_, modal_, parent)
+:inherited(typ_ ,read_only_, modal_, parent)
 {
+  root = base_;
   tabs = NULL;
 }
 
