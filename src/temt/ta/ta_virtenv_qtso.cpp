@@ -506,6 +506,9 @@ bool VEObjCarousel::LoadObjs(bool force) {
   if(TestError(!(bool)obj_table, "LoadObjs", "obj_table is not set -- cannot load objs!"))
     return false;
 
+  // this delay is deadly for viewing!
+  SoVRMLImageTexture::setDelayFetchURL(false);
+
   MakeSwitch();
   SoSwitch* sw = obj_switch;
 

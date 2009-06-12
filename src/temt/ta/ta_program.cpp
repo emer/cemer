@@ -2523,8 +2523,11 @@ void ProgramCall::UpdateAfterMove_impl(taBase* old_owner) {
 void ProgramCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateArgs();		// always do this..  nondestructive and sometimes stuff changes anyway
-  if(targ_ld_init.empty() && (bool)target) {
-    targ_ld_init = String("*") + target.ptr()->GetName() + "*"; // make it wild!
+  if((bool)target) {
+    String targ_ld_i = targ_ld_init.between("*", "*");
+    if(targ_ld_init.empty() || !target.ptr()->GetName().contains(targ_ld_i)) {
+      targ_ld_init = String("*") + target.ptr()->GetName() + "*"; // make it wild!
+    }
   }
 }
 
