@@ -44,6 +44,7 @@
 # include <QMessageBox>
 # include <QWidgetList>
 # include <QGLFormat>
+# include <QWebSettings>
 #endif
 
 #include "inetworkaccessmanager.h"
@@ -2055,7 +2056,7 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
     if ((taMisc::gui_style == taMisc::GS_WINDOWSVISTA) && (
       QSysInfo::WindowsVersion != QSysInfo::WV_VISTA))
       taMisc::gui_style = taMisc::GS_WINDOWSXP;
-# endif
+# endif // TA_OS_WIN
     String gstyle;
     if(taMisc::gui_style != taMisc::GS_DEFAULT) {
       gstyle = TA_taMisc.GetEnumString("GuiStyle", taMisc::gui_style).after("GS_").downcase();
@@ -2071,7 +2072,7 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 # else
     new QApplication(argc, (char**)argv); // accessed as qApp
     milestone |= SM_QAPP_OBJ;
-# endif
+# endif // TA_USE_INVENTOR
     if(gstyle.nonempty()) {
       QApplication::setStyle(gstyle.toQString());
     }
@@ -2087,14 +2088,17 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
     }
 
 #ifdef TA_USE_INVENTOR
-#if COIN_MAJOR_VERSION >= 3
+# if COIN_MAJOR_VERSION >= 3
     // this installs the callback to eliminate dependency on simage 
     coin_image_reader_cb_obj = new CoinImageReaderCB;
+# endif
 #endif
 
+  QWebSettings *defaultSettings = QWebSettings::globalSettings();
+  defaultSettings->setAttribute(QWebSettings::PluginsEnabled, true);
+
   } else 
-#endif
-#endif
+#endif // TA_GUI
 
   {
     new QCoreApplication(argc, (char**)argv); // accessed as qApp
