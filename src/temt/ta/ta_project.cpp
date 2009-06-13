@@ -3038,16 +3038,20 @@ void taRootBase::SaveRecoverFileHandler(int err) {
   }
   has_crashed = true;		// to prevent recursive crashing..
 
-#ifdef DMEM_COMPILE
-  MPI_Finalize();
-#endif
-  taThreadMgr::TerminateAllThreads(); // don't leave any active threads lying around
+  bool non_term_sig = ((err == SIGALRM) || (err == SIGUSR1) || (err == SIGUSR2));
 
-#ifdef TA_GUI
-  taiMisc::Cleanup(err);	// cleanup stuff in tai
+  if(!non_term_sig) {
+#ifdef DMEM_COMPILE
+    MPI_Finalize();
 #endif
+    taThreadMgr::TerminateAllThreads(); // don't leave any active threads lying around
+#ifdef TA_GUI
+    taiMisc::Cleanup(err);	// cleanup stuff in tai
+#endif
+  }
+
 #ifndef TA_OS_WIN // MS CRT doesn't handle these signals...
-  if((err == SIGUSR1) || (err == SIGUSR2) || (err == SIGALRM)) {
+  if(non_term_sig) {
     cerr << "Saving project file(s) from signal: ";
   } else
 #endif // !TA_OS_WIN
@@ -3065,11 +3069,16 @@ void taRootBase::SaveRecoverFileHandler(int err) {
 #ifdef TA_OS_WIN // MS CRT doesn't handle these signals...
   exit(err);
 #else // TA_OS_WIN // MS CRT doesn't handle these signals...
-  if((err == SIGALRM) || (err == SIGUSR1) || (err == SIGUSR2)) {
+  if(non_term_sig) {
     taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFileHandler);
     has_crashed = false;
   } else {
-    kill(getpid(), err);		// activate signal
+    if(err == SIGTERM) {
+      exit(err);		// we need to forcibly exit on this one
+    }
+    else {
+      kill(getpid(), err);	// activate signal
+    }
   }
 #endif // 
  
