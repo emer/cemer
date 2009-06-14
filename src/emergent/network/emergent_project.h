@@ -129,9 +129,6 @@ public:
   virtual Network* 	GetDefNetwork();
   // get default network from project
 
-  override void 	AssertDefaultWiz(bool auto_opn);
-  // make the default wizard(s)
-
   override void		SaveRecoverFile_strm(ostream& strm);
 
   virtual void	AutoBuildNets();
@@ -141,6 +138,7 @@ public:
 
   void	UpdateAfterEdit();
   void 	InitLinks_impl(); // special, for this class only
+  void 	InitLinks_post(); // special, for this class only
   void	CutLinks_impl(); // special, so we can do base class guys first (esp. viewers)
   void	Copy_(const ProjectBase& cp);
   TA_BASEFUNS(ProjectBase);

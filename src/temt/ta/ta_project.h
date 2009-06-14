@@ -471,8 +471,6 @@ public:
   // #CAT_Display gets one if there is, else NULL
   virtual MainWindowViewer* AssertDefaultProjectBrowser(bool auto_opn); 
     // #CAT_Display make sure the default project browser is made, and optionally open it
-  virtual void 		AssertDefaultWiz(bool auto_opn) {} 
-    // #CAT_Display make sure the default wizard(s) are made, and optionally open them
   virtual void		OpenNewProjectBrowser(String proj_browser_name = "(default name)");
     // #MENU #MENU_ON_View #MENU_CONTEXT #CAT_Display open a new browser, either 3-pane or 2-2-pane (tree + viewer)
   virtual void		OpenNewProjectViewer(String proj_browser_name = "(default name)");
@@ -483,7 +481,6 @@ public:
   // #CAT_Display manual refresh of all view information in the project -- equivalent to the View/Refresh (F5 key) menu -- should not be necessary but sometimes comes in handy..
   virtual void		UpdateUi();
   // #CAT_Display manual call to update user interface enabled/disabled settings -- usually done through signals and slots, but this can be useful for non-gui driven changes that might affect enabling
-  override void		WindowShowHook();
 
   ///////////////////////////////////////////////////////////////////
   //	Get new proj objects
@@ -533,11 +530,12 @@ public:
   TA_BASEFUNS(taProject);
   
 protected:
-  virtual void 		InitLinks_post(); // #IGNORE called after all _impls: does LoadDefaults and launches wiz
+  virtual void 		InitLinks_post(); // #IGNORE called after all _impls (not called for undo_loading): assert things like default wizards in here
   void 	CutLinks(); // don't override this -- use _impl instead
   virtual MainWindowViewer* MakeProjectBrowser_impl(); // make a standard viewer for this project type
   override int		GetOwnerEditableState_impl(int mask) const
     {return 0;} // the readonly stops here!
+  void 			DoView();
   
 private:
   void	Copy_(const taProject& cp);

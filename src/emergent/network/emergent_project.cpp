@@ -745,6 +745,16 @@ void ProjectBase::InitLinks_impl() {
   data.FindMakeGpName("AnalysisData");
 }
 
+void ProjectBase::InitLinks_post() {
+  taWizard* wiz = wizards.SafeEl(0);
+  if (!wiz) {
+    wiz = (Wizard*)wizards.New(1, wizards.el_typ);
+    wiz->auto_open = !taMisc::is_loading; // only auto open first time
+    ((Wizard*)wiz)->ThreeLayerNet();
+  }
+  inherited::InitLinks_post();
+}
+
 void ProjectBase::CutLinks_impl() {
   // do base first, esp. to nuke viewers before the networks
   inherited::CutLinks_impl();
@@ -794,19 +804,6 @@ void ProjectBase::AutoBuildNets() {
     }
     taMisc::Info("Network:",net->name,"auto building");
     net->Build();
-  }
-}
-
-void ProjectBase::AssertDefaultWiz(bool auto_opn) {
-  taWizard* wiz = wizards.SafeEl(0);
-//TODO: need a better wizard making api -- factor out the make routine
-  if (!wiz) {
-    wiz = (Wizard*)wizards.New(1, wizards.el_typ);
-  }
-  if(auto_opn) {
-    wiz->auto_open = true;
-    ((Wizard*)wiz)->ThreeLayerNet();
-    wiz->EditPanel(true);
   }
 }
 

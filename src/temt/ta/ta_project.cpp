@@ -909,25 +909,8 @@ void taProject::InitLinks_impl() {
 }
 
 void taProject::InitLinks_post() {
-  if(taMisc::is_undo_loading) return; // none of this.
   if (!taMisc::is_loading) {
-    AssertDefaultProjectBrowser(true);
-#ifdef TA_OS_WIN
-    taMisc::ProcessEvents(); // needed for Windows
-#endif
-    AssertDefaultWiz(true);	// make default and do edit it
-  } else {
-//NO    AssertDefaultProjectBrowser(false);
-    AssertDefaultWiz(false);	// make default and don't edit it
-  }
-  // then select second tab -- see PostLoadAutos for more info
-  if (taMisc::gui_active) {
-    taiMiscCore::ProcessEvents();
-    taiMiscCore::ProcessEvents();
-    MainWindowViewer* vwr = GetDefaultProjectBrowser();
-    if(vwr) {
-      vwr->SelectPanelTabNo(1);
-    }
+    DoView();
   }
 }
 
@@ -1033,36 +1016,24 @@ MainWindowViewer* taProject::GetDefaultProjectViewer() {
 }
 
 void taProject::PostLoadAutos() {
-  if(taMisc::is_undo_loading) return; // none of this.
-  if (taMisc::gui_active) {
-//    MainWindowViewer* vwr = 
-    AssertDefaultProjectBrowser(true);
-    // note: we want a doc to be the default item, if possible
-    docs.AutoEdit();
-    wizards.AutoEdit();
-    edits.AutoEdit();
-  }
+  DoView();
 }
 
-void taProject::WindowShowHook() {
-  MainWindowViewer* vwr = AssertDefaultProjectBrowser(false);
-  taiMiscCore::ProcessEvents();
-  taiMiscCore::ProcessEvents();
-  taiMiscCore::ProcessEvents();
-  vwr->SelectT3ViewTabNo(1);	// select wrong guy
-  taiMiscCore::ProcessEvents();
-  taiMiscCore::ProcessEvents();
-  taiMiscCore::ProcessEvents();
-  vwr->SelectT3ViewTabNo(0);	// then select right guy..
+void taProject::DoView() {
+  if (!taMisc::gui_active || taMisc::is_undo_loading) return; 
+  MainWindowViewer* vwr = AssertDefaultProjectBrowser(true);
+#ifdef TA_OS_WIN
+  taMisc::ProcessEvents(); // needed for Windows
+#endif
+  // note: we want a doc to be the default item, if possible
+  docs.AutoEdit();
+  wizards.AutoEdit();
+  edits.AutoEdit();
   // this is very hacky... select the 2nd tab, which will 
   // be the first auto guy if there were any
   taiMiscCore::ProcessEvents();
-  taiMiscCore::ProcessEvents();
-  taiMiscCore::ProcessEvents();
   vwr->SelectPanelTabNo(1);
-  //  tabMisc::DelayedFunCall_gui(this,"RefreshAllViews");
 }
-
 
 MainWindowViewer* taProject::AssertDefaultProjectBrowser(bool auto_open) {
   MainWindowViewer* vwr = NULL;
@@ -1724,7 +1695,8 @@ void taRootBase::AddTemplates() {
 void taRootBase::AddDocs() {
   taDoc* doc = (taDoc*)docs.New(1);
   doc->SetURL(taMisc::web_home);
-  doc->EditPanel(true, true); // true,true = new tab, pinned in place
+  doc->auto_open = true;
+//  doc->EditPanel(true, true); // true,true = new tab, pinned in place
 }
 
 taBase* taRootBase::FindGlobalObject(TypeDef* base_type, 
@@ -2664,6 +2636,9 @@ bool taRootBase::Startup_MakeMainWin() {
   }
   db->SetUserData("view_win_ht", ht); 
   db->ViewWindow();
+  tabMisc::root->docs.AutoEdit();
+  tabMisc::root->wizards.AutoEdit();
+
   iMainWindowViewer* bw = db->viewerWindow();
   if (bw) { //note: already constrained to max screen size, so we don't have to check
     // main win handle internal app urls
@@ -2679,8 +2654,9 @@ bool taRootBase::Startup_MakeMainWin() {
 }
 
 void taRootBase::WindowShowHook() {
-  if(docs.size > 0)
-    docs[0]->EditPanel(true, true); // pin, new tab
+//why is this needed? see bugID:723
+//  if(docs.size > 0)
+//    docs[0]->EditPanel(true, true); // pin, new tab
 }
 
 bool taRootBase::Startup_Console() {
