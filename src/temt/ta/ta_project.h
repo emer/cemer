@@ -631,6 +631,10 @@ public:
     const String& name = _nilString);
     // find an object deriving from base_type, with given name, or any name if blank
 
+  virtual taDoc* FindMakeDoc(const String& doc_name, const String& wiki_nm = "",
+			     const String& web_url = "");
+  // #CAT_Doc get doc document object of given name, or make one if not found -- also set the wiki name and web url if specified
+
   virtual void  MonControl(bool on);
   // #MENU #MENU_ON_Object set profile monitoring: on=true = on, else off.  starts out off..
   
@@ -727,21 +731,21 @@ protected:
   
   static int		milestone; // StartupMilestones
   static taMisc::ConsoleType console_type; // #IGNORE 
-  static int console_options; //#IGNORE taMisc::ConsoleOptions 
+  static int 		console_options; //#IGNORE taMisc::ConsoleOptions 
   static ContextFlag	in_init; // suppresses spurious Saves
   
-  static bool 	Startup_InitTA_AppFolders();  // #IGNORE Share, Plugins
-  static bool 	Startup_InitTA_InitUserAppDir();  // #IGNORE once found
-  static void	Startup_EnumerateEnginesR(TypeDef* typ);
+  static bool 		Startup_InitTA_AppFolders();  // #IGNORE Share, Plugins
+  static bool 		Startup_InitTA_InitUserAppDir();  // #IGNORE once found
+  static void		Startup_EnumerateEnginesR(TypeDef* typ);
   override void		UpdateAfterEdit_impl();
   // #IGNORE recursively enumerate from typ 
-  bool		AddRecentFile_impl(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
-  bool		AddRecentPath_impl(const String& value); // #IGNORE add this path to the recent list;
+  bool			AddRecentFile_impl(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
+  bool			AddRecentPath_impl(const String& value); // #IGNORE add this path to the recent list;
   virtual void		AddTemplates(); // called in InitLinks -- extend to add new templates
   virtual void		AddDocs(); // called in InitLinks -- extend to add new docs
   virtual taBase* 	GetTemplateInstance_impl(TypeDef* typ, taBase* base);
   virtual void		MakeWizards_impl();
-  
+
 #ifdef TA_OS_LINUX 
 public: // debuggy stuff
   enum FPExceptFlags { // #BITS floating point exception masks -- helps to debug nan issues etc.

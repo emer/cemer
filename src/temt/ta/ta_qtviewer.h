@@ -1089,7 +1089,7 @@ public slots:
   virtual void 	fileSaveAll();  // Save All Projects (always enabled)
   virtual void 	fileClose(); // Close Project (only enabled if viewer)
   virtual void 	fileOptions(); // edits taMisc
-  virtual void 	filePrint(){}
+  virtual void 	filePrint();
   virtual void 	fileCloseWindow();// (non-root only)
   virtual void 	fileQuit(); // (root) or all on Mac (needed for App menu)
   virtual void 	editUndo();
@@ -1127,8 +1127,10 @@ public slots:
     // Clipboard server: called by cliphandler after major events, to refresh menus, toolbars, etc.
 
 #ifndef __MAKETA__
-  void		globalUrlHandler(const QUrl& url);
-    // root browser handles the pdp:// urls that point to internal objects -- routed
+  void		taUrlHandler(const QUrl& url);
+  // QDesktopServices::setUrlHandler -- "ta" scheme set to call this guy to process all our "internal" links
+  void		httpUrlHandler(const QUrl& url);
+  // QDesktopServices::setUrlHandler -- "http" scheme set to call this guy to re-route all web access through our internal browser
 
 signals:
   void 		EditAction(int ea); 

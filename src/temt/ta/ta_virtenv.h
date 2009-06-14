@@ -241,6 +241,9 @@ public:
   virtual void	SetValsToODE_Velocity();// #CAT_ODE set velocity
   virtual void	SetValsToODE_Mass();	// #CAT_ODE set the mass of body in ODE
 
+  virtual void	RotateBody(float x_ax, float y_ax, float z_ax, float rot, bool init);
+  // #CAT_ODE #BUTTON apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+
   bool	IsCurShape()  { return ((shape == cur_shape) &&
 				(HasBodyFlag(FM_FILE) == HasBodyFlag(CUR_FM_FILE))); }
   // #CAT_ODE is the ODE guy actually configured for the current shape or not?

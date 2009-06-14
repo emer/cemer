@@ -32,6 +32,7 @@
 #include "ilineedit.h"
 #include "inetworkaccessmanager.h"
 #include "icookiejar.h"
+# include <QWebSettings>
 
 #include <qapplication.h>
 #include <qbitmap.h>
@@ -179,6 +180,9 @@ void taiMisc::Init(bool gui) {
     this, SLOT(desktopWidget_resized(int)));
   connect(dw, SIGNAL(workAreaResized(int)), 
     this, SLOT(desktopWidget_workAreaResized(int)));
+
+  QWebSettings *defaultSettings = QWebSettings::globalSettings();
+  defaultSettings->setAttribute(QWebSettings::PluginsEnabled, true);
 
   net_access_mgr = new iNetworkAccessManager;
   net_access_mgr->setCookieJar(new iCookieJar(net_access_mgr));

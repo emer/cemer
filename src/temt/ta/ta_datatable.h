@@ -214,9 +214,9 @@ public:
   // #CAT_Modify set value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), d's are matrix dimension indicies
 
   bool	 	InitVals(const Variant& init_val);
-  // #CAT_Modify initialize all values in this column to given value
+  // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Column initialize all values in this column to given value
   bool	 	InitValsToRowNo();
-  // #CAT_Modify initialize all values in this column to be equal to the row number -- only valid for scalar (not matrix) columns
+  // #CAT_Modify #MENU #MENU_CONTEXT initialize all values in this column to be equal to the row number -- only valid for scalar (not matrix) columns
 
   int 		FindVal(const Variant& val, int st_row = 0) const;
   // #CAT_Access find row number for given value within column of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
@@ -357,7 +357,7 @@ public:
   // misc
 
   virtual String	ColStats();
-  // #CAT_DataProc #MENU #MENU_ON_Column #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
+  // #CAT_DataProc #MENU #MENU_ON_Column #MENU_SEP_BEFORE #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
   int			displayWidth() const;
   // #CAT_Display low level display width, in chars, taken from options
@@ -1019,10 +1019,10 @@ public:
 
   bool	 	InitValsCol(DataCol* col, const Variant& init_val)
   { return col->InitVals(init_val); }
-  // #CAT_XpertColumns #MENU #MENU_ON_Columns #FROM_GROUP_data initialize all values in given column to given value
+  // #CAT_Columns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #LABEL_InitVals #FROM_GROUP_data initialize all values in given column to given value
   bool	 	InitValsToRowNoCol(DataCol* col) 
   { return col->InitValsToRowNo(); }
-  // #CAT_XpertModify #MENU #FROM_GROUP_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
+  // #CAT_Columns #MENU #LABEL_InitValsToRowNo #FROM_GROUP_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
   int 		FindValCol(DataCol* col, const Variant& val, int st_row = 0) const 
   { return col->FindVal(val, st_row); }
   // #CAT_XpertAccess #MENU #FROM_GROUP_data #USE_RVAL find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)

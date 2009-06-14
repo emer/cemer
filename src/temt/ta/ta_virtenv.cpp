@@ -362,6 +362,32 @@ void VEBody::GetValsFmODE(bool updt_disp) {
   //  dBodyGetMass(bid, &mass);
 }
 
+void VEBody::RotateBody(float x_ax, float y_ax, float z_ax, float rot, bool init) {
+  if(TestError(x_ax == y_ax == z_ax == 0.0f, "RotateBody", "must specify a non-zero axis!"))
+    return;
+
+  SbRotation sbrot;
+  sbrot.setValue(SbVec3f(x_ax, y_ax, z_ax), rot);
+
+  if(init) {
+    SbRotation irot;
+    irot.setValue(SbVec3f(init_rot.x, init_rot.y, init_rot.z), init_rot.rot);
+    irot *= sbrot;
+    SbVec3f rot_ax;
+    irot.getValue(rot_ax, init_rot.rot);
+    init_rot.x = rot_ax[0]; init_rot.y = rot_ax[1]; init_rot.z = rot_ax[2];
+  }
+  else {
+    SbRotation irot;
+    irot.setValue(SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
+    irot *= sbrot;
+    SbVec3f rot_ax;
+    irot.getValue(rot_ax, cur_rot.rot);
+    cur_rot.x = rot_ax[0]; cur_rot.y = rot_ax[1]; cur_rot.z = rot_ax[2];
+  }
+  DataChanged(DCR_ITEM_UPDATED); // update displays..
+}
+
 /////////////////////////////////////////////
 //		Group
 

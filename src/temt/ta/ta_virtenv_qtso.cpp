@@ -54,6 +54,7 @@
 
 
 void VETexture::SetTexture(SoTexture2* sotx) {
+  if(fname.empty()) return;
   taMisc::TestError(this, !SoImageEx::SetTextureFile(sotx, fname),
      "Could not set texture from fname:", fname);
   if(wrap_horiz == REPEAT)
@@ -91,7 +92,7 @@ void VETexture::SetTransform(SoTexture2Transform* sotx) {
 }
 
 bool VETexture::UpdateTexture() {
-  if(idx < 0) return false;
+  if(idx < 0 || fname.empty()) return false;
   bool rval = false;
   VEWorld* wrld = GET_MY_OWNER(VEWorld);
   if(wrld) {

@@ -44,7 +44,6 @@
 # include <QMessageBox>
 # include <QWidgetList>
 # include <QGLFormat>
-# include <QWebSettings>
 #endif
 
 #include "inetworkaccessmanager.h"
@@ -980,8 +979,15 @@ taDoc* taProject::FindMakeDoc(const String& nm, const String& wiki_nm, const Str
     rval = (taDoc*)docs.New(1);
     rval->SetName(nm);
   }
-  rval->wiki = wiki_nm;
-  rval->url = web_url;
+  if(web_url.nonempty()) {
+    if(wiki_nm.nonempty()) {
+      rval->wiki = wiki_nm;
+      rval->url = web_url;
+    }
+    else {
+      rval->SetURL(web_url);
+    }
+  }
   rval->UpdateAfterEdit();
   return rval;
 }
@@ -1291,7 +1297,8 @@ void taProject::SaveRecoverFile() {
   String fnm = prfx + String(cnt) + sufx;
   taFiler* flr = GetSaveFiler(fnm, _nilString, -1, _nilString);
   bool saved = false;
-  if(flr->ostrm) {
+  int acc = access(flr->FileName(), W_OK); // add extra explict check -- ostrm might not have this
+  if(acc == 0 && flr->ostrm) {
     SaveRecoverFile_strm(*flr->ostrm);
     saved = true;
   }
@@ -1693,10 +1700,27 @@ void taRootBase::AddTemplates() {
 }
 
 void taRootBase::AddDocs() {
-  taDoc* doc = (taDoc*)docs.New(1);
-  doc->SetURL(taMisc::web_home);
+  taDoc* doc = FindMakeDoc("web_home", "", taMisc::web_home);
   doc->auto_open = true;
-//  doc->EditPanel(true, true); // true,true = new tab, pinned in place
+}
+
+taDoc* taRootBase::FindMakeDoc(const String& nm, const String& wiki_nm, const String& web_url) {
+  taDoc* rval = docs.FindName(nm);
+  if(!rval) {
+    rval = (taDoc*)docs.New(1);
+    rval->SetName(nm);
+  }
+  if(web_url.nonempty()) {
+    if(wiki_nm.nonempty()) {
+      rval->wiki = wiki_nm;
+      rval->url = web_url;
+    }
+    else {
+      rval->SetURL(web_url);
+    }
+  }
+  rval->UpdateAfterEdit();
+  return rval;
 }
 
 taBase* taRootBase::FindGlobalObject(TypeDef* base_type, 
@@ -2065,10 +2089,6 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
     coin_image_reader_cb_obj = new CoinImageReaderCB;
 # endif
 #endif
-
-  QWebSettings *defaultSettings = QWebSettings::globalSettings();
-  defaultSettings->setAttribute(QWebSettings::PluginsEnabled, true);
-
   } else 
 #endif // TA_GUI
 
@@ -2644,7 +2664,8 @@ bool taRootBase::Startup_MakeMainWin() {
     // main win handle internal app urls
     taiMisc::main_window = bw;
     taiMisc::net_access_mgr->setMainWindow(bw);
-    QDesktopServices::setUrlHandler("ta", bw, "globalUrlHandler");
+    QDesktopServices::setUrlHandler("ta", bw, "taUrlHandler");
+    QDesktopServices::setUrlHandler("http", bw, "httpUrlHandler");
     bw->show(); // when we start event loop
   }
   //TODO: following prob not necessary

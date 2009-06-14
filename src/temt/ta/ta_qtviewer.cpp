@@ -3305,7 +3305,7 @@ void iApplicationToolBar::Constr_post() {
 //   win->fileSaveNotesAction->addTo(tb);
   win->fileUpdateChangeLogAction->addTo(tb);
   win->fileCloseAction->addTo(tb);
-  win->filePrintAction->addTo(tb);
+//   win->filePrintAction->addTo(tb);
   tb->addSeparator();
   win->editUndoAction->addTo(tb);
   win->editRedoAction->addTo(tb);
@@ -3845,17 +3845,18 @@ void iMainWindowViewer::Constr_Menu_impl() {
     this, SLOT( fileOpenRecent_aboutToShow() ) );
   fileSaveAction->AddTo(fileMenu );
   fileSaveAsAction->AddTo(fileMenu);
+  fileMenu->insertSeparator();
   fileSaveNotesAction->AddTo(fileMenu );
   fileUpdateChangeLogAction->AddTo(fileMenu );
   fileSaveAllAction->AddTo(fileMenu);
-  fileCloseAction->AddTo(fileMenu);
   fileMenu->insertSeparator();
+  fileCloseAction->AddTo(fileMenu);
   
   // other actions
   fileOptionsAction = AddAction(new taiAction("&Options...", QKeySequence(), "fileOptionsAction" ));
   
-  filePrintAction = AddAction(new taiAction("&Print...", QKeySequence(), _filePrintAction ));
-  filePrintAction->setIcon( QIcon( QPixmap(":/images/fileprint.png") ) );
+//   filePrintAction = AddAction(new taiAction("&Print...", QKeySequence(), _filePrintAction ));
+//   filePrintAction->setIcon( QIcon( QPixmap(":/images/fileprint.png") ) );
   if (!isRoot()) {
     fileCloseWindowAction = AddAction(new taiAction("C&lose Window", QKeySequence(), _fileCloseWindowAction ));
     connect(fileCloseWindowAction, SIGNAL(Action()), this, SLOT(fileCloseWindow()) );
@@ -3922,10 +3923,9 @@ void iMainWindowViewer::Constr_Menu_impl() {
   helpHelpAction->setStatusTip(s);
   helpAboutAction = AddAction(new taiAction("&About", QKeySequence(), _helpAboutAction ));
 
-  fileExportMenu = fileMenu->AddSubMenu("Export"); // submenu -- empty and disabled in base
+//   fileExportMenu = fileMenu->AddSubMenu("Export"); // submenu -- empty and disabled in base
   fileOptionsAction->AddTo( fileMenu );
-  fileMenu->insertSeparator();
-  filePrintAction->AddTo( fileMenu );
+//   filePrintAction->AddTo( fileMenu );
   editUndoAction->AddTo( editMenu ); 
   editRedoAction->AddTo( editMenu );
   editMenu->insertSeparator();
@@ -3978,7 +3978,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
 
     // signals and slots connections
   connect( fileOptionsAction, SIGNAL( Action() ), this, SLOT( fileOptions() ) );
-//   connect( filePrintAction, SIGNAL( activated() ), this, SLOT( filePrint() ) ); */
+//   connect( filePrintAction, SIGNAL( activated() ), this, SLOT( filePrint() ) );
   connect( editUndoAction, SIGNAL( activated() ), this, SLOT( editUndo() ) );
   connect( editRedoAction, SIGNAL( activated() ), this, SLOT( editRedo() ) );
   connect( editCutAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
@@ -4332,7 +4332,9 @@ bool iMainWindowViewer::AssertPanel(taiDataLink* link,
   return true;
 }
 
-void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
+// this is only for internally-generated ta:// links
+
+void iMainWindowViewer::taUrlHandler(const QUrl& url) {
 // URLs are usually suffixed with a "#Xxx" where Xxx is the uniqueId()
 // of the window in which is embedded the doc viewer 
 // if no WinId (ex. Find) then we use that of the topmost window
@@ -4434,6 +4436,28 @@ void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
   }
 }
 
+void iMainWindowViewer::httpUrlHandler(const QUrl& url) {
+  if(isProjShower()) {
+    taProject* prj = curProject();
+    if(prj) {
+      taDoc* browser = prj->FindMakeDoc("misc_browser", "", url.toString());
+      browser->EditDialog();
+      return;
+    }
+  }
+  else if(isRoot()) {
+    MainWindowViewer* db = viewer();
+    if(db) {
+      taRootBase* rt = dynamic_cast<taRootBase*>(db->data());
+      if(rt) {
+	taDoc* browser = rt->FindMakeDoc("misc_browser", "", url.toString());
+	browser->EditDialog();
+	return;
+      }
+    }
+  }
+  QDesktopServices::openUrl(url);	// fall back on default
+}
 
 bool iMainWindowViewer::event(QEvent* ev) {
   bool rval = inherited::event(ev);
@@ -4485,6 +4509,8 @@ void iMainWindowViewer::windowActivate(int win) {
   wid->raise();
 }
 
+void iMainWindowViewer::filePrint() {
+}
 
 void iMainWindowViewer::helpHelp() {
   String url = taMisc::web_help_general;
@@ -6693,7 +6719,7 @@ void iDocDataPanel::doc_linkClicked(const QUrl& url) {
     if (viewerWindow())
       new_url.setFragment("#" + QString::number(viewerWindow()->uniqueId()));
   }
-  // goes to: iMainWindowViewer::globalUrlHandler  in ta_qtviewer.cpp
+  // goes to: iMainWindowViewer::taUrlHandler  in ta_qtviewer.cpp
   QDesktopServices::openUrl(new_url);
 }
 
@@ -8668,7 +8694,7 @@ void iSearchDialog::results_setSourceRequest(iTextBrowser* src,
     setFirstSort(col);
     Render();
   } 
-  else { // unknown, so forward to global, which is iMainWindowViewer::globalUrlHandler
+  else { // unknown, so forward to global, which is iMainWindowViewer::taUrlHandler
     QDesktopServices::openUrl(url); 
   }
   cancel = true;
