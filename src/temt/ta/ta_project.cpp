@@ -1295,27 +1295,23 @@ void taProject::SaveRecoverFile() {
     prfx += recv;
   int cnt = taMisc::GetUniqueFileNumber(0, prfx, sufx);
   String fnm = prfx + String(cnt) + sufx;
+  QFileInfo fi(fnm);
+  String tdir = fi.path();
+  String full_fnm = tdir + PATH_SEP + fnm;
+  int acc = access(full_fnm, W_OK); 	// can we save this file?
+  if(acc != 0) {
+    fnm = taMisc::user_dir + PATH_SEP + fnm;
+  }
   taFiler* flr = GetSaveFiler(fnm, _nilString, -1, _nilString);
   bool saved = false;
-  int acc = access(flr->FileName(), W_OK); // add extra explict check -- ostrm might not have this
-  if(acc == 0 && flr->ostrm) {
+  if(flr->ostrm) {
     SaveRecoverFile_strm(*flr->ostrm);
     saved = true;
   }
-  else {
-    // note: don't try printing until *after* saving the file
-    String old_fnm(fnm);
-    fnm = taMisc::user_dir + PATH_SEP + taMisc::GetFileFmPath(old_fnm);
-    flr->SetFileName(fnm);
-    flr->Save(false);
-    if(flr->ostrm) {
-      SaveRecoverFile_strm(*flr->ostrm);
+  if(acc != 0) {
 #ifdef DEBUG // NOTE: really only works on Linux, and is so marginal...
-      cerr << "Error saving recover file: " << old_fnm << endl
-        << "Now saving in user directory: " << fnm << endl;
+      cerr << "Error saving recover file in original location -- now saved in user directory: " << fnm << endl;
 #endif
-      saved = true;
-    }
   }
   flr->Close();
   taRefN::unRefDone(flr);
