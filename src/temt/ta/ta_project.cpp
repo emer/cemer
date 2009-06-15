@@ -2640,22 +2640,25 @@ bool taRootBase::Startup_MakeMainWin() {
 #ifdef TA_GUI
   // TODO: need to better orchestrate the "OpenWindows" call below with
   // create the default application window
-  MainWindowViewer* db = MainWindowViewer::NewBrowser(tabMisc::root, NULL, true);
+  MainWindowViewer* vwr = MainWindowViewer::NewBrowser(tabMisc::root, NULL, true);
   // try to size fairly large to avoid scrollbars
-  db->SetUserData("view_win_wd", 0.6f);
+  vwr->SetUserData("view_win_wd", 0.6f);
   float ht = 0.5f; // no console
 //  iSize s(1024, 480); // no console  (note: values obtained empirically)
   if ((console_type == taMisc::CT_GUI) && (!(console_options & taMisc::CO_GUI_TRACKING))) {
     ht = 0.8f; // console
     ConsoleDockViewer* cdv = new ConsoleDockViewer;
-    db->docks.Add(cdv);
+    vwr->docks.Add(cdv);
   }
-  db->SetUserData("view_win_ht", ht); 
-  db->ViewWindow();
+  vwr->SetUserData("view_win_ht", ht); 
+  vwr->ViewWindow();
+#ifdef TA_OS_WIN
+  taMisc::ProcessEvents(); // may be needed for Windows (see taProject::DoView)
+#endif
   tabMisc::root->docs.AutoEdit();
   tabMisc::root->wizards.AutoEdit();
 
-  iMainWindowViewer* bw = db->viewerWindow();
+  iMainWindowViewer* bw = vwr->viewerWindow();
   if (bw) { //note: already constrained to max screen size, so we don't have to check
     // main win handle internal app urls
     taiMisc::main_window = bw;
@@ -2671,6 +2674,17 @@ bool taRootBase::Startup_MakeMainWin() {
 }
 
 void taRootBase::WindowShowHook() {
+  bool static done = false;
+  if (!done) {
+    done = true; // set now in case ProcessEvents recurses
+    // this is very hacky... select the 2nd tab, which will 
+    // be the first auto guy if there were any
+    MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.SafeEl(0)); // always the default
+    if (vwr) {
+      vwr->SelectPanelTabNo(1);
+      taiMiscCore::ProcessEvents();
+    }
+  }
 //why is this needed? see bugID:723
 //  if(docs.size > 0)
 //    docs[0]->EditPanel(true, true); // pin, new tab
