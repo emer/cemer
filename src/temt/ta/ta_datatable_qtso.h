@@ -18,7 +18,6 @@
 
 #include "ta_qttype.h"
 #include "ta_qtviewer.h"
-#include "ta_fontspec.h"
 
 #include "ta_datatable.h"
 #include "ta_geometry.h"

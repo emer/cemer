@@ -388,6 +388,29 @@ void VEBody::RotateBody(float x_ax, float y_ax, float z_ax, float rot, bool init
   DataChanged(DCR_ITEM_UPDATED); // update displays..
 }
 
+#ifdef TA_OS_MAC 
+
+#include <ApplicationServices/ApplicationServices.h>
+//#include <SpeechSynthesis.h>
+
+void VEBody::SpeakText(const String& text) {
+  // todo: should use the newer interface: SpeakCFString
+  CFStringRef cfstr = CFStringCreateWithCString(NULL, text.chars(), kCFStringEncodingMacRoman);
+  Str255 pstr;
+  
+  CFStringGetPascalString(cfstr, pstr, 255, kCFStringEncodingMacRoman);
+  
+  SpeakString(pstr);
+}
+
+#else // TA_OS_MAC
+
+void VEBody::SpeakText(const String& text) {
+  cerr << "Sorry, SpeakText not supported on this platform. Should be saying: " << text << endl;
+}
+
+#endif 
+
 /////////////////////////////////////////////
 //		Group
 

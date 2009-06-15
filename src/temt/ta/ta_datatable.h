@@ -18,7 +18,6 @@
 
 #include "igeometry.h"
 
-#include "ta_fontspec.h"
 #include "minmax.h"
 #include "ta_group.h"
 #include "ta_matrix.h"

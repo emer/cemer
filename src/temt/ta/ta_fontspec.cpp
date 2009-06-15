@@ -20,10 +20,10 @@
 
 #include <qfontdialog.h>
 
-void FontSpec::Initialize() {
+void taFontSpec::Initialize() {
 }
 
-void FontSpec::InitLinks() {
+void taFontSpec::InitLinks() {
   inherited::InitLinks();
   if (!taMisc::gui_active) return;
 /*obs
@@ -38,7 +38,7 @@ void FontSpec::InitLinks() {
   prv_pat = pattern; */
 }
 
-void FontSpec::CutLinks() {
+void taFontSpec::CutLinks() {
 /*obs  if(text_g != NULL) {
     ivResource::unref(text_g);
     text_g = NULL;
@@ -46,17 +46,17 @@ void FontSpec::CutLinks() {
   inherited::CutLinks();
 }
 
-bool FontSpec::Equals(const FontSpec& b) {
+bool taFontSpec::Equals(const taFontSpec& b) {
   bool rval = iFont::equals(b);
   return rval;
 }
 
-void FontSpec::SetFont(char* fn) {
+void taFontSpec::SetFont(char* fn) {
   pattern = fn;
   UpdateAfterEdit();
 }
 
-void FontSpec::SetFontSize(int sz) {
+void taFontSpec::SetFontSize(int sz) {
   pointSize = sz;
 /* obs
   String szstr = String(sz);
@@ -74,7 +74,7 @@ void FontSpec::SetFontSize(int sz) {
   UpdateAfterEdit(); */
 }
 
-void FontSpec::UpdateAfterEdit(){
+void taFontSpec::UpdateAfterEdit(){
   if (!taMisc::gui_active) return;
   if (!pattern.empty()) {
     //legacy value -- from load
@@ -138,7 +138,7 @@ void FontSpec::UpdateAfterEdit(){
   inherited::UpdateAfterEdit();
 }
 
-void FontSpec::SelectFont() {
+void taFontSpec::SelectFont() {
   QFont fnt;
   copyTo(fnt);
   bool ok;
@@ -149,7 +149,7 @@ void FontSpec::SelectFont() {
   }
 }
 
-void FontSpec::Copy_(const FontSpec& cp) {
+void taFontSpec::Copy_(const taFontSpec& cp) {
   pattern = cp.pattern;
   iFont::copy((iFont)cp);
 }

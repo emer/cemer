@@ -23,7 +23,7 @@
 
 #include "ta_TA_type.h"
 
-class TA_API FontSpec : public taOBase, public iFont {
+class TA_API taFontSpec : public taOBase, public iFont {
  // #INLINE #INLINE_DUMP ##CAT_Display a specification of a font (for Unix - X logical font description)
 INHERITED(taOBase)
 public:
@@ -35,12 +35,12 @@ public:
   virtual void	SetFontSize(int point_size = 10);
   // #BUTTON set font to given point size
 
-  bool	Equals(const FontSpec& b);
+  bool	Equals(const taFontSpec& b);
   void	UpdateAfterEdit();
   void	CutLinks();
   void	InitLinks();
-  void	Copy_(const FontSpec& cp);
-  TA_BASEFUNS(FontSpec);
+  void	Copy_(const taFontSpec& cp);
+  TA_BASEFUNS(taFontSpec);
 private:
   void	Initialize();
   void	Destroy() {CutLinks();}

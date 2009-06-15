@@ -570,7 +570,6 @@ public:
   static bool		StdProgVarFilter(void* base, void* var); // generic progvar filter -- excludes variables from functions if not itself in same function -- use this for most progvars in ITEM_FILTER comment directive
 
   ProgVar*	var_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER #ITEM_FILTER_StdProgVarFilter lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
-  DynEnumItem*	enum_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER lookup a dynamic enum variable and add it to the current expression (this field then returns to empty/NULL)
 
   void 	CutLinks();
   TA_BASEFUNS_NOCOPY(ProgExpr);
@@ -693,7 +692,7 @@ public:
     OFF 		= 0x0001, // inactivated: does not generate code
     NON_STD 		= 0x0002, // non-standard: not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
     NEW_EL 		= 0x0004, // new element: this element was recently added to the program (just for user information/highlighting)
-    QUIET		= 0x0008, // suppress warnings for this el -- useful when the normally helpful standard warnings are annoying in a specific case
+    VERBOSE		= 0x0008, // print informative message about the operation of this program element to std output (e.g., css console or during -nogui startup) -- useful for debugging and for logging key steps during startup
   };
 
   String		desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
@@ -739,7 +738,8 @@ public:
   // note: it is our own, plus disabled if parent is
   override void		SetEnabled(bool value);
   override String 	GetDesc() const {return desc;}
-  override bool		GetQuiet() const {return (flags & QUIET);} 
+  virtual  bool		IsVerbose() const { return HasProgFlag(VERBOSE); } 
+
   TA_BASEFUNS(ProgEl);
 
 protected:
