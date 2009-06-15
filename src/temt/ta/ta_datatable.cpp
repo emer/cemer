@@ -2867,14 +2867,16 @@ void DataTable::DetermineLoadDataParams(istream& strm,
   // get first line -- always need this to differentiate Emergent vs. simple
   String ln;
   readline_auto(strm, ln);
-  native = ln.startsWith("_H:") ||  ln.startsWith("_D:");
+  bool native_h = ln.startsWith("_H:");
+  bool native_d = ln.startsWith("_D:");
+  native = native_h || native_d;
   
-//  int todo = 0;
   // headers is actually same as LH since the Emergent version is auto regardless
-  headers = (headers_req == LH_AUTO_YES);
+  // but we also set if we see the _H: so later quote check knows if 1st line is data
+  headers = (headers_req == LH_AUTO_YES) || native_h;
   
   // for Emergent files, the default is TAB and will almost certainly be used
-  // but regardless, Emergent files have at least one delim
+  // but regardless, Emergent files have at least one delim due to marker col
   
   // note: we guess the delims and quotes so we can warn if override seems wrong
   // if it has TABS or COMMA then almost guaranteed that is delim, else assume SPACE
@@ -2897,11 +2899,27 @@ void DataTable::DetermineLoadDataParams(istream& strm,
     }
     delim = (Delimiters)delim_req;
   }
-  // if any quote is present, assume quoted (since this is most likely header line)
-  int quo_cnt = ln.freq('"');
-  quote_str = (quo_cnt > 0);
+  
+  // determining quotes is a bit trickier...
+  // native headers will not have quotes so we have to check data line (default is quoted)
+  // imported headers *may* be quoted as well as data
+  // OpenOffice puts quotes around everything by default
+  // Excel 2004 (Mac) doesn't quote headers, and only quotes data sometimes, ex. when it has a comma
+  if (!native_h || native_d) {
+    int quo_cnt = ln.freq('"');
+    quote_str = (quo_cnt > 0);
+  }
+  // if no quotes so far, check first data line (if not already checked)
+  if (headers && !quote_str && !native_d) {
+    // read first data line to determine quoting -- obviously irrelevant if empty
+    readline_auto(strm, ln); // don't care if empty
+    // if any quote is present in header, assume quoted
+    int quo_cnt = ln.freq('"');
+    quote_str = (quo_cnt > 0);
+  }
   
   if (quote_str_req != LQ_AUTO) {
+    // NOTE: this warning may be annoying if quoted string requested but there are no string cols
     if (quote_str != (quote_str_req == LQ_YES)) {
       taMisc::Warning("requested quotes and the quote status in the file do not seem the same... consider using quote_str=AUTO");
     }
