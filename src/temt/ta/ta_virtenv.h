@@ -244,9 +244,6 @@ public:
   virtual void	RotateBody(float x_ax, float y_ax, float z_ax, float rot, bool init);
   // #CAT_ODE #BUTTON apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
 
-  virtual void	SpeakText(const String& text);
-  // #CAT_ODE #BUTTON generate an speech synthesis output of the given text string, where supported coming from the 3D location of the body 
-
   bool	IsCurShape()  { return ((shape == cur_shape) &&
 				(HasBodyFlag(FM_FILE) == HasBodyFlag(CUR_FM_FILE))); }
   // #CAT_ODE is the ODE guy actually configured for the current shape or not?
@@ -1099,5 +1096,23 @@ private:
 };
 
 SmartRef_Of(VEWorld,TA_VEWorld); // VEWorldRef
+
+
+///////////////////////////////////////////////////////////////////////////
+//	TODO: MOVE TO ta_audio.h/cpp file when brad xfers his to main
+
+class TA_API taAudioProc : public taNBase {
+  // #STEM_BASE ##CAT_Audio basic audio processing operations
+INHERITED(taNBase)
+public:	
+
+  static bool	SpeakText(const String& text);
+  // #CAT_SpeechOut #BUTTON generate an speech synthesis output of the given text string -- returns false if not successful
+
+  TA_SIMPLE_BASEFUNS(taAudioProc);
+private:
+  void 	Initialize();
+  void  Destroy();
+};
 
 #endif // TA_VIRTENV_H

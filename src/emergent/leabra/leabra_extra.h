@@ -864,6 +864,79 @@ private:
   void	Destroy()		{ };
 };
 
+// class LEABRA_API XCALSpikeConSpec : public taOBase {
+//   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCAL purely spiking learning rule based on Urakubo et al 2008
+// INHERITED(taOBase)
+// public:
+//   float		K_ca; // #DEF_0.3 effective Ca that gives 50% inhibition of maximal activity
+//   float		V_rspike; // #DEF_20 votage induced in the dendrite resulting from a receiver spike
+//   float		Ca_vgcc;  // #DEF_1.3 Ca influx resulting from receiver spiking (due to voltage gated calcium channels)
+//   float		Ca_v_nmda; // #DEF_0.0223 Ca influx due to nmda
+//   float		NMDAR_dt; // #DEF_40 time constant (in msec) for decay of NMDA conductance
+//   float		V_rest;	  // #DEF_-65 membrane resting potential
+//   float		
+
+//   SIMPLE_COPY(ActAvgHebbMixSpec);
+//   TA_BASEFUNS(ActAvgHebbMixSpec);
+// protected:
+//   void	UpdateAfterEdit_impl();
+// private:
+//   void	Initialize();
+//   void	Destroy()	{ };
+// };
+
+// class LEABRA_API LeabraXCALSpikeConSpec : public LeabraConSpec {
+//   // basic delta-rule learning (plus - minus) * sender, with sender in the minus phase -- soft bounding as specified in spec -- no hebbian or anything else
+// INHERITED(LeabraConSpec)
+// public:
+//   inline void C_Compute_dWt_XCALSpike(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+//     float lin_wt = LinFmSigWt(cn->wt);
+//     float dwt = (ru->act_p - ru->act_m) * su->act_m; // basic delta rule, sender in minus
+//     if(lmix.err_sb) {
+//       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
+//       else		dwt *= lin_wt;
+//     }
+//     cn->dwt += cur_lrate * dwt;
+//   }
+
+//   inline void C_Compute_dWt_Delta_CAL(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+//     float dwt = (ru->act_p - ru->act_m) * su->act_m; // basic delta rule, sender in minus
+//     cn->dwt += cur_lrate * dwt;
+//     // soft bounding is managed in the weight update phase, not in dwt
+//   }
+
+//   override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+//     for(int i=0; i<cg->size; i++) {
+//       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+//       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+//       C_Compute_dWt_Delta(cn, ru, su);  
+//     }
+//   }
+
+//   override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+//     for(int i=0; i<cg->size; i++) {
+//       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+//       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+//       C_Compute_dWt_Delta_CAL(cn, ru, su);  
+//     }
+//   }
+
+//   override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
+//     for(int i=0; i<cg->size; i++) {
+//       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+//       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+//       C_Compute_dWt_Delta_CAL(cn, ru, su);  
+//     }
+//   }
+
+//   TA_SIMPLE_BASEFUNS(LeabraXCALSpikeConSpec);
+// protected:
+//   void	UpdateAfterEdit_impl();
+// private:
+//   void 	Initialize();
+//   void	Destroy()		{ };
+// };
+
 
 ////////////////////////////////////////////////////////////////////////
 //	Limited precision weights: for hardware impl testing
