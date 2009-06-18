@@ -1098,21 +1098,4 @@ private:
 SmartRef_Of(VEWorld,TA_VEWorld); // VEWorldRef
 
 
-///////////////////////////////////////////////////////////////////////////
-//	TODO: MOVE TO ta_audio.h/cpp file when brad xfers his to main
-
-class TA_API taAudioProc : public taNBase {
-  // #STEM_BASE ##CAT_Audio basic audio processing operations
-INHERITED(taNBase)
-public:	
-
-  static bool	SpeakText(const String& text);
-  // #CAT_SpeechOut #BUTTON generate an speech synthesis output of the given text string -- returns false if not successful
-
-  TA_SIMPLE_BASEFUNS(taAudioProc);
-private:
-  void 	Initialize();
-  void  Destroy();
-};
-
 #endif // TA_VIRTENV_H

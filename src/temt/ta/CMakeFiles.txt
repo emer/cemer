@@ -34,6 +34,7 @@ set(ta_HEADS_MAKETA
   ta_thread.h
   ta_dmem.h
   ta_qtclipdata.h
+  ta_audioproc.h
   colorscale.h
   ta_fontspec.h
   ta_script.h
@@ -111,6 +112,7 @@ set(ta_HEADS
   ta_fontspec.h
   minmax.h
   ta_group.h
+  ta_audioproc.h
   ta_qtclipdata.h
   colorscale.h
   ta_script.h
@@ -245,6 +247,7 @@ set(ta_SRCS
   ta_fontspec.cpp
   minmax.cpp
   ta_group.cpp
+  ta_audioproc.cpp
   ta_qtclipdata.cpp
   colorscale.cpp
   ta_script.cpp
