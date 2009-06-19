@@ -543,7 +543,7 @@ void MelCepstrumBlock::Initialize() {
   n_lin_chans = 10;
   n_log_chans = 20;
   // FORMULA:
-  cf_hi = 6727.5f;
+  cf_hi = 6727.5f; // note: "exact" value -- but will get rounded to fft bin
   n_chans = 30;
 }
 
@@ -648,6 +648,12 @@ float f2mel(float f) {
 float mel2f(float m) {
   return 700.0f * (expf(m / 1127.01f) - 1.0f);
 }
+// round f to nearest fft bin
+float nearest_bin(float f, float bin) {
+  // divide by the bin to get into unit space, then 
+  // do a conventional round which is floor(x+.5)
+  return (float)((floor((f/bin) + .5)) * bin);
+}
 
 void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
 //TODO: when sharpening, correct the gain of the edge channels to compensate
@@ -665,8 +671,8 @@ void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
   case MW_LIN_LOG: {
     n_chans = n_lin_chans + n_log_chans;
     chans.SetSize(n_chans);
-    float cf = cf_lo;
-    float cf_last = cf_lo - cf_lin_bw;
+    float cf = nearest_bin(cf_lo, fft_band);
+    float cf_last = nearest_bin(cf_lo - cf_lin_bw, fft_band);
     for (int i = 0; i < chans.size; ++i) {
       // don't move on to next child, if prev step didn't succeed
       if (!check && !ok) return;
@@ -679,6 +685,7 @@ void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
 	} else {
 	  cf *= cf_log_factor;
 	}
+	cf = nearest_bin(cf, fft_band);
 	// since we use triangular filter, estimate erb as 1/2 entire band
 	// via: h*w = 1/2*b*h, therefore, w=1/2*b
 	gc->erb = .5f * (cf - cf_last);
@@ -700,8 +707,8 @@ void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
     float cf_lo_m = f2mel(cf_lo); // start at low, then increment in loop
     float cf_hi_m = f2mel(cf_hi);
     float cf_inc_m = (cf_hi_m - cf_lo_m) / (n_chans - 1);
-    float cf_last = mel2f(cf_lo_m - cf_inc_m); // what previous chan would have been
-    float cf = cf_lo; // we actually calculate it ahead, at end of loop
+    float cf_last = nearest_bin(mel2f(cf_lo_m - cf_inc_m), fft_band); // what previous chan would have been
+    float cf = nearest_bin(cf_lo, fft_band); // we actually calculate it ahead, at end of loop
     for (int i = 0; i < chans.size; ++i) {
       // don't move on to next child, if prev step didn't succeed
       if (!check && !ok) return;
@@ -709,7 +716,7 @@ void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
       if (!check) {
 	gc->InitChan(cf, 1.0f, 0); //note: erb is below
 	// next cf -- we calc now to compute ERB for this guy
-	cf = mel2f(cf_lo_m + (cf_inc_m * (i + 1)));
+	cf = nearest_bin(mel2f(cf_lo_m + (cf_inc_m * (i + 1))), fft_band);
 	// since we use triangular filter, estimate erb as 1/2 entire band
 	// via: h*w = 1/2*b*h, therefore, w=1/2*b
 	gc->erb = .5f * (cf - cf_last);
@@ -817,7 +824,7 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
 	  }
 	  
           // compress, if enabled
-          if (mel_flags && MF_COMPRESS) {
+          if (mel_flags & MF_COMPRESS) {
             if (out < comp_thresh) out = comp_thresh;
             out = log(out);
           }
@@ -825,7 +832,7 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
 	}
 	
 	// Discrete Cosine transform (if enabled) and output, but no notify yet
-        if (mel_flags && MF_DCT) {
+        if (mel_flags & MF_DCT) {
 	  // determine if we need to calc MFCC0
 	  const int cep_base = (mel_flags & MF_USE_MFCC0) ? 0 : 1;
 	  int ch = 0;
@@ -835,14 +842,14 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
             for (int mel = 0; mel < chans.size; ++mel) {
              out += mel_out.FastEl_Flat(mel) * dct_filt.FastEl(mel, cep);
             }
-            out_buff.mat.FastEl(0, ch, f, 0, out_buff.stage) = (float)out;
+            out_buff.mat.FastEl(0, ch, f, out_buff.item, out_buff.stage) = (float)out;
 	    ++ch;
           }
         
         } else {
           // straight mel out
           for (int ch = 0; ch < chans.size; ++ch) {
-            out_buff.mat.FastEl(0, ch, f, 0, out_stage) = 
+            out_buff.mat.FastEl(0, ch, f, out_buff.item, out_buff.stage) = 
               mel_out.FastEl_Flat(ch);
           }
         }
