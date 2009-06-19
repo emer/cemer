@@ -63,7 +63,7 @@ INHERITED(taOBase)
 public:
 
   String	expr;		// #EDIT_DIALOG enter the expression here -- column value will be set to this.\nyou can just type in names of other columns (value is corresponding row's value) or literal values, or math expressions, etc.\nenclose strings in double quotes.\ncolumn names will be checked and automatically updated
-  DataCol* col_lookup;	// #APPLY_IMMED #NULL_OK #NO_EDIT #NO_SAVE #FROM_GROUP_data_cols #NO_UPDATE_POINTER lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
+  DataCol* col_lookup;	// #NULL_OK #NO_EDIT #NO_SAVE #FROM_GROUP_data_cols #NO_UPDATE_POINTER lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
 
   DataTableCols*	data_cols;
   // #READ_ONLY #HIDDEN #NO_SAVE data table columns (set from owner field)
@@ -125,13 +125,13 @@ public:
     PIN 		= 0x0002, // #NO_SHOW protect this column from being automatically deleted according to the MARK scheme (see comment).  this is often not very easy for uers to find and use (columns to be saved should be listed explicitly in the context in which others are being used), so we are not exposing it to users, but it can be used internally for some reason
     SAVE_ROWS 		= 0x0004, // save the row data for this column in the internal format used when the entire object is saved (e.g., along with a project or whatever).  the column configuration etc is always saved, just not the rows of data if not on.
     SAVE_DATA 		= 0x0008, // save this column in the 'data' export format used by the SaveData and associated functions (e.g., as recorded in 'logs' of data from running programs)
-    CALC 		= 0x0010, // #APPLY_IMMED calculate value of this column based on calc_expr expression
+    CALC 		= 0x0010, // calculate value of this column based on calc_expr expression
     READ_ONLY		= 0x0020, // this column is read-only in the gui (helps protect keys or programmatically generated data items)
     PAT_4D		= 0x0040, // (4d cells only) displays cells in the same geometry as grouped network layers -- NOTE: data is still copied/pasted in clipboard in a 2d format
   };
 
   String		desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column
-  ColFlags		col_flags; // #APPLY_IMMED flags for this column to indicate specific properties 
+  ColFlags		col_flags; // flags for this column to indicate specific properties 
   int			col_idx; // #READ_ONLY #SHOW #NO_SAVE #NO_COPY the index of this column in the table
   bool			is_matrix;
   // #READ_ONLY #SAVE #SHOW 'true' if the cell is a matrix, not a scalar
@@ -585,9 +585,9 @@ public:
   DataTableCols		data;
   // all the columns and actual data
   DataFlags		data_flags;
-  // #APPLY_IMMED flags for various features and state of the data table
+  // flags for various features and state of the data table
   AutoLoadMode		auto_load;
-  // #APPLY_IMMED #CONDEDIT_OFF_data_flags:SAVE_ROWS whether to automatically load a data file from auto_load_file when data table object is loaded (only applicable when SAVE_ROWS is not active -- makes the project file smaller for large data tables, but the cost is that the project is no longer self contained)
+  // #CONDEDIT_OFF_data_flags:SAVE_ROWS whether to automatically load a data file from auto_load_file when data table object is loaded (only applicable when SAVE_ROWS is not active -- makes the project file smaller for large data tables, but the cost is that the project is no longer self contained)
   String		auto_load_file;
   // #CONDEDIT_OFF_auto_load:NO_AUTO_LOAD file to load data table from if AUTO_LOAD option is set (if file name has .dtbl extention, it is loaded using internal Load format, otherwise LoadData is used)
   Variant		keygen; // #HIDDEN #VARTYPE_READ_ONLY #GUI_READ_ONLY 64bit int used to generate keys; advance to get next key; only reset if all data reset

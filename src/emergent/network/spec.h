@@ -162,7 +162,7 @@ class EMERGENT_API SpecPtr_impl : public taOBase {
 INHERITED(taOBase)
 public:
   TypeDef*	base_type;	// #TYPE_BaseSpec #HIDDEN #NO_SAVE base type for type field
-  TypeDef*	type;		// #APPLY_IMMED #TYPE_ON_base_type The type of the spec to use
+  TypeDef*	type;		// #TYPE_ON_base_type The type of the spec to use
 
   virtual BaseSpec* GetSpec() const	{ return NULL; } // get the spec pointer
   virtual bool	SetSpec(BaseSpec*)	{ return false; } // set the spec pointer

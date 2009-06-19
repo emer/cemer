@@ -176,7 +176,7 @@ public:
   String	desc;	   	// #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
   void*		body_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the body (cast to a dBodyID which is dxbody*)
   void*		geom_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the geometry associated with the body (cast to a dGeomID which is dxgeom*)
-  BodyFlags	flags;		// #APPLY_IMMED flags for various body properties
+  BodyFlags	flags;		// flags for various body properties
   FloatTDCoord	init_pos;  	// initial position of body (when creating it)
   FloatRotation	init_rot;  	// initial rotation of body (when creating it) (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
   FloatTDCoord	init_lin_vel;	// initial linear velocity
@@ -187,7 +187,7 @@ public:
   FloatTDCoord	cur_lin_vel;	// current linear velocity
   FloatTDCoord	cur_ang_vel;	// current angular velocity
 
-  Shape		shape;		// #APPLY_IMMED shape of body for purposes of mass/inertia and collision (and visual rendering if not FM_FILE)
+  Shape		shape;		// shape of body for purposes of mass/inertia and collision (and visual rendering if not FM_FILE)
   float		mass;		// total mass of body (in kg)
   float		radius;		// #CONDEDIT_OFF_shape:BOX radius of body, for all but box
   float		length;		// #CONDEDIT_OFF_shape:BOX,SPHERE length of body, for all but box 
@@ -503,10 +503,10 @@ public:
 
   String	desc;	   	// #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
   void*		joint_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the joint (cast to a dJointID which is dxjoint*)
-  JointFlags	flags;		// #APPLY_IMMED joint flags
+  JointFlags	flags;		// joint flags
   VEBodyRef	body1;		// #SCOPE_VEObject first body in the joint
   VEBodyRef	body2;		// #SCOPE_VEObject second body in the joint
-  JointType    	joint_type;	// #APPLY_IMMED type of joint
+  JointType    	joint_type;	// type of joint
   FloatTDCoord	anchor;  	// anchor location for joint, specified RELATIVE TO BODY1 (note this is different from ODE -- we just add body1's position to this anchor position)
   FloatTDCoord	axis;  		// #CONDEDIT_OFF_joint_type:BALL axis orientation vector
   FloatTDCoord	axis2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 second axis for universal joint and hinge2 -- for universal, the first axis should be 1,0,0 and second 0,1,0 if those are the two axes being used -- otherwise a dRFrom2Axes zero length vector error will occur!
@@ -827,11 +827,11 @@ public:
 
   String	desc;	   	// #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
   void*		geom_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the geometry associated with the static item (cast to a dGeomID which is dxgeom*)
-  StaticFlags	flags;		// #APPLY_IMMED flags for various env el properties
+  StaticFlags	flags;		// flags for various env el properties
   FloatTDCoord	pos;  		// #CONDEDIT_OFF_shape:PLANE position of static item
   FloatRotation	rot;  		// #CONDEDIT_OFF_shape:PLANE rotation of static item (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
 
-  Shape		shape;		// #APPLY_IMMED shape of static item for purposes of collision (and visual rendering if not FM_FILE)
+  Shape		shape;		// shape of static item for purposes of collision (and visual rendering if not FM_FILE)
   float		radius;		// #CONDEDIT_OFF_shape:BOX,PLANE radius of body, for all but box
   float		length;		// #CONDEDIT_OFF_shape:BOX,PLANE,SPHERE length of body, for all but box 
   LongAxis	long_axis;	// #CONDEDIT_OFF_shape:BOX,PLANE,SPHERE direction of the long axis of the body (where length is oriented)
@@ -1030,7 +1030,7 @@ public:
   SpaceType	space_type;	// type of space to use (typically HASH_SPACE is good for worlds having more objects)
   MinMaxInt	hash_levels;	// #CONDEDIT_ON_space_type:HASH_SPACE minimum and maximum spacing levels in hash space
 
-  StepType	step_type;	// #APPLY_IMMED what type of stepping function to use
+  StepType	step_type;	// what type of stepping function to use
   float		stepsize;	// how big of a step to take
   int		quick_iters;	// #CONDEDIT_ON_step_type:QUICK_STEP how many iterations to take in quick step mode
   FloatTDCoord	gravity;	// gravitational setting for world (0,0,-9.81) is std

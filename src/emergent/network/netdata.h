@@ -45,12 +45,12 @@ public:
   // #READ_ONLY #HIDDEN #NO_SAVE data table columns -- gets set dynamically if data is a datatable, just for choosing column..
 
   DataCol*		col_lookup;
-  // #NO_SAVE #FROM_GROUP_data_cols #APPLY_IMMED #NO_EDIT #NO_UPDATE_POINTER column/channel in data table use -- just to lookup the chan_name, which is what is actually used -- this is reset to NULL after column is selected
+  // #NO_SAVE #FROM_GROUP_data_cols #NO_EDIT #NO_UPDATE_POINTER column/channel in data table use -- just to lookup the chan_name, which is what is actually used -- this is reset to NULL after column is selected
   String		chan_name;
   // name of the channel/column in the data to use 
 
   NetTarget		net_target;
-  // #APPLY_IMMED what to read/write from on the network
+  // what to read/write from on the network
 
   NetworkRef 		network;
   // #READ_ONLY #HIDDEN #NO_SAVE the network to operate on -- managed by owner
@@ -119,7 +119,7 @@ class EMERGENT_API LayerWriterEl : public LayerDataEl {
   // #STEM_BASE controls the writing of input data from a data source to a network layer
 INHERITED(LayerDataEl)
 public: 
-  bool		use_layer_type; // #APPLY_IMMED #DEF_true use layer_type information on the layer to determine flags to set (if false, turn on EXPERT showing to view flags)
+  bool		use_layer_type; // #DEF_true use layer_type information on the layer to determine flags to set (if false, turn on EXPERT showing to view flags)
   bool		na_by_range;	// use act_range on the unitspec for the units to determine inputs that are not appplicable (n/a) and thus do not get relevant flags or values set: those that have input values outside the range are n/a
   Unit::ExtType	ext_flags;	// #EXPERT #CONDSHOW_OFF_use_layer_type:true how to flag the unit/layer's external input status
   Random	noise;		// #EXPERT noise optionally added to values when applied
@@ -229,17 +229,17 @@ public:
   };
 
   bool			off; // #NO_SAVE_EMPTY set this to not use this netmon item
-  bool			computed;	// #APPLY_IMMED if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
-  TypeDef*		object_type;	// #APPLY_IMMED #CONDSHOW_OFF_computed LAYER #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
+  bool			computed;	// if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
+  TypeDef*		object_type;	// #CONDSHOW_OFF_computed LAYER #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
   taSmartRef 		object;		// #CONDSHOW_OFF_computed #TYPE_ON_object_type #NO_SCOPE the network object being monitored
-  MemberDef*		lookup_var;	// #APPLY_IMMED #CONDSHOW_OFF_computed #TYPE_ON_object_type #NULL_OK #NO_SAVE #NO_EDIT lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
+  MemberDef*		lookup_var;	// #CONDSHOW_OFF_computed #TYPE_ON_object_type #NULL_OK #NO_SAVE #NO_EDIT lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
   String        	variable;	// #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections or prjns gets projection-level variables; can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified
   String		var_label;	// #CONDSHOW_OFF_computed label to use in place of variable in naming the columns/channels generated from this data (if empty, variable is used)
   NameStyle		name_style;	 // #CONDSHOW_OFF_computed how to name the columns/channels generated from this data?
   int			max_name_len;	 // #DEF_6 #EXPERT maximum length for any name segment
 
   ValType		val_type;       // #CONDSHOW_ON_computed type of data column to create (only for computed variables)
-  bool			matrix;		// #APPLY_IMMED #CONDSHOW_ON_computed if true, create a matrix data column (otherwise scalar)
+  bool			matrix;		// #CONDSHOW_ON_computed if true, create a matrix data column (otherwise scalar)
   MatrixGeom		matrix_geom;	// #CONDSHOW_ON_matrix geometry of matrix to create if a matrix type
 
   bool			data_agg; 	// #CONDSHOW_ON_computed compute value automatically from a column of data in another data table

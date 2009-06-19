@@ -202,8 +202,10 @@ void DataGroupSpec::Initialize() {
 ///////////////////////////
 
 void DataSelectEl::Initialize() {
+  on = true;
   rel = EQUAL;
   use_var = false;
+  act_enabled = true;
 }
 
 String DataSelectEl::GetDisplayName() const {
@@ -241,6 +243,13 @@ bool DataSelectEl::Eval(const Variant& val) {
   return false;
 }
 
+void DataSelectEl::UpdateEnabled() {
+  act_enabled = on;
+  if((bool)enable_var) {
+    act_enabled = on && enable_var->GetVar().toBool();
+  }
+}
+
 void DataSelectEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(col_lookup) {
@@ -260,6 +269,13 @@ void DataSelectSpec::Initialize() {
 String DataSelectSpec::GetDisplayName() const {
   return inherited::GetDisplayName() + " " +
     GetTypeDef()->GetEnumString("CombOp", comb_op);
+}
+
+void DataSelectSpec::UpdateEnabled() {
+  for(int i=0; i<ops.size; i++) {
+    DataSelectEl* el = (DataSelectEl*)ops[i];
+    el->UpdateEnabled();
+  }
 }
 
 ///////////////////////////
@@ -875,12 +891,13 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
   dest->StructUpdate(true);
   dest->Copy_NoData(*src);		// give it same structure
   spec->GetColumns(src);		// cache column pointers & indicies from names
+  // also sets act_enabled flag
   for(int row=0;row<src->rows; row++) {
     bool incl = false;
     bool not_incl = false;
     for(int i=0; i<spec->ops.size; i++) {
       DataSelectEl* ds = (DataSelectEl*)spec->ops.FastEl(i);
-      if(ds->col_idx < 0) continue;
+      if(!ds->act_enabled || ds->col_idx < 0) continue;
       DataCol* da = src->data.FastEl(ds->col_idx);
       Variant val = da->GetValAsVar(row);
       bool ev = ds->Eval(val);
@@ -930,7 +947,7 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
     bool not_incl = false;
     for(int i=0; i<spec->ops.size; i++) {
       DataSelectEl* ds = (DataSelectEl*)spec->ops.FastEl(i);
-      if(ds->col_idx < 0) continue;
+      if(!ds->act_enabled || ds->col_idx < 0) continue;
       DataCol* da = src->data.FastEl(ds->col_idx);
       Variant val = da->GetValAsVar(row);
       bool ev = ds->Eval(val);

@@ -31,7 +31,7 @@ public:
   DataTableCols*	data_cols;
   // #READ_ONLY #HIDDEN #NO_SAVE data table columns -- gets set dynamically -- just to lookup column
   DataCol*		col_lookup;
-  // #APPLY_IMMED #NULL_OK #NO_SAVE #FROM_GROUP_data_cols #NO_EDIT #NO_UPDATE_POINTER lookup column in data table to sort on -- sets col_name field (which is what is actually used) and returns to NULL after selection is applied
+  // #NULL_OK #NO_SAVE #FROM_GROUP_data_cols #NO_EDIT #NO_UPDATE_POINTER lookup column in data table to sort on -- sets col_name field (which is what is actually used) and returns to NULL after selection is applied
   String		col_name;	// name of column in data table to sort on (either enter directly or lookup from col_lookup)
   int			col_idx;	// #READ_ONLY #NO_SAVE column idx (from GetColumns)
 
@@ -201,12 +201,17 @@ public:
     NOT_CONTAINS,	// for strings: doesn't contain this value
   };
 
-  Relations	rel;		// relation of column to expression for selection
-  bool		use_var;	// #APPLY_IMMED if true, use a program variable to specify the selection value
-  Variant	cmp;		// #CONDEDIT_ON_use_var:false literal compare value of column to this comparison value
-  ProgVarRef	var;		// #CONDEDIT_ON_use_var:true variable that contains the comparison value: note -- this MUST be a global var in vars or args, not in local vars!
+  bool		on;		// use this selection criterion?  can be useful to have various selections available but not enabled as needs change.  see also enable_var to dynamically determine use of selection crtiteria based on a variable.
+  Relations	rel;		// #CONDEDIT_ON_on relation of column to expression for selection
+  bool		use_var;	// #CONDEDIT_ON_on if true, use a program variable to specify the selection value
+  Variant	cmp;		// #CONDEDIT_ON_use_var:false&&on literal compare value of column to this comparison value
+  ProgVarRef	var;		// #CONDEDIT_ON_use_var&&on variable that contains the comparison value: note -- this MUST be a global var in vars or args, not in local vars!
+  ProgVarRef	enable_var;	// #CONDEDIT_ON_on optional variable that is evaluated as either true or false *at the start of the select procedure* to determine if this select criterion is enabled -- can setup a large set of criteria and flexibly enable them as appropriate. note -- this MUST be a global var in vars or args, not in local vars!
+  bool		act_enabled;	// #READ_ONLY #NO_SAVE actual enabled value to use -- reflects on && enable_var
 
   bool	Eval(const Variant& val); // evaluate expression
+
+  virtual void 	UpdateEnabled(); // update the act_enabled flag based on flag and variable
 
   override String GetDisplayName() const;
   void  Initialize();
@@ -228,6 +233,10 @@ public:
   };
 
   CombOp	comb_op;	// how to combine individual expressions for each column
+
+  virtual void 	UpdateEnabled(); // update the act_enabled flags based on variables etc
+
+  override void GetColumns(DataTable* dt) { inherited::GetColumns(dt); UpdateEnabled(); }
 
   override String GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(DataSelectSpec);
@@ -460,7 +469,7 @@ public:
   };
 
   bool		set_data;	// if true, values in data table are set according to current variable values, otherwise, it gets data from the data table into the variables
-  RowType	row_spec;	// #APPLY_IMMED how the row number within data table is specified
+  RowType	row_spec;	// how the row number within data table is specified
   ProgVarRef	row_var;	// #CONDEDIT_OFF_row_spec:CUR_ROW #ITEM_FILTER_StdProgVarFilter program variable containing information about which row to operate on (depends on row_spec for what this information is)
 
   ProgVarRef	var_1;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!

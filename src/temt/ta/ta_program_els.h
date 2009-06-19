@@ -409,11 +409,11 @@ public:
   ProgVarRef		result_var;
   // #ITEM_FILTER_StdProgVarFilter where to store the result of the method call (optional -- can be NULL)
   ProgVarRef		obj;
-  // #APPLY_IMMED #ITEM_FILTER_ObjProgVarFilter program variable that points to the object with the method to call
+  // #ITEM_FILTER_ObjProgVarFilter program variable that points to the object with the method to call
   TypeDef*		obj_type;
   // #NO_SHOW #NO_SAVE temp copy of obj.object_type
   MethodDef*		method;
-  // #TYPE_ON_obj_type #APPLY_IMMED the method to call on object obj
+  // #TYPE_ON_obj_type the method to call on object obj
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
   String		meth_sig;
@@ -443,13 +443,13 @@ class TA_API MemberProgEl: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgVarRef		obj;
-  // #APPLY_IMMED #ITEM_FILTER_ObjProgVarFilter program variable that points to the object with the method to call
+  // #ITEM_FILTER_ObjProgVarFilter program variable that points to the object with the method to call
   TypeDef*		obj_type;
   // #NO_SHOW #NO_SAVE temp copy of obj.object_type
   String		path;
   // path to the member -- can just be member name (use Ctrl+L or member_lookup to lookup and enter here) -- you can also enter in multiple sub-path elements for object members that themselves have members
   MemberDef*		member_lookup;
-  // #TYPE_ON_obj_type #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER lookup a member name -- after you choose, it will copy the name into the path and reset this lookup to NULL
+  // #TYPE_ON_obj_type #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER lookup a member name -- after you choose, it will copy the name into the path and reset this lookup to NULL
   
   virtual bool		GetTypeFromPath(bool quiet = false);
   // get obj_type from current path (also gives warnings about bad paths unless quiet = true)
@@ -523,7 +523,7 @@ public:
   ProgVarRef		result_var;
   // #ITEM_FILTER_StdProgVarFilter where to store the result of the method call (optional -- can be NULL)
   MethodDef*		method;
-  // #TYPE_ON_mth_obj_type #APPLY_IMMED the method to call on object obj->path
+  // #TYPE_ON_mth_obj_type the method to call on object obj->path
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
 
@@ -677,7 +677,7 @@ class TA_API OtherProgramVar : public ProgEl {
   // A program element for exchanging variable information between programs -- variables must have the same names in both programs
 INHERITED(ProgEl)
 public:
-  ProgramRef	other_prog; 	// #APPLY_IMMED the other program with variables that you want to get or set
+  ProgramRef	other_prog; 	// the other program with variables that you want to get or set
   bool		set_other;	// if true, values in other program are set from our variable values, otherwise our variables get values from those in other program
   ProgVarRef	var_1;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of variable in other program!
   ProgVarRef	var_2;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of variable in other program!
@@ -708,7 +708,7 @@ class TA_API ProgVarFmArg: public ProgEl {
   // sets a variable (vars or args) in a program from a startup command-line argument (if arg was not set by user, nothing happens). IMPORTANT: must also include a RegisterArgs program element BEFORE this item in the program code to register this argument and process the command list
 INHERITED(ProgEl)
 public:
-  ProgramRef		prog; 	// #APPLY_IMMED program that you want to set variable from argument in
+  ProgramRef		prog; 	// program that you want to set variable from argument in
   String		var_name; // name of variable in program to set
   String		arg_name; // argument name -- this will be passed on the command line as <arg_name>=<value> (no spaces) (e.g., if arg_name is "rate" then command line would be rate=0.01 and internal arg name is just "rate" -- can be accessed using taMisc arg functions using that name)
 

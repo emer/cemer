@@ -207,7 +207,7 @@ class TA_API XYNGeom : public PosTwoDCoord {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP two-dimensional X-Y geometry with possibility of total number n != x*y
   INHERITED(PosTwoDCoord)
 public:
-  bool	       	n_not_xy;	// #APPLY_IMMED #DEF_false total number of units is less than x * y
+  bool	       	n_not_xy;	// #DEF_false total number of units is less than x * y
   int		n;		// #CONDEDIT_ON_n_not_xy:true total number of units (=x*y unless n_not_xy is true)
 
   int 		z;

@@ -286,7 +286,7 @@ class TA_API ViewColor : public taNBase {
   // ##INLINE ##NO_TOKENS ##CAT_Display view color specification -- name lookup of color highlighting for view display
 INHERITED(taNBase)
 public:
-  bool		use_fg;			// #APPLY_IMMED use a special foreground color
+  bool		use_fg;			// use a special foreground color
   RGBA		fg_color;		// #CONDEDIT_ON_use_fg:true foreground color
   bool		use_bg;			// use a special background color
   RGBA		bg_color;		// #CONDEDIT_ON_use_fg:true background color

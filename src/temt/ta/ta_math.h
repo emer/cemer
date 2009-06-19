@@ -49,7 +49,7 @@ public:
 
   Relations	rel;		// #LABEL_ relationship to evaluate
   double	val;		// #LABEL_ comparison value
-  bool		use_var;	// #APPLY_IMMED if true, use a program variable to specify the relation value
+  bool		use_var;	// if true, use a program variable to specify the relation value
   ProgVarRef	var;		// #CONDSHOW_ON_use_var:true variable that contains the comparison value (only used if this is embedded in a DataSelectRowsProg program element) -- variable must be a top-level (.args or .vars) variable and not a local one
 
   bool		CacheVar(Relation& tmp_rel);
@@ -95,7 +95,7 @@ public:
   String	name;		// #HIDDEN_INLINE name of the object
 #endif
 
-  Operator      op;		// #APPLY_IMMED how to aggregate over the network
+  Operator      op;		// how to aggregate over the network
   Relation	rel;		// #CONDSHOW_ON_op:COUNT,FIND_FIRST,FIND_LAST,QUANTILE,VAR,STDEV parameters for the COUNT, FIND_xxx, and QUANTILE operators
 
   virtual String GetAggName() const;  // get string representation of aggregation opr
@@ -135,7 +135,7 @@ public:
   String	name;		// #HIDDEN_INLINE name of the object
 #endif
 
-  MathOpr 	opr;		// #APPLY_IMMED what math operator to use
+  MathOpr 	opr;		// what math operator to use
   double	arg;		// #CONDSHOW_ON_opr:THRESH,ADD,SUB,MUL,POWER,DIV,MIN,MAX,REPLACE argument for ops (threshold add/sub/mul/div,power,max,min arg,replace)
   double	lw;		// #CONDSHOW_ON_opr:THRESH,MINMAX,REPLACE the value to assign values below threshold for THRESH, or the low range for MINMAX, or value to replace with for REPLACE
   double	hi;		// #CONDSHOW_ON_opr:THRESH,MINMAX the value to assign values above threshold for THRESH, or the high range for MINMAX
@@ -1378,7 +1378,7 @@ public:
   String	name;		// #HIDDEN_INLINE name of the object
 #endif
 
-  Type		type;		// #APPLY_IMMED type of random variable to generate
+  Type		type;		// type of random variable to generate
   double	mean;		// mean of random distribution
   double	var;		// #CONDEDIT_OFF_type:NONE 'varibility' parameter for the random numbers (gauss = standard deviation, not variance; uniform = half-range)
   double	par;		// #CONDEDIT_ON_type:GAMMA,BINOMIAL extra parameter for distribution (depends on each one)

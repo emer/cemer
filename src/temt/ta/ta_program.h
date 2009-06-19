@@ -229,8 +229,8 @@ class TA_API DynEnum : public taOBase {
   // #STEM_BASE #NO_TOKENS #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated value -- represents one item from a list of enumerated alternative labeled values
 INHERITED(taOBase)
 public:
-  DynEnumTypeRef	enum_type; // #APPLY_IMMED enum type information (list of enum labels)
-  int			value;     // #APPLY_IMMED #DYNENUM_ON_enum_type current value, which for normal mutually-exclusive options is index into list of enums (-1 = not set), and for bits is the bit values
+  DynEnumTypeRef	enum_type; // enum type information (list of enum labels)
+  int			value;     // #DYNENUM_ON_enum_type current value, which for normal mutually-exclusive options is index into list of enums (-1 = not set), and for bits is the bit values
 
   virtual bool	IsSet() const
   { return ((bool)enum_type && (value >= 0)); }
@@ -290,14 +290,14 @@ public:
   };
 
   String	name;		// name of the variable
-  VarType	var_type;	// #APPLY_IMMED type of variable -- determines which xxx_val(s) is/are used
+  VarType	var_type;	// type of variable -- determines which xxx_val(s) is/are used
   int		int_val;	// #CONDSHOW_ON_var_type:T_Int,T_HardEnum #CONDEDIT_OFF_flags:LOCAL_VAR integer value (also for enum types)
   double	real_val;	// #CONDSHOW_ON_var_type:T_Real #CONDEDIT_OFF_flags:LOCAL_VAR real value
   String	string_val;	// #CONDSHOW_ON_var_type:T_String #CONDEDIT_OFF_flags:LOCAL_VAR #EDIT_DIALOG string value
   bool		bool_val;	// #CONDSHOW_ON_var_type:T_Bool #CONDEDIT_OFF_flags:LOCAL_VAR boolean value
-  TypeDef*	object_type; 	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_Object #NO_NULL #TYPE_taBase #LABEL_min_type the minimum acceptable type of the object
+  TypeDef*	object_type; 	// #CONDSHOW_ON_var_type:T_Object #NO_NULL #TYPE_taBase #LABEL_min_type the minimum acceptable type of the object
   taBaseRef	object_val;	// #CONDSHOW_ON_var_type:T_Object #CONDEDIT_OFF_flags:LOCAL_VAR #TYPE_ON_object_type #SCOPE_taProject object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere.  if it is in this program's .objs, then the name will be automatically set
-  TypeDef*	hard_enum_type;	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase #LABEL_enum_type type information for hard enum (value goes in int_val)
+  TypeDef*	hard_enum_type;	// #CONDSHOW_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase #LABEL_enum_type type information for hard enum (value goes in int_val)
   DynEnum 	dyn_enum_val; 	// #CONDSHOW_ON_var_type:T_DynEnum #LABEL_enum_val dynamic enum value
   bool		objs_ptr;	// #HIDDEN this is a pointer to a variable in the objs list of a program
   VarFlags	flags;		// flags controlling various things about how the variable appears and is used
@@ -569,7 +569,7 @@ INHERITED(ProgExprBase)
 public:
   static bool		StdProgVarFilter(void* base, void* var); // generic progvar filter -- excludes variables from functions if not itself in same function -- use this for most progvars in ITEM_FILTER comment directive
 
-  ProgVar*	var_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER #ITEM_FILTER_StdProgVarFilter lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
+  ProgVar*	var_lookup;	// #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER #ITEM_FILTER_StdProgVarFilter lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
 
   void 	CutLinks();
   TA_BASEFUNS_NOCOPY(ProgExpr);
@@ -843,8 +843,8 @@ INHERITED(ProgEl)
 public:
   ProgVarRef		result_var; // #ITEM_FILTER_StdProgVarFilter result variable (optional -- can be NULL)
   TypeDef*		min_type; // #NO_SHOW #NO_SAVE #TYPE_taBase minimum object type to choose from -- anchors selection of object_type (derived versions can set this)
-  TypeDef*		object_type; // #TYPE_ON_min_type #APPLY_IMMED The object type to look for methods on
-  MethodDef*		method; //  #TYPE_ON_object_type #APPLY_IMMED the method to call
+  TypeDef*		object_type; // #TYPE_ON_min_type The object type to look for methods on
+  MethodDef*		method; //  #TYPE_ON_object_type the method to call
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
 
@@ -943,7 +943,7 @@ public:
   ProgVarRef		result_var;
   // #ITEM_FILTER_StdProgVarFilter where to store the result (return value) of the function (optional -- can be NULL)
   FunctionRef		fun;
-  // #APPLY_IMMED the function to be called
+  // the function to be called
   ProgArg_List		fun_args;
   // #SHOW_TREE arguments to the function: passed when called
 
@@ -1395,7 +1395,7 @@ class TA_API ProgramCall: public ProgEl {
   // ##DEF_CHILD_prog_args call (run) another program, setting any arguments before hand
 INHERITED(ProgEl)
 public:
-  ProgramRef		target; // #APPLY_IMMED the program to be called
+  ProgramRef		target; // the program to be called
   String		targ_ld_init; // #EDIT_DIALOG name(s) of target programs to search for to set this target pointer when program is loaded from program library or other external sources -- if not found, a warning message is emitted.  if empty, it defaults to name of current target. use commas to separate multiple options (tried in order) and an * indicates use the "contains" searching function (not full regexp support yet)
   ProgArg_List		prog_args; // #SHOW_TREE arguments to the program--copied to prog before call
 

@@ -509,7 +509,7 @@ public:
     COPY,			// just copy from retinal inputs, summing over on and off fields
   };
 
-  V1FilterType	filter_type; 	// #APPLY_IMMED what type of filter to use?
+  V1FilterType	filter_type; 	// what type of filter to use?
   TwoDCoord 	rf_width;	// width of the receptive field into the retinal inputs -- enforced to be even numbers, to enable the 1/2 overlap constraint for neighboring rf's
   TwoDCoord 	rf_ovlp;	// #CONDEDIT_ON_filter_type:COPY half-width of the receptive field into the retinal inputs, which is the amount that the receptive fields overlap
   int		n_filters;	// #READ_ONLY #SHOW number of filters -- computed from appropriate _rf specifications in terms of number of angles/sizes etc.

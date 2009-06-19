@@ -100,7 +100,7 @@ class LEABRA_API OutErrSpec : public taOBase {
 INHERITED(taOBase)
 public:
   float		err_tol;	// #DEF_0.5 error tolerance for counting an activation wrong
-  bool		graded;		// #DEF_false #APPLY_IMMED compute a graded reward signal as a function of number of correct output values
+  bool		graded;		// #DEF_false compute a graded reward signal as a function of number of correct output values
   bool		no_off_err;	// #DEF_false do not count a unit wrong if it is off but target says on -- only count wrong units that are on but should be off
   float		scalar_val_max;	// #CONDEDIT_ON_graded maximum value for scalar value output layers when using a graded value -- reward is error normalized by this value, and clipped at min/max
 
@@ -136,7 +136,7 @@ public:
     DA_REW			// get rewards from da values on first unit in layer (if ext val == norew_val, then no ext rew signaled)
   };
 
-  RewardType	rew_type;	// #APPLY_IMMED how do we get the reward values?
+  RewardType	rew_type;	// how do we get the reward values?
   AvgExtRewSpec	avg_rew;	// average reward computation specifications
   OutErrSpec	out_err;	// #CONDEDIT_ON_rew_type:OUT_ERR_REW how to compute external rewards based on output performance
   ExtRewSpec	rew;		// misc reward computation specifications
