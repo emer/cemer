@@ -529,16 +529,22 @@ void GammatoneBlock::MakeStdFilters(float cf_lo, float cf_hi, int n_chans) {
 */
 
 void MelCepstrumBlock::Initialize() {
-  mel_flags = (MelFlags)(MF_COMPRESS & MF_DCT);
-  cf_lo = 100.0f;
-  cf_lin_bw = 100.0f;
-  cf_log_factor = 1.1f;
-  n_lin_chans = 10;
-  n_log_chans = 22;
+  mel_flags = (MelFlags)(MF_COMPRESS | MF_DCT | MF_AUTO_GAIN);
   comp_thresh.Set(-60, Level::UN_DBI);
   n_cepstrum = 12;
   out_rate = 10.0f;
   fft_band = 0;
+  mel_warp = MW_LIN_LOG;
+  // common warp init:
+  cf_lo = 100.0f;
+  // LIN_LOG:
+  cf_lin_bw = 100.0f;
+  cf_log_factor = 1.1f;
+  n_lin_chans = 10;
+  n_log_chans = 20;
+  // FORMULA:
+  cf_hi = 6727.5f;
+  n_chans = 30;
 }
 
 void MelCepstrumBlock::UpdateAfterEdit_impl() {
@@ -584,7 +590,9 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
     return;
   
   // crudely set gain based on an empirically derived constants to get peak mel~=1 for 1Khz sine
-  auto_gain.Set(1.0f / ((16.0f * out_rate) - 37.0f), Level::UN_SCALE);
+  if (mel_flags & MF_AUTO_GAIN) {
+    auto_gain.Set(1.0f / ((16.0f * out_rate) - 37.0f), Level::UN_SCALE);
+  }
   
   // just init all chans, whether enabled or not
   const int n_chans = n_lin_chans + n_log_chans;
@@ -634,6 +642,13 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   }
 }
 
+float f2mel(float f) {
+  return 1127.01f * logf(1 + f/700.0f);
+}
+float mel2f(float m) {
+  return 700.0f * (expf(m / 1127.01f) - 1.0f);
+}
+
 void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
 //TODO: when sharpening, correct the gain of the edge channels to compensate
 // for the loss caused by not integrating the full DoG filter width
@@ -644,30 +659,67 @@ void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
   if (!src_buff) return;
   
   const float nyquist = src_buff->fs / 2.0f;
-  const int n_chans = n_lin_chans + n_log_chans;
-  chans.SetSize(n_chans);
-  float cf = cf_lo;
-  float cf_last = cf_lo - cf_lin_bw;
-  for (int i = 0; i < chans.size; ++i) {
-    // don't move on to next child, if prev step didn't succeed
-    if (!check && !ok) return;
-    FilterChan* gc = chans.FastEl(i);
-    if (!check) {
-      gc->InitChan(cf, 1.0f, 0); //note: erb is below
-      // next cf
-      if (i < n_lin_chans) {
-        cf += cf_lin_bw;
-      } else {
-        cf *= cf_log_factor;
+  // NOTE: we try to set the alternate choice params to roughly correspond so user
+  // can switch between them
+  switch (mel_warp) {
+  case MW_LIN_LOG: {
+    n_chans = n_lin_chans + n_log_chans;
+    chans.SetSize(n_chans);
+    float cf = cf_lo;
+    float cf_last = cf_lo - cf_lin_bw;
+    for (int i = 0; i < chans.size; ++i) {
+      // don't move on to next child, if prev step didn't succeed
+      if (!check && !ok) return;
+      FilterChan* gc = chans.FastEl(i);
+      if (!check) {
+	gc->InitChan(cf, 1.0f, 0); //note: erb is below
+	// next cf
+	if (i < n_lin_chans) {
+	  cf += cf_lin_bw;
+	} else {
+	  cf *= cf_log_factor;
+	}
+	// since we use triangular filter, estimate erb as 1/2 entire band
+	// via: h*w = 1/2*b*h, therefore, w=1/2*b
+	gc->erb = .5f * (cf - cf_last);
+	cf_last = gc->cf;
+	// we know chan spills over past nyquist if next cf is above nyquist
+	if (cf > nyquist)
+	  gc->on = false;
       }
-      // since we use triangular filter, estimate erb as 1/2 entire band
-      // via: h*w = 1/2*b*h, therefore, w=1/2*b
-      gc->erb = .5f * (cf - cf_last);
-      cf_last = gc->cf;
-      // we know chan spills over past nyquist if next cf is above nyquist
-      if (cf > nyquist)
-        gc->on = false;
+    } 
+    } break;
+  case MW_FORMULA: {
+    // try to make n_lin/log commensurable if not already
+    if ((n_lin_chans + n_log_chans) != n_chans) {
+      n_lin_chans = n_chans / 3;
+      n_log_chans = n_chans - n_lin_chans;
     }
+    chans.SetSize(n_chans);
+    // we calc the lo/hi in mels, then just iterate linearly in mels
+    float cf_lo_m = f2mel(cf_lo); // start at low, then increment in loop
+    float cf_hi_m = f2mel(cf_hi);
+    float cf_inc_m = (cf_hi_m - cf_lo_m) / (n_chans - 1);
+    float cf_last = mel2f(cf_lo_m - cf_inc_m); // what previous chan would have been
+    float cf = cf_lo; // we actually calculate it ahead, at end of loop
+    for (int i = 0; i < chans.size; ++i) {
+      // don't move on to next child, if prev step didn't succeed
+      if (!check && !ok) return;
+      FilterChan* gc = chans.FastEl(i);
+      if (!check) {
+	gc->InitChan(cf, 1.0f, 0); //note: erb is below
+	// next cf -- we calc now to compute ERB for this guy
+	cf = mel2f(cf_lo_m + (cf_inc_m * (i + 1)));
+	// since we use triangular filter, estimate erb as 1/2 entire band
+	// via: h*w = 1/2*b*h, therefore, w=1/2*b
+	gc->erb = .5f * (cf - cf_last);
+	cf_last = gc->cf;
+	// we know chan spills over past nyquist if next cf is above nyquist
+	if (cf > nyquist)
+	  gc->on = false;
+      }
+    } 
+    } break;
   }
   // do the default, which calls all the items, prob does nothing
   inherited::InitChildConfig_impl(check, quiet, ok);
@@ -2219,7 +2271,7 @@ void NormBlock::AcceptData_impl(SignalProcBlock* src_blk,
       }
     }
   }
-  if (agc_flags & (AGC_ON & AGC_UPDATE_INIT)) {
+  if ((agc_flags & AGC_ON) && (agc_flags & AGC_UPDATE_INIT)) {
     init_norm_offset = norm_offset;
     init_norm_factor = norm_factor;
   }

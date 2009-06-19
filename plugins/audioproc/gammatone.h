@@ -183,16 +183,25 @@ public:
     MF_COMPRESS		= 0x001, //  #LABEL_Compress compress mel outputs logarithmically (using natural log)
     MF_DCT		= 0x002, //  #LABEL_DCT apply Discrete Cosine Transform and create cepstrum coefficients
     MF_USE_MFCC0	= 0x004, //  #LABEL_Use_MFCC0 output the channel 0 DCT (typically not used)
+    MF_AUTO_GAIN	= 0x008, //  #LABEL_Use_AutoGain automatically control gain to yield ~ flat in/out gain
+  };
+  
+  enum MelWarp {
+    MW_LIN_LOG,		// use a bank of linear freq then a bank of log freq bins -- if lin freq bins are mults of fs there will be less warp distortion
+    MW_FORMULA,		// use the formula 1127*ln(1+f/700) for mel warping
   };
   
   MelFlags		mel_flags; // flags that control what type of processing and output
   float			out_rate; // output rate, in ms (frames will be 2x this duration, i.e. half-overlapping)
-  Level			auto_gain; // #READ_ONLY #SHOW #NO_SAVE an automatically applied gain adjustment based on the output type selected; crudely makes 1Khz sine wave have ~1 output (linear) in peak channel of mel fft
+  Level			auto_gain; // #CONDEDIT_OFF_mel_flags:MF_AUTO_GAIN  gain adjustment -- when on AUTO is based on the output type selected; crudely makes 1Khz sine wave have ~1 output (linear) in peak channel of mel fft
+  MelWarp		mel_warp; // how to determine the Mel frequency warping -- LIN_LOG is often used by the speech community
   float			cf_lo; // lower center frequency (Hz)
-  float			cf_lin_bw; // linear range bandwidth
-  float			cf_log_factor; // how much to multiple to get next log channel 
-  int			n_lin_chans; // #MIN_1 number of linear bands
-  int			n_log_chans; // #MIN_0 number of log bands
+  float			cf_lin_bw; // #CONDSHOW_ON_mel_warp:MW_LIN_LOG linear range bandwidth
+  float			cf_log_factor; // #CONDSHOW_ON_mel_warp:MW_LIN_LOG how much to multiple to get next log channel 
+  int			n_lin_chans; // #CONDSHOW_ON_mel_warp:MW_LIN_LOG #MIN_1 number of linear bands
+  int			n_log_chans; // #CONDSHOW_ON_mel_warp:MW_LIN_LOG #MIN_1 number of log bands
+  float			cf_hi; // #CONDSHOW_ON_mel_warp:MW_FORMULA high center frequency (Hz)
+  float			n_chans; // #CONDSHOW_ON_mel_warp:MW_FORMULA #MIN_2 number of channels
   Level			comp_thresh; // #CONDEDIT_ON_mel_flags:MF_COMPRESS lower threshold (clamped at this)
   int			n_cepstrum; // #CONDEDIT_ON_mel_flags:MF_DCT #MIN_4 number of cepstrum output coefficients (including 0, even if not used)
   
