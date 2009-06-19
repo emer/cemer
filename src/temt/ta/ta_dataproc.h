@@ -187,7 +187,7 @@ private:
 /////////////////////////////////////////////////////////
 
 class TA_API DataSelectEl : public DataOpEl {
-  // one element of a data selection specification
+  // one element of a data selection specification -- for matrix cells with cell size > 1, the cmp value is treated as a cell index and if the value at this index is 1 (true) then result is true for EQUAL and not true for NOTEQUAL
   INHERITED(DataOpEl)
 public:
   enum Relations {

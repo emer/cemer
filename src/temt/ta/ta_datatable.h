@@ -700,10 +700,10 @@ public:
     bool quote_str = true, bool reset_load_schema = true); // #IGNORE used by Server
   virtual void 		LoadData(const String& fname, Delimiters delim = TAB,
 	bool quote_str = true, int max_recs = -1, bool reset_first=false);
-  // #CAT_File load Emergent format data, up to max num of recs (-1 for all), with delimiter between columns and optionally quoting strings, reset_first = remove any existing data prior to loading
+  // #CAT_File #BUTTON #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log load Emergent format data, up to max num of recs (-1 for all), with delimiter between columns and optionally quoting strings, reset_first = remove any existing data prior to loading
   void 			LoadData_Gui(const String& fname)
     {LoadDataEx(fname, LH_AUTO_YES, LD_AUTO, LQ_AUTO, -1, true);}
-  // #CAT_File #LABEL_Load_Data #BUTTON #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load data in default Emergent data format; removes all existing data
+  // #CAT_File #LABEL_Load_Data_NotWorking #BUTTON #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load data in default Emergent data format; removes all existing data
   void 			LoadDataEx(const String& fname, LoadHeaders headers = LH_AUTO_YES,
     LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO, int max_recs = -1,
     bool reset_first=false);

@@ -253,7 +253,9 @@ void DataSelectEl::UpdateEnabled() {
 void DataSelectEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(col_lookup) {
-    CheckError(col_lookup->is_matrix, quiet, rval, "cannot use matrix column to select");
+    CheckError(col_lookup->is_matrix && col_lookup->cell_size() > 1 && 
+	       !(rel == EQUAL || rel == NOTEQUAL), quiet, rval,
+	       "matrix column selection only uses EQUAL or NOTEQUAL and checks for a 1 value at matrix cell given by cmp index");
   }
   CheckError(use_var && !var, quiet, rval, "use_var is selected but no var variable is set!");
   if(use_var && (bool)var) {
@@ -899,8 +901,28 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
       DataSelectEl* ds = (DataSelectEl*)spec->ops.FastEl(i);
       if(!ds->act_enabled || ds->col_idx < 0) continue;
       DataCol* da = src->data.FastEl(ds->col_idx);
-      Variant val = da->GetValAsVar(row);
-      bool ev = ds->Eval(val);
+      bool ev = false;
+      if(da->isMatrix()) {
+	if(da->cell_size() == 1) { // degenerate case
+	  Variant val = da->GetValAsVarM(row, 0);
+	  ev = ds->Eval(val);
+	}
+	else {
+	  if(ds->use_var && (bool)ds->var) {
+	    ds->cmp = ds->var->GetVar();	// get current val
+	  }
+	  int cmpidx = ds->cmp.toInt(); // convert to an integer index
+	  int vl = da->GetValAsIntM(row, cmpidx); // use as a cell number
+	  if(ds->rel == DataSelectEl::EQUAL)
+	    ev = (vl == 1);			  // true if cell value is 1
+	  else
+	    ev = (vl != 1);			  // true if cell value is NOT 1
+	}
+      }
+      else {
+	Variant val = da->GetValAsVar(row);
+	ev = ds->Eval(val);
+      }
 //       cerr << "cmp: " << ds->col_name << " idx: " << ds->col_idx
 //       << " val: " << val << " ev: " << ev << endl;
       if(spec->comb_op == DataSelectSpec::AND) {
@@ -949,8 +971,28 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
       DataSelectEl* ds = (DataSelectEl*)spec->ops.FastEl(i);
       if(!ds->act_enabled || ds->col_idx < 0) continue;
       DataCol* da = src->data.FastEl(ds->col_idx);
-      Variant val = da->GetValAsVar(row);
-      bool ev = ds->Eval(val);
+      bool ev = false;
+      if(da->isMatrix()) {
+	if(da->cell_size() == 1) { // degenerate case
+	  Variant val = da->GetValAsVarM(row, 0);
+	  ev = ds->Eval(val);
+	}
+	else {
+	  if(ds->use_var && (bool)ds->var) {
+	    ds->cmp = ds->var->GetVar();	// get current val
+	  }
+	  int cmpidx = ds->cmp.toInt(); // convert to an integer index
+	  int vl = da->GetValAsIntM(row, cmpidx); // use as a cell number
+	  if(ds->rel == DataSelectEl::EQUAL)
+	    ev = (vl == 1);			  // true if cell value is 1
+	  else
+	    ev = (vl != 1);			  // true if cell value is NOT 1
+	}
+      }
+      else {
+	Variant val = da->GetValAsVar(row);
+	ev = ds->Eval(val);
+      }
       if(spec->comb_op == DataSelectSpec::AND) {
 	if(!ev) { not_incl = true;  break; }
       }
