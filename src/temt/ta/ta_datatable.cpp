@@ -2850,6 +2850,9 @@ void DataTable::LoadDataEx(const String& fname, LoadHeaders headers_req,
 
     if (reset_first)
       RemoveAllRows();
+    // have to reopen gz filers because gzstream can't seek back to 0
+    if (flr->IsCompressed())
+      flr->open_read();
     if (native) {
       LoadData_strm(*flr->istrm, delim, quote_str, max_recs);
     } else {
@@ -2925,9 +2928,10 @@ void DataTable::DetermineLoadDataParams(istream& strm,
     }
     quote_str = (quote_str_req == LQ_YES);
   }
-  // reset stream
-  streambuf* sb = strm.rdbuf();
-  sb->pubseekpos(0, ios_base::in);
+  // reset stream -- this only works for filestream, not gzstream -- caller must reopen
+  strm.seekg(0);
+//  streambuf* sb = strm.rdbuf();
+//  sb->pubseekpos(0, ios_base::in);
 }
 
 void DataTable::LoadDataFixed(const String& fname, FixedWidthSpec* fws,
