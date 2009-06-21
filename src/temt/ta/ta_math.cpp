@@ -1392,6 +1392,43 @@ double taMath_double::vec_dist(const double_Matrix* vec, const double_Matrix* ot
   return -1.0;
 }
 
+double taMath_double::scalar_dist(double v1, double v2,
+				  DistMetric metric, double tolerance) 
+{
+  double rval = -1.0;
+  switch(metric) {
+  case SUM_SQUARES:
+  case COVAR:
+    rval = (v1 - v2);
+    if(fabs(rval) < tolerance) rval = 0.0f;
+    else rval *= rval;
+    break;
+  case EUCLIDIAN:
+  case CORREL:
+    rval = (v1 - v2);
+    if(fabs(rval) < tolerance) rval = 0.0f;
+    else rval = sqrt(rval * rval);
+    break;
+  case HAMMING:
+    rval = fabs(v1 - v2);
+    if(rval < tolerance) rval = 0.0f;
+    break;
+  case INNER_PROD:
+    rval = v1 * v2;
+  case CROSS_ENTROPY: {
+    double q = max(v2,0.000001); q = max(v2,0.999999);
+    if(v1 >= 1.0)
+      rval = -log(q);
+    else if(v1 <= 0.0)
+      rval = -log(1.0 - q);
+    else
+      rval = v1 * log(v1/q) + (1.0 - v1) * log((1.0 - v1) / (1.0 - q));
+    break;
+  }
+  }
+  return rval;
+}
+
 ///////////////////////////////////////
 // Normalization
 
@@ -3659,6 +3696,43 @@ float taMath_float::vec_dist(const float_Matrix* vec, const float_Matrix* oth,
     return vec_cross_entropy(vec, oth);
   }
   return -1.0;
+}
+
+float taMath_float::scalar_dist(float v1, float v2,
+				  DistMetric metric, float tolerance) 
+{
+  float rval = -1.0;
+  switch(metric) {
+  case SUM_SQUARES:
+  case COVAR:
+    rval = (v1 - v2);
+    if(fabs(rval) < tolerance) rval = 0.0f;
+    else rval *= rval;
+    break;
+  case EUCLIDIAN:
+  case CORREL:
+    rval = (v1 - v2);
+    if(fabs(rval) < tolerance) rval = 0.0f;
+    else rval = sqrt(rval * rval);
+    break;
+  case HAMMING:
+    rval = fabs(v1 - v2);
+    if(rval < tolerance) rval = 0.0f;
+    break;
+  case INNER_PROD:
+    rval = v1 * v2;
+  case CROSS_ENTROPY: {
+    float q = max(v2,0.000001); q = max(v2,0.999999);
+    if(v1 >= 1.0)
+      rval = -log(q);
+    else if(v1 <= 0.0)
+      rval = -log(1.0 - q);
+    else
+      rval = v1 * log(v1/q) + (1.0 - v1) * log((1.0 - v1) / (1.0 - q));
+    break;
+  }
+  }
+  return rval;
 }
 
 ///////////////////////////////////////

@@ -1753,6 +1753,11 @@ public:
   virtual bool		NextOptionAfter(const String& prefix, int& itr, String& result) const; // enables enumeration of multi-valued prefixes; start w/ itr=0; true if a new value was returned in result
   virtual String	GetLabel() const;
   // checks for option of LABEL_xxx and returns it or name
+  virtual String	GetCat() const { return OptionAfter("CAT_"); }
+  // get category of this item, from CAT_ option -- empty if not specified
+
+  virtual String	GetOptsHTML() const;
+  // get options in HTML format
   
   TypeItem();
   TypeItem(const TypeItem& cp); // copy constructor
@@ -1920,6 +1925,9 @@ public:
   ostream& 	Output(ostream& strm, void* base, int indent) const;
   ostream& 	OutputR(ostream& strm, void* base, int indent) const;
 
+  String GetHTML(int detail_level) const;
+  // gets an HTML representation of this object -- for help view etc -- detail level: 0 = just name and type, 1 = + description, 2 = + options & offsets (full programming stuff)
+
   // for dump files
   bool		DumpMember(void* par); 		// decide whether to dump or not
   int		Dump_Save(ostream& strm, void* base, void* par, int indent);
@@ -1970,6 +1978,9 @@ public:
   override const Variant GetValVar(const void* base) const;
   override void	SetValVar(const Variant& val, void* base, void* par = NULL);
     // note: par is only needed really needed for owned taBase ptrs)
+
+  String GetHTML(int detail_level) const;
+  // gets an HTML representation of this object -- for help view etc -- detail level: 0 = just name and type, 1 = + description, 2 = + options & offsets (full programming stuff)
   
 private:
   void 		Initialize();
@@ -2032,6 +2043,10 @@ public:
   // call the function, using gui dialog if need to get args
   const String		ParamsAsString() const; // returns what would be in () for a definition
   bool			ShowMethod(taMisc::ShowMembs show = taMisc::USE_SHOW_GUI_DEF) const;
+
+  String GetHTML(int detail_level) const;
+  // gets an HTML representation of this object -- for help view etc -- detail level: 0 = just name and type (args), 1 = + description, 2 = + options (full programming stuff)
+
 protected:
   mutable byte	show_any; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
   void		ShowMethod_CalcCache() const; // called when show_any=0, ie, not configured yet
@@ -2082,7 +2097,7 @@ public:
   TypeSpace	parents;	// type(s) this inherits from
   int_PArray	par_off;	// parent offsets
   TypeSpace	par_formal;	// formal parents (e.g. class, const, enum..)
-  TypeSpace	par_cache;	// cache of certain parent types for speedup
+  TypeSpace	par_cache;	// cache of *all* parents for optimized inheritance checking (not avail during maketa)
   TypeSpace	children;	// inherited from this
   TokenSpace	tokens;		// tokens of this type (if kept)
 
@@ -2357,6 +2372,13 @@ public:
   // output type information only
   ostream&  	OutputInherit(ostream& strm) const;
   ostream&  	OutputInherit_impl(ostream& strm) const;
+
+  String 	GetHTML(int detail_level = 0) const;
+  // gets an HTML representation of this type -- for help view etc -- detail level: 0,1 = basic user information, 2 = + full programming details (expert mode)
+  String	GetHTMLLink() const;
+  // get HTML code for a link to this type -- only generates a link if InheritsNonAtomicClass -- otherwise it just returns the Get_C_Name representation
+  String 	GetHTMLSubType(int detail_level) const;
+  // gets an HTML representation of a sub type (typdef or enum) -- for help view etc -- detail level: 0 = just name and type, 1 = + description, 2 = + options etc (full programming stuff)
 
   // saving and loading of type instances to/from streams
   int		Dump_Save(ostream& strm, void* base, void* par=NULL, int indent=0);

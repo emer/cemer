@@ -577,6 +577,9 @@ public:
   static double	vec_dist(const double_Matrix* vec, const double_Matrix* oth_vec,
 			 DistMetric metric, bool norm = false, double tolerance=0.0);
   // #CAT_Distance compute generalized distance metric with other vector (double_Matrix* vec, calls appropriate fun above)
+  static double	scalar_dist(double v1, double v2,
+			    DistMetric metric, double tolerance=0.0);
+  // #CAT_Distance compute distance metric on scalar values -- not really sensible for COVAR o CORREL (which reduce to SUM_SQUARES and EUCLIDIAN, respectively)
 
   ///////////////////////////////////////
   // Normalization
@@ -1124,6 +1127,9 @@ public:
   static float	vec_dist(const float_Matrix* vec, const float_Matrix* oth_vec,
 			 DistMetric metric, bool norm = false, float tolerance=0.0f);
   // #CAT_Distance compute generalized distance metric with other vector (float_Matrix* vec, calls appropriate fun above)
+  static float	scalar_dist(float v1, float v2,
+			    DistMetric metric, float tolerance=0.0);
+  // #CAT_Distance compute distance metric on scalar values -- not really sensible for COVAR o CORREL (which reduce to SUM_SQUARES and EUCLIDIAN, respectively)
 
   ///////////////////////////////////////
   // Normalization

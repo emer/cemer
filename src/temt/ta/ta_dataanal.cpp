@@ -534,7 +534,8 @@ String taDataAnal::RegressLinear(DataTable* src_data, const String& x_data_col_n
 
 bool taDataAnal::DistMatrix(float_Matrix* dist_mat, DataTable* src_data,
 			    const String& data_col_nm,
-			    taMath::DistMetric metric, bool norm, float tol) {
+			    taMath::DistMetric metric, bool norm, float tol,
+			    bool incl_scalars) {
   if(!src_data) return false;
   if(data_col_nm.empty()) {
     int n_rows = src_data->rows;
@@ -545,27 +546,34 @@ bool taDataAnal::DistMatrix(float_Matrix* dist_mat, DataTable* src_data,
 	for(int cl=0; cl<src_data->cols(); cl++) {
 	  DataCol* da = src_data->GetColData(cl);
 	  if(!da) return false;
-	  if(!da->isMatrix()) continue;
 	  if(da->valType() != VT_FLOAT && da->valType() != VT_DOUBLE) continue;
-	  if(da->valType() == VT_FLOAT) {
-	    float_Matrix* ta = (float_Matrix*)src_data->GetValAsMatrix(cl, ar);
-	    taBase::Ref(ta);
-	    float_Matrix* tb = (float_Matrix*)src_data->GetValAsMatrix(cl, br);
-	    taBase::Ref(tb);
-	    float dist = taMath_float::vec_dist(ta, tb, metric, norm, tol);
-	    cell_dist += dist;
-	    taBase::unRefDone(ta);
-	    taBase::unRefDone(tb);
+	  if(!da->isMatrix()) {
+	    if(!incl_scalars) continue;
+	    float fa = src_data->GetValAsFloat(cl, ar);
+	    float fb = src_data->GetValAsFloat(cl, br);
+	    cell_dist += taMath_float::scalar_dist(fa, fb, metric, tol);
 	  }
-	  else {		// VT_DOUBLE
-	    double_Matrix* ta = (double_Matrix*)src_data->GetValAsMatrix(cl, ar);
-	    taBase::Ref(ta);
-	    double_Matrix* tb = (double_Matrix*)src_data->GetValAsMatrix(cl, br);
-	    taBase::Ref(tb);
-	    double dist = taMath_double::vec_dist(ta, tb, metric, norm, tol);
-	    cell_dist += dist;
-	    taBase::unRefDone(ta);
-	    taBase::unRefDone(tb);
+	  else {
+	    if(da->valType() == VT_FLOAT) {
+	      float_Matrix* ta = (float_Matrix*)src_data->GetValAsMatrix(cl, ar);
+	      taBase::Ref(ta);
+	      float_Matrix* tb = (float_Matrix*)src_data->GetValAsMatrix(cl, br);
+	      taBase::Ref(tb);
+	      float dist = taMath_float::vec_dist(ta, tb, metric, norm, tol);
+	      cell_dist += dist;
+	      taBase::unRefDone(ta);
+	      taBase::unRefDone(tb);
+	    }
+	    else {		// VT_DOUBLE
+	      double_Matrix* ta = (double_Matrix*)src_data->GetValAsMatrix(cl, ar);
+	      taBase::Ref(ta);
+	      double_Matrix* tb = (double_Matrix*)src_data->GetValAsMatrix(cl, br);
+	      taBase::Ref(tb);
+	      double dist = taMath_double::vec_dist(ta, tb, metric, norm, tol);
+	      cell_dist += dist;
+	      taBase::unRefDone(ta);
+	      taBase::unRefDone(tb);
+	    }
 	  }
 	}
 	dist_mat->FastEl(br,ar) = cell_dist;
@@ -592,10 +600,11 @@ bool taDataAnal::DistMatrix(float_Matrix* dist_mat, DataTable* src_data,
 
 bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_data,
 				 const String& data_col_nm, const String& name_col_nm,
-				 taMath::DistMetric metric, bool norm, float tol) {
+				 taMath::DistMetric metric, bool norm, float tol,
+				 bool incl_scalars) {
   if(!src_data) return false;
   float_Matrix dmat(false);
-  bool rval = DistMatrix(&dmat, src_data, data_col_nm, metric, norm, tol);
+  bool rval = DistMatrix(&dmat, src_data, data_col_nm, metric, norm, tol, incl_scalars);
   if(!rval) return false;
   GetDest(dist_mat, src_data, "DistMatrix");
   dist_mat->StructUpdate(true);
@@ -640,7 +649,8 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
 bool taDataAnal::CrossDistMatrix(float_Matrix* dist_mat,
 				 DataTable* src_data_a, const String& data_col_nm_a,
 				 DataTable* src_data_b, const String& data_col_nm_b,
-				 taMath::DistMetric metric, bool norm, float tol) {
+				 taMath::DistMetric metric, bool norm, float tol,
+				 bool incl_scalars) {
   if(!src_data_a || !src_data_b) return false;
   if(data_col_nm_a.empty() && data_col_nm_b.empty()) {
     int n_rows = src_data_a->rows;
@@ -653,28 +663,35 @@ bool taDataAnal::CrossDistMatrix(float_Matrix* dist_mat,
 	  DataCol* da_a = src_data_a->GetColData(cl);
 	  DataCol* da_b = src_data_b->GetColData(cl);
 	  if(!da_a || !da_b) return false;
-	  if(!da_a->isMatrix() || !da_b->isMatrix()) continue;
 	  if(da_a->valType() != da_b->valType()) continue;
 	  if(da_a->valType() != VT_FLOAT && da_a->valType() != VT_DOUBLE) continue;
-	  if(da_a->valType() == VT_FLOAT) {
-	    float_Matrix* ta = (float_Matrix*)src_data_a->GetValAsMatrix(cl, ar);
-	    taBase::Ref(ta);
-	    float_Matrix* tb = (float_Matrix*)src_data_b->GetValAsMatrix(cl, br);
-	    taBase::Ref(tb);
-	    float dist = taMath_float::vec_dist(ta, tb, metric, norm, tol);
-	    cell_dist += dist;
-	    taBase::unRefDone(ta);
-	    taBase::unRefDone(tb);
+	  if(!da_a->isMatrix() || !da_b->isMatrix()) {
+	    if(!incl_scalars || (da_a->isMatrix() != da_b->isMatrix())) continue;
+	    float fa = src_data_a->GetValAsFloat(cl, ar);
+	    float fb = src_data_b->GetValAsFloat(cl, br);
+	    cell_dist += taMath_float::scalar_dist(fa, fb, metric, tol);
 	  }
-	  else {		// VT_DOUBLE
-	    double_Matrix* ta = (double_Matrix*)src_data_a->GetValAsMatrix(cl, ar);
-	    taBase::Ref(ta);
-	    double_Matrix* tb = (double_Matrix*)src_data_b->GetValAsMatrix(cl, br);
-	    taBase::Ref(tb);
-	    double dist = taMath_double::vec_dist(ta, tb, metric, norm, tol);
-	    cell_dist += dist;
-	    taBase::unRefDone(ta);
-	    taBase::unRefDone(tb);
+	  else {
+	    if(da_a->valType() == VT_FLOAT) {
+	      float_Matrix* ta = (float_Matrix*)src_data_a->GetValAsMatrix(cl, ar);
+	      taBase::Ref(ta);
+	      float_Matrix* tb = (float_Matrix*)src_data_b->GetValAsMatrix(cl, br);
+	      taBase::Ref(tb);
+	      float dist = taMath_float::vec_dist(ta, tb, metric, norm, tol);
+	      cell_dist += dist;
+	      taBase::unRefDone(ta);
+	      taBase::unRefDone(tb);
+	    }
+	    else {		// VT_DOUBLE
+	      double_Matrix* ta = (double_Matrix*)src_data_a->GetValAsMatrix(cl, ar);
+	      taBase::Ref(ta);
+	      double_Matrix* tb = (double_Matrix*)src_data_b->GetValAsMatrix(cl, br);
+	      taBase::Ref(tb);
+	      double dist = taMath_double::vec_dist(ta, tb, metric, norm, tol);
+	      cell_dist += dist;
+	      taBase::unRefDone(ta);
+	      taBase::unRefDone(tb);
+	    }
 	  }
 	}
 	dist_mat->FastEl(br,ar) = cell_dist;
@@ -711,11 +728,12 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
 				      const String& name_col_nm_a,
 				      DataTable* src_data_b, const String& data_col_nm_b,
 				      const String& name_col_nm_b,
-				      taMath::DistMetric metric, bool norm, float tol) {
+				      taMath::DistMetric metric, bool norm, float tol,
+				      bool incl_scalars) {
   if(!src_data_a || !src_data_b) return false;
   float_Matrix dmat(false);
   bool rval = CrossDistMatrix(&dmat, src_data_a, data_col_nm_a, src_data_b, data_col_nm_b, 
-			      metric, norm, tol);
+			      metric, norm, tol, incl_scalars);
   if(!rval) return false;
   GetDest(dist_mat, src_data_a, src_data_b->name + "_DistMatrix");
   dist_mat->StructUpdate(true);

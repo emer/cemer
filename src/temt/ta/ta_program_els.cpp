@@ -982,12 +982,25 @@ bool MemberProgEl::GetTypeFromPath(bool quiet) {
     return false;
   }
   TypeDef* ot = obj->act_object_type();
-  int net_base_off = 0;
-  ta_memb_ptr net_mbr_off = 0;
-  MemberDef* md = TypeDef::FindMemberPathStatic(ot, net_base_off, net_mbr_off, path, false);
-  // gets static path based just on member types, updates ot to point to owner type of md
-  obj_type = ot;
-  return (bool)md;
+  taBase* base_base = obj->object_val;
+  MemberDef* md = NULL;
+  bool rval = false;
+  if(base_base) {
+    taBase* mb_tab = base_base->FindFromPath(path, md);
+    if(mb_tab) {
+      obj_type = mb_tab->GetTypeDef();
+      rval = true;
+    }
+  }
+  else {
+    int net_base_off = 0;
+    ta_memb_ptr net_mbr_off = 0;
+    md = TypeDef::FindMemberPathStatic(ot, net_base_off, net_mbr_off, path, false);
+    // gets static path based just on member types, updates ot to point to owner type of md
+    obj_type = ot;
+    rval = (bool)md;
+  }
+  return rval;
 }
 
 void MemberProgEl::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1120,7 +1133,6 @@ String MemberFmArg::GetDisplayName() const {
 
 void MemberMethodCall::Initialize() {
   method = NULL;
-  mth_obj_type = &TA_taBase; // placeholder
 }
 
 void MemberMethodCall::UpdateAfterEdit_impl() {
@@ -1162,20 +1174,6 @@ const String MemberMethodCall::GenCssBody_impl(int indent_level) {
   rval += ";\n";
   
   return rval;
-}
-
-bool MemberMethodCall::GetTypeFromPath(bool quiet) {
-  bool rval = inherited::GetTypeFromPath(quiet);
-  if(!rval) return false;
-
-  TypeDef* ot = obj->act_object_type();
-  int net_base_off = 0;
-  ta_memb_ptr net_mbr_off = 0;
-  String tmp_pth = path + ".";	// get sub-guy
-  MemberDef* md = TypeDef::FindMemberPathStatic(ot, net_base_off, net_mbr_off, tmp_pth, false);
-  // gets static path based just on member types, updates ot to point to owner type of md
-  mth_obj_type = ot;
-  return (bool)md;
 }
 
 String MemberMethodCall::GetDisplayName() const {

@@ -2152,43 +2152,91 @@ bool ProgEl::CheckProgVarRef(ProgVarRef& pvr, bool quiet, bool& rval) {
 bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
   ProgVar* cur_ptr = pvr.ptr();
   if(!cur_ptr) return false;
-  Program* myprg = GET_MY_OWNER(Program);
-  Program* otprg = GET_OWNER(cur_ptr, Program);
-  if(!myprg || !otprg || myprg == otprg || myprg->HasBaseFlag(taBase::COPYING)) return false; // not updated
   String var_nm = cur_ptr->name;
-  String cur_path = cur_ptr->GetPath(NULL, otprg);
-  MemberDef* md;
-  ProgVar* pv = (ProgVar*)myprg->FindFromPath(cur_path, md);
-  if(pv && (pv->name == var_nm)) { pvr.set(pv); return true; }
-  // ok, this is where we find same name or make one
-  String cur_own_path = cur_ptr->owner->GetPath(NULL, otprg);
-  taBase* pv_own_tab = myprg->FindFromPath(cur_own_path, md);
-  if(!pv_own_tab || !pv_own_tab->InheritsFrom(&TA_ProgVar_List)) {
-    taMisc::Warning("Warning: could not find owner for program variable:", 
-		    var_nm, "in program:", myprg->name, "on path:",
-		    cur_own_path, "setting var to null!");
-    pvr.set(NULL);
-    return false;
+  Program* my_prg = GET_MY_OWNER(Program);
+  Program* ot_prg = GET_OWNER(cur_ptr, Program);
+  if(!my_prg || !ot_prg || my_prg->HasBaseFlag(taBase::COPYING)) return false; // not updated
+  Function* ot_fun = GET_OWNER(cur_ptr, Function);
+  Function* my_fun = GET_MY_OWNER(Function);
+  if(ot_fun && my_fun) {	       // both in functions
+    if(my_fun == ot_fun) return false; // nothing to do
+    String cur_path = cur_ptr->GetPath(NULL, ot_fun);
+    MemberDef* md;
+    ProgVar* pv = (ProgVar*)my_fun->FindFromPath(cur_path, md);
+    if(pv && (pv->name == var_nm)) { pvr.set(pv); return true; }
+    // ok, this is where we find same name or make one
+    String cur_own_path = cur_ptr->owner->GetPath(NULL, ot_fun);
+    taBase* pv_own_tab = my_fun->FindFromPath(cur_own_path, md);
+    if(!pv_own_tab || !pv_own_tab->InheritsFrom(&TA_ProgVar_List)) {
+      ProgVars* pvars = (ProgVars*)my_fun->fun_code.FindType(&TA_ProgVars);
+      if(!pvars) {
+	taMisc::Warning("Warning: could not find owner for program variable:", 
+			var_nm, "in program:", my_prg->name, "on path:",
+			cur_own_path, "setting var to null!");
+	pvr.set(NULL);
+	return false;
+      }
+      pv_own_tab = &(pvars->local_vars);
+    }
+    ProgVar_List* pv_own = (ProgVar_List*)pv_own_tab;
+    pv = pv_own->FindName(var_nm);
+    if(pv) { pvr.set(pv); return true; }	// got it!
+    pv = my_fun->FindVarName(var_nm); // do more global search
+    if(pv) { pvr.set(pv); return true; }	// got it!
+    // now we need to add a clone of cur_ptr to our local list and use that!!
+    pv = (ProgVar*)cur_ptr->Clone();
+    pv_own->Add(pv);
+    pv->CopyFrom(cur_ptr);	// somehow clone is not copying stuff -- try this
+    pv->name = var_nm;		// just to be sure
+    pv->DataChanged(DCR_ITEM_UPDATED);
+    pvr.set(pv); // done!!
+    taMisc::Info("Note: copied program variable:", 
+		 var_nm, "from function:", ot_fun->name, "to function:",
+		 my_fun->name, "because copied program element refers to it");
+    taProject* myproj = GET_OWNER(my_prg, taProject);
+    taProject* otproj = GET_OWNER(ot_prg, taProject);
+    // update possible var pointers from other project!
+    if(myproj && otproj && (myproj != otproj)) {
+      pv->UpdatePointers_NewPar(otproj, myproj);
+    }
   }
-  ProgVar_List* pv_own = (ProgVar_List*)pv_own_tab;
-  pv = pv_own->FindName(var_nm);
-  if(pv) { pvr.set(pv); return true; }	// got it!
-  pv = myprg->FindVarName(var_nm); // do more global search
-  if(pv) { pvr.set(pv); return true; }	// got it!
-  // now we need to add a clone of cur_ptr to our local list and use that!!
-  pv = (ProgVar*)cur_ptr->Clone();
-  pv_own->Add(pv);
-  pv->name = var_nm;		// just to be sure
-  pv->DataChanged(DCR_ITEM_UPDATED);
-  pvr.set(pv); // done!!
-  taMisc::Info("Note: copied program variable:", 
-	       var_nm, "from program:", otprg->name, "to program:",
-	       myprg->name, "because copied program element refers to it");
-  taProject* myproj = GET_OWNER(myprg, taProject);
-  taProject* otproj = GET_OWNER(otprg, taProject);
-  // update possible var pointers from other project!
-  if(myproj && otproj && (myproj != otproj)) {
-    pv->UpdatePointers_NewPar(otproj, myproj);
+  else {
+    if(my_prg == ot_prg) return false;	      // same program, no problem
+    String cur_path = cur_ptr->GetPath(NULL, ot_prg);
+    MemberDef* md;
+    ProgVar* pv = (ProgVar*)my_prg->FindFromPath(cur_path, md);
+    if(pv && (pv->name == var_nm)) { pvr.set(pv); return true; }
+    // ok, this is where we find same name or make one
+    String cur_own_path = cur_ptr->owner->GetPath(NULL, ot_prg);
+    taBase* pv_own_tab = my_prg->FindFromPath(cur_own_path, md);
+    if(!pv_own_tab || !pv_own_tab->InheritsFrom(&TA_ProgVar_List)) {
+      taMisc::Warning("Warning: could not find owner for program variable:", 
+		      var_nm, "in program:", my_prg->name, "on path:",
+		      cur_own_path, "setting var to null!");
+      pvr.set(NULL);
+      return false;
+    }
+    ProgVar_List* pv_own = (ProgVar_List*)pv_own_tab;
+    pv = pv_own->FindName(var_nm);
+    if(pv) { pvr.set(pv); return true; }	// got it!
+    pv = my_prg->FindVarName(var_nm); // do more global search
+    if(pv) { pvr.set(pv); return true; }	// got it!
+    // now we need to add a clone of cur_ptr to our local list and use that!!
+    pv = (ProgVar*)cur_ptr->Clone();
+    pv_own->Add(pv);
+    pv->CopyFrom(cur_ptr);	// somehow clone is not copying stuff -- try this
+    pv->name = var_nm;		// just to be sure
+    pv->DataChanged(DCR_ITEM_UPDATED);
+    pvr.set(pv); // done!!
+    taMisc::Info("Note: copied program variable:", 
+		 var_nm, "from program:", ot_prg->name, "to program:",
+		 my_prg->name, "because copied program element refers to it");
+    taProject* myproj = GET_OWNER(my_prg, taProject);
+    taProject* otproj = GET_OWNER(ot_prg, taProject);
+    // update possible var pointers from other project!
+    if(myproj && otproj && (myproj != otproj)) {
+      pv->UpdatePointers_NewPar(otproj, myproj);
+    }
   }
   return true;
 }
@@ -2818,6 +2866,16 @@ void Function::UpdateAfterEdit_impl() {
   if(return_val.var_type != ProgVar::T_Int) {
     return_type = return_val.var_type;
     return_val.var_type = ProgVar::T_Int;
+  }
+}
+
+void Function::UpdateAfterCopy(const ProgEl& cp) {
+  inherited::UpdateAfterCopy(cp);
+  Program* myprg = GET_MY_OWNER(Program);
+  Program* otprg = (Program*)cp.GetOwner(&TA_Program);
+  if(myprg && otprg && myprg == otprg && !myprg->HasBaseFlag(taBase::COPYING)) {
+    // if within the same program, we need to update the *function* pointers 
+    UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
   }
 }
 

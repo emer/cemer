@@ -40,6 +40,7 @@ class Program_List;
 class ProgLibEl;
 class ProgLib;
 class iProgramPanel;
+class Function;
 class ProgramCall; //
 
 /////////////////////////////////////////////////////////////////////
@@ -540,6 +541,13 @@ public:
   override String GetName() const;
   override String GetTypeDecoKey() const { return "ProgExpr"; }
 
+  static String	  ExprLookupFun(const String& cur_txt, int cur_pos, int& new_pos,
+				taBase*& path_own_obj, TypeDef*& path_own_typ,
+				MemberDef*& path_md,
+				Program* own_prg, Function* own_fun,
+				taBase* path_base=NULL, TypeDef* path_base_typ=NULL);
+  // generic lookup function for any kind of expression -- very powerful!  takes current text and position where the lookup function was called, and returns the new text filled in with whatever the user looked up, with a new cursor position (new_pos) -- if this is a path expression then path_own_typ is the type of object that owns the member path_md at the end of the path -- if path_md is NULL then path_own_typ is an object in a list or other container where member def is not relevant.  path_base is a base anchor point for paths if that is implied instead of needing to be fully contained within the expression (path_base_typ is type of that guy, esp needed if base is null) -- in this case only path expressions are allowed.
+
   override String StringFieldLookupFun(const String& cur_txt, int cur_pos,
 				       const String& mbr_name, int& new_pos);
 
@@ -895,6 +903,7 @@ public:
   TA_BASEFUNS(Function);
 protected:
   override void		UpdateAfterEdit_impl();
+  override void		UpdateAfterCopy(const ProgEl& cp);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
