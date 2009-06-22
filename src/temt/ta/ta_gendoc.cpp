@@ -25,46 +25,36 @@
 // 	     GenDoc		//
 //////////////////////////////////
 
-bool taGenDoc::MemberSpace_Filter_Member(MemberSpace* ths, MemberDef* md) {
-  if((md->owner == ths) && !md->HasOption("IGNORE"))
-    return true;
-  return false;
-}
+// bool taGenDoc::MemberSpace_Filter_Member(MemberSpace* ths, MemberDef* md) {
+//   if((md->owner == ths) && !md->HasOption("IGNORE"))
+//     return true;
+//   return false;
+// }
 
-bool taGenDoc::MethodSpace_Filter_Method(MethodSpace* ths, MethodDef* md) {
-  // always ignore these
-  if((md->name == "Copy_") || md->HasOption("IGNORE")
-     || ths->owner->IgnoreMeth(md->name))
-    return false;
+// bool taGenDoc::MethodSpace_Filter_Method(MethodSpace* ths, MethodDef* md) {
+//   // always ignore these
+//   if((md->name == "Copy_") || md->HasOption("IGNORE")
+//      || ths->owner->IgnoreMeth(md->name))
+//     return false;
 
-  if((md->owner != ths) && !ths->owner->HasOption("MULT_INHERIT"))
-    return false;		// don't reproduce owners functions (except multi inh)
+//   if((md->owner != ths) && !ths->owner->HasOption("MULT_INHERIT"))
+//     return false;		// don't reproduce owners functions (except multi inh)
 
-  // is_static is a problem in mult_inherit cases for compiler
-  if(ths->owner->HasOption("MULT_INHERIT")) {
-    if(!md->is_static)
-      return true;
-    return false;
-  }
+//   // is_static is a problem in mult_inherit cases for compiler
+//   if(ths->owner->HasOption("MULT_INHERIT")) {
+//     if(!md->is_static)
+//       return true;
+//     return false;
+//   }
 
-  return true;
-}
-
-String_PArray* taGenDoc::TypeDef_Get_Parents(TypeDef* td, String_PArray* bp) {
-  TypeSpace* pp = &td->parents; // Potential parents
-  for(int i=0;i<pp->size;i++) {
-    TypeDef* this_par = pp->FastEl(i);
-    if (!TypeDef_Filter_Type(this_par, pp)) {
-	bp->Add(this_par->name);
-	bp = TypeDef_Get_Parents(this_par, bp);
-      }
-  }
-  return bp;
-}
+//   return true;
+// }
 
 bool taGenDoc::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
   /////////////////////////////////////////////////////////////
   // 	Filters! Returns true if you should filter this TypeDef
+
+  if(!td->InheritsNonAtomicClass()) return true;
 
 //   TypeDef* ta_base_def = ts->FindName("taBase");
   TypeDef* ta_smartref_def = ts->FindName("taSmartRef");
@@ -83,271 +73,37 @@ bool taGenDoc::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
   if (td->InheritsFormal(TA_templ_inst))
     return true;
 
-  if(td->HasOption("IGNORE"))
-    return true;
-
   // exclude low-level non-instance guys, except for the ones we want..
   if((td->HasOption("NO_INSTANCE") || td->HasOption("NO_CSS"))
      && !(td->HasOption("VIRT_BASE") || td->HasOption("SMART_POINTER")
 	  || td->name == "taMisc"))
     return true;
 
-//    if(spc_builtin.FindName(td->name)) 
-//      return true;
-
   // no builtin guys
   if((td != ta_smartref_def && td->InheritsFrom(ta_smartref_def))
      || (td != ta_smartptr_def && td->InheritsFrom(ta_smartptr_def)))
     return true;
 
-  TypeDef* main_parent = NULL;
-  if(td->parents.size >= 1)
-    main_parent = td->parents.FastEl(0);
-
-  if(main_parent && main_parent->HasOption("IGNORE"))
-    return true;
   return false;
 }
 
-void taGenDoc::GenDoc(TypeSpace* ths, fstream& strm) {
-
-  //////////////////////
-  //     TypeSpace    //
-  //////////////////////
-
-  TypeSpace* ts = ths;
-
-  strm << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
-  strm << "<TypeSpace>\n";
-  strm << " <TypeName>" << ts->name.xml_esc() << "</TypeName>\n";
-
-  TypeDef* ta_base_def = ts->FindName("taBase");
-//   TypeDef* ta_smartref_def = ts->FindName("taSmartRef");
-//   TypeDef* ta_smartptr_def = ts->FindName("taSmartPtr");
+void taGenDoc::GenDoc(TypeSpace* ts, int detail_level) {
 
   for(int i=0;i<ts->size;i++) {
-  
-    //////////////////////
-    //     TypeDef      //
-    //////////////////////
-
     TypeDef* td = ts->FastEl(i);
-
     if (TypeDef_Filter_Type(td, ts)) continue;
 
-    TypeDef* main_parent = NULL;
-    if(td->parents.size >= 1)
-      main_parent = td->parents.FastEl(0);
+//     TypeDef* main_parent = NULL;
+//     if(td->parents.size >= 1)
+//       main_parent = td->parents.FastEl(0);
 
-    if(td == ta_base_def) main_parent = NULL; // somehow parent of taBase is taBase!
+//     if(td == ta_base_def) main_parent = NULL; // somehow parent of taBase is taBase!
 
-    ///////////////////////////////////////////////////
-    // now generate type info
-
-    strm << " <TypeDef>\n";
-    strm << "  <TypeDefName>" << td->name.xml_esc() << "</TypeDefName>\n";
-    strm << (td->is_enum() ? "  <Type>enum</Type>\n":"");
-    strm << (td->is_class() ? "  <Type>class</Type>\n":"");
-    strm << (trim(td->desc).length() ? "  <Desc>"+trim(td->desc).xml_esc()+"</Desc>\n":"");
-
-    if (td->opts.size) {  // Options of this TypeDef
-      strm << "  <Options>\n";
-      for (int k=0;k<td->opts.size;k++)
-	strm << "   <Option>" << trim(td->opts.FastEl(k)).xml_esc() << "   </Option>\n";
-      strm << "  </Options>\n";
-    }
-      
-    String_PArray* bp = new String_PArray; // Biological parents
-    bp = TypeDef_Get_Parents(td, bp);
-    if(bp->size){
-      strm << "  <Parents>\n";
-      for (int l=0;l<bp->size;l++)
-	strm << "   <Parent>" << trim(bp->FastEl(l)).xml_esc() << "</Parent>\n";
-      strm << "  </Parents>\n";
-    }
-
-    TypeSpace* tsc = &td->children;
-    if (tsc->size) {
-      strm << "  <Children>\n";
-      for (int j=0;j<tsc->size;j++) {
-	TypeDef* tdc = tsc->FastEl(j);
-	if (!TypeDef_Filter_Type(tdc, tsc))
-	  strm << "   <Child>" << trim(tdc->name).xml_esc() << "</Child>\n";
-      }
-      strm << "  </Children>\n";
-    }
-
-    //////////////////////
-    //    Sub-types     //
-    //////////////////////
-
-    TypeSpace* subs = &td->sub_types;
-    if(subs->size) {
-      bool first_one = true;
-      for(int q=0;q<subs->size;q++) {
-	TypeDef* st = subs->FastEl(q);
-	if(st->GetOwnerType() != td) continue; // note: this should filter redundancies!
-	if(st->is_enum()) {
-	  if(first_one) {
-	    strm << "  <SubTypes>\n";
-	    first_one = false;
-	  }
-	  strm << "   <EnumType>\n";
-	  strm << "    <EnumTypeName>" << st->name.xml_esc() << "</EnumTypeName>\n";
-	  EnumSpace* es = &st->enum_vals;
-	  if(es->size) {
-	    for (int j=0;j<es->size;j++) {
-	      EnumDef* ed = es->FastEl(j);
-	      strm << "    <EnumDef>\n";
-	      strm << "     <EnumDefName>" << ed->name.xml_esc() << "</EnumDefName>\n";
-	      strm << (trim(ed->desc).length() ? "     <Desc>"+trim(ed->desc).xml_esc()+"</Desc>\n":"");
-	      strm << "     <Value>" << ed->enum_no << "</Value>\n";
-	      strm << "    </EnumDef>\n";
-	    }
-	  }
-	  strm << "   </EnumType>\n";
-	}
-      }
-      if(!first_one)
-	strm << "  </SubTypes>\n";
-    }
-
-    //////////////////////
-    //    MemberSpace   //
-    //////////////////////
-
-    MemberSpace* mems = &td->members;
-    if (mems->size) {
-      //////////////////////
-      //    MemberDef     //
-      //////////////////////
-
-      bool first_one = true;
-      for (int j=0;j<mems->size;j++) {
-	MemberDef* md = mems->FastEl(j);
-
-	if(!MemberSpace_Filter_Member(mems, md))
-	  continue;
-
-	if(md->HasOption("NO_SHOW") || md->HasOption("NO_SHOW_EDIT") ||
-	   md->HasOption("HIDDEN") || md->HasOption("HIDDEN_TREE"))
-	  continue;
-
-	if(first_one) {
-	  strm << "  <MemberSpace>\n";
-	  strm << (mems->name != "members" ? "   <MemberSpaceName>"+mems->name.xml_esc()+"</Name>\n":"");
-	  first_one = false;
-	}
-
-	strm << "    <MemberDef>\n";
-	strm << "     <MemberDefName>" << md->name << "</MemberDefName>\n";
-	strm << (trim(md->desc).length() ? "     <Desc>"+trim(md->desc).xml_esc()+"</Desc>\n":"");
-	strm << "     <Type>"+md->type->Get_C_Name().xml_esc()+"</Type>\n";
-
-	if (md->opts.size) {
-	  strm << "     <Options>\n"; 
-	  for (int k=0;k<md->opts.size;k++)
-	    strm << "      <Option>" << trim(md->opts.FastEl(k)).xml_esc() << "   </Option>\n";
-	  strm << "     </Options>\n"; 
-	}
-
-	strm << "    </MemberDef>\n";
-      }
-      if(!first_one)
-	strm << "  </MemberSpace>\n";
-    }
-
-    //////////////////////
-    //    MethodSpace   //
-    //////////////////////
-
-    MethodSpace* mets = &td->methods;
-    if (mets->size) {
-
-      //////////////////////
-      //    MethodDef     //
-      //////////////////////
-
-      bool first_one = true;
-      for (int j=0;j<mets->size;j++) {
-	MethodDef* metd = mets->FastEl(j);
-
-	if (!MethodSpace_Filter_Method(mets, metd)) {
-	  continue;
-	}
-
-// 	if(metd->HasOption("EXPERT"))
-// 	  continue;
-
-	if(ta_base_def && td != ta_base_def && ta_base_def->methods.FindName(metd->name))
-	  continue;		// firmly exclude any of the base guys, which tend to be
-	                        // overwritten quite frequently in subclasses
-
-	if(main_parent && main_parent->methods.FindName(metd->name)) {
-	  continue;		// sometimes methods get re-owned, esp in multiple inheritance
-	                        // and templates -- for docs, we can always exclude
-	}
-
-	if(metd->name.contains("__")) continue; // internal thing
-
-	if(first_one) {
-	  strm << "  <MethodSpace>\n";
-	  first_one = false;
-	}
-
-	strm << "    <MethodDef>\n";
-	strm << "     <MethodDefName>" << metd->name << "</MethodDefName>\n";
-	strm << (trim(metd->desc).length() ? "     <Desc>"+trim(metd->desc).xml_esc()+"</Desc>\n":"");
-
- 	strm << "     <MethodDefType>" << metd->type->name << "</MethodDefType>\n";
-
-	for (int l=0;l<metd->arg_names.size;++l) {
-	  strm << "     <Argument>\n";
-	  strm << "      <Type>" << metd->arg_types[l]->Get_C_Name() << "</Type>\n";
-	  strm << "      <Name>" << metd->arg_names[l]<< "</Name>\n";
-	  String def = metd->arg_defs[l];
-	  if (def.nonempty())
-	    strm << "      <Def>" << def << "</Def>\n";
-	  strm << "     </Argument>\n";
-	}
-          
-
-	if (metd->opts.size) {
-	  strm << "     <Options>\n"; 
-	  for (int k=0;k<metd->opts.size;k++)
-	    strm << "      <Option>" << trim(metd->opts.FastEl(k)).xml_esc() << "   </Option>\n";
-	  strm << "     </Options>\n"; 
-	}
-	strm << "    </MethodDef>\n";
-      }
-      if(!first_one)
-	strm << "  </MethodSpace>\n";
-    }
-
-    //////////////////////
-    //    EnumSpace     //
-    //////////////////////
-
-    // Note: These are self-closing tags
-    EnumSpace* es = &td->enum_vals;
-    if(es->size) {
-      strm << "  <EnumSpace>\n";
-
-      //////////////////////
-      //    EnumDef       //
-      //////////////////////
-
-      for (int j=0;j<es->size;j++) {
-	EnumDef* ed = es->FastEl(j);
-	strm << "   <EnumDef>\n";
-	strm << "    <EnumDefName>" << ed->name.xml_esc() << "</EnumDefName>\n";
-	strm << (trim(ed->desc).length() ? "    <Desc>"+trim(ed->desc).xml_esc()+"</Desc>\n":"");
-	strm << "    <Value>" << ed->enum_no << "</Value>\n";
-	strm << "   </EnumDef>\n";
-      }
-      strm << "  </EnumSpace>\n";
-    }
-    strm << " </TypeDef>\n";
+    String fnm = td->name + ".html";
+    String html = td->GetHTML(detail_level);
+    fstream strm;
+    strm.open(fnm, ios::out);
+    strm << html << endl;
+    strm.close();
   }
-  strm << "</TypeSpace>\n";
 }

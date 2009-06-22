@@ -251,10 +251,10 @@ protected:
   // update the index of the item at given index (i.e., which was just moved)
 
 public:
-  void**	el;		// #READ_ONLY #NO_SAVE #NO_SHOW the elements themselves
-  int 		alloc_size;	// #READ_ONLY #NO_SAVE allocation size
-  taHashTable*	hash_table;	// #READ_ONLY #NO_SAVE #HIDDEN a hash table (NULL if not used)
-  int		size;		// #READ_ONLY #NO_SAVE #SHOW number of elements in the list
+  void**	el;		// #IGNORE the elements themselves
+  int 		alloc_size;	// #READ_ONLY #NO_SAVE #CAT_taList allocation size
+  taHashTable*	hash_table;	// #READ_ONLY #NO_SAVE #HIDDEN #CAT_taList a hash table (NULL if not used)
+  int		size;		// #READ_ONLY #NO_SAVE #SHOW #CAT_taList number of elements in the list
 
   taPtrList_impl()			{ InitList_(); }
   taPtrList_impl(const taPtrList_impl& cp)	{ InitList_(); Duplicate(cp); }
@@ -712,8 +712,8 @@ public:
 class TA_API  taArray_impl {
   // #NO_TOKENS Base Type for Arrays: physically contiguous allocation of an array of objects
 public:
-  int 		size;			// #NO_SAVE #READ_ONLY number of elements in the array
-  int		alloc_size;		// #READ_ONLY #NO_SAVE #EXPERT allocated (physical) size
+  int 		size;			// #NO_SAVE #READ_ONLY #CAT_taArray number of elements in the array
+  int		alloc_size;		// #READ_ONLY #NO_SAVE #EXPERT #CAT_taArray allocated (physical) size
 
   taArray_impl()			{ alloc_size = 0; size = 0; }
   virtual ~taArray_impl()		{ alloc_size = 0; size = 0; }
@@ -844,8 +844,8 @@ template<class T>
 class taPlainArray : public taArray_impl {
   // #INSTANCE ##NO_TOKENS a plain array
 public:
-  T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
-  T		err;		// #HIDDEN what is returned when out of range -- MUST INIT IN CONSTRUCTOR
+  T*		el;		// #HIDDEN #NO_SAVE #CAT_taArray Pointer to actual array memory
+  T		err;		// #HIDDEN #CAT_taArray what is returned when out of range -- MUST INIT IN CONSTRUCTOR
 
   void* 	FastEl_(int i)		{ return &(el[i]); } // #IGNORE
   const void*	FastEl_(int i) const  	{ return (const void*)&(el[i]); } // #IGNORE

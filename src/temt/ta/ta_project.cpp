@@ -2734,9 +2734,7 @@ bool taRootBase::Startup_ProcessArgs() {
     taMisc::HelpMsg();
   }
   if(taMisc::CheckArgByName("GenDoc")) {
-    fstream gen_doc_xml;
-    gen_doc_xml.open(taMisc::app_prefs_key + "_TA_doc.xml", ios::out);
-    taGenDoc::GenDoc(&(taMisc::types), gen_doc_xml);
+    taGenDoc::GenDoc(&(taMisc::types), 1); // 1 = regular mode
   }
 
   // just load the thing!?

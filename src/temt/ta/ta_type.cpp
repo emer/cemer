@@ -3320,7 +3320,7 @@ String TypeItem::GetOptsHTML() const {
   STRING_BUF(rval, 32); // extends if needed
   rval.cat("Options: ");
   for(int i=0;i<opts.size;i++) {
-    if(i > 0) rval.cat(" ");
+    if(i > 0) rval.cat(", ");
     rval.cat(trim(opts[i]).xml_esc());
   }
   return rval;
@@ -3765,8 +3765,13 @@ bool MemberDef::ValIsDefault(const void* base, int for_show) const {
 String MemberDef::GetHTML(int detail_level) const {
   // todo: fun_ptr!
   STRING_BUF(rval, (detail_level == 0 ? 100 : 300)); // extends if needed
+  String own_typ;
+  TypeDef* ot = GetOwnerType();
+  if(ot) {
+    own_typ.cat(ot->name).cat("::");
+  }
   if(detail_level >= 1) {
-    rval.cat("<h3 class=\"fn\"><a name=\"").cat(name).cat("\"></a>").cat(name).cat(" : ");
+    rval.cat("<h3 class=\"fn\"><a name=\"").cat(name).cat("\"></a>").cat(own_typ).cat(name).cat(" : ");
     rval.cat(type->GetHTMLLink()).cat("</h3>\n");
     rval.cat("<p>").cat(trim(desc).xml_esc()).cat("</p>\n");
     if(detail_level >= 2) {
@@ -4161,13 +4166,13 @@ void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
 
 String MethodDef::GetHTML(int detail_level) const {
   STRING_BUF(rval, (detail_level == 0 ? 100 : 300)); // extends if needed
+  String own_typ;
+  TypeDef* ot = GetOwnerType();
+  if(ot) {
+    own_typ.cat(ot->name).cat("::");
+  }
   if(detail_level >= 1) {
-    rval.cat("<h3 class=\"fn\">");
-    String own_typ;
-    TypeDef* ot = GetOwnerType();
-    if(ot) {
-      own_typ.cat(ot->name).cat("::");
-    }
+    rval.cat("<h3 class=\"fn\"><a name=\"").cat(name).cat("\"></a>");
     rval.cat(type->GetHTMLLink()).cat(" ").cat(own_typ).cat(name).cat(" ( ");
     for(int i = 0; i < arg_names.size; ++i) {
       if (i > 0) rval.cat(", ");
@@ -4186,7 +4191,7 @@ String MethodDef::GetHTML(int detail_level) const {
     }
   }
   else {
-    rval.cat(type->Get_C_Name()).cat("<b><a href=#").cat(name).cat(">").cat(name).cat("</a></b> ( ");
+    rval.cat(type->Get_C_Name()).cat(" <b><a href=#").cat(name).cat(">").cat(own_typ).cat(name).cat("</a></b> ( ");
     for(int i = 0; i < arg_names.size; ++i) {
       if (i > 0) rval.cat(", ");
       rval.cat(arg_types[i]->Get_C_Name()).cat(' ');
@@ -6753,33 +6758,72 @@ String TypeDef::GetHTMLLink() const {
 
 String TypeDef::GetHTMLSubType(int detail_level) const {
   STRING_BUF(rval, 100); // extends if needed
-  // todo do this
+  String own_typ;
+  TypeDef* ot = GetOwnerType();
+  if(ot) {
+    own_typ.cat(ot->name).cat("::");
+  }
+  if(InheritsFormal(TA_class)) {
+    // todo: not yet supported by maketa..
+  }
+  else if(InheritsFormal(TA_enum)) {
+    if(detail_level == 0) {
+      rval.cat("enum <b><a href=\"#").cat(name).cat("\">").cat(own_typ).cat(name).cat("</a></b> { ");
+      for(int i=0;i<enum_vals.size;i++) {
+	EnumDef* ed = enum_vals[i];
+	if(i > 0) rval.cat(", ");
+	rval.cat(ed->name);
+      }
+      rval.cat(" }");
+    }
+    else {
+      rval.cat("<h3 class=\"flags\"><a name=\"").cat(name).cat("\"></a>");
+      rval.cat("enum ").cat(own_typ).cat(name).cat("</h3>\n");
+      rval.cat("<p>").cat(trim(desc).xml_esc()).cat("</p>\n");
+      rval.cat("<p><table border=\"1\" cellpadding=\"2\" cellspacing=\"1\" width=\"100%\">\n");
+      rval.cat("<tr><th width=\"25%\">Constant</th><th width=\"15%\">Value</th><th width=\"60%\">Description</th></tr>\n");
+      for(int i=0;i<enum_vals.size;i++) {
+	EnumDef* ed = enum_vals[i];
+	rval.cat("<tr><td valign=\"top\"><tt>").cat(own_typ).cat(ed->name).cat("</tt></td>");
+	rval.cat("<td align=\"center\" valign=\"top\"><tt>0x").cat(String(ed->enum_no,"%08X")).cat("</tt></td>");
+	rval.cat("<td valign=\"top\">").cat(trim(ed->desc).xml_esc()).cat("</td></tr>\n");
+      }
+      rval.cat("</table></p>\n");
+    }
+  }
+  else {
+    rval.cat("typedef ");
+    for(int i=0;i<parents.size;i++) {
+      rval.cat(parents[i]->Get_C_Name()).cat(" ");
+    }
+    rval.cat(name);
+  }
   return rval;
 }
 
 String TypeDef::GetHTML(int detail_level) const {
+  if(!InheritsFormal(TA_class)) return GetHTMLLink();
+
   STRING_BUF(rval, 4048); // extends if needed
 
   int sub_detail = MAX(1, detail_level); // what we pass onto our sub-guys
 
+  String wiki_help_url = taMisc::GetWikiURL(taMisc::web_help_wiki, true); // add index
+
   // preamble
   rval.cat("<head>\n");
-  rval.cat("<title>Emergent ").cat(taMisc::version).cat(name).cat(" Class Reference</title>\n");
+  rval.cat("<title>").cat(taMisc::app_name).cat(" ").cat(taMisc::version).cat(" ").cat(name).cat(" Class Reference</title>\n");
   rval.cat("<link href=\"classic.css\" rel=\"stylesheet\" type=\"text/css\" />\n");
   rval.cat("</head>\n");
   rval.cat("<body>\n");
   rval.cat("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n");
   rval.cat("<tr>\n");
   rval.cat("<td align=\"left\" valign=\"top\" width=\"32\"><a href=\"").cat(taMisc::web_home).cat("\">");
-  rval.cat(taMisc::app_name).cat("</a></td>\n");
+  rval.cat(taMisc::app_name).cat("</a> ").cat(taMisc::version).cat("</td>\n");
   rval.cat("<td width=\"1\">&nbsp;&nbsp;</td><td class=\"postheader\" valign=\"center\">");
-  rval.cat("<a href=\"index.html\"><font color=\"#004faf\">Home</font></a>&nbsp;&middot; ");
-  rval.cat("<a href=\"namespaces.html\"><font color=\"#004faf\">All&nbsp;Namespaces</font></a>&nbsp;&middot; ");
-  rval.cat("<a href=\"classes.html\"><font color=\"#004faf\">All&nbsp;Classes</font></a>&nbsp;&middot; ");
-  rval.cat("<a href=\"mainclasses.html\"><font color=\"#004faf\">Main&nbsp;Classes</font></a>&nbsp;&middot; ");
-  rval.cat("<a href=\"groups.html\"><font color=\"#004faf\">Grouped&nbsp;Classes</font></a>&nbsp;&middot; ");
-  rval.cat("<a href=\"modules.html\"><font color=\"#004faf\">Modules</font></a>&nbsp;&middot; ");
-  rval.cat("<a href=\"functions.html\"><font color=\"#004faf\">Functions</font></a></td>\n");
+  rval.cat("<a href=\"").cat(taMisc::web_home).cat("\"><font color=\"#004faf\">Home</font></a>&nbsp;&middot; ");
+  rval.cat("<a href=\"").cat(wiki_help_url).cat(name).cat("\"><font color=\"#004faf\">Wiki Help For: ").cat(name).cat("</font></a>&nbsp;&middot; ");
+  rval.cat("<a href=\"ta:class_browser\"><font color=\"#004faf\">Class&nbsp;Browser</font></a>&nbsp\n");
 
   rval.cat("<td align=\"right\" valign=\"top\" width=\"230\"></td></tr></table><h1 class=\"title\">");
   rval.cat(name).cat(" Class Reference<br />\n");
@@ -6791,37 +6835,64 @@ String TypeDef::GetHTML(int detail_level) const {
   // NOTE: for include file tracking -- not a bad idea to actually record this info in maketa!!
   //  rval.cat("<pre> #include &lt;QTextDocument&gt;</pre>\n");
 
-  rval.cat("<p>Inherits ");
-  for(int i=0;i<par_cache.size; i++) {
-    if(i > 0) rval.cat(" ");
-    rval.cat(par_cache[i]->GetHTMLLink());
+  if(par_cache.size > 0) {
+    int inhi = 0;
+    rval.cat("<p>Inherits From: ");
+    for(int i=0;i<par_cache.size; i++) {
+      TypeDef* par = par_cache[i];
+      if(par->InheritsFormal(TA_templ_inst)) continue; // none of those
+      if(inhi > 0) rval.cat(", ");
+      rval.cat(par->GetHTMLLink());
+      inhi++;
+    }
+    rval.cat("</p>\n\n");	
   }
-  rval.cat("</p>\n\n");	
-  // todo: might be good to have this option somehow:
-// <ul>
-// <li><a href="qtextdocument-members.html">List of all members, including inherited members</a></li>
-// </ul>
+
+  if(children.size > 0) {
+    int inhi = 0;
+    rval.cat("<p>Inherited By: ");
+    for(int i=0;i<children.size; i++) {
+      TypeDef* par = children[i];
+      if(par->InheritsFormal(TA_templ_inst)) continue; // none of those
+      if(inhi > 0) rval.cat(", ");
+      rval.cat(par->GetHTMLLink());
+      inhi++;
+    }
+    rval.cat("</p>\n\n");	
+  }
+
+  if(detail_level >= 2) {
+    if(opts.size > 0) {
+      rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
+    }
+  }
+
+  rval.cat("<p>Index: <a href=\"#subtypes\">SubTypes</a>, ");
+  rval.cat("<a href=\"#members\">Members</a>, ");
+  rval.cat("<a href=\"#methods\">Methods</a></p>");
+
+  rval.cat("<a name=\"subtypes\"></a>\n");
+  rval.cat("<h3>Sub Types</h3>\n");
   if(sub_types.size > 0) {
-    rval.cat("<a name=\"public-types\"></a>\n");
-    rval.cat("<h3>Public Types</h3>\n");
     rval.cat("<ul>\n");
     for(int i=0;i<sub_types.size;i++) {
-//       rval.cat("<li><div class=\"fn\"/>"enum <b><a href=\"#FindFlag-enum">FindFlag</a></b> { FindBackward, FindCaseSensitively, FindWholeWords }</li>
+      TypeDef* st = sub_types[i];
+      if(!st->InheritsFormal(&TA_enum)) continue;
+      if((this != &TA_taBase) && (st->GetOwnerType() == &TA_taBase)) continue;
+      rval.cat("<li>").cat(st->GetHTMLSubType(0)).cat("</li>\n");
     }
     rval.cat("</ul>\n");
   }
-
-  TypeDef* main_parent = NULL;
-  if(parents.size >= 1)
-    main_parent = parents.FastEl(0);
-  if(this == &TA_taBase) main_parent = NULL; // somehow parent of taBase is taBase!
-
+  
+  /////////////////////////////////////////////////////////////////////
+  // collect the members and methods into string arrays for sorting 
   String_PArray memb_idx;
   for(int i=0;i<members.size;i++) {
     MemberDef* md = members[i];
     if(detail_level < 2) {
-      if(md->HasOption("NO SHOW") || md->HasOption("HIDDEN")) continue;
+      if(md->HasOption("NO_SHOW") || md->HasOption("HIDDEN")) continue;
     }
+    if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
     String cat = md->GetCat();
     if(cat.empty()) cat = "_NoCategory";
     String key = cat + ":" + md->name;
@@ -6832,19 +6903,11 @@ String TypeDef::GetHTML(int detail_level) const {
   String_PArray meth_idx;
   for(int i=0;i<methods.size;i++) {
     MethodDef* md = methods[i];
-    if(this != &TA_taBase && TA_taBase.methods.FindName(md->name))
-      continue;
-
-    if(main_parent && main_parent->methods.FindName(md->name)) {
-      continue;		// sometimes methods get re-owned, esp in multiple inheritance
-      // and templates -- for docs, we can always exclude
-    }
-
-    if(md->name.contains("__")) continue; // internal thing
-
-    if(detail_level < 2) {
-      if(md->HasOption("EXPERT")) continue;
-    }
+    // expert methods are fine for this kind of doc rendering, given that they are grouped at bottom typically
+//     if(detail_level < 2) {
+//       if(md->HasOption("EXPERT")) continue;
+//     }
+    if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
     String cat = md->GetCat();
     if(cat.empty()) cat = "_NoCategory";
     String key = cat + ":" + md->name;
@@ -6852,11 +6915,12 @@ String TypeDef::GetHTML(int detail_level) const {
   }
   meth_idx.Sort();		// sorts by category then key, in effect
 
-  // todo: make the category guys links too!
+  //////////////////////////////////////////
+  // then do first pass output
 
+  rval.cat("<a name=\"members\"></a>\n");
+  rval.cat("<h3>Members</h3>\n");
   if(memb_idx.size > 0) {
-    rval.cat("<a name=\"members\"></a>\n");
-    rval.cat("<h3>Members</h3>\n");
     String prv_cat;
     for(int i=0;i<memb_idx.size;i++) {
       String key = memb_idx[i];
@@ -6865,7 +6929,7 @@ String TypeDef::GetHTML(int detail_level) const {
       MemberDef* md = members.FindName(mnm);
       if(cat != prv_cat) {
 	if(prv_cat.nonempty()) rval.cat("</ul>\n"); // terminate prev
-	rval.cat("<h4>Category: ").cat(cat).cat("</h4>\n");
+	rval.cat("<h4>Member Category: <a href=\"#MbrCat-").cat(cat).cat("\">").cat(cat).cat("</a></h4>\n");
 	rval.cat("<ul>\n");
 	prv_cat = cat;
       }
@@ -6874,9 +6938,9 @@ String TypeDef::GetHTML(int detail_level) const {
     rval.cat("</ul>\n");
   }
 
+  rval.cat("<a name=\"methods\"></a>\n");
+  rval.cat("<h3>Methods</h3>\n");
   if(meth_idx.size > 0) {
-    rval.cat("<a name=\"methods\"></a>\n");
-    rval.cat("<h3>Methods</h3>\n");
     String prv_cat;
     for(int i=0;i<meth_idx.size;i++) {
       String key = meth_idx[i];
@@ -6885,7 +6949,7 @@ String TypeDef::GetHTML(int detail_level) const {
       MethodDef* md = methods.FindName(mnm);
       if(cat != prv_cat) {
 	if(prv_cat.nonempty()) rval.cat("</ul>\n"); // terminate prev
-	rval.cat("<h4>Category: ").cat(cat).cat("</h4>\n");
+	rval.cat("<h4>Method Category: <a href=\"#MthCat-").cat(cat).cat("\">").cat(cat).cat("</a></h4>\n");
 	rval.cat("<ul>\n");
 	prv_cat = cat;
       }
@@ -6899,7 +6963,14 @@ String TypeDef::GetHTML(int detail_level) const {
 
   if(sub_types.size > 0) {
     rval.cat("<hr />\n");
-    rval.cat("<h2>Member Type Documentation</h2>\n");
+    rval.cat("<h2>SubType Documentation</h2>\n");
+
+    for(int i=0;i<sub_types.size;i++) {
+      TypeDef* st = sub_types[i];
+      if(!st->InheritsFormal(&TA_enum)) continue;
+      if((this != &TA_taBase) && (st->GetOwnerType() == &TA_taBase)) continue;
+      rval.cat(st->GetHTMLSubType(sub_detail));
+    }
   }
 
   if(memb_idx.size > 0) {
@@ -6913,7 +6984,8 @@ String TypeDef::GetHTML(int detail_level) const {
       String mnm = key.after(':');
       MemberDef* md = members.FindName(mnm);
       if(cat != prv_cat) {
-	rval.cat("<h3>Category: ").cat(cat).cat("</h3>\n");
+	rval.cat("<a name=\"MbrCat-").cat(cat).cat("\"></a>\n");
+	rval.cat("<h3>Member Category: ").cat(cat).cat("</h3>\n");
 	prv_cat = cat;
       }
       rval.cat(md->GetHTML(sub_detail)).cat("\n"); // extra cr for good readability
@@ -6931,13 +7003,23 @@ String TypeDef::GetHTML(int detail_level) const {
       String mnm = key.after(':');
       MethodDef* md = methods.FindName(mnm);
       if(cat != prv_cat) {
-	rval.cat("<h3>Category: ").cat(cat).cat("</h3>\n");
+	rval.cat("<a name=\"MthCat-").cat(cat).cat("\"></a>\n");
+	rval.cat("<h3>Method Category: ").cat(cat).cat("</h3>\n");
 	prv_cat = cat;
       }
       rval.cat(md->GetHTML(sub_detail)).cat("\n"); // extra cr for good readability
     }
   }
 
+  /////////////////////////
+  // postscript/footer
+  rval.cat("<p /><address><hr /><div align=\"center\">\n");
+  rval.cat("<table width=\"100%\" cellspacing=\"0\" border=\"0\"><tr class=\"address\">\n");
+  rval.cat("<td width=\"70%\" align=\"left\">Copyright &copy; 2009 Regents of the University of Colorado, Carnegie Mellon University, Princeton University.</td>\n");
+  //  rval.cat("<td width=\"40%\" align=\"center\"><a href=\"trademarks.html\">Trademarks</a></td>\n");
+  rval.cat("<td width=\"30%\" align=\"right\"><div align=\"right\"> ").cat(taMisc::app_name).cat(" ").cat(taMisc::version).cat("</div></td>\n");
+  rval.cat("</tr></table></div></address></body>\n");
+  rval.cat("</html>\n");
   return rval;
 }
 

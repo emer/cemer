@@ -1341,7 +1341,7 @@ public:
   ///////////////////////////////////////////////////////////////////////////
   //		Misc Impl stuff
 
-  mutable BaseFlags	base_flags; // #NO_SHOW #NO_SAVE #READ_ONLY base_flags for ta system
+  mutable BaseFlags	base_flags; // #NO_SHOW #NO_SAVE #READ_ONLY #CAT_taBase base_flags for ta system
 protected:
   QAtomicInt		refn;	// number of references to this object
 private: 
@@ -1527,9 +1527,9 @@ class TA_API taOBase : public taBase {
   // #NO_TOKENS #NO_UPDATE_AFTER owned base class of taBase
 INHERITED(taBase)
 public:
-  taBase*		owner;	// #NO_SHOW #READ_ONLY #NO_SAVE #NO_SET_POINTER pointer to owner
+  taBase*		owner;	// #NO_SHOW #READ_ONLY #NO_SAVE #NO_SET_POINTER #CAT_taBase pointer to owner
 
-  mutable UserDataItem_List* user_data_; // #OWN_POINTER #NO_SHOW_EDIT #HIDDEN_TREE #NO_SAVE_EMPTY storage for user data (created if needed)
+  mutable UserDataItem_List* user_data_; // #OWN_POINTER #NO_SHOW_EDIT #HIDDEN_TREE #NO_SAVE_EMPTY #CAT_taBase storage for user data (created if needed)
 
   taDataLink**		addr_data_link() {return &m_data_link;} // #IGNORE
   override taDataLink*	data_link() {return m_data_link;}	// #IGNORE
@@ -1626,7 +1626,7 @@ private:
 class TA_API taNBase : public taOBase { // #NO_TOKENS Named, owned base class of taBase
 INHERITED(taOBase)
 public:
-  String		name; // #CONDEDIT_OFF_base_flags:NAME_READONLY name of the object
+  String		name; // #CONDEDIT_OFF_base_flags:NAME_READONLY #CAT_taBase name of the object
 
   bool 		SetName(const String& nm)    	{ name = nm; return true; }
   String	GetName() const			{ return name; }
@@ -1646,8 +1646,8 @@ private:
 class TA_API taFBase: public taNBase {
   // #NO_TOKENS #NO_UPDATE_AFTER named/owned base class of taBase, with filename
 public:
-  String		desc;	   // #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
-  String		file_name; // #READ_ONLY #NO_SAVE #SHOW #FILE_DIALOG_LOAD the current filename for this object
+  String		desc;	   // #EDIT_DIALOG #CAT_taBase description of this object: what does it do, how should it be used, etc
+  String		file_name; // #READ_ONLY #NO_SAVE #SHOW #FILE_DIALOG_LOAD #CAT_taBase the current filename for this object
 
   override String	GetDesc() const { return desc; }
 
@@ -1731,10 +1731,10 @@ typedef taOBase inherited_taBase;
 typedef taPtrList_ta_base inherited_taPtrList;
 #endif
 public:
-  String        name;           // #CONDEDIT_OFF_base_flags:NAME_READONLY name of the object 
-  TypeDef*	el_base;	// #EXPERT #NO_SHOW_TREE #READ_ONLY_GUI #NO_SAVE Base type for objects in group
-  TypeDef* 	el_typ;		// #TYPE_ON_el_base #NO_SHOW_TREE Default type for objects in group
-  int		el_def;		// #EXPERT Index of default element in group
+  String        name;           // #CONDEDIT_OFF_base_flags:NAME_READONLY #CAT_taBase name of the object 
+  TypeDef*	el_base;	// #EXPERT #NO_SHOW_TREE #READ_ONLY_GUI #NO_SAVE #CAT_taList Base type for objects in group
+  TypeDef* 	el_typ;		// #TYPE_ON_el_base #NO_SHOW_TREE #CAT_taList Default type for objects in group
+  int		el_def;		// #EXPERT #CAT_taList Index of default element in group
 
   // stuff for the taBase 
   bool          SetName(const String& nm)       { name = nm; return true; }

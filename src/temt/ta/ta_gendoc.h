@@ -26,14 +26,10 @@
 class TA_API taGenDoc  {
   // #NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS collection of gendoc functions
 public:
-  static void 		GenDoc(TypeSpace* ths, fstream& strm);
-  // main function -- output type info to stream
+  static void 		GenDoc(TypeSpace* ths, int detail_level=1);
+  // main function -- output type info to stream -- saves .html files in current location -- detail level: 0,1 = basic user information, 2 = + full programming details (expert mode)
 
-  // helper funs:
-  static String_PArray* TypeDef_Get_Parents(TypeDef* td, String_PArray* bp);
   static bool 		TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts);
-  static bool 		MemberSpace_Filter_Member(MemberSpace* ths, MemberDef* md);
-  static bool 		MethodSpace_Filter_Method(MethodSpace* ths, MethodDef* md);
 };
 
 #endif // ta_gendoc_h
