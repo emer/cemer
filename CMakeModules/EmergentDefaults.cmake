@@ -42,6 +42,9 @@ else (WIN32) # assume gcc!!!
   if (APPLE) #grr... not working on Mac for some reason
     message(STATUS "note: '-Werror=return-type' not working on Mac: suggest fixing") 
     add_definitions(-Wreturn-type) # at least get a warning!
+    # on Mac, DEBUG is not defined!
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+    message(STATUS "CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
   else (APPLE)
     add_definitions(-Werror=return-type)
   endif (APPLE)
