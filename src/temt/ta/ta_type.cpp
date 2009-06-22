@@ -6842,7 +6842,7 @@ String TypeDef::GetHTML(int detail_level) const {
   rval.cat(taMisc::app_name).cat("</a> ").cat(taMisc::version).cat("</td>\n");
   rval.cat("<td width=\"1\">&nbsp;&nbsp;</td><td class=\"postheader\" valign=\"center\">");
   rval.cat("<a href=\"").cat(taMisc::web_home).cat("\"><font color=\"#004faf\">Home</font></a>&nbsp;&middot; ");
-  rval.cat("<a href=\"").cat(wiki_help_url).cat(name).cat("\"><font color=\"#004faf\">Wiki Help For: ").cat(name).cat("</font></a>&nbsp;&middot; ");
+  rval.cat("<a href=\"").cat(wiki_help_url).cat(name).cat("\"><font color=\"#004faf\">Wiki Docs For: ").cat(name).cat("</font></a>&nbsp;&middot; ");
   rval.cat("<a href=\"ta:class_browser\"><font color=\"#004faf\">Class&nbsp;Browser</font></a>&nbsp\n");
 
   rval.cat("<td align=\"right\" valign=\"top\" width=\"230\"></td></tr></table><h1 class=\"title\">");
@@ -6850,7 +6850,8 @@ String TypeDef::GetHTML(int detail_level) const {
   // <span class=\"small-subtitle\">[<a href="qtgui.html">QtGui</a> module]</span>
   rval.cat("</h1>\n\n");
 
-  rval.cat("<p>").cat(trim(desc).xml_esc()).cat("</p>\n\n");
+  rval.cat("<p>").cat(trim(desc).xml_esc()).cat("</p>\n");
+  rval.cat("<p>See for more info: <a href=\"").cat(wiki_help_url).cat(name).cat("\">Wiki Docs For: ").cat(name).cat("</a></p>\n\n");
 
   // NOTE: for include file tracking -- not a bad idea to actually record this info in maketa!!
   //  rval.cat("<pre> #include &lt;QTextDocument&gt;</pre>\n");
