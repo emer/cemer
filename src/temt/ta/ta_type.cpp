@@ -3892,11 +3892,16 @@ bool PropertyDef::ValIsDefault(const void* base, int for_show) const {
 
 String PropertyDef::GetHTML(int detail_level) const {
   // todo: accessor functions, etc
+  // todo: fun_ptr!
   STRING_BUF(rval, (detail_level == 0 ? 100 : 300)); // extends if needed
+  String own_typ;
+  TypeDef* ot = GetOwnerType();
+  if(ot) {
+    own_typ.cat(ot->name).cat("::");
+  }
   if(detail_level >= 1) {
-    rval.cat("<h3 class=\"fn\"><a name=\"").cat(name).cat("\"></a>").cat(name).cat(" : ");
+    rval.cat("<h3 class=\"fn\"><a name=\"").cat(name).cat("\"></a>").cat(own_typ).cat(name).cat(" : ");
     rval.cat(type->GetHTMLLink()).cat("</h3>\n");
-    rval.cat("</h3>\n");
     rval.cat("<p>").cat(trim(desc).xml_esc()).cat("</p>\n");
     if(detail_level >= 2) {
       rval.cat("<p> Size: ").cat(String(type->size)).cat("</p>\n");
@@ -6747,8 +6752,23 @@ ostream& TypeDef::OutputR(ostream& strm, void* base, int indent) const {
 
 String TypeDef::GetHTMLLink() const {
   STRING_BUF(rval, 32); // extends if needed
-  if(InheritsNonAtomicClass()) {
-    rval.cat("<a href=\"").cat(name).cat(".html\">").cat(Get_C_Name()).cat("</a>");
+  TypeDef* npt = (TypeDef*)this;
+  if(npt->ptr > 0)
+    npt = npt->GetNonPtrType();
+  if(npt && npt->ref)
+    npt = npt->GetNonRefType();
+  if(npt && npt->DerivesFrom(TA_const))
+    npt = npt->GetNonConstType();
+  if(npt) {
+    if(npt->InheritsFormal(TA_class)) {
+      rval.cat("<a href=\"").cat(npt->name).cat(".html\">").cat(Get_C_Name()).cat("</a>");
+    }
+    else if(npt->InheritsFormal(TA_enum)) {
+      rval.cat("<a href=\"#").cat(npt->name).cat("\">").cat(Get_C_Name()).cat("</a>");
+    }
+    else {
+      rval.cat(Get_C_Name());
+    }
   }
   else {
     rval.cat(Get_C_Name());
@@ -6804,7 +6824,7 @@ String TypeDef::GetHTMLSubType(int detail_level) const {
 String TypeDef::GetHTML(int detail_level) const {
   if(!InheritsFormal(TA_class)) return GetHTMLLink();
 
-  STRING_BUF(rval, 4048); // extends if needed
+  STRING_BUF(rval, 9096); // extends if needed
 
   int sub_detail = MAX(1, detail_level); // what we pass onto our sub-guys
 
@@ -6879,6 +6899,7 @@ String TypeDef::GetHTML(int detail_level) const {
       TypeDef* st = sub_types[i];
       if(!st->InheritsFormal(&TA_enum)) continue;
       if((this != &TA_taBase) && (st->GetOwnerType() == &TA_taBase)) continue;
+      if(st->GetOwnerType()->InheritsFormal(TA_templ_inst)) continue;
       rval.cat("<li>").cat(st->GetHTMLSubType(0)).cat("</li>\n");
     }
     rval.cat("</ul>\n");
@@ -6969,6 +6990,7 @@ String TypeDef::GetHTML(int detail_level) const {
       TypeDef* st = sub_types[i];
       if(!st->InheritsFormal(&TA_enum)) continue;
       if((this != &TA_taBase) && (st->GetOwnerType() == &TA_taBase)) continue;
+      if(st->GetOwnerType()->InheritsFormal(TA_templ_inst)) continue;
       rval.cat(st->GetHTMLSubType(sub_detail));
     }
   }
