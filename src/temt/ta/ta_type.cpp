@@ -3763,7 +3763,6 @@ bool MemberDef::ValIsDefault(const void* base, int for_show) const {
 
 
 String MemberDef::GetHTML(int detail_level) const {
-  // todo: fun_ptr!
   STRING_BUF(rval, (detail_level == 0 ? 100 : 300)); // extends if needed
   String own_typ;
   TypeDef* ot = GetOwnerType();
@@ -3772,7 +3771,10 @@ String MemberDef::GetHTML(int detail_level) const {
   }
   if(detail_level >= 1) {
     rval.cat("<h3 class=\"fn\"><a name=\"").cat(name).cat("\"></a>").cat(own_typ).cat(name).cat(" : ");
-    rval.cat(type->GetHTMLLink()).cat("</h3>\n");
+    rval.cat(type->GetHTMLLink());
+    if(fun_ptr)   rval.cat("(*)"); // function pointer indicator
+    if(is_static) rval.cat("&nbsp;&nbsp;<tt> [static]</tt>");
+    rval.cat("</h3>\n");
     rval.cat("<p>").cat(trim(desc).xml_esc()).cat("</p>\n");
     if(detail_level >= 2) {
       rval.cat("<p> Size: ").cat(String(type->size)).cat("</p>\n");
@@ -3783,6 +3785,8 @@ String MemberDef::GetHTML(int detail_level) const {
   }
   else {
     rval.cat("<b><a href=#").cat(name).cat(">").cat(name).cat("</a></b> : ").cat(type->Get_C_Name());
+    if(fun_ptr)   rval.cat("(*)"); // function pointer indicator
+    if(is_static) rval.cat("&nbsp;&nbsp;<tt> [static]</tt>");
   }
   return rval;
 }
@@ -4187,7 +4191,9 @@ String MethodDef::GetHTML(int detail_level) const {
       if (def.nonempty())
 	rval.cat(" = ").cat(trim(def).xml_esc());
     }
-    rval.cat(" )</h3>\n");
+    rval.cat(" )");
+    if(is_static) rval.cat("&nbsp;&nbsp;<tt> [static]</tt>");
+    rval.cat("</h3>\n");
     rval += "<p>" + trim(desc).xml_esc() + "</p>\n";
     if(detail_level >= 2) {
       if(opts.size > 0) {
@@ -4206,6 +4212,7 @@ String MethodDef::GetHTML(int detail_level) const {
 	rval.cat(" = ").cat(trim(def).xml_esc());
     }
     rval.cat(" )");
+    if(is_static) rval.cat("&nbsp;&nbsp;<tt> [static]</tt>");
   }
   return rval;
 }
