@@ -6109,6 +6109,8 @@ void Network::NetTextUserData() {
   TypeDef* td = GetTypeDef();
   Variant bool_on_val;
   bool_on_val.setBool(true);
+  Variant bool_off_val;
+  bool_off_val.setBool(true);
   for(int i=td->members.size-1; i>=0; i--) {
     MemberDef* md = td->members[i];
     if(!md->HasOption("VIEW")) continue;
