@@ -486,7 +486,6 @@ public:
   bool			net_text;       // whether to display text box below network with counters etc
   FloatTransform	net_text_xform;  // transform of coordinate system for the net text display element
   float			net_text_rot;	 // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
-  float			net_box_offset;	 // #READ_ONLY negative offset of the network box, which typically contains the net_text_xform -- if the net_text is on, this is set to .5, if off, then 0
   MemberSpace		membs;		// #NO_SAVE #NO_COPY list of all the members possible in units; note: all items are new clones
   String_Array	  	ordered_uvg_list; // #HIDDEN #NO_COPY selected var buttons
   // unit display flags

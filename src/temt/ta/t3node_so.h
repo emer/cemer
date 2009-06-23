@@ -402,18 +402,19 @@ class TA_API SoLineBox3d : public SoIndexedLineSet {
 #ifndef __MAKETA__
 typedef SoIndexedLineSet inherited;
 
-  SO_NODE_HEADER(SoLineBox3d);
+ SO_NODE_HEADER(SoLineBox3d);
 #endif // def __MAKETA__
 public:
   static void		initClass();
 
+  bool		center;		// if true, location is at center, else at lower-left-corner
   float		width;		// x
   float		height;		// y
   float		depth;		// z
 
   void 		render();
 
-  SoLineBox3d(float wd = 1.0f, float ht = 1.0f, float dp = 1.0f);
+  SoLineBox3d(float wd = 1.0f, float ht = 1.0f, float dp = 1.0f, bool ctr = true);
 protected:
   const char*  	getFileFormatName() const {return "IndexedLineSet"; } 
 

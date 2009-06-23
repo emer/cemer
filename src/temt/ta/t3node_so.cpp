@@ -717,9 +717,10 @@ void SoLineBox3d::initClass()
   SO_NODE_INIT_CLASS(SoLineBox3d, SoIndexedLineSet, "SoIndexedLineSet");
 }
 
-SoLineBox3d::SoLineBox3d(float wd, float ht, float dp) {
+SoLineBox3d::SoLineBox3d(float wd, float ht, float dp, bool ctr) {
   SO_NODE_CONSTRUCTOR(SoLineBox3d);
 
+  center = ctr;
   width = wd;
   height = ht;
   depth = dp;
@@ -733,14 +734,27 @@ void SoLineBox3d::render() {
   vtx.setNum(8);
   SbVec3f* v_dat = vtx.startEditing();
   int idx = 0;
-  v_dat[idx++].setValue(0.0f,0.0f,-depth);	// around the back
-  v_dat[idx++].setValue(width,0.0f,-depth);
-  v_dat[idx++].setValue(width,height,-depth);
-  v_dat[idx++].setValue(0.0f,height,-depth);
-  v_dat[idx++].setValue(0.0f,0.0f,0.0f);	// around the front
-  v_dat[idx++].setValue(width,0.0f,0.0f);
-  v_dat[idx++].setValue(width,height,0.0f);
-  v_dat[idx++].setValue(0.0f,height,0.0f);
+  if(center) {
+    float hx = 0.5f * width; float hy = 0.5f * height; float hz = 0.5f * depth;
+    v_dat[idx++].setValue(-hx,-hy,-hz);	// around the back
+    v_dat[idx++].setValue(hx,-hy,-hz);
+    v_dat[idx++].setValue(hx,hy,-hz);
+    v_dat[idx++].setValue(-hx,hy,-hz);
+    v_dat[idx++].setValue(-hx,-hy,hz);	// around the front
+    v_dat[idx++].setValue(hx,-hy,hz);
+    v_dat[idx++].setValue(hx,hy,hz);
+    v_dat[idx++].setValue(-hx,hy,hz);
+  }
+  else {
+    v_dat[idx++].setValue(0.0f,0.0f,-depth);	// around the back
+    v_dat[idx++].setValue(width,0.0f,-depth);
+    v_dat[idx++].setValue(width,height,-depth);
+    v_dat[idx++].setValue(0.0f,height,-depth);
+    v_dat[idx++].setValue(0.0f,0.0f,0.0f);	// around the front
+    v_dat[idx++].setValue(width,0.0f,0.0f);
+    v_dat[idx++].setValue(width,height,0.0f);
+    v_dat[idx++].setValue(0.0f,height,0.0f);
+  }
   vtx.finishEditing();
 
   coordIndex.setNum(24);

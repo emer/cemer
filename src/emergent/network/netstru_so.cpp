@@ -417,6 +417,7 @@ void T3UnitGroupNode::removeUnitText() {
 
 const float T3LayerNode::height = 0.05f;
 const float T3LayerNode::width = 0.5f;
+const float T3LayerNode::max_width = 0.05f;
 
 SO_NODE_SOURCE(T3LayerNode);
 
@@ -507,6 +508,8 @@ void T3LayerNode::render() {
   float fy = disp_scale * ((float)geom.y / max_size.y);
   float max_xy = MAX(max_size.x, max_size.y);
   float lay_wd = width / max_xy;
+  lay_wd = MIN(lay_wd, max_width);
+  
   float xfrac = .5f * fx;
   float yfrac = .5f * fy;
 
@@ -713,43 +716,12 @@ T3LayerGroupNode::T3LayerGroupNode(void* dataView_, bool show_draggers, bool roo
     SoMaterial* mat = material();
     mat->diffuseColor.setValue(0.8f, 0.5f, 0.8f); // lighter violet than draggers
     mat->transparency.setValue(0.3f);		// less transparent
-    shape_ = new SoIndexedLineSet;
-    vtx_prop_ = new SoVertexProperty;
-    shape_->vertexProperty.setValue(vtx_prop_); // note: vp refs/unrefs automatically
+    shape_ = new SoLineBox3d;
     ss->addChild(shape_);
-
-    SoMFVec3f& vertex = vtx_prop_->vertex;
-    vertex.setNum(8);
-
-    SoMFInt32& coords = shape_->coordIndex;
-    vtx_prop_->materialBinding.setValue(SoMaterialBinding::OVERALL);
-    coords.setNum(20);
-    int32_t* coords_dat = coords.startEditing();
-
-    //    2 -+-  ++- 4
-    //    0 ---  +-- 1
-
-    //  6 -++  +++ 7
-    //  3 --+  +-+ 5
-
-    int cidx = 0;
-    coords_dat[cidx++] = 0; coords_dat[cidx++] = 1;
-    coords_dat[cidx++] = 4; coords_dat[cidx++] = 2;
-    coords_dat[cidx++] = 0;
-    coords_dat[cidx++] = 3; coords_dat[cidx++] = 5;
-    coords_dat[cidx++] = 7; coords_dat[cidx++] = 6;
-    coords_dat[cidx++] = 3; coords_dat[cidx++] = -1;
-
-    coords_dat[cidx++] = 2; coords_dat[cidx++] = 6; coords_dat[cidx++] = -1;
-    coords_dat[cidx++] = 4; coords_dat[cidx++] = 7; coords_dat[cidx++] = -1;
-    coords_dat[cidx++] = 1; coords_dat[cidx++] = 5; coords_dat[cidx++] = -1;
-
-    coords.finishEditing();
   }
   else {
     drw_styl_ = NULL;		// no shape
     shape_ = NULL;		// no shape
-    vtx_prop_ = NULL;
   }
 }
 
@@ -766,25 +738,17 @@ void T3LayerGroupNode::render() {
   float fz = ((float)(lgp_max_size.z-1) + 4.0f * T3LayerNode::height) / max_size.z;
   float lay_wd_x = (T3LayerNode::width / max_size.x);
   float lay_wd_y = (T3LayerNode::width / max_size.y);
+  lay_wd_x = MIN(lay_wd_x, T3LayerNode::max_width);
+  lay_wd_y = MIN(lay_wd_y, T3LayerNode::max_width);
   float lay_ht_z = 2.0f * (T3LayerNode::height / max_size.z);
   float xfrac = (.5f * fx) - lay_wd_x;
   float yfrac = (.5f * fy) - lay_wd_y;
   float zfrac = (.5f * fz) - lay_ht_z;
 
-  SoMFVec3f& vertex = vtx_prop_->vertex;
-  SbVec3f* vertex_dat = vertex.startEditing();
-
-  int v_idx = 0;
-  vertex_dat[v_idx++].setValue(-.5f * fx, -.5f * fz, -.5f * fy); // 0 = ---
-  vertex_dat[v_idx++].setValue(.5f * fx, -.5f * fz, -.5f * fy); // 1 = +--
-  vertex_dat[v_idx++].setValue(-.5f * fx, .5f * fz, -.5f * fy); // 2 = -+-
-  vertex_dat[v_idx++].setValue(-.5f * fx, -.5f * fz, .5f * fy); // 3 = --+
-  vertex_dat[v_idx++].setValue(.5f * fx, .5f * fz, -.5f * fy); // 4 = ++-
-  vertex_dat[v_idx++].setValue(.5f * fx, -.5f * fz, .5f * fy); // 5 = +-+
-  vertex_dat[v_idx++].setValue(-.5f * fx, .5f * fz, .5f * fy); // 6 = -++
-  vertex_dat[v_idx++].setValue(.5f * fx, .5f * fz, .5f * fy); // 7 = +++
-
-  vertex.finishEditing();
+  shape_->width = fx;
+  shape_->height = fz;
+  shape_->depth = fy;
+  shape_->render();
 
   txfm_shape()->translation.setValue(xfrac, zfrac, -yfrac); // move to 0,0
 
@@ -875,21 +839,25 @@ void T3NetNode::initClass()
   SO_NODE_INIT_CLASS(T3NetNode, T3NodeParent, "T3NodeParent");
 }
 
-T3NetNode::T3NetNode(void* dataView_, float box_off,
-		     bool show_draggers, bool show_net_text, bool show_nt_drag)
+T3NetNode::T3NetNode(void* dataView_, bool show_draggers,
+		     bool show_net_text, bool show_nt_drag)
 :inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3NetNode);
 
-  box_off_ = box_off;
   show_drag_ = show_draggers;
   show_net_text_drag_ = show_nt_drag && show_net_text;
+
+  float net_margin = 0.05f;
+  float two_net_marg = 2.0f * net_margin;
+  txfm_shape()->translation.setValue(-net_margin, -net_margin, -net_margin);
 
   if(show_drag_) {
     drag_ = new T3TransformBoxDragger(0.06f, .04f, .03f);
 
-    drag_->xf_->translation.setValue(0.0f, -box_off_, 0.0f);
-    String expr = "oA = vec3f(.5 + A[0], -" + String(box_off_) + "+ A[1], -.5 + A[2])";
+    drag_->xf_->translation.setValue(-net_margin, -net_margin, -net_margin);
+    String expr = "oA = vec3f(-" + String(net_margin) + " + A[0], -"
+      + String(net_margin) + " + A[1], -" + String(net_margin) + " + A[2])";
     drag_->trans_calc_->expression = expr.chars();
 
     txfm_shape()->translation.connectFrom(&drag_->trans_calc_->oA);
@@ -898,19 +866,18 @@ T3NetNode::T3NetNode(void* dataView_, float box_off,
 
     drag_->dragger_->addFinishCallback(T3NetNode_DragFinishCB, (void*)this);
     topSeparator()->addChild(drag_);
+    SoSeparator* ss = shapeSeparator(); // cache
+    shape_draw_ = new SoDrawStyle;
+    shape_draw_->style = SoDrawStyle::LINES;
+    ss->addChild(shape_draw_);
+    shape_ = new SoLineBox3d(1.0f + two_net_marg, 1.0f + two_net_marg, 1.0f + two_net_marg, false); // false = no center
+    ss->addChild(shape_);
+  }
+  else {
+    shape_ = NULL;
+    shape_draw_ = NULL;
   }
 
-  //  shape_ = new SoCube;
-  shape_ = new SoFrame();
-//   shape_->setName("shape");
-  shapeSeparator()->addChild(shape_);
-
-  float h = 0.04f; // nominal amount of height, so we don't vanish
-  float x = 1.0f;
-  float y = 1.0f;
-  // set size/pos of cube -- move down to -1 y
-  txfm_shape()->translation.setValue(.5f, .5f * h - box_off_, -.5f);
-  shape_->setDimensions(x, y, 0.02f, -0.02f);
   net_text_ = NULL;
   net_text_drag_ = NULL;
   net_text_xform_ = NULL;
@@ -919,7 +886,7 @@ T3NetNode::T3NetNode(void* dataView_, float box_off,
     net_text_ = new SoSeparator;
     addChild(net_text_);
     net_text_xform_ = new SoTransform;
-    net_text_xform_->translation.setValue(0.0f, -box_off_, 0.0f);
+    net_text_xform_->translation.setValue(0.0f, 0.0f, 0.0f);
     net_text_->addChild(net_text_xform_);
     if(show_net_text_drag_) {
       net_text_drag_xform_ = new SoTransform;
@@ -955,7 +922,7 @@ T3NetNode::~T3NetNode()
 }
 
 void T3NetNode::setDefaultCaptionTransform() {
-  SbVec3f tran(0.0f, -.05f + -box_off_, 0.03f);
+  SbVec3f tran(0.0f, -.1f, 0.03f);
   transformCaption(tran);
 }
 

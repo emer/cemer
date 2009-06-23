@@ -253,6 +253,7 @@ typedef T3NodeParent inherited;
 public:
   static const float 	height; // = 0.05f height of layer frame shape itself (in fractions of a unit)
   static const float 	width; // = 0.5f width of layer frame shape (in frac of unit)
+  static const float 	max_width; // = 0.05f maximum absolute width value (prevent mondo frames for very small nets)
 
   static void		initClass();
 
@@ -339,7 +340,6 @@ public:
 				float max_x, float max_y, float max_z);
 
   SoDrawStyle* 		drawStyle() { return drw_styl_; }
-  SoVertexProperty* 	vertexProperty() { return vtx_prop_; }
 
   T3LayerGroupNode(void* dataView_ = NULL, bool show_draggers = true, bool root_lg = false);
 
@@ -352,9 +352,8 @@ protected:
   ~T3LayerGroupNode();
 
 private:
-  SoIndexedLineSet*	shape_;
+  SoLineBox3d*		shape_;
   SoDrawStyle*		drw_styl_;
-  SoVertexProperty*	vtx_prop_;
 
   bool			show_drag_;
   bool			root_lg_; // root layer group: no shape
@@ -407,7 +406,8 @@ typedef T3NodeParent inherited;
 public:
   static void		initClass();
 
-  SoFrame*		shape() {return shape_;}
+  SoLineBox3d*		shape() {return shape_;}
+  SoDrawStyle*		shapeDraw() {return shape_draw_;}
   SoSeparator*		netText() {return net_text_;} // extra text of network vars etc
   SoTransform* 		netTextXform() {return net_text_xform_;}
   SoTransform* 		netTextDragXform() {return net_text_drag_xform_;}
@@ -417,7 +417,7 @@ public:
   SoIndexedLineSet*	wtLinesSet() {return wt_lines_set_;}
   SoVertexProperty* 	wtLinesVtxProp() {return wt_lines_vtx_prop_;}
 
-  T3NetNode(void* dataView_ = NULL, float box_off = .5f, bool show_draggers = true,
+  T3NetNode(void* dataView_ = NULL, bool show_draggers = true,
 	    bool show_net_text = true, bool show_nt_drag = true);
 
 protected:
@@ -425,14 +425,14 @@ protected:
   ~T3NetNode();
 
 protected:
-  SoFrame*		shape_; //#IGNORE
+  SoDrawStyle*		shape_draw_;
+  SoLineBox3d*		shape_; //#IGNORE
   SoSeparator* 		net_text_; // network text variables
   SoSeparator* 		wt_lines_; // weight lines
   SoDrawStyle*		wt_lines_draw_;
   SoIndexedLineSet*	wt_lines_set_;
   SoVertexProperty*	wt_lines_vtx_prop_;
 
-  float			box_off_;
   bool			show_drag_;
   bool			show_net_text_drag_;
   T3TransformBoxDragger* drag_;	// my position dragger

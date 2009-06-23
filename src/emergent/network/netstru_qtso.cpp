@@ -1344,6 +1344,7 @@ void LayerView::Render_impl() {
 
   float max_xy = MAX(nv->max_size.x, nv->max_size.y);
   float lay_wd = T3LayerNode::width / max_xy;
+  lay_wd = MIN(lay_wd, T3LayerNode::max_width);
   float fx = (float)lay->scaled_act_geom.x / nv->max_size.x;
 
   // ensure that the layer label does not go beyond width of layer itself!
@@ -1566,9 +1567,9 @@ void PrjnView::Render_impl() {
   float lay_ht = T3LayerNode::height / max_xy;
   float lay_wd = T3LayerNode::width / max_xy;
 
-  // y = network z coords -- same for all cases  (add .5f to z..)
-  src.y = ((float)lay_fr_pos.z+.5f) / nv->max_size.z;
-  dst.y = ((float)lay_to_pos.z+.5f) / nv->max_size.z;
+  // y = network z coords -- same for all cases
+  src.y = ((float)lay_fr_pos.z) / nv->max_size.z;
+  dst.y = ((float)lay_to_pos.z) / nv->max_size.z;
 
   // move above/below layer plane
   if(src.y < dst.y) {
@@ -1781,7 +1782,7 @@ void LayerGroupView::Render_impl() {
   FloatTransform* ft = transform(true);
   if(root_laygp) {
     ft->translate.SetXYZ((float)pos.x / nv->max_size.x,
-			 ((float)pos.z + .5f) / nv->max_size.z,
+			 ((float)pos.z) / nv->max_size.z,
 			 (float)-pos.y / nv->max_size.y);
   }
   else {
@@ -2201,9 +2202,10 @@ void NetView::Initialize() {
   display = true;
   lay_mv = true;
   net_text = true;
-  net_text_xform.translate.SetXYZ(0.0f, -0.5f, 0.0f); // start at bottom 
-  net_text_rot = 0.0f;
-  net_box_offset = -0.5f;
+  net_text_xform.translate.SetXYZ(0.0f, 1.0f, -1.0f); // start at top back
+  net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi); // start at right mid
+  net_text_xform.scale = 0.7f;
+  net_text_rot = -90.0f;
   unit_disp_mode = UDM_BLOCK;
   unit_text_disp = UTD_NONE;
   unit_con_md = false;
@@ -2611,17 +2613,6 @@ void NetView::InitDisplay(bool init_panel) {
 
   GetMaxSize();
 
-  // figure out whether the net box footer should be lower or not
-  if(net_text) {
-    if(net_text_xform.translate.y < -0.1f) // positioned low, so keep box low
-      net_box_offset = .5f;
-    else
-      net_box_offset = 0.0f;
-  }
-  else {
-    net_box_offset = 0.0f;
-  }
-
   GetMembs();
   if (init_panel) {
     InitPanel();
@@ -2677,6 +2668,7 @@ void NetView::NewLayer(int x, int y) {
 void NetView::GetMaxSize() {
   net()->UpdateMaxSize();
   max_size = net()->max_size;
+  max_size.z -= (max_size.z - 1.0f) / max_size.z; // leave 1 extra layer's worth of room..
   if(view_params.xy_square) {
     max_size.x = MAX(max_size.x, max_size.y);
     max_size.y = max_size.x;
@@ -2706,8 +2698,9 @@ void NetView::Render_pre() {
   SoQtViewer* vw = GetViewer();
   if(vw)
     show_drag = !vw->isViewing();
+  if(!lay_mv) show_drag = false;
 
-  setNode(new T3NetNode(this, net_box_offset, show_drag, net_text, show_drag && lay_mv));
+  setNode(new T3NetNode(this, show_drag, net_text, show_drag && lay_mv));
   SoMaterial* mat = node_so()->material(); //cache
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
   mat->transparency.setValue(0.5f);
@@ -2758,8 +2751,8 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   float h = 0.04f; // nominal amount of height, so we don't vanish
   netnd->txfm_shape()->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
   netnd->txfm_shape()->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-  netnd->txfm_shape()->translation.setValue(.5f, .5f * h - nv->net_box_offset, -.5f);
-  dragger->translation.setValue(0.0f, -nv->net_box_offset, 0.0f);
+  netnd->txfm_shape()->translation.setValue(.5f, .5f * h, -.5f);
+  dragger->translation.setValue(0.0f, 0.0f, 0.0f);
   dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
   dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
 
@@ -2829,6 +2822,9 @@ void NetView::Render_impl() {
   String cap_txt = data()->GetName() + " Value: ";
   if(unit_disp_md)
     cap_txt += unit_disp_md->name;
+
+  if(node_so->shapeDraw())
+    node_so->shapeDraw()->lineWidth = view_params.laygp_width;
 
   node_so->setCaption(cap_txt.chars());
 

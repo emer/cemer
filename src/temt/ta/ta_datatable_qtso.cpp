@@ -3897,7 +3897,7 @@ void GraphTableView::RenderGraph_XY() {
     boxd = depth;
 
   // each graph has a box and lines..
-  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, boxd);
+  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, boxd, false); // not centered
   gr1->addChild(lbox);
 
   for(int i=0;i<main_y_plots.size;i++) {
@@ -3952,7 +3952,7 @@ void GraphTableView::RenderGraph_Bar() {
   float bar_off = - .5f * (1.0f - bar_space);
 
   // each graph has a box and lines..
-  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, boxd);
+  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, boxd, false); // not centered
   gr1->addChild(lbox);
 
   for(int i=0;i<main_y_plots.size;i++) {
@@ -3994,7 +3994,7 @@ void GraphTableView::RenderGraph_Matrix_Zi() {
   graphs->addChild(gr1);
 
   // each graph has a box and lines..
-  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, depth);
+  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, depth, false); // not centered
   gr1->addChild(lbox);
 
   for(int i=0;i<da_1->cell_size();i++) {
@@ -4044,7 +4044,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 	tr->translation.setValue(xp, yp, 0.0f);
 
 	// each graph has a box and lines..
-	SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy);
+	SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy, false); // not ctr
 	gr->addChild(lbox);
 	SoTransform* tx = new SoTransform();
 	gr->addChild(tx);
@@ -4090,7 +4090,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 	  tr->translation.setValue(xp, yp, 0.0f);
 
 	  // each graph has a box and lines..
-	  SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy);
+	  SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy, false); // not ctr
 	  gr->addChild(lbox);
 	  SoTransform* tx = new SoTransform();
 	  gr->addChild(tx);
@@ -4130,7 +4130,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 	    tr->translation.setValue(xp, yp, 0.0f);
 
 	    // each graph has a box and lines..
-	    SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy);
+	    SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy, false); // not ctr
 	    gr->addChild(lbox);
 	    SoTransform* tx = new SoTransform();
 	    gr->addChild(tx);
