@@ -2968,7 +2968,7 @@ void NetView::Render_wt_lines() {
   Layer* src_lay = NULL;
   if(unit_src)
     src_lay =GET_OWNER(unit_src, Layer);
-  if(!src_lay) do_lines = false;
+  if(!src_lay || src_lay->Iconified()) do_lines = false;
   SoIndexedLineSet* ils = node_so->wtLinesSet();
   SoDrawStyle* drw = node_so->wtLinesDraw();
   SoVertexProperty* vtx_prop = node_so->wtLinesVtxProp();
@@ -3003,6 +3003,7 @@ void NetView::Render_wt_lines() {
     taOBase* cg = (swt ? (taOBase*)unit_src->send.FastEl(g) : (taOBase*)unit_src->recv.FastEl(g));
     Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
     if(!prjn || !prjn->from || !prjn->layer) continue;
+    if(prjn->from->Iconified()) continue;
 
     n_prjns++;
     int n_con = 0;
@@ -3063,14 +3064,15 @@ void NetView::Render_wt_lines() {
     taOBase* cg = (swt ? (taOBase*)unit_src->send.FastEl(g) : (taOBase*)unit_src->recv.FastEl(g));
     Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
     if(!prjn || !prjn->from || !prjn->layer) continue;
+    if(prjn->from->Iconified()) continue;
     Layer* lay_fr = (swt ? prjn->layer : prjn->from);
     Layer* lay_to = (swt ? prjn->from : prjn->layer);
     TDCoord lay_fr_pos; lay_fr->GetAbsPos(lay_fr_pos);
     TDCoord lay_to_pos; lay_to->GetAbsPos(lay_to_pos);
     
-    // y = network z coords -- same for all cases  (add .5f to z..)
-    src.y = ((float)lay_to_pos.z+.5f) / max_size.z;
-    dst.y = ((float)lay_fr_pos.z+.5f) / max_size.z;
+    // y = network z coords -- same for all cases
+    src.y = ((float)lay_to_pos.z) / max_size.z;
+    dst.y = ((float)lay_fr_pos.z) / max_size.z;
 
     // move above/below layer plane
     if(src.y < dst.y) { src.y += lay_ht; dst.y -= lay_ht; }
@@ -3109,9 +3111,9 @@ void NetView::Render_wt_lines() {
   if((bool)wt_prjn_lay) {
     TDCoord wt_prjn_lay_pos; wt_prjn_lay->GetAbsPos(wt_prjn_lay_pos);
     
-    // y = network z coords -- same for all cases  (add .5f to z..)
-    src.y = ((float)src_lay_pos.z+.5f) / max_size.z;
-    dst.y = ((float)wt_prjn_lay_pos.z+.5f) / max_size.z;
+    // y = network z coords -- same for all cases
+    src.y = ((float)src_lay_pos.z) / max_size.z;
+    dst.y = ((float)wt_prjn_lay_pos.z) / max_size.z;
 
     // move above/below layer plane
     if(src.y < dst.y) { src.y += lay_ht; dst.y -= lay_ht; }
