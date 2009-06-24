@@ -154,7 +154,7 @@ public:
   virtual void		goHome();
   // restore the saved camera view information to the current view
 
-  virtual QPixmap	grabImage();
+  virtual QImage	grabImage();
   // grab the current viewer image to a pixmap
   virtual void		saveImage(const QString& fname);
   // save the current viewer image to given file name

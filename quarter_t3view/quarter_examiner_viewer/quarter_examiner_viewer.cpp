@@ -457,23 +457,25 @@ void QuarterExaminerViewer::goHome() {
   saved_home.setCameraParams(cam);
 }
 
-QPixmap	QuarterExaminerViewer::grabImage() {
-  return QPixmap::grabWidget(this); // this only shows the frame, not contents!
+QImage	QuarterExaminerViewer::grabImage() {
+//   return QPixmap::grabWidget(this); // this only shows the frame, not contents!
   //  return QPixmap::grabWidget(quarter); 
   // oops! this is blank
+  return quarter->grabFrameBuffer(true); // true = get alpha
+  // also no version of this works either!
 }
 
 void QuarterExaminerViewer::saveImage(const QString& fname) {
-  QPixmap pix = grabImage();
-  pix.save(fname);
+  QImage img = grabImage();
+  img.save(fname);
 }
 
 void QuarterExaminerViewer::printImage() {
-  QPixmap pix = grabImage();
+  QImage img = grabImage();
   QPrinter pr;
   QPrintDialog pd(&pr, this);
   if(pd.exec() == QDialog::Accepted) {
     QPainter p(&pr);
-    p.drawPixmap(0, 0, pix);
+    p.drawImage(0, 0, img);
   }
 }
