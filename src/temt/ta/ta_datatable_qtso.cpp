@@ -879,9 +879,8 @@ GridTableView* GridTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
   vw->BuildAll();
   fr->Render();
   fr->ViewAll();
-  // todo:
-//   if(fr->singleChild())
-//     fr->GetCameraPosOrient();
+  if(fr->singleChild())
+    fr->SaveCurView(0);
   return vw;
 }
 
@@ -2777,9 +2776,8 @@ GraphTableView* GraphTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
   vw->BuildAll();
   fr->Render();
   fr->ViewAll();
-  // todo: fix this!
-//   if(fr->singleChild())
-//     fr->GetCameraPosOrient();
+  if(fr->singleChild())
+    fr->SaveCurView(0);
   return vw;
 }
 

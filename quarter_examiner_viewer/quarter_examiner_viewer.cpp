@@ -274,7 +274,7 @@ void QuarterExaminerViewer::zoomwheelChanged(int value) {
   if(value < 100 && zoom_start_val > 900) zoom_start_val -= 1000;
   float delta = (float)(value - zoom_start_val);
   zoom_start_val = value;
-  zoomView(ZOOM_DELTA_MULT * delta);
+  zoomView(-ZOOM_DELTA_MULT * delta); // direction is opposite
 }
 
 void QuarterExaminerViewer::interactbuttonClicked() {
@@ -360,18 +360,8 @@ SoCamera* QuarterExaminerViewer::getViewerCamera() {
 }
 
 void QuarterExaminerViewer::viewAll() {
-  SoEventManager* mgr = quarter->getSoEventManager();
-  SoCamera* cam = getViewerCamera();
-  SoNode* sg = quarter->getSceneGraph();
-  if(cam && sg) {
-    SbVec3f axis;
-    axis[0]=-1.0; axis[1]=0.0f; axis[2]=0.0f;
-//     float angle = .35;
-    float angle = 0.0f;
-    cam->orientation.setValue(axis, angle);
-    cam->viewAll(sg, mgr->getViewportRegion());
-    zoomView(-.35f);		// zoom in !!
-  }
+  quarter->viewAll();
+  zoomView(-.35f);		// zoom in !!
 }
 
 // this is copied directly from SoQtFullViewer.cpp, which defines it as a static

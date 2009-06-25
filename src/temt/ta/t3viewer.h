@@ -90,7 +90,7 @@ public:
 
 // note: this now requires Quarter instead of SoQt
 
-class TA_API T3SavedCamera : public taNBase {
+class TA_API T3SavedView : public taNBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_View Saves camera parameters for the Quarter Examiner Viewer -- name of view is name of object -- can store other arbitrary info in UserData for this guy
 INHERITED(taNBase)
 public:
@@ -104,20 +104,21 @@ public:
   bool		setCameraParams(SoCamera* cam);
   // set the camera parmeters from our saved values (returns false if no view saved)
 
-  QToolButton*	home_button;	// #IGNORE home button for this view
+  QToolButton*	view_button;	// #IGNORE view button for this view
+  taiAction*	view_action;	// #IGNORE action for the gotoview function
 
-  TA_SIMPLE_BASEFUNS(T3SavedCamera);
+  TA_SIMPLE_BASEFUNS(T3SavedView);
 private:
   void	Initialize();
   void	Destroy()	{ };
 };
 
-class TA_API T3SavedCamera_List: public taList<T3SavedCamera> {
+class TA_API T3SavedView_List: public taList<T3SavedView> {
   // ##CAT_View list of saved views
-  INHERITED(taList<T3SavedCamera>)
+  INHERITED(taList<T3SavedView>)
 public:
 
-  TA_BASEFUNS_NOCOPY(T3SavedCamera_List);
+  TA_BASEFUNS_NOCOPY(T3SavedView_List);
 private:
   void	Initialize();
   void	Destroy() { };
@@ -163,15 +164,13 @@ public:
 
   QToolButton*	  interact_button; // (red arrow) -- mouse actions interact with elements in the display
   QToolButton*	  view_button;     // (white hand) -- mouse actions move view around
-  QToolButton*	  home_button;     // (home) -- restores display to the home viewing configuration
-  QToolButton* 	  set_home_button; // (blue home) -- set the home viewing configuration for home button to current configuration
   QToolButton*	  view_all_button; // (eyeball) -- repositions camera so everything is in view
   QToolButton* 	  seek_button;	   // (flashlight) -- zooms display to view clicked objects
   QToolButton* 	  snapshot_button; // (camera) -- save an image of the current view to a file
   QToolButton* 	  print_button;    // (printer) -- print current view to a file
 
-  static const int   n_homes;	   // number of saved "home" view parameters to save (length of saved_homes)
-  T3SavedCamera_List saved_homes; // saved home view information
+  static const int   n_views;	   // number of saved view parameters to save (length of saved_views)
+  T3SavedView_List saved_views; // saved view information
   NameVar_PArray     dyn_buttons; // dynamic buttons
 
   //////////////////////////////////////////////
@@ -214,12 +213,12 @@ public:
   virtual void		setInteractionModeOn(bool onoff);
   // set the interaction mode on or off (if off, then it is in view mode) -- also updates button states
 
-  virtual void		saveHome(int home_no);
-  // save the current camera view information to the 'home' view
-  virtual void		goHome(int home_no);
+  virtual void		saveView(int view_no);
+  // save the current camera view information to given saved view
+  virtual void		gotoView(int view_no);
   // restore the saved camera view information to the current view
-  virtual bool	  	nameHome(int home_no, const String& name);
-  // add a new label for given home view location
+  virtual bool	  	nameView(int view_no, const String& name);
+  // add a new label for given saved view location
 
   virtual QImage	grabImage();
   // grab the current viewer image to a pixmap
@@ -240,15 +239,15 @@ public slots:
   void snapshotbuttonClicked();
   void printbuttonClicked();
 
-  void homebuttonClicked(int home_no);
-  void sethomeTriggered(int home_no);
-  void namehomeTriggered(int home_no);
+  void gotoviewbuttonClicked(int view_no);
+  void saveviewTriggered(int view_no);
+  void nameviewTriggered(int view_no);
 
   void dynbuttonClicked(int but_no);
 
 #ifndef __MAKETA__
 signals:
-  void homeSaved(int home_no);	// the home location was saved (e.g., can now save to more permanent storage)
+  void viewSaved(int view_no);	// the given view location was saved (e.g., can now save to more permanent storage)
   void dynbuttonActivated(int but_no); // dynamic button of given number was activated by user
 #endif
 
@@ -353,9 +352,6 @@ public:
   override void		ChildRendered(taDataView* child); //  NOTE: child is always a T3DataView
 
   virtual void		OnWindowBind(iT3DataViewFrame* vw); // called after the viewer creates/fills the main window (for dataviews embedded in main viewer only), or when DataView added to existing viewer
-//TODO  virtual BrDataLink*	GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
-//  override bool		HasChildItems() {return false;} // used when node first created, to control whether we put a + expansion on it or not
-//obs  virtual String 	GetName() const = 0; // base name of item (could be blank)
   virtual void		ReInit(); // perform a reinitialization, particularly of visual state -- overload _impl
   virtual void		UpdateChildNames(T3DataView*); // #IGNORE update child names of the indicated node
   
@@ -368,19 +364,9 @@ public: // ISelectable interface (only not in IDataLinkClient)
   override ISelectableHost* host() const; //
   override MemberDef*	md() const {return m_md;}
   override ISelectable*	par() const;
-//  override taiDataLink* par_link() const; // from parent data
-//  override MemberDef* 	par_md() const; // as for par_link
   override taiDataLink*	viewLink() const; // data of the link
   override GuiContext	shType() const {return GC_DUAL_DEF_DATA;} 
   override taiDataLink*	clipParLink(GuiContext sh_typ = GC_DEFAULT) const; // not par_link 
-/*override int		EditAction_(ISelectable_PtrList& sel_items, int ea);
-  override void 		FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu);
-  override taiClipData*	GetClipData(const ISelectable_PtrList& sel_items, int src_edit_action,
-    bool for_drag) const;
-  override taiClipData*	GetClipDataSingle(int src_edit_action, bool for_drag) const;
-  override taiClipData*	GetClipDataMulti(const ISelectable_PtrList& sel_items, 
-    int src_edit_action, bool for_drag) const;
-  override int		QueryEditActions_(taiMimeSource* ms) const; */
 protected:
 //  override void		FillContextMenu_impl(taiActions* menu, GuiContext sh_typ);
   override void 	QueryEditActionsS_impl_(int& allowed, int& forbidden,
@@ -392,18 +378,14 @@ protected:
   void			setNode(T3Node* node); // make changes via this
   
   virtual void		AddRemoveChildNode_impl(SoNode* node, bool adding); // generic base uses SoSeparator->addChild()/removeChild()-- replace to change
-//override void 	ChildAdding(taDataView* child) {} // #IGNORE called from list;
   override void		ChildRemoving(taDataView* child); // #IGNORE called from list; we also forward to DataViewer; we also remove visually
   virtual void		Constr_Node_impl() {} // create the node_so rep -- called in RenderPre, null'ed in Clear
-//nn  virtual void		DestroyPanels();
 
   virtual void		OnWindowBind_impl(iT3DataViewFrame* vw) {} // override for something this class
   override void		Clear_impl();
   virtual void		ReInit_impl(); // default just calls clear() on the so, if it exists
   override void		Render_pre(); //
   override void		Render_impl();
-//  override void		Render_post();
-//  override void		Reset_impl();
 
   override void 	DataStructUpdateEnd_impl(); // our own customized version, similar to generic base
   override void  	DataRebuildView_impl() {DataStructUpdateEnd_impl();} // same as StructEnd
@@ -487,8 +469,6 @@ public:
   override T3DataViewRoot* root() {return this;}
   override bool		isRootLevelView() const {return true;} 
     
-  override void 	ChildRemoving(taDataView* child); 
-  
   T3_DATAVIEWFUNS(T3DataViewRoot, T3DataViewPar)
 
 // ISelectable i/f
@@ -643,7 +623,7 @@ public:
 
   iT3ViewspaceWidget*	t3vs;
 
-  T3ExaminerViewer* 	ra() {return m_ra;}
+  T3ExaminerViewer* 	t3viewer() {return m_t3viewer;}
 
   T3DataViewRoot*	root();
   virtual void		setSceneTop(SoNode* node); // set top of scene -- usually called during Render_post
@@ -665,7 +645,7 @@ public: // menu and menu overrides
 
 public slots:
   virtual void 		fileExportInventor();
-  virtual void 		homeSaved(int home_no); // connect to homeSaved on examiner viewer
+  virtual void 		viewSaved(int view_no); // connect to viewSaved on examiner viewer
 
 public: // IDataViewWidget i/f
   override QWidget*	widget() {return this;}
@@ -674,7 +654,7 @@ protected:
   override void		Refresh_impl(); // note: we just do the lite Render_impl stuff
   
 protected:
-  T3ExaminerViewer* 	m_ra;
+  T3ExaminerViewer* 	m_t3viewer;
   virtual void		Render_pre(); // #IGNORE
   virtual void		Render_impl();  // #IGNORE
   virtual void		Render_post(); // #IGNORE
@@ -720,7 +700,7 @@ public:
   taColor		bg_color; // #NO_ALPHA background color of the frame (note: alpha transparency value not used)
   bool			headlight_on; // turn the camera headlight on for illuminating the scene -- turn off only if there is another source of light within the scenegraph -- otherwise it will be dark!
   StereoView		stereo_view;  // what type of stereo display to render, if any
-  T3SavedCamera_List	saved_views;  // saved camera position views from viewer -- this is the persitent version copied from camera
+  T3SavedView_List	saved_views;  // saved camera position views from viewer -- this is the persitent version copied from camera
 
   bool			singleMode() const
     {return (root_view.children.size == 1);}
@@ -735,6 +715,15 @@ public:
 
   virtual void		ViewAll();
   // reset the camera position to view everything in the display
+  virtual void		GetSavedView(int view_no);
+  // copy given saved view on the T3ExaminerViewer to our saved view information (for persistence) -- does not actually grab the current view, just the previously saved data -- see SaveCurView
+  virtual void		SetSavedView(int view_no);
+  // copy our saved view to the T3ExaminerViewer -- does not go to that view, just grabs data -- see GoToSavedView
+
+  virtual void		SaveCurView(int view_no);
+  // save the current T3 examiner viewer view parameters to the given view (on us and the viewer) -- for programmatic usage
+  virtual void		GoToSavedView(int view_no);
+  // tell the viewer to go to given saved view parameters (copies our parameters in case they have been locally modified programmatically)
 
   override QPixmap	GrabImage(bool& got_image);
   override bool		SaveImageAs(const String& fname = "", ImageFormat img_fmt = EPS);
@@ -765,7 +754,6 @@ protected:
   override void		Render_impl();  // #IGNORE
   override void		Render_post(); // #IGNORE
   override void		Reset_impl(); //  #IGNORE
-  override void 	Dump_Save_pre();
 private:
   void	Copy_(const T3DataViewFrame& cp);
   void			Initialize();

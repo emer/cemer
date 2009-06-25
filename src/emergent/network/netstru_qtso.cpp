@@ -2106,9 +2106,8 @@ NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
   nv->BuildAll();
   fr->Render();
   fr->ViewAll();
-  // todo: fix this
-//   if(fr->singleChild())
-//     fr->GetCameraPosOrient();
+  if(fr->singleChild())
+    fr->SaveCurView(0);
   return nv;
 }
 

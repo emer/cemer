@@ -660,8 +660,8 @@ bool InitNamedUnits::ViewDataLegend() {
   ngtv->main_xform.scale = .33f;
   frame->Render();
   frame->ViewAll(); 
-  // todo: fix this
-//   frame->GetCameraPosOrient();
+  // not sure we really want to do this
+  //    fr->SaveCurView(0);
   return true;
 }
 

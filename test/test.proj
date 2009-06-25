@@ -56,10 +56,32 @@ LeabraProject .projects[0] {
 		  };
 		};
 	      };
+
+	      T3SavedView_List NULL = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
 	    };
 	    T3DataViewFrame @[1] { 
 	      T3DataView_List @.children = [1] {
-		NetView @[0] { };
+		NetView @[0] { 
+		  ScaleRange_List @.scale_ranges = [1] {
+		    ScaleRange @[0] { };
+		  };
+		};
+	      };
+
+	      T3SavedView_List NULL = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
 	      };
 	    };
 	  };
@@ -175,7 +197,10 @@ LeabraProject .projects[0] {
       };
 
       Layer_Group @.layers = [1] {
-	LeabraLayer @[0] { };
+	LeabraLayer @[0] { 
+	  Unit_Group @.units = [1] {
+	  };
+	};
       };
     };
   };
@@ -457,13 +482,56 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	 };
 	};
        };
-       camera_pos {x=0.5082653: y=1.342647: z=1.435406: };
-       camera_orient {x=-1.000001: y=0: z=0: rot=0.3761258: };
-       camera_focdist=2.065157;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        headlight_on=1;
-       fullscreen_on=0;
        stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="T3SavedView";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[1] {
+	 name="T3SavedView";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="T3SavedView";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="T3SavedView";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="T3SavedView";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="T3SavedView";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
       };
       T3DataViewFrame @[1] {
        m_data=NULL;
@@ -485,7 +553,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  net_text=1;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=1: y=0: z=-0.5: }: };
 	  net_text_rot=-90;
-	  ordered_uvg_list{ 	  };
+	  ordered_uvg_list{ act;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=1: y=1: z=1: };
@@ -519,29 +587,78 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  scale {
 	   name="ColorScale";
 	   chunks=133;
-	   min=-0;
-	   max=0;
-	   range=0;
+	   min=-1;
+	   max=1;
+	   range=1;
 	   zero=0;
 	   spec=$2$;
-	   auto_scale=1;
+	   auto_scale=0;
 	  };
 	  scale_ranges {
 	   name=;
 	   el_typ=ScaleRange;
 	   el_def=0;
+	   ScaleRange @[0] {
+	    name="act";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
 	  };
 	  lay_disp_modes{ LeabraLayer_5=-1;	  };
 	 };
 	};
        };
-       camera_pos {x=0.8601889: y=0.5059248: z=2.548707: };
-       camera_orient {x=0: y=0: z=1: rot=0: };
-       camera_focdist=2.656778;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        headlight_on=1;
-       fullscreen_on=0;
        stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="T3SavedView";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[1] {
+	 name="T3SavedView";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="T3SavedView";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="T3SavedView";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="T3SavedView";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="T3SavedView";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
       };
      };
     };
@@ -1780,7 +1897,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    lay_layout=THREE_D;
-   n_units=0;
+   n_units=1;
    n_cons=0;
    max_size {x=1: y=1: z=1: };
    learn_rule=LEABRA_CHL;
