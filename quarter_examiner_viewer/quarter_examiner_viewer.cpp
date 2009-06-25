@@ -10,6 +10,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QPainter>
+#include <QKeyEvent>
 
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoOrthographicCamera.h>
@@ -173,7 +174,7 @@ void QuarterExaminerViewer::Constr_RHS_Buttons() {
   interact_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   interact_button->setCheckable(true);
   interact_button->setIcon(QPixmap((const char **)pick_xpm));
-  interact_button->setToolTip("Interact (ESC key): Allows you to select and manipulate objects in the display \n(ESC toggles between Interact and Camera View");
+  interact_button->setToolTip("Interact (I key, or ESC to toggle): Allows you to select and manipulate objects in the display \n(ESC toggles between Interact and Camera View");
   QObject::connect(interact_button, SIGNAL(clicked()),
 		   this, SLOT(interactbuttonClicked()));
   rhs_button_vbox->addWidget(interact_button);
@@ -183,7 +184,7 @@ void QuarterExaminerViewer::Constr_RHS_Buttons() {
   view_button->setCheckable(true);
   view_button->setChecked(true);
   view_button->setIcon(QPixmap((const char **)view_xpm));
-  view_button->setToolTip("Camera View (ESC key): Allows you to move the view around (click and drag to move; \nshift = move in the plane; ESC toggles between Camera View and Interact)");
+  view_button->setToolTip("Camera View (V key, or ESC to toggle): Allows you to move the view around (click and drag to move; \nshift = move in the plane; ESC toggles between Camera View and Interact)");
   QObject::connect(view_button, SIGNAL(clicked()),
 		   this, SLOT(viewbuttonClicked()));
   rhs_button_vbox->addWidget(view_button);
@@ -191,7 +192,7 @@ void QuarterExaminerViewer::Constr_RHS_Buttons() {
   home_button = new QToolButton(this);
   home_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   home_button->setIcon(QPixmap((const char **)home_xpm));
-  home_button->setToolTip("Home View (Home key): Restores display to the 'home' viewing configuration\n(set by next button down, saved with the project)");
+  home_button->setToolTip("Home View (H or Home key): Restores display to the 'home' viewing configuration\n(set by next button down, saved with the project)");
   QObject::connect(home_button, SIGNAL(clicked()),
 		   this, SLOT(homebuttonClicked()));
   rhs_button_vbox->addWidget(home_button);
@@ -207,7 +208,7 @@ void QuarterExaminerViewer::Constr_RHS_Buttons() {
   view_all_button = new QToolButton(this);
   view_all_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   view_all_button->setIcon(QPixmap((const char **)view_all_xpm));
-  view_all_button->setToolTip("View All: repositions the camera view to the standard initial view with everything in view");
+  view_all_button->setToolTip("(A key) View All: repositions the camera view to the standard initial view with everything in view");
   QObject::connect(view_all_button, SIGNAL(clicked()),
 		   this, SLOT(viewallbuttonClicked()));
   rhs_button_vbox->addWidget(view_all_button);
@@ -215,7 +216,7 @@ void QuarterExaminerViewer::Constr_RHS_Buttons() {
   seek_button = new QToolButton(this);
   seek_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   seek_button->setIcon(QPixmap((const char **)seek_xpm));
-  seek_button->setToolTip("Seek: Click on objects (not text!) in the display and the camera will \nfocus in on the point where you click -- repeated clicks will zoom in further");
+  seek_button->setToolTip("Seek (S key): Click on objects (not text!) in the display and the camera will \nfocus in on the point where you click -- repeated clicks will zoom in further");
   QObject::connect(seek_button, SIGNAL(clicked()),
 		   this, SLOT(seekbuttonClicked()));
   rhs_button_vbox->addWidget(seek_button);
@@ -277,15 +278,11 @@ void QuarterExaminerViewer::zoomwheelChanged(int value) {
 }
 
 void QuarterExaminerViewer::interactbuttonClicked() {
-  interact_button->setChecked(true);
-  view_button->setChecked(false);
-  quarter->setInteractionModeOn(true);
+  setInteractionModeOn(true);
 }
 
 void QuarterExaminerViewer::viewbuttonClicked() {
-  interact_button->setChecked(false);
-  view_button->setChecked(true);
-  quarter->setInteractionModeOn(false);
+  setInteractionModeOn(false);
 }
 
 void QuarterExaminerViewer::homebuttonClicked() {
@@ -311,6 +308,47 @@ void QuarterExaminerViewer::snapshotbuttonClicked() {
 void QuarterExaminerViewer::printbuttonClicked() {
   printImage();
 }
+
+void QuarterExaminerViewer::keyPressEvent(QKeyEvent* e) {
+  if(e->key() == Qt::Key_Escape) {
+    if(quarter->interactionModeOn()) {
+      setInteractionModeOn(false);
+    }
+    else {
+      setInteractionModeOn(true);
+    }
+    e->accept();
+    return;
+  }
+  if(e->key() == Qt::Key_I) {
+    setInteractionModeOn(true);
+    e->accept();
+    return;
+  }
+  if(e->key() == Qt::Key_V) {
+    setInteractionModeOn(false);
+    e->accept();
+    return;
+  }
+  if((e->key() == Qt::Key_Home) || (e->key() == Qt::Key_H)) {
+    goHome();
+    e->accept();
+    return;
+  }
+  if(e->key() == Qt::Key_A) {
+    viewAll();
+    e->accept();
+    return;
+  }
+  if(e->key() == Qt::Key_S) {	// seek
+    quarter->seek();
+    goHome();
+    e->accept();
+    return;
+  }
+  QWidget::keyPressEvent(e);
+}
+
 
 
 ///////////////////////////////////////////////////////////////
@@ -442,6 +480,19 @@ void QuarterExaminerViewer::RotateView(const SbVec3f& axis, const float ang) {
   SbVec3f newdir;
   cam->orientation.getValue().multVec(DEFAULTDIRECTION, newdir);
   cam->position = focalpoint - cam->focalDistance.getValue() * newdir;
+}
+
+void QuarterExaminerViewer::setInteractionModeOn(bool onoff) {
+  if(quarter->interactionModeOn() != onoff)
+    quarter->setInteractionModeOn(onoff);
+  if(quarter->interactionModeOn()) {
+    interact_button->setChecked(true);
+    view_button->setChecked(false);
+  }
+  else {
+    interact_button->setChecked(false);
+    view_button->setChecked(true);
+  }
 }
 
 void QuarterExaminerViewer::saveHome() {

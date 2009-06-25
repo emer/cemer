@@ -59,6 +59,7 @@ class QHBoxLayout;
 class QPushButton;
 class QToolButton;
 class QLabel;
+class QKeyEvent;
 class SoCamera;
 
 using namespace SIM::Coin3D::Quarter;
@@ -149,6 +150,9 @@ public:
   virtual void		RotateView(const SbVec3f& axis, const float ang);
   // implementation function that will rotate view camera given angle (in radians) around given axis
 
+  virtual void		setInteractionModeOn(bool onoff);
+  // set the interaction mode on or off (if off, then it is in view mode) -- also updates button states
+
   virtual void		saveHome();
   // save the current camera view information to the 'home' view
   virtual void		goHome();
@@ -183,6 +187,8 @@ protected:
   int	hrot_start_val;
   int	vrot_start_val;
   int	zoom_start_val;
+
+  void keyPressEvent(QKeyEvent* e);
 };
 
 #endif // QUARTER_EXAMINER_VIEWER_H
