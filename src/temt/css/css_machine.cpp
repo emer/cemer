@@ -38,7 +38,6 @@
 # include "css_qt.h"
 # include "ta_qt.h" // for iApplication
 # ifdef TA_USE_INVENTOR
-#   include <Inventor/Qt/SoQt.h>
 # endif
 #endif
 

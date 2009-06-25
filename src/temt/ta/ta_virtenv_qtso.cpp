@@ -226,9 +226,9 @@ void VEBodyView::SetBody(VEBody* ob) {
 
 void VEBodyView::Render_pre() {
   bool show_drag = true;;
-  SoQtViewer* vw = GetViewer();
+  T3ExaminerViewer* vw = GetViewer();
   if(vw)
-    show_drag = !vw->isViewing();
+    show_drag = vw->quarter->interactionModeOn();
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
@@ -569,9 +569,9 @@ void VEObjCarouselView::SetObjCarousel(VEObjCarousel* ob) {
 
 void VEObjCarouselView::Render_pre() {
   bool show_drag = true;;
-  SoQtViewer* vw = GetViewer();
+  T3ExaminerViewer* vw = GetViewer();
   if(vw)
-    show_drag = !vw->isViewing();
+    show_drag = vw->quarter->interactionModeOn();
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
@@ -720,9 +720,9 @@ void VEStaticView::SetStatic(VEStatic* ob) {
 
 void VEStaticView::Render_pre() {
   bool show_drag = true;;
-  SoQtViewer* vw = GetViewer();
+  T3ExaminerViewer* vw = GetViewer();
   if(vw)
-    show_drag = !vw->isViewing();
+    show_drag = vw->quarter->interactionModeOn();
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
@@ -1043,8 +1043,9 @@ VEWorldView* VEWorldView::New(VEWorld* wl, T3DataViewFrame*& fr) {
   vw->BuildAll();
   fr->Render();
   fr->ViewAll();
-  if(fr->singleChild())
-    fr->GetCameraPosOrient();
+  // todo: fix this!
+//   if(fr->singleChild())
+//     fr->GetCameraPosOrient();
   return vw;
 }
 

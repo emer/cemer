@@ -40,6 +40,14 @@
 #include <QTimer>
 #include <QPushButton>
 #include <QGLWidget>
+#include <QToolButton>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QPainter>
+#include <QKeyEvent>
 
 #include <Inventor/SoPath.h>
 #include <Inventor/SoPickedPoint.h>
@@ -58,10 +66,10 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoOrthographicCamera.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/Qt/SoQtRenderArea.h>
-#include <Inventor/Qt/viewers/SoQtViewer.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+#include <Inventor/SoEventManager.h>
+
+#include "qtthumbwheel.h"
+
 
 const float t3Misc::pts_per_geom(72.0f);
 const float t3Misc::geoms_per_pt(1/pts_per_geom);
@@ -75,98 +83,6 @@ using namespace Qt;
 # define GL_MULTISAMPLE  0x809D
 #endif
 
-//////////////////////////
-//	T3ExaminerViewer
-//////////////////////////
-
-void T3ExaminerViewer_qobj::interactbuttonClicked() {
-  s->interactbuttonClicked();
-}
-void T3ExaminerViewer_qobj::viewbuttonClicked() {
-  s->viewbuttonClicked();
-}
-void T3ExaminerViewer_qobj::homebuttonClicked() {
-  s->homebuttonClicked();
-}
-void T3ExaminerViewer_qobj::sethomebuttonClicked() {
-  s->sethomebuttonClicked();
-}
-void T3ExaminerViewer_qobj::viewallbuttonClicked() {
-  s->viewallbuttonClicked();
-}
-void T3ExaminerViewer_qobj::seekbuttonClicked() {
-  s->seekbuttonClicked();
-}
-void T3ExaminerViewer_qobj::snapshotbuttonClicked() {
-  s->snapshotbuttonClicked();
-}
-void T3ExaminerViewer_qobj::printbuttonClicked() {
-  s->printbuttonClicked();
-}
-
-SOQT_OBJECT_SOURCE(T3ExaminerViewer);
-
-T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget *parent, const char *name, bool embed)
- :inherited(parent, name, embed, SoQtFullViewer::BUILD_ALL, SoQtViewer::BROWSER, FALSE) // no build
-{
-  q = new T3ExaminerViewer_qobj(this);
-  t3vw = parent;
-  interactbutton = NULL;
-  viewbutton = NULL;
-  seekbutton = NULL;
-  priv_button_list = NULL;
-  setClassName("T3ExaminerViewer");
-  QWidget * widget = buildWidget(getParentWidget()); // build now so that stuff is there
-  setBaseWidget(widget);
-}
-
-bool so_scrollbar_is_dragging = false; // referenced in t3node_so.cpp
-
-void T3ExaminerViewer::processEvent(QEvent* ev_) {
-  static bool inside_event_loop = false;
-
-  //NOTE: the base classes don't check if event is already handled, so we have to skip
-  // calling inherited if we handle it ourselves
-
-  if (!t3vw) goto do_inherited;
-
-  if (ev_->type() == QEvent::MouseButtonPress) {
-    QMouseEvent* ev = (QMouseEvent*)ev_;
-    if (ev->button() == Qt::RightButton) {
-      //TODO: maybe should check for item under mouse???
-      //TODO: pos will need to be adjusted for parent offset of renderarea ???
-      ISelectable* ci = t3vw->curItem();
-      if (!ci) goto do_inherited;
-
-      ev->accept();
-      t3vw->ContextMenuRequested(ev->globalPos());
-      return;
-    }
-  }
-
-do_inherited:
-  inherited::processEvent(ev_);
-
-  if(so_scrollbar_is_dragging) {
-    if(!inside_event_loop) {
-      inside_event_loop = true;
-      while(so_scrollbar_is_dragging) { // remain inside local scroll event loop until end!
-	taiMiscCore::ProcessEvents();
-      }
-      inside_event_loop = false;
-    }
-  }
-}
-
-T3ExaminerViewer::~T3ExaminerViewer() {
-  // anything?
-  delete q; q = NULL;
-  t3vw = NULL;
-}
-
-// pimpl is definitely a wart!  any attempt at re-use is really really awful!
-
-// Button icons.
 #include "pick.xpm"
 #include "view.xpm"
 #include "home.xpm"
@@ -176,136 +92,472 @@ T3ExaminerViewer::~T3ExaminerViewer() {
 #include "print.xpm"
 #include "snapshot.xpm"
 
-// original buttons
-enum {
-  INTERACT_BUTTON = 0,
-  EXAMINE_BUTTON,
-  HOME_BUTTON,
-  SET_HOME_BUTTON,
-  VIEW_ALL_BUTTON,
-  SEEK_BUTTON,
-  SNAPSHOT_BUTTON,
-  PRINT_BUTTON,
-};
+#define WHEEL_LENGTH 80		// long axis
+#define WHEEL_WIDTH 20		// short axis
+#define BUTTON_WIDTH 20
+#define BUTTON_HEIGHT 20
 
-QWidget *
-T3ExaminerViewer::buildRightTrim(QWidget * parent) {
-  QWidget* rval = inherited::buildRightTrim(parent);
-  fixViewerButtons();
-  return rval;
+void T3SavedCamera::Initialize() {
+  view_saved = false;
+}
+
+// void T3SavedCamera::Destroy() {
+//   view_saved = false;
+// }
+
+void T3SavedCamera::getCameraParams(SoCamera* cam) {
+  SbVec3f sb_pos = cam->position.getValue();
+  SbVec3f sb_axis;
+  cam->orientation.getValue(sb_axis, orient.rot);
+  focal_dist = cam->focalDistance.getValue();
+
+  pos.x = sb_pos[0]; pos.y = sb_pos[1]; pos.z = sb_pos[2];
+  orient.x = sb_axis[0]; orient.y = sb_axis[1]; orient.z = sb_axis[2];
+
+  view_saved = true;
+}
+
+bool T3SavedCamera::setCameraParams(SoCamera* cam) {
+  if(!view_saved) return false;
+  cam->position.setValue(pos.x, pos.y, pos.z);
+  cam->orientation.setValue(SbVec3f(orient.x, orient.y, orient.z), orient.rot);
+  cam->focalDistance.setValue(focal_dist);
+  return true;
+}
+
+void T3SavedCamera_List::Initialize() {
+  SetBaseType(&TA_T3SavedCamera);
 }
 
 
+const int T3ExaminerViewer::n_homes = 6;
 
-void T3ExaminerViewer::fixViewerButtons() {
-  // this is necessary because buildViewerButtons includes this little gem:
-  // b->setFixedSize(30, 30);
-  // which apparently doesn't work on macs anymore with Qt 4.4.x
+T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
+  : QWidget(parent)
+{
+  t3vw = parent;
 
-  if(priv_button_list) {
-    const int numViewerButtons = priv_button_list->getLength();
-    for (int i = 0; i < numViewerButtons; i++) {
-      QPushButton * b = (QPushButton *)priv_button_list->get(i);
-      b->setFixedSize(30, 40);	// make 'em bigger
-    }
+  // all the main layout code
+  //  main_vbox: main_hbox: lhs_vbox quarter rhs_vbox
+  //             bot_hbox
+
+  main_vbox = new QVBoxLayout(this);
+  main_vbox->setMargin(0); main_vbox->setSpacing(0);
+
+  main_hbox = new QHBoxLayout;
+  main_hbox->setMargin(0); main_hbox->setSpacing(0);
+  main_vbox->addLayout(main_hbox);
+
+  bot_hbox = new QHBoxLayout;
+  bot_hbox->setMargin(0); main_hbox->setSpacing(0);
+  main_vbox->addLayout(bot_hbox);
+
+  lhs_vbox = new QVBoxLayout;
+  lhs_vbox->setMargin(0); lhs_vbox->setSpacing(0);
+  main_hbox->addLayout(lhs_vbox);
+
+  quarter = new QuarterWidget(this);
+  main_hbox->addWidget(quarter);
+
+  // set any initial configs for quarter widget here (or somewhere else if you please)
+  quarter->setInteractionModeEnabled(true);
+  quarter->setTransparencyType(QuarterWidget::BLEND); // this is a good default
+  quarter->setNavigationModeFile(QUrl("coin:///scxml/navigation/examiner.xml"));
+
+  rhs_vbox = new QVBoxLayout;
+  rhs_vbox->setMargin(0); rhs_vbox->setSpacing(0);
+  main_hbox->addLayout(rhs_vbox);
+
+  /////	make wheels all together
+
+  hrot_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Horizontal, this);
+  hrot_start_val = 500;
+  hrot_wheel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  hrot_wheel->setMaximumSize(WHEEL_LENGTH, WHEEL_WIDTH);
+  hrot_wheel->setWrapsAround(true);
+  hrot_wheel->setLimitedDrag(false);
+  QObject::connect(hrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(hrotwheelChanged(int)));
+
+  vrot_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Vertical, this);
+  vrot_start_val = 500;
+  vrot_wheel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  vrot_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
+  vrot_wheel->setWrapsAround(true);
+  vrot_wheel->setLimitedDrag(false);
+  QObject::connect(vrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(vrotwheelChanged(int)));
+
+  zoom_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Vertical, this);
+  zoom_start_val = 500;
+  zoom_wheel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  zoom_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
+  zoom_wheel->setWrapsAround(true);
+  zoom_wheel->setLimitedDrag(false);
+  QObject::connect(zoom_wheel, SIGNAL(valueChanged(int)), this, SLOT(zoomwheelChanged(int)));
+
+  /////  lhs_vbox
+
+  lhs_button_vbox = new QVBoxLayout;
+  lhs_button_vbox->setMargin(0); lhs_button_vbox->setSpacing(0);
+  lhs_vbox->addLayout(lhs_button_vbox);
+
+  lhs_vbox->addStretch();
+
+  lhs_vbox->addWidget(vrot_wheel);
+
+  /////  rhs_vbox
+
+  rhs_button_vbox = new QVBoxLayout;
+  rhs_button_vbox->setMargin(0); rhs_button_vbox->setSpacing(0);
+  rhs_vbox->addLayout(rhs_button_vbox);
+
+  rhs_vbox->addStretch();
+
+  rhs_vbox->addWidget(zoom_wheel);
+
+  /////  bot_hbox
+
+  vrot_lbl = new QLabel("V.Rot ", this);
+  bot_hbox->addWidget(vrot_lbl);
+
+  hrot_lbl = new QLabel("H.Rot", this);
+  bot_hbox->addWidget(hrot_lbl);
+
+  bot_hbox->addWidget(hrot_wheel);
+
+  bot_hbox->addStretch();
+
+  bot_button_hbox = new QHBoxLayout;
+  bot_button_hbox->setMargin(0); rhs_button_vbox->setSpacing(0);
+  bot_hbox->addLayout(bot_button_hbox);
+
+  bot_hbox->addStretch();
+
+  zoom_lbl = new QLabel("Zoom   ", this);
+  bot_hbox->addWidget(zoom_lbl);
+
+  Constr_RHS_Buttons();
+  Constr_LHS_Buttons();
+  Constr_Bot_Buttons();
+}
+
+T3ExaminerViewer::~T3ExaminerViewer() {
+  
+}
+
+T3DataViewFrame* T3ExaminerViewer::GetFrame() {
+  if(!t3vw) return NULL;
+  iT3DataViewFrame* idvf = t3vw->i_data_frame();
+  if(!idvf) return NULL;
+  T3DataViewFrame* dvf = idvf->viewer();
+  return dvf;
+}
+
+void T3ExaminerViewer::Constr_RHS_Buttons() {
+  interact_button = new QToolButton(this);
+  interact_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
+  interact_button->setCheckable(true);
+  interact_button->setIcon(QPixmap((const char **)pick_xpm));
+  interact_button->setToolTip("Interact (I key, or ESC to toggle): Allows you to select and manipulate objects in the display \n(ESC toggles between Interact and Camera View");
+  QObject::connect(interact_button, SIGNAL(clicked()),
+		   this, SLOT(interactbuttonClicked()));
+  rhs_button_vbox->addWidget(interact_button);
+
+  view_button = new QToolButton(this);
+  view_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
+  view_button->setCheckable(true);
+  view_button->setChecked(true);
+  view_button->setIcon(QPixmap((const char **)view_xpm));
+  view_button->setToolTip("Camera View (V key, or ESC to toggle): Allows you to move the view around (click and drag to move; \nshift = move in the plane; ESC toggles between Camera View and Interact)");
+  QObject::connect(view_button, SIGNAL(clicked()),
+		   this, SLOT(viewbuttonClicked()));
+  rhs_button_vbox->addWidget(view_button);
+
+//   home_button = new QToolButton(this);
+//   home_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
+//   home_button->setIcon(QPixmap((const char **)home_xpm));
+//   home_button->setToolTip("Home View (H or Home key): Restores display to the 'home' viewing configuration\n(set by next button down, saved with the project)");
+//   QObject::connect(home_button, SIGNAL(clicked()),
+// 		   this, SLOT(homebuttonClicked()));
+//   rhs_button_vbox->addWidget(home_button);
+
+//   set_home_button = new QToolButton(this);
+//   set_home_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
+//   set_home_button->setIcon(QPixmap((const char **)set_home_xpm));
+//   set_home_button->setToolTip("Save Home: Saves the current 'home' viewing configuration \n(click button above to go back to this view) -- saved with the project");
+//   QObject::connect(set_home_button, SIGNAL(clicked()),
+// 		   this, SLOT(sethomebuttonClicked()));
+//   rhs_button_vbox->addWidget(set_home_button);
+
+  view_all_button = new QToolButton(this);
+  view_all_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
+  view_all_button->setIcon(QPixmap((const char **)view_all_xpm));
+  view_all_button->setToolTip("(A key) View All: repositions the camera view to the standard initial view with everything in view");
+  QObject::connect(view_all_button, SIGNAL(clicked()),
+		   this, SLOT(viewallbuttonClicked()));
+  rhs_button_vbox->addWidget(view_all_button);
+
+  seek_button = new QToolButton(this);
+  seek_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
+  seek_button->setIcon(QPixmap((const char **)seek_xpm));
+  seek_button->setToolTip("Seek (S key): Click on objects (not text!) in the display and the camera will \nfocus in on the point where you click -- repeated clicks will zoom in further");
+  QObject::connect(seek_button, SIGNAL(clicked()),
+		   this, SLOT(seekbuttonClicked()));
+  rhs_button_vbox->addWidget(seek_button);
+
+  snapshot_button = new QToolButton(this);
+  snapshot_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
+  snapshot_button->setIcon(QPixmap((const char **)snapshot_xpm));
+  snapshot_button->setToolTip("Snapshot: save the current viewer image to quarter_image_snap.png file");
+  QObject::connect(snapshot_button, SIGNAL(clicked()),
+		   this, SLOT(snapshotbuttonClicked()));
+  rhs_button_vbox->addWidget(snapshot_button);
+
+  print_button = new QToolButton(this);
+  print_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
+  print_button->setIcon(QPixmap((const char **)print_xpm));
+  print_button->setToolTip("Print: print the current viewer image to a printer -- uses the bitmap of screen image\n make window as large as possible for better quality");
+  QObject::connect(print_button, SIGNAL(clicked()),
+		   this, SLOT(printbuttonClicked()));
+  rhs_button_vbox->addWidget(print_button);
+}
+
+void T3ExaminerViewer::Constr_LHS_Buttons() {
+  
+}
+
+void T3ExaminerViewer::Constr_Bot_Buttons() {
+  saved_homes.SetSize(n_homes);
+  for(int i=0; i<n_homes; i++) {
+    String nm = "Home " + String(i);
+    saved_homes[i]->name = nm;
+    QToolButton* home_button = new QToolButton(this);
+    home_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
+    home_button->setText(nm);
+    home_button->setToolTip("Home View: Restores display to given 'home' viewing configuration -- hold mouse down for menu to save view and set view name");
+    connect(home_button, SIGNAL(clicked()), this, SLOT(homebuttonClicked(i)));
+    bot_button_hbox->addWidget(home_button);
+    saved_homes[i]->home_button = home_button;
+
+    QMenu* home_menu = new QMenu(this);
+
+    QAction* save_act = new QAction("Save Home", this);
+    save_act->setStatusTip("Save the current view settings to this home button");
+    connect(save_act, SIGNAL(triggered()), this, SLOT(sethomeTriggered(i)));
+    home_menu->addAction(save_act);
+
+    QAction* name_act = new QAction("Name Home", this);
+    save_act->setStatusTip("Name this home button");
+    connect(save_act, SIGNAL(triggered()), this, SLOT(namehomeTriggered(i)));
+    home_menu->addAction(save_act);
+
+    home_button->setMenu(home_menu);
+    home_button->setPopupMode(QToolButton::DelayedPopup);
   }
 }
 
-// this is from SoQt/src/Inventor/Qt/viewers/FullViewer.cpp
+int T3ExaminerViewer::addDynButton(const String& label, const String& tooltip) {
+  int but_no = dyn_buttons.FindName(label);
+  if(but_no >= 0) return but_no;
+  but_no = dyn_buttons.size;
+  NameVar nv(label, but_no);
+  dyn_buttons.Add(nv);
+  
+  QToolButton* dyn_button = new QToolButton(this);
+  dyn_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
+  dyn_button->setText(label);
+  dyn_button->setToolTip(tooltip);
+  connect(dyn_button, SIGNAL(clicked()), this, SLOT(dynbuttonClicked(but_no)));
+  lhs_button_vbox->addWidget(dyn_button);
+  return but_no;
+}
 
-void
-T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
-{
+QToolButton* T3ExaminerViewer::getDynButton(int but_no) {
+  if(but_no < 0 || but_no >= dyn_buttons.size) return NULL;
+  return dynamic_cast<QToolButton*>(lhs_button_vbox->itemAt(but_no));
+}
 
-  priv_button_list = buttonlist; // need this for hack above to fix button sizes..
+QToolButton* T3ExaminerViewer::getDynButtonName(const String& label) {
+  int but_no = dyn_buttons.FindName(label);
+  if(but_no < 0) return NULL;
+  return getDynButton(but_no);
+}
 
-  // note that the parent of this guy has a gridlayout that is causing icons
-  // to overlap in mac mode, most likely due to a mac bug in 4.3.1, that is due to
-  // be fixed in 4.4.0
-  for (int i=0; i <= PRINT_BUTTON; i++) {
-    QPushButton * p = new QPushButton(parent);
-    // Button focus doesn't really make sense in the way we're using
-    // the pushbuttons.
-    p->setFocusPolicy(Qt::NoFocus);
-    // In some GUI styles in Qt4, a default button is drawn with an
-    // extra frame around it, up to 3 pixels or more. This causes
-    // pixmaps on buttons to look tiny, which is not what we want.
-    p->setIconSize(QSize(24, 24));
-    //    p->setMinimumSize(QSize(24, 100));
+void T3ExaminerViewer::removeAllDynButtons() {
+  dyn_buttons.Reset();
+  for(int i=lhs_button_vbox->count()-1; i>=0; i--) {
+    lhs_button_vbox->removeItem(lhs_button_vbox->itemAt(i));
+  }
+}
 
-    switch (i) {
-    case INTERACT_BUTTON:
-      interactbutton = p;
-      p->setCheckable(TRUE);
-      p->setIcon(QPixmap((const char **)pick_xpm));
-      p->setChecked(this->isViewing() ? FALSE : TRUE);
-      p->setToolTip("Interact (ESC key): Allows you to select and manipulate objects in the display \n(ESC toggles between Interact and Camera View");
-      QObject::connect(p, SIGNAL(clicked()),
-	      q, SLOT(interactbuttonClicked()));
-      break;
-    case EXAMINE_BUTTON:
-      viewbutton = p;
-      p->setCheckable(TRUE);
-      p->setIcon(QPixmap((const char **)view_xpm));
-      p->setChecked(this->isViewing());
-      p->setToolTip("Camera View (ESC key): Allows you to move the view around (click and drag to move; \nshift = move in the plane; ESC toggles between Camera View and Interact)");
-      QObject::connect(p, SIGNAL(clicked()),
-		       q, SLOT(viewbuttonClicked()));
-      break;
-    case HOME_BUTTON:
-      QObject::connect(p, SIGNAL(clicked()), q, SLOT(homebuttonClicked()));
-      p->setToolTip("Home View (Home key): Restores display to the 'home' viewing configuration\n(set by next button down, saved with the project)");
-      p->setIcon(QPixmap((const char **)home_xpm));
-      break;
-    case SET_HOME_BUTTON:
-      QObject::connect(p, SIGNAL(clicked()),
-		       q, SLOT(sethomebuttonClicked()));
-      p->setToolTip("Save Home: Saves the current 'home' viewing configuration \n(click button above to go back to this view) -- saved with the project");
-      p->setIcon(QPixmap((const char **)set_home_xpm));
-      break;
-    case VIEW_ALL_BUTTON:
-      QObject::connect(p, SIGNAL(clicked()),
-		       q, SLOT(viewallbuttonClicked()));
-      p->setToolTip("View All: repositions the camera view to the standard initial view with everything in view");
-      p->setIcon(QPixmap((const char **)view_all_xpm));
-      break;
-    case SEEK_BUTTON:
-      seekbutton = p;
-      p->setCheckable(TRUE);
-      p->setChecked(isSeekMode());
-      QObject::connect(p, SIGNAL(clicked()), q, SLOT(seekbuttonClicked()));
-      p->setToolTip("Seek: Click on objects (not text!) in the display and the camera will \nfocus in on the point where you click -- repeated clicks will zoom in further");
-      p->setIcon(QPixmap((const char **)seek_xpm));
-      break;
-    case SNAPSHOT_BUTTON:
-      QObject::connect(p, SIGNAL(clicked()),
-		       q, SLOT(snapshotbuttonClicked()));
-      p->setToolTip("Snapshot: save the current image to a file\nEPS format gives best resolution but transparency etc not captured\n -- use EPS primarily for graphs and grids\n PNG is best for lossless compression \n JPEG is best for lossy compression (see jpeg_qualty in preferences)");
-      p->setIcon(QPixmap((const char **)snapshot_xpm));
-      break;
-    case PRINT_BUTTON:
-      QObject::connect(p, SIGNAL(clicked()),
-		       q, SLOT(printbuttonClicked()));
-      p->setToolTip("Print: print the current image to a printer -- uses the bitmap of screen image\n make window as large as possible for better quality");
-      p->setIcon(QPixmap((const char **)print_xpm));
-      break;
-    default:
-      assert(0);
-      break;
+bool T3ExaminerViewer::removeDynButton(int but_no) {
+  if(but_no < 0 || but_no >= dyn_buttons.size) return false;
+  dyn_buttons.RemoveIdx(but_no);
+  lhs_button_vbox->removeItem(lhs_button_vbox->itemAt(but_no));
+  return true;
+}
+
+bool T3ExaminerViewer::removeDynButtonName(const String& label) {
+  int but_no = dyn_buttons.FindName(label);
+  if(but_no < 0) return false;
+  return removeDynButton(but_no);
+}
+
+///////////////////////////////////////////////////////////////
+//		Main Button Actions
+
+#define ROT_DELTA_MULT  0.01f
+#define ZOOM_DELTA_MULT 0.01f
+
+void T3ExaminerViewer::hrotwheelChanged(int value) {
+  // first detect wraparound
+  if(hrot_start_val < 100 && value > 900) hrot_start_val += 1000;
+  if(value < 100 && hrot_start_val > 900) hrot_start_val -= 1000;
+  float delta = (float)(value - hrot_start_val);
+  hrot_start_val = value;
+  horizRotateView(ROT_DELTA_MULT * delta);
+}
+
+void T3ExaminerViewer::vrotwheelChanged(int value) {
+  if(vrot_start_val < 100 && value > 900) vrot_start_val += 1000;
+  if(value < 100 && vrot_start_val > 900) vrot_start_val -= 1000;
+  float delta = (float)(value - vrot_start_val);
+  vrot_start_val = value;
+  vertRotateView(ROT_DELTA_MULT * delta);
+}
+
+void T3ExaminerViewer::zoomwheelChanged(int value) {
+  if(zoom_start_val < 100 && value > 900) zoom_start_val += 1000;
+  if(value < 100 && zoom_start_val > 900) zoom_start_val -= 1000;
+  float delta = (float)(value - zoom_start_val);
+  zoom_start_val = value;
+  zoomView(ZOOM_DELTA_MULT * delta);
+}
+
+void T3ExaminerViewer::interactbuttonClicked() {
+  setInteractionModeOn(true);
+  T3DataViewFrame* dvf = GetFrame();
+  if(!dvf) return;
+  // rebuilds to update manipulators
+  dvf->Render();
+}
+
+void T3ExaminerViewer::viewbuttonClicked() {
+  setInteractionModeOn(false);
+  T3DataViewFrame* dvf = GetFrame();
+  if(!dvf) return;
+  // rebuilds to update manipulators
+  dvf->Render();
+}
+
+void T3ExaminerViewer::viewallbuttonClicked() {
+  viewAll();
+}
+
+void T3ExaminerViewer::seekbuttonClicked() {
+  quarter->seek();
+}
+
+void T3ExaminerViewer::snapshotbuttonClicked() {
+  saveImage("quarter_viewer_snap.png");
+}
+
+void T3ExaminerViewer::printbuttonClicked() {
+  printImage();
+}
+
+void T3ExaminerViewer::homebuttonClicked(int home_no) {
+  goHome(home_no);
+}
+
+void T3ExaminerViewer::sethomeTriggered(int home_no) {
+  saveHome(home_no);
+}
+
+void T3ExaminerViewer::namehomeTriggered(int home_no) {
+  // todo: some kind of edit dialog
+}
+
+void T3ExaminerViewer::dynbuttonClicked(int but_no) {
+  emit dynbuttonActivated(but_no);
+}
+
+void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
+  if(e->key() == Qt::Key_Escape) {
+    if(quarter->interactionModeOn()) {
+      setInteractionModeOn(false);
     }
+    else {
+      setInteractionModeOn(true);
+    }
+    e->accept();
+    return;
+  }
+  if(e->key() == Qt::Key_I) {
+    setInteractionModeOn(true);
+    e->accept();
+    return;
+  }
+  if(e->key() == Qt::Key_V) {
+    setInteractionModeOn(false);
+    e->accept();
+    return;
+  }
+  if((e->key() == Qt::Key_Home) || (e->key() == Qt::Key_H)) {
+    goHome(0);			// 0 is base guy
+    e->accept();
+    return;
+  }
+  if(e->key() == Qt::Key_A) {
+    viewAll();
+    e->accept();
+    return;
+  }
+  if(e->key() == Qt::Key_S) {	// seek
+    quarter->seek();
+    e->accept();
+    return;
+  }
+  QWidget::keyPressEvent(e);
+}
 
-    p->adjustSize();
-    buttonlist->append(p);
+
+
+///////////////////////////////////////////////////////////////
+//		Actual functions
+
+SoCamera* T3ExaminerViewer::getViewerCamera() const {
+  SoEventManager* mgr = quarter->getSoEventManager();
+  if(!mgr) return NULL;
+  return mgr->getCamera();
+}
+
+const SbViewportRegion& T3ExaminerViewer::getViewportRegion() const {
+  SoEventManager* mgr = quarter->getSoEventManager();
+  return mgr->getViewportRegion(); // hope it works!
+}
+
+void T3ExaminerViewer::viewAll() {
+  SoEventManager* mgr = quarter->getSoEventManager();
+  SoCamera* cam = getViewerCamera();
+  SoNode* sg = quarter->getSceneGraph();
+  if(cam && sg) {
+    SbVec3f axis;
+    axis[0]=-1.0; axis[1]=0.0f; axis[2]=0.0f;
+//     float angle = .35;
+    float angle = 0.0f;
+    cam->orientation.setValue(axis, angle);
+    cam->viewAll(sg, mgr->getViewportRegion());
+    zoomView(-.35f);		// zoom in !!
   }
 }
 
 // this is copied directly from SoQtFullViewer.cpp, which defines it as a static
-// method on SoGuiFullViewerP -- again, pimpl = no code reuse!  crazy.  what are 
-// you trying to hide anyway!!
+// method on SoGuiFullViewerP
 
-void
-T3ExaminerViewer::zoom(SoCamera* cam, const float diffvalue) {
-  if (cam == NULL) return; // can happen for empty scenegraph
+void T3ExaminerViewer::zoomView(const float diffvalue) {
+  SoCamera* cam = getViewerCamera();
+  if(!cam) return; // can happen for empty scenegraph
+
   SoType t = cam->getTypeId();
   SbName tname = t.getName();
 
@@ -313,14 +565,12 @@ T3ExaminerViewer::zoom(SoCamera* cam, const float diffvalue) {
   float multiplicator = float(exp(diffvalue));
 
   if (t.isDerivedFrom(SoOrthographicCamera::getClassTypeId())) {
-
     // Since there's no perspective, "zooming" in the original sense
     // of the word won't have any visible effect. So we just increase
     // or decrease the field-of-view values of the camera instead, to
     // "shrink" the projection size of the model / scene.
     SoOrthographicCamera * oc = (SoOrthographicCamera *)cam;
     oc->height = oc->height.getValue() * multiplicator;
-
   }
   else {
     // FrustumCamera can be found in the SmallChange CVS module (it's
@@ -377,137 +627,151 @@ T3ExaminerViewer::zoom(SoCamera* cam, const float diffvalue) {
   }
 }
 
-// make another button that does the angle = .35 thing??
+void T3ExaminerViewer::horizRotateView(const float rot_value) {
+  RotateView(SbVec3f(0.0f, -1.0f, 0.0f), rot_value);
+}
 
-void T3ExaminerViewer::viewAll() {
-  SoCamera* cam = getCamera();
-  SoNode* sg = getSceneGraph();
-  if (cam && sg) {
-    SbVec3f axis;
-    axis[0]=-1.0; axis[1]=0.0f; axis[2]=0.0f;
-//     float angle = .35;
-    float angle = 0.0f;
-    cam->orientation.setValue(axis, angle);
-    cam->viewAll(sg, getViewportRegion());
-    zoom(cam, -.35f);		// zoom in !!
+void T3ExaminerViewer::vertRotateView(const float rot_value) {
+  RotateView(SbVec3f(-1.0f, 0.0f, 0.0f), rot_value);
+}
+
+// copied from SoQtExaminerViewer.cpp -- hidden method on private P class
+
+void T3ExaminerViewer::RotateView(const SbVec3f& axis, const float ang) {
+  SoCamera* cam = getViewerCamera();
+  if(!cam) return;
+
+  const SbVec3f DEFAULTDIRECTION(0, 0, -1);
+  const SbRotation currentorientation = cam->orientation.getValue();
+
+  SbVec3f currentdir;
+  currentorientation.multVec(DEFAULTDIRECTION, currentdir);
+
+  const SbVec3f focalpoint = cam->position.getValue() +
+    cam->focalDistance.getValue() * currentdir;
+
+  // set new orientation
+  cam->orientation = SbRotation(axis, ang) * currentorientation;
+
+  SbVec3f newdir;
+  cam->orientation.getValue().multVec(DEFAULTDIRECTION, newdir);
+  cam->position = focalpoint - cam->focalDistance.getValue() * newdir;
+}
+
+void T3ExaminerViewer::setInteractionModeOn(bool onoff) {
+  if(quarter->interactionModeOn() != onoff)
+    quarter->setInteractionModeOn(onoff);
+  if(quarter->interactionModeOn()) {
+    interact_button->setChecked(true);
+    view_button->setChecked(false);
+  }
+  else {
+    interact_button->setChecked(false);
+    view_button->setChecked(true);
   }
 }
 
-// Qt slot.
-void
-T3ExaminerViewer::interactbuttonClicked(void)
-{
-  if(isSeekMode()) setSeekMode_doit(FALSE);	// get out of seek mode
-  if (interactbutton)
-    interactbutton->setChecked(TRUE);
-  if (viewbutton)
-    viewbutton->setChecked(FALSE);
-  if (isViewing())
-    setViewing(FALSE); // other guys assume buttons!
-  T3DataViewFrame* dvf = GetFrame();
-  if(!dvf) return;
-  // rebuilds to update manipulators
-  dvf->Render();
+void T3ExaminerViewer::saveHome(int home_no) {
+  if(home_no < 0 || home_no >= n_homes) return;
+  SoCamera* cam = getViewerCamera();
+  if(!cam) return;
+  saved_homes[home_no]->getCameraParams(cam);
+  emit homeSaved(home_no);
 }
 
-// *************************************************************************
-
-// Qt slot.
-void
-T3ExaminerViewer::viewbuttonClicked(void)
-{
-  if(isSeekMode()) setSeekMode_doit(FALSE);	// get out of seek mode
-  if (interactbutton)
-    interactbutton->setChecked(FALSE);
-  if (viewbutton)
-    viewbutton->setChecked(TRUE);
-  if (!isViewing())
-    setViewing(TRUE); // other guys assume buttons!
-  T3DataViewFrame* dvf = GetFrame();
-  if(!dvf) return;
-  // rebuilds to update manipulators
-  dvf->Render();
+void T3ExaminerViewer::goHome(int home_no) {
+  if(home_no < 0 || home_no >= n_homes) return;
+  SoCamera* cam = getViewerCamera();
+  if(!cam) return;
+  saved_homes[home_no]->setCameraParams(cam);
 }
 
-void
-T3ExaminerViewer::viewallbuttonClicked()
-{
-  if(isSeekMode()) setSeekMode_doit(FALSE);	// get out of seek mode
-  viewAll();
-}
-
-void
-T3ExaminerViewer::homebuttonClicked()
-{
-  if(isSeekMode()) setSeekMode_doit(FALSE);	// get out of seek mode
-  resetToHomePosition();
-}
-
-void
-T3ExaminerViewer::sethomebuttonClicked()
-{
-  saveHomePosition();
-}
-
-void
-T3ExaminerViewer::seekbuttonClicked()
-{
-  setSeekMode_doit(isSeekMode() ? FALSE : TRUE);
-}
-
-void
-T3ExaminerViewer::setSeekMode(SbBool enable)
-{
-  // do nothing -- the thing is always trying to turn off seek mode too much!
-}
-
-void
-T3ExaminerViewer::setSeekMode_doit(SbBool enable)
-{
-  if (seekbutton)
-    seekbutton->setChecked(enable);
-  inherited::setSeekMode(enable); // actually do it!
-}
-
-void
-T3ExaminerViewer::snapshotbuttonClicked()
-{
-  T3DataViewFrame* dvf = GetFrame();
-  if(!dvf) return;
-  dvf->CallFun("SaveImageAs");
-}
-
-void
-T3ExaminerViewer::printbuttonClicked()
-{
-  T3DataViewFrame* dvf = GetFrame();
-  if(!dvf) return;
-  dvf->PrintImage();
+bool T3ExaminerViewer::nameHome(int home_no, const String& label) {
+  if(home_no < 0 || home_no >= n_homes) return false;
+  saved_homes[home_no]->name = label;
+  // todo: update button label!
+  return true;
 }
 
 
-T3DataViewFrame* T3ExaminerViewer::GetFrame() {
-  if(!t3vw) return NULL;
-  iT3DataViewFrame* idvf = t3vw->i_data_frame();
-  if(!idvf) return NULL;
-  T3DataViewFrame* dvf = idvf->viewer();
-  return dvf;
+QImage	T3ExaminerViewer::grabImage() {
+//   return QPixmap::grabWidget(this); // this only shows the frame, not contents!
+  //  return QPixmap::grabWidget(quarter); 
+  // oops! this is blank
+  return quarter->grabFrameBuffer(true); // true = get alpha
+  // also no version of this works either!
 }
 
-void
-T3ExaminerViewer::saveHomePosition() {
-  T3DataViewFrame* dvf = GetFrame();
-  if(!dvf) return;
-  dvf->GetCameraPosOrient();
+void T3ExaminerViewer::saveImage(const QString& fname) {
+  QImage img = grabImage();
+  img.save(fname);
 }
 
-void
-T3ExaminerViewer::resetToHomePosition(void)
-{
-  T3DataViewFrame* dvf = GetFrame();
-  if(!dvf) return;
-  dvf->SetCameraPosOrient();
+void T3ExaminerViewer::printImage() {
+  QImage img = grabImage();
+  QPrinter pr;
+  QPrintDialog pd(&pr, this);
+  if(pd.exec() == QDialog::Accepted) {
+    QPainter p(&pr);
+    p.drawImage(0, 0, img);
+  }
 }
+
+// void
+// T3ExaminerViewer::snapshotbuttonClicked()
+// {
+//   T3DataViewFrame* dvf = GetFrame();
+//   if(!dvf) return;
+//   dvf->CallFun("SaveImageAs");
+// }
+
+// void
+// T3ExaminerViewer::printbuttonClicked()
+// {
+//   T3DataViewFrame* dvf = GetFrame();
+//   if(!dvf) return;
+//   dvf->PrintImage();
+// }
+
+bool so_scrollbar_is_dragging = false; // referenced in t3node_so.cpp
+
+// todo: need to do this!?
+
+// void T3ExaminerViewer::processEvent(QEvent* ev_) {
+//   static bool inside_event_loop = false;
+
+//   //NOTE: the base classes don't check if event is already handled, so we have to skip
+//   // calling inherited if we handle it ourselves
+
+//   if (!t3vw) goto do_inherited;
+
+//   if (ev_->type() == QEvent::MouseButtonPress) {
+//     QMouseEvent* ev = (QMouseEvent*)ev_;
+//     if (ev->button() == Qt::RightButton) {
+//       //TODO: maybe should check for item under mouse???
+//       //TODO: pos will need to be adjusted for parent offset of renderarea ???
+//       ISelectable* ci = t3vw->curItem();
+//       if (!ci) goto do_inherited;
+
+//       ev->accept();
+//       t3vw->ContextMenuRequested(ev->globalPos());
+//       return;
+//     }
+//   }
+
+// do_inherited:
+//   inherited::processEvent(ev_);
+
+//   if(so_scrollbar_is_dragging) {
+//     if(!inside_event_loop) {
+//       inside_event_loop = true;
+//       while(so_scrollbar_is_dragging) { // remain inside local scroll event loop until end!
+// 	taiMiscCore::ProcessEvents();
+//       }
+//       inside_event_loop = false;
+//     }
+//   }
+// }
 
 //////////////////////////
 //	T3DataView	//
@@ -717,10 +981,10 @@ T3DataViewFrame* T3DataView::GetFrame() {
   return frame;
 }
 
-SoQtViewer* T3DataView::GetViewer() {
+T3ExaminerViewer* T3DataView::GetViewer() {
   T3DataViewFrame* frame = GetFrame();
   if(!frame || !frame->widget()) return NULL;
-  SoQtViewer* viewer = frame->widget()->ra();
+  T3ExaminerViewer* viewer = frame->widget()->ra();
   return viewer;
 }
 
@@ -968,14 +1232,14 @@ iT3ViewspaceWidget::~iT3ViewspaceWidget() {
   sel_so = NULL;
   m_scene = NULL;
   m_root_so = NULL; // unref's/deletes
-  setRenderArea(NULL);
+  setT3viewer(NULL);
   m_horScrollBar = NULL;
   m_verScrollBar = NULL;
   m_i_data_frame = NULL;
 }
 
 void iT3ViewspaceWidget::init() {
-  m_renderArea = NULL;
+  m_t3viewer = NULL;
   m_horScrollBar = NULL;
   m_verScrollBar = NULL;
   m_root_so = new SoSeparator(); // refs
@@ -988,9 +1252,9 @@ void iT3ViewspaceWidget::init() {
 }
 
 void iT3ViewspaceWidget::deleteScene() {
-  if (m_renderArea) {
+  if (m_t3viewer) {
     // remove the nodes
-    m_renderArea->setSceneGraph(NULL);
+    m_t3viewer->quarter->setSceneGraph(NULL);
   }
 }
 
@@ -1004,9 +1268,10 @@ void iT3ViewspaceWidget::LayoutComponents() {
   QSize sz = size(); // already valid
   int ra_wd = (m_verScrollBar) ? sz.width() - m_verScrollBar->width() : sz.width();
   int ra_ht = (m_horScrollBar) ? sz.height() - m_horScrollBar->height() : sz.height();
-  if (m_renderArea) {
+  if (m_t3viewer) {
     //NOTE: presumably has 0,0 origin, and could change by changing baseWidget()
-    m_renderArea->setSize(SbVec2s(ra_wd, ra_ht));
+    // todo: do this in SoEentManager guy
+    m_t3viewer->setMinimumSize(ra_wd, ra_ht);
   }
   if (m_horScrollBar) {
     m_horScrollBar->setGeometry(0, ra_ht, ra_wd, m_horScrollBar->height());
@@ -1053,98 +1318,84 @@ static bool CheckExtension(const char *extName ) {
   return false;
 }
 
-void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
-  if (m_renderArea == value) return;
-  if (value && (value->getParentWidget() != this))
-      taMisc::Error("iT3ViewspaceWidget::setRenderArea",
+// todo: clean all this up!
+
+void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
+  if (m_t3viewer == value) return;
+  if (value && (value->t3vw != this))
+      taMisc::Error("iT3ViewspaceWidget::setT3viewer",
       "The RenderArea must be owned by ViewspaceWidget being assigned.");
-  if (m_renderArea) {
-    delete m_renderArea;
+  if (m_t3viewer) {
+    delete m_t3viewer;
   }
-  m_renderArea = value;
+  m_t3viewer = value;
+  if(!m_t3viewer) return;
 
-  if (m_renderArea) {
+  // this is the new Multisampling method -- much better!
 
-    // NOTE: the following is old-style and is VERY slow
-//     m_renderArea->setAccumulationBuffer(true);
-//     bool accum_buf = m_renderArea->getAccumulationBuffer();
-//     if(accum_buf)
-//       m_renderArea->setAntialiasing(true, taMisc::antialiasing_passes);
-//     else {
-//       m_renderArea->setAntialiasing(true, 1);
-//       taMisc::Warning("Note: was not able to establish an accumulation buffer so rendering will not be anti-aliased.  Sorry.");
-//     }
+  QGLWidget* qglw = (QGLWidget*)m_t3viewer->quarter; // it is this guy
+  QGLFormat fmt = qglw->format();
 
-    // this is the new Multisampling method -- much better!
+  if(taMisc::antialiasing_level > 1) {
+    fmt.setSampleBuffers(true);
+    fmt.setSamples(taMisc::antialiasing_level);
+    qglw->setFormat(fmt);		// obs: this is supposedly deprecated..
+    qglw->makeCurrent();
+    glEnable(GL_MULTISAMPLE);
+  }
+  else {
+    fmt.setSampleBuffers(false);
+    qglw->setFormat(fmt);		// obs: this is supposedly deprecated..
+    qglw->makeCurrent();
+    glDisable(GL_MULTISAMPLE);
+  }
 
-    QGLWidget* qglw = (QGLWidget*)m_renderArea->getGLWidget();
-    QGLFormat fmt = qglw->format();
-
-    if(taMisc::antialiasing_level > 1) {
-      fmt.setSampleBuffers(true);
-      fmt.setSamples(taMisc::antialiasing_level);
-      qglw->setFormat(fmt);		// obs: this is supposedly deprecated..
-      qglw->makeCurrent();
-      glEnable(GL_MULTISAMPLE);
-    }
-    else {
-      fmt.setSampleBuffers(false);
-      qglw->setFormat(fmt);		// obs: this is supposedly deprecated..
-      qglw->makeCurrent();
-      glDisable(GL_MULTISAMPLE);
-    }
-
-    // apparently the key problem e.g., with remote X into mac X server 
-    // is this code, GL_TEXTURE_3D:
-//     void
-//       SoGLTexture3EnabledElement::updategl(void)
-//     {
-//       const cc_glglue * glw = sogl_glue_instance(this->state);
+  // apparently the key problem e.g., with remote X into mac X server 
+  // is this code, GL_TEXTURE_3D:
+  //     void
+  //       SoGLTexture3EnabledElement::updategl(void)
+  //     {
+  //       const cc_glglue * glw = sogl_glue_instance(this->state);
   
-//       if (SoGLDriverDatabase::isSupported(glw, SO_GL_3D_TEXTURES)) {
-// 	if (this->data) glEnable(GL_TEXTURE_3D);
-// 	else glDisable(GL_TEXTURE_3D);
-//       }
-//     }
+  //       if (SoGLDriverDatabase::isSupported(glw, SO_GL_3D_TEXTURES)) {
+  // 	if (this->data) glEnable(GL_TEXTURE_3D);
+  // 	else glDisable(GL_TEXTURE_3D);
+  //       }
+  //     }
 
-    // but the glxinfo suggests that it should be supported, and doing it 
-    // directly here does NOT cause a problem
+  // but the glxinfo suggests that it should be supported, and doing it 
+  // directly here does NOT cause a problem
 
-    // this extension is also used quite a bit, but apparently is not the problem:
-    //    CheckExtension("GL_EXT_texture_rectangle");
+  // this extension is also used quite a bit, but apparently is not the problem:
+  //    CheckExtension("GL_EXT_texture_rectangle");
 
-    // this will tell you what version is running for debugging purposes:
-//     String gl_vers = (int)QGLFormat::openGLVersionFlags();
-//     taMisc::Error("GL version:", gl_vers); 
+  // this will tell you what version is running for debugging purposes:
+  //     String gl_vers = (int)QGLFormat::openGLVersionFlags();
+  //     taMisc::Error("GL version:", gl_vers); 
 
-    if (m_selMode == SM_NONE)
-      m_renderArea->setSceneGraph(m_root_so);
-    else {
-      sel_so = new SoSelection();
-      switch (m_selMode) {
-      case SM_SINGLE: sel_so->policy = SoSelection::SINGLE; break;
-      case SM_MULTI: sel_so->policy = SoSelection::SHIFT; break;
-      default: break; // compiler food
-      }
-      sel_so->addChild(m_root_so);
-      sel_so->addSelectionCallback(SoSelectionCallback, (void*)this);
-      sel_so->addDeselectionCallback(SoDeselectionCallback, (void*)this);
-      m_renderArea->setSceneGraph(sel_so);
-      SoBoxHighlightRenderAction* rend_act = new SoBoxHighlightRenderAction;
-//       rend_act->setTransparencyType(SoGLRenderAction::DELAYED_BLEND);
-      rend_act->setTransparencyType(SoGLRenderAction::BLEND);
-      rend_act->setSmoothing(true); // low-cost line smoothing
-
-      // old-style accummulation buffer antialiasing:
-      //#ifndef TA_OS_MAC		    // temp until bug is fixed!
-      // bug is now fixed with patch to soqt 1.4.1
-//       if(accum_buf)
-// 	rend_act->setNumPasses(taMisc::antialiasing_passes);    // 1 = no antialiasing; 2 = antialiasing
-      //#endif
-      m_renderArea->setGLRenderAction(rend_act);
+  if (m_selMode == SM_NONE)
+    m_t3viewer->quarter->setSceneGraph(m_root_so);
+  else {
+    sel_so = new SoSelection();
+    switch (m_selMode) {
+    case SM_SINGLE: sel_so->policy = SoSelection::SINGLE; break;
+    case SM_MULTI: sel_so->policy = SoSelection::SHIFT; break;
+    default: break; // compiler food
     }
-    LayoutComponents();
+    sel_so->addChild(m_root_so);
+    sel_so->addSelectionCallback(SoSelectionCallback, (void*)this);
+    sel_so->addDeselectionCallback(SoDeselectionCallback, (void*)this);
+    m_t3viewer->quarter->setSceneGraph(sel_so);
+
+    // todo: this is all legacy
+    //       SoBoxHighlightRenderAction* rend_act = new SoBoxHighlightRenderAction;
+    // //       rend_act->setTransparencyType(SoGLRenderAction::DELAYED_BLEND);
+    //       rend_act->setTransparencyType(SoGLRenderAction::BLEND);
+    //       rend_act->setSmoothing(true); // low-cost line smoothing
+
+    //       m_t3viewer->setGLRenderAction(rend_act);
   }
+  LayoutComponents();
 }
 
 void iT3ViewspaceWidget::setHasHorScrollBar(bool value) {
@@ -1174,7 +1425,7 @@ void iT3ViewspaceWidget::setHasVerScrollBar(bool value) {
 }
 
 void iT3ViewspaceWidget::setSceneGraph(SoNode* sg) {
-  if (!m_renderArea) return; //not supposed to happen
+  if (!m_t3viewer) return; //not supposed to happen
   if (m_scene == sg) return;
   if (m_scene) { //had to have already been initialized before
     m_root_so->removeChild(m_scene);
@@ -1303,12 +1554,33 @@ void iT3DataViewFrame::Init() {
   t3vs->setSelMode(iT3ViewspaceWidget::SM_MULTI); // default
 
   m_ra = new T3ExaminerViewer(t3vs);
-  t3vs->setRenderArea(m_ra);
+  t3vs->setT3viewer(m_ra);
+  connect(m_ra, SIGNAL(homeSaved(int)), this, SLOT(homeSaved(int)) );
+  T3DataViewFrame* t3dvf = viewer();
+  if(!t3dvf) return;
+  t3dvf->saved_views.SetSize(m_ra->n_homes); // make sure
+
+  for(int i=0;i<t3dvf->saved_views.size;i++) {
+    T3SavedCamera* oursc = t3dvf->saved_views[i];
+    T3SavedCamera* sc = m_ra->saved_homes[i];
+    if(!sc) continue;
+    sc->CopyFrom(oursc);	// initialize from us
+  }
+}
+
+void iT3DataViewFrame::homeSaved(int home_no) {
+  T3DataViewFrame* t3dvf = viewer();
+  if(!t3dvf) return;		// shouldn't happen
+  T3SavedCamera* sc = m_ra->saved_homes.SafeEl(home_no);
+  if(!sc) return;
+  T3SavedCamera* oursc = t3dvf->saved_views.SafeEl(home_no);
+  if(!oursc) return;
+  oursc->CopyFrom(sc);
 }
 
 void iT3DataViewFrame::fileExportInventor() {
   static QFileDialog* fd = NULL;
-  SoNode* scene = m_ra->getSceneGraph();
+  SoNode* scene = m_ra->quarter->getSceneGraph();
   if (!scene) {
     taiChoiceDialog::ErrorDialog(this, "No scene exists yet.", "No scene", false);
     return;
@@ -1442,13 +1714,11 @@ void iT3DataViewFrame::viewRefresh() {
 
 void T3DataViewFrame::Initialize() {
 //  link_type = &TA_T3DataLink;
-  camera_focdist = 0.0f;
   bg_color.no_a = true; 
   bg_color.r = 0.8f;
   bg_color.g = 0.8f;
   bg_color.b = 0.8f;
   headlight_on = true;
-  fullscreen_on = false;
   stereo_view = STEREO_NONE;
 }
 
@@ -1460,8 +1730,6 @@ void T3DataViewFrame::Destroy() {
 void T3DataViewFrame::InitLinks() {
   inherited::InitLinks();
   taBase::Own(root_view, this);
-  taBase::Own(camera_pos, this);
-  taBase::Own(camera_orient, this);
   taBase::Own(bg_color, this);
 }
 
@@ -1500,7 +1768,7 @@ void T3DataViewFrame::Constr_impl(QWidget* gui_parent) {
 void T3DataViewFrame::Constr_post() {
   inherited::Constr_post();
   root_view.OnWindowBind(widget());
-  SetCameraPosOrient();
+//   SetCameraPosOrient();
 }
 
 IDataViewWidget* T3DataViewFrame::ConstrWidget_impl(QWidget* gui_parent) {
@@ -1562,20 +1830,19 @@ void T3DataViewFrame::Render_pre() {
   widget()->Render_pre();
   root_view.Render_pre();
 
-  SoQtViewer* viewer = widget()->ra();
+  T3ExaminerViewer* viewer = widget()->ra();
   if(viewer) {
-    viewer->setStereoType((SoQtViewer::StereoType)stereo_view);
-    viewer->setHeadlight(headlight_on);
-    viewer->setFullScreen(fullscreen_on);
+    viewer->quarter->setStereoMode((QuarterWidget::StereoMode)stereo_view);
+    viewer->quarter->setHeadlightEnabled(headlight_on);
   }
 }
 
 void T3DataViewFrame::Render_impl() {
   inherited::Render_impl();
   root_view.Render_impl();
-  SoQtViewer* viewer = widget()->ra();
+  T3ExaminerViewer* viewer = widget()->ra();
   iColor bg = GetBgColor();
-  viewer->setBackgroundColor(SbColor(bg.redf(), bg.greenf(), bg.bluef()));
+  viewer->quarter->setBackgroundColor((QColor)bg);
   widget()->Render_impl();
 }
 
@@ -1584,11 +1851,11 @@ void T3DataViewFrame::Render_post() {
   root_view.Render_post();
   widget()->setSceneTop(root_view.node_so());
   widget()->Render_post();
-  // on first opening, do a viewall to center all geometry in viewer
-  if(camera_pos == 0.0f && camera_focdist == 0.0f) {
+  // todo:!! on first opening, do a viewall to center all geometry in viewer
+//   if(camera_pos == 0.0f && camera_focdist == 0.0f) {
     ViewAll();
-    GetCameraPosOrient();
-  }
+//     GetCameraPosOrient();
+//   }
 }
 
 void T3DataViewFrame::Reset_impl() {
@@ -1606,39 +1873,39 @@ void T3DataViewFrame::WindowClosing(CancelOp& cancel_op) {
 
 void T3DataViewFrame::ViewAll() {
   if(!widget()) return;
-  SoQtViewer* viewer = widget()->ra();
+  T3ExaminerViewer* viewer = widget()->ra();
   viewer->viewAll();
 }
 
-void T3DataViewFrame::GetCameraPosOrient() {
-  if(!widget()) return;
-  SoQtViewer* viewer = widget()->ra();
-  SoCamera* cam = viewer->getCamera();
-  SbVec3f pos = cam->position.getValue();
-  camera_pos.x = pos[0]; camera_pos.y = pos[1]; camera_pos.z = pos[2];
-  SbVec3f axis;
-  float angle;
-  cam->orientation.getValue(axis, angle);
-  camera_orient.x = axis[0]; camera_orient.y = axis[1]; camera_orient.z = axis[2];
-  camera_orient.rot = angle;
-  camera_focdist = cam->focalDistance.getValue();
-}
+// void T3DataViewFrame::GetCameraPosOrient() {
+//   if(!widget()) return;
+//   T3ExaminerViewer* viewer = widget()->ra();
+//   SoCamera* cam = viewer->getViewerCamera();
+//   SbVec3f pos = cam->position.getValue();
+//   camera_pos.x = pos[0]; camera_pos.y = pos[1]; camera_pos.z = pos[2];
+//   SbVec3f axis;
+//   float angle;
+//   cam->orientation.getValue(axis, angle);
+//   camera_orient.x = axis[0]; camera_orient.y = axis[1]; camera_orient.z = axis[2];
+//   camera_orient.rot = angle;
+//   camera_focdist = cam->focalDistance.getValue();
+// }
 
-void T3DataViewFrame::SetCameraPosOrient() {
-  if(!widget()) return;
-  SoQtViewer* viewer = widget()->ra();
-  if(camera_pos == 0.0f && camera_focdist == 0.0f) {
-    viewer->viewAll();
-    return;
-  }
-  SoCamera* cam = viewer->getCamera();
-  cam->position.setValue(camera_pos.x, camera_pos.y, camera_pos.z);
-  SbVec3f axis;
-  axis[0]=camera_orient.x; axis[1]=camera_orient.y; axis[2]=camera_orient.z;
-  float angle = camera_orient.rot;
-  cam->orientation.setValue(axis, angle);
-  cam->focalDistance.setValue(camera_focdist);
-}
+// void T3DataViewFrame::SetCameraPosOrient() {
+//   if(!widget()) return;
+//   T3ExaminerViewer* viewer = widget()->ra();
+//   if(camera_pos == 0.0f && camera_focdist == 0.0f) {
+//     viewer->viewAll();
+//     return;
+//   }
+//   SoCamera* cam = viewer->getCamera();
+//   cam->position.setValue(camera_pos.x, camera_pos.y, camera_pos.z);
+//   SbVec3f axis;
+//   axis[0]=camera_orient.x; axis[1]=camera_orient.y; axis[2]=camera_orient.z;
+//   float angle = camera_orient.rot;
+//   cam->orientation.setValue(axis, angle);
+//   cam->focalDistance.setValue(camera_focdist);
+// }
 
 void T3DataViewFrame::Dump_Save_pre() {
   inherited::Dump_Save_pre();
@@ -1651,21 +1918,10 @@ QPixmap T3DataViewFrame::GrabImage(bool& got_image) {
   if(!widget()) {
     return QPixmap();
   }
-  // this doesn't get the gl parts:
-  //  return QPixmap::grabWidget(widget());
-  // this doesn't work either: no gl
-//   QPoint widgpos = widget()->mapToGlobal(QPoint(0,0));
-//   QWidget* winwidg = widget()->window();
-//   QPoint winpos = winwidg->mapToGlobal(QPoint(0,0));
-//   QPoint off = widgpos - winpos;
-//   return QPixmap::grabWindow(winwidg->winId(), (int)fabsf(off.x()), (int)fabsf(off.y()),
-// 			     (int)widget()->width(), (int)widget()->height());
-  SoQtViewer* viewer = widget()->ra();
+  T3ExaminerViewer* viewer = widget()->ra();
   if(TestError(!viewer, "GrabImage", "viewer is NULL!")) return QPixmap();
-  QGLWidget* qglw = (QGLWidget*)viewer->getGLWidget();
-  // renderPixmap did not work -- returned a black screen -- something about InitGL..
-  QImage img = qglw->grabFrameBuffer(false); // todo: try true?
-  if(TestError(img.isNull(), "GrabImage", "got a null image from grabFrameBuffer call!"))
+  QImage img = viewer->grabImage();
+  if(TestError(img.isNull(), "GrabImage", "got a null image from T3ExaminerViewer"))
     return QPixmap();
   got_image = true;
 //   cerr << "Grabbed image of size: " << img.width() << " x " << img.height() << " depth: " << img.depth() << endl;
@@ -1683,7 +1939,7 @@ bool T3DataViewFrame::SaveImageAs(const String& fname, ImageFormat img_fmt) {
 }      
 
 bool T3DataViewFrame::SaveImageEPS(const String& fname) {
-  SoQtViewer* viewer = widget()->ra();
+  T3ExaminerViewer* viewer = widget()->ra();
   if(!viewer) return false;
 
   String ext = String(".") + image_exts.SafeEl(EPS);
@@ -1736,7 +1992,7 @@ bool T3DataViewFrame::SaveImageEPS(const String& fname) {
 
   // apply action on the viewer scenegraph. Remember to use
   // SoSceneManager's scene graph so that the camera is included.
-  ps->apply(viewer->getSceneManager()->getSceneGraph());
+  ps->apply(viewer->quarter->getSceneGraph());
 
   // this will create the postscript file
   ps->endPage();
@@ -1750,7 +2006,7 @@ bool T3DataViewFrame::SaveImageEPS(const String& fname) {
 }
 
 bool T3DataViewFrame::SaveImageIV(const String& fname) {
-  SoQtViewer* viewer = widget()->ra();
+  T3ExaminerViewer* viewer = widget()->ra();
   if(!viewer) return false;
 
   String ext = String(".") + image_exts.SafeEl(IV);
@@ -1767,7 +2023,7 @@ bool T3DataViewFrame::SaveImageIV(const String& fname) {
   SoWriteAction wa(&out);
 
   wa.apply(root_view.node_so()); // just the data, not the whole camera
-  //  wa.apply(viewer->getSceneManager()->getSceneGraph());
+  //  wa.apply(viewer->quarter->getSceneGraph());
   out.closeFile();
 
   taRefN::unRefDone(flr);

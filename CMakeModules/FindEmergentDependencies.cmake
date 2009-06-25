@@ -2,7 +2,7 @@
 
 find_package(Qt4 REQUIRED)
 find_package(Coin REQUIRED)
-find_package(SoQt REQUIRED)
+find_package(Quarter REQUIRED)
 if (NOT WIN32)
   find_package(Readline REQUIRED)
   if (NOT APPLE)  
@@ -25,7 +25,7 @@ set(QT_USE_QTNETWORK 1)
 set(QT_USE_QTWEBKIT 1)
 include(${QT_USE_FILE})
 
-include_directories(${QT_INCLUDES} ${COIN_INCLUDE_DIR} ${SOQT_INCLUDE_DIR}
+include_directories(${QT_INCLUDES} ${COIN_INCLUDE_DIR} ${QUARTER_INCLUDE_DIR}
   ${ODE_INCLUDE_DIR}
   ${GSL_INCLUDE_DIR}
 )
@@ -44,12 +44,12 @@ endif (WIN32)
 
 # Windows dll macros
 if (WIN32)
-  add_definitions(-DCOIN_DLL -DSOQT_DLL)
+  add_definitions(-DCOIN_DLL -DQUARTER_DLL)
 endif (WIN32)
 
 # all dependency libraries to link to -- used automatically in EMERGENT_LINK_LIBRARIES
 # specify in executables
-set(EMERGENT_DEP_LIBRARIES ${COIN_LIBRARY} ${SOQT_LIBRARY} ${QT_LIBRARIES}
+set(EMERGENT_DEP_LIBRARIES ${COIN_LIBRARY} ${QUARTER_LIBRARY} ${QT_LIBRARIES}
     ${ODE_LIBRARY}
     ${GSL_LIBRARIES}
 )

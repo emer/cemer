@@ -163,10 +163,6 @@ class SoPath;			// #IGNORE
 class SoSeparator; 		//
 class SoTransform; 		// #IGNORE 
 
-// #IGNORE SoQt Classes (Coin3D/Inventor)
-class SoQtRenderArea; //
-class SoQtViewer; //
-
 // #IGNORE T3 Gadgets
 class	T3ViewspaceWidget;	// #IGNORE 
 #endif // #IGNORE TA_GUI
@@ -197,7 +193,6 @@ class	iDataViewer;		// #IGNORE  -- in ta_qtviewer.h
 #define iPixmap		QPixmap
 class	iPoint;			//
 class	iRect;			//
-class	iRenderAreaWrapper;	// #IGNORE  -- wrapper for SoQtRenderArea
 class	iSize;			//
 class	iSpinBox;		// #IGNORE 
 class	iStripeWidget;		// #IGNORE  -- in ieditgrid.h/.cc

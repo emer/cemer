@@ -37,7 +37,13 @@
 # include <QTabBar>
 # include <qwidget.h>
 # include <Inventor/nodes/SoSeparator.h>
-# include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+# include <Inventor/SbLinear.h>
+# include <Quarter/Quarter.h>
+# include <Quarter/QuarterWidget.h>
+
+using SIM::Coin3D::Quarter::QuarterWidget;
+#else
+class QuarterWidget;	// #IGNORE
 #endif
 
 // externals
@@ -47,8 +53,8 @@ class taiMimeSource;
 class TDCoord;
 class FloatTransform;
 class SoPath; // #IGNORE
-class SbPList; // #IGNORE
 class SoCamera; // #IGNORE
+class SbViewportRegion; // #IGNORE
 class T3Node;
 
 // forwards
@@ -66,6 +72,8 @@ class T3DataViewFrame;
 class T3DataViewer;
 class T3ExaminerViewer;
 
+class QtThumbWheel;		// #IGNORE
+
 SoPtr_Of(T3Node);
 
 class TA_API t3Misc {
@@ -77,88 +85,188 @@ public:
   static const float	char_base_fract; // fraction of total ht below baseline
 };
 
-///////////////////////////////////////
-//	custom T3 viewer object
-///////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//   T3ExaminerViewer -- customized 
 
-// goals: get rid of unused buttons, and add new ones(?)
-// fix view button to regularize the view as well.
+// note: this now requires Quarter instead of SoQt
 
-class SbPList; // #IGNORE
-
-class TA_API T3ExaminerViewer_qobj : public QObject {
-  Q_OBJECT
-  INHERITED(QObject)
+class TA_API T3SavedCamera : public taNBase {
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_View Saves camera parameters for the Quarter Examiner Viewer -- name of view is name of object -- can store other arbitrary info in UserData for this guy
+INHERITED(taNBase)
 public:
-  T3ExaminerViewer*	s;
-  T3ExaminerViewer_qobj(T3ExaminerViewer* s_) {s = s_;}
-  ~T3ExaminerViewer_qobj() {s = NULL;}
+  bool		view_saved;	// whether a view is currently saved or not
+  FloatTDCoord	pos;		// position of camera in view
+  FloatRotation	orient;		// orientation of camera in view
+  float		focal_dist;	// focal distance
 
-public slots:
-  void interactbuttonClicked();
-  void viewbuttonClicked();
-  void homebuttonClicked();
-  void sethomebuttonClicked();
-  void viewallbuttonClicked();
-  void seekbuttonClicked();
-  void snapshotbuttonClicked();
-  void printbuttonClicked();
+  void		getCameraParams(SoCamera* cam);
+  // get the camera parameters into our saved values
+  bool		setCameraParams(SoCamera* cam);
+  // set the camera parmeters from our saved values (returns false if no view saved)
+
+  QToolButton*	home_button;	// #IGNORE home button for this view
+
+  TA_SIMPLE_BASEFUNS(T3SavedCamera);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
 };
 
-class TA_API T3ExaminerViewer : public SoQtExaminerViewer {
-  SOQT_OBJECT_HEADER(T3ExaminerViewer, SoQtExaminerViewer);
+class TA_API T3SavedCamera_List: public taList<T3SavedCamera> {
+  // ##CAT_View list of saved views
+  INHERITED(taList<T3SavedCamera>)
 public:
-  T3ExaminerViewer(iT3ViewspaceWidget* parent = NULL,
-		   const char * name = NULL,
-		   bool embed = true);
+
+  TA_BASEFUNS_NOCOPY(T3SavedCamera_List);
+private:
+  void	Initialize();
+  void	Destroy() { };
+};
+
+
+class TA_API T3ExaminerViewer : public QWidget {
+  // provides a full examiner viewer interface built on top of the QuarterWidget viewer, replicating the GUI of the SoQtExaminerViewer
+  Q_OBJECT
+public:
+  T3ExaminerViewer(iT3ViewspaceWidget* parent = NULL);
   ~T3ExaminerViewer();
 
-  iT3ViewspaceWidget*		t3vw;
+  iT3ViewspaceWidget*	t3vw;		// owner widget
 
-  static void zoom(SoCamera* cam, const float diffvalue);
-  // zoom in/out by given amount: adjusts both camera pos and focal length
+  T3DataViewFrame* 	GetFrame();	// get my owning frame, from t3vw
 
-  T3DataViewFrame* GetFrame();
-  // get my owning frame, from t3vw
+  //////////////////////////////////////////////
+  //   Overall widget structure
 
-  override void viewAll();
-  // make this actually fill the damn screen!
-  override void saveHomePosition();
-  override void resetToHomePosition();
-  // use our saved values in frame dude
+  QVBoxLayout*	  main_vbox;	   // overall vertical box, containing main_hbox, bot_hbox
+  QHBoxLayout*	  main_hbox;	   // overall horizontal box, containing lhs_vbox, quarter, rhs_vbox
+  QVBoxLayout*	  lhs_vbox; 	// overall box for all decoration on the left-hand-side of widget -- contains (optional -- none in default impl) buttons at top and vrot_wheel at bottom
+    QVBoxLayout*  lhs_button_vbox; // buttons on the top-left hand side (empty by default)
+  QuarterWidget*  quarter;	// the quarter viewer -- in the middle of the widget
+  QVBoxLayout*	  rhs_vbox; 	// overall box for all decoration on the right-hand-side of widget -- contains buttons at top and zoom_wheel at bottom
+    QVBoxLayout*  rhs_button_vbox; // buttons on the top-right hand side
+  QHBoxLayout*	  bot_hbox;	   // overall box for all decoration on the bottom of widget -- contains (optional -- none in default impl) buttons at right and hrot_wheel at left
+    QHBoxLayout*  bot_button_hbox; // buttons on the bottom right side
 
-public: // slot callbacks
+  //////////////////////////////////////////////
+  //   Thumbwheels
+
+  QtThumbWheel*	  zoom_wheel;	// the zoom wheel (dolly in SoQt)
+  QtThumbWheel*	  vrot_wheel;	// the vertical rotation wheel (Rotx in SoQt)
+  QtThumbWheel*	  hrot_wheel;	// the horizontal rotation wheel (Roty in SoQt)
+  QLabel*	  zoom_lbl;	// labels
+  QLabel*	  vrot_lbl;
+  QLabel*	  hrot_lbl;
+
+  //////////////////////////////////////////////
+  //   Standard view buttons (on RHS)
+
+  QToolButton*	  interact_button; // (red arrow) -- mouse actions interact with elements in the display
+  QToolButton*	  view_button;     // (white hand) -- mouse actions move view around
+  QToolButton*	  home_button;     // (home) -- restores display to the home viewing configuration
+  QToolButton* 	  set_home_button; // (blue home) -- set the home viewing configuration for home button to current configuration
+  QToolButton*	  view_all_button; // (eyeball) -- repositions camera so everything is in view
+  QToolButton* 	  seek_button;	   // (flashlight) -- zooms display to view clicked objects
+  QToolButton* 	  snapshot_button; // (camera) -- save an image of the current view to a file
+  QToolButton* 	  print_button;    // (printer) -- print current view to a file
+
+  static const int   n_homes;	   // number of saved "home" view parameters to save (length of saved_homes)
+  T3SavedCamera_List saved_homes; // saved home view information
+  NameVar_PArray     dyn_buttons; // dynamic buttons
+
+  //////////////////////////////////////////////
+  //   Constructor helper methods
+
+  void    Constr_RHS_Buttons();		// construct right-hand-side pushbuttons
+  void    Constr_LHS_Buttons();		// construct left-hand-side pushbuttons
+  void    Constr_Bot_Buttons();		// construct bottom pushbuttons
+
+  int	  addDynButton(const String& label, const String& tooltip);
+  // add a new dynamic button -- returns button number (may already exist)
+  QToolButton* getDynButton(int but_no);
+  // get given dynamic button
+  QToolButton* getDynButtonName(const String& label);
+  // get dynamic button by name
+  void 	  removeAllDynButtons();
+  // remove all the dynamic buttons
+  bool 	  removeDynButton(int but_no);
+  // remove given dynamic button
+  bool 	  removeDynButtonName(const String& label);
+  // remove given dynamic button by name
+
+  //////////////////////////////////////////////
+  //   Functions that actually do stuff
+
+  SoCamera*  		getViewerCamera() const;
+  // helper function get the quarter viewer camera (not immediately avail on quarter widget)
+  const SbViewportRegion& getViewportRegion() const;
+  // helper function get the quarter viewer viewport region (not immediately avail on quarter widget)
+  virtual void 	  	viewAll();
+  // view all objects in scene -- compared to QuarterWidget's default version, this one doesn't leave such a huge margin around everything so you really fill the window
+
+  virtual void		zoomView(const float zoom_value);
+  // zoom view camera in/out by given amount: adjusts both camera pos and focal length -- associated with the zoom_wheel on the right side of viewer
+  virtual void		horizRotateView(const float rot_value);
+  // horizontally rotate view camera (actually around the vertical Y axis) -- associated with the hrot_wheel on bottom of viewer
+  virtual void		vertRotateView(const float rot_value);
+  // vertically rotate view camera (actually around the horizontal or X axis) -- associated with the vrot_wheel on left hand side of viewer
+
+  virtual void		setInteractionModeOn(bool onoff);
+  // set the interaction mode on or off (if off, then it is in view mode) -- also updates button states
+
+  virtual void		saveHome(int home_no);
+  // save the current camera view information to the 'home' view
+  virtual void		goHome(int home_no);
+  // restore the saved camera view information to the current view
+  virtual bool	  	nameHome(int home_no, const String& name);
+  // add a new label for given home view location
+
+  virtual QImage	grabImage();
+  // grab the current viewer image to a pixmap
+  virtual void		saveImage(const QString& fname);
+  // save the current viewer image to given file name
+  virtual void		printImage();
+  // print the current viewer image to a printer
+
+public slots:
+  void hrotwheelChanged(int value);
+  void vrotwheelChanged(int value);
+  void zoomwheelChanged(int value);
+
   void interactbuttonClicked();
   void viewbuttonClicked();
-  void homebuttonClicked();
-  void sethomebuttonClicked();
   void viewallbuttonClicked();
   void seekbuttonClicked();
   void snapshotbuttonClicked();
   void printbuttonClicked();
 
-protected:
-  T3ExaminerViewer_qobj*	q;
-  QPushButton* interactbutton;
-  QPushButton* viewbutton;
-  QPushButton* seekbutton;
-  SbPList*     priv_button_list;
+  void homebuttonClicked(int home_no);
+  void sethomeTriggered(int home_no);
+  void namehomeTriggered(int home_no);
 
-  override void processEvent(QEvent* ev_);
-  override void createViewerButtons(QWidget* parent, SbPList* buttonlist);
-  override QWidget * buildRightTrim(QWidget * parent);
-  virtual void fixViewerButtons(); // fix the viewer buttons to actually fit..
+  void dynbuttonClicked(int but_no);
 
-#ifndef __MAKETA__ // doesn't like SbBool..
-  override void setSeekMode(SbBool enable); // #IGNORE override standard one to do nothing
-  virtual void setSeekMode_doit(SbBool enable);
-  // #IGNORE this is the one that calls the original -- only activated by the user!
+#ifndef __MAKETA__
+signals:
+  void homeSaved(int home_no);	// the home location was saved (e.g., can now save to more permanent storage)
+  void dynbuttonActivated(int but_no); // dynamic button of given number was activated by user
 #endif
+
+protected:
+  // start values on wheels for computing deltas
+  int	hrot_start_val;
+  int	vrot_start_val;
+  int	zoom_start_val;
+
+  virtual void	RotateView(const SbVec3f& axis, const float ang);
+  // implementation function that will rotate view camera given angle (in radians) around given axis
+
+  void keyPressEvent(QKeyEvent* e);
 };
 
-//////////////////////////
-//   T3DataView_List	//
-//////////////////////////
+
+////////////////////////////////////////////////////
+//   T3DataView_List
 
 class TA_API T3DataView_List: public DataView_List { // ##NO_TOKENS
 INHERITED(DataView_List)
@@ -230,8 +338,8 @@ public:
   virtual T3DataViewRoot* root();
   virtual T3DataViewFrame* GetFrame();
   // get the T3DataViewFrame that owns us
-  virtual SoQtViewer*	GetViewer();
-  // #IGNORE get the SoQtViewer that contains us
+  virtual T3ExaminerViewer* GetViewer();
+  // #IGNORE get the Viewer that contains us
 
   void 			AddRemoveChildNode(SoNode* node, bool adding);
     // can be used for manually using non-default T3Node items in a child; add in Pre_impl, remove in Clear_impl
@@ -464,8 +572,8 @@ public:
     // #IGNORE true adds a SoSelection node, and selection call back
   void			setSelMode(SelectionMode); // #IGNORE true adds a SoSelection node, and selection call back
 
-  SoQtRenderArea* 	renderArea() {return m_renderArea;}
-  void			setRenderArea(SoQtRenderArea* value); // must be called once, after creation
+  T3ExaminerViewer* 	t3viewer() {return m_t3viewer;}
+  void			setT3viewer(T3ExaminerViewer* value); // must be called once, after creation
   void 			setSceneGraph(SoNode* sg);
   void			setTopView(taDataView* tv); // set topmost view; for show/hide -- calls SetVisible if visible on set
 
@@ -496,7 +604,7 @@ protected:
 
   QScrollBar*		m_horScrollBar;
   QScrollBar*		m_verScrollBar;
-  SoQtRenderArea* 	m_renderArea;
+  T3ExaminerViewer* 	m_t3viewer;
   SoSeparatorPtr	m_root_so; //
   SoNode*		m_scene; // actual top item set by user
   SelectionMode		m_selMode; // #IGNORE true adds a SoSelection node, and selection call back
@@ -535,7 +643,8 @@ public:
 
   iT3ViewspaceWidget*	t3vs;
 
-  SoQtViewer* 		ra() {return m_ra;} //TODO: maybe should not cache; should get from body()
+  T3ExaminerViewer* 	ra() {return m_ra;}
+
   T3DataViewRoot*	root();
   virtual void		setSceneTop(SoNode* node); // set top of scene -- usually called during Render_post
   override int		stretchFactor() const {return 4;} // 4/2 default
@@ -556,6 +665,7 @@ public: // menu and menu overrides
 
 public slots:
   virtual void 		fileExportInventor();
+  virtual void 		homeSaved(int home_no); // connect to homeSaved on examiner viewer
 
 public: // IDataViewWidget i/f
   override QWidget*	widget() {return this;}
@@ -564,7 +674,7 @@ protected:
   override void		Refresh_impl(); // note: we just do the lite Render_impl stuff
   
 protected:
-  SoQtViewer* 		m_ra;
+  T3ExaminerViewer* 	m_ra;
   virtual void		Render_pre(); // #IGNORE
   virtual void		Render_impl();  // #IGNORE
   virtual void		Render_post(); // #IGNORE
@@ -607,13 +717,10 @@ public:
   };
 
   T3DataViewRoot	root_view; // #SHOW_TREE placeholder item -- contains the actual root(s) DataView items as children
-  FloatTDCoord		camera_pos;	// position of camera in view
-  FloatRotation		camera_orient;	// orientation of camera in view
-  float			camera_focdist; // focalDistance of camera in view
   taColor		bg_color; // #NO_ALPHA background color of the frame (note: alpha transparency value not used)
   bool			headlight_on; // turn the camera headlight on for illuminating the scene -- turn off only if there is another source of light within the scenegraph -- otherwise it will be dark!
-  bool			fullscreen_on; // make this display take over the full screen
   StereoView		stereo_view;  // what type of stereo display to render, if any
+  T3SavedCamera_List	saved_views;  // saved camera position views from viewer -- this is the persitent version copied from camera
 
   bool			singleMode() const
     {return (root_view.children.size == 1);}
@@ -628,10 +735,6 @@ public:
 
   virtual void		ViewAll();
   // reset the camera position to view everything in the display
-  virtual void		GetCameraPosOrient();
-  // get camera's current position and orientation from viewer into my fields (for saving)
-  virtual void		SetCameraPosOrient();
-  // set camera's current position and orientation from viewer from my fields (during loading)
 
   override QPixmap	GrabImage(bool& got_image);
   override bool		SaveImageAs(const String& fname = "", ImageFormat img_fmt = EPS);

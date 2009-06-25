@@ -439,15 +439,7 @@ class TA_API iDataTableView_Panel: public iViewPanelFrame {
 public:
   QWidget*		widg;
   QVBoxLayout*		layWidg;
-  
-  iT3ViewspaceWidget*	t3vs; //note: created with call to Constr_T3Viewspace
-
-//  override String	panel_type() const; // this string is on the subpanel button for this panel
-
-  DataTableView*		lv() {return (DataTableView*)m_dv;}
-  SoQtRenderArea* 	ra() {return m_ra;}
-
-  void 			viewAll(); // zooms to fit entire scenegraph in window
+  DataTableView*	lv() {return (DataTableView*)m_dv;}
 
   iDataTableView_Panel(DataTableView* lv);
   ~iDataTableView_Panel();
@@ -457,12 +449,6 @@ public: // IDataLinkClient interface
   override TypeDef*	GetTypeDef() const {return &TA_iDataTableView_Panel;}
 
 protected:
-  SoQtRenderArea* 	m_ra;
-  SoPerspectiveCamera*	m_camera;
-  SoLightModel*		m_lm;
-
-  void 			Constr_T3ViewspaceWidget(QWidget* widg);
-
 };
 
 class TA_API iGridTableView_Panel: public iDataTableView_Panel {

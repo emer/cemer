@@ -342,7 +342,6 @@ void QuarterExaminerViewer::keyPressEvent(QKeyEvent* e) {
   }
   if(e->key() == Qt::Key_S) {	// seek
     quarter->seek();
-    goHome();
     e->accept();
     return;
   }

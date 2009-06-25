@@ -48,8 +48,6 @@
 #include <qwidget.h>
 
 #include <Inventor/SbLinear.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/Qt/SoQtRenderArea.h>
 #include <Inventor/fields/SoMFString.h>
 #include <Inventor/nodes/SoAsciiText.h>
 #include <Inventor/nodes/SoBaseColor.h>
@@ -384,11 +382,11 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
     taDataView* dv = fr->root_view.children[i];
     if(dv->InheritsFrom(&TA_NetView)) {
       NetView* tnv = (NetView*)dv;
-      SoQtViewer* viewer = tnv->GetViewer();
+      T3ExaminerViewer* viewer = tnv->GetViewer();
       SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
       SoRayPickAction rp( viewer->getViewportRegion());
       rp.setPoint(mouseevent->getPosition());
-      rp.apply(viewer->getSceneManager()->getSceneGraph());
+      rp.apply(viewer->quarter->getSceneGraph());
 
       
       SoPickedPoint* pp = rp.getPickedPoint(0);
@@ -1307,9 +1305,9 @@ void LayerView::DoHighlightColor(bool apply) {
 
 void LayerView::Render_pre() {
   bool show_drag = true;;
-  SoQtViewer* vw = GetViewer();
+  T3ExaminerViewer* vw = GetViewer();
   if(vw)
-    show_drag = !vw->isViewing();
+    show_drag = vw->quarter->interactionModeOn();
 
   NetView* nv = this->nv();
   if(!nv->lay_mv) show_drag = false;
@@ -1758,9 +1756,9 @@ void LayerGroupView::DoHighlightColor(bool apply) {
 
 void LayerGroupView::Render_pre() {
   bool show_drag = true;;
-  SoQtViewer* vw = GetViewer();
+  T3ExaminerViewer* vw = GetViewer();
   if(vw)
-    show_drag = !vw->isViewing();
+    show_drag = vw->quarter->interactionModeOn();
 
   NetView* nv = this->nv();
   if(!nv->lay_mv) show_drag = false;
@@ -1923,10 +1921,11 @@ void NetViewObjView::SetObj(NetViewObj* ob) {
 }
 
 void NetViewObjView::Render_pre() {
-  SoQtViewer* vw = GetViewer();
+  T3ExaminerViewer* vw = GetViewer();
   bool show_drag = false;
   if(vw)
-    show_drag = !vw->isViewing();
+    show_drag = vw->quarter->interactionModeOn();
+
 
   NetView* nv = GET_MY_OWNER(NetView);
   if(nv && !nv->lay_mv) show_drag = false;
@@ -2107,8 +2106,9 @@ NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
   nv->BuildAll();
   fr->Render();
   fr->ViewAll();
-  if(fr->singleChild())
-    fr->GetCameraPosOrient();
+  // todo: fix this
+//   if(fr->singleChild())
+//     fr->GetCameraPosOrient();
   return nv;
 }
 
@@ -2695,9 +2695,9 @@ void NetView::Render_pre() {
   InitDisplay();
   
   bool show_drag = true;;
-  SoQtViewer* vw = GetViewer();
+  T3ExaminerViewer* vw = GetViewer();
   if(vw)
-    show_drag = !vw->isViewing();
+    show_drag = vw->quarter->interactionModeOn();
   if(!lay_mv) show_drag = false;
 
   setNode(new T3NetNode(this, show_drag, net_text, show_drag && lay_mv));

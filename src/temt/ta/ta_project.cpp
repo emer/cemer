@@ -61,7 +61,7 @@
 #endif
 
 #ifdef TA_USE_INVENTOR
-  #include <Inventor/Qt/SoQt.h>
+  #include <Quarter/Quarter.h>
 #endif
 #include <ode/ode.h>
 
@@ -2059,7 +2059,8 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 // # endif
 # ifdef TA_USE_INVENTOR
     new QApplication(argc, (char**)argv); // accessed as qApp
-    SoQt::init(argc, (char**)argv, cssMisc::prompt.chars()); // creates a special Coin QApplication instance
+    SIM::Coin3D::Quarter::Quarter::init();
+//     SoQt::init(argc, (char**)argv, cssMisc::prompt.chars()); // creates a special Coin QApplication instance
     milestone |= (SM_QAPP_OBJ | SM_SOQT_INIT);
 # else
     new QApplication(argc, (char**)argv); // accessed as qApp
@@ -2874,7 +2875,7 @@ void taRootBase::Cleanup_Main() {
       coin_image_reader_cb_obj= NULL;
     }
 #endif
-    SoQt::done();
+    SIM::Coin3D::Quarter::Quarter::clean();
   }
 #endif
 #ifdef DMEM_COMPILE

@@ -17,7 +17,6 @@
 #include "safeptr_so.h"
 #ifdef TA_USE_INVENTOR
 
-#include <Inventor/Qt/SoQt.h>
 #include <Inventor/misc/SoBase.h>
 #include <Inventor/nodekits/SoSeparatorKit.h>
 #include <Inventor/nodes/SoGroup.h>

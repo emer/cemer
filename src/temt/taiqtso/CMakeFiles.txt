@@ -21,7 +21,6 @@ set(taiqtso_HEADS
     ieditgrid.h
     safeptr_so.h
     imisc_so.h
-    irenderarea.h
     idimedit.h
     interceptor.h
     qconsole.h
@@ -33,6 +32,7 @@ set(taiqtso_HEADS
     iautosaver.h
     icookiejar.h
     inetworkaccessmanager.h
+    qtthumbwheel.h
 )
 
 # headers that need Qt moc run
@@ -49,7 +49,6 @@ set(taiqtso_HEADS_MOC
     idimedit.h
     interceptor.h
     qconsole.h
-    irenderarea.h
     ibutton.h
     iscrollarea.h
     itextbrowser.h
@@ -58,6 +57,7 @@ set(taiqtso_HEADS_MOC
     iautosaver.h
     icookiejar.h
     inetworkaccessmanager.h
+    qtthumbwheel.h
 )
 
 # source files to compile: NOTE: do NOT include .moc files -- auto generated
@@ -79,7 +79,6 @@ set(taiqtso_SRCS
     qconsole.cpp
     safeptr_so.cpp
     imisc_so.cpp
-    irenderarea.cpp
     ibutton.cpp
     iscrollarea.cpp
     itextbrowser.cpp
@@ -89,6 +88,7 @@ set(taiqtso_SRCS
     iautosaver.cpp
     icookiejar.cpp
     inetworkaccessmanager.cpp
+    qtthumbwheel.cpp
 )
 
 # headers that need Qt ui compiler run

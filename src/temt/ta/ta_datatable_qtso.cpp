@@ -46,8 +46,6 @@
 #include <QHeaderView>
 
 #include <Inventor/SbLinear.h>
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/Qt/SoQtRenderArea.h>
 #include <Inventor/fields/SoMFString.h>
 #include <Inventor/nodes/SoAsciiText.h>
 #include <Inventor/nodes/SoBaseColor.h>
@@ -68,8 +66,6 @@
 #include <Inventor/events/SoMouseButtonEvent.h>
 #include <Inventor/actions/SoRayPickAction.h>
 #include <Inventor/SoPickedPoint.h>
-
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
 #include <limits.h>
 #include <float.h>
@@ -684,9 +680,6 @@ void DataTableView::BuildAll() {
 void DataTableView::Render_pre() {
   if (!node_so()) return; // shouldn't happen
   InitPanel();
-  if(m_lvp && m_lvp->t3vs) {
-    m_lvp->t3vs->setSceneGraph(NULL);	// remove existing scene graph
-  }
   inherited::Render_pre();
 }
 
@@ -708,10 +701,6 @@ void DataTableView::Render_impl() {
 
 void DataTableView::Render_post() {
   inherited::Render_post();
-  if (m_lvp && m_lvp->t3vs) {
-    m_lvp->t3vs->setSceneGraph(node_so()); //TODO: change to node_so()->canvas()
-    m_lvp->viewAll();
-  }
 }
 
 void DataTableView::Reset_impl() {
@@ -890,8 +879,9 @@ GridTableView* GridTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
   vw->BuildAll();
   fr->Render();
   fr->ViewAll();
-  if(fr->singleChild())
-    fr->GetCameraPosOrient();
+  // todo:
+//   if(fr->singleChild())
+//     fr->GetCameraPosOrient();
   return vw;
 }
 
@@ -1053,9 +1043,9 @@ void GridTableView::UpdateFromDataTable_this(bool first) {
 
 void GridTableView::Render_pre() {
   bool show_drag = manip_ctrl_on;
-  SoQtViewer* vw = GetViewer();
+  T3ExaminerViewer* vw = GetViewer();
   if(vw)
-    show_drag = !vw->isViewing();
+    show_drag = vw->quarter->interactionModeOn();
 
   setNode(new T3GridViewNode(this, width, show_drag));
 
@@ -1861,10 +1851,6 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
 iDataTableView_Panel::iDataTableView_Panel(DataTableView* lv)
 :inherited(lv)
 {
-  t3vs = NULL; //these are created in  Constr_T3ViewspaceWidget
-  m_ra = NULL;
-  m_camera = NULL;
-  
   widg = new QWidget();
 //  widg->setFrameStyle( QFrame::GroupBoxPanel | QFrame::Sunken );
   layWidg = new QVBoxLayout(widg); //def margin/spacing=2  
@@ -1873,30 +1859,6 @@ iDataTableView_Panel::iDataTableView_Panel(DataTableView* lv)
 }
 
 iDataTableView_Panel::~iDataTableView_Panel() {
-}
-
-void iDataTableView_Panel::Constr_T3ViewspaceWidget(QWidget* widg) {
-  t3vs = new iT3ViewspaceWidget(widg);
-  t3vs->setSelMode(iT3ViewspaceWidget::SM_MULTI); // default
-
-  m_ra = new SoQtRenderArea(t3vs);
-  t3vs->setRenderArea(m_ra);
-
-  SoSeparator* root = t3vs->root_so();
-  m_camera = new SoPerspectiveCamera();
-  root->addChild(m_camera);
-
-  m_lm = new SoLightModel();
-  m_lm->model = SoLightModel::BASE_COLOR;
-  root->addChild(m_lm);
-
-  viewAll();
-}
-
-void iDataTableView_Panel::viewAll() {
-  if(!t3vs) return;
-  m_camera->viewAll(t3vs->root_so(), ra()->getViewportRegion());
-  m_camera->focalDistance.setValue(.1f); // zoom in!
 }
 
 
@@ -2051,14 +2013,6 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 
   layWidg->addStretch();
 
-  ////////////////////////////////////////////////////////////////////////////
-  // 	viewspace guy
-
-  // not used anymore!
-//   layViewspace = new QHBoxLayout(layWidg);
-//   Constr_T3ViewspaceWidget(widg);
-//   layViewspace->addWidget(t3vs);
-
   MakeButtons(layOuter);
 }
 
@@ -2125,13 +2079,6 @@ void iGridTableView_Panel::UpdatePanel_impl() {
 
   cbar->UpdateScaleValues();
   chkAutoScale->setChecked(glv->colorscale.auto_scale);
-
-  // bg color
-//   SoQtRenderArea* ra = t3vs->renderArea();
-//   bool ok;
-//   iColor bg = glv->bgColor(ok); // note: we know it is ok!
-//   if (!ok) bg.setRgb(0.8f, 0.8f, 0.8f);
-//   ra->setBackgroundColor(SbColor(bg.redf(), bg.greenf(), bg.bluef()));
 }
 
 void iGridTableView_Panel::butRefresh_pressed() {
@@ -2830,8 +2777,9 @@ GraphTableView* GraphTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
   vw->BuildAll();
   fr->Render();
   fr->ViewAll();
-  if(fr->singleChild())
-    fr->GetCameraPosOrient();
+  // todo: fix this!
+//   if(fr->singleChild())
+//     fr->GetCameraPosOrient();
   return vw;
 }
 
@@ -3276,11 +3224,11 @@ void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
     taDataView* dv = fr->root_view.children[i];
     if(dv->InheritsFrom(&TA_GraphTableView)) {
       GraphTableView* tgv = (GraphTableView*)dv;
-      SoQtViewer* viewer = tgv->GetViewer();
+      T3ExaminerViewer* viewer = tgv->GetViewer();
       SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
       SoRayPickAction rp( viewer->getViewportRegion());
       rp.setPoint(mouseevent->getPosition());
-      rp.apply(viewer->getSceneManager()->getSceneGraph());
+      rp.apply(viewer->quarter->getSceneGraph());
 
       SoPickedPoint* pp = rp.getPickedPoint(0);
       if(!pp) continue;
@@ -3317,9 +3265,9 @@ void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
 
 void GraphTableView::Render_pre() {
   bool show_drag = manip_ctrl_on;
-  SoQtViewer* vw = GetViewer();
+  T3ExaminerViewer* vw = GetViewer();
   if(vw)
-    show_drag = !vw->isViewing();
+    show_drag = vw->quarter->interactionModeOn();
 
   setNode(new T3GraphViewNode(this, width, show_drag));
 
@@ -4950,14 +4898,6 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layRAxis->addStretch();
   
   layWidg->addStretch();
-
-  ////////////////////////////////////////////////////////////////////////////
-  // 	viewspace guy
-
-  // no room!
-//   layViewspace = new QHBoxLayout(layWidg);
-//   Constr_T3ViewspaceWidget(widg);
-//   layViewspace->addWidget(t3vs);
 
   MakeButtons(layOuter);
 }

@@ -50,9 +50,8 @@
 #include <qpushbutton.h> // metrics
 #include <QSessionManager>
 
-#ifdef TA_USE_INVENTOR
-#include <Inventor/Qt/SoQt.h>
-#endif
+// #ifdef TA_USE_INVENTOR
+// #endif
 
 
 //#include <ostream.h>
