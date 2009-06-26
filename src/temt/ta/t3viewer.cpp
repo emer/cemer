@@ -67,6 +67,7 @@
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoOrthographicCamera.h>
 #include <Inventor/SoEventManager.h>
+#include <Inventor/SoRenderManager.h>
 
 #include "qtthumbwheel.h"
 
@@ -100,6 +101,7 @@ using namespace Qt;
 void T3SavedView::Initialize() {
   view_saved = false;
   view_button = NULL;
+  view_action = NULL;
   focal_dist = 0.0f;
   pos = 0.0f;
 }
@@ -309,17 +311,23 @@ void T3ExaminerViewer::Constr_LHS_Buttons() {
 }
 
 void T3ExaminerViewer::Constr_Bot_Buttons() {
+  cur_view_no = -1;		// nothing set yet
   saved_views.SetSize(n_views);
   for(int i=0; i<n_views; i++) {
-    String nm = "View " + String(i);
     T3SavedView* sv = saved_views[i];
-    sv->name = nm;
+    String nm = sv->name;
+    if(nm.contains("T3SavedView")) {		// uninitialized
+      nm = "View " + String(i);
+      sv->name = nm;
+    }
 
     QToolButton* view_button = new QToolButton(this);
 
     taiAction* view_act = new taiAction(i, nm, QKeySequence());
     view_act->connect(taiAction::int_act, this,  SLOT(gotoviewbuttonClicked(int))); 
     view_act->setParent(view_button);
+    view_act->setCheckable(true);
+    view_act->setChecked(sv->view_saved);
 
     view_button->setToolTip("Go To View: Restores display to previously saved viewing configuration -- hold mouse down for menu to save view and set view name");
     //    view_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
@@ -357,7 +365,7 @@ int T3ExaminerViewer::addDynButton(const String& label, const String& tooltip) {
   dyn_buttons.Add(nv);
   
   QToolButton* dyn_button = new QToolButton(this);
-  taiAction* dyn_act = new taiAction(but_no, nm, QKeySequence());
+  taiAction* dyn_act = new taiAction(but_no, label, QKeySequence());
   dyn_act->connect(taiAction::int_act, this,  SLOT(dynbuttonClicked(int))); 
   dyn_act->setParent(dyn_button);
 //   dyn_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
@@ -458,6 +466,10 @@ void T3ExaminerViewer::printbuttonClicked() {
 }
 
 void T3ExaminerViewer::gotoviewbuttonClicked(int view_no) {
+  T3SavedView* sv = saved_views.SafeEl(view_no);
+  if(!sv) return;
+  if(sv->view_action)
+    sv->view_action->setChecked(sv->view_saved); // always update with this state!
   gotoView(view_no);
 }
 
@@ -466,8 +478,10 @@ void T3ExaminerViewer::saveviewTriggered(int view_no) {
 }
 
 void T3ExaminerViewer::nameviewTriggered(int view_no) {
-  // todo: popup dialog -- this is just test
-  nameView(view_no, String("New Name") + String(view_no));
+  T3SavedView* sv = saved_views.SafeEl(view_no);
+  if(!sv) return;
+  if(sv->EditDialog(true))		// modal!
+    nameView(view_no, sv->name);
 }
 
 void T3ExaminerViewer::dynbuttonClicked(int but_no) {
@@ -663,7 +677,10 @@ void T3ExaminerViewer::saveView(int view_no) {
   if(view_no < 0 || view_no >= n_views) return;
   SoCamera* cam = getViewerCamera();
   if(!cam) return;
-  saved_views[view_no]->getCameraParams(cam);
+  T3SavedView* sv = saved_views[view_no];
+  sv->getCameraParams(cam);
+  if(sv->view_action)
+    sv->view_action->setChecked(true);
   emit viewSaved(view_no);
 }
 
@@ -672,6 +689,8 @@ void T3ExaminerViewer::gotoView(int view_no) {
   SoCamera* cam = getViewerCamera();
   if(!cam) return;
   saved_views[view_no]->setCameraParams(cam);
+  cur_view_no = view_no;
+  emit viewSelected(view_no);
 }
 
 bool T3ExaminerViewer::nameView(int view_no, const String& label) {
@@ -680,9 +699,18 @@ bool T3ExaminerViewer::nameView(int view_no, const String& label) {
   sv->name = label;
   if(sv->view_action)
     sv->view_action->setText(label);
+  emit viewSaved(view_no);	// view updated -- propagate
   return true;
 }
 
+void T3ExaminerViewer::updtViewName(int view_no) {
+  if(view_no < 0 || view_no >= n_views) return;
+  T3SavedView* sv = saved_views[view_no];
+  if(sv->view_action) {
+    sv->view_action->setText(sv->name);
+    sv->view_action->setChecked(sv->view_saved);
+  }
+}
 
 QImage	T3ExaminerViewer::grabImage() {
   return quarter->grabFrameBuffer(true); // true = get alpha
@@ -1342,12 +1370,12 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
     sel_so->addDeselectionCallback(SoDeselectionCallback, (void*)this);
     m_t3viewer->quarter->setSceneGraph(sel_so);
 
-//     SoBoxHighlightRenderAction* rend_act = new SoBoxHighlightRenderAction;
-// //     rend_act->setTransparencyType(SoGLRenderAction::DELAYED_BLEND);
-// //     rend_act->setTransparencyType(SoGLRenderAction::BLEND);
-//     rend_act->setSmoothing(true); // low-cost line smoothing
-
-//     m_t3viewer->setGLRenderAction(rend_act);
+    SoBoxHighlightRenderAction* rend_act = new SoBoxHighlightRenderAction;
+    SoRenderManager* rman = m_t3viewer->quarter->getSoRenderManager();
+    rman->setGLRenderAction(rend_act);
+    rman->setAntialiasing(true, 1); // low-cost line smoothing
+    m_t3viewer->quarter->setTransparencyType(QuarterWidget::BLEND);
+    // make sure it has the transparency set for new guy
   }
   LayoutComponents();
 }
@@ -1507,12 +1535,6 @@ void iT3DataViewFrame::Init() {
   m_t3viewer = new T3ExaminerViewer(t3vs);
   t3vs->setT3viewer(m_t3viewer);
   connect(m_t3viewer, SIGNAL(viewSaved(int)), this, SLOT(viewSaved(int)) );
-  T3DataViewFrame* t3dvf = viewer();
-  if(!t3dvf) return;
-  t3dvf->saved_views.SetSize(m_t3viewer->n_views); // make sure
-  for(int i=0;i<t3dvf->saved_views.size;i++) {
-    t3dvf->SetSavedView(i);
-  }
 }
 
 void iT3DataViewFrame::viewSaved(int view_no) {
@@ -1674,6 +1696,7 @@ void T3DataViewFrame::InitLinks() {
   inherited::InitLinks();
   taBase::Own(root_view, this);
   taBase::Own(bg_color, this);
+  taBase::Own(saved_views, this);
 }
 
 void T3DataViewFrame::CutLinks() {
@@ -1775,6 +1798,10 @@ void T3DataViewFrame::Render_pre() {
 
   T3ExaminerViewer* viewer = widget()->t3viewer();
   if(viewer) {
+    if(viewer->cur_view_no < 0) {
+      SetAllSavedViews();		// init from us
+      viewer->gotoView(0);		// goto first saved view as default
+    }
     viewer->quarter->setStereoMode((QuarterWidget::StereoMode)stereo_view);
     viewer->quarter->setHeadlightEnabled(headlight_on);
   }
@@ -1817,27 +1844,44 @@ void T3DataViewFrame::WindowClosing(CancelOp& cancel_op) {
 void T3DataViewFrame::ViewAll() {
   if(!widget()) return;
   T3ExaminerViewer* viewer = widget()->t3viewer();
-  viewer->viewAll();
+  if(viewer)
+    viewer->viewAll();
 }
 
 void T3DataViewFrame::GetSavedView(int view_no) {
   if(!widget()) return;
   T3ExaminerViewer* viewer = widget()->t3viewer();
-  if(view_no < 0 || view_no >= viewer->n_views) return;
+  if(!viewer || view_no < 0 || view_no >= viewer->n_views) return;
   T3SavedView* oursc = saved_views.SafeEl(view_no);
   T3SavedView* sc = viewer->saved_views.SafeEl(view_no);
-  if(!sc || !oursc) 
+  if(!sc || !oursc) return;
   oursc->CopyFrom(sc);	// initialize from them
+  oursc->name = sc->name;	// names not usu copied
 }
 
 void T3DataViewFrame::SetSavedView(int view_no) {
   if(!widget()) return;
   T3ExaminerViewer* viewer = widget()->t3viewer();
-  if(view_no < 0 || view_no >= viewer->n_views) return;
+  if(!viewer || view_no < 0 || view_no >= viewer->n_views) return;
   T3SavedView* oursc = saved_views.SafeEl(view_no);
   T3SavedView* sc = viewer->saved_views.SafeEl(view_no);
-  if(!sc || !oursc) 
+  if(!sc || !oursc) return;
   sc->CopyFrom(oursc);	// initialize from us
+  sc->name = oursc->name;	// names not usu copied
+  viewer->updtViewName(view_no); // trigger update of label
+}
+
+void T3DataViewFrame::SetAllSavedViews() {
+  T3ExaminerViewer* viewer = widget()->t3viewer();
+  if(!viewer) return;
+  saved_views.SetSize(viewer->n_views); // make sure
+  for(int i=0;i<saved_views.size;i++) {
+    T3SavedView* sv = saved_views[i];
+    if(sv->name.contains("T3SavedView")) {		// uninitialized
+      sv->name = "View " + String(i);
+    }
+    SetSavedView(i);
+  }
 }
 
 void T3DataViewFrame::SaveCurView(int view_no) {

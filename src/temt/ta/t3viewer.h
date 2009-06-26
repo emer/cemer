@@ -94,10 +94,10 @@ class TA_API T3SavedView : public taNBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_View Saves camera parameters for the Quarter Examiner Viewer -- name of view is name of object -- can store other arbitrary info in UserData for this guy
 INHERITED(taNBase)
 public:
-  bool		view_saved;	// whether a view is currently saved or not
-  FloatTDCoord	pos;		// position of camera in view
-  FloatRotation	orient;		// orientation of camera in view
-  float		focal_dist;	// focal distance
+  bool		view_saved;	// #READ_ONLY #SHOW whether a view is currently saved or not
+  FloatTDCoord	pos;		// #READ_ONLY position of camera in view
+  FloatRotation	orient;		// #READ_ONLY orientation of camera in view
+  float		focal_dist;	// #READ_ONLY focal distance
 
   void		getCameraParams(SoCamera* cam);
   // get the camera parameters into our saved values
@@ -171,6 +171,7 @@ public:
 
   static const int   n_views;	   // number of saved view parameters to save (length of saved_views)
   T3SavedView_List saved_views; // saved view information
+  int		   cur_view_no;	// current view number -- last one to have gotoView called -- -1 if not done yet
   NameVar_PArray     dyn_buttons; // dynamic buttons
 
   //////////////////////////////////////////////
@@ -219,6 +220,8 @@ public:
   // restore the saved camera view information to the current view
   virtual bool	  	nameView(int view_no, const String& name);
   // add a new label for given saved view location
+  virtual void	  	updtViewName(int view_no);
+  // update displayed name from saved_views -- during init
 
   virtual QImage	grabImage();
   // grab the current viewer image to a pixmap
@@ -248,6 +251,7 @@ public slots:
 #ifndef __MAKETA__
 signals:
   void viewSaved(int view_no);	// the given view location was saved (e.g., can now save to more permanent storage)
+  void viewSelected(int view_no); // the given view location was selected for viewing -- other saved elements can now be activated by this signal
   void dynbuttonActivated(int but_no); // dynamic button of given number was activated by user
 #endif
 
@@ -718,7 +722,9 @@ public:
   virtual void		GetSavedView(int view_no);
   // copy given saved view on the T3ExaminerViewer to our saved view information (for persistence) -- does not actually grab the current view, just the previously saved data -- see SaveCurView
   virtual void		SetSavedView(int view_no);
-  // copy our saved view to the T3ExaminerViewer -- does not go to that view, just grabs data -- see GoToSavedView
+  // copy our saved view to the T3ExaminerViewer -- does not go to that view, just sets data -- see GoToSavedView
+  virtual void		SetAllSavedViews();
+  // copy all our saved views to the T3ExaminerViewer -- during initialization
 
   virtual void		SaveCurView(int view_no);
   // save the current T3 examiner viewer view parameters to the given view (on us and the viewer) -- for programmatic usage
