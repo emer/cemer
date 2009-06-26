@@ -332,7 +332,7 @@ bool PVrLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
   SetUnique("decay", true);

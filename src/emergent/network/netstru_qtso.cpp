@@ -1741,7 +1741,7 @@ taBase::DumpQueryResult LayerGroupView::Dump_QuerySaveMember(MemberDef* md) {
 void LayerGroupView::DoHighlightColor(bool apply) {
   T3LayerGroupNode* nd = node_so();
   if (!nd) return;
-  NetView* nv = this->nv();
+//  NetView* nv = this->nv();
   
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {

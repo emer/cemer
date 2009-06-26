@@ -574,9 +574,12 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
         tname != "FrustumCamera") {
       static SbBool first = TRUE;
       if (first) {
+/*SoDebugError prolly doesn't exist in non-debug builds of Coin...
         SoDebugError::postWarning("SoGuiFullViewerP::zoom",
                                   "Unknown camera type, "
-                                  "will zoom by moving position, but this might not be correct.");
+                                  "will zoom by moving position, but this might not be correct.");*/
+        taMisc::Warning("SoGuiFullViewerP::zoom",
+          "Unknown camera type, will zoom by moving position, but this might not be correct.");
         first = FALSE;
       }
     }
