@@ -177,7 +177,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   hrot_wheel->setMaximumSize(WHEEL_LENGTH, WHEEL_WIDTH);
   hrot_wheel->setWrapsAround(true);
   hrot_wheel->setLimitedDrag(false);
-  QObject::connect(hrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(hrotwheelChanged(int)));
+  connect(hrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(hrotwheelChanged(int)));
 
   vrot_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Vertical, this);
   vrot_start_val = 500;
@@ -185,7 +185,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   vrot_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
   vrot_wheel->setWrapsAround(true);
   vrot_wheel->setLimitedDrag(false);
-  QObject::connect(vrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(vrotwheelChanged(int)));
+  connect(vrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(vrotwheelChanged(int)));
 
   zoom_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Vertical, this);
   zoom_start_val = 500;
@@ -193,7 +193,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   zoom_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
   zoom_wheel->setWrapsAround(true);
   zoom_wheel->setLimitedDrag(false);
-  QObject::connect(zoom_wheel, SIGNAL(valueChanged(int)), this, SLOT(zoomwheelChanged(int)));
+  connect(zoom_wheel, SIGNAL(valueChanged(int)), this, SLOT(zoomwheelChanged(int)));
 
   /////  lhs_vbox
 
@@ -259,8 +259,7 @@ void T3ExaminerViewer::Constr_RHS_Buttons() {
   interact_button->setCheckable(true);
   interact_button->setIcon(QPixmap((const char **)pick_xpm));
   interact_button->setToolTip("Interact (I key, or ESC to toggle): Allows you to select and manipulate objects in the display \n(ESC toggles between Interact and Camera View");
-  QObject::connect(interact_button, SIGNAL(clicked()),
-		   this, SLOT(interactbuttonClicked()));
+  connect(interact_button, SIGNAL(clicked()), this, SLOT(interactbuttonClicked()));
   rhs_button_vbox->addWidget(interact_button);
 
   view_button = new QToolButton(this);
@@ -269,40 +268,35 @@ void T3ExaminerViewer::Constr_RHS_Buttons() {
   view_button->setChecked(true);
   view_button->setIcon(QPixmap((const char **)view_xpm));
   view_button->setToolTip("Camera View (V key, or ESC to toggle): Allows you to move the view around (click and drag to move; \nshift = move in the plane; ESC toggles between Camera View and Interact)");
-  QObject::connect(view_button, SIGNAL(clicked()),
-		   this, SLOT(viewbuttonClicked()));
+  connect(view_button, SIGNAL(clicked()), this, SLOT(viewbuttonClicked()));
   rhs_button_vbox->addWidget(view_button);
 
   view_all_button = new QToolButton(this);
   view_all_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   view_all_button->setIcon(QPixmap((const char **)view_all_xpm));
   view_all_button->setToolTip("(A key) View All: repositions the camera view to the standard initial view with everything in view");
-  QObject::connect(view_all_button, SIGNAL(clicked()),
-		   this, SLOT(viewallbuttonClicked()));
+  connect(view_all_button, SIGNAL(clicked()), this, SLOT(viewallbuttonClicked()));
   rhs_button_vbox->addWidget(view_all_button);
 
   seek_button = new QToolButton(this);
   seek_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   seek_button->setIcon(QPixmap((const char **)seek_xpm));
   seek_button->setToolTip("Seek (S key): Click on objects (not text!) in the display and the camera will \nfocus in on the point where you click -- repeated clicks will zoom in further");
-  QObject::connect(seek_button, SIGNAL(clicked()),
-		   this, SLOT(seekbuttonClicked()));
+  connect(seek_button, SIGNAL(clicked()), this, SLOT(seekbuttonClicked()));
   rhs_button_vbox->addWidget(seek_button);
 
   snapshot_button = new QToolButton(this);
   snapshot_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   snapshot_button->setIcon(QPixmap((const char **)snapshot_xpm));
   snapshot_button->setToolTip("Snapshot: save the current viewer image to quarter_image_snap.png file");
-  QObject::connect(snapshot_button, SIGNAL(clicked()),
-		   this, SLOT(snapshotbuttonClicked()));
+  connect(snapshot_button, SIGNAL(clicked()), this, SLOT(snapshotbuttonClicked()));
   rhs_button_vbox->addWidget(snapshot_button);
 
   print_button = new QToolButton(this);
   print_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   print_button->setIcon(QPixmap((const char **)print_xpm));
   print_button->setToolTip("Print: print the current viewer image to a printer -- uses the bitmap of screen image\n make window as large as possible for better quality");
-  QObject::connect(print_button, SIGNAL(clicked()),
-		   this, SLOT(printbuttonClicked()));
+  connect(print_button, SIGNAL(clicked()), this, SLOT(printbuttonClicked()));
   rhs_button_vbox->addWidget(print_button);
 }
 
@@ -371,16 +365,17 @@ int T3ExaminerViewer::addDynButton(const String& label, const String& tooltip) {
 //   dyn_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   dyn_button->setDefaultAction(dyn_act);
   dyn_button->setToolTip(tooltip);
+  dyn_button->setFont(taiM->buttonFont(taiMisc::sizMedium));
   lhs_button_vbox->addWidget(dyn_button);
+  dyn_actions.Add(dyn_act);
   return but_no;
 }
 
-QToolButton* T3ExaminerViewer::getDynButton(int but_no) {
-  if(but_no < 0 || but_no >= dyn_buttons.size) return NULL;
-  return dynamic_cast<QToolButton*>(lhs_button_vbox->itemAt(but_no));
+taiAction* T3ExaminerViewer::getDynButton(int but_no) {
+  return dyn_actions.SafeEl(but_no);
 }
 
-QToolButton* T3ExaminerViewer::getDynButtonName(const String& label) {
+taiAction* T3ExaminerViewer::getDynButtonName(const String& label) {
   int but_no = dyn_buttons.FindName(label);
   if(but_no < 0) return NULL;
   return getDynButton(but_no);
@@ -388,6 +383,7 @@ QToolButton* T3ExaminerViewer::getDynButtonName(const String& label) {
 
 void T3ExaminerViewer::removeAllDynButtons() {
   dyn_buttons.Reset();
+  dyn_actions.Reset();
   for(int i=lhs_button_vbox->count()-1; i>=0; i--) {
     lhs_button_vbox->removeItem(lhs_button_vbox->itemAt(i));
   }
@@ -396,6 +392,7 @@ void T3ExaminerViewer::removeAllDynButtons() {
 bool T3ExaminerViewer::removeDynButton(int but_no) {
   if(but_no < 0 || but_no >= dyn_buttons.size) return false;
   dyn_buttons.RemoveIdx(but_no);
+  dyn_actions.RemoveIdx(but_no);
   lhs_button_vbox->removeItem(lhs_button_vbox->itemAt(but_no));
   return true;
 }
@@ -659,9 +656,11 @@ void T3ExaminerViewer::setInteractionModeOn(bool onoff) {
   if(quarter->interactionModeOn() != onoff) {
     quarter->setInteractionModeOn(onoff);
     T3DataViewFrame* dvf = GetFrame();
-    if(!dvf) return;
-    // rebuilds to update manipulators
-    dvf->Render();
+    if(dvf) {
+      dvf->Render();
+      // rebuilds to update manipulators -- not right now though!
+//       tabMisc::DelayedFunCall_gui(dvf, "Render");
+    }
   }
   if(quarter->interactionModeOn()) {
     interact_button->setChecked(true);
@@ -733,43 +732,39 @@ void T3ExaminerViewer::printImage() {
 
 bool so_scrollbar_is_dragging = false; // referenced in t3node_so.cpp
 
-// todo: need to do this!?
+bool T3ExaminerViewer::event(QEvent* ev_) {
+  static bool inside_event_loop = false;
 
-// void T3ExaminerViewer::processEvent(QEvent* ev_) {
-//   static bool inside_event_loop = false;
+  //NOTE: the base classes don't check if event is already handled, so we have to skip
+  // calling inherited if we handle it ourselves
 
-//   //NOTE: the base classes don't check if event is already handled, so we have to skip
-//   // calling inherited if we handle it ourselves
+  if (!t3vw) goto do_inherited;
 
-//   if (!t3vw) goto do_inherited;
+  if (ev_->type() == QEvent::MouseButtonPress) {
+    QMouseEvent* ev = (QMouseEvent*)ev_;
+    if (ev->button() == Qt::RightButton) {
+      ISelectable* ci = t3vw->curItem();
+      if (!ci) goto do_inherited;
+      ev->accept();
+      t3vw->ContextMenuRequested(ev->globalPos());
+      return true;
+    }
+  }
 
-//   if (ev_->type() == QEvent::MouseButtonPress) {
-//     QMouseEvent* ev = (QMouseEvent*)ev_;
-//     if (ev->button() == Qt::RightButton) {
-//       //TODO: maybe should check for item under mouse???
-//       //TODO: pos will need to be adjusted for parent offset of renderarea ???
-//       ISelectable* ci = t3vw->curItem();
-//       if (!ci) goto do_inherited;
+ do_inherited:
+  bool rval = inherited::event(ev_);
 
-//       ev->accept();
-//       t3vw->ContextMenuRequested(ev->globalPos());
-//       return;
-//     }
-//   }
-
-// do_inherited:
-//   inherited::processEvent(ev_);
-
-//   if(so_scrollbar_is_dragging) {
-//     if(!inside_event_loop) {
-//       inside_event_loop = true;
-//       while(so_scrollbar_is_dragging) { // remain inside local scroll event loop until end!
-// 	taiMiscCore::ProcessEvents();
-//       }
-//       inside_event_loop = false;
-//     }
-//   }
-// }
+  if(so_scrollbar_is_dragging) {
+    if(!inside_event_loop) {
+      inside_event_loop = true;
+      while(so_scrollbar_is_dragging) { // remain inside local scroll event loop until end!
+	taiMiscCore::ProcessEvents();
+      }
+      inside_event_loop = false;
+    }
+  }
+  return rval;
+}
 
 //////////////////////////
 //	T3DataView	//
@@ -1802,8 +1797,11 @@ void T3DataViewFrame::Render_pre() {
       SetAllSavedViews();		// init from us
       viewer->gotoView(0);		// goto first saved view as default
     }
-    viewer->quarter->setStereoMode((QuarterWidget::StereoMode)stereo_view);
-    viewer->quarter->setHeadlightEnabled(headlight_on);
+
+    if(viewer->quarter->stereoMode() != (QuarterWidget::StereoMode)stereo_view)
+      viewer->quarter->setStereoMode((QuarterWidget::StereoMode)stereo_view);
+    if(viewer->quarter->headlightEnabled() != headlight_on)
+      viewer->quarter->setHeadlightEnabled(headlight_on);
   }
 }
 
@@ -1811,8 +1809,11 @@ void T3DataViewFrame::Render_impl() {
   inherited::Render_impl();
   root_view.Render_impl();
   T3ExaminerViewer* viewer = widget()->t3viewer();
-  iColor bg = GetBgColor();
-  viewer->quarter->setBackgroundColor((QColor)bg);
+  if(viewer) {
+    QColor bg = (QColor)GetBgColor();
+    if(viewer->quarter->backgroundColor() != bg)
+      viewer->quarter->setBackgroundColor(bg);
+  }
   widget()->Render_impl();
 }
 

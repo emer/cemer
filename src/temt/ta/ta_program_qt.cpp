@@ -395,8 +395,8 @@ bool iProgramEditor::eventFilter(QObject* obj, QEvent* event) {
 
 void iProgramEditor::Apply_Async() {
   if (apply_req) return; // already waiting
-  QEvent* ev = new QEvent((QEvent::Type)CET_APPLY);
   apply_req = true;
+  QEvent* ev = new QEvent((QEvent::Type)CET_APPLY);
   QCoreApplication::postEvent(this, ev);
 }
 
@@ -1395,7 +1395,8 @@ void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList* ref, taBase* base,
   
   //note: don't need to check for is_loading because we defer until after
   // we need to do a fullblown reshow, to handle things like name changes of vars, etc.
-  ReShow_Async();
+  if(!apply_req)		// already doing delayed apply
+    ReShow_Async();
 }
 
 MemberDef* iProgramCtrlDataHost::GetMemberPropsForSelect(int sel_idx, taBase** base,

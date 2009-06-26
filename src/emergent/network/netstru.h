@@ -159,7 +159,7 @@ private:
 class EMERGENT_API Connection {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network base connection between two units
 public:
-  float 	wt;		// weight of connection
+  float 	wt;		// #VIEW_HOT weight of connection
   float		dwt;		// #NO_VIEW #NO_SAVE resulting net weight change
 
   Connection() { wt = dwt = 0.0f; }
@@ -796,13 +796,13 @@ public: //
   ExtType	ext_flag;
   // #GUI_READ_ONLY #SHOW #CAT_Activation tells what kind of external input unit received
   float 	targ;
-  // #CAT_Activation target value: drives learning to produce this activation value
+  // #VIEW_HOT #CAT_Activation target value: drives learning to produce this activation value
   float 	ext;
-  // #CAT_Activation external input: drives activation of unit from outside influences (e.g., sensory input)
+  // #VIEW_HOT #CAT_Activation external input: drives activation of unit from outside influences (e.g., sensory input)
   float 	act;
-  // #DMEM_SHARE_SET_2 #CAT_Activation activation value -- what the unit communicates to others
+  // #DMEM_SHARE_SET_2 #VIEW_HOT #CAT_Activation activation value -- what the unit communicates to others
   float 	net;
-  // #DMEM_SHARE_SET_1 #CAT_Activation net input value -- what the unit receives from others (typically sum of sending activations times the weights)
+  // #DMEM_SHARE_SET_1 #VIEW_HOT #CAT_Activation net input value -- what the unit receives from others (typically sum of sending activations times the weights)
   float		wt_prjn;
   // #NO_SAVE #CAT_Statistic weight projection value -- computed by Network::ProjectUnitWeights (triggered in GUI by setting wt prjn variable in netview control panel to point to a layer instead of NULL) -- represents weight values projected through any intervening layers from source unit (selected unit in netview or passed to ProjectUnitWeights function directly)
   float		snap;

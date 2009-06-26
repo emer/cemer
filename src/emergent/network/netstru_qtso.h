@@ -73,19 +73,6 @@ class NetView; //
 class NetViewPanel; //
 
 
-/*
-// note: an array is really what we want, but this is ok
-class T3UnitNode_PtrList: public taPtrList<T3UnitNode> {
-#ifndef __MAKETA__
-typedef taPtrList<T3UnitNode> inherited;
-#endif
-public:
-  ~T3UnitNode_PtrList();
-protected:
-  override void*	El_Ref_(void* it);	// when pushed
-  override void* 	El_unRef_(void* it);	// when popped
-} */
-
 ////////////////////////////////////////////////////
 //   nvDataView	
 
@@ -515,6 +502,8 @@ public:
   void 			setUnitSrc(UnitView* uv, Unit* unit); // updates picked unit
   void			setUnitDisp(int value); // sets a new md to display, index in membs
   void			setUnitDispMd(MemberDef* md); // sets a new md to display, lookup/set scale values
+  void			UpdateViewerModeForMd(MemberDef* md);
+  // update viewer interaction/viewer mode based on type of member def to view -- only call for interactive view changes
 
   ////////////////////////////////////////////////////////////////
   // display updating & rendering
@@ -701,6 +690,7 @@ protected:
 
 public slots:
   void			viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
+  void			dynbuttonActivated(int but_no); // for hot member buttons
 
 protected slots:
   void			butBuildAll_pressed();

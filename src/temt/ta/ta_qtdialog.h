@@ -583,7 +583,17 @@ protected:
 };
 
 
-
+#ifndef __MAKETA__
+class ReShowEvent: public QEvent {
+  // #IGNORE
+INHERITED(QEvent)
+public:
+  bool forced;
+  ReShowEvent(bool forced_):inherited((QEvent::Type)taiDataHost::CET_RESHOW) {
+    forced = forced_;
+  }
+};
+#endif
 
 class TA_API taiHostDialog_List : public taPtrList<taiDataHost> {
   // #IGNORE list of DataHosts that have been dialoged

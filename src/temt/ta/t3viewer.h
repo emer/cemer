@@ -128,6 +128,7 @@ private:
 class TA_API T3ExaminerViewer : public QWidget {
   // provides a full examiner viewer interface built on top of the QuarterWidget viewer, replicating the GUI of the SoQtExaminerViewer
   Q_OBJECT
+  INHERITED(QWidget)
 public:
   T3ExaminerViewer(iT3ViewspaceWidget* parent = NULL);
   ~T3ExaminerViewer();
@@ -172,7 +173,8 @@ public:
   static const int   n_views;	   // number of saved view parameters to save (length of saved_views)
   T3SavedView_List saved_views; // saved view information
   int		   cur_view_no;	// current view number -- last one to have gotoView called -- -1 if not done yet
-  NameVar_PArray     dyn_buttons; // dynamic buttons
+  NameVar_PArray     dyn_buttons; // dynamic button names
+  taiAction_List     dyn_actions; // dynamic button actions -- has all the relevant properties
 
   //////////////////////////////////////////////
   //   Constructor helper methods
@@ -183,10 +185,10 @@ public:
 
   int	  addDynButton(const String& label, const String& tooltip);
   // add a new dynamic button -- returns button number (may already exist)
-  QToolButton* getDynButton(int but_no);
-  // get given dynamic button
-  QToolButton* getDynButtonName(const String& label);
-  // get dynamic button by name
+  taiAction* getDynButton(int but_no);
+  // get given dynamic button action -- has all the relevant info
+  taiAction* getDynButtonName(const String& label);
+  // get dynamic button action by name -- has all the relevant info
   void 	  removeAllDynButtons();
   // remove all the dynamic buttons
   bool 	  removeDynButton(int but_no);
@@ -264,7 +266,8 @@ protected:
   virtual void	RotateView(const SbVec3f& axis, const float ang);
   // implementation function that will rotate view camera given angle (in radians) around given axis
 
-  void keyPressEvent(QKeyEvent* e);
+  override bool event(QEvent* ev_);
+  override void keyPressEvent(QKeyEvent* e);
 };
 
 

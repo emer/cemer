@@ -72,6 +72,7 @@
 #include <Inventor/draggers/SoTransformBoxDragger.h>
 #include <Inventor/nodes/SoIndexedLineSet.h>
 #include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/SoEventManager.h>
 
 //#include <OS/file.h>
 
@@ -386,9 +387,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
       SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
       SoRayPickAction rp( viewer->getViewportRegion());
       rp.setPoint(mouseevent->getPosition());
-      rp.apply(viewer->quarter->getSceneGraph());
-
-      
+      rp.apply(viewer->quarter->getSoEventManager()->getSceneGraph()); // event mgr has full graph!
       SoPickedPoint* pp = rp.getPickedPoint(0);
       if(!pp) continue;
       SoNode* pobj = pp->getPath()->getNodeFromTail(2);
@@ -2258,21 +2257,6 @@ void NetView::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
   if(taMisc::is_loading || !taMisc::gui_active) return;
   TypeDef* typ = child->GetTypeDef();
   if (typ->InheritsFrom(&TA_ScaleRange)) {
-  /*TODO  NetView* nv = GET_MY_OWNER(NetView);
-    if((nv == NULL)||(nv->editor == NULL)||(nv->editor->netg == NULL)) return;
-    if(nv->ordered_uvg_list.size == 1) {
-      MemberDef* md =
-        (MemberDef *) nv->editor->netg->membs[nv->ordered_uvg_list[0]];
-      if((md != NULL) && (md->name == name)){
-        nv->auto_scale = nv->editor->auto_scale = auto_scale;
-        nv->editor->as_ckbox->state()->set(ivTelltaleState::is_chosen,auto_scale);
-        nv->scale_min = minmax.min;
-        nv->scale_max = minmax.max;
-        nv->editor->cbar->SetMinMax(minmax.min,minmax.max);
-        nv->editor->UpdateDisplay();
-      }
-    }
-        */
     handled = true;
   }
   if (!handled)
@@ -2424,28 +2408,6 @@ UnitView* NetView::FindUnitView(Unit* unit) {
   return NULL;
 }
 
-/*obsScaleRange* NetView::GetCurScaleRange() {
-  MemberDef* md = NULL;
-  if (ordered_uvg_list.size >= 1) {
-    int i = ordered_uvg_list[0];
-    md = membs.SafeEl(i);
-  }
-  String nm;
-  if (md) {
-    nm = md->name;
-  } else {
-    nm = "."; // always making one simplifies everything
-  }
-  ScaleRange* sr = scale_ranges.FindName(nm);
-  if (sr == NULL) {
-    sr = (scale_ranges.New(1,&TA_NetViewScaleRange));
-    sr->name = nm;
-    sr->SetFromScale(scale);
-  }
-
-  return sr;
-} */
-
 // this fills a member group with the valid memberdefs from the units and connections
 void NetView::GetMembs() { 
   if(!net()) return;
@@ -2463,25 +2425,6 @@ void NetView::GetMembs() {
       TypeDef* td = u->GetTypeDef();
       if(td == prv_td) continue; // don't re-scan!
       prv_td = td;
-
-      if(u->bias.size) {
-	TypeDef* td = u->bias.con_type;
-	for(int k=0; k<td->members.size; k++) {
-	  MemberDef* smd = td->members.FastEl(k);
-	  if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-	    if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
-		smd->HasOption("READ_ONLY")))
-	      continue;
-	    String nm = "bias." + smd->name;
-	    if(membs.FindName(nm)==NULL) {
-	      MemberDef* nmd = smd->Clone();
-	      nmd->name = nm;
-	      membs.Add(nmd);
-	      nmd->idx = smd->idx;
-	    }
-	  }
-	}
-      }
 
       for(int m=0; m<td->members.size; m++) {
 	MemberDef* md = td->members.FastEl(m);
@@ -2523,38 +2466,60 @@ void NetView::GetMembs() {
 	  }
 	}
       }
+
+      // then do bias weights
+      if(u->bias.size) {
+	TypeDef* td = u->bias.con_type;
+	for(int k=0; k<td->members.size; k++) {
+	  MemberDef* smd = td->members.FastEl(k);
+	  if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
+	    if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
+		smd->HasOption("READ_ONLY")))
+	      continue;
+	    String nm = "bias." + smd->name;
+	    if(membs.FindName(nm)==NULL) {
+	      MemberDef* nmd = smd->Clone();
+	      nmd->name = nm;
+	      membs.Add(nmd);
+	      nmd->idx = smd->idx;
+	    }
+	  }
+	}
+      }
     }
   }
 
   // then, only do the connections if any Unit guys, otherwise we are
   // not built yet, so we leave ourselves empty to signal that
-  if (membs.size > 0) FOR_ITR_EL(Layer, lay, net()->layers., l_itr) {
-    Projection* prjn;
-    taLeafItr p_itr;
-    FOR_ITR_EL(Projection, prjn, lay->projections., p_itr) {
-      TypeDef* td = prjn->con_type;
-      if(td == prv_td) continue; // don't re-scan!
-      prv_td = td;
-      int k;
-      for (k=0; k<td->members.size; k++) {
-	MemberDef* smd = td->members.FastEl(k);
-	if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-	  if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
-	      smd->HasOption("READ_ONLY")))
-	    continue;
-	  String nm = "r." + smd->name;
-	  if(membs.FindName(nm)==NULL) {
-	    MemberDef* nmd = smd->Clone();
-	    nmd->name = nm;
-	    membs.Add(nmd);
-	    nmd->idx = smd->idx;
-	  }
-	  nm = "s." + smd->name;
-	  if(membs.FindName(nm)==NULL) {
-	    MemberDef* nmd = smd->Clone();
-	    nmd->name = nm;
-	    membs.Add(nmd);
-	    nmd->idx = smd->idx;
+  if (membs.size > 0) {
+    FOR_ITR_EL(Layer, lay, net()->layers., l_itr) {
+      Projection* prjn;
+      taLeafItr p_itr;
+      FOR_ITR_EL(Projection, prjn, lay->projections., p_itr) {
+	TypeDef* td = prjn->con_type;
+	if(td == prv_td) continue; // don't re-scan!
+	prv_td = td;
+	int k;
+	for (k=0; k<td->members.size; k++) {
+	  MemberDef* smd = td->members.FastEl(k);
+	  if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
+	    if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
+		smd->HasOption("READ_ONLY")))
+	      continue;
+	    String nm = "r." + smd->name;
+	    if(membs.FindName(nm)==NULL) {
+	      MemberDef* nmd = smd->Clone();
+	      nmd->name = nm;
+	      membs.Add(nmd);
+	      nmd->idx = smd->idx;
+	    }
+	    nm = "s." + smd->name;
+	    if(membs.FindName(nm)==NULL) {
+	      MemberDef* nmd = smd->Clone();
+	      nmd->name = nm;
+	      membs.Add(nmd);
+	      nmd->idx = smd->idx;
+	    }
 	  }
 	}
       }
@@ -2704,10 +2669,20 @@ void NetView::Render_pre() {
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
   mat->transparency.setValue(0.5f);
 
-  SoEventCallback* ecb = new SoEventCallback;
-  ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
-  node_so()->addChild(ecb);
+  if(vw && vw->quarter->interactionModeOn()) {
+    SoEventCallback* ecb = new SoEventCallback;
+    ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
+    node_so()->addChild(ecb);
+  }
 
+  if(vw) {			// add hot buttons to viewer
+    MemberDef* md;
+    for (int i=0; i < membs.size; i++) {
+      md = membs[i];
+      if(!md->HasOption("VIEW_HOT")) continue;
+      vw->addDynButton(md->name, md->desc); // add the button
+    }
+  }
   inherited::Render_pre();
 }
 
@@ -3242,8 +3217,20 @@ void NetView::setUnitDispMd(MemberDef* md) {
     InitScaleRange(*unit_sr);
   }
   scale.SetFromScaleRange(unit_sr);
-
 }
+
+void NetView::UpdateViewerModeForMd(MemberDef* md) {
+  T3ExaminerViewer* vw = GetViewer();
+  if(vw) {
+    if(md->name.startsWith("r.") || md->name.startsWith("s.")) {
+      vw->setInteractionModeOn(true); // select!
+    }
+    else {
+      vw->setInteractionModeOn(false); // not needed
+    }
+  }
+}
+
 
 void NetView::SetHighlightSpec(BaseSpec* spec) {
   if(children.size > 0) {
@@ -3342,6 +3329,10 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   int font_spec = taiMisc::fonMedium;
   m_cur_spec = NULL;
   req_full_redraw = false;
+
+  T3ExaminerViewer* vw = dv_->GetViewer();
+  if(vw)
+    connect(vw, SIGNAL(dynbuttonActivated(int)), this, SLOT(dynbuttonActivated(int)) );
   
   QWidget* widg = new QWidget();
   layTopCtrls = new QVBoxLayout(widg); //layWidg->addLayout(layTopCtrls);
@@ -3799,6 +3790,8 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   MemberDef* md = (MemberDef*)nv_->membs.FindName(nv_->ordered_uvg_list.SafeEl(0));
   if (md) {
     nv_->setUnitDispMd(md); 
+    // this causes various problems..
+//     nv_->UpdateViewerModeForMd(md);
   }
   ColorScaleFromData();
   nv_->InitDisplay(false);
@@ -3869,3 +3862,23 @@ void NetViewPanel::viewWin_NotifySignal(ISelectableHost* src, int op) {
   nv_->viewWin_NotifySignal(src, op);
 }
 
+void NetViewPanel::dynbuttonActivated(int but_no) {
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+
+  T3ExaminerViewer* vw = nv_->GetViewer();
+  if(!vw) return;
+  taiAction* dyb = vw->getDynButton(but_no);
+  if(!dyb) return;
+  String nm = dyb->text();
+  nv_->ordered_uvg_list.Reset(); 
+  nv_->ordered_uvg_list.Add(nm);
+  MemberDef* md = (MemberDef*)nv_->membs.FindName(nm);
+  if(md) {
+    nv_->setUnitDispMd(md); 
+    nv_->UpdateViewerModeForMd(md);
+  }
+  ColorScaleFromData();
+  nv_->InitDisplay(false);
+  nv_->UpdateDisplay(true);	// update panel
+}

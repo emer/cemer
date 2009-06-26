@@ -801,6 +801,15 @@ LeabraProject .projects[0] {
 		  };
 		};
 	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
 	    };
 	    T3DataViewFrame @[1] { 
 	      T3DataView_List @.children = [1] {
@@ -818,6 +827,15 @@ LeabraProject .projects[0] {
 		  };
 		};
 	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
 	    };
 	    T3DataViewFrame @[2] { 
 	      T3DataView_List @.children = [1] {
@@ -828,6 +846,15 @@ LeabraProject .projects[0] {
 		    GridColView @[2] { };
 		  };
 		};
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
 	      };
 	    };
 	  };
@@ -2736,7 +2763,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[4] {
       name="err_stopcrit";
       var_type=T_Real;
-      real_val=0;
+      real_val=-1;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED;
       reference=0;
@@ -4228,10 +4255,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4258,10 +4287,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4288,10 +4319,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4318,10 +4351,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4348,10 +4383,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4378,10 +4415,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4408,10 +4447,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4438,10 +4479,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4468,10 +4511,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4498,10 +4543,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="SimpleMathSpec": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="SimpleMathSpec": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4759,10 +4806,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4789,10 +4838,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4819,10 +4870,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4849,10 +4902,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4879,10 +4934,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4909,10 +4966,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4939,10 +4998,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4969,10 +5030,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4999,10 +5062,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="SimpleMathSpec": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="SimpleMathSpec": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5694,11 +5759,10 @@ FloatTransform @*(.m_transform) {scale={x=0.6753985: y=0.6753985: z=0.6753985: }
 	  net_text=1;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
-	  net_box_offset=0.5;
 	  ordered_uvg_list{ act;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
-	  max_size {x=1: y=1: z=3: };
+	  max_size {x=5: y=5: z=2.333333: };
 	  font_sizes {
 	   net_name=0.05;
 	   net_vals=0.05;
@@ -6510,13 +6574,56 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	 };
 	};
        };
-       camera_pos {x=0.8699911: y=1.253086: z=2.261982: };
-       camera_orient {x=-0.9986469: y=-0.03246701: z=0.04067912: rot=0.2368263: };
-       camera_focdist=2.806019;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        headlight_on=1;
-       fullscreen_on=0;
        stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="All";
+	 view_saved=1;
+	 pos {x=0.9776142: y=0.6829696: z=2.504105: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=2.966665;
+	};
+	T3SavedView @[1] {
+	 name="Network";
+	 view_saved=1;
+	 pos {x=0.3297242: y=0.7985333: z=0.8434573: };
+	 orient {x=-0.9991525: y=-0.03577575: z=-0.02038673: rot=0.4692823: };
+	 focal_dist=1.444031;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
       };
       T3DataViewFrame @[1] {
        m_data=NULL;
@@ -6967,13 +7074,56 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 };
 	};
        };
-       camera_pos {x=1.465061: y=0.4675: z=1.544333: };
-       camera_orient {x=0: y=0: z=1: rot=0: };
-       camera_focdist=2.054333;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        headlight_on=1;
-       fullscreen_on=0;
        stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=1.375625: y=0.4449999: z=1.426795: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.936795;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
       };
       T3DataViewFrame @[2] {
        m_data=NULL;
@@ -7063,13 +7213,56 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 };
 	};
        };
-       camera_pos {x=1.5325: y=0.5175: z=1.443747: };
-       camera_orient {x=0: y=0: z=1: rot=0: };
-       camera_focdist=1.453747;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        headlight_on=1;
-       fullscreen_on=0;
        stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=1.5325: y=0.5174999: z=1.443747: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.453747;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
       };
      };
     };
@@ -7443,7 +7636,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_typ=LeabraLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
-    max_size {x=1: y=1: z=3: };
+    max_size {x=5: y=5: z=3: };
     LeabraLayer @[0] {
      name="Input";
      desc=;
@@ -7775,7 +7968,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    lay_layout=THREE_D;
    n_units=75;
    n_cons=1875;
-   max_size {x=1: y=1: z=3: };
+   max_size {x=5: y=5: z=3: };
    learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;
    no_plus_test=1;

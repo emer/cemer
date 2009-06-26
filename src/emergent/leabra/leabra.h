@@ -114,7 +114,7 @@ class LeabraProject;
 class LeabraCon : public Connection {
   // #STEM_BASE ##CAT_Leabra Leabra connection
 public:
-  float		pdw;		// #NO_SAVE previous delta-weight change -- useful for viewing because current weight change (dwt) is typically reset to 0 when views are updated
+  float		pdw;		// #VIEW_HOT #NO_SAVE previous delta-weight change -- useful for viewing because current weight change (dwt) is typically reset to 0 when views are updated
   float		sravg_s;	// #NO_SAVE short time-scale, most recent (plus phase) average of sender and receiver activation product over time
   float		sravg_m;	// #NO_SAVE medium time-scale, trial-level average of sender and receiver activation product over time
   
@@ -1255,9 +1255,9 @@ public:
   float		ravg_ml;	// #CAT_Activation medium-to-long time-scale average activation (as computed in the bias connection and spec) which integrates over recent history of medium (trial level) averages, used for rapid adaptation of l_thr = LTP vs LTD learning threshold in XCAL, and for learning based on receiver average activations with a trace of prior activations
   float		ravg_l;		// #CAT_Activation long time-scale average of medium-time scale (trial level) activation (as computed in the bias connection and spec), used for l_thr = the LTP vs LTD learning threshold in XCAL
   float		l_thr;		// #CAT_Activation long time-scale LTP vs LTD learning threshold in XCAL BCM-style learning -- l_gain * MAX(ravg_l, ravg_ml) (as computed in the bias connection and spec)
-  float		act_m;		// #CAT_Activation minus_phase activation (act_nd), set after settling, used for learning and performance stats 
-  float		act_p;		// #CAT_Activation plus_phase activation (act_nd), set after settling, used for learning and performance stats
-  float		act_dif;	// #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
+  float		act_m;		// #VIEW_HOT #CAT_Activation minus_phase activation (act_nd), set after settling, used for learning and performance stats 
+  float		act_p;		// #VIEW_HOT #CAT_Activation plus_phase activation (act_nd), set after settling, used for learning and performance stats
+  float		act_dif;	// #VIEW_HOT #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
   float		act_m2;		// #CAT_Activation second minus_phase (e.g., nothing phase) activation (act_nd), set after settling, used for learning and performance stats
   float		act_p2;		// #CAT_Activation second plus_phase activation (act_nd), set after settling, used for learning and performance stats
   float		act_dif2;	// #CAT_Activation difference between second set of phases, where relevant (e.g., act_p - act_m2 for MINUS_PLUS_NOTHING, or act_p2 - act_p for MINUS_PLUS_PLUS)

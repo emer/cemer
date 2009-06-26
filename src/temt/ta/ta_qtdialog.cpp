@@ -665,15 +665,6 @@ void iMethodButtonMgr::SetCurMenuButton(MethodDef* md) {
 // 	taiDataHostBase		//
 //////////////////////////////////
 
-class ReShowEvent: public QEvent {
-INHERITED(QEvent)
-public:
-  bool forced;
-  ReShowEvent(bool forced_):inherited((QEvent::Type)taiDataHost::CET_RESHOW) {
-    forced = forced_;
-  }
-};
-
 #define LAYBODY_MARGIN	1
 #define LAYBODY_SPACING	0
 
@@ -1269,8 +1260,8 @@ void taiDataHost_impl::customEvent(QEvent* ev_) {
 void taiDataHost_impl::Apply_Async() {
   if (apply_req) return; // already waiting
   if (state != ACTIVE) return;
-  QEvent* ev = new QEvent((QEvent::Type)CET_APPLY);
   apply_req = true;
+  QEvent* ev = new QEvent((QEvent::Type)CET_APPLY);
   QCoreApplication::postEvent(this, ev);
 }
 
@@ -2490,7 +2481,7 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
       ctrl_pressed = true;
 #endif
     if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
-      Apply();			// do it!
+      Apply_Async();			// do it!
       iMainWindowViewer* mvw = viewerWindow();
       if(mvw)
 	mvw->FocusCurTreeView(); // return focus back to current browser

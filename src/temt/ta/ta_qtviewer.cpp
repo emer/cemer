@@ -3979,8 +3979,8 @@ void iMainWindowViewer::Constr_Menu_impl() {
     // signals and slots connections
   connect( fileOptionsAction, SIGNAL( Action() ), this, SLOT( fileOptions() ) );
 //   connect( filePrintAction, SIGNAL( activated() ), this, SLOT( filePrint() ) );
-  connect( editUndoAction, SIGNAL( activated() ), this, SLOT( editUndo() ) );
-  connect( editRedoAction, SIGNAL( activated() ), this, SLOT( editRedo() ) );
+  connect( editUndoAction, SIGNAL( Action() ), this, SLOT( editUndo() ) );
+  connect( editRedoAction, SIGNAL( Action() ), this, SLOT( editRedo() ) );
   connect( editCutAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editCopyAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editDupeAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
