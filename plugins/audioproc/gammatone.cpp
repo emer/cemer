@@ -545,10 +545,90 @@ void MelCepstrumBlock::Initialize() {
   // FORMULA:
   cf_hi = 6727.5f; // note: "exact" value -- but will get rounded to fft bin
   n_chans = 30;
+  n_chans_on = 0; // set in config
+  cf_lo_m1 = 0; // calc'ed later
+  cf_hi_p1 = 0;
 }
 
 void MelCepstrumBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+}
+
+void MelCepstrumBlock::InitConfig_impl(bool check, bool quiet, bool& ok) {
+  inherited::InitConfig_impl(check, quiet, ok);
+  if (check) return;
+  
+  // mel warping filter and indexes
+  // we use 1/2 the fft out bins, which is exactly out_size
+  mel_filt.SetGeom(2, out_size, n_chans_on);
+  mel_filt.Clear(); // after 1st time
+  mel_idx.SetGeom(2, 2, n_chans_on);
+  mel_idx.Clear(); // after 1st time
+
+  for (int ch = 0; ch < n_chans_on; ++ch) {
+    FilterChan* fc = chans.FastEl(ch);
+    double wt_tot = 0; // to normalize
+    // lower sideband -- get calc'ed lowest
+    float lower = (ch > 0) ?
+      chans.FastEl(ch - 1)->cf :
+      cf_lo_m1;
+    // find nearest index in fft
+    int fft_ctr = fc->cf / fft_band;
+    MinMax mm; // easy way to compute the wt
+    mm.Set(lower, fc->cf);
+    // note: low/hi indexes will be one in from outer range, since that
+    // is 0 by definition
+    int fft_idx = lower / fft_band;
+    mel_idx.FastEl(0, ch) = min((fft_idx + 1), (out_size - 1));
+    while (fft_idx <= fft_ctr) {
+      // the weight is the value between 0 and 1 of the line from low to cf
+      // we use 2 to preserve unity gain
+      float wt = mm.Normalize(fft_idx * fft_band);
+      wt_tot += wt;
+      mel_filt.FastEl(fft_idx, ch) = wt;
+      ++fft_idx;
+    }
+
+    // upper sideband -- get calc'ed highest
+    float higher = (ch < (n_chans_on - 1)) ?
+      chans.FastEl(ch + 1)->cf :
+      cf_hi_p1;
+
+    mm.Set(fc->cf, higher);
+    int fft_hi = higher / fft_band;
+    // note: fft_idx is already incremented to right starting value
+    while (fft_idx <= fft_hi) {
+      // the weight is the value between 0 and 1 of the line from cf to high
+      float wt = ( 1.0f - mm.Normalize(fft_idx * fft_band));
+      wt_tot += wt;
+      mel_filt.FastEl(fft_idx, ch) = wt;
+      ++fft_idx;
+    }
+    // again, we don't include the fft_hi because it is 0
+    mel_idx.FastEl(1, ch) = max((fft_hi - 1), 0);
+    /* now, normalize those guys! PROLLY NOT NEEDED???
+    for (fft_idx = mel_idx.FastEl(0, ch);
+      fft_idx <= mel_idx.FastEl(1, ch); ++fft_idx)
+    {
+    }*/
+  }
+  
+  // mel_out and DCT filter depend on n_chans_on so done here
+  
+  mel_out.SetGeom(1, n_chans_on);
+  
+  // dct filter, if applicable -- filter always defines MFCC0 even if we don't use it
+  // ex. from Zheng et al. 2001 
+  if (mel_flags & MF_DCT) {
+    dct_filt.SetGeom(2, n_chans_on, n_cepstrum);
+    for (int n = 0; n < n_cepstrum; ++n) 
+    for (int i = 0; i < n_chans_on; ++i)
+    {
+      dct_filt.FastEl(i, n) = cosf( (M_PI / n_chans_on) * n * (i + 0.5f) );
+    }
+  } else {
+    dct_filt.Reset();
+  }
 }
 
 void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
@@ -595,7 +675,6 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   }
   
   // just init all chans, whether enabled or not
-  const int n_chans = n_lin_chans + n_log_chans;
   DataBuffer* ob = &out_buff;
   ob->enabled = true; // energy may get disabled
   ob->fs.SetCustom((float)src_buff->fs / out_size);
@@ -622,24 +701,12 @@ void MelCepstrumBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
     window_filt.Set((float)(0.54 - (0.46 * cos(M_PI * ((double)i / (out_size - 1))))), i);
   for (int i = out_size, j = out_size - 1; i < frame_size; ++i, --j)
     window_filt.Set(window_filt.FastEl_Flat(j), i);
-    
+  
+  // mel warping filter and indexes in InitConfig_impl since needs Child
+  
   // mel output
   fft_band = 1000.0f / (2 * out_rate);
-  mel_out.SetGeom(1, n_chans);
   
-  // dct filter, if applicable -- filter always defines MFCC0 even if we don't use it
-  // ex. from Zheng et al. 2001 
-  if (mel_flags & MF_DCT) {
-    dct_filt.SetGeom(2, n_chans, n_cepstrum);
-    for (int n = 0; n < n_cepstrum; ++n) 
-    for (int i = 0; i < n_chans; ++i)
-    {
-      //dct_filt.FastEl(i, n) = cosf( ( (M_PI * n) * (2 * i + 1)) / (2 * n_chans) );
-      dct_filt.FastEl(i, n) = cosf( (M_PI * n * (i - 0.5f)) / n_chans );
-    }
-  } else {
-    dct_filt.Reset();
-  }
 }
 
 float f2mel(float f) {
@@ -664,6 +731,7 @@ void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
   DataBuffer* src_buff = in_block.GetBuffer();
   if (!src_buff) return;
   
+  n_chans_on = 0;
   const float nyquist = src_buff->fs / 2.0f;
   // NOTE: we try to set the alternate choice params to roughly correspond so user
   // can switch between them
@@ -673,6 +741,7 @@ void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
     chans.SetSize(n_chans);
     float cf = nearest_bin(cf_lo, fft_band);
     float cf_last = nearest_bin(cf_lo - cf_lin_bw, fft_band);
+    cf_lo_m1 = cf_last;
     for (int i = 0; i < chans.size; ++i) {
       // don't move on to next child, if prev step didn't succeed
       if (!check && !ok) return;
@@ -693,8 +762,11 @@ void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
 	// we know chan spills over past nyquist if next cf is above nyquist
 	if (cf > nyquist)
 	  gc->on = false;
+        else
+          ++n_chans_on; // include it!
       }
-    } 
+    }
+    cf_hi_p1 = cf; 
     } break;
   case MW_FORMULA: {
     // try to make n_lin/log commensurable if not already
@@ -708,6 +780,7 @@ void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
     float cf_hi_m = f2mel(cf_hi);
     float cf_inc_m = (cf_hi_m - cf_lo_m) / (n_chans - 1);
     float cf_last = nearest_bin(mel2f(cf_lo_m - cf_inc_m), fft_band); // what previous chan would have been
+    cf_lo_m1 = cf_last;
     float cf = nearest_bin(cf_lo, fft_band); // we actually calculate it ahead, at end of loop
     for (int i = 0; i < chans.size; ++i) {
       // don't move on to next child, if prev step didn't succeed
@@ -724,8 +797,11 @@ void MelCepstrumBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
 	// we know chan spills over past nyquist if next cf is above nyquist
 	if (cf > nyquist)
 	  gc->on = false;
+        else
+          ++n_chans_on; // include it!
       }
     } 
+    cf_hi_p1 = cf; 
     } break;
   }
   // do the default, which calls all the items, prob does nothing
@@ -787,39 +863,13 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
 	  "fft did not complete ok")) return PS_ERROR;
 	  
 	// collapse freq bands into mel_out
-	int n_active_chans = 0;
-	for (int ch = 0; ch < chans.size; ++ch) {
-	  FilterChan* fc = chans.FastEl(ch);
-	  if (!fc->on) break;
-	  ++n_active_chans;
+	for (int ch = 0; ch < n_chans_on; ++ch) {
 	  double out = 0;
-	  // lower sideband -- interpolate lowest
-	  float lower = (ch > 0) ?
-	    chans.FastEl(ch - 1)->cf :
-	    cf_lo - cf_lin_bw;
-	  // find nearest index in fft
-	  int fft_ctr = fc->cf / fft_band;
-	  MinMax mm; // easy way to compute the wt
-	  mm.Set(lower, fc->cf);
-	  double wt_tot = 0;
-	  for (int fft_idx = lower / fft_band; fft_idx <= fft_ctr; ++fft_idx) {
-	    // the weight is the value between 0 and 1 of the line from low to cf
-	    float wt = mm.Normalize(fft_idx * fft_band);
-	    wt_tot += wt;
-	    out += wt * fft_out.FastEl_Flat(fft_idx);
-	  }
- 
-	  // upper sideband -- interpolate highest
-	  float higher = (ch < (chans.size - 1)) ?
-	    chans.FastEl(ch + 1)->cf :
-	    fc->cf * cf_log_factor;
-
-	  mm.Set(fc->cf, higher);
-	  int fft_hi = higher / fft_band;
-	  for (int fft_idx = fft_ctr + 1;  fft_idx <= fft_hi; ++fft_idx) {
-	    // the weight is the value between 0 and 1 of the line from cf to high
-	    float wt = 1.0f - mm.Normalize(fft_idx * fft_band);
-	    wt_tot += wt;
+	  const int fft_idx_max = mel_idx.FastEl(1, ch);
+	  for (int fft_idx = mel_idx.FastEl(0, ch); 
+	    fft_idx <= fft_idx_max; ++fft_idx) 
+          {
+	    float wt = mel_filt.FastEl(fft_idx, ch);
 	    out += wt * fft_out.FastEl_Flat(fft_idx);
 	  }
 	  
@@ -839,7 +889,7 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
 	  // cep is the raw cepstrum coefficient, 
           for (int cep = cep_base; cep < n_cepstrum; ++cep) {
             double out = 0; 
-            for (int mel = 0; mel < chans.size; ++mel) {
+            for (int mel = 0; mel < n_chans_on; ++mel) {
              out += mel_out.FastEl_Flat(mel) * dct_filt.FastEl(mel, cep);
             }
             out_buff.mat.FastEl(0, ch, f, out_buff.item, out_buff.stage) = (float)out;
@@ -847,8 +897,8 @@ SignalProcBlock::ProcStatus MelCepstrumBlock::AcceptData_MC(float_Matrix* in_mat
           }
         
         } else {
-          // straight mel out
-          for (int ch = 0; ch < chans.size; ++ch) {
+          // straight mel out -- note that off chans will not be written
+          for (int ch = 0; ch < n_chans_on; ++ch) {
             out_buff.mat.FastEl(0, ch, f, out_buff.item, out_buff.stage) = 
               mel_out.FastEl_Flat(ch);
           }

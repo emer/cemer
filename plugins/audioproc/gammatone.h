@@ -221,18 +221,24 @@ public:
 public: // DO NOT USE
   float_Matrix		in_buff; // #EXPERT_TREE #NO_SAVE buffer input values
   float_Matrix		window_filt; // #EXPERT_TREE #NO_SAVE hamming window filter
+  float_Matrix		mel_filt; // #EXPERT_TREE #NO_SAVE mel warping filter filter d0:in, d1: out (psuedo-sparse, mel_idx is min,max bin idx)
+  int_Matrix		mel_idx; // #EXPERT_TREE #NO_SAVE min..max fft bin indexes; d0:min..max, d1:out
   float_Matrix		fft_in; // #EXPERT_TREE #NO_SAVE buffer used for fft
   float_Matrix		fft_out; // #EXPERT_TREE #NO_SAVE buffer used for fft
   float_Matrix		mel_out; // #EXPERT_TREE #NO_SAVE buffer used for mel spectrum
-  float_Matrix		dct_filt; // #EXPERT_TREE #NO_SAVE dct filter coefficients 
+  float_Matrix		dct_filt; // #EXPERT_TREE #NO_SAVE dct filter coefficients; d0:in, d1:out
+  float			cf_lo_m1; // #EXPERT #NO_SAVE #READ_ONLY cf_lo minus 1, for mel triangular filter
+  float			cf_hi_p1; // #EXPERT #NO_SAVE #READ_ONLY cf_hi plus 1, for mel triangular filter
 protected:
   int			num_out_chans; // will depend on whether dct enabled or not
+  int			n_chans_on; // we only "see" the chans that are on
   int			out_size; // output size, in samples (= fs*out_rate)
   int			frame_size; // frame size, in samples = 2* out_size
   int			in_idx; // input values received, 0..frame_size-1
   float			fft_band; // width of each fft band, in Hz
   override void		UpdateAfterEdit_impl();
   
+  override void 	InitConfig_impl(bool check, bool quiet, bool& ok);
   override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok);
   override void 	InitChildConfig_impl(bool check, bool quiet, bool& ok); 
   override void		AcceptData_impl(SignalProcBlock* src_blk,
