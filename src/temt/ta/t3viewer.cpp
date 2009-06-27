@@ -1267,6 +1267,7 @@ QScrollBar* iT3ViewspaceWidget::horScrollBar(bool auto_create) {
 }
 
 void iT3ViewspaceWidget::LayoutComponents() {
+return;//TEMP
   QSize sz = size(); // already valid
   int ra_wd = (m_verScrollBar) ? sz.width() - m_verScrollBar->width() : sz.width();
   int ra_ht = (m_horScrollBar) ? sz.height() - m_horScrollBar->height() : sz.height();
@@ -1285,7 +1286,14 @@ void iT3ViewspaceWidget::LayoutComponents() {
 
 void iT3ViewspaceWidget::resizeEvent(QResizeEvent* ev) {
   inherited::resizeEvent(ev);
-  LayoutComponents();
+//TEMP  LayoutComponents();
+//TEMP:
+  QSize sz = size(); // already valid
+  if (m_t3viewer) {
+    //NOTE: presumably has 0,0 origin, and could change by changing baseWidget()
+    // todo: do this in SoEentManager guy
+    m_t3viewer->resize(sz);
+  }
 }
 
 // #include <GL/gl.h>
@@ -1400,7 +1408,7 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
 }
 
 void iT3ViewspaceWidget::setHasHorScrollBar(bool value) {
-  if ((m_horScrollBar != NULL) == value) return;
+return;//TEMP  if ((m_horScrollBar != NULL) == value) return;
   if (m_horScrollBar) {
     m_horScrollBar->deleteLater();
     m_horScrollBar = NULL;
@@ -1413,7 +1421,7 @@ void iT3ViewspaceWidget::setHasHorScrollBar(bool value) {
 }
 
 void iT3ViewspaceWidget::setHasVerScrollBar(bool value) {
-  if ((m_verScrollBar != NULL) == value) return;
+return;//TEMP  if ((m_verScrollBar != NULL) == value) return;
   if (m_verScrollBar) {
     m_verScrollBar->deleteLater();
     m_verScrollBar = NULL;
