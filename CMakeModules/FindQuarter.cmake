@@ -7,13 +7,12 @@
 FIND_PATH(QUARTER_INCLUDE_DIR Quarter.h
     /usr/include
     /usr/local/include
-	/opt/local/include
-    /usr/include/Inventor/Qt
-    /usr/local/include/Inventor/Qt
-	/opt/local/include/Inventor/Qt
-	/Library/Frameworks/Quarter.framework/Headers
+    /opt/local/include
+    /usr/include/Quarter
+    /usr/local/include/Quarter
+    /opt/local/include/Quarter
+    /Library/Frameworks/Quarter.framework/Headers
     $ENV{INCLUDE}
-    ${COINDIR}/include/Inventor/Qt
 )
 #MESSAGE("QUARTER_INCLUDE_DIR=" ${QUARTER_INCLUDE_DIR})
 
@@ -22,13 +21,13 @@ FIND_PATH(QUARTER_INCLUDE_DIR Quarter.h
 
 if (WIN32)
   if (CMAKE_BUILD_TYPE MATCHES "Debug")
-    IF (EXISTS ${COINDIR}/lib/soqt1d.lib)
-      SET(QUARTER_LIBRARY "${COINDIR}/lib/soqt1d.lib")
-    ENDIF (EXISTS ${COINDIR}/lib/soqt1d.lib)
+    IF (EXISTS ${COINDIR}/lib/quarter1d.lib)
+      SET(QUARTER_LIBRARY "${COINDIR}/lib/quarter1d.lib")
+    ENDIF (EXISTS ${COINDIR}/lib/quarter1.dylib)
   else (CMAKE_BUILD_TYPE MATCHES "Debug") 
-    IF (EXISTS ${COINDIR}/lib/soqt1.lib)
-      SET(QUARTER_LIBRARY "${COINDIR}/lib/soqt1.lib")
-    ENDIF (EXISTS ${COINDIR}/lib/soqt1.lib)
+    IF (EXISTS ${COINDIR}/lib/quarter1.lib)
+      SET(QUARTER_LIBRARY "${COINDIR}/lib/quarter1.lib")
+    ENDIF (EXISTS ${COINDIR}/lib/quarter1.lib)
   endif (CMAKE_BUILD_TYPE MATCHES "Debug")
 else (WIN32)
   FIND_LIBRARY(QUARTER_LIBRARY NAMES Quarter PATH
