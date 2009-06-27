@@ -318,7 +318,7 @@ void T3ExaminerViewer::Constr_Bot_Buttons() {
       sv->name = nm;
     }
 
-    QToolButton* view_button = new QToolButton(this);
+    QToolButton* view_button = new iContextMenuButton(this);
 
     taiAction* view_act = new taiAction(i, nm, QKeySequence());
     view_act->connect(taiAction::int_act, this,  SLOT(gotoviewbuttonClicked(int))); 
@@ -351,6 +351,7 @@ void T3ExaminerViewer::Constr_Bot_Buttons() {
 
     view_button->setMenu(view_menu);
     view_button->setPopupMode(QToolButton::DelayedPopup);
+//     view_button->setContextMenuPolicy(Qt::ActionsContextMenu);
   }
 }
 
@@ -382,6 +383,21 @@ taiAction* T3ExaminerViewer::getDynButtonName(const String& label) {
   int but_no = dyn_buttons.FindName(label);
   if(but_no < 0) return NULL;
   return getDynButton(but_no);
+}
+
+void T3ExaminerViewer::setDynButtonChecked(int but_no, bool onoff, bool mutex) {
+  if(but_no < 0 || but_no >= dyn_actions.size) return;
+  if(mutex) {
+    for(int i=0;i<dyn_actions.size; i++) {
+      taiAction* da = dyn_actions[i];
+      da->setCheckable(true);
+      da->setChecked(false);
+    }
+  }
+
+  taiAction* da = dyn_actions[but_no];
+  da->setCheckable(true);
+  da->setChecked(onoff);
 }
 
 void T3ExaminerViewer::removeAllDynButtons() {
@@ -1805,23 +1821,22 @@ void T3DataViewFrame::Render_pre() {
       SetAllSavedViews();		// init from us
       viewer->gotoView(0);		// goto first saved view as default
     }
-
-    if(viewer->quarter->stereoMode() != (QuarterWidget::StereoMode)stereo_view)
-      viewer->quarter->setStereoMode((QuarterWidget::StereoMode)stereo_view);
-    if(viewer->quarter->headlightEnabled() != headlight_on)
-      viewer->quarter->setHeadlightEnabled(headlight_on);
   }
 }
 
 void T3DataViewFrame::Render_impl() {
-  inherited::Render_impl();
-  root_view.Render_impl();
   T3ExaminerViewer* viewer = widget()->t3viewer();
   if(viewer) {
     QColor bg = (QColor)GetBgColor();
     if(viewer->quarter->backgroundColor() != bg)
       viewer->quarter->setBackgroundColor(bg);
+    if(viewer->quarter->stereoMode() != (QuarterWidget::StereoMode)stereo_view)
+      viewer->quarter->setStereoMode((QuarterWidget::StereoMode)stereo_view);
+    if(viewer->quarter->headlightEnabled() != headlight_on)
+      viewer->quarter->setHeadlightEnabled(headlight_on);
   }
+  inherited::Render_impl();
+  root_view.Render_impl();
   widget()->Render_impl();
 }
 

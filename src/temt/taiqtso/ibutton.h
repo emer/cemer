@@ -34,6 +34,16 @@ private:
   void		init();
 };
 
+class TAIQTSO_API iContextMenuButton: public QToolButton {
+  // ##NO_CSS automatically calls associated menu when activated by a context menu event
+INHERITED(QToolButton)
+  Q_OBJECT
+public:
+  iContextMenuButton(QWidget* parent = 0);
+protected:
+  void contextMenuEvent(QContextMenuEvent * event);
+};
+
 class TAIQTSO_API iColorButton: public QToolButton {
 INHERITED(QToolButton)
   Q_OBJECT

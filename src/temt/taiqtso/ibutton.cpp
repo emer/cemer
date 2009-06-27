@@ -18,6 +18,7 @@
 #include <QColor>
 #include <QColorDialog>
 #include <QPainter>
+#include <QMenu>
 
 iMenuButton::iMenuButton(QWidget* parent)
 :inherited(parent)
@@ -37,6 +38,19 @@ void iMenuButton::init() {
   setArrowType(Qt::DownArrow);
   setPopupMode(InstantPopup); //note: Menu mode looks/behaves awful
   setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+}
+
+
+iContextMenuButton::iContextMenuButton(QWidget* parent)
+:inherited(parent)
+{
+  setContextMenuPolicy(Qt::DefaultContextMenu);
+}
+
+void iContextMenuButton::contextMenuEvent(QContextMenuEvent* event) {
+  QMenu* men = menu();
+  QPoint pt = mapToGlobal(event->pos());
+  men->popup(pt);
 }
 
 //////////////////////////////////

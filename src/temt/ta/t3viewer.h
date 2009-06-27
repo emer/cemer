@@ -189,6 +189,9 @@ public:
   // get given dynamic button action -- has all the relevant info
   taiAction* getDynButtonName(const String& label);
   // get dynamic button action by name -- has all the relevant info
+  void	  setDynButtonChecked(int but_no, bool onoff, bool mutex = true);
+  // set the "checked" status of the dyn button to given state -- if mutex is true, then all other buttons are turned off when current one is changed (regardless of on/off state, all are off)
+
   void 	  removeAllDynButtons();
   // remove all the dynamic buttons
   bool 	  removeDynButton(int but_no);

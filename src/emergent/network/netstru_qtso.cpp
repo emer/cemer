@@ -3792,6 +3792,17 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
     nv_->setUnitDispMd(md); 
     // this causes various problems..
 //     nv_->UpdateViewerModeForMd(md);
+
+    // also causes problems -- put this in render instead!!!
+//     T3ExaminerViewer* vw = nv_->GetViewer();
+//     if(!vw) return;
+//     int but_no = vw->dyn_buttons.FindName(md->name);
+//     if(but_no >= 0) {
+//       vw->setDynButtonChecked(but_no, true, true); // mutex
+//     }
+//     else {
+//       vw->setDynButtonChecked(0, false, true); // mutex -- turn all off
+//     }
   }
   ColorScaleFromData();
   nv_->InitDisplay(false);
@@ -3877,6 +3888,7 @@ void NetViewPanel::dynbuttonActivated(int but_no) {
   if(md) {
     nv_->setUnitDispMd(md); 
     nv_->UpdateViewerModeForMd(md);
+    vw->setDynButtonChecked(but_no, true, true); // mutex
   }
   ColorScaleFromData();
   nv_->InitDisplay(false);
