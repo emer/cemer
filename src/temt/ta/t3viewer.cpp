@@ -674,14 +674,14 @@ void T3ExaminerViewer::RotateView(const SbVec3f& axis, const float ang) {
   cam->position = focalpoint - cam->focalDistance.getValue() * newdir;
 }
 
-void T3ExaminerViewer::setInteractionModeOn(bool onoff) {
+void T3ExaminerViewer::setInteractionModeOn(bool onoff, bool re_render) {
   if(quarter->interactionModeOn() != onoff) {
     quarter->setInteractionModeOn(onoff);
-    T3DataViewFrame* dvf = GetFrame();
-    if(dvf) {
-      dvf->Render();
-      // rebuilds to update manipulators -- not right now though!
-//       tabMisc::DelayedFunCall_gui(dvf, "Render");
+    if(re_render) {
+      T3DataViewFrame* dvf = GetFrame();
+      if(dvf) {
+	dvf->Render();
+      }
     }
   }
   if(quarter->interactionModeOn()) {

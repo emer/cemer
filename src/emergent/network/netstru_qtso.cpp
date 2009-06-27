@@ -2660,8 +2660,19 @@ void NetView::Render_pre() {
   
   bool show_drag = true;;
   T3ExaminerViewer* vw = GetViewer();
-  if(vw)
+
+  if(vw) {
+    if(unit_disp_md) {
+      int but_no = vw->dyn_buttons.FindName(unit_disp_md->name);
+      if(but_no >= 0) {
+	vw->setDynButtonChecked(but_no, true, true); // mutex
+      }
+      else {
+	vw->setDynButtonChecked(0, false, true); // mutex -- turn all off
+      }
+    }
     show_drag = vw->quarter->interactionModeOn();
+  }
   if(!lay_mv) show_drag = false;
 
   setNode(new T3NetNode(this, show_drag, net_text, show_drag && lay_mv));
@@ -3223,10 +3234,10 @@ void NetView::UpdateViewerModeForMd(MemberDef* md) {
   T3ExaminerViewer* vw = GetViewer();
   if(vw) {
     if(md->name.startsWith("r.") || md->name.startsWith("s.")) {
-      vw->setInteractionModeOn(true); // select!
+      vw->setInteractionModeOn(true, false); // select! -- false == no -re-render
     }
     else {
-      vw->setInteractionModeOn(false); // not needed
+      vw->setInteractionModeOn(false, false); // not needed -- false == no re-render
     }
   }
 }
@@ -3791,18 +3802,7 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   if (md) {
     nv_->setUnitDispMd(md); 
     // this causes various problems..
-//     nv_->UpdateViewerModeForMd(md);
-
-    // also causes problems -- put this in render instead!!!
-//     T3ExaminerViewer* vw = nv_->GetViewer();
-//     if(!vw) return;
-//     int but_no = vw->dyn_buttons.FindName(md->name);
-//     if(but_no >= 0) {
-//       vw->setDynButtonChecked(but_no, true, true); // mutex
-//     }
-//     else {
-//       vw->setDynButtonChecked(0, false, true); // mutex -- turn all off
-//     }
+    //    nv_->UpdateViewerModeForMd(md);
   }
   ColorScaleFromData();
   nv_->InitDisplay(false);

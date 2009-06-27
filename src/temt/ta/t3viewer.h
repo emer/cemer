@@ -216,8 +216,8 @@ public:
   virtual void		vertRotateView(const float rot_value);
   // vertically rotate view camera (actually around the horizontal or X axis) -- associated with the vrot_wheel on left hand side of viewer
 
-  virtual void		setInteractionModeOn(bool onoff);
-  // set the interaction mode on or off (if off, then it is in view mode) -- also updates button states
+  virtual void		setInteractionModeOn(bool onoff, bool re_render = true);
+  // set the interaction mode on or off (if off, then it is in view mode) -- also updates button states -- also calls Render on parent dataview if mode has changed, so that interactors can be updated (unless re_render = false)
 
   virtual void		saveView(int view_no);
   // save the current camera view information to given saved view
