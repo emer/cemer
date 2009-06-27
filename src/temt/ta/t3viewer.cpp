@@ -1186,6 +1186,7 @@ iSoSelectionEvent::iSoSelectionEvent(bool is_selected_, const SoPath* path_)
 void iT3ViewspaceWidget::SoSelectionCallback(void* inst, SoPath* path) {
   iSoSelectionEvent ev(true, path);
   iT3ViewspaceWidget* t3vw = (iT3ViewspaceWidget*)inst;
+  if(!t3vw->t3viewer()->quarter->interactionModeOn()) return;
   t3vw->SoSelectionEvent(&ev);
   t3vw->sel_so->touch(); // to redraw
 
@@ -1194,6 +1195,7 @@ void iT3ViewspaceWidget::SoSelectionCallback(void* inst, SoPath* path) {
 void iT3ViewspaceWidget::SoDeselectionCallback(void* inst, SoPath* path) {
   iSoSelectionEvent ev(false, path);
   iT3ViewspaceWidget* t3dv = (iT3ViewspaceWidget*)inst;
+  if(!t3dv->t3viewer()->quarter->interactionModeOn()) return;
   t3dv->SoSelectionEvent(&ev);
   t3dv->sel_so->touch(); // to redraw
 }
@@ -1366,9 +1368,9 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
     case SM_MULTI: sel_so->policy = SoSelection::SHIFT; break;
     default: break; // compiler food
     }
-    sel_so->addChild(m_root_so);
     sel_so->addSelectionCallback(SoSelectionCallback, (void*)this);
     sel_so->addDeselectionCallback(SoDeselectionCallback, (void*)this);
+    sel_so->addChild(m_root_so);
     m_t3viewer->quarter->setSceneGraph(sel_so);
 
     SoBoxHighlightRenderAction* rend_act = new SoBoxHighlightRenderAction;
