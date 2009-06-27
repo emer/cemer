@@ -7084,9 +7084,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	T3SavedView @[0] {
 	 name="View 0";
 	 view_saved=1;
-	 pos {x=1.375625: y=0.4449999: z=1.426795: };
+	 pos {x=1.422509: y=0.429834: z=1.621442: };
 	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=1.936795;
+	 focal_dist=2.131442;
 	};
 	T3SavedView @[1] {
 	 name="View 1";

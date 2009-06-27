@@ -142,6 +142,8 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   //  main_vbox: main_hbox: lhs_vbox quarter rhs_vbox
   //             bot_hbox
 
+  setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
   main_vbox = new QVBoxLayout(this);
   main_vbox->setMargin(0); main_vbox->setSpacing(0);
 
@@ -164,6 +166,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   quarter->setInteractionModeEnabled(true);
   quarter->setTransparencyType(QuarterWidget::BLEND); // this is a good default
   quarter->setNavigationModeFile(QUrl("coin:///scxml/navigation/examiner.xml"));
+  quarter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
   rhs_vbox = new QVBoxLayout;
   rhs_vbox->setMargin(0); rhs_vbox->setSpacing(0);
@@ -406,8 +409,8 @@ bool T3ExaminerViewer::removeDynButtonName(const String& label) {
 ///////////////////////////////////////////////////////////////
 //		Main Button Actions
 
-#define ROT_DELTA_MULT  0.01f
-#define ZOOM_DELTA_MULT 0.01f
+#define ROT_DELTA_MULT  0.005f
+#define ZOOM_DELTA_MULT 0.005f
 
 void T3ExaminerViewer::hrotwheelChanged(int value) {
   // first detect wraparound
