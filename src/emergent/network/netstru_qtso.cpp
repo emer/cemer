@@ -2660,17 +2660,7 @@ void NetView::Render_pre() {
   
   bool show_drag = true;;
   T3ExaminerViewer* vw = GetViewer();
-
   if(vw) {
-    if(unit_disp_md) {
-      int but_no = vw->dyn_buttons.FindName(unit_disp_md->name);
-      if(but_no >= 0) {
-	vw->setDynButtonChecked(but_no, true, true); // mutex
-      }
-      else {
-	vw->setDynButtonChecked(0, false, true); // mutex -- turn all off
-      }
-    }
     show_drag = vw->quarter->interactionModeOn();
   }
   if(!lay_mv) show_drag = false;
@@ -2798,6 +2788,19 @@ void NetView::Render_impl() {
   //  cerr << "nv render_impl" << endl;
   FloatTransform* ft = transform(true);
   *ft = main_xform;
+
+  T3ExaminerViewer* vw = GetViewer();
+  if(vw) {
+    if(unit_disp_md) {
+      int but_no = vw->dyn_buttons.FindName(unit_disp_md->name);
+      if(but_no >= 0) {
+	vw->setDynButtonChecked(but_no, true, true); // mutex
+      }
+      else {
+	vw->setDynButtonChecked(0, false, true); // mutex -- turn all off
+      }
+    }
+  }
 
   GetMaxSize();
   T3NetNode* node_so = this->node_so(); //cache
@@ -3234,10 +3237,10 @@ void NetView::UpdateViewerModeForMd(MemberDef* md) {
   T3ExaminerViewer* vw = GetViewer();
   if(vw) {
     if(md->name.startsWith("r.") || md->name.startsWith("s.")) {
-      vw->setInteractionModeOn(true, false); // select! -- false == no -re-render
+      vw->setInteractionModeOn(true, true); // select! -- true = re-render
     }
     else {
-      vw->setInteractionModeOn(false, false); // not needed -- false == no re-render
+      vw->setInteractionModeOn(false, true); // not needed -- true = re-render
     }
   }
 }
@@ -3542,7 +3545,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   hdr << "Value" << "Description";
   lvDisplayValues->setHeaderLabels(hdr);
   lvDisplayValues->setSortingEnabled(false);
-  lvDisplayValues->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  lvDisplayValues->setSelectionMode(QAbstractItemView::SingleSelection);
   //layDisplayValues->addWidget(lvDisplayValues, 1);
   connect(lvDisplayValues, SIGNAL(itemSelectionChanged()), this, SLOT(lvDisplayValues_selectionChanged()) );
   
@@ -3802,7 +3805,7 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   if (md) {
     nv_->setUnitDispMd(md); 
     // this causes various problems..
-    //    nv_->UpdateViewerModeForMd(md);
+    nv_->UpdateViewerModeForMd(md);
   }
   ColorScaleFromData();
   nv_->InitDisplay(false);

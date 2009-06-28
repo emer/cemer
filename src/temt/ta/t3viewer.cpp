@@ -351,7 +351,6 @@ void T3ExaminerViewer::Constr_Bot_Buttons() {
 
     view_button->setMenu(view_menu);
     view_button->setPopupMode(QToolButton::DelayedPopup);
-//     view_button->setContextMenuPolicy(Qt::ActionsContextMenu);
   }
 }
 
@@ -1625,11 +1624,11 @@ void iT3DataViewFrame::hideEvent(QHideEvent* ev) {
 void iT3DataViewFrame::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
   Refresh();
-#ifdef TA_OS_MAC
+// #ifdef TA_OS_MAC
   // this was needed on Mac as of 4.0.19 Qt 4.4.1+ to prevent
   // the occasional "white screen of death" that was occurring
-  taiMiscCore::ProcessEvents();
-#endif
+//   taiMiscCore::ProcessEvents();
+// #endif
   Showing(true);
 }
 
