@@ -126,15 +126,24 @@ private:
 
 
 class TA_API T3ExaminerViewer : public QWidget {
-  // provides a full examiner viewer interface built on top of the QuarterWidget viewer, replicating the GUI of the SoQtExaminerViewer
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS provides a full examiner viewer interface built on top of the QuarterWidget viewer, replicating the GUI of the SoQtExaminerViewer
   Q_OBJECT
   INHERITED(QWidget)
 public:
   T3ExaminerViewer(iT3ViewspaceWidget* parent = NULL);
   ~T3ExaminerViewer();
 
-  iT3ViewspaceWidget*	t3vw;		// owner widget
+  enum ViewerMode {		// our persistent sense of the view mode -- quarter may get out of sync
+    VIEW = 0,			// move camera around (must be 0 so equiv to interaction off)
+    INTERACT = 1,		// interactive (can select -- red arrow) (must be 1 so equiv to interaction on)
+    PAN = 2,			// panning instead of rotating (not yet avail -- for future use)
+    SEEK = 3,			// seeking (not a persistent state -- not used currently -- for future use)
+  };
 
+
+  ViewerMode		viewer_mode; 	// our current viewer mode -- used to make sure that quarter is in appropriate state
+
+  iT3ViewspaceWidget*	t3vw;		// owner widget
   T3DataViewFrame* 	GetFrame();	// get my owning frame, from t3vw
 
   //////////////////////////////////////////////
@@ -215,6 +224,9 @@ public:
   // horizontally rotate view camera (actually around the vertical Y axis) -- associated with the hrot_wheel on bottom of viewer
   virtual void		vertRotateView(const float rot_value);
   // vertically rotate view camera (actually around the horizontal or X axis) -- associated with the vrot_wheel on left hand side of viewer
+
+  virtual void		syncViewerMode();
+  // ensure that quarter is in the same viewer mode that we think it should be in -- this should be called upon any redraw that might knock quarter out of whack.
 
   virtual void		setInteractionModeOn(bool onoff, bool re_render = true);
   // set the interaction mode on or off (if off, then it is in view mode) -- also updates button states -- also calls Render on parent dataview if mode has changed, so that interactors can be updated (unless re_render = false)

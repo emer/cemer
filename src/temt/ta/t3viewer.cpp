@@ -138,6 +138,8 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 {
   t3vw = parent;
 
+  viewer_mode = VIEW;
+
   // all the main layout code
   //  main_vbox: main_hbox: lhs_vbox quarter rhs_vbox
   //             bot_hbox
@@ -628,18 +630,12 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
     const float distorigo = newpos.length();
     // sqrt(FLT_MAX) == ~ 1e+19, which should be both safe for further
     // calculations and ok for the end-user and app-programmer.
-    if (distorigo > 1.0e+19) {
-#if SOQT_DEBUG && 0 // debug
-      SoDebugError::postWarning("SoGuiFullViewerP::zoom",
-                                "zoomed too far (distance to origo==%f (%e))",
-                                distorigo, distorigo);
-#endif // debug
-    }
-    else {
+    if (distorigo < 1.0e+19) {
       cam->position = newpos;
       cam->focalDistance = newfocaldist;
     }
   }
+  syncViewerMode();		// keep it sync'd -- this tends to throw it off
 }
 
 void T3ExaminerViewer::horizRotateView(const float rot_value) {
@@ -671,9 +667,19 @@ void T3ExaminerViewer::RotateView(const SbVec3f& axis, const float ang) {
   SbVec3f newdir;
   cam->orientation.getValue().multVec(DEFAULTDIRECTION, newdir);
   cam->position = focalpoint - cam->focalDistance.getValue() * newdir;
+  syncViewerMode();		// keep it sync'd -- this tends to throw it off
+}
+
+
+void T3ExaminerViewer::syncViewerMode() {
+  bool int_onoff = (bool)viewer_mode;
+  if(quarter->interactionModeOn() != int_onoff) {
+    quarter->setInteractionModeOn(int_onoff);
+  }
 }
 
 void T3ExaminerViewer::setInteractionModeOn(bool onoff, bool re_render) {
+  viewer_mode = (ViewerMode)onoff; // enum matches
   if(quarter->interactionModeOn() != onoff) {
     quarter->setInteractionModeOn(onoff);
     if(re_render) {
@@ -1054,6 +1060,9 @@ void T3DataView::ReInit_impl() {
 }
 
 void T3DataView::Render_impl() {
+  T3ExaminerViewer* vw = GetViewer();
+  if(vw) vw->syncViewerMode();	// always make sure it is sync'd with what we think it should be
+
   T3Node* node = m_node_so.ptr();
   if (m_transform && node) {
     m_transform->CopyTo(node->transform());
@@ -1327,8 +1336,6 @@ static bool CheckExtension(const char *extName ) {
   return false;
 }
 
-// todo: clean all this up!
-
 void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
   if (m_t3viewer == value) return;
   if (value && (value->t3vw != this))
@@ -1345,6 +1352,7 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
   QGLWidget* qglw = (QGLWidget*)m_t3viewer->quarter; // it is this guy
   QGLFormat fmt = qglw->format();
 
+  // note: can move this to an inherited Quarter widget if we need to, as it is a QGLWidget
   if(taMisc::antialiasing_level > 1) {
     fmt.setSampleBuffers(true);
     fmt.setSamples(taMisc::antialiasing_level);
@@ -1358,6 +1366,11 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
     qglw->makeCurrent();
     glDisable(GL_MULTISAMPLE);
   }
+
+#ifdef DEBUG
+  // as of 6/28/09 -- this stuff no longer seems to be the problem -- just crashes
+  // in low-level Qt gl code around direct rendering. 
+  // todo: try fmt->setDirectRendering(false) to test for remote viewing
 
   // apparently the key problem e.g., with remote X into mac X server 
   // is this code, GL_TEXTURE_3D:
@@ -1381,6 +1394,7 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
   // this will tell you what version is running for debugging purposes:
   //     String gl_vers = (int)QGLFormat::openGLVersionFlags();
   //     taMisc::Error("GL version:", gl_vers); 
+#endif
 
   if (m_selMode == SM_NONE)
     m_t3viewer->quarter->setSceneGraph(m_root_so);
@@ -1841,6 +1855,7 @@ void T3DataViewFrame::Render_impl() {
       viewer->quarter->setStereoMode((QuarterWidget::StereoMode)stereo_view);
     if(viewer->quarter->headlightEnabled() != headlight_on)
       viewer->quarter->setHeadlightEnabled(headlight_on);
+    viewer->syncViewerMode();	// keep it in sync
   }
   inherited::Render_impl();
   root_view.Render_impl();
