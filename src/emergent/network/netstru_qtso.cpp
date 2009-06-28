@@ -378,13 +378,15 @@ void UnitGroupView::UpdateAutoScale(bool& updated) {
 void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
   NetView* nv = (NetView*)userData;
   T3DataViewFrame* fr = nv->GetFrame();
+  SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
+  SoMouseButtonEvent::Button but = mouseevent->getButton();
+  if(!SoMouseButtonEvent::isButtonReleaseEvent(mouseevent, but)) return; // only releases
   bool got_one = false;
   for(int i=0;i<fr->root_view.children.size;i++) {
     taDataView* dv = fr->root_view.children[i];
     if(dv->InheritsFrom(&TA_NetView)) {
       NetView* tnv = (NetView*)dv;
       T3ExaminerViewer* viewer = tnv->GetViewer();
-      SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
       SoRayPickAction rp( viewer->getViewportRegion());
       rp.setPoint(mouseevent->getPosition());
       rp.apply(viewer->quarter->getSoEventManager()->getSceneGraph()); // event mgr has full graph!
@@ -3804,7 +3806,6 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   MemberDef* md = (MemberDef*)nv_->membs.FindName(nv_->ordered_uvg_list.SafeEl(0));
   if (md) {
     nv_->setUnitDispMd(md); 
-    // this causes various problems..
     nv_->UpdateViewerModeForMd(md);
   }
   ColorScaleFromData();

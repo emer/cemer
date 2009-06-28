@@ -1294,13 +1294,10 @@ void taProject::SaveRecoverFile() {
   else
     prfx += recv;
   int cnt = taMisc::GetUniqueFileNumber(0, prfx, sufx);
-  String fnm = prfx + String(cnt) + sufx;
-  QFileInfo fi(fnm);
-  String tdir = fi.path();
-  String full_fnm = tdir + PATH_SEP + fnm;
-  int acc = access(full_fnm, W_OK); 	// can we save this file?
+  String fnm = prfx + String(cnt) + sufx; // note: this is a full path!
+  int acc = access(fnm, W_OK); 	// can we save this file?
   if(acc != 0) {
-    fnm = taMisc::user_dir + PATH_SEP + fnm;
+    fnm = taMisc::user_dir + PATH_SEP + taMisc::GetFileFmPath(fnm);
   }
   taFiler* flr = GetSaveFiler(fnm, _nilString, -1, _nilString);
   bool saved = false;
@@ -1311,6 +1308,7 @@ void taProject::SaveRecoverFile() {
   if(acc != 0) {
 #ifdef DEBUG // NOTE: really only works on Linux, and is so marginal...
       cerr << "Error saving recover file in original location -- now saved in user directory: " << fnm << endl;
+      taMisc::FlushConsole();
 #endif
   }
   flr->Close();

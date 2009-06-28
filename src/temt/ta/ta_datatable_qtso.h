@@ -343,6 +343,15 @@ public:
 
   MinMaxInt	mat_size_range;	// range of display sizes for matrix items relative to other text items.  each cell in a matrix counts as one character in size, within these ranges (smaller matricies are made larger to min size, and large ones are made smaller to max size)
   MinMax	text_size_range; // (default .02 - .05) minimum and maximum text size -- keeps things readable and not too big
+
+  bool		click_vals;	// If on, then clicking on cell values in the grid view display in interact mode (red arrow) will change the values
+  float		lmb_val;	// left mouse button value: Value that will be set in the cell if you click with the left mouse button (if Click Vals is on)
+  float		mmb_val;	// middle mouse button value: Value that will be set in the cell if you click with the middle mouse button (if Click Vals is on)
+
+  String	last_sel_col_nm; // #READ_ONLY #SHOW #NO_SAVE column name of the last selected point in graph to view values (if empty, then none)
+  bool		last_sel_got;	 // #READ_ONLY #SHOW #NO_SAVE got a last sel value
+  float		last_sel_val; 	// #READ_ONLY #SHOW #NO_SAVE value of last selected point
+
   bool		scrolling_;	// #IGNORE currently scrolling (in scroll callback)
 
   GridColView*		colVis(int i) const
@@ -374,7 +383,7 @@ public:
 
   override String	GetLabel() const;
   override String	GetName() const;
-
+  override const String	caption() const;
   override bool		hasViewProperties() const { return true; }
   
   const iColor 		bgColor(bool& ok) const {
@@ -492,7 +501,12 @@ public:
   ScaleBar*		    cbar;	      // colorbar
   QPushButton*		    butSetColor;
 
-  QHBoxLayout*		  layViewspace;
+  QHBoxLayout*		  layClickVals;
+  QCheckBox*		    chkClickVals;
+  QLabel*		    lblLMBVal;
+  taiField*		    fldLMBVal;
+  QLabel*		    lblMMBVal;
+  taiField*		    fldMMBVal;
 
   override String	panel_type() const; // this string is on the subpanel button for this panel
   GridTableView*	glv() {return (GridTableView*)m_dv;}

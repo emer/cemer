@@ -1188,6 +1188,7 @@ SoMatrixGrid::SoMatrixGrid(taMatrix* mat, bool oddy, ColorScale* sc, MatrixLayou
   spacing = .1f;
   block_height = .2f;
   trans_max = 0.6f;
+  user_data = NULL;
   //  render(); // don't do this by default; often want to spec further guys
 }
 

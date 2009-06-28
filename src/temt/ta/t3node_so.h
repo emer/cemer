@@ -498,6 +498,7 @@ public:
   float		spacing;	// #DEF_0.1 space between cell blocks, as a proportion of max of X, Y cell size
   float		block_height;	// #DEF_0.2 how tall (in Z dimension) to make the blocks (relative to the max of their X or Y size)
   float		trans_max;	// #DEF_0.6 maximum transparency value (for zero scaled values)
+  void*		user_data;	// optional user data associated with this guy (e.g., DataCol)
 
   void		setMatrix(taMatrix* mat, bool oddy);
   void		setColorScale(ColorScale* cs);

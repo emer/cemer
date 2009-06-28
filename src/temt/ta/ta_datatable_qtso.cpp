@@ -66,6 +66,7 @@
 #include <Inventor/events/SoMouseButtonEvent.h>
 #include <Inventor/actions/SoRayPickAction.h>
 #include <Inventor/SoPickedPoint.h>
+#include <Inventor/SoEventManager.h>
 
 #include <limits.h>
 #include <float.h>
@@ -919,6 +920,13 @@ void GridTableView::Initialize() {
   head_height = .1f;
   font_scale = .1f;
 
+  click_vals = false;
+  lmb_val = 1.0f;
+  mmb_val = 0.0f;
+
+  last_sel_val = 0.0f;
+  last_sel_got = false;
+
   children.SetBaseType(&TA_GridColView); // subclasses need to set this to their type!
 }
 
@@ -989,6 +997,15 @@ String GridTableView::GetName() const {
   return inherited::GetName() + " Grid";
 }
 
+const String GridTableView::caption() const {
+  String rval = inherited::caption();
+  if(last_sel_got) {
+//     rval += " val: " + last_sel_col_nm + " = " + String(last_sel_val);
+    rval += " val: " + String(last_sel_val);
+  }
+  return rval;
+}
+
 void GridTableView::InitFromUserData() {
   DataTable* dt = dataTable();
   if(!dt) return;
@@ -1040,6 +1057,8 @@ void GridTableView::UpdateFromDataTable_this(bool first) {
   }
 }
 
+void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb);
+
 void GridTableView::Render_pre() {
   bool show_drag = manip_ctrl_on;
   T3ExaminerViewer* vw = GetViewer();
@@ -1047,6 +1066,12 @@ void GridTableView::Render_pre() {
     show_drag = vw->quarter->interactionModeOn();
 
   setNode(new T3GridViewNode(this, width, show_drag));
+
+  if(vw && vw->quarter->interactionModeOn()) {
+    SoEventCallback* ecb = new SoEventCallback;
+    ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), T3GridViewNode_MouseCB, this);
+    node_so()->addChild(ecb);
+  }
 
   UpdatePanel();		// otherwise doesn't get updated without explicit click..
   inherited::Render_pre();
@@ -1662,6 +1687,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 	  sogr->spacing = mat_block_spc;
 	  sogr->block_height = mat_block_height;
 	  sogr->trans_max = mat_trans;
+	  sogr->user_data = dc;	// needed for point picking
 	  sogr->render();
 	  taBase::UnRef(cell_mat);
 	  grsep->addChild(sogr);
@@ -1842,6 +1868,116 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   nv->UpdateDisplay();
 }
 
+// this callback is registered in GridTableView::Render_pre
+
+void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
+  GridTableView* gv = (GridTableView*)userData;
+  T3DataViewFrame* fr = gv->GetFrame();
+  SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
+  SoMouseButtonEvent::Button but = mouseevent->getButton();
+  if(!SoMouseButtonEvent::isButtonReleaseEvent(mouseevent, but)) return; // only releases
+//   cerr << "but: " << but << endl;
+  bool left_but = false;	// assume other button -- don't really care what it is
+  if(but == SoMouseButtonEvent::BUTTON1)
+    left_but = true;
+  bool got_one = false;
+  for(int i=0;i<fr->root_view.children.size;i++) {
+    taDataView* dv = fr->root_view.children[i];
+    if(dv->InheritsFrom(&TA_GridTableView)) {
+      GridTableView* tgv = (GridTableView*)dv;
+      T3ExaminerViewer* viewer = tgv->GetViewer();
+      SoRayPickAction rp( viewer->getViewportRegion());
+      rp.setPoint(mouseevent->getPosition());
+      rp.apply(viewer->quarter->getSoEventManager()->getSceneGraph()); // event mgr has full graph!
+      SoPickedPoint* pp = rp.getPickedPoint(0);
+      if(!pp) continue;
+      SoNode* pobj = pp->getPath()->getNodeFromTail(1);
+      if(!pobj) continue;
+//       cerr << "obj typ: " << pobj->getTypeId().getName() << endl;
+      if(!pobj->isOfType(SoMatrixGrid::getClassTypeId())) {
+// 	cerr << "not SoMatrixGrid!" << endl;
+	continue;
+      }
+      SoMatrixGrid* mtxg = (SoMatrixGrid*)pobj;
+      DataCol* dcol = (DataCol*)mtxg->user_data;
+      taMatrix* matrix = mtxg->matrix;
+      SbVec3f pt = pp->getObjectPoint(pobj); 
+//       cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
+
+      int geom_x, geom_y;
+      matrix->geom.Get2DGeomGui(geom_x, geom_y, mtxg->odd_y, 1);
+      float cl_x = 1.0f / (float)geom_x;	// how big each cell is
+      float cl_y = 1.0f / (float)geom_y;
+      int xp = (int)((pt[0] * geom_x));
+      int yp = (int)((pt[1] * geom_y));
+//       cerr << xp << ", " << yp << endl;
+
+      float val_to_set = 0.0f;
+      if(tgv->click_vals) {
+	if(left_but) val_to_set = tgv->lmb_val;
+	else val_to_set = tgv->mmb_val;
+	taProject* proj = (taProject*)tgv->GetOwner(&TA_taProject);
+	// save undo state!
+	if(proj && dcol) {
+	  proj->undo_mgr.SaveUndo(dcol, "GridView Click Vals", dcol);
+	}
+      }
+
+      // note: all the bot zero stuff is backwards due to coord inversion -- coin is bot zero!
+      if(matrix->dims() == 1) {
+	int ymax = matrix->dim(0);	// assumes odd_y
+	int yeff = yp;
+	if(mtxg->mat_layout != SoMatrixGrid::BOT_ZERO) yeff = ymax-1-yp;
+	if(tgv->click_vals)
+	  matrix->SetFmVar(val_to_set, yeff);
+	else
+	  tgv->last_sel_val = matrix->SafeElAsFloat(yeff);
+      }
+      if(matrix->dims() == 2) {
+	int yeff = yp;
+	if(mtxg->mat_layout != SoMatrixGrid::BOT_ZERO) yeff = geom_y-1-yp;
+	if(tgv->click_vals)
+	  matrix->SetFmVar(val_to_set, xp, yeff);
+	else
+	  tgv->last_sel_val = matrix->SafeElAsFloat(xp, yeff);
+      }
+      if(matrix->dims() == 4) {
+	yp--;			// yp has 1 extra in 4d by some reason.. spacing..
+	int xmax = matrix->dim(0);	int ymax = matrix->dim(1);
+	int xxmax = matrix->dim(2);	int yymax = matrix->dim(3);
+
+	int oxp = xp / (xmax+1);	int oyp = yp / (ymax+1);
+	int ixp = xp % (xmax+1);	int iyp = yp % (ymax+1);
+// 	cerr << "4d: " << ixp << ", " << iyp << ", " << oxp << ", " << oyp << endl;
+
+	int iyeff = iyp;  int oyeff = oyp;
+	if(mtxg->mat_layout != SoMatrixGrid::BOT_ZERO) {
+	  iyeff = ymax-1-iyp;	  oyeff = yymax-1-oyp;
+	}
+	if(tgv->click_vals) 
+	  matrix->SetFmVar(val_to_set, ixp, iyeff, oxp, oyeff);
+	else
+	  tgv->last_sel_val = matrix->SafeElAsFloat(ixp, iyeff, oxp, oyeff);
+      }
+      if(tgv->click_vals) {
+	// this causes a crash
+// 	if(dcol)
+// 	  dcol->DataChanged(DCR_ITEM_UPDATED); // col drives updating
+      }
+      else {
+	tgv->last_sel_got = true;
+	if(dcol) {
+	  tgv->last_sel_col_nm = dcol->name;
+	}
+      }
+      tgv->UpdateDisplay();	// update to show last viewed val
+      got_one = true;
+      break;
+    }
+  }
+  if(got_one)
+    ecb->setHandled();
+}
 
 //////////////////////////
 //    iTableView_Panel //
@@ -1876,33 +2012,39 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   int font_spec = taiMisc::fonMedium;
 
   layTopCtrls = new QHBoxLayout; layWidg->addLayout(layTopCtrls);
+//   layTopCtrls->setSpacing(2);	// plenty of room
+
+  // note: check boxes require spacing after them apparently, at least on mac..
 
   chkDisplay = new QCheckBox("Disp", widg); chkDisplay->setObjectName("chkDisplay");
   chkDisplay->setToolTip("Whether to update the display when the underlying data changes");
   connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkDisplay);
+  layTopCtrls->addSpacing(taiM->hsep_c);
 
   chkHeaders =  new QCheckBox("Hdrs", widg ); chkHeaders->setObjectName("chkHeaders");
   chkHeaders->setToolTip("Whether to display a top row of headers indicating the name of the columns");
   connect(chkHeaders, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkHeaders);
+  layTopCtrls->addSpacing(taiM->hsep_c);
 
   chkRowNum =  new QCheckBox("Row\n#", widg); chkRowNum->setObjectName("chkRowNum");
   chkRowNum->setToolTip("Whether to display the row number as the first column");
   connect(chkRowNum, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkRowNum);
+  layTopCtrls->addSpacing(taiM->hsep_c);
 
   chk2dFont =  new QCheckBox("2d\nFont", widg); chk2dFont->setObjectName("chk2dFont");
   chk2dFont->setToolTip("Whether to use a two-dimensional font that is easier to read but does not obey 3d transformations of the display");
   connect(chk2dFont, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chk2dFont);
+  layTopCtrls->addSpacing(taiM->hsep_c);
 
   lblFontScale = taiM->NewLabel("Font\nScale", widg, font_spec);
   lblFontScale->setToolTip("Scaling of the 2d font to make it roughly the same size as the 3d font -- adjust this to change the size of the 2d text (has no effect if 2d Font is not clicked");
   layTopCtrls->addWidget(lblFontScale);
   fldFontScale = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layTopCtrls->addWidget(fldFontScale->GetRep());
-//   layMatrix->addSpacing(taiM->hsep_c);
 
   layTopCtrls->addStretch();
 
@@ -1911,54 +2053,44 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layTopCtrls->addWidget(butRefresh);
   connect(butRefresh, SIGNAL(pressed()), this, SLOT(butRefresh_pressed()) );
 
-  // not clear we want the user to be able to clear the table like this -- may just
-  // think it is the display, not the actual underlying data..
-//   butClear = new QPushButton("Clear", widg);
-//   butClear->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
-//   layTopCtrls->addWidget(butClear);
-//   connect(butClear, SIGNAL(pressed()), this, SLOT(butClear_pressed()) );
-
   layVals = new QHBoxLayout; layWidg->addLayout(layVals);
+  layVals->setSpacing(2);	// plenty of room
 
   lblRows = taiM->NewLabel("Rows", widg, font_spec);
   lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
   layVals->addWidget(lblRows);
   fldRows = dl.Add(new taiIncrField(&TA_int, this, NULL, widg));
   layVals->addWidget(fldRows->GetRep());
-//   layVals->addSpacing(taiM->hsep_c);
 
   lblCols = taiM->NewLabel("Cols", widg, font_spec);
   lblCols->setToolTip("Maximum number of columns to display (column widths are scaled to fit).");
   layVals->addWidget(lblCols);
   fldCols = dl.Add(new taiIncrField(&TA_int, this, NULL, widg));
   layVals->addWidget(fldCols->GetRep());
-//   layVals->addSpacing(taiM->hsep_c);
 
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
   lblWidth->setToolTip("Width of grid log display, in normalized units (default is 1.0 = same as height).");
   layVals->addWidget(lblWidth);
   fldWidth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldWidth->GetRep());
-//   layVals->addSpacing(taiM->hsep_c);
 
   lblTxtMin = taiM->NewLabel("Min\nText", widg, font_spec);
   lblTxtMin->setToolTip("Minimum text size in 'view units' (size of entire display is 1.0) -- .02 is default -- increase to make small text more readable");
   layVals->addWidget(lblTxtMin);
   fldTxtMin = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldTxtMin->GetRep());
-//   layMatrix->addSpacing(taiM->hsep_c);
 
   lblTxtMax = taiM->NewLabel("Max\nText", widg, font_spec);
   lblTxtMax->setToolTip("Maximum text size in 'view units' (size of entire display is 1.0) -- .05 is default");
   layVals->addWidget(lblTxtMax);
   fldTxtMax = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldTxtMax->GetRep());
-//   layMatrix->addSpacing(taiM->hsep_c);
 
   layVals->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
   layMatrix = new QHBoxLayout; layWidg->addLayout(layMatrix);
+  layMatrix->setSpacing(2);	// plenty of room
 
   lblMatrix = taiM->NewLabel("Matrix\nDisplay", widg, font_spec);
   lblMatrix->setToolTip("This row contains parameters that control the display of matrix values (shown in a grid of colored blocks)");
@@ -1968,20 +2100,19 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   chkValText->setToolTip("Whether to display text of the matrix block values.");
   connect(chkValText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layMatrix->addWidget(chkValText);
+  layMatrix->addSpacing(taiM->hsep_c);
 
   lblTrans = taiM->NewLabel("Trans-\nparency", widg, font_spec);
   lblTrans->setToolTip("Maximum transparency of the grid blocks (0 = fully opaque, 1 = fully transparent)\nBlocks with smaller magnitude values are more transparent.");
   layMatrix->addWidget(lblTrans);
   fldTrans = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layMatrix->addWidget(fldTrans->GetRep());
-//   layMatrix->addSpacing(taiM->hsep_c);
 
   lblRot = taiM->NewLabel("Mat\nRot", widg, font_spec);
   lblRot->setToolTip("Rotation (in degrees) of the matrix in the Z axis, producing a denser stacking of patterns.");
   layMatrix->addWidget(lblRot);
   fldRot = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layMatrix->addWidget(fldRot->GetRep());
-//   layMatrix->addSpacing(taiM->hsep_c);
 
   lblBlockHeight = taiM->NewLabel("Blk\nHgt", widg, font_spec);
   lblBlockHeight->setToolTip("Maximum height of grid blocks (in Z dimension), as a proportion of their overall X-Y size.");
@@ -1998,6 +2129,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   chkAutoScale = new QCheckBox("auto\nscale", widg);
   connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScale->addWidget(chkAutoScale);
+  layColorScale->addSpacing(taiM->hsep_c);
 
   cbar = new HCScaleBar(&tlv->colorscale, ScaleBar::RANGE, true, true, widg);
 //  cbar->setMaximumWidth(30);
@@ -2009,6 +2141,28 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   butSetColor->setMinimumWidth(taiM->maxButtonWidth() / 2);
   layColorScale->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
+
+  ////////////////////////////////////////////////////////////////////////////
+  layClickVals = new QHBoxLayout; layWidg->addLayout(layClickVals);
+  layClickVals->setSpacing(2);	// plenty of room
+
+  chkClickVals =  new QCheckBox("Click\nVals", widg); chkClickVals->setObjectName( "chkClickVals");
+  chkClickVals->setToolTip("If on, then clicking on cell values in the grid view display in interact mode (red arrow) will change the values.");
+  connect(chkClickVals, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layClickVals->addWidget(chkClickVals);
+  layClickVals->addSpacing(taiM->hsep_c);
+
+  lblLMBVal = taiM->NewLabel("Left Click\nValue", widg, font_spec);
+  lblLMBVal->setToolTip("Value that will be set in the cell if you click with the left mouse button (if Click Vals is on).");
+  layClickVals->addWidget(lblLMBVal);
+  fldLMBVal = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  layClickVals->addWidget(fldLMBVal->GetRep());
+
+  lblMMBVal = taiM->NewLabel("Middle Click\nValue", widg, font_spec);
+  lblMMBVal->setToolTip("Value that will be set in the cell if you click with the middle mouse button (if Click Vals is on).");
+  layClickVals->addWidget(lblMMBVal);
+  fldMMBVal = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  layClickVals->addWidget(fldMMBVal->GetRep());
 
   layWidg->addStretch();
 
@@ -2043,6 +2197,9 @@ void iGridTableView_Panel::GetValue_impl() {
   glv->mat_rot = (float)fldRot->GetValue();
   glv->mat_block_height = (float)fldBlockHeight->GetValue();
   glv->setScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max());
+  glv->click_vals = chkClickVals->isChecked();
+  glv->lmb_val = (float)fldLMBVal->GetValue();
+  glv->mmb_val = (float)fldMMBVal->GetValue();
   
   glv->UpdateDisplay(false); // don't update us, because logic will do that anyway
 }
@@ -2078,6 +2235,10 @@ void iGridTableView_Panel::UpdatePanel_impl() {
 
   cbar->UpdateScaleValues();
   chkAutoScale->setChecked(glv->colorscale.auto_scale);
+
+  chkClickVals->setChecked(glv->click_vals);
+  fldLMBVal->GetImage((String)glv->lmb_val);
+  fldMMBVal->GetImage((String)glv->mmb_val);
 }
 
 void iGridTableView_Panel::butRefresh_pressed() {
@@ -3217,16 +3378,18 @@ const String GraphTableView::caption() const {
 void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
   GraphTableView* nv = (GraphTableView*)userData;
   T3DataViewFrame* fr = nv->GetFrame();
+  SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
+  SoMouseButtonEvent::Button but = mouseevent->getButton();
+  if(!SoMouseButtonEvent::isButtonReleaseEvent(mouseevent, but)) return; // only releases
   bool got_one = false;
   for(int i=0;i<fr->root_view.children.size;i++) {
     taDataView* dv = fr->root_view.children[i];
     if(dv->InheritsFrom(&TA_GraphTableView)) {
       GraphTableView* tgv = (GraphTableView*)dv;
       T3ExaminerViewer* viewer = tgv->GetViewer();
-      SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
       SoRayPickAction rp( viewer->getViewportRegion());
       rp.setPoint(mouseevent->getPosition());
-      rp.apply(viewer->quarter->getSceneGraph());
+      rp.apply(viewer->quarter->getSoEventManager()->getSceneGraph()); // event mgr has full graph!
 
       SoPickedPoint* pp = rp.getPickedPoint(0);
       if(!pp) continue;
@@ -3255,6 +3418,7 @@ void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
       //      tgv->InitDisplay();
       tgv->UpdateDisplay();
       got_one = true;
+      break;			// once you get one, stop!
     }
   }
   if(got_one)
