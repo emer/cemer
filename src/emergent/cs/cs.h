@@ -279,11 +279,11 @@ class CS_API CsUnit : public Unit {
   // #STEM_BASE ##CAT_Cs constraint satisfaction unit
 INHERITED(Unit)
 public:
-  float		da;		// delta-activation (or net input) value
+  float		da;		// #VIEW_HOT delta-activation (or net input) value
   float		prv_net;	// #NO_VIEW previous net input
   float		clmp_net;	// #NO_VIEW net input from hard_fast_clamp
-  float		act_m;		// minus phase activation
-  float		act_p;		// plus phase activation
+  float		act_m;		// #VIEW_HOT minus phase activation
+  float		act_p;		// #VIEW_HOT plus phase activation
   int		n_dwt_aggs;	// number of delta-weight aggregations performed
 
   void	Compute_ClampAct(CsNetwork* net)

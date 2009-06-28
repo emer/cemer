@@ -202,9 +202,9 @@ class BP_API BpUnit : public Unit {
   // #STEM_BASE ##CAT_Bp ##DMEM_SHARE_SETS_4 standard feed-forward Bp unit
 INHERITED(Unit)
 public:
-  float 	err; 		// this is E, not dEdA
-  float 	dEdA;		// #LABEL_dEdA #DMEM_SHARE_SET_3 error wrt activation
-  float 	dEdNet;		// #LABEL_dEdNet error wrt net input
+  float 	err; 		// #VIEW_HOT this is E, not dEdA
+  float 	dEdA;		// #LABEL_dEdA #DMEM_SHARE_SET_3 #VIEW_HOT error wrt activation
+  float 	dEdNet;		// #LABEL_dEdNet #VIEW_HOT error wrt net input
 
   // these are "convenience" functions for those defined in the spec
   void SetCurLrate(int epoch)   { ((BpUnitSpec*)GetUnitSpec())->SetCurLrate(this, epoch); }

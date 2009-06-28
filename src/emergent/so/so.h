@@ -138,7 +138,7 @@ class SO_API SoUnit : public Unit {
 INHERITED(Unit)
 public:
   float		act_i;
-  // independent activation of the unit (before layer-level rescaling)
+  //  #VIEW_HOT independent activation of the unit (before layer-level rescaling)
 
   void		Compute_AvgInAct()
   { ((SoUnitSpec*)GetUnitSpec())->Compute_AvgInAct(this); }
