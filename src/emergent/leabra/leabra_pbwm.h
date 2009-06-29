@@ -242,6 +242,7 @@ public:
   float		neg_da_bl;	// #DEF_0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
   float		neg_gain;	// #DEF_1.5 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
   float		perf_gain;	// #DEF_0 performance effect da gain (in 2- phase for trans, 1+ for gogo)
+  float		snr_err_da;	// dopamine value to add if the corresponding snrthal unit has a COMP targ value greater than 0.5 and the stripe did not fire Go -- achieves error-driven learning via snr modulation of da
   bool		no_snr_mod;	// #DEF_false #EXPERT disable the Da learning modulation by SNrThal ativation (this is only to demonstrate how important it is)
 
   void 	Defaults()	{ Initialize(); }

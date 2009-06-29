@@ -165,9 +165,13 @@ public:
   QtThumbWheel*	  zoom_wheel;	// the zoom wheel (dolly in SoQt)
   QtThumbWheel*	  vrot_wheel;	// the vertical rotation wheel (Rotx in SoQt)
   QtThumbWheel*	  hrot_wheel;	// the horizontal rotation wheel (Roty in SoQt)
+  QtThumbWheel*	  vpan_wheel;	// the vertical panning wheel 
+  QtThumbWheel*	  hpan_wheel;	// the horizontal panning wheel
   QLabel*	  zoom_lbl;	// labels
   QLabel*	  vrot_lbl;
   QLabel*	  hrot_lbl;
+  QLabel*	  vpan_lbl;
+  QLabel*	  hpan_lbl;
 
   //////////////////////////////////////////////
   //   Standard view buttons (on RHS)
@@ -224,6 +228,10 @@ public:
   // horizontally rotate view camera (actually around the vertical Y axis) -- associated with the hrot_wheel on bottom of viewer
   virtual void		vertRotateView(const float rot_value);
   // vertically rotate view camera (actually around the horizontal or X axis) -- associated with the vrot_wheel on left hand side of viewer
+  virtual void		horizPanView(const float pan_value);
+  // horizontally pan (move) view camera -- associated with the hpan_wheel on bottom of viewer
+  virtual void		vertPanView(const float pan_value);
+  // vertically pan (move) view camera  -- associated with the vpan_wheel on right hand side of viewer
 
   virtual void		syncViewerMode();
   // ensure that quarter is in the same viewer mode that we think it should be in -- this should be called upon any redraw that might knock quarter out of whack.
@@ -251,6 +259,8 @@ public slots:
   void hrotwheelChanged(int value);
   void vrotwheelChanged(int value);
   void zoomwheelChanged(int value);
+  void hpanwheelChanged(int value);
+  void vpanwheelChanged(int value);
 
   void interactbuttonClicked();
   void viewbuttonClicked();
@@ -277,9 +287,13 @@ protected:
   int	hrot_start_val;
   int	vrot_start_val;
   int	zoom_start_val;
+  int	hpan_start_val;
+  int	vpan_start_val;
 
   virtual void	RotateView(const SbVec3f& axis, const float ang);
   // implementation function that will rotate view camera given angle (in radians) around given axis
+  virtual void	PanView(const SbVec3f& dir, const float dist);
+  // implementation function that will move (pan) view camera given distance in given direction 
 
   override bool event(QEvent* ev_);
   override void keyPressEvent(QKeyEvent* e);

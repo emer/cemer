@@ -256,8 +256,8 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
     LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     if(rew_lay->name == "RewTarg") continue;
 
-    if(rew_lay->ext_flag & Unit::TARG) n_targs++;
-    else if(rew_lay->ext_flag & Unit::COMP) n_comps++;
+    if(rew_lay->HasExtFlag(Unit::TARG)) n_targs++;
+    else if(rew_lay->HasExtFlag(Unit::COMP)) n_comps++;
   }
 
   int rew_chk_flag = Unit::TARG;
@@ -272,7 +272,7 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
     LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     if(rew_lay->name == "RewTarg") continue;
 
-    if(!(rew_lay->ext_flag & rew_chk_flag)) continue; // only proceed if valid 
+    if(!rew_lay->HasExtFlag(rew_chk_flag)) continue; // only proceed if valid 
     toterr += rew_lay->norm_err;	// now using norm err
     totposs += 1.0f;
   }
@@ -309,7 +309,7 @@ void ExtRewLayerSpec::Compute_OutErrRew(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void ExtRewLayerSpec::Compute_ExtRew(LeabraLayer* lay, LeabraNetwork* net) {
-  if(!(lay->ext_flag & Unit::TARG)) {
+  if(!lay->HasExtFlag(Unit::TARG)) {
     Compute_NoRewAct(lay, net);	
     return;
   }

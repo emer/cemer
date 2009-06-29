@@ -285,7 +285,7 @@ void MatrixUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
 
   u->net_raw += u->net_delta;
   float tot_net = (u->bias_scale * u->bias.OwnCn(0)->wt) + u->net_raw;
-  if(u->ext_flag & Unit::EXT) {
+  if(u->HasExtFlag(Unit::EXT)) {
     LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
     tot_net += u->ext * ls->clamp.gain;
   }
@@ -358,6 +358,7 @@ void MatrixMiscSpec::Initialize() {
   neg_da_bl = 0.0002f;
   neg_gain = 1.5f;
   perf_gain = 0.0f;
+  snr_err_da = .1f;
   no_snr_mod = false;
 }
 
@@ -545,6 +546,11 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 		"Could not find DA layer (PVLVDaLayerSpec) -- must receive MarkerConSpec projection from one!")) {
     return false;
   }
+  int myidx = lay->own_net->layers.FindLeafEl(lay);
+  int daidx = lay->own_net->layers.FindLeafEl(da_lay);
+  lay->CheckError(daidx > myidx, quiet, rval,
+		  "DA layer (PVLVDaLayerspec) layer must be *before* this layer in list of layers -- it is now after, won't work!");
+
   if(lay->CheckError(snr_lay == NULL, quiet, rval,
 		"Could not find SNrThal layer -- must receive MarkerConSpec projection from one!")) {
     return false;
@@ -651,7 +657,7 @@ void MatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mugp
 
 void MatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net) {
   int snr_prjn_idx = 0;
-  FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
+  LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
 
   PFCGateSpec::GateSignal gate_sig = (PFCGateSpec::GateSignal)mugp->misc_state2;
     
@@ -678,6 +684,12 @@ void MatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mug
     float dav = snrthal_act * u->dav - matrix.neg_da_bl; // da is modulated by snrthal; sub baseline
     if(mugp->misc_state1 == PFCGateSpec::NOGO_RND_GO) {
       dav += rnd_go.nogo_da; 
+    }
+
+    if((gate_sig == PFCGateSpec::GATE_NOGO) && (net->phase_no == 1) &&
+       snr_lay->HasExtFlag(Unit::COMP) && (snrsu->targ > .5f)) {
+      //  output gating -- get plus-phase err signal if avail, as COMP input to snr layer
+      dav += matrix.snr_err_da;
     }
 
     u->dav = dav;		// make it show up in display
@@ -1220,7 +1232,7 @@ void PFCLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork*) {
 }
 
 void PFCLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
-  if(gate.allow_clamp && clamp.hard && (lay->ext_flag & Unit::EXT)) {
+  if(gate.allow_clamp && clamp.hard && lay->HasExtFlag(Unit::EXT)) {
     inherited::Compute_HardClamp(lay, net);
   }
   else {
@@ -1639,18 +1651,18 @@ bool LeabraWizard::PBWM_ToLayerGroups(LeabraNetwork* net) {
   Layer_Group* pfc_laygp = net->FindMakeLayerGroup("PBWM_PFC", NULL, new_pfc_laygp);
 
   Layer* lay;
-  if(lay = net->FindLayer("Patch")) bg_laygp->Transfer(lay);
-  if(lay = net->FindLayer("SNc")) bg_laygp->Transfer(lay);
-  if(lay = net->FindLayer("Matrix")) bg_laygp->Transfer(lay);
-  if(lay = net->FindLayer("Matrix_mnt")) bg_laygp->Transfer(lay);
-  if(lay = net->FindLayer("Matrix_out")) bg_laygp->Transfer(lay);
-  if(lay = net->FindLayer("SNrThal")) bg_laygp->Transfer(lay);
-  if(lay = net->FindLayer("SNrThal_out")) bg_laygp->Transfer(lay);
-  if(lay = net->FindLayer("SNrThal_mnt")) bg_laygp->Transfer(lay);
-  if(lay = net->FindLayer("PFC")) pfc_laygp->Transfer(lay);
-  if(lay = net->FindLayer("PFC_mnt")) pfc_laygp->Transfer(lay);
-  if(lay = net->FindLayer("PFC_out")) pfc_laygp->Transfer(lay);
-
+  if(lay = net->FindLayer("Patch")) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
+  if(lay = net->FindLayer("SNc")) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
+  if(lay = net->FindLayer("Matrix")) { bg_laygp->Transfer(lay); lay->pos.z = 1; }
+  if(lay = net->FindLayer("Matrix_mnt")) { bg_laygp->Transfer(lay); lay->pos.z = 1; }
+  if(lay = net->FindLayer("Matrix_out")) { bg_laygp->Transfer(lay); lay->pos.z = 1; }
+  if(lay = net->FindLayer("SNrThal")) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
+  if(lay = net->FindLayer("SNrThal_out")) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
+  if(lay = net->FindLayer("SNrThal_mnt")) { bg_laygp->Transfer(lay); lay->pos.z = 0; }
+  if(lay = net->FindLayer("PFC")) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
+  if(lay = net->FindLayer("PFC_mnt")) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
+  if(lay = net->FindLayer("PFC_out")) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
+  
   if(new_bg_laygp || new_pfc_laygp) {
     bg_laygp->pos.z = 0;
     pfc_laygp->pos.z = 2;

@@ -93,7 +93,7 @@ using namespace Qt;
 #include "print.xpm"
 #include "snapshot.xpm"
 
-#define WHEEL_LENGTH 80		// long axis
+#define WHEEL_LENGTH 60		// long axis
 #define WHEEL_WIDTH 20		// short axis
 #define BUTTON_WIDTH 20
 #define BUTTON_HEIGHT 20
@@ -133,10 +133,17 @@ void T3SavedView_List::Initialize() {
 
 const int T3ExaminerViewer::n_views = 6;
 
+static void t3ev_config_wheel(QtThumbWheel* whl) {
+  whl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  whl->setWrapsAround(true);
+  whl->setLimitedDrag(false);
+}
+
 T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   : QWidget(parent)
 {
   t3vw = parent;
+  quarter = NULL;		// for startup events
 
   viewer_mode = VIEW;
 
@@ -177,28 +184,34 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   /////	make wheels all together
 
   hrot_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Horizontal, this);
+  t3ev_config_wheel(hrot_wheel);
   hrot_start_val = 500;
-  hrot_wheel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   hrot_wheel->setMaximumSize(WHEEL_LENGTH, WHEEL_WIDTH);
-  hrot_wheel->setWrapsAround(true);
-  hrot_wheel->setLimitedDrag(false);
   connect(hrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(hrotwheelChanged(int)));
 
   vrot_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Vertical, this);
+  t3ev_config_wheel(vrot_wheel);
   vrot_start_val = 500;
-  vrot_wheel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   vrot_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
-  vrot_wheel->setWrapsAround(true);
-  vrot_wheel->setLimitedDrag(false);
   connect(vrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(vrotwheelChanged(int)));
 
   zoom_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Vertical, this);
+  t3ev_config_wheel(zoom_wheel);
   zoom_start_val = 500;
-  zoom_wheel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   zoom_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
-  zoom_wheel->setWrapsAround(true);
-  zoom_wheel->setLimitedDrag(false);
   connect(zoom_wheel, SIGNAL(valueChanged(int)), this, SLOT(zoomwheelChanged(int)));
+
+  hpan_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Horizontal, this);
+  t3ev_config_wheel(hpan_wheel);
+  hpan_start_val = 500;
+  hpan_wheel->setMaximumSize(WHEEL_LENGTH, WHEEL_WIDTH);
+  connect(hpan_wheel, SIGNAL(valueChanged(int)), this, SLOT(hpanwheelChanged(int)));
+
+  vpan_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Vertical, this);
+  t3ev_config_wheel(vpan_wheel);
+  vpan_start_val = 500;
+  vpan_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
+  connect(vpan_wheel, SIGNAL(valueChanged(int)), this, SLOT(vpanwheelChanged(int)));
 
   /////  lhs_vbox
 
@@ -219,11 +232,19 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   rhs_vbox->addStretch();
 
   rhs_vbox->addWidget(zoom_wheel);
+  zoom_lbl = new QLabel("Zoom", this);
+  zoom_lbl->setFont(taiM->buttonFont(taiMisc::sizMedium));
+  rhs_vbox->addWidget(zoom_lbl);
+
+  rhs_vbox->addSpacing(4);
+  rhs_vbox->addWidget(vpan_wheel);
 
   /////  bot_hbox
 
-  vrot_lbl = new QLabel("V.Rot ", this);
+  vrot_lbl = new QLabel("V.Rot", this);
   bot_hbox->addWidget(vrot_lbl);
+
+  bot_hbox->addSpacing(4);
 
   hrot_lbl = new QLabel("H.Rot", this);
   bot_hbox->addWidget(hrot_lbl);
@@ -238,8 +259,14 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 
   bot_hbox->addStretch();
 
-  zoom_lbl = new QLabel("Zoom   ", this);
-  bot_hbox->addWidget(zoom_lbl);
+  bot_hbox->addWidget(hpan_wheel);
+  hpan_lbl = new QLabel("H.Pan", this);
+  bot_hbox->addWidget(hpan_lbl);
+
+  bot_hbox->addSpacing(4);
+
+  vpan_lbl = new QLabel("V.Pan ", this);
+  bot_hbox->addWidget(vpan_lbl);
 
   Constr_RHS_Buttons();
   Constr_LHS_Buttons();
@@ -426,8 +453,9 @@ bool T3ExaminerViewer::removeDynButtonName(const String& label) {
 ///////////////////////////////////////////////////////////////
 //		Main Button Actions
 
-#define ROT_DELTA_MULT  0.005f
-#define ZOOM_DELTA_MULT 0.005f
+#define ROT_DELTA_MULT  0.002f
+#define PAN_DELTA_MULT  0.002f
+#define ZOOM_DELTA_MULT 0.002f
 
 void T3ExaminerViewer::hrotwheelChanged(int value) {
   // first detect wraparound
@@ -452,6 +480,23 @@ void T3ExaminerViewer::zoomwheelChanged(int value) {
   float delta = (float)(value - zoom_start_val);
   zoom_start_val = value;
   zoomView(-ZOOM_DELTA_MULT * delta); // direction is opposite
+}
+
+void T3ExaminerViewer::hpanwheelChanged(int value) {
+  // first detect wraparound
+  if(hpan_start_val < 100 && value > 900) hpan_start_val += 1000;
+  if(value < 100 && hpan_start_val > 900) hpan_start_val -= 1000;
+  float delta = (float)(value - hpan_start_val);
+  hpan_start_val = value;
+  horizPanView(PAN_DELTA_MULT * delta);
+}
+
+void T3ExaminerViewer::vpanwheelChanged(int value) {
+  if(vpan_start_val < 100 && value > 900) vpan_start_val += 1000;
+  if(value < 100 && vpan_start_val > 900) vpan_start_val -= 1000;
+  float delta = (float)(value - vpan_start_val);
+  vpan_start_val = value;
+  vertPanView(PAN_DELTA_MULT * delta);
 }
 
 void T3ExaminerViewer::interactbuttonClicked() {
@@ -646,6 +691,14 @@ void T3ExaminerViewer::vertRotateView(const float rot_value) {
   RotateView(SbVec3f(-1.0f, 0.0f, 0.0f), rot_value);
 }
 
+void T3ExaminerViewer::horizPanView(const float pan_value) {
+  PanView(SbVec3f(-1.0f, 0.0f, 0.0f), pan_value);
+}
+
+void T3ExaminerViewer::vertPanView(const float pan_value) {
+  PanView(SbVec3f(0.0f, 1.0f, 0.0f), pan_value);
+}
+
 // copied from SoQtExaminerViewer.cpp -- hidden method on private P class
 
 void T3ExaminerViewer::RotateView(const SbVec3f& axis, const float ang) {
@@ -670,8 +723,20 @@ void T3ExaminerViewer::RotateView(const SbVec3f& axis, const float ang) {
   syncViewerMode();		// keep it sync'd -- this tends to throw it off
 }
 
+void T3ExaminerViewer::PanView(const SbVec3f& dir, const float dist) {
+  SoCamera* cam = getViewerCamera();
+  if(!cam) return;
+
+  SbVec3f mvec = dir * dist;
+
+  SbVec3f newpos = cam->position.getValue() + mvec;
+  cam->position = newpos;
+  syncViewerMode();		// keep it sync'd -- this tends to throw it off
+}
+
 
 void T3ExaminerViewer::syncViewerMode() {
+  if(!quarter) return;
   bool int_onoff = (bool)viewer_mode;
   if(quarter->interactionModeOn() != int_onoff) {
     quarter->setInteractionModeOn(int_onoff);
@@ -761,6 +826,8 @@ bool so_scrollbar_is_dragging = false; // referenced in t3node_so.cpp
 
 bool T3ExaminerViewer::event(QEvent* ev_) {
   static bool inside_event_loop = false;
+
+  syncViewerMode();		// keep it sync'd
 
   //NOTE: the base classes don't check if event is already handled, so we have to skip
   // calling inherited if we handle it ourselves

@@ -385,6 +385,7 @@ class TA_API PosTDCoord : public TDCoord {
 public:
   TA_BASEFUNS_LITE(PosTDCoord);
 
+  inline PosTDCoord& operator=(const TDCoord& cp) { x = cp.x; y = cp.y; z = cp.z; UpdateAfterEdit(); return *this;}
   inline PosTDCoord& operator=(int cp) 	{ x = cp; y = cp; z = cp; return *this;}
   inline PosTDCoord& operator=(float cp) { x = (int)cp; y = (int)cp; z = (int)cp; return *this;}
   inline PosTDCoord& operator=(double cp) { x = (int)cp; y = (int)cp; z = (int)cp; return *this;}

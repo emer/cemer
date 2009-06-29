@@ -1386,9 +1386,9 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
 //     drag_sc << " fx: " << fx << " fy: " << fy << " new: " << new_x << " " << new_y << endl;
 
   lay->pos.x += (int)new_x;
-  if(lay->pos.x < 0) lay->pos.x = 0;
+//   if(lay->pos.x < 0) lay->pos.x = 0;
   lay->pos.y += (int)new_y;
-  if(lay->pos.y < 0) lay->pos.y = 0;
+//   if(lay->pos.y < 0) lay->pos.y = 0;
 
   laynd->txfm_shape()->translation.setValue(xfrac, 0.0f, -yfrac); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
@@ -1415,7 +1415,7 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
 //   cerr << "lay: " << lay->name << " z:" << trans[0] << " new_z: " << new_z << endl;
 
   lay->pos.z += (int)new_z;
-  if(lay->pos.z < 0) lay->pos.z = 0;
+//   if(lay->pos.z < 0) lay->pos.z = 0;
 
   const SbVec3f& shptrans = laynd->txfm_shape()->translation.getValue();
   laynd->txfm_shape()->translation.setValue(shptrans[0], 0.0f, shptrans[2]); // reset!

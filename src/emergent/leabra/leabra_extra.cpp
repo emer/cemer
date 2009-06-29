@@ -941,7 +941,7 @@ void ScalarValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net)
     inherited::Compute_HardClamp(lay, net);
     return;
   }
-  if(!(lay->ext_flag & Unit::EXT)) {
+  if(!lay->HasExtFlag(Unit::EXT)) {
     lay->hard_clamped = false;
     return;
   }
@@ -964,7 +964,7 @@ float ScalarValLayerSpec::Compute_SSE_ugp(Unit_Group* ugp, LeabraLayer* lay, int
   LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   // only count if target value is within range -- otherwise considered a non-target
-  if(u->ext_flag & (Unit::TARG | Unit::COMP) && val_range.RangeTestEq(u->targ)) {
+  if(u->HasExtFlag(Unit::TARG | Unit::COMP) && val_range.RangeTestEq(u->targ)) {
     n_vals++;
     float uerr = u->targ - u->act_m;
     if(fabsf(uerr) < us->sse_tol)
@@ -977,7 +977,7 @@ float ScalarValLayerSpec::Compute_SSE_ugp(Unit_Group* ugp, LeabraLayer* lay, int
 float ScalarValLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork*, 
 				      int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
-  if(!(lay->ext_flag & (Unit::TARG | Unit::COMP))) return 0.0f;
+  if(!(lay->HasExtFlag(Unit::TARG | Unit::COMP))) return 0.0f;
   lay->sse = 0.0f;
   UNIT_GP_ITR(lay, 
 	      lay->sse += Compute_SSE_ugp(ugp, lay, n_vals);
@@ -988,7 +988,7 @@ float ScalarValLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork*,
   if(sqrt)
     lay->sse = sqrtf(lay->sse);
   if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
-     ((lay->ext_flag & Unit::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
+     (lay->HasExtFlag(Unit::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
     rval = 0.0f;
     n_vals = 0;
   }
@@ -1000,7 +1000,7 @@ float ScalarValLayerSpec::Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug,
   LeabraUnit* u = (LeabraUnit*)ug->FastEl(0);
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   // only count if target value is within range -- otherwise considered a non-target
-  if(u->ext_flag & (Unit::TARG | Unit::COMP) && val_range.RangeTestEq(u->targ)) {
+  if(u->HasExtFlag(Unit::TARG | Unit::COMP) && val_range.RangeTestEq(u->targ)) {
     float uerr = u->targ - u->act_m;
     if(fabsf(uerr) < us->sse_tol)
       return 0.0f;
@@ -1011,7 +1011,7 @@ float ScalarValLayerSpec::Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug,
 
 float ScalarValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   lay->norm_err = -1.0f;					 // assume not contributing
-  if(!(lay->ext_flag & (Unit::TARG | Unit::COMP))) return -1.0f; // indicates not applicable
+  if(!lay->HasExtFlag(Unit::TARG | Unit::COMP)) return -1.0f; // indicates not applicable
 
   float nerr = 0.0f;
   float ntot = 0;
@@ -1032,7 +1032,7 @@ float ScalarValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) 
   if(lay->norm_err > 1.0f) lay->norm_err = 1.0f;
 
   if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
-     ((lay->ext_flag & Unit::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE)))
+     (lay->HasExtFlag(Unit::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE)))
     return -1.0f;		// no contributarse
 
   return lay->norm_err;
@@ -1847,7 +1847,7 @@ void TwoDValLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwo
   inherited::Settle_Init_TargFlags_Layer(lay, net);
   // need to actually copy over targ to ext vals!
   TwoDValLeabraLayer* tdlay = (TwoDValLeabraLayer*)lay;
-  if(lay->ext_flag & Unit::TARG) {	// only process target layers..
+  if(lay->HasExtFlag(Unit::TARG)) {	// only process target layers..
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
       int gi = 0;
       if(tdlay->units.gp.size > 0) {

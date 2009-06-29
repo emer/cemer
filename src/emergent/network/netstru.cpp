@@ -1815,7 +1815,7 @@ void UnitSpec::Compute_SentNetin(Unit* u, Network* net, float sent_netin) {
 }
 
 void UnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
-  if(u->ext_flag & Unit::EXT)
+  if(u->HasExtFlag(Unit::EXT))
     u->act = u->ext;
   else
     u->act = u->net;
@@ -1846,7 +1846,7 @@ void UnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
 float UnitSpec::Compute_SSE(Unit* u, Network* net, bool& has_targ) {
   float sse = 0.0f;
   has_targ = false;
-  if(u->ext_flag & (Unit::TARG | Unit::COMP)) {
+  if(u->HasExtFlag(Unit::TARG | Unit::COMP)) {
     has_targ = true;
     float uerr = u->targ - u->act;
     if(fabsf(uerr) >= sse_tol)
@@ -4364,7 +4364,7 @@ void Layer::Init_Weights_post(Network* net) {
 float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
   sse = 0.0f;
-  if(!(ext_flag & (Unit::TARG | Unit::COMP))) return 0.0f;
+  if(!HasExtFlag(Unit::TARG | Unit::COMP)) return 0.0f;
   Unit* u;
   taLeafItr i;
   bool has_targ;
@@ -4377,7 +4377,7 @@ float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
     sse /= (float)n_vals;
   if(sqrt)
     sse = sqrtf(sse);
-  if(HasLayerFlag(NO_ADD_SSE) || ((ext_flag & Unit::COMP) && HasLayerFlag(NO_ADD_COMP_SSE))) {
+  if(HasLayerFlag(NO_ADD_SSE) || (HasExtFlag(Unit::COMP) && HasLayerFlag(NO_ADD_COMP_SSE))) {
     rval = 0.0f;
     n_vals = 0;
   }

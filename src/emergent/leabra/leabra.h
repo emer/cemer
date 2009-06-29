@@ -1267,7 +1267,7 @@ public:
   float		I_net;		// #NO_SAVE #CAT_Activation net current produced by all channels
   float		v_m;		// #NO_SAVE #CAT_Activation membrane potential
   float		noise;		// #NO_SAVE #CAT_Activation noise value added to unit (noise_type on unit spec determines where it is added) -- this can be used in learning in some cases
-  float 	dav;		// #CAT_Activation dopamine value (da is delta activation) which modulates activations (e.g., via accom and hyst currents) to then drive learning
+  float 	dav;		// #VIEW_HOT #CAT_Activation dopamine value (da is delta activation) which modulates activations (e.g., via accom and hyst currents) to then drive learning
   float 	maint_h;	// #CAT_Activation maintained hysteresis current value (e.g., for PFC units)
 
   bool		in_subgp;	// #READ_ONLY #NO_SAVE #CAT_Structure determine if unit is in a subgroup

@@ -1003,11 +1003,11 @@ void LeabraUnitSpec::Settle_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thr
 
 void LeabraUnitSpec::Settle_Init_TargFlags(LeabraUnit* u, LeabraNetwork* net) {
   LeabraLayer* lay = u->own_lay();
-  if(!(u->ext_flag & Unit::TARG))
+  if(!u->HasExtFlag(Unit::TARG))
     return;
 
   if(net->phase == LeabraNetwork::MINUS_PHASE) {
-    if(!(lay->ext_flag & Unit::TARG)) {	// layer isn't a target but unit is..
+    if(!lay->HasExtFlag(Unit::TARG)) {	// layer isn't a target but unit is..
       u->targ = u->ext;
     }
     u->ext = 0.0f;
@@ -1115,7 +1115,7 @@ void LeabraUnitSpec::Compute_HardClampNoClip(LeabraUnit* u, LeabraNetwork*) {
 }
 
 void LeabraUnitSpec::ExtToComp(LeabraUnit* u, LeabraNetwork*) {
-  if(!(u->ext_flag & Unit::EXT))
+  if(!u->HasExtFlag(Unit::EXT))
     return;
   u->ext_flag = Unit::COMP;
   u->targ = u->ext;
@@ -1123,9 +1123,9 @@ void LeabraUnitSpec::ExtToComp(LeabraUnit* u, LeabraNetwork*) {
 }
 
 void LeabraUnitSpec::TargExtToComp(LeabraUnit* u, LeabraNetwork*) {
-  if(!(u->ext_flag & Unit::TARG_EXT))
+  if(!u->HasExtFlag(Unit::TARG_EXT))
     return;
-  if(u->ext_flag & Unit::EXT)
+  if(u->HasExtFlag(Unit::EXT))
     u->targ = u->ext;
   u->ext = 0.0f;
   u->ext_flag = Unit::COMP;
@@ -1182,7 +1182,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
 
   u->net_raw += u->net_delta;
   float tot_net = (u->bias_scale * u->bias.OwnCn(0)->wt) + u->net_raw;
-  if(u->ext_flag & Unit::EXT) {
+  if(u->HasExtFlag(Unit::EXT)) {
     LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
     tot_net += u->ext * ls->clamp.gain;
   }
@@ -1794,7 +1794,7 @@ void LeabraUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
 float LeabraUnitSpec::Compute_SSE(Unit* u, Network* net, bool& has_targ) {
   has_targ = false;
   LeabraUnit* lu = (LeabraUnit*)u;
-  if(lu->ext_flag & (Unit::TARG | Unit::COMP)) {
+  if(lu->HasExtFlag(Unit::TARG | Unit::COMP)) {
     has_targ = true;
     float uerr = lu->targ - lu->act_m;
     if(fabsf(uerr) < sse_tol)
@@ -1806,7 +1806,7 @@ float LeabraUnitSpec::Compute_SSE(Unit* u, Network* net, bool& has_targ) {
 }
 
 float LeabraUnitSpec::Compute_NormErr(LeabraUnit* u, LeabraNetwork* net) {
-  if(!(u->ext_flag & (Unit::TARG | Unit::COMP))) return 0.0f;
+  if(!u->HasExtFlag(Unit::TARG | Unit::COMP)) return 0.0f;
 
   if(net->on_errs) {
     if(u->act_m > 0.5f && u->targ < 0.5f) return 1.0f;
@@ -2645,7 +2645,7 @@ void LeabraLayerSpec::Compute_Active_K_ugp(LeabraLayer* lay, Unit_Group* ug, Lea
   if(kwtspec.k_from == KWTASpec::USE_PCT)
     new_k = (int)(kwtspec.pct * (float)ug->leaves);
   else if((kwtspec.k_from == KWTASpec::USE_PAT_K) && 
-	  ((lay->ext_flag & (Unit::TARG | Unit::COMP)) || (lay->ext_flag & Unit::EXT)))
+	  (lay->HasExtFlag(Unit::TARG | Unit::COMP | Unit::EXT)))
     new_k = Compute_Pat_K(lay, ug, thr);
   else
     new_k = kwtspec.k;
@@ -2665,22 +2665,22 @@ void LeabraLayerSpec::Compute_Active_K_ugp(LeabraLayer* lay, Unit_Group* ug, Lea
 
 int LeabraLayerSpec::Compute_Pat_K(LeabraLayer* lay, Unit_Group* ug, LeabraInhib*) {
   bool use_comp = false;
-  if(lay->ext_flag & Unit::COMP) // only use comparison vals if entire lay is COMP!
+  if(lay->HasExtFlag(Unit::COMP)) // only use comparison vals if entire lay is COMP!
     use_comp = true;
   int pat_k = 0;
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, ug->, i) {
     // use either EXT or TARG information...
-    if(u->ext_flag & Unit::EXT) {
+    if(u->HasExtFlag(Unit::EXT)) {
       if(u->ext >= kwta.pat_q)
 	pat_k++;
     }
-    else if(u->ext_flag & Unit::TARG) {
+    else if(u->HasExtFlag(Unit::TARG)) {
       if(u->targ >= kwta.pat_q)
 	pat_k++;
     }
-    else if(use_comp && (u->ext_flag | Unit::COMP)) {
+    else if(use_comp && u->HasExtFlag(Unit::COMP)) {
       if(u->targ >= kwta.pat_q)
 	pat_k++;
     }	      
@@ -2703,7 +2703,7 @@ void LeabraLayerSpec::Settle_Init_TargFlags(LeabraLayer* lay, LeabraNetwork* net
 }
 
 void LeabraLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) {
-  if(lay->ext_flag & Unit::TARG) {	// only process target layers..
+  if(lay->HasExtFlag(Unit::TARG)) {	// only process target layers..
     if(net->phase == LeabraNetwork::PLUS_PHASE)
       lay->SetExtFlag(Unit::EXT);
   }
@@ -2730,7 +2730,7 @@ void LeabraLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
     Compute_HardClampPhase2(lay, net);
     return;
   }
-  if(!(clamp.hard && (lay->ext_flag & Unit::EXT))) {
+  if(!(clamp.hard && lay->HasExtFlag(Unit::EXT))) {
     lay->hard_clamped = false;
     return;
   }
@@ -2746,7 +2746,7 @@ void LeabraLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::ExtToComp(LeabraLayer* lay, LeabraNetwork* net) {
-  if(!(lay->ext_flag & Unit::EXT))	// only process ext
+  if(!lay->HasExtFlag(Unit::EXT))	// only process ext
     return;
   lay->ext_flag = Unit::COMP;	// totally reset to comparison
     
@@ -2757,7 +2757,7 @@ void LeabraLayerSpec::ExtToComp(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::TargExtToComp(LeabraLayer* lay, LeabraNetwork* net) {
-  if(!(lay->ext_flag & Unit::TARG_EXT))	// only process w/ external input
+  if(!lay->HasExtFlag(Unit::TARG_EXT))	// only process w/ external input
     return;
   lay->ext_flag = Unit::COMP;	// totally reset to comparison
     
@@ -3376,7 +3376,7 @@ void LeabraLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay->un_g_i.cmpt)
     Compute_UnitInhib_AvgMax(lay, net);
 
-  if(lay->ext_flag & Unit::TARG) {
+  if(lay->HasExtFlag(Unit::TARG)) {
     net->trg_max_act = MAX(net->trg_max_act, lay->acts.max);
   }
 
@@ -3894,7 +3894,7 @@ float LeabraLayerSpec::Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug,
 
 float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   lay->norm_err = -1.0f;					 // assume not contributing
-  if(!(lay->ext_flag & (Unit::TARG | Unit::COMP))) return -1.0f; // indicates not applicable
+  if(!lay->HasExtFlag(Unit::TARG | Unit::COMP)) return -1.0f; // indicates not applicable
 
   float nerr = 0.0f;
   int ntot = 0;
@@ -3921,7 +3921,7 @@ float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay->norm_err > 1.0f) lay->norm_err = 1.0f;
 
   if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
-     ((lay->ext_flag & Unit::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE)))
+     (lay->HasExtFlag(Unit::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE)))
     return -1.0f;		// no contributarse
 
   return lay->norm_err;
@@ -3931,7 +3931,7 @@ float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
 //	Parameter Adaptation over longer timesales
 
 void LeabraLayerSpec::AdaptKWTAPt(LeabraLayer* lay, LeabraNetwork*) {
-  if((lay->ext_flag & Unit::EXT) && !(lay->ext_flag & Unit::TARG))
+  if(lay->HasExtFlag(Unit::EXT) && !lay->HasExtFlag(Unit::TARG))
     return;			// don't adapt points for input-only layers
   if((inhib_group != ENTIRE_LAYER) && (lay->units.gp.size > 0)) {
     int g;

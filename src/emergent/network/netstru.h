@@ -864,6 +864,8 @@ public: //
   // #CAT_Activation set ext flag for what type of input data we receive
   void		UnSetExtFlag(ExtType flg) { ext_flag = (ExtType)(ext_flag & ~flg); }
   // #CAT_Activation un-set ext flag for what type of input data we receive
+  bool		HasExtFlag(int flg) { return ext_flag & flg; }
+  // #CAT_Activation check if has given ext flag value
 
   virtual void 	ApplyInputData(float val, ExtType act_ext_flags, Random* ran = NULL,
 			       bool na_by_range=false);
@@ -1510,6 +1512,8 @@ public:
   // #CAT_Activation set external input data flag
   void		UnSetExtFlag(int flg) { ext_flag = (Unit::ExtType)(ext_flag & ~flg); }
   // #CAT_Activation un-set external input data flag
+  bool		HasExtFlag(int flg)   { return ext_flag & flg; }
+  // #CAT_Activation check if has given ext flag value set
 
   virtual void	SetLayUnitExtFlags(int flg);
   // #CAT_Activation set external input data flags for layer and all units in the layer
@@ -1709,7 +1713,7 @@ INHERITED(taGroup<Layer>)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
-  TDCoord	pos;		// Position of Group of layers relative to network
+  PosTDCoord	pos;		// Position of Group of layers relative to network
   PosTDCoord	max_size;	// #READ_ONLY #SHOW #CAT_Structure maximum size of the layer group -- computed automatically from the layers within the group
 
   void		GetAbsPos(TDCoord& abs_pos)
