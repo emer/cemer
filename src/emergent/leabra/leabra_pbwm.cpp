@@ -358,7 +358,7 @@ void MatrixMiscSpec::Initialize() {
   neg_da_bl = 0.0002f;
   neg_gain = 1.5f;
   perf_gain = 0.0f;
-  snr_err_da = .1f;
+  snr_err_da = 1.0f;
   no_snr_mod = false;
 }
 

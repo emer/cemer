@@ -228,7 +228,7 @@ void VEBodyView::Render_pre() {
   bool show_drag = true;;
   T3ExaminerViewer* vw = GetViewer();
   if(vw)
-    show_drag = vw->quarter->interactionModeOn();
+    show_drag = vw->interactionModeOn();
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
@@ -571,7 +571,7 @@ void VEObjCarouselView::Render_pre() {
   bool show_drag = true;;
   T3ExaminerViewer* vw = GetViewer();
   if(vw)
-    show_drag = vw->quarter->interactionModeOn();
+    show_drag = vw->interactionModeOn();
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
@@ -722,7 +722,7 @@ void VEStaticView::Render_pre() {
   bool show_drag = true;;
   T3ExaminerViewer* vw = GetViewer();
   if(vw)
-    show_drag = vw->quarter->interactionModeOn();
+    show_drag = vw->interactionModeOn();
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
@@ -1203,6 +1203,10 @@ void VEWorldView::BuildAll() {
 void VEWorldView::Render_pre() {
   InitPanel();
 
+  T3ExaminerViewer* vw = GetViewer();
+  if(vw) {
+    vw->syncViewerMode();
+  }
   // this delay is deadly for viewing!
   SoVRMLImageTexture::setDelayFetchURL(false);
 

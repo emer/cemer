@@ -552,7 +552,7 @@ void T3ExaminerViewer::dynbuttonClicked(int but_no) {
 
 void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
   if(e->key() == Qt::Key_Escape) {
-    if(quarter->interactionModeOn()) {
+    if(interactionModeOn()) {
       setInteractionModeOn(false);
     }
     else {
@@ -827,7 +827,8 @@ bool so_scrollbar_is_dragging = false; // referenced in t3node_so.cpp
 bool T3ExaminerViewer::event(QEvent* ev_) {
   static bool inside_event_loop = false;
 
-  syncViewerMode();		// keep it sync'd
+  // this is probably not necc -- too much!
+//   syncViewerMode();		// keep it sync'd
 
   //NOTE: the base classes don't check if event is already handled, so we have to skip
   // calling inherited if we handle it ourselves
@@ -1277,7 +1278,7 @@ iSoSelectionEvent::iSoSelectionEvent(bool is_selected_, const SoPath* path_)
 void iT3ViewspaceWidget::SoSelectionCallback(void* inst, SoPath* path) {
   iSoSelectionEvent ev(true, path);
   iT3ViewspaceWidget* t3vw = (iT3ViewspaceWidget*)inst;
-  if(!t3vw->t3viewer()->quarter->interactionModeOn()) return;
+  if(!t3vw->t3viewer()->interactionModeOn()) return;
   t3vw->SoSelectionEvent(&ev);
   t3vw->sel_so->touch(); // to redraw
 
@@ -1286,7 +1287,7 @@ void iT3ViewspaceWidget::SoSelectionCallback(void* inst, SoPath* path) {
 void iT3ViewspaceWidget::SoDeselectionCallback(void* inst, SoPath* path) {
   iSoSelectionEvent ev(false, path);
   iT3ViewspaceWidget* t3dv = (iT3ViewspaceWidget*)inst;
-  if(!t3dv->t3viewer()->quarter->interactionModeOn()) return;
+  if(!t3dv->t3viewer()->interactionModeOn()) return;
   t3dv->SoSelectionEvent(&ev);
   t3dv->sel_so->touch(); // to redraw
 }

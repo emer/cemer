@@ -238,6 +238,8 @@ public:
 
   virtual void		setInteractionModeOn(bool onoff, bool re_render = true);
   // set the interaction mode on or off (if off, then it is in view mode) -- also updates button states -- also calls Render on parent dataview if mode has changed, so that interactors can be updated (unless re_render = false)
+  bool			interactionModeOn() { return (bool)viewer_mode; }
+  // is interaction mode on or not -- this is the interface that all 3rd parties should consult -- not the one on quarter which can often be out of sync!
 
   virtual void		saveView(int view_no);
   // save the current camera view information to given saved view

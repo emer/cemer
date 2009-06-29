@@ -1062,12 +1062,14 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb);
 void GridTableView::Render_pre() {
   bool show_drag = manip_ctrl_on;
   T3ExaminerViewer* vw = GetViewer();
-  if(vw)
-    show_drag = vw->quarter->interactionModeOn();
+  if(vw) {
+    vw->syncViewerMode();
+    show_drag = vw->interactionModeOn();
+  }
 
   setNode(new T3GridViewNode(this, width, show_drag));
 
-  if(vw && vw->quarter->interactionModeOn()) {
+  if(vw && vw->interactionModeOn()) {
     SoEventCallback* ecb = new SoEventCallback;
     ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), T3GridViewNode_MouseCB, this);
     node_so()->addChild(ecb);
@@ -3428,8 +3430,10 @@ void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
 void GraphTableView::Render_pre() {
   bool show_drag = manip_ctrl_on;
   T3ExaminerViewer* vw = GetViewer();
-  if(vw)
-    show_drag = vw->quarter->interactionModeOn();
+  if(vw) {
+    vw->syncViewerMode();
+    show_drag = vw->interactionModeOn();
+  }
 
   setNode(new T3GraphViewNode(this, width, show_drag));
 

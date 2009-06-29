@@ -1308,7 +1308,7 @@ void LayerView::Render_pre() {
   bool show_drag = true;;
   T3ExaminerViewer* vw = GetViewer();
   if(vw)
-    show_drag = vw->quarter->interactionModeOn();
+    show_drag = vw->interactionModeOn();
 
   NetView* nv = this->nv();
   if(!nv->lay_mv) show_drag = false;
@@ -1759,7 +1759,7 @@ void LayerGroupView::Render_pre() {
   bool show_drag = true;;
   T3ExaminerViewer* vw = GetViewer();
   if(vw)
-    show_drag = vw->quarter->interactionModeOn();
+    show_drag = vw->interactionModeOn();
 
   NetView* nv = this->nv();
   if(!nv->lay_mv) show_drag = false;
@@ -1925,7 +1925,7 @@ void NetViewObjView::Render_pre() {
   T3ExaminerViewer* vw = GetViewer();
   bool show_drag = false;
   if(vw)
-    show_drag = vw->quarter->interactionModeOn();
+    show_drag = vw->interactionModeOn();
 
 
   NetView* nv = GET_MY_OWNER(NetView);
@@ -2663,7 +2663,8 @@ void NetView::Render_pre() {
   bool show_drag = true;;
   T3ExaminerViewer* vw = GetViewer();
   if(vw) {
-    show_drag = vw->quarter->interactionModeOn();
+    vw->syncViewerMode();
+    show_drag = vw->interactionModeOn();
   }
   if(!lay_mv) show_drag = false;
 
@@ -2672,7 +2673,7 @@ void NetView::Render_pre() {
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
   mat->transparency.setValue(0.5f);
 
-  if(vw && vw->quarter->interactionModeOn()) {
+  if(vw && vw->interactionModeOn()) {
     SoEventCallback* ecb = new SoEventCallback;
     ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
     node_so()->addChild(ecb);
@@ -2793,6 +2794,7 @@ void NetView::Render_impl() {
 
   T3ExaminerViewer* vw = GetViewer();
   if(vw) {
+    vw->syncViewerMode();
     if(unit_disp_md) {
       int but_no = vw->dyn_buttons.FindName(unit_disp_md->name);
       if(but_no >= 0) {
