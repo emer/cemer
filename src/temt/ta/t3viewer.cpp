@@ -781,6 +781,7 @@ void T3ExaminerViewer::gotoView(int view_no) {
   if(!cam) return;
   saved_views[view_no]->setCameraParams(cam);
   cur_view_no = view_no;
+  syncViewerMode();
   emit viewSelected(view_no);
 }
 
