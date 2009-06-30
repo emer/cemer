@@ -1592,14 +1592,13 @@ void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
   if (!t3node) return;
 
   if (ev->is_selected) {
-//     if (t3node->selectEditMe()) {
-//       if (taMisc::click_style == taMisc::CS_SINGLE) {
-//         t3node->ViewProperties();
-//         // don't also select or grab focus in this mode
-//         return;
-//       }
-//     }
     AddSelectedItem(t3node);
+    taiDataLink* link = t3node->effLink(ISelectable::GC_DEFAULT);
+    if(link) {
+      taBase* obj = (taBase*)link->data();
+      if(obj)
+	tabMisc::DelayedFunCall_gui(obj, "BrowserSelectMe");
+    }
   }
   else {
     RemoveSelectedItem(t3node);
