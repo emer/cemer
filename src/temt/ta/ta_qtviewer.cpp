@@ -3527,8 +3527,7 @@ int iMainWindowViewer::s_next_unique_id;
 
 iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
 : inherited(parent, (Qt::Window |Qt:: WindowSystemMenuHint | 
-  Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint
-  )), IDataViewWidget(viewer_)
+		     Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)), IDataViewWidget(viewer_)
 {
   Init();
   m_is_root = viewer_->isRoot(); // need to do before Constr
