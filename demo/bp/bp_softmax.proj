@@ -1,0 +1,6643 @@
+// ta_Dump File v2.0 -- code v4.0.21.0
+BpProject .projects[0] { 
+  Doc_Group @.docs = [2] {
+    taDoc @[0] { };
+    taDoc @[1] { };
+  };
+
+  Wizard_Group @.wizards = [1] {
+    BpWizard @[0] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+
+      LayerWizElList @.layer_cfg = [3] {
+	LayerWizEl @[0] { };
+	LayerWizEl @[1] { };
+	LayerWizEl @[2] { };
+      };
+    };
+  };
+
+  SelectEdit_Group @.edits = [1] {
+    SelectEdit @[0] { 
+      EditMbrItem_Group @.mbrs = [3] {
+	EditMbrItem @[0] { };
+	EditMbrItem @[1] { };
+	EditMbrItem @[2] { };
+      };
+
+      EditMthItem_Group @.mths = [4] {
+	EditMthItem @[0] { };
+	EditMthItem @[1] { };
+	EditMthItem @[2] { };
+	EditMthItem @[3] { };
+      };
+    };
+  };
+
+  DataTable_Group @.data = [0] {
+    DataTable_Group @.gp[0] = [2] { 
+      DataTable @[0] { 
+	DataTableCols @.data = [3] {
+	  String_Data @[0] { };
+	  float_Data @[1] { };
+	  float_Data @[2] { };
+	};
+      };
+      DataTable @[1] { 
+	DataTableCols @.data = [3] {
+	  String_Data @[0] { };
+	  float_Data @[1] { };
+	  float_Data @[2] { };
+	};
+      };
+    };
+    DataTable_Group @.gp[1] = [2] { 
+      DataTable @[0] { 
+	DataTableCols @.data = [6] {
+	  int_Data @[0] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @[0] { };
+      };
+};
+	  int_Data @[1] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @[0] { };
+      };
+};
+	  int_Data @[2] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @[0] { };
+      };
+};
+	  String_Data @[3] { };
+	  String_Data @[4] { };
+	  float_Data @[5] { };
+	};
+      };
+      DataTable @[1] { 
+	DataTableCols @.data = [6] {
+	  int_Data @[0] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @[0] { };
+      };
+};
+	  int_Data @[1] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @[0] { };
+      };
+};
+	  float_Data @[2] { };
+	  float_Data @[3] { };
+	  float_Data @[4] { };
+	  float_Data @[5] { };
+	};
+      };
+    };
+    DataTable_Group @.gp[2] = [1] { 
+      DataTable @[0] { 
+	DataTableCols @.data = [2] {
+	  float_Data @[0] { };
+	  float_Data @[1] { };
+	};
+      };
+    };
+  };
+
+  taBase_Group @.data_proc = [4] {
+    taDataProc @[0] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taDataAnal @[1] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taDataGen @[2] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taImageProc @[3] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+  };
+
+  Program_Group @.programs = [0] {
+    Program_Group @.gp[0] = [8] { 
+      Program @[0] { 
+	ProgVar_List @.args = [3] {
+	  ProgVar @[0] { };
+	  ProgVar @[1] { };
+	  ProgVar @[2] { };
+	};
+
+	ProgVar_List @.vars = [1] {
+	  ProgVar @[0] { };
+	};
+
+	ProgEl_List @.init_code = [1] {
+	  NetCounterInit @[0] { };
+	};
+
+	ProgEl_List @.prog_code = [2] {
+	  NetCounterInit @[0] { };
+	  WhileLoop @[1] { 
+	    ProgEl_List @.loop_code = [2] {
+	      ProgramCall @[0] { 
+		ProgArg_List @.prog_args = [3] {
+		  ProgArg @[0] { };
+		  ProgArg @[1] { };
+		  ProgArg @[2] { };
+		};
+	      };
+	      NetCounterIncr @[1] { };
+	    };
+	  };
+	};
+      };
+      Program @[1] { 
+	ProgObjList @.objs = [1] {
+	  RndSeed @[0] { };
+	};
+
+	ProgType_List @.types = [1] {
+	  DynEnumType @[0] { 
+	    DynEnumItem_List @.enums = [2] {
+	      DynEnumItem @[0] { };
+	      DynEnumItem @[1] { };
+	    };
+	  };
+	};
+
+	ProgVar_List @.args = [3] {
+	  ProgVar @[0] { };
+	  ProgVar @[1] { };
+	  ProgVar @[2] { };
+	};
+
+	ProgVar_List @.vars = [7] {
+	  ProgVar @[0] { };
+	  ProgVar @[1] { };
+	  ProgVar @[2] { };
+	  ProgVar @[3] { };
+	  ProgVar @[4] { };
+	  ProgVar @[5] { };
+	  ProgVar @[6] { };
+	};
+
+	ProgEl_List @.init_code = [6] {
+	  AssignExpr @[0] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	  AssignExpr @[2] { };
+	  IfElse @[3] { 
+	    ProgEl_List @.true_code = [1] {
+	      MethodCall @[0] { };
+	    };
+
+	    ProgEl_List @.false_code = [1] {
+	      MethodCall @[0] { };
+	    };
+	  };
+	  IfGuiPrompt @[4] { 
+	    ProgEl_List @.yes_code = [2] {
+	      MethodCall @[0] { };
+	      PrintExpr @[1] { };
+	    };
+	  };
+	  AssignExpr @[5] { };
+	};
+
+	ProgEl_List @.prog_code = [7] {
+	  AssignExpr @[0] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	  MemberAssign @[2] { };
+	  IfElse @[3] { 
+	    ProgEl_List @.true_code = [2] {
+	      MethodCall @[0] { };
+	      PrintExpr @[1] { };
+	    };
+	  };
+	  AssignExpr @[4] { };
+	  WhileLoop @[5] { 
+	    ProgEl_List @.loop_code = [3] {
+	      ProgramCall @[0] { 
+		ProgArg_List @.prog_args = [2] {
+		  ProgArg @[0] { };
+		  ProgArg @[1] { };
+		};
+	      };
+	      NetCounterIncr @[1] { };
+	      IfBreak @[2] { };
+	    };
+	  };
+	  MethodCall @[6] { };
+	};
+      };
+      Program @[2] { 
+	ProgVar_List @.args = [2] {
+	  ProgVar @[0] { };
+	  ProgVar @[1] { };
+	};
+
+	ProgVar_List @.vars = [5] {
+	  ProgVar @[0] { };
+	  ProgVar @[1] { };
+	  ProgVar @[2] { };
+	  ProgVar @[3] { };
+	  ProgVar @[4] { };
+	};
+
+	ProgEl_List @.init_code = [2] {
+	  NetCounterInit @[0] { };
+	  AssignExpr @[1] { };
+	};
+
+	ProgEl_List @.prog_code = [9] {
+	  NetCounterInit @[0] { };
+	  AssignExpr @[1] { };
+	  MethodCall @[2] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	  MethodCall @[3] { };
+	  NetDataLoop @[4] { 
+	    ProgEl_List @.loop_code = [2] {
+	      ProgramCall @[0] { 
+		ProgArg_List @.prog_args = [2] {
+		  ProgArg @[0] { };
+		  ProgArg @[1] { };
+		};
+	      };
+	      IfElse @[1] { 
+		ProgEl_List @.true_code = [1] {
+		  MethodCall @[0] { };
+		};
+	      };
+	    };
+	  };
+	  IfElse @[5] { 
+	    ProgEl_List @.true_code = [1] {
+	      MethodCall @[0] { };
+	    };
+	  };
+	  MethodCall @[6] { };
+	  MethodCall @[7] { };
+	  ProgramCall @[8] { 
+	    ProgArg_List @.prog_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	};
+      };
+      Program @[3] { 
+	ProgVar_List @.args = [2] {
+	  ProgVar @[0] { };
+	  ProgVar @[1] { };
+	};
+
+	ProgVar_List @.vars = [1] {
+	  ProgVar @[0] { };
+	};
+
+	ProgEl_List @.prog_code = [6] {
+	  MethodCall @[0] { };
+	  ProgramCall @[1] { 
+	    ProgArg_List @.prog_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
+	  MethodCall @[2] { };
+	  MethodCall @[3] { };
+	  ProgramCall @[4] { 
+	    ProgArg_List @.prog_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	  NetUpdateView @[5] { };
+	};
+      };
+      Program @[4] { 
+	ProgObjList @.objs = [1] {
+	  LayerWriter @[0] { 
+	    LayerDataEl_List @.layer_data = [3] {
+	      LayerWriterEl @[0] { };
+	      LayerWriterEl @[1] { };
+	      LayerWriterEl @[2] { };
+	    };
+	  };
+	};
+
+	ProgVar_List @.args = [2] {
+	  ProgVar @[0] { };
+	  ProgVar @[1] { };
+	};
+
+	ProgVar_List @.vars = [1] {
+	  ProgVar @[0] { };
+	};
+
+	ProgEl_List @.init_code = [2] {
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	};
+
+	ProgEl_List @.prog_code = [1] {
+	  MethodCall @[0] { };
+	};
+      };
+      Program @[5] { 
+	ProgObjList @.objs = [1] {
+	  NetMonitor @[0] { 
+	    NetMonItem_List @.items = [6] {
+	      NetMonItem @[0] { };
+	      NetMonItem @[1] { };
+	      NetMonItem @[2] { };
+	      NetMonItem @[3] { };
+	      NetMonItem @[4] { };
+	      NetMonItem @[5] { };
+	    };
+	  };
+	};
+
+	ProgVar_List @.args = [1] {
+	  ProgVar @[0] { };
+	};
+
+	ProgVar_List @.vars = [2] {
+	  ProgVar @[0] { };
+	  ProgVar @[1] { };
+	};
+
+	ProgEl_List @.init_code = [3] {
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	  MethodCall @[2] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	};
+
+	ProgEl_List @.prog_code = [4] {
+	  MethodCall @[0] { };
+	  MethodCall @[1] { };
+	  MethodCall @[2] { };
+	  MethodCall @[3] { 
+	    ProgArg_List @.meth_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
+	};
+      };
+      Program @[6] { 
+	ProgObjList @.objs = [1] {
+	  NetMonitor @[0] { 
+	    NetMonItem_List @.items = [6] {
+	      NetMonItem @[0] { };
+	      NetMonItem @[1] { };
+	      NetMonItem @[2] { };
+	      NetMonItem @[3] { };
+	      NetMonItem @[4] { };
+	      NetMonItem @[5] { };
+	    };
+	  };
+	};
+
+	ProgVar_List @.args = [1] {
+	  ProgVar @[0] { };
+	};
+
+	ProgVar_List @.vars = [3] {
+	  ProgVar @[0] { };
+	  ProgVar @[1] { };
+	  ProgVar @[2] { };
+	};
+
+	ProgEl_List @.init_code = [4] {
+	  AssignExpr @[0] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
+	  MethodCall @[2] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	  MethodCall @[3] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	};
+
+	ProgEl_List @.prog_code = [6] {
+	  MethodCall @[0] { };
+	  MethodCall @[1] { };
+	  AssignExpr @[2] { };
+	  MethodCall @[3] { 
+	    ProgArg_List @.meth_args = [3] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	      ProgArg @[2] { };
+	    };
+	  };
+	  MethodCall @[4] { 
+	    ProgArg_List @.meth_args = [3] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	      ProgArg @[2] { };
+	    };
+	  };
+	  MethodCall @[5] { };
+	};
+      };
+      Program @[7] { 
+	ProgVar_List @.args = [1] {
+	  ProgVar @[0] { };
+	};
+
+	ProgVar_List @.vars = [6] {
+	  ProgVar @[0] { };
+	  ProgVar @[1] { };
+	  ProgVar @[2] { };
+	  ProgVar @[3] { };
+	  ProgVar @[4] { };
+	  ProgVar @[5] { };
+	};
+
+	ProgEl_List @.prog_code = [6] {
+	  IfReturn @[0] { };
+	  MiscCall @[1] { 
+	    ProgArg_List @.meth_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
+	  MiscCall @[2] { 
+	    ProgArg_List @.meth_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
+	  AssignExpr @[3] { };
+	  MethodCall @[4] { 
+	    ProgArg_List @.meth_args = [4] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	      ProgArg @[2] { };
+	      ProgArg @[3] { };
+	    };
+	  };
+	  MethodCall @[5] { 
+	    ProgArg_List @.meth_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
+	};
+      };
+    };
+  };
+
+  DataViewer_List @.viewers = [1] {
+    MainWindowViewer @[0] { 
+      ToolBar_List @.toolbars = [1] {
+	ToolBar @[0] { };
+      };
+
+      FrameViewer_List @.frames = [3] {
+	tabBrowseViewer @[0] { };
+	PanelViewer @[1] { };
+	T3DataViewer @[2] { 
+	  T3DataViewFrame_List @.frames = [5] {
+	    T3DataViewFrame @[0] { 
+	      T3DataView_List @.children = [1] {
+		NetView @[0] { 
+		  ScaleRange_List @.scale_ranges = [5] {
+		    ScaleRange @[0] { };
+		    ScaleRange @[1] { };
+		    ScaleRange @[2] { };
+		    ScaleRange @[3] { };
+		    ScaleRange @[4] { };
+		  };
+		};
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
+	    };
+	    T3DataViewFrame @[1] { 
+	      T3DataView_List @.children = [1] {
+		NetView @[0] { 
+		  ScaleRange_List @.scale_ranges = [1] {
+		    ScaleRange @[0] { };
+		  };
+		};
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
+	    };
+	    T3DataViewFrame @[2] { 
+	      T3DataView_List @.children = [1] {
+		GridTableView @[0] { 
+		  T3DataView_List @.children = [3] {
+		    GridColView @[0] { };
+		    GridColView @[1] { };
+		    GridColView @[2] { };
+		  };
+		};
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
+	    };
+	    T3DataViewFrame @[3] { 
+	      T3DataView_List @.children = [1] {
+		GridTableView @[0] { 
+		  T3DataView_List @.children = [3] {
+		    GridColView @[0] { };
+		    GridColView @[1] { };
+		    GridColView @[2] { };
+		  };
+		};
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
+	    };
+	    T3DataViewFrame @[4] { 
+	      T3DataView_List @.children = [1] {
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [6] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		    GraphColView @[3] { };
+		    GraphColView @[4] { };
+		    GraphColView @[5] { };
+		  };
+		};
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
+	    };
+	  };
+	};
+      };
+
+      DockViewer_List @.docks = [1] {
+	ToolBoxDockViewer @[0] { };
+      };
+    };
+  };
+
+  Network_Group @.networks = [2] {
+    BpNetwork @[0] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+	UserDataItem @[1] { };
+	UserDataItem @[2] { };
+	UserDataItem @[3] { };
+	UserDataItem @[4] { };
+	UserDataItem @[5] { };
+	UserDataItem @[6] { };
+	UserDataItem @[7] { };
+	UserDataItem @[8] { };
+	UserDataItem @[9] { };
+	UserDataItem @[10] { };
+   };
+
+      BaseSpec_Group @.specs = [4] {
+	BpUnitSpec @[0] { 
+	  BaseSpec_Group @.children = [3] {
+	    ExpBpUnitSpec @[0] { };
+	    SoftMaxBpUnitSpec @[1] { };
+	    LinearBpUnitSpec @[2] { };
+	  };
+	};
+	BpConSpec @[1] { 
+	  BaseSpec_Group @.children = [2] {
+	    BpConSpec @[0] { };
+	    BpConSpec @[1] { };
+	  };
+	};
+	FullPrjnSpec @[2] { };
+	OneToOnePrjnSpec @[3] { };
+      };
+
+      Layer_Group @.layers = [5] {
+	BpLayer @[0] { 
+	  Unit_Group @.units = [16] {
+	  };
+	};
+	BpLayer @[1] { 
+	  Projection_Group @.projections = [1] {
+	    Projection @[0] { };
+	  };
+
+	  Unit_Group @.units = [9] {
+	  };
+	};
+	BpLayer @[2] { 
+	  Projection_Group @.projections = [1] {
+	    Projection @[0] { };
+	  };
+
+	  Unit_Group @.units = [4] {
+	  };
+	};
+	BpLayer @[3] { 
+	  Projection_Group @.projections = [1] {
+	    Projection @[0] { };
+	  };
+
+	  Unit_Group @.units = [1] {
+	  };
+	};
+	BpLayer @[4] { 
+	  Projection_Group @.projections = [2] {
+	    Projection @[0] { };
+	    Projection @[1] { };
+	  };
+
+	  Unit_Group @.units = [4] {
+	  };
+	};
+      };
+    };
+    BpNetwork @[1] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+	UserDataItem @[1] { };
+	UserDataItem @[2] { };
+	UserDataItem @[3] { };
+	UserDataItem @[4] { };
+	UserDataItem @[5] { };
+	UserDataItem @[6] { };
+	UserDataItem @[7] { };
+	UserDataItem @[8] { };
+	UserDataItem @[9] { };
+	UserDataItem @[10] { };
+   };
+
+      BaseSpec_Group @.specs = [4] {
+	BpUnitSpec @[0] { 
+	  BaseSpec_Group @.children = [3] {
+	    ExpBpUnitSpec @[0] { };
+	    SoftMaxBpUnitSpec @[1] { };
+	    LinearBpUnitSpec @[2] { };
+	  };
+	};
+	BpConSpec @[1] { 
+	  BaseSpec_Group @.children = [2] {
+	    BpConSpec @[0] { };
+	    BpConSpec @[1] { };
+	  };
+	};
+	FullPrjnSpec @[2] { };
+	OneToOnePrjnSpec @[3] { };
+      };
+
+      Layer_Group @.layers = [3] {
+	BpLayer @[0] { 
+	  Unit_Group @.units = [16] {
+	  };
+	};
+	BpLayer @[1] { 
+	  Projection_Group @.projections = [1] {
+	    Projection @[0] { };
+	  };
+
+	  Unit_Group @.units = [9] {
+	  };
+	};
+	BpLayer @[2] { 
+	  Projection_Group @.projections = [1] {
+	    Projection @[0] { };
+	  };
+
+	  Unit_Group @.units = [4] {
+	  };
+	};
+      };
+    };
+  };
+};
+BpProject .projects[0] {
+ name="Project_0";
+ desc="
+
+
+";
+ tags=;
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ wiki_url {
+  sync=0;
+  wiki=;
+  url=;
+ };
+ templates {
+  name=;
+  el_typ=taBase;
+  el_def=0;
+ };
+ docs {
+  name=;
+  el_typ=taDoc;
+  el_def=0;
+  taDoc @[0] {
+   name="ProjectDocs";
+   auto_open=1;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+= SoftMax Bp =
+
+* go to the [[.PanelTab.ControlPanel]] to set parameters and train the network.
+
+* seems like you can increase the ExpBpUnitSpec gain from 1 to 2 or 3 *after* training has progressed for a hundred epochs or so, but high values at the start of training are not good.  Probably just need to decrease the initial random weight variance or something like that.
+
+</body>
+</html>
+";
+   html_text="<html><head></head><body>
+<h1> SoftMax Bp </h1>
+<p>
+</p><ul><li> go to the <a href=\"ta:.PanelTab.ControlPanel\">ControlPanel</a> to set parameters and train the network.
+</li></ul>
+<ul><li> seems like you can increase the ExpBpUnitSpec gain from 1 to 2 or 3 *after* training has progressed for a hundred epochs or so, but high values at the start of training are not good.  Probably just need to decrease the initial random weight variance or something like that.
+</li></ul>
+
+
+</body></html>";
+  };
+  taDoc @[1] {
+   name="HelpDoc";
+   auto_open=0;
+   web_doc=1;
+   wiki="emergent";
+   url="taDoc";
+   full_url="http://grey.colorado.edu/emergent/index.php/taDoc";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text="<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\" dir=\"ltr\"><head>
+		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">
+		<meta http-equiv=\"Content-Style-Type\" content=\"text/css\">
+		<meta name=\"generator\" content=\"MediaWiki 1.16alpha\">
+		<meta name=\"keywords\" content=\"Docs,preferences,css path\">
+		<link rel=\"canonical\" href=\"/emergent/index.php/Docs\">
+		<link rel=\"stylesheet\" type=\"text/css\" href=\"/emergent/extensions/BreadCrumbs/BreadCrumbs.css\">
+		<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=Docs&amp;action=edit\">
+		<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=Docs&amp;action=edit\">
+		<link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection\" href=\"http://yui.yahooapis.com/2.5.1/build/fonts/fonts-min.css\">
+		<link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection\" href=\"http://yui.yahooapis.com/2.5.1/build/tabview/assets/skins/sam/tabview.css\">
+		<link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection\" href=\"/emergent/extensions/HeaderTabs/skins/headertabs.css\">
+		<link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
+		<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"Emergent (en)\">
+		<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Emergent RSS Feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=rss\">
+		<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Emergent Atom Feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
+		<title>Docs - Emergent</title>
+		<link rel=\"stylesheet\" href=\"/emergent/skins/common/shared.css?228\" type=\"text/css\" media=\"screen\">
+		<link rel=\"stylesheet\" href=\"/emergent/skins/common/commonPrint.css?228\" type=\"text/css\" media=\"print\">
+		<link rel=\"stylesheet\" href=\"/emergent/skins/monobook/main.css?228\" type=\"text/css\" media=\"screen\">
+		<!--[if lt IE 5.5000]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE50Fixes.css?228\" type=\"text/css\" media=\"screen\" /><![endif]-->
+		<!--[if IE 5.5000]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE55Fixes.css?228\" type=\"text/css\" media=\"screen\" /><![endif]-->
+		<!--[if IE 6]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE60Fixes.css?228\" type=\"text/css\" media=\"screen\" /><![endif]-->
+		<!--[if IE 7]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE70Fixes.css?228\" type=\"text/css\" media=\"screen\" /><![endif]-->
+		<link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:Common.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" type=\"text/css\">
+		<link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:Print.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" type=\"text/css\" media=\"print\">
+		<link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:monobook.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" type=\"text/css\">
+		<link rel=\"stylesheet\" href=\"/emergent/index.php?title=-&amp;action=raw&amp;maxage=18000&amp;smaxage=0&amp;ts=20090702054355&amp;gen=css\" type=\"text/css\">
+		<!--[if lt IE 7]><script type=\"text/javascript\" src=\"/emergent/skins/common/IEFixes.js?228\"></script>
+		<meta http-equiv=\"imagetoolbar\" content=\"no\" /><![endif]-->
+
+		<script type=\"text/javascript\">/*<![CDATA[*/
+var skin=\"monobook\",
+stylepath=\"/emergent/skins\",
+wgArticlePath=\"/emergent/index.php/$1\",
+wgScriptPath=\"/emergent\",
+wgScript=\"/emergent/index.php\",
+wgVariantArticlePath=false,
+wgActionPaths={},
+wgServer=\"http://grey.colorado.edu\",
+wgCanonicalNamespace=\"\",
+wgCanonicalSpecialPageName=false,
+wgNamespaceNumber=0,
+wgPageName=\"Docs\",
+wgTitle=\"Docs\",
+wgAction=\"view\",
+wgArticleId=\"244\",
+wgIsArticle=true,
+wgUserName=\"Oreilly\",
+wgUserGroups=[\"*\", \"user\", \"autoconfirmed\"],
+wgUserLanguage=\"en\",
+wgContentLanguage=\"en\",
+wgBreakFrames=false,
+wgCurRevisionId=3996,
+wgVersion=\"1.16alpha\",
+wgEnableAPI=true,
+wgEnableWriteAPI=true,
+wgSeparatorTransformTable=[\"\", \"\"],
+wgDigitTransformTable=[\"\", \"\"],
+wgRestrictionEdit=[],
+wgRestrictionMove=[],
+wgAjaxWatch={\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg\": \"Watching...\", \"unwatchingMsg\": \"Unwatching...\"}
+/*]]>*/</script>
+
+		<script type=\"text/javascript\" src=\"/emergent/skins/common/wikibits.js?228\"><!-- wikibits js --></script><style type=\"text/css\">@import \"/emergent/skins/monobook/KHTMLFixes.css\";</style>
+		<script type=\"text/javascript\" src=\"/emergent/skins/common/ajax.js?228\"></script>
+		<script type=\"text/javascript\" src=\"/emergent/skins/common/ajaxwatch.js?228\"></script>
+		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/utilities/utilities.js\"></script>
+		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/tabview/tabview-min.js\"></script>
+		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/event/event-min.js\"></script>
+		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/history/history-min.js\"></script>
+		<script type=\"text/javascript\" src=\"/emergent/extensions/HeaderTabs/skins/headertabs.js\"></script>
+		<link rel=\"alternate\" type=\"application/rdf+xml\" title=\"Docs\" href=\"/emergent/index.php?title=Special:ExportRDF/Docs&amp;xmlmime=rdf\">
+		<script type=\"text/javascript\" src=\"/emergent/index.php?title=-&amp;action=raw&amp;smaxage=0&amp;gen=js&amp;useskin=monobook\"><!-- site js --></script><script src=\"http://meta.wikimedia.org/w/index.php?title=MediaWiki:Wikiminiatlas.js&amp;action=raw&amp;ctype=text/javascript&amp;smaxage=21600&amp;maxage=86400\" type=\"text/javascript\"></script>
+	</head><body class=\"mediawiki ltr ns-0 ns-subject page-Docs skin-monobook\">
+	<div id=\"globalWrapper\">
+		<div id=\"column-content\">
+	<div id=\"content\">
+		<a name=\"top\" id=\"top\"></a>
+				<h1 id=\"firstHeading\" class=\"firstHeading\">Docs</h1>
+		<div id=\"bodyContent\">
+			<h3 id=\"siteSub\">From Emergent</h3>
+			<div id=\"contentSub\">(Redirected from <a href=\"/emergent/index.php?title=taDoc&amp;redirect=no\" title=\"taDoc\">taDoc</a>)</div>
+									<div id=\"jump-to-nav\">Jump to: <a href=\"#column-one\">navigation</a>, <a href=\"#searchInput\">search</a></div>			<!-- start content -->
+			<div id=\"BreadCrumbsTrail\"><a href=\"/emergent/index.php/Main_Page\" title=\"Main Page\">Main Page</a> &gt; <a href=\"/emergent/index.php/Docs\" title=\"Docs\">Docs</a></div><p>Docs are simple but very helpful and powerful -- a doc is basically a text document inside a project that can be used for any purpose. Docs are most useful for writing descriptions of simulations, instructions for customization or running, keeping track of scientific references, providing tutorials, and so on. You can link any object to a doc, which enables you to put the doc text right at the place it is most needed.
+</p><p>In addition to basic HTML and wiki-style formatting, these doc objects also support internal <code>ta:</code> links or URL's that can activate different objects within the project, call functions, and control what is displayed.  Thus, you can use document objects to provide a \"live\" tutorial for running and controlling your project.
+</p><p><b>New for 4.1</b> -- Docs can now live on a wiki website, instead of being stored within a project.  This facilitates better sharing of documentation across multiple related projects, and among multiple users.  The top of a doc contains standard web browser controls, including a field for entering a wiki name and a URL -- see the tooltips of those fields for more information: basically the wiki name refers to one of the named wikis setup in the global <a href=\"/emergent/index.php?title=preferences&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"preferences (page does not exist)\">preferences</a> (options) which has an associated URL (web link) -- the url you enter in the doc is relative to that base url if the wiki field is entered, and otherwise must be a full url.  Entering a blank or \"local\" url makes the doc work like it did previously, with local text content stored with the project.
+</p>
+<table id=\"toc\" class=\"toc\" summary=\"Contents\"><tbody><tr><td><div id=\"toctitle\"><h2>Contents</h2> <span class=\"toctoggle\">[<a id=\"togglelink\" class=\"internal\" href=\"javascript:toggleToc()\">hide</a>]</span></div>
+<ul>
+<li class=\"toclevel-1 tocsection-1\"><a href=\"#To_create_a_doc\"><span class=\"tocnumber\">1</span> <span class=\"toctext\">To create a doc</span></a></li>
+<li class=\"toclevel-1 tocsection-2\"><a href=\"#Editing_a_Doc\"><span class=\"tocnumber\">2</span> <span class=\"toctext\">Editing a Doc</span></a>
+<ul>
+<li class=\"toclevel-2 tocsection-3\"><a href=\"#To_edit_a_Doc\"><span class=\"tocnumber\">2.1</span> <span class=\"toctext\">To edit a Doc</span></a></li>
+<li class=\"toclevel-2 tocsection-4\"><a href=\"#HTML_and_Wiki_Formatting\"><span class=\"tocnumber\">2.2</span> <span class=\"toctext\">HTML and Wiki Formatting</span></a>
+<ul>
+<li class=\"toclevel-3 tocsection-5\"><a href=\"#Headings\"><span class=\"tocnumber\">2.2.1</span> <span class=\"toctext\">Headings</span></a></li>
+<li class=\"toclevel-3 tocsection-6\"><a href=\"#Lists\"><span class=\"tocnumber\">2.2.2</span> <span class=\"toctext\">Lists</span></a></li>
+<li class=\"toclevel-3 tocsection-7\"><a href=\"#Emphasis.2C_Bold\"><span class=\"tocnumber\">2.2.3</span> <span class=\"toctext\">Emphasis, Bold</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class=\"toclevel-1 tocsection-8\"><a href=\"#Linking_Docs\"><span class=\"tocnumber\">3</span> <span class=\"toctext\">Linking Docs</span></a>
+<ul>
+<li class=\"toclevel-2 tocsection-9\"><a href=\"#To_link_a_Doc\"><span class=\"tocnumber\">3.1</span> <span class=\"toctext\">To link a Doc</span></a></li>
+</ul>
+</li>
+<li class=\"toclevel-1 tocsection-10\"><a href=\"#URLs\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">URLs</span></a>
+<ul>
+<li class=\"toclevel-2 tocsection-11\"><a href=\"#Syntax_Details\"><span class=\"tocnumber\">4.1</span> <span class=\"toctext\">Syntax Details</span></a></li>
+</ul>
+</li>
+</ul>
+</td></tr></tbody></table><script type=\"text/javascript\"> if (window.showTocToggle) { var tocShowText = \"show\"; var tocHideText = \"hide\"; showTocToggle(); } </script>
+<a name=\"To_create_a_doc\" id=\"To_create_a_doc\"></a><h3><span class=\"editsection\">[<a href=\"/emergent/index.php?title=Docs&amp;action=edit&amp;section=1\" title=\"Edit section: To create a doc\">edit</a>]</span> <span class=\"mw-headline\"> To create a doc </span></h3>
+<ol><li> click on the docs collection in the project
+</li><li> right click, select New
+</li><li> in the dialog, press Ok
+</li><li> rename the new doc with a descriptive title
+</li></ol>
+<a name=\"Editing_a_Doc\" id=\"Editing_a_Doc\"></a><h2><span class=\"editsection\">[<a href=\"/emergent/index.php?title=Docs&amp;action=edit&amp;section=2\" title=\"Edit section: Editing a Doc\">edit</a>]</span> <span class=\"mw-headline\"> Editing a Doc </span></h2>
+<p>A doc can use many common Wikimedia wiki tags, as well as most common HTML tags (wiki tags are often easiest.) The simplest docs don't need any formatting at all (just enter plain text.) However longer docs will benefit from at least some formatting, such as section headings, bulleted and numbered lists, and italics and bolding.
+</p>
+<a name=\"To_edit_a_Doc\" id=\"To_edit_a_Doc\"></a><h3><span class=\"editsection\">[<a href=\"/emergent/index.php?title=Docs&amp;action=edit&amp;section=3\" title=\"Edit section: To edit a Doc\">edit</a>]</span> <span class=\"mw-headline\"> To edit a Doc </span></h3>
+<ol><li> select the doc in the project tree
+</li><li> in the panel, select the Doc Source subpanel
+</li><li> enter or modify any combination of: plain text, wiki text, or html text
+</li><li> when you are finished making changes, press Apply
+</li><li> view the resulting formatted document in the Doc panel, to verify your edits, formatting, etc.
+</li></ol>
+<a name=\"HTML_and_Wiki_Formatting\" id=\"HTML_and_Wiki_Formatting\"></a><h3><span class=\"editsection\">[<a href=\"/emergent/index.php?title=Docs&amp;action=edit&amp;section=4\" title=\"Edit section: HTML and Wiki Formatting\">edit</a>]</span> <span class=\"mw-headline\"> HTML and Wiki Formatting </span></h3>
+<ul><li> The HTML (web standard) formatting codes supported are shown here: <a href=\"http://doc.trolltech.com/4.2/richtext-html-subset.html\" class=\"external free\" title=\"http://doc.trolltech.com/4.2/richtext-html-subset.html\" rel=\"nofollow\">http://doc.trolltech.com/4.2/richtext-html-subset.html</a> (in the Qt toolkit).
+</li><li> We also support a very basic set of wiki-style formatting codes:
+</li></ul>
+<a name=\"Headings\" id=\"Headings\"></a><h4><span class=\"editsection\">[<a href=\"/emergent/index.php?title=Docs&amp;action=edit&amp;section=5\" title=\"Edit section: Headings\">edit</a>]</span> <span class=\"mw-headline\"> Headings </span></h4>
+<pre> = Level 1 Heading =
+ == Level 2 heading ==
+ (etc).
+</pre>
+<a name=\"Lists\" id=\"Lists\"></a><h4><span class=\"editsection\">[<a href=\"/emergent/index.php?title=Docs&amp;action=edit&amp;section=6\" title=\"Edit section: Lists\">edit</a>]</span> <span class=\"mw-headline\"> Lists </span></h4>
+<p>This is a bulleted list:
+</p>
+<pre>* Item 1
+* Second Item
+* Third item
+</pre>
+<p>This is a numbered list:
+</p>
+<pre># Item 1
+# Second Item
+# Third item
+</pre>
+<a name=\"Emphasis.2C_Bold\" id=\"Emphasis.2C_Bold\"></a><h4><span class=\"editsection\">[<a href=\"/emergent/index.php?title=Docs&amp;action=edit&amp;section=7\" title=\"Edit section: Emphasis, Bold\">edit</a>]</span> <span class=\"mw-headline\"> Emphasis, Bold </span></h4>
+<p>For emphasis (italics):
+</p>
+<pre>This word: ''important'' will be italicized
+</pre>
+<p>For bold:
+</p>
+<pre>This word: '''bold''' will be bolded
+</pre>
+<p><br>
+</p>
+<a name=\"Linking_Docs\" id=\"Linking_Docs\"></a><h2><span class=\"editsection\">[<a href=\"/emergent/index.php?title=Docs&amp;action=edit&amp;section=8\" title=\"Edit section: Linking Docs\">edit</a>]</span> <span class=\"mw-headline\"> Linking Docs </span></h2>
+<p>Docs in the doc collection can be helpful by themselves, especially if they are given descriptive titles. You can enhance the utility of docs by linking a doc directly to an applicable object. For example, you might write a doc called \"Setting Network Parameters\" which you might like to link directly to the network. A linked doc will appear (in read-only, formatted form) in a new subpanel of the object. (This is a view of the document, not a separate copy - if you edit the doc, the new content will automatically be displayed anywhere it is linked.) Note that an object can only be linked to a single doc; however, you can link a single doc to as many objects as you wish.
+</p>
+<a name=\"To_link_a_Doc\" id=\"To_link_a_Doc\"></a><h3><span class=\"editsection\">[<a href=\"/emergent/index.php?title=Docs&amp;action=edit&amp;section=9\" title=\"Edit section: To link a Doc\">edit</a>]</span> <span class=\"mw-headline\"> To link a Doc </span></h3>
+<ol><li> select the object in the project tree
+</li><li> right click, and select Set Doc Link from the menu
+</li><li> in the dialog, choose the doc you want to link
+</li><li> press Ok
+</li></ol>
+<p>the linked doc will appear in a new Doc subpanel in the Panel for the object
+</p>
+<a name=\"URLs\" id=\"URLs\"></a><h2><span class=\"editsection\">[<a href=\"/emergent/index.php?title=Docs&amp;action=edit&amp;section=10\" title=\"Edit section: URLs\">edit</a>]</span> <span class=\"mw-headline\"> URLs </span></h2>
+<p>Docs can contain Uniform Resource Locators (URLs) or \"links\". These can be any of the following:
+</p>
+<ul><li> standard html \"a\" links, which when pressed, will open an external application:
+<ul><li> http: opens the user's browser (the most common type of link)
+</li><li> mailto: opens the email application
+</li></ul>
+</li><li> function calling - invoke a method on any project object
+</li><li> tab viewing - show/open the tab for an object
+</li><li> invoking another doc - navigate to another doc
+</li><li> showing a control panel - show a control panel tab
+</li></ul>
+<p>You can see examples of all these URLs in the tutorial project provided with Emergent.
+</p>
+<a name=\"Syntax_Details\" id=\"Syntax_Details\"></a><h3><span class=\"editsection\">[<a href=\"/emergent/index.php?title=Docs&amp;action=edit&amp;section=11\" title=\"Edit section: Syntax Details\">edit</a>]</span> <span class=\"mw-headline\"> Syntax Details </span></h3>
+<p>The full explicit ta:... path can be used, or, because ta: paths all start with a single period (.), if you just start the link with that, it will automatically translate it into a ta: path, using only the last part after last . as the name of the link.  Only the first example shows both forms -- the rest use the simpler \"short form\".
+</p><p><i>NOTE:</i> for any of these cases, you can always customize the link text by adding a \"pipe\" character and whatever text you want -- some examples shown below.
+</p>
+<ul><li> A link to an object -- the path after ta: is any valid <a href=\"/emergent/index.php?title=css_path&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"css path (page does not exist)\">css path</a> to the object -- this will select the object in the viewer and bring up an edit panel for it:
+</li></ul>
+<pre>[[ta:.networks[0].layers.Output]] # long form, shows full path
+[[.networks[0].layers.Output]]    # short form, shows up as just Output
+</pre>
+<ul><li> A function (method) on an object -- will actually call this function directly!
+</li></ul>
+<pre>[[.data.InputData.StdInputData.GridView()]]  # link text is StdInputData.GridView()
+[[.data.InputData.StdInputData.GridView()|Make GridView]] # link text is \"Make GridView\"
+</pre>
+<ul><li> An edit panel with a given name (typically name of object being edited) -- this will activate that panel:
+</li></ul>
+<pre>[[.PanelTab.ControlPanel]]
+</pre>
+<ul><li> An 3D view panel with a given name -- this will activate that panel:
+</li></ul>
+<pre>[[.T3Tab.NetworkView]]
+</pre>
+<ul><li> A wiki/help entry (will translate following example into <a href=\"http://grey.colorado.edu/emergent/index.php/Program\" class=\"external free\" title=\"http://grey.colorado.edu/emergent/index.php/Program\" rel=\"nofollow\">http://grey.colorado.edu/emergent/index.php/Program</a>):
+</li></ul>
+<pre>[[.Wiki.Program]]
+</pre>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 103/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:244-0!1!0!!en!0 and timestamp 20090702054350 -->
+<div class=\"printfooter\">
+Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php/Docs\">http://grey.colorado.edu/emergent/index.php/Docs</a>\"</div>
+						<!-- end content -->
+						<div class=\"visualClear\"></div>
+		</div>
+	</div>
+		</div>
+		<div id=\"column-one\">
+	<div id=\"p-cactions\" class=\"portlet\">
+		<h5>Views</h5>
+		<div class=\"pBody\">
+			<ul lang=\"en\" xml:lang=\"en\">
+	
+				 <li id=\"ca-nstab-main\" class=\"selected\"><a href=\"/emergent/index.php/Docs\" title=\"View the content page [ctrl-alt-c]\" accesskey=\"c\">Page</a></li>
+				 <li id=\"ca-talk\" class=\"new\"><a href=\"/emergent/index.php?title=Talk:Docs&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [ctrl-alt-t]\" accesskey=\"t\">Discussion</a></li>
+				 <li id=\"ca-edit\"><a href=\"/emergent/index.php?title=Docs&amp;action=edit\" title=\"You can edit this page.
+Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit</a></li>
+				 <li id=\"ca-history\"><a href=\"/emergent/index.php?title=Docs&amp;action=history\" title=\"Past revisions of this page [ctrl-alt-h]\" accesskey=\"h\">History</a></li>
+				 <li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/Docs\" title=\"Move this page [ctrl-alt-m]\" accesskey=\"m\">Move</a></li>
+				 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=Docs&amp;action=unwatch\" title=\"Remove this page from your watchlist [ctrl-alt-w]\" accesskey=\"w\">Unwatch</a></li>			<li id=\"ca-upload\"><a href=\"http://grey.colorado.edu/emergent/index.php/Special:Upload\" accesskey=\"0\" title=\"Special:Upload [ctrl-alt-0]\">upload</a></li><li id=\"ca-recent-changes\"><a href=\"http://grey.colorado.edu/emergent/index.php/Special:RecentChanges\" accesskey=\"0\" title=\"Special:RecentChanges [ctrl-alt-0]\">recent changes</a></li><li id=\"ca-help\"><a href=\"http://grey.colorado.edu/emergent/index.php/Help:Contents\" accesskey=\"0\" title=\"Help:Contents [ctrl-alt-0]\">help</a></li><li id=\"ca-search\"><a href=\"http://grey.colorado.edu/emergent/index.php/Special:Search\" accesskey=\"0\" title=\"Special:Search [ctrl-alt-0]\">search</a></li><li id=\"ca-home\"><a href=\"http://grey.colorado.edu/emergent\" accesskey=\"0\" title=\"Main_Page [ctrl-alt-0]\">home</a></li></ul>
+		</div>
+	</div>
+	<div class=\"portlet\" id=\"p-personal\">
+		<h5>Personal tools</h5>
+		<div class=\"pBody\">
+			<ul lang=\"en\" xml:lang=\"en\">
+				<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" title=\"Your user page [ctrl-alt-.]\" accesskey=\".\">Oreilly</a></li>
+				<li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" title=\"Your talk page [ctrl-alt-n]\" accesskey=\"n\" class=\"new\">My talk</a></li>
+				<li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">My preferences</a></li>
+				<li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"The list of pages you are monitoring for changes [ctrl-alt-l]\" accesskey=\"l\">My watchlist</a></li>
+				<li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"List of your contributions [ctrl-alt-y]\" accesskey=\"y\">My contributions</a></li>
+				<li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=Docs\" title=\"Log out\">Log out</a></li>
+			</ul>
+		</div>
+	</div>
+	<div class=\"portlet\" id=\"p-logo\">
+		<a style=\"background-image: url(/mediawiki/sites//emergent/logo.png);\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [ctrl-alt-z]\" accesskey=\"z\"></a>
+	</div>
+	<script type=\"text/javascript\"> if (window.isMSIE55) fixalpha(); </script>
+	<div class=\"generated-sidebar portlet\" id=\"p-navigation\">
+		<h5 lang=\"en\" xml:lang=\"en\">Navigation</h5>
+		<div class=\"pBody\">
+			<ul>
+				<li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li>
+				<li id=\"n-FAQ\"><a href=\"/emergent/index.php/FAQ\">FAQ</a></li>
+				<li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li>
+				<li id=\"n-Bug-tracker\"><a href=\"http://grey.colorado.edu/cgi-bin/bugzilla/index.cgi\">Bug tracker</a></li>
+				<li id=\"n-Mailing-list\"><a href=\"http://grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\">Mailing list</a></li>
+				<li id=\"n-CodeReview\"><a href=\"/emergent/index.php/Special:Code/emergent\">CodeReview</a></li>
+				<li id=\"n-Nightly-build-status\"><a href=\"http://grey.colorado.edu/CDash\">Nightly build status</a></li>
+				<li id=\"n-Browse-source-code\"><a href=\"http://grey.colorado.edu/cgi-bin/viewvc.cgi/emergent/\">Browse source code</a></li>
+				<li id=\"n-ChangeLog\"><a href=\"/emergent/index.php/ChangeLog\">ChangeLog</a></li>
+				<li id=\"n-Installation\"><a href=\"/emergent/index.php/Installation\">Installation</a></li>
+				<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"The list of recent changes in the wiki [ctrl-alt-r]\" accesskey=\"r\">Recent changes</a></li>
+				<li id=\"n-help\"><a href=\"/emergent/index.php/Help:Contents\" title=\"The place to find out\">Help</a></li>
+			</ul>
+		</div>
+	</div>
+	<div id=\"p-search\" class=\"portlet\">
+		<h5 lang=\"en\" xml:lang=\"en\"><label for=\"searchInput\">Search</label></h5>
+		<div id=\"searchBody\" class=\"pBody\">
+			<form action=\"/emergent/index.php\" id=\"searchform\"><div>
+				<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
+				<input id=\"searchInput\" name=\"search\" type=\"text\" title=\"Search Emergent [ctrl-alt-f]\" accesskey=\"f\" value=\"\">
+				<input type=\"submit\" name=\"go\" class=\"searchButton\" id=\"searchGoButton\" value=\"Go\" title=\"Go to a page with this exact name if exists\">&nbsp;
+				<input type=\"submit\" name=\"fulltext\" class=\"searchButton\" id=\"mw-searchButton\" value=\"Search\" title=\"Search the pages for this text\">
+			</div></form>
+		</div>
+	</div>
+	<div class=\"portlet\" id=\"p-tb\">
+		<h5 lang=\"en\" xml:lang=\"en\">Toolbox</h5>
+		<div class=\"pBody\">
+			<ul>
+				<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/Docs\" title=\"List of all wiki pages that link here [ctrl-alt-j]\" accesskey=\"j\">What links here</a></li>
+				<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/Docs\" title=\"Recent changes in pages linked from this page [ctrl-alt-k]\" accesskey=\"k\">Related changes</a></li>
+<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [ctrl-alt-u]\" accesskey=\"u\">Upload file</a></li>
+<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"List of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
+				<li id=\"t-print\"><a href=\"/emergent/index.php?title=Docs&amp;printable=yes\" rel=\"alternate\" title=\"Printable version of this page [ctrl-alt-p]\" accesskey=\"p\">Printable version</a></li>				<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=Docs&amp;oldid=3996\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/Docs\" title=\"Special:Browse/Docs\">Browse properties</a></li>			</ul>
+		</div>
+	</div>
+		</div><!-- end of the left (by default at least) column -->
+			<div class=\"visualClear\"></div>
+			<div id=\"footer\">
+				<div id=\"f-poweredbyico\"><a href=\"http://www.mediawiki.org/\"><img src=\"/emergent/skins/common/images/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\"></a></div>
+			<ul id=\"f-list\">
+					<li id=\"lastmod\"> This page was last modified on 1 May 2009, at 05:25.</li>
+					<li id=\"viewcount\">This page has been accessed 881 times.</li>
+					<li id=\"about\"><a href=\"/emergent/index.php/Emergent:About\" class=\"mw-redirect\" title=\"Emergent:About\">About Emergent</a></li>
+			</ul>
+		</div>
+</div>
+
+		<script type=\"text/javascript\">if (window.runOnloadHook) runOnloadHook();</script>
+<!-- Served in 0.362 secs. -->
+</body></html>";
+  };
+ };
+ wizards {
+  name=;
+  el_typ=BpWizard;
+  el_def=0;
+  BpWizard @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="BpWizard_0";
+   auto_open=0;
+   n_layers=3;
+   layer_cfg {
+    name=;
+    el_typ=LayerWizEl;
+    el_def=0;
+    LayerWizEl @[0] {
+     name="Input";
+     n_units=25;
+     io_type=INPUT;
+    };
+    LayerWizEl @[1] {
+     name="Hidden";
+     n_units=25;
+     io_type=HIDDEN;
+    };
+    LayerWizEl @[2] {
+     name="Output";
+     n_units=25;
+     io_type=OUTPUT;
+    };
+   };
+   connectivity=FEEDFORWARD;
+   default_net_type=BpNetwork;
+  };
+ };
+ edits {
+  name=;
+  el_typ=SelectEdit;
+  el_def=0;
+  SelectEdit @[0] {
+   name="ControlPanel";
+   auto_edit=1;
+   desc=;
+   mbrs {
+    name=;
+    el_typ=EditMbrItem;
+    el_def=0;
+    EditMbrItem @[0] {
+     label="BpConSpec_0 lrate";
+     desc=" learning rate";
+     base=.projects[0].networks[0].specs[1]$0$;
+     mbr=BpConSpec::lrate;
+    };
+    EditMbrItem @[1] {
+     label="ExpBpUnitSpec_0 act range";
+     desc=" range of activation for units<br>  min:  minimum value<br>  max:  maximum value";
+     base=.projects[0].networks[0].specs[0].children[0]$1$;
+     mbr=UnitSpec::act_range;
+    };
+    EditMbrItem @[2] {
+     label="ExpBpUnitSpec_0 sig";
+     desc=" sigmoid activation parameters<br>  off:  offset for .5 point<br>  gain:  gain";
+     base=$1$;
+     mbr=BpUnitSpec::sig;
+    };
+   };
+   mths {
+    name=;
+    el_typ=EditMthItem;
+    el_def=0;
+    group_type=GT_BUTTONS;
+    EditMthItem @[0] {
+     label="Train Init";
+     desc=" set the program state back to the beginning";
+     base=.projects[0].programs.gp[0][1]$2$;
+     mth=Program::Init;
+    };
+    EditMthItem @[1] {
+     label="Train Run";
+     desc=" run the program";
+     base=$2$;
+     mth=Program::Run;
+    };
+    EditMthItem @[2] {
+     label="Train Step";
+     desc=" step the program, at the previously selected step level (see SetAsStep or the program group control panel)";
+     base=$2$;
+     mth=Program::Step;
+    };
+    EditMthItem @[3] {
+     label="Train Stop";
+     desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
+     base=$2$;
+     mth=Program::Stop;
+    };
+   };
+  };
+ };
+ data {
+  name=;
+  el_typ=DataTable;
+  el_def=0;
+  DataTable_Group @.gp[0] {
+   name="InputData";
+   el_typ=DataTable;
+   el_def=0;
+   DataTable @[0] {
+    name="Prototypes";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @[0] {
+      name="Name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [4] "Proto_0";"Proto_1";"Proto_2";"Proto_3";      };
+     };
+     float_Data @[1] {
+      name="Input";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=1;
+      cell_geom{ 4;4;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [4 4 4] 0;0;0;1;0;1;1;0;0;0;
+0;0;0;0;1;0;0;0;0;0;
+1;0;0;0;0;1;1;0;0;1;
+0;0;0;1;0;0;0;0;0;1;
+1;0;0;0;1;0;0;0;1;0;
+1;0;0;0;0;0;1;1;0;0;
+0;0;0;0;      };
+     };
+     float_Data @[2] {
+      name="Output_SoftMax";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=1;
+      cell_geom{ 4;1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [4 1 4] 1;0;0;1;0;0;0;0;0;0;
+0;0;0;0;0;0;      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   DataTable @[1] {
+    name="Exemplars";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @[0] {
+      name="Name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [16] "Ex_0_0";"Ex_0_1";"Ex_0_2";"Ex_0_3";"Ex_1_0";"Ex_1_1";"Ex_1_2";"Ex_1_3";"Ex_2_0";"Ex_2_1";
+"Ex_2_2";"Ex_2_3";"Ex_3_0";"Ex_3_1";"Ex_3_2";"Ex_3_3";      };
+     };
+     float_Data @[1] {
+      name="Input";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=1;
+      cell_geom{ 4;4;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [4 4 16] 0;0;0;0;0;1;1;0;0;0;
+0;0;0;1;1;0;0;0;0;0;
+0;1;1;0;0;0;0;1;0;0;
+1;0;0;1;0;0;0;1;1;0;
+0;0;0;0;0;0;1;0;0;1;
+0;0;0;1;1;0;0;0;0;0;
+0;0;1;0;0;1;0;0;1;0;
+0;0;0;1;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;1;1;
+1;0;0;1;0;0;0;0;0;0;
+0;0;0;0;0;1;1;0;0;1;
+0;1;0;0;0;0;1;0;0;0;
+0;1;0;0;0;1;0;1;0;0;
+0;0;0;0;0;1;1;0;0;0;
+1;0;1;0;0;0;0;0;0;0;
+1;1;1;0;0;0;1;0;0;0;
+0;1;0;0;0;0;0;0;1;0;
+0;1;1;0;0;0;0;1;0;0;
+0;0;0;0;1;0;0;0;1;1;
+0;0;1;0;1;0;0;0;0;0;
+1;0;1;0;0;0;0;0;1;0;
+0;0;0;0;0;0;1;1;0;0;
+0;0;1;0;1;0;1;0;0;1;
+0;0;0;1;0;0;0;0;0;0;
+0;0;1;1;0;0;0;0;1;1;
+0;0;0;0;0;0;      };
+     };
+     float_Data @[2] {
+      name="Output_SoftMax";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=1;
+      cell_geom{ 4;1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [4 1 16] 1;0;0;0;1;0;0;0;1;0;
+0;0;1;0;0;0;0;1;0;0;
+0;1;0;0;0;1;0;0;0;1;
+0;0;0;0;1;0;0;0;1;0;
+0;0;1;0;0;0;1;0;0;0;
+0;1;0;0;0;1;0;0;0;1;
+0;0;0;1;      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+  };
+  DataTable_Group @.gp[1] {
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+   DataTable @[0] {
+    name="TrialOutputData";
+    desc=;
+    data {
+     name="data";
+     el_typ=int_Data;
+     el_def=0;
+     int_Data @[0] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="NARROW";
+	value 1 0=1;
+       };
+      };
+      name="batch";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @[1] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="NARROW";
+	value 1 0=1;
+       };
+      };
+      name="epoch";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @[2] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="NARROW";
+	value 1 0=1;
+       };
+      };
+      name="trial";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @[3] {
+      name="trial_name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @[4] {
+      name="group_name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     float_Data @[5] {
+      name="sse";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   DataTable @[1] {
+    name="EpochOutputData";
+    desc=;
+    data {
+     name="data";
+     el_typ=int_Data;
+     el_def=0;
+     int_Data @[0] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="NARROW";
+	value 1 0=1;
+       };
+      };
+      name="batch";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @[1] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @[0] {
+	name="NARROW";
+	value 1 0=1;
+       };
+      };
+      name="epoch";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     float_Data @[2] {
+      name="avg_sse";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     float_Data @[3] {
+      name="cnt_err";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     float_Data @[4] {
+      name="epoch_time_tot";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     float_Data @[5] {
+      name="epoch_time_usr";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+  };
+  DataTable_Group @.gp[2] {
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+   DataTable @[0] {
+    name="ExpBpUnitSpec_0_ActFun";
+    desc=;
+    data {
+     name="data";
+     el_typ=float_Data;
+     el_def=0;
+     float_Data @[0] {
+      name="Netin";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [1000] -5;-4.9899998;-4.9799995;-4.9699993;-4.9599991;-4.9499989;-4.9399986;-4.9299984;-4.9199982;-4.9099979;
+-4.8999977;-4.8899975;-4.8799973;-4.869997;-4.8599968;-4.8499966;-4.8399963;-4.8299961;-4.8199959;-4.8099957;
+-4.7999954;-4.7899952;-4.779995;-4.7699947;-4.7599945;-4.7499943;-4.739994;-4.7299938;-4.7199936;-4.7099934;
+-4.6999931;-4.6899929;-4.6799927;-4.6699924;-4.6599922;-4.649992;-4.6399918;-4.6299915;-4.6199913;-4.6099911;
+-4.5999908;-4.5899906;-4.5799904;-4.5699902;-4.5599899;-4.5499897;-4.5399895;-4.5299892;-4.519989;-4.5099888;
+-4.4999886;-4.4899883;-4.4799881;-4.4699879;-4.4599876;-4.4499874;-4.4399872;-4.429987;-4.4199867;-4.4099865;
+-4.3999863;-4.389986;-4.3799858;-4.3699856;-4.3599854;-4.3499851;-4.3399849;-4.3299847;-4.3199844;-4.3099842;
+-4.299984;-4.2899837;-4.2799835;-4.2699833;-4.2599831;-4.2499828;-4.2399826;-4.2299824;-4.2199821;-4.2099819;
+-4.1999817;-4.1899815;-4.1799812;-4.169981;-4.1599808;-4.1499805;-4.1399803;-4.1299801;-4.1199799;-4.1099796;
+-4.0999794;-4.0899792;-4.0799789;-4.0699787;-4.0599785;-4.0499783;-4.039978;-4.0299778;-4.0199776;-4.0099773;
+-3.9999774;-3.9899774;-3.9799774;-3.9699774;-3.9599774;-3.9499774;-3.9399774;-3.9299774;-3.9199774;-3.9099774;
+-3.8999774;-3.8899775;-3.8799775;-3.8699775;-3.8599775;-3.8499775;-3.8399775;-3.8299775;-3.8199775;-3.8099775;
+-3.7999775;-3.7899776;-3.7799776;-3.7699776;-3.7599776;-3.7499776;-3.7399776;-3.7299776;-3.7199776;-3.7099776;
+-3.6999776;-3.6899776;-3.6799777;-3.6699777;-3.6599777;-3.6499777;-3.6399777;-3.6299777;-3.6199777;-3.6099777;
+-3.5999777;-3.5899777;-3.5799778;-3.5699778;-3.5599778;-3.5499778;-3.5399778;-3.5299778;-3.5199778;-3.5099778;
+-3.4999778;-3.4899778;-3.4799778;-3.4699779;-3.4599779;-3.4499779;-3.4399779;-3.4299779;-3.4199779;-3.4099779;
+-3.3999779;-3.3899779;-3.3799779;-3.369978;-3.359978;-3.349978;-3.339978;-3.329978;-3.319978;-3.309978;
+-3.299978;-3.289978;-3.279978;-3.269978;-3.2599781;-3.2499781;-3.2399781;-3.2299781;-3.2199781;-3.2099781;
+-3.1999781;-3.1899781;-3.1799781;-3.1699781;-3.1599782;-3.1499782;-3.1399782;-3.1299782;-3.1199782;-3.1099782;
+-3.0999782;-3.0899782;-3.0799782;-3.0699782;-3.0599782;-3.0499783;-3.0399783;-3.0299783;-3.0199783;-3.0099783;
+-2.9999783;-2.9899783;-2.9799783;-2.9699783;-2.9599783;-2.9499784;-2.9399784;-2.9299784;-2.9199784;-2.9099784;
+-2.8999784;-2.8899784;-2.8799784;-2.8699784;-2.8599784;-2.8499784;-2.8399785;-2.8299785;-2.8199785;-2.8099785;
+-2.7999785;-2.7899785;-2.7799785;-2.7699785;-2.7599785;-2.7499785;-2.7399786;-2.7299786;-2.7199786;-2.7099786;
+-2.6999786;-2.6899786;-2.6799786;-2.6699786;-2.6599786;-2.6499786;-2.6399786;-2.6299787;-2.6199787;-2.6099787;
+-2.5999787;-2.5899787;-2.5799787;-2.5699787;-2.5599787;-2.5499787;-2.5399787;-2.5299788;-2.5199788;-2.5099788;
+-2.4999788;-2.4899788;-2.4799788;-2.4699788;-2.4599788;-2.4499788;-2.4399788;-2.4299788;-2.4199789;-2.4099789;
+-2.3999789;-2.3899789;-2.3799789;-2.3699789;-2.3599789;-2.3499789;-2.3399789;-2.3299789;-2.319979;-2.309979;
+-2.299979;-2.289979;-2.279979;-2.269979;-2.259979;-2.249979;-2.239979;-2.229979;-2.219979;-2.2099791;
+-2.1999791;-2.1899791;-2.1799791;-2.1699791;-2.1599791;-2.1499791;-2.1399791;-2.1299791;-2.1199791;-2.1099792;
+-2.0999792;-2.0899792;-2.0799792;-2.0699792;-2.0599792;-2.0499792;-2.0399792;-2.0299792;-2.0199792;-2.0099792;
+-1.9999793;-1.9899793;-1.9799793;-1.9699793;-1.9599793;-1.9499793;-1.9399793;-1.9299793;-1.9199793;-1.9099793;
+-1.8999794;-1.8899794;-1.8799794;-1.8699794;-1.8599794;-1.8499794;-1.8399794;-1.8299794;-1.8199794;-1.8099794;
+-1.7999794;-1.7899795;-1.7799795;-1.7699795;-1.7599795;-1.7499795;-1.7399795;-1.7299795;-1.7199795;-1.7099795;
+-1.6999795;-1.6899796;-1.6799796;-1.6699796;-1.6599796;-1.6499796;-1.6399796;-1.6299796;-1.6199796;-1.6099796;
+-1.5999796;-1.5899796;-1.5799797;-1.5699797;-1.5599797;-1.5499797;-1.5399797;-1.5299797;-1.5199797;-1.5099797;
+-1.4999797;-1.4899797;-1.4799798;-1.4699798;-1.4599798;-1.4499798;-1.4399798;-1.4299798;-1.4199798;-1.4099798;
+-1.3999798;-1.3899798;-1.3799798;-1.3699799;-1.3599799;-1.3499799;-1.3399799;-1.3299799;-1.3199799;-1.3099799;
+-1.2999799;-1.2899799;-1.2799799;-1.26998;-1.25998;-1.24998;-1.23998;-1.22998;-1.21998;-1.20998;
+-1.19998;-1.18998;-1.17998;-1.16998;-1.1599801;-1.1499801;-1.1399801;-1.1299801;-1.1199801;-1.1099801;
+-1.0999801;-1.0899801;-1.0799801;-1.0699801;-1.0599802;-1.0499802;-1.0399802;-1.0299802;-1.0199802;-1.0099802;
+-0.99998021;-0.98998022;-0.97998023;-0.96998024;-0.95998025;-0.94998026;-0.93998027;-0.92998028;-0.91998029;-0.9099803;
+-0.89998031;-0.88998032;-0.87998033;-0.86998034;-0.85998034;-0.84998035;-0.83998036;-0.82998037;-0.81998038;-0.80998039;
+-0.7999804;-0.78998041;-0.77998042;-0.76998043;-0.75998044;-0.74998045;-0.73998046;-0.72998047;-0.71998048;-0.70998049;
+-0.6999805;-0.68998051;-0.67998052;-0.66998053;-0.65998054;-0.64998055;-0.63998055;-0.62998056;-0.61998057;-0.60998058;
+-0.59998059;-0.5899806;-0.57998061;-0.56998062;-0.55998063;-0.54998064;-0.53998065;-0.52998066;-0.51998067;-0.50998068;
+-0.49998069;-0.4899807;-0.47998071;-0.46998072;-0.45998073;-0.44998074;-0.43998075;-0.42998075;-0.41998076;-0.40998077;
+-0.39998078;-0.38998079;-0.3799808;-0.36998081;-0.35998082;-0.34998083;-0.33998084;-0.32998085;-0.31998086;-0.30998087;
+-0.29998088;-0.28998089;-0.2799809;-0.26998091;-0.25998092;-0.24998091;-0.23998091;-0.2299809;-0.2199809;-0.20998089;
+-0.19998088;-0.18998088;-0.17998087;-0.16998087;-0.15998086;-0.14998086;-0.13998085;-0.12998085;-0.11998085;-0.10998085;
+-0.099980853;-0.089980856;-0.079980858;-0.06998086;-0.059980862;-0.049980864;-0.039980866;-0.029980866;-0.019980866;-0.0099808667;
+1.9133091e-05;0.010019133;0.020019133;0.030019132;0.040019132;0.05001913;0.060019128;0.070019126;0.080019124;0.090019122;
+0.10001912;0.11001912;0.12001912;0.13001911;0.14001912;0.15001912;0.16001913;0.17001913;0.18001914;0.19001915;
+0.20001915;0.21001916;0.22001916;0.23001917;0.24001917;0.25001916;0.26001915;0.27001914;0.28001913;0.29001912;
+0.30001912;0.31001911;0.3200191;0.33001909;0.34001908;0.35001907;0.36001906;0.37001905;0.38001904;0.39001903;
+0.40001902;0.41001901;0.420019;0.43001899;0.44001898;0.45001897;0.46001896;0.47001895;0.48001894;0.49001893;
+0.50001895;0.51001894;0.52001894;0.53001893;0.54001892;0.55001891;0.5600189;0.57001889;0.58001888;0.59001887;
+0.60001886;0.61001885;0.62001884;0.63001883;0.64001882;0.65001881;0.6600188;0.67001879;0.68001878;0.69001877;
+0.70001876;0.71001875;0.72001874;0.73001873;0.74001873;0.75001872;0.76001871;0.7700187;0.78001869;0.79001868;
+0.80001867;0.81001866;0.82001865;0.83001864;0.84001863;0.85001862;0.86001861;0.8700186;0.88001859;0.89001858;
+0.90001857;0.91001856;0.92001855;0.93001854;0.94001853;0.95001853;0.96001852;0.97001851;0.9800185;0.99001849;
+1.0000185;1.0100185;1.0200185;1.0300184;1.0400184;1.0500184;1.0600184;1.0700184;1.0800184;1.0900184;
+1.1000184;1.1100184;1.1200184;1.1300184;1.1400183;1.1500183;1.1600183;1.1700183;1.1800183;1.1900183;
+1.2000183;1.2100183;1.2200183;1.2300183;1.2400182;1.2500182;1.2600182;1.2700182;1.2800182;1.2900182;
+1.3000182;1.3100182;1.3200182;1.3300182;1.3400182;1.3500181;1.3600181;1.3700181;1.3800181;1.3900181;
+1.4000181;1.4100181;1.4200181;1.4300181;1.4400181;1.450018;1.460018;1.470018;1.480018;1.490018;
+1.500018;1.510018;1.520018;1.530018;1.540018;1.550018;1.5600179;1.5700179;1.5800179;1.5900179;
+1.6000179;1.6100179;1.6200179;1.6300179;1.6400179;1.6500179;1.6600178;1.6700178;1.6800178;1.6900178;
+1.7000178;1.7100178;1.7200178;1.7300178;1.7400178;1.7500178;1.7600178;1.7700177;1.7800177;1.7900177;
+1.8000177;1.8100177;1.8200177;1.8300177;1.8400177;1.8500177;1.8600177;1.8700176;1.8800176;1.8900176;
+1.9000176;1.9100176;1.9200176;1.9300176;1.9400176;1.9500176;1.9600176;1.9700176;1.9800175;1.9900175;
+2.0000176;2.0100176;2.0200176;2.0300176;2.0400176;2.0500176;2.0600176;2.0700176;2.0800176;2.0900176;
+2.1000175;2.1100175;2.1200175;2.1300175;2.1400175;2.1500175;2.1600175;2.1700175;2.1800175;2.1900175;
+2.2000175;2.2100174;2.2200174;2.2300174;2.2400174;2.2500174;2.2600174;2.2700174;2.2800174;2.2900174;
+2.3000174;2.3100173;2.3200173;2.3300173;2.3400173;2.3500173;2.3600173;2.3700173;2.3800173;2.3900173;
+2.4000173;2.4100173;2.4200172;2.4300172;2.4400172;2.4500172;2.4600172;2.4700172;2.4800172;2.4900172;
+2.5000172;2.5100172;2.5200171;2.5300171;2.5400171;2.5500171;2.5600171;2.5700171;2.5800171;2.5900171;
+2.6000171;2.6100171;2.6200171;2.630017;2.640017;2.650017;2.660017;2.670017;2.680017;2.690017;
+2.700017;2.710017;2.720017;2.7300169;2.7400169;2.7500169;2.7600169;2.7700169;2.7800169;2.7900169;
+2.8000169;2.8100169;2.8200169;2.8300169;2.8400168;2.8500168;2.8600168;2.8700168;2.8800168;2.8900168;
+2.9000168;2.9100168;2.9200168;2.9300168;2.9400167;2.9500167;2.9600167;2.9700167;2.9800167;2.9900167;
+3.0000167;3.0100167;3.0200167;3.0300167;3.0400167;3.0500166;3.0600166;3.0700166;3.0800166;3.0900166;
+3.1000166;3.1100166;3.1200166;3.1300166;3.1400166;3.1500165;3.1600165;3.1700165;3.1800165;3.1900165;
+3.2000165;3.2100165;3.2200165;3.2300165;3.2400165;3.2500165;3.2600164;3.2700164;3.2800164;3.2900164;
+3.3000164;3.3100164;3.3200164;3.3300164;3.3400164;3.3500164;3.3600163;3.3700163;3.3800163;3.3900163;
+3.4000163;3.4100163;3.4200163;3.4300163;3.4400163;3.4500163;3.4600163;3.4700162;3.4800162;3.4900162;
+3.5000162;3.5100162;3.5200162;3.5300162;3.5400162;3.5500162;3.5600162;3.5700161;3.5800161;3.5900161;
+3.6000161;3.6100161;3.6200161;3.6300161;3.6400161;3.6500161;3.6600161;3.6700161;3.680016;3.690016;
+3.700016;3.710016;3.720016;3.730016;3.740016;3.750016;3.760016;3.770016;3.7800159;3.7900159;
+3.8000159;3.8100159;3.8200159;3.8300159;3.8400159;3.8500159;3.8600159;3.8700159;3.8800159;3.8900158;
+3.9000158;3.9100158;3.9200158;3.9300158;3.9400158;3.9500158;3.9600158;3.9700158;3.9800158;3.9900157;
+4.0000157;4.010016;4.0200162;4.0300164;4.0400167;4.0500169;4.0600171;4.0700173;4.0800176;4.0900178;
+4.100018;4.1100183;4.1200185;4.1300187;4.1400189;4.1500192;4.1600194;4.1700196;4.1800199;4.1900201;
+4.2000203;4.2100205;4.2200208;4.230021;4.2400212;4.2500215;4.2600217;4.2700219;4.2800221;4.2900224;
+4.3000226;4.3100228;4.3200231;4.3300233;4.3400235;4.3500237;4.360024;4.3700242;4.3800244;4.3900247;
+4.4000249;4.4100251;4.4200253;4.4300256;4.4400258;4.450026;4.4600263;4.4700265;4.4800267;4.490027;
+4.5000272;4.5100274;4.5200276;4.5300279;4.5400281;4.5500283;4.5600286;4.5700288;4.580029;4.5900292;
+4.6000295;4.6100297;4.6200299;4.6300302;4.6400304;4.6500306;4.6600308;4.6700311;4.6800313;4.6900315;
+4.7000318;4.710032;4.7200322;4.7300324;4.7400327;4.7500329;4.7600331;4.7700334;4.7800336;4.7900338;
+4.800034;4.8100343;4.8200345;4.8300347;4.840035;4.8500352;4.8600354;4.8700356;4.8800359;4.8900361;
+4.9000363;4.9100366;4.9200368;4.930037;4.9400373;4.9500375;4.9600377;4.9700379;4.9800382;4.9900384;
+      };
+     };
+     float_Data @[1] {
+      name="Act";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [1000] 1.3887944e-11;1.460001e-11;1.5348587e-11;1.6135544e-11;1.6962851e-11;1.7832576e-11;1.8746893e-11;1.9708088e-11;2.0718567e-11;2.1780857e-11;
+2.2897611e-11;2.4071623e-11;2.530583e-11;2.6603319e-11;2.7967333e-11;2.9401283e-11;3.0908755e-11;3.2493515e-11;3.4159533e-11;3.5910972e-11;
+3.7752211e-11;3.9687854e-11;4.172274e-11;4.3861959e-11;4.6110865e-11;4.8475075e-11;5.0960503e-11;5.3573364e-11;5.6320195e-11;5.9207861e-11;
+6.2243585e-11;6.5434956e-11;6.8789953e-11;7.2316972e-11;7.6024832e-11;7.9922798e-11;8.4020624e-11;8.832856e-11;9.2857368e-11;9.7618379e-11;
+1.0262349e-10;1.0788524e-10;1.1341676e-10;1.192319e-10;1.2534519e-10;1.3177193e-10;1.3852818e-10;1.4563084e-10;1.5309766e-10;1.6094734e-10;
+1.6919947e-10;1.7787471e-10;1.8699477e-10;1.9658242e-10;2.0666165e-10;2.1725767e-10;2.2839697e-10;2.4010741e-10;2.5241825e-10;2.6536032e-10;
+2.7896596e-10;2.9326919e-10;3.0830577e-10;3.2411332e-10;3.4073136e-10;3.5820144e-10;3.7656725e-10;3.9587472e-10;4.1617212e-10;4.3751022e-10;
+4.5994239e-10;4.8352466e-10;5.0831611e-10;5.3437865e-10;5.6177746e-10;5.9058108e-10;6.2086153e-10;6.5269451e-10;6.8615968e-10;7.2134065e-10;
+7.5832546e-10;7.9720658e-10;8.3808116e-10;8.8105151e-10;9.2622504e-10;9.7371478e-10;1.0236393e-09;1.0761236e-09;1.1312991e-09;1.1893033e-09;
+1.2502817e-09;1.3143865e-09;1.381778e-09;1.452625e-09;1.5271044e-09;1.6054026e-09;1.6877153e-09;1.7742483e-09;1.8652182e-09;1.9608521e-09;
+2.0613855e-09;2.1670776e-09;2.2781843e-09;2.3949875e-09;2.517784e-09;2.6468714e-09;2.7825826e-09;2.9252465e-09;3.0752247e-09;3.2328986e-09;
+3.3986503e-09;3.5729069e-09;3.756091e-09;3.9486667e-09;4.1511239e-09;4.3639532e-09;4.5876947e-09;4.8229163e-09;5.0701883e-09;5.3301386e-09;
+5.6034271e-09;5.8907164e-09;6.1927468e-09;6.510251e-09;6.8440333e-09;7.1949429e-09;7.5638296e-09;7.9516447e-09;8.3593275e-09;8.7879126e-09;
+9.2384891e-09;9.7121493e-09;1.0210094e-08;1.0733589e-08;1.1283904e-08;1.1862433e-08;1.2470647e-08;1.3110021e-08;1.3782201e-08;1.4488819e-08;
+1.5231665e-08;1.6012628e-08;1.6833599e-08;1.7696697e-08;1.8604011e-08;1.9557845e-08;2.056062e-08;2.1614769e-08;2.2722965e-08;2.3888024e-08;
+2.5112769e-08;2.6400309e-08;2.7753913e-08;2.9176864e-08;3.067283e-08;3.2245435e-08;3.3898669e-08;3.5636731e-08;3.7463835e-08;3.9384691e-08;
+4.1403958e-08;4.352675e-08;4.5758465e-08;4.8104518e-08;5.0570851e-08;5.3163735e-08;5.5889455e-08;5.8754921e-08;6.1767423e-08;6.4934255e-08;
+6.8263589e-08;7.176348e-08;7.5442813e-08;7.9310944e-08;8.3377238e-08;8.7652175e-08;9.2146131e-08;9.6870494e-08;1.0183727e-07;1.0705849e-07;
+1.1254752e-07;1.1831798e-07;1.2438417e-07;1.3076151e-07;1.3746582e-07;1.4451373e-07;1.5192315e-07;1.5971244e-07;1.6790111e-07;1.7650962e-07;
+1.8555932e-07;1.9507317e-07;2.0507483e-07;2.1558908e-07;2.2664261e-07;2.3826287e-07;2.5047891e-07;2.6332128e-07;2.7682185e-07;2.9101486e-07;
+3.0593557e-07;3.2162097e-07;3.3811091e-07;3.554463e-07;3.736705e-07;3.9282907e-07;4.1296951e-07;4.34143e-07;4.5640209e-07;4.7980194e-07;
+5.0440201e-07;5.3026338e-07;5.5745068e-07;5.8603189e-07;6.160779e-07;6.4766499e-07;6.8087161e-07;7.1578012e-07;7.5247908e-07;7.9105968e-07;
+8.3161831e-07;8.742565e-07;9.1907987e-07;9.6620226e-07;1.0157407e-06;1.0678181e-06;1.1225665e-06;1.1801219e-06;1.2406283e-06;1.3042369e-06;
+1.3711056e-06;1.4414039e-06;1.5153065e-06;1.5929968e-06;1.6746718e-06;1.7605344e-06;1.8507992e-06;1.945692e-06;2.0454484e-06;2.1503211e-06;
+2.2605709e-06;2.376471e-06;2.4983158e-06;2.6264076e-06;2.761067e-06;2.9026305e-06;3.0514491e-06;3.2079008e-06;3.3723741e-06;3.5452767e-06;
+3.7270477e-06;3.9181382e-06;4.1190265e-06;4.3302143e-06;4.5522256e-06;4.7856238e-06;5.0309891e-06;5.2889295e-06;5.5600995e-06;5.8451733e-06;
+6.1448627e-06;6.459918e-06;6.7911196e-06;7.1393092e-06;7.5053508e-06;7.8901521e-06;8.2946908e-06;8.7199705e-06;9.1670545e-06;9.6370613e-06;
+1.0131156e-05;1.0650594e-05;1.1196664e-05;1.177072e-05;1.237422e-05;1.3008662e-05;1.3675633e-05;1.4376801e-05;1.5113904e-05;1.5888812e-05;
+1.6703452e-05;1.7559843e-05;1.8460159e-05;1.9406636e-05;2.040164e-05;2.1447659e-05;2.2547287e-05;2.3703315e-05;2.4918614e-05;2.61962e-05;
+2.7539312e-05;2.8951288e-05;3.0435658e-05;3.1996133e-05;3.3636585e-05;3.5361176e-05;3.7174192e-05;3.9080121e-05;4.1083811e-05;4.319023e-05;
+4.5404649e-05;4.7732603e-05;5.0179868e-05;5.2752657e-05;5.5457353e-05;5.8300669e-05;6.1289822e-05;6.4432228e-05;6.7735753e-05;7.1208655e-05;
+7.4859541e-05;7.8697689e-05;8.2732615e-05;8.6974345e-05;9.1433634e-05;9.6121548e-05;0.00010104983;0.00010623079;0.00011167727;0.00011740311;
+0.00012342252;0.00012975042;0.0001364029;0.00014339645;0.00015074857;0.00015847765;0.00016660284;0.00017514479;0.00018412468;0.00019356482;
+0.00020348914;0.00021392228;0.00022489036;0.00023642078;0.00024854214;0.00026128523;0.00027468166;0.00028876466;0.00030357001;0.00031913441;
+0.00033549685;0.00035269806;0.00037078117;0.00038979159;0.00040977672;0.00043078628;0.00045287304;0.00047609245;0.0005005023;0.00052616344;
+0.0005531403;0.00058150053;0.00061131478;0.0006426574;0.00067560695;0.00071024621;0.00074666145;0.00078494335;0.00082518801;0.00086749648;
+0.00091197417;0.00095873181;0.0010078867;0.0010595624;0.0011138875;0.0011709974;0.0012310355;0.0012941522;0.001360505;0.0014302592;
+0.0015035898;0.0015806807;0.0016617243;0.0017469223;0.0018364884;0.0019306474;0.0020296343;0.0021336952;0.0022430914;0.0023580976;
+0.0024790005;0.0026061006;0.0027397175;0.0028801865;0.0030278573;0.003183098;0.0033462979;0.0035178671;0.0036982326;0.003887844;
+0.0040871766;0.0042967317;0.0045170304;0.0047486224;0.0049920878;0.005248039;0.0055171126;0.0057999794;0.0060973489;0.0064099678;
+0.0067386152;0.0070841094;0.0074473172;0.0078291511;0.0082305614;0.0086525492;0.0090961726;0.0095625445;0.010052829;0.010568245;
+0.011110088;0.011679716;0.01227855;0.012908082;0.01356989;0.014265635;0.014997053;0.015765963;0.016574297;0.017424082;
+0.018317433;0.019256588;0.020243892;0.021281818;0.022372959;0.023520045;0.024725942;0.025993668;0.02732639;0.028727442;
+0.030200329;0.031748731;0.033376522;0.035087772;0.036886755;0.038777981;0.040766168;0.042856291;0.045053579;0.047363523;
+0.049791899;0.052344784;0.055028554;0.057849925;0.060815953;0.063934051;0.067212015;0.070658043;0.074280761;0.078089207;
+0.082092926;0.086301915;0.090726703;0.095378354;0.10026851;0.10540938;0.11081383;0.11649536;0.1224682;0.12874728;
+0.13534829;0.14228773;0.14958298;0.15725225;0.16531473;0.1737906;0.18270102;0.19206829;0.20191585;0.21226828;
+0.22315149;0.23459271;0.24662052;0.25926501;0.2725578;0.28653216;0.30122295;0.31666702;0.33290285;0.34997118;
+0.36791462;0.386778;0.40660855;0.42745581;0.44937193;0.47241178;0.49663284;0.52209574;0.54886419;0.57700509;
+0.60658872;0.63768917;0.67038423;0.70475554;0.74088913;0.77887529;0.81880909;0.86079031;0.90492398;0.95132041;
+1.0000957;1.0513717;1.1052766;1.1619453;1.2215196;1.2841482;1.349988;1.4192033;1.4919673;1.5684621;
+1.6488789;1.7334187;1.8222929;1.9157239;2.0139451;2.1172025;2.2257538;2.3398707;2.4598384;2.5859571;
+2.7185421;2.8579249;3.0044537;3.1584954;3.3204353;3.4906776;3.6696482;3.857795;4.0555882;4.2635221;
+4.4821177;4.7119203;4.9535055;5.2074771;5.4744697;5.7551513;6.0502243;6.3604255;6.6865311;7.0293565;
+7.3897591;7.7686396;8.1669464;8.5856743;9.0258703;9.488636;9.9751282;10.486564;11.02422;11.589444;
+12.18365;12.808315;13.465014;14.155376;14.881141;15.644109;16.446203;17.289412;18.175863;19.107754;
+20.087433;21.117332;22.200045;23.338259;24.534842;25.792763;27.115191;28.505409;29.966917;31.503345;
+33.118565;34.816578;36.601669;38.478264;40.451096;42.525055;44.705372;46.997452;49.40707;51.940212;
+54.603252;57.402805;60.345921;63.439903;66.692551;70.111931;73.706657;77.485657;81.45845;85.634888;
+90.025505;94.641182;99.493553;104.59467;109.95737;115.59498;121.52168;127.7522;134.30222;141.188;
+148.4269;156.03685;164.03706;172.44737;181.28897;190.5838;200.35529;210.62766;221.42682;232.77954;
+244.71445;257.26117;270.45126;284.31754;298.89484;314.21942;330.32986;347.26614;365.07092;383.78839;
+403.46573;424.15173;445.89856;468.76013;492.79407;518.06;544.62164;572.5448;601.8999;632.75983;
+665.20221;699.30768;735.16205;772.85443;812.47968;854.13617;897.92883;943.96631;992.36469;1043.244;
+1096.7325;1152.9629;1212.0768;1274.2209;1339.5519;1408.2318;1480.4336;1556.3367;1636.1321;1720.0178;
+1808.2053;1900.9135;1998.3759;2100.8342;2208.5466;2321.7805;2440.8213;2565.9641;2697.5244;2835.8286;
+2981.2253;3134.0764;3294.7615;3463.6882;3641.2761;3827.969;4024.23;4230.5576;4447.4639;4675.4907;
+4915.2046;5167.2139;5432.1436;5710.6562;6003.4434;6311.248;6634.8335;6975.0103;7332.6211;7708.5742;
+8103.8027;8519.2949;8956.082;9415.2715;9898.0049;10405.488;10938.981;11499.837;12089.448;12709.29;
+13360.899;14045.93;14766.083;15523.159;16319.036;17155.734;18035.33;18960.025;19932.111;20954.057;
+22028.398;23157.822;24345.154;25593.361;26905.566;28285.023;29735.232;31259.797;32862.496;34547.398;
+36318.688;38180.797;40138.375;42196.281;44359.738;46634.121;49025.066;51538.645;54181.098;56959.031;
+59879.395;62949.43;66176.93;69569.906;73136.773;76886.594;80828.664;84972.859;89329.523;93909.477;
+98724.336;103786.06;109107.2;114701.27;120582.16;126764.56;133263.94;140096.42;147279.34;154830.55;
+162768.77;171114.12;179887.38;189110.42;198806.36;208999.23;219714.89;230979.95;242822.36;255272.19;
+268360.31;282119.5;296584.12;311790.09;327775.97;344581.47;362248.25;380821.19;400346.41;420872.69;
+442451.38;465135.97;488984.09;514054.94;540410.69;568118.25;597246.44;627868;660059.62;693901.06;
+729478.31;766879.56;806197.75;847532.5;890986.62;936668.69;984692.88;1035178.4;1088253.2;1144049.5;
+1202705.2;1264369.5;1329195.4;1397344.9;1468988.6;1544304.1;1623482.5;1706720.6;1794224.6;1886216.9;
+1982925.6;2084592.9;2191472.5;2303830;2421950.5;2546127;2676667.8;2813903.8;2958176.2;3109846;
+3269291.8;3436909.2;3613124;3798373.8;3993117.2;4197849.5;4413079;4639343;4877208.5;5127264;
+5390145.5;5666505.5;5957029;6262453.5;6583537.5;6921084;7275937;7648976.5;8041149.5;8453430;
+8886839;9342488;9821480;10325030;10854418;11410928;11995992;12611030;13257601;13937349;
+14651921;15403129;16192883;17023098;17895876;18813440;19778010;20792074;21858090;22978760;
+24156934;25395468;26697552;28066342;29505312;31018118;32608426;34280268;36037896;37885572;
+39827976;41870048;44016736;46273576;48646036;51140132;53762204;56518608;59416448;62462744;
+65665228;69032040;72571328;76292080;80203752;84315824;88638720;93183432;97960976;1.0298366e+08;
+1.0826366e+08;1.1381437e+08;1.196499e+08;1.2578438e+08;1.3223363e+08;1.390133e+08;1.4614054e+08;1.536335e+08;1.6151034e+08;1.6979102e+08;
+1.7849659e+08;1.8764818e+08;1.9726894e+08;2.0738338e+08;2.1801598e+08;2.2919418e+08;2.4094502e+08;2.5329835e+08;2.6628554e+08;2.7993808e+08;
+2.9429114e+08;3.0937952e+08;3.252415e+08;3.4191741e+08;3.5944758e+08;3.7787658e+08;3.972512e+08;4.1761837e+08;4.3902979e+08;4.6153984e+08;
+4.8520314e+08;5.1008061e+08;5.3623363e+08;5.6372755e+08;5.9263117e+08;6.230167e+08;6.5496026e+08;6.8854157e+08;7.2384467e+08;7.6095782e+08;
+7.9997389e+08;8.409904e+08;8.8410989e+08;9.2944026e+08;9.7709478e+08;1.0271927e+09;1.0798592e+09;1.1352261e+09;1.1934317e+09;1.2546217e+09;
+1.3189491e+09;1.3865746e+09;1.4576675e+09;1.5324055e+09;1.6109754e+09;1.6935738e+09;1.7804072e+09;1.8716928e+09;1.9676588e+09;2.0685452e+09;
+2.1746043e+09;2.2861012e+09;2.4033149e+09;2.5265382e+09;2.6560799e+09;2.7922632e+09;2.9354289e+09;3.0859351e+09;3.244158e+09;3.4104934e+09;
+3.5853573e+09;3.7691868e+09;3.9624417e+09;4.1656051e+09;4.3791852e+09;4.6037161e+09;4.8397594e+09;5.0879048e+09;5.3487734e+09;5.6230175e+09;
+5.9113226e+09;6.2144097e+09;6.5330365e+09;6.8680008e+09;7.2201385e+09;7.5903319e+09;7.9795057e+09;8.3886331e+09;8.8187382e+09;9.2708946e+09;
+9.7462344e+09;1.0245946e+10;1.077128e+10;1.1323548e+10;1.1904132e+10;1.2514484e+10;1.3156131e+10;1.3830676e+10;1.4539807e+10;1.5285296e+10;
+1.6069008e+10;1.6892903e+10;1.7759042e+10;1.8669588e+10;1.9626822e+10;2.0633133e+10;2.1691042e+10;2.2803192e+10;2.3972362e+10;2.5201482e+10;
+2.6493618e+10;2.7852007e+10;2.9280045e+10;3.0781299e+10;3.2359528e+10;3.4018675e+10;3.5762889e+10;3.7596537e+10;3.9524196e+10;4.1550692e+10;
+4.3681092e+10;4.5920723e+10;4.8275186e+10;5.0750366e+10;5.3352452e+10;5.6087953e+10;5.8963714e+10;6.1986918e+10;6.5165132e+10;6.8506296e+10;
+      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+  };
+ };
+ data_proc {
+  name=;
+  el_typ=taDataProc;
+  el_def=0;
+  taDataProc @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_base";
+  };
+  taDataAnal @[1] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_anal";
+  };
+  taDataGen @[2] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_gen";
+  };
+  taImageProc @[3] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="image_proc";
+  };
+ };
+ programs {
+  name=;
+  el_typ=Program;
+  el_def=0;
+  step_prog=NULL;
+  tags=;
+  desc=;
+  Program_Group @.gp[0] {
+   name="BpAll_Std";
+   el_typ=Program;
+   el_def=0;
+   step_prog=.projects[0].programs.gp[0][3]$3$;
+   tags="Bp, Std, All";
+   desc="The full set of programs for training a standard Backpropagation network";
+   Program @[0] {
+    name="BpBatch";
+    tags="Bp, Std";
+    desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
+    flags=SHOW_STEP;
+    objs {
+     name=;
+     el_typ=taOBase;
+     el_def=0;
+    };
+    types {
+     name=;
+     el_typ=ProgType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="network";
+      var_type=T_Object;
+      object_type=BpNetwork;
+      object_val=.projects[0].networks[0]$4$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="network to operate on -- updates batch counter on network and passes it to train program";
+     };
+     ProgVar @[1] {
+      name="input_data";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects[0].data.gp[0][0]$5$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
+      desc="datatable with training patterns -- not used by this program, but passed to train program";
+     };
+     ProgVar @[2] {
+      name="max_batch";
+      var_type=T_Int;
+      int_val=10;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
+      desc="maximum number of batch runs to perform";
+     };
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="batch";
+      var_type=T_Int;
+      int_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
+      desc="batch counter";
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    load_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=NetCounterInit;
+     el_def=0;
+     NetCounterInit @[0] {
+      desc="initializes local batch counter and batch field on network";
+      flags=;
+      network_var=.projects[0].programs.gp[0][0].args[0]$6$;
+      local_ctr_var=.projects[0].programs.gp[0][0].vars[0]$7$;
+      counter=Network::batch;
+      update_after=0;
+     };
+    };
+    prog_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+     NetCounterInit @[0] {
+      desc="initializes local batch counter and batch field on network";
+      flags=;
+      network_var=$6$;
+      local_ctr_var=$7$;
+      counter=Network::batch;
+      update_after=0;
+     };
+     WhileLoop @[1] {
+      desc="the main loop over training runs";
+      flags=;
+      loop_code {
+       name=;
+       el_typ=ProgEl;
+       el_def=0;
+       ProgramCall @[0] {
+	desc="run the training program -- sets the network and input_data args";
+	flags=;
+	target=$2$;
+	targ_ld_init="*BpTrain*";
+	prog_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=BpNetwork;
+	  type="BpNetwork*";
+	  name="network";
+	  required=1;
+	  def_val=;
+	  expr {
+	   expr="network";
+	  };
+	 };
+	 ProgArg @[1] {
+	  arg_type=DataTable;
+	  type="DataTable*";
+	  name="input_data";
+	  required=1;
+	  def_val=;
+	  expr {
+	   expr="input_data";
+	  };
+	 };
+	 ProgArg @[2] {
+	  arg_type=bool;
+	  type="bool";
+	  name="no_prompts";
+	  required=1;
+	  def_val=;
+	  expr {
+	   expr="true";
+	  };
+	 };
+	};
+       };
+       NetCounterIncr @[1] {
+	desc="increment the local batch counter and copy to network";
+	flags=;
+	network_var=$6$;
+	local_ctr_var=$7$;
+	counter=Network::batch;
+	update_after=0;
+       };
+      };
+      test {
+       expr="batch < max_batch";
+      };
+     };
+    };
+   };
+   Program @[1] {
+    name="BpTrain";
+    tags="Bp, Std";
+    desc="A complete training run of a Backpropagation network: iterating over epochs until the network has learned the task";
+    flags=SHOW_STEP;
+    objs {
+     name=;
+     el_typ=RndSeed;
+     el_def=0;
+     RndSeed @[0] {
+      name="rnd_seed";
+      seed{ -725239770;1720742810;1377341225;1382343371;-357461066;101589870;1418451052;419018760;-432413904;-1982730712;-210931556;-1010072122;-297454651;-60005589;770410198;552515709;-2041270687;-646920160;1636741345;806594675;-1676935053;-1408260694;-1452588194;-438186141;-1246678792;1358175419;-725295236;-37739466;1235330565;-927292495;-1524967592;1548492961;-1948352704;-1817147605;-1155972017;-1331681404;16797186;-1997809425;647916199;1646555914;54478463;-1507211452;-452324152;-139995326;-701450799;591601159;-1698850831;784530958;-1488602698;1389336629;-574168906;1856668828;-964077787;1037875251;336394069;2026705344;1336887901;393712261;1564015539;1074499445;1350610176;-966735198;-2029577533;979752804;-1641120076;-1994300401;823291491;34441298;1602792094;-1835833344;1725897488;-453458180;2107505123;1195083891;-912271548;-315232690;1927887277;1234488617;630675734;-1963136003;940413675;-1989690872;113360964;1278295847;742604882;-835566929;-1573496270;-855292601;1241626668;595115802;-828485732;2120909078;448478575;1103668264;488748427;591463222;-1848104274;-204283331;1694003416;1817683712;-1543803703;-587755652;703566977;1032167500;982837860;1726741981;-1493572554;-920462097;-1653639800;832977375;883305577;909293276;1440866620;-1470987646;568589554;1676561901;-1507063152;50744847;128701281;-1366274372;1749335918;-40178108;1872036221;502854247;566346271;1697459640;1683622779;-1878994527;-1074270001;2118825570;-1882591087;1685034370;-1315039181;61392090;484725896;1191846447;-896787794;-1706550326;-1748435342;-1484369221;1230152841;123712053;1519561847;-1184681699;-1522206517;-1227310882;-59593890;-495099580;293036183;518712104;949956446;2058944173;-235239820;1796062348;976083259;1374963682;-888285141;1312534629;-777118702;-684905388;-68284941;1810952273;-656826318;300772600;-1127958916;-457740709;-1965842082;1079830003;2102606626;1584468088;1136345447;-1062575127;-1508399618;151804185;691832971;163660422;-1618807410;-890843923;-1824769896;-717045899;-536498110;-1420274854;1171978862;1819489666;732706919;1676828764;45927019;-910417934;-806906927;-1758022505;-1152648057;-1832858056;805595042;2057344427;555288276;324216423;-1607711129;1810289566;-156592767;-1981968623;-478175673;283628957;-804041541;615759203;-1661422629;2102204010;1901468677;1074999907;1178030970;2078131032;1870115823;1560697785;1017096300;-2028781711;-676228043;-153460699;-358201898;1405848290;-1932114071;1420783890;1749010523;-1244121505;737163407;-1007429558;-2081266003;1784621804;234866019;-1874863118;1500853908;1602700974;-671380751;-1204333471;1555187447;-1291213321;-1303275629;1430545952;-175442703;126232167;1129006737;-2090473537;1919128449;1941484145;-1603512542;658407571;1987864051;859880303;-790537535;1439211905;-1592444808;-336686309;-411049614;-1691325552;-1398172778;1475178081;1163783390;803916794;-1700707166;-1346784223;1721748945;1658881043;1572847134;-532833728;-340739979;1655303573;-868552596;-2064301100;-655668616;1829582482;-1703922677;844913050;-1248279344;1616382441;1163989400;1491456878;-1394879779;-1364424178;373744592;-1265487323;1301653881;-167438993;-294895436;-128419764;-244138171;1837886905;980697780;175941153;1325151523;-304207479;396836498;594924219;-1302382615;-1387558;-101468479;-515707473;-1068707326;616064140;-94201756;726024396;-2131182170;1595643615;296834242;178275255;58238817;1876161396;-1877234855;-1122283752;1523654772;-32281508;-1388209745;-1512425610;-1427048966;-1099250673;-1313517735;-1283652832;619540388;-538455825;-1414022568;581742783;-2114915431;1135284326;622172387;579587536;-755202990;715558456;2035946844;-410766346;-559309329;2145557347;1362936050;1524575272;-909287817;180246799;-567596233;-544022319;-1929308632;-1989133855;-1586081057;-2045642878;1191847634;-1987232366;1234918180;1209320430;-1131072095;2080859558;534936379;183120544;-2049074566;1096821427;-2069357674;2116097729;393919262;-1218387403;-1781944301;71471382;-1920858864;612410237;1923704501;-1548232087;408514717;-925338536;-1507353521;-2107580214;-839141294;808063584;-2062638772;-1539677389;1819630787;-96506887;396649746;-1452244085;1955018623;41767977;-1499781471;-1789363516;688285588;-503246117;1634338992;374548558;1367516736;189489696;-81733604;-1535714120;1745120;817453535;-212742789;75712985;-1690286817;-987575564;639190007;-1659371272;1372859944;1686710452;-1982272015;2140269928;914283767;-1559339522;-421858824;-1044525932;1316980769;1896470063;532815798;277408351;1208635405;826016335;-300797505;1441742017;-1742358186;-1201925189;-1729049963;1904983596;-1004331429;562041427;1167763291;-989253089;-684342614;1275150156;-562483199;-930151317;-1465882966;214985195;-1605005733;2069744578;-1268662123;1925368890;-3987473;-3142203;752772808;-399010157;997292156;-928848231;-1679595920;396914345;-884270243;-841409593;-656418298;1847636652;-784329483;876211395;1474545061;689815403;-2078684689;1823965498;-2060742399;366990058;-443321842;361756126;-311308204;-54082798;-1706684299;62205876;-1427167290;855545367;728008663;1446815896;-1537775837;1519606476;-1890219607;991483200;1873503242;662002978;1142092342;-761659264;-929214339;-1315556987;-1082930413;970078342;1675232432;-564292440;69741643;-40198548;-170726751;-1640675903;430891719;-523437732;1206598485;1373265407;-513407726;-714270062;2100958739;-1338484487;11956199;1831716612;531903451;-1059739062;-529776207;1572613919;-1572362564;364017885;-1675430375;1849462160;-258116321;898576887;1425860447;-617965565;1797650926;1111852090;-624050121;-1602966923;-1702759963;-1861611242;-2086112552;853670903;448829801;502577508;176138860;-1350169963;-106037619;2093051393;-1104254980;-572000461;-1306707986;-1548773;61864312;322348633;-335264737;317054223;-681164817;50365985;233018891;73602910;237733918;1138148319;-1247865184;-1051811339;-1905488358;1267132805;298698530;-273759111;-294727630;-1132896666;337757062;-476128271;-318813554;-1518804810;232586522;-1621571751;942889983;-1065892684;-1668838067;2101545286;-2141541857;194618510;881847332;1730375763;1381315706;1745914280;-137313585;-516945761;-1731009616;2028738911;1749766716;1885673784;787576485;-1740300734;-466275990;642560408;578054948;54561633;-1900746637;618344388;-714752380;-842306444;965639205;-156644916;111503327;250696752;-1735136986;-367312533;-1667663808;196462147;-1784277591;-1479798350;617229484;2120199705;-225277514;1064645544;192564104;1784911593;1164227530;-746613670;1378364001;-1859773915;-753388887;1448016217;1107327488;226602414;-505567760;-941193686;853401977;92452874;1633024064;-1634943756;-782224034;-921774846;-2116119369;-950498628;1734866607;-1781959941;399548307;1807327830;-58810965;-1880416863;773058217;-1422615544;797502542;1704786723;1329744072;-2019997012;-80505082;-196131750;961059455;1103883646;705080447;1919616896;197460299;-1082677250;2063541460;-281901198;-914232577;-1008299049;702597392;280552893;-1878013185;-1832420032;      };
+      mti=624;
+     };
+    };
+    types {
+     name=;
+     el_typ=DynEnumType;
+     el_def=0;
+     DynEnumType @[0] {
+      name="RndInitType";
+      desc=;
+      enums {
+       name=;
+       el_typ=DynEnumItem;
+       el_def=0;
+       DynEnumItem @[0] {
+	name="OLD_SEED";
+	value=0;
+	desc="use stored random seed value (recreates same sequence every time)";
+       };
+       DynEnumItem @[1] {
+	name="NEW_SEED";
+	value=1;
+	desc="generate new random seed (new sequence of random numbers)";
+       };
+      };
+      bits=0;
+     };
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="network";
+      var_type=T_Object;
+      object_type=BpNetwork;
+      object_val=$4$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="network to train";
+     };
+     ProgVar @[1] {
+      name="input_data";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects[0].data.gp[0][1]$8$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="datatable with training patterns";
+     };
+     ProgVar @[2] {
+      name="no_prompts";
+      var_type=T_Bool;
+      bool_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
+     };
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="max_epoch";
+      var_type=T_Int;
+      int_val=5000;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="maximum number of epochs to run";
+     };
+     ProgVar @[1] {
+      name="epoch";
+      var_type=T_Int;
+      int_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
+      desc="current epoch -- local copy, which is used to update network's epoch counter";
+     };
+     ProgVar @[2] {
+      name="train_mode";
+      var_type=T_HardEnum;
+      int_val=1;
+      hard_enum_type=Network::TrainMode;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="TRAIN = update weights (learn), TEST = just record network's responses but don't learn";
+     };
+     ProgVar @[3] {
+      name="rnd_init";
+      var_type=T_DynEnum;
+      dyn_enum_val {
+       enum_type=.projects[0].programs.gp[0][1].types[0]$9$;
+       value=1;
+      };
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="how to initialize the random numbers when the Init button is pressed";
+     };
+     ProgVar @[4] {
+      name="err_stopcrit";
+      var_type=T_Real;
+      real_val=-1;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="stopping criterion -- when error measure (average sum squared error by default) goes <= this value, stop training (set to -1 to disable stopping criterion, and always train to max_epoch epochs)";
+     };
+     ProgVar @[5] {
+      name="rnd_seed";
+      var_type=T_Object;
+      object_type=RndSeed;
+      object_val=.projects[0].programs.gp[0][1].objs[0]$10$;
+      objs_ptr=1;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="random seed that is used at start of training -- if OldSeed is called";
+     };
+     ProgVar @[6] {
+      name="train_timer";
+      var_type=T_Object;
+      object_type=TimeUsed;
+      object_val=.projects[0].networks[0].train_time$11$;
+      objs_ptr=0;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="records time used to train network (object lives on network -- this is a pointer to it)";
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    load_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=MethodCall;
+     el_def=0;
+     AssignExpr @[0] {
+      desc=;
+      flags=;
+      result_var=.projects[0].programs.gp[0][1].args[2]$12$;
+      expr {
+       expr="false";
+      };
+     };
+     MethodCall @[1] {
+      desc="check network to make sure it is ready to be run";
+      flags=;
+      result_var=NULL;
+      obj=.projects[0].programs.gp[0][1].args[0]$13$;
+      method=taBase::CheckConfig;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=bool;
+	type="bool";
+	name="quiet";
+	required=0;
+	def_val="false";
+	expr {
+	 expr="false";
+	};
+       };
+      };
+     };
+     AssignExpr @[2] {
+      desc="get our pointer to the network training time object";
+      flags=;
+      result_var=.projects[0].programs.gp[0][1].vars[6]$14$;
+      expr {
+       expr="network.train_time";
+      };
+     };
+     IfElse @[3] {
+      desc="initialize random seed (either old or new)";
+      flags=;
+      cond {
+       expr="rnd_init == OLD_SEED";
+      };
+      true_code {
+       name=;
+       el_typ=ProgEl;
+       el_def=0;
+       MethodCall @[0] {
+	desc="restore previous random seed (all runs produce same results)";
+	flags=;
+	result_var=NULL;
+	obj=.projects[0].programs.gp[0][1].vars[5]$15$;
+	method=RndSeed::OldSeed;
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+       };
+      };
+      false_code {
+       name=;
+       el_typ=ProgEl;
+       el_def=0;
+       MethodCall @[0] {
+	desc="new random numbers each time";
+	flags=;
+	result_var=NULL;
+	obj=$15$;
+	method=RndSeed::NewSeed;
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+       };
+      };
+     };
+     IfGuiPrompt @[4] {
+      desc="don't initialize weights without checking";
+      flags=;
+      prompt="Do you want to Initialize Network Weights";
+      yes_label="Yes";
+      no_label="No";
+      yes_code {
+       name=;
+       el_typ=ProgEl;
+       el_def=0;
+       MethodCall @[0] {
+	desc="initialize network weights: could also load pre-set weights or something else here";
+	flags=;
+	result_var=NULL;
+	obj=$13$;
+	method=Network::Init_Weights;
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+       };
+       PrintExpr @[1] {
+	desc=;
+	flags=;
+	expr {
+	 expr="network.name << \" Weights Initialized\"";
+	};
+       };
+      };
+     };
+     AssignExpr @[5] {
+      desc="always get current epoch counter";
+      flags=;
+      result_var=.projects[0].programs.gp[0][1].vars[1]$16$;
+      expr {
+       expr="network.epoch";
+      };
+     };
+    };
+    prog_code {
+     name=;
+     el_typ=MethodCall;
+     el_def=0;
+     AssignExpr @[0] {
+      desc="get our pointer to the network training time object";
+      flags=;
+      result_var=$14$;
+      expr {
+       expr="network.train_time";
+      };
+     };
+     MethodCall @[1] {
+      desc="start timer to keep track of how long it takes to run entire training run";
+      flags=;
+      result_var=NULL;
+      obj=$14$;
+      method=TimeUsed::StartTimer;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=bool;
+	type="bool";
+	name="reset_used";
+	required=0;
+	def_val="true";
+	expr {
+	 expr="true";
+	};
+       };
+      };
+     };
+     MemberAssign @[2] {
+      desc="set network's training mode to our local value";
+      flags=;
+      obj=$13$;
+      path="train_mode";
+      expr {
+       expr="train_mode";
+      };
+      update_after=0;
+     };
+     IfElse @[3] {
+      desc=;
+      flags=;
+      cond {
+       expr="no_prompts";
+      };
+      true_code {
+       name=;
+       el_typ=ProgEl;
+       el_def=0;
+       MethodCall @[0] {
+	desc="initialize network weights: could also load pre-set weights or something else here";
+	flags=;
+	result_var=NULL;
+	obj=$13$;
+	method=Network::Init_Weights;
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+       };
+       PrintExpr @[1] {
+	desc=;
+	flags=;
+	expr {
+	 expr="network.name << \" Weights Initialized\"";
+	};
+       };
+      };
+      false_code {
+       name=;
+       el_typ=ProgEl;
+       el_def=0;
+      };
+     };
+     AssignExpr @[4] {
+      desc="grab the official network epoch counter: will be initialized if needed by now";
+      flags=;
+      result_var=$16$;
+      expr {
+       expr="network.epoch";
+      };
+     };
+     WhileLoop @[5] {
+      desc="main loop over epochs of training";
+      flags=;
+      loop_code {
+       name=;
+       el_typ=ProgramCall;
+       el_def=0;
+       ProgramCall @[0] {
+	desc="run the epoch program (one epoch), passes our network and input_data";
+	flags=;
+	target=.projects[0].programs.gp[0][2]$17$;
+	targ_ld_init="*BpEpoch*";
+	prog_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=BpNetwork;
+	  type="BpNetwork*";
+	  name="network";
+	  required=1;
+	  def_val=;
+	  expr {
+	   expr="network";
+	  };
+	 };
+	 ProgArg @[1] {
+	  arg_type=DataTable;
+	  type="DataTable*";
+	  name="input_data";
+	  required=1;
+	  def_val=;
+	  expr {
+	   expr="input_data";
+	  };
+	 };
+	};
+       };
+       NetCounterIncr @[1] {
+	desc="increment the epoch counter (locally and on network)";
+	flags=;
+	network_var=$13$;
+	local_ctr_var=$16$;
+	counter=Network::epoch;
+	update_after=0;
+       };
+       IfBreak @[2] {
+	desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here instead)";
+	flags=;
+	cond {
+	 expr="network.avg_sse <= err_stopcrit";
+	};
+       };
+      };
+      test {
+       expr="epoch < max_epoch";
+      };
+     };
+     MethodCall @[6] {
+      desc="stop the timer -- time elapsed is now recorded in this object, and can be displayed or recorded to a data table";
+      flags=;
+      result_var=NULL;
+      obj=$14$;
+      method=TimeUsed::EndTimer;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+    };
+   };
+   Program @[2] {
+    name="BpEpoch";
+    tags="Bp, Std";
+    desc="iterates over all of the items in a data table and calls BpTrial process on them";
+    flags=SHOW_STEP;
+    objs {
+     name=;
+     el_typ=taOBase;
+     el_def=0;
+    };
+    types {
+     name=;
+     el_typ=ProgType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="network";
+      var_type=T_Object;
+      object_type=BpNetwork;
+      object_val=$4$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="network to operate on";
+     };
+     ProgVar @[1] {
+      name="input_data";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=$8$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="table of patterns to present to the network, one row at a time";
+     };
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="data_loop_order";
+      var_type=T_HardEnum;
+      int_val=1;
+      hard_enum_type=DataLoop::Order;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="controls the order in which events (rows of the input data datatable) are presented to the network
+(SEQUENTIAL, PERMUTED, RANDOM)";
+     };
+     ProgVar @[1] {
+      name="trial";
+      var_type=T_Int;
+      int_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
+      desc="current trial (event) within the epoch -- increments automatically";
+     };
+     ProgVar @[2] {
+      name="trial_mon_data";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects[0].data.gp[1][0]$18$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
+     };
+     ProgVar @[3] {
+      name="epoch_timer";
+      var_type=T_Object;
+      object_type=TimeUsed;
+      object_val=.projects[0].networks[0].epoch_time$19$;
+      objs_ptr=0;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
+     };
+     ProgVar @[4] {
+      name="data_loop_index";
+      var_type=T_Int;
+      int_val=10;
+      objs_ptr=0;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    load_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=NetCounterInit;
+     el_def=0;
+     NetCounterInit @[0] {
+      desc="initialize trial counter (local variable and in the network)";
+      flags=;
+      network_var=.projects[0].programs.gp[0][2].args[0]$20$;
+      local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$21$;
+      counter=Network::trial;
+      update_after=0;
+     };
+     AssignExpr @[1] {
+      desc="get pointer to epoch timer object on network";
+      flags=;
+      result_var=.projects[0].programs.gp[0][2].vars[3]$22$;
+      expr {
+       expr="network.epoch_time";
+      };
+     };
+    };
+    prog_code {
+     name=;
+     el_typ=NetCounterInit;
+     el_def=0;
+     NetCounterInit @[0] {
+      desc="initialize trial counter (local variable and in the network)";
+      flags=;
+      network_var=$20$;
+      local_ctr_var=$21$;
+      counter=Network::trial;
+      update_after=0;
+     };
+     AssignExpr @[1] {
+      desc="get pointer to epoch timer object on network";
+      flags=;
+      result_var=$22$;
+      expr {
+       expr="network.epoch_time";
+      };
+     };
+     MethodCall @[2] {
+      desc="start the epoch timer to record computation time per epoch";
+      flags=;
+      result_var=NULL;
+      obj=$22$;
+      method=TimeUsed::StartTimer;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=bool;
+	type="bool";
+	name="reset_used";
+	required=0;
+	def_val="true";
+	expr {
+	 expr="true";
+	};
+       };
+      };
+     };
+     MethodCall @[3] {
+      desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
+      flags=;
+      result_var=NULL;
+      obj=.projects[0].programs.gp[0][2].vars[2]$23$;
+      method=DataTable::ResetData;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     NetDataLoop @[4] {
+      desc="iterates over the events/rows of input_data, according to data_loop_order variable";
+      flags=;
+      loop_code {
+       name=;
+       el_typ=ProgramCall;
+       el_def=0;
+       ProgramCall @[0] {
+	desc="run the trial program, passing network and input_data";
+	flags=;
+	target=$3$;
+	targ_ld_init="*BpTrial*";
+	prog_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=BpNetwork;
+	  type="BpNetwork*";
+	  name="network";
+	  required=1;
+	  def_val=;
+	  expr {
+	   expr="network";
+	  };
+	 };
+	 ProgArg @[1] {
+	  arg_type=DataTable;
+	  type="DataTable*";
+	  name="input_data";
+	  required=1;
+	  def_val=;
+	  expr {
+	   expr="input_data";
+	  };
+	 };
+	};
+       };
+       IfElse @[1] {
+	desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
+	flags=;
+	cond {
+	 expr="network.Compute_Weights_Test(trial+1)";
+	};
+	true_code {
+	 name=;
+	 el_typ=MethodCall;
+	 el_def=0;
+	 MethodCall @[0] {
+	  desc="update the weight values based on changes computed by trial program";
+	  flags=;
+	  result_var=NULL;
+	  obj=$20$;
+	  method=Network::Compute_Weights;
+	  meth_args {
+	   name=;
+	   el_typ=ProgArg;
+	   el_def=0;
+	  };
+	 };
+	};
+	false_code {
+	 name=;
+	 el_typ=ProgEl;
+	 el_def=0;
+	};
+       };
+      };
+      data_var=.projects[0].programs.gp[0][2].args[1]$24$;
+      index_var=.projects[0].programs.gp[0][2].vars[4]$25$;
+      order_var=.projects[0].programs.gp[0][2].vars[0]$26$;
+      order=PERMUTED;
+      item_idx_list{ 6;15;9;10;12;3;14;7;13;8;5;2;4;0;1;11;      };
+      update_after=0;
+      dmem_nprocs=1;
+      dmem_this_proc=0;
+     };
+     IfElse @[5] {
+      desc="if full batch mode, update only at end of epoch";
+      flags=;
+      cond {
+       expr="network.wt_update == Network::BATCH";
+      };
+      true_code {
+       name=;
+       el_typ=ProgEl;
+       el_def=0;
+       MethodCall @[0] {
+	desc="final update of weights based on accumulated changes";
+	flags=;
+	result_var=NULL;
+	obj=$20$;
+	method=Network::Compute_Weights;
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+       };
+      };
+      false_code {
+       name=;
+       el_typ=ProgEl;
+       el_def=0;
+      };
+     };
+     MethodCall @[6] {
+      desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
+      flags=;
+      result_var=NULL;
+      obj=$20$;
+      method=LeabraNetwork::Compute_EpochStats;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     MethodCall @[7] {
+      desc="done with the computation in the epoch -- record time it took";
+      flags=;
+      result_var=NULL;
+      obj=$22$;
+      method=TimeUsed::EndTimer;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     ProgramCall @[8] {
+      desc="run program that records data from network and possibly other sources about the epoch";
+      flags=;
+      target=.projects[0].programs.gp[0][6]$27$;
+      targ_ld_init="*BpEpochMonitor*";
+      prog_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=Network;
+	type="BpNetwork*";
+	name="network";
+	required=1;
+	def_val=;
+	expr {
+	 expr="network";
+	};
+       };
+      };
+     };
+    };
+   };
+   Program @[3] {
+    name="BpTrial";
+    tags="Bp, Std";
+    desc="Backpropagation processing of a single input/output event or external information";
+    flags=;
+    objs {
+     name=;
+     el_typ=taOBase;
+     el_def=0;
+    };
+    types {
+     name=;
+     el_typ=ProgType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="network";
+      var_type=T_Object;
+      object_type=BpNetwork;
+      object_val=$4$;
+      objs_ptr=0;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="network to operate on -- typically set by higher-level calling programs";
+     };
+     ProgVar @[1] {
+      name="input_data";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=$8$;
+      objs_ptr=0;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="datatable containing training input/output patterns";
+     };
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="update_net_view";
+      var_type=T_Bool;
+      bool_val=1;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="determines whether to update any network view displays after trial is completed";
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    load_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=NetCounterInit;
+     el_def=0;
+    };
+    prog_code {
+     name=;
+     el_typ=MethodCall;
+     el_def=0;
+     MethodCall @[0] {
+      desc="resets input data, before getting new external inputs data from apply inputs call";
+      flags=;
+      result_var=NULL;
+      obj=.projects[0].programs.gp[0][3].args[0]$28$;
+      method=Network::Init_InputData;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     ProgramCall @[1] {
+      desc="apply external input activations from the input_data table to the network
+this program can be extended to do arbitrary things to generate data and apply it to network layers";
+      flags=;
+      target=.projects[0].programs.gp[0][4]$29$;
+      targ_ld_init="*ApplyInputs*";
+      prog_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=LeabraNetwork;
+	type="BpNetwork*";
+	name="network";
+	required=1;
+	def_val=;
+	expr {
+	 expr="network";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=DataTable;
+	type="DataTable*";
+	name="input_data";
+	required=1;
+	def_val=;
+	expr {
+	 expr="input_data";
+	};
+       };
+      };
+     };
+     MethodCall @[2] {
+      desc="initializes various counters at start of trial";
+      flags=;
+      result_var=NULL;
+      obj=$28$;
+      method=BpNetwork::Trial_Run;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     MethodCall @[3] {
+      desc=;
+      flags=;
+      result_var=NULL;
+      obj=$28$;
+      method=LeabraNetwork::Compute_TrialStats;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     ProgramCall @[4] {
+      desc="records data about the trial-level processing to a datatable for graphing/processing";
+      flags=;
+      target=.projects[0].programs.gp[0][5]$30$;
+      targ_ld_init="*BpTrialMonitor*";
+      prog_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=Network;
+	type="BpNetwork*";
+	name="network";
+	required=1;
+	def_val=;
+	expr {
+	 expr="network";
+	};
+       };
+      };
+     };
+     NetUpdateView @[5] {
+      desc="update the network view(s) (only if update_net_view is true)";
+      flags=;
+      network_var=$28$;
+      update_var=.projects[0].programs.gp[0][3].vars[0]$31$;
+     };
+    };
+   };
+   Program @[4] {
+    name="ApplyInputs";
+    tags="Network, InputData, Apply";
+    desc="apply the current input data to the network as external input and target values";
+    flags=;
+    objs {
+     name=;
+     el_typ=LayerWriter;
+     el_def=0;
+     LayerWriter @[0] {
+      name="LayerWriter_0";
+      data=$8$;
+      network=$4$;
+      layer_data {
+       name=;
+       el_typ=LayerWriterEl;
+       el_def=0;
+       LayerWriterEl @[0] {
+	chan_name="Input";
+	net_target=LAYER;
+	layer_name="Input";
+	offset {x=0: y=0: };
+	use_layer_type=1;
+	na_by_range=0;
+	ext_flags=EXT;
+	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+       };
+       LayerWriterEl @[1] {
+	chan_name="Output_SoftMax";
+	net_target=LAYER;
+	layer_name="Output";
+	offset {x=0: y=0: };
+	use_layer_type=1;
+	na_by_range=0;
+	ext_flags=TARG;
+	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+       };
+       LayerWriterEl @[2] {
+	chan_name="Name";
+	net_target=TRIAL_NAME;
+	layer_name="Name";
+	offset {x=0: y=0: };
+	use_layer_type=1;
+	na_by_range=0;
+	ext_flags=;
+	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+       };
+      };
+     };
+    };
+    types {
+     name=;
+     el_typ=ProgType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="network";
+      var_type=T_Object;
+      object_type=LeabraNetwork;
+      object_val=$4$;
+      objs_ptr=0;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="network to apply inputs to -- typically set by calling program";
+     };
+     ProgVar @[1] {
+      name="input_data";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=$8$;
+      objs_ptr=0;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="input datatable containing input/output patterns";
+     };
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="LayerWriter_0";
+      var_type=T_Object;
+      object_type=LayerWriter;
+      object_val=.projects[0].programs.gp[0][4].objs[0]$32$;
+      objs_ptr=1;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    load_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=MethodCall;
+     el_def=0;
+     MethodCall @[0] {
+      desc="sets the datatable and network for the layer writer, so it knows what to write to";
+      flags=;
+      result_var=NULL;
+      obj=.projects[0].programs.gp[0][4].vars[0]$33$;
+      method=LayerWriter::SetDataNetwork;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=DataBlock_ptr;
+	type="DataBlock*";
+	name="db";
+	required=0;
+	def_val=;
+	expr {
+	 expr="input_data";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=Network_ptr;
+	type="Network*";
+	name="net";
+	required=0;
+	def_val=;
+	expr {
+	 expr="network";
+	};
+       };
+      };
+     };
+     MethodCall @[1] {
+      desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
+      flags=;
+      result_var=NULL;
+      obj=$33$;
+      method=taList_impl::CheckConfig;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=bool;
+	type="bool";
+	name="quiet";
+	required=0;
+	def_val="false";
+	expr {
+	 expr="false";
+	};
+       };
+      };
+     };
+    };
+    prog_code {
+     name=;
+     el_typ=MethodCall;
+     el_def=0;
+     MethodCall @[0] {
+      desc="apply inputs to the network!  layer writer has all the key specs";
+      flags=;
+      result_var=NULL;
+      obj=$33$;
+      method=LayerWriter::ApplyInputData;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+    };
+   };
+   Program @[5] {
+    name="BpTrialMonitor";
+    tags="Bp, Std, Monitor";
+    desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
+    flags=;
+    objs {
+     name=;
+     el_typ=NetMonitor;
+     el_def=0;
+     NetMonitor @[0] {
+      name="trial_netmon";
+      items {
+       name=;
+       el_typ=NetMonItem;
+       el_def=0;
+       NetMonItem @[0] {
+	name="batch";
+	computed=0;
+	object_type=LeabraNetwork;
+	object=$4$;
+	variable="batch";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[1] {
+	name="epoch";
+	computed=0;
+	object_type=LeabraNetwork;
+	object=$4$;
+	variable="epoch";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[2] {
+	name="trial";
+	computed=0;
+	object_type=LeabraNetwork;
+	object=$4$;
+	variable="trial";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[3] {
+	name="trial_name";
+	computed=0;
+	object_type=LeabraNetwork;
+	object=$4$;
+	variable="trial_name";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[4] {
+	name="group_name";
+	computed=0;
+	object_type=LeabraNetwork;
+	object=$4$;
+	variable="group_name";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[5] {
+	name="sse";
+	computed=0;
+	object_type=LeabraNetwork;
+	object=$4$;
+	variable="sse";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+      };
+      network=$4$;
+      data=$18$;
+      rmv_orphan_cols=1;
+     };
+    };
+    types {
+     name=;
+     el_typ=ProgType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="network";
+      var_type=T_Object;
+      object_type=Network;
+      object_val=$4$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="network to record data from";
+     };
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="trial_mon_data";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=$18$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="data table to record trial-level data to (this program writes new data to this table!)";
+     };
+     ProgVar @[1] {
+      name="trial_netmon";
+      var_type=T_Object;
+      object_type=NetMonitor;
+      object_val=.projects[0].programs.gp[0][5].objs[0]$34$;
+      objs_ptr=1;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    load_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=MethodCall;
+     el_def=0;
+     MethodCall @[0] {
+      desc="set the network and datatable for the NetMonitor";
+      flags=;
+      result_var=NULL;
+      obj=.projects[0].programs.gp[0][5].vars[1]$35$;
+      method=NetMonitor::SetDataNetwork;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=DataTable_ptr;
+	type="DataTable*";
+	name="dt";
+	required=0;
+	def_val=;
+	expr {
+	 expr="trial_mon_data";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=Network_ptr;
+	type="Network*";
+	name="net";
+	required=0;
+	def_val=;
+	expr {
+	 expr="network";
+	};
+       };
+      };
+     };
+     MethodCall @[1] {
+      desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
+      flags=;
+      result_var=NULL;
+      obj=$35$;
+      method=taBase::CheckConfig;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=bool;
+	type="bool";
+	name="quiet";
+	required=0;
+	def_val="false";
+	expr {
+	 expr="false";
+	};
+       };
+      };
+     };
+     MethodCall @[2] {
+      desc="update the monitor items and data schema based on current settings of the NetMonitor object";
+      flags=;
+      result_var=NULL;
+      obj=$35$;
+      method=NetMonitor::UpdateMonitors;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=bool;
+	type="bool";
+	name="reset_first";
+	required=0;
+	def_val="false";
+	expr {
+	 expr="true";
+	};
+       };
+      };
+     };
+    };
+    prog_code {
+     name=;
+     el_typ=MethodCall;
+     el_def=0;
+     MethodCall @[0] {
+      desc="add a new blank row to the data";
+      flags=;
+      result_var=NULL;
+      obj=.projects[0].programs.gp[0][5].vars[0]$36$;
+      method=DataTable::AddBlankRow;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     MethodCall @[1] {
+      desc="get the new monitor data from the network and other sources -- this does the main work";
+      flags=;
+      result_var=NULL;
+      obj=$35$;
+      method=NetMonitor::GetMonVals;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     MethodCall @[2] {
+      desc="update views and other things after writing new data to monitor data table";
+      flags=;
+      result_var=NULL;
+      obj=$36$;
+      method=DataBlock::WriteClose;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     MethodCall @[3] {
+      desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
+      flags=;
+      result_var=NULL;
+      obj=.projects[0].programs.gp[0][5].args[0]$37$;
+      method=Network::DMem_ShareTrialData;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=DataTable_ptr;
+	type="DataTable*";
+	name="dt";
+	required=1;
+	def_val=;
+	expr {
+	 expr="trial_mon_data";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=int;
+	type="int";
+	name="n_rows";
+	required=0;
+	def_val="1";
+	expr {
+	 expr="1";
+	};
+       };
+      };
+     };
+    };
+   };
+   Program @[6] {
+    name="BpEpochMonitor";
+    tags="Bp, Std, Monitor";
+    desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+    flags=;
+    objs {
+     name=;
+     el_typ=NetMonitor;
+     el_def=0;
+     NetMonitor @[0] {
+      name="epoch_netmon";
+      items {
+       name=;
+       el_typ=NetMonItem;
+       el_def=0;
+       NetMonItem @[0] {
+	name="batch";
+	computed=0;
+	object_type=LeabraNetwork;
+	object=$4$;
+	variable="batch";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[1] {
+	name="epoch";
+	computed=0;
+	object_type=LeabraNetwork;
+	object=$4$;
+	variable="epoch";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[2] {
+	name="avg_sse";
+	computed=0;
+	object_type=LeabraNetwork;
+	object=$4$;
+	variable="avg_sse";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[3] {
+	name="cnt_err";
+	computed=0;
+	object_type=LeabraNetwork;
+	object=$4$;
+	variable="cnt_err";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[4] {
+	name="epoch_time_tot";
+	computed=1;
+	object_type=NULL;
+	object=NULL;
+	variable="act";
+	var_label=;
+	name_style=MY_NAME;
+	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[5] {
+	name="epoch_time_usr";
+	computed=1;
+	object_type=NULL;
+	object=NULL;
+	variable="act";
+	var_label=;
+	name_style=MY_NAME;
+	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+      };
+      network=$4$;
+      data=.projects[0].data.gp[1][1]$38$;
+      rmv_orphan_cols=1;
+     };
+    };
+    types {
+     name=;
+     el_typ=ProgType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="network";
+      var_type=T_Object;
+      object_type=Network;
+      object_val=$4$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="network to get data from";
+     };
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="epoch_mon_data";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=$38$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc="data table to write the epoch data to";
+     };
+     ProgVar @[1] {
+      name="epoch_netmon";
+      var_type=T_Object;
+      object_type=NetMonitor;
+      object_val=.projects[0].programs.gp[0][6].objs[0]$39$;
+      objs_ptr=1;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="network monitor object that contains full specs for what to record and where to get it";
+     };
+     ProgVar @[2] {
+      name="epoch_timer";
+      var_type=T_Object;
+      object_type=TimeUsed;
+      object_val=$19$;
+      objs_ptr=0;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    load_code {
+     name=;
+     el_typ=AssignExpr;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=MethodCall;
+     el_def=0;
+     AssignExpr @[0] {
+      desc="get the epoch timer from current network";
+      flags=;
+      result_var=.projects[0].programs.gp[0][6].vars[2]$40$;
+      expr {
+       expr="network.epoch_time";
+      };
+     };
+     MethodCall @[1] {
+      desc="set data and network on NetMonitor object";
+      flags=;
+      result_var=NULL;
+      obj=.projects[0].programs.gp[0][6].vars[1]$41$;
+      method=NetMonitor::SetDataNetwork;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=DataTable_ptr;
+	type="DataTable*";
+	name="dt";
+	required=0;
+	def_val=;
+	expr {
+	 expr="epoch_mon_data";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=Network_ptr;
+	type="Network*";
+	name="net";
+	required=0;
+	def_val=;
+	expr {
+	 expr="network";
+	};
+       };
+      };
+     };
+     MethodCall @[2] {
+      desc="check configuration and emit errors/warnings for problems";
+      flags=;
+      result_var=NULL;
+      obj=$41$;
+      method=taBase::CheckConfig;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=bool;
+	type="bool";
+	name="quiet";
+	required=0;
+	def_val="false";
+	expr {
+	 expr="false";
+	};
+       };
+      };
+     };
+     MethodCall @[3] {
+      desc="update the monitor items and data schema based on current settings of NetMonitor";
+      flags=;
+      result_var=NULL;
+      obj=$41$;
+      method=NetMonitor::UpdateMonitors;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=bool;
+	type="bool";
+	name="reset_first";
+	required=0;
+	def_val="false";
+	expr {
+	 expr="true";
+	};
+       };
+      };
+     };
+    };
+    prog_code {
+     name=;
+     el_typ=MethodCall;
+     el_def=0;
+     MethodCall @[0] {
+      desc="add a new blank row to the data";
+      flags=;
+      result_var=NULL;
+      obj=.projects[0].programs.gp[0][6].vars[0]$42$;
+      method=DataTable::AddBlankRow;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     MethodCall @[1] {
+      desc="get the new monitor data and stor it into the data table -- this does the main job here";
+      flags=;
+      result_var=NULL;
+      obj=$41$;
+      method=NetMonitor::GetMonVals;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     AssignExpr @[2] {
+      desc="get the epoch timer from current network";
+      flags=;
+      result_var=$40$;
+      expr {
+       expr="network.epoch_time";
+      };
+     };
+     MethodCall @[3] {
+      desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
+      flags=;
+      result_var=NULL;
+      obj=$42$;
+      method=DataTable::SetValColName;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_Variant_ref;
+	type="const Variant&";
+	name="val";
+	required=0;
+	def_val=;
+	expr {
+	 expr="epoch_timer.used.GetTotSecs()";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=const_taString_ref;
+	type="const taString&";
+	name="col_name";
+	required=0;
+	def_val="\"\"";
+	expr {
+	 expr="\"epoch_time_tot\"";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=int;
+	type="int";
+	name="row";
+	required=0;
+	def_val=;
+	expr {
+	 expr="-1";
+	};
+       };
+      };
+     };
+     MethodCall @[4] {
+      desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
+      flags=;
+      result_var=NULL;
+      obj=$42$;
+      method=DataTable::SetValColName;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_Variant_ref;
+	type="const Variant&";
+	name="val";
+	required=0;
+	def_val=;
+	expr {
+	 expr="epoch_timer.used.GetUsrSecs()";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=const_taString_ref;
+	type="const taString&";
+	name="col_name";
+	required=0;
+	def_val="\"\"";
+	expr {
+	 expr="\"epoch_time_usr\"";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=int;
+	type="int";
+	name="row";
+	required=0;
+	def_val=;
+	expr {
+	 expr="-1";
+	};
+       };
+      };
+     };
+     MethodCall @[5] {
+      desc="update after writing new data to monitor data table";
+      flags=;
+      result_var=NULL;
+      obj=$42$;
+      method=DataBlock::WriteClose;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+    };
+   };
+   Program @[7] {
+    name="SaveWeights";
+    tags="Network, Weights";
+    desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
+    flags=;
+    objs {
+     name=;
+     el_typ=taOBase;
+     el_def=0;
+    };
+    types {
+     name=;
+     el_typ=ProgType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="network";
+      var_type=T_Object;
+      object_type=Network;
+      object_val=$4$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
+      desc=;
+     };
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="tag";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
+      desc="user-provided tag (startup script will set this!)";
+     };
+     ProgVar @[1] {
+      name="wts_subdir";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
+      desc="user-provided subdirectory to save weights in";
+     };
+     ProgVar @[2] {
+      name="fname";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
+      desc="final generated file name -- do not edit!";
+     };
+     ProgVar @[3] {
+      name="epoch_str";
+      var_type=T_String;
+      string_val="0036";
+      objs_ptr=0;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="string rep of epoch with leading zeros";
+     };
+     ProgVar @[4] {
+      name="batch_str";
+      var_type=T_String;
+      string_val="03";
+      objs_ptr=0;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="string rep of batch with leading zeros";
+     };
+     ProgVar @[5] {
+      name="final_tag";
+      var_type=T_String;
+      string_val=".03_0036";
+      objs_ptr=0;
+      flags=NULL_CHECK|USED;
+      reference=0;
+      desc="batch + epoch";
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    load_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
+    prog_code {
+     name=;
+     el_typ=MethodCall;
+     el_def=0;
+     IfReturn @[0] {
+      desc="do not save if not the first dmem process (only relevant for dmem = distributed memory processing)";
+      flags=;
+      cond {
+       expr="taMisc::dmem_proc > 0";
+      };
+     };
+     MiscCall @[1] {
+      desc="get current batch counter for file name, with leading zeros to length 3";
+      flags=;
+      result_var=.projects[0].programs.gp[0][7].vars[4]$43$;
+      object_type=taMisc;
+      method=taMisc::LeadingZeros;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=int;
+	type="int";
+	name="num";
+	required=0;
+	def_val=;
+	expr {
+	 expr="network.batch";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=int;
+	type="int";
+	name="len";
+	required=0;
+	def_val=;
+	expr {
+	 expr="2";
+	};
+       };
+      };
+     };
+     MiscCall @[2] {
+      desc="get current epoch counter with leading zeros to length 4";
+      flags=;
+      result_var=.projects[0].programs.gp[0][7].vars[3]$44$;
+      object_type=taMisc;
+      method=taMisc::LeadingZeros;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=int;
+	type="int";
+	name="num";
+	required=0;
+	def_val=;
+	expr {
+	 expr="network.epoch";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=int;
+	type="int";
+	name="len";
+	required=0;
+	def_val=;
+	expr {
+	 expr="4";
+	};
+       };
+      };
+     };
+     AssignExpr @[3] {
+      desc="string 'tag' to identify the batch, epoch, and other user id info for the weights";
+      flags=;
+      result_var=.projects[0].programs.gp[0][7].vars[5]$45$;
+      expr {
+       expr="tag + \".\" + batch_str + \"_\" + epoch_str";
+      };
+     };
+     MethodCall @[4] {
+      desc="get a file name based on the project's current file name, for saving the weights";
+      flags=;
+      result_var=.projects[0].programs.gp[0][7].vars[2]$46$;
+      obj=.projects[0].programs.gp[0][7].args[0]$47$;
+      method=taBase::GetFileNameFmProject;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString_ref;
+	type="const taString&";
+	name="ext";
+	required=1;
+	def_val=;
+	expr {
+	 expr="\".wts.gz\"";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=const_taString_ref;
+	type="const taString&";
+	name="tag";
+	required=0;
+	def_val="\"\"";
+	expr {
+	 expr="final_tag";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=const_taString_ref;
+	type="const taString&";
+	name="subdir";
+	required=0;
+	def_val="\"\"";
+	expr {
+	 expr="wts_subdir";
+	};
+       };
+       ProgArg @[3] {
+	arg_type=bool;
+	type="bool";
+	name="dmem_proc_no";
+	required=0;
+	def_val="false";
+	expr {
+	 expr="false";
+	};
+       };
+      };
+     };
+     MethodCall @[5] {
+      desc="save the weights to that file name";
+      flags=;
+      result_var=NULL;
+      obj=$47$;
+      method=Network::SaveWeights;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString_ref;
+	type="const taString&";
+	name="fname";
+	required=0;
+	def_val="\"\"";
+	expr {
+	 expr="fname";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=Network::WtSaveFormat;
+	type="Network::WtSaveFormat";
+	name="fmt";
+	required=0;
+	def_val="Network::NET_FMT";
+	expr {
+	 expr="Network::NET_FMT";
+	};
+       };
+      };
+     };
+    };
+   };
+  };
+ };
+ viewers {
+  name=;
+  el_typ=TopLevelViewer;
+  el_def=0;
+  MainWindowViewer @[0] {
+   m_data=.projects[0]$48$;
+   name="Browser3";
+   visible=1;
+   m_is_root=0;
+   m_is_viewer_xor_browser=0;
+   m_is_proj_viewer=1;
+   m_is_dialog=0;
+   toolbars {
+    name=;
+    el_typ=ToolBar;
+    el_def=0;
+    ToolBar @[0] {
+     m_data=NULL;
+     name="Application";
+     visible=0;
+     lft=0;
+     top=0;
+     o=Horizontal;
+    };
+   };
+   frames {
+    name=;
+    el_typ=FrameViewer;
+    el_def=0;
+    tabBrowseViewer @[0] {
+     m_data=NULL;
+     name="Tree";
+     visible=1;
+     root_typ=BpProject;
+     root_md=NULL;
+     m_root=$48$;
+    };
+    PanelViewer @[1] {
+     m_data=NULL;
+     name="Panels";
+     visible=1;
+    };
+    T3DataViewer @[2] {
+     m_data=NULL;
+     name="T3Frames";
+     visible=1;
+     frames {
+      name=;
+      el_typ=T3DataViewFrame;
+      el_def=0;
+      T3DataViewFrame @[0] {
+       m_data=NULL;
+       name="SoftMax_Net";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 NetView @[0] {
+	  m_data=$4$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
+	  display=1;
+	  lay_mv=0;
+	  net_text=1;
+	  net_text_xform {scale={x=0.6999999: y=0.6999998: z=0.6999998: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0.1074312: y=0.8633766: z=-0.9999952: }: };
+	  net_text_rot=-90;
+	  ordered_uvg_list{ act;	  };
+	  unit_disp_mode=UDM_BLOCK;
+	  unit_text_disp=UTD_NONE;
+	  max_size {x=4: y=5: z=2.333333: };
+	  font_sizes {
+	   net_name=0.05;
+	   net_vals=0.05;
+	   layer=0.04;
+	   layer_vals=0.03;
+	   prjn=0.01;
+	   unit=0.02;
+	   un_nm_len=3;
+	  };
+	  view_params {
+	   xy_square=0;
+	   unit_spacing=0.05;
+	   prjn_disp=L_R_F;
+	   prjn_name=0;
+	   prjn_width=0.002;
+	   prjn_trans=0.5;
+	   lay_trans=0.5;
+	   unit_trans=0.6;
+	   laygp_width=1;
+	  };
+	  wt_line_disp=0;
+	  wt_line_width=4;
+	  wt_line_thr=0.5;
+	  wt_line_swt=0;
+	  wt_prjn_lay=NULL;
+	  snap_bord_disp=0;
+	  snap_bord_width=4;
+	  scale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=.colorspecs[0]$49$;
+	   auto_scale=0;
+	  };
+	  scale_ranges {
+	   name=;
+	   el_typ=ScaleRange;
+	   el_def=0;
+	   ScaleRange @[0] {
+	    name="act";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[1] {
+	    name="r.wt";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[2] {
+	    name="net";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[3] {
+	    name="err";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[4] {
+	    name="dEdA";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	  };
+	  lay_disp_modes{ Input=-1;Hidden=-1;Output_Exp=-1;Output_Sum=-1;Output=-1;	  };
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=0.5: y=0.6893748: z=2.006099: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=2.181998;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+      T3DataViewFrame @[1] {
+       m_data=NULL;
+       name="Standard_Net";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 NetView @[0] {
+	  m_data=.projects[0].networks[1]$50$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
+	  display=1;
+	  lay_mv=0;
+	  net_text=1;
+	  net_text_xform {scale={x=0.7: y=0.6999999: z=0.6999999: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0.05201041: y=0.6911638: z=-0.9999974: }: };
+	  net_text_rot=-90;
+	  ordered_uvg_list{ act;	  };
+	  unit_disp_mode=UDM_BLOCK;
+	  unit_text_disp=UTD_NONE;
+	  max_size {x=4: y=4: z=2.333333: };
+	  font_sizes {
+	   net_name=0.05;
+	   net_vals=0.05;
+	   layer=0.04;
+	   layer_vals=0.03;
+	   prjn=0.01;
+	   unit=0.02;
+	   un_nm_len=3;
+	  };
+	  view_params {
+	   xy_square=0;
+	   unit_spacing=0.05;
+	   prjn_disp=L_R_F;
+	   prjn_name=0;
+	   prjn_width=0.002;
+	   prjn_trans=0.5;
+	   lay_trans=0.5;
+	   unit_trans=0.6;
+	   laygp_width=1;
+	  };
+	  wt_line_disp=0;
+	  wt_line_width=4;
+	  wt_line_thr=0.5;
+	  wt_line_swt=0;
+	  wt_prjn_lay=NULL;
+	  snap_bord_disp=0;
+	  snap_bord_width=4;
+	  scale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$49$;
+	   auto_scale=0;
+	  };
+	  scale_ranges {
+	   name=;
+	   el_typ=ScaleRange;
+	   el_def=0;
+	   ScaleRange @[0] {
+	    name="act";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	  };
+	  lay_disp_modes{ Input=-1;Hidden=-1;Output=-1;	  };
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=0.5: y=0.6433628: z=1.818275: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.983184;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+      T3DataViewFrame @[2] {
+       m_data=NULL;
+       name="Prototypes";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @[0] {
+	  m_data=$5$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @[0] {
+	    m_data=.projects[0].data.gp[0][0].data[0]$51$;
+	    m_transform=NULL;
+	    name="Name";
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[1] {
+	    m_data=.projects[0].data.gp[0][0].data[1]$52$;
+	    m_transform=NULL;
+	    name="Input";
+	    visible=1;
+	    text_width=4;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[2] {
+	    m_data=.projects[0].data.gp[0][0].data[2]$53$;
+	    m_transform=NULL;
+	    name="Output_SoftMax";
+	    visible=1;
+	    text_width=4;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10;
+	  view_range {min=0: max=3: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=0: max=2: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$49$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	  click_vals=0;
+	  lmb_val=1;
+	  mmb_val=0;
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=1.5325: y=0.5174999: z=1.443747: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.453747;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+      T3DataViewFrame @[3] {
+       m_data=NULL;
+       name="Exemplars";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @[0] {
+	  m_data=$8$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @[0] {
+	    m_data=.projects[0].data.gp[0][1].data[0]$54$;
+	    m_transform=NULL;
+	    name="Name";
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[1] {
+	    m_data=.projects[0].data.gp[0][1].data[1]$55$;
+	    m_transform=NULL;
+	    name="Input";
+	    visible=1;
+	    text_width=4;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[2] {
+	    m_data=.projects[0].data.gp[0][1].data[2]$56$;
+	    m_transform=NULL;
+	    name="Output_SoftMax";
+	    visible=1;
+	    text_width=4;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10;
+	  view_range {min=0: max=9: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=0: max=2: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$49$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	  click_vals=0;
+	  lmb_val=1;
+	  mmb_val=0;
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=1.5325: y=0.5174999: z=1.443747: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.453747;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+      T3DataViewFrame @[4] {
+       m_data=NULL;
+       name="EpochOutputData";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GraphTableView @[0] {
+	  m_data=$38$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].data.gp[1][1].data[0]$57$;
+	    m_transform=NULL;
+	    name="batch";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].data.gp[1][1].data[1]$58$;
+	    m_transform=NULL;
+	    name="epoch";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=93: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].data.gp[1][1].data[2]$59$;
+	    m_transform=NULL;
+	    name="avg_sse";
+	    visible=1;
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=0.978264: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[3] {
+	    m_data=.projects[0].data.gp[1][1].data[3]$60$;
+	    m_transform=NULL;
+	    name="cnt_err";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[4] {
+	    m_data=.projects[0].data.gp[1][1].data[4]$61$;
+	    m_transform=NULL;
+	    name="epoch_time_tot";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[5] {
+	    m_data=.projects[0].data.gp[1][1].data[5]$62$;
+	    m_transform=NULL;
+	    name="epoch_time_usr";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10000;
+	  view_range {min=0: max=-1: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="epoch";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=183: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=183: };
+	   range {min=0: max=183: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name="batch";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-19: max=6e-19: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="avg_sse";
+	   fixed_range {fix_min=1: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=6e-19: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  plot_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	   alt_y=0;
+	  };
+	  plot_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	   alt_y=0;
+	  };
+	  plot_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	   alt_y=0;
+	  };
+	  plot_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	   alt_y=0;
+	  };
+	  plot_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CROSS;
+	   alt_y=0;
+	  };
+	  plot_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=STAR;
+	   alt_y=0;
+	  };
+	  plot_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=MINUS;
+	   alt_y=0;
+	  };
+	  alt_y_1=0;
+	  alt_y_2=0;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  err_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=VALUE_COLOR;
+	  color_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=$49$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=1.4275: y=0.445: z=1.624621: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.637121;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+     };
+    };
+   };
+   docks {
+    name=;
+    el_typ=DockViewer;
+    el_def=0;
+    ToolBoxDockViewer @[0] {
+     m_data=NULL;
+     name="Tools";
+     visible=1;
+     dock_flags=DV_MOVABLE|DV_FLOATABLE;
+     dock_area=1;
+    };
+   };
+  };
+ };
+ last_change_desc=;
+ networks {
+  name=;
+  el_typ=BpNetwork;
+  el_def=0;
+  BpNetwork @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="sse";
+     value 1 0=1;
+    };
+    UserDataItem @[1] {
+     name="output_name";
+     value 1 0=1;
+    };
+    UserDataItem @[2] {
+     name="trial_name";
+     value 1 0=1;
+    };
+    UserDataItem @[3] {
+     name="group_name";
+     value 1 0=1;
+    };
+    UserDataItem @[4] {
+     name="time";
+     value 1 0=1;
+    };
+    UserDataItem @[5] {
+     name="cycle";
+     value 1 0=1;
+    };
+    UserDataItem @[6] {
+     name="tick";
+     value 1 0=1;
+    };
+    UserDataItem @[7] {
+     name="trial";
+     value 1 0=1;
+    };
+    UserDataItem @[8] {
+     name="group";
+     value 1 0=1;
+    };
+    UserDataItem @[9] {
+     name="epoch";
+     value 1 0=1;
+    };
+    UserDataItem @[10] {
+     name="batch";
+     value 1 0=1;
+    };
+   };
+   name="SoftMax_Net";
+   desc=;
+   specs {
+    name=;
+    el_typ=BaseSpec;
+    el_def=0;
+    BpUnitSpec @[0] {
+     name="BpUnitSpec_0";
+     desc=;
+     unique{      };
+     children {
+      name=;
+      el_typ=BpUnitSpec;
+      el_def=0;
+      ExpBpUnitSpec @[0] {
+       name="ExpBpUnitSpec_0";
+       desc=;
+       unique{ act_range;sig;       };
+       children {
+	name=;
+	el_typ=ExpBpUnitSpec;
+	el_def=0;
+       };
+       act_range {min=0: max=1e+08: range=1e+08: scale=1e-08: };
+       bias_con_type=BpCon;
+       bias_spec {type=BpConSpec: spec=$0$: };
+       sse_tol=0;
+       sig {off=0: gain=1: };
+       err_tol=0;
+       err_fun=Bp_CrossEnt_Error;
+      };
+      SoftMaxBpUnitSpec @[1] {
+       name="SoftMaxBpUnitSpec_0";
+       desc=;
+       unique{ bias_spec;sig;       };
+       children {
+	name=;
+	el_typ=SoftMaxBpUnitSpec;
+	el_def=0;
+       };
+       act_range {min=0: max=1: range=1: scale=1: };
+       bias_con_type=BpCon;
+       bias_spec {type=BpConSpec: spec=.projects[0].networks[0].specs[1].children[1]$63$: };
+       sse_tol=0;
+       sig {off=0: gain=1: };
+       err_tol=0;
+       err_fun=Bp_CrossEnt_Error;
+      };
+      LinearBpUnitSpec @[2] {
+       name="LinearBpUnitSpec_0";
+       desc=;
+       unique{ act_range;bias_spec;err_fun;       };
+       children {
+	name=;
+	el_typ=LinearBpUnitSpec;
+	el_def=0;
+       };
+       act_range {min=-1e+20: max=1e+20: range=2e+20: scale=5e-21: };
+       bias_con_type=BpCon;
+       bias_spec {type=BpConSpec: spec=$63$: };
+       sse_tol=0;
+       sig {off=0: gain=1: };
+       err_tol=0;
+       err_fun=Bp_Squared_Error;
+      };
+     };
+     act_range {min=0: max=1: range=1: scale=1: };
+     bias_con_type=BpCon;
+     bias_spec {type=BpConSpec: spec=$0$: };
+     sse_tol=0;
+     sig {off=0: gain=1: };
+     err_tol=0;
+     err_fun=Bp_CrossEnt_Error;
+    };
+    BpConSpec @[1] {
+     name="BpConSpec_0";
+     desc=;
+     unique{      };
+     children {
+      name=;
+      el_typ=BpConSpec;
+      el_def=0;
+      BpConSpec @[0] {
+       name="Fixed_1";
+       desc=;
+       unique{ rnd;lrate;momentum;decay;       };
+       children {
+	name=;
+	el_typ=BpConSpec;
+	el_def=0;
+       };
+       rnd {name="": type=UNIFORM: mean=1: var=0: par=1: };
+       wt_limits {type=MIN_MAX: min=-10: max=10: sym=0: };
+       lrate=0;
+       cur_lrate=0;
+       lrate_sched {
+	name=;
+	el_typ=SchedItem;
+	el_def=0;
+	last_ctr=-1;
+	default_val=1;
+	interpolate=0;
+	cur_val=0;
+       };
+       momentum=0;
+       momentum_type=BEFORE_LRATE;
+       momentum_c=1;
+       decay=0;
+       decay_fun=NULL;
+      };
+      BpConSpec @[1] {
+       name="ZeroBias";
+       desc=;
+       unique{ rnd;lrate;momentum;decay;       };
+       children {
+	name=;
+	el_typ=BpConSpec;
+	el_def=0;
+       };
+       rnd {name="": type=UNIFORM: mean=0: var=0: par=1: };
+       wt_limits {type=MIN_MAX: min=-10: max=10: sym=0: };
+       lrate=0;
+       cur_lrate=0;
+       lrate_sched {
+	name=;
+	el_typ=SchedItem;
+	el_def=0;
+	last_ctr=-1;
+	default_val=1;
+	interpolate=0;
+	cur_val=0;
+       };
+       momentum=0;
+       momentum_type=BEFORE_LRATE;
+       momentum_c=1;
+       decay=0;
+       decay_fun=NULL;
+      };
+     };
+     rnd {name="": type=UNIFORM: mean=0: var=0.5: par=1: };
+     wt_limits {type=MIN_MAX: min=-10: max=10: sym=0: };
+     lrate=0.01;
+     cur_lrate=0.01;
+     lrate_sched {
+      name=;
+      el_typ=SchedItem;
+      el_def=0;
+      last_ctr=-1;
+      default_val=1;
+      interpolate=0;
+      cur_val=0;
+     };
+     momentum=0;
+     momentum_type=BEFORE_LRATE;
+     momentum_c=1;
+     decay=0;
+     decay_fun=NULL;
+    };
+    FullPrjnSpec @[2] {
+     name="FullPrjnSpec_0";
+     desc=;
+     unique{      };
+     children {
+      name=;
+      el_typ=FullPrjnSpec;
+      el_def=0;
+     };
+     self_con=0;
+     init_wts=0;
+    };
+    OneToOnePrjnSpec @[3] {
+     name="OneToOnePrjnSpec_0";
+     desc=;
+     unique{ self_con;     };
+     children {
+      name=;
+      el_typ=OneToOnePrjnSpec;
+      el_def=0;
+     };
+     self_con=0;
+     init_wts=0;
+     n_conns=-1;
+     recv_start=0;
+     send_start=0;
+    };
+   };
+   layers {
+    name=;
+    el_typ=BpLayer;
+    el_def=0;
+    pos {x=0: y=0: z=0: };
+    max_size {x=4: y=5: z=3: };
+    BpLayer @[0] {
+     name="Input";
+     desc=;
+     flags=;
+     layer_type=INPUT;
+     pos {x=0: y=0: z=0: };
+     disp_scale=1;
+     un_geom {x=4: y=4: n_not_xy=0: n=16: };
+     unit_groups=0;
+     gp_geom {x=0: y=0: n_not_xy=0: n=0: };
+     gp_spc {x=0: y=0: };
+     act_geom {x=4: y=4: n_not_xy=0: n=16: };
+     scaled_act_geom {x=4: y=4: n_not_xy=0: n=1: };
+     projections {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+     };
+     send_prjns {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+	    Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[1].projections[0];
+     };
+     units {
+      name=;
+      el_typ=BpUnit;
+      el_def=0;
+      pos {x=0: y=0: z=0: };
+      unique_geom=0;
+      geom {x=4: y=4: n_not_xy=0: n=16: };
+      units_lesioned=0;
+      output_name=;
+     };
+     unit_spec {type=BpUnitSpec: spec=.projects[0].networks[0].specs[0]$64$: };
+     ext_flag=;
+     dmem_dist=DMEM_DIST_DEFAULT;
+     dist {
+      fm_input=-1;
+      fm_output=-1;
+     };
+     output_name=;
+     sse=0;
+     icon_value=0;
+    };
+    BpLayer @[1] {
+     name="Hidden";
+     desc=;
+     flags=;
+     layer_type=HIDDEN;
+     pos {x=0: y=0: z=1: };
+     disp_scale=1;
+     un_geom {x=3: y=3: n_not_xy=0: n=9: };
+     unit_groups=0;
+     gp_geom {x=0: y=0: n_not_xy=0: n=0: };
+     gp_spc {x=0: y=0: };
+     act_geom {x=3: y=3: n_not_xy=0: n=9: };
+     scaled_act_geom {x=3: y=3: n_not_xy=0: n=1: };
+     projections {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+      Projection @[0] {
+       name="Fm_Input";
+       from_type=CUSTOM;
+       from=.projects[0].networks[0].layers[0]$65$;
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$66$: };
+       con_type=BpCon;
+       recvcons_type=BpRecvCons;
+       sendcons_type=BpSendCons;
+       con_spec {type=BpConSpec: spec=$0$: };
+       recv_idx=0;
+       send_idx=0;
+       recv_n=1;
+       send_n=1;
+       projected=1;
+       direction=DIR_UNKNOWN;
+      };
+     };
+     send_prjns {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+	    Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[2].projections[0];
+     };
+     units {
+      name=;
+      el_typ=BpUnit;
+      el_def=0;
+      pos {x=0: y=0: z=0: };
+      unique_geom=0;
+      geom {x=3: y=3: n_not_xy=0: n=9: };
+      units_lesioned=0;
+      output_name=;
+     };
+     unit_spec {type=BpUnitSpec: spec=$64$: };
+     ext_flag=;
+     dmem_dist=DMEM_DIST_DEFAULT;
+     dist {
+      fm_input=-1;
+      fm_output=-1;
+     };
+     output_name=;
+     sse=0;
+     icon_value=0;
+    };
+    BpLayer @[2] {
+     name="Output_Exp";
+     desc=;
+     flags=;
+     layer_type=TARGET;
+     pos {x=0: y=0: z=2: };
+     disp_scale=1;
+     un_geom {x=4: y=1: n_not_xy=0: n=4: };
+     unit_groups=0;
+     gp_geom {x=0: y=0: n_not_xy=0: n=0: };
+     gp_spc {x=0: y=0: };
+     act_geom {x=4: y=1: n_not_xy=0: n=4: };
+     scaled_act_geom {x=4: y=1: n_not_xy=0: n=1: };
+     projections {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+      Projection @[0] {
+       name="Fm_Hidden";
+       from_type=CUSTOM;
+       from=.projects[0].networks[0].layers[1]$67$;
+       spec {type=FullPrjnSpec: spec=$66$: };
+       con_type=BpCon;
+       recvcons_type=BpRecvCons;
+       sendcons_type=BpSendCons;
+       con_spec {type=BpConSpec: spec=$0$: };
+       recv_idx=0;
+       send_idx=0;
+       recv_n=1;
+       send_n=1;
+       projected=1;
+       direction=DIR_UNKNOWN;
+      };
+     };
+     send_prjns {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+	    Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[3].projections[0];
+	    Projection_Group @. = [1] = Projection .projects[0].networks[0].layers[4].projections[0];
+     };
+     units {
+      name=;
+      el_typ=BpUnit;
+      el_def=0;
+      pos {x=0: y=0: z=0: };
+      unique_geom=0;
+      geom {x=4: y=1: n_not_xy=0: n=4: };
+      units_lesioned=0;
+      output_name=;
+     };
+     unit_spec {type=ExpBpUnitSpec: spec=$1$: };
+     ext_flag=;
+     dmem_dist=DMEM_DIST_DEFAULT;
+     dist {
+      fm_input=-1;
+      fm_output=-1;
+     };
+     output_name=;
+     sse=0;
+     icon_value=0;
+    };
+    BpLayer @[3] {
+     name="Output_Sum";
+     desc=;
+     flags=;
+     layer_type=TARGET;
+     pos {x=3: y=2: z=2: };
+     disp_scale=1;
+     un_geom {x=1: y=1: n_not_xy=0: n=1: };
+     unit_groups=0;
+     gp_geom {x=0: y=0: n_not_xy=0: n=0: };
+     gp_spc {x=0: y=0: };
+     act_geom {x=1: y=1: n_not_xy=0: n=1: };
+     scaled_act_geom {x=1: y=1: n_not_xy=0: n=1: };
+     projections {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+      Projection @[0] {
+       name="Fm_Output_Exp";
+       from_type=CUSTOM;
+       from=.projects[0].networks[0].layers[2]$68$;
+       spec {type=FullPrjnSpec: spec=$66$: };
+       con_type=BpCon;
+       recvcons_type=BpRecvCons;
+       sendcons_type=BpSendCons;
+       con_spec {type=BpConSpec: spec=.projects[0].networks[0].specs[1].children[0]$69$: };
+       recv_idx=0;
+       send_idx=1;
+       recv_n=1;
+       send_n=1;
+       projected=1;
+       direction=DIR_UNKNOWN;
+      };
+     };
+     send_prjns {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+	    Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[4].projections[1];
+     };
+     units {
+      name=;
+      el_typ=BpUnit;
+      el_def=0;
+      pos {x=0: y=0: z=0: };
+      unique_geom=0;
+      geom {x=1: y=1: n_not_xy=0: n=1: };
+      units_lesioned=0;
+      output_name=;
+     };
+     unit_spec {type=LinearBpUnitSpec: spec=.projects[0].networks[0].specs[0].children[2]$70$: };
+     ext_flag=;
+     dmem_dist=DMEM_DIST_DEFAULT;
+     dist {
+      fm_input=-1;
+      fm_output=-1;
+     };
+     output_name=;
+     sse=0;
+     icon_value=0;
+    };
+    BpLayer @[4] {
+     name="Output";
+     desc=;
+     flags=;
+     layer_type=TARGET;
+     pos {x=0: y=4: z=2: };
+     disp_scale=1;
+     un_geom {x=4: y=1: n_not_xy=0: n=4: };
+     unit_groups=0;
+     gp_geom {x=0: y=0: n_not_xy=0: n=0: };
+     gp_spc {x=0: y=0: };
+     act_geom {x=4: y=1: n_not_xy=0: n=4: };
+     scaled_act_geom {x=4: y=1: n_not_xy=0: n=1: };
+     projections {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+      Projection @[0] {
+       name="Fm_Output_Exp";
+       from_type=CUSTOM;
+       from=$68$;
+       spec {type=OneToOnePrjnSpec: spec=.projects[0].networks[0].specs[3]$71$: };
+       con_type=BpCon;
+       recvcons_type=BpRecvCons;
+       sendcons_type=BpSendCons;
+       con_spec {type=BpConSpec: spec=$69$: };
+       recv_idx=0;
+       send_idx=0;
+       recv_n=1;
+       send_n=1;
+       projected=1;
+       direction=DIR_UNKNOWN;
+      };
+      Projection @[1] {
+       name="Fm_Output_Sum";
+       from_type=CUSTOM;
+       from=.projects[0].networks[0].layers[3]$72$;
+       spec {type=FullPrjnSpec: spec=$66$: };
+       con_type=BpCon;
+       recvcons_type=BpRecvCons;
+       sendcons_type=BpSendCons;
+       con_spec {type=BpConSpec: spec=$69$: };
+       recv_idx=1;
+       send_idx=0;
+       recv_n=1;
+       send_n=1;
+       projected=1;
+       direction=DIR_UNKNOWN;
+      };
+     };
+     send_prjns {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+     };
+     units {
+      name=;
+      el_typ=BpUnit;
+      el_def=0;
+      pos {x=0: y=0: z=0: };
+      unique_geom=0;
+      geom {x=4: y=1: n_not_xy=0: n=4: };
+      units_lesioned=0;
+      output_name=;
+     };
+     unit_spec {type=SoftMaxBpUnitSpec: spec=.projects[0].networks[0].specs[0].children[1]$73$: };
+     ext_flag=;
+     dmem_dist=DMEM_DIST_DEFAULT;
+     dist {
+      fm_input=-1;
+      fm_output=-1;
+     };
+     output_name=;
+     sse=0;
+     icon_value=0;
+    };
+   };
+   view_objs {
+    name=;
+    el_typ=NetViewObj;
+    el_def=0;
+   };
+   flags=;
+   auto_build=AUTO_BUILD;
+   train_mode=TRAIN;
+   wt_update=ON_LINE;
+   small_batch_n=10;
+   batch=0;
+   epoch=0;
+   group=0;
+   trial=0;
+   tick=0;
+   cycle=0;
+   time=0;
+   group_name=;
+   trial_name=;
+   output_name=;
+   sse_unit_avg=0;
+   sse_sqrt=0;
+   sse=0;
+   sum_sse=0;
+   avg_sse=0;
+   cnt_err_tol=0;
+   cnt_err=0;
+   pct_err=0;
+   pct_cor=0;
+   cur_sum_sse=0;
+   avg_sse_n=0;
+   cur_cnt_err=0;
+   train_time {name="": start={usr=26126: sys=8430: tot=97272741: }: end={usr=12010: sys=3839: tot=97235522: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   epoch_time {name="": start={usr=27098: sys=8804: tot=97274111: }: end={usr=27097: sys=8804: tot=97274110: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   trial_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   settle_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   cycle_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   wt_sync_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   misc_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   threads {
+    run_time {name="": s_used=0: n_used=0: };
+    sync_time {name="": s_used=0: n_used=0: };
+    total_time {name="": s_used=0: n_used=0: };
+    n_wake_in_sync=0;
+    run_time_pct=0;
+    sync_time_pct=0;
+    wake_in_sync_pct=5.310868937649195e-315;
+    interleave=1;
+    ignore_lay_sync=0;
+   };
+   dmem_sync_level=DMEM_SYNC_NETWORK;
+   dmem_nprocs=1;
+   usr1_save_fmt=FULL_NET;
+   wt_save_fmt=TEXT;
+   lay_layout=THREE_D;
+   n_units=34;
+   n_cons=192;
+   max_size {x=4: y=5: z=3: };
+   bp_to_inputs=0;
+  };
+  BpNetwork @[1] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="sse";
+     value 1 0=1;
+    };
+    UserDataItem @[1] {
+     name="output_name";
+     value 1 0=1;
+    };
+    UserDataItem @[2] {
+     name="trial_name";
+     value 1 0=1;
+    };
+    UserDataItem @[3] {
+     name="group_name";
+     value 1 0=1;
+    };
+    UserDataItem @[4] {
+     name="time";
+     value 1 0=1;
+    };
+    UserDataItem @[5] {
+     name="cycle";
+     value 1 0=1;
+    };
+    UserDataItem @[6] {
+     name="tick";
+     value 1 0=1;
+    };
+    UserDataItem @[7] {
+     name="trial";
+     value 1 0=1;
+    };
+    UserDataItem @[8] {
+     name="group";
+     value 1 0=1;
+    };
+    UserDataItem @[9] {
+     name="epoch";
+     value 1 0=1;
+    };
+    UserDataItem @[10] {
+     name="batch";
+     value 1 0=1;
+    };
+   };
+   name="Standard_Net";
+   desc=;
+   specs {
+    name=;
+    el_typ=BaseSpec;
+    el_def=0;
+    BpUnitSpec @[0] {
+     name="BpUnitSpec_0";
+     desc=;
+     unique{      };
+     children {
+      name=;
+      el_typ=BpUnitSpec;
+      el_def=0;
+      ExpBpUnitSpec @[0] {
+       name="ExpBpUnitSpec_0";
+       desc=;
+       unique{ act_range;       };
+       children {
+	name=;
+	el_typ=ExpBpUnitSpec;
+	el_def=0;
+       };
+       act_range {min=0.01: max=0.99: range=0.98: scale=1.020408: };
+       bias_con_type=BpCon;
+       bias_spec {type=BpConSpec: spec=$0$: };
+       sse_tol=0;
+       sig {off=0: gain=1: };
+       err_tol=0;
+       err_fun=Bp_CrossEnt_Error;
+      };
+      SoftMaxBpUnitSpec @[1] {
+       name="SoftMaxBpUnitSpec_0";
+       desc=;
+       unique{ bias_spec;       };
+       children {
+	name=;
+	el_typ=SoftMaxBpUnitSpec;
+	el_def=0;
+       };
+       act_range {min=0: max=1: range=1: scale=1: };
+       bias_con_type=BpCon;
+       bias_spec {type=BpConSpec: spec=$63$: };
+       sse_tol=0;
+       sig {off=0: gain=1: };
+       err_tol=0;
+       err_fun=Bp_CrossEnt_Error;
+      };
+      LinearBpUnitSpec @[2] {
+       name="LinearBpUnitSpec_0";
+       desc=;
+       unique{ act_range;bias_spec;err_fun;       };
+       children {
+	name=;
+	el_typ=LinearBpUnitSpec;
+	el_def=0;
+       };
+       act_range {min=-1e+20: max=1e+20: range=2e+20: scale=5e-21: };
+       bias_con_type=BpCon;
+       bias_spec {type=BpConSpec: spec=$63$: };
+       sse_tol=0;
+       sig {off=0: gain=1: };
+       err_tol=0;
+       err_fun=Bp_Squared_Error;
+      };
+     };
+     act_range {min=0: max=1: range=1: scale=1: };
+     bias_con_type=BpCon;
+     bias_spec {type=BpConSpec: spec=$0$: };
+     sse_tol=0;
+     sig {off=0: gain=1: };
+     err_tol=0;
+     err_fun=Bp_CrossEnt_Error;
+    };
+    BpConSpec @[1] {
+     name="BpConSpec_0";
+     desc=;
+     unique{      };
+     children {
+      name=;
+      el_typ=BpConSpec;
+      el_def=0;
+      BpConSpec @[0] {
+       name="Fixed_1";
+       desc=;
+       unique{ rnd;lrate;momentum;decay;       };
+       children {
+	name=;
+	el_typ=BpConSpec;
+	el_def=0;
+       };
+       rnd {name="": type=UNIFORM: mean=1: var=0: par=1: };
+       wt_limits {type=MIN_MAX: min=-10: max=10: sym=0: };
+       lrate=0;
+       cur_lrate=0.25;
+       lrate_sched {
+	name=;
+	el_typ=SchedItem;
+	el_def=0;
+	last_ctr=-1;
+	default_val=1;
+	interpolate=0;
+	cur_val=0;
+       };
+       momentum=0;
+       momentum_type=BEFORE_LRATE;
+       momentum_c=1;
+       decay=0;
+       decay_fun=NULL;
+      };
+      BpConSpec @[1] {
+       name="ZeroBias";
+       desc=;
+       unique{ rnd;lrate;momentum;decay;       };
+       children {
+	name=;
+	el_typ=BpConSpec;
+	el_def=0;
+       };
+       rnd {name="": type=UNIFORM: mean=0: var=0: par=1: };
+       wt_limits {type=MIN_MAX: min=-10: max=10: sym=0: };
+       lrate=0;
+       cur_lrate=0.25;
+       lrate_sched {
+	name=;
+	el_typ=SchedItem;
+	el_def=0;
+	last_ctr=-1;
+	default_val=1;
+	interpolate=0;
+	cur_val=0;
+       };
+       momentum=0;
+       momentum_type=BEFORE_LRATE;
+       momentum_c=1;
+       decay=0;
+       decay_fun=NULL;
+      };
+     };
+     rnd {name="": type=UNIFORM: mean=0: var=0.5: par=1: };
+     wt_limits {type=MIN_MAX: min=-10: max=10: sym=0: };
+     lrate=0.01;
+     cur_lrate=0.01;
+     lrate_sched {
+      name=;
+      el_typ=SchedItem;
+      el_def=0;
+      last_ctr=-1;
+      default_val=1;
+      interpolate=0;
+      cur_val=0;
+     };
+     momentum=0;
+     momentum_type=BEFORE_LRATE;
+     momentum_c=1;
+     decay=0;
+     decay_fun=NULL;
+    };
+    FullPrjnSpec @[2] {
+     name="FullPrjnSpec_0";
+     desc=;
+     unique{      };
+     children {
+      name=;
+      el_typ=FullPrjnSpec;
+      el_def=0;
+     };
+     self_con=0;
+     init_wts=0;
+    };
+    OneToOnePrjnSpec @[3] {
+     name="OneToOnePrjnSpec_0";
+     desc=;
+     unique{ self_con;     };
+     children {
+      name=;
+      el_typ=OneToOnePrjnSpec;
+      el_def=0;
+     };
+     self_con=0;
+     init_wts=0;
+     n_conns=-1;
+     recv_start=0;
+     send_start=0;
+    };
+   };
+   layers {
+    name=;
+    el_typ=BpLayer;
+    el_def=0;
+    pos {x=0: y=0: z=0: };
+    max_size {x=4: y=4: z=3: };
+    BpLayer @[0] {
+     name="Input";
+     desc=;
+     flags=;
+     layer_type=INPUT;
+     pos {x=0: y=0: z=0: };
+     disp_scale=1;
+     un_geom {x=4: y=4: n_not_xy=0: n=16: };
+     unit_groups=0;
+     gp_geom {x=0: y=0: n_not_xy=0: n=0: };
+     gp_spc {x=0: y=0: };
+     act_geom {x=4: y=4: n_not_xy=0: n=16: };
+     scaled_act_geom {x=4: y=4: n_not_xy=0: n=1: };
+     projections {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+     };
+     send_prjns {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+	    Projection_Group @. = [0] = Projection .projects[0].networks[1].layers[1].projections[0];
+     };
+     units {
+      name=;
+      el_typ=BpUnit;
+      el_def=0;
+      pos {x=0: y=0: z=0: };
+      unique_geom=0;
+      geom {x=4: y=4: n_not_xy=0: n=16: };
+      units_lesioned=0;
+      output_name=;
+     };
+     unit_spec {type=BpUnitSpec: spec=.projects[0].networks[1].specs[0]$74$: };
+     ext_flag=EXT;
+     dmem_dist=DMEM_DIST_DEFAULT;
+     dist {
+      fm_input=-1;
+      fm_output=-1;
+     };
+     output_name=;
+     sse=0;
+     icon_value=0;
+    };
+    BpLayer @[1] {
+     name="Hidden";
+     desc=;
+     flags=;
+     layer_type=HIDDEN;
+     pos {x=0: y=0: z=1: };
+     disp_scale=1;
+     un_geom {x=3: y=3: n_not_xy=0: n=9: };
+     unit_groups=0;
+     gp_geom {x=0: y=0: n_not_xy=0: n=0: };
+     gp_spc {x=0: y=0: };
+     act_geom {x=3: y=3: n_not_xy=0: n=9: };
+     scaled_act_geom {x=3: y=3: n_not_xy=0: n=1: };
+     projections {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+      Projection @[0] {
+       name="Fm_Input";
+       from_type=CUSTOM;
+       from=.projects[0].networks[1].layers[0]$75$;
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[1].specs[2]$76$: };
+       con_type=BpCon;
+       recvcons_type=BpRecvCons;
+       sendcons_type=BpSendCons;
+       con_spec {type=BpConSpec: spec=.projects[0].networks[1].specs[1]$77$: };
+       recv_idx=0;
+       send_idx=0;
+       recv_n=1;
+       send_n=1;
+       projected=1;
+       direction=DIR_UNKNOWN;
+      };
+     };
+     send_prjns {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+	    Projection_Group @. = [0] = Projection .projects[0].networks[1].layers[2].projections[0];
+     };
+     units {
+      name=;
+      el_typ=BpUnit;
+      el_def=0;
+      pos {x=0: y=0: z=0: };
+      unique_geom=0;
+      geom {x=3: y=3: n_not_xy=0: n=9: };
+      units_lesioned=0;
+      output_name=;
+     };
+     unit_spec {type=BpUnitSpec: spec=$74$: };
+     ext_flag=;
+     dmem_dist=DMEM_DIST_DEFAULT;
+     dist {
+      fm_input=-1;
+      fm_output=-1;
+     };
+     output_name=;
+     sse=0;
+     icon_value=0;
+    };
+    BpLayer @[2] {
+     name="Output";
+     desc=;
+     flags=;
+     layer_type=TARGET;
+     pos {x=0: y=0: z=2: };
+     disp_scale=1;
+     un_geom {x=4: y=1: n_not_xy=0: n=4: };
+     unit_groups=0;
+     gp_geom {x=0: y=0: n_not_xy=0: n=0: };
+     gp_spc {x=0: y=0: };
+     act_geom {x=4: y=1: n_not_xy=0: n=4: };
+     scaled_act_geom {x=4: y=1: n_not_xy=0: n=1: };
+     projections {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+      Projection @[0] {
+       name="Fm_Hidden";
+       from_type=CUSTOM;
+       from=.projects[0].networks[1].layers[1]$78$;
+       spec {type=FullPrjnSpec: spec=$76$: };
+       con_type=BpCon;
+       recvcons_type=BpRecvCons;
+       sendcons_type=BpSendCons;
+       con_spec {type=BpConSpec: spec=$77$: };
+       recv_idx=0;
+       send_idx=0;
+       recv_n=1;
+       send_n=1;
+       projected=1;
+       direction=DIR_UNKNOWN;
+      };
+     };
+     send_prjns {
+      name=;
+      el_typ=Projection;
+      el_def=0;
+     };
+     units {
+      name=;
+      el_typ=BpUnit;
+      el_def=0;
+      pos {x=0: y=0: z=0: };
+      unique_geom=0;
+      geom {x=4: y=1: n_not_xy=0: n=4: };
+      units_lesioned=0;
+      output_name=;
+     };
+     unit_spec {type=BpUnitSpec: spec=$74$: };
+     ext_flag=TARG;
+     dmem_dist=DMEM_DIST_DEFAULT;
+     dist {
+      fm_input=-1;
+      fm_output=-1;
+     };
+     output_name=;
+     sse=0.1676571;
+     icon_value=0;
+    };
+   };
+   view_objs {
+    name=;
+    el_typ=NetViewObj;
+    el_def=0;
+   };
+   flags=;
+   auto_build=AUTO_BUILD;
+   train_mode=TRAIN;
+   wt_update=ON_LINE;
+   small_batch_n=10;
+   batch=0;
+   epoch=163;
+   group=0;
+   trial=15;
+   tick=0;
+   cycle=0;
+   time=0;
+   group_name=;
+   trial_name="Ex_1_0";
+   output_name=;
+   sse_unit_avg=0;
+   sse_sqrt=0;
+   sse=0.1676571;
+   sum_sse=3.997593;
+   avg_sse=0.2498496;
+   cnt_err_tol=0;
+   cnt_err=16;
+   pct_err=1;
+   pct_cor=0;
+   cur_sum_sse=0;
+   avg_sse_n=0;
+   cur_cnt_err=0;
+   train_time {name="": start={usr=26923: sys=6854: tot=93049010: }: end={usr=27977: sys=7188: tot=93050416: }: used={usr=1054: sys=334: tot=1406: }: s_used=14.06: n_used=1: };
+   epoch_time {name="": start={usr=27972: sys=7187: tot=93050409: }: end={usr=27975: sys=7188: tot=93050414: }: used={usr=3: sys=1: tot=5: }: s_used=0.05: n_used=1: };
+   trial_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   settle_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   cycle_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   wt_sync_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   misc_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   threads {
+    run_time {name="": s_used=0: n_used=0: };
+    sync_time {name="": s_used=0: n_used=0: };
+    total_time {name="": s_used=0: n_used=0: };
+    n_wake_in_sync=0;
+    run_time_pct=0;
+    sync_time_pct=0;
+    wake_in_sync_pct=-1.547111125070234e+215;
+    interleave=1;
+    ignore_lay_sync=0;
+   };
+   dmem_sync_level=DMEM_SYNC_NETWORK;
+   dmem_nprocs=1;
+   usr1_save_fmt=FULL_NET;
+   wt_save_fmt=TEXT;
+   lay_layout=THREE_D;
+   n_units=29;
+   n_cons=180;
+   max_size {x=4: y=4: z=3: };
+   bp_to_inputs=0;
+  };
+ };
+};
