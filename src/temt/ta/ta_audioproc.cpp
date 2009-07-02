@@ -53,7 +53,7 @@ bool taAudioProc::SpeakText(const String& text) {
 
 bool taAudioProc::SpeakText(const String& text) {
   // NOTE: uses festival command line interface
-  String cmd = "echo \"" + text + "\" | festival -tts";
+  String cmd = "echo \"" + text + "\" | festival --tts";
   int rval = system(cmd);
   return (rval == 0);
 }
