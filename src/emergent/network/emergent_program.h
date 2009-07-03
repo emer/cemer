@@ -55,6 +55,7 @@ public:
   // configure the dmem communicator stuff: depends on dmem setup of network
 
   override String GetDisplayName() const;
+  override String	GetToolbarName() const { return "data loop"; }
 
   PROGEL_SIMPLE_BASEFUNS(NetDataLoop);
 protected:
@@ -94,6 +95,7 @@ public:
   virtual void	GetGroupList();
   // initialize the group_idx_list from the data: idx's are where group name changes
   virtual void  GetItemList(int group_idx); // 
+  override String	GetToolbarName() const { return "gp data lp"; }
 
   PROGEL_SIMPLE_BASEFUNS(NetGroupedDataLoop);
 protected:
@@ -108,38 +110,6 @@ protected:
 private:
   void	Initialize();
   void	Destroy() { CutLinks(); }
-};
-
-// todo: remove at some point -- obsolete!
-
-class EMERGENT_API BasicDataLoop: public NetDataLoop { 
-  // DO NOT USE -- OBSOLETE! REPLACE WITH NetDataLoop!
-INHERITED(NetDataLoop)
-public:
-  void	ChangeToNetDataLoop();
-  // #BUTTON -- this will change me to a NetDataLoop object -- do this!!
-
-  TA_BASEFUNS_NOCOPY(BasicDataLoop);
-protected:
-  override void	UpdateAfterEdit_impl();
-private:
-  void	Initialize() { };
-  void	Destroy() { }
-};
-
-class EMERGENT_API GroupedDataLoop: public NetGroupedDataLoop { 
-  // DO NOT USE -- OBSOLETE! REPLACE WITH NetGroupedDataLoop!
-INHERITED(NetGroupedDataLoop)
-public:
-  void	ChangeToNetGroupedDataLoop();
-  // #BUTTON -- this will change me to a NetGroupedDataLoop object -- do this!!
-
-  TA_BASEFUNS_NOCOPY(GroupedDataLoop);
-protected:
-  override void	UpdateAfterEdit_impl();
-private:
-  void	Initialize() { };
-  void	Destroy() { }
 };
 
 class EMERGENT_API NetCounterBase: public NetBaseProgEl { 
@@ -170,6 +140,7 @@ class EMERGENT_API NetCounterInit: public NetCounterBase {
 INHERITED(NetCounterBase)
 public:
   override String	GetDisplayName() const;
+  override String	GetToolbarName() const { return "net ctr init"; }
 
   PROGEL_SIMPLE_BASEFUNS(NetCounterInit);
 protected:
@@ -185,6 +156,7 @@ class EMERGENT_API NetCounterIncr: public NetCounterBase {
 INHERITED(NetCounterBase)
 public:
   override String	GetDisplayName() const;
+  override String	GetToolbarName() const { return "net ctr inc"; }
 
   PROGEL_SIMPLE_BASEFUNS(NetCounterIncr);
 protected:
@@ -204,6 +176,7 @@ public:
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
+  override String	GetToolbarName() const { return "net updt view"; }
 
   PROGEL_SIMPLE_BASEFUNS(NetUpdateView);
 protected:
@@ -248,6 +221,7 @@ public:
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
+  override String	GetToolbarName() const { return "init nm units"; }
 
   PROGEL_SIMPLE_BASEFUNS(InitNamedUnits);
 protected:
@@ -279,6 +253,7 @@ public:
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
+  override String	GetToolbarName() const { return "set units lit"; }
 
   PROGEL_SIMPLE_BASEFUNS(SetUnitsLit);
 protected:
@@ -311,6 +286,7 @@ public:
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
+  override String	GetToolbarName() const { return "set units var"; }
 
   PROGEL_SIMPLE_BASEFUNS(SetUnitsVar);
 protected:
@@ -331,6 +307,7 @@ class EMERGENT_API WtInitPrompt: public IfGuiPrompt {
   // special program element for prompting whether to initialize network weights -- only prompts if network has been trained (epoch > 0) -- requires a variable named: network -- will complain if not found!
 INHERITED(IfGuiPrompt)
 public:
+  override String	GetToolbarName() const { return "wt init prmt"; }
   TA_BASEFUNS_NOCOPY(WtInitPrompt);
 protected:
   override const String	GenCssPre_impl(int indent_level); 

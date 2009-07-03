@@ -1156,6 +1156,7 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
    
   if (fname.nonempty()) {
     flr->SetFileName(fname);
+    flr->FixFileName();
     flr->Save();
   } else { 
     String tfname = GetFileName();

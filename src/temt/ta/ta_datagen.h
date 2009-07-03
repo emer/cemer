@@ -198,6 +198,7 @@ class TA_API DataGenCall : public StaticMethodCall {
   // call a taDataGen (data generation) function
 INHERITED(StaticMethodCall)
 public:
+  override String	GetToolbarName() const { return "data gen()"; }
   TA_BASEFUNS_NOCOPY(DataGenCall);
 private:
   void	Initialize();

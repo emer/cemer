@@ -746,7 +746,12 @@ public:
   // note: it is our own, plus disabled if parent is
   override void		SetEnabled(bool value);
   override String 	GetDesc() const {return desc;}
-  virtual  bool		IsVerbose() const { return HasProgFlag(VERBOSE); } 
+  override const String	GetToolTip(const KeyString& key) const;
+  override String	GetColText(const KeyString& key, int itm_idx = -1) const;
+  bool			IsVerbose() const { return HasProgFlag(VERBOSE); } 
+
+  virtual String	GetToolbarName() const;
+  // name of the program element as represented in the programming toolbar
 
   TA_BASEFUNS(ProgEl);
 
@@ -859,6 +864,7 @@ public:
   override taList_impl*	children_() {return &meth_args;}	
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
+  override String	GetToolbarName() const { return "static()"; }
 
   PROGEL_SIMPLE_BASEFUNS(StaticMethodCall);
 protected:
@@ -897,6 +903,7 @@ public:
   override String 	GetTypeDecoKey() const { return "Function"; }
   override bool 	SetName(const String& nm)    	{ name = nm; return true; }
   override String	GetName() const			{ return name; }
+  override String	GetToolbarName() const { return "fun def"; }
 
   override void		InitLinks();
   PROGEL_SIMPLE_COPY(Function);
@@ -962,6 +969,7 @@ public:
   override taList_impl*	children_() {return &fun_args;}
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
+  override String	GetToolbarName() const { return "fun()"; }
 
   PROGEL_SIMPLE_BASEFUNS(FunctionCall);
 protected:
@@ -1423,6 +1431,7 @@ public:
   override taList_impl*	children_() {return &prog_args;}	
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Program"; }
+  override String	GetToolbarName() const { return "prog()"; }
 
   PROGEL_SIMPLE_BASEFUNS(ProgramCall);
 protected:

@@ -638,9 +638,9 @@ public:
   static String		t3d_font_name;	// #SAVE #CAT_GUI #EXPERT default font name to use in the 3D display (default is Arial -- not many options supported depending on platform -- set the environment variable COIN_DEBUG_FONTSUPPORT to debug)
   static ConsoleType	console_type; // #SAVE #CAT_GUI style of the console to display -- **REQUIRES APP RESTART
 #ifdef TA_OS_WIN // none on windows (yet), so we omit for clarity
-  static ConsoleOptions	console_options; // #IGNORE #CAT_GUI options for the console **REQUIRES APP RESTART
+  static ConsoleOptions	console_options; // #IGNORE #CAT_GUI #EXPERT options for the console **REQUIRES APP RESTART
 #else
-  static ConsoleOptions	console_options; // #SAVE #CAT_GUI options for the console **REQUIRES APP RESTART
+  static ConsoleOptions	console_options; // #SAVE #CAT_GUI #EXPERT options for the console **REQUIRES APP RESTART
 #endif
   static String		console_font_name;	// #SAVE #CAT_GUI font name for the css console
   static int		console_font_size;	// #SAVE #CAT_GUI font size for the css console
@@ -650,27 +650,26 @@ public:
   static int		undo_depth; 	// #SAVE #CAT_GUI how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics 
   static float		undo_new_src_thr; // #SAVE #CAT_GUI #EXPERT threshold for how big (as a proportion of total file size) the diff's need to get before a new undo source record is created (default of around .3 is usually fine)
   static bool		delete_prompts;	 //  #SAVE #CAT_GUI should a prompt be provided to confirm when deleting an item?  with the undo system available, this is not neccessary
-  static int		tree_indent; 	// #SAVE #CAT_GUI number of pixels to indent in the tree browser gui interface
+  static int		tree_indent; 	// #SAVE #CAT_GUI #EXPERT number of pixels to indent in the tree browser gui interface
+  static int		program_editor_width; 	// #SAVE #CAT_GUI #EXPERT width in characters of the main listing field of the program editor -- if this is too large, then you can't see the description comments
 
   static int		max_menu;	// #SAVE #CAT_GUI #EXPERT maximum number of items in a menu -- largely obsolete at this point
   static int		search_depth;   // #SAVE #CAT_GUI #EXPERT depth recursive find will search for a path object
   static int		color_scale_size; // #SAVE #CAT_GUI #EXPERT number of colors to put in a color scale
-  static int		jpeg_quality; 	// #SAVE #CAT_GUI jpeg quality for dumping jpeg files (1-100; 95 default)
-  static ColorHints 	color_hints; // #SAVE #CAT_GUI what types of color hinting to use in the application
-  static ClickStyle	click_style; // #SAVE #CAT_GUI how to select editable items in the gui, particularly in the 3d gui
-  static ProjViewPref	proj_view_pref; // #SAVE #CAT_GUI the default way to view projects
-  static ViewerOptions	viewer_options; // #SAVE #CAT_GUI misc options for the viewer
+  static int		jpeg_quality; 	// #SAVE #CAT_GUI #EXPERT jpeg quality for dumping jpeg files (1-100; 95 default) -- in general it is better to use PNG format which is lossless and yields small compressed file sizes for saved view images, etc
+  static ColorHints 	color_hints; // #SAVE #CAT_GUI #EXPERT what types of color hinting to use in the application
+  static ProjViewPref	proj_view_pref; // #SAVE #CAT_GUI #EXPERT the default way to view projects
+  static ViewerOptions	viewer_options; // #SAVE #CAT_GUI #EXPERT misc options for the viewer
 #ifndef NO_TA_BASE
 //NOTE: following not keeping tokens so cannot be viewed in any mode
   static ViewColor_List* view_colors; 	// #NO_SAVE #NO_SHOW colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
 #endif
-  static EditStyle	std_edit_style; // #SAVE #SHOW #READ_ONLY #CAT_GUI style to use for standard edit dialogs (i.e., non select-edit dialogs)
-  static EditStyle	select_edit_style; // #SAVE #CAT_GUI style to use for select edit dialogs (which are typically used for control panels, etc)
+  static EditStyle	std_edit_style; // #SAVE #SHOW #READ_ONLY #CAT_GUI #EXPERT style to use for standard edit dialogs (i.e., non select-edit dialogs)
+  static EditStyle	select_edit_style; // #SAVE #CAT_GUI #EXPERT style to use for select edit dialogs (which are typically used for control panels, etc)
 
   static int		antialiasing_level; // #SAVE #CAT_GUI level of smoothing to perform in the 3d display -- values depend on hardware acceleration, but 2 or 4 are typical values.  1 or lower disables entirely.  modern hardware can do typically do level 4 with little slowdown in speed.
-  static float		text_complexity;     // #SAVE #CAT_GUI #EXPERT complexity value (between 0 and 1 for rendering text -- a lower number (e.g., .1) should make things faster, without much cost in the display quality
-
-  static ShowMembs	show_gui;	// #SAVE #CAT_GUI what to show in the gui
+  static float		text_complexity;     // #SAVE #CAT_GUI #EXPERT complexity value (between 0 and 1) for rendering 3D text -- values above .5 are usually not noticibly better and slow rendering
+  static ShowMembs	show_gui;	// #SAVE #CAT_GUI #EXPERT what to show in the gui
   static TypeInfo	type_info_;	// #SAVE #CAT_GUI #EXPERT #LABEL_type_info what to show when displaying type information
   //note: 'type_info' is a reserved word in C++, it is the type of rtti data
   static KeepTokens	keep_tokens;	// #SAVE #CAT_GUI #EXPERT default for keeping tokens
@@ -748,8 +747,6 @@ public:
 
   static ostream*	record_script;  // #IGNORE #CAT_File stream to use for recording a script of interface activity (NULL if no record)
 
-  static String		help_file_tmplt; // #SAVE #CAT_File template for converting type name into a help file (%t = type name)
-  static String		help_cmd;	// #SAVE #CAT_File how to run html browser to get help, %s is entire path to help file
   static String		edit_cmd;	// #SAVE #CAT_File how to run editor
   
   static SimageAvail	simage_avail;	// #NO_SAVE #SHOW #READ_ONLY #HIDDEN 

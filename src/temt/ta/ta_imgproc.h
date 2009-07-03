@@ -946,6 +946,7 @@ class TA_API ImageProcCall : public StaticMethodCall {
   // call a taImageProc function
 INHERITED(StaticMethodCall)
 public:
+  override String	GetToolbarName() const { return "img proc()"; }
   TA_BASEFUNS_NOCOPY(ImageProcCall);
 private:
   void	Initialize();

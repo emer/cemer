@@ -19,26 +19,24 @@
 #include "ta_project.h"
 #include "ta_qtviewer.h"
 
+static void ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* td) {
+  ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction(obj->GetToolbarName(), obj));
+}
+
 void PDPProgramToolBoxProc(iToolBoxDockViewer* tb) {
   int sec = tb->AssertSection("Network"); //note: need to keep it short
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("init nm units",
-    tabMisc::root->GetTemplateInstance(&TA_InitNamedUnits)));
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("set units lit",
-    tabMisc::root->GetTemplateInstance(&TA_SetUnitsLit)));
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("set units var",
-    tabMisc::root->GetTemplateInstance(&TA_SetUnitsVar)));
+  ptbp_add_widget(tb, sec, &TA_InitNamedUnits);
+  ptbp_add_widget(tb, sec, &TA_SetUnitsLit);
+  ptbp_add_widget(tb, sec, &TA_SetUnitsVar);
   tb->AddSeparator(sec);
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("net ctr init",
-    tabMisc::root->GetTemplateInstance(&TA_NetCounterInit)));
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("net ctr inc",
-    tabMisc::root->GetTemplateInstance(&TA_NetCounterIncr)));
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("net updt view",
-    tabMisc::root->GetTemplateInstance(&TA_NetCounterIncr)));
+  ptbp_add_widget(tb, sec, &TA_NetCounterInit);
+  ptbp_add_widget(tb, sec, &TA_NetCounterIncr);
+  ptbp_add_widget(tb, sec, &TA_NetUpdateView);
+  ptbp_add_widget(tb, sec, &TA_WtInitPrompt);
   tb->AddSeparator(sec);
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("data loop",
-    tabMisc::root->GetTemplateInstance(&TA_NetDataLoop)));
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("gp data lp",
-    tabMisc::root->GetTemplateInstance(&TA_NetGroupedDataLoop)));
+  ptbp_add_widget(tb, sec, &TA_NetDataLoop);
+  ptbp_add_widget(tb, sec, &TA_NetGroupedDataLoop);
 }
 
 ToolBoxRegistrar emergent_ptb(PDPProgramToolBoxProc);

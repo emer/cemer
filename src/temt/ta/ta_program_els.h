@@ -32,6 +32,7 @@ public:
 //no  override taList_impl*	children_() {return &prog_code;}	
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
+  override String	GetToolbarName() const { return "block"; }
 
   PROGEL_SIMPLE_BASEFUNS(CodeBlock);
 protected:
@@ -61,6 +62,7 @@ public:
   override taList_impl*	children_() {return &local_vars;}
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
+  override String	GetToolbarName() const { return "loc vars"; }
 
   PROGEL_SIMPLE_BASEFUNS(ProgVars);
 protected:
@@ -87,6 +89,8 @@ public:
   
   override void		SetProgExprFlags();
   override String	GetDisplayName() const;
+  override String	GetToolbarName() const { return "script"; }
+
   PROGEL_SIMPLE_BASEFUNS(UserScript);
 protected:
   override void UpdateAfterEdit_impl();
@@ -104,6 +108,8 @@ public:
   ProgExpr		test; // a test expression for whether to continue looping (e.g., 'i < max')
   
   override String	GetDisplayName() const;
+  override String	GetToolbarName() const { return "while"; }
+
   PROGEL_SIMPLE_BASEFUNS(WhileLoop);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
@@ -122,6 +128,8 @@ public:
   ProgExpr		test; // a test expression for whether to continue looping (e.g., 'i < max')
   
   override String	GetDisplayName() const;
+  override String	GetToolbarName() const { return "do"; }
+
   PROGEL_SIMPLE_BASEFUNS(DoLoop);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
@@ -149,6 +157,7 @@ public:
 
   override String	GetDisplayName() const;
   override void		SetProgExprFlags();
+  override String	GetToolbarName() const { return "for"; }
 
   PROGEL_SIMPLE_COPY(ForLoop);
   void InitLinks();
@@ -171,13 +180,14 @@ private:
 };
 
 class TA_API IfContinue: public ProgEl { 
-  // if condition is true, continue looping (skip any following code and loop back to top of loop)
+  // if condition is true, continue looping (skip any following code and loop back to top of loop) (can leave condition empty to just insert an unconditional continue)
 INHERITED(ProgEl)
 public:
   ProgExpr		cond; 		// conditionalizing expression for continuing loop
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
+  override String	GetToolbarName() const { return "if.cont"; }
 
   PROGEL_SIMPLE_BASEFUNS(IfContinue);
 protected:
@@ -190,13 +200,14 @@ private:
 };
 
 class TA_API IfBreak: public ProgEl { 
-  // if condition is true, break out of current loop
+  // if condition is true, break out of current loop (can leave condition empty to just insert an unconditional break
 INHERITED(ProgEl)
 public:
   ProgExpr		cond; 		// conditionalizing expression for breaking loop
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
+  override String	GetToolbarName() const { return "if.break"; }
 
   PROGEL_SIMPLE_BASEFUNS(IfBreak);
 protected:
@@ -209,13 +220,14 @@ private:
 };
 
 class TA_API IfReturn: public ProgEl { 
-  // if condition is true, return (from void function or stop further execution of code or init segments of Program)
+  // if condition is true, return (from void function or stop further execution of code or init segments of Program) (can leave condition empty to just insert an unconditional return)
 INHERITED(ProgEl)
 public:
   ProgExpr		cond; 		// conditionalizing expression for returning
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
+  override String	GetToolbarName() const { return "if.return"; }
 
   PROGEL_SIMPLE_BASEFUNS(IfReturn);
 protected:
@@ -237,6 +249,7 @@ public:
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
+  override String	GetToolbarName() const { return "if"; }
 
   PROGEL_SIMPLE_BASEFUNS(If);
 protected:
@@ -260,6 +273,7 @@ public:
   ProgEl_List	    	false_code; // #SHOW_TREE items to execute if condition false
 
   override ProgVar*	FindVarName(const String& var_nm) const;
+  override String	GetToolbarName() const { return "if.else"; }
   
   PROGEL_SIMPLE_BASEFUNS(IfElse);
 protected:
@@ -286,6 +300,7 @@ public:
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
+  override String	GetToolbarName() const { return "if gui prmt"; }
 
   PROGEL_SIMPLE_BASEFUNS(IfGuiPrompt);
 protected:
@@ -309,6 +324,7 @@ public:
   ProgExpr		case_val; // value of the switch variable -- if switch_var is equal to this, then this code is run (must use literal expression here) -- if case_val is empty, then this represents the default case (run when no other case matches)
 
   override String	GetDisplayName() const;
+  override String	GetToolbarName() const { return "case"; }
 
   PROGEL_SIMPLE_BASEFUNS(CaseBlock);
 protected:
@@ -339,6 +355,7 @@ public:
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
+  override String	GetToolbarName() const { return "switch"; }
 
   PROGEL_SIMPLE_BASEFUNS(Switch);
 protected:
@@ -369,6 +386,7 @@ public:
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
+  override String	GetToolbarName() const { return "var="; }
 
   PROGEL_SIMPLE_BASEFUNS(AssignExpr);
 protected:
@@ -391,6 +409,7 @@ public:
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
+  override String	GetToolbarName() const { return "var+="; }
 
   PROGEL_SIMPLE_BASEFUNS(VarIncr);
 protected:
@@ -424,7 +443,7 @@ public:
   override taList_impl*	children_() {return &meth_args;}	
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
-//nn  override const String statusTip(const KeyString&) const;
+  override String	GetToolbarName() const { return "meth()"; }
 
   PROGEL_SIMPLE_BASEFUNS(MethodCall);
 protected:
@@ -476,6 +495,7 @@ public:
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
+  override String	GetToolbarName() const { return "memb="; }
 
   PROGEL_SIMPLE_BASEFUNS(MemberAssign);
 protected:
@@ -497,6 +517,7 @@ public:
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
+  override String	GetToolbarName() const { return "memb=arg"; }
 
   //  PROGEL_SIMPLE_BASEFUNS(MemberFmArg);
   void Copy_(const MemberFmArg& cp);
@@ -528,6 +549,7 @@ public:
   override taList_impl*	children_() {return &meth_args;}	
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
+  override String	GetToolbarName() const { return "memb.mth()"; }
 
   PROGEL_SIMPLE_BASEFUNS(MemberMethodCall);
 protected:
@@ -545,6 +567,8 @@ class TA_API MathCall : public StaticMethodCall {
   // call a taMath function
 INHERITED(StaticMethodCall)
 public:
+  override String	GetToolbarName() const { return "math()"; }
+
   TA_BASEFUNS_NOCOPY(MathCall);
 private:
   void	Initialize();
@@ -555,6 +579,8 @@ class TA_API RandomCall : public StaticMethodCall {
   // call a Random number generation function
 INHERITED(StaticMethodCall)
 public:
+  override String	GetToolbarName() const { return "random()"; }
+
   TA_BASEFUNS_NOCOPY(RandomCall);
 private:
   void	Initialize();
@@ -565,6 +591,8 @@ class TA_API MiscCall : public StaticMethodCall {
   // call a taMisc function
 INHERITED(StaticMethodCall)
 public:
+  override String	GetToolbarName() const { return "misc()"; }
+
   TA_BASEFUNS_NOCOPY(MiscCall);
 private:
   void	Initialize();
@@ -585,6 +613,7 @@ public:
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
+  override String	GetToolbarName() const { return "print var"; }
 
   PROGEL_SIMPLE_BASEFUNS(PrintVar);
 protected:
@@ -605,8 +634,9 @@ public:
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
-  PROGEL_SIMPLE_BASEFUNS(PrintExpr);
+  override String	GetToolbarName() const { return "print"; }
 
+  PROGEL_SIMPLE_BASEFUNS(PrintExpr);
 protected:
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
@@ -622,9 +652,9 @@ INHERITED(ProgEl)
 public:
   override String	GetDisplayName() const;
   override String	GetTypeDecoKey() const { return "Comment"; }
+  override String	GetToolbarName() const { return "comment"; }
 
   PROGEL_SIMPLE_BASEFUNS(Comment);
-
 protected:
   override bool		useDesc() const {return false;} 
   override const String	GenCssBody_impl(int indent_level);
@@ -640,8 +670,9 @@ INHERITED(ProgEl)
 public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-  PROGEL_SIMPLE_BASEFUNS(StopStepPoint);
+  override String	GetToolbarName() const { return "stop/step"; }
 
+  PROGEL_SIMPLE_BASEFUNS(StopStepPoint);
 protected:
   override const String	GenCssBody_impl(int indent_level);
 
@@ -659,8 +690,9 @@ public:
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-  PROGEL_SIMPLE_BASEFUNS(ReturnExpr);
+  override String	GetToolbarName() const { return "return()"; }
 
+  PROGEL_SIMPLE_BASEFUNS(ReturnExpr);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
@@ -686,6 +718,7 @@ public:
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Program"; }
+  override String	GetToolbarName() const { return "oth prg var"; }
 
   PROGEL_SIMPLE_BASEFUNS(OtherProgramVar);
 protected:
@@ -714,8 +747,9 @@ public:
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
-  PROGEL_SIMPLE_BASEFUNS(ProgVarFmArg);
+  override String	GetToolbarName() const { return "var=arg"; }
 
+  PROGEL_SIMPLE_BASEFUNS(ProgVarFmArg);
 protected:
   override void UpdateAfterEdit_impl();
   override void CheckThisConfig_impl(bool quiet, bool& rval);
@@ -745,8 +779,9 @@ public:
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "DataTable"; }
-  PROGEL_SIMPLE_BASEFUNS(DataColsFmArgs);
+  override String	GetToolbarName() const { return "data=args"; }
 
+  PROGEL_SIMPLE_BASEFUNS(DataColsFmArgs);
 protected:
   override void UpdateAfterEdit_impl();
   override void CheckThisConfig_impl(bool quiet, bool& rval);
@@ -763,8 +798,9 @@ INHERITED(ProgEl)
 public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
-  PROGEL_SIMPLE_BASEFUNS(RegisterArgs);
+  override String	GetToolbarName() const { return "reg args"; }
 
+  PROGEL_SIMPLE_BASEFUNS(RegisterArgs);
 protected:
   override const String	GenCssBody_impl(int indent_level);
 

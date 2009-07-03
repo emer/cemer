@@ -393,6 +393,8 @@ class TA_API DataProcCall : public StaticMethodCall {
   // call a taDataProc (data processing/database) function
 INHERITED(StaticMethodCall)
 public:
+  override String	GetToolbarName() const { return "data proc()"; }
+
   TA_BASEFUNS_NOCOPY(DataProcCall);
 private:
   void	Initialize();
@@ -442,6 +444,7 @@ public:
   // get order value from order_var variable
 
   override String	GetDisplayName() const;
+  override String	GetToolbarName() const { return "data loop"; }
 
   PROGEL_SIMPLE_BASEFUNS(DataLoop);
 protected:
@@ -478,6 +481,7 @@ public:
   ProgVarRef	var_4;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
 
   override String	GetDisplayName() const;
+  override String	GetToolbarName() const { return "data=vars"; }
 
   PROGEL_SIMPLE_BASEFUNS(DataVarProg);
 protected:
@@ -497,6 +501,8 @@ class TA_API DataVarProgMatrix : public DataVarProg {
   // A program element for exchanging information between program variables and data table values in columns with the same names as the variables -- for matrix variables up to 4 cells (var_1 is first cell, var_2 is second cell..), name of column is var name before last '_'
 INHERITED(DataVarProg)
 public:
+  override String	GetToolbarName() const { return "data mtx=vars"; }
+
   TA_BASEFUNS_NOCOPY(DataVarProgMatrix);
 protected:
   override bool	GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm,
@@ -511,6 +517,8 @@ class TA_API ResetDataRows: public DataOneProg {
 INHERITED(DataOneProg)
 public:
   override String	GetDisplayName() const;
+  override String	GetToolbarName() const { return "reset rows"; }
+
   TA_BASEFUNS_NOCOPY(ResetDataRows);
 protected:
   override const String	GenCssBody_impl(int indent_level);
@@ -524,6 +532,8 @@ class TA_API AddNewDataRow: public DataOneProg {
 INHERITED(DataOneProg)
 public:
   override String	GetDisplayName() const;
+  override String	GetToolbarName() const { return "new row"; }
+
   TA_BASEFUNS_NOCOPY(AddNewDataRow);
 protected:
   override const String	GenCssBody_impl(int indent_level);
@@ -537,6 +547,8 @@ class TA_API DoneWritingDataRow: public DataOneProg {
 INHERITED(DataOneProg)
 public:
   override String	GetDisplayName() const;
+  override String	GetToolbarName() const { return "row done"; }
+
   TA_BASEFUNS_NOCOPY(DoneWritingDataRow);
 protected:
   override const String	GenCssBody_impl(int indent_level);
@@ -585,6 +597,8 @@ public:
   override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
+  override String	GetToolbarName() const { return "sort"; }
+
   TA_SIMPLE_BASEFUNS(DataSortProg);
 protected:
   override void UpdateAfterEdit_impl();
@@ -609,6 +623,8 @@ public:
   override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
+  override String	GetToolbarName() const { return "group"; }
+
   TA_SIMPLE_BASEFUNS(DataGroupProg);
 protected:
   override void UpdateAfterEdit_impl();
@@ -633,6 +649,8 @@ public:
   override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
+  override String	GetToolbarName() const { return "sel rows"; }
+
   TA_SIMPLE_BASEFUNS(DataSelectRowsProg);
 protected:
   override void UpdateAfterEdit_impl();
@@ -660,6 +678,8 @@ public:
   override void*	GetTA_Element(Variant i, TypeDef*& eltd)
   { return select_spec.GetTA_Element(i, eltd); }
   override String GetDisplayName() const;
+  override String	GetToolbarName() const { return "sel cols"; }
+
   TA_SIMPLE_BASEFUNS(DataSelectColsProg);
 protected:
   override void UpdateAfterEdit_impl();
@@ -683,6 +703,8 @@ public:
   override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
+  override String	GetToolbarName() const { return "join"; }
+
   PROGEL_SIMPLE_BASEFUNS(DataJoinProg);
 protected:
   override void UpdateAfterEdit_impl();
@@ -726,6 +748,8 @@ public:
   override ProgVar*	FindVarName(const String& var_nm) const;
 
   override String GetDisplayName() const;
+  override String	GetToolbarName() const { return "calc loop"; }
+
   PROGEL_SIMPLE_BASEFUNS(DataCalcLoop);
 protected:
   override void UpdateAfterEdit_impl();
@@ -760,6 +784,8 @@ public:
   // get my data table ptrs from parent calc loop obj
 
   override String GetDisplayName() const;
+  override String	GetToolbarName() const { return "+dest row"; }
+
   void	InitLinks();
   TA_BASEFUNS(DataCalcAddDestRow);
 protected:
@@ -786,6 +812,8 @@ public:
   // get my data table ptrs from parent calc loop obj
 
   override String GetDisplayName() const;
+  override String	GetToolbarName() const { return "=dest row"; }
+
   void 	InitLinks();
   TA_BASEFUNS(DataCalcSetDestRow);
 protected:
@@ -812,6 +840,8 @@ public:
   // get my data table ptrs from parent calc loop obj
 
   override String GetDisplayName() const;
+  override String	GetToolbarName() const { return "=src row"; }
+
   void 	InitLinks();
   TA_BASEFUNS(DataCalcSetSrcRow);
 protected:
@@ -840,6 +870,8 @@ public:
   // get my data table ptrs from parent calc loop obj
 
   override String GetDisplayName() const;
+  override String	GetToolbarName() const { return "cpy cols"; }
+
   void 	InitLinks();
   SIMPLE_COPY_EX(DataCalcCopyCommonCols,CopyInner_);
   TA_BASEFUNS(DataCalcCopyCommonCols);

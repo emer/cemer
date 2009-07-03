@@ -2361,6 +2361,22 @@ bool ProgEl::BrowserCollapseAll() {
   return prog->BrowserCollapseAll_ProgItem(this);
 }
 
+String ProgEl::GetColText(const KeyString& key, int itm_idx) const {
+  String rval = inherited::GetColText(key, itm_idx);
+  return rval.elidedTo(taMisc::program_editor_width);
+}
+
+const String ProgEl::GetToolTip(const KeyString& key) const {
+  String rval = inherited::GetColText(key); // get full col text from tabase
+  // include type names for further reference
+  return String("(") + GetToolbarName() + " " + GetTypeName() + ") : " + rval;
+}
+
+String ProgEl::GetToolbarName() const {
+  return "<base el>";
+}
+
+
 //////////////////////////
 //   ProgEl_List	//
 //////////////////////////
@@ -2538,7 +2554,7 @@ String StaticMethodCall::GetDisplayName() const {
     ProgArg* pa = meth_args[i];
     if (i > 0)
       rval += ", ";
-    rval += pa->GetDisplayName();
+    rval += pa->expr.expr;
   }
   rval += ")";
   return rval;

@@ -279,31 +279,6 @@ String NetGroupedDataLoop::GetDisplayName() const {
     + " item index: " + item_index_nm +")";
 }
 
-///////////////////////////////////
-//	Obsolete converters
-
-void BasicDataLoop::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  cerr << "WARNING: BasicDataLoop type is obsolete -- change type to NetDataLoop -- edit: " 
-       << GetPath() << " and press button to fix!" << endl;
-}
-
-void BasicDataLoop::ChangeToNetDataLoop() {
-  GetIndexVar();
-  ChangeMyType(&TA_NetDataLoop);
-}
-
-void GroupedDataLoop::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  cerr << "WARNING: GroupedDataLoop type is obsolete -- change type to NetGroupedDataLoop -- edit: " 
-       << GetPath() << " and press button to fix!" << endl;
-}
-
-void GroupedDataLoop::ChangeToNetGroupedDataLoop() {
-  GetIndexVars();
-  ChangeMyType(&TA_NetGroupedDataLoop);
-}
-
 
 //////////////////////////
 //  Network Counters	//

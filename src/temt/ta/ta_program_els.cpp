@@ -379,20 +379,25 @@ void IfContinue::Initialize() {
 
 void IfContinue::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
+//   CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
   CheckEqualsError(cond.expr, quiet, rval);
 }
 
 const String IfContinue::GenCssBody_impl(int indent_level) {
   cond.ParseExpr();		// re-parse just to be sure!
   String rval;
-  rval = cssMisc::Indent(indent_level) + 
-    "if(" + cond.GetFullExpr() + ") continue;\n";
+  rval = cssMisc::Indent(indent_level);
+  String fexp = cond.GetFullExpr();
+  if(fexp.nonempty()) rval += "if(" + fexp + ") ";
+  rval += "continue;\n";
   return rval; 
 }
 
 String IfContinue::GetDisplayName() const {
-  return "if(" + cond.expr + ") continue;";
+  if(cond.expr.empty())
+    return "continue;";
+  else
+    return "if(" + cond.expr + ") continue;";
 }
 
 
@@ -405,20 +410,25 @@ void IfBreak::Initialize() {
 
 void IfBreak::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
+//   CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
   CheckEqualsError(cond.expr, quiet, rval);
 }
 
 const String IfBreak::GenCssBody_impl(int indent_level) {
   cond.ParseExpr();		// re-parse just to be sure!
   String rval;
-  rval = cssMisc::Indent(indent_level) + 
-    "if(" + cond.GetFullExpr() + ") break;\n";
+  rval = cssMisc::Indent(indent_level);
+  String fexp = cond.GetFullExpr();
+  if(fexp.nonempty()) rval += "if(" + fexp + ") ";
+  rval += "break;\n";
   return rval; 
 }
 
 String IfBreak::GetDisplayName() const {
-  return "if(" + cond.expr + ") break;";
+  if(cond.expr.empty())
+    return "break;";
+  else
+    return "if(" + cond.expr + ") break;";
 }
 
 //////////////////////////
@@ -430,20 +440,25 @@ void IfReturn::Initialize() {
 
 void IfReturn::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
+//   CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
   CheckEqualsError(cond.expr, quiet, rval);
 }
 
 const String IfReturn::GenCssBody_impl(int indent_level) {
   cond.ParseExpr();		// re-parse just to be sure!
   String rval;
-  rval = cssMisc::Indent(indent_level) + 
-    "if(" + cond.GetFullExpr() + ") return;\n";
+  rval = cssMisc::Indent(indent_level);
+  String fexp = cond.GetFullExpr();
+  if(fexp.nonempty()) rval += "if(" + fexp + ") ";
+  rval += "return;\n";
   return rval; 
 }
 
 String IfReturn::GetDisplayName() const {
-  return "if(" + cond.expr + ") return;";
+  if(cond.expr.empty())
+    return "return;";
+  else
+    return "if(" + cond.expr + ") return;";
 }
 
 //////////////////////////

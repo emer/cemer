@@ -561,13 +561,13 @@ int	taMisc::undo_depth = 100;
 float	taMisc::undo_new_src_thr = 0.3f;
 bool	taMisc::delete_prompts = false;
 //bool	taMisc::delete_prompts = true;
-int	taMisc::tree_indent = 12;
+int	taMisc::tree_indent = 8; // 12 used to be default, but 8 seems good
+int	taMisc::program_editor_width = 60;
 int	taMisc::max_menu = 1000; // no cost now in QT for making it large..
 int 	taMisc::search_depth = 4;
 int	taMisc::color_scale_size = 128;
 int	taMisc::jpeg_quality = 95;
 taMisc::ColorHints taMisc::color_hints = (taMisc::ColorHints)(taMisc::CH_EDITS | taMisc::CH_BROWSER);
-taMisc::ClickStyle taMisc::click_style = taMisc::CS_CONTEXT;
 //note: we actually init this in ta_project, the first time, for the user
 //taMisc::ProjViewPref taMisc::proj_view_pref = (taMisc::ProjViewPref)-1;//taMisc::PVP_2x2;
 // nobody besides Brad uses 2x2.. 
@@ -580,7 +580,7 @@ taMisc::EditStyle	taMisc::select_edit_style = taMisc::ES_ACTIVE_CONTROL;
 taMisc::EditStyle	taMisc::std_edit_style = taMisc::ES_ALL_CONTROLS;
 
 int	taMisc::antialiasing_level = 4;
-float	taMisc::text_complexity = .5f;
+float	taMisc::text_complexity = .2f;
 
 taMisc::ShowMembs  	taMisc::show_gui = taMisc::NORM_MEMBS;
 taMisc::TypeInfo  	taMisc::type_info_ = taMisc::NO_OPTIONS_LISTS;
@@ -637,20 +637,16 @@ NameVar_PArray	taMisc::named_paths;
 DumpFileCvtList taMisc::file_converters; 
 
 String	taMisc::compress_sfx = ".gz";
-String	taMisc::help_file_tmplt = "manual/html/Help_%t.html";
 ostream*	taMisc::record_script = NULL;
 
 // NOTE: we quote all filenames in case they have spaces
 #ifdef TA_OS_WIN
 //NOTE: Notepad could possibly really screw up files, because of crlf
-String	taMisc::help_cmd = "\"C:/Program Files/Internet Explorer/iexplore.exe\" file:\"%s\"";
 String	taMisc::edit_cmd = "Notepad.exe \"%s\"";
 #else
 #ifdef TA_OS_MAC
-String	taMisc::help_cmd = "open \"%s\" &";
 String	taMisc::edit_cmd = "emacs \"%s\" &";
 #else // prob Linux, or some Unix for sure
-String	taMisc::help_cmd = "firefox file:\"%s\" &";
 String	taMisc::edit_cmd = "emacs \"%s\" &";
 #endif
 #endif

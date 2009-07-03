@@ -766,7 +766,7 @@ public:
   // tell the viewer to go to given saved view parameters (copies our parameters in case they have been locally modified programmatically)
 
   override QPixmap	GrabImage(bool& got_image);
-  override bool		SaveImageAs(const String& fname = "", ImageFormat img_fmt = EPS);
+  override bool		SaveImageAs(const String& fname = "", ImageFormat img_fmt = PNG);
   virtual  void		SetImageSize(int width, int height);
   // set size of SaveImageAs image to given size parameters
 
