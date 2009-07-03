@@ -980,6 +980,8 @@ int taiDataHostBase::Edit(bool modal_) { // only called if isDialog() true
 //dialog->resize(dialog->minimumWidth(), 1);
   dialog->setCentralWidget(widget());
   dialog->setButtonsWidget(widButtons);
+  dialog->setMinimumWidth(800);
+  dialog->setMinimumHeight(600);
   //note: following is hack from rebasing
   if (!modal && (GetTypeDef()->InheritsFrom(&TA_taiDataHost))) {
     taiMisc::active_dialogs.AddUnique((taiDataHost*)this); // add to the list of active dialogs
