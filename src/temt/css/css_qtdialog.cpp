@@ -119,10 +119,10 @@ void cssiEditDialog::Constr_Strings() {
   win_str += String(" ") + obj->name;
 }
 
-int cssiEditDialog::Edit(bool modal_) {
+int cssiEditDialog::Edit(bool modal_, int min_width, int min_height) {
   if (!modal_)
     taiMisc::css_active_edits.Add(this);
-  return taiEditDataHost::Edit(modal_);
+  return taiEditDataHost::Edit(modal_, min_width, min_height);
 }
 
 void cssiEditDialog::GetValue_Membs() {
@@ -493,7 +493,7 @@ void cssiArgDialog::GetImage(bool) {
   Unchanged();
 }
 
-int cssiArgDialog::Edit(bool modal_) {
+int cssiArgDialog::Edit(bool modal_, int min_width, int min_height) {
   // special case for a single stream arg
   if ((use_argc == 1) && md->arg_types[0]->InheritsFrom(TA_ios)
      && !md->HasOption("FILE_ARG_EDIT"))
@@ -518,7 +518,7 @@ int cssiArgDialog::Edit(bool modal_) {
       return false;
     return true;
   } else
-    return cssiEditDialog::Edit(modal_);
+    return cssiEditDialog::Edit(modal_, min_width, min_height);
 }
 
 

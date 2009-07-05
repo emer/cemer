@@ -48,7 +48,8 @@ public:
 
   override void		GetImage_Membs();
   override void		GetValue_Membs();
-  override int		Edit(bool modal_ = false); // ati is for when leading argument(s) are predetermined, and user shouldn't be prompted for them
+  override int		Edit(bool modal_ = false, int min_width=-1, int min_height=-1);
+  // ati is for when leading argument(s) are predetermined, and user shouldn't be prompted for them
 
 protected:
   void	 		GetName(int idx, cssEl* md, String& name, String& desc);
@@ -84,7 +85,8 @@ public:
   USING(inherited::GetImage)
   void		GetImage(bool force); // force ignored
   void		GetValue();
-  int		Edit(bool modal_); // ati is for when n leading args are predetermined by context, and so shouldn't be shown to the user
+  override int	Edit(bool modal_ = false, int min_width=-1, int min_height=-1);
+  // ati is for when n leading args are predetermined by context, and so shouldn't be shown to the user
 
   void		Ok();
 

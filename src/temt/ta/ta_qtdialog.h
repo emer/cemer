@@ -330,18 +330,11 @@ public:
     //NOTE: if built with as_panel=true, then must only be a panel, not dialog, and viceversa
   void  ConstrDeferred(); // finish deferred construction
   void		 	ConstrEditControl(); 
-  virtual int 		Edit(bool modal_ = false); // for dialogs -- creates iHostDialog
-/*  virtual void		Iconify(bool value);	// for dialogs: iconify/deiconify
-  virtual void 		ReConstr_Body(); // called when show has changed and body should be reconstructed -- this is a deferred call */
+  virtual int 		Edit(bool modal_ = false, int min_width=-1, int min_height=-1);
+  // for dialogs -- creates iHostDialog
   virtual void  Unchanged();	// call when data has been saved or reverted
   virtual void		Refresh(); // does a GetImage or defered Reshow
-/*  virtual void	Revert_force();	// forcibly (automatically) revert buffer (prompts)
-  virtual void  SetRevert();	// set the revert button on
-  virtual void  UnSetRevert();	// set the revert button off
-  virtual bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
-  virtual void		ReShow_Async(bool force = false); // reshow asynchronously; can be called multiple times before the reshow (only done once)*/
   virtual void		GetImage_Async(){} // refresh asynchronously; can be called multiple times (only done once)
-  /*virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front*/
   virtual void 		ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) {}
   virtual void		WidgetDeleting(); // lets us null the gui fields, and set state
 
@@ -689,12 +682,10 @@ public:
   ~taiEditDataHost();
 
 
-  override int 		Edit(bool modal_ = false); 
-    // for dialogs -- add to list of active_edit dialogs too
+  override int 		Edit(bool modal_ = false, int min_width=-1, int min_height=-1); 
+  // for dialogs -- add to list of active_edit dialogs too
   EditDataPanel* 	EditPanel(taiDataLink* link); // for panels
   EditDataPanel* 	EditPanelDeferred(taiDataLink* link); // for panels
-//  void		 	ConstrEditControl(); 
-    // for controls -- construct then edit 
   USING(inherited::GetImage)
   void			GetImage(bool force); //override
   void			GetValue(); //override

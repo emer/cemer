@@ -674,7 +674,7 @@ void cssTA_Base::operator=(const String& s) {
     // note: cannot use SetValStr because it automatically does SetPointer!
     taBase* bs = NULL;
     String tmp_val = s;
-    if((tmp_val != String::con_NULL) && (tmp_val != "Null")) {
+    if((tmp_val != String::con_NULL) && (tmp_val != "Null") && (tmp_val != "__null")) {
       MemberDef* md = NULL;
       bs = tabMisc::root->FindFromPath(tmp_val, md);
       if(!bs) {

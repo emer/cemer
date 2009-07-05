@@ -1803,7 +1803,8 @@ void taRootBase::Options() {
   taiEdit* ie =  TA_taMisc.ie;
   if (!ie) return;
   taMisc* inst = (taMisc*)TA_taMisc.GetInstance();
-  int accepted = ie->EditDialog(inst, false, true); // r/w, modal
+  int accepted = ie->EditDialog(inst, false, true, taiTypeBase::def_color, 
+				800, 600); // r/w, modal, min width, height
   if (accepted) {
     if(taMisc::gui_active && (console_type == taMisc::CT_GUI)) {  
       QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);

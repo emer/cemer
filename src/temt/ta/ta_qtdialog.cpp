@@ -972,7 +972,8 @@ void taiDataHostBase::DoRaise_Dialog() {
   }
 }
 
-int taiDataHostBase::Edit(bool modal_) { // only called if isDialog() true
+int taiDataHostBase::Edit(bool modal_, int min_width, int min_height) {
+  // only called if isDialog() true
   if (state != CONSTRUCTED)
     return false;
   modal = modal_;
@@ -980,8 +981,10 @@ int taiDataHostBase::Edit(bool modal_) { // only called if isDialog() true
 //dialog->resize(dialog->minimumWidth(), 1);
   dialog->setCentralWidget(widget());
   dialog->setButtonsWidget(widButtons);
-  dialog->setMinimumWidth(800);
-  dialog->setMinimumHeight(600);
+  if(min_width > 0)
+    dialog->setMinimumWidth(min_width);
+  if(min_height > 0)
+    dialog->setMinimumHeight(min_height);
   //note: following is hack from rebasing
   if (!modal && (GetTypeDef()->InheritsFrom(&TA_taiDataHost))) {
     taiMisc::active_dialogs.AddUnique((taiDataHost*)this); // add to the list of active dialogs
@@ -2183,10 +2186,10 @@ void taiEditDataHost::DoConstr_Dialog(iHostDialog*& dlg) {
   }
 }
 
-int taiEditDataHost::Edit(bool modal_) {
+int taiEditDataHost::Edit(bool modal_, int min_width, int min_height) {
   if (!modal_)
     taiMisc::active_edits.Add(this); // add to the list of active edit dialogs
-  return inherited::Edit(modal_);
+  return inherited::Edit(modal_, min_width, min_height);
 }
 
 EditDataPanel* taiEditDataHost::EditPanel(taiDataLink* link) {

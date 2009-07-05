@@ -1076,7 +1076,7 @@ int taiEdit::Edit(void* base, bool readonly, const iColor& bgcol) {
 }
 
 int taiEdit::EditDialog(void* base, bool read_only, bool modal,
-  const iColor& bgcol) 
+			const iColor& bgcol, int min_width, int min_height) 
 {
   taiEditDataHost* host = NULL;
   if (!modal) {
@@ -1099,8 +1099,7 @@ int taiEdit::EditDialog(void* base, bool read_only, bool modal,
     //bgcol = NULL; 
   }
   host->Constr("", "", taiDataHost::HT_DIALOG);
-  return host->Edit(modal);
-  
+  return host->Edit(modal, min_width, min_height);
 }
 
 EditDataPanel* taiEdit::EditNewPanel(taiDataLink* link, void* base,
