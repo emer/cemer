@@ -239,6 +239,9 @@ public:
   void			GeomFromString(const String& str, const char* ldelim = "[", const char* rdelim = "]");
   // reads geometry from string (consuming text) in form: "[dims:{dim}{,dim}]"
 
+  void			AddFmGeom(const MatrixGeom& ad);
+  // add given geometry values to ours -- useful for adding offsets to indicies, for example
+
   override String GetValStr(void* par = NULL, MemberDef* md = NULL,
 			    TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
 			    bool force_inline = false) const;
@@ -299,6 +302,16 @@ public:
   void*			This() {return (void*)this;}
 
 public: 
+   enum RenderOp {		// operation for rendering one matrix into another
+     COPY,			// dest = source
+     ADD,			// dest += source
+     SUB,			// dest -= source
+     MULT,			// dest *= source
+     DIV,			// dest /= source
+     MAX,			// dest = MAX(dest, source)
+     MIN,			// dest = MIN(dest, source)
+   };
+
   ///////////////////////////////////////////////////////////////////
   // IMatrix i/f  
 
@@ -496,6 +509,46 @@ public:
   double	FastElAsDouble_Flat(int idx) const 
   { return El_GetDouble_(FastEl_Flat_(idx)); } 
   // #CAT_Access get element as double without range checking, flat array model
+
+  ///////////////////////////////////////
+  // sub-matrix reading and writing functions
+
+  static Variant RenderValue(const Variant& dest_val, const Variant& src_val, RenderOp render_op);
+  // #CAT_SubMatrix compute render operation on given values
+
+  virtual void	WriteFmSubMatrix(const taMatrix* src, int off0=0, int off1=0, int off2=0,
+			      int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix write to this matrix from source sub-matrix (typically of smaller size), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  virtual void	ReadToSubMatrix(taMatrix* dest, int off0=0, int off1=0, int off2=0,
+				int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix read from this matrix to dest sub-matrix (typically of smaller size), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+
+  virtual void	WriteFmSubMatrix_Render(const taMatrix* src, RenderOp render_op,
+					int off0=0, int off1=0, int off2=0,
+					int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix write to this matrix from source sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  virtual void	ReadToSubMatrix_Render(taMatrix* dest, RenderOp render_op, 
+				       int off0=0, int off1=0, int off2=0,
+				       int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix read from this matrix to dest sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+
+  virtual void	WriteFmSubMatrixFrames(const taMatrix* src, 
+				      int off0=0, int off1=0, int off2=0,
+				      int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix write to each frame of this matrix from source sub-matrix (typically of smaller cell size than this one -- if source has one less dimension, then same values are replicated across frames), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  virtual void	ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op, 
+				       int off0=0, int off1=0, int off2=0,
+				       int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix read from each frame of this matrix to dest sub-matrix (typically of smaller cell size than this one, but must have same number of dimensions and frame count will be set to be same as this matrix), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+
+  virtual void	WriteFmSubMatrixFrames_Render(const taMatrix* src, RenderOp render_op,
+					     int off0=0, int off1=0, int off2=0,
+					     int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix write to each frame of this matrix from source sub-matrix (typically of smaller cell size than this one -- if source has one less dimension, then same values are replicated across frames), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  virtual void	ReadToSubMatrixFrames_Render(taMatrix* dest, RenderOp render_op, 
+					    int off0=0, int off1=0, int off2=0,
+					    int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix read from each frame of this matrix to dest sub-matrix (typically of smaller cell size than this one, but must have same number of dimensions and frame count will be set to be same as this matrix), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
 
   ///////////////////////////////////////
   // alloc management

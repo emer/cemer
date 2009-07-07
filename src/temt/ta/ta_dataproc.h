@@ -32,7 +32,7 @@ public:
   // #READ_ONLY #HIDDEN #NO_SAVE data table columns -- gets set dynamically -- just to lookup column
   DataCol*		col_lookup;
   // #NULL_OK #NO_SAVE #FROM_GROUP_data_cols #NO_EDIT #NO_UPDATE_POINTER lookup column in data table to sort on -- sets col_name field (which is what is actually used) and returns to NULL after selection is applied
-  String		col_name;	// name of column in data table to sort on (either enter directly or lookup from col_lookup)
+  String		col_name;	// name of column in data table to operate on (either enter directly or lookup from col_lookup)
   int			col_idx;	// #READ_ONLY #NO_SAVE column idx (from GetColumns)
 
   virtual void 	SetDataTable(DataTable* dt);

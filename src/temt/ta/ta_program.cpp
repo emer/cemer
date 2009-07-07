@@ -517,7 +517,7 @@ void ProgVar::Initialize() {
   object_type = &TA_taOBase;
   hard_enum_type = NULL;
   objs_ptr = false;
-  flags = (VarFlags)(CTRL_PANEL | NULL_CHECK);
+  flags = (VarFlags)(CTRL_PANEL | NULL_CHECK | EDIT_VAL);
   reference = false;
   parse_css_el = NULL;
 }
@@ -572,6 +572,12 @@ void ProgVar::SetFlagsByOwnership() {
       if(pvl->owner && pvl->owner->InheritsFrom(&TA_Function))
 	SetVarFlag(FUN_ARG);
     }
+  }
+  if(HasVarFlag(LOCAL_VAR) || init_from) {
+    ClearVarFlag(EDIT_VAL);
+  }
+  else {
+    SetVarFlag(EDIT_VAL);
   }
 }
 
@@ -649,6 +655,16 @@ void ProgVar::UpdateAfterEdit_impl() {
   }
   SetFlagsByOwnership();
   UpdateUsedFlag();
+  GetInitFromVar(true);		// warn 
+}
+
+
+ProgVar* ProgVar::GetInitFromVar(bool warn) {
+  if(!(bool)init_from) return NULL;
+  ProgVar* ivar = init_from->FindVarName(name); // use our name
+  TestWarning(warn && !ivar, "GetInitFromVar", "variable with my name:",name,
+	      "in init_from program:",init_from->name,"not found.");
+  return ivar;
 }
 
 void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -671,6 +687,7 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
 		  "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
     }
   }
+  GetInitFromVar(true);		// warn 
 }
 
 void ProgVar::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -1029,6 +1046,24 @@ const String ProgVar::GenCssVar_impl() {
   return rval;
 }
 
+Program* ProgVar::GetInitFromProg() {
+  TestError(!init_from, "GetInitFromProg", "init_from program is NULL for initializing variable:", name, "in program:", program()->name);
+  return init_from.ptr();
+}
+
+
+const String ProgVar::GenCssInitFrom(int indent_level) {
+  ProgVar* ivar = GetInitFromVar(false); // no warning now
+  if(!ivar) return _nilString;
+  String il = cssMisc::Indent(indent_level);
+  String il1 = cssMisc::Indent(indent_level+1);
+  String rval = il + "{ // init_from\n"; 
+  rval.cat(il1).cat("Program* init_fm_prog = this").cat(GetPath(NULL, program())).cat("->GetInitFromProg();\n");
+  rval.cat(il1).cat(name).cat(" = init_fm_prog->GetVar(\"").cat(name).cat("\");\n");
+  rval.cat(il).cat("}\n");
+  return rval;
+}
+
 cssEl* ProgVar::NewCssEl() {
   switch(var_type) {
   case T_Int:
@@ -1145,6 +1180,15 @@ const String ProgVar_List::GenCss(int indent_level) const {
     }
     rval += it->GenCss(is_arg); 
     ++cnt;
+  }
+  return rval;
+}
+
+const String ProgVar_List::GenCssInitFrom(int indent_level) const {
+  String rval;
+  for(int i=0;i<size;i++) {
+    ProgVar* var = FastEl(i);
+    rval += var->GenCssInitFrom(indent_level);
   }
   return rval;
 }
@@ -3772,7 +3816,10 @@ const String Program::scriptString() {
     }
     m_scriptCache += "  }\n";
   }
-  m_scriptCache += "  // Then run our init code\n";
+  m_scriptCache += "  // init_from vars\n";
+  m_scriptCache += args.GenCssInitFrom(1);
+  m_scriptCache += vars.GenCssInitFrom(1);
+  m_scriptCache += "  // run our init code\n";
   m_scriptCache += init_code.GenCss(1); // ok if empty, returns nothing
   if (sub_progs.size > 0) {
     if (init_code.size >0) m_scriptCache += "\n";
@@ -3803,6 +3850,10 @@ const String Program::scriptString() {
   m_scriptCache += "}\n\n";
     
   m_scriptCache += "void __Prog() {\n";
+  m_scriptCache += "  // init_from vars\n";
+  m_scriptCache += args.GenCssInitFrom(1);
+  m_scriptCache += vars.GenCssInitFrom(1);
+  m_scriptCache += "  // prog_code\n";
   m_scriptCache += prog_code.GenCss(1);
   if(!(flags & NO_STOP)) {
     m_scriptCache += "  StopCheck(); // process pending events, including Stop and Step events\n";

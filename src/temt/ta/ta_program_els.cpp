@@ -1443,10 +1443,8 @@ String OtherProgramVar::GetDisplayName() const {
 }
 
 Program* OtherProgramVar::GetOtherProg() {
-  if(!other_prog) {
-    taMisc::CheckError("Other program is NULL in OtherProgramVar:",
-		       desc, "in program:", program()->name);
-  }
+  TestError(!other_prog, "GetOtherProg", "Other program is NULL in OtherProgramVar:",
+	    desc, "in program:", program()->name);
   return other_prog.ptr();
 }
 
@@ -1472,7 +1470,7 @@ const String OtherProgramVar::GenCssPre_impl(int indent_level) {
 
 const String OtherProgramVar::GenCssBody_impl(int indent_level) {
   if (!other_prog) return _nilString;
-  String il = cssMisc::Indent(indent_level);
+  String il = cssMisc::Indent(indent_level+1);
   String rval;
   rval += il + "Program* other_prog = this" + GetPath(NULL, program())+ "->GetOtherProg();\n";
   GenCss_OneVar(rval, var_1, il, 0);

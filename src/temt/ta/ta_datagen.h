@@ -16,9 +16,39 @@
 #ifndef ta_datagen_h
 #define ta_datagen_h
 
-#include "ta_datatable.h"
-#include "ta_math.h"
-#include "ta_program.h"
+#include "ta_dataproc.h"
+
+class TA_API SubMatrixOpEl : public DataOpEl {
+  // sub matrix operations element -- specifies a sub-matrix column and offset of that sub-matrix into larger matrix to operate on
+  INHERITED(DataOpEl)
+public:
+  MatrixGeom		offset;
+
+  override String GetDisplayName() const;
+  void  Initialize();
+  void 	Destroy()		{ };
+  TA_SIMPLE_BASEFUNS(SubMatrixOpEl);
+protected:
+  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+};
+
+class TA_API SubMatrixOpSpec : public DataOpBaseSpec {
+  // sub matrix operations spec -- contains a list of columns that contain sub matricies, and their offsets within a larger matrix
+INHERITED(DataOpBaseSpec)
+public:
+  DataTableRef		sub_matrix_table;
+  // pointer to a sub matrix data table, for looking up the column names in the spec (different tables can be used for actual processing as long as they have the same structure)
+
+  TA_SIMPLE_BASEFUNS(SubMatrixOpSpec);
+protected:
+  override void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
+
 
 class TA_API taDataGen : public taNBase {
   // #STEM_BASE ##CAT_Data collection of data generation functions (e.g., drawing, random patterns, combining lists)
@@ -173,6 +203,31 @@ public:
 // 			     taMath::DistMetric metric=taMath::HAMMING,
 // 			     bool norm=false, float tol=0.0f);
 //   // #CAT_Distance returns min and max distance between probe pattern and all in group
+
+
+  ///////////////////////////////////////////////////////////////////
+  // sub-matrix operations -- read/write from sub matricies to/from larger matrix
+
+  static bool	WriteFmSubMatricies(DataTable* dest, const String& dest_col_nm, 
+				    DataTable* sub_mtx_src, SubMatrixOpSpec* spec, 
+				    bool reset_first = true);
+  // #CAT_SubMatrix #MENU_BUTTON #MENU_ON_SubMatrix write to column dest_col_nm in destination table from sub matricies in sub_mtx_src according to columns and offsets in given spec -- if reset_first, dest is reset first  -- rows are always set to number in source
+  static bool	ReadToSubMatricies(DataTable* src, const String& src_col_nm, 
+				   DataTable* sub_mtx_dest, SubMatrixOpSpec* spec,
+				   bool reset_first = true);
+  // #CAT_SubMatrix #MENU_BUTTON #MENU_ON_SubMatrix read from column src_col_nm in source table to sub matricies in sub_mtx_dest according to columns and offsets in given spec -- if reset_first, dest is reset first  -- rows are always set to number in source
+
+  static bool	WriteFmSubMatricies_Render(DataTable* dest, const String& dest_col_nm, 
+					   DataTable* sub_mtx_src, SubMatrixOpSpec* spec, 
+					   taMatrix::RenderOp render_op,
+					   bool reset_first = true);
+  // #CAT_SubMatrix #MENU_BUTTON #MENU_ON_SubMatrix write to column dest_col_nm in destination using given rendering operation from sub matricies in sub_mtx_src according to columns and offsets in given spec -- if reset_first, dest is reset first  -- rows are always set to number in source
+  static bool	ReadToSubMatricies_Render(DataTable* src, const String& src_col_nm, 
+					  DataTable* sub_mtx_dest, SubMatrixOpSpec* spec,
+					  taMatrix::RenderOp render_op,
+					  bool reset_first = true);
+  // #CAT_SubMatrix #MENU_BUTTON #MENU_ON_SubMatrix read from column src_col_nm in source using given rendering operation to sub matricies in sub_mtx_dest according to columns and offsets in given spec -- if reset_first, dest is reset first  -- rows are always set to number in source
+
 
   ///////////////////////////////////////////////////////////////////
   // misc data sources

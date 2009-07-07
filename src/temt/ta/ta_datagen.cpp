@@ -20,6 +20,39 @@
 
 #include <QDir>
 
+void SubMatrixOpEl::Initialize() {
+}
+
+String SubMatrixOpEl::GetDisplayName() const {
+//   String rval = col_name + " ";
+//   if(order == ASCENDING) 
+//     rval += "up";
+//   else
+//     rval += "dn";
+  return col_name;
+}
+
+void SubMatrixOpEl::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(col_lookup) {
+    CheckError(!col_lookup->is_matrix, quiet, rval, "column must be a matrix column");
+  }
+}
+
+void SubMatrixOpSpec::Initialize() {
+  ops.SetBaseType(&TA_SubMatrixOpEl);
+}
+
+void SubMatrixOpSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if((bool)sub_matrix_table) {
+    SetDataTable(sub_matrix_table);
+  }
+}
+
+///////////////////////////////////////////
+//		taDataGen
+
 bool taDataGen::CheckDims(float_Matrix* mat, int dims) {
   if(!mat) return false;
   if(mat->dims() != dims) {
@@ -1069,6 +1102,36 @@ float taDataGen::LastMinMaxDist(DataCol* da, int row, float& max_dist,
 //   }
 //   return rval;
 // }
+
+
+///////////////////////////////////////////////////////////////////
+// sub-matrix operations -- read/write from sub matricies to/from larger matrix
+
+bool taDataGen::WriteFmSubMatricies(DataTable* dest, const String& dest_col_nm, 
+				    DataTable* sub_mtx_src, SubMatrixOpSpec* spec, 
+				    bool reset_first) {
+  return true;
+}
+
+bool taDataGen::ReadToSubMatricies(DataTable* src, const String& src_col_nm, 
+				   DataTable* sub_mtx_dest, SubMatrixOpSpec* spec,
+				    bool reset_first) {
+  return true;
+}
+
+bool taDataGen::WriteFmSubMatricies_Render(DataTable* dest, const String& dest_col_nm, 
+					   DataTable* sub_mtx_src, SubMatrixOpSpec* spec, 
+					   taMatrix::RenderOp render_op,
+					   bool reset_first) {
+  return false;
+}
+
+bool taDataGen::ReadToSubMatricies_Render(DataTable* src, const String& src_col_nm, 
+					  DataTable* sub_mtx_dest, SubMatrixOpSpec* spec,
+					  taMatrix::RenderOp render_op,
+					  bool reset_first) {
+  return false;
+}
 
 ///////////////////////////////////////////////////////////////////
 // misc data functions

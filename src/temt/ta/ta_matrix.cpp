@@ -300,6 +300,13 @@ void MatrixGeom::Get2DGeomGui(int& x, int& y, bool odd_y, int spc) const {
   }
 }
 
+void MatrixGeom::AddFmGeom(const MatrixGeom& ad) {
+  int mxd = MIN(size, ad.size);
+  for(int i=0; i<mxd; i++) {
+    FastEl(i) += ad.FastEl(i);
+  }
+}
+
 int MatrixGeom::Dump_Save_Value(ostream& strm, TAPtr, int) {
   strm << "{ ";
   int i;
@@ -1467,6 +1474,108 @@ void taMatrix::UpdateSlices_Realloc(ta_intptr_t base_delta) {
   }
 }
  
+////////////////////////////////////////////////////
+//   sub-matrix reading and writing functions
+
+Variant taMatrix::RenderValue(const Variant& dest_val, const Variant& src_val, RenderOp render_op) {
+  Variant rval;
+  switch(render_op) {
+  case COPY:
+    rval = src_val;
+    break;
+  case ADD:
+    rval = dest_val.toDouble() + src_val.toDouble();
+    break;
+  case SUB:
+    rval = dest_val.toDouble() - src_val.toDouble();
+    break;
+  case MULT:
+    rval = dest_val.toDouble() * src_val.toDouble();
+    break;
+  case DIV:
+    rval = dest_val.toDouble() / src_val.toDouble();
+    break;
+  case MAX:
+    rval = MAX(dest_val.toDouble(), src_val.toDouble());
+    break;
+  case MIN:
+    rval = MIN(dest_val.toDouble(), src_val.toDouble());
+    break;
+  }
+  return rval;
+}
+
+void taMatrix::WriteFmSubMatrix(const taMatrix* src, int off0, int off1, int off2,
+				int off3, int off4, int off5, int off6) {
+  if(!src) return;
+  MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
+  MatrixGeom srcp;
+  for(int i=0;i<src->size;i++) {
+    src->geom.DimsFmIndex(i, srcp);
+    Variant val = src->FastElAsVar_Flat(i);
+    MatrixGeom trgp(off);
+    trgp.AddFmGeom(srcp);
+    SetFmVarN(val, trgp);
+  }
+}
+
+void taMatrix::ReadToSubMatrix(taMatrix* dest, int off0, int off1, int off2,
+			       int off3, int off4, int off5, int off6) {
+  if(!dest) return;
+  MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
+  MatrixGeom srcp;
+  for(int i=0;i<dest->size;i++) {
+    dest->geom.DimsFmIndex(i, srcp);
+    MatrixGeom trgp(off);
+    trgp.AddFmGeom(srcp);
+    Variant val = SafeElAsVarN(trgp);
+    if(!val.isInvalid())
+      dest->SetFmVar_Flat(val, i);
+  }
+}
+
+void taMatrix::WriteFmSubMatrix_Render(const taMatrix* src, RenderOp render_op,
+					int off0, int off1, int off2,
+				       int off3, int off4, int off5, int off6) {
+  if(!src) return;
+  MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
+  MatrixGeom srcp;
+  for(int i=0;i<src->size;i++) {
+    src->geom.DimsFmIndex(i, srcp);
+    Variant sval = src->FastElAsVar_Flat(i);
+    MatrixGeom trgp(off);
+    trgp.AddFmGeom(srcp);
+    Variant dval = SafeElAsVarN(trgp);
+    RenderValue(dval, sval, render_op);
+    SetFmVarN(dval, trgp);
+  }
+}
+
+void taMatrix::ReadToSubMatrix_Render(taMatrix* dest, RenderOp render_op, 
+				       int off0, int off1, int off2,
+				      int off3, int off4, int off5, int off6) {
+}
+
+void taMatrix::WriteFmSubMatrixFrames(const taMatrix* src, 
+				      int off0, int off1, int off2,
+				      int off3, int off4, int off5, int off6) {
+}
+
+void taMatrix::ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op, 
+				       int off0, int off1, int off2,
+				     int off3, int off4, int off5, int off6) {
+}
+
+void taMatrix::WriteFmSubMatrixFrames_Render(const taMatrix* src, RenderOp render_op,
+					     int off0, int off1, int off2,
+					     int off3, int off4, int off5, int off6) {
+}
+
+void taMatrix::ReadToSubMatrixFrames_Render(taMatrix* dest, RenderOp render_op, 
+					    int off0, int off1, int off2,
+					    int off3, int off4, int off5, int off6) {
+}
+
 
 //////////////////////////
 //   String_Matrix	//

@@ -288,32 +288,39 @@ public:
     LOCAL_VAR		= 0x0008, // #NO_SHOW this is a local variable which does not set or update values!
     FUN_ARG		= 0x0010, // #NO_SHOW this is a function argument variable
     USED		= 0x0020, // #NO_SHOW whether this variable is currently being used in the program (set automatically)
+    EDIT_VAL		= 0x0040, // #NO_SHOW allow value to be edited -- only if !LOCAL_VAR && !init_from
   };
 
   String	name;		// name of the variable
   VarType	var_type;	// type of variable -- determines which xxx_val(s) is/are used
-  int		int_val;	// #CONDSHOW_ON_var_type:T_Int,T_HardEnum #CONDEDIT_OFF_flags:LOCAL_VAR integer value (also for enum types)
-  double	real_val;	// #CONDSHOW_ON_var_type:T_Real #CONDEDIT_OFF_flags:LOCAL_VAR real value
-  String	string_val;	// #CONDSHOW_ON_var_type:T_String #CONDEDIT_OFF_flags:LOCAL_VAR #EDIT_DIALOG string value
-  bool		bool_val;	// #CONDSHOW_ON_var_type:T_Bool #CONDEDIT_OFF_flags:LOCAL_VAR boolean value
+  int		int_val;	// #CONDSHOW_ON_var_type:T_Int,T_HardEnum #CONDEDIT_ON_flags:EDIT_VAL integer value (also for enum types)
+  double	real_val;	// #CONDSHOW_ON_var_type:T_Real #CONDEDIT_ON_flags:EDIT_VAL real value
+  String	string_val;	// #CONDSHOW_ON_var_type:T_String #CONDEDIT_ON_flags:EDIT_VAL #EDIT_DIALOG string value
+  bool		bool_val;	// #CONDSHOW_ON_var_type:T_Bool #CONDEDIT_ON_flags:EDIT_VAL boolean value
   TypeDef*	object_type; 	// #CONDSHOW_ON_var_type:T_Object #NO_NULL #TYPE_taBase #LABEL_min_type the minimum acceptable type of the object
-  taBaseRef	object_val;	// #CONDSHOW_ON_var_type:T_Object #CONDEDIT_OFF_flags:LOCAL_VAR #TYPE_ON_object_type #SCOPE_taProject object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere.  if it is in this program's .objs, then the name will be automatically set
+  taBaseRef	object_val;	// #CONDSHOW_ON_var_type:T_Object #CONDEDIT_ON_flags:EDIT_VAL #TYPE_ON_object_type #SCOPE_taProject object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere.  if it is in this program's .objs, then the name will be automatically set
   TypeDef*	hard_enum_type;	// #CONDSHOW_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase #LABEL_enum_type type information for hard enum (value goes in int_val)
   DynEnum 	dyn_enum_val; 	// #CONDSHOW_ON_var_type:T_DynEnum #LABEL_enum_val dynamic enum value
   bool		objs_ptr;	// #HIDDEN this is a pointer to a variable in the objs list of a program
   VarFlags	flags;		// flags controlling various things about how the variable appears and is used
   bool		reference;	// #CONDSHOW_ON_flags:FUN_ARG make this a reference variable (only for function arguments) which allows the function to modify the argument value, making it in effect a return value from the function when you need multiple return values
   String	desc;		// #EDIT_DIALOG Description of what this variable is for
+  ProgramRef	init_from;	// #CONDSHOW_OFF_flags:LOCAL_VAR initialize this variable from one with the same name in another program -- value is initialized at the start of the Init and Run functions -- useful to maintain a set of global parameter variables that are used in various sub programs
 
   cssEl*	parse_css_el;	// #IGNORE css el for parsing
   
   bool			schemaChanged(); // true if schema for most recent change differed from prev change
   void			Cleanup(); // #IGNORE we call this after changing value, to cleanup unused
+  Program*		program() {return GET_MY_OWNER(Program);} 
+
   virtual const String	GenCssType() const; // type name
   virtual const String	GenCssInitVal() const; // intial value
 
   virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
   virtual const String	GenListing(bool is_arg = false, int indent_level = 0); // generate listing of program
+  virtual const String	GenCssInitFrom(int indent_level);
+  // generate css code to initialize from other variable
+  virtual Program*	GetInitFromProg(); // get the init_from program for use in program css code -- emits warning if NULL (shouldn't happen)
   
   virtual cssEl*	NewCssEl();
   // #IGNORE get a new cssEl of an appropriate type, name/value initialized
@@ -376,6 +383,9 @@ public:
   virtual bool		UpdateUsedFlag();
   // #IGNORE update the USED flag based on datalink refs
 
+  virtual ProgVar*	GetInitFromVar(bool warn = true);
+  // get the program variable to initialize from in the init_from program -- warn = emit a warning if the variable is not found
+
   override int		GetEnabled() const;
   override bool		BrowserSelectMe();
   override bool		BrowserExpandAll();
@@ -415,6 +425,8 @@ public:
   VarContext	var_context; // #DEF_VC_ProgVars #HIDDEN #NO_SAVE context of vars, set by owner
   
   virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
+  virtual const String	GenCssInitFrom(int indent_level) const;
+  // init_from code for all vars in list
   virtual const String 	GenListing(int indent_level) const; // generate listing of program
 
   virtual void	AddVarTo(taNBase* src);
