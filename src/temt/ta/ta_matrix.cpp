@@ -1546,7 +1546,7 @@ void taMatrix::WriteFmSubMatrix_Render(const taMatrix* src, RenderOp render_op,
     MatrixGeom trgp(off);
     trgp.AddFmGeom(srcp);
     Variant dval = SafeElAsVarN(trgp);
-    RenderValue(dval, sval, render_op);
+    dval = RenderValue(dval, sval, render_op);
     SetFmVarN(dval, trgp);
   }
 }
@@ -1554,11 +1554,45 @@ void taMatrix::WriteFmSubMatrix_Render(const taMatrix* src, RenderOp render_op,
 void taMatrix::ReadToSubMatrix_Render(taMatrix* dest, RenderOp render_op, 
 				       int off0, int off1, int off2,
 				      int off3, int off4, int off5, int off6) {
+  if(!dest) return;
+  MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
+  MatrixGeom srcp;
+  for(int i=0;i<dest->size;i++) {
+    dest->geom.DimsFmIndex(i, srcp);
+    MatrixGeom trgp(off);
+    trgp.AddFmGeom(srcp);
+    Variant sval = SafeElAsVarN(trgp);
+    if(!sval.isInvalid()) {
+      Variant dval = dest->FastElAsVar_Flat(i);
+      dval = RenderValue(dval, sval, render_op);
+      dest->SetFmVar_Flat(dval, i);
+    }
+  }
 }
 
 void taMatrix::WriteFmSubMatrixFrames(const taMatrix* src, 
 				      int off0, int off1, int off2,
 				      int off3, int off4, int off5, int off6) {
+  if(!src) return;
+  MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
+  MatrixGeom srcp;
+  int fr_max = frames();
+  bool src_frames = false;	// source has frames
+  if(src->dims() == dims()) {
+    fr_max = MIN(fr_max, src->frames());
+    src_frames = true;
+  }
+  for(int fr=0;fr<fr_max;fr++) {
+    //    taMatrixPtr myfr = GetFrameSlice_(fr);
+    // todo: here
+    for(int i=0;i<src->size;i++) {
+      src->geom.DimsFmIndex(i, srcp);
+      Variant val = src->FastElAsVar_Flat(i);
+      MatrixGeom trgp(off);
+      trgp.AddFmGeom(srcp);
+      SetFmVarN(val, trgp);
+    }
+  }
 }
 
 void taMatrix::ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op, 
