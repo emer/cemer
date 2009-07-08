@@ -183,7 +183,7 @@ QVariant MatrixTableModel::headerData(int section,
         rval = QString("%1").arg(coords[1]);
         j = 2;
       }
-      for (int i = j; i < coords.size; ++i) {
+      for (int i = j; i < coords.dims(); ++i) {
         rval = QString("%1:").arg(coords[i]) + rval;
       }
       return rval;

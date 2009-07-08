@@ -4144,7 +4144,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 
   TwoDCoord pos;
   int idx = 0;
-  if(mgeom.size <= 2) {
+  if(mgeom.dims() <= 2) {
     for(pos.y=0; pos.y<geom_y; pos.y++) {
       for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
 	float xp = ((float)pos.x) * cl_x;
@@ -4166,13 +4166,13 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 	T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
 	gr->addChild(ln);
 	if(mat_layout == taMisc::TOP_ZERO) {
-	  if(mgeom.size == 1)
+	  if(mgeom.dims() == 1)
 	    idx = MAX(geom_y-1-pos.y, pos.x);
 	  else
 	    idx = mgeom.IndexFmDims(pos.x, geom_y-1-pos.y);
 	}
 	else {
-	  if(mgeom.size == 1)
+	  if(mgeom.dims() == 1)
 	    idx = MAX(pos.y,pos.y);
 	  else
 	    idx = mgeom.IndexFmDims(pos.x, pos.y);
@@ -4181,7 +4181,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
       }
     }
   }
-  else if(mgeom.size == 3) {
+  else if(mgeom.dims() == 3) {
     int xmax = mgeom[0];
     int ymax = mgeom[1];
     int zmax = mgeom[2];
@@ -4220,7 +4220,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
       }
     }
   }
-  else if(mgeom.size == 4) {
+  else if(mgeom.dims() == 4) {
     int xmax = mgeom[0];
     int ymax = mgeom[1];
     int xxmax = mgeom[2];
@@ -5793,7 +5793,7 @@ void taiTabularDataMimeFactory::Mat_EditActionD(taMatrix* mat,
     CellRange sel2(sel);
     // if sel is a single cell, adjust to max
     if (sel2.single()) {
-      sel2.col_to = mat->geom.SafeEl(0) - 1;
+      sel2.col_to = mat->geom.dim(0) - 1;
       sel2.row_to = mat->rowCount() - 1;
     }
     // Priority is: Mat, Table, Generic

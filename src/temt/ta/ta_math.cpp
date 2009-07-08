@@ -1994,7 +1994,7 @@ bool taMath_double::fft_real_transform(double_Matrix* out_mat,
         (pow(out_mat->FastEl_Flat(in+1),2)));
     }
     // now redim, which will preserve the data -- we can just reuse geom
-    out_geom.SetSize(out_mat->dims() - 1); // reduce 1 dim
+    out_geom.SetDims(out_mat->dims() - 1); // reduce 1 dim
     for (int i = 1; i < out_mat->dims(); ++i) 
       out_geom.Set(i-1, out_mat->dim(i));
     
@@ -2236,8 +2236,8 @@ bool taMath_double::mat_frame_convolve(double_Matrix* out_vec, const double_Matr
 
 bool taMath_double::mat_fmt_out_frame(double_Matrix* out_mat, const double_Matrix* in_mat) {
   MatrixGeom frg = in_mat->geom;
-  if(frg.size == 1 || in_mat->frames() == 0) return false;
-  frg.SetSize(frg.size-1);	// nuke last dim
+  if(frg.dims() == 1 || in_mat->frames() == 0) return false;
+  frg.SetDims(frg.dims()-1);	// nuke last dim
   out_mat->SetGeomN(frg);
   return true;
 }
@@ -4381,8 +4381,8 @@ bool taMath_float::mat_frame_convolve(float_Matrix* out_vec, const float_Matrix*
 
 bool taMath_float::mat_fmt_out_frame(float_Matrix* out_mat, const float_Matrix* in_mat) {
   MatrixGeom frg = in_mat->geom;
-  if(frg.size == 1 || in_mat->frames() == 0) return false;
-  frg.SetSize(frg.size-1);	// nuke last dim
+  if(frg.dims() == 1 || in_mat->frames() == 0) return false;
+  frg.SetDims(frg.dims()-1);	// nuke last dim
   out_mat->SetGeomN(frg);
   return true;
 }

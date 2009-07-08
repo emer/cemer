@@ -898,15 +898,12 @@ public:
   // The function name
   ProgVar::VarType	return_type;
   // The return type for the function -- what kind of variable does it return
+  TypeDef*		object_type; 	// #CONDSHOW_ON_return_type:T_Object #NO_NULL #TYPE_taBase for Object* return types, the type of object to return
   ProgVar_List		args;
   // The arguments to the function
   ProgEl_List	    	fun_code;
   // the function code (list of program elements)
 
-  // todo: remove obsolete guy:
-  ProgVar		return_val;
-  // #HIDDEN #NO_SAVE #OBSOLETE The return value of the function -- used only for determining the type
-  
   virtual void  UpdateCallerArgs();
   // #BUTTON #CAT_Code run UpdateArgs on all the function calls to me, and also display all these calls in the Find dialog (searching on this function's name) so you can make sure the args are correct for each call
 

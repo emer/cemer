@@ -880,11 +880,11 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   }
   String valname = GetChanName(lay, val_specs.size);
   AddMatrixChan(valname, VT_FLOAT, &geom);
-  if (geom.size == 1) {
+  if (geom.dims() == 1) {
     for (int i = 0; i < lay->units.leaves; ++i) {
       ScanObject_InObject(lay->units.Leaf(i), var, NULL); // don't make a col
     }
-  } else if(geom.size == 2) {
+  } else if(geom.dims() == 2) {
     TwoDCoord c;
     for (c.y = 0; c.y < lay->un_geom.y; ++c.y) {
       for (c.x = 0; c.x < lay->un_geom.x; ++c.x) {
@@ -893,7 +893,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
 	  ScanObject_InObject(u, var, NULL); // don't make a col
       }
     }
-  } else if(geom.size == 4) {
+  } else if(geom.dims() == 4) {
     TwoDCoord gc;
     for (gc.y = 0; gc.y < lay->gp_geom.y; ++gc.y) {
       for (gc.x = 0; gc.x < lay->gp_geom.x; ++gc.x) {
@@ -1160,7 +1160,7 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
   
   String valname = GetChanName(ug, val_specs.size);
   AddMatrixChan(valname, VT_FLOAT, &geom);
-  if(geom.size == 1) {
+  if(geom.dims() == 1) {
     for(int i = 0; i < ug->size; i++) {
       ScanObject_InObject(ug->FastEl(i), var, NULL); // don't make a col
     }

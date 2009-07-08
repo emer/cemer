@@ -1338,15 +1338,15 @@ void taiDimEdit::Initialize(QWidget* gui_parent_) {
 
 void taiDimEdit::GetImage(const MatrixGeom* arr) {
   iDimEdit* de = rep(); // cache
-  de->setDims(arr->size);
-  for (int i = 0; i < arr->size; ++i) {
+  de->setDims(arr->dims());
+  for (int i = 0; i < arr->dims(); ++i) {
     de->setDim(i, arr->FastEl(i));
   }
 }
 
 void taiDimEdit::GetValue(MatrixGeom* arr) const {
   iDimEdit* de = rep(); // cache
-  arr->SetSize(de->dims());
+  arr->SetDims(de->dims());
   for (int i = 0; i < de->dims(); ++i) {
     arr->Set(i, de->dim(i));
   }

@@ -194,7 +194,7 @@ bool taDataGen::CrossLists(DataTable* dest, const DataTable* data_list_1,
 
   MatrixGeom mg;
   for(int l=0; l<n_lists; l++) {
-    mg.Add(dats[l]->rows);	// number of rows are like geometries of each dim
+    mg.AddDim(dats[l]->rows);	// number of rows are like geometries of each dim
     for(int i=0; i < dats[l]->data.size; i++) {
       DataCol* sda = dats[l]->data.FastEl(i);
       DataCol* nda = (DataCol*)sda->MakeToken();
@@ -1110,12 +1110,54 @@ float taDataGen::LastMinMaxDist(DataCol* da, int row, float& max_dist,
 bool taDataGen::WriteFmSubMatricies(DataTable* dest, const String& dest_col_nm, 
 				    DataTable* sub_mtx_src, SubMatrixOpSpec* spec, 
 				    bool reset_first) {
+  if(!dest) { taMisc::Error("taDataGen::WriteFmSubMatricies: dest is NULL"); return false; }
+  if(!sub_mtx_src) { taMisc::Error("taDataGen::WriteFmSubMatricies: sub_mtx_src is NULL"); return false; }
+  if(!spec) { taMisc::Error("taDataGen::WriteFmSubMatricies: spec is NULL"); return false; }
+
+  DataCol* dcol = dest->FindColName(dest_col_nm, true); // warn
+  if(!dcol) return false;
+
+  dest->StructUpdate(true);
+  spec->GetColumns(sub_mtx_src);		// cache column pointers & indicies from names
+
+  int dms,d0,d1,d2,d3,d4,d5,d6;
+
+  for(int i=0;i<spec->ops.size; i++) {
+    SubMatrixOpEl* ds = (SubMatrixOpEl*)spec->ops.FastEl(i);
+    if(ds->col_idx < 0) continue; // couldn't find this col
+    ds->offset.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
+    DataCol* scol = sub_mtx_src->data.FastEl(ds->col_idx);
+    dcol->AR()->WriteFmSubMatrixFrames(scol->AR(), d0,d1,d2,d3,d4,d5,d6);
+  }
+  spec->ClearColumns();
+  dest->StructUpdate(false);
   return true;
 }
 
 bool taDataGen::ReadToSubMatricies(DataTable* src, const String& src_col_nm, 
 				   DataTable* sub_mtx_dest, SubMatrixOpSpec* spec,
 				    bool reset_first) {
+  if(!src) { taMisc::Error("taDataGen::ReadToSubMatricies: src is NULL"); return false; }
+  if(!sub_mtx_dest) { taMisc::Error("taDataGen::ReadToSubMatricies: sub_mtx_dest is NULL"); return false; }
+  if(!spec) { taMisc::Error("taDataGen::ReadToSubMatricies: spec is NULL"); return false; }
+
+  DataCol* scol = src->FindColName(src_col_nm, true); // warn
+  if(!scol) return false;
+
+  sub_mtx_dest->StructUpdate(true);
+  spec->GetColumns(sub_mtx_dest);		// cache column pointers & indicies from names
+
+  int dms,d0,d1,d2,d3,d4,d5,d6;
+
+  for(int i=0;i<spec->ops.size; i++) {
+    SubMatrixOpEl* ds = (SubMatrixOpEl*)spec->ops.FastEl(i);
+    if(ds->col_idx < 0) continue; // couldn't find this col
+    ds->offset.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
+    DataCol* dcol = sub_mtx_dest->data.FastEl(ds->col_idx);
+    scol->AR()->ReadToSubMatrixFrames(dcol->AR(), d0,d1,d2,d3,d4,d5,d6);
+  }
+  spec->ClearColumns();
+  sub_mtx_dest->StructUpdate(false);
   return true;
 }
 
@@ -1123,14 +1165,257 @@ bool taDataGen::WriteFmSubMatricies_Render(DataTable* dest, const String& dest_c
 					   DataTable* sub_mtx_src, SubMatrixOpSpec* spec, 
 					   taMatrix::RenderOp render_op,
 					   bool reset_first) {
-  return false;
+  if(!dest) { taMisc::Error("taDataGen::WriteFmSubMatricies: dest is NULL"); return false; }
+  if(!sub_mtx_src) { taMisc::Error("taDataGen::WriteFmSubMatricies: sub_mtx_src is NULL"); return false; }
+  if(!spec) { taMisc::Error("taDataGen::WriteFmSubMatricies: spec is NULL"); return false; }
+
+  DataCol* dcol = dest->FindColName(dest_col_nm, true); // warn
+  if(!dcol) return false;
+
+  dest->StructUpdate(true);
+  spec->GetColumns(sub_mtx_src);		// cache column pointers & indicies from names
+
+  int dms,d0,d1,d2,d3,d4,d5,d6;
+
+  for(int i=0;i<spec->ops.size; i++) {
+    SubMatrixOpEl* ds = (SubMatrixOpEl*)spec->ops.FastEl(i);
+    if(ds->col_idx < 0) continue; // couldn't find this col
+    ds->offset.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
+    DataCol* scol = sub_mtx_src->data.FastEl(ds->col_idx);
+    dcol->AR()->WriteFmSubMatrixFrames_Render(scol->AR(), render_op, d0,d1,d2,d3,d4,d5,d6);
+  }
+  spec->ClearColumns();
+  dest->StructUpdate(false);
+  return true;
 }
 
 bool taDataGen::ReadToSubMatricies_Render(DataTable* src, const String& src_col_nm, 
 					  DataTable* sub_mtx_dest, SubMatrixOpSpec* spec,
 					  taMatrix::RenderOp render_op,
 					  bool reset_first) {
-  return false;
+  if(!src) { taMisc::Error("taDataGen::ReadToSubMatricies: src is NULL"); return false; }
+  if(!sub_mtx_dest) { taMisc::Error("taDataGen::ReadToSubMatricies: sub_mtx_dest is NULL"); return false; }
+  if(!spec) { taMisc::Error("taDataGen::ReadToSubMatricies: spec is NULL"); return false; }
+
+  DataCol* scol = src->FindColName(src_col_nm, true); // warn
+  if(!scol) return false;
+
+  sub_mtx_dest->StructUpdate(true);
+  spec->GetColumns(sub_mtx_dest);		// cache column pointers & indicies from names
+
+  int dms,d0,d1,d2,d3,d4,d5,d6;
+
+  for(int i=0;i<spec->ops.size; i++) {
+    SubMatrixOpEl* ds = (SubMatrixOpEl*)spec->ops.FastEl(i);
+    if(ds->col_idx < 0) continue; // couldn't find this col
+    ds->offset.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
+    DataCol* dcol = sub_mtx_dest->data.FastEl(ds->col_idx);
+    scol->AR()->ReadToSubMatrixFrames_Render(dcol->AR(), render_op, d0,d1,d2,d3,d4,d5,d6);
+  }
+  spec->ClearColumns();
+  sub_mtx_dest->StructUpdate(false);
+  return true;
+}
+
+
+///////////////////////////////////////////////////////////////////
+// 	FeatPats -- Generating larger patterns from Feature patterns
+
+
+taMatrix* taDataGen::GetFeatPatNo(DataTable* feat_vocab, const String& feat_col_nm, int row_no) {
+  return feat_vocab->GetValAsMatrixColName(feat_col_nm, row_no);
+}
+
+taMatrix* taDataGen::GetFeatPatName(DataTable* feat_vocab, const String& feat_col_nm, 
+				    const String& feat_row_name, const String& name_col_nm) {
+  return feat_vocab->GetValAsMatrixColRowName(feat_col_nm, name_col_nm, feat_row_name);
+}
+
+taMatrix* taDataGen::GetRndFeatPat(DataTable* feat_vocab, const String& feat_col_nm) {
+  int rnd_idx = Random::IntZeroN(feat_vocab->rows);
+  return GetFeatPatNo(feat_vocab, feat_col_nm, rnd_idx);
+}
+
+
+bool taDataGen::GenRndFeatPats(DataTable* dest, const String& dest_col, int n_pats,
+			       DataTable* feat_vocab, const String& feat_col_nm) {
+  if(!dest) { taMisc::Error("taDataGen::GenRndFeatPats: dest is NULL"); return false; }
+  if(!feat_vocab) { taMisc::Error("taDataGen::GenRndFeatPats: feat_vocab is NULL"); return false; }
+
+  DataCol* dcol = dest->FindColName(dest_col, true);
+  if(!dcol) return false;
+  if(dcol->cell_dims() < 2) {
+    taMisc::Error("taDataGen::GenRndFeatPats: destination column must be matrix with dimensionality >= 2");
+    return false;
+  }
+
+  taMatrixPtr ref_pat;  ref_pat = GetFeatPatNo(feat_vocab, feat_col_nm, 0); // get 1st guy as ref
+  if(ref_pat->dims() != 2) {
+    taMisc::Error("taDataGen::GenRndFeatPats: feature vocab must have 2d matrix cells");
+    return false;
+  }
+  int feat_x = ref_pat->dim(0);     int feat_y = ref_pat->dim(1);
+  int pat_x = dcol->GetCellGeom(0);  int pat_y = dcol->GetCellGeom(1);
+  int feat_sz = feat_x * feat_y;
+
+  if(pat_x != feat_x || pat_y % feat_y != 0) {
+    taMisc::Error("taDataGen::GenRndFeatPats: features do not fit evenly into dest cell geometry -- innermost (x) dimension must be equal, and next (y) dimension must evenly divisible");
+    return false;
+  }
+
+  dest->StructUpdate(true);
+  dest->EnforceRows(n_pats);
+
+  int n_feats = dcol->cell_size() / feat_sz; // how many features per pattern
+
+  MatrixGeom dpt;
+  int dms,d0,d1,d2,d3,d4,d5,d6;
+
+  for(int pat=0;pat<n_pats;pat++) {
+    for(int i=0;i<n_feats;i++) {
+      int dest_idx = feat_sz * i;
+      dcol->cell_geom.DimsFmIndex(dest_idx, dpt);
+      dpt.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
+      taMatrixPtr rnd_pat; rnd_pat = GetRndFeatPat(feat_vocab, feat_col_nm);
+      taMatrixPtr dst_pat; dst_pat = dcol->GetValAsMatrix(pat);
+      dst_pat->WriteFmSubMatrix(rnd_pat, d0,d1,d2,d3,d4,d5,d6);
+    }
+  }
+  dest->StructUpdate(false);
+  return true;
+}
+
+bool taDataGen::GenItemsFmProtos(DataTable* items, const String& dest_col, 
+				 DataTable* protos, int n_items, float flip_pct,
+				 DataTable* feat_vocab, const String& feat_col_nm) {
+  if(!items) { taMisc::Error("taDataGen::GenItemsFmProtos: items is NULL"); return false; }
+  if(!protos) { taMisc::Error("taDataGen::GenItemsFmProtos: protos is NULL"); return false; }
+  if(!feat_vocab) { taMisc::Error("taDataGen::GenItemsFmProtos: feat_vocab is NULL"); return false; }
+
+  DataCol* dcol = protos->FindColName(dest_col, true);
+  if(!dcol) return false;
+  if(dcol->cell_dims() < 2) {
+    taMisc::Error("taDataGen::GenItemsFmProtos: destination column must be matrix with dimensionality >= 2");
+    return false;
+  }
+
+  taMatrixPtr ref_pat;  ref_pat = GetFeatPatNo(feat_vocab, feat_col_nm, 0); // get 1st guy as ref
+  if(ref_pat->dims() != 2) {
+    taMisc::Error("taDataGen::GenItemsFmProtos: feature vocab must have 2d matrix cells");
+    return false;
+  }
+  int feat_x = ref_pat->dim(0);     int feat_y = ref_pat->dim(1);
+  int pat_x = dcol->GetCellGeom(0);  int pat_y = dcol->GetCellGeom(1);
+  int feat_sz = feat_x * feat_y;
+
+  if(pat_x != feat_x || pat_y % feat_y != 0) {
+    taMisc::Error("taDataGen::GenItemsFmProtos: features do not fit evenly into dest cell geometry -- innermost (x) dimension must be equal, and next (y) dimension must evenly divisible");
+    return false;
+  }
+
+  items->StructUpdate(true);
+
+  int n_feats = dcol->cell_size() / feat_sz; // how many features per pattern
+  int flip_n = flip_pct * n_feats;
+  flip_n = MIN(n_feats, flip_n);
+  flip_n = MAX(1, flip_n);	// flip at least 1!
+
+  items->ResetData();
+  items->Copy_NoData(*protos);
+  taDataProc::ReplicateRows(items, protos, n_items);
+
+  // rename items if name col is there
+  DataCol* nm_col = items->FindColName("Name", false); // no warning
+  if(nm_col) {
+    int rw = 0;
+    for(int prot=0;prot<protos->rows;prot++) {
+      for(int itm=0;itm<n_items;itm++, rw++) {
+	String cur_nm = nm_col->GetValAsString(rw);
+	nm_col->SetValAsString(cur_nm + "_" + String(itm), rw);
+      }
+    }
+  }
+  dcol = items->FindColName(dest_col, true); // get it for items now
+
+  MatrixGeom dpt;
+  int dms,d0,d1,d2,d3,d4,d5,d6;
+
+  int_Array flip_list;
+  flip_list.SetSize(n_feats);
+
+  for(int pat=0;pat<items->rows;pat++) {
+    flip_list.Permute();	// flip for each item
+    for (int i=0; i<flip_n; i++) {
+      int dest_idx = feat_sz * flip_list[i]; // permute indirection
+      dcol->cell_geom.DimsFmIndex(dest_idx, dpt);
+      dpt.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
+      taMatrixPtr rnd_pat; rnd_pat = GetRndFeatPat(feat_vocab, feat_col_nm);
+      taMatrixPtr dst_pat; dst_pat = dcol->GetValAsMatrix(pat);
+      dst_pat->WriteFmSubMatrix(rnd_pat, d0,d1,d2,d3,d4,d5,d6);
+    }
+  }
+  items->StructUpdate(false);
+  return true;
+}
+
+bool taDataGen::GenNamedFeatPats(DataTable* dest, const String& dest_col,
+				 DataTable* feat_vocab, const String& feat_col_nm,
+				 DataTable* names, const String& name_col_nm,
+				 const String& feat_name_col_nm) {
+  if(!dest) { taMisc::Error("taDataGen::GenNamedFeatPats: dest is NULL"); return false; }
+  if(!names) { taMisc::Error("taDataGen::GenNamedFeatPats: names is NULL"); return false; }
+  if(!feat_vocab) { taMisc::Error("taDataGen::GenNamedFeatPats: feat_vocab is NULL"); return false; }
+
+  DataCol* dcol = dest->FindColName(dest_col, true);
+  if(!dcol) return false;
+  if(dcol->cell_dims() < 2) {
+    taMisc::Error("taDataGen::GenNamedFeatPats: destination column must be matrix with dimensionality >= 2");
+    return false;
+  }
+
+  DataCol* nmcol = names->FindColName(name_col_nm, true);
+  if(!nmcol) return false;
+
+  taMatrixPtr ref_pat;  ref_pat = GetFeatPatNo(feat_vocab, feat_col_nm, 0); // get 1st guy as ref
+  if(ref_pat->dims() != 2) {
+    taMisc::Error("taDataGen::GenNamedFeatPats: feature vocab must have 2d matrix cells");
+    return false;
+  }
+  int feat_x = ref_pat->dim(0);     int feat_y = ref_pat->dim(1);
+  int pat_x = dcol->GetCellGeom(0);  int pat_y = dcol->GetCellGeom(1);
+  int feat_sz = feat_x * feat_y;
+
+  if(pat_x != feat_x || pat_y % feat_y != 0) {
+    taMisc::Error("taDataGen::GenNamedFeatPats: features do not fit evenly into dest cell geometry -- innermost (x) dimension must be equal, and next (y) dimension must evenly divisible");
+    return false;
+  }
+
+  dest->StructUpdate(true);
+  dest->EnforceRows(names->rows); // same as names
+
+  int n_feats = dcol->cell_size() / feat_sz; // how many features per pattern
+  int n_names = nmcol->cell_size();
+
+  int ft_max = MIN(n_feats, n_names); // only go as high as have names
+
+  MatrixGeom dpt;
+  int dms,d0,d1,d2,d3,d4,d5,d6;
+
+  for(int pat=0;pat<dest->rows;pat++) {
+    for(int i=0;i<ft_max;i++) {
+      int dest_idx = feat_sz * i;
+      dcol->cell_geom.DimsFmIndex(dest_idx, dpt);
+      dpt.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
+      String cur_nm = nmcol->GetValAsStringM(pat, i);
+      taMatrixPtr nm_pat; nm_pat = GetFeatPatName(feat_vocab, feat_col_nm, cur_nm,
+						  feat_name_col_nm);
+      if(!(bool)nm_pat) continue; // didn't find it.
+      taMatrixPtr dst_pat; dst_pat = dcol->GetValAsMatrix(pat);
+      dst_pat->WriteFmSubMatrix(nm_pat, d0,d1,d2,d3,d4,d5,d6);
+    }
+  }
+  dest->StructUpdate(false);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////

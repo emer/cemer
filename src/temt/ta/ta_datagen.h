@@ -212,6 +212,7 @@ public:
 				    DataTable* sub_mtx_src, SubMatrixOpSpec* spec, 
 				    bool reset_first = true);
   // #CAT_SubMatrix #MENU_BUTTON #MENU_ON_SubMatrix write to column dest_col_nm in destination table from sub matricies in sub_mtx_src according to columns and offsets in given spec -- if reset_first, dest is reset first  -- rows are always set to number in source
+
   static bool	ReadToSubMatricies(DataTable* src, const String& src_col_nm, 
 				   DataTable* sub_mtx_dest, SubMatrixOpSpec* spec,
 				   bool reset_first = true);
@@ -222,12 +223,40 @@ public:
 					   taMatrix::RenderOp render_op,
 					   bool reset_first = true);
   // #CAT_SubMatrix #MENU_BUTTON #MENU_ON_SubMatrix write to column dest_col_nm in destination using given rendering operation from sub matricies in sub_mtx_src according to columns and offsets in given spec -- if reset_first, dest is reset first  -- rows are always set to number in source
+
   static bool	ReadToSubMatricies_Render(DataTable* src, const String& src_col_nm, 
 					  DataTable* sub_mtx_dest, SubMatrixOpSpec* spec,
 					  taMatrix::RenderOp render_op,
 					  bool reset_first = true);
   // #CAT_SubMatrix #MENU_BUTTON #MENU_ON_SubMatrix read from column src_col_nm in source using given rendering operation to sub matricies in sub_mtx_dest according to columns and offsets in given spec -- if reset_first, dest is reset first  -- rows are always set to number in source
 
+  ///////////////////////////////////////////////////////////////////
+  // 	FeatPats -- Generating larger patterns from Feature patterns
+
+  static taMatrix*  GetFeatPatNo(DataTable* feat_vocab, const String& feat_col_nm, int row_no);
+  // #CAT_FeatPats get feature pattern matrix from given row of feature vocabulary data table, from feature pattern column name -- column must have 2d matrix cells -- important: must ref the return val in calling function (use taMatrixPtr)
+  static taMatrix*  GetFeatPatName(DataTable* feat_vocab, const String& feat_col_nm,
+				   const String& feat_row_nm, const String& name_col_nm = "Name");
+  // #CAT_FeatPats get feature pattern matrix from row with given name (in column name_col_nm) of feature vocabulary data table, from feature pattern column name -- column must have 2d matrix cells -- important: must ref the return val in calling function (use taMatrixPtr)
+  static taMatrix*  GetRndFeatPat(DataTable* feat_vocab, const String& feat_col_nm);
+  // #CAT_FeatPats get a random feature pattern from feature vocabulary data table, given feature pattern column name -- column must have 2d matrix cells -- important: must ref the return val in calling function (use taMatrixPtr)
+
+  static bool	    GenRndFeatPats(DataTable* dest, const String& dest_col, int n_pats,
+				   DataTable* feat_vocab, const String& feat_col_nm);
+  // #CAT_FeatPats #MENU_BUTTON #MENU_ON_FeatPats generate n_pats new patterns (rows) in dest data table by stacking together randomly generated features from the feature vocabulary table -- automatically detects how many features to use based on relative geometries (dest must have same innermost (x) dimension as feat pats, next (y) must be even multiple, feat pats must be 2d matrix)
+
+  // todo: min dist version!?
+
+  static bool	    GenItemsFmProtos(DataTable* items, const String& dest_col, 
+				     DataTable* protos, int n_items, float flip_pct,
+				     DataTable* feat_vocab, const String& feat_col_nm);
+  // #CAT_FeatPats #MENU_BUTTON #MENU_ON_FeatPats generate n_items items (per prototype) from prototypes contained in protos table, by flipping flip_pct proportion of the features to a new random feature value in feat_vocab (could end up being the same value by chance!) -- automatically detects how many features to use based on relative geometries (dest must have same innermost (x) dimension as feat pats, next (y) must be even multiple, feat pats must be 2d matrix)
+
+  static bool	    GenNamedFeatPats(DataTable* dest, const String& dest_col,
+				     DataTable* feat_vocab, const String& feat_col_nm,
+				     DataTable* names, const String& name_col_nm,
+				     const String& feat_name_col_nm = "Name");
+  // #CAT_FeatPats #MENU_BUTTON #MENU_ON_FeatPats generate patterns in dest table (dest_col) by stacking together feature patterns from feat_vocab (feat_col_nm) based on list of names given in names table (name_col_nm) -- name column must contain a String matrix -- items are looked up by name in the feat_name_col_nm -- automatically detects how many features to use based on relative geometries (dest must have same innermost (x) dimension as feat pats, next (y) must be even multiple, feat pats must be 2d matrix)
 
   ///////////////////////////////////////////////////////////////////
   // misc data sources

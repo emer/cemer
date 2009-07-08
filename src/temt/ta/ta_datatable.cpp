@@ -107,7 +107,7 @@ void DataCol::Initialize() {
   col_idx = -1;
   is_matrix = false;
   // default initialize to scalar
-  cell_geom.SetSize(1);
+  cell_geom.SetDims(1);
   cell_geom.Set(0, 1);
   hash_table = NULL;
 }
@@ -224,8 +224,8 @@ void DataCol::Init() {
   if (tab) rows = tab->rows;
   if (is_matrix) {
     MatrixGeom tdim = cell_geom;
-    tdim.SetSize(tdim.size + 1);
-    tdim.Set(tdim.size-1, rows);
+    tdim.SetDims(tdim.dims() + 1);
+    tdim.Set(tdim.dims()-1, rows);
     ar->SetGeomN(tdim);
   } else {
     ar->SetGeom(1, rows);
@@ -239,7 +239,7 @@ bool DataCol::isImage() const {
 }
 
 int DataCol::imageComponents() const {
-  if (cell_geom.size <= 2) return 1;
+  if (cell_geom.dims() <= 2) return 1;
   else return cell_geom.FastEl(2);
 }
 
@@ -462,7 +462,7 @@ int DataCol::IndexOfEl_Flat(int row, int cell) const {
 int DataCol::IndexOfEl_Flat_Dims(int row, int d0, int d1, int d2, int d3) const {
   if(row < 0) row = rows() + row; // abs row, if request was from end
   if(TestError((row < 0 || row >= rows()), "IndexOfEl_Flat", "row out of range")) return -1;
-  switch(cell_geom.size) {
+  switch(cell_geom.dims()) {
   case 0:
     return AR()->SafeElIndex(row);
   case 1:
@@ -588,7 +588,7 @@ String DataCol::EncodeHeaderName(const MatrixGeom& dims) const {
   String mat_info;
   if(is_matrix) {		// specify which cell in matrix this is [dims:d0,d1,d2..]
     mat_info = dims.GeomToString("[", "]");
-    if(cell_geom.IndexFmDims(dims) == 0) { // first guy
+    if(cell_geom.IndexFmDimsN(dims) == 0) { // first guy
       mat_info += cell_geom.GeomToString("<", ">");
     }
   }
@@ -600,8 +600,8 @@ void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
 {
   base_nm = nm;
   vt = -1; // unknown
-  mat_idx.SetSize(0);
-  mat_geom.SetSize(0);
+  mat_idx.SetDims(0);
+  mat_geom.SetDims(0);
   if (nm.empty()) return;
 
   // first check for type info:
@@ -2599,13 +2599,13 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim,
       if(!da || (da->valType() != val_typ)) { // only make new one if val type doesn't match
         // mat_geom is only decorated onto first col and should not be remade...
         // if none was supplied, then set it for scalar col (the default)
-        if ((mat_idx.size == 0) || mat_geom.size != 0) {
-          da = FindMakeColName(base_nm, col_idx, (ValType)val_typ, mat_geom.size,
+        if ((mat_idx.dims() == 0) || mat_geom.dims() != 0) {
+          da = FindMakeColName(base_nm, col_idx, (ValType)val_typ, mat_geom.dims(),
                               mat_geom[0], mat_geom[1], mat_geom[2],
                               mat_geom[3]);
         }
       }
-      if(mat_idx.size > 0) {
+      if(mat_idx.dims() > 0) {
         cell_idx = da->cell_geom.IndexFmDims(mat_idx[0], mat_idx[1], mat_idx[2], mat_idx[3]);
       } // else is default=-1
     } else { // Import

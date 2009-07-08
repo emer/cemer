@@ -189,93 +189,114 @@ public:
 ///////////////////////////////////
 
 class TA_API MatrixGeom: public taBase  { 
-  // matrix geometry, similar to an array of int
+  // matrix geometry and index set -- holds dims() dimensions worth of integers, which are either the geometry of a matrix or a multidimensional index into a particular matrix location
 INHERITED(taBase)
 friend class taMatrix;
 friend class DataCol;
 public:
-  int			size; // DO NOT SET DIRECTLY, use SetSize
-  
-  int 			colCount(bool pat_4d = false) const; // #IGNORE
-  int			rowCount(bool pat_4d = false) const; // #IGNORE
-  inline int		dims() const {return size;} // convenience
-  bool			Equal(const MatrixGeom& other) const;
-  inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < size));}
-  bool			IsFrameOf(const MatrixGeom& other) const; 
-    // 'true' if this is a proper frame of other
-  int 			Product() const; // returns product of all elements
-  
-  bool			SetSize(int sz); // sets to size, zeroing orphaned or new dims (true if changed size; false if not)
-  int			SafeEl(int i) const {if (InRange(i)) return el[i]; else return 0;}
-  // the element at the given index
-  int			dim(int i) const { return SafeEl(i); }
-  // given dimension value
-  
-  void			Add(int value); // safely add a new element
-  void			Set(int i, int value) // safely set an element
-    {if (InRange(i)) el[i] = value;}
-  void			SetGeom(int dims, int d0, int d1=0, int d2=0,
-    int d3=0, int d4=0, int d5=0, int d6=0);
-    
-  inline void		Reset() {SetSize(0);} // set size to 0, and clear all dims
+  int		n_dims; // #READ_ONLY #SHOW number of dimensions represented in this geom -- must be <= TA_MATRIX_DIMS_MAX (8)
 
-  int 			IndexFmDims(const MatrixGeom& dims) const;
-    // get index from dimension values, based on geometry
-  int			IndexFmDims(int d0, int d1=0, int d2=0,
-    int d3=0, int d4=0, int d5=0, int d6=0) const;
-    // get index from dimension values, based on geometry
-  int			IndexFmDims2D(int col, int row, bool pat_4d = true,
-    taMisc::MatrixView mat_view = taMisc::DEF_ZERO) const;
-    // #IGNORE get index from dimension values for 2d display (MatEditor and GridView)
-  void 			DimsFmIndex(int idx, MatrixGeom& dims) const;
-  // get dimension values from index, based on geometry
+  ///////////////////////////////////////////////////////
+  //	Access 
 
-  void			Get2DGeom(int& x, int& y) const; // for flat2d views
-  void			Get2DGeomGui(int& x, int& y, bool odd_y, int spc) const;
-  // for rendering routines, provides standardized 2d geom regardless of dimensionality (includes space for extra dimensions), odd_y = for odd dimension sizes, put extra dimension in y (else x): 3d = x, (y+1) * z (vertical time series of 2d patterns, +1=space), 4d = (x+1)*xx, (y+1)*yy (e.g., 2d groups of 2d patterns), 5d = vertical time series of 4d.
+  inline int	dims() const { return n_dims;}
+  // #CAT_Access number of dimensions represented in this geom
+  inline bool	InRange(int idx) const {return ((idx >= 0) && (idx < n_dims));}
+  // #CAT_Access is the given dimension index value within range of dimensions in this geom
+  inline int	dim(int i) const { if (InRange(i)) return el[i]; else return 0; }
+  // #CAT_Access return value along given dimension
+  int 		Product() const; 
+  // #CAT_Access returns product of all dimension values (i.e., total size of geometry)
+  int 		IndexFmDimsN(const MatrixGeom& dims) const;
+  // #CAT_Access get index from dimension values, based on geometry represented by 'this' geom object
+  int		IndexFmDims(int d0, int d1=0, int d2=0,
+			    int d3=0, int d4=0, int d5=0, int d6=0) const;
+  // #CAT_Access get index from dimension values, based on geometry represented by 'this' geom object
+  void 		DimsFmIndex(int idx, MatrixGeom& dims) const;
+  // #CAT_Access get dimension values from index, based on geometry represented by 'this' geom object
+
+  ///////////////////////////////////////////////////////
+  //	Modify and misc operations
+
+  bool		SetDims(int dms);
+  // #CAT_Modify sets number of dimensions, zeroing orphaned or new dims (true if changed size; false if not)
+  inline void	AddDim(int value)
+  { if (n_dims >= TA_MATRIX_DIMS_MAX) return; el[n_dims++] = value; }
+  // #CAT_Modify safely add a new dimension with given value
+  inline void	Set(int i, int value) { if (InRange(i)) el[i] = value; }
+  // #CAT_Modify safely set a dimension to given value
+  void		SetGeom(int dims, int d0, int d1=0, int d2=0,
+			int d3=0, int d4=0, int d5=0, int d6=0);
+  // #CAT_Modify initialize all geometry settings all at once
+  void		GetGeom(int& dims, int& d0, int& d1, int& d2,
+				int& d3, int& d4, int& d5, int& d6);
+  // #CAT_Access get all geometry information to individual ints
+  inline void	Reset() { SetDims(0); }
+  // #CAT_Modify set number of dimensions to 0, and clear all dims
+  void		AddFmGeom(const MatrixGeom& ad);
+  // #CAT_Modify add given geometry values to ours -- useful for adding offsets to indicies, for example
+  inline MatrixGeom& 	operator += (const MatrixGeom& ad)  { AddFmGeom(ad); return *this;}
+
+  bool		Equal(const MatrixGeom& other) const;
+  // #CAT_Access are two geometries equal to each other?
+
+  bool		IsFrameOf(const MatrixGeom& other) const; 
+  // 'true' if this is a proper frame of other
   
-  String		GeomToString(const char* ldelim = "[", const char* rdelim = "]") const;
-  // returns human-friendly text in form: "[dims:{dim}{,dim}]"
-  void			GeomFromString(const String& str, const char* ldelim = "[", const char* rdelim = "]");
-  // reads geometry from string (consuming text) in form: "[dims:{dim}{,dim}]"
+  ///////////////////////////////////////////////////////
+  //	2D and 4D representations matricies -- for display
 
-  void			AddFmGeom(const MatrixGeom& ad);
-  // add given geometry values to ours -- useful for adding offsets to indicies, for example
+  void		Get2DGeom(int& x, int& y) const;
+  // #CAT_TwoDRep get geometry collapsed down/up to two dimensions
+  void		Get2DGeomGui(int& x, int& y, bool odd_y, int spc) const;
+  // #CAT_TwoDRep for rendering routines, provides standardized 2d geom regardless of dimensionality (includes space for extra dimensions), odd_y = for odd dimension sizes, put extra dimension in y (else x): 3d = x, (y+1) * z (vertical time series of 2d patterns, +1=space), 4d = (x+1)*xx, (y+1)*yy (e.g., 2d groups of 2d patterns), 5d = vertical time series of 4d.
+  int		IndexFmDims2D(int col, int row, bool pat_4d = true,
+			      taMisc::MatrixView mat_view = taMisc::DEF_ZERO) const;
+  // #IGNORE get index from dimension values for 2d display (MatEditor and GridView)
+  
+  int 		colCount(bool pat_4d = false) const;
+  // #IGNORE for matrix view display, get column count (modulo 4d mode flag)
+  int		rowCount(bool pat_4d = false) const;
+  // #IGNORE for matrix view display, get row count (modulo 4d mode flag)
 
+  ///////////////////////////////////////////////////////
+  //	Input/Output/String
+
+  String	GeomToString(const char* ldelim = "[", const char* rdelim = "]") const;
+  // #CAT_File returns human-friendly text in form: "[dims:{dim}{,dim}]"
+  void		GeomFromString(const String& str, const char* ldelim = "[", const char* rdelim = "]");
+  // #CAT_File reads geometry from string (consuming text) in form: "[dims:{dim}{,dim}]"
   override String GetValStr(void* par = NULL, MemberDef* md = NULL,
 			    TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
 			    bool force_inline = false) const;
   override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
 			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
 			   bool force_inline = false);
-
-  override int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
-  override int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
-  void			Copy_(const MatrixGeom& cp);
-  explicit MatrixGeom(int init_size);
+  override int	Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
+  override int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
+  void		Copy_(const MatrixGeom& cp);
+  explicit 	MatrixGeom(int init_size);
   MatrixGeom(int dims, int d0, int d1=0, int d2=0, int d3=0,
-    int d4=0, int d5=0, int d6=0);
+	     int d4=0, int d5=0, int d6=0);
   TA_BASEFUNS_LITE(MatrixGeom); //
 
 public: // functions for internal/trusted use only
-  inline int		FastEl(int i) const {return el[i];} // #IGNORE
-  inline int&		FastEl(int i) {return el[i];} // #IGNORE
+  inline int	FastEl(int i) const {return el[i];} // #IGNORE
+  inline int&	FastEl(int i) {return el[i];} // #IGNORE
     
-  inline int&		operator [](int i) {return el[i];}  // #IGNORE 
+  inline int&	operator [](int i) {return el[i];}  // #IGNORE 
 
 protected:
   static MatrixGeom	td; // temp
-  void	UpdateAfterEdit_impl();
-  int			el[TA_MATRIX_DIMS_MAX];
+  int		el[TA_MATRIX_DIMS_MAX];
+
+  inline int	operator [](int i) const {return el[i];}  
+  int 		IndexFmDims_(const int* d) const;
+  // get index from dimension values, based on geometry
   
-  inline int		operator [](int i) const {return el[i];}  
-
-  int 			IndexFmDims_(const int* d) const;
-    // get index from dimension values, based on geometry
-
 private:
-  void			Initialize();
-  void			Destroy();
+  void		Initialize();
+  void		Destroy();
 };
 
 inline bool operator ==(const MatrixGeom& a, const MatrixGeom& b)
@@ -323,10 +344,10 @@ public:
   // #CAT_Access flat col count, for 2-d grid operations, never 0; by2 puts d0/d1 in same row when dims>=4
   inline int		count() const {return size;}
   // #CAT_Access the number of items
-  inline int		dims() const {return geom.size;}
+  inline int		dims() const {return geom.dims(); }
   // #CAT_Access the number of dimensions
-  inline int		dim(int d) const {return geom.el[d];}
-  // #CAT_Access the value of dimenion d -- MUST BE IN_RANGE
+  inline int		dim(int d) const {return geom.dim(d);}
+  // #CAT_Access the value of dimenion d
   int 			frames() const;
   // #CAT_Access number of frames currently in use (value of highest dimension) 
   int 			frameSize() const;
@@ -437,7 +458,7 @@ public:
   // #IGNORE validates proposed geom, ex. dims >=1, and valid values for supplied geoms
   static bool		GeomIsValid(const MatrixGeom& geom_,
     String* err_msg = NULL, bool allow_flex = true)
-  { return GeomIsValid(geom_.size, geom_.el, err_msg, allow_flex); }
+  { return GeomIsValid(geom_.dims(), geom_.el, err_msg, allow_flex); }
   // #IGNORE validates proposed geom, ex. dims >=1, and valid values for supplied geoms
   
   bool			canResize() const; 
@@ -532,16 +553,16 @@ public:
 				       int off3=0, int off4=0, int off5=0, int off6=0);
   // #CAT_SubMatrix read from this matrix to dest sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
 
-  virtual void	WriteFmSubMatrixFrames(const taMatrix* src, 
+  virtual void	WriteFmSubMatrixFrames(taMatrix* src, 
 				      int off0=0, int off1=0, int off2=0,
 				      int off3=0, int off4=0, int off5=0, int off6=0);
   // #CAT_SubMatrix write to each frame of this matrix from source sub-matrix (typically of smaller cell size than this one -- if source has one less dimension, then same values are replicated across frames), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
-  virtual void	ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op, 
+  virtual void	ReadToSubMatrixFrames(taMatrix* dest,
 				       int off0=0, int off1=0, int off2=0,
 				       int off3=0, int off4=0, int off5=0, int off6=0);
   // #CAT_SubMatrix read from each frame of this matrix to dest sub-matrix (typically of smaller cell size than this one, but must have same number of dimensions and frame count will be set to be same as this matrix), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
 
-  virtual void	WriteFmSubMatrixFrames_Render(const taMatrix* src, RenderOp render_op,
+  virtual void	WriteFmSubMatrixFrames_Render(taMatrix* src, RenderOp render_op,
 					     int off0=0, int off1=0, int off2=0,
 					     int off3=0, int off4=0, int off5=0, int off6=0);
   // #CAT_SubMatrix write to each frame of this matrix from source sub-matrix (typically of smaller cell size than this one -- if source has one less dimension, then same values are replicated across frames), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
@@ -578,8 +599,7 @@ public:
   { int d[TA_MATRIX_DIMS_MAX]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3;
     d[4]=d4; d[5]=d5; d[6]=d6; d[7]=0; SetGeom_(size, d);} 
   // #CAT_Modify set geom for matrix -- if matches current size, it is non-destructive 
-  void			SetGeomN(const MatrixGeom& geom_) 
-  { SetGeom_(geom_.size, geom_.el);}
+  void			SetGeomN(const MatrixGeom& geom_) { SetGeom_(geom_.dims(), geom_.el);}
   // #MENU #MENU_CONTEXT #MENU_ON_Matrix #MENU_SEP_BEFORE #CAT_Modify #INIT_ARGVAL_ON_geom set geom for any sized matrix -- if matches current size, it is non-destructive 
   
   // Slicing -- NOTES: 

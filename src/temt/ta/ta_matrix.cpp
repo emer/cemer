@@ -71,9 +71,9 @@ void CellRange::SetFromModel(const QModelIndexList& indexes) {
 
 MatrixGeom MatrixGeom::td;
 
-MatrixGeom::MatrixGeom(int init_size) {
+MatrixGeom::MatrixGeom(int init_n_dims) {
   Initialize();
-  SetSize(init_size);
+  SetDims(init_n_dims);
 }
   
 MatrixGeom::MatrixGeom(int dims, int d0, int d1, int d2, int d3, int d4, int d5, int d6)
@@ -84,7 +84,7 @@ MatrixGeom::MatrixGeom(int dims, int d0, int d1, int d2, int d3, int d4, int d5,
 
 void MatrixGeom::Initialize() {
   // default minimum geometry is 2d
-  size = 0;
+  n_dims = 0;
   // set all the dim values valid -- other code may use shortcuts to read these
   memset(el, 0, sizeof(el));
 }
@@ -92,60 +92,19 @@ void MatrixGeom::Initialize() {
 void MatrixGeom::Destroy() {
 #ifdef DEBUG
   // helps detect multi-delete errors
-  for (int i = size - 1; i >= 0; el[i--] = 0); 
-  size = 0; 
+  for (int i = n_dims - 1; i >= 0; el[i--] = 0); 
+  n_dims = 0; 
 #endif
 }
 
 void MatrixGeom::Copy_(const MatrixGeom& cp) {
-  SetSize(cp.size);
-  for (int i = 0; i < size; ++i) {
+  SetDims(cp.n_dims);
+  for (int i = 0; i < n_dims; ++i) {
     el[i] = cp.el[i];
   }
 } 
 
-void MatrixGeom::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  // we paranoically set unused vals to 0, in case optimized code elsewhere 
-  // is somewhat sleazily directly accessing el values w/o checking size
-  for (int i = size; i < TA_MATRIX_DIMS_MAX; ++i) 
-    el[i] = 0;
-}
-
-void MatrixGeom::Add(int value) {
-  if (size >= TA_MATRIX_DIMS_MAX) return;
-  el[size++] = value;
-}
-
-int MatrixGeom::colCount(bool pat_4d) const {
-  if (size == 0)
-    return 1;
-  else if (size < 4)
-    return el[0];
-  else {	
-    if (pat_4d)
-      return (el[0] * el[2]);
-    else return (el[0]);
-  }
-}
-
-int MatrixGeom::rowCount(bool pat_4d) const {
-  if (size <= 1)
-    return 1;
-  // more than 2d, return # flat rows
-  int rval = el[1];
-  if (pat_4d && (size >= 4)) { //note: el[2] is part of cols
-    for (int i = 3; i < size; ++i)
-      rval *= el[i];
-  } else {
-    for (int i = 2; i < size; ++i)
-      rval *= el[i];
-  }
-  return rval;
-  
-}
-
-int MatrixGeom::IndexFmDims(const MatrixGeom& d) const {
+int MatrixGeom::IndexFmDimsN(const MatrixGeom& d) const {
   return IndexFmDims_(d.el);
 }
 
@@ -166,7 +125,7 @@ int MatrixGeom::IndexFmDims(int d0, int d1, int d2,
 
 int MatrixGeom::IndexFmDims_(const int* d) const {
   int rval = -1;
-  switch (size) {
+  switch (n_dims) {
   case 0: rval = 0;
     break;
   case 1: rval = d[0];
@@ -189,7 +148,7 @@ int MatrixGeom::IndexFmDims_(const int* d) const {
 int MatrixGeom::IndexFmDims2D(int col, int row, bool pat_4d,
     taMisc::MatrixView mat_view) const
 {
-  if (size < 4) pat_4d = false;
+  if (n_dims < 4) pat_4d = false;
   if (mat_view == taMisc::DEF_ZERO)
     mat_view = taMisc::matrix_view;
   // 0-base the row
@@ -211,11 +170,11 @@ int MatrixGeom::IndexFmDims2D(int col, int row, bool pat_4d,
 
 
 void MatrixGeom::DimsFmIndex(int idx, MatrixGeom& d) const {
-  d.SetSize(size);
+  d.SetDims(n_dims);
   div_t qr;
   // note this algo is iterative, so we keep falling from case to case
   // who said fallthrough was always bad!
-  switch (size) {
+  switch (n_dims) {
   case 7:
     qr = div(idx, (el[5] * el[4] * el[3] * el[2] * el[1] * el[0]));
     d[6] = qr.quot; idx = qr.rem;
@@ -243,19 +202,76 @@ void MatrixGeom::DimsFmIndex(int idx, MatrixGeom& d) const {
   }
 }
 
+bool MatrixGeom::Equal(const MatrixGeom& other) const {
+  if (n_dims != other.n_dims) return false;
+  for (int i = 0; i < n_dims; ++i) {
+    if (el[i] != other.el[i]) return false;
+  }
+  return true;
+} 
+
+bool MatrixGeom::IsFrameOf(const MatrixGeom& other) const {
+  if (n_dims != (other.n_dims - 1)) return false;
+  for (int i = 0; i < n_dims; ++i) {
+    if (el[i] != other.el[i]) return false;
+  }
+  return true;
+}
+
+int MatrixGeom::Product() const {
+  if (n_dims == 0) return 0;
+  int rval = el[0];
+  for (int i = 1; i < n_dims; ++i)
+    rval *= el[i];
+  return rval;
+}
+
+void MatrixGeom::SetGeom(int dms, int d0, int d1, int d2, int d3, int d4,
+  int d5, int d6) 
+{
+  SetDims(dms);
+  el[0] = d0;
+  el[1] = d1;
+  el[2] = d2;
+  el[3] = d3;
+  el[4] = d4;
+  el[5] = d5;
+  el[6] = d6;
+}
+
+void MatrixGeom::GetGeom(int& dms, int& d0, int& d1, int& d2, int& d3, int& d4,
+  int& d5, int& d6) 
+{
+  dms = dims();
+  if(dms >= 1) d0 = dim(0); else d0 = 0;
+  if(dms >= 2) d1 = dim(1); else d1 = 0;
+  if(dms >= 3) d2 = dim(2); else d2 = 0;
+  if(dms >= 4) d3 = dim(3); else d3 = 0;
+  if(dms >= 5) d4 = dim(4); else d4 = 0;
+  if(dms >= 6) d5 = dim(5); else d5 = 0;
+  if(dms >= 7) d6 = dim(6); else d6 = 0;
+}
+
+void MatrixGeom::AddFmGeom(const MatrixGeom& ad) {
+  int mxd = MIN(n_dims, ad.n_dims);
+  for(int i=0; i<mxd; i++) {
+    FastEl(i) += ad.FastEl(i);
+  }
+}
+
 void MatrixGeom::Get2DGeom(int& x, int& y) const {
-  if (size == 0) {
+  if (n_dims == 0) {
     x = 0;
     y = 0;
   }
-  else if(size == 1) {
+  else if(n_dims == 1) {
     x = FastEl(0);
     y = 1;
   }
-  else if(size >= 2) {
+  else if(n_dims >= 2) {
     x = FastEl(0);
     y = FastEl(1);
-    for (int i = 2; i < size; ++i)
+    for (int i = 2; i < n_dims; ++i)
       y *= FastEl(i);
   }
 }
@@ -264,17 +280,17 @@ void MatrixGeom::Get2DGeomGui(int& x, int& y, bool odd_y, int spc) const {
   if (spc < 0) spc = 0;
   x = 1;
   y = 1;
-  if(size == 1) {
+  if(n_dims == 1) {
     if(odd_y)
       y = FastEl(0);
     else
       x = FastEl(0);
   }
-  else if(size == 2) {
+  else if(n_dims == 2) {
     x = FastEl(0);
     y = FastEl(1);
   }
-  else if(size == 3) { // series of 2d guys: layout vert or horiz?? vert!?
+  else if(n_dims == 3) { // series of 2d guys: layout vert or horiz?? vert!?
     if(odd_y) {
       x = FastEl(0);
       y = (FastEl(1) + spc) * FastEl(2); // assume space with 1
@@ -284,11 +300,11 @@ void MatrixGeom::Get2DGeomGui(int& x, int& y, bool odd_y, int spc) const {
       y = FastEl(1);
     }
   }
-  else if(size == 4) { // matrix of 2d guys
+  else if(n_dims == 4) { // matrix of 2d guys
     x = (FastEl(0) + spc) * FastEl(2);
     y = (FastEl(1) + spc) * FastEl(3);
   }
-  else if(size == 5) { // matrix of 2d guys + time series: vertical
+  else if(n_dims == 5) { // matrix of 2d guys + time series: vertical
     if(odd_y) {
       x = (FastEl(0) + spc) * FastEl(2);
       y = (FastEl(1) + spc) * FastEl(3) * FastEl(4);
@@ -300,52 +316,39 @@ void MatrixGeom::Get2DGeomGui(int& x, int& y, bool odd_y, int spc) const {
   }
 }
 
-void MatrixGeom::AddFmGeom(const MatrixGeom& ad) {
-  int mxd = MIN(size, ad.size);
-  for(int i=0; i<mxd; i++) {
-    FastEl(i) += ad.FastEl(i);
+int MatrixGeom::colCount(bool pat_4d) const {
+  if (n_dims == 0)
+    return 1;
+  else if (n_dims < 4)
+    return el[0];
+  else {	
+    if (pat_4d)
+      return (el[0] * el[2]);
+    else return (el[0]);
   }
 }
 
-int MatrixGeom::Dump_Save_Value(ostream& strm, TAPtr, int) {
-  strm << "{ ";
-  int i;
-  for (i=0; i < size; i++) {
-    strm << FastEl(i) << ";";
+int MatrixGeom::rowCount(bool pat_4d) const {
+  if (n_dims <= 1)
+    return 1;
+  // more than 2d, return # flat rows
+  int rval = el[1];
+  if (pat_4d && (n_dims >= 4)) { //note: el[2] is part of cols
+    for (int i = 3; i < n_dims; ++i)
+      rval *= el[i];
+  } else {
+    for (int i = 2; i < n_dims; ++i)
+      rval *= el[i];
   }
-  return true;
-}
-
-int MatrixGeom::Dump_Load_Value(istream& strm, TAPtr) {
-  int c = taMisc::skip_white(strm);
-  if(c == EOF)    return EOF;
-  if(c == ';') // just a path
-    return 2;  // signal that just a path was loaded..
-
-  if(c != '{') {
-    taMisc::Error("Missing '{' in dump file for type:",GetTypeDef()->name,"\n");
-    return false;
-  }
-  c = taMisc::read_till_rb_or_semi(strm);
-  int cnt = 0;
-  int val;
-  while ((c == ';') && (c != EOF)) {
-    val = taMisc::LexBuf.toInt();
-    if (cnt > size-1)
-      Add(val);
-    else Set(cnt, val);
-    ++cnt;
-    c = taMisc::read_till_rb_or_semi(strm);
-  }
-  if (c==EOF)	return EOF;
-  return true;
+  return rval;
+  
 }
 
 String MatrixGeom::GeomToString(const char* ldelim, const char* rdelim) const {
   String rval(ldelim);
-  rval += String(size) + ":";
+  rval += String(n_dims) + ":";
   int i;
-  for (i = 0; i < size-1; ++i) {
+  for (i = 0; i < n_dims-1; ++i) {
     rval += String(el[i]) + ",";
   }
   rval += String(el[i]) + rdelim;
@@ -356,9 +359,9 @@ void MatrixGeom::GeomFromString(const String& str_, const char* ldelim, const ch
   String str = str_.after(ldelim);
   String ds = str.before(':');
   str = str.after(':');
-  SetSize((int)ds);
+  SetDims((int)ds);
   int i;
-  for(i=0;i<size-1;i++) {
+  for(i=0;i<n_dims-1;i++) {
     ds = str.before(',');
     str = str.after(',');
     Set(i, (int)ds);
@@ -381,56 +384,53 @@ bool MatrixGeom::SetValStr(const String& val, void* par, MemberDef* memb_def,
   return true;
 }
 
-bool MatrixGeom::SetSize(int new_sz) {
+int MatrixGeom::Dump_Save_Value(ostream& strm, TAPtr, int) {
+  strm << "{ ";
+  int i;
+  for (i=0; i < n_dims; i++) {
+    strm << FastEl(i) << ";";
+  }
+  return true;
+}
+
+int MatrixGeom::Dump_Load_Value(istream& strm, TAPtr) {
+  int c = taMisc::skip_white(strm);
+  if(c == EOF)    return EOF;
+  if(c == ';') // just a path
+    return 2;  // signal that just a path was loaded..
+
+  if(c != '{') {
+    taMisc::Error("Missing '{' in dump file for type:",GetTypeDef()->name,"\n");
+    return false;
+  }
+  c = taMisc::read_till_rb_or_semi(strm);
+  int cnt = 0;
+  int val;
+  while ((c == ';') && (c != EOF)) {
+    val = taMisc::LexBuf.toInt();
+    if (cnt > n_dims-1)
+      AddDim(val);
+    else Set(cnt, val);
+    ++cnt;
+    c = taMisc::read_till_rb_or_semi(strm);
+  }
+  if (c==EOF)	return EOF;
+  SetDims(cnt);			// just to be double sure it is same as loaded size
+  return true;
+}
+
+bool MatrixGeom::SetDims(int new_sz) {
   if ((new_sz < 0) || (new_sz > TA_MATRIX_DIMS_MAX)) return false;
-  if(size == new_sz) return false;
+  if(n_dims == new_sz) return false;
   // zero out orphaned old elements
-  for (int i = size - 1; i >= new_sz; --i)
+  for (int i = n_dims - 1; i >= new_sz; --i)
     el[i] = 0;
   // zero out new elements
-  for (int i = size; i < new_sz; ++i)
+  for (int i = n_dims; i < new_sz; ++i)
     el[i] = 0;
-  size = new_sz;
+  n_dims = new_sz;
   return true;
 }
-
-bool MatrixGeom::Equal(const MatrixGeom& other) const {
-  if (size != other.size) return false;
-  for (int i = 0; i < size; ++i) {
-    if (el[i] != other.el[i]) return false;
-  }
-  return true;
-} 
-
-bool MatrixGeom::IsFrameOf(const MatrixGeom& other) const {
-  if (size != (other.size - 1)) return false;
-  for (int i = 0; i < size; ++i) {
-    if (el[i] != other.el[i]) return false;
-  }
-  return true;
-}
-
-int MatrixGeom::Product() const {
-  if (size == 0) return 0;
-  int rval = el[0];
-  for (int i = 1; i < size; ++i)
-    rval *= el[i];
-  return rval;
-}
-
-void MatrixGeom::SetGeom(int dims, int d0, int d1, int d2, int d3, int d4,
-  int d5, int d6) 
-{
-  SetSize(dims);
-  el[0] = d0;
-  el[1] = d1;
-  el[2] = d2;
-  el[3] = d3;
-  el[4] = d4;
-  el[5] = d5;
-  el[6] = d6;
-}
-
 
 
 //////////////////////////
@@ -767,10 +767,10 @@ int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
       strm.get(); // actually gets the [
     do {
       c = taMisc::read_word(strm); // also consumes next char, whether sp or ]
-      ar.Add(taMisc::LexBuf.toInt());
+      ar.AddDim(taMisc::LexBuf.toInt());
     } while ((c != ']') && (c != EOF));
     //note: should always be at least one dim if we had [ but we check anyway
-    if (ar.size > 0) {
+    if (ar.dims() > 0) {
       SetGeomN(ar);
       //note: we always write the correct number, so early termination is an error!
       int i = 0;
@@ -798,11 +798,11 @@ int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
   
   // save data, if not completely null
   int i;
-  if (geom.size > 0) {
+  if (geom.dims() > 0) {
     taMisc::indent(strm, indent);
     // dims
     strm << "[";
-    for (i=0; i< geom.size; ++i) {
+    for (i=0; i< geom.dims(); ++i) {
       if (i > 0) strm << " ";
       strm << geom.FastEl(i);
     }
@@ -851,10 +851,10 @@ int taMatrix::BinaryLoad_strm(istream& strm) {
       strm.get(); // actually gets the [
     do {
       c = taMisc::read_word(strm); // also consumes next char, whether sp or ]
-      ar.Add(taMisc::LexBuf.toInt());
+      ar.AddDim(taMisc::LexBuf.toInt());
     } while ((c != ']') && (c != EOF));
     //note: should always be at least one dim if we had [ but we check anyway
-    if (ar.size > 0) {
+    if (ar.dims() > 0) {
       SetGeomN(ar);
       //note: we always write the correct number, so early termination is an error!
       int i = 0;
@@ -879,11 +879,11 @@ int taMatrix::BinarySave_strm(ostream& strm) {
   
   // save data, if not completely null
   int i;
-  if (geom.size > 0) {
+  if (geom.dims() > 0) {
     taMisc::indent(strm, 0);
     // dims
     strm << "[";
-    for (i=0; i< geom.size; ++i) {
+    for (i=0; i< geom.dims(); ++i) {
       if (i > 0) strm << " ";
       strm << geom.FastEl(i);
     }
@@ -925,7 +925,7 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
   int new_size = n * frameSize();
   // avoid spurious notifies -- geom changes do their own notify
   if (new_size == size) {
-    geom.Set(geom.size-1, n);	
+    geom.Set(geom.dims()-1, n);	
     return true;
   }
   StructUpdate(true);
@@ -935,11 +935,11 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
       El_Copy_(FastEl_Flat_(i), blank);
     }
     size = new_size;
-    geom.Set(geom.size-1, n);
+    geom.Set(geom.dims()-1, n);
   } else if (new_size < size) {
     ReclaimOrphans_(new_size, size - 1);
     size = new_size;
-    geom.Set(geom.size-1, n);	
+    geom.Set(geom.dims()-1, n);	
   }
   StructUpdate(false);
   return true;
@@ -947,7 +947,7 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
 
 int taMatrix::FastElIndex(int d0, int d1, int d2, int d3, int d4, int d5, int d6) const {
   int rval = -1;
-  switch (geom.size) {
+  switch (geom.dims()) {
   case 0: 
     if(TestError(true, "FastElIndex", "matrix geometry has not been initialized")) return -1;
     break;
@@ -973,7 +973,7 @@ int taMatrix::FastElIndex2D(int d0, int d1) const {
 int taMatrix::FastElIndexN(const MatrixGeom& indices) const {
   int d0 = indices[0];
   int rval = 0;
-  for (int i = indices.size - 1 ; i > 0; --i) {
+  for (int i = indices.dims() - 1 ; i > 0; --i) {
     int di = indices[i];
     rval += di;
     rval *= geom[i-1];
@@ -1003,15 +1003,15 @@ const String taMatrix::FlatRangeToTSV(int row_fr, int col_fr, int row_to, int co
 }
 
 int taMatrix::frames() const {
-  if (geom.size == 0) return 0;
-  return geom[geom.size-1];
+  if (geom.dims() == 0) return 0;
+  return geom[geom.dims()-1];
 }
 
 int taMatrix::frameSize() const {
-  if (geom.size == 0) return 0;
-  if (geom.size == 1) return 1;
+  if (geom.dims() == 0) return 0;
+  if (geom.dims() == 1) return 1;
   int rval = geom[0];
-  for (int i = 1; i < (geom.size - 1); ++i) 
+  for (int i = 1; i < (geom.dims() - 1); ++i) 
     rval *= geom[i];
   return rval;
 }
@@ -1111,7 +1111,7 @@ taMatrix* taMatrix::FindSlice(void* el_, const MatrixGeom& geom_) {
 } 
 
 bool taMatrix::InRange(int d0, int d1, int d2, int d3, int d4, int d5, int d6) const {
-  switch (geom.size) {
+  switch (geom.dims()) {
   case 0: return false; // not initialized
   case 1: return ((d0 >= 0) && (d0 < geom[0]));
   case 2: return ((d0 >= 0) && (d0 < geom[0]))
@@ -1134,8 +1134,8 @@ bool taMatrix::InRange(int d0, int d1, int d2, int d3, int d4, int d5, int d6) c
  
  
 bool taMatrix::InRangeN(const MatrixGeom& indices) const {
-  if (indices.size < geom.size) return false;
-  for (int i = 0; i < indices.size; ++i) {
+  if (indices.dims() < geom.dims()) return false;
+  for (int i = 0; i < indices.dims(); ++i) {
     int di = indices[i];
     if ((di < 0) || (di >= geom[i])) return false;
   }
@@ -1247,7 +1247,7 @@ void taMatrix::Reset() {
 
 int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3, int d4, int d5, int d6) const {
   int rval = -1;
-  switch (geom.size) {
+  switch (geom.dims()) {
   case 0: 
     if(TestError(true, "SafeElIndex", "matrix geometry has not been initialized")) return -1;
     break;
@@ -1289,18 +1289,18 @@ int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3, int d4, int d5, int d6
 }
  
 int taMatrix::SafeElIndexN(const MatrixGeom& indices) const {
-  if(TestError((geom.size < 1), "SafeElIndexN", "matrix geometry has not been initialized"))
+  if(TestError((geom.dims() < 1), "SafeElIndexN", "matrix geometry has not been initialized"))
     return -1;
-  if(TestError((indices.size < 1), "SafeElIndexN", "at least 1 index must be specified"))
+  if(TestError((indices.dims() < 1), "SafeElIndexN", "at least 1 index must be specified"))
     return -1;
-  if(TestError((indices.size > geom.size), "SafeElIndexN", "too many indices for matrix"))
+  if(TestError((indices.dims() > geom.dims()), "SafeElIndexN", "too many indices for matrix"))
     return -1;
   int d0 = indices[0];
   if(TestError(((d0 < 0) || (d0 >= geom[0])), "SafeElIndexN", "matrix index 0 out of bounds:"))
     return -1;
   
   int rval = 0;
-  for (int i = indices.size - 1 ; i > 0; --i) {
+  for (int i = indices.dims() - 1 ; i > 0; --i) {
     int di = indices[i];
     if(TestError(((di < 0) || (di >= geom[i])),
 		 "SafeElIndexN", "matrix index n out of bounds")) return -1;
@@ -1352,7 +1352,7 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
   // only copy bottom N-1 dims, setting 0 frames -- we size frames in next step
   StructUpdate(true);
   // we collapse slices if #dims change, inner dims change, or frames go down
-  bool collapse_slices = geom.SetSize(dims_);
+  bool collapse_slices = geom.SetDims(dims_);
   for (int i = 0; i < (dims_ - 1); ++i) {
     if(geom[i] != geom_[i]) {
       collapse_slices = true;
@@ -1416,13 +1416,13 @@ void taMatrix::UpdateGeom() {
   // from a stream -- no slice checking because there can't really be any yet!
   // handle legacy/graceful case wherein size is non-zero, but no dims -- 
   // set dims to 1, and dim[0] to the size
-  if ((size != 0) && (geom.size == 0)) {
-    geom.SetSize(1);
+  if ((size != 0) && (geom.dims() == 0)) {
+    geom.SetDims(1);
     geom.FastEl(0) = size;
   }
   
   // get overall framesize and frames
-  int dims_ = geom.size; // cache
+  int dims_ = geom.dims(); // cache
   // make sure dims are valid (outer dim can be 0, others must be >0)
   int i;
   for (i = 0; i < (dims_ - 1) ; ++i) {
@@ -1512,9 +1512,9 @@ void taMatrix::WriteFmSubMatrix(const taMatrix* src, int off0, int off1, int off
   MatrixGeom srcp;
   for(int i=0;i<src->size;i++) {
     src->geom.DimsFmIndex(i, srcp);
-    Variant val = src->FastElAsVar_Flat(i);
     MatrixGeom trgp(off);
     trgp.AddFmGeom(srcp);
+    Variant val = src->FastElAsVar_Flat(i);
     SetFmVarN(val, trgp);
   }
 }
@@ -1542,9 +1542,9 @@ void taMatrix::WriteFmSubMatrix_Render(const taMatrix* src, RenderOp render_op,
   MatrixGeom srcp;
   for(int i=0;i<src->size;i++) {
     src->geom.DimsFmIndex(i, srcp);
-    Variant sval = src->FastElAsVar_Flat(i);
     MatrixGeom trgp(off);
     trgp.AddFmGeom(srcp);
+    Variant sval = src->FastElAsVar_Flat(i);
     Variant dval = SafeElAsVarN(trgp);
     dval = RenderValue(dval, sval, render_op);
     SetFmVarN(dval, trgp);
@@ -1570,7 +1570,7 @@ void taMatrix::ReadToSubMatrix_Render(taMatrix* dest, RenderOp render_op,
   }
 }
 
-void taMatrix::WriteFmSubMatrixFrames(const taMatrix* src, 
+void taMatrix::WriteFmSubMatrixFrames(taMatrix* src, 
 				      int off0, int off1, int off2,
 				      int off3, int off4, int off5, int off6) {
   if(!src) return;
@@ -1583,31 +1583,101 @@ void taMatrix::WriteFmSubMatrixFrames(const taMatrix* src,
     src_frames = true;
   }
   for(int fr=0;fr<fr_max;fr++) {
-    //    taMatrixPtr myfr = GetFrameSlice_(fr);
-    // todo: here
-    for(int i=0;i<src->size;i++) {
-      src->geom.DimsFmIndex(i, srcp);
-      Variant val = src->FastElAsVar_Flat(i);
+    taMatrixPtr dfr;  dfr = GetFrameSlice_(fr);
+    taMatrixPtr sfr;
+    if(src_frames)
+      sfr = src->GetFrameSlice_(fr);
+    else
+      sfr = src;
+    for(int i=0;i<sfr->size;i++) {
+      sfr->geom.DimsFmIndex(i, srcp);
       MatrixGeom trgp(off);
       trgp.AddFmGeom(srcp);
-      SetFmVarN(val, trgp);
+      Variant val = sfr->FastElAsVar_Flat(i);
+      dfr->SetFmVarN(val, trgp);
     }
   }
 }
 
-void taMatrix::ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op, 
-				       int off0, int off1, int off2,
+void taMatrix::ReadToSubMatrixFrames(taMatrix* dest,
+				     int off0, int off1, int off2,
 				     int off3, int off4, int off5, int off6) {
+  if(!dest) return;
+  // actually, it doesn't matter, just as long as the frame count matches..
+//   if(TestError(dest->dims() != dims(), "ReadToSubMatrixFrames", "destination must be same dimensionality as this (source) matrix.  Source is:", String(dims()), "dest is:", dest->dims()))
+//     return;
+  dest->EnforceFrames(frames()); // match them up
+  MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
+  MatrixGeom srcp;
+  int fr_max = frames();
+  for(int fr=0;fr<fr_max;fr++) {
+    taMatrixPtr sfr;  sfr = GetFrameSlice_(fr);
+    taMatrixPtr dfr;  dfr = dest->GetFrameSlice_(fr);
+    for(int i=0;i<dfr->size;i++) {
+      dfr->geom.DimsFmIndex(i, srcp);
+      MatrixGeom trgp(off);
+      trgp.AddFmGeom(srcp);
+      Variant val = sfr->SafeElAsVarN(trgp);
+      if(!val.isInvalid())
+	dfr->SetFmVar_Flat(val, i);
+    }
+  }
 }
 
-void taMatrix::WriteFmSubMatrixFrames_Render(const taMatrix* src, RenderOp render_op,
+void taMatrix::WriteFmSubMatrixFrames_Render(taMatrix* src, RenderOp render_op,
 					     int off0, int off1, int off2,
 					     int off3, int off4, int off5, int off6) {
+  if(!src) return;
+  MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
+  MatrixGeom srcp;
+  int fr_max = frames();
+  bool src_frames = false;	// source has frames
+  if(src->dims() == dims()) {
+    fr_max = MIN(fr_max, src->frames());
+    src_frames = true;
+  }
+  for(int fr=0;fr<fr_max;fr++) {
+    taMatrixPtr dfr;  dfr = GetFrameSlice_(fr);
+    taMatrixPtr sfr;
+    if(src_frames)
+      sfr = src->GetFrameSlice_(fr);
+    else
+      sfr = src;
+    for(int i=0;i<sfr->size;i++) {
+      sfr->geom.DimsFmIndex(i, srcp);
+      MatrixGeom trgp(off);
+      trgp.AddFmGeom(srcp);
+      Variant sval = sfr->FastElAsVar_Flat(i);
+      Variant dval = dfr->SafeElAsVarN(trgp);
+      dval = RenderValue(dval, sval, render_op);
+      dfr->SetFmVarN(dval, trgp);
+    }
+  }
 }
 
 void taMatrix::ReadToSubMatrixFrames_Render(taMatrix* dest, RenderOp render_op, 
 					    int off0, int off1, int off2,
 					    int off3, int off4, int off5, int off6) {
+  if(!dest) return;
+  dest->EnforceFrames(frames()); // match them up
+  MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
+  MatrixGeom srcp;
+  int fr_max = frames();
+  for(int fr=0;fr<fr_max;fr++) {
+    taMatrixPtr sfr;  sfr = GetFrameSlice_(fr);
+    taMatrixPtr dfr;  dfr = dest->GetFrameSlice_(fr);
+    for(int i=0;i<dfr->size;i++) {
+      dfr->geom.DimsFmIndex(i, srcp);
+      MatrixGeom trgp(off);
+      trgp.AddFmGeom(srcp);
+      Variant sval = sfr->SafeElAsVarN(trgp);
+      if(!sval.isInvalid()) {
+	Variant dval = dfr->FastElAsVar_Flat(i);
+	dval = RenderValue(dval, sval, render_op);
+	dfr->SetFmVar_Flat(dval, i);
+      }
+    }
+  }
 }
 
 
