@@ -1316,7 +1316,7 @@ bool taDataGen::GenItemsFmProtos(DataTable* items, const String& dest_col,
   items->StructUpdate(true);
 
   int n_feats = dcol->cell_size() / feat_sz; // how many features per pattern
-  int flip_n = flip_pct * n_feats;
+  int flip_n = (int)(flip_pct * (float)n_feats);
   flip_n = MIN(n_feats, flip_n);
   flip_n = MAX(1, flip_n);	// flip at least 1!
 
@@ -1342,6 +1342,7 @@ bool taDataGen::GenItemsFmProtos(DataTable* items, const String& dest_col,
 
   int_Array flip_list;
   flip_list.SetSize(n_feats);
+  flip_list.FillSeq();
 
   for(int pat=0;pat<items->rows;pat++) {
     flip_list.Permute();	// flip for each item
