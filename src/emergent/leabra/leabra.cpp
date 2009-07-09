@@ -4343,6 +4343,8 @@ void LeabraUnit_Group::Initialize() {
   misc_state = 0;
   misc_state1 = 0;
   misc_state2 = 0;
+  misc_float = 0.0f;
+  misc_float1 = 0.0f;
 }
 
 void LeabraUnit_Group::InitLinks() {
@@ -4366,6 +4368,8 @@ void LeabraUnit_Group::Copy_(const LeabraUnit_Group& cp) {
   misc_state = cp.misc_state;
   misc_state1 = cp.misc_state1;
   misc_state2 = cp.misc_state2;
+  misc_float = cp.misc_float;
+  misc_float1 = cp.misc_float1;
 }
 
 
@@ -4698,6 +4702,7 @@ void LeabraNetwork::Trial_Init() {
 //   Trial_DecayState();
 //   Trial_NoiseInit();
 //   Trial_Init_SRAvg();
+  Trial_Init_Layer();
 }
 
 void LeabraNetwork::Trial_Init_Phases() {
@@ -4791,6 +4796,15 @@ void LeabraNetwork::Trial_Init_SRAvg() {
   }
 }
   
+void LeabraNetwork::Trial_Init_Layer() {
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    lay->Trial_Init_Layer(this);
+  }
+}
+
 
 ///////////////////////////////////////////////////////////////////////
 //	SettleInit -- at start of settling

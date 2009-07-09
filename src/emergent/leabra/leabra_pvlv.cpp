@@ -963,35 +963,33 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
 void PVLVDaLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
   float net_da = 0.0f;
-  if(net->phase_no > 0) {
-    int lve_prjn_idx;
-    LeabraLayer* lve_lay = FindLayerFmSpec(lay, lve_prjn_idx, &TA_LVeLayerSpec);
-    LVeLayerSpec* lve_sp = (LVeLayerSpec*)lve_lay->GetLayerSpec();
-    int lvi_prjn_idx;
-    LeabraLayer* lvi_lay = FindLayerFmSpec(lay, lvi_prjn_idx, &TA_LViLayerSpec);
-    //   LVeLayerSpec* lvi_sp = (LViLayerSpec*)lvi_lay->GetLayerSpec();
+  int lve_prjn_idx;
+  LeabraLayer* lve_lay = FindLayerFmSpec(lay, lve_prjn_idx, &TA_LVeLayerSpec);
+  LVeLayerSpec* lve_sp = (LVeLayerSpec*)lve_lay->GetLayerSpec();
+  int lvi_prjn_idx;
+  LeabraLayer* lvi_lay = FindLayerFmSpec(lay, lvi_prjn_idx, &TA_LViLayerSpec);
+  //   LVeLayerSpec* lvi_sp = (LViLayerSpec*)lvi_lay->GetLayerSpec();
 
-    int pvi_prjn_idx;
-    LeabraLayer* pvi_lay = FindLayerFmSpec(lay, pvi_prjn_idx, &TA_PViLayerSpec);
-    PViLayerSpec* pvils = (PViLayerSpec*)pvi_lay->spec.SPtr();
+  int pvi_prjn_idx;
+  LeabraLayer* pvi_lay = FindLayerFmSpec(lay, pvi_prjn_idx, &TA_PViLayerSpec);
+  PViLayerSpec* pvils = (PViLayerSpec*)pvi_lay->spec.SPtr();
 
-    int nv_prjn_idx;
-    LeabraLayer* nv_lay = FindLayerFmSpec(lay, nv_prjn_idx, &TA_NVLayerSpec);
-    NVLayerSpec* nvls = NULL;
-    if(nv_lay) nvls = (NVLayerSpec*)nv_lay->spec.SPtr();
+  int nv_prjn_idx;
+  LeabraLayer* nv_lay = FindLayerFmSpec(lay, nv_prjn_idx, &TA_NVLayerSpec);
+  NVLayerSpec* nvls = NULL;
+  if(nv_lay) nvls = (NVLayerSpec*)nv_lay->spec.SPtr();
 
-    float lv_da = lve_sp->Compute_LVDa(lve_lay, lvi_lay, net);
-    // nv only contributes to lv, not pv..
-    if(nv_lay) {
-      lv_da += nvls->Compute_NVDa(nv_lay, net);
-    }
-    float pv_da = pvils->Compute_PVDa(pvi_lay, net);
-    bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
-    if(er_avail)
-      net_da = da.da_gain * pv_da;
-    else
-      net_da = da.da_gain * lv_da;
+  float lv_da = lve_sp->Compute_LVDa(lve_lay, lvi_lay, net);
+  // nv only contributes to lv, not pv..
+  if(nv_lay) {
+    lv_da += nvls->Compute_NVDa(nv_lay, net);
   }
+  float pv_da = pvils->Compute_PVDa(pvi_lay, net);
+  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
+  if(er_avail)
+    net_da = da.da_gain * pv_da;
+  else
+    net_da = da.da_gain * lv_da;
 
   lay->dav = net_da;
   LeabraUnit* u;

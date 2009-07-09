@@ -560,4 +560,246 @@ private:
   void 	Destroy()		{ };
 };
 
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+// 	New Xperimental version of PBWM
+
+//////////////////////////////////
+//	  Matrix Layer Spec	//
+//////////////////////////////////
+
+class LEABRA_API XMatrixMiscSpec : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
+INHERITED(taOBase)
+public:
+  float		neg_da_bl;	// #DEF_0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
+  float		neg_gain;	// #DEF_1.5 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
+  float		perf_gain;	// #DEF_0.1 performance effect da gain -- in minus phase
+  float		snr_err_da;	// dopamine value to add if the corresponding snrthal unit has a COMP targ value greater than 0.5 and the stripe did not fire Go -- achieves error-driven learning via snr modulation of da
+  bool		no_snr_mod;	// #DEF_false #EXPERT disable the Da learning modulation by SNrThal ativation (this is only to demonstrate how important it is)
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(XMatrixMiscSpec);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
+class LEABRA_API XMatrixLayerSpec : public LeabraLayerSpec {
+  // eXperimental basal ganglia matrix layer, integrates maintenance and output gating
+INHERITED(LeabraLayerSpec)
+public:
+  XMatrixMiscSpec 	matrix;		// misc parameters for the matrix layer
+  ContrastSpec 	 	contrast;	// contrast enhancement effects of da/dopamine neuromodulation
+  MatrixGoNogoGainSpec	go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
+  MatrixRndGoSpec	rnd_go;		// matrix random Go firing for nogo firing stripes case
+
+  virtual void 	Compute_DaMod_NoContrast(LeabraUnit* u, float dav, int go_no);
+  // apply given dopamine modulation value to the unit, based on whether it is a go (0) or nogo (1); no contrast enancement based on activation
+  virtual void 	Compute_DaMod_Contrast(LeabraUnit* u, float dav, float gating_act, int go_no);
+  // apply given dopamine modulation value to the unit, based on whether it is a go (0) or nogo (1); contrast enhancement based on activation (gating_act)
+  virtual void 	Compute_DaTonicMod(LeabraLayer* lay, LeabraUnit_Group* mugp,
+				   int gpidx, LeabraNetwork* net);
+  // compute tonic da modulation (for pfc gating units in first two phases)
+  virtual void 	Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mugp,
+				  int gpidx, LeabraNetwork* net);
+  // compute dynamic da modulation; performance modulation, not learning (second minus phase)
+  virtual void 	Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mugp,
+				   int gpidx, LeabraNetwork* net);
+  // compute dynamic da modulation: evaluation modulation, which is sensitive to GO/NOGO firing and activation in action phase
+
+  virtual void 	Compute_ClearRndGo(LeabraLayer* lay, LeabraNetwork* net);
+  // clear the rnd go signals
+  virtual void 	Compute_NoGoRndGo(LeabraLayer* lay, LeabraNetwork* net);
+  // compute random Go for nogo case
+
+  virtual void	LabelUnits_impl(Unit_Group* ugp);
+  // label units with Go/No (unit group) -- auto done in InitWeights
+  virtual void	LabelUnits(LeabraLayer* lay);
+  // label units with Go/No -- auto done in InitWeights
+
+  override void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+
+  //  override bool	Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
+
+  void	HelpConfig();	// #BUTTON get help message for configuring this spec
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+  void	Defaults();
+
+  TA_SIMPLE_BASEFUNS(XMatrixLayerSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
+//////////////////////////////////////////////////////////////////
+//	  SNrThalLayer: Integrate Matrix and compute Gating 	//
+//////////////////////////////////////////////////////////////////
+
+class XSNrThalMiscSpec : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
+INHERITED(taOBase)
+public:
+  float		net_off;	// [0.2 or 0] netinput offset -- how much to add to each unit's baseline netinput -- positive values make it more likely that some stripe will always fire, even if it has a net nogo activation state in the matrix -- very useful for preventing all nogo situations -- if net_off is .2 then act.gain should be 600, if net_off is 0 then act.gain should be 20 (dynamic range is diff)
+  float		go_thr;		// #DEF_0.1 threshold in snrthal activation required to trigger a Go gating event
+  float		rnd_go_inc;	// #DEF_0.2 how much to add to the net input for a random-go signal triggered in corresponding matrix layer?
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(XSNrThalMiscSpec);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
+class LEABRA_API XSNrThalLayerSpec : public LeabraLayerSpec {
+  // computes activation = GO - NOGO from MatrixLayerSpec
+INHERITED(LeabraLayerSpec)
+public:
+  XSNrThalMiscSpec	snrthal; // misc specs for snrthal layer
+
+  virtual void	Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net);
+  // compute netinput as GO - NOGO on matrix layer
+
+  // hook for new netin goes here:
+  override void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
+
+  // don't do any learning:
+  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+
+  void	HelpConfig();	// #BUTTON get help message for configuring this spec
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+  void	Defaults();
+
+  TA_SIMPLE_BASEFUNS(XSNrThalLayerSpec);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
+//////////////////////////////////////////
+//	PFC Unit Spec	
+
+class LEABRA_API PFCUnitSpec : public LeabraUnitSpec {
+  // Prefrontal cortex units: activation output is modulated by output gating signal
+INHERITED(LeabraUnitSpec)
+public:
+
+  override void Compute_Conduct(LeabraUnit* u, LeabraNetwork* net);
+  override void Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net);
+
+  TA_BASEFUNS_NOCOPY(PFCUnitSpec);
+private:
+  void	Initialize();
+  void	Destroy()		{ };
+};
+
+//////////////////////////////////////////
+//	XPFC Layer Spec	
+//////////////////////////////////////////
+
+// misc_state docs:
+// * pfc ugp->misc_state = counter of number of trials in maint or empty state
+// ** 0 = just cleared (empty)
+// ** 1+ = maint for a trial or a more
+// ** -1- = empty for a trial or more
+// * pfc ugp->misc_state1 = GateState 
+// * pfc ugp->misc_state2 = cur gating signal (cleared at start of trial, latches to first Go)
+// * pfc ugp->misc_float = current Go activation value (mnt or out) -- used by units to boost netin -- already multiplied by gate.go_netin_gain
+// * pfc ugp->misc_float1 = current output gating Go activation value with base_gain and go_gain factored in -- used for graded Go -- just multiply directly by this number
+
+class LEABRA_API XPFCGateSpec : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
+INHERITED(taOBase)
+public:
+  enum	GateSignal {
+    GATE_MNT_GO = 0,		// gate maintenance Go unit fired 
+    GATE_OUT_GO = 1,		// gate output Go unit fired 
+    GATE_NOGO = 2		// gate NoGo unit fired
+  };
+
+  enum	GateState {		// what happened on last gating action, stored in misc_state1 on unit group -- for debugging etc
+    EMPTY_MNT_GO,		// stripe was empty, got MAINT Go
+    EMPTY_OUT_GO,		// stripe was empty, got OUTPUT Go
+    EMPTY_NOGO,			// stripe was empty, got NoGo
+    MAINT_MNT_GO,		// stripe was already maintaining, got MAINT Go: cleared, encoded
+    MAINT_OUT_GO,		// stripe was already maintaining, got OUTPUT Go
+    MAINT_NOGO,			// stripe was already maintaining, got NoGo
+    NOGO_RND_GO,		// random go for stripes constantly firing nogo
+    INIT_STATE,			// initialized state at start of trial
+  };
+
+  float		base_gain;	// #DEF_0.5 how much activation gets through even without a Go gating signal
+  float		go_gain;	// #READ_ONLY #SHOW how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
+  bool		graded_out_go;	// #DEF_true does actual activation level of output Go signal drive output activation level 
+  float		go_netin_gain;	// #DEF_0.01 how much of the go signal to add to the netinput, to influence learning
+  bool		out_go_clear;	// #DEF_true output Go signal clears maintenance!
+  float		off_accom;	// #DEF_0 how much of the maintenance current to apply to accommodation after turning a unit off
+
+  inline void	SetBaseGain(float bg)
+  { base_gain = bg;
+    if(base_gain > 1.0f) base_gain = 1.0f; if(base_gain < 0.0f) base_gain = 0.0f;
+    go_gain = 1.0f - base_gain; }
+  // set base gain value with limits enforced and go_gain updated
+
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(XPFCGateSpec);
+protected:
+  void  UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
+class LEABRA_API XPFCLayerSpec : public LeabraLayerSpec {
+  // Prefrontal cortex layer: gets maintenance and output gating signals from SNrThal -- gate toggles off in minus phase, on at end of plus phase, output gating drives unit act relative to internal act_eq value
+INHERITED(LeabraLayerSpec)
+public:
+  enum MaintUpdtAct {
+    STORE,			// store current activity state in maintenance currents
+    CLEAR,			// clear current activity state from maintenance currents
+  };
+
+  XPFCGateSpec	gate;		// parameters controlling the gating of pfc units
+
+  virtual void 	Compute_TrialInitGates(LeabraLayer* lay, LeabraNetwork* net);
+  // clear various gating signals at the start of the trial
+
+  virtual void 	Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct updt_act,
+				      LeabraLayer* lay, LeabraNetwork* net);
+  // update maintenance state variables (gc.h, misc_1) based on given action: ugp impl
+  virtual void	SendGateStates(LeabraLayer* lay, LeabraNetwork* net);
+  // send misc_state gating state variables to the snrthal and matrix layers
+  virtual void 	Compute_Gating(LeabraLayer* lay, LeabraNetwork* net);
+  // compute the gating signal based on SNrThal layer activations -- each cycle during normal processing
+  virtual void 	Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net);
+  // compute the gating signal based on SNrThal layer activations -- at end of plus phase
+
+  override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+
+  void	HelpConfig();	// #BUTTON get help message for configuring this spec
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+  void	Defaults();
+
+  TA_SIMPLE_BASEFUNS(XPFCLayerSpec);
+private:
+  void 	Initialize();
+  void	Destroy()		{ CutLinks(); }
+};
+
 #endif // leabra_pbwm_h

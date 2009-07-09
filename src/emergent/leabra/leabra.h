@@ -1772,13 +1772,16 @@ public:
   //	TrialInit -- at start of trial
 
   virtual void	SetCurLrate(LeabraLayer* lay, LeabraNetwork* net, int epoch);
-  // #CAT_Learning set current learning rate based on epoch
-  virtual void	Trial_DecayState(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation decay activations and other state between events
-  virtual void	Trial_NoiseInit(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation initialize various noise factors at start of trial
-  virtual void	Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning reset the sender-receiver coproduct average (CtLeabra_X/CAL)
+  // #CAT_Learning set current learning rate based on epoch -- goes through projections
+  virtual void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) { };
+  // #CAT_Learning layer level trial init -- overload where needed
+
+    virtual void	Trial_DecayState(LeabraLayer* lay, LeabraNetwork* net);
+    // #CAT_Activation NOT CALLED DURING STD PROCESSING decay activations and other state between events
+    virtual void	Trial_NoiseInit(LeabraLayer* lay, LeabraNetwork* net);
+    // #CAT_Activation NOT CALLED DURING STD PROCESSING initialize various noise factors at start of trial
+    virtual void	Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net);
+    // #CAT_Learning NOT CALLED DURING STD PROCESSING reset the sender-receiver coproduct average (CtLeabra_X/CAL)
 
   ///////////////////////////////////////////////////////////////////////
   //	SettleInit -- at start of settling
@@ -2167,13 +2170,15 @@ public:
 
   void	SetCurLrate(LeabraNetwork* net, int epoch) { spec->SetCurLrate(this, net, epoch); }
   // #CAT_Learning set current learning rate based on epoch
+  void	Trial_Init_Layer(LeabraNetwork* net) { spec->Trial_Init_Layer(this, net); }
+  // #CAT_Learning layer-level trial init
 
-  void	Trial_DecayState(LeabraNetwork* net)	{ spec->Trial_DecayState(this, net); }
-  // #CAT_Activation decay activations and other state between events
-  void	Trial_NoiseInit(LeabraNetwork* net)	{ spec->Trial_NoiseInit(this, net); }
-  // #CAT_Activation initialize various noise factors at start of trial
-  void 	Trial_Init_SRAvg(LeabraNetwork* net)   	{ spec->Trial_Init_SRAvg(this, net); }
-  // #CAT_Learning initialize sending-receiving activation product averages (CtLeabra_X/CAL)
+    void	Trial_DecayState(LeabraNetwork* net)	{ spec->Trial_DecayState(this, net); }
+    // #CAT_Activation NOT CALLED DURING STD PROCESSING decay activations and other state between events
+    void	Trial_NoiseInit(LeabraNetwork* net)	{ spec->Trial_NoiseInit(this, net); }
+    // #CAT_Activation NOT CALLED DURING STD PROCESSING initialize various noise factors at start of trial
+    void 	Trial_Init_SRAvg(LeabraNetwork* net)   	{ spec->Trial_Init_SRAvg(this, net); }
+    // #CAT_Learning NOT CALLED DURING STD PROCESSING initialize sending-receiving activation product averages (CtLeabra_X/CAL)
 
   ///////////////////////////////////////////////////////////////////////
   //	SettleInit -- at start of settling
@@ -2338,6 +2343,8 @@ public:
   int		misc_state;	// #CAT_Activation miscellaneous state variable
   int		misc_state1;	// #CAT_Activation second miscellaneous state variable 
   int		misc_state2;	// #CAT_Activation third miscellaneous state variable 
+  float		misc_float;	// #CAT_Activation miscellaneous floating point variable 
+  float		misc_float1;	// #CAT_Activation second miscellaneous floating point variable 
 
   void	InitLinks();
   void	Copy_(const LeabraUnit_Group& cp);
@@ -2661,6 +2668,8 @@ public:
       // #CAT_TrialInit initialize various noise factors at start of trial -- goes to units via layers
       virtual void Trial_Init_SRAvg();
       // #CAT_Learning initialize sending-receiving activation coproduct averages (CtLeabra_X/CAL) -- goes to connections via units, layers
+    virtual void Trial_Init_Layer();
+    // #CAT_TrialInit layer-level trial init (not used in base code, can be overloaded)
 
   ///////////////////////////////////////////////////////////////////////
   //	SettleInit -- at start of settling
