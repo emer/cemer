@@ -419,6 +419,12 @@ int MatrixGeom::Dump_Load_Value(istream& strm, TAPtr) {
   return true;
 }
 
+int MatrixGeom::SafeEl(int i) const {
+  if ((i < 0) || (i >= n_dims))
+    return 0;
+  return el[i];
+}
+
 bool MatrixGeom::SetDims(int new_sz) {
   if ((new_sz < 0) || (new_sz > TA_MATRIX_DIMS_MAX)) return false;
   if(n_dims == new_sz) return false;

@@ -214,6 +214,7 @@ public:
   // #CAT_Access get index from dimension values, based on geometry represented by 'this' geom object
   void 		DimsFmIndex(int idx, MatrixGeom& dims) const;
   // #CAT_Access get dimension values from index, based on geometry represented by 'this' geom object
+  int		SafeEl(int i) const;
 
   ///////////////////////////////////////////////////////
   //	Modify and misc operations

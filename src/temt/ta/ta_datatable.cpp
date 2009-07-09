@@ -936,7 +936,8 @@ bool DataTable::AutoLoadData() {
     auto_load_file = cur_alf;
   }
   else {
-    LoadData(auto_load_file, TAB, true, -1, true);
+//obs    LoadData(auto_load_file, TAB, true, -1, true);
+    LoadDataEx(auto_load_file, LH_AUTO_YES, LD_AUTO, LQ_AUTO, -1, true);
   }
   return true;
 }
