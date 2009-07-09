@@ -1417,7 +1417,7 @@ void SignalMonBlock::Init_MT_ITEM(bool check, bool quiet, bool& ok)
   float_Matrix* mat = &db->mat;
   // create dims according the spec 
   MatrixGeom cell_geom;
-  cell_geom.SetSize(item_dims);
+  cell_geom.SetDims(item_dims);
   for (int d = 0; d < item_dims; d++) {
     int dest_sz = 1; // default for dummy dims
     int sd = itemDim(d);
