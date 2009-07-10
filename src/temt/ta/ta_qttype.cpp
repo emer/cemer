@@ -1754,6 +1754,8 @@ taiData* taiSubTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, Q
     flags_ |= taiData::flgNullOk;
   if (!mbr->HasOption("NO_EDIT"))
     flags_ |= taiData::flgEditOk;
+  if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
   taiSubToken* rval =
     new taiSubToken( taiMenu::buttonmenu, taiMisc::fonSmall, td, host_, par, gui_parent_, flags_);
   return rval;
@@ -3070,6 +3072,8 @@ taiData* gpiFromGpTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par
     new_flags |= taiData::flgEditOk;
   if(!mbr->HasOption("GROUP_OPT_OK"))
     new_flags |= taiData::flgNoList;
+  if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    new_flags |= taiData::flgAutoApply; // default is to auto-apply!
 
   if (mbr->type->DerivesFrom(&TA_taGroup_impl))
     return new gpiSubGroups(taiMenu::buttonmenu, taiMisc::fonSmall, NULL, typ, host_, par, gui_parent_, new_flags);

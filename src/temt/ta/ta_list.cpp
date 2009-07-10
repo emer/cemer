@@ -160,7 +160,14 @@ void* taPtrList_impl::GetTA_Element_(Variant i, TypeDef*& eltd) const {
     if(rval) { eltd = El_GetType_(rval); return rval; }
   }
   int dx = i.toInt();	// string could be number in disguise -- try that next
-  void* rval = SafeEl_(dx); if (rval) eltd = El_GetType_(rval); return rval;
+  void* rval = SafeEl_(dx);
+  if(rval) {
+    eltd = El_GetType_(rval);
+    return rval;
+  }
+  taMisc::Error("taPtrList_impl: Attempt to access list element with index/name:", i.toString(),
+		"which is out of range or not found -- list size:", String(size));
+  return NULL;
 }
 
 int taPtrList_impl::FindEl_(const void* it) const {

@@ -561,7 +561,7 @@ int	taMisc::undo_depth = 100;
 float	taMisc::undo_new_src_thr = 0.3f;
 bool	taMisc::delete_prompts = false;
 //bool	taMisc::delete_prompts = true;
-int	taMisc::tree_indent = 8; // 12 used to be default, but 8 seems good
+int	taMisc::tree_indent = 10; // 12 used to be default, but 10 seems good
 int	taMisc::program_editor_width = 60;
 int	taMisc::max_menu = 1000; // no cost now in QT for making it large..
 int 	taMisc::search_depth = 4;
@@ -3303,11 +3303,6 @@ String TypeItem::GetLabel() const {
     taMisc::SpaceLabel(rval);
   } else				// do translate spaces..
     rval.gsub('_', ' ');
-  // if has the APPLY_IMMED flag, decorate it so user is aware
-  // now ubiquitous so no longer needed
-//   if (HasOption(opt_APPLY_IMMED)) {
-//     rval.cat('!');
-//   }
   return rval;
 }
 

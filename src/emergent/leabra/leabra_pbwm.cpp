@@ -2180,7 +2180,7 @@ void PFCUnitSpec::Initialize() {
 }
 
 void PFCUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
-  LeabraUnit_Group* ugp = (LeabraUnit_Group*)owner; // assume..
+  LeabraUnit_Group* ugp = (LeabraUnit_Group*)u->owner; // assume..
   u->net += u->act_eq * ugp->misc_float;	      // go netin mod -- weight by actual activation
   inherited::Compute_Conduct(u, net);
 }
@@ -2193,7 +2193,7 @@ void PFCUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
   else {
     u->act = u->act_eq;		// copy back
     Compute_ActFmVm_rate(u, net); 
-    LeabraUnit_Group* ugp = (LeabraUnit_Group*)owner; // assume..
+    LeabraUnit_Group* ugp = (LeabraUnit_Group*)u->owner; // assume..
     u->act = u->act_eq * ugp->misc_float1;	      // net output go mod
   }
 }
