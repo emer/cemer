@@ -2809,18 +2809,23 @@ iTabViewer::iTabViewer(PanelViewer* viewer_, QWidget* parent)
 
 iTabViewer::~iTabViewer()
 {
-  delete m_tabViews;
-  m_tabViews = NULL;
+//  delete m_tabViews;
+//  m_tabViews = NULL;
+  if (m_curTabView) {
+    delete m_curTabView;
+    m_curTabView = NULL;
+  }
 }
 
 void iTabViewer::Init() {
-  m_tabViews = new  iTabView_PtrList();
+//  m_tabViews = new  iTabView_PtrList();
   cur_item = NULL;
   QVBoxLayout* lay = new QVBoxLayout(this);
   lay->setMargin(0);  lay->setSpacing(0);
-  spl_main = new QSplitter(this);
-  lay->addWidget(spl_main);
-  m_curTabView = AddTabView(spl_main);
+  m_curTabView = new iTabView(this, this);
+  lay->addWidget(m_curTabView);
+//  m_tabViews->Add(rval);
+//nn  m_curTabView->show();
 }
 
 void iTabViewer::AddPanel(iDataPanel* panel) {
@@ -2835,20 +2840,6 @@ void iTabViewer::AddTab() {
   tabView()->AddTab();
 }
 
-iTabView* iTabViewer::AddTabView(QWidget* parCtrl, iTabView* splitBuddy) {
-  iTabView* rval;
-  if (splitBuddy) { // split
-    rval = new iTabView(this, parCtrl);
-    m_tabViews->Add(rval);
-    //TODO:
-  } else { // no split
-    rval = new iTabView(this, parCtrl);
-    m_tabViews->Add(rval);
-  }
-  rval->show();
-  return rval;
-}
-
 void iTabViewer::CloseTab() {
   tabView()->CloseTab();
 }
@@ -2858,38 +2849,54 @@ void iTabViewer::Closing(CancelOp& cancel_op) {
 }
 
 void iTabViewer::Constr_post() {
-  for (int i = 0; i < m_tabViews->size; ++i) {
+/*  for (int i = 0; i < m_tabViews->size; ++i) {
     iTabView* itv = m_tabViews->FastEl(i);
     itv->OnWindowBind(this);
+  }*/
+  if (m_curTabView) {
+    m_curTabView->OnWindowBind(this);
   }
 }
 
 void iTabViewer::GetWinState_impl() {
-  for (int i = 0; i < m_tabViews->size; ++i) {
+  /*for (int i = 0; i < m_tabViews->size; ++i) {
     iTabView* itv = m_tabViews->FastEl(i);
     itv->GetWinState();
+  }*/
+  if (m_curTabView) {
+    m_curTabView->GetWinState();
   }
 }
 
 void iTabViewer::SetWinState_impl() {
-  for (int i = 0; i < m_tabViews->size; ++i) {
+  /*for (int i = 0; i < m_tabViews->size; ++i) {
     iTabView* itv = m_tabViews->FastEl(i);
     itv->SetWinState();
+  }*/
+  if (m_curTabView) {
+    m_curTabView->SetWinState();
   }
 }
 
 void iTabViewer::Refresh_impl() {
-  for (int i = 0; i < m_tabViews->size; ++i) {
+ /* for (int i = 0; i < m_tabViews->size; ++i) {
     iTabView* itv = m_tabViews->FastEl(i);
     itv->Refresh();
+  }*/
+  if (m_curTabView) {
+    m_curTabView->Refresh();
   }
 }
 
 void iTabViewer::ResolveChanges_impl(CancelOp& cancel_op) {
-  for (int i = 0; i < m_tabViews->size; ++i) {
+  /*for (int i = 0; i < m_tabViews->size; ++i) {
     iTabView* itv = m_tabViews->FastEl(i);
     if (itv) itv->ResolveChanges(cancel_op);
     if (cancel_op == CO_CANCEL) break;
+  }
+  }*/
+  if (m_curTabView) {
+    m_curTabView->ResolveChanges(cancel_op);
   }
 }
 
@@ -2911,12 +2918,14 @@ end:
 }
 
 void iTabViewer::TabView_Destroying(iTabView* tv) {
-  int idx = m_tabViews->FindEl(tv);
+  if (m_curTabView != tv) return;
+  m_curTabView = NULL;
+ /* int idx = m_tabViews->FindEl(tv);
   m_tabViews->RemoveIdx(idx);
   if (m_curTabView != tv) return;
   // focus next, if any, or prev, if any
   if (idx >= m_tabViews->size) --idx;
-  TabView_Selected(m_tabViews->PosSafeEl(idx)); // NULL if no more
+  TabView_Selected(m_tabViews->PosSafeEl(idx)); // NULL if no more*/
 }
 
 void iTabViewer::TabView_Selected(iTabView* tv) {
@@ -2940,153 +2949,6 @@ void iTabViewer::ShowPanel(iDataPanel* panel) {
 
 void iTabViewer::UpdateTabNames() { // called by a datalink when a tab name might have changed
   tabView()->UpdateTabNames();
-}
-
-void iTabViewer::viewCloseCurrentView() { // closes split, unless it is last
-/*TODO  // We are going to delete the current splitter and the current tabview.
-  // We will reparent the current tabview's buddy to the grandparent splitter.
-
-  if (m_tabViews->size < 2) return; //shouldn't happen, because should be disabled
-  if (m_tabViews->size == 2) { // will only be one left, so disable closing
-    viewCloseCurrentViewAction->setEnabled(false); // only enabled for multi tabs
-  }
-  iTabView* closer = m_curTabView;
-  // get splitter parent, and the buddy tabview
-  //we check type, as a precaution, even though it should be a splitter
-  if (!closer->parentWidget()->inherits("QSplitter")) {
-    cerr << "TabDataViewer::viewCloseCurrentView Unexpected parent for tabview\n";
-    return;
-  }
-  QSplitter* par_spl = (QSplitter*)closer->parentWidget();
-  iTabView* buddy = NULL;
-  const QObjectList& it = par_spl->children();
-  QObject* obj;
-  foreach (obj, it) {
-    if (obj == closer) continue;
-    if (!obj->inherits("iTabView")) continue;
-    buddy = (iTabView*) obj;
-    break;
-  }
-  if (!buddy) {
-    cerr << "TabDataViewer::viewCloseCurrentView Unexpected could not find buddy\n";
-    return;
-  }
-
-
-  // find the splitter grandparent of pair we are modifying -- we get sizes of its panes to fix up after
-  // QSplitter visual widget order is independent of children() order, and is inaccessible, so
-  // we determine if the parent is visually earlier than its buddy, by comparing left/top values
-  bool move_first = false; // will need to move the buddy back to first
-  QSplitter* gpar_spl = NULL;
-  QList<int> gpar_spl_sizes;
-  if (par_spl->parentWidget()->inherits("QSplitter")) {
-    gpar_spl = (QSplitter* )par_spl->parentWidget();
-    gpar_spl_sizes = gpar_spl->sizes(); // easiest way to set new list is to get an old one
-
-    const QObjectList& it = gpar_spl->children();
-    QWidget* widg;
-    foreach (obj, it) {
-      if (obj == par_spl) continue;
-      if (!obj->isWidgetType()) continue;
-      widg = (QWidget*)obj;
-
-      if ((par_spl->x() < widg->x()) || (par_spl->y() < widg->y())) {
-        move_first = true;
-        break;
-      }
-    }
-  }
-  // determine placement of old splitter par in the grandparent
-
-  // ok, set the new tabview as selected, and do close processing on old one
-  TabView_Selected(buddy);
-  bool dummy;
-  closer->Closing(true, dummy);
-
-  // reparent the remaining tabview to its grandparent
-  buddy->reparent(par_spl->parentWidget(), 0, QPoint(), true);
-  par_spl->hide();
-  par_spl->deleteLater();
-  // if grandparent (aka new parent) was splitter (it should have been), then fix up panel order, and sizes
-  if (gpar_spl) {
-    if (move_first) gpar_spl->moveToFirst(buddy);
-    else  gpar_spl->moveToLast(buddy);
-    gpar_spl->setSizes(gpar_spl_sizes);
-  }*/
-}
-
-void iTabViewer::viewSplit(int o) {
-  //NOTE: 'o' is opposite from type of split we are doing, since it represents the splitter type
-
-  // We are going to take the current tab view, replace it (visually) with a splitter, then
-  // put the tab view, and a new tab view, in this splitter. We will also fix up the sizes and
-  // orders of the splitter, and a possible parent splitter, so they are the same as before the split.
-
-  iTabView* old = m_curTabView;
-  QWidget* old_par = old->parentWidget();
-
-  // if old parent is splitter, get it, and save the pane sizes, so we can resize the same after rebuilding
-  QSplitter* old_par_spl = NULL;
-  bool old_par_is_spl = (old_par->inherits("QSplitter"));
-  QList<int> par_spl_sizes;
-  bool move_first = false; // will need to move the new splitter back to first
-  if (old_par_is_spl) {
-    old_par_spl = (QSplitter* )old_par;
-    par_spl_sizes = old_par_spl->sizes(); // easiest way to set new list is to get an old one
-
-    // QSplitter visual widget order is independent of children() order, and is inaccessible, so
-    // we determine order by comparing left/top values
-    const QObjectList& it = old_par_spl->children();
-    QObject* obj;
-    QWidget* widg;
-    foreach (obj, it) {
-      if (obj == old) continue;
-      if (!obj->isWidgetType()) continue;
-      widg = (QWidget*)obj;
-
-      if ((old->x() < widg->x()) || (old->y() < widg->y())) {
-        move_first = true;
-        break;
-      }
-    }
-  }
-
-  // get available space (we will divide it equally)
-  int spc = ((Qt::Orientation)o == Qt::Horizontal) ? old->width() : old->height();
-
-  // create a new splitter whose parent is the old parent of the splitee tabview
-  QSplitter* splNew = new QSplitter((Qt::Orientation)o, old->parentWidget());
-  // reparent the existing tabview to the new splitter
-//Qt3  old->reparent(splNew, 0, QPoint(), true);
-  splNew->setParent(old);
-  splNew->show();
-
-  // create the new tab view, and split space evenly
-  //iTabView* new_tv =
-  AddTabView(splNew, old);
-  QList<int> new_spl_sizes = splNew->sizes(); // easiest way to set new list is to get an old one
-  new_spl_sizes[0] = spc / 2;
-  new_spl_sizes[1] = spc / 2;
-  splNew->setSizes(new_spl_sizes);
-
-  // fix up the visual order and size to the way it was before reparenting
-  if (old_par_is_spl) {
-    if (move_first)// will need to move our new pair back into first place in parent splitter
-      old_par_spl->insertWidget(0, splNew);//old_par_spl->moveToFirst(splNew);
-    else
-      old_par_spl->addWidget(splNew); //old_par_spl->moveToLast(splNew);
-    old_par_spl->setSizes(par_spl_sizes);
-  }
-  // divide the space evenly
-//TODO:  viewCloseCurrentViewAction->setEnabled(true); // only enabled for multi tabs
-}
-
-void iTabViewer::viewSplitVertical() {
-  viewSplit(Qt::Horizontal); //note: Hor is the orientation of the splitter, which is opposite to how we split window
-}
-
-void iTabViewer::viewSplitHorizontal() {
-  viewSplit(Qt::Vertical); //note: Ver is the orientation of the splitter, which is opposite to how we split window
 }
 
 

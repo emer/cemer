@@ -724,17 +724,15 @@ class TA_API iTabViewer : public iFrameViewer { // viewer window used for tabbed
 INHERITED(iFrameViewer)
 friend class iTabView;
 public:
-  QSplitter*		spl_main; // toplevel guy
-  
   virtual taiDataLink*	sel_link() const {return (cur_item) ? cur_item->link() : NULL;} // datalink of selected item that is controlling the current data panel view, ex. datalink of the selected tree node in a browser; return NULL if unknown, mult-select is in force, etc. -- controls things like clip handling
   virtual MemberDef*	sel_md() const {return (cur_item) ? cur_item->md() : NULL;}; // as for sel_link
   override int		stretchFactor() const {return 4;} // 3/2 default
   iTabView*		tabView() {return m_curTabView;} // currently active
-  iTabView_PtrList*	tabViews() {return m_tabViews;} // currently active
+//  iTabView_PtrList*	tabViews() {return m_tabViews;} // currently active
 
   virtual void		AddPanel(iDataPanel* panel); // adds a new pane, and sets active in current tab
   void			AddPanelNewTab(iDataPanel* panel, bool lock = false); // adds a new tab, sets panel active in it, locks if requested
-  virtual iTabView*	AddTabView(QWidget* parCtrl, iTabView* splitBuddy = NULL); // adds a new tab view, optionally as a split
+//obs  virtual iTabView*	AddTabView(QWidget* parCtrl); // adds a new tab view
   void 			ShowLink(taiDataLink* link, bool not_in_cur = false);
   void			ShowPanel(iDataPanel* panel); // shows the panel, according to showing rules
   
@@ -749,22 +747,17 @@ public slots:
   virtual void		CloseTab(); // causes current tab to close (unless only 1 tab)
   void			Closing(CancelOp& cancel_op); // override
   
-  virtual void 		viewCloseCurrentView();
-  virtual void 		viewSplitVertical();
-  virtual void 		viewSplitHorizontal();
-
 protected: // IDataViewWidget i/f
   override void		Refresh_impl(); 
 
 protected:
-  iTabView_PtrList*	m_tabViews; // all created tab views
+//  iTabView_PtrList*	m_tabViews; // all created tab views
   iTabView*		m_curTabView; // tab view (split) that currently has the focus
   ISelectable*		cur_item; // the last item that was curItem -- NOTE: somewhat dangerous to cache, but according to spec, src_host should issue a new notify if this deletes
   void			Constr_Menu_impl(); // override
   override void		Constr_post(); // called virtually, in DV::Constr_post 
   override void		ResolveChanges_impl(CancelOp& cancel_op);
   override void 	SelectionChanged_impl(ISelectableHost* src_host); // called when sel changes
-  void 			viewSplit(int o);
   override void 	GetWinState_impl();
   override void		SetWinState_impl();
 
