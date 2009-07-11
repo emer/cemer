@@ -26,7 +26,7 @@
 //   PVe = excitatory: primary reward (just uses ExtRewLayerSpec -- nothing specific for pvlv)
 //   PVi = inhibitory: cancelling expected primary rewards
 //   PVr = detector of time when rewards are present (fast to learn, slow to extinguish,
-// 	   learns based on 1/0 values instead of actual reward magnitudes)
+// 	   learns based on 1/.5 values instead of actual reward magnitudes)
 // LV learned value: learns only at the time of primary (expected) rewards,
 //         free to fire at time CS's come on
 //   LVe = excitatory: rapidly learns excitatory CS assocs
@@ -39,7 +39,7 @@
 //////////////////////////////////////////
 
 class LEABRA_API PVConSpec : public LeabraConSpec {
-  // primary value connection spec: learns using delta rule from PVe - PVi values -- does not use hebb or err_sb parameters
+  // pvlv connection spec: learns using delta rule from act_p - act_m values -- does not use hebb or err_sb parameters
 INHERITED(LeabraConSpec)
 public:
   inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
@@ -100,7 +100,7 @@ public:
 
   virtual float	Compute_PVDa(LeabraLayer* lay, LeabraNetwork* net);
   // compute da contribution from PV
-    virtual float Compute_PVDa_ugp(Unit_Group* ugp, float pve_val);
+    virtual float Compute_PVDa_ugp(Unit_Group* ugp, float pve_val, LeabraNetwork* net);
     // #IGNORE
   virtual void	Update_PVPrior(LeabraLayer* lay, LeabraNetwork* net);
   // update the prior PV value, stored in pv unit misc_1 values -- at very end of trial
@@ -169,11 +169,10 @@ private:
 };
 
 class LEABRA_API PVDetectSpec : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for detecting if a primary value is present or expected
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for detecting if a primary value is present or expected -- just learns with value 1 for PV present, .5 for absent
 INHERITED(taOBase)
 public:
-  float		thr_min;	// #DEF_0.2 minimum threshold on PVr value, below which PV is considered present (i.e., punishment) -- PVr learns a 0 for all punishment-valence cases, regardless of value
-  float		thr_max;	// #DEF_0.8 maximum threshold on PVr value, above which PV is considered present (i.e., reward) -- PVr learns a 1 for all reward-valence cases, regardless of value
+  float		thr;	// #DEF_0.7 threshold on PVr value, above which PV is considered present (i.e., reward) -- PVr learns a 1 for all reward-valence cases, regardless of value, and .5 for reward absent
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(PVDetectSpec);
@@ -183,7 +182,7 @@ private:
 };
 
 class LEABRA_API PVrLayerSpec : public ScalarValLayerSpec {
-  // primary value reward detection layer: learns when rewards are expected to occur -- gets a 1 for positive rewards (> PVe.norew_val) and a 0 for punishments (< PVe.norew_val)
+  // primary value reward detection layer: learns when rewards are expected to occur -- gets a 1 for any primary value feedback (reward or punishment), and .5 otherwise
 INHERITED(ScalarValLayerSpec)
 public:
   PVDetectSpec	pv_detect;	// primary reward value detection spec: detect if a primary reward is expected based on PVr value
@@ -196,7 +195,7 @@ public:
 
   // overrides:
   override bool	Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
-  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
   override void	Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net);
   override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
@@ -243,7 +242,7 @@ public:
 
   virtual float	Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay, LeabraNetwork* net);
   // compute da contribution from Lv, based on lve_layer and lvi_layer activations (multiple subgroups allowed)
-    virtual float Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp);
+    virtual float Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, LeabraNetwork* net);
     // #IGNORE
 
   virtual void	Update_LVPrior(LeabraLayer* lay, LeabraNetwork* net);
@@ -286,13 +285,53 @@ private:
 //	  Novelty Value Layer (NV)	//
 //////////////////////////////////////////
 
+class LEABRA_API NVConSpec : public PVConSpec {
+  // novelty value connection spec: learns using delta rule from act_p - act_m values -- does not use hebb or err_sb parameters -- has decay to refresh novelty if not seen for a while..
+INHERITED(PVConSpec)
+public:
+  float		decay;		// amount to decay weight values every time they are updated, restoring some novelty (also multiplied by lrate)
+
+  inline void C_Compute_Weights_LeabraCHL(LeabraCon* cn, float dkfact) {
+    float lin_wt = LinFmSigWt(cn->wt);
+    cn->dwt -= dkfact * lin_wt;
+    if(cn->dwt != 0.0f) {
+      cn->wt = SigFmLinWt(lin_wt + cn->dwt);
+    }
+    cn->pdw = cn->dwt;
+    cn->dwt = 0.0f;
+  }
+
+  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    float dkfact = cur_lrate * decay;
+    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i), dkfact));
+    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+  }
+
+  inline void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    float dkfact = cur_lrate * decay;
+    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i), dkfact));
+    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+  }
+
+  inline void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    float dkfact = cur_lrate * decay;
+    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i), dkfact));
+    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+  }
+
+  TA_SIMPLE_BASEFUNS(NVConSpec);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
 class LEABRA_API NVSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for novelty value learning
 INHERITED(taOBase)
 public:
   float		da_gain;	// #DEF_1 gain for novelty value dopamine signal
   float		val_thr;	// #DEF_0.1 threshold for value (training value is 0) -- value is zero below this threshold
-  float		prior_discount;	// #EXPERT #MIN_0 #MAX_1 how much to discount the prior NV delta value (nvd = NV - val_thr) in computing the net NV dopamine signal (NV DA = nvd_t - prior_discount * nvd_t-1)
+  float		prior_discount;	// #MIN_0 #MAX_1 how much to discount the prior NV delta value (nvd = NV - val_thr) in computing the net NV dopamine signal (NV DA = nvd_t - prior_discount * nvd_t-1)
   bool		er_reset_prior;	// #EXPERT #DEF_true reset prior delta value (nvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
 
   void 	Defaults()	{ Initialize(); }

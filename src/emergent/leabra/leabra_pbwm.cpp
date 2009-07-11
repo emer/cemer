@@ -154,7 +154,7 @@ void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
     LeabraUnit* snc_u = (LeabraUnit*)snc_ugp->FastEl(0);
 //    LeabraUnit* patch_u = (LeabraUnit*)patch_ugp->FastEl(0);
 
-    float str_da = patch_sp->Compute_LVDa_ugp(patch_ugp, lvi_ugp); // per stripe
+    float str_da = patch_sp->Compute_LVDa_ugp(patch_ugp, lvi_ugp, net); // per stripe
     if(er_avail) {
       snc_u->dav = da.da_gain * pv_da;
     }
@@ -1637,10 +1637,10 @@ void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
 /////////////////////////////////////////////////////
 
 void XMatrixMiscSpec::Initialize() {
+  perf_gain = 0.1f;
+  out_pvr_da = 0.1f;
   neg_da_bl = 0.0002f;
   neg_gain = 1.5f;
-  perf_gain = 0.1f;
-  snr_err_da = 1.0f;
   no_snr_mod = false;
 }
 
@@ -1882,7 +1882,7 @@ void XMatrixLayerSpec::Compute_DaTonicMod(LeabraLayer* lay, LeabraUnit_Group* mu
 }
 
 void XMatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mugp,
-					 int gpidx, LeabraNetwork*) {
+					 int gpidx, LeabraNetwork* net) {
   int da_prjn_idx;
   LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_PVLVDaLayerSpec);
   PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
@@ -1894,6 +1894,21 @@ void XMatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mug
   FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
     XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(idx % 3);
 
+    // apply da selectively to out vs mnt to bias
+    if(matrix.out_pvr_da > 0.0f) {
+      if(net->pv_detected) {
+	if(go_no == XPFCGateSpec::GATE_MNT_GO) {
+	  u->dav = tonic_da; 	// no da for mnt go
+	}
+	else {			   // recompute wth out_pvr_da
+	  u->dav += matrix.out_pvr_da;
+	}
+      }
+      else {
+	if(go_no == XPFCGateSpec::GATE_OUT_GO) 
+	  u->dav = tonic_da; // no da for out go
+      }
+    }
     // need to separate out the tonic and non-tonic because tonic contributes with contrast.gain
     // but perf is down-modulated by matrix.perf_gain..
     float non_tonic = u->dav - tonic_da;
@@ -1908,25 +1923,42 @@ void XMatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mu
   int snr_prjn_idx = 0;
   LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_XSNrThalLayerSpec);
 
-  bool stripe_fired_go = false;
-  if(mugp->misc_state1 != XPFCGateSpec::INIT_STATE)
-    stripe_fired_go = true;	// we did it!
+  LeabraUnit_Group* snrug = (LeabraUnit_Group*)snr_lay->units.gp[gpidx];
+  LeabraUnit* snr_mnt_u = (LeabraUnit*)snrug->Leaf(0);
+  LeabraUnit* snr_out_u = (LeabraUnit*)snrug->Leaf(1);
+
+  // computed live in the PFC -- we'll be 1 trial behind..
+  XPFCGateSpec::GateSignal gate_sig = (XPFCGateSpec::GateSignal)mugp->misc_state2;
     
   int idx = 0;
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
     XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(idx % 3);
-    LeabraUnit_Group* snrug = (LeabraUnit_Group*)snr_lay->units.gp[gpidx];
-    LeabraUnit* snr_mnt_u = (LeabraUnit*)snrug->Leaf(0);
-    LeabraUnit* snr_out_u = (LeabraUnit*)snrug->Leaf(1);
 
     // critical signal is in the minus phase
     float gating_act = u->act_m;
     float snrthal_act = MAX(snr_mnt_u->act_m, snr_out_u->act_m);
 
-    if(!stripe_fired_go)
-      snrthal_act = 0.0f;
+    // todo: potential discontinuity here with perf mod, both in contrast and in 
+    // modulation by type of go that occurred vs. pv_detected modulation..
+
+    if(matrix.out_pvr_da > 0.0f && net->pv_detected) {
+      // add in the perf gain da so we don't get artifical dips here..
+      u->dav += matrix.perf_gain * matrix.out_pvr_da;
+    }
+
+    if(gate_sig == XPFCGateSpec::GATE_NOGO)
+      snrthal_act = 0.0f;	// if we don't go, nothing happens
+    else {
+      if(gate_sig == XPFCGateSpec::GATE_MNT_GO && go_no == XPFCGateSpec::GATE_OUT_GO) {
+	snrthal_act = 0.0f;	// don't reward output for mnt gating
+      }
+      else if(gate_sig == XPFCGateSpec::GATE_OUT_GO && go_no == XPFCGateSpec::GATE_MNT_GO) {
+	snrthal_act = 0.0f;	// don't reward mnt for output gating
+      }
+    }
+
     if(matrix.no_snr_mod)	// disable!
       snrthal_act = 1.0f;
 
@@ -1934,12 +1966,6 @@ void XMatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mu
     if(mugp->misc_state1 == XPFCGateSpec::NOGO_RND_GO) {
       dav += rnd_go.nogo_da; 
     }
-
-//     if((gate_sig == XPFCGateSpec::GATE_NOGO) && (net->phase_no == 1) &&
-//        snr_lay->HasExtFlag(Unit::COMP) && (snrsu->targ > .5f)) {
-//       //  output gating -- get plus-phase err signal if avail, as COMP input to snr layer
-//       dav += matrix.snr_err_da;
-//     }
 
     u->dav = dav;		// make it show up in display
     Compute_DaMod_Contrast(u, dav, gating_act, go_no);
@@ -2476,20 +2502,24 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 
     ugp->misc_state2 = gate_sig; // store the raw gating signal itself
 
-    if(net->phase_no == 0) {	 // minus phase -- only care about clearing prior storage
+    if((net->phase_no == 0) && (gate_sig == XPFCGateSpec::GATE_MNT_GO)) {
+      // minus phase -- only care about maint go firing, and clearing prior storage
       if(ugp->misc_state > 0) { // full stripe
-	if(gate_sig == XPFCGateSpec::GATE_MNT_GO) {
-	  ugp->misc_state1 = XPFCGateSpec::MAINT_MNT_GO; // record action for later store
-	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);
-	}
+	ugp->misc_state1 = XPFCGateSpec::MAINT_MNT_GO; // record action for later store
+	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);
+	ugp->misc_state = 0;	// cleared
       }
       else {
-	if((ugp->misc_state1 == XPFCGateSpec::INIT_STATE) &&
-	   (gate_sig == XPFCGateSpec::GATE_MNT_GO)) {
+	if(ugp->misc_state1 == XPFCGateSpec::INIT_STATE)
 	  ugp->misc_state1 = XPFCGateSpec::EMPTY_MNT_GO; // record action for later store
-	}
       }
     }
+
+    // if we did a maintenance go firing at any point during trial, it trumps anything..
+    if(ugp->misc_state1 != XPFCGateSpec::INIT_STATE) {
+      ugp->misc_state2 = gate_sig = XPFCGateSpec::GATE_MNT_GO;
+    }
+
     // ignore gating signals during plus phase -- only update at very end
   }
   SendGateStates(lay, net);

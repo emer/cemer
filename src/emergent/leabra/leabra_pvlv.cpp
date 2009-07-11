@@ -183,12 +183,15 @@ void PViLayerSpec::Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
 // so even though this supports multiple PVi's, it does not support multiple PVe's in a 
 // pairwise manner, even though it is possible to have multiple PVe's
 
-float PViLayerSpec::Compute_PVDa_ugp(Unit_Group* pvi_ugp, float pve_val) {
+float PViLayerSpec::Compute_PVDa_ugp(Unit_Group* pvi_ugp, float pve_val, LeabraNetwork* net) {
   LeabraUnit* u = (LeabraUnit*)pvi_ugp->FastEl(0);
 
-  // note: da ONLY called in plus or later phase, so minus phase value is valid
-  float pvd = pve_val - MAX(u->act_m, pv.min_pvi);
-  float pv_da = pvd - u->misc_1; // delta relative to prior
+  float pvd = 0.0f;
+  float pv_da = 0.0f;
+  if(net->phase_no > 0) {
+    pvd = pve_val - MAX(u->act_m, pv.min_pvi);
+    pv_da = pvd - u->misc_1; // delta relative to prior
+  }
 
   for(int i=0;i<pvi_ugp->size;i++) {
     LeabraUnit* du = (LeabraUnit*)pvi_ugp->FastEl(i);
@@ -207,7 +210,7 @@ float PViLayerSpec::Compute_PVDa(LeabraLayer* lay, LeabraNetwork* net) {
   int n_da = 0;
   UNIT_GP_ITR
     (lay,
-     pv_da += Compute_PVDa_ugp(ugp, pve_val);
+     pv_da += Compute_PVDa_ugp(ugp, pve_val, net);
      n_da++;
      );
   if(n_da > 0) {
@@ -283,8 +286,7 @@ void PVrConSpec::Initialize() {
 }
 
 void PVDetectSpec::Initialize() {
-  thr_min = 0.2f;
-  thr_max = 0.8f;
+  thr = 0.7f;
 }
 
 void PVrLayerSpec::Initialize() {
@@ -377,21 +379,23 @@ bool PVrLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 bool PVrLayerSpec::Compute_PVDetect(LeabraLayer* lay, LeabraNetwork* net) {
   bool pv_detected = false;
   LeabraUnit* pvru = (LeabraUnit*)lay->units.Leaf(0);
-  if((pvru->act_eq > pv_detect.thr_max) ||
-     (pvru->act_eq < pv_detect.thr_min))
+  if(pvru->act_eq > pv_detect.thr)
     pv_detected = true;
   net->pv_detected = pv_detected;
+  net->pvlv_pvr = pvru->act_eq;
   return pv_detected;
+}
+
+void PVrLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_CycleStats(lay, net);
+  if(net->phase_no == 0)
+    Compute_PVDetect(lay, net);	// detect in the minus phase -- continuous!
 }
 
 void PVrLayerSpec::Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) {
   float pvr_targ_val = 0.5f;
-  if(net->ext_rew_avail) {
-    if(net->ext_rew < net->norew_val)
-      pvr_targ_val = 0.0f;
-    else
-      pvr_targ_val = 1.0f;
-  }
+  if(net->ext_rew_avail)
+    pvr_targ_val = 1.0f;	// any kind of primary reward is trained with a 1
 
   UNIT_GP_ITR
     (lay, 
@@ -400,14 +404,6 @@ void PVrLayerSpec::Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
      ClampValue_ugp(ugp, net); 	// apply new value
      Compute_ExtToPlus_ugp(ugp, net); // copy ext values to act_p
      );
-}
-
-void PVrLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::PostSettle(lay, net);
-
-  if(net->phase_no == 0) {	// compute after first (minus) phase
-    Compute_PVDetect(lay, net);
-  }
 }
 
 void PVrLayerSpec::Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) {
@@ -551,7 +547,7 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
   }
 }
 
-float LVeLayerSpec::Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp) {
+float LVeLayerSpec::Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, LeabraNetwork* net) {
   LeabraUnit* lveu = (LeabraUnit*)lve_ugp->FastEl(0);
   LeabraUnit* lviu = (LeabraUnit*)lvi_ugp->FastEl(0);
 
@@ -573,7 +569,7 @@ float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
     for(gi=0; gi<lve_lay->units.gp.size; gi++) {
       Unit_Group* lve_ugp = (Unit_Group*)lve_lay->units.gp[gi];
       Unit_Group* lvi_ugp = (Unit_Group*)lvi_lay->units.gp[gi];
-      lv_da += Compute_LVDa_ugp(lve_ugp, lvi_ugp);
+      lv_da += Compute_LVDa_ugp(lve_ugp, lvi_ugp, net);
     }
     lv_da /= (float)lve_lay->units.gp.size; // average!
   }
@@ -584,7 +580,7 @@ float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
     else			      lvi_ugp = (Unit_Group*)&(lvi_lay->units);
     for(gi=0; gi<lve_lay->units.gp.size; gi++) {
       Unit_Group* lve_ugp = (Unit_Group*)lve_lay->units.gp[gi];
-      lv_da += Compute_LVDa_ugp(lve_ugp, lvi_ugp);
+      lv_da += Compute_LVDa_ugp(lve_ugp, lvi_ugp, net);
     }
     lv_da /= (float)lve_lay->units.gp.size; // average!
   }
@@ -595,7 +591,7 @@ float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
     else			      lve_ugp = (Unit_Group*)&(lve_lay->units);
     for(gi=0; gi<lvi_lay->units.gp.size; gi++) {
       Unit_Group* lvi_ugp = (Unit_Group*)lvi_lay->units.gp[gi];
-      lv_da += Compute_LVDa_ugp(lve_ugp, lvi_ugp);
+      lv_da += Compute_LVDa_ugp(lve_ugp, lvi_ugp, net);
     }
     lv_da /= (float)lvi_lay->units.gp.size; // average!
   }
@@ -606,7 +602,7 @@ float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
     Unit_Group* lvi_ugp;
     if(lvi_lay->units.gp.size > 0)    lvi_ugp = (Unit_Group*)lvi_lay->units.gp[0];
     else			      lvi_ugp = (Unit_Group*)&(lvi_lay->units);
-    lv_da = Compute_LVDa_ugp(lve_ugp, lvi_ugp);
+    lv_da = Compute_LVDa_ugp(lve_ugp, lvi_ugp, net);
   } 
   return lv_da;
 }
@@ -681,6 +677,10 @@ bool LVeLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 //////////////////////////////////////////
 //	NV (Novelty Value) Layer Spec	//
 //////////////////////////////////////////
+
+void NVConSpec::Initialize() {
+  decay = 0.0f;
+}
 
 void NVSpec::Initialize() {
   da_gain = 1.0f;
@@ -1300,8 +1300,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   nvsp->bias_val.un = ScalarValBias::GC;
   nvsp->bias_val.wt = ScalarValBias::NO_WT;
   nvsp->bias_val.val = 1.0f;
-  pvrsp->pv_detect.thr_min = .2f;
-  pvrsp->pv_detect.thr_max = .8f;
+//   pvrsp->pv_detect.thr_min = .2f;
+//   pvrsp->pv_detect.thr_max = .8f;
 
   pv_units->SetUnique("act", true);
   pv_units->SetUnique("act_fun", true);

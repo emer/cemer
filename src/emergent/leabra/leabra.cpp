@@ -4501,6 +4501,7 @@ void LeabraNetwork::Initialize() {
   norew_val = 0.5f;
   avg_ext_rew = 0.0f;
   pvlv_pvi = 0.0f;
+  pvlv_pvr = 0.0f;
   pvlv_lve = 0.0f;
   pvlv_lvi = 0.0f;
   pv_detected = false;
@@ -4586,6 +4587,7 @@ void LeabraNetwork::Init_Stats() {
   norew_val = 0.5f;
   avg_ext_rew = 0.0f;
   pvlv_pvi = 0.0f;
+  pvlv_pvr = 0.0f;
   pvlv_lve = 0.0f;
   pvlv_lvi = 0.0f;
   pv_detected = false;
