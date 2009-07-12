@@ -1637,9 +1637,10 @@ void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
 /////////////////////////////////////////////////////
 
 void XMatrixMiscSpec::Initialize() {
-  perf_gain = 0.1f;
-  out_pvr_da = 0.2f;
-  mnt_nogo_da = 2.0f;
+  mnt_nogo_da = 20.0f;
+  empty_go_da = 1.0f;
+  out_pvr_da = 20.0f;
+  perf_gain = 0.0f;
   neg_da_bl = 0.0002f;
   neg_gain = 1.5f;
   no_snr_mod = false;
@@ -1881,7 +1882,7 @@ void XMatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mug
       }
       else {			// otherwise, bias to maintain!
 	if(go_no != XPFCGateSpec::GATE_OUT_GO)  {
-	  new_dav = cur_dav;	// should have LVe evaluation of this item
+	  new_dav = cur_dav + matrix.empty_go_da; // cur_dav should have LVe evaluation of this item
 	}
 	else {
 	  new_dav = 0.0f;	// no da for OUT Go in mnt go 
