@@ -574,8 +574,9 @@ class LEABRA_API XMatrixMiscSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
 INHERITED(taOBase)
 public:
-  float		perf_gain;	// #DEF_0.1 performance effect da gain -- in minus phase
-  float		out_pvr_da;	// if PVr detects a reward trial is coming, this amount of peformance dopamine is provided to bias the output gating units to get them to respond instead of maint gating (or nogo)
+  float		perf_gain;	// #DEF_0.1 performance effect da gain -- multiplies naturally-computed da values (mainly just LV) in minus phase -- does NOT multiply the following additional perf da factors
+  float		mnt_nogo_da;	// for stripes that are maintaining, amount of NoGo (negative dopamine) performance da mod, only if not on an output trial as determined by PVr -- this is critical for enabling robust maintenance 
+  float		out_pvr_da;	// if PVr detects a reward trial is coming, amount of Go (positive dopamine) peformance da mod to bias the output gating units to respond instead of maint or nogo
   float		neg_da_bl;	// #DEF_0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
   float		neg_gain;	// #DEF_1.5 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
   bool		no_snr_mod;	// #DEF_false #EXPERT disable the Da learning modulation by SNrThal ativation (this is only to demonstrate how important it is)
@@ -587,6 +588,10 @@ private:
   void	Destroy()	{ };
 };
 
+// matrix unit misc_ var docs
+// * misc_1 = patch LVe value for patch-modulated noise
+// * misc_2 = performance da value in minus phase, carried over to plus phase
+
 class LEABRA_API XMatrixLayerSpec : public LeabraLayerSpec {
   // eXperimental basal ganglia matrix layer, integrates maintenance and output gating
 INHERITED(LeabraLayerSpec)
@@ -596,13 +601,8 @@ public:
   MatrixGoNogoGainSpec	go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
   MatrixRndGoSpec	rnd_go;		// matrix random Go firing for nogo firing stripes case
 
-  virtual void 	Compute_DaMod_NoContrast(LeabraUnit* u, float dav, int go_no);
-  // apply given dopamine modulation value to the unit, based on whether it is a go (0) or nogo (1); no contrast enancement based on activation
-  virtual void 	Compute_DaMod_Contrast(LeabraUnit* u, float dav, float gating_act, int go_no);
+  virtual void 	Compute_DaMod(LeabraUnit* u, float dav, float gating_act, int go_no);
   // apply given dopamine modulation value to the unit, based on whether it is a go (0) or nogo (1); contrast enhancement based on activation (gating_act)
-  virtual void 	Compute_DaTonicMod(LeabraLayer* lay, LeabraUnit_Group* mugp,
-				   int gpidx, LeabraNetwork* net);
-  // compute tonic da modulation (for pfc gating units in first two phases)
   virtual void 	Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mugp,
 				  int gpidx, LeabraNetwork* net);
   // compute dynamic da modulation; performance modulation, not learning (second minus phase)

@@ -135,7 +135,7 @@ void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
   if(nv_lay) {
     lv_da += nvls->Compute_NVDa(nv_lay, net);
   }
-  float pv_da = pvils->Compute_PVDa(pvi_lay, net);
+  float pv_da = da.pv_gain * pvils->Compute_PVDa(pvi_lay, net);
   bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
 
   Unit_Group* lvi_ugp;
@@ -1638,7 +1638,8 @@ void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
 
 void XMatrixMiscSpec::Initialize() {
   perf_gain = 0.1f;
-  out_pvr_da = 0.1f;
+  out_pvr_da = 0.2f;
+  mnt_nogo_da = 2.0f;
   neg_da_bl = 0.0002f;
   neg_gain = 1.5f;
   no_snr_mod = false;
@@ -1810,74 +1811,35 @@ void XMatrixLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR(lay, 
 	      LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
 	      u->misc_1 = 0.0f;
+	      u->misc_2 = 0.0f;
 	      );
   LabelUnits(lay);
 }
 
-void XMatrixLayerSpec::Compute_DaMod_NoContrast(LeabraUnit* u, float dav, int go_no) {
+void XMatrixLayerSpec::Compute_DaMod(LeabraUnit* u, float dav, float act_val, int go_no) {
   if(go_no == (int)XPFCGateSpec::GATE_NOGO) {
     if(dav >= 0.0f) {
       u->vcb.g_h = 0.0f;
-      u->vcb.g_a = dav;
-    }
-    else {
-      u->vcb.g_h = -dav;
-      u->vcb.g_a = 0.0f;
-    }
-  }
-  else {			// must be a GO
-    if(dav >= 0.0f)  { 
-      u->vcb.g_h = dav;
-      u->vcb.g_a = 0.0f;
-    }
-    else {
-      u->vcb.g_h = 0.0f;
-      u->vcb.g_a = -dav;
-    }
-  }
-}
-
-void XMatrixLayerSpec::Compute_DaMod_Contrast(LeabraUnit* u, float dav, float act_val, int go_no) {
-  if(go_no == (int)XPFCGateSpec::GATE_NOGO) {
-    if(dav >= 0.0f) {
-      u->vcb.g_h = 0.0f;
-      u->vcb.g_a = contrast.gain * dav * ((1.0f - contrast.nogo_p) + (contrast.nogo_p * act_val));
+      u->vcb.g_a = dav * ((1.0f - contrast.nogo_p) + (contrast.nogo_p * act_val));
       if(go_nogo_gain.on) u->vcb.g_a *= go_nogo_gain.nogo_p;
     }
     else {
-      u->vcb.g_h = -matrix.neg_gain * contrast.gain * dav * ((1.0f - contrast.nogo_n) + (contrast.nogo_n * act_val));
+      u->vcb.g_h = -matrix.neg_gain * dav * ((1.0f - contrast.nogo_n) + (contrast.nogo_n * act_val));
       if(go_nogo_gain.on) u->vcb.g_h *= go_nogo_gain.nogo_n;
       u->vcb.g_a = 0.0f;
     }
   }
   else {			// must be a GO
     if(dav >= 0.0f)  { 
-      u->vcb.g_h = contrast.gain * dav * ((1.0f - contrast.go_p) + (contrast.go_p * act_val));
+      u->vcb.g_h = dav * ((1.0f - contrast.go_p) + (contrast.go_p * act_val));
       if(go_nogo_gain.on) u->vcb.g_h *= go_nogo_gain.go_p;
       u->vcb.g_a = 0.0f;
     }
     else {
       u->vcb.g_h = 0.0f;
-      u->vcb.g_a = -matrix.neg_gain * contrast.gain * dav * ((1.0f - contrast.go_n) + (contrast.go_n * act_val));
+      u->vcb.g_a = -matrix.neg_gain * dav * ((1.0f - contrast.go_n) + (contrast.go_n * act_val));
       if(go_nogo_gain.on) u->vcb.g_a *= go_nogo_gain.go_n;
     }
-  }
-}
-
-void XMatrixLayerSpec::Compute_DaTonicMod(LeabraLayer* lay, LeabraUnit_Group* mugp, 
-					  int gpidx, LeabraNetwork*) {
-  int da_prjn_idx;
-  LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_PVLVDaLayerSpec);
-  PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
-  float dav = contrast.gain * dals->da.tonic_da;
-  int idx = 0;
-  LeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
-    XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(idx % 3);
-    u->dav = dav;		// accurately reflect tonic modulation!
-    Compute_DaMod_NoContrast(u, dav, go_no);
-    idx++;
   }
 }
 
@@ -1888,32 +1850,48 @@ void XMatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mug
   PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
   float tonic_da = dals->da.tonic_da;
 
+  int pfc_mnt_cnt = mugp->misc_state; // is pfc maintaining or not?
+
+  int gp_sz = mugp->leaves / 3;
+
   int idx = 0;
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
-    XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(idx % 3);
+    XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(idx / gp_sz);
+
+    float gating_act = u->act_eq; // current activity
+
+    float cur_dav = matrix.perf_gain * (u->dav - tonic_da); // exclude tonic
+    float new_dav = 0.0f;
 
     // apply da selectively to out vs mnt to bias
-    if(matrix.out_pvr_da > 0.0f) {
-      if(net->pv_detected) {
-	if(go_no == XPFCGateSpec::GATE_MNT_GO) {
-	  u->dav = tonic_da; 	// no da for mnt go
-	}
-	else {			   // recompute wth out_pvr_da
-	  u->dav += matrix.out_pvr_da;
-	}
+    if(net->pv_detected) {
+      // only if pfc is maintaining, bias output gating
+      if(pfc_mnt_cnt > 0 && (go_no != XPFCGateSpec::GATE_MNT_GO)) {
+	new_dav = cur_dav + matrix.out_pvr_da; // cur_dav is almost certainly 0
       }
-      else {
-	if(go_no == XPFCGateSpec::GATE_OUT_GO) 
-	  u->dav = tonic_da; // no da for out go
+      else {			   // recompute wth out_pvr_da
+	new_dav = 0.0f;	   // no da for MNT GO in out go situation
       }
     }
-    // need to separate out the tonic and non-tonic because tonic contributes with contrast.gain
-    // but perf is down-modulated by matrix.perf_gain..
-    float non_tonic = u->dav - tonic_da;
-    float dav = contrast.gain * (tonic_da + matrix.perf_gain * non_tonic);
-    Compute_DaMod_NoContrast(u, dav, go_no);
+    else {			// not a PV trial
+      if(pfc_mnt_cnt > 0) {	// currently maintaining: bias NoGo for everything
+	new_dav = -matrix.mnt_nogo_da;
+      }
+      else {			// otherwise, bias to maintain!
+	if(go_no != XPFCGateSpec::GATE_OUT_GO)  {
+	  new_dav = cur_dav;	// should have LVe evaluation of this item
+	}
+	else {
+	  new_dav = 0.0f;	// no da for OUT Go in mnt go 
+	}
+      }
+    }
+    float dav = contrast.gain * (new_dav + tonic_da);
+    u->dav = dav;		// record visually
+    u->misc_2 = dav;		// and for learn mod
+    Compute_DaMod(u, dav, gating_act, go_no);
     idx++;
   }
 }
@@ -1927,26 +1905,28 @@ void XMatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mu
   LeabraUnit* snr_mnt_u = (LeabraUnit*)snrug->Leaf(0);
   LeabraUnit* snr_out_u = (LeabraUnit*)snrug->Leaf(1);
 
+  int da_prjn_idx;
+  LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_PVLVDaLayerSpec);
+  PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
+  float tonic_da = dals->da.tonic_da;
+
   // computed live in the PFC -- we'll be 1 trial behind..
   XPFCGateSpec::GateSignal gate_sig = (XPFCGateSpec::GateSignal)mugp->misc_state2;
+
+  int gp_sz = mugp->leaves / 3;
     
   int idx = 0;
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
-    XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(idx % 3);
+    XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(idx / gp_sz);
 
     // critical signal is in the minus phase
     float gating_act = u->act_m;
     float snrthal_act = MAX(snr_mnt_u->act_m, snr_out_u->act_m);
 
-    // todo: potential discontinuity here with perf mod, both in contrast and in 
-    // modulation by type of go that occurred vs. pv_detected modulation..
-
-    if(matrix.out_pvr_da > 0.0f && net->pv_detected) {
-      // add in the perf gain da so we don't get artifical dips here..
-      u->dav += matrix.perf_gain * matrix.out_pvr_da;
-    }
+    float dav_perf = u->misc_2;	// performance da: important: includes the tonic_da!
+    float cur_dav = u->dav - tonic_da; // exclude tonic
 
     if(gate_sig == XPFCGateSpec::GATE_NOGO)
       snrthal_act = 0.0f;	// if we don't go, nothing happens
@@ -1962,13 +1942,13 @@ void XMatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mu
     if(matrix.no_snr_mod)	// disable!
       snrthal_act = 1.0f;
 
-    float dav = snrthal_act * u->dav - matrix.neg_da_bl; // da is modulated by snrthal; sub baseline
+    float dav = dav_perf + contrast.gain * snrthal_act * cur_dav;
     if(mugp->misc_state1 == XPFCGateSpec::NOGO_RND_GO) {
       dav += rnd_go.nogo_da; 
     }
 
     u->dav = dav;		// make it show up in display
-    Compute_DaMod_Contrast(u, dav, gating_act, go_no);
+    Compute_DaMod(u, dav, gating_act, go_no);
     idx++;
   }
 }
@@ -2027,9 +2007,10 @@ bool XMatrixLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork*
 }
 
 void XMatrixLayerSpec::LabelUnits_impl(Unit_Group* ugp) {
+  int gp_sz = ugp->leaves / 3;
   for(int i=0;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-    XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(i % 3);
+    XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(i / gp_sz);
     if(go_no == XPFCGateSpec::GATE_MNT_GO)
       u->name = "GoM";
     else if(go_no == XPFCGateSpec::GATE_OUT_GO)
@@ -2154,10 +2135,10 @@ void XSNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) 
       float sum_mnt_go = 0.0f;
       float sum_out_go = 0.0f;
       float sum_nogo = 0.0f;
-      float norm_factor = (float)(mugp->size / 3); // normalization factor: number of go units
+      int gp_sz = mugp->leaves / 3;
       for(int i=0;i<mugp->size;i++) {
 	LeabraUnit* u = (LeabraUnit*)mugp->FastEl(i);
-	XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(i % 3); 
+	XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(i / gp_sz); 
 	if(go_no == XPFCGateSpec::GATE_MNT_GO)
 	  sum_mnt_go += u->act_eq;
 	else if(go_no == XPFCGateSpec::GATE_OUT_GO)
@@ -2165,6 +2146,7 @@ void XSNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) 
 	else
 	  sum_nogo += u->act_eq;
       }
+      float norm_factor = (float)gp_sz; // normalization factor: number of go units
       mnt_go_net = (sum_mnt_go - sum_nogo) / norm_factor;
       out_go_net = (sum_out_go - sum_nogo) / norm_factor;
       if(mugp->misc_state1 >= XPFCGateSpec::NOGO_RND_GO) {

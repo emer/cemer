@@ -863,6 +863,7 @@ void LeabraUnitSpec::Init_Weights(Unit* u, Network* net) {
   LeabraUnit* lu = (LeabraUnit*)u;
   lu->act_avg = act.avg_init;
   lu->misc_1 = 0.0f;
+  lu->misc_2 = 0.0f;
   lu->spk_amp = depress.max_amp;
   lu->vcb.hyst = lu->vcb.g_h = 0.0f;
   lu->vcb.hyst_on = false;
@@ -2083,6 +2084,7 @@ void LeabraUnit::Initialize() {
   i_thr = 0.0f;
   spk_amp = 1.0f;
   misc_1 = 0.0f;
+  misc_2 = 0.0f;
 }
 
 void LeabraUnit::InitLinks() {
@@ -2136,6 +2138,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   i_thr = cp.i_thr;
   spk_amp = cp.spk_amp;
   misc_1 = cp.misc_1;
+  misc_2 = cp.misc_2;
   act_buf = cp.act_buf;
   spike_buf = cp.spike_buf;
 }
