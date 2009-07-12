@@ -130,6 +130,47 @@ void T3SavedView_List::Initialize() {
   SetBaseType(&TA_T3SavedView);
 }
 
+void T3SavedView_List::SetCameraPos(int view_no, float x, float y, float z) {
+  T3SavedView* sv = SafeEl(view_no);
+  if(TestError(!sv, "SetCameraPos", "view no out of range:", String(view_no), "n views:",
+	       String(size))) return;
+  sv->SetCameraPos(x,y,z);
+}
+
+void T3SavedView_List::SetCameraOrient(int view_no, float x, float y, float z, float r) {
+  T3SavedView* sv = SafeEl(view_no);
+  if(TestError(!sv, "SetCameraOrient", "view no out of range:", String(view_no), "n views:",
+	       String(size))) return;
+  sv->SetCameraOrient(x,y,z,r);
+}
+
+void T3SavedView_List::SetCameraFocDist(int view_no, float fd) {
+  T3SavedView* sv = SafeEl(view_no);
+  if(TestError(!sv, "SetCameraFocDist", "view no out of range:", String(view_no), "n views:",
+	       String(size))) return;
+  sv->SetCameraFocDist(fd);
+}
+
+void T3SavedView_List::GetCameraPos(int view_no, float& x, float& y, float& z) {
+  T3SavedView* sv = SafeEl(view_no);
+  if(TestError(!sv, "GetCameraPos", "view no out of range:", String(view_no), "n views:",
+	       String(size))) return;
+  sv->GetCameraPos(x,y,z);
+}
+
+void T3SavedView_List::GetCameraOrient(int view_no, float& x, float& y, float& z, float& r) {
+  T3SavedView* sv = SafeEl(view_no);
+  if(TestError(!sv, "GetCameraOrient", "view no out of range:", String(view_no), "n views:",
+	       String(size))) return;
+  sv->GetCameraOrient(x,y,z,r);
+}
+
+void T3SavedView_List::GetCameraFocDist(int view_no, float& fd) {
+  T3SavedView* sv = SafeEl(view_no);
+  if(TestError(!sv, "GetCameraFocDist", "view no out of range:", String(view_no), "n views:",
+	       String(size))) return;
+  sv->GetCameraFocDist(fd);
+}
 
 const int T3ExaminerViewer::n_views = 6;
 

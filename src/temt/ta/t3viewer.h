@@ -104,6 +104,20 @@ public:
   bool		setCameraParams(SoCamera* cam);
   // set the camera parmeters from our saved values (returns false if no view saved)
 
+  void		SetCameraPos(float x, float y, float z) { pos.SetXYZ(x,y,z); }
+  // #CAT_Display set camera position
+  void		SetCameraOrient(float x, float y, float z, float r) { orient.SetXYZR(x,y,z,r); }
+  // #CAT_Display set camera orientation -- x,y,z axis and r rotation value
+  void		SetCameraFocDist(float fd) { focal_dist = fd; }
+  // #CAT_Display set camera focal distance
+
+  void		GetCameraPos(float& x, float& y, float& z) { pos.GetXYZ(x,y,z); }
+  // #CAT_Display set camera position
+  void		GetCameraOrient(float& x, float& y, float& z, float& r) { orient.GetXYZR(x,y,z,r); }
+  // #CAT_Display set camera orientation -- x,y,z axis and r rotation value
+  void		GetCameraFocDist(float& fd) { fd = focal_dist; }
+  // #CAT_Display set camera focal distance
+
   QToolButton*	view_button;	// #IGNORE view button for this view
   taiAction*	view_action;	// #IGNORE action for the gotoview function
 
@@ -117,6 +131,20 @@ class TA_API T3SavedView_List: public taList<T3SavedView> {
   // ##CAT_View list of saved views
   INHERITED(taList<T3SavedView>)
 public:
+
+  void	SetCameraPos(int view_no, float x, float y, float z);
+  // #CAT_Display for given view number, set camera position
+  void	SetCameraOrient(int view_no, float x, float y, float z, float r);
+  // #CAT_Display for given view number, set camera orientation -- x,y,z axis and r rotation value
+  void	SetCameraFocDist(int view_no, float fd);
+  // #CAT_Display for given view number, set camera focal distance
+
+  void	GetCameraPos(int view_no, float& x, float& y, float& z);
+  // #CAT_Display for given view number, set camera position
+  void	GetCameraOrient(int view_no, float& x, float& y, float& z, float& r);
+  // #CAT_Display for given view number, set camera orientation -- x,y,z axis and r rotation value
+  void	GetCameraFocDist(int view_no, float& fd);
+  // #CAT_Display for given view number, set camera focal distance
 
   TA_BASEFUNS_NOCOPY(T3SavedView_List);
 private:
@@ -749,31 +777,53 @@ public:
   const iColor		GetBgColor() const; // get the effective bg color
   
   virtual void		AddView(T3DataView* view); // add a view
-  virtual T3DataView*	FindRootViewOfData(TAPtr data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
+  // #IGNORE 
+  virtual T3DataView*	FindRootViewOfData(TAPtr data);
+  // #IGNORE looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
 
   virtual void		ViewAll();
-  // reset the camera position to view everything in the display
+  // #CAT_Display reset the camera position to view everything in the display
   virtual void		GetSavedView(int view_no);
-  // copy given saved view on the T3ExaminerViewer to our saved view information (for persistence) -- does not actually grab the current view, just the previously saved data -- see SaveCurView
+  // #CAT_Display copy given saved view on the T3ExaminerViewer to our saved view information (for persistence) -- does not actually grab the current view, just the previously saved data -- see SaveCurView
   virtual void		SetSavedView(int view_no);
-  // copy our saved view to the T3ExaminerViewer -- does not go to that view, just sets data -- see GoToSavedView
+  // #CAT_Display copy our saved view to the T3ExaminerViewer -- does not go to that view, just sets data -- see GoToSavedView
   virtual void		SetAllSavedViews();
-  // copy all our saved views to the T3ExaminerViewer -- during initialization
+  // #CAT_Display copy all our saved views to the T3ExaminerViewer -- during initialization
 
   virtual void		SaveCurView(int view_no);
-  // save the current T3 examiner viewer view parameters to the given view (on us and the viewer) -- for programmatic usage
+  // #CAT_Display save the current T3 examiner viewer view parameters to the given view (on us and the viewer) -- for programmatic usage
   virtual void		GoToSavedView(int view_no);
-  // tell the viewer to go to given saved view parameters (copies our parameters in case they have been locally modified programmatically)
+  // #CAT_Display tell the viewer to go to given saved view parameters (copies our parameters in case they have been locally modified programmatically)
+
+  void	SetCameraPos(int view_no, float x, float y, float z)
+  { saved_views.SetCameraPos(view_no, x,y,z); }
+  // #CAT_Display for given view number, set camera position
+  void	SetCameraOrient(int view_no, float x, float y, float z, float r)
+  { saved_views.SetCameraOrient(view_no, x,y,z,r); }
+  // #CAT_Display for given view number, set camera orientation -- x,y,z axis and r rotation value
+  void	SetCameraFocDist(int view_no, float fd)
+  { saved_views.SetCameraFocDist(view_no, fd); }
+  // #CAT_Display for given view number, set camera focal distance
+
+  void	GetCameraPos(int view_no, float& x, float& y, float& z)
+  { saved_views.GetCameraPos(view_no, x,y,z); }
+  // #CAT_Display for given view number, set camera position
+  void	GetCameraOrient(int view_no, float& x, float& y, float& z, float& r)
+  { saved_views.GetCameraOrient(view_no, x,y,z,r); }
+  // #CAT_Display for given view number, set camera orientation -- x,y,z axis and r rotation value
+  void	GetCameraFocDist(int view_no, float& fd)
+  { saved_views.GetCameraFocDist(view_no, fd); }
+  // #CAT_Display for given view number, set camera focal distance
 
   override QPixmap	GrabImage(bool& got_image);
   override bool		SaveImageAs(const String& fname = "", ImageFormat img_fmt = PNG);
   virtual  void		SetImageSize(int width, int height);
-  // set size of SaveImageAs image to given size parameters
+  // #CAT_Display set size of SaveImageAs image to given size parameters
 
   virtual bool		SaveImageEPS(const String& fname = "");
-  // save image in EPS format
+  // #CAT_Display save image in EPS format
   virtual bool		SaveImageIV(const String& fname = "");
-  // save image in IV (open inventor) format
+  // #CAT_Display save image in IV (open inventor) format
 
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // we notify viewer
   void	InitLinks();
