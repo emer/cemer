@@ -1646,6 +1646,13 @@ void XMatrixMiscSpec::Initialize() {
   no_snr_mod = false;
 }
 
+void XMatrixRndGoSpec::Initialize() {
+  nogo_thr = 50;
+  nogo_p = .1f;
+  perf_da = 5.0f;
+  learn_da = 5.0f;
+}
+
 void XMatrixLayerSpec::Initialize() {
   //  SetUnique("decay", true);
   decay.phase = 0.0f;
@@ -1878,7 +1885,7 @@ void XMatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mug
 	new_dav = 0.0f;	   // no da for MNT GO in out go situation
       }
       if(nogo_rnd_go) {
-	new_dav += rnd_go.nogo_da; // extra perf da
+	new_dav += rnd_go.perf_da; // extra perf da
       }
     }
     else {			// not a PV trial
@@ -1889,7 +1896,7 @@ void XMatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mug
 	if(go_no != XPFCGateSpec::GATE_OUT_GO)  {
 	  new_dav = cur_dav + matrix.empty_go_da; // cur_dav should have LVe evaluation of this item	
 	  if(nogo_rnd_go)
-	    new_dav += rnd_go.nogo_da; // extra perf da
+	    new_dav += rnd_go.perf_da; // extra perf da
 	}
 	else {
 	  new_dav = 0.0f;	// no da for OUT Go in mnt go 
@@ -1921,6 +1928,8 @@ void XMatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mu
   // computed live in the PFC -- we'll be 1 trial behind..
   XPFCGateSpec::GateSignal gate_sig = (XPFCGateSpec::GateSignal)mugp->misc_state2;
 
+  bool nogo_rnd_go = (mugp->misc_state1 == XPFCGateSpec::NOGO_RND_GO);
+
   int gp_sz = mugp->leaves / 3;
     
   int idx = 0;
@@ -1951,9 +1960,9 @@ void XMatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mu
       snrthal_act = 1.0f;
 
     float dav = dav_perf + contrast.gain * snrthal_act * cur_dav;
-//     if(mugp->misc_state1 == XPFCGateSpec::NOGO_RND_GO) {
-//       dav += rnd_go.nogo_da; 
-//     }
+    if(nogo_rnd_go) {
+      dav += rnd_go.learn_da; 
+    }
 
     u->dav = dav;		// make it show up in display
     Compute_DaMod(u, dav, gating_act, go_no);
