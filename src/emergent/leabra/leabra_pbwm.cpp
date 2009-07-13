@@ -1637,12 +1637,12 @@ void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
 /////////////////////////////////////////////////////
 
 void XMatrixMiscSpec::Initialize() {
-  mnt_nogo_da = 20.0f;
-  empty_go_da = 1.0f;
-  out_pvr_da = 20.0f;
+  mnt_nogo_da = 5.0f;
+  empty_go_da = 5.0f;
+  out_pvr_da = 5.0f;
   perf_gain = 0.0f;
-  neg_da_bl = 0.0002f;
-  neg_gain = 1.5f;
+  neg_da_bl = 0.0f;
+  neg_gain = 1.0f;
   no_snr_mod = false;
 }
 
@@ -1855,6 +1855,8 @@ void XMatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mug
 
   int gp_sz = mugp->leaves / 3;
 
+  bool nogo_rnd_go = (mugp->misc_state1 == XPFCGateSpec::NOGO_RND_GO);
+
   int idx = 0;
   LeabraUnit* u;
   taLeafItr i;
@@ -1875,14 +1877,19 @@ void XMatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mug
       else {			   // recompute wth out_pvr_da
 	new_dav = 0.0f;	   // no da for MNT GO in out go situation
       }
+      if(nogo_rnd_go) {
+	new_dav += rnd_go.nogo_da; // extra perf da
+      }
     }
     else {			// not a PV trial
-      if(pfc_mnt_cnt > 0) {	// currently maintaining: bias NoGo for everything
+      if(pfc_mnt_cnt > 0 && !nogo_rnd_go) {	// currently maintaining: bias NoGo for everything
 	new_dav = -matrix.mnt_nogo_da;
       }
-      else {			// otherwise, bias to maintain!
+      else {			// otherwise, bias to maintain/update
 	if(go_no != XPFCGateSpec::GATE_OUT_GO)  {
-	  new_dav = cur_dav + matrix.empty_go_da; // cur_dav should have LVe evaluation of this item
+	  new_dav = cur_dav + matrix.empty_go_da; // cur_dav should have LVe evaluation of this item	
+	  if(nogo_rnd_go)
+	    new_dav += rnd_go.nogo_da; // extra perf da
 	}
 	else {
 	  new_dav = 0.0f;	// no da for OUT Go in mnt go 
@@ -1944,9 +1951,9 @@ void XMatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mu
       snrthal_act = 1.0f;
 
     float dav = dav_perf + contrast.gain * snrthal_act * cur_dav;
-    if(mugp->misc_state1 == XPFCGateSpec::NOGO_RND_GO) {
-      dav += rnd_go.nogo_da; 
-    }
+//     if(mugp->misc_state1 == XPFCGateSpec::NOGO_RND_GO) {
+//       dav += rnd_go.nogo_da; 
+//     }
 
     u->dav = dav;		// make it show up in display
     Compute_DaMod(u, dav, gating_act, go_no);
@@ -2150,16 +2157,16 @@ void XSNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) 
       float norm_factor = (float)gp_sz; // normalization factor: number of go units
       mnt_go_net = (sum_mnt_go - sum_nogo) / norm_factor;
       out_go_net = (sum_out_go - sum_nogo) / norm_factor;
-      if(mugp->misc_state1 >= XPFCGateSpec::NOGO_RND_GO) {
-	if(mnt_go_net > out_go_net) {
-	  mnt_go_net += snrthal.rnd_go_inc;
-	  if(mnt_go_net > 1.0f) mnt_go_net = 1.0f;
-	}
-	else {
-	  out_go_net += snrthal.rnd_go_inc;
-	  if(out_go_net > 1.0f) out_go_net = 1.0f;
-	}
-      }
+//       if(mugp->misc_state1 >= XPFCGateSpec::NOGO_RND_GO) {
+// 	if(mnt_go_net > out_go_net) {
+// 	  mnt_go_net += snrthal.rnd_go_inc;
+// 	  if(mnt_go_net > 1.0f) mnt_go_net = 1.0f;
+// 	}
+// 	else {
+// 	  out_go_net += snrthal.rnd_go_inc;
+// 	  if(out_go_net > 1.0f) out_go_net = 1.0f;
+// 	}
+//       }
     }
 
     float mnt_net_eff = net_off_rescale * (mnt_go_net + snrthal.net_off);
