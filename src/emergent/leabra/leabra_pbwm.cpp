@@ -1880,12 +1880,12 @@ void XMatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mug
       // only if pfc is maintaining, bias output gating
       if(pfc_mnt_cnt > 0 && (go_no != XPFCGateSpec::GATE_MNT_GO)) {
 	new_dav = cur_dav + matrix.out_pvr_da; // cur_dav is almost certainly 0
+	if(nogo_rnd_go) {
+	  new_dav += rnd_go.perf_da; // extra perf da
+	}
       }
       else {			   // recompute wth out_pvr_da
 	new_dav = 0.0f;	   // no da for MNT GO in out go situation
-      }
-      if(nogo_rnd_go) {
-	new_dav += rnd_go.perf_da; // extra perf da
       }
     }
     else {			// not a PV trial
