@@ -2166,16 +2166,16 @@ void XSNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) 
       float norm_factor = (float)gp_sz; // normalization factor: number of go units
       mnt_go_net = (sum_mnt_go - sum_nogo) / norm_factor;
       out_go_net = (sum_out_go - sum_nogo) / norm_factor;
-//       if(mugp->misc_state1 >= XPFCGateSpec::NOGO_RND_GO) {
-// 	if(mnt_go_net > out_go_net) {
-// 	  mnt_go_net += snrthal.rnd_go_inc;
-// 	  if(mnt_go_net > 1.0f) mnt_go_net = 1.0f;
-// 	}
-// 	else {
-// 	  out_go_net += snrthal.rnd_go_inc;
-// 	  if(out_go_net > 1.0f) out_go_net = 1.0f;
-// 	}
-//       }
+      if(mugp->misc_state1 >= XPFCGateSpec::NOGO_RND_GO) {
+	if(mnt_go_net > out_go_net) {
+	  mnt_go_net += snrthal.rnd_go_inc;
+	  if(mnt_go_net > 1.0f) mnt_go_net = 1.0f;
+	}
+	else {
+	  out_go_net += snrthal.rnd_go_inc;
+	  if(out_go_net > 1.0f) out_go_net = 1.0f;
+	}
+      }
     }
 
     float mnt_net_eff = net_off_rescale * (mnt_go_net + snrthal.net_off);
