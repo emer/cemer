@@ -1646,13 +1646,6 @@ void XMatrixMiscSpec::Initialize() {
   no_snr_mod = false;
 }
 
-void XMatrixRndGoSpec::Initialize() {
-  nogo_thr = 50;
-  nogo_p = .1f;
-  perf_da = 5.0f;
-  learn_da = 5.0f;
-}
-
 void XMatrixLayerSpec::Initialize() {
   //  SetUnique("decay", true);
   decay.phase = 0.0f;
@@ -1880,9 +1873,6 @@ void XMatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mug
       // only if pfc is maintaining, bias output gating
       if(pfc_mnt_cnt > 0 && (go_no != XPFCGateSpec::GATE_MNT_GO)) {
 	new_dav = cur_dav + matrix.out_pvr_da; // cur_dav is almost certainly 0
-	if(nogo_rnd_go) {
-	  new_dav += rnd_go.perf_da; // extra perf da
-	}
       }
       else {			   // recompute wth out_pvr_da
 	new_dav = 0.0f;	   // no da for MNT GO in out go situation
@@ -1895,8 +1885,6 @@ void XMatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mug
       else {			// otherwise, bias to maintain/update
 	if(go_no != XPFCGateSpec::GATE_OUT_GO)  {
 	  new_dav = cur_dav + matrix.empty_go_da; // cur_dav should have LVe evaluation of this item	
-	  if(nogo_rnd_go)
-	    new_dav += rnd_go.perf_da; // extra perf da
 	}
 	else {
 	  new_dav = 0.0f;	// no da for OUT Go in mnt go 
@@ -1961,7 +1949,7 @@ void XMatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mu
 
     float dav = dav_perf + contrast.gain * snrthal_act * cur_dav;
     if(nogo_rnd_go) {
-      dav += rnd_go.learn_da; 
+      dav += rnd_go.nogo_da; 
     }
 
     u->dav = dav;		// make it show up in display

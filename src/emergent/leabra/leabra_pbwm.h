@@ -589,22 +589,6 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API XMatrixRndGoSpec : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc random go specifications (nogo)
-INHERITED(taOBase)
-public:
-  int		nogo_thr;	// #DEF_50 threshold of number of nogo firing in a row that will trigger NoGo random go firing
-  float		nogo_p;		// #DEF_0.1;0 probability of actually firing a nogo random Go once the threshold is exceeded
-  float		perf_da;	// #DEF_5 strength of performance dopamine for activating Go (gc.h) and inhibiting NoGo (gc.a) for a nogo-driven random go firing
-  float		learn_da;	// #DEF_5 strength of extra learning dopamine in a random go firing situation
-
-  void 	Defaults()	{ Initialize(); }
-  TA_SIMPLE_BASEFUNS(XMatrixRndGoSpec);
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-};
-
 // matrix unit misc_ var docs
 // * misc_1 = patch LVe value for patch-modulated noise
 // * misc_2 = performance da value in minus phase, carried over to plus phase
@@ -616,7 +600,7 @@ public:
   XMatrixMiscSpec 	matrix;		// misc parameters for the matrix layer
   ContrastSpec 	 	contrast;	// contrast enhancement effects of da/dopamine neuromodulation
   MatrixGoNogoGainSpec	go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
-  XMatrixRndGoSpec	rnd_go;		// matrix random Go firing for nogo firing stripes case
+  MatrixRndGoSpec	rnd_go;		// matrix random Go firing for nogo firing stripes case
 
   virtual void 	Compute_DaMod(LeabraUnit* u, float dav, float gating_act, int go_no);
   // apply given dopamine modulation value to the unit, based on whether it is a go (0) or nogo (1); contrast enhancement based on activation (gating_act)
