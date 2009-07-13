@@ -127,7 +127,8 @@ public:
 #ifndef __MAKETA__ 
   QPointer<iMainWindowViewer> m_window; // set this so cliphandler can be set for controls
 #endif 
-  int			editLines() const; // number of edit lines (typ 4) 
+  int			editLines() const {return m_editLines;} // number of edit lines (min 4) 
+  void			setEditLines(int val);
   void			setEditNode(TAPtr value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
   void 			setEditBgColor(const iColor& value); // set bg for edit, null for default
   void			defEditBgColor(); // set default color
@@ -177,6 +178,7 @@ protected:
   int			ln_sz; // const, the line size, without margins
   int			ln_vmargin; // const, margin, typ 1 
   int 			line_ht; // const, size of each stripe
+  int			m_editLines;
   int			m_changing; // for suppressing spurious notifies
   iColor		bg_color; // for edit area
   iColor		bg_color_dark; // for edit area
@@ -201,6 +203,8 @@ protected:
   
   void			InternalSetModified(bool value); // does all the gui config
   void 			UpdateButtons();
+  void			Controls_Remove(); // when Base_Remove or lines changes
+  void			Controls_Add(); // when Base_Add or lines changes
   
 protected slots:
   void			label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e); // note, it MUST have this name
@@ -237,6 +241,7 @@ protected:
   
 protected slots:
   void			mb_Expert(bool checked); // expert button on minibar
+  void			mb_Lines(int val); // lines spin on minibar
 };
 
 

@@ -239,6 +239,7 @@ void iProgramEditor::Init() {
   // layout constants
   ln_sz = taiM->max_control_height(taiM->ctrl_size); 
   ln_vmargin = 1; 
+  m_editLines = 4; // legacy value
 
   m_changing = 0;
   read_only = false;
@@ -261,9 +262,11 @@ void iProgramEditor::Init() {
   scrBody = new QScrollArea(this);
   scrBody->setWidgetResizable(true); 
   scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//  scrBody->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//  scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   body = new iStripeWidget; 
   scrBody->setWidget(body);
-
+//  body = new iStripeWidget(this);
   body->installEventFilter(this);
 
   line_ht = ln_sz + (2 * ln_vmargin);
@@ -271,6 +274,7 @@ void iProgramEditor::Init() {
   int body_ht = line_ht * editLines();
   scrBody->setMinimumHeight(body_ht + scrBody->horizontalScrollBar()->height() + 2);
   layOuter->addWidget(scrBody); 
+//  layOuter->addWidget(body); 
 
   meth_but_mgr = new iMethodButtonMgr(this); 
   
@@ -407,7 +411,8 @@ QWidget* iProgramEditor::firstTabFocusWidget() {
 bool iProgramEditor::ShowMember(MemberDef* md) {
   return taiPolyData::ShowMemberStat(md, show());
 }
-
+/* //TODO: move
+#include "iflowlayout.h"
 void iProgramEditor::Base_Add() {
   base->AddDataClient(this);
   // get colors for type
@@ -416,6 +421,115 @@ void iProgramEditor::Base_Add() {
   if (ok) setEditBgColor(bgc);
   else defEditBgColor();
 
+  row = 0;
+  
+  TypeDef* typ = GetRootTypeDef();
+  // check for a desc guy, it will consume another line
+//  MemberDef* md_desc = typ->members.FindName("desc");
+//  if (md_desc) --lines;
+  
+  // make main layout
+  iFlowLayout* lay = new iFlowLayout(body);
+  lay->setMargin(0);
+  lay->setSpacing(0); //TODO: tweak to get flow to match to stripes
+  
+  // we just put them all in 0
+  membs.SetMinSize(1);
+  
+  // round up slightly so first N lines get the extra odd ones
+  { 
+  int cur_ln = 0; // current line binning into
+  for (int i = 0; i < typ->members.size; ++i) {
+    MemberDef* md = typ->members.FastEl(i);
+    if (!ShowMember(md)) continue;
+//    if (md->name == "desc") continue; // on separate line at end
+    membs.FastEl(cur_ln)->memb_el.Add(md);
+  }
+  }
+  // don't forget the desc guy
+//  if (md_desc) {
+//     membs.SetMinSize(lines + 1);
+//     membs.FastEl(lines)->memb_el.Add(md_desc);
+//  }
+  
+  // add main inline controls
+  int flags = taiData::flgInline ;
+  if (read_only) flags |= taiData::flgReadOnly;
+  const int ctrl_size = taiM->ctrl_size;
+  for (int j = 0; j < membs.size; ++j) {
+    MembSet* ms = membs.FastEl(j);
+    if (ms->memb_el.size == 0) continue; // actually, is end
+    QHBoxLayout* hbl = new QHBoxLayout();
+    //hbl->setMargin(ln_vmargin);
+    hbl->addItem(new QSpacerItem(0, line_ht, QSizePolicy::Minimum, QSizePolicy::Fixed));
+    hbl->setSpacing(0);
+    hbl->addSpacing(taiM->hsep_c);
+    // if only 1 guy, give it all to him, else share
+    int stretch = (ms->memb_el.size > 1) ? 0 : 1;
+    for (int i = 0; i < ms->memb_el.size; ++i) {
+      if (i > 0)
+        hbl->addSpacing(taiM->hspc_c);
+      MemberDef* md = ms->memb_el.FastEl(i);
+      taiData* mb_dat = md->im->GetDataRep(this, NULL, body, NULL, flags);
+      ms->data_el.Add(mb_dat);
+      
+//obs      QLabel* lbl = taiM->NewLabel(, body);
+      String name;
+      String desc;
+      taiDataHost::GetName(md, name, desc);
+      iLabel* lbl = taiDataHost::MakeInitEditLabel(name, body,
+        ctrl_size,  desc, mb_dat,   
+        this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row);
+      
+      hbl->addWidget(lbl, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
+      hbl->addSpacing(taiM->hsep_c);
+      lbl->show(); //n???
+      
+      QWidget* rep = mb_dat->GetRep();
+      hbl->addWidget(rep, stretch, (Qt::AlignVCenter)); 
+      rep->show();
+    }
+    //if (stretch == 0)
+      hbl->addStretch(); // so guys flush left
+    lay->addItem(hbl); 
+    ++row;
+  }
+QHBoxLayout*
+  layMeths = new QHBoxLayout; // def margins ok
+  layMeths->setMargin(0); 
+  layMeths->addSpacing(2); //no stretch: we left-justify
+  layMeths->addItem(new QSpacerItem(0, ln_sz + (2 * ln_vmargin), 
+				    QSizePolicy::Fixed, QSizePolicy::Fixed));
+  meth_but_mgr->Constr(body, layMeths, base);
+  if (meth_but_mgr->show_meth_buttons) {
+    layMeths->addStretch();
+  } else {
+    delete layMeths;
+    layMeths = NULL;
+  }
+  
+  if (meth_but_mgr->show_meth_buttons) {
+    lay->addItem(meth_but_mgr->lay());
+    row++;
+    //AddData(cur_line++, NULL, meth_but_mgr->lay());
+  }
+//  lay->addStretch();
+
+  // ok, get er!
+  GetImage();
+}*/
+
+void iProgramEditor::Base_Add() {
+  base->AddDataClient(this);
+  // get colors for type
+  bool ok;
+  const iColor bgc = base->GetEditColorInherit(ok); 
+  if (ok) setEditBgColor(bgc);
+  else defEditBgColor();
+  Controls_Add();
+}
+
+void iProgramEditor::Controls_Add() {
   // metrics for laying out
   int lines = editLines(); // amount of space, in lines, available
   row = 0;
@@ -446,27 +560,40 @@ void iProgramEditor::Base_Add() {
   
   // ok, we know how much room we have, so allocate and divide
   membs.SetMinSize(lines);
-  // first, enumerate all members, to get a count
+  // first, enumerate all non-desc members, to get a count
   int mbr_cnt = 0;
   for (int i = 0; i < typ->members.size; ++i) {
     MemberDef* md = typ->members.FastEl(i);
     if (ShowMember(md)) ++mbr_cnt;
   }
+  if (md_desc) --mbr_cnt; // don't double count
   
   // apportion the members amongst the available lines
   // round up slightly so first N lines get the extra odd ones
   { 
   int cur_ln = 0; // current line binning into
-  int n_per_ln = (mbr_cnt + (lines - 1)) / lines; // number per line, rounded up
+//  int n_per_ln = (mbr_cnt + (lines - 1)) / lines; // number per line, rounded up
+  int n_per_ln = mbr_cnt / lines; // probably under by 1, at least for first lines
+  int n_rem = mbr_cnt % lines; // we'll need to use these up
+  if (n_rem > 0) ++n_per_ln; // we'll reduce it when n_rem used up
+  int tmbr_cnt = mbr_cnt; // temp, this loop
   for (int i = 0, i_ln = 0; i < typ->members.size; ++i) {
     MemberDef* md = typ->members.FastEl(i);
     if (!ShowMember(md)) continue;
     if (md->name == "desc") continue; // on separate line at end
     membs.FastEl(cur_ln)->memb_el.Add(md);
     ++i_ln;
+    --tmbr_cnt;
+    // if we somehow used up all lines, tough!
+    if (cur_ln >= (lines - 1)) continue;
+    
     if (i_ln >= n_per_ln || md->HasOption("PROGEDIT_NEWLN")) {
       i_ln = 0;
       ++cur_ln;
+      // redo metrics -- if we ever NEWLN we'll need to pack more in
+      n_per_ln = tmbr_cnt / (lines - cur_ln); // probably under by 1, at least for first lines
+      n_rem = tmbr_cnt % (lines - cur_ln); // we'll need to use these up
+      if (n_rem > 0) ++n_per_ln; // we'll reduce it when n_rem used up
     }
   }
   }
@@ -548,6 +675,10 @@ void iProgramEditor::Base_Remove() {
   items->focus_next_widget = NULL; // clear
   base->RemoveDataClient(this);
   base = NULL;
+  Controls_Remove();
+}
+
+void iProgramEditor::Controls_Remove() {
   membs.Reset();
   meth_but_mgr->Reset(); // deletes items and widgets (buts/menus)
   body->clearLater();
@@ -614,8 +745,13 @@ void iProgramEditor::Changed() {
   InternalSetModified(true);
 }
 
-int iProgramEditor::editLines() const {
-  return 4;
+void iProgramEditor::setEditLines(int val) {
+  if (m_editLines == val) return;
+  m_editLines = val;
+  Controls_Remove();
+  int body_ht = line_ht * val;
+  scrBody->setMinimumHeight(body_ht + scrBody->horizontalScrollBar()->height() + 2);
+  Controls_Add();
 }
 
 TypeDef* iProgramEditor::GetRootTypeDef() const {
@@ -845,6 +981,23 @@ iProgramPanelBase::iProgramPanelBase(taiDataLink* dl_)
 {
   pe = new iProgramEditor();
   setCentralWidget(pe); //sets parent
+  
+  // add view button(s)
+  QLabel* lab = new QLabel;
+  lab->setMaximumHeight(taiM->label_height(taiMisc::sizSmall));
+  lab->setFont(taiM->nameFont(taiMisc::sizSmall));
+  lab->setText("lines");
+  lab->setToolTip("how many lines to show in the item editor");
+  AddMinibarWidget(lab);
+  QSpinBox* sp = new QSpinBox;
+  sp->setFont(taiM->buttonFont(taiMisc::sizSmall));
+  sp->setValue(pe->editLines()); // assume this is min as well
+  sp->setMinimum(pe->editLines()); // assume this is min as well
+  sp->setMaximum(20);// arbitrary
+  sp->setToolTip(lab->toolTip());
+  AddMinibarWidget(sp);
+  connect(sp, SIGNAL(valueChanged(int)), this, SLOT(mb_Lines(int)) );
+  
   // add view button(s)
   QCheckBox* but = new QCheckBox;
   but->setMaximumHeight(taiM->button_height(taiMisc::sizSmall));
@@ -881,6 +1034,10 @@ void iProgramPanelBase::mb_Expert(bool checked) {
     show = show | taMisc::NO_EXPERT;
   }
   pe->setShow(show);
+}
+
+void iProgramPanelBase::mb_Lines(int val) {
+  pe->setEditLines(val);
 }
 
 void iProgramPanelBase::OnWindowBind_impl(iTabViewer* itv) {
