@@ -574,9 +574,9 @@ class LEABRA_API XMatrixMiscSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
 INHERITED(taOBase)
 public:
-  float		mnt_nogo_da;	// #DEF_5 for stripes that are maintaining, amount of NoGo (negative dopamine) performance da mod, only if not on an output trial as determined by PVr -- this is critical for enabling robust maintenance 
-  float		empty_go_da;	// #DEF_5 for empty stripes, amount of Go (positive dopamine) performance da mod, only if not on an output trial as determined by PVr -- provides a bias for maintaining new information
-  float		out_pvr_da;	// #DEF_5 if PVr detects a reward trial is coming, amount of Go (positive dopamine) peformance da mod to bias the output gating units to respond instead of maint or nogo
+  float		mnt_nogo_da;	// #DEF_6 for stripes that are maintaining, amount of NoGo (negative dopamine) performance da mod, only if not on an output trial as determined by PVr -- this is critical for enabling robust maintenance 
+  float		empty_go_da;	// #DEF_6 for empty stripes, amount of Go (positive dopamine) performance da mod, only if not on an output trial as determined by PVr -- provides a bias for maintaining new information
+  float		out_pvr_da;	// #DEF_6 if PVr detects a reward trial is coming, amount of Go (positive dopamine) peformance da mod to bias the output gating units to respond instead of maint or nogo
   float		perf_gain;	// #DEF_0 performance effect da gain -- multiplies naturally-computed da values (mainly just LV) in minus phase -- does NOT multiply the following additional perf da factors
   float		neg_da_bl;	// #DEF_0 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
   float		neg_gain;	// #DEF_1 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
@@ -650,8 +650,8 @@ class XSNrThalMiscSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
 INHERITED(taOBase)
 public:
-  float		net_off;	// [0.2 or 0] netinput offset -- how much to add to each unit's baseline netinput -- positive values make it more likely that some stripe will always fire, even if it has a net nogo activation state in the matrix -- very useful for preventing all nogo situations -- if net_off is .2 then act.gain should be 600, if net_off is 0 then act.gain should be 20 (dynamic range is diff)
-  float		go_thr;		// #DEF_0.1 threshold in snrthal activation required to trigger a Go gating event
+  float		net_off;	// #DEF_-0.1 netinput offset -- how much to add to each unit's baseline netinput -- positive values make it more likely that some stripe will always fire, even if it has a net nogo activation state in the matrix -- very useful for preventing all nogo situations -- if net_off is .2 then act.gain should be 600, if net_off is 0 then act.gain should be 20 (dynamic range is diff)
+  float		go_thr;		// #DEF_0.5 threshold in snrthal activation required to trigger a Go gating event
   float		rnd_go_inc;	// #DEF_0.2 how much to add to the net input for a random-go signal triggered in corresponding matrix layer?
 
   void 	Defaults()	{ Initialize(); }

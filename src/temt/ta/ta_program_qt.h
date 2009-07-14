@@ -116,6 +116,7 @@ public:
   iMethodButtonMgr*	    meth_but_mgr; // note: not a widget
   QHBoxLayout*		  layButtons;
   QToolBar*		    tb; // for the history buttons
+  HiLightButton*	    btnHelp;
   HiLightButton*	    btnApply;
   HiLightButton*	    btnRevert;
   iTreeView*		  items;
@@ -143,6 +144,7 @@ public:
 public slots:
   void			Apply();
   void			Revert();
+  void			Help();
   void			ExpandAll(); // expands all, and resizes columns
   void		 	slot_AssertBrowserItem(taiDataLink* link)
     {AssertBrowserItem(link);}

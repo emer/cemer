@@ -287,6 +287,12 @@ void iProgramEditor::Init() {
   int icon_sz = taiM_->label_height(taiMisc::sizSmall) -4;
   tb->setIconSize(QSize(icon_sz, icon_sz));
   layButtons->addWidget(tb);
+  layButtons->addSpacing(4);
+
+  btnHelp = new HiLightButton("&Help", this);
+  layButtons->addWidget(btnHelp);
+  connect(btnHelp, SIGNAL(clicked()), this, SLOT(Help()) );
+
   layButtons->addStretch();
   btnApply = new HiLightButton("&Apply", this);
   layButtons->addWidget(btnApply);
@@ -699,6 +705,10 @@ void iProgramEditor::Apply() {
   GetValue();
   GetImage();
   InternalSetModified(false); // superfulous??
+}
+
+void iProgramEditor::Help() {
+  base->Help();
 }
 
 iTreeViewItem* iProgramEditor::AssertBrowserItem(taiDataLink* link)
