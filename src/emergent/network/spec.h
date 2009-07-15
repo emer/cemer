@@ -169,10 +169,20 @@ public:
 
   BaseSpec* 	operator=(BaseSpec* cp)	{ SetSpec(cp); return cp; }
 
-  virtual void	SetDefaultSpec(TAPtr ownr, TypeDef* td); // for class that owns ptr
-  virtual void	SetBaseType(TypeDef* td);		 // for overloaded classes
-  virtual BaseSpec_Group* GetSpecGroup();		 // get the group where specs go
-  virtual void	GetSpecOfType();			 // get a spec of type type
+  virtual void	SetDefaultSpec(TAPtr ownr, TypeDef* td);
+  // for class that owns ptr
+  virtual void	SetBaseType(TypeDef* td);
+  // for overloaded classes
+  virtual BaseSpec_Group* GetSpecGroup();
+  // get the group where specs go
+  virtual void	GetSpecOfType(bool verbose = false);
+  // get a spec of type type in GetSpecGroup group -- if existing one is not found, make a new one -- verbose = report about it
+
+  virtual void	CheckSpec(TypeDef* obj_td = NULL);
+  // check the spec for !NULL and type match, and for proper type of object (obj_td) that is using this spec (if obj_td is null, it is set to owner type -- can be diff for various other cases) -- fix if out of whack -- this is what used to be called in the UpdateAfterEdit and is now called in the network CheckSpecs prior to build
+
+  virtual bool	CheckObjTypeForSpec(TypeDef* obj_td = NULL);
+  // check for proper type of object (obj_td) that is using this spec (if obj_td is null, it is set to owner type -- can be diff for various other cases) -- just a check -- no message or anything (message is in CheckSpec
 
   override taBase* UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par,
 						 taBase* new_par);
@@ -180,7 +190,7 @@ public:
 
   TA_BASEFUNS(SpecPtr_impl);
 protected:
-  override void	UpdateAfterEdit_impl();	// check, update the spec type
+  override void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()		{ };
@@ -211,33 +221,6 @@ public:
 		  "should be at least:", base_type->name,"in object:",owner->GetPath());
     return false;
   }
-
-  bool		CheckSpec_impl(TypeDef* obj_td, taBase* own_obj, bool quiet = false)   {
-    if(!obj_td || !own_obj) return false;
-    if(!spec) {
-      if(!quiet)
-	taMisc::CheckError("CheckSpec: spec is NULL in", own_obj->GetPath());
-      return false;
-    }
-    if(!spec->InheritsFrom(base_type)) {
-      if(!quiet)
-	taMisc::CheckError("CheckSpec: incorrect type of spec:", spec->GetPath(),
-			   "of type:", spec->GetTypeDef()->name,
-			   "should be at least:", base_type->name,"in object:",own_obj->GetPath());
-      return false;
-    }
-    if(!obj_td->InheritsFrom(spec->min_obj_type)) {
-      if(!quiet)
-	taMisc::CheckError("CheckSpec: incorrect type of object:", obj_td->name,
-			   "for spec of type:", spec->GetTypeDef()->name,
-			   "should be at least:", spec->min_obj_type->name,
-			   "in object:",own_obj->GetPath());
-      return false;
-    }
-    return true;
-  }
-  bool		CheckSpec(TypeDef* obj_td, bool quiet = false)
-  { return CheckSpec_impl(obj_td, owner, quiet); }
 
   void		SetDefaultSpec(taBase* ownr, TypeDef* td)
   { SpecPtr_impl::SetDefaultSpec(ownr, td); }

@@ -260,6 +260,11 @@ bool SoLayer::SetLayerSpec(LayerSpec* sp) {
   return true;
 } 
 
+void SoLayer::CheckSpecs() {
+  spec.CheckSpec();
+  inherited::CheckSpecs();
+}
+
 //////////////////////////////////
 //	Simple SoftMax		//
 //////////////////////////////////

@@ -4111,12 +4111,14 @@ void LeabraLayerSpec::Compute_AdaptAbsNetin(LeabraLayer* lay, LeabraNetwork*) {
   }
 }
 
+void LeabraLayer::CheckSpecs() {
+  spec.CheckSpec();
+  inherited::CheckSpecs();
+}
+
 void LeabraLayer::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!spec.CheckSpec(GetTypeDef())) {
-    rval = false; // fatal
-    return;
-  }
+
   if(!spec->CheckConfig_Layer(this, quiet)) {
     rval = false;
   }

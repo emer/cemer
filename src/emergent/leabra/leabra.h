@@ -2139,6 +2139,7 @@ public:
   // #IGNORE aggregate network variables across procs for trial-level dmem 
 #endif
 
+  override void CheckSpecs();
   override void	BuildUnits();
   override void BuildUnits_Threads(Network* net)
   { if(spec) spec->BuildUnits_Threads(this, (LeabraNetwork*)net); }
@@ -3539,10 +3540,10 @@ public:
 
   virtual bool 	PBWM_V2(LeabraNetwork* net, bool da_mod_all = false,
 			int n_stripes=4, bool no_lrn_pfc=false);
-  // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) Version 2 -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated;  da_mod_all = have da value modulate all the regular units in the network; nolrn_pfc = pfc does not learn -- just copies input acts directly (useful for demonstration but not as realistic or powerful)
+  // #MENU_BUTTON configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) Version 2 -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated;  da_mod_all = have da value modulate all the regular units in the network; nolrn_pfc = pfc does not learn -- just copies input acts directly (useful for demonstration but not as realistic or powerful)
 
   virtual bool PBWM_SetNStripes(LeabraNetwork* net, int n_stripes, int n_units=-1);
-  // #MENU_BUTTON set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units)
+  // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units)
   virtual bool PBWM_ToLayerGroups(LeabraNetwork* net);
   // #MENU_BUTTON move all the PBWM layers to PBWM_BG and PBWM_PFC layer groups, which is the new default way of organizing these layers
   virtual bool PBWM_Remove(LeabraNetwork* net);

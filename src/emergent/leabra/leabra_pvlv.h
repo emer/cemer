@@ -329,7 +329,7 @@ class LEABRA_API NVSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for novelty value learning
 INHERITED(taOBase)
 public:
-  float		da_gain;	// #DEF_1 gain for novelty value dopamine signal
+  float		da_gain;	// #DEF_1;0 gain for novelty value dopamine signal
   float		val_thr;	// #DEF_0.1 threshold for value (training value is 0) -- value is zero below this threshold
   float		prior_discount;	// #DEF_1 #MIN_0 #MAX_1 how much to discount the prior NV delta value (nvd = NV - val_thr) in computing the net NV dopamine signal (NV DA = nvd_t - prior_discount * nvd_t-1)
   bool		er_reset_prior;	// #EXPERT #DEF_true reset prior delta value (nvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
@@ -383,7 +383,7 @@ INHERITED(taOBase)
 public:
   float		da_gain;	// #DEF_0.2:2 #MIN_0 multiplier for dopamine values
   float		tonic_da;	// #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
-  float		pv_gain;	// #DEF_1 extra gain modulation of PV generated DA -- it can be much larger in general than lv so sometimes it is useful to turn it down
+  float		pv_gain;	// #DEF_1;0.5 extra gain modulation of PV generated DA -- it can be much larger in general than lv so sometimes it is useful to turn it down (e.g., in new version of PBWM)
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(PVLVDaSpec);

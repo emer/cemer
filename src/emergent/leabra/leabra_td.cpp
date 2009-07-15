@@ -1208,8 +1208,8 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
 
   net->Build();
 
-  bool ok = tdrpsp->CheckConfig_Layer(tdrp, true) && tdintsp->CheckConfig_Layer(tdint, true)
-    && tdsp->CheckConfig_Layer(tdda, true) && ersp->CheckConfig_Layer(extrew, true);
+  bool ok = tdrpsp->CheckConfig_Layer(tdrp, false) && tdintsp->CheckConfig_Layer(tdint, false)
+    && tdsp->CheckConfig_Layer(tdda, false) && ersp->CheckConfig_Layer(extrew, false);
 
   if(!ok) {
     msg =

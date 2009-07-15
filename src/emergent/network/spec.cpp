@@ -349,7 +349,7 @@ void BaseSpec::UpdateMember(BaseSpec* from, int memb_no) {
 	    (((taArray_impl*)md->GetOff((void*)from))->size);
 	}
 	MemberCopyFrom(memb_no, from);
-	DataChanged(DCR_ITEM_UPDATED); //obs tabMisc::NotifyEdits(this);
+	DataChanged(DCR_ITEM_UPDATED);
       }
     }
   }
@@ -583,17 +583,25 @@ int SpecPtr_impl::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   return 1;
 }
 
-void SpecPtr_impl::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-
-  if (!owner || !type || owner->isDestroying())
+void SpecPtr_impl::CheckSpec(TypeDef* obj_td) {
+  if (!owner || !type || !base_type || owner->isDestroying())
     return;
+
+  if(!obj_td) obj_td = owner->GetTypeDef(); // use owner type
 
   Network* net = GET_MY_OWNER(Network);
   if(!net || net->isDestroying()) return;
 
   Network* owner_net = GET_OWNER(owner, Network);
   if(!owner_net || owner_net->isDestroying()) return;
+
+  if(TestError(!type->InheritsFrom(base_type),
+	       "CheckSpec",
+	       "spec type:", type->name, "does not inherit from base_type:",
+	       base_type->name, "this should not happen (programmer error).",
+	       "Reverting type to base_type")) {
+    type = base_type;
+  }
 
   BaseSpec* sp = GetSpec();
 
@@ -603,24 +611,89 @@ void SpecPtr_impl::UpdateAfterEdit_impl() {
     if(spgp) {
       BaseSpec* nsp = spgp->FindSpecName(sp->name);
       SetSpec(nsp);		// set -- either null or a candidate
+      sp = nsp;			// update our cur ptr guy
+      DataChanged(DCR_ITEM_UPDATED);
     }
     else {
       SetSpec(NULL);		// get rid of existing -- will try to find new one
     }
   }
 
+  // check again
+  sp = GetSpec();
   if(sp) {
     if(sp->isDestroying()) {	// shouldn't happen, but just in case
       SetSpec(NULL);
     }
-    else if(sp->GetTypeDef() == type) {
-      return;			// everything is good, bail!
-    }
-    else {
+    else if(sp->GetTypeDef() != type) {
       SetSpec(NULL);		// get rid of existing spec
     }
   }
-  GetSpecOfType();
+
+  // and again
+  sp = GetSpec();
+  if(!sp) {
+    taMisc::CheckError("CheckSpec: spec is NULL in object:", owner->GetPath(),
+		       "getting a new spec of type:", type->name);
+    GetSpecOfType(true);	// verbose
+  }
+
+  // and again
+  sp = GetSpec();
+  if(sp && !obj_td->InheritsFrom(sp->min_obj_type)) {
+    taMisc::CheckError("CheckSpec: incorrect type of object:", obj_td->name,
+		       "for spec of type:", sp->GetTypeDef()->name,
+		       "should be at least:", sp->min_obj_type->name,
+		       "in object:",owner->GetPath(),
+		       "This is a programmer error (should not happen) -- DO NOT RUN NETWORK until fixed!");
+  }
+}
+
+bool SpecPtr_impl::CheckObjTypeForSpec(TypeDef* obj_td) {
+  if (!owner || !type || !base_type || owner->isDestroying())
+    return false;
+
+  if(!obj_td) obj_td = owner->GetTypeDef(); // use owner type
+
+  BaseSpec* sp = GetSpec();
+  if(sp && !obj_td->InheritsFrom(sp->min_obj_type)) {
+    return false;
+  }
+  return true;
+}
+
+void SpecPtr_impl::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  // don't do so much automatic -- just check for wrong owner and type stuff
+
+  Network* net = GET_MY_OWNER(Network);
+  if(!net || net->isDestroying()) return;
+
+  Network* owner_net = GET_OWNER(owner, Network);
+  if(!owner_net || owner_net->isDestroying()) return;
+
+  if(TestError(type && base_type && !type->InheritsFrom(base_type),
+	       "UpdateAfterEdit",
+	       "spec type:", type->name, "does not inherit from base_type:",
+	       base_type->name, "this should not happen (programmer error).",
+	       "Reverting type to base_type")) {
+    type = base_type;
+  }
+
+  BaseSpec* sp = GetSpec();
+
+  if(sp && (owner_net != net)) {	// oops!
+    // try to find same name one first:
+    BaseSpec_Group* spgp = GetSpecGroup();
+    if(spgp) {
+      BaseSpec* nsp = spgp->FindSpecName(sp->name);
+      SetSpec(nsp);		// set -- either null or a candidate
+      DataChanged(DCR_ITEM_UPDATED);
+    }
+    else {
+      SetSpec(NULL);		// get rid of existing -- will try to find new one later
+    }
+  }
 }
 
 void SpecPtr_impl::SetBaseType(TypeDef* td) {
@@ -675,19 +748,36 @@ BaseSpec_Group* SpecPtr_impl::GetSpecGroup() {
   return &(net->specs);
 }
 
-void SpecPtr_impl::GetSpecOfType() {
+void SpecPtr_impl::GetSpecOfType(bool verbose) {
   BaseSpec_Group* spgp = GetSpecGroup();
   if(spgp == NULL)
     return;
-  BaseSpec* sp = spgp->FindSpecType(type);
+
+  BaseSpec* sp = GetSpec();
+  if(sp && (sp->GetTypeDef() == type))
+    return;
+
+  sp = spgp->FindSpecType(type);
   if((sp) && (sp->GetTypeDef() == type)) {
     SetSpec(sp);
+    if(verbose) {
+      taMisc::CheckError("GetSpecOfType for object:", owner->GetPath(),
+			 "set spec pointer to existing spec named:", sp->name,
+			 "of correct type:", type->name);
+    }
+    DataChanged(DCR_ITEM_UPDATED);
     return;
   }
 
   sp = (BaseSpec*)spgp->NewEl(1, type);
   if (sp) {
     SetSpec(sp);
+    if(verbose) {
+      taMisc::CheckError("GetSpecOfType for object:", owner->GetPath(),
+			 "set spec pointer to NEW spec I just created, named:", sp->name,
+			 "of type:", type->name);
+    }
+    DataChanged(DCR_ITEM_UPDATED);
   }
 }
 

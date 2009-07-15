@@ -2299,6 +2299,7 @@ void NetView::BuildAll() { // populates all T3 guys
   // add layers not in us, move in position
   for(int li = 0; li < nt->layers.leaves; ++li) {
     Layer* ly = nt->layers.Leaf(li);
+    if(!ly) continue;		// can happen, apparently!
     int i = lay_disp_modes.FindName(ly->name);
     if(i < 0) {
       NameVar dmv;

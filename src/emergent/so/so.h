@@ -196,6 +196,8 @@ public:
   bool		SetLayerSpec(LayerSpec* sp);
   LayerSpec*	GetLayerSpec()		{ return (LayerSpec*)spec.spec; }
 
+  override void	CheckSpecs();
+
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const SoLayer& cp);

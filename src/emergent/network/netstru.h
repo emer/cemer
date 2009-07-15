@@ -1130,6 +1130,9 @@ public:
 			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
   // #MENU #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
+  virtual void  CheckSpecs();
+  // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
+
   // convenience functions for those defined in the spec
   void 	PreConnect()		{ spec->PreConnect(this); }
   // #CAT_Structure pre-configure connection state
@@ -1461,6 +1464,8 @@ public:
   virtual void	SetNUnitGroups(int n_groups);
   // #CAT_Structure set number of unit groups in layer in the gp_geom member -- attempts to lay out geometry in closest to a square that fits all the groups evenly, if possible.  note: does NOT rebuild the network.  also does not make any changes if current number of groups is same as arg, or arg <= 0 (e.g., for startup arg, just init n_groups to -1 prior to getting arg val so it won't have any effect if arg not passed)
   
+  virtual void  CheckSpecs();
+  // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
   virtual void  BuildUnits();
   // #MENU #MENU_ON_Actions #CONFIRM #CAT_Structure build the units based current geometry configuration
   virtual void 	BuildUnits_Threads(Network* net);
@@ -2054,17 +2059,20 @@ public:
   virtual int	GetDefaultZ();  // #IGNORE
 
   void  Build();
-  // #BUTTON #CAT_Structure Build the network units and Connect them (calls BuildLayers/Units/Prjns and Connect)
-  virtual void  BuildLayers();
-  // #MENU #MENU_ON_Structure #CAT_Structure Build any network layers that are dynamically constructed
-  virtual void  BuildUnits();
-  // #MENU #CAT_Structure Build the network units in layers according to geometry
-  virtual void 	BuildUnits_Threads();
-  // #IGNORE build unit-level thread information: flat list of units, etc, and update thread structures
-  virtual void  BuildPrjns();
-  // #MENU #CAT_Structure Build any network prjns that are dynamically constructed
+  // #BUTTON #CAT_Structure Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)
+    virtual void  CheckSpecs();
+    // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
+    virtual void  BuildLayers();
+    // #MENU #MENU_ON_Structure #CAT_Structure Build any network layers that are dynamically constructed
+    virtual void  BuildUnits();
+    // #MENU #CAT_Structure Build the network units in layers according to geometry
+    virtual void 	BuildUnits_Threads();
+    // #IGNORE build unit-level thread information: flat list of units, etc, and update thread structures
+    virtual void  BuildPrjns();
+    // #MENU #CAT_Structure Build any network prjns that are dynamically constructed
   void	Connect();
   // #MENU #CAT_Structure Connect this network according to projections on Layers
+
   virtual bool	CheckBuild(bool quiet=false);
   // #CAT_Structure check if network units are built 
   virtual bool	CheckConnect(bool quiet=false);

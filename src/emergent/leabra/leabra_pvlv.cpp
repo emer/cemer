@@ -1198,7 +1198,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   PVConSpec* pvr_cons = (PVConSpec*)pvi_cons->FindMakeChild("PVr", &TA_PVrConSpec, pvr_cons_new);
   PVConSpec* lve_cons = (PVConSpec*)pvi_cons->FindMakeChild("LVe", &TA_PVConSpec);
   PVConSpec* lvi_cons = (PVConSpec*)lve_cons->FindMakeChild("LVi", &TA_PVConSpec);
-  PVConSpec* nv_cons = (PVConSpec*)pvi_cons->FindMakeChild("NV", &TA_PVConSpec);
+  NVConSpec* nv_cons = (NVConSpec*)pvi_cons->FindMakeChild("NV", &TA_NVConSpec);
   LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
   if(bg_bias == NULL) return false;
   LeabraConSpec* fixed_bias = (LeabraConSpec*)bg_bias->FindMakeChild("FixedBias", &TA_LeabraBiasSpec);
@@ -1466,10 +1466,13 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
 
   taMisc::CheckConfigStart(false, false);
 
-  bool ok = pvisp->CheckConfig_Layer(pvi, true) && lvesp->CheckConfig_Layer(lve, true)
-    && lvisp->CheckConfig_Layer(lve, true)
-    && dasp->CheckConfig_Layer(vta, true) && pvesp->CheckConfig_Layer(pve, true)
-    && pvrsp->CheckConfig_Layer(pvr, true) && nvsp->CheckConfig_Layer(nv, true);
+  bool ok = pvisp->CheckConfig_Layer(pvi, false);
+  ok &= lvesp->CheckConfig_Layer(lve, false);
+  ok &= lvisp->CheckConfig_Layer(lve, false);
+  ok &= dasp->CheckConfig_Layer(vta, false);
+  ok &= pvesp->CheckConfig_Layer(pve, false);
+  ok &= pvrsp->CheckConfig_Layer(pvr, false);
+  ok &= nvsp->CheckConfig_Layer(nv, false);
 
   taMisc::CheckConfigEnd(ok);
 

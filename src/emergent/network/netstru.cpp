@@ -2880,6 +2880,12 @@ void Projection::SetCustomFrom(Layer* fm_lay) {
   UpdateAfterEdit();
 }
 
+void Projection::CheckSpecs() {
+  spec.CheckSpec();
+  con_spec.CheckSpec(con_type);
+  UpdateConSpecs();
+}
+
 bool Projection::UpdateConSpecs(bool force) {
   if((!(bool)layer) || (!(bool)from)) return false;
   if(!force && (con_spec.SPtr() == m_prv_con_spec)) return false;
@@ -2925,7 +2931,7 @@ bool Projection::SetPrjnSpec(ProjectionSpec* sp) {
 bool Projection::SetConSpec(ConSpec* sp) {
   if(!sp)	return false;
   if(!con_spec.SetSpec(sp)) return false;
-  if(!con_spec.CheckSpec(con_type, true)) { // quiet
+  if(!con_spec.CheckObjTypeForSpec(con_type)) {
     if(taMisc::Choice("The con spec you are setting is not compatible with the con type for connections in this projection -- should I change the con type to be: " +  con_spec->min_obj_type->name
 		      + " (if you answer No, you will continue to get errors until a compatible selection is made)",
 		      "Yes", "No") == 0) {
@@ -3005,12 +3011,8 @@ int Projection::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp) 
 void Projection::CheckThisConfig_impl(bool quiet, bool& rval) { 
   inherited::CheckThisConfig_impl(quiet, rval);
   
-  if(!spec.CheckSpec(GetTypeDef())) {
-    rval = false;
-  }
-  if(!con_spec.CheckSpec(con_type)) {
-    rval = false;
-  }
+  CheckSpecs();			// just check!
+
   if(CheckError((recvcons_type == &TA_RecvCons), quiet, rval,
 		"recvcons_type is base type; should be special one for specific algorithm")) {
     projected = false;
@@ -3958,6 +3960,18 @@ void Layer::SetNUnitGroups(int n_groups) {
   UpdateAfterEdit();
 }
 
+void Layer::CheckSpecs() {
+  // NOTE: if an algo has a layerspec, definitely need to check its spec here!
+  unit_spec.CheckSpec(units.el_typ);
+  UpdateUnitSpecs();
+
+  Projection* prjn;
+  taLeafItr j;
+  FOR_ITR_EL(Projection, prjn, projections.,j) {
+    prjn->CheckSpecs();
+  }
+}
+
 void Layer::BuildUnits() {
   taMisc::Busy();
   StructUpdate(true);
@@ -4093,13 +4107,12 @@ bool Layer::CheckConnect(bool quiet) {
 void Layer::CheckThisConfig_impl(bool quiet, bool& rval) {
   // note: network also called our checks
   // slightly non-standard, since we bail on first error
-  if(!unit_spec.CheckSpec(units.el_typ)) {
-    rval = false;
-  }
+
+  CheckSpecs();
+
   if (!CheckBuild(quiet)) {rval = false; return;}
   if (!CheckConnect(quiet)) {rval = false; return;}
   inherited::CheckThisConfig_impl(quiet, rval);
-  // could also checkspec for layers w/ specs
 }
 
 void Layer::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -4692,7 +4705,7 @@ bool Layer::UpdateConSpecs(bool force) {
 bool Layer::SetUnitSpec(UnitSpec* sp) {
   if(!sp)	return false;
   if(!unit_spec.SetSpec(sp)) return false;
-  if(!unit_spec.CheckSpec(units.el_typ, true)) { // quiet
+  if(!unit_spec.CheckObjTypeForSpec(units.el_typ)) {
     if(taMisc::Choice("The unit spec you are setting is not compatible with the unit type for units in this layer -- should I change the unit type to be: " +  unit_spec->min_obj_type->name
 		      + " (if you answer No, you will continue to get errors until a compatible selection is made)",
 		      "Yes", "No") == 0) {
@@ -5844,6 +5857,7 @@ void Network::Build() {
   taMisc::Busy();
   ++taMisc::no_auto_expand; // c'mon...!!! ;)
   StructUpdate(true);
+  CheckSpecs();
   BuildLayers(); // note: for Area constructs
   BuildUnits();
   BuildPrjns(); // note: for Area constructs
@@ -5854,6 +5868,13 @@ void Network::Build() {
 //   }
   --taMisc::no_auto_expand;
   taMisc::DoneBusy();
+}
+
+void Network::CheckSpecs() {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i)
+    l->CheckSpecs();
 }
 
 void Network::BuildLayers() {
@@ -5921,6 +5942,7 @@ void Network::Connect() {
   taMisc::Busy();
   ++taMisc::no_auto_expand; // c'mon...!!! ;)
   StructUpdate(true);
+  CheckSpecs();
   RemoveCons();
   SyncSendPrjns();
   // go in reverse order so that symmetric prjns can be made in
@@ -6202,7 +6224,7 @@ void Network::Init_dWt(){
 void Network::Init_Weights() {
   // do lots of checking here to make sure, cuz often 1st thing that happens
   //NOTE: this will typically be nested inside a gui check
-  if (!CheckConfig(true)) return;
+  if (!CheckConfig(false)) return;
 
   taMisc::Busy();
   Layer* l;
