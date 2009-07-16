@@ -455,6 +455,8 @@ public:
   static void	vec_to_ints(int_Matrix* int_mat, const double_Matrix* double_mat);
   // copy double matrix data back to integer matrix
 
+  static bool	vec_check_type(const double_Matrix* a);
+  // check that matrix is actually a double type -- issues Error if not and returns false
   static bool	vec_check_same_size(const double_Matrix* a, const double_Matrix* b, bool quiet = false);
   // check that both vectors are the same size, and issue warning if not (unless quiet)
 
@@ -1005,6 +1007,8 @@ public:
   static void	vec_to_ints(int_Matrix* int_mat, const float_Matrix* float_mat);
   // copy float matrix data back to integer matrix
 
+  static bool	vec_check_type(const float_Matrix* a);
+  // check that matrix is actually a float type -- issues Error if not and returns false
   static bool	vec_check_same_size(const float_Matrix* a, const float_Matrix* b, bool quiet = false);
   // check that both vectors are the same size, and issue warning if not (unless quiet)
 
