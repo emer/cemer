@@ -1,4 +1,4 @@
-// ta_Dump File v2.0
+// ta_Dump File v2.0 -- code v4.0.21.0
 LeabraProject .projects[0] { 
   Doc_Group @.docs = [1] {
     taDoc @[0] { };
@@ -6,7 +6,7 @@ LeabraProject .projects[0] {
 
   Wizard_Group @.wizards = [1] {
     LeabraWizard @[0] { 
-   UserDataItem_List @*(.user_data_) { 
+   UserDataItem_List @*(.user_data_) {
 	UserDataItem @[0] { };
    };
 
@@ -22,12 +22,12 @@ LeabraProject .projects[0] {
     DataTable @[0] { 
       DataTableCols @.data = [8] {
 	int_Data @[0] { 
-     UserDataItem_List @*(.user_data_) { 
+     UserDataItem_List @*(.user_data_) {
 	    UserDataItem @[0] { };
      };
 };
 	int_Data @[1] { 
-     UserDataItem_List @*(.user_data_) { 
+     UserDataItem_List @*(.user_data_) {
 	    UserDataItem @[0] { };
      };
 };
@@ -45,12 +45,12 @@ LeabraProject .projects[0] {
       DataTable @[0] { 
 	DataTableCols @.data = [4] {
 	  int_Data @[0] { 
-      UserDataItem_List @*(.user_data_) { 
+      UserDataItem_List @*(.user_data_) {
 	      UserDataItem @[0] { };
       };
 };
 	  int_Data @[1] { 
-      UserDataItem_List @*(.user_data_) { 
+      UserDataItem_List @*(.user_data_) {
 	      UserDataItem @[0] { };
       };
 };
@@ -61,12 +61,12 @@ LeabraProject .projects[0] {
       DataTable @[1] { 
 	DataTableCols @.data = [8] {
 	  int_Data @[0] { 
-      UserDataItem_List @*(.user_data_) { 
+      UserDataItem_List @*(.user_data_) {
 	      UserDataItem @[0] { };
       };
 };
 	  int_Data @[1] { 
-      UserDataItem_List @*(.user_data_) { 
+      UserDataItem_List @*(.user_data_) {
 	      UserDataItem @[0] { };
       };
 };
@@ -83,22 +83,22 @@ LeabraProject .projects[0] {
 
   taBase_Group @.data_proc = [4] {
     taDataProc @[0] { 
-   UserDataItem_List @*(.user_data_) { 
+   UserDataItem_List @*(.user_data_) {
 	UserDataItem @[0] { };
    };
 };
     taDataAnal @[1] { 
-   UserDataItem_List @*(.user_data_) { 
+   UserDataItem_List @*(.user_data_) {
 	UserDataItem @[0] { };
    };
 };
     taDataGen @[2] { 
-   UserDataItem_List @*(.user_data_) { 
+   UserDataItem_List @*(.user_data_) {
 	UserDataItem @[0] { };
    };
 };
     taImageProc @[3] { 
-   UserDataItem_List @*(.user_data_) { 
+   UserDataItem_List @*(.user_data_) {
 	UserDataItem @[0] { };
    };
 };
@@ -129,7 +129,7 @@ LeabraProject .projects[0] {
 	ProgVar @[11] { };
       };
 
-      ProgEl_List @.prog_code = [26] {
+      ProgEl_List @.prog_code = [27] {
 	Comment @[0] { };
 	MiscCall @[1] { 
 	  ProgArg_List @.meth_args = [2] {
@@ -183,43 +183,48 @@ LeabraProject .projects[0] {
 	    DataGroupEl @[3] { };
 	  };
 	};
-	PrintExpr @[11] { };
-	MethodCall @[12] { 
+	MemberMethodCall @[11] { 
 	  ProgArg_List @.meth_args = [1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	PrintVar @[13] { };
-	MathCall @[14] { 
+	PrintExpr @[12] { };
+	MethodCall @[13] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	PrintVar @[14] { };
+	MathCall @[15] { 
 	  ProgArg_List @.meth_args = [2] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
 	  };
 	};
-	UserScript @[15] { };
-	PrintExpr @[16] { };
-	MethodCall @[17] { 
+	UserScript @[16] { };
+	PrintExpr @[17] { };
+	MethodCall @[18] { 
 	  ProgArg_List @.meth_args = [1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	PrintVar @[18] { };
-	UserScript @[19] { };
-	PrintExpr @[20] { };
-	MethodCall @[21] { 
+	PrintVar @[19] { };
+	UserScript @[20] { };
+	PrintExpr @[21] { };
+	MethodCall @[22] { 
 	  ProgArg_List @.meth_args = [1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	PrintVar @[22] { };
-	MathCall @[23] { 
+	PrintVar @[23] { };
+	MathCall @[24] { 
 	  ProgArg_List @.meth_args = [2] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
 	  };
 	};
-	UserScript @[24] { };
-	DataAnalCall @[25] { 
+	UserScript @[25] { };
+	DataAnalCall @[26] { 
 	  ProgArg_List @.meth_args = [9] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
@@ -262,6 +267,15 @@ LeabraProject .projects[0] {
 		  };
 		};
 	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
 	    };
 	    T3DataViewFrame @[1] { 
 	      T3DataView_List @.children = [1] {
@@ -278,6 +292,15 @@ LeabraProject .projects[0] {
 		  };
 		};
 	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
 	    };
 	  };
 	};
@@ -293,6 +316,16 @@ LeabraProject .projects[0] {
  name="Project_0";
  desc=;
  tags=;
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ wiki_url {
+  sync=0;
+  wiki=;
+  url=;
+ };
  templates {
   name=;
   el_typ=taBase;
@@ -305,6 +338,11 @@ LeabraProject .projects[0] {
   taDoc @[0] {
    name="ProjectDocs";
    auto_open=1;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
    text="<html>
 <head></head>
 <body>
@@ -323,11 +361,27 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
 </body>
 </html>
 ";
+   html_text="<html><head></head><body>
+<h2> Epoch Log Analysis Project </h2>
+<p>
+This project provides a mechanism for analyzing the epoch level log file data produced by training a neural network, providing various ways of assessing the number of epochs it takes the network to learn whatever problem it is being trained on.
+</p><p>
+To run it within the gui, just Init and Run the <a href=\"ta:.programs.EpochsToTrain\">EpochsToTrain</a> program.
+</p><p>
+To run at the command line, use the epoch_log_analysis.sh shell script, or directly like this:
+</p><p>
+emergent -nogui -ni -p epoch_log_analysis.proj logfile=<log file=\"\" name=\"\"> [err_thresh=xx]
+</log></p><p>
+where err_thresh is the threshold on the cnt_err variable to count as having learned (default is 0, which is perfect performance)
+</p><p>
+
+
+</p></body></html>";
   };
  };
  wizards {
   name=;
-  el_typ=taWizard;
+  el_typ=LeabraWizard;
   el_def=0;
   LeabraWizard @[0] {
    UserDataItem_List @*(.user_data_) {
@@ -749,9 +803,10 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      var_type=T_String;
      string_val=;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc="log file name to load -- leave empty to choose from browser";
+     init_from=NULL;
     };
    };
    vars {
@@ -763,27 +818,30 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      var_type=T_Int;
      int_val=0;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc="alternative error threshold to use";
+     init_from=NULL;
     };
     ProgVar @[1] {
      name="kern_width";
      var_type=T_Int;
      int_val=14;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
     ProgVar @[2] {
      name="kern_sig";
      var_type=T_Real;
      real_val=7;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
     ProgVar @[3] {
      name="EpochData";
@@ -791,9 +849,10 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      object_type=DataTable;
      object_val=.projects[0].data[0]$0$;
      objs_ptr=0;
-     flags=NULL_CHECK|USED;
+     flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
     ProgVar @[4] {
      name="EpochData_Group";
@@ -801,45 +860,50 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      object_type=DataTable;
      object_val=.projects[0].data.gp[2][0]$1$;
      objs_ptr=0;
-     flags=NULL_CHECK|USED;
+     flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
     ProgVar @[5] {
      name="stats";
      var_type=T_String;
      string_val="n=10; min=0; max=0; mean=0; median=0; mode=0; stdev=0; sem=0;";
      objs_ptr=0;
-     flags=NULL_CHECK|USED;
+     flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
     ProgVar @[6] {
      name="max_idx";
      var_type=T_Int;
      int_val=0;
      objs_ptr=0;
-     flags=NULL_CHECK|USED;
+     flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
     ProgVar @[7] {
      name="max_val";
      var_type=T_Real;
      real_val=3.783505853677006e-44;
      objs_ptr=0;
-     flags=NULL_CHECK|USED;
+     flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
     ProgVar @[8] {
      name="min_val";
      var_type=T_Real;
      real_val=0;
      objs_ptr=0;
-     flags=NULL_CHECK|USED;
+     flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
     ProgVar @[9] {
      name="EpochData_SmoothGauss";
@@ -847,9 +911,10 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      object_type=DataTable;
      object_val=.projects[0].data.gp[2][1]$2$;
      objs_ptr=0;
-     flags=NULL_CHECK|USED;
+     flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
     ProgVar @[10] {
      name="EpochsToTrain";
@@ -857,9 +922,10 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      object_type=Program;
      object_val=.projects[0].programs[0]$3$;
      objs_ptr=0;
-     flags=NULL_CHECK|USED;
+     flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc="pointer to ourself so we can set our own variables from startup args";
+     init_from=NULL;
     };
     ProgVar @[11] {
      name="rel";
@@ -867,14 +933,15 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      object_type=Relation;
      object_val=.projects[0].programs[0].objs[0]$4$;
      objs_ptr=1;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
    };
    functions {
     name=;
-    el_typ=ProgEl;
+    el_typ=Function;
     el_def=0;
    };
    load_code {
@@ -1196,14 +1263,37 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       append_agg_name=1;
      };
     };
-    PrintExpr @[11] {
+    MemberMethodCall @[11] {
+     desc="convert to float so that subsequent stats can use that";
+     flags=;
+     obj=$7$;
+     path="data.epoch_last";
+     result_var=NULL;
+     method=DataCol::ChangeColType;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=taBase::ValType;
+       type="taBase::ValType";
+       name="new_type";
+       required=0;
+       def_val=;
+       expr {
+	expr="taBase::VT_FLOAT";
+       };
+      };
+     };
+    };
+    PrintExpr @[12] {
      desc=;
      flags=;
      expr {
       expr="\"=====================\\n\" << \"Epochs to criterion:\"";
      };
     };
-    MethodCall @[12] {
+    MethodCall @[13] {
      desc=;
      flags=;
      result_var=.projects[0].programs[0].vars[5]$9$;
@@ -1225,7 +1315,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       };
      };
     };
-    PrintVar @[13] {
+    PrintVar @[14] {
      desc=;
      flags=;
      message=;
@@ -1236,7 +1326,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      print_var5=NULL;
      print_var6=NULL;
     };
-    MathCall @[14] {
+    MathCall @[15] {
      desc=;
      flags=;
      result_var=.projects[0].programs[0].vars[7]$10$;
@@ -1268,7 +1358,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       };
      };
     };
-    UserScript @[15] {
+    UserScript @[16] {
      desc=;
      flags=;
      script {
@@ -1277,14 +1367,14 @@ cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_las
 ";
      };
     };
-    PrintExpr @[16] {
+    PrintExpr @[17] {
      desc=;
      flags=;
      expr {
       expr="\"=====================\\n\" << \"Epochs to cnt_err < err_thresh: \" << err_thresh";
      };
     };
-    MethodCall @[17] {
+    MethodCall @[18] {
      desc=;
      flags=;
      result_var=$9$;
@@ -1306,7 +1396,7 @@ cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_las
       };
      };
     };
-    PrintVar @[18] {
+    PrintVar @[19] {
      desc=;
      flags=;
      message=;
@@ -1317,7 +1407,7 @@ cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_las
      print_var5=NULL;
      print_var6=NULL;
     };
-    UserScript @[19] {
+    UserScript @[20] {
      desc=;
      flags=;
      script {
@@ -1327,14 +1417,14 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
 ";
      };
     };
-    PrintExpr @[20] {
+    PrintExpr @[21] {
      desc=;
      flags=;
      expr {
       expr="\"=====================\\n\" << \"Min cnt_err value per batch:\"";
      };
     };
-    MethodCall @[21] {
+    MethodCall @[22] {
      desc=;
      flags=;
      result_var=$9$;
@@ -1356,7 +1446,7 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
       };
      };
     };
-    PrintVar @[22] {
+    PrintVar @[23] {
      desc=;
      flags=;
      message=;
@@ -1367,7 +1457,7 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
      print_var5=NULL;
      print_var6=NULL;
     };
-    MathCall @[23] {
+    MathCall @[24] {
      desc=;
      flags=;
      result_var=.projects[0].programs[0].vars[8]$11$;
@@ -1399,7 +1489,7 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
       };
      };
     };
-    UserScript @[24] {
+    UserScript @[25] {
      desc=;
      flags=;
      script {
@@ -1408,7 +1498,7 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
 ";
      };
     };
-    DataAnalCall @[25] {
+    DataAnalCall @[26] {
      desc="smooth the training data -- just for visualization, not other analyses";
      flags=;
      result_var=NULL;
@@ -1648,7 +1738,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=10000;
-	  view_range {min=0: max=245: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -1698,10 +1788,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=Y;
 	   col_name="cnt_err";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=25: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=25: };
-	   range {min=0: max=25: };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -1770,6 +1860,54 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=PLUS;
+	   alt_y=0;
+	  };
+	  plot_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CROSS;
+	   alt_y=0;
+	  };
+	  plot_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=STAR;
+	   alt_y=0;
+	  };
+	  plot_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=MINUS;
 	   alt_y=0;
 	  };
 	  alt_y_1=0;
@@ -1857,6 +1995,54 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   point_style=CIRCLE;
 	   alt_y=0;
 	  };
+	  err_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
 	  err_spacing=1;
 	  err_bar_width=0.02;
 	  color_mode=VALUE_COLOR;
@@ -1908,10 +2094,56 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 };
 	};
        };
-       camera_pos {x=1.44905: y=0.445: z=1.55715: };
-       camera_orient {x=0: y=0: z=1: rot=0: };
-       camera_focdist=2.04715;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=1.4275: y=0.4449999: z=1.376934: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.866934;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
       };
       T3DataViewFrame @[1] {
        m_data=NULL;
@@ -1998,7 +2230,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=10000;
-	  view_range {min=0: max=245: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -2048,10 +2280,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=Y;
 	   col_name="cnt_err";
-	   fixed_range {fix_min=0: min=2.886822: fix_max=0: max=23.52796: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=2.886822: max=23.52796: };
-	   range {min=2.886822: max=23.52796: };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -2120,6 +2352,54 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=PLUS;
+	   alt_y=0;
+	  };
+	  plot_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CROSS;
+	   alt_y=0;
+	  };
+	  plot_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=STAR;
+	   alt_y=0;
+	  };
+	  plot_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=MINUS;
 	   alt_y=0;
 	  };
 	  alt_y_1=0;
@@ -2207,6 +2487,54 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   point_style=CIRCLE;
 	   alt_y=0;
 	  };
+	  err_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
 	  err_spacing=1;
 	  err_bar_width=0.02;
 	  color_mode=VALUE_COLOR;
@@ -2258,10 +2586,56 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 };
 	};
        };
-       camera_pos {x=1.4275: y=0.445: z=1.509074: };
-       camera_orient {x=0: y=0: z=1: rot=0: };
-       camera_focdist=1.999074;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=1.4275: y=0.4449999: z=1.376934: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.866934;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
       };
      };
     };
@@ -2280,7 +2654,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    };
   };
  };
- use_change_log=0;
  last_change_desc=;
  networks {
   name=;
