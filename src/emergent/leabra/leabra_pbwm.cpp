@@ -3573,7 +3573,8 @@ bool LeabraWizard::PBWM_V2(LeabraNetwork* net, bool da_mod_all,
   //////////////////////////////////////////////////////////////////////////////////
   // set default spec parameters
 
-  // todo: update these values!
+  net->min_cycles = 30;		// needed to clear out!
+  net->phase_order = LeabraNetwork::MINUS_PLUS;
 
   // NOT unique: inherit from lve
   patchsp->SetUnique("decay", false);

@@ -1530,6 +1530,12 @@ void DataVarProg::Initialize() {
   set_data = false;
 }
 
+void DataVarProg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(row_spec == CUR_ROW)
+    row_var = NULL;		// reset to null
+}
+
 void DataVarProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(row_spec != CUR_ROW && !row_var, quiet, rval, "row_var is NULL but is required!");

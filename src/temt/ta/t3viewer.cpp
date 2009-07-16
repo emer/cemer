@@ -2173,10 +2173,10 @@ bool T3DataViewFrame::SaveImageIV(const String& fname) {
 
 void T3DataViewFrame::SetImageSize(int width, int height) {
   if(!widget()) return;
+  T3ExaminerViewer* viewer = widget()->t3viewer();
+  if(!viewer || !viewer->quarter) return;
   // note: these may not be the same on all platforms!! works for me on my mac.. :)
-  int eff_wd = width + 60;
-  int eff_ht = height + 30;
-  widget()->resize(eff_wd, eff_ht);
+  viewer->quarter->resize(width, height);
 }
 
 //////////////////////////

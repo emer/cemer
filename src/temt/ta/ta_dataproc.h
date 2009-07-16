@@ -485,6 +485,7 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(DataVarProg);
 protected:
+  override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
 
   override const String	GenCssBody_impl(int indent_level);
