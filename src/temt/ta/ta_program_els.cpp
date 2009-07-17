@@ -1032,6 +1032,14 @@ void MemberAssign::Initialize() {
   update_after = false;
 }
 
+void MemberAssign::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if((bool)obj && (bool)obj->object_val && expr.empty()) { // assume ok to set default here based on obj
+    update_after = obj->object_val->UAEProgramDefault();
+  }
+}
+
+
 void MemberAssign::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   expr.CheckConfig(quiet, rval);

@@ -239,7 +239,7 @@ void iProgramEditor::Init() {
   // layout constants
   ln_sz = taiM->max_control_height(taiM->ctrl_size); 
   ln_vmargin = 1; 
-  m_editLines = 4; // legacy value
+  m_editLines = taMisc::program_editor_lines;
 
   m_changing = 0;
   read_only = false;

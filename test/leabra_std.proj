@@ -1204,6 +1204,15 @@ LeabraProject .projects[0] {
 		  };
 		};
 	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
 	    };
 	  };
 	};
@@ -1561,9 +1570,10 @@ LeabraProject .projects[0] {
      object_type=Program;
      object_val=.projects[0].programs.gp[0][1]$0$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc="set this to point to your train process";
+     init_from=NULL;
     };
     ProgVar @[1] {
      name="batch";
@@ -1571,54 +1581,60 @@ LeabraProject .projects[0] {
      object_type=Program;
      object_val=.projects[0].programs.gp[0][0]$1$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc="set this to point to your batch process";
+     init_from=NULL;
     };
     ProgVar @[2] {
      name="tag";
      var_type=T_String;
      string_val="_gui";
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
     ProgVar @[3] {
      name="batch_str";
      var_type=T_String;
      string_val="00";
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc="batch number as a string (leading zeros)";
+     init_from=NULL;
     };
     ProgVar @[4] {
      name="log_dir";
      var_type=T_String;
      string_val=;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc="log file directory";
+     init_from=NULL;
     };
     ProgVar @[5] {
      name="log_file_nm";
      var_type=T_String;
      string_val=;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc="name of log file";
+     init_from=NULL;
     };
     ProgVar @[6] {
      name="batch_start";
      var_type=T_Int;
      int_val=0;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc="batch starting number";
+     init_from=NULL;
     };
     ProgVar @[7] {
      name="EpochOutputData";
@@ -1626,9 +1642,10 @@ LeabraProject .projects[0] {
      object_type=DataTable;
      object_val=.projects[0].data.gp[1][1]$2$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
     ProgVar @[8] {
      name="TrialOutputData";
@@ -1636,9 +1653,10 @@ LeabraProject .projects[0] {
      object_type=DataTable;
      object_val=.projects[0].data.gp[1][0]$3$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
    };
    functions {
@@ -2452,9 +2470,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=LeabraNetwork;
      object_val=.projects[0].networks[0]$14$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
      reference=0;
      desc="network to operate on -- updates batch counter on network and passes it to train program";
+     init_from=NULL;
     };
     ProgVar @[1] {
      name="input_data";
@@ -2462,9 +2481,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=DataTable;
      object_val=.projects[0].data.gp[0][0]$15$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
      reference=0;
      desc="datatable with training patterns -- not used by this program, but passed to train program";
+     init_from=NULL;
     };
    };
    vars {
@@ -2477,36 +2497,40 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=Program;
      object_val=$1$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc="set this to point to your batch process";
+     init_from=NULL;
     };
     ProgVar @[1] {
      name="tag";
      var_type=T_String;
      string_val=;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
     ProgVar @[2] {
      name="log_dir";
      var_type=T_String;
      string_val=;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc="log file directory";
+     init_from=NULL;
     };
     ProgVar @[3] {
      name="log_file_nm";
      var_type=T_String;
      string_val=;
      objs_ptr=0;
-     flags=NULL_CHECK|USED;
+     flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc="name of log file";
+     init_from=NULL;
     };
     ProgVar @[4] {
      name="EpochOutputData";
@@ -2514,9 +2538,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=DataTable;
      object_val=$2$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
     ProgVar @[5] {
      name="TrialOutputData";
@@ -2524,9 +2549,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=DataTable;
      object_val=$3$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
      desc=;
+     init_from=NULL;
     };
    };
    functions {
@@ -3056,9 +3082,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       object_type=LeabraNetwork;
       object_val=$14$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to operate on -- updates batch counter on network and passes it to train program";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="input_data";
@@ -3066,9 +3093,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       object_type=DataTable;
       object_val=$15$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="datatable with training patterns -- not used by this program, but passed to train program";
+      init_from=NULL;
      };
     };
     vars {
@@ -3080,18 +3108,20 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="batch counter";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="max_batch";
       var_type=T_Int;
       int_val=10;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="maximum number of batch runs to perform";
+      init_from=NULL;
      };
     };
     functions {
@@ -3242,9 +3272,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       object_type=LeabraNetwork;
       object_val=$14$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to train";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="input_data";
@@ -3252,18 +3283,20 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       object_type=DataTable;
       object_val=$15$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="datatable with training patterns";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="no_prompts";
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
+      init_from=NULL;
      };
     };
     vars {
@@ -3275,18 +3308,20 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Int;
       int_val=500;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="maximum number of epochs to run";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="epoch";
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="current epoch -- local copy, which is used to update network's epoch counter";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="train_mode";
@@ -3294,9 +3329,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       int_val=1;
       hard_enum_type=Network::TrainMode;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="TRAIN = update weights (learn), TEST = just record network's responses but don't learn";
+      init_from=NULL;
      };
      ProgVar @[3] {
       name="rnd_init";
@@ -3306,28 +3342,31 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        value=0;
       };
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="how to initialize the random numbers when the Init button is pressed";
+      init_from=NULL;
      };
      ProgVar @[4] {
       name="err_stopcrit";
       var_type=T_Real;
       real_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="stopping criterion -- when error measure (count of trials with a non-zero error by defult)
 goes <= this value, stop training (set to -1 to disable stopping criterion, and always train to max_epoch epochs)";
+      init_from=NULL;
      };
      ProgVar @[5] {
       name="save_final_wts";
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="save the network's weights at the end of training?  Note: you can also just call SaveWeights program inside training loop to save more frequently";
+      init_from=NULL;
      };
      ProgVar @[6] {
       name="rnd_seed";
@@ -3335,9 +3374,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=RndSeed;
       object_val=.projects[0].programs.gp[0][1].objs[0]$26$;
       objs_ptr=1;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="random seed that is used at start of training -- if OldSeed is called";
+      init_from=NULL;
      };
      ProgVar @[7] {
       name="train_timer";
@@ -3345,9 +3385,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=TimeUsed;
       object_val=.projects[0].networks[0].train_time$27$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="records time used to train network (object lives on network -- this is a pointer to it)";
+      init_from=NULL;
      };
     };
     functions {
@@ -3688,9 +3729,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=LeabraNetwork;
       object_val=$14$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to operate on";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="input_data";
@@ -3698,9 +3740,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=$15$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="table of patterns to present to the network, one row at a time";
+      init_from=NULL;
      };
     };
     vars {
@@ -3713,19 +3756,21 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       int_val=1;
       hard_enum_type=DataLoop::Order;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="controls the order in which events (rows of the input data datatable) are presented to the network
 (SEQUENTIAL, PERMUTED, RANDOM)";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="trial";
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="trial_mon_data";
@@ -3733,9 +3778,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=$3$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
+      init_from=NULL;
      };
      ProgVar @[3] {
       name="epoch_timer";
@@ -3743,36 +3789,40 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=TimeUsed;
       object_val=.projects[0].networks[0].epoch_time$34$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
+      init_from=NULL;
      };
      ProgVar @[4] {
       name="data_loop_index";
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
+      init_from=NULL;
      };
      ProgVar @[5] {
       name="compute_rel_netin";
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="call Compute_AvgAbsRelNetin() function to collect relative net input information telling how much each layer receives from each of its receiving projections";
+      init_from=NULL;
      };
      ProgVar @[6] {
       name="adapt_rel_abs_netin";
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="use the computed rel and abs netin values to adapt the wt_scale.abs and wt_scale.rel params of network conspecs to match target values that are set on the projections -- see conspec rel_net_adapt and layerspec abs_net_adapt parmeters and comments for more information";
+      init_from=NULL;
      };
     };
     functions {
@@ -4069,9 +4119,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=LeabraNetwork;
       object_val=$14$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to operate on -- typically set by higher-level calling programs";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="input_data";
@@ -4079,9 +4130,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=$15$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="datatable containing training input/output patterns";
+      init_from=NULL;
      };
     };
     vars {
@@ -4093,36 +4145,40 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="local phase counting variable (0 is typically minus phase, 1 is typically plus -- depends on network settings)";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="update_net_view";
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="determines whether to update any network view displays after trial is completed";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="trial";
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
+      init_from=NULL;
      };
      ProgVar @[3] {
       name="compute_rel_netin";
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="call ComputeAbsRelNetin() function to collect relative net input information telling how much each layer receives from each of its receiving projections";
+      init_from=NULL;
      };
     };
     functions {
@@ -4349,9 +4405,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=LeabraNetwork;
       object_val=$14$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc=;
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="input_data";
@@ -4359,9 +4416,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=$15$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|EDIT_VAL;
       reference=0;
       desc=;
+      init_from=NULL;
      };
     };
     vars {
@@ -4373,28 +4431,31 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="current cycle of settling (local loop counter)";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="min_cycles";
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="IMPORTANT: this value is obtained from the network min_cycles and min_cycles_phase2 -- change the value on the network object, not here in this program!
 sets the minimum number of cycles to settle for, regardless of network state changes, etc";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="if true, will update network views at end of settling";
+      init_from=NULL;
      };
     };
     functions {
@@ -4671,9 +4732,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=LeabraNetwork;
       object_val=$14$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc=;
+      init_from=NULL;
      };
     };
     vars {
@@ -4685,9 +4747,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
+      init_from=NULL;
      };
     };
     functions {
@@ -4794,9 +4857,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=Network;
       object_val=$14$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="network to apply inputs to -- typically set by calling program";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="input_data";
@@ -4804,9 +4868,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=DataTable;
       object_val=$15$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="input datatable containing input/output patterns";
+      init_from=NULL;
      };
     };
     vars {
@@ -4819,9 +4884,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=LayerWriter;
       object_val=.projects[0].programs.gp[0][6].objs[0]$56$;
       objs_ptr=1;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
+      init_from=NULL;
      };
     };
     functions {
@@ -4979,10 +5045,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5009,10 +5077,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5039,10 +5109,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5069,10 +5141,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5099,10 +5173,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5129,10 +5205,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5159,10 +5237,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5189,10 +5269,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5219,10 +5301,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5249,9 +5333,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=Network;
       object_val=$14$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to record data from";
+      init_from=NULL;
      };
     };
     vars {
@@ -5264,9 +5349,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=DataTable;
       object_val=$3$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="data table to record trial-level data to (this program writes new data to this table!)";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="trial_netmon";
@@ -5274,9 +5360,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=NetMonitor;
       object_val=.projects[0].programs.gp[0][7].objs[0]$58$;
       objs_ptr=1;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
+      init_from=NULL;
      };
     };
     functions {
@@ -5480,10 +5567,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5510,10 +5599,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5540,10 +5631,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5570,10 +5663,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5600,10 +5695,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5630,10 +5727,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5660,10 +5759,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5690,10 +5791,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5720,9 +5823,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=Network;
       object_val=$14$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="network to get data from";
+      init_from=NULL;
      };
     };
     vars {
@@ -5735,9 +5839,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=DataTable;
       object_val=$2$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="data table to write the epoch data to";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="epoch_netmon";
@@ -5745,9 +5850,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=NetMonitor;
       object_val=.projects[0].programs.gp[0][8].objs[0]$62$;
       objs_ptr=1;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network monitor object that contains full specs for what to record and where to get it";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="epoch_timer";
@@ -5755,9 +5861,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=TimeUsed;
       object_val=$34$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
+      init_from=NULL;
      };
     };
     functions {
@@ -6018,9 +6125,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=Network;
       object_val=$14$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc=;
+      init_from=NULL;
      };
     };
     vars {
@@ -6032,54 +6140,60 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="user-provided tag (startup script will set this!)";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="wts_subdir";
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="user-provided subdirectory to save weights in";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="fname";
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="final generated file name -- do not edit!";
+      init_from=NULL;
      };
      ProgVar @[3] {
       name="epoch_str";
       var_type=T_String;
       string_val="0036";
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="string rep of epoch with leading zeros";
+      init_from=NULL;
      };
      ProgVar @[4] {
       name="batch_str";
       var_type=T_String;
       string_val="03";
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="string rep of batch with leading zeros";
+      init_from=NULL;
      };
      ProgVar @[5] {
       name="final_tag";
       var_type=T_String;
       string_val=".03_0036";
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="batch + epoch";
+      init_from=NULL;
      };
     };
     functions {
@@ -6299,9 +6413,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=LeabraNetwork;
       object_val=$14$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to operate on";
+      init_from=NULL;
      };
     };
     vars {
@@ -6314,9 +6429,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=DataTable;
       object_val=$15$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="table of patterns to present to the network, one row at a time";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="data_loop_order";
@@ -6324,19 +6440,21 @@ presented in the minus phase -- if this is not the case (values are computed on 
       int_val=0;
       hard_enum_type=DataLoop::Order;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="controls the order in which events (rows of the input data datatable) are presented to the network
 (SEQUENTIAL, PERMUTED, RANDOM)";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="trial";
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
+      init_from=NULL;
      };
      ProgVar @[3] {
       name="trial_mon_data";
@@ -6344,9 +6462,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=DataTable;
       object_val=.projects[0].data.gp[1][2]$72$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
+      init_from=NULL;
      };
      ProgVar @[4] {
       name="epoch_timer";
@@ -6354,23 +6473,25 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=TimeUsed;
       object_val=$34$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
+      init_from=NULL;
      };
      ProgVar @[5] {
       name="data_loop_index";
       var_type=T_Int;
       int_val=6;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
+      init_from=NULL;
      };
     };
     functions {
      name=;
-     el_typ=ProgEl;
+     el_typ=Function;
      el_def=0;
     };
     load_code {
@@ -6622,9 +6743,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=LeabraNetwork;
       object_val=$14$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to operate on -- typically set by higher-level calling programs";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="input_data";
@@ -6632,9 +6754,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=DataTable;
       object_val=$15$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="datatable containing training input/output patterns";
+      init_from=NULL;
      };
     };
     vars {
@@ -6646,23 +6769,25 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="local phase counting variable (0 is typically minus phase, 1 is typically plus -- depends on network settings)";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="update_net_view";
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="determines whether to update any network view displays after trial is completed";
+      init_from=NULL;
      };
     };
     functions {
      name=;
-     el_typ=ProgEl;
+     el_typ=Function;
      el_def=0;
     };
     load_code {
@@ -6860,9 +6985,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=LeabraNetwork;
       object_val=$14$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc=;
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="input_data";
@@ -6870,9 +6996,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=DataTable;
       object_val=$15$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|EDIT_VAL;
       reference=0;
       desc=;
+      init_from=NULL;
      };
     };
     vars {
@@ -6884,33 +7011,36 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="current cycle of settling (local loop counter)";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="min_cycles";
       var_type=T_Int;
       int_val=15;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="IMPORTANT: this value is obtained from the network min_cycles and min_cycles_phase2 -- change the value on the network object, not here in this program!
 sets the minimum number of cycles to settle for, regardless of network state changes, etc";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="update_net_view";
       var_type=T_Bool;
       bool_val=1;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="if true, will update network views at end of settling";
+      init_from=NULL;
      };
     };
     functions {
      name=;
-     el_typ=ProgEl;
+     el_typ=Function;
      el_def=0;
     };
     load_code {
@@ -7182,9 +7312,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=LeabraNetwork;
       object_val=$14$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc=;
+      init_from=NULL;
      };
     };
     vars {
@@ -7196,14 +7327,15 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
+      init_from=NULL;
      };
     };
     functions {
      name=;
-     el_typ=ProgEl;
+     el_typ=Function;
      el_def=0;
     };
     load_code {
@@ -7305,9 +7437,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=Network;
       object_val=$14$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="network to apply inputs to -- typically set by calling program";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="input_data";
@@ -7315,9 +7448,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=DataTable;
       object_val=$15$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="input datatable containing input/output patterns";
+      init_from=NULL;
      };
     };
     vars {
@@ -7330,14 +7464,15 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=LayerWriter;
       object_val=.projects[0].programs.gp[1][4].objs[0]$94$;
       objs_ptr=1;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
+      init_from=NULL;
      };
     };
     functions {
      name=;
-     el_typ=ProgEl;
+     el_typ=Function;
      el_def=0;
     };
     load_code {
@@ -7490,10 +7625,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7520,10 +7657,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7550,10 +7689,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7580,10 +7721,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7610,10 +7753,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7640,10 +7785,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7670,10 +7817,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7700,10 +7849,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7730,10 +7881,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7760,9 +7913,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=Network;
       object_val=$14$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to record data from";
+      init_from=NULL;
      };
     };
     vars {
@@ -7775,9 +7929,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=DataTable;
       object_val=$72$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="data table to record trial-level data to (this program writes new data to this table!)";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="trial_netmon";
@@ -7785,14 +7940,15 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=NetMonitor;
       object_val=.projects[0].programs.gp[1][5].objs[0]$96$;
       objs_ptr=1;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
+      init_from=NULL;
      };
     };
     functions {
      name=;
-     el_typ=ProgEl;
+     el_typ=Function;
      el_def=0;
     };
     load_code {
@@ -7991,10 +8147,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -8021,10 +8179,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -8051,10 +8211,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -8081,10 +8243,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -8111,10 +8275,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -8141,10 +8307,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -8171,10 +8339,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -8201,10 +8371,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
 	 cmp 0 1;
 	 var=NULL;
+	 enable_var=NULL;
 	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -8231,9 +8403,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=Network;
       object_val=$14$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="network to get data from";
+      init_from=NULL;
      };
     };
     vars {
@@ -8246,9 +8419,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=DataTable;
       object_val=.projects[0].data.gp[1][3]$100$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="data table to write the epoch data to";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="epoch_netmon";
@@ -8256,9 +8430,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=NetMonitor;
       object_val=.projects[0].programs.gp[1][6].objs[0]$101$;
       objs_ptr=1;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network monitor object that contains full specs for what to record and where to get it";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="epoch_timer";
@@ -8266,14 +8441,15 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=TimeUsed;
       object_val=$34$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
+      init_from=NULL;
      };
     };
     functions {
      name=;
-     el_typ=ProgEl;
+     el_typ=Function;
      el_def=0;
     };
     load_code {
@@ -8576,11 +8752,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  net_text=1;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
-	  net_box_offset=0.5;
 	  ordered_uvg_list{ act;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
-	  max_size {x=5: y=5: z=3: };
+	  max_size {x=5: y=5: z=2.333333: };
 	  font_sizes {
 	   net_name=0.05;
 	   net_vals=0.05;
@@ -8599,6 +8774,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   prjn_trans=0.5;
 	   lay_trans=0.5;
 	   unit_trans=0.6;
+	   laygp_width=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
@@ -8632,13 +8808,56 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	 };
 	};
        };
-       camera_pos {x=0.5: y=0.3022419: z=1.917677: };
-       camera_orient {x=0: y=0: z=1: rot=0: };
-       camera_focdist=2.335362;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
        headlight_on=1;
-       fullscreen_on=0;
        stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=0.5: y=0.32591: z=1.863396: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=2.245828;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
       };
      };
     };
@@ -8978,6 +9197,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
     el_typ=LeabraLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
+    max_size {x=5: y=5: z=3: };
     LeabraLayer @[0] {
      name="Input";
      desc=;
@@ -9310,25 +9530,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    n_units=75;
    n_cons=1875;
    max_size {x=5: y=5: z=3: };
-   font_sizes {
-    net_name=0.05;
-    net_vals=0.05;
-    layer=0.04;
-    layer_vals=0.03;
-    prjn=0.01;
-    unit=0.02;
-    un_nm_len=3;
-   };
-   view_params {
-    xy_square=0;
-    unit_spacing=0.05;
-    prjn_disp=L_R_F;
-    prjn_name=0;
-    prjn_width=0.002;
-    prjn_trans=0.5;
-    lay_trans=0.5;
-    unit_trans=0.6;
-   };
    learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;
    no_plus_test=1;
@@ -9399,6 +9600,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    norew_val=0.5;
    avg_ext_rew=0;
    pvlv_pvi=0;
+   pvlv_pvr=0;
    pvlv_lve=0;
    pvlv_lvi=0;
    pv_detected=0;

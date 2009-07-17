@@ -110,6 +110,7 @@ public:
   virtual bool 	    RemoveChild(const char* nm, TypeDef* td = NULL);
   // remove a child based on name or type
 
+  override bool	    UAEProgramDefault() { return true; }
   override String GetDesc() const { return desc; }
   void	InitLinks();
   void	CutLinks();

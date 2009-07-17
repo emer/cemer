@@ -499,6 +499,7 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(MemberAssign);
 protected:
+  override void		UpdateAfterEdit_impl();
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 

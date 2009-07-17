@@ -515,7 +515,7 @@ taThreadDefaults::taThreadDefaults() {
   cpus = 1;
   n_threads = -1;
   alloc_pct = 0.0f;
-  min_units = 1000;
+  min_units = 3000;
   compute_thr = 0.5f;
   nibble_chunk = 8;
 }
@@ -563,6 +563,7 @@ bool	taMisc::delete_prompts = false;
 //bool	taMisc::delete_prompts = true;
 int	taMisc::tree_indent = 10; // 12 used to be default, but 10 seems good
 int	taMisc::program_editor_width = 60;
+int	taMisc::program_editor_lines = 5;
 int	taMisc::max_menu = 1000; // no cost now in QT for making it large..
 int 	taMisc::search_depth = 4;
 int	taMisc::color_scale_size = 128;
