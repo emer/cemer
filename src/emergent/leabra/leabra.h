@@ -2705,6 +2705,9 @@ public:
     virtual void TargExtToComp();
     // #CAT_SettleInit move target and external input values to comparison (for PLUS_NOTHING, called by Settle_Init)
 
+  virtual void  NewInputData_Init();
+  // #CAT_SettleInit perform initialization stuff needed to update external input data signals so they actually show up as activations in the network: Settle_Init_Layer, Settle_Init_TrgFlags, Compute_HardClamp
+
   ////////////////////////////////////////////////////////////////
   //	Cycle_Run
 

@@ -427,16 +427,16 @@ public:
   
   enum BaseFlags { // #BITS control flags 
     BF_0		= 0, // #IGNORE
-    THIS_INVALID	= 0x0001, // CheckThisConfig_impl has detected a problem
-    CHILD_INVALID	= 0x0002, // CheckChildConfig_impl returns issue with a child
-    COPYING		= 0x0004, // this object is currently within a Copy function
-    USE_STALE		= 0x0008, // calls setStale on appropriate changes; usually set in Initialize
-    BF_READ_ONLY	= 0x0010, // this object should be considered readonly by most code (except controlling objs) and by CSS -- note that ro is a property -- use that to query the ro status
-    BF_GUI_READ_ONLY	= 0x0020, // a less restrictive form of ro intended to prevent users from modifying an object, but still permit programmatic access; RO ==> GRO
-    DESTROYING		= 0x0040, // Set in Destroying at the very beginning of destroy
-    DESTROYED		= 0x0080,  // set in base destroy (DEBUG only); lets us detect multi destroys
-    NAME_READONLY	= 0x0100,  // set to disable editing of name
-    REGISTERED		= 0x0200, // set when registered (must unreg)
+    THIS_INVALID	= 0x0001, // #EXPERT CheckThisConfig_impl has detected a problem
+    CHILD_INVALID	= 0x0002, // #EXPERT CheckChildConfig_impl returns issue with a child
+    COPYING		= 0x0004, // #EXPERT this object is currently within a Copy function
+    USE_STALE		= 0x0008, // #EXPERT calls setStale on appropriate changes; usually set in Initialize
+    BF_READ_ONLY	= 0x0010, // #EXPERT this object should be considered readonly by most code (except controlling objs) and by CSS -- note that ro is a property -- use that to query the ro status
+    BF_GUI_READ_ONLY	= 0x0020, // #EXPERT a less restrictive form of ro intended to prevent users from modifying an object, but still permit programmatic access; RO ==> GRO
+    DESTROYING		= 0x0040, // #EXPERT Set in Destroying at the very beginning of destroy
+    DESTROYED		= 0x0080, // #EXPERT set in base destroy (DEBUG only); lets us detect multi destroys
+    NAME_READONLY	= 0x0100, // #EXPERT set to disable editing of name
+    REGISTERED		= 0x0200, // #EXPERT set when registered (must unreg)
 #ifndef __MAKETA__
     INVALID_MASK	= THIS_INVALID | CHILD_INVALID
     ,COPY_MASK		= THIS_INVALID | CHILD_INVALID | NAME_READONLY // flags to copy when doing an object copy
@@ -445,9 +445,9 @@ public:
   };
   
   enum DumpQueryResult { // #IGNORE Dump_QuerySaveMember response
-    DQR_NO_SAVE,	// definitely do not save
-    DQR_SAVE,		// definitely save
-    DQR_DEFAULT		// do default for this member (this is the base result)
+    DQR_NO_SAVE,	// #EXPERT definitely do not save
+    DQR_SAVE,		// #EXPERT definitely save
+    DQR_DEFAULT		// #EXPERT do default for this member (this is the base result)
   };
 
   ///////////////////////////////////////////////////////////////////////////

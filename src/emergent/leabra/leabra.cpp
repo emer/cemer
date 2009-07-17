@@ -4965,6 +4965,12 @@ void LeabraNetwork::TargExtToComp() {
   }
 }
 
+void LeabraNetwork::NewInputData_Init() {
+  Settle_Init_Layer();
+  Settle_Init_TargFlags();
+  Compute_HardClamp();
+}
+
 ////////////////////////////////////////////////////////////////
 //	Cycle_Run
 

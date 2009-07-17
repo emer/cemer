@@ -511,12 +511,12 @@ void UnitGroupView::Render_impl_children() {
   T3UnitGroupNode* node_so = this->node_so(); // cache
   if(!node_so) return;
 
-  Render_impl_snap_bord();
-
   if(lv()->disp_mode == LayerView::DISP_OUTPUT_NAME) {
     Render_impl_outnm();
     return;
   }
+
+  Render_impl_snap_bord();
 
   if(nv->unit_disp_mode == NetView::UDM_BLOCK) {
     Render_impl_blocks();

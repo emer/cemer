@@ -1683,6 +1683,7 @@ void XMatrixLayerSpec::Initialize() {
 
 void XMatrixLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  matrix.UpdateAfterEdit();
   if(contrast.one_val) {
     contrast.go_p = contrast.go_n = contrast.nogo_p = contrast.nogo_n = contrast.contrast;
     // set them all
