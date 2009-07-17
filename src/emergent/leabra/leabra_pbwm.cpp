@@ -1640,13 +1640,24 @@ void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
 /////////////////////////////////////////////////////
 
 void XMatrixMiscSpec::Initialize() {
-  mnt_nogo_da = 6.0f;
-  empty_go_da = 6.0f;
-  out_pvr_da = 6.0f;
+  one_bias_da = true;
+  bias_da = 5.0f;
+  mnt_nogo_da = 5.0f;
+  empty_go_da = 5.0f;
+  out_pvr_da = 5.0f;
   perf_gain = 0.0f;
   neg_da_bl = 0.0f;
   neg_gain = 1.0f;
   no_snr_mod = false;
+}
+
+void XMatrixMiscSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(one_bias_da) {
+    mnt_nogo_da = bias_da;
+    empty_go_da = bias_da;
+    out_pvr_da = bias_da;
+  }
 }
 
 void XMatrixLayerSpec::Initialize() {

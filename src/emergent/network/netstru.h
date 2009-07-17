@@ -2312,7 +2312,7 @@ public:
   virtual Layer_Group* FindMakeLayerGroup(const char* nm, TypeDef* td = NULL,
 			    bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
   // #CAT_Structure find a given layer group and if not found, make it (of default type if NULL) (if nm is not found and alt_nm != NULL, it is searched for)
-  virtual Layer* FindLayer(const char* nm) { return (Layer*)layers.FindName(nm); }
+  virtual Layer* FindLayer(const char* nm) { return (Layer*)layers.FindLeafName(nm); }
   // #CAT_Structure find layer by name
   virtual Projection* FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps = NULL, ConSpec* cs = NULL, bool& nw_itm = nw_itm_def_arg);
   // #CAT_Structure find a projection between two layers using given specs, make it if not found; if existing prjn between layers exists, it will be modified with current specs

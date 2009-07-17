@@ -574,9 +574,11 @@ class LEABRA_API XMatrixMiscSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
 INHERITED(taOBase)
 public:
-  float		mnt_nogo_da;	// #DEF_6 for stripes that are maintaining, amount of NoGo (negative dopamine) performance da mod, only if not on an output trial as determined by PVr -- this is critical for enabling robust maintenance 
-  float		empty_go_da;	// #DEF_6 for empty stripes, amount of Go (positive dopamine) performance da mod, only if not on an output trial as determined by PVr -- provides a bias for maintaining new information
-  float		out_pvr_da;	// #DEF_6 if PVr detects a reward trial is coming, amount of Go (positive dopamine) peformance da mod to bias the output gating units to respond instead of maint or nogo
+  bool		one_bias_da;	// #DEF_true use one value to specify the bias dopamine values (mnt_nogo_da, empty_go_da, out_pvr_da) instead of specifying each separately -- typically things work best with just one value
+  float		bias_da;	// #DEF_5 #CONDSHOW_ON_one_bias_da the one dopamine (da) bias value to use for mnt_nogo_da, empty_go_da, out_pvr_da, if one_bias_da flag is true 
+  float		mnt_nogo_da;	// #DEF_5 #CONDEDIT_OFF_one_bias_da for stripes that are maintaining, amount of NoGo (negative dopamine) performance da mod, only if not on an output trial as determined by PVr -- this is critical for enabling robust maintenance 
+  float		empty_go_da;	// #DEF_5 #CONDEDIT_OFF_one_bias_da for empty stripes, amount of Go (positive dopamine) performance da mod, only if not on an output trial as determined by PVr -- provides a bias for maintaining new information
+  float		out_pvr_da;	// #DEF_5 #CONDEDIT_OFF_one_bias_da if PVr detects a reward trial is coming, amount of Go (positive dopamine) peformance da mod to bias the output gating units to respond instead of maint or nogo
   float		perf_gain;	// #DEF_0 performance effect da gain -- multiplies naturally-computed da values (mainly just LV) in minus phase -- does NOT multiply the following additional perf da factors
   float		neg_da_bl;	// #DEF_0 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
   float		neg_gain;	// #DEF_1 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
@@ -584,6 +586,8 @@ public:
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(XMatrixMiscSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
