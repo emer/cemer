@@ -932,6 +932,7 @@ public slots:
   void			FocusFirstTab(); // hack to get first tab focussed on load
   
 protected: // IDataViewWidget i/f
+  int 			last_idx;
   override void		Refresh_impl();
   
   virtual void		FillContextMenu_impl(taiMenu* menu, int tab_idx);

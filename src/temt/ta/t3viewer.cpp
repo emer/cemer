@@ -2235,6 +2235,7 @@ iT3DataViewer::~iT3DataViewer() {
 }
 
 void iT3DataViewer::Init() {
+  last_idx = -1;
   QVBoxLayout* lay = new QVBoxLayout(this);
   lay->setSpacing(0);  lay->setMargin(0);
   tw = new iTabWidget(this); //top, standard tabs
@@ -2301,8 +2302,13 @@ void iT3DataViewer::FillContextMenu_impl(taiMenu* menu, int tab_idx) {
 }
 
 void iT3DataViewer::FocusFirstTab() {
-  if (tw->count() > 0)
-    tw->setCurrentIndex(0);
+  if (tw->count() > 0) {
+    if (tw->currentIndex() == 0) {
+      tw_currentChanged(0);
+    } else {
+      tw->setCurrentIndex(0);
+    }
+  }
 
 }
 
@@ -2316,12 +2322,15 @@ void iT3DataViewer::tw_customContextMenuRequested2(const QPoint& pos, int tab_id
 }
 
 void iT3DataViewer::tw_currentChanged(int tab_idx) {
-  if (tab_idx >= 0) {
-    iT3DataViewFrame* idvf = iViewFrame(tab_idx);
-    if (idvf) { // should exist
-      idvf->Showing(true);
-    }
+  iT3DataViewFrame* idvf = iViewFrame(last_idx);
+  if (idvf) { 
+    idvf->Showing(false);
   }
+  idvf = iViewFrame(tab_idx);
+  if (idvf) { // should exist
+    idvf->Showing(true);
+  }
+  last_idx = tab_idx;
 }
 
 iT3DataViewFrame* iT3DataViewer::iViewFrame(int idx) const {
