@@ -1908,8 +1908,8 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
 
       int geom_x, geom_y;
       matrix->geom.Get2DGeomGui(geom_x, geom_y, mtxg->odd_y, 1);
-      float cl_x = 1.0f / (float)geom_x;	// how big each cell is
-      float cl_y = 1.0f / (float)geom_y;
+//      float cl_x = 1.0f / (float)geom_x;	// how big each cell is
+//      float cl_y = 1.0f / (float)geom_y;
       int xp = (int)((pt[0] * geom_x));
       int yp = (int)((pt[1] * geom_y));
 //       cerr << xp << ", " << yp << endl;

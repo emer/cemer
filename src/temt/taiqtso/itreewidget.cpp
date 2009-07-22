@@ -64,6 +64,8 @@ void  iTreeWidget::init() {
     this,  SLOT(this_itemExpanded(QTreeWidgetItem*)) );
   connect(this, SIGNAL(itemCollapsed(QTreeWidgetItem*)),
     this,  SLOT(this_itemCollapsed(QTreeWidgetItem*)) );
+  // default is to do auto-open
+  setAutoExpandDelay(500);
 }
 
 bool iTreeWidget::allColumnsShowFocus() const {

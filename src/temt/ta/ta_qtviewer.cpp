@@ -5075,7 +5075,7 @@ void iTabView::ShowTab(iDataPanel* panel, bool show, bool focus) {
   if (show) {
     // may be there already, prob most recent...
     int tb = -1;
-    for (int i = tabCount(); i >= 0; --i) {
+    for (int i = tabCount() - 1; i >= 0; --i) {
       iDataPanel* tpan = tabPanel(i);
       if (tpan == panel) {
         tb = i;
@@ -5089,7 +5089,7 @@ void iTabView::ShowTab(iDataPanel* panel, bool show, bool focus) {
     if (focus) 
       SetCurrentTab(tb);
   } else {
-    for (int i = tabCount(); i >= 0; --i) {
+    for (int i = tabCount() - 1; i >= 0; --i) {
       iDataPanel* tpan = tabPanel(i);
       if (tpan == panel) {
         tbPanels->removeTab(i);

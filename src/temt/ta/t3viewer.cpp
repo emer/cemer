@@ -1739,7 +1739,7 @@ void iT3DataViewFrame::NodeDeleting(T3Node* node) {
   }
 }
 
-void iT3DataViewFrame::hideEvent(QHideEvent* ev) {
+/*void iT3DataViewFrame::hideEvent(QHideEvent* ev) {
   inherited::hideEvent(ev);
   Showing(false);
 }
@@ -1753,14 +1753,14 @@ void iT3DataViewFrame::showEvent(QShowEvent* ev) {
 //   taiMiscCore::ProcessEvents();
 // #endif
   Showing(true);
-}
+}*/
 
 void iT3DataViewFrame::Showing(bool showing) {
   if (panel_set) {
     // note: don't focus, because that results in hard-to-prevent side-effect
     // of spurious focusing when restoring windows, changing desktops, etc.
-    //panel_set->FrameShowing(showing, showing); // focus it if showing
-    panel_set->FrameShowing(showing, false);
+    panel_set->FrameShowing(showing, showing); // focus it if showing
+    //panel_set->FrameShowing(showing, false);
   }
 }
 
@@ -2246,6 +2246,8 @@ void iT3DataViewer::Init() {
   lay->addWidget(tw);
   connect(tw, SIGNAL(customContextMenuRequested2(const QPoint&, int)),
 	  this, SLOT(tw_customContextMenuRequested2(const QPoint&, int)) );
+  connect(tw, SIGNAL(currentChanged(int)),
+	  this, SLOT(tw_currentChanged(int)) );
   // punt, and just connect a timer to focus first tab
   // if any ProcessEvents get called (should not!) may have to make non-zero time
   QTimer::singleShot(0, this, SLOT(FocusFirstTab()) );
@@ -2311,6 +2313,15 @@ void iT3DataViewer::tw_customContextMenuRequested2(const QPoint& pos, int tab_id
     menu->exec(pos);
   }
   delete menu;
+}
+
+void iT3DataViewer::tw_currentChanged(int tab_idx) {
+  if (tab_idx >= 0) {
+    iT3DataViewFrame* idvf = iViewFrame(tab_idx);
+    if (idvf) { // should exist
+      idvf->Showing(true);
+    }
+  }
 }
 
 iT3DataViewFrame* iT3DataViewer::iViewFrame(int idx) const {

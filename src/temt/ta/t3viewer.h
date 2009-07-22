@@ -680,6 +680,7 @@ class TA_API iT3DataViewFrame : public QWidget, public IDataViewWidget {
   Q_OBJECT
 INHERITED(QWidget)
 friend class T3DataViewFrame;
+friend class iT3DataViewer;
 friend class T3DataViewer;
 public:
 #ifndef __MAKETA__
@@ -727,8 +728,8 @@ protected:
   virtual void		Reset_impl(); // note: delegated from DataViewer::Clear_impl
 
 protected:
-  void			hideEvent(QHideEvent* ev);
-  void			showEvent(QShowEvent* ev);
+//  void			hideEvent(QHideEvent* ev);
+//  void			showEvent(QShowEvent* ev);
   void			Showing(bool showing); 
   
 private:
@@ -937,6 +938,7 @@ protected: // IDataViewWidget i/f
   
 protected slots:
   void 			tw_customContextMenuRequested2(const QPoint& pos, int tab_idx);
+  void			tw_currentChanged(int tab_idx);
 
 private:
   void			Init();
