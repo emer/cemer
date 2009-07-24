@@ -1463,6 +1463,8 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
 
   bool ok = cam_renderer->render(node_so);
 
+//   cam_renderer->writeToRGB("test_image.rgb");
+
   cam_switch->whichChild = -1;	// switch off for regular viewing!
 
   if(TestError(!ok, "GetCameraImage", "offscreen render failed!")) return img;
@@ -1488,7 +1490,9 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
       }
     }
   }
-
+  
+  if(cur_img_sc == cur_img_size)
+    return img;
   return img.scaled(cur_img_size.x, cur_img_size.y, Qt::IgnoreAspectRatio,
 		    Qt::SmoothTransformation);
 }

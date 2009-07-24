@@ -819,7 +819,7 @@ public:
   override QPixmap	GrabImage(bool& got_image);
   override bool		SaveImageAs(const String& fname = "", ImageFormat img_fmt = PNG);
   virtual  void		SetImageSize(int width, int height);
-  // #CAT_Display set size of SaveImageAs image to given size parameters
+  // #CAT_Display #BUTTON set size of 3d viewer (and thus SaveImageAs image) to given size parameters
 
   virtual bool		SaveImageEPS(const String& fname = "");
   // #CAT_Display save image in EPS format

@@ -444,6 +444,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
   override String	GetToolbarName() const { return "meth()"; }
+  override void 	Help();
 
   PROGEL_SIMPLE_BASEFUNS(MethodCall);
 protected:
@@ -475,6 +476,7 @@ public:
 
   override String StringFieldLookupFun(const String& cur_txt, int cur_pos,
 				       const String& mbr_name, int& new_pos);
+  override void 	Help();
 
   PROGEL_SIMPLE_BASEFUNS(MemberProgEl);
 protected:

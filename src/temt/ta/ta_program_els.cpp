@@ -952,6 +952,16 @@ String MethodCall::GetDisplayName() const {
   return rval;
 }
 
+void MethodCall::Help() {
+  if(obj && (bool)obj->object_val) {
+    obj->object_val->Help();
+    // todo: add check for method and select that in class browser guy..
+  }
+  else {
+    inherited::Help();
+  }
+}
+
 /*const String MethodCall::statusTip(const KeyString& ks) const {
   if (method)
     return method->prototype();
@@ -1022,6 +1032,16 @@ void MemberProgEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!obj, quiet, rval, "obj is NULL");
   CheckError(path.empty(), quiet, rval, "path is empty");
+}
+
+void MemberProgEl::Help() {
+  if(obj && (bool)obj->object_val) {
+    obj->object_val->Help();
+    // todo: add check for member and select that in class browser guy..
+  }
+  else {
+    inherited::Help();
+  }
 }
 
 //////////////////////////

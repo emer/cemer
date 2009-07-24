@@ -2235,6 +2235,7 @@ void PFCUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
 void XPFCGateSpec::Initialize() {
   base_gain = 0.5f;
   go_gain = 0.5f;
+  clear_decay = 0.1f;
   graded_out_go = true;
   go_netin_gain = 0.01f;
   out_go_clear = true;
@@ -2408,6 +2409,7 @@ void XPFCLayerSpec::Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct up
       if(gate.off_accom > 0.0f)
 	u->vcb.g_a = gate.off_accom * u->vcb.g_h;
       u->vcb.g_h = u->maint_h = 0.0f;
+      us->DecayState(u, net, gate.clear_decay);
     }
     us->Compute_Conduct(u, net); // update displayed conductances!
   }
