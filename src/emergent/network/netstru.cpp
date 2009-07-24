@@ -1752,6 +1752,8 @@ void UnitSpec::Init_dWt(Unit* u, Network* net) {
 }
 
 void UnitSpec::Init_Weights(Unit* u, Network* net) {
+  u->snap = 0.0f;
+
 #ifdef DMEM_COMPILE
   if(!u->DMem_IsLocal()) {
     // make up for random numbers not being used for non-local connections.

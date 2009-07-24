@@ -937,18 +937,16 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork*, float decay) {
   if(depress.on)
     u->spk_amp += (act_range.max - u->spk_amp) * decay;
 
-  if(decay >= .5f) {	      // significant decay
-    // reset the rest of this stuff just for clarity
-    u->act_sent = 0.0f;
-    u->net_raw = 0.0f;
-    u->net_delta = 0.0f;
-    u->g_i_raw = 0.0f;
-    u->g_i_delta = 0.0f;
+  // reset the rest of this stuff just for clarity and accurate computation 
+  u->act_sent = 0.0f;
+  u->net_raw = 0.0f;
+  u->net_delta = 0.0f;
+  u->g_i_raw = 0.0f;
+  u->g_i_delta = 0.0f;
   
-    u->net = 0.0f;
-    u->net_scale = u->bias_scale = 0.0f;
-    u->da = u->I_net = 0.0f;
-  }
+  u->net = 0.0f;
+  u->net_scale = u->bias_scale = 0.0f;
+  u->da = u->I_net = 0.0f;
 
   if(decay == 1.0f) {
     u->act_buf.Reset();

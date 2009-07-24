@@ -2409,7 +2409,13 @@ void XPFCLayerSpec::Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct up
       if(gate.off_accom > 0.0f)
 	u->vcb.g_a = gate.off_accom * u->vcb.g_h;
       u->vcb.g_h = u->maint_h = 0.0f;
-      us->DecayState(u, net, gate.clear_decay);
+      if(gate.clear_decay > 0.0f) {
+	float decay = gate.clear_decay;
+	// don't use DecayState -- only for between phases
+	// just focus on key vars that will affect hystersis and upcoming act computation
+	u->v_m -= decay * (u->v_m - us->v_m_init.mean);
+	u->net -= decay * u->net;
+      }
     }
     us->Compute_Conduct(u, net); // update displayed conductances!
   }
@@ -2551,9 +2557,9 @@ void XPFCLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork*) {
   }
 }
 
-void XPFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  Compute_Gating(lay, net);
-  inherited::Compute_CycleStats(lay, net);
+void XPFCLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_ApplyInhib(lay, net);
+  Compute_Gating(lay, net);	// online gating, after activations have been updated
 }
   
 void XPFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
