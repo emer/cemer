@@ -2551,9 +2551,9 @@ void XPFCLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork*) {
   }
 }
 
-void XPFCLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_ApplyInhib(lay, net);
-  Compute_Gating(lay, net);	// online gating, after activations have been updated
+void XPFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  Compute_Gating(lay, net);
+  inherited::Compute_CycleStats(lay, net);
 }
   
 void XPFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {

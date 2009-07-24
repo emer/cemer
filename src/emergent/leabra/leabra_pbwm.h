@@ -795,7 +795,7 @@ public:
   // compute the gating signal based on SNrThal layer activations -- at end of plus phase
 
   override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
-  override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
