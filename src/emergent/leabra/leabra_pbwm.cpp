@@ -2235,7 +2235,7 @@ void PFCUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
 void XPFCGateSpec::Initialize() {
   base_gain = 0.5f;
   go_gain = 0.5f;
-  clear_decay = 0.1f;
+  clear_decay = 0.0f;
   graded_out_go = true;
   go_netin_gain = 0.01f;
   out_go_clear = true;
