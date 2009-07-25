@@ -652,7 +652,7 @@ public:
   static bool		delete_prompts;	 //  #SAVE #CAT_GUI should a prompt be provided to confirm when deleting an item?  with the undo system available, this is not neccessary
   static int		tree_indent; 	// #SAVE #CAT_GUI #EXPERT number of pixels to indent in the tree browser gui interface
   static int		program_editor_width; 	// #SAVE #CAT_GUI #EXPERT width in characters of the main listing field of the program editor -- if this is too large, then you can't see the description comments
-  static int		program_editor_lines; 	// #SAVE #CAT_GUI default number of lines in the mini editor within the program editor, where program elements and other objects are edited.
+  static int		program_editor_lines; 	// #SAVE #CAT_GUI #MIN_4 #MAX_20 default number of lines in the mini editor within the program editor, where program elements and other objects are edited.
 
   static int		max_menu;	// #SAVE #CAT_GUI #EXPERT maximum number of items in a menu -- largely obsolete at this point
   static int		search_depth;   // #SAVE #CAT_GUI #EXPERT depth recursive find will search for a path object

@@ -758,6 +758,8 @@ void iProgramEditor::Changed() {
 void iProgramEditor::setEditLines(int val) {
   if (m_editLines == val) return;
   m_editLines = val;
+  // write back to global, because user likely wants this value hence
+  taMisc::program_editor_lines = val;
   Controls_Remove();
   int body_ht = line_ht * val;
   scrBody->setMinimumHeight(body_ht + scrBody->horizontalScrollBar()->height() + 2);
