@@ -2368,7 +2368,7 @@ public:
   QStatusBar*		  status_bar;
   
   int			options() const {return m_options;}
-  void			setRoot(taiDataLink* root); // set or reset the root and window used for the search; sets caption and clears
+  void			setRoot(taiDataLink* root, bool update_gui = true); // set or reset the root and window used for the search; sets caption and clears
   void			setSearchStr(const String& srch_str);
   // set the search string to given value (erases any that might be there already -- if non-empty, starts the search going too!
   String		searchStr() const;
@@ -2423,6 +2423,7 @@ protected:
     const String& href, const String& desc, const String& hits);
 
   iSearchDialog(iMainWindowViewer* par_window_);
+  ~iSearchDialog();
   
 protected slots:
   void			go_clicked();

@@ -8458,6 +8458,10 @@ iSearchDialog::iSearchDialog(iMainWindowViewer* par_window_)
   init();
 }
 
+iSearchDialog::~iSearchDialog() {
+  setRoot(NULL, false);
+}
+
 void iSearchDialog::init() {
   m_options = SO_DEF_OPTIONS;
   m_changing = 0;
@@ -8712,12 +8716,13 @@ bool iSearchDialog::setFirstSort(int col) {
   return true;
 }
 
-void iSearchDialog::setRoot(taiDataLink* root) {
+void iSearchDialog::setRoot(taiDataLink* root, bool update_gui) {
   if (link() != root) {
     if (link()) link()->RemoveDataClient(this); 
     if (root) root->AddDataClient(this);
   }
-  RootSet(root);
+  if (update_gui)
+    RootSet(root);
 }
 
 void iSearchDialog::setSearchStr(const String& srch_str) {
