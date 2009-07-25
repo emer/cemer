@@ -3970,6 +3970,8 @@ void LeabraLayerSpec::AdaptKWTAPt(LeabraLayer* lay, LeabraNetwork*) {
 }
 
 void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork*) {
+  if(lay->netin.max < 0.01f) return; // not getting enough activation to count!
+
   lay->avg_netin_sum.avg += lay->netin.avg;
   lay->avg_netin_sum.max += lay->netin.max;
   lay->avg_netin_n++;
