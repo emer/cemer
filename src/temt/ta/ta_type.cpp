@@ -4955,6 +4955,11 @@ bool TypeDef::IgnoreMeth(const String& nm) const {
   return false;
 }
 
+bool TypeDef::is_anchor() const {
+  return ((ptr == 0) && !ref && !DerivesFrom(TA_const)
+    && (enum_vals.size == 0));
+}
+
 bool TypeDef::is_class() const {
   return InheritsFormal(TA_class);
 }

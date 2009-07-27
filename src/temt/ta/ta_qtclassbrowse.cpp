@@ -21,13 +21,11 @@
 #include "ilineedit.h"
 #include "ispinbox.h"
 
-#include <qlayout.h>
+#include <QLayout>
+#include <QSplitter>
+#include <QTextBrowser>
 #include <QTreeWidget>
-#include "itreewidget.h"
 #include <qpushbutton.h>
-#include <qsplitter.h>
-//#include <qtable.h>
-#include <qtabwidget.h>
 
 /*
   switch(tik) {
@@ -566,31 +564,6 @@ taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_
 }
 
 void taTypeSpaceTreeDataNode::init(taTypeSpaceDataLink_Base* link_, int flags_) {
-/*  m_child_type = NULL; 
-  switch (link_->tik) {
-  case taMisc::TIK_ENUMSPACE: 
-    m_child_tik = taMisc::TIK_ENUM; 
-    m_child_type = &TA_EnumDef; 
-    break;
-  case taMisc::TIK_TYPESPACE: 
-    m_child_tik = taMisc::TIK_TYPE; 
-    m_child_type = &TA_TypeDef; 
-    break;
-  case taMisc::TIK_METHODSPACE: 
-    m_child_tik = taMisc::TIK_METHOD; 
-    m_child_type = &TA_MethodDef; 
-    break;
-  case taMisc::TIK_MEMBERSPACE: 
-    m_child_tik = taMisc::TIK_MEMBER; 
-    m_child_type = &TA_MemberDef; 
-    break;
-  case taMisc::TIK_PROPERTYSPACE: 
-    m_child_tik = taMisc::TIK_MEMBER; 
-    m_child_type = &TA_MemberDef; 
-    break;
-  default:  break;
-  //TODO: TOKENS, if used
-  }*/
 }
 
 taTypeSpaceTreeDataNode::~taTypeSpaceTreeDataNode() {
@@ -654,9 +627,6 @@ void taTypeSpaceTreeDataNode::CreateChildren_impl() {
       last_child_node, tree_nm, flags);
   }
 }
-/*TODO: can only make showing modal if browser will either populate or
-at least refresh dynamically
-*/
 
 bool taTypeSpaceTreeDataNode::ShowItem(TypeItem* ti) const {
 return true;
@@ -705,7 +675,7 @@ void taTypeSpaceTreeDataNode::willHaveChildren_impl(bool& will) const
 
 
 //////////////////////////
-//   iClassBrowseViewer 	//
+//   iClassBrowseViewer //
 //////////////////////////
 
 iClassBrowseViewer::iClassBrowseViewer(ClassBrowseViewer* browser_, QWidget* parent)
@@ -947,3 +917,120 @@ taiDataLink* taTypeInfoViewType::GetDataLink(void* el, TypeDef* td) {
 }
 
 
+//////////////////////////
+//   iTypeDefDialog	//
+//////////////////////////
+
+iTypeDefDialog* iTypeDefDialog::inst;
+
+iTypeDefDialog* iTypeDefDialog::instance() {
+  if (!inst) {
+    inst = new iTypeDefDialog();
+    iSize sz = taiM->dialogSize(taiMisc::dlgBig);
+    inst->resize(sz.width(), sz.height());
+  }
+  inst->show();
+  return inst;
+}
+
+// note: we parent to main_win so something will delete it
+iTypeDefDialog::iTypeDefDialog() 
+:inherited(taiMisc::main_window)
+{
+  init();
+}
+
+iTypeDefDialog::~iTypeDefDialog() {
+  if (this == inst) {
+    inst = NULL;
+  }
+  // disconnect in case it will be firing
+  disconnect(this, SIGNAL(this_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+}
+
+void iTypeDefDialog::init() {
+  this->setAttribute(Qt::WA_DeleteOnClose, false); // keep alive when closed
+  this->setWindowTitle("Type Browser");
+  this->setSizeGripEnabled(true);
+  
+  layOuter = new QVBoxLayout(this);
+  layOuter->setMargin(0);
+  layOuter->setSpacing(0);
+  split = new QSplitter(this);
+  layOuter->addWidget(split);
+  tv = new QTreeWidget;
+  tv->setColumnCount(2);
+  QTreeWidgetItem* hdr = tv->headerItem();
+  hdr->setText(0, "Type");
+  hdr->setText(1, "Category");
+  
+  split->addWidget(tv);
+  brow = new QTextBrowser;
+  split->addWidget(brow);
+  
+  // add all types -- only non-virtual, base types
+  AddTypesR(&taMisc::types);
+  tv->setSortingEnabled(true);
+  tv->sortByColumn(0, Qt::AscendingOrder);
+  tv->resizeColumnToContents(0);
+  
+  connect(tv, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
+    this, SLOT(this_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+}
+
+void iTypeDefDialog::AddTypesR(TypeSpace* ts) {
+  for (int i = 0; i < ts->size; ++i) {
+    TypeDef* typ = ts->FastEl(i);
+    if (!(typ->is_class() && typ->is_anchor()))
+      continue;
+    if (typ->InheritsFormal(TA_templ_inst) ||
+      typ->HasOption("VIRT_BASE") ||
+      typ->HasOption("HIDDEN") ||
+      typ->HasOption("IGNORE")) 
+      continue;
+    QTreeWidgetItem* twi = new QTreeWidgetItem(tv);
+    twi->setText(0, typ->name);
+    twi->setText(1, typ->GetCat());
+    twi->setData(0, Qt::UserRole, QVariant((ta_intptr_t)typ));
+//    AddTypesR(&typ->children);
+  }
+}
+
+QTreeWidgetItem* iTypeDefDialog::FindItem(TypeDef* typ) {
+  typ = typ->GetNonPtrType();
+  typ = typ->GetNonConstNonRefType();
+  QTreeWidgetItemIterator it(tv);
+  QTreeWidgetItem* rval;
+  while ((rval = *it)) {
+    if (GetTypeDef(rval) == typ) 
+      return rval;
+    ++it;
+  }
+  return NULL;
+}
+
+TypeDef* iTypeDefDialog::GetTypeDef(QTreeWidgetItem* item) {
+  return (TypeDef*)QVARIANT_TO_INTPTR(item->data(0, Qt::UserRole));
+}
+
+void iTypeDefDialog::ItemChanged(QTreeWidgetItem* item) {
+  TypeDef* typ = GetTypeDef(item);
+  if (typ) {
+    String html = typ->GetHTML();
+    brow->setHtml(html);
+  } else {
+    brow->setPlainText("");
+  }
+}
+
+bool iTypeDefDialog::SetItem(TypeDef* typ) {
+  QTreeWidgetItem* item = FindItem(typ);
+  if (item) {
+    tv->setCurrentItem(item); // should raise signal
+  }
+  return (item != NULL);
+}
+
+void iTypeDefDialog::this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
+  ItemChanged(curr);
+}

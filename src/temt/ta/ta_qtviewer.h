@@ -1013,6 +1013,7 @@ public:
   taiAction* 		viewSaveViewAction;
 
   taiAction*	        toolsClassBrowseAction;
+  taiAction*	        toolsTypeBrowseAction;
   
   taiAction* 		helpHelpAction;
   taiAction* 		helpAboutAction;
@@ -1096,7 +1097,8 @@ public slots:
   virtual void	showMenu_aboutToShow();
   virtual void	ShowChange(taiAction* sender);	// when show/hide menu changes
   
-  virtual void	toolsClassBrowser();
+  void		toolsClassBrowser();
+  void		toolsTypeBrowser();
 
   virtual void	windowMenu_aboutToShow();
   void 		windowActivate(int win); // activate the indicated win

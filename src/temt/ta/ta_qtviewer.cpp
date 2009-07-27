@@ -3782,6 +3782,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence("F5"), _viewRefreshAction ));
   viewSaveViewAction = AddAction(new taiAction("&Save View", QKeySequence(), "viewSaveViewAction" ));
   toolsClassBrowseAction = AddAction(new taiAction(0, "Class Browser", QKeySequence(), "toolsClassBrowseAction"));
+  toolsTypeBrowseAction = AddAction(new taiAction(0, "Type Browser", QKeySequence(), "toolsTypeBrowseAction"));
   String s = taMisc::app_name + " Help on the web";
   helpHelpAction = AddAction(new taiAction("&Help", QKeySequence(), _helpHelpAction ));
   helpHelpAction->setToolTip(s);
@@ -3837,6 +3838,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
  
 
   toolsClassBrowseAction->AddTo(toolsMenu );
+  toolsTypeBrowseAction->AddTo(toolsMenu );
   helpHelpAction->AddTo(helpMenu );
   helpMenu->insertSeparator();
   helpAboutAction->AddTo(helpMenu );
@@ -3863,6 +3865,8 @@ void iMainWindowViewer::Constr_Menu_impl() {
   connect( viewSaveViewAction, SIGNAL( Action() ), this, SLOT(viewSaveView()) );
   connect( toolsClassBrowseAction, SIGNAL( triggered() ), 
     this, SLOT( toolsClassBrowser() ) );
+  connect( toolsTypeBrowseAction, SIGNAL( triggered() ), 
+    this, SLOT( toolsTypeBrowser() ) );
   connect( helpHelpAction, SIGNAL(Action()), this, SLOT(helpHelp()) );
   connect( helpAboutAction, SIGNAL(Action()), this, SLOT(helpAbout()) );
 }
@@ -4610,6 +4614,10 @@ void iMainWindowViewer::toolsClassBrowser() {
   MainWindowViewer* brows = MainWindowViewer::NewClassBrowser(&taMisc::types, &TA_TypeSpace);
   if (brows == NULL) return;
   brows->ViewWindow();
+}
+
+void iMainWindowViewer::toolsTypeBrowser() {
+  iTypeDefDialog* tdd = iTypeDefDialog::instance();
 }
 
 void iMainWindowViewer::UpdateUi() {

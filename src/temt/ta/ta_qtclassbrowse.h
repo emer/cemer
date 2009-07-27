@@ -70,13 +70,6 @@ protected:
   override iDataPanel* 	CreateDataPanel_impl(); 
   override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
     iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
-/*  override void		QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& forbidden);
-  override int		EditAction_impl(taiMimeSource* ms, int ea);
-  override void		ChildQueryEditActions_impl(const MemberDef* par_md, taiDataLink* child,
-     taiMimeSource* ms,  int& allowed, int& forbidden);
-  override int		ChildEditAction_impl(const MemberDef* par_md, taiDataLink* child,
-    taiMimeSource* ms, int ea);
-  override void		FillContextMenu_impl(taiMenu* menu); */
 };
 
 
@@ -85,10 +78,6 @@ class TA_API taTypeSpaceDataLink_Base: public taClassDataLink {
 INHERITED(taClassDataLink)
 public:
   taPtrList_impl*	data() {return (taPtrList_impl*)m_data;}
-//  override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
-//  override int		NumListCols(); // number of columns in a list view for this item type
-//  override String	GetColHeading(int col); // header text for the indicated column
-//  override String	ChildGetColText(taDataLink* child, int col, int itm_idx = -1);
   override bool		HasChildItems() {return true;} 
 
   taTypeSpaceDataLink_Base(taMisc::TypeInfoKind tik_, taPtrList_impl* data_, 
@@ -223,8 +212,6 @@ class TA_API taTypeSpaceTreeDataNode: public taiTreeDataNode { // node for space
 INHERITED(taiTreeDataNode)
 public:
   const taMisc::TypeInfoKind	tik;
-//  taMisc::TypeInfoKind		child_tik() const {return m_child_tik;}
-//  TypeDef*		child_type() const {return m_child_type;}
   
   USING(inherited::data)
   taPtrList_impl* 	data() {return ((taTypeSpaceDataLink_Base*)m_link)->data();}
@@ -239,8 +226,6 @@ public:
   bool			ShowMethod(MethodDef* md) const; 
     // determine whether to show, ex. based on a filter
 
-//  override void		UpdateChildNames(); // #IGNORE update child names of the indicated node
-
   taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_, MemberDef* md, taiTreeDataNode* parent_,
     taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
   taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_, MemberDef* md, iTreeView* parent_,
@@ -250,13 +235,9 @@ public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_taTypeSpaceTreeDataNode;}
 protected:
-//  taMisc::TypeInfoKind		m_child_tik;
-//  TypeDef*		m_child_type;
-//  override void		DataChanged_impl(int dcr, void* op1, void* op2);
   override void		willHaveChildren_impl(bool& will) const;
   override void 	CreateChildren_impl(); // called by the Node when it needs to create its children
   void			CreateListItem(taiTreeDataNode* par_node, taiTreeDataNode* after_node, void* el);
-//  void			UpdateListNames(); // #IGNORE updates names after inserts/deletes etc.
 private:
   void			init(taTypeSpaceDataLink_Base* link_, int flags_); // #IGNORE
 };
@@ -298,6 +279,160 @@ public:
   void			Initialize() {}
   void			Destroy() {}
   TA_VIEW_TYPE_FUNS(taTypeInfoViewType, taiViewType)
+};//
+
+
+
+
+/*
+class TA_API taTypeInfoDataLink: public taiDataLink { // DataLink for TypeDef objects
+INHERITED(taiDataLink)
+public:
+  TypeDef*		data() {return (TypeDef*)m_data;} //
+  TypeDef*		data() const {return (TypeDef*)m_data;} //
+
+  override String	GetName() const;
+  override TypeDef*	GetDataTypeDef() const;
+  override String	GetDisplayName() const;
+  USING(inherited::ShowMember)
+  override bool		ShowMember(MemberDef* md); // asks this type if we should show the md member
+
+  taTypeDefDataLink(TypeDef* data_, taDataLink* &link_ref_);  //
+  DL_FUNS(taTypeDefDataLink); //
+
+protected:
+  override iDataPanel* 	CreateDataPanel_impl(); 
+  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+    iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
+};
+
+
+class TA_API taiTypeDefDataNode: public taiTreeDataNode { // node for spaces, ex. enumspace, typespace, etc.
+  INHERITED(taiTreeDataNode)
+  public:
+  
+    USING(inherited::data)
+    taPtrList_impl* 	data() {return ((taTypeSpaceDataLink_Base*)m_link)->data();}
+    taTypeInfoDataLink* 	child_link(int idx);
+    taTypeSpaceDataLink_Base* 	link() const {return (taTypeSpaceDataLink_Base*)m_link;}
+
+    taiTypeDefDataNode(taTypeSpaceDataLink_Base* link_, MemberDef* md, taiTreeDataNode* parent_,
+                            taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
+    taiTypeDefDataNode(taTypeSpaceDataLink_Base* link_, MemberDef* md, iTreeView* parent_,
+                            taiTreeDataNode* last_child_, const String& tree_name, int flags_ = 0);
+    ~taiTypeDefDataNode();
+  public: // IDataLinkClient interface
+    override void*	This() {return (void*)this;}
+    override TypeDef*	GetTypeDef() const {return &TA_taiTypeDefDataNode;}
+  protected:
+    //override void	willHaveChildren_impl(bool& will) const;
+    //override void 	CreateChildren_impl(); // called by the Node when it needs to create its children
+    //void			CreateListItem(taiTreeDataNode* par_node, taiTreeDataNode* after_node, void* el);
+  private:
+    void			init(taTypeSpaceDataLink_Base* link_, int flags_); // #IGNORE
+};
+
+
+class TA_API iTypeDefBrowseViewer: public iBrowseViewer { // viewer window used for type browsing
+  Q_OBJECT
+  INHERITED(iBrowseViewer)
+  friend class ClassBrowser;
+  public:
+
+    ClassBrowseViewer*		browser() {return (ClassBrowseViewer*)m_viewer;}
+
+    iTypeDefBrowseViewer(ClassBrowseViewer* browser_, QWidget* parent = 0);
+    ~iTypeDefBrowseViewer();
+
+  public slots:
+    virtual void		mnuNewBrowser(taiAction* mel); // called from context 'New Browse from here'; cast obj to taiNode*
+};
+
+
+class TA_API taTypeDefViewType: public taiViewType { // for TypeDef types 
+  INHERITED(taiViewType)
+  public:
+    override int		BidForView(TypeDef*);
+    override taiDataLink*	GetDataLink(void* data_, TypeDef* el_typ);
+    void			Initialize() {}
+    void			Destroy() {}
+    TA_VIEW_TYPE_FUNS(taTypeDefViewType, taiViewType)
+};
+
+*/
+
+class TA_API iTypeDefDialog: public QDialog {
+//   TypeDef documentation
+INHERITED(QDialog)
+  Q_OBJECT
+public:
+#ifndef __MAKETA__
+  enum Roles { // extra roles, for additional data, etc.
+    ObjUrlRole = Qt::UserRole + 1, // Url stored in this
+//    ObjCatRole  // for object category string, whether shown or not
+  };
+#endif
+
+  
+#ifndef __MAKETA__ 
+  static iTypeDefDialog* instance(); // we only create one instance, this gets it
+
+  iBrowseHistory*	brow_hist;
+  
+  QVBoxLayout*		layOuter;
+  QSplitter*		split;
+  QTreeWidget*		  tv;
+  QTextBrowser*		  brow;
+//QHBoxLayout*		  layOptions;
+//QHBoxLayout*		  laySearch;
+//  iLineEdit*		    search;
+//  QAbstractButton*	    btnGo;
+//  QAbstractButton*	    btnStop;
+//  iTextBrowser* 	  results; 	// list of result items
+//  QStatusBar*		  status_bar;
+  
+
+//  bool			stop() const; // allow event loop, then check stop
+  bool			setFirstSort(int col); // set first sort column, pushes others down; true if order changed
+//  inline const String_PArray& targets() const {return m_targets;} // ref for max speed; only use in search
+//  inline const String_PArray& kickers() const {return m_kickers;} // ref for max speed; only use in search
+  
+//  void			FindNext(); // really only applicable if already have results
+  
+//  void			Reset(); // clears items and window, esp for when link detaches
+//  void			Search(); // search, based on search line
+  
+  bool			SetItem(TypeDef* typ); // set active item by TypeDef, true if set
+protected:
+  static const int	num_sorts = 3;
+  static iTypeDefDialog* inst;
+  
+  String		m_caption; // base portion of caption
+  int			m_changing;
+  bool			m_stop;
+  String_PArray		m_targets;
+  String_PArray		m_kickers;
+  int			m_row; // row num, for baking into results table
+  int			m_sorts[num_sorts];
+  
+//  void			ParseSearchString();
+  TypeDef*		GetTypeDef(QTreeWidgetItem* item);
+  QTreeWidgetItem*	FindItem(TypeDef* typ); // find item from type -- we derefence type to base type
+  void			ItemChanged(QTreeWidgetItem* item); // item changed to this, sync
+  
+  iTypeDefDialog();
+  ~iTypeDefDialog();
+  
+protected slots:
+//  void			go_clicked();
+//  void			stop_clicked();
+//  void			results_setSourceRequest(iTextBrowser* src, const QUrl& url, bool& cancel);
+  void			this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
+  
+private:
+  void 		init(); // called by constructors
+  void		AddTypesR(TypeSpace* ts);
+#endif // !__MAKETA__
 };
 
 

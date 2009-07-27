@@ -2117,6 +2117,7 @@ public:
 
   bool		is_enum() const; // true if an enum 
   bool		is_class() const; // true if it is a class
+  bool		is_anchor() const; // true if this is the non-ptr, non-ref, non-const type
   bool		isVarCompat() const; // true if read/write compatible with Variant
   taMisc::TypeInfoKind typeInfoKind() const {return taMisc::TIK_TYPE;}
   
