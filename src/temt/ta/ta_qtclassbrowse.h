@@ -361,9 +361,9 @@ class TA_API taTypeDefViewType: public taiViewType { // for TypeDef types
 
 */
 
-class TA_API iTypeDefDialog: public QDialog {
+class TA_API iTypeDefDialog: public QMainWindow {
 //   TypeDef documentation
-INHERITED(QDialog)
+INHERITED(QMainWindow)
   Q_OBJECT
 public:
 #ifndef __MAKETA__
@@ -375,21 +375,26 @@ public:
 
   
 #ifndef __MAKETA__ 
-  static iTypeDefDialog* instance(); // we only create one instance, this gets it
 
+public: //  this is the public interface
+  static iTypeDefDialog* instance(); // we only create one instance, this gets it
+  
+  bool			SetItem(TypeDef* typ); // set active item by TypeDef, true if set
+
+public:
   iBrowseHistory*	brow_hist;
   
   QVBoxLayout*		layOuter;
   QSplitter*		split;
   QTreeWidget*		  tv;
-  QTextBrowser*		  brow;
+  iTextBrowser*		  brow;
 //QHBoxLayout*		  layOptions;
 //QHBoxLayout*		  laySearch;
 //  iLineEdit*		    search;
 //  QAbstractButton*	    btnGo;
 //  QAbstractButton*	    btnStop;
 //  iTextBrowser* 	  results; 	// list of result items
-//  QStatusBar*		  status_bar;
+  QStatusBar*		  status_bar;
   
 
 //  bool			stop() const; // allow event loop, then check stop
@@ -402,17 +407,14 @@ public:
 //  void			Reset(); // clears items and window, esp for when link detaches
 //  void			Search(); // search, based on search line
   
-  bool			SetItem(TypeDef* typ); // set active item by TypeDef, true if set
 protected:
   static const int	num_sorts = 3;
   static iTypeDefDialog* inst;
   
-  String		m_caption; // base portion of caption
   int			m_changing;
   bool			m_stop;
   String_PArray		m_targets;
   String_PArray		m_kickers;
-  int			m_row; // row num, for baking into results table
   int			m_sorts[num_sorts];
   
 //  void			ParseSearchString();
@@ -426,8 +428,8 @@ protected:
 protected slots:
 //  void			go_clicked();
 //  void			stop_clicked();
-//  void			results_setSourceRequest(iTextBrowser* src, const QUrl& url, bool& cancel);
-  void			this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
+  void			brow_setSourceRequest(iTextBrowser* src, const QUrl& url, bool& cancel);
+  void			tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
   
 private:
   void 		init(); // called by constructors

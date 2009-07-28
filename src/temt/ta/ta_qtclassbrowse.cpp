@@ -20,10 +20,12 @@
 #include "icheckbox.h"
 #include "ilineedit.h"
 #include "ispinbox.h"
+#include "itextbrowser.h"
 
+#include <QDesktopServices>
 #include <QLayout>
 #include <QSplitter>
-#include <QTextBrowser>
+#include <QStatusBar>
 #include <QTreeWidget>
 #include <qpushbutton.h>
 
@@ -945,19 +947,19 @@ iTypeDefDialog::~iTypeDefDialog() {
     inst = NULL;
   }
   // disconnect in case it will be firing
-  disconnect(this, SIGNAL(this_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+  disconnect(this, SIGNAL(tv_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
 }
 
 void iTypeDefDialog::init() {
   this->setAttribute(Qt::WA_DeleteOnClose, false); // keep alive when closed
   this->setWindowTitle("Type Browser");
-  this->setSizeGripEnabled(true);
+//  this->setSizeGripEnabled(true);
   
-  layOuter = new QVBoxLayout(this);
-  layOuter->setMargin(0);
-  layOuter->setSpacing(0);
-  split = new QSplitter(this);
-  layOuter->addWidget(split);
+//  layOuter = new QVBoxLayout(this);
+//  layOuter->setMargin(0);
+//  layOuter->setSpacing(0);
+  split = new QSplitter;
+//  layOuter->addWidget(split, 1);
   tv = new QTreeWidget;
   tv->setColumnCount(2);
   QTreeWidgetItem* hdr = tv->headerItem();
@@ -965,8 +967,12 @@ void iTypeDefDialog::init() {
   hdr->setText(1, "Category");
   
   split->addWidget(tv);
-  brow = new QTextBrowser;
+  brow = new iTextBrowser;
   split->addWidget(brow);
+  
+  setCentralWidget(split);
+  status_bar = statusBar();// new QStatusBar(this);
+//  layOuter->addWidget(status_bar);
   
   // add all types -- only non-virtual, base types
   AddTypesR(&taMisc::types);
@@ -975,7 +981,11 @@ void iTypeDefDialog::init() {
   tv->resizeColumnToContents(0);
   
   connect(tv, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
-    this, SLOT(this_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+    this, SLOT(tv_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+  connect(brow, SIGNAL(setSourceRequest(iTextBrowser*, const QUrl&, bool&)),
+    this, SLOT(brow_setSourceRequest(iTextBrowser*, const QUrl&, bool&)) );
+  connect(brow, SIGNAL(highlighted(const QString&)),
+    status_bar, SLOT(message(const QString&)) );
 }
 
 void iTypeDefDialog::AddTypesR(TypeSpace* ts) {
@@ -995,6 +1005,17 @@ void iTypeDefDialog::AddTypesR(TypeSpace* ts) {
 //    AddTypesR(&typ->children);
   }
 }
+
+void iTypeDefDialog::brow_setSourceRequest(iTextBrowser* src,
+  const QUrl& url, bool& cancel) 
+{
+  // forward to global, which is iMainWindowViewer::taUrlHandler
+  QDesktopServices::openUrl(url); 
+  //NOTE: we never let results call its own setSource because we don't want
+  // link clicking to cause us to change our source page
+  cancel = true;
+}
+
 
 QTreeWidgetItem* iTypeDefDialog::FindItem(TypeDef* typ) {
   typ = typ->GetNonPtrType();
@@ -1031,6 +1052,6 @@ bool iTypeDefDialog::SetItem(TypeDef* typ) {
   return (item != NULL);
 }
 
-void iTypeDefDialog::this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
+void iTypeDefDialog::tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
   ItemChanged(curr);
 }

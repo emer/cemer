@@ -6847,7 +6847,7 @@ String TypeDef::GetHTML(int detail_level) const {
   rval.cat("<td width=\"1\">&nbsp;&nbsp;</td><td class=\"postheader\" valign=\"center\">");
   rval.cat("<a href=\"").cat(taMisc::web_home).cat("\"><font color=\"#004faf\">Home</font></a>&nbsp;&middot; ");
   rval.cat("<a href=\"").cat(wiki_help_url).cat(name).cat("\"><font color=\"#004faf\">Wiki Docs For: ").cat(name).cat("</font></a>&nbsp;&middot; ");
-  rval.cat("<a href=\"ta:class_browser\"><font color=\"#004faf\">Class&nbsp;Browser</font></a>&nbsp\n");
+  rval.cat("<a href=\"ta:class_browser\"><font color=\"#004faf\">Class&nbsp;Browser</font></a>&nbsp;\n");
 
   rval.cat("<td align=\"right\" valign=\"top\" width=\"230\"></td></tr></table><h1 class=\"title\">");
   rval.cat(name).cat(" Class Reference<br />\n");
