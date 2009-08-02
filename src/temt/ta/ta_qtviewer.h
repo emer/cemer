@@ -2318,7 +2318,7 @@ private:
   void			init(tabGroupDataLink* link_, int dn_flags_); // #IGNORE
 };
 
-class TA_API iSearchDialog: public QDialog, public IDataLinkClient {
+class TA_API iSearchDialog: public QDialog, public virtual IDataLinkClient {
 //   search a project (or more)
 INHERITED(QDialog)
   Q_OBJECT

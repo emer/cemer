@@ -378,27 +378,38 @@ public:
 
 public: //  this is the public interface
   static iTypeDefDialog* instance(); // we only create one instance, this gets it
+  static void		StatLoadEnum(TypeDef* typ); // the enum set, not an individual guy
+  static void		StatLoadMember(MemberDef* mbr);
+  static void		StatLoadMethod(MethodDef* mth);
+  static void		StatLoadType(TypeDef* typ);
+  static void		StatLoadUrl(const String& url); // saves url to detect anchors
   
+  void			LoadEnum(TypeDef* typ); // the enum set, not an individual guy
+  void			LoadMember(MemberDef* mbr);
+  void			LoadMethod(MethodDef* mth);
+  void			LoadType(TypeDef* typ, const String& anchor = _nilString);
+  void			LoadUrl(const String& url); // saves url to detect anchors
   bool			SetItem(TypeDef* typ); // set active item by TypeDef, true if set
 
 public:
-  iBrowseHistory*	brow_hist;
-  
+  taiAction* 		historyBackAction;
+  taiAction* 		historyForwardAction;
+
+  QToolBar*		tool_bar;
   QVBoxLayout*		layOuter;
-  QSplitter*		split;
-  QTreeWidget*		  tv;
-  iTextBrowser*		  brow;
-//QHBoxLayout*		  layOptions;
-//QHBoxLayout*		  laySearch;
-//  iLineEdit*		    search;
-//  QAbstractButton*	    btnGo;
+  QHBoxLayout*		  laySearch;
+  iLineEdit*		    search;
+  QAbstractButton*	    btnGo;
 //  QAbstractButton*	    btnStop;
-//  iTextBrowser* 	  results; 	// list of result items
+  QSplitter*		  split;
+  QTreeWidget*		    tv;
+  QWebView*		    brow; // note: use our own load() routine for urls
   QStatusBar*		  status_bar;
   
-
+  String		curUrl() const {return m_curUrl;} // current pseudo Url (w/o #xxx anchor)
+  
 //  bool			stop() const; // allow event loop, then check stop
-  bool			setFirstSort(int col); // set first sort column, pushes others down; true if order changed
+//  bool			setFirstSort(int col); // set first sort column, pushes others down; true if order changed
 //  inline const String_PArray& targets() const {return m_targets;} // ref for max speed; only use in search
 //  inline const String_PArray& kickers() const {return m_kickers;} // ref for max speed; only use in search
   
@@ -410,12 +421,14 @@ public:
 protected:
   static const int	num_sorts = 3;
   static iTypeDefDialog* inst;
-  
-  int			m_changing;
-  bool			m_stop;
-  String_PArray		m_targets;
-  String_PArray		m_kickers;
-  int			m_sorts[num_sorts];
+    
+  String		m_curUrl;
+  String		m_curHtml; // full page of generated Type
+//  int			m_changing;
+//  bool			m_stop;
+//  String_PArray		m_targets;
+//  String_PArray		m_kickers;
+//  int			m_sorts[num_sorts];
   
 //  void			ParseSearchString();
   TypeDef*		GetTypeDef(QTreeWidgetItem* item);
@@ -428,7 +441,7 @@ protected:
 protected slots:
 //  void			go_clicked();
 //  void			stop_clicked();
-  void			brow_setSourceRequest(iTextBrowser* src, const QUrl& url, bool& cancel);
+  void			brow_linkClicked(const QUrl& url);
   void			tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
   
 private:

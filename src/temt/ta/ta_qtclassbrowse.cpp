@@ -19,14 +19,18 @@
 
 #include "icheckbox.h"
 #include "ilineedit.h"
+#include "inetworkaccessmanager.h"
 #include "ispinbox.h"
-#include "itextbrowser.h"
+//#include "itextbrowser.h"
 
 #include <QDesktopServices>
 #include <QLayout>
 #include <QSplitter>
 #include <QStatusBar>
+#include <QToolBar>
 #include <QTreeWidget>
+#include <QWebPage>
+#include <QWebView>
 #include <qpushbutton.h>
 
 /*
@@ -935,6 +939,26 @@ iTypeDefDialog* iTypeDefDialog::instance() {
   return inst;
 }
 
+void iTypeDefDialog::StatLoadEnum(TypeDef* typ) {
+  instance()->LoadEnum(typ);
+}
+
+void iTypeDefDialog::StatLoadMember(MemberDef* mbr) {
+  instance()->LoadMember(mbr);
+}
+
+void iTypeDefDialog::StatLoadMethod(MethodDef* mth) {
+  instance()->LoadMethod(mth);
+}
+
+void iTypeDefDialog::StatLoadType(TypeDef* typ) {
+  instance()->LoadType(typ);
+}
+
+void iTypeDefDialog::StatLoadUrl(const String& url) {
+  instance()->LoadUrl(url);
+}
+
 // note: we parent to main_win so something will delete it
 iTypeDefDialog::iTypeDefDialog() 
 :inherited(taiMisc::main_window)
@@ -954,6 +978,33 @@ void iTypeDefDialog::init() {
   this->setAttribute(Qt::WA_DeleteOnClose, false); // keep alive when closed
   this->setWindowTitle("Type Browser");
 //  this->setSizeGripEnabled(true);
+  tool_bar = new QToolBar(this);
+  addToolBar(tool_bar);
+  // forward/back guys -- note: on Win the icons don't show up if Action has text
+  historyBackAction = new taiAction("Back", QKeySequence(), "historyBackAction" );
+  historyBackAction->setToolTip("Back");
+  historyBackAction->setStatusTip(historyBackAction->toolTip());
+/*  connect(brow_hist, SIGNAL(back_enabled(bool)), 
+    historyBackAction, SLOT(setEnabled(bool)) );*/
+  historyForwardAction = new taiAction("Forward", QKeySequence(), "historyForwardAction" );
+  historyForwardAction->setToolTip("Forward");
+  historyForwardAction->setStatusTip(historyForwardAction->toolTip());
+/*  connect(brow_hist, SIGNAL(forward_enabled(bool)), 
+    historyForwardAction, SLOT(setEnabled(bool)) );
+  connect(this, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
+    brow_hist, SLOT(SelectableHostNotifying(ISelectableHost*, int)) );
+  connect(brow_hist, SIGNAL(select_item(taiDataLink*)),
+    this, SLOT(slot_AssertBrowserItem(taiDataLink*)) );*/
+  // no history, just manually disable
+  historyBackAction->setEnabled(true);
+  historyForwardAction->setEnabled(true);
+  historyBackAction->addTo(tool_bar);
+  historyForwardAction->addTo(tool_bar);
+  QToolButton* but = qobject_cast<QToolButton*>(tool_bar->widgetForAction(historyBackAction));
+  if (but) {but->setArrowType(Qt::LeftArrow); but->setText("");}
+  but = qobject_cast<QToolButton*>(tool_bar->widgetForAction(historyForwardAction));
+  if (but) {but->setArrowType(Qt::RightArrow); but->setText("");}
+  
   
 //  layOuter = new QVBoxLayout(this);
 //  layOuter->setMargin(0);
@@ -967,12 +1018,15 @@ void iTypeDefDialog::init() {
   hdr->setText(1, "Category");
   
   split->addWidget(tv);
-  brow = new iTextBrowser;
+  brow = new QWebView;
+  QWebPage* wp = brow->page();
+  wp->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
+  wp->setNetworkAccessManager(taiMisc::net_access_mgr);
   split->addWidget(brow);
   
   setCentralWidget(split);
-  status_bar = statusBar();// new QStatusBar(this);
 //  layOuter->addWidget(status_bar);
+  status_bar = statusBar(); // creates
   
   // add all types -- only non-virtual, base types
   AddTypesR(&taMisc::types);
@@ -980,12 +1034,24 @@ void iTypeDefDialog::init() {
   tv->sortByColumn(0, Qt::AscendingOrder);
   tv->resizeColumnToContents(0);
   
+  connect(historyBackAction, SIGNAL(triggered()), brow, SLOT(back()) );
+  connect(historyForwardAction, SIGNAL(triggered()), brow, SLOT(forward()) );
   connect(tv, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     this, SLOT(tv_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
-  connect(brow, SIGNAL(setSourceRequest(iTextBrowser*, const QUrl&, bool&)),
-    this, SLOT(brow_setSourceRequest(iTextBrowser*, const QUrl&, bool&)) );
-  connect(brow, SIGNAL(highlighted(const QString&)),
+  connect(brow, SIGNAL(linkClicked(const QUrl&)),
+    this, SLOT(brow_linkClicked(const QUrl&)) );
+  connect(brow, SIGNAL(statusBarMessage(const QString&)),
     status_bar, SLOT(message(const QString&)) );
+  // note: WebView doesn't show hover links in status by default so we do it
+  connect(wp, SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
+    status_bar, SLOT(message(const QString&)) );
+/*  connect(brow, SIGNAL(setSourceRequest(iTextBrowser*,
+    const QUrl&, bool&)),
+    this, SLOT(brow_setSourceRequest(iTextBrowser*,
+    const QUrl&, bool&)) );
+  connect(brow, SIGNAL(highlighted(const QString&)),
+    status_bar, SLOT(message(const QString&)) );*/
+  
 }
 
 void iTypeDefDialog::AddTypesR(TypeSpace* ts) {
@@ -1006,16 +1072,30 @@ void iTypeDefDialog::AddTypesR(TypeSpace* ts) {
   }
 }
 
-void iTypeDefDialog::brow_setSourceRequest(iTextBrowser* src,
-  const QUrl& url, bool& cancel) 
+void iTypeDefDialog::brow_linkClicked(const QUrl& url) 
 {
   // forward to global, which is iMainWindowViewer::taUrlHandler
-  QDesktopServices::openUrl(url); 
-  //NOTE: we never let results call its own setSource because we don't want
-  // link clicking to cause us to change our source page
-  cancel = true;
+//TEMP  QDesktopServices::openUrl(url); 
+LoadUrl(String(url.toString()));
 }
 
+/*void iTypeDefDialog::brow_setSourceRequest(iTextBrowser* tb,
+    const QUrl& url, bool& cancel)
+{
+  String turl = url.toString();
+  String surl = turl.before("#");
+  String anchor = turl.after("#");
+  // check if merely an anchor click, if so, continue
+  //TODO: refine, making sure curUrl is canonical
+  if (anchor.nonempty() && (surl == curUrl())) {
+    return;
+  }
+
+  // check for mere anchor changes
+  // forward to global, which is iMainWindowViewer::taUrlHandler
+  cancel = true;
+  QDesktopServices::openUrl(url); 
+}*/
 
 QTreeWidgetItem* iTypeDefDialog::FindItem(TypeDef* typ) {
   typ = typ->GetNonPtrType();
@@ -1036,12 +1116,47 @@ TypeDef* iTypeDefDialog::GetTypeDef(QTreeWidgetItem* item) {
 
 void iTypeDefDialog::ItemChanged(QTreeWidgetItem* item) {
   TypeDef* typ = GetTypeDef(item);
+  LoadType(typ);
+}
+
+void iTypeDefDialog::LoadEnum(TypeDef* typ) {
+//TODO: maybe check if enum, maybe in debug mode? maybe not needed...
+  LoadType(typ->GetParent(), typ->name);
+}
+
+void iTypeDefDialog::LoadMember(MemberDef* mbr) {
+  LoadType(mbr->type, mbr->name);
+}
+
+void iTypeDefDialog::LoadMethod(MethodDef* mth) {
+  LoadType(mth->type, mth->name);
+}
+
+void iTypeDefDialog::LoadType(TypeDef* typ, const String& anchor) {
+  String html;
+  String url;
   if (typ) {
-    String html = typ->GetHTML();
-    brow->setHtml(html);
-  } else {
-    brow->setPlainText("");
+    typ = typ->GetNonPtrType();
+    html = typ->GetHTML();
+    url = "ta:.Type." + typ->name + ".html";
+    if (anchor.nonempty())
+      url.cat("#").cat(anchor);
   }
+  m_curUrl = url;
+  m_curHtml = html;
+  brow->setHtml(html.toQString(), url.toQString());
+}
+
+void iTypeDefDialog::LoadUrl(const String& url) {
+  String html;
+  String base_url = url.before("#");
+//  String anchor = url.after("#");
+  if (base_url == curUrl()) { 
+    html = m_curHtml;
+  } else {
+  //TODO: full decode chain
+  }
+  brow->setHtml(html.toQString(), base_url.toQString());
 }
 
 bool iTypeDefDialog::SetItem(TypeDef* typ) {
