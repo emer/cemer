@@ -137,6 +137,7 @@ public:
     flgCondEditUseRO	= 0x2000, // for taiCondEditMember, used to keep its use_ro flag
     flgNoEditDialogAutoApply = 0x4000, // overrides the implicit APPLY_IMMED for the edit dialog of fields
     flgNoAlpha		= 0x10000, // for taiColor, don't use the alpha channel
+    flgNoHelp		= 0x20000, // for taiPtr guys, don't add a Help button
 #ifndef __MAKETA__
     flg_INHERIT_MASK	= (flgReadOnly) // flags to pass on to nested children, in inline
 #endif

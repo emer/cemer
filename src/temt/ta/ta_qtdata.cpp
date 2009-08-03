@@ -26,6 +26,7 @@
 #include "ta_qtdialog.h"
 #include "ta_qttype_def.h"
 #include "ta_qtclipdata.h" // for clip-aware controls
+#include "ta_qtclassbrowse.h"
 #include "css_basic_types.h"
 #include "css_qtdialog.h"
 #include "css_ta.h"
@@ -3441,16 +3442,30 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
   m_sel = NULL;
   cats = NULL;
   null_text = " NULL";
-  if (flags_ & flgEditDialog) {
-    // put the stuff in the gui
-    QWidget* act_par = MakeLayoutWidget(gui_parent_);
-    QHBoxLayout* lay = new QHBoxLayout(act_par);
+  btnEdit = NULL;
+  btnHelp = NULL;
+  // if we need more than one control, we make a widg w/layout
+  QWidget* act_par = NULL;
+  QHBoxLayout* lay = NULL;
+  if ((flags_ & flgEditDialog) || !(flags_ & flgNoHelp)) {
+    act_par = MakeLayoutWidget(gui_parent_);
+    lay = new QHBoxLayout(act_par);
     lay->setMargin(0);
     lay->setSpacing(1);
+    // put the stuff in the gui
     m_but = new QToolButton(act_par);
-    taiM->FormatButton(m_but, _nilString, defSize());
-    m_but->setFixedHeight(taiM->button_height(defSize()));
+//    taiM->FormatButton(m_but, _nilString, defSize());
+//    m_but->setFixedHeight(taiM->button_height(defSize()));
     lay->addWidget(m_but, 1);
+    SetRep(act_par);
+  } else {
+    m_but = new QToolButton(gui_parent_);
+    SetRep(m_but);
+  }
+  taiM->FormatButton(m_but, _nilString, defSize());
+  m_but->setFixedHeight(taiM->button_height(defSize()));
+  
+  if (flags_ & flgEditDialog) {
     if (!(flags_ & flgReadOnly)) {
       btnEdit = new iMenuButton(act_par);
       btnEdit->setText("...");
@@ -3461,18 +3476,23 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
       btnEdit->setMenu(mnuEdit);
       btnEdit->setFixedHeight(taiM->text_height(defSize()));
       lay->addWidget(btnEdit);
-      lay->addStretch();
       connect(btnEdit, SIGNAL(clicked()),
         this, SLOT(EditPanel()) );
     }
-    SetRep(act_par);
-  } else {
-    btnEdit = NULL; // not used
-    m_but = new QToolButton(gui_parent_);
-    SetRep(m_but);
   }
-  taiM->FormatButton(m_but, _nilString, defSize());
-  m_but->setFixedHeight(taiM->button_height(defSize()));
+  
+  if (!(flags_ & flgNoHelp)) {
+    btnHelp = new QToolButton(act_par);
+    btnHelp->setText("?");
+    btnHelp->setToolTip("get Help for this item");
+//    taiM->FormatButton(btnHelp, _nilString, defSize());
+    btnHelp->setFixedHeight(taiM->button_height(defSize()));
+    lay->addWidget(btnHelp);
+    connect(btnHelp, SIGNAL(clicked()), this, SLOT(btnHelp_clicked()) );
+  }
+  if (lay) {
+    lay->addStretch();
+  }
   // disable button if ro or no tokens available
   if (flags_ & (flgReadOnly | flgNoTokenDlg)) {
     m_but->setEnabled(false);
@@ -3579,6 +3599,12 @@ taiMemberDefButton::taiMemberDefButton(TypeDef* typ_, IDataHost* host,
 {
 }
 
+void taiMemberDefButton::btnHelp_clicked() {
+  MemberDef* mbr = md();
+  if (!mbr) return;
+  iTypeDefDialog::StatLoadMember(mbr);
+}
+
 void taiMemberDefButton::BuildCategories_impl() {
   if (cats) cats->Reset();
   else cats = new String_Array;
@@ -3671,6 +3697,12 @@ taiMethodDefButton::taiMethodDefButton(TypeDef* typ_, IDataHost* host,
 				       const String& flt_start_txt)
  :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
+}
+
+void taiMethodDefButton::btnHelp_clicked() {
+  MethodDef* mth = md();
+  if (!mth) return;
+  iTypeDefDialog::StatLoadMethod(mth);
 }
 
 void taiMethodDefButton::BuildCategories_impl() {
@@ -3808,6 +3840,19 @@ taiMemberMethodDefButton::taiMemberMethodDefButton(TypeDef* typ_, IDataHost* hos
 						   const String& flt_start_txt)
  :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
+}
+
+void taiMemberMethodDefButton::btnHelp_clicked() {
+  MethodDef* mth = dynamic_cast<MethodDef*>(md());
+  if (mth) {
+    iTypeDefDialog::StatLoadMethod(mth);
+    return;
+  }
+  MemberDef* mbr = dynamic_cast<MemberDef*>(md());
+  if (mbr) {
+    iTypeDefDialog::StatLoadMember(mbr);
+    return;
+  }
 }
 
 void taiMemberMethodDefButton::BuildCategories_impl() {
@@ -3956,6 +4001,24 @@ taiEnumStaticButton::taiEnumStaticButton(TypeDef* typ_, IDataHost* host,
 					 const String& flt_start_txt)
  :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
+}
+
+void taiEnumStaticButton::btnHelp_clicked() {
+  MethodDef* mth = dynamic_cast<MethodDef*>(md());
+  if (mth) {
+    iTypeDefDialog::StatLoadMethod(mth);
+    return;
+  }
+  MemberDef* mbr = dynamic_cast<MemberDef*>(md());
+  if (mbr) {
+    iTypeDefDialog::StatLoadMember(mbr);
+    return;
+  }
+  EnumDef* ed = dynamic_cast<EnumDef*>(md());
+  if (ed) {
+//TODO    iTypeDefDialog::StatLoadEnumDef(ed);
+    return;
+  }
 }
 
 void taiEnumStaticButton::BuildCategories_impl() {
@@ -4165,6 +4228,12 @@ taiTypeDefButton::TypeCat taiTypeDefButton::AddType_Class(TypeDef* typ_) {
   return TC_Add;
 }
 
+void taiTypeDefButton::btnHelp_clicked() {
+  TypeDef* typ = td();
+  if (!typ) return;
+  iTypeDefDialog::StatLoadType(typ);
+}
+
 void taiTypeDefButton::BuildCategories_impl() {
   if (cats) cats->Reset();
   else cats = new String_Array;
@@ -4323,6 +4392,12 @@ bool taiEnumTypeDefButton::AddType_Enum(TypeDef* typ_, TypeDef* par_typ) {
   return false;
 }
 
+void taiEnumTypeDefButton::btnHelp_clicked() {
+  TypeDef* typ = td();
+  if (!typ) return;
+  iTypeDefDialog::StatLoadEnum(typ);
+}
+
 void taiEnumTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
   //assume only called if needed
   
@@ -4445,6 +4520,14 @@ taiTokenPtrButton::taiTokenPtrButton(TypeDef* typ_, IDataHost* host,
  :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
   scope_typ = NULL;
+}
+
+void taiTokenPtrButton::btnHelp_clicked() {
+  taBase* tok = token();
+  if (!tok) return;
+  TypeDef* typ = tok->GetTypeDef();
+  if (!typ) return;
+  iTypeDefDialog::StatLoadType(typ);
 }
 
 void taiTokenPtrButton::EditDialog() {

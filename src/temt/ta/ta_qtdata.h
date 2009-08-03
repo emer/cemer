@@ -1121,11 +1121,13 @@ public slots:
   bool			OpenChooser(); // make and then open chooser dialog
   virtual void		EditPanel() {} // used by tokens to edit -- opens panel on guy (in new tab)
   virtual void		EditDialog() {} // used by tokens to edit -- opens edit dialog
+  virtual void		btnHelp_clicked() {}
 
 protected:
   void*			m_sel; // current value
   QAbstractButton*	m_but;
   QToolButton*		btnEdit; // only for tokens
+  QToolButton*		btnHelp; // typically for non-tokens, ex Type, Method, etc.
   TypeDef*		targ_typ; 
   String_Array*		cats; // categories -- only created if needed
   String		null_text;	
@@ -1160,6 +1162,7 @@ public:
   override void		BuildChooser(taiItemChooser* ic, int view = 0); // 
   
   virtual bool		ShowMember(MemberDef* mbr);
+  override void		btnHelp_clicked();
 
   taiMemberDefButton(TypeDef* typ_, IDataHost* host,
 		     taiData* par, QWidget* gui_parent_, int flags_ = 0,
@@ -1189,6 +1192,7 @@ public:
   MethodDef*		GetValue() {return md();}
 
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
+  override void		btnHelp_clicked();
 
   taiMethodDefButton(TypeDef* typ_, IDataHost* host,
 		     taiData* par, QWidget* gui_parent_, int flags_ = 0,
@@ -1226,6 +1230,7 @@ public:
   
   virtual bool		ShowMember(MemberDef* mbr);
   virtual bool		ShowMethod(MethodDef* mth);
+  override void		btnHelp_clicked();
 
   taiMemberMethodDefButton(TypeDef* typ_, IDataHost* host,
 			   taiData* par, QWidget* gui_parent_, int flags_ = 0,
@@ -1262,6 +1267,7 @@ public:
   virtual bool		ShowEnum(EnumDef* enm);
   virtual bool		ShowMember(MemberDef* mbr);
   virtual bool		ShowMethod(MethodDef* mth);
+  override void		btnHelp_clicked();
 
   taiEnumStaticButton(TypeDef* typ_, IDataHost* host,
 		      taiData* par, QWidget* gui_parent_, int flags_ = 0,
@@ -1295,6 +1301,7 @@ public:
   TypeDef*		GetValue() {return td();}
 
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
+  override void		btnHelp_clicked();
 
   taiTypeDefButton(TypeDef* typ_, IDataHost* host,
 		   taiData* par, QWidget* gui_parent_, int flags_ = 0,
@@ -1324,6 +1331,7 @@ public:
   const String		headerText(int index, int view) const; // override
   
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
+  override void		btnHelp_clicked();
 
   taiEnumTypeDefButton(TypeDef* typ_, IDataHost* host,
 		       taiData* par, QWidget* gui_parent_, int flags_ = 0,
@@ -1357,6 +1365,7 @@ public:
   virtual taBase*	GetValue() {return token();}
   
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
+  override void		btnHelp_clicked();
 
   override void		EditPanel();
   override void		EditDialog();
@@ -1396,6 +1405,7 @@ public:
   virtual taBase*	GetValue() {return token();}
   
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
+//TODO  override void		btnHelp_clicked();
 
   override void		EditPanel();
   override void		EditDialog();

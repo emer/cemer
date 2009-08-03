@@ -934,8 +934,14 @@ iTypeDefDialog* iTypeDefDialog::instance() {
     inst = new iTypeDefDialog();
     iSize sz = taiM->dialogSize(taiMisc::dlgBig);
     inst->resize(sz.width(), sz.height());
+    inst->show();
+    taiMiscCore::ProcessEvents(); // run default stuff
+    taiMiscCore::ProcessEvents(); // run default stuff
+    taiMiscCore::ProcessEvents(); // run default stuff
+  } else {
+    inst->show();
+    inst->raise();
   }
-  inst->show();
   return inst;
 }
 
@@ -1121,15 +1127,15 @@ void iTypeDefDialog::ItemChanged(QTreeWidgetItem* item) {
 
 void iTypeDefDialog::LoadEnum(TypeDef* typ) {
 //TODO: maybe check if enum, maybe in debug mode? maybe not needed...
-  LoadType(typ->GetParent(), typ->name);
+  LoadType(typ->GetOwnerType(), typ->name);
 }
 
 void iTypeDefDialog::LoadMember(MemberDef* mbr) {
-  LoadType(mbr->type, mbr->name);
+  LoadType(mbr->GetOwnerType(), mbr->name);
 }
 
 void iTypeDefDialog::LoadMethod(MethodDef* mth) {
-  LoadType(mth->type, mth->name);
+  LoadType(mth->GetOwnerType(), mth->name);
 }
 
 void iTypeDefDialog::LoadType(TypeDef* typ, const String& anchor) {
