@@ -701,6 +701,8 @@ class LEABRA_API PFCUnitSpec : public LeabraUnitSpec {
 INHERITED(LeabraUnitSpec)
 public:
 
+  override void	DecayState(LeabraUnit* u, LeabraNetwork* net, float decay);
+  override void Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   override void Compute_Conduct(LeabraUnit* u, LeabraNetwork* net);
   override void Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net);
 

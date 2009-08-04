@@ -631,7 +631,7 @@ void LVeLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LViLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  ScalarValLayerSpec::Compute_CycleStats(lay, net);
+  inherited::Compute_CycleStats(lay, net);
   // take the 1st guy as the overall general guy
   LeabraUnit* lvisu = (LeabraUnit*)lay->units.Leaf(0);
   net->pvlv_lvi = lvisu->act_eq;

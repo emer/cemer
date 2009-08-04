@@ -34,6 +34,16 @@
 // PVLVDa (VTA/SNc) computes DA signal as: IF PV present, PVe - PVi, else LVe - LVi
 // delta version (5/07) uses temporal derivative of LV & PV signals, not synaptic depression
 
+
+class LEABRA_API PVLVLayerSpec : public ScalarValLayerSpec {
+  // #VIRT_BASE -- generic PVLV layer spec -- all PVLV layer specs inherit from this
+INHERITED(ScalarValLayerSpec)
+public:
+  TA_BASEFUNS_NOCOPY(PVLVLayerSpec);
+ void 	Initialize()		{ }
+  void	Destroy()		{ };
+};
+
 //////////////////////////////////////////
 //	PV: Primary Value Layer		//
 //////////////////////////////////////////
@@ -89,9 +99,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API PViLayerSpec : public ScalarValLayerSpec {
+class LEABRA_API PViLayerSpec : public PVLVLayerSpec {
   // primary value inhibitory (PVi) layer: continously learns to expect primary reward values, contribute to overall dopamine with PV delta pvd = PVe - PVi; PV DA = pvd_t - pvd_t-1
-INHERITED(ScalarValLayerSpec)
+INHERITED(PVLVLayerSpec)
 public:
   PVMiscSpec	pv;		// misc parameters for the PV computation
 
@@ -181,9 +191,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API PVrLayerSpec : public ScalarValLayerSpec {
+class LEABRA_API PVrLayerSpec : public PVLVLayerSpec {
   // primary value reward detection layer: learns when rewards are expected to occur -- gets a 1 for any primary value feedback (reward or punishment), and .5 otherwise
-INHERITED(ScalarValLayerSpec)
+INHERITED(PVLVLayerSpec)
 public:
   PVDetectSpec	pv_detect;	// primary reward value detection spec: detect if a primary reward is expected based on PVr value
 
@@ -231,9 +241,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API LVeLayerSpec : public ScalarValLayerSpec {
+class LEABRA_API LVeLayerSpec : public PVLVLayerSpec {
   // learns value based on inputs that are associated with rewards, only learns at time of primary rewards (filtered by PV system). This is excitatory version LVe.  LV contribution to dopamine is based on LV delta lvd = LVe - LVi; LV DA = lvd_t - lvd_t-1
-INHERITED(ScalarValLayerSpec)
+INHERITED(PVLVLayerSpec)
 public:
   LVMiscSpec	lv;		// misc parameters controlling the LV computation (note: only the LVe instance of these parameters are used)
 
@@ -341,9 +351,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API NVLayerSpec : public ScalarValLayerSpec {
+class LEABRA_API NVLayerSpec : public PVLVLayerSpec {
   // novelty value (NV) layer: starts with a bias of 1.0, and learns to activate 0.0 value -- value signal is how novel the stimulus is: NV delta nvd = NV - val_thr; NV DA = nvd_t - nvd_t-1
-INHERITED(ScalarValLayerSpec)
+INHERITED(PVLVLayerSpec)
 public:
   NVSpec	nv;	// novelty value specs
 
