@@ -750,6 +750,7 @@ public:
   float		base_gain;	// #DEF_0.5 how much activation gets through even without a Go gating signal
   float		go_gain;	// #READ_ONLY #SHOW how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
   float		clear_decay;	// #DEF_0 how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse
+  bool	        mnt_to_bg;	// #DEF_false send maintenance activation values to the PVLV and Matrix layers instead of the output gated activation (act) which is sent to other layers
   bool		graded_out_go;	// #DEF_true does actual activation level of output Go signal drive output activation level 
   float		go_netin_gain;	// #DEF_0.01 how much of the go signal to add to the netinput, to influence learning
   bool		out_go_clear;	// #DEF_true output Go signal clears maintenance!

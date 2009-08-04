@@ -37,7 +37,8 @@ void PatchLayerSpec::Send_PVeToMatrix(LeabraLayer* lay, LeabraNetwork* net) {
        LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
        if(tol->lesioned())	continue;
        LeabraLayerSpec* tols = (LeabraLayerSpec*)tol->GetLayerSpec();
-       if(tols->GetTypeDef() != &TA_MatrixLayerSpec) continue; // only to matrix
+       if(!((tols->GetTypeDef() == &TA_MatrixLayerSpec) ||
+	    (tols->GetTypeDef() == &TA_XMatrixLayerSpec))) continue; // only to matrix
        for(int j=0;j<send_gp->size; j++) {
 	 ((LeabraUnit*)send_gp->Un(j))->misc_1 = snd_val;
        }
@@ -2214,6 +2215,13 @@ void PFCUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) {
 }
 
 void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  LeabraLayer* lay = u->own_lay();
+  XPFCLayerSpec* ls = (XPFCLayerSpec*)lay->GetLayerSpec();
+  if(!ls->gate.mnt_to_bg) {
+    inherited::Send_NetinDelta(u, net, thread_no);
+    return;
+  }
+
   if(thread_no < 0)
     net->send_pct_tot++;	// only safe for non-thread case
 
@@ -2232,8 +2240,8 @@ void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_
 	  LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
 	  LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
 	  if(tol->lesioned() || tol->hard_clamped || !send_gp->size)	continue;
-	  LeabraLayerSpec* ls = (LeabraLayerSpec*)tol->GetLayerSpec();
-	  if(ls->InheritsFrom(&TA_PVLVLayerSpec) || ls->InheritsFrom(&TA_XMatrixLayerSpec)) {
+	  LeabraLayerSpec* tols = (LeabraLayerSpec*)tol->GetLayerSpec();
+	  if(tols->InheritsFrom(&TA_PVLVLayerSpec) || tols->InheritsFrom(&TA_XMatrixLayerSpec)) {
 	    send_gp->Send_NetinDelta(net, thread_no, act_delta);
 	  }
 	}
@@ -2246,8 +2254,8 @@ void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_
 	LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
 	LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
 	if(tol->lesioned() || tol->hard_clamped || !send_gp->size)	continue;
-	LeabraLayerSpec* ls = (LeabraLayerSpec*)tol->GetLayerSpec();
-	if(ls->InheritsFrom(&TA_PVLVLayerSpec) || ls->InheritsFrom(&TA_XMatrixLayerSpec)) {
+	LeabraLayerSpec* tols = (LeabraLayerSpec*)tol->GetLayerSpec();
+	if(tols->InheritsFrom(&TA_PVLVLayerSpec) || tols->InheritsFrom(&TA_XMatrixLayerSpec)) {
 	  send_gp->Send_NetinDelta(net, thread_no, act_delta);
 	}
       }
@@ -2258,9 +2266,10 @@ void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_
   // second case is standard to everyone else
   {
     float act_ts = u->act;
-    if(syn_delay.on) {
-      act_ts = u->act_buf.CircSafeEl(0); // get first logical element..
-    }
+    // keep it consistent
+//     if(syn_delay.on) {
+//       act_ts = u->act_buf.CircSafeEl(0); // get first logical element..
+//     }
 
     if(act_ts > opt_thresh.send) {
       float act_delta = act_ts - u->act_sent;
@@ -2271,8 +2280,8 @@ void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_
 	  LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
 	  LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
 	  if(tol->lesioned() || tol->hard_clamped || !send_gp->size)	continue;
-	  LeabraLayerSpec* ls = (LeabraLayerSpec*)tol->GetLayerSpec();
-	  if(!(ls->InheritsFrom(&TA_PVLVLayerSpec) || ls->InheritsFrom(&TA_XMatrixLayerSpec))) {
+	  LeabraLayerSpec* tols = (LeabraLayerSpec*)tol->GetLayerSpec();
+	  if(!(tols->InheritsFrom(&TA_PVLVLayerSpec) || tols->InheritsFrom(&TA_XMatrixLayerSpec))) {
 	    send_gp->Send_NetinDelta(net, thread_no, act_delta);
 	  }
 	}
@@ -2288,8 +2297,8 @@ void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_
 	LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
 	if(tol->lesioned() || tol->hard_clamped || !send_gp->size)	continue;
 	send_gp->Send_NetinDelta(net, thread_no, act_delta);
-	LeabraLayerSpec* ls = (LeabraLayerSpec*)tol->GetLayerSpec();
-	if(!(ls->InheritsFrom(&TA_PVLVLayerSpec) || ls->InheritsFrom(&TA_XMatrixLayerSpec))) {
+	LeabraLayerSpec* tols = (LeabraLayerSpec*)tol->GetLayerSpec();
+	if(!(tols->InheritsFrom(&TA_PVLVLayerSpec) || tols->InheritsFrom(&TA_XMatrixLayerSpec))) {
 	  send_gp->Send_NetinDelta(net, thread_no, act_delta);
 	}
       }
@@ -2326,6 +2335,7 @@ void XPFCGateSpec::Initialize() {
   base_gain = 0.5f;
   go_gain = 0.5f;
   clear_decay = 0.0f;
+  mnt_to_bg = false;
   graded_out_go = true;
   go_netin_gain = 0.01f;
   out_go_clear = true;
