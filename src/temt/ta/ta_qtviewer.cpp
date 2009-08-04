@@ -4210,6 +4210,13 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
 
   //NOTE: URLs only open in the main project browser for that project
   String path = url.path(); // will only be part before #, if any
+  
+  // TypeBrowser invocations are dependency-free so we check them first
+  if(path.startsWith(".Type.")) {
+    iTypeBrowser::StatLoadUrl(String(url.toString()));
+    return; 
+  }
+  
   // we usually embed the uniqueId of the win that had the invoking url
   String win_id_str = String(url.fragment()).after("#");
   int win_id = win_id_str.toInt(); // 0 if empty or not an int
@@ -4617,7 +4624,8 @@ void iMainWindowViewer::toolsClassBrowser() {
 }
 
 void iMainWindowViewer::toolsTypeBrowser() {
-  iTypeDefDialog* tdd = iTypeDefDialog::instance();
+ // iTypeBrowser* tdd = 
+  iTypeBrowser::instance();
 }
 
 void iMainWindowViewer::UpdateUi() {

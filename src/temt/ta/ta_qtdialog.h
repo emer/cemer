@@ -509,6 +509,7 @@ protected:
   override void		Refresh_impl(bool reshow);
 protected slots:
   virtual void	label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e);
+  virtual void		helpMenu_triggered();
 };
 
 

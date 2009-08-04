@@ -26,6 +26,7 @@
 #include "css_ta.h"
 #include "ta_seledit.h"
 #include "ta_project.h"
+#include "ta_qtclassbrowse.h"
 #include "ta_TA_type.h"
 
 #include <QApplication>
@@ -1352,6 +1353,14 @@ void taiDataHost_impl::label_contextMenuInvoked(iLabel* sender, QContextMenuEven
 }
 
 void taiDataHost_impl::FillLabelContextMenu(QMenu* menu, int& last_id) {
+  // only add member help if exists
+  if (sel_item_mbr) {
+    menu->addAction("&Help", this, SLOT(helpMenu_triggered()));
+  }
+}
+
+void taiDataHost_impl::helpMenu_triggered() {
+  iTypeBrowser::StatLoadMember(sel_item_mbr);
 }
 
 void taiDataHost_impl::Iconify(bool value) {

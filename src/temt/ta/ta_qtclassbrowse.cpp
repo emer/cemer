@@ -924,14 +924,14 @@ taiDataLink* taTypeInfoViewType::GetDataLink(void* el, TypeDef* td) {
 
 
 //////////////////////////
-//   iTypeDefDialog	//
+//   iTypeBrowser	//
 //////////////////////////
 
-iTypeDefDialog* iTypeDefDialog::inst;
+iTypeBrowser* iTypeBrowser::inst;
 
-iTypeDefDialog* iTypeDefDialog::instance() {
+iTypeBrowser* iTypeBrowser::instance() {
   if (!inst) {
-    inst = new iTypeDefDialog();
+    inst = new iTypeBrowser();
     iSize sz = taiM->dialogSize(taiMisc::dlgBig);
     inst->resize(sz.width(), sz.height());
     inst->show();
@@ -945,34 +945,34 @@ iTypeDefDialog* iTypeDefDialog::instance() {
   return inst;
 }
 
-void iTypeDefDialog::StatLoadEnum(TypeDef* typ) {
+void iTypeBrowser::StatLoadEnum(TypeDef* typ) {
   instance()->LoadEnum(typ);
 }
 
-void iTypeDefDialog::StatLoadMember(MemberDef* mbr) {
+void iTypeBrowser::StatLoadMember(MemberDef* mbr) {
   instance()->LoadMember(mbr);
 }
 
-void iTypeDefDialog::StatLoadMethod(MethodDef* mth) {
+void iTypeBrowser::StatLoadMethod(MethodDef* mth) {
   instance()->LoadMethod(mth);
 }
 
-void iTypeDefDialog::StatLoadType(TypeDef* typ) {
+void iTypeBrowser::StatLoadType(TypeDef* typ) {
   instance()->LoadType(typ);
 }
 
-void iTypeDefDialog::StatLoadUrl(const String& url) {
+void iTypeBrowser::StatLoadUrl(const String& url) {
   instance()->LoadUrl(url);
 }
 
 // note: we parent to main_win so something will delete it
-iTypeDefDialog::iTypeDefDialog() 
+iTypeBrowser::iTypeBrowser() 
 :inherited(taiMisc::main_window)
 {
   init();
 }
 
-iTypeDefDialog::~iTypeDefDialog() {
+iTypeBrowser::~iTypeBrowser() {
   if (this == inst) {
     inst = NULL;
   }
@@ -980,7 +980,7 @@ iTypeDefDialog::~iTypeDefDialog() {
   disconnect(this, SIGNAL(tv_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
 }
 
-void iTypeDefDialog::init() {
+void iTypeBrowser::init() {
   this->setAttribute(Qt::WA_DeleteOnClose, false); // keep alive when closed
   this->setWindowTitle("Type Browser");
 //  this->setSizeGripEnabled(true);
@@ -1060,7 +1060,7 @@ void iTypeDefDialog::init() {
   
 }
 
-void iTypeDefDialog::AddTypesR(TypeSpace* ts) {
+void iTypeBrowser::AddTypesR(TypeSpace* ts) {
   for (int i = 0; i < ts->size; ++i) {
     TypeDef* typ = ts->FastEl(i);
     if (!(typ->is_class() && typ->is_anchor()))
@@ -1070,6 +1070,9 @@ void iTypeDefDialog::AddTypesR(TypeSpace* ts) {
       typ->HasOption("HIDDEN") ||
       typ->HasOption("IGNORE")) 
       continue;
+    // get rid of the junk stub types by looking for empties...
+    if ((typ->members.size == 0) && (typ->methods.size == 0))
+      continue;
     QTreeWidgetItem* twi = new QTreeWidgetItem(tv);
     twi->setText(0, typ->name);
     twi->setText(1, typ->GetCat());
@@ -1078,14 +1081,15 @@ void iTypeDefDialog::AddTypesR(TypeSpace* ts) {
   }
 }
 
-void iTypeDefDialog::brow_linkClicked(const QUrl& url) 
+void iTypeBrowser::brow_linkClicked(const QUrl& url) 
 {
   // forward to global, which is iMainWindowViewer::taUrlHandler
-//TEMP  QDesktopServices::openUrl(url); 
-LoadUrl(String(url.toString()));
+  // for .Type. urls (us) it just calls back to LoadUrl(url)
+  QDesktopServices::openUrl(url); 
+//nuke LoadUrl(String(url.toString()));
 }
 
-/*void iTypeDefDialog::brow_setSourceRequest(iTextBrowser* tb,
+/*void iTypeBrowser::brow_setSourceRequest(iTextBrowser* tb,
     const QUrl& url, bool& cancel)
 {
   String turl = url.toString();
@@ -1103,7 +1107,7 @@ LoadUrl(String(url.toString()));
   QDesktopServices::openUrl(url); 
 }*/
 
-QTreeWidgetItem* iTypeDefDialog::FindItem(TypeDef* typ) {
+QTreeWidgetItem* iTypeBrowser::FindItem(TypeDef* typ) {
   typ = typ->GetNonPtrType();
   typ = typ->GetNonConstNonRefType();
   QTreeWidgetItemIterator it(tv);
@@ -1116,56 +1120,69 @@ QTreeWidgetItem* iTypeDefDialog::FindItem(TypeDef* typ) {
   return NULL;
 }
 
-TypeDef* iTypeDefDialog::GetTypeDef(QTreeWidgetItem* item) {
+TypeDef* iTypeBrowser::GetTypeDef(QTreeWidgetItem* item) {
   return (TypeDef*)QVARIANT_TO_INTPTR(item->data(0, Qt::UserRole));
 }
 
-void iTypeDefDialog::ItemChanged(QTreeWidgetItem* item) {
+void iTypeBrowser::ItemChanged(QTreeWidgetItem* item) {
   TypeDef* typ = GetTypeDef(item);
   LoadType(typ);
 }
 
-void iTypeDefDialog::LoadEnum(TypeDef* typ) {
+void iTypeBrowser::LoadEnum(TypeDef* typ) {
 //TODO: maybe check if enum, maybe in debug mode? maybe not needed...
   LoadType(typ->GetOwnerType(), typ->name);
 }
 
-void iTypeDefDialog::LoadMember(MemberDef* mbr) {
+void iTypeBrowser::LoadMember(MemberDef* mbr) {
   LoadType(mbr->GetOwnerType(), mbr->name);
 }
 
-void iTypeDefDialog::LoadMethod(MethodDef* mth) {
+void iTypeBrowser::LoadMethod(MethodDef* mth) {
   LoadType(mth->GetOwnerType(), mth->name);
 }
 
-void iTypeDefDialog::LoadType(TypeDef* typ, const String& anchor) {
+void iTypeBrowser::LoadType(TypeDef* typ, const String& anchor) {
   String html;
   String url;
+  QTreeWidgetItem* twi = NULL;
   if (typ) {
     typ = typ->GetNonPtrType();
     html = typ->GetHTML();
     url = "ta:.Type." + typ->name + ".html";
     if (anchor.nonempty())
       url.cat("#").cat(anchor);
+    twi = FindItem(typ);
   }
   m_curUrl = url;
   m_curHtml = html;
+  if (twi != tv->currentItem()) {
+    ++m_changing;
+    tv->setCurrentItem(twi);
+    --m_changing;
+  }
   brow->setHtml(html.toQString(), url.toQString());
 }
 
-void iTypeDefDialog::LoadUrl(const String& url) {
+void iTypeBrowser::LoadUrl(const String& url) {
   String html;
-  String base_url = url.before("#");
-//  String anchor = url.after("#");
+  String base_url;
+  String anchor = url.after("#");
+  if (anchor.empty())
+    base_url = url;
+  else
+    base_url = url.before("#");
   if (base_url == curUrl()) { 
     html = m_curHtml;
+    brow->setHtml(html.toQString(), base_url.toQString());
   } else {
-  //TODO: full decode chain
+    String typ_name(base_url.after(".Type.").before(".html"));
+    TypeDef* typ = taMisc::types.FindName(typ_name);
+    LoadType(typ, anchor);
   }
-  brow->setHtml(html.toQString(), base_url.toQString());
 }
 
-bool iTypeDefDialog::SetItem(TypeDef* typ) {
+bool iTypeBrowser::SetItem(TypeDef* typ) {
   QTreeWidgetItem* item = FindItem(typ);
   if (item) {
     tv->setCurrentItem(item); // should raise signal
@@ -1173,6 +1190,7 @@ bool iTypeDefDialog::SetItem(TypeDef* typ) {
   return (item != NULL);
 }
 
-void iTypeDefDialog::tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
+void iTypeBrowser::tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
+  if (m_changing) return;
   ItemChanged(curr);
 }

@@ -361,7 +361,7 @@ class TA_API taTypeDefViewType: public taiViewType { // for TypeDef types
 
 */
 
-class TA_API iTypeDefDialog: public QMainWindow {
+class TA_API iTypeBrowser: public QMainWindow {
 //   TypeDef documentation
 INHERITED(QMainWindow)
   Q_OBJECT
@@ -377,7 +377,7 @@ public:
 #ifndef __MAKETA__ 
 
 public: //  this is the public interface
-  static iTypeDefDialog* instance(); // we only create one instance, this gets it
+  static iTypeBrowser* instance(); // we only create one instance, this gets it
   static void		StatLoadEnum(TypeDef* typ); // the enum set, not an individual guy
   static void		StatLoadMember(MemberDef* mbr);
   static void		StatLoadMethod(MethodDef* mth);
@@ -420,11 +420,11 @@ public:
   
 protected:
   static const int	num_sorts = 3;
-  static iTypeDefDialog* inst;
+  static iTypeBrowser* inst;
     
   String		m_curUrl;
   String		m_curHtml; // full page of generated Type
-//  int			m_changing;
+  ContextFlag		m_changing; // true when we should ignore change to tree select
 //  bool			m_stop;
 //  String_PArray		m_targets;
 //  String_PArray		m_kickers;
@@ -435,8 +435,8 @@ protected:
   QTreeWidgetItem*	FindItem(TypeDef* typ); // find item from type -- we derefence type to base type
   void			ItemChanged(QTreeWidgetItem* item); // item changed to this, sync
   
-  iTypeDefDialog();
-  ~iTypeDefDialog();
+  iTypeBrowser();
+  ~iTypeBrowser();
   
 protected slots:
 //  void			go_clicked();
