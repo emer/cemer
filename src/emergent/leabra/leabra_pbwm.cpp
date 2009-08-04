@@ -2240,7 +2240,7 @@ void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_
 	u->misc_1 = act_ts;	// cache the last sent value
       }
     }
-    else if(u->act_sent > opt_thresh.send) {
+    else if(u->misc_1 > opt_thresh.send) {
       float act_delta = - u->misc_1; // un-send the last above-threshold activation to get back to 0
       for(int g=0; g<u->send.size; g++) {
 	LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
