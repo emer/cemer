@@ -6765,7 +6765,7 @@ String TypeDef::GetHTMLLink() const {
     npt = npt->GetNonConstType();
   if(npt) {
     if(npt->InheritsFormal(TA_class)) {
-      rval.cat("<a href=\"ta:.Type.").cat(npt->name).cat(".html\">").cat(Get_C_Name()).cat("</a>");
+      rval.cat("<a href=\"ta:.Type.").cat(npt->name).cat("\">").cat(Get_C_Name()).cat("</a>");
     }
     else if(npt->InheritsFormal(TA_enum)) {
       rval.cat("<a href=\"#").cat(npt->name).cat("\">").cat(Get_C_Name()).cat("</a>");

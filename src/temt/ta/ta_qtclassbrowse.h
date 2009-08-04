@@ -396,13 +396,12 @@ public:
   taiAction* 		historyForwardAction;
 
   QToolBar*		tool_bar;
-  QVBoxLayout*		layOuter;
-  QHBoxLayout*		  laySearch;
-  iLineEdit*		    search;
   QAbstractButton*	    btnGo;
 //  QAbstractButton*	    btnStop;
   QSplitter*		  split;
-  QTreeWidget*		    tv;
+//  QHBoxLayout*		    layFilter;
+  iLineEdit*		      filter;
+  QTreeWidget*		      tv;
   QWebView*		    brow; // note: use our own load() routine for urls
   QStatusBar*		  status_bar;
   
@@ -429,8 +428,13 @@ protected:
 //  String_PArray		m_targets;
 //  String_PArray		m_kickers;
 //  int			m_sorts[num_sorts];
+  QString		last_filter; // for checking if anything changed
+  QTimer*		timFilter; // timer for filter changes
   
-//  void			ParseSearchString();
+  void			SetFilter(const QString& filt); // apply a filter
+  void			ClearFilter(); // remove filtering
+  void 			ApplyFiltering();
+  bool 			ShowItem(const QTreeWidgetItem* item) const;
   TypeDef*		GetTypeDef(QTreeWidgetItem* item);
   QTreeWidgetItem*	FindItem(TypeDef* typ); // find item from type -- we derefence type to base type
   void			ItemChanged(QTreeWidgetItem* item); // item changed to this, sync
@@ -443,6 +447,9 @@ protected slots:
 //  void			stop_clicked();
   void			brow_linkClicked(const QUrl& url);
   void			tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
+  void 			filter_textChanged(const QString& text);
+  void 			timFilter_timeout();
+  void			show_timeout(); // for scrolling to item
   
 private:
   void 		init(); // called by constructors

@@ -27,6 +27,7 @@
 #include <QLayout>
 #include <QSplitter>
 #include <QStatusBar>
+#include <QTimer>
 #include <QToolBar>
 #include <QTreeWidget>
 #include <QWebPage>
@@ -1012,18 +1013,35 @@ void iTypeBrowser::init() {
   if (but) {but->setArrowType(Qt::RightArrow); but->setText("");}
   
   
-//  layOuter = new QVBoxLayout(this);
-//  layOuter->setMargin(0);
-//  layOuter->setSpacing(0);
   split = new QSplitter;
-//  layOuter->addWidget(split, 1);
-  tv = new QTreeWidget;
+  
+  QWidget* tvw = new QWidget;
+  QVBoxLayout* lay_tv = new QVBoxLayout(tvw);
+  lay_tv->setMargin(0);
+  //lay_tv->setSpacing(0);
+  lay_tv->addSpacing(taiM->vsep_c);
+  
+  QHBoxLayout* lay = new QHBoxLayout();
+  lay->addSpacing(taiM->hspc_c); 
+  QLabel* lbl = new QLabel("search", this);
+  lbl->setToolTip("Enter text that must appear in an item to keep it visible");
+  lay->addWidget(lbl);
+  lay->addSpacing(taiM->hsep_c);
+  filter = new iLineEdit(tvw);
+  filter->setToolTip(lbl->toolTip());
+  lay->addWidget(filter, 1);
+  lay->addSpacing(taiM->hspc_c); 
+
+  lay_tv->addLayout(lay);
+  
+  tv = new QTreeWidget(tvw);
   tv->setColumnCount(2);
   QTreeWidgetItem* hdr = tv->headerItem();
   hdr->setText(0, "Type");
   hdr->setText(1, "Category");
+  lay_tv->addWidget(tv, 1);
   
-  split->addWidget(tv);
+  split->addWidget(tvw);
   brow = new QWebView;
   QWebPage* wp = brow->page();
   wp->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
@@ -1040,6 +1058,10 @@ void iTypeBrowser::init() {
   tv->sortByColumn(0, Qt::AscendingOrder);
   tv->resizeColumnToContents(0);
   
+  timFilter = new QTimer(this);
+  timFilter->setSingleShot(true);
+  timFilter->setInterval(500);
+
   connect(historyBackAction, SIGNAL(triggered()), brow, SLOT(back()) );
   connect(historyForwardAction, SIGNAL(triggered()), brow, SLOT(forward()) );
   connect(tv, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
@@ -1051,12 +1073,9 @@ void iTypeBrowser::init() {
   // note: WebView doesn't show hover links in status by default so we do it
   connect(wp, SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
     status_bar, SLOT(message(const QString&)) );
-/*  connect(brow, SIGNAL(setSourceRequest(iTextBrowser*,
-    const QUrl&, bool&)),
-    this, SLOT(brow_setSourceRequest(iTextBrowser*,
-    const QUrl&, bool&)) );
-  connect(brow, SIGNAL(highlighted(const QString&)),
-    status_bar, SLOT(message(const QString&)) );*/
+  connect(filter, SIGNAL(textChanged(const QString&)),
+    this, SLOT(filter_textChanged(const QString&)) );
+  connect(timFilter, SIGNAL(timeout()), this, SLOT(timFilter_timeout()) );
   
 }
 
@@ -1081,12 +1100,32 @@ void iTypeBrowser::AddTypesR(TypeSpace* ts) {
   }
 }
 
+void iTypeBrowser::ApplyFiltering() {
+  ++m_changing;
+  taMisc::Busy();
+  QTreeWidgetItemIterator it(tv, QTreeWidgetItemIterator::All);
+  QTreeWidgetItem* item;
+  QString s;
+  //QTreeWidgetItem* first_item = NULL;
+  int n_items = 0;
+  while ((item = *it)) { 
+    // TODO (maybe): don't hide NULL item
+    bool show = ShowItem(item);
+    tv->setItemHidden(item, !show);
+    if(show) {
+      n_items++;
+    }
+    ++it;
+  }
+  taMisc::DoneBusy();
+  --m_changing;
+}
+
 void iTypeBrowser::brow_linkClicked(const QUrl& url) 
 {
   // forward to global, which is iMainWindowViewer::taUrlHandler
   // for .Type. urls (us) it just calls back to LoadUrl(url)
   QDesktopServices::openUrl(url); 
-//nuke LoadUrl(String(url.toString()));
 }
 
 /*void iTypeBrowser::brow_setSourceRequest(iTextBrowser* tb,
@@ -1106,6 +1145,25 @@ void iTypeBrowser::brow_linkClicked(const QUrl& url)
   cancel = true;
   QDesktopServices::openUrl(url); 
 }*/
+
+void iTypeBrowser::ClearFilter() {
+  ++m_changing;
+  taMisc::Busy();
+  last_filter.clear();
+  QTreeWidgetItemIterator it(tv, QTreeWidgetItemIterator::Hidden);
+  QTreeWidgetItem* item;
+  while ((item = *it)) { 
+    tv->setItemHidden(item, false);
+    ++it;
+  }
+  taMisc::DoneBusy();
+  --m_changing;
+} 
+
+void iTypeBrowser::filter_textChanged(const QString& /*text*/) {
+  // following either starts timer, or restarts it
+  timFilter->start();
+}
 
 QTreeWidgetItem* iTypeBrowser::FindItem(TypeDef* typ) {
   typ = typ->GetNonPtrType();
@@ -1149,7 +1207,7 @@ void iTypeBrowser::LoadType(TypeDef* typ, const String& anchor) {
   if (typ) {
     typ = typ->GetNonPtrType();
     html = typ->GetHTML();
-    url = "ta:.Type." + typ->name + ".html";
+    url = "ta:.Type." + typ->name ;//+ ".html";
     if (anchor.nonempty())
       url.cat("#").cat(anchor);
     twi = FindItem(typ);
@@ -1176,10 +1234,61 @@ void iTypeBrowser::LoadUrl(const String& url) {
     html = m_curHtml;
     brow->setHtml(html.toQString(), base_url.toQString());
   } else {
-    String typ_name(base_url.after(".Type.").before(".html"));
+    String typ_name(base_url.after(".Type."));//.before(".html"));
     TypeDef* typ = taMisc::types.FindName(typ_name);
     LoadType(typ, anchor);
   }
+}
+
+bool iTypeBrowser::ShowItem(const QTreeWidgetItem* item) const {
+  // we show the item unless it either doesn't meet filter criteria, or not in cat
+  
+/*  // category filter
+  if (m_cat_filter != 0) {
+    String act_cat = item->data(0, ObjCatRole).toString(); //s/b blank if none set
+    String cat_txt = client()->catText(m_cat_filter - 1);// subtract 1 for 'all' item
+    if(multi_cats && act_cat.contains(", ")) {
+      bool any_match = false;
+      while(true) {
+	String cur_cat = act_cat.before(", ");
+	act_cat = act_cat.after(", ");
+	if(cur_cat == cat_txt) {
+	  any_match = true; break;
+	}
+	if(act_cat.contains(", ")) continue;
+	if(act_cat == cat_txt) {
+	  any_match = true;
+	}
+	break;
+      }
+      if(!any_match) return false;
+    }
+    else {
+      if (act_cat != cat_txt) 
+	return false;
+    }
+  }*/
+  
+  // filter text filter
+  if (!last_filter.isEmpty()) {
+    bool hide = true;
+    QString s;
+    int cols = tv->columnCount();
+    for (int i = 0; i < cols; ++i) {
+      s = item->text(i);
+      if (s.contains(last_filter, Qt::CaseInsensitive)) {
+        hide = false;
+        break;
+      }  
+    }
+    if (hide) return false;
+  }
+  return true;
+}
+
+void iTypeBrowser::SetFilter(const QString& filt) {
+  last_filter = filt;
+  ApplyFiltering();
 }
 
 bool iTypeBrowser::SetItem(TypeDef* typ) {
@@ -1188,6 +1297,25 @@ bool iTypeBrowser::SetItem(TypeDef* typ) {
     tv->setCurrentItem(item); // should raise signal
   }
   return (item != NULL);
+}
+
+void iTypeBrowser::show_timeout() {
+  QTreeWidgetItem* ci = tv->currentItem();
+  if (ci)
+    tv->scrollToItem(ci);
+}
+
+void iTypeBrowser::timFilter_timeout() {
+  // if nothing has changed in text, do nothing
+  QString text = filter->text();
+  if (last_filter == text) return;
+  // if we are already filtering, then don't reenter, but just try again
+  if (m_changing) {
+    timFilter->start();
+    return;
+  }
+  if (text.isEmpty()) ClearFilter();
+  else SetFilter(text);
 }
 
 void iTypeBrowser::tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {

@@ -3109,6 +3109,7 @@ QTreeWidgetItem* taiItemChooser::AddItem(const QString& itm_txt, QTreeWidgetItem
 }
 
 void taiItemChooser::ApplyFiltering() {
+  ++m_changing;
   taMisc::Busy();
   QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::All);
   QTreeWidgetItem* item;
@@ -3383,7 +3384,6 @@ bool taiItemChooser::ShowItem(const QTreeWidgetItem* item) const {
 }
 
 void taiItemChooser::SetFilter(const QString& filt) {
-  ++m_changing;
   last_filter = filt;
   ApplyFiltering();
 }
