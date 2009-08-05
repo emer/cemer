@@ -314,6 +314,17 @@ float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
   float noise_amp = 1.0f;		// noise amplitude multiplier
   if(matrix_noise.patch_noise) {
     noise_amp = (1.0f - (noise_adapt.min_pct_c * u->misc_1)); // lve value on patch is in misc_1
+
+    LeabraLayer* lay = u->own_lay();
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+    if(ls->InheritsFrom(&TA_XMatrixLayerSpec)) {
+      int gp_sz = ((LeabraUnit_Group*)owner)->leaves / 3;
+      XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(u->idx / gp_sz);
+      if(go_no == XPFCGateSpec::GATE_OUT_GO) {
+	XMatrixLayerSpec* xmls = (XMatrixLayerSpec*)lay->GetLayerSpec();
+	noise_amp *= xmls->matrix.out_noise_amp; // extra noise for output gating guys
+      }
+    }
   }
   else {
     if(noise_adapt.mode == NoiseAdaptSpec::SCHED_CYCLES) {
@@ -1646,6 +1657,7 @@ void XMatrixMiscSpec::Initialize() {
   mnt_nogo_da = 5.0f;
   empty_go_da = 5.0f;
   out_pvr_da = 5.0f;
+  out_noise_amp = 100.0f;
   perf_gain = 0.0f;
   neg_da_bl = 0.0f;
   neg_gain = 1.0f;
@@ -2058,6 +2070,7 @@ void XSNrThalMiscSpec::Initialize() {
 void XSNrThalLayerSpec::Initialize() {
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
+  decay.phase = 0.0f;
   SetUnique("gp_kwta", true);
   gp_kwta.k_from = KWTASpec::USE_K;
   gp_kwta.k = 1;
@@ -2236,8 +2249,8 @@ void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_
     if(act_ts > opt_thresh.send) {
       float act_delta = act_ts - u->misc_2; // misc_2 = act_sent
       if(fabsf(act_delta) > opt_thresh.delta) {
-	if(thread_no < 0)
-	  net->send_pct_n++;
+// 	if(thread_no < 0)
+// 	  net->send_pct_n++;
 	for(int g=0; g<u->send.size; g++) {
 	  LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
 	  LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
@@ -2250,8 +2263,8 @@ void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_
       }
     }
     else if(u->misc_2 > opt_thresh.send) {
-      if(thread_no < 0)
-	net->send_pct_n++;
+//       if(thread_no < 0)
+// 	net->send_pct_n++;
       float act_delta = - u->misc_2; // un-send the last above-threshold activation to get back to 0
       for(int g=0; g<u->send.size; g++) {
 	LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
@@ -3757,7 +3770,8 @@ bool LeabraWizard::PBWM_V2(LeabraNetwork* net, bool da_mod_all,
   matrix_units->g_bar.h = .01f; // old syn dep
   matrix_units->g_bar.a = .03f;
   matrix_units->noise_type = LeabraUnitSpec::NETIN_NOISE;
-  matrix_units->noise.var = 5.0e-5f;
+  matrix_units->noise.var = 0.0001f;
+  matrix_units->dt.vm = 0.2f;
   matrix_units->noise_adapt.trial_fixed = true;
   matrix_units->noise_adapt.mode = NoiseAdaptSpec::PVLV_LVE;
   matrix_units->freeze_net = false;
@@ -3877,6 +3891,7 @@ bool LeabraWizard::PBWM_V2(LeabraNetwork* net, bool da_mod_all,
     matrixsp->SelectForEditNm("matrix", edit, "matrix");
     matrixsp->SelectForEditNm("contrast", edit, "matrix");
     matrix_units->SelectForEditNm("g_bar", edit, "matrix");
+    matrix_units->SelectForEditNm("noise", edit, "matrix");
     matrix_cons->SelectForEditNm("lrate", edit, "matrix");
     matrix_cons->SelectForEditNm("xcal", edit, "matrix");
     mfmpfc_cons->SelectForEditNm("wt_scale", edit, "mtx_fm_pfc");
