@@ -360,6 +360,19 @@ class TA_API taTypeDefViewType: public taiViewType { // for TypeDef types
 };
 
 */
+#ifndef __MAKETA__
+class iWebView: public QWebView {
+Q_OBJECT
+INHERITED(QWebView);
+public:
+  iWebView(QWidget* parent = 0):inherited(parent) {}
+signals:
+  void 		sigCreateWindow(QWebPage::WebWindowType type,
+    QWebView*& window);
+protected:
+  override QWebView* createWindow(QWebPage::WebWindowType type);
+};
+#endif
 
 class TA_API iTypeBrowser: public QMainWindow {
 //   TypeDef documentation
@@ -395,17 +408,16 @@ public:
   taiAction* 		historyBackAction;
   taiAction* 		historyForwardAction;
 
-  QToolBar*		tool_bar;
-  QAbstractButton*	    btnGo;
 //  QAbstractButton*	    btnStop;
   QSplitter*		  split;
 //  QHBoxLayout*		    layFilter;
   iLineEdit*		      filter;
   QTreeWidget*		      tv;
-  QWebView*		    brow; // note: use our own load() routine for urls
+  QTabWidget*		    tab; // note: use our own load() routine for urls
   QStatusBar*		  status_bar;
   
   String		curUrl() const {return m_curUrl;} // current pseudo Url (w/o #xxx anchor)
+  QWebView*		curWebView(); // always returns one
   
 //  bool			stop() const; // allow event loop, then check stop
 //  bool			setFirstSort(int col); // set first sort column, pushes others down; true if order changed
@@ -422,7 +434,7 @@ protected:
   static iTypeBrowser* inst;
     
   String		m_curUrl;
-  String		m_curHtml; // full page of generated Type
+//  String		m_curHtml; // full page of generated Type
   ContextFlag		m_changing; // true when we should ignore change to tree select
 //  bool			m_stop;
 //  String_PArray		m_targets;
@@ -431,9 +443,12 @@ protected:
   QString		last_filter; // for checking if anything changed
   QTimer*		timFilter; // timer for filter changes
   
+  QWebView*		AddWebView(const String& label); // add a new tab
   void			SetFilter(const QString& filt); // apply a filter
   void			ClearFilter(); // remove filtering
   void 			ApplyFiltering();
+  void			Load_impl(TypeDef* typ, const String& base_url,
+    const String& anchor);
   bool 			ShowItem(const QTreeWidgetItem* item) const;
   TypeDef*		GetTypeDef(QTreeWidgetItem* item);
   QTreeWidgetItem*	FindItem(TypeDef* typ); // find item from type -- we derefence type to base type
@@ -443,13 +458,16 @@ protected:
   ~iTypeBrowser();
   
 protected slots:
-//  void			go_clicked();
-//  void			stop_clicked();
+  void			forward_clicked();
+  void			back_clicked();
+  void 			brow_createWindow(QWebPage::WebWindowType type,
+    QWebView*& window);
   void			brow_linkClicked(const QUrl& url);
-  void			tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
   void 			filter_textChanged(const QString& text);
-  void 			timFilter_timeout();
   void			show_timeout(); // for scrolling to item
+  void			tab_tabCloseRequested(int index);
+  void 			timFilter_timeout();
+  void			tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
   
 private:
   void 		init(); // called by constructors

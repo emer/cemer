@@ -27,6 +27,7 @@
 #include <QLayout>
 #include <QSplitter>
 #include <QStatusBar>
+#include <QTabWidget>
 #include <QTimer>
 #include <QToolBar>
 #include <QTreeWidget>
@@ -928,6 +929,14 @@ taiDataLink* taTypeInfoViewType::GetDataLink(void* el, TypeDef* td) {
 //   iTypeBrowser	//
 //////////////////////////
 
+QWebView* iWebView::createWindow(QWebPage::WebWindowType type) {
+  QWebView* rval = NULL;
+  emit sigCreateWindow(type, rval);
+  if (!rval) 
+    rval = inherited::createWindow(type);
+  return rval;
+}
+
 iTypeBrowser* iTypeBrowser::inst;
 
 iTypeBrowser* iTypeBrowser::instance() {
@@ -985,8 +994,17 @@ void iTypeBrowser::init() {
   this->setAttribute(Qt::WA_DeleteOnClose, false); // keep alive when closed
   this->setWindowTitle("Type Browser");
 //  this->setSizeGripEnabled(true);
-  tool_bar = new QToolBar(this);
-  addToolBar(tool_bar);
+  
+  split = new QSplitter;
+  
+  QWidget* tvw = new QWidget;
+  QVBoxLayout* lay_tv = new QVBoxLayout(tvw);
+  lay_tv->setMargin(0);
+  //lay_tv->setSpacing(0);
+  lay_tv->addSpacing(taiM->vsep_c);
+
+  QToolBar* tool_bar = new QToolBar(tvw);
+  lay_tv->addWidget(tool_bar);
   // forward/back guys -- note: on Win the icons don't show up if Action has text
   historyBackAction = new taiAction("Back", QKeySequence(), "historyBackAction" );
   historyBackAction->setToolTip("Back");
@@ -1011,28 +1029,22 @@ void iTypeBrowser::init() {
   if (but) {but->setArrowType(Qt::LeftArrow); but->setText("");}
   but = qobject_cast<QToolButton*>(tool_bar->widgetForAction(historyForwardAction));
   if (but) {but->setArrowType(Qt::RightArrow); but->setText("");}
+  tool_bar->addSeparator();
   
-  
-  split = new QSplitter;
-  
-  QWidget* tvw = new QWidget;
-  QVBoxLayout* lay_tv = new QVBoxLayout(tvw);
-  lay_tv->setMargin(0);
-  //lay_tv->setSpacing(0);
-  lay_tv->addSpacing(taiM->vsep_c);
-  
-  QHBoxLayout* lay = new QHBoxLayout();
-  lay->addSpacing(taiM->hspc_c); 
-  QLabel* lbl = new QLabel("search", this);
+  //QHBoxLayout* lay = new QHBoxLayout();
+  //lay->addSpacing(taiM->hspc_c); 
+  QLabel* lbl = new QLabel("search");
   lbl->setToolTip("Enter text that must appear in an item to keep it visible");
-  lay->addWidget(lbl);
-  lay->addSpacing(taiM->hsep_c);
-  filter = new iLineEdit(tvw);
+  tool_bar->addWidget(lbl);
+  //lay->addWidget(lbl);
+  //lay->addSpacing(taiM->hsep_c);
+  filter = new iLineEdit();
   filter->setToolTip(lbl->toolTip());
-  lay->addWidget(filter, 1);
-  lay->addSpacing(taiM->hspc_c); 
+  tool_bar->addWidget(filter);
+  //lay->addWidget(filter, 1);
+  //lay->addSpacing(taiM->hspc_c); 
 
-  lay_tv->addLayout(lay);
+  //lay_tv->addLayout(lay);
   
   tv = new QTreeWidget(tvw);
   tv->setColumnCount(2);
@@ -1042,15 +1054,14 @@ void iTypeBrowser::init() {
   lay_tv->addWidget(tv, 1);
   
   split->addWidget(tvw);
-  brow = new QWebView;
-  QWebPage* wp = brow->page();
-  wp->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
-  wp->setNetworkAccessManager(taiMisc::net_access_mgr);
-  split->addWidget(brow);
+  tab = new QTabWidget;
+#if (QT_VERSION >= 0x040500) //TEMP
+  tab->setTabsClosable(true);
+#endif
+  split->addWidget(tab);
   
   setCentralWidget(split);
 //  layOuter->addWidget(status_bar);
-  status_bar = statusBar(); // creates
   
   // add all types -- only non-virtual, base types
   AddTypesR(&taMisc::types);
@@ -1061,22 +1072,28 @@ void iTypeBrowser::init() {
   timFilter = new QTimer(this);
   timFilter->setSingleShot(true);
   timFilter->setInterval(500);
+  
+  status_bar = statusBar(); // asserts
 
-  connect(historyBackAction, SIGNAL(triggered()), brow, SLOT(back()) );
-  connect(historyForwardAction, SIGNAL(triggered()), brow, SLOT(forward()) );
+  connect(historyBackAction, SIGNAL(triggered()), this, SLOT(back_clicked()) );
+  connect(historyForwardAction, SIGNAL(triggered()), this, SLOT(forward_clicked()) );
   connect(tv, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     this, SLOT(tv_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
-  connect(brow, SIGNAL(linkClicked(const QUrl&)),
-    this, SLOT(brow_linkClicked(const QUrl&)) );
-  connect(brow, SIGNAL(statusBarMessage(const QString&)),
-    status_bar, SLOT(message(const QString&)) );
-  // note: WebView doesn't show hover links in status by default so we do it
-  connect(wp, SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
-    status_bar, SLOT(message(const QString&)) );
+  connect(tab, SIGNAL(tabCloseRequested(int)),
+    this, SLOT(tab_closeRequested(int)) );
   connect(filter, SIGNAL(textChanged(const QString&)),
     this, SLOT(filter_textChanged(const QString&)) );
   connect(timFilter, SIGNAL(timeout()), this, SLOT(timFilter_timeout()) );
   
+  AddWebView(_nilString); // so stuff lays out
+}
+
+void iTypeBrowser::forward_clicked() {
+  curWebView()->forward();
+}
+
+void iTypeBrowser::back_clicked() {
+  curWebView()->back();
 }
 
 void iTypeBrowser::AddTypesR(TypeSpace* ts) {
@@ -1100,6 +1117,26 @@ void iTypeBrowser::AddTypesR(TypeSpace* ts) {
   }
 }
 
+QWebView* iTypeBrowser::AddWebView(const String& label) {
+  QWebView* brow = new iWebView;
+  QWebPage* wp = brow->page();
+  wp->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
+  wp->setNetworkAccessManager(taiMisc::net_access_mgr);
+  //TODO: user style sheet 
+  tab->addTab(brow, label.toQString());
+  connect(brow, SIGNAL(linkClicked(const QUrl&)),
+    this, SLOT(brow_linkClicked(const QUrl&)) );
+  connect(brow, SIGNAL(statusBarMessage(const QString&)),
+    status_bar, SLOT(message(const QString&)) );
+  connect(brow, SIGNAL(sigCreateWindow(QWebPage::WebWindowType,
+    QWebView*&)), this, SLOT(brow_createWindow(QWebPage::WebWindowType,
+    QWebView*&)) );
+  // note: WebView doesn't show hover links in status by default so we do it
+  connect(wp, SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
+    status_bar, SLOT(message(const QString&)) );
+  return brow;
+}
+
 void iTypeBrowser::ApplyFiltering() {
   ++m_changing;
   taMisc::Busy();
@@ -1119,6 +1156,14 @@ void iTypeBrowser::ApplyFiltering() {
   }
   taMisc::DoneBusy();
   --m_changing;
+}
+
+void iTypeBrowser::brow_createWindow(QWebPage::WebWindowType type,
+    QWebView*& window)
+{
+  if (type == QWebPage::WebBrowserWindow) {
+    window = AddWebView(_nilString);
+  }
 }
 
 void iTypeBrowser::brow_linkClicked(const QUrl& url) 
@@ -1159,6 +1204,12 @@ void iTypeBrowser::ClearFilter() {
   taMisc::DoneBusy();
   --m_changing;
 } 
+
+QWebView* iTypeBrowser::curWebView() {
+  if (tab->count() == 0)
+    return AddWebView(_nilString);
+  return (QWebView*)tab->currentWidget();
+}
 
 void iTypeBrowser::filter_textChanged(const QString& /*text*/) {
   // following either starts timer, or restarts it
@@ -1201,25 +1252,12 @@ void iTypeBrowser::LoadMethod(MethodDef* mth) {
 }
 
 void iTypeBrowser::LoadType(TypeDef* typ, const String& anchor) {
-  String html;
-  String url;
-  QTreeWidgetItem* twi = NULL;
+  String base_url;
   if (typ) {
     typ = typ->GetNonPtrType();
-    html = typ->GetHTML();
-    url = "ta:.Type." + typ->name ;//+ ".html";
-    if (anchor.nonempty())
-      url.cat("#").cat(anchor);
-    twi = FindItem(typ);
+    base_url = "ta:.Type." + typ->name ;
   }
-  m_curUrl = url;
-  m_curHtml = html;
-  if (twi != tv->currentItem()) {
-    ++m_changing;
-    tv->setCurrentItem(twi);
-    --m_changing;
-  }
-  brow->setHtml(html.toQString(), url.toQString());
+  Load_impl(typ, base_url, anchor);
 }
 
 void iTypeBrowser::LoadUrl(const String& url) {
@@ -1230,14 +1268,32 @@ void iTypeBrowser::LoadUrl(const String& url) {
     base_url = url;
   else
     base_url = url.before("#");
-  if (base_url == curUrl()) { 
-    html = m_curHtml;
-    brow->setHtml(html.toQString(), base_url.toQString());
-  } else {
-    String typ_name(base_url.after(".Type."));//.before(".html"));
-    TypeDef* typ = taMisc::types.FindName(typ_name);
-    LoadType(typ, anchor);
+  String typ_name(base_url.after(".Type."));
+  TypeDef* typ = taMisc::types.FindName(typ_name);
+  Load_impl(typ, base_url, anchor);
+}
+
+void iTypeBrowser::Load_impl(TypeDef* typ, const String& base_url,
+    const String& anchor)
+{
+  String html;
+  String url = base_url;
+  if (anchor.nonempty())
+    url.cat("#").cat(anchor);
+  QTreeWidgetItem* twi = NULL;
+  String tab_text;
+  if (typ) {
+    html = typ->GetHTML();
+    tab_text = typ->name;
+    twi = FindItem(typ);
   }
+  if (twi != tv->currentItem()) {
+    ++m_changing;
+    tv->setCurrentItem(twi);
+    --m_changing;
+  }
+  curWebView()->setHtml(html.toQString(), url.toQString());
+  tab->setTabText(tab->currentIndex(), tab_text.toQString());
 }
 
 bool iTypeBrowser::ShowItem(const QTreeWidgetItem* item) const {
@@ -1303,6 +1359,11 @@ void iTypeBrowser::show_timeout() {
   QTreeWidgetItem* ci = tv->currentItem();
   if (ci)
     tv->scrollToItem(ci);
+}
+
+void iTypeBrowser::tab_tabCloseRequested(int index) {
+  if (tab->count() <= 1) return; // always 1;
+  tab->removeTab(index);
 }
 
 void iTypeBrowser::timFilter_timeout() {
