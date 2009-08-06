@@ -25,6 +25,8 @@
 //	Patch/Striosomes and SNc
 
 void PatchLayerSpec::Initialize() {
+  SetUnique("inhib_group", true);
+  inhib_group = UNIT_GROUPS;
 }
 
 void PatchLayerSpec::Send_LVeToMatrix(LeabraLayer* lay, LeabraNetwork* net) {
@@ -3134,7 +3136,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   // NOT unique: inherit from lve
   patchsp->SetUnique("decay", false);
   patchsp->SetUnique("kwta", false);
-  patchsp->SetUnique("inhib_group", false);
+  patchsp->SetUnique("inhib_group", true);
+  patchsp->inhib_group = LeabraLayerSpec::UNIT_GROUPS;
   patchsp->SetUnique("inhib", false);
 
   // lr sched:
@@ -3722,7 +3725,8 @@ bool LeabraWizard::PBWM_V2(LeabraNetwork* net, bool da_mod_all,
   // NOT unique: inherit from lve
   patchsp->SetUnique("decay", false);
   patchsp->SetUnique("kwta", false);
-  patchsp->SetUnique("inhib_group", false);
+  patchsp->SetUnique("inhib_group", true);
+  patchsp->inhib_group = LeabraLayerSpec::UNIT_GROUPS;
   patchsp->SetUnique("inhib", false);
 
   nvsp->nv.da_gain = 0.0f;	// turn off by default, for now
