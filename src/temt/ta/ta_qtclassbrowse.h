@@ -413,11 +413,13 @@ public:
 //  QHBoxLayout*		    layFilter;
   iLineEdit*		      filter;
   QTreeWidget*		      tv;
+  iLineEdit*		    url_text;
   QTabWidget*		    tab; // note: use our own load() routine for urls
   QStatusBar*		  status_bar;
   
   String		curUrl() const {return m_curUrl;} // current pseudo Url (w/o #xxx anchor)
   QWebView*		curWebView(); // always returns one
+  QWebView*		webView(int index);
   
 //  bool			stop() const; // allow event loop, then check stop
 //  bool			setFirstSort(int col); // set first sort column, pushes others down; true if order changed
@@ -463,8 +465,10 @@ protected slots:
   void 			brow_createWindow(QWebPage::WebWindowType type,
     QWebView*& window);
   void			brow_linkClicked(const QUrl& url);
+  void			brow_urlChanged(const QUrl& url);
   void 			filter_textChanged(const QString& text);
   void			show_timeout(); // for scrolling to item
+  void			tab_currentChanged(int index);
   void			tab_tabCloseRequested(int index);
   void 			timFilter_timeout();
   void			tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev);

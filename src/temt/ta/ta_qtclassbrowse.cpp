@@ -992,7 +992,7 @@ iTypeBrowser::~iTypeBrowser() {
 
 void iTypeBrowser::init() {
   this->setAttribute(Qt::WA_DeleteOnClose, false); // keep alive when closed
-  this->setWindowTitle("Type Browser");
+  this->setWindowTitle("Help Browser");
 //  this->setSizeGripEnabled(true);
   
   split = new QSplitter;
@@ -1054,11 +1054,17 @@ void iTypeBrowser::init() {
   lay_tv->addWidget(tv, 1);
   
   split->addWidget(tvw);
-  tab = new QTabWidget;
+  QWidget* wid_tab = new QWidget;
+  QVBoxLayout* lay_tab = new QVBoxLayout(wid_tab);
+  lay_tab->setMargin(0);
+  url_text = new iLineEdit(wid_tab);
+  lay_tab->addWidget(url_text);
+  tab = new QTabWidget(wid_tab);
+  lay_tab->addWidget(tab);
 #if (QT_VERSION >= 0x040500) //TEMP
   tab->setTabsClosable(true);
 #endif
-  split->addWidget(tab);
+  split->addWidget(wid_tab);
   
   setCentralWidget(split);
 //  layOuter->addWidget(status_bar);
@@ -1083,6 +1089,8 @@ void iTypeBrowser::init() {
     this, SLOT(tab_closeRequested(int)) );
   connect(filter, SIGNAL(textChanged(const QString&)),
     this, SLOT(filter_textChanged(const QString&)) );
+  connect(tab, SIGNAL(currentChanged(int)),
+    this, SIGNAL(tab_currentChanged(int)) );
   connect(timFilter, SIGNAL(timeout()), this, SLOT(timFilter_timeout()) );
   
   AddWebView(_nilString); // so stuff lays out
@@ -1171,6 +1179,13 @@ void iTypeBrowser::brow_linkClicked(const QUrl& url)
   // forward to global, which is iMainWindowViewer::taUrlHandler
   // for .Type. urls (us) it just calls back to LoadUrl(url)
   QDesktopServices::openUrl(url); 
+}
+
+void iTypeBrowser::brow_urlChanged(const QUrl& url) 
+{ // NOTE: we assume it is only the current visible guy who can do this
+  ++m_changing;
+  url_text->setText(url.toString());
+  --m_changing; 
 }
 
 /*void iTypeBrowser::brow_setSourceRequest(iTextBrowser* tb,
@@ -1294,6 +1309,9 @@ void iTypeBrowser::Load_impl(TypeDef* typ, const String& base_url,
   }
   curWebView()->setHtml(html.toQString(), url.toQString());
   tab->setTabText(tab->currentIndex(), tab_text.toQString());
+  ++m_changing;
+  url_text->setText(curWebView()->url().toString());
+  --m_changing;
 }
 
 bool iTypeBrowser::ShowItem(const QTreeWidgetItem* item) const {
@@ -1361,6 +1379,17 @@ void iTypeBrowser::show_timeout() {
     tv->scrollToItem(ci);
 }
 
+void iTypeBrowser::tab_currentChanged(int index) {
+  QWebView* wv = webView(index); // safe
+  ++m_changing;
+  if (wv) {
+    url_text->setText(wv->url().toString());
+  } else {
+    url_text->setText("");
+  }
+  --m_changing;
+}
+
 void iTypeBrowser::tab_tabCloseRequested(int index) {
   if (tab->count() <= 1) return; // always 1;
   tab->removeTab(index);
@@ -1382,4 +1411,10 @@ void iTypeBrowser::timFilter_timeout() {
 void iTypeBrowser::tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
   if (m_changing) return;
   ItemChanged(curr);
+}
+
+QWebView* iTypeBrowser::webView(int index) {
+  if ((index < 0) || (index >= tab->count()))
+    return NULL;
+  return (QWebView*)tab->widget(index);
 }
