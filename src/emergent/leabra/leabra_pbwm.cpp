@@ -27,7 +27,7 @@
 void PatchLayerSpec::Initialize() {
 }
 
-void PatchLayerSpec::Send_PVeToMatrix(LeabraLayer* lay, LeabraNetwork* net) {
+void PatchLayerSpec::Send_LVeToMatrix(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR
     (lay, 
      LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
@@ -49,7 +49,7 @@ void PatchLayerSpec::Send_PVeToMatrix(LeabraLayer* lay, LeabraNetwork* net) {
 void PatchLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   ScalarValLayerSpec::Compute_CycleStats(lay, net);
   // do NOT report lvi value!
-  Send_PVeToMatrix(lay, net);
+  Send_LVeToMatrix(lay, net);
 }
 
 
@@ -312,13 +312,14 @@ void MatrixUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
 
 float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
   float noise_amp = 1.0f;		// noise amplitude multiplier
+  LeabraUnit_Group* mugp = u->own_ugp();
   if(matrix_noise.patch_noise) {
     noise_amp = (1.0f - (noise_adapt.min_pct_c * u->misc_1)); // lve value on patch is in misc_1
 
     LeabraLayer* lay = u->own_lay();
     LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
     if(ls->InheritsFrom(&TA_XMatrixLayerSpec)) {
-      int gp_sz = ((LeabraUnit_Group*)owner)->leaves / 3;
+      int gp_sz = mugp->leaves / 3;
       XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(u->idx / gp_sz);
       if(go_no == XPFCGateSpec::GATE_OUT_GO) {
 	XMatrixLayerSpec* xmls = (XMatrixLayerSpec*)lay->GetLayerSpec();
@@ -345,7 +346,6 @@ float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
     }
   }
 
-  LeabraUnit_Group* mugp = u->own_ugp();
   int nogos = (int)fabs((float)mugp->misc_state);
   if(nogos > matrix_noise.nogo_thr) {
     noise_amp *= matrix_noise.nogo_gain * (float)(nogos - matrix_noise.nogo_thr);
@@ -1657,7 +1657,7 @@ void XMatrixMiscSpec::Initialize() {
   mnt_nogo_da = 5.0f;
   empty_go_da = 5.0f;
   out_pvr_da = 5.0f;
-  out_noise_amp = 100.0f;
+  out_noise_amp = 10.0f;
   perf_gain = 0.0f;
   neg_da_bl = 0.0f;
   neg_gain = 1.0f;
@@ -2166,7 +2166,13 @@ void XSNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) 
     MatrixUnitSpec* us = (MatrixUnitSpec*)matrix_lay->unit_spec.SPtr();
     float mnt_go_net = 0.0f;
     float out_go_net = 0.0f;
+    float patch_lve = 0.5f;
     if((mugp->size > 0) && (mugp->acts.max >= us->opt_thresh.send)) {
+
+      // carry over the patch LVe value in misc_1, so it can be used for modulating output
+      LeabraUnit* mu = (LeabraUnit*)mugp->FastEl(0);
+      patch_lve = mu->misc_1;
+
       float sum_mnt_go = 0.0f;
       float sum_out_go = 0.0f;
       float sum_nogo = 0.0f;
@@ -2205,6 +2211,10 @@ void XSNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) 
     mnt_ru->i_thr = mnt_ru->Compute_IThresh(net);
     out_ru->net = out_net_eff;
     out_ru->i_thr = out_ru->Compute_IThresh(net);
+
+    // carry this forward
+    mnt_ru->misc_1 = patch_lve;
+    out_ru->misc_1 = patch_lve;
   }
 }
 
@@ -2347,6 +2357,7 @@ void XPFCGateSpec::Initialize() {
   clear_decay = 0.0f;
   mnt_to_bg = false;
   graded_out_go = true;
+  patch_out_mod = false;
   go_netin_gain = 0.01f;
   out_go_clear = true;
   off_accom = 0.0f;
@@ -2613,6 +2624,8 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 	ugp->misc_float1 = snr_out_u->act_eq;
       else
 	ugp->misc_float1 = 1.0f; // go all the way
+      if(gate.patch_out_mod)
+	ugp->misc_float1 *= snr_out_u->misc_1; // misc_1 has patch lve value
     }
 
     ugp->misc_float *= gate.go_netin_gain;
