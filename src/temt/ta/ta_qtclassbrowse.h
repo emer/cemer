@@ -396,6 +396,7 @@ public: //  this is the public interface
   static void		StatLoadMethod(MethodDef* mth);
   static void		StatLoadType(TypeDef* typ);
   static void		StatLoadUrl(const String& url); // saves url to detect anchors
+  static String		UrlToTabText(const String& url); // extracts tab text from url, for when url changes
   
   void			LoadEnum(TypeDef* typ); // the enum set, not an individual guy
   void			LoadMember(MemberDef* mbr);

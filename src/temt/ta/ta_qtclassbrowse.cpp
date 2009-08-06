@@ -975,6 +975,20 @@ void iTypeBrowser::StatLoadUrl(const String& url) {
   instance()->LoadUrl(url);
 }
 
+String iTypeBrowser::UrlToTabText(const String& url) {
+  String base_url;
+  String anchor = url.after("#");
+  if (anchor.empty())
+    base_url = url;
+  else
+    base_url = url.before("#");
+  if (base_url.contains(".Type.")) {
+    return base_url.after(".Type.");
+  }
+  return url;
+}
+
+
 // note: we parent to main_win so something will delete it
 iTypeBrowser::iTypeBrowser() 
 :inherited(taiMisc::main_window)
@@ -1086,11 +1100,11 @@ void iTypeBrowser::init() {
   connect(tv, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     this, SLOT(tv_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
   connect(tab, SIGNAL(tabCloseRequested(int)),
-    this, SLOT(tab_closeRequested(int)) );
+    this, SLOT(tab_tabCloseRequested(int)) );
   connect(filter, SIGNAL(textChanged(const QString&)),
     this, SLOT(filter_textChanged(const QString&)) );
   connect(tab, SIGNAL(currentChanged(int)),
-    this, SIGNAL(tab_currentChanged(int)) );
+    this, SLOT(tab_currentChanged(int)) );
   connect(timFilter, SIGNAL(timeout()), this, SLOT(timFilter_timeout()) );
   
   AddWebView(_nilString); // so stuff lays out
@@ -1126,12 +1140,15 @@ void iTypeBrowser::AddTypesR(TypeSpace* ts) {
 }
 
 QWebView* iTypeBrowser::AddWebView(const String& label) {
+  ++m_changing;
   QWebView* brow = new iWebView;
   QWebPage* wp = brow->page();
   wp->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
   wp->setNetworkAccessManager(taiMisc::net_access_mgr);
   //TODO: user style sheet 
-  tab->addTab(brow, label.toQString());
+  int tidx = tab->addTab(brow, label.toQString());
+  tab->setCurrentIndex(tidx); // not automatic
+  
   connect(brow, SIGNAL(linkClicked(const QUrl&)),
     this, SLOT(brow_linkClicked(const QUrl&)) );
   connect(brow, SIGNAL(statusBarMessage(const QString&)),
@@ -1142,6 +1159,7 @@ QWebView* iTypeBrowser::AddWebView(const String& label) {
   // note: WebView doesn't show hover links in status by default so we do it
   connect(wp, SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
     status_bar, SLOT(message(const QString&)) );
+  --m_changing;
   return brow;
 }
 
@@ -1185,6 +1203,7 @@ void iTypeBrowser::brow_urlChanged(const QUrl& url)
 { // NOTE: we assume it is only the current visible guy who can do this
   ++m_changing;
   url_text->setText(url.toString());
+  tab->setTabText(tab->currentIndex(), UrlToTabText(url.toString()));
   --m_changing; 
 }
 
@@ -1380,6 +1399,7 @@ void iTypeBrowser::show_timeout() {
 }
 
 void iTypeBrowser::tab_currentChanged(int index) {
+  if (m_changing) return; // already expected
   QWebView* wv = webView(index); // safe
   ++m_changing;
   if (wv) {
