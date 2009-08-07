@@ -4040,8 +4040,10 @@ void MethodDef::CallFun(void* base) const {
     if((fun_argc == 0) || (fun_argd == 0)) {
       ++taMisc::in_gui_call;
       cssEl* rval = (*(stubp))(base, 0, (cssEl**)NULL);
-      if(rval)
+      if(rval) {
+	cssEl::Ref(rval);
 	cssEl::unRefDone(rval);
+      }
       --taMisc::in_gui_call;
     }
     else {

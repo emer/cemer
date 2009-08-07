@@ -5737,8 +5737,10 @@ bool taiMethodData::CallFun_impl() {
       if (use_busy) taMisc::Busy(false);
       if ((show_rval && (rval != &cssMisc::Void)))
 	ShowReturnVal(rval, thost, meth_name);
-      if(rval)
+      if(rval) {
+	cssEl::Ref(rval);
 	cssEl::unRefDone(rval);
+      }
     } // NOTE: end of DMEM_COMPILE
     return (bool)ths;
   }
@@ -5766,8 +5768,10 @@ bool taiMethodData::CallFun_impl() {
       taMisc::Busy(false);
       if ((show_rval && (rval != &cssMisc::Void)))
 	ShowReturnVal(rval, thost, meth_name);
-      if(rval)
+      if(rval) {
+	cssEl::Ref(rval);
 	cssEl::unRefDone(rval);
+      }
 #ifdef DMEM_COMPILE
     }
 #endif
