@@ -467,6 +467,7 @@ protected slots:
     QWebView*& window);
   void			brow_linkClicked(const QUrl& url);
   void			brow_urlChanged(const QUrl& url);
+  void 			brow_urlChanged_timeout();
   void 			filter_textChanged(const QString& text);
   void			show_timeout(); // for scrolling to item
   void			tab_currentChanged(int index);

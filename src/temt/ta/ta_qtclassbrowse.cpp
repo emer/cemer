@@ -1152,13 +1152,13 @@ QWebView* iTypeBrowser::AddWebView(const String& label) {
   connect(brow, SIGNAL(linkClicked(const QUrl&)),
     this, SLOT(brow_linkClicked(const QUrl&)) );
   connect(brow, SIGNAL(statusBarMessage(const QString&)),
-    status_bar, SLOT(message(const QString&)) );
+    status_bar, SLOT(showMessage(const QString&)) );
   connect(brow, SIGNAL(sigCreateWindow(QWebPage::WebWindowType,
     QWebView*&)), this, SLOT(brow_createWindow(QWebPage::WebWindowType,
     QWebView*&)) );
   // note: WebView doesn't show hover links in status by default so we do it
   connect(wp, SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
-    status_bar, SLOT(message(const QString&)) );
+    status_bar, SLOT(showMessage(const QString&)) );
   --m_changing;
   return brow;
 }
@@ -1190,6 +1190,8 @@ void iTypeBrowser::brow_createWindow(QWebPage::WebWindowType type,
   if (type == QWebPage::WebBrowserWindow) {
     window = AddWebView(_nilString);
   }
+  // need to force change
+  QTimer::singleShot(0, this, SLOT(brow_urlChanged_timeout()) );
 }
 
 void iTypeBrowser::brow_linkClicked(const QUrl& url) 
@@ -1205,6 +1207,11 @@ void iTypeBrowser::brow_urlChanged(const QUrl& url)
   url_text->setText(url.toString());
   tab->setTabText(tab->currentIndex(), UrlToTabText(url.toString()));
   --m_changing; 
+}
+
+void iTypeBrowser::brow_urlChanged_timeout() 
+{
+  brow_urlChanged(curWebView()->url());
 }
 
 /*void iTypeBrowser::brow_setSourceRequest(iTextBrowser* tb,
