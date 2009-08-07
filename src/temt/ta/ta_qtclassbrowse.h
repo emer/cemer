@@ -409,13 +409,15 @@ public:
   taiAction* 		historyBackAction;
   taiAction* 		historyForwardAction;
 
-//  QAbstractButton*	    btnStop;
   QSplitter*		  split;
 //  QHBoxLayout*		    layFilter;
   iLineEdit*		      filter;
   QTreeWidget*		      tv;
   iLineEdit*		    url_text;
+  QAction*		    actGo;
+//  QAbstractButton*	    btnStop;
   QTabWidget*		    tab; // note: use our own load() routine for urls
+  QAbstractButton*	    btnAdd; // new tab
   QStatusBar*		  status_bar;
   
   String		curUrl() const {return m_curUrl;} // current pseudo Url (w/o #xxx anchor)
@@ -463,12 +465,14 @@ protected:
 protected slots:
   void			forward_clicked();
   void			back_clicked();
+  void			addTab_clicked(); // or return in url_text
   void 			brow_createWindow(QWebPage::WebWindowType type,
     QWebView*& window);
   void			brow_linkClicked(const QUrl& url);
   void			brow_urlChanged(const QUrl& url);
   void 			brow_urlChanged_timeout();
   void 			filter_textChanged(const QString& text);
+  void			go_clicked(); // or return in url_text
   void			show_timeout(); // for scrolling to item
   void			tab_currentChanged(int index);
   void			tab_tabCloseRequested(int index);

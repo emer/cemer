@@ -3782,7 +3782,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence("F5"), _viewRefreshAction ));
   viewSaveViewAction = AddAction(new taiAction("&Save View", QKeySequence(), "viewSaveViewAction" ));
   toolsClassBrowseAction = AddAction(new taiAction(0, "Class Browser", QKeySequence(), "toolsClassBrowseAction"));
-  toolsTypeBrowseAction = AddAction(new taiAction(0, "Type Browser", QKeySequence(), "toolsTypeBrowseAction"));
+  toolsTypeBrowseAction = AddAction(new taiAction(0, "&Help Browser", QKeySequence(), "toolsTypeBrowseAction"));
   String s = taMisc::app_name + " Help on the web";
   helpHelpAction = AddAction(new taiAction("&Help", QKeySequence(), _helpHelpAction ));
   helpHelpAction->setToolTip(s);

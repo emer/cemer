@@ -1071,9 +1071,21 @@ void iTypeBrowser::init() {
   QWidget* wid_tab = new QWidget;
   QVBoxLayout* lay_tab = new QVBoxLayout(wid_tab);
   lay_tab->setMargin(0);
-  url_text = new iLineEdit(wid_tab);
-  lay_tab->addWidget(url_text);
+  
+  tool_bar = new QToolBar(wid_tab);
+  lay_tab->addWidget(tool_bar);
+  
+  url_text = new iLineEdit();
+  tool_bar->addWidget(url_text);
+  actGo = tool_bar->addAction("Go");
+  lay_tab->addWidget(tool_bar);
   tab = new QTabWidget(wid_tab);
+  tab->setElideMode(Qt::ElideMiddle);
+  tab->setUsesScrollButtons(true); // otherwise doesn't always, ex. on Mac
+  btnAdd = new QToolButton;
+  btnAdd->setText("+");
+  btnAdd->setToolTip("add a new empty tab");
+  tab->setCornerWidget(btnAdd, Qt::TopLeftCorner);
   lay_tab->addWidget(tab);
 #if (QT_VERSION >= 0x040500) //TEMP
   tab->setTabsClosable(true);
@@ -1087,7 +1099,9 @@ void iTypeBrowser::init() {
   AddTypesR(&taMisc::types);
   tv->setSortingEnabled(true);
   tv->sortByColumn(0, Qt::AscendingOrder);
+  // fit tree to minimum
   tv->resizeColumnToContents(0);
+  tv->resizeColumnToContents(1);
   
   timFilter = new QTimer(this);
   timFilter->setSingleShot(true);
@@ -1095,6 +1109,9 @@ void iTypeBrowser::init() {
   
   status_bar = statusBar(); // asserts
 
+  connect(actGo, SIGNAL(triggered()), this, SLOT(go_clicked()) );
+  connect(btnAdd, SIGNAL(clicked()), this, SLOT(addTab_clicked()) );
+  connect(url_text, SIGNAL(returnPressed()), this, SLOT(go_clicked()) );
   connect(historyBackAction, SIGNAL(triggered()), this, SLOT(back_clicked()) );
   connect(historyForwardAction, SIGNAL(triggered()), this, SLOT(forward_clicked()) );
   connect(tv, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
@@ -1110,6 +1127,10 @@ void iTypeBrowser::init() {
   AddWebView(_nilString); // so stuff lays out
 }
 
+void iTypeBrowser::addTab_clicked() {
+  AddWebView("");
+}
+    
 void iTypeBrowser::forward_clicked() {
   curWebView()->forward();
 }
@@ -1156,10 +1177,17 @@ QWebView* iTypeBrowser::AddWebView(const String& label) {
   connect(brow, SIGNAL(sigCreateWindow(QWebPage::WebWindowType,
     QWebView*&)), this, SLOT(brow_createWindow(QWebPage::WebWindowType,
     QWebView*&)) );
+  connect(brow, SIGNAL(urlChanged(const QUrl&)),
+    this, SLOT(brow_urlChanged(const QUrl&)) );
   // note: WebView doesn't show hover links in status by default so we do it
   connect(wp, SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
     status_bar, SLOT(showMessage(const QString&)) );
   --m_changing;
+  if (tab->count() > 1) {
+#if (QT_VERSION >= 0x040500) //TEMP
+    tab->setTabsClosable(true);
+#endif
+  }
   return brow;
 }
 
@@ -1191,7 +1219,7 @@ void iTypeBrowser::brow_createWindow(QWebPage::WebWindowType type,
     window = AddWebView(_nilString);
   }
   // need to force change
-  QTimer::singleShot(0, this, SLOT(brow_urlChanged_timeout()) );
+//  QTimer::singleShot(0, this, SLOT(brow_urlChanged_timeout()) );
 }
 
 void iTypeBrowser::brow_linkClicked(const QUrl& url) 
@@ -1272,6 +1300,10 @@ QTreeWidgetItem* iTypeBrowser::FindItem(TypeDef* typ) {
 
 TypeDef* iTypeBrowser::GetTypeDef(QTreeWidgetItem* item) {
   return (TypeDef*)QVARIANT_TO_INTPTR(item->data(0, Qt::UserRole));
+}
+
+void iTypeBrowser::go_clicked() {
+  curWebView()->setUrl(url_text->text());
 }
 
 void iTypeBrowser::ItemChanged(QTreeWidgetItem* item) {
@@ -1420,6 +1452,12 @@ void iTypeBrowser::tab_currentChanged(int index) {
 void iTypeBrowser::tab_tabCloseRequested(int index) {
   if (tab->count() <= 1) return; // always 1;
   tab->removeTab(index);
+  // don't let user close last
+  if (tab->count() == 1) {
+#if (QT_VERSION >= 0x040500) //TEMP
+    tab->setTabsClosable(false);
+#endif
+  }
 }
 
 void iTypeBrowser::timFilter_timeout() {
