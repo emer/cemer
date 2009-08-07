@@ -2439,4 +2439,115 @@ private:
 };
 
 
+#ifndef __MAKETA__
+class iWebView: public QWebView {
+Q_OBJECT
+INHERITED(QWebView);
+public:
+  iWebView(QWidget* parent = 0):inherited(parent) {}
+signals:
+  void 		sigCreateWindow(QWebPage::WebWindowType type,
+    QWebView*& window);
+protected:
+  override QWebView* createWindow(QWebPage::WebWindowType type);
+};
+#endif
+
+class TA_API iHelpBrowser: public QMainWindow {
+//   TypeDef documentation
+INHERITED(QMainWindow)
+  Q_OBJECT
+public:
+#ifndef __MAKETA__
+  enum Roles { // extra roles, for additional data, etc.
+    ObjUrlRole = Qt::UserRole + 1, // Url stored in this
+//    ObjCatRole  // for object category string, whether shown or not
+  };
+#endif
+
+  
+#ifndef __MAKETA__ 
+
+public: //  this is the public interface
+  static iHelpBrowser* instance(); // we only create one instance, this gets it
+  static void		StatLoadEnum(TypeDef* typ); // the enum set, not an individual guy
+  static void		StatLoadMember(MemberDef* mbr);
+  static void		StatLoadMethod(MethodDef* mth);
+  static void		StatLoadType(TypeDef* typ);
+  static void		StatLoadUrl(const String& url); // saves url to detect anchors
+  static String		UrlToTabText(const String& url); // extracts tab text from url, for when url changes
+  
+  void			LoadEnum(TypeDef* typ); // the enum set, not an individual guy
+  void			LoadMember(MemberDef* mbr);
+  void			LoadMethod(MethodDef* mth);
+  void			LoadType(TypeDef* typ, const String& anchor = _nilString);
+  void			LoadUrl(const String& url); // saves url to detect anchors
+  bool			SetItem(TypeDef* typ); // set active item by TypeDef, true if set
+
+public:
+
+  QSplitter*		split;
+  QAction* 		  actBack;
+  QAction* 		  actForward;
+  iLineEdit*		  filter;
+  QTreeWidget*		  tv;
+  iLineEdit*		  url_text;
+  QAction*		  actGo;
+  QAction*	    	  actStop;
+  QTabWidget*		  tab; // note: use our own load() routine for urls
+  QAbstractButton*	  btnAdd; // new tab
+  QStatusBar*		status_bar;
+  
+  String		curUrl() const {return m_curUrl;} // current pseudo Url (w/o #xxx anchor)
+  QWebView*		curWebView(); // always returns one
+  QWebView*		webView(int index);
+  
+protected:
+  static const int	num_sorts = 3;
+  static iHelpBrowser* inst;
+    
+  String		m_curUrl;
+  ContextFlag		m_changing; // true when we should ignore various changes
+  QString		last_filter; // for checking if anything changed
+  QTimer*		timFilter; // timer for filter changes
+  
+  QWebView*		AddWebView(const String& label); // add a new tab
+  void			SetFilter(const QString& filt); // apply a filter
+  void			ClearFilter(); // remove filtering
+  void 			ApplyFiltering();
+  void			LoadType_impl(TypeDef* typ, const String& base_url,
+    const String& anchor);
+  bool 			ShowItem(const QTreeWidgetItem* item) const;
+  TypeDef*		GetTypeDef(QTreeWidgetItem* item);
+  QTreeWidgetItem*	FindItem(TypeDef* typ); // find item from type -- we derefence type to base type
+  void			ItemChanged(QTreeWidgetItem* item); // item changed to this, sync
+  
+  iHelpBrowser();
+  ~iHelpBrowser();
+  
+protected slots:
+  void			forward_clicked();
+  void			back_clicked();
+  void			addTab_clicked(); // or return in url_text
+  void 			brow_createWindow(QWebPage::WebWindowType type,
+    QWebView*& window);
+  void			brow_linkClicked(const QUrl& url);
+  void			brow_urlChanged(const QUrl& url);
+  void			page_unsupportedContent(QNetworkReply* reply); 
+  void 			filter_textChanged(const QString& text);
+  void			go_clicked(); // or return in url_text
+  void			stop_clicked(); // or return in url_text
+  void			show_timeout(); // for scrolling to item
+  void			tab_currentChanged(int index);
+  void			tab_tabCloseRequested(int index);
+  void 			timFilter_timeout();
+  void			tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
+  
+private:
+  void 		init(); // called by constructors
+  void		AddTypesR(TypeSpace* ts);
+#endif // !__MAKETA__
+};
+
+
 #endif // TA_QTVIEWER_H

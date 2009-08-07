@@ -34,8 +34,8 @@
 #include "icolor.h"
 #include "inetworkaccessmanager.h"
 
-#include <qaction.h>
-#include <qapplication.h>
+#include <QAction>
+#include <QApplication>
 #include <qbuttongroup.h>
 #include <qclipboard.h>
 #include <QDesktopServices>
@@ -47,21 +47,27 @@
 #include <qimage.h>
 #include <QLayout>
 #include <qmenubar.h>
-#include <QMenu>
 #include <QList>
+#include <QMenu>
+#include <QNetworkReply>	
 #include <QScrollArea>
 #include <QSplitter>
 #include <QStackedWidget>
 #include <QStackedLayout>
 #include <QStatusBar>
+#include <QTabWidget>
 #include <QTextBrowser>
 #include <QTimer>
+#include <QToolBar>
 #include <QToolBox>
-#include <qtooltip.h>
+#include <QToolTip>
+#include <QTreeWidget>
 #include <qvariant.h>
 #include <QVBoxLayout>
 #include <qwhatsthis.h>
 #include <QWebFrame>
+#include <QWebPage>
+#include <QWebView>
 
 #include "itextbrowser.h"
 #include "itextedit.h"
@@ -4229,7 +4235,7 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
   
   // TypeBrowser invocations are dependency-free so we check them first
   if(path.startsWith(".Type.")) {
-    iTypeBrowser::StatLoadUrl(String(url.toString()));
+    iHelpBrowser::StatLoadUrl(String(url.toString()));
     return; 
   }
   
@@ -4640,8 +4646,8 @@ void iMainWindowViewer::toolsClassBrowser() {
 }
 
 void iMainWindowViewer::toolsTypeBrowser() {
- // iTypeBrowser* tdd = 
-  iTypeBrowser::instance();
+ // iHelpBrowser* tdd = 
+  iHelpBrowser::instance();
 }
 
 void iMainWindowViewer::UpdateUi() {
@@ -8893,5 +8899,528 @@ bool taBase::GuiFindFromMe(const String& find_str) {
     imwv->Find(link, find_str);
   }
   return rval;
+}
+
+
+//////////////////////////
+//   iHelpBrowser	//
+//////////////////////////
+
+QWebView* iWebView::createWindow(QWebPage::WebWindowType type) {
+  QWebView* rval = NULL;
+  emit sigCreateWindow(type, rval);
+  if (!rval) 
+    rval = inherited::createWindow(type);
+  return rval;
+}
+
+iHelpBrowser* iHelpBrowser::inst;
+
+iHelpBrowser* iHelpBrowser::instance() {
+  if (!inst) {
+    inst = new iHelpBrowser();
+    iSize sz = taiM->dialogSize(taiMisc::dlgBig);
+    inst->resize(sz.width(), sz.height());
+    inst->show();
+    taiMiscCore::ProcessEvents(); // run default stuff
+    taiMiscCore::ProcessEvents(); // run default stuff
+    taiMiscCore::ProcessEvents(); // run default stuff
+  } else {
+    inst->show();
+    inst->raise();
+  }
+  return inst;
+}
+
+void iHelpBrowser::StatLoadEnum(TypeDef* typ) {
+  instance()->LoadEnum(typ);
+}
+
+void iHelpBrowser::StatLoadMember(MemberDef* mbr) {
+  instance()->LoadMember(mbr);
+}
+
+void iHelpBrowser::StatLoadMethod(MethodDef* mth) {
+  instance()->LoadMethod(mth);
+}
+
+void iHelpBrowser::StatLoadType(TypeDef* typ) {
+  instance()->LoadType(typ);
+}
+
+void iHelpBrowser::StatLoadUrl(const String& url) {
+  instance()->LoadUrl(url);
+}
+
+String iHelpBrowser::UrlToTabText(const String& url) {
+  String base_url;
+  String anchor = url.after("#");
+  if (anchor.empty())
+    base_url = url;
+  else
+    base_url = url.before("#");
+  if (base_url.contains(".Type.")) {
+    return base_url.after(".Type.");
+  }
+  return url;
+}
+
+
+// note: we parent to main_win so something will delete it
+iHelpBrowser::iHelpBrowser() 
+:inherited(taiMisc::main_window)
+{
+  init();
+}
+
+iHelpBrowser::~iHelpBrowser() {
+  if (this == inst) {
+    inst = NULL;
+  }
+  // disconnect in case it will be firing
+  disconnect(this, SIGNAL(tv_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+}
+
+void iHelpBrowser::init() {
+  this->setAttribute(Qt::WA_DeleteOnClose, false); // keep alive when closed
+  this->setWindowTitle("Help Browser");
+//  this->setSizeGripEnabled(true);
+  
+  split = new QSplitter;
+  
+  QWidget* tvw = new QWidget;
+  QVBoxLayout* lay_tv = new QVBoxLayout(tvw);
+  lay_tv->setMargin(0);
+
+  QToolBar* tool_bar = new QToolBar(tvw);
+  lay_tv->addWidget(tool_bar);
+  
+  actBack = tool_bar->addAction("<");
+  actBack->setToolTip("Back");
+  actBack->setStatusTip(actBack->toolTip());
+  actForward = tool_bar->addAction(">" );
+  actForward->setToolTip("Forward");
+  actForward->setStatusTip(actForward->toolTip());
+  tool_bar->addSeparator();
+  
+  QLabel* lbl = new QLabel("search");
+  lbl->setToolTip("Enter text that must appear in an item to keep it visible");
+  tool_bar->addWidget(lbl);
+  filter = new iLineEdit();
+  filter->setToolTip(lbl->toolTip());
+  tool_bar->addWidget(filter);
+  
+  tv = new QTreeWidget(tvw);
+  tv->setColumnCount(2);
+  QTreeWidgetItem* hdr = tv->headerItem();
+  hdr->setText(0, "Type");
+  hdr->setText(1, "Category");
+  lay_tv->addWidget(tv, 1);
+  
+  split->addWidget(tvw);
+  QWidget* wid_tab = new QWidget;
+  QVBoxLayout* lay_tab = new QVBoxLayout(wid_tab);
+  lay_tab->setMargin(0);
+  
+  tool_bar = new QToolBar(wid_tab);
+  lay_tab->addWidget(tool_bar);
+  
+  url_text = new iLineEdit();
+  tool_bar->addWidget(url_text);
+  actGo = tool_bar->addAction("Go");
+  actStop = tool_bar->addAction("X");
+  actStop->setToolTip("Stop");
+  lay_tab->addWidget(tool_bar);
+  tab = new QTabWidget(wid_tab);
+  tab->setElideMode(Qt::ElideMiddle);
+  tab->setUsesScrollButtons(true); // otherwise doesn't always, ex. on Mac
+  btnAdd = new QToolButton;
+  btnAdd->setText("+");
+  btnAdd->setToolTip("add a new empty tab");
+  tab->setCornerWidget(btnAdd, Qt::TopLeftCorner);
+  lay_tab->addWidget(tab);
+  split->addWidget(wid_tab);
+  
+  setCentralWidget(split);
+//  layOuter->addWidget(status_bar);
+  
+  // add all types -- only non-virtual, base types
+  AddTypesR(&taMisc::types);
+  tv->setSortingEnabled(true);
+  tv->sortByColumn(0, Qt::AscendingOrder);
+  // fit tree to minimum
+  tv->resizeColumnToContents(0);
+  tv->resizeColumnToContents(1);
+  
+  timFilter = new QTimer(this);
+  timFilter->setSingleShot(true);
+  timFilter->setInterval(500);
+  
+  status_bar = statusBar(); // asserts
+
+  connect(actGo, SIGNAL(triggered()), this, SLOT(go_clicked()) );
+  connect(actStop, SIGNAL(triggered()), this, SLOT(stop_clicked()) );
+  connect(btnAdd, SIGNAL(clicked()), this, SLOT(addTab_clicked()) );
+  connect(url_text, SIGNAL(returnPressed()), this, SLOT(go_clicked()) );
+  connect(actBack, SIGNAL(triggered()), this, SLOT(back_clicked()) );
+  connect(actForward, SIGNAL(triggered()), this, SLOT(forward_clicked()) );
+  connect(tv, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
+    this, SLOT(tv_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+  connect(tab, SIGNAL(tabCloseRequested(int)),
+    this, SLOT(tab_tabCloseRequested(int)) );
+  connect(filter, SIGNAL(textChanged(const QString&)),
+    this, SLOT(filter_textChanged(const QString&)) );
+  connect(tab, SIGNAL(currentChanged(int)),
+    this, SLOT(tab_currentChanged(int)) );
+  connect(timFilter, SIGNAL(timeout()), this, SLOT(timFilter_timeout()) );
+  
+  AddWebView(_nilString); // so stuff lays out
+}
+
+void iHelpBrowser::addTab_clicked() {
+  AddWebView("");
+}
+    
+void iHelpBrowser::forward_clicked() {
+  curWebView()->forward();
+}
+
+void iHelpBrowser::back_clicked() {
+  curWebView()->back();
+}
+
+void iHelpBrowser::AddTypesR(TypeSpace* ts) {
+  for (int i = 0; i < ts->size; ++i) {
+    TypeDef* typ = ts->FastEl(i);
+    if (!(typ->is_class() && typ->is_anchor()))
+      continue;
+    if (typ->InheritsFormal(TA_templ_inst) ||
+      typ->HasOption("VIRT_BASE") ||
+      typ->HasOption("HIDDEN") ||
+      typ->HasOption("IGNORE")) 
+      continue;
+    // get rid of the junk stub types by looking for empties...
+    if ((typ->members.size == 0) && (typ->methods.size == 0))
+      continue;
+    QTreeWidgetItem* twi = new QTreeWidgetItem(tv);
+    twi->setText(0, typ->name);
+    twi->setText(1, typ->GetCat());
+    twi->setData(0, Qt::UserRole, QVariant((ta_intptr_t)typ));
+//    AddTypesR(&typ->children);
+  }
+}
+
+QWebView* iHelpBrowser::AddWebView(const String& label) {
+  ++m_changing;
+  QWebView* brow = new iWebView;
+  QWebPage* wp = brow->page();
+  wp->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
+  wp->setNetworkAccessManager(taiMisc::net_access_mgr);
+  //TODO: user style sheet 
+  int tidx = tab->addTab(brow, label.toQString());
+  tab->setCurrentIndex(tidx); // not automatic
+  url_text->setText("");// something else has to make it valid
+  connect(brow, SIGNAL(linkClicked(const QUrl&)),
+    this, SLOT(brow_linkClicked(const QUrl&)) );
+  connect(brow, SIGNAL(statusBarMessage(const QString&)),
+    status_bar, SLOT(showMessage(const QString&)) );
+  connect(brow, SIGNAL(sigCreateWindow(QWebPage::WebWindowType,
+    QWebView*&)), this, SLOT(brow_createWindow(QWebPage::WebWindowType,
+    QWebView*&)) );
+  connect(brow, SIGNAL(urlChanged(const QUrl&)),
+    this, SLOT(brow_urlChanged(const QUrl&)) );
+  // note: WebView doesn't show hover links in status by default so we do it
+  connect(wp, SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
+    status_bar, SLOT(showMessage(const QString&)) );
+  connect(wp, SIGNAL(unsupportedContent(QNetworkReply*)),
+    this, SLOT(page_unsupportedContent(QNetworkReply*)) );
+  wp->setForwardUnsupportedContent(true);
+
+  --m_changing;
+  if (tab->count() > 1) {
+#if (QT_VERSION >= 0x040500) //TEMP
+    tab->setTabsClosable(true);
+#endif
+  }
+  return brow;
+}
+
+void iHelpBrowser::ApplyFiltering() {
+  ++m_changing;
+  taMisc::Busy();
+  QTreeWidgetItemIterator it(tv, QTreeWidgetItemIterator::All);
+  QTreeWidgetItem* item;
+  QString s;
+  //QTreeWidgetItem* first_item = NULL;
+  int n_items = 0;
+  while ((item = *it)) { 
+    // TODO (maybe): don't hide NULL item
+    bool show = ShowItem(item);
+    tv->setItemHidden(item, !show);
+    if(show) {
+      n_items++;
+    }
+    ++it;
+  }
+  taMisc::DoneBusy();
+  --m_changing;
+}
+
+void iHelpBrowser::brow_createWindow(QWebPage::WebWindowType type,
+    QWebView*& window)
+{
+  if (type == QWebPage::WebBrowserWindow) {
+    window = AddWebView(_nilString);
+  }
+}
+
+void iHelpBrowser::brow_linkClicked(const QUrl& url) 
+{
+  // forward to global, which is iMainWindowViewer::taUrlHandler
+  // for .Type. urls (us) it just calls back to LoadUrl(url)
+  QDesktopServices::openUrl(url); 
+}
+
+void iHelpBrowser::brow_urlChanged(const QUrl& url) 
+{ // NOTE: we assume it is only the current visible guy who can do this
+  ++m_changing;
+  url_text->setText(url.toString());
+  tab->setTabText(tab->currentIndex(), UrlToTabText(url.toString()));
+  --m_changing; 
+}
+
+void iHelpBrowser::page_unsupportedContent(QNetworkReply* reply) {
+  // this should only get called when a Open Window or Open Link gets ta: type of url
+  QDesktopServices::openUrl(reply->url()); 
+}
+
+void iHelpBrowser::ClearFilter() {
+  ++m_changing;
+  taMisc::Busy();
+  last_filter.clear();
+  QTreeWidgetItemIterator it(tv, QTreeWidgetItemIterator::Hidden);
+  QTreeWidgetItem* item;
+  while ((item = *it)) { 
+    tv->setItemHidden(item, false);
+    ++it;
+  }
+  taMisc::DoneBusy();
+  --m_changing;
+} 
+
+QWebView* iHelpBrowser::curWebView() {
+  if (tab->count() == 0)
+    return AddWebView(_nilString);
+  return (QWebView*)tab->currentWidget();
+}
+
+void iHelpBrowser::filter_textChanged(const QString& /*text*/) {
+  // following either starts timer, or restarts it
+  timFilter->start();
+}
+
+QTreeWidgetItem* iHelpBrowser::FindItem(TypeDef* typ) {
+  typ = typ->GetNonPtrType();
+  typ = typ->GetNonConstNonRefType();
+  QTreeWidgetItemIterator it(tv);
+  QTreeWidgetItem* rval;
+  while ((rval = *it)) {
+    if (GetTypeDef(rval) == typ) 
+      return rval;
+    ++it;
+  }
+  return NULL;
+}
+
+TypeDef* iHelpBrowser::GetTypeDef(QTreeWidgetItem* item) {
+  return (TypeDef*)QVARIANT_TO_INTPTR(item->data(0, Qt::UserRole));
+}
+
+void iHelpBrowser::go_clicked() {
+  QUrl url(url_text->text());
+  QDesktopServices::openUrl(url); 
+//  curWebView()->setUrl();
+}
+
+void iHelpBrowser::ItemChanged(QTreeWidgetItem* item) {
+  TypeDef* typ = GetTypeDef(item);
+  LoadType(typ);
+}
+
+void iHelpBrowser::LoadEnum(TypeDef* typ) {
+//TODO: maybe check if enum, maybe in debug mode? maybe not needed...
+  LoadType(typ->GetOwnerType(), typ->name);
+}
+
+void iHelpBrowser::LoadMember(MemberDef* mbr) {
+  LoadType(mbr->GetOwnerType(), mbr->name);
+}
+
+void iHelpBrowser::LoadMethod(MethodDef* mth) {
+  LoadType(mth->GetOwnerType(), mth->name);
+}
+
+void iHelpBrowser::LoadType(TypeDef* typ, const String& anchor) {
+  String base_url;
+  if (typ) {
+    typ = typ->GetNonPtrType();
+    base_url = "ta:.Type." + typ->name ;
+  }
+  LoadType_impl(typ, base_url, anchor);
+}
+
+void iHelpBrowser::LoadUrl(const String& url) {
+  String html;
+  String base_url;
+  String anchor = url.after("#");
+  if (anchor.empty())
+    base_url = url;
+  else
+    base_url = url.before("#");
+  String typ_name(base_url.after(".Type."));
+  TypeDef* typ = taMisc::types.FindName(typ_name);
+  LoadType_impl(typ, base_url, anchor);
+}
+
+void iHelpBrowser::LoadType_impl(TypeDef* typ, const String& base_url,
+    const String& anchor)
+{
+  String html;
+  String url = base_url;
+  if (anchor.nonempty())
+    url.cat("#").cat(anchor);
+  QTreeWidgetItem* twi = NULL;
+  String tab_text;
+  if (typ) {
+    html = typ->GetHTML();
+    tab_text = typ->name;
+    twi = FindItem(typ);
+  }
+  if (twi != tv->currentItem()) {
+    ++m_changing;
+    tv->setCurrentItem(twi);
+    --m_changing;
+  }
+  curWebView()->setHtml(html.toQString(), url.toQString());
+  tab->setTabText(tab->currentIndex(), tab_text.toQString());
+  ++m_changing;
+  url_text->setText(curWebView()->url().toString());
+  --m_changing;
+}
+
+bool iHelpBrowser::ShowItem(const QTreeWidgetItem* item) const {
+  // we show the item unless it either doesn't meet filter criteria, or not in cat
+  
+/*  // category filter
+  if (m_cat_filter != 0) {
+    String act_cat = item->data(0, ObjCatRole).toString(); //s/b blank if none set
+    String cat_txt = client()->catText(m_cat_filter - 1);// subtract 1 for 'all' item
+    if(multi_cats && act_cat.contains(", ")) {
+      bool any_match = false;
+      while(true) {
+	String cur_cat = act_cat.before(", ");
+	act_cat = act_cat.after(", ");
+	if(cur_cat == cat_txt) {
+	  any_match = true; break;
+	}
+	if(act_cat.contains(", ")) continue;
+	if(act_cat == cat_txt) {
+	  any_match = true;
+	}
+	break;
+      }
+      if(!any_match) return false;
+    }
+    else {
+      if (act_cat != cat_txt) 
+	return false;
+    }
+  }*/
+  
+  // filter text filter
+  if (!last_filter.isEmpty()) {
+    bool hide = true;
+    QString s;
+    int cols = tv->columnCount();
+    for (int i = 0; i < cols; ++i) {
+      s = item->text(i);
+      if (s.contains(last_filter, Qt::CaseInsensitive)) {
+        hide = false;
+        break;
+      }  
+    }
+    if (hide) return false;
+  }
+  return true;
+}
+
+void iHelpBrowser::SetFilter(const QString& filt) {
+  last_filter = filt;
+  ApplyFiltering();
+}
+
+bool iHelpBrowser::SetItem(TypeDef* typ) {
+  QTreeWidgetItem* item = FindItem(typ);
+  if (item) {
+    tv->setCurrentItem(item); // should raise signal
+  }
+  return (item != NULL);
+}
+
+void iHelpBrowser::show_timeout() {
+  QTreeWidgetItem* ci = tv->currentItem();
+  if (ci)
+    tv->scrollToItem(ci);
+}
+
+void iHelpBrowser::stop_clicked() {
+  curWebView()->stop();
+}
+
+void iHelpBrowser::tab_currentChanged(int index) {
+  if (m_changing) return; // already expected
+  QWebView* wv = webView(index); // safe
+  ++m_changing;
+  if (wv) {
+    url_text->setText(wv->url().toString());
+  } else {
+    url_text->setText("");
+  }
+  --m_changing;
+}
+
+void iHelpBrowser::tab_tabCloseRequested(int index) {
+  if (tab->count() <= 1) return; // always 1;
+  tab->removeTab(index);
+  // don't let user close last
+  if (tab->count() == 1) {
+#if (QT_VERSION >= 0x040500) //TEMP
+    tab->setTabsClosable(false);
+#endif
+  }
+}
+
+void iHelpBrowser::timFilter_timeout() {
+  // if nothing has changed in text, do nothing
+  QString text = filter->text();
+  if (last_filter == text) return;
+  // if we are already filtering, then don't reenter, but just try again
+  if (m_changing) {
+    timFilter->start();
+    return;
+  }
+  if (text.isEmpty()) ClearFilter();
+  else SetFilter(text);
+}
+
+void iHelpBrowser::tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
+  if (m_changing) return;
+  ItemChanged(curr);
+}
+
+QWebView* iHelpBrowser::webView(int index) {
+  if ((index < 0) || (index >= tab->count()))
+    return NULL;
+  return (QWebView*)tab->widget(index);
 }
 

@@ -26,7 +26,6 @@
 #include "css_ta.h"
 #include "ta_seledit.h"
 #include "ta_project.h"
-#include "ta_qtclassbrowse.h"
 #include "ta_TA_type.h"
 
 #include <QApplication>
@@ -1360,7 +1359,7 @@ void taiDataHost_impl::FillLabelContextMenu(QMenu* menu, int& last_id) {
 }
 
 void taiDataHost_impl::helpMenu_triggered() {
-  iTypeBrowser::StatLoadMember(sel_item_mbr);
+  iHelpBrowser::StatLoadMember(sel_item_mbr);
 }
 
 void taiDataHost_impl::Iconify(bool value) {

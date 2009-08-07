@@ -3602,7 +3602,7 @@ taiMemberDefButton::taiMemberDefButton(TypeDef* typ_, IDataHost* host,
 void taiMemberDefButton::btnHelp_clicked() {
   MemberDef* mbr = md();
   if (!mbr) return;
-  iTypeBrowser::StatLoadMember(mbr);
+  iHelpBrowser::StatLoadMember(mbr);
 }
 
 void taiMemberDefButton::BuildCategories_impl() {
@@ -3702,7 +3702,7 @@ taiMethodDefButton::taiMethodDefButton(TypeDef* typ_, IDataHost* host,
 void taiMethodDefButton::btnHelp_clicked() {
   MethodDef* mth = md();
   if (!mth) return;
-  iTypeBrowser::StatLoadMethod(mth);
+  iHelpBrowser::StatLoadMethod(mth);
 }
 
 void taiMethodDefButton::BuildCategories_impl() {
@@ -3845,12 +3845,12 @@ taiMemberMethodDefButton::taiMemberMethodDefButton(TypeDef* typ_, IDataHost* hos
 void taiMemberMethodDefButton::btnHelp_clicked() {
   MethodDef* mth = dynamic_cast<MethodDef*>(md());
   if (mth) {
-    iTypeBrowser::StatLoadMethod(mth);
+    iHelpBrowser::StatLoadMethod(mth);
     return;
   }
   MemberDef* mbr = dynamic_cast<MemberDef*>(md());
   if (mbr) {
-    iTypeBrowser::StatLoadMember(mbr);
+    iHelpBrowser::StatLoadMember(mbr);
     return;
   }
 }
@@ -4006,17 +4006,17 @@ taiEnumStaticButton::taiEnumStaticButton(TypeDef* typ_, IDataHost* host,
 void taiEnumStaticButton::btnHelp_clicked() {
   MethodDef* mth = dynamic_cast<MethodDef*>(md());
   if (mth) {
-    iTypeBrowser::StatLoadMethod(mth);
+    iHelpBrowser::StatLoadMethod(mth);
     return;
   }
   MemberDef* mbr = dynamic_cast<MemberDef*>(md());
   if (mbr) {
-    iTypeBrowser::StatLoadMember(mbr);
+    iHelpBrowser::StatLoadMember(mbr);
     return;
   }
   EnumDef* ed = dynamic_cast<EnumDef*>(md());
   if (ed) {
-//TODO    iTypeBrowser::StatLoadEnumDef(ed);
+//TODO    iHelpBrowser::StatLoadEnumDef(ed);
     return;
   }
 }
@@ -4231,7 +4231,7 @@ taiTypeDefButton::TypeCat taiTypeDefButton::AddType_Class(TypeDef* typ_) {
 void taiTypeDefButton::btnHelp_clicked() {
   TypeDef* typ = td();
   if (!typ) return;
-  iTypeBrowser::StatLoadType(typ);
+  iHelpBrowser::StatLoadType(typ);
 }
 
 void taiTypeDefButton::BuildCategories_impl() {
@@ -4395,7 +4395,7 @@ bool taiEnumTypeDefButton::AddType_Enum(TypeDef* typ_, TypeDef* par_typ) {
 void taiEnumTypeDefButton::btnHelp_clicked() {
   TypeDef* typ = td();
   if (!typ) return;
-  iTypeBrowser::StatLoadEnum(typ);
+  iHelpBrowser::StatLoadEnum(typ);
 }
 
 void taiEnumTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
@@ -4527,7 +4527,7 @@ void taiTokenPtrButton::btnHelp_clicked() {
   if (!tok) return;
   TypeDef* typ = tok->GetTypeDef();
   if (!typ) return;
-  iTypeBrowser::StatLoadType(typ);
+  iHelpBrowser::StatLoadType(typ);
 }
 
 void taiTokenPtrButton::EditDialog() {

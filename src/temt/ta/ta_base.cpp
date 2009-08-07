@@ -38,7 +38,7 @@
 # include "ta_qttype_def.h"
 # include "ta_qtgroup.h"
 # include "ta_qtclipdata.h"
-
+# include "ta_qtviewer.h" // for Help Browser
 # include  <qcolor.h>
 # include <QMessageBox>
 # include  <qpixmap.h>
@@ -2464,11 +2464,14 @@ bool taBase::CloseLater_Child(TAPtr) {
 
 void taBase::Help() {
   TypeDef* mytd = GetTypeDef();
-
+#ifdef TA_GUI
+  iHelpBrowser::StatLoadType(mytd);
+#endif
+/*legacy... 
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return;
   taDoc* help_doc = proj->FindMakeDoc("HelpDoc", taMisc::web_help_wiki, mytd->name);
-  help_doc->EditDialog();
+  help_doc->EditDialog();*/
 }
 
 // old help 
