@@ -52,27 +52,39 @@ class LEABRA_API PVConSpec : public LeabraConSpec {
   // pvlv connection spec: learns using delta rule from act_p - act_m values -- does not use hebb or err_sb parameters
 INHERITED(LeabraConSpec)
 public:
-  inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    float err = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
-    cn->dwt += cur_lrate * err;
+  inline void C_Compute_dWt_Delta(LeabraCon* cn, float lin_wt, LeabraUnit* ru, LeabraUnit* su) {
+    float dwt = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
+    if(lmix.err_sb) {
+      if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
+      else		dwt *= lin_wt;
+    }
+    cn->dwt += cur_lrate * dwt;
+  }
+
+  inline void C_Compute_dWt_Delta_NoSB(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    float dwt = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
+    cn->dwt += cur_lrate * dwt;
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta(cn, ru, su);  
+      C_Compute_dWt_Delta(cn, LinFmSigWt(cn->wt), ru, su);  
     }
   }
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    // no softbound so same as above
-    Compute_dWt_LeabraCHL(cg, su);
+    // softbound is separate, do noSB guy here
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+      C_Compute_dWt_Delta_NoSB(cn, ru, su);  
+    }
   }
 
   inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    // no softbound so same as above
-    Compute_dWt_LeabraCHL(cg, su);
+    Compute_dWt_CtLeabraXCAL(cg, su);
   }
 
   TA_SIMPLE_BASEFUNS(PVConSpec);
@@ -146,31 +158,42 @@ INHERITED(PVConSpec)
 public:
   float 	wt_dec_mult;   // multiplier for weight decrease rate relative to basic lrate used for weight increases
 
-  inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    float err = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
-    if(err < 0.0f)	err *= wt_dec_mult;
-    // note: no err_sb
-    cn->dwt += cur_lrate * err;
+  inline void C_Compute_dWt_Delta(LeabraCon* cn, float lin_wt, LeabraUnit* ru, LeabraUnit* su) {
+    float dwt = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
+    if(dwt < 0.0f)	dwt *= wt_dec_mult;
+    if(lmix.err_sb) {
+      if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
+      else		dwt *= lin_wt;
+    }
+    cn->dwt += cur_lrate * dwt;
+  }
+
+  inline void C_Compute_dWt_Delta_NoSB(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    float dwt = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
+    if(dwt < 0.0f)	dwt *= wt_dec_mult;
+    cn->dwt += cur_lrate * dwt;
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta(cn, ru, su);
+      C_Compute_dWt_Delta(cn, LinFmSigWt(cn->wt), ru, su);  
     }
   }
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    // no softbound so same as above
-    Compute_dWt_LeabraCHL(cg, su);
+    // softbound is separate, do noSB guy here
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+      C_Compute_dWt_Delta_NoSB(cn, ru, su);  
+    }
   }
 
   inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    // no softbound so same as above
-    Compute_dWt_LeabraCHL(cg, su);
+    Compute_dWt_CtLeabraXCAL(cg, su);
   }
-
 
   TA_SIMPLE_BASEFUNS(PVrConSpec);
 private:
