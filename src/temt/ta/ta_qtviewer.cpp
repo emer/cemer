@@ -2414,6 +2414,8 @@ void ISelectableHost::DoDynAction(int idx) {
           base = link->data();
           if (!base) continue;
           rval = (*(meth->stubp))(base, prompt_argc, prompt_params);
+	  if(rval)
+	    cssEl::unRefDone(rval);
         }
         goto exit;
       }
@@ -2446,6 +2448,8 @@ void ISelectableHost::DoDynAction(int idx) {
           if (!link) continue;
           *param[2] = (void*)link->data();
           rval = (*(meth->stubp))(base, 1 + prompt_argc, param); 
+	  if(rval)
+	    cssEl::unRefDone(rval);
         }
       } break;
       case DynMethod_PtrList::Type_2N_1: { // call 2:N with 1 as param
@@ -2463,6 +2467,8 @@ void ISelectableHost::DoDynAction(int idx) {
           if (!link) continue; // prob won't happen
           base = link->data();
           rval = (*(meth->stubp))(base, 1 + prompt_argc, param); // note: "array" of 1 item
+	  if(rval)
+	    cssEl::unRefDone(rval);
         }
       } break;
       case DynMethod_PtrList::Type_MimeN_N: { // call 1:N with ms_objs[1..N] as params
@@ -2485,6 +2491,8 @@ void ISelectableHost::DoDynAction(int idx) {
             rval = (*(meth->stubp))(base, 1 + prompt_argc, param); 
             if (link->isBase())
               ((taBase*)base)->UpdateAfterEdit();
+	    if(rval)
+	      cssEl::unRefDone(rval);
           }
         }
       } break;
