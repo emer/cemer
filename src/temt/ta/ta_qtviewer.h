@@ -2476,13 +2476,13 @@ public: //  this is the public interface
   static void		StatLoadType(TypeDef* typ);
   static void		StatLoadUrl(const String& url); // saves url to detect anchors
   static String		UrlToTabText(const String& url); // extracts tab text from url, for when url changes
+  static bool		IsUrlExternal(const String& url); // true for http/s:, file:
   
   void			LoadEnum(TypeDef* typ); // the enum set, not an individual guy
   void			LoadMember(MemberDef* mbr);
   void			LoadMethod(MethodDef* mth);
   void			LoadType(TypeDef* typ, const String& anchor = _nilString);
-  void			LoadUrl(const String& url); // saves url to detect anchors
-  bool			SetItem(TypeDef* typ); // set active item by TypeDef, true if set
+  void			LoadUrl(const String& url); // s/b a .Type. or http
 
 public:
 
@@ -2512,15 +2512,19 @@ protected:
   QTimer*		timFilter; // timer for filter changes
   
   QWebView*		AddWebView(const String& label); // add a new tab
+  QWebView*		FindWebView(const String& url, int& idx); // find existing tab w/ this base url (#anchors ok)
+  QWebView*		EmptyWebView(int& idx); // find existing tab w/ no url, else make new
   void			SetFilter(const QString& filt); // apply a filter
   void			ClearFilter(); // remove filtering
   void 			ApplyFiltering();
   void			LoadType_impl(TypeDef* typ, const String& base_url,
-    const String& anchor);
+    const String& anchor); // for loading Type guys
+  void			LoadExternal_impl(const String& url); // for loading External guys
   bool 			ShowItem(const QTreeWidgetItem* item) const;
   TypeDef*		GetTypeDef(QTreeWidgetItem* item);
   QTreeWidgetItem*	FindItem(TypeDef* typ); // find item from type -- we derefence type to base type
   void			ItemChanged(QTreeWidgetItem* item); // item changed to this, sync
+  bool			SetItem(TypeDef* typ); // set active item by TypeDef, true if set
   
   iHelpBrowser();
   ~iHelpBrowser();

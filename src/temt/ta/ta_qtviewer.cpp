@@ -51,6 +51,7 @@
 #include <QMenu>
 #include <QNetworkReply>	
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QSplitter>
 #include <QStackedWidget>
 #include <QStackedLayout>
@@ -8482,6 +8483,11 @@ void tabGroupTreeDataNode::willHaveChildren_impl(bool& will) const {
 //   iSearchDialog		//
 //////////////////////////////////
 
+class QSleazyFakeTreeWidget: public QTreeWidget {
+public:
+    using QTreeWidget::sizeHintForColumn;
+};
+
 iSearchDialog* iSearchDialog::New(int ft, iMainWindowViewer* par_window_) 
 {
   iSearchDialog* rval = new iSearchDialog(par_window_);
@@ -8932,6 +8938,13 @@ iHelpBrowser* iHelpBrowser::instance() {
   return inst;
 }
 
+bool iHelpBrowser::IsUrlExternal(const String& url) {
+  return (url.startsWith("http:") ||
+    url.startsWith("https:") ||
+    url.startsWith("file:")
+  );
+}
+
 void iHelpBrowser::StatLoadEnum(TypeDef* typ) {
   instance()->LoadEnum(typ);
 }
@@ -9012,6 +9025,9 @@ void iHelpBrowser::init() {
   
   tv = new QTreeWidget(tvw);
   tv->setColumnCount(2);
+  // will always need a vert scroller so turn on so sizing is deterministic
+  tv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+//  tv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   QTreeWidgetItem* hdr = tv->headerItem();
   hdr->setText(0, "Type");
   hdr->setText(1, "Category");
@@ -9048,9 +9064,15 @@ void iHelpBrowser::init() {
   AddTypesR(&taMisc::types);
   tv->setSortingEnabled(true);
   tv->sortByColumn(0, Qt::AscendingOrder);
-  // fit tree to minimum
+  // fit tree to minimum -- we have to force splitter to resize unfortunately
   tv->resizeColumnToContents(0);
-  tv->resizeColumnToContents(1);
+  int tv_width = tv->columnWidth(0) + ((QSleazyFakeTreeWidget*)tv)->sizeHintForColumn(1)
+    + tv->verticalScrollBar()->width() + 20;
+  tv->resize(tv_width, tv->height());
+/*  QList<int> sizes;
+  sizes << tv_width << split->width() - tv_width;
+  split->setSizes(sizes);*/
+//  tv->resizeColumnToContents(1);
   
   timFilter = new QTimer(this);
   timFilter->setSingleShot(true);
@@ -9214,6 +9236,19 @@ QWebView* iHelpBrowser::curWebView() {
   return (QWebView*)tab->currentWidget();
 }
 
+QWebView* iHelpBrowser::EmptyWebView(int& idx) {
+  QWebView* rval = NULL;
+  for (idx = 0; idx < tab->count(); ++idx) {
+    rval = webView(idx);
+    String turl = rval->url().toString();
+    if (turl.empty())
+      return rval;
+  }
+  rval = AddWebView("");
+  idx = tab->count() - 1;
+  return rval;
+}
+
 void iHelpBrowser::filter_textChanged(const QString& /*text*/) {
   // following either starts timer, or restarts it
   timFilter->start();
@@ -9229,6 +9264,22 @@ QTreeWidgetItem* iHelpBrowser::FindItem(TypeDef* typ) {
       return rval;
     ++it;
   }
+  return NULL;
+}
+
+QWebView* iHelpBrowser::FindWebView(const String& url, int& idx) {
+  String base_url = url; // common
+  if (url.contains("#")) {
+    base_url = url.before("#");
+  }
+  
+  for (idx = 0; idx < tab->count(); ++idx) {
+    QWebView* rval = webView(idx);
+    String turl = rval->url().toString();
+    if (turl.startsWith(base_url))
+      return rval;
+  }
+  idx = -1;
   return NULL;
 }
 
@@ -9270,16 +9321,37 @@ void iHelpBrowser::LoadType(TypeDef* typ, const String& anchor) {
 }
 
 void iHelpBrowser::LoadUrl(const String& url) {
-  String html;
-  String base_url;
-  String anchor = url.after("#");
-  if (anchor.empty())
-    base_url = url;
-  else
-    base_url = url.before("#");
-  String typ_name(base_url.after(".Type."));
-  TypeDef* typ = taMisc::types.FindName(typ_name);
-  LoadType_impl(typ, base_url, anchor);
+  if (url.startsWith("ta:.Type.")) {
+    String base_url = url;
+    String anchor = url.after("#");
+    if (anchor.nonempty())
+      base_url = url.before("#");
+    String typ_name(base_url.after(".Type."));
+    TypeDef* typ = taMisc::types.FindName(typ_name);
+    LoadType_impl(typ, base_url, anchor);
+  } else if (IsUrlExternal(url)) {
+    LoadExternal_impl(url);
+  } else {
+    taMisc::Warning("Attempt to load unsupported url into Help Browser:",
+      url);
+  }
+}
+
+void iHelpBrowser::LoadExternal_impl(const String& url)
+{
+  int idx;
+  QWebView* wv = FindWebView(url, idx);
+  if (!wv)
+    wv = EmptyWebView(idx); // always succeeds
+  ++m_changing;
+  if (tab->currentIndex() != idx) {
+    tab->setCurrentIndex(idx);
+  }
+  String tab_text(UrlToTabText(url));
+  wv->setUrl(QUrl(url.toQString()));
+  tab->setTabText(idx, tab_text.toQString());
+  url_text->setText(wv->url().toString());
+  --m_changing;
 }
 
 void iHelpBrowser::LoadType_impl(TypeDef* typ, const String& base_url,
@@ -9301,10 +9373,17 @@ void iHelpBrowser::LoadType_impl(TypeDef* typ, const String& base_url,
     tv->setCurrentItem(twi);
     --m_changing;
   }
-  curWebView()->setHtml(html.toQString(), url.toQString());
-  tab->setTabText(tab->currentIndex(), tab_text.toQString());
+  int idx;
+  QWebView* wv = FindWebView(url, idx);
+  if (!wv)
+    wv = EmptyWebView(idx); // always succeeds
   ++m_changing;
-  url_text->setText(curWebView()->url().toString());
+  if (tab->currentIndex() != idx) {
+    tab->setCurrentIndex(idx);
+  }
+  wv->setHtml(html.toQString(), url.toQString());
+  tab->setTabText(idx, tab_text.toQString());
+  url_text->setText(wv->url().toString());
   --m_changing;
 }
 
