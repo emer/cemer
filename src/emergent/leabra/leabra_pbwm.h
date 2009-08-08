@@ -570,6 +570,22 @@ private:
 //	  Matrix Layer Spec	//
 //////////////////////////////////
 
+class LEABRA_API XMatrixDaSpec : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra how dopamine is applied to the matrix units
+INHERITED(taOBase)
+public:
+  float		gain;		// #DEF_1 overall gain for da modulation of matrix units
+  float		perf_contrast;	// #DEF_0 for performance/bias dopamine values: proportion of da * act to apply for da modulation -- if this value is 1 (highest contrast) then inactive units get no additional boost, and if it is 0 then every unit gets the same amount
+  float		mnt_lrn_contrast; // #DEF_0.5 for maintenance learning dopamine values: proportion of da * act to apply for da modulation -- if this value is 1 (highest contrast) then inactive units get no additional boost, and if it is 0 then every unit gets the same amount
+  float		out_lrn_contrast; // #DEF_1 for output learning dopamine values: proportion of da * act to apply for da modulation -- if this value is 1 (highest contrast) then inactive units get no additional boost, and if it is 0 then every unit gets the same amount
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(XMatrixDaSpec);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 class LEABRA_API XMatrixMiscSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
 INHERITED(taOBase)
@@ -603,12 +619,12 @@ class LEABRA_API XMatrixLayerSpec : public LeabraLayerSpec {
 INHERITED(LeabraLayerSpec)
 public:
   XMatrixMiscSpec 	matrix;		// misc parameters for the matrix layer
-  ContrastSpec 	 	contrast;	// contrast enhancement effects of da/dopamine neuromodulation
+  XMatrixDaSpec 	da;		// how dopamine is applied to the units
   MatrixGoNogoGainSpec	go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
   MatrixRndGoSpec	rnd_go;		// matrix random Go firing for nogo firing stripes case
 
-  virtual void 	Compute_DaMod(LeabraUnit* u, float dav, float gating_act, int go_no);
-  // apply given dopamine modulation value to the unit, based on whether it is a go (0) or nogo (1); contrast enhancement based on activation (gating_act)
+  virtual void 	Compute_UnitPerfDaMod(LeabraUnit* u, float perf_dav, float act_val, int go_no);
+  // apply given performance dopamine modulation value to the unit, based on whether it is a go or nogo; contrast enhancement based on activation (act_val)
   virtual void 	Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mugp,
 				  int gpidx, LeabraNetwork* net);
   // compute dynamic da modulation; performance modulation, not learning (second minus phase)

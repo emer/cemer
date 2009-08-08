@@ -101,11 +101,6 @@ bool SNcLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 }  
 
 void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
-//   if(net->phase_no == 0) {
-//     inherited::Compute_Da(lay, net);
-//     return;
-//   }
-
   int lve_prjn_idx;
   LeabraLayer* lve_lay = FindLayerFmSpec(lay, lve_prjn_idx, &TA_LVeLayerSpec);
   LVeLayerSpec* lve_sp = (LVeLayerSpec*)lve_lay->GetLayerSpec();
@@ -160,6 +155,9 @@ void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
     float str_da = patch_sp->Compute_LVDa_ugp(patch_ugp, lvi_ugp, net); // per stripe
     if(er_avail) {
       snc_u->dav = da.da_gain * pv_da;
+      if(da.add_pv_lv) {
+	snc_u->dav += da.da_gain * da_norm * (lv_da + stripe_da_gain * str_da);
+      }
     }
     else {
       snc_u->dav = da.da_gain * da_norm * (lv_da + stripe_da_gain * str_da);
@@ -1653,6 +1651,13 @@ void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
 
 /////////////////////////////////////////////////////
 
+void XMatrixDaSpec::Initialize() {
+  gain = 1.0f;
+  perf_contrast = 0.0f;
+  mnt_lrn_contrast = 0.5f;
+  out_lrn_contrast = 1.0f;
+}
+
 void XMatrixMiscSpec::Initialize() {
   one_bias_da = true;
   bias_da = 5.0f;
@@ -1699,16 +1704,12 @@ void XMatrixLayerSpec::Initialize() {
 void XMatrixLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   matrix.UpdateAfterEdit();
-  if(contrast.one_val) {
-    contrast.go_p = contrast.go_n = contrast.nogo_p = contrast.nogo_n = contrast.contrast;
-    // set them all
-  }
 }
 
 void XMatrixLayerSpec::Defaults() {
   inherited::Defaults();
   matrix.Defaults();
-  contrast.Defaults();
+  da.Defaults();
   Initialize();
 }
 
@@ -1847,28 +1848,29 @@ void XMatrixLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   LabelUnits(lay);
 }
 
-void XMatrixLayerSpec::Compute_DaMod(LeabraUnit* u, float dav, float act_val, int go_no) {
+void XMatrixLayerSpec::Compute_UnitPerfDaMod(LeabraUnit* u, float perf_dav,
+					     float act_val, int go_no) {
   if(go_no == (int)XPFCGateSpec::GATE_NOGO) {
-    if(dav >= 0.0f) {
+    if(perf_dav >= 0.0f) {
       u->vcb.g_h = 0.0f;
-      u->vcb.g_a = dav * ((1.0f - contrast.nogo_p) + (contrast.nogo_p * act_val));
+      u->vcb.g_a = perf_dav * ((1.0f - da.perf_contrast) + (da.perf_contrast * act_val));
       if(go_nogo_gain.on) u->vcb.g_a *= go_nogo_gain.nogo_p;
     }
     else {
-      u->vcb.g_h = -matrix.neg_gain * dav * ((1.0f - contrast.nogo_n) + (contrast.nogo_n * act_val));
+      u->vcb.g_h = -matrix.neg_gain * perf_dav * ((1.0f - da.perf_contrast) + (da.perf_contrast * act_val));
       if(go_nogo_gain.on) u->vcb.g_h *= go_nogo_gain.nogo_n;
       u->vcb.g_a = 0.0f;
     }
   }
   else {			// must be a GO
-    if(dav >= 0.0f)  { 
-      u->vcb.g_h = dav * ((1.0f - contrast.go_p) + (contrast.go_p * act_val));
+    if(perf_dav >= 0.0f)  { 
+      u->vcb.g_h = perf_dav * ((1.0f - da.perf_contrast) + (da.perf_contrast * act_val));
       if(go_nogo_gain.on) u->vcb.g_h *= go_nogo_gain.go_p;
       u->vcb.g_a = 0.0f;
     }
     else {
       u->vcb.g_h = 0.0f;
-      u->vcb.g_a = -matrix.neg_gain * dav * ((1.0f - contrast.go_n) + (contrast.go_n * act_val));
+      u->vcb.g_a = -matrix.neg_gain * perf_dav * ((1.0f - da.perf_contrast) + (da.perf_contrast * act_val));
       if(go_nogo_gain.on) u->vcb.g_a *= go_nogo_gain.go_n;
     }
   }
@@ -1893,7 +1895,7 @@ void XMatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mug
   FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
     XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(idx / gp_sz);
 
-    float gating_act = u->act_eq; // current activity
+    float act_val = u->act_eq; // current activity
 
     float cur_dav = matrix.perf_gain * (u->dav - tonic_da); // exclude tonic
     float new_dav = 0.0f;
@@ -1921,10 +1923,10 @@ void XMatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mug
 	}
       }
     }
-    float dav = contrast.gain * (new_dav + tonic_da);
-    u->dav = dav;		// record visually
-    u->misc_2 = dav;		// and for learn mod
-    Compute_DaMod(u, dav, gating_act, go_no);
+    float perf_dav = da.gain * (new_dav + tonic_da);
+    u->dav = perf_dav;		// record visually
+    u->misc_2 = perf_dav;	// and for learn mod
+    Compute_UnitPerfDaMod(u, perf_dav, act_val, go_no);
     idx++;
   }
 }
@@ -1957,10 +1959,10 @@ void XMatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mu
     XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(idx / gp_sz);
 
     // critical signal is in the minus phase
-    float gating_act = u->act_m;
+    float act_val = u->act_m;
     float snrthal_act = MAX(snr_mnt_u->act_m, snr_out_u->act_m);
 
-    float dav_perf = u->misc_2;	// performance da: important: includes the tonic_da!
+    float perf_dav = u->misc_2;	// performance da: important: includes the tonic_da!
     float cur_dav = u->dav - tonic_da; // exclude tonic
 
     if(gate_sig == XPFCGateSpec::GATE_NOGO)
@@ -1977,13 +1979,60 @@ void XMatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mu
     if(matrix.no_snr_mod)	// disable!
       snrthal_act = 1.0f;
 
-    float dav = dav_perf + contrast.gain * snrthal_act * cur_dav;
+    float lrn_dav = da.gain * snrthal_act * cur_dav;
     if(nogo_rnd_go) {
-      dav += rnd_go.nogo_da; 
+      lrn_dav += rnd_go.nogo_da; 
     }
 
+    float dav = perf_dav + lrn_dav;
     u->dav = dav;		// make it show up in display
-    Compute_DaMod(u, dav, gating_act, go_no);
+
+    Compute_UnitPerfDaMod(u, perf_dav, act_val, go_no); // baseline is perf dav
+    // now add learn dav:
+    if(go_no == (int)XPFCGateSpec::GATE_NOGO) {
+      if(lrn_dav >= 0.0f) {
+	float ga = 0.0f;
+	if(gate_sig == XPFCGateSpec::GATE_MNT_GO)
+	  ga = lrn_dav * ((1.0f - da.mnt_lrn_contrast) + (da.mnt_lrn_contrast * act_val));
+	else
+	  ga = lrn_dav * ((1.0f - da.out_lrn_contrast) + (da.out_lrn_contrast * act_val));
+	if(go_nogo_gain.on) ga *= go_nogo_gain.nogo_p;
+	u->vcb.g_a += ga;
+      }
+      else {
+	float gh = 0.f;
+	if(gate_sig == XPFCGateSpec::GATE_MNT_GO)
+	  gh = -matrix.neg_gain * lrn_dav * ((1.0f - da.mnt_lrn_contrast) + (da.mnt_lrn_contrast * act_val));
+	else 
+	  gh = -matrix.neg_gain * lrn_dav * ((1.0f - da.out_lrn_contrast) + (da.out_lrn_contrast * act_val));
+	if(go_nogo_gain.on) gh *= go_nogo_gain.nogo_n;
+	u->vcb.g_h += gh;
+      }
+    }
+    else if(go_no == XPFCGateSpec::GATE_MNT_GO) {
+      if(lrn_dav >= 0.0f)  {
+	float gh = lrn_dav * ((1.0f - da.mnt_lrn_contrast) + (da.mnt_lrn_contrast * act_val));
+	if(go_nogo_gain.on) gh *= go_nogo_gain.go_p;
+	u->vcb.g_h += gh;
+      }
+      else {
+	float ga = -matrix.neg_gain * lrn_dav * ((1.0f - da.mnt_lrn_contrast) + (da.mnt_lrn_contrast * act_val));
+	if(go_nogo_gain.on) ga *= go_nogo_gain.go_n;
+	u->vcb.g_a += ga;
+      }
+    }
+    else if(go_no == XPFCGateSpec::GATE_OUT_GO) {
+      if(lrn_dav >= 0.0f)  {
+	float gh = lrn_dav * ((1.0f - da.out_lrn_contrast) + (da.out_lrn_contrast * act_val));
+	if(go_nogo_gain.on) gh *= go_nogo_gain.go_p;
+	u->vcb.g_h += gh;
+      }
+      else {
+	float ga = -matrix.neg_gain * lrn_dav * ((1.0f - da.out_lrn_contrast) + (da.out_lrn_contrast * act_val));
+	if(go_nogo_gain.on) ga *= go_nogo_gain.go_n;
+	u->vcb.g_a += ga;
+      }
+    }
     idx++;
   }
 }

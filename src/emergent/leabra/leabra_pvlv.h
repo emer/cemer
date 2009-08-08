@@ -417,6 +417,7 @@ public:
   float		da_gain;	// #DEF_0.2:2 #MIN_0 multiplier for dopamine values
   float		tonic_da;	// #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
   float		pv_gain;	// #DEF_1;0.5 extra gain modulation of PV generated DA -- it can be much larger in general than lv so sometimes it is useful to turn it down (e.g., in new version of PBWM)
+  float		add_pv_lv;	// #DEF_false for cases where reward is expected/delivered, add PV and LV dopamine signals (otherwise, only use PV signal)
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(PVLVDaSpec);

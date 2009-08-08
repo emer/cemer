@@ -851,6 +851,7 @@ void PVLVDaSpec::Initialize() {
   da_gain = 1.0f;
   tonic_da = 0.0f;
   pv_gain = 1.0f;
+  add_pv_lv = false;
 }
 
 void PVLVDaLayerSpec::Initialize() {
@@ -988,10 +989,15 @@ void PVLVDaLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
   }
   float pv_da = da.pv_gain * pvils->Compute_PVDa(pvi_lay, net);
   bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
-  if(er_avail)
+  if(er_avail) {
     net_da = da.da_gain * pv_da;
-  else
+    if(da.add_pv_lv) {
+      net_da += da.da_gain * lv_da;
+    }
+  }
+  else {
     net_da = da.da_gain * lv_da;
+  }
 
   lay->dav = net_da;
   LeabraUnit* u;
