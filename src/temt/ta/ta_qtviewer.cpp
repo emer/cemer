@@ -7251,7 +7251,8 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
     }
   }
   if((ctrl_pressed && e->key() == Qt::Key_W) ||
-     (ctrl_pressed && e->key() == Qt::Key_D) || (e->key() == Qt::Key_Delete)) {
+     (ctrl_pressed && e->key() == Qt::Key_D) || (e->key() == Qt::Key_Delete)
+     || (e->key() == Qt::Key_Backspace)) {
     ISelectable* si = curItem();
     if(si && si->link()) {
       taBase* sb = si->link()->taData();
@@ -7259,7 +7260,7 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
 	if(proj) {
 	  proj->undo_mgr.SaveUndo(sb, "Delete"); // global save
 	}
-	sb->CloseLater();
+	sb->CloseLater();	// todo: needs to check if a member or not -- only nuke if !mbr
       }
     }
     e->accept();

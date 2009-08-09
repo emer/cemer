@@ -3226,11 +3226,12 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
   QHBoxLayout* lay = new QHBoxLayout();
   lay->addSpacing(taiM->hspc_c); 
   lbl = new QLabel("search", this);
-  lbl->setToolTip("Enter text that must appear in an item to keep it visible");
+  lbl->setToolTip("Search for items that contain this text, showing only them -- if starts with a ^ then only look for items in the first column that start with the text after the ^");
   lay->addWidget(lbl);
   lay->addSpacing(taiM->vsep_c);
   filter = new QLineEdit(this);
   filter->setToolTip(lbl->toolTip());
+  filter->setText("^");
   lay->addWidget(filter, 1);
   lay->addSpacing(taiM->hspc_c); 
   layOuter->addLayout(lay);
@@ -3369,16 +3370,27 @@ bool taiItemChooser::ShowItem(const QTreeWidgetItem* item) const {
   // filter text filter
   if (!last_filter.isEmpty()) {
     bool hide = true;
-    QString s;
-    int cols = items->columnCount();
-    for (int i = 0; i < cols; ++i) {
-      s = item->text(i);
-      if (s.contains(last_filter, Qt::CaseInsensitive)) {
-        hide = false;
-        break;
-      }  
+    if(last_filter.startsWith("^")) { // special start of string search (on by default)
+      QString flt = last_filter.mid(1); // skip ^
+      if(flt.isEmpty()) return true;	// nothing after it!
+      QString s = item->text(0);	// only 1st col
+      if(s.startsWith(flt, Qt::CaseInsensitive)) {
+	hide = false;
+      }
+      if (hide) return false;
     }
-    if (hide) return false;
+    else {
+      QString s;
+      int cols = items->columnCount();
+      for (int i = 0; i < cols; ++i) {
+	s = item->text(i);
+	if (s.contains(last_filter, Qt::CaseInsensitive)) {
+	  hide = false;
+	  break;
+	}  
+      }
+      if (hide) return false;
+    }
   }
   return true;
 }

@@ -270,12 +270,18 @@ void MatrixUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   float eff_dt = dt.net;
   // this is the new part of the code: getting the effective dt relative to the freeze net fun
   if(freeze_net) {
-    MatrixLayerSpec* mls = (MatrixLayerSpec*)lay->spec.SPtr();
-    if(mls->bg_type == MatrixLayerSpec::MAINT) {
-      if(net->phase_no == 2) eff_dt = 0.0f;
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->spec.SPtr();
+    if(ls->InheritsFrom(&TA_MatrixLayerSpec)) {
+      MatrixLayerSpec* mls = (MatrixLayerSpec*)lay->spec.SPtr();
+      if(mls->bg_type == MatrixLayerSpec::MAINT) {
+	if(net->phase_no == 2) eff_dt = 0.0f;
+      }
+      else {
+	if(net->phase_no >= 1) eff_dt = 0.0f;
+      }
     }
-    else {
-      if(net->phase_no >= 1) eff_dt = 0.0f;
+    else {			// Xmatrix
+      if(net->phase_no >= 1) eff_dt = 0.0f; // freeze in plus and beyond
     }
   }
 

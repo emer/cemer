@@ -1933,7 +1933,11 @@ const iColor T3DataViewFrame::GetBgColor() const {
     if (sng) {
       bool ok = false;
       rval = sng->bgColor(ok);
-      if (ok) return rval;
+      if (ok) {
+	if(bg_color.r != 0.8f || bg_color.g != 0.8f || bg_color.b != 0.8f) 
+	  rval = bg_color;	// when frame is set to something different, it overrides regardless
+	return rval;
+      }
     }
   }
   rval = bg_color;
