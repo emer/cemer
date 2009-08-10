@@ -69,6 +69,7 @@
 #include <QWebFrame>
 #include <QWebPage>
 #include <QWebView>
+#include <QProgressBar>
 
 #include "itextbrowser.h"
 #include "itextedit.h"
@@ -6554,6 +6555,11 @@ iDocDataPanel::iDocDataPanel()
   url_box->addWidget(url_edit);
   url_box->addSpacing(taiM->hsep_c);
 
+  prog_bar = new QProgressBar(wb_widg);
+  prog_bar->setRange(0, 100);
+  prog_bar->setMaximumWidth(30);
+  url_box->addWidget(prog_bar);
+
   seturl_but = new QPushButton("Set URL", wb_widg);
   url_box->addWidget(seturl_but);
 
@@ -6575,6 +6581,9 @@ iDocDataPanel::iDocDataPanel()
   connect(url_edit, SIGNAL(returnPressed()), this, SLOT(doc_goPressed()) );
   connect(wiki_edit, SIGNAL(returnPressed()), this, SLOT(doc_goPressed()) );
   connect(seturl_but, SIGNAL(pressed()), this, SLOT(doc_seturlPressed()) );
+
+  connect(webview->page(), SIGNAL(loadProgress(int)), prog_bar, SLOT(setValue(int)) );
+  connect(webview->page(), SIGNAL(loadStarted()), prog_bar, SLOT(reset()) );
 
   webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
   connect(webview->page(), SIGNAL(linkClicked(const QUrl&)),

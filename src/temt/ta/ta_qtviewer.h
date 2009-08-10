@@ -70,11 +70,12 @@ class iViewPanelSet;
 class iListDataPanel;
 class iSearchDialog;
 
-
 // externals
 class taGroup_impl;
 class taProject;
 
+
+class QProgressBar;		// #IGNORE
 
 class TA_API DataLink_QObj: public QObject {
 Q_OBJECT
@@ -1787,6 +1788,7 @@ public:
   QToolButton*		fwd_but; // forward
   QToolButton*		bak_but; // backward
   QPushButton*		go_but; // load web page
+  QProgressBar*		prog_bar;   // progress bar
   QPushButton*		seturl_but; // save this location as our url!
   
   virtual void		setDoc(taDoc* doc); // only called if changes after creation
