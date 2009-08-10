@@ -321,17 +321,6 @@ float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
   LeabraUnit_Group* mugp = u->own_ugp();
   if(matrix_noise.patch_noise) {
     noise_amp = (1.0f - (noise_adapt.min_pct_c * u->misc_1)); // lve value on patch is in misc_1
-
-    LeabraLayer* lay = u->own_lay();
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-    if(ls->InheritsFrom(&TA_XMatrixLayerSpec)) {
-      int gp_sz = mugp->leaves / 3;
-      XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(u->idx / gp_sz);
-      if(go_no == XPFCGateSpec::GATE_OUT_GO) {
-	XMatrixLayerSpec* xmls = (XMatrixLayerSpec*)lay->GetLayerSpec();
-	noise_amp *= xmls->matrix.out_noise_amp; // extra noise for output gating guys
-      }
-    }
   }
   else {
     if(noise_adapt.mode == NoiseAdaptSpec::SCHED_CYCLES) {
@@ -349,6 +338,17 @@ float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
     else if(noise_adapt.mode == NoiseAdaptSpec::PVLV_MIN) {
       float pvlv_val = MIN(net->pvlv_pvi, net->pvlv_lve);
       noise_amp = (1.0f - (noise_adapt.min_pct_c * pvlv_val));
+    }
+  }
+
+  LeabraLayer* lay = u->own_lay();
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+  if(ls->InheritsFrom(&TA_XMatrixLayerSpec)) {
+    int gp_sz = mugp->leaves / 3;
+    XPFCGateSpec::GateSignal go_no = (XPFCGateSpec::GateSignal)(u->idx / gp_sz);
+    if(go_no == XPFCGateSpec::GATE_OUT_GO) {
+      XMatrixLayerSpec* xmls = (XMatrixLayerSpec*)lay->GetLayerSpec();
+      noise_amp *= xmls->matrix.out_noise_amp; // extra noise for output gating guys
     }
   }
 

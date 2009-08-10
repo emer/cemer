@@ -3231,7 +3231,6 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
   lay->addSpacing(taiM->vsep_c);
   filter = new QLineEdit(this);
   filter->setToolTip(lbl->toolTip());
-  filter->setText("^");
   lay->addWidget(filter, 1);
   lay->addSpacing(taiM->hspc_c); 
   layOuter->addLayout(lay);
@@ -3422,6 +3421,9 @@ void taiItemChooser::showEvent(QShowEvent* event) {
 void taiItemChooser::show_timeout() {
   if (m_selItem)
     items->scrollToItem(m_selItem);
+  filter->insert("^");
+  filter->deselect();
+  filter->end(false);
 }
 
 void taiItemChooser::timFilter_timeout() {
@@ -3921,7 +3923,7 @@ void taiMemberMethodDefButton::BuildChooser_0(taiItemChooser* ic) {
     MemberDef* mbr = mbs->FastEl(i);
     if (!ShowMember(mbr)) continue;
     cat = "member: " + mbr->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, "mbr:  "+mbr->name, NULL, (void*)mbr);
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr);
     item->setData(1, Qt::DisplayRole, mbr->desc);
   }
 
@@ -3930,7 +3932,7 @@ void taiMemberMethodDefButton::BuildChooser_0(taiItemChooser* ic) {
     MethodDef* mth = mts->FastEl(i);
     if (!ShowMethod(mth)) continue;
     cat = "method: " + mth->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, "mth:  "+mth->name, NULL, (void*)mth);
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
     item->setData(1, Qt::DisplayRole, mth->desc);
   }
@@ -4094,7 +4096,7 @@ void taiEnumStaticButton::BuildChooser_0(taiItemChooser* ic) {
       for(int j=0;j< td->enum_vals.size; j++) {
 	EnumDef* ed = td->enum_vals.FastEl(j);
 	if(!ShowEnum(ed)) continue;
-	QTreeWidgetItem* item = ic->AddItem(cat, "enum:  "+ed->name, NULL, (void*)ed);
+	QTreeWidgetItem* item = ic->AddItem(cat, ed->name + " (enum)", NULL, (void*)ed);
 	item->setData(1, Qt::DisplayRole, ed->desc);
       }
     }
@@ -4105,7 +4107,7 @@ void taiEnumStaticButton::BuildChooser_0(taiItemChooser* ic) {
     MemberDef* mbr = mbs->FastEl(i);
     if (!ShowMember(mbr)) continue;
     cat = "member: " + mbr->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, "mbr:  "+mbr->name, NULL, (void*)mbr);
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr);
     item->setData(1, Qt::DisplayRole, mbr->desc);
   }
 
@@ -4114,7 +4116,7 @@ void taiEnumStaticButton::BuildChooser_0(taiItemChooser* ic) {
     MethodDef* mth = mts->FastEl(i);
     if (!ShowMethod(mth)) continue;
     cat = "method: " + mth->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, "mth:  "+mth->name, NULL, (void*)mth);
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
     item->setData(1, Qt::DisplayRole, mth->desc);
   }
@@ -4185,6 +4187,9 @@ const String taiEnumStaticButton::labelNameNonNull() const {
 }
 
 bool taiEnumStaticButton::ShowEnum(EnumDef* enm) {
+  if(enm->HasOption("EXPERT")) {
+    if(taMisc::show_gui & taMisc::NO_EXPERT) return false;
+  }
   return (ShowItemFilter(NULL, enm, enm->name));
 }
 
@@ -4458,49 +4463,6 @@ int taiEnumTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ,
   }
   return rval;
 }
-
-/*
-int taiEnumTypeDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ, 
-  QTreeWidgetItem* top_item)
-{
-  int rval = 0;
-  // for top level, we need to add NULL choice
-  if (!top_item) {
-    if (HasFlag(flgNullOk)) {
-      ic->AddItem(String::con_NULL, top_item, (void*)NULL); //note: no desc
-      ++rval;
-    }
-  }
-  
-  // add Enums of this type
-  for (int i = 0; i < top_typ->sub_types.size; ++i) {
-    TypeDef* chld = top_typ->sub_types.FastEl(i);
-    if (AddType_Enum(chld)) {
-      QTreeWidgetItem* item = ic->AddItem(top_typ->name + "::" + chld->name, top_item, (void*)chld);
-      item->setData(1, Qt::DisplayRole, chld->desc);
-      ++rval;
-    }
-  }
-  // add entries for the subclasses
-  for (int i = 0; i < top_typ->children.size; ++i) {
-    TypeDef* chld = top_typ->children.FastEl(i);
-    if (chld->ptr != 0)
-      continue;
-
-    if ((CountChildren(chld) > 0) || (CountEnums(chld) > 0))
-    {
-      QTreeWidgetItem* item = ic->AddItem((char*)chld->name, top_item);
-      item->setFlags(Qt::ItemIsEnabled); // but not selectable
-      int num = BuildChooser_1(ic, chld, item);
-      // if no items were actually generated, then we just delete this one
-      if (num ==0) {
-        delete item;
-      } else rval += num;
-      
-    }
-  }
-  return rval;
-}*/
 
 int taiEnumTypeDefButton::columnCount(int view) const {
   switch (view) {

@@ -1957,9 +1957,26 @@ void taiProgLibElArgType::GetValue_impl(taiData* dat, void*) {
 //        StringFieldLookupFun      //
 //////////////////////////////////////
 
+static ProgExprBase* expr_lookup_cur_base = NULL;
+
+bool ProgExprBase::ExprLookupVarFilter(void* base_, void* var_) {
+  if(!base_) return true;
+  Program* prog = dynamic_cast<Program*>(static_cast<taBase*>(base_));
+  if(!prog) return true;
+  ProgVar* var = dynamic_cast<ProgVar*>(static_cast<taBase*>(var_));
+  if(!var || !var->HasVarFlag(ProgVar::LOCAL_VAR)) return true; // definitely all globals
+  Function* varfun = GET_OWNER(var, Function);
+  if(!varfun) return true;	// not within a function, always go -- can't really tell scoping very well at this level -- could actually do it but it would be recursive and hairy
+  if(!expr_lookup_cur_base) return true; // no filter possible
+  Function* basefun = GET_OWNER(expr_lookup_cur_base, Function);
+  if(basefun != varfun) return false; // different function scope
+  return true;
+}
+
+
 String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_pos,
 				   taBase*& path_own_obj, TypeDef*& path_own_typ,
-				   MemberDef*& path_md,
+				   MemberDef*& path_md, ProgExprBase* expr_base,
 				   Program* own_prg, Function* own_fun,
 				   taBase* path_base, TypeDef* path_base_typ) {
   path_own_obj = NULL;
@@ -2051,7 +2068,8 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
 //     cerr << "base_path empty: lookup a var, seed: " << lookup_seed << endl;
     taiTokenPtrMultiTypeButton* varlkup =  new taiTokenPtrMultiTypeButton
       (&TA_ProgVar, NULL, NULL,	NULL, 0, lookup_seed);
-    varlkup->item_filter = (item_filter_fun)ProgExpr::StdProgVarFilter;
+    varlkup->item_filter = (item_filter_fun)ProgExprBase::ExprLookupVarFilter;
+    expr_lookup_cur_base = expr_base;
     varlkup->type_list.Link(&TA_ProgVar);
     varlkup->type_list.Link(&TA_DynEnumItem);
     varlkup->GetImageScoped(NULL, &TA_ProgVar, own_prg, &TA_Program);
@@ -2062,6 +2080,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       rval += append_at_end;
     }
     delete varlkup;
+    expr_lookup_cur_base = NULL;
     break;
   }
   case 2: {			// members/methods
@@ -2265,7 +2284,7 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   MemberDef* path_md = NULL;
   return ProgExprBase::ExprLookupFun(cur_txt, cur_pos, new_pos,
 				     path_own_obj, path_own_typ, path_md,
-				     own_prg, own_fun);
+				     this, own_prg, own_fun);
 }
 
 String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
@@ -2290,7 +2309,7 @@ String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   MemberDef* path_md = NULL;
   rval = ProgExprBase::ExprLookupFun(cur_txt, cur_pos, new_pos,
 				     path_own_obj, path_own_typ, path_md,
-				     own_prg, own_fun, path_base, path_base_typ);
+				     NULL, own_prg, own_fun, path_base, path_base_typ);
 
   if(path_own_typ) {
     obj_type = path_own_typ;
