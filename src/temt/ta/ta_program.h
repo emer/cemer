@@ -248,10 +248,10 @@ public:
   virtual bool	ClearBitName(const String& val);
   // only for bits type, clear bit with given name
 
-  override String	GetDisplayName() const;
-  override String	GetValStr(void* par = NULL, MemberDef* md = NULL,
+  override String	GetDisplayName() const;//
+/*TEMP  override String	GetValStr(void* par = NULL, MemberDef* md = NULL,
 				  TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-				  bool force_inline = false) const;
+				  bool force_inline = false) const;*/
 
   TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DynEnum, Program);
 protected:

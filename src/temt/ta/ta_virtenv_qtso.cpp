@@ -15,7 +15,7 @@
 
 #include "ta_virtenv_qtso.h"
 
-#include "ta_math.h"
+//#include "ta_math.h"
 #include "ta_imgproc.h"
 #include "ta_platform.h"
 
@@ -48,6 +48,16 @@
 #include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
 
 #include "SoCapsule.h"
+
+#ifdef TA_OS_WIN
+// following for msvc
+# ifdef near
+#   undef near
+# endif
+# ifdef far
+#   undef far
+# endif
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 //		So configure classes defined in ta_virtenv.h
@@ -123,7 +133,7 @@ bool VETexture::UpdateTexture() {
 void VECamera::ConfigCamera(SoPerspectiveCamera* cam) {
   cam->position.setValue(cur_pos.x, cur_pos.y, cur_pos.z);
   cam->orientation.setValue(SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
-  cam->nearDistance = view_dist.near;
+  cam->nearDistance = this->view_dist.near;
   cam->focalDistance = view_dist.focal;
   cam->farDistance = view_dist.far;
   cam->heightAngle = field_of_view * taMath_float::rad_per_deg;

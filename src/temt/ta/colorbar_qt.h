@@ -25,7 +25,8 @@
 
 #ifndef __MAKETA__
 # include <QWidget>
-#else
+#endif
+#ifdef TA_OS_WIN
 // following for msvc
 # ifdef min
 #   undef min

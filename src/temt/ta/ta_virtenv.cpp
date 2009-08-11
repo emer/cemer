@@ -363,7 +363,8 @@ void VEBody::GetValsFmODE(bool updt_disp) {
 }
 
 void VEBody::RotateBody(float x_ax, float y_ax, float z_ax, float rot, bool init) {
-  if(TestError(x_ax == y_ax == z_ax == 0.0f, "RotateBody", "must specify a non-zero axis!"))
+  if(TestError((x_ax == 0.0f) && (y_ax == 0.0f) && (z_ax == 0.0f), 
+    "RotateBody", "must specify a non-zero axis!"))
     return;
 
   SbRotation sbrot;

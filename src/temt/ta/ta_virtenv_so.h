@@ -23,6 +23,31 @@
 
 #include "t3node_so.h"
 
+// these following are a HUGE hack here -- this file gets loaded late in
+// ta_TA.cpp
+#ifdef TA_OS_WIN
+// following for msvc
+# ifdef min
+#   undef min
+# endif
+# ifdef max
+#   undef max
+# endif
+# ifdef near
+#   undef near
+# endif
+# ifdef far
+#   undef far
+# endif
+// damn A/W macros interfere...
+# ifdef LoadImage
+#   undef LoadImage
+# endif
+# ifdef GetObject
+#   undef GetObject
+# endif
+#endif
+
 class SoOffscreenRenderer; // #IGNORE
 class SoSwitch;		   // #IGNORE
 class SoDirectionalLight;  // #IGNORE

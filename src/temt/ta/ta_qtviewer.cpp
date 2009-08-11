@@ -5214,6 +5214,7 @@ void iTabView::ResolveChanges(CancelOp& cancel_op) {
 bool iTabView::SetCurrentTab(int tab_idx) {
   if (tab_idx < 0 || tab_idx >= tbPanels->count()) return false;
   iDataPanel* pan = tabPanel(tab_idx);
+  if (!pan) return false;
   tbPanels->setCurrentIndex(tab_idx);
   wsPanels->setCurrentWidget(pan);
   pan->show();			// make it visible for sure!

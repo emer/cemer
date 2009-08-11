@@ -358,11 +358,11 @@ void taThreadMgr::SyncThreads() {
 
   int n_wakes = 0;
   while(n_started < n_to_run && n_wakes < 10000) { // wait for other guys to start
-    usleep(sync_sleep_usec*10);    // this is going to be slower, so wait longer
+    taManagedThread::usleep(sync_sleep_usec*10);    // this is going to be slower, so wait longer
     n_wakes++;
   }
   while(n_running > 0) {	// then wait for everyone to finish
-    usleep(sync_sleep_usec);
+    taManagedThread::usleep(sync_sleep_usec);
   }
 
   n_to_run = 0;			// done!

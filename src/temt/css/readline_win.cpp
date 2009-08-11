@@ -214,7 +214,7 @@ cssWinConsole::~cssWinConsole() {
 }
 
 void cssWinConsole::setTitle(const QString& value) {
-  SetConsoleTitle(value);
+  SetConsoleTitle(value.toLatin1());
 }
 
 

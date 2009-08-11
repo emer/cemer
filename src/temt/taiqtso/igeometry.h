@@ -186,8 +186,8 @@ public:
   float		top() const {return max.y;}
   float		left() const {return min.x;}
   float		right() const {return max.x;}
-  float		far() const {return min.z;}
-  float		near() const {return max.z;}
+  float		far() const {return min.z;} //#IGNORE
+  float		near() const {return max.z;} //#IGNORE
   iVec3f	size() const {return iVec3f(max.x - min.x, max.y - min.y, max.z - min.z);}  // size of the box in each dimension
   bool		isZero() const { return (min.isZero() && max.isZero());}
 

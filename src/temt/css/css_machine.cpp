@@ -1262,8 +1262,18 @@ void cssElInCFun::BindArgs(cssEl** args, int& act_argc) {
 cssEl::RunStat cssElInCFun::Do(cssProg* prg) {
   prog = prg;
   dostat = cssEl::Running;
-  int act_argc;
+  //note: argc can be -2 sentinel
+  int targc = (argc >= 0) ? argc : 0;
+#ifdef _MSC_VER
+  cssEl* args[ArgMax + 1];	// only need fixed amount
+#else
+# ifdef DEBUG
+  if (argc < 0)
+    cerr << "cssElInCFun::Do argc is less than 0: " << argc << "\n";
+# endif
   cssEl* args[argc + 1];	// only need fixed amount
+#endif
+  int act_argc;
   BindArgs(args, act_argc);
 
   cssEl* tmp = (*funp)(act_argc, args);
@@ -1273,7 +1283,6 @@ cssEl::RunStat cssElInCFun::Do(cssProg* prg) {
     prog->Stack()->Push(tmp);
   }
   DoneArgs(args, act_argc);
-
   return dostat;
 }
 

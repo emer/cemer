@@ -3043,7 +3043,11 @@ void taRootBase::SaveRecoverFileHandler(int err) {
   }
   has_crashed = true;		// to prevent recursive crashing..
 
+#ifdef TA_OS_WIN
+  bool non_term_sig = false;
+#else
   bool non_term_sig = ((err == SIGALRM) || (err == SIGUSR1) || (err == SIGUSR2));
+#endif
 
   if(!non_term_sig) {
 #ifdef DMEM_COMPILE

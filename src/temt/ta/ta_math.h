@@ -29,6 +29,15 @@
 # include "gsl/gsl_matrix_double.h"
 # include "gsl/gsl_matrix_float.h"
 #endif
+#ifdef TA_OS_WIN
+// following for msvc
+# ifdef min
+#   undef min
+# endif
+# ifdef max
+#   undef max
+# endif
+#endif
 
 class TA_API Relation : public taNBase {
   // #STEM_BASE ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math counting criteria params

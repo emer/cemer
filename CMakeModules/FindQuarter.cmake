@@ -13,6 +13,7 @@ FIND_PATH(QUARTER_INCLUDE_DIR Quarter.h
     /opt/local/include/Quarter
     /Library/Frameworks/Quarter.framework/Headers
     $ENV{INCLUDE}
+    ${COINDIR}/include/Quarter
 )
 #MESSAGE("QUARTER_INCLUDE_DIR=" ${QUARTER_INCLUDE_DIR})
 
@@ -23,7 +24,7 @@ if (WIN32)
   if (CMAKE_BUILD_TYPE MATCHES "Debug")
     IF (EXISTS ${COINDIR}/lib/quarter1d.lib)
       SET(QUARTER_LIBRARY "${COINDIR}/lib/quarter1d.lib")
-    ENDIF (EXISTS ${COINDIR}/lib/quarter1.dylib)
+    ENDIF (EXISTS ${COINDIR}/lib/quarter1.lib)
   else (CMAKE_BUILD_TYPE MATCHES "Debug") 
     IF (EXISTS ${COINDIR}/lib/quarter1.lib)
       SET(QUARTER_LIBRARY "${COINDIR}/lib/quarter1.lib")

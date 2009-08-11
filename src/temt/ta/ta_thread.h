@@ -156,6 +156,7 @@ class TA_API taManagedThread: public QThread {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Thread a fully managed thread -- controlled by the taThreadMgr and not capable of operating without it, but much more efficient for collective operations than the taTaskThread object
 INHERITED(QThread)
 public:
+  USING(inherited::usleep);
   taThreadMgr*		mgr;
   // our manager -- controls everything
   

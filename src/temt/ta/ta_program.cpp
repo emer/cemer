@@ -426,13 +426,13 @@ String DynEnum::GetDisplayName() const {
     return "(no dyn enum type!)";
 }
 
-String DynEnum::GetValStr(void* par, MemberDef* md, TypeDef::StrContext sc,
+/*TEMP String DynEnum::GetValStr(void* par, MemberDef* md, TypeDef::StrContext sc,
 			  bool force_inline) const {
   if(sc == TypeDef::SC_DISPLAY)
     return GetDisplayName();
   else
     return inherited::GetValStr(par, md, sc, force_inline);
-}
+}*/
 
 void DynEnum::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
