@@ -395,7 +395,7 @@ inline static bool shorterPaths(const QNetworkCookie &c1, const QNetworkCookie &
 
 QList<QNetworkCookie> iNetworkCookieJar::cookiesForUrl(const QUrl &url) const
 {
-#if defined(DEBUG)
+#if defined(COOKIE_DEBUG)
   qDebug() << "iNetworkCookieJar::" << __FUNCTION__ << url;
 #endif
   // Generate split host
@@ -429,7 +429,7 @@ QList<QNetworkCookie> iNetworkCookieJar::cookiesForUrl(const QUrl &url) const
   QList<QNetworkCookie>::iterator i = cookies.begin();
   for (; i != cookies.end();) {
     if (!d->matchingPath(*i, urlPath)) {
-#if defined(DEBUG)
+#if defined(COOKIE_DEBUG)
       qDebug() << __FUNCTION__ << "Ignoring cookie, path does not match" << *i << urlPath;
 #endif
       i = cookies.erase(i);
@@ -437,7 +437,7 @@ QList<QNetworkCookie> iNetworkCookieJar::cookiesForUrl(const QUrl &url) const
     }
     if (!isSecure && i->isSecure()) {
       i = cookies.erase(i);
-#if defined(DEBUG)
+#if defined(COOKIE_DEBUG)
       qDebug() << __FUNCTION__ << "Ignoring cookie, security mismatch"
 	       << *i << !isSecure;
 #endif
@@ -447,7 +447,7 @@ QList<QNetworkCookie> iNetworkCookieJar::cookiesForUrl(const QUrl &url) const
       // remove now (expensive short term) because there will
       // probably be many more cookiesForUrl calls for this host
       d->tree.remove(splitHost(i->domain()), *i);
-#if defined(DEBUG)
+#if defined(COOKIE_DEBUG)
       qDebug() << __FUNCTION__ << "Ignoring cookie, expiration issue"
 	       << *i << now;
 #endif
@@ -459,7 +459,7 @@ QList<QNetworkCookie> iNetworkCookieJar::cookiesForUrl(const QUrl &url) const
 
   // shorter paths should go first
   qSort(cookies.begin(), cookies.end(), shorterPaths);
-#if defined(DEBUG)
+#if defined(COOKIE_DEBUG)
   qDebug() << "iNetworkCookieJar::" << __FUNCTION__ << "returning" << cookies.count();
   qDebug() << cookies;
 #endif

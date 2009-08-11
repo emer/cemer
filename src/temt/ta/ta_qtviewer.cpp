@@ -4337,26 +4337,28 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
 }
 
 void iMainWindowViewer::httpUrlHandler(const QUrl& url) {
-  if(isProjShower()) {
-    taProject* prj = curProject();
-    if(prj) {
-      taDoc* browser = prj->FindMakeDoc("misc_browser", "", url.toString());
-      browser->EditDialog();
-      return;
-    }
-  }
-  else if(isRoot()) {
-    MainWindowViewer* db = viewer();
-    if(db) {
-      taRootBase* rt = dynamic_cast<taRootBase*>(db->data());
-      if(rt) {
-	taDoc* browser = rt->FindMakeDoc("misc_browser", "", url.toString());
-	browser->EditDialog();
-	return;
-      }
-    }
-  }
-  QDesktopServices::openUrl(url);	// fall back on default
+  // always just use the help browser for any misc links
+  iHelpBrowser::StatLoadUrl(url.toString());
+//   if(isProjShower()) {
+//     taProject* prj = curProject();
+//     if(prj) {
+//       taDoc* browser = prj->FindMakeDoc("misc_browser", "", url.toString());
+//       browser->EditDialog();
+//       return;
+//     }
+//   }
+//   else if(isRoot()) {
+//     MainWindowViewer* db = viewer();
+//     if(db) {
+//       taRootBase* rt = dynamic_cast<taRootBase*>(db->data());
+//       if(rt) {
+// 	taDoc* browser = rt->FindMakeDoc("misc_browser", "", url.toString());
+// 	browser->EditDialog();
+// 	return;
+//       }
+//     }
+//   }
+//   QDesktopServices::openUrl(url);	// fall back on default
 }
 
 bool iMainWindowViewer::event(QEvent* ev) {
@@ -6517,6 +6519,8 @@ String iTextDataPanel::panel_type() const {
 iDocDataPanel::iDocDataPanel()
 :inherited(NULL) // usual case: we dynamically set the link, via setDoc
 {
+  is_loading = false;
+
   wb_widg = new QWidget();
   wb_box = new QVBoxLayout(wb_widg);
   wb_box->setMargin(0); wb_box->setSpacing(2);
@@ -6568,13 +6572,11 @@ iDocDataPanel::iDocDataPanel()
   wb_box->addWidget(webview);
 
   webview->page()->setNetworkAccessManager(taiMisc::net_access_mgr);
+  webview->page()->setForwardUnsupportedContent(true);
 
   setCentralWidget(wb_widg);
 
   webview->installEventFilter(this); // translate keys..
-
-  connect(webview, SIGNAL(loadFinished(bool)),
-	  this, SLOT(doc_loadFinished(bool)) );
 
   connect(go_but, SIGNAL(pressed()), this, SLOT(doc_goPressed()) );
   connect(bak_but, SIGNAL(pressed()), this, SLOT(doc_bakPressed()) );
@@ -6583,8 +6585,9 @@ iDocDataPanel::iDocDataPanel()
   connect(wiki_edit, SIGNAL(returnPressed()), this, SLOT(doc_goPressed()) );
   connect(seturl_but, SIGNAL(pressed()), this, SLOT(doc_seturlPressed()) );
 
-  connect(webview->page(), SIGNAL(loadProgress(int)), prog_bar, SLOT(setValue(int)) );
-  connect(webview->page(), SIGNAL(loadStarted()), prog_bar, SLOT(reset()) );
+  connect(webview, SIGNAL(loadProgress(int)), prog_bar, SLOT(setValue(int)) );
+  connect(webview, SIGNAL(loadStarted()), this, SLOT(doc_loadStarted()) );
+  connect(webview, SIGNAL(loadFinished(bool)), this, SLOT(doc_loadFinished(bool)) );
 
   webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
   connect(webview->page(), SIGNAL(linkClicked(const QUrl&)),
@@ -6637,7 +6640,15 @@ void iDocDataPanel::doc_linkClicked(const QUrl& url) {
   QDesktopServices::openUrl(new_url);
 }
 
+void iDocDataPanel::doc_loadStarted() {
+  is_loading = true;
+  go_but->setText("X");
+  prog_bar->reset();
+}
+
 void iDocDataPanel::doc_loadFinished(bool ok) {
+  is_loading = false;
+  go_but->setText("Go");
   if(!ok) return;
   taDoc* doc_ = this->doc();
   if(!doc_) return;
@@ -6651,10 +6662,16 @@ void iDocDataPanel::doc_goPressed() {
   taDoc* doc_ = this->doc();
   if(!doc_) return;
   if(!url_edit) return;
-  doc_->wiki = wiki_edit->text();
-  doc_->url = url_edit->text();
-  doc_->UpdateAfterEdit();	// this will drive all the updating, including toggle from local etc
-  UpdatePanel();		// also update us..
+  if(is_loading) {
+    // now means stop!
+    if(webview) webview->stop();
+  }
+  else {
+    doc_->wiki = wiki_edit->text();
+    doc_->url = url_edit->text();
+    doc_->UpdateAfterEdit();	// this will drive all the updating, including toggle from local etc
+    UpdatePanel();		// also update us..
+  }
 }
 
 void iDocDataPanel::doc_bakPressed() {
@@ -8937,7 +8954,7 @@ iHelpBrowser* iHelpBrowser::instance() {
   if (!inst) {
     inst = new iHelpBrowser();
     iSize sz = taiM->dialogSize(taiMisc::dlgBig);
-    inst->resize(sz.width(), sz.height());
+    inst->resize(sz.width(), (int)(1.2f * (float)sz.height())); // a bit bigger than .6h
     inst->show();
     taiMiscCore::ProcessEvents(); // run default stuff
     taiMiscCore::ProcessEvents(); // run default stuff
@@ -9028,7 +9045,7 @@ void iHelpBrowser::init() {
   tool_bar->addSeparator();
   
   QLabel* lbl = new QLabel("search");
-  lbl->setToolTip("Enter text that must appear in an item to keep it visible");
+  lbl->setToolTip("Search for object type names to narrow the list below -- will find anything containing the text entered");
   tool_bar->addWidget(lbl);
   filter = new iLineEdit();
   filter->setToolTip(lbl->toolTip());
@@ -9044,7 +9061,6 @@ void iHelpBrowser::init() {
   hdr->setText(1, "Category");
   lay_tv->addWidget(tv, 1);
   
-  split->addWidget(tvw);
   QWidget* wid_tab = new QWidget;
   QVBoxLayout* lay_tab = new QVBoxLayout(wid_tab);
   lay_tab->setMargin(0);
@@ -9054,6 +9070,12 @@ void iHelpBrowser::init() {
   
   url_text = new iLineEdit();
   tool_bar->addWidget(url_text);
+
+  prog_bar = new QProgressBar(wid_tab);
+  prog_bar->setRange(0, 100);
+  prog_bar->setMaximumWidth(30);
+  tool_bar->addWidget(prog_bar);
+
   actGo = tool_bar->addAction("Go");
   actStop = tool_bar->addAction("X");
   actStop->setToolTip("Stop");
@@ -9066,7 +9088,6 @@ void iHelpBrowser::init() {
   btnAdd->setToolTip("add a new empty tab");
   tab->setCornerWidget(btnAdd, Qt::TopLeftCorner);
   lay_tab->addWidget(tab);
-  split->addWidget(wid_tab);
   
   setCentralWidget(split);
 //  layOuter->addWidget(status_bar);
@@ -9078,13 +9099,13 @@ void iHelpBrowser::init() {
   // fit tree to minimum -- we have to force splitter to resize unfortunately
   tv->resizeColumnToContents(0);
   int tv_width = tv->columnWidth(0) + ((QSleazyFakeTreeWidget*)tv)->sizeHintForColumn(1)
-    + tv->verticalScrollBar()->width() + 20;
+    + tv->verticalScrollBar()->width() + 40;
   tv->resize(tv_width, tv->height());
-/*  QList<int> sizes;
-  sizes << tv_width << split->width() - tv_width;
-  split->setSizes(sizes);*/
 //  tv->resizeColumnToContents(1);
   
+  split->addWidget(tvw);
+  split->addWidget(wid_tab);
+
   timFilter = new QTimer(this);
   timFilter->setSingleShot(true);
   timFilter->setInterval(500);
@@ -9149,7 +9170,6 @@ QWebView* iHelpBrowser::AddWebView(const String& label) {
   QWebPage* wp = brow->page();
   wp->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
   wp->setNetworkAccessManager(taiMisc::net_access_mgr);
-  //TODO: user style sheet 
   int tidx = tab->addTab(brow, label.toQString());
   tab->setCurrentIndex(tidx); // not automatic
   url_text->setText("");// something else has to make it valid
@@ -9167,6 +9187,8 @@ QWebView* iHelpBrowser::AddWebView(const String& label) {
     status_bar, SLOT(showMessage(const QString&)) );
   connect(wp, SIGNAL(unsupportedContent(QNetworkReply*)),
     this, SLOT(page_unsupportedContent(QNetworkReply*)) );
+  connect(brow, SIGNAL(loadProgress(int)), prog_bar, SLOT(setValue(int)) );
+  connect(brow, SIGNAL(loadStarted()), prog_bar, SLOT(reset()) );
   wp->setForwardUnsupportedContent(true);
 
   --m_changing;
@@ -9332,17 +9354,24 @@ void iHelpBrowser::LoadType(TypeDef* typ, const String& anchor) {
 }
 
 void iHelpBrowser::LoadUrl(const String& url) {
+  String base_url = url;
+  String anchor = url.after("#");
+  if (anchor.nonempty())
+    base_url = url.before("#");
   if (url.startsWith("ta:.Type.")) {
-    String base_url = url;
-    String anchor = url.after("#");
-    if (anchor.nonempty())
-      base_url = url.before("#");
     String typ_name(base_url.after(".Type."));
     TypeDef* typ = taMisc::types.FindName(typ_name);
     LoadType_impl(typ, base_url, anchor);
-  } else if (IsUrlExternal(url)) {
+  }
+  else if(url.startsWith("http://.type.")) {
+    String typ_name(base_url.after(".type."));
+    String nw_url = "ta:.Type." + typ_name;
+    LoadUrl(nw_url);		// convert..
+  }
+  else if (IsUrlExternal(url)) {
     LoadExternal_impl(url);
-  } else {
+  }
+  else {
     taMisc::Warning("Attempt to load unsupported url into Help Browser:",
       url);
   }
@@ -9457,10 +9486,23 @@ bool iHelpBrowser::SetItem(TypeDef* typ) {
   return (item != NULL);
 }
 
+void iHelpBrowser::showEvent(QShowEvent* event) {
+  inherited::showEvent(event);
+  QTimer::singleShot(150, this, SLOT(show_timeout()) );
+}
+
 void iHelpBrowser::show_timeout() {
   QTreeWidgetItem* ci = tv->currentItem();
   if (ci)
     tv->scrollToItem(ci);
+
+  tv->resizeColumnToContents(0);
+  int tv_width = tv->columnWidth(0) + ((QSleazyFakeTreeWidget*)tv)->sizeHintForColumn(1)
+    + tv->verticalScrollBar()->width() + 60;
+
+  QList<int> sizes;
+  sizes << tv_width << split->width() - tv_width;
+  split->setSizes(sizes);
 }
 
 void iHelpBrowser::stop_clicked() {

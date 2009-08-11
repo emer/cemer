@@ -6838,9 +6838,36 @@ String TypeDef::GetHTML(int detail_level) const {
   String wiki_help_url = taMisc::GetWikiURL(taMisc::web_help_wiki, true); // add index
 
   // preamble
+  rval.cat("<iframe src=\"").cat(wiki_help_url).cat(name).cat("\" width=\"99%\" height=\"40%\" style=\"border:5px solid #000000\"></iframe>\n");
   rval.cat("<head>\n");
   rval.cat("<title>").cat(taMisc::app_name).cat(" ").cat(taMisc::version).cat(" ").cat(name).cat(" Class Reference</title>\n");
-  rval.cat("<link href=\"classic.css\" rel=\"stylesheet\" type=\"text/css\" />\n");
+  // include style sheet right in the thing
+  rval.cat("<style type=\"text/css\">\n");
+  rval.cat("h3.fn,span.fn { margin-left: 1cm;  text-indent: -1cm; }\n");
+  rval.cat("a:link { color: #004faf; text-decoration: none }\n");
+  rval.cat("a:visited { color: #672967; text-decoration: none }\n");
+  rval.cat("a.obsolete { color: #661100; text-decoration: none }\n");
+  rval.cat("a.compat { color: #661100; text-decoration: none }\n");
+  rval.cat("a.obsolete:visited { color: #995500; text-decoration: none }\n");
+  rval.cat("a.compat:visited { color: #995500; text-decoration: none }\n");
+  rval.cat("td.postheader { font-family: sans-serif }\n");
+  rval.cat("tr.address { font-family: sans-serif }\n");
+  rval.cat("body { background: #ffffff; color: black }\n");
+  rval.cat("table tr.odd { background: #f0f0f0; color: black; }\n");
+  rval.cat("table tr.even { background: #e4e4e4; color: black; }\n");
+  rval.cat("table.annotated th { padding: 3px; text-align: left }\n");
+  rval.cat("table.annotated td { padding: 3px; }\n");
+  rval.cat("table tr pre { padding-top: none; padding-bottom: none; padding-left: none; padding-right: none; border: none; background: none }\n");
+  rval.cat("tr.qt-style { background: #66B036; color: black }\n");
+  rval.cat("body pre { padding: 0.2em; border: #e7e7e7 1px solid; background: #f1f1f1; color: black }\n");
+  rval.cat("span.preprocessor, span.preprocessor a { color: darkblue; }\n");
+  rval.cat("span.comment { color: darkred; font-style: italic }\n");
+  rval.cat("span.string,span.char { color: darkgreen; }\n");
+  rval.cat(".title { text-align: center }\n");
+  rval.cat(".subtitle { font-size: 0.8em }\n");
+  rval.cat(".small-subtitle { font-size: 0.65em }\n");
+  rval.cat("</style>\n");
+  //  rval.cat("<link href=\"classic.css\" rel=\"stylesheet\" type=\"text/css\" />\n");
   rval.cat("</head>\n");
   rval.cat("<body>\n");
   rval.cat("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n");
@@ -6850,7 +6877,7 @@ String TypeDef::GetHTML(int detail_level) const {
   rval.cat("<td width=\"1\">&nbsp;&nbsp;</td><td class=\"postheader\" valign=\"center\">");
   rval.cat("<a href=\"").cat(taMisc::web_home).cat("\"><font color=\"#004faf\">Home</font></a>&nbsp;&middot; ");
   rval.cat("<a href=\"").cat(wiki_help_url).cat(name).cat("\"><font color=\"#004faf\">Wiki Docs For: ").cat(name).cat("</font></a>&nbsp;&middot; ");
-  rval.cat("<a href=\"ta:class_browser\"><font color=\"#004faf\">Class&nbsp;Browser</font></a>&nbsp;\n");
+  rval.cat("<a href=\"ta:.Type.").cat(name).cat("\"><font color=\"#004faf\">Emergent&nbsp;Help&nbsp;Browser</font></a>&nbsp;\n");
 
   rval.cat("<td align=\"right\" valign=\"top\" width=\"230\"></td></tr></table><h1 class=\"title\">");
   rval.cat(name).cat(" Class Reference<br />\n");

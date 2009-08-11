@@ -1811,6 +1811,7 @@ public: // IDataLinkClient interface
   override bool		ignoreDataChanged() const;
 protected:
   taDoc*		m_doc; // ref managed through link; we just put ptr here to detect change
+  bool			is_loading;
   override void		DataChanged_impl(int dcr, void* op1, void* op2);
   override void 	UpdatePanel_impl();
   override bool 	eventFilter(QObject *obj, QEvent *event);
@@ -1819,11 +1820,12 @@ protected:
 #ifndef __MAKETA__
 protected slots:
   void			doc_linkClicked(const QUrl& url);
-  void			doc_loadFinished(bool ok);
   void			doc_goPressed();
   void			doc_bakPressed();
   void			doc_fwdPressed();
   void			doc_seturlPressed();
+  void			doc_loadStarted();
+  void			doc_loadFinished(bool ok);
 //  void 			br_copyAvailable (bool yes);
 #endif
 
@@ -2494,6 +2496,7 @@ public:
   iLineEdit*		  filter;
   QTreeWidget*		  tv;
   iLineEdit*		  url_text;
+  QProgressBar*		  prog_bar;
   QAction*		  actGo;
   QAction*	    	  actStop;
   QTabWidget*		  tab; // note: use our own load() routine for urls
@@ -2527,6 +2530,7 @@ protected:
   QTreeWidgetItem*	FindItem(TypeDef* typ); // find item from type -- we derefence type to base type
   void			ItemChanged(QTreeWidgetItem* item); // item changed to this, sync
   bool			SetItem(TypeDef* typ); // set active item by TypeDef, true if set
+  void 			showEvent(QShowEvent* e); // override
   
   iHelpBrowser();
   ~iHelpBrowser();
