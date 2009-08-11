@@ -4520,6 +4520,7 @@ void taiTokenPtrButton::EditPanel() {
   if (dl) {
     imw->EditItem(dl, true); // edit, but not in this tab
   }
+  tabMisc::DelayedFunCall_gui(cur_base, "BrowserSelectMe");
 }
 
 
