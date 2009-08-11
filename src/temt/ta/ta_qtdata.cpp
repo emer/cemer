@@ -3481,17 +3481,12 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
   
   if (flags_ & flgEditDialog) {
     if (!(flags_ & flgReadOnly)) {
-      btnEdit = new iMenuButton(act_par);
-      btnEdit->setText("...");
-      btnEdit->setToolTip("edit this token");
-      QMenu* mnuEdit = new QMenu(act_par); // note: ownership not transferred when set
-      mnuEdit->addAction("Edit in another panel", this, SLOT(EditPanel()) );
-      mnuEdit->addAction("Edit in a dialog", this, SLOT(EditDialog()) );
-      btnEdit->setMenu(mnuEdit);
+      btnEdit = new QToolButton(act_par);
+      btnEdit->setIcon( QIcon( QPixmap(":/images/editedit.png") ) );
+      btnEdit->setToolTip("edit this item in another panel");
+      connect(btnEdit, SIGNAL(clicked()), this, SLOT(EditPanel()) );
       btnEdit->setFixedHeight(taiM->text_height(defSize()));
       lay->addWidget(btnEdit);
-      connect(btnEdit, SIGNAL(clicked()),
-        this, SLOT(EditPanel()) );
     }
   }
   

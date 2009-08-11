@@ -4891,7 +4891,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   // X AXis
   layXAxis = new QHBoxLayout; layWidg->addLayout(layXAxis);
 
-  int list_flags = taiData::flgNullOk | taiData::flgAutoApply;
+  int list_flags = taiData::flgNullOk | taiData::flgAutoApply | taiData::flgNoHelp;
 
   lblXAxis = taiM->NewLabel("X:", widg, font_spec);
   lblXAxis->setToolTip("Column of data to plot for the X Axis");
