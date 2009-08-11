@@ -2528,9 +2528,11 @@ protected:
   bool 			ShowItem(const QTreeWidgetItem* item) const;
   TypeDef*		GetTypeDef(QTreeWidgetItem* item);
   QTreeWidgetItem*	FindItem(TypeDef* typ); // find item from type -- we derefence type to base type
+  QTreeWidgetItem*	FindItem(const String& typ_name); // find item from type name
   void			ItemChanged(QTreeWidgetItem* item); // item changed to this, sync
   bool			SetItem(TypeDef* typ); // set active item by TypeDef, true if set
   void 			showEvent(QShowEvent* e); // override
+  void			UpdateTreeItem(); // call after tab changes and url changes
   
   iHelpBrowser();
   ~iHelpBrowser();

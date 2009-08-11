@@ -9300,6 +9300,18 @@ QTreeWidgetItem* iHelpBrowser::FindItem(TypeDef* typ) {
   return NULL;
 }
 
+QTreeWidgetItem* iHelpBrowser::FindItem(const String& typ_name_) {
+  QString typ_name = typ_name_;
+  QTreeWidgetItemIterator it(tv);
+  QTreeWidgetItem* rval;
+  while ((rval = *it)) {
+    if (rval->text(0) == typ_name) 
+      return rval;
+    ++it;
+  }
+  return NULL;
+}
+
 QWebView* iHelpBrowser::FindWebView(const String& url, int& idx) {
   String base_url = url; // common
   if (url.contains("#")) {
@@ -9323,7 +9335,6 @@ TypeDef* iHelpBrowser::GetTypeDef(QTreeWidgetItem* item) {
 void iHelpBrowser::go_clicked() {
   QUrl url(url_text->text());
   QDesktopServices::openUrl(url); 
-//  curWebView()->setUrl();
 }
 
 void iHelpBrowser::ItemChanged(QTreeWidgetItem* item) {
@@ -9518,6 +9529,7 @@ void iHelpBrowser::tab_currentChanged(int index) {
   } else {
     url_text->setText("");
   }
+  UpdateTreeItem();
   --m_changing;
 }
 
@@ -9548,6 +9560,22 @@ void iHelpBrowser::timFilter_timeout() {
 void iHelpBrowser::tv_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
   if (m_changing) return;
   ItemChanged(curr);
+}
+
+void iHelpBrowser::UpdateTreeItem() {
+  String url = curWebView()->url().toString();
+  if (!url.startsWith("ta:.Type.")) return;
+  
+  String typ_name = url.after("ta:.Type.");
+  if (typ_name.contains("#"))
+    typ_name = typ_name.before("#");
+  
+  QTreeWidgetItem* twi = FindItem(typ_name);
+  if (twi != tv->currentItem()) {
+    ++m_changing;
+    tv->setCurrentItem(twi);
+    --m_changing;
+  }
 }
 
 QWebView* iHelpBrowser::webView(int index) {
