@@ -1336,14 +1336,14 @@ public:
     void Settle_Init_TargFlags(LeabraNetwork* net)
     { ((LeabraUnitSpec*)GetUnitSpec())->Settle_Init_TargFlags(this, net); }
     // #CAT_Activation initialize external input flags based on phase
-    void Settle_DecayState(LeabraNetwork* net)
+    void Settle_DecayState(LeabraNetwork* net, int)
     { ((LeabraUnitSpec*)GetUnitSpec())->Settle_DecayState(this, net); }
     // #CAT_Activation decay activation states towards initial values: at phase-level boundary at start of settling
-    void Compute_NetinScale(LeabraNetwork* net)
+    void Compute_NetinScale(LeabraNetwork* net, int)
     { ((LeabraUnitSpec*)GetUnitSpec())->Compute_NetinScale(this, net); }
     // #CAT_Activation compute net input scaling values
 
-  void Compute_NetinScale_Senders(LeabraNetwork* net)
+  void Compute_NetinScale_Senders(LeabraNetwork* net, int)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_NetinScale_Senders(this, net); }
   // #CAT_Activation compute net input scaling values for sending cons -- copies from values computed in the recv guys -- has to be done as a second phase of the Settle_Init_Unit stage after all the recv ones are computed
 

@@ -1796,7 +1796,7 @@ public:
 #ifdef __MAKETA__
 typedef void* ThreadUnitCall;
 #else
-typedef EMERGENT_API taTaskMethCall2<Unit, void, Network*, int> ThreadUnitCall;
+typedef taTaskMethCall2<Unit, void, Network*, int> ThreadUnitCall;
 typedef void (Unit::*ThreadUnitMethod)(Network*, int);
 #endif
 

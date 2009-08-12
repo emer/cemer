@@ -310,7 +310,7 @@ template <class Class, typename ReturnType, typename Parameter1, typename Parame
 class taTaskMethCall2 {
   // useful template for creating tasks that call the same method on a list of same objs
 public:
-  typedef ReturnType (Class::*Method)(Parameter1, Parameter2);
+  typedef ReturnType (Class::*Method) (Parameter1, Parameter2);
 
   taTaskMethCall2(Method _method) {
     method        = _method;
