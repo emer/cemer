@@ -741,9 +741,11 @@ public:
   void			SetOffFlag(bool off);
   // #MENU #MENU_ON_Object #DYN1 set the OFF flag to given state (i.e., turn OFF or ON this code element)
   void			SetNonStdFlag(bool non_std);
-  // #MENU #MENU_ON_Object #DYN1 set non standard flag to given state: indicates that this is not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
+  // #MENU #MENU_ON_Object #DYN1 set non standard flag to given state: flag indicates that this is not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
   void			SetNewElFlag(bool new_el);
-  // #MENU #MENU_ON_Object #DYN1 set new element flag to given state: this element was recently added to the program (just for user information/highlighting)
+  // #MENU #MENU_ON_Object #DYN1 set new element flag to given state: flag indicates that this element was recently added to the program (just for user information/highlighting)
+  void			SetVerboseFlag(bool new_el);
+  // #MENU #MENU_ON_Object #DYN1 set verbose flag to given state: when this part of the program is run, an informational message will be printed out on the css Console -- very useful for debugging
 
   virtual ProgVar*	FindVarName(const String& var_nm) const;
   // find given variable within this program element -- NULL if not found

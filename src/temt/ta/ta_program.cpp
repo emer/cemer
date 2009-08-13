@@ -2379,6 +2379,11 @@ void ProgEl::SetNewElFlag(bool new_el) {
   DataChanged(DCR_ITEM_UPDATED);
 }
 
+void ProgEl::SetVerboseFlag(bool new_el) {
+  SetProgFlagState(VERBOSE, new_el);
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
 void ProgEl::PreGen(int& item_id) {
   if(HasProgFlag(OFF)) return;
   PreGenMe_impl(item_id);
