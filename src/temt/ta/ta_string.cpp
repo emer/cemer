@@ -1198,6 +1198,13 @@ String& String::xml_esc() {
   return *this;
 }
 
+String& String::quote_esc() {
+  makeUnique();
+  gsub("\\", "\\\\");
+  gsub("\"", "\\\"");
+  return *this;
+}
+
 // IO
 #define ISTR_RESIZE_QUANTA 80
 TA_API istream& operator>>(istream& s, String& x) {

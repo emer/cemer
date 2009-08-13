@@ -2550,6 +2550,8 @@ bool taRootBase::Startup_InitViewColors() {
 					 false, _nilString, true, "yellow1");
   taMisc::view_colors->FindMakeViewColor("ProgElNewEl", "State: program element is newly added",
 					 false, _nilString, true, "SpringGreen1");
+  taMisc::view_colors->FindMakeViewColor("ProgElVerbose", "State: program element is verbose",
+					 false, _nilString, true, "khaki");
   taMisc::view_colors->FindMakeViewColor("Comment", "Program comment",
 					 true, "firebrick", true, "firebrick1");
   taMisc::view_colors->FindMakeViewColor("ProgCtrl", "Program keyword",

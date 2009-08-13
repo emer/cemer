@@ -471,6 +471,8 @@ public:
   // #CAT_Modify capitalize the first letter of each word of this string (NOTE: modifies this string, and also returns the resulting string value)
   String&		xml_esc();
   // #CAT_Modify xml escape, ex & to &amp; of this string (NOTE: modifies this string, and also returns the resulting string value)
+  String&		quote_esc();
+  // #CAT_Modify quote escape, replacing double quotes " and back-slashes with their safely quoted forms (just adds a backslash) -- makes the string safe to print or save (NOTE: modifies this string, and also returns the resulting string value)
 
   void			truncate(uint new_len); 
   // #CAT_Modify shortens the string to new_len (if less than curr)

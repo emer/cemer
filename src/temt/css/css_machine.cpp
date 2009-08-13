@@ -1267,11 +1267,7 @@ cssEl::RunStat cssElInCFun::Do(cssProg* prg) {
 #ifdef _MSC_VER
   cssEl* args[ArgMax + 1];	// only need fixed amount
 #else
-# ifdef DEBUG
-  if (argc < 0)
-    cerr << "cssElInCFun::Do argc is less than 0: " << argc << "\n";
-# endif
-  cssEl* args[argc + 1];	// only need fixed amount
+  cssEl* args[targc + 1];	// only need fixed amount
 #endif
   int act_argc;
   BindArgs(args, act_argc);

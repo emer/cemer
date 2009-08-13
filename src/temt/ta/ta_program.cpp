@@ -2358,6 +2358,8 @@ String ProgEl::GetStateDecoKey() const {
       return "ProgElNonStd";
     if(HasProgFlag(NEW_EL))
       return "ProgElNewEl";
+    if(HasProgFlag(VERBOSE))
+      return "ProgElVerbose";
   }
   return rval;
 }
@@ -2573,6 +2575,12 @@ const String StaticMethodCall::GenCssBody_impl(int indent_level) {
     return rval;
   }
   
+  if(IsVerbose()) {
+    String argstmp = meth_args.GenCssBody_impl(indent_level);
+    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"calling static method " +
+      object_type->name + "::" + method->name + argstmp.quote_esc() + "\");\n";
+  }
+
   if (result_var)
     rval += result_var->name + " = ";
   rval += object_type->name;
@@ -2676,6 +2684,11 @@ const String ProgramCall::GenCssBody_impl(int indent_level) {
   rval += "Program* target = this" + GetPath(NULL, program())+ "->GetTarget();\n";
   rval += cssMisc::Indent(indent_level);
   rval += "if(target) {\n";
+
+  if(IsVerbose()) {
+    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"calling program\",target->name);\n";
+  }
+
   if (prog_args.size > 0) {
     rval += cssMisc::Indent(indent_level+1);
     rval += "// set global vars of target\n";
@@ -3042,7 +3055,15 @@ void FunctionCall::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 const String FunctionCall::GenCssBody_impl(int indent_level) {
   if (!fun) return _nilString;
-  String rval = cssMisc::Indent(indent_level);
+  String rval;
+
+  if(IsVerbose()) {
+    String argstmp = fun_args.GenCssBody_impl(indent_level);
+    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"calling function " +
+      fun->name + argstmp.quote_esc() + "\");\n";
+  }
+
+  rval += cssMisc::Indent(indent_level);
   if(result_var) {
     rval += result_var->name + "=";
   }

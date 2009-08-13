@@ -179,7 +179,12 @@ void WhileLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 const String WhileLoop::GenCssPre_impl(int indent_level) {
   test.ParseExpr();		// re-parse just to be sure!
-  return cssMisc::Indent(indent_level) + "while (" + test.GetFullExpr() + ") {\n";
+  String rval = cssMisc::Indent(indent_level) + "while (" + test.GetFullExpr() + ") {\n";
+  if(IsVerbose()) {
+    rval += cssMisc::Indent(indent_level+1) + "taMisc::Info(\"starting while(" +
+      test.GetFullExpr().quote_esc() + ") loop...\");\n";
+  }
+  return rval;
 }
 
 const String WhileLoop::GenCssPost_impl(int indent_level) {
@@ -201,6 +206,9 @@ void DoLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 const String DoLoop::GenCssPre_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level) + "do {\n";
+  if(IsVerbose())
+    rval += cssMisc::Indent(indent_level+1) + "taMisc::Info(\"starting do..while(" +
+      test.GetFullExpr().quote_esc() + ") loop\");\n";
   return rval; 
 }
 
@@ -340,8 +348,13 @@ const String ForLoop::GenCssPre_impl(int indent_level) {
   test.ParseExpr();		// re-parse just to be sure!
   iter.ParseExpr();		// re-parse just to be sure!
   String rval;
+  String full_expr = init.GetFullExpr() + "; " + test.GetFullExpr() + "; " + iter.GetFullExpr();
   rval = cssMisc::Indent(indent_level) + 
-    "for (" + init.GetFullExpr() + "; " + test.GetFullExpr() + "; " + iter.GetFullExpr() + ") {\n";
+    "for (" + full_expr + ") {\n";
+  if(IsVerbose()) {
+    rval += cssMisc::Indent(indent_level+1) + "taMisc::Info(\"starting for(" + 
+      full_expr.quote_esc() + ") loop\");\n";
+  }
   return rval; 
 }
 
@@ -389,7 +402,10 @@ const String IfContinue::GenCssBody_impl(int indent_level) {
   rval = cssMisc::Indent(indent_level);
   String fexp = cond.GetFullExpr();
   if(fexp.nonempty()) rval += "if(" + fexp + ") ";
-  rval += "continue;\n";
+  if(IsVerbose())
+    rval += "{ taMisc::Info(\"if(" + fexp.quote_esc() + ") == true, continuing\"); continue; }\n";
+  else
+    rval += "continue;\n";
   return rval; 
 }
 
@@ -420,7 +436,10 @@ const String IfBreak::GenCssBody_impl(int indent_level) {
   rval = cssMisc::Indent(indent_level);
   String fexp = cond.GetFullExpr();
   if(fexp.nonempty()) rval += "if(" + fexp + ") ";
-  rval += "break;\n";
+  if(IsVerbose())
+    rval += "{ taMisc::Info(\"if=true, breaking\"); break; }\n";
+  else
+    rval += "break;\n";
   return rval; 
 }
 
@@ -449,8 +468,16 @@ const String IfReturn::GenCssBody_impl(int indent_level) {
   String rval;
   rval = cssMisc::Indent(indent_level);
   String fexp = cond.GetFullExpr();
-  if(fexp.nonempty()) rval += "if(" + fexp + ") ";
-  rval += "return;\n";
+  if(fexp.empty()) {
+    rval += "return;\n";
+  }
+  else {
+    rval += "if(" + fexp + ") ";
+    if(IsVerbose())
+      rval += "{ taMisc::Info(\"if(" + fexp.quote_esc() + ") == true, returning\"); return; }\n";
+    else
+      rval += "return;\n";
+  }
   return rval; 
 }
 
@@ -484,6 +511,9 @@ const String If::GenCssPre_impl(int indent_level) {
   cond.ParseExpr();		// re-parse just to be sure!
   String rval = cssMisc::Indent(indent_level);
   rval += "if(" + cond.GetFullExpr() + ") {\n";
+  if(IsVerbose())
+    rval += cssMisc::Indent(indent_level+1) + "taMisc::Info(\"if("
+      + cond.GetFullExpr().quote_esc() + ") == true...\");\n";
   return rval; 
 }
 
@@ -532,6 +562,9 @@ const String IfElse::GenCssBody_impl(int indent_level) {
   // don't gen 'else' portion unless there are els
   if (false_code.size > 0) {
     rval += cssMisc::Indent(indent_level) + "} else {\n";
+    if(IsVerbose())
+      rval += cssMisc::Indent(indent_level+1) + "taMisc::Info(\"if(" + 
+	cond.GetFullExpr().quote_esc() + ") == false, in else...\");\n";
     rval += false_code.GenCss(indent_level + 1);
   }
   return rval;
@@ -644,6 +677,9 @@ const String CaseBlock::GenCssPre_impl(int indent_level) {
     rval = il + "default: {\n";
   else
     rval = il + "case " + case_val.GetFullExpr() + ": {\n";
+  if(IsVerbose())
+    rval += cssMisc::Indent(indent_level+1) + "taMisc::Info(\"in case " +
+      case_val.GetFullExpr().quote_esc() + "...\");\n";
   return rval; 
 }
 
@@ -686,6 +722,9 @@ const String Switch::GenCssPre_impl(int indent_level) {
   if(!switch_var) return _nilString;
   String rval = cssMisc::Indent(indent_level);
   rval += "switch(" + switch_var->name + ") {\n";
+  if(IsVerbose())
+    rval += cssMisc::Indent(indent_level+1) + "taMisc::Info(\"in switch(" +
+      switch_var->name + ")...\");\n";
   return rval; 
 }
 
@@ -823,6 +862,9 @@ const String AssignExpr::GenCssBody_impl(int indent_level) {
   }
   
   rval += result_var->name + " = " + expr.GetFullExpr() + ";\n";
+  if(IsVerbose())
+    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"assigned " + result_var->name
+      + " = " + expr.GetFullExpr().quote_esc() + "; now = \", " + result_var->name + ");\n";
   return rval;
 }
 
@@ -859,6 +901,9 @@ const String VarIncr::GenCssBody_impl(int indent_level) {
   }
   
   rval += var->name + " = " + var->name + " + " + expr.GetFullExpr() + ";\n";
+  if(IsVerbose())
+    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"incremented " + var->name
+      + " += " + expr.GetFullExpr().quote_esc() + "; now = \", " + var->name + ");\n";
   return rval;
 }
 
@@ -920,6 +965,12 @@ const String MethodCall::GenCssBody_impl(int indent_level) {
    return rval;
   }
   
+  if(IsVerbose()) {
+    String argstmp = meth_args.GenCssBody_impl(indent_level);
+    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"calling method " +
+      obj->name + "->" + method->name + argstmp.quote_esc() + "\");\n";
+  }
+
   if(result_var)
     rval += result_var->name + " = ";
   rval += obj->name;
@@ -1080,6 +1131,10 @@ const String MemberAssign::GenCssBody_impl(int indent_level) {
     rval += cssMisc::Indent(indent_level);
     rval += obj->name + "->UpdateAfterEdit();\n";
   }
+  if(IsVerbose())
+    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"assigned " + obj->name + "->" + path
+      + " = " + expr.GetFullExpr().quote_esc() + "; now = \", " +
+      obj->name + "->" + path + ");\n";
   return rval;
 }
 
@@ -1153,7 +1208,7 @@ const String MemberFmArg::GenCssBody_impl(int indent_level) {
     rval += il2 + obj->name + "->UpdateAfterEdit();\n";
   }
 
-  if(!quiet)
+  if(!quiet || IsVerbose())
     rval += il2 + "taMisc::Info(\"Set " + flpth + " to:\"," + flpth + ");\n";
   rval += il1 + "}\n";
   rval += il + "}\n";
@@ -1209,6 +1264,12 @@ const String MemberMethodCall::GenCssBody_impl(int indent_level) {
    return rval;
   }
   
+  if(IsVerbose()) {
+    String argstmp = meth_args.GenCssBody_impl(indent_level);
+    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"calling method " +
+      obj->name + "->" + path + "->" + method->name + argstmp.quote_esc() + "\");\n";
+  }
+
   if(result_var)
     rval += result_var->name + " = ";
   rval += obj->name + "->" + path + "->";
@@ -1400,6 +1461,10 @@ void ReturnExpr::CheckChildConfig_impl(bool quiet, bool& rval) {
 const String ReturnExpr::GenCssBody_impl(int indent_level) {
   expr.ParseExpr();		// re-parse just to be sure!
   String rval;
+  if(IsVerbose())
+    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"returning value: "
+      + expr.GetFullExpr().quote_esc() + ");\n";
+
   rval += cssMisc::Indent(indent_level);
   rval += "return " + expr.GetFullExpr() + ";\n";
   return rval;
@@ -1483,6 +1548,14 @@ bool OtherProgramVar::GenCss_OneVar(String& rval, ProgVarRef& var,
     rval += il + "other_prog->SetVar(\"" + var->name + "\", " + var->name +");\n";
   else
     rval += il + var->name + " = other_prog->GetVar(\"" + var->name + "\");\n";
+  if(IsVerbose()) {
+    if(set_other)
+      rval += il + "taMisc::Info(\"assigned var " + var->name
+	+ " in other program: " + other_prog->name + " to same variable in this program, which has value:\"," + var->name + ");\n";
+    else
+      rval += il + "taMisc::Info(\"assigned var " + var->name
+	+ " in this program to same variable in other program: " + other_prog->name + " -- now has value:\"," + var->name + ");\n";
+  }
   return true;
 }
 
