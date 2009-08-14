@@ -906,7 +906,7 @@ void gpiMultiEditDataHost::Constr_Body() {
 
 void gpiMultiEditDataHost::Constr_Box() {
   // create the splitter before calling base, so scrbody gets put into the splitter
-  splBody = new QSplitter(widget());
+  splBody = new iSplitter(widget());
   splBody->setOrientation(Qt::Vertical);
   vblDialog->addWidget(splBody, 1); // gets all the space
 

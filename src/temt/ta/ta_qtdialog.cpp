@@ -50,7 +50,6 @@
 #include <qpushbutton.h>
 #include <QScrollArea>
 #include <qsizepolicy.h>
-#include <QSplitter>
 #include <qstring.h>
 #include <qtimer.h>
 #include <qtooltip.h>

@@ -21,11 +21,9 @@
 #include "ilineedit.h"
 #include "inetworkaccessmanager.h"
 #include "ispinbox.h"
-//#include "itextbrowser.h"
 
 #include <QDesktopServices>
 #include <QLayout>
-#include <QSplitter>
 #include <QStatusBar>
 #include <QTabWidget>
 #include <QTimer>

@@ -29,6 +29,7 @@
 
 #include "ilineedit.h"
 #include "ispinbox.h"
+#include "iscrollarea.h"
 
 #include <QApplication>
 #include <QButtonGroup>
@@ -40,7 +41,6 @@
 #include <qpalette.h>
 #include <qpixmap.h>
 #include <QPushButton>
-#include <QSplitter>
 #include <QTableView>
 #include <QTextStream>
 #include <QHeaderView>
@@ -5413,7 +5413,7 @@ iDataTableEditor::iDataTableEditor(QWidget* parent)
   m_cell_par = NULL;
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(0); layOuter->setSpacing(0);
-  splMain = new QSplitter(this);
+  splMain = new iSplitter(this);
   splMain->setOrientation(Qt::Vertical);
   layOuter->addWidget(splMain);
   tvTable = new iDataTableView();

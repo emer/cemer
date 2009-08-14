@@ -52,7 +52,6 @@
 #include <QNetworkReply>	
 #include <QScrollArea>
 #include <QScrollBar>
-#include <QSplitter>
 #include <QStackedWidget>
 #include <QStackedLayout>
 #include <QStatusBar>
@@ -9028,7 +9027,7 @@ void iHelpBrowser::init() {
   this->setWindowTitle("Help Browser");
 //  this->setSizeGripEnabled(true);
   
-  split = new QSplitter;
+  split = new iSplitter;
   
   QWidget* tvw = new QWidget;
   QVBoxLayout* lay_tv = new QVBoxLayout(tvw);
