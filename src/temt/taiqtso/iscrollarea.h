@@ -55,6 +55,7 @@ protected:
 
   override QSplitterHandle* createHandle();
   override void showEvent(QShowEvent* ev);
+protected slots:
   void		showDelayed();
 };
 
