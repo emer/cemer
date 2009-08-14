@@ -497,13 +497,15 @@ istream* taFiler::open_read() {
   // note: it is the filename that determines compress, not the flag
   if (m_fname.endsWith(taMisc::compress_sfx)) {
     compressed = true;
-    istrm = new igzstream(FileName().chars(), ios::in);
+    int acc = access(FileName(), R_OK);
+    if(acc == 0)
+      istrm = new igzstream(FileName().chars(), ios::in);
   } else {
     fstrm = new fstream(FileName().chars(), ios::in);
     istrm = (istream*)fstrm;
   }
   // note: check "good" rather than "bad" because good is proactive, bad is only reactive
-  if (!istrm->good()) {
+  if(!istrm || !istrm->good()) {
     taMisc::Error("File:",FileName(),"could not be opened for reading");
     Close();
     return NULL;

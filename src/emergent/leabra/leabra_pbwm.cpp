@@ -2323,7 +2323,7 @@ void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_
 	  LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
 	  if(tol->lesioned() || tol->hard_clamped || !send_gp->size)	continue;
 	  LeabraLayerSpec* tols = (LeabraLayerSpec*)tol->GetLayerSpec();
-	  if(tols->InheritsFrom(&TA_PVLVLayerSpec) || tols->InheritsFrom(&TA_XMatrixLayerSpec))
+	  if(tols->InheritsFrom(&TA_LVeLayerSpec) || tols->InheritsFrom(&TA_XMatrixLayerSpec))
 	    send_gp->Send_NetinDelta(net, thread_no, act_delta);
 	}
 	u->misc_2 = act_ts;	// cache the last sent value
@@ -2338,7 +2338,7 @@ void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_
 	LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
 	if(tol->lesioned() || tol->hard_clamped || !send_gp->size)	continue;
 	LeabraLayerSpec* tols = (LeabraLayerSpec*)tol->GetLayerSpec();
-	if(tols->InheritsFrom(&TA_PVLVLayerSpec) || tols->InheritsFrom(&TA_XMatrixLayerSpec))
+	if(tols->InheritsFrom(&TA_LVeLayerSpec) || tols->InheritsFrom(&TA_XMatrixLayerSpec))
 	  send_gp->Send_NetinDelta(net, thread_no, act_delta);
       }
       u->misc_2 = 0.0f;		// now it effectively sent a 0..
@@ -2361,7 +2361,7 @@ void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_
 	  LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
 	  if(tol->lesioned() || tol->hard_clamped || !send_gp->size)	continue;
 	  LeabraLayerSpec* tols = (LeabraLayerSpec*)tol->GetLayerSpec();
-	  if(!(tols->InheritsFrom(&TA_PVLVLayerSpec) || tols->InheritsFrom(&TA_XMatrixLayerSpec)))
+	  if(!(tols->InheritsFrom(&TA_LVeLayerSpec) || tols->InheritsFrom(&TA_XMatrixLayerSpec)))
 	    send_gp->Send_NetinDelta(net, thread_no, act_delta);
 	}
 	u->act_sent = act_ts;	// cache the last sent value
@@ -2376,7 +2376,7 @@ void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_
 	LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
 	if(tol->lesioned() || tol->hard_clamped || !send_gp->size)	continue;
 	LeabraLayerSpec* tols = (LeabraLayerSpec*)tol->GetLayerSpec();
-	if(!(tols->InheritsFrom(&TA_PVLVLayerSpec) || tols->InheritsFrom(&TA_XMatrixLayerSpec)))
+	if(!(tols->InheritsFrom(&TA_LVeLayerSpec) || tols->InheritsFrom(&TA_XMatrixLayerSpec)))
 	  send_gp->Send_NetinDelta(net, thread_no, act_delta);
       }
       u->act_sent = 0.0f;		// now it effectively sent a 0..
