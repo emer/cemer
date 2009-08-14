@@ -73,6 +73,7 @@
 
 #include "itextbrowser.h"
 #include "itextedit.h"
+#include "iscrollarea.h"
 
 using namespace Qt;
 /*TODO: nuke
@@ -3664,7 +3665,7 @@ void iMainWindowViewer::Constr_impl() {
     fileQuitAction->AddTo(fileMenu);
   }
 
-  body = new QSplitter(); // def is hor
+  body = new iSplitter(); // def is hor
   setCentralWidget(body);
   body->show();
 
