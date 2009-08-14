@@ -375,10 +375,11 @@ void QConsole::mouseReleaseEvent(QMouseEvent *e) {
   else if(e->button() & Qt::LeftButton) {
     copy();			// always copy!
   }
-  QTextCursor cursor(textCursor());
-  // displays the prompt
-  gotoEnd(cursor, false);
-  setTextCursor(cursor);
+  // this is actually confusing to people -- just let it be..
+//   QTextCursor cursor(textCursor());
+//   // displays the prompt
+//   gotoEnd(cursor, false);
+//   setTextCursor(cursor);
 }
 
 

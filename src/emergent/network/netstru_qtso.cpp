@@ -280,7 +280,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* s
 	  Connection* con = tcong->FindConFrom(src_u);
 	  if (!con) continue;
 	  uvd.disp_base = act_md->GetOff(con);
-	  break; //TODO: is this right????
+	  break;		// once you've got one, done!
 	}
       }
       else {
@@ -291,7 +291,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* s
 	  Connection* con = tcong->FindConFrom(src_u);
 	  if (!con) continue;
 	  uvd.disp_base = act_md->GetOff(con);
-	  break; //TODO: is this right????
+	  break;		// once you've got one, done!
 	}
       }
     }
@@ -1134,6 +1134,7 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
   SoMFUInt32& color = vtx_prop->orderedRGBA;
 
   uint32_t* color_dat = color.startEditing();
+  if(!color_dat) return;
 
   float trans = nv->view_params.unit_trans;
   float val;
@@ -2150,6 +2151,12 @@ String Network::GetViewVar() {
   NetView* nv = FindView();
   if(!nv || !nv->unit_disp_md) return _nilString;
   return nv->unit_disp_md->name;
+}
+
+Unit* Network::GetViewSrcU() {
+  NetView* nv = FindView();
+  if(nv) return nv->unit_src;
+  return NULL;
 }
 
 void Network::PlaceNetText(NetTextLoc net_text_loc, float scale) {

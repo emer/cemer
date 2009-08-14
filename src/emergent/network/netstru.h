@@ -2154,6 +2154,8 @@ public:
   // #CAT_Display find (first) existing viewer of this network
   virtual String GetViewVar();
   // #CAT_Display get the currently viewed variable name from netview
+  virtual Unit* GetViewSrcU();
+  // #CAT_Display get the currently picked unit (for viewing weights) from netview
 #endif
 
   virtual NetViewObj* NewViewText(const String& txt);

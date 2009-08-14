@@ -2068,9 +2068,51 @@ void Unit::MonitorVar(NetMonitor* net_mon, const String& variable) {
 }
 
 bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap) {
-  MemberDef* md = NULL;
-  Variant val = GetValFromPath(var, md, true); // true = warn
-  if(val.isNull() || val.isInvalid()) return false;  // already warned
+  Variant val = 0.0f;
+  if(var.startsWith("r.") || var.startsWith("s.")) {
+    Unit* src_u = NULL;
+    if(own_lay() && own_lay()->own_net)
+      src_u = own_lay()->own_net->GetViewSrcU();
+    if(!src_u) return false;
+    String cvar = var.after(".");
+    bool is_send = var.startsWith("s.");
+    if(is_send) {
+      for(int g=0;g<recv.size;g++) {
+	RecvCons* tcong = recv.FastEl(g);
+	MemberDef* act_md = tcong->con_type->members.FindName(cvar);
+	if(!act_md) continue;
+	Connection* con = tcong->FindConFrom(src_u);
+	if(!con) continue;
+	val = *((float*)act_md->GetOff(con));
+	break;
+      }
+    }
+    else {
+      for(int g=0;g<send.size;g++) {
+	SendCons* tcong = send.FastEl(g);
+	MemberDef* act_md = tcong->con_type->members.FindName(cvar);
+	if(!act_md)	continue;
+	Connection* con = tcong->FindConFrom(src_u);
+	if(!con) continue;
+	val = *((float*)act_md->GetOff(con));
+	break;
+      }
+    }
+  }
+  else if(var.startsWith("bias.")) {
+    if(bias.size == 0) return false;
+    String cvar = var.after(".");
+    MemberDef* act_md = bias.con_type->members.FindName(cvar);
+    if(!act_md) return false;
+    Connection* con = bias.Cn(0);
+    if(!con) return false;
+    val = *((float*)act_md->GetOff(con));
+  }
+  else {
+    MemberDef* md = NULL;
+    Variant val = GetValFromPath(var, md, true); // true = warn
+    if(val.isNull() || val.isInvalid()) return false;  // already warned
+  }
   if(math_op.opr == SimpleMathSpec::NONE) {
     snap = val.toFloat();
   }
@@ -7059,6 +7101,12 @@ bool Network::Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg
     if(TestError(var.empty(), "Snapshot", "No view variable found!"))
       return false;
   }
+  if(var.startsWith("r.") || var.startsWith("s.")) {
+    Unit* src_u = GetViewSrcU();
+    if(TestError(!src_u, "Snapshot", "For r. or s. variables, must have a selected unit in the network view!"))
+      return false;
+  }
+
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
