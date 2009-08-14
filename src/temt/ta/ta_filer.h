@@ -81,13 +81,14 @@ public:
   
   String	filter; 	// the QFileDialog-compatible filter expression
   String	filetype; 	// the filetype, ex Project
-  String	ext; 		// the default extension (if any), including '.'
   bool		select_only;	// file is to be selected only (not opened)
 
   istream*	istrm;		// #READ_ONLY #NO_SAVE
   ostream*	ostrm;		// #READ_ONLY #NO_SAVE
   bool		open_file;	// #READ_ONLY #NO_SAVE true if there is an open file somewhere
   bool		file_selected;	// #READ_ONLY #NO_SAVE true if a file was selected last time..
+  
+  String	defExt() const; // the default extension (if any) including '.'
 
   inline void		SetFilerFlag(FilerFlags flg)   { flags = (FilerFlags)(flags | flg); }
   // set flag state on
@@ -154,6 +155,7 @@ protected:
   String	m_dir;		// the directory path to the file
   String	m_fname;	// the name (no path) of the file
   String	m_tmp_fname;	// the name (no path) of the temporary file, if used
+  String	exts; 		// the default extensions (if any), including '.'; comma-sep
   FilerFlags 	flags;	
   fstream*	fstrm;		// #READ_ONLY the underlying file
   bool		compressed; // set when file has .gz suffix

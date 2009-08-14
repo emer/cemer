@@ -74,9 +74,13 @@ void taiFileDialogExtension::init() {
 //////////////////////////////////
 
 bool taFiler::GetFileName(FileOperation filerOperation) {
-  // note: attempting to make these permanent, so changes don't get lost all the damn time
-  static QFileDialog* fd = NULL;
-  static taiFileDialogExtension* fde = NULL;
+  // note: no static FileDialog!!! causes many issues: 
+  // * compression extension thing not always working
+  // * filters can only be added in ctor
+  // * some use-cases cause no Save dialog if prev is Open
+  // DO NOT MAKE STATIC!!!!
+  QFileDialog* fd = NULL;
+  taiFileDialogExtension* fde = NULL;
 
   String tfname;
   if(!taMisc::gui_active) {
@@ -130,9 +134,9 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   fd->setFilters(filter_list);
 
   if(CompressEnabled() && (CompressReq() || IsCompressed()))
-    fd->setDefaultSuffix(ext + taMisc::compress_sfx);
+    fd->setDefaultSuffix(defExt() + taMisc::compress_sfx);
   else
-    fd->setDefaultSuffix(ext);
+    fd->setDefaultSuffix(defExt());
 
   switch (filerOperation) {
   case foOpen:
@@ -189,7 +193,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
     tfname = sfs[0];
     // some weird bugs showing up in qt filer!
     tfname.gsub("..", ".");	// .. -> .
-    tfname.gsub(ext + ext, ext); // .proj.proj -> .proj
+//shouldn't happen anymore!    tfname.gsub(ext + ext, ext); // .proj.proj -> .proj
 
     QFileInfo fi(tfname);
     // we always add the path here, to the sys paths -- if added again, it is a noop
@@ -216,9 +220,9 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   }
 
 exit:
-//   if (fd) {
-//     delete fd;
-//     fd = NULL;
-//   }
+   if (fd) {
+     delete fd;
+     fd = NULL;
+   }
   return result; 
 }

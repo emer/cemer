@@ -2438,7 +2438,7 @@ void DataTable::SaveHeader(const String& fname, Delimiters delim) {
 }
 
 void DataTable::SaveDataRow(const String& fname, int row, Delimiters delim, bool quote_str, bool row_mark) {
-  taFiler* flr = GetSaveFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
+  taFiler* flr = GetSaveFiler(fname, ".dat,.log", false, "Data");
   if(flr->ostrm)
     SaveDataRow_strm(*flr->ostrm, row, delim, quote_str, row_mark);
   flr->Close();
@@ -2448,7 +2448,7 @@ void DataTable::SaveDataRow(const String& fname, int row, Delimiters delim, bool
 void DataTable::SaveData(const String& fname, Delimiters delim,
   bool quote_str, bool save_headers) 
 {
-  taFiler* flr = GetSaveFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
+  taFiler* flr = GetSaveFiler(fname, ".dat,.log", false, "Data");
   if (flr->ostrm) {
     SaveData_strm(*flr->ostrm, delim, quote_str, save_headers);
   }
@@ -2459,29 +2459,14 @@ void DataTable::SaveData(const String& fname, Delimiters delim,
 void DataTable::ExportData(const String& fname, Delimiters delim,
   bool quote_str, bool save_headers) 
 {
-  taFiler* flr = GetSaveFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
+  // note: don't get file name when exporting
+  taFiler* flr = GetSaveFiler(fname, ".csv,.tsv,.txt,.log", false, "Data", false);
   if (flr->ostrm) {
     ExportData_strm(*flr->ostrm, delim, quote_str, save_headers);
   }
   flr->Close();
   taRefN::unRefDone(flr);
 }
-
-// redundant with existing save -- perhaps useful to test the TSV stuff used by clip guy?
-// void DataTable::SaveDataTSV(const String& fname) {
-//   taFiler* flr = GetSaveFiler(fname, ".tsv", false, "Data");
-//   if(flr->ostrm) {
-//     *flr->ostrm << HeaderToTSV();
-// //    int tot_col = 0; // total flat cols
-// //    int max_cell_rows = 0; // max flat rows per cell
-//     CellRange cr;
-//     cr.SetExtent(cols(), rows);
-// //    GetFlatGeom(cr, tot_col, max_cell_rows);
-//     *flr->ostrm << RangeToTSV(cr);
-//   }
-//   flr->Close();
-//   taRefN::unRefDone(flr);
-// }
 
 void DataTable::AppendData(const String& fname, Delimiters delim, bool quote_str, bool row_mark) {
   taFiler* flr = GetAppendFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
@@ -2546,15 +2531,18 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool 
     strm.get();
     depth++;
   }
-  while(strm.peek() == delim) {	// consume any immediate delims
+/*NO  while(strm.peek() == delim) {	// consume any immediate delims
     strm.get();
-  }
+  }*/
   while(((c = strm.get()) != EOF) && (c != '\n') && (c != '\r') && !((c == delim) && (depth <= 0))) {
     if(quote_str && (depth > 0) && (c == '\"'))
       depth--;
     else
       str += (char)c;
   }
+  // consume lf of crlf-pair for Windows files
+  if ((c == '\r') && (strm.peek() == '\n'))
+    c = strm.get();
   return c;
 }
 
@@ -2569,13 +2557,13 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim,
   load_col_idx.Reset();
   load_mat_idx.Reset();
   int c;
-  while(true) {
+  bool cont = true;
+  while(cont) {
     String str;
     c = ReadTillDelim(strm, str, cdlm, quote_str);
-    if(c == EOF) break;
-    if(str.empty()) {
-      if(c == '\n') break;
-      if(c == '\r') { if(strm.peek() == '\n') strm.get(); break; }
+    cont = !((c == '\n') || (c == '\r') || (c == EOF));
+    if (str.empty()) {
+      if (!cont) break;
       continue;			// for some reason it is empty
     }
     String base_nm;
@@ -2625,8 +2613,6 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim,
     load_col_idx.Add(col_idx);
     load_mat_idx.Add(cell_idx);	// no matrix info
     
-    if(c == '\n') break;
-    if(c == '\r') { if(strm.peek() == '\n') strm.get(); break; }
   }
   return c;
 }
@@ -2663,7 +2649,7 @@ int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str)
   while(true) {
     STRING_BUF(str, 32); // provide a buff so numbers and short strings are efficient
     c = ReadTillDelim(strm, str, cdlm, quote_str);
-    if(c == EOF) break;
+    if (str.empty() && (c == EOF)) break;
     if(str == "_H:") {
       c = LoadHeader_impl(strm, delim, true);
       if(c == EOF) break;
@@ -2721,8 +2707,7 @@ int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str)
       data_col++;
     }
     load_col++;
-    if(c == '\n') break;
-    if(c == '\r') { if(strm.peek() == '\n') strm.get(); break; }
+    if ((c == '\n') || (c == '\r') || (c == EOF)) break;
   }
   StructUpdate(false);
   return c;

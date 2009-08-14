@@ -1014,7 +1014,7 @@ void AppendFilerInfo(TypeDef* typ, String& exts, int& compress, String& filetype
 
 
 taFiler* taBase::GetLoadFiler(const String& fname, String exts,
-  int compress, String filetypes) 
+  int compress, String filetypes, bool getset_file_name) 
 {
   // get names/types here, because save/load are different
   TypeDef* typ = GetTypeDef(); // will be replaced with item type if we are a list
@@ -1042,13 +1042,15 @@ taFiler* taBase::GetLoadFiler(const String& fname, String exts,
     flr->SetFileName(fname);
     flr->open_read();
   } else { 
-    String tfname = GetFileName();
+    String tfname;
+    if (getset_file_name)
+      tfname = GetFileName();
     if (tfname.empty())
       tfname = GetName();
     flr->SetFileName(tfname); // filer etc. does auto extension
     flr->Open();
   }
-  if(flr->istrm) {
+  if(flr->istrm && getset_file_name) {
     SetFileName(flr->FileName());
   }
   return flr;
@@ -1074,14 +1076,14 @@ int taBase::Load_cvt(taFiler*& flr) {
   if(TestWarning((typ_id < 0), "Load_cvt",
 		 "Old format file could not be identified; not converting!")) return false;
   DumpFileCvt* cvt = taMisc::file_converters[typ_id];
-  taFiler* cvt_flr = taFiler::New(flr->filetype, flr->ext);
+  taFiler* cvt_flr = taFiler::New(flr->filetype, flr->defExt());
   taRefN::Ref(cvt_flr);
   String cvt_fname = flr->FileName();
   QDir::setCurrent(taMisc::GetDirFmPath(cvt_fname));	
   String cvt_tag = "_v4precvt";
-  if(!flr->ext.empty()) {
-    if(cvt_fname.contains(flr->ext)) cvt_fname = cvt_fname.before(flr->ext);
-    cvt_fname += cvt_tag + flr->ext;
+  if(!flr->defExt().empty()) {
+    if(cvt_fname.contains(flr->defExt())) cvt_fname = cvt_fname.before(flr->defExt());
+    cvt_fname += cvt_tag + flr->defExt();
   }
   else {
     String ex;
@@ -1142,7 +1144,7 @@ int taBase::Save_strm(ostream& strm, TAPtr par, int indent) {
 }
 
 taFiler* taBase::GetSaveFiler(const String& fname, String exts,
-  int compress, String filetypes)
+  int compress, String filetypes, bool getset_file_name)
 {
   // get names/types here, because save/load are different
   TypeDef* typ = NULL; // we are the group
@@ -1159,14 +1161,16 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
     flr->FixFileName();
     flr->Save();
   } else { 
-    String tfname = GetFileName();
+    String tfname;
+    if (getset_file_name)
+      tfname = GetFileName();
     if (tfname.empty())
       tfname = GetName();
     flr->SetFileName(tfname); // filer etc. does auto extension
     flr->SaveAs();
   }
   
-  if (flr->ostrm) {
+  if (flr->ostrm && getset_file_name) {
     SetFileName(flr->FileName());
     // don't notify! very dangerous in middle of save, and also marks Dirty
    // DataChanged(DCR_ITEM_UPDATED);
@@ -1175,7 +1179,7 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
 }
 
 taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int compress,
-  String filetypes) 
+  String filetypes, bool getset_file_name) 
 {
   taFiler* flr = GetFiler(NULL, ext, compress, filetypes); 
   taRefN::Ref(flr);
@@ -1184,14 +1188,16 @@ taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int comp
     flr->SetFileName(fname);
     flr->open_append();
   } else { 
-    String tfname = GetFileName();
+    String tfname;
+    if (getset_file_name)
+      tfname = GetFileName();
     if (tfname.empty())
       tfname = GetName();
     flr->SetFileName(tfname); // filer etc. does auto extension
     flr->Append();
   }
   
-  if(flr->ostrm) {
+  if(flr->ostrm && getset_file_name) {
     SetFileName(flr->FileName());
   }
   return flr;

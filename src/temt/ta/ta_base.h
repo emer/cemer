@@ -689,8 +689,8 @@ public:
 
   virtual int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
   // #CAT_XpertFile Load object data from a file -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
-  virtual taFiler* 	GetLoadFiler(const String& fname, String exts = _nilString,
-    int compress=-1, String filetypes = _nilString);
+  taFiler* 		GetLoadFiler(const String& fname, String exts = _nilString,
+    int compress=-1, String filetypes = _nilString, bool getset_file_name = true);
   // #IGNORE get filer with istrm opened for loading for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
   virtual int	 	Load(const String& fname="", taBase** loaded_obj_ptr = NULL);
   // #MENU #MENU_ON_Object #ARGC_0 #CAT_File Load object data from given file name (if empty, prompt user for a name) -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
@@ -699,11 +699,11 @@ public:
 
   virtual int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
   // #CAT_XpertFile Save object data to a file stream
-  virtual taFiler* 	GetSaveFiler(const String& fname, String ext = _nilString,
-    int compress=-1, String filetypes=_nilString);
+  taFiler* 		GetSaveFiler(const String& fname, String ext = _nilString,
+    int compress=-1, String filetypes=_nilString, bool getset_file_name = true);
   // #IGNORE get filer with ostrm opened for saving for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
-  virtual taFiler* 	GetAppendFiler(const String& fname, const String& ext="",
-    int compress=-1, String filetypes=_nilString);
+  taFiler* 		GetAppendFiler(const String& fname, const String& ext="",
+    int compress=-1, String filetypes=_nilString, bool getset_file_name = true);
   // #IGNORE get filer with ostrm opened for appending for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
   virtual int		Save(); 
   // #MENU #MENU_ON_Object #CAT_File saves the object to a file using current file name 

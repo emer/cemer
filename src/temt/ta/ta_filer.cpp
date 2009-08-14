@@ -286,12 +286,12 @@ String taFiler::last_fname;
 ContextFlag taFiler::no_save_last_fname; 
 
 taFiler* taFiler::New(const String& filetype_, 
-  const String& ext_, FilerFlags flags_) 
+  const String& exts_, FilerFlags flags_) 
 {
   taFiler* rval = new taFiler(flags_);
   rval->m_dir = ".";
   rval->filetype = filetype_;
-  rval->ext = ext_;
+  rval->exts = exts_;
     
   return rval;
 }
@@ -331,7 +331,7 @@ taFiler& taFiler::operator=(const taFiler& cp) {
   // can't copy an open one!
   Close();
   filter = cp.filter;
-  ext = cp.ext;
+  exts = cp.exts;
   m_dir = cp.m_dir;
   m_fname = cp.m_fname;
   m_tmp_fname = cp.m_fname;
@@ -375,6 +375,16 @@ void taFiler::Close() {
   }
 }
 
+String taFiler::defExt() const {
+  String rval;
+  // only grab first in list as default extension
+  if (exts.contains(","))
+    rval = exts.before(",");
+  else
+    rval = exts;
+  return rval;
+}
+
 String taFiler::FileName() const {
   if (m_dir.empty()) 
     return m_fname;
@@ -408,7 +418,7 @@ const String taFiler::FilterText(bool incl_allfiles, QStringList* list) const {
   String_PArray sa_ft;
   String_PArray sa_ex;
   sa_ft.SetFromString(filetype, ",");
-  sa_ex.SetFromString(ext, ",");
+  sa_ex.SetFromString(exts, ",");
   // key on the exts, and just put a ? for type if we run out
   for (int i = 0; i < sa_ex.size; ++i) {
     String tft = sa_ft.SafeEl(i);
@@ -442,15 +452,16 @@ void taFiler::FixFileName() {
   // if m_fname is an actual existing file, we don't touch it
   if (file_exists) return;
 
+  String base_fname = m_fname; // name w/o compress extension
   // if existing file has compression suffix, then activate compression
   if(m_fname.endsWith(taMisc::compress_sfx)) {
     compressed = true;
+    base_fname = m_fname.before(taMisc::compress_sfx, -1);
   }
 
   // otherwise, if no ext was supplied and we have one, we apply it
-  String act_ext; // the actual extension
-  if (ext.nonempty()) act_ext = ext;
-  if(act_ext.contains(',')) act_ext = act_ext.before(','); // could be multiple
+  String act_ext = base_fname.after(".", -1); // the actual extension, if any
+  if (act_ext.empty()) act_ext = defExt();
   String nocompr_ext = act_ext;
   if (compressed) act_ext += taMisc::compress_sfx;
   
