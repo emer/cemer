@@ -9410,7 +9410,7 @@ void iHelpBrowser::LoadExternal_impl(const String& url)
     tab->setCurrentIndex(idx);
   }
   String tab_text(UrlToTabText(url));
-  wv->setUrl(QUrl(url.toQString()));
+  wv->load(QUrl(url.toQString()));
   tab->setTabText(idx, tab_text.toQString());
   url_text->setText(wv->url().toString());
   --m_changing;
