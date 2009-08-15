@@ -2118,6 +2118,22 @@ void XMatrixLayerSpec::LabelUnits(LeabraLayer* lay) {
 //	XSNrThal Layer Spec	//
 //////////////////////////////////
 
+void XSNrThalLayer::Initialize() {
+  
+}
+
+void XSNrThalLayer::BuildUnits() {
+  inherited::BuildUnits();
+  mnt_units.Reset();
+  out_units.Reset();
+
+  for(int mg=0; mg<units.gp.size; mg++) {
+    LeabraUnit_Group* rugp = (LeabraUnit_Group*)units.gp[mg];
+    mnt_units.Add((LeabraUnit*)rugp->SafeEl(0));
+    out_units.Add((LeabraUnit*)rugp->SafeEl(1));
+  }
+}
+
 void XSNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
   net_off = -0.1f;
@@ -2125,6 +2141,7 @@ void XSNrThalMiscSpec::Initialize() {
 }
 
 void XSNrThalLayerSpec::Initialize() {
+  min_obj_type = &TA_XSNrThalLayer;
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
   decay.phase = 0.0f;
@@ -2144,6 +2161,12 @@ void XSNrThalLayerSpec::Initialize() {
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;
+
+  mnt_out_inhib.type = LeabraInhibSpec::KWTA_INHIB;
+  mnt_inhib = true;
+  out_inhib = true;
+  mnt_kwta.pct = .75f;
+  out_kwta.pct = .25f;
 }
 
 void XSNrThalLayerSpec::Defaults() {
@@ -2177,6 +2200,11 @@ bool XSNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
 //  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
+
+  if(CheckError(mnt_out_inhib.type != LeabraInhibSpec::KWTA_INHIB, quiet, rval,
+		"only KWTA_INHIB is currently supported for mnt/out inhibition -- I set it to that for you.")) {
+    mnt_out_inhib.type = LeabraInhibSpec::KWTA_INHIB;
+  }
 
   if(lay->CheckError(!lay->unit_groups, quiet, rval,
 		"layer must have unit_groups = true (= stripes) (multiple are good for indepent searching of gating space)!  I just set it for you -- you must configure groups now")) {
@@ -2279,6 +2307,197 @@ void XSNrThalLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net)
   // note: this no longer has dt.net in effect here!! hopefully not a huge diff..
   Compute_GoNogoNet(lay, net);
   inherited::Compute_NetinStats(lay, net);
+}
+
+void XSNrThalLayerSpec::Compute_Active_K(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_Active_K(lay, net);
+
+  XSNrThalLayer* snrlay = (XSNrThalLayer*)lay;
+  Compute_Active_K_mntout(snrlay, &(snrlay->mnt_units), mnt_kwta, snrlay->mnt_kwta);
+  Compute_Active_K_mntout(snrlay, &(snrlay->out_units), mnt_kwta, snrlay->out_kwta);
+}
+
+void XSNrThalLayerSpec::Compute_Active_K_mntout(XSNrThalLayer* lay, LeabraSort* ug,
+						KWTASpec& kwtspec, KWTAVals& kvals)
+{
+  int new_k = 0;
+  if(kwtspec.k_from == KWTASpec::USE_PCT)
+    new_k = (int)(kwtspec.pct * (float)ug->size);
+  else
+    new_k = kwtspec.k;
+
+//   if(inhib.type == LeabraInhibSpec::KWTA_INHIB)
+    new_k = MIN(ug->size - 1, new_k);
+//   else
+//     new_k = MIN(ug->leaves, new_k);
+  new_k = MAX(1, new_k);
+
+  if(kvals.k != new_k) {
+    // overkill but whatever
+    lay->mnt_active_buf.size = 0;
+    lay->mnt_inact_buf.size = 0;
+    lay->out_active_buf.size = 0;
+    lay->out_inact_buf.size = 0;
+  }
+
+  kvals.k = new_k;
+  kvals.Compute_Pct(ug->size);
+}
+
+
+void XSNrThalLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_Inhib(lay, net);
+  if(!out_inhib && !mnt_inhib) return;
+
+  XSNrThalLayer* snrlay = (XSNrThalLayer*)lay;
+  
+  if(mnt_out_inhib.type == LeabraInhibSpec::KWTA_INHIB) { // only one supported as yet
+    if(mnt_inhib)
+      Compute_Inhib_kWTA_mntout(mnt_kwta, snrlay->mnt_kwta, snrlay->mnt_i_val, 
+				snrlay->mnt_units, snrlay->mnt_active_buf,
+				snrlay->mnt_inact_buf, net);
+    if(out_inhib)
+      Compute_Inhib_kWTA_mntout(out_kwta, snrlay->out_kwta, snrlay->out_i_val, 
+				snrlay->out_units, snrlay->out_active_buf,
+				snrlay->out_inact_buf, net);
+  }
+  else {
+    TestError(true, "Compute_Inhib_impl", "only KWTA_INHIB is currently supported for mnt/out inhibition!");
+  }
+}
+
+void XSNrThalLayerSpec::Compute_Inhib_kWTA_mntout(KWTASpec& kwta, KWTAVals& kvals,
+			InhibVals& ivals, LeabraSort& uns, LeabraSort& active_buf,
+			LeabraSort& inact_buf, LeabraNetwork*) {
+  if(uns.size <= 1) {	// this is undefined
+    return;
+  }
+
+  int k_plus_1 = kvals.k + 1;	// expand cutoff to include N+1th one
+  k_plus_1 = MIN(uns.size,k_plus_1);
+  float k1_net = FLT_MAX;
+  int k1_idx = 0;
+
+  Compute_Inhib_kWTA_Sort_mntout(uns, active_buf, inact_buf, k_plus_1, k1_net, k1_idx);
+
+  // active_buf now has k+1 most active units, get the next-highest one
+  int k_idx = -1;
+  float net_k = FLT_MAX;
+  for(int j=0; j < k_plus_1; j++) {
+    float tmp = active_buf.FastEl(j)->i_thr;
+    if((tmp < net_k) && (j != k1_idx)) {
+      net_k = tmp;		k_idx = j;
+    }
+  }
+  if(k_idx == -1) {		// we didn't find the next one
+    k_idx = k1_idx;
+    net_k = k1_net;
+  }
+
+  LeabraUnit* k1_u = (LeabraUnit*)active_buf[k1_idx];
+  LeabraUnit* k_u = (LeabraUnit*)active_buf[k_idx];
+
+  float k1_i = k1_u->i_thr;
+  float k_i = k_u->i_thr;
+  kvals.k_ithr = k_i;
+  kvals.k1_ithr = k1_i;
+
+  //  Compute_Inhib_BreakTie(thr);
+
+  // place kwta inhibition between k and k+1
+  float nw_gi = kvals.k1_ithr + mnt_out_inhib.kwta_pt * (kvals.k_ithr - kvals.k1_ithr);
+  nw_gi = MAX(nw_gi, mnt_out_inhib.min_i);
+  ivals.kwta = ivals.g_i = ivals.g_i_orig = nw_gi;
+  kvals.Compute_IThrR();
+}
+
+void XSNrThalLayerSpec::Compute_Inhib_kWTA_Sort_mntout(LeabraSort& ug,
+				     LeabraSort& act_buf, LeabraSort& inact_buf,
+				     int k_eff, float& k_net, int& k_idx) {
+  LeabraUnit* u;
+  int j;
+  if(act_buf.size != k_eff) { // need to fill the sort buf..
+    act_buf.size = 0;
+    for(j = 0; j < k_eff; ++j) {
+      u = (LeabraUnit*)ug.FastEl(j);
+      act_buf.Add(u);		// add unit to the list
+      if(u->i_thr < k_net) {
+	k_net = u->i_thr;	k_idx = j;
+      }
+    }
+    inact_buf.size = 0;
+    // now, use the "replace-the-lowest" sorting technique
+    for(; j<ug.size; ++j) {
+      u = (LeabraUnit*)ug.FastEl(j);
+      if(u->i_thr <=  k_net) {	// not bigger than smallest one in sort buffer
+	inact_buf.Add(u);
+	continue;
+      }
+      inact_buf.Add(act_buf[k_idx]); // now inactive
+      act_buf.ReplaceIdx(k_idx, u);// replace the smallest with it
+      k_net = u->i_thr;		// assume its the smallest
+      for(j=0; j < k_eff; j++) { 	// and recompute the actual smallest
+	float tmp = act_buf[j]->i_thr;
+	if(tmp < k_net) {
+	  k_net = tmp;		k_idx = j;
+	}
+      }
+    }
+  }
+  else {				// keep the ones around from last time, find k_net
+    for(j=0; j < k_eff; j++) { 	// these should be the top ones, very fast!!
+      float tmp = act_buf[j]->i_thr;
+      if(tmp < k_net) {
+	k_net = tmp;		k_idx = j;
+      }
+    }
+    // now, use the "replace-the-lowest" sorting technique (on the inact_list)
+    for(j=0; j < inact_buf.size; j++) {
+      u = inact_buf[j];
+      if(u->i_thr <=  k_net)		// not bigger than smallest one in sort buffer
+	continue;
+      inact_buf.ReplaceIdx(j, act_buf[k_idx]);	// now inactive
+      act_buf.ReplaceIdx(k_idx, u);// replace the smallest with it
+      k_net = u->i_thr;		// assume its the smallest
+      int i;
+      for(i=0; i < k_eff; i++) { 	// and recompute the actual smallest
+	float tmp = act_buf[i]->i_thr;
+	if(tmp < k_net) {
+	  k_net = tmp;		k_idx = i;
+	}
+      }
+    }
+  }
+}
+
+void XSNrThalLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
+  if((net->cycle >= 0) && lay->hard_clamped)
+    return;			// don't do this during normal processing
+  if(inhib.type == LeabraInhibSpec::UNIT_INHIB) return; // otherwise overwrites!
+
+  XSNrThalLayer* snrlay = (XSNrThalLayer*)lay;
+
+  for(int mg=0; mg<snrlay->units.gp.size; mg++) {
+    LeabraUnit_Group* rugp = (LeabraUnit_Group*)snrlay->units.gp[mg];
+    LeabraUnit* mntu = (LeabraUnit*)rugp->SafeEl(0);
+    LeabraUnit* outu = (LeabraUnit*)rugp->SafeEl(1);
+
+    float inhib_val;
+    if(inhib_group == ENTIRE_LAYER)
+      inhib_val = lay->i_val.g_i;
+    else
+      inhib_val = rugp->i_val.g_i;
+
+    if(mnt_inhib)
+      mntu->Compute_ApplyInhib(net, MAX(snrlay->mnt_i_val.g_i, inhib_val));
+    else
+      mntu->Compute_ApplyInhib(net, inhib_val);
+
+    if(out_inhib)
+      outu->Compute_ApplyInhib(net, MAX(snrlay->out_i_val.g_i, inhib_val));
+    else
+      outu->Compute_ApplyInhib(net, inhib_val);
+  }
 }
 
 //////////////////////////////////////////
@@ -2411,12 +2630,13 @@ void PFCUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
 void XPFCGateSpec::Initialize() {
   base_gain = 0.5f;
   go_gain = 0.5f;
-  clear_decay = 0.0f;
-  mnt_to_bg = false;
   graded_out_go = true;
+  mnt_go_netin = 0.01f;
+  out_go_netin = 0.01f;
+  clear_decay = 0.0f;
+  mnt_clear_veto = true;
+  mnt_to_bg = true;
   patch_out_mod = false;
-  go_netin_gain = 0.01f;
-  out_go_clear = true;
   off_accom = 0.0f;
 }
 
@@ -2610,43 +2830,39 @@ void XPFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
     LeabraUnit* snr_mnt_u = (LeabraUnit*)snrgp->Leaf(0);
     LeabraUnit* snr_out_u = (LeabraUnit*)snrgp->Leaf(1);
 
-    if(ugp->misc_state1 != XPFCGateSpec::INIT_STATE) { // must be MAINT_MNT_GO or EMPTY_MNT_GO
+    if(ugp->misc_state1 == XPFCGateSpec::INIT_STATE) { // NOGO
+      if(ugp->misc_state > 0) {
+	ugp->misc_state1 = XPFCGateSpec::MAINT_NOGO;	  
+	ugp->misc_state++;
+      }
+      else {
+	ugp->misc_state1 = XPFCGateSpec::EMPTY_NOGO;
+	ugp->misc_state--;
+      }
+    }
+    else if(ugp->misc_state1 == XPFCGateSpec::MAINT_MNT_GO ||
+	    ugp->misc_state1 == XPFCGateSpec::EMPTY_MNT_GO) {
       Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it
-      if(ugp->misc_state <= 0) ugp->misc_state = 1;
+      if(ugp->misc_state <= 0) ugp->misc_state = 1;    // this has to be the case..
       else ugp->misc_state++;
     }
-    else {
-      // now check for output gating -- use minus phase signals
-      if(snr_out_u->act_m > snrthalsp->snrthal.go_thr && snr_out_u->act_m > snr_mnt_u->act_m) {
-	// output go fired!
-	if(ugp->misc_state > 0)
-	  ugp->misc_state1 = XPFCGateSpec::MAINT_OUT_GO;
-	else
-	  ugp->misc_state1 = XPFCGateSpec::EMPTY_OUT_GO;
-	if(gate.out_go_clear) {
-	  if(ugp->misc_state > 0) {		       // maintaining
-	    Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
-	    ugp->misc_state = 0;			     // empty
-	  }
-	}
-	else {
-	  // just continue as if nothing happened
-	  if(ugp->misc_state > 0)
-	    ugp->misc_state++;
-	  else
-	    ugp->misc_state--;
-	}
+    else if(ugp->misc_state1 == XPFCGateSpec::MAINT_OUT_GO ||
+	    ugp->misc_state1 == XPFCGateSpec::EMPTY_OUT_GO) {
+      // output without any maint -- means clear!
+      if(ugp->misc_state > 0) {		       // maintaining
+	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
+	ugp->misc_state = 0;			     // empty
       }
-      else {			// NOGO
-	if(ugp->misc_state > 0) {
-	  ugp->misc_state1 = XPFCGateSpec::MAINT_NOGO;	  
-	  ugp->misc_state++;
-	}
-	else {
-	  ugp->misc_state1 = XPFCGateSpec::EMPTY_NOGO;
-	  ugp->misc_state--;
-	}
+      else {
+	ugp->misc_state--;	// effectively a nogo -- continue incrementing
       }
+    }
+    else {			// a clear veto case (flag already consulted to get here)
+      // just continue as if nothing happened
+      if(ugp->misc_state > 0)
+	ugp->misc_state++;
+      else
+	ugp->misc_state--;
     }
   }
 }
@@ -2658,25 +2874,34 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 
   // this is the online version during the trial, not final
 
+  int max_mnt_go_cycle = net->min_cycles - 1;
+  // maint has to happen before this point, otherwise it is too disruptive in the clearing
+  // of mnt currents and can affect learning dynamics in pfc -- this gives it plenty of time
+  // to clear out old and gate in new
+
   for(int mg=0;mg<lay->units.gp.size;mg++) {
     LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
     LeabraUnit_Group* snrgp = (LeabraUnit_Group*)snrthal_lay->units.gp[mg];
     LeabraUnit* snr_mnt_u = (LeabraUnit*)snrgp->Leaf(0);
     LeabraUnit* snr_out_u = (LeabraUnit*)snrgp->Leaf(1);
 
-    ugp->misc_float = 0.0f;	// default off
-    ugp->misc_float1 = 0.0f;	// default off
-
+    ugp->misc_float = 0.0f;	// go_netin multiplier factor
+    ugp->misc_float1 = 0.0f;	// output gating multiplier factor
     XPFCGateSpec::GateSignal gate_sig = XPFCGateSpec::GATE_NOGO;
-    if(snr_mnt_u->act_eq > snrthalsp->snrthal.go_thr &&
-       snr_mnt_u->act_eq > snr_out_u->act_eq) {
-      gate_sig = XPFCGateSpec::GATE_MNT_GO;
-      ugp->misc_float = snr_mnt_u->act_eq;
-    }
-    else if(snr_out_u->act_eq > snrthalsp->snrthal.go_thr &&
-	    snr_out_u->act_eq > snr_mnt_u->act_eq) {
+
+    // output gating is a threshold to initiate -- once initiated, always apply so it is
+    // more continuous in its behavior -- avoid potential oscillations etc
+    bool out_already_fired = false;
+    if(ugp->misc_state1 == XPFCGateSpec::MAINT_OUT_GO ||
+       ugp->misc_state1 == XPFCGateSpec::EMPTY_OUT_GO || 
+       ugp->misc_state1 == XPFCGateSpec::MAINT_OUT_MNT_GO ||
+       ugp->misc_state1 == XPFCGateSpec::EMPTY_OUT_MNT_GO)
+      out_already_fired = true;
+
+    // compute output gating multiplier consistently for all cases -- always does this
+    if(out_already_fired || snr_out_u->act_eq > snrthalsp->snrthal.go_thr) {
       gate_sig = XPFCGateSpec::GATE_OUT_GO;
-      ugp->misc_float = snr_out_u->act_eq;
+      ugp->misc_float = gate.out_go_netin * snr_out_u->act_eq;
       if(gate.graded_out_go)
 	ugp->misc_float1 = snr_out_u->act_eq;
       else
@@ -2685,32 +2910,56 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 	ugp->misc_float1 *= snr_out_u->misc_1; // misc_1 has patch lve value
     }
 
-    ugp->misc_float *= gate.go_netin_gain;
-    
+    // two states of operation: before any gating signal, and after a gating signal
+    if(ugp->misc_state1 == XPFCGateSpec::INIT_STATE) {
+      // before any gating signal -- out wins in a tie due to clear_veto logic
+      if(gate_sig == XPFCGateSpec::GATE_OUT_GO) {
+	if(net->phase_no == 0) {	// only update misc_state1 in minus phase
+	  if(ugp->misc_state > 0)  // full stripe
+	    ugp->misc_state1 = XPFCGateSpec::MAINT_OUT_GO;
+	  else
+	    ugp->misc_state1 = XPFCGateSpec::EMPTY_OUT_GO;
+	}
+      }
+      else if(net->ct_cycle < max_mnt_go_cycle && // only allow mnt within early minus 
+	      snr_mnt_u->act_eq > snrthalsp->snrthal.go_thr) {
+	gate_sig = XPFCGateSpec::GATE_MNT_GO;
+	ugp->misc_float = gate.mnt_go_netin * snr_mnt_u->act_eq;
+
+	if(ugp->misc_state > 0) { // full stripe
+	  ugp->misc_state1 = XPFCGateSpec::MAINT_MNT_GO;
+	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);	 // clear maint currents
+	  ugp->misc_state = 0;	// record as cleared
+	}
+	else {
+	  ugp->misc_state1 = XPFCGateSpec::EMPTY_MNT_GO;
+	}
+      }
+    }
+    else if(ugp->misc_state1 == XPFCGateSpec::MAINT_OUT_GO ||
+	    ugp->misc_state1 == XPFCGateSpec::EMPTY_OUT_GO) {
+      // already fired output go, so only question is: did mnt go fire too?
+      if(gate.mnt_clear_veto && (snr_mnt_u->act_eq > snrthalsp->snrthal.go_thr)) {
+	if(ugp->misc_state1 == XPFCGateSpec::MAINT_OUT_GO)
+	  ugp->misc_state1 = XPFCGateSpec::MAINT_OUT_MNT_GO;
+	else
+	  ugp->misc_state1 = XPFCGateSpec::EMPTY_OUT_MNT_GO;
+      }
+    }
+    else if(ugp->misc_state1 == XPFCGateSpec::MAINT_MNT_GO ||
+	    ugp->misc_state1 == XPFCGateSpec::EMPTY_MNT_GO) {
+      // pure mnt gating -- use it for the activations -- could also have output
+      // going on too, but anyway this is considered dominant
+      gate_sig = XPFCGateSpec::GATE_MNT_GO;
+      ugp->misc_float = gate.mnt_go_netin * snr_mnt_u->act_eq;
+    }
+
+    if(gate.patch_out_mod)		    // apply to neting tagin guy too 
+      ugp->misc_float *= snr_out_u->misc_1; // misc_1 has patch lve value
+
     // fix misc_float1 to be net output gating multiplier:
     ugp->misc_float1 = gate.base_gain + gate.go_gain * ugp->misc_float1;
-
     ugp->misc_state2 = gate_sig; // store the raw gating signal itself
-
-    if((net->phase_no == 0) && (gate_sig == XPFCGateSpec::GATE_MNT_GO)) {
-      // minus phase -- only care about maint go firing, and clearing prior storage
-      if(ugp->misc_state > 0) { // full stripe
-	ugp->misc_state1 = XPFCGateSpec::MAINT_MNT_GO; // record action for later store
-	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);
-	ugp->misc_state = 0;	// cleared
-      }
-      else {
-	if(ugp->misc_state1 == XPFCGateSpec::INIT_STATE)
-	  ugp->misc_state1 = XPFCGateSpec::EMPTY_MNT_GO; // record action for later store
-      }
-    }
-
-    // if we did a maintenance go firing at any point during trial, it trumps anything..
-    if(ugp->misc_state1 != XPFCGateSpec::INIT_STATE) {
-      ugp->misc_state2 = gate_sig = XPFCGateSpec::GATE_MNT_GO;
-    }
-
-    // ignore gating signals during plus phase -- only update at very end
   }
   SendGateStates(lay, net);
 }
@@ -3585,7 +3834,7 @@ bool LeabraWizard::PBWM_V2(LeabraNetwork* net, bool da_mod_all,
   snc = (LeabraLayer*)bg_laygp->FindMakeLayer("SNc", NULL, snc_new, "SNc");
 
   matrix = (LeabraLayer*)bg_laygp->FindMakeLayer("Matrix", NULL, matrix_new, "Matrix");
-  snrthal = (LeabraLayer*)bg_laygp->FindMakeLayer("SNrThal", NULL, snrthal_new, "SNrThal");
+  snrthal = (LeabraLayer*)bg_laygp->FindMakeLayer("SNrThal", &TA_XSNrThalLayer, snrthal_new, "SNrThal");
   pfc = (LeabraLayer*)pfc_laygp->FindMakeLayer("PFC", NULL, pfc_new);
 
   if(!patch || !snc || !matrix || !snrthal || !pfc) return false;
@@ -3968,6 +4217,9 @@ bool LeabraWizard::PBWM_V2(LeabraNetwork* net, bool da_mod_all,
     matrix_cons->SelectForEditNm("xcal", edit, "matrix");
     mfmpfc_cons->SelectForEditNm("wt_scale", edit, "mtx_fm_pfc");
     snrthalsp->SelectForEditNm("gp_kwta", edit, "snr_thal");
+    snrthalsp->SelectForEditNm("mnt_kwta", edit, "snr_thal");
+    snrthalsp->SelectForEditNm("out_kwta", edit, "snr_thal");
+    snrthalsp->SelectForEditNm("mnt_out_inhib", edit, "snr_thal");
     snrthal_units->SelectForEditNm("g_bar", edit, "snr_thal");
 //       snrthal_units->SelectForEditNm("dt", edit, "snr_thal");
   }

@@ -246,7 +246,7 @@ void BaseSpec::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 BaseSpec* BaseSpec::NewChild(TypeDef* child_type) {
   BaseSpec* rval = (BaseSpec*)children.New_gui(1, child_type);
-  rval->UpdateSpec();
+  if(rval) rval->UpdateSpec();
   return rval;
 }
 
@@ -645,7 +645,7 @@ void SpecPtr_impl::CheckSpec(TypeDef* obj_td) {
 		       "for spec of type:", sp->GetTypeDef()->name,
 		       "should be at least:", sp->min_obj_type->name,
 		       "in object:",owner->GetPath(),
-		       "This is a programmer error (should not happen) -- DO NOT RUN NETWORK until fixed!");
+		       "DO NOT RUN NETWORK until fixed! (Use ChangeMyType on offending object)");
   }
 }
 

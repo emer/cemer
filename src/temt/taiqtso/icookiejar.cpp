@@ -109,6 +109,8 @@ static const char *const twoLevelDomains[] = {
 #include <qdebug.h>
 #endif
 
+// #define COOKIE_DEBUG 1
+
 /*
   A Trie tree (prefix tree) where the lookup takes m in the worst case.
 
@@ -516,7 +518,7 @@ void iNetworkCookieJar::endSession()
 
 bool iNetworkCookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, const QUrl &url)
 {
-#if defined(NETWORKCOOKIEJAR_DEBUG)
+#if defined(COOKIE_DEBUG)
   qDebug() << "iNetworkCookieJar::" << __FUNCTION__ << url;
   qDebug() << cookieList;
 #endif
@@ -534,7 +536,7 @@ bool iNetworkCookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieLis
     if (cookie.path().isEmpty()) {
       cookie.setPath(defaultPath);
     } else if (!d->matchingPath(cookie, urlPath)) {
-#ifdef NETWORKCOOKIEJAR_LOGREJECTEDCOOKIES
+#ifdef COOKIE_DEBUG
       qDebug() << "iNetworkCookieJar::" << __FUNCTION__
 	       << "Blocked cookie because: path doesn't match: " << cookie << url;
 #endif
@@ -547,7 +549,7 @@ bool iNetworkCookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieLis
 	continue;
       cookie.setDomain(host);
     } else if (!d->matchingDomain(cookie, url)) {
-#ifdef NETWORKCOOKIEJAR_LOGREJECTEDCOOKIES
+#ifdef COOKIE_DEBUG
       qDebug() << "iNetworkCookieJar::" << __FUNCTION__
 	       << "Blocked cookie because: domain doesn't match: " << cookie << url;
 #endif
@@ -582,7 +584,7 @@ bool iNetworkCookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieLis
 
 QList<QNetworkCookie> iNetworkCookieJar::allCookies() const
 {
-#if defined(NETWORKCOOKIEJAR_DEBUG)
+#if defined(COOKIE_DEBUG)
   qDebug() << "iNetworkCookieJar::" << __FUNCTION__;
 #endif
   return d->tree.all();
@@ -590,7 +592,7 @@ QList<QNetworkCookie> iNetworkCookieJar::allCookies() const
 
 void iNetworkCookieJar::setAllCookies(const QList<QNetworkCookie> &cookieList)
 {
-#if defined(NETWORKCOOKIEJAR_DEBUG)
+#if defined(COOKIE_DEBUG)
   qDebug() << "iNetworkCookieJar::" << __FUNCTION__ << cookieList.count();
 #endif
   d->tree.clear();
@@ -924,6 +926,11 @@ bool iCookieJar::setCookiesFromUrl(const QList<QNetworkCookie> &cookieList, cons
 {
   if (!m_loaded)
     load();
+
+#if defined(COOKIE_DEBUG)
+  qDebug() << "iCookieJar::" << __FUNCTION__ << url;
+  qDebug() << cookieList;
+#endif
 
   QWebSettings *globalSettings = QWebSettings::globalSettings();
   if (globalSettings->testAttribute(QWebSettings::PrivateBrowsingEnabled))

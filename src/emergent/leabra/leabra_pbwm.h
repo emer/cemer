@@ -352,7 +352,7 @@ private:
 //	  SNrThalLayer: Integrate Matrix and compute Gating 	//
 //////////////////////////////////////////////////////////////////
 
-class SNrThalMiscSpec : public taOBase {
+class LEABRA_API SNrThalMiscSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
 INHERITED(taOBase)
 public:
@@ -670,7 +670,30 @@ private:
 // snr unit misc_ var docs
 // * misc_1 = patch LVe value for patch-modulated gating signal
 
-class XSNrThalMiscSpec : public taOBase {
+class LEABRA_API XSNrThalLayer : public LeabraLayer {
+  // layer for the SNr & Thalamus of the PBWM model -- has inhibitory competition both within group and between maint and output gating guys
+INHERITED(LeabraLayer)
+public:
+  LeabraSort 	mnt_units;	// #HIDDEN #NO_SAVE #CAT_Activation list of maint units
+  LeabraSort 	mnt_active_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of active units -- maint sort
+  LeabraSort 	mnt_inact_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of inactive units -- maint sort
+  LeabraSort 	out_units;	// #HIDDEN #NO_SAVE #CAT_Activation list of output units
+  LeabraSort 	out_active_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of active units -- output sort
+  LeabraSort 	out_inact_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of inactive units -- output sort
+  KWTAVals	mnt_kwta;	// #READ_ONLY #EXPERT #CAT_Activation values for maint kwta -- activity levels, etc NOTE THIS IS A COMPUTED VALUE: k IS SET IN LayerSpec!
+  InhibVals	mnt_i_val;	// #READ_ONLY #EXPERT #CAT_Activation inhibitory values computed by kwta
+  KWTAVals	out_kwta;	// #READ_ONLY #EXPERT #CAT_Activation values for output kwta -- activity levels, etc NOTE THIS IS A COMPUTED VALUE: k IS SET IN LayerSpec!
+  InhibVals	out_i_val;	// #READ_ONLY #EXPERT #CAT_Activation inhibitory values computed by kwta
+
+  override void  BuildUnits();
+
+  TA_SIMPLE_BASEFUNS(XSNrThalLayer);
+private:
+  void	Initialize();
+  void	Destroy()		{ };
+};
+
+class LEABRA_API XSNrThalMiscSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
 INHERITED(taOBase)
 public:
@@ -690,12 +713,37 @@ class LEABRA_API XSNrThalLayerSpec : public LeabraLayerSpec {
 INHERITED(LeabraLayerSpec)
 public:
   XSNrThalMiscSpec	snrthal; // misc specs for snrthal layer
+  bool			mnt_inhib; // #DEF_true also perform inhibitory competition among the maintenance units 
+  KWTASpec		mnt_kwta; // #CONDEDIT_ON_mnt_inhib #CAT_Activation desired activity level for maintenance units across stripes 
+  bool			out_inhib; // #DEF_true also perform inhibitory competition among the output units 
+  KWTASpec		out_kwta; // #CONDEDIT_ON_out_inhib #CAT_Activation desired activity level for output units across stripes 
+  LeabraInhibSpec 	mnt_out_inhib;	// #CAT_Activation how to compute inhibition for maintenance and output unit competition
 
   virtual void	Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net);
   // compute netinput as GO - NOGO on matrix layer
 
   // hook for new netin goes here:
   override void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
+
+  // mnt/out inhibition
+
+  override void Compute_Active_K(LeabraLayer* lay, LeabraNetwork* net);
+    virtual void Compute_Active_K_mntout(XSNrThalLayer* lay, LeabraSort* ug,
+				       KWTASpec& kwtspec, KWTAVals& kvals);
+    // #IGNORE mnt out
+
+  override void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
+    virtual void Compute_Inhib_kWTA_Sort_mntout(LeabraSort& ug, LeabraSort& act_buf,
+						LeabraSort& inact_buf,
+						int k_eff, float& k_net, int& k_idx);
+    // #IGNORE mnt, out version of kwta sort
+    virtual void Compute_Inhib_kWTA_mntout(KWTASpec& kwta, KWTAVals& kvals, InhibVals& ivals,
+				 LeabraSort& uns, LeabraSort& act_buf,
+				 LeabraSort& inact_buf, LeabraNetwork*);
+    // #IGNORE mnt, out version of kwta
+
+  override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+
 
   // don't do any learning:
   override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
@@ -743,7 +791,7 @@ private:
 // ** -1- = empty for a trial or more
 // * pfc ugp->misc_state1 = GateState 
 // * pfc ugp->misc_state2 = cur gating signal (cleared at start of trial, latches to first Go)
-// * pfc ugp->misc_float = current Go activation value (mnt or out) -- used by units to boost netin -- already multiplied by gate.go_netin_gain
+// * pfc ugp->misc_float = current Go activation value (mnt or out) -- used by units to boost netin -- already multiplied by gate.mnt/out_go_netin
 // * pfc ugp->misc_float1 = current output gating Go activation value with base_gain and go_gain factored in -- used for graded Go -- just multiply directly by this number
 
 class LEABRA_API XPFCGateSpec : public taOBase {
@@ -759,9 +807,11 @@ public:
   enum	GateState {		// what happened on last gating action, stored in misc_state1 on unit group -- for debugging etc
     EMPTY_MNT_GO,		// stripe was empty, got MAINT Go
     EMPTY_OUT_GO,		// stripe was empty, got OUTPUT Go
+    EMPTY_OUT_MNT_GO,		// stripe was empty, got OUTPUT then MAINT Go
     EMPTY_NOGO,			// stripe was empty, got NoGo
     MAINT_MNT_GO,		// stripe was already maintaining, got MAINT Go: cleared, encoded
     MAINT_OUT_GO,		// stripe was already maintaining, got OUTPUT Go
+    MAINT_OUT_MNT_GO,		// stripe was already maintaining, got OUTPUT then MAINT Go
     MAINT_NOGO,			// stripe was already maintaining, got NoGo
     NOGO_RND_GO,		// random go for stripes constantly firing nogo
     INIT_STATE,			// initialized state at start of trial
@@ -769,13 +819,14 @@ public:
 
   float		base_gain;	// #DEF_0.5 how much activation gets through even without a Go gating signal
   float		go_gain;	// #READ_ONLY #SHOW how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
-  float		clear_decay;	// #DEF_0 how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse
-  bool	        mnt_to_bg;	// #DEF_true send maintenance activation values to the PVLV LVe and Matrix layers instead of the output gated activation (act) which is sent to other layers
   bool		graded_out_go;	// #DEF_true use actual activation level of output Go signal to drive output activation level
+  float		mnt_go_netin;   // #DEF_0.01 how much of the Maint Go activation signal to add to the unit netinput (multiplied by the unit activation -- full contrast da-like effect), to influence learning
+  float		out_go_netin;   // #DEF_0.01 how much of the Output Go activation signal to add to the unit netinput (multiplied by the unit activation -- full contrast da-like effect), to influence learning
+  float		clear_decay;	// #DEF_0 how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse
+  bool	        mnt_clear_veto;	// #DEF_true a maint Go gating signal, arriving after output gating, can veto the clearing of maintenance currents that would otherwise occur from the output gating
+  bool	        mnt_to_bg;	// #DEF_true send maintenance activation values to the PVLV LVe and Matrix layers instead of the output gated activation (act) which is sent to other layers
   bool		patch_out_mod;	// #DEF_false use patch LVe value to modulate output gating activation level
-  float		go_netin_gain;	// #DEF_0.01 how much of the go signal to add to the netinput, to influence learning
-  bool		out_go_clear;	// #DEF_true output Go signal clears maintenance!
-  float		off_accom;	// #DEF_0 how much of the maintenance current to apply to accommodation after turning a unit off
+  float		off_accom;	// #DEF_0 #EXPERT how much of the maintenance current to apply to accommodation after turning a unit off
 
   inline void	SetBaseGain(float bg)
   { base_gain = bg;
