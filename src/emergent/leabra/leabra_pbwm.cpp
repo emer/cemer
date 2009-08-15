@@ -2314,7 +2314,7 @@ void XSNrThalLayerSpec::Compute_Active_K(LeabraLayer* lay, LeabraNetwork* net) {
 
   XSNrThalLayer* snrlay = (XSNrThalLayer*)lay;
   Compute_Active_K_mntout(snrlay, &(snrlay->mnt_units), mnt_kwta, snrlay->mnt_kwta);
-  Compute_Active_K_mntout(snrlay, &(snrlay->out_units), mnt_kwta, snrlay->out_kwta);
+  Compute_Active_K_mntout(snrlay, &(snrlay->out_units), out_kwta, snrlay->out_kwta);
 }
 
 void XSNrThalLayerSpec::Compute_Active_K_mntout(XSNrThalLayer* lay, LeabraSort* ug,
