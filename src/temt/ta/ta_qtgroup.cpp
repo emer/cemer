@@ -1488,13 +1488,15 @@ QWidget* iDocEditDataPanel::firstTabFocusWidget() {
 }
 
 bool iDocEditDataPanel::ignoreDataChanged() const {
-  return !isVisible();
+  return false; // don't ignore -- we do SmartButComplicatedIgnore(TM)
+//  return !isVisible();
 }
 
 void iDocEditDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  if (dcr <= DCR_ITEM_UPDATED_ND) {
+    this->m_update_req = true; // so we update next time we show, if hidden
+  }
   inherited::DataChanged_impl(dcr, op1_, op2_);
-  //NOTE: don't need to do anything because DataModel will handle it
-  // not in this case!
 }
 
 bool iDocEditDataPanel::HasChanged() {
@@ -1507,6 +1509,7 @@ void iDocEditDataPanel::OnWindowBind_impl(iTabViewer* itv) {
 }
 
 void iDocEditDataPanel::UpdatePanel_impl() {
+  inherited::UpdatePanel_impl(); // clears reg flag and updates tab
   if (de) de->ReShow_Async();
 }
 
@@ -1532,11 +1535,13 @@ void tabDocViewType::CreateDataPanel_impl(taiDataLink* dl_)
 {
   // doc view is default
   iDocDataPanel* cp = new iDocDataPanel();
+  cp->setUpdateOnShow(false); // no way -- user must refresh
   cp->setDoc((taDoc*)dl_->data());
   DataPanelCreated(cp);
 
   // then source editor
   iDocEditDataPanel* dp = new iDocEditDataPanel(dl_);
+  dp->setUpdateOnShow(false); // no way -- leave where it is
   DataPanelCreated(dp);
 
   // then standard properties

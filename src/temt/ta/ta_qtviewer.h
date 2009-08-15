@@ -1366,6 +1366,8 @@ public:
   inline bool		pinned() const {return m_pinned;}
   inline bool		rendered() const {return m_rendered;}
   void			setPinned(bool value);
+  bool			updateOnShow() const {return m_update_on_show;} // usually true, but things like docs don't want it
+  void			setUpdateOnShow(bool val);
 //  DataViewer*		viewer() {return (m_dps) ? m_dps->viewer() : m_tabView->viewer();}
   iTabBar::TabIcon	tabIcon() const;
   inline iTabView*	tabView() const {return m_tabView;} // tab view in which we are shown
@@ -1413,6 +1415,8 @@ protected:
   bool			m_pinned;
   bool			m_rendered; // set once rendered
   bool			show_req; // set when we send the SHOW_REQ event
+  bool			m_update_on_show;
+  bool			m_update_req; // for when data changes while hidden
   QVBoxLayout* 		layOuter; 
   QScrollArea*		scr; // central scrollview
   override void 	customEvent(QEvent* ev_);

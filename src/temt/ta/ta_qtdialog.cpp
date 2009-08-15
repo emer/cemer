@@ -747,6 +747,7 @@ void taiDataHostBase::Apply() {
   }
   ++updating;
   GetValue();
+  defer_reshow_req = true; // forces rebuild so CONDSHOW guys work
   Refresh(); // GetImage/Unchanged, unless a defer_reshow pending
 /*obs  GetImage();
   Unchanged(); */

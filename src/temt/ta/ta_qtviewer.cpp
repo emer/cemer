@@ -5402,6 +5402,8 @@ iDataPanel::iDataPanel(taiDataLink* dl_)
   m_tabView = NULL; // set when added to tabview; remains NULL if in a panelset
   m_pinned = false;
   m_rendered = false;
+  m_update_on_show = true; // legacy default for most panels
+  m_update_req = true;
   show_req = false;
   setFrameStyle(NoFrame | Plain);
   scr = new QScrollArea(this);
@@ -5486,6 +5488,7 @@ void iDataPanel::UpdatePanel() {
 }
 
 void iDataPanel::UpdatePanel_impl() {
+  m_update_req = false;
   if (tabView())
     tabView()->UpdateTabName(this); //in case changed 
 }
@@ -5515,6 +5518,11 @@ void iDataPanel::setCentralWidget(QWidget* widg) {
   widg->show(); 
 }
 
+void iDataPanel::setUpdateOnShow(bool value) {
+  if (m_update_on_show == value) return;
+  m_update_on_show = value; // no action needed... 
+}
+
 void iDataPanel::setPinned(bool value) {
   if (m_pinned == value) return;
   m_pinned = value; // no action needed... "pinned is just a state of mind"
@@ -5534,8 +5542,10 @@ void iDataPanel::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
   // note: we only call the impl, because each guy gets it, so we don't
   // want sets to then invoke this twice
-  if (m_rendered) UpdatePanel_impl();
-  else            Render();
+  if (m_rendered) {
+    if (updateOnShow() || m_update_req)
+      UpdatePanel_impl();
+  } else            Render();
 }
 
 iTabBar::TabIcon iDataPanel::tabIcon() const {
@@ -6734,7 +6744,8 @@ void iDocDataPanel::UpdatePanel_impl() {
 
 void iDocDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
-  if (dcr <= DCR_ITEM_UPDATED_ND) { // todo: not clear why this isn't standard..
+  if (dcr <= DCR_ITEM_UPDATED_ND) {
+    this->m_update_req = true; // so we update next time we show
     UpdatePanel();
   }
 }
