@@ -2252,6 +2252,8 @@ void taiEditDataHost::GetButtonImage(bool force) {
     bool ghost_on = false; // defaults here make it editable in test chain below
     bool val_is_eq = false;
     taBase* base = mth_rep->Base();
+    // in case of some obscure delete/refresh scenarios, skip if deleted
+    if (!base) continue;
     if (!taiType::CheckProcessCondMembMeth("GHOST", mth_rep->meth, base, ghost_on, val_is_eq))
       continue;
     QAbstractButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true

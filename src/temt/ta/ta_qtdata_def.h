@@ -212,8 +212,7 @@ protected:
 #endif
   taiData*		mparent;		// if data is contained within data, this the parent container
   int			mflags;
-  mutable taBase*	m_base; // this is a hack for when the Host is not the Base, particularly ProgCtrl panels, etc., and enables Seledit to work
-  
+  mutable taBaseRef	m_base; // this is a hack for when the Host is not the Base, particularly ProgCtrl panels, etc., and enables Seledit to work
 
   virtual void		SetRep(QWidget* val);
   virtual void		ChildAdd(taiData* child) {}
