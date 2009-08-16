@@ -2925,6 +2925,7 @@ void iTabViewer::ResolveChanges_impl(CancelOp& cancel_op) {
 }
 
 void iTabViewer::SelectionChanged_impl(ISelectableHost* src_host) {
+  if (tab_changing) return;
   //TODO: should actually check if old panel=new panel, since theoretically, two different
   // gui items can have the same datalink (i.e., underlying data)
   iDataPanel* new_pn = NULL;
@@ -5155,6 +5156,7 @@ int iTabView::panelCount() const {
 void iTabView::panelSelected(int idx) {
   iDataPanel* panel = NULL;
   if (idx >= 0) panel = tbPanels->panel(idx); 
+  ++(tabViewerWin()->tab_changing);
   if (panel) {
     wsPanels->setCurrentWidget(panel);
   } else {
@@ -5162,6 +5164,7 @@ void iTabView::panelSelected(int idx) {
   }
   if (m_viewer_win)
     m_viewer_win->TabView_Selected(this);
+  --(tabViewerWin()->tab_changing);
 }
 
 void iTabView::OnWindowBind(iTabViewer* itv) {
@@ -5217,9 +5220,11 @@ bool iTabView::SetCurrentTab(int tab_idx) {
   if (tab_idx < 0 || tab_idx >= tbPanels->count()) return false;
   iDataPanel* pan = tabPanel(tab_idx);
   if (!pan) return false;
+  ++(tabViewerWin()->tab_changing);
   tbPanels->setCurrentIndex(tab_idx);
   wsPanels->setCurrentWidget(pan);
   pan->show();			// make it visible for sure!
+  --(tabViewerWin()->tab_changing);
   return true;
 }
 

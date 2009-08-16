@@ -755,6 +755,7 @@ protected:
 //  iTabView_PtrList*	m_tabViews; // all created tab views
   iTabView*		m_curTabView; // tab view (split) that currently has the focus
   ISelectable*		cur_item; // the last item that was curItem -- NOTE: somewhat dangerous to cache, but according to spec, src_host should issue a new notify if this deletes
+  ContextFlag		tab_changing; // lets us ignore spurious re-entrant tab changes, ex. bugID:817
   void			Constr_Menu_impl(); // override
   override void		Constr_post(); // called virtually, in DV::Constr_post 
   override void		ResolveChanges_impl(CancelOp& cancel_op);
