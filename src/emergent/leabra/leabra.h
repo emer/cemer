@@ -605,7 +605,7 @@ public:
   inline override void	B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
 						   LeabraLayer* rlay);
 
-  bool	CheckObjectType_impl(TAPtr obj);
+  bool	CheckObjectType_impl(taBase* obj);
 
   void	Defaults();
   TA_SIMPLE_BASEFUNS(LeabraBiasSpec);

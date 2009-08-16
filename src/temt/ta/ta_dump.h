@@ -45,7 +45,7 @@ class TA_API VPUnref {			// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 public:
   String	name;		// just for looking up purposes
   MemberDef*	memb_def;	// memberdef of the pointer
-  void* 	base;		// location of ptr to set, usually TAPtr*, but could be taSmartRef*
+  void* 	base;		// location of ptr to set, usually taBase**, but could be taSmartRef*
   taBase* 	parent;		// location's parent to update
   String 	path;
 

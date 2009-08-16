@@ -501,7 +501,7 @@ void LeabraBiasSpec::Initialize() {
   dwt_thresh = .1f;
 }
 
-bool LeabraBiasSpec::CheckObjectType_impl(TAPtr obj) {
+bool LeabraBiasSpec::CheckObjectType_impl(taBase* obj) {
   // don't allow anything to point to a biasspec except the unitspec!
   if(!obj->InheritsFrom(TA_BaseSpec) &&
      !obj->InheritsFrom(TA_LeabraCon)) return false;

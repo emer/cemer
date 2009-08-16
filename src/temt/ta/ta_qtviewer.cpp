@@ -2390,7 +2390,7 @@ void ISelectableHost::DoDynAction(int idx) {
     arg_dlg = new cssiArgDialog(meth, typ, base, use_argc, hide_args);
     if (base && typ->InheritsFrom(TA_taBase)) {
       bool ok;
-      iColor bgclr = ((TAPtr)base)->GetEditColorInherit(ok);
+      iColor bgclr = ((taBase*)base)->GetEditColorInherit(ok);
       if (ok) arg_dlg->setBgColor(bgclr);
     }
     arg_dlg->Constr("", "");
@@ -8225,7 +8225,7 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     int nd_idx; // index of the node
     taList_impl* list = this->list(); // cache
     for (int i = 0; i < list->size; ++i) {
-      TAPtr tab = (TAPtr)list->FastEl_(i);
+      taBase* tab = (taBase*)list->FastEl_(i);
       FindChildForData(tab, nd_idx);
       if (i == nd_idx) continue; // in right place already
       moveChild(nd_idx, i);
@@ -8467,7 +8467,7 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     int nd_idx; // index of the node
     taGroup_impl* gp = this->tadata(); // cache
     for (int i = 0; i < gp->gp.size; ++i) {
-      TAPtr tab = (TAPtr)gp->FastGp_(i);
+      taBase* tab = (taBase*)gp->FastGp_(i);
       FindChildForData(tab, nd_idx);
       if ((gp0_idx+i) == nd_idx) continue; // in right place already
       moveChild(nd_idx, (gp0_idx+i));

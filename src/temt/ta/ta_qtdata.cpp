@@ -2691,13 +2691,13 @@ void taiEditButton::setRepLabel(const char* label) {
 //////////////////////////////////////////
 
 
-taiObjChooser* taiObjChooser::createInstance(TAPtr parob, const char* captn, bool selonly, QWidget* par_window_) {
+taiObjChooser* taiObjChooser::createInstance(taBase* parob, const char* captn, bool selonly, QWidget* par_window_) {
   if (par_window_ == NULL)
     par_window_ = taiMisc::main_window;
   return new taiObjChooser(parob, captn, selonly, par_window_);
 }
 
-taiObjChooser* taiObjChooser::createInstance(TypeDef* tpdf, const char* captn, TAPtr scope_ref_, QWidget* par_window_) {
+taiObjChooser* taiObjChooser::createInstance(TypeDef* tpdf, const char* captn, taBase* scope_ref_, QWidget* par_window_) {
   if (par_window_ == NULL)
     par_window_ = taiMisc::main_window;
   return new taiObjChooser(tpdf, captn, scope_ref_, par_window_);
@@ -2716,7 +2716,7 @@ void taiObjChooser::init(const char* captn, bool selonly, QWidget* par_window_) 
   resize(taiM->dialogSize(taiMisc::hdlg_s));
 }
 
-taiObjChooser::taiObjChooser(TAPtr parob, const char* captn, bool selonly, QWidget* par_window_)
+taiObjChooser::taiObjChooser(taBase* parob, const char* captn, bool selonly, QWidget* par_window_)
 {
   init(captn, selonly, par_window_);
 
@@ -2728,7 +2728,7 @@ taiObjChooser::taiObjChooser(TAPtr parob, const char* captn, bool selonly, QWidg
   Build();
 }
 
-taiObjChooser::taiObjChooser(TypeDef* td, const char* captn, TAPtr scope_ref_, QWidget* par_window_)
+taiObjChooser::taiObjChooser(TypeDef* td, const char* captn, taBase* scope_ref_, QWidget* par_window_)
 : iDialog(par_window_)
 {
   setModal(true);
@@ -2742,9 +2742,9 @@ taiObjChooser::taiObjChooser(TypeDef* td, const char* captn, TAPtr scope_ref_, Q
   Build();
 }
 
-void taiObjChooser::setSel_obj(const TAPtr value) {
+void taiObjChooser::setSel_obj(const taBase* value) {
   if (msel_obj == value) return;
-  msel_obj = value;
+  msel_obj = const_cast<taBase*>(value);
   for (int i = 0; i < browser->count(); ++i) {
     QListWidgetItem* lbi = browser->item(i);
     if (lbi->data(Qt::UserRole).value<ta_intptr_t>() == (ta_intptr_t)value) {
@@ -2827,7 +2827,7 @@ void taiObjChooser::Load() {
     }
     int i;
     for (i=0; i<lst_par_obj->size; i++) {
-      TAPtr ob = (TAPtr)lst_par_obj->FastEl_(i);
+      taBase* ob = (taBase*)lst_par_obj->FastEl_(i);
       String lbl = ob->GetName();
       if(lbl.length() == 0)
 	lbl = String("[") + String(i) + "]";
@@ -2845,12 +2845,12 @@ void taiObjChooser::Load() {
   }
 }
 
-void taiObjChooser::AddObjects(TAPtr obj) {
+void taiObjChooser::AddObjects(taBase* obj) {
   TypeDef* td = obj->GetTypeDef();
   for (int i = 0; i < td->members.size; ++i) {
     MemberDef* md = td->members.FastEl(i);
     if(!md->type->InheritsFrom(&TA_taBase)) continue;
-    TAPtr mb = (TAPtr)md->GetOff((void*)obj);
+    taBase* mb = (taBase*)md->GetOff((void*)obj);
     if(mb->GetOwner() == NULL) continue; // not going to be a good selection item
     AddItem((const char*)md->name, md);
   }
@@ -2862,7 +2862,7 @@ void taiObjChooser::AddTokens(TypeDef* td) {
     void* tmp = td->tokens.FastEl(i);
     String adrnm = String((long)tmp);
     if(td->InheritsFrom(TA_taBase)) {
-      TAPtr btmp = (TAPtr)tmp;
+      taBase* btmp = (taBase*)tmp;
       if((scope_ref != NULL) && !btmp->SameScope(scope_ref))
 	continue;
       if(!btmp->GetName().empty()) {
@@ -2921,7 +2921,7 @@ void taiObjChooser::UpdateFmSelStr() {
     if(!typ_par_obj->InheritsFrom(TA_taBase))
       return;
     long adr = (long)msel_str;
-    msel_obj = (TAPtr)adr;
+    msel_obj = (taBase*)adr;
     if((msel_obj != NULL) && !msel_obj->GetName().empty())
       msel_str = msel_obj->GetName();
   }
@@ -2959,7 +2959,7 @@ void taiObjChooser::browser_currentItemChanged(QListWidgetItem* itm, QListWidget
   if (itm == NULL)
     msel_obj = NULL;
   else
-    msel_obj = (TAPtr)(itm->data(Qt::UserRole).value<ta_intptr_t>());
+    msel_obj = (taBase*)(itm->data(Qt::UserRole).value<ta_intptr_t>());
 
   String nw_txt;
   if (msel_obj == NULL)
@@ -4613,7 +4613,7 @@ int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
   // if !tokens.keep then tokens.size==0
   
   for (int i = 0; i < td->tokens.size; ++i) {
-    TAPtr btmp = (TAPtr)td->tokens.FastEl(i);
+    taBase* btmp = (taBase*)td->tokens.FastEl(i);
     if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
     if (!ShowToken(btmp)) continue;
@@ -4621,7 +4621,7 @@ int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
     QTreeWidgetItem* item = ic->AddItem(btmp->GetColText(taBase::key_disp_name),
       top_item, (void*)btmp); 
     item->setData(1, Qt::DisplayRole, btmp->GetTypeDef()->name);
-    TAPtr own = btmp->GetParent();
+    taBase* own = btmp->GetParent();
     if (own) {
       item->setData(2, Qt::DisplayRole, own->GetDisplayName()); // use disp name directly -- overriden to name for groups..
       item->setData(3, Qt::DisplayRole, own->GetColText(taBase::key_type));
@@ -4650,8 +4650,8 @@ void taiTokenPtrButton::GetImage(void* cur_sel_, TypeDef* targ_typ_)
   inherited::GetImage(cur_sel_, targ_typ_);
 }
 
-void taiTokenPtrButton::GetImageScoped(TAPtr ths, TypeDef* targ_typ_,
-  TAPtr scope_, TypeDef* scope_type_) 
+void taiTokenPtrButton::GetImageScoped(taBase* ths, TypeDef* targ_typ_,
+  taBase* scope_, TypeDef* scope_type_) 
 {
   scope_ref = scope_;
   scope_typ = scope_type_;
@@ -4676,7 +4676,7 @@ const String taiTokenPtrButton::labelNameNonNull() const {
 }
 
 bool taiTokenPtrButton::ShowToken(void* tk) const {
-  TAPtr btmp = (TAPtr)tk;
+  taBase* btmp = (taBase*)tk;
   return ShowItemFilter(scope_ref, tk, btmp->GetName());
 }
 
@@ -4760,7 +4760,7 @@ int taiTokenPtrMultiTypeButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
   // if !tokens.keep then tokens.size==0
   
   for (int i = 0; i < td->tokens.size; ++i) {
-    TAPtr btmp = (TAPtr)td->tokens.FastEl(i);
+    taBase* btmp = (taBase*)td->tokens.FastEl(i);
     if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
     if (!ShowToken(btmp)) continue;
@@ -4768,7 +4768,7 @@ int taiTokenPtrMultiTypeButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
     QTreeWidgetItem* item = ic->AddItem(btmp->GetColText(taBase::key_disp_name),
       top_item, (void*)btmp); 
     item->setData(1, Qt::DisplayRole, btmp->GetTypeDef()->name);
-    TAPtr own = btmp->GetOwner();
+    taBase* own = btmp->GetOwner();
     if (own) {
       item->setData(2, Qt::DisplayRole, own->GetColText(taBase::key_disp_name));
       item->setData(3, Qt::DisplayRole, own->GetColText(taBase::key_type));
@@ -4794,8 +4794,8 @@ void taiTokenPtrMultiTypeButton::GetImage(void* cur_sel_, TypeDef* targ_typ_)
   inherited::GetImage(cur_sel_, targ_typ_);
 }
 
-void taiTokenPtrMultiTypeButton::GetImageScoped(TAPtr ths, TypeDef* targ_typ_,
-  TAPtr scope_, TypeDef* scope_type_) 
+void taiTokenPtrMultiTypeButton::GetImageScoped(taBase* ths, TypeDef* targ_typ_,
+  taBase* scope_, TypeDef* scope_type_) 
 {
   scope_ref = scope_;
   scope_typ = scope_type_;
@@ -4817,7 +4817,7 @@ const String taiTokenPtrMultiTypeButton::labelNameNonNull() const {
 }
 
 bool taiTokenPtrMultiTypeButton::ShowToken(void* tk) const {
-  TAPtr btmp = (TAPtr)tk;
+  taBase* btmp = (taBase*)tk;
   return ShowItemFilter(scope_ref, tk, btmp->GetName());
 }
 
@@ -4952,7 +4952,7 @@ void taiElBase::DataChanged(taiData* chld) {
   else inherited::DataChanged(chld);
 }
 
-void taiElBase::setCur_obj(TAPtr value, bool do_chng) {
+void taiElBase::setCur_obj(taBase* value, bool do_chng) {
   if (cur_obj == value) return;
   cur_obj = value;
   ta_actions->GetImageByData(Variant(value));
@@ -4984,7 +4984,7 @@ void taiToken::Chooser() {
   chs->setSel_obj(cur_obj); // set initial selection
   bool rval = chs->Choose();
   if (rval) {
-    setCur_obj((TAPtr)chs->sel_obj()); //TODO: ***DANGEROUS CAST*** -- could possibly be non-taBase type!!!
+    setCur_obj((taBase*)chs->sel_obj()); //TODO: ***DANGEROUS CAST*** -- could possibly be non-taBase type!!!
  /*TODO: can we even do this??? is there ever actions for radio button items???   if ((ta_actions->cur_sel != NULL) && (ta_actions->cur_sel->label == "<Over max, select...>") &&
        (ta_actions->cur_sel->men_act != NULL)) {
       ta_actions->cur_sel->usr_data = (void*)chs_obj;
@@ -5014,12 +5014,12 @@ void taiToken::Edit() {
   gc->Edit(cur_base, false);
 }
 
-void taiToken::GetImage(TAPtr ths) {
+void taiToken::GetImage(taBase* ths) {
   GetUpdateMenu();
   setCur_obj(ths, false);
 }
 
-void taiToken::GetImage(TAPtr ths, TypeDef* new_typ, TAPtr new_scope) {
+void taiToken::GetImage(taBase* ths, TypeDef* new_typ, taBase* new_scope) {
   scope_ref = new_scope;
   typ = new_typ;
   GetImage(ths);
@@ -5039,7 +5039,7 @@ void taiToken::GetUpdateMenu(const taiMenuAction* actn) {
   GetMenu_impl(ta_actions, typ, actn);
 }
 
-TAPtr taiToken::GetValue() {
+taBase* taiToken::GetValue() {
   return cur_obj;
 }
 
@@ -5069,7 +5069,7 @@ void taiToken::GetMenu_impl(taiActions* menu, TypeDef* td, const taiMenuAction* 
       taiMenuAction ma(this, SLOT(ItemChosen(taiAction*)));
       String	nm;
       for (int i = 0; i < td->tokens.size; ++i) {
-        TAPtr btmp = (TAPtr)td->tokens.FastEl(i);
+        taBase* btmp = (taBase*)td->tokens.FastEl(i);
         if ((scope_ref != NULL) && !btmp->SameScope(scope_ref))
           continue;
         //TODO: need to get some kind of less ambiguous name
@@ -5136,7 +5136,7 @@ void taiToken::GetMenu_impl(taiMenu* menu, TypeDef* td, const taiMenuAction* act
 	void* tmp = td->tokens.FastEl(i);
 	nm = String((long)tmp);
 	if (td->InheritsFrom(TA_taBase)) {
-	  TAPtr btmp = (TAPtr)tmp;
+	  taBase* btmp = (taBase*)tmp;
 	  if ((scope_ref != NULL) && !btmp->SameScope(scope_ref))
 	    continue;
 	  if (!btmp->GetName().empty())
@@ -5169,7 +5169,7 @@ void taiToken::GetMenu_impl(taiMenu* menu, TypeDef* td, const taiMenuAction* act
   }
 }*/
 /*obs
-void taiToken::SetTypeScope(TypeDef* new_typ, TAPtr new_scope, bool force) {
+void taiToken::SetTypeScope(TypeDef* new_typ, taBase* new_scope, bool force) {
   if ((new_typ == typ) && (new_scope == scope_ref) && !force) return;
   typ = new_typ;
   scope_ref = new_scope;
@@ -5633,7 +5633,7 @@ taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* 
   meth = md;
   gui_parent = gui_parent_;
   if(base && typ && typ->InheritsFrom(TA_taBase)) {
-    typ = ((TAPtr)base)->GetTypeDef(); // get the *actual* type def of this object!
+    typ = ((taBase*)base)->GetTypeDef(); // get the *actual* type def of this object!
   }
   is_menu_item = false;
   args = NULL;
@@ -5717,7 +5717,7 @@ bool taiMethodData::CallFun_impl() {
   arg_dlg = new cssiArgDialog(meth, typ, base, use_argc, 0); //modal
   if (typ->InheritsFrom(TA_taBase)) {
     bool ok;
-    iColor bgclr = ((TAPtr)base)->GetEditColorInherit(ok);
+    iColor bgclr = ((taBase*)base)->GetEditColorInherit(ok);
     if (ok) arg_dlg->setBgColor(bgclr);
   }
   arg_dlg->Constr("", "");
@@ -5797,7 +5797,7 @@ void taiMethodData::UpdateAfter() {
     (((taiDataHost*)host->This())->state != taiDataHost::ACTIVE)) ) 
   {
     if(base == NULL) return;
-    TAPtr tap = (TAPtr)base;
+    taBase* tap = (taBase*)base;
     if (meth->HasOption("UPDATE_MENUS"))
       taiMisc::Update(tap);
     return;
@@ -5806,7 +5806,7 @@ void taiMethodData::UpdateAfter() {
   if ((host->GetRootTypeDef() != NULL) && 
     host->GetRootTypeDef()->InheritsFrom(TA_taBase)) 
   {
-    TAPtr tap = host->Base();
+    taBase* tap = host->Base();
     if (tap && meth->HasOption("UPDATE_MENUS")) {
       taiMisc::Update(tap);	// update menus and stuff
       tap->UpdateAllViews(); // tell others to update
@@ -5825,7 +5825,7 @@ void taiMethodData::GenerateScript() {
   }
 #endif
 
-  TAPtr tab = (TAPtr)base;
+  taBase* tab = (taBase*)base;
 
   if ((use_argc == 0) || (arg_dlg == NULL)) {
     String rscr = tab->GetPath() + "." + meth->name + "();";

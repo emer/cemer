@@ -93,13 +93,13 @@ class TA_API taiListElsButtonBase : public taiItemPtrBase {
 // for items in a list
 INHERITED(taiItemPtrBase)
 public:
-  inline TAPtr		item() const {return (TAPtr)m_sel;}
+  inline taBase*		item() const {return (taBase*)m_sel;}
   int			columnCount(int view) const; // override
   const String		headerText(int index, int view) const; // override
   int			viewCount() const {return 1;} // override
   const String		viewText(int index) const; // override
 
-  TAPtr			GetValue() {return item();}
+  taBase*			GetValue() {return item();}
   
   taiListElsButtonBase(TypeDef* typ_, IDataHost* host,
 		       taiData* par, QWidget* gui_parent_, int flags_ = 0,
@@ -123,7 +123,7 @@ public:
   override const String	titleText();
 
   USING(inherited::GetImage)
-  void			GetImage(TABLPtr base_lst, TAPtr it);
+  void			GetImage(TABLPtr base_lst, taBase* it);
   
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
 
@@ -141,7 +141,7 @@ public:
   
   override const String	titleText();
   USING(inherited::GetImage)
-  void			GetImage(taGroup_impl* base_grp, TAPtr it);
+  void			GetImage(taGroup_impl* base_grp, taBase* it);
   
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
 
@@ -166,8 +166,8 @@ public:
   virtual void	UpdateMenu(taiMenuAction* actn = NULL);
 
   QWidget*	GetRep();
-  void		GetImage(TABLPtr base_lst, TAPtr it);
-  TAPtr		GetValue();
+  void		GetImage(TABLPtr base_lst, taBase* it);
+  taBase*		GetValue();
 
   gpiListEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* tp, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // flags include: flgNullOk, flgNoList, flgEditOk
@@ -284,11 +284,11 @@ class TA_API gpiList_ElData {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS contains data_els for one member of List
 public:
   TypeDef*	typ;
-  TAPtr		cur_base;
+  taBase*		cur_base;
   Member_List	memb_el; // members
   taiDataList   data_el; // data elements for members
 
-  gpiList_ElData(TypeDef* tp, TAPtr base);
+  gpiList_ElData(TypeDef* tp, taBase* base);
   virtual ~gpiList_ElData();
 };
 
@@ -336,10 +336,10 @@ class TA_API gpiCompactList_ElData {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS contains data_els for one member of List
 public:
   TypeDef*	typ;
-  TAPtr		cur_base;
+  taBase*		cur_base;
   taiData*	data_el;	// data element provided by the typ->it
 
-  gpiCompactList_ElData(TypeDef* tp, TAPtr base, taiData* data_el = NULL);
+  gpiCompactList_ElData(TypeDef* tp, taBase* base, taiData* data_el = NULL);
   virtual ~gpiCompactList_ElData();
 };
 

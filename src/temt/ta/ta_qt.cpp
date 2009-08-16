@@ -131,7 +131,7 @@ iTopLevelWindow_List	taiMisc::active_wins;
 TypeSpace		taiMisc::arg_types;
 QPointer<iMainWindowViewer> taiMisc::main_window;
 taBase_PtrList		taiMisc::unopened_windows;
-void (*taiMisc::Update_Hook)(TAPtr) = NULL;
+void (*taiMisc::Update_Hook)(taBase*) = NULL;
 iNetworkAccessManager*	taiMisc::net_access_mgr = NULL;
 
 int taiMisc::busy_count = 0;
@@ -571,7 +571,7 @@ void taiMisc::ResolveViewerChanges(CancelOp& cancel_op) {
   }
 }
 
-void taiMisc::Update(TAPtr obj) {
+void taiMisc::Update(taBase* obj) {
   if (Update_Hook != NULL)
     (*Update_Hook)(obj);
 }

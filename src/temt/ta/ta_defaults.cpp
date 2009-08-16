@@ -60,7 +60,7 @@ void TypeDefault::Dump_Load_pre() {
   active_membs.Reset();		// remove all members before loading..
 }
 
-int TypeDefault::Dump_Load_Value(istream& strm, TAPtr par) {
+int TypeDefault::Dump_Load_Value(istream& strm, taBase* par) {
   int rval = taNBase::Dump_Load_Value(strm, par);
   if(rval == 1)
     UpdateAfterEdit();
@@ -189,7 +189,7 @@ void TypeDefault::UpdateToNameValue() {
   }
 }
 
-void TypeDefault::SetTypeDefaults(TAPtr tok) {
+void TypeDefault::SetTypeDefaults(taBase* tok) {
   if((default_type == NULL) || (tok == NULL) || (token == NULL))
     return;
 

@@ -384,7 +384,7 @@ bool MatrixGeom::SetValStr(const String& val, void* par, MemberDef* memb_def,
   return true;
 }
 
-int MatrixGeom::Dump_Save_Value(ostream& strm, TAPtr, int) {
+int MatrixGeom::Dump_Save_Value(ostream& strm, taBase*, int) {
   strm << "{ ";
   int i;
   for (i=0; i < n_dims; i++) {
@@ -393,7 +393,7 @@ int MatrixGeom::Dump_Save_Value(ostream& strm, TAPtr, int) {
   return true;
 }
 
-int MatrixGeom::Dump_Load_Value(istream& strm, TAPtr) {
+int MatrixGeom::Dump_Load_Value(istream& strm, taBase*) {
   int c = taMisc::skip_white(strm);
   if(c == EOF)    return EOF;
   if(c == ';') // just a path
@@ -689,7 +689,7 @@ void taMatrix::DataChanged(int dcr, void* op1, void* op2) {
   }
 }
 
-TAPtr taMatrix::GetOwner() const { 
+taBase* taMatrix::GetOwner() const { 
   if (slice_par) return slice_par; 
   return owner;
 }
@@ -745,7 +745,7 @@ int taMatrix::Dump_Load_Item(istream& strm, int idx) {
   return c;
 }
 
-int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
+int taMatrix::Dump_Load_Value(istream& strm, taBase* par) {
   int c = taMisc::skip_white(strm);
   if(c == EOF)	return EOF;
   if(c == ';')	return 2;	// signal that its a path
@@ -797,7 +797,7 @@ void taMatrix::Dump_Save_Item(ostream& strm, int idx) {
   strm << FastElAsStr_Flat(idx);
 }
 
-int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
+int taMatrix::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
   // save the members -- it puts the { out
   //int rval = 
   inherited::Dump_Save_Value(strm, par, indent);

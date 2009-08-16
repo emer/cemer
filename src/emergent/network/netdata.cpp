@@ -558,7 +558,7 @@ void NetMonItem::UpdateAfterEdit_impl() {
   }
 }
 
-String NetMonItem::GetObjName(TAPtr obj) {
+String NetMonItem::GetObjName(taBase* obj) {
   if (!obj) return _nilString;
 
   // cases where default name is not what we want:
@@ -800,11 +800,11 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
       return true; //no mon, but we did handle it
     }
     // we can only handle embedded objs and ptrs to objs
-    TAPtr ths = NULL;
+    taBase* ths = NULL;
     if (md->type->ptr == 0)
-      ths = (TAPtr) md->GetOff((void*)obj);
+      ths = (taBase*) md->GetOff((void*)obj);
     else if (md->type->ptr == 1)
-      ths = *((TAPtr*)md->GetOff((void*)obj));
+      ths = *((taBase**)md->GetOff((void*)obj));
     else {
       TestError(true, "ScanObject_InObject", "can only handle embedded taBase objects"
 		" or ptrs to them, not level=",
@@ -1270,7 +1270,7 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
   }
 }
 
-void NetMonItem::SetMonVals(TAPtr obj, const String& var) {
+void NetMonItem::SetMonVals(taBase* obj, const String& var) {
   if ((object.ptr() == obj) && (variable == var)) return; 
   object = obj;
   if(object)
@@ -1537,7 +1537,7 @@ void NetMonitor::AddBlank() {
   items.New_gui(1);		// gui version
 }
 
-void NetMonitor::AddObject(TAPtr obj, const String& variable) {
+void NetMonitor::AddObject(taBase* obj, const String& variable) {
   // check for exact obj/variable already there, otherwise add one
   NetMonItem* nmi;
   for (int i = 0; i < items.size; ++i) {

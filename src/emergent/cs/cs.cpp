@@ -944,7 +944,7 @@ void CsNetwork::Compute_EpochStats() {
 //     Stat* nag = (Stat*)stat_to_agg->Clone(); // clone original one
 //     sproc->loop_stats.Add(nag);
 //     nag->time_agg.op = Aggregate::AVG;
-//     taBase::SetPointer((TAPtr*)&(nag->time_agg.from), stat_to_agg);
+//     taBase::SetPointer((taBase**)&(nag->time_agg.from), stat_to_agg);
 //     nag->time_agg.UpdateAfterEdit();
 //     nag->UpdateAfterEdit();
 //     sproc = (SchedProcess *) sproc->super_proc;
@@ -955,7 +955,7 @@ void CsNetwork::Compute_EpochStats() {
 //   if(smp_proc == NULL)    return;
 //   CsTIGstat* tig_stat = new CsTIGstat;
 //   smp_proc->final_stats.Add(tig_stat);
-//   taBase::SetPointer((TAPtr*)&(tig_stat->dist_stat), stat_to_agg);
+//   taBase::SetPointer((taBase**)&(tig_stat->dist_stat), stat_to_agg);
 //   tig_stat->UpdateAfterEdit();
 //   tig_stat->CreateAggregates(default_op);
 //   UpdateAfterEdit();
@@ -979,12 +979,12 @@ void CsNetwork::Compute_EpochStats() {
 // void CsTIGstat::CutLinks() {
 //   Stat::CutLinks();
 //   trial_proc = NULL;
-//   taBase::DelPointer((TAPtr*) &dist_stat);
+//   taBase::DelPointer((taBase**) &dist_stat);
 // }
 
 // void CsTIGstat::Copy_(const CsTIGstat& cp) {
 //   tig = cp.tig;
-//   taBase::SetPointer((TAPtr*) &dist_stat, cp.dist_stat);
+//   taBase::SetPointer((taBase**) &dist_stat, cp.dist_stat);
 // }
 
 // void CsTIGstat::InitStat() {
@@ -1053,12 +1053,12 @@ void CsNetwork::Compute_EpochStats() {
 
 // void CsTargStat::CutLinks() {
 //   Stat::CutLinks();
-//   taBase::DelPointer((TAPtr*) &dist_stat);
+//   taBase::DelPointer((taBase**) &dist_stat);
 // }
 
 // void CsTargStat::Copy_(const CsTargStat& cp) {
 //   trg_pct = cp.trg_pct;
-//   taBase::SetPointer((TAPtr*) &dist_stat, cp.dist_stat);
+//   taBase::SetPointer((taBase**) &dist_stat, cp.dist_stat);
 // }
 
 // void CsTargStat::InitStat() {

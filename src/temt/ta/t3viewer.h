@@ -779,7 +779,7 @@ public:
   
   virtual void		AddView(T3DataView* view); // add a view
   // #IGNORE 
-  virtual T3DataView*	FindRootViewOfData(TAPtr data);
+  virtual T3DataView*	FindRootViewOfData(taBase* data);
   // #IGNORE looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
 
   virtual void		ViewAll();
@@ -959,7 +959,7 @@ public:
   override bool		isRootLevelView() const {return true;} 
   inline iT3DataViewer*	widget() {return (iT3DataViewer*)inherited::widget();} // lex override
 
-  virtual T3DataView*	FindRootViewOfData(TAPtr data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
+  virtual T3DataView*	FindRootViewOfData(taBase* data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
 
   virtual T3DataViewFrame* FirstEmptyT3DataViewFrame(); // find the first frame with no contents (to avoid making a new one)
   virtual T3DataViewFrame* NewT3DataViewFrame(); // #MENU #MENU_ON_Object #MENU_CONTEXT create and map a new frame
@@ -973,7 +973,7 @@ public:
 
 protected:
   // from taDataView
-  override void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2);
+  override void		DataChanged_Child(taBase* child, int dcr, void* op1, void* op2);
   override void		DoActionChildren_impl(DataViewAction act); // just one act
 
   // DataViewer

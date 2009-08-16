@@ -721,7 +721,7 @@ void ClearLogProc::Initialize() {
 //	TypeDefault_Group	//
 //////////////////////////////////
 
-int TypeDefault_Group::Dump_Load_Value(istream& strm, TAPtr par) {
+int TypeDefault_Group::Dump_Load_Value(istream& strm, taBase* par) {
   Reset(); // get rid of any existing defaults before loading
   return inherited::Dump_Load_Value(strm, par);
 }

@@ -921,21 +921,21 @@ class TA_API taiObjChooser: iDialog {
   INHERITED(iDialog)
   Q_OBJECT
 public:
-  static taiObjChooser* createInstance(TAPtr parob, const char* captn, bool selonly = true, QWidget* par_window_ = NULL);
+  static taiObjChooser* createInstance(taBase* parob, const char* captn, bool selonly = true, QWidget* par_window_ = NULL);
     // create method for lists/groups
-  static taiObjChooser* createInstance(TypeDef* tpdf, const char* captn, TAPtr scope_ref_ = NULL, QWidget* par_window_ = NULL);
+  static taiObjChooser* createInstance(TypeDef* tpdf, const char* captn, taBase* scope_ref_ = NULL, QWidget* par_window_ = NULL);
     // create method for tokens
 
   bool	        	select_only;	// if true, only for selecting objects from current parent object
   String		caption; 	// current caption at top of chooser
   String		path_str;	// current path string
   TABLPtr		lst_par_obj;	// parent object that is a list object
-  TAPtr			reg_par_obj; 	// parent object that is *not* a list object
+  taBase*			reg_par_obj; 	// parent object that is *not* a list object
   TypeDef*		typ_par_obj; 	// parent object that is a typedef (get tokens)
-  TAPtr			scope_ref;	// reference object for scoping
+  taBase*			scope_ref;	// reference object for scoping
 
-  TAPtr			sel_obj() const {return msel_obj;}// current selected object
-  void			setSel_obj(const TAPtr value);	// 
+  taBase*			sel_obj() const {return msel_obj;}// current selected object
+  void			setSel_obj(const taBase* value);	// 
   String		sel_str() const {return msel_str;} 	// string rep of current selection
   String_Array		items;		// the items in the list
 
@@ -946,8 +946,8 @@ public:
   QPushButton*		btnOk;
   QPushButton*		btnCancel;
 
-  taiObjChooser(TAPtr parob, const char* captn, bool selonly, QWidget* par_window_); // USE createInstance instead!!!
-  taiObjChooser(TypeDef* tpdf, const char* captn, TAPtr scope_ref_, QWidget* par_window_); // USE createInstance instead!!!
+  taiObjChooser(taBase* parob, const char* captn, bool selonly, QWidget* par_window_); // USE createInstance instead!!!
+  taiObjChooser(TypeDef* tpdf, const char* captn, taBase* scope_ref_, QWidget* par_window_); // USE createInstance instead!!!
 
   virtual bool	Choose();
   // main user interface: this actually puts up the dialog, returns true if Ok, false if cancel
@@ -962,12 +962,12 @@ public:
   virtual void	UpdateFmSelStr(); // update selection based on sel_str
 
 protected:
-  TAPtr			msel_obj;	// current selected object
+  taBase*			msel_obj;	// current selected object
   String		msel_str; 	// string rep of current selection
 
   void 		init(const char* captn, bool selonly, QWidget* par_window_); // called by constructors
   virtual void 	AcceptEditor_impl(QLineEdit* e);
-  void 		AddObjects(TAPtr obj);
+  void 		AddObjects(taBase* obj);
   void		AddTokens(TypeDef* td); // add all tokens of given type
 
 protected slots:
@@ -1349,7 +1349,7 @@ class TA_API taiTokenPtrButton : public taiItemPtrBase {
 // for tokens of taBase objects
 INHERITED(taiItemPtrBase)
 public:
-  inline TAPtr		token() const {return (TAPtr)m_sel;}
+  inline taBase*		token() const {return (taBase*)m_sel;}
   override int		columnCount(int view) const;
   override const String	headerText(int index, int view) const;
   override int		viewCount() const {return 1;}
@@ -1359,7 +1359,7 @@ public:
   virtual bool		countTokensToN(int& cnt, TypeDef* td, int n, void*& last_itm);
   // recursively count valid (in scope etc) tokens of type until reaching n, at which point a true is returned -- if n is not reached, return false -- used for above two routines
   override void 	GetImage(void* cur_sel, TypeDef* targ_typ);
-  virtual void		GetImageScoped(TAPtr ths, TypeDef* targ_typ, TAPtr scope = NULL,
+  virtual void		GetImageScoped(taBase* ths, TypeDef* targ_typ, taBase* scope = NULL,
 	TypeDef* scope_type = NULL);
   // get image, using the new type and scope params supplied
   virtual taBase*	GetValue() {return token();}
@@ -1392,14 +1392,14 @@ INHERITED(taiItemPtrBase)
 public:
   TypeSpace		type_list; // #LINK_GROUP set of types to generate tokens for -- must be set manually after construction and before GetImage etc -- be sure to only do Link here..
 
-  inline TAPtr		token() const {return (TAPtr)m_sel;}
+  inline taBase*		token() const {return (taBase*)m_sel;}
   override int		columnCount(int view) const;
   override const String	headerText(int index, int view) const;
   override int		viewCount() const; // n = size of type_list + 1
   override const String	viewText(int index) const;
 
   override void 	GetImage(void* cur_sel, TypeDef* targ_typ);
-  virtual void		GetImageScoped(TAPtr ths, TypeDef* targ_typ, TAPtr scope = NULL,
+  virtual void		GetImageScoped(taBase* ths, TypeDef* targ_typ, taBase* scope = NULL,
 	TypeDef* scope_type = NULL);
   // get image, using the new type and scope params supplied
   virtual taBase*	GetValue() {return token();}
@@ -1467,11 +1467,11 @@ protected:
 class TA_API taiElBase: public taiData {
 INHERITED(taiData)
 public:
-  TAPtr		cur_obj;
+  taBase*		cur_obj;
   override void		DataChanged(taiData* chld = NULL); // do autoapply
 //  void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_menu, actn);}
   virtual void  GetMenu(taiActions* actions, taiMenuAction* actn = NULL) {} // variant provided for MenuGroup_impl in winbase
-  void 		setCur_obj(TAPtr value, bool do_chng = true); // set cur_obj and notifies change if different
+  void 		setCur_obj(taBase* value, bool do_chng = true); // set cur_obj and notifies change if different
   taiElBase(taiActions* actions_, TypeDef* tp, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
   ~taiElBase();
 protected:
@@ -1492,12 +1492,12 @@ public:
 
   override QWidget*	GetRep() { return (ta_actions) ? ta_actions->GetRep() : NULL; }
   
-  virtual void		GetImage(TAPtr ths);
+  virtual void		GetImage(taBase* ths);
     // get image, using the current type and scope
-  virtual void		GetImage(TAPtr ths, TypeDef* new_typ, TAPtr new_scope);
+  virtual void		GetImage(taBase* ths, TypeDef* new_typ, taBase* new_scope);
     // get image, using the new type and scope supplied
-  virtual TAPtr		GetValue(); //
-//nn  virtual void		SetTypeScope(TypeDef* new_typ, TAPtr new_scope); 
+  virtual taBase*		GetValue(); //
+//nn  virtual void		SetTypeScope(TypeDef* new_typ, taBase* new_scope); 
     // set a new base type and scope; doesn't update menu
   
   virtual void		GetUpdateMenu(const taiMenuAction* actn = NULL); 
@@ -1508,7 +1508,7 @@ private: //test for usage
       QWidget* gui_parent_, int flags_ = (flgNullOk | flgEditOk)); // uses flags flgNullOk, flgEditOk,
 //            bool nul_not=false, bool edt_not=false);
 protected:
-  TAPtr		scope_ref;	// reference object for scoping, default is none
+  taBase*		scope_ref;	// reference object for scoping, default is none
   
   virtual void	GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAction* actn = NULL);
 

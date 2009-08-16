@@ -706,14 +706,14 @@ public:
   ValIdx(float v, int i) 		{ SetValIdx(v, i); }
   ValIdx(const String& str) 		{ val = (float)str; }
   ~ValIdx() 				{ };
-  TAPtr Clone() 			{ return new ValIdx(*this); }
+  taBase* Clone() 			{ return new ValIdx(*this); }
   void  UnSafeCopy(const taBase* cp) {
     if(cp->InheritsFrom(&TA_ValIdx)) Copy(*((ValIdx*)cp));
     if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this);
   }
   void  CastCopyTo(taBase* cp) const 	{ ValIdx& rf = *((ValIdx*)cp); rf.Copy(*this); }
-  TAPtr MakeToken()			{ return (TAPtr)(new ValIdx); }
-  TAPtr MakeTokenAry(int no)		{ return (TAPtr)(new ValIdx[no]); }
+  taBase* MakeToken()			{ return (taBase*)(new ValIdx); }
+  taBase* MakeTokenAry(int no)		{ return (taBase*)(new ValIdx[no]); }
   TypeDef* GetTypeDef() const 		{ return &TA_ValIdx; }
   static TypeDef* StatTypeDef(int) 	{ return &TA_ValIdx; }
 

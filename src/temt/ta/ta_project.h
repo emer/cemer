@@ -560,7 +560,7 @@ class TA_API Project_Group : public taGroup<taProject> {
 INHERITED(taGroup<taProject>)
 friend class taProject;
 public:
-  override int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
+  override int	 	Load_strm(istream& strm, taBase* par=NULL, taBase** loaded_obj_ptr = NULL);
   override int	 	Load(const String& fname="", taBase** loaded_obj_ptr = NULL);
 
   TA_BASEFUNS(Project_Group);

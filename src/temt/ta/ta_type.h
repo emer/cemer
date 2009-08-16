@@ -209,7 +209,7 @@ public:
 };
 
 class taBase;
-typedef taBase* TAPtr;		// pointer to a taBase type
+// typedef taBase* TAPtr;		// pointer to a taBase type
 
 class TA_API NameVar_PArray : public taPlainArray<NameVar> {
   // #NO_TOKENS a plain-array of name value (variant) items
@@ -2335,7 +2335,7 @@ public:
   //		Get/Set From Variant
 
   const Variant	GetValVar(const void* base, const MemberDef* memb_def = NULL) const;
-  // get a Variant representation of value; primarily for value types (int, etc.); NOTE: returns TAPtr types as the Base value (not a pointer to the pointer), which is usually what you want (see source for more detail)
+  // get a Variant representation of value; primarily for value types (int, etc.); NOTE: returns taBase* types as the Base value (not a pointer to the pointer), which is usually what you want (see source for more detail)
   void		SetValVar(const Variant& val, void* base, void* par = NULL,
 			  MemberDef* memb_def = NULL);
   // sets value from a Variant representation; primarily for value types (int, etc.); 

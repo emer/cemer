@@ -2748,7 +2748,7 @@ String TokenSpace::El_GetName_(void* it) const {
     return tmp_el_name;
   }
 #ifndef NO_TA_BASE
-  TAPtr tmp = (TAPtr)it;
+  taBase* tmp = (taBase*)it;
   return tmp->GetName();
 #else
   return _nilString;
@@ -5465,7 +5465,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     }
 # endif
     else if(DerivesFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)base;
+      taBase* rbase = (taBase*)base;
       if(rbase)
 	return rbase->GetValStr(par, memb_def, sc, force_inline);
     }
@@ -5485,7 +5485,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     }
     else if (DerivesFrom(TA_taSmartRef)) {
       taSmartRef& ref = *((taSmartRef*)base);
-      TAPtr rbase = ref;
+      taBase* rbase = ref;
       if (rbase) {
         if ((rbase->GetOwner() != NULL) || (rbase == tabMisc::root)) {
           switch (sc) {
@@ -5722,7 +5722,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     }
 # endif
     else if(DerivesFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)base;
+      taBase* rbase = (taBase*)base;
       if(rbase)
 	rbase->SetValStr(val, par, memb_def, sc, force_inline);
     }
@@ -5737,7 +5737,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       return;
     }
     else if(DerivesFrom(TA_taSmartRef) && (tabMisc::root)) {
-      TAPtr bs = NULL;
+      taBase* bs = NULL;
       if ((val != String::con_NULL) && (val != "Null")) {
         String tmp_val(val); // FindFromPath can change it
 	if (sc == SC_STREAMING) {
@@ -5752,7 +5752,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 	  }
 	  if(md) {
 	    if (md->type->ptr == 1) {
-	      bs = *((TAPtr*)bs);
+	      bs = *((taBase**)bs);
 	      if(bs == NULL) {
 		taMisc::Warning("*** Null object at end of path in SetValStr:",val);
 		return;
@@ -5903,16 +5903,16 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
 #ifndef NO_TA_BASE
     //WARNING: there could be ref-count issues if base has not been ref'ed at least once!
     else if(DerivesFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)base;
+      taBase* rbase = (taBase*)base;
       //WARNING: there could be ref-count issues if base has not been ref'ed at least once!
       return rbase; // T_Base
     }
     else if (DerivesFrom(TA_taSmartPtr)) {
-      TAPtr rbase = (TAPtr)base;
+      taBase* rbase = (taBase*)base;
       return rbase; // T_Base
     }
     else if (DerivesFrom(TA_taSmartRef)) {
-      TAPtr rbase = *((taSmartRef*)base);
+      taBase* rbase = *((taSmartRef*)base);
       return rbase; // T_Base
     }
 #endif
@@ -5926,9 +5926,9 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
     else if (DerivesFrom(TA_taBase)) {
       //NOTE: strictly speaking, we should be returning a generic ptr which points to the
       // base value, but in practice, this is never what we want, since members that
-      // are TAPtr's are ubiquitous, what we actually want is a reference to the thing
+      // are taBase*'s are ubiquitous, what we actually want is a reference to the thing
       // being pointed to, ie., the content of the variable
-      TAPtr rbase = *((TAPtr*)base);
+      taBase* rbase = *((taBase**)base);
       return rbase; // T_Base
     }
 #endif
@@ -6027,11 +6027,11 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
     }
 #ifndef NO_TA_BASE
     else if (DerivesFrom(TA_taSmartPtr)) {
-      TAPtr rbase = (TAPtr)base;
+      taBase* rbase = (taBase*)base;
       return !(rbase); // T_Base
     }
     else if (DerivesFrom(TA_taSmartRef)) {
-      TAPtr rbase = *((taSmartRef*)base);
+      taBase* rbase = *((taSmartRef*)base);
       return !(rbase); // T_Base
     }
 #endif
@@ -6129,7 +6129,7 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
   else if(ptr == 1) {
 #ifndef NO_TA_BASE
     if (DerivesFrom(TA_taBase)) {
-      TAPtr bs = val.toBase();
+      taBase* bs = val.toBase();
       if (bs && !bs->GetTypeDef()->DerivesFrom(this)) {
         taMisc::Warning("Attempt to set member of type", this->name, " from ",
           bs->GetTypeDef()->name);
@@ -6140,13 +6140,13 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
 	if(par == NULL)
 	  taMisc::Warning("*** NULL parent for owned pointer:");
 	else
-	  taBase::OwnPointer((TAPtr*)base, bs, (TAPtr)par);
+	  taBase::OwnPointer((taBase**)base, bs, (taBase*)par);
       }
       else {
         if (memb_def && memb_def->HasOption("NO_SET_POINTER"))
-	  (*(TAPtr*)base) = bs;
+	  (*(taBase**)base) = bs;
         else
-	  taBase::SetPointer((TAPtr*)base, bs);
+	  taBase::SetPointer((taBase**)base, bs);
       }
       return;
     }
@@ -6294,8 +6294,8 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
     else if(DerivesFrom(TA_taSmartPtr))
       *((taSmartPtr*)trg_base) = *((taSmartPtr*)src_base);
     else if(DerivesFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)trg_base;
-      TAPtr sbase = (TAPtr)src_base;
+      taBase* rbase = (taBase*)trg_base;
+      taBase* sbase = (taBase*)src_base;
       if(sbase->InheritsFrom(rbase->GetTypeDef()) || rbase->InheritsFrom(sbase->GetTypeDef())) // makin it safe..
 	rbase->UnSafeCopy(sbase);
     }
@@ -6306,8 +6306,8 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
   else if(ptr >= 1) {
 #ifndef NO_TA_BASE
     if((ptr == 1) && DerivesFrom(TA_taBase)) {
-      TAPtr* rbase = (TAPtr*)trg_base;
-      TAPtr* sbase = (TAPtr*)src_base;
+      taBase** rbase = (taBase**)trg_base;
+      taBase** sbase = (taBase**)src_base;
       taBase::SetPointer(rbase, *sbase);
     }
     else {
@@ -6325,7 +6325,7 @@ void TypeDef::CopyOnlySameType(void* trg_base, void* src_base,
   if(InheritsFormal(TA_class)) {
 #ifndef NO_TA_BASE
     if(InheritsFrom(TA_taBase)) {
-      TAPtr src = (TAPtr)src_base;
+      taBase* src = (taBase*)src_base;
       // I actually inherit from the other guy, need to use their type for copying!
       if((src->GetTypeDef() != this) && InheritsFrom(src->GetTypeDef())) {
 	src->GetTypeDef()->CopyOnlySameType(trg_base, src_base);
@@ -6662,7 +6662,7 @@ ostream& MemberDef::OutputR(ostream& strm, void* base, int indent) const {
     taMisc::fmt_sep(strm, name, 1, indent);
     if(type->ptr == 0) {
       if(type->DerivesFrom(TA_taBase)) {
-	TAPtr rbase = (TAPtr)GetOff(base);
+	taBase* rbase = (taBase*)GetOff(base);
 	rbase->OutputR(strm, indent);
       }
       else
@@ -6681,11 +6681,11 @@ ostream& TypeDef::Output(ostream& strm, void* base, int indent) const {
   taMisc::indent(strm, indent);
 #ifndef NO_TA_BASE
   if(DerivesFrom(TA_taBase)) {
-    TAPtr rbase;
+    taBase* rbase;
     if(ptr == 0)
-      rbase = (TAPtr)base;
+      rbase = (taBase*)base;
     else if(ptr == 1)
-      rbase = *((TAPtr*)base);
+      rbase = *((taBase**)base);
     else
       rbase = NULL;
 
@@ -6700,7 +6700,7 @@ ostream& TypeDef::Output(ostream& strm, void* base, int indent) const {
 
 #ifndef NO_TA_BASE
   if(InheritsFrom(TA_taBase)) {
-    TAPtr rbase = (TAPtr)base;
+    taBase* rbase = (taBase*)base;
     strm << " " << rbase->GetName()
 	 << " (refn=" << taBase::GetRefn(rbase) << ")";
   }
@@ -6721,11 +6721,11 @@ ostream& TypeDef::OutputR(ostream& strm, void* base, int indent) const {
   taMisc::indent(strm, indent);
 #ifndef NO_TA_BASE
   if(DerivesFrom(TA_taBase)) {
-    TAPtr rbase;
+    taBase* rbase;
     if(ptr == 0)
-      rbase = (TAPtr)base;
+      rbase = (taBase*)base;
     else if(ptr == 1)
-      rbase = *((TAPtr*)base);
+      rbase = *((taBase**)base);
     else
       rbase = NULL;
 
@@ -6740,7 +6740,7 @@ ostream& TypeDef::OutputR(ostream& strm, void* base, int indent) const {
 
 #ifndef NO_TA_BASE
   if(InheritsFrom(TA_taBase)) {
-    TAPtr rbase = (TAPtr)base;
+    taBase* rbase = (taBase*)base;
     strm << " " << rbase->GetName()
 	 << " (refn=" << taBase::GetRefn(rbase) << ")";
   }

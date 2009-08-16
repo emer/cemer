@@ -273,8 +273,8 @@ public:
   override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
 			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
 			   bool force_inline = false);
-  override int	Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
-  override int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
+  override int	Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
+  override int	Dump_Load_Value(istream& strm, taBase* par=NULL);
   void		Copy_(const MatrixGeom& cp);
   explicit 	MatrixGeom(int init_size);
   MatrixGeom(int dims, int d0, int d1=0, int d2=0, int d3=0,
@@ -644,13 +644,13 @@ public:
 			   bool force_inline = false);
 
   void			SetDefaultName() { };
-  TAPtr 		GetOwner() const;
+  taBase* 		GetOwner() const;
   USING(inherited::GetOwner) 
   ostream& 		Output(ostream& strm, int indent = 0) const;
   ostream& 		OutputR(ostream& strm, int indent = 0) const
     { return Output(strm, indent); }
-  int			Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
-  int			Dump_Load_Value(istream& strm, TAPtr par=NULL);
+  int			Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
+  int			Dump_Load_Value(istream& strm, taBase* par=NULL);
   void 			DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_ABSTRACT_BASEFUNS(taMatrix) //
 

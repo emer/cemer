@@ -348,7 +348,7 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(MemberDef* disp_md) {
     if (nptd->ptr == 1) {
       par_base = *((void**)par_base); // its a pointer, so de-reference it
       if (par_base == NULL) continue;
-      nptd = ((TAPtr)par_base)->GetTypeDef(); // get actual typedef
+      nptd = ((taBase*)par_base)->GetTypeDef(); // get actual typedef
     }
     MemberDef* smd = nptd->members.FindName(nm);
     if (smd == NULL)  continue;
@@ -2262,7 +2262,7 @@ void NetView::CopyFromView(NetView* cp) {
   // nothing else to do..
 }
 
-void NetView::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
+void NetView::ChildUpdateAfterEdit(taBase* child, bool& handled) {
   if(taMisc::is_loading || !taMisc::gui_active) return;
   TypeDef* typ = child->GetTypeDef();
   if (typ->InheritsFrom(&TA_ScaleRange)) {
@@ -2452,7 +2452,7 @@ void NetView::GetMembs() {
 	  if(md->type->ptr > 1) continue; // only one level of pointer tolerated
 	  TypeDef* nptd;
 	  if(md->type->ptr > 0) {
-	    TAPtr* par_ptr = (TAPtr*)md->GetOff((void*)u);
+	    taBase** par_ptr = (taBase**)md->GetOff((void*)u);
 	    if(*par_ptr == NULL) continue; // null pointer
 	    nptd = (*par_ptr)->GetTypeDef(); // get actual type of connection
 	  }
@@ -3854,7 +3854,7 @@ void NetViewPanel::tvSpecs_Notify(ISelectableHost* src, int op) {
   switch (op) {
   //case ISelectableHost::OP_GOT_FOCUS: return;
   case ISelectableHost::OP_SELECTION_CHANGED: {
-    TAPtr new_base = NULL;
+    taBase* new_base = NULL;
     ISelectable* si = src->curItem();
     if (si && si->link()) {
       new_base = si->link()->taData(); // NULL if not a taBase, shouldn't happen

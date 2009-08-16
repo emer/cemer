@@ -498,7 +498,7 @@ public:
   
   override String GetTypeDecoKey() const { return "Connection"; }
 
-  override int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0);
+  override int	Dump_Save_PathR(ostream& strm, taBase* par=NULL, int indent=0);
   override int	Dump_Load_Value(istream& strm, taBase* par=NULL);
   // the dump system saves the alloc_size during the first 'path' stage of dumping, and then during loading does a full AllocCons for everything, building it all anew prior to the second 'value' stage of loading, which can then do ConnectFrom to setup connections, and set weights etc
 
@@ -769,7 +769,7 @@ protected:
   override void  	UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& ok);
   override bool 	CheckType_impl(TypeDef* td);
-  override bool 	CheckObjectType_impl(TAPtr obj);
+  override bool 	CheckObjectType_impl(taBase* obj);
 private:
   void 	Initialize();
   void 	Destroy()		{ };
@@ -2370,8 +2370,8 @@ public:
 #endif
 
   override int	Dump_Load_Value(istream& strm, taBase* par=NULL);
-  override int 	Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
-  override int 	Dump_Save_impl(ostream& strm, TAPtr par=NULL, int indent=0);
+  override int 	Save_strm(ostream& strm, taBase* par=NULL, int indent=0);
+  override int 	Dump_Save_impl(ostream& strm, taBase* par=NULL, int indent=0);
 
   override String 	GetTypeDecoKey() const { return "Network"; }
 

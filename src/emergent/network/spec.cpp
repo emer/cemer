@@ -62,7 +62,7 @@ BaseSpec* BaseSpec_Group::FindSpecType(TypeDef* td) {
   return NULL;
 }
 
-BaseSpec* BaseSpec_Group::FindSpecInherits(TypeDef* td, TAPtr for_obj) {
+BaseSpec* BaseSpec_Group::FindSpecInherits(TypeDef* td, taBase* for_obj) {
   // breadth-first search
   BaseSpec* bs;
   taLeafItr i;
@@ -102,7 +102,7 @@ BaseSpec* BaseSpec_Group::FindSpecTypeNotMe(TypeDef* td, BaseSpec* not_me) {
   return NULL;
 }
 
-BaseSpec* BaseSpec_Group::FindSpecInheritsNotMe(TypeDef* td, BaseSpec* not_me, TAPtr for_obj) {
+BaseSpec* BaseSpec_Group::FindSpecInheritsNotMe(TypeDef* td, BaseSpec* not_me, taBase* for_obj) {
   // breadth-first search
   BaseSpec* bs;
   taLeafItr i;
@@ -376,7 +376,7 @@ bool BaseSpec::CheckType(TypeDef* td) {
   return true;
 }
 
-bool BaseSpec::CheckObjectType(TAPtr obj) {
+bool BaseSpec::CheckObjectType(taBase* obj) {
   if(TestWarning(!obj, "CheckObjectType",
 		 "object is null",
 		 "should be at least:", min_obj_type->name)) {
@@ -402,7 +402,7 @@ bool BaseSpec::CheckType_impl(TypeDef* td) {
   return true;
 }
 
-bool BaseSpec::CheckObjectType_impl(TAPtr obj) {
+bool BaseSpec::CheckObjectType_impl(taBase* obj) {
   // other specs are allowed to own any kind of other spec,
   // and layers and projections also contain specs..
   if (obj->InheritsFrom(TA_BaseSpec))
@@ -701,14 +701,14 @@ void SpecPtr_impl::SetBaseType(TypeDef* td) {
   base_type = td;		// this doesn't get set by defaults
 }
 
-void SpecPtr_impl::SetDefaultSpec(TAPtr ownr, TypeDef* td) {
+void SpecPtr_impl::SetDefaultSpec(taBase* ownr, TypeDef* td) {
   if(type == NULL)
     type = td;
 
   if(base_type == &TA_BaseSpec)
     base_type = td;
 
-  owner = (TAPtr)ownr;
+  owner = (taBase*)ownr;
   if(taBase::GetRefn(this) == 0) {
     taBase::Ref(this);		// refer to this object..
   }

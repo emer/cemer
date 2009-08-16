@@ -77,7 +77,7 @@ bool taiSpecMember::NoCheckBox(IDataHost* host_) const {
       return false;		// owner has a parent spec, needs a box
     return true;		// no owner, no box..
   } else {
-    TAPtr tap = (TAPtr)base;
+    taBase* tap = (taBase*)base;
     BaseSpec* bs = (BaseSpec*)tap->GetOwner(&TA_BaseSpec); // find an owner..
     if(bs == NULL)
       return true;		// no owner, no box..

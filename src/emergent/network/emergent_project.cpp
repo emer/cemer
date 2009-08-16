@@ -551,10 +551,10 @@ CopyToEnvStat* Wizard::SaveValuesInDataEnv(MonitorStat* stat) {
       sgp->MoveAfter(stat, cte);
     }
   }
-  taBase::SetPointer((TAPtr*)&cte->stat, stat);
+  taBase::SetPointer((taBase**)&cte->stat, stat);
   if(cte->data_env == NULL) {
     Environment* env = pdpMisc::GetNewEnv(proj, &TA_Environment);
-    taBase::SetPointer((TAPtr*)&cte->data_env, env);
+    taBase::SetPointer((taBase**)&cte->data_env, env);
   }
   cte->InitEnv();
   taMisc::DelayedMenuUpdate(stat->GetMySchedProc());
@@ -580,7 +580,7 @@ DispDataEnvProc* Wizard::AutoAnalyzeDataEnv(Environment* data_env, int pat_no,
   if(ddep == NULL) {
     ddep = (DispDataEnvProc*)tgp->NewEl(1, &TA_DispDataEnvProc);
   }
-  taBase::SetPointer((TAPtr*)&ddep->data_env, data_env);
+  taBase::SetPointer((taBase**)&ddep->data_env, data_env);
   ddep->pat_no = pat_no;
   ddep->disp_type = disp_type;
   ddep->C_Code();		// run it!
@@ -608,19 +608,19 @@ UnitActRFStat* Wizard::ActBasedReceptiveField(SchedProcess* rec_proc, SchedProce
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   Stat_Group* tgp = rec_proc->GetStatGroup(&TA_UnitActRFStat, rec_loc);
   UnitActRFStat* rfs = (UnitActRFStat*)tgp->FindMakeStat(&TA_UnitActRFStat);
-  taBase::SetPointer((TAPtr*)&rfs->layer, recv_layer);
+  taBase::SetPointer((taBase**)&rfs->layer, recv_layer);
   if(send_layer != NULL)
     rfs->rf_layers.LinkUnique(send_layer);
   if(send2_layer != NULL)
     rfs->rf_layers.LinkUnique(send2_layer);
   if(rfs->data_env == NULL) {
     Environment* env = pdpMisc::GetNewEnv(proj, &TA_Environment);
-    taBase::SetPointer((TAPtr*)&rfs->data_env, env);
+    taBase::SetPointer((taBase**)&rfs->data_env, env);
   }
   rfs->InitRFVals();
   Process_Group* reset_gp = disp_proc->GetProcGroup(SchedProcess::INIT_PROCS);
   UnitActRFStatResetProc* rrf = (UnitActRFStatResetProc*)reset_gp->FindMakeProc(NULL, &TA_UnitActRFStatResetProc);
-  taBase::SetPointer((TAPtr*)&rrf->unit_act_rf_stat, rfs);
+  taBase::SetPointer((taBase**)&rrf->unit_act_rf_stat, rfs);
   AutoAnalyzeDataEnv(rfs->data_env, 0, DispDataEnvProc::RAW_DATA_GRID, disp_proc, disp_loc);
   if(send2_layer != NULL)
     AutoAnalyzeDataEnv(rfs->data_env, 1, DispDataEnvProc::RAW_DATA_GRID, disp_proc, disp_loc);
@@ -644,7 +644,7 @@ void Wizard::StopOnActThresh(SchedProcess* proc, Layer* lay, float thresh) {
   if((proc == NULL) || (lay == NULL)) return;
   Stat_Group* sgp = (Stat_Group*)&(proc->loop_stats);
   ActThreshRTStat* rts = (ActThreshRTStat*)sgp->FindMakeStat(&TA_ActThreshRTStat);
-  taBase::SetPointer((TAPtr*)&rts->layer, lay);
+  taBase::SetPointer((taBase**)&rts->layer, lay);
   rts->act_thresh = thresh;
   rts->max_act.stopcrit.flag = true;
   rts->UpdateAfterEdit();
@@ -655,7 +655,7 @@ void Wizard::AddCountersToTest(SchedProcess* te_proc, SchedProcess* tr_proc) {
   if((te_proc == NULL) || (tr_proc == NULL)) return;
   Stat_Group* sgp = (Stat_Group*)&(te_proc->final_stats);
   ProcCounterStat* st = (ProcCounterStat*)sgp->FindMakeStat(&TA_ProcCounterStat);
-  taBase::SetPointer((TAPtr*)&st->proc, tr_proc);
+  taBase::SetPointer((taBase**)&st->proc, tr_proc);
   st->UpdateAfterEdit();
   taMisc::DelayedMenuUpdate(te_proc);
 }
@@ -686,7 +686,7 @@ TimeCounterStat* Wizard::AddTimeCounter(SchedProcess* inc_proc, SchedProcess::St
   Process_Group* rgp = (Process_Group*)&(reset_proc->init_procs);
   TimeCounterStatResetProc* rproc =
     (TimeCounterStatResetProc*)rgp->FindMakeProc(NULL, &TA_TimeCounterStatResetProc);
-  taBase::SetPointer((TAPtr*)&rproc->time_ctr_stat, st);
+  taBase::SetPointer((taBase**)&rproc->time_ctr_stat, st);
   taMisc::DelayedMenuUpdate(inc_proc);
   taMisc::DelayedMenuUpdate(reset_proc);
   return st;
@@ -825,10 +825,10 @@ void EmergentRoot::Initialize() {
 }
 
 #ifdef TA_GUI
-TAPtr EmergentRoot::Browse(const char* init_path) {
+taBase* EmergentRoot::Browse(const char* init_path) {
   if(!taMisc::gui_active) return NULL;
 
-  TAPtr iob = this;
+  taBase* iob = this;
   MemberDef* md;
   if(init_path != NULL) {
     String ip = init_path;
@@ -836,9 +836,9 @@ TAPtr EmergentRoot::Browse(const char* init_path) {
     if(!iob) iob = this;
   }
 
-  taiObjChooser* chs = new taiObjChooser((TAPtr)iob, "Browse for Object", false, NULL);
+  taiObjChooser* chs = new taiObjChooser((taBase*)iob, "Browse for Object", false, NULL);
   chs->Choose();
-  TAPtr retv = chs->sel_obj();
+  taBase* retv = chs->sel_obj();
   delete chs;
   return retv;
 }

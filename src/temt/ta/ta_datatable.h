@@ -1236,7 +1236,7 @@ public:
   // #IGNORE perform auto saving of data to file when project is saved
   override void		Dump_Load_post();
 
-  override int 		Dump_Load_Value(istream& strm, TAPtr par);
+  override int 		Dump_Load_Value(istream& strm, taBase* par);
   override void		Dump_Save_pre();
   override String 	GetTypeDecoKey() const { return "DataTable"; }
 

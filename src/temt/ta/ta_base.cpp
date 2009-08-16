@@ -503,12 +503,12 @@ void taBase::Destroying() {
   }
 }
 
-void taBase::SetTypeDefaults_impl(TypeDef* ttd, TAPtr scope) {
+void taBase::SetTypeDefaults_impl(TypeDef* ttd, taBase* scope) {
   if(ttd->defaults == NULL) return;
   int i;
   for(i=0; i<ttd->defaults->size; i++) {
     TypeDefault* td = (TypeDefault*)ttd->defaults->FastEl(i);
-    TAPtr tdscope = td->GetScopeObj(taMisc::default_scope);
+    taBase* tdscope = td->GetScopeObj(taMisc::default_scope);
     if(tdscope == scope) {
       td->SetTypeDefaults(this);
       break;
@@ -516,7 +516,7 @@ void taBase::SetTypeDefaults_impl(TypeDef* ttd, TAPtr scope) {
   }
 }
 
-void taBase::SetTypeDefaults_parents(TypeDef* ttd, TAPtr scope) {
+void taBase::SetTypeDefaults_parents(TypeDef* ttd, taBase* scope) {
   int i;
   for(i=0; i<ttd->parents.size; i++) {
     TypeDef* par = ttd->parents.FastEl(i);
@@ -531,24 +531,24 @@ void taBase::SetTypeDefaults_parents(TypeDef* ttd, TAPtr scope) {
 
 void taBase::SetTypeDefaults() {
   TypeDef* ttd = GetTypeDef();	// this typedef = ttd
-  TAPtr scope = GetScopeObj(taMisc::default_scope); // scope for default vals
+  taBase* scope = GetScopeObj(taMisc::default_scope); // scope for default vals
   SetTypeDefaults_parents(ttd, scope);
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // actual constructors/destructors and related: defined in TA_BASEFUNS for derived classes
 
-TAPtr taBase::MakeToken(TypeDef* td) {
+taBase* taBase::MakeToken(TypeDef* td) {
   if(td->GetInstance() != NULL) {
-    return ((TAPtr)td->GetInstance())->MakeToken();
+    return ((taBase*)td->GetInstance())->MakeToken();
   }
   else
     return NULL;
 }
 
-TAPtr taBase::MakeTokenAry(TypeDef* td, int no) {
+taBase* taBase::MakeTokenAry(TypeDef* td, int no) {
   if(td->GetInstance() != NULL) {
-    return ((TAPtr)td->GetInstance())->MakeTokenAry(no);
+    return ((taBase*)td->GetInstance())->MakeTokenAry(no);
   }
   else
     return NULL;
@@ -622,8 +622,8 @@ String taBase::GetUniqueName() const {
   return GetPath_Long();
 }
 
-TAPtr taBase::GetOwner(TypeDef* td) const {
-  TAPtr own = GetOwner();
+taBase* taBase::GetOwner(TypeDef* td) const {
+  taBase* own = GetOwner();
   if(own == NULL)
     return NULL;
   if(own->InheritsFrom(td))
@@ -632,12 +632,12 @@ TAPtr taBase::GetOwner(TypeDef* td) const {
   return own->GetOwner(td);
 }
 
-TAPtr taBase::GetThisOrOwner(TypeDef* td) {
+taBase* taBase::GetThisOrOwner(TypeDef* td) {
   if (InheritsFrom(td)) return this;
   return GetOwner(td);
 }
 
-TAPtr taBase::GetParent() const	{ 
+taBase* taBase::GetParent() const	{ 
   taBase* rval = GetOwner();
   while (rval && (rval->InheritsFrom(TA_taList_impl)))
     rval = rval->GetOwner();
@@ -707,7 +707,7 @@ String taBase::GetStateDecoKey() const {
 ///////////////////////////////////////////////////////////////////////////
 //	Paths in the structural hierarchy
 
-String taBase::GetPath_Long(TAPtr ta, TAPtr par_stop) const {
+String taBase::GetPath_Long(taBase* ta, taBase* par_stop) const {
   if((this == par_stop) && (ta == NULL))
     return ".";
   String rval;
@@ -717,7 +717,7 @@ String taBase::GetPath_Long(TAPtr ta, TAPtr par_stop) const {
     if(ta == NULL) rval = "root";
   }
   else if(this != par_stop)
-    rval = par->GetPath_Long((TAPtr)this, par_stop);
+    rval = par->GetPath_Long((taBase*)this, par_stop);
 
   if((par != NULL) && (GetName() != ""))
     rval += "(" + GetName() + ")";
@@ -737,7 +737,7 @@ String taBase::GetPath_Long(TAPtr ta, TAPtr par_stop) const {
   return rval;
 }
 
-String taBase::GetPath(TAPtr ta, TAPtr par_stop) const {
+String taBase::GetPath(taBase* ta, taBase* par_stop) const {
   if ((this == par_stop) && (ta == NULL))
     return ".";
 
@@ -746,7 +746,7 @@ String taBase::GetPath(TAPtr ta, TAPtr par_stop) const {
   if (par == NULL) {
     if (ta == NULL) rval = "root";
   } else if (this != par_stop)
-    rval = par->GetPath((TAPtr)this, par_stop);
+    rval = par->GetPath((taBase*)this, par_stop);
 
   if (ta != NULL) {
     MemberDef* md;
@@ -761,17 +761,17 @@ String taBase::GetPath(TAPtr ta, TAPtr par_stop) const {
   return rval;
 }
 
-TAPtr taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) const {
+taBase* taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) const {
   if(((int)path.length() <= start) || (path == ".")) {
     ret_md = NULL;
-    return (TAPtr)this;
+    return (taBase*)this;
   }
   if((path == "Null") || (path == "NULL")) {
     ret_md = NULL;
     return NULL;
   }
 
-  TAPtr rval = NULL;
+  taBase* rval = NULL;
   bool ptrflag = false;
   int length = path.length();
 
@@ -794,7 +794,7 @@ TAPtr taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) co
     MemberDef* md;
     void* tmp_ptr = FindMembeR(el_path, md);
     if(tmp_ptr && (!md || md->type->InheritsFrom(TA_taBase))) { // null md = taBase
-      TAPtr mbr = (TAPtr)tmp_ptr;
+      taBase* mbr = (taBase*)tmp_ptr;
       if(delim_pos < length) {	// there's more to be done..
 	rval = mbr->FindFromPath(path, ret_md, next_pos); // start from after delim
       }
@@ -808,7 +808,7 @@ TAPtr taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) co
       continue;
     }
     if((ptrflag) && (rval != NULL))
-      return *((TAPtr *)rval);
+      return *((taBase* *)rval);
     return rval;
   }
   return NULL;
@@ -893,7 +893,7 @@ TypeDef* taBase::GetScopeType() {
   else return taMisc::default_scope;
 }
 
-TAPtr taBase::GetScopeObj(TypeDef* scp_tp) {
+taBase* taBase::GetScopeObj(TypeDef* scp_tp) {
   if (!scp_tp)
     scp_tp = GetScopeType();
   if (!scp_tp)
@@ -901,7 +901,7 @@ TAPtr taBase::GetScopeObj(TypeDef* scp_tp) {
   return GetOwner(scp_tp);
 }
 
-bool taBase::SameScope(TAPtr ref_obj, TypeDef* scp_tp) {
+bool taBase::SameScope(taBase* ref_obj, TypeDef* scp_tp) {
   if (!ref_obj)
     return true;
   if (!scp_tp)
@@ -909,19 +909,19 @@ bool taBase::SameScope(TAPtr ref_obj, TypeDef* scp_tp) {
   if (!scp_tp)
     return true;
 
-  TAPtr my_scp = GetOwner(scp_tp);
+  taBase* my_scp = GetOwner(scp_tp);
   if ((!my_scp) || (my_scp == ref_obj) || (my_scp == ref_obj->GetOwner(scp_tp)))
     return true;
   return false;
 }
 
-int taBase::NTokensInScope(TypeDef* td, TAPtr ref_obj, TypeDef* scp_tp) {
+int taBase::NTokensInScope(TypeDef* td, taBase* ref_obj, TypeDef* scp_tp) {
   if(ref_obj == NULL)
     return td->tokens.size;
   int cnt = 0;
   int i;
   for(i=0; i<td->tokens.size; i++) {
-    TAPtr tmp = (TAPtr)td->tokens.FastEl(i);
+    taBase* tmp = (taBase*)td->tokens.FastEl(i);
     if(tmp->SameScope(ref_obj, scp_tp))
       cnt++;
   }
@@ -987,7 +987,7 @@ taFiler* taBase::GetFiler(TypeItem* td, const String& exts,
   return StatGetFiler(td, exts, compress, filetypes);
 }
 
-int taBase::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) { 
+int taBase::Load_strm(istream& strm, taBase* par, taBase** loaded_obj_ptr) { 
   Dump_Load_pre();
   int rval = GetTypeDef()->Dump_Load(strm, (void*)this, par, (void**)loaded_obj_ptr); 
   if(loaded_obj_ptr) {
@@ -1137,7 +1137,7 @@ int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
   return rval;
 }
 
-int taBase::Save_strm(ostream& strm, TAPtr par, int indent) { 
+int taBase::Save_strm(ostream& strm, taBase* par, int indent) { 
   int rval = GetTypeDef()->Dump_Save(strm, (void*)this, par, indent); 
   setDirty(false);
   return rval;
@@ -1222,7 +1222,7 @@ int taBase::SaveAs(const String& fname) {
 }
 
 
-int taBase::Save_String(String& save_str, TAPtr par, int indent) {
+int taBase::Save_String(String& save_str, taBase* par, int indent) {
   ostringstream oss;
   int rval = Save_strm(oss, par,indent);
   save_str = oss.str().c_str();
@@ -1230,7 +1230,7 @@ int taBase::Save_String(String& save_str, TAPtr par, int indent) {
 }
 
 
-int taBase::Load_String(const String& load_str, TAPtr par, taBase** loaded_obj_ptr) {
+int taBase::Load_String(const String& load_str, taBase* par, taBase** loaded_obj_ptr) {
   istringstream iss(load_str.chars());
   int rval = Load_strm(iss, par, loaded_obj_ptr);
   return rval;
@@ -1423,7 +1423,7 @@ void taBase::UpdateAfterEdit() {
   } /* */
 }
 
-void taBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
+void taBase::ChildUpdateAfterEdit(taBase* child, bool& handled) {
   if (handled) return; // note: really shouldn't have been handled already if we are called...
   // call notify if it is an owned member object (but not list/group items)
   if (((char*)child >= ((char*)this)) && ((char*)child < ((char*)this + GetTypeDef()->size))) {
@@ -1658,14 +1658,14 @@ bool taBase::Copy(const taBase* cp) {
   return CanDoCopy_impl(cp, false, true);
 }
 
-bool taBase::CopyFrom(TAPtr cpy_from) {
+bool taBase::CopyFrom(taBase* cpy_from) {
 // this one is easy, since it is really just the same as Copy, but with warnings
   if (!CanCopy(cpy_from, false)) return false;
   UnSafeCopy(cpy_from);
   return true;
 }
 
-bool taBase::CopyTo(TAPtr cpy_to) {
+bool taBase::CopyTo(taBase* cpy_to) {
   if(TestError((!cpy_to), "CopyTo", "targetis null")) return false;
   return cpy_to->CopyFrom(this);
 }
@@ -1719,7 +1719,7 @@ taBase* taBase::ChildDuplicate(const taBase* chld) {
 }
 
 bool taBase::DuplicateMe() {
-  TAPtr own = GetOwner();
+  taBase* own = GetOwner();
   if (TestError((own == NULL), "DuplicateMe", "owner is null")) return false;
   if (!own->ChildCanDuplicate(this, false)) return false;
   return (own->ChildDuplicate(this));
@@ -1727,7 +1727,7 @@ bool taBase::DuplicateMe() {
 
 
 #ifdef TA_GUI
-static void tabase_base_closing_all_gp(TAPtr obj) {
+static void tabase_base_closing_all_gp(taBase* obj) {
 //  SelectEdit::BaseClosingAll(obj); // get it before it is moved around and stuff
   // also check for groups and objects in them that might die
   TypeDef* td = obj->GetTypeDef();
@@ -1739,7 +1739,7 @@ static void tabase_base_closing_all_gp(TAPtr obj) {
       taGroup_impl* gp = (taGroup_impl*)md->GetOff((void*)obj);
       int lf;
       for (lf=0;lf<gp->leaves;lf++) {
-	TAPtr chld = (TAPtr)gp->Leaf_(lf);
+	taBase* chld = (taBase*)gp->Leaf_(lf);
 	if((chld != NULL) && (chld->GetOwner() == gp))
 	  tabase_base_closing_all_gp(chld); // get it before it is moved around and stuff
       }
@@ -1748,7 +1748,7 @@ static void tabase_base_closing_all_gp(TAPtr obj) {
     taList_impl* gp = (taList_impl*)md->GetOff((void*)obj);
     int gi;
     for (gi=0;gi<gp->size;gi++) {
-      TAPtr chld = (TAPtr)gp->FastEl_(gi);
+      taBase* chld = (taBase*)gp->FastEl_(gi);
       if((chld != NULL) && (chld->GetOwner() == gp))
 	tabase_base_closing_all_gp(chld); // get it before it is moved around and stuff
     }
@@ -1757,7 +1757,7 @@ static void tabase_base_closing_all_gp(TAPtr obj) {
 #endif
 
 bool taBase::ChangeMyType(TypeDef* new_type) {
-  TAPtr ownr = GetOwner();
+  taBase* ownr = GetOwner();
   if(TestError(((new_type == NULL) || (ownr == NULL)), "ChangeMyType",
 	       "new type or owner is NULL")) return false;
   if(TestError(!ownr->InheritsFrom(TA_taList_impl),
@@ -2304,7 +2304,7 @@ const iColor taBase::GetEditColor(bool& ok) {
 const iColor taBase::GetEditColorInherit(bool& ok) {
   iColor bgclr = GetEditColor(ok);
   if (!ok) {
-    TAPtr ownr = GetOwner();
+    taBase* ownr = GetOwner();
     while ((ownr != NULL) && (!ok)) {
       bgclr = ownr->GetEditColor(ok);
       ownr = ownr->GetOwner();
@@ -2447,24 +2447,24 @@ bool taBase::SelectFunForEditNm(const String& function, SelectEdit* editor,
 //	Closing 
 
 void taBase::Close() {
-  TAPtr own = GetOwner();
+  taBase* own = GetOwner();
   if (own && own->Close_Child(this))
     return;
   taBase::UnRef(this);
 }
 
 void taBase::CloseLater() {
-  TAPtr own = GetOwner();
+  taBase* own = GetOwner();
   if (own && own->CloseLater_Child(this))
     return;
   tabMisc::DelayedClose(this);
 }
 
-bool taBase::Close_Child(TAPtr) {
+bool taBase::Close_Child(taBase*) {
   return false;
 }
 
-bool taBase::CloseLater_Child(TAPtr) {
+bool taBase::CloseLater_Child(taBase*) {
   return false;
 }
 
@@ -3174,7 +3174,7 @@ void taList_impl::Copy_(const taList_impl& cp) {
 }
 
 void* taList_impl::El_CopyN_(void* to_, void* fm) {
-  taBase* to = (TAPtr)to_;
+  taBase* to = (taBase*)to_;
   to->StructUpdate(true);
   void* rval = El_Copy_(to_, fm);
   El_SetName_(to_, El_GetName_(fm));
@@ -3200,7 +3200,7 @@ void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 
-void taList_impl::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
+void taList_impl::ChildUpdateAfterEdit(taBase* child, bool& handled) {
   // check for embedded member
   inherited_taBase::ChildUpdateAfterEdit(child, handled);
   // otherwise, we assume it is an owned list member
@@ -3253,7 +3253,7 @@ String taList_impl::GetColText(const KeyString& key, int itm_idx) const {
 bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
   if(TestError(!new_type, "ChangeType", "new type is null")) return false;
   if(TestError(!InRange(idx), "ChangeType", "index is out of range")) return false;
-  TAPtr itm = (TAPtr)el[idx];
+  taBase* itm = (taBase*)el[idx];
   if(TestError(!itm, "ChangeType", "item is null")) return false;
   TypeDef* itd = itm->GetTypeDef();
   if(!new_type->InheritsFrom(itd) && !itm->InheritsFrom(new_type)) {
@@ -3261,13 +3261,13 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
     if(itd->parents.size >= 1) {
       if(new_type->InheritsFrom(itd->GetParent())) {
 	ChangeType(idx, itd->GetParent());
-	itm = (TAPtr)el[idx];
+	itm = (taBase*)el[idx];
 	RemoveIdx(size-1);			// remove the last guy!
       }
       else if((itd->GetParent()->parents.size >= 1) &&
 	      new_type->InheritsFrom(itd->GetParent()->GetParent())) {
 	ChangeType(idx, itd->GetParent()->GetParent());
-	itm = (TAPtr)el[idx];
+	itm = (taBase*)el[idx];
 	RemoveIdx(size-1);			// remove the last guy!
       }
       else {
@@ -3284,7 +3284,7 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
       return false;
     }
   }
-  TAPtr rval = taBase::MakeToken(new_type);
+  taBase* rval = taBase::MakeToken(new_type);
   if(TestError(!rval, "ChangeType", "maketoken is null")) return false;
   Add(rval);		// add to end of list
   String orgnm = itm->GetName();
@@ -3297,7 +3297,7 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
   return true;
 }
 
-bool taList_impl::ChangeType(TAPtr itm, TypeDef* new_type) {
+bool taList_impl::ChangeType(taBase* itm, TypeDef* new_type) {
   int idx = FindEl(itm);
   if(idx >= 0)
     return ChangeType(idx, new_type);
@@ -3312,11 +3312,11 @@ void taList_impl::Close() {
   inherited_taBase::Close();
 }
 
-bool taList_impl::Close_Child(TAPtr obj) {
+bool taList_impl::Close_Child(taBase* obj) {
   return RemoveEl(obj);
 }
 
-bool taList_impl::CloseLater_Child(TAPtr obj) {
+bool taList_impl::CloseLater_Child(taBase* obj) {
 #ifdef DEBUG
   if (obj->refn <= 0) {
     cerr << "WARNING: taList_impl::CloseLater_Child: taBase refn <= 0 for item type="
@@ -3355,7 +3355,7 @@ bool taList_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
   return false;
 }
 
-int taList_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) {
+int taList_impl::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {
    bool dump_my_path = !(this == par);
   // dump_my_path is a bit of a hack, to enable us to use this same
   // routine either for Dump_Save_PathR or when dumping list items
@@ -3385,12 +3385,12 @@ int taList_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) {
   return true;
 }
 
-int taList_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
+int taList_impl::Dump_Save_PathR_impl(ostream& strm, taBase* par, int indent) {
   if(!Dump_QuerySaveChildren()) return true;
   int cnt = 0;
   int i;
   for (i=0; i<size; i++) {
-    TAPtr itm = (TAPtr)el[i];
+    taBase* itm = (taBase*)el[i];
     if(itm == NULL)
       continue;
     cnt++; // sure we are dumping something at this point
@@ -3420,7 +3420,7 @@ int taList_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
 }
 
 // actually save all the elements in the group
-int taList_impl::Dump_SaveR(ostream& strm, TAPtr par, int indent) {
+int taList_impl::Dump_SaveR(ostream& strm, taBase* par, int indent) {
   if(!Dump_QuerySaveChildren()) return true;
   String mypath = GetPath(NULL, par);
   int i;
@@ -3527,7 +3527,7 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
   return nw_el;
 }
 
-int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
+int taList_impl::Dump_Load_Value(istream& strm, taBase* par) {
   m_trg_load_size = -1;
 
   int c = taMisc::skip_white(strm);
@@ -3561,7 +3561,7 @@ int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
 	  String lnk_path = taMisc::LexBuf;
 	  dumpMisc::path_subs.FixPath(eltd, tabMisc::root, lnk_path);
 	  MemberDef* md;
-	  TAPtr tp = tabMisc::root->FindFromPath(lnk_path, md);
+	  taBase* tp = tabMisc::root->FindFromPath(lnk_path, md);
 	  if(idx < size)
 	    ReplaceLinkIdx(idx, tp); // if already room, replace it..
 	  else {
@@ -3569,7 +3569,7 @@ int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
 	    idx = size-1;
 	  }
 	  if(tp == NULL) {
-	    dumpMisc::vpus.AddVPU((TAPtr*)&(el[idx]), (TAPtr)NULL, lnk_path);
+	    dumpMisc::vpus.AddVPU((taBase**)&(el[idx]), (taBase*)NULL, lnk_path);
 	  }
 	  return true;
 	}
@@ -3620,18 +3620,18 @@ void taList_impl::El_SetDefaultName_(void* item_, int idx) {
 void taList_impl::EnforceSameStru(const taList_impl& cp) {
   int i;
   for(i=0; i<cp.size; i++) {
-    TAPtr citm = (TAPtr)cp.el[i];
+    taBase* citm = (taBase*)cp.el[i];
     if(citm == NULL) continue;
     if(size <= i) {
-      TAPtr itm = taBase::MakeToken(citm->GetTypeDef());
+      taBase* itm = taBase::MakeToken(citm->GetTypeDef());
       if(itm != NULL)
 	Add_(itm);
     }
     else {
-      TAPtr itm = (TAPtr)el[i];
+      taBase* itm = (taBase*)el[i];
       if(citm->GetTypeDef() == itm->GetTypeDef())
 	continue;
-      TAPtr rval = taBase::MakeToken(citm->GetTypeDef());
+      taBase* rval = taBase::MakeToken(citm->GetTypeDef());
       if(rval != NULL)
 	ReplaceIdx(i, rval);
     }
@@ -3652,11 +3652,11 @@ void taList_impl::SetSize(int sz) {
 void taList_impl::EnforceType() {
   int i;
   for(i=0; i<size; i++) {
-    TAPtr itm = (TAPtr)el[i];
+    taBase* itm = (taBase*)el[i];
     if((itm == NULL) || (itm->GetTypeDef() == el_typ))
       continue;
 
-    TAPtr rval = taBase::MakeToken(el_typ);
+    taBase* rval = taBase::MakeToken(el_typ);
     if(rval != NULL)
       ReplaceIdx(i, rval);
   }
@@ -3749,8 +3749,8 @@ taBase* taList_impl::FindNameType_(const String& item_nm) const {
   return NULL;
 }
 
-String taList_impl::GetPath(TAPtr ta, TAPtr par_stop) const {
-  if((((TAPtr) this) == par_stop) && (ta == NULL))
+String taList_impl::GetPath(taBase* ta, taBase* par_stop) const {
+  if((((taBase*) this) == par_stop) && (ta == NULL))
     return ".";
   String rval;
 
@@ -3758,8 +3758,8 @@ String taList_impl::GetPath(TAPtr ta, TAPtr par_stop) const {
   if(par == NULL) {
     if(ta == NULL) rval = "root";
   }
-  else if(((TAPtr) this) != par_stop)
-    rval = par->GetPath((TAPtr)this, par_stop);
+  else if(((taBase*) this) != par_stop)
+    rval = par->GetPath((taBase*)this, par_stop);
 
   if (ta != NULL) {
     MemberDef* md;
@@ -3780,8 +3780,8 @@ String taList_impl::GetPath(TAPtr ta, TAPtr par_stop) const {
   return rval;
 }
 
-String taList_impl::GetPath_Long(TAPtr ta, TAPtr par_stop) const {
-  if((((TAPtr) this) == par_stop) && (ta == NULL))
+String taList_impl::GetPath_Long(taBase* ta, taBase* par_stop) const {
+  if((((taBase*) this) == par_stop) && (ta == NULL))
     return ".";
   String rval;
 
@@ -3789,8 +3789,8 @@ String taList_impl::GetPath_Long(TAPtr ta, TAPtr par_stop) const {
   if(par == NULL) {
     if(ta == NULL) rval = "root";
   }
-  else if(((TAPtr) this) != par_stop)
-    rval = par->GetPath_Long((TAPtr)this, par_stop);
+  else if(((taBase*) this) != par_stop)
+    rval = par->GetPath_Long((taBase*)this, par_stop);
 
   if(GetName() != "")
     rval += "(" + GetName() + ")";
@@ -3873,7 +3873,7 @@ ostream& taList_impl::OutputR(ostream& strm, int indent) const {
 
   for(i=0; i<size; i++) {
     if(el[i] == NULL) continue;
-    ((TAPtr)el[i])->OutputR(strm, indent+1);
+    ((taBase*)el[i])->OutputR(strm, indent+1);
     taMisc::FlushConsole();
   }
 
@@ -3900,7 +3900,7 @@ int taList_impl::ReplaceType(TypeDef* old_type, TypeDef* new_type) {
   int sz = size;		// only go to current size
   int i;
   for(i=0;i<sz;i++) {
-    if(((TAPtr)el[i])->GetTypeDef() != old_type) continue;
+    if(((taBase*)el[i])->GetTypeDef() != old_type) continue;
     if(ChangeType(i, new_type)) nchanged++;
   }
   return nchanged;
@@ -3911,7 +3911,7 @@ void taList_impl::SetBaseType(TypeDef* it) {
   el_typ = it;
 }
 
-int taList_impl::SetDefaultEl(TAPtr it) {
+int taList_impl::SetDefaultEl(taBase* it) {
   int idx = FindEl(it);
   if(idx >= 0)    el_def = idx;
   return idx;
@@ -4364,8 +4364,8 @@ void taDataView::SetData(taBase* ta) {
   }
 }
 
-TAPtr taDataView::SetOwner(TAPtr own) {
-  TAPtr rval = inherited::SetOwner(own);
+taBase* taDataView::SetOwner(taBase* own) {
+  taBase* rval = inherited::SetOwner(own);
   // note: we have to do this here and in InitLinks
   m_parent = (taDataView*)GetOwner(parentType()); // NULL if no owner, or no compatible type
   return rval;
@@ -4397,7 +4397,7 @@ void* DataView_List::El_Own_(void* it) {
   return it;
 }
 
-TAPtr DataView_List::SetOwner(TAPtr own) {
+taBase* DataView_List::SetOwner(taBase* own) {
   if (own && own->GetTypeDef()->InheritsFrom(&TA_taDataView))
     data_view = (taDataView*)own;
   else data_view = NULL;
@@ -4461,7 +4461,7 @@ bool taArray_base::SetValStr(const String& val, void* par, MemberDef* memb_def,
   return true;
 }
 
-int taArray_base::Dump_Save_Value(ostream& strm, TAPtr, int) {
+int taArray_base::Dump_Save_Value(ostream& strm, taBase*, int) {
   strm << "{ ";
   int i;
   for(i=0;i<size;i++) {
@@ -4470,7 +4470,7 @@ int taArray_base::Dump_Save_Value(ostream& strm, TAPtr, int) {
   return true;
 }
 
-int taArray_base::Dump_Load_Value(istream& strm, TAPtr) {
+int taArray_base::Dump_Load_Value(istream& strm, taBase*) {
   int c = taMisc::skip_white(strm);
   if(c == EOF)    return EOF;
   if(c == ';') // just a path
@@ -4542,14 +4542,14 @@ void SArg_Array::Copy_(const SArg_Array& cp) {
   labels = cp.labels;
 }
 
-int SArg_Array::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
+int SArg_Array::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
   int rval = String_Array::Dump_Save_Value(strm, par, indent);
   strm << "};" << endl;
   int rv2 = labels.Dump_Save_Value(strm, this, indent+1);
   return (rval && rv2);
 }
 
-int SArg_Array::Dump_Load_Value(istream& strm, TAPtr par) {
+int SArg_Array::Dump_Load_Value(istream& strm, taBase* par) {
   int rval = String_Array::Dump_Load_Value(strm, par);
   int c = taMisc::skip_white(strm, true); // peek
   if(c == '{') {

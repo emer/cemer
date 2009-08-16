@@ -1779,7 +1779,7 @@ class EMERGENT_API TypeDefault_Group : public taGroup<TypeDefault> {
   // #DEF_PATH_$PDPDIR$/defaults ##CAT_v3Compat group of type default objects
 INHERITED(taGroup<TypeDefault>)
 public:
-  int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
+  int	Dump_Load_Value(istream& strm, taBase* par=NULL);
   // reset members before loading..
 
   void	Initialize() 		{ SetBaseType(&TA_TypeDefault); }

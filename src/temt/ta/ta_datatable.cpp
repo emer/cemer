@@ -965,7 +965,7 @@ void DataTable::Dump_Load_post() {
   //  StructUpdate(false);
 }
 
-int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
+int DataTable::Dump_Load_Value(istream& strm, taBase* par) {
   int c = inherited::Dump_Load_Value(strm, par);
   if (c == EOF) return EOF;
   if (c == 2) return 2; // signal that it was just a path

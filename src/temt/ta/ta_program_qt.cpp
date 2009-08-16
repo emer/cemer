@@ -866,7 +866,7 @@ void iProgramEditor::items_Notify(ISelectableHost* src, int op) {
   switch (op) {
   //case ISelectableHost::OP_GOT_FOCUS: return;
   case ISelectableHost::OP_SELECTION_CHANGED: {
-    TAPtr new_base = NULL;
+    taBase* new_base = NULL;
     ISelectable* si = src->curItem();
     if (si && si->link()) {
       new_base = si->link()->taData(); // NULL if not a taBase, shouldn't happen
@@ -948,7 +948,7 @@ void iProgramEditor::defEditBgColor() {
   setEditBgColor(QApplication::palette().color(QPalette::Active, QPalette::Background));
 }
 
-void iProgramEditor::setEditNode(TAPtr value, bool autosave) {
+void iProgramEditor::setEditNode(taBase* value, bool autosave) {
   if (base == value) return;
   if (base) {
     if (m_modified && autosave) {
@@ -1941,7 +1941,7 @@ void taiProgLibElArgType::GetImage_impl(taiData* dat, const void* base) {
   if (from_md == NULL)	return;
   TABLPtr lst = GetList(from_md, base);
   taiProgLibElsButton* els = (taiProgLibElsButton*)dat;
-  els->GetImage((TABLPtr)lst, *((TAPtr*)arg_base));
+  els->GetImage((TABLPtr)lst, *((taBase**)arg_base));
 }
 
 void taiProgLibElArgType::GetValue_impl(taiData* dat, void*) {

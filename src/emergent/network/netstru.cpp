@@ -1031,7 +1031,7 @@ int BaseCons::LoadWeights(const String& fname, Unit* ru, BaseCons::WtSaveFormat 
   return rval;
 }
 
-int BaseCons::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) {
+int BaseCons::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {
   // first save any sub-members (there usually aren't any)
 //   int rval = GetTypeDef()->Dump_Save_PathR(strm, (void*)this, (void*)par, indent);
 
@@ -1042,7 +1042,7 @@ int BaseCons::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) {
   return true;
 }
 
-int BaseCons::Dump_Load_Value(istream& strm, TAPtr par) {
+int BaseCons::Dump_Load_Value(istream& strm, taBase* par) {
   int c = taMisc::skip_white(strm);
   if(c == EOF)	return EOF;
   if(c == ';')	return 2;	// signal that its a path
@@ -1707,7 +1707,7 @@ bool UnitSpec::CheckType_impl(TypeDef* td) {
   return inherited::CheckType_impl(td);
 }
 
-bool UnitSpec::CheckObjectType_impl(TAPtr obj) {
+bool UnitSpec::CheckObjectType_impl(taBase* obj) {
   // other specs are allowed to own any kind of other spec,
   // and layers and projections also contain specs..
   if (obj->InheritsFrom(TA_Layer))
@@ -5863,7 +5863,7 @@ int Network::Dump_Save_impl(ostream& strm, taBase* par, int indent) {
   return inherited::Dump_Save_impl(strm, par, indent);
 }
 
-int Network::Save_strm(ostream& strm, TAPtr par, int indent) {
+int Network::Save_strm(ostream& strm, taBase* par, int indent) {
   SetNetFlag(SAVE_UNITS_FORCE); // override if !SAVE_UNITS
   int rval = inherited::Save_strm(strm, par, indent);
   ClearNetFlag(SAVE_UNITS_FORCE);

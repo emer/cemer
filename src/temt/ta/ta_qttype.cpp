@@ -116,7 +116,7 @@ bool taiType::CheckProcessCondMembMeth(const String condkey,
     else
       mbr = optedit.before(':');
   
-    TAPtr tab = (TAPtr)base;
+    taBase* tab = (taBase*)base;
     void* mbr_base = NULL;	// base for conditionalizing member itself
 
     TypeDef* own_td = tab->GetTypeDef();
@@ -898,7 +898,7 @@ void taiTokenPtrType::GetImage_impl(taiData* dat, const void* base) {
   }
   else {
     taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
-    rval->GetImage(*((TAPtr*)base), npt); // default typ, no scope
+    rval->GetImage(*((taBase**)base), npt); // default typ, no scope
   }
 }
 
@@ -915,12 +915,12 @@ void taiTokenPtrType::GetValue_impl(taiData* dat, void* base) {
   else {
     taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
     if(!no_setpointer)
-      taBase::SetPointer((TAPtr*)base, (TAPtr)rval->GetValue());
+      taBase::SetPointer((taBase**)base, (taBase*)rval->GetValue());
     else
       *((void**)base) = rval->GetValue();
 /*type must derive from taBase, otherwise we wouldn't have bid!!!
         if(!no_setpointer && typ->DerivesFrom(TA_taBase))
-      taBase::SetPointer((TAPtr*)base, (TAPtr)rval->GetValue());
+      taBase::SetPointer((taBase**)base, (taBase*)rval->GetValue());
     else
       *((void**)base) = rval->GetValue(); */
   }
@@ -1165,7 +1165,7 @@ const iColor taiEdit::GetBackgroundColor(void* base, bool& ok) {
 void taiMember::EndScript(const void* base) {
   if(taMisc::record_script == NULL)
     return;
-  if((((TAPtr)base)->GetOwner() == NULL) && ((TAPtr)base != tabMisc::root))
+  if((((taBase*)base)->GetOwner() == NULL) && ((taBase*)base != tabMisc::root))
     return;	// no record for unowned objs (except root)!
   *taMisc::record_script << "}" << endl;
 }
@@ -1406,9 +1406,9 @@ void taiMember::StartScript(const void* base) {
   if((taMisc::record_script == NULL) || !typ->InheritsFrom(TA_taBase))
     return;
 
-  if((((TAPtr)base)->GetOwner() == NULL) && ((TAPtr)base != tabMisc::root))
+  if((((taBase*)base)->GetOwner() == NULL) && ((taBase*)base != tabMisc::root))
     return;	// no record for unowned objs (except root)!
-  TAPtr tab = (TAPtr)base;
+  taBase* tab = (taBase*)base;
   *taMisc::record_script << "{ " << typ->name << "* ths = "
 			   << tab->GetPath() << ";" << endl;
 }
@@ -1416,7 +1416,7 @@ void taiMember::StartScript(const void* base) {
 void taiMember::CmpOrigVal(taiData* dat, const void* base, bool& first_diff) {
   if((taMisc::record_script == NULL) || !typ->InheritsFrom(TA_taBase))
     return;
-  if((((TAPtr)base)->GetOwner() == NULL) && ((TAPtr)base != tabMisc::root))
+  if((((taBase*)base)->GetOwner() == NULL) && ((taBase*)base != tabMisc::root))
     return;	// no record for unowned objs (except root)!
   String new_val = mbr->type->GetValStr(mbr->GetOff(base));
   if(dat->orig_val == new_val)
@@ -1660,11 +1660,11 @@ void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
   taBase* tok_ptr = GetTokenPtr(base); // this is the addr of the token, in the member
   TypeDef* targ_typ = GetMinType(base);
   
-  TAPtr scope = NULL;
+  taBase* scope = NULL;
   if (!mbr->HasOption("NO_SCOPE")) {
-    scope = (TAPtr)base;
+    scope = (taBase*)base;
 /*nn    if((rval->host != NULL) && (rval->host)->GetRootTypeDef()->InheritsFrom(TA_taBase))
-      scope = (TAPtr)(rval->host)->Base(); */
+      scope = (taBase*)(rval->host)->Base(); */
   }
   TypeDef* scope_type = NULL;
   String sctyp = mbr->OptionAfter("SCOPE_");
@@ -1687,10 +1687,10 @@ void taiTokenPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
     if (no_setpointer)
       *((void**)mbr->GetOff(base)) = rval->GetValue();
     else
-      taBase::SetPointer((TAPtr*)mbr->GetOff(base), (TAPtr)rval->GetValue());
+      taBase::SetPointer((taBase**)mbr->GetOff(base), (taBase*)rval->GetValue());
     break;
   case MD_SMART_PTR: //WARNING: use of no_setpointer on smartptrs is not defined!
-    taBase::SetPointer((TAPtr*)mbr->GetOff(base), (TAPtr)rval->GetValue());
+    taBase::SetPointer((taBase**)mbr->GetOff(base), (taBase*)rval->GetValue());
     break;
   case MD_SMART_REF: {
     taSmartRef& ref = *((taSmartRef*)(mbr->GetOff(base)));
@@ -1774,7 +1774,7 @@ void taiSubTokenPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
   void* new_base = mbr->GetOff(base);
   taiSubToken* rval = (taiSubToken*)dat;
   if (!no_setpointer && mbr->type->DerivesFrom(TA_taBase))
-    taBase::SetPointer((TAPtr*)new_base, (TAPtr)rval->GetValue());
+    taBase::SetPointer((taBase**)new_base, (taBase*)rval->GetValue());
   else
     *((void**)new_base) = rval->GetValue();
 }
@@ -2066,7 +2066,7 @@ void taiTDefaultMember::GetImage(taiData* dat, const void* base) {
   if (gp != NULL) {
     for (int i = 0; i < gp->size; ++i) {
       TypeDefault* td = (TypeDefault*)gp->FastEl(i);
-      if (td->token == (TAPtr)base) {
+      if (td->token == (taBase*)base) {
 	tpdflt = td;
 	break;
       }
@@ -2492,7 +2492,7 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
   String mb_nm = GetOptionAfter("TYPE_ON_");
   if(!mb_nm.empty()) {
     if(mb_nm == "this") {
-      npt = ((TAPtr)base)->GetTypeDef(); // use object type
+      npt = ((taBase*)base)->GetTypeDef(); // use object type
     }
     else {
       TypeDef* own_td = typ;
@@ -2515,14 +2515,14 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
   }
   taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
   //  taiToken* rval = (taiToken*)dat;
-  TAPtr scope = NULL;
+  taBase* scope = NULL;
   if(GetHasOption("NO_SCOPE"))
     scope = NULL;
   else if((rval->host != NULL) && (rval->host->GetRootTypeDef() != NULL) &&
 	  (rval->host->GetRootTypeDef()->InheritsFrom(TA_taBase)))
     scope = (rval->host)->Base();
   else
-    scope = (TAPtr)base;
+    scope = (taBase*)base;
   TypeDef* scope_type = NULL;
   String sctyp = GetOptionAfter("SCOPE_");
   if(!sctyp.empty()) {
@@ -2539,7 +2539,7 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
       taBase::SetPointer((taBase**)arg_base, val.toBase());
     }
   }
-  rval->GetImageScoped(*((TAPtr*)arg_base), npt, scope, scope_type);
+  rval->GetImageScoped(*((taBase**)arg_base), npt, scope, scope_type);
 }
 
 void taiTokenPtrArgType::GetValue_impl(taiData* dat, void*) {
@@ -2568,7 +2568,7 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
     if (mb_nm == "this") {
       tpdf = typ;
       if (typ->InheritsFrom(&TA_taBase) && (base != NULL))
-	tpdf = ((TAPtr)base)->GetTypeDef();
+	tpdf = ((taBase*)base)->GetTypeDef();
     } else {
       TypeDef* own_td = typ;
       ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
@@ -2591,7 +2591,7 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
       if (mb_nm == "this") {
 	tpdf = typ;
 	if (typ->InheritsFrom(&TA_taBase) && (base != NULL))
-	  tpdf = ((TAPtr)base)->GetTypeDef();
+	  tpdf = ((taBase*)base)->GetTypeDef();
       } else {
 	tpdf = taMisc::types.FindName(mb_nm);
       }
@@ -2861,7 +2861,7 @@ void taiDefaultEditDataHost::Enum_Members() {
 
 void taiDefaultEditDataHost::GetValue() {
   inherited::GetValue();
-  TAPtr rbase = Base();
+  taBase* rbase = Base();
   if (rbase) {
     taBase_List* gp = typ->defaults;
     TypeDefault* tpdflt = NULL;
@@ -2987,7 +2987,7 @@ taiData* gpiDefaultEl::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* 
 
 void gpiDefaultEl::GetImage_impl(taiData* dat, const void* base) {
   taList_impl* tl = (taList_impl*)base;
-  TAPtr tmp_ptr = tl->DefaultEl_();
+  taBase* tmp_ptr = tl->DefaultEl_();
   gpiListEls* rval = (gpiListEls*)dat;
   rval->GetImage((TAGPtr)base, tmp_ptr);
   GetOrigVal(dat, base);
@@ -2996,7 +2996,7 @@ void gpiDefaultEl::GetImage_impl(taiData* dat, const void* base) {
 void gpiDefaultEl::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
   taList_impl* tl = (taList_impl*)base;
   gpiListEls* rval = (gpiListEls*)dat;
-  TAPtr tmp_ptr = rval->GetValue();
+  taBase* tmp_ptr = rval->GetValue();
   tl->SetDefaultEl(tmp_ptr);
   CmpOrigVal(dat, base, first_diff);
 }
@@ -3095,7 +3095,7 @@ void gpiFromGpTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
   } else {
     gpiListEls* rval = (gpiListEls*)dat;
     TABLPtr lst = GetList(from_md, base);
-    rval->GetImage(lst, *((TAPtr*)mbr->GetOff(base)));
+    rval->GetImage(lst, *((taBase**)mbr->GetOff(base)));
   }
   GetOrigVal(dat, base);
 }
@@ -3103,10 +3103,10 @@ void gpiFromGpTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
 void gpiFromGpTokenPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
   if (mbr->type->DerivesFrom(&TA_taGroup_impl)) {
     gpiSubGroups* rval = (gpiSubGroups*)dat;
-    taBase::SetPointer((TAPtr*)mbr->GetOff(base), (TAPtr)rval->GetValue());
+    taBase::SetPointer((taBase**)mbr->GetOff(base), (taBase*)rval->GetValue());
   } else {
     gpiListEls* rval = (gpiListEls*)dat;
-    taBase::SetPointer((TAPtr*)mbr->GetOff(base), (TAPtr)rval->GetValue());
+    taBase::SetPointer((taBase**)mbr->GetOff(base), (taBase*)rval->GetValue());
   }
   CmpOrigVal(dat, base, first_diff);
 }
@@ -3130,7 +3130,7 @@ TABLPtr	gpiFromGpTokenPtrMember::GetList(MemberDef* from_md, const void* base) {
 
 
 //////////////////////////////////
-//        gpiTAPtrArgType     //
+//        gpitaBase*ArgType     //
 //////////////////////////////////
 
 int gpiTAPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
@@ -3200,10 +3200,10 @@ void gpiInObjArgType::GetImage_impl(taiData* dat, const void* base) {
   }
   if (typ->InheritsFrom(TA_taGroup_impl)) {
     taiGroupElsButton* els = (taiGroupElsButton*)dat;
-    els->GetImage((taGroup_impl*)base, *((TAPtr*)arg_base));
+    els->GetImage((taGroup_impl*)base, *((taBase**)arg_base));
   } else {
     taiListElsButton* els = (taiListElsButton*)dat;
-    els->GetImage((TABLPtr)base, *((TAPtr*)arg_base));
+    els->GetImage((TABLPtr)base, *((taBase**)arg_base));
   }
 }
 
@@ -3275,10 +3275,10 @@ void gpiFromGpArgType::GetImage_impl(taiData* dat, const void* base) {
   TABLPtr lst = GetList(from_md, base);
   if (typ->InheritsFrom(TA_taGroup_impl)) {
     taiGroupElsButton* els = (taiGroupElsButton*)dat;
-    els->GetImage((taGroup_impl*)lst, *((TAPtr*)arg_base));
+    els->GetImage((taGroup_impl*)lst, *((taBase**)arg_base));
   } else {
     taiListElsButton* els = (taiListElsButton*)dat;
-    els->GetImage((TABLPtr)lst, *((TAPtr*)arg_base));
+    els->GetImage((TABLPtr)lst, *((taBase**)arg_base));
   }
 }
 

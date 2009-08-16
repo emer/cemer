@@ -1908,7 +1908,7 @@ void T3DataViewFrame::DataChanged(int dcr, void* op1, void* op2) {
   }
 }
 
-T3DataView* T3DataViewFrame::FindRootViewOfData(TAPtr data) {
+T3DataView* T3DataViewFrame::FindRootViewOfData(taBase* data) {
   if (!data) return NULL;
   for (int i = 0; i < root_view.children.size; ++i) {
     T3DataView* dv;
@@ -2471,7 +2471,7 @@ void T3DataViewer::ConstrFrames_impl() {
   }
 }
 
-void T3DataViewer::DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2) {
+void T3DataViewer::DataChanged_Child(taBase* child, int dcr, void* op1, void* op2) {
   if (child == &frames) {
     // if reorder, then do a gui reorder
     //TODO:if new addition when mapped, then add gui
@@ -2490,7 +2490,7 @@ void T3DataViewer::DoActionChildren_impl(DataViewAction act) {
 }
 
 
-T3DataView* T3DataViewer::FindRootViewOfData(TAPtr data) {
+T3DataView* T3DataViewer::FindRootViewOfData(taBase* data) {
   if (!data) return NULL;
   for (int i = 0; i < frames.size; ++i) {
     T3DataViewFrame* f = frames.FastEl(i);

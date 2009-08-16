@@ -262,7 +262,7 @@ public:
   
   String  	GetAutoName(taBase* obj); 
   // get auto-name value based on current values
-  String  	GetObjName(TAPtr obj); 
+  String  	GetObjName(taBase* obj); 
   // get name of object for naming monitored values -- uses GetDisplayName by default but is optimized for various network objects; uses max_name_len constraint
   String	GetChanName(taBase* obj, int chan_idx);
   // get name for given column/channel of data, taking into account namestyle preferences; chan_idx is index within the channelspec_list for this guy

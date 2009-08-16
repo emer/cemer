@@ -30,11 +30,11 @@ void ClustLink::Initialize() {
 
 void ClustLink::Copy_(const ClustLink& cp) {
   dist = cp.dist;
-  taBase::SetPointer((TAPtr*)&node, cp.node);
+  taBase::SetPointer((taBase**)&node, cp.node);
 }
 
 void ClustLink::CutLinks() {
-  taBase::DelPointer((TAPtr*)&node);
+  taBase::DelPointer((taBase**)&node);
   taBase::CutLinks();
 }
 
@@ -55,27 +55,27 @@ void ClustNode::InitLinks() {
 }
 
 void ClustNode::CutLinks() {
-  taBase::DelPointer((TAPtr*)&leaf_dists);
-  taBase::DelPointer((TAPtr*)&pat);
+  taBase::DelPointer((taBase**)&leaf_dists);
+  taBase::DelPointer((taBase**)&pat);
   children.Reset();
   nns.Reset();
   inherited::CutLinks();
 }
 
 void ClustNode::SetPat(taMatrix* pt) {
-  taBase::SetPointer((TAPtr*)&pat, pt);
+  taBase::SetPointer((taBase**)&pat, pt);
 }
 
 void ClustNode::AddChild(ClustNode* nd, float dst) {
   ClustLink* lk = new ClustLink;
-  taBase::SetPointer((TAPtr*)&(lk->node), nd);
+  taBase::SetPointer((taBase**)&(lk->node), nd);
   lk->dist = dst;
   children.Add(lk);
 }
 
 void ClustNode::LinkNN(ClustNode* nd, float dst) {
   ClustLink* lk = new ClustLink;
-  taBase::SetPointer((TAPtr*)&(lk->node), nd);
+  taBase::SetPointer((taBase**)&(lk->node), nd);
   lk->dist = dst;
   nns.Add(lk);
 }
@@ -115,12 +115,12 @@ bool ClustNode::Cluster(taMath::DistMetric metric, bool norm, float tol) {
     return false;
   }
 
-  taBase::SetPointer((TAPtr*)&leaf_dists, new float_Matrix);
+  taBase::SetPointer((taBase**)&leaf_dists, new float_Matrix);
   leaf_dists->SetGeom(2, children.size, children.size);
   for(int i=0; i<children.size; i++) {
     ClustNode* nd = GetChild(i);
     nd->leaf_idx = i;
-    taBase::SetPointer((TAPtr*)&(nd->leaf_dists), leaf_dists);
+    taBase::SetPointer((taBase**)&(nd->leaf_dists), leaf_dists);
     for(int j=0;j<children.size;j++) {
       ClustNode* ond = GetChild(j);
       float dst;
@@ -140,7 +140,7 @@ bool ClustNode::Cluster(taMath::DistMetric metric, bool norm, float tol) {
 
   SetParDists(0.0f);
 
-  taBase::DelPointer((TAPtr*)&leaf_dists);
+  taBase::DelPointer((taBase**)&leaf_dists);
   return true;
 }
 

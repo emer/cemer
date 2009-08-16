@@ -147,7 +147,7 @@ public:
   static int			busy_count; // levels of busy
 
   static TypeSpace		arg_types; 	// list of all taiArgTypes
-  static void (*Update_Hook)(TAPtr);
+  static void (*Update_Hook)(taBase*);
   // #IGNORE called after apply in a dialog, etc. obj is the object that was edited
 #ifndef __MAKETA__
   static QPointer<iMainWindowViewer> main_window; // the main window (dialogs are parented to this)
@@ -168,7 +168,7 @@ public:
 //obs  static int	SetIconify(void* obj, int onoff); // set iconified field of winbase obj to onoff
 
 
-  static void	Update(TAPtr obj); // #IGNORE update stuff after modification (uses hook fun)
+  static void	Update(taBase* obj); // #IGNORE update stuff after modification (uses hook fun)
 
   static void	PurgeDialogs();
   // remove any 'NoBlock' dialogs from active list (& delete them)

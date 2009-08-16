@@ -40,7 +40,7 @@ INHERITED(taNBase)
 public:
   TypeDef*	old_type;	// #HIDDEN #NO_SAVE has previous type (if default_type changes)
   TypeDef*	default_type;	// #TYPE_taBase type of the default
-  TAPtr		token;		// #DEFAULT_EDIT #NO_SAVE token which has default values
+  taBase*		token;		// #DEFAULT_EDIT #NO_SAVE token which has default values
   taBase_List 	active_membs;	// MemberName / MemberValue pairs
   unsigned long active[MAX_DFT_LONGS]; // #HIDDEN #NO_SAVE bits representing a memberdefs activity in a default
 
@@ -51,10 +51,10 @@ public:
   virtual void	UpdateToNameValue();		   // set the name value data from token
   virtual void	UpdateFromNameValue();		   // set the token form the name values
   virtual void	SetTypeDefaults()		{ taNBase::SetTypeDefaults(); }
-  virtual void	SetTypeDefaults(TAPtr tok);	   // set defaults for a given token
+  virtual void	SetTypeDefaults(taBase* tok);	   // set defaults for a given token
 
   void	Dump_Load_pre();
-  int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
+  int	Dump_Load_Value(istream& strm, taBase* par=NULL);
 
   void	InitLinks();
   TA_BASEFUNS(TypeDefault);

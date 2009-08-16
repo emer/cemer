@@ -77,7 +77,7 @@ public:
   static void		WaitProc();
   // wait process function: process all the delayed stuff
 
-  static void		DelayedUpdateAfterEdit(TAPtr obj);
+  static void		DelayedUpdateAfterEdit(taBase* obj);
   // call update-after-edit on object in wait process (in case this does other kinds of damage..)
   static void		DelayedFunCall_gui(taBase* obj, const String& fun_name);
   // perform a delayed function call on this object of given function name (using CallFun) -- if args required they will be prompted for, but that is probably not a great idea from the user's perspective.. best for void functions -- gui version for gui feedback events -- checks for gui_active
@@ -145,14 +145,14 @@ public: \
 
 // common defs used to make instances: Cloning and Tokens
 #define TA_BASEFUNS_INST_(y) \
-  TAPtr Clone() { return new y(*this); }  \
-  TAPtr MakeToken(){ return (TAPtr)(new y); } \
-  TAPtr MakeTokenAry(int n){ return (TAPtr)(new y[n]); }
+  taBase* Clone() { return new y(*this); }  \
+  taBase* MakeToken(){ return (taBase*)(new y); } \
+  taBase* MakeTokenAry(int n){ return (taBase*)(new y[n]); }
 
 #define TA_TMPLT_BASEFUNS_INST_(y,T) \
-  TAPtr Clone() { return new y<T>(*this); } \
-  TAPtr MakeToken(){ return (TAPtr)(new y<T>); }  \
-  TAPtr MakeTokenAry(int n){ return (TAPtr)(new y<T>[n]); }  
+  taBase* Clone() { return new y<T>(*this); } \
+  taBase* MakeToken(){ return (taBase*)(new y<T>); }  \
+  taBase* MakeTokenAry(int n){ return (taBase*)(new y<T>[n]); }  
 
 // ctors -- one size fits all (where used) thanks to Initialize__
 
@@ -366,8 +366,8 @@ public: \
 #define GET_MY_OWNER(T) (T *) GetOwner(&TA_##T)
 #define GET_OWNER(B,T)  (T *) B ->GetOwner(T::StatTypeDef(0))
 
-#define SET_POINTER(var,obj) (taBase::SetPointer((TAPtr*)&(var), (TAPtr)(obj)))
-#define DEL_POINTER(var) (taBase::DelPointer((TAPtr*)&(var)))
+#define SET_POINTER(var,obj) (taBase::SetPointer((taBase**)&(var), (taBase*)(obj)))
+#define DEL_POINTER(var) (taBase::DelPointer((taBase**)&(var)))
 
 // standard smart refs and ptrs -- you should use this for every class
 #define TA_SMART_PTRS(y) \
@@ -454,7 +454,7 @@ public:
   // 	Reference counting mechanisms, all static just for consistency..
 public:
 
-  static int		GetRefn(TAPtr it)	{ return it->refn; } // #IGNORE
+  static int		GetRefn(taBase* it)	{ return it->refn; } // #IGNORE
 #ifdef DEBUG
   static void  		Ref(taBase& it);	     // #IGNORE
   static void  		Ref(taBase* it);	     // #IGNORE
@@ -463,9 +463,9 @@ public:
   static void  		Ref(taBase* it) 	{ it->refn.ref(); }	     // #IGNORE
 #endif
   static void		UnRef(taBase* it) {unRef(it); Done(it);} // #IGNORE
-  static void		Own(taBase& it, TAPtr onr);	// #IGNORE note: also does a RefStatic() on first ownership
-  static void		Own(taBase* it, TAPtr onr);	// #IGNORE note: also does a Ref() on new ownership
-  static void		Own(taSmartRef& it, TAPtr onr);	// #IGNORE for semantic compat with other Owns
+  static void		Own(taBase& it, taBase* onr);	// #IGNORE note: also does a RefStatic() on first ownership
+  static void		Own(taBase* it, taBase* onr);	// #IGNORE note: also does a Ref() on new ownership
+  static void		Own(taSmartRef& it, taBase* onr);	// #IGNORE for semantic compat with other Owns
 protected:
   // legacy ref counting routines, for compatability -- do not use for new code
   // note that guards/tests in these are "defensive", not "by design"
@@ -513,8 +513,8 @@ public:
   // #IGNORE non-virtual, called in destructors to unregister token in token list
   virtual void		SetTypeDefaults();
   // #IGNORE initialize modifiable default initial values stored with the typedef -- see TypeDefault object in ta_defaults.  currently not used; was called in taBase::Own
-  virtual void		SetTypeDefaults_impl(TypeDef* ttd, TAPtr scope); // #IGNORE
-  virtual void		SetTypeDefaults_parents(TypeDef* ttd, TAPtr scope); // #IGNORE
+  virtual void		SetTypeDefaults_impl(TypeDef* ttd, taBase* scope); // #IGNORE
+  virtual void		SetTypeDefaults_parents(TypeDef* ttd, taBase* scope); // #IGNORE
 
 
 protected:  // Impl
@@ -529,9 +529,9 @@ protected:  // Impl
   // actual constructors/destructors and related: defined in TA_BASEFUNS for derived classes
 public:
   static  TypeDef*	StatTypeDef(int);	// #IGNORE
-  static TAPtr 		MakeToken(TypeDef* td);
+  static taBase* 		MakeToken(TypeDef* td);
   // #IGNORE static version to make a token of the given type
-  static TAPtr 		MakeTokenAry(TypeDef* td, int no);
+  static taBase* 		MakeTokenAry(TypeDef* td, int no);
   // #IGNORE static version to make an array of tokens of the given type
 
 #ifdef __MAKETA__
@@ -544,9 +544,9 @@ public:
 #endif
   virtual ~taBase() 		{ Destroy(); } //
 
-  virtual TAPtr		Clone()			{ return new taBase(*this); } // #IGNORE
-  virtual TAPtr 	MakeToken()		{ return new taBase; }	// #IGNORE
-  virtual TAPtr 	MakeTokenAry(int no)	{ return new taBase[no]; } // #IGNORE
+  virtual taBase*		Clone()			{ return new taBase(*this); } // #IGNORE
+  virtual taBase* 	MakeToken()		{ return new taBase; }	// #IGNORE
+  virtual taBase* 	MakeTokenAry(int no)	{ return new taBase[no]; } // #IGNORE
 //  taBase&		operator=(const taBase& cp) { Copy(cp); return *this;}
   virtual TypeDef*	GetTypeDef() const;	// #IGNORE
   taBase*		New(int n_objs=1, TypeDef* type=NULL,
@@ -632,11 +632,11 @@ public:
   const taList_impl*  	children_() const 
   { return const_cast<const taList_impl*>(const_cast<taBase*>(this)->children_());} 
   // #IGNORE mostly for testing if has children
-  virtual TAPtr 	SetOwner(TAPtr)		{ return(NULL); } // #IGNORE
-  virtual TAPtr 	GetOwner() const	{ return(NULL); } // #CAT_ObjectMgmt 
-  virtual TAPtr		GetOwner(TypeDef* td) const; // #CAT_ObjectMgmt 
-  virtual TAPtr		GetThisOrOwner(TypeDef* td); // #CAT_ObjectMgmt get this obj or first owner that is of type td
-  virtual TAPtr 	GetParent() const; 
+  virtual taBase* 	SetOwner(taBase*)		{ return(NULL); } // #IGNORE
+  virtual taBase* 	GetOwner() const	{ return(NULL); } // #CAT_ObjectMgmt 
+  virtual taBase*		GetOwner(TypeDef* td) const; // #CAT_ObjectMgmt 
+  virtual taBase*		GetThisOrOwner(TypeDef* td); // #CAT_ObjectMgmt get this obj or first owner that is of type td
+  virtual taBase* 	GetParent() const; 
     // #CAT_ObjectMgmt typically the first non-list/group owner above this one
   bool 			IsParentOf(const taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect parent of the obj (or is the obj)
   bool			IsChildOf(const taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect child of the obj (or is the obj)
@@ -644,9 +644,9 @@ public:
   //	Paths in the structural hierarchy
 public:
 
-  virtual String 	GetPath_Long(TAPtr ta=NULL, TAPtr par_stop=NULL) const;
+  virtual String 	GetPath_Long(taBase* ta=NULL, taBase* par_stop=NULL) const;
   // #IGNORE get path from root (default), but stop at par_stop if non-null  -- ta is used for recursion and should be NULL for any end-user calls
-  virtual String	GetPath(TAPtr ta=NULL, TAPtr par_stop=NULL) const;
+  virtual String	GetPath(taBase* ta=NULL, taBase* par_stop=NULL) const;
   // #CAT_ObjectMgmt get path without name information, stop at par_stop if non-null -- ta is used for recursion and should be NULL for any end-user calls
   virtual taBase*	FindFromPath(const String& path, MemberDef*& ret_md, int start=0) const;
   // #CAT_ObjectMgmt find object from path (starting from this, and position start of the path -- ret_md is return member def: if NULL and return is !NULL, then it is a member of a list or group, not a member in object
@@ -661,11 +661,11 @@ public:
 
   virtual TypeDef*	GetScopeType();
   // #IGNORE gets my scope type (if NULL, it means no scoping, or root)
-  virtual TAPtr		GetScopeObj(TypeDef* scp_tp=NULL);
+  virtual taBase*		GetScopeObj(TypeDef* scp_tp=NULL);
   // #IGNORE gets the object that is at the scope type above me (uses GetScopeType() or scp_tp)
-  virtual bool		SameScope(TAPtr ref_obj, TypeDef* scp_tp=NULL);
+  virtual bool		SameScope(taBase* ref_obj, TypeDef* scp_tp=NULL);
   // #IGNORE determine if this is in the same scope as given ref_obj (uses my scope type)
-  static int		NTokensInScope(TypeDef* type, TAPtr ref_obj, TypeDef* scp_tp=NULL);
+  static int		NTokensInScope(TypeDef* type, taBase* ref_obj, TypeDef* scp_tp=NULL);
   // #IGNORE number of tokens of taBase objects of given type in same scope as ref_obj
 
 protected: // Impl
@@ -687,7 +687,7 @@ public:
     int compress=-1, const String& filetypes = _nilString);
   // #IGNORE gets filer for this object (or TypeItem if non-null) -- clients must ref/unrefdone; ext is for non-default extension (otherwise looks up EXT_); compress -1=default, 0=none, 1=yes; exts/ft's must match, and are ,-separated lists
 
-  virtual int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
+  virtual int	 	Load_strm(istream& strm, taBase* par=NULL, taBase** loaded_obj_ptr = NULL);
   // #CAT_XpertFile Load object data from a file -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
   taFiler* 		GetLoadFiler(const String& fname, String exts = _nilString,
     int compress=-1, String filetypes = _nilString, bool getset_file_name = true);
@@ -697,7 +697,7 @@ public:
   virtual int 		Load_cvt(taFiler*& flr);
   // #IGNORE convert stream from old to new format (if needed)
 
-  virtual int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
+  virtual int 		Save_strm(ostream& strm, taBase* par=NULL, int indent=0);
   // #CAT_XpertFile Save object data to a file stream
   taFiler* 		GetSaveFiler(const String& fname, String ext = _nilString,
     int compress=-1, String filetypes=_nilString, bool getset_file_name = true);
@@ -710,9 +710,9 @@ public:
   virtual int		SaveAs(const String& fname = ""); 
   // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, the user is prompted with a file dialog
 
-  virtual int 		Save_String(String& save_str, TAPtr par=NULL, int indent=0);
+  virtual int 		Save_String(String& save_str, taBase* par=NULL, int indent=0);
   // #CAT_XpertFile dump full object save information to a string, which contains the exact information that would be saved to a file for Save_strm -- just a string-stream (sstream) wrapper around Save_strm
-  virtual int	 	Load_String(const String& load_str, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
+  virtual int	 	Load_String(const String& load_str, taBase* par=NULL, taBase** loaded_obj_ptr = NULL);
   // #CAT_XpertFile load full object information from a string, which should have been generated through a corresponding Save_String call -- must contain the exact information that would be saved to a file for Save_strm -- just a string-stream (sstream) wrapper around Load_strm
 
   virtual String	GetValStr(void* par = NULL, MemberDef* md = NULL,
@@ -737,7 +737,7 @@ public:
   ////////////////////////////////////////////////////////////////////// 
   // 	Low-level dump load/save
 public:  
-  virtual int	 	Dump_Load_impl(istream& strm, TAPtr par=NULL) // #IGNORE
+  virtual int	 	Dump_Load_impl(istream& strm, taBase* par=NULL) // #IGNORE
   { return GetTypeDef()->Dump_Load_impl(strm, (void*)this, par); }
   virtual taBase*	Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ);
   // #IGNORE load a new object that is an owned pointer that lives on 'this' object, of given type and path -- returns ptr to new obj or NULL if failure
@@ -745,7 +745,7 @@ public:
   // #IGNORE 'this' is the parent, and el_path specifies path to child -- create appropriate obj -- returns ptr to new obj or NULL if failure -- only really defined for taList..
   virtual void		Dump_Load_pre() {};
   // #IGNORE -- called just before single-object Load_strm -- use to reset stuff prior to loading
-  virtual int	 	Dump_Load_Value(istream& strm, TAPtr par=NULL) // #IGNORE
+  virtual int	 	Dump_Load_Value(istream& strm, taBase* par=NULL) // #IGNORE
   { return GetTypeDef()->Dump_Load_Value(strm, (void*)this, par); }
   virtual void 		Dump_Load_post() {} 
   // #IGNORE called after load, in normal (non loading) context if has DUMP_LOAD_POST directive
@@ -755,20 +755,20 @@ public:
   // note: this routine (and overrides) is in ta_dump.cpp
   virtual void 		Dump_Save_pre() {}
   // #IGNORE called before _Path, enables jit updating before save
-  virtual int 		Dump_Save_impl(ostream& strm, TAPtr par=NULL, int indent=0)
+  virtual int 		Dump_Save_impl(ostream& strm, taBase* par=NULL, int indent=0)
   { Dump_Save_pre(); 
     return GetTypeDef()->Dump_Save_impl(strm, (void*)this, par, indent); } // #IGNORE
-  virtual int 		Dump_Save_inline(ostream& strm, TAPtr par=NULL, int indent=0)
+  virtual int 		Dump_Save_inline(ostream& strm, taBase* par=NULL, int indent=0)
   { Dump_Save_pre(); 
     return GetTypeDef()->Dump_Save_inline(strm, (void*)this, par, indent); } // #IGNORE
-  virtual int 		Dump_Save_Path(ostream& strm, TAPtr par=NULL, int indent=0)
+  virtual int 		Dump_Save_Path(ostream& strm, taBase* par=NULL, int indent=0)
   { return GetTypeDef()->Dump_Save_Path(strm, (void*)this, par, indent); } // #IGNORE
-  virtual int 		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent=0)
+  virtual int 		Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent=0)
   { return GetTypeDef()->Dump_Save_Value(strm, (void*)this, par, indent); } // #IGNORE
 
-  virtual int		Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0)
+  virtual int		Dump_SaveR(ostream& strm, taBase* par=NULL, int indent=0)
   { return GetTypeDef()->Dump_SaveR(strm, (void*)this, par, indent); } 	// #IGNORE
-  virtual int 		Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0)
+  virtual int 		Dump_Save_PathR(ostream& strm, taBase* par=NULL, int indent=0)
   { return GetTypeDef()->Dump_Save_PathR(strm, (void*)this, par, indent); } // #IGNORE
   virtual DumpQueryResult Dump_QuerySaveMember(MemberDef* md); 
   // #IGNORE default checks NO_SAVE directive; override to make save decision at runtime
@@ -784,8 +784,8 @@ public:
   // #CAT_ObjectMgmt called after editing, or any user change to members (eg. in the interface, script)
   virtual bool		UAEProgramDefault() { return false; }
   // #CAT_ObjectMgmt what is default setting of update_after flag for programs that modify fields on this object -- the base default is false, to produce reasonable speed -- only use where essential
-  virtual void		ChildUpdateAfterEdit(TAPtr child, bool& handled);
-  // #IGNORE called by a child in its UAE routine; provides child notifications  NOTE: only member objects are detected; subclasses that want to notify on owned TAPtr members must override and check for those instances manually
+  virtual void		ChildUpdateAfterEdit(taBase* child, bool& handled);
+  // #IGNORE called by a child in its UAE routine; provides child notifications  NOTE: only member objects are detected; subclasses that want to notify on owned taBase* members must override and check for those instances manually
   virtual void		UpdateAfterMove(taBase* old_owner);
   // #IGNORE called after object has been moved from one location to another in the object hierarchy (i.e., list Transfer fun) -- actual functions should be put in the _impl version which should call inherited:: etc just as for UAE -- use for updating pointers etc
   virtual void		UpdateAllViews();
@@ -1021,9 +1021,9 @@ public:
   { GetTypeDef()->MemberCopyFrom(memb_no, (void*)this, src_base); }
    // #IGNORE copy given member index no from source object of same type
 //note: CopyFrom/To should NOT be virtual -- specials should be handled in the impl routines, or the Copy_ routines
-  bool			CopyFrom(TAPtr cpy_from);
+  bool			CopyFrom(taBase* cpy_from);
   // #TYPE_ON_this #NO_SCOPE #CAT_ObjectMgmt Copy from given object into this object (this is a safe interface to UnSafeCopy)
-  bool			CopyTo(TAPtr cpy_to);
+  bool			CopyTo(taBase* cpy_to);
   // #TYPE_ON_this #NO_SCOPE #CAT_ObjectMgmt Copy to given object from this object
   // need both directions to more easily handle scoping of types on menus
   virtual bool		ChildCanDuplicate(const taBase* chld, bool quiet = true) const;
@@ -1161,7 +1161,7 @@ public:
 
   static String		GetStringRep(const taBase& it) {return it.GetStringRep_impl();}
    // #IGNORE string representation
-  static String		GetStringRep(TAPtr it); 
+  static String		GetStringRep(taBase* it); 
   // #IGNORE string representation; ok if null, calls ->GetStringRep_impl
 
 protected:  // Impl
@@ -1252,9 +1252,9 @@ public:
   // #NO_REVERT_AFTER #LABEL_Close_(Destroy) #CAT_ObjectMgmt PERMANENTLY Destroy this object!  This is not Iconify or close window..
   virtual void		Close();
   // #IGNORE an immediate version of Close for use in code (no waitproc delay)
-  virtual bool		Close_Child(TAPtr obj);
+  virtual bool		Close_Child(taBase* obj);
   // #IGNORE actually closes a child object (should be immediate child)
-  virtual bool		CloseLater_Child(TAPtr obj);
+  virtual bool		CloseLater_Child(taBase* obj);
   // #IGNORE actually closes a child object (should be immediate child) but defers deletion to loop
 
   virtual void		Help();
@@ -1379,7 +1379,7 @@ public:
     // needed to avoid ambiguities when we have derived T* operators
   inline 		operator taBase*() const {return m_ptr;}
   inline taBase* 	operator->() const {return m_ptr;}
-  inline TAPtr* 	operator&() const {return &m_ptr;}
+  inline taBase** 	operator&() const {return &m_ptr;}
     //note: operator& is *usually* verbotten but we are binary compat -- it simplifies low-level compat
   inline taBase* 	operator=(const taSmartPtr& src) 
     {set(src.m_ptr); return m_ptr;} 
@@ -1537,9 +1537,9 @@ public:
   override taDataLink*	data_link() {return m_data_link;}	// #IGNORE
 //  override void		set_data_link(taDataLink* dl) {m_data_link = dl;}
 
-  TAPtr 		GetOwner() const	{ return owner; }
+  taBase* 		GetOwner() const	{ return owner; }
   USING(inherited::GetOwner)
-  TAPtr 		SetOwner(TAPtr ta)	{ owner = ta; return ta; }
+  taBase* 		SetOwner(taBase* ta)	{ owner = ta; return ta; }
   UserDataItem_List* 	GetUserDataList(bool force = false) const;  
   void	CutLinks();
   TA_BASEFUNS(taOBase); //
@@ -1578,7 +1578,7 @@ private:
 /*
  * taBaseAdapter enables a taOBase object to handle Qt events, via a
  * proxy(taBaseAdapter)/stub(taBase) approach. Note that dual-parenting a taBase object
- * with QObject is not workable, because QObject must come first, and then all the (TAPtr)(void*)
+ * with QObject is not workable, because QObject must come first, and then all the (taBase*)(void*)
  * casts in the system break...
 
  * To use, subclass taBaseAdapter when events need to be handled. Create the instance in
@@ -1667,13 +1667,13 @@ private:
 class TA_API taBase_PtrList: public taPtrList<taBase> { // a primitive taBase list type, used for global lists that manage taBase objects
 public:
   TypeDef*	El_GetType_(void* it) const 
-    {return ((TAPtr)it)->GetTypeDef();} // #IGNORE
+    {return ((taBase*)it)->GetTypeDef();} // #IGNORE
 protected:
-  String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
+  String	El_GetName_(void* it) const { return ((taBase*)it)->GetName(); }
 
-  void*		El_Ref_(void* it)	{ taBase::Ref((TAPtr)it); return it; }
-  void*		El_unRef_(void* it)	{ taBase::unRef((TAPtr)it); return it; }
-  void		El_Done_(void* it)	{ taBase::Done((TAPtr)it); }
+  void*		El_Ref_(void* it)	{ taBase::Ref((taBase*)it); return it; }
+  void*		El_unRef_(void* it)	{ taBase::unRef((taBase*)it); return it; }
+  void		El_Done_(void* it)	{ taBase::Done((taBase*)it); }
 };
 
 typedef taPtrList_base<taBase>  taPtrList_ta_base; // this comment needed for maketa parser
@@ -1709,8 +1709,8 @@ protected: // we actually protect these
 protected:
   IRefListClient*	m_own; // optional owner
   
-  String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
-  TypeDef*	El_GetType_(void* it) const {return ((TAPtr)it)->GetTypeDef();}
+  String	El_GetName_(void* it) const { return ((taBase*)it)->GetName(); }
+  TypeDef*	El_GetType_(void* it) const {return ((taBase*)it)->GetTypeDef();}
   void*		El_Ref_(void* it);
   void*		El_unRef_(void* it);
 private:
@@ -1748,19 +1748,19 @@ public:
   override void*        GetTA_Element(Variant i, TypeDef*& eltd)
     { return taPtrList_ta_base::GetTA_Element_(i, eltd); }
   override TypeDef*	El_GetType_(void* it) const
-    {return ((TAPtr)it)->GetTypeDef();} // #IGNORE 
+    {return ((taBase*)it)->GetTypeDef();} // #IGNORE 
   override taList_impl* children_() {return this;}
 
 
-  String 	GetPath_Long(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
-  String 	GetPath(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
+  String 	GetPath_Long(taBase* ta=NULL, taBase* par_stop = NULL) const;
+  String 	GetPath(taBase* ta=NULL, taBase* par_stop = NULL) const;
 
   void* 	FindMembeR(const String& nm, MemberDef*& ret_md) const;
 
   override void	Close();
-  override bool	Close_Child(TAPtr obj);
-  override bool	CloseLater_Child(TAPtr obj);
-  override void	ChildUpdateAfterEdit(TAPtr child, bool& handled); 
+  override bool	Close_Child(taBase* obj);
+  override bool	CloseLater_Child(taBase* obj);
+  override void	ChildUpdateAfterEdit(taBase* child, bool& handled); 
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); 
 
   ostream& 	OutputR(ostream& strm, int indent = 0) const;
@@ -1773,12 +1773,12 @@ public:
 			   bool force_inline = false);
 
   override void Dump_Save_GetPluginDeps();
-  override int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0);
-  override int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0);
-  virtual int 	Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent); // #IGNORE
+  override int	Dump_SaveR(ostream& strm, taBase* par=NULL, int indent=0);
+  override int	Dump_Save_PathR(ostream& strm, taBase* par=NULL, int indent=0);
+  virtual int 	Dump_Save_PathR_impl(ostream& strm, taBase* par, int indent); // #IGNORE
   override void	Dump_Load_pre();
   override taBase* Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el_typ);
-  override int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
+  override int	Dump_Load_Value(istream& strm, taBase* par=NULL);
 
   override void	Search_impl(const String& srch, taBase_PtrList& items,
 			    taBase_PtrList* owners = NULL, 
@@ -1797,13 +1797,13 @@ public:
   override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   override int	UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr);
 
-  TAPtr		DefaultEl_() const	{ return (TAPtr)SafeEl_(el_def); } // #IGNORE
+  taBase*		DefaultEl_() const	{ return (taBase*)SafeEl_(el_def); } // #IGNORE
 
   virtual int	SetDefaultElType(TypeDef* it);
   // #CAT_Access set the default element to be item with given type
   virtual int	SetDefaultElName(const String& nm);
   // #CAT_Access set the default element to be item with given name
-  virtual int	SetDefaultEl(TAPtr it);
+  virtual int	SetDefaultEl(taBase* it);
   // #CAT_Access set the default element to be given item
 
   taBase* 	New_gui(int n_objs=1, TypeDef* typ=NULL,
@@ -1822,7 +1822,7 @@ public:
 
   virtual bool	ChangeType(int idx, TypeDef* new_type);
   // change type of item at index
-  virtual bool	ChangeType(TAPtr itm, TypeDef* new_type);
+  virtual bool	ChangeType(taBase* itm, TypeDef* new_type);
   // #MENU #ARG_ON_OBJ #CAT_Modify #TYPE_ON_el_base change type of item to new type, copying current info
   virtual int	ReplaceType(TypeDef* old_type, TypeDef* new_type);
   // #MENU #USE_RVAL #CAT_Modify #TYPE_ON_el_base replace all items of old type with new type (returns number changed)
@@ -1864,30 +1864,30 @@ protected:
   int		m_trg_load_size; // #IGNORE target load size -- set during Dump_Load -- used to enforce size to that which was saved, in case of load-over
 
   String	GetListName_() const	{ return name; }
-  void		El_SetIndex_(void* it, int idx) {((TAPtr)it)->SetIndex(idx);}
+  void		El_SetIndex_(void* it, int idx) {((taBase*)it)->SetIndex(idx);}
   void		El_SetDefaultName_(void*, int idx); // sets default name if child has DEF_NAME_LIST 
-  String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
-  void 		El_SetName_(void* it, const String& nm)  {((TAPtr)it)->SetName(nm);}
+  String	El_GetName_(void* it) const { return ((taBase*)it)->GetName(); }
+  void 		El_SetName_(void* it, const String& nm)  {((taBase*)it)->SetName(nm);}
   TALPtr	El_GetOwnerList_(void* it) const 
-  { return dynamic_cast<TABLPtr>(((TAPtr)it)->GetOwner()); }
-  void*		El_GetOwnerObj_(void* it) const { return ((TAPtr)it)->GetOwner(); }
-  void*		El_SetOwner_(void* it)	{ ((TAPtr)it)->SetOwner(this); return it; }
+  { return dynamic_cast<TABLPtr>(((taBase*)it)->GetOwner()); }
+  void*		El_GetOwnerObj_(void* it) const { return ((taBase*)it)->GetOwner(); }
+  void*		El_SetOwner_(void* it)	{ ((taBase*)it)->SetOwner(this); return it; }
   bool		El_FindCheck_(void* it, const String& nm) const
-  { if (((TAPtr)it)->FindCheck(nm)) {TALPtr own = El_GetOwnerList_(it);
+  { if (((taBase*)it)->FindCheck(nm)) {TALPtr own = El_GetOwnerList_(it);
     return ((!own) || (own == (TALPtr)this));} return false; }
 
-  void*		El_Ref_(void* it)	{ taBase::Ref((TAPtr)it); return it; }
-  void*		El_unRef_(void* it)	{ taBase::unRef((TAPtr)it); return it; }
-  void		El_Done_(void* it)	{ taBase::Done((TAPtr)it); }
-  void*		El_Own_(void* it)	{ taBase::Own((TAPtr)it,this); return it; }
+  void*		El_Ref_(void* it)	{ taBase::Ref((taBase*)it); return it; }
+  void*		El_unRef_(void* it)	{ taBase::unRef((taBase*)it); return it; }
+  void		El_Done_(void* it)	{ taBase::Done((taBase*)it); }
+  void*		El_Own_(void* it)	{ taBase::Own((taBase*)it,this); return it; }
   void		El_disOwn_(void* it)
-  { if(El_GetOwnerList_(it) == this) {((TAPtr)it)->Destroying(); ((TAPtr)it)->CutLinks();}
+  { if(El_GetOwnerList_(it) == this) {((taBase*)it)->Destroying(); ((taBase*)it)->CutLinks();}
     El_Done_(El_unRef_(it)); }
   // cut links to other objects when removed from owner group
 
-  void*		El_MakeToken_(void* it) { return (void*)((TAPtr)it)->MakeToken(); }
+  void*		El_MakeToken_(void* it) { return (void*)((taBase*)it)->MakeToken(); }
   void*		El_Copy_(void* trg, void* src)
-  { ((TAPtr)trg)->UnSafeCopy((TAPtr)src); return trg; }
+  { ((taBase*)trg)->UnSafeCopy((taBase*)src); return trg; }
   void* 	El_CopyN_(void* to, void* fm); // wrap in an update bracket
   
 protected:
@@ -1918,7 +1918,7 @@ public:
   T*		DefaultEl() const		{ return (T*)DefaultEl_(); }
   // #CAT_Access returns the element specified as the default for this list
 
-  T*		Edit_El(T* item) const		{ return SafeEl(FindEl((TAPtr)item)); }
+  T*		Edit_El(T* item) const		{ return SafeEl(FindEl((taBase*)item)); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ #CAT_Access Edit given list item
 
   T*		FindName(const String& item_nm) const
@@ -2090,7 +2090,7 @@ protected: // the following just call inherited then insert the DV_ version
 public:
   int	GetIndex() const {return m_index;}
   void	SetIndex(int value) {m_index = value;}
-  TAPtr	SetOwner(TAPtr own); // update the parent; nulls it if not of parentType
+  taBase*	SetOwner(taBase* own); // update the parent; nulls it if not of parentType
   void	CutLinks();
   void	UpdateAfterEdit();
   TA_BASEFUNS(taDataView)
@@ -2123,7 +2123,7 @@ protected:
   virtual void		DataUpdateView_impl() { if(taMisc::gui_active) Render_impl(); } // called for Update All Views, and at end of a DataUpdate batch
   virtual void		DataRebuildView_impl() {} // called for Rebuild All Views, clients usually do beg/end both
   virtual void		DataStructUpdateEnd_impl() {} // called ONLY at end of a struct update -- derived classes usually do some kind of rebuild or render
-  virtual void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2) {} 
+  virtual void		DataChanged_Child(taBase* child, int dcr, void* op1, void* op2) {} 
    // typically from an owned list
   virtual void		DoActionChildren_impl(DataViewAction acts) {} // only one action called at a time, if CONSTR do children in order, if DESTR do in reverse order; call child.DoActions(act)
   virtual void 		SetVisible_impl(DataViewAction act);
@@ -2176,7 +2176,7 @@ public:
   virtual void		DoAction(taDataView::DataViewAction act); 
    // do a single action on all items; we also do self->Reset on Reset_impl
   
-  override TAPtr SetOwner(TAPtr); // #IGNORE
+  override taBase* SetOwner(taBase*); // #IGNORE
   TA_DATAVIEWLISTFUNS(DataView_List, taList<taDataView>, taDataView) //
   
 protected:
@@ -2212,8 +2212,8 @@ public:
   override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
 			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
 			   bool force_inline = false);
-  int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
-  int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
+  int		Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
+  int		Dump_Load_Value(istream& strm, taBase* par=NULL);
   
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); 
 
@@ -2296,10 +2296,10 @@ public:
 /*  taArray()				{ el = NULL; } // no_tokens is assumed
   ~taArray()				{ SetArray_(NULL); }
   
-  void  UnSafeCopy(TAPtr cp) { 
+  void  UnSafeCopy(taBase* cp) { 
     if(cp->InheritsFrom(taArray::StatTypeDef(0))) Copy(*((taArray<T>*)cp));
     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); }
-  void  CastCopyTo(TAPtr cp)            { taArray<T>& rf = *((taArray<T>*)cp); rf.Copy(*this); } //*/
+  void  CastCopyTo(taBase* cp)            { taArray<T>& rf = *((taArray<T>*)cp); rf.Copy(*this); } //*/
   TA_TMPLT_BASEFUNS_NOCOPY(taArray,T); //
 public:
   void*		FastEl_(int i)		{ return &(el[i]); }// #IGNORE
@@ -2465,8 +2465,8 @@ public:
   void		SetValue(const String& key, const String& value);
     // set or update the value for the key
     
-  int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
-  int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
+  int		Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
+  int		Dump_Load_Value(istream& strm, taBase* par=NULL);
   void	UpdateAfterEdit();
   void	InitLinks();
   TA_BASEFUNS(SArg_Array);

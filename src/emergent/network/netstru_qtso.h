@@ -564,7 +564,7 @@ public:
   override const iColor	bgColor(bool& ok) const;
   override void		InitLinks();
   override void		CutLinks();
-  override void  	ChildUpdateAfterEdit(TAPtr child, bool& handled);
+  override void  	ChildUpdateAfterEdit(taBase* child, bool& handled);
   T3_DATAVIEWFUNS(NetView, T3DataViewMain) //
 
 // ISelectable i/f

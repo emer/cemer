@@ -34,12 +34,12 @@ public:
 
   virtual BaseSpec*	FindSpecType(TypeDef* td);
   // find a spec of eactly given type, searching in the children too
-  virtual BaseSpec*	FindSpecInherits(TypeDef* td, TAPtr for_obj = NULL);
+  virtual BaseSpec*	FindSpecInherits(TypeDef* td, taBase* for_obj = NULL);
   // find a spec that inherits from given type, searching in the children too
 
   virtual BaseSpec*	FindSpecTypeNotMe(TypeDef* td, BaseSpec* not_me);
   // find a spec of eactly given type, searching in the children too, but skip not_me
-  virtual BaseSpec*	FindSpecInheritsNotMe(TypeDef* td, BaseSpec* not_me, TAPtr for_obj = NULL);
+  virtual BaseSpec*	FindSpecInheritsNotMe(TypeDef* td, BaseSpec* not_me, taBase* for_obj = NULL);
   // find a spec that inherits from given type, searching in the children too
 
   virtual BaseSpec*	FindSpecName(const char* nm);
@@ -100,9 +100,9 @@ public:
 
   virtual bool  CheckType(TypeDef* td);
   // checks typedef type, issues error and returns false if not sufficient
-  virtual bool	CheckObjectType(TAPtr obj);
+  virtual bool	CheckObjectType(taBase* obj);
   // checks object type, issues error and returns false if not sufficient
-  virtual void	SpecSet(TAPtr obj) {}
+  virtual void	SpecSet(taBase* obj) {}
   // #IGNORE called just after the spec was was set but before obj->UAE
 
   virtual BaseSpec* FindMakeChild(const char* nm, TypeDef* td = NULL, bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
@@ -120,7 +120,7 @@ protected:
   override void CheckChildConfig_impl(bool quiet, bool& rval);
   virtual bool  CheckType_impl(TypeDef* td);
   // #IGNORE actually does the check
-  virtual bool	CheckObjectType_impl(TAPtr obj);
+  virtual bool	CheckObjectType_impl(taBase* obj);
   // #IGNORE actually does the check
 private:
   void 	Initialize();
@@ -170,7 +170,7 @@ public:
 
   BaseSpec* 	operator=(BaseSpec* cp)	{ SetSpec(cp); return cp; }
 
-  virtual void	SetDefaultSpec(TAPtr ownr, TypeDef* td);
+  virtual void	SetDefaultSpec(taBase* ownr, TypeDef* td);
   // for class that owns ptr
   virtual void	SetBaseType(TypeDef* td);
   // for overloaded classes

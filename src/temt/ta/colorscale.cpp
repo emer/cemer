@@ -494,7 +494,7 @@ void ColorScale::InitLinks() {
 void ColorScale::CutLinks() {
   // don't want to close edits and purge dialogs, cause flush is generated at bad times..
 //  taNBase::CutLinks();
-  taBase::DelPointer((TAPtr*)&spec);
+  taBase::DelPointer((taBase**)&spec);
 }
 
 ColorScale::ColorScale(int chunk) {
@@ -512,7 +512,7 @@ void ColorScale::UpdateAfterEdit() {
 }
 
 void ColorScale::SetColorSpec(ColorScaleSpec* color_spec) {
-  taBase::SetPointer((TAPtr*)&spec, color_spec);
+  taBase::SetPointer((taBase**)&spec, color_spec);
   DefaultChunks();
   MapColors();
 }

@@ -130,7 +130,7 @@ public:
 #endif 
   int			editLines() const {return m_editLines;} // number of edit lines (min 4) 
   void			setEditLines(int val);
-  void			setEditNode(TAPtr value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
+  void			setEditNode(taBase* value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
   void 			setEditBgColor(const iColor& value); // set bg for edit, null for default
   void			defEditBgColor(); // set default color
   void			setShow(int value); // only used by expert toggle
@@ -187,7 +187,7 @@ protected:
   bool			m_modified;
   bool			warn_clobber; // set if we get a notify and are already modified
   bool			apply_req;
-  TAPtr			base; // no need for smartref, because we are a dlc
+  taBase*		base; // no need for smartref, because we are a dlc
   MembSet_List		membs; // the member items, one set per line
   
   int 			row;

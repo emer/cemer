@@ -2046,7 +2046,7 @@ void taiEditDataHost::Constr_Strings() {
   String desc; 
   if (typ != NULL) {
     prompt_str = typ->name;
-    TAPtr rbase = Base();
+    taBase* rbase = Base();
     if (rbase) {
       desc = rbase->GetDesc(); // often empty -- use td if so
       if(rbase->GetOwner() != NULL)
@@ -2363,7 +2363,7 @@ void taiEditDataHost::GetValue() {
 }
 
 void taiEditDataHost::GetValue_Membs() {
-  TAPtr rbase = Base();
+  taBase* rbase = Base();
   if(rbase && root) {
     taProject* proj = (taProject*)((taBase*)root)->GetOwner(&TA_taProject);
     if(proj) {

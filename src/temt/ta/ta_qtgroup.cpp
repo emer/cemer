@@ -231,7 +231,7 @@ int taiListElsButtonBase::BuildChooser_0(taiItemChooser* ic, taList_impl* top_ls
   int rval = 0;
   
   for (int i = 0; i < top_lst->size; ++i) {
-    TAPtr tab = (TAPtr)top_lst->FastEl_(i);
+    taBase* tab = (taBase*)top_lst->FastEl_(i);
     if (!tab)  continue;
     if(filter_start_txt.nonempty()) {
       String nm = tab->GetName();
@@ -313,7 +313,7 @@ void taiListElsButton::BuildChooser(taiItemChooser* ic, int view) {
   }
 }
 
-void taiListElsButton::GetImage(taList_impl* base_lst, TAPtr it) {
+void taiListElsButton::GetImage(taList_impl* base_lst, taBase* it) {
   list = base_lst;
   inherited::GetImage((void*)it, base_lst->el_base);
 }
@@ -377,7 +377,7 @@ int taiGroupElsButton::BuildChooser_1(taiItemChooser* ic, taGroup_impl* top_grp,
   return rval;
 }
 
-void taiGroupElsButton::GetImage(taGroup_impl* base_grp, TAPtr it) {
+void taiGroupElsButton::GetImage(taGroup_impl* base_grp, taBase* it) {
   grp = base_grp;
   inherited::GetImage((void*)it, NULL); // don't need a targ_typ
 }
@@ -410,7 +410,7 @@ QWidget* gpiListEls::GetRep() {
   return ta_actions->GetRep();
 }
 
-void gpiListEls::GetImage(TABLPtr base_lst, TAPtr it) {
+void gpiListEls::GetImage(TABLPtr base_lst, taBase* it) {
   if (ths != base_lst) {
     ths = base_lst;
   }
@@ -419,7 +419,7 @@ void gpiListEls::GetImage(TABLPtr base_lst, TAPtr it) {
   setCur_obj(it, false);
 }
 
-TAPtr gpiListEls::GetValue() {
+taBase* gpiListEls::GetValue() {
   taiAction* cur = ta_actions->curSel();
   if (over_max) {
     if ((cur == NULL) || (cur->text() == "<Over max, select...>")
@@ -434,7 +434,7 @@ TAPtr gpiListEls::GetValue() {
 }
 
 void gpiListEls::Edit() {
-  TAPtr cur_base = GetValue();
+  taBase* cur_base = GetValue();
   if (cur_base != NULL) {
     cur_base->Edit();
 /*obs    if (host != NULL)
@@ -507,9 +507,9 @@ void gpiListEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction* 
     }
     return;
   }
-  TAPtr tmp;
+  taBase* tmp;
   for (int i = 0; i < cur_lst->size; ++i) {
-    tmp = (TAPtr)cur_lst->FastEl_(i);
+    tmp = (taBase*)cur_lst->FastEl_(i);
     if (tmp == NULL) continue;
     String nm = tmp->GetName();
     if (nm == "")
@@ -571,7 +571,7 @@ void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction*
     }
   } else {
     for (int i = 0; i < cur_gp->size; ++i) {
-      TAPtr tmp = (TAPtr)cur_gp->FastEl_(i);
+      taBase* tmp = (taBase*)cur_gp->FastEl_(i);
       if (tmp == NULL) continue;
       String nm = tmp->GetName();
       if (nm.empty())
@@ -753,7 +753,7 @@ void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiActions* menu, taiMenuAction* actn
     return;
   }
   for (int i = 0; i < gp->size; ++i) {
-    TAPtr tmp = (TAPtr)gp->FastEl_(i);
+    taBase* tmp = (taBase*)gp->FastEl_(i);
     if (tmp == NULL)	continue;
     String nm = tmp->GetName();
     if (nm.empty())
@@ -794,7 +794,7 @@ void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiActions* menu, taiMenuAction* actn
       has_sub_stuff = true;
     if (!has_sub_stuff) {
       for(int j = 0; j < tmp_grp->size; ++j) {
-	TAPtr tmp = (TAPtr)tmp_grp->FastEl_(j);
+	taBase* tmp = (taBase*)tmp_grp->FastEl_(j);
 	if (tmp == NULL)	continue;
 	if (tmp->HasOption("MEMB_IN_GPMENU") && (tmp->GetOwner() == tmp_grp))  {
 	  TypeDef* ttd = tmp->GetTypeDef();
@@ -855,7 +855,7 @@ void gpiElTypes::GetMenu(taiActions* menu, taiMenuAction* nact) {
 //////////////////////////////////
 
 
-gpiList_ElData::gpiList_ElData(TypeDef* tp, TAPtr base) {
+gpiList_ElData::gpiList_ElData(TypeDef* tp, taBase* base) {
   typ = tp; cur_base = base;
 }
 
@@ -992,7 +992,7 @@ void gpiListDataHost::Constr_MultiBody() {
 
 void gpiListDataHost::Constr_ElData() {
   for (int lf = 0; lf < cur_lst->size; ++lf) {
-    TAPtr tmp_lf = (TAPtr)cur_lst->FastEl_(lf);
+    taBase* tmp_lf = (taBase*)cur_lst->FastEl_(lf);
     if (tmp_lf == NULL)	continue; // note: not supposed to have NULL values in lists
     TypeDef* tmp_td = tmp_lf->GetTypeDef();
     lst_data_el.Add(new gpiList_ElData(tmp_td, tmp_lf));
@@ -1039,7 +1039,7 @@ void gpiListDataHost::GetValue_Membs() {
   if (lst_data_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
     for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
-      if (lst_data_el.FastEl(lf)->cur_base != (TAPtr)cur_lst->FastEl_(lf)) {
+      if (lst_data_el.FastEl(lf)->cur_base != (taBase*)cur_lst->FastEl_(lf)) {
 	rebuild = true;
 	break;
       }
@@ -1058,10 +1058,10 @@ void gpiListDataHost::GetValue_Membs() {
   for (int lf=0;  lf < lst_data_el.size;  ++lf) {
     gpiList_ElData* lf_el = lst_data_el.FastEl(lf);
     GetValue_impl(&lf_el->memb_el, lf_el->data_el, lf_el->cur_base);
-    ((TAPtr)lf_el->cur_base)->UpdateAfterEdit();
+    ((taBase*)lf_el->cur_base)->UpdateAfterEdit();
   }
   cur_lst->UpdateAfterEdit();	// call here too!
-  taiMisc::Update((TAPtr)cur_lst);
+  taiMisc::Update((taBase*)cur_lst);
 }
 
 void gpiListDataHost::GetImage_Membs() {
@@ -1069,7 +1069,7 @@ void gpiListDataHost::GetImage_Membs() {
   if (lst_data_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
     for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
-      if (lst_data_el.FastEl(lf)->cur_base != (TAPtr)cur_lst->FastEl_(lf)) {
+      if (lst_data_el.FastEl(lf)->cur_base != (taBase*)cur_lst->FastEl_(lf)) {
 	rebuild = true;
 	break;
       }
@@ -1111,7 +1111,7 @@ int gpiListDataHost::Edit() {
 } */
 
 
-gpiCompactList_ElData::gpiCompactList_ElData(TypeDef* typ_, TAPtr base, taiData* data_el_) {
+gpiCompactList_ElData::gpiCompactList_ElData(TypeDef* typ_, taBase* base, taiData* data_el_) {
   typ = typ_;
   cur_base = base;
   data_el = data_el_;
@@ -1161,7 +1161,7 @@ bool gpiCompactListDataHost::ShowMember(MemberDef* md) const {
 
 void gpiCompactListDataHost::Constr_ElData() {
   for (int lf = 0; lf < cur_lst->size; ++lf) {
-    TAPtr tmp_lf = (TAPtr)cur_lst->FastEl_(lf);
+    taBase* tmp_lf = (taBase*)cur_lst->FastEl_(lf);
     if (tmp_lf == NULL)	continue; // note: not supposed to have NULL values in lists
     TypeDef* tmp_td = tmp_lf->GetTypeDef();
     lst_data_el.Add(new gpiCompactList_ElData(tmp_td, tmp_lf));
@@ -1197,7 +1197,7 @@ void gpiCompactListDataHost::GetValue_Membs() {
   if (lst_data_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
     for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
-      if (lst_data_el.FastEl(lf)->cur_base != (TAPtr)cur_lst->FastEl_(lf)) {
+      if (lst_data_el.FastEl(lf)->cur_base != (taBase*)cur_lst->FastEl_(lf)) {
 	rebuild = true;
 	break;
       }
@@ -1216,10 +1216,10 @@ void gpiCompactListDataHost::GetValue_Membs() {
   for (int lf=0;  lf < lst_data_el.size;  ++lf) {
     gpiCompactList_ElData* lf_el = lst_data_el.FastEl(lf);
     lf_el->typ->it->GetValue(lf_el->data_el, lf_el->cur_base);
-    ((TAPtr)lf_el->cur_base)->UpdateAfterEdit();
+    ((taBase*)lf_el->cur_base)->UpdateAfterEdit();
   }
   cur_lst->UpdateAfterEdit();	// call here too!
-  taiMisc::Update((TAPtr)cur_lst);
+  taiMisc::Update((taBase*)cur_lst);
 }
 
 void gpiCompactListDataHost::GetImage_Membs() {
@@ -1227,7 +1227,7 @@ void gpiCompactListDataHost::GetImage_Membs() {
   if (lst_data_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
     for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
-      if (lst_data_el.FastEl(lf)->cur_base != (TAPtr)cur_lst->FastEl_(lf)) {
+      if (lst_data_el.FastEl(lf)->cur_base != (taBase*)cur_lst->FastEl_(lf)) {
 	rebuild = true;
 	break;
       }

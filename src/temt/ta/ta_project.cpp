@@ -1347,7 +1347,7 @@ int Project_Group::Load(const String& fname, taBase** loaded_obj_ptr) {
   return rval;
 }
 
-int Project_Group::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) {
+int Project_Group::Load_strm(istream& strm, taBase* par, taBase** loaded_obj_ptr) {
   int prj_sz = leaves;
   int rval = inherited::Load_strm(strm, par, loaded_obj_ptr);
   for(int i=prj_sz;i<leaves;i++) {

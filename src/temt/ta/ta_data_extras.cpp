@@ -149,7 +149,7 @@ taMatrix* ImageReader::GetDataMatrix_impl(int chan) {
 
 void ImageReader::ReadClose_impl() {
   if (m_mat) {
-    taBase::DelPointer((TAPtr*)&m_mat);
+    taBase::DelPointer((taBase**)&m_mat);
   }
   inherited::ReadClose_impl();
 }
@@ -193,7 +193,7 @@ void ImageReader::ReadOpen_impl(bool& ok) {
 }
 
 void ImageReader::SetMat(taMatrix* new_mat) {
-  taBase::SetPointer((TAPtr*)&m_mat, new_mat);
+  taBase::SetPointer((taBase**)&m_mat, new_mat);
 }
 
 int ImageReader::sourceChannelCount() const {

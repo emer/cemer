@@ -156,7 +156,7 @@ public:
 
   override void	About();
 #ifdef TA_GUI
-  TAPtr	Browse(const char* init_path=NULL);
+  taBase*	Browse(const char* init_path=NULL);
   // #MENU #ARGC_0 #USE_RVAL #NO_REVERT_AFTER use object browser to find an object, starting with initial path if given
 #endif
 
