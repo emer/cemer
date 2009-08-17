@@ -4296,9 +4296,8 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
     }
   }
   else if(path.startsWith(".Wiki.")) {
-    String new_path = "http://grey.colorado.edu/emergent/index.php/" + path.after(".Wiki.");
-    QUrl new_url(new_path);
-    QDesktopServices::openUrl(new_url);
+    String new_path = taMisc::GetWikiURL(taMisc::web_help_wiki, true) + path.after(".Wiki.");
+    iHelpBrowser::StatLoadUrl(new_path);
   }
   else {
     String fun_call;

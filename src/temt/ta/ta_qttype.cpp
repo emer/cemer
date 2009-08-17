@@ -2004,7 +2004,7 @@ taiData* taiFileDialogMember::GetDataRep_impl(IDataHost* host_, taiData* par, QW
   else if(file_act == "APPEND")
     fact = taiFileDialogField::FA_APPEND;
 
-  String fext = mbr->OptionAfter("EXT_");
+  String fext = String(".") + mbr->OptionAfter("EXT_");
   String ftyp = mbr->OptionAfter("FILETYPE_");
   bool cmprs = mbr->HasOption("COMPRESS");
   
@@ -2784,7 +2784,7 @@ taiData* taiFileDialogArgType::GetDataRep_impl(IDataHost* host_, taiData* par,
   else if(file_act == "APPEND")
     fact = taiFileDialogField::FA_APPEND;
 
-  String fext = GetOptionAfter("EXT_");
+  String fext = String(".") + GetOptionAfter("EXT_");
   String ftyp = GetOptionAfter("FILETYPE_");
   bool cmprs = GetHasOption("COMPRESS");
   
