@@ -3797,7 +3797,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editPasteAssignAction->setIcon( QIcon( editpaste ) );
   editPasteAppendAction = AddAction(new taiAction(taiClipData::EA_PASTE_APPEND, "&Paste Append", QKeySequence(cmd_str+"V"), "editPasteAppendAction" ));
   editPasteAppendAction->setIcon( QIcon( editpaste ) );
-  editDeleteAction = AddAction(new taiAction(taiClipData::EA_DELETE, "&Delete", QKeySequence("Shift+D"), _editDeleteAction ));
+  editDeleteAction = AddAction(new taiAction(taiClipData::EA_DELETE, "&Delete", QKeySequence("Ctrl+D"), _editDeleteAction ));
 //  editDeleteAction->setIcon( QIcon( editpaste ) );
   editLinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link", QKeySequence(), _editLinkAction ));
   editLinkIntoAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link Into", QKeySequence(), "editLinkIntoAction" ));
@@ -7297,13 +7297,13 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
      (ctrl_pressed && e->key() == Qt::Key_D) || (e->key() == Qt::Key_Delete)
      || (e->key() == Qt::Key_Backspace)) {
     ISelectable* si = curItem();
-    if(si && si->link()) {
-      taBase* sb = si->link()->taData();
-      if(sb) {
-	if(proj) {
-	  proj->undo_mgr.SaveUndo(sb, "Delete"); // global save
-	}
-	sb->CloseLater();	// todo: needs to check if a member or not -- only nuke if !mbr
+    ISelectableHost* host = NULL;
+      if(si && (host = si->host())) {
+      int ea = 0;
+      host->EditActionsEnabled(ea);
+      if (ea & taiClipData::EA_DELETE) {
+	host->EditAction(taiClipData::EA_DELETE);
+	//WARNING: we may be deleted at this point!!!
       }
     }
     e->accept();
