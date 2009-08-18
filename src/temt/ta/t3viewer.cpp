@@ -419,6 +419,12 @@ void T3ExaminerViewer::Constr_Bot_Buttons() {
     name_act->setParent(view_menu);
     view_menu->addAction(name_act);
 
+    taiAction* sname_act = new taiAction(i, "&Save + Name", QKeySequence());
+    sname_act->setStatusTip("Save the current view settings to this view button, and then name it");
+    sname_act->connect(taiAction::int_act, this,  SLOT(savenameviewTriggered(int))); 
+    sname_act->setParent(view_menu);
+    view_menu->addAction(sname_act);
+
     view_button->setMenu(view_menu);
     view_button->setPopupMode(QToolButton::DelayedPopup);
   }
@@ -584,6 +590,14 @@ void T3ExaminerViewer::saveviewTriggered(int view_no) {
 }
 
 void T3ExaminerViewer::nameviewTriggered(int view_no) {
+  T3SavedView* sv = saved_views.SafeEl(view_no);
+  if(!sv) return;
+  if(sv->EditDialog(true))		// modal!
+    nameView(view_no, sv->name);
+}
+
+void T3ExaminerViewer::savenameviewTriggered(int view_no) {
+  saveView(view_no);
   T3SavedView* sv = saved_views.SafeEl(view_no);
   if(!sv) return;
   if(sv->EditDialog(true))		// modal!

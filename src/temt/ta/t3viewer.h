@@ -302,6 +302,7 @@ public slots:
   void gotoviewbuttonClicked(int view_no);
   void saveviewTriggered(int view_no);
   void nameviewTriggered(int view_no);
+  void savenameviewTriggered(int view_no);
 
   void dynbuttonClicked(int but_no);
 
