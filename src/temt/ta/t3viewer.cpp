@@ -1762,8 +1762,7 @@ void iT3DataViewFrame::Showing(bool showing) {
   if (panel_set) {
     // note: don't focus, because that results in hard-to-prevent side-effect
     // of spurious focusing when restoring windows, changing desktops, etc.
-    panel_set->FrameShowing(showing, showing); // focus it if showing
-    //panel_set->FrameShowing(showing, false);
+    panel_set->FrameShowing(showing, false);
   }
 }
 
