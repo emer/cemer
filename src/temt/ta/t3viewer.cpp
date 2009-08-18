@@ -210,13 +210,13 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   main_hbox->addLayout(lhs_vbox);
 
   quarter = new QuarterWidget(this);
-  main_hbox->addWidget(quarter);
-
   // set any initial configs for quarter widget here (or somewhere else if you please)
   quarter->setInteractionModeEnabled(true);
   quarter->setTransparencyType(QuarterWidget::BLEND); // this is a good default
   quarter->setNavigationModeFile(QUrl("coin:///scxml/navigation/examiner.xml"));
   quarter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  main_hbox->addWidget(quarter, 1);
+
 
   rhs_vbox = new QVBoxLayout;
   rhs_vbox->setMargin(0); rhs_vbox->setSpacing(0);
@@ -432,6 +432,9 @@ int T3ExaminerViewer::addDynButton(const String& label, const String& tooltip) {
   dyn_buttons.Add(nv);
   
   QToolButton* dyn_button = new QToolButton(this);
+  // make them all the same size
+  QSizePolicy sp(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+  dyn_button->setSizePolicy(sp);
   taiAction* dyn_act = new taiAction(but_no, label, QKeySequence());
   dyn_act->connect(taiAction::int_act, this,  SLOT(dynbuttonClicked(int))); 
   dyn_act->setParent(dyn_button);
@@ -1742,18 +1745,18 @@ void iT3DataViewFrame::NodeDeleting(T3Node* node) {
 /*void iT3DataViewFrame::hideEvent(QHideEvent* ev) {
   inherited::hideEvent(ev);
   Showing(false);
-}
+}*/
 
 void iT3DataViewFrame::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
   Refresh();
-// #ifdef TA_OS_MAC
+/*// #ifdef TA_OS_MAC
   // this was needed on Mac as of 4.0.19 Qt 4.4.1+ to prevent
   // the occasional "white screen of death" that was occurring
 //   taiMiscCore::ProcessEvents();
 // #endif
-  Showing(true);
-}*/
+  Showing(true);*/
+}
 
 void iT3DataViewFrame::Showing(bool showing) {
   if (panel_set) {

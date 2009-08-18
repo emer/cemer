@@ -729,7 +729,7 @@ protected:
 
 protected:
 //  void			hideEvent(QHideEvent* ev);
-//  void			showEvent(QShowEvent* ev);
+  void			showEvent(QShowEvent* ev);
   void			Showing(bool showing); 
   
 private:
