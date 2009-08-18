@@ -4195,6 +4195,8 @@ String MethodDef::GetHTML(int detail_level) const {
 	rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
       }
     }
+    rval.cat("<span class=\"fakelink\" onclick='writesrc(this,\"");
+    rval.cat(type->Get_C_Name()).cat(" ").cat(own_typ).cat(name).cat("\")'>Show Source Code</span><br>\n");
   }
   else {
     rval.cat(type->Get_C_Name()).cat(" <b><a href=#").cat(name).cat(">").cat(own_typ).cat(name).cat("</a></b> ( ");
@@ -6840,6 +6842,8 @@ String TypeDef::GetHTML(int detail_level) const {
   // preamble
   rval.cat("<iframe src=\"").cat(wiki_help_url).cat(name).cat("\" width=\"99%\" height=\"40%\" style=\"border:5px solid #000000\"></iframe>\n");
   rval.cat("<head>\n");
+  // following is magic code viewer incantation
+  rval.cat("<script>function writesrc(t,signature){t.innerHTML='<iframe width=\"100%\" height=\"50%\" src=\"http://grey.colorado.edu/gendoc.py?q='+signature+'\"></iframe>';}</script>\n");
   rval.cat("<title>").cat(taMisc::app_name).cat(" ").cat(taMisc::version).cat(" ").cat(name).cat(" Class Reference</title>\n");
   // include style sheet right in the thing
   rval.cat("<style type=\"text/css\">\n");
@@ -6863,6 +6867,7 @@ String TypeDef::GetHTML(int detail_level) const {
   rval.cat("span.preprocessor, span.preprocessor a { color: darkblue; }\n");
   rval.cat("span.comment { color: darkred; font-style: italic }\n");
   rval.cat("span.string,span.char { color: darkgreen; }\n");
+  rval.cat("span.fakelink{text-decoration:underline;color:blue;cursor:pointer;font-size:small;}\n");
   rval.cat(".title { text-align: center }\n");
   rval.cat(".subtitle { font-size: 0.8em }\n");
   rval.cat(".small-subtitle { font-size: 0.65em }\n");
