@@ -379,6 +379,7 @@ protected:
   // deferred reshow -- used when hidden, or changed; when refresh comes, it reshows
   bool			get_image_req;
   bool			apply_req;
+  bool			reshow_on_apply; // default, so we rebuild on Apply for CONDSHOW etc., but no good for cssDialogs
   
   const String		def_prompt() const {return m_def_prompt;} // default prompt, provided at constr time
   const String		def_title() const {return m_def_title;}; // default title, provided at constr time

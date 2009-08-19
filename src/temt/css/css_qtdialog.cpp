@@ -56,6 +56,7 @@ cssiEditDialog::cssiEditDialog(cssClassInst* ob, cssProgSpace* tp,
   if(ob->type_def->HasOption("NO_CANCEL"))
     read_only = true;
   membs.def_size = 0; // we handle all
+  reshow_on_apply = false; // breaks us, and not necessary
 }
 
 cssiEditDialog::~cssiEditDialog() {

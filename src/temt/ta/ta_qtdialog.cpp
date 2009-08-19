@@ -712,6 +712,7 @@ taiDataHostBase::taiDataHostBase(TypeDef* typ_, bool read_only_,
   defer_reshow_req = false;
   get_image_req = false;
   apply_req = false;
+  reshow_on_apply = true;
   warn_clobber = false;
 }
 
@@ -747,7 +748,8 @@ void taiDataHostBase::Apply() {
   }
   ++updating;
   GetValue();
-  defer_reshow_req = true; // forces rebuild so CONDSHOW guys work
+  if (reshow_on_apply)
+    defer_reshow_req = true; // forces rebuild so CONDSHOW guys work
   Refresh(); // GetImage/Unchanged, unless a defer_reshow pending
 /*obs  GetImage();
   Unchanged(); */
@@ -2335,8 +2337,6 @@ void taiEditDataHost::GetImage_impl(const Member_List* ms, const taiDataList& dl
     if ((md == NULL) || (mb_dat == NULL))
       taMisc::Error("taiEditDataHost::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
     else {
-      //ARGH!!! the following line of code is EVIL but necessary..
-      // in practice, I think there is no such thing as a non-taBase call here
       if (typ && typ->InheritsFrom(&TA_taBase))
         mb_dat->SetBase((taBase*)base); // used for things like Seledit context menu
       md->im->GetImage(mb_dat, base); // need to do this first, to affect visible
