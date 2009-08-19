@@ -2342,13 +2342,14 @@ void iT3DataViewer::tw_customContextMenuRequested2(const QPoint& pos, int tab_id
 }
 
 void iT3DataViewer::tw_currentChanged(int tab_idx) {
-  iT3DataViewFrame* idvf = iViewFrame(last_idx);
-  if (idvf) { 
-    idvf->Showing(false);
-  }
+  iT3DataViewFrame* idvf;
   idvf = iViewFrame(tab_idx);
   if (idvf) { // should exist
     idvf->Showing(true);
+  idvf = iViewFrame(last_idx);
+  if (idvf) { 
+    idvf->Showing(false);
+  }
   }
   last_idx = tab_idx;
 }
