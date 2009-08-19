@@ -2883,6 +2883,10 @@ void taRootBase::Cleanup_Main() {
   if (milestone & SM_MPI_INIT)
     MPI_Finalize();
 #endif
+// hack to get console properly back in echo mode
+#ifndef TA_OS_WIN
+  system("stty echo");
+#endif
 }
 
 #ifdef DMEM_COMPILE
