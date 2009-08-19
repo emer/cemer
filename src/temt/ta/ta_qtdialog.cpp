@@ -2337,7 +2337,8 @@ void taiEditDataHost::GetImage_impl(const Member_List* ms, const taiDataList& dl
     else {
       //ARGH!!! the following line of code is EVIL but necessary..
       // in practice, I think there is no such thing as a non-taBase call here
-      mb_dat->SetBase((taBase*)base); // used for things like Seledit context menu
+      if (typ && typ->InheritsFrom(&TA_taBase))
+        mb_dat->SetBase((taBase*)base); // used for things like Seledit context menu
       md->im->GetImage(mb_dat, base); // need to do this first, to affect visible
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
       // note: visibles are cached, so nothing happens if it hasn't changed
