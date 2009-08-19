@@ -2342,6 +2342,10 @@ void iT3DataViewer::tw_customContextMenuRequested2(const QPoint& pos, int tab_id
 }
 
 void iT3DataViewer::tw_currentChanged(int tab_idx) {
+//note: the backwards order below fulfills two competing requirements:
+// 1) have a hide/show insures we don't get multiple tabs
+// 2) but show/hide order prevents panel tab switching away
+// TODO: known bug: when you delete a frame, it switches from CtrlPanel tab
   iT3DataViewFrame* idvf;
   idvf = iViewFrame(tab_idx);
   if (idvf) { // should exist
