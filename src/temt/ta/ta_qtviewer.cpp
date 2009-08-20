@@ -3475,6 +3475,7 @@ void iMainWindowViewer::Init() {
   (void)statusBar(); // creates the status bar
   
   // these are modal, so NULL them for when unused
+  toolsMenu = NULL;
   historyBackAction = NULL;
   historyForwardAction = NULL;
   fileNewAction = NULL;
@@ -3682,7 +3683,8 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   viewMenu = menu->AddSubMenu("&View");
   show_menu = menu->AddSubMenu("&Show");
   connect(show_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(showMenu_aboutToShow()) );
-  toolsMenu = menu->AddSubMenu("&Tools");
+  if (!(taMisc::show_gui & taMisc::NO_EXPERT))
+    toolsMenu = menu->AddSubMenu("&Tools");
   windowMenu = menu->AddSubMenu("&Window");
   connect(windowMenu->menu(), SIGNAL(aboutToShow()),
     this, SLOT(windowMenu_aboutToShow()) );
@@ -3861,9 +3863,10 @@ void iMainWindowViewer::Constr_Menu_impl() {
       this, SLOT(ShowChange(taiAction*)), 4 );
   //note: correct toggles set dynamically when user drops down menu
  
-
-  toolsClassBrowseAction->AddTo(toolsMenu );
-  toolsTypeBrowseAction->AddTo(toolsMenu );
+  if (toolsMenu) {
+    toolsClassBrowseAction->AddTo(toolsMenu );
+    toolsTypeBrowseAction->AddTo(toolsMenu );
+  }
   helpHelpAction->AddTo(helpMenu );
   helpMenu->insertSeparator();
   helpAboutAction->AddTo(helpMenu );

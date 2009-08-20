@@ -1570,7 +1570,7 @@ DataBuffer* SequentialProcSet::outBuff(int idx) {
 //  StimChan			//
 //////////////////////////////////
 
-TAPtr StimChan::SetOwner(TAPtr own) {
+taBase* StimChan::SetOwner(taBase* own) {
   inherited::SetOwner(own);
   chan_flags = CF_0;
   stim_gen = GET_MY_OWNER(StimGen); 

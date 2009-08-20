@@ -886,7 +886,7 @@ public:
   
   int	GetEnabled() const {return (chan_flags & CF_OFF) ? 0 : 1;}
   override void SetDefaultName() {name = _nilString;}
-  override TAPtr SetOwner(TAPtr own);
+  override taBase* SetOwner(taBase* own);
   TA_BASEFUNS_NOCOPY(StimChan)
 
 protected:
@@ -1177,7 +1177,7 @@ public:
   
   
   override void SetDefaultName() {name = _nilString;}
-  override TAPtr SetOwner(TAPtr own);
+  override taBase* SetOwner(taBase* own);
   TA_BASEFUNS(AGCProfile)
   
 protected:
