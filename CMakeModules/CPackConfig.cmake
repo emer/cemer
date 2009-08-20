@@ -36,4 +36,4 @@ else (WIN32)
   SET(CPACK_INSTALL_PREFIX "/usr/local")
 endif (WIN32)
 
-SET(CPACK_DEBIAN_PACKAGE_DEPENDS "subversion, cmake, g++, libqt4-dev, libcoin40-dev, libsoqt4-dev, libreadline5-dev, libgsl0-dev, libode0-dev, libsimage-dev")
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "subversion, cmake, g++, libqt4-dev, libcoin60-dev, libreadline5-dev, libgsl0-dev, libode0-dev, libquarter")
