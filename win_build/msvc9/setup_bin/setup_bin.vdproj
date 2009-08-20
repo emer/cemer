@@ -4635,12 +4635,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_EB97DDE138FF4227AED47CC7057569C3"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_EC191A3375D04D149B7BD23C21D2E628"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -20520,26 +20514,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EB97DDE138FF4227AED47CC7057569C3"
-            {
-            "SourcePath" = "8:..\\..\\..\\NEWS"
-            "TargetName" = "8:NEWS"
-            "Tag" = "8:"
-            "Folder" = "8:_2CC1AE92E340477CBAE29B499B64198C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EC191A3375D04D149B7BD23C21D2E628"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\colorbar_qt.moc.cpp"
@@ -22511,14 +22485,14 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Emergent"
-        "ProductCode" = "8:{B8BF9695-BAD0-4861-9198-2D2997B8E17C}"
-        "PackageCode" = "8:{9C5F8B92-F2B5-4C7D-B171-A8806ED24D41}"
+        "ProductCode" = "8:{2DAB3069-1B70-49A8-8C14-AB56273BFEA6}"
+        "PackageCode" = "8:{FFBCBAA2-315E-49EB-9261-BEF470BB84D1}"
         "UpgradeCode" = "8:{B1672FC2-321F-449F-A1C4-926E728B59CA}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:4.0.21"
+        "ProductVersion" = "8:5.0.0"
         "Manufacturer" = "8:CCN Lab"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://grey.colorado.edu/emergent/index.php/Main_Page"
