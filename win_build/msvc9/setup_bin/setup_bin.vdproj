@@ -57,12 +57,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_02C101FFBD544F35A5DF2ACF1110099B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_02DBB3A495AA4028A429C3D36DF1E7A3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -369,12 +363,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_1094E477BF014F1AABADED9D3744314C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_11947114B3294C20B36E7A74DD0250BF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -501,12 +489,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_1823AC3C6770446BB66A2A7DA8563A1B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_18DFD3590C7144A9BB6CE1A5BA41AFB0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -514,18 +496,6 @@
         "Entry"
         {
         "MsmKey" = "8:_18ECA36A06B44EB5BAFDAFA7A9CB3958"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_19749BB43D4046E496384CDC97C44D15"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_19E77C1A9F2548169DAC1167A0D2374B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -682,12 +652,6 @@
         "Entry"
         {
         "MsmKey" = "8:_255F543698DE486FBC6285EAE5D7FA76"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_2584E7F0ED974B7C820068F6321934C4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1071,12 +1035,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_3C4E89B06BD1427499777B33C3145929"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_3CC87809411748CF9BC5437492833B80"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1149,18 +1107,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_408F445F77C14EE9AEEAE548342D9589"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_40C90FBF27204A7D885FF2521CAD9E90"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_40EBC164B81140ECADEB925AFF7AA6ED"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1192,12 +1138,6 @@
         "Entry"
         {
         "MsmKey" = "8:_425D0D2CADBA4F46A6C529DFA98FA173"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_426ADD8EC89B4F59821D3DCFDB7C1691"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1300,12 +1240,6 @@
         "Entry"
         {
         "MsmKey" = "8:_45D4CFC0C12345A68AFF36CFEC3668E2"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_45E1A5583A5F4ED18453F047AF145831"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1455,12 +1389,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_4F2CC90861AB48C6B6170F0BB18AA578"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_4FE9597DCE3847028918AC6142D810E3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1539,12 +1467,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_5298FDC03F584FA4A0B4C4911D3942DE"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_52E12F288C9542FE931A7F4006B465B3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1600,12 +1522,6 @@
         "Entry"
         {
         "MsmKey" = "8:_56FF2683E7A54FC1AFDD6393CC7EB7C9"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5732565641944C6AB3624638EE7579E0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1911,12 +1827,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_68E4A5FC82E94B82B07D6026709D9220"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_68EAF897D8C4489DA22BB9FD05D2519F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1966,12 +1876,6 @@
         "Entry"
         {
         "MsmKey" = "8:_6BDA431B32AA49628337C427386217AE"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_6BE99E81851C4743A9FFD8E0B43D88FB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2289,12 +2193,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_7BC03110540E473F996007CDAE05B5AC"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_7C2C2FDE03B54A059B82B77D9E488294"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2307,12 +2205,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_7C3F0BFB45F6433DA6120D71FB893506"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_7C4B6BCC28EA48BF83AE0E8F8FB46F08"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2320,12 +2212,6 @@
         "Entry"
         {
         "MsmKey" = "8:_7C9DCCB302754D698A0B9C248BC715F6"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7CC6B71BA4844F779C20808A4099D139"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2392,12 +2278,6 @@
         "Entry"
         {
         "MsmKey" = "8:_7F30CADCDE884DB48FD77837E12D940E"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7F49D081666443E5B73BEDAFA4B5E616"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2523,12 +2403,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_826C833C80D4455882B7372FD941BAE8"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_8277C74B83EA44238B9B3607AC21BDE8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2632,12 +2506,6 @@
         "Entry"
         {
         "MsmKey" = "8:_8613BFEEC9DF44A0B7B35F29425EBAC2"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_863CA3A758A54B0F8D91C6C4A578517C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2752,12 +2620,6 @@
         "Entry"
         {
         "MsmKey" = "8:_8D7E8ED34F6F4DB3B038905C652622D3"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_8D7FC7CE8D034F688737BA132CDEEA1E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2980,12 +2842,6 @@
         "Entry"
         {
         "MsmKey" = "8:_98465171A73640AD972686A279BFC9A8"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_99116AA900244AA4BF87A4027ECF1128"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3376,12 +3232,6 @@
         "Entry"
         {
         "MsmKey" = "8:_AD1A0127D03A4809ACD1149A239A6839"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_AD51B61EF76A4F3BBDF99125A92343F4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3885,12 +3735,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C56C78208ACA45DEA5094530C93633FE"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C5C915A9E1E644D0999C9316A2936CC0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3940,12 +3784,6 @@
         "Entry"
         {
         "MsmKey" = "8:_C8325029F24F4F0BBDD26EB913B0B415"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C88579E906BB4320A89D83DBD2129B32"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -4239,12 +4077,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_D84DDD47263C4268BFF7335C9B7358A9"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_D8B5FBAFA27044769256DFAE57F4E94E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -4390,12 +4222,6 @@
         "Entry"
         {
         "MsmKey" = "8:_DFF2B84FC83D44CF89CF140399EE9CB3"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_E01DE4402DEC4F7E9DEE58C408B236EA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -4635,12 +4461,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_EC191A3375D04D149B7BD23C21D2E628"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_ECD7949E3B2942DFB47EFA02829B2945"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -4720,12 +4540,6 @@
         "Entry"
         {
         "MsmKey" = "8:_F00F00C29D634098AFEF327B8FBBCC19"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F063990F4B414ECBACFD2427F68BBAEC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -4864,18 +4678,6 @@
         "Entry"
         {
         "MsmKey" = "8:_F6ADC18751904675A80C2AFD82D40AC1"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F6EC7B66A42B4347A0C9D4E52A7DB8EB"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F714857944DA4AE5860D64A077281974"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -5081,10 +4883,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Visual.C++.9.0.x86"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Visual.C++.9.0.x64"
                     {
-                    "Name" = "8:Visual C++ Runtime Libraries (x86)"
-                    "ProductCode" = "8:Microsoft.Visual.C++.9.0.x86"
+                    "Name" = "8:Visual C++ Runtime Libraries (x64)"
+                    "ProductCode" = "8:Microsoft.Visual.C++.9.0.x64"
                     }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
                     {
@@ -5238,26 +5040,6 @@
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_virtenv.h"
             "TargetName" = "8:ta_virtenv.h"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_02C101FFBD544F35A5DF2ACF1110099B"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_qtdata_def.moc.cpp"
-            "TargetName" = "8:ta_qtdata_def.moc.cpp"
             "Tag" = "8:"
             "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
             "Condition" = "8:"
@@ -6294,26 +6076,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1094E477BF014F1AABADED9D3744314C"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_qtdata.moc.cpp"
-            "TargetName" = "8:ta_qtdata.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_11947114B3294C20B36E7A74DD0250BF"
             {
             "SourcePath" = "8:..\\..\\..\\plugins\\audioproc_dbg.dll"
@@ -6734,26 +6496,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1823AC3C6770446BB66A2A7DA8563A1B"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_plugin_p.moc.cpp"
-            "TargetName" = "8:ta_plugin_p.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_18DFD3590C7144A9BB6CE1A5BA41AFB0"
             {
             "SourcePath" = "8:..\\..\\..\\include\\taiqtso.h"
@@ -6780,46 +6522,6 @@
             "TargetName" = "8:CsAll_Test.progp"
             "Tag" = "8:"
             "Folder" = "8:_612BD7E23EAB4A64861742520DB7BE6D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_19749BB43D4046E496384CDC97C44D15"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\emergent\\network\\netstru_qtso.moc.cpp"
-            "TargetName" = "8:netstru_qtso.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_8A1F612F30E84C1D98F2809FE210D942"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_19E77C1A9F2548169DAC1167A0D2374B"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_matrix_qt.moc.cpp"
-            "TargetName" = "8:ta_matrix_qt.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -7340,26 +7042,6 @@
             "TargetName" = "8:vcrbitmaps.h"
             "Tag" = "8:"
             "Folder" = "8:_A75A0ED8BD3E4A73BC01DBCDFB4B18BD"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2584E7F0ED974B7C820068F6321934C4"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\css\\css_console.moc.cpp"
-            "TargetName" = "8:css_console.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_CB8336C6D5004C58B1398DE53EA42E5E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -8634,26 +8316,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3C4E89B06BD1427499777B33C3145929"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\css\\css_qt.moc.cpp"
-            "TargetName" = "8:css_qt.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_CB8336C6D5004C58B1398DE53EA42E5E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3CC87809411748CF9BC5437492833B80"
             {
             "SourcePath" = "8:..\\..\\..\\include\\emergent_qtso.h"
@@ -8894,46 +8556,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_408F445F77C14EE9AEEAE548342D9589"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_userdata_qt.moc.cpp"
-            "TargetName" = "8:ta_userdata_qt.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_40C90FBF27204A7D885FF2521CAD9E90"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_datatable_qtso.moc.cpp"
-            "TargetName" = "8:ta_datatable_qtso.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_40EBC164B81140ECADEB925AFF7AA6ED"
             {
             "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\ap_files.h"
@@ -9040,26 +8662,6 @@
             "TargetName" = "8:CMakeFiles.txt"
             "Tag" = "8:"
             "Folder" = "8:_ECFFDB481A664D76B1E68E35BD6F29B4"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_426ADD8EC89B4F59821D3DCFDB7C1691"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_qttype.moc.cpp"
-            "TargetName" = "8:ta_qttype.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -9400,26 +9002,6 @@
             "TargetName" = "8:idimedit.h"
             "Tag" = "8:"
             "Folder" = "8:_A75A0ED8BD3E4A73BC01DBCDFB4B18BD"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_45E1A5583A5F4ED18453F047AF145831"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_server.moc.cpp"
-            "TargetName" = "8:ta_server.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -9914,26 +9496,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4F2CC90861AB48C6B6170F0BB18AA578"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_program_qt.moc.cpp"
-            "TargetName" = "8:ta_program_qt.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4FE9597DCE3847028918AC6142D810E3"
             {
             "SourcePath" = "8:..\\..\\..\\include\\t3viewer.h"
@@ -10194,26 +9756,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5298FDC03F584FA4A0B4C4911D3942DE"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_qtclipdata.moc.cpp"
-            "TargetName" = "8:ta_qtclipdata.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_52E12F288C9542FE931A7F4006B465B3"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_qttype_def.h"
@@ -10400,26 +9942,6 @@
             "TargetName" = "8:cs_TA_inst.h"
             "Tag" = "8:"
             "Folder" = "8:_A17B1E255D3140FA97A96973E311B3FA"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5732565641944C6AB3624638EE7579E0"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_qtviewer.moc.cpp"
-            "TargetName" = "8:ta_qtviewer.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -11434,26 +10956,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_68E4A5FC82E94B82B07D6026709D9220"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_qtgroup.moc.cpp"
-            "TargetName" = "8:ta_qtgroup.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_68EAF897D8C4489DA22BB9FD05D2519F"
             {
             "SourcePath" = "8:..\\..\\..\\plugins\\audioproc\\snd\\8000.1\\hello_universe.au"
@@ -11620,26 +11122,6 @@
             "TargetName" = "8:audioproc.dll"
             "Tag" = "8:"
             "Folder" = "8:_61EBFCA0C7864353890091C330F974DD"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6BE99E81851C4743A9FFD8E0B43D88FB"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\t3viewer.moc.cpp"
-            "TargetName" = "8:t3viewer.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -12694,26 +12176,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7BC03110540E473F996007CDAE05B5AC"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_project.moc.cpp"
-            "TargetName" = "8:ta_project.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7C2C2FDE03B54A059B82B77D9E488294"
             {
             "SourcePath" = "8:C:\\Qt\\4.5.2\\plugins\\imageformats\\qgifd4.dll"
@@ -12754,26 +12216,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7C3F0BFB45F6433DA6120D71FB893506"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\emergent\\network\\emergent_qtso.moc.cpp"
-            "TargetName" = "8:emergent_qtso.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_8A1F612F30E84C1D98F2809FE210D942"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7C4B6BCC28EA48BF83AE0E8F8FB46F08"
             {
             "SourcePath" = "8:..\\..\\..\\demo\\leabra\\ax_tutorial_input_data.dtbl"
@@ -12800,26 +12242,6 @@
             "TargetName" = "8:AsianGamelan.aif"
             "Tag" = "8:"
             "Folder" = "8:_F402B7214BD645139BFC268F5740655E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7CC6B71BA4844F779C20808A4099D139"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_matrix.moc.cpp"
-            "TargetName" = "8:ta_matrix.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -13040,26 +12462,6 @@
             "TargetName" = "8:css_console.h"
             "Tag" = "8:"
             "Folder" = "8:_CB8336C6D5004C58B1398DE53EA42E5E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7F49D081666443E5B73BEDAFA4B5E616"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_virtenv_qtso.moc.cpp"
-            "TargetName" = "8:ta_virtenv_qtso.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -13474,26 +12876,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_826C833C80D4455882B7372FD941BAE8"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_qttype_def.moc.cpp"
-            "TargetName" = "8:ta_qttype_def.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8277C74B83EA44238B9B3607AC21BDE8"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_userdata_qt.h"
@@ -13838,26 +13220,6 @@
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\x.xpm"
             "TargetName" = "8:x.xpm"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_863CA3A758A54B0F8D91C6C4A578517C"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_qtdialog.moc.cpp"
-            "TargetName" = "8:ta_qtdialog.moc.cpp"
             "Tag" = "8:"
             "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
             "Condition" = "8:"
@@ -14240,26 +13602,6 @@
             "TargetName" = "8:CMakeLists.txt"
             "Tag" = "8:"
             "Folder" = "8:_B6627434CF78490C92A80330822C193D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8D7FC7CE8D034F688737BA132CDEEA1E"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_datatable.moc.cpp"
-            "TargetName" = "8:ta_datatable.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -15000,26 +14342,6 @@
             "TargetName" = "8:CMakeLists.txt"
             "Tag" = "8:"
             "Folder" = "8:_FF5A4DCE98824B2A8D88867AD38FB922"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_99116AA900244AA4BF87A4027ECF1128"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_qtclassbrowse.moc.cpp"
-            "TargetName" = "8:ta_qtclassbrowse.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -16320,26 +15642,6 @@
             "TargetName" = "8:iautosaver.h"
             "Tag" = "8:"
             "Folder" = "8:_B6627434CF78490C92A80330822C193D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AD51B61EF76A4F3BBDF99125A92343F4"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\emergent\\network\\emergent_program_qtso.moc.cpp"
-            "TargetName" = "8:emergent_program_qtso.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_8A1F612F30E84C1D98F2809FE210D942"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -18014,26 +17316,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C56C78208ACA45DEA5094530C93633FE"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\css\\css_qtdata.moc.cpp"
-            "TargetName" = "8:css_qtdata.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_CB8336C6D5004C58B1398DE53EA42E5E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C5C915A9E1E644D0999C9316A2936CC0"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_time.cpp"
@@ -18198,26 +17480,6 @@
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_base.cpp"
             "TargetName" = "8:ta_base.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C88579E906BB4320A89D83DBD2129B32"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_qt.moc.cpp"
-            "TargetName" = "8:ta_qt.moc.cpp"
             "Tag" = "8:"
             "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
             "Condition" = "8:"
@@ -19194,26 +18456,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D84DDD47263C4268BFF7335C9B7358A9"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\css\\css_qttype.moc.cpp"
-            "TargetName" = "8:css_qttype.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_CB8336C6D5004C58B1398DE53EA42E5E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D8B5FBAFA27044769256DFAE57F4E94E"
             {
             "SourcePath" = "8:..\\..\\..\\include\\ta_viewdata.h"
@@ -19700,26 +18942,6 @@
             "TargetName" = "8:ta_type.cpp"
             "Tag" = "8:"
             "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E01DE4402DEC4F7E9DEE58C408B236EA"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\css\\css_qtdialog.moc.cpp"
-            "TargetName" = "8:css_qtdialog.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_CB8336C6D5004C58B1398DE53EA42E5E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -20514,26 +19736,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EC191A3375D04D149B7BD23C21D2E628"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\colorbar_qt.moc.cpp"
-            "TargetName" = "8:colorbar_qt.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_ECD7949E3B2942DFB47EFA02829B2945"
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\taiqtso\\safeptr_so.h"
@@ -20800,26 +20002,6 @@
             "TargetName" = "8:imisc_so.cpp"
             "Tag" = "8:"
             "Folder" = "8:_B6627434CF78490C92A80330822C193D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F063990F4B414ECBACFD2427F68BBAEC"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\css\\css_machine.moc.cpp"
-            "TargetName" = "8:css_machine.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_CB8336C6D5004C58B1398DE53EA42E5E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -21278,46 +20460,6 @@
             {
             "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_qtdialog.h"
             "TargetName" = "8:ta_qtdialog.h"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F6EC7B66A42B4347A0C9D4E52A7DB8EB"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_type.moc.cpp"
-            "TargetName" = "8:ta_type.moc.cpp"
-            "Tag" = "8:"
-            "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F714857944DA4AE5860D64A077281974"
-            {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\ta_seledit_qt.moc.cpp"
-            "TargetName" = "8:ta_seledit_qt.moc.cpp"
             "Tag" = "8:"
             "Folder" = "8:_EAAD036BBF464951AA97E71B6ED4CEA7"
             "Condition" = "8:"
