@@ -15,6 +15,7 @@ FIND_PATH(COIN_INCLUDE_DIR SbVec3f.h
     $ENV{INCLUDE}
     ${COINDIR}/include/Inventor
 )
+SET(COIN_INCLUDE_DIR ${COIN_INCLUDE_DIR} /usr/include)
 
 # NOTE: Mac is not finding the coin framework because the name is Inventor but the lib is Coin!
 # SoQt works perfectly just right out of the bag
