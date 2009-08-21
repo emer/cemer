@@ -1251,7 +1251,7 @@ public:
   virtual void		CloseLater();
   // #NO_REVERT_AFTER #LABEL_Close_(Destroy) #CAT_ObjectMgmt PERMANENTLY Destroy this object!  This is not Iconify or close window..
   virtual void		Close();
-  // #NO_REVERT_AFTER #LABEL_Close_(Destroy) #CAT_ObjectMgmt PERMANENTLY IMMEDIATELY Destroy this object!  This is not Iconify or close window..
+  // #IGNORE an immediate version of Close for use in code (no waitproc delay)
   virtual bool		Close_Child(taBase* obj);
   // #IGNORE actually closes a child object (should be immediate child)
   virtual bool		CloseLater_Child(taBase* obj);
