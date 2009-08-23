@@ -35,7 +35,16 @@ public:
   static AudioCodec*	New(SoundFormat sf); // make the correct impl, based on format
   static SoundFormat	ExtensionToFormat(String ext);
     // converts an extension into best-guess of format; 0 (auto) means unknown
-  
+  static void		MatToFile(float_Matrix* mat, const String& fname,
+    AudioCodec::SoundFormat format, int sample_rate, int fields, 
+    AudioCodec::ValueType val_type = VT_FORMAT_PCM_16);
+    // save the contents of the matrix as a sound file
+  static void		TableCellNameToFile(DataTable* tab, const String& col,
+    const String& fname,
+    AudioCodec::SoundFormat format, int sample_rate, int fields, 
+    AudioCodec::ValueType val_type = VT_FORMAT_PCM_16);
+    // save the contents of the matrix table cell current row as a sound file
+    
   TA_BASEFUNS(AudioCodec)
 #ifndef __MAKETA__
 public: // interface to implement; props valid after successful open

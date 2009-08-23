@@ -57,8 +57,41 @@ AudioCodec* AudioCodec::New(SoundFormat sf) {
   if ((sf >= SF_SNDFILE_MIN) && (sf <= SF_SNDFILE_MAX))
     return new SndfileCodec;
   
-  taMisc::Warning("Could not create a codec! for SoundFormat:", String(sf));
+  taMisc::Error("Could not create a codec! for SoundFormat:", String(sf));
   return NULL; 
+}
+
+void AudioCodec::MatToFile(float_Matrix* mat, const String& fname,
+    AudioCodec::SoundFormat format, int sample_rate, int fields, 
+    AudioCodec::ValueType val_type)
+{
+  AudioCodec* codec = New(format);
+  if (!codec) return;
+  format = (AudioCodec::SoundFormat) (format | val_type);
+  int status = codec->OpenFileWrite(fname, format, sample_rate,  fields);
+  if (status < 0) return;
+  codec->WriteData((const float*)mat->data(), mat->size);
+  codec->CloseFile();
+  delete codec;
+}
+
+void AudioCodec::TableCellNameToFile(DataTable* tab, const String& col_name,
+    const String& fname,
+    AudioCodec::SoundFormat format, int sample_rate, int fields, 
+    AudioCodec::ValueType val_type)
+{
+  taMatrixPtr mat;
+  mat = tab->GetValAsMatrixColName(col_name, tab->ReadIndex());
+  if (!mat.ptr()) {
+    taMisc::Error("Could not get col of name", col_name);
+    return;
+  }
+  float_Matrix* fmat = dynamic_cast<float_Matrix*> (mat.ptr());
+  if (!fmat) {
+    taMisc::Error("col is not float_Matrix");
+    return;
+  }
+  MatToFile(fmat, fname, format, sample_rate, fields, val_type);
 }
 
 void AudioCodec::Initialize() {
