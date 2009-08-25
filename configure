@@ -84,6 +84,16 @@ else
     cmake_cmd="$cmake_cmd -DCMAKE_VERBOSE_MAKEFILE=OFF"
 fi
 
+# Support building in trunk
+if [[ "$build_dir" != "$(pwd)" ]];
+then
+  mkdir "$build_dir"
+  cd "$build_dir" || exit 1
+else
+  # Don't run cmake in your home directory..
+  cmake_cmd=$(echo $cmake_cmd | sed 's/cmake \.\.\//cmake /')
+fi
+
 echo " "
 echo "####################################################"
 echo "configure script settings:"
@@ -98,8 +108,6 @@ echo " "
 echo "  cmake command: $cmake_cmd"
 echo " "
 
-mkdir "$build_dir"
-cd "$build_dir" || exit 1
 if [[ $clean == "true" ]]; then
     echo "NOTE: Cleaning files now!"
     /bin/rm -rf *
