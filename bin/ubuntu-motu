@@ -31,7 +31,7 @@ DEBFULLNAME='Brian Mingus'
 # sudo apt-get install build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools
 
 cd /tmp
-rm -fr emergent*
+#rm -fr emergent*
 svn checkout --username anonymous --password emergent http://grey.colorado.edu/svn/emergent/emergent/trunk emergent-${EMERGENT_VERSION}
 tar -czf emergent_${EMERGENT_VERSION}.orig.tar.gz emergent-${EMERGENT_VERSION}/
 cd emergent-${EMERGENT_VERSION}
@@ -148,10 +148,8 @@ Emergent
 cat > debian/rules <<Emergent
 #!/usr/bin/make -f
 
-cmake -DCMAKE_INSTALL_PREFIX=\$(CURDIR)/debian/emergent/usr .
-
 build:
-	./configure --build-dir=pwd
+	./configure --build-dir=pwd --prefix=\$(CURDIR)/debian/emergent/usr
 	\$(MAKE)
 
 clean:
