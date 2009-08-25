@@ -23,7 +23,7 @@
 #  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #################################################
 
-EMERGENT_VERSION=4.0.21
+EMERGENT_VERSION=5.0.0
 DEBEMAIL='brian.mingus@colorado.edu'
 DEBFULLNAME='Brian Mingus'
 
@@ -31,6 +31,7 @@ DEBFULLNAME='Brian Mingus'
 # sudo apt-get install build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools
 
 cd /tmp
+rm -fr emergent*
 svn checkout --username anonymous --password emergent http://grey.colorado.edu/svn/emergent/emergent/trunk emergent-${EMERGENT_VERSION}
 tar -czf emergent_${EMERGENT_VERSION}.orig.tar.gz emergent-${EMERGENT_VERSION}/
 cd emergent-${EMERGENT_VERSION}
@@ -44,7 +45,7 @@ mkdir debian
 # debuild -S chokes on the svn2cl changelog
 # svn2cl -o debian/changelog http://grey.colorado.edu/svn/emergent/emergent/trunk
 cat > debian/changelog <<Emergent
-emergent (4.0.21-1) unstable; urgency=low
+emergent (${EMERGENT_VERSION}-1) unstable; urgency=low
 
   * Initial release (Closes: #364748)
 
@@ -62,7 +63,7 @@ Source: emergent
 Section: devel
 Priority: extra
 Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
-Build-Depends: subversion, cmake, g++, libqt4-dev, libcoin40-dev, libsoqt4-dev, libreadline5-dev, libgsl0-dev, libode0-dev, libsimage-dev
+Build-Depends: subversion, cmake, g++, libqt4-dev, libcoin60-dev, libreadline5-dev, libgsl0-dev, libode0-dev, libsndfile1-dev
 Standards-Version: 3.8.0
 Homepage: <http://grey.colorado.edu/emergent>
 
@@ -150,12 +151,12 @@ cat > debian/rules <<Emergent
 cmake -DCMAKE_INSTALL_PREFIX=\$(CURDIR)/debian/emergent/usr .
 
 build:
+	./configure --build-dir=pwd
 	\$(MAKE)
 
 clean:
 	dh_testdir
 	dh_testroot
-	\$(MAKE) clean
 	dh_clean
 
 install: build
@@ -193,3 +194,4 @@ Emergent
 #################################################
 # END Create debian/rules
 #################################################
+debuild
