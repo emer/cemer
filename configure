@@ -12,7 +12,7 @@ echo "  --enable-release (or --release)  enable release, maximum optimized build
 echo "  --prefix=<path>              set the install prefix to path"
 echo "  --enable-mpi (or --mpi)      enable MPI distributed memory parallel build"
 echo "  --clean                      clean existing cmake cache etc first: start fresh"
-echo "  --build-dir=<name>           provide a custom build directory name (else auto)"
+echo "  --build-dir=<name>           provide a custom build directory name (else auto)."
 echo "  --generator=<name>           use given code generator (-G in cmake, which also works)"
 echo "  --verbose-build (or --verbose or -v) turn on verbose make output: for make probs"
 echo " "
@@ -84,14 +84,16 @@ else
     cmake_cmd="$cmake_cmd -DCMAKE_VERBOSE_MAKEFILE=OFF"
 fi
 
-# Support building in trunk
-if [[ "$build_dir" != "$(pwd)" ]];
+# Support building in trunk by passing in pwd keyword
+# $(pwd) didn't work for out of source builds
+if [[ "$build_dir" == "pwd" ]];
 then
+  # Don't run cmake in your home directory..
+  # Also don't try to make or go to the build dir, we are already there
+  cmake_cmd="$(echo $cmake_cmd | sed 's/\.\.\///')"
+else
   mkdir "$build_dir"
   cd "$build_dir" || exit 1
-else
-  # Don't run cmake in your home directory..
-  cmake_cmd=$(echo $cmake_cmd | sed 's/cmake \.\.\//cmake /')
 fi
 
 echo " "
