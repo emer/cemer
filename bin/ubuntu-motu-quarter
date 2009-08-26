@@ -1,0 +1,196 @@
+#!/bin/bash
+#################################################
+# Create an Ubuntu source package for quarter
+# It does everything for you - whoever you are, just change the first few vars and then run the script
+# https://wiki.ubuntu.com/PackagingGuide/Complete
+#################################################
+# Copyright, 2009, Brian Mingus
+# This file is part of The Quarter Toolkit
+#
+#  Quarter is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  Quarter is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this package; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#################################################
+
+QUARTER_VERSION=1.0.0
+DEBEMAIL='brian.mingus@colorado.edu'
+DEBFULLNAME='Brian Mingus'
+
+# You have to have these installed
+# sudo apt-get install build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools
+
+cd /tmp
+wget -O/tmp/Quarter-${QUARTER_VERSION}.tar.gz http://ftp.coin3d.org/coin/src/all/Quarter-1.0.0.tar.gz
+tar -xzf Quarter-${QUARTER_VERSION}
+tar -czf quarter_${QUARTER_VERSION}.orig.tar.gz quarter-${QUARTER_VERSION}/
+cd quarter-${QUARTER_VERSION}
+
+# We're going to create everything we need manually
+mkdir debian
+
+#################################################
+# START Create debian/changelog
+#################################################
+cat > debian/changelog <<Quarter
+quarter (${QUARTER_VERSION}-1) unstable; urgency=low
+
+  * Initial release (Closes: #364748)
+
+ -- ${DEBFULLNAME} <${DEBEMAIL}>  $(date -R)
+Quarter
+#################################################
+# END Create debian/changelog
+#################################################
+
+#################################################
+# START Create debian/control
+#################################################
+cat > debian/control <<Quarter
+Source: quarter
+Section: devel
+Priority: extra
+Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
+Build-Depends: libqt4-designer, libqt4-opengl, libqt4-gui, libqt4-xml, libqt4-core, libqt4-script, libcoin60, libaudio2, libpng12-0
+Standards-Version: 3.8.0
+Homepage: <http://www.coin3d.org/lib/quarter>
+
+Package: quarter
+Architecture: any
+Depends: \${shlibs:Depends}, \${misc:Depends}
+Description: Quarter is a light-weight glue library that provides
+ seamless integration between Kongsberg SIM's Coin high-level 3D
+ visualization library and Nokia's Qt 2D user interface library.
+
+Quarter
+#################################################
+# END Create debian/control
+#################################################
+
+#################################################
+# START Create debian/copyright
+#################################################
+cat > debian/copyright <<Quarter
+
+This package was debianized by:
+
+    ${DEBFULLNAME} <${DEBEMAIL}> on $(date -R)
+
+It was downloaded from:
+
+    http://www.coin3d.org/lib/quarter
+
+Upstream Author(s):
+
+    Coin3D Systems in Motion <help@coin3d.org>
+
+Copyright:
+
+     Copyright (C) 1998-2009 by Systems in Motion. 
+
+License:
+
+     This file is part of the SIM Quarter extension library for Coin.
+     Copyright (C) 1998-2009 by Systems in Motion.    All rights reserved.
+ 
+     This library is free software; you can redistribute it and/or modify
+     it under the terms of the GNU General Public License ("GPL") version 2
+     as published by the Free Software Foundation.    See the file COPYING
+     at the root directory of this source distribution for additional
+     information about the GNU GPL.
+ 
+     For using SIM Quarter with software that can not be combined with
+     the GNU GPL, and for taking advantage of the additional benefits of
+     our support services, please contact Systems in Motion about acquiring
+     a Coin Professional Edition License.
+ 
+     See <URL:http://www.coin3d.org/> for more information.
+ 
+     Systems in Motion AS, N-0257 Oslo, NORWAY. (www.sim.no)
+
+
+The Debian packaging is:
+
+    Copyright (C) 2009, ${DEBFULLNAME} <${DEBEMAIL}>
+
+and is licensed under the GPL, see above.
+
+X-Comment: On Debian GNU/Linux systems, the complete text of the GNU General
+ Public License can be found in the /usr/share/common-licenses/GPL file.
+
+Quarter
+#################################################
+# END Create debian/copyright
+#################################################
+
+#################################################
+# START Create debian/rules makefile
+#################################################
+cat > debian/rules <<Quarter
+#!/usr/bin/make -f
+
+build:
+	./configure --prefix=\$(CURDIR)/debian/quarter/usr
+	\$(MAKE)
+
+clean:
+	dh_testdir
+	dh_testroot
+	\$(MAKE) clean
+	dh_clean
+
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+	\$(MAKE) install
+
+# Build architecture-independent files here.
+binary-indep: install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs ChangeLog
+	dh_installdocs AUTHORS COPYING COPYING.LIB
+	dh_installmenu
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install
+
+Quarter
+#################################################
+# END Create debian/rules
+#################################################
+#################################################
+# START Create debian/compat 
+#################################################
+cat > debian/compat <<Quarter
+7
+Quarter
+#################################################
+# START Create debian/compat 
+#################################################
+
+debuild
