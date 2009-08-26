@@ -6,9 +6,9 @@ DEBFULLNAME='Brian Mingus'
 cd /tmp
 wget -O/tmp/Quarter-1.tar.gz http://ftp.coin3d.org/coin/src/all/Quarter-1.0.0.tar.gz
 tar -xzf Quarter-1.tar.gz
-mv Quarter-1.0.0 libquarter_1.0
-tar -czf libquarter_1.0.orig.tar.gz libquarter_1.0
-cd libquarter_1.0
+mv Quarter-1.0.0 libquarter-1.0
+tar -czf libquarter_1.0.orig.tar.gz libquarter-1.0
+cd libquarter-1.0
 mkdir debian
 
 #################################################

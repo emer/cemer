@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EMERGENT_VERSION=5.0.0
+EMERGENT_VERSION=5.0
 DEBEMAIL='brian.mingus@colorado.edu'
 DEBFULLNAME='Brian Mingus'
 
@@ -16,7 +16,7 @@ mkdir debian
 # Create debian/changelog
 #################################################
 cat > debian/changelog <<Emergent
-emergent (${EMERGENT_VERSION}-1) unstable; urgency=low
+emergent (5.0-0ubuntu1) karmic; urgency=low
 
   * Initial release (Closes: #364748)
 
@@ -28,12 +28,13 @@ Emergent
 #################################################
 cat > debian/control <<Emergent
 Source: emergent
-Section: devel
+Section: science
 Priority: extra
-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
-Build-Depends: libqt4-dev, libcoin60-dev, libreadline5-dev, libgsl0-dev, libode0-dev, libsndfile1-dev
-Standards-Version: 3.8.0
-Homepage: <http://grey.colorado.edu/emergent>
+Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
+XSBC-Original-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
+Build-Depends: debhelper (>= 7.0.17), libqt4-dev, libcoin60-dev, libreadline5-dev, libgsl0-dev, libode0-dev, libsndfile1-dev
+Standards-Version: 3.8.3
+Homepage: http://grey.colorado.edu/emergent
 
 Package: emergent
 Architecture: any
@@ -118,6 +119,7 @@ build-stamp:
 	touch build-stamp
 
 clean:
+	rm -f CMakeFiles/CMakeDetermineCompilerABI_C.bin CMakeDetermineCompilerABI_CXX.bin CompilerIdC/a.out CompilerIdCXX/a.out CMakeCache.txt
 	dh clean
 
 install: build install-stamp
@@ -141,4 +143,31 @@ cat > debian/compat <<Emergent
 7
 Emergent
 
+#################################################
+# START Create debian/emergent.1
+#################################################
+# cat > debian/emergent.1 <<Emergent
+
+# .\" Process this file with
+# .\" groff -man -Tascii foo.1
+# .\"
+# .TH FOO 1 "MARCH 1995" Linux "User Manuals"
+# .SH NAME
+# emergent \- Neural Network Simulation System
+# .SH DESCRIPTION
+# emergent (http://grey.colorado.edu) is a comprehensive simulation
+# environment for creating complex, sophisticated models of the brain
+# and cognitive processes using neural network models. These same
+# networks can also be used for all kinds of other more pragmatic tasks,
+# like predicting the stock market or analyzing data. It includes a full
+# GUI environment for constructing networks and the input/output
+# patterns for the networks to process, and many different analysis
+# tools for understanding what the networks are doing. It has a new
+# tabbed-browser style interface with full 3D graphics (via OpenGL and
+# Open Inventor/Coin3D), and powerful new GUI programming tools and data
+# processing and analysis capabilities.
+# .SH AUTHOR
+# Randy OReilly <oreilly at grey dot colorado dot edu>
+
+# Emergent
 debuild
