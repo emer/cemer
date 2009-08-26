@@ -31,8 +31,7 @@ Section: graphics
 Priority: extra
 Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
 XSBC-Original-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
-Build-Depends: debhelper (>= 7.0.17), libqt4-designer, libqt4-opengl,
- libqt4-gui, libqt4-xml, libqt4-core, libqt4-script, libcoin60
+Build-Depends: debhelper (>= 7.0.17), libqt4-dev, libcoin60-dev
 Standards-Version: 3.8.3
 
 Homepage: http://www.coin3d.org/lib/quarter

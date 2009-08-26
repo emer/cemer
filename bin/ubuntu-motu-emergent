@@ -1,49 +1,20 @@
 #!/bin/bash
-#################################################
-# Create an Ubuntu source package for emergent
-# NOTE: This is an interactive script that will ask for feedback
-# It does everything for you - whoever you are, just change the first few vars and then run the script
-# https://wiki.ubuntu.com/PackagingGuide/Complete
-#################################################
-# Copyright, 2009, Brian Mingus
-# This file is part of The Emergent Toolkit
-#
-#  Emergent is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  Emergent is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this package; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
-#################################################
 
 EMERGENT_VERSION=5.0.0
 DEBEMAIL='brian.mingus@colorado.edu'
 DEBFULLNAME='Brian Mingus'
 
-# You have to have these installed
-# sudo apt-get install build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools
-
 cd /tmp
-#rm -fr emergent*
-svn checkout --username anonymous --password emergent http://grey.colorado.edu/svn/emergent/emergent/trunk emergent-${EMERGENT_VERSION}
-tar -czf emergent_${EMERGENT_VERSION}.orig.tar.gz emergent-${EMERGENT_VERSION}/
+wget ftp://grey.colorado.edu/pub/emergent/emergent-5.tar.gz
+tar -xzf emergent-5.tar.gz
+mv emergent emergent-${EMERGENT_VERSION}
+tar -czf emergent_${EMERGENT_VERSION}.orig.tar.gz emergent-${EMERGENT_VERSION}
 cd emergent-${EMERGENT_VERSION}
-
-# We're going to create everything we need manually
 mkdir debian
 
 #################################################
-# START Create debian/changelog
+# Create debian/changelog
 #################################################
-# debuild -S chokes on the svn2cl changelog
-# svn2cl -o debian/changelog http://grey.colorado.edu/svn/emergent/emergent/trunk
 cat > debian/changelog <<Emergent
 emergent (${EMERGENT_VERSION}-1) unstable; urgency=low
 
@@ -51,19 +22,16 @@ emergent (${EMERGENT_VERSION}-1) unstable; urgency=low
 
  -- ${DEBFULLNAME} <${DEBEMAIL}>  $(date -R)
 Emergent
-#################################################
-# END Create debian/changelog
-#################################################
 
 #################################################
-# START Create debian/control
+# Create debian/control
 #################################################
 cat > debian/control <<Emergent
 Source: emergent
 Section: devel
 Priority: extra
 Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
-Build-Depends: subversion, cmake, g++, libqt4-dev, libcoin60-dev, libreadline5-dev, libgsl0-dev, libode0-dev, libsndfile1-dev
+Build-Depends: libqt4-dev, libcoin60-dev, libreadline5-dev, libgsl0-dev, libode0-dev, libsndfile1-dev
 Standards-Version: 3.8.0
 Homepage: <http://grey.colorado.edu/emergent>
 
@@ -85,15 +53,11 @@ Description: Emergent Neural Network Simulation System
  and data processing and analysis capabilities.
 
 Emergent
-#################################################
-# END Create debian/control
-#################################################
 
 #################################################
-# START Create debian/copyright
+# Create debian/copyright
 #################################################
 cat > debian/copyright <<Emergent
-
 This package was debianized by:
 
     ${DEBFULLNAME} <${DEBEMAIL}> on $(date -R)
@@ -104,11 +68,14 @@ It was downloaded from:
 
 Upstream Author(s):
 
-    Randy OReilly <oreilly@grey.colorado.edu>
+    Randy OReilly <oreilly@grey.colorado.edu>, 
+    Brad Aisa <Brad.Aisa@colorado.edu>,
+    Brian Mingus <Brian.Mingus@colorado.edu>
 
 Copyright:
 
-    Copyright (C) 1995-2009 Regents of the University of Colorado, Carnegie Mellon University, Princeton University
+    Copyright 1995-2009 Regents of the University of Colorado, 
+    Carnegie Mellon University, Princeton University
 
 License:
 
@@ -130,76 +97,48 @@ License:
 
 The Debian packaging is:
 
-    Copyright (C) 2009, ${DEBFULLNAME} <${DEBEMAIL}>
+    Copyright 2009, ${DEBFULLNAME} <${DEBEMAIL}>
 
 and is licensed under the GPL, see above.
 
 X-Comment: On Debian GNU/Linux systems, the complete text of the GNU General
- Public License can be found in the /usr/share/common-licenses/GPL file.
+ Public License can be found in the /usr/share/common-licenses/GPL-2 file.
 
 Emergent
-#################################################
-# END Create debian/copyright
-#################################################
 
 #################################################
-# START Create debian/rules makefile
+# Create debian/rules makefile
 #################################################
 cat > debian/rules <<Emergent
 #!/usr/bin/make -f
 
-build:
-	./configure --build-dir=pwd --prefix=\$(CURDIR)/debian/emergent/usr
-	\$(MAKE)
+build: build-stamp
+build-stamp:
+	dh build
+	touch build-stamp
 
 clean:
-	dh_testdir
-	dh_testroot
-	dh_clean
+	dh clean
 
-install: build
-	dh_testdir
-	dh_testroot
-	dh_prep
-	dh_installdirs
-	\$(MAKE) install
+install: build install-stamp
+install-stamp:
+	dh install
+	touch install-stamp
 
-
-# Build architecture-independent files here.
-binary-indep: install
-# We have nothing to do by default.
-
-# Build architecture-dependent files here.
 binary-arch: install
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs ChangeLog
-	dh_installdocs AUTHORS COPYING COPYING.LIB
-	dh_installmenu
-	dh_strip
-	dh_compress
-	dh_fixperms
-	dh_installdeb
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
+	dh binary-arch
 
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install
+binary-indep: install
+	dh binary-indep
 
+binary: binary-arch binary-indep
 Emergent
-#################################################
-# END Create debian/rules
-#################################################
+
 #################################################
 # START Create debian/compat 
 #################################################
 cat > debian/compat <<Emergent
 7
 Emergent
-#################################################
-# START Create debian/compat 
-#################################################
 
 debuild
