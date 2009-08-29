@@ -664,6 +664,10 @@ const SbViewportRegion& T3ExaminerViewer::getViewportRegion() const {
 }
 
 void T3ExaminerViewer::viewAll() {
+  SoCamera* cam = getViewerCamera();
+  if(!cam) return; // can happen for empty scenegraph
+  // restore camera position to head-on
+  cam->orientation.setValue(SbVec3f(-1.0f, 0.0f, 0.0f), 0.0f);
   quarter->viewAll();
   zoomView(-.35f);		// zoom in !!
 }

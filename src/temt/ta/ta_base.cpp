@@ -669,13 +669,14 @@ void taBase::SetDefaultName_impl(int idx) {
   if (nm.empty()) nm = td->name;
   // name style -- 0 is the legacy one
   int nm_style = td->OptionAfter("DEF_NAME_STYLE_").toInt(); // 0 if not present
+  if(idx < 0) idx = 0;	// avoid -1 not found: can't just have typedef name for programs etc
   if (nm_style == 2) { // no number (for things that are unique in a container)
     ;
   } 
   else if (nm_style == 1) {
-    if (idx >= 0) nm += String(++idx); // use 1-based, no _
+    nm += String(++idx); // use 1-based, no _
   } else { // 0, or unknown style -- use legacy
-    if (idx >= 0) nm += ("_" + String(idx)); 
+    nm += ("_" + String(idx)); 
   }
   SetName(nm);
 }

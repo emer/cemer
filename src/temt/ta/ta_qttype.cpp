@@ -448,7 +448,7 @@ taiData* taiRealType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* g
   QDoubleValidator* dv = new QDoubleValidator(rval->rep());
   // set std notation, otherwise default is scientific
 #if (QT_VERSION >= 0x040300)
-  dv->setNotation(QDoubleValidator::StandardNotation);
+  dv->setNotation(QDoubleValidator::ScientificNotation);
 #endif
   //note: validator doesn't actually enforce mins and max's...
   if (mbr) {
