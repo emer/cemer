@@ -5857,8 +5857,17 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
 
 int Network::Dump_Save_impl(ostream& strm, taBase* par, int indent) {
   if(taMisc::is_undo_saving) {
-    if((tabMisc::cur_undo_save_top != this) && (tabMisc::cur_undo_mod_obj != this))
-      return 1;
+    if((tabMisc::cur_undo_save_top != this) && (tabMisc::cur_undo_mod_obj != this)) {
+      if(!tabMisc::cur_undo_mod_obj) return 1;
+      if(tabMisc::cur_undo_mod_obj->GetOwner(&TA_Network) != this) {
+#ifdef DEBUG
+	cout << "NOT saving for Undo network named: " << name << endl;
+	taMisc::FlushConsole();
+#endif
+	return 1;
+      }
+      // if we own the guy, then save it!
+    }
   }
   return inherited::Dump_Save_impl(strm, par, indent);
 }

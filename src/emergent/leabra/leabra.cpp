@@ -5699,12 +5699,15 @@ bool LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
 ///////////////////////////////////////////////////////////////
 
 bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   if(!net) {
-    LeabraProject* proj = GET_MY_OWNER(LeabraProject);
     net = (LeabraNetwork*)proj->GetNewNetwork();
     if(TestError(!net, "UnitInhib", "network is NULL and could not make a new one -- aborting!")) return false;
   }
 
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::UnitInhib -- actually saves network specifically");
+  }
   net->RemoveUnits();
   
   LeabraUnitSpec* basic_us = (LeabraUnitSpec*)net->FindSpecType(&TA_LeabraUnitSpec);
@@ -5821,7 +5824,6 @@ bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
   net->cycle_max = 300;
   net->min_cycles = 150;
 
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   SelectEdit* edit = proj->FindMakeSelectEdit("UnitInhib");
   if(edit != NULL) {
     basic_us->SelectForEditNm("dt", edit, "excite");

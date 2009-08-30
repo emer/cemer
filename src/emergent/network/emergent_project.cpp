@@ -176,11 +176,14 @@ bool Wizard::MultiLayerNet(int n_inputs, int n_hiddens, int n_outputs) {
 }
 
 bool Wizard::StdNetwork(TypeDef* net_type, Network* net) {
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(!net) {
-    ProjectBase* proj = GET_MY_OWNER(ProjectBase);
     if(TestError(!proj, "StdNetwork", "network is NULL and could not find project owner to make a new one -- aborting!")) return false;
     net = proj->GetNewNetwork(net_type);
     if(TestError(!net, "StdNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
+  }
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::StdNetwork -- actually saves network specifically");
   }
   net->StructUpdate(true);
   layer_cfg.SetSize(n_layers);
@@ -281,13 +284,17 @@ bool Wizard::StdNetwork(TypeDef* net_type, Network* net) {
 }
 
 bool Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(!net) {
-    ProjectBase* proj = GET_MY_OWNER(ProjectBase);
     if(TestError(!proj, "RetinaSpecNetwork", "network is NULL and could not find project owner to make a new one -- aborting!")) return false;
     net = proj->GetNewNetwork();
     if(TestError(!net, "RetinaSpecNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
   }
   if(TestError(!retina_spec, "RetinaSpecNetwork", "retina_spec is NULL -- you need to create and configure this in advance, as it is then used to configure the network!")) return false;
+
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::RetinaSpecNetwork -- actually saves network specifically");
+  }
 
   net->StructUpdate(true);
   for(int i=0;i<retina_spec->dogs.size; i++) {

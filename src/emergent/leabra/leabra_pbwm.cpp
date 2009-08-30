@@ -3069,6 +3069,16 @@ static void set_n_stripes(LeabraNetwork* net, const char* nm, int n_stripes,
 }
 
 bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int n_stripes, int n_units) {
+  if(TestError(!net, "PBWM_SetNStripes", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
+    return false;
+
+  // this is called as a subroutine a lot too so don't save here -- could do impl but
+  // not really worth it..
+//   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+//   if(proj) {
+//     proj->undo_mgr.SaveUndo(net, "Wizard::PBWM_SetNStripes -- actually saves network specifically");
+//   }
+
   set_n_stripes(net, "PFC", n_stripes, n_units, true);
   set_n_stripes(net, "PFC_mnt", n_stripes, n_units, true);
   set_n_stripes(net, "PFC_out", n_stripes, n_units, true);
@@ -4262,6 +4272,11 @@ bool LeabraWizard::PBWM_V2(LeabraNetwork* net, bool da_mod_all,
 bool LeabraWizard::PBWM_Remove(LeabraNetwork* net) {
   if(TestError(!net, "PBWM_ToLayerGroup", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
     return false;
+
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PBWM_Remove -- actually saves network specifically");
+  }
 
   net->RemoveUnits();
   net->layers.gp.RemoveName("PBWM_PFC");

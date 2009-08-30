@@ -1061,6 +1061,11 @@ bool LeabraWizard::PVLV_ToLayerGroup(LeabraNetwork* net) {
   if(TestError(!net, "PVLV_ToLayerGroup", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
     return false;
 
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_ToLayerGroup -- actually saves network specifically");
+  }
+
   String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
   String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
   String vtanm = "VTA";
@@ -1090,12 +1095,16 @@ bool LeabraWizard::PVLV_ToLayerGroup(LeabraNetwork* net) {
 // todo: set td_mod.on = true for td_mod_all; need to get UnitSpec..
 
 bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   if(!net) {
-    LeabraProject* proj = GET_MY_OWNER(LeabraProject);
     net = (LeabraNetwork*)proj->GetNewNetwork();
     if(TestError(!net, "PVLV", "network is NULL and could not make a new one -- aborting!"))
       return false;
     if(!StdNetwork(&TA_LeabraNetwork, net)) return false;
+  }
+
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV -- actually saves network specifically");
   }
 
   String msg = "Configuring Pavlov (PVLV) Layers:\n\n\
@@ -1512,7 +1521,6 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   //////////////////////////////////////////////////////////////////////////////////
   // select edit
 
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   SelectEdit* edit = proj->FindMakeSelectEdit("PVLV");
   if(edit) {
     pvr_cons->SelectForEditNm("lrate", edit, "pvr");
@@ -1538,6 +1546,11 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
 bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_layer,
 				     bool disconnect) {
   if(TestError(!net || !sending_layer, "PVLV_ConnectLayer", "must specify a network and a sending layer!")) return false;
+
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_ConnectLayer -- actually saves network specifically");
+  }
 
   // String pvenm = "PVe";
   String pvinm = "PVi";  String pvrnm = "PVr";
@@ -1597,6 +1610,11 @@ bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_la
 bool LeabraWizard::PVLV_OutToPVe(LeabraNetwork* net, LeabraLayer* output_layer,
 				     bool disconnect) {
   if(TestError(!net || !output_layer, "PVLV_OutToPVe", "must specify a network and an output layer!")) return false;
+
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_OutToPVe -- actually saves network specifically");
+  }
 
   String pvenm = "PVe";
   LeabraLayer* pve = (LeabraLayer*)net->FindLayer(pvenm);
