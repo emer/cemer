@@ -614,6 +614,8 @@ void T3PrjnNode::init() {
 
 void T3PrjnNode::setEndPoint(const SbVec3f& ep) {
   float len = ep.length() - 6.0f * radius;
+  if(len < radius) len = radius;
+
   float hlf_len = .5f *len;
 
   line_prjn->height = len;

@@ -1566,6 +1566,7 @@ void PrjnView::Render_impl() {
   float max_xy = MAX(nv->max_size.x, nv->max_size.y);
   float lay_ht = T3LayerNode::height / max_xy;
   float lay_wd = T3LayerNode::width / max_xy;
+  lay_wd = MIN(lay_wd, T3LayerNode::max_width);
 
   // y = network z coords -- same for all cases
   src.y = ((float)lay_fr_pos.z) / nv->max_size.z;
@@ -1608,6 +1609,10 @@ void PrjnView::Render_impl() {
     // dest is *back* right
     dst.x = ((float)lay_to_pos.x + (float)lay_to->scaled_act_geom.x) / nv->max_size.x - lay_wd;
     dst.z = -((float)(lay_to_pos.y  + lay_to->scaled_act_geom.y) / nv->max_size.y) - lay_wd;
+  }
+
+  if(dst.y == src.y && dst.x == src.x && dst.z == src.z) {
+    dst.x += lay_wd;		// give it some minimal something
   }
 
   transform(true)->translate.SetXYZ(src.x, src.y, src.z);
@@ -1804,6 +1809,7 @@ void LayerGroupView::Render_impl() {
     float lay_wd_y = T3LayerNode::width / nv->max_size.y;
     float lay_ht_z = T3LayerNode::height / nv->max_size.z;
     float fx = (float)lgp->max_size.x / nv->max_size.x;
+    lay_wd_y = MIN(lay_wd_y, T3LayerNode::max_width);
 
     // ensure that the layer label does not go beyond width of layer itself!
     float eff_lay_font_size = nv->font_sizes.layer;
