@@ -2350,14 +2350,21 @@ void iT3DataViewer::tw_currentChanged(int tab_idx) {
 // 1) have a hide/show insures we don't get multiple tabs
 // 2) but show/hide order prevents panel tab switching away
 // TODO: known bug: when you delete a frame, it switches from CtrlPanel tab
+// different logic required when tab numbers are the same!
   iT3DataViewFrame* idvf;
-  idvf = iViewFrame(tab_idx);
-  if (idvf) { // should exist
+  if(tab_idx == last_idx) {
+    idvf = iViewFrame(tab_idx);
     idvf->Showing(true);
-  idvf = iViewFrame(last_idx);
-  if (idvf) { 
-    idvf->Showing(false);
   }
+  else {
+    idvf = iViewFrame(tab_idx);
+    if (idvf) { // should exist
+      idvf->Showing(true);
+      idvf = iViewFrame(last_idx);
+      if (idvf) { 
+	idvf->Showing(false);
+      }
+    }
   }
   last_idx = tab_idx;
 }
