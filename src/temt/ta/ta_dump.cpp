@@ -1444,13 +1444,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     return false;
   }
 
-  if(taMisc::loading_version < taMisc::version_bin) {
-    taMisc::Warning("Loading a file saved in an earlier version of the software:",
-		    taMisc::loading_version.toString(),"  Current version is:",
-		    taMisc::version_bin.toString(),
-		    "there are likely to be version skew warnings -- see the current ChangeLog info on the emergent wiki for things you should be looking for");
-  }
-  else if(taMisc::loading_version > taMisc::version_bin) {
+  if(taMisc::loading_version > taMisc::version_bin) {
     taMisc::Warning("Loading a file saved in a *LATER* version of the software:",
 		    taMisc::loading_version.toString(),"  Current version is:",
 		    taMisc::version_bin.toString(),
@@ -1560,6 +1554,21 @@ endload:
     } else { // shouldn't happen???
       dumpMisc::post_update_after.Reset(); // if it does happen, don't leave around
     }
+  }
+
+  if(taMisc::loading_version < taMisc::version_bin) {
+    if(td && td->InheritsFrom(&TA_taProject)) { // only for project-level objects, not sub-files
+      taMisc::Warning("Loaded a file saved in an earlier version of the software:",
+		      taMisc::loading_version.toString(),"  Current version is:",
+		      taMisc::version_bin.toString(),
+		      "the above version skew warnings (if any) may have useful information -- see the current ChangeLog info on the emergent wiki for things you should be looking for");
+    }
+  }
+  else if(taMisc::loading_version > taMisc::version_bin) {
+    taMisc::Warning("Loaded a file saved in a *LATER* version of the software:",
+		    taMisc::loading_version.toString(),"  Current version is:",
+		    taMisc::version_bin.toString(),
+		    "this is not likely to be a good idea, as the software is generally only backwards compatible, but it might work..");
   }
   return rval;
 }

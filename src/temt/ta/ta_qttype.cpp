@@ -2478,6 +2478,7 @@ taiData* taiTokenPtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWi
     token_flags |= taiData::flgNullOk;
   if (GetHasOption("EDIT_OK"))
     token_flags |= taiData::flgEditOk;
+  token_flags |= taiData::flgNoHelp; // help not avail on modal arg dialogs
   taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_, token_flags);
   return rval;
 //   taiToken* rval = new taiToken(taiMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_,
@@ -2613,6 +2614,7 @@ taiData* taiTypePtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
   int flags = flags_;
   if (GetHasOption("NULL_OK"))
     flags |= taiData::flgNullOk;
+  flags |= taiData::flgNoHelp; // help not avail on modal arg dialogs
   
 //   TypeDef* init_typ = &TA_taBase;
 //   if (*((TypeDef**)arg_base) != NULL)
@@ -2673,6 +2675,8 @@ cssEl* taiMemberPtrArgType::GetElFromArg(const char* nm, void*) {
 taiData* taiMemberPtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, 
   QWidget* gui_parent_, int flags_, MemberDef*) 
 {
+  flags_ |= taiData::flgNoHelp; // help not avail on modal arg dialogs
+  
   taiMemberDefButton* rval = new taiMemberDefButton(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
@@ -2714,6 +2718,7 @@ taiData* taiMethodPtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QW
   MethodDef* init_md = typ->methods.FindName("Load");
   if (*((MethodDef**)arg_base) != NULL)
     init_md = *((MethodDef**)arg_base);
+  flags_ |= taiData::flgNoHelp; // help not avail on modal arg dialogs
   taiMethodDefMenu* rval = new taiMethodDefMenu(taiMenu::buttonmenu, taiMisc::fonSmall,
 	init_md, NULL, typ, host_, par, gui_parent_, flags_);
   rval->GetMenu();
@@ -3251,6 +3256,7 @@ taiData* gpiFromGpArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidg
     new_flags |= taiData::flgNullOk;
   if (GetHasOption("EDIT_OK"))
     new_flags |= taiData::flgEditOk;
+  new_flags |= taiData::flgNoHelp; // help not avail on modal arg dialogs
 
   if (GetHasOption("NO_GROUP_OPT"))
     new_flags |= taiData::flgNoGroup; //aka flagNoList
