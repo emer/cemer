@@ -5857,14 +5857,21 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
 
 int Network::Dump_Save_impl(ostream& strm, taBase* par, int indent) {
   if(taMisc::is_undo_saving) {
-    if((tabMisc::cur_undo_save_top != this) && (tabMisc::cur_undo_mod_obj != this)) {
-      if(!tabMisc::cur_undo_mod_obj) return 1;
-      if(tabMisc::cur_undo_mod_obj->GetOwner(&TA_Network) != this) {
+    taBase* cumo = tabMisc::cur_undo_mod_obj;
+    if((tabMisc::cur_undo_save_top != this) && (cumo != this)) {
+      if(!cumo) return 1;
+      if(cumo->GetOwner(&TA_Network) != this) {
+	bool bail = true;
+	if(cumo->InheritsFrom(&TA_Network) && cumo->GetOwner() == this->GetOwner())
+	  bail = false;		// if obj is another network in our group/list, then we need
+	// to save because otherwise we will not be properly restored if it is deleted..
+	if(bail) {
 #ifdef DEBUG
-	cout << "NOT saving for Undo network named: " << name << endl;
-	taMisc::FlushConsole();
+	  cout << "NOT saving for Undo network named: " << name << endl;
+	  taMisc::FlushConsole();
 #endif
-	return 1;
+	  return 1;
+	}
       }
       // if we own the guy, then save it!
     }

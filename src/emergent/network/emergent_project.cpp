@@ -183,7 +183,7 @@ bool Wizard::StdNetwork(TypeDef* net_type, Network* net) {
     if(TestError(!net, "StdNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
   }
   if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::StdNetwork -- actually saves network specifically");
+    proj->undo_mgr.SaveUndo(net, "Wizard::StdNetwork before -- actually saves network specifically");
   }
   net->StructUpdate(true);
   layer_cfg.SetSize(n_layers);
@@ -280,6 +280,9 @@ bool Wizard::StdNetwork(TypeDef* net_type, Network* net) {
     tabMisc::DelayedFunCall_gui(net, "BrowserExpandAll");
     tabMisc::DelayedFunCall_gui(net, "BrowserSelectMe");
   }
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::StdNetwork after -- actually saves network specifically");
+  }
   return true;
 }
 
@@ -293,7 +296,7 @@ bool Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
   if(TestError(!retina_spec, "RetinaSpecNetwork", "retina_spec is NULL -- you need to create and configure this in advance, as it is then used to configure the network!")) return false;
 
   if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::RetinaSpecNetwork -- actually saves network specifically");
+    proj->undo_mgr.SaveUndo(net, "Wizard::RetinaSpecNetwork before -- actually saves network specifically");
   }
 
   net->StructUpdate(true);
@@ -315,6 +318,10 @@ bool Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
     tabMisc::DelayedFunCall_gui(net, "BrowserExpandAll");
     tabMisc::DelayedFunCall_gui(net, "BrowserSelectMe");
   }
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::RetinaSpecNetwork after -- actually saves network specifically");
+  }
+
   return true;
 }
 

@@ -3761,6 +3761,10 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
       snrthalosp->SelectForEditNm("kwta", edit, "snr_thal_out");
     }    
   }
+
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PBWM -- actually saves network specifically");
+  }
   return true;
 }
 
@@ -4263,6 +4267,9 @@ bool LeabraWizard::PBWM_V2(LeabraNetwork* net, bool da_mod_all,
     sp->UpdateAfterEdit();
   }
 
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PBWM_V2 -- actually saves network specifically");
+  }
   return true;
 }
 
@@ -4275,7 +4282,7 @@ bool LeabraWizard::PBWM_Remove(LeabraNetwork* net) {
 
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::PBWM_Remove -- actually saves network specifically");
+    proj->undo_mgr.SaveUndo(net, "Wizard::PBWM_Remove before -- actually saves network specifically");
   }
 
   net->RemoveUnits();
@@ -4290,5 +4297,8 @@ bool LeabraWizard::PBWM_Remove(LeabraNetwork* net) {
 
   net->CheckSpecs();		// could have nuked dependent specs!
 
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PBWM_Remove after -- actually saves network specifically");
+  }
   return true;
 }

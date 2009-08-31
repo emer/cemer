@@ -3366,7 +3366,8 @@ int taList_impl::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {
   // first save any sub-members (there usually aren't any)
   int rval = GetTypeDef()->Dump_Save_PathR(strm, (void*)this, (void*)par, indent);
 
-  if (IsEmpty())  return rval;
+//   if (IsEmpty())  return rval;
+  // actually need to save this to be able to undo back to an empty group
 
   strm << "\n";			// actually saving a path: put a newline
   if (dump_my_path) {		
@@ -3578,6 +3579,11 @@ int taList_impl::Dump_Load_Value(istream& strm, taBase* par) {
 	  strm.get();		// get the bracket
 	  Alloc(idx);		// just make sure we have the ptrs allocated to this size
 	  m_trg_load_size = idx; // target loading size
+	  if(m_trg_load_size == 0) {
+	    Reset();		// normal load size enforcement occurs on last item loaded --
+	    // if no items to load, it never happens!  This is the enforcer!
+	    // also: for undo optimized loading (i.e., not saving networks), this count is actually set accurately pre-filtering so it is fine
+	  }
 	  return GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par);
 	}
 	else {			// type information -- create objects too!

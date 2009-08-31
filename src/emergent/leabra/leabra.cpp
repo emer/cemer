@@ -5705,9 +5705,6 @@ bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
     if(TestError(!net, "UnitInhib", "network is NULL and could not make a new one -- aborting!")) return false;
   }
 
-  if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::UnitInhib -- actually saves network specifically");
-  }
   net->RemoveUnits();
   
   LeabraUnitSpec* basic_us = (LeabraUnitSpec*)net->FindSpecType(&TA_LeabraUnitSpec);
@@ -5836,6 +5833,10 @@ bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
 
     net->SelectForEditNm("cycle_max", edit, net->name);
     net->SelectForEditNm("min_cycles", edit, net->name);
+  }
+
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::UnitInhib -- actually saves network specifically");
   }
   return true;
 }

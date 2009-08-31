@@ -1062,9 +1062,6 @@ bool LeabraWizard::PVLV_ToLayerGroup(LeabraNetwork* net) {
     return false;
 
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_ToLayerGroup -- actually saves network specifically");
-  }
 
   String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
   String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
@@ -1102,9 +1099,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
       return false;
     if(!StdNetwork(&TA_LeabraNetwork, net)) return false;
   }
-
   if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV -- actually saves network specifically");
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV before -- actually saves network specifically");
   }
 
   String msg = "Configuring Pavlov (PVLV) Layers:\n\n\
@@ -1540,6 +1536,9 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
 //    dasp->SelectForEditNm("avg_da", edit, "vta");
     dasp->SelectForEditNm("da", edit, "vta");
   }
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV after -- actually saves network specifically");
+  }
   return true;
 }
 
@@ -1549,7 +1548,7 @@ bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_la
 
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_ConnectLayer -- actually saves network specifically");
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_ConnectLayer before -- actually saves network specifically");
   }
 
   // String pvenm = "PVe";
@@ -1604,6 +1603,9 @@ bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_la
     if(nv && nv_cons)
       net->FindMakePrjn(nv,  sending_layer, fullprjn, nv_cons);
   }
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_ConnectLayer before -- actually saves network specifically");
+  }
   return true;
 }
 
@@ -1613,7 +1615,7 @@ bool LeabraWizard::PVLV_OutToPVe(LeabraNetwork* net, LeabraLayer* output_layer,
 
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_OutToPVe -- actually saves network specifically");
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_OutToPVe before -- actually saves network specifically");
   }
 
   String pvenm = "PVe";
@@ -1633,6 +1635,9 @@ bool LeabraWizard::PVLV_OutToPVe(LeabraNetwork* net, LeabraLayer* output_layer,
   }
   else {
     net->FindMakePrjn(pve, output_layer, onetoone, marker_cons);
+  }
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_OutToPVe after -- actually saves network specifically");
   }
   return true;
 }
