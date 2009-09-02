@@ -577,7 +577,7 @@ void SpikeFunSpec::Initialize() {
   v_m_r = 0.0f;
   eq_gain = 10.0f;
   eq_dt = 0.02f;
-  hard_gain = .2f;
+  clamp_max_p = .1f;
   // vm_dt of .1 should also be used; vm_noise var .002???
   
   gg_decay = g_gain / decay;
@@ -1084,10 +1084,7 @@ void LeabraUnitSpec::Compute_HardClamp(LeabraUnit* u, LeabraNetwork*) {
   u->net = u->prv_net = u->ext;
   u->act_eq = clamp_range.Clip(u->ext);
   u->act_nd = u->act_eq;
-  if(act_fun == SPIKE)
-    u->act = spike.hard_gain * u->act_eq;
-  else
-    u->act = u->act_eq;
+  u->act = u->act_eq;
   if(u->act_eq == 0.0f)
     u->v_m = e_rev.l;
   else
@@ -1103,10 +1100,7 @@ void LeabraUnitSpec::Compute_HardClampNoClip(LeabraUnit* u, LeabraNetwork*) {
   //  u->act_eq = clamp_range.Clip(u->ext);
   u->act_eq = u->ext;
   u->act_nd = u->act_eq;
-  if(act_fun == SPIKE)
-    u->act = spike.hard_gain * u->act_eq;
-  else
-    u->act = u->act_eq;
+  u->act = u->act_eq;
   if(u->act_eq == 0.0f)
     u->v_m = e_rev.l;
   else
@@ -1260,7 +1254,13 @@ void LeabraUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   LeabraNetwork* lnet = (LeabraNetwork*)net;
   LeabraLayer* lay = lu->own_lay();
 
-  if((lnet->cycle >= 0) && lay->hard_clamped) return; // don't re-compute
+  if((lnet->cycle >= 0) && lay->hard_clamped) {
+    if(lay->hard_clamped && act_fun == SPIKE) {
+      Compute_PoissonSpike(lu, lnet, u->ext * spike.clamp_max_p);
+      lu->AddToActBuf(syn_delay);
+    }
+    return; // don't re-compute
+  }
 
   Compute_Conduct(lu, lnet);
   Compute_Vm(lu, lnet);
@@ -1269,6 +1269,19 @@ void LeabraUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
 
   lu->AddToActBuf(syn_delay);
 }
+
+void LeabraUnitSpec::Compute_PoissonSpike(LeabraUnit* u, LeabraNetwork* net, float spike_p) {
+  double poisson = Random::Poisson(spike_p);
+  if(poisson > 0.0) {
+    u->v_m = act.thr + 0.1f;	// make it fire
+  }
+  else {
+    u->v_m = e_rev.l;		// make it not fire
+  }
+  
+  Compute_ActFmVm_spike(u, net); // then do normal spiking computation
+}
+
 
 void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
   LeabraLayer* lay = u->own_lay();

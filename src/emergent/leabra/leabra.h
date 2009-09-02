@@ -723,7 +723,7 @@ private:
 };
 
 class LEABRA_API SpikeFunSpec : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically -- for clamped layers, a poisson spike rate with probability proportional to external input is computed
 INHERITED(taOBase)
 public:
   float		rise;		// #DEF_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is highly optimized (doesn't use window -- just uses recursive exp decay) and thus the default!
@@ -733,7 +733,7 @@ public:
   float		v_m_r;		// #DEF_0 post-spiking membrane potential to reset to, produces refractory effect 
   float		eq_gain;	// #DEF_10 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
   float		eq_dt;		// #DEF_0.02 if non-zero, eq is computed as a running average with this time constant
-  float		hard_gain;	// #DEF_0.2 gain for hard-clamped external inputs, mutliplies ext.  constant external inputs otherwise have too much influence compared to spiking ones: Note: soft clamping is strongly recommended
+  float		clamp_max_p;	// #DEF_0.1 maximum probability of poisson spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall poisson probability of firing a spike
 
   float		gg_decay;	// #READ_ONLY #NO_SAVE g_gain/decay
   float		gg_decay_sq;	// #READ_ONLY #NO_SAVE g_gain/decay^2
@@ -1118,6 +1118,8 @@ public:
 
       virtual void Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net);
       // #CAT_Activation compute the activation from membrane potential -- discrete spiking
+      virtual void Compute_PoissonSpike(LeabraUnit* u, LeabraNetwork* net, float spike_p);
+      // #CAT_Activation compute spiking activation according to given poission probability -- includes depression and other active factors as done in Compute_ActFmVm_spike -- used for hard clamped inputs in spiking nets
     virtual void Compute_SelfReg_Cycle(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation Act Step 3: compute self-regulatory currents (hysteresis, accommodation) -- at the cycle time scale
     virtual void Compute_SelfReg_Trial(LeabraUnit* u, LeabraNetwork* net);
