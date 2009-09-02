@@ -514,6 +514,7 @@ public:
 
   override bool		SetFileName(const String& val);
   override int		Save(); 
+  override int		SaveAs(const String& fname = ""); 
 
   virtual int		SaveNoteChanges(); 
   // #CAT_File saves the project to a file using current file name, but first prompts for a text note of changes that have been made, which are registered in the ChangeLog document within the project prior to saving

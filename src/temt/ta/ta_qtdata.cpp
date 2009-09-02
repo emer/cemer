@@ -2798,7 +2798,7 @@ void taiObjChooser::Build() {
 
   //note: create editor last so it is last on tab order
   GetPathStr();
-  editor = new QLineEdit(path_str, this);
+  editor = new iLineEdit(path_str, this);
   layOuter->addWidget(editor, 0, 0);
 
   connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
@@ -3229,7 +3229,7 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
   lbl->setToolTip("Search for items that contain this text, showing only them -- if starts with a ^ then only look for items in the first column that start with the text after the ^");
   lay->addWidget(lbl);
   lay->addSpacing(taiM->vsep_c);
-  filter = new QLineEdit(this);
+  filter = new iLineEdit(this);
   filter->setToolTip(lbl->toolTip());
   lay->addWidget(filter, 1);
   lay->addSpacing(taiM->hspc_c); 
@@ -3415,6 +3415,8 @@ void taiItemChooser::setView(int value, bool force) {
 
 void taiItemChooser::showEvent(QShowEvent* event) {
   inherited::showEvent(event);
+  if (m_selItem)
+    items->scrollToItem(m_selItem);
   QTimer::singleShot(150, this, SLOT(show_timeout()) );
 }
 

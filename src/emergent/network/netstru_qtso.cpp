@@ -650,15 +650,17 @@ void UnitGroupView::Render_impl_blocks() {
       un_txt = node_so->getUnitText();
       build_text = true;
       node_so->addChild(un_txt);
+      T3DataViewFrame* fr = GetFrame();
+      iColor txtcolr = fr->GetTextColor();
       SoBaseColor* bc = new SoBaseColor;
-      bc->rgb.setValue(0, 0, 0); //black is default for text
+      bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
       un_txt->addChild(bc);
       // doesn't seem to make much diff:
       SoComplexity* cplx = new SoComplexity;
       cplx->value.setValue(taMisc::text_complexity);
       un_txt->addChild(cplx);
       SoFont* fnt = new SoFont();
-      fnt->name = "Arial";
+      fnt->name = (const char*)taMisc::t3d_font_name;
       un_txt->addChild(fnt);
     }
     SoFont* fnt = (SoFont*)un_txt->getChild(2);
@@ -986,15 +988,17 @@ void UnitGroupView::Render_impl_outnm() {
   if(!un_txt) {
     un_txt = node_so->getUnitText();
     node_so->addChild(un_txt);
+    T3DataViewFrame* fr = GetFrame();
+    iColor txtcolr = fr->GetTextColor();
     SoBaseColor* bc = new SoBaseColor;
-    bc->rgb.setValue(0, 0, 0); //black is default for text
+    bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
     un_txt->addChild(bc);
     // doesn't seem to make much diff:
     SoComplexity* cplx = new SoComplexity;
     cplx->value.setValue(taMisc::text_complexity);
     un_txt->addChild(cplx);
     SoFont* fnt = new SoFont();
-    fnt->name = "Arial";
+    fnt->name = (const char*)taMisc::t3d_font_name;
     un_txt->addChild(fnt);
     SoTranslation* tr = new SoTranslation;
     un_txt->addChild(tr);
@@ -1965,7 +1969,7 @@ void NetViewObjView::Render_pre() {
       cplx->value.setValue(taMisc::text_complexity);
       tsep->addChild(cplx);
       SoFont* fnt = new SoFont();
-      fnt->name = "Arial";
+      fnt->name = (const char*)taMisc::t3d_font_name;
       fnt->size.setValue(ob->font_size);
       tsep->addChild(fnt);
       SoAsciiText* txt = new SoAsciiText();
@@ -2895,9 +2899,11 @@ void NetView::Render_net_text() {
   bool build_text = false;
 
   if(net_txt->getNumChildren() < txt_st_off) { // haven't made basic guys yet
+    T3DataViewFrame* fr = GetFrame();
+    iColor txtcolr = fr->GetTextColor();
     build_text = true;
     SoBaseColor* bc = new SoBaseColor;
-    bc->rgb.setValue(0, 0, 0); //black is default for text
+    bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
     net_txt->addChild(bc);
     // doesn't seem to make much diff:
     SoComplexity* cplx = new SoComplexity;

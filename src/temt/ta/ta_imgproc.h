@@ -63,6 +63,11 @@ public:
   virtual bool	ImageToRGB_float(float_Matrix& rgb_data);
   // #CAT_Data convert image to RGB floating point image data -- img_data is 3 dimensional with 3rd dim = r,g,b: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
 
+  bool	ImageToMatrix_grey(float_Matrix& grey_data) { return ImageToGrey_float(grey_data); }
+  // #CAT_Data convert image to greyscale Matrix floating point image data (alias for ImageToGrey_float): note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
+  bool	ImageToMatrix_rgb(float_Matrix& rgb_data) { return ImageToRGB_float(rgb_data); }
+  // #CAT_Data convert image to RGB Matrix floating point image data (alias for ImageToMatrix_rgb) -- img_data is 3 dimensional with 3rd dim = r,g,b: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
+
   virtual bool	ImageToDataCell(DataTable* dt, int col, int row);
   // #CAT_Data set image to datatable cell indexed by col and row numbers -- uses cell dimensionality and type -- only amount that fits in cell is copied. row = -1 = last row
   virtual bool	ImageToDataCellName(DataTable* dt, const String& col_nm, int row);

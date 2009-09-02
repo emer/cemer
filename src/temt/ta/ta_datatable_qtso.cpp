@@ -1471,6 +1471,9 @@ void GridTableView::RenderHeader() {
     fnt->size.setValue(font_scale);
   hdr->addChild(fnt);
 
+  T3DataViewFrame* fr = GetFrame();
+  iColor txtcolr = fr->GetTextColor();
+
   float gr_mg_sz = grid_margin;
   float gr_mg_sz2 = 2.0f * gr_mg_sz;
   // margin and baseline adj
@@ -1514,7 +1517,7 @@ void GridTableView::RenderHeader() {
     col_wd_lst = col_widths[col_idx++]; // note incr
     T3GridColViewNode* colnd = cvs->MakeGridColViewNode(); //note: non-standard semantics
     SoSeparator* colsep = colnd->topSeparator();
-    colnd->material()->diffuseColor.setValue(0.0f, 0.0f, 0.0f); // black text
+    colnd->material()->diffuseColor.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
     SoTranslation* ttr = new SoTranslation();
     ttr->translation.setValue(.5f * col_wd_lst, 0.0f, 0.0f);
     colsep->addChild(ttr);

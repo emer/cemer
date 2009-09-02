@@ -3367,6 +3367,11 @@ int Program::CallInit(Program* caller) {
 
 void Program::Init() {
   ClearStopReq();		// NOTE: newly added 4/18/09 -- check for breakage..
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(proj && proj->file_name.nonempty()) {
+    QFileInfo fi(proj->file_name); // set to current working dir on init
+    QDir::setCurrent(fi.absolutePath());
+  }
   taMisc::Busy();
   setRunState(INIT);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state

@@ -1198,6 +1198,21 @@ int taProject::Save() {
   return SaveAs(fname);
 }
 
+int taProject::SaveAs(const String& fname) {
+  int rval = false;
+  taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString);
+  if (flr->ostrm) {
+    QFileInfo fi(flr->FileName()); // set to current working dir
+    QDir::setCurrent(fi.absolutePath());
+    Save_strm(*(flr->ostrm));
+    flr->Close();
+    rval = true;
+  }
+  taRefN::unRefDone(flr);
+  DataChanged(DCR_ITEM_UPDATED_ND);
+  return rval;
+} 
+
 int taProject::SaveNoteChanges() {
   UpdateChangeLog();
   return Save();

@@ -28,6 +28,7 @@
 // Lesser General Public License for more details.
 
 #include "t3node_so.h"
+#include "t3viewer.h"
 #include "ta_geometry.h"
 
 #include <QImage>
@@ -180,7 +181,16 @@ SoAsciiText* T3Node::captionNode(bool auto_create) {
   if (captionNode_ || !auto_create) return captionNode_;
   SoSeparator* cs = captionSeparator(auto_create); //note: ac is true
   SoBaseColor* bc = new SoBaseColor;
-  bc->rgb.setValue(0, 0, 0); //black is default for text
+
+  T3DataView* dview = (T3DataView*)dataView();
+  if(dview) {
+    T3DataViewFrame* fr = dview->GetFrame();
+    iColor txtcolr = fr->GetTextColor();
+    bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
+  }
+  else {
+    bc->rgb.setValue(0, 0, 0); //black is default for text
+  }
   insertChildBefore(cs, bc, NULL); // at end
   captionNode_ = new SoAsciiText();
 //  captionNode_->setName("captionNode");
@@ -273,7 +283,7 @@ SoFont* T3NodeLeaf::captionFont(bool auto_create) {
   if (!rval && auto_create) {
     rval = new SoFont();
     rval->setName("captionFont");
-    rval->name = "Arial";
+    rval->name = (const char*)taMisc::t3d_font_name;
     cs->insertChild(rval, 0);
   }
   return rval;
@@ -360,7 +370,7 @@ SoFont* T3NodeParent::captionFont(bool auto_create) {
   if (!rval && auto_create) {
     rval = new SoFont();
     rval->setName("captionFont");
-    rval->name = "Arial";
+    rval->name = (const char*)taMisc::t3d_font_name;
     insertChildAfter(ts, rval, shapeSeparator());
   }
   return rval;
@@ -1294,7 +1304,7 @@ void SoMatrixGrid::render() {
       bc->rgb.setValue(0, 0, 0); //black is default for text
       cell_text_->addChild(bc);
       cell_fnt_ = new SoFont();
-      cell_fnt_->name = "Arial";
+      cell_fnt_->name = (const char*)taMisc::t3d_font_name;
       cell_text_->addChild(cell_fnt_);
     }
     cell_fnt_->size.setValue(ufontsz);
@@ -1969,7 +1979,7 @@ void So3DHeightField::render() {
       bc->rgb.setValue(0, 0, 0); //black is default for text
       cell_text_->addChild(bc);
       cell_fnt_ = new SoFont();
-      cell_fnt_->name = "Arial";
+      cell_fnt_->name = (const char*)taMisc::t3d_font_name;
       cell_text_->addChild(cell_fnt_);
     }
     cell_fnt_->size.setValue(ufontsz);

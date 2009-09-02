@@ -766,6 +766,7 @@ public:
 
   T3DataViewRoot	root_view; // #SHOW_TREE placeholder item -- contains the actual root(s) DataView items as children
   taColor		bg_color; // #NO_ALPHA background color of the frame (note: alpha transparency value not used)
+  taColor		text_color; // color to use for text in the frame -- may need to change this from default of black depending on the bg_color
   bool			headlight_on; // turn the camera headlight on for illuminating the scene -- turn off only if there is another source of light within the scenegraph -- otherwise it will be dark!
   StereoView		stereo_view;  // what type of stereo display to render, if any
   T3SavedView_List	saved_views;  // saved camera position views from viewer -- this is the persitent version copied from camera
@@ -777,6 +778,7 @@ public:
   
   inline iT3DataViewFrame* widget() {return (iT3DataViewFrame*)inherited::widget();} // lex override
   const iColor		GetBgColor() const; // get the effective bg color
+  const iColor		GetTextColor() const; // get the effective text color
   
   virtual void		AddView(T3DataView* view); // add a view
   // #IGNORE 

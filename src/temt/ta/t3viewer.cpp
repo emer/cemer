@@ -1852,6 +1852,10 @@ void T3DataViewFrame::Initialize() {
   bg_color.r = 0.8f;
   bg_color.g = 0.8f;
   bg_color.b = 0.8f;
+  text_color.no_a = false;
+  text_color.r = 0.0f;
+  text_color.g = 0.0f;
+  text_color.b = 0.0f;
   headlight_on = true;
   stereo_view = STEREO_NONE;
 }
@@ -1865,11 +1869,13 @@ void T3DataViewFrame::InitLinks() {
   inherited::InitLinks();
   taBase::Own(root_view, this);
   taBase::Own(bg_color, this);
+  taBase::Own(text_color, this);
   taBase::Own(saved_views, this);
 }
 
 void T3DataViewFrame::CutLinks() {
   bg_color.CutLinks();
+  text_color.CutLinks();
   root_view.CutLinks();
   inherited::CutLinks();
 }
@@ -1877,6 +1883,7 @@ void T3DataViewFrame::CutLinks() {
 void T3DataViewFrame::Copy_(const T3DataViewFrame& cp) {
   root_view = cp.root_view;
   bg_color = cp.bg_color;
+  text_color = cp.text_color;
 }
 
 
@@ -1962,6 +1969,10 @@ const iColor T3DataViewFrame::GetBgColor() const {
   }
   rval = bg_color;
   return rval;
+}
+
+const iColor T3DataViewFrame::GetTextColor() const {
+  return text_color;  // no actual logic required it seems
 }
 
 void T3DataViewFrame::Render_pre() {
