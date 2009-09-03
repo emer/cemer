@@ -826,6 +826,7 @@ public:
   bool	        mnt_clear_veto;	// #DEF_true a maint Go gating signal, arriving after output gating, can veto the clearing of maintenance currents that would otherwise occur from the output gating
   bool	        mnt_to_bg;	// #DEF_true send maintenance activation values to the PVLV LVe and Matrix layers instead of the output gated activation (act) which is sent to other layers
   bool		patch_out_mod;	// #DEF_false use patch LVe value to modulate output gating activation level
+  bool		out_go_clear;	// #DEF_true an output Go clears the maintenance currents at the end of the trial -- you use it, you lose it..
   float		off_accom;	// #DEF_0 #EXPERT how much of the maintenance current to apply to accommodation after turning a unit off
 
   inline void	SetBaseGain(float bg)

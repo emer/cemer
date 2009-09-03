@@ -2637,6 +2637,7 @@ void XPFCGateSpec::Initialize() {
   mnt_clear_veto = true;
   mnt_to_bg = true;
   patch_out_mod = false;
+  out_go_clear = true;
   off_accom = 0.0f;
 }
 
@@ -2849,7 +2850,7 @@ void XPFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
     else if(ugp->misc_state1 == XPFCGateSpec::MAINT_OUT_GO ||
 	    ugp->misc_state1 == XPFCGateSpec::EMPTY_OUT_GO) {
       // output without any maint -- means clear!
-      if(ugp->misc_state > 0) {		       // maintaining
+      if(gate.out_go_clear && (ugp->misc_state > 0)) {		       // maintaining
 	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
 	ugp->misc_state = 0;			     // empty
       }

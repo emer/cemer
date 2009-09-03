@@ -577,7 +577,7 @@ void SpikeFunSpec::Initialize() {
   v_m_r = 0.0f;
   eq_gain = 10.0f;
   eq_dt = 0.02f;
-  clamp_max_p = .1f;
+  clamp_max_p = .11f;
   clamp_type = REGULAR;
   // vm_dt of .1 should also be used; vm_noise var .002???
   

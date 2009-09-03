@@ -723,7 +723,7 @@ private:
 };
 
 class LEABRA_API SpikeFunSpec : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically -- for clamped layers, a poisson spike rate with probability proportional to external input is computed
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically -- for clamped layers, spiking probability is proportional to external input controlled by the clamp_type and clamp_max_p values -- soft clamping may still be a better option though
 INHERITED(taOBase)
 public:
   enum ClampType {		// how to generate spikes during hard clamp conditions
@@ -739,8 +739,8 @@ public:
   float		v_m_r;		// #DEF_0 post-spiking membrane potential to reset to, produces refractory effect 
   float		eq_gain;	// #DEF_10 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
   float		eq_dt;		// #DEF_0.02 if non-zero, eq is computed as a running average with this time constant
-  float		clamp_max_p;	// #DEF_0.1 maximum probability of spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall probability of firing a spike -- distribution is determined by clamp_type
-  ClampType	clamp_type;	// how to generate spikes when layer is hard clamped
+  float		clamp_max_p;	// #DEF_0.11 maximum probability of spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall probability of firing a spike -- distribution is determined by clamp_type
+  ClampType	clamp_type;	// how to generate spikes when layer is hard clamped -- in many cases soft clamping may work better
 
   float		gg_decay;	// #READ_ONLY #NO_SAVE g_gain/decay
   float		gg_decay_sq;	// #READ_ONLY #NO_SAVE g_gain/decay^2
