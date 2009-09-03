@@ -726,6 +726,12 @@ class LEABRA_API SpikeFunSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically -- for clamped layers, a poisson spike rate with probability proportional to external input is computed
 INHERITED(taOBase)
 public:
+  enum ClampType {		// how to generate spikes during hard clamp conditions
+    POISSON,			// generate spikes according to Poisson distribution with probability = clamp_max_p * u->ext
+    UNIFORM,			// generate spikes according to Uniform distribution with probability = clamp_max_p * u->ext
+    REGULAR,			// generate spikes every 1 / (clamp_max_p * u->ext) cycles -- this works the best, at least in smaller networks, due to the lack of additional noise, and the synchrony of the inputs for driving synchrony elsewhere
+  };
+
   float		rise;		// #DEF_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is highly optimized (doesn't use window -- just uses recursive exp decay) and thus the default!
   float		decay;		// #DEF_5 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function (not very useful)
   float		g_gain;		// #DEF_5 multiplier for the spike-generated conductances when using alpha function which is normalized by area under the curve -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well, effectively neutralizing the area normalization (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
@@ -733,7 +739,8 @@ public:
   float		v_m_r;		// #DEF_0 post-spiking membrane potential to reset to, produces refractory effect 
   float		eq_gain;	// #DEF_10 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
   float		eq_dt;		// #DEF_0.02 if non-zero, eq is computed as a running average with this time constant
-  float		clamp_max_p;	// #DEF_0.1 maximum probability of poisson spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall poisson probability of firing a spike
+  float		clamp_max_p;	// #DEF_0.1 maximum probability of spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall probability of firing a spike -- distribution is determined by clamp_type
+  ClampType	clamp_type;	// how to generate spikes when layer is hard clamped
 
   float		gg_decay;	// #READ_ONLY #NO_SAVE g_gain/decay
   float		gg_decay_sq;	// #READ_ONLY #NO_SAVE g_gain/decay^2
@@ -1118,8 +1125,8 @@ public:
 
       virtual void Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net);
       // #CAT_Activation compute the activation from membrane potential -- discrete spiking
-      virtual void Compute_PoissonSpike(LeabraUnit* u, LeabraNetwork* net, float spike_p);
-      // #CAT_Activation compute spiking activation according to given poission probability -- includes depression and other active factors as done in Compute_ActFmVm_spike -- used for hard clamped inputs in spiking nets
+      virtual void Compute_ClampSpike(LeabraUnit* u, LeabraNetwork* net, float spike_p);
+      // #CAT_Activation compute spiking activation according to spike.clamp_type with given probability (typically spike.clamp_max_p * u->ext) -- includes depression and other active factors as done in Compute_ActFmVm_spike -- used for hard clamped inputs in spiking nets
     virtual void Compute_SelfReg_Cycle(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation Act Step 3: compute self-regulatory currents (hysteresis, accommodation) -- at the cycle time scale
     virtual void Compute_SelfReg_Trial(LeabraUnit* u, LeabraNetwork* net);

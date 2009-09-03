@@ -578,6 +578,7 @@ void SpikeFunSpec::Initialize() {
   eq_gain = 10.0f;
   eq_dt = 0.02f;
   clamp_max_p = .1f;
+  clamp_type = REGULAR;
   // vm_dt of .1 should also be used; vm_noise var .002???
   
   gg_decay = g_gain / decay;
@@ -1256,7 +1257,7 @@ void LeabraUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
 
   if((lnet->cycle >= 0) && lay->hard_clamped) {
     if(lay->hard_clamped && act_fun == SPIKE) {
-      Compute_PoissonSpike(lu, lnet, u->ext * spike.clamp_max_p);
+      Compute_ClampSpike(lu, lnet, u->ext * spike.clamp_max_p);
       lu->AddToActBuf(syn_delay);
     }
     return; // don't re-compute
@@ -1270,18 +1271,30 @@ void LeabraUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   lu->AddToActBuf(syn_delay);
 }
 
-void LeabraUnitSpec::Compute_PoissonSpike(LeabraUnit* u, LeabraNetwork* net, float spike_p) {
-  double poisson = Random::Poisson(spike_p);
-  if(poisson > 0.0) {
+void LeabraUnitSpec::Compute_ClampSpike(LeabraUnit* u, LeabraNetwork* net, float spike_p) {
+  bool fire_now = false;
+  switch(spike.clamp_type) {
+  case SpikeFunSpec::POISSON:
+    if(Random::Poisson(spike_p) > 0.0f) fire_now = true;
+    break;
+  case SpikeFunSpec::UNIFORM:
+    fire_now = Random::BoolProb(spike_p);
+    break;
+  case SpikeFunSpec::REGULAR: {
+    if(spike_p > 0.0f) {
+      int cyc_int = (int)((1.0f / spike_p) + 0.5f);
+      fire_now = (net->ct_cycle % cyc_int == 0);
+    }
+    break;
+  }
+  }
+  if(fire_now)
     u->v_m = act.thr + 0.1f;	// make it fire
-  }
-  else {
+  else
     u->v_m = e_rev.l;		// make it not fire
-  }
-  
+    
   Compute_ActFmVm_spike(u, net); // then do normal spiking computation
 }
-
 
 void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
   LeabraLayer* lay = u->own_lay();
