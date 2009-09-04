@@ -1146,7 +1146,7 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
   }
   String load_str;		// this will be the load string 
   if(old_load) {
-    cerr << "old load: con_alloc: " << con_alloc << " alloc_size: " << alloc_size << endl;
+//     cerr << "old load: con_alloc: " << con_alloc << " alloc_size: " << alloc_size << endl;
     load_str += "{ con_alloc = " + String(con_alloc) + ";\n";
   }
   c = taMisc::read_word(strm);

@@ -2871,6 +2871,10 @@ bool taRootBase::Startup_Run() {
   return true;
 }
 
+extern "C" {
+  extern void rl_cleanup_after_signal(void);
+}
+
 // todo: could partition these out into separate guys..  	
 void taRootBase::Cleanup_Main() {
   // remove sig handler -- very nasty when baddies happen after this point
@@ -2898,9 +2902,12 @@ void taRootBase::Cleanup_Main() {
   if (milestone & SM_MPI_INIT)
     MPI_Finalize();
 #endif
-// hack to get console properly back in echo mode
+
 #ifndef TA_OS_WIN
-  system("stty echo");
+  // only if using readline-based console, reset tty state
+  if((console_type == taMisc::CT_NONE) && (taMisc::gui_active || cssMisc::init_interactive)) {
+    rl_cleanup_after_signal();
+  }
 #endif
 }
 
