@@ -2872,6 +2872,7 @@ bool taRootBase::Startup_Run() {
 }
 
 extern "C" {
+  extern void rl_free_line_state(void);
   extern void rl_cleanup_after_signal(void);
 }
 
@@ -2906,6 +2907,7 @@ void taRootBase::Cleanup_Main() {
 #ifndef TA_OS_WIN
   // only if using readline-based console, reset tty state
   if((console_type == taMisc::CT_NONE) && (taMisc::gui_active || cssMisc::init_interactive)) {
+    rl_free_line_state();
     rl_cleanup_after_signal();
   }
 #endif
