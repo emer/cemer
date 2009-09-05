@@ -2508,6 +2508,14 @@ void PFCUnitSpec::Initialize() {
   
 }
 
+void PFCUnitSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(depress.on) {
+    TestWarning(true, "UAE", "cannot use synaptic depression with these units as a variable (act_nd) has been co-opted temporarily in an incompatible way.  Email Randy if this is a problem.");
+    depress.on = false;
+  }
+}
+
 void PFCUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) {
   inherited::DecayState(u, net, decay);
   u->misc_2 = 0.0f;
@@ -2603,12 +2611,6 @@ void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_
   }
 }
 
-void PFCUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
-  LeabraUnit_Group* ugp = (LeabraUnit_Group*)u->owner; // assume..
-  u->net += u->act_eq * ugp->misc_float;	      // go netin mod -- weight by actual activation
-  inherited::Compute_Conduct(u, net);
-}
-
 void PFCUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
   if(act_fun == SPIKE) {
     // todo: do something here..
@@ -2619,6 +2621,9 @@ void PFCUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
     Compute_ActFmVm_rate(u, net); 
     LeabraUnit_Group* ugp = (LeabraUnit_Group*)u->owner; // assume..
     u->act = u->act_eq * ugp->misc_float1;	      // net output go mod
+    // modulate learning activation value (act_nd) by gating factor..
+    if(net->phase == LeabraNetwork::PLUS_PHASE)
+      u->act_nd = u->act_m + ugp->misc_float * (u->act_eq - u->act_m);
   }
 }
 
@@ -2631,12 +2636,12 @@ void XPFCGateSpec::Initialize() {
   base_gain = 0.5f;
   go_gain = 0.5f;
   graded_out_go = true;
-  mnt_go_netin = 0.01f;
-  out_go_netin = 0.01f;
+  go_learn_mod = 0.5f;
+  mnt_go_learn_mod = true;
+  patch_out_mod = false;
+  mnt_to_bg = true;
   clear_decay = 0.0f;
   mnt_clear_veto = true;
-  mnt_to_bg = true;
-  patch_out_mod = false;
   out_go_clear = true;
   off_accom = 0.0f;
 }
@@ -2886,7 +2891,7 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     LeabraUnit* snr_mnt_u = (LeabraUnit*)snrgp->Leaf(0);
     LeabraUnit* snr_out_u = (LeabraUnit*)snrgp->Leaf(1);
 
-    ugp->misc_float = 0.0f;	// go_netin multiplier factor
+    ugp->misc_float = 0.0f;	// go_learn multiplier factor
     ugp->misc_float1 = 0.0f;	// output gating multiplier factor
     XPFCGateSpec::GateSignal gate_sig = XPFCGateSpec::GATE_NOGO;
 
@@ -2902,7 +2907,7 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     // compute output gating multiplier consistently for all cases -- always does this
     if(out_already_fired || snr_out_u->act_eq > snrthalsp->snrthal.go_thr) {
       gate_sig = XPFCGateSpec::GATE_OUT_GO;
-      ugp->misc_float = gate.out_go_netin * snr_out_u->act_eq;
+      ugp->misc_float = snr_out_u->act_eq;
       if(gate.graded_out_go)
 	ugp->misc_float1 = snr_out_u->act_eq;
       else
@@ -2925,7 +2930,8 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       else if(net->ct_cycle < max_mnt_go_cycle && // only allow mnt within early minus 
 	      snr_mnt_u->act_eq > snrthalsp->snrthal.go_thr) {
 	gate_sig = XPFCGateSpec::GATE_MNT_GO;
-	ugp->misc_float = gate.mnt_go_netin * snr_mnt_u->act_eq;
+	if(gate.mnt_go_learn_mod)
+	  ugp->misc_float = snr_mnt_u->act_eq;
 
 	if(ugp->misc_state > 0) { // full stripe
 	  ugp->misc_state1 = XPFCGateSpec::MAINT_MNT_GO;
@@ -2952,11 +2958,15 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       // pure mnt gating -- use it for the activations -- could also have output
       // going on too, but anyway this is considered dominant
       gate_sig = XPFCGateSpec::GATE_MNT_GO;
-      ugp->misc_float = gate.mnt_go_netin * snr_mnt_u->act_eq;
+      if(gate.mnt_go_learn_mod)
+	ugp->misc_float = snr_mnt_u->act_eq;
     }
 
     if(gate.patch_out_mod)		    // apply to neting tagin guy too 
       ugp->misc_float *= snr_out_u->misc_1; // misc_1 has patch lve value
+
+    // this is the final value with the go_learn_mod factor incorporated
+    ugp->misc_float = (1.0f - gate.go_learn_mod) + (gate.go_learn_mod * ugp->misc_float);
 
     // fix misc_float1 to be net output gating multiplier:
     ugp->misc_float1 = gate.base_gain + gate.go_gain * ugp->misc_float1;

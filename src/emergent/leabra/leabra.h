@@ -125,8 +125,8 @@ class LEABRA_API WtScaleSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight scaling specification
 INHERITED(taBase)
 public:
-  float		abs;		// #DEF_1 absolute scaling (not subject to normalization: directly multiplies weight values)
-  float		rel;		// [Default: 1] relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
+  float		abs;		// #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
+  float		rel;		// [Default: 1] #MIN_0 relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
 
   inline float	NetScale() 	{ return abs * rel; }
 
@@ -142,8 +142,8 @@ class LEABRA_API WtScaleSpecInit : public taBase {
 INHERITED(taBase)
 public:
   bool		init;		// use these scaling values to initialize the wt_scale parameters during InitWeights (if false, these values have no effect at all)
-  float		abs;		// #CONDEDIT_ON_init #DEF_1 absolute scaling (not subject to normalization: directly multiplies weight values)
-  float		rel;		// #CONDEDIT_ON_init [Default: 1] relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
+  float		abs;		// #CONDEDIT_ON_init #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
+  float		rel;		// #CONDEDIT_ON_init [Default: 1] #MIN_0 relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(WtScaleSpecInit);
@@ -156,8 +156,8 @@ class LEABRA_API WtSigSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sigmoidal weight function specification
 INHERITED(taOBase)
 public:
-  float		gain;		// #DEF_1;6 gain (contrast, sharpness) of the weight contrast function (1 = linear)
-  float		off;		// #DEF_1;1.25 offset of the function (1=centered at .5, >1=higher, <1=lower)
+  float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
+  float		off;		// #DEF_1;1.25 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower)
 
   static inline float	SigFun(float w, float gn, float of) {
     if(w <= 0.0f) return 0.0f;
@@ -196,7 +196,7 @@ class LEABRA_API LearnMixSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra Leabra CHL mixture of learning factors (hebbian vs. error-driven) specification
 INHERITED(taBase)
 public:
-  float		hebb;		// [Default: .01] amount of hebbian learning (should be relatively small, can be effective at .0001)
+  float		hebb;		// [Default: .01] #MIN_0 amount of hebbian learning (should be relatively small, can be effective at .0001)
   float		err;		// #READ_ONLY #SHOW [Default: .99] amount of error driven learning, automatically computed to be 1-hebb
   bool		err_sb;		// #DEF_true apply exponential soft-bounding to the error learning component (applied in dWt)
 
@@ -221,15 +221,15 @@ public:
   };
 
   LearnVar	lrn_var;	// #DEF_XCAL_SR learning rule variant -- non-XCAL options are primarily for testing and specialized applications -- bias weights always use CAL or CHL if CHL is selected
-  float		mvl_mix;	// #DEF_0.001:1.0 [0.002 std] amount that medium (trial) versus long (epoch) time scale learning contributes -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is svm: short (plus phase) versus medium (trial) time scale which reflects pure error-driven learning
+  float		mvl_mix;	// #DEF_0.001:1.0 [0.002 std] #MIN_0 amount that medium (trial) versus long (epoch) time scale learning contributes -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is svm: short (plus phase) versus medium (trial) time scale which reflects pure error-driven learning
   float		svm_mix;	// #READ_ONLY 1-mvl_mix -- how much the short (plus phase) versus medium (trial) time-scale factor contributes to learning -- this the pure error-driven learning component -- the rest (mvl_mix = 1-svm_mix) is medium (trial) versus long (epoch) time-scale
-  float		s_mix;		// #DEF_0.7:0.95 [0.90 std] how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
+  float		s_mix;		// #DEF_0.7:0.95 [0.90 std] #MIN_0 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
-  float		l_dt;		// #DEF_0.0001:0.01 [0.005 std for TRIAL, .0002 for CONT] time constant for updating the long time-scale ravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_l variable!!
-  float		l_gain;		// #DEF_1.5 gain for long time-scale ravg term -- needed to put into same terms as the s*r avg values used in the s and m components of learning -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level l_thr variable!!
-  float		ml_dt;		// #DEF_0.4 time constant for updating the medium-to-long time-scale ravg_ml value, which integrates over recent history of medium (trial level) averages, used for rapid adaptation of LTP vs LTD learning threshold in XCAL, and for learning based on receiver average activations with a trace of prior activations -- note this is computed on the unit bias con spec, where it updates the unit-level ravg_ml variable
-  float		d_rev;		// #DEF_0.1 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.10 is a compromise
-  float		d_gain;		// #DEF_1 multiplier on LTD values relative to LTP values -- generally do not change from 1.0 default unless using only BCM-style learning
+  float		l_dt;		// #DEF_0.0001:0.01 [0.005 std for TRIAL, .0002 for CONT] #MIN_0 time constant for updating the long time-scale ravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_l variable!!
+  float		l_gain;		// #DEF_1.5 #MIN_0 gain for long time-scale ravg term -- needed to put into same terms as the s*r avg values used in the s and m components of learning -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level l_thr variable!!
+  float		ml_dt;		// #DEF_0.4 #MIN_0 time constant for updating the medium-to-long time-scale ravg_ml value, which integrates over recent history of medium (trial level) averages, used for rapid adaptation of LTP vs LTD learning threshold in XCAL, and for learning based on receiver average activations with a trace of prior activations -- note this is computed on the unit bias con spec, where it updates the unit-level ravg_ml variable
+  float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.10 is a compromise
+  float		d_gain;		// #DEF_1 #MIN_0 multiplier on LTD values relative to LTP values -- generally do not change from 1.0 default unless using only BCM-style learning
 
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- multiplication factor in learning rule
 
@@ -262,8 +262,8 @@ class LEABRA_API XCalContSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra eXtended Contrastive Attractor Learning (XCAL) fully continuous time specs (CTLEABRA_XCAL_C)
 INHERITED(taOBase)
 public:
-  float		s_dt;		// #DEF_0.2 time (only for XCAL_C) constant for continuously updating the short time-scale sravg_s value
-  float		m_dt;		// #DEF_0.1 time (only for XCAL_C) constant for continuous updating the medium time-scale sravg_m value
+  float		s_dt;		// #DEF_0.2 #MIN_0 time (only for XCAL_C) constant for continuously updating the short time-scale sravg_s value
+  float		m_dt;		// #DEF_0.1 #MIN_0 time (only for XCAL_C) constant for continuous updating the medium time-scale sravg_m value
   // todo: need some params like this for continuous mode -- currently still use trial-wise hooks
 //   float		lrn_thr;	// threshold on sravg_m value to initiate learning, in continous mode
 //   int		lrn_delay;	// delay after lrn_thr threshold has been crossed after which learning occurs
@@ -281,13 +281,13 @@ class LEABRA_API XCalMiscSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra eXtended Contrastive Attractor Learning (XCAL) extra misc specs (lower frequency usage)
 INHERITED(taOBase)
 public:
-  float		ml_mix;		// #DEF_0 how much the medium-to-long time scale average activations contribute to synaptic activation -- useful for capturing sequential dependencies between events, when these are present in the simulation, but not appropriate for random event sequences
-  float		sm_mix;		// #READ_ONLY #DEF_1 complement of ml_mix = 1-ml_mix -- how much the short & medium time scale average activations contribute to synaptic activation
+  float		ml_mix;		// #DEF_0 #MIN_0 how much the medium-to-long time scale average activations contribute to synaptic activation -- useful for capturing sequential dependencies between events, when these are present in the simulation, but not appropriate for random event sequences
+  float		sm_mix;		// #READ_ONLY #DEF_1 #MIN_0 complement of ml_mix = 1-ml_mix -- how much the short & medium time scale average activations contribute to synaptic activation
 
   bool		use_sb;		// #DEF_true use soft weight bounding -- this should almost always be used except in special experimental circumstances
   bool		use_nd;		// #DEF_false use the act_nd variables (non-depressed) for computing sravg/ravg terms (else use raw act, which is raw spikes in spiking mode, and subject to depression if in place)
 
-  float		avg_init;	// #DEF_0.15 initial value for averages
+  float		avg_init;	// #DEF_0.15 #MIN_0 initial value for averages
 
   bool		do_init_sravg;	// #HIDDEN #READ_ONLY #NO_SAVE initialize sravg values at connection level -- this is a complicated test so it is precompiled.
   bool		do_comp_sravg;	// #HIDDEN #READ_ONLY #NO_SAVE compute sravg values at connection level -- this is a complicated test so it is precompiled.
@@ -305,8 +305,8 @@ class LEABRA_API SAvgCorSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sending average activation correction specifications: affects hebbian learning and netinput computation
 INHERITED(taBase)
 public:
-  float		cor;		// #DEF_0.4:0.8 proportion of correction to apply (0=none, 1=all, .5=half, etc)
-  float		thresh;		// #DEF_0.001 threshold of sending average activation below which learning does not occur (prevents learning when there is no input)
+  float		cor;		// #DEF_0.4:0.8 #MIN_0 #MAX_1 proportion of correction to apply (0=none, 1=all, .5=half, etc)
+  float		thresh;		// #DEF_0.001 #MIN_0 threshold of sending average activation below which learning does not occur (prevents learning when there is no input)
   bool		norm_con_n;	// #DEF_false #AKA_div_gp_n in normalizing netinput, divide by the actual number of connections (recv group n), not the overall number of units in the sending layer; this is good when units only receive from a small fraction of sending layer units
 
   void 	Defaults()	{ Initialize(); }
@@ -321,14 +321,14 @@ class LEABRA_API AdaptRelNetinSpec : public taBase {
 INHERITED(taBase)
 public:
   bool		on;		// whether to adapt relative netinput values for this connection (only applied if AdaptAbsNetin is called, after AbsRelNetin and AvgAbsRelNetin)
-  float		trg_fm_input;	// #CONDEDIT_ON_on:true (typically 0.85) target relative netinput for fm_input projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_output and lateral should sum to 1. if other types are missing, this is increased in proportion
-  float		trg_fm_output;	// #CONDEDIT_ON_on:true (typically 0.10) target relative netwinput for fm_output projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_input and lateral should sum to 1. if other types are missing, this is increased in proportion
-  float		trg_lateral;	// #CONDEDIT_ON_on:true (typically 0.05) target relative netinput for lateral projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them)  -- this plus fm_input and lateral should sum to 1.  if other types are missing, this is increased in proportion
+  float		trg_fm_input;	// #CONDEDIT_ON_on:true (typically 0.85) #MIN_0 #MAX_1 target relative netinput for fm_input projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_output and lateral should sum to 1. if other types are missing, this is increased in proportion
+  float		trg_fm_output;	// #CONDEDIT_ON_on:true (typically 0.10) #MIN_0 #MAX_1 target relative netwinput for fm_output projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_input and lateral should sum to 1. if other types are missing, this is increased in proportion
+  float		trg_lateral;	// #CONDEDIT_ON_on:true (typically 0.05) #MIN_0 #MAX_1 target relative netinput for lateral projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them)  -- this plus fm_input and lateral should sum to 1.  if other types are missing, this is increased in proportion
   float		trg_sum;	// #READ_ONLY #SHOW sum of trg values -- should be 1!
 
-  float		tol_lg;		// #CONDEDIT_ON_on:true #DEF_0.05 tolerance from target value (as a proportion of target value) on large numbers (>.25), within which parameters are not adapted
-  float		tol_sm;		// #CONDEDIT_ON_on:true #DEF_0.2 tolerance from target value (as a proportion of target value) on small numbers (<.25), within which parameters are not adapted
-  float		rel_lrate;	// #CONDEDIT_ON_on:true #DEF_0.2 adpatation 'learning' rate on wt_scale.rel parameter
+  float		tol_lg;		// #CONDEDIT_ON_on:true #DEF_0.05 #MIN_0 #MAX_1 tolerance from target value (as a proportion of target value) on large numbers (>.25), within which parameters are not adapted
+  float		tol_sm;		// #CONDEDIT_ON_on:true #DEF_0.2 #MIN_0 #MAX_1 tolerance from target value (as a proportion of target value) on small numbers (<.25), within which parameters are not adapted
+  float		rel_lrate;	// #CONDEDIT_ON_on:true #DEF_0.2 #MIN_0 #MAX_1 adpatation 'learning' rate on wt_scale.rel parameter
 
   virtual bool	CheckInTolerance(float trg, float val);
   // check if value is inside the tolerance from trg
@@ -365,7 +365,7 @@ public:
   WtScaleSpec	wt_scale;	// #CAT_Activation scale effective weight values to control the overall strength of a projection -- relative shifts balance among different projections, while absolute is a direct multipler
   WtScaleSpecInit wt_scale_init;// #CAT_Activation initial values of wt_scale parameters, set during InitWeights -- useful for rel_net_adapt and abs_net_adapt (on LayerSpec)
 
-  float		lrate;		// #CAT_Learning #DEF_0.01;0.02 [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience
+  float		lrate;		// #CAT_Learning #DEF_0.01;0.02 #MIN_0 [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience
   float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW #CAT_Learning current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
   LRSValue	lrs_value;	// #CAT_Learning what value to drive the learning rate schedule with (Important: affects values entered in start_ctr fields of schedule!)
   Schedule	lrate_sched;	// #CAT_Learning schedule of learning rate over training epochs or as a function of performance, as determined by lrs_value (NOTE: these factors multiply lrate to give the cur_lrate value)
@@ -595,7 +595,7 @@ class LEABRA_API LeabraBiasSpec : public LeabraConSpec {
   // Leabra bias-weight connection specs (bias wts are a little bit special)
 INHERITED(LeabraConSpec)
 public:
-  float		dwt_thresh;  // #DEF_0.1 #CAT_Learning don't change if dwt < thresh, prevents buildup of small changes
+  float		dwt_thresh;  // #DEF_0.1 #MIN_0 #CAT_Learning don't change if dwt < thresh, prevents buildup of small changes
 
   inline override void	B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru);
   inline override void	B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru,
@@ -707,10 +707,10 @@ public:
   };
 
   float		thr;		// #DEF_0.25 threshold value Theta (Q) for firing output activation 
-  float		gain;		// #DEF_600 gain (gamma) of the sigmoidal rate-coded activation function 
-  float		nvar;		// #DEF_0.005 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1
-  float		avg_dt;		// #DEF_0.005 time constant for integrating activation average (computed across trials)
-  float		avg_init;	// #DEF_0.15 initial activation average value
+  float		gain;		// #DEF_600 #MIN_0 gain (gamma) of the sigmoidal rate-coded activation function 
+  float		nvar;		// #DEF_0.005 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1
+  float		avg_dt;		// #DEF_0.005 #MIN_0 time constant for integrating activation average (computed across trials)
+  float		avg_init;	// #DEF_0.15 #MIN_0 initial activation average value
   IThrFun	i_thr;		// [STD or NO_AH for da mod units) how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing) -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation
 
   void 	Defaults()	{ Initialize(); }
@@ -732,14 +732,14 @@ public:
     REGULAR,			// generate spikes every 1 / (clamp_max_p * u->ext) cycles -- this works the best, at least in smaller networks, due to the lack of additional noise, and the synchrony of the inputs for driving synchrony elsewhere
   };
 
-  float		rise;		// #DEF_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is highly optimized (doesn't use window -- just uses recursive exp decay) and thus the default!
-  float		decay;		// #DEF_5 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function (not very useful)
-  float		g_gain;		// #DEF_5 multiplier for the spike-generated conductances when using alpha function which is normalized by area under the curve -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well, effectively neutralizing the area normalization (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
-  int		window;		// #DEF_3 spike integration window -- when rise==0, this window is used to smooth out the spike impulses similar to a rise time -- each net contributes over the window in proportion to 1/window -- for rise > 0, this is used for computing the alpha function -- should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost
+  float		rise;		// #DEF_0 #MIN_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is highly optimized (doesn't use window -- just uses recursive exp decay) and thus the default!
+  float		decay;		// #DEF_5 #MIN_0 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function (not very useful)
+  float		g_gain;		// #DEF_5 #MIN_0 multiplier for the spike-generated conductances when using alpha function which is normalized by area under the curve -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well, effectively neutralizing the area normalization (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
+  int		window;		// #DEF_3 #MIN_0 spike integration window -- when rise==0, this window is used to smooth out the spike impulses similar to a rise time -- each net contributes over the window in proportion to 1/window -- for rise > 0, this is used for computing the alpha function -- should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost
   float		v_m_r;		// #DEF_0 post-spiking membrane potential to reset to, produces refractory effect 
-  float		eq_gain;	// #DEF_10 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
-  float		eq_dt;		// #DEF_0.02 if non-zero, eq is computed as a running average with this time constant
-  float		clamp_max_p;	// #DEF_0.11 maximum probability of spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall probability of firing a spike -- distribution is determined by clamp_type
+  float		eq_gain;	// #DEF_10 #MIN_0 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
+  float		eq_dt;		// #DEF_0.02 #MIN_0 #MAX_1 if non-zero, eq is computed as a running average with this time constant
+  float		clamp_max_p;	// #DEF_0.11 #MIN_0 #MAX_1 maximum probability of spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall probability of firing a spike -- distribution is determined by clamp_type
   ClampType	clamp_type;	// how to generate spikes when layer is hard clamped -- in many cases soft clamping may work better
 
   float		gg_decay;	// #READ_ONLY #NO_SAVE g_gain/decay
@@ -769,11 +769,11 @@ class LEABRA_API DepressSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		on;		// synaptic depression is in effect: multiplies normal activation computed by current activation function in effect
-  float		rec;		// #CONDEDIT_ON_on #DEF_0.2 rate of recovery of spike amplitude (determines overall time constant of depression function)
-  float		asymp_act;	// #CONDEDIT_ON_on #DEF_0.5 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl value)
+  float		rec;		// #CONDEDIT_ON_on #DEF_0.2 #MIN_0 rate of recovery of spike amplitude (determines overall time constant of depression function)
+  float		asymp_act;	// #CONDEDIT_ON_on #DEF_0.5 #MIN_0 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl value)
   float		depl;		// #CONDEDIT_ON_on #READ_ONLY #SHOW rate of depletion of spike amplitude as a function of activation output (computed from rec, asymp_act)
-  int		interval;	// #CONDEDIT_ON_on only update synaptic depression at given interval (in terms of cycles, using ct_cycle) -- this can be beneficial in producing a more delayed overall effect, as is observed with discrete spiking
-  float		max_amp;	// #CONDEDIT_ON_on maximum spike amplitude -- this is the multiplier factor for activation values -- set to clamp_norm_max_amp to maintain asymptotic values at normal hard clamp levels, or set to 1 to retain usual normalized activation values (val is copied to act_range.max)
+  int		interval;	// #CONDEDIT_ON_on #MIN_1 only update synaptic depression at given interval (in terms of cycles, using ct_cycle) -- this can be beneficial in producing a more delayed overall effect, as is observed with discrete spiking
+  float		max_amp;	// #CONDEDIT_ON_on #MIN_0 maximum spike amplitude -- this is the multiplier factor for activation values -- set to clamp_norm_max_amp to maintain asymptotic values at normal hard clamp levels, or set to 1 to retain usual normalized activation values (val is copied to act_range.max)
   float		clamp_norm_max_amp;	// #CONDEDIT_ON_on #READ_ONLY #SHOW maximum spike amplitude required to maintain asymptotic firing at normal clamp levels -- set max_amp to this value for delta-based learning rules to normalize against large diffs across phases
 
   void 	Defaults()	{ Initialize(); }
@@ -790,7 +790,7 @@ class LEABRA_API SynDelaySpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		on;		// is synaptic delay active?
-  int		delay;		// #CONDEDIT_ON_on number of cycles to delay for
+  int		delay;		// #CONDEDIT_ON_on #MIN_0 number of cycles to delay for
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(SynDelaySpec);
@@ -818,12 +818,12 @@ class LEABRA_API DtSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra time constants
 INHERITED(taOBase)
 public:
-  float		vm;		// #DEF_0.1:0.3 membrane potential time constant -- if units oscillate too much, then this is too high (but see d_vm_max for another solution)
-  float		net;		// #DEF_0.7 net input time constant -- how fast to update net input (damps oscillations)
+  float		vm;		// #DEF_0.1:0.3 #MIN_0 membrane potential time constant -- if units oscillate too much, then this is too high (but see d_vm_max for another solution)
+  float		net;		// #DEF_0.7 #MIN_0 net input time constant -- how fast to update net input (damps oscillations)
   bool		midpoint;	// #DEF_false use the midpoint method in computing the vm value -- better avoids oscillations and allows a larger dt.vm parameter to be used
-  float		d_vm_max;	// #DEF_0.02:0.025 maximum change in vm at any timestep (limits blowup)
+  float		d_vm_max;	// #DEF_0.02:0.025 #MIN_0 maximum change in vm at any timestep (limits blowup)
   int		vm_eq_cyc;	// #AKA_cyc0_vm_eq #DEF_0 number of cycles to compute the vm as equilibirium potential given current inputs: set to 1 to quickly activate input layers; set to 100 to always use this computation
-  float		vm_eq_dt;	// #DEF_1 time constant for integrating the vm_eq values: how quickly to move toward the current eq value from previous vm value
+  float		vm_eq_dt;	// #DEF_1 #MIN_0 time constant for integrating the vm_eq values: how quickly to move toward the current eq value from previous vm value
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(DtSpec);
@@ -896,8 +896,8 @@ public:
   };
 
   dAValue	val;		// #DEF_INET_DA value to use for computing delta-activation (change in activation over cycles of settling).
-  float		inet_scale;	// #DEF_1 how to scale the inet measure to be like da
-  float		lay_avg_thr;	// #DEF_0.01 threshold for layer average activation to switch to da fm Inet
+  float		inet_scale;	// #DEF_1 #MIN_0 how to scale the inet measure to be like da
+  float		lay_avg_thr;	// #DEF_0.01 #MIN_0 threshold for layer average activation to switch to da fm Inet
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(MaxDaSpec);

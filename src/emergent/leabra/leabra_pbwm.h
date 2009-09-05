@@ -771,10 +771,12 @@ public:
 
   override void	DecayState(LeabraUnit* u, LeabraNetwork* net, float decay);
   override void Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  override void Compute_Conduct(LeabraUnit* u, LeabraNetwork* net);
   override void Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net);
 
   TA_BASEFUNS_NOCOPY(PFCUnitSpec);
+protected:
+  void  UpdateAfterEdit_impl();
+
 private:
   void	Initialize();
   void	Destroy()		{ };
@@ -817,17 +819,17 @@ public:
     INIT_STATE,			// initialized state at start of trial
   };
 
-  float		base_gain;	// #DEF_0.5 how much activation gets through even without a Go gating signal
+  float		base_gain;	// #DEF_0.5 #MIN_0 #MAX_1 how much activation gets through even without a Go gating signal
   float		go_gain;	// #READ_ONLY #SHOW how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
   bool		graded_out_go;	// #DEF_true use actual activation level of output Go signal to drive output activation level
-  float		mnt_go_netin;   // #DEF_0.01 how much of the Maint Go activation signal to add to the unit netinput (multiplied by the unit activation -- full contrast da-like effect), to influence learning
-  float		out_go_netin;   // #DEF_0.01 how much of the Output Go activation signal to add to the unit netinput (multiplied by the unit activation -- full contrast da-like effect), to influence learning
-  float		clear_decay;	// #DEF_0 how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse
-  bool	        mnt_clear_veto;	// #DEF_true a maint Go gating signal, arriving after output gating, can veto the clearing of maintenance currents that would otherwise occur from the output gating
-  bool	        mnt_to_bg;	// #DEF_true send maintenance activation values to the PVLV LVe and Matrix layers instead of the output gated activation (act) which is sent to other layers
+  float		go_learn_mod;	// #DEF_0.5 #MIN_0 #MAX_1 how much to modulate PFC learning as a function of go gating signal magnitude -- determines how far learning signal moves toward actual activation value away from minus-phase activation state: plus phase act_eq = act_m + ((1.0 - go_learn_mod) + go_learn_mod * gate_act) * (act - act_m)
+  bool		mnt_go_learn_mod; // #DEF_true also include maintenance go gating signal in the go learn modulation function
   bool		patch_out_mod;	// #DEF_false use patch LVe value to modulate output gating activation level
+  bool	        mnt_to_bg;	// #DEF_true send maintenance activation values to the PVLV LVe and Matrix layers instead of the output gated activation (act) which is sent to other layers
+  float		clear_decay;	// #DEF_0 #MIN_0 #MAX_1 how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse
+  bool	        mnt_clear_veto;	// #DEF_true a maint Go gating signal, arriving after output gating, can veto the clearing of maintenance currents that would otherwise occur from the output gating
   bool		out_go_clear;	// #DEF_true an output Go clears the maintenance currents at the end of the trial -- you use it, you lose it..
-  float		off_accom;	// #DEF_0 #EXPERT how much of the maintenance current to apply to accommodation after turning a unit off
+  float		off_accom;	// #DEF_0 #EXPERT #MIN_0 #MAX_1 how much of the maintenance current to apply to accommodation after turning a unit off
 
   inline void	SetBaseGain(float bg)
   { base_gain = bg;
