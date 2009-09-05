@@ -1,5 +1,8 @@
-// ta_Dump File v2.0 -- code v4.0.21.0
+// ta_Dump File v2.0 -- code v5.0.0.0
 LeabraProject .projects[0] { 
+  taBase_Group @.templates = [0] {
+  };
+
   Doc_Group @.docs = [1] {
     taDoc @[0] { };
   };
@@ -15,6 +18,18 @@ LeabraProject .projects[0] {
 	LayerWizEl @[1] { };
 	LayerWizEl @[2] { };
       };
+    };
+  };
+
+  SelectEdit_Group @.edits = [0] {
+  };
+
+  DataTable_Group @.data = [0] {
+    DataTable_Group @.gp[0] { 
+    };
+    DataTable_Group @.gp[1] { 
+    };
+    DataTable_Group @.gp[2] { 
     };
   };
 
@@ -41,6 +56,9 @@ LeabraProject .projects[0] {
 };
   };
 
+  Program_Group @.programs = [0] {
+  };
+
   DataViewer_List @.viewers = [1] {
     MainWindowViewer @[0] { 
       ToolBar_List @.toolbars = [1] {
@@ -61,6 +79,15 @@ LeabraProject .projects[0] {
 		  };
 		};
 	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
 	    };
 	    T3DataViewFrame @[1] { 
 	      T3DataView_List @.children = [1] {
@@ -70,6 +97,15 @@ LeabraProject .projects[0] {
 		    ScaleRange @[1] { };
 		  };
 		};
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
 	      };
 	    };
 	    T3DataViewFrame @[2] { 
@@ -81,6 +117,15 @@ LeabraProject .projects[0] {
 		  };
 		};
 	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
 	    };
 	    T3DataViewFrame @[3] { 
 	      T3DataView_List @.children = [1] {
@@ -91,6 +136,15 @@ LeabraProject .projects[0] {
 		  };
 		};
 	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
 	    };
 	    T3DataViewFrame @[4] { 
 	      T3DataView_List @.children = [1] {
@@ -100,6 +154,15 @@ LeabraProject .projects[0] {
 		    ScaleRange @[1] { };
 		  };
 		};
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
 	      };
 	    };
 	  };
@@ -137,18 +200,54 @@ LeabraProject .projects[0] {
    };
 
       BaseSpec_Group @.specs = [8] {
-	LeabraUnitSpec @[0] { };
-	LeabraBiasSpec @[1] { };
-	LeabraLayerSpec @[2] { };
-	GaussRFPrjnSpec @[3] { };
-	GaussRFPrjnSpec @[4] { };
-	GaussRFPrjnSpec @[5] { };
-	LeabraConSpec @[6] { };
-	FullPrjnSpec @[7] { };
+	LeabraUnitSpec @[0] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.noise_sched = [0] {
+	  };
+	};
+	LeabraBiasSpec @[1] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.lrate_sched = [0] {
+	  };
+	};
+	LeabraLayerSpec @[2] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	GaussRFPrjnSpec @[3] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	GaussRFPrjnSpec @[4] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	GaussRFPrjnSpec @[5] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	LeabraConSpec @[6] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.lrate_sched = [0] {
+	  };
+	};
+	FullPrjnSpec @[7] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
       };
 
       Layer_Group @.layers = [4] {
 	LeabraLayer @[0] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
 	  Unit_Group @.units = [144] {
 	  };
 	};
@@ -177,6 +276,9 @@ LeabraProject .projects[0] {
 	  };
 	};
       };
+
+      NetViewObj_Group @.view_objs = [0] {
+      };
     };
     LeabraNetwork @[1] { 
    UserDataItem_List @*(.user_data_) {
@@ -202,10 +304,28 @@ LeabraProject .projects[0] {
    };
 
       BaseSpec_Group @.specs = [8] {
-	LeabraUnitSpec @[0] { };
-	LeabraBiasSpec @[1] { };
-	LeabraLayerSpec @[2] { };
+	LeabraUnitSpec @[0] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.noise_sched = [0] {
+	  };
+	};
+	LeabraBiasSpec @[1] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.lrate_sched = [0] {
+	  };
+	};
+	LeabraLayerSpec @[2] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
 	TesselPrjnSpec @[3] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
 	  TessEl_List @.send_offs = [13] {
 	    TessEl @[0] { };
 	    TessEl @[1] { };
@@ -223,6 +343,9 @@ LeabraProject .projects[0] {
 	  };
 	};
 	TesselPrjnSpec @[4] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
 	  TessEl_List @.send_offs = [16] {
 	    TessEl @[0] { };
 	    TessEl @[1] { };
@@ -243,6 +366,9 @@ LeabraProject .projects[0] {
 	  };
 	};
 	TesselPrjnSpec @[5] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
 	  TessEl_List @.send_offs = [49] {
 	    TessEl @[0] { };
 	    TessEl @[1] { };
@@ -295,12 +421,24 @@ LeabraProject .projects[0] {
 	    TessEl @[48] { };
 	  };
 	};
-	LeabraConSpec @[6] { };
-	FullPrjnSpec @[7] { };
+	LeabraConSpec @[6] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.lrate_sched = [0] {
+	  };
+	};
+	FullPrjnSpec @[7] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
       };
 
       Layer_Group @.layers = [4] {
 	LeabraLayer @[0] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
 	  Unit_Group @.units = [144] {
 	  };
 	};
@@ -329,6 +467,9 @@ LeabraProject .projects[0] {
 	  };
 	};
       };
+
+      NetViewObj_Group @.view_objs = [0] {
+      };
     };
     LeabraNetwork @[2] { 
    UserDataItem_List @*(.user_data_) {
@@ -354,17 +495,50 @@ LeabraProject .projects[0] {
    };
 
       BaseSpec_Group @.specs = [7] {
-	LeabraUnitSpec @[0] { };
-	LeabraBiasSpec @[1] { };
-	LeabraLayerSpec @[2] { };
-	LeabraConSpec @[3] { };
-	FullPrjnSpec @[4] { };
-	TiledRFPrjnSpec @[5] { };
-	TiledNovlpPrjnSpec @[6] { };
+	LeabraUnitSpec @[0] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.noise_sched = [0] {
+	  };
+	};
+	LeabraBiasSpec @[1] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.lrate_sched = [0] {
+	  };
+	};
+	LeabraLayerSpec @[2] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	LeabraConSpec @[3] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.lrate_sched = [0] {
+	  };
+	};
+	FullPrjnSpec @[4] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	TiledRFPrjnSpec @[5] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	TiledNovlpPrjnSpec @[6] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
       };
 
       Layer_Group @.layers = [3] {
 	LeabraLayer @[0] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
 	  Unit_Group @.units = [144] {
 	  };
 	};
@@ -453,6 +627,9 @@ LeabraProject .projects[0] {
 	  };
 	};
       };
+
+      NetViewObj_Group @.view_objs = [0] {
+      };
     };
     LeabraNetwork @[3] { 
    UserDataItem_List @*(.user_data_) {
@@ -478,19 +655,58 @@ LeabraProject .projects[0] {
    };
 
       BaseSpec_Group @.specs = [9] {
-	LeabraUnitSpec @[0] { };
-	LeabraBiasSpec @[1] { };
-	LeabraLayerSpec @[2] { };
-	LeabraConSpec @[3] { };
-	FullPrjnSpec @[4] { };
-	TiledRFPrjnSpec @[5] { };
-	TiledNovlpPrjnSpec @[6] { };
-	UniformRndPrjnSpec @[7] { };
-	UniformRndPrjnSpec @[8] { };
+	LeabraUnitSpec @[0] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.noise_sched = [0] {
+	  };
+	};
+	LeabraBiasSpec @[1] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.lrate_sched = [0] {
+	  };
+	};
+	LeabraLayerSpec @[2] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	LeabraConSpec @[3] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.lrate_sched = [0] {
+	  };
+	};
+	FullPrjnSpec @[4] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	TiledRFPrjnSpec @[5] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	TiledNovlpPrjnSpec @[6] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	UniformRndPrjnSpec @[7] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	UniformRndPrjnSpec @[8] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
       };
 
       Layer_Group @.layers = [3] {
 	LeabraLayer @[0] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
 	  Unit_Group @.units = [144] {
 	  };
 	};
@@ -510,6 +726,9 @@ LeabraProject .projects[0] {
 	  Unit_Group @.units = [36] {
 	  };
 	};
+      };
+
+      NetViewObj_Group @.view_objs = [0] {
       };
     };
     LeabraNetwork @[4] { 
@@ -536,20 +755,59 @@ LeabraProject .projects[0] {
    };
 
       BaseSpec_Group @.specs = [9] {
-	LeabraUnitSpec @[0] { };
-	LeabraBiasSpec @[1] { };
-	LeabraLayerSpec @[2] { };
-	LeabraConSpec @[3] { };
-	FullPrjnSpec @[4] { };
-	TiledRFPrjnSpec @[5] { };
-	TiledNovlpPrjnSpec @[6] { };
-	UniformRndPrjnSpec @[7] { };
-	UniformRndPrjnSpec @[8] { };
+	LeabraUnitSpec @[0] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.noise_sched = [0] {
+	  };
+	};
+	LeabraBiasSpec @[1] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.lrate_sched = [0] {
+	  };
+	};
+	LeabraLayerSpec @[2] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	LeabraConSpec @[3] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.lrate_sched = [0] {
+	  };
+	};
+	FullPrjnSpec @[4] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	TiledRFPrjnSpec @[5] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	TiledNovlpPrjnSpec @[6] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	UniformRndPrjnSpec @[7] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	UniformRndPrjnSpec @[8] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
       };
 
       Layer_Group @.layers = [3] {
 	LeabraLayer @[0] { 
-	  Unit_Group @.units = [1296] {
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [0] {
 	  };
 	};
 	LeabraLayer @[1] { 
@@ -557,7 +815,7 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[0] { };
 	  };
 
-	  Unit_Group @.units = [576] {
+	  Unit_Group @.units = [0] {
 	  };
 	};
 	LeabraLayer @[2] { 
@@ -565,9 +823,12 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[0] { };
 	  };
 
-	  Unit_Group @.units = [144] {
+	  Unit_Group @.units = [0] {
 	  };
 	};
+      };
+
+      NetViewObj_Group @.view_objs = [0] {
       };
     };
   };
@@ -613,11 +874,9 @@ LeabraProject .projects[0] {
    html_text="<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\" dir=\"ltr\"><head>
 		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">
 		<meta http-equiv=\"Content-Style-Type\" content=\"text/css\">
-		<meta name=\"generator\" content=\"MediaWiki 1.16alpha\">
-		<meta name=\"keywords\" content=\"ProjectionSpec,GaussRFPrjnSpec,ScriptPrjnSpec,TesselPrjnSpec,css,FullPrjnSpec,OneToOnePrjnSpec,GpOneToOnePrjnSpec,TiledNovlpPrjnSpec,TiledRFPrjnSpec,GpRndTesselPrjnSpec\">
+		<meta name=\"generator\" content=\"MediaWiki 1.16alpha-wmf\">
+		<meta name=\"keywords\" content=\"ProjectionSpec,FullPrjnSpec,GaussRFPrjnSpec,ScriptPrjnSpec,TesselPrjnSpec,css,demo,OneToOnePrjnSpec,GpOneToOnePrjnSpec,TiledNovlpPrjnSpec,TiledRFPrjnSpec\">
 		<link rel=\"stylesheet\" type=\"text/css\" href=\"/emergent/extensions/BreadCrumbs/BreadCrumbs.css\">
-		<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=ProjectionSpec&amp;action=edit\">
-		<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=ProjectionSpec&amp;action=edit\">
 		<link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection\" href=\"http://yui.yahooapis.com/2.5.1/build/fonts/fonts-min.css\">
 		<link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection\" href=\"http://yui.yahooapis.com/2.5.1/build/tabview/assets/skins/sam/tabview.css\">
 		<link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection\" href=\"/emergent/extensions/HeaderTabs/skins/headertabs.css\">
@@ -626,18 +885,18 @@ LeabraProject .projects[0] {
 		<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Emergent RSS Feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=rss\">
 		<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Emergent Atom Feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
 		<title>ProjectionSpec - Emergent</title>
-		<link rel=\"stylesheet\" href=\"/emergent/skins/common/shared.css?220\" type=\"text/css\" media=\"screen\">
-		<link rel=\"stylesheet\" href=\"/emergent/skins/common/commonPrint.css?220\" type=\"text/css\" media=\"print\">
-		<link rel=\"stylesheet\" href=\"/emergent/skins/monobook/main.css?220\" type=\"text/css\" media=\"screen\">
-		<!--[if lt IE 5.5000]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE50Fixes.css?220\" type=\"text/css\" media=\"screen\" /><![endif]-->
-		<!--[if IE 5.5000]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE55Fixes.css?220\" type=\"text/css\" media=\"screen\" /><![endif]-->
-		<!--[if IE 6]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE60Fixes.css?220\" type=\"text/css\" media=\"screen\" /><![endif]-->
-		<!--[if IE 7]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE70Fixes.css?220\" type=\"text/css\" media=\"screen\" /><![endif]-->
+		<link rel=\"stylesheet\" href=\"/emergent/skins/common/shared.css?233z\" type=\"text/css\" media=\"screen\">
+		<link rel=\"stylesheet\" href=\"/emergent/skins/common/commonPrint.css?233z\" type=\"text/css\" media=\"print\">
+		<link rel=\"stylesheet\" href=\"/emergent/skins/monobook/main.css?233z\" type=\"text/css\" media=\"screen\">
+		<!--[if lt IE 5.5000]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE50Fixes.css?233z\" type=\"text/css\" media=\"screen\" /><![endif]-->
+		<!--[if IE 5.5000]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE55Fixes.css?233z\" type=\"text/css\" media=\"screen\" /><![endif]-->
+		<!--[if IE 6]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE60Fixes.css?233z\" type=\"text/css\" media=\"screen\" /><![endif]-->
+		<!--[if IE 7]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE70Fixes.css?233z\" type=\"text/css\" media=\"screen\" /><![endif]-->
 		<link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:Common.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" type=\"text/css\">
 		<link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:Print.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" type=\"text/css\" media=\"print\">
 		<link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:monobook.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" type=\"text/css\">
-		<link rel=\"stylesheet\" href=\"/emergent/index.php?title=-&amp;action=raw&amp;maxage=18000&amp;smaxage=0&amp;ts=20090525071639&amp;gen=css\" type=\"text/css\">
-		<!--[if lt IE 7]><script type=\"text/javascript\" src=\"/emergent/skins/common/IEFixes.js?220\"></script>
+		<link rel=\"stylesheet\" href=\"/emergent/index.php?title=-&amp;action=raw&amp;maxage=18000&amp;gen=css\" type=\"text/css\">
+		<!--[if lt IE 7]><script type=\"text/javascript\" src=\"/emergent/skins/common/IEFixes.js?233z\"></script>
 		<meta http-equiv=\"imagetoolbar\" content=\"no\" /><![endif]-->
 
 		<script type=\"text/javascript\">/*<![CDATA[*/
@@ -657,26 +916,36 @@ LeabraProject .projects[0] {
 		var wgAction = \"view\";
 		var wgArticleId = \"301\";
 		var wgIsArticle = true;
-		var wgUserName = \"Oreilly\";
-		var wgUserGroups = [\"*\", \"user\", \"autoconfirmed\"];
+		var wgUserName = null;
+		var wgUserGroups = null;
 		var wgUserLanguage = \"en\";
 		var wgContentLanguage = \"en\";
 		var wgBreakFrames = false;
-		var wgCurRevisionId = 4119;
-		var wgVersion = \"1.16alpha\";
+		var wgCurRevisionId = 4508;
+		var wgVersion = \"1.16alpha-wmf\";
 		var wgEnableAPI = true;
 		var wgEnableWriteAPI = true;
 		var wgSeparatorTransformTable = [\"\", \"\"];
 		var wgDigitTransformTable = [\"\", \"\"];
+		var wgMainPageTitle = \"Main Page\";
 		var wgRestrictionEdit = [];
 		var wgRestrictionMove = [];
-		var wgAjaxWatch = {\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg\": \"Watching?\", \"unwatchingMsg\": \"Unwatching?\"};
+		var wgFCKEditorDir = \"extensions/FCKeditor/fckeditor/\";
+		var wgFCKEditorExtDir = \"extensions/FCKeditor\";
+		var wgFCKEditorToolbarSet = \"Wiki\";
+		var wgFCKEditorHeight = \"0\";
 		/*]]>*/</script>
 
-		<script type=\"text/javascript\" src=\"/emergent/skins/common/wikibits.js?220\"><!-- wikibits js --></script><style type=\"text/css\">@import \"/emergent/skins/monobook/KHTMLFixes.css\";</style>
+		<script type=\"text/javascript\" src=\"/emergent/skins/common/wikibits.js?233z\"><!-- wikibits js --></script><style type=\"text/css\">@import \"/emergent/skins/monobook/KHTMLFixes.css\";</style>
 		<!-- Head Scripts -->
-		<script type=\"text/javascript\" src=\"/emergent/skins/common/ajax.js?220\"></script>		<script type=\"text/javascript\" src=\"/emergent/skins/common/ajaxwatch.js?220\"></script>		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/utilities/utilities.js\"></script>		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/tabview/tabview-min.js\"></script>		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/event/event-min.js\"></script>		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/history/history-min.js\"></script>		<script type=\"text/javascript\" src=\"/emergent/extensions/HeaderTabs/skins/headertabs.js\"></script>		<link rel=\"alternate\" type=\"application/rdf+xml\" title=\"ProjectionSpec\" href=\"/emergent/index.php?title=Special:ExportRDF/ProjectionSpec&amp;xmlmime=rdf\">
-		<script type=\"text/javascript\" src=\"/emergent/index.php?title=-&amp;action=raw&amp;smaxage=0&amp;gen=js&amp;useskin=monobook\"><!-- site js --></script><script src=\"http://meta.wikimedia.org/w/index.php?title=MediaWiki:Wikiminiatlas.js&amp;action=raw&amp;ctype=text/javascript&amp;smaxage=21600&amp;maxage=86400\" type=\"text/javascript\"></script>
+		<script type=\"text/javascript\" src=\"/emergent/skins/common/ajax.js?233z\"></script>
+		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/utilities/utilities.js\"></script>
+		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/tabview/tabview-min.js\"></script>
+		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/event/event-min.js\"></script>
+		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/history/history-min.js\"></script>
+		<script type=\"text/javascript\" src=\"/emergent/extensions/HeaderTabs/skins/headertabs.js\"></script>
+		<link rel=\"alternate\" type=\"application/rdf+xml\" title=\"ProjectionSpec\" href=\"/emergent/index.php?title=Special:ExportRDF/ProjectionSpec&amp;xmlmime=rdf\">
+		<script type=\"text/javascript\" src=\"/emergent/index.php?title=-&amp;action=raw&amp;gen=js&amp;useskin=monobook\"><!-- site js --></script><script src=\"http://meta.wikimedia.org/w/index.php?title=MediaWiki:Wikiminiatlas.js&amp;action=raw&amp;ctype=text/javascript&amp;smaxage=21600&amp;maxage=86400\" type=\"text/javascript\"></script>
 	</head><body class=\"mediawiki ltr ns-0 ns-subject page-ProjectionSpec skin-monobook\">
 	<div id=\"globalWrapper\">
 		<div id=\"column-content\">
@@ -687,7 +956,11 @@ LeabraProject .projects[0] {
 			<h3 id=\"siteSub\">From Emergent</h3>
 			<div id=\"contentSub\"></div>
 									<div id=\"jump-to-nav\">Jump to: <a href=\"#column-one\">navigation</a>, <a href=\"#searchInput\">search</a></div>			<!-- start content -->
-			<div id=\"BreadCrumbsTrail\"><a href=\"/emergent/index.php/Main_Page\" title=\"Main Page\">Main Page</a> &gt; <a href=\"/emergent/index.php/ProjectionSpec\" title=\"ProjectionSpec\">ProjectionSpec</a></div><p>The ProjectionSpec is connected to one or more Projections to specify a pattern of connectivity.  The simplest case is a FullPrjnSpec, which specifies full connectivity, but there are many other types.  For now, the best documentation is just the reference information for each type of <a href=\"http://grey.colorado.edu/gendoc/emergent/ProjectionSpec.html\" class=\"external text\" title=\"http://grey.colorado.edu/gendoc/emergent/ProjectionSpec.html\" rel=\"nofollow\">ProjectionSpec</a> -- click on that link and then on its children to find specific types.  There is also more detailed info below on some specs that require more of an explanation.
+			<div id=\"BreadCrumbsTrail\"><a href=\"/emergent/index.php/ProjectionSpec\" title=\"ProjectionSpec\">ProjectionSpec</a></div><p>
+</p>
+<div style=\"width: 50%;padding-left: 15px; border:2px solid #000000;\">Reference info for type <strong>ProjectionSpec</strong>: <a href=\"http://grey.colorado.edu/gendoc/emergent/ProjectionSpec.html\">Wiki</a> | <a href=\"ta:.Type.ProjectionSpec\">Emergent Help Browser</a></div> 
+<div style=\"width: 50%;padding-left: 15px; border:2px solid #000000;\">Reference info for type <strong>Projection</strong>: <a href=\"http://grey.colorado.edu/gendoc/emergent/Projection.html\">Wiki</a> | <a href=\"ta:.Type.Projection\">Emergent Help Browser</a></div>
+<p>The ProjectionSpec is connected to one or more Projections to specify a pattern of connectivity.  The simplest case is a FullPrjnSpec, which specifies full connectivity, but there are many other types.  For now, the best documentation is just the reference information for each type of  -- click on that link and then on its children to find specific types.  There is also more detailed info below on some specs that require more of an explanation.
 </p>
 <table id=\"toc\" class=\"toc\" summary=\"Contents\"><tbody><tr><td><div id=\"toctitle\"><h2>Contents</h2> <span class=\"toctoggle\">[<a id=\"togglelink\" class=\"internal\" href=\"javascript:toggleToc()\">hide</a>]</span></div>
 <ul>
@@ -703,37 +976,37 @@ LeabraProject .projects[0] {
 <li class=\"toclevel-2\"><a href=\"#Various_Flavors_of_Random\"><span class=\"tocnumber\">2.2</span> <span class=\"toctext\">Various Flavors of Random</span></a></li>
 </ul>
 </li>
-<li class=\"toclevel-1\"><a href=\"#Reference_Information\"><span class=\"tocnumber\">3</span> <span class=\"toctext\">Reference Information</span></a></li>
 </ul>
 </td></tr></tbody></table><script type=\"text/javascript\"> if (window.showTocToggle) { var tocShowText = \"show\"; var tocHideText = \"hide\"; showTocToggle(); } </script>
-<a name=\"Specific_Projection_Types\" id=\"Specific_Projection_Types\"></a><h2><span class=\"editsection\">[<a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=edit&amp;section=1\" title=\"Edit section: Specific Projection Types\">edit</a>]</span> <span class=\"mw-headline\"> Specific Projection Types </span></h2>
+<a name=\"Specific_Projection_Types\" id=\"Specific_Projection_Types\"></a><h2> <span class=\"mw-headline\"> Specific Projection Types </span></h2>
 <ul><li> <a href=\"/emergent/index.php/TesselPrjnSpec\" title=\"TesselPrjnSpec\">TesselPrjnSpec</a> -- connects two layers using tesselations (repeated patterns) of connectivity
 </li><li> <a href=\"/emergent/index.php/ScriptPrjnSpec\" title=\"ScriptPrjnSpec\">ScriptPrjnSpec</a>  -- allows you to define any arbitrary patterns of connectivity by writing <a href=\"/emergent/index.php/css\" title=\"css\" class=\"mw-redirect\">css</a> script code.
 </li></ul>
-<a name=\"Projection_Spec_Choice_Guide\" id=\"Projection_Spec_Choice_Guide\"></a><h2><span class=\"editsection\">[<a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=edit&amp;section=2\" title=\"Edit section: Projection Spec Choice Guide\">edit</a>]</span> <span class=\"mw-headline\"> Projection Spec Choice Guide </span></h2>
+<a name=\"Projection_Spec_Choice_Guide\" id=\"Projection_Spec_Choice_Guide\"></a><h2> <span class=\"mw-headline\"> Projection Spec Choice Guide </span></h2>
 <p>Choosing the right projection spec can be difficult given the large number of options.  This guide attempts to help..
-</p><p>First, some things are easy, like full connectivity (<a href=\"/emergent/index.php?title=FullPrjnSpec&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"FullPrjnSpec (page does not exist)\">FullPrjnSpec</a>) and one-to-one connectivity (<a href=\"/emergent/index.php?title=OneToOnePrjnSpec&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"OneToOnePrjnSpec (page does not exist)\">OneToOnePrjnSpec</a>), and the variant of that for unit groups, which connects entire unit groups to each other (<a href=\"/emergent/index.php?title=GpOneToOnePrjnSpec&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"GpOneToOnePrjnSpec (page does not exist)\">GpOneToOnePrjnSpec</a>).
+</p><p>See the <a href=\"/emergent/index.php/demo\" title=\"demo\" class=\"mw-redirect\">demo</a> project: <code>demo/network_misc/projection_sampler.proj</code> for networks that demonstrate the use of the most popular of the following projection specs -- allows for interactive exploration as well.
+</p><p>First, some things are easy, like full connectivity (<a href=\"/emergent/index.php/FullPrjnSpec\" title=\"FullPrjnSpec\">FullPrjnSpec</a>) and one-to-one connectivity (<a href=\"/emergent/index.php?title=OneToOnePrjnSpec&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"OneToOnePrjnSpec (page does not exist)\">OneToOnePrjnSpec</a>), and the variant of that for unit groups, which connects entire unit groups to each other (<a href=\"/emergent/index.php?title=GpOneToOnePrjnSpec&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"GpOneToOnePrjnSpec (page does not exist)\">GpOneToOnePrjnSpec</a>).
 </p><p>It is when you need a more complex pattern of partial connectivity that things get a bit more difficult.  The following sections consider options for various general categories of connectivity.
 </p><p>If everything else fails, the <a href=\"/emergent/index.php/ScriptPrjnSpec\" title=\"ScriptPrjnSpec\">ScriptPrjnSpec</a> allows you to do anything, but requires programming.  The <a href=\"/emergent/index.php/TesselPrjnSpec\" title=\"TesselPrjnSpec\">TesselPrjnSpec</a> is the most flexible non-programming prjn spec, but it takes some effort to figure out.
 </p>
-<a name=\"Receptive_Fields\" id=\"Receptive_Fields\"></a><h3><span class=\"editsection\">[<a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=edit&amp;section=3\" title=\"Edit section: Receptive Fields\">edit</a>]</span> <span class=\"mw-headline\"> Receptive Fields </span></h3>
+<a name=\"Receptive_Fields\" id=\"Receptive_Fields\"></a><h3> <span class=\"mw-headline\"> Receptive Fields </span></h3>
 <p>A major category of connectivity is when you want receiving units to have a \"receptive field\" (RF) window of connections from the sending layer -- i.e., a spatially contiguous subset of sending units, typically in the shape of a square or a circle.  The position of this window onto the sending layer moves with the position of the receiving unit, resulting in a <b>topographic</b> pattern of connectivity.  This seems to be the default connectivity pattern in the brain.
 </p><p>One major subdivision in these specs is whether they depend on having the receiving units organized into unit groups, where each such group shares a common pattern of connectivity.  This is analogous to the hypercolumn or minicolumn in the brain.
 </p><p>The following list is organized in rough order of complexity, with simplest first -- use the simplest one that fits your needs, and you may need to experiment a bit to find the right one.
 </p>
-<a name=\"No_Recv_Unit_Groups\" id=\"No_Recv_Unit_Groups\"></a><h4><span class=\"editsection\">[<a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=edit&amp;section=4\" title=\"Edit section: No Recv Unit Groups\">edit</a>]</span> <span class=\"mw-headline\"> No Recv Unit Groups </span></h4>
+<a name=\"No_Recv_Unit_Groups\" id=\"No_Recv_Unit_Groups\"></a><h4> <span class=\"mw-headline\"> No Recv Unit Groups </span></h4>
 <ul><li> <a href=\"/emergent/index.php/GaussRFPrjnSpec\" title=\"GaussRFPrjnSpec\">GaussRFPrjnSpec</a> -- this is perhaps the simplest RF prjn spec -- it creates a square RF window of a specified width, and that window moves a fixed amount for every increment in receiving unit position, allowing for overlapping and non-overlapping connections, and it (optionally) initializes the weights to a gaussian function of the distance from the center of the receptive field.  This is useful for self-projections too where you want to introduce some topography into the receiving layer, such that neighboring units tend to represent similar things (as in the Kohonen-style self-organizing map).
 </li></ul>
 <ul><li> <a href=\"/emergent/index.php/TesselPrjnSpec\" title=\"TesselPrjnSpec\">TesselPrjnSpec</a> -- allows more complex prjn patterns (ellipses, or any arbitrary shape), and does not use unit groups -- can also set gaussian weights
 </li></ul>
-<a name=\"Recv_Unit_Groups\" id=\"Recv_Unit_Groups\"></a><h4><span class=\"editsection\">[<a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=edit&amp;section=5\" title=\"Edit section: Recv Unit Groups\">edit</a>]</span> <span class=\"mw-headline\"> Recv Unit Groups </span></h4>
+<a name=\"Recv_Unit_Groups\" id=\"Recv_Unit_Groups\"></a><h4> <span class=\"mw-headline\"> Recv Unit Groups </span></h4>
 <ul><li> <a href=\"/emergent/index.php?title=TiledNovlpPrjnSpec&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"TiledNovlpPrjnSpec (page does not exist)\">TiledNovlpPrjnSpec</a> -- this is a fully automatic projection (no parameters) that connects unit groups with <b>non-overlapping</b> RF windows.
 </li></ul>
 <ul><li> <a href=\"/emergent/index.php?title=TiledRFPrjnSpec&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"TiledRFPrjnSpec (page does not exist)\">TiledRFPrjnSpec</a> -- a complex but very powerful spec for unit-group-based overlapping windows -- it automatically uses the relative sizes of the layers to compute the receptive field window sizes, etc, and can optionally apply to subsets of unit groups.
 </li></ul>
 <ul><li> <a href=\"/emergent/index.php?title=GpRndTesselPrjnSpec&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"GpRndTesselPrjnSpec (page does not exist)\">GpRndTesselPrjnSpec</a> -- does the same thing as TesselPrjnSpec but instead of operating on the level of individual units, it <b>operates on unit groups in both sending and receiving layers</b>, and then allows partial random connectivity (or not -- can also do full) for those connected groups -- compare to <a href=\"/emergent/index.php?title=RndGpOneToOnePrjnSpec&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"RndGpOneToOnePrjnSpec (page does not exist)\">RndGpOneToOnePrjnSpec</a>)
 </li></ul>
-<a name=\"Various_Flavors_of_Random\" id=\"Various_Flavors_of_Random\"></a><h3><span class=\"editsection\">[<a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=edit&amp;section=6\" title=\"Edit section: Various Flavors of Random\">edit</a>]</span> <span class=\"mw-headline\"> Various Flavors of Random </span></h3>
+<a name=\"Various_Flavors_of_Random\" id=\"Various_Flavors_of_Random\"></a><h3> <span class=\"mw-headline\"> Various Flavors of Random </span></h3>
 <ul><li> <a href=\"/emergent/index.php?title=UniformRndPrjnSpec&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"UniformRndPrjnSpec (page does not exist)\">UniformRndPrjnSpec</a> -- no spatial constraints at all -- just randomly connects units with given probability.  
 </li></ul>
 <ul><li> <a href=\"/emergent/index.php?title=PolarRndPrjnSpec&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"PolarRndPrjnSpec (page does not exist)\">PolarRndPrjnSpec</a> -- introduces a polar coordinate system of distance and angle away from a given sending unit location, and probability of connection is function of these coordinates -- creates a random topographic connection (see also Receptive Fields section above).
@@ -742,20 +1015,16 @@ LeabraProject .projects[0] {
 </li></ul>
 <ul><li> <a href=\"/emergent/index.php?title=GpRndTesselPrjnSpec&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"GpRndTesselPrjnSpec (page does not exist)\">GpRndTesselPrjnSpec</a> -- does the same thing as TesselPrjnSpec but instead of operating on the level of individual units, it <b>operates on unit groups in both sending and receiving layers</b>, and then allows partial random connectivity (or not -- can also do full) for those connected groups -- compare to <a href=\"/emergent/index.php?title=RndGpOneToOnePrjnSpec&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"RndGpOneToOnePrjnSpec (page does not exist)\">RndGpOneToOnePrjnSpec</a>)
 </li></ul>
-<a name=\"Reference_Information\" id=\"Reference_Information\"></a><h2><span class=\"editsection\">[<a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=edit&amp;section=7\" title=\"Edit section: Reference Information\">edit</a>]</span> <span class=\"mw-headline\"> Reference Information </span></h2>
-<ul><li> <a href=\"http://grey.colorado.edu/gendoc/emergent/ProjectionSpec.html\" class=\"external text\" title=\"http://grey.colorado.edu/gendoc/emergent/ProjectionSpec.html\" rel=\"nofollow\">ProjectionSpec</a>
-</li><li> <a href=\"http://grey.colorado.edu/gendoc/emergent/Projection.html\" class=\"external text\" title=\"http://grey.colorado.edu/gendoc/emergent/Projection.html\" rel=\"nofollow\">Projection</a>
-</li></ul>
 
 <!-- 
 NewPP limit report
-Preprocessor node count: 26/1000000
-Post-expand include size: 223/2097152 bytes
-Template argument size: 76/2097152 bytes
+Preprocessor node count: 23/1000000
+Post-expand include size: 228/2097152 bytes
+Template argument size: 24/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:301-0!1!0!!en!2 and timestamp 20090525071634 -->
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:301-0!1!0!!en!2!edit=0 and timestamp 20090905030215 -->
 <div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php/ProjectionSpec\">http://grey.colorado.edu/emergent/index.php/ProjectionSpec</a>\"</div>
 						<!-- end content -->
@@ -771,23 +1040,16 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php/Projectio
 	
 				 <li id=\"ca-nstab-main\" class=\"selected\"><a href=\"/emergent/index.php/ProjectionSpec\" title=\"View the content page [ctrl-alt-c]\" accesskey=\"c\">Page</a></li>
 				 <li id=\"ca-talk\" class=\"new\"><a href=\"/emergent/index.php?title=Talk:ProjectionSpec&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [ctrl-alt-t]\" accesskey=\"t\">Discussion</a></li>
-				 <li id=\"ca-edit\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=edit\" title=\"You can edit this page.
-Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit</a></li>
-				 <li id=\"ca-history\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=history\" title=\"Past revisions of this page [ctrl-alt-h]\" accesskey=\"h\">History</a></li>
-				 <li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/ProjectionSpec\" title=\"Move this page [ctrl-alt-m]\" accesskey=\"m\">Move</a></li>
-				 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=unwatch\" title=\"Remove this page from your watchlist [ctrl-alt-w]\" accesskey=\"w\">Unwatch</a></li>			<li id=\"ca-upload\"><a href=\"http://grey.colorado.edu/emergent/index.php/Special:Upload\" accesskey=\"0\" title=\"Special:Upload [ctrl-alt-0]\">upload</a></li><li id=\"ca-recent-changes\"><a href=\"http://grey.colorado.edu/emergent/index.php/Special:RecentChanges\" accesskey=\"0\" title=\"Special:RecentChanges [ctrl-alt-0]\">recent changes</a></li><li id=\"ca-help\"><a href=\"http://grey.colorado.edu/emergent/index.php/Help:Contents\" accesskey=\"0\" title=\"Help:Contents [ctrl-alt-0]\">help</a></li><li id=\"ca-search\"><a href=\"http://grey.colorado.edu/emergent/index.php/Special:Search\" accesskey=\"0\" title=\"Special:Search [ctrl-alt-0]\">search</a></li><li id=\"ca-home\"><a href=\"http://grey.colorado.edu/emergent\" accesskey=\"0\" title=\"Main_Page [ctrl-alt-0]\">home</a></li></ul>
+				 <li id=\"ca-viewsource\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=edit\" title=\"This page is protected.
+You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
+				 <li id=\"ca-history\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;action=history\" title=\"Past revisions of this page [ctrl-alt-h]\" accesskey=\"h\">History</a></li>			<li id=\"ca-upload\"><a href=\"http://grey.colorado.edu/emergent/index.php/Special:Upload\" accesskey=\"0\" title=\"Special:Upload [ctrl-alt-0]\">upload</a></li><li id=\"ca-recent-changes\"><a href=\"http://grey.colorado.edu/emergent/index.php/Special:RecentChanges\" accesskey=\"0\" title=\"Special:RecentChanges [ctrl-alt-0]\">recent changes</a></li><li id=\"ca-help\"><a href=\"http://grey.colorado.edu/emergent/index.php/Help:Contents\" accesskey=\"0\" title=\"Help:Contents [ctrl-alt-0]\">help</a></li><li id=\"ca-search\"><a href=\"http://grey.colorado.edu/emergent/index.php/Special:Search\" accesskey=\"0\" title=\"Special:Search [ctrl-alt-0]\">search</a></li><li id=\"ca-home\"><a href=\"http://grey.colorado.edu/emergent\" accesskey=\"0\" title=\"Main_Page [ctrl-alt-0]\">home</a></li></ul>
 		</div>
 	</div>
 	<div class=\"portlet\" id=\"p-personal\">
 		<h5>Personal tools</h5>
 		<div class=\"pBody\">
 			<ul lang=\"en\" xml:lang=\"en\">
-				<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" title=\"Your user page [ctrl-alt-.]\" accesskey=\".\">Oreilly</a></li>
-				<li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" title=\"Your talk page [ctrl-alt-n]\" accesskey=\"n\" class=\"new\">My talk</a></li>
-				<li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">My preferences</a></li>
-				<li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"The list of pages you are monitoring for changes [ctrl-alt-l]\" accesskey=\"l\">My watchlist</a></li>
-				<li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"List of your contributions [ctrl-alt-y]\" accesskey=\"y\">My contributions</a></li>
-				<li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=ProjectionSpec\" title=\"Log out\">Log out</a></li>
+				<li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=ProjectionSpec\" title=\"You are encouraged to log in; however, it is not mandatory [ctrl-alt-o]\" accesskey=\"o\">Log in / create account</a></li>
 			</ul>
 		</div>
 	</div>
@@ -833,7 +1095,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
 				<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/ProjectionSpec\" title=\"Recent changes in pages linked from this page [ctrl-alt-k]\" accesskey=\"k\">Related changes</a></li>
 <li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [ctrl-alt-u]\" accesskey=\"u\">Upload file</a></li>
 <li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"List of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
-				<li id=\"t-print\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;printable=yes\" rel=\"alternate\" title=\"Printable version of this page [ctrl-alt-p]\" accesskey=\"p\">Printable version</a></li>				<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;oldid=4119\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/ProjectionSpec\" title=\"Special:Browse/ProjectionSpec\">Browse properties</a></li>			</ul>
+				<li id=\"t-print\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;printable=yes\" rel=\"alternate\" title=\"Printable version of this page [ctrl-alt-p]\" accesskey=\"p\">Printable version</a></li>				<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;oldid=4508\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/ProjectionSpec\" title=\"Special:Browse/ProjectionSpec\">Browse properties</a></li>			</ul>
 		</div>
 	</div>
 		</div><!-- end of the left (by default at least) column -->
@@ -841,15 +1103,15 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
 			<div id=\"footer\">
 				<div id=\"f-poweredbyico\"><a href=\"http://www.mediawiki.org/\"><img src=\"/emergent/skins/common/images/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\"></a></div>
 			<ul id=\"f-list\">
-					<li id=\"lastmod\"> This page was last modified on 21 May 2009, at 19:55.</li>
-					<li id=\"viewcount\">This page has been accessed 497 times.</li>
-					<li id=\"about\"><a href=\"/emergent/index.php/Emergent:About\" title=\"Emergent:About\">About Emergent</a></li>
+					<li id=\"lastmod\"> This page was last modified on 13 August 2009, at 17:09.</li>
+					<li id=\"viewcount\">This page has been accessed 619 times.</li>
+					<li id=\"about\"><a href=\"/emergent/index.php/Emergent:About\" class=\"mw-redirect\" title=\"Emergent:About\">About Emergent</a></li>
 			</ul>
 		</div>
 </div>
 
 		<script type=\"text/javascript\">if (window.runOnloadHook) runOnloadHook();</script>
-<!-- Served in 0.199 secs. -->
+<!-- Served in 0.221 secs. -->
 </body></html>";
   };
  };
@@ -1050,11 +1312,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  net_text=0;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
-	  net_box_offset=0;
 	  ordered_uvg_list{ r.wt;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
-	  max_size {x=12: y=12: z=3: };
+	  max_size {x=12: y=12: z=2.333333: };
 	  font_sizes {
 	   net_name=0.05;
 	   net_vals=0.05;
@@ -1073,6 +1334,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   prjn_trans=0.5;
 	   lay_trans=0.5;
 	   unit_trans=0.6;
+	   laygp_width=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
@@ -1112,13 +1374,57 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	 };
 	};
        };
-       camera_pos {x=0.4432183: y=0.7013532: z=1.610852: };
-       camera_orient {x=-1.000012: y=0: z=0: rot=0.08548222: };
-       camera_focdist=1.933122;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
-       fullscreen_on=0;
        stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=0.424: y=0.7857856: z=1.554389: };
+	 orient {x=-1.000018: y=0: z=0: rot=0.1339975: };
+	 focal_dist=1.905099;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
       };
       T3DataViewFrame @[1] {
        m_data=NULL;
@@ -1140,11 +1446,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  net_text=0;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
-	  net_box_offset=0;
 	  ordered_uvg_list{ r.wt;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
-	  max_size {x=16: y=16: z=3: };
+	  max_size {x=16: y=16: z=2.333333: };
 	  font_sizes {
 	   net_name=0.05;
 	   net_vals=0.05;
@@ -1163,6 +1468,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   prjn_trans=0.5;
 	   lay_trans=0.5;
 	   unit_trans=0.6;
+	   laygp_width=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
@@ -1202,13 +1508,57 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	 };
 	};
        };
-       camera_pos {x=0.4622073: y=0.6130528: z=1.332516: };
-       camera_orient {x=-0.9999621: y=0: z=0: rot=0.05129186: };
-       camera_focdist=1.640899;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
-       fullscreen_on=0;
        stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=0.434: y=0.7928977: z=1.361687: };
+	 orient {x=-1.000004: y=0: z=0: rot=0.1979993: };
+	 focal_dist=1.729205;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
       };
       T3DataViewFrame @[2] {
        m_data=NULL;
@@ -1230,11 +1580,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  net_text=0;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
-	  net_box_offset=0;
 	  ordered_uvg_list{ r.wt;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
-	  max_size {x=24: y=14: z=2: };
+	  max_size {x=24: y=14: z=1.5: };
 	  font_sizes {
 	   net_name=0.05;
 	   net_vals=0.05;
@@ -1253,6 +1602,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   prjn_trans=0.5;
 	   lay_trans=0.5;
 	   unit_trans=0.6;
+	   laygp_width=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
@@ -1292,13 +1642,57 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	 };
 	};
        };
-       camera_pos {x=0.4982613: y=0.7724295: z=1.639259: };
-       camera_orient {x=-1.000011: y=0: z=0: rot=0.1367716: };
-       camera_focdist=1.971132;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
-       fullscreen_on=0;
        stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=0.5: y=0.7544793: z=1.458035: };
+	 orient {x=-1.000003: y=0: z=0: rot=0.1939993: };
+	 focal_dist=1.860519;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
       };
       T3DataViewFrame @[3] {
        m_data=NULL;
@@ -1320,11 +1714,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  net_text=0;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
-	  net_box_offset=0;
 	  ordered_uvg_list{ r.wt;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
-	  max_size {x=14: y=12: z=2: };
+	  max_size {x=14: y=12: z=1.5: };
 	  font_sizes {
 	   net_name=0.05;
 	   net_vals=0.05;
@@ -1343,6 +1736,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   prjn_trans=0.5;
 	   lay_trans=0.5;
 	   unit_trans=0.6;
+	   laygp_width=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
@@ -1382,13 +1776,57 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	 };
 	};
        };
-       camera_pos {x=0.5: y=0.7021163: z=1.614141: };
-       camera_orient {x=-1.000016: y=0: z=0: rot=0.1025782: };
-       camera_focdist=1.969197;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
-       fullscreen_on=0;
        stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=0.5: y=0.7605507: z=1.583142: };
+	 orient {x=-1.000004: y=0: z=0: rot=0.1639994: };
+	 focal_dist=1.97795;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
       };
       T3DataViewFrame @[4] {
        m_data=NULL;
@@ -1410,11 +1848,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  net_text=0;
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
-	  net_box_offset=0;
 	  ordered_uvg_list{ r.wt;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
-	  max_size {x=38: y=36: z=2: };
+	  max_size {x=38: y=36: z=1.5: };
 	  font_sizes {
 	   net_name=0.05;
 	   net_vals=0.05;
@@ -1433,6 +1870,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   prjn_trans=0.5;
 	   lay_trans=0.5;
 	   unit_trans=0.6;
+	   laygp_width=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
@@ -1472,13 +1910,57 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	 };
 	};
        };
-       camera_pos {x=0.4980924: y=0.7130808: z=1.488055: };
-       camera_orient {x=-1.000011: y=0: z=0: rot=0.1367716: };
-       camera_focdist=1.82873;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
-       fullscreen_on=0;
        stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=0.5: y=0.7855068: z=1.460079: };
+	 orient {x=-1.000002: y=0: z=0: rot=0.2359995: };
+	 focal_dist=1.877551;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
       };
      };
     };
@@ -1605,13 +2087,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
-     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: hard_gain=0.2: };
+     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: clamp_max_p=0.11: clamp_type=REGULAR: };
      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
      syn_delay {
       on=0;
       delay=4;
      };
-     opt_thresh {send=0.1: delta=0.005: learn=0.01: phase_dif=0: };
+     opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      v_m_init {name="": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
@@ -1834,6 +2316,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
     el_typ=LeabraLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
+    max_size {x=12: y=12: z=3: };
     LeabraLayer @[0] {
      name="Sender";
      desc=;
@@ -2232,25 +2715,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    n_units=278;
    n_cons=5444;
    max_size {x=12: y=12: z=3: };
-   font_sizes {
-    net_name=0.05;
-    net_vals=0.05;
-    layer=0.04;
-    layer_vals=0.03;
-    prjn=0.01;
-    unit=0.02;
-    un_nm_len=3;
-   };
-   view_params {
-    xy_square=0;
-    unit_spacing=0.05;
-    prjn_disp=L_R_F;
-    prjn_name=0;
-    prjn_width=0.002;
-    prjn_trans=0.5;
-    lay_trans=0.5;
-    unit_trans=0.6;
-   };
    learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;
    no_plus_test=1;
@@ -2321,6 +2785,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    norew_val=0.5;
    avg_ext_rew=0;
    pvlv_pvi=0;
+   pvlv_pvr=0;
    pvlv_lve=0;
    pvlv_lvi=0;
    pv_detected=0;
@@ -2436,13 +2901,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
-     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: hard_gain=0.2: };
+     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: clamp_max_p=0.11: clamp_type=REGULAR: };
      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
      syn_delay {
       on=0;
       delay=4;
      };
-     opt_thresh {send=0.1: delta=0.005: learn=0.01: phase_dif=0: };
+     opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      v_m_init {name="": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
@@ -3001,6 +3466,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
     el_typ=LeabraLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
+    max_size {x=16: y=16: z=3: };
     LeabraLayer @[0] {
      name="Sender";
      desc=;
@@ -3399,25 +3865,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    n_units=360;
    n_cons=6708;
    max_size {x=16: y=16: z=3: };
-   font_sizes {
-    net_name=0.05;
-    net_vals=0.05;
-    layer=0.04;
-    layer_vals=0.03;
-    prjn=0.01;
-    unit=0.02;
-    un_nm_len=3;
-   };
-   view_params {
-    xy_square=0;
-    unit_spacing=0.05;
-    prjn_disp=L_R_F;
-    prjn_name=0;
-    prjn_width=0.002;
-    prjn_trans=0.5;
-    lay_trans=0.5;
-    unit_trans=0.6;
-   };
    learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;
    no_plus_test=1;
@@ -3488,6 +3935,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    norew_val=0.5;
    avg_ext_rew=0;
    pvlv_pvi=0;
+   pvlv_pvr=0;
    pvlv_lve=0;
    pvlv_lvi=0;
    pv_detected=0;
@@ -3603,13 +4051,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
-     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: hard_gain=0.2: };
+     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: clamp_max_p=0.11: clamp_type=REGULAR: };
      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
      syn_delay {
       on=0;
       delay=4;
      };
-     opt_thresh {send=0.1: delta=0.005: learn=0.01: phase_dif=0: };
+     opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      v_m_init {name="": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
@@ -3822,6 +4270,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
     el_typ=LeabraLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
+    max_size {x=24: y=14: z=2: };
     LeabraLayer @[0] {
      name="Sender";
      desc=;
@@ -3971,6 +4420,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[1] {
        name=;
@@ -3997,6 +4448,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[2] {
        name=;
@@ -4023,6 +4476,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[3] {
        name=;
@@ -4049,6 +4504,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[4] {
        name=;
@@ -4075,6 +4532,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[5] {
        name=;
@@ -4101,6 +4560,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[6] {
        name=;
@@ -4127,6 +4588,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[7] {
        name=;
@@ -4153,6 +4616,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[8] {
        name=;
@@ -4179,6 +4644,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[9] {
        name=;
@@ -4205,6 +4672,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[10] {
        name=;
@@ -4231,6 +4700,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[11] {
        name=;
@@ -4257,6 +4728,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[12] {
        name=;
@@ -4283,6 +4756,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[13] {
        name=;
@@ -4309,6 +4784,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[14] {
        name=;
@@ -4335,6 +4812,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[15] {
        name=;
@@ -4361,6 +4840,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[16] {
        name=;
@@ -4387,6 +4868,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[17] {
        name=;
@@ -4413,6 +4896,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[18] {
        name=;
@@ -4439,6 +4924,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[19] {
        name=;
@@ -4465,6 +4952,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[20] {
        name=;
@@ -4491,6 +4980,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[21] {
        name=;
@@ -4517,6 +5008,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[22] {
        name=;
@@ -4543,6 +5036,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[23] {
        name=;
@@ -4569,6 +5064,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[24] {
        name=;
@@ -4595,6 +5092,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
      };
      unit_spec {type=LeabraUnitSpec: spec=$26$: };
@@ -4711,6 +5210,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[1] {
        name=;
@@ -4737,6 +5238,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[2] {
        name=;
@@ -4763,6 +5266,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[3] {
        name=;
@@ -4789,6 +5294,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[4] {
        name=;
@@ -4815,6 +5322,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[5] {
        name=;
@@ -4841,6 +5350,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[6] {
        name=;
@@ -4867,6 +5378,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[7] {
        name=;
@@ -4893,6 +5406,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
       LeabraUnit_Group @.gp[8] {
        name=;
@@ -4919,6 +5434,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_float=0;
+       misc_float1=0;
       };
      };
      unit_spec {type=LeabraUnitSpec: spec=$26$: };
@@ -5013,25 +5530,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    n_units=280;
    n_cons=2176;
    max_size {x=24: y=14: z=2: };
-   font_sizes {
-    net_name=0.05;
-    net_vals=0.05;
-    layer=0.04;
-    layer_vals=0.03;
-    prjn=0.01;
-    unit=0.02;
-    un_nm_len=3;
-   };
-   view_params {
-    xy_square=0;
-    unit_spacing=0.05;
-    prjn_disp=L_R_F;
-    prjn_name=0;
-    prjn_width=0.002;
-    prjn_trans=0.5;
-    lay_trans=0.5;
-    unit_trans=0.6;
-   };
    learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;
    no_plus_test=1;
@@ -5102,6 +5600,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    norew_val=0.5;
    avg_ext_rew=0;
    pvlv_pvi=0;
+   pvlv_pvr=0;
    pvlv_lve=0;
    pvlv_lvi=0;
    pv_detected=0;
@@ -5217,13 +5716,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
-     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: hard_gain=0.2: };
+     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: clamp_max_p=0.11: clamp_type=REGULAR: };
      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
      syn_delay {
       on=0;
       delay=4;
      };
-     opt_thresh {send=0.1: delta=0.005: learn=0.01: phase_dif=0: };
+     opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      v_m_init {name="": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
@@ -5476,6 +5975,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
     el_typ=LeabraLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
+    max_size {x=14: y=12: z=2: };
     LeabraLayer @[0] {
      name="Sender";
      desc=;
@@ -5781,27 +6281,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    wt_save_fmt=TEXT;
    lay_layout=THREE_D;
    n_units=216;
-   n_cons=1543;
+   n_cons=1547;
    max_size {x=14: y=12: z=2: };
-   font_sizes {
-    net_name=0.05;
-    net_vals=0.05;
-    layer=0.04;
-    layer_vals=0.03;
-    prjn=0.01;
-    unit=0.02;
-    un_nm_len=3;
-   };
-   view_params {
-    xy_square=0;
-    unit_spacing=0.05;
-    prjn_disp=L_R_F;
-    prjn_name=0;
-    prjn_width=0.002;
-    prjn_trans=0.5;
-    lay_trans=0.5;
-    unit_trans=0.6;
-   };
    learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;
    no_plus_test=1;
@@ -5872,6 +6353,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    norew_val=0.5;
    avg_ext_rew=0;
    pvlv_pvi=0;
+   pvlv_pvr=0;
    pvlv_lve=0;
    pvlv_lvi=0;
    pv_detected=0;
@@ -5987,13 +6469,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
-     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: hard_gain=0.2: };
+     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: clamp_max_p=0.11: clamp_type=REGULAR: };
      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
      syn_delay {
       on=0;
       delay=4;
      };
-     opt_thresh {send=0.1: delta=0.005: learn=0.01: phase_dif=0: };
+     opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      v_m_init {name="": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
@@ -6246,6 +6728,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
     el_typ=LeabraLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
+    max_size {x=38: y=36: z=2: };
     LeabraLayer @[0] {
      name="Sender";
      desc=;
@@ -6553,25 +7036,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    n_units=2016;
    n_cons=195760;
    max_size {x=38: y=36: z=2: };
-   font_sizes {
-    net_name=0.05;
-    net_vals=0.05;
-    layer=0.04;
-    layer_vals=0.03;
-    prjn=0.01;
-    unit=0.02;
-    un_nm_len=3;
-   };
-   view_params {
-    xy_square=0;
-    unit_spacing=0.05;
-    prjn_disp=L_R_F;
-    prjn_name=0;
-    prjn_width=0.002;
-    prjn_trans=0.5;
-    lay_trans=0.5;
-    unit_trans=0.6;
-   };
    learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;
    no_plus_test=1;
@@ -6642,6 +7106,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    norew_val=0.5;
    avg_ext_rew=0;
    pvlv_pvi=0;
+   pvlv_pvr=0;
    pvlv_lve=0;
    pvlv_lvi=0;
    pv_detected=0;

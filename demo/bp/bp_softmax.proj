@@ -1,5 +1,8 @@
-// ta_Dump File v2.0 -- code v4.0.21.0
+// ta_Dump File v2.0 -- code v5.0.0.0
 BpProject .projects[0] { 
+  taBase_Group @.templates = [0] {
+  };
+
   Doc_Group @.docs = [2] {
     taDoc @[0] { };
     taDoc @[1] { };
@@ -131,6 +134,12 @@ BpProject .projects[0] {
   Program_Group @.programs = [0] {
     Program_Group @.gp[0] = [8] { 
       Program @[0] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [3] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -139,6 +148,12 @@ BpProject .projects[0] {
 
 	ProgVar_List @.vars = [1] {
 	  ProgVar @[0] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [1] {
@@ -191,6 +206,12 @@ BpProject .projects[0] {
 	  ProgVar @[6] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
 	ProgEl_List @.init_code = [6] {
 	  AssignExpr @[0] { };
 	  MethodCall @[1] { 
@@ -201,16 +222,25 @@ BpProject .projects[0] {
 	  AssignExpr @[2] { };
 	  IfElse @[3] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 
 	    ProgEl_List @.false_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  IfGuiPrompt @[4] { 
 	    ProgEl_List @.yes_code = [2] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	      PrintExpr @[1] { };
 	    };
 	  };
@@ -227,8 +257,14 @@ BpProject .projects[0] {
 	  MemberAssign @[2] { };
 	  IfElse @[3] { 
 	    ProgEl_List @.true_code = [2] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	      PrintExpr @[1] { };
+	    };
+
+	    ProgEl_List @.false_code = [0] {
 	    };
 	  };
 	  AssignExpr @[4] { };
@@ -244,10 +280,19 @@ BpProject .projects[0] {
 	      IfBreak @[2] { };
 	    };
 	  };
-	  MethodCall @[6] { };
+	  MethodCall @[6] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	};
       };
       Program @[2] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -259,6 +304,12 @@ BpProject .projects[0] {
 	  ProgVar @[2] { };
 	  ProgVar @[3] { };
 	  ProgVar @[4] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [2] {
@@ -274,7 +325,10 @@ BpProject .projects[0] {
 	      ProgArg @[0] { };
 	    };
 	  };
-	  MethodCall @[3] { };
+	  MethodCall @[3] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  NetDataLoop @[4] { 
 	    ProgEl_List @.loop_code = [2] {
 	      ProgramCall @[0] { 
@@ -285,18 +339,36 @@ BpProject .projects[0] {
 	      };
 	      IfElse @[1] { 
 		ProgEl_List @.true_code = [1] {
-		  MethodCall @[0] { };
+		  MethodCall @[0] { 
+		    ProgArg_List @.meth_args = [0] {
+		    };
+		  };
+		};
+
+		ProgEl_List @.false_code = [0] {
 		};
 	      };
 	    };
 	  };
 	  IfElse @[5] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
+	    };
+
+	    ProgEl_List @.false_code = [0] {
 	    };
 	  };
-	  MethodCall @[6] { };
-	  MethodCall @[7] { };
+	  MethodCall @[6] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[7] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  ProgramCall @[8] { 
 	    ProgArg_List @.prog_args = [1] {
 	      ProgArg @[0] { };
@@ -305,6 +377,12 @@ BpProject .projects[0] {
 	};
       };
       Program @[3] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -314,16 +392,34 @@ BpProject .projects[0] {
 	  ProgVar @[0] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
+	ProgEl_List @.init_code = [0] {
+	};
+
 	ProgEl_List @.prog_code = [6] {
-	  MethodCall @[0] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  ProgramCall @[1] { 
 	    ProgArg_List @.prog_args = [2] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	    };
 	  };
-	  MethodCall @[2] { };
-	  MethodCall @[3] { };
+	  MethodCall @[2] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[3] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  ProgramCall @[4] { 
 	    ProgArg_List @.prog_args = [1] {
 	      ProgArg @[0] { };
@@ -343,6 +439,9 @@ BpProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -350,6 +449,12 @@ BpProject .projects[0] {
 
 	ProgVar_List @.vars = [1] {
 	  ProgVar @[0] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [2] {
@@ -367,7 +472,10 @@ BpProject .projects[0] {
 	};
 
 	ProgEl_List @.prog_code = [1] {
-	  MethodCall @[0] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	};
       };
       Program @[5] { 
@@ -384,6 +492,9 @@ BpProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -391,6 +502,12 @@ BpProject .projects[0] {
 	ProgVar_List @.vars = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [3] {
@@ -413,9 +530,18 @@ BpProject .projects[0] {
 	};
 
 	ProgEl_List @.prog_code = [4] {
-	  MethodCall @[0] { };
-	  MethodCall @[1] { };
-	  MethodCall @[2] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[2] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  MethodCall @[3] { 
 	    ProgArg_List @.meth_args = [2] {
 	      ProgArg @[0] { };
@@ -438,6 +564,9 @@ BpProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -446,6 +575,12 @@ BpProject .projects[0] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
 	  ProgVar @[2] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [4] {
@@ -469,8 +604,14 @@ BpProject .projects[0] {
 	};
 
 	ProgEl_List @.prog_code = [6] {
-	  MethodCall @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  AssignExpr @[2] { };
 	  MethodCall @[3] { 
 	    ProgArg_List @.meth_args = [3] {
@@ -486,10 +627,19 @@ BpProject .projects[0] {
 	      ProgArg @[2] { };
 	    };
 	  };
-	  MethodCall @[5] { };
+	  MethodCall @[5] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	};
       };
       Program @[7] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -501,6 +651,15 @@ BpProject .projects[0] {
 	  ProgVar @[3] { };
 	  ProgVar @[4] { };
 	  ProgVar @[5] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
+	ProgEl_List @.init_code = [0] {
 	};
 
 	ProgEl_List @.prog_code = [6] {
@@ -680,23 +839,56 @@ BpProject .projects[0] {
       BaseSpec_Group @.specs = [4] {
 	BpUnitSpec @[0] { 
 	  BaseSpec_Group @.children = [3] {
-	    ExpBpUnitSpec @[0] { };
-	    SoftMaxBpUnitSpec @[1] { };
-	    LinearBpUnitSpec @[2] { };
+	    ExpBpUnitSpec @[0] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+	    };
+	    SoftMaxBpUnitSpec @[1] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+	    };
+	    LinearBpUnitSpec @[2] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+	    };
 	  };
 	};
 	BpConSpec @[1] { 
 	  BaseSpec_Group @.children = [2] {
-	    BpConSpec @[0] { };
-	    BpConSpec @[1] { };
+	    BpConSpec @[0] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+
+	      Schedule @.lrate_sched = [0] {
+	      };
+	    };
+	    BpConSpec @[1] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+
+	      Schedule @.lrate_sched = [0] {
+	      };
+	    };
+	  };
+
+	  Schedule @.lrate_sched = [0] {
 	  };
 	};
-	FullPrjnSpec @[2] { };
-	OneToOnePrjnSpec @[3] { };
+	FullPrjnSpec @[2] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	OneToOnePrjnSpec @[3] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
       };
 
       Layer_Group @.layers = [5] {
 	BpLayer @[0] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
 	  Unit_Group @.units = [16] {
 	  };
 	};
@@ -734,6 +926,9 @@ BpProject .projects[0] {
 	  };
 	};
       };
+
+      NetViewObj_Group @.view_objs = [0] {
+      };
     };
     BpNetwork @[1] { 
    UserDataItem_List @*(.user_data_) {
@@ -753,23 +948,56 @@ BpProject .projects[0] {
       BaseSpec_Group @.specs = [4] {
 	BpUnitSpec @[0] { 
 	  BaseSpec_Group @.children = [3] {
-	    ExpBpUnitSpec @[0] { };
-	    SoftMaxBpUnitSpec @[1] { };
-	    LinearBpUnitSpec @[2] { };
+	    ExpBpUnitSpec @[0] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+	    };
+	    SoftMaxBpUnitSpec @[1] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+	    };
+	    LinearBpUnitSpec @[2] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+	    };
 	  };
 	};
 	BpConSpec @[1] { 
 	  BaseSpec_Group @.children = [2] {
-	    BpConSpec @[0] { };
-	    BpConSpec @[1] { };
+	    BpConSpec @[0] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+
+	      Schedule @.lrate_sched = [0] {
+	      };
+	    };
+	    BpConSpec @[1] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+
+	      Schedule @.lrate_sched = [0] {
+	      };
+	    };
+	  };
+
+	  Schedule @.lrate_sched = [0] {
 	  };
 	};
-	FullPrjnSpec @[2] { };
-	OneToOnePrjnSpec @[3] { };
+	FullPrjnSpec @[2] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	OneToOnePrjnSpec @[3] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
       };
 
       Layer_Group @.layers = [3] {
 	BpLayer @[0] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
 	  Unit_Group @.units = [16] {
 	  };
 	};
@@ -789,6 +1017,9 @@ BpProject .projects[0] {
 	  Unit_Group @.units = [4] {
 	  };
 	};
+      };
+
+      NetViewObj_Group @.view_objs = [0] {
       };
     };
   };
@@ -1992,9 +2223,10 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       object_type=BpNetwork;
       object_val=.projects[0].networks[0]$4$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to operate on -- updates batch counter on network and passes it to train program";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="input_data";
@@ -2002,18 +2234,20 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       object_type=DataTable;
       object_val=.projects[0].data.gp[0][0]$5$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="datatable with training patterns -- not used by this program, but passed to train program";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="max_batch";
       var_type=T_Int;
       int_val=10;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="maximum number of batch runs to perform";
+      init_from=NULL;
      };
     };
     vars {
@@ -2025,9 +2259,10 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="batch counter";
+      init_from=NULL;
      };
     };
     functions {
@@ -2178,9 +2413,10 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       object_type=BpNetwork;
       object_val=$4$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to train";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="input_data";
@@ -2188,18 +2424,20 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       object_type=DataTable;
       object_val=.projects[0].data.gp[0][1]$8$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="datatable with training patterns";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="no_prompts";
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
+      init_from=NULL;
      };
     };
     vars {
@@ -2211,18 +2449,20 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       var_type=T_Int;
       int_val=5000;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="maximum number of epochs to run";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="epoch";
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="current epoch -- local copy, which is used to update network's epoch counter";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="train_mode";
@@ -2230,9 +2470,10 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       int_val=1;
       hard_enum_type=Network::TrainMode;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="TRAIN = update weights (learn), TEST = just record network's responses but don't learn";
+      init_from=NULL;
      };
      ProgVar @[3] {
       name="rnd_init";
@@ -2242,18 +2483,20 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
        value=1;
       };
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="how to initialize the random numbers when the Init button is pressed";
+      init_from=NULL;
      };
      ProgVar @[4] {
       name="err_stopcrit";
       var_type=T_Real;
       real_val=-1;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="stopping criterion -- when error measure (average sum squared error by default) goes <= this value, stop training (set to -1 to disable stopping criterion, and always train to max_epoch epochs)";
+      init_from=NULL;
      };
      ProgVar @[5] {
       name="rnd_seed";
@@ -2261,9 +2504,10 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       object_type=RndSeed;
       object_val=.projects[0].programs.gp[0][1].objs[0]$10$;
       objs_ptr=1;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="random seed that is used at start of training -- if OldSeed is called";
+      init_from=NULL;
      };
      ProgVar @[6] {
       name="train_timer";
@@ -2271,9 +2515,10 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       object_type=TimeUsed;
       object_val=.projects[0].networks[0].train_time$11$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="records time used to train network (object lives on network -- this is a pointer to it)";
+      init_from=NULL;
      };
     };
     functions {
@@ -2594,9 +2839,10 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       object_type=BpNetwork;
       object_val=$4$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to operate on";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="input_data";
@@ -2604,9 +2850,10 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       object_type=DataTable;
       object_val=$8$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="table of patterns to present to the network, one row at a time";
+      init_from=NULL;
      };
     };
     vars {
@@ -2619,19 +2866,21 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       int_val=1;
       hard_enum_type=DataLoop::Order;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="controls the order in which events (rows of the input data datatable) are presented to the network
 (SEQUENTIAL, PERMUTED, RANDOM)";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="trial";
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="trial_mon_data";
@@ -2639,9 +2888,10 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       object_type=DataTable;
       object_val=.projects[0].data.gp[1][0]$18$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
+      init_from=NULL;
      };
      ProgVar @[3] {
       name="epoch_timer";
@@ -2649,18 +2899,20 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       object_type=TimeUsed;
       object_val=.projects[0].networks[0].epoch_time$19$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
+      init_from=NULL;
      };
      ProgVar @[4] {
       name="data_loop_index";
       var_type=T_Int;
       int_val=10;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
+      init_from=NULL;
      };
     };
     functions {
@@ -2926,9 +3178,10 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       object_type=BpNetwork;
       object_val=$4$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to operate on -- typically set by higher-level calling programs";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="input_data";
@@ -2936,9 +3189,10 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       object_type=DataTable;
       object_val=$8$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="datatable containing training input/output patterns";
+      init_from=NULL;
      };
     };
     vars {
@@ -2950,9 +3204,10 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       var_type=T_Bool;
       bool_val=1;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="determines whether to update any network view displays after trial is completed";
+      init_from=NULL;
      };
     };
     functions {
@@ -3136,9 +3391,10 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=LeabraNetwork;
       object_val=$4$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to apply inputs to -- typically set by calling program";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="input_data";
@@ -3146,9 +3402,10 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=DataTable;
       object_val=$8$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="input datatable containing input/output patterns";
+      init_from=NULL;
      };
     };
     vars {
@@ -3161,9 +3418,10 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=LayerWriter;
       object_val=.projects[0].programs.gp[0][4].objs[0]$32$;
       objs_ptr=1;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
+      init_from=NULL;
      };
     };
     functions {
@@ -3481,9 +3739,10 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=Network;
       object_val=$4$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to record data from";
+      init_from=NULL;
      };
     };
     vars {
@@ -3496,9 +3755,10 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=DataTable;
       object_val=$18$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="data table to record trial-level data to (this program writes new data to this table!)";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="trial_netmon";
@@ -3506,9 +3766,10 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=NetMonitor;
       object_val=.projects[0].programs.gp[0][5].objs[0]$34$;
       objs_ptr=1;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
+      init_from=NULL;
      };
     };
     functions {
@@ -3904,9 +4165,10 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=Network;
       object_val=$4$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to get data from";
+      init_from=NULL;
      };
     };
     vars {
@@ -3919,9 +4181,10 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=DataTable;
       object_val=$38$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="data table to write the epoch data to";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="epoch_netmon";
@@ -3929,9 +4192,10 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=NetMonitor;
       object_val=.projects[0].programs.gp[0][6].objs[0]$39$;
       objs_ptr=1;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network monitor object that contains full specs for what to record and where to get it";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="epoch_timer";
@@ -3939,9 +4203,10 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=TimeUsed;
       object_val=$19$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
+      init_from=NULL;
      };
     };
     functions {
@@ -4202,9 +4467,10 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=Network;
       object_val=$4$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc=;
+      init_from=NULL;
      };
     };
     vars {
@@ -4216,54 +4482,60 @@ this program can be extended to do arbitrary things to generate data and apply i
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="user-provided tag (startup script will set this!)";
+      init_from=NULL;
      };
      ProgVar @[1] {
       name="wts_subdir";
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="user-provided subdirectory to save weights in";
+      init_from=NULL;
      };
      ProgVar @[2] {
       name="fname";
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="final generated file name -- do not edit!";
+      init_from=NULL;
      };
      ProgVar @[3] {
       name="epoch_str";
       var_type=T_String;
       string_val="0036";
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="string rep of epoch with leading zeros";
+      init_from=NULL;
      };
      ProgVar @[4] {
       name="batch_str";
       var_type=T_String;
       string_val="03";
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="string rep of batch with leading zeros";
+      init_from=NULL;
      };
      ProgVar @[5] {
       name="final_tag";
       var_type=T_String;
       string_val=".03_0036";
       objs_ptr=0;
-      flags=NULL_CHECK|USED;
+      flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="batch + epoch";
+      init_from=NULL;
      };
     };
     functions {
@@ -4603,6 +4875,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
@@ -4730,6 +5003,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
@@ -4872,6 +5146,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
@@ -5014,6 +5289,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
@@ -5490,6 +5766,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {

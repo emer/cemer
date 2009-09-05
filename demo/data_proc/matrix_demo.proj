@@ -1,0 +1,1226 @@
+// ta_Dump File v2.0 -- code v5.0.0.0
+LeabraProject .projects[0] { 
+  taBase_Group @.templates = [0] {
+  };
+
+  Doc_Group @.docs = [0] {
+  };
+
+  Wizard_Group @.wizards = [1] {
+    LeabraWizard @[0] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+
+      LayerWizElList @.layer_cfg = [3] {
+	LayerWizEl @[0] { };
+	LayerWizEl @[1] { };
+	LayerWizEl @[2] { };
+      };
+    };
+  };
+
+  SelectEdit_Group @.edits = [0] {
+  };
+
+  DataTable_Group @.data = [0] {
+    DataTable_Group @.gp[0] { 
+    };
+    DataTable_Group @.gp[1] { 
+    };
+    DataTable_Group @.gp[2] { 
+    };
+  };
+
+  taBase_Group @.data_proc = [4] {
+    taDataProc @[0] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taDataAnal @[1] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taDataGen @[2] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+    taImageProc @[3] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+   };
+};
+  };
+
+  Program_Group @.programs = [1] {
+    Program @[0] { 
+      ProgObjList @.objs = [2] {
+	Random @[0] { };
+	DataTable @[1] { 
+	  DataTableCols @.data = [3] {
+	    float_Data @[0] { };
+	    float_Data @[1] { };
+	    float_Data @[2] { };
+	  };
+	};
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgVar_List @.vars = [4] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+	ProgVar @[2] { };
+	ProgVar @[3] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.load_code = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
+      };
+
+      ProgEl_List @.prog_code = [1] {
+	CodeBlock @[0] { 
+	  ProgEl_List @.prog_code = [17] {
+	    ProgVars @[0] { 
+	      ProgVar_List @.local_vars = [3] {
+		ProgVar @[0] { };
+		ProgVar @[1] { };
+		ProgVar @[2] { };
+	      };
+	    };
+	    AssignExpr @[1] { };
+	    AssignExpr @[2] { };
+	    AssignExpr @[3] { };
+	    MethodCall @[4] { 
+	      ProgArg_List @.meth_args = [8] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+		ProgArg @[3] { };
+		ProgArg @[4] { };
+		ProgArg @[5] { };
+		ProgArg @[6] { };
+		ProgArg @[7] { };
+	      };
+	    };
+	    DataGenCall @[5] { 
+	      ProgArg_List @.meth_args = [2] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+	      };
+	    };
+	    MathCall @[6] { 
+	      ProgArg_List @.meth_args = [1] {
+		ProgArg @[0] { };
+	      };
+	    };
+	    MathCall @[7] { 
+	      ProgArg_List @.meth_args = [4] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+		ProgArg @[3] { };
+	      };
+	    };
+	    MathCall @[8] { 
+	      ProgArg_List @.meth_args = [3] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+	      };
+	    };
+	    PrintExpr @[9] { };
+	    PrintExpr @[10] { };
+	    PrintVar @[11] { };
+	    MethodCall @[12] { 
+	      ProgArg_List @.meth_args = [1] {
+		ProgArg @[0] { };
+	      };
+	    };
+	    MethodCall @[13] { 
+	      ProgArg_List @.meth_args = [3] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+	      };
+	    };
+	    MethodCall @[14] { 
+	      ProgArg_List @.meth_args = [3] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+	      };
+	    };
+	    MethodCall @[15] { 
+	      ProgArg_List @.meth_args = [3] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+	      };
+	    };
+	    DoneWritingDataRow @[16] { };
+	  };
+	};
+      };
+    };
+  };
+
+  DataViewer_List @.viewers = [1] {
+    MainWindowViewer @[0] { 
+      ToolBar_List @.toolbars = [1] {
+	ToolBar @[0] { };
+      };
+
+      FrameViewer_List @.frames = [3] {
+	tabBrowseViewer @[0] { };
+	PanelViewer @[1] { };
+	T3DataViewer @[2] { 
+	  T3DataViewFrame_List @.frames = [1] {
+	    T3DataViewFrame @[0] { 
+	      T3DataView_List @.children = [1] {
+		GridTableView @[0] { 
+		  T3DataView_List @.children = [3] {
+		    GridColView @[0] { };
+		    GridColView @[1] { };
+		    GridColView @[2] { };
+		  };
+		};
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
+	    };
+	  };
+	};
+      };
+
+      DockViewer_List @.docks = [1] {
+	ToolBoxDockViewer @[0] { };
+      };
+    };
+  };
+
+  Network_Group @.networks = [0] {
+  };
+};
+LeabraProject .projects[0] {
+ name="Project_0";
+ desc=;
+ tags=;
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ wiki_url {
+  sync=0;
+  wiki=;
+  url=;
+ };
+ templates {
+  name=;
+  el_typ=taBase;
+  el_def=0;
+ };
+ docs {
+  name=;
+  el_typ=taDoc;
+  el_def=0;
+ };
+ wizards {
+  name=;
+  el_typ=LeabraWizard;
+  el_def=0;
+  LeabraWizard @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="LeabraWizard_0";
+   auto_open=0;
+   n_layers=3;
+   layer_cfg {
+    name=;
+    el_typ=LayerWizEl;
+    el_def=0;
+    LayerWizEl @[0] {
+     name="Input";
+     n_units=25;
+     io_type=INPUT;
+    };
+    LayerWizEl @[1] {
+     name="Hidden";
+     n_units=25;
+     io_type=HIDDEN;
+    };
+    LayerWizEl @[2] {
+     name="Output";
+     n_units=25;
+     io_type=OUTPUT;
+    };
+   };
+   connectivity=BIDIRECTIONAL;
+   default_net_type=LeabraNetwork;
+  };
+ };
+ edits {
+  name=;
+  el_typ=SelectEdit;
+  el_def=0;
+ };
+ data {
+  name=;
+  el_typ=DataTable;
+  el_def=0;
+  DataTable_Group @.gp[0] {
+   name="InputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp[1] {
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp[2] {
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+ };
+ data_proc {
+  name=;
+  el_typ=taDataProc;
+  el_def=0;
+  taDataProc @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_base";
+  };
+  taDataAnal @[1] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_anal";
+  };
+  taDataGen @[2] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_gen";
+  };
+  taImageProc @[3] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="image_proc";
+  };
+ };
+ programs {
+  name=;
+  el_typ=Program;
+  el_def=0;
+  step_prog=NULL;
+  tags=;
+  desc=;
+  Program @[0] {
+   name="MatrixMathDemo";
+   tags=;
+   desc="demonstration for how to create and manipulate matrix objects";
+   flags=;
+   objs {
+    name=;
+    el_typ=Random;
+    el_def=0;
+    Random @[0] {name="Random_0": type=GAUSSIAN: mean=0.3: var=1: par=1: };
+    DataTable @[1] {
+     name="Results";
+     desc=;
+     data {
+      name="data";
+      el_typ=float_Data;
+      el_def=0;
+      float_Data @[0] {
+       name="noise_data";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=1;
+       cell_geom{ 5;5;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [5 5 1] -0.66586292;0.92779601;0.7826072;-0.51080108;0.63808089;-0.12493658;0.74799222;0.49851945;-0.078386933;-0.10575757;
+-0.40335098;1.9857781;0.26219243;1.7626901;0.68639004;0.26554835;0.2978664;1.9523624;1.7568694;1.1005182;
+0.40597463;-1.1655356;1.1570826;-0.78868842;-0.52187824;       };
+      };
+      float_Data @[1] {
+       name="eigen_vectors";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=1;
+       cell_geom{ 5;5;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [5 5 1] -0.035879467;0.19032873;0.21571298;0.95686007;0.019349791;0.47465798;-0.43239984;-0.7183789;0.26630786;-0.027240891;
+0.58925354;0.61274391;-0.036797862;-0.10191125;0.51534957;0.64652556;-0.30797774;0.60875124;-0.044888731;-0.33846915;
+-0.090539515;-0.55362439;0.25586626;0.033137478;0.78659838;       };
+      };
+      float_Data @[2] {
+       name="eigen_values";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=1;
+       cell_geom{ 5;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [5 1] 3.8506782;-3.2911561;1.0499464;-0.65607333;0.62591773;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="Random_0";
+     var_type=T_Object;
+     object_type=Random;
+     object_val=.projects[0].programs[0].objs[0]$0$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="mean";
+     var_type=T_Real;
+     real_val=0.4345227479934692;
+     objs_ptr=0;
+     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc="mean of matrix values";
+     init_from=NULL;
+    };
+    ProgVar @[2] {
+     name="std_dev";
+     var_type=T_Real;
+     real_val=0.8598507642745972;
+     objs_ptr=0;
+     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc="standard deviation of matrix values";
+     init_from=NULL;
+    };
+    ProgVar @[3] {
+     name="Results";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[0].objs[1]$1$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   load_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    CodeBlock @[0] {
+     desc=;
+     flags=;
+     prog_code {
+      name=;
+      el_typ=ProgEl;
+      el_def=0;
+      ProgVars @[0] {
+       desc=;
+       flags=;
+       local_vars {
+	name=;
+	el_typ=ProgVar;
+	el_def=0;
+	ProgVar @[0] {
+	 name="my_mat";
+	 var_type=T_Object;
+	 object_type=float_Matrix;
+	 object_val=NULL;
+	 objs_ptr=0;
+	 flags=LOCAL_VAR|USED;
+	 reference=0;
+	 desc="critical for it to be a local var within a ProgVars, not in global vars!";
+	 init_from=NULL;
+	};
+	ProgVar @[1] {
+	 name="eigen_vectors";
+	 var_type=T_Object;
+	 object_type=float_Matrix;
+	 object_val=NULL;
+	 objs_ptr=0;
+	 flags=LOCAL_VAR|USED;
+	 reference=0;
+	 desc=;
+	 init_from=NULL;
+	};
+	ProgVar @[2] {
+	 name="eigen_values";
+	 var_type=T_Object;
+	 object_type=float_Matrix;
+	 object_val=NULL;
+	 objs_ptr=0;
+	 flags=LOCAL_VAR|USED;
+	 reference=0;
+	 desc=;
+	 init_from=NULL;
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc="create a new object for our variable to point to -- this is essential!";
+       flags=;
+       result_var=.projects[0].programs[0].prog_code[0].prog_code[0].local_vars[0]$2$;
+       expr {
+	expr="new float_Matrix";
+       };
+      };
+      AssignExpr @[2] {
+       desc="all \"return values\" in math functions assume matrix object exists already, even if they configure geom for it";
+       flags=;
+       result_var=.projects[0].programs[0].prog_code[0].prog_code[0].local_vars[2]$3$;
+       expr {
+	expr="new float_Matrix";
+       };
+      };
+      AssignExpr @[3] {
+       desc="all \"return values\" in math functions assume matrix object exists already, even if they configure geom for it";
+       flags=;
+       result_var=.projects[0].programs[0].prog_code[0].prog_code[0].local_vars[1]$4$;
+       expr {
+	expr="new float_Matrix";
+       };
+      };
+      MethodCall @[4] {
+       desc="Manually set to be a 5x5 2 dimensional matrix";
+       flags=;
+       result_var=NULL;
+       obj=$2$;
+       method=taMatrix::SetGeom;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=int;
+	 type="int";
+	 name="size";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="2";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=int;
+	 type="int";
+	 name="d0";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="5";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="d1";
+	 required=0;
+	 def_val="0";
+	 expr {
+	  expr="5";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=int;
+	 type="int";
+	 name="d2";
+	 required=0;
+	 def_val="0";
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=int;
+	 type="int";
+	 name="d3";
+	 required=0;
+	 def_val="0";
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=int;
+	 type="int";
+	 name="d4";
+	 required=0;
+	 def_val="0";
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=int;
+	 type="int";
+	 name="d5";
+	 required=0;
+	 def_val="0";
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=int;
+	 type="int";
+	 name="d6";
+	 required=0;
+	 def_val="0";
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      DataGenCall @[5] {
+       desc="fill matrix with noise";
+       flags=;
+       result_var=NULL;
+       object_type=taDataGen;
+       method=taDataGen::AddNoiseMat;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=float_Matrix_ptr;
+	 type="float_Matrix*";
+	 name="mat";
+	 required=0;
+	 def_val=;
+	 expr {
+	  expr="my_mat";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_Random_ref;
+	 type="const Random&";
+	 name="rnd_spec";
+	 required=0;
+	 def_val=;
+	 expr {
+	  expr="Random_0";
+	 };
+	};
+       };
+      };
+      MathCall @[6] {
+       desc="compute mean of matrix";
+       flags=;
+       result_var=.projects[0].programs[0].vars[1]$5$;
+       object_type=taMath_float;
+       method=taMath_float::vec_mean;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_float_Matrix_ptr;
+	 type="const float_Matrix*";
+	 name="vec";
+	 required=0;
+	 def_val=;
+	 expr {
+	  expr="my_mat";
+	 };
+	};
+       };
+      };
+      MathCall @[7] {
+       desc="compute std dev of matrix";
+       flags=;
+       result_var=.projects[0].programs[0].vars[2]$6$;
+       object_type=taMath_float;
+       method=taMath_float::vec_std_dev;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_float_Matrix_ptr;
+	 type="const float_Matrix*";
+	 name="vec";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="my_mat";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=float;
+	 type="float";
+	 name="mean";
+	 required=0;
+	 def_val="0";
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=bool;
+	 type="bool";
+	 name="use_mean";
+	 required=0;
+	 def_val="false";
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=bool;
+	 type="bool";
+	 name="use_est";
+	 required=0;
+	 def_val="false";
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+      };
+      MathCall @[8] {
+       desc="compute std dev of matrix";
+       flags=;
+       result_var=NULL;
+       object_type=taMath_float;
+       method=taMath_float::mat_eigen;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_float_Matrix_ptr;
+	 type="const float_Matrix*";
+	 name="A";
+	 required=0;
+	 def_val=;
+	 expr {
+	  expr="my_mat";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=float_Matrix_ptr;
+	 type="float_Matrix*";
+	 name="eigen_vals";
+	 required=0;
+	 def_val=;
+	 expr {
+	  expr="eigen_values";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=float_Matrix_ptr;
+	 type="float_Matrix*";
+	 name="eigen_vecs";
+	 required=0;
+	 def_val=;
+	 expr {
+	  expr="eigen_vectors";
+	 };
+	};
+       };
+      };
+      PrintExpr @[9] {
+       desc="test to see what the geometry of the resulting matrix is -- turned off but can be turned on to check";
+       flags=OFF;
+       expr {
+	expr="eigen_vectors.geom.GeomToString()";
+       };
+      };
+      PrintExpr @[10] {
+       desc="test to see what the geometry of the resulting matrix is -- turned off but can be turned on to check";
+       flags=OFF;
+       expr {
+	expr="eigen_values.geom.GeomToString()";
+       };
+      };
+      PrintVar @[11] {
+       desc=;
+       flags=;
+       message="stats on matrix are:";
+       print_var=$5$;
+       print_var2=$6$;
+       print_var3=NULL;
+       print_var4=NULL;
+       print_var5=NULL;
+       print_var6=NULL;
+      };
+      MethodCall @[12] {
+       desc="make sure has exactly one row";
+       flags=;
+       result_var=NULL;
+       obj=.projects[0].programs[0].vars[3]$7$;
+       method=DataTable::EnforceRows;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=int;
+	 type="int";
+	 name="n_rows";
+	 required=0;
+	 def_val=;
+	 expr {
+	  expr="1";
+	 };
+	};
+       };
+      };
+      MethodCall @[13] {
+       desc="write our matrix data to a data table, which is very convenient for visualization";
+       flags=;
+       result_var=NULL;
+       obj=$7$;
+       method=DataTable::SetValAsMatrixColName;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taMatrix_ptr;
+	 type="const taMatrix*";
+	 name="val";
+	 required=0;
+	 def_val=;
+	 expr {
+	  expr="my_mat";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="const taString&";
+	 name="col_name";
+	 required=0;
+	 def_val="\"\"";
+	 expr {
+	  expr="\"noise_data\"";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=0;
+	 def_val=;
+	 expr {
+	  expr="0";
+	 };
+	};
+       };
+      };
+      MethodCall @[14] {
+       desc=;
+       flags=;
+       result_var=NULL;
+       obj=$7$;
+       method=DataTable::SetValAsMatrixColName;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taMatrix_ptr;
+	 type="const taMatrix*";
+	 name="val";
+	 required=0;
+	 def_val=;
+	 expr {
+	  expr="eigen_values";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="const taString&";
+	 name="col_name";
+	 required=0;
+	 def_val="\"\"";
+	 expr {
+	  expr="\"eigen_values\"";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=0;
+	 def_val=;
+	 expr {
+	  expr="0";
+	 };
+	};
+       };
+      };
+      MethodCall @[15] {
+       desc=;
+       flags=;
+       result_var=NULL;
+       obj=$7$;
+       method=DataTable::SetValAsMatrixColName;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taMatrix_ptr;
+	 type="const taMatrix*";
+	 name="val";
+	 required=0;
+	 def_val=;
+	 expr {
+	  expr="eigen_vectors";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="const taString&";
+	 name="col_name";
+	 required=0;
+	 def_val="\"\"";
+	 expr {
+	  expr="\"eigen_vectors\"";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=0;
+	 def_val=;
+	 expr {
+	  expr="0";
+	 };
+	};
+       };
+      };
+      DoneWritingDataRow @[16] {
+       desc="this triggers a display update";
+       flags=;
+       data_var=$7$;
+      };
+     };
+    };
+   };
+  };
+ };
+ viewers {
+  name=;
+  el_typ=TopLevelViewer;
+  el_def=0;
+  MainWindowViewer @[0] {
+   m_data=.projects[0]$8$;
+   name="Browser2";
+   visible=1;
+   m_is_root=0;
+   m_is_viewer_xor_browser=0;
+   m_is_proj_viewer=1;
+   m_is_dialog=0;
+   toolbars {
+    name=;
+    el_typ=ToolBar;
+    el_def=0;
+    ToolBar @[0] {
+     m_data=NULL;
+     name="Application";
+     visible=0;
+     lft=0;
+     top=0;
+     o=Horizontal;
+    };
+   };
+   frames {
+    name=;
+    el_typ=FrameViewer;
+    el_def=0;
+    tabBrowseViewer @[0] {
+     m_data=NULL;
+     name="Tree";
+     visible=1;
+     root_typ=LeabraProject;
+     root_md=NULL;
+     m_root=$8$;
+    };
+    PanelViewer @[1] {
+     m_data=NULL;
+     name="Panels";
+     visible=1;
+    };
+    T3DataViewer @[2] {
+     m_data=NULL;
+     name="T3Frames";
+     visible=1;
+     frames {
+      name=;
+      el_typ=T3DataViewFrame;
+      el_def=0;
+      T3DataViewFrame @[0] {
+       m_data=NULL;
+       name="Results";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @[0] {
+	  m_data=$1$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @[0] {
+	    m_data=.projects[0].programs[0].objs[1].data[0]$9$;
+	    m_transform=NULL;
+	    name="noise_data";
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[1] {
+	    m_data=.projects[0].programs[0].objs[1].data[1]$10$;
+	    m_transform=NULL;
+	    name="eigen_vectors";
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[2] {
+	    m_data=.projects[0].programs[0].objs[1].data[2]$11$;
+	    m_transform=NULL;
+	    name="eigen_values";
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=1;
+	  view_range {min=0: max=0: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=0: max=2: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale_0";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=.colorspecs[0]$12$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	  click_vals=0;
+	  lmb_val=1;
+	  mmb_val=0;
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=1.5325: y=0.5174999: z=1.443747: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.453747;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+     };
+    };
+   };
+   docks {
+    name=;
+    el_typ=DockViewer;
+    el_def=0;
+    ToolBoxDockViewer @[0] {
+     m_data=NULL;
+     name="Tools";
+     visible=1;
+     dock_flags=DV_MOVABLE|DV_FLOATABLE;
+     dock_area=1;
+    };
+   };
+  };
+ };
+ last_change_desc=;
+ networks {
+  name=;
+  el_typ=LeabraNetwork;
+  el_def=0;
+ };
+};

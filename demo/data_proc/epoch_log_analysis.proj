@@ -1,5 +1,8 @@
-// ta_Dump File v2.0 -- code v4.0.21.0
+// ta_Dump File v2.0 -- code v5.0.0.0
 LeabraProject .projects[0] { 
+  taBase_Group @.templates = [0] {
+  };
+
   Doc_Group @.docs = [1] {
     taDoc @[0] { };
   };
@@ -16,6 +19,9 @@ LeabraProject .projects[0] {
 	LayerWizEl @[2] { };
       };
     };
+  };
+
+  SelectEdit_Group @.edits = [0] {
   };
 
   DataTable_Group @.data = [1] {
@@ -39,8 +45,10 @@ LeabraProject .projects[0] {
 	float_Data @[7] { };
       };
     };
-    DataTable_Group @.gp[0] { };
-    DataTable_Group @.gp[1] { };
+    DataTable_Group @.gp[0] { 
+    };
+    DataTable_Group @.gp[1] { 
+    };
     DataTable_Group @.gp[2] = [2] { 
       DataTable @[0] { 
 	DataTableCols @.data = [4] {
@@ -110,6 +118,9 @@ LeabraProject .projects[0] {
 	Relation @[0] { };
       };
 
+      ProgType_List @.types = [0] {
+      };
+
       ProgVar_List @.args = [1] {
 	ProgVar @[0] { };
       };
@@ -127,6 +138,15 @@ LeabraProject .projects[0] {
 	ProgVar @[9] { };
 	ProgVar @[10] { };
 	ProgVar @[11] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.load_code = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
       };
 
       ProgEl_List @.prog_code = [27] {
@@ -149,7 +169,10 @@ LeabraProject .projects[0] {
 	    ProgArg @[1] { };
 	  };
 	};
-	MiscCall @[4] { };
+	MiscCall @[4] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
 	MethodCall @[5] { 
 	  ProgArg_List @.meth_args = [3] {
 	    ProgArg @[0] { };
@@ -165,7 +188,10 @@ LeabraProject .projects[0] {
 	  };
 	};
 	Comment @[7] { };
-	MethodCall @[8] { };
+	MethodCall @[8] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
 	MethodCall @[9] { 
 	  ProgArg_List @.meth_args = [5] {
 	    ProgArg @[0] { };
@@ -310,6 +336,9 @@ LeabraProject .projects[0] {
 	ToolBoxDockViewer @[0] { };
       };
     };
+  };
+
+  Network_Group @.networks = [0] {
   };
 };
 LeabraProject .projects[0] {
@@ -2095,6 +2124,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
@@ -2587,6 +2617,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {

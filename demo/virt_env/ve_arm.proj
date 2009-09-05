@@ -1,5 +1,8 @@
 // ta_Dump File v2.0 -- code v5.0.0.0
 LeabraProject .projects[0] { 
+  taBase_Group @.templates = [0] {
+  };
+
   Doc_Group @.docs = [2] {
     taDoc @[0] { };
     taDoc @[1] { };
@@ -69,9 +72,16 @@ LeabraProject .projects[0] {
 	  EditMbrItem @[4] { };
 	  EditMbrItem @[5] { };
 	};
-	EditMbrItem_Group @.gp[1] { };
-	EditMbrItem_Group @.gp[2] { };
-	EditMbrItem_Group @.gp[3] { };
+	EditMbrItem_Group @.gp[1] { 
+	};
+	EditMbrItem_Group @.gp[2] { 
+	};
+	EditMbrItem_Group @.gp[3] { 
+	  EditMbrItem_Group @.gp[0] { 
+	  };
+	  EditMbrItem_Group @.gp[1] { 
+	  };
+	};
 	EditMbrItem_Group @.gp[4] = [0] { 
 	  EditMbrItem_Group @.gp[0] = [3] { 
 	    EditMbrItem @[0] { };
@@ -110,6 +120,9 @@ LeabraProject .projects[0] {
 	EditMbrItem @[8] { };
 	EditMbrItem @[9] { };
 	EditMbrItem @[10] { };
+      };
+
+      EditMthItem_Group @.mths = [0] {
       };
     };
   };
@@ -252,7 +265,8 @@ LeabraProject .projects[0] {
 	};
       };
     };
-    DataTable_Group @.gp[2] { };
+    DataTable_Group @.gp[2] { 
+    };
   };
 
   taBase_Group @.data_proc = [4] {
@@ -280,6 +294,12 @@ LeabraProject .projects[0] {
 
   Program_Group @.programs = [1] {
     Program @[0] { 
+      ProgObjList @.objs = [0] {
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
       ProgVar_List @.args = [2] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
@@ -294,6 +314,15 @@ LeabraProject .projects[0] {
 	ProgVar @[5] { };
 	ProgVar @[6] { };
 	ProgVar @[7] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.load_code = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
       };
 
       ProgEl_List @.prog_code = [30] {
@@ -314,7 +343,10 @@ LeabraProject .projects[0] {
 	RegisterArgs @[4] { };
 	Comment @[5] { };
 	PrintExpr @[6] { };
-	MethodCall @[7] { };
+	MethodCall @[7] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
 	MiscCall @[8] { 
 	  ProgArg_List @.meth_args = [1] {
 	    ProgArg @[0] { };
@@ -419,6 +451,9 @@ LeabraProject .projects[0] {
 		VEBody_Group @.bodies = [1] {
 		  VEBody @[0] { };
 		};
+
+		VEJoint_Group @.joints = [0] {
+		};
 	      };
 	    };
 
@@ -429,6 +464,9 @@ LeabraProject .projects[0] {
 		  VEStatic @[1] { };
 		};
 	      };
+	    };
+
+	    VETexture_List @.textures = [0] {
 	    };
 	  };
 	  DataTable @[1] { 
@@ -549,6 +587,9 @@ LeabraProject .projects[0] {
 	  taImage @[6] { };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [3] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -601,8 +642,17 @@ LeabraProject .projects[0] {
 	  ProgVar @[42] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
 	ProgEl_List @.init_code = [14] {
-	  MethodCall @[0] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  MethodCall @[1] { 
 	    ProgArg_List @.meth_args = [1] {
 	      ProgArg @[0] { };
@@ -692,11 +742,17 @@ LeabraProject .projects[0] {
 		  };
 		};
 	      };
-	      MethodCall @[1] { };
+	      MethodCall @[1] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	      If @[2] { 
 		ProgEl_List @.true_code = [6] {
 		  AddNewDataRow @[0] { };
-		  MethodCall @[1] { };
+		  MethodCall @[1] { 
+		    ProgArg_List @.meth_args = [0] {
+		    };
+		  };
 		  MethodCall @[2] { 
 		    ProgArg_List @.meth_args = [2] {
 		      ProgArg @[0] { };
@@ -746,7 +802,10 @@ LeabraProject .projects[0] {
 	  AssignExpr @[17] { };
 	  AssignExpr @[18] { };
 	  AddNewDataRow @[19] { };
-	  MethodCall @[20] { };
+	  MethodCall @[20] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  MethodCall @[21] { 
 	    ProgArg_List @.meth_args = [2] {
 	      ProgArg @[0] { };
@@ -815,6 +874,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[1] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [3] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -831,6 +896,15 @@ LeabraProject .projects[0] {
 	  ProgVar @[6] { };
 	  ProgVar @[7] { };
 	  ProgVar @[8] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
+	ProgEl_List @.init_code = [0] {
 	};
 
 	ProgEl_List @.prog_code = [7] {
@@ -855,10 +929,19 @@ LeabraProject .projects[0] {
 	  AssignExpr @[3] { };
 	  MemberAssign @[4] { };
 	  MemberAssign @[5] { };
-	  MethodCall @[6] { };
+	  MethodCall @[6] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	};
       };
       Program @[2] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -881,6 +964,15 @@ LeabraProject .projects[0] {
 	  ProgVar @[14] { };
 	  ProgVar @[15] { };
 	  ProgVar @[16] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
+	ProgEl_List @.init_code = [0] {
 	};
 
 	ProgEl_List @.prog_code = [16] {
@@ -939,6 +1031,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[3] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -959,6 +1057,15 @@ LeabraProject .projects[0] {
 	  ProgVar @[12] { };
 	  ProgVar @[13] { };
 	  ProgVar @[14] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
+	ProgEl_List @.init_code = [0] {
 	};
 
 	ProgEl_List @.prog_code = [15] {
@@ -1016,6 +1123,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[4] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -1029,6 +1142,12 @@ LeabraProject .projects[0] {
 	  ProgVar @[4] { };
 	  ProgVar @[5] { };
 	  ProgVar @[6] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [1] {
@@ -1073,6 +1192,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[5] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -1080,6 +1205,15 @@ LeabraProject .projects[0] {
 
 	ProgVar_List @.vars = [1] {
 	  ProgVar @[0] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
+	ProgEl_List @.init_code = [0] {
 	};
 
 	ProgEl_List @.prog_code = [2] {
@@ -1128,6 +1262,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[6] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -1139,13 +1279,25 @@ LeabraProject .projects[0] {
 	  ProgVar @[2] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
+	ProgEl_List @.init_code = [0] {
+	};
+
 	ProgEl_List @.prog_code = [2] {
 	  AssignExpr @[0] { };
 	  Switch @[1] { 
 	    ProgEl_List @.cases = [2] {
 	      CaseBlock @[0] { 
 		ProgEl_List @.prog_code = [1] {
-		  ProgramCall @[0] { };
+		  ProgramCall @[0] { 
+		    ProgArg_List @.prog_args = [0] {
+		    };
+		  };
 		};
 	      };
 	      CaseBlock @[1] { 
@@ -1169,7 +1321,10 @@ LeabraProject .projects[0] {
 		      };
 		    };
 		  };
-		  ProgramCall @[1] { };
+		  ProgramCall @[1] { 
+		    ProgArg_List @.prog_args = [0] {
+		    };
+		  };
 		};
 	      };
 	    };
@@ -1179,6 +1334,12 @@ LeabraProject .projects[0] {
     };
     Program_Group @.gp[1] = [11] { 
       Program @[0] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -1187,6 +1348,12 @@ LeabraProject .projects[0] {
 	ProgVar_List @.vars = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [1] {
@@ -1240,6 +1407,12 @@ LeabraProject .projects[0] {
 	  ProgVar @[7] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
 	ProgEl_List @.init_code = [5] {
 	  AssignExpr @[0] { };
 	  MethodCall @[1] { 
@@ -1250,16 +1423,25 @@ LeabraProject .projects[0] {
 	  AssignExpr @[2] { };
 	  IfElse @[3] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 
 	    ProgEl_List @.false_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  IfGuiPrompt @[4] { 
 	    ProgEl_List @.yes_code = [2] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	      PrintExpr @[1] { };
 	    };
 	  };
@@ -1275,7 +1457,10 @@ LeabraProject .projects[0] {
 	  MemberAssign @[2] { };
 	  If @[3] { 
 	    ProgEl_List @.true_code = [2] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	      PrintExpr @[1] { };
 	    };
 	  };
@@ -1292,7 +1477,10 @@ LeabraProject .projects[0] {
 	      IfBreak @[2] { };
 	    };
 	  };
-	  MethodCall @[6] { };
+	  MethodCall @[6] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  If @[7] { 
 	    ProgEl_List @.true_code = [1] {
 	      ProgramCall @[0] { 
@@ -1305,6 +1493,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[2] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -1322,6 +1516,12 @@ LeabraProject .projects[0] {
 	  ProgVar @[8] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
 	ProgEl_List @.init_code = [2] {
 	  NetCounterInit @[0] { };
 	  AssignExpr @[1] { };
@@ -1335,8 +1535,14 @@ LeabraProject .projects[0] {
 	      ProgArg @[0] { };
 	    };
 	  };
-	  MethodCall @[3] { };
-	  MethodCall @[4] { };
+	  MethodCall @[3] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[4] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  MethodCall @[5] { 
 	    ProgArg_List @.meth_args = [1] {
 	      ProgArg @[0] { };
@@ -1354,22 +1560,43 @@ LeabraProject .projects[0] {
 	  };
 	  IfElse @[7] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
+	    };
+
+	    ProgEl_List @.false_code = [0] {
 	    };
 	  };
-	  MethodCall @[8] { };
+	  MethodCall @[8] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  If @[9] { 
 	    ProgEl_List @.true_code = [2] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	      If @[1] { 
 		ProgEl_List @.true_code = [2] {
-		  MethodCall @[0] { };
-		  MethodCall @[1] { };
+		  MethodCall @[0] { 
+		    ProgArg_List @.meth_args = [0] {
+		    };
+		  };
+		  MethodCall @[1] { 
+		    ProgArg_List @.meth_args = [0] {
+		    };
+		  };
 		};
 	      };
 	    };
 	  };
-	  MethodCall @[10] { };
+	  MethodCall @[10] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  ProgramCall @[11] { 
 	    ProgArg_List @.prog_args = [1] {
 	      ProgArg @[0] { };
@@ -1378,6 +1605,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[3] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -1390,13 +1623,22 @@ LeabraProject .projects[0] {
 	  ProgVar @[3] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
 	ProgEl_List @.init_code = [1] {
 	  NetCounterInit @[0] { };
 	};
 
 	ProgEl_List @.prog_code = [9] {
 	  NetCounterInit @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  ProgramCall @[2] { 
 	    ProgArg_List @.prog_args = [2] {
 	      ProgArg @[0] { };
@@ -1412,18 +1654,30 @@ LeabraProject .projects[0] {
 		};
 	      };
 	      NetCounterIncr @[1] { };
-	      MethodCall @[2] { };
+	      MethodCall @[2] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
-	  MethodCall @[4] { };
+	  MethodCall @[4] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  If @[5] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  If @[6] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  ProgramCall @[7] { 
@@ -1435,6 +1689,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[4] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -1448,20 +1708,32 @@ LeabraProject .projects[0] {
 	  ProgVar @[4] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
 	ProgEl_List @.init_code = [1] {
 	  NetCounterInit @[0] { };
 	};
 
 	ProgEl_List @.prog_code = [10] {
 	  NetCounterInit @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  ProgramCall @[2] { 
 	    ProgArg_List @.prog_args = [2] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	    };
 	  };
-	  MethodCall @[3] { };
+	  MethodCall @[3] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  IfElse @[4] { 
 	    ProgEl_List @.true_code = [1] {
 	      AssignExpr @[0] { };
@@ -1483,21 +1755,36 @@ LeabraProject .projects[0] {
 	      IfBreak @[3] { };
 	    };
 	  };
-	  MethodCall @[6] { };
+	  MethodCall @[6] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  If @[7] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  If @[8] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  NetUpdateView @[9] { };
 	};
       };
       Program @[5] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -1506,8 +1793,20 @@ LeabraProject .projects[0] {
 	  ProgVar @[0] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
+	ProgEl_List @.init_code = [0] {
+	};
+
 	ProgEl_List @.prog_code = [2] {
-	  MethodCall @[0] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  NetUpdateView @[1] { };
 	};
       };
@@ -1529,10 +1828,22 @@ LeabraProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
+	ProgVar_List @.args = [0] {
+	};
+
 	ProgVar_List @.vars = [3] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
 	  ProgVar @[2] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [2] {
@@ -1556,7 +1867,10 @@ LeabraProject .projects[0] {
 	      ProgArg @[1] { };
 	    };
 	  };
-	  MethodCall @[1] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	};
       };
       Program @[7] { 
@@ -1574,10 +1888,22 @@ LeabraProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
+	ProgVar_List @.args = [0] {
+	};
+
 	ProgVar_List @.vars = [3] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
 	  ProgVar @[2] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [2] {
@@ -1601,7 +1927,10 @@ LeabraProject .projects[0] {
 	      ProgArg @[1] { };
 	    };
 	  };
-	  MethodCall @[1] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	};
       };
       Program @[8] { 
@@ -1623,6 +1952,9 @@ LeabraProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -1630,6 +1962,12 @@ LeabraProject .projects[0] {
 	ProgVar_List @.vars = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [3] {
@@ -1652,9 +1990,18 @@ LeabraProject .projects[0] {
 	};
 
 	ProgEl_List @.prog_code = [4] {
-	  MethodCall @[0] { };
-	  MethodCall @[1] { };
-	  MethodCall @[2] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[2] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  MethodCall @[3] { 
 	    ProgArg_List @.meth_args = [2] {
 	      ProgArg @[0] { };
@@ -1682,6 +2029,9 @@ LeabraProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -1690,6 +2040,12 @@ LeabraProject .projects[0] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
 	  ProgVar @[2] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [4] {
@@ -1713,8 +2069,14 @@ LeabraProject .projects[0] {
 	};
 
 	ProgEl_List @.prog_code = [6] {
-	  MethodCall @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  AssignExpr @[2] { };
 	  MethodCall @[3] { 
 	    ProgArg_List @.meth_args = [3] {
@@ -1730,10 +2092,19 @@ LeabraProject .projects[0] {
 	      ProgArg @[2] { };
 	    };
 	  };
-	  MethodCall @[5] { };
+	  MethodCall @[5] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	};
       };
       Program @[10] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -1745,6 +2116,15 @@ LeabraProject .projects[0] {
 	  ProgVar @[3] { };
 	  ProgVar @[4] { };
 	  ProgVar @[5] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
+	ProgEl_List @.init_code = [0] {
 	};
 
 	ProgEl_List @.prog_code = [6] {
@@ -1781,6 +2161,12 @@ LeabraProject .projects[0] {
     };
     Program_Group @.gp[2] = [6] { 
       Program @[0] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -1793,6 +2179,12 @@ LeabraProject .projects[0] {
 	  ProgVar @[4] { };
 	  ProgVar @[5] { };
 	  ProgVar @[6] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [2] {
@@ -1820,7 +2212,10 @@ LeabraProject .projects[0] {
 	      ProgArg @[0] { };
 	    };
 	  };
-	  MethodCall @[5] { };
+	  MethodCall @[5] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  NetDataLoop @[6] { 
 	    ProgEl_List @.loop_code = [1] {
 	      ProgramCall @[0] { 
@@ -1833,11 +2228,23 @@ LeabraProject .projects[0] {
 	  };
 	  IfElse @[7] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
+	    };
+
+	    ProgEl_List @.false_code = [0] {
 	    };
 	  };
-	  MethodCall @[8] { };
-	  MethodCall @[9] { };
+	  MethodCall @[8] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[9] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  ProgramCall @[10] { 
 	    ProgArg_List @.prog_args = [1] {
 	      ProgArg @[0] { };
@@ -1847,6 +2254,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[1] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -1859,13 +2272,22 @@ LeabraProject .projects[0] {
 	  ProgVar @[3] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
 	ProgEl_List @.init_code = [1] {
 	  NetCounterInit @[0] { };
 	};
 
 	ProgEl_List @.prog_code = [9] {
 	  NetCounterInit @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  ProgramCall @[2] { 
 	    ProgArg_List @.prog_args = [2] {
 	      ProgArg @[0] { };
@@ -1881,18 +2303,30 @@ LeabraProject .projects[0] {
 		};
 	      };
 	      NetCounterIncr @[1] { };
-	      MethodCall @[2] { };
+	      MethodCall @[2] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
-	  MethodCall @[4] { };
+	  MethodCall @[4] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  If @[5] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  If @[6] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  ProgramCall @[7] { 
@@ -1904,6 +2338,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[2] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -1917,20 +2357,32 @@ LeabraProject .projects[0] {
 	  ProgVar @[4] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
 	ProgEl_List @.init_code = [1] {
 	  NetCounterInit @[0] { };
 	};
 
 	ProgEl_List @.prog_code = [10] {
 	  NetCounterInit @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  ProgramCall @[2] { 
 	    ProgArg_List @.prog_args = [2] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	    };
 	  };
-	  MethodCall @[3] { };
+	  MethodCall @[3] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  IfElse @[4] { 
 	    ProgEl_List @.true_code = [1] {
 	      AssignExpr @[0] { };
@@ -1952,21 +2404,36 @@ LeabraProject .projects[0] {
 	      IfBreak @[3] { };
 	    };
 	  };
-	  MethodCall @[6] { };
+	  MethodCall @[6] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  If @[7] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  If @[8] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  NetUpdateView @[9] { };
 	};
       };
       Program @[3] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -1975,8 +2442,20 @@ LeabraProject .projects[0] {
 	  ProgVar @[0] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
+	ProgEl_List @.init_code = [0] {
+	};
+
 	ProgEl_List @.prog_code = [2] {
-	  MethodCall @[0] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  NetUpdateView @[1] { };
 	};
       };
@@ -1999,6 +2478,9 @@ LeabraProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -2006,6 +2488,12 @@ LeabraProject .projects[0] {
 	ProgVar_List @.vars = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [3] {
@@ -2028,9 +2516,18 @@ LeabraProject .projects[0] {
 	};
 
 	ProgEl_List @.prog_code = [4] {
-	  MethodCall @[0] { };
-	  MethodCall @[1] { };
-	  MethodCall @[2] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[2] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  MethodCall @[3] { 
 	    ProgArg_List @.meth_args = [2] {
 	      ProgArg @[0] { };
@@ -2058,6 +2555,9 @@ LeabraProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -2066,6 +2566,12 @@ LeabraProject .projects[0] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
 	  ProgVar @[2] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [4] {
@@ -2089,8 +2595,14 @@ LeabraProject .projects[0] {
 	};
 
 	ProgEl_List @.prog_code = [6] {
-	  MethodCall @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  AssignExpr @[2] { };
 	  MethodCall @[3] { 
 	    ProgArg_List @.meth_args = [3] {
@@ -2106,7 +2618,10 @@ LeabraProject .projects[0] {
 	      ProgArg @[2] { };
 	    };
 	  };
-	  MethodCall @[5] { };
+	  MethodCall @[5] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	};
       };
     };
@@ -2436,34 +2951,103 @@ LeabraProject .projects[0] {
    };
 
       BaseSpec_Group @.specs = [7] {
-	LeabraUnitSpec @[0] { };
+	LeabraUnitSpec @[0] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.noise_sched = [0] {
+	  };
+	};
 	LeabraLayerSpec @[1] { 
 	  BaseSpec_Group @.children = [1] {
-	    LeabraLayerSpec @[0] { };
+	    LeabraLayerSpec @[0] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+	    };
 	  };
 	};
-	FullPrjnSpec @[2] { };
+	FullPrjnSpec @[2] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
 	LeabraConSpec @[3] { 
 	  BaseSpec_Group @.children = [1] {
-	    LeabraBiasSpec @[0] { };
+	    LeabraBiasSpec @[0] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+
+	      Schedule @.lrate_sched = [0] {
+	      };
+	    };
+	  };
+
+	  Schedule @.lrate_sched = [0] {
 	  };
 	};
-	ScalarValLayerSpec @[4] { };
-	ScalarValLayerSpec @[5] { };
-	TwoDValLayerSpec @[6] { };
+	ScalarValLayerSpec @[4] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	ScalarValLayerSpec @[5] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	TwoDValLayerSpec @[6] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
       };
 
       Layer_Group @.layers = [11] {
-	TwoDValLeabraLayer @[0] { };
-	TwoDValLeabraLayer @[1] { };
-	LeabraLayer @[2] { };
-	LeabraLayer @[3] { };
-	LeabraLayer @[4] { };
-	LeabraLayer @[5] { };
+	TwoDValLeabraLayer @[0] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [110] {
+	  };
+	};
+	TwoDValLeabraLayer @[1] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [110] {
+	  };
+	};
+	LeabraLayer @[2] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [12] {
+	  };
+	};
+	LeabraLayer @[3] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [12] {
+	  };
+	};
+	LeabraLayer @[4] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [12] {
+	  };
+	};
+	LeabraLayer @[5] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [12] {
+	  };
+	};
 	LeabraLayer @[6] { 
 	  Projection_Group @.projections = [2] {
 	    LeabraPrjn @[0] { };
 	    LeabraPrjn @[1] { };
+	  };
+
+	  Unit_Group @.units = [49] {
 	  };
 	};
 	LeabraLayer @[7] { 
@@ -2475,22 +3059,37 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[4] { };
 	    LeabraPrjn @[5] { };
 	  };
+
+	  Unit_Group @.units = [49] {
+	  };
 	};
 	TwoDValLeabraLayer @[8] { 
 	  Projection_Group @.projections = [1] {
 	    LeabraPrjn @[0] { };
+	  };
+
+	  Unit_Group @.units = [110] {
 	  };
 	};
 	LeabraLayer @[9] { 
 	  Projection_Group @.projections = [1] {
 	    LeabraPrjn @[0] { };
 	  };
+
+	  Unit_Group @.units = [12] {
+	  };
 	};
 	LeabraLayer @[10] { 
 	  Projection_Group @.projections = [1] {
 	    LeabraPrjn @[0] { };
 	  };
+
+	  Unit_Group @.units = [12] {
+	  };
 	};
+      };
+
+      NetViewObj_Group @.view_objs = [0] {
       };
     };
     LeabraNetwork @[1] { 
@@ -2519,18 +3118,36 @@ LeabraProject .projects[0] {
       BaseSpec_Group @.specs = [7] {
 	LeabraUnitSpec @[0] { 
 	  BaseSpec_Group @.children = [1] {
-	    LeabraUnitSpec @[0] { };
+	    LeabraUnitSpec @[0] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+
+	      Schedule @.noise_sched = [0] {
+	      };
+	    };
+	  };
+
+	  Schedule @.noise_sched = [0] {
 	  };
 	};
 	LeabraLayerSpec @[1] { 
 	  BaseSpec_Group @.children = [1] {
-	    LeabraLayerSpec @[0] { };
+	    LeabraLayerSpec @[0] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+	    };
 	  };
 	};
-	FullPrjnSpec @[2] { };
+	FullPrjnSpec @[2] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
 	LeabraConSpec @[3] { 
 	  BaseSpec_Group @.children = [1] {
 	    LeabraBiasSpec @[0] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+
 	      Schedule @.lrate_sched = [2] {
 		SchedItem @[0] { };
 		SchedItem @[1] { };
@@ -2543,60 +3160,156 @@ LeabraProject .projects[0] {
 	    SchedItem @[1] { };
 	  };
 	};
-	ScalarValLayerSpec @[4] { };
-	ScalarValLayerSpec @[5] { };
-	TwoDValLayerSpec @[6] { };
+	ScalarValLayerSpec @[4] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	ScalarValLayerSpec @[5] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	TwoDValLayerSpec @[6] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
 	BaseSpec_Group @.gp[0] = [2] { 
 	  LeabraUnitSpec @[0] { 
 	    BaseSpec_Group @.children = [1] {
-	      LeabraUnitSpec @[0] { };
+	      LeabraUnitSpec @[0] { 
+		BaseSpec_Group @.children = [0] {
+		};
+
+		Schedule @.noise_sched = [0] {
+		};
+	      };
+	    };
+
+	    Schedule @.noise_sched = [0] {
 	    };
 	  };
-	  LeabraUnitSpec @[1] { };
+	  LeabraUnitSpec @[1] { 
+	    BaseSpec_Group @.children = [0] {
+	    };
+
+	    Schedule @.noise_sched = [0] {
+	    };
+	  };
 	};
 	BaseSpec_Group @.gp[1] = [2] { 
 	  LeabraConSpec @[0] { 
 	    BaseSpec_Group @.children = [2] {
 	      PVConSpec @[0] { 
 		BaseSpec_Group @.children = [3] {
-		  PVrConSpec @[0] { };
-		  PVConSpec @[1] { 
-		    BaseSpec_Group @.children = [1] {
-		      PVConSpec @[0] { };
+		  PVrConSpec @[0] { 
+		    BaseSpec_Group @.children = [0] {
+		    };
+
+		    Schedule @.lrate_sched = [0] {
 		    };
 		  };
-		  PVConSpec @[2] { };
+		  PVConSpec @[1] { 
+		    BaseSpec_Group @.children = [1] {
+		      PVConSpec @[0] { 
+			BaseSpec_Group @.children = [0] {
+			};
+
+			Schedule @.lrate_sched = [0] {
+			};
+		      };
+		    };
+
+		    Schedule @.lrate_sched = [0] {
+		    };
+		  };
+		  PVConSpec @[2] { 
+		    BaseSpec_Group @.children = [0] {
+		    };
+
+		    Schedule @.lrate_sched = [0] {
+		    };
+		  };
+		};
+
+		Schedule @.lrate_sched = [0] {
 		};
 	      };
 	      LeabraBiasSpec @[1] { 
 		BaseSpec_Group @.children = [1] {
-		  LeabraBiasSpec @[0] { };
+		  LeabraBiasSpec @[0] { 
+		    BaseSpec_Group @.children = [0] {
+		    };
+
+		    Schedule @.lrate_sched = [0] {
+		    };
+		  };
+		};
+
+		Schedule @.lrate_sched = [0] {
+		};
+	      };
+	    };
+
+	    Schedule @.lrate_sched = [0] {
+	    };
+	  };
+	  MarkerConSpec @[1] { 
+	    BaseSpec_Group @.children = [0] {
+	    };
+
+	    Schedule @.lrate_sched = [0] {
+	    };
+	  };
+	};
+	BaseSpec_Group @.gp[2] = [6] { 
+	  ExtRewLayerSpec @[0] { 
+	    BaseSpec_Group @.children = [0] {
+	    };
+	  };
+	  PVrLayerSpec @[1] { 
+	    BaseSpec_Group @.children = [0] {
+	    };
+	  };
+	  PViLayerSpec @[2] { 
+	    BaseSpec_Group @.children = [0] {
+	    };
+	  };
+	  LVeLayerSpec @[3] { 
+	    BaseSpec_Group @.children = [1] {
+	      LViLayerSpec @[0] { 
+		BaseSpec_Group @.children = [0] {
 		};
 	      };
 	    };
 	  };
-	  MarkerConSpec @[1] { };
-	};
-	BaseSpec_Group @.gp[2] = [6] { 
-	  ExtRewLayerSpec @[0] { };
-	  PVrLayerSpec @[1] { };
-	  PViLayerSpec @[2] { };
-	  LVeLayerSpec @[3] { 
-	    BaseSpec_Group @.children = [1] {
-	      LViLayerSpec @[0] { };
+	  NVLayerSpec @[4] { 
+	    BaseSpec_Group @.children = [0] {
 	    };
 	  };
-	  NVLayerSpec @[4] { };
-	  PVLVDaLayerSpec @[5] { };
+	  PVLVDaLayerSpec @[5] { 
+	    BaseSpec_Group @.children = [0] {
+	    };
+	  };
 	};
 	BaseSpec_Group @.gp[3] = [2] { 
-	  FullPrjnSpec @[0] { };
-	  OneToOnePrjnSpec @[1] { };
+	  FullPrjnSpec @[0] { 
+	    BaseSpec_Group @.children = [0] {
+	    };
+	  };
+	  OneToOnePrjnSpec @[1] { 
+	    BaseSpec_Group @.children = [0] {
+	    };
+	  };
 	};
       };
 
       Layer_Group @.layers = [18] {
-	LeabraLayer @[0] { };
+	LeabraLayer @[0] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [1] {
+	  };
+	};
 	LeabraLayer @[1] { 
 	  Projection_Group @.projections = [5] {
 	    LeabraPrjn @[0] { };
@@ -2605,12 +3318,18 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[3] { };
 	    LeabraPrjn @[4] { };
 	  };
+
+	  Unit_Group @.units = [4] {
+	  };
 	};
 	LeabraLayer @[2] { 
 	  Projection_Group @.projections = [3] {
 	    LeabraPrjn @[0] { };
 	    LeabraPrjn @[1] { };
 	    LeabraPrjn @[2] { };
+	  };
+
+	  Unit_Group @.units = [4] {
 	  };
 	};
 	LeabraLayer @[3] { 
@@ -2619,12 +3338,18 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[1] { };
 	    LeabraPrjn @[2] { };
 	  };
+
+	  Unit_Group @.units = [4] {
+	  };
 	};
 	LeabraLayer @[4] { 
 	  Projection_Group @.projections = [3] {
 	    LeabraPrjn @[0] { };
 	    LeabraPrjn @[1] { };
 	    LeabraPrjn @[2] { };
+	  };
+
+	  Unit_Group @.units = [4] {
 	  };
 	};
 	LeabraLayer @[5] { 
@@ -2633,11 +3358,17 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[1] { };
 	    LeabraPrjn @[2] { };
 	  };
+
+	  Unit_Group @.units = [4] {
+	  };
 	};
 	LeabraLayer @[6] { 
 	  Projection_Group @.projections = [2] {
 	    LeabraPrjn @[0] { };
 	    LeabraPrjn @[1] { };
+	  };
+
+	  Unit_Group @.units = [4] {
 	  };
 	};
 	LeabraLayer @[7] { 
@@ -2648,17 +3379,26 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[3] { };
 	    LeabraPrjn @[4] { };
 	  };
+
+	  Unit_Group @.units = [1] {
+	  };
 	};
 	LeabraLayer @[8] { 
 	  Projection_Group @.projections = [2] {
 	    LeabraPrjn @[0] { };
 	    LeabraPrjn @[1] { };
 	  };
+
+	  Unit_Group @.units = [12] {
+	  };
 	};
 	LeabraLayer @[9] { 
 	  Projection_Group @.projections = [2] {
 	    LeabraPrjn @[0] { };
 	    LeabraPrjn @[1] { };
+	  };
+
+	  Unit_Group @.units = [12] {
 	  };
 	};
 	LeabraLayer @[10] { 
@@ -2669,14 +3409,62 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[3] { };
 	    LeabraPrjn @[4] { };
 	  };
+
+	  Unit_Group @.units = [49] {
+	  };
 	};
-	LeabraLayer @[11] { };
-	LeabraLayer @[12] { };
-	LeabraLayer @[13] { };
-	LeabraLayer @[14] { };
-	TwoDValLeabraLayer @[15] { };
-	TwoDValLeabraLayer @[16] { };
-	TwoDValLeabraLayer @[17] { };
+	LeabraLayer @[11] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [12] {
+	  };
+	};
+	LeabraLayer @[12] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [12] {
+	  };
+	};
+	LeabraLayer @[13] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [12] {
+	  };
+	};
+	LeabraLayer @[14] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [12] {
+	  };
+	};
+	TwoDValLeabraLayer @[15] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [110] {
+	  };
+	};
+	TwoDValLeabraLayer @[16] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [110] {
+	  };
+	};
+	TwoDValLeabraLayer @[17] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [110] {
+	  };
+	};
+      };
+
+      NetViewObj_Group @.view_objs = [0] {
       };
     };
   };
@@ -2731,11 +3519,11 @@ LeabraProject .projects[0] {
 <body>
 <h1>ChangeLog</h1>
 <ul>
-<P>
+
 <li>Tue Apr  7 23:42:10 2009 0.1.1. oreilly <code>EmerRobot_Arm.proj</code><br>
   lambda arm muscle code in place, with minimal rl and forward model learning, and all programs cleaned up, docs added.
-<P>
-<P>
+
+
 </ul>
 </body>
 </html>
@@ -2781,32 +3569,34 @@ To see the model in action, go to the [[.PanelTab.ControlPanel]] and do Test Ini
 ";
    html_text="<html><head></head><body>
 <h1> Emer Robot (Arm) </h1>
-<p>
+
 This project demonstrates how to use the virtual environment (VE) code to simulate a simple robot with a two-joint arm, which learns to reach to a target location (sort of).
-</p><p>
+
 The focus of this project so far is on building a clean infrastructure for the modeling work, including a robust VE model and numerous programs in RobotProgs for interfacing between the robot and the networks.  We are not so much interested in the details of individual reach movements, but rather on the learning and higher-level coordination of such movements.  Thus, each reach is considred to be a ballistic event that occurs within the \"Trial\" level of processing, although it is possible to have subsequent trials include corrective reaches or something like that. 
-</p><p>
+
 The models contain both joint-level and simluated visual information about the body and world, including current joint angles (somatosensory) and current hand location (visual), and they use scalar value layer specs to represent graded joint angle information.
-</p><p>
+
 There networks are:
-</p><p>
-</p><ul><li> <a href=\"ta:.T3Tab.FwdModelNet\">FwdModelNet</a> -- a forward model that currently is  <i>only</i>  a forward model (does not train an \"inverse\" model to control the robot to reach the target), which learns to predict the arm location based on random motor commands.
+
+<ul><li> <a href=\"ta:.T3Tab.FwdModelNet\">FwdModelNet</a> -- a forward model that currently is  <i>only</i>  a forward model (does not train an \"inverse\" model to control the robot to reach the target), which learns to predict the arm location based on random motor commands.
+
 </li></ul>
 <ul><li> <a href=\"ta:.T3Tab.RLNet\">RLNet</a> -- a reinforcement-learning model using the PVLV dopamine-based RL system to learn to reach the target, based on reward signals that are based on how close the hand got to the target.  Due to the strongly nonlinear properties of the Leabra unit functions, and kwta inhibitory competition, etc, the system does not do a very good job of learning based on graded distance information, and instead learns a set of \"good enough\" reaches that get close but not right on the target.  In general, we think this form of learning is much better for more discrete trial-and-error learning, e.g., for deciding which larger-scale motor plan to execute, rather than learning the fine details of motor control itself.
+
 </li></ul>
 <h2> Arm Model: Lambda Equilibrium Point (EP) Controller </h2>
-<p>
+
 The arm control signals are target final joint angles, which then determine the \"set points\" of muscles that are modeled based on the Gribble, Ostry, Sanguineti, and Labossiere, 1998 version of the Lambda model. There are flexor and extensor muscles for each joint, and each muscle has an equilibrium point (EP) at which no force is generated, based on the muscle spindle fiber reflex system. To move the arm from one joint angle to another, the system generates a smooth trajectory of EP values between the current and target joint angles, and this causes forces to be generated that move the arm.  In addition to joint angles, one can specify the degree of co-contraction (0-1), whereby the muscle set point is reduced by a fixed amount on both sides, causing a constant contraction force at the EP from both muscles, which serves to stabilize the arm.  See co_contract_pct in the EmerRobot program -- it defaults to .4, which produces very stable movements with little oscillation at the end of the reach.  Lower values are \"lower effort\" but result in more oscillations.
-</p><p>
+
 The detailed parameters for each muscle can be found under the <a href=\"ta:.programs.EmerRobot.objs.VEEmerWorld\">VEEmerWorld</a> object in the <a href=\"ta:.programs.EmerRobot\">EmerRobot</a> program -- just double-click on that World guy and everything will open up below it in the left hand browser, and you'll see the Shoulder and Elbow joints, and their associated flexor and extensor muscles.  All of the parameters are from Gribble et al, 1998 except the muscle recruitment gradient (m_rec_grad) parameter, which needed to be higher to produce faster reaches.  Note that this muscle model is quite realistic in many respects, including temporal delays in the reflex action, and time constants for the build-up of Calcium that actually activates the muscle contraction, etc.  
-</p><p>
-</p><h2> Simple Demo of the Model </h2>
-<p>
+
+<h2> Simple Demo of the Model </h2>
+
 To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">ControlPanel</a> and do Test Init, Test Run -- this will load weights into the RLNet and use that to control the arm to reach for the target -- it is not great as explained above, but much better than chance..
-</p><p>
 
 
-</p></body></html>";
+
+</body></html>";
   };
  };
  wizards {
@@ -3614,26 +4404,26 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
       };
       ar {
        name=;
-	    [2 1 100] 0.0084972251;0.42742443;0.4992061;0.72554076;0.77195233;0.41890037;0.78196299;0.49107638;0.21586487;0.39528811;
-0.6521942;0.54322934;0.97903454;0.43708602;0.045720246;0.51503485;0.47817624;0.70463967;0.49772447;0.71296477;
-0.60778433;0.64681005;0.71934026;0.58966595;0.79901439;0.58302975;0.52670878;0.5502829;0.43069813;0.54253346;
-0.27082026;0.35971704;0.21654698;0.56890118;0.70115757;0.45509249;0.39451179;0.48913383;0.47954291;0.69090319;
-0.32900596;0.46344078;0.70766759;0.34491467;0.13939345;0.40563747;0.3858037;0.71735358;0.44169739;0.64447278;
-0.50754553;0.59203756;0.48050973;0.63338065;0.77886117;0.59791517;0.091613717;0.40050849;0.75918335;0.6613887;
-0.84292543;0.43195537;0.28327048;0.80643857;0.29031208;0.42740357;0.71619719;0.71555191;0.70098227;0.8946014;
-0.33941782;0.36718646;0.86938417;0.53296858;0.14904813;0.54617268;0.29805905;0.6004653;0.31074718;0.78649575;
-0.69274437;0.71394455;0.13338436;0.39230883;0.24575023;0.7903834;0.85947496;0.57462418;0.089883305;0.463222;
-0.76026547;0.82442641;0.31901503;0.70351589;0.095793664;0.47392753;0.71101421;0.82828283;0.16079357;0.56227905;
-0.69472742;0.56102902;0.52965206;0.89086002;0.40497333;0.62369734;0.13101219;0.60754985;0.47877103;0.56176007;
-0.84533465;0.66553694;0.95285153;0.41757053;0.11130316;0.66289794;0.44492826;0.65525883;0.6829592;0.4056769;
-0.3813017;0.84187198;0.77833796;0.47757989;0.089899048;0.55066752;0.65039754;0.89657187;0.4525345;0.9727754;
-0.53978848;0.51087707;0.23003018;0.8006987;0.82589293;0.55546147;0.029849129;0.50600797;0.36660802;0.62531126;
-0.38703439;0.65215921;0.21864557;0.684228;0.1564426;0.52825242;0.79193348;0.51737225;0.67799109;0.55979717;
-0.53780758;0.91694939;0.5807485;0.84894258;0.54391754;0.77857322;0.23172879;0.40306747;0.33897769;0.39647293;
-0.77458817;0.53619748;0.49014667;0.70407319;0.79518622;0.77184051;0.82288653;0.69102275;0.61557227;0.49724102;
-0.53132433;0.52128363;0.22717114;0.77282768;0.38270304;0.94642013;0.35441852;0.96607757;0.026684562;0.49065483;
-0.25141105;0.68175566;0.18910734;0.38774285;0.099350005;0.448374;0.42873064;0.71162313;0.30912998;0.77243304;
-0.13926129;0.54223633;0.97973651;0.34668508;0.66049445;0.36277974;0.38148889;0.8521719;0.092834078;0.65938795;
+	    [2 1 100] 0.53984874;0.6658864;0.73252583;0.52143013;0.55890507;0.78799635;0.49758691;0.60275376;0.78891814;0.43550277;
+0.40750295;0.50034577;0.44108042;0.67312568;0.35960332;0.85066587;0.36573929;0.75443947;0.54509765;0.59655231;
+0.32926697;0.40385702;0.81081712;0.40780884;0.90496558;0.61157286;0.49391499;0.67610043;0.90038562;0.70971411;
+0.63444209;0.84043801;0.72190922;0.4544346;0.63156497;0.35040995;0.30568701;0.43050012;0.21570995;0.39998674;
+0.81027234;0.42516604;0.71441656;0.66313028;0.96418399;0.41039598;0.9881621;0.33556414;0.29329875;0.74876493;
+0.12845618;0.55061245;0.64474368;0.79807919;0.1070187;0.53205544;0.68105024;0.61593002;0.2377062;0.42132309;
+0.62555391;0.53855276;0.45721605;0.59473974;0.41140085;0.76571375;0.77928931;0.84629291;0.29540259;0.62458658;
+0.56650263;0.86247796;0.43918985;0.632312;0.95424634;0.56625414;0.70374715;0.46909302;0.71898526;0.33605999;
+0.50952196;0.66155541;0.83110434;0.54316455;0.70033014;0.39511669;0.75455064;0.68538183;0.10475238;0.40890858;
+0.23633604;0.5781641;0.89710057;0.63809443;0.58183342;0.65386742;0.29134536;0.84421766;0.7757507;0.41800207;
+0.23006669;0.87764227;0.53624314;0.55578202;0.68137604;0.41341868;0.45640033;0.62821323;0.28425351;0.75229657;
+0.63058972;0.63997012;0.24821877;0.89366436;0.58439928;0.66867185;0.41433123;0.50598234;0.18815637;0.65639877;
+0.36176074;0.77521461;0.62730914;0.47361675;0.41154182;0.53458995;0.5343526;0.80036944;0.72799939;0.37084442;
+0.54615879;0.61848348;0.50812936;0.91432166;0.50103134;0.57871515;0.25881758;0.85103428;0.50557232;0.75227737;
+0.35272118;0.58939809;0.68415117;0.81598544;0.34403995;0.80049032;0.67628211;0.57133269;0.76528543;0.45565635;
+0.023283897;0.44482815;0.47406551;0.69202936;0.75478232;0.54499823;0.28192714;0.49281859;0.79241443;0.34957752;
+0.75311887;0.42381117;0.74159288;0.78514522;0.75551003;0.61850232;0.14521138;0.45838109;0.66132534;0.33116412;
+0.69900244;0.54662991;0.27125716;0.60507035;0.28227058;0.57973915;0.33467433;0.49805981;0.98113823;0.33744302;
+0.01871876;0.47371909;0.24950455;0.37637889;0.84852779;0.38323534;0.32763293;0.41747409;0.68261933;0.56003714;
+0.47959718;0.54546815;0.76102972;0.57015514;0.37011504;0.54655617;0.1309645;0.61220646;0.93352169;0.34421337;
       };
      };
      float_Data @[2] {
@@ -3646,26 +4436,26 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
       };
       ar {
        name=;
-	    [2 1 100] 0.98657721;0.34101382;0.20831288;0.65765351;0.62393475;0.86144274;0.73799676;0.49385718;0.50645936;0.62628865;
-0.19194734;0.56364179;0.48272955;0.6117059;0.70515323;0.49509379;0.70232397;0.49527246;0.5736689;0.87031978;
-0.57366902;0.87031263;0.48478392;0.6193186;0.48478794;0.6193164;0.57594961;0.87037474;0.48432139;0.61902714;
-0.48432595;0.61902457;0.19491315;0.57324833;0.19491744;0.57324594;0.7523433;0.46791059;0.5102303;0.62567735;
-0.56349808;0.87412792;0.17274985;0.57618403;0.75364655;0.46659949;0.18932961;0.59519649;0.61618924;0.86521256;
-0.61618704;0.86520749;0.47634351;0.61500132;0.58180207;0.86926425;0.48287538;0.61831158;0.19512381;0.57401133;
-0.62393022;0.86252868;0.73764086;0.49415949;0.56229061;0.87015098;0.17362989;0.57887363;0.59688705;0.87169343;
-0.59688503;0.87168765;0.17804925;0.5940901;0.7536884;0.46708563;0.189362;0.59530532;0.18936667;0.59530234;
-0.75312883;0.46833989;0.55833763;0.87138724;0.17284527;0.57613766;0.59556401;0.87219393;0.48141363;0.61723924;
-0.19529904;0.5748626;0.62414867;0.86243069;0.62413538;0.8624295;0.18507308;0.61417323;0.61093354;0.86589402;
-0.18223669;0.60606992;0.47916052;0.60714877;0.5773682;0.87009501;0.48396164;0.61887479;0.19496766;0.57343256;
-0.48207039;0.61127788;0.19469115;0.57598257;0.753169;0.46753994;0.18938544;0.59517688;0.47953093;0.60756075;
-0.70653272;0.49502143;0.5725224;0.8703984;0.48504406;0.61945409;0.19481491;0.57285279;0.62340033;0.86276931;
-0.62339193;0.86276567;0.47477245;0.6141991;0.58286148;0.86909026;0.48262808;0.61816877;0.19515865;0.57414615;
-0.48202801;0.61123228;0.57639778;0.87063843;0.17597111;0.58675534;0.17597587;0.58675379;0.7538178;0.46624377;
-0.55782557;0.87149668;0.55782574;0.87149078;0.55782598;0.87149078;0.55782628;0.87149101;0.17277311;0.57587934;
-0.48221004;0.60798019;0.70669836;0.49448633;0.57246739;0.87042272;0.57246751;0.8704167;0.57246763;0.8704167;
-0.48506141;0.61945868;0.48506626;0.61945593;0.70238084;0.49572223;0.57369536;0.87031591;0.57369542;0.87030905;
-0.17561552;0.58552843;0.17562027;0.585527;0.1756206;0.58552712;0.17562088;0.58552724;0.60030037;0.87038428;
-0.1787515;0.59628189;0.17875597;0.59628016;0.75364774;0.46732888;0.7535798;0.46735492;0.55807883;0.87142378;
+	    [2 1 100] 0.98657721;0.34101382;0.20831288;0.65765351;0.20831719;0.65765262;0.47304952;0.60638481;0.70675075;0.49467856;
+0.5724324;0.87040532;0.48506477;0.61946464;0.57576281;0.87041438;0.48436958;0.61904675;0.57620835;0.87032014;
+0.48425475;0.61899978;0.19492345;0.57328236;0.19492766;0.57327992;0.19492768;0.57327986;0.75234598;0.46790794;
+0.55808735;0.87131089;0.55808753;0.8713038;0.55808783;0.87130386;0.55808806;0.87130404;0.5580883;0.87130421;
+0.5580886;0.87130439;0.55808884;0.87130457;0.14381857;0.48169249;0.14382091;0.48169312;0.9663862;0.19695835;
+0.15718634;0.8245225;0.71362823;0.56222779;0.9679414;0.21170889;0.24562082;0.45380825;0.96653432;0.45855373;
+0.97151595;0.17289846;0.27014521;0.5755164;0.57212734;0.78737134;0.96371114;0.20569997;0.13417266;0.434852;
+0.96455413;0.3145892;0.63369542;0.92887443;0.24664155;0.20763071;0.74064469;0.69620013;0.94939476;0.46656933;
+0.97615379;0.30889025;0.23582725;0.2394089;0.62572467;0.97739631;0.71182567;0.54124194;0.88664937;0.4373365;
+0.95709413;0.10978943;0.54733664;0.76115274;0.90115637;0.45977089;0.92341334;0.42243382;0.9631263;0.13386415;
+0.23961434;0.23875462;0.36126769;0.86522025;0.14556855;0.47298524;0.93155164;0.411567;0.81846327;0.77813578;
+0.060211733;0.60501671;0.23265214;0.86407846;0.45871225;0.88122952;0.95328718;0.37532434;0.83365309;0.82887149;
+0.73794186;0.47623402;0.93274957;0.51611686;0.66467166;0.92581326;0.2165954;0.30143201;0.57032096;0.99422204;
+0.13432632;0.674891;0.25237513;0.15800264;0.21870556;0.32267269;0.21869037;0.87713224;0.23551589;0.38030663;
+0.77379835;0.66346043;0.97911972;0.22355248;0.30403915;0.73727894;0.92559582;0.45844883;0.97570372;0.28750068;
+0.67760307;0.92138797;0.2449199;0.2205596;0.55704993;0.95109075;0.24281657;0.22684784;0.019291965;0.35702142;
+0.40650046;0.69247615;0.93442756;0.41088757;0.30858099;0.45826608;0.93530655;0.36295387;0.67506731;0.96587366;
+0.54753602;0.70008528;0.90976375;0.61140054;0.96744204;0.15143223;0.25285941;0.21891621;0.97827697;0.38752383;
+0.24517582;0.21913064;0.97538954;0.40808228;0.25931916;0.20600308;0.61440086;0.98152781;0.25018981;0.15957654;
+0.27864453;0.39528492;0.57581991;0.79719537;0.93821532;0.43427095;0.97381735;0.18703447;0.35961789;0.86695707;
       };
      };
      float_Data @[3] {
@@ -3678,16 +4468,16 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
       };
       ar {
        name=;
-	    [1 1 100] 0.2178771;0.67570716;0.36479545;0.021481249;0.28191885;0.70602304;0.30673131;0.016394459;0.016270371;0.39331642;
-0.39331642;0.30758256;0.30758256;0.39223343;0.30809122;0.30809122;0.70056152;0.70056152;0.0023788414;0.27664503;
-0.40165296;0.72568476;0.0017085556;0.70318562;0.37075949;0.37075976;0.31766087;0.38848999;0.30979532;0.7001633;
-0.36574951;0.021669935;0.39907017;0.72418427;0.3838363;0.38383657;0.71659714;0.0021579713;0.70313168;0.70313168;
-0.0030630464;0.40220571;0.72558135;0.38481992;0.31136304;0.69979036;0.36559129;0.36559954;0.70584804;0.37326849;
-0.71009523;0.30980945;0.39130759;0.30852625;0.70046139;0.3074868;0.70026916;0.0023633244;0.70312327;0.30945048;
-0.016485265;0.3939563;0.30728114;0.70075536;0.36613685;0.36614138;0.31960166;0.38784531;0.31007811;0.70009601;
-0.30752662;0.39223117;0.72013932;0.72013891;0.0014574835;0.40257481;0.40257481;0.40257481;0.40257481;0.72571188;
-0.3056567;0.015961209;0.39400357;0.39400372;0.39400372;0.30725875;0.30725875;0.016738949;0.39330018;0.39330018;
-0.72075105;0.72075069;0.72075027;0.72074997;0.38130507;0.71546364;0.71546334;0.0023594783;0.002359445;0.40237647;
+	    [1 1 100] 0.2178771;0.67570716;0.67570752;0.31868929;0.016163383;0.39400703;0.30725703;0.39235809;0.30803275;0.3920612;
+0.30817223;0.70054275;0.70054275;0.70054275;0.0023774763;0.40228111;0.40228111;0.40228111;0.40228111;0.40228111;
+0.40228111;0.40228111;0.78354704;0.78354543;0.078397036;0.82469743;0.082622677;0.082624771;0.68871015;0.17993353;
+0.11205147;0.61178631;0.33028626;0.070833281;0.81177515;0.097385548;0.42923293;0.88371027;0.20175073;0.15259662;
+0.12258063;0.85966182;0.50186855;0.062612221;0.06261117;0.083235651;0.32866502;0.090321794;0.090347797;0.093743429;
+0.85849935;0.55602849;0.78472555;0.093719848;0.29964802;0.88941836;0.70774168;0.47744757;0.10448697;0.40264165;
+0.0050182785;0.16391675;0.42377886;0.81921476;0.53566897;0.77121747;0.92751873;0.80142754;0.74544978;0.74545085;
+0.17746359;0.12955937;0.56979322;0.11512493;0.11512408;0.41898972;0.87259036;0.4763495;0.86775053;1.0000002;
+0.43845907;0.09693709;0.61372524;0.072394922;0.50394756;0.28631923;0.21395898;0.10558933;0.87115705;0.16409419;
+0.87378782;0.16791885;0.88116461;0.50867921;0.92654419;0.69426423;0.33532664;0.11566903;0.11569729;0.55867505;
       };
      };
      float_Data @[4] {
@@ -3700,16 +4490,16 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
       };
       ar {
        name=;
-	    [1 1 100] 0.034482758;0.57881641;0.50949466;0.7715385;0.86470139;0.62814718;0.88075465;0.81911349;0.82300991;0.52552146;
-0.52552128;0.87240338;0.87240338;0.52436143;0.87268937;0.87268937;0.6266619;0.6266619;0.76126903;0.86506277;
-0.52348125;0.58477885;0.75973761;0.60068989;0.50897062;0.50897062;0.87621278;0.52334756;0.87335056;0.62648797;
-0.50769186;0.77192503;0.5306353;0.58447415;0.51084;0.51084;0.58122903;0.75947088;0.60066247;0.60066259;
-0.7598384;0.53006816;0.58499044;0.51078504;0.8743943;0.62618589;0.50768727;0.50768745;0.57782674;0.51154369;
-0.57937908;0.88540894;0.52415377;0.8728267;0.62662572;0.88116139;0.62433857;0.76010936;0.6008032;0.88500035;
-0.81719613;0.5259105;0.87227464;0.62677139;0.50769645;0.50769663;0.8768549;0.5230968;0.87348503;0.62645245;
-0.88120753;0.52370715;0.58299232;0.58299285;0.75961244;0.53007096;0.53007066;0.53007019;0.53006983;0.58504128;
-0.88486451;0.81725729;0.52589506;0.52589488;0.5258947;0.872271;0.872271;0.82267761;0.52551538;0.5255152;
-0.58325392;0.58325446;0.58325493;0.58325541;0.51095998;0.58081239;0.58081269;0.75943422;0.75952381;0.53010237;
+	    [1 1 100] 0.034482758;0.57881641;0.57881707;0.88526636;0.81707644;0.52593976;0.8722645;0.52438331;0.87267178;0.5243305;
+0.87271398;0.62665564;0.62665564;0.62665564;0.76126611;0.53028816;0.53028786;0.53028738;0.53028703;0.53028673;
+0.53028619;0.53028589;0.58262056;0.58262056;0.21967778;0.14413986;0.76404226;0.22455977;0.77431744;0.24373749;
+0.11832898;0.74116248;0.65045393;0.24538094;0.5795244;0.29277873;0.3679128;0.76746762;0.60720038;0.32094485;
+0.22813572;0.76257724;0.22153826;0.78129739;0.51793957;0.12156852;0.69439167;0.47465757;0.42717001;0.12170088;
+0.76848871;0.49664995;0.58979386;0.40585375;0.35664827;0.24806207;0.31448236;0.5204497;0.33915213;0.13405047;
+0.78015476;0.35036519;0.33734506;0.74482757;0.21954261;0.4108071;0.75043052;0.75043106;0.23368248;0.77669835;
+0.59136575;0.12771182;0.62459391;0.40753764;0.224347;0.32970566;0.77021897;0.3718735;0.76933289;0.24450487;
+0.76218408;0.39706153;0.86692244;0.40268081;0.14907019;0.77053452;0.33795443;0.11183857;0.78202266;0.20850679;
+0.77004665;0.22026116;0.78634393;0.22152182;0.74807447;0.84338862;0.63532555;0.37724581;0.12393001;0.49229512;
       };
      };
      float_Data @[5] {
@@ -3744,16 +4534,16 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
       };
       ar {
        name=;
-	    [1 1 100] 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;0;
-1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;0;1;1;1;1;
-1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;0;1;1;1;
-1;1;1;1;1;1;1;1;1;1;
+	    [1 1 100] 1;0;1;1;0;1;1;1;1;1;
+1;0;0;1;1;1;0;0;0;0;
+0;1;0;1;1;0;0;1;1;0;
+1;1;0;0;0;1;0;1;1;1;
+0;0;1;1;0;1;1;0;0;0;
+1;1;1;1;1;0;1;0;0;0;
+0;0;1;1;0;0;0;0;0;1;
+0;1;0;0;0;1;1;0;1;0;
+1;0;1;0;1;1;0;1;0;0;
+0;1;0;1;0;1;1;0;1;0;
       };
      };
     };
@@ -5237,7 +6027,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       updt_display=1;
       ode_params {
        erp=0.2;
-       cfm=1e-005;
+       cfm=1e-05;
        max_cor_vel=1000000;
        contact_depth=0.001;
        max_col_pts=4;
@@ -5263,8 +6053,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=0: y=0.1: z=0: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=-1.738567e-006: y=1.750733e-011: z=4.953906e-007: };
-	  cur_ang_vel {x=6.145879e-008: y=-6.60967e-007: z=1.864068e-007: };
+	  cur_lin_vel {x=3.255995e-06: y=2.15791e-10: z=9.162774e-06: };
+	  cur_ang_vel {x=9.927923e-07: y=-5.40066e-06: z=-3.252817e-07: };
 	  shape=BOX;
 	  mass=1;
 	  radius=0.5;
@@ -5277,13 +6067,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  color {r=0: g=1: b=0: a=1: };
 	  texture=NULL;
 	  surface {
-	   friction=1e+022;
+	   friction=1e+22;
 	   bounce=0;
 	   bounce_vel=0.01;
 	  };
 	  softness {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	 };
 	 VEBody @[1] {
@@ -5296,8 +6086,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=0.42: y=0.2: z=0.03: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=-0.1124848: y=1.061222e-007: z=0.06586304: };
-	  cur_ang_vel {x=4.739774e-007: y=-0.7663196: z=1.121114e-007: };
+	  cur_lin_vel {x=-2.563129e-05: y=-4.775915e-08: z=4.718713e-05: };
+	  cur_ang_vel {x=1.656136e-06: y=-3.892911e-06: z=-8.213972e-07: };
 	  shape=CAPSULE;
 	  mass=2.1;
 	  radius=0.03;
@@ -5310,13 +6100,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  color {r=0.2: g=0.2: b=0.4901961: a=1: };
 	  texture=NULL;
 	  surface {
-	   friction=1e+022;
+	   friction=1e+22;
 	   bounce=0;
 	   bounce_vel=0.01;
 	  };
 	  softness {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	 };
 	 VEBody @[2] {
@@ -5329,8 +6119,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=0.77: y=0.2: z=0.03: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=-0.3074127: y=1.944388e-007: z=0.00511859: };
-	  cur_ang_vel {x=1.442515e-007: y=-0.7663174: z=3.486429e-007: };
+	  cur_lin_vel {x=-7.627343e-05: y=-2.83355e-07: z=3.64901e-05: };
+	  cur_ang_vel {x=1.936657e-06: y=-5.917157e-06: z=-6.022723e-07: };
 	  shape=CAPSULE;
 	  mass=1.65;
 	  radius=0.02;
@@ -5343,13 +6133,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  color {r=0: g=0: b=1: a=1: };
 	  texture=NULL;
 	  surface {
-	   friction=1e+022;
+	   friction=1e+22;
 	   bounce=0;
 	   bounce_vel=0.01;
 	  };
 	  softness {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	 };
 	 VEBody @[3] {
@@ -5362,8 +6152,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=0.98: y=0.2: z=0.03: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=-0.3671291: y=-1.890959e-007: z=-0.144412: };
-	  cur_ang_vel {x=1.442078e-007: y=-0.7663181: z=3.485494e-007: };
+	  cur_lin_vel {x=-8.453699e-05: y=-7.434368e-07: z=-1.513269e-05: };
+	  cur_ang_vel {x=1.936891e-06: y=-8.264906e-06: z=-6.023112e-07: };
 	  shape=SPHERE;
 	  mass=0.05;
 	  radius=0.025;
@@ -5376,13 +6166,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  color {r=1: g=0: b=1: a=1: };
 	  texture=NULL;
 	  surface {
-	   friction=1e+022;
+	   friction=1e+22;
 	   bounce=0;
 	   bounce_vel=0.01;
 	  };
 	  softness {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	 };
 	 VEBody @[4] {
@@ -5395,8 +6185,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=0: y=0.35: z=0: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=-1.151785e-022: y=5.021424e-024: z=-7.514467e-027: };
-	  cur_ang_vel {x=2.261275e-017: y=-5.230402e-018: z=-8.351662e-019: };
+	  cur_lin_vel {x=-9.869478e-28: y=6.872477e-31: z=-1.426297e-28: };
+	  cur_ang_vel {x=1.225905e-28: y=4.961904e-20: z=9.218611e-21: };
 	  shape=CAPSULE;
 	  mass=1;
 	  radius=0.1;
@@ -5409,13 +6199,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  color {r=1: g=0.8: b=0.4: a=1: };
 	  texture=NULL;
 	  surface {
-	   friction=1e+022;
+	   friction=1e+22;
 	   bounce=0;
 	   bounce_vel=0.01;
 	  };
 	  softness {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	 };
 	 VECamera @[5] {
@@ -5428,8 +6218,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=0.04: y=0.35: z=0.1: };
 	  cur_rot {x=0: y=1: z=0: rot=3.14159: };
-	  cur_lin_vel {x=-5.44241e-019: y=-2.333267e-018: z=-7.450581e-008: };
-	  cur_ang_vel {x=5.461276e-006: y=3.24131e-008: z=6.57009e-009: };
+	  cur_lin_vel {x=4.961947e-21: y=3.689654e-22: z=-7.450581e-08: };
+	  cur_ang_vel {x=3.427267e-07: y=5.146475e-09: z=1.044398e-09: };
 	  shape=CYLINDER;
 	  mass=0.01;
 	  radius=0.01;
@@ -5442,13 +6232,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  color {r=0.2: g=0.2: b=0.5: a=0.5: };
 	  texture=NULL;
 	  surface {
-	   friction=1e+022;
+	   friction=1e+22;
 	   bounce=0;
 	   bounce_vel=0.01;
 	  };
 	  softness {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	  img_size {x=320: y=240: };
 	  color_cam=1;
@@ -5464,7 +6254,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   intensity=0.2;
 	   color {r=1: g=1: b=1: a=1: };
 	  };
-	  dir_norm {x=-2.535182e-006: y=0: z=1: };
+	  dir_norm {x=-2.535182e-06: y=0: z=1: };
 	 };
 	 VECamera @[6] {
 	  name="RightEye";
@@ -5476,8 +6266,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=-0.04: y=0.35: z=0.1: };
 	  cur_rot {x=0: y=1: z=0: rot=3.14159: };
-	  cur_lin_vel {x=-5.598681e-019: y=-2.272033e-018: z=-7.450581e-008: };
-	  cur_ang_vel {x=5.461276e-006: y=3.24131e-008: z=6.57009e-009: };
+	  cur_lin_vel {x=4.961981e-21: y=-3.691054e-22: z=-7.450581e-08: };
+	  cur_ang_vel {x=3.427267e-07: y=5.146475e-09: z=1.044398e-09: };
 	  shape=CYLINDER;
 	  mass=0.01;
 	  radius=0.01;
@@ -5490,13 +6280,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  color {r=0.2: g=0.2: b=0.5: a=0.5: };
 	  texture=NULL;
 	  surface {
-	   friction=1e+022;
+	   friction=1e+22;
 	   bounce=0;
 	   bounce_vel=0.01;
 	  };
 	  softness {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	  img_size {x=320: y=240: };
 	  color_cam=1;
@@ -5512,7 +6302,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   intensity=0.2;
 	   color {r=1: g=1: b=1: a=1: };
 	  };
-	  dir_norm {x=-2.535182e-006: y=0: z=1: };
+	  dir_norm {x=-2.535182e-06: y=0: z=1: };
 	 };
 	 VEBody @[7] {
 	  name="Pectoralis";
@@ -5538,13 +6328,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  color {r=1: g=0.1176471: b=0.2039216: a=1: };
 	  texture=NULL;
 	  surface {
-	   friction=1e+022;
+	   friction=1e+22;
 	   bounce=0;
 	   bounce_vel=0.01;
 	  };
 	  softness {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	 };
 	 VEBody @[8] {
@@ -5571,13 +6361,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  color {r=1: g=0.1176471: b=0.2039216: a=1: };
 	  texture=NULL;
 	  surface {
-	   friction=1e+022;
+	   friction=1e+22;
 	   bounce=0;
 	   bounce_vel=0.01;
 	  };
 	  softness {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	 };
 	};
@@ -5614,7 +6404,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  motor {
 	   motor_on=1;
 	   vel=0;
-	   f_max=0.5528747;
+	   f_max=0.679314;
 	   servo_on=0;
 	   trg_pos=0;
 	   gain=0.1;
@@ -5629,13 +6419,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  };
 	  ode_params {
 	   erp=0.2;
-	   cfm=1e-005;
-	   no_stop_cfm=1e-005;
+	   cfm=1e-05;
+	   no_stop_cfm=1e-05;
 	   fudge=1;
 	  };
 	  suspension {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	  pos=0;
 	  pos_norm=0.2178771;
@@ -5741,7 +6531,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   dlen=0;
 	   act=0;
 	   m_act_force=0;
-	   m_force=2.802597e-045;
+	   m_force=2.802597e-45;
 	   force=0;
 	   torque=0;
 	   muscle_obj=NULL;
@@ -5774,7 +6564,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   dlen=0;
 	   act=0;
 	   m_act_force=0;
-	   m_force=1.356313e-019;
+	   m_force=1.356313e-19;
 	   force=0;
 	   torque=0;
 	   muscle_obj=NULL;
@@ -5814,7 +6604,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  motor {
 	   motor_on=1;
 	   vel=0;
-	   f_max=0.2939057;
+	   f_max=0.28183;
 	   servo_on=0;
 	   trg_pos=0;
 	   gain=0.1;
@@ -5829,13 +6619,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  };
 	  ode_params {
 	   erp=0.2;
-	   cfm=1e-005;
-	   no_stop_cfm=1e-005;
+	   cfm=1e-05;
+	   no_stop_cfm=1e-05;
 	   fudge=1;
 	  };
 	  suspension {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	  pos=0;
 	  pos_norm=0.03448276;
@@ -5941,7 +6731,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   dlen=0;
 	   act=0;
 	   m_act_force=0;
-	   m_force=5.240856e-043;
+	   m_force=5.240856e-43;
 	   force=0;
 	   torque=0;
 	   muscle_obj=NULL;
@@ -5974,7 +6764,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   dlen=0;
 	   act=0;
 	   m_act_force=0;
-	   m_force=2.127124e-019;
+	   m_force=2.127124e-19;
 	   force=0;
 	   torque=0;
 	   muscle_obj=NULL;
@@ -6029,13 +6819,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  };
 	  ode_params {
 	   erp=0.2;
-	   cfm=1e-005;
-	   no_stop_cfm=1e-005;
+	   cfm=1e-05;
+	   no_stop_cfm=1e-05;
 	   fudge=1;
 	  };
 	  suspension {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	  pos=0;
 	  pos_norm=0;
@@ -6092,13 +6882,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  };
 	  ode_params {
 	   erp=0.2;
-	   cfm=1e-005;
-	   no_stop_cfm=1e-005;
+	   cfm=1e-05;
+	   no_stop_cfm=1e-05;
 	   fudge=1;
 	  };
 	  suspension {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	  pos=0;
 	  pos_norm=0.5;
@@ -6155,13 +6945,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  };
 	  ode_params {
 	   erp=0.2;
-	   cfm=1e-005;
-	   no_stop_cfm=1e-005;
+	   cfm=1e-05;
+	   no_stop_cfm=1e-05;
 	   fudge=1;
 	  };
 	  suspension {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	  pos=0;
 	  pos_norm=0.5;
@@ -6189,11 +6979,11 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  name="TargetBody";
 	  desc=;
 	  flags=FIXED;
-	  init_pos {x=-0.4218768: y=0.12: z=0.2188128: };
+	  init_pos {x=0.5744807: y=0.12: z=0.3794964: };
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=-0.4218768: y=0.12: z=0.2188128: };
+	  cur_pos {x=0.5744807: y=0.12: z=0.3794964: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
 	  cur_lin_vel {x=0: y=0: z=0: };
 	  cur_ang_vel {x=0: y=0: z=0: };
@@ -6209,13 +6999,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  color {r=1: g=1: b=0: a=1: };
 	  texture=NULL;
 	  surface {
-	   friction=1e+022;
+	   friction=1e+22;
 	   bounce=0.5;
 	   bounce_vel=0.01;
 	  };
 	  softness {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	 };
 	};
@@ -6259,13 +7049,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  color {r=0.4: g=0.4: b=0.4: a=1: };
 	  texture=NULL;
 	  surface {
-	   friction=1e+022;
+	   friction=1e+22;
 	   bounce=0;
 	   bounce_vel=0.01;
 	  };
 	  softness {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	 };
 	 VEStatic @[1] {
@@ -6280,7 +7070,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  long_axis=LONG_X;
 	  box {x=3: y=3: z=0.01: };
 	  plane_norm=NORM_Y;
-	  plane_height=2.28735e-014;
+	  plane_height=2.28735e-14;
 	  plane_vis_size {x=100: y=100: };
 	  obj_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  obj_fname=;
@@ -6288,13 +7078,13 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  color {r=0.7019608: g=0.7019608: b=0.7019608: a=1: };
 	  texture=NULL;
 	  surface {
-	   friction=1e+022;
+	   friction=1e+22;
 	   bounce=0;
 	   bounce_vel=0.01;
 	  };
 	  softness {
 	   erp=0.2;
-	   cfm=1e-005;
+	   cfm=1e-05;
 	  };
 	 };
 	};
@@ -8551,7 +9341,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[1] {
       name="shoulder_trg_angle_norm";
       var_type=T_Real;
-      real_val=0.699999988079071;
+      real_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8561,7 +9351,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[2] {
       name="elbow_trg_angle_norm";
       var_type=T_Real;
-      real_val=0.6000000238418579;
+      real_val=0.800000011920929;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8666,7 +9456,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.4;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="how much to co-contract the muscles for the movement";
       init_from=NULL;
@@ -8694,7 +9484,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[11] {
       name="ve_step";
       var_type=T_Int;
-      int_val=133;
+      int_val=126;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8706,7 +9496,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Int;
       int_val=500;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="maximum number of ve steps to take per movement";
       init_from=NULL;
@@ -8754,7 +9544,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[17] {
       name="shoulder_pos_dir";
       var_type=T_Bool;
-      bool_val=1;
+      bool_val=0;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8764,7 +9554,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[18] {
       name="shoulder_angle_err";
       var_type=T_Real;
-      real_val=0.01639445871113838;
+      real_val=0.01027690712362528;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8784,7 +9574,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[20] {
       name="elbow_pos_dir";
       var_type=T_Bool;
-      bool_val=0;
+      bool_val=1;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8794,7 +9584,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[21] {
       name="elbow_angle_err";
       var_type=T_Real;
-      real_val=0.01911342144012451;
+      real_val=0.03230452537536621;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8804,7 +9594,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[22] {
       name="angle_err";
       var_type=T_Real;
-      real_val=0.01775394007563145;
+      real_val=0.02129071624949574;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8814,7 +9604,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[23] {
       name="hand_vel";
       var_type=T_Real;
-      real_val=0.3945106267929077;
+      real_val=8.588394848629832e-05;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8826,7 +9616,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.0001;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="threshold for stopping movement in hand velocity";
       init_from=NULL;
@@ -8948,7 +9738,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[36] {
       name="hand_pos_x_norm";
       var_type=T_Real;
-      real_val=0.7051532255802703;
+      real_val=0.7450289725509339;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8958,7 +9748,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[37] {
       name="hand_pos_z_norm";
       var_type=T_Real;
-      real_val=0.4950937811564071;
+      real_val=0.4794853025150663;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8968,7 +9758,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[38] {
       name="targ_pos_x_norm";
       var_type=T_Real;
-      real_val=0.9790345654009081;
+      real_val=0.7144165873471446;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8978,7 +9768,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[39] {
       name="targ_pos_z_norm";
       var_type=T_Real;
-      real_val=0.437086005836738;
+      real_val=0.663130287557812;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8988,7 +9778,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[40] {
       name="trg_dist";
       var_type=T_Real;
-      real_val=0.2799569368362427;
+      real_val=0.1861789375543594;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10187,7 +10977,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[1] {
       name="targ_angle";
       var_type=T_Real;
-      real_val=2.828927804927618;
+      real_val=0.8710502220767044;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10197,7 +10987,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[2] {
       name="targ_dist";
       var_type=T_Real;
-      real_val=0.7113658017407445;
+      real_val=0.496069978008589;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10233,7 +11023,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[2] {
       name="targ_x";
       var_type=T_Real;
-      real_val=-0.4218768404294073;
+      real_val=0.5744807059398321;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10243,7 +11033,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[3] {
       name="targ_z";
       var_type=T_Real;
-      real_val=0.2188128306236989;
+      real_val=0.3794963739024679;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10608,7 +11398,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[11] {
       name="hand_pos_x_norm";
       var_type=T_Real;
-      real_val=0.7051532255802703;
+      real_val=0.5580888668695777;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10618,7 +11408,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[12] {
       name="hand_pos_z_norm";
       var_type=T_Real;
-      real_val=0.4950937811564071;
+      real_val=0.8713045613402883;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10628,7 +11418,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[13] {
       name="targ_pos_x_norm";
       var_type=T_Real;
-      real_val=0.04572024500232568;
+      real_val=0.7144165873471446;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10638,7 +11428,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[14] {
       name="targ_pos_z_norm";
       var_type=T_Real;
-      real_val=0.5150348582067115;
+      real_val=0.663130287557812;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10648,7 +11438,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[15] {
       name="shoulder_ang_norm";
       var_type=T_Real;
-      real_val=0.01639445871114731;
+      real_val=0.4022811055183411;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10658,7 +11448,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[16] {
       name="elbow_ang_norm";
       var_type=T_Real;
-      real_val=0.8191134929656982;
+      real_val=0.5302858948707581;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -11165,7 +11955,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[11] {
       name="shoulder_trg_angle_norm";
       var_type=T_Real;
-      real_val=0.09080483280671337;
+      real_val=0.09080483280671336;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -11594,7 +12384,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[0] {
       name="trg_dist";
       var_type=T_Real;
-      real_val=0.2799569368362427;
+      real_val=0.1861789375543594;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -11626,7 +12416,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.4;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="initial threshold on distance to get a reward at start of training";
       init_from=NULL;
@@ -11636,7 +12426,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.01;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="how much to change the distance threshold when network is doing well or poorly (see avg_rew_*_thr)";
       init_from=NULL;
@@ -11646,7 +12436,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.8;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="threshold on network avg_rew for decreasing the reward threshold (makes the task harder -- when doing well)";
       init_from=NULL;
@@ -11656,7 +12446,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.2;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="threshold on network avg_rew for increasing the reward threshold (makes task easier -- when doing poorly)";
       init_from=NULL;
@@ -12610,7 +13400,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=DataTable;
       object_val=$35$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="datatable with training patterns";
       init_from=NULL;
@@ -12643,7 +13433,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      ProgVar @[1] {
       name="epoch";
       var_type=T_Int;
-      int_val=0;
+      int_val=1;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -13134,7 +13924,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @[5] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=95;
+      int_val=5;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -16402,7 +17192,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @[5] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=7;
+      int_val=21;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -19357,7 +20147,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -19633,7 +20423,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -19881,7 +20671,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -20157,7 +20947,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   fixed_range {fix_min=1: min=0: fix_max=0: max=0: };
 	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=0: max=6e-019: };
+	   range {min=0: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -20709,7 +21499,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -20769,7 +21559,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -20785,7 +21575,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -20801,7 +21591,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -20817,7 +21607,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -21305,7 +22095,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -21333,7 +22123,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -21597,7 +22387,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -21637,6 +22427,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=0;
        stereo_view=STEREO_NONE;
        saved_views {
@@ -21646,23 +22437,23 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	T3SavedView @[0] {
 	 name="View 0";
 	 view_saved=1;
-	 pos {x=0: y=1.4975: z=4.583357: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=4.585857;
+	 pos {x=0.07999998: y=1.3774: z=2.003552: };
+	 orient {x=-1.000001: y=0: z=0: rot=0.3819996: };
+	 focal_dist=2.161878;
 	};
 	T3SavedView @[1] {
-	 name="View 1";
-	 view_saved=0;
-	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
+	 name="TopDown";
+	 view_saved=1;
+	 pos {x=0.2114639: y=2.290442: z=0.2542374: };
+	 orient {x=-1: y=0: z=0: rot=1.524: };
+	 focal_dist=1.611198;
 	};
 	T3SavedView @[2] {
-	 name="View 2";
-	 view_saved=0;
-	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
+	 name="Side";
+	 view_saved=1;
+	 pos {x=2.191079: y=0.830333: z=0.3848871: };
+	 orient {x=-0.03250458: y=0.993804: z=0.1062884: rot=1.400158: };
+	 focal_dist=2.161878;
 	};
 	T3SavedView @[3] {
 	 name="View 3";
@@ -21794,6 +22585,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
@@ -21803,9 +22595,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	T3SavedView @[0] {
 	 name="View 0";
 	 view_saved=1;
-	 pos {x=0.4024: y=-0.1083837: z=0.8337232: };
+	 pos {x=0.5: y=0.3359568: z=1.734998: };
 	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=1.354104;
+	 focal_dist=2.138079;
 	};
 	T3SavedView @[1] {
 	 name="View 1";
@@ -21992,7 +22784,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -22022,7 +22814,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   fixed_range {fix_min=1: min=0: fix_max=0: max=0: };
 	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=0: max=6e-019: };
+	   range {min=0: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -22054,7 +22846,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -22070,7 +22862,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -22086,7 +22878,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -22310,6 +23102,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
@@ -22376,10 +23169,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  display=1;
-	  lay_mv=1;
+	  lay_mv=0;
 	  net_text=1;
-	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
-	  net_text_rot=0;
+	  net_text_xform {scale={x=0.7: y=0.7000002: z=0.7000002: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0.4590484: y=-0.5233579: z=-0.4999987: }: };
+	  net_text_rot=-90;
 	  ordered_uvg_list{ act;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
@@ -22449,6 +23242,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
@@ -22458,9 +23252,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	T3SavedView @[0] {
 	 name="View 0";
 	 view_saved=1;
-	 pos {x=0.4149: y=-0.1083837: z=0.8453995: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=1.36578;
+	 pos {x=0.4897743: y=0.6755549: z=1.577252: };
+	 orient {x=-1.00002: y=0: z=0: rot=0.1299974: };
+	 focal_dist=2.016901;
 	};
 	T3SavedView @[1] {
 	 name="View 1";
@@ -22630,10 +23424,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=X;
 	   col_name="trial";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=83: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=4: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=83: };
-	   range {min=0: max=83: };
+	   data_range {min=0: max=4: };
+	   range {min=0: max=4: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -22693,7 +23487,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-019: max=6e-019: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -22965,6 +23759,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
@@ -23141,7 +23936,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
-     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: hard_gain=0.2: };
+     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: clamp_max_p=0.11: clamp_type=REGULAR: };
      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
      syn_delay {
       on=0;
@@ -23482,7 +24277,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_typ=LeabraLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
-    max_size {x=52: y=10: z=4: };
+    max_size {x=52: y=10: z=3: };
     TwoDValLeabraLayer @[0] {
      name="VisTarget_Cur";
      desc=;
@@ -23526,9 +24321,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="0.7,1";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.0462189: max=0.8746769: max_i=83: };
      acts_m {cmpt=1: avg=0.0462189: max=0.8746769: max_i=83: };
      phase_dif_ratio=1;
@@ -23536,7 +24331,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=9: pct=0.08181818: pct_c=0.9181818: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=TwoDValLayerSpec: spec=.projects[0].networks[0].specs[6]$308$: };
@@ -23550,7 +24345,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      da_updt=0;
      twod_vals {
       name=;
-     };
+	  [2 11 1 1 1] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;     };
     };
     TwoDValLeabraLayer @[1] {
      name="VisHand_Cur";
@@ -23595,9 +24392,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="0.7,1";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.04577775: max=0.9096908: max_i=83: };
      acts_m {cmpt=1: avg=0.04577775: max=0.9096908: max_i=83: };
      phase_dif_ratio=1;
@@ -23605,7 +24402,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=9: pct=0.08181818: pct_c=0.9181818: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=TwoDValLayerSpec: spec=$308$: };
@@ -23619,7 +24416,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      da_updt=0;
      twod_vals {
       name=;
-     };
+	  [2 11 1 1 1] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;     };
     };
     LeabraLayer @[2] {
      name="SomaShoulderAngle_Cur";
@@ -23669,9 +24468,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       name=;
 	  [12 1] "val";"-0.5";"-0.3";"-0.1";"0.1";"0.3";"0.5";"0.7";"0.9";"1.1";
 "1.3";"1.5";     };
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.2162403: max=0.95: max_i=6: };
      acts_m {cmpt=1: avg=0.2162403: max=0.95: max_i=6: };
      phase_dif_ratio=1;
@@ -23679,12 +24478,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ScalarValLayerSpec: spec=.projects[0].networks[0].specs[4]$309$: };
      hard_clamped=0;
-     ravg_l_avg=2.237259e-021;
+     ravg_l_avg=2.237259e-21;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
@@ -23740,9 +24539,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       name=;
 	  [12 1] "val";"-0.5";"-0.3";"-0.1";"0.1";"0.3";"0.5";"0.7";"0.9";"1.1";
 "1.3";"1.5";     };
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.214652: max=0.95: max_i=5: };
      acts_m {cmpt=1: avg=0.214652: max=0.95: max_i=5: };
      phase_dif_ratio=1;
@@ -23750,12 +24549,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ScalarValLayerSpec: spec=$309$: };
      hard_clamped=0;
-     ravg_l_avg=8.598187e-019;
+     ravg_l_avg=8.598187e-19;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
@@ -23812,9 +24611,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       name=;
 	  [12 1] "val";"-1.5";"-1.3";"-1.1";"-0.9";"-0.7";"-0.5";"-0.3";"-0.1";"0.1";
 "0.3";"0.5";     };
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.2161191: max=0.95: max_i=4: };
      acts_m {cmpt=1: avg=0.2161191: max=0.95: max_i=4: };
      phase_dif_ratio=1;
@@ -23822,12 +24621,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ScalarValLayerSpec: spec=$309$: };
      hard_clamped=0;
-     ravg_l_avg=7.215596e-018;
+     ravg_l_avg=7.215596e-18;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
@@ -23884,9 +24683,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       name=;
 	  [12 1] "val";"-1.5";"-1.3";"-1.1";"-0.9";"-0.7";"-0.5";"-0.3";"-0.1";"0.1";
 "0.3";"0.5";     };
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.2086742: max=0.9357619: max_i=6: };
      acts_m {cmpt=1: avg=0.2086742: max=0.9357619: max_i=6: };
      phase_dif_ratio=1;
@@ -23894,7 +24693,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ScalarValLayerSpec: spec=$309$: };
@@ -23933,7 +24732,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
        con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$312$: };
-       recv_idx=1;
+       recv_idx=0;
        send_idx=1;
        recv_n=1;
        send_n=1;
@@ -23957,7 +24756,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
        con_spec {type=LeabraConSpec: spec=$312$: };
-       recv_idx=2;
+       recv_idx=1;
        send_idx=1;
        recv_n=1;
        send_n=1;
@@ -23977,6 +24776,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       name=;
       el_typ=LeabraPrjn;
       el_def=0;
+	    Projection_Group @. = [0] = LeabraPrjn .projects[0].networks[0].layers[8].projections[0];
      };
      units {
       name=;
@@ -24005,9 +24805,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 ;;;;;;;;;;
 ;;;;;;;;;;
 ;;;;;;;;;     };
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.09679781: max=0.9208624: max_i=24: };
      acts_m {cmpt=1: avg=0.09412758: max=0.9269682: max_i=26: };
      phase_dif_ratio=0.9724144;
@@ -24015,7 +24815,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.114074: k1_ithr=2.250072: ithr_r=0.3249695: ithr_diff=0.2774506: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.1428571: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$314$: };
@@ -24224,9 +25024,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 ;;;;;;;;;;
 ;;;;;;;;;;
 ;;;;;;;;;     };
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.1281596: max=0.7573113: max_i=29: };
      acts_m {cmpt=1: avg=0.1250271: max=0.7651332: max_i=29: };
      phase_dif_ratio=0.9755577;
@@ -24234,7 +25034,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.153238: k1_ithr=2.795386: ithr_r=0.1204594: ithr_diff=0.1134869: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.1428571: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=LeabraLayerSpec: spec=$314$: };
@@ -24273,11 +25073,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
        con_spec {type=LeabraConSpec: spec=$312$: };
-       recv_idx=-1;
-       send_idx=-1;
+       recv_idx=0;
+       send_idx=0;
        recv_n=1;
        send_n=1;
-       projected=0;
+       projected=1;
        direction=DIR_UNKNOWN;
        netin_avg=0;
        netin_rel=0;
@@ -24314,9 +25114,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="0.9,0.5";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.04687428: max=0.8913006: max_i=62: };
      acts_m {cmpt=1: avg=0.04619429: max=0.4859317: max_i=83: };
      phase_dif_ratio=0.9854932;
@@ -24324,7 +25124,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=9: pct=0.08181818: pct_c=0.9181818: adth_k=1: k_ithr=0.5058727: k1_ithr=0.3506964: ithr_r=0.366364: ithr_diff=0.3067496: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=TwoDValLayerSpec: spec=$308$: };
@@ -24338,7 +25138,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      da_updt=0;
      twod_vals {
       name=;
-     };
+	  [2 11 1 1 1] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;     };
     };
     LeabraLayer @[9] {
      name="SomaShoulderAngle_Pred";
@@ -24412,9 +25214,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       name=;
 	  [12 1] "val";"-0.5";"-0.3";"-0.1";"0.1";"0.3";"0.5";"0.7";"0.9";"1.1";
 "1.3";"1.5";     };
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.2160379: max=0.95: max_i=4: };
      acts_m {cmpt=1: avg=0.2147014: max=0.9039337: max_i=4: };
      phase_dif_ratio=0.9938134;
@@ -24422,12 +25224,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.378915: k1_ithr=1.74764: ithr_r=0.3083784: ithr_diff=0.2653627: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ScalarValLayerSpec: spec=$309$: };
      hard_clamped=0;
-     ravg_l_avg=1.0901e-017;
+     ravg_l_avg=1.0901e-17;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
@@ -24507,9 +25309,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       name=;
 	  [12 1] "val";"-0.5";"-0.3";"-0.1";"0.1";"0.3";"0.5";"0.7";"0.9";"1.1";
 "1.3";"1.5";     };
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.2107818: max=0.9047918: max_i=6: };
      acts_m {cmpt=1: avg=0.1945973: max=0.8631099: max_i=6: };
      phase_dif_ratio=0.9232167;
@@ -24517,7 +25319,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.100982: k1_ithr=1.564851: ithr_r=0.2946139: ithr_diff=0.2551809: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ScalarValLayerSpec: spec=$309$: };
@@ -24587,8 +25389,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    wt_save_fmt=TEXT;
    lay_layout=THREE_D;
    n_units=500;
-   n_cons=0;
-   max_size {x=52: y=10: z=4: };
+   n_cons=11270;
+   max_size {x=52: y=10: z=3: };
    learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;
    no_plus_test=1;
@@ -24783,7 +25585,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        sse_tol=0.5;
        act_fun=NOISY_XX1;
        act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=NO_AH: };
-       spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: hard_gain=0.2: };
+       spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: clamp_max_p=0.11: clamp_type=REGULAR: };
        depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
        syn_delay {
 	on=0;
@@ -24820,7 +25622,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=NO_AH: };
-     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: hard_gain=0.2: };
+     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: clamp_max_p=0.11: clamp_type=REGULAR: };
      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
      syn_delay {
       on=0;
@@ -24962,16 +25764,16 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        wt_scale {abs=1: rel=1: };
        wt_scale_init {init=0: abs=1: rel=1: };
        lrate=0.02;
-       cur_lrate=0.002;
+       cur_lrate=0.02;
        lrs_value=EXT_REW_STAT;
        lrate_sched {
 	name=;
 	el_typ=SchedItem;
 	el_def=0;
-	last_ctr=-1;
+	last_ctr=41;
 	default_val=1;
 	interpolate=0;
-	cur_val=0;
+	cur_val=1;
 	SchedItem @[0] {
 	 start_ctr=0;
 	 start_val=1;
@@ -25011,16 +25813,16 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      wt_scale {abs=1: rel=1: };
      wt_scale_init {init=0: abs=1: rel=1: };
      lrate=0.02;
-     cur_lrate=0.002;
+     cur_lrate=0.02;
      lrs_value=EXT_REW_STAT;
      lrate_sched {
       name=;
       el_typ=SchedItem;
       el_def=0;
-      last_ctr=-1;
+      last_ctr=41;
       default_val=1;
       interpolate=0;
-      cur_val=0;
+      cur_val=1;
       SchedItem @[0] {
        start_ctr=0;
        start_val=1;
@@ -25206,7 +26008,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	sse_tol=0.5;
 	act_fun=NOISY_LINEAR;
 	act {thr=0.17: gain=220: nvar=0.01: avg_dt=0: avg_init=0.15: i_thr=STD: };
-	spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: hard_gain=0.2: };
+	spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: clamp_max_p=0.11: clamp_type=REGULAR: };
 	depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
 	syn_delay {
 	 on=0;
@@ -25243,7 +26045,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       sse_tol=0.5;
       act_fun=NOISY_LINEAR;
       act {thr=0.17: gain=220: nvar=0.01: avg_dt=0: avg_init=0.15: i_thr=STD: };
-      spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: hard_gain=0.2: };
+      spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: clamp_max_p=0.11: clamp_type=REGULAR: };
       depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
       syn_delay {
        on=0;
@@ -25288,7 +26090,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       sse_tol=0.5;
       act_fun=NOISY_XX1;
       act {thr=0.25: gain=600: nvar=0.005: avg_dt=0: avg_init=0.15: i_thr=STD: };
-      spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: hard_gain=0.2: };
+      spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: clamp_max_p=0.11: clamp_type=REGULAR: };
       depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
       syn_delay {
        on=0;
@@ -25585,7 +26387,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   last_ctr=-1;
 	   default_val=1;
 	   interpolate=0;
-	   cur_val=0;
+	   cur_val=1;
 	  };
 	  wt_sig {gain=6: off=1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -25622,7 +26424,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 last_ctr=-1;
 	 default_val=1;
 	 interpolate=0;
-	 cur_val=0;
+	 cur_val=1;
 	};
 	wt_sig {gain=6: off=1: };
 	lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -25703,7 +26505,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        last_ctr=-1;
        default_val=1;
        interpolate=0;
-       cur_val=0;
+       cur_val=1;
       };
       wt_sig {gain=6: off=1: };
       lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -26071,7 +26873,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_typ=LeabraLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
-    max_size {x=38: y=10: z=4: };
+    max_size {x=38: y=10: z=3: };
     LeabraLayer @[0] {
      name="RewTarg";
      desc=;
@@ -26116,19 +26918,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name=;
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0.0622335: max=0.0622335: max_i=0: };
-     i_thrs {cmpt=1: avg=-0.1: max=-0.1: max_i=0: };
-     acts {cmpt=1: avg=0.9865372: max=0.9865372: max_i=0: };
-     acts_p {cmpt=1: avg=0.9915431: max=0.9915431: max_i=0: };
-     acts_m {cmpt=1: avg=0.9865372: max=0.9865372: max_i=0: };
-     phase_dif_ratio=0.9984199;
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.9920644: max=0.9920644: max_i=0: };
+     acts_m {cmpt=1: avg=0.9915959: max=0.9915959: max_i=0: };
+     phase_dif_ratio=0.9986019;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=1: pct=1: pct_c=0: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=1: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
-     maxda=0.0002172589;
+     maxda=0;
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[1].specs[1]$324$: };
      hard_clamped=0;
      ravg_l_avg=0;
@@ -26136,7 +26938,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=-1;
+     norm_err=0;
      da_updt=0;
     };
     LeabraLayer @[1] {
@@ -26304,27 +27106,27 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="1";
      sse=0.25;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0.2375: max=0.95: max_i=2: };
-     acts_p {cmpt=1: avg=0.2375: max=0.95: max_i=3: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.2375: max=0.95: max_i=1: };
      acts_m {cmpt=1: avg=0.2375: max=0.95: max_i=2: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
-     i_val {kwta=0: g_i=0.9: gp_g_i=0: g_i_orig=0.9: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ExtRewLayerSpec: spec=$28$: };
-     hard_clamped=1;
+     hard_clamped=0;
      ravg_l_avg=0.02325581;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0.5;
+     norm_err=0;
      da_updt=0;
     };
     LeabraLayer @[2] {
@@ -26445,17 +27247,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="1";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0.3591143: max=0.6924419: max_i=3: };
-     i_thrs {cmpt=1: avg=14.82825: max=28.63634: max_i=3: };
-     acts {cmpt=1: avg=0.3837274: max=0.7787879: max_i=3: };
-     acts_p {cmpt=1: avg=0.3893034: max=0.7781158: max_i=1: };
-     acts_m {cmpt=1: avg=0.3837274: max=0.7787879: max_i=3: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.3885027: max=0.7756267: max_i=3: };
+     acts_m {cmpt=1: avg=0.3885022: max=0.7756248: max_i=3: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=28.63634: k1_ithr=10.22554: ithr_r=1.029788: ithr_diff=0.6429173: tie_brk=0: };
-     i_val {kwta=26.79527: g_i=26.79527: gp_g_i=0: g_i_orig=26.79527: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=35.24149: k1_ithr=12.99053: ithr_r=0.9980032: ithr_diff=0.6313853: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=PVrLayerSpec: spec=$31$: };
@@ -26465,7 +27267,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=-1;
+     norm_err=0;
      da_updt=0;
     };
     LeabraLayer @[3] {
@@ -26581,20 +27383,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       fm_input=-1;
       fm_output=-1;
      };
-     output_name="0";
+     output_name="0.5";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0.02573802: max=0.06334797: max_i=3: };
-     i_thrs {cmpt=1: avg=0.9931281: max=2.528941: max_i=3: };
-     acts {cmpt=1: avg=0.2438169: max=0.81884: max_i=3: };
-     acts_p {cmpt=1: avg=0.2175473: max=0.8534505: max_i=1: };
-     acts_m {cmpt=1: avg=0.2438169: max=0.81884: max_i=3: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.2187932: max=0.8170229: max_i=2: };
+     acts_m {cmpt=1: avg=0.2187932: max=0.8170229: max_i=2: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.528941: k1_ithr=0.4811904: ithr_r=1.659293: ithr_diff=0.8097265: tie_brk=0: };
-     i_val {kwta=2.324166: g_i=2.324166: gp_g_i=0: g_i_orig=2.324166: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=1.145: k1_ithr=0.1829452: ithr_r=1.833974: ithr_diff=0.8402225: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=PViLayerSpec: spec=$29$: };
@@ -26604,7 +27406,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=-1;
+     norm_err=0;
      da_updt=0;
     };
     LeabraLayer @[4] {
@@ -26720,30 +27522,30 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       fm_input=-1;
       fm_output=-1;
      };
-     output_name="0";
+     output_name="0.5";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0.03075196: max=0.07115627: max_i=3: };
-     i_thrs {cmpt=1: avg=1.201207: max=2.852986: max_i=3: };
-     acts {cmpt=1: avg=0.2684295: max=0.8091419: max_i=3: };
-     acts_p {cmpt=1: avg=0.2181313: max=0.8498374: max_i=1: };
-     acts_m {cmpt=1: avg=0.2684295: max=0.8091419: max_i=3: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.3129267: max=0.7538869: max_i=2: };
+     acts_m {cmpt=1: avg=0.3129267: max=0.7538869: max_i=2: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.852986: k1_ithr=0.6506137: ithr_r=1.478205: ithr_diff=0.7719535: tie_brk=0: };
-     i_val {kwta=2.632749: g_i=2.632749: gp_g_i=0: g_i_orig=2.632749: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=1.145: k1_ithr=0.4569193: ithr_r=0.9186531: ithr_diff=0.6009439: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=LVeLayerSpec: spec=$30$: };
      hard_clamped=0;
-     ravg_l_avg=2.869696e-019;
+     ravg_l_avg=2.869696e-19;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=-1;
+     norm_err=0;
      da_updt=0;
     };
     LeabraLayer @[5] {
@@ -26859,20 +27661,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       fm_input=-1;
       fm_output=-1;
      };
-     output_name="1";
+     output_name="0.5";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0.0146431: max=0.03055568: max_i=3: };
-     i_thrs {cmpt=1: avg=0.5326887: max=1.168061: max_i=3: };
-     acts {cmpt=1: avg=0.3369862: max=0.7866306: max_i=3: };
-     acts_p {cmpt=1: avg=0.2288929: max=0.8253596: max_i=1: };
-     acts_m {cmpt=1: avg=0.3369862: max=0.7866306: max_i=3: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.2167978: max=0.8354885: max_i=2: };
+     acts_m {cmpt=1: avg=0.2167978: max=0.8354885: max_i=2: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=1.168061: k1_ithr=0.3208979: ithr_r=1.291978: ithr_diff=0.725273: tie_brk=0: };
-     i_val {kwta=1.083345: g_i=1.083345: gp_g_i=0: g_i_orig=1.083345: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=1.145: k1_ithr=0.1051562: ithr_r=2.387713: ithr_diff=0.9081606: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=LViLayerSpec: spec=.projects[0].networks[1].specs.gp[2][3].children[0]$337$: };
@@ -26882,7 +27684,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=-1;
+     norm_err=0;
      da_updt=0;
     };
     LeabraLayer @[6] {
@@ -26977,17 +27779,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="0";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0.1401277: max=0.5133411: max_i=1: };
-     i_thrs {cmpt=1: avg=5.7403: max=21.20366: max_i=1: };
-     acts {cmpt=1: avg=0.2200211: max=0.8765381: max_i=1: };
-     acts_p {cmpt=1: avg=0.2204396: max=0.8785468: max_i=1: };
-     acts_m {cmpt=1: avg=0.2200211: max=0.8765381: max_i=1: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.2212213: max=0.8821437: max_i=1: };
+     acts_m {cmpt=1: avg=0.2212213: max=0.8821437: max_i=1: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=21.20366: k1_ithr=0.5858462: ithr_r=3.588872: ithr_diff=0.9723705: tie_brk=0: };
-     i_val {kwta=19.14188: g_i=19.14188: gp_g_i=0: g_i_orig=19.14188: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=33.9919: k1_ithr=0.4273043: ithr_r=4.376381: ithr_diff=0.9874293: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=NVLayerSpec: spec=$32$: };
@@ -26997,7 +27799,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=-1;
+     norm_err=0;
      da_updt=0;
     };
     LeabraLayer @[7] {
@@ -27166,27 +27968,27 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name=;
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0: max=0: max_i=0: };
-     acts_p {cmpt=1: avg=0.6: max=0.6: max_i=0: };
-     acts_m {cmpt=1: avg=0: max=0: max_i=0: };
-     phase_dif_ratio=0;
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=-0.4722868: max=-0.4722868: max_i=0: };
+     acts_m {cmpt=1: avg=-0.1560636: max=-0.1560636: max_i=0: };
+     phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=1: pct=1: pct_c=0: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=1: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=PVLVDaLayerSpec: spec=$33$: };
      hard_clamped=0;
      ravg_l_avg=0.015;
-     dav=0;
+     dav=0.5277132;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=-1;
+     norm_err=0;
      da_updt=0;
     };
     LeabraLayer @[8] {
@@ -27279,24 +28081,24 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       fm_input=-1;
       fm_output=-1;
      };
-     output_name="0.6";
+     output_name="0.8";
      sse=0;
      icon_value=0;
      unit_names {
       name=;
 	  [12 1] "val";"0";"0.1";"0.2";"0.3";"0.4";"0.5";"0.6";"0.7";"0.8";
 "0.9";"1";     };
-     netin {cmpt=1: avg=0.1714053: max=0.3192814: max_i=7: };
-     i_thrs {cmpt=1: avg=1.210228: max=2.3106: max_i=7: };
-     acts {cmpt=1: avg=0.07042875: max=0.845145: max_i=7: };
-     acts_p {cmpt=1: avg=0.06206649: max=0.7447979: max_i=9: };
-     acts_m {cmpt=1: avg=0.07042875: max=0.845145: max_i=7: };
-     phase_dif_ratio=0.9280818;
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.07084167: max=0.8501: max_i=6: };
+     acts_m {cmpt=1: avg=0.0714606: max=0.8575271: max_i=9: };
+     phase_dif_ratio=1.019299;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.08333334: pct_c=0.9166667: adth_k=1: k_ithr=2.3106: k1_ithr=1.110194: ithr_r=0.7329724: ithr_diff=0.5195213: tie_brk=0: };
-     i_val {kwta=2.070519: g_i=2.070519: gp_g_i=0: g_i_orig=2.070519: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     kwta {k=1: pct=0.08333334: pct_c=0.9166667: adth_k=1: k_ithr=2.756744: k1_ithr=1.283472: ithr_r=0.7644814: ithr_diff=0.5344247: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.08333334: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ScalarValLayerSpec: spec=$12$: };
@@ -27399,24 +28201,24 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       fm_input=-1;
       fm_output=-1;
      };
-     output_name="0.7";
+     output_name="0";
      sse=0;
      icon_value=0;
      unit_names {
       name=;
 	  [12 1] "val";"0";"0.1";"0.2";"0.3";"0.4";"0.5";"0.6";"0.7";"0.8";
 "0.9";"1";     };
-     netin {cmpt=1: avg=0.1685549: max=0.3177858: max_i=8: };
-     i_thrs {cmpt=1: avg=1.188473: max=2.292493: max_i=8: };
-     acts {cmpt=1: avg=0.06670891: max=0.800507: max_i=8: };
-     acts_p {cmpt=1: avg=0.07412142: max=0.889457: max_i=1: };
-     acts_m {cmpt=1: avg=0.06670891: max=0.800507: max_i=8: };
-     phase_dif_ratio=0.9876639;
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.07172187: max=0.8606625: max_i=5: };
+     acts_m {cmpt=1: avg=0.07042875: max=0.845145: max_i=1: };
+     phase_dif_ratio=1.016061;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.08333334: pct_c=0.9166667: adth_k=1: k_ithr=2.292493: k1_ithr=1.088108: ithr_r=0.7451998: ithr_diff=0.5253605: tie_brk=0: };
-     i_val {kwta=2.051616: g_i=2.051616: gp_g_i=0: g_i_orig=2.051616: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     kwta {k=1: pct=0.08333334: pct_c=0.9166667: adth_k=1: k_ithr=2.744652: k1_ithr=1.190551: ithr_r=0.835238: ithr_diff=0.5662288: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.08333334: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ScalarValLayerSpec: spec=$12$: };
@@ -27426,7 +28228,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=-1;
+     norm_err=0;
      da_updt=0;
     };
     LeabraLayer @[10] {
@@ -27455,7 +28257,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
        con_spec {type=LeabraConSpec: spec=$345$: };
-       recv_idx=2;
+       recv_idx=0;
        send_idx=0;
        recv_n=1;
        send_n=1;
@@ -27479,7 +28281,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
        con_spec {type=LeabraConSpec: spec=$345$: };
-       recv_idx=3;
+       recv_idx=1;
        send_idx=0;
        recv_n=1;
        send_n=1;
@@ -27503,7 +28305,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
        con_spec {type=LeabraConSpec: spec=$345$: };
-       recv_idx=4;
+       recv_idx=2;
        send_idx=0;
        recv_n=1;
        send_n=1;
@@ -27527,7 +28329,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
        con_spec {type=LeabraConSpec: spec=$345$: };
-       recv_idx=5;
+       recv_idx=3;
        send_idx=0;
        recv_n=1;
        send_n=1;
@@ -27551,7 +28353,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
        con_spec {type=MarkerConSpec: spec=$327$: };
-       recv_idx=6;
+       recv_idx=4;
        send_idx=0;
        recv_n=1;
        send_n=1;
@@ -27594,19 +28396,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name=;
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0.16239: max=0.2496288: max_i=38: };
-     i_thrs {cmpt=1: avg=1.123908: max=1.779473: max_i=38: };
-     acts {cmpt=1: avg=0.1031627: max=0.9360201: max_i=38: };
-     acts_p {cmpt=1: avg=0.1110669: max=0.9474235: max_i=39: };
-     acts_m {cmpt=1: avg=0.1031627: max=0.9360201: max_i=38: };
-     phase_dif_ratio=0.9779499;
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.09792598: max=0.9363656: max_i=36: };
+     acts_m {cmpt=1: avg=0.10861: max=0.9528139: max_i=37: };
+     phase_dif_ratio=1.049681;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=1.553157: k1_ithr=1.052366: ithr_r=0.3892485: ithr_diff=0.3224341: tie_brk=0: };
-     i_val {kwta=1.352841: g_i=1.352841: gp_g_i=0: g_i_orig=1.352841: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=1.835979: k1_ithr=1.064649: ithr_r=0.5449325: ithr_diff=0.4201191: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.1428571: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
-     maxda=2.264977e-006;
+     maxda=0;
      spec {type=LeabraLayerSpec: spec=$324$: };
      hard_clamped=0;
      ravg_l_avg=0;
@@ -27614,7 +28416,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=-1;
+     norm_err=0;
      da_updt=0;
     };
     LeabraLayer @[11] {
@@ -27666,27 +28468,27 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="0.5";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0.210216: max=0.9185686: max_i=8: };
-     acts_p {cmpt=1: avg=0.2156418: max=0.95: max_i=8: };
-     acts_m {cmpt=1: avg=0.210216: max=0.9185686: max_i=8: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.2148634: max=0.95: max_i=6: };
+     acts_m {cmpt=1: avg=0.2148634: max=0.95: max_i=6: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
-     i_val {kwta=0: g_i=0.6: gp_g_i=0: g_i_orig=0.6: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ScalarValLayerSpec: spec=.projects[0].networks[1].specs[4]$348$: };
-     hard_clamped=1;
+     hard_clamped=0;
      ravg_l_avg=0;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=-1;
+     norm_err=0;
      da_updt=0;
     };
     LeabraLayer @[12] {
@@ -27743,7 +28545,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.088846: k1_ithr=1.569475: ithr_r=0.285871: ithr_diff=0.2486405: tie_brk=0: };
      i_val {kwta=1.881098: g_i=0.6: gp_g_i=0: g_i_orig=0.6: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ScalarValLayerSpec: spec=$348$: };
@@ -27802,30 +28604,30 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       fm_input=-1;
       fm_output=-1;
      };
-     output_name="0.3";
+     output_name="0.5";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0.2104094: max=0.9149837: max_i=4: };
-     acts_p {cmpt=1: avg=0.2161847: max=0.95: max_i=5: };
-     acts_m {cmpt=1: avg=0.2104094: max=0.9149837: max_i=4: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.2109375: max=0.8944726: max_i=6: };
+     acts_m {cmpt=1: avg=0.2109375: max=0.8944726: max_i=6: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
-     i_val {kwta=0: g_i=0.6: gp_g_i=0: g_i_orig=0.6: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ScalarValLayerSpec: spec=$348$: };
-     hard_clamped=1;
+     hard_clamped=0;
      ravg_l_avg=0;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=-1;
+     norm_err=0;
      da_updt=0;
     };
     LeabraLayer @[14] {
@@ -27882,7 +28684,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.113612: k1_ithr=1.569521: ithr_r=0.2976281: ithr_diff=0.2574225: tie_brk=0: };
      i_val {kwta=1.895975: g_i=0.6: gp_g_i=0: g_i_orig=0.6: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=ScalarValLayerSpec: spec=$348$: };
@@ -27938,31 +28740,33 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="0.3,0.75";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0.04408608: max=0.95: max_i=61: };
-     acts_p {cmpt=1: avg=0.04870487: max=0.8676552: max_i=60: };
-     acts_m {cmpt=1: avg=0.04408608: max=0.95: max_i=61: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.05146443: max=0.9478945: max_i=71: };
+     acts_m {cmpt=1: avg=0.05146444: max=0.9478941: max_i=71: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=9: pct=0.08181818: pct_c=0.9181818: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
-     i_val {kwta=0: g_i=0.6: gp_g_i=0: g_i_orig=0.6: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
-     adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
+     adapt_i {avg_avg=0.08181818: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=TwoDValLayerSpec: spec=.projects[0].networks[1].specs[6]$349$: };
-     hard_clamped=1;
+     hard_clamped=0;
      ravg_l_avg=0;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=-1;
+     norm_err=0;
      da_updt=0;
      twod_vals {
       name=;
-     };
+	  [2 11 1 1 1] 0.55808884;0.87130457;0;0;0.57017261;0.87655681;0.57017261;0.87655681;0.57017255;0.87655681;
+0;0;0;0;0;0;0;0;0;0;
+0;0;     };
     };
     TwoDValLeabraLayer @[16] {
      name="VisHand_Pred";
@@ -28017,7 +28821,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=9: pct=0.08181818: pct_c=0.9181818: adth_k=1: k_ithr=0.9875029: k1_ithr=0.761307: ithr_r=0.2601427: ithr_diff=0.2290585: tie_brk=0: };
      i_val {kwta=0.8970246: g_i=0.6: gp_g_i=0: g_i_orig=0.6: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=TwoDValLayerSpec: spec=$349$: };
@@ -28031,7 +28835,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      da_updt=0;
      twod_vals {
       name=;
-     };
+	  [2 11 1 1 1] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;     };
     };
     TwoDValLeabraLayer @[17] {
      name="VisTarget_Cur";
@@ -28076,31 +28882,33 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="0.5,0.5";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+038: max_i=-1: };
-     acts {cmpt=1: avg=0.04635016: max=0.95: max_i=58: };
-     acts_p {cmpt=1: avg=0.04714963: max=0.8928071: max_i=62: };
-     acts_m {cmpt=1: avg=0.04635016: max=0.95: max_i=58: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.05172521: max=0.9011544: max_i=51: };
+     acts_m {cmpt=1: avg=0.05293736: max=0.95: max_i=61: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=9: pct=0.08181818: pct_c=0.9181818: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
-     i_val {kwta=0: g_i=0.6: gp_g_i=0: g_i_orig=0.6: };
-     un_g_i {cmpt=0: avg=0: max=-3.402823e+038: max_i=-1: };
-     adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
+     adapt_i {avg_avg=0.08181818: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      spec {type=TwoDValLayerSpec: spec=$349$: };
-     hard_clamped=1;
+     hard_clamped=0;
      ravg_l_avg=0;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=-1;
+     norm_err=0;
      da_updt=0;
      twod_vals {
       name=;
-     };
+	  [2 11 1 1 1] 0.71441656;0.66313028;0;0;0.71155292;0.67728555;0.71155292;0.67728555;0.80733883;0.43104687;
+0;0;0;0;0;0;0;0;0;0;
+0;0;     };
     };
    };
    view_objs {
@@ -28114,29 +28922,29 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    wt_update=ON_LINE;
    small_batch_n=10;
    batch=0;
-   epoch=500;
+   epoch=0;
    group=0;
    trial=0;
    tick=0;
    cycle=0;
-   time=44680;
+   time=0;
    group_name=;
    trial_name=;
-   output_name="0.6_0.7";
+   output_name=;
    sse_unit_avg=0;
    sse_sqrt=0;
-   sse=0.25;
-   sum_sse=108.2656;
-   avg_sse=0.3075728;
+   sse=0;
+   sum_sse=0;
+   avg_sse=0;
    cnt_err_tol=0;
-   cnt_err=352;
-   pct_err=1;
+   cnt_err=0;
+   pct_err=0;
    pct_cor=0;
-   cur_sum_sse=2.944521;
-   avg_sse_n=8;
-   cur_cnt_err=8;
-   train_time {name="": start={usr=12007: sys=1730: tot=3657791847: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
-   epoch_time {name="": start={usr=5858: sys=1090: tot=3675512800: }: end={usr=5073: sys=844: tot=3675478652: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   cur_sum_sse=0;
+   avg_sse_n=0;
+   cur_cnt_err=0;
+   train_time {name="": start={usr=3747: sys=1042: tot=659464690: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   epoch_time {name="": start={usr=10479: sys=2588: tot=659483860: }: end={usr=9595: sys=2317: tot=659472140: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    trial_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    settle_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    cycle_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
@@ -28159,19 +28967,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    wt_save_fmt=TEXT;
    lay_layout=THREE_D;
    n_units=477;
-   n_cons=0;
-   max_size {x=38: y=10: z=4: };
+   n_cons=4119;
+   max_size {x=38: y=10: z=3: };
    learn_rule=CTLEABRA_XCAL;
    phase_order=MINUS_PLUS;
    no_plus_test=0;
    sequence_init=DO_NOTHING;
-   phase=PLUS_PHASE;
+   phase=MINUS_PHASE;
    nothing_phase=0;
    phase_no=0;
    phase_max=2;
-   ct_cycle=50;
+   ct_cycle=59;
    time_inc=1;
-   cycle_max=50;
+   cycle_max=20;
    min_cycles=0;
    min_cycles_phase2=0;
    ct_time {
@@ -28203,46 +29011,46 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    sravg_vals {
     s_sum=0;
     s_nrm=0;
-    m_sum=4;
+    m_sum=0;
     m_nrm=0;
     do_s=0;
    };
-   minus_cycles=50;
-   avg_cycles=50;
-   avg_cycles_sum=400;
-   avg_cycles_n=8;
-   minus_output_name="0.6_0.7";
+   minus_cycles=0;
+   avg_cycles=0;
+   avg_cycles_sum=0;
+   avg_cycles_n=0;
+   minus_output_name=;
    net_misc {
     cyc_syn_dep=0;
     syn_dep_int=20;
    };
    send_pct=0;
    send_pct_n=0;
-   send_pct_tot=307;
-   avg_send_pct=0.01373867;
-   avg_send_pct_sum=6.837129;
-   avg_send_pct_n=540;
+   send_pct_tot=0;
+   avg_send_pct=0;
+   avg_send_pct_sum=0;
+   avg_send_pct_n=0;
    maxda_stopcrit=-1;
-   maxda=0.0002172589;
+   maxda=0;
    trg_max_act_stopcrit=1;
    trg_max_act=0;
-   ext_rew=-1.1;
+   ext_rew=0;
    ext_rew_avail=0;
    norew_val=0.5;
-   avg_ext_rew=0.9713467;
-   pvlv_pvi=0.8401663;
+   avg_ext_rew=0;
+   pvlv_pvi=0;
    pvlv_pvr=0;
-   pvlv_lve=0.7540973;
-   pvlv_lvi=0.5840271;
+   pvlv_lve=0;
+   pvlv_lvi=0;
    pv_detected=0;
-   avg_ext_rew_sum=7;
-   avg_ext_rew_n=7;
+   avg_ext_rew_sum=0;
+   avg_ext_rew_n=0;
    off_errs=1;
    on_errs=1;
-   norm_err=0.25;
-   avg_norm_err=0.2895148;
-   avg_norm_err_sum=2.682069;
-   avg_norm_err_n=8;
+   norm_err=0;
+   avg_norm_err=1;
+   avg_norm_err_sum=0;
+   avg_norm_err_n=0;
   };
  };
 };

@@ -1,12 +1,15 @@
-// ta_Dump File v2.0
+// ta_Dump File v2.0 -- code v5.0.0.0
 LeabraProject .projects[0] { 
+  taBase_Group @.templates = [0] {
+  };
+
   Doc_Group @.docs = [1] {
     taDoc @[0] { };
   };
 
   Wizard_Group @.wizards = [1] {
     LeabraWizard @[0] { 
-   UserDataItem_List @*(.user_data_) { 
+   UserDataItem_List @*(.user_data_) {
 	UserDataItem @[0] { };
    };
 
@@ -18,8 +21,12 @@ LeabraProject .projects[0] {
     };
   };
 
+  SelectEdit_Group @.edits = [0] {
+  };
+
   DataTable_Group @.data = [0] {
-    DataTable_Group @.gp[0] { };
+    DataTable_Group @.gp[0] { 
+    };
     DataTable_Group @.gp[1] = [1] { 
       DataTable @[0] { 
 	DataTableCols @.data = [4] {
@@ -45,22 +52,22 @@ LeabraProject .projects[0] {
 
   taBase_Group @.data_proc = [4] {
     taDataProc @[0] { 
-   UserDataItem_List @*(.user_data_) { 
+   UserDataItem_List @*(.user_data_) {
 	UserDataItem @[0] { };
    };
 };
     taDataAnal @[1] { 
-   UserDataItem_List @*(.user_data_) { 
+   UserDataItem_List @*(.user_data_) {
 	UserDataItem @[0] { };
    };
 };
     taDataGen @[2] { 
-   UserDataItem_List @*(.user_data_) { 
+   UserDataItem_List @*(.user_data_) {
 	UserDataItem @[0] { };
    };
 };
     taImageProc @[3] { 
-   UserDataItem_List @*(.user_data_) { 
+   UserDataItem_List @*(.user_data_) {
 	UserDataItem @[0] { };
    };
 };
@@ -68,9 +75,27 @@ LeabraProject .projects[0] {
 
   Program_Group @.programs = [1] {
     Program @[0] { 
+      ProgObjList @.objs = [0] {
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
       ProgVar_List @.args = [2] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
+      };
+
+      ProgVar_List @.vars = [0] {
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.load_code = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
       };
 
       ProgEl_List @.prog_code = [5] {
@@ -83,6 +108,9 @@ LeabraProject .projects[0] {
 	    DataOpEl @[3] { };
 	  };
 
+	  DataOpList @.dest_cols = [0] {
+	  };
+
 	  ProgEl_List @.loop_code = [2] {
 	    AssignExpr @[0] { };
 	    DataCalcSetSrcRow @[1] { };
@@ -93,6 +121,9 @@ LeabraProject .projects[0] {
 	    ProgVar @[1] { };
 	    ProgVar @[2] { };
 	    ProgVar @[3] { };
+	  };
+
+	  ProgVar_List @.dest_col_vars = [0] {
 	  };
 	};
 	Comment @[2] { };
@@ -116,6 +147,9 @@ LeabraProject .projects[0] {
 		DataCalcCopyCommonCols @[1] { };
 		AssignExpr @[2] { };
 		DataCalcSetDestRow @[3] { };
+	      };
+
+	      ProgEl_List @.false_code = [0] {
 	      };
 	    };
 	  };
@@ -157,6 +191,15 @@ LeabraProject .projects[0] {
 		  };
 		};
 	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
 	    };
 	  };
 	};
@@ -167,10 +210,24 @@ LeabraProject .projects[0] {
       };
     };
   };
+
+  Network_Group @.networks = [0] {
+  };
 };
 LeabraProject .projects[0] {
  name="Project_0";
  desc=;
+ tags=;
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ wiki_url {
+  sync=0;
+  wiki=;
+  url=;
+ };
  templates {
   name=;
   el_typ=taBase;
@@ -183,6 +240,11 @@ LeabraProject .projects[0] {
   taDoc @[0] {
    name="DataCalcLoopDocs";
    auto_open=1;
+   web_doc=0;
+   wiki=;
+   url="local";
+   full_url="local";
+   text_size=1;
    text="<html>
 <head></head>
 <body>
@@ -199,6 +261,20 @@ The program should be well enough documented to follow along in the Edit Program
 </body>
 </html>
 ";
+   html_text="<html><head></head><body>
+<h2> Data Calc Loop Demo Project </h2>
+<p>
+This project shows how to use the DataCalcLoop system to iteratively process rows of a datatable.
+</p><p>
+The program <a href=\"ta:.programs.DataCalcLoopDemo\">DataCalcLoopDemo</a> runs two different types of data calc loops:
+</p><ul><li> the first modifes a single data table, by computing a new column from existing columns.  Specifically, AvgValue is computed as the average of Value1 and Value2 -- you can enter new values in the SomeData table and see that it updates them in the bar graph at the right.
+</li><li> the second creates a new data table by selecting values from an existing one, and computing new values as well.  Specifically, it extracts \"train\" data from the SomeData into TrainData data table, and computes the MaxValue column.
+</li></ul>
+The program should be well enough documented to follow along in the Edit Program code.  Be sure to read the comments for extra tips.
+<p>
+
+
+</p></body></html>";
   };
  };
  wizards {
@@ -239,6 +315,7 @@ The program should be well enough documented to follow along in the Edit Program
     };
    };
    connectivity=BIDIRECTIONAL;
+   default_net_type=LeabraNetwork;
   };
  };
  edits {
@@ -276,7 +353,8 @@ The program should be well enough documented to follow along in the Edit Program
       };
       ar {
        name=;
-	    [10] "train_a";"train_b";"train_c";"train_d";"train_e";"test_a";"test_b";"test_c";"test_d";"test_e";      };
+	    [10] "train_a";"train_b";"train_c";"train_d";"train_e";"test_a";"test_b";"test_c";"test_d";"test_e";
+      };
      };
      float_Data @[1] {
       name="Value1";
@@ -288,7 +366,8 @@ The program should be well enough documented to follow along in the Edit Program
       };
       ar {
        name=;
-	    [10] 0.40000001;0.5;0.2;0.69999999;0.30000001;0.5;0.69999999;0.40000001;0.80000001;0.40000001;      };
+	    [10] 0.40000001;0.5;0.2;0.69999999;0.30000001;0.5;0.69999999;0.40000001;0.80000001;0.40000001;
+      };
      };
      float_Data @[2] {
       name="Value2";
@@ -300,7 +379,8 @@ The program should be well enough documented to follow along in the Edit Program
       };
       ar {
        name=;
-	    [10] 0.30000001;0.60000002;0.30000001;0.60000002;0.40000001;0.30000001;0.80000001;0.5;0.89999998;0.30000001;      };
+	    [10] 0.30000001;0.60000002;0.30000001;0.60000002;0.40000001;0.30000001;0.80000001;0.5;0.89999998;0.30000001;
+      };
      };
      float_Data @[3] {
       name="AvgValue";
@@ -313,7 +393,8 @@ The program should be well enough documented to follow along in the Edit Program
       };
       ar {
        name=;
-	    [10] 0.35000002;0.55000001;0.25;0.64999998;0.35000002;0.40000001;0.75;0.44999999;0.85000002;0.35000002;      };
+	    [10] 0.35000002;0.55000001;0.25;0.64999998;0.35000002;0.40000001;0.75;0.44999999;0.85000002;0.35000002;
+      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -487,8 +568,10 @@ The program should be well enough documented to follow along in the Edit Program
      object_type=DataTable;
      object_val=.projects[0].data.gp[1][0]$0$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
      desc=;
+     init_from=NULL;
     };
     ProgVar @[1] {
      name="TrainData";
@@ -496,8 +579,10 @@ The program should be well enough documented to follow along in the Edit Program
      object_type=DataTable;
      object_val=.projects[0].data.gp[2][0]$1$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
      desc=;
+     init_from=NULL;
     };
    };
    vars {
@@ -565,12 +650,6 @@ The program should be well enough documented to follow along in the Edit Program
        result_var=.projects[0].programs[0].prog_code[1].src_col_vars[3]$3$;
        expr {
 	expr=".5 * (s_Value1 +  s_Value2)";
-	flags=;
-	var_expr=".5 * ($#0#$ +  $#1#$)";
-	vars {
-	};
-	var_names{ s_Value1;s_Value2;	};
-	bad_vars{ 	};
        };
       };
       DataCalcSetSrcRow @[1] {
@@ -586,35 +665,43 @@ The program should be well enough documented to follow along in the Edit Program
       el_def=0;
       ProgVar @[0] {
        name="s_Name";
-       var_type=T_Int;
-       int_val=0;
+       var_type=T_String;
+       string_val=;
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK;
+       flags=NULL_CHECK|LOCAL_VAR;
+       reference=0;
        desc=;
+       init_from=NULL;
       };
       ProgVar @[1] {
        name="s_Value1";
-       var_type=T_Int;
-       int_val=0;
+       var_type=T_Real;
+       real_val=0;
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK;
+       flags=NULL_CHECK|LOCAL_VAR|USED;
+       reference=0;
        desc=;
+       init_from=NULL;
       };
       ProgVar @[2] {
        name="s_Value2";
-       var_type=T_Int;
-       int_val=0;
+       var_type=T_Real;
+       real_val=0;
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK;
+       flags=NULL_CHECK|LOCAL_VAR|USED;
+       reference=0;
        desc=;
+       init_from=NULL;
       };
       ProgVar @[3] {
        name="s_AvgValue";
-       var_type=T_Int;
-       int_val=0;
+       var_type=T_Real;
+       real_val=0;
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK;
+       flags=NULL_CHECK|LOCAL_VAR|USED;
+       reference=0;
        desc=;
+       init_from=NULL;
       };
      };
      dest_col_vars {
@@ -671,12 +758,6 @@ The program should be well enough documented to follow along in the Edit Program
        flags=;
        cond {
 	expr="s_Name.contains(\"train_\")";
-	flags=;
-	var_expr="$#0#$.contains(\"train_\")";
-	vars {
-	};
-	var_names{ s_Name;	};
-	bad_vars{ 	};
        };
        true_code {
 	name=;
@@ -701,12 +782,6 @@ The program should be well enough documented to follow along in the Edit Program
 	 result_var=.projects[0].programs[0].prog_code[4].dest_col_vars[0]$5$;
 	 expr {
 	  expr="MAX(s_Value1, s_Value2)";
-	  flags=;
-	  var_expr="MAX($#0#$, $#1#$)";
-	  vars {
-	  };
-	  var_names{ s_Value1;s_Value2;	  };
-	  bad_vars{ 	  };
 	 };
 	};
 	DataCalcSetDestRow @[3] {
@@ -729,35 +804,43 @@ The program should be well enough documented to follow along in the Edit Program
       el_def=0;
       ProgVar @[0] {
        name="s_Name";
-       var_type=T_Int;
-       int_val=0;
+       var_type=T_String;
+       string_val=;
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK;
+       flags=NULL_CHECK|LOCAL_VAR;
+       reference=0;
        desc=;
+       init_from=NULL;
       };
       ProgVar @[1] {
        name="s_Value1";
-       var_type=T_Int;
-       int_val=0;
+       var_type=T_Real;
+       real_val=0;
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK;
+       flags=NULL_CHECK|LOCAL_VAR;
+       reference=0;
        desc=;
+       init_from=NULL;
       };
       ProgVar @[2] {
        name="s_Value2";
-       var_type=T_Int;
-       int_val=0;
+       var_type=T_Real;
+       real_val=0;
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK;
+       flags=NULL_CHECK|LOCAL_VAR;
+       reference=0;
        desc=;
+       init_from=NULL;
       };
       ProgVar @[3] {
        name="s_AvgValue";
-       var_type=T_Int;
-       int_val=0;
+       var_type=T_Real;
+       real_val=0;
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK;
+       flags=NULL_CHECK|LOCAL_VAR;
+       reference=0;
        desc=;
+       init_from=NULL;
       };
      };
      dest_col_vars {
@@ -766,11 +849,13 @@ The program should be well enough documented to follow along in the Edit Program
       el_def=0;
       ProgVar @[0] {
        name="d_MaxValue";
-       var_type=T_Int;
-       int_val=0;
+       var_type=T_Real;
+       real_val=0;
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK;
+       flags=NULL_CHECK|LOCAL_VAR|USED;
+       reference=0;
        desc=;
+       init_from=NULL;
       };
      };
     };
@@ -786,6 +871,7 @@ The program should be well enough documented to follow along in the Edit Program
    name="Browser";
    visible=1;
    m_is_root=0;
+   m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
    m_is_dialog=0;
    toolbars {
@@ -882,6 +968,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  view_range {min=0: max=9: };
 	  display_on=1;
 	  manip_ctrl_on=1;
+	  graph_type=BAR;
+	  plot_style=LINE_AND_POINTS;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
 	  x_axis {
 	   m_data=NULL;
 	   m_transform=NULL;
@@ -924,6 +1023,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  plot_2 {
 	   m_data=NULL;
@@ -939,6 +1039,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=SQUARE;
+	   alt_y=0;
 	  };
 	  plot_3 {
 	   m_data=NULL;
@@ -954,6 +1055,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=DIAMOND;
+	   alt_y=0;
 	  };
 	  plot_4 {
 	   m_data=NULL;
@@ -969,6 +1071,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=TRIANGLE;
+	   alt_y=0;
 	  };
 	  plot_5 {
 	   m_data=NULL;
@@ -984,25 +1087,61 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=PLUS;
+	   alt_y=0;
 	  };
+	  plot_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CROSS;
+	   alt_y=0;
+	  };
+	  plot_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=STAR;
+	   alt_y=0;
+	  };
+	  plot_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=MINUS;
+	   alt_y=0;
+	  };
+	  alt_y_1=0;
 	  alt_y_2=0;
 	  alt_y_3=0;
 	  alt_y_4=0;
 	  alt_y_5=0;
-	  graph_type=BAR;
-	  plot_style=LINE_AND_POINTS;
-	  line_width=2;
-	  point_size=MEDIUM;
-	  point_spacing=1;
-	  bar_space=0.2;
-	  color_mode=FIXED_COLOR;
-	  negative_draw=0;
-	  axis_font_size=0.05;
-	  label_font_size=0.04;
-	  label_spacing=-1;
-	  matrix_mode=SEP_GRAPHS;
-	  mat_layout=BOT_ZERO;
-	  mat_odd_vert=1;
 	  err_1 {
 	   m_data=NULL;
 	   m_transform=NULL;
@@ -1017,6 +1156,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_2 {
 	   m_data=NULL;
@@ -1032,6 +1172,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_3 {
 	   m_data=NULL;
@@ -1047,6 +1188,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_4 {
 	   m_data=NULL;
@@ -1062,6 +1204,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_5 {
 	   m_data=NULL;
@@ -1077,9 +1220,59 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_6 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_7 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_8 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_spacing=1;
 	  err_bar_width=0.02;
+	  color_mode=FIXED_COLOR;
 	  color_axis {
 	   m_data=NULL;
 	   m_transform=NULL;
@@ -1120,17 +1313,65 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  thresh=0.5;
 	  thr_line_len=0.48;
-	  width=1;
-	  depth=1;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
 	  two_d_font=0;
 	  two_d_font_scale=350;
 	 };
 	};
        };
-       camera_pos {x=1.428465: y=0.445: z=1.625717: };
-       camera_orient {x=0: y=0: z=1: rot=0: };
-       camera_focdist=1.638217;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=1.4275: y=0.445: z=1.624621: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.637121;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
       };
      };
     };
@@ -1149,7 +1390,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    };
   };
  };
- use_change_log=0;
  last_change_desc=;
  networks {
   name=;

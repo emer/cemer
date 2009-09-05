@@ -339,9 +339,9 @@ public:
   ///////////////////////////////////////////////////////////////
   // Matrix ops -- you must Ref/UnRef taMatrix return types
   taMatrix*	GetValAsMatrix(int row);
-  // #CAT_XpertAccess gets the cell as a slice of the entire column (note: not const -- you can write it) -- must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it
+  // #CAT_Access gets the cell as a slice of the entire column (note: not const -- you can write it) -- must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it
   bool	 	SetValAsMatrix(const taMatrix* val, int row);
-  // #CAT_XpertModify set the matrix cell from a same-sized matrix 
+  // #CAT_Modify set the matrix cell from a same-sized matrix 
   taMatrix*	GetRangeAsMatrix(int st_row, int n_rows);
   // #CAT_XpertAccess gets a slice of the entire column from starting row for n_rows (note: not const -- you can write it) -- must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it
   bool		GetMinMaxScale(MinMax& mm);
@@ -1118,16 +1118,16 @@ public:
   // 	Entire Matrix
 
   taMatrix*	 	GetValAsMatrix(int col, int row);
-  // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
+  // #CAT_Access get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
   taMatrix*	 	GetValAsMatrixColName(const String& col_name, int row);
-  // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
+  // #CAT_Access get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
   taMatrix*	 	GetValAsMatrixColRowName(const String& col_name, const String& row_col_name,
 					 const Variant& row_value);
   // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column name, and row by looking up row_value in column named row_col_name; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
   bool 			SetValAsMatrix(const taMatrix* val, int col, int row);
-  // #CAT_XpertModify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
+  // #CAT_Modify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
   bool 			SetValAsMatrixColName(const taMatrix* val, const String& col_name, int row);
-  // #CAT_XpertModify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
+  // #CAT_Modify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
   taMatrix*	 	GetRangeAsMatrix(int col, int st_row, int n_rows);
   // #CAT_XpertAccess get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
 
