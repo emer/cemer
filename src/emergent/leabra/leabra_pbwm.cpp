@@ -2611,6 +2611,14 @@ void PFCUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_
   }
 }
 
+void PFCUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
+  LeabraLayer* lay = u->own_lay();
+  XPFCLayerSpec* ls = (XPFCLayerSpec*)lay->GetLayerSpec();
+  LeabraUnit_Group* ugp = (LeabraUnit_Group*)u->owner; // assume..
+  u->net += ls->gate.go_netin_gain * u->act_eq * ugp->misc_float;  // go netin mod -- weight by actual activation
+  inherited::Compute_Conduct(u, net);
+}
+
 void PFCUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
   if(act_fun == SPIKE) {
     // todo: do something here..
@@ -2638,6 +2646,7 @@ void XPFCGateSpec::Initialize() {
   graded_out_go = true;
   go_learn_mod = 0.5f;
   mnt_go_learn_mod = true;
+  go_netin_gain = 0.01f;
   patch_out_mod = false;
   mnt_to_bg = true;
   clear_decay = 0.0f;

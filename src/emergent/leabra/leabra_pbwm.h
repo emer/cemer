@@ -771,6 +771,7 @@ public:
 
   override void	DecayState(LeabraUnit* u, LeabraNetwork* net, float decay);
   override void Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
+  override void Compute_Conduct(LeabraUnit* u, LeabraNetwork* net);
   override void Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net);
 
   TA_BASEFUNS_NOCOPY(PFCUnitSpec);
@@ -824,6 +825,7 @@ public:
   bool		graded_out_go;	// #DEF_true use actual activation level of output Go signal to drive output activation level
   float		go_learn_mod;	// #DEF_0.5 #MIN_0 #MAX_1 how much to modulate PFC learning as a function of go gating signal magnitude -- determines how far learning signal moves toward actual activation value away from minus-phase activation state: plus phase act_eq = act_m + ((1.0 - go_learn_mod) + go_learn_mod * gate_act) * (act - act_m)
   bool		mnt_go_learn_mod; // #DEF_true also include maintenance go gating signal in the go learn modulation function
+  float		go_netin_gain;	  // #DEF_0.01 extra net input to add to active units as a function of gating signal -- uses the mnt_go_learn_mod to determine if maintenance go contributes to the gating signal
   bool		patch_out_mod;	// #DEF_false use patch LVe value to modulate output gating activation level
   bool	        mnt_to_bg;	// #DEF_true send maintenance activation values to the PVLV LVe and Matrix layers instead of the output gated activation (act) which is sent to other layers
   float		clear_decay;	// #DEF_0 #MIN_0 #MAX_1 how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse
