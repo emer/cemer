@@ -709,7 +709,7 @@ public:
     bool reset_first=false);
   // #CAT_File #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD loads data in Emergent file format OR delimited import formats, up to max num of recs (-1 for all), reset_first = remove any existing data prior to loading
   void 			LoadAppendData_Gui(const String& fname)
-    {LoadDataEx(fname, LH_AUTO_YES, LD_AUTO, LQ_AUTO, -1, true);}
+    {LoadDataEx(fname, LH_AUTO_YES, LD_AUTO, LQ_AUTO, -1, false);}
   // #CAT_File #LABEL_Load_Append_Data #MENU  #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load data in default Emergent data format; appends to existing data in table (doesn't reset first)
   
   void 			LoadDataFixed(const String& fname, FixedWidthSpec* fws, bool reset_first=false);
