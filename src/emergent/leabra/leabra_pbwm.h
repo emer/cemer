@@ -823,8 +823,7 @@ public:
   float		base_gain;	// #DEF_0.5 #MIN_0 #MAX_1 how much activation gets through even without a Go gating signal
   float		go_gain;	// #READ_ONLY #SHOW how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
   bool		graded_out_go;	// #DEF_true use actual activation level of output Go signal to drive output activation level
-  float		go_learn_mod;	// #DEF_0.5 #MIN_0 #MAX_1 how much to modulate PFC learning as a function of go gating signal magnitude -- determines how far learning signal moves toward actual activation value away from minus-phase activation state: plus phase act_eq = act_m + ((1.0 - go_learn_mod) + go_learn_mod * gate_act) * (act - act_m)
-  bool		mnt_go_learn_mod; // #DEF_true also include maintenance go gating signal in the go learn modulation function
+  float		go_learn_base;	// #DEF_0.02 #MIN_0 #MAX_1 how much PFC learning occurs in the absence of go gating modulation -- 1 minus this is how much happens with go gating -- determines how far plus phase activations used in learning can deviate from minus-phase activation state: plus phase act_nd = act_m + (go_learn_base + (1-go_learn_base) * gate_act) * (act - act_m)
   float		go_netin_gain;	  // #DEF_0.01 extra net input to add to active units as a function of gating signal -- uses the mnt_go_learn_mod to determine if maintenance go contributes to the gating signal
   bool		patch_out_mod;	// #DEF_false use patch LVe value to modulate output gating activation level
   bool	        mnt_to_bg;	// #DEF_true send maintenance activation values to the PVLV LVe and Matrix layers instead of the output gated activation (act) which is sent to other layers

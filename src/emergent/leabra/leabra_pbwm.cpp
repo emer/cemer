@@ -2163,10 +2163,12 @@ void XSNrThalLayerSpec::Initialize() {
   ct_inhib_mod.trough_i = 0.0f;
 
   mnt_out_inhib.type = LeabraInhibSpec::KWTA_INHIB;
+  mnt_out_inhib.kwta_pt = .25f;
   mnt_inhib = true;
   out_inhib = true;
   mnt_kwta.pct = .75f;
-  out_kwta.pct = .25f;
+  out_kwta.k_from = KWTASpec::USE_K;
+  out_kwta.k = 3;
 }
 
 void XSNrThalLayerSpec::Defaults() {
@@ -2644,8 +2646,7 @@ void XPFCGateSpec::Initialize() {
   base_gain = 0.5f;
   go_gain = 0.5f;
   graded_out_go = true;
-  go_learn_mod = 0.5f;
-  mnt_go_learn_mod = true;
+  go_learn_base = 0.02f;
   go_netin_gain = 0.01f;
   patch_out_mod = false;
   mnt_to_bg = true;
@@ -2939,8 +2940,7 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       else if(net->ct_cycle < max_mnt_go_cycle && // only allow mnt within early minus 
 	      snr_mnt_u->act_eq > snrthalsp->snrthal.go_thr) {
 	gate_sig = XPFCGateSpec::GATE_MNT_GO;
-	if(gate.mnt_go_learn_mod)
-	  ugp->misc_float = snr_mnt_u->act_eq;
+	ugp->misc_float = snr_mnt_u->act_eq;
 
 	if(ugp->misc_state > 0) { // full stripe
 	  ugp->misc_state1 = XPFCGateSpec::MAINT_MNT_GO;
@@ -2967,15 +2967,14 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       // pure mnt gating -- use it for the activations -- could also have output
       // going on too, but anyway this is considered dominant
       gate_sig = XPFCGateSpec::GATE_MNT_GO;
-      if(gate.mnt_go_learn_mod)
-	ugp->misc_float = snr_mnt_u->act_eq;
+      ugp->misc_float = snr_mnt_u->act_eq;
     }
 
     if(gate.patch_out_mod)		    // apply to neting tagin guy too 
       ugp->misc_float *= snr_out_u->misc_1; // misc_1 has patch lve value
 
-    // this is the final value with the go_learn_mod factor incorporated
-    ugp->misc_float = (1.0f - gate.go_learn_mod) + (gate.go_learn_mod * ugp->misc_float);
+    // this is the final value with the go_learn_base factor incorporated
+    ugp->misc_float = gate.go_learn_base + ((1.0f - gate.go_learn_base) * ugp->misc_float);
 
     // fix misc_float1 to be net output gating multiplier:
     ugp->misc_float1 = gate.base_gain + gate.go_gain * ugp->misc_float1;
@@ -4125,10 +4124,11 @@ bool LeabraWizard::PBWM_V2(LeabraNetwork* net, bool da_mod_all,
   matrix_units->g_bar.h = .01f; // old syn dep
   matrix_units->g_bar.a = .03f;
   matrix_units->noise_type = LeabraUnitSpec::NETIN_NOISE;
-  matrix_units->noise.var = 0.0001f;
+  matrix_units->noise.var = 0.00005f;
   matrix_units->dt.vm = 0.2f;
   matrix_units->noise_adapt.trial_fixed = true;
-  matrix_units->noise_adapt.mode = NoiseAdaptSpec::PVLV_LVE;
+  matrix_units->noise_adapt.mode = NoiseAdaptSpec::PVLV_PVI;
+  matrix_units->matrix_noise.patch_noise = false;
   matrix_units->freeze_net = false;
 
   pfc_units->SetUnique("g_bar", true);
