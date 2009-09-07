@@ -821,7 +821,7 @@ public:
   };
 
   float		base_gain;	// #DEF_0.5 #MIN_0 #MAX_1 how much activation gets through even without a Go gating signal
-  float		go_gain;	// #READ_ONLY #SHOW how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
+  float		go_gain;	// #READ_ONLY how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
   bool		graded_out_go;	// #DEF_true use actual activation level of output Go signal to drive output activation level
   float		go_learn_base;	// #DEF_0.02 #MIN_0 #MAX_1 how much PFC learning occurs in the absence of go gating modulation -- 1 minus this is how much happens with go gating -- determines how far plus phase activations used in learning can deviate from minus-phase activation state: plus phase act_nd = act_m + (go_learn_base + (1-go_learn_base) * gate_act) * (act - act_m)
   float		go_netin_gain;	  // #DEF_0.01 extra net input to add to active units as a function of gating signal -- uses the mnt_go_learn_mod to determine if maintenance go contributes to the gating signal

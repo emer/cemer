@@ -2974,7 +2974,8 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       ugp->misc_float *= snr_out_u->misc_1; // misc_1 has patch lve value
 
     // this is the final value with the go_learn_base factor incorporated
-    ugp->misc_float = gate.go_learn_base + ((1.0f - gate.go_learn_base) * ugp->misc_float);
+    //    ugp->misc_float = gate.go_learn_base + ((1.0f - gate.go_learn_base) * ugp->misc_float);
+    ugp->misc_float = (1.0f - gate.go_learn_base) + (gate.go_learn_base * ugp->misc_float);
 
     // fix misc_float1 to be net output gating multiplier:
     ugp->misc_float1 = gate.base_gain + gate.go_gain * ugp->misc_float1;
