@@ -2974,9 +2974,9 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     }
 
     // misc_float has the go_learn_base factor incorporated
-    ugp->misc_float = gate.go_learn_base + (gate.go_learn_mod * go_act);
+    ugp->misc_float = gate.go_learn_base + gate.go_learn_mod * go_act;
     // misc_float1 includes net output gating multiplier:
-    ugp->misc_float1 = gate.base_gain + (gate.go_gain * out_go_act);
+    ugp->misc_float1 = gate.base_gain + gate.go_gain * out_go_act;
     ugp->misc_state2 = gate_sig; // store the raw gating signal itself
   }
   SendGateStates(lay, net);
