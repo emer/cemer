@@ -2647,8 +2647,8 @@ void XPFCGateSpec::Initialize() {
   go_gain = 0.5f;
   graded_out_go = true;
   go_learn_base = 0.02f;
+  go_learn_mod = 1.0f - go_learn_base;
   go_netin_gain = 0.01f;
-  patch_out_mod = false;
   mnt_to_bg = true;
   clear_decay = 0.0f;
   mnt_clear_veto = true;
@@ -2659,6 +2659,7 @@ void XPFCGateSpec::Initialize() {
 void XPFCGateSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   go_gain = 1.0f - base_gain;
+  go_learn_mod = 1.0f - go_learn_base;
 }
 
 void XPFCLayerSpec::Initialize() {
@@ -2903,6 +2904,10 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 
     ugp->misc_float = 0.0f;	// go_learn multiplier factor
     ugp->misc_float1 = 0.0f;	// output gating multiplier factor
+
+    float go_act = 0.0f;	// activation of go gating unit (out or mnt depending -- used for learning)
+    float out_go_act = 0.0f;	// activation of output gating unit specifically
+
     XPFCGateSpec::GateSignal gate_sig = XPFCGateSpec::GATE_NOGO;
 
     // output gating is a threshold to initiate -- once initiated, always apply so it is
@@ -2917,13 +2922,11 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     // compute output gating multiplier consistently for all cases -- always does this
     if(out_already_fired || snr_out_u->act_eq > snrthalsp->snrthal.go_thr) {
       gate_sig = XPFCGateSpec::GATE_OUT_GO;
-      ugp->misc_float = snr_out_u->act_eq;
+      go_act = snr_out_u->act_eq;
       if(gate.graded_out_go)
-	ugp->misc_float1 = snr_out_u->act_eq;
+	out_go_act = snr_out_u->act_eq;
       else
-	ugp->misc_float1 = 1.0f; // go all the way
-      if(gate.patch_out_mod)
-	ugp->misc_float1 *= snr_out_u->misc_1; // misc_1 has patch lve value
+	out_go_act = 1.0f; // go all the way
     }
 
     // two states of operation: before any gating signal, and after a gating signal
@@ -2940,7 +2943,7 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       else if(net->ct_cycle < max_mnt_go_cycle && // only allow mnt within early minus 
 	      snr_mnt_u->act_eq > snrthalsp->snrthal.go_thr) {
 	gate_sig = XPFCGateSpec::GATE_MNT_GO;
-	ugp->misc_float = snr_mnt_u->act_eq;
+	go_act = snr_mnt_u->act_eq;
 
 	if(ugp->misc_state > 0) { // full stripe
 	  ugp->misc_state1 = XPFCGateSpec::MAINT_MNT_GO;
@@ -2967,18 +2970,13 @@ void XPFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       // pure mnt gating -- use it for the activations -- could also have output
       // going on too, but anyway this is considered dominant
       gate_sig = XPFCGateSpec::GATE_MNT_GO;
-      ugp->misc_float = snr_mnt_u->act_eq;
+      go_act = snr_mnt_u->act_eq;
     }
 
-    if(gate.patch_out_mod)		    // apply to neting tagin guy too 
-      ugp->misc_float *= snr_out_u->misc_1; // misc_1 has patch lve value
-
-    // this is the final value with the go_learn_base factor incorporated
-    //    ugp->misc_float = gate.go_learn_base + ((1.0f - gate.go_learn_base) * ugp->misc_float);
-    ugp->misc_float = (1.0f - gate.go_learn_base) + (gate.go_learn_base * ugp->misc_float);
-
-    // fix misc_float1 to be net output gating multiplier:
-    ugp->misc_float1 = gate.base_gain + gate.go_gain * ugp->misc_float1;
+    // misc_float has the go_learn_base factor incorporated
+    ugp->misc_float = gate.go_learn_base + (gate.go_learn_mod * go_act);
+    // misc_float1 includes net output gating multiplier:
+    ugp->misc_float1 = gate.base_gain + (gate.go_gain * out_go_act);
     ugp->misc_state2 = gate_sig; // store the raw gating signal itself
   }
   SendGateStates(lay, net);
