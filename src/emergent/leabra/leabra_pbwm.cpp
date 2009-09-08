@@ -4085,7 +4085,7 @@ bool LeabraWizard::PBWM_V2(LeabraNetwork* net, bool da_mod_all,
     topfc_cons->rnd.var = 0.0f;
   }
   else {
-    topfc_cons->lrate = .001f;
+    topfc_cons->lrate = .005f;
     topfc_cons->SetUnique("rnd", false);
     topfc_cons->rnd.var = 0.25f;
   }

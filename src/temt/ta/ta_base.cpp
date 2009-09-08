@@ -3580,9 +3580,15 @@ int taList_impl::Dump_Load_Value(istream& strm, taBase* par) {
 	  Alloc(idx);		// just make sure we have the ptrs allocated to this size
 	  m_trg_load_size = idx; // target loading size
 	  if(m_trg_load_size == 0) {
-	    Reset();		// normal load size enforcement occurs on last item loaded --
+	    if(size > 0)
+	      cerr << "load reset size: " << size << endl;
+	    taList_impl::RemoveAll();
+	    // normal load size enforcement occurs on last item loaded --
 	    // if no items to load, it never happens!  This is the enforcer!
-	    // also: for undo optimized loading (i.e., not saving networks), this count is actually set accurately pre-filtering so it is fine
+	    // also: for undo optimized loading (i.e., not saving networks), this count
+	    // is actually set accurately pre-filtering so it is fine
+	    // also, using list version b/c groups may have sub guys and don't want to nuke 
+	    // those guys!!
 	  }
 	  return GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par);
 	}
