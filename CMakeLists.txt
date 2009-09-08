@@ -18,7 +18,7 @@
 # Step 0: ensure we have the right version of cmake -- this
 # has to go directly here in this file otherwise cmake complains
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4 FATAL_ERROR)
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
