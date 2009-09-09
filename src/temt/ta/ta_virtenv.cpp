@@ -330,6 +330,25 @@ void VEBody::GetValsFmODE(bool updt_disp) {
   SbRotation sbrot;
   sbrot.setValue(quat[1], quat[2], quat[3], quat[0]);
 
+  FixExtRotation(sbrot);
+  // capsules and cylinders need to have extra rotation as they are always Z axis oriented: undo!
+
+  SbVec3f rot_ax;
+  sbrot.getValue(rot_ax, cur_rot.rot);
+  cur_rot.x = rot_ax[0]; cur_rot.y = rot_ax[1]; cur_rot.z = rot_ax[2];
+
+  const dReal* olv = dBodyGetLinearVel(bid);
+  cur_lin_vel.x = olv[0]; cur_lin_vel.y = olv[1]; cur_lin_vel.z = olv[2];
+  const dReal* oav = dBodyGetAngularVel(bid);
+  cur_ang_vel.x = oav[0]; cur_ang_vel.y = oav[1]; cur_ang_vel.z = oav[2];
+
+  if(updt_disp)
+    DataChanged(DCR_ITEM_UPDATED); // update displays..
+  // not necc (nonrelativistic!)
+  //  dBodyGetMass(bid, &mass);
+}
+
+void VEBody::FixExtRotation(SbRotation& sbrot) {
   // capsules and cylinders need to have extra rotation as they are always Z axis oriented: undo!
   if(shape == CAPSULE || shape == CYLINDER) {
     if(long_axis == LONG_X) {
@@ -349,19 +368,6 @@ void VEBody::GetValsFmODE(bool updt_disp) {
       sbrot *= ubrot;
     }
   }
-  SbVec3f rot_ax;
-  sbrot.getValue(rot_ax, cur_rot.rot);
-  cur_rot.x = rot_ax[0]; cur_rot.y = rot_ax[1]; cur_rot.z = rot_ax[2];
-
-  const dReal* olv = dBodyGetLinearVel(bid);
-  cur_lin_vel.x = olv[0]; cur_lin_vel.y = olv[1]; cur_lin_vel.z = olv[2];
-  const dReal* oav = dBodyGetAngularVel(bid);
-  cur_ang_vel.x = oav[0]; cur_ang_vel.y = oav[1]; cur_ang_vel.z = oav[2];
-
-  if(updt_disp)
-    DataChanged(DCR_ITEM_UPDATED); // update displays..
-  // not necc (nonrelativistic!)
-  //  dBodyGetMass(bid, &mass);
 }
 
 void VEBody::RotateBody(float x_ax, float y_ax, float z_ax, float rot, bool init) {
@@ -437,6 +443,24 @@ void VEBody::CurToInit() {
   init_ang_vel = cur_ang_vel;
 }
 
+static float ve_snap_val(float val, float grid_size) {
+  int ival = (int)((val / grid_size) + .5f);
+  return (float)ival * grid_size;
+}
+
+void VEBody::SnapPosToGrid(float grid_size, bool do_init_pos) {
+  if(do_init_pos) {
+    init_pos.x = ve_snap_val(init_pos.x, grid_size);
+    init_pos.y = ve_snap_val(init_pos.y, grid_size);
+    init_pos.z = ve_snap_val(init_pos.z, grid_size);
+  }
+  else {
+    cur_pos.x = ve_snap_val(cur_pos.x, grid_size);
+    cur_pos.y = ve_snap_val(cur_pos.y, grid_size);
+    cur_pos.z = ve_snap_val(cur_pos.z, grid_size);
+  }
+}
+
 /////////////////////////////////////////////
 //		Group
 
@@ -469,6 +493,14 @@ void VEBody_Group::CurToInit() {
   taLeafItr i;
   FOR_ITR_EL(VEBody, ob, this->, i) {
     ob->CurToInit();
+  }
+}
+
+void VEBody_Group::SnapPosToGrid(float grid_size, bool init_pos) {
+  VEBody* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEBody, ob, this->, i) {
+    ob->SnapPosToGrid(grid_size, init_pos);
   }
 }
 
@@ -1569,6 +1601,10 @@ void VEObject::CurToInit() {
   bodies.CurToInit();
 }
 
+void VEObject::SnapPosToGrid(float grid_size, bool init_pos) {
+  bodies.SnapPosToGrid(grid_size, init_pos);
+}
+
 /////////////////////////////////////////////
 //		Group
 
@@ -1601,6 +1637,14 @@ void VEObject_Group::CurToInit() {
   taLeafItr i;
   FOR_ITR_EL(VEObject, ob, this->, i) {
     ob->CurToInit();
+  }
+}
+
+void VEObject_Group::SnapPosToGrid(float grid_size, bool init_pos) {
+  VEObject* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEObject, ob, this->, i) {
+    ob->SnapPosToGrid(grid_size, init_pos);
   }
 }
 
@@ -1753,6 +1797,12 @@ void VEStatic::SetValsToODE_PosRot() {
   }
 }
 
+void VEStatic::SnapPosToGrid(float grid_size) {
+  pos.x = ve_snap_val(pos.x, grid_size);
+  pos.y = ve_snap_val(pos.y, grid_size);
+  pos.z = ve_snap_val(pos.z, grid_size);
+}
+
 /////////////////////////////////////////////
 //		HeightField
 
@@ -1780,6 +1830,14 @@ void VEStatic_Group::DestroyODE() {
   taLeafItr i;
   FOR_ITR_EL(VEStatic, ob, this->, i) {
     ob->DestroyODE();
+  }
+}
+
+void VEStatic_Group::SnapPosToGrid(float grid_size) {
+  VEStatic* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEStatic, ob, this->, i) {
+    ob->SnapPosToGrid(grid_size);
   }
 }
 
@@ -1856,6 +1914,10 @@ void VESpace::SetValsToODE() {
   static_els.SetValsToODE();
 }
 
+void VESpace::SnapPosToGrid(float grid_size) {
+  static_els.SnapPosToGrid(grid_size);
+}
+
 /////////////////////////////////////////////
 //		Group
 
@@ -1874,6 +1936,15 @@ void VESpace_Group::DestroyODE() {
     ob->DestroyODE();
   }
 }
+
+void VESpace_Group::SnapPosToGrid(float grid_size) {
+  VESpace* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VESpace, ob, this->, i) {
+    ob->SnapPosToGrid(grid_size);
+  }
+}
+
 
 ///////////////////////////////////////////////////////////////
 //	Error handling!!
@@ -2084,6 +2155,11 @@ void VEWorld::GetValsFmODE() {
 
 void VEWorld::CurToInit() {
   objects.CurToInit();
+}
+
+void VEWorld::SnapPosToGrid(float grid_size, bool init_pos) {
+  objects.SnapPosToGrid(grid_size, init_pos);
+  spaces.SnapPosToGrid(grid_size);
 }
 
 void VEWorld::CollisionCallback(dGeomID o1, dGeomID o2) {

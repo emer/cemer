@@ -290,27 +290,10 @@ void VEBodyView::Render_pre() {
       sp->radius = ob->radius;
       sp->height = ob->length;
       ssep->addChild(sp);
-      SoTransform* tx = obv->txfm_shape();
-      if(ob->long_axis == VEBody::LONG_X)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-      else if(ob->long_axis == VEBody::LONG_Y)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-      else if(ob->long_axis == VEBody::LONG_Z)
-	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
       break;
     }
     case VEBody::CYLINDER: {
       SoCylinder* sp = new SoCylinder;
-      sp->radius = ob->radius;
-      sp->height = ob->length;
-      ssep->addChild(sp);
-      SoTransform* tx = obv->txfm_shape();
-      if(ob->long_axis == VEBody::LONG_X)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-      else if(ob->long_axis == VEBody::LONG_Y)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-      else if(ob->long_axis == VEBody::LONG_Z)
-	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
       break;
     }
     case VEBody::BOX: {
@@ -328,9 +311,39 @@ void VEBodyView::Render_pre() {
   }      
  finish:
 
+  FixOrientation();
   SetDraggerPos();
 
   inherited::Render_pre();
+}
+
+void VEBodyView::FixOrientation() {
+  VEBody* ob = Body();
+  T3VEBody* obv = (T3VEBody*)node_so();
+  if(ob) {
+    switch(ob->shape) {
+    case VEBody::CAPSULE: {
+      SoTransform* tx = obv->txfm_shape();
+      if(ob->long_axis == VEBody::LONG_X)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+      else if(ob->long_axis == VEBody::LONG_Y)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+      else if(ob->long_axis == VEBody::LONG_Z)
+	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+      break;
+    }
+    case VEBody::CYLINDER: {
+      SoTransform* tx = obv->txfm_shape();
+      if(ob->long_axis == VEBody::LONG_X)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+      else if(ob->long_axis == VEBody::LONG_Y)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+      else if(ob->long_axis == VEBody::LONG_Z)
+	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+      break;
+    }
+    }
+  }
 }
 
 void VEBodyView::SetDraggerPos() {
@@ -482,6 +495,7 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
     rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
     SbRotation nw_rot = rot * cur_rot;
     nw_rot.getValue(axis, angle);
+//     ob->FixExtRotation(nw_rot);
     ob->cur_rot.SetXYZR(axis[0], axis[1], axis[2], angle);
     ob->init_rot = ob->cur_rot;
   }
@@ -493,6 +507,8 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
   dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
   dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+
+  obv->FixOrientation();
 
   wv->UpdateDisplay();
 }
@@ -783,13 +799,6 @@ void VEStaticView::Render_pre() {
       sp->radius = ob->radius;
       sp->height = ob->length;
       ssep->addChild(sp);
-      SoTransform* tx = node_so()->txfm_shape();
-      if(ob->long_axis == VEStatic::LONG_X)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-      else if(ob->long_axis == VEStatic::LONG_Y)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-      else if(ob->long_axis == VEStatic::LONG_Z)
-	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
       break;
     }
     case VEStatic::CYLINDER: {
@@ -797,18 +806,6 @@ void VEStaticView::Render_pre() {
       sp->radius = ob->radius;
       sp->height = ob->length;
       ssep->addChild(sp);
-      SoTransform* tx = node_so()->txfm_shape();
-      switch (ob->long_axis) {
-      case VEStatic::LONG_X:
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-	break;
-      case VEStatic::LONG_Y:
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-	break;
-      case VEStatic::LONG_Z:
-	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
-	break;
-      }
       break;
     }
     case VEStatic::BOX: {
@@ -847,8 +844,38 @@ void VEStaticView::Render_pre() {
  finish:
 
   SetDraggerPos();
+  FixOrientation();
 
   inherited::Render_pre();
+}
+
+void VEStaticView::FixOrientation() {
+  VEStatic* ob = Static();
+  T3VEStatic* obv = (T3VEStatic*)node_so();
+  if(ob) {
+    switch(ob->shape) {
+    case VEStatic::CAPSULE: {
+      SoTransform* tx = obv->txfm_shape();
+      if(ob->long_axis == VEStatic::LONG_X)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+      else if(ob->long_axis == VEStatic::LONG_Y)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+      else if(ob->long_axis == VEStatic::LONG_Z)
+	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+      break;
+    }
+    case VEStatic::CYLINDER: {
+      SoTransform* tx = obv->txfm_shape();
+      if(ob->long_axis == VEStatic::LONG_X)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+      else if(ob->long_axis == VEStatic::LONG_Y)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+      else if(ob->long_axis == VEStatic::LONG_Z)
+	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+      break;
+    }
+    }
+  }
 }
 
 void VEStaticView::SetDraggerPos() {
@@ -952,6 +979,8 @@ void T3VEStatic_DragFinishCB(void* userData, SoDragger* dragr) {
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
   dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
   dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+
+  obv->FixOrientation();
 
   wv->UpdateDisplay();
 }

@@ -48,6 +48,8 @@ public:
 
   virtual void		SetDraggerPos();
   // set dragger position, based on shape
+  virtual void		FixOrientation();
+  // fix the orientation of the body for different shape axes (capsule and cylinder)
 
   void 	SetDefaultName() {} // leave it blank
   void	Copy_(const VEBodyView& cp);
@@ -125,6 +127,8 @@ public:
 
   virtual void		SetDraggerPos();
   // set dragger position, based on shape
+  virtual void		FixOrientation();
+  // fix the orientation of the body for different shape axes (capsule and cylinder)
 
   void 	SetDefaultName() {} // leave it blank
   void	Copy_(const VEStaticView& cp);

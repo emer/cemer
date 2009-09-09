@@ -369,9 +369,19 @@ void QtThumbWheel::mouseMoveEvent(QMouseEvent *e)
 */
 void QtThumbWheel::wheelEvent(QWheelEvent *e)
 {
-    int step = (e->modifiers() & Qt::ControlModifier) ? singleStep() : pageStep();
-    setValue(value() - e->delta()*step/ (150*4));
-    e->accept();
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+  if(e->modifiers() & Qt::ShiftModifier)
+    ctrl_pressed = true;
+  int step = (ctrl_pressed) ? singleStep() : pageStep();
+  setValue(value() - (e->delta()*step/ 120));
+  e->accept();
 }
 
 /*!

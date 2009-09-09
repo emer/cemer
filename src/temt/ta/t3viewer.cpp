@@ -275,6 +275,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   rhs_vbox->addWidget(zoom_wheel);
   zoom_lbl = new QLabel("Zoom", this);
   zoom_lbl->setFont(taiM->buttonFont(taiMisc::sizMedium));
+  zoom_lbl->setToolTip("Wheel above will Zoom the view camera in and out -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
   rhs_vbox->addWidget(zoom_lbl);
 
   rhs_vbox->addSpacing(4);
@@ -283,11 +284,13 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   /////  bot_hbox
 
   vrot_lbl = new QLabel("V.Rot", this);
+  vrot_lbl->setToolTip("Wheel above will rotate the view vertically -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
   bot_hbox->addWidget(vrot_lbl);
 
   bot_hbox->addSpacing(4);
 
   hrot_lbl = new QLabel("H.Rot", this);
+  hrot_lbl->setToolTip("Wheel to the right will rotate the view horizontally -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
   bot_hbox->addWidget(hrot_lbl);
 
   bot_hbox->addWidget(hrot_wheel);
@@ -302,11 +305,13 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 
   bot_hbox->addWidget(hpan_wheel);
   hpan_lbl = new QLabel("H.Pan", this);
+  hpan_lbl->setToolTip("Wheel to the left will pan (move) the view horizontally -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
   bot_hbox->addWidget(hpan_lbl);
 
   bot_hbox->addSpacing(4);
 
   vpan_lbl = new QLabel("V.Pan ", this);
+  vpan_lbl->setToolTip("Wheel above will pan (move) the view vertically -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
   bot_hbox->addWidget(vpan_lbl);
 
   Constr_RHS_Buttons();

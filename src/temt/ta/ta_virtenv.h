@@ -145,6 +145,8 @@ private:
 };
 
 
+class SbRotation;		// #IGNORE
+
 class TA_API VEBody : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vebod virtual environment body (rigid structural element), subject to physics dynamics
 INHERITED(taNBase)
@@ -241,6 +243,9 @@ public:
   virtual void	SetValsToODE_Velocity();// #CAT_ODE set velocity
   virtual void	SetValsToODE_Mass();	// #CAT_ODE set the mass of body in ODE
 
+  virtual void	FixExtRotation(SbRotation& sbrot);
+  // #IGNORE fix any external rotation applied to the body -- needed for capsule and cylinder types that have to correct for different types of axes
+
   virtual void	RotateBody(float x_ax, float y_ax, float z_ax, float rot, bool init);
   // #CAT_ODE #BUTTON apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
 
@@ -251,6 +256,8 @@ public:
   // #BUTTON #CAT_ODE add given force vector to object at given position on object -- rel_force and rel_pos specify values relative to the reference frame (orientation, position) of the body, in contrast to global reference frame coordinates
   virtual void	CurToInit();
   // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
+  virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
+  // #BUTTON #CAT_ODE snap the position of body to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
 
   bool	IsCurShape()  { return ((shape == cur_shape) &&
 				(HasBodyFlag(FM_FILE) == HasBodyFlag(CUR_FM_FILE))); }
@@ -281,6 +288,8 @@ public:
 
   virtual void	CurToInit();
   // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
+  virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
+  // #BUTTON #CAT_ODE snap the position of bodies to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
 
   TA_BASEFUNS_NOCOPY(VEBody_Group);
 private:
@@ -777,6 +786,8 @@ public:
 
   virtual void	CurToInit();
   // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
+  virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
+  // #BUTTON #CAT_ODE snap the position of bodies to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
 
   SIMPLE_COPY(VEObject);
   SIMPLE_INITLINKS(VEObject);
@@ -802,6 +813,8 @@ public:
 
   virtual void	CurToInit();
   // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
+  virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
+  // #BUTTON #CAT_ODE snap the position of bodies to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
 
   TA_BASEFUNS_NOCOPY(VEObject_Group);
 private:
@@ -897,6 +910,9 @@ public:
   bool	IsCurShape()  { return shape == cur_shape; }
   // #CAT_ODE is the ODE guy actually configured for the current shape or not?
 
+  virtual void	SnapPosToGrid(float grid_size=0.05f);
+  // #BUTTON #CAT_ODE snap the position of static body to grid of given size
+
   SIMPLE_COPY(VEStatic);
   SIMPLE_INITLINKS(VEStatic);
   override void CutLinks();
@@ -918,6 +934,9 @@ INHERITED(taGroup<VEStatic>)
 public:
   virtual void	SetValsToODE();	// set the current values to ODE
   virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
+
+  virtual void	SnapPosToGrid(float grid_size=0.05f);
+  // #BUTTON #CAT_ODE snap the position of static bodies to grid of given size
 
   TA_BASEFUNS_NOCOPY(VEStatic_Group);
 private:
@@ -953,7 +972,7 @@ private:
 //	Space: collection of static elements
 
 class TA_API VESpace : public taNBase {
-  // #STEM_BASE ##CAT_VirtEnv ##EXT_veobj a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects
+  // #STEM_BASE ##CAT_VirtEnv ##EXT_veobj a virtual environment that represents a sub-space of objects, containing static elements only -- helps optimize the collision detection process to group proximal items into sub spaces
 INHERITED(taNBase)
 public:	
   enum SpaceType {
@@ -979,6 +998,9 @@ public:
   virtual void	SetValsToODE();
   // #CAT_ODE set the current values to ODE (creates id's if not already done)
 
+  virtual void	SnapPosToGrid(float grid_size=0.05f);
+  // #BUTTON #CAT_ODE snap the position of static bodies to grid of given size
+
   SIMPLE_COPY(VESpace);
   SIMPLE_INITLINKS(VESpace);
   override void CutLinks();
@@ -999,6 +1021,9 @@ INHERITED(taGroup<VESpace>)
 public:
   virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE
   virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
+
+  virtual void	SnapPosToGrid(float grid_size=0.05f);
+  // #BUTTON #CAT_ODE snap the position of static bodies to grid of given size
 
   TA_BASEFUNS_NOCOPY(VESpace_Group);
 private:
@@ -1082,6 +1107,8 @@ public:
 
   virtual void	CurToInit();
   // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE -- for all bodies
+  virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
+  // #BUTTON #CAT_ODE snap the position of all bodies and static objects to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
 
   VEWorldView*	NewView(T3DataViewFrame* fr = NULL);
   // #NULL_OK #NULL_TEXT_0_NewFrame #BUTTON #CAT_Display make a new viewer of this world (NULL=use existing empty frame if any, else make new frame)
