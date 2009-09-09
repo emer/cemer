@@ -1665,6 +1665,17 @@ String taMisc::GetWikiURL(const String& wiki_name, bool add_index) {
   return url;
 }
 
+String taMisc::FixURL(const String& urltxt) {
+  String nwurl = urltxt;
+  if(!urltxt.contains(':') && !urltxt.startsWith('.')) {
+    nwurl = String("http://") + urltxt; // assume http as default
+  }
+  if(nwurl.startsWith("http://")) { // now fixup http links..
+    if(!nwurl.contains('.')) nwurl += ".com"; // assume .com
+  }
+  return nwurl;
+}
+
 bool taMisc::InternetConnected() {
 #ifndef NO_TA_BASE
   QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();

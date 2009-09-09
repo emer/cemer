@@ -9021,7 +9021,20 @@ String iHelpBrowser::UrlToTabText(const String& url) {
   if (base_url.contains(".Type.")) {
     return base_url.after(".Type.");
   }
-  return url;
+  // replace with wiki names to shorten
+  String nwurl = url;
+  String idx = "/index.php/";
+  for(int i=0;i<taMisc::wikis.size;i++) {
+    NameVar& nv = taMisc::wikis[i];
+    String wurl = nv.value.toString();
+    if(nwurl.startsWith(wurl)) {
+      String nm = nwurl.after(wurl);
+      if(nm.startsWith(idx)) nm = nm.after(idx);
+      nwurl = nv.name + " " + nm;
+      break;
+    }
+  }
+  return nwurl;
 }
 
 
@@ -9209,6 +9222,8 @@ QWebView* iHelpBrowser::AddWebView(const String& label) {
   connect(brow, SIGNAL(loadStarted()), prog_bar, SLOT(reset()) );
   wp->setForwardUnsupportedContent(true);
 
+  brow->installEventFilter(this); // translate keys..
+
   --m_changing;
   if (tab->count() > 1) {
 #if (QT_VERSION >= 0x040500) //TEMP
@@ -9351,7 +9366,10 @@ TypeDef* iHelpBrowser::GetTypeDef(QTreeWidgetItem* item) {
 }
 
 void iHelpBrowser::go_clicked() {
-  QUrl url(url_text->text());
+  String urltxt = url_text->text();
+  if(urltxt.empty()) return;
+  urltxt = taMisc::FixURL(urltxt);
+  QUrl url(urltxt);
   QDesktopServices::openUrl(url); 
 }
 
@@ -9602,3 +9620,71 @@ QWebView* iHelpBrowser::webView(int index) {
   return (QWebView*)tab->widget(index);
 }
 
+bool iHelpBrowser::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() != QEvent::KeyPress) {
+    return QObject::eventFilter(obj, event);
+  }
+
+  QKeyEvent* e = static_cast<QKeyEvent *>(event);
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+  // emacs keys!!
+  if(ctrl_pressed) {
+    QCoreApplication* app = QCoreApplication::instance();
+    if(e->key() == Qt::Key_P) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_N) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_A) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_E) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_F) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_B) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_D) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_K) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_Y) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_W) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_Slash) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_Minus) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+  }
+  return QObject::eventFilter(obj, event);
+}

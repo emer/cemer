@@ -26,6 +26,7 @@
 #include <qwidget.h>
 #include <QPixmap>
 #include <QLabel>
+#include "iflowlayout.h"
 
 #include <Inventor/nodes/SoTexture2.h>
 #include <Inventor/nodes/SoTexture2Transform.h>
@@ -1555,8 +1556,19 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
   labcam1_txt = new QLabel(widg);
   labcam1_txt->setText("Camera 1");
   layCam1->addWidget(labcam1_txt);
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Command Buttons
+  widCmdButtons = new QWidget(widg);
+  iFlowLayout* fl = new iFlowLayout(widCmdButtons);
+//  layTopCtrls->addWidget(widCmdButtons);
+  layOuter->addWidget(widCmdButtons);
   
+  meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons); 
+  meth_but_mgr->Constr(wv()->World());
+
   setCentralWidget(widg);
+  MakeButtons(layOuter);
 }
 
 VEWorldViewPanel::~VEWorldViewPanel() {

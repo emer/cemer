@@ -1051,6 +1051,8 @@ public:
 
   static String	GetWikiURL(const String& wiki_name, bool add_index=true);
   // #CAT_File get the url for a given wiki name, optionally adding /index.php/ if add_index is true
+  static String	FixURL(const String& url_str);
+  // #CAT_File do some basic things to fix a url to make it at least somewhat viable (e.g., add http:// if no 'scheme' already there, add .com if no . present in an http:// url)
 
   static bool	InternetConnected();
   // #CAT_File determine if the system has at least one active network interface -- i.e., is it connected to the internet?

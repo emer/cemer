@@ -659,9 +659,6 @@ public:
   
   iMethodButtonMgr*	meth_but_mgr;
   QWidget*		widCmdButtons;
-  QPushButton*		butNewLayer;
-  QPushButton*		butBuildAll;
-  QPushButton*		butConnectAll;
 
   NetView*		nv() {return (NetView*)m_dv;} //
 
@@ -693,9 +690,6 @@ public slots:
   void			dynbuttonActivated(int but_no); // for hot member buttons
 
 protected slots:
-  void			butBuildAll_pressed();
-  void			butConnectAll_pressed();
-  void			butNewLayer_pressed();
   void			butScaleDefault_pressed();
   void 			butSetColor_pressed();
   void			lvDisplayValues_selectionChanged();

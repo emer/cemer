@@ -22,6 +22,7 @@
 #include "ta_virtenv.h" 
 #include "ta_virtenv_so.h" 
 #include "t3viewer.h"
+#include "ta_qtgroup.h"
 
 class SoOffscreenRenderer; // #IGNORE
 
@@ -249,6 +250,9 @@ public:
   QVBoxLayout*		  layCam1;
   QLabel*		  labcam1;
   QLabel*		  labcam1_txt;
+
+  iMethodButtonMgr*	meth_but_mgr;
+  QWidget*		widCmdButtons;
 
   VEWorldView*		wv() {return (VEWorldView*)m_dv;} //
 

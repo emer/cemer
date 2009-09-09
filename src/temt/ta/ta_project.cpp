@@ -145,6 +145,7 @@ String taDoc::GetURL() {
     }
     return wiki_url + url;
   }
+  url = taMisc::FixURL(url);
   return url;
 }
 

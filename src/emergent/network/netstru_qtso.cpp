@@ -3627,7 +3627,6 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons); 
   meth_but_mgr->Constr(nv()->net());
 
-//  setCentralWidget(widg);
   MakeButtons(layOuter);
 }
 
@@ -3742,21 +3741,6 @@ void NetViewPanel::GetValue_impl() {
 void NetViewPanel::CopyFrom_impl() {
   NetView* nv_; if (!(nv_ = nv())) return;
   nv_->CallFun("CopyFromView");
-}
-
-void NetViewPanel::butNewLayer_pressed() {
-  NetView* nv_; if (!(nv_ = nv())) return;
-  nv_->CallFun("NewLayer");
-}
-
-void NetViewPanel::butBuildAll_pressed() {
-  NetView* nv_; if (!(nv_ = nv())) return;
-  nv_->net()->Build();
-}
-
-void NetViewPanel::butConnectAll_pressed() {
-  NetView* nv_; if (!(nv_ = nv())) return;
-  nv_->net()->Connect();
 }
 
 void NetViewPanel::butScaleDefault_pressed() {

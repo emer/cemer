@@ -670,11 +670,11 @@ void taiVariantType::GetValue_impl(taiData* dat, void* base) {
 //////////////////////////
 
 int taiClassType::BidForType(TypeDef* td) {
-//temp
-if (td->name == "taSmartRef") {
-  int i = 0;
-  ++i;
-}
+  //temp
+  if (td->name == "taSmartRef") {
+    int i = 0;
+    ++i;
+  }
   if(td->InheritsFormal(TA_class)) //iCoord handled by built-in type system
     return (taiType::BidForType(td) +1);
   return 0;

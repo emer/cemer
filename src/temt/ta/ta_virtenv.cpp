@@ -273,6 +273,8 @@ void VEBody::SetValsToODE_Rotation() {
 
 void VEBody::SetValsToODE_Velocity() {
   dBodyID bid = (dBodyID)body_id;
+  cur_lin_vel = init_lin_vel;
+  cur_ang_vel = init_ang_vel;
 
   if(HasBodyFlag(FIXED)) {
     if(!fixed_joint_id) CreateODE();
@@ -389,6 +391,52 @@ void VEBody::RotateBody(float x_ax, float y_ax, float z_ax, float rot, bool init
   DataChanged(DCR_ITEM_UPDATED); // update displays..
 }
 
+void VEBody::AddForce(float fx, float fy, float fz, bool torque, bool rel) {
+  if(!body_id) CreateODE();
+  if(!body_id) return;
+  dBodyID bid = (dBodyID)body_id;
+
+  if(torque) {
+    if(rel)
+      dBodyAddRelTorque(bid, fx, fy, fz);
+    else
+      dBodyAddTorque(bid, fx, fy, fz);
+  }
+  else {
+    if(rel)
+      dBodyAddRelForce(bid, fx, fy, fz);
+    else
+      dBodyAddForce(bid, fx, fy, fz);
+  }
+}
+
+void VEBody::AddForceAtPos(float fx, float fy, float fz, float px, float py, float pz,
+			   bool rel_force, bool rel_pos) {
+  if(!body_id) CreateODE();
+  if(!body_id) return;
+  dBodyID bid = (dBodyID)body_id;
+
+  if(rel_pos) {
+    if(rel_force)
+      dBodyAddRelForceAtRelPos(bid, fx, fy, fz, px, py, pz);
+    else
+      dBodyAddForceAtRelPos(bid, fx, fy, fz, px, py, pz);
+  }
+  else {
+    if(rel_force)
+      dBodyAddRelForceAtPos(bid, fx, fy, fz, px, py, pz);
+    else
+      dBodyAddRelForceAtPos(bid, fx, fy, fz, px, py, pz);
+  }
+}
+
+void VEBody::CurToInit() {
+  init_pos = cur_pos;
+  init_rot = cur_rot;
+  init_lin_vel = cur_lin_vel;
+  init_ang_vel = cur_ang_vel;
+}
+
 /////////////////////////////////////////////
 //		Group
 
@@ -413,6 +461,14 @@ void VEBody_Group::DestroyODE() {
   taLeafItr i;
   FOR_ITR_EL(VEBody, ob, this->, i) {
     ob->DestroyODE();
+  }
+}
+
+void VEBody_Group::CurToInit() {
+  VEBody* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEBody, ob, this->, i) {
+    ob->CurToInit();
   }
 }
 
@@ -1509,6 +1565,10 @@ void VEObject::GetValsFmODE(bool updt_disp) {
   joints.GetValsFmODE(updt_disp);
 }
 
+void VEObject::CurToInit() {
+  bodies.CurToInit();
+}
+
 /////////////////////////////////////////////
 //		Group
 
@@ -1536,7 +1596,13 @@ void VEObject_Group::DestroyODE() {
   }
 }
 
-
+void VEObject_Group::CurToInit() {
+  VEObject* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEObject, ob, this->, i) {
+    ob->CurToInit();
+  }
+}
 
 ////////////////////////////////////////////////
 //	Static bodies
@@ -2014,6 +2080,10 @@ void VEWorld::GetValsFmODE() {
   }
   // not really nec
   // void dWorldGetGravity (dWorldID, dVector3 gravity);
+}
+
+void VEWorld::CurToInit() {
+  objects.CurToInit();
 }
 
 void VEWorld::CollisionCallback(dGeomID o1, dGeomID o2) {

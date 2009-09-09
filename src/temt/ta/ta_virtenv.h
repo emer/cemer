@@ -244,6 +244,14 @@ public:
   virtual void	RotateBody(float x_ax, float y_ax, float z_ax, float rot, bool init);
   // #CAT_ODE #BUTTON apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
 
+  virtual void 	AddForce(float fx, float fy, float fz, bool torque=false, bool rel=false);
+  // #BUTTON #CAT_ODE add given force vector to object at its center of mass -- if torque then it is a torque (angular force), otherwise linear -- if rel then force is relative to the objects own frame of reference (orientation) -- otherwise it is in the global reference frame
+  virtual void 	AddForceAtPos(float fx, float fy, float fz, float px, float py, float pz,
+			      bool rel_force=false, bool rel_pos=false);
+  // #BUTTON #CAT_ODE add given force vector to object at given position on object -- rel_force and rel_pos specify values relative to the reference frame (orientation, position) of the body, in contrast to global reference frame coordinates
+  virtual void	CurToInit();
+  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
+
   bool	IsCurShape()  { return ((shape == cur_shape) &&
 				(HasBodyFlag(FM_FILE) == HasBodyFlag(CUR_FM_FILE))); }
   // #CAT_ODE is the ODE guy actually configured for the current shape or not?
@@ -270,6 +278,9 @@ public:
   virtual void	SetValsToODE();	// set the current values to ODE
   virtual void	GetValsFmODE(bool updt_disp = false);	// get the updated values from ODE after computing
   virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
+
+  virtual void	CurToInit();
+  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
 
   TA_BASEFUNS_NOCOPY(VEBody_Group);
 private:
@@ -764,6 +775,9 @@ public:
   virtual void	GetValsFmODE(bool updt_disp = false);
   // #CAT_ODE get the updated values from ODE after computing
 
+  virtual void	CurToInit();
+  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
+
   SIMPLE_COPY(VEObject);
   SIMPLE_INITLINKS(VEObject);
   override void CutLinks();
@@ -785,6 +799,9 @@ public:
   virtual void	SetValsToODE();	// set the current values to ODE
   virtual void	GetValsFmODE(bool updt_disp = false);	// get the updated values from ODE after computing
   virtual void	DestroyODE();	// #CAT_ODE destroy ODE objs for these items
+
+  virtual void	CurToInit();
+  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE
 
   TA_BASEFUNS_NOCOPY(VEObject_Group);
 private:
@@ -1062,6 +1079,9 @@ public:
   // #BUTTON #CAT_ODE take one step of integration, and get updated values
   virtual void	Reset() { DestroyODE(); SetValsToODE(); }
   // #BUTTON #CAT_ODE completely reset the ODE environment -- this is necessary if bad float numbers have been generated (nan, inf)
+
+  virtual void	CurToInit();
+  // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init or SetValsToODE -- for all bodies
 
   VEWorldView*	NewView(T3DataViewFrame* fr = NULL);
   // #NULL_OK #NULL_TEXT_0_NewFrame #BUTTON #CAT_Display make a new viewer of this world (NULL=use existing empty frame if any, else make new frame)
