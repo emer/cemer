@@ -130,4 +130,4 @@ cat > debian/compat <<Quarter
 7
 Quarter
 
-debuild
+debuild -S

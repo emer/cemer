@@ -18,7 +18,7 @@ mkdir debian
 cat > debian/changelog <<Emergent
 emergent (5.0-0ubuntu1) karmic; urgency=low
 
-  * Initial release (Closes: #364748)
+  * Initial release (LP: #364748)
 
  -- ${DEBFULLNAME} <${DEBEMAIL}>  $(date -R)
 Emergent
@@ -170,4 +170,4 @@ Emergent
 # Randy OReilly <oreilly at grey dot colorado dot edu>
 
 # Emergent
-debuild
+debuild -S
