@@ -82,6 +82,36 @@ protected:
   override void		Render_impl();
 };
 
+class TA_API VEJointView: public T3DataView {
+  // view of one joint
+INHERITED(T3DataView)
+friend class VEWorldView;
+public:
+  String	name;		// name of joint this one is associated with
+
+  VEJoint*		Joint() const { return (VEJoint*)data();}
+  virtual void		SetJoint(VEJoint* ob);
+  
+  DATAVIEW_PARENT(VEWorldView)
+
+  override bool		SetName(const String& nm);
+  override String	GetName() const 	{ return name; } 
+
+  virtual void		SetDraggerPos();
+  // set dragger position, based on shape
+  virtual void		FixOrientation();
+
+  void 	SetDefaultName() {} // leave it blank
+  void	Copy_(const VEJointView& cp);
+  TA_BASEFUNS(VEJointView);
+protected:
+  void	Initialize();
+  void	Destroy();
+
+  override void		Render_pre();
+  override void		Render_impl();
+};
+
 class TA_API VEObjectView: public T3DataViewPar {
   // view of one object: a group of bodies
 INHERITED(T3DataViewPar)
@@ -178,6 +208,7 @@ public:
 
   bool		display_on;  	// #DEF_true 'true' if display should be updated
   bool		drag_objs;	// allow user to drag/rotate/rescale objects
+  bool		show_joints;	// show a visual representation of the joints
 
   virtual const String	caption() const; // what to show in viewer
 
@@ -245,6 +276,7 @@ public:
   QHBoxLayout*		 layDispCheck;
   QCheckBox*		  chkDisplay;
   QCheckBox*		  chkDragObjs;
+  QCheckBox*		  chkShowJoints;
 
   QHBoxLayout*		 layCams;
   QVBoxLayout*		  layCam0;
@@ -268,6 +300,7 @@ public: // IDataLinkClient interface
   override TypeDef*	GetTypeDef() const {return &TA_VEWorldViewPanel;}
 
 protected:
+  bool			req_full_redraw;
   override void		UpdatePanel_impl();
   override void		GetValue_impl();
 

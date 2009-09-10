@@ -294,6 +294,9 @@ void VEBodyView::Render_pre() {
     }
     case VEBody::CYLINDER: {
       SoCylinder* sp = new SoCylinder;
+      sp->radius = ob->radius;
+      sp->height = ob->length;
+      ssep->addChild(sp);
       break;
     }
     case VEBody::BOX: {
@@ -643,6 +646,261 @@ void VEObjCarouselView::Render_impl() {
   }
 }
 
+//////////////////////////////////////////////
+//		VE Joint
+
+void VEJointView::Initialize(){
+  data_base = &TA_VEJoint;
+}
+
+void VEJointView::Copy_(const VEJointView& cp) {
+  name = cp.name;
+}
+
+void VEJointView::Destroy() {
+  CutLinks();
+}
+
+bool VEJointView::SetName(const String& value) { 
+  name = value;  
+  return true; 
+} 
+
+void VEJointView::SetJoint(VEJoint* ob) {
+  if (Joint() == ob) return;
+  SetData(ob);
+  if(ob) {
+    if (name != ob->name) {
+      name = ob->name;
+    }
+  }
+}
+
+void VEJointView::Render_pre() {
+  bool show_drag = true;;
+  T3ExaminerViewer* vw = GetViewer();
+  if(vw)
+    show_drag = vw->interactionModeOn();
+  VEWorldView* wv = parent();
+  if(!wv->drag_objs) show_drag = false;
+
+  show_drag = false;		// disable for now -- not that much time on my hands
+
+  if(!wv->show_joints) return;
+
+  T3VEJoint* obv = new T3VEJoint(this, show_drag);
+  setNode(obv);
+  SoSeparator* ssep = obv->shapeSeparator();
+
+  VEJoint* ob = Joint();
+  if(ob) {
+    VEBody* bod1 = ob->body1.ptr();
+    if(!bod1) goto finalize;
+
+    switch(ob->joint_type) {
+    case VEJoint::BALL: {
+      SoSphere* sp = new SoSphere;
+      sp->radius = ob->vis_size * .5f;
+      ssep->addChild(sp);
+      break;
+    }
+    case VEJoint::HINGE:
+    case VEJoint::SLIDER: {
+      SoCylinder* sp = new SoCylinder;
+      sp->radius = ob->vis_size * .1f;
+      sp->height = ob->vis_size;
+      ssep->addChild(sp);
+      break;
+    }
+    case VEJoint::UNIVERSAL:
+    case VEJoint::HINGE2: {
+      SoCylinder* sp = new SoCylinder;
+      sp->radius = ob->vis_size * .1f;
+      sp->height = ob->vis_size;
+      ssep->addChild(sp);
+      SoSeparator* sep2 = new SoSeparator;
+      ssep->addChild(sep2);
+      SoTransform* tx = new SoTransform;
+      sep2->addChild(tx);
+      sep2->addChild(sp);
+      break;
+    }
+    case VEJoint::FIXED: {
+      SoCube* sp = new SoCube;
+      sp->width = ob->vis_size *.1f;
+      sp->depth = ob->vis_size *.1f;
+      sp->height = ob->vis_size *.1f;
+      ssep->addChild(sp);
+      break;
+    }
+    case VEJoint::NO_JOINT: {
+      break;
+    }
+    }
+  }      
+
+ finalize:
+  FixOrientation();
+  SetDraggerPos();
+
+  inherited::Render_pre();
+}
+
+void VEJointView::FixOrientation() {
+  VEJoint* ob = Joint();
+  T3VEJoint* obv = (T3VEJoint*)node_so();
+  if(ob && obv) {
+    SoSeparator* ssep = obv->shapeSeparator();
+    switch(ob->joint_type) {
+    case VEJoint::HINGE:
+    case VEJoint::SLIDER: {
+      SoTransform* tx = obv->txfm_shape();
+      SbRotation netrot;
+      // construct rotation that rotates from Y axis to desired target axis
+      netrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), SbVec3f(ob->axis.x, ob->axis.y, ob->axis.z)); 
+      tx->rotation.setValue(netrot);
+      break;
+    }
+    case VEJoint::UNIVERSAL:
+    case VEJoint::HINGE2: {
+      SoTransform* tx = obv->txfm_shape();
+      SbRotation netrot;
+      // construct rotation that rotates from Y axis to desired target axis
+      netrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), SbVec3f(ob->axis.x, ob->axis.y, ob->axis.z)); 
+      tx->rotation.setValue(netrot);
+      // next joint
+      SoSeparator* sep2 = (SoSeparator*)ssep->getChild(ssep->getNumChildren()-1);
+      SoTransform* tx2 = (SoTransform*)sep2->getChild(0);
+      SbRotation j2rot;
+      // construct rotation that rotates from first axis to next one
+      j2rot.setValue(SbVec3f(ob->axis.x, ob->axis.y, ob->axis.z),
+		     SbVec3f(ob->axis2.x, ob->axis2.y, ob->axis2.z)); 
+      tx2->rotation.setValue(j2rot);
+      break;
+    }
+    }
+  }
+}
+
+void VEJointView::SetDraggerPos() {
+  T3VEJoint* obv = (T3VEJoint*)node_so();
+  if(!obv) return;
+  VEJoint* ob = Joint();
+  if(!ob) return;
+
+  // set dragger position
+  T3TransformBoxDragger* drag = obv->getDragger();
+  if(!drag) return;
+
+//   switch(ob->shape) {
+//   case VEJoint::SPHERE: {
+//     drag->xf_->translation.setValue(-ob->radius, -ob->radius, ob->radius);
+//     break;
+//   }
+//   case VEJoint::CAPSULE:
+//   case VEJoint::CYLINDER: {
+//     if(ob->long_axis == VEJoint::LONG_X)
+//       drag->xf_->translation.setValue(-ob->length*.5f, -ob->radius, ob->radius);
+//     else if(ob->long_axis == VEJoint::LONG_Y)
+//       drag->xf_->translation.setValue(-ob->radius, -ob->length*.5f, ob->radius);
+//     else if(ob->long_axis == VEJoint::LONG_Z)
+//       drag->xf_->translation.setValue(-ob->radius, -ob->radius, ob->length*.5f);
+//     break;
+//   }
+//   case VEJoint::BOX: {
+//     drag->xf_->translation.setValue(-ob->box.x*.5f, -ob->box.y*.5f, ob->box.z*.5f);
+//     break;
+//   }
+//   case VEJoint::NO_SHAPE: {
+//     break;
+//   }
+//   }
+}
+
+void VEJointView::Render_impl() {
+  inherited::Render_impl();
+
+  T3VEJoint* obv = (T3VEJoint*)this->node_so(); // cache
+  if(!obv) return;
+  VEJoint* ob = Joint();
+  if(!ob) return;
+
+  VEBody* bod1 = ob->body1.ptr();
+  if(!bod1) return;
+
+  SoTransform* tx = obv->transform();
+  SbRotation sbrot;
+  sbrot.setValue(SbVec3f(bod1->cur_rot.x, bod1->cur_rot.y, bod1->cur_rot.z), bod1->cur_rot.rot); 
+  // rotate the anchor too!
+  SbVec3f anchor(ob->anchor.x, ob->anchor.y, ob->anchor.z);
+  SbVec3f nw_anc;
+  sbrot.multVec(anchor, nw_anc);
+  tx->translation.setValue(bod1->cur_pos.x + nw_anc[0], bod1->cur_pos.y + nw_anc[1],
+			   bod1->cur_pos.z + nw_anc[2]);
+//   tx->rotation.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
+
+  SoMaterial* mat = obv->material();
+  mat->diffuseColor.setValue(1.0f, 0.0f, 0.0f);
+  mat->transparency.setValue(0.5f);
+
+  SoSeparator* ssep = obv->shapeSeparator();
+}
+
+// callback for transformer dragger
+void T3VEJoint_DragFinishCB(void* userData, SoDragger* dragr) {
+  SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
+  T3VEJoint* obso = (T3VEJoint*)userData;
+  VEJointView* obv = (VEJointView*)obso->dataView();
+  VEJoint* ob = obv->Joint();
+  VEWorldView* wv = obv->parent();
+
+//   SbRotation cur_rot;
+//   cur_rot.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
+
+//   SbVec3f trans = dragger->translation.getValue();
+// //   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
+//   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
+//   FloatTDCoord tr(trans[0], trans[1], trans[2]);
+//   ob->cur_pos += tr;
+//   ob->init_pos = ob->cur_pos;
+
+//   const SbVec3f& scale = dragger->scaleFactor.getValue();
+// //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
+//   FloatTDCoord sc(scale[0], scale[1], scale[2]);
+//   if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
+//   ob->radius *= sc.x;
+//   ob->length *= sc.x;
+//   ob->box *= sc;
+//   ob->obj_xform.scale *= sc;
+
+//   SbVec3f axis;
+//   float angle;
+//   dragger->rotation.getValue(axis, angle);
+// //   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
+//   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
+//     // todo: does this need to undo cylinder/capsule stuff???
+//     SbRotation rot;
+//     rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
+//     SbRotation nw_rot = rot * cur_rot;
+//     nw_rot.getValue(axis, angle);
+// //     ob->FixExtRotation(nw_rot);
+//     ob->cur_rot.SetXYZR(axis[0], axis[1], axis[2], angle);
+//     ob->init_rot = ob->cur_rot;
+//   }
+
+// //   float h = 0.04f; // nominal amount of height, so we don't vanish
+//   obso->txfm_shape()->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+//   obso->txfm_shape()->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+//   obso->txfm_shape()->translation.setValue(0.0f, 0.0f, 0.0f);
+//   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
+//   dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+//   dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+
+//   obv->FixOrientation();
+
+//   wv->UpdateDisplay();
+}
+
 
 //////////////////////////
 //   VEObjectView	//
@@ -697,6 +955,15 @@ void VEObjectView::BuildAll() {
       children.Add(ov);
       ov->BuildAll();
     }
+  }
+
+  VEJoint* jnt;
+  FOR_ITR_EL(VEJoint, jnt, obj->joints., i) {
+    if(jnt->HasJointFlag(VEJoint::OFF)) continue;
+    VEJointView* ov = new VEJointView();
+    ov->SetJoint(jnt);
+    children.Add(ov);
+    ov->BuildAll();
   }
 }
 
@@ -1113,6 +1380,7 @@ void VEWorld::UpdateView() {
 void VEWorldView::Initialize() {
   display_on = true;
   drag_objs = true;
+  show_joints = true;
   data_base = &TA_VEWorld;
 //   children.SetBaseType(&TA_VEObjectView);
   cam_renderer = NULL;
@@ -1550,6 +1818,8 @@ bool VEWorld::GetCameraTaImage(taImage& ta_img, int cam_no) {
 VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
 :inherited(dv_)
 {
+  req_full_redraw = false;
+
 //   int font_spec = taiMisc::fonMedium;
   QWidget* widg = new QWidget();
   //note: we don't set the values of all controls here, because dv does an immediate refresh
@@ -1566,6 +1836,10 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
   chkDragObjs = new QCheckBox("Drag Objs", widg);
   connect(chkDragObjs, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkDragObjs);
+
+  chkShowJoints = new QCheckBox("Show Joints", widg);
+  connect(chkShowJoints, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layDispCheck->addWidget(chkShowJoints);
 
   ////////////////////////////////////////////////////////////////////////////
   layCams = new QHBoxLayout; layOuter->addLayout(layCams);
@@ -1615,8 +1889,16 @@ void VEWorldViewPanel::UpdatePanel_impl() {
   VEWorld* wl = wv_->World();
   if(!wl) return;
   
+  if (req_full_redraw) {
+    req_full_redraw = false;
+    wv_->Reset();
+    wv_->BuildAll();
+    wv_->Render();
+  }
+
   chkDisplay->setChecked(wv_->display_on);
   chkDragObjs->setChecked(wv_->drag_objs);
+  chkShowJoints->setChecked(wv_->show_joints);
 
   if(wv_->display_on) {
     if(wl->camera_0) {
@@ -1656,4 +1938,7 @@ void VEWorldViewPanel::GetValue_impl() {
 
   wv_->display_on = chkDisplay->isChecked();
   wv_->drag_objs = chkDragObjs->isChecked();
+  wv_->show_joints = chkShowJoints->isChecked();
+
+  req_full_redraw = true;	// not worth micro-managing: MOST changes require full redraw!
 }

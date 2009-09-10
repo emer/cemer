@@ -122,6 +122,26 @@ protected:
   ~T3VEBody();
 };
 
+class TA_API T3VEJoint : public T3NodeLeaf {
+  // joint for virtual environment 
+#ifndef __MAKETA__
+typedef T3NodeLeaf inherited;
+  SO_NODE_HEADER(T3VEJoint);
+#endif // def __MAKETA__
+public:
+  static void	initClass();
+
+  T3VEJoint(void* bod = NULL, bool show_drag = false);
+
+  T3TransformBoxDragger* getDragger() { return drag_; }	// my position dragger
+
+protected:
+  bool			 show_drag_;
+  T3TransformBoxDragger* drag_;	// my position dragger
+
+  ~T3VEJoint();
+};
+
 class TA_API T3VESpace : public T3NodeParent {
   // space parent for virtual environment 
 #ifndef __MAKETA__

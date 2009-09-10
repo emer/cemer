@@ -665,6 +665,7 @@ void VEJoint::Initialize() {
   joint_type = HINGE;
   axis.x = 1.0f;
   axis2.y = 1.0f;
+  vis_size = 0.1f;
   pos = pos_norm = vel = pos2 = pos2_norm = vel2 = 0.0f;
 }
 

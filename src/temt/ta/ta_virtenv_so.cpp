@@ -138,6 +138,43 @@ T3VEBody::~T3VEBody()
 }
 
 /////////////////////////////////////////////
+//	Joint
+
+extern void T3VEJoint_DragFinishCB(void* userData, SoDragger* dragger);
+// defined in qtso
+
+SO_NODE_SOURCE(T3VEJoint);
+
+void T3VEJoint::initClass()
+{
+  SO_NODE_INIT_CLASS(T3VEJoint, T3NodeLeaf, "T3NodeLeaf");
+}
+
+T3VEJoint::T3VEJoint(void* bod, bool show_drag)
+:inherited(bod)
+{
+  SO_NODE_CONSTRUCTOR(T3VEJoint);
+
+  show_drag_ = show_drag;
+  drag_ = NULL;
+  if(show_drag_) {
+    drag_ = new T3TransformBoxDragger(0.06f, .04f, .03f);
+
+    txfm_shape()->translation.connectFrom(&drag_->dragger_->translation);
+    txfm_shape()->rotation.connectFrom(&drag_->dragger_->rotation);
+    txfm_shape()->scaleFactor.connectFrom(&drag_->dragger_->scaleFactor);
+
+    drag_->dragger_->addFinishCallback(T3VEJoint_DragFinishCB, (void*)this);
+    insertChildBefore(topSeparator(), drag_, txfm_shape());
+  }
+}
+
+T3VEJoint::~T3VEJoint()
+{
+  
+}
+
+/////////////////////////////////////////////
 //	Space
 
 SO_NODE_SOURCE(T3VESpace);
