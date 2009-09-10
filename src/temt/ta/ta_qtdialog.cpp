@@ -1176,8 +1176,11 @@ void taiDataHost_impl::Cancel_impl() { //note: taiEditDataHost takes care of can
 void taiDataHost_impl::ClearBody(bool waitproc) {
   widget()->setUpdatesEnabled(false);
   ClearBody_impl();
-  if (waitproc)
-    taiMiscCore::RunPending(); // not a bad idea to update gui before proceeding
+  if (waitproc) {
+    taiMiscCore::ProcessEvents(); // not a bad idea to update gui before proceeding
+    taiMiscCore::ProcessEvents(); // not a bad idea to update gui before proceeding
+    taiMiscCore::ProcessEvents(); // not a bad idea to update gui before proceeding
+  }
   BodyCleared(); //rebuilds if ShowChanged
   widget()->setUpdatesEnabled(true);
 }
@@ -2485,6 +2488,8 @@ iMainWindowViewer* taiEditDataHost::viewerWindow() const {
   return dv;
 }
 
+#include "ta_program_qt.h"
+
 bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() == QEvent::KeyPress) {
     QKeyEvent* e = static_cast<QKeyEvent *>(event);
@@ -2497,7 +2502,10 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
       ctrl_pressed = true;
 #endif
     if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
-      Apply_Async();			// do it!
+      iProgramCtrlDataHost* ths_ipcdh = dynamic_cast<iProgramCtrlDataHost*>(this);
+      if(!ths_ipcdh) {		// NOT one of those..
+	Apply();
+      }
       iMainWindowViewer* mvw = viewerWindow();
       if(mvw)
 	mvw->FocusCurTreeView(); // return focus back to current browser

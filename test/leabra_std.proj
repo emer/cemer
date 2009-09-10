@@ -1,5 +1,11 @@
-// ta_Dump File v2.0 -- code v4.0.21.0
+// ta_Dump File v2.0 -- code v5.0.1.0
 LeabraProject .projects[0] { 
+  taBase_Group @.templates = [0] {
+  };
+
+  Doc_Group @.docs = [0] {
+  };
+
   Wizard_Group @.wizards = [1] {
     LeabraWizard @[0] { 
    UserDataItem_List @*(.user_data_) {
@@ -14,6 +20,9 @@ LeabraProject .projects[0] {
     };
   };
 
+  SelectEdit_Group @.edits = [0] {
+  };
+
   DataTable_Group @.data = [0] {
     DataTable_Group @.gp[0] = [1] { 
       DataTable @[0] { 
@@ -25,12 +34,25 @@ LeabraProject .projects[0] {
       };
     };
     DataTable_Group @.gp[1] = [4] { 
-      DataTable @[0] { };
-      DataTable @[1] { };
-      DataTable @[2] { };
-      DataTable @[3] { };
+      DataTable @[0] { 
+	DataTableCols @.data = [0] {
+	};
+      };
+      DataTable @[1] { 
+	DataTableCols @.data = [0] {
+	};
+      };
+      DataTable @[2] { 
+	DataTableCols @.data = [0] {
+	};
+      };
+      DataTable @[3] { 
+	DataTableCols @.data = [0] {
+	};
+      };
     };
-    DataTable_Group @.gp[2] { };
+    DataTable_Group @.gp[2] { 
+    };
   };
 
   taBase_Group @.data_proc = [4] {
@@ -58,6 +80,113 @@ LeabraProject .projects[0] {
 
   Program_Group @.programs = [2] {
     Program @[0] { 
+      ProgObjList @.objs = [0] {
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
+      ProgVar_List @.args = [2] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+      };
+
+      ProgVar_List @.vars = [6] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+	ProgVar @[2] { };
+	ProgVar @[3] { };
+	ProgVar @[4] { };
+	ProgVar @[5] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.load_code = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
+      };
+
+      ProgEl_List @.prog_code = [20] {
+	IfReturn @[0] { };
+	RegisterArgs @[1] { };
+	PrintExpr @[2] { };
+	MethodCall @[3] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+	Comment @[4] { };
+	ProgVarFmArg @[5] { };
+	ProgVarFmArg @[6] { };
+	ProgVarFmArg @[7] { };
+	ProgVarFmArg @[8] { };
+	Comment @[9] { };
+	Comment @[10] { };
+	MethodCall @[11] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MiscCall @[12] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[13] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MethodCall @[14] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+	MethodCall @[15] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MethodCall @[16] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+	OtherProgramVar @[17] { };
+	PrintExpr @[18] { };
+	ProgramCall @[19] { 
+	  ProgArg_List @.prog_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+      };
+    };
+    Program @[1] { 
+      ProgObjList @.objs = [0] {
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
+      ProgVar_List @.args = [0] {
+      };
+
       ProgVar_List @.vars = [9] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
@@ -68,6 +197,15 @@ LeabraProject .projects[0] {
 	ProgVar @[6] { };
 	ProgVar @[7] { };
 	ProgVar @[8] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.load_code = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
       };
 
       ProgEl_List @.prog_code = [28] {
@@ -103,10 +241,13 @@ LeabraProject .projects[0] {
 	    ProgArg @[1] { };
 	  };
 	};
-	MiscCall @[7] { };
+	RegisterArgs @[7] { };
 	Comment @[8] { };
 	PrintExpr @[9] { };
-	MethodCall @[10] { };
+	MethodCall @[10] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
 	MiscCall @[11] { 
 	  ProgArg_List @.meth_args = [1] {
 	    ProgArg @[0] { };
@@ -208,108 +349,14 @@ LeabraProject .projects[0] {
 	};
       };
     };
-    Program @[1] { 
-      ProgVar_List @.args = [2] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-      };
-
-      ProgVar_List @.vars = [6] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-	ProgVar @[2] { };
-	ProgVar @[3] { };
-	ProgVar @[4] { };
-	ProgVar @[5] { };
-      };
-
-      ProgEl_List @.prog_code = [22] {
-	IfReturn @[0] { };
-	Comment @[1] { };
-	MiscCall @[2] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	MiscCall @[3] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	RegisterArgs @[4] { };
-	Comment @[5] { };
-	PrintExpr @[6] { };
-	MethodCall @[7] { };
-	MiscCall @[8] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-	MiscCall @[9] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-	ProgVarFmArg @[10] { };
-	ProgVarFmArg @[11] { };
-	Comment @[12] { };
-	MethodCall @[13] { 
-	  ProgArg_List @.meth_args = [4] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	  };
-	};
-	MiscCall @[14] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-	MethodCall @[15] { 
-	  ProgArg_List @.meth_args = [4] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	  };
-	};
-	MethodCall @[16] { 
-	  ProgArg_List @.meth_args = [3] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	  };
-	};
-	MethodCall @[17] { 
-	  ProgArg_List @.meth_args = [4] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	  };
-	};
-	MethodCall @[18] { 
-	  ProgArg_List @.meth_args = [3] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	  };
-	};
-	OtherProgramVar @[19] { };
-	PrintExpr @[20] { };
-	ProgramCall @[21] { 
-	  ProgArg_List @.prog_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-      };
-    };
     Program_Group @.gp[0] = [10] { 
       Program @[0] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -318,6 +365,12 @@ LeabraProject .projects[0] {
 	ProgVar_List @.vars = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [1] {
@@ -371,6 +424,12 @@ LeabraProject .projects[0] {
 	  ProgVar @[7] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
 	ProgEl_List @.init_code = [5] {
 	  AssignExpr @[0] { };
 	  MethodCall @[1] { 
@@ -381,16 +440,25 @@ LeabraProject .projects[0] {
 	  AssignExpr @[2] { };
 	  IfElse @[3] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 
 	    ProgEl_List @.false_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  IfGuiPrompt @[4] { 
 	    ProgEl_List @.yes_code = [2] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	      PrintExpr @[1] { };
 	    };
 	  };
@@ -406,7 +474,10 @@ LeabraProject .projects[0] {
 	  MemberAssign @[2] { };
 	  If @[3] { 
 	    ProgEl_List @.true_code = [2] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	      PrintExpr @[1] { };
 	    };
 	  };
@@ -423,7 +494,10 @@ LeabraProject .projects[0] {
 	      IfBreak @[2] { };
 	    };
 	  };
-	  MethodCall @[6] { };
+	  MethodCall @[6] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  If @[7] { 
 	    ProgEl_List @.true_code = [1] {
 	      ProgramCall @[0] { 
@@ -436,6 +510,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[2] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -451,6 +531,12 @@ LeabraProject .projects[0] {
 	  ProgVar @[6] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
 	ProgEl_List @.init_code = [2] {
 	  NetCounterInit @[0] { };
 	  AssignExpr @[1] { };
@@ -464,7 +550,10 @@ LeabraProject .projects[0] {
 	      ProgArg @[0] { };
 	    };
 	  };
-	  MethodCall @[3] { };
+	  MethodCall @[3] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  NetDataLoop @[4] { 
 	    ProgEl_List @.loop_code = [1] {
 	      ProgramCall @[0] { 
@@ -477,22 +566,43 @@ LeabraProject .projects[0] {
 	  };
 	  IfElse @[5] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
+	    };
+
+	    ProgEl_List @.false_code = [0] {
 	    };
 	  };
-	  MethodCall @[6] { };
+	  MethodCall @[6] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  If @[7] { 
 	    ProgEl_List @.true_code = [2] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	      If @[1] { 
 		ProgEl_List @.true_code = [2] {
-		  MethodCall @[0] { };
-		  MethodCall @[1] { };
+		  MethodCall @[0] { 
+		    ProgArg_List @.meth_args = [0] {
+		    };
+		  };
+		  MethodCall @[1] { 
+		    ProgArg_List @.meth_args = [0] {
+		    };
+		  };
 		};
 	      };
 	    };
 	  };
-	  MethodCall @[8] { };
+	  MethodCall @[8] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  ProgramCall @[9] { 
 	    ProgArg_List @.prog_args = [1] {
 	      ProgArg @[0] { };
@@ -501,6 +611,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[3] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -513,13 +629,22 @@ LeabraProject .projects[0] {
 	  ProgVar @[3] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
 	ProgEl_List @.init_code = [1] {
 	  NetCounterInit @[0] { };
 	};
 
 	ProgEl_List @.prog_code = [8] {
 	  NetCounterInit @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  WhileLoop @[2] { 
 	    ProgEl_List @.loop_code = [3] {
 	      ProgramCall @[0] { 
@@ -529,18 +654,30 @@ LeabraProject .projects[0] {
 		};
 	      };
 	      NetCounterIncr @[1] { };
-	      MethodCall @[2] { };
+	      MethodCall @[2] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
-	  MethodCall @[3] { };
+	  MethodCall @[3] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  If @[4] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  If @[5] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  ProgramCall @[6] { 
@@ -552,6 +689,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[4] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -563,20 +706,32 @@ LeabraProject .projects[0] {
 	  ProgVar @[2] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
 	ProgEl_List @.init_code = [1] {
 	  NetCounterInit @[0] { };
 	};
 
 	ProgEl_List @.prog_code = [10] {
 	  NetCounterInit @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  ProgramCall @[2] { 
 	    ProgArg_List @.prog_args = [2] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	    };
 	  };
-	  MethodCall @[3] { };
+	  MethodCall @[3] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  IfElse @[4] { 
 	    ProgEl_List @.true_code = [1] {
 	      AssignExpr @[0] { };
@@ -598,21 +753,36 @@ LeabraProject .projects[0] {
 	      IfBreak @[3] { };
 	    };
 	  };
-	  MethodCall @[6] { };
+	  MethodCall @[6] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  If @[7] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  If @[8] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  NetUpdateView @[9] { };
 	};
       };
       Program @[5] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -621,8 +791,20 @@ LeabraProject .projects[0] {
 	  ProgVar @[0] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
+	ProgEl_List @.init_code = [0] {
+	};
+
 	ProgEl_List @.prog_code = [2] {
-	  MethodCall @[0] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  NetUpdateView @[1] { };
 	};
       };
@@ -637,6 +819,9 @@ LeabraProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -644,6 +829,12 @@ LeabraProject .projects[0] {
 
 	ProgVar_List @.vars = [1] {
 	  ProgVar @[0] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [2] {
@@ -667,7 +858,10 @@ LeabraProject .projects[0] {
 	      ProgArg @[1] { };
 	    };
 	  };
-	  MethodCall @[1] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	};
       };
       Program @[7] { 
@@ -687,6 +881,9 @@ LeabraProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -694,6 +891,12 @@ LeabraProject .projects[0] {
 	ProgVar_List @.vars = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [3] {
@@ -716,9 +919,18 @@ LeabraProject .projects[0] {
 	};
 
 	ProgEl_List @.prog_code = [4] {
-	  MethodCall @[0] { };
-	  MethodCall @[1] { };
-	  MethodCall @[2] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[2] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  MethodCall @[3] { 
 	    ProgArg_List @.meth_args = [2] {
 	      ProgArg @[0] { };
@@ -743,6 +955,9 @@ LeabraProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -751,6 +966,12 @@ LeabraProject .projects[0] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
 	  ProgVar @[2] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [4] {
@@ -774,8 +995,14 @@ LeabraProject .projects[0] {
 	};
 
 	ProgEl_List @.prog_code = [6] {
-	  MethodCall @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  AssignExpr @[2] { };
 	  MethodCall @[3] { 
 	    ProgArg_List @.meth_args = [3] {
@@ -791,10 +1018,19 @@ LeabraProject .projects[0] {
 	      ProgArg @[2] { };
 	    };
 	  };
-	  MethodCall @[5] { };
+	  MethodCall @[5] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	};
       };
       Program @[9] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -806,6 +1042,15 @@ LeabraProject .projects[0] {
 	  ProgVar @[3] { };
 	  ProgVar @[4] { };
 	  ProgVar @[5] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
+	ProgEl_List @.init_code = [0] {
 	};
 
 	ProgEl_List @.prog_code = [6] {
@@ -842,6 +1087,12 @@ LeabraProject .projects[0] {
     };
     Program_Group @.gp[1] = [7] { 
       Program @[0] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -853,6 +1104,12 @@ LeabraProject .projects[0] {
 	  ProgVar @[3] { };
 	  ProgVar @[4] { };
 	  ProgVar @[5] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [2] {
@@ -869,7 +1126,10 @@ LeabraProject .projects[0] {
 	      ProgArg @[0] { };
 	    };
 	  };
-	  MethodCall @[4] { };
+	  MethodCall @[4] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  NetDataLoop @[5] { 
 	    ProgEl_List @.loop_code = [1] {
 	      ProgramCall @[0] { 
@@ -882,11 +1142,23 @@ LeabraProject .projects[0] {
 	  };
 	  IfElse @[6] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
+	    };
+
+	    ProgEl_List @.false_code = [0] {
 	    };
 	  };
-	  MethodCall @[7] { };
-	  MethodCall @[8] { };
+	  MethodCall @[7] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[8] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  ProgramCall @[9] { 
 	    ProgArg_List @.prog_args = [1] {
 	      ProgArg @[0] { };
@@ -896,6 +1168,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[1] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -906,13 +1184,22 @@ LeabraProject .projects[0] {
 	  ProgVar @[1] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
 	ProgEl_List @.init_code = [1] {
 	  NetCounterInit @[0] { };
 	};
 
 	ProgEl_List @.prog_code = [7] {
 	  NetCounterInit @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  WhileLoop @[2] { 
 	    ProgEl_List @.loop_code = [3] {
 	      ProgramCall @[0] { 
@@ -922,13 +1209,22 @@ LeabraProject .projects[0] {
 		};
 	      };
 	      NetCounterIncr @[1] { };
-	      MethodCall @[2] { };
+	      MethodCall @[2] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
-	  MethodCall @[3] { };
+	  MethodCall @[3] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  If @[4] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  ProgramCall @[5] { 
@@ -940,6 +1236,12 @@ LeabraProject .projects[0] {
 	};
       };
       Program @[2] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -951,20 +1253,32 @@ LeabraProject .projects[0] {
 	  ProgVar @[2] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
 	ProgEl_List @.init_code = [1] {
 	  NetCounterInit @[0] { };
 	};
 
 	ProgEl_List @.prog_code = [10] {
 	  NetCounterInit @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  ProgramCall @[2] { 
 	    ProgArg_List @.prog_args = [2] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	    };
 	  };
-	  MethodCall @[3] { };
+	  MethodCall @[3] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  IfElse @[4] { 
 	    ProgEl_List @.true_code = [1] {
 	      AssignExpr @[0] { };
@@ -986,21 +1300,36 @@ LeabraProject .projects[0] {
 	      IfBreak @[3] { };
 	    };
 	  };
-	  MethodCall @[6] { };
+	  MethodCall @[6] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  If @[7] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  If @[8] { 
 	    ProgEl_List @.true_code = [1] {
-	      MethodCall @[0] { };
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
 	    };
 	  };
 	  NetUpdateView @[9] { };
 	};
       };
       Program @[3] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -1009,8 +1338,20 @@ LeabraProject .projects[0] {
 	  ProgVar @[0] { };
 	};
 
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
+	ProgEl_List @.init_code = [0] {
+	};
+
 	ProgEl_List @.prog_code = [2] {
-	  MethodCall @[0] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  NetUpdateView @[1] { };
 	};
       };
@@ -1025,6 +1366,9 @@ LeabraProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
@@ -1032,6 +1376,12 @@ LeabraProject .projects[0] {
 
 	ProgVar_List @.vars = [1] {
 	  ProgVar @[0] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [2] {
@@ -1055,7 +1405,10 @@ LeabraProject .projects[0] {
 	      ProgArg @[1] { };
 	    };
 	  };
-	  MethodCall @[1] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	};
       };
       Program @[5] { 
@@ -1075,6 +1428,9 @@ LeabraProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -1082,6 +1438,12 @@ LeabraProject .projects[0] {
 	ProgVar_List @.vars = [2] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [3] {
@@ -1104,9 +1466,18 @@ LeabraProject .projects[0] {
 	};
 
 	ProgEl_List @.prog_code = [4] {
-	  MethodCall @[0] { };
-	  MethodCall @[1] { };
-	  MethodCall @[2] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[2] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  MethodCall @[3] { 
 	    ProgArg_List @.meth_args = [2] {
 	      ProgArg @[0] { };
@@ -1131,6 +1502,9 @@ LeabraProject .projects[0] {
 	  };
 	};
 
+	ProgType_List @.types = [0] {
+	};
+
 	ProgVar_List @.args = [1] {
 	  ProgVar @[0] { };
 	};
@@ -1139,6 +1513,12 @@ LeabraProject .projects[0] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
 	  ProgVar @[2] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
 	};
 
 	ProgEl_List @.init_code = [4] {
@@ -1162,8 +1542,14 @@ LeabraProject .projects[0] {
 	};
 
 	ProgEl_List @.prog_code = [6] {
-	  MethodCall @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	  AssignExpr @[2] { };
 	  MethodCall @[3] { 
 	    ProgArg_List @.meth_args = [3] {
@@ -1179,7 +1565,10 @@ LeabraProject .projects[0] {
 	      ProgArg @[2] { };
 	    };
 	  };
-	  MethodCall @[5] { };
+	  MethodCall @[5] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
 	};
       };
     };
@@ -1249,22 +1638,46 @@ LeabraProject .projects[0] {
    };
 
       BaseSpec_Group @.specs = [4] {
-	LeabraUnitSpec @[0] { };
-	LeabraLayerSpec @[1] { 
-	  BaseSpec_Group @.children = [1] {
-	    LeabraLayerSpec @[0] { };
+	LeabraUnitSpec @[0] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.noise_sched = [0] {
 	  };
 	};
-	FullPrjnSpec @[2] { };
+	LeabraLayerSpec @[1] { 
+	  BaseSpec_Group @.children = [1] {
+	    LeabraLayerSpec @[0] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+	    };
+	  };
+	};
+	FullPrjnSpec @[2] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
 	LeabraConSpec @[3] { 
 	  BaseSpec_Group @.children = [1] {
-	    LeabraBiasSpec @[0] { };
+	    LeabraBiasSpec @[0] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+
+	      Schedule @.lrate_sched = [0] {
+	      };
+	    };
+	  };
+
+	  Schedule @.lrate_sched = [0] {
 	  };
 	};
       };
 
       Layer_Group @.layers = [3] {
 	LeabraLayer @[0] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
 	  Unit_Group @.units = [25] {
 	  };
 	};
@@ -1285,6 +1698,9 @@ LeabraProject .projects[0] {
 	  Unit_Group @.units = [25] {
 	  };
 	};
+      };
+
+      NetViewObj_Group @.view_objs = [0] {
       };
     };
   };
@@ -1328,7 +1744,7 @@ LeabraProject .projects[0] {
     };
    };
    name="LeabraWizard_0";
-   auto_open=1;
+   auto_open=0;
    n_layers=3;
    layer_cfg {
     name=;
@@ -1541,6 +1957,518 @@ LeabraProject .projects[0] {
   tags=;
   desc=;
   Program @[0] {
+   name="LeabraStartup_simple";
+   tags="Leabra, Startup";
+   desc="run project in the background (replaces leabra_startup.css)
+command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx]";
+   flags=STARTUP_RUN;
+   objs {
+    name=;
+    el_typ=taNBase;
+    el_def=0;
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="network";
+     var_type=T_Object;
+     object_type=LeabraNetwork;
+     object_val=.projects[0].networks[0]$0$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
+     reference=0;
+     desc="network to operate on -- updates batch counter on network and passes it to train program";
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="input_data";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].data.gp[0][0]$1$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
+     reference=0;
+     desc="datatable with training patterns -- not used by this program, but passed to train program";
+     init_from=NULL;
+    };
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="batch";
+     var_type=T_Object;
+     object_type=Program;
+     object_val=.projects[0].programs.gp[0][0]$2$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc="set this to point to your batch process";
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="tag";
+     var_type=T_String;
+     string_val=;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[2] {
+     name="log_dir";
+     var_type=T_String;
+     string_val=;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc="log file directory";
+     init_from=NULL;
+    };
+    ProgVar @[3] {
+     name="log_file_nm";
+     var_type=T_String;
+     string_val=;
+     objs_ptr=0;
+     flags=NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc="name of log file";
+     init_from=NULL;
+    };
+    ProgVar @[4] {
+     name="EpochOutputData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].data.gp[1][1]$3$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[5] {
+     name="TrialOutputData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].data.gp[1][0]$4$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   load_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    IfReturn @[0] {
+     desc="don't run if running in the gui!";
+     flags=;
+     cond {
+      expr="taMisc::gui_active";
+     };
+    };
+    RegisterArgs @[1] {
+     desc="This is KEY!!! actuall processes all args, including those from ProgVarFmArg guys below";
+     flags=;
+    };
+    PrintExpr @[2] {
+     desc=;
+     flags=;
+     expr {
+      expr="\"Loaded project: \" << .projects[0].file_name";
+     };
+    };
+    MethodCall @[3] {
+     desc="initialize process hierarchy prior to setting variables, etc";
+     flags=;
+     result_var=NULL;
+     obj=.projects[0].programs[0].vars[0]$5$;
+     method=Program::Init;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    Comment @[4] {
+     desc="= Std variables in startup program itself =";
+     flags=;
+    };
+    ProgVarFmArg @[5] {
+     desc=;
+     flags=;
+     prog=.projects[0].programs[0]$6$;
+     var_name="tag";
+     arg_name="tag";
+    };
+    ProgVarFmArg @[6] {
+     desc=;
+     flags=;
+     prog=$6$;
+     var_name="log_dir";
+     arg_name="log_dir";
+    };
+    ProgVarFmArg @[7] {
+     desc=;
+     flags=;
+     prog=.projects[0].programs.gp[0][1]$7$;
+     var_name="max_epoch";
+     arg_name="epochs";
+    };
+    ProgVarFmArg @[8] {
+     desc=;
+     flags=;
+     prog=$2$;
+     var_name="max_batch";
+     arg_name="batches";
+    };
+    Comment @[9] {
+     desc="= Add your own variables here =";
+     flags=;
+    };
+    Comment @[10] {
+     desc="= Below saves log files of standard data tables =";
+     flags=;
+    };
+    MethodCall @[11] {
+     desc="save args to file: last arg is to include dmem proc number";
+     flags=;
+     result_var=.projects[0].programs[0].vars[3]$8$;
+     obj=.projects[0].programs[0].vars[4]$9$;
+     method=taBase::GetFileNameFmProject;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="ext";
+       required=1;
+       def_val=;
+       expr {
+	expr="\".args\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="tag";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="tag";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="subdir";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_dir";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="dmem_proc_no";
+       required=0;
+       def_val="false";
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    MiscCall @[12] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     object_type=taMisc;
+     method=taMisc::FullArgStringToFile;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="fname";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_file_nm";
+       };
+      };
+     };
+    };
+    MethodCall @[13] {
+     desc="last arg is to include dmem proc number";
+     flags=;
+     result_var=$8$;
+     obj=$9$;
+     method=taBase::GetFileNameFmProject;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="ext";
+       required=1;
+       def_val=;
+       expr {
+	expr="\".epc.dat\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="tag";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="tag";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="subdir";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_dir";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="dmem_proc_no";
+       required=0;
+       def_val="false";
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    MethodCall @[14] {
+     desc="last arg is to restrict log to dmem_proc = 0";
+     flags=;
+     result_var=NULL;
+     obj=$9$;
+     method=DataTable::SaveDataLog;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="fname";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_file_nm";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="append";
+       required=0;
+       def_val="false";
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=bool;
+       type="bool";
+       name="dmem_proc_0";
+       required=0;
+       def_val="true";
+       expr {
+	expr="true";
+       };
+      };
+     };
+    };
+    MethodCall @[15] {
+     desc="last arg is to include dmem proc number";
+     flags=OFF;
+     result_var=$8$;
+     obj=.projects[0].programs[0].vars[5]$10$;
+     method=taBase::GetFileNameFmProject;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="ext";
+       required=1;
+       def_val=;
+       expr {
+	expr="\".trl.dat\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="tag";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="tag";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="subdir";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_dir";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="dmem_proc_no";
+       required=0;
+       def_val="false";
+       expr {
+	expr="true";
+       };
+      };
+     };
+    };
+    MethodCall @[16] {
+     desc="last arg is to restrict log to dmem_proc = 0";
+     flags=OFF;
+     result_var=NULL;
+     obj=$10$;
+     method=DataTable::SaveDataLog;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="fname";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_file_nm";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="append";
+       required=0;
+       def_val="false";
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=bool;
+       type="bool";
+       name="dmem_proc_0";
+       required=0;
+       def_val="true";
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    OtherProgramVar @[17] {
+     desc="propagate the tag";
+     flags=;
+     other_prog=.projects[0].programs.gp[0][9]$11$;
+     set_other=1;
+     var_1=.projects[0].programs[0].vars[1]$12$;
+     var_2=NULL;
+     var_3=NULL;
+     var_4=NULL;
+    };
+    PrintExpr @[18] {
+     desc=;
+     flags=;
+     expr {
+      expr="\"Running: \" << batch.name";
+     };
+    };
+    ProgramCall @[19] {
+     desc="actually run the program -- change to proper level to run if necessary";
+     flags=;
+     target=$2$;
+     targ_ld_init="*LeabraBatch*";
+     prog_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=LeabraNetwork;
+       type="LeabraNetwork*";
+       name="network";
+       required=1;
+       def_val=;
+       expr {
+	expr="network";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=DataTable;
+       type="DataTable*";
+       name="input_data";
+       required=1;
+       def_val=;
+       expr {
+	expr="input_data";
+       };
+      };
+     };
+    };
+   };
+  };
+  Program @[1] {
    name="LeabraStartup_pb";
    tags="Leabra, Startup, Parallel Batch";
    desc="run project in the background (replaces leabra_startup.css) -- parallel batch version for running on a cluster";
@@ -1568,7 +2496,7 @@ LeabraProject .projects[0] {
      name="train";
      var_type=T_Object;
      object_type=Program;
-     object_val=.projects[0].programs.gp[0][1]$0$;
+     object_val=$7$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -1579,7 +2507,7 @@ LeabraProject .projects[0] {
      name="batch";
      var_type=T_Object;
      object_type=Program;
-     object_val=.projects[0].programs.gp[0][0]$1$;
+     object_val=$2$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -1640,7 +2568,7 @@ LeabraProject .projects[0] {
      name="EpochOutputData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[1][1]$2$;
+     object_val=$3$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -1651,7 +2579,7 @@ LeabraProject .projects[0] {
      name="TrialOutputData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[1][0]$3$;
+     object_val=$4$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -1849,17 +2777,9 @@ LeabraProject .projects[0] {
       };
      };
     };
-    MiscCall @[7] {
-     desc="key step: actually process args!";
+    RegisterArgs @[7] {
+     desc="This is KEY!!! actually processes all args, including those from ProgVarFmArg guys below";
      flags=;
-     result_var=NULL;
-     object_type=taMisc;
-     method=taMisc::UpdateArgs;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-     };
     };
     Comment @[8] {
      desc="Initialize and set variables from args";
@@ -1876,7 +2796,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[1]$4$;
+     obj=.projects[0].programs[1].vars[1]$13$;
      method=Program::Init;
      meth_args {
       name=;
@@ -1887,7 +2807,7 @@ LeabraProject .projects[0] {
     MiscCall @[11] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[2]$5$;
+     result_var=.projects[0].programs[1].vars[2]$14$;
      object_type=taMisc;
      method=taMisc::FindArgByName;
      meth_args {
@@ -1909,7 +2829,7 @@ LeabraProject .projects[0] {
     MiscCall @[12] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[6]$6$;
+     result_var=.projects[0].programs[1].vars[6]$15$;
      object_type=taMisc;
      method=taMisc::FindArgByName;
      meth_args {
@@ -1931,7 +2851,7 @@ LeabraProject .projects[0] {
     MiscCall @[13] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[3]$7$;
+     result_var=.projects[0].programs[1].vars[3]$16$;
      object_type=taMisc;
      method=taMisc::LeadingZeros;
      meth_args {
@@ -1963,7 +2883,7 @@ LeabraProject .projects[0] {
     VarIncr @[14] {
      desc=;
      flags=;
-     var=$5$;
+     var=$14$;
      expr {
       expr="\".\" + batch_str";
      };
@@ -1971,7 +2891,7 @@ LeabraProject .projects[0] {
     MiscCall @[15] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[4]$8$;
+     result_var=.projects[0].programs[1].vars[4]$17$;
      object_type=taMisc;
      method=taMisc::FindArgByName;
      meth_args {
@@ -1994,7 +2914,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[0]$9$;
+     obj=.projects[0].programs[1].vars[0]$18$;
      method=Program::SetVarFmArg;
      meth_args {
       name=;
@@ -2036,7 +2956,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=;
      result_var=NULL;
-     obj=$4$;
+     obj=$13$;
      method=Program::SetVarFmArg;
      meth_args {
       name=;
@@ -2078,7 +2998,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=;
      result_var=NULL;
-     obj=$4$;
+     obj=$13$;
      method=Program::SetVarFmArg;
      meth_args {
       name=;
@@ -2133,8 +3053,8 @@ LeabraProject .projects[0] {
       MethodCall @[0] {
        desc="save args to file: last arg is to include dmem proc number";
        flags=;
-       result_var=.projects[0].programs[0].vars[5]$10$;
-       obj=.projects[0].programs[0].vars[7]$11$;
+       result_var=.projects[0].programs[1].vars[5]$19$;
+       obj=.projects[0].programs[1].vars[7]$20$;
        method=taBase::GetFileNameFmProject;
        meth_args {
 	name=;
@@ -2209,8 +3129,8 @@ LeabraProject .projects[0] {
     MethodCall @[21] {
      desc="last arg is to include dmem proc number";
      flags=;
-     result_var=$10$;
-     obj=$11$;
+     result_var=$19$;
+     obj=$20$;
      method=taBase::GetFileNameFmProject;
      meth_args {
       name=;
@@ -2262,7 +3182,7 @@ LeabraProject .projects[0] {
      desc="last arg is to restrict log to dmem_proc = 0";
      flags=;
      result_var=NULL;
-     obj=$11$;
+     obj=$20$;
      method=DataTable::SaveDataLog;
      meth_args {
       name=;
@@ -2303,8 +3223,8 @@ LeabraProject .projects[0] {
     MethodCall @[23] {
      desc="last arg is to include dmem proc number";
      flags=OFF;
-     result_var=$10$;
-     obj=.projects[0].programs[0].vars[8]$12$;
+     result_var=$19$;
+     obj=.projects[0].programs[1].vars[8]$21$;
      method=taBase::GetFileNameFmProject;
      meth_args {
       name=;
@@ -2356,7 +3276,7 @@ LeabraProject .projects[0] {
      desc="last arg is to restrict log to dmem_proc = 0";
      flags=OFF;
      result_var=NULL;
-     obj=$12$;
+     obj=$21$;
      method=DataTable::SaveDataLog;
      meth_args {
       name=;
@@ -2397,9 +3317,9 @@ LeabraProject .projects[0] {
     OtherProgramVar @[25] {
      desc=;
      flags=;
-     other_prog=.projects[0].programs.gp[0][9]$13$;
+     other_prog=$11$;
      set_other=1;
-     var_1=$5$;
+     var_1=$14$;
      var_2=NULL;
      var_3=NULL;
      var_4=NULL;
@@ -2414,7 +3334,7 @@ LeabraProject .projects[0] {
     ProgramCall @[27] {
      desc=;
      flags=;
-     target=$1$;
+     target=$2$;
      targ_ld_init="*LeabraBatch*";
      prog_args {
       name=;
@@ -2438,612 +3358,6 @@ LeabraProject .projects[0] {
        def_val=;
        expr {
 	expr=;
-       };
-      };
-     };
-    };
-   };
-  };
-  Program @[1] {
-   name="LeabraStartup";
-   tags="Leabra, Startup";
-   desc="run project in the background (replaces leabra_startup.css)
-command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx]";
-   flags=STARTUP_RUN;
-   objs {
-    name=;
-    el_typ=taNBase;
-    el_def=0;
-   };
-   types {
-    name=;
-    el_typ=ProgType;
-    el_def=0;
-   };
-   args {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-    ProgVar @[0] {
-     name="network";
-     var_type=T_Object;
-     object_type=LeabraNetwork;
-     object_val=.projects[0].networks[0]$14$;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
-     reference=0;
-     desc="network to operate on -- updates batch counter on network and passes it to train program";
-     init_from=NULL;
-    };
-    ProgVar @[1] {
-     name="input_data";
-     var_type=T_Object;
-     object_type=DataTable;
-     object_val=.projects[0].data.gp[0][0]$15$;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
-     reference=0;
-     desc="datatable with training patterns -- not used by this program, but passed to train program";
-     init_from=NULL;
-    };
-   };
-   vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-    ProgVar @[0] {
-     name="batch";
-     var_type=T_Object;
-     object_type=Program;
-     object_val=$1$;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
-     reference=0;
-     desc="set this to point to your batch process";
-     init_from=NULL;
-    };
-    ProgVar @[1] {
-     name="tag";
-     var_type=T_String;
-     string_val=;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @[2] {
-     name="log_dir";
-     var_type=T_String;
-     string_val=;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
-     reference=0;
-     desc="log file directory";
-     init_from=NULL;
-    };
-    ProgVar @[3] {
-     name="log_file_nm";
-     var_type=T_String;
-     string_val=;
-     objs_ptr=0;
-     flags=NULL_CHECK|USED|EDIT_VAL;
-     reference=0;
-     desc="name of log file";
-     init_from=NULL;
-    };
-    ProgVar @[4] {
-     name="EpochOutputData";
-     var_type=T_Object;
-     object_type=DataTable;
-     object_val=$2$;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @[5] {
-     name="TrialOutputData";
-     var_type=T_Object;
-     object_type=DataTable;
-     object_val=$3$;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-   };
-   functions {
-    name=;
-    el_typ=Function;
-    el_def=0;
-   };
-   load_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   init_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   prog_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-    IfReturn @[0] {
-     desc="don't run if running in the gui!";
-     flags=;
-     cond {
-      expr="taMisc::gui_active";
-     };
-    };
-    Comment @[1] {
-     desc="add our special args from command line";
-     flags=;
-    };
-    MiscCall @[2] {
-     desc=;
-     flags=;
-     result_var=NULL;
-     object_type=taMisc;
-     method=taMisc::AddArgName;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="flag";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="\"tag=\"";
-       };
-      };
-      ProgArg @[1] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="name";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="\"FileTag\"";
-       };
-      };
-     };
-    };
-    MiscCall @[3] {
-     desc=;
-     flags=;
-     result_var=NULL;
-     object_type=taMisc;
-     method=taMisc::AddArgName;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="flag";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="\"logdir=\"";
-       };
-      };
-      ProgArg @[1] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="name";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="\"LogDir\"";
-       };
-      };
-     };
-    };
-    RegisterArgs @[4] {
-     desc="This is KEY!!! actuall processes all args, including those from ProgVarFmArg guys below";
-     flags=;
-    };
-    Comment @[5] {
-     desc="Initialize and set variables from args";
-     flags=;
-    };
-    PrintExpr @[6] {
-     desc=;
-     flags=;
-     expr {
-      expr="\"Loaded project: \" << .projects[0].file_name";
-     };
-    };
-    MethodCall @[7] {
-     desc=;
-     flags=;
-     result_var=NULL;
-     obj=.projects[0].programs[1].vars[0]$16$;
-     method=Program::Init;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-     };
-    };
-    MiscCall @[8] {
-     desc=;
-     flags=;
-     result_var=.projects[0].programs[1].vars[1]$17$;
-     object_type=taMisc;
-     method=taMisc::FindArgByName;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="nm";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="\"FileTag\"";
-       };
-      };
-     };
-    };
-    MiscCall @[9] {
-     desc=;
-     flags=;
-     result_var=.projects[0].programs[1].vars[2]$18$;
-     object_type=taMisc;
-     method=taMisc::FindArgByName;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="nm";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="\"LogDir\"";
-       };
-      };
-     };
-    };
-    ProgVarFmArg @[10] {
-     desc=;
-     flags=;
-     prog=$0$;
-     var_name="max_epoch";
-     arg_name="epochs";
-    };
-    ProgVarFmArg @[11] {
-     desc=;
-     flags=;
-     prog=$1$;
-     var_name="max_batch";
-     arg_name="batches";
-    };
-    Comment @[12] {
-     desc="Set log files";
-     flags=;
-    };
-    MethodCall @[13] {
-     desc="save args to file: last arg is to include dmem proc number";
-     flags=;
-     result_var=.projects[0].programs[1].vars[3]$19$;
-     obj=.projects[0].programs[1].vars[4]$20$;
-     method=taBase::GetFileNameFmProject;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="ext";
-       required=1;
-       def_val=;
-       expr {
-	expr="\".args\"";
-       };
-      };
-      ProgArg @[1] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="tag";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="tag";
-       };
-      };
-      ProgArg @[2] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="subdir";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="log_dir";
-       };
-      };
-      ProgArg @[3] {
-       arg_type=bool;
-       type="bool";
-       name="dmem_proc_no";
-       required=0;
-       def_val="false";
-       expr {
-	expr="false";
-       };
-      };
-     };
-    };
-    MiscCall @[14] {
-     desc=;
-     flags=;
-     result_var=NULL;
-     object_type=taMisc;
-     method=taMisc::FullArgStringToFile;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="fname";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="log_file_nm";
-       };
-      };
-     };
-    };
-    MethodCall @[15] {
-     desc="last arg is to include dmem proc number";
-     flags=;
-     result_var=$19$;
-     obj=$20$;
-     method=taBase::GetFileNameFmProject;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="ext";
-       required=1;
-       def_val=;
-       expr {
-	expr="\".epc.dat\"";
-       };
-      };
-      ProgArg @[1] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="tag";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="tag";
-       };
-      };
-      ProgArg @[2] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="subdir";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="log_dir";
-       };
-      };
-      ProgArg @[3] {
-       arg_type=bool;
-       type="bool";
-       name="dmem_proc_no";
-       required=0;
-       def_val="false";
-       expr {
-	expr="false";
-       };
-      };
-     };
-    };
-    MethodCall @[16] {
-     desc="last arg is to restrict log to dmem_proc = 0";
-     flags=;
-     result_var=NULL;
-     obj=$20$;
-     method=DataTable::SaveDataLog;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="fname";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="log_file_nm";
-       };
-      };
-      ProgArg @[1] {
-       arg_type=bool;
-       type="bool";
-       name="append";
-       required=0;
-       def_val="false";
-       expr {
-	expr="false";
-       };
-      };
-      ProgArg @[2] {
-       arg_type=bool;
-       type="bool";
-       name="dmem_proc_0";
-       required=0;
-       def_val="true";
-       expr {
-	expr="true";
-       };
-      };
-     };
-    };
-    MethodCall @[17] {
-     desc="last arg is to include dmem proc number";
-     flags=OFF;
-     result_var=$19$;
-     obj=.projects[0].programs[1].vars[5]$21$;
-     method=taBase::GetFileNameFmProject;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="ext";
-       required=1;
-       def_val=;
-       expr {
-	expr="\".trl.dat\"";
-       };
-      };
-      ProgArg @[1] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="tag";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="tag";
-       };
-      };
-      ProgArg @[2] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="subdir";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="log_dir";
-       };
-      };
-      ProgArg @[3] {
-       arg_type=bool;
-       type="bool";
-       name="dmem_proc_no";
-       required=0;
-       def_val="false";
-       expr {
-	expr="true";
-       };
-      };
-     };
-    };
-    MethodCall @[18] {
-     desc="last arg is to restrict log to dmem_proc = 0";
-     flags=OFF;
-     result_var=NULL;
-     obj=$21$;
-     method=DataTable::SaveDataLog;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=const_taString_ref;
-       type="const taString&";
-       name="fname";
-       required=0;
-       def_val="\"\"";
-       expr {
-	expr="log_file_nm";
-       };
-      };
-      ProgArg @[1] {
-       arg_type=bool;
-       type="bool";
-       name="append";
-       required=0;
-       def_val="false";
-       expr {
-	expr="false";
-       };
-      };
-      ProgArg @[2] {
-       arg_type=bool;
-       type="bool";
-       name="dmem_proc_0";
-       required=0;
-       def_val="true";
-       expr {
-	expr="false";
-       };
-      };
-     };
-    };
-    OtherProgramVar @[19] {
-     desc=;
-     flags=;
-     other_prog=$13$;
-     set_other=1;
-     var_1=$17$;
-     var_2=NULL;
-     var_3=NULL;
-     var_4=NULL;
-    };
-    PrintExpr @[20] {
-     desc=;
-     flags=;
-     expr {
-      expr="\"Running: \" << batch.name";
-     };
-    };
-    ProgramCall @[21] {
-     desc=;
-     flags=;
-     target=$1$;
-     targ_ld_init="*LeabraBatch*";
-     prog_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=LeabraNetwork;
-       type="LeabraNetwork*";
-       name="network";
-       required=1;
-       def_val=;
-       expr {
-	expr="network";
-       };
-      };
-      ProgArg @[1] {
-       arg_type=DataTable;
-       type="DataTable*";
-       name="input_data";
-       required=1;
-       def_val=;
-       expr {
-	expr="input_data";
        };
       };
      };
@@ -3080,7 +3394,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -3091,7 +3405,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$15$;
+      object_val=$1$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
@@ -3169,7 +3483,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        ProgramCall @[0] {
 	desc="run the training program -- sets the network and input_data args";
 	flags=;
-	target=$0$;
+	target=$7$;
 	targ_ld_init="*LeabraTrain*";
 	prog_args {
 	 name=;
@@ -3270,7 +3584,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -3281,7 +3595,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$15$;
+      object_val=$1$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
@@ -3682,7 +3996,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        ProgramCall @[0] {
 	desc=;
 	flags=;
-	target=$13$;
+	target=$11$;
 	targ_ld_init="*SaveWeights*";
 	prog_args {
 	 name=;
@@ -3727,7 +4041,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -3738,7 +4052,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$15$;
+      object_val=$1$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -3776,7 +4090,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$3$;
+      object_val=$4$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -4117,7 +4431,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -4128,7 +4442,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$15$;
+      object_val=$1$;
       objs_ptr=0;
       flags=NULL_CHECK|EDIT_VAL;
       reference=0;
@@ -4403,7 +4717,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -4414,7 +4728,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$15$;
+      object_val=$1$;
       objs_ptr=0;
       flags=NULL_CHECK|EDIT_VAL;
       reference=0;
@@ -4730,7 +5044,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -4803,8 +5117,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      LayerWriter @[0] {
       name="LayerWriter_0";
-      data=$15$;
-      network=$14$;
+      data=$1$;
+      network=$0$;
       layer_data {
        name=;
        el_typ=LayerWriterEl;
@@ -4855,7 +5169,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=NULL_CHECK|EDIT_VAL;
       reference=0;
@@ -4866,7 +5180,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$15$;
+      object_val=$1$;
       objs_ptr=0;
       flags=NULL_CHECK|EDIT_VAL;
       reference=0;
@@ -5028,7 +5342,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5060,7 +5374,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5092,7 +5406,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="trial";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="trial";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5124,7 +5438,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="trial_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="trial_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5156,7 +5470,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="group_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="group_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5188,7 +5502,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="phase_no";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="phase_no";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5220,7 +5534,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="cycle";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="minus_cycles";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5252,7 +5566,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5284,7 +5598,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="ext_rew";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="ext_rew";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5313,8 +5627,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$14$;
-      data=$3$;
+      network=$0$;
+      data=$4$;
       rmv_orphan_cols=1;
      };
     };
@@ -5331,7 +5645,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -5347,7 +5661,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$3$;
+      object_val=$4$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -5550,7 +5864,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5582,7 +5896,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5614,7 +5928,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="avg_sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5646,7 +5960,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="cnt_err";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="cnt_err";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5678,7 +5992,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_ext_rew";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="avg_ext_rew";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5710,7 +6024,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_cycles";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="avg_cycles";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -5803,8 +6117,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$14$;
-      data=$2$;
+      network=$0$;
+      data=$3$;
       rmv_orphan_cols=1;
      };
     };
@@ -5821,7 +6135,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
@@ -5837,7 +6151,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="epoch_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$2$;
+      object_val=$3$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -6123,7 +6437,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -6411,7 +6725,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -6427,7 +6741,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$15$;
+      object_val=$1$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -6741,7 +7055,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -6752,7 +7066,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$15$;
+      object_val=$1$;
       objs_ptr=0;
       flags=NULL_CHECK|EDIT_VAL;
       reference=0;
@@ -6983,7 +7297,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -6994,7 +7308,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$15$;
+      object_val=$1$;
       objs_ptr=0;
       flags=NULL_CHECK|EDIT_VAL;
       reference=0;
@@ -7310,7 +7624,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -7383,8 +7697,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      LayerWriter @[0] {
       name="LayerWriter_0";
-      data=$15$;
-      network=$14$;
+      data=$1$;
+      network=$0$;
       layer_data {
        name=;
        el_typ=LayerWriterEl;
@@ -7435,7 +7749,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=NULL_CHECK|EDIT_VAL;
       reference=0;
@@ -7446,7 +7760,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$15$;
+      object_val=$1$;
       objs_ptr=0;
       flags=NULL_CHECK|EDIT_VAL;
       reference=0;
@@ -7608,7 +7922,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7640,7 +7954,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7672,7 +7986,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="trial";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="trial";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7704,7 +8018,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="trial_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="trial_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7736,7 +8050,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="group_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="group_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7768,7 +8082,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="phase_no";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="phase_no";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7800,7 +8114,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="cycle";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="minus_cycles";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7832,7 +8146,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7864,7 +8178,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="ext_rew";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="ext_rew";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7893,8 +8207,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$14$;
-      data=$3$;
+      network=$0$;
+      data=$4$;
       rmv_orphan_cols=1;
      };
     };
@@ -7911,7 +8225,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8130,7 +8444,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8162,7 +8476,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8194,7 +8508,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="avg_sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8226,7 +8540,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="cnt_err";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="cnt_err";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8258,7 +8572,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_ext_rew";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="avg_ext_rew";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8290,7 +8604,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_cycles";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$14$;
+	object=$0$;
 	variable="avg_cycles";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -8383,8 +8697,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$14$;
-      data=$2$;
+      network=$0$;
+      data=$3$;
       rmv_orphan_cols=1;
      };
     };
@@ -8401,7 +8715,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$14$;
+      object_val=$0$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
@@ -8744,7 +9058,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 NetView @[0] {
-	  m_data=$14$;
+	  m_data=$0$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  display=1;
@@ -8809,6 +9123,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
@@ -8984,7 +9299,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
-     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: hard_gain=0.2: };
+     spike {rise=0: decay=5: g_gain=5: window=3: v_m_r=0: eq_gain=10: eq_dt=0.02: clamp_max_p=0.11: clamp_type=REGULAR: };
      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
      syn_delay {
       on=0;

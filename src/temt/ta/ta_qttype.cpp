@@ -1221,7 +1221,7 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
     
     // ro child, either ro of this guy, or default if we don't handle ro
     flags_ |= taiData::flgReadOnly;
-    child = GetArbitrateDataRep(host_, deck, gui_parent_, flags_, mbr);;
+    child = GetArbitrateDataRep(host_, deck, gui_parent_, flags_, mbr);
     deck->AddChildWidget(child->GetRep());
     child->SetMemberDef(mbr); // not used much, ex. used by taiField for edit dialog info
     deck->EndLayout();
