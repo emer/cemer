@@ -1052,7 +1052,7 @@ Program_Group .projects[0].programs.gp[0] {
  };
  Program @[1] {
   name="LeabraTrain";
-  tags="Leabra, RndSeedList";
+  tags="Leabra, Train, RndSeedList";
   desc="A complete training run of a Leabra network: iterating over epochs until the network has learned the task.  Also has a list of random seeds that are tied to the network batch counter, providing consistent runs regardless of what happens in the training of each network, or where it is run (e.g., on different processors)";
   flags=SHOW_STEP;
   objs {
@@ -1320,7 +1320,7 @@ Program_Group .projects[0].programs.gp[0] {
     objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
     reference=0;
-    desc=;
+    desc="stopping criterion for training, in terms of count of trials with errors in the epoch (nework cnt_err)";
     init_from=NULL;
    };
    ProgVar @[5] {

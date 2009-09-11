@@ -1,4 +1,4 @@
-// ta_Dump File v2.0
+// ta_Dump File v2.0 -- code v5.0.1.0
 Program .projects[0].programs.gp[0][6] { 
   ProgObjList @.objs = [1] {
     NetMonitor @[0] { 
@@ -13,6 +13,9 @@ Program .projects[0].programs.gp[0][6] {
     };
   };
 
+  ProgType_List @.types = [0] {
+  };
+
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
   };
@@ -21,6 +24,12 @@ Program .projects[0].programs.gp[0][6] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.load_code = [0] {
   };
 
   ProgEl_List @.init_code = [4] {
@@ -44,8 +53,14 @@ Program .projects[0].programs.gp[0][6] {
   };
 
   ProgEl_List @.prog_code = [6] {
-    MethodCall @[0] { };
-    MethodCall @[1] { };
+    MethodCall @[0] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     AssignExpr @[2] { };
     MethodCall @[3] { 
       ProgArg_List @.meth_args = [3] {
@@ -61,7 +76,10 @@ Program .projects[0].programs.gp[0][6] {
 	ProgArg @[2] { };
       };
     };
-    MethodCall @[5] { };
+    MethodCall @[5] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
   };
 };
 Program .projects[0].programs.gp[0][6] {
@@ -91,6 +109,22 @@ Program .projects[0].programs.gp[0][6] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -107,6 +141,22 @@ Program .projects[0].programs.gp[0][6] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -123,6 +173,22 @@ Program .projects[0].programs.gp[0][6] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -139,6 +205,22 @@ Program .projects[0].programs.gp[0][6] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -155,6 +237,22 @@ Program .projects[0].programs.gp[0][6] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -171,6 +269,22 @@ Program .projects[0].programs.gp[0][6] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -196,8 +310,10 @@ Program .projects[0].programs.gp[0][6] {
    object_type=Network;
    object_val=$0$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="network to get data from";
+   init_from=NULL;
   };
  };
  vars {
@@ -210,8 +326,10 @@ Program .projects[0].programs.gp[0][6] {
    object_type=DataTable;
    object_val=$1$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="data table to write the epoch data to";
+   init_from=NULL;
   };
   ProgVar @[1] {
    name="epoch_netmon";
@@ -219,8 +337,10 @@ Program .projects[0].programs.gp[0][6] {
    object_type=NetMonitor;
    object_val=.projects[0].programs.gp[0][6].objs[0]$2$;
    objs_ptr=1;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="network monitor object that contains full specs for what to record and where to get it";
+   init_from=NULL;
   };
   ProgVar @[2] {
    name="epoch_timer";
@@ -228,13 +348,15 @@ Program .projects[0].programs.gp[0][6] {
    object_type=TimeUsed;
    object_val=.projects[0].networks[0].epoch_time$3$;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
+   init_from=NULL;
   };
  };
  functions {
   name=;
-  el_typ=ProgEl;
+  el_typ=Function;
   el_def=0;
  };
  load_code {
@@ -252,12 +374,6 @@ Program .projects[0].programs.gp[0][6] {
    result_var=.projects[0].programs.gp[0][6].vars[2]$4$;
    expr {
     expr="network.epoch_time";
-    flags=;
-    var_expr="$#0#$.epoch_time";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
   };
   MethodCall @[1] {
@@ -278,12 +394,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val=;
      expr {
       expr="epoch_mon_data";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ epoch_mon_data;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -294,12 +404,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val=;
      expr {
       expr="network";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
    };
@@ -322,12 +426,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val="false";
      expr {
       expr="false";
-      flags=;
-      var_expr="false";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -350,12 +448,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val="false";
      expr {
       expr="true";
-      flags=;
-      var_expr="true";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -395,12 +487,6 @@ Program .projects[0].programs.gp[0][6] {
    result_var=$4$;
    expr {
     expr="network.epoch_time";
-    flags=;
-    var_expr="$#0#$.epoch_time";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
   };
   MethodCall @[3] {
@@ -421,12 +507,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val=;
      expr {
       expr="epoch_timer.used.GetTotSecs()";
-      flags=;
-      var_expr="$#0#$.used.GetTotSecs()";
-      vars {
-      };
-      var_names{ epoch_timer;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -437,12 +517,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val="\"\"";
      expr {
       expr="\"epoch_time_tot\"";
-      flags=;
-      var_expr="\"epoch_time_tot\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
     ProgArg @[2] {
@@ -453,12 +527,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val=;
      expr {
       expr="-1";
-      flags=;
-      var_expr="-1";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -481,12 +549,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val=;
      expr {
       expr="epoch_timer.used.GetUsrSecs()";
-      flags=;
-      var_expr="$#0#$.used.GetUsrSecs()";
-      vars {
-      };
-      var_names{ epoch_timer;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -497,12 +559,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val="\"\"";
      expr {
       expr="\"epoch_time_usr\"";
-      flags=;
-      var_expr="\"epoch_time_usr\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
     ProgArg @[2] {
@@ -513,12 +569,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val=;
      expr {
       expr="-1";
-      flags=;
-      var_expr="-1";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };

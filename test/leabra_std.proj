@@ -3276,7 +3276,7 @@ LeabraProject .projects[0] {
    };
    Program @[1] {
     name="LeabraTrain";
-    tags="Leabra, RndSeedList";
+    tags="Leabra, Train, RndSeedList";
     desc="A complete training run of a Leabra network: iterating over epochs until the network has learned the task.  Also has a list of random seeds that are tied to the network batch counter, providing consistent runs regardless of what happens in the training of each network, or where it is run (e.g., on different processors)";
     flags=SHOW_STEP;
     objs {
@@ -3544,7 +3544,7 @@ LeabraProject .projects[0] {
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
-      desc=;
+      desc="stopping criterion for training, in terms of count of trials with errors in the epoch (nework cnt_err)";
       init_from=NULL;
      };
      ProgVar @[5] {
@@ -10065,7 +10065,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        wt_sig {gain=6: off=1.25: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -10102,7 +10102,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      wt_sig {gain=6: off=1.25: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };

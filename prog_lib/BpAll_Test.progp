@@ -1,7 +1,13 @@
-// ta_Dump File v2.0
+// ta_Dump File v2.0 -- code v5.0.1.0
 Program_Group .projects[0].programs.gp[1] { 
   Program_Group .projects[0].programs.gp[1] = [5] {
     Program @[0] { 
+      ProgObjList @.objs = [0] {
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
       ProgVar_List @.args = [1] {
 	ProgVar @[0] { };
       };
@@ -13,6 +19,12 @@ Program_Group .projects[0].programs.gp[1] {
 	ProgVar @[3] { };
 	ProgVar @[4] { };
 	ProgVar @[5] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.load_code = [0] {
       };
 
       ProgEl_List @.init_code = [2] {
@@ -29,7 +41,10 @@ Program_Group .projects[0].programs.gp[1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	MethodCall @[4] { };
+	MethodCall @[4] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
 	NetDataLoop @[5] { 
 	  ProgEl_List @.loop_code = [2] {
 	    ProgramCall @[0] { 
@@ -40,27 +55,51 @@ Program_Group .projects[0].programs.gp[1] {
 	    };
 	    IfElse @[1] { 
 	      ProgEl_List @.true_code = [1] {
-		MethodCall @[0] { };
+		MethodCall @[0] { 
+		  ProgArg_List @.meth_args = [0] {
+		  };
+		};
+	      };
+
+	      ProgEl_List @.false_code = [0] {
 	      };
 	    };
 	  };
 	};
 	IfElse @[6] { 
 	  ProgEl_List @.true_code = [1] {
-	    MethodCall @[0] { };
+	    MethodCall @[0] { 
+	      ProgArg_List @.meth_args = [0] {
+	      };
+	    };
+	  };
+
+	  ProgEl_List @.false_code = [0] {
 	  };
 	};
-	MethodCall @[7] { };
-	MethodCall @[8] { };
-	ProgramCall @[9] { 
+	MethodCall @[7] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+	ProgramCall @[8] { 
 	  ProgArg_List @.prog_args = [1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	MemberAssign @[10] { };
+	MemberAssign @[9] { };
+	MethodCall @[10] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
       };
     };
     Program @[1] { 
+      ProgObjList @.objs = [0] {
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
       ProgVar_List @.args = [2] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
@@ -70,16 +109,34 @@ Program_Group .projects[0].programs.gp[1] {
 	ProgVar @[0] { };
       };
 
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.load_code = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
+      };
+
       ProgEl_List @.prog_code = [6] {
-	MethodCall @[0] { };
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
 	ProgramCall @[1] { 
 	  ProgArg_List @.prog_args = [2] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
 	  };
 	};
-	MethodCall @[2] { };
-	MethodCall @[3] { };
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+	MethodCall @[3] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
 	ProgramCall @[4] { 
 	  ProgArg_List @.prog_args = [1] {
 	    ProgArg @[0] { };
@@ -99,6 +156,9 @@ Program_Group .projects[0].programs.gp[1] {
 	};
       };
 
+      ProgType_List @.types = [0] {
+      };
+
       ProgVar_List @.args = [2] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
@@ -106,6 +166,12 @@ Program_Group .projects[0].programs.gp[1] {
 
       ProgVar_List @.vars = [1] {
 	ProgVar @[0] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.load_code = [0] {
       };
 
       ProgEl_List @.init_code = [2] {
@@ -122,8 +188,17 @@ Program_Group .projects[0].programs.gp[1] {
 	};
       };
 
-      ProgEl_List @.prog_code = [1] {
-	MethodCall @[0] { };
+      ProgEl_List @.prog_code = [2] {
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
       };
     };
     Program @[3] { 
@@ -140,6 +215,9 @@ Program_Group .projects[0].programs.gp[1] {
 	};
       };
 
+      ProgType_List @.types = [0] {
+      };
+
       ProgVar_List @.args = [1] {
 	ProgVar @[0] { };
       };
@@ -147,6 +225,12 @@ Program_Group .projects[0].programs.gp[1] {
       ProgVar_List @.vars = [2] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.load_code = [0] {
       };
 
       ProgEl_List @.init_code = [3] {
@@ -169,9 +253,18 @@ Program_Group .projects[0].programs.gp[1] {
       };
 
       ProgEl_List @.prog_code = [4] {
-	MethodCall @[0] { };
-	MethodCall @[1] { };
-	MethodCall @[2] { };
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
 	MethodCall @[3] { 
 	  ProgArg_List @.meth_args = [2] {
 	    ProgArg @[0] { };
@@ -194,6 +287,9 @@ Program_Group .projects[0].programs.gp[1] {
 	};
       };
 
+      ProgType_List @.types = [0] {
+      };
+
       ProgVar_List @.args = [1] {
 	ProgVar @[0] { };
       };
@@ -202,6 +298,12 @@ Program_Group .projects[0].programs.gp[1] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
 	ProgVar @[2] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.load_code = [0] {
       };
 
       ProgEl_List @.init_code = [4] {
@@ -225,8 +327,14 @@ Program_Group .projects[0].programs.gp[1] {
       };
 
       ProgEl_List @.prog_code = [6] {
-	MethodCall @[0] { };
-	MethodCall @[1] { };
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
 	AssignExpr @[2] { };
 	MethodCall @[3] { 
 	  ProgArg_List @.meth_args = [3] {
@@ -242,7 +350,10 @@ Program_Group .projects[0].programs.gp[1] {
 	    ProgArg @[2] { };
 	  };
 	};
-	MethodCall @[5] { };
+	MethodCall @[5] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
       };
     };
   };
@@ -279,8 +390,10 @@ Program_Group .projects[0].programs.gp[1] {
     object_type=BpNetwork;
     object_val=.projects[0].networks[0]$1$;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="network to operate on";
+    init_from=NULL;
    };
   };
   vars {
@@ -293,8 +406,10 @@ Program_Group .projects[0].programs.gp[1] {
     object_type=DataTable;
     object_val=.projects[0].data.gp[0][0]$2$;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="table of patterns to present to the network, one row at a time";
+    init_from=NULL;
    };
    ProgVar @[1] {
     name="data_loop_order";
@@ -302,17 +417,21 @@ Program_Group .projects[0].programs.gp[1] {
     int_val=0;
     hard_enum_type=DataLoop::Order;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="controls the order in which events (rows of the input data datatable) are presented to the network
 (SEQUENTIAL, PERMUTED, RANDOM)";
+    init_from=NULL;
    };
    ProgVar @[2] {
     name="trial";
     var_type=T_Int;
     int_val=0;
     objs_ptr=0;
-    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="current trial (event) within the epoch -- increments automatically";
+    init_from=NULL;
    };
    ProgVar @[3] {
     name="trial_mon_data";
@@ -320,8 +439,10 @@ Program_Group .projects[0].programs.gp[1] {
     object_type=DataTable;
     object_val=.projects[0].data.gp[1][2]$3$;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
+    init_from=NULL;
    };
    ProgVar @[4] {
     name="epoch_timer";
@@ -329,21 +450,25 @@ Program_Group .projects[0].programs.gp[1] {
     object_type=TimeUsed;
     object_val=.projects[0].networks[0].epoch_time$4$;
     objs_ptr=0;
-    flags=NULL_CHECK;
+    flags=NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
+    init_from=NULL;
    };
    ProgVar @[5] {
     name="data_loop_index";
     var_type=T_Int;
     int_val=5;
     objs_ptr=0;
-    flags=NULL_CHECK;
+    flags=NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
+    init_from=NULL;
    };
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
@@ -361,6 +486,7 @@ Program_Group .projects[0].programs.gp[1] {
     network_var=.projects[0].programs.gp[1][0].args[0]$5$;
     local_ctr_var=.projects[0].programs.gp[1][0].vars[2]$6$;
     counter=Network::trial;
+    update_after=0;
    };
    AssignExpr @[1] {
     desc="get pointer to epoch timer object on network";
@@ -368,11 +494,6 @@ Program_Group .projects[0].programs.gp[1] {
     result_var=.projects[0].programs.gp[1][0].vars[4]$7$;
     expr {
      expr="network.epoch_time";
-     var_expr="$#0#$.epoch_time";
-     vars {
-     };
-     var_names{ network;     };
-     bad_vars{      };
     };
    };
   };
@@ -386,6 +507,7 @@ Program_Group .projects[0].programs.gp[1] {
     network_var=$5$;
     local_ctr_var=$6$;
     counter=Network::trial;
+    update_after=0;
    };
    MemberAssign @[1] {
     desc="set to testing mode";
@@ -394,11 +516,6 @@ Program_Group .projects[0].programs.gp[1] {
     path="train_mode";
     expr {
      expr="Network::TEST";
-     var_expr="Network::TEST";
-     vars {
-     };
-     var_names{      };
-     bad_vars{      };
     };
     update_after=0;
    };
@@ -408,11 +525,6 @@ Program_Group .projects[0].programs.gp[1] {
     result_var=$7$;
     expr {
      expr="network.epoch_time";
-     var_expr="$#0#$.epoch_time";
-     vars {
-     };
-     var_names{ network;     };
-     bad_vars{      };
     };
    };
    MethodCall @[3] {
@@ -433,11 +545,6 @@ Program_Group .projects[0].programs.gp[1] {
       def_val="true";
       expr {
        expr="true";
-       var_expr="true";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -478,11 +585,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="network";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -493,11 +595,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="input_data";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ input_data;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -507,11 +604,6 @@ Program_Group .projects[0].programs.gp[1] {
       flags=;
       cond {
        expr="network.Compute_Weights_Test(trial+1)";
-       var_expr="$#0#$.Compute_Weights_Test($#1#$+1)";
-       vars {
-       };
-       var_names{ network;trial;       };
-       bad_vars{        };
       };
       true_code {
        name=;
@@ -542,6 +634,7 @@ Program_Group .projects[0].programs.gp[1] {
     order_var=.projects[0].programs.gp[1][0].vars[1]$11$;
     order=PERMUTED;
     item_idx_list{ 0;5;4;1;2;3;    };
+    update_after=0;
     dmem_nprocs=1;
     dmem_this_proc=0;
    };
@@ -550,11 +643,6 @@ Program_Group .projects[0].programs.gp[1] {
     flags=;
     cond {
      expr="network.wt_update == Network::BATCH";
-     var_expr="$#0#$.wt_update == Network::BATCH";
-     vars {
-     };
-     var_names{ network;     };
-     bad_vars{      };
     };
     true_code {
      name=;
@@ -591,19 +679,7 @@ Program_Group .projects[0].programs.gp[1] {
      el_def=0;
     };
    };
-   MethodCall @[8] {
-    desc="done with the computation in the epoch -- record time it took";
-    flags=;
-    result_var=NULL;
-    obj=$7$;
-    method=TimeUsed::EndTimer;
-    meth_args {
-     name=;
-     el_typ=ProgArg;
-     el_def=0;
-    };
-   };
-   ProgramCall @[9] {
+   ProgramCall @[8] {
     desc="run program that records data from network and possibly other sources about the epoch";
     flags=;
     target=.projects[0].programs.gp[1][4]$12$;
@@ -620,29 +696,31 @@ Program_Group .projects[0].programs.gp[1] {
       def_val=;
       expr {
        expr="network";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
    };
-   MemberAssign @[10] {
+   MemberAssign @[9] {
     desc="set back to training mode";
     flags=NEW_EL;
     obj=$5$;
     path="train_mode";
     expr {
      expr="Network::TRAIN";
-     var_expr="Network::TRAIN";
-     vars {
-     };
-     var_names{      };
-     bad_vars{      };
     };
     update_after=0;
+   };
+   MethodCall @[10] {
+    desc="done with the computation in the epoch -- record time it took";
+    flags=;
+    result_var=NULL;
+    obj=$7$;
+    method=TimeUsed::EndTimer;
+    meth_args {
+     name=;
+     el_typ=ProgArg;
+     el_def=0;
+    };
    };
   };
  };
@@ -671,8 +749,10 @@ Program_Group .projects[0].programs.gp[1] {
     object_type=BpNetwork;
     object_val=$1$;
     objs_ptr=0;
-    flags=NULL_CHECK;
+    flags=NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="network to operate on -- typically set by higher-level calling programs";
+    init_from=NULL;
    };
    ProgVar @[1] {
     name="input_data";
@@ -680,8 +760,10 @@ Program_Group .projects[0].programs.gp[1] {
     object_type=DataTable;
     object_val=$2$;
     objs_ptr=0;
-    flags=NULL_CHECK;
+    flags=NULL_CHECK|EDIT_VAL;
+    reference=0;
     desc="datatable containing training input/output patterns";
+    init_from=NULL;
    };
   };
   vars {
@@ -693,13 +775,15 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Bool;
     bool_val=1;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="determines whether to update any network view displays after trial is completed";
+    init_from=NULL;
    };
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
@@ -746,11 +830,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="network";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
      ProgArg @[1] {
@@ -761,11 +840,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="input_data";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ input_data;       };
-       bad_vars{        };
       };
      };
     };
@@ -811,11 +885,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="network";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
@@ -851,6 +920,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       layer_name="Input";
       offset {x=0: y=0: };
       use_layer_type=1;
+      na_by_range=0;
       ext_flags=;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
      };
@@ -860,15 +930,17 @@ this program can be extended to do arbitrary things to generate data and apply i
       layer_name="Output";
       offset {x=0: y=0: };
       use_layer_type=1;
+      na_by_range=0;
       ext_flags=;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
      };
      LayerWriterEl @[2] {
       chan_name="Name";
       net_target=TRIAL_NAME;
-      layer_name=;
+      layer_name="Name";
       offset {x=0: y=0: };
       use_layer_type=1;
+      na_by_range=0;
       ext_flags=;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
      };
@@ -890,8 +962,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     object_type=LeabraNetwork;
     object_val=$1$;
     objs_ptr=0;
-    flags=NULL_CHECK;
+    flags=NULL_CHECK|EDIT_VAL;
+    reference=0;
     desc="network to apply inputs to -- typically set by calling program";
+    init_from=NULL;
    };
    ProgVar @[1] {
     name="input_data";
@@ -899,8 +973,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     object_type=DataTable;
     object_val=$2$;
     objs_ptr=0;
-    flags=NULL_CHECK;
+    flags=NULL_CHECK|EDIT_VAL;
+    reference=0;
     desc="input datatable containing input/output patterns";
+    init_from=NULL;
    };
   };
   vars {
@@ -913,13 +989,15 @@ this program can be extended to do arbitrary things to generate data and apply i
     object_type=LayerWriter;
     object_val=.projects[0].programs.gp[1][2].objs[0]$17$;
     objs_ptr=1;
-    flags=NULL_CHECK;
+    flags=NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
+    init_from=NULL;
    };
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
@@ -949,11 +1027,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="input_data";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ input_data;       };
-       bad_vars{        };
       };
      };
      ProgArg @[1] {
@@ -964,11 +1037,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="network";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
@@ -991,11 +1059,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="false";
       expr {
        expr="false";
-       var_expr="false";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -1006,6 +1069,38 @@ this program can be extended to do arbitrary things to generate data and apply i
    el_typ=MethodCall;
    el_def=0;
    MethodCall @[0] {
+    desc="sets the datatable and network for the layer writer, so it knows what to write to";
+    flags=;
+    result_var=NULL;
+    obj=$18$;
+    method=LayerWriter::SetDataNetwork;
+    meth_args {
+     name=;
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=DataBlock_ptr;
+      type="DataBlock*";
+      name="db";
+      required=0;
+      def_val=;
+      expr {
+       expr="input_data";
+      };
+     };
+     ProgArg @[1] {
+      arg_type=Network_ptr;
+      type="Network*";
+      name="net";
+      required=0;
+      def_val=;
+      expr {
+       expr="network";
+      };
+     };
+    };
+   };
+   MethodCall @[1] {
     desc="apply inputs to the network!  layer writer has all the key specs";
     flags=;
     result_var=NULL;
@@ -1046,7 +1141,22 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1063,7 +1173,22 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1080,7 +1205,22 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1097,7 +1237,22 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1114,7 +1269,22 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1131,7 +1301,22 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1157,8 +1342,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     object_type=Network;
     object_val=$1$;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="network to record data from";
+    init_from=NULL;
    };
   };
   vars {
@@ -1171,8 +1358,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     object_type=DataTable;
     object_val=$3$;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="data table to record trial-level data to (this program writes new data to this table!)";
+    init_from=NULL;
    };
    ProgVar @[1] {
     name="trial_netmon";
@@ -1180,13 +1369,15 @@ this program can be extended to do arbitrary things to generate data and apply i
     object_type=NetMonitor;
     object_val=.projects[0].programs.gp[1][3].objs[0]$20$;
     objs_ptr=1;
-    flags=NULL_CHECK;
+    flags=NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
+    init_from=NULL;
    };
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
@@ -1216,11 +1407,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="trial_mon_data";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ trial_mon_data;       };
-       bad_vars{        };
       };
      };
      ProgArg @[1] {
@@ -1231,11 +1417,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="network";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
@@ -1258,11 +1439,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="false";
       expr {
        expr="false";
-       var_expr="false";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -1285,11 +1461,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="false";
       expr {
        expr="true";
-       var_expr="true";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -1353,11 +1524,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="trial_mon_data";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ trial_mon_data;       };
-       bad_vars{        };
       };
      };
      ProgArg @[1] {
@@ -1368,11 +1534,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="1";
       expr {
        expr="1";
-       var_expr="1";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -1406,7 +1567,22 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1423,7 +1599,22 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1440,7 +1631,22 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1457,7 +1663,22 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1474,7 +1695,22 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1491,7 +1727,22 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1517,8 +1768,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     object_type=Network;
     object_val=$1$;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
+    reference=0;
     desc="network to get data from";
+    init_from=NULL;
    };
   };
   vars {
@@ -1531,8 +1784,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     object_type=DataTable;
     object_val=.projects[0].data.gp[1][3]$25$;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="data table to write the epoch data to";
+    init_from=NULL;
    };
    ProgVar @[1] {
     name="epoch_netmon";
@@ -1540,8 +1795,10 @@ this program can be extended to do arbitrary things to generate data and apply i
     object_type=NetMonitor;
     object_val=.projects[0].programs.gp[1][4].objs[0]$26$;
     objs_ptr=1;
-    flags=NULL_CHECK;
+    flags=NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="network monitor object that contains full specs for what to record and where to get it";
+    init_from=NULL;
    };
    ProgVar @[2] {
     name="epoch_timer";
@@ -1549,13 +1806,15 @@ this program can be extended to do arbitrary things to generate data and apply i
     object_type=TimeUsed;
     object_val=$4$;
     objs_ptr=0;
-    flags=NULL_CHECK;
+    flags=NULL_CHECK|USED|EDIT_VAL;
+    reference=0;
     desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
+    init_from=NULL;
    };
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
   };
   load_code {
@@ -1573,11 +1832,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     result_var=.projects[0].programs.gp[1][4].vars[2]$27$;
     expr {
      expr="network.epoch_time";
-     var_expr="$#0#$.epoch_time";
-     vars {
-     };
-     var_names{ network;     };
-     bad_vars{      };
     };
    };
    MethodCall @[1] {
@@ -1598,11 +1852,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="epoch_mon_data";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ epoch_mon_data;       };
-       bad_vars{        };
       };
      };
      ProgArg @[1] {
@@ -1613,11 +1862,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="network";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
@@ -1640,11 +1884,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="false";
       expr {
        expr="false";
-       var_expr="false";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -1667,11 +1906,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="false";
       expr {
        expr="true";
-       var_expr="true";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -1711,11 +1945,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     result_var=$27$;
     expr {
      expr="network.epoch_time";
-     var_expr="$#0#$.epoch_time";
-     vars {
-     };
-     var_names{ network;     };
-     bad_vars{      };
     };
    };
    MethodCall @[3] {
@@ -1736,11 +1965,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="epoch_timer.used.GetTotSecs()";
-       var_expr="$#0#$.used.GetTotSecs()";
-       vars {
-       };
-       var_names{ epoch_timer;       };
-       bad_vars{        };
       };
      };
      ProgArg @[1] {
@@ -1751,11 +1975,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="\"\"";
       expr {
        expr="\"epoch_time_tot\"";
-       var_expr="\"epoch_time_tot\"";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
      ProgArg @[2] {
@@ -1766,11 +1985,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="-1";
-       var_expr="-1";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -1793,11 +2007,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="epoch_timer.used.GetUsrSecs()";
-       var_expr="$#0#$.used.GetUsrSecs()";
-       vars {
-       };
-       var_names{ epoch_timer;       };
-       bad_vars{        };
       };
      };
      ProgArg @[1] {
@@ -1808,11 +2017,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="\"\"";
       expr {
        expr="\"epoch_time_usr\"";
-       var_expr="\"epoch_time_usr\"";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
      ProgArg @[2] {
@@ -1823,11 +2027,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="-1";
-       var_expr="-1";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
