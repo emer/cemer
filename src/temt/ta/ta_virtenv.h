@@ -592,6 +592,8 @@ public:
   virtual void	SetValsToODE_Motor(); // #CAT_ODE set motor params
   virtual void	SetValsToODE_ODEParams(); // #CAT_ODE set ode integration parameters (erp, cfm)
 
+  bool	IsCurType()  { return (joint_type == cur_type); }
+  // #CAT_ODE is the ODE guy actually configured for the current joint type or not?
 
   SIMPLE_COPY(VEJoint);
   SIMPLE_INITLINKS(VEJoint);
@@ -599,6 +601,7 @@ public:
   TA_BASEFUNS(VEJoint);
 protected:
   JointType		cur_type;	// current type that was previously set
+
 #ifndef __MAKETA__
   dJointFeedback	ode_fdbk_obj;	// #IGNORE ode feedback object
 #endif
@@ -835,6 +838,7 @@ public:
     SF_NONE		= 0, // #NO_BIT
     OFF 		= 0x0001, // turn this object off -- do not include in the virtual world
     FM_FILE		= 0x0002, // load object image features from Inventor (iv) object file
+    CUR_FM_FILE		= 0x0020, // #NO_SHOW #READ_ONLY current flag setting load object image features from Inventor (iv) object file
   };
 
   enum Shape {			// shape of the object -- used for intertial mass and for collision detection (unless use_fname
@@ -908,7 +912,8 @@ public:
   virtual void	SetValsToODE_Shape();	// #CAT_ODE set shape information
   virtual void	SetValsToODE_PosRot();	// #CAT_ODE set position and rotation
 
-  bool	IsCurShape()  { return shape == cur_shape; }
+  bool	IsCurShape()  { return ((shape == cur_shape) && 
+				(HasStaticFlag(FM_FILE) == HasStaticFlag(CUR_FM_FILE))); }
   // #CAT_ODE is the ODE guy actually configured for the current shape or not?
 
   virtual void	SnapPosToGrid(float grid_size=0.05f);

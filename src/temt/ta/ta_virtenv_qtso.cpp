@@ -424,26 +424,12 @@ void VEBodyView::Render_impl() {
 	SoCapsule* sp = (SoCapsule*)ssep->getChild(ssep->getNumChildren()-1); // last thing
 	sp->radius = ob->radius;
 	sp->height = ob->length;
-	SoTransform* tx = obv->txfm_shape();
-	if(ob->long_axis == VEBody::LONG_X)
-	  tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-	else if(ob->long_axis == VEBody::LONG_Y)
-	  tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-	else if(ob->long_axis == VEBody::LONG_Z)
-	  tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
 	break;
       }
       case VEBody::CYLINDER: {
 	SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-1); // last thing
 	sp->radius = ob->radius;
 	sp->height = ob->length;
-	SoTransform* tx = obv->txfm_shape();
-	if(ob->long_axis == VEBody::LONG_X)
-	  tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-	else if(ob->long_axis == VEBody::LONG_Y)
-	  tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-	else if(ob->long_axis == VEBody::LONG_Z)
-	  tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
 	break;
       }
       case VEBody::BOX: {
@@ -459,6 +445,8 @@ void VEBodyView::Render_impl() {
       }
     }
   }
+
+  FixOrientation();
 }
 
 // callback for transformer dragger
@@ -844,6 +832,41 @@ void VEJointView::Render_impl() {
   mat->transparency.setValue(0.5f);
 
   SoSeparator* ssep = obv->shapeSeparator();
+  if(ob->IsCurType()) {
+    switch(ob->joint_type) {
+    case VEJoint::BALL: {
+      SoSphere* sp = (SoSphere*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+      sp->radius = ob->vis_size * .5f;
+      break;
+    }
+    case VEJoint::HINGE:
+    case VEJoint::SLIDER: {
+      SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+      sp->radius = ob->vis_size * .1f;
+      sp->height = ob->vis_size;
+      break;
+    }
+    case VEJoint::UNIVERSAL:
+    case VEJoint::HINGE2: {
+      SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-2);
+      sp->radius = ob->vis_size * .1f;
+      sp->height = ob->vis_size;
+      break;
+    }
+    case VEJoint::FIXED: {
+      SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+      sp->width = ob->vis_size *.1f;
+      sp->depth = ob->vis_size *.1f;
+      sp->height = ob->vis_size *.1f;
+      break;
+    }
+    case VEJoint::NO_JOINT: {
+      break;
+    }
+    }
+  }
+
+  FixOrientation();
 }
 
 // callback for transformer dragger
@@ -1141,6 +1164,21 @@ void VEStaticView::FixOrientation() {
 	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
       break;
     }
+    case VEStatic::PLANE: {
+      SoTransform* tx = node_so()->txfm_shape();
+      switch (ob->plane_norm) {
+      case VEStatic::NORM_X:
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+	break;
+      case VEStatic::NORM_Y:
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+	break;
+      case VEStatic::NORM_Z:
+	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+	break;
+      }
+      break;
+    }
     }
   }
 }
@@ -1185,20 +1223,69 @@ void VEStaticView::SetDraggerPos() {
 void VEStaticView::Render_impl() {
   inherited::Render_impl();
 
-  T3VEStatic* node_so = (T3VEStatic*)this->node_so(); // cache
-  if(!node_so) return;
+  T3VEStatic* obv = (T3VEStatic*)this->node_so(); // cache
+  if(!obv) return;
   VEStatic* ob = Static();
   if(!ob) return;
 
-  SoTransform* tx = node_so->transform();
+  SoTransform* tx = obv->transform();
   tx->translation.setValue(ob->pos.x, ob->pos.y, ob->pos.z);
   tx->rotation.setValue(SbVec3f(ob->rot.x, ob->rot.y, ob->rot.z), ob->rot.rot);
 
   if(ob->set_color) {
-    SoMaterial* mat = node_so->material();
+    SoMaterial* mat = obv->material();
     mat->diffuseColor.setValue(ob->color.r, ob->color.g, ob->color.b);
     mat->transparency.setValue(1.0f - ob->color.a);
   }
+
+  SoSeparator* ssep = obv->shapeSeparator();
+
+  if(ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
+    if(ob->HasStaticFlag(VEStatic::FM_FILE)) {
+      SoTransform* tx = obv->txfm_shape();
+      ob->obj_xform.CopyTo(tx);
+    }
+    else {
+      switch(ob->shape) {
+      case VEStatic::SPHERE: {
+	SoSphere* sp = (SoSphere*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+	sp->radius = ob->radius;
+	break;
+      }
+      case VEStatic::CAPSULE: {
+	SoCapsule* sp = (SoCapsule*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+	sp->radius = ob->radius;
+	sp->height = ob->length;
+	break;
+      }
+      case VEStatic::CYLINDER: {
+	SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+	sp->radius = ob->radius;
+	sp->height = ob->length;
+	break;
+      }
+      case VEStatic::BOX: {
+	SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+	sp->width = ob->box.x;
+	sp->depth = ob->box.z;
+	sp->height = ob->box.y;
+	break;
+      }
+      case VEStatic::PLANE: {
+	SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+	sp->height = .01f;
+	sp->width = ob->plane_vis_size.x;
+	sp->depth = ob->plane_vis_size.y;
+	break;
+      }
+      case VEStatic::NO_SHAPE: {
+	break;
+      }
+      }
+    }
+  }
+
+  FixOrientation();
 }
 
 // callback for transformer dragger
@@ -1307,8 +1394,8 @@ void VESpaceView::Render_pre() {
 void VESpaceView::Render_impl() {
   inherited::Render_impl();
 
-  T3VESpace* node_so = (T3VESpace*)this->node_so(); // cache
-  if(!node_so) return;
+  T3VESpace* obv = (T3VESpace*)this->node_so(); // cache
+  if(!obv) return;
   VESpace* ob = Space();
   if(!ob) return;
 }
@@ -1463,6 +1550,16 @@ void VEWorldView::DataUpdateView_impl() {
   UpdateDisplay(true);
 }
 
+void VEWorldView::DataUpdateAfterEdit_impl() {
+  UpdatePanel();
+  // maybe rerender???
+}
+
+void VEWorldView::DataUpdateAfterEdit_Child_impl(taDataView* chld) {
+  // called when lays/specs are updated; typically just update spec view
+  UpdatePanel();
+}
+
 void VEWorldView::UpdateDisplay(bool update_panel) {
   if (update_panel) UpdatePanel();
   Render_impl();
@@ -1527,10 +1624,10 @@ void VEWorldView::Render_pre() {
 }
 
 void VEWorldView::CreateLights() {
-  T3VEWorld* node_so = (T3VEWorld*)this->node_so(); // cache
+  T3VEWorld* obv = (T3VEWorld*)this->node_so(); // cache
   VEWorld* wl = World();
 
-  SoGroup* lgt_group = node_so->getLightGroup();
+  SoGroup* lgt_group = obv->getLightGroup();
   int n_lgt = 0;
   if(wl->light_0) {
     VELight* vlgt = wl->light_0.ptr();
@@ -1547,11 +1644,11 @@ void VEWorldView::CreateLights() {
 }
 
 void VEWorldView::CreateTextures() {
-  T3VEWorld* node_so = (T3VEWorld*)this->node_so(); // cache
+  T3VEWorld* obv = (T3VEWorld*)this->node_so(); // cache
   VEWorld* wl = World();
 
-  SoSwitch* texsw = node_so->getTextureSwitch();
-  SoSwitch* texxfsw = node_so->getTextureXformSwitch();
+  SoSwitch* texsw = obv->getTextureSwitch();
+  SoSwitch* texxfsw = obv->getTextureXformSwitch();
   for(int i=0;i<wl->textures.size;i++) {
     VETexture* vtex = wl->textures.FastEl(i);
     SoTexture2* tex = new SoTexture2;
@@ -1568,16 +1665,16 @@ void VEWorldView::Render_impl() {
   inherited::Render_impl();
 
   // these tests are so the subroutines don't need them
-  T3VEWorld* node_so = (T3VEWorld*)this->node_so(); // cache
-  if(!node_so) return;
+  T3VEWorld* obv = (T3VEWorld*)this->node_so(); // cache
+  if(!obv) return;
   VEWorld* wl = World();
   if(!wl) return;
 
   // don't set the caption!!  just gets in the way!
-//   SoFont* font = node_so->captionFont(true);
+//   SoFont* font = obv->captionFont(true);
 //   float font_size = 0.4f;
 //   font->size.setValue(font_size); // is in same units as geometry units of network
-//   node_so->setCaption(caption().chars());
+//   obv->setCaption(caption().chars());
 
   SetupCameras();
   SetupLights();
@@ -1586,10 +1683,10 @@ void VEWorldView::Render_impl() {
 }
 
 void VEWorldView::SetupCameras() {
-  T3VEWorld* node_so = (T3VEWorld*)this->node_so(); // cache
+  T3VEWorld* obv = (T3VEWorld*)this->node_so(); // cache
   VEWorld* wl = World();
 
-  SoSwitch* cam_switch = node_so->getCameraSwitch();
+  SoSwitch* cam_switch = obv->getCameraSwitch();
   int n_cam = 0;
   VECamera* cam_light = NULL;
   if(wl->camera_0) {
@@ -1619,21 +1716,21 @@ void VEWorldView::SetupCameras() {
   }
 
   if(cam_light) {
-    node_so->setCamLightOn(true);
-    node_so->setCamLightDir(cam_light->dir_norm.x, cam_light->dir_norm.y,
+    obv->setCamLightOn(true);
+    obv->setCamLightDir(cam_light->dir_norm.x, cam_light->dir_norm.y,
 			    -cam_light->dir_norm.z);
   }
   else {
-    node_so->setCamLightOn(false);
+    obv->setCamLightOn(false);
   }
 
 }
 
 void VEWorldView::SetupLights() {
-  T3VEWorld* node_so = (T3VEWorld*)this->node_so(); // cache
+  T3VEWorld* obv = (T3VEWorld*)this->node_so(); // cache
   VEWorld* wl = World();
 
-  SoGroup* lgt_group = node_so->getLightGroup();
+  SoGroup* lgt_group = obv->getLightGroup();
   int n_lgt = 0;
   if(lgt_group->getNumChildren() > 0) {
     if(wl->light_0) {
@@ -1651,14 +1748,14 @@ void VEWorldView::SetupLights() {
   }
 
   if(wl->sun_light.on) {
-    node_so->setSunLightOn(true);
-    node_so->setSunLightDir(0.0f, -1.0f, 0.0f);
-    SoDirectionalLight* slt = node_so->getSunLight();
+    obv->setSunLightOn(true);
+    obv->setSunLightDir(0.0f, -1.0f, 0.0f);
+    SoDirectionalLight* slt = obv->getSunLight();
     slt->intensity = wl->sun_light.intensity;
     slt->color.setValue(wl->sun_light.color.r, wl->sun_light.color.g, wl->sun_light.color.b);
   }
   else {
-    node_so->setSunLightOn(false);
+    obv->setSunLightOn(false);
   }
 }
 
@@ -1704,21 +1801,21 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
   VEWorld* wl = World();
   if(!wl) return img;
 
-  T3VEWorld* node_so = (T3VEWorld*)this->node_so(); // cache
-  if(!node_so) {
+  T3VEWorld* obv = (T3VEWorld*)this->node_so(); // cache
+  if(!obv) {
     if(taMisc::gui_no_win) {	// offscreen rendering mode -- need to build a new worldview
       BuildAll();
       Render_pre();
       Render_impl();
       Render_post();
-      node_so = (T3VEWorld*)this->node_so(); // cache
+      obv = (T3VEWorld*)this->node_so(); // cache
     }
-    if(!node_so) {		// still didn't work
+    if(!obv) {		// still didn't work
       return img;
     }
   }
 
-  SoSwitch* cam_switch = node_so->getCameraSwitch();
+  SoSwitch* cam_switch = obv->getCameraSwitch();
   if(cam_switch->getNumChildren() <= cam_no) return img; // not ready yet
 
   VECamera* vecam = NULL;
@@ -1769,7 +1866,7 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
 //   action.apply(sceneroot);
 //   SbBox3f box = action.getBoundingBox();
 
-  bool ok = cam_renderer->render(node_so);
+  bool ok = cam_renderer->render(obv);
 
 //   cam_renderer->writeToRGB("test_image.rgb");
 

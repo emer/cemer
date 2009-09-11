@@ -1783,6 +1783,7 @@ void VEStatic::SetValsToODE_Shape() {
     return;
 
   cur_shape = shape;
+  SetStaticFlagState(CUR_FM_FILE, HasStaticFlag(FM_FILE));
 
   dGeomSetData((dGeomID)geom_id, (void*)this);
 }
