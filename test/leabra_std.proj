@@ -1957,7 +1957,7 @@ LeabraProject .projects[0] {
   tags=;
   desc=;
   Program @[0] {
-   name="LeabraStartup_simple";
+   name="LeabraStartup_basic";
    tags="Leabra, Startup";
    desc="run project in the background (replaces leabra_startup.css)
 command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx]";
@@ -2094,7 +2094,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      };
     };
     RegisterArgs @[1] {
-     desc="This is KEY!!! actuall processes all args, including those from ProgVarFmArg guys below";
+     desc="This is KEY!!! actually processes all args, including those from ProgVarFmArg guys below";
      flags=;
     };
     PrintExpr @[2] {
@@ -2469,7 +2469,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    };
   };
   Program @[1] {
-   name="LeabraStartup_pb";
+   name="LeabraStartup";
    tags="Leabra, Startup, Parallel Batch";
    desc="run project in the background (replaces leabra_startup.css) -- parallel batch version for running on a cluster";
    flags=STARTUP_RUN;

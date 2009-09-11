@@ -106,7 +106,7 @@ void iClipToolWidget::mouseMoveEvent(QMouseEvent* event) {
     QDrag* drag = new QDrag(this);
     drag->setMimeData(md);
     //Qt::DropAction dropAction = 
-    drag->start(supportedDropActions());
+    drag->exec(supportedDropActions());
   }
 }
 
