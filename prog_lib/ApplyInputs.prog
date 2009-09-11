@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v4.0.21.0
+// ta_Dump File v2.0 -- code v5.0.1.0
 Program .projects[0].programs.gp[0][6] { 
   ProgObjList @.objs = [1] {
     LayerWriter @[0] { 
@@ -10,6 +10,9 @@ Program .projects[0].programs.gp[0][6] {
     };
   };
 
+  ProgType_List @.types = [0] {
+  };
+
   ProgVar_List @.args = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
@@ -17,6 +20,12 @@ Program .projects[0].programs.gp[0][6] {
 
   ProgVar_List @.vars = [1] {
     ProgVar @[0] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.load_code = [0] {
   };
 
   ProgEl_List @.init_code = [2] {
@@ -40,7 +49,10 @@ Program .projects[0].programs.gp[0][6] {
 	ProgArg @[1] { };
       };
     };
-    MethodCall @[1] { };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
   };
 };
 Program .projects[0].programs.gp[0][6] {
@@ -67,7 +79,7 @@ Program .projects[0].programs.gp[0][6] {
      offset {x=0: y=0: };
      use_layer_type=1;
      na_by_range=0;
-     ext_flags=;
+     ext_flags=EXT;
      noise {name="": type=NONE: mean=0: var=0.5: par=1: };
     };
     LayerWriterEl @[1] {
@@ -77,7 +89,7 @@ Program .projects[0].programs.gp[0][6] {
      offset {x=0: y=0: };
      use_layer_type=1;
      na_by_range=0;
-     ext_flags=;
+     ext_flags=TARG;
      noise {name="": type=NONE: mean=0: var=0.5: par=1: };
     };
     LayerWriterEl @[2] {
@@ -108,9 +120,10 @@ Program .projects[0].programs.gp[0][6] {
    object_type=Network;
    object_val=$1$;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="network to apply inputs to -- typically set by calling program";
+   init_from=NULL;
   };
   ProgVar @[1] {
    name="input_data";
@@ -118,9 +131,10 @@ Program .projects[0].programs.gp[0][6] {
    object_type=DataTable;
    object_val=$0$;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="input datatable containing input/output patterns";
+   init_from=NULL;
   };
  };
  vars {
@@ -133,9 +147,10 @@ Program .projects[0].programs.gp[0][6] {
    object_type=LayerWriter;
    object_val=.projects[0].programs.gp[0][6].objs[0]$2$;
    objs_ptr=1;
-   flags=NULL_CHECK|USED;
+   flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
+   init_from=NULL;
   };
  };
  functions {

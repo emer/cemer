@@ -1,80 +1,125 @@
-// ta_Dump File v2.0
-Program .projects[2].programs[1] { 
+// ta_Dump File v2.0 -- code v5.0.1.0
+Program .projects[0].programs[0] { 
+  ProgObjList @.objs = [0] {
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
   ProgVar_List @.args = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
   };
 
-  ProgVar_List @.vars = [6] {
+  ProgVar_List @.vars = [9] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
     ProgVar @[3] { };
     ProgVar @[4] { };
     ProgVar @[5] { };
+    ProgVar @[6] { };
+    ProgVar @[7] { };
+    ProgVar @[8] { };
   };
 
-  ProgEl_List @.prog_code = [22] {
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.load_code = [0] {
+  };
+
+  ProgEl_List @.init_code = [0] {
+  };
+
+  ProgEl_List @.prog_code = [26] {
     IfReturn @[0] { };
-    Comment @[1] { };
-    MiscCall @[2] { 
-      ProgArg_List @.meth_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
+    RegisterArgs @[1] { };
+    PrintExpr @[2] { };
+    MethodCall @[3] { 
+      ProgArg_List @.meth_args = [0] {
       };
     };
-    MiscCall @[3] { 
-      ProgArg_List @.meth_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-      };
-    };
-    RegisterArgs @[4] { };
-    Comment @[5] { };
-    PrintExpr @[6] { };
-    MethodCall @[7] { };
-    MiscCall @[8] { 
-      ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-      };
-    };
-    MiscCall @[9] { 
-      ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-      };
-    };
+    Comment @[4] { };
+    ProgVarFmArg @[5] { };
+    ProgVarFmArg @[6] { };
+    ProgVarFmArg @[7] { };
+    ProgVarFmArg @[8] { };
+    ProgVarFmArg @[9] { };
     ProgVarFmArg @[10] { };
     ProgVarFmArg @[11] { };
     Comment @[12] { };
-    MethodCall @[13] { 
-      ProgArg_List @.meth_args = [4] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-	ProgArg @[3] { };
+    Comment @[13] { };
+    IfElse @[14] { 
+      ProgEl_List @.true_code = [5] {
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	ProgVarFmArg @[1] { };
+	MiscCall @[2] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	VarIncr @[3] { };
+	If @[4] { 
+	  ProgEl_List @.true_code = [2] {
+	    MethodCall @[0] { 
+	      ProgArg_List @.meth_args = [4] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+		ProgArg @[3] { };
+	      };
+	    };
+	    MiscCall @[1] { 
+	      ProgArg_List @.meth_args = [1] {
+		ProgArg @[0] { };
+	      };
+	    };
+	  };
+	};
+      };
+
+      ProgEl_List @.false_code = [2] {
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MiscCall @[1] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
       };
     };
-    MiscCall @[14] { 
-      ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-      };
-    };
-    MethodCall @[15] { 
-      ProgArg_List @.meth_args = [4] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-	ProgArg @[3] { };
-      };
-    };
+    Comment @[15] { };
     MethodCall @[16] { 
-      ProgArg_List @.meth_args = [3] {
+      ProgArg_List @.meth_args = [4] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
 	ProgArg @[2] { };
+	ProgArg @[3] { };
       };
     };
     MethodCall @[17] { 
+      ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+      };
+    };
+    PrintVar @[18] { };
+    Comment @[19] { };
+    MethodCall @[20] { 
       ProgArg_List @.meth_args = [4] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
@@ -82,23 +127,28 @@ Program .projects[2].programs[1] {
 	ProgArg @[3] { };
       };
     };
-    MethodCall @[18] { 
+    MethodCall @[21] { 
       ProgArg_List @.meth_args = [3] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
 	ProgArg @[2] { };
       };
     };
-    OtherProgramVar @[19] { };
-    PrintExpr @[20] { };
-    ProgramCall @[21] { };
+    PrintVar @[22] { };
+    OtherProgramVar @[23] { };
+    PrintExpr @[24] { };
+    ProgramCall @[25] { 
+      ProgArg_List @.prog_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
   };
 };
-Program .projects[2].programs[1] {
+Program .projects[0].programs[0] {
  name="LeabraStartup";
- tags="Leabra, Startup";
- desc="run project in the background (replaces leabra_startup.css)
-command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx]";
+ tags="Leabra, Startup, Parallel Batch";
+ desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx] | [b_start=xxx] [b_end=xxx] for parallel-batch mode";
  flags=STARTUP_RUN;
  objs {
   name=;
@@ -120,9 +170,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="network to operate on -- updates batch counter on network and passes it to train program";
+   init_from=NULL;
   };
   ProgVar @[1] {
    name="input_data";
@@ -130,9 +181,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="datatable with training patterns -- not used by this program, but passed to train program";
+   init_from=NULL;
   };
  };
  vars {
@@ -140,61 +192,98 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
+   name="train";
+   var_type=T_Object;
+   object_type=Program;
+   object_val=.projects[0].programs.gp[0][1]$2$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
+   reference=0;
+   desc="set this to point to your train process";
+   init_from=NULL;
+  };
+  ProgVar @[1] {
    name="batch";
    var_type=T_Object;
    object_type=Program;
-   object_val=.projects[0].programs.gp[0][0]$2$;
+   object_val=.projects[0].programs.gp[0][0]$3$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="set this to point to your batch process";
-  };
-  ProgVar @[1] {
-   name="tag";
-   var_type=T_String;
-   string_val=;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED;
-   reference=0;
-   desc=;
+   init_from=NULL;
   };
   ProgVar @[2] {
+   name="tag";
+   var_type=T_String;
+   string_val="_gui";
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[3] {
+   name="batch_str";
+   var_type=T_String;
+   string_val="00";
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc="batch number as a string (leading zeros)";
+   init_from=NULL;
+  };
+  ProgVar @[4] {
    name="log_dir";
    var_type=T_String;
    string_val=;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="log file directory";
+   init_from=NULL;
   };
-  ProgVar @[3] {
+  ProgVar @[5] {
    name="log_file_nm";
    var_type=T_String;
    string_val=;
    objs_ptr=0;
-   flags=NULL_CHECK|USED;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="name of log file";
+   init_from=NULL;
   };
-  ProgVar @[4] {
+  ProgVar @[6] {
+   name="batch_start";
+   var_type=T_Int;
+   int_val=0;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc="batch starting number";
+   init_from=NULL;
+  };
+  ProgVar @[7] {
    name="EpochOutputData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[1][1]$3$;
+   object_val=.projects[0].data.gp[1][1]$4$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc=;
+   init_from=NULL;
   };
-  ProgVar @[5] {
+  ProgVar @[8] {
    name="TrialOutputData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[1][0]$4$;
+   object_val=.projects[0].data.gp[1][0]$5$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc=;
+   init_from=NULL;
   };
  };
  functions {
@@ -223,94 +312,22 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
     expr="taMisc::gui_active";
    };
   };
-  Comment @[1] {
-   desc="add our special args from command line";
+  RegisterArgs @[1] {
+   desc="This is KEY!!! actually processes all args, including those from ProgVarFmArg guys below";
    flags=;
   };
-  MiscCall @[2] {
-   desc=;
-   flags=;
-   result_var=NULL;
-   object_type=taMisc;
-   method=taMisc::AddArgName;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="flag";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"tag=\"";
-     };
-    };
-    ProgArg @[1] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="name";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"FileTag\"";
-     };
-    };
-   };
-  };
-  MiscCall @[3] {
-   desc=;
-   flags=;
-   result_var=NULL;
-   object_type=taMisc;
-   method=taMisc::AddArgName;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="flag";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"logdir=\"";
-     };
-    };
-    ProgArg @[1] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="name";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"LogDir\"";
-     };
-    };
-   };
-  };
-  RegisterArgs @[4] {
-   desc="This is KEY!!! actuall processes all args, including those from ProgVarFmArg guys below";
-   flags=;
-  };
-  Comment @[5] {
-   desc="Initialize and set variables from args";
-   flags=;
-  };
-  PrintExpr @[6] {
+  PrintExpr @[2] {
    desc=;
    flags=;
    expr {
     expr="\"Loaded project: \" << .projects[0].file_name";
    };
   };
-  MethodCall @[7] {
-   desc=;
+  MethodCall @[3] {
+   desc="initialize process hierarchy prior to setting variables, etc";
    flags=;
    result_var=NULL;
-   obj=.projects[2].programs[1].vars[0]$5$;
+   obj=.projects[0].programs[0].vars[1]$6$;
    method=Program::Init;
    meth_args {
     name=;
@@ -318,147 +335,332 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
     el_def=0;
    };
   };
-  MiscCall @[8] {
+  Comment @[4] {
+   desc="= Std variables in startup program itself =";
+   flags=;
+  };
+  ProgVarFmArg @[5] {
    desc=;
    flags=;
-   result_var=.projects[2].programs[1].vars[1]$6$;
-   object_type=taMisc;
-   method=taMisc::FindArgByName;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="nm";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"FileTag\"";
-     };
-    };
-   };
+   prog=.projects[0].programs[0]$7$;
+   var_name="tag";
+   arg_name="tag";
   };
-  MiscCall @[9] {
+  ProgVarFmArg @[6] {
    desc=;
    flags=;
-   result_var=.projects[2].programs[1].vars[2]$7$;
-   object_type=taMisc;
-   method=taMisc::FindArgByName;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="nm";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"LogDir\"";
-     };
-    };
-   };
+   prog=$7$;
+   var_name="log_dir";
+   arg_name="log_dir";
   };
-  ProgVarFmArg @[10] {
-   desc=;
-   flags=;
-   prog=.projects[0].programs.gp[0][1]$8$;
-   var_name="max_epoch";
-   arg_name="epochs";
-  };
-  ProgVarFmArg @[11] {
+  ProgVarFmArg @[7] {
    desc=;
    flags=;
    prog=$2$;
+   var_name="max_epoch";
+   arg_name="epochs";
+  };
+  ProgVarFmArg @[8] {
+   desc=;
+   flags=;
+   prog=$2$;
+   var_name="rnd_init";
+   arg_name="rnd_init";
+  };
+  ProgVarFmArg @[9] {
+   desc=;
+   flags=;
+   prog=$3$;
    var_name="max_batch";
    arg_name="batches";
   };
+  ProgVarFmArg @[10] {
+   desc="b_end is parallel-batch mode of operation (see b_start)";
+   flags=;
+   prog=$3$;
+   var_name="max_batch";
+   arg_name="b_end";
+  };
+  ProgVarFmArg @[11] {
+   desc="b_start is parallel-batch mode of operation (see also b_end)";
+   flags=;
+   prog=$3$;
+   var_name="batch";
+   arg_name="b_start";
+  };
   Comment @[12] {
-   desc="Set log files";
+   desc="= Add your own variables here =";
    flags=;
   };
-  MethodCall @[13] {
-   desc="save args to file: last arg is to include dmem proc number";
+  Comment @[13] {
+   desc="= Below saves log files of standard data tables =";
    flags=;
-   result_var=.projects[2].programs[1].vars[3]$9$;
-   obj=.projects[2].programs[1].vars[4]$10$;
-   method=taBase::GetFileNameFmProject;
-   meth_args {
+  };
+  IfElse @[14] {
+   desc="if passed b_start, then turn off init_batch in Batch program, so it starts here instead of 0";
+   flags=;
+   cond {
+    expr="taMisc::CheckArgByName(\"b_start\")";
+   };
+   true_code {
     name=;
-    el_typ=ProgArg;
+    el_typ=ProgEl;
     el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="ext";
-     required=1;
-     def_val=;
-     expr {
-      expr="\".args\"";
+    MethodCall @[0] {
+     desc="directly set variable on batch program";
+     flags=;
+     result_var=NULL;
+     obj=$6$;
+     method=Program::SetVar;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="var_nm";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="\"init_batch\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Variant_ref;
+       type="const Variant&";
+       name="value";
+       required=0;
+       def_val=;
+       expr {
+	expr="false";
+       };
+      };
      };
     };
-    ProgArg @[1] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="tag";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="tag";
+    ProgVarFmArg @[1] {
+     desc="read in the arg to us too, so we can set file names based on it";
+     flags=;
+     prog=$7$;
+     var_name="batch_start";
+     arg_name="b_start";
+    };
+    MiscCall @[2] {
+     desc="string version with leading zeros";
+     flags=;
+     result_var=.projects[0].programs[0].vars[3]$8$;
+     object_type=taMisc;
+     method=taMisc::LeadingZeros;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="num";
+       required=0;
+       def_val=;
+       expr {
+	expr="batch_start";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="len";
+       required=0;
+       def_val=;
+       expr {
+	expr="2";
+       };
+      };
      };
     };
-    ProgArg @[2] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="subdir";
-     required=0;
-     def_val="\"\"";
+    VarIncr @[3] {
+     desc="add to tag for setting log file names";
+     flags=;
+     var=.projects[0].programs[0].vars[2]$9$;
      expr {
-      expr="log_dir";
+      expr="\".\" + batch_str";
      };
     };
-    ProgArg @[3] {
-     arg_type=bool;
-     type="bool";
-     name="dmem_proc_no";
-     required=0;
-     def_val="false";
-     expr {
-      expr="false";
+    If @[4] {
+     desc="save startup args: only for first job in parallel batch mode, or this should be 0 otherwise in any case";
+     flags=;
+     cond {
+      expr="batch_start == 0";
+     };
+     true_code {
+      name=;
+      el_typ=ProgEl;
+      el_def=0;
+      MethodCall @[0] {
+       desc="save args to file: last arg is to include dmem proc number";
+       flags=;
+       result_var=.projects[0].programs[0].vars[5]$10$;
+       obj=.projects[0].programs[0].vars[7]$11$;
+       method=taBase::GetFileNameFmProject;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="const taString&";
+	 name="ext";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="\".args\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="const taString&";
+	 name="tag";
+	 required=0;
+	 def_val="\"\"";
+	 expr {
+	  expr="tag.before(\".00\",-1)";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="const taString&";
+	 name="subdir";
+	 required=0;
+	 def_val="\"\"";
+	 expr {
+	  expr="log_dir";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=bool;
+	 type="bool";
+	 name="dmem_proc_no";
+	 required=0;
+	 def_val="false";
+	 expr {
+	  expr="false";
+	 };
+	};
+       };
+      };
+      MiscCall @[1] {
+       desc=;
+       flags=;
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::FullArgStringToFile;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="const taString&";
+	 name="fname";
+	 required=0;
+	 def_val="\"\"";
+	 expr {
+	  expr="log_file_nm";
+	 };
+	};
+       };
+      };
+     };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc="save args to file: last arg is to include dmem proc number";
+     flags=;
+     result_var=$10$;
+     obj=$11$;
+     method=taBase::GetFileNameFmProject;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="ext";
+       required=1;
+       def_val=;
+       expr {
+	expr="\".args\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="tag";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="tag";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="subdir";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_dir";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="dmem_proc_no";
+       required=0;
+       def_val="false";
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    MiscCall @[1] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     object_type=taMisc;
+     method=taMisc::FullArgStringToFile;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="fname";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_file_nm";
+       };
+      };
      };
     };
    };
   };
-  MiscCall @[14] {
-   desc=;
+  Comment @[15] {
+   desc="== Save epoch log -- on by default ==";
    flags=;
-   result_var=NULL;
-   object_type=taMisc;
-   method=taMisc::FullArgStringToFile;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="fname";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="log_file_nm";
-     };
-    };
-   };
   };
-  MethodCall @[15] {
+  MethodCall @[16] {
    desc="last arg is to include dmem proc number";
    flags=;
-   result_var=$9$;
-   obj=$10$;
+   result_var=$10$;
+   obj=$11$;
    method=taBase::GetFileNameFmProject;
    meth_args {
     name=;
@@ -506,11 +708,11 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
     };
    };
   };
-  MethodCall @[16] {
+  MethodCall @[17] {
    desc="last arg is to restrict log to dmem_proc = 0";
    flags=;
    result_var=NULL;
-   obj=$10$;
+   obj=$11$;
    method=DataTable::SaveDataLog;
    meth_args {
     name=;
@@ -548,11 +750,26 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
     };
    };
   };
-  MethodCall @[17] {
+  PrintVar @[18] {
+   desc=;
+   flags=;
+   message="Saving epoch log data to:";
+   print_var=$10$;
+   print_var2=NULL;
+   print_var3=NULL;
+   print_var4=NULL;
+   print_var5=NULL;
+   print_var6=NULL;
+  };
+  Comment @[19] {
+   desc="== Save trial log -- OFF by default ==";
+   flags=;
+  };
+  MethodCall @[20] {
    desc="last arg is to include dmem proc number";
    flags=OFF;
-   result_var=$9$;
-   obj=.projects[2].programs[1].vars[5]$11$;
+   result_var=$10$;
+   obj=.projects[0].programs[0].vars[8]$12$;
    method=taBase::GetFileNameFmProject;
    meth_args {
     name=;
@@ -600,11 +817,11 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
     };
    };
   };
-  MethodCall @[18] {
+  MethodCall @[21] {
    desc="last arg is to restrict log to dmem_proc = 0";
    flags=OFF;
    result_var=NULL;
-   obj=$11$;
+   obj=$12$;
    method=DataTable::SaveDataLog;
    meth_args {
     name=;
@@ -642,32 +859,63 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
     };
    };
   };
-  OtherProgramVar @[19] {
+  PrintVar @[22] {
    desc=;
+   flags=OFF;
+   message="Saving trial log data to:";
+   print_var=$10$;
+   print_var2=NULL;
+   print_var3=NULL;
+   print_var4=NULL;
+   print_var5=NULL;
+   print_var6=NULL;
+  };
+  OtherProgramVar @[23] {
+   desc="propagate the tag";
    flags=;
-   other_prog=.projects[0].programs.gp[0][9]$12$;
+   other_prog=.projects[0].programs.gp[0][9]$13$;
    set_other=1;
-   var_1=$6$;
+   var_1=$9$;
    var_2=NULL;
    var_3=NULL;
    var_4=NULL;
   };
-  PrintExpr @[20] {
+  PrintExpr @[24] {
    desc=;
    flags=;
    expr {
     expr="\"Running: \" << batch.name";
    };
   };
-  ProgramCall @[21] {
+  ProgramCall @[25] {
    desc=;
    flags=;
-   target=$2$;
+   target=$3$;
    targ_ld_init="*LeabraBatch*";
    prog_args {
     name=;
     el_typ=ProgArg;
     el_def=0;
+    ProgArg @[0] {
+     arg_type=LeabraNetwork;
+     type="LeabraNetwork*";
+     name="network";
+     required=1;
+     def_val=;
+     expr {
+      expr="network";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=DataTable;
+     type="DataTable*";
+     name="input_data";
+     required=1;
+     def_val=;
+     expr {
+      expr="input_data";
+     };
+    };
    };
   };
  };

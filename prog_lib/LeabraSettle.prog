@@ -1,5 +1,11 @@
-// ta_Dump File v2.0 -- code v4.0.21.0
+// ta_Dump File v2.0 -- code v5.0.1.0
 Program .projects[0].programs.gp[0][4] { 
+  ProgObjList @.objs = [0] {
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
   ProgVar_List @.args = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
@@ -11,20 +17,32 @@ Program .projects[0].programs.gp[0][4] {
     ProgVar @[2] { };
   };
 
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.load_code = [0] {
+  };
+
   ProgEl_List @.init_code = [1] {
     NetCounterInit @[0] { };
   };
 
   ProgEl_List @.prog_code = [10] {
     NetCounterInit @[0] { };
-    MethodCall @[1] { };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     ProgramCall @[2] { 
       ProgArg_List @.prog_args = [2] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
       };
     };
-    MethodCall @[3] { };
+    MethodCall @[3] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     IfElse @[4] { 
       ProgEl_List @.true_code = [1] {
 	AssignExpr @[0] { };
@@ -46,15 +64,24 @@ Program .projects[0].programs.gp[0][4] {
 	IfBreak @[3] { };
       };
     };
-    MethodCall @[6] { };
+    MethodCall @[6] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     If @[7] { 
       ProgEl_List @.true_code = [1] {
-	MethodCall @[0] { };
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
       };
     };
     If @[8] { 
       ProgEl_List @.true_code = [1] {
-	MethodCall @[0] { };
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
       };
     };
     NetUpdateView @[9] { };
@@ -85,9 +112,10 @@ Program .projects[0].programs.gp[0][4] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
-   flags=NULL_CHECK|USED;
+   flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc=;
+   init_from=NULL;
   };
   ProgVar @[1] {
    name="input_data";
@@ -95,9 +123,10 @@ Program .projects[0].programs.gp[0][4] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc=;
+   init_from=NULL;
   };
  };
  vars {
@@ -109,28 +138,31 @@ Program .projects[0].programs.gp[0][4] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="current cycle of settling (local loop counter)";
+   init_from=NULL;
   };
   ProgVar @[1] {
    name="min_cycles";
    var_type=T_Int;
-   int_val=0;
+   int_val=15;
    objs_ptr=0;
-   flags=NULL_CHECK|USED;
+   flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="IMPORTANT: this value is obtained from the network min_cycles and min_cycles_phase2 -- change the value on the network object, not here in this program!
 sets the minimum number of cycles to settle for, regardless of network state changes, etc";
+   init_from=NULL;
   };
   ProgVar @[2] {
    name="update_net_view";
    var_type=T_Bool;
    bool_val=1;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="if true, will update network views at end of settling";
+   init_from=NULL;
   };
  };
  functions {

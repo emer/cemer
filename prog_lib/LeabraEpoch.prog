@@ -1,5 +1,11 @@
-// ta_Dump File v2.0 -- code v4.0.21.0
+// ta_Dump File v2.0 -- code v5.0.1.0
 Program .projects[0].programs.gp[0][2] { 
+  ProgObjList @.objs = [0] {
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
   ProgVar_List @.args = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
@@ -15,6 +21,12 @@ Program .projects[0].programs.gp[0][2] {
     ProgVar @[6] { };
   };
 
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.load_code = [0] {
+  };
+
   ProgEl_List @.init_code = [2] {
     NetCounterInit @[0] { };
     AssignExpr @[1] { };
@@ -28,7 +40,10 @@ Program .projects[0].programs.gp[0][2] {
 	ProgArg @[0] { };
       };
     };
-    MethodCall @[3] { };
+    MethodCall @[3] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     NetDataLoop @[4] { 
       ProgEl_List @.loop_code = [1] {
 	ProgramCall @[0] { 
@@ -41,22 +56,43 @@ Program .projects[0].programs.gp[0][2] {
     };
     IfElse @[5] { 
       ProgEl_List @.true_code = [1] {
-	MethodCall @[0] { };
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+      };
+
+      ProgEl_List @.false_code = [0] {
       };
     };
-    MethodCall @[6] { };
+    MethodCall @[6] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     If @[7] { 
       ProgEl_List @.true_code = [2] {
-	MethodCall @[0] { };
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
 	If @[1] { 
 	  ProgEl_List @.true_code = [2] {
-	    MethodCall @[0] { };
-	    MethodCall @[1] { };
+	    MethodCall @[0] { 
+	      ProgArg_List @.meth_args = [0] {
+	      };
+	    };
+	    MethodCall @[1] { 
+	      ProgArg_List @.meth_args = [0] {
+	      };
+	    };
 	  };
 	};
       };
     };
-    MethodCall @[8] { };
+    MethodCall @[8] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     ProgramCall @[9] { 
       ProgArg_List @.prog_args = [1] {
 	ProgArg @[0] { };
@@ -89,9 +125,10 @@ Program .projects[0].programs.gp[0][2] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="network to operate on";
+   init_from=NULL;
   };
   ProgVar @[1] {
    name="input_data";
@@ -99,9 +136,10 @@ Program .projects[0].programs.gp[0][2] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="table of patterns to present to the network, one row at a time";
+   init_from=NULL;
   };
  };
  vars {
@@ -114,19 +152,21 @@ Program .projects[0].programs.gp[0][2] {
    int_val=1;
    hard_enum_type=DataLoop::Order;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="controls the order in which events (rows of the input data datatable) are presented to the network
 (SEQUENTIAL, PERMUTED, RANDOM)";
+   init_from=NULL;
   };
   ProgVar @[1] {
    name="trial";
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="current trial (event) within the epoch -- increments automatically";
+   init_from=NULL;
   };
   ProgVar @[2] {
    name="trial_mon_data";
@@ -134,9 +174,10 @@ Program .projects[0].programs.gp[0][2] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[1][0]$2$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
+   init_from=NULL;
   };
   ProgVar @[3] {
    name="epoch_timer";
@@ -144,36 +185,40 @@ Program .projects[0].programs.gp[0][2] {
    object_type=TimeUsed;
    object_val=.projects[0].networks[0].epoch_time$3$;
    objs_ptr=0;
-   flags=NULL_CHECK|USED;
+   flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
+   init_from=NULL;
   };
   ProgVar @[4] {
    name="data_loop_index";
    var_type=T_Int;
-   int_val=0;
+   int_val=6;
    objs_ptr=0;
-   flags=NULL_CHECK|USED;
+   flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
+   init_from=NULL;
   };
   ProgVar @[5] {
    name="compute_rel_netin";
    var_type=T_Bool;
    bool_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="call Compute_AvgAbsRelNetin() function to collect relative net input information telling how much each layer receives from each of its receiving projections";
+   init_from=NULL;
   };
   ProgVar @[6] {
    name="adapt_rel_abs_netin";
    var_type=T_Bool;
    bool_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="use the computed rel and abs netin values to adapt the wt_scale.abs and wt_scale.rel params of network conspecs to match target values that are set on the projections -- see conspec rel_net_adapt and layerspec abs_net_adapt parmeters and comments for more information";
+   init_from=NULL;
   };
  };
  functions {
@@ -304,7 +349,7 @@ Program .projects[0].programs.gp[0][2] {
    index_var=.projects[0].programs.gp[0][2].vars[4]$10$;
    order_var=.projects[0].programs.gp[0][2].vars[0]$11$;
    order=PERMUTED;
-   item_idx_list{ 2;1;4;3;5;0;   };
+   item_idx_list{ 4;1;5;3;2;0;   };
    update_after=0;
    dmem_nprocs=1;
    dmem_this_proc=0;

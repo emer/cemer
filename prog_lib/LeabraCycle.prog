@@ -1,5 +1,11 @@
-// ta_Dump File v2.0 -- code v4.0.21.0
+// ta_Dump File v2.0 -- code v5.0.1.0
 Program .projects[0].programs.gp[0][5] { 
+  ProgObjList @.objs = [0] {
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
   };
@@ -8,8 +14,20 @@ Program .projects[0].programs.gp[0][5] {
     ProgVar @[0] { };
   };
 
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.load_code = [0] {
+  };
+
+  ProgEl_List @.init_code = [0] {
+  };
+
   ProgEl_List @.prog_code = [2] {
-    MethodCall @[0] { };
+    MethodCall @[0] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     NetUpdateView @[1] { };
   };
 };
@@ -38,9 +56,10 @@ Program .projects[0].programs.gp[0][5] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
-   flags=NULL_CHECK|USED;
+   flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc=;
+   init_from=NULL;
   };
  };
  vars {
@@ -52,9 +71,10 @@ Program .projects[0].programs.gp[0][5] {
    var_type=T_Bool;
    bool_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
+   init_from=NULL;
   };
  };
  functions {

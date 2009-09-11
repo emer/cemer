@@ -1,5 +1,11 @@
-// ta_Dump File v2.0 -- code v4.0.21.0
+// ta_Dump File v2.0 -- code v5.0.1.0
 Program .projects[0].programs.gp[0][9] { 
+  ProgObjList @.objs = [0] {
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
   };
@@ -11,6 +17,15 @@ Program .projects[0].programs.gp[0][9] {
     ProgVar @[3] { };
     ProgVar @[4] { };
     ProgVar @[5] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.load_code = [0] {
+  };
+
+  ProgEl_List @.init_code = [0] {
   };
 
   ProgEl_List @.prog_code = [6] {
@@ -69,9 +84,10 @@ Program .projects[0].programs.gp[0][9] {
    object_type=Network;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc=;
+   init_from=NULL;
   };
  };
  vars {
@@ -81,56 +97,62 @@ Program .projects[0].programs.gp[0][9] {
   ProgVar @[0] {
    name="tag";
    var_type=T_String;
-   string_val=;
+   string_val="_gui";
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="user-provided tag (startup script will set this!)";
+   init_from=NULL;
   };
   ProgVar @[1] {
    name="wts_subdir";
    var_type=T_String;
    string_val=;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="user-provided subdirectory to save weights in";
+   init_from=NULL;
   };
   ProgVar @[2] {
    name="fname";
    var_type=T_String;
-   string_val=;
+   string_val="/Users/oreilly/emergent/test/leabra_std.00_0010.wts.gz";
    objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="final generated file name -- do not edit!";
+   init_from=NULL;
   };
   ProgVar @[3] {
    name="epoch_str";
    var_type=T_String;
-   string_val="0036";
+   string_val="0010";
    objs_ptr=0;
-   flags=NULL_CHECK|USED;
+   flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="string rep of epoch with leading zeros";
+   init_from=NULL;
   };
   ProgVar @[4] {
    name="batch_str";
    var_type=T_String;
-   string_val="03";
+   string_val="00";
    objs_ptr=0;
-   flags=NULL_CHECK|USED;
+   flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="string rep of batch with leading zeros";
+   init_from=NULL;
   };
   ProgVar @[5] {
    name="final_tag";
    var_type=T_String;
-   string_val=".03_0036";
+   string_val=".00_0010";
    objs_ptr=0;
-   flags=NULL_CHECK|USED;
+   flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc="batch + epoch";
+   init_from=NULL;
   };
  };
  functions {
