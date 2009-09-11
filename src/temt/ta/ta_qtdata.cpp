@@ -3424,7 +3424,6 @@ void taiItemChooser::showEvent(QShowEvent* event) {
 }
 
 void taiItemChooser::show_timeout() {
-  filter->insert("^");
   filter->deselect();
   filter->end(false);
   if (m_selItem)
