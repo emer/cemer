@@ -1550,16 +1550,6 @@ void VEWorldView::DataUpdateView_impl() {
   UpdateDisplay(true);
 }
 
-void VEWorldView::DataUpdateAfterEdit_impl() {
-  UpdatePanel();
-  // maybe rerender???
-}
-
-void VEWorldView::DataUpdateAfterEdit_Child_impl(taDataView* chld) {
-  // called when lays/specs are updated; typically just update spec view
-  UpdatePanel();
-}
-
 void VEWorldView::UpdateDisplay(bool update_panel) {
   if (update_panel) UpdatePanel();
   Render_impl();

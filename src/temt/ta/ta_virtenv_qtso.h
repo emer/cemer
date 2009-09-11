@@ -260,8 +260,6 @@ protected:
 
   override void		DataUpdateView_impl();
   override void 	UpdateAfterEdit_impl();
-  override void		DataUpdateAfterEdit_impl(); //
-  override void		DataUpdateAfterEdit_Child_impl(taDataView* chld); // called by lays and prjns
 
   override void		Render_pre();
   override void		Render_impl();
