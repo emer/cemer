@@ -3415,23 +3415,26 @@ void taiItemChooser::setView(int value, bool force) {
 
 void taiItemChooser::showEvent(QShowEvent* event) {
   inherited::showEvent(event);
+  filter->insert("^");
+  filter->deselect();
+  filter->end(false);
   if (m_selItem)
     items->scrollToItem(m_selItem);
   QTimer::singleShot(150, this, SLOT(show_timeout()) );
 }
 
 void taiItemChooser::show_timeout() {
-  if (m_selItem)
-    items->scrollToItem(m_selItem);
   filter->insert("^");
   filter->deselect();
   filter->end(false);
+  if (m_selItem)
+    items->scrollToItem(m_selItem);
 }
 
 void taiItemChooser::timFilter_timeout() {
   // if nothing has changed in text, do nothing
   QString text = filter->text();
-  if (last_filter == text) return;
+  if (last_filter == text || text == "^") return;
   // if we are already filtering, then don't reenter, but just try again
   if (m_changing > 0) {
     timFilter->start();
