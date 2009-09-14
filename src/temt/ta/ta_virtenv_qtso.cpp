@@ -323,7 +323,7 @@ void VEBodyView::Render_pre() {
 void VEBodyView::FixOrientation() {
   VEBody* ob = Body();
   T3VEBody* obv = (T3VEBody*)node_so();
-  if(ob) {
+  if(ob && ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
     switch(ob->shape) {
     case VEBody::CAPSULE: {
       SoTransform* tx = obv->txfm_shape();
@@ -737,7 +737,7 @@ void VEJointView::Render_pre() {
 void VEJointView::FixOrientation() {
   VEJoint* ob = Joint();
   T3VEJoint* obv = (T3VEJoint*)node_so();
-  if(ob && obv) {
+  if(ob && obv && ob->IsCurType()) {// only if we are currently the right type
     SoSeparator* ssep = obv->shapeSeparator();
     switch(ob->joint_type) {
     case VEJoint::HINGE:
@@ -1142,7 +1142,7 @@ void VEStaticView::Render_pre() {
 void VEStaticView::FixOrientation() {
   VEStatic* ob = Static();
   T3VEStatic* obv = (T3VEStatic*)node_so();
-  if(ob) {
+  if(ob && ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
     switch(ob->shape) {
     case VEStatic::CAPSULE: {
       SoTransform* tx = obv->txfm_shape();
