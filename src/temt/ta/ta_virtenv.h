@@ -259,6 +259,56 @@ public:
   virtual void	SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
   // #BUTTON #CAT_ODE snap the position of body to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
 
+  //////////////////////////////
+  //	Set Damping
+
+  virtual void SetDampingDefaults();
+  // #CAT_ODE Resets the damping settings to the current world's settings.
+  virtual void SetDamping(float ldamp, float adamp);
+  // #CAT_ODE Convenience function to set both linear and angular scales at once.
+  virtual void SetLinearDamping(float ldamp);
+  // #CAT_ODE Set the body's linear damping scale. After setting a damping scale, the body will ignore the world's damping scale until dBodySetDampingDefaults() is called.
+  virtual void SetAngularDamping(float adamp);
+  // #CAT_ODE Set the body's angular damping scale. After setting a damping scale, the body will ignore the world's damping scale until dBodySetDampingDefaults() is called.
+  virtual void SetLinearDampingThreshold(float lthresh);
+  // #CAT_ODE Set the body's linear damping threshold. The damping will be applied only if the linear speed is above the threshold limit
+  virtual void SetAngularDampingThreshold(float athresh);
+  // #CAT_ODE Set the body's angular damping threshold. The damping will be applied only if the angular speed is above the threshold limit
+  virtual void SetMaxAngularSpeed(float maxaspeed);
+  // #CAT_ODE You can also limit the maximum angular speed. In contrast to the damping functions, the angular velocity is affected before the body is moved. This means that it will introduce errors in joints that are forcing the body to rotate too fast. Some bodies have naturally high angular velocities (like cars' wheels), so you may want to give them a very high (like the default, dInfinity) limit.
+
+  //////////////////////////////
+  //	Get Damping
+
+  virtual float GetLinearDamping();
+  // #CAT_ODE Get the body's linear damping scale. After setting a damping scale, the body will ignore the world's damping scale until dBodySetDampingDefaults() is called.
+  virtual float GetAngularDamping();
+  // #CAT_ODE Get the body's angular damping scale. After setting a damping scale, the body will ignore the world's damping scale until dBodySetDampingDefaults() is called.
+  virtual float GetLinearDampingThreshold();
+  // #CAT_ODE Get the body's linear damping threshold. The damping will be applied only if the linear speed is above the threshold limit
+  virtual float GetAngularDampingThreshold();
+  // #CAT_ODE Get the body's angular damping threshold. The damping will be applied only if the angular speed is above the threshold limit
+  virtual float GetMaxAngularSpeed();
+  // #CAT_ODE You can also limit the maximum angular speed. In contrast to the damping functions, the angular velocity is affected before the body is moved. This means that it will introduce errors in joints that are forcing the body to rotate too fast. Some bodies have naturally high angular velocities (like cars' wheels), so you may want to give them a very high (like the default, dInfinity) limit.
+
+  //////////////////////////////
+  //	Finite rotation mode - important for wheels
+
+  virtual void SetFiniteRotationMode(int rotmode);
+  // #CAT_ODE This function controls the way a body's orientation is updated at each time step. The mode argument can be 0 or 1.0: An "infinitesimal" orientation update is used. This is fast to compute, but it can occasionally cause inaccuracies for bodies that are rotating at high speed, especially when those bodies are joined to other bodies. This is the default for every new body that is created. 1: A finite orientation update is used. This is more costly to compute, but will be more accurate for high speed rotations. Note however that high speed rotations can result in many types of error in a simulation, and this mode will only fix one of those sources of error.
+  virtual void SetFiniteRotationAxis(float xr, float yr, float zr);
+  //#CAT_ODE This sets the finite rotation axis for a body. This is axis only has meaning when the finite rotation mode is set (see dBodySetFiniteRotationMode). If this axis is zero (0,0,0), full finite rotations are performed on the body. If this axis is nonzero, the body is rotated by performing a partial finite rotation along the axis direction followed by an infinitesimal rotation along an orthogonal direction. This can be useful to alleviate certain sources of error caused by quickly spinning bodies. For example, if a car wheel is rotating at high speed you can call this function with the wheel's hinge axis as the argument to try and improve its behavior.
+  virtual int GetFiniteRotationMode();
+  // #CAT_ODE Return the current finite rotation mode of a body (0 or 1)
+
+  //////////////////////////////
+  //	Gravity mode
+
+  virtual void SetGravityMode(int mode);
+  // #CAT_ODE Set whether the body is influenced by the world's gravity or not. If mode is nonzero it is, if mode is zero, it isn't. Newly created bodies are always influenced by the world's gravity.
+  virtual int GetGravityMode();
+  // #CAT_ODE Get whether the body is influenced by the world's gravity or not. If mode is nonzero it is, if mode is zero, it isn't. Newly created bodies are always influenced by the world's gravity.
+
   bool	IsCurShape()  { return ((shape == cur_shape) &&
 				(HasBodyFlag(FM_FILE) == HasBodyFlag(CUR_FM_FILE))); }
   // #CAT_ODE is the ODE guy actually configured for the current shape or not?

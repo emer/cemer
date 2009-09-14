@@ -461,6 +461,131 @@ void VEBody::SnapPosToGrid(float grid_size, bool do_init_pos) {
   }
 }
 
+  //////////////////////////////
+  //	Set Damping
+
+void VEBody::SetDampingDefaults() {
+  if(!body_id) CreateODE();
+  if(!body_id) return;
+  dBodyID bid = (dBodyID)body_id;
+  dBodySetDampingDefaults(bid);
+}
+
+void VEBody::SetDamping(float ldamp, float adamp) {
+  if(!body_id) CreateODE();
+  if(!body_id) return;
+  dBodyID bid = (dBodyID)body_id;
+  dBodySetDamping(bid, ldamp, adamp);
+}
+
+void VEBody::SetLinearDamping(float ldamp) {
+  if(!body_id) CreateODE();
+  if(!body_id) return;
+  dBodyID bid = (dBodyID)body_id;
+  dBodySetLinearDamping(bid, ldamp);
+}
+
+void VEBody::SetAngularDamping(float adamp) {
+  if(!body_id) CreateODE();
+  if(!body_id) return;
+  dBodyID bid = (dBodyID)body_id;
+  dBodySetAngularDamping(bid, adamp);
+}
+
+void VEBody::SetLinearDampingThreshold(float ldampthresh) {
+  if(!body_id) CreateODE();
+  if(!body_id) return;
+  dBodyID bid = (dBodyID)body_id;
+  dBodySetLinearDampingThreshold(bid, ldampthresh);
+}
+
+void VEBody::SetAngularDampingThreshold(float adampthresh) {
+  if(!body_id) CreateODE();
+  if(!body_id) return;
+  dBodyID bid = (dBodyID)body_id;
+  dBodySetAngularDampingThreshold(bid, adampthresh);
+}
+
+void VEBody::SetMaxAngularSpeed(float maxaspeed) {
+  if(!body_id) CreateODE();
+  if(!body_id) return;
+  dBodyID bid = (dBodyID)body_id;
+  dBodySetMaxAngularSpeed(bid, maxaspeed);
+}
+
+  //////////////////////////////
+  //	Get Damping
+
+float VEBody::GetLinearDamping() {
+  if(!body_id) CreateODE();
+  dBodyID bid = (dBodyID)body_id;
+  return dBodyGetLinearDamping(bid);
+}
+
+float VEBody::GetAngularDamping() {
+  if(!body_id) CreateODE();
+  dBodyID bid = (dBodyID)body_id;
+  return dBodyGetAngularDamping(bid);
+}
+
+float VEBody::GetLinearDampingThreshold() {
+  if(!body_id) CreateODE();
+  dBodyID bid = (dBodyID)body_id;
+  return dBodyGetLinearDampingThreshold(bid);
+}
+
+float VEBody::GetAngularDampingThreshold() {
+  if(!body_id) CreateODE();
+  dBodyID bid = (dBodyID)body_id;
+  return dBodyGetAngularDampingThreshold(bid);
+}
+
+float VEBody::GetMaxAngularSpeed() {
+  if(!body_id) CreateODE();
+  dBodyID bid = (dBodyID)body_id;
+  return dBodyGetMaxAngularSpeed(bid);
+}
+
+
+  //////////////////////////////
+  //	Finite Rotation Mode
+
+void VEBody::SetFiniteRotationMode(int rotmode) {
+  if(!body_id) CreateODE();
+  if(!body_id) return;
+  dBodyID bid = (dBodyID)body_id;
+  dBodySetFiniteRotationMode(bid, rotmode);
+}
+
+void VEBody::SetFiniteRotationAxis(float xr, float yr, float zr) {
+  if(!body_id) CreateODE();
+  if(!body_id) return;
+  dBodyID bid = (dBodyID)body_id;
+  dBodySetFiniteRotationAxis(bid, xr, yr, zr);
+}
+
+int VEBody::GetFiniteRotationMode() {
+  if(!body_id) CreateODE();
+  dBodyID bid = (dBodyID)body_id;
+  return dBodyGetFiniteRotationMode(bid);
+}
+
+  //////////////////////////////
+  //	Gravity mode
+
+void VEBody::SetGravityMode(int mode) {
+  if(!body_id) CreateODE();
+  if(!body_id) return;
+  dBodyID bid = (dBodyID)body_id;
+  dBodySetGravityMode(bid, mode);
+}
+
+int VEBody::GetGravityMode() {
+  if(!body_id) CreateODE();
+  dBodyID bid = (dBodyID)body_id;
+  return dBodyGetGravityMode(bid);
+}
+
 /////////////////////////////////////////////
 //		Group
 
