@@ -36,6 +36,22 @@ void ODEIntParams::UpdateAfterEdit_impl() {
 }
 
 ////////////////////////////////////////////////
+//	damping
+
+void ODEDamping::Initialize() {
+  lin = 0.0f;
+  lin_thr = 0.0f;
+  ang = 0.0f;
+  ang_thr = 0.0f;
+  ang_speed = 0.0f;
+}
+
+void ODEDamping::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+}
+
+
+////////////////////////////////////////////////
 //		surfaces and textures
 
 void VESurface::Initialize() {
@@ -90,6 +106,9 @@ void VEBody::Initialize() {
   set_color = true;
   color.Set(0.2f, 0.2f, .5f, .5f);	// transparent blue.. why not..
   fixed_joint_id = NULL;
+  finite_rotation_mode = false;
+  gravity_mode = true;
+  damping = false;
 }
 
 void VEBody::Destroy() {
@@ -178,6 +197,9 @@ void VEBody::SetValsToODE() {
   SetValsToODE_Rotation();
   SetValsToODE_Velocity();
   SetValsToODE_Mass();
+  SetValsToODE_FiniteRotation();
+  SetValsToODE_Gravity();
+  SetValsToODE_Damping();
 }
 
 void VEBody::SetValsToODE_Shape() {
@@ -313,6 +335,35 @@ void VEBody::SetValsToODE_Mass() {
     break;
   }
   dBodySetMass(bid, &mass_ode);
+}
+
+void VEBody::SetValsToODE_FiniteRotation() {
+  if (finite_rotation_mode) {
+      SetFiniteRotationMode(1);
+      if (finite_rotation_axis.x != 0.0 || \
+	  finite_rotation_axis.y != 0.0 || \
+	  finite_rotation_axis.z != 0.0)
+	SetFiniteRotationAxis(finite_rotation_axis.x, finite_rotation_axis.y, finite_rotation_axis.z);
+    }
+  else
+      SetFiniteRotationMode(0);    
+}
+
+void VEBody::SetValsToODE_Gravity() {
+  if (gravity_mode)
+    SetGravityMode(1);
+  else
+    SetGravityMode(0);
+}
+
+void VEBody::SetValsToODE_Damping() {
+  if (damping) {
+      SetLinearDamping(damp.lin);
+      SetLinearDampingThreshold(damp.lin_thr);
+      SetAngularDamping(damp.ang);
+      SetAngularDampingThreshold(damp.ang_thr);
+      SetMaxAngularSpeed(damp.ang_speed);
+  }
 }
 
 void VEBody::GetValsFmODE(bool updt_disp) {
@@ -464,20 +515,6 @@ void VEBody::SnapPosToGrid(float grid_size, bool do_init_pos) {
   //////////////////////////////
   //	Set Damping
 
-void VEBody::SetDampingDefaults() {
-  if(!body_id) CreateODE();
-  if(!body_id) return;
-  dBodyID bid = (dBodyID)body_id;
-  dBodySetDampingDefaults(bid);
-}
-
-void VEBody::SetDamping(float ldamp, float adamp) {
-  if(!body_id) CreateODE();
-  if(!body_id) return;
-  dBodyID bid = (dBodyID)body_id;
-  dBodySetDamping(bid, ldamp, adamp);
-}
-
 void VEBody::SetLinearDamping(float ldamp) {
   if(!body_id) CreateODE();
   if(!body_id) return;
@@ -514,40 +551,6 @@ void VEBody::SetMaxAngularSpeed(float maxaspeed) {
 }
 
   //////////////////////////////
-  //	Get Damping
-
-float VEBody::GetLinearDamping() {
-  if(!body_id) CreateODE();
-  dBodyID bid = (dBodyID)body_id;
-  return dBodyGetLinearDamping(bid);
-}
-
-float VEBody::GetAngularDamping() {
-  if(!body_id) CreateODE();
-  dBodyID bid = (dBodyID)body_id;
-  return dBodyGetAngularDamping(bid);
-}
-
-float VEBody::GetLinearDampingThreshold() {
-  if(!body_id) CreateODE();
-  dBodyID bid = (dBodyID)body_id;
-  return dBodyGetLinearDampingThreshold(bid);
-}
-
-float VEBody::GetAngularDampingThreshold() {
-  if(!body_id) CreateODE();
-  dBodyID bid = (dBodyID)body_id;
-  return dBodyGetAngularDampingThreshold(bid);
-}
-
-float VEBody::GetMaxAngularSpeed() {
-  if(!body_id) CreateODE();
-  dBodyID bid = (dBodyID)body_id;
-  return dBodyGetMaxAngularSpeed(bid);
-}
-
-
-  //////////////////////////////
   //	Finite Rotation Mode
 
 void VEBody::SetFiniteRotationMode(int rotmode) {
@@ -564,12 +567,6 @@ void VEBody::SetFiniteRotationAxis(float xr, float yr, float zr) {
   dBodySetFiniteRotationAxis(bid, xr, yr, zr);
 }
 
-int VEBody::GetFiniteRotationMode() {
-  if(!body_id) CreateODE();
-  dBodyID bid = (dBodyID)body_id;
-  return dBodyGetFiniteRotationMode(bid);
-}
-
   //////////////////////////////
   //	Gravity mode
 
@@ -578,12 +575,6 @@ void VEBody::SetGravityMode(int mode) {
   if(!body_id) return;
   dBodyID bid = (dBodyID)body_id;
   dBodySetGravityMode(bid, mode);
-}
-
-int VEBody::GetGravityMode() {
-  if(!body_id) CreateODE();
-  dBodyID bid = (dBodyID)body_id;
-  return dBodyGetGravityMode(bid);
 }
 
 /////////////////////////////////////////////
