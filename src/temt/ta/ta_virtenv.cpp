@@ -745,7 +745,7 @@ bool VEObjCarousel::ViewObjName(const String& obj_nm) {
 //		Joints
 
 void VEJointStops::Initialize() {
-  stops_on = false;
+  stops_on = true;
   lo = -3.1415f;
   hi = 3.1415f;
   def = 0.0f;
