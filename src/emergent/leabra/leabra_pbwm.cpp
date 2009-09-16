@@ -1392,6 +1392,7 @@ bool PFCOutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
   int pfc_prjn_idx;
   LeabraLayer* pfc_lay = FindLayerFmSpec(lay, pfc_prjn_idx, &TA_PFCLayerSpec);
+  PFCLayerSpec* pfcspec = (PFCLayerSpec*)pfc_lay->spec.SPtr();
 
   for(int mg=0; mg<lay->units.gp.size; mg++) {
     LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[mg];
@@ -1404,6 +1405,9 @@ void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
     rugp->misc_float1 = pfcgp->misc_float1;
 
     float gate_val = rugp->misc_float1;
+    if(net->ct_cycle <= net->mid_minus_cycle) {
+      gate_val = pfcspec->gate.base_gain; // everyone is at base gain prior to output gate
+    }
     
     for(int i=0;i<rugp->size;i++) {
       LeabraUnit* ru = (LeabraUnit*)rugp->FastEl(i);
