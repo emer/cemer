@@ -190,8 +190,6 @@ void MatrixConSpec::Initialize() {
 
   SetUnique("wt_limits", true);
   wt_limits.sym = false;
-
-  matrix_rule = MAINT;
 }
 
 void MatrixConSpec::UpdateAfterEdit_impl() {
@@ -219,16 +217,12 @@ void MatrixBiasSpec::Initialize() {
   wt_limits.type = WeightLimits::NONE;
   dwt_thresh = .1f;
 
-  matrix_rule = MAINT;
-
   SetUnique("lrate", true);
   lrate = 0.0f;			// default is no lrate
 }
 
 void MatrixNoiseSpec::Initialize() {
   patch_noise = true;
-  nogo_thr = 50;
-  nogo_gain = 0.0f;
 }
 
 void MatrixUnitSpec::Initialize() {
@@ -249,8 +243,6 @@ void MatrixUnitSpec::Initialize() {
   SetUnique("noise_adapt", true);
   noise_adapt.trial_fixed = true;
   noise_adapt.mode = NoiseAdaptSpec::PVLV_LVE;
-
-  freeze_net = true;
 }
 
 void MatrixUnitSpec::Defaults() {
@@ -261,59 +253,6 @@ void MatrixUnitSpec::Defaults() {
 void MatrixUnitSpec::InitLinks() {
   inherited::InitLinks();
   bias_spec.type = &TA_MatrixBiasSpec;
-}
-
-void MatrixUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
-  LeabraLayer* lay = u->own_lay();
-  if(lay->hard_clamped) return;
-  
-  float eff_dt = dt.net;
-  // this is the new part of the code: getting the effective dt relative to the freeze net fun
-  if(freeze_net) {
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->spec.SPtr();
-    if(ls->InheritsFrom(&TA_MatrixLayerSpec)) {
-      MatrixLayerSpec* mls = (MatrixLayerSpec*)lay->spec.SPtr();
-      if(mls->bg_type == MatrixLayerSpec::MAINT) {
-	if(net->phase_no == 2) eff_dt = 0.0f;
-      }
-      else {
-	if(net->phase_no >= 1) eff_dt = 0.0f;
-      }
-    }
-    else {			// Xmatrix
-      if(net->phase_no >= 1) eff_dt = 0.0f; // freeze in plus and beyond
-    }
-  }
-
-  // remainder below here should be same as original, except dt.net -> eff_dt
-  if(net->inhib_cons_used) {
-    u->g_i_raw += u->g_i_delta;
-    u->gc.i = u->g_i_raw;
-    u->gc.i = u->prv_g_i + eff_dt * (u->gc.i - u->prv_g_i);
-    u->prv_g_i = u->gc.i;
-  }
-
-  u->net_raw += u->net_delta;
-  float tot_net = (u->bias_scale * u->bias.OwnCn(0)->wt) + u->net_raw;
-  if(u->HasExtFlag(Unit::EXT)) {
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-    tot_net += u->ext * ls->clamp.gain;
-  }
-
-  u->net_delta = 0.0f;	// clear for next use
-  u->g_i_delta = 0.0f;	// clear for next use
-
-  if(act_fun == SPIKE) {
-    // todo: need a mech for inhib spiking
-    u->net = tot_net;		// store directly for integration
-    Compute_NetinInteg_Spike(u,net);
-  }
-  else {
-    u->net = u->prv_net + eff_dt * (tot_net - u->prv_net);
-    u->prv_net = u->net;
-  }
-
-  u->i_thr = Compute_IThresh(u, net);
 }
 
 float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
@@ -352,11 +291,6 @@ float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
     }
   }
 
-  int nogos = (int)fabs((float)mugp->misc_state);
-  if(nogos > matrix_noise.nogo_thr) {
-    noise_amp *= matrix_noise.nogo_gain * (float)(nogos - matrix_noise.nogo_thr);
-  }
-
   float rval = 0.0f;
   if(noise_adapt.trial_fixed) {
     rval = u->noise; // u->noise is trial-level generated value
@@ -375,33 +309,41 @@ float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
 //	Matrix Layer Spec	//
 //////////////////////////////////
 
-void MatrixMiscSpec::Initialize() {
-  neg_da_bl = 0.0002f;
-  neg_gain = 1.5f;
-  perf_gain = 0.0f;
-  snr_err_da = 1.0f;
-  no_snr_mod = false;
+void MatrixRndGoSpec::Initialize() {
+  nogo_thr = 50;
+  nogo_p = .1f;
+  nogo_da = 10.0f;
 }
 
-void ContrastSpec::Initialize() {
-  gain = 1.0f;
-  one_val = true;
-  contrast = .5f;
-  go_p = .5f;
-  go_n = .5f;
-  nogo_p = .5f;
-  nogo_n = .5f;
+void MatrixGateBiasSpec::Initialize() {
+  one_bias = true;
+  bias = 5.0f;
+  mnt_nogo = 5.0f;
+  empty_go = 5.0f;
+  out_pvr = 5.0f;
+  mnt_pvr = 0.0f;
+}
+
+void MatrixGateBiasSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(one_bias) {
+    mnt_nogo = bias;
+    empty_go = bias;
+    out_pvr = bias;
+  }
+}
+
+void MatrixMiscSpec::Initialize() {
+  da_gain = 1.0f;
+  mnt_encode_gain = 0.1f;
+  neg_da_bl = 0.0f; // 0.0002f;
+  neg_gain = 1.0f; // 1.5f;
+  no_snr_mod = false;
 }
 
 void MatrixGoNogoGainSpec::Initialize() {
   on = false;
   go_p = go_n = nogo_p = nogo_n = 1.0f;
-}
-
-void MatrixRndGoSpec::Initialize() {
-  nogo_thr = 50;
-  nogo_p = .1f;
-  nogo_da = 10.0f;
 }
 
 /////////////////////////////////////////////////////
@@ -431,16 +373,15 @@ void MatrixLayerSpec::Initialize() {
 
 void MatrixLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(contrast.one_val) {
-    contrast.go_p = contrast.go_n = contrast.nogo_p = contrast.nogo_n = contrast.contrast;
-    // set them all
-  }
+  gate_bias.UpdateAfterEdit();
 }
 
 void MatrixLayerSpec::Defaults() {
   inherited::Defaults();
   matrix.Defaults();
-  contrast.Defaults();
+  gate_bias.Defaults();
+  go_nogo_gain.Defaults();
+  rnd_go.Defaults();
   Initialize();
 }
 
@@ -546,22 +487,6 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
       cs->SetUnique("wt_limits", true);
       cs->wt_limits.sym = false;
     }
-    if(bg_type == MatrixLayerSpec::OUTPUT) {
-      if(lay->CheckError((cs->matrix_rule != MatrixConSpec::OUTPUT), quiet, rval,
-		    "OUTPUT BG requires MatrixConSpec matrix_rule of OUTPUT type, I just set it for you in spec:",
-		    cs->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-	cs->SetUnique("matrix_rule", true);
-	cs->matrix_rule = MatrixConSpec::OUTPUT;
-      }
-    }
-    else {			// pfc
-      if(lay->CheckError((cs->matrix_rule == MatrixConSpec::OUTPUT), quiet, rval,
-		    "BG_pfc requires MatrixConSpec matrix_rule of MAINT type, I just set it for you in spec:",
-		    cs->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-	cs->SetUnique("matrix_rule", true);
-	cs->matrix_rule = MatrixConSpec::MAINT;
-      }
-    }
   }
   if(lay->CheckError(da_lay == NULL, quiet, rval,
 		"Could not find DA layer (PVLVDaLayerSpec) -- must receive MarkerConSpec projection from one!")) {
@@ -581,164 +506,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
 void MatrixLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Init_Weights(lay, net);
-  UNIT_GP_ITR(lay, 
-	      LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
-	      u->misc_1 = 0.0f;
-	      );
   LabelUnits(lay);
-}
-
-void MatrixLayerSpec::Compute_DaMod_NoContrast(LeabraUnit* u, float dav, int go_no) {
-  if(go_no == (int)PFCGateSpec::GATE_GO) {	// we are a GO gate unit
-    if(dav >= 0.0f)  { 
-      u->vcb.g_h = dav;
-      u->vcb.g_a = 0.0f;
-    }
-    else {
-      u->vcb.g_h = 0.0f;
-      u->vcb.g_a = -dav;
-    }
-  }
-  else {			// we are a NOGO gate unit
-    if(dav >= 0.0f) {
-      u->vcb.g_h = 0.0f;
-      u->vcb.g_a = dav;
-    }
-    else {
-      u->vcb.g_h = -dav;
-      u->vcb.g_a = 0.0f;
-    }
-  }
-}
-
-
-void MatrixLayerSpec::Compute_DaMod_Contrast(LeabraUnit* u, float dav, float act_val, int go_no) {
-  if(go_no == (int)PFCGateSpec::GATE_GO) {	// we are a GO gate unit
-    if(dav >= 0.0f)  { 
-      u->vcb.g_h = contrast.gain * dav * ((1.0f - contrast.go_p) + (contrast.go_p * act_val));
-      if(go_nogo_gain.on) u->vcb.g_h *= go_nogo_gain.go_p;
-      u->vcb.g_a = 0.0f;
-    }
-    else {
-      u->vcb.g_h = 0.0f;
-      u->vcb.g_a = -matrix.neg_gain * contrast.gain * dav * ((1.0f - contrast.go_n) + (contrast.go_n * act_val));
-      if(go_nogo_gain.on) u->vcb.g_a *= go_nogo_gain.go_n;
-    }
-  }
-  else {			// we are a NOGO gate unit
-    if(dav >= 0.0f) {
-      u->vcb.g_h = 0.0f;
-      u->vcb.g_a = contrast.gain * dav * ((1.0f - contrast.nogo_p) + (contrast.nogo_p * act_val));
-      if(go_nogo_gain.on) u->vcb.g_a *= go_nogo_gain.nogo_p;
-    }
-    else {
-      u->vcb.g_h = -matrix.neg_gain * contrast.gain * dav * ((1.0f - contrast.nogo_n) + (contrast.nogo_n * act_val));
-      if(go_nogo_gain.on) u->vcb.g_h *= go_nogo_gain.nogo_n;
-      u->vcb.g_a = 0.0f;
-    }
-  }
-}
-
-void MatrixLayerSpec::Compute_DaTonicMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork*) {
-  int da_prjn_idx;
-  LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_PVLVDaLayerSpec);
-  PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
-  float dav = contrast.gain * dals->da.tonic_da;
-  int idx = 0;
-  LeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
-    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx % 2); // GO = 0, NOGO = 1
-    u->dav = dav;		// accurately reflect tonic modulation!
-    Compute_DaMod_NoContrast(u, dav, go_no);
-    idx++;
-  }
-}
-
-void MatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork*) {
-  int da_prjn_idx;
-  LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_PVLVDaLayerSpec);
-  PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
-  float tonic_da = dals->da.tonic_da;
-
-  int idx = 0;
-  LeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
-    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx % 2); // GO = 0, NOGO = 1
-
-    // need to separate out the tonic and non-tonic because tonic contributes with contrast.gain
-    // but perf is down-modulated by matrix.perf_gain..
-    float non_tonic = u->dav - tonic_da;
-    float dav = contrast.gain * (tonic_da + matrix.perf_gain * non_tonic);
-    Compute_DaMod_NoContrast(u, dav, go_no);
-    idx++;
-  }
-}
-
-void MatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net) {
-  int snr_prjn_idx = 0;
-  LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
-
-  PFCGateSpec::GateSignal gate_sig = (PFCGateSpec::GateSignal)mugp->misc_state2;
-    
-  int idx = 0;
-  LeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
-    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx % 2); // GO = 0, NOGO = 1
-    LeabraRecvCons* snrcg = (LeabraRecvCons*)u->recv[snr_prjn_idx];
-    LeabraUnit* snrsu = (LeabraUnit*)snrcg->Un(0);
-
-    float gating_act = 0.0f;	// activity of the unit during the gating action firing
-    float snrthal_act = 0.0f;	// activity of the snrthal during gating action firing
-    if(net->phase_no == 3) 	{ gating_act = u->act_m2; snrthal_act = snrsu->act_m2; } // TRANS
-    else if(net->phase_no == 2) { gating_act = u->act_p;  snrthal_act = snrsu->act_p; }	// GOGO
-    else if(net->phase_no == 1)	{ gating_act = u->act_m;  snrthal_act = snrsu->act_m; }	// OUTPUT
-
-    if(gate_sig == PFCGateSpec::GATE_NOGO)	// if didn't actually GO (act > thresh), then no learning!
-      snrthal_act = 0.0f;
-    
-    if(matrix.no_snr_mod)	// disable!
-      snrthal_act = 1.0f;
-
-    float dav = snrthal_act * u->dav - matrix.neg_da_bl; // da is modulated by snrthal; sub baseline
-    if(mugp->misc_state1 == PFCGateSpec::NOGO_RND_GO) {
-      dav += rnd_go.nogo_da; 
-    }
-
-    if((gate_sig == PFCGateSpec::GATE_NOGO) && (net->phase_no == 1) &&
-       snr_lay->HasExtFlag(Unit::COMP) && (snrsu->targ > .5f)) {
-      //  output gating -- get plus-phase err signal if avail, as COMP input to snr layer
-      dav += matrix.snr_err_da;
-    }
-
-    u->dav = dav;		// make it show up in display
-    Compute_DaMod_Contrast(u, dav, gating_act, go_no);
-    idx++;
-  }
-}
-
-void MatrixLayerSpec::Compute_MotorGate(LeabraLayer* lay, LeabraNetwork*) {
-  int snr_prjn_idx = 0;
-  LeabraLayer* snrthal_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
-  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_lay->spec.SPtr();
-
-  for(int gi=0; gi<lay->units.gp.size; gi++) {
-    LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
-    LeabraUnit_Group* snrgp = (LeabraUnit_Group*)snrthal_lay->units.gp[gi];
-    LeabraUnit* snru = (LeabraUnit*)snrgp->Leaf(0);
-
-    PFCGateSpec::GateSignal gate_sig = PFCGateSpec::GATE_NOGO;
-    if(snru->act_eq > snrthalsp->snrthal.go_thr) {
-      gate_sig = PFCGateSpec::GATE_GO;
-      mugp->misc_state = 0;
-    }
-    else {
-      mugp->misc_state++;
-    }
-    snrgp->misc_state2 = mugp->misc_state2 = gate_sig; // store the raw gating signal itself
-  }
 }
 
 void MatrixLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
@@ -746,20 +514,168 @@ void MatrixLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
   
   for(int gi=0; gi<lay->units.gp.size; gi++) {
     LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
-    if(bg_type == MatrixLayerSpec::MAINT) {
-      if(net->phase_no == 0)
-	Compute_DaTonicMod(lay, mugp, net);
-      else if(net->phase_no == 1)
-	Compute_DaPerfMod(lay, mugp, net);
-      else if(net->phase_no == 2)
-	Compute_DaLearnMod(lay, mugp, net);
+    Compute_BiasDaMod(lay, mugp, net); // always just compute this one
+  }
+}
+
+void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp, 
+					LeabraNetwork* net) {
+  int da_prjn_idx;
+  LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_PVLVDaLayerSpec);
+  PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
+  float tonic_da = dals->da.tonic_da;
+  int pfc_mnt_cnt = mugp->misc_state; // is pfc maintaining or not?
+  int gp_sz = mugp->leaves / 2;
+  bool nogo_rnd_go = (mugp->misc_state1 == PFCGateSpec::NOGO_RND_GO);
+
+  int idx = 0;
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
+    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx / gp_sz);
+
+    float bias_dav = 0.0f;
+
+    if(bg_type == OUTPUT) {	// output gating guy
+      if(net->pv_detected) {	// PV reward trial -- bias output gating
+	// only if pfc is maintaining..
+	if(pfc_mnt_cnt > 0)
+	  bias_dav = gate_bias.out_pvr; // cur_dav is almost certainly 0
+      }
+      else {			// not a PV trial
+	if(pfc_mnt_cnt > 0 && !nogo_rnd_go) // currently maintaining: bias NoGo for everything
+	  bias_dav = -gate_bias.mnt_nogo;
+      }
     }
-    else {			// OUTPUT
-      if(net->phase_no == 0)
-	Compute_DaTonicMod(lay, mugp, net);
-      else if(net->phase_no == 1)
-	Compute_DaLearnMod(lay, mugp, net);
-      // don't do anything in 2nd plus!
+    else {			// MAINT
+      if(net->pv_detected) {
+	// only if pfc is maintaining, bias output gating
+	if(pfc_mnt_cnt > 0)
+	  bias_dav = gate_bias.mnt_pvr;
+      }
+      else {			// not a PV trial
+	if(pfc_mnt_cnt > 0 && !nogo_rnd_go) // currently maintaining: bias NoGo for everything
+	  bias_dav = -gate_bias.mnt_nogo;
+	else			// otherwise, bias to maintain/update
+	  bias_dav = gate_bias.empty_go;
+      }
+    }
+    // don't set here because we need the values for computation otherwise
+//     u->dav = tonic_da + bias_dav;
+    Compute_UnitBiasDaMod(u, bias_dav + tonic_da, go_no);
+    idx++;
+  }
+}
+
+void MatrixLayerSpec::Compute_UnitBiasDaMod(LeabraUnit* u, float bias_dav, int go_no) {
+  if(go_no == (int)PFCGateSpec::GATE_NOGO) {
+    if(bias_dav >= 0.0f) {
+      u->vcb.g_h = 0.0f;
+      u->vcb.g_a = bias_dav;
+      if(go_nogo_gain.on) u->vcb.g_a *= go_nogo_gain.nogo_p;
+    }
+    else {
+      u->vcb.g_h = -bias_dav;
+      if(go_nogo_gain.on) u->vcb.g_h *= go_nogo_gain.nogo_n;
+      u->vcb.g_a = 0.0f;
+    }
+  }
+  else {			// must be a GO
+    if(bias_dav >= 0.0f)  { 
+      u->vcb.g_h = bias_dav;
+      if(go_nogo_gain.on) u->vcb.g_h *= go_nogo_gain.go_p;
+      u->vcb.g_a = 0.0f;
+    }
+    else {
+      u->vcb.g_h = 0.0f;
+      u->vcb.g_a = -bias_dav;
+      if(go_nogo_gain.on) u->vcb.g_a *= go_nogo_gain.go_n;
+    }
+  }
+}
+
+void MatrixLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
+  // grab the da value in addition to activation
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+    u->act_m2 = u->act_eq;
+    u->act_p2 = u->dav;		// store mid-minus dav value
+  }
+}
+
+void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::PostSettle(lay, net);
+
+  // grab the dav in minus phase
+  if(net->phase_no == 0) {
+    LeabraUnit* u;
+    taLeafItr i;
+    FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+      u->misc_2 = u->dav;	// store end-of-minus dav value
+    }
+  }
+  else if(net->phase_no == 1) {
+    // end of plus -- compute da value used for learning
+    Compute_LearnDaVal(lay, net);
+  }
+}
+
+// this is called at end of plus phase, to establish a da value for driving learning
+
+void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
+  for(int gi=0; gi<lay->units.gp.size; gi++) {
+    LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
+    int snr_prjn_idx = 0;
+    LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
+
+    LeabraUnit_Group* snrug = (LeabraUnit_Group*)snr_lay->units.gp[gi];
+    LeabraUnit* snr_u = (LeabraUnit*)snrug->Leaf(0);
+
+    PFCGateSpec::GateSignal gate_sig = (PFCGateSpec::GateSignal)mugp->misc_state2;
+    int pfc_mnt_cnt = mugp->misc_state; // is pfc maintaining or not?
+    bool nogo_rnd_go = (mugp->misc_state1 == PFCGateSpec::NOGO_RND_GO);
+    int gp_sz = mugp->leaves / 2;
+    
+    int idx = 0;
+    LeabraUnit* u;
+    taLeafItr i;
+    FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
+      PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx / gp_sz);
+
+      // critical gating activation value is mid-minus state
+      float act_val = u->act_m2;
+      float snrthal_act = snr_u->act_m2;
+
+      float lrn_dav = 0.0f;	// learning dopamine value -- compute it!
+
+      if(bg_type == OUTPUT) {
+	if((gate_sig == PFCGateSpec::GATE_NOGO) || (gate_sig == PFCGateSpec::GATE_MNT_GO))
+	  snrthal_act = 0.0f;	// if no OUT_GO, nothing for us..
+
+	if(matrix.no_snr_mod)	// disable -- just for testing!
+	  snrthal_act = 1.0f;
+
+	lrn_dav = matrix.da_gain * snrthal_act * u->dav; // dav is current plus phase -- good for out gating
+      }
+      else {			// MAINT
+	if((gate_sig == PFCGateSpec::GATE_NOGO) || (gate_sig == PFCGateSpec::GATE_OUT_GO))
+	  snrthal_act = 0.0f;	// if no MNT_GO, nothing for us..
+
+	if(matrix.no_snr_mod)	// disable -- just for testing!
+	  snrthal_act = 1.0f;
+
+	float lv_delta = u->misc_2 - u->act_p2; // end-of-minus - mid-minus delta
+	if(pfc_mnt_cnt <= 0)			 // stripe is empty -- need encode gain
+	  lv_delta = u->misc_2 * matrix.mnt_encode_gain; // just a multiplier on raw, instead of delta
+
+        lrn_dav = matrix.da_gain * snrthal_act * lv_delta;
+      }
+
+      if(nogo_rnd_go)
+	lrn_dav += rnd_go.nogo_da; // output gating also gets this too
+      u->dav = lrn_dav;		// re-store back to da value, which is used in conspec lrule
+      idx++;
     }
   }
 }
@@ -768,15 +684,13 @@ void MatrixLayerSpec::Compute_ClearRndGo(LeabraLayer* lay, LeabraNetwork*) {
   for(int gi=0; gi<lay->units.gp.size; gi++) {
     LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
     if(mugp->misc_state1 >= PFCGateSpec::NOGO_RND_GO)
-      mugp->misc_state1 = PFCGateSpec::EMPTY_GO;
+      mugp->misc_state1 = PFCGateSpec::INIT_STATE;
   }
 }
 
 void MatrixLayerSpec::Compute_NoGoRndGo(LeabraLayer* lay, LeabraNetwork*) {
   for(int gi=0; gi<lay->units.gp.size; gi++) {
     LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
-
-//     float rval = Random::ZeroOne(); // this is to match old code, just for debugging.
 
     if((int)fabs((float)mugp->misc_state) > rnd_go.nogo_thr) {
       if(Random::ZeroOne() < rnd_go.nogo_p) {
@@ -787,54 +701,19 @@ void MatrixLayerSpec::Compute_NoGoRndGo(LeabraLayer* lay, LeabraNetwork*) {
 }
 
 void MatrixLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->phase_no == 0)
+  if(net->phase_no == 0) {
     Compute_ClearRndGo(lay, net);
-
-  if(bg_type == MatrixLayerSpec::MAINT) {
-    if(net->phase_no == 1) {
-      Compute_NoGoRndGo(lay, net);
-    }
-  }
-  else {			// OUTPUT
-    if(net->phase_no == 0) {
-      Compute_NoGoRndGo(lay, net);
-    }
+    Compute_NoGoRndGo(lay, net);
   }
 
   inherited::Compute_HardClamp(lay, net);
 }
 
-void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::PostSettle(lay, net);
-
-  if(bg_type == MatrixLayerSpec::OUTPUT) {
-    if(net->phase_no == 0)
-      Compute_MotorGate(lay, net);
-  }
-}
-
-bool MatrixLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  if(bg_type == MatrixLayerSpec::OUTPUT) {
-    return true;
-  }
-  return false;
-}
-
-bool MatrixLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  if(bg_type == MatrixLayerSpec::MAINT) {
-    return true;
-  }
-  return false;
-}
-
-bool MatrixLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  return false;
-}
-
 void MatrixLayerSpec::LabelUnits_impl(Unit_Group* ugp) {
+  int gp_sz = ugp->leaves / 2;
   for(int i=0;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i % 2); // GO = 0, NOGO = 1
+    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i / gp_sz); // GO = 0, NOGO = 1
     if(go_no == PFCGateSpec::GATE_GO)
       u->name = "Go";
     else
@@ -857,6 +736,8 @@ void SNrThalMiscSpec::Initialize() {
 }
 
 void SNrThalLayerSpec::Initialize() {
+  bg_type = MAINT;
+
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
   SetUnique("kwta", true);
@@ -932,6 +813,11 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     return false;
   }
 
+  // grab bg_type from matrix guy
+  MatrixLayerSpec* mls = (MatrixLayerSpec*)matrix_lay->spec.SPtr();
+  SetUnique("bg_type", true);
+  bg_type = (BGType)mls->bg_type;
+
   return true;
 }
 
@@ -950,9 +836,10 @@ void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
     if((mugp->size > 0) && (mugp->acts.max >= us->opt_thresh.send)) {
       float sum_go = 0.0f;
       float sum_nogo = 0.0f;
+      int gp_sz = mugp->size / 2;
       for(int i=0;i<mugp->size;i++) {
 	LeabraUnit* u = (LeabraUnit*)mugp->FastEl(i);
-	PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i % 2); // GO = 0, NOGO = 1
+	PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i / gp_sz); // GO = 0, NOGO = 1
 	if(go_no == PFCGateSpec::GATE_GO)
 	  sum_go += u->act_eq;
 	else
@@ -989,9 +876,21 @@ void SNrThalLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) 
 //////////////////////////////////
 
 void PFCGateSpec::Initialize() {
+  base_gain = 0.0f;
+  go_gain = 1.0f;
+  graded_out_go = true;
+  go_learn_base = 0.06f;
+  go_learn_mod = 1.0f - go_learn_base;
+  go_netin_gain = 0.01f;
+  clear_decay = 0.0f;
+  out_go_clear = true;
   off_accom = 0.0f;
-  out_gate_learn_mod = false;
-  allow_clamp = false;
+}
+
+void PFCGateSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  go_gain = 1.0f - base_gain;
+  go_learn_mod = 1.0f - go_learn_base;
 }
 
 void PFCLayerSpec::Initialize() {
@@ -1008,6 +907,11 @@ void PFCLayerSpec::Initialize() {
   decay.phase = 0.0f;
   decay.phase2 = 0.1f;
   decay.clamp_phase2 = false;	// this is the one exception!
+}
+
+void PFCLayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  gate.UpdateAfterEdit();
 }
 
 void PFCLayerSpec::Defaults() {
@@ -1035,6 +939,28 @@ void PFCLayerSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
+void PFCLayerSpec::GetSNrThalLayers(LeabraLayer* lay, LeabraLayer*& snrthal_mnt, LeabraLayer*& snrthal_out) {
+  snrthal_mnt = NULL;
+  snrthal_out = NULL;
+  if(lay->units.leaves == 0) return;
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
+    if(!fmlay) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+    if(cs->InheritsFrom(TA_MarkerConSpec)) {
+      LeabraLayerSpec* ls = (LeabraLayerSpec*)fmlay->spec.SPtr();
+      if(ls->InheritsFrom(&TA_SNrThalLayerSpec)) {
+	if(((SNrThalLayerSpec*)ls)->bg_type == SNrThalLayerSpec::OUTPUT)
+	  snrthal_out = fmlay;
+	else
+	  snrthal_mnt = fmlay;
+      }
+    }
+  }
+}
+
 bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
   LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
@@ -1056,24 +982,24 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
     return false;
   }
 
-  if(lay->CheckError(net->phase_order == LeabraNetwork::MINUS_PLUS, quiet, rval,
-		"requires LeabraNetwork phase_oder = MINUS_PLUS_PLUS, I just set it for you")) {
-    net->phase_order = LeabraNetwork::MINUS_PLUS_PLUS;
+  if(lay->CheckError(net->phase_order == LeabraNetwork::MINUS_PLUS_PLUS, quiet, rval,
+		"requires LeabraNetwork phase_oder = MINUS_PLUS, I just set it for you")) {
+    net->phase_order = LeabraNetwork::MINUS_PLUS;
   }
 
-  if(lay->CheckError(net->min_cycles_phase2 < 35, quiet, rval,
-		"requires LeabraNetwork min_cycles_phase2 >= 35, I just set it for you")) {
-    net->min_cycles_phase2 = 35;
+  if(lay->CheckError(net->mid_minus_cycle < 5, quiet, rval,
+		"requires LeabraNetwork min_minus_cycle > 0, I just set it to 30 for you")) {
+    net->mid_minus_cycle = 30;
+  }
+
+  if(lay->CheckError(net->min_cycles < net->mid_minus_cycle, quiet, rval,
+		"requires LeabraNetwork min_cycles >= mid_minus_cycle + 5, I just set it for you")) {
+    net->min_cycles = net->mid_minus_cycle + 5;
   }
 
   if(lay->CheckError(net->sequence_init != LeabraNetwork::DO_NOTHING, quiet, rval,
 		"requires network sequence_init = DO_NOTHING, I just set it for you")) {
     net->sequence_init = LeabraNetwork::DO_NOTHING;
-  }
-
-  if(lay->CheckError(gate.out_gate_learn_mod, quiet, rval,
-		"out_gate_learn_mod is not currently functional due to conflicts with the threading system -- sorry!  to avoid further warnings, please it is now turned off for time being")) {
-    gate.out_gate_learn_mod = false;
   }
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
@@ -1098,43 +1024,60 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
     us->acc.init = false;
   }
 
-  if(lay->units.leaves == 0) return false;
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
-    if(lay->CheckError(fmlay == NULL, quiet, rval,
-		  "null from layer in recv projection:", (String)g)) {
-      return false;
-    }
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(cs->InheritsFrom(TA_MarkerConSpec)) continue;
-    // could check the conspec parameters here..
-  }
+  LeabraLayer* snrthal_mnt = NULL;
+  LeabraLayer* snrthal_out = NULL;
+  GetSNrThalLayers(lay, snrthal_mnt, snrthal_out);
 
-  int snrthal_prjn_idx;
-  LeabraLayer* snrthal_lay = FindLayerFmSpec(lay, snrthal_prjn_idx, &TA_SNrThalLayerSpec);
-  if(lay->CheckError(snrthal_lay == NULL, quiet, rval,
-		"no projection from SNrThal Layer found: must have MarkerConSpec!")) {
+  if(lay->CheckError(!snrthal_mnt, quiet, rval,
+		"no projection from SNrThal MAINT Layer found: must exist with MarkerConSpec connection")) {
     return false;
   }
-  if(lay->CheckError(snrthal_lay->units.gp.size != lay->units.gp.size, quiet, rval,
+  if(lay->CheckError(snrthal_mnt->units.gp.size != lay->units.gp.size, quiet, rval,
 		"Gating Layer unit groups must = PFCLayer unit groups!")) {
-    snrthal_lay->unit_groups = true;
-    snrthal_lay->gp_geom.n = lay->units.gp.size;
-    return false;
+    snrthal_mnt->unit_groups = true;
+    snrthal_mnt->gp_geom.n = lay->units.gp.size;
+  }
+  if(snrthal_out) {
+    if(lay->CheckError(snrthal_out->units.gp.size != lay->units.gp.size, quiet, rval,
+		       "Gating Layer unit groups must = PFCLayer unit groups!")) {
+      snrthal_out->unit_groups = true;
+      snrthal_out->gp_geom.n = lay->units.gp.size;
+    }
+  }
+  else {
+    TestWarning(true, "CheckConfig", "No OUTPUT SNrThal projection found -- this will reduce functionality of PFC layer significantly -- consider running wizard to create it");
   }
 
   return true;
 }
 
-void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct updt_act, LeabraLayer* lay, LeabraNetwork* net) {
-  if(updt_act == NO_UPDT) return;
+void PFCLayerSpec::Compute_TrialInitGates(LeabraLayer* lay, LeabraNetwork* net) {
+  for(int mg=0;mg<lay->units.gp.size;mg++) {
+    LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
+    ugp->misc_state1 = PFCGateSpec::INIT_STATE;
+    ugp->misc_state2 = PFCGateSpec::GATE_NOGO;
+    ugp->misc_float = 0.0f;
+    ugp->misc_float1 = 0.0f;	// reset raw gating signals..
+  }
+}
+
+void PFCLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Trial_Init_Layer(lay, net);
+  Compute_TrialInitGates(lay, net);
+}
+
+void PFCLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_MidMinus(lay, net);
+  Compute_Gating(lay, net);	// basic gating happens in mid minus
+}
+  
+void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct updt_act,
+					  LeabraLayer* lay, LeabraNetwork* net) {
   for(int j=0;j<ugp->size;j++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(j);
     LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
     if(updt_act == STORE) {
-      u->vcb.g_h = u->maint_h = u->act_eq;
+      u->vcb.g_h = u->maint_h = u->act_eq; // note: store current act value
       if(gate.off_accom > 0.0f)
 	u->vcb.g_a = 0.0f;
     }
@@ -1142,106 +1085,121 @@ void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct upd
       if(gate.off_accom > 0.0f)
 	u->vcb.g_a = gate.off_accom * u->vcb.g_h;
       u->vcb.g_h = u->maint_h = 0.0f;
-    }
-    else if(updt_act == RESTORE) {
-      u->vcb.g_h = u->act_eq = u->maint_h;
-      if(gate.off_accom > 0.0f)
-	u->vcb.g_a = 0.0f;
-    }
-    else if(updt_act == TMP_STORE) {
-      u->vcb.g_h = u->act_eq;
-      if(gate.off_accom > 0.0f)
-	u->vcb.g_a = 0.0f;
-    }
-    else if(updt_act == TMP_CLEAR) {
-      u->vcb.g_h = 0.0f;
-      if(gate.off_accom > 0.0f)
-	u->vcb.g_a = 0.0f;
+      if(gate.clear_decay > 0.0f) {
+	float decay = gate.clear_decay;
+	// don't use DecayState -- only for between phases
+	// just focus on key vars that will affect hystersis and upcoming act computation
+	u->v_m -= decay * (u->v_m - us->v_m_init.mean);
+	u->net -= decay * u->net;
+      }
     }
     us->Compute_Conduct(u, net); // update displayed conductances!
   }
-  if(updt_act == STORE) ugp->misc_state = 1;
-  else if(updt_act == CLEAR) ugp->misc_state = 0;
 }
 
-void PFCLayerSpec::Compute_TmpClear(LeabraLayer* lay, LeabraNetwork* net) {
-  for(int mg=0;mg<lay->units.gp.size;mg++) {
-    LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
-    Compute_MaintUpdt_ugp(ugp, TMP_CLEAR, lay, net); // temporary clear for trans input!
+void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
+  LeabraLayer* snrthal_mnt = NULL;
+  LeabraLayer* snrthal_out = NULL;
+  GetSNrThalLayers(lay, snrthal_mnt, snrthal_out);
+  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_mnt->spec.SPtr();
+  float go_thr_mnt = snrthalsp->snrthal.go_thr;
+  float go_thr_out = go_thr_mnt;
+  if(snrthal_out) {
+    go_thr_out = ((SNrThalLayerSpec*)snrthal_out->spec.SPtr())->snrthal.go_thr;
   }
-}
 
-void PFCLayerSpec::Compute_MaintUpdt(MaintUpdtAct updt_act, LeabraLayer* lay, LeabraNetwork* net) {
-  for(int mg=0;mg<lay->units.gp.size;mg++) {
-    LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
-    Compute_MaintUpdt_ugp(ugp, updt_act, lay, net);
-  }
-}
-
-void PFCLayerSpec::Compute_GatingGOGO(LeabraLayer* lay, LeabraNetwork* net) {
-  int snrthal_prjn_idx;
-  LeabraLayer* snrthal_lay = FindLayerFmSpec(lay, snrthal_prjn_idx, &TA_SNrThalLayerSpec);
-  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_lay->spec.SPtr();
+  // this is the mid minus version -- when gating actually happens
 
   for(int mg=0;mg<lay->units.gp.size;mg++) {
     LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
-    LeabraUnit_Group* snrgp = (LeabraUnit_Group*)snrthal_lay->units.gp[mg];
-    LeabraUnit* snru = (LeabraUnit*)snrgp->Leaf(0);
-
-    PFCGateSpec::GateSignal gate_sig = PFCGateSpec::GATE_NOGO;
-    if(snru->act_eq > snrthalsp->snrthal.go_thr) {
-      gate_sig = PFCGateSpec::GATE_GO;
+    LeabraUnit_Group* snrgp_mnt = (LeabraUnit_Group*)snrthal_mnt->units.gp[mg];
+    LeabraUnit* snr_mnt_u = (LeabraUnit*)snrgp_mnt->Leaf(0);
+    LeabraUnit* snr_out_u = NULL;
+    if(snrthal_out) {
+      LeabraUnit_Group* snrgp_out = (LeabraUnit_Group*)snrthal_out->units.gp[mg];
+      snr_out_u = (LeabraUnit*)snrgp_out->Leaf(0);
     }
 
-    ugp->misc_state2 = gate_sig; // store the raw gating signal itself
+    int pfc_mnt_cnt = ugp->misc_state; // is pfc maintaining or not?
 
-    if(net->phase_no == 1) {
-      if(ugp->misc_state <= 0) { // empty stripe
-	if(gate_sig == PFCGateSpec::GATE_GO) {
-	  ugp->misc_state1 = PFCGateSpec::EMPTY_GO;
-	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net);
-	}
-	else {
-	  ugp->misc_state1 = PFCGateSpec::EMPTY_NOGO;
-	  ugp->misc_state--;	// more time off
-	}
+    float lrn_go_act = 0.0f;	// activation of go gating unit (out or mnt depending -- used for learning)
+    float out_go_act = 0.0f;	// activation of output gating unit specifically
+
+    PFCGateSpec::GateSignal gate_sig_out = PFCGateSpec::GATE_NOGO;
+    PFCGateSpec::GateSignal gate_sig_mnt = PFCGateSpec::GATE_NOGO;
+
+    // default NOGO results
+    if(pfc_mnt_cnt > 0) // full stripe
+      ugp->misc_state1 = PFCGateSpec::MAINT_NOGO;
+    else
+      ugp->misc_state1 = PFCGateSpec::EMPTY_NOGO;
+    ugp->misc_state2 = PFCGateSpec::GATE_NOGO;
+
+    // maintenance gating signal
+    if(snr_mnt_u->act_eq > go_thr_mnt) {
+      gate_sig_mnt = PFCGateSpec::GATE_GO;
+      lrn_go_act = snr_mnt_u->act_eq;
+      // provide summary just based on maintenance gating
+      ugp->misc_state2 = PFCGateSpec::GATE_MNT_GO;
+      if(pfc_mnt_cnt > 0) { // full stripe
+	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);	 // clear maint currents
+	ugp->misc_state1 = PFCGateSpec::MAINT_MNT_GO;
       }
-      else {			// latched stripe
-	if(gate_sig == PFCGateSpec::GATE_GO) {
-	  ugp->misc_state1 = PFCGateSpec::LATCH_GO;
-	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net); // clear in first phase
-	}
-	else {
-	  ugp->misc_state1 = PFCGateSpec::LATCH_NOGO;
-	  ugp->misc_state++;  // keep on mainting
-	}
-      }
-    }
-    else {			// second plus (2m)
-      if(ugp->misc_state <= 0) {
-	if(gate_sig == PFCGateSpec::GATE_GO) {
-	  if(ugp->misc_state1 == PFCGateSpec::LATCH_GO)
-	    ugp->misc_state1 = PFCGateSpec::LATCH_GOGO;
-	  else
-	    ugp->misc_state1 = PFCGateSpec::EMPTY_GO;
-	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net);
-	}
+      else {
+	ugp->misc_state1 = PFCGateSpec::EMPTY_MNT_GO;
       }
     }
+
+    // output gating signal
+    if(snr_out_u && snr_out_u->act_eq > go_thr_out) {
+      gate_sig_out = PFCGateSpec::GATE_GO;
+      lrn_go_act = MAX(snr_out_u->act_eq, lrn_go_act);
+      if(gate.graded_out_go)
+	out_go_act = snr_out_u->act_eq;
+      else
+	out_go_act = 1.0f; // go all the way
+      // provide integrated summary
+      if(gate_sig_mnt == PFCGateSpec::GATE_NOGO) {
+	// only output gating fired -- simple
+	ugp->misc_state2 = PFCGateSpec::GATE_OUT_GO;
+	if(pfc_mnt_cnt > 0) // full stripe
+	  ugp->misc_state1 = PFCGateSpec::MAINT_OUT_GO;
+	else
+	  ugp->misc_state1 = PFCGateSpec::EMPTY_OUT_GO;
+      }
+      else {
+	// both output and maint gating fired..
+	ugp->misc_state2 = PFCGateSpec::GATE_OUT_MNT_GO;
+	if(pfc_mnt_cnt > 0) // full stripe
+	  ugp->misc_state1 = PFCGateSpec::MAINT_OUT_MNT_GO;
+	else
+	  ugp->misc_state1 = PFCGateSpec::EMPTY_OUT_MNT_GO;
+      }
+    }
+
+    // misc_float has the go_learn_base factor incorporated
+    ugp->misc_float = gate.go_learn_base + (gate.go_learn_mod * lrn_go_act);
+    // misc_float1 includes net output gating multiplier:
+    ugp->misc_float1 = gate.base_gain + (gate.go_gain * out_go_act);
   }
   SendGateStates(lay, net);
 }
 
 void PFCLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork*) {
-  int snrthal_prjn_idx;
-  LeabraLayer* snrthal_lay = FindLayerFmSpec(lay, snrthal_prjn_idx, &TA_SNrThalLayerSpec);
+  LeabraLayer* snrthal_mnt = NULL;
+  LeabraLayer* snrthal_out = NULL;
+  GetSNrThalLayers(lay, snrthal_mnt, snrthal_out);
   int mtx_prjn_idx = 0;
-  LeabraLayer* matrix_lay = FindLayerFmSpec(snrthal_lay, mtx_prjn_idx, &TA_MatrixLayerSpec);
+  LeabraLayer* matrix_mnt = FindLayerFmSpec(snrthal_mnt, mtx_prjn_idx, &TA_MatrixLayerSpec);
+  LeabraLayer* matrix_out = NULL;
+  if(snrthal_out) {
+    matrix_out = FindLayerFmSpec(snrthal_out, mtx_prjn_idx, &TA_MatrixLayerSpec);
+  }
   int mg;
   for(mg=0;mg<lay->units.gp.size;mg++) {
     LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
-    LeabraUnit_Group* snrgp = (LeabraUnit_Group*)snrthal_lay->units.gp[mg];
-    LeabraUnit_Group* mugp = (LeabraUnit_Group*)matrix_lay->units.gp[mg];
+    LeabraUnit_Group* snrgp = (LeabraUnit_Group*)snrthal_mnt->units.gp[mg];
+    LeabraUnit_Group* mugp = (LeabraUnit_Group*)matrix_mnt->units.gp[mg];
     // everybody gets gate state info from PFC!
     snrgp->misc_state = mugp->misc_state = ugp->misc_state;
     snrgp->misc_state1 = ugp->misc_state1; 
@@ -1249,79 +1207,102 @@ void PFCLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork*) {
       mugp->misc_state1 = ugp->misc_state1;
     }
     snrgp->misc_state2 = mugp->misc_state2 = ugp->misc_state2;
-  }
-}
-
-void PFCLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
-  if(gate.allow_clamp && clamp.hard && lay->HasExtFlag(Unit::EXT)) {
-    inherited::Compute_HardClamp(lay, net);
-  }
-  else {
-    // not to hard clamp: needs to update in 2nd plus phase!
-    lay->hard_clamped = false;
-    lay->Init_InputData(net);
+    snrgp->misc_float = mugp->misc_float = ugp->misc_float;
+    snrgp->misc_float1 = mugp->misc_float1 = ugp->misc_float1;
+    if(matrix_out) {
+      snrgp = (LeabraUnit_Group*)snrthal_out->units.gp[mg];
+      mugp = (LeabraUnit_Group*)matrix_out->units.gp[mg];
+      snrgp->misc_state = mugp->misc_state = ugp->misc_state;
+      snrgp->misc_state1 = ugp->misc_state1; 
+      if(mugp->misc_state1 < PFCGateSpec::NOGO_RND_GO) { // don't override random go signals
+	mugp->misc_state1 = ugp->misc_state1;
+      }
+      snrgp->misc_state2 = mugp->misc_state2 = ugp->misc_state2;
+      snrgp->misc_float = mugp->misc_float = ugp->misc_float;
+      snrgp->misc_float1 = mugp->misc_float1 = ugp->misc_float1;
+    }
   }
 }
 
 void PFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::PostSettle(lay, net);
 
-  if(net->phase_no >= 1) {
-    Compute_GatingGOGO(lay, net);	// do gating
+  if(net->phase_no == 1) {
+    Compute_Gating_Final(lay, net);	// final gating
   }
 }
 
-// todo: this is no longer feasible -- would require a unit-level check function or something
-// could potentially impl as a post-hoc zero of activations for non-gated layers.
-// but overall, it seems a bit of a stretch in any case, and doesn't make a huge diff,
-// so probably better to just let it go..
+void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
+  for(int mg=0;mg<lay->units.gp.size;mg++) {
+    LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
 
-// void PFCLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-//   if(!gate.out_gate_learn_mod) {
-//     inherited::Compute_dWt_impl(lay, net);
-//     return;
-//   }
-//   int pfcout_prjn_idx;
-//   LeabraLayer* pfcout_lay = FindLayerFmSpec(lay, pfcout_prjn_idx, &TA_PFCOutLayerSpec);
-//   if(!pfcout_lay) {
-//     inherited::Compute_dWt_impl(lay, net);
-//     return;
-//   }
+    // for NOGO, just update the misc_state counter
+    if(ugp->misc_state1 == PFCGateSpec::EMPTY_NOGO || 
+       ugp->misc_state1 == PFCGateSpec::MAINT_NOGO) {
+      if(ugp->misc_state > 0)
+	ugp->misc_state++;
+      else
+	ugp->misc_state--;
+    }
+    // look for store condition
+    else if(ugp->misc_state1 == PFCGateSpec::MAINT_MNT_GO ||
+	    ugp->misc_state1 == PFCGateSpec::EMPTY_MNT_GO ||
+	    ugp->misc_state1 == PFCGateSpec::EMPTY_OUT_MNT_GO) {
+      Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it
+      if(ugp->misc_state1 == PFCGateSpec::MAINT_MNT_GO)
+	ugp->misc_state = 1;	// just cleared mnt act, but couldn't reset mnt ctr
+      else if(ugp->misc_state <= 0) ugp->misc_state = 1;
+      else ugp->misc_state++;
+    }
+    // or basic output gate with no veto from maint
+    else if(ugp->misc_state1 == PFCGateSpec::MAINT_OUT_GO ||
+	    ugp->misc_state1 == PFCGateSpec::EMPTY_OUT_GO) {
+      if(gate.out_go_clear && (ugp->misc_state > 0)) {		       // maintaining
+	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
+	ugp->misc_state = 0;			     // empty
+      }
+      else {
+	ugp->misc_state--;	// effectively a nogo -- continue incrementing
+      }
+    }
+    // finally, must be a MAINT_OUT_MNT_GO -- veto normal clear state
+    else {
+      // just continue as if nothing happened
+      if(ugp->misc_state > 0)
+	ugp->misc_state++;
+      else
+	ugp->misc_state--;
+    }
+  }
+}
 
-//   for(int mg=0;mg<lay->units.gp.size;mg++) {
-//     LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
-//     LeabraUnit_Group* outgp = (LeabraUnit_Group*)pfcout_lay->units.gp[mg];
+void PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  if(net->phase == LeabraNetwork::PLUS_PHASE)
+    Compute_PfcMntAct(lay, net);
+  inherited::Compute_CycleStats(lay, net);
+}
 
-//     if(outgp->misc_state2 != PFCGateSpec::GATE_NOGO) {
-//       LeabraUnit* u;
-//       taLeafItr i;
-//       FOR_ITR_EL(LeabraUnit, u, ugp->, i)
-// 	u->Compute_dWt(lay, net);
-//     }
-//   }
-// }
+void PFCLayerSpec::Compute_PfcMntAct(LeabraLayer* lay, LeabraNetwork* net) {
+  for(int mg=0; mg<lay->units.gp.size; mg++) {
+    LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[mg];
+
+    float lrn_mod_val = rugp->misc_float; // learning modulation value as function of gating
+    
+    for(int i=0;i<rugp->size;i++) {
+      LeabraUnit* ru = (LeabraUnit*)rugp->FastEl(i);
+      // only stray so far away from act_m  -- depending on gating strength
+      ru->act_nd = ru->act_m + lrn_mod_val * (ru->act_nd - ru->act_m); 
+    }
+  }
+}
+
+
 
 //////////////////////////////////
 //	PFCOut Layer Spec	//
 //////////////////////////////////
 
-void PFCOutGateSpec::Initialize() {
-  base_gain = 0.5f;
-  go_gain = 0.5f;
-  graded_go = false;
-}
-
-void PFCOutGateSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  go_gain = 1.0f - base_gain;
-}
-
-
 void PFCOutLayerSpec::Initialize() {
-  gain_sched_value = NO_BGS;
-  gain_sched.interpolate = false;
-  gain_sched.default_val = .5f;
-
   // this guy should always inherit from PFCLayerSpec
 //   SetUnique("gp_kwta", true);
   gp_kwta.k_from = KWTASpec::USE_PCT;
@@ -1342,15 +1323,8 @@ void PFCOutLayerSpec::Initialize() {
   ct_inhib_mod.trough_i = 0.0f;
 }
 
-void PFCOutLayerSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  out_gate.UpdateAfterEdit();
-  gain_sched.UpdateAfterEdit();
-}
-
 void PFCOutLayerSpec::Defaults() {
   inherited::Defaults();
-  out_gate.Defaults();
   Initialize();
 }
 
@@ -1390,36 +1364,8 @@ bool PFCOutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     return false;
   }
 
-  int snrthal_prjn_idx;
-  LeabraLayer* snrthal_lay = FindLayerFmSpec(lay, snrthal_prjn_idx, &TA_SNrThalLayerSpec);
-  if(lay->CheckError(snrthal_lay == NULL, quiet, rval,
-		"no projection from SNrThal Layer found: must have MarkerConSpec!")) {
-    return false;
-  }
-  if(lay->CheckError(snrthal_lay->units.gp.size != lay->units.gp.size, quiet, rval,
-		"Gating Layer unit groups must = PFCOutLayer unit groups!")) {
-    snrthal_lay->unit_groups = true;
-    snrthal_lay->gp_geom.n = lay->units.gp.size;
-    return false;
-  }
-
   int pfc_prjn_idx;
   LeabraLayer* pfc_lay = FindLayerFmSpec(lay, pfc_prjn_idx, &TA_PFCLayerSpec);
-  if(!pfc_lay) {
-    // try to find a non-pfclayerspec layer with marker cons that is not snrthal..
-    Projection* p;
-    taLeafItr pi;
-    FOR_ITR_EL(Projection, p, lay->projections., pi) {
-      LeabraConSpec* cs = (LeabraConSpec*)p->con_spec.SPtr();
-      if(!cs) continue;
-      LeabraLayer* fmlay = (LeabraLayer*)p->from.ptr();
-      if(cs->InheritsFrom(&TA_MarkerConSpec) && (fmlay != snrthal_lay)) {
-	pfc_prjn_idx = p->recv_idx;
-	pfc_lay = fmlay;
-	break;
-      }
-    }
-  }
   if(lay->CheckError(!pfc_lay, quiet, rval,
 		"no projection from PFC Layer found: must have MarkerConSpec!")) {
     return false;
@@ -1443,100 +1389,28 @@ bool PFCOutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   return true;
 }
 
-void PFCOutLayerSpec::SetCurBaseGain(LeabraNetwork* net) {
-  if(gain_sched_value == NO_BGS) return;
-
-  if(gain_sched_value == EXT_REW_AVG) {
-    LeabraLayer* er_lay = LeabraLayerSpec::FindLayerFmSpecNet(net, &TA_ExtRewLayerSpec);
-    if(er_lay != NULL) {
-      LeabraUnit* un = (LeabraUnit*)er_lay->units.Leaf(0);
-      float avg_rew = un->act_avg;
-      int ar_pct = (int)(100.0f * avg_rew);
-      out_gate.SetBaseGain(gain_sched.GetVal(ar_pct));
-      return;
-    }
-    else {
-      TestWarning(true, "SetCurLrate", "appropriate ExtRew layer not found for EXT_REW_AVG, reverting to EPOCH!");
-      SetUnique("gain_sched_value", true);
-      gain_sched_value = EPOCH;
-      UpdateAfterEdit();
-    }
-  }
-  if(gain_sched_value == EXT_REW_STAT) {
-    int arval = 0;
-    if(net->epoch < 1) {
-      arval = gain_sched.last_ctr;
-    }
-    else {
-      arval = (int)(100.0f * net->avg_ext_rew);
-    }
-    out_gate.SetBaseGain(gain_sched.GetVal(arval));
-  }
-
-  if(gain_sched_value == EPOCH) {
-    out_gate.SetBaseGain(gain_sched.GetVal(net->epoch));
-  }
-}
-
-void PFCOutLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
-  SetCurBaseGain(net);
-
-  // not to hard clamp: needs to update in 2nd plus phase!
-  lay->hard_clamped = false;
-  lay->Init_InputData(net);
-}
-
 void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
-  int snrthal_prjn_idx;
-  LeabraLayer* snrthal_lay = FindLayerFmSpec(lay, snrthal_prjn_idx, &TA_SNrThalLayerSpec);
-  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_lay->spec.SPtr();
-//   int mtx_prjn_idx;
-//   LeabraLayer* matrix_lay = FindLayerFmSpec(snrthal_lay, mtx_prjn_idx, &TA_MatrixLayerSpec);
   int pfc_prjn_idx;
   LeabraLayer* pfc_lay = FindLayerFmSpec(lay, pfc_prjn_idx, &TA_PFCLayerSpec);
-  if(!pfc_lay) {
-    // try to find a non-pfclayerspec layer with marker cons that is not snrthal..
-    Projection* p;
-    taLeafItr pi;
-    FOR_ITR_EL(Projection, p, lay->projections., pi) {
-      LeabraConSpec* cs = (LeabraConSpec*)p->con_spec.SPtr();
-      LeabraLayer* fmlay = (LeabraLayer*)p->from.ptr();
-      if(!cs) continue;
-      if(cs->InheritsFrom(&TA_MarkerConSpec) && (fmlay != snrthal_lay)) {
-	pfc_prjn_idx = p->recv_idx;
-	pfc_lay = fmlay;
-	break;
-      }
-    }
-  }
 
   for(int mg=0; mg<lay->units.gp.size; mg++) {
     LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[mg];
     LeabraUnit_Group* pfcgp = (LeabraUnit_Group*)pfc_lay->units.gp[mg];
-    LeabraUnit_Group* snrgp = (LeabraUnit_Group*)snrthal_lay->units.gp[mg];
-//     LeabraUnit_Group* mugp = (LeabraUnit_Group*)matrix_lay->units.gp[mg];
-    LeabraUnit* snru = (LeabraUnit*)snrgp->Leaf(0);
 
-    // note that random go is added into activation at the snrthal level, not here.
+    rugp->misc_state = pfcgp->misc_state;
+    rugp->misc_state1 = pfcgp->misc_state1;
+    rugp->misc_state2 = pfcgp->misc_state2;
+    rugp->misc_float = pfcgp->misc_float;
+    rugp->misc_float1 = pfcgp->misc_float1;
 
-    float gain = out_gate.base_gain;
-    PFCGateSpec::GateSignal gate_sig = PFCGateSpec::GATE_NOGO;
-    if(!snrthal_lay->lesioned() && (snru->act_eq > snrthalsp->snrthal.go_thr)) {
-      gate_sig = PFCGateSpec::GATE_GO;
-      if(out_gate.graded_go) 
-	gain += snru->act_eq * out_gate.go_gain;
-      else
-	gain += out_gate.go_gain;
-    }
-
-    rugp->misc_state2 = gate_sig; // store the raw gating signal itself
+    float gate_val = rugp->misc_float1;
     
     for(int i=0;i<rugp->size;i++) {
       LeabraUnit* ru = (LeabraUnit*)rugp->FastEl(i);
       LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
       LeabraUnit* pfcu = (LeabraUnit*)pfcgp->FastEl(i);
       
-      ru->act = gain * pfcu->act;
+      ru->act = gate_val * pfcu->act;
       ru->act_eq = ru->act_nd = ru->act;
       ru->da = 0.0f;		// I'm fully settled!
       ru->AddToActBuf(rus->syn_delay);
@@ -1820,12 +1694,6 @@ bool XMatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 		  cs->name,"(make sure this is appropriate for all layers that use this spec!)")) {
       cs->SetUnique("wt_limits", true);
       cs->wt_limits.sym = false;
-    }
-    if(lay->CheckError((cs->matrix_rule != MatrixConSpec::OUTPUT), quiet, rval,
-		       "XMatrix requires MatrixConSpec matrix_rule of OUTPUT type, I just set it for you in spec:",
-		       cs->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-      cs->SetUnique("matrix_rule", true);
-      cs->matrix_rule = MatrixConSpec::OUTPUT;
     }
   }
   if(lay->CheckError(da_lay == NULL, quiet, rval,
@@ -3531,8 +3399,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   matrix_units->noise_adapt.mode = NoiseAdaptSpec::PVLV_LVE;
 
   if(out_gate) {
-    matrixo_units->SetUnique("freeze_net", true);
-    matrixo_units->freeze_net = false;
     matrixo_units->SetUnique("g_bar", true);
     matrixo_units->g_bar.h = .02f; matrixo_units->g_bar.a = .06f;
     matrixo_units->SetUnique("noise_type", false);
@@ -3543,10 +3409,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     matrixo_units->noise_adapt.mode = NoiseAdaptSpec::PVLV_PVI;
     matrixo_units->SetUnique("matrix_noise", true);
     matrixo_units->matrix_noise.patch_noise = false;
-    matrixo_units->matrix_noise.nogo_gain = 0.0f;
     
-    matrixo_cons->SetUnique("matrix_rule", true);
-    matrixo_cons->matrix_rule = MatrixConSpec::OUTPUT;
     matrixo_cons->SetUnique("lmix", false);
     matrixo_cons->SetUnique("lrate", true);
     matrixo_cons->lrate = .1f;
@@ -3605,8 +3468,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   if(out_gate) {
     matrixosp->SetUnique("bg_type", true);
     matrixosp->bg_type = MatrixLayerSpec::OUTPUT;
-    matrixosp->SetUnique("contrast", true);
-    matrixosp->contrast.contrast = 1.0f;
   }
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -4110,7 +3971,6 @@ bool LeabraWizard::PBWM_V2(LeabraNetwork* net, bool da_mod_all,
   matrix_cons->SetUnique("xcal", true);
   matrix_cons->xcal.mvl_mix = 0.005f;
   matrix_cons->xcal.s_mix = 0.8f;
-  matrix_cons->matrix_rule = MatrixConSpec::OUTPUT;
 
   mfmpfc_cons->SetUnique("wt_scale", true);
   mfmpfc_cons->wt_scale.rel = .2f;
@@ -4128,7 +3988,6 @@ bool LeabraWizard::PBWM_V2(LeabraNetwork* net, bool da_mod_all,
   matrix_units->noise_adapt.trial_fixed = true;
   matrix_units->noise_adapt.mode = NoiseAdaptSpec::PVLV_PVI;
   matrix_units->matrix_noise.patch_noise = false;
-  matrix_units->freeze_net = false;
 
   pfc_units->SetUnique("g_bar", true);
   if(nolrn_pfc)

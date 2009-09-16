@@ -3615,6 +3615,13 @@ float LeabraLayerSpec::Compute_TopKAvgNetin(LeabraLayer* lay, LeabraNetwork* net
 ///////////////////////////////////////////////////////////////////////
 //	Cycle Optional Misc
 
+void LeabraLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
+  // just snapshot the activation state
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i)
+    u->act_m2 = u->act_eq;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //	SettleFinal
@@ -4507,6 +4514,7 @@ void LeabraNetwork::Initialize() {
   time_inc = 1.0f;		// just a simple counter by default
 
   cycle_max = 60;
+  mid_minus_cycle = -1;
   min_cycles = 15;
   min_cycles_phase2 = 35;
 
@@ -5020,6 +5028,8 @@ void LeabraNetwork::Cycle_Run() {
   Compute_CycSynDep();
 
   Compute_SRAvg();		// note: only ctleabra variants do con-level compute here
+  Compute_MidMinus();		// check for mid-minus and run if so (PBWM)
+
   ct_cycle++;
   time += time_inc;			// always increment time..
 }
@@ -5188,6 +5198,18 @@ void LeabraNetwork::Compute_CycSynDep() {
 
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_CycSynDep);
   threads.Run(&un_call, 0.6f); // todo: this # is an estimate -- not tested yet -- no flag for it 
+}
+
+void LeabraNetwork::Compute_MidMinus() {
+  if(mid_minus_cycle <= 0) return;
+  if(ct_cycle == mid_minus_cycle) {
+    LeabraLayer* lay;
+    taLeafItr l;
+    FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+      if(lay->lesioned())	continue;
+      lay->Compute_MidMinus(this);
+    }
+  }
 }
   
 ///////////////////////////////////////////////////////////////////////

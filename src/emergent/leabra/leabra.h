@@ -1932,6 +1932,8 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Optional Misc
 
+  virtual void	Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycle parameter, if > 0 -- currently used for the PBWM algorithm -- stores act_m2
 
   ///////////////////////////////////////////////////////////////////////
   //	SettleFinal
@@ -2255,6 +2257,8 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Optional Misc
 
+  void	Compute_MidMinus(LeabraNetwork* net)	{ spec->Compute_MidMinus(this, net); }
+  // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycle parameter, if > 0 -- currently used for the PBWM algorithm
 
   ///////////////////////////////////////////////////////////////////////
   //	SettleFinal
@@ -2572,6 +2576,7 @@ public:
   float		time_inc;	// how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset
 
   int		cycle_max;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_60 maximum number of cycles to settle for: note for CtLeabra_X/CAL this is overridden by phase specific settings by the settle process
+  int		mid_minus_cycle; // #CAT_Counter #DEF_-1;30 cycle number for computations that take place roughly mid-way through the minus phase -- used for PBWM algorithm -- effective min_cycles for minus phase will be this value + min_cycles -- set to -1 to disable
   int		min_cycles;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_15 minimum number of cycles to settle for
   int		min_cycles_phase2; // #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_35 minimum number of cycles to settle for in second phase
 
@@ -2760,12 +2765,14 @@ public:
 
   virtual void 	Compute_CycSynDep();
   // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on -- threaded direct to units
+  virtual void	Compute_MidMinus();
+  // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycles parameter, if > 0 -- currently used for the PBWM algorithm
 
   ///////////////////////////////////////////////////////////////////////
   //	Settle Final
 
   virtual void	Settle_Final();
-  // #CAT_SettleFinal do final processing after settling (postsettle, Compute_dWt if needed
+  // #CAT_SettleFinal do final processing after settling (postsettle, Compute_dWt if needed)
     virtual void PostSettle();
     // #CAT_SettleFinal perform computations in layers at end of settling  (called by Settle_Final)
     virtual void Settle_Compute_dWt();
