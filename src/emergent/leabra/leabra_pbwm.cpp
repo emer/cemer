@@ -674,6 +674,10 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
 
       if(nogo_rnd_go)
 	lrn_dav += rnd_go.nogo_da; // output gating also gets this too
+
+      if(go_no == PFCGateSpec::GATE_NOGO)
+	lrn_dav *= -1.0f;	// flip the sign for nogo!
+
       u->dav = lrn_dav;		// re-store back to da value, which is used in conspec lrule
       idx++;
     }
