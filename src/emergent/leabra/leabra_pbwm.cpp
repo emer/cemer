@@ -400,6 +400,7 @@ void MatrixGateBiasSpec::UpdateAfterEdit_impl() {
 void MatrixMiscSpec::Initialize() {
   da_gain = 1.0f;
   mnt_raw_da = 0.1f;
+  mnt_raw_empty = true;
   neg_da_bl = 0.0f; // 0.0002f;
   neg_gain = 1.0f; // 1.5f;
   no_snr_mod = false;
@@ -692,8 +693,7 @@ void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 // this is called at end of plus phase, to establish a da value for driving learning
-// IMPORTANT: PFC Compute_Gating_Final will be called *AFTER* this, so 
-// misc_state reflects count at time of gating
+// NOTE: misc_state reflects count at time of gating -- not updated at Compute_Gate_Final
 
 void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   for(int gi=0; gi<lay->units.gp.size; gi++) {
@@ -737,8 +737,14 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
 	if(matrix.no_snr_mod)	// disable -- just for testing!
 	  snrthal_act = 1.0f;
 
-	float eff_dav = matrix.mnt_raw_da * u->misc_2 +
-	  (u->misc_2 - u->act_p2); // end-of-minus - mid-minus delta
+	float eff_dav = (u->misc_2 - u->act_p2); // end-of-minus - mid-minus delta
+	if(matrix.mnt_raw_empty) {
+	  if(pfc_mnt_cnt <= 0)	// empty
+	    eff_dav += matrix.mnt_raw_da * u->misc_2;
+	}
+	else {
+	  eff_dav += matrix.mnt_raw_da * u->misc_2;
+	}
         lrn_dav = matrix.da_gain * snrthal_act * eff_dav;
       }
 
@@ -963,6 +969,7 @@ void PFCGateSpec::Initialize() {
   go_netin_gain = 0.01f;
   clear_decay = 0.0f;
   out_go_clear = true;
+  clear_veto = true;
   off_accom = 0.0f;
 }
 
@@ -1248,7 +1255,7 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       else {
 	// both output and maint gating fired..
 	ugp->misc_state2 = PFCGateSpec::GATE_OUT_MNT_GO;
-	if(pfc_mnt_cnt > 0) // full stripe
+	if(pfc_mnt_cnt > 0) // full stripe -- do NOT clear mnt at this point in any case
 	  ugp->misc_state1 = PFCGateSpec::MAINT_OUT_MNT_GO;
 	else
 	  ugp->misc_state1 = PFCGateSpec::EMPTY_OUT_MNT_GO;
@@ -1340,21 +1347,40 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
     // or basic output gate with no veto from maint
     else if(ugp->misc_state1 == PFCGateSpec::MAINT_OUT_GO ||
 	    ugp->misc_state1 == PFCGateSpec::EMPTY_OUT_GO) {
-      if(gate.out_go_clear && (ugp->misc_state > 0)) {		       // maintaining
-	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
-	ugp->misc_state = 0;			     // empty
+      if(gate.out_go_clear) {
+	if(ugp->misc_state > 0) {		       // maintaining
+	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
+	  ugp->misc_state = 0;			     // empty
+	}
+	else {
+	  ugp->misc_state--;	// effectively a nogo -- continue incrementing
+	}
       }
       else {
-	ugp->misc_state--;	// effectively a nogo -- continue incrementing
+	// just continue as if nothing happened
+	if(ugp->misc_state > 0)
+	  ugp->misc_state++;
+	else
+	  ugp->misc_state--;
       }
     }
-    // finally, must be a MAINT_OUT_MNT_GO -- veto normal clear state
+    // finally, must be a MAINT_OUT_MNT_GO
     else {
-      // just continue as if nothing happened
-      if(ugp->misc_state > 0)
-	ugp->misc_state++;
-      else
-	ugp->misc_state--;
+      if(gate.out_go_clear && !gate.clear_veto) {
+	if(ugp->misc_state > 0) {		       // maintaining
+	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
+	  ugp->misc_state = 0;			     // empty
+	}
+	else {
+	  ugp->misc_state--;	// effectively a nogo -- continue incrementing
+	}
+      }
+      else {      // just continue as if nothing happened -- clear was vetoed
+	if(ugp->misc_state > 0)
+	  ugp->misc_state++;
+	else
+	  ugp->misc_state--;
+      }
     }
   }
   // NOTE: Do NOT send final gate states -- empty/maint status checks on other layers

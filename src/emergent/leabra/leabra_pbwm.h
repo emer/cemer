@@ -251,6 +251,7 @@ INHERITED(taOBase)
 public:
   float		da_gain;	// #DEF_1 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain
   float		mnt_raw_da; 	// #DEF_0.1 how much of the raw da signal to apply for learning in maintenance units -- e.g., when an empty stripe is gated on, the LV delta signal is otherwise zero, so it only learns on the raw
+  bool		mnt_raw_empty;	// only apply mnt_raw_da on empty stripes (not currently maintaining)
   float		neg_da_bl;	// #DEF_0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
   float		neg_gain;	// #DEF_1.5 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
   bool		no_snr_mod;	// #DEF_false #EXPERT disable the Da learning modulation by SNrThal ativation (this is only to demonstrate how important it is)
@@ -441,6 +442,7 @@ public:
   float		go_netin_gain;	  // #DEF_0.01 extra net input to add to active units as a function of gating signal -- uses the mnt_go_learn_mod to determine if maintenance go contributes to the gating signal
   float		clear_decay;	// #DEF_0 #MIN_0 #MAX_1 how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse
   bool		out_go_clear;	// #DEF_true an output Go clears the maintenance currents at the end of the trial -- you use it, you lose it..
+  bool		clear_veto;	// #DEF_false #CONDEDIT_ON_out_go_clear if both MAINT and OUT Go signals occur at the same time, then this vetos the out_go_clear that would otherwise occur
   float		off_accom;	// #DEF_0 #EXPERT #MIN_0 #MAX_1 how much of the maintenance current to apply to accommodation after turning a unit off
 
   void 	Defaults()	{ Initialize(); }
