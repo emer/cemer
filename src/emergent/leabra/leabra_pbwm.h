@@ -34,9 +34,12 @@ class LEABRA_API PatchLayerSpec : public LVeLayerSpec {
   // Patch version of the LVe layer -- functionally identical to LVe and just so-named so that other layers can use its functionality appropriately
 INHERITED(LVeLayerSpec)
 public:
+  bool	learn_mnt_only;		// only learn for stripes that are currently maintaining!
+
   virtual void	Send_LVeToMatrix(LeabraLayer* lay, LeabraNetwork* net);
   // send the LVe value computed by the patch units to misc_1 field in any MarkerCons prjn to MatrixLayerSpec layers -- used for noise modulation
 
+  override void Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
   TA_SIMPLE_BASEFUNS(PatchLayerSpec);
@@ -52,7 +55,7 @@ public:
   float		stripe_da_gain;	// extra multiplier on the stripe-wise dopamine value relative to the global computed value (enters into weighted average with global value -- remains normalized)
 
   override void	Compute_Da(LeabraLayer* lay, LeabraNetwork* net);
-  // compute the da value based on recv projections: every cycle in 1+ phases (delta version)
+  override void	Send_Da(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
@@ -228,7 +231,7 @@ class LEABRA_API MatrixMiscSpec : public taOBase {
 INHERITED(taOBase)
 public:
   float		da_gain;	// #DEF_1 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain
-  float		mnt_encode_gain; // #DEF_0.1 how much of the raw da signal to apply for learning in the maintenance gating case when an empty stripe is gated on -- required because the LV delta signal is otherwise zero
+  float		mnt_raw_da; 	// #DEF_0.1 how much of the raw da signal to apply for learning in maintenance units -- e.g., when an empty stripe is gated on, the LV delta signal is otherwise zero, so it only learns on the raw
   float		neg_da_bl;	// #DEF_0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
   float		neg_gain;	// #DEF_1.5 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
   bool		no_snr_mod;	// #DEF_false #EXPERT disable the Da learning modulation by SNrThal ativation (this is only to demonstrate how important it is)
@@ -399,16 +402,16 @@ public:
   };
 
   enum	GateState {		// what happened on last gating action, stored in misc_state1 on unit group -- for debugging etc
-    EMPTY_MNT_GO,		// stripe was empty, got MAINT Go
-    EMPTY_OUT_GO,		// stripe was empty, got OUTPUT Go
-    EMPTY_OUT_MNT_GO,		// stripe was empty, got OUTPUT then MAINT Go
-    EMPTY_NOGO,			// stripe was empty, got NoGo
-    MAINT_MNT_GO,		// stripe was already maintaining, got MAINT Go: cleared, encoded
-    MAINT_OUT_GO,		// stripe was already maintaining, got OUTPUT Go
-    MAINT_OUT_MNT_GO,		// stripe was already maintaining, got OUTPUT then MAINT Go
-    MAINT_NOGO,			// stripe was already maintaining, got NoGo
-    NOGO_RND_GO,		// random go for stripes constantly firing nogo
-    INIT_STATE,			// initialized state at start of trial
+    EMPTY_MNT_GO = 0,		// stripe was empty, got MAINT Go
+    EMPTY_OUT_GO = 1,		// stripe was empty, got OUTPUT Go
+    EMPTY_OUT_MNT_GO = 2,	// stripe was empty, got OUTPUT then MAINT Go
+    EMPTY_NOGO = 3,		// stripe was empty, got NoGo
+    MAINT_MNT_GO = 4,		// stripe was already maintaining, got MAINT Go: cleared, encoded
+    MAINT_OUT_GO = 5,		// stripe was already maintaining, got OUTPUT Go
+    MAINT_OUT_MNT_GO = 6,	// stripe was already maintaining, got OUTPUT then MAINT Go
+    MAINT_NOGO = 7,		// stripe was already maintaining, got NoGo
+    NOGO_RND_GO = 8,		// random go for stripes constantly firing nogo
+    INIT_STATE = 9,		// initialized state at start of trial
   };
 
   float		base_gain;	// #DEF_0 #MIN_0 #MAX_1 how much activation gets through even without a Go gating signal

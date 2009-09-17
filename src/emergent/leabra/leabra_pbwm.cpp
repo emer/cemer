@@ -27,6 +27,7 @@
 void PatchLayerSpec::Initialize() {
   SetUnique("inhib_group", true);
   inhib_group = UNIT_GROUPS;
+  learn_mnt_only = false;
 }
 
 void PatchLayerSpec::Send_LVeToMatrix(LeabraLayer* lay, LeabraNetwork* net) {
@@ -54,6 +55,33 @@ void PatchLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   Send_LVeToMatrix(lay, net);
 }
 
+
+void PatchLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) {
+  if(!learn_mnt_only) {
+    inherited::Compute_LVPlusPhaseDwt(lay, net);
+    return;
+  }
+  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
+  if(!er_avail) return;					  // just let it ride..
+
+  float pve_val = net->norew_val;
+  if(net->ext_rew_avail) {
+    pve_val = net->ext_rew;
+  }
+
+  for(int gi=0; gi < lay->units.gp.size; gi++) {
+    LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[gi];
+    LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
+    if(ugp->misc_state > 0) {	// stripe was maintaining at mid minus gating point
+       u->ext = pve_val;
+       ClampValue_ugp(ugp, net); 		// apply new value
+       Compute_ExtToPlus_ugp(ugp, net); 	// copy ext values to act_p
+    }
+  }
+}
+
+//////////////////////////////////////////////////////
+//		SNcLayerSpec
 
 void SNcLayerSpec::Initialize() {
   stripe_da_gain = 1.0f;
@@ -153,21 +181,44 @@ void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
 //    LeabraUnit* patch_u = (LeabraUnit*)patch_ugp->FastEl(0);
 
     float str_da = patch_sp->Compute_LVDa_ugp(patch_ugp, lvi_ugp, net); // per stripe
+    float lv_da_str = da_norm * (lv_da + stripe_da_gain * str_da);
+
     if(er_avail) {
-      snc_u->dav = da.da_gain * pv_da;
+      snc_u->dav = pv_da;
       if(da.add_pv_lv) {
-	snc_u->dav += da.da_gain * da_norm * (lv_da + stripe_da_gain * str_da);
+	snc_u->dav += lv_da_str;
       }
     }
     else {
-      snc_u->dav = da.da_gain * da_norm * (lv_da + stripe_da_gain * str_da);
-      // simple additive model here (avg)
+      snc_u->dav = lv_da_str;
     }
-    snc_u->ext = da.tonic_da + snc_u->dav;
+    snc_u->ext = da.tonic_da + da.da_gain * snc_u->dav;
     snc_u->act_eq = snc_u->act_nd = snc_u->act = snc_u->net = snc_u->ext;
     lay->dav += snc_u->dav;
+
+    // now send, with target specificity
+    for(int g=0; g<snc_u->send.size; g++) {
+      LeabraSendCons* send_gp = (LeabraSendCons*)snc_u->send.FastEl(g);
+      LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
+      if(tol->lesioned())	continue;
+      LeabraLayerSpec* ls = (LeabraLayerSpec*)tol->spec.SPtr();
+      float send_val = snc_u->act;
+      if(ls->InheritsFrom(&TA_MatrixLayerSpec)) {
+	if(((MatrixLayerSpec*)ls)->bg_type == MatrixLayerSpec::OUTPUT)
+	  send_val = pv_da * da.da_gain; // send PV to output
+	else
+	  send_val = lv_da_str * da.da_gain; // and LV to maint
+      }
+      for(int j=0;j<send_gp->size; j++) {
+	((LeabraUnit*)send_gp->Un(j))->dav = send_val;
+      }
+    }
   }
   lay->dav /= (float)lay->units.gp.size; // integrated average -- not really used
+}
+
+void SNcLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
+  // do nothing -- was sent in more targeted fashion in compute_da
 }
 
 
@@ -335,7 +386,7 @@ void MatrixGateBiasSpec::UpdateAfterEdit_impl() {
 
 void MatrixMiscSpec::Initialize() {
   da_gain = 1.0f;
-  mnt_encode_gain = 0.1f;
+  mnt_raw_da = 0.1f;
   neg_da_bl = 0.0f; // 0.0002f;
   neg_gain = 1.0f; // 1.5f;
   no_snr_mod = false;
@@ -464,6 +515,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   LeabraLayer* da_lay = NULL;
   LeabraLayer* snr_lay = NULL;
+  LeabraLayer* patch_lay = NULL;
   if(lay->units.leaves == 0) return false;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
@@ -474,6 +526,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
       LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
       if(fmlay->spec.SPtr()->InheritsFrom(TA_PVLVDaLayerSpec)) da_lay = fmlay;
       if(fmlay->spec.SPtr()->InheritsFrom(TA_SNrThalLayerSpec)) snr_lay = fmlay;
+      if(fmlay->spec.SPtr()->InheritsFrom(TA_PatchLayerSpec)) patch_lay = fmlay;
       continue;
     }
     MatrixConSpec* cs = (MatrixConSpec*)recv_gp->GetConSpec();
@@ -499,6 +552,10 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   if(lay->CheckError(snr_lay == NULL, quiet, rval,
 		"Could not find SNrThal layer -- must receive MarkerConSpec projection from one!")) {
+    return false;
+  }
+  if(lay->CheckError(bg_type == MAINT && patch_lay == NULL, quiet, rval,
+		"Could not find Patch layer -- MAINT Matrix must receive MarkerConSpec projection from one!")) {
     return false;
   }
   return true;
@@ -622,6 +679,8 @@ void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 // this is called at end of plus phase, to establish a da value for driving learning
+// IMPORTANT: PFC Compute_Gating_Final will be called *AFTER* this, so 
+// misc_state reflects count at time of gating
 
 void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   for(int gi=0; gi<lay->units.gp.size; gi++) {
@@ -665,15 +724,18 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
 	if(matrix.no_snr_mod)	// disable -- just for testing!
 	  snrthal_act = 1.0f;
 
-	float lv_delta = u->misc_2 - u->act_p2; // end-of-minus - mid-minus delta
-	if(pfc_mnt_cnt <= 0)			 // stripe is empty -- need encode gain
-	  lv_delta = u->misc_2 * matrix.mnt_encode_gain; // just a multiplier on raw, instead of delta
-
-        lrn_dav = matrix.da_gain * snrthal_act * lv_delta;
+	float eff_dav = matrix.mnt_raw_da * u->misc_2 +
+	  (u->misc_2 - u->act_p2); // end-of-minus - mid-minus delta
+        lrn_dav = matrix.da_gain * snrthal_act * eff_dav;
       }
 
       if(nogo_rnd_go)
 	lrn_dav += rnd_go.nogo_da; // output gating also gets this too
+
+      if(lrn_dav < 0.0f)
+	lrn_dav *= matrix.neg_gain;
+
+      lrn_dav -= matrix.neg_da_bl;
 
       if(go_no == PFCGateSpec::GATE_NOGO)
 	lrn_dav *= -1.0f;	// flip the sign for nogo!
@@ -1139,37 +1201,36 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       ugp->misc_state1 = PFCGateSpec::EMPTY_NOGO;
     ugp->misc_state2 = PFCGateSpec::GATE_NOGO;
 
-    // maintenance gating signal
-    if(snr_mnt_u->act_eq > go_thr_mnt) {
-      gate_sig_mnt = PFCGateSpec::GATE_GO;
-      lrn_go_act = snr_mnt_u->act_eq;
-      // provide summary just based on maintenance gating
-      ugp->misc_state2 = PFCGateSpec::GATE_MNT_GO;
-      if(pfc_mnt_cnt > 0) { // full stripe
-	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);	 // clear maint currents
-	ugp->misc_state1 = PFCGateSpec::MAINT_MNT_GO;
-      }
-      else {
-	ugp->misc_state1 = PFCGateSpec::EMPTY_MNT_GO;
-      }
-    }
-
     // output gating signal
     if(snr_out_u && snr_out_u->act_eq > go_thr_out) {
       gate_sig_out = PFCGateSpec::GATE_GO;
-      lrn_go_act = MAX(snr_out_u->act_eq, lrn_go_act);
+      lrn_go_act = snr_out_u->act_eq;
       if(gate.graded_out_go)
 	out_go_act = snr_out_u->act_eq;
       else
 	out_go_act = 1.0f; // go all the way
-      // provide integrated summary
-      if(gate_sig_mnt == PFCGateSpec::GATE_NOGO) {
-	// only output gating fired -- simple
-	ugp->misc_state2 = PFCGateSpec::GATE_OUT_GO;
-	if(pfc_mnt_cnt > 0) // full stripe
-	  ugp->misc_state1 = PFCGateSpec::MAINT_OUT_GO;
-	else
-	  ugp->misc_state1 = PFCGateSpec::EMPTY_OUT_GO;
+      // provide summary just based on output gating
+      ugp->misc_state2 = PFCGateSpec::GATE_OUT_GO;
+      if(pfc_mnt_cnt > 0) // full stripe
+	ugp->misc_state1 = PFCGateSpec::MAINT_OUT_GO;
+      else
+	ugp->misc_state1 = PFCGateSpec::EMPTY_OUT_GO;
+    }
+
+    // maintenance gating signal
+    if(snr_mnt_u->act_eq > go_thr_mnt) {
+      gate_sig_mnt = PFCGateSpec::GATE_GO;
+      lrn_go_act = MAX(snr_out_u->act_eq, lrn_go_act);
+      if(gate_sig_out == PFCGateSpec::GATE_NOGO) {
+	// only maintenance fired
+	ugp->misc_state2 = PFCGateSpec::GATE_MNT_GO;
+	if(pfc_mnt_cnt > 0) { // full stripe
+	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);	 // clear maint currents -- only if not also OUT go, which then causes a clear veto!
+	  ugp->misc_state1 = PFCGateSpec::MAINT_MNT_GO;
+	}
+	else {
+	  ugp->misc_state1 = PFCGateSpec::EMPTY_MNT_GO;
+	}
       }
       else {
 	// both output and maint gating fired..
@@ -1193,26 +1254,28 @@ void PFCLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork*) {
   LeabraLayer* snrthal_mnt = NULL;
   LeabraLayer* snrthal_out = NULL;
   GetSNrThalLayers(lay, snrthal_mnt, snrthal_out);
-  int mtx_prjn_idx = 0;
-  LeabraLayer* matrix_mnt = FindLayerFmSpec(snrthal_mnt, mtx_prjn_idx, &TA_MatrixLayerSpec);
+  int dum_prjn_idx = 0;
+  LeabraLayer* matrix_mnt = FindLayerFmSpec(snrthal_mnt, dum_prjn_idx, &TA_MatrixLayerSpec);
   LeabraLayer* matrix_out = NULL;
   if(snrthal_out) {
-    matrix_out = FindLayerFmSpec(snrthal_out, mtx_prjn_idx, &TA_MatrixLayerSpec);
+    matrix_out = FindLayerFmSpec(snrthal_out, dum_prjn_idx, &TA_MatrixLayerSpec);
   }
+  LeabraLayer* patch = FindLayerFmSpec(matrix_mnt, dum_prjn_idx, &TA_PatchLayerSpec);
   int mg;
   for(mg=0;mg<lay->units.gp.size;mg++) {
     LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
     LeabraUnit_Group* snrgp = (LeabraUnit_Group*)snrthal_mnt->units.gp[mg];
     LeabraUnit_Group* mugp = (LeabraUnit_Group*)matrix_mnt->units.gp[mg];
+    LeabraUnit_Group* patchgp = (LeabraUnit_Group*)patch->units.gp[mg];
     // everybody gets gate state info from PFC!
-    snrgp->misc_state = mugp->misc_state = ugp->misc_state;
-    snrgp->misc_state1 = ugp->misc_state1; 
+    patchgp->misc_state = snrgp->misc_state = mugp->misc_state = ugp->misc_state;
+    patchgp->misc_state1 = snrgp->misc_state1 = ugp->misc_state1; 
     if(mugp->misc_state1 < PFCGateSpec::NOGO_RND_GO) { // don't override random go signals
       mugp->misc_state1 = ugp->misc_state1;
     }
-    snrgp->misc_state2 = mugp->misc_state2 = ugp->misc_state2;
-    snrgp->misc_float = mugp->misc_float = ugp->misc_float;
-    snrgp->misc_float1 = mugp->misc_float1 = ugp->misc_float1;
+    patchgp->misc_state2 = snrgp->misc_state2 = mugp->misc_state2 = ugp->misc_state2;
+    patchgp->misc_float = snrgp->misc_float = mugp->misc_float = ugp->misc_float;
+    patchgp->misc_float1 = snrgp->misc_float1 = mugp->misc_float1 = ugp->misc_float1;
     if(matrix_out) {
       snrgp = (LeabraUnit_Group*)snrthal_out->units.gp[mg];
       mugp = (LeabraUnit_Group*)matrix_out->units.gp[mg];
@@ -1239,6 +1302,9 @@ void PFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
   for(int mg=0;mg<lay->units.gp.size;mg++) {
     LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
+
+    // basically just update the misc_state counter and implement any
+    // delayed STORE or CLEAR actions
 
     // for NOGO, just update the misc_state counter
     if(ugp->misc_state1 == PFCGateSpec::EMPTY_NOGO || 
@@ -1278,6 +1344,9 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
 	ugp->misc_state--;
     }
   }
+  // NOTE: Do NOT send final gate states -- empty/maint status checks on other layers
+  // need to reflect status at time of gating computation (mid minus)
+  //  SendGateStates(lay, net);
 }
 
 void PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {

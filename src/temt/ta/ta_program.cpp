@@ -4008,7 +4008,7 @@ void Program::LoadFromProgLib(ProgLibEl* prog_type) {
   if(TestError(!prog_type, "LoadFromProgLib", "program type is null")) return;
   if(TestError(prog_type->is_group, "LoadFromProgLib",
 	       "cannot load a program group file into a single program!")) return;
-  Reset();
+//   Reset();
   prog_type->LoadProgram(this);
 }
 
@@ -4291,11 +4291,11 @@ void Program_Group::LoadFromProgLib(ProgLibEl* prog_type) {
   if(TestError(!prog_type, "LoadFromProgLib", "program type to load is null")) return;
   if(TestError(!prog_type->is_group, "LoadFromProgLib", 
 	       "cannot load a single program file into a program group!")) return;
-  taLeafItr itr;
-  Program* prog;
-  FOR_ITR_EL(Program, prog, this->, itr) {
-    prog->Reset();
-  }
+//   taLeafItr itr;
+//   Program* prog;
+//   FOR_ITR_EL(Program, prog, this->, itr) {
+//     prog->Reset();
+//   }
   prog_type->LoadProgramGroup(this);
 }
 
