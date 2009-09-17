@@ -48,11 +48,28 @@ private:
   void	Destroy()		{ };
 };
 
+class LEABRA_API SNcMiscSpec : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc parameters for SNc layer spec
+INHERITED(taOBase)
+public:
+  float		stripe_lv_pct;	// #MIN_0 #MAX_1 #DEF_0.5 proportion of total LV dopamine value determined by stripe-wise LV signals from the patch layer -- remainder is from global LV signal
+  float		global_lv_pct;	// #READ_ONLY #SHOW 1 - stripe_lv_pct -- proportion of total LV dopamine value determined by global LV signals
+  bool		lv_mnt_pv_out;	// #DEF_false send LV-based da signals to maintenance matrix layers, and PV-based da to output matrix layers
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(SNcMiscSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 class LEABRA_API SNcLayerSpec : public PVLVDaLayerSpec {
   // implements a substantia-nigra pars compacta (SNc) version of the PVLVDaLayerSpec, which receives stripe-wise LVe inputs from a PatchLayerSpec layer
 INHERITED(PVLVDaLayerSpec)
 public:
-  float		stripe_da_gain;	// extra multiplier on the stripe-wise dopamine value relative to the global computed value (enters into weighted average with global value -- remains normalized)
+  SNcMiscSpec	snc;		// misc params for SNc layer
 
   override void	Compute_Da(LeabraLayer* lay, LeabraNetwork* net);
   override void	Send_Da(LeabraLayer* lay, LeabraNetwork* net);
@@ -61,6 +78,8 @@ public:
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(SNcLayerSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };

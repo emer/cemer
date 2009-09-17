@@ -83,8 +83,23 @@ void PatchLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net
 //////////////////////////////////////////////////////
 //		SNcLayerSpec
 
+void SNcMiscSpec::Initialize() {
+  stripe_lv_pct = 0.5f;
+  global_lv_pct = 0.5f;
+  lv_mnt_pv_out = true;
+}
+
+void SNcMiscSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  global_lv_pct = 1.0f - stripe_lv_pct;
+}
+
 void SNcLayerSpec::Initialize() {
-  stripe_da_gain = 1.0f;
+}
+
+void SNcLayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  snc.UpdateAfterEdit();
 }
 
 void SNcLayerSpec::HelpConfig() {
@@ -171,8 +186,6 @@ void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
     lvi_ugp = (Unit_Group*)&(lvi_lay->units);
   // assuming only one lvi group of units for time being
 
-  float da_norm = 1.0f / (1.0f + stripe_da_gain);
-
   lay->dav = 0.0f;
   for(int gi=0; gi < lay->units.gp.size; gi++) {
     Unit_Group* snc_ugp = (Unit_Group*)lay->units.gp[gi];
@@ -181,7 +194,7 @@ void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
 //    LeabraUnit* patch_u = (LeabraUnit*)patch_ugp->FastEl(0);
 
     float str_da = patch_sp->Compute_LVDa_ugp(patch_ugp, lvi_ugp, net); // per stripe
-    float lv_da_str = da_norm * (lv_da + stripe_da_gain * str_da);
+    float lv_da_str = snc.global_lv_pct * lv_da + snc.stripe_lv_pct * str_da;
 
     if(er_avail) {
       snc_u->dav = pv_da;
@@ -203,7 +216,7 @@ void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
       if(tol->lesioned())	continue;
       LeabraLayerSpec* ls = (LeabraLayerSpec*)tol->spec.SPtr();
       float send_val = snc_u->act;
-      if(ls->InheritsFrom(&TA_MatrixLayerSpec)) {
+      if(snc.lv_mnt_pv_out && ls->InheritsFrom(&TA_MatrixLayerSpec)) {
 	if(((MatrixLayerSpec*)ls)->bg_type == MatrixLayerSpec::OUTPUT)
 	  send_val = pv_da * da.da_gain; // send PV to output
 	else
@@ -1220,7 +1233,7 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     // maintenance gating signal
     if(snr_mnt_u->act_eq > go_thr_mnt) {
       gate_sig_mnt = PFCGateSpec::GATE_GO;
-      lrn_go_act = MAX(snr_out_u->act_eq, lrn_go_act);
+      lrn_go_act = MAX(snr_mnt_u->act_eq, lrn_go_act);
       if(gate_sig_out == PFCGateSpec::GATE_NOGO) {
 	// only maintenance fired
 	ugp->misc_state2 = PFCGateSpec::GATE_MNT_GO;
