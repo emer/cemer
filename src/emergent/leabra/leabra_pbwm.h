@@ -252,8 +252,8 @@ public:
   float		da_gain;	// #DEF_1 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain
   float		mnt_raw_da; 	// #DEF_0.1 how much of the raw da signal to apply for learning in maintenance units -- e.g., when an empty stripe is gated on, the LV delta signal is otherwise zero, so it only learns on the raw
   bool		mnt_raw_empty;	// only apply mnt_raw_da on empty stripes (not currently maintaining)
-  float		neg_da_bl;	// #DEF_0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
-  float		neg_gain;	// #DEF_1.5 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
+  float		neg_da_bl;	// #DEF_0;0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
+  float		neg_gain;	// #DEF_1;1.5 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
   bool		no_snr_mod;	// #DEF_false #EXPERT disable the Da learning modulation by SNrThal ativation (this is only to demonstrate how important it is)
 
   void 	Defaults()	{ Initialize(); }

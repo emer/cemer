@@ -1255,8 +1255,10 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       else {
 	// both output and maint gating fired..
 	ugp->misc_state2 = PFCGateSpec::GATE_OUT_MNT_GO;
-	if(pfc_mnt_cnt > 0) // full stripe -- do NOT clear mnt at this point in any case
+	if(pfc_mnt_cnt > 0) {// full stripe -- do NOT clear mnt at this point in any case
+	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);	 // this was working before??
 	  ugp->misc_state1 = PFCGateSpec::MAINT_OUT_MNT_GO;
+	}
 	else
 	  ugp->misc_state1 = PFCGateSpec::EMPTY_OUT_MNT_GO;
       }
