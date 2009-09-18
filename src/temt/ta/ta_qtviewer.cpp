@@ -6585,7 +6585,7 @@ iDocDataPanel::iDocDataPanel()
   seturl_but = new QPushButton("Set URL", wb_widg);
   url_box->addWidget(seturl_but);
 
-  webview = new QWebView(wb_widg);
+  webview = new iWebView(wb_widg);
   wb_box->addWidget(webview);
 
   webview->page()->setNetworkAccessManager(taiMisc::net_access_mgr);
@@ -6609,6 +6609,9 @@ iDocDataPanel::iDocDataPanel()
   webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
   connect(webview->page(), SIGNAL(linkClicked(const QUrl&)),
 	  this, SLOT(doc_linkClicked(const QUrl&)) );
+  connect(webview, SIGNAL(sigCreateWindow(QWebPage::WebWindowType,
+    QWebView*&)), this, SLOT(doc_createWindow(QWebPage::WebWindowType,
+    QWebView*&)) );
 
 //TODO  connect(txtText, SIGNAL(copyAvailable(bool)),
 //      this, SLOT(textText_copyAvailable(bool)) );
@@ -6622,6 +6625,14 @@ iDocDataPanel::~iDocDataPanel() {
 
 QWidget* iDocDataPanel::firstTabFocusWidget() {
   return url_edit;
+}
+
+void iDocDataPanel::doc_createWindow(QWebPage::WebWindowType type, QWebView*& window) {
+  // fork to browser
+  if (type == QWebPage::WebBrowserWindow) {
+    iHelpBrowser* hbrow = iHelpBrowser::instance();
+    window = hbrow->AddWebView(_nilString);
+  }
 }
 
 void iDocDataPanel::doc_linkClicked(const QUrl& url) {

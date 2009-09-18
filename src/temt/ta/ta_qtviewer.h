@@ -1777,6 +1777,20 @@ protected slots:
 
 };
 
+#ifndef __MAKETA__
+class iWebView: public QWebView {
+Q_OBJECT
+INHERITED(QWebView);
+public:
+  iWebView(QWidget* parent = 0):inherited(parent) {}
+signals:
+  void 		sigCreateWindow(QWebPage::WebWindowType type,
+    QWebView*& window);
+protected:
+  override QWebView* createWindow(QWebPage::WebWindowType type);
+};
+#endif
+
 class TA_API iDocDataPanel: public iDataPanelFrame {
   // a panel frame for displaying docs
   Q_OBJECT
@@ -1825,6 +1839,7 @@ protected:
 #ifndef __MAKETA__
 protected slots:
   void			doc_linkClicked(const QUrl& url);
+  void 			doc_createWindow(QWebPage::WebWindowType type, QWebView*& window);
   void			doc_goPressed();
   void			doc_bakPressed();
   void			doc_fwdPressed();
@@ -2448,20 +2463,6 @@ private:
 };
 
 
-#ifndef __MAKETA__
-class iWebView: public QWebView {
-Q_OBJECT
-INHERITED(QWebView);
-public:
-  iWebView(QWidget* parent = 0):inherited(parent) {}
-signals:
-  void 		sigCreateWindow(QWebPage::WebWindowType type,
-    QWebView*& window);
-protected:
-  override QWebView* createWindow(QWebPage::WebWindowType type);
-};
-#endif
-
 class TA_API iHelpBrowser: public QMainWindow {
 //   TypeDef documentation
 INHERITED(QMainWindow)
@@ -2511,6 +2512,7 @@ public:
   String		curUrl() const {return m_curUrl;} // current pseudo Url (w/o #xxx anchor)
   QWebView*		curWebView(); // always returns one
   QWebView*		webView(int index);
+  QWebView*		AddWebView(const String& label); // add a new tab
   
 protected:
   static const int	num_sorts = 3;
@@ -2521,7 +2523,6 @@ protected:
   QString		last_filter; // for checking if anything changed
   QTimer*		timFilter; // timer for filter changes
   
-  QWebView*		AddWebView(const String& label); // add a new tab
   QWebView*		FindWebView(const String& url, int& idx); // find existing tab w/ this base url (#anchors ok)
   QWebView*		EmptyWebView(int& idx); // find existing tab w/ no url, else make new
   void			SetFilter(const QString& filt); // apply a filter
@@ -2548,8 +2549,7 @@ protected slots:
   void			forward_clicked();
   void			back_clicked();
   void			addTab_clicked(); // or return in url_text
-  void 			brow_createWindow(QWebPage::WebWindowType type,
-    QWebView*& window);
+  void 			brow_createWindow(QWebPage::WebWindowType type, QWebView*& window);
   void			brow_linkClicked(const QUrl& url);
   void			brow_urlChanged(const QUrl& url);
   void			page_unsupportedContent(QNetworkReply* reply); 

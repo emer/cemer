@@ -399,10 +399,11 @@ void MatrixGateBiasSpec::UpdateAfterEdit_impl() {
 
 void MatrixMiscSpec::Initialize() {
   da_gain = 1.0f;
-  mnt_raw_da = 0.1f;
-  mnt_raw_empty = true;
+  mnt_raw_da = 0.0f;
+  mnt_raw_empty = 0.1f;
   neg_da_bl = 0.0f; // 0.0002f;
   neg_gain = 1.0f; // 1.5f;
+  neg_dwt_gain = 1.0f;
   no_snr_mod = false;
 }
 
@@ -738,13 +739,11 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
 	  snrthal_act = 1.0f;
 
 	float eff_dav = (u->misc_2 - u->act_p2); // end-of-minus - mid-minus delta
-	if(matrix.mnt_raw_empty) {
-	  if(pfc_mnt_cnt <= 0)	// empty
-	    eff_dav += matrix.mnt_raw_da * u->misc_2;
-	}
-	else {
+	if(pfc_mnt_cnt <= 0)	// empty
+	  eff_dav += matrix.mnt_raw_empty * u->misc_2;
+	else
 	  eff_dav += matrix.mnt_raw_da * u->misc_2;
-	}
+
         lrn_dav = matrix.da_gain * snrthal_act * eff_dav;
       }
 
@@ -758,6 +757,9 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
 
       if(go_no == PFCGateSpec::GATE_NOGO)
 	lrn_dav *= -1.0f;	// flip the sign for nogo!
+
+      if(lrn_dav < 0.0f)
+	lrn_dav *= matrix.neg_dwt_gain;
 
       u->dav = lrn_dav;		// re-store back to da value, which is used in conspec lrule
       idx++;
