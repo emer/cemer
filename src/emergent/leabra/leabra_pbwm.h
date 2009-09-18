@@ -230,10 +230,10 @@ class LEABRA_API MatrixGateBiasSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		one_bias;	// #DEF_true use one value to specify the main gating biases (mnt_nogo, empty_go, out_pvr) instead of specifying each separately -- typically things work best with the same value for all biases, so this makes it simpler to set them
-  float		bias; 		// #DEF_0-2 #CONDSHOW_ON_one_bias the one dopamine (da) bias value to use for mnt_nogo, empty_go, out_pvr, if one_bias flag is true 
-  float		mnt_nogo;	// #DEF_0-2 #CONDEDIT_OFF_one_bias for stripes that are maintaining, amount of NoGo bias da (negative dopamine) -- only if not on an output trial as determined by PVr -- this is critical for enabling robust maintenance 
-  float		empty_go;	// #DEF_0-2 #CONDEDIT_OFF_one_bias for empty stripes, amount of Go bias da (positive dopamine) -- only if not on an output trial as determined by PVr -- provides a bias for encoding and maintaining new information
-  float		out_pvr;	// #DEF_0-2 #CONDEDIT_OFF_one_bias if PVr detects that this is trial where external rewards are typically provided, amount of OUTPUT Go bias da (positive dopamine) to encourage the output gating units to respond
+  float		bias; 		// #DEF_0:2 #CONDSHOW_ON_one_bias the one dopamine (da) bias value to use for mnt_nogo, empty_go, out_pvr, if one_bias flag is true 
+  float		mnt_nogo;	// #DEF_0:2 #CONDEDIT_OFF_one_bias for stripes that are maintaining, amount of NoGo bias da (negative dopamine) -- only if not on an output trial as determined by PVr -- this is critical for enabling robust maintenance 
+  float		empty_go;	// #DEF_0:2 #CONDEDIT_OFF_one_bias for empty stripes, amount of Go bias da (positive dopamine) -- only if not on an output trial as determined by PVr -- provides a bias for encoding and maintaining new information
+  float		out_pvr;	// #DEF_0:2 #CONDEDIT_OFF_one_bias if PVr detects that this is trial where external rewards are typically provided, amount of OUTPUT Go bias da (positive dopamine) to encourage the output gating units to respond
   float		mnt_pvr;	// #DEF_0 if PVr detects that this is trial where external rewards are typically provided, amount of MAINT Go bias da (positive dopamine) to encourage the output gating units to respond
 
   void 	Defaults()	{ Initialize(); }
@@ -250,11 +250,10 @@ class LEABRA_API MatrixMiscSpec : public taOBase {
 INHERITED(taOBase)
 public:
   float		da_gain;	// #MIN_0 #DEF_1 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain
-  float		mnt_raw_da; 	// #MIN_0 #DEF_0:0.1 how much of the raw da signal to apply for learning in maintenance units -- e.g., when an empty stripe is gated on, the LV delta signal is otherwise zero, so it only learns on the raw
-  float		mnt_raw_empty;	// #MIN_0 #DEF_0.1 how much of the raw da signal to apply for learning in maintenance units -- e.g., when an empty stripe is gated on, the LV delta signal is otherwise zero, so it only learns on the raw
+  float		mnt_raw_empty;	// #MIN_0 #DEF_0.1 how much of the raw da signal to apply for learning in maintenance units, for case when an empty stripe is gated on, where the LV delta signal is otherwise zero, so it only can learn on the raw da value
+  float		mnt_raw_updt; 	// #MIN_0 #DEF_0:0.1 how much of the raw da signal to apply for learning in maintenance units, for case when a maintaining stripe is updated to a new value -- a good LV delta value is present in this case so this is not necessary, and all indications are that it only impairs performance..
   float		neg_da_bl;	// #MIN_0 #DEF_0;0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
   float		neg_gain;	// #DEF_1;0.7;1.5 gain for negative DA signals relative to positive ones
-  float		neg_dwt_gain;	// #DEF_1;0.7 gain for negative dWt values relative to positive ones -- compared to neg_gain, this operates *after* the flip of sign for NoGo, and may compensate for overall diffs in gc.h vs. gc.a that were present in earlier versions of the model -- neg_gain or neg_dwt_gain should be 1 if the other is != 1
   bool		no_snr_mod;	// #DEF_false #EXPERT disable the Da learning modulation by SNrThal ativation (this is only to demonstrate how important it is)
 
   void 	Defaults()	{ Initialize(); }
