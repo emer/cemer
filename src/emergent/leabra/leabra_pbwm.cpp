@@ -254,6 +254,8 @@ void MatrixConSpec::Initialize() {
 
   SetUnique("wt_limits", true);
   wt_limits.sym = false;
+
+  lrn_act_dif = true;
 }
 
 void MatrixConSpec::UpdateAfterEdit_impl() {
@@ -307,6 +309,8 @@ void MatrixUnitSpec::Initialize() {
   SetUnique("noise_adapt", true);
   noise_adapt.trial_fixed = true;
   noise_adapt.mode = NoiseAdaptSpec::PVLV_LVE;
+
+  freeze_net = true;
 }
 
 void MatrixUnitSpec::Defaults() {
@@ -317,6 +321,47 @@ void MatrixUnitSpec::Defaults() {
 void MatrixUnitSpec::InitLinks() {
   inherited::InitLinks();
   bias_spec.type = &TA_MatrixBiasSpec;
+}
+
+void MatrixUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  LeabraLayer* lay = u->own_lay();
+  if(lay->hard_clamped) return;
+  
+  float eff_dt = dt.net;
+  // this is the new part of the code: getting the effective dt relative to the freeze net fun
+  if(freeze_net) {
+    if(net->ct_cycle > net->mid_minus_cycle) eff_dt = 0.0f;
+  }
+
+  // remainder below here should be same as original, except dt.net -> eff_dt
+  if(net->inhib_cons_used) {
+    u->g_i_raw += u->g_i_delta;
+    u->gc.i = u->g_i_raw;
+    u->gc.i = u->prv_g_i + eff_dt * (u->gc.i - u->prv_g_i);
+    u->prv_g_i = u->gc.i;
+  }
+
+  u->net_raw += u->net_delta;
+  float tot_net = (u->bias_scale * u->bias.OwnCn(0)->wt) + u->net_raw;
+  if(u->HasExtFlag(Unit::EXT)) {
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+    tot_net += u->ext * ls->clamp.gain;
+  }
+
+  u->net_delta = 0.0f;	// clear for next use
+  u->g_i_delta = 0.0f;	// clear for next use
+
+  if(act_fun == SPIKE) {
+    // todo: need a mech for inhib spiking
+    u->net = tot_net;		// store directly for integration
+    Compute_NetinInteg_Spike(u,net);
+  }
+  else {
+    u->net = u->prv_net + eff_dt * (tot_net - u->prv_net);
+    u->prv_net = u->net;
+  }
+
+  u->i_thr = Compute_IThresh(u, net);
 }
 
 float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
@@ -398,9 +443,9 @@ void MatrixGateBiasSpec::UpdateAfterEdit_impl() {
 }
 
 void MatrixMiscSpec::Initialize() {
+  lrn_act_dif = true;
   da_gain = 1.0f;
-  mnt_raw_empty = 0.1f;
-  mnt_raw_updt = 0.0f;
+  da_contrast = 0.5;
   neg_da_bl = 0.0f; // 0.0002f;
   neg_gain = 1.0f; // 1.5f;
   no_snr_mod = false;
@@ -585,7 +630,10 @@ void MatrixLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
   
   for(int gi=0; gi<lay->units.gp.size; gi++) {
     LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
-    Compute_BiasDaMod(lay, mugp, net); // always just compute this one
+    if(net->ct_cycle > net->mid_minus_cycle)
+      Compute_LearnDaMod(lay, mugp, gi, net);
+    else
+      Compute_BiasDaMod(lay, mugp, net); // always just compute this one
   }
 }
 
@@ -599,41 +647,42 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
   int gp_sz = mugp->leaves / 2;
   bool nogo_rnd_go = (mugp->misc_state1 == PFCGateSpec::NOGO_RND_GO);
 
+  float bias_dav = 0.0f;
+
+  if(bg_type == OUTPUT) {	// output gating guy
+    if(net->pv_detected) {	// PV reward trial -- bias output gating
+      // only if pfc is maintaining..
+      if(pfc_mnt_cnt > 0)
+	bias_dav = gate_bias.out_pvr; // cur_dav is almost certainly 0
+    }
+    else {			// not a PV trial
+      if(pfc_mnt_cnt > 0 && !nogo_rnd_go) // currently maintaining: bias NoGo for everything
+	bias_dav = -gate_bias.mnt_nogo;
+    }
+  }
+  else {			// MAINT
+    if(net->pv_detected) {
+      // only if pfc is maintaining, bias output gating
+      if(pfc_mnt_cnt > 0)
+	bias_dav = gate_bias.mnt_pvr;
+    }
+    else {			// not a PV trial
+      if(pfc_mnt_cnt > 0 && !nogo_rnd_go) // currently maintaining: bias NoGo for everything
+	bias_dav = -gate_bias.mnt_nogo;
+      else			// otherwise, bias to maintain/update
+	bias_dav = gate_bias.empty_go;
+    }
+  }
+
+  mugp->misc_float = bias_dav;	// save bias value for baseline later in learn mod
+  float tot_dav = bias_dav + tonic_da;
+
   int idx = 0;
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
     PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx / gp_sz);
-
-    float bias_dav = 0.0f;
-
-    if(bg_type == OUTPUT) {	// output gating guy
-      if(net->pv_detected) {	// PV reward trial -- bias output gating
-	// only if pfc is maintaining..
-	if(pfc_mnt_cnt > 0)
-	  bias_dav = gate_bias.out_pvr; // cur_dav is almost certainly 0
-      }
-      else {			// not a PV trial
-	if(pfc_mnt_cnt > 0 && !nogo_rnd_go) // currently maintaining: bias NoGo for everything
-	  bias_dav = -gate_bias.mnt_nogo;
-      }
-    }
-    else {			// MAINT
-      if(net->pv_detected) {
-	// only if pfc is maintaining, bias output gating
-	if(pfc_mnt_cnt > 0)
-	  bias_dav = gate_bias.mnt_pvr;
-      }
-      else {			// not a PV trial
-	if(pfc_mnt_cnt > 0 && !nogo_rnd_go) // currently maintaining: bias NoGo for everything
-	  bias_dav = -gate_bias.mnt_nogo;
-	else			// otherwise, bias to maintain/update
-	  bias_dav = gate_bias.empty_go;
-      }
-    }
-    // don't set here because we need the values for computation otherwise
-//     u->dav = tonic_da + bias_dav;
-    Compute_UnitBiasDaMod(u, bias_dav + tonic_da, go_no);
+    Compute_UnitBiasDaMod(u, tot_dav, go_no);
     idx++;
   }
 }
@@ -665,28 +714,94 @@ void MatrixLayerSpec::Compute_UnitBiasDaMod(LeabraUnit* u, float bias_dav, int g
   }
 }
 
-void MatrixLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
-  // grab the da value in addition to activation
+void MatrixLayerSpec::Compute_LearnDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp,
+					 int gpidx, LeabraNetwork* net) {
+  int snr_prjn_idx = 0;
+  LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
+
+  LeabraUnit_Group* snrug = (LeabraUnit_Group*)snr_lay->units.gp[gpidx];
+  LeabraUnit* snr_u = (LeabraUnit*)snrug->Leaf(0);
+
+  int da_prjn_idx;
+  LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_PVLVDaLayerSpec);
+  PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
+  float tonic_da = dals->da.tonic_da;
+
+  // computed live in the PFC -- we'll be 1 trial behind..
+  PFCGateSpec::GateSignal gate_sig = (PFCGateSpec::GateSignal)mugp->misc_state2;
+  int pfc_mnt_cnt = mugp->misc_state; // is pfc maintaining or not?
+  bool nogo_rnd_go = (mugp->misc_state1 == PFCGateSpec::NOGO_RND_GO);
+  float bias_dav = mugp->misc_float; // stored in BiasDaMod
+  int gp_sz = mugp->leaves / 2;
+    
+  float snrthal_act = snr_u->act_m2; // m2 is gating signal
+  if(bg_type == OUTPUT) {
+    if((gate_sig == PFCGateSpec::GATE_NOGO) || (gate_sig == PFCGateSpec::GATE_MNT_GO))
+      snrthal_act = 0.0f;	// if no OUT_GO, nothing for us..
+  }
+  else {			// MAINT
+    if((gate_sig == PFCGateSpec::GATE_NOGO) || (gate_sig == PFCGateSpec::GATE_OUT_GO))
+      snrthal_act = 0.0f;	// if no MNT_GO, nothing for us..
+  }
+  if(matrix.no_snr_mod)	// disable -- just for testing!
+    snrthal_act = 1.0f;
+
+  int idx = 0;
   LeabraUnit* u;
   taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
-    u->act_m2 = u->act_eq;
-    u->act_p2 = u->dav;		// store mid-minus dav value
+  FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
+    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx / gp_sz);
+
+    // critical signal is in the mid minus phase, act_m2
+    float act_val = u->act_m2;
+    float cur_dav = u->dav - tonic_da; // exclude tonic
+    float lrn_dav = snrthal_act * cur_dav;
+    if(nogo_rnd_go) {
+      lrn_dav += rnd_go.nogo_da; 
+    }
+    lrn_dav -= matrix.neg_da_bl; // baseline = post snrthal mod
+
+    //    u->dav = bias_dav + lrn_dav;
+    if(matrix.lrn_act_dif)
+      u->dav = lrn_dav;		// just show learn dav here -- can't do if using dav for learning
+
+    lrn_dav *= matrix.da_gain;	// da_gain is after everything
+
+    Compute_UnitBiasDaMod(u, bias_dav, go_no); // baseline is bias dav
+
+    // now add learn dav:
+    if(go_no == (int)PFCGateSpec::GATE_NOGO) {
+      if(lrn_dav >= 0.0f) {
+	float ga = lrn_dav * ((1.0f - matrix.da_contrast) + (matrix.da_contrast * act_val));
+	if(go_nogo_gain.on) ga *= go_nogo_gain.nogo_p;
+	u->vcb.g_a += ga;
+      }
+      else {
+	float gh = -matrix.neg_gain * lrn_dav * ((1.0f - matrix.da_contrast) + (matrix.da_contrast * act_val));
+	if(go_nogo_gain.on) gh *= go_nogo_gain.nogo_n;
+	u->vcb.g_h += gh;
+      }
+    }
+    else {			// GATE_GO
+      if(lrn_dav >= 0.0f)  {
+	float gh = lrn_dav * ((1.0f - matrix.da_contrast) + (matrix.da_contrast * act_val));
+	if(go_nogo_gain.on) gh *= go_nogo_gain.go_p;
+	u->vcb.g_h += gh;
+      }
+      else {
+	float ga = -matrix.neg_gain * lrn_dav * ((1.0f - matrix.da_contrast) + (matrix.da_contrast * act_val));
+	if(go_nogo_gain.on) ga *= go_nogo_gain.go_n;
+	u->vcb.g_a += ga;
+      }
+    }
+    idx++;
   }
 }
 
 void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::PostSettle(lay, net);
 
-  // grab the dav in minus phase
-  if(net->phase_no == 0) {
-    LeabraUnit* u;
-    taLeafItr i;
-    FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
-      u->misc_2 = u->dav;	// store end-of-minus dav value
-    }
-  }
-  else if(net->phase_no == 1) {
+  if(!matrix.lrn_act_dif && (net->phase_no == 1)) {
     // end of plus -- compute da value used for learning
     Compute_LearnDaVal(lay, net);
   }
@@ -708,7 +823,19 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
     int pfc_mnt_cnt = mugp->misc_state; // is pfc maintaining or not?
     bool nogo_rnd_go = (mugp->misc_state1 == PFCGateSpec::NOGO_RND_GO);
     int gp_sz = mugp->leaves / 2;
-    
+
+    float snrthal_act = snr_u->act_m2;
+    if(bg_type == OUTPUT) {
+      if((gate_sig == PFCGateSpec::GATE_NOGO) || (gate_sig == PFCGateSpec::GATE_MNT_GO))
+	snrthal_act = 0.0f;	// if no OUT_GO, nothing for us..
+    }
+    else {			// MAINT
+      if((gate_sig == PFCGateSpec::GATE_NOGO) || (gate_sig == PFCGateSpec::GATE_OUT_GO))
+	snrthal_act = 0.0f;	// if no MNT_GO, nothing for us..
+    }
+    if(matrix.no_snr_mod)	// disable -- just for testing!
+      snrthal_act = 1.0f;
+
     int idx = 0;
     LeabraUnit* u;
     taLeafItr i;
@@ -717,42 +844,15 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
 
       // critical gating activation value is mid-minus state
       float act_val = u->act_m2;
-      float snrthal_act = snr_u->act_m2;
+      float lrn_dav = snrthal_act * u->dav; // dav is current plus phase
 
-      float lrn_dav = 0.0f;	// learning dopamine value -- compute it!
-
-      if(bg_type == OUTPUT) {
-	if((gate_sig == PFCGateSpec::GATE_NOGO) || (gate_sig == PFCGateSpec::GATE_MNT_GO))
-	  snrthal_act = 0.0f;	// if no OUT_GO, nothing for us..
-
-	if(matrix.no_snr_mod)	// disable -- just for testing!
-	  snrthal_act = 1.0f;
-
-	lrn_dav = matrix.da_gain * snrthal_act * u->dav; // dav is current plus phase -- good for out gating
-      }
-      else {			// MAINT
-	if((gate_sig == PFCGateSpec::GATE_NOGO) || (gate_sig == PFCGateSpec::GATE_OUT_GO))
-	  snrthal_act = 0.0f;	// if no MNT_GO, nothing for us..
-
-	if(matrix.no_snr_mod)	// disable -- just for testing!
-	  snrthal_act = 1.0f;
-
-	float eff_dav = (u->misc_2 - u->act_p2); // end-of-minus - mid-minus delta
-	if(pfc_mnt_cnt <= 0)	// empty
-	  eff_dav += matrix.mnt_raw_empty * u->misc_2;
-	else
-	  eff_dav += matrix.mnt_raw_updt * u->misc_2;
-
-        lrn_dav = matrix.da_gain * snrthal_act * eff_dav;
-      }
+      lrn_dav -= matrix.neg_da_bl;
 
       if(nogo_rnd_go)
 	lrn_dav += rnd_go.nogo_da; // output gating also gets this too
 
       if(lrn_dav < 0.0f)
 	lrn_dav *= matrix.neg_gain;
-
-      lrn_dav -= matrix.neg_da_bl;
 
       if(go_no == PFCGateSpec::GATE_NOGO)
 	lrn_dav *= -1.0f;	// flip the sign for nogo!

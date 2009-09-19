@@ -95,9 +95,11 @@ public:
 #ifdef __MAKETA__
   XCalLearnSpec	xcal;		// #CAT_Learning XCAL learning parameters for matrix cons, used for keeping units from being either too active or not active enough -- note that mvl_mix default value should be multiplied by da_gain
 #endif
-  inline void C_Compute_dWt_Matrix(LeabraCon* cn, float lin_wt, 
-				   float mtx_act_m2, float mtx_da, float su_act_m2, 
-				   float ru_thr) {
+  bool		lrn_act_dif;	// #DEF_true use activation differential (driven by dopamine modulation) instead of using dopamine modulation directly
+
+  inline void C_Compute_dWt_Matrix_Da(LeabraCon* cn, float lin_wt, 
+				      float mtx_act_m2, float mtx_da, float su_act_m2, 
+				      float ru_thr) {
     float sr_prod = mtx_act_m2 * su_act_m2;
     float err = mtx_da * sr_prod;
     float dwt = xcal.svm_mix * err + xcal.mvl_mix * xcal.dWtFun(sr_prod, ru_thr);
@@ -109,27 +111,69 @@ public:
     cn->dwt += cur_lrate * dwt;
   }
 
-  inline void C_Compute_dWt_Matrix_NoSB(LeabraCon* cn, float mtx_act_m2, float mtx_da,
-					float su_act_m2, float ru_thr) {
+  inline void C_Compute_dWt_Matrix_ActDif(LeabraCon* cn, float lin_wt, 
+					  float ru_act_p, float ru_act_m, float su_act, 
+					  float ru_thr) {
+    float err = (ru_act_p - ru_act_m) * su_act;
+    float sm_mix = xcal.s_mix * ru_act_p * su_act + xcal.m_mix * ru_act_m * su_act;
+    float dwt = xcal.svm_mix * err + xcal.mvl_mix * xcal.dWtFun(sm_mix, ru_thr);
+    // std leabra requires separate softbounding on all terms.. see XCAL for its version
+    if(lmix.err_sb) {
+      if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
+      else		dwt *= lin_wt;
+    }
+    cn->dwt += cur_lrate * dwt;
+  }
+
+  inline void C_Compute_dWt_Matrix_Da_NoSB(LeabraCon* cn, float mtx_act_m2, float mtx_da,
+					   float su_act_m2, float ru_thr) {
     float sr_prod = mtx_act_m2 * su_act_m2;
     float err = mtx_da * sr_prod;
     float dwt = xcal.svm_mix * err + xcal.mvl_mix * xcal.dWtFun(sr_prod, ru_thr);
     cn->dwt += cur_lrate * dwt;
   }
 
+  inline void C_Compute_dWt_Matrix_ActDif_NoSB(LeabraCon* cn, float ru_act_p, float ru_act_m,
+					       float su_act, float ru_thr) {
+    float err = (ru_act_p - ru_act_m) * su_act;
+    float sm_mix = xcal.s_mix * ru_act_p * su_act + xcal.m_mix * ru_act_m * su_act;
+    float dwt = xcal.svm_mix * err + xcal.mvl_mix * xcal.dWtFun(sm_mix, ru_thr);
+    cn->dwt += cur_lrate * dwt;
+  }
+
   inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_m2, ru->dav, su->act_m2, ru->l_thr);
+    if(lrn_act_dif) {
+      for(int i=0; i<cg->size; i++) {
+	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+	C_Compute_dWt_Matrix_ActDif(cn, LinFmSigWt(cn->wt), ru->act_p, ru->act_m2, su->act_m2,
+				    ru->l_thr);
+      }
+    }
+    else {
+      for(int i=0; i<cg->size; i++) {
+	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+	C_Compute_dWt_Matrix_Da(cn, LinFmSigWt(cn->wt), ru->act_m2, ru->dav, su->act_m2,
+				ru->l_thr);
+      }
     }
   }
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Matrix_NoSB(cn, ru->act_m2, ru->dav, su->act_m2, ru->l_thr);
+    if(lrn_act_dif) {
+      for(int i=0; i<cg->size; i++) {
+	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+	C_Compute_dWt_Matrix_ActDif_NoSB(cn, ru->act_p, ru->act_m2, su->act_m2, ru->l_thr);
+      }
+    }
+    else {
+      for(int i=0; i<cg->size; i++) {
+	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+	C_Compute_dWt_Matrix_Da_NoSB(cn, ru->act_m2, ru->dav, su->act_m2, ru->l_thr);
+      }
     }
   }
 
@@ -153,7 +197,12 @@ public:
 
   inline override void B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru) {
     float err;
-    err = ru->act_m2 * ru->da;
+    if(lrn_act_dif) {
+      err = ru->act_m2 * ru->dav;
+    }
+    else {
+      err = ru->act_p - ru->act_m2;
+    }
     if(fabsf(err) >= dwt_thresh)
       cn->dwt += cur_lrate * err;
   }
@@ -187,13 +236,15 @@ private:
   void	Destroy()	{ };
 };
 
-
 class LEABRA_API MatrixUnitSpec : public LeabraUnitSpec {
   // basal ganglia matrix units: fire actions or WM updates. modulated by da signals
 INHERITED(LeabraUnitSpec)
 public:
+  bool	freeze_net;		// #DEF_true freeze netinput after gating signal is computed (from mid-minus cycle onward) during learning modulation so that learning only reflects DA modulation and not other changes in netin
+
   MatrixNoiseSpec matrix_noise;	// special noise parameters for matrix units
 
+  override void Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no);
   override float Compute_Noise(LeabraUnit* u, LeabraNetwork* net);
 
   void	Defaults();
@@ -249,9 +300,9 @@ class LEABRA_API MatrixMiscSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
 INHERITED(taOBase)
 public:
+  bool		lrn_act_dif;	// #DEF_true use activation differential (driven by dopamine modulation) instead of using dopamine modulation directly
   float		da_gain;	// #MIN_0 #DEF_1 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain
-  float		mnt_raw_empty;	// #MIN_0 #DEF_0.1 how much of the raw da signal to apply for learning in maintenance units, for case when an empty stripe is gated on, where the LV delta signal is otherwise zero, so it only can learn on the raw da value
-  float		mnt_raw_updt; 	// #MIN_0 #DEF_0:0.1 how much of the raw da signal to apply for learning in maintenance units, for case when a maintaining stripe is updated to a new value -- a good LV delta value is present in this case so this is not necessary, and all indications are that it only impairs performance..
+  float		da_contrast;	// #DEF_0.5;1 #MIN_0 #MAX_1 for learning-based dopamine modulation (not bias da mod), amount of contrast enhancement of da signal based on current unit activation: 0 = all units get same da; 1 = only active units get da, in proportion to activity; .5 = half-way between
   float		neg_da_bl;	// #MIN_0 #DEF_0;0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
   float		neg_gain;	// #DEF_1;0.7;1.5 gain for negative DA signals relative to positive ones
   bool		no_snr_mod;	// #DEF_false #EXPERT disable the Da learning modulation by SNrThal ativation (this is only to demonstrate how important it is)
@@ -280,10 +331,9 @@ private:
   void	Destroy()	{ };
 };
 
-// matrix unit misc_ var docs
-// * act_p2 = da value at mid minus
-// * misc_2 = da value at end of minus
+// matrix unit/layer misc_ var docs
 // * misc_1 = patch LVe value (send by PatchLayerSpec, for patch_noise in Matrix Units)
+// * ugp->misc_float = bias_dav value computed per stripe in Compute_BiasDaMod
 
 class LEABRA_API MatrixLayerSpec : public LeabraLayerSpec {
   // basal ganglia matrix layer: initiate actions (OUTPUT gating) or working memory updating (MAINT gating) -- gating signal computed at mid minus point
@@ -307,6 +357,9 @@ public:
     // apply bias da modulation to individual unit
   virtual void 	Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net);
   // compute u->dav learning dopamine value based on raw dav and gating state, etc -- this dav is then directly used in conspec leraning rule
+  virtual void 	Compute_LearnDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp,
+				   int gpidx, LeabraNetwork* net);
+  // compute dynamic da modulation: evaluation modulation, which is sensitive to GO/NOGO firing and activation in action phase
 
   virtual void 	Compute_NoGoRndGo(LeabraLayer* lay, LeabraNetwork* net);
   // compute random Go for nogo case
@@ -321,7 +374,6 @@ public:
   override void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
   //  override bool	Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
@@ -349,9 +401,9 @@ class LEABRA_API SNrThalMiscSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
 INHERITED(taOBase)
 public:
-  float		net_off;	// [0.2 or 0] netinput offset -- how much to add to each unit's baseline netinput -- positive values make it more likely that some stripe will always fire, even if it has a net nogo activation state in the matrix -- very useful for preventing all nogo situations -- if net_off is .2 then act.gain should be 600, if net_off is 0 then act.gain should be 20 (dynamic range is diff)
-  float		go_thr;		// #DEF_0.1 threshold in snrthal activation required to trigger a Go gating event
-  float		rnd_go_inc;	// #DEF_0.2 how much to add to the net input for a random-go signal triggered in corresponding matrix layer?
+  float		net_off;	// #DEF_-0.1:0.5 #MIN_-1 #MAX_1 netinput offset -- how much to add to each unit's baseline netinput -- positive values make it more likely that some stripe will always fire, even if it has a net nogo activation state in the matrix -- very useful for preventing all nogo situations -- if net_off is .2 then act.gain should be 600, if net_off is 0 then act.gain should be 20 (dynamic range is diff)
+  float		go_thr;		// #DEF_0.1:0.5 #MIN_0 #MAX_1 threshold in snrthal activation required to trigger a Go gating event
+  float		rnd_go_inc;	// #DEF_0.2 #MIN_0 how much to add to the net input for a random-go signal triggered in corresponding matrix layer?
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(SNrThalMiscSpec);
