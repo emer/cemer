@@ -322,7 +322,7 @@ class LEABRA_API NVConSpec : public PVConSpec {
   // novelty value connection spec: learns using delta rule from act_p - act_m values -- does not use hebb or err_sb parameters -- has decay to refresh novelty if not seen for a while..
 INHERITED(PVConSpec)
 public:
-  float		decay;		// amount to decay weight values every time they are updated, restoring some novelty (also multiplied by lrate)
+  float		decay;		// #MIN_0 amount to decay weight values every time they are updated, restoring some novelty (also multiplied by lrate)
 
   inline void C_Compute_Weights_LeabraCHL(LeabraCon* cn, float dkfact) {
     float lin_wt = LinFmSigWt(cn->wt);
@@ -362,8 +362,8 @@ class LEABRA_API NVSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for novelty value learning
 INHERITED(taOBase)
 public:
-  float		da_gain;	// #DEF_1;0 gain for novelty value dopamine signal
-  float		val_thr;	// #DEF_0.1 threshold for value (training value is 0) -- value is zero below this threshold
+  float		da_gain;	// #DEF_0:1 #MIN_0 gain for novelty value dopamine signal
+  float		val_thr;	// #DEF_0.1 #MIN_0 threshold for value (training value is 0) -- value is zero below this threshold
   float		prior_discount;	// #DEF_1 #MIN_0 #MAX_1 how much to discount the prior NV delta value (nvd = NV - val_thr) in computing the net NV dopamine signal (NV DA = nvd_t - prior_discount * nvd_t-1)
   bool		er_reset_prior;	// #EXPERT #DEF_true reset prior delta value (nvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
 

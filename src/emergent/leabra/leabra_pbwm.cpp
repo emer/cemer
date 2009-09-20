@@ -752,6 +752,8 @@ void MatrixLayerSpec::Compute_LearnDaMod(LeabraLayer* lay, LeabraUnit_Group* mug
   FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
     PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx / gp_sz);
 
+    u->act_dif2	= u->act_eq - u->act_m2; // visualize the relevant delta
+
     // critical signal is in the mid minus phase, act_m2
     float act_val = u->act_m2;
     float cur_dav = u->dav - tonic_da; // exclude tonic
@@ -1392,8 +1394,9 @@ void PFCLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork*) {
       mugp->misc_state1 = ugp->misc_state1;
     }
     patchgp->misc_state2 = snrgp->misc_state2 = mugp->misc_state2 = ugp->misc_state2;
-    patchgp->misc_float = snrgp->misc_float = mugp->misc_float = ugp->misc_float;
-    patchgp->misc_float1 = snrgp->misc_float1 = mugp->misc_float1 = ugp->misc_float1;
+    // matrix does not get misc_float -- uses it otherwise
+    patchgp->misc_float = snrgp->misc_float = ugp->misc_float;
+    patchgp->misc_float1 = snrgp->misc_float1 = ugp->misc_float1;
     if(matrix_out) {
       snrgp = (LeabraUnit_Group*)snrthal_out->units.gp[mg];
       mugp = (LeabraUnit_Group*)matrix_out->units.gp[mg];
@@ -1403,8 +1406,9 @@ void PFCLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork*) {
 	mugp->misc_state1 = ugp->misc_state1;
       }
       snrgp->misc_state2 = mugp->misc_state2 = ugp->misc_state2;
-      snrgp->misc_float = mugp->misc_float = ugp->misc_float;
-      snrgp->misc_float1 = mugp->misc_float1 = ugp->misc_float1;
+    // matrix does not get misc_float -- uses it otherwise
+      snrgp->misc_float = ugp->misc_float;
+      snrgp->misc_float1 = ugp->misc_float1;
     }
   }
 }

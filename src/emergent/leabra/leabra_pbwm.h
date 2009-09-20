@@ -494,7 +494,7 @@ public:
   float		go_netin_gain;	  // #DEF_0.01 extra net input to add to active units as a function of gating signal -- uses the mnt_go_learn_mod to determine if maintenance go contributes to the gating signal
   float		clear_decay;	// #DEF_0 #MIN_0 #MAX_1 how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse
   bool		out_go_clear;	// #DEF_true an output Go clears the maintenance currents at the end of the trial -- you use it, you lose it..
-  bool		clear_veto;	// #DEF_false #CONDEDIT_ON_out_go_clear if both MAINT and OUT Go signals occur at the same time, then this vetos the out_go_clear that would otherwise occur
+  bool		clear_veto;	// #DEF_true #CONDEDIT_ON_out_go_clear if both MAINT and OUT Go signals occur at the same time, then this vetos the out_go_clear that would otherwise occur
   float		off_accom;	// #DEF_0 #EXPERT #MIN_0 #MAX_1 how much of the maintenance current to apply to accommodation after turning a unit off
 
   void 	Defaults()	{ Initialize(); }
