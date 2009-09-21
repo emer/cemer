@@ -676,6 +676,10 @@ void DataTableCols::DataChanged(int dcr, void* op1, void* op2) {
   if ((dcr >= DCR_LIST_ORDER_MIN) && (dcr <= DCR_LIST_ORDER_MAX)) {
     DataTable* dt = GET_MY_OWNER(DataTable); // cache
     if (!dt) return;
+    // if last col removed then rows must become 0
+    if (size == 0) {
+      dt->rows = 0;
+    }
     // treat changes here as Struct changes on the table
     dt->StructUpdate(true);
     dt->StructUpdate(false);
