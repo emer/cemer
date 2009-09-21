@@ -876,10 +876,11 @@ void MatrixLayerSpec::Compute_DaTonicMod(LeabraLayer* lay, LeabraUnit_Group* mug
   PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
   float dav = contrast.gain * dals->da.tonic_da;
   int idx = 0;
+  int gp_sz = mugp->size / 2;
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
-    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx % 2); // GO = 0, NOGO = 1
+    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx / gp_sz); // GO = 0, NOGO = 1
     u->dav = dav;		// accurately reflect tonic modulation!
     Compute_DaMod_NoContrast(u, dav, go_no);
     idx++;
@@ -892,11 +893,12 @@ void MatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mugp
   PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
   float tonic_da = dals->da.tonic_da;
 
+  int gp_sz = mugp->size / 2;
   int idx = 0;
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
-    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx % 2); // GO = 0, NOGO = 1
+    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx / gp_sz); // GO = 0, NOGO = 1
 
     // need to separate out the tonic and non-tonic because tonic contributes with contrast.gain
     // but perf is down-modulated by matrix.perf_gain..
@@ -913,11 +915,12 @@ void MatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mug
 
   PFCGateSpec::GateSignal gate_sig = (PFCGateSpec::GateSignal)mugp->misc_state2;
     
+  int gp_sz = mugp->size / 2;
   int idx = 0;
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
-    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx % 2); // GO = 0, NOGO = 1
+    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx / gp_sz); // GO = 0, NOGO = 1
     LeabraRecvCons* snrcg = (LeabraRecvCons*)u->recv[snr_prjn_idx];
     LeabraUnit* snrsu = (LeabraUnit*)snrcg->Un(0);
 
@@ -1063,9 +1066,10 @@ bool MatrixLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* 
 }
 
 void MatrixLayerSpec::LabelUnits_impl(Unit_Group* ugp) {
+  int gp_sz = ugp->size / 2;
   for(int i=0;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i % 2); // GO = 0, NOGO = 1
+    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i / gp_sz); // GO = 0, NOGO = 1
     if(go_no == PFCGateSpec::GATE_GO)
       u->name = "Go";
     else
