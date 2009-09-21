@@ -1381,9 +1381,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API XPFCLayerSpec : public LeabraLayerSpec {
+class LEABRA_API XPFCLayerSpec : public PFCBaseLayerSpec {
   // Prefrontal cortex layer: gets maintenance and output gating signals from SNrThal -- gate toggles off in minus phase, on at end of plus phase, output gating drives unit act relative to internal act_eq value
-INHERITED(LeabraLayerSpec)
+INHERITED(PFCBaseLayerSpec)
 public:
   enum MaintUpdtAct {
     STORE,			// store current activity state in maintenance currents
