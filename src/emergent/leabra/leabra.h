@@ -3557,9 +3557,18 @@ public:
 		     bool no_lrn_pfc=false);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated;  da_mod_all = have da value modulate all the regular units in the network; out_gate = each PFC layer has separate output gated layer and corresponding matrix output gates; nolrn_pfc = pfc does not learn -- just copies input acts directly (useful for demonstration but not as realistic or powerful)
 
-  virtual bool 	PBWM_V2(LeabraNetwork* net, bool da_mod_all = false,
+  virtual bool 	PBWM_V21(LeabraNetwork* net, bool da_mod_all = false,
 			int n_stripes=4, bool no_lrn_pfc=false);
-  // #MENU_BUTTON configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) Version 2 -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated;  da_mod_all = have da value modulate all the regular units in the network; nolrn_pfc = pfc does not learn -- just copies input acts directly (useful for demonstration but not as realistic or powerful)
+  // #MENU_BUTTON configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) Version 2.1 -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated;  da_mod_all = have da value modulate all the regular units in the network; nolrn_pfc = pfc does not learn -- just copies input acts directly (useful for demonstration but not as realistic or powerful)
+
+  virtual bool 	PBWM_ToV22_impl(String& proj_str);
+  // #IGNORE do the actual gsub conversions for ToV22 routines
+
+  virtual bool 	PBWM_ToV22();
+  // #MENU_BUTTON #CONFIRM convert the existing project to version 2.2 -- will load the new 2.2 version over this existing project, and you can then save it to a file.  NOTE: 2.2 requires that the SNrThal_out projection go to the PFC_mnt layer, instead of the PFC_out layer -- this consolidates all the gating information in one layer
+
+  virtual bool 	PBWM_FixV22File(const String& proj_file_nm, bool load_after = true);
+  // #MENU_BUTTON #CAT_File #EXT_proj #FILE_DIALOG_LOAD convert an earlier version of an existing PBWM 2.2 project to the current version -- for versions that were created when original V1 names were used, instead of the current X2.. names -- once converted, if load_after, then THIS FILE IS THEN LOADED OVER EXISTING PROJECT -- otherwise THE ORIGINAL PROJECT IS OVERWRITTEN
 
   virtual bool PBWM_SetNStripes(LeabraNetwork* net, int n_stripes, int n_units=-1);
   // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units)
