@@ -396,9 +396,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API MatrixLayerSpec : public LeabraLayerSpec {
+class LEABRA_API MatrixLayerSpec : public MatrixBaseLayerSpec {
   // basal ganglia matrix layer: fire actions/WM updates, or nogo; MAINT = gate in 1+ and 2+, OUTPUT = gate in -
-INHERITED(LeabraLayerSpec)
+INHERITED(MatrixBaseLayerSpec)
 public:
   enum 	BGType {       		// which type of basal ganglia circuit is this?
     OUTPUT,			// #AKA_MOTOR matrix that does output gating: controls access of frontal activations to other areas (e.g., motor output, or output of maintained PFC information)
@@ -491,9 +491,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API PFCLayerSpec : public LeabraLayerSpec {
+class LEABRA_API PFCLayerSpec : public PFCBaseLayerSpec {
   // Prefrontal cortex layer: gets gating signal from SNrThal, gate updates before plus and 2nd plus (update) phase (toggle off, toggle on)
-INHERITED(LeabraLayerSpec)
+INHERITED(PFCBaseLayerSpec)
 public:
   enum MaintUpdtAct {
     NO_UPDT,			// no update action
