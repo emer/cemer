@@ -1376,6 +1376,7 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 	  ugp->misc_state1 = PFCGateSpec::MAINT_OUT_MNT_GO;
 	}
 	else {
+ 	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net); // note: TMP
 	  ugp->misc_state1 = PFCGateSpec::EMPTY_OUT_MNT_GO;
 	}
       }
@@ -1403,7 +1404,8 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
     else if(ugp->misc_state1 == PFCGateSpec::MAINT_MNT_GO ||
 	    ugp->misc_state1 == PFCGateSpec::EMPTY_MNT_GO ||
 	    ugp->misc_state1 == PFCGateSpec::EMPTY_OUT_MNT_GO) {
-      Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it
+      if(ugp->misc_state1 == PFCGateSpec::MAINT_MNT_GO)
+	Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it
       ugp->misc_state = 1;	// always reset on new store
     }
     // or basic output gate with no veto from maint
@@ -1435,8 +1437,7 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
 	else
 	  ugp->misc_state--;
       }
-      else {
-	// both out clear and mnt suggest a CLEAR here
+      else if(gate.out_go_clear) {
 	if(ugp->misc_state > 0) {		       // maintaining
 	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
 	  ugp->misc_state = 0;			     // empty
@@ -1444,6 +1445,11 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
 	else {
 	  ugp->misc_state--;	// effectively a nogo -- continue incrementing
 	}
+      }
+      else {
+	// standard mode: store because it is a toggle maint case
+	Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it
+	ugp->misc_state = 1;
       }
     }
   }
