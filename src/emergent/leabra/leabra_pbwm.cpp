@@ -1089,7 +1089,7 @@ void MatrixLayerSpec::LabelUnits(LeabraLayer* lay) {
 void PFCGateSpec::Initialize() {
   out_go_clear = false;
   graded_out_go = false;
-  clear_veto = true;
+  mnt_out_go = MOGO_MNT;
   off_accom = 0.0f;
   allow_clamp = false;
 }
@@ -1363,20 +1363,20 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 	  ugp->misc_state1 = PFCGateSpec::MAINT_MNT_GO;
 	}
 	else {
- 	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net); // note: TMP
-	  // store in 2nd plus is fine -- could have a flag for waiting till very end
+ 	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net);
 	  ugp->misc_state1 = PFCGateSpec::EMPTY_MNT_GO;
 	}
       }
       else {
 	// both output and maint gating fired..
 	ugp->misc_state2 = PFCGateSpec::GATE_OUT_MNT_GO;
-	if(pfc_mnt_cnt > 0)  { // full stripe -- do NOT clear mnt at this point in any case
-	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net); // NOTE: tmp
+	if(pfc_mnt_cnt > 0)  { // full stripe -- what to do..
 	  ugp->misc_state1 = PFCGateSpec::MAINT_OUT_MNT_GO;
+	  if(gate.mnt_out_go == PFCGateSpec::MOGO_MNT)
+	    Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);
 	}
 	else {
- 	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net); // note: TMP
+ 	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net); // always store now
 	  ugp->misc_state1 = PFCGateSpec::EMPTY_OUT_MNT_GO;
 	}
       }
@@ -1393,12 +1393,11 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
     // delayed STORE or CLEAR actions
 
     // for NOGO, just update the misc_state counter
-    if(ugp->misc_state1 == PFCGateSpec::EMPTY_NOGO || 
-       ugp->misc_state1 == PFCGateSpec::MAINT_NOGO) {
-      if(ugp->misc_state > 0)
-	ugp->misc_state++;
-      else
-	ugp->misc_state--;
+    if(ugp->misc_state1 == PFCGateSpec::EMPTY_NOGO) {
+      ugp->misc_state--;	// stay empty
+    }
+    else if(ugp->misc_state1 == PFCGateSpec::MAINT_NOGO) {
+      ugp->misc_state++;	// continue maintaining
     }
     // look for store condition
     else if(ugp->misc_state1 == PFCGateSpec::MAINT_MNT_GO ||
@@ -1409,47 +1408,37 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
       ugp->misc_state = 1;	// always reset on new store
     }
     // or basic output gate with no veto from maint
-    else if(ugp->misc_state1 == PFCGateSpec::MAINT_OUT_GO ||
-	    ugp->misc_state1 == PFCGateSpec::EMPTY_OUT_GO) {
+    else if(ugp->misc_state1 == PFCGateSpec::MAINT_OUT_GO) {
       if(gate.out_go_clear) {
-	if(ugp->misc_state > 0) {		       // maintaining
-	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
-	  ugp->misc_state = 0;			     // empty
-	}
-	else {
-	  ugp->misc_state--;	// effectively a nogo -- continue incrementing
-	}
+	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
+	ugp->misc_state = 0;			     // empty
       }
       else {
-	// just continue as if nothing happened
-	if(ugp->misc_state > 0)
-	  ugp->misc_state++;
-	else
-	  ugp->misc_state--;
+	ugp->misc_state++;	// continue maintaining
       }
     }
-    // finally, must be a MAINT_OUT_MNT_GO
-    else {
-      if(gate.out_go_clear && gate.clear_veto) {
-	// just continue as if nothing happened -- clear was vetoed
-	if(ugp->misc_state > 0)
-	  ugp->misc_state++;
-	else
-	  ugp->misc_state--;
-      }
-      else if(gate.out_go_clear) {
-	if(ugp->misc_state > 0) {		       // maintaining
+    else if(ugp->misc_state1 == PFCGateSpec::EMPTY_OUT_GO) {
+      ugp->misc_state--;	// no real issue here..
+    }
+    else if(ugp->misc_state1 == PFCGateSpec::MAINT_OUT_MNT_GO) {
+      // this is the most complex challenging case..
+      if(gate.out_go_clear) {
+	if(gate.mnt_out_go == PFCGateSpec::MOGO_VETO) {
+	  ugp->misc_state++;	// continue maintaining
+	}
+	else if(gate.mnt_out_go == PFCGateSpec::MOGO_OUT) {
 	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
 	  ugp->misc_state = 0;			     // empty
 	}
-	else {
-	  ugp->misc_state--;	// effectively a nogo -- continue incrementing
-	}
       }
       else {
-	// standard mode: store because it is a toggle maint case
-	Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it
-	ugp->misc_state = 1;
+	if(gate.mnt_out_go == PFCGateSpec::MOGO_MNT) { // treat like MAINT_MNT_GO
+	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it
+	  ugp->misc_state = 1;
+	}
+	else {			// nop -- just increment
+	  ugp->misc_state++;	// continue maintaining
+	}
       }
     }
   }
@@ -2441,7 +2430,7 @@ void X2PFCGateSpec::Initialize() {
   go_netin_gain = 0.01f;
   clear_decay = 0.0f;
   out_go_clear = true;
-  clear_veto = true;
+  mnt_out_go = MOGO_MNT;
   off_accom = 0.0f;
 }
 
@@ -2737,10 +2726,14 @@ void X2PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       else {
 	// both output and maint gating fired..
 	ugp->misc_state2 = X2PFCGateSpec::GATE_OUT_MNT_GO;
-	if(pfc_mnt_cnt > 0) // full stripe -- do NOT clear mnt at this point in any case 
+	if(pfc_mnt_cnt > 0) { // full stripe -- what to do..
 	  ugp->misc_state1 = X2PFCGateSpec::MAINT_OUT_MNT_GO;
-	else
+	  if(gate.mnt_out_go == X2PFCGateSpec::MOGO_MNT) // mnt mode is to clear
+	    Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);
+	}
+	else {
 	  ugp->misc_state1 = X2PFCGateSpec::EMPTY_OUT_MNT_GO;
+	}
       }
     }
 
@@ -2750,6 +2743,68 @@ void X2PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     ugp->misc_float1 = gate.base_gain + (gate.go_gain * out_go_act);
   }
   SendGateStates(lay, net);
+}
+
+void X2PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
+  for(int mg=0;mg<lay->units.gp.size;mg++) {
+    LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
+
+    // basically just update the misc_state counter and implement any
+    // delayed STORE or CLEAR actions
+
+    // for NOGO, just update the misc_state counter
+    // for NOGO, just update the misc_state counter
+    if(ugp->misc_state1 == X2PFCGateSpec::EMPTY_NOGO) {
+      ugp->misc_state--;	// stay empty
+    }
+    else if(ugp->misc_state1 == X2PFCGateSpec::MAINT_NOGO) {
+      ugp->misc_state++;	// continue maintaining
+    }
+    // look for store condition
+    else if(ugp->misc_state1 == X2PFCGateSpec::MAINT_MNT_GO ||
+	    ugp->misc_state1 == X2PFCGateSpec::EMPTY_MNT_GO ||
+	    ugp->misc_state1 == X2PFCGateSpec::EMPTY_OUT_MNT_GO) {
+      Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it (never stored before)
+      ugp->misc_state = 1;	// always reset on new store
+    }
+    // or basic output gate with no veto from maint
+    else if(ugp->misc_state1 == X2PFCGateSpec::MAINT_OUT_GO) {
+      if(gate.out_go_clear) {
+	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
+	ugp->misc_state = 0;			     // empty
+      }
+      else {
+	ugp->misc_state++;	// continue maintaining
+      }
+    }
+    else if(ugp->misc_state1 == X2PFCGateSpec::EMPTY_OUT_GO) {
+      ugp->misc_state--;	// no real issue here..
+    }
+    else if(ugp->misc_state1 == X2PFCGateSpec::MAINT_OUT_MNT_GO) {
+      // this is the most complex challenging case..
+      if(gate.out_go_clear) {
+	if(gate.mnt_out_go == X2PFCGateSpec::MOGO_VETO) {
+	  ugp->misc_state++;	// continue maintaining
+	}
+	else if(gate.mnt_out_go == X2PFCGateSpec::MOGO_OUT) {
+	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
+	  ugp->misc_state = 0;			     // empty
+	}
+      }
+      else {
+	if(gate.mnt_out_go == X2PFCGateSpec::MOGO_MNT) { // treat like MAINT_MNT_GO
+	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it
+	  ugp->misc_state = 1;
+	}
+	else {			// nop -- just increment
+	  ugp->misc_state++;	// continue maintaining
+	}
+      }
+    }
+  }
+  // NOTE: Do NOT send final gate states -- empty/maint status checks on other layers
+  // need to reflect status at time of gating computation (mid minus)
+  //  SendGateStates(lay, net);
 }
 
 void X2PFCLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork*) {
@@ -2801,74 +2856,6 @@ void X2PFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no == 1) {
     Compute_Gating_Final(lay, net);	// final gating
   }
-}
-
-void X2PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
-  for(int mg=0;mg<lay->units.gp.size;mg++) {
-    LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
-
-    // basically just update the misc_state counter and implement any
-    // delayed STORE or CLEAR actions
-
-    // for NOGO, just update the misc_state counter
-    if(ugp->misc_state1 == X2PFCGateSpec::EMPTY_NOGO || 
-       ugp->misc_state1 == X2PFCGateSpec::MAINT_NOGO) {
-      if(ugp->misc_state > 0)
-	ugp->misc_state++;
-      else
-	ugp->misc_state--;
-    }
-    // look for store condition
-    else if(ugp->misc_state1 == X2PFCGateSpec::MAINT_MNT_GO ||
-	    ugp->misc_state1 == X2PFCGateSpec::EMPTY_MNT_GO ||
-	    ugp->misc_state1 == X2PFCGateSpec::EMPTY_OUT_MNT_GO) {
-      Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it
-      ugp->misc_state = 1;	// always reset on new store
-    }
-    // or basic output gate with no veto from maint
-    else if(ugp->misc_state1 == X2PFCGateSpec::MAINT_OUT_GO ||
-	    ugp->misc_state1 == X2PFCGateSpec::EMPTY_OUT_GO) {
-      if(gate.out_go_clear) {
-	if(ugp->misc_state > 0) {		       // maintaining
-	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
-	  ugp->misc_state = 0;			     // empty
-	}
-	else {
-	  ugp->misc_state--;	// effectively a nogo -- continue incrementing
-	}
-      }
-      else {
-	// just continue as if nothing happened
-	if(ugp->misc_state > 0)
-	  ugp->misc_state++;
-	else
-	  ugp->misc_state--;
-      }
-    }
-    // finally, must be a MAINT_OUT_MNT_GO
-    else {
-      if(gate.out_go_clear && gate.clear_veto) {
-	// just continue as if nothing happened -- clear was vetoed
-	if(ugp->misc_state > 0)
-	  ugp->misc_state++;
-	else
-	  ugp->misc_state--;
-      }
-      else {
-	// both out clear and mnt suggest a CLEAR here
-	if(ugp->misc_state > 0) {		       // maintaining
-	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
-	  ugp->misc_state = 0;			     // empty
-	}
-	else {
-	  ugp->misc_state--;	// effectively a nogo -- continue incrementing
-	}
-      }
-    }
-  }
-  // NOTE: Do NOT send final gate states -- empty/maint status checks on other layers
-  // need to reflect status at time of gating computation (mid minus)
-  //  SendGateStates(lay, net);
 }
 
 void X2PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
@@ -3008,8 +2995,14 @@ void X2PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) 
       LeabraUnit* ru = (LeabraUnit*)rugp->FastEl(i);
       LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
       LeabraUnit* pfcu = (LeabraUnit*)pfcgp->FastEl(i);
-      
-      ru->act = gate_val * pfcu->act;
+
+      if(pfcspec->gate.mnt_out_go == X2PFCGateSpec::MOGO_MNT &&
+	 net->ct_cycle > net->mid_minus_cycle) {
+	ru->act = gate_val * pfcu->act_m2; // use memory value, due to updating issues "hand off"
+      }
+      else {
+	ru->act = gate_val * pfcu->act; // live val is fine
+      }
       ru->act_eq = ru->act_nd = ru->act;
       ru->da = 0.0f;		// I'm fully settled!
       ru->AddToActBuf(rus->syn_delay);

@@ -492,13 +492,18 @@ public:
     MAINT_OUT_GO = 5,		// stripe was already maintaining, got OUTPUT Go
     MAINT_OUT_MNT_GO = 6,	// stripe was already maintaining, got OUTPUT then MAINT Go
     MAINT_NOGO = 7,		// stripe was already maintaining, got NoGo
-    MAINT_MNT_GOGO = 8,		// stripe was already maintaining, got MAINT Go, then got 2nd MAINT Go
     NOGO_RND_GO = 20,		// random go for stripes constantly firing nogo
     INIT_STATE = 30,		// initialized state at start of trial
   };
 
+  enum MntOutGo {		// what to do when both MAINT and OUTPUT fire Go at the same time
+    MOGO_MNT,			// treat like a MAINT Go -- store if empty, or toggle off then back on if maintaining
+    MOGO_OUT,			// treat like an OUTPUT Go -- depends on out_go_clear -- if that is set, then just ignores MNT update and clears if maintaining, otherwise stores
+    MOGO_VETO,			// the MAINT veto's the OUT clear that would otherwise occur on out_go_clear
+  };
+
   bool		out_go_clear;	// #DEF_true an output Go clears the maintenance currents at the end of the trial -- you use it, you lose it..
-  bool		clear_veto;	// #DEF_true #CONDEDIT_ON_out_go_clear if both MAINT and OUT Go signals occur at the same time, then this vetos the out_go_clear that would otherwise occur
+  MntOutGo	mnt_out_go;	// #DEF_MOGO_MNT what to do when both MAINT and OUTPUT fire Go at the same time -- result also depends on out_go_clear status
   bool		graded_out_go;	// #DEF_false use actual activation level of output Go signal to drive output activation level
   float		off_accom;	// #DEF_0 how much of the maintenance current to apply to accommodation after turning a unit off
   bool		allow_clamp;	// #DEF_false allow external hard clamp of layer (e.g., for testing)
@@ -990,6 +995,12 @@ public:
     INIT_STATE = 30,		// initialized state at start of trial
   };
 
+  enum MntOutGo {		// what to do when both MAINT and OUTPUT fire Go at the same time
+    MOGO_MNT,			// treat like a MAINT Go -- store if empty, or toggle off then back on if maintaining
+    MOGO_OUT,			// treat like an OUTPUT Go -- depends on out_go_clear -- if that is set, then just ignores MNT update and clears if maintaining, otherwise stores
+    MOGO_VETO,			// the MAINT veto's the OUT clear that would otherwise occur on out_go_clear
+  };
+
   float		base_gain;	// #DEF_0;0.5 #MIN_0 #MAX_1 how much activation gets through even without a Go gating signal
   float		go_gain;	// #READ_ONLY how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
   bool		graded_out_go;	// #DEF_true use actual activation level of output Go signal to drive output activation level
@@ -998,7 +1009,7 @@ public:
   float		go_netin_gain;	  // #DEF_0.01 extra net input to add to active units as a function of gating signal -- uses the mnt_go_learn_mod to determine if maintenance go contributes to the gating signal
   float		clear_decay;	// #DEF_0 #MIN_0 #MAX_1 how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse
   bool		out_go_clear;	// #DEF_true an output Go clears the maintenance currents at the end of the trial -- you use it, you lose it..
-  bool		clear_veto;	// #DEF_true #CONDEDIT_ON_out_go_clear if both MAINT and OUT Go signals occur at the same time, then this vetos the out_go_clear that would otherwise occur
+  MntOutGo	mnt_out_go;	// #DEF_MOGO_MNT what to do when both MAINT and OUTPUT fire Go at the same time -- result also depends on out_go_clear status
   float		off_accom;	// #DEF_0 #EXPERT #MIN_0 #MAX_1 how much of the maintenance current to apply to accommodation after turning a unit off
 
   void 	Defaults()	{ Initialize(); }
