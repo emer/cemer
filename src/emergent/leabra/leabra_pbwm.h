@@ -461,27 +461,46 @@ private:
 //	PFC Layer Spec	(Maintenance)	//
 //////////////////////////////////////////
 
+// misc_state docs:
+// * pfc ugp->misc_state = counter of number of trials in maint or empty state
+// ** 0 = just cleared (empty)
+// ** 1+ = maint for a trial or a more
+// ** -1- = empty for a trial or more
+// * pfc ugp->misc_state1 = GateState -- what happened on last gating action in terms of PFC state and gating signal action
+// * pfc ugp->misc_state2 = GateSignal -- what gating signal(s) happened on most recent trial
+// * pfc ugp->misc_float = current Go activation value (mnt or out) -- used by units to boost netin -- already multiplied by gate.mnt/out_go_netin
+// * pfc ugp->misc_float1 = current output gating Go activation value with base_gain and go_gain factored in -- used for graded Go -- just multiply directly by this number
+
 class LEABRA_API PFCGateSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
 INHERITED(taOBase)
 public:
   enum	GateSignal {
     GATE_GO = 0,		// gate GO unit fired 
-    GATE_NOGO = 1		// gate NOGO unit fired
+    GATE_NOGO = 1,		// gate NOGO unit fired
+    GATE_MNT_GO = 2,		// gate maintenance Go unit fired 
+    GATE_OUT_GO = 3,		// gate output Go unit fired 
+    GATE_OUT_MNT_GO = 4,	// gate maint and output Go units fired 
   };
   
-  enum	GateState {		// what happened on last gating action, stored in misc_state1 on unit group
-    EMPTY_GO,			// stripe was empty, got a GO
-    EMPTY_NOGO,			// stripe was empty, got a NOGO
-    LATCH_GO,			// stripe was already latched, got a GO
-    LATCH_NOGO,			// stripe was already latched, got a NOGO
-    LATCH_GOGO,			// stripe was already latched, got a GO then another GO
-    NO_GATE,			// no gating took place
-    NOGO_RND_GO,		// random go for stripes constantly firing nogo
+  enum	GateState {		// what happened on last gating action, stored in misc_state1 on unit group -- for debugging etc
+    EMPTY_MNT_GO = 0,		// stripe was empty, got MAINT Go
+    EMPTY_OUT_GO = 1,		// stripe was empty, got OUTPUT Go
+    EMPTY_OUT_MNT_GO = 2,	// stripe was empty, got OUTPUT then MAINT Go
+    EMPTY_NOGO = 3,		// stripe was empty, got NoGo
+    MAINT_MNT_GO = 4,		// stripe was already maintaining, got MAINT Go: cleared, encoded
+    MAINT_OUT_GO = 5,		// stripe was already maintaining, got OUTPUT Go
+    MAINT_OUT_MNT_GO = 6,	// stripe was already maintaining, got OUTPUT then MAINT Go
+    MAINT_NOGO = 7,		// stripe was already maintaining, got NoGo
+    MAINT_MNT_GOGO = 8,		// stripe was already maintaining, got MAINT Go, then got 2nd MAINT Go
+    NOGO_RND_GO = 20,		// random go for stripes constantly firing nogo
+    INIT_STATE = 30,		// initialized state at start of trial
   };
 
+  bool		out_go_clear;	// #DEF_true an output Go clears the maintenance currents at the end of the trial -- you use it, you lose it..
+  bool		clear_veto;	// #DEF_true #CONDEDIT_ON_out_go_clear if both MAINT and OUT Go signals occur at the same time, then this vetos the out_go_clear that would otherwise occur
+  bool		graded_out_go;	// #DEF_false use actual activation level of output Go signal to drive output activation level
   float		off_accom;	// #DEF_0 how much of the maintenance current to apply to accommodation after turning a unit off
-  bool		out_gate_learn_mod; // #HIDDEN NOTE: not currently functional!  modulate the learning as a function of whether the corresponding output gating layer fired Go, to enforce appropriate credit assignment to only learn when given stripe participated in output -- this is a discrete modulation (all or nothing)
   bool		allow_clamp;	// #DEF_false allow external hard clamp of layer (e.g., for testing)
 
   void 	Defaults()	{ Initialize(); }
@@ -499,23 +518,20 @@ public:
     NO_UPDT,			// no update action
     STORE,			// store current activity state in maintenance currents
     CLEAR,			// clear current activity state from maintenance currents
-    RESTORE,			// restore prior maintenance currents (after transient input activation)
-    TMP_STORE,			// temporary store of current activity state (for default maintenance of last state)
-    TMP_CLEAR			// temporary clear of current maintenance state (for transient representation in second plus)
   };
 
   PFCGateSpec	gate;		// parameters controlling the gating of pfc units
 
+  virtual void	GetSNrThalLayers(LeabraLayer* lay, LeabraLayer*& snrthal_mnt, LeabraLayer*& snrthal_out);
+  // find maintenance (required) and output (optional) snrthal input layers
   virtual void 	Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct updt_act, LeabraLayer* lay, LeabraNetwork* net);
   // update maintenance state variables (gc.h, misc_1) based on given action: ugp impl
-  virtual void 	Compute_MaintUpdt(MaintUpdtAct updt_act, LeabraLayer* lay, LeabraNetwork* net);
-  // update maintenance state variables (gc.h, misc_1) based on given action
   virtual void	SendGateStates(LeabraLayer* lay, LeabraNetwork* net);
   // send misc_state gating state variables to the snrthal and matrix layers
-  virtual void 	Compute_TmpClear(LeabraLayer* lay, LeabraNetwork* net);
-  // temporarily clear the maintenance of pfc units to prepare way for transient acts
-  virtual void 	Compute_GatingGOGO(LeabraLayer* lay, LeabraNetwork* net);
-  // compute the gating signal based on SNrThal layer: GOGO model
+  virtual void 	Compute_Gating(LeabraLayer* lay, LeabraNetwork* net);
+  // compute the gating signal based on SNrThal layer -- called at end of first plus phase when maint gating occurs
+  virtual void 	Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net);
+  // compute updates etc on gating, at the end of the second plus phase
 
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
@@ -970,8 +986,8 @@ public:
     MAINT_OUT_GO = 5,		// stripe was already maintaining, got OUTPUT Go
     MAINT_OUT_MNT_GO = 6,	// stripe was already maintaining, got OUTPUT then MAINT Go
     MAINT_NOGO = 7,		// stripe was already maintaining, got NoGo
-    NOGO_RND_GO = 8,		// random go for stripes constantly firing nogo
-    INIT_STATE = 9,		// initialized state at start of trial
+    NOGO_RND_GO = 20,		// random go for stripes constantly firing nogo
+    INIT_STATE = 30,		// initialized state at start of trial
   };
 
   float		base_gain;	// #DEF_0;0.5 #MIN_0 #MAX_1 how much activation gets through even without a Go gating signal
