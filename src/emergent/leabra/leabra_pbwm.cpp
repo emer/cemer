@@ -1422,21 +1422,21 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
     }
     else if(ugp->misc_state1 == PFCGateSpec::MAINT_OUT_MNT_GO) {
       // this is the most complex challenging case..
-      if(gate.out_go_clear) {
-	if(gate.mnt_out_go == PFCGateSpec::MOGO_VETO) {
-	  ugp->misc_state++;	// continue maintaining
-	}
-	else if(gate.mnt_out_go == PFCGateSpec::MOGO_OUT) {
-	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
-	  ugp->misc_state = 0;			     // empty
-	}
+      if(gate.mnt_out_go == PFCGateSpec::MOGO_MNT) { // treat like MAINT_MNT_GO
+	Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it
+	ugp->misc_state = 1;
       }
       else {
-	if(gate.mnt_out_go == PFCGateSpec::MOGO_MNT) { // treat like MAINT_MNT_GO
-	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it
-	  ugp->misc_state = 1;
+	if(gate.out_go_clear) {
+	  if(gate.mnt_out_go == PFCGateSpec::MOGO_VETO) {
+	    ugp->misc_state++;	// continue maintaining
+	  }
+	  else if(gate.mnt_out_go == PFCGateSpec::MOGO_OUT) {
+	    Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
+	    ugp->misc_state = 0;			     // empty
+	  }
 	}
-	else {			// nop -- just increment
+	else {
 	  ugp->misc_state++;	// continue maintaining
 	}
       }
@@ -2782,21 +2782,21 @@ void X2PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) 
     }
     else if(ugp->misc_state1 == X2PFCGateSpec::MAINT_OUT_MNT_GO) {
       // this is the most complex challenging case..
-      if(gate.out_go_clear) {
-	if(gate.mnt_out_go == X2PFCGateSpec::MOGO_VETO) {
-	  ugp->misc_state++;	// continue maintaining
-	}
-	else if(gate.mnt_out_go == X2PFCGateSpec::MOGO_OUT) {
-	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
-	  ugp->misc_state = 0;			     // empty
-	}
+      if(gate.mnt_out_go == X2PFCGateSpec::MOGO_MNT) { // treat like MAINT_MNT_GO
+	Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it
+	ugp->misc_state = 1;
       }
       else {
-	if(gate.mnt_out_go == X2PFCGateSpec::MOGO_MNT) { // treat like MAINT_MNT_GO
-	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it
-	  ugp->misc_state = 1;
+	if(gate.out_go_clear) {
+	  if(gate.mnt_out_go == X2PFCGateSpec::MOGO_VETO) {
+	    ugp->misc_state++;	// continue maintaining
+	  }
+	  else if(gate.mnt_out_go == X2PFCGateSpec::MOGO_OUT) {
+	    Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
+	    ugp->misc_state = 0;			     // empty
+	  }
 	}
-	else {			// nop -- just increment
+	else {
 	  ugp->misc_state++;	// continue maintaining
 	}
       }
