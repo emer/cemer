@@ -1363,7 +1363,7 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 	  ugp->misc_state1 = PFCGateSpec::MAINT_MNT_GO;
 	}
 	else {
-// 	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net);
+ 	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net); // note: TMP
 	  // store in 2nd plus is fine -- could have a flag for waiting till very end
 	  ugp->misc_state1 = PFCGateSpec::EMPTY_MNT_GO;
 	}
@@ -1371,10 +1371,13 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       else {
 	// both output and maint gating fired..
 	ugp->misc_state2 = PFCGateSpec::GATE_OUT_MNT_GO;
-	if(pfc_mnt_cnt > 0) // full stripe -- do NOT clear mnt at this point in any case
+	if(pfc_mnt_cnt > 0)  { // full stripe -- do NOT clear mnt at this point in any case
+	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net); // NOTE: tmp
 	  ugp->misc_state1 = PFCGateSpec::MAINT_OUT_MNT_GO;
-	else
+	}
+	else {
 	  ugp->misc_state1 = PFCGateSpec::EMPTY_OUT_MNT_GO;
+	}
       }
     }
   }
