@@ -47,7 +47,7 @@ else (WIN32)
   if ("$ENV{EMERGENT_PREFIX_DIR}")
     set(EMERGENT_SHARE_DIR "$ENV{EMERGENT_PREFIX_DIR}/share/Emergent")
   else ("$ENV{EMERGENT_PREFIX_DIR}")
-    find_path(EMERGENT_SHARE_DIR README PATHS
+    find_path(EMERGENT_SHARE_DIR AUTHORS PATHS
       /usr/local/share/Emergent
       /usr/share/Emergent
       /opt/local/share/Emergent
