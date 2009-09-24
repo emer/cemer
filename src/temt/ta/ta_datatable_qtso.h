@@ -794,7 +794,7 @@ public:
   bool			negative_draw_z; // continue same line when Z value resets in negative axis direction?
   float			line_width;	// width of line -- 0 means use default
   PointSize		point_size;	// size of point symbols
-  int 			point_spacing;	// #CONDEDIT_OFF_plot_style:LINE how frequently to display point markers 
+  int 			point_spacing;	// #CONDEDIT_OFF_plot_style:LINE #MIN_1 how frequently to display point markers 
   float			bar_space;	// #DEF_0.2 amount of space between bars
   int 			label_spacing;	// how frequently to display text labels of the data values (-1 = never); if plotting a string column, the other data column (e.g. plot_2) is used to determine the y axis values
   float			width;		// how wide to make the display (height is always 1.0)

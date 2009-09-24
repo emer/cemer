@@ -2360,6 +2360,7 @@ public:
   int		misc_state2;	// #CAT_Activation third miscellaneous state variable 
   float		misc_float;	// #CAT_Activation miscellaneous floating point variable 
   float		misc_float1;	// #CAT_Activation second miscellaneous floating point variable 
+  float		misc_float2;	// #CAT_Activation third miscellaneous floating point variable 
 
   void	InitLinks();
   void	Copy_(const LeabraUnit_Group& cp);
@@ -2576,8 +2577,8 @@ public:
   float		time_inc;	// how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset
 
   int		cycle_max;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_60 maximum number of cycles to settle for: note for CtLeabra_X/CAL this is overridden by phase specific settings by the settle process
-  int		mid_minus_cycle; // #CAT_Counter #DEF_-1;30 cycle number for computations that take place roughly mid-way through the minus phase -- used for PBWM algorithm -- effective min_cycles for minus phase will be this value + min_cycles -- set to -1 to disable
-  int		min_cycles;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_15 minimum number of cycles to settle for
+  int		mid_minus_cycle; // #CAT_Counter #DEF_-1:30 cycle number for computations that take place roughly mid-way through the minus phase -- used for PBWM algorithm -- effective min_cycles for minus phase will be this value + min_cycles -- set to -1 to disable
+  int		min_cycles;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_15:35 minimum number of cycles to settle for
   int		min_cycles_phase2; // #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_35 minimum number of cycles to settle for in second phase
 
   CtTrialTiming	 ct_time;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL timing parameters for ct leabra trial: Settle_Init sets the cycle_max based on these values

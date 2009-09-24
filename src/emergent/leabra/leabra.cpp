@@ -4385,6 +4385,7 @@ void LeabraUnit_Group::Initialize() {
   misc_state2 = 0;
   misc_float = 0.0f;
   misc_float1 = 0.0f;
+  misc_float2 = 0.0f;
 }
 
 void LeabraUnit_Group::InitLinks() {
@@ -4410,6 +4411,7 @@ void LeabraUnit_Group::Copy_(const LeabraUnit_Group& cp) {
   misc_state2 = cp.misc_state2;
   misc_float = cp.misc_float;
   misc_float1 = cp.misc_float1;
+  misc_float2 = cp.misc_float2;
 }
 
 

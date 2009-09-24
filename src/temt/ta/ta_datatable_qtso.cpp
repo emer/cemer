@@ -3179,6 +3179,8 @@ void GraphTableView::UpdateAfterEdit_impl(){
 
   if(taMisc::is_loading) return;
 
+  point_spacing = MAX(1, point_spacing);
+
   x_axis.axis_length = width;
   z_axis.axis_length = depth;
 
@@ -5157,6 +5159,7 @@ void iGraphTableView_Panel::GetValue_impl() {
   glv->view_rows = (int)fldRows->GetValue();
   glv->line_width = (float)fldLineWidth->GetValue();
   glv->point_spacing = (int)fldPointSpacing->GetValue();
+  glv->point_spacing = MAX(1, glv->point_spacing);
   glv->label_spacing = (int)fldLabelSpacing->GetValue();
   glv->negative_draw = chkNegDraw->isChecked();
   glv->negative_draw_z = chkNegDrawZ->isChecked();
