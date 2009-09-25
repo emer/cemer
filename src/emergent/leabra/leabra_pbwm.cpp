@@ -750,18 +750,6 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 		"UnitSpec must be MatrixUnitSpec!")) {
     return false;
   }
-  if(lay->CheckError(us->act.avg_dt <= 0.0f, quiet, rval,
-		"requires UnitSpec act.avg_dt > 0, I just set it to .005 for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act", true);
-    us->act.avg_dt = 0.005f;
-  }
-  if(lay->CheckError(us->act.i_thr != ActFunSpec::NO_AH, quiet, rval,
-		"requires UnitSpec act.i_thr = NO_AH to support proper da modulation, I just set it for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act", true);
-    us->act.i_thr = ActFunSpec::NO_AH; // key for dopamine effects
-  }
 
   us->SetUnique("g_bar", true);
 
@@ -1255,12 +1243,6 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
 
-  if(lay->CheckError(us->act.avg_dt <= 0.0f, quiet, rval,
-		"requires UnitSpec act.avg_dt > 0, I just set it to .005 for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act", true);
-    us->act.avg_dt = 0.005f;
-  }
   us->SetUnique("g_bar", true);
   if(lay->CheckError(us->hyst.init, quiet, rval,
 		"requires UnitSpec hyst.init = false, I just set it for you in spec:",
@@ -2062,18 +2044,6 @@ bool X2MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 		"UnitSpec must be X2MatrixUnitSpec!")) {
     return false;
   }
-  if(lay->CheckError(us->act.avg_dt <= 0.0f, quiet, rval,
-		"requires UnitSpec act.avg_dt > 0, I just set it to .005 for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act", true);
-    us->act.avg_dt = 0.005f;
-  }
-  if(lay->CheckError(us->act.i_thr != ActFunSpec::NO_AH, quiet, rval,
-		"requires UnitSpec act.i_thr = NO_AH to support proper da modulation, I just set it for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act", true);
-    us->act.i_thr = ActFunSpec::NO_AH; // key for dopamine effects
-  }
 
   us->SetUnique("g_bar", true);
 
@@ -2580,12 +2550,6 @@ bool X2PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
 
-  if(lay->CheckError(us->act.avg_dt <= 0.0f, quiet, rval,
-		"requires UnitSpec act.avg_dt > 0, I just set it to .005 for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act", true);
-    us->act.avg_dt = 0.005f;
-  }
   us->SetUnique("g_bar", true);
   if(lay->CheckError(us->hyst.init, quiet, rval,
 		"requires UnitSpec hyst.init = false, I just set it for you in spec:",
@@ -3136,25 +3100,11 @@ bool XMatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   }
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  if(lay->CheckError(!us->InheritsFrom(TA_MatrixUnitSpec), quiet, rval,
-		"UnitSpec must be MatrixUnitSpec!")) {
+  if(lay->CheckError(!us->InheritsFrom(TA_X2MatrixUnitSpec), quiet, rval,
+		"UnitSpec must be X2MatrixUnitSpec!")) {
     return false;
   }
-  if(lay->CheckError(us->act.avg_dt <= 0.0f, quiet, rval,
-		"requires UnitSpec act.avg_dt > 0, I just set it to .005 for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act", true);
-    us->act.avg_dt = 0.005f;
-  }
-  if(lay->CheckError(us->act.i_thr != ActFunSpec::NO_AH, quiet, rval,
-		"requires UnitSpec act.i_thr = NO_AH to support proper da modulation, I just set it for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act", true);
-    us->act.i_thr = ActFunSpec::NO_AH; // key for dopamine effects
-  }
-
   us->SetUnique("g_bar", true);
-
   // must have these not initialized every trial!
   if(lay->CheckError(us->hyst.init, quiet, rval,
 		"requires UnitSpec hyst.init = false, I just set it for you in spec:",
@@ -3190,9 +3140,9 @@ bool XMatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
       if(fmlay->spec.SPtr()->InheritsFrom(TA_XSNrThalLayerSpec)) snr_lay = fmlay;
       continue;
     }
-    MatrixConSpec* cs = (MatrixConSpec*)recv_gp->GetConSpec();
-    if(lay->CheckError(!cs->InheritsFrom(TA_MatrixConSpec), quiet, rval,
-		  "Receiving connections must be of type MatrixConSpec!")) {
+    X2MatrixConSpec* cs = (X2MatrixConSpec*)recv_gp->GetConSpec();
+    if(lay->CheckError(!cs->InheritsFrom(TA_X2MatrixConSpec), quiet, rval,
+		  "Receiving connections must be of type X2MatrixConSpec!")) {
       return false;
     }
     if(lay->CheckError(cs->wt_limits.sym != false, quiet, rval,
@@ -3201,11 +3151,11 @@ bool XMatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
       cs->SetUnique("wt_limits", true);
       cs->wt_limits.sym = false;
     }
-    if(lay->CheckError((cs->matrix_rule != MatrixConSpec::OUTPUT), quiet, rval,
-		       "XMatrix requires MatrixConSpec matrix_rule of OUTPUT type, I just set it for you in spec:",
+    if(lay->CheckError(cs->lrn_act_dif, quiet, rval,
+		       "XMatrix requires X2MatrixConSpec lrn_act_dif = false, I just set it for you in spec:",
 		       cs->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-      cs->SetUnique("matrix_rule", true);
-      cs->matrix_rule = MatrixConSpec::OUTPUT;
+      cs->SetUnique("lrn_act_dif", true);
+      cs->lrn_act_dif = false;
     }
   }
   if(lay->CheckError(da_lay == NULL, quiet, rval,
@@ -3955,12 +3905,6 @@ bool XPFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
 
-  if(lay->CheckError(us->act.avg_dt <= 0.0f, quiet, rval,
-		"requires UnitSpec act.avg_dt > 0, I just set it to .005 for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act", true);
-    us->act.avg_dt = 0.005f;
-  }
   us->SetUnique("g_bar", true);
   if(lay->CheckError(us->hyst.init, quiet, rval,
 		"requires UnitSpec hyst.init = false, I just set it for you in spec:",
