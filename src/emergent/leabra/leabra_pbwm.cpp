@@ -964,7 +964,7 @@ void PFCUnitSpec::Initialize() {
 
 void PFCUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
   LeabraUnit_Group* ugp = (LeabraUnit_Group*)u->owner; // assume..
-  if(net->phase_no >= 1)	       // only after gating computed, in plus phase!
+  if(net->ct_cycle > net->mid_minus_cycle)  // only after gating computed, in plus phase!
     u->net += u->act_eq * ugp->misc_float2;
   // misc_float contains fully parameterized "go netin gain" value 
   inherited::Compute_Conduct(u, net);
