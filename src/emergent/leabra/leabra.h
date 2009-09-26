@@ -3526,6 +3526,11 @@ class LEABRA_API LeabraWizard : public Wizard {
   // #STEM_BASE ##CAT_Leabra Leabra-specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
+  enum PBWMMode {
+    GATE_BIAS,			// uses the gate biases and out_go_clear to provide a scaffolding of generally good gating dynamics, which learning can then shape as appropriate -- this is the current default behavior -- somewhat slower learning but more sensible overall behavior
+    PROMISCUOUS,		// promiscuous Go firing with no gate_bias and no out_go_clear -- basically in perpetual updating mode -- learns very fast and reliably, but the resulting gating dynamic is often fairly random and hard to interpret -- this was the way it worked prior to 10/2009 and version 5.0.1 of the software
+  };
+
   override bool StdNetwork(TypeDef* net_type = &TA_LeabraNetwork, Network* net = NULL);
   override bool	UpdateInputDataFmNet(Network* net, DataTable* data_table);
 
@@ -3557,19 +3562,13 @@ public:
 		     int n_stripes=4, bool out_gate=true,
 		     bool no_lrn_pfc=false);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated;  da_mod_all = have da value modulate all the regular units in the network; out_gate = each PFC layer has separate output gated layer and corresponding matrix output gates; nolrn_pfc = pfc does not learn -- just copies input acts directly (useful for demonstration but not as realistic or powerful)
+  virtual bool 	PBWM_Mode(LeabraNetwork* net, PBWMMode mode);
+  // #MENU_BUTTON change the general behavior of the model by adjusting a set of parameters in concert to achieve different overall dynamics -- network must already be configured as a PBWM model *WITH* output gating (difference only really applies in this case)
 
-  virtual bool 	PBWM_V21(LeabraNetwork* net, bool da_mod_all = false,
-			int n_stripes=4, bool no_lrn_pfc=false);
-  // #MENU_BUTTON configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) Version 2.1 -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated;  da_mod_all = have da value modulate all the regular units in the network; nolrn_pfc = pfc does not learn -- just copies input acts directly (useful for demonstration but not as realistic or powerful)
-
-  virtual bool 	PBWM_ToV22_impl(String& proj_str);
-  // #IGNORE do the actual gsub conversions for ToV22 routines
-
-  virtual bool 	PBWM_ToV22();
-  // #MENU_BUTTON #CONFIRM convert the existing project to version 2.2 -- will load the new 2.2 version over this existing project, and you can then save it to a file.  NOTE: 2.2 requires that the SNrThal_out projection go to the PFC_mnt layer, instead of the PFC_out layer -- this consolidates all the gating information in one layer
-
-  virtual bool 	PBWM_FixV22File(const String& proj_file_nm, bool load_after = true);
-  // #MENU_BUTTON #CAT_File #EXT_proj #FILE_DIALOG_LOAD convert an earlier version of an existing PBWM 2.2 project to the current version -- for versions that were created when original V1 names were used, instead of the current X2.. names -- once converted, if load_after, then THIS FILE IS THEN LOADED OVER EXISTING PROJECT -- otherwise THE ORIGINAL PROJECT IS OVERWRITTEN
+  virtual bool 	PBWM_FixX2_impl(String& proj_str);
+  // #IGNORE do the actual gsub conversions for X2 -> regular 
+  virtual bool 	PBWM_FixX2File(const String& proj_file_nm, bool load_after = true);
+  // #MENU_BUTTON #CAT_File #EXT_proj #FILE_DIALOG_LOAD convert a PBWM project saved with X2 spec names into the basic default spec names (now appropriate) -- once converted, if load_after, then THIS FILE IS THEN LOADED OVER EXISTING PROJECT -- otherwise THE ORIGINAL PROJECT IS OVERWRITTEN
 
   virtual bool PBWM_SetNStripes(LeabraNetwork* net, int n_stripes, int n_units=-1);
   // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units)
