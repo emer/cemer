@@ -93,8 +93,8 @@ class LEABRA_API SNrThalMiscSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
 INHERITED(taOBase)
 public:
-  float		net_off;	// #DEF_-0.1:0.5 #MIN_-1 #MAX_1 netinput offset -- how much to add to each unit's baseline netinput -- positive values make it more likely that some stripe will always fire, even if it has a net nogo activation state in the matrix -- very useful for preventing all nogo situations -- if net_off is .2 then act.gain should be 600, if net_off is 0 then act.gain should be 20 (dynamic range is diff)
-  float		go_thr;		// #DEF_0.1:0.5 #MIN_0 #MAX_1 threshold in snrthal activation required to trigger a Go gating event
+  float		net_off;	// #DEF_0 #MIN_-1 #MAX_1 netinput offset -- how much to add to each unit's baseline netinput -- positive values make it more likely that some stripe will always fire, even if it has a net nogo activation state in the matrix -- very useful for preventing all nogo situations -- if net_off is .2 then act.gain should be 600, if net_off is 0 then act.gain should be 20 (dynamic range is diff)
+  float		go_thr;		// #DEF_0.5 #MIN_0 #MAX_1 threshold in snrthal activation required to trigger a Go gating event
   float		rnd_go_inc;	// #DEF_0.2 #MIN_0 how much to add to the net input for a random-go signal triggered in corresponding matrix layer?
 
   void 	Defaults()	{ Initialize(); }
@@ -291,11 +291,11 @@ class LEABRA_API MatrixGateBiasSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		one_bias;	// #DEF_true use one value to specify the main gating biases (mnt_nogo, empty_go, out_pvr) instead of specifying each separately -- typically things work best with the same value for all biases, so this makes it simpler to set them
-  float		bias; 		// #DEF_0:2 #CONDSHOW_ON_one_bias the one dopamine (da) bias value to use for mnt_nogo, empty_go, out_pvr, if one_bias flag is true 
-  float		mnt_nogo;	// #DEF_0:2 #CONDEDIT_OFF_one_bias for stripes that are maintaining, amount of NoGo bias da (negative dopamine) -- only if not on an output trial as determined by PVr -- this is critical for enabling robust maintenance 
-  float		mnt_empty_go;	// #DEF_0:2 #CONDEDIT_OFF_one_bias for empty MAINT stripes, amount of Go bias da (positive dopamine) -- only if not on an output trial as determined by PVr -- provides a bias for encoding and maintaining new information
-  float		out_pvr;	// #DEF_0:2 #CONDEDIT_OFF_one_bias for OUTPUT stripes, if PVr detects that this is trial where external rewards are typically provided, amount of OUTPUT Go bias da (positive dopamine) to encourage the output gating units to respond -- only applied for stripes that are maintaining information -- otherwise see out_empty_nogo
-  float		out_empty_nogo;	// #DEF_0:2 #CONDEDIT_OFF_one_bias for OUTPUT stripes that are not maintaining anything, amount of OUTPUT NoGo bias da (negative dopamine) to encourage the output gating units to NOT respond when the stripe is NOT maintaining anything
+  float		bias; 		// #DEF_1:2 #CONDSHOW_ON_one_bias the one dopamine (da) bias value to use for mnt_nogo, empty_go, out_pvr, if one_bias flag is true 
+  float		mnt_nogo;	// #DEF_1:2 #CONDEDIT_OFF_one_bias for stripes that are maintaining, amount of NoGo bias da (negative dopamine) -- only if not on an output trial as determined by PVr -- this is critical for enabling robust maintenance 
+  float		mnt_empty_go;	// #DEF_1:2 #CONDEDIT_OFF_one_bias for empty MAINT stripes, amount of Go bias da (positive dopamine) -- only if not on an output trial as determined by PVr -- provides a bias for encoding and maintaining new information
+  float		out_pvr;	// #DEF_1:2 #CONDEDIT_OFF_one_bias for OUTPUT stripes, if PVr detects that this is trial where external rewards are typically provided, amount of OUTPUT Go bias da (positive dopamine) to encourage the output gating units to respond -- only applied for stripes that are maintaining information -- otherwise see out_empty_nogo
+  float		out_empty_nogo;	// #DEF_1:2 #CONDEDIT_OFF_one_bias for OUTPUT stripes that are not maintaining anything, amount of OUTPUT NoGo bias da (negative dopamine) to encourage the output gating units to NOT respond when the stripe is NOT maintaining anything
   float		mnt_pvr;	// #DEF_0 if PVr detects that this is trial where external rewards are typically provided, amount of MAINT Go bias da (positive dopamine) to encourage the maintenance gating units to respond
 
   void 	Defaults()	{ Initialize(); }
@@ -312,8 +312,6 @@ class LEABRA_API MatrixMiscSpec : public taOBase {
 INHERITED(taOBase)
 public:
   float		da_gain;	// #MIN_0 #DEF_1 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain
-  float		neg_gain;	// #DEF_1;0.7;1.5 gain for negative DA signals relative to positive ones -- currently deprecated and should generally just be set to 1.0
-  float		neg_da_bl;	// #MIN_0 #DEF_0;0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo) -- currently deprecated and should generally be set to 0
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(MatrixMiscSpec);
@@ -326,9 +324,9 @@ class LEABRA_API MatrixRndGoSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc random go specifications -- when stripe has not fired for a long time, encourage some Go firing to get back into the game..
 INHERITED(taOBase)
 public:
-  bool		sep_out_mnt;	// use separate logic for OUTPUT and MAINT Go -- trigger OUTPUT Go for over-maintenance (e.g., for out_go_clear case -- will use and clear info) and MAINT Go for over-empty (will update to new rep)
+  bool		sep_out_mnt;	// #DEF_true use separate logic for OUTPUT and MAINT Go -- trigger OUTPUT Go for over-maintenance (e.g., for out_go_clear case -- will use and clear info) and MAINT Go for over-empty (will update to new rep)
   int		nogo_thr;	// #DEF_50 threshold of number of nogo firing in a row that will trigger NoGo random go firing
-  float		nogo_p;		// #DEF_0.1;0 probability of actually firing a nogo random Go once the threshold is exceeded
+  float		nogo_p;		// #DEF_0.1 probability of actually firing a nogo random Go once the threshold is exceeded
   float		nogo_da;	// #DEF_10 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) for a nogo-driven random go firing
   float		go_bias;	// how strong of a performance bias to apply to induce units to fire a Go during a random go firing episode -- this is like the gate_bias -- applied from start of trial
 
@@ -477,7 +475,7 @@ public:
   float		base_gain;	// #DEF_0;0.5 #MIN_0 #MAX_1 how much activation gets through even without a Go gating signal
   float		go_gain;	// #READ_ONLY how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
   bool		graded_out_go;	// #DEF_true use actual activation level of output Go signal to drive output activation level
-  bool		no_empty_out; 	// #DEF_false prevent an output gating signal from being generated from an empty stripe (one that is not currently maintaining something) -- this can help focus output gating on maintained information -- logic is that even if Go firing happens, it still takes recurrent activity from PFC to drive it, so if not maintaining, nothing happens..
+  bool		no_empty_out; 	// prevent an output gating signal from being generated from an empty stripe (one that is not currently maintaining something) -- this can help focus output gating on maintained information -- logic is that even if Go firing happens, it still takes recurrent activity from PFC to drive it, so if not maintaining, nothing happens..
   float		clear_decay;	// #DEF_0 #MIN_0 #MAX_1 how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse
   bool		out_go_clear;	// #DEF_true an output Go clears the maintenance currents at the end of the trial -- you use it, you lose it..
   MntOutGo	mnt_out_go;	// #DEF_MOGO_VETO what to do when both MAINT and OUTPUT fire Go at the same time -- result also depends on out_go_clear status
@@ -560,7 +558,7 @@ private:
 };
 
 //////////////////////////////////////////
-//	PFC Layer Spec (Output)	//
+//	PFC Layer Spec (Output)		//
 //////////////////////////////////////////
 
 class LEABRA_API PFCOutLayerSpec : public PFCBaseLayerSpec {
@@ -626,8 +624,6 @@ INHERITED(taOBase)
 public:
   float		da_gain;	// #MIN_0 #DEF_1 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain
   float		out_noise_amp;	// #DEF_10 amplifier for output gating noise, which generally needs to be higher than maintenance gating -- multiplies noise value by this amount
-  float		neg_da_bl;	// #DEF_0 #EXPERT negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
-  float		neg_gain;	// #DEF_1 #EXPERT gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(XMatrixMiscSpec);
