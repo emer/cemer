@@ -3443,6 +3443,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   // different PVLV defaults
   lvesp->lv.min_lvi = 0.4f;
   nvsp->nv.da_gain = 0.2f;
+  dasp->da.da_gain = 0.1f;
   dasp->da.pv_gain = 0.1f;
 
   // NOT unique: inherit from lve
@@ -3859,6 +3860,7 @@ bool LeabraWizard::PBWM_Mode(LeabraNetwork* net, PBWMMode mode) {
 
   if(mode == PROMISCUOUS) {
     // todo: nv, pv?
+    dasp->da.da_gain = 0.1f;
     
     sncsp->snc.lv_mnt_pv_out= false;
 
@@ -3881,6 +3883,8 @@ bool LeabraWizard::PBWM_Mode(LeabraNetwork* net, PBWMMode mode) {
     lvesp->lv.min_lvi = 0.4f;
     nvsp->nv.da_gain = 0.2f;
     dasp->da.pv_gain = 0.1f;
+    dasp->da.da_gain = 0.1f;
+
     sncsp->snc.lv_mnt_pv_out= true;
 
     snrthalsp->snrthal.net_off = 0.0f;
