@@ -942,6 +942,80 @@ void InputBlockSet::ProcNext_Samples_impl(int n, ProcStatus& ps) {
 
 
 //////////////////////////////////
+//  InputBlockSequence		//
+//////////////////////////////////
+
+void InputBlockSequence::Initialize() {
+  stages = 1;
+}
+
+void InputBlockSequence::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  // note: we assume we will be connected to a ListenerBlock, and thus should
+  // have enough stages to feed it -- we check, using the defaults for head/sound
+  // if stages seems to low, then bump it
+  int min_stages = ListenerBlock::CalcMinInputStages((float)fs);
+  SignalProcBlock* blk = blocks.Peek();
+  if (!blk) return;
+  
+  if (stages < min_stages) {
+    stages = min_stages;
+    taMisc::Warning("InputBlockSequence::UpdateAfterEdit(): increased output stages to meet assumed minimum for a ListenerBlock -- this should be harmless if not needed");
+  }
+}
+
+
+void InputBlockSequence::InitChildItemConfig_impl(SignalProcItem* itm, 
+    bool check, bool quiet, bool& ok)
+{
+  // before calling its init, we force its fs to be ours, and also turn off option
+  InputBlockBase* blk = dynamic_cast<InputBlockBase*>(itm);
+  if (blk) { // should be first guy
+    // slave to our fs
+    blk->use_fs = false; // user should not set this
+    blk->fs = fs;
+    if (check) goto cont;
+  }
+cont:
+  inherited::InitChildItemConfig_impl(itm, check, quiet, ok);
+}
+
+void InputBlockSequence::InitConfig_impl(bool check, bool quiet, bool& ok) {
+  SignalProcBlock* blk = blocks.Peek();
+  if (check) goto cont;
+  
+  if (blk) {
+    // all buffering in last stage needs to be the same, based on our own buffer
+    for (int b = 0; b < blk->outBuffCount(); ++b) {
+      DataBuffer* buf = blk->outBuff(b);
+      buf->stages = stages;
+    }
+  }
+cont:
+  inherited::InitConfig_impl(check, quiet, ok);
+}
+
+
+void InputBlockSequence::ProcNext_Samples_impl(int n, ProcStatus& ps) {
+  // we just fire off the first child guy
+  InputBlockBase* blk = dynamic_cast<InputBlockBase*>(blocks.SafeEl(0));
+  if (!blk || blk->off()) return;
+  ps = blk->ProcNext_Samples(n);
+  // note that this notify doesn't provide a buffer
+//??    NotifyClientsBuffStageFull(NULL, 0, ps);
+}
+
+int InputBlockSequence::outBuffCount() const {
+  return (blocks.size == 0) ? 0 : blocks.Peek()->outBuffCount();
+}
+
+DataBuffer* InputBlockSequence::outBuff(int idx) {
+  return (blocks.size == 0) ? NULL : blocks.Peek()->outBuff(idx);
+}
+
+
+
+//////////////////////////////////
 //  ListenerBlock		//
 //////////////////////////////////
 

@@ -539,7 +539,7 @@ private:
 
 
 class AUDIOPROC_API InputBlockSet: public InputBlockBase
-{ // #DEF_CHILD_blocks encapsulates a set of blocks that are processed in parallel, typically as a set of sound sources that will be fed into a mixer/listener
+{ // # DEF_CHILD_blocks encapsulates a set of blocks that are processed in parallel, typically as a set of sound sources that will be fed into a mixer/listener
 INHERITED(InputBlockBase) 
 public:
   SignalProcBlock_List	blocks; // the blocks that make up the set -- they should be input blocks
@@ -567,6 +567,36 @@ private:
   void	Initialize();
   void	Destroy() {CutLinks();}
   SIMPLE_COPY(InputBlockSet)
+};
+
+
+class AUDIOPROC_API InputBlockSequence: public InputBlockBase
+{ // # DEF_CHILD_blocks encapsulates a set of blocks that are processed in series, typically as a set of sound sources that will be fed into a mixer/listener
+INHERITED(InputBlockBase) 
+public:
+  SignalProcBlock_List	blocks; // the blocks that make up the sequence -- first one should be an input block
+  int			stages; // #MIN_1 (advanced) for when you want more than one frame of history (sets into the last block)
+  
+  override taList_impl*  children_() {return &blocks;} 
+  override int		outBuffCount() const;
+  override DataBuffer* 	outBuff(int idx);
+  
+  SIMPLE_LINKS(InputBlockSequence)
+  TA_BASEFUNS(InputBlockSequence)
+  
+public:
+
+protected:
+  override void		UpdateAfterEdit_impl();
+  override void		InitConfig_impl(bool check, bool quiet, bool& ok);
+  override void 	InitChildItemConfig_impl(SignalProcItem* itm, 
+    bool check, bool quiet, bool& ok); 
+  override void		ProcNext_Samples_impl(int n, ProcStatus& ps);
+
+private:
+  void	Initialize();
+  void	Destroy() {CutLinks();}
+  SIMPLE_COPY(InputBlockSequence)
 };
 
 
