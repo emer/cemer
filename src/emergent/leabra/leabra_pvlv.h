@@ -414,7 +414,7 @@ class LEABRA_API PVLVDaSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PVLV da parameters
 INHERITED(taOBase)
 public:
-  float		da_gain;	// #DEF_0.2:2 #MIN_0 multiplier for dopamine values
+  float		da_gain;	// #DEF_0:2 #MIN_0 multiplier for dopamine values
   float		tonic_da;	// #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
   float		pv_gain;	// #DEF_1;0.1;0.5 #MIN_0 extra gain modulation of PV generated DA -- it can be much larger in general than lv so sometimes it is useful to turn it down (e.g., in new version of PBWM)
   bool		add_pv_lv;	// #DEF_false for cases where reward is expected/delivered, add PV and LV dopamine signals (otherwise, only use PV signal)

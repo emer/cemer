@@ -972,10 +972,10 @@ void PFCGateSpec::Initialize() {
   base_gain = 0.0f;
   go_gain = 1.0f;
   graded_out_go = true;
-  no_empty_out = false;
+  no_empty_out = true;
   clear_decay = 0.0f;
   out_go_clear = true;
-  mnt_out_go = MOGO_MNT;
+  mnt_out_go = MOGO_VETO;
   off_accom = 0.0f;
 }
 
@@ -3234,15 +3234,12 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   LeabraUnitSpec* pfc_units = (LeabraUnitSpec*)units->FindMakeSpec("PFCUnits", &TA_LeabraUnitSpec);
   LeabraUnitSpec* matrix_units = (LeabraUnitSpec*)units->FindMakeSpec("MatrixUnits", &TA_MatrixUnitSpec);
   LeabraUnitSpec* snrthal_units = (LeabraUnitSpec*)units->FindMakeSpec("SNrThalUnits", &TA_LeabraUnitSpec);
-  if(pfc_units == NULL || matrix_units == NULL) return false;
   MatrixUnitSpec* matrixo_units = NULL;
   if(out_gate) {
     matrixo_units = (MatrixUnitSpec*)matrix_units->FindMakeChild("MatrixOut", &TA_MatrixUnitSpec);
   }
 
   LeabraConSpec* learn_cons = (LeabraConSpec*)cons->FindMakeSpec("LearnCons", &TA_LeabraConSpec);
-  if(!learn_cons) return false;
-
   LeabraConSpec* pvi_cons = (LeabraConSpec*)learn_cons->FindMakeChild("PVi", &TA_PVConSpec);
   LeabraConSpec* pvr_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("PVr", &TA_PVrConSpec);
   LeabraConSpec* lve_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("LVe", &TA_PVConSpec);
@@ -3250,9 +3247,11 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   LeabraConSpec* nv_cons =  (LeabraConSpec*)pvi_cons->FindMakeChild("NV", &TA_PVConSpec);
 
   LeabraConSpec* topfc_cons = (LeabraConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
-  if(topfc_cons == NULL) return false;
   LeabraConSpec* intra_pfc = (LeabraConSpec*)topfc_cons->FindMakeChild("IntraPFC", &TA_LeabraConSpec);
   LeabraConSpec* pfc_bias = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCBias", &TA_LeabraBiasSpec);
+  LeabraConSpec* fmpfcmnt_cons = NULL;
+  if(out_gate)
+    fmpfcmnt_cons = (LeabraConSpec*)learn_cons->FindMakeChild("FmPFC_mnt", &TA_LeabraConSpec);
   MatrixConSpec* matrix_cons = (MatrixConSpec*)learn_cons->FindMakeChild("MatrixCons", &TA_MatrixConSpec);
   MatrixConSpec* mfmpfc_cons = (MatrixConSpec*)matrix_cons->FindMakeChild("MatrixFmPFC", &TA_MatrixConSpec);
 
@@ -3268,15 +3267,10 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   LeabraConSpec* pfc_self = (LeabraConSpec*)cons->FindMakeSpec("PFCSelfCon", &TA_LeabraConSpec);
 
   LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
-  if(bg_bias == NULL) return false;
   LeabraConSpec* old_matrix_bias = (LeabraConSpec*)bg_bias->children.FindSpecName("MatrixCons");
   if(old_matrix_bias) {
     bg_bias->children.RemoveEl(old_matrix_bias);
   }
-  if(pfc_self == NULL || intra_pfc == NULL || matrix_cons == NULL || marker_cons == NULL 
-     || matrix_bias == NULL)
-    return false;
-
   LVeLayerSpec* lvesp = (LVeLayerSpec*)layers->FindMakeSpec(lvenm + "Layer", &TA_LVeLayerSpec);
   LViLayerSpec* lvisp = (LViLayerSpec*)lvesp->FindMakeChild(lvinm + "Layer", &TA_LViLayerSpec);
   NVLayerSpec* nvsp = (NVLayerSpec*)layers->FindMakeSpec(nvnm + "Layer", &TA_NVLayerSpec);
@@ -3290,7 +3284,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   if(out_gate)
     pfcosp = (PFCOutLayerSpec*)pfcmsp->FindMakeChild("PFCOutLayer", &TA_PFCOutLayerSpec);
   MatrixLayerSpec* matrixsp = (MatrixLayerSpec*)layers->FindMakeSpec("MatrixLayer", &TA_MatrixLayerSpec);
-  if(pfcmsp == NULL || matrixsp == NULL) return false;
 
   MatrixLayerSpec* matrixosp = NULL;
   if(out_gate)
@@ -3309,7 +3302,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   GpRndTesselPrjnSpec* intra_pfcps = (GpRndTesselPrjnSpec*)prjns->FindMakeSpec("IntraPFC", &TA_GpRndTesselPrjnSpec);
   TesselPrjnSpec* input_pfc = (TesselPrjnSpec*)prjns->FindMakeSpec("Input_PFC", &TA_TesselPrjnSpec);
   PFCLVPrjnSpec* pfc_lv_prjn = (PFCLVPrjnSpec*)prjns->FindMakeSpec("PFC_LV_Prjn", &TA_PFCLVPrjnSpec);
-  if(topfc == NULL || pfc_selfps == NULL || intra_pfcps == NULL || gponetoone == NULL || input_pfc == NULL) return false;
 
   input_pfc->send_offs.New(1); // this is all it takes!
 
@@ -3422,7 +3414,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     Layer* hl = (Layer*)hidden_lays[i];
     if(out_gate) {
       net->FindMakePrjn(hl, pfc_o, fullprjn, learn_cons);
-      net->RemovePrjn(hl, pfc_m); // get rid of any existing ones
+      net->FindMakePrjn(hl, pfc_m, fullprjn, fmpfcmnt_cons);
     }
     else {
       net->FindMakePrjn(hl, pfc_m, fullprjn, learn_cons);
@@ -3442,7 +3434,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
 
   // different PVLV defaults
   lvesp->lv.min_lvi = 0.4f;
-  nvsp->nv.da_gain = 0.2f;
+  nvsp->nv.da_gain = 0.1f;
   dasp->da.da_gain = 0.1f;
   dasp->da.pv_gain = 0.1f;
 
@@ -3539,6 +3531,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
 
     snrthalosp->SetUnique("kwta", true);
     snrthalosp->kwta.pct = .25f; // generally works better!
+
+    fmpfcmnt_cons->SetUnique("wt_scale", true);
+    fmpfcmnt_cons->wt_scale.rel = 1.0f; // todo: see if important
   }
 
   pfc_units->SetUnique("g_bar", true);
@@ -3551,6 +3546,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   pfc_units->dt.vm = .1f;	// slower is better..  .1 is even better!
 
   snrthal_units->dt.vm = .1f;
+  snrthal_units->g_bar.l = .8f;
 //   if(snrthalsp->snrthal.net_off == 0.0f)
 //     snrthal_units->act.gain = 20.0f; // lower gain for net_off = 0
 //   else
@@ -3734,32 +3730,39 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     pfc_units->SelectForEditNm("g_bar", edit, "pfc");
     pfcmsp->SelectForEditNm("gate", edit, "pfc_m");
     pfcmsp->SelectForEditNm("learn", edit, "pfc_m");
+    topfc_cons->SelectForEditNm("lrate", edit, "to_pfc");
+    if(out_gate) {
+      fmpfcmnt_cons->SelectForEditNm("wt_scale", edit, "fm_pfc_mnt");
+    }
     matrixsp->SelectForEditNm("matrix", edit, "matrix");
     matrixsp->SelectForEditNm("gate_bias", edit, "matrix");
     matrixsp->SelectForEditNm("rnd_go", edit, "matrix");
     matrix_units->SelectForEditNm("noise", edit, "matrix");
     matrix_units->SelectForEditNm("noise_adapt", edit, "matrix");
     matrix_units->SelectForEditNm("patch_noise", edit, "matrix");
+    if(out_gate) {
+      matrixo_units->SelectForEditNm("noise", edit, "matrix_out");
+      matrixo_units->SelectForEditNm("noise_adapt", edit, "matrix_out");
+      matrixo_units->SelectForEditNm("patch_noise", edit, "matrix_out");
+    }
     matrix_cons->SelectForEditNm("lrate", edit, "matrix");
     matrix_cons->SelectForEditNm("xcal", edit, "matrix");
+    if(out_gate) {
+      matrixo_cons->SelectForEditNm("lrate", edit, "matrix_out");
+      matrixo_cons->SelectForEditNm("rnd", edit, "matrix_out");
+//       matrixo_cons->SelectForEditNm("wt_sig", edit, "mtx_out");
+    }
     //    matrix_cons->SelectForEditNm("lmix", edit, "matrix");
     mfmpfc_cons->SelectForEditNm("wt_scale", edit, "mtx_fm_pfc");
     snrthalsp->SelectForEditNm("kwta", edit, "snrthal");
+    if(out_gate) {
+      snrthalosp->SelectForEditNm("kwta", edit, "snrthal_out");
+    }    
 //       snrthal_units->SelectForEditNm("g_bar", edit, "snr_thal");
 //       snrthal_units->SelectForEditNm("dt", edit, "snr_thal");
     snrthalsp->SelectForEditNm("snrthal", edit, "snrthal");
     snrthal_units->SelectForEditNm("act", edit, "snrthal");
     sncsp->SelectForEditNm("snc", edit, "snc");
-    if(out_gate) {
-      matrixo_units->SelectForEditNm("noise", edit, "matrix_out");
-      matrixo_units->SelectForEditNm("noise_adapt", edit, "matrix_out");
-      matrixo_units->SelectForEditNm("patch_noise", edit, "matrix_out");
-      matrixo_cons->SelectForEditNm("lrate", edit, "matrix_out");
-      matrixo_cons->SelectForEditNm("rnd", edit, "matrix_out");
-//       matrixo_cons->SelectForEditNm("wt_sig", edit, "mtx_out");
-      snrthalosp->SelectForEditNm("kwta", edit, "snrthal_out");
-      snrthalosp->SelectForEditNm("snrthal", edit, "snrthal_out");
-    }    
   }
 
   if(proj) {
@@ -3881,7 +3884,7 @@ bool LeabraWizard::PBWM_Mode(LeabraNetwork* net, PBWMMode mode) {
   }
   else if(mode == GATE_BIAS) {
     lvesp->lv.min_lvi = 0.4f;
-    nvsp->nv.da_gain = 0.2f;
+    nvsp->nv.da_gain = 0.1f;
     dasp->da.pv_gain = 0.1f;
     dasp->da.da_gain = 0.1f;
 
