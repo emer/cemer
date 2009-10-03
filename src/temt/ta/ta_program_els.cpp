@@ -1306,7 +1306,7 @@ String MemberMethodCall::GetDisplayName() const {
 
 void MathCall::Initialize() {
   min_type = &TA_taMath;
-  object_type = &TA_taMath;
+  object_type = &TA_taMath_float;
 }
 
 void RandomCall::Initialize() {

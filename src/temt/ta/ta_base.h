@@ -1998,9 +1998,9 @@ private:
   by overidding canCutPasteDel()
 
 */
-class TA_API taDataView: public taOBase, public virtual IDataLinkClient {
+class TA_API taDataView: public taNBase, public virtual IDataLinkClient {
   // #NO_TOKENS ##CAT_Display base class for views of an object
-INHERITED(taOBase)
+INHERITED(taNBase)
 friend class DataView_List;
 public:
   enum DataViewAction { // #BITS enum used to (safely) manually invoke one or more _impl actions

@@ -3433,7 +3433,7 @@ void taiItemChooser::show_timeout() {
 void taiItemChooser::timFilter_timeout() {
   // if nothing has changed in text, do nothing
   QString text = filter->text();
-  if (last_filter == text || text == "^") return;
+  if (last_filter == text || (last_filter.isEmpty() && text == "^")) return;
   // if we are already filtering, then don't reenter, but just try again
   if (m_changing > 0) {
     timFilter->start();

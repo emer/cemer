@@ -290,8 +290,9 @@ class TA_API taDataProc : public taNBase {
 INHERITED(taNBase)
 public:
   
-  static bool	GetDest(DataTable*& dest, const DataTable* src, const String& suffix);
-  // #IGNORE helper function: if dest is NULL, a new one is created in proj.data.AnalysisData, with name from source + suffix
+  static bool	GetDest(DataTable*& dest, const DataTable* src, const String& suffix,
+			bool& in_place_req);
+  // #IGNORE helper function: if dest is NULL, a new one is created in proj.data.AnalysisData, with name from source + suffix -- if dest == src, then in_place_req is returned as true, and dest is created as a 'new' object (on the heap) and ref-counted once -- should then be copied back to src at the end of the process, and then deleted
 
   ///////////////////////////////////////////////////////////////////
   // manipulating lists of columns
@@ -324,7 +325,7 @@ public:
   // reordering functions
 
   static bool	Sort(DataTable* dest, DataTable* src, DataSortSpec* spec);
-  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON #MENU_ON_Order sort data from src into dest according to sorting specifications in spec; dest is completely overwritten (if dest is NULL, a new one is created in proj.data.AnalysisData)
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON #MENU_ON_Order sort data from src into dest according to sorting specifications in spec; if src == dest, then it is sorted in-place, otherwise, dest is completely overwritten, and if dest is NULL, a new one is created in proj.data.AnalysisData
   static bool 	SortInPlace(DataTable* dt, DataSortSpec* spec);
   // #CAT_Order #MENU_BUTTON #MENU_ON_Order sort given data table in place (modifies data table) according to sorting specifications in spec
 
@@ -335,10 +336,10 @@ public:
   // #IGNORE actually perform sort on data table using specs
 
   static bool	Permute(DataTable* dest, DataTable* src);
-  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON permute (randomly reorder) the rows of the data table -- note that it is typically much more efficient to just use a permuted index to access the data rather than physically permuting the items
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON permute (randomly reorder) the rows of the data table -- note that it is typically much more efficient to just use a permuted index to access the data rather than physically permuting the items -- if src == dest, then a temp dest is used and results are copied back to src (i.e., in-place operation)
 
   static bool	Group(DataTable* dest, DataTable* src, DataGroupSpec* spec);
-  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON group data from src into dest according to grouping specifications in spec (if dest is NULL, a new one is created in proj.data.AnalysisData)
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON group data from src into dest according to grouping specifications in spec (if dest is NULL, a new one is created in proj.data.AnalysisData) -- if src == dest, then a temp dest is used and results are copied back to src (i.e., in-place operation)
 
   static bool	Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec);
   // #IGNORE helper function to do grouping when there are no GROUP items
@@ -350,7 +351,7 @@ public:
   // row-wise functions: selecting/splitting
 
   static bool	SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec);
-  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Select #MENU_BUTTON #MENU_ON_Select select rows of data from src into dest according to selection specifications in spec (all columns are copied) (if dest is NULL, a new one is created in proj.data.AnalysisData)
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Select #MENU_BUTTON #MENU_ON_Select select rows of data from src into dest according to selection specifications in spec (all columns are copied) (if dest is NULL, a new one is created in proj.data.AnalysisData) -- if src == dest, then a temp dest is used and results are copied back to src (i.e., in-place operation)
 
   static bool	SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
 			  DataSelectSpec* spec);
@@ -369,7 +370,7 @@ public:
   // column-wise functions: selecting, joining
 
   static bool	SelectCols(DataTable* dest, DataTable* src, DataOpList* spec);
-  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON #MENU_ON_Columns select columns of data from src into dest according to list of columnns in spec (all rows are copied)
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON #MENU_ON_Columns select columns of data from src into dest according to list of columnns in spec (all rows are copied) -- if src == dest, then a temp dest is used and results are copied back to src (i.e., in-place operation)
 
   static bool	Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJoinSpec* spec);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON joins two datatables (src_a and src_b) into dest datatable.  tables are internally sorted first according to the join column.  all matching row values from both tables are included in the result.  for the left join, all rows of src_a are included even if src_b does not match, and vice-versa for the right join.  inner only includes the matches.  all columns are included (without repeating the common column)

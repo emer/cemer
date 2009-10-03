@@ -315,7 +315,15 @@ void DataJoinSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
 //   taDataProc
 /////////////////////////////////////////////////////////
 
-bool taDataProc::GetDest(DataTable*& dest, const DataTable* src, const String& suffix) {
+bool taDataProc::GetDest(DataTable*& dest, const DataTable* src, const String& suffix,
+			 bool& in_place_req) {
+  if(src == dest) {
+    in_place_req = true;
+    dest = new DataTable;
+    taBase::Ref(dest);
+    return true;
+  }
+  in_place_req = false;
   if(dest) return false;
   taProject* proj = GET_OWNER(src, taProject);
   dest = proj->GetNewAnalysisDataTable(src->name + "_" + suffix, true);
@@ -370,7 +378,13 @@ bool taDataProc::GetColIntersection(DataOpList* trg_cols, DataOpList* ref_cols) 
 
 bool taDataProc::CopyData(DataTable* dest, DataTable* src) {
   if(!src) { taMisc::Error("taDataProc::CopyData: src is NULL"); return false; }
-  GetDest(dest, src, "CopyData");
+  bool in_place_req = false;
+  GetDest(dest, src, "CopyData", in_place_req);
+  if(in_place_req) {
+    taMisc::Error("taDataProc::CopyData -- src cannot be same as dest for this operation!");
+    delete dest;
+    return false;
+  }
   dest->StructUpdate(true);
   dest->Reset();
   dest->Copy_NoData(*src);		// give it same structure
@@ -382,6 +396,10 @@ bool taDataProc::CopyData(DataTable* dest, DataTable* src) {
 bool taDataProc::CopyCommonColsRow_impl(DataTable* dest, DataTable* src, DataOpList* dest_cols,
 				   DataOpList* src_cols, int dest_row, int src_row) {
   if(!dest || !src || !dest_cols || !src_cols) return false;
+  if(dest == src) {
+    taMisc::Error("taDataProc::CopyCommonColsRow_impl -- src cannot be same as dest for this operation!");
+    return false;
+  }
   dest->DataUpdate(true);
   for(int j=0;j<src_cols->size;j++) {
     DataOpEl* sop = src_cols->FastEl(j);
@@ -398,6 +416,10 @@ bool taDataProc::CopyCommonColsRow_impl(DataTable* dest, DataTable* src, DataOpL
 bool taDataProc::CopyCommonColsRow(DataTable* dest, DataTable* src, int dest_row, int src_row) {
   if(!dest) { taMisc::Error("taDataProc::CopyCommonColsRow: dest is NULL"); return false; }
   if(!src) { taMisc::Error("taDataProc::CopyCommonColsRow: src is NULL"); return false; }
+  if(dest == src) {
+    taMisc::Error("taDataProc::CopyCommonColsRow -- src cannot be same as dest for this operation!");
+    return false;
+  }
   DataOpList dest_cols;
   DataOpList src_cols;
   GetCommonCols(dest, src, &dest_cols, &src_cols);
@@ -407,6 +429,10 @@ bool taDataProc::CopyCommonColsRow(DataTable* dest, DataTable* src, int dest_row
 bool taDataProc::CopyCommonColData(DataTable* dest, DataTable* src) {
   if(!dest) { taMisc::Error("taDataProc::CopyCommonColData: dest is NULL"); return false; }
   if(!src) { taMisc::Error("taDataProc::CopyCommonColData: src is NULL"); return false; }
+  if(dest == src) {
+    taMisc::Error("taDataProc::CopyCommonColData -- src cannot be same as dest for this operation!");
+    return false;
+  }
   DataOpList dest_cols;
   DataOpList src_cols;
   GetCommonCols(dest, src, &dest_cols, &src_cols);
@@ -429,6 +455,10 @@ bool taDataProc::CopyCommonColData(DataTable* dest, DataTable* src) {
 bool taDataProc::AppendRows(DataTable* dest, DataTable* src) {
   if(!dest) { taMisc::Error("taDataProc::AppendRows: dest is NULL"); return false; }
   if(!src) { taMisc::Error("taDataProc::AppendRows: src is NULL"); return false; }
+  if(dest == src) {
+    taMisc::Error("taDataProc::AppendRows -- src cannot be same as dest for this operation!");
+    return false;
+  }
   if(dest->data.size != src->data.size) {
     taMisc::Error("taDataProc::AppendRows -- tables do not have same number of columns -- use CopyCommonColData instead!");
     return false;
@@ -447,7 +477,8 @@ bool taDataProc::AppendRows(DataTable* dest, DataTable* src) {
 }
 
 bool taDataProc::ReplicateRows(DataTable* dest, DataTable* src, int n_repl) {
-  GetDest(dest, src, "ReplicateRows");
+  bool in_place_req = false;
+  GetDest(dest, src, "ReplicateRows", in_place_req);
   dest->StructUpdate(true);
   dest->Copy_NoData(*src);		// give it same structure
   for(int i=0;i<src->rows;i++) {
@@ -461,6 +492,10 @@ bool taDataProc::ReplicateRows(DataTable* dest, DataTable* src, int n_repl) {
     }
   }
   dest->StructUpdate(false);
+  if(in_place_req) {
+    *src = *dest;
+    delete dest;
+  }
   return true;
 }
 
@@ -468,7 +503,13 @@ bool taDataProc::ConcatRows(DataTable* dest, DataTable* src_a, DataTable* src_b,
 			    DataTable* src_d, DataTable* src_e, DataTable* src_f) {
   if(!src_a) { taMisc::Error("taDataProc::ConcatRows: src_a is NULL"); return false; }
   if(!src_b) { taMisc::Error("taDataProc::ConcatRows: src_b is NULL"); return false; }
-  GetDest(dest, src_a, "ConcatRows");
+  bool in_place_req = false;
+  GetDest(dest, src_a, "ConcatRows", in_place_req);
+  if(in_place_req) {
+    taMisc::Error("taDataProc::ConcatRows -- src_a cannot be same as dest for this operation!");
+    delete dest;
+    return false;
+  }
   dest->StructUpdate(true);
   dest->Reset();
   String dnm = dest->name;
@@ -490,8 +531,12 @@ bool taDataProc::ConcatRows(DataTable* dest, DataTable* src_a, DataTable* src_b,
 bool taDataProc::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
   if(!src) { taMisc::Error("taDataProc::Sort: src is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataProc::Sort: spec is NULL"); return false; }
+  if(src == dest) {
+    return Sort_impl(src, spec);
+  }
   // just copy and operate on dest
-  GetDest(dest, src, "Sort");
+  bool in_place_req = false;
+  GetDest(dest, src, "Sort", in_place_req);
   dest->Reset();
   String dnm = dest->name;
   *dest = *src;
@@ -500,6 +545,7 @@ bool taDataProc::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
 }
 
 bool taDataProc::SortInPlace(DataTable* dt, DataSortSpec* spec) {
+  if(!dt) { taMisc::Error("taDataProc::Sort: data table is NULL"); return false; }
   return Sort_impl(dt, spec);
 }
 
@@ -574,7 +620,8 @@ bool taDataProc::Sort_impl(DataTable* dt, DataSortSpec* spec) {
 
 bool taDataProc::Permute(DataTable* dest, DataTable* src) {
   if(!src) { taMisc::Error("taDataProc::Permute: src is NULL"); return false; }
-  GetDest(dest, src, "Permute");
+  bool in_place_req = false;
+  GetDest(dest, src, "Permute", in_place_req);
   dest->StructUpdate(true);
   dest->Copy_NoData(*src);		// give it same structure
   // this just uses the index technique..
@@ -587,13 +634,18 @@ bool taDataProc::Permute(DataTable* dest, DataTable* src) {
     dest->CopyFromRow(-1, *src, idxs[row]);
   }
   dest->StructUpdate(false);
+  if(in_place_req) {
+    *src = *dest;
+    delete dest;
+  }
   return true;
 }
 
 bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   if(!src) { taMisc::Error("taDataProc::Group: src is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataProc::Group: spec is NULL"); return false; }
-  GetDest(dest, src, "Group");
+  bool in_place_req = false;
+  GetDest(dest, src, "Group", in_place_req);
   dest->StructUpdate(true);
   spec->GetColumns(src);		// cache column pointers & indicies from names
   dest->Reset();
@@ -644,6 +696,10 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   }
   dest->StructUpdate(false);
   spec->ClearColumns();
+  if(in_place_req) {
+    *src = *dest;
+    delete dest;
+  }
   return true;
 }
 
@@ -889,7 +945,8 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 // row-wise functions: selecting/splitting
 
 bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec) {
-  GetDest(dest, src, "SelectRows");
+  bool in_place_req = false;
+  GetDest(dest, src, "SelectRows", in_place_req);
   dest->StructUpdate(true);
   dest->Copy_NoData(*src);		// give it same structure
   spec->GetColumns(src);		// cache column pointers & indicies from names
@@ -950,6 +1007,10 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
   }
   dest->StructUpdate(false);
   spec->ClearColumns();
+  if(in_place_req) {
+    *src = *dest;
+    delete dest;
+  }
   return true;
 }
 
@@ -957,8 +1018,19 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
 			   DataSelectSpec* spec) {
   if(!src) { taMisc::Error("taDataProc::SplitRows: src is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataProc::SplitRows: spec is NULL"); return false; }
-  GetDest(dest_a, src, "SplitRows_a");
-  GetDest(dest_b, src, "SplitRows_b");
+  bool in_place_req = false;
+  GetDest(dest_a, src, "SplitRows_a", in_place_req);
+  if(in_place_req) {
+    taMisc::Error("taDataProc::SplitRows -- src cannot be same as dest for this operation!");
+    delete dest_a;
+    return false;
+  }
+  GetDest(dest_b, src, "SplitRows_b", in_place_req);
+  if(in_place_req) {
+    taMisc::Error("taDataProc::SplitRows -- src cannot be same as dest for this operation!");
+    delete dest_b;
+    return false;
+  }
   dest_a->StructUpdate(true);
   dest_a->Copy_NoData(*src);		// give it same structure
   dest_b->StructUpdate(true);
@@ -1037,7 +1109,13 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
   int n_tot = 0;
   for(int i=0;i<6;i++) {
     if(!dary[i]) break;
-    GetDest(dary[i], src, "SplitByN_" + String(i));
+    bool in_place_req = false;
+    GetDest(dary[i], src, "SplitByN_" + String(i), in_place_req);
+    if(in_place_req) {
+      taMisc::Error("taDataProc::SplitRowsN -- src cannot be same as dest for this operation!");
+      delete dary[i];
+      return false;
+    }
     dary[i]->StructUpdate(true);
     dary[i]->Copy_NoData(*src);
     if(nary[i] < 0) {
@@ -1103,7 +1181,13 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
   int n_tot = 0;
   for(int i=0;i<6;i++) {
     if(!dary[i]) break;
-    GetDest(dary[i], src, "SplitByN_" + String(i));
+    bool in_place_req = false;
+    GetDest(dary[i], src, "SplitByN_" + String(i), in_place_req);
+    if(in_place_req) {
+      taMisc::Error("taDataProc::SplitRowsNPermuted -- src cannot be same as dest for this operation!");
+      delete dary[i];
+      return false;
+    }
     dary[i]->StructUpdate(true);
     dary[i]->Copy_NoData(*src);
     if(nary[i] < 0) {
@@ -1168,7 +1252,8 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
 bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
   if(!src) { taMisc::Error("taDataProc::SelectCols: src is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataProc::SelectCols: spec is NULL"); return false; }
-  GetDest(dest, src, "SelectCols");
+  bool in_place_req = false;
+  GetDest(dest, src, "SelectCols", in_place_req);
   dest->StructUpdate(true);
   spec->GetColumns(src);		// cache column pointers & indicies from names
   dest->Reset();
@@ -1194,6 +1279,10 @@ bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
   }
   dest->StructUpdate(false);
   spec->ClearColumns();
+  if(in_place_req) {
+    *src = *dest;
+    delete dest;
+  }
   return true;
 }
 
@@ -1203,7 +1292,13 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
   if(!src_b) { taMisc::Error("taDataProc::Join: src_b is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataProc::Join: spec is NULL"); return false; }
   if((spec->col_a.col_idx < 0) || (spec->col_b.col_idx < 0)) return false;
-  GetDest(dest, src_a, "Join");
+  bool in_place_req = false;
+  GetDest(dest, src_a, "Join", in_place_req);
+  if(in_place_req) {
+    taMisc::Error("taDataProc::Join -- src_a cannot be same as dest for this operation!");
+    delete dest;
+    return false;
+  }
   dest->StructUpdate(true);
   spec->GetColumns(src_a, src_b);	// cache column pointers & indicies from names
   dest->Reset();
@@ -1330,7 +1425,13 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
 bool taDataProc::ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b) {
   if(!src_a) { taMisc::Error("taDataProc::ConcatCols: src_a is NULL"); return false; }
   if(!src_b) { taMisc::Error("taDataProc::ConcatCols: src_b is NULL"); return false; }
-  GetDest(dest, src_a, "ConcatCols");
+  bool in_place_req = false;
+  GetDest(dest, src_a, "ConcatCols", in_place_req);
+  if(in_place_req) {
+    taMisc::Error("taDataProc::ConcatCols -- src_a cannot be same as dest for this operation!");
+    delete dest;
+    return false;
+  }
   dest->StructUpdate(true);
   dest->Reset();
   for(int i=0; i < src_a->data.size; i++) {
