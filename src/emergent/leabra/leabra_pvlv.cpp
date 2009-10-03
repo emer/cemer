@@ -51,6 +51,8 @@ void PVConSpec::Initialize() {
   SetUnique("lrate_sched", true); // not to have any lrate schedule!!
   SetUnique("lrs_value", true); // not to have any lrate schedule!!
   lrs_value = NO_LRS;
+
+  send_act = ACT_P;
 }
 
 void PVConSpec::UpdateAfterEdit_impl() {
@@ -659,18 +661,21 @@ bool LVeLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* n
   // state information should be available etc
   if(net->phase_no < net->phase_max-1)
     return false;
+  if(!(net->ext_rew_avail || net->pv_detected)) return false; // no learn on no rew
   return true;
 }
 
 bool LVeLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
     return false;
+  if(!(net->ext_rew_avail || net->pv_detected)) return false; // no learn on no rew
   return true;
 }
 
 bool LVeLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
     return false;
+  if(!(net->ext_rew_avail || net->pv_detected)) return false; // no learn on no rew
   return true;
 }
 

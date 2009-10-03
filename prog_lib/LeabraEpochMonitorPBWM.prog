@@ -1,5 +1,5 @@
-// ta_Dump File v2.0 -- code v4.0.21.0
-Program .projects[0].programs.gp[0][8] { 
+// ta_Dump File v2.0 -- code v5.0.1.0
+Program .projects[1].programs.gp[0][8] { 
   ProgObjList @.objs = [3] {
     NetMonitor @[0] { 
       NetMonItem_List @.items = [41] {
@@ -73,6 +73,9 @@ Program .projects[0].programs.gp[0][8] {
     };
   };
 
+  ProgType_List @.types = [0] {
+  };
+
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
   };
@@ -87,6 +90,12 @@ Program .projects[0].programs.gp[0][8] {
     ProgVar @[6] { };
     ProgVar @[7] { };
     ProgVar @[8] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.load_code = [0] {
   };
 
   ProgEl_List @.init_code = [4] {
@@ -135,14 +144,23 @@ Program .projects[0].programs.gp[0][8] {
 	DataGroupEl @[1] { };
       };
     };
-    MethodCall @[2] { };
-    MethodCall @[3] { };
+    MethodCall @[2] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
+    MethodCall @[3] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     AssignExpr @[4] { };
     UserScript @[5] { };
-    MethodCall @[6] { };
+    MethodCall @[6] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
   };
 };
-Program .projects[0].programs.gp[0][8] {
+Program .projects[1].programs.gp[0][8] {
  name="LeabraEpochMonitorPBWM";
  tags="Leabra, Epoch, Monitor, PBWM";
  desc="monitor epoch-level data from the network -- PBWM version (V2 only)";
@@ -161,7 +179,7 @@ Program .projects[0].programs.gp[0][8] {
      name="batch";
      computed=0;
      object_type=LeabraNetwork;
-     object=.projects[0].networks[0]$0$;
+     object=.projects[1].networks[0]$0$;
      variable="batch";
      var_label=;
      name_style=AUTO_NAME;
@@ -350,10 +368,10 @@ Program .projects[0].programs.gp[0][8] {
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[6] {
-     name="Leabra_cur_lrate";
+     name="FullPr_cur_lrate";
      computed=0;
      object_type=LeabraConSpec;
-     object=.projects[0].networks[0].specs[3]$1$;
+     object=.projects[1].networks[0].specs[3]$1$;
      variable="cur_lrate";
      var_label=;
      name_style=AUTO_NAME;
@@ -458,7 +476,7 @@ Program .projects[0].programs.gp[0][8] {
      matrix=0;
      matrix_geom{      };
      data_agg=1;
-     data_src=.projects[0].programs.gp[0][8].objs[1]$2$;
+     data_src=.projects[1].programs.gp[0][8].objs[1]$2$;
      agg_col {
       col_name="DA";
      };
@@ -469,8 +487,8 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="S";
-      var=.projects[0].programs.gp[0][8].vars[6]$3$;
+      cmp 9 0="e_";
+      var=.projects[1].programs.gp[0][8].vars[6]$3$;
       enable_var=NULL;
      };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -501,8 +519,8 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=EQUAL;
       use_var=1;
-      cmp 9 0="I";
-      var=.projects[0].programs.gp[0][8].vars[7]$4$;
+      cmp 9 0="e_t:2";
+      var=.projects[1].programs.gp[0][8].vars[7]$4$;
       enable_var=NULL;
      };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -533,8 +551,8 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="R";
-      var=.projects[0].programs.gp[0][8].vars[8]$5$;
+      cmp 9 0="r_";
+      var=.projects[1].programs.gp[0][8].vars[8]$5$;
       enable_var=NULL;
      };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -565,7 +583,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="S";
+      cmp 9 0="e_";
       var=$3$;
       enable_var=NULL;
      };
@@ -597,7 +615,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=EQUAL;
       use_var=1;
-      cmp 9 0="I";
+      cmp 9 0="e_t:2";
       var=$4$;
       enable_var=NULL;
      };
@@ -629,7 +647,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="R";
+      cmp 9 0="r_";
       var=$5$;
       enable_var=NULL;
      };
@@ -661,7 +679,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="S";
+      cmp 9 0="e_";
       var=$3$;
       enable_var=NULL;
      };
@@ -693,7 +711,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=EQUAL;
       use_var=1;
-      cmp 9 0="I";
+      cmp 9 0="e_t:2";
       var=$4$;
       enable_var=NULL;
      };
@@ -725,7 +743,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="R";
+      cmp 9 0="r_";
       var=$5$;
       enable_var=NULL;
      };
@@ -746,7 +764,7 @@ Program .projects[0].programs.gp[0][8] {
      matrix=0;
      matrix_geom{      };
      data_agg=1;
-     data_src=.projects[0].programs.gp[0][8].objs[2]$6$;
+     data_src=.projects[1].programs.gp[0][8].objs[2]$6$;
      agg_col {
       col_name="absDA_mean";
      };
@@ -821,7 +839,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="S";
+      cmp 9 0="e_";
       var=$3$;
       enable_var=NULL;
      };
@@ -853,7 +871,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=EQUAL;
       use_var=1;
-      cmp 9 0="I";
+      cmp 9 0="e_t:2";
       var=$4$;
       enable_var=NULL;
      };
@@ -885,7 +903,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="R";
+      cmp 9 0="r_";
       var=$5$;
       enable_var=NULL;
      };
@@ -917,7 +935,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="S";
+      cmp 9 0="e_";
       var=$3$;
       enable_var=NULL;
      };
@@ -949,7 +967,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="S";
+      cmp 9 0="e_";
       var=$3$;
       enable_var=NULL;
      };
@@ -981,7 +999,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="I";
+      cmp 9 0="e_t:2";
       var=$4$;
       enable_var=NULL;
      };
@@ -1013,7 +1031,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="I";
+      cmp 9 0="e_t:2";
       var=$4$;
       enable_var=NULL;
      };
@@ -1045,7 +1063,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="I";
+      cmp 9 0="e_t:2";
       var=$4$;
       enable_var=NULL;
      };
@@ -1077,7 +1095,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="R";
+      cmp 9 0="r_";
       var=$5$;
       enable_var=NULL;
      };
@@ -1109,7 +1127,7 @@ Program .projects[0].programs.gp[0][8] {
       on=1;
       rel=CONTAINS;
       use_var=1;
-      cmp 9 0="R";
+      cmp 9 0="r_";
       var=$5$;
       enable_var=NULL;
      };
@@ -1130,7 +1148,7 @@ Program .projects[0].programs.gp[0][8] {
      matrix=0;
      matrix_geom{      };
      data_agg=1;
-     data_src=.projects[0].data.gp[1][0]$7$;
+     data_src=.projects[1].data.gp[1][0]$7$;
      agg_col {
       col_name="max_mnt";
      };
@@ -1471,7 +1489,7 @@ Program .projects[0].programs.gp[0][8] {
     };
    };
    network=$0$;
-   data=.projects[0].data.gp[1][1]$8$;
+   data=.projects[1].data.gp[1][1]$8$;
    rmv_orphan_cols=1;
   };
   DataTable @[1] {
@@ -1491,7 +1509,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] "I";"R1";"R2";"S1";"S2";     };
+	  [6] "e_t:0";"e_t:1";"e_t:2";"r_t:0";"r_t:1";"r_t:2";     };
     };
     float_Data @[1] {
      name="DA";
@@ -1503,7 +1521,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] 0.028521283;0.44701543;0.45619503;0.032595366;0.12981869;     };
+	  [6] 0.10625247;0.01549808;0.0097763054;0.10195871;0.091387376;0.095868804;     };
     };
     float_Data @[2] {
      name="LVe";
@@ -1515,7 +1533,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] 0.44845536;0.19837394;0.20663768;0.45906118;0.41542682;     };
+	  [6] 0.46841231;0.42428911;0.47933015;0.42931053;0.37208867;0.33283642;     };
     };
     float_Data @[3] {
      name="LVi";
@@ -1527,7 +1545,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] 0.4918645;0.44624746;0.44154492;0.49200705;0.49113485;     };
+	  [6] 0.49820548;0.49787197;0.49849218;0.49723566;0.49599606;0.49519444;     };
     };
     float_Data @[4] {
      name="PVe";
@@ -1539,7 +1557,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] 0.5;0.22222222;0.2631579;0.5;0.5;     };
+	  [6] 0.5;0.5;0.5;0.5;0;0.25;     };
     };
     float_Data @[5] {
      name="PVi";
@@ -1551,7 +1569,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] 0.49769861;0.25137576;0.23549853;0.49664557;0.49287644;     };
+	  [6] 0.48914176;0.4837122;0.49135116;0.47373924;0.45600083;0.44956166;     };
     };
     float_Data @[6] {
      name="PVr";
@@ -1563,7 +1581,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] 0.51630765;0.7936582;0.80104524;0.52547538;0.52928716;     };
+	  [6] 0.54754812;0.5351572;0.52886963;0.64134884;0.66941804;0.69305432;     };
     };
     float_Data @[7] {
      name="n_mgo";
@@ -1575,7 +1593,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] 2.0799999;3.1111112;2.2631578;2.3157895;2.7368422;     };
+	  [6] 0;0;0;0;0;0;     };
     };
     float_Data @[8] {
      name="n_ogo";
@@ -1587,7 +1605,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] 0;4.6111112;4.4210525;0.42105263;0;     };
+	  [6] 4.5999999;3.75;4.5;4.75;4.25;4.25;     };
     };
     float_Data @[9] {
      name="n_emty_mnt";
@@ -1599,7 +1617,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] 1.96;0.27777779;0.57894737;2.1052632;2.5263157;     };
+	  [6] 0.40000001;0;0.25;0.25;0;0;     };
     };
     float_Data @[10] {
      name="n_mnt_mnt";
@@ -1611,7 +1629,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] 0.12;2.8333333;1.6842105;0.21052632;0.21052632;     };
+	  [6] 0.80000001;2;1;0.5;0.75;0;     };
     };
     float_Data @[11] {
      name="n_emty_out";
@@ -1623,7 +1641,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] 0;0.22222222;0.52631581;0.42105263;0;     };
+	  [6] 0;0.25;0.25;0;0;0;     };
     };
     float_Data @[12] {
      name="n_mnt_out";
@@ -1635,7 +1653,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] 0;4.3888888;3.8947368;0;0;     };
+	  [6] 0;0;0;0.5;1;1.75;     };
     };
     float_Data @[13] {
      name="n_emty_nogo";
@@ -1647,7 +1665,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] 0;0.27777779;0.31578946;0.052631579;0.42105263;     };
+	  [6] 1.4;1.25;1;1;1;1;     };
     };
     float_Data @[14] {
      name="n_mnt_nogo";
@@ -1659,7 +1677,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [5] 5.9200001;0;1;5.2105265;4.8421054;     };
+	  [6] 3.2;2.5;3.5;3.75;3.25;3.25;     };
     };
    };
    data_flags=SAVE_ROWS|AUTO_CALC;
@@ -1684,7 +1702,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [1] 0.20512882;     };
+	  [1] 0.07156878;     };
     };
     float_Data @[1] {
      name="absDA_max";
@@ -1696,7 +1714,7 @@ Program .projects[0].programs.gp[0][8] {
      };
      ar {
       name=;
-	  [1] 0.60004461;     };
+	  [1] 0.1279625;     };
     };
    };
    data_flags=SAVE_ROWS|AUTO_CALC;
@@ -1745,7 +1763,7 @@ Program .projects[0].programs.gp[0][8] {
    name="epoch_netmon";
    var_type=T_Object;
    object_type=NetMonitor;
-   object_val=.projects[0].programs.gp[0][8].objs[0]$9$;
+   object_val=.projects[1].programs.gp[0][8].objs[0]$9$;
    objs_ptr=1;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -1756,7 +1774,7 @@ Program .projects[0].programs.gp[0][8] {
    name="epoch_timer";
    var_type=T_Object;
    object_type=TimeUsed;
-   object_val=.projects[0].networks[0].epoch_time$10$;
+   object_val=.projects[1].networks[0].epoch_time$10$;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -1799,7 +1817,7 @@ Program .projects[0].programs.gp[0][8] {
   ProgVar @[6] {
    name="store_trial_contains";
    var_type=T_String;
-   string_val="S";
+   string_val="e_";
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -1809,7 +1827,7 @@ Program .projects[0].programs.gp[0][8] {
   ProgVar @[7] {
    name="ignore_trial_contains";
    var_type=T_String;
-   string_val="I";
+   string_val="e_t:2";
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -1819,7 +1837,7 @@ Program .projects[0].programs.gp[0][8] {
   ProgVar @[8] {
    name="recall_trial_contains";
    var_type=T_String;
-   string_val="R";
+   string_val="r_";
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -1844,7 +1862,7 @@ Program .projects[0].programs.gp[0][8] {
   AssignExpr @[0] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][8].vars[2]$11$;
+   result_var=.projects[1].programs.gp[0][8].vars[2]$11$;
    expr {
     expr="network.epoch_time";
    };
@@ -1853,7 +1871,7 @@ Program .projects[0].programs.gp[0][8] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][8].vars[1]$12$;
+   obj=.projects[1].programs.gp[0][8].vars[1]$12$;
    method=NetMonitor::SetDataNetwork;
    meth_args {
     name=;
@@ -1933,8 +1951,8 @@ Program .projects[0].programs.gp[0][8] {
   DataGroupProg @[0] {
    desc=;
    flags=;
-   src_data_var=.projects[0].programs.gp[0][8].vars[5]$13$;
-   dest_data_var=.projects[0].programs.gp[0][8].vars[3]$14$;
+   src_data_var=.projects[1].programs.gp[0][8].vars[5]$13$;
+   dest_data_var=.projects[1].programs.gp[0][8].vars[3]$14$;
    group_spec {
     name="group_spec";
     ops {
@@ -2009,7 +2027,7 @@ Program .projects[0].programs.gp[0][8] {
    desc=;
    flags=;
    src_data_var=$13$;
-   dest_data_var=.projects[0].programs.gp[0][8].vars[4]$15$;
+   dest_data_var=.projects[1].programs.gp[0][8].vars[4]$15$;
    group_spec {
     name="group_spec";
     ops {
@@ -2032,7 +2050,7 @@ Program .projects[0].programs.gp[0][8] {
    desc="add a new blank row to the data";
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][8].vars[0]$16$;
+   obj=.projects[1].programs.gp[0][8].vars[0]$16$;
    method=DataTable::AddBlankRow;
    meth_args {
     name=;

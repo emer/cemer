@@ -1562,14 +1562,21 @@ void NetMonitor::SetDataTable(DataTable* dt) {
 }
 
 void NetMonitor::SetNetwork(Network* net) {
-  if(network.ptr() == net) return;
+//   if(network.ptr() == net) return;
   network = net;
   UpdateNetworkPtrs();
 }
 
 void NetMonitor::UpdateNetworkPtrs() {
-  if(network)
+  if(network) {
     items.UpdatePointers_NewParType(&TA_Network, network);
+    for (int i = 0; i < items.size; ++i) {
+      NetMonItem* nmi = items.FastEl(i);
+      if(nmi->object_type && nmi->object_type->InheritsFrom(&TA_Network)) {
+	nmi->object = network;
+      }
+    }
+  }
 }
 
 void NetMonitor::SetDataNetwork(DataTable* dt, Network* net) {

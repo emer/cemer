@@ -52,8 +52,21 @@ class LEABRA_API PVConSpec : public LeabraConSpec {
   // pvlv connection spec: learns using delta rule from act_p - act_m values -- does not use hebb or err_sb parameters
 INHERITED(LeabraConSpec)
 public:
+  enum SendActVal {
+    ACT_P,			// plus phase activation state
+    ACT_M2,			// mid-minus activation state (for PBWM)
+  };
+
+  SendActVal	send_act;	// what to use for the sending activation value
+
   inline void C_Compute_dWt_Delta(LeabraCon* cn, float lin_wt, LeabraUnit* ru, LeabraUnit* su) {
-    float dwt = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
+    float su_act;
+    if(send_act == ACT_P)
+      su_act = su->act_p;
+    else			// ACT_M2
+      su_act = su->act_m2;
+	
+    float dwt = (ru->act_p - ru->act_m) * su_act; // basic delta rule
     if(lmix.err_sb) {
       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
       else		dwt *= lin_wt;
