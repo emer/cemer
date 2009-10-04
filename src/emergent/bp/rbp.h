@@ -102,7 +102,7 @@ public:
   float		soft_clamp_gain; // #CONDEDIT_ON_soft_clamp:true gain on the soft clamping
   bool		teacher_force;	 // use teacher forcing
   bool		store_states;    // store activity states (usually true, except in AP mode)
-  Random	initial_act;	 // initial activation value
+  RandomSpec	initial_act;	 // initial activation value
   bool		updt_clamped_wts; // update weights for clamped units: need this for symmetric cons!
 
   virtual void	ResetStored(RBpUnit* u, BpNetwork* net, int thread_no=-1);
@@ -246,7 +246,7 @@ class BP_API NoisyRBpUnitSpec : public RBpUnitSpec {
   // RBp with noisy output signal (act plus noise)
 INHERITED(RBpUnitSpec)
 public:
-  Random	noise;		// what kind of noise to add to activations
+  RandomSpec	noise;		// what kind of noise to add to activations
   float		sqrt_dt; 	// #HIDDEN square-root of dt for noise
 
   void 		Compute_Act_impl(RBpUnit* u, BpNetwork* net, int thread_no=-1);

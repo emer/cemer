@@ -147,13 +147,13 @@ public:
   };
 
   MinMaxRange	real_range;		// the actual range to use for activations
-  Random	noise;			// what kind of noise?
+  RandomSpec	noise;			// what kind of noise?
   float		step;			// step size taken to update activations
   float		sqrt_step;		// #HIDDEN square-root of the step size
   float		gain;			// gain of the activation fun (1/T for boltz)
   ClampType	clamp_type;		// type of clamping to use
   float		clamp_gain;		// #CONDEDIT_OFF_clamp_type:HARD_CLAMP,HARD_FAST_CLAMP gain of the soft clamping
-  Random	initial_act;		// what to initialize the act to
+  RandomSpec	initial_act;		// what to initialize the act to
   float		state_decay;		// #AKA_modify_decay amount to decay acts towards rest for DECAY_STATE initialization between phases or trials
   bool		use_annealing;		// true if noise sched is used to anneal acts
   Schedule	noise_sched;		// #CONDEDIT_ON_use_annealing:true schedule of noise variance multipliers

@@ -122,7 +122,7 @@ public:
   bool		use_layer_type; // #DEF_true use layer_type information on the layer to determine flags to set (if false, turn on EXPERT showing to view flags)
   bool		na_by_range;	// use act_range on the unitspec for the units to determine inputs that are not appplicable (n/a) and thus do not get relevant flags or values set: those that have input values outside the range are n/a
   Unit::ExtType	ext_flags;	// #EXPERT #CONDSHOW_OFF_use_layer_type:true how to flag the unit/layer's external input status
-  Random	noise;		// #EXPERT noise optionally added to values when applied
+  RandomSpec	noise;		// #EXPERT noise optionally added to values when applied
 
   virtual bool	ApplyInputData(DataBlock* db, Network* net);
   // #CAT_LayerWriter apply data to the layer on network, using the network's current context settings (TEST,TRAIN,etc) -- returns success
@@ -246,7 +246,7 @@ public:
   DataTableRef		data_src;	// #CONDSHOW_ON_data_agg source data for data aggregation operation
   DataOpEl		agg_col;	// #CONDSHOW_ON_data_agg column name in data_src data table to get data to aggregate from
   
-  Aggregate		agg;		// #CONDSHOW_ON_computed:false||data_agg:true aggregation operation to perform (reduces vector data down to a single scalar value for network variables, and is aggregation to perform for data_agg aggregation)
+  AggregateSpec		agg;		// #CONDSHOW_ON_computed:false||data_agg:true aggregation operation to perform (reduces vector data down to a single scalar value for network variables, and is aggregation to perform for data_agg aggregation)
 
   bool			select_rows;	// #CONDSHOW_ON_data_agg whether to select specific rows of data from the data_src data table to operate on
   DataSelectEl		select_spec;	// #CONDSHOW_ON_select_rows optional selection of rows to perform aggregation on according to the value of items in given column -- for more complex selections and/or greater efficiency, use DataSelectRowsProg to create intermediate data table and operate on that

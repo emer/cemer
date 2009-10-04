@@ -40,7 +40,7 @@
 #endif
 
 class TA_API Relation : public taNBase {
-  // #STEM_BASE ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math counting criteria params
+  // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math counting criteria params
   INHERITED(taNBase)
 public:
   enum Relations {
@@ -51,10 +51,6 @@ public:
     LESSTHANOREQUAL,	// #LABEL_<=
     GREATERTHANOREQUAL 	// #LABEL_>=
   };
-
-#ifdef __MAKETA__
-  String	name;		// #HIDDEN_INLINE name of the object
-#endif
 
   Relations	rel;		// #LABEL_ relationship to evaluate
   double	val;		// #LABEL_ comparison value
@@ -71,8 +67,20 @@ public:
   TA_SIMPLE_BASEFUNS(Relation);
 };
 
+class TA_API RelationSpec : public Relation {
+  // counting criteria params -- use this for inline members (hides name field)
+  INHERITED(Relation)
+public:
+#ifdef __MAKETA__
+  String	name;		// #HIDDEN_INLINE name of the object
+#endif
+  void  Initialize()		{ };
+  void 	Destroy()		{ };
+  TA_BASEFUNS_NOCOPY(RelationSpec);
+};
+
 class TA_API Aggregate : public taNBase {
-  // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math Basic aggregation operations
+  // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math Basic aggregation operations
   INHERITED(taNBase)
 public:
   enum Operator {		// Aggregate Operators
@@ -116,8 +124,20 @@ public:
   TA_SIMPLE_BASEFUNS(Aggregate);
 };
 
+class TA_API AggregateSpec : public Aggregate {
+  //  Basic aggregation operations -- use this for inline members (hides name field)
+  INHERITED(Aggregate)
+public:
+#ifdef __MAKETA__
+  String	name;		// #HIDDEN_INLINE name of the object
+#endif
+  void  Initialize()		{ };
+  void 	Destroy()		{ };
+  TA_BASEFUNS_NOCOPY(AggregateSpec);
+};
+
 class TA_API SimpleMathSpec : public taNBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##NO_TOKENS ##CAT_Math params for std kinds of simple math operators applied to an input value 'val'
+  // #STEM_BASE ##INLINE ##INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Math params for std kinds of simple math operators applied to an input value 'val'
   INHERITED(taNBase)
 public:
   enum MathOpr {
@@ -139,10 +159,6 @@ public:
     MINMAX,			// minimum of value and hi, and maximum of value and lw (enforce val between lw-hi range)
     REPLACE,			// replace value arg value with lw value
   };
-
-#ifdef __MAKETA__
-  String	name;		// #HIDDEN_INLINE name of the object
-#endif
 
   MathOpr 	opr;		// what math operator to use
   double	arg;		// #CONDSHOW_ON_opr:THRESH,ADD,SUB,MUL,POWER,DIV,MIN,MAX,REPLACE argument for ops (threshold add/sub/mul/div,power,max,min arg,replace)
@@ -1381,7 +1397,7 @@ private:
 };
 
 class TA_API Random : public taNBase {
-  // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math Random Number Generation
+  // #STEM_BASE #NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math Random Number Generation
 INHERITED(taNBase)
 public:
   enum Type {
@@ -1392,10 +1408,6 @@ public:
     GAUSSIAN,			// normal with var
     NONE 			// just the mean
   };
-
-#ifdef __MAKETA__
-  String	name;		// #HIDDEN_INLINE name of the object
-#endif
 
   Type		type;		// type of random variable to generate
   double	mean;		// mean of random distribution
@@ -1457,7 +1469,21 @@ public:
   void	Initialize();
   void	Destroy()		 { };
   void	Copy_(const Random& cp);
-  TA_BASEFUNS_LITE(Random); //
+  TA_BASEFUNS(Random); //
 };
+
+class TA_API RandomSpec : public Random {
+  // Random Number Generation -- use this for inline members (hides name field)
+INHERITED(Random)
+public:
+#ifdef __MAKETA__
+  String	name;		// #HIDDEN_INLINE name of the object
+#endif
+  void  Initialize()		{ };
+  void 	Destroy()		{ };
+  TA_BASEFUNS_NOCOPY(RandomSpec);
+};
+
+
 
 #endif // TA_MATH_H

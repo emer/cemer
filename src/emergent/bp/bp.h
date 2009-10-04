@@ -465,7 +465,7 @@ INHERITED(BpUnitSpec)
 public:
   float		hysteresis;	 // hysteresis factor: (1-hyst)*new + hyst*old
   float		hysteresis_c;	 // #READ_ONLY complement of hysteresis
-  Random	initial_act;	 // initial activation value
+  RandomSpec	initial_act;	 // initial activation value
   String	variable;	 // name of unit variable to copy into
   Unit::ExtType	unit_flags;	 // flags to set on the unit after copying value
   MemberDef*	var_md;		 // #IGNORE memberdef of variable
@@ -529,7 +529,7 @@ class BP_API NoisyBpUnitSpec : public BpUnitSpec {
   // Bp with noisy output signal (act plus noise)
 INHERITED(BpUnitSpec)
 public:
-  Random	noise;		// what kind of noise to add to activations
+  RandomSpec	noise;		// what kind of noise to add to activations
 
   override void Compute_Act(Unit* u, Network* net, int thread_no=-1);
 

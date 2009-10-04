@@ -1310,7 +1310,7 @@ public:
   MinMaxRange	 pos_range;	// range of position values encoded over the X axis of unit groups in the layer
   MinMaxRange	 vel_range;	// range of velocity values encoded over the Y axis of unit groups in the layer
   bool		 add_noise;	// add some noise after computing value from layer
-  Random	 force_noise;	// #CONDEDIT_ON_add_noise parameters for random added noise to forces
+  RandomSpec	 force_noise;	// #CONDEDIT_ON_add_noise parameters for random added noise to forces
 
   virtual float	ReadForce(LeabraLayer* lay, LeabraNetwork* net, float pos, float vel);
   // #CAT_MotorForce read the force value from the layer, as a gaussian weighted average over units near the current position and velocity values

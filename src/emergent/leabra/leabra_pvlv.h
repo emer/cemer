@@ -267,6 +267,7 @@ class LEABRA_API LVMiscSpec : public taOBase {
 INHERITED(taOBase)
 public:
   float		min_lvi;	// #DEF_0.1;0.4 minimum lvi value -- LVi is not allowed to go below this value for the purposes of computing the LV delta value: lvd = LVe - MAX(LVi,min_lvi)
+  bool		lrn_pv_only;	// #DEF_true only compute weight changes on trials where primary rewards are expected or actually received -- the target PV value is only presented on such trials, but if this flag is off, it actually learns on other trials, but with whatever plus phase activation state happens to arise
   float		prior_discount;	// #DEF_1 #MIN_0 #MAX_1 #EXPERT how much to discount the prior time step LV delta value (lvd = LVe - MAX(LVi,min_lvi)) in computing the net LV dopamine signal (LV DA = lvd_t - prior_discount * lvd_t-1)
   bool		er_reset_prior;	// #EXPERT #DEF_true reset prior delta value (lvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
 

@@ -160,7 +160,7 @@ class TA_API DataGroupEl : public DataOpEl {
   // one element of a data grouping specification
   INHERITED(DataOpEl)
 public:
-  Aggregate	agg;		// how to aggregate this information
+  AggregateSpec	agg;		// how to aggregate this information
 
   override String GetDisplayName() const;
   void  Initialize();

@@ -442,6 +442,7 @@ bool PVrLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 
 void LVMiscSpec::Initialize() {
   min_lvi = 0.1f;
+  lrn_pv_only = true;
   prior_discount = 1.0f;
   er_reset_prior = true;
 }
@@ -661,21 +662,24 @@ bool LVeLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* n
   // state information should be available etc
   if(net->phase_no < net->phase_max-1)
     return false;
-  if(!(net->ext_rew_avail || net->pv_detected)) return false; // no learn on no rew
+  if(lv.lrn_pv_only && !(net->ext_rew_avail || net->pv_detected))
+    return false; // no learn on no rew
   return true;
 }
 
 bool LVeLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
     return false;
-  if(!(net->ext_rew_avail || net->pv_detected)) return false; // no learn on no rew
+  if(lv.lrn_pv_only && !(net->ext_rew_avail || net->pv_detected))
+    return false; // no learn on no rew
   return true;
 }
 
 bool LVeLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
     return false;
-  if(!(net->ext_rew_avail || net->pv_detected)) return false; // no learn on no rew
+  if(lv.lrn_pv_only && !(net->ext_rew_avail || net->pv_detected))
+    return false; // no learn on no rew
   return true;
 }
 

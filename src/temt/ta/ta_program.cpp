@@ -2267,12 +2267,25 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
     pv = my_prg->FindVarName(var_nm); // do more global search
     if(pv) { pvr.set(pv); return true; }	// got it!
     // now we need to add a clone of cur_ptr to our local list and use that!!
+    if(cur_ptr->objs_ptr && (bool)cur_ptr->object_val) {
+      // copy the obj -- if copying var, by defn need to copy obj -- auto makes corresp var!
+      taBase* varobj = cur_ptr->object_val.ptr();
+      taBase* nwobj = varobj->Clone();
+      nwobj->CopyFrom(varobj);	// should not be nec..
+      nwobj->SetName(varobj->GetName()); // copy name in this case
+      my_prg->objs.Add(nwobj);
+      taMisc::Info("Note: copied program object:", 
+		   varobj->GetName(), "from program:", ot_prg->name, "to program:",
+		   my_prg->name, "because copied program element refers to it");
+      pv = my_prg->FindVarName(var_nm); // get new var that was just created!
+      if(pv) { pvr.set(pv); return true; }	// got it!
+    }
     pv = (ProgVar*)cur_ptr->Clone();
     pv_own->Add(pv);
     pv->CopyFrom(cur_ptr);	// somehow clone is not copying stuff -- try this
     pv->name = var_nm;		// just to be sure
-    pv->DataChanged(DCR_ITEM_UPDATED);
     pvr.set(pv); // done!!
+    pv->DataChanged(DCR_ITEM_UPDATED);
     taMisc::Info("Note: copied program variable:", 
 		 var_nm, "from program:", ot_prg->name, "to program:",
 		 my_prg->name, "because copied program element refers to it");

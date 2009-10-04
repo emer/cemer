@@ -768,7 +768,7 @@ public:
   PosTDCoord    geom;		// geometry of pattern in EnviroView
   PosTDCoord    pos;		// position of pattern in EnviroView
   float		initial_val;	// Initial value for pattern values
-  Random	noise;		// #ENVIROVIEW Noise added to values when applied
+  RandomSpec	noise;		// #ENVIROVIEW Noise added to values when applied
   String_Array  value_names;	// display names of the individual pattern values
   int_Array 	global_flags;	// #CONDEDIT_ON_use_flags:USE_GLOBAL_FLAGS,USE_PAT_THEN_GLOBAL_FLAGS these are global flags for all events (cf use_flags)
 

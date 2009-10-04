@@ -155,8 +155,8 @@ public:
   };
 
   float		p_con;		// overall probability of connection (number of samples)
-  Random 	rnd_dist;	// prob density of connectivity as a fctn of distance
-  Random	rnd_angle;	// prob density of connectivity as a fctn of angle (1 = 2pi)
+  RandomSpec 	rnd_dist;	// prob density of connectivity as a fctn of distance
+  RandomSpec	rnd_angle;	// prob density of connectivity as a fctn of angle (1 = 2pi)
   UnitDistType	dist_type; 	// type of distance function to use
   bool		wrap;		// wrap around layer coordinates (else clip at ends)
   int	       	max_retries;	// maximum number of times attempt to con same sender allowed
