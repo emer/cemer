@@ -1516,12 +1516,13 @@ bool PFCOutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     lay->un_geom = pfc_lay->un_geom;
   }
 
-  PFCLayerSpec* pfcsp = (PFCLayerSpec*)pfc_lay->spec.SPtr();
-  kwta = pfcsp->kwta;
-  gp_kwta = pfcsp->gp_kwta;
-  inhib_group = pfcsp->inhib_group;
-  inhib.type = pfcsp->inhib.type;
-  inhib.kwta_pt = pfcsp->inhib.kwta_pt;
+  // this is not right -- should only happen with spec inheritance..
+//   PFCLayerSpec* pfcsp = (PFCLayerSpec*)pfc_lay->spec.SPtr();
+//   kwta = pfcsp->kwta;
+//   gp_kwta = pfcsp->gp_kwta;
+//   inhib_group = pfcsp->inhib_group;
+//   inhib.type = pfcsp->inhib.type;
+//   inhib.kwta_pt = pfcsp->inhib.kwta_pt;
   return true;
 }
 
