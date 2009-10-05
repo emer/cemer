@@ -652,7 +652,7 @@ public:
   bool	IsCurType()  { return (joint_type == cur_type); }
   // #CAT_ODE is the ODE guy actually configured for the current joint type or not?
 
-  SIMPLE_COPY(VEJoint);
+  SIMPLE_COPY_UPDT_PTR_PAR(VEJoint, VEWorld);
   SIMPLE_INITLINKS(VEJoint);
   override void CutLinks();
   TA_BASEFUNS(VEJoint);
@@ -1193,7 +1193,7 @@ public:
   // #IGNORE callback function for the collision function, with two objects that are actual objects and not spaces
 #endif
 
-  SIMPLE_COPY(VEWorld);
+  void Copy_(const VEWorld& cp);
   SIMPLE_INITLINKS(VEWorld);
   override void CutLinks();
   TA_BASEFUNS(VEWorld);

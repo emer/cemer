@@ -1697,6 +1697,8 @@ public:
 
   taBase_RefList(IRefListClient* own_ = NULL) {Initialize(); setOwner(own_);}
   ~taBase_RefList();
+
+  int UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   
 public: // IDataLinkClient i/f 
   void*			This() {return this;}  // #IGNORE

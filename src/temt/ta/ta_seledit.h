@@ -26,7 +26,7 @@ class EditMbrItem;
 class EditMthItem;
 
 class TA_API SelectEditItem: public taOBase {
-  // #STEM_BASE ##CAT_Display base class for membs/meths in a ControlEdit
+  // #STEM_BASE ##CAT_Display base class for membs/meths in a SelectEdit
   INHERITED(taOBase)
 public:
 // some convenience functions
@@ -40,10 +40,11 @@ public:
   static bool		StatRemoveItemBase(taGroup_impl* grp, taBase* base);
     // remove any items with this base
   
-  String		label;	 // full display label for item in edit dialog
-  String		desc; // #EDIT_DIALOG description (appears as tooltip for item)
-  taBase*		base; // #READ_ONLY #SHOW #NO_SET_POINTER the mbr/mth base (not ref'ed)
-  String		item_nm; // #READ_ONLY #NO_SHOW #NO_SAVE #OBSOLETE name of the member or method
+  String		label;	 	// full display label for item in edit dialog
+  String		desc; 		// #EDIT_DIALOG description (appears as tooltip for item)
+  bool			cust_desc;	// the description (desc) is customized over the default and thus protected from automatic updates -- otherwise desc is obtained from the member or method type information -- this flag is automatically set by editing, but can also be set manually if desired
+  taBase*		base; 		// #READ_ONLY #SHOW #NO_SET_POINTER #UPDATE_POINTER the mbr/mth base (not ref'ed)
+  String		item_nm; 	// #READ_ONLY #NO_SHOW #NO_SAVE #OBSOLETE name of the member or method
   
   String 		caption() const; // the string used in the editor
   virtual TypeItem*	typeItem() const {return NULL;} // the mbr or mth
@@ -52,7 +53,11 @@ public:
   override String 	GetColText(const KeyString& key, int itm_idx = -1) const;
   override String	GetDesc() const;
   TA_BASEFUNS(SelectEditItem);
+protected:
+  void			UpdateAfterEdit_impl();
 private:
+  String 		prv_desc; // previous description -- for checking for changes
+
   void	Initialize();
   void	Destroy();
   void	Copy_(const SelectEditItem& cp);
@@ -60,7 +65,7 @@ private:
 
 
 class TA_API EditMbrItem: public SelectEditItem {
-  //  ##CAT_Display base class for membs/meths in a Edit
+  // a member select edit item -- allows editing of just one member from a class
   INHERITED(SelectEditItem)
 public:
   MemberDef*		mbr; // #READ_ONLY #SHOW the mbr type
@@ -78,7 +83,7 @@ private:
 };
 
 class TA_API EditMthItem: public SelectEditItem {
-  //  ##CAT_Display base class for meths in a Edit
+  // a method select edit item -- allows access via menu or button to just one method from a class
   INHERITED(SelectEditItem)
 public:
   MethodDef*		mth; // #READ_ONLY #SHOW the mbr type
@@ -234,9 +239,6 @@ public: // public API
   virtual int	FindMethBase(taBase* base, MethodDef* md);
   // find a given base and method, returns index
 
-  virtual void 	ResetDescs();
-  // #MENU #CONFIRM #MENU_SEP_BEFORE clear all desc (description) fields, which will cause the text to be reloaded from the hard-coded descriptions of the associated members and methods -- NOTE: this will delete any customized comments in the desc fields -- you can always do this on an item-by-item basis as well
- 
   virtual void	Reset();
   // #MENU #CONFIRM reset (remove all) current members and methods
  

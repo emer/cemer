@@ -705,10 +705,15 @@ void VEJointView::Render_pre() {
       SoCylinder* sp = new SoCylinder;
       sp->radius = ob->vis_size * .1f;
       sp->height = ob->vis_size;
-      ssep->addChild(sp);
+      // put each in separate  seps with own tx's
       SoSeparator* sep2 = new SoSeparator;
       ssep->addChild(sep2);
       SoTransform* tx = new SoTransform;
+      sep2->addChild(tx);
+      sep2->addChild(sp);
+      sep2 = new SoSeparator;
+      ssep->addChild(sep2);
+      tx = new SoTransform;
       sep2->addChild(tx);
       sep2->addChild(sp);
       break;
@@ -751,19 +756,18 @@ void VEJointView::FixOrientation() {
     }
     case VEJoint::UNIVERSAL:
     case VEJoint::HINGE2: {
-      SoTransform* tx = obv->txfm_shape();
+      SoSeparator* sep2 = (SoSeparator*)ssep->getChild(ssep->getNumChildren()-2);
+      SoTransform* tx2 = (SoTransform*)sep2->getChild(0);
       SbRotation netrot;
       // construct rotation that rotates from Y axis to desired target axis
       netrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), SbVec3f(ob->axis.x, ob->axis.y, ob->axis.z)); 
-      tx->rotation.setValue(netrot);
+      tx2->rotation.setValue(netrot);
       // next joint
-      SoSeparator* sep2 = (SoSeparator*)ssep->getChild(ssep->getNumChildren()-1);
-      SoTransform* tx2 = (SoTransform*)sep2->getChild(0);
-      SbRotation j2rot;
-      // construct rotation that rotates from first axis to next one
-      j2rot.setValue(SbVec3f(ob->axis.x, ob->axis.y, ob->axis.z),
-		     SbVec3f(ob->axis2.x, ob->axis2.y, ob->axis2.z)); 
-      tx2->rotation.setValue(j2rot);
+      sep2 = (SoSeparator*)ssep->getChild(ssep->getNumChildren()-1);
+      tx2 = (SoTransform*)sep2->getChild(0);
+      // construct rotation that rotates from Y axis to desired target axis
+      netrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), SbVec3f(ob->axis2.x, ob->axis2.y, ob->axis2.z)); 
+      tx2->rotation.setValue(netrot);
       break;
     }
     }
@@ -848,7 +852,8 @@ void VEJointView::Render_impl() {
     }
     case VEJoint::UNIVERSAL:
     case VEJoint::HINGE2: {
-      SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-2);
+      SoSeparator* sep2 = (SoSeparator*)ssep->getChild(ssep->getNumChildren()-2);
+      SoCylinder* sp = (SoCylinder*)sep2->getChild(sep2->getNumChildren()-1);
       sp->radius = ob->vis_size * .1f;
       sp->height = ob->vis_size;
       break;

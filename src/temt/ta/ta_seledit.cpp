@@ -94,6 +94,7 @@ bool SelectEditItem::StatRemoveItemBase(taGroup_impl* grp, taBase* base) {
 
 void SelectEditItem::Initialize() {
   base = NULL;
+  cust_desc = false;
 }
 
 void SelectEditItem::Destroy() {
@@ -102,8 +103,18 @@ void SelectEditItem::Destroy() {
 void SelectEditItem::Copy_(const SelectEditItem& cp) {
   label = cp.label;
   desc = cp.desc;
+  cust_desc = cp.cust_desc;
+  prv_desc = desc;	       // no change here
   base = cp.base;
   item_nm = cp.item_nm;
+}
+
+void SelectEditItem::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(!cust_desc && !taMisc::is_loading && desc != prv_desc) {
+    cust_desc = true;
+  }
+  prv_desc = desc;
 }
 
 String SelectEditItem::caption() const {
@@ -146,9 +157,10 @@ void EditMbrItem::Copy_(const EditMbrItem& cp) {
 
 void EditMbrItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if (desc.empty() && mbr)
+  if (!cust_desc && mbr) {
+    desc = _nilString;
     MemberDef::GetMembDesc(mbr, desc, "");
-    
+  }
 }
 
 String EditMbrItem::GetColText(const KeyString& key, int itm_idx) const {
@@ -211,9 +223,8 @@ void EditMthItem::Copy_(const EditMthItem& cp) {
 
 void EditMthItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if (desc.empty() && mth)
+  if(!cust_desc && mth)
     desc = mth->desc;
-    
 }
 
 
@@ -331,8 +342,9 @@ void SelectEdit::UpdateAfterEdit_impl() {
 }
 
 int SelectEdit::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
-return 0;
-//TODO:
+  int rval = base_refs.UpdatePointers_NewPar(old_par, new_par);
+  rval += inherited::UpdatePointers_NewPar(old_par, new_par);
+  return rval;
 }
 
 void SelectEdit::BaseAdded(taBase* base) {
@@ -437,19 +449,6 @@ void SelectEdit::RemoveFun_impl(int idx) {
   EditMthItem* item = mths.Leaf(idx);
   if (item) 
     item->Close();
-}
-
-void SelectEdit::ResetDescs() {
-  SelectEditItem* se = NULL;
-  taLeafItr itr;
-  FOR_ITR_EL(SelectEditItem, se, mbrs., itr) {
-    se->desc = _nilString;
-    se->UpdateAfterEdit();
-  }
-  FOR_ITR_EL(SelectEditItem, se, mths., itr) {
-    se->desc = _nilString;
-    se->UpdateAfterEdit();
-  }
 }
 
 void SelectEdit::Reset() {

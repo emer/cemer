@@ -2180,6 +2180,11 @@ void VEWorld::CutLinks() {
   inherited::CutLinks();
 }
 
+void VEWorld::Copy_(const VEWorld& cp) {
+  TA_VEWorld.CopyOnlySameType((void*)this, (void*)&cp);
+  UpdatePointers_NewPar((taBase*)&cp, this); // update all the pointers
+}
+
 bool VEWorld::CreateODE() {
   if(!world_id)
     world_id = (dWorldID)dWorldCreate();

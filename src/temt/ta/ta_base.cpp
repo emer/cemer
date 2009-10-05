@@ -3126,6 +3126,27 @@ void taBase_RefList::setOwner(IRefListClient* own_) {
   m_own = own_;
 }
 
+int taBase_RefList::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
+  int nchg = 0;
+  for(int i=size-1; i>=0; i--) {
+    taBase* itm = (taBase*)el[i];
+    if(!itm) continue;
+    taBase* old_own = itm->GetOwner(old_par->GetTypeDef());
+    if(old_own != old_par) continue;
+    String old_path = itm->GetPath(NULL, old_par);
+    MemberDef* md;
+    taBase* nitm = new_par->FindFromPath(old_path, md);
+    if(nitm) {
+      ReplaceIdx(i, nitm);
+      nchg++;
+    }
+    else {
+      RemoveIdx(i);
+    }
+  }
+  return nchg;
+}
+
 
 
 //////////////////////////

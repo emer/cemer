@@ -1,5 +1,5 @@
 // ta_Dump File v2.0 -- code v5.0.1.0
-LeabraProject .projects[0] { 
+LeabraProject .projects[1] { 
   taBase_Group @.templates = [0] {
   };
 
@@ -55,65 +55,7 @@ LeabraProject .projects[0] {
 };
   };
 
-  Program_Group @.programs = [2] {
-    Program @[0] { 
-      ProgObjList @.objs = [1] {
-	Random @[0] { };
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [0] {
-      };
-
-      ProgVar_List @.vars = [2] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.load_code = [0] {
-      };
-
-      ProgEl_List @.init_code = [0] {
-      };
-
-      ProgEl_List @.prog_code = [1] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-      };
-    };
-    Program @[1] { 
-      ProgObjList @.objs = [0] {
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [0] {
-      };
-
-      ProgVar_List @.vars = [0] {
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.load_code = [0] {
-      };
-
-      ProgEl_List @.init_code = [0] {
-      };
-
-      ProgEl_List @.prog_code = [0] {
-      };
-    };
+  Program_Group @.programs = [0] {
   };
 
   DataViewer_List @.viewers = [1] {
@@ -153,7 +95,7 @@ LeabraProject .projects[0] {
   Network_Group @.networks = [0] {
   };
 };
-LeabraProject .projects[0] {
+LeabraProject .projects[1] {
  name="Project_0";
  desc=;
  tags=;
@@ -192,7 +134,7 @@ LeabraProject .projects[0] {
     };
    };
    name="LeabraWizard_0";
-   auto_open=0;
+   auto_open=1;
    n_layers=3;
    layer_cfg {
     name=;
@@ -303,142 +245,6 @@ LeabraProject .projects[0] {
   step_prog=NULL;
   tags=;
   desc=;
-  Program @[0] {
-   name="Program_1";
-   tags=;
-   desc=;
-   flags=;
-   objs {
-    name=;
-    el_typ=Random;
-    el_def=0;
-    Random @[0] {name="Random_0": type=UNIFORM: mean=0: var=1: par=1: };
-   };
-   types {
-    name=;
-    el_typ=ProgType;
-    el_def=0;
-   };
-   args {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-    ProgVar @[0] {
-     name="Random_0";
-     var_type=T_Object;
-     object_type=Random;
-     object_val=.projects[0].programs[0].objs[0]$0$;
-     objs_ptr=1;
-     flags=NULL_CHECK|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @[1] {
-     name="Var_1";
-     var_type=T_Int;
-     int_val=0;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-   };
-   functions {
-    name=;
-    el_typ=Function;
-    el_def=0;
-   };
-   load_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   init_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   prog_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-    MethodCall @[0] {
-     desc=;
-     flags=;
-     result_var=.projects[0].programs[0].vars[1]$1$;
-     obj=.projects[0].programs[0].vars[0]$2$;
-     method=Random::IntZeroN;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=int;
-       type="int";
-       name="n";
-       required=0;
-       def_val=;
-       expr {
-	expr="20";
-       };
-      };
-     };
-    };
-   };
-  };
-  Program @[1] {
-   name="Program_2";
-   tags=;
-   desc=;
-   flags=;
-   objs {
-    name=;
-    el_typ=taNBase;
-    el_def=0;
-   };
-   types {
-    name=;
-    el_typ=ProgType;
-    el_def=0;
-   };
-   args {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   functions {
-    name=;
-    el_typ=Function;
-    el_def=0;
-   };
-   load_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   init_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   prog_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-  };
  };
  viewers {
   name=;
@@ -446,7 +252,7 @@ LeabraProject .projects[0] {
   el_def=0;
   MainWindowViewer @[0] {
    name="Browser2";
-   m_data=.projects[0]$3$;
+   m_data=.projects[1]$0$;
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -475,7 +281,7 @@ LeabraProject .projects[0] {
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$3$;
+     m_root=$0$;
     };
     PanelViewer @[1] {
      name="Panels";
