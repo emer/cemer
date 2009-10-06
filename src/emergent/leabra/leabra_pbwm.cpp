@@ -268,6 +268,7 @@ void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
   net_off = 0.0f;
   rnd_go_inc = 0.2f;
+  norm_n = false;
 }
 
 void SNrThalLayerSpec::Initialize() {
@@ -381,8 +382,11 @@ void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
 	else
 	  sum_nogo += u->act_eq;
       }
-      if(sum_go + sum_nogo > 0.0f) {
-	gonogo = (sum_go - sum_nogo) / (sum_go + sum_nogo);
+      float norm_factor = sum_go + sum_nogo;
+      if(snrthal.norm_n)
+	norm_factor = (float)gp_sz; // number of go units
+      if(norm_factor > 0.0f) {
+	gonogo = (sum_go - sum_nogo) / norm_factor;
       }
       if(mugp->misc_state1 >= PFCGateSpec::NOGO_RND_GO) {
 	gonogo += snrthal.rnd_go_inc;
@@ -882,6 +886,8 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
       if(nogo_rnd_go) {
 	lrn_dav += rnd_go.nogo_da; // output gating also gets this too
       }
+
+      lrn_dav *= matrix.da_gain;
 
       if(go_no == PFCGateSpec::GATE_NOGO)
 	lrn_dav *= -1.0f;	// flip the sign for nogo!
