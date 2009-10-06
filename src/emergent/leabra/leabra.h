@@ -3565,10 +3565,10 @@ public:
   virtual bool 	PBWM_Mode(LeabraNetwork* net, PBWMMode mode);
   // #MENU_BUTTON change the general behavior of the model by adjusting a set of parameters in concert to achieve different overall dynamics -- network must already be configured as a PBWM model *WITH* output gating (difference only really applies in this case)
 
-  virtual bool 	PBWM_FixX2_impl(String& proj_str);
-  // #IGNORE do the actual gsub conversions for X2 -> regular 
-  virtual bool 	PBWM_FixX2File(const String& proj_file_nm, bool load_after = true);
-  // #MENU_BUTTON #CAT_File #EXT_proj #FILE_DIALOG_LOAD convert a PBWM project saved with X2 spec names into the basic default spec names (now appropriate) -- once converted, if load_after, then THIS FILE IS THEN LOADED OVER EXISTING PROJECT -- otherwise THE ORIGINAL PROJECT IS OVERWRITTEN
+  virtual bool 	PBWM_CvtV1_impl(String& proj_str);
+  // #IGNORE do the actual gsub conversions to V1
+  virtual bool 	PBWM_CvtV1File(const String& proj_file_nm, bool load_after = true);
+  // #MENU_BUTTON #CAT_File #EXT_proj #FILE_DIALOG_LOAD convert an older "version 1" (anything prior to version 5.0.1 of emergent) PBWM project file to use the V1 specs, which replicates the exact prior funcionality -- these projects can typically also be run using the new basic specs, using the PARSIMONIUS PBWM_Mode -- once converted, if load_after, then THIS FILE IS THEN LOADED OVER EXISTING PROJECT -- otherwise THE ORIGINAL PROJECT IS OVERWRITTEN
 
   virtual bool PBWM_SetNStripes(LeabraNetwork* net, int n_stripes, int n_units=-1);
   // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units)
