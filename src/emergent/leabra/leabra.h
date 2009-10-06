@@ -3568,7 +3568,7 @@ public:
   virtual bool 	PBWM_CvtV1_impl(String& proj_str);
   // #IGNORE do the actual gsub conversions to V1
   virtual bool 	PBWM_CvtV1File(const String& proj_file_nm, bool load_after = true);
-  // #MENU_BUTTON #CAT_File #EXT_proj #FILE_DIALOG_LOAD convert an older "version 1" (anything prior to version 5.0.1 of emergent) PBWM project file to use the V1 specs, which replicates the exact prior funcionality -- these projects can typically also be run using the new basic specs, using the PARSIMONIUS PBWM_Mode -- once converted, if load_after, then THIS FILE IS THEN LOADED OVER EXISTING PROJECT -- otherwise THE ORIGINAL PROJECT IS OVERWRITTEN
+  // #MENU_BUTTON #CAT_File #EXT_proj #FILE_DIALOG_LOAD convert an older "version 1" (anything prior to version 5.0.1 of emergent) PBWM project file to use the V1 specs, which replicates the exact prior funcionality -- these projects can typically also be run using the new basic specs, using the PARSIMONIUS PBWM_Mode -- once converted, if load_after, then THIS FILE IS THEN LOADED OVER EXISTING PROJECT (and can then be saved to a new file name -- must be reloaded to get views to update) -- otherwise THE ORIGINAL PROJECT IS OVERWRITTEN
 
   virtual bool PBWM_SetNStripes(LeabraNetwork* net, int n_stripes, int n_units=-1);
   // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units)
