@@ -1529,6 +1529,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
 
   SelectEdit* edit = proj->FindMakeSelectEdit("PVLV");
   if(edit) {
+    edit->auto_edit = true;
     pvr_cons->SelectForEditNm("lrate", edit, "pvr");
     pvi_cons->SelectForEditNm("lrate", edit, "pvi");
     lve_cons->SelectForEditNm("lrate", edit, "lve");

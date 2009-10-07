@@ -268,7 +268,7 @@ void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
   net_off = 0.0f;
   rnd_go_inc = 0.2f;
-  norm_n = false;
+  leak = 0.0f;
 }
 
 void SNrThalLayerSpec::Initialize() {
@@ -285,7 +285,7 @@ void SNrThalLayerSpec::Initialize() {
   inhib_group = ENTIRE_LAYER;
   SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  inhib.kwta_pt = .6f;
+  inhib.kwta_pt = .8f;
   SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
@@ -382,9 +382,7 @@ void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
 	else
 	  sum_nogo += u->act_eq;
       }
-      float norm_factor = sum_go + sum_nogo;
-      if(snrthal.norm_n)
-	norm_factor = (float)gp_sz; // number of go units
+      float norm_factor = sum_go + sum_nogo + snrthal.leak;
       if(norm_factor > 0.0f) {
 	gonogo = (sum_go - sum_nogo) / norm_factor;
       }
@@ -569,7 +567,7 @@ void MatrixGateBiasSpec::UpdateAfterEdit_impl() {
 }
 
 void MatrixMiscSpec::Initialize() {
-  da_gain = 1.0f;
+  da_gain = 0.1f;
 }
 
 void MatrixRndGoSpec::Initialize() {
@@ -1112,7 +1110,7 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
 
   if(lay->CheckError(net->mid_minus_cycle < 5, quiet, rval,
 		"requires LeabraNetwork min_minus_cycle > 0, I just set it to 20 for you")) {
-    net->mid_minus_cycle = 20;
+    net->mid_minus_cycle = 25;
   }
 
   if(lay->CheckError(net->min_cycles < net->mid_minus_cycle + 5, quiet, rval,
@@ -3442,8 +3440,10 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   // different PVLV defaults
   lvesp->lv.min_lvi = 0.4f;
   nvsp->nv.da_gain = 0.1f;
-  dasp->da.da_gain = 0.1f;
+  dasp->da.da_gain = 1.0f;
   dasp->da.pv_gain = 0.1f;
+
+  matrixsp->matrix.da_gain = 0.1f;
 
   // NOT unique: inherit from lve
   patchsp->SetUnique("decay", false);
@@ -3734,42 +3734,65 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   SelectEdit* edit = proj->FindMakeSelectEdit("PBWM");
   if(edit != NULL) {
-    pfc_units->SelectForEditNm("g_bar", edit, "pfc");
-    pfcmsp->SelectForEditNm("gate", edit, "pfc_m");
-    pfcmsp->SelectForEditNm("learn", edit, "pfc_m");
-    topfc_cons->SelectForEditNm("lrate", edit, "to_pfc");
+    edit->auto_edit = true;
+    String subgp;
+    subgp = "PFC";
+    pfc_units->SelectForEditNm("g_bar", edit, "pfc", subgp,
+      "set g_bar.h to 1 for non-learning (localist) PFC, and to .5 for learning PFC");
+    pfcmsp->SelectForEditNm("gate", edit, "pfc_m", subgp);
+    pfcmsp->SelectForEditNm("learn", edit, "pfc_m", subgp);
+    topfc_cons->SelectForEditNm("lrate", edit, "to_pfc", subgp,
+	"PFC requires a slower learning rate in general, around .005 if go_learn_base is set to default of .06, otherwise .001 for go_learn_base of 1");
     if(out_gate) {
-      fmpfcmnt_cons->SelectForEditNm("wt_scale", edit, "fm_pfc_mnt");
+      fmpfcmnt_cons->SelectForEditNm("wt_scale", edit, "fm_pfc_mnt", subgp,
+     "If SNrThal_out kwta k value is low (i.e., few output stripes activated in general), set wt_scale.rel to a lower value to compensate in balance between mnt and out projections");
+      pfcosp->SelectForEditNm("gp_kwta", edit, "pfc_o", subgp,
+     "If SNrThal_out kwta k value is low (i.e., few output stripes activated in general), set dif_act_pct and act_pct to a lower value to compensate in balance between mnt and out projections");
     }
-    matrixsp->SelectForEditNm("matrix", edit, "matrix");
-    matrixsp->SelectForEditNm("gate_bias", edit, "matrix");
-    matrixsp->SelectForEditNm("rnd_go", edit, "matrix");
-    matrix_units->SelectForEditNm("noise", edit, "matrix");
-    matrix_units->SelectForEditNm("noise_adapt", edit, "matrix");
-    matrix_units->SelectForEditNm("patch_noise", edit, "matrix");
+    ////////////////////////////////
+    subgp = "Matrix";
+    matrixsp->SelectForEditNm("matrix", edit, "matrix", subgp);
+    matrixsp->SelectForEditNm("gate_bias", edit, "matrix", subgp);
+    matrixsp->SelectForEditNm("rnd_go", edit, "matrix", subgp);
+    matrix_units->SelectForEditNm("noise", edit, "matrix", subgp,
+  "For MAINT Matrix, default noise level is 5.0e-5 (.00005)");
+    matrix_units->SelectForEditNm("noise_adapt", edit, "matrix", subgp);
+    matrix_units->SelectForEditNm("patch_noise", edit, "matrix", subgp);
     if(out_gate) {
-      matrixo_units->SelectForEditNm("noise", edit, "matrix_out");
-      matrixo_units->SelectForEditNm("noise_adapt", edit, "matrix_out");
-      matrixo_units->SelectForEditNm("patch_noise", edit, "matrix_out");
+      matrixo_units->SelectForEditNm("noise", edit, "matrix_out", subgp,
+  "For OUTPUT Matrix, default noise level is (.005)");
+      matrixo_units->SelectForEditNm("noise_adapt", edit, "matrix_out", subgp);
+      matrixo_units->SelectForEditNm("patch_noise", edit, "matrix_out", subgp);
     }
-    matrix_cons->SelectForEditNm("lrate", edit, "matrix");
-    matrix_cons->SelectForEditNm("xcal", edit, "matrix");
+    matrix_cons->SelectForEditNm("lrate", edit, "matrix", subgp,
+   "Default MAINT Matrix lrate is .05");
+    matrix_cons->SelectForEditNm("xcal", edit, "matrix", subgp,
+   "Matrix cons use XCAL (BCM-like activity feedback set-point like behavior) for preventing hog units -- mvl_mix is only relevant parameter -- generaly .005 or .002 are best");
     if(out_gate) {
-      matrixo_cons->SelectForEditNm("lrate", edit, "matrix_out");
-      matrixo_cons->SelectForEditNm("rnd", edit, "matrix_out");
-//       matrixo_cons->SelectForEditNm("wt_sig", edit, "mtx_out");
+      matrixo_cons->SelectForEditNm("lrate", edit, "matrix_out", subgp,
+   "Default OUTPUT Matrix lrate is .1");
+      matrixo_cons->SelectForEditNm("rnd", edit, "matrix_out", subgp);
+//       matrixo_cons->SelectForEditNm("wt_sig", edit, "mtx_out", subgp);
     }
-    //    matrix_cons->SelectForEditNm("lmix", edit, "matrix");
-    mfmpfc_cons->SelectForEditNm("wt_scale", edit, "mtx_fm_pfc");
-    snrthalsp->SelectForEditNm("kwta", edit, "snrthal");
+    //    matrix_cons->SelectForEditNm("lmix", edit, "matrix", subgp);
+    mfmpfc_cons->SelectForEditNm("wt_scale", edit, "mtx_fm_pfc", subgp,
+        "Generally have lower influence of PFC on MAINT Matrix, which is driven more by inputs -- .2 is default");
+    ////////////////////////////////
+    subgp = "SNrThal";
+    snrthalsp->SelectForEditNm("kwta", edit, "snrthal", subgp,
+"Set MAINT kwta to a higher percent than OUTPUT kwta -- typically around 75% or so -- depends on how many different things PFC needs to maintain (lower the % for more maintenance demands)");
     if(out_gate) {
-      snrthalosp->SelectForEditNm("kwta", edit, "snrthal_out");
+      snrthalosp->SelectForEditNm("kwta", edit, "snrthal_out", subgp,
+"Set OUTPUT kwta to a lower percent than MAINT kwta -- typically around 25% or so -- depends on how many different things PFC needs to maintain (lower the % for more maintenance demands)");
     }    
-//       snrthal_units->SelectForEditNm("g_bar", edit, "snr_thal");
-//       snrthal_units->SelectForEditNm("dt", edit, "snr_thal");
-    snrthalsp->SelectForEditNm("snrthal", edit, "snrthal");
-    snrthal_units->SelectForEditNm("act", edit, "snrthal");
-    sncsp->SelectForEditNm("snc", edit, "snc");
+    snrthalsp->SelectForEditNm("inhib", edit, "snrthal", subgp,
+"Default is KWTA_AVG_INHIB with kwta_pt = .8 -- more competition but with some flexibility from avg-based computation");
+
+//       snrthal_units->SelectForEditNm("g_bar", edit, "snr_thal", subgp);
+//       snrthal_units->SelectForEditNm("dt", edit, "snr_thal", subgp);
+    snrthalsp->SelectForEditNm("snrthal", edit, "snrthal", subgp);
+//     snrthal_units->SelectForEditNm("act", edit, "snrthal", subgp);
+    sncsp->SelectForEditNm("snc", edit, "snc", subgp);
   }
 
   if(proj) {

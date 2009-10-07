@@ -55,8 +55,9 @@ public:
   TA_BASEFUNS(SelectEditItem);
 protected:
   void			UpdateAfterEdit_impl();
-private:
   String 		prv_desc; // previous description -- for checking for changes
+
+private:
 
   void	Initialize();
   void	Destroy();

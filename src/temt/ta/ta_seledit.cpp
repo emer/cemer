@@ -34,8 +34,8 @@ void taBase::GetSelectText(MemberDef* mbr, String xtra_lbl,
   if (full_lbl.nonempty()) full_lbl += " ";
   full_lbl += mbr->GetLabel();
   // desc is the member description
-  if (desc.empty()) 
-    MemberDef::GetMembDesc(mbr, desc, "");
+//   if (desc.empty()) 
+//     MemberDef::GetMembDesc(mbr, desc, "");
 }
 
 
@@ -160,6 +160,7 @@ void EditMbrItem::UpdateAfterEdit_impl() {
   if (!cust_desc && mbr) {
     desc = _nilString;
     MemberDef::GetMembDesc(mbr, desc, "");
+    prv_desc = desc;
   }
 }
 
@@ -222,9 +223,11 @@ void EditMthItem::Copy_(const EditMthItem& cp) {
 }
 
 void EditMthItem::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  if(!cust_desc && mth)
+  if(!cust_desc && mth) {
     desc = mth->desc;
+    prv_desc = desc;
+  }
+  inherited::UpdateAfterEdit_impl();
 }
 
 
@@ -516,6 +519,10 @@ bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
     item->item_nm = md->name;
     item->label = full_lbl;
     item->desc = desc; // even if empty
+    if(desc.nonempty())
+      item->cust_desc = true;
+    else
+      item->cust_desc = false;
     if(sub_gp_nm.nonempty()) {
       EditMbrItem_Group* egp = (EditMbrItem_Group*)mbrs.FindMakeGpName(sub_gp_nm);
       egp->Add(item);
@@ -532,6 +539,7 @@ bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
       negp->Transfer(item);	// grab it
     }
   }
+  item->UpdateAfterEdit();
   return rval;
 }
 
@@ -564,9 +572,11 @@ bool SelectEdit::SelectMethod_impl(taBase* base, MethodDef* mth,
     item->base = base;
     item->mth = mth;
     item->item_nm = mth->name;
-    if (desc.empty())
-      item->desc = desc;
-    else item->desc = mth->desc;
+    item->desc = desc;
+    if(desc.nonempty())
+      item->cust_desc = true;
+    else
+      item->cust_desc = false;
     item->label = xtra_lbl;
     if (item->label.nonempty()) item->label += " ";
     item->label += mth->GetLabel();
@@ -586,6 +596,7 @@ bool SelectEdit::SelectMethod_impl(taBase* base, MethodDef* mth,
       negp->Transfer(item);	// grab it
     }
   }
+  item->UpdateAfterEdit();
   return rval;
 }
 

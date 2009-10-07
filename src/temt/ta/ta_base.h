@@ -1176,8 +1176,9 @@ public:
       const String& extra_label = "", const String& sub_gp_nm = "");
   // #MENU #MENU_ON_SelectEdit #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewEditor select a given member for editing in an edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits).  returns false if member was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
   virtual bool		SelectForEditNm(const String& memb_nm, SelectEdit* editor,
-	const String& extra_label = _nilString, const String& sub_gp_nm = _nilString);
-  // #CAT_Display select a given member (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits).  returns false if member was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
+		const String& extra_label = _nilString, const String& sub_gp_nm = _nilString,
+		const String& desc = _nilString);
+  // #CAT_Display select a given member (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits).  returns false if member was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist).  desc is a custom description -- will show up as tooltip for user (default is info from member)
   virtual int		SelectForEditSearch(const String& memb_contains, SelectEdit*& editor);
   // #MENU #NULL_OK_1 #NULL_TEXT_1_NewEditor #CAT_Display search among this object and any sub-objects for members containing given string, and add to given select editor (if NULL, a new one is created in .edits).  returns number found
   virtual int		SelectForEditCompare(taBase* cmp_obj, SelectEdit*& editor, bool no_ptrs = true);
@@ -1188,8 +1189,9 @@ public:
 	 const String& extra_label = "", const String& sub_gp_nm = "");
   // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display select a given function (method) for calling in a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
   virtual bool		SelectFunForEditNm(const String& function_nm, SelectEdit* editor,
-	   const String& extra_label = _nilString, const String& sub_gp_nm = _nilString);
-  // #CAT_Display select a given method (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits)  returns false if method was already selected.   extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
+	   const String& extra_label = _nilString, const String& sub_gp_nm = _nilString,
+	   const String& desc = _nilString);
+  // #CAT_Display select a given method (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits)  returns false if method was already selected.   extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)  desc is a custom description -- will show up as tooltip for user (default is info from member)
   virtual void		GetSelectText(MemberDef* mbr, String extra_label,
     String& lbl, String& desc) const; // #IGNORE supply extra_label (optional); provides the canonical lbl and (if empty) desc -- NOTE: routine is in ta_seledit.cpp
   
