@@ -268,7 +268,7 @@ void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
   net_off = 0.0f;
   rnd_go_inc = 0.2f;
-  leak = 0.0f;
+  leak = 0.5f;
 }
 
 void SNrThalLayerSpec::Initialize() {
@@ -3538,6 +3538,12 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
 
     snrthalosp->SetUnique("kwta", true);
     snrthalosp->kwta.pct = .25f; // generally works better!
+    // inherit the rest from parent guy!
+    snrthalosp->SetUnique("inhib", false);
+    snrthalosp->SetUnique("inhib_group", false);
+    snrthalosp->SetUnique("decay", false);
+    snrthalosp->SetUnique("tie_brk", false);
+    snrthalosp->SetUnique("ct_inhib_mod", false);
 
     fmpfcmnt_cons->SetUnique("wt_scale", true);
     fmpfcmnt_cons->wt_scale.rel = 1.0f; // todo: see if important
@@ -3892,8 +3898,11 @@ bool LeabraWizard::PBWM_Mode(LeabraNetwork* net, PBWMMode mode) {
     snrthalosp = (SNrThalLayerSpec*)snrthalsp->FindMakeChild("SNrThalOut", &TA_SNrThalLayerSpec);
 
   if(mode == PROMISCUOUS) {
-    // todo: nv, pv?
-    dasp->da.da_gain = 0.1f;
+    lvesp->lv.min_lvi = 0.1f;
+    nvsp->nv.da_gain = 1.0f;
+    dasp->da.pv_gain = 1.0f;
+    dasp->da.da_gain = 1.0f;
+    matrixsp->matrix.da_gain = 0.1f;
     
     sncsp->snc.lv_mnt_pv_out= false;
 
@@ -3916,7 +3925,8 @@ bool LeabraWizard::PBWM_Mode(LeabraNetwork* net, PBWMMode mode) {
     lvesp->lv.min_lvi = 0.4f;
     nvsp->nv.da_gain = 0.1f;
     dasp->da.pv_gain = 0.1f;
-    dasp->da.da_gain = 0.1f;
+    dasp->da.da_gain = 1.0f;
+    matrixsp->matrix.da_gain = 0.1f;
 
     sncsp->snc.lv_mnt_pv_out= true;
 
