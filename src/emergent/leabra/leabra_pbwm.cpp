@@ -992,6 +992,7 @@ void PFCLearnSpec::Initialize() {
   go_learn_base = 0.06f;
   go_learn_mod = 1.0f - go_learn_base;
   go_netin_gain = 0.01f;
+  learn_out_go = true;
 }
 
 void PFCLearnSpec::UpdateAfterEdit_impl() {
@@ -1252,7 +1253,8 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     if(snr_out_u && (snr_out_u->act_eq > go_thr_out) &&
        (!gate.no_empty_out || pfc_mnt_cnt > 0)) {
       gate_sig_out = PFCGateSpec::GATE_GO;
-      lrn_go_act = snr_out_u->act_eq;
+      if(learn.learn_out_go)
+	lrn_go_act = snr_out_u->act_eq;
       if(gate.graded_out_go)
 	out_go_act = snr_out_u->act_eq;
       else
