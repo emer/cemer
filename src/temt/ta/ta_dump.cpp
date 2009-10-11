@@ -1557,7 +1557,8 @@ endload:
   }
 
   if(taMisc::loading_version < taMisc::version_bin) {
-    if(td && td->InheritsFrom(&TA_taProject)) { // only for project-level objects, not sub-files
+    if(td && td->InheritsFrom(&TA_taProject) && taMisc::gui_active) {
+      // only for project-level objects, not sub-files, and only in gui mode (so analysis scripts and startup things don't give a lot of grief
       taMisc::Warning("Loaded a file saved in an earlier version of the software:",
 		      taMisc::loading_version.toString(),"  Current version is:",
 		      taMisc::version_bin.toString(),

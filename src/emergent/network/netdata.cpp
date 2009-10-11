@@ -1565,6 +1565,7 @@ void NetMonitor::SetNetwork(Network* net) {
 //   if(network.ptr() == net) return;
   network = net;
   UpdateNetworkPtrs();
+  UpdateDataTable(false);	// re-cache pointers after network setting
 }
 
 void NetMonitor::UpdateNetworkPtrs() {
@@ -1572,7 +1573,8 @@ void NetMonitor::UpdateNetworkPtrs() {
     items.UpdatePointers_NewParType(&TA_Network, network);
     for (int i = 0; i < items.size; ++i) {
       NetMonItem* nmi = items.FastEl(i);
-      if(nmi->object_type && nmi->object_type->InheritsFrom(&TA_Network)) {
+      if(nmi->object_type && nmi->object_type->InheritsFrom(&TA_Network)
+	 && nmi->object.ptr() != network) {
 	nmi->object = network;
       }
     }

@@ -268,7 +268,7 @@ void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
   net_off = 0.0f;
   rnd_go_inc = 0.2f;
-  leak = 0.5f;
+  leak = 1.0f;
 }
 
 void SNrThalLayerSpec::Initialize() {
