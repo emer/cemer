@@ -396,7 +396,7 @@ public:
   // return the number of redo actions currently available
 
   virtual void	ReportStats(bool show_list = false, bool show_diffs = false);
-  // #BUTTON report (on cout) the current undo statistics in terms of # of records and total amount of ram taken, etc -- if show_list, show full list of current undo info, if show_diffs, then show full diffs of changes from orig source data (requires show_list too)
+  // #BUTTON #EDIT_READ_ONLY report (on cout) the current undo statistics in terms of # of records and total amount of ram taken, etc -- if show_list, show full list of current undo info, if show_diffs, then show full diffs of changes from orig source data (requires show_list too)
 
   TA_SIMPLE_BASEFUNS(taUndoMgr);
 protected:

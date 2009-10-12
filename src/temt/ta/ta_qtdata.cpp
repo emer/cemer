@@ -2634,13 +2634,14 @@ void taiEditButton::GetMethMenus() {
     if ((md->name == "CopyFrom") || (md->name == "CopyTo") || (md->name == "DuplicateMe")
        || (md->name == "ChangeMyType") || (md->name == "Help"))
       continue;
-    if ((HasFlag(flgReadOnly)) && !(md->HasOption("EDIT_READ_ONLY"))) continue;
+    // do menu stuff to stay in sync with directives
     String cur_nm = md->OptionAfter("MENU_ON_");
     if (cur_nm != "")
       men_nm = cur_nm;
     // has to be on one of these two menus..
     if ((men_nm != "Object") && (men_nm != "Edit"))
       continue;
+    if (HasFlag(flgReadOnly) && (!md->HasOption("EDIT_READ_ONLY")) ) continue;
     if ((men_nm != lst_men_nm) && (lst_men_nm != ""))
       AddSep();
     lst_men_nm = men_nm;

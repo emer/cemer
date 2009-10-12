@@ -706,9 +706,9 @@ public:
     int compress=-1, String filetypes=_nilString, bool getset_file_name = true);
   // #IGNORE get filer with ostrm opened for appending for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
   virtual int		Save(); 
-  // #MENU #MENU_ON_Object #CAT_File saves the object to a file using current file name 
+  // #MENU #MENU_ON_Object #EDIT_READ_ONLY #CAT_File saves the object to a file using current file name 
   virtual int		SaveAs(const String& fname = ""); 
-  // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, the user is prompted with a file dialog
+  // #MENU #ARGC_0 #EDIT_READ_ONLY #CAT_File Saves object data to a new file -- if fname is empty, the user is prompted with a file dialog
 
   virtual int 		Save_String(String& save_str, taBase* par=NULL, int indent=0);
   // #CAT_XpertFile dump full object save information to a string, which contains the exact information that would be saved to a file for Save_strm -- just a string-stream (sstream) wrapper around Save_strm
@@ -959,9 +959,9 @@ public:
   virtual bool		Edit();
   // #CAT_Display Edit this object using the gui -- this will be an edit dialog or an edit panel depending on ...???
   virtual bool		EditDialog(bool modal = false);
-  // #MENU #ARGC_0 #MENU_ON_Object #MENU_SEP_BEFORE #MENU_CONTEXT #NO_SCRIPT #CAT_Display Edit this object in a popup dialog using the gui (if modal == true, the edit dialog blocks all other gui operations until the user closes it)
+  // #MENU #ARGC_0 #MENU_ON_Object #MENU_SEP_BEFORE #MENU_CONTEXT #NO_SCRIPT #EDIT_READ_ONLY #CAT_Display Edit this object in a popup dialog using the gui (if modal == true, the edit dialog blocks all other gui operations until the user closes it)
   virtual bool		EditPanel(bool new_tab = false, bool pin_tab = false);
-  // #MENU #ARGC_0 #MENU_ON_Object #NO_SCRIPT #CAT_Display Edit this object in a panel in the gui browser (if new_tab == true, then a new edit panel tab is opened for it, if pin_tab == true then the new tab is pinned in place (option ignored for new_tab == false))
+  // #MENU #ARGC_0 #MENU_ON_Object #NO_SCRIPT #EDIT_READ_ONLY #CAT_Display Edit this object in a panel in the gui browser (if new_tab == true, then a new edit panel tab is opened for it, if pin_tab == true then the new tab is pinned in place (option ignored for new_tab == false))
   virtual bool		BrowserSelectMe();
   // #CAT_Display select this item in the main project browser (only works if gui is active, etc) -- returns success
   virtual bool		BrowserExpandAll();
@@ -969,7 +969,7 @@ public:
   virtual bool		BrowserCollapseAll();
   // #CAT_Display collapse all sub-leaves under this item in the browser
   virtual void		BrowseMe();
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #CAT_Display show this object in its own browser 
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #EDIT_READ_ONLY #CAT_Display show this object in its own browser 
   virtual bool		GuiFindFromMe(const String& find_str="");
   // #CAT_Display activate the gui find dialog starting from this object, with given find string
   // #CAT_Display reshows any open edit dialogs for this object
