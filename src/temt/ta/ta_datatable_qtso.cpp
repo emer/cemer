@@ -5454,6 +5454,10 @@ void iDataTableEditor::ConfigView() {
     }
   }
   tvCell->setVisible(show_cell);
+  // make sure orphan cell viewer goes away...
+  if (dt->rows == 0) {
+    setCellMat(NULL, QModelIndex());
+  }
 }
 
 
