@@ -1574,6 +1574,9 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 
   float text_ht = font_scale;
 
+  T3DataViewFrame* fr = GetFrame();
+  iColor txtcolr = fr->GetTextColor();
+
   int col_idx = 0;
   float col_wd_lst = 0.0f; // width of last col
   // following metrics will be adjusted for mat font scale, when necessary
@@ -1588,6 +1591,9 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     SoSeparator* row_sep = new SoSeparator;
     tr = new SoTranslation;
     row_sep->addChild(tr);
+    SoBaseColor* bc = new SoBaseColor;
+    bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
+    row_sep->addChild(bc);
     float y_offs = ((row_height - text_ht) * 0.5f) + text_ht - txt_base_adj;
     el = String(data_row);
     tr->translation.setValue(.5 * col_wd_lst, -y_offs, 0.0f);
@@ -1708,6 +1714,9 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       float x_offs = gr_mg_sz; // default for left
       tr = new SoTranslation;
       txt_sep->addChild(tr);
+      SoBaseColor* bc = new SoBaseColor;
+      bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
+      txt_sep->addChild(bc);
       float y_offs = ((row_height - text_ht) *.5f) +
 	text_ht - txt_base_adj;
       if (dc->isNumeric()) {
@@ -2323,7 +2332,7 @@ void GraphAxisBase::Initialize() {
   axis = Y;
   col_lookup = NULL;
   col_list = NULL;
-  color.name = "black";
+  color.name = taMisc::t3d_text_color;
   n_ticks = 10;
   axis_length = 1.0f;
   start_tick = 0;
@@ -2951,8 +2960,12 @@ void GraphTableView::Initialize() {
   view_rows = 10000;
 
   x_axis.axis = GraphAxisBase::X;
+  x_axis.color.name = taMisc::t3d_text_color;
+  x_axis.color.UpdateAfterEdit();	// needed to pick up color name
   z_axis.axis = GraphAxisBase::Z;
-  plot_1.color.name = "black";
+  z_axis.color.name = taMisc::t3d_text_color;
+  z_axis.color.UpdateAfterEdit();	// needed to pick up color name
+  plot_1.color.name = taMisc::t3d_text_color;
   plot_1.point_style = GraphPlotView::CIRCLE;
   plot_1.color.UpdateAfterEdit();	// needed to pick up color name
   plot_2.color.name = "red";

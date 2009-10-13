@@ -878,11 +878,13 @@ public:
   { if (row_num < 0) row_num = rows + row_num;
     act_idx = col_size - (rows - row_num); return (act_idx >= 0 && act_idx < col_size); } 
   // #CAT_Rows calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
-  inline bool		idx_err(int row_num, int col_size, int& act_idx) const {
-    return !TestError(!idx(row_num, col_size, act_idx), "idx_err", "index out of range"); }
+  inline bool		idx_err(int row_num, int col_size, int& act_idx, bool quiet = false) const {
+    bool rval = idx(row_num, col_size, act_idx);
+    if(!quiet) TestError(!rval, "idx_err", "index out of range"); return rval; }
   // #IGNORE
-  inline bool		idx_warn(int row_num, int col_size, int& act_idx) const {
-    return !TestWarning(!idx(row_num, col_size, act_idx), "idx_err", "index out of range"); }
+  inline bool		idx_warn(int row_num, int col_size, int& act_idx, bool quiet = false) const {
+    bool rval = idx(row_num, col_size, act_idx);
+    if(!quiet) TestWarning(!rval, "idx_err", "index out of range"); return rval; }
   // #IGNORE 
   virtual bool		RowInRangeNormalize(int& row);
   // #CAT_XpertRows normalizes row (if -ve) and tests result in range 
@@ -950,24 +952,26 @@ public:
   /////////////////////////////
   // column name versions:
 
-  const Variant 	GetValColName(const String& col_name, int row) const;
-  // #CAT_XpertAccess get data of scalar type, in Variant form (any data type, use for Programs), for given column name, row
-  bool 			SetValColName(const Variant& val, const String& col_name, int row);
-  // #CAT_XpertModify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful
+  const Variant 	GetValColName(const String& col_name, int row,
+				      bool quiet = false) const;
+  // #CAT_XpertAccess get data of scalar type, in Variant form (any data type, use for Programs), for given column name, row  -- quiet = fail quietly
+  bool 			SetValColName(const Variant& val, const String& col_name, int row,
+				      bool quiet = false);
+  // #CAT_XpertModify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful -- quiet = fail quietly
 
   const Variant 	GetMatrixValColName(const String& col_name, int row,
-					    int d0, int d1=0, int d2=0, int d3=0) const;
-  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies
+		    int d0, int d1=0, int d2=0, int d3=0, bool quiet = false) const;
+  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies -- quiet = fail quietly
   bool 			SetMatrixValColName(const Variant& val, const String& col_name,
-					    int row, int d0, int d1=0, int d2=0, int d3=0);
-  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
+		    int row, int d0, int d1=0, int d2=0, int d3=0, bool quiet = false);
+  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful -- quiet = fail quietly
 
   const Variant 	GetMatrixFlatValColName(const String& col_name, int row,
-						int cell) const;
-  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality)
+						int cell, bool quiet = false) const;
+  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality) -- quiet = fail quietly
   bool 			SetMatrixFlatValColName(const Variant& val, const String& col_name,
-						int row, int cell);
-  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality); returns 'true' if valid access and set is successful
+						int row, int cell, bool quiet = false);
+  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality); returns 'true' if valid access and set is successful -- quiet = fail quietly
 
   bool	 	InitValsColName(const Variant& init_val, const String& col_name);
   // #CAT_XpertModify initialize all values in column of given name to given value
@@ -989,29 +993,30 @@ public:
   // column and row name versions:
 
   const Variant 	GetValColRowName(const String& col_name, const String& row_col_name,
-					 const Variant& row_value) const;
-  // #CAT_XpertAccess get data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name
+					 const Variant& row_value, bool quiet = false) const;
+  // #CAT_XpertAccess get data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name -- quiet = fail quietly
   bool 			SetValColRowName(const Variant& val, const String& col_name,
-				      const String& row_col_name, const Variant& row_value);
-  // #CAT_XpertModify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name; returns 'true' if valid access and set is successful
+					 const String& row_col_name, const Variant& row_value,
+					 bool quiet = false);
+  // #CAT_XpertModify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name; returns 'true' if valid access and set is successful -- quiet = fail quietly
 
   const Variant 	GetMatrixValColRowName(const String& col_name,
 				const String& row_col_name, const Variant& row_value,
-					    int d0, int d1=0, int d2=0, int d3=0) const;
-  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies
+			       int d0, int d1=0, int d2=0, int d3=0, bool quiet = false) const;
+  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies -- quiet = fail quietly
   bool 			SetMatrixValColRowName(const Variant& val, const String& col_name,
 				    const String& row_col_name, const Variant& row_value,
-					       int d0, int d1=0, int d2=0, int d3=0);
-  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
+			       int d0, int d1=0, int d2=0, int d3=0, bool quiet = false);
+  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful -- quiet = fail quietly
 
   const Variant 	GetMatrixFlatValColRowName(const String& col_name,
 				const String& row_col_name, const Variant& row_value,
-					    int cell) const;
-  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix cell index (flat index into matrix cells)
+				    int cell, bool quiet = false) const;
+  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix cell index (flat index into matrix cells) -- quiet = fail quietly
   bool 			SetMatrixFlatValColRowName(const Variant& val, const String& col_name,
 				    const String& row_col_name, const Variant& row_value,
-					       int cell);
-  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix cell index (flat index into matrix cells); returns 'true' if valid access and set is successful
+				       int cell, bool quiet = false);
+  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix cell index (flat index into matrix cells); returns 'true' if valid access and set is successful -- quiet = fail quietly
 
   /////////////////////////////
   // column pointer versions, just for the gui:
@@ -1122,8 +1127,8 @@ public:
   taMatrix*	 	GetValAsMatrixColName(const String& col_name, int row);
   // #CAT_Access get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
   taMatrix*	 	GetValAsMatrixColRowName(const String& col_name, const String& row_col_name,
-					 const Variant& row_value);
-  // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column name, and row by looking up row_value in column named row_col_name; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
+					 const Variant& row_value, bool quiet = false);
+  // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column name, and row by looking up row_value in column named row_col_name; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it -- quiet = fail quietly
   bool 			SetValAsMatrix(const taMatrix* val, int col, int row);
   // #CAT_Modify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
   bool 			SetValAsMatrixColName(const taMatrix* val, const String& col_name, int row);

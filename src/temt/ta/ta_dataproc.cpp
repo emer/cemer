@@ -1698,18 +1698,18 @@ bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idn
   else if(row_spec == ROW_NUM) {
     if(set_data)
       rval +=  il + idnm + ".SetValColName(" + string_cvt + var->name + ", \"" + var->name +"\", "
-	+ row_var->name + ");\n";
+	+ row_var->name + "\", " + String(quiet)  + ");\n";
     else 
       rval += il + var->name + " = " + idnm + ".GetValColName(\"" + var->name + "\", "
-	+ row_var->name + ");\n";
+	+ row_var->name + "\", " + String(quiet) + ");\n";
   }
   else if(row_spec == ROW_VAL) {
     if(set_data)
       rval +=  il + idnm + ".SetValColRowName(" + string_cvt + var->name + ", \"" + var->name+ "\", \""
-	+ row_var->name + "\", " + row_var->name + ");\n";
+	+ row_var->name + "\", " + row_var->name + "\", " + String(quiet) + ");\n";
     else 
       rval += il + var->name + " = " + idnm + ".GetValColRowName(\"" + var->name +"\", \""
-	+ row_var->name + "\", " + row_var->name + ");\n";
+	+ row_var->name + "\", " + row_var->name + "\", " + String(quiet) + ");\n";
   }
   return true;
 }

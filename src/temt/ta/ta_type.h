@@ -635,6 +635,8 @@ public:
   static GuiStyle	gui_style;	// #SAVE #CAT_GUI #DEF_GS_DEFAULT style options provided by the gui system, affecting how the widgets are drawn, etc (not all are available on all platforms) -- change only takes effect on restarting the program
   static String		font_name;	// #SAVE #CAT_GUI default font name to use
   static int		font_size;	// #SAVE #CAT_GUI default font size to use
+  static String		t3d_bg_color;	// #SAVE #CAT_GUI default background color for 3d view -- standard X11 color names are supported, most of which are also web/html standard color names
+  static String		t3d_text_color;	// #SAVE #CAT_GUI default text color for 3d view  -- standard X11 color names are supported, most of which are also web/html standard color names
   static String		t3d_font_name;	// #SAVE #CAT_GUI #EXPERT default font name to use in the 3D display (default is Arial -- not many options supported depending on platform -- set the environment variable COIN_DEBUG_FONTSUPPORT to debug)
   static ConsoleType	console_type; // #SAVE #CAT_GUI style of the console to display -- **REQUIRES APP RESTART
 #ifdef TA_OS_WIN // none on windows (yet), so we omit for clarity

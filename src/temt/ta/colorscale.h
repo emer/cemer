@@ -55,7 +55,11 @@ public:
   float			a; // #CONDSHOW_ON_no_a:false alpha (intensity, ratio of fg to bg)
 
   const iColor		color() const;
+  // return the internal value-based color object -- common currency for color reps
   void			setColor(const iColor& cp);
+  // set from the internal value-based color object -- common currency for color reps
+  void			setColorName(const String& nm);
+  // set from standard X11 color names, most of which are also web/html standard color names
   
   void			Set(float r_, float g_, float b_, float a_ = 1)
      {r=r_; g=g_; b=b_; a=a_;}
@@ -73,14 +77,27 @@ class TA_API RGBA : public taNBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Display Red Green Blue Alpha color specification
 INHERITED(taNBase)
 public:
-  String 		name; // description of what this color is
+#ifdef __MAKETA__
+  String 		name; // color name -- use this to lookup standard X11 color names, most of which are also web/html standard color names
+#endif
   float			r; // red
   float			g; // green
   float			b; // blue
   float			a; // alpha (intensity, ratio of fg to bg)
   String 		desc; // description of what this color is
 
-  const iColor		color() const; //note: always correct -- updated on call
+  const iColor		color() const;
+  // return the internal value-based color object -- common currency for color reps
+  void			setColor(const iColor& cp);
+  // set from the internal value-based color object -- common currency for color reps
+  void			setColorName(const String& nm);
+  // set from standard X11 color names, most of which are also web/html standard color names
+
+  void			Set(float r_, float g_, float b_, float a_ = 1)
+     {r=r_; g=g_; b=b_; a=a_;}
+  // set from rgb values
+
+  override void		SetDefaultName() { };
 
   String ToString_RGBA() const;
   String	GetDesc() const			{ return desc; }

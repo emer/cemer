@@ -1082,62 +1082,62 @@ bool DataTable::SetMatrixFlatVal(const Variant& val, Variant col, int row, int c
 ///////////////////////////////////////////
 //	Column Name Access
 
-const Variant DataTable::GetValColName(const String& col_nm, int row) const {
+const Variant DataTable::GetValColName(const String& col_nm, int row, bool quiet) const {
   DataCol* da = FindColName(col_nm, true);
   int i;
-  if (da &&  idx_err(row, da->rows(), i))
+  if (da &&  idx_err(row, da->rows(), i, quiet))
     return da->GetValAsVar(i);
   else return _nilVariant;
 }
 
-bool DataTable::SetValColName(const Variant& val, const String& col_nm, int row) {
+bool DataTable::SetValColName(const Variant& val, const String& col_nm, int row, bool quiet) {
   DataCol* da = FindColName(col_nm, true);
   if (!da) return false;
   if (da->is_matrix_err()) return false;
   int i;
-  if (idx_err(row, da->rows(), i)) {
+  if (idx_err(row, da->rows(), i, quiet)) {
     da->SetValAsVar(val, i);
     return true;
   } else return false;
 }
 
 const Variant DataTable::GetMatrixValColName(const String& col_nm, int row,
-					     int d0, int d1, int d2, int d3) const {
+		     int d0, int d1, int d2, int d3, bool quiet) const {
   DataCol* da = FindColName(col_nm, true);
   if (!da || da->not_matrix_err()) return false;
   int i;
-  if (da &&  idx_err(row, da->rows(), i))
+  if (da &&  idx_err(row, da->rows(), i, quiet))
     return da->GetValAsVarMDims(i, d0, d1, d2, d3);
   else return _nilVariant;
 }
 
 bool DataTable::SetMatrixValColName(const Variant& val, const String& col_nm,
-				    int row, int d0, int d1, int d2, int d3) {
+		    int row, int d0, int d1, int d2, int d3, bool quiet) {
   DataCol* da = FindColName(col_nm, true);
   if (!da || da->not_matrix_err()) return false;
   int i;
-  if (idx_err(row, da->rows(), i)) {
+  if (idx_err(row, da->rows(), i, quiet)) {
     da->SetValAsVarMDims(val, i, d0, d1, d2, d3);
     return true;
   } else return false;
 }
 
 const Variant DataTable::GetMatrixFlatValColName(const String& col_nm, int row,
-						 int cell) const {
+						 int cell, bool quiet) const {
   DataCol* da = FindColName(col_nm, true);
   if (!da || da->not_matrix_err()) return false;
   int i;
-  if (da &&  idx_err(row, da->rows(), i))
+  if (da &&  idx_err(row, da->rows(), i, quiet))
     return da->GetValAsVarM(i, cell);
   else return _nilVariant;
 }
 
 bool DataTable::SetMatrixFlatValColName(const Variant& val, const String& col_nm,
-					int row, int cell) {
+					int row, int cell, bool quiet) {
   DataCol* da = FindColName(col_nm, true);
   if (!da || da->not_matrix_err()) return false;
   int i;
-  if (idx_err(row, da->rows(), i)) {
+  if (idx_err(row, da->rows(), i, quiet)) {
     da->SetValAsVarM(val, i, cell);
     return true;
   } else return false;
@@ -1146,91 +1146,117 @@ bool DataTable::SetMatrixFlatValColName(const Variant& val, const String& col_nm
 /////////////////////
 
 const Variant DataTable::GetValColRowName(const String& col_nm, const String& row_col_name,
-					  const Variant& row_value) const {
+					  const Variant& row_value, bool quiet) const {
   DataCol* cda = FindColName(col_nm, true);
   if(!cda) return _nilVariant;
   DataCol* rda = FindColName(row_col_name, true);
   if(!rda) return _nilVariant;
   int row = rda->FindVal(row_value);
-  if(TestError(row < 0, "GetValColRowName", "value:", row_value.toString(),
-	    "of column named:", row_col_name, "not found"))
-    return _nilVariant;
+  if(quiet) {
+    if(row < 0) return _nilVariant;
+  }
+  else {
+    if(TestError(row < 0, "GetValColRowName", "value:", row_value.toString(),
+		 "of column named:", row_col_name, "not found"))
+      return _nilVariant;
+  }
   return cda->GetValAsVar(row);
 }
 
 bool DataTable::SetValColRowName(const Variant& val, const String& col_nm,
-				 const String& row_col_name,
-				 const Variant& row_value) {
+				 const String& row_col_name, const Variant& row_value,
+				 bool quiet) {
   DataCol* cda = FindColName(col_nm, true);
   if(!cda || cda->is_matrix_err()) return false;
   DataCol* rda = FindColName(row_col_name, true);
   if(!rda) return false;
   int row = rda->FindVal(row_value);
-  if(TestError(row < 0, "SetValColRowName", "value:", row_value.toString(),
-	    "of column named:", row_col_name, "not found"))
-    return false;
+  if(quiet) {
+    if(row < 0) return false;
+  }
+  else {
+    if(TestError(row < 0, "SetValColRowName", "value:", row_value.toString(),
+		 "of column named:", row_col_name, "not found"))
+      return false;
+  }
   cda->SetValAsVar(val, row);
   return true;
 }
 
 const Variant DataTable::GetMatrixValColRowName(const String& col_nm, 
-						const String& row_col_name,
-						const Variant& row_value,
-						int d0, int d1, int d2, int d3) const {
+				const String& row_col_name, const Variant& row_value,
+				int d0, int d1, int d2, int d3, bool quiet) const {
   DataCol* cda = FindColName(col_nm, true);
   if(!cda || cda->not_matrix_err()) return _nilVariant;
   DataCol* rda = FindColName(row_col_name, true);
   if(!rda) return _nilVariant;
   int row = rda->FindVal(row_value);
-  if(TestError(row < 0, "GetMatrixValColRowName", "value:", row_value.toString(),
-	       "of column named:", row_col_name, "not found"))
-    return _nilVariant;
+  if(quiet) {
+    if(row < 0) return _nilVariant;
+  }
+  else {
+    if(TestError(row < 0, "GetMatrixValColRowName", "value:", row_value.toString(),
+		 "of column named:", row_col_name, "not found"))
+      return _nilVariant;
+  }
   return cda->GetValAsVarMDims(row, d0, d1, d2, d3);
 }
 
 bool DataTable::SetMatrixValColRowName(const Variant& val, const String& col_nm,
-				       const String& row_col_name,
-				       const Variant& row_value,
-				       int d0, int d1, int d2, int d3) {
+	       const String& row_col_name, const Variant& row_value,
+	       int d0, int d1, int d2, int d3, bool quiet) {
   DataCol* cda = FindColName(col_nm, true);
   if (!cda || cda->not_matrix_err()) return false;
   DataCol* rda = FindColName(row_col_name, true);
   if(!rda) return false;
   int row = rda->FindVal(row_value);
-  if(TestError(row < 0, "SetMatrixValColRowName", "value:", row_value.toString(),
-	       "of column named:", row_col_name, "not found"))
-    return false;
+  if(quiet) {
+    if(row < 0) return false;
+  }
+  else {
+    if(TestError(row < 0, "SetMatrixValColRowName", "value:", row_value.toString(),
+		 "of column named:", row_col_name, "not found"))
+      return false;
+  }
   cda->SetValAsVarMDims(val, row, d0, d1, d2, d3);
   return true;
 }
 
 const Variant DataTable::GetMatrixFlatValColRowName(const String& col_nm, 
-						const String& row_col_name,
-						const Variant& row_value,
-						int cell) const {
+		const String& row_col_name, const Variant& row_value,
+   	        int cell, bool quiet) const {
   DataCol* cda = FindColName(col_nm, true);
   if(!cda || cda->not_matrix_err()) return _nilVariant;
   DataCol* rda = FindColName(row_col_name, true);
   if(!rda) return _nilVariant;
   int row = rda->FindVal(row_value);
-  if(TestError(row < 0, "GetMatrixFlatValColRowName", "value:", row_value.toString(),
-	       "of column named:", row_col_name, "not found"))
-    return _nilVariant;
+  if(quiet) {
+    if(row < 0) return _nilVariant;
+  }
+  else {
+    if(TestError(row < 0, "GetMatrixFlatValColRowName", "value:", row_value.toString(),
+		 "of column named:", row_col_name, "not found"))
+      return _nilVariant;
+  }
   return cda->GetValAsVarM(row, cell);
 }
 
 bool DataTable::SetMatrixFlatValColRowName(const Variant& val, const String& col_nm,
-				       const String& row_col_name,
-				       const Variant& row_value,
-				       int cell) {
+		   const String& row_col_name, const Variant& row_value,
+		   int cell, bool quiet) {
   DataCol* cda = FindColName(col_nm, true);
   if (!cda || cda->not_matrix_err()) return false;
   DataCol* rda = FindColName(row_col_name, true);
   if(!rda) return false;
   int row = rda->FindVal(row_value);
-  if(TestError(row < 0, "SetMatrixFlatValColRowName", "value:", row_value.toString(),
-	       "of column named:", row_col_name, "not found"))
-    return false;
+  if(quiet) {
+    if(row < 0) return false;
+  }
+  else {
+    if(TestError(row < 0, "SetMatrixFlatValColRowName", "value:", row_value.toString(),
+		 "of column named:", row_col_name, "not found"))
+      return false;
+  }
   cda->SetValAsVarMDims(val, row, cell);
   return true;
 }
@@ -1420,16 +1446,22 @@ taMatrix* DataTable::GetValAsMatrixColName(const String& col_nm, int row) {
 }
 
 taMatrix* DataTable::GetValAsMatrixColRowName(const String& col_nm, const String& row_col_name,
-	const Variant& row_value)
+					      const Variant& row_value, bool quiet)
 {
   DataCol* cda = FindColName(col_nm, true);
   if(!cda) return NULL;
   DataCol* rda = FindColName(row_col_name, true);
   if(!rda) return NULL;
   int row = rda->FindVal(row_value);
-  if(row >= 0)
-    return cda->GetValAsMatrix(row);
-  return NULL;
+  if(quiet) {
+    if(row < 0) return NULL;
+  }
+  else {
+    if(TestError(row < 0, "GetValAsMatrixColRowName", "value:", row_value.toString(),
+		 "of column named:", row_col_name, "not found"))
+      return NULL;
+  }
+  return cda->GetValAsMatrix(row);
 }
 
 

@@ -1853,14 +1853,8 @@ void iT3DataViewFrame::viewRefresh() {
 
 void T3DataViewFrame::Initialize() {
 //  link_type = &TA_T3DataLink;
-  bg_color.no_a = true; 
-  bg_color.r = 0.8f;
-  bg_color.g = 0.8f;
-  bg_color.b = 0.8f;
-  text_color.no_a = false;
-  text_color.r = 0.0f;
-  text_color.g = 0.0f;
-  text_color.b = 0.0f;
+  bg_color.setColorName(taMisc::t3d_bg_color);
+  text_color.setColorName(taMisc::t3d_text_color);
   headlight_on = true;
   stereo_view = STEREO_NONE;
 }

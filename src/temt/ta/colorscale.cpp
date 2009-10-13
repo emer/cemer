@@ -43,16 +43,24 @@ void taColor::setColor(const iColor& cp) {
   Set(cp.redf(), cp.greenf(), cp.bluef(), cp.alphaf());
 }
 
+void taColor::setColorName(const String& nm) {
+  if(!(iColor::find((char*)nm,r,g,b))){
+    taMisc::Error("Color: " , nm , " not found for this display");
+  }
+}
+
+
 //////////////////////////
 //	RGBA		//
 //////////////////////////
 
 RGBA::RGBA(float rd, float gr, float bl, float al) {
-  Initialize(); SetDefaultName();
+  Initialize();
   r = rd; g = gr; b = bl; a = al;
 }
 
 void RGBA::Initialize() {
+  name = _nilString;
   r = g = b = 0.0f;
   a = 1.0f;
 }
@@ -64,9 +72,13 @@ void RGBA::UpdateAfterEdit_impl(){
   taOBase::UpdateAfterEdit_impl(); // skip nBase guy
   //  if(!taMisc::gui_active)    return;
   if (!name.empty()) {
-    if(!(iColor::find
-	 ((char*)name,r,g,b))){
-      taMisc::Error("Color: " , name , " not found for this display");
+    if(name.contains("RGBA_")) {
+      name = _nilString; // not legal name
+    }
+    else {
+      if(!(iColor::find((char*)name,r,g,b))){
+	taMisc::Error("Color: " , name , " not found for this display");
+      }
     }
   }
 }
@@ -116,6 +128,15 @@ void RGBA::CopyToCustom_impl(taBase* to_) const
 
 const iColor RGBA::color() const {
   return iColor(r, g, b, a);
+}
+
+void RGBA::setColor(const iColor& cp) {
+  Set(cp.redf(), cp.greenf(), cp.bluef(), cp.alphaf());
+}
+
+void RGBA::setColorName(const String& nm) {
+  name = nm;
+  UpdateAfterEdit();
 }
 
 String RGBA::ToString_RGBA() const {
