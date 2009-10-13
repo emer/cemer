@@ -529,8 +529,6 @@ taThreadDefaults taMisc::thread_defaults;
 #ifdef TA_OS_MAC
 String  taMisc::font_name = "Lucida Grande";
 int  	taMisc::font_size = 10;
-String  taMisc::t3d_bg_color = "grey80";
-String  taMisc::t3d_text_color = "black";
 String  taMisc::console_font_name = "Andale Mono";
 int  	taMisc::console_font_size = 10;
 #elif defined(TA_OS_WIN)
@@ -547,6 +545,8 @@ int  	taMisc::console_font_size = 10;
 
 bool	taMisc::log_console_out = false;
 String  taMisc::t3d_font_name = "Arial";
+String  taMisc::t3d_bg_color = "grey80";
+String  taMisc::t3d_text_color = "black";
 
 // parameters that differ between win and unix
 #ifdef TA_OS_WIN
