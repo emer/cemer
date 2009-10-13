@@ -1698,18 +1698,18 @@ bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idn
   else if(row_spec == ROW_NUM) {
     if(set_data)
       rval +=  il + idnm + ".SetValColName(" + string_cvt + var->name + ", \"" + var->name +"\", "
-	+ row_var->name + "\", " + String(quiet)  + ");\n";
+	+ row_var->name + ", " + String(quiet)  + ");\n";
     else 
       rval += il + var->name + " = " + idnm + ".GetValColName(\"" + var->name + "\", "
-	+ row_var->name + "\", " + String(quiet) + ");\n";
+	+ row_var->name + ", " + String(quiet) + ");\n";
   }
   else if(row_spec == ROW_VAL) {
     if(set_data)
       rval +=  il + idnm + ".SetValColRowName(" + string_cvt + var->name + ", \"" + var->name+ "\", \""
-	+ row_var->name + "\", " + row_var->name + "\", " + String(quiet) + ");\n";
+	+ row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");\n";
     else 
       rval += il + var->name + " = " + idnm + ".GetValColRowName(\"" + var->name +"\", \""
-	+ row_var->name + "\", " + row_var->name + "\", " + String(quiet) + ");\n";
+	+ row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");\n";
   }
   return true;
 }
@@ -1733,10 +1733,10 @@ bool DataVarProg::GenCss_OneVarMat(String& rval, ProgVarRef& var, const String& 
     rval += il + "__tmp_mat = " + idnm + ".GetMatrixDataByName(\"" + var->name + "\");\n";
   } else if (row_spec == ROW_NUM) {
     rval += il + "__tmp_mat = " + idnm + ".GetValAsMatrixColName(\"" + var->name + "\", "
-      + row_var->name + ");\n";
+      + row_var->name + ", " + String(quiet) + ");\n";
   } else if (row_spec == ROW_VAL) {
     rval += il + "__tmp_mat = " + idnm + ".GetValAsMatrixColRowName(\"" + var->name +"\", \""
-      + row_var->name + "\", " + row_var->name + ");\n";
+      + row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");\n";
   }
   if(set_data) {
     rval +=  il + "__tmp_mat.CopyFrom(" + var->name + ");\n";

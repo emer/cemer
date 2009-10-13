@@ -760,7 +760,8 @@ protected: // protected Load/Save guys
   // #IGNORE loads simple delimited data with undecorated headers and rows (such as csv files from Excel etc.)
 					 
   // #IGNORE #CAT_File #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
-  bool 			SetValAsMatrix_impl(const taMatrix* val, DataCol* da, int row);
+  bool 			SetValAsMatrix_impl(const taMatrix* val, DataCol* da, int row,
+					    bool quiet = false);
   void 			DetermineLoadDataParams(istream& strm, 
     LoadHeaders headers_req, LoadDelimiters delim_req, LoadQuotes quote_str_req,
     bool& headers, Delimiters& delim, bool& quote_str, bool& native);
@@ -1124,15 +1125,16 @@ public:
 
   taMatrix*	 	GetValAsMatrix(int col, int row);
   // #CAT_Access get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
-  taMatrix*	 	GetValAsMatrixColName(const String& col_name, int row);
-  // #CAT_Access get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
-  taMatrix*	 	GetValAsMatrixColRowName(const String& col_name, const String& row_col_name,
-					 const Variant& row_value, bool quiet = false);
+  taMatrix*	 	GetValAsMatrixColName(const String& col_name, int row, bool quiet = false);
+  // #CAT_Access get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it -- quiet = fail quietly
+  taMatrix*	 	GetValAsMatrixColRowName(const String& col_name,
+		const String& row_col_name, const Variant& row_value, bool quiet = false);
   // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column name, and row by looking up row_value in column named row_col_name; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it -- quiet = fail quietly
   bool 			SetValAsMatrix(const taMatrix* val, int col, int row);
   // #CAT_Modify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
-  bool 			SetValAsMatrixColName(const taMatrix* val, const String& col_name, int row);
-  // #CAT_Modify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
+  bool 			SetValAsMatrixColName(const taMatrix* val, const String& col_name,
+					      int row, bool quiet = false);
+  // #CAT_Modify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set -- quiet = fail quietly
   taMatrix*	 	GetRangeAsMatrix(int col, int st_row, int n_rows);
   // #CAT_XpertAccess get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
 

@@ -1437,10 +1437,10 @@ taMatrix* DataTable::GetValAsMatrix(int col, int row) {
   else return NULL;
 }
 
-taMatrix* DataTable::GetValAsMatrixColName(const String& col_nm, int row) {
+taMatrix* DataTable::GetValAsMatrixColName(const String& col_nm, int row, bool quiet) {
   DataCol* da = FindColName(col_nm, true);
   int i;
-  if (da &&  idx_err(row, da->rows(), i))
+  if (da &&  idx_err(row, da->rows(), i, quiet))
     return da->GetValAsMatrix(i);
   else return NULL;
 }
@@ -1535,16 +1535,17 @@ bool DataTable::SetValAsMatrix(const taMatrix* val, int col, int row) {
   return SetValAsMatrix_impl(val, da, row);
 }
 
-bool DataTable::SetValAsMatrixColName(const taMatrix* val, const String& col_nm, int row) {
+bool DataTable::SetValAsMatrixColName(const taMatrix* val, const String& col_nm, int row,
+				      bool quiet) {
   DataCol* da = FindColName(col_nm, true);
-  return SetValAsMatrix_impl(val, da, row);
+  return SetValAsMatrix_impl(val, da, row, quiet);
 }
 
-bool DataTable::SetValAsMatrix_impl(const taMatrix* val, DataCol* da, int row) {
+bool DataTable::SetValAsMatrix_impl(const taMatrix* val, DataCol* da, int row, bool quiet) {
   if (!da) return false;
   if (da->not_matrix_err()) return false;
   int i;
-  if (idx_err(row, da->rows(), i)) {
+  if (idx_err(row, da->rows(), i, quiet)) {
     return da->SetValAsMatrix(val, i);
   } else return false;
 }
