@@ -157,7 +157,6 @@ void tabMisc::WaitProc() {
   ++in_wait_proc;
   // prevent reentrant waitprocs!
 #ifdef TA_GUI
-  taiDataHostBase::AsyncWaitProc();
   taiMisc::PurgeDialogs();
 #endif
   DoDelayedCloses();

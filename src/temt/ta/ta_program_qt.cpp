@@ -245,6 +245,7 @@ void iProgramEditor::Init() {
   read_only = false;
   m_modified = false;
   warn_clobber = false;
+  apply_req = false;
 //  bg_color.set(TAI_Program->GetEditColor()); // always the same
   base = NULL;
   row = 0;
@@ -362,6 +363,21 @@ if (but) but->setArrowType(Qt::RightArrow);
   InternalSetModified(false);
 }
 
+void iProgramEditor::customEvent(QEvent* ev_) {
+  // we return early if we don't accept, otherwise fall through to accept
+  switch ((int)ev_->type()) {
+  case CET_APPLY: {
+    if (apply_req) {
+      Apply();
+      apply_req = false;
+    }
+  } break;
+  default: inherited::customEvent(ev_); 
+    return; // don't accept
+  }
+  ev_->accept();
+}
+
 bool iProgramEditor::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() == QEvent::KeyPress) {
     QKeyEvent* e = static_cast<QKeyEvent *>(event);
@@ -385,6 +401,13 @@ bool iProgramEditor::eventFilter(QObject* obj, QEvent* event) {
     }
   }
   return QWidget::eventFilter(obj, event);
+}
+
+void iProgramEditor::Apply_Async() {
+  if (apply_req) return; // already waiting
+  apply_req = true;
+  QEvent* ev = new QEvent((QEvent::Type)CET_APPLY);
+  QCoreApplication::postEvent(this, ev);
 }
 
 QWidget* iProgramEditor::firstTabFocusWidget() {
@@ -682,10 +705,6 @@ void iProgramEditor::Apply() {
   GetValue();
   GetImage();
   InternalSetModified(false); // superfulous??
-}
-
-void iProgramEditor::Apply_Async() {
-  Apply();			// no async!?
 }
 
 void iProgramEditor::Help() {

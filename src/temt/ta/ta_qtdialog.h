@@ -247,14 +247,6 @@ private:
   void		Init();
 };
 
-
-class TA_API taiDataHostBase_List : public taPtrList<taiDataHostBase> {
-  // #IGNORE list of data host base guys -- for async management -- no ownership of items
-protected:
-public:
-  ~taiDataHostBase_List()            { Reset(); }
-};
-
 class TA_API taiDataHostBase: public QObject, virtual public IDataLinkClient {
   // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for managing the contents of an edit dialog
 INHERITED(QObject)
@@ -279,11 +271,19 @@ public:
     HT_CONTROL		// host/owner is a control -- we won't show menus or obj buttons
   };
   
+#ifndef __MAKETA__
+  enum CustomEventType {
+    CET_RESHOW		= QEvent::User + 1,  // uses ReShowEvent
+    CET_GET_IMAGE,
+    CET_APPLY
+  };
+#endif
+
   static void	DeleteChildrenLater(QObject* obj); // convenience function -- deleteLater all children
   static void   MakeDarkBgColor(const iColor& bg, iColor& dk_bg); // for use by other users of stripe grids, to make the right dk bg color
 
-  TypeDef*	typ;		// type of object (if relevant)
-  void*		root;	// current root pointer of object (if relevant)
+  TypeDef*		typ;		// type of object (if relevant)
+  void*			root;	// current root pointer of object (if relevant)
   int		ctrl_size;	// a taiMisc::SizeSpec-compatible value (ie, from FontSpec) -- def is taiM->ctrl_size
   int		row_height;	// height of edit rows, not including margins and spaces (= max_control_height(def_size)) -- set in Constr_impl
   bool          read_only;	// cannot change data
@@ -297,8 +297,7 @@ public:
 
   QVBoxLayout*	vblDialog;	// layout for the entire dialog -- stacked/nested as follows:
   QLabel*	prompt;		// informative message at top of dialog
-  QScrollArea*	scrBody;	// scrollbars for the body items
-  QWidget*	body;		// parent for the body items
+  QWidget*	    body;	// parent for the body items
   QWidget*	widButtons; // box of buttons on the bottom of the dialog (unparented -- added to parent later
   QHBoxLayout*	layButtons;	
   HiLightButton*  okbut; // is HilightButton for the special mouse button handling
@@ -333,18 +332,14 @@ public:
   void		 	ConstrEditControl(); 
   virtual int 		Edit(bool modal_ = false, int min_width=-1, int min_height=-1);
   // for dialogs -- creates iHostDialog
-  virtual void  	Unchanged();	// call when data has been saved or reverted
+  virtual void  Unchanged();	// call when data has been saved or reverted
   virtual void		Refresh(); // does a GetImage or defered Reshow
-  virtual bool		ReShow(bool force = false) { return false; } // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
-  virtual void 		ReConstr_Body() { }; // called when show has changed and body should be reconstructed -- this is a deferred call
+  virtual void		GetImage_Async(){} // refresh asynchronously; can be called multiple times (only done once)
   virtual void 		ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) {}
   virtual void		WidgetDeleting(); // lets us null the gui fields, and set state
 
   virtual QWidget*	firstTabFocusWidget() { return NULL; } // first widget that accepts tab focus -- to set link between tab and contents of edit
 
-
-  static bool	AsyncWaitProc();
-  // process async apply, reshow, getimage requests -- called by overall wait proc system
   
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*		This() {return this;} // override
@@ -363,11 +358,6 @@ public: // IDataLinkClient i/f -- note: only registered though for taiEDH and la
 public slots:
   virtual void		Apply(); 
   virtual void  	Changed();	// override method call when data has changed
-  virtual void		Apply_Async();
-  virtual void		ReShow_Async(bool force = false); // reshow asynchronously; can be called multiple times before the reshow (only done once)
-  virtual void		ReConstr_Async();
-  virtual void		GetImage_Async(); // refresh asynchronously; can be called multiple times (only done once)
-  virtual void		DebugDestroy(QObject* obj); // todo: remove -- just for debugging
 
 public slots:
   virtual void		Revert(); 
@@ -385,19 +375,12 @@ protected:
   iColor 		bg_color; // background color of host -- set via setBgColor
   iColor		bg_color_dark;	// background color of dialog, darkened (calculated when bg_color set)
   bool			reshow_req; // these are set on async req, cleared when serviced
-  bool			reshow_req_forced; // is reshow forced
-  bool			reconstr_req;
   bool			defer_reshow_req; 
   // deferred reshow -- used when hidden, or changed; when refresh comes, it reshows
-  bool			getimage_req;
+  bool			get_image_req;
   bool			apply_req;
   bool			reshow_on_apply; // default, so we rebuild on Apply for CONDSHOW etc., but no good for cssDialogs
   
-  static taiDataHostBase_List async_apply_list;
-  static taiDataHostBase_List async_reshow_list;
-  static taiDataHostBase_List async_reconstr_list;
-  static taiDataHostBase_List async_getimage_list;
-
   const String		def_prompt() const {return m_def_prompt;} // default prompt, provided at constr time
   const String		def_title() const {return m_def_title;}; // default title, provided at constr time
 
@@ -422,6 +405,8 @@ protected:
   void 			DoDestr_Dialog(iHostDialog*& dlg); // common sub-code for destructing a dialog instance
   void			DoRaise_Dialog(); // what Raise() calls for dialogs
 
+/*  override void		customEvent(QEvent* ev);
+*/  
   virtual void		InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor 
   virtual void		GetImage_PromptTitle(); // updates the prompt and win title
 private:
@@ -460,12 +445,14 @@ public:
    // prepare dialog for rebuilding Body to show new contents
 
   virtual void		Iconify(bool value);	// for dialogs: iconify/deiconify
-  override void 	ReConstr_Body(); // called when show has changed and body should be reconstructed -- this is a deferred call
+  virtual void 		ReConstr_Body(); // called when show has changed and body should be reconstructed -- this is a deferred call
   virtual void		Revert_force();	
    // forcibly (automatically) revert buffer (prompts)
   virtual void  	SetRevert();	// set the revert button on
   virtual void  	UnSetRevert();	// set the revert button off
-  override bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
+  virtual bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
+  virtual void		ReShow_Async(bool force = false); // reshow asynchronously; can be called multiple times before the reshow (only done once)
+  override void		GetImage_Async(); // refresh asynchronously; can be called multiple times (only done once)
   virtual void		Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front
   override void		GetImage(bool force) {inherited::GetImage(force);} // scope ugh
   
@@ -492,8 +479,9 @@ public: // IDataHost i/f
   void		GetImage()	{GetImage(true);}
   void		GetValue()	{ }
 public slots:
+  void		Apply_Async();
   void  	Changed() {inherited::Changed();}
-  void		Apply_Async() {inherited::Apply_Async(); }
+
 
 protected:
   bool			show_meth_buttons; // true if any are created
@@ -503,18 +491,21 @@ protected:
   taBase*		sel_item_base; // ONLY used/valid in handling of context menu for select edits
   bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
 
-  virtual void		StartEndLayout(bool start); // bracket the layout of ctrls; helps optimize
-  virtual void		ClearBody_impl(); // #IGNORE prepare dialog for rebuilding Body to show new contents -- INHERITING CLASSES MUST CALL THIS LAST
-  override void  	Constr_Methods(); // creates the box for buttons
-  virtual void		Constr_Methods_impl(); // actually makes methods -- stub this out to supress methods
-  override void  	Insert_Methods(); // insert the menu and methods, if made, and not owned elsewise
+  virtual void	StartEndLayout(bool start); // bracket the layout of ctrls; helps optimize
+  virtual void		BodyCleared(); // called when show changed, and body has actually been cleared
+  virtual void	ClearBody_impl(); // #IGNORE prepare dialog for rebuilding Body to show new contents -- INHERITING CLASSES MUST CALL THIS LAST
+  override void  Constr_Methods(); // creates the box for buttons
+  virtual void	Constr_Methods_impl(); // actually makes methods -- stub this out to supress methods
+  override void  Insert_Methods(); // insert the menu and methods, if made, and not owned elsewise
   //override void	Constr_Final();
-  virtual void		FillLabelContextMenu(QMenu* menu, int& last_id); // last_id enables access menu items
-  override void		Cancel_impl();
-  override void		Ok_impl();
+  virtual void	FillLabelContextMenu(QMenu* menu, int& last_id); // last_id enables access menu items
+  override void	Cancel_impl();
+  override void	Ok_impl();
 
 
 protected:
+  override void		customEvent(QEvent* ev);
+
   override void		InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor
   override void		Refresh_impl(bool reshow);
 protected slots:
@@ -539,6 +530,7 @@ public:
 
 
   QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
+  QScrollArea*	  scrBody;		// scrollbars for the body items
 #ifndef __MAKETA__
   QPointer<QWidget> first_tab_foc;	// first tab focus widget
 #endif
@@ -585,6 +577,18 @@ protected:
   override void	InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor
 };
 
+
+#ifndef __MAKETA__
+class ReShowEvent: public QEvent {
+  // #IGNORE
+INHERITED(QEvent)
+public:
+  bool forced;
+  ReShowEvent(bool forced_):inherited((QEvent::Type)taiDataHost::CET_RESHOW) {
+    forced = forced_;
+  }
+};
+#endif
 
 class TA_API taiHostDialog_List : public taPtrList<taiDataHost> {
   // #IGNORE list of DataHosts that have been dialoged
