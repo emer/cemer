@@ -492,7 +492,6 @@ protected:
   bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
 
   virtual void	StartEndLayout(bool start); // bracket the layout of ctrls; helps optimize
-  virtual void		BodyCleared(); // called when show changed, and body has actually been cleared
   virtual void	ClearBody_impl(); // #IGNORE prepare dialog for rebuilding Body to show new contents -- INHERITING CLASSES MUST CALL THIS LAST
   override void  Constr_Methods(); // creates the box for buttons
   virtual void	Constr_Methods_impl(); // actually makes methods -- stub this out to supress methods
@@ -511,6 +510,8 @@ protected:
 protected slots:
   virtual void	label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e);
   virtual void		helpMenu_triggered();
+  virtual void		BodyCleared(); // called when show changed, and body has actually been cleared
+
 };
 
 

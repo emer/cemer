@@ -1177,6 +1177,7 @@ void taiDataHost_impl::ClearBody(bool waitproc) {
   widget()->setUpdatesEnabled(false);
   ClearBody_impl();
   if (waitproc) {
+//   QTimer::singleShot(150, this, SLOT(BodyCleared()) );
     taiMiscCore::ProcessEvents(); // not a bad idea to update gui before proceeding
     taiMiscCore::ProcessEvents(); // not a bad idea to update gui before proceeding
     taiMiscCore::ProcessEvents(); // not a bad idea to update gui before proceeding

@@ -1079,6 +1079,11 @@ bool LeabraWizard::PVLV_ToLayerGroup(LeabraNetwork* net) {
   bool new_laygp = false;
   Layer_Group* laygp = net->FindMakeLayerGroup("PVLV", NULL, new_laygp);
 
+  if(new_laygp) {
+    laygp->pos.z = 0;
+    net->RebuildAllViews();	// trigger update
+  }
+
   Layer* lay;
   if(lay = net->FindLayer(pvenm)) { laygp->Transfer(lay); lay->pos.z = 0; } 
   if(lay = net->FindLayer(pvinm)) { laygp->Transfer(lay); lay->pos.z = 0; }
@@ -1090,10 +1095,7 @@ bool LeabraWizard::PVLV_ToLayerGroup(LeabraNetwork* net) {
   if(lay = net->FindLayer("DA")) { laygp->Transfer(lay); lay->pos.z = 0; }
   if(lay = net->FindLayer("RewTarg")) { laygp->Transfer(lay); lay->pos.z = 0; }
 
-  if(new_laygp) {
-    laygp->pos.z = 0;
-    net->RebuildAllViews();	// trigger update
-  }
+  net->RebuildAllViews();	// trigger update
 
   return true;
 }
@@ -1379,6 +1381,10 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   //////////////////////////////////////////////////////////////////////////////////
   // set positions & geometries
 
+  if(new_laygp) {
+    laygp->pos.z = 0;
+  }
+
   if(lve_new) {
     pve->pos.SetXYZ(0,0,0);
     pvi->pos.SetXYZ(0,2,0);
@@ -1406,10 +1412,6 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   vta->un_geom.n = 1;
   rew_targ_lay->un_geom.n = 1;
   rew_targ_lay->layer_type = Layer::INPUT;
-
-  if(new_laygp) {
-    laygp->pos.z = 0;
-  }
 
   //////////////////////////////////////////////////////////////////////////////////
   // apply specs to objects
