@@ -397,8 +397,8 @@ void taiMiscCore::Init(bool gui) {
   // does idle processing in Qt
   timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
-  timer->start(50);
-  
+  timer->start();		// this must not have a number in it, so that it happens only
+  // when other events are DONE!
 }
 
 void taiMiscCore::OnQuitting_impl(CancelOp& cancel_op) {
