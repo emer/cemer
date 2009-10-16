@@ -669,13 +669,10 @@ void iMethodButtonMgr::SetCurMenuButton(MethodDef* md) {
 
 void taiDataHostBase::DeleteChildrenLater(QObject* obj) {
   if (obj == NULL) return;
-  QObject* chobj;
   const QObjectList& ol = obj->children(); 
-  int i = 0;
-  while (ol.count() > 0) {
-    i = ol.size() - 1;
-    chobj = ol.at(i);
-    delete chobj;
+  for(int i=ol.count()-1;i >= 0; i--) {
+    QObject* chobj = ol.at(i);
+    chobj->deleteLater();
   }
 }
 
@@ -1177,12 +1174,14 @@ void taiDataHost_impl::ClearBody(bool waitproc) {
   widget()->setUpdatesEnabled(false);
   ClearBody_impl();
   if (waitproc) {
-//   QTimer::singleShot(150, this, SLOT(BodyCleared()) );
+    QTimer::singleShot(150, this, SLOT(BodyCleared()) );
     taiMiscCore::ProcessEvents(); // not a bad idea to update gui before proceeding
     taiMiscCore::ProcessEvents(); // not a bad idea to update gui before proceeding
     taiMiscCore::ProcessEvents(); // not a bad idea to update gui before proceeding
   }
-  BodyCleared(); //rebuilds if ShowChanged
+  else {
+    BodyCleared(); //rebuilds if ShowChanged
+  }
   widget()->setUpdatesEnabled(true);
 }
 
