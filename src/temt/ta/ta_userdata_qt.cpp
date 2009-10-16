@@ -144,6 +144,10 @@ void iUserDataDataHost::Constr_impl() {
 }
   
 void iUserDataDataHost::Constr_Body_impl() {
+}
+ 
+void iUserDataDataHost::Constr_Box() {
+  row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if 
   if (tw) return;
   tw = new QTableWidget(widget());
   tw->setColumnCount(2);
@@ -170,10 +174,6 @@ void iUserDataDataHost::Constr_Body_impl() {
   connect(tw, SIGNAL(itemChanged(QTableWidgetItem*)), 
     this, SLOT(tw_itemChanged(QTableWidgetItem*)) );
   body = tw;
-}
- 
-void iUserDataDataHost::Constr_Box() {
-  row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if 
 }
  
 

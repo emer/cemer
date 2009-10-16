@@ -667,12 +667,38 @@ void iMethodButtonMgr::SetCurMenuButton(MethodDef* md) {
 #define LAYBODY_MARGIN	1
 #define LAYBODY_SPACING	0
 
+void taiDataHostBase::DeleteWidgetsLater(QObject* obj) {
+  if (obj == NULL) return;
+  QObject* chobj;
+  const QObjectList& ol = obj->children(); 
+  for(int i = ol.count()-1; i >= 0; i--) {
+    chobj = ol.at(i);
+    if(chobj->inherits("QWidget")) {
+      ((QWidget*)chobj)->hide();
+      chobj->deleteLater();
+    }
+  }
+}
+
 void taiDataHostBase::DeleteChildrenLater(QObject* obj) {
   if (obj == NULL) return;
+  QObject* chobj;
   const QObjectList& ol = obj->children(); 
-  for(int i=ol.count()-1;i >= 0; i--) {
-    QObject* chobj = ol.at(i);
+  for(int i = ol.count()-1; i >= 0; i--) {
+    chobj = ol.at(i);
     chobj->deleteLater();
+  }
+}
+
+void taiDataHostBase::DeleteChildrenNow(QObject* obj) {
+  if (obj == NULL) return;
+  QObject* chobj;
+  const QObjectList& ol = obj->children(); 
+  int i = 0;
+  while (ol.count() > 0) {
+    i = ol.size() - 1;
+    chobj = ol.at(i);
+    delete chobj;
   }
 }
 
@@ -706,8 +732,10 @@ taiDataHostBase::taiDataHostBase(TypeDef* typ_, bool read_only_,
 //  warn_clobber = false;
   host_type = HT_DIALOG; // default, set later
   reshow_req = false;
+  reshow_req_forced = false;
+  reconstr_req = false;
   defer_reshow_req = false;
-  get_image_req = false;
+  getimage_req = false;
   apply_req = false;
   reshow_on_apply = true;
   warn_clobber = false;
@@ -723,6 +751,7 @@ void taiDataHostBase::InitGuiFields(bool) {
   vblDialog = NULL;
   prompt = NULL;
   body = NULL;
+  scrBody = NULL;
   widButtons = NULL;
   layButtons = NULL;
   okbut = NULL;
@@ -1056,6 +1085,117 @@ void taiDataHostBase::WidgetDeleting() {
   state = ZOMBIE;
 }
 
+taiDataHostBase_List taiDataHostBase::async_apply_list;
+taiDataHostBase_List taiDataHostBase::async_reshow_list;
+taiDataHostBase_List taiDataHostBase::async_reconstr_list;
+taiDataHostBase_List taiDataHostBase::async_getimage_list;
+
+bool taiDataHostBase::AsyncWaitProc() {
+  if(async_apply_list.size == 0 && async_reshow_list.size == 0 &&
+     async_getimage_list.size == 0 && async_reconstr_list.size == 0) return false;
+
+  // order is important here: don't want to have one thing trigger another right away..
+
+  bool did_some = false;
+  for(int i=0;i<async_reconstr_list.size;i++) {
+    taiDataHostBase* dhb = async_reconstr_list.FastEl(i);
+    if(dhb->reconstr_req) {
+//       cerr << "doing reconstr on: " << dhb->typ->name << endl;
+      dhb->ReConstr_Body();
+//       cerr << "did reconstr on: " << dhb->typ->name << endl;
+      dhb->state &= ~SHOW_CHANGED;
+      dhb->reconstr_req = false;
+      did_some = true;
+    }
+  }
+  async_reconstr_list.Reset();
+  if(did_some) return true;
+
+  for(int i=0;i<async_reshow_list.size;i++) {
+    taiDataHostBase* dhb = async_reshow_list.FastEl(i);
+    if(dhb->reshow_req) {
+      if(dhb->state == ACTIVE) {
+// 	cerr << "doing reshow on: " << dhb->typ->name << endl;
+        dhb->ReShow(dhb->reshow_req_forced);
+// 	cerr << "did reshow on: " << dhb->typ->name << endl;
+	did_some = true;
+      }
+      dhb->reshow_req = false;
+    }
+  }
+  async_reshow_list.Reset();
+  if(did_some) return true;
+
+  for(int i=0;i<async_getimage_list.size;i++) {
+    taiDataHostBase* dhb = async_getimage_list.FastEl(i);
+    if(dhb->getimage_req) {
+      if ((dhb->state & STATE_MASK) < CANCELED) {
+// 	cerr << "doing getimage on: " << dhb->typ->name << endl;
+        dhb->GetImage(false);
+// 	cerr << "did getimage on: " << dhb->typ->name << endl;
+	did_some = true;
+      }
+      dhb->getimage_req = false;
+    }
+  }
+  async_getimage_list.Reset();
+  if(did_some) return true;
+
+  for(int i=0;i<async_apply_list.size;i++) {
+    taiDataHostBase* dhb = async_apply_list.FastEl(i);
+    if(dhb->apply_req) {
+      if(dhb->state == ACTIVE) {
+// 	cerr << "doing apply on: " << dhb->typ->name << endl;
+        dhb->Apply();
+// 	cerr << "did apply on: " << dhb->typ->name << endl;
+	did_some = true;
+      }
+      dhb->apply_req = false;
+    }
+  }
+  async_apply_list.Reset();
+
+  return true;
+}
+
+void taiDataHostBase::Apply_Async() {
+  if (apply_req) return; // already waiting
+  if (state != ACTIVE) return;
+  apply_req = true;
+  async_apply_list.Link(this);
+//   cerr << "req apply async on: " << typ->name << endl;
+}
+
+void taiDataHostBase::ReShow_Async(bool forced) {
+  if (reshow_req) return; // already waiting
+  if ((state & STATE_MASK) >= CANCELED) return;
+  reshow_req = true;
+  reshow_req_forced = forced;
+  async_reshow_list.Link(this);
+//   cerr << "req reshow async on: " << typ->name << endl;
+}
+
+void taiDataHostBase::ReConstr_Async() {
+  if(reconstr_req) return;
+  reconstr_req = true;
+  async_reconstr_list.Link(this);
+//   cerr << "req constr async on: " << typ->name << endl;
+}
+
+void taiDataHostBase::GetImage_Async() {
+  // reshow does a getimage, so ignore if a reshow pending
+  if (getimage_req) return; // already waiting
+  // we can get these for DEFERRED as well, for buttons, ex/esp Program panels
+  if ((state & STATE_MASK) >= CANCELED) return;
+  getimage_req = true;
+  async_getimage_list.Link(this);
+//   cerr << "req getimage async on: " << typ->name << endl;
+}
+
+void taiDataHostBase::DebugDestroy(QObject* obj) {
+  cerr << "debug destroying: " << endl;
+}
+
 
 //////////////////////////////////
 //  taiDataHost_impl		//
@@ -1144,18 +1284,10 @@ const iColor taiDataHost_impl::colorOfRow(int row) const {
 
 void taiDataHost_impl::StartEndLayout(bool start) {
   if (start) {
-    body->setUpdatesEnabled(false);
+    widget()->setUpdatesEnabled(false);
   } else { // end
-    body->setUpdatesEnabled(true);
+    widget()->setUpdatesEnabled(true);
   }
-}
-
-
-void taiDataHost_impl::BodyCleared() { // called when last widget cleared from body
-  if (!(state & SHOW_CHANGED)) return; // probably just destroying
-  rebuild_body = true;
-  ReConstr_Body();
-  state &= ~SHOW_CHANGED;
 }
 
 void taiDataHost_impl::Cancel_impl() { //note: taiEditDataHost takes care of cancelling panels
@@ -1168,25 +1300,6 @@ void taiDataHost_impl::Cancel_impl() { //note: taiEditDataHost takes care of can
   }
 
   warn_clobber = false; // just in case
-}
-
-void taiDataHost_impl::ClearBody(bool waitproc) {
-  widget()->setUpdatesEnabled(false);
-  ClearBody_impl();
-  if (waitproc) {
-    QTimer::singleShot(150, this, SLOT(BodyCleared()) );
-    taiMiscCore::ProcessEvents(); // not a bad idea to update gui before proceeding
-    taiMiscCore::ProcessEvents(); // not a bad idea to update gui before proceeding
-    taiMiscCore::ProcessEvents(); // not a bad idea to update gui before proceeding
-  }
-  else {
-    BodyCleared(); //rebuilds if ShowChanged
-  }
-  widget()->setUpdatesEnabled(true);
-}
-
-void taiDataHost_impl::ClearBody_impl() {
-  DeleteChildrenLater(body);
 }
 
 void taiDataHost_impl::Constr_Methods() {
@@ -1230,67 +1343,6 @@ void taiDataHost_impl::Insert_Methods() {
     vblDialog->addWidget(frmMethButtons);
     frmMethButtons->setVisible(show_meth_buttons); // needed for deferred insert
   }
-}
-
-void taiDataHost_impl::customEvent(QEvent* ev_) {
-  // we return early if we don't accept, otherwise fall through to accept
-  switch ((int)ev_->type()) {
-  case CET_APPLY: {
-    if (apply_req) {
-      if (state == ACTIVE) {
-        Apply();
-      }
-      apply_req = false;
-    }
-  } break;
-  case CET_RESHOW: {
-    ReShowEvent* ev = static_cast<ReShowEvent*>(ev_);
-    if (reshow_req) {
-      if (state == ACTIVE) {
-        ReShow(ev->forced);
-        GetImage();
-      }
-      reshow_req = false;
-    }
-  } break;
-  case CET_GET_IMAGE: {
-    if (get_image_req) {
-      if ((state & STATE_MASK) < CANCELED) {
-        GetImage(false);
-      }
-      get_image_req = false;
-    }
-  } break;
-  default: inherited(ev_); 
-    return; // don't accept
-  }
-  ev_->accept();
-}
-
-void taiDataHost_impl::Apply_Async() {
-  if (apply_req) return; // already waiting
-  if (state != ACTIVE) return;
-  apply_req = true;
-  QEvent* ev = new QEvent((QEvent::Type)CET_APPLY);
-  QCoreApplication::postEvent(this, ev);
-}
-
-void taiDataHost_impl::ReShow_Async(bool forced) {
-  if (reshow_req) return; // already waiting
-  if ((state & STATE_MASK) >= CANCELED) return;
-  ReShowEvent* ev = new ReShowEvent(forced);
-  reshow_req = true;
-  QCoreApplication::postEvent(this, ev);
-}
-
-void taiDataHost_impl::GetImage_Async() {
-  // reshow does a getimage, so ignore if a reshow pending
-  if (get_image_req || reshow_req) return; // already waiting
-  // we can get these for DEFERRED as well, for buttons, ex/esp Program panels
-  if ((state & STATE_MASK) >= CANCELED) return;
-  QEvent* ev = new QEvent((QEvent::Type)CET_GET_IMAGE);
-  get_image_req = true;
-  QCoreApplication::postEvent(this, ev);
 }
 
 void taiDataHost_impl::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
@@ -1383,10 +1435,24 @@ void taiDataHost_impl::Ok_impl() { //note: only used for Dialogs
   }
 }
 
+void taiDataHost_impl::ClearBody(bool waitproc) {
+  widget()->setUpdatesEnabled(false);
+  ClearBody_impl();
+  if (!(state & SHOW_CHANGED)) return; // probably just destroying
+  ReConstr_Async();
+}
+
+void taiDataHost_impl::ClearBody_impl() {
+  DeleteChildrenLater(body);
+}
+
 void taiDataHost_impl::ReConstr_Body() {
   if (!isConstructed()) return;
+  rebuild_body = true;
   Constr_Body();
-  GetImage();
+  widget()->setUpdatesEnabled(true); // closes updates guy that was started in reshow
+  GetImage_Async();		// async all the way
+  rebuild_body = false;		// in case..
 }
 
 bool taiDataHost_impl::ReShow(bool force) {
@@ -1424,7 +1490,6 @@ bool taiDataHost_impl::ReShow(bool force) {
   }
   state |= SHOW_CHANGED; 
   ClearBody(); // rebuilds body after clearing -- but SHOW_CHANGED prevents GetImage...
-  GetImage(); // ... so we do it here
   defer_reshow_req = false; // if it was true
   return true;
 }
@@ -1687,6 +1752,9 @@ void taiDataHost::Constr_Box() {
   SET_PALETTE_BACKGROUND_COLOR(scrBody->viewport(), bg_color_dark);
   scrBody->setWidgetResizable(true); 
   body = new iStripeWidget();
+  body_vlay = new QVBoxLayout(body);
+  body_vlay->setMargin(0);
+  
   scrBody->setWidget(body);
   SET_PALETTE_BACKGROUND_COLOR(body, bg_color);
   ((iStripeWidget*)body)->setHiLightColor(bg_color_dark);
@@ -1700,8 +1768,6 @@ void taiDataHost::Constr_Box() {
 
 void taiDataHost::Constr_Body_impl() {
   first_tab_foc = NULL;		// reset
-  QVBoxLayout* vbl = new QVBoxLayout(body);
-  vbl->setMargin(0);
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
   layBody = new iFormLayout();
   layBody->setFormAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -1723,8 +1789,17 @@ void taiDataHost::Constr_Body_impl() {
 #endif
   layBody->setColumnStretch(1,1);
 #endif // 4.4 vs. <4.4
-  vbl->addLayout(layBody);
-  vbl->addStretch(1);
+  body_vlay->addLayout(layBody);
+  body_vlay->addStretch(1);
+}
+
+void taiDataHost::ClearBody_impl() {
+  if(body) {
+    DeleteWidgetsLater(body);
+    delete body->layout();	// nuke our vboxlayout guy
+    body_vlay = new QVBoxLayout(body);
+    body_vlay->setMargin(0);
+  }
 }
 
 void taiDataHost::Constr_Final() {
@@ -2502,10 +2577,10 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
       ctrl_pressed = true;
 #endif
     if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
-      iProgramCtrlDataHost* ths_ipcdh = dynamic_cast<iProgramCtrlDataHost*>(this);
-      if(!ths_ipcdh) {		// NOT one of those..
+//       iProgramCtrlDataHost* ths_ipcdh = dynamic_cast<iProgramCtrlDataHost*>(this);
+//       if(!ths_ipcdh) {		// NOT one of those..
 	Apply();
-      }
+//       }
       iMainWindowViewer* mvw = viewerWindow();
       if(mvw)
 	mvw->FocusCurTreeView(); // return focus back to current browser

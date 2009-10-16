@@ -729,6 +729,10 @@ void iSelectEditDataHost2::Initialize()
 }
 
 void iSelectEditDataHost2::Constr_Body_impl() {
+}
+ 
+void iSelectEditDataHost2::Constr_Box() {
+  row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if 
   if (tw) return;
   tw = new taiEditTableWidget(widget());
   tw->setColumnCount(2);
@@ -755,10 +759,6 @@ void iSelectEditDataHost2::Constr_Body_impl() {
   connect(tw, SIGNAL(customContextMenuRequested(const QPoint&)), 
     this, SLOT(tw_customContextMenuRequested(const QPoint&)) );
   body = tw;
-}
- 
-void iSelectEditDataHost2::Constr_Box() {
-  row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if 
 }
  
 
