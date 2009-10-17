@@ -675,8 +675,8 @@ void taiDataHostBase::DeleteWidgetsLater(QObject* obj) {
     chobj = ol.at(i);
     if(chobj->inherits("QWidget")) {
       ((QWidget*)chobj)->hide();
-      chobj->deleteLater();
     }
+    chobj->deleteLater();
   }
 }
 
@@ -777,8 +777,6 @@ void taiDataHostBase::Apply() {
   if (reshow_on_apply)
     defer_reshow_req = true; // forces rebuild so CONDSHOW guys work
   Refresh(); // GetImage/Unchanged, unless a defer_reshow pending
-/*obs  GetImage();
-  Unchanged(); */
   --updating;
 }
 
@@ -1159,10 +1157,11 @@ bool taiDataHostBase::AsyncWaitProc() {
 }
 
 void taiDataHostBase::Apply_Async() {
-  if (apply_req) return; // already waiting
-  if (state != ACTIVE) return;
-  apply_req = true;
-  async_apply_list.Link(this);
+  Apply();	     // no reason to async this..
+//   if (apply_req) return; // already waiting
+//   if (state != ACTIVE) return;
+//   apply_req = true;
+//   async_apply_list.Link(this);
 //   cerr << "req apply async on: " << typ->name << endl;
 }
 
@@ -1436,7 +1435,7 @@ void taiDataHost_impl::Ok_impl() { //note: only used for Dialogs
 }
 
 void taiDataHost_impl::ClearBody(bool waitproc) {
-  widget()->setUpdatesEnabled(false);
+  widget()->setUpdatesEnabled(false); // this is not reenabled until getimage!
   ClearBody_impl();
   if (!(state & SHOW_CHANGED)) return; // probably just destroying
   ReConstr_Async();
@@ -1450,8 +1449,7 @@ void taiDataHost_impl::ReConstr_Body() {
   if (!isConstructed()) return;
   rebuild_body = true;
   Constr_Body();
-  widget()->setUpdatesEnabled(true); // closes updates guy that was started in reshow
-  GetImage_Async();		// async all the way
+  GetImage_Async();		// async all the way -- otherwise doesn't work
   rebuild_body = false;		// in case..
 }
 
@@ -1795,8 +1793,8 @@ void taiDataHost::Constr_Body_impl() {
 
 void taiDataHost::ClearBody_impl() {
   if(body) {
-    DeleteWidgetsLater(body);
     delete body->layout();	// nuke our vboxlayout guy
+    DeleteWidgetsLater(body);
     body_vlay = new QVBoxLayout(body);
     body_vlay->setMargin(0);
   }

@@ -229,7 +229,8 @@ void iUserDataDataHost::Constr_Data_Labels() {
       QTableWidgetItem* twi = NULL;
       
       // force span, in case this row had a group before
-      tw->setSpan(row, 0, 1, 1);
+      // this is now giving an error in 4.6.0 beta -- unnec?
+//       tw->setSpan(row, 0, 1, 1);
       //TODO: Modal, based on type
       // data item
       twi = new QTableWidgetItem;
