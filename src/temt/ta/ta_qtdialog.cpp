@@ -1157,11 +1157,11 @@ bool taiDataHostBase::AsyncWaitProc() {
 }
 
 void taiDataHostBase::Apply_Async() {
-  Apply();	     // no reason to async this..
-//   if (apply_req) return; // already waiting
-//   if (state != ACTIVE) return;
-//   apply_req = true;
-//   async_apply_list.Link(this);
+//   Apply();	     // no reason to async this..
+  if (apply_req) return; // already waiting
+  if (state != ACTIVE) return;
+  apply_req = true;
+  async_apply_list.Link(this);
 //   cerr << "req apply async on: " << typ->name << endl;
 }
 
