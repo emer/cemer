@@ -737,15 +737,25 @@ public:
   inline void		SetProgFlagState(ProgFlags flg, bool on)
   { if(on) SetProgFlag(flg); else ClearProgFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
+  inline void		ToggleProgFlag(ProgFlags flg) { SetProgFlagState(flg, !HasProgFlag(flg)); }
+  // toggle program flag
 
   void			SetOffFlag(bool off);
-  // #MENU #MENU_ON_Object #DYN1 set the OFF flag to given state (i.e., turn OFF or ON this code element)
+  // set the OFF flag to given state: flag indicates whether code element should be run or not
+  void			ToggleOffFlag();
+  // #MENU #MENU_ON_Object #DYN1 toggle the OFF flag to opposite of current state: flag indicates whether code element should be run or not
   void			SetNonStdFlag(bool non_std);
-  // #MENU #MENU_ON_Object #DYN1 set non standard flag to given state: flag indicates that this is not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
+  // set non standard flag to given state: flag indicates that this is not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
+  void			ToggleNonStdFlag();
+  // #MENU #MENU_ON_Object #DYN1 toggle non standard flag to opposite of current state: flag indicates that this is not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
   void			SetNewElFlag(bool new_el);
-  // #MENU #MENU_ON_Object #DYN1 set new element flag to given state: flag indicates that this element was recently added to the program (just for user information/highlighting)
+  // set new element flag to given state: flag indicates that this element was recently added to the program (just for user information/highlighting)
+  void			ToggleNewElFlag();
+  // #MENU #MENU_ON_Object #DYN1 toggle new element flag to opposite of current state: flag indicates that this element was recently added to the program (just for user information/highlighting)
   void			SetVerboseFlag(bool new_el);
-  // #MENU #MENU_ON_Object #DYN1 set verbose flag to given state: when this part of the program is run, an informational message will be printed out on the css Console -- very useful for debugging
+  // set verbose flag to given state: when this part of the program is run, an informational message will be printed out on the css Console -- very useful for debugging
+  void			ToggleVerboseFlag();
+  // #MENU #MENU_ON_Object #DYN1 toggle verbose flag to opposite of current state: when this part of the program is run, an informational message will be printed out on the css Console -- very useful for debugging
 
   virtual ProgVar*	FindVarName(const String& var_nm) const;
   // find given variable within this program element -- NULL if not found

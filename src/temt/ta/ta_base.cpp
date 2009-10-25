@@ -230,6 +230,10 @@ bool tabMisc::DoDelayedFunCalls() {
 }
 
 void tabMisc::DeleteRoot() {
+  delayed_updateafteredit.Reset();
+  delayed_funcalls.Reset();
+  delayed_close.Reset();
+
   if (tabMisc::root) {
     delete tabMisc::root;
     tabMisc::root = NULL;

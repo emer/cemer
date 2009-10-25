@@ -2382,8 +2382,18 @@ void ProgEl::SetOffFlag(bool off) {
   DataChanged(DCR_ITEM_UPDATED);
 }
 
+void ProgEl::ToggleOffFlag() {
+  ToggleProgFlag(OFF);
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
 void ProgEl::SetNonStdFlag(bool non_std) {
   SetProgFlagState(NON_STD, non_std);
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
+void ProgEl::ToggleNonStdFlag() {
+  ToggleProgFlag(NON_STD);
   DataChanged(DCR_ITEM_UPDATED);
 }
 
@@ -2392,8 +2402,18 @@ void ProgEl::SetNewElFlag(bool new_el) {
   DataChanged(DCR_ITEM_UPDATED);
 }
 
+void ProgEl::ToggleNewElFlag() {
+  ToggleProgFlag(NEW_EL);
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
 void ProgEl::SetVerboseFlag(bool new_el) {
   SetProgFlagState(VERBOSE, new_el);
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
+void ProgEl::ToggleVerboseFlag() {
+  ToggleProgFlag(VERBOSE);
   DataChanged(DCR_ITEM_UPDATED);
 }
 

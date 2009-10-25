@@ -1107,7 +1107,12 @@ bool taiDataHostBase::AsyncWaitProc() {
     }
   }
   async_reconstr_list.Reset();
-  if(did_some) return true;
+  if(did_some) {
+    taMisc::ProcessEvents();
+    taMisc::ProcessEvents();
+    taMisc::ProcessEvents();
+    return true;
+  }
 
   for(int i=0;i<async_reshow_list.size;i++) {
     taiDataHostBase* dhb = async_reshow_list.FastEl(i);
@@ -1122,7 +1127,12 @@ bool taiDataHostBase::AsyncWaitProc() {
     }
   }
   async_reshow_list.Reset();
-  if(did_some) return true;
+  if(did_some) {
+    taMisc::ProcessEvents();
+    taMisc::ProcessEvents();
+    taMisc::ProcessEvents();
+    return true;
+  }
 
   for(int i=0;i<async_getimage_list.size;i++) {
     taiDataHostBase* dhb = async_getimage_list.FastEl(i);
@@ -1137,7 +1147,12 @@ bool taiDataHostBase::AsyncWaitProc() {
     }
   }
   async_getimage_list.Reset();
-  if(did_some) return true;
+  if(did_some) {
+    taMisc::ProcessEvents();
+    taMisc::ProcessEvents();
+    taMisc::ProcessEvents();
+    return true;
+  }
 
   for(int i=0;i<async_apply_list.size;i++) {
     taiDataHostBase* dhb = async_apply_list.FastEl(i);

@@ -26,6 +26,8 @@
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
 
+#include "iflowlayout.h"
+
 //////////////////////////////////
 //  tabSelectEditViewType 	//
 /////////////////////////////////
@@ -196,8 +198,16 @@ void iSelectEditDataHost::ClearBody_impl() {
   ta_menus.Reset();
   ta_menu_buttons.Reset();
 //  meth_el.Reset(); // must defer deletion of these, because the MethodData objects are used in menu calls, so can't be
-  layMethButtons = NULL;
-  DeleteChildrenLater(frmMethButtons);
+  if(frmMethButtons) {
+    if(layMethButtons && (layMethButtons != (iFlowLayout*)frmMethButtons->layout())) {
+      delete layMethButtons;
+    }
+    if(frmMethButtons->layout()) {
+      delete frmMethButtons->layout();
+    }
+    layMethButtons = NULL;
+    DeleteChildrenLater(frmMethButtons);
+  }
   show_meth_buttons = false;
 
   // note: no show menu in this class
@@ -767,8 +777,17 @@ void iSelectEditDataHost2::ClearBody_impl() {
   ta_menus.Reset();
   ta_menu_buttons.Reset();
 //  meth_el.Reset(); // must defer deletion of these, because the MethodData objects are used in menu calls, so can't be
-  layMethButtons = NULL;
-  DeleteChildrenLater(frmMethButtons);
+  // somehow separate..
+  if(frmMethButtons) {
+    if(layMethButtons && (layMethButtons != (iFlowLayout*)frmMethButtons->layout())) {
+      delete layMethButtons;
+    }
+    if(frmMethButtons->layout()) {
+      delete frmMethButtons->layout();
+    }
+    layMethButtons = NULL;
+    DeleteChildrenLater(frmMethButtons);
+  }
   show_meth_buttons = false;
 
   // note: no show menu in this class
