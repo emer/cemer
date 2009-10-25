@@ -558,6 +558,7 @@ void ProgVar::SetFlagsByOwnership() {
     }
   }
   else {
+    objs_ptr = false;		// this is incompatible with being local
     SetVarFlag(LOCAL_VAR);
     int_val = 0;
     real_val = 0.0;
@@ -633,6 +634,12 @@ void ProgVar::Copy_(const ProgVar& cp) {
     }
   }
   SetFlagsByOwnership();
+  if(objs_ptr) {
+    Program* myprg = (Program*)GetOwner(&TA_Program);
+    Program* othprg = (Program*)cp.GetOwner(&TA_Program);
+    if(myprg == othprg)
+      objs_ptr = false; // if in same program, then it is a duplicate and cannot be objs_ptr
+  }
 }
 
 void ProgVar::UpdateAfterEdit_impl() {
