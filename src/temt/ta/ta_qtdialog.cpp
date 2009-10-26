@@ -2060,14 +2060,14 @@ void taiEditDataHost::Enum_Members() {
 
 void taiEditDataHost::Constr_Body() {
   Constr_Body_impl();
-  StartEndLayout(true);
+//   StartEndLayout(true);
   if (inline_mode) {
     dat_cnt = 0;
     Constr_Inline();
   } else {
     Constr_Data_Labels();
   }
-  StartEndLayout(false);
+//   StartEndLayout(false);
 }
 
 void taiEditDataHost::Constr_Data_Labels() {
@@ -2368,11 +2368,13 @@ void taiEditDataHost::GetImage(bool force) {
   if (!mwidget) return; // huh?
   if (!force && !mwidget->isVisible()) return;
   ++updating;
+  StartEndLayout(true);
   GetImage_PromptTitle();
   if (state > DEFERRED1) {
     GetImage_Membs();
   }
   Unchanged();
+  StartEndLayout(false);
   --updating;
 }
 

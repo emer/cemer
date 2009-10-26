@@ -1426,6 +1426,10 @@ void DocEditDataHost::Constr_Box() {
   //  inherited::Constr_Box();
 }
 
+void DocEditDataHost::ClearBody_impl() {
+
+}
+
 void DocEditDataHost::GetImage_Membs() {
   //  inherited::GetImage_Membs();
   taDoc* doc = this->doc();

@@ -445,6 +445,7 @@ public:
 protected:
   override void		Constr_Body();
   override void 	Constr_Box(); // add the docs box
+  override void 	ClearBody_impl();
   override void 	GetValue_Membs();
   override void 	GetImage_Membs();
 

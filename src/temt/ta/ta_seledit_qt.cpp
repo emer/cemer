@@ -845,7 +845,10 @@ void iSelectEditDataHost2::Constr_Data_Labels() {
       ms->memb_el.Add(md);
       // force span, in case this row had a group before
       // this is now giving an error in 4.6.0 beta -- unnec?
-//       tw->setSpan(row, 0, 1, 1);
+      // but it needs the call in 4.5.x -- otherwise row is blank.
+#if (QT_VERSION < 0x040600)
+      tw->setSpan(row, 0, 1, 1);
+#endif
       // label item
       QTableWidgetItem* twi = new QTableWidgetItem;
       twi->setText(item->caption());
