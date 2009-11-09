@@ -760,6 +760,36 @@ void ScriptPrjnSpec::Compile() {
 }
 
 /////////////////////////////
+//	  Program	   //
+/////////////////////////////
+
+void ProgramPrjnSpec::Initialize() {
+}
+
+void ProgramPrjnSpec::Destroy() {
+}
+
+void ProgramPrjnSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(!CheckError(!(bool)prog, quiet, rval,
+		 "The program prog is not set -- no projections will be made!"))
+    return;
+  CheckError(!prog->HasVar("prjn"), quiet, rval,
+	     "The program does not have the required 'prjn' arg variable -- no projections will be made!");
+}
+
+void ProgramPrjnSpec::Connect_impl(Projection* prj) {
+  if(!prog) return;
+  bool did_it = prog->SetVar("prjn", prj);
+  if(!did_it) return;
+  prog->Run();
+}
+
+void ProgramPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+}
+
+/////////////////////////////
 //	  Custom	   //
 /////////////////////////////
 

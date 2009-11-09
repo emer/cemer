@@ -199,7 +199,7 @@ private:
 };
 
 class EMERGENT_API ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {
-  // Script-controlled connectivity: use prjn variable in script code to refer to current projection that script is operating on; recv layer is prjn->layer, send layer is prjn->from; must do recv_unit->ConnectAlloc(no_of_cons, prjn); to allocate full set of connections before making any connections using recv_unit->ConnectFromCk(send_unit, prjn) 
+  // Script-controlled connectivity: use prjn variable in script code to refer to current projection that script is operating on; recv layer is prjn->layer, send layer is prjn->from; must do ru->RecvConsPreAlloc and su->SendConsPreAlloc calls pprior to making connections -- use ru->ConnectFrom(su, prjn) or ru->ConnectFromCk to make connections
 INHERITED(ProjectionSpec)
 public:
   Projection*	prjn;		// #READ_ONLY #NO_SAVE this holds the argument to the prjn
@@ -226,6 +226,25 @@ private:
   void 	Destroy();
 };
 
+class EMERGENT_API ProgramPrjnSpec : public ProjectionSpec {
+  // Program-controlled connectivity: points to a program that will generate appropriate connections -- MUST have a 'prjn' arg variable variable in program, which will be set prior to calling to relevant projection -- recv layer is prjn->layer, send layer is prjn->from; must do ru->RecvConsPreAlloc and su->SendConsPreAlloc calls pprior to making connections -- use ru->ConnectFrom(su, prjn) or ru->ConnectFromCk to make connections
+INHERITED(ProjectionSpec)
+public:
+  ProgramRef	prog;		// program to call to connect layers -- prjn arg value (must exist) is set to current projection and then it is called
+
+  override void	Connect_impl(Projection* prj);
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {}
+    // NOTE: if you allow init_wts you must set wts in your script
+
+  TA_SIMPLE_BASEFUNS(ProgramPrjnSpec);
+protected:
+  override void UpdateAfterEdit_impl();
+  override void CheckThisConfig_impl(bool quiet, bool& rval);
+private:
+  void	Initialize();
+  void 	Destroy();
+};
+
 class EMERGENT_API CustomPrjnSpec : public ProjectionSpec {
   // connectivity is defined manually (i.e. unit-by-unit)
 INHERITED(ProjectionSpec)
@@ -237,7 +256,6 @@ private:
   void	Initialize()	{ };
   void	Destroy()	{ };
 };
-
 
 //////////////////////////////////////////
 //	UnitGroup-based PrjnSpecs	//

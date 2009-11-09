@@ -3599,6 +3599,7 @@ void Program::Step() {
 void Program::SetAsStep() {
   if(!prog_gp) return;
   prog_gp->step_prog = this;
+//   SetProgFlag(SHOW_STEP);
 }
 
 void Program::SetStopReq(StopReason stop_rsn, const String& stop_message) {

@@ -415,6 +415,9 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
 	    return DQR_NO_SAVE;
 	  // to save because otherwise we will not be properly restored if it is deleted..
 	}
+	if(dt->Cells() > taMisc::undo_data_max_cells) {
+	  return DQR_NO_SAVE;	// too big!
+	}
       }
       if (dt && dt->HasDataFlag(DataTable::SAVE_ROWS)) return DQR_SAVE;
     }
@@ -1779,6 +1782,15 @@ int DataTable::MinLength() {
     min = MIN(min,ar->AR()->frames());
   }
   return min;
+}
+
+int DataTable::CellsPerRow() const {
+  int rval = 0;
+  for(int i=0;i<data.size;i++) {
+    DataCol* ar = data.FastEl(i);
+    rval += ar->cell_size();
+  }
+  return rval;
 }
 
 DataCol* DataTable::NewCol(DataCol::ValType val_type, const String& col_nm) {

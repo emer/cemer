@@ -629,11 +629,27 @@ String NetMonItem::GetChanName(taBase* obj, int col_idx) {
       rval = name;
     else
       rval = name + "_" + String(col_idx);
+    rval = taMisc::StringCVar(rval); // keep it clean for css var names
+    TestWarning(val_specs.FindNameIdx(rval) >= 0, "NetMonItem::GetChanName",
+		   "Monitor item with custom name:", name,
+		"conflicts with another monitor item of the same name -- please rename one of them!");
   }
   else {
     rval = GetAutoName(obj);
+    rval = taMisc::StringCVar(rval); // keep it clean for css var names
+    if(val_specs.FindNameIdx(rval) >= 0) {   // NOTE: N^2 kind of thing, but done infrequently so ok..
+      for(max_name_len++; max_name_len < 50; max_name_len++) { // hard coded max here..
+	rval = GetAutoName(obj);
+	rval = taMisc::StringCVar(rval); // keep it clean for css var names
+	if(val_specs.FindNameIdx(rval) < 0) {
+	  break;		// safe!
+	}
+      }
+      TestWarning(max_name_len >= 50, "NetMonItem::GetChanName",
+		  "Monitor item:",name,"with auto-name of:",rval,	
+		  "is conflicting with another item of the same name, despite an attempt to increase the max_name_len up to 50 -- either manually incease further or fix underlying naming conflict");
+    }
   }
-  rval = taMisc::StringCVar(rval); // keep it clean for css var names
   return rval;
 }
 

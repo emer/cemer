@@ -3060,6 +3060,7 @@ taiItemChooser::taiItemChooser(const String& caption_, QWidget* par_window_)
 }
 
 void taiItemChooser::init(const String& caption_) {
+  init_filter = "^";
   m_changing = 0;
   caption = caption_;
   multi_cats = false;
@@ -3139,6 +3140,10 @@ bool taiItemChooser::Choose(taiItemPtrBase* client_) {
 // more complex caching would require flags etc. to track whether the
 // inputs to the item changed -- cpus are so fast now, this may not be worth it
   m_client = client_;
+  if(client_->filter_start_txt.nonempty())
+    init_filter = String("^") + client_->filter_start_txt;
+  else
+    init_filter = "^";
   if (view() < 0) {
     setView(0); // triggers build, and sets sel
   } else {
@@ -3416,7 +3421,7 @@ void taiItemChooser::setView(int value, bool force) {
 
 void taiItemChooser::showEvent(QShowEvent* event) {
   inherited::showEvent(event);
-  filter->insert("^");
+  filter->insert(init_filter);
   filter->deselect();
   filter->end(false);
   if (m_selItem)
@@ -3578,7 +3583,7 @@ bool taiItemPtrBase::OpenChooser() {
 }
 
 bool taiItemPtrBase::ShowItemFilter(void* base, void* item, const String& itnm) const {
-  if(filter_start_txt.nonempty() && !itnm.startsWith(filter_start_txt)) return false;
+//   if(filter_start_txt.nonempty() && !itnm.startsWith(filter_start_txt)) return false;
   if (item_filter) 
     return item_filter(base, item);
   return true;

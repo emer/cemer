@@ -773,6 +773,10 @@ public:
 
   int			cols() const { return data.size; }
   // #CAT_Columns number of columns
+  int			CellsPerRow() const;
+  // #CAT_Columns compute the total number of cells (single values) used per row in the entire data table (iterates over columns, adds up cell_size())
+  int			Cells() const { return CellsPerRow() * rows; }
+  // #CAT_Columns compute the total number of cells used in the entire data table (CellsPerRow() * rows)
   override taList_impl* children_() {return &data;}
   override void*	GetTA_Element(Variant i, TypeDef*& eltd)
   { return data.GetTA_Element(i, eltd); }

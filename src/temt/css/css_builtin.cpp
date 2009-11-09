@@ -157,25 +157,41 @@ static cssEl* cssElCFun_asgn_mult_stub(int, cssEl* arg[]) {
   return arg[1];
 }
 static cssEl* cssElCFun_asgn_div_stub(int, cssEl* arg[]) {
-  if((double)*(arg[2]) == 0.0) {
-    cssProg* cp = arg[0]->prog;
-    cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
-//     cp->top->run_stat = cssEl::ExecError;
+  cssEl::cssTypes eltp = arg[1]->GetType();
+  if(eltp == cssEl::T_Real || eltp == cssEl::T_Float) {
+    if((double)*(arg[2]) == 0.0) {
+      cssProg* cp = arg[0]->prog;
+      cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
+      return arg[1];
+    }
   }
   else {
-    *(arg[1]) /= *(arg[2]);
+    if((int)*(arg[2]) == 0) {
+      cssProg* cp = arg[0]->prog;
+      cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
+      return arg[1];
+    }
   }
+  *(arg[1]) /= *(arg[2]);
   return arg[1];
 }
 static cssEl* cssElCFun_asgn_mod_stub(int, cssEl* arg[]) {
-  if((double)*(arg[2]) == 0.0) {
-    cssProg* cp = arg[0]->prog;
-    cssMisc::Warning(cp, "Floating Point Exception: Division by Zero (Modulus operator)");
-//     cp->top->run_stat = cssEl::ExecError;
+  cssEl::cssTypes eltp = arg[1]->GetType();
+  if(eltp == cssEl::T_Real || eltp == cssEl::T_Float) {
+    if((double)*(arg[2]) == 0.0) {
+      cssProg* cp = arg[0]->prog;
+      cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
+      return arg[1];
+    }
   }
   else {
-    *(arg[1]) %= *(arg[2]);
+    if((int)*(arg[2]) == 0) {
+      cssProg* cp = arg[0]->prog;
+      cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
+      return arg[1];
+    }
   }
+  *(arg[1]) %= *(arg[2]);
   return arg[1];
 }
 static cssEl* cssElCFun_asgn_lshift_stub(int, cssEl* arg[]) {
@@ -377,26 +393,40 @@ static cssEl* cssElCFun_mul_stub(int, cssEl* arg[]) {
   return *(arg[1]) * *(arg[2]);
 }
 static cssEl* cssElCFun_div_stub(int, cssEl* arg[]) {
-  if((double)*(arg[2]) == 0.0) {
-    cssProg* cp = arg[0]->prog;
-    cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
-//     cp->top->run_stat = cssEl::ExecError;
-    return arg[2];
+  cssEl::cssTypes eltp = arg[1]->GetType();
+  if(eltp == cssEl::T_Real || eltp == cssEl::T_Float) {
+    if((double)*(arg[2]) == 0.0) {
+      cssProg* cp = arg[0]->prog;
+      cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
+      return arg[2];
+    }
   }
   else {
-    return *(arg[1]) / *(arg[2]);
+    if((int)*(arg[2]) == 0) {
+      cssProg* cp = arg[0]->prog;
+      cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
+      return arg[2];
+    }
   }
+  return *(arg[1]) / *(arg[2]);
 }
 static cssEl* cssElCFun_modulo_stub(int, cssEl* arg[]) {
-  if((double)*(arg[2]) == 0.0) {
-    cssProg* cp = arg[0]->prog;
-    cssMisc::Warning(cp, "Floating Point Exception: Division by Zero (Modulus operator)");
-//     cp->top->run_stat = cssEl::ExecError;
-    return arg[2];
+  cssEl::cssTypes eltp = arg[1]->GetType();
+  if(eltp == cssEl::T_Real || eltp == cssEl::T_Float) {
+    if((double)*(arg[2]) == 0.0) {
+      cssProg* cp = arg[0]->prog;
+      cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
+      return arg[2];
+    }
   }
   else {
-    return *(arg[1]) % *(arg[2]);
+    if((int)*(arg[2]) == 0) {
+      cssProg* cp = arg[0]->prog;
+      cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
+      return arg[2];
+    }
   }
+  return *(arg[1]) % *(arg[2]);
 }
 static cssEl* cssElCFun_lshift_stub(int, cssEl* arg[]) {
   if((arg[1]->GetType() == cssEl::T_TA) && (arg[2]->GetType() == cssEl::T_Bool)) {

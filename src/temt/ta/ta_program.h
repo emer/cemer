@@ -1167,7 +1167,7 @@ public:
   virtual void  Run();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run the program
   virtual void	Step();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run step the program, at the previously selected step level (see SetAsStep or the program group control panel)
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT&&flags:SHOW_STEP #CAT_Run step the program, at the previously selected step level (see SetAsStep or the program group control panel)
   virtual void	Stop();
   // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)
   virtual void	Abort();

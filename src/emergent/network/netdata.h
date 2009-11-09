@@ -236,7 +236,7 @@ public:
   String        	variable;	// #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections or prjns gets projection-level variables; can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified
   String		var_label;	// #CONDSHOW_OFF_computed label to use in place of variable in naming the columns/channels generated from this data (if empty, variable is used)
   NameStyle		name_style;	 // #CONDSHOW_OFF_computed how to name the columns/channels generated from this data?
-  int			max_name_len;	 // #DEF_6 #EXPERT maximum length for any name segment
+  int			max_name_len;	 // #DEF_6 maximum length for any name segment
 
   ValType		val_type;       // #CONDSHOW_ON_computed type of data column to create (only for computed variables)
   bool			matrix;		// #CONDSHOW_ON_computed if true, create a matrix data column (otherwise scalar)

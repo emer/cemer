@@ -562,6 +562,7 @@ taMisc::ConsoleOptions taMisc::console_options = (taMisc::ConsoleOptions)(CO_USE
 taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
 int	taMisc::display_width = 80;
 int	taMisc::undo_depth = 100;
+int	taMisc::undo_data_max_cells = 1000;
 float	taMisc::undo_new_src_thr = 0.3f;
 bool	taMisc::delete_prompts = false;
 //bool	taMisc::delete_prompts = true;
