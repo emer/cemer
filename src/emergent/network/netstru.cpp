@@ -905,12 +905,12 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
   }
   if(sz < size) {
     TestWarning(!quiet, "LoadWeights_strm", "weights file has fewer connections:", String(sz),
-		"than existing group size of:",
-		String(size), "-- eliminating extra connections");
-    for(int i=size-1; i >= sz; i--) {
-      Unit* su = Un(i);
-      ru->DisConnectFrom(su, prjn);
-    }
+		"than existing group size of:", String(size));
+    // doesn't really make sense to nuke these -- maybe add a flag overall to enable this
+//     for(int i=size-1; i >= sz; i--) {
+//       Unit* su = Un(i);
+//       ru->DisConnectFrom(su, prjn);
+//     }
   }
   else if(sz > size) {
     if(sz > alloc_size) {
@@ -3544,6 +3544,22 @@ bool Unit_Group::GetUnitNames(taMatrix* mat) {
   return true;
 }
 
+Unit* Unit_Group::MostActiveUnit(int& idx) {
+  idx = -1;
+  if(leaves == 0) return NULL;
+  Unit* max_un = Leaf(0);
+  float max_act = max_un->act;
+  for(int i=1;i<leaves;i++) {
+    Unit* un = Leaf(i);
+    if(un->act > max_act) {
+      max_un = un;
+      idx = i;
+      max_act = max_un->act;
+    }
+  }
+  return max_un;
+}
+
 Unit* Unit_Group::FindUnitFmCoord(int x, int y) {
   if (( x < 0) || (x >= geom.x) || (y < 0) || (y >= geom.y)) return NULL;
   int idx = y * geom.x + x;
@@ -4782,6 +4798,10 @@ bool Layer::Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_i
     if(!u->Snapshot(variable, math_op, arg_is_snap)) return false;
   }
   return true;
+}
+
+Unit* Layer::MostActiveUnit(int& idx) {
+  return units.MostActiveUnit(idx);
 }
 
 int Layer::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {

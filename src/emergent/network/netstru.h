@@ -1297,6 +1297,9 @@ public:
   virtual void	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
 
+  virtual Unit* MostActiveUnit(int& idx);
+  // #CAT_Activation Return the unit with the highest activation (act) value -- index of unit is returned in idx
+
   Unit* 	FindUnitFmCoord(const TwoDCoord& coord)
   { return FindUnitFmCoord(coord.x,coord.y); }
   // #CAT_Structure returns unit at given coordinates within layer
@@ -1622,6 +1625,8 @@ public:
   // #BUTTON #DYN1 #CAT_Statistic monitor (record in a datatable) the given variable on this layer (can be a variable on the units or connections as well)
   virtual bool	Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap=true);
   // #BUTTON #CAT_Statistic take a snapshot of given variable: assign snap value on unit to given variable value, optionally using simple math operation on that value.  if arg_is_snap is true, then the 'arg' argument to the math operation is the current value of the snap variable.  for example, to compute intersection of variable with snap value, use MIN and arg_is_snap.  
+  virtual Unit* MostActiveUnit(int& idx);
+  // #CAT_Statistic Return the unit with the highest activation (act) value -- index of unit is returned in idx
 
   virtual int	ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp);
   // #CAT_Structure switch any units/layers using old_sp to using new_sp
