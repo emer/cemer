@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.0.0
+// ta_Dump File v2.0 -- code v5.0.1.0
 LeabraProject .projects[0] { 
   taBase_Group @.templates = [0] {
   };
@@ -485,47 +485,45 @@ The next step is more clearly monitor the performance of the network as it learn
 </body>
 </html>
 ";
-   html_text="<html>
-<head></head>
-<body>
-<P>
-<h1> Programs for Controlling the Simulation </h1>
-<P>
+   html_text="<html><head></head><body>
+<p>
+</p><h1> Programs for Controlling the Simulation </h1>
+<p>
 Again return to the <a href=\"ta:.PanelTab.LeabraWizard_0\">LeabraWizard_0</a> wizard panel, and now select <a href=\"ta:.wizards.LeabraWizard_0.StdProgs()\">Programs/Std Progs</a> from the bottom menu.  (return to these docs by clicking back on <code>docs/Programs</code> in the browser).
-<P>
+</p><p>
 This created a set of standard programs that organize the presentation of input patterns to the network into a hierarchy of time scales:
-<P>
-<ul><li> LeabraBatch -- iterates over multiple simulated \"subjects\" -- each having their own different random initial weights (we won't use this initially).
-<li> LeabraTrain -- a complete training of the network from random initial weights to final correct performance, by iterating over multiple \"epochs\"
-<li> LeabraEpoch -- one full pass through all of the different task input patterns
-<li> LeabraTrial -- processes one input pattern, using two  <i>phases</i>  of settling -- the minus phase presents the input stimulus, and allows the network to come up with its own best guess as to the correct response, and the plus phase presents the correct answer to allow the network to learn to perform the task correctly.
-<li> LeabraSettle -- multiple updates of neural unit activations to process a given input/output pattern.
-<li> LeabraCycle -- a single cycle of updating of neural unit activation states (roughly 5-10msec of simulated real time)
-</ul>
+</p><p>
+</p><ul><li> LeabraBatch -- iterates over multiple simulated \"subjects\" -- each having their own different random initial weights (we won't use this initially).
+</li><li> LeabraTrain -- a complete training of the network from random initial weights to final correct performance, by iterating over multiple \"epochs\"
+</li><li> LeabraEpoch -- one full pass through all of the different task input patterns
+</li><li> LeabraTrial -- processes one input pattern, using two  <i>phases</i>  of settling -- the minus phase presents the input stimulus, and allows the network to come up with its own best guess as to the correct response, and the plus phase presents the correct answer to allow the network to learn to perform the task correctly.
+</li><li> LeabraSettle -- multiple updates of neural unit activations to process a given input/output pattern.
+</li><li> LeabraCycle -- a single cycle of updating of neural unit activation states (roughly 5-10msec of simulated real time)
+</li></ul>
 There are also some other supporting programs that we'll discuss later.
-<P>
+<p>
 You might notice that the ApplyInputs program is opened up to show the LayerWriter_0 object -- this was auto-configured to apply the input data values to the appropriate (same name) layers in the network.  If you change the layer names or add additional layers, etc, you may need to go back to this object and hit the AutoConfig button to reconfigure it.  We'll do this later in the tutorial.
-<P>
-<h2> Running the Simulation </h2>
-<P>
+</p><p>
+</p><h2> Running the Simulation </h2>
+<p>
 First, make sure you're viewing the <a href=\"ta:.T3Tab.Network_0\">Network_0</a> network view tab, and then click on the 
  <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain\">LeabraTrain</a> program.  Press the 
  <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Init()\">Init</a> button at the bottom of the window, followed by 
 the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Run()\">Run</a> button (these links will actually do this for you!).
-<P>
+</p><p>
 You should then see the network processing each of the input patterns for the task multiple times, as it iterates over epochs of trials of settles of cycles of processing.  Depending on your hardware, this may wiz by in quite a blur.
-<P>
+</p><p>
 Once it finishes, you can see more clearly what it is doing by hitting the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Step()\">Step</a> button, 
 which will perform one phase of settling at a time.  You should observe that the network gets the correct output unit active in the minus phase (look for <code>MINUS_PHASE</code> or <code>PLUS_PHASE</code> in the text region at the bottom of the network 3d view display.  It has successfully learned the task!
-<P>
+</p><p>
 We'll learn a lot more about how programs work when we write one from scratch to generate our input data for training the network.  If you're adventurous, you can click on them and hit the EditProgram button to see the underlying \"guts\" that make the programs do what they do.  Everything that happens in running the simulation is explicitly listed out, and can be modified in any way that you might want -- this is very powerful and probably a bit dangerous too.. :)  Don't do anything to modify the programs at this point.
-<P>
+</p><p>
 The next step is more clearly monitor the performance of the network as it learns, by recording 
 <a href=\"ta:.docs.OutputData\">OutputData</a> from the network.
-<P>
-</body>
-</html>
-";
+</p><p>
+
+
+</p></body></html>";
   };
   taDoc @[4] {
    name="OutputData";
@@ -590,7 +588,7 @@ First, we can make a cluster plot of the Hidden Layer activations, to see if we 
  [[.data_proc.data_anal.Cluster()|HighDim/Cluster]], and set the following parameters (leave the rest at their defaults):
 * view = on (generate a graph of the cluster data)
 * src_data = TrialOutputData
-* data_col_nm = Hidden_act   (specifies the column of data that we want to cluster)
+* data_col_nm = Hidden_act_m   (specifies the column of data that we want to cluster)
 * name_col_name = trial_name (specifies the column with labels for the cluster nodes)
 
 You should see a new graph show up, with the A,B,C,X,Y,Z labels grouped together into different clusters.  Most likely, you should observe in a trained network that the A and X are grouped together, separate from the other items.  Can you figure out why this would be the case?
@@ -603,74 +601,72 @@ There are many more things one could do, but hopefully this gives a flavor.  The
 </body>
 </html>
 ";
-   html_text="<html>
-<head></head>
-<body>
+   html_text="<html><head></head><body>
 <h1> Monitoring, Analyzing, and Displaying Output Data </h1>
-<P>
+<p>
 In this section we explore various ways of understanding better how the network is performing.
-<P>
-<h2> Graphing Learning Performance over Epochs </h2>
-<P>
+</p><p>
+</p><h2> Graphing Learning Performance over Epochs </h2>
+<p>
 To see how your network is learning a given task, the first step is to generate a graph of the learning performance (sum squared error on the training patterns) over epochs.  Fortunately, the default programs are already collecting this data for us, so we just need to display the graph.
-<P>
+</p><p>
 The data is being recorded in the <a href=\"ta:.data.gp.OutputData.EpochOutputData\">EpochOutputData</a> data table object in the <code>data/OutputData subgroup</code>.  You should see a few rows of data from the previous run, and you should notice that the <code>avg_sse</code> column shows a general decrease in average sum-squared-error on the training patterns, ending in a 0, which is what stopped the training.
-<P>
+</p><p>
 To graph this data, you just generate a graph view of this data table.  As a general rule in the software, all view information is always generated by a given main object like a datatable or a network -- you don't create a graph and then associate data with it -- it goes the other way.  The menu selection to create the graph view is <a href=\"ta:.data.gp.OutputData.EpochOutputData.NewGraphView()\">View/New Graph View</a>.  This time, let's be adventurous and instead of putting this graph in a separate view frame, put it in the <code>Network_0</code> frame.
-<P>
+</p><p>
 If you happened to have put it in the wrong frame initially, don't worry -- just do the context menu over the frame view tab on the right (should be called EpochOutputData), and select Delete Frame.  Note that there can be multiple views of the same underlying data.
-<P>
+</p><p>
 You should see a graph appear in the upper right of your network display, showing a decreasing line from left to right.  By default the line is (redundantly) color coded for the plot value.  You can control this and many other features of the graph display in the graph control panel.
-<P>
+</p><p>
 But wait, where is that panel?  You should only see a <a href=\"ta:.PanelTab.Network_0\">Network_0</a> tab in the middle panel tabs.  If you click on that guy, and look at the bottom, you'll see selectors for the different view objects within this one view frame (Network_0 and EpochOutputData Graph).  Select the graph view tab at the bottom, and again mouse over the various controls and play around with them.  As you can see, there are many different ways of
 configuring the graphs -- feel free to explore.  Note that there are several other variables that you could plot, including average cycles to settle, and a count of the number of errors made across trials. Also see the wiki <a href=\"ta:.Wiki.GraphView\">GraphView</a> page for more details.
-<P>
+</p><p>
 To see your graph updating in real-time, you can re-init and run the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain\">LeabraTrain</a> program:
  <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Init()\">Init</a> 
 <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Run()\">Run</a>.
-<P>
-<h3> Arranging the 3d View </h3>
-<P>
+</p><p>
+</p><h3> Arranging the 3d View </h3>
+<p>
 Although the <a href=\"ta:.T3Tab.Network_0\">Network_0</a> view is sufficient, it could be configured to look better.  We could shrink the graph view a bit, and orient it better.  To do this (optional), click on the <b>red arrow</b> button to the right of the view, and then grab the upper horizontal bar of the small purple box in the lower-left hand corner of the graph view display.  Drag this slowly down -- you'll see the green frame rotating as you do.  Do this to the point where graph is angled more \"head on\".  Similarly, you can grab the left vertical bar and rotate the graph to the left a bit to make it more face on.  Next, grab any corner of the box, and shrink the view a bit (maybe to half or so of its original size).  Finally, you can move the view down and to the right a bit, by clicking on the face of the cube (not on any of the purple elements), to fit in between the Hidden and Output layers.
-<P>
+</p><p>
 When you've got it the way you want, you can press the <b>eye</b> button to resize the display to fit, and maybe Dolly zoom in a bit.  You could perhaps pan to the right a bit with shift-mouse.  When it looks good, hit the <b>blueprint house</b> button (\"save home\"), which saves this view configuration.
-<P>
-<h2> Recording Network Activations for a Grid View </h2>
-<P>
+</p><p>
+</p><h2> Recording Network Activations for a Grid View </h2>
+<p>
 Another common analysis task is to look at the pattern of activations across trials.  To do this, we need to record activation values to our trial-level output data table (which was automatically created by the wizard).  The easiest way to do this is to select the network object in the network view by clicking on the thin green frame surrounding the text display at the bottom of the network, and then using the right mouse button to get the context menu, and select <a href=\"ta:.networks[0].MonitorVar()\">MonitorVar</a>.  For the <code>net_mon</code> field, click and select the <code>trial_netmon</code>, which is for monitoring information at the trial level (the other one is for the epoch level).  For the <code>variable</code> field, type in \"act_m\" (no quotes), to record minus-phase activations (the monitor runs at the end of the trial, after the plus phase).  This will record activations for all three layers in the network in one easy step (you could alternatively do MonitorVar on each of the layers individually, or on any other object in the network for that matter, and record any variable).
-<P>
+</p><p>
 Next, we need to make a Grid View of the resulting data, which will be recorded in the <a href=\"ta:.data.gp.OutputData.TrialOutputData\">TrialOutputData</a> object -- do a 
 <a href=\"ta:.data.gp.OutputData.TrialOutputData.NewGridView()\">View/New Grid View</a>, and again let's put this in the Network_0 frame.  Follow the same general steps as before (see Arranging the 3d View above) to position this new grid view into the bottom right hand region of the view.
-<P>
+</p><p>
 The grid view will not contain the new information until the  <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain\">LeabraTrain</a> program is <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Init()\">Init</a> and <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Run()\">Run</a> again.  After doing that, you need to scroll the grid view display all the way over to the right -- there are too many columns to fit within the 5 columns that the standard grid view is configured to display.  To do this, select the <b>red arrow</b> tool and drag the purple bar at the bottom of the <code>TrialOutputData</code> gridview all the way to the right.  You should see some colored squares with the Input, Hidden, and Output column headers.
-<P>
+</p><p>
 To really make things clean, you can select the column headers of the columns you don't want to display (e.g., ext_rew, minus cycles) and do context menu/View Properties and then hit the Hide button at the bottom of the dialog that comes up.  Ideally, you'd just want to see the trial name, sse, and the different layer activation columns.
-<P>
+</p><p>
 Also, because there are just 6 events, we can set the rows to display to 6 in the grid view panel, to make the display fit just right.
-<P>
+</p><p>
 Again, you can run your program and see it update the display.
-<P>
-<h2> Analyzing the Hidden Layer Representations </h2>
-<P>
+</p><p>
+</p><h2> Analyzing the Hidden Layer Representations </h2>
+<p>
 Now that we have some data from the network, we can perform some powerful analysis techniques on that data. 
-<P>
+</p><p>
 First, we can make a cluster plot of the Hidden Layer activations, to see if we can understand better what is being encoded.  To do this, find the <a href=\"ta:.data_proc.data_anal\">data_anal</a> object under <code>data_proc/data_anal</code> in the left browser.  This contains many useful analysis tools, organized by different topics in the buttons at the bottom.  Select
  <a href=\"ta:.data_proc.data_anal.Cluster()\">HighDim/Cluster</a>, and set the following parameters (leave the rest at their defaults):
-<ul><li> view = on (generate a graph of the cluster data)
-<li> src_data = TrialOutputData
-<li> data_col_nm = Hidden_act   (specifies the column of data that we want to cluster)
-<li> name_col_name = trial_name (specifies the column with labels for the cluster nodes)
-</ul>
+</p><ul><li> view = on (generate a graph of the cluster data)
+</li><li> src_data = TrialOutputData
+</li><li> data_col_nm = Hidden_act_m   (specifies the column of data that we want to cluster)
+</li><li> name_col_name = trial_name (specifies the column with labels for the cluster nodes)
+</li></ul>
 You should see a new graph show up, with the A,B,C,X,Y,Z labels grouped together into different clusters.  Most likely, you should observe in a trained network that the A and X are grouped together, separate from the other items.  Can you figure out why this would be the case?
-<P>
+<p>
 Another way to process this high-dimensional activation pattern data is to project it down into 2 dimensions.  Two techniques for this are principal components analysis (PCA) and multidimensiona scaling (MDS).  To try PCA, select
 <a href=\"ta:.data_proc.data_anal.PCA2dPrjn()\">HighDim/PCA2dPrjn</a> -- fill in the same info you did for the Cluster plot.  You should see that the labels are distributed as points in a two-dimensional space, with the X-axis being the dimension (principal component) of the hidden layer activation patterns that captures the greatest amount of variance across patterns, and the Y-axis being the second strongest component.  Accordingly, you should see A and X on the left or the right side of the graph, and the others on the other side.  It is not clear what the vertical axis represents..
-<P>
+</p><p>
 There are many more things one could do, but hopefully this gives a flavor.  The next step: <a href=\"ta:.docs.TaskProgram\">TaskProgram</a> is to write a program to automatically generate our input patterns for training the network -- initially we'll start out with the simple task we ran already, but then we'll progressively expand to more complex tasks.  
-<P>
-</body>
-</html>
-";
+</p><p>
+
+
+</p></body></html>";
   };
   taDoc @[5] {
    name="TaskProgram";
@@ -756,7 +752,7 @@ Next, go back to the [[.programs.AXTaskGen.init_code[0]|InitNamedUnits]] object,
 
 Next, we'll create those enums mentioned previously.  Click on [[.programs.AXTaskGen.init_code[0].InitDynEnums()|Init Dyn Enums]].  You will see two new entries in the <code>types</code> section of your program -- Input and Output.
 
-Under the Input type, you should see 6 items with names like I_A, I_B, etc.  Under the Output type, you see O_N and O_T.  The first letter is taken from the first letter of the layer (I = Input, O = Output), and the remainder after the underbar is the name entered in the UnitNames table.
+Under the Input type, you should see 6 items with names like I_A, I_B, etc., plus a final NInputs that indicates the total number of input units.  Under the Output type, you see O_N and O_T (plus NOutputs).  The first letter is taken from the first letter of the layer (I = Input, O = Output), and the remainder after the underbar is the name entered in the UnitNames table.
 
 The purpose of these enum types is to allow you to use a symbol to refer to a unit. If you want to activate the X input unit, you can use the I_X enum value to do that.  It represents the <i>index</i> of the X unit within the input layer -- when you click on I_X, you can see that it has a value of 3.  enums have both numeric and symbolic (name-like) properties, and can be converted to and from names and numbers.  You'll understand more about why they are so useful as we go along.
 
@@ -792,7 +788,7 @@ and [[.programs.AXTaskGen.Run()|Run]] to confirm.
 
 Next, we need to generate the correct output for each input.  To do this, we first need to create a variable to hold the output value.  Goto <code>Var/Fun</code> in the toolbox, and drag the first <code>Var</code> item into your program <code>vars</code> (select \"Copy Here\", not \"Add Var To\", when you drop -- we'll explain later).  Set the name to <code>output_unit</code> and change the type to DynEnum with enum_type selected as Output.
 
-Now we just need to set this variable inside our for loop code, depending on the value of the input_unit variable.  The Ctrl/if guy will do this for us -- drag it into the loop_code and drop on top of the PrintVar (it will become the first element in the program).  In the <code>cond</code> condition expression, enter: <code>input_unit == I_A || input_unit == I_X</code> (again note that you can use the var and enum lookup to save some typing and make sure you've spelled them correctly).  The == is the logical test for equality, and the || is the logical OR operator (this is standard C++ syntax -- any valid C++ expression can be entered here).  This is the condition for a target.
+Now we just need to set this variable inside our for loop code, depending on the value of the input_unit variable.  The Ctrl/if.else guy will do this for us -- drag it into the loop_code and drop on top of the PrintVar (it will become the first element in the program).  In the <code>cond</code> condition expression, enter: <code>input_unit == I_A || input_unit == I_X</code> (again note that you can use the var and enum lookup to save some typing and make sure you've spelled them correctly).  The == is the logical test for equality, and the || is the logical OR operator (this is standard C++ syntax -- any valid C++ expression can be entered here).  This is the condition for a target.
 
 We need to assign our output_unit variable to the target value when this \"if condition\" is true, and to the non-target case otherwise.  To assign a variable value, drag <code>var=</code> from the Var/Fun category to the true_code section of your if guy.  For the <code>result_var</code>, select output_unit, and for the <code>expr</code> expression, enter O_T (or choose from the enum_lookup).  This sets output_unit to O_T (target).  As a timesaver, drag this AssignExpr guy from true_code into false_code -- then you can just change O_T to O_N very quickly.
 
@@ -822,148 +818,146 @@ You have now done a little bit of each of the critical main elements of simulati
 </body>
 </html>
 ";
-   html_text="<html>
-<head></head>
-<body>
+   html_text="<html><head></head><body>
 <h1> Programming the Task Environment </h1>
-<P>
+<p>
 The goal here is to write a Program that will automatically generate a set of input/output patterns to train the network.  Because the task is so easy (at least to start), this will not represent a savings in time, but will hopefully generate understanding of how Programs work, and will also provide a basis for making more complex programs.
-<P>
+</p><p>
 The major steps involved are:
-<ol><li> Create the new Program object
-<li> Initialize \"enums\" based on unit names -- allows us to refer to units by name (an enum is geek-speak for an enumerated set of labeled values -- more later).
-<li> Iterate over the input units and generate the appropriate output response.
-<li> Write the appropriate information into the input data table.
-</ol>
+</p><ol><li> Create the new Program object
+</li><li> Initialize \"enums\" based on unit names -- allows us to refer to units by name (an enum is geek-speak for an enumerated set of labeled values -- more later).
+</li><li> Iterate over the input units and generate the appropriate output response.
+</li><li> Write the appropriate information into the input data table.
+</li></ol>
 <h2>  Create the Program </h2>
-<P>
+<p>
 In the context menu (right mouse or ctrl+mouse on mac) on the <code>programs</code> item in the left browser, select <a href=\"ta:.programs.New_gui()\">New</a> -- default parameters are fine, so then hit OK.
 This should have created a <a href=\"ta:.programs.Program_11\">Program_11</a> program, which you should now click on, and change the name to: <code>AXTaskGen</code> (the rest of the links here will assume this name, so do enter exactly that name).
-<P>
+</p><p>
 It is good to get in the habit of entering descriptions of various objects in your simluation, especially programs, so enter something like \"generates the simple A-X target detection task\" in the <code>desc</code> field.
-<P>
+</p><p>
 Note that there are three sub-tabs or sub-panels for a Program: 
-<P>
-<ul><li> <code>Program Ctrl</code>: For the \"end user\" to control the running and key parameters of the program
-<li> <code>Edit Program</code>: For writing the program.
-<li> <code>Properties</code>: For setting overall parameters of the program object, including <code>tags</code> which help people find this program if it is uploaded to a common repository, and <code>flags</code> that determine various advanced properties.
-</ul>
+</p><p>
+</p><ul><li> <code>Program Ctrl</code>: For the \"end user\" to control the running and key parameters of the program
+</li><li> <code>Edit Program</code>: For writing the program.
+</li><li> <code>Properties</code>: For setting overall parameters of the program object, including <code>tags</code> which help people find this program if it is uploaded to a common repository, and <code>flags</code> that determine various advanced properties.
+</li></ul>
 Select <code>Edit Program</code> and we can get started doing that!
-<P>
-<h2> Overview of Programing Process </h2>
-<P>
+<p>
+</p><h2> Overview of Programing Process </h2>
+<p>
 Programming in this system mostly consists of dragging program elements from the toolbar at the very left edge of the display into your program, and then configuring their properties (drag-and-drop and duplicate are also very handy here).
-<P>
+</p><p>
 The Program object has several different locations for different types of program elements:
-<ul><li> objs -- place to put misc objects that contain local data for the program (e.g., a local DataTable that might hold some intermediate processing data for the program).
-<li> types -- special user-defined types that define properties of corresponding variables (e.g., the enums we'll be using).
-<li> args -- (short for arguments) this is where you put variables that other programs will set when they run  this program.
-<li> vars -- place for other non-argument variables that are used in the program.
-<li> functions -- you can define subroutines (functions) that can be called within a program to perform a given task that needs to be done repeatedly.  These functions are only accessible from <i>within</i> this given program.
-<li> init_code -- actions to be performed when the user presses the Init button -- to initialize the program and other objects that it operates on (e.g., initializing the network weights, as the LeabraTrain process does).
-<li> prog_code -- finally, this is where the main code for your program goes!  because it can depend on any of the preceding elements, it logically comes last (and it is typically the largest).
-</ul>
+</p><ul><li> objs -- place to put misc objects that contain local data for the program (e.g., a local DataTable that might hold some intermediate processing data for the program).
+</li><li> types -- special user-defined types that define properties of corresponding variables (e.g., the enums we'll be using).
+</li><li> args -- (short for arguments) this is where you put variables that other programs will set when they run  this program.
+</li><li> vars -- place for other non-argument variables that are used in the program.
+</li><li> functions -- you can define subroutines (functions) that can be called within a program to perform a given task that needs to be done repeatedly.  These functions are only accessible from <i>within</i> this given program.
+</li><li> init_code -- actions to be performed when the user presses the Init button -- to initialize the program and other objects that it operates on (e.g., initializing the network weights, as the LeabraTrain process does).
+</li><li> prog_code -- finally, this is where the main code for your program goes!  because it can depend on any of the preceding elements, it logically comes last (and it is typically the largest).
+</li></ul>
 In the Toolbox, the program elements are organized into various sub-categories (Network, Ctrl, Var/Fun, etc).  Take a look through these categories and use the mouse-over to see what kinds of things are available.
-<P>
-<h2> Initialize Unit Names and Enums </h2>
-<P>
+<p>
+</p><h2> Initialize Unit Names and Enums </h2>
+<p>
 To begin your program, locate the Network category, and drag (click and hold and move the mouse) the <code>init nm units</code> element into the <code>init_code</code> section of your program.
-<P>
+</p><p>
 This Init nm units is a very powerful program element, which does a lot of configuration when it is first dropped into place.  You'll see various things being created in your project, and you should get an error message indicating that it could not find the input_data table.  Just hit OK to the error message, and let's take stock of what just happened (and fix the error).
-<P>
+</p><p>
 You should see that a variable named <code>input_data</code> was created in the <code>args</code> section, and <code>unit_names</code> was created in the <code>vars</code> section.  These are both \"pointer\" variables that provide a local \"handle\" within the program to refer to objects that actually live outside of the program, in the <code>data</code> section of the overall project.
-<P>
+</p><p>
 Click on the <a href=\"ta:.programs.AXTaskGen.args.input_data\">input_data</a> object, and take some time to mouse over the various fields and read the tooltips.  We want to set the <code>object_val</code> field to point to our StdInputData data table -- click on it and select it.
-<P>
+</p><p>
 Now go down to the  <a href=\"ta:.programs.AXTaskGen.vars.unit_names\">unit_names</a> object, and note that it is already set to point to the UnitNames data table, which was automatically created in the <code>data/InputData subgroup</code> section of the project.  This new datatable will contain a single row of data, with labels for each of the units in the StdInputData data table.  However, right now it is empty, because we hadn't set the input_data variable yet.
-<P>
-<h3> Entering UnitNames </h3>
-<P>
+</p><p>
+</p><h3> Entering UnitNames </h3>
+<p>
 Now that we have set input_data, we can go back to the InitNamedUnits guy in the init_code, and hit the <a href=\"ta:.programs.AXTaskGen.init_code[0].InitNamesTable()\">Init Names Table</a> button.  This will pull up an informational dialog -- hit OK.
 Now go back up to the <a href=\"ta:.data.gp.InputData.UnitNames\">UnitNames</a> data table, and you should see two columns: Input and Output, with a single row of data.  Click on the Input matrix and enter text labels for each of the units, as follows:
-<P>
+</p><p>
 <table>
-<tr><td>X</td><td>Y</td><td>Z</td></tr>
+<tbody><tr><td>X</td><td>Y</td><td>Z</td></tr>
 <tr><td>A</td><td>B</td><td>C</td></tr>
-</table>
-<P>
+</tbody></table>
+</p><p>
 For the Output matrix, you can enter N and T (for non-target and target, respectively).
-<P>
-<h3> View Data Legend </h3>
-<P>
+</p><p>
+</p><h3> View Data Legend </h3>
+<p>
 Next, go back to the <a href=\"ta:.programs.AXTaskGen.init_code[0]\">InitNamedUnits</a> object, and select
 <a href=\"ta:.programs.AXTaskGen.init_code[0].ViewDataLegend()\">View Data Legend</a> -- this will configure a new view frame with the input data patterns, plus a legend from the UnitNames table showing what each of the unit names are.  These same names can also be applied directly to the network to label the units -- we'll do that later.  You might want to remove your other view frame for StdInputData (without the legend) -- do context menu and select Delete Frame.
-<P>
-<h3> Creating Enums </h3>
-<P>
+</p><p>
+</p><h3> Creating Enums </h3>
+<p>
 Next, we'll create those enums mentioned previously.  Click on <a href=\"ta:.programs.AXTaskGen.init_code[0].InitDynEnums()\">Init Dyn Enums</a>.  You will see two new entries in the <code>types</code> section of your program -- Input and Output.
-<P>
-Under the Input type, you should see 6 items with names like I_A, I_B, etc.  Under the Output type, you see O_N and O_T.  The first letter is taken from the first letter of the layer (I = Input, O = Output), and the remainder after the underbar is the name entered in the UnitNames table.
-<P>
+</p><p>
+Under the Input type, you should see 6 items with names like I_A, I_B, etc., plus a final NInputs that indicates the total number of input units.  Under the Output type, you see O_N and O_T (plus NOutputs).  The first letter is taken from the first letter of the layer (I = Input, O = Output), and the remainder after the underbar is the name entered in the UnitNames table.
+</p><p>
 The purpose of these enum types is to allow you to use a symbol to refer to a unit. If you want to activate the X input unit, you can use the I_X enum value to do that.  It represents the <i>index</i> of the X unit within the input layer -- when you click on I_X, you can see that it has a value of 3.  enums have both numeric and symbolic (name-like) properties, and can be converted to and from names and numbers.  You'll understand more about why they are so useful as we go along.
-<P>
+</p><p>
 We are done with the unit names for now, and can move on to writing our program.
-<P>
-<h2> Iterating over the Inputs </h2>
-<P>
+</p><p>
+</p><h2> Iterating over the Inputs </h2>
+<p>
 The core of our program will be to <i>loop</i> or <i>iterate</i> over each of the possible input units, and then generate an appropriate output for each.  We can use a <b>for loop</b> for this purpose.
-<P>
+</p><p>
 In the left Toolbox, click on the <code>Ctrl</code> category (for \"control\"), and drag the <code>for</code> element into your program code (<code>prog_code</code>).
-<P>
+</p><p>
 You should now see a set of 3 main fields for the for loop object: <code>init, test, iter</code> -- the default values produce a loop that goes from 0 to 9:
-<ul><li> Init is for initializing your looping variable (<code>i = 0</code>), where i is the integer variable that keeps track of where we are in the loop -- it was automatically created by the for loop element. 
-<li> Test is for testing when to terminate the loop (<code>i &lt; 10</code>) -- as long as the i variable remains less than 10, we continue looping.
-<li> iter is what to do on each iteration prior to the test (<code>i++</code>) -- i.e., increment the loop variable.  
-</ul>
+</p><ul><li> Init is for initializing your looping variable (<code>i = 0</code>), where i is the integer variable that keeps track of where we are in the loop -- it was automatically created by the for loop element. 
+</li><li> Test is for testing when to terminate the loop (<code>i &lt; 10</code>) -- as long as the i variable remains less than 10, we continue looping.
+</li><li> iter is what to do on each iteration prior to the test (<code>i++</code>) -- i.e., increment the loop variable.  
+</li></ul>
 To see this in action, let's drag the <code>print_var</code> guy from the <code>Print..</code> category of program elements into our <code>loop_code</code> of the for loop.  This is where we put the program elements (\"code\") that we want to run during each iteration of the loop.  Select the <code>i</code> variable for the <code>print_var</code> field.  
-<P>
+<p>
 Now we can <a href=\"ta:.programs.AXTaskGen.Init()\">Init</a> 
 and <a href=\"ta:.programs.AXTaskGen.Run()\">Run</a> our simple program.  You should see a sequence of \"i=0, i=1...i=9\" in the console window (typically located below the main project window).  It is a very good idea to keep that window visible during programming, as various informative messages may show up there.
-<P>
-Although perhaps fascinating for new programmers, this for loop is not exactly what we want.  We want to iterate over the input units, not just over the numbers from 0-9.  To do that, we need to click on the <a href=\"ta:.programs.AXTaskGen.vars.i\">i</a> variable in the <code>vars</code> section of the program.  Change the <code>var_type</code> to DynEnum instead of Int.  Then, click on the </code>enum_type</code> field and select the Input type (which is what we created earlier).  You can also change the name of this variable to something more expressive, like <code>input_unit</code>.  Note that when you apply this name change, the for loop code automatically updates to use this new name, as does the print var guy.
-<P>
+</p><p>
+Although perhaps fascinating for new programmers, this for loop is not exactly what we want.  We want to iterate over the input units, not just over the numbers from 0-9.  To do that, we need to click on the <a href=\"ta:.programs.AXTaskGen.vars.i\">i</a> variable in the <code>vars</code> section of the program.  Change the <code>var_type</code> to DynEnum instead of Int.  Then, click on the enum_type field and select the Input type (which is what we created earlier).  You can also change the name of this variable to something more expressive, like <code>input_unit</code>.  Note that when you apply this name change, the for loop code automatically updates to use this new name, as does the print var guy.
+</p><p>
 Let's go back to that <a href=\"ta:.programs.AXTaskGen.prog_code[0]\">for</a> loop guy, and change the <code>test</code> field to: <code>input_unit &lt;= I_Z</code>.  Note how you can just type in I_Z and this is automatically treated as a number -- this is what enums do. 
 <a href=\"ta:.programs.AXTaskGen.Init()\">Init</a> 
 and <a href=\"ta:.programs.AXTaskGen.Run()\">Run</a> that.  Everything should be fine, up until the very end, when it tries to go beyond the I_Z case -- this will generate an error message (as it should -- one of the many advantages of using enums is that they provide built-in error-checking like this).
-<P>
+</p><p>
 To get around this issue, we need to add a test inside of our loop that bails out when we get to I_Z, so that final ++ increment does not occur.  In the <code>Ctrl</code> elements, there is an <code>if.break</code> guy that does just this -- drag it into the loop_code so it appears at the end (note that you need to drop it on the loop_code guy itself to put it at the end, or go just after the print var and you'll see a thin horizontal line -- dropping there should work too).  In the <code>cond</code> field, enter <code>input_unit == I_Z</code> (note that you can do this without much typing by selecting lookup_var and lookup_enum to choose those guys off of a list).  This will break the loop at the last item (I_Z).
 <a href=\"ta:.programs.AXTaskGen.Init()\">Init</a> 
 and <a href=\"ta:.programs.AXTaskGen.Run()\">Run</a> to confirm.
-<P>
-<h3> Generating the Correct Output </h3>
-<P>
+</p><p>
+</p><h3> Generating the Correct Output </h3>
+<p>
 Next, we need to generate the correct output for each input.  To do this, we first need to create a variable to hold the output value.  Goto <code>Var/Fun</code> in the toolbox, and drag the first <code>Var</code> item into your program <code>vars</code> (select \"Copy Here\", not \"Add Var To\", when you drop -- we'll explain later).  Set the name to <code>output_unit</code> and change the type to DynEnum with enum_type selected as Output.
-<P>
-Now we just need to set this variable inside our for loop code, depending on the value of the input_unit variable.  The Ctrl/if guy will do this for us -- drag it into the loop_code and drop on top of the PrintVar (it will become the first element in the program).  In the <code>cond</code> condition expression, enter: <code>input_unit == I_A || input_unit == I_X</code> (again note that you can use the var and enum lookup to save some typing and make sure you've spelled them correctly).  The == is the logical test for equality, and the || is the logical OR operator (this is standard C++ syntax -- any valid C++ expression can be entered here).  This is the condition for a target.
-<P>
+</p><p>
+Now we just need to set this variable inside our for loop code, depending on the value of the input_unit variable.  The Ctrl/if.else guy will do this for us -- drag it into the loop_code and drop on top of the PrintVar (it will become the first element in the program).  In the <code>cond</code> condition expression, enter: <code>input_unit == I_A || input_unit == I_X</code> (again note that you can use the var and enum lookup to save some typing and make sure you've spelled them correctly).  The == is the logical test for equality, and the || is the logical OR operator (this is standard C++ syntax -- any valid C++ expression can be entered here).  This is the condition for a target.
+</p><p>
 We need to assign our output_unit variable to the target value when this \"if condition\" is true, and to the non-target case otherwise.  To assign a variable value, drag <code>var=</code> from the Var/Fun category to the true_code section of your if guy.  For the <code>result_var</code>, select output_unit, and for the <code>expr</code> expression, enter O_T (or choose from the enum_lookup).  This sets output_unit to O_T (target).  As a timesaver, drag this AssignExpr guy from true_code into false_code -- then you can just change O_T to O_N very quickly.
-<P>
+</p><p>
 Finally, go to your PrintVar and select output_unit for print_var1 (or print_var2 if that is easier to see).  <a href=\"ta:.programs.AXTaskGen.Init()\">Init</a> 
 and <a href=\"ta:.programs.AXTaskGen.Run()\">Run</a>, and you should see the correct values for input_unit and output_unit being displayed in your console! 
-<P>
-<h2> Writing the Data to the Input Data Table </h2>
-<P>
+</p><p>
+</p><h2> Writing the Data to the Input Data Table </h2>
+<p>
 Now that you have all the key logic of your task, you just need to write the results to the input data table.  There are three main steps for this:
-<P>
-<ol><li> Erase any existing data at the start
-<li> In the for loop, add a new row, and write the data for each input/output pattern
-<li> Tell the system that we're done writing to each row so it can update the view
-</ol>
+</p><p>
+</p><ol><li> Erase any existing data at the start
+</li><li> In the for loop, add a new row, and write the data for each input/output pattern
+</li><li> Tell the system that we're done writing to each row so it can update the view
+</li></ol>
 The first step is achieved by dragging a <code>reset_rows</code> guy from the Data toolbox to the first line of the program code (drop right on top of the for loop).  Then select the input_data variable for the data_var.
-<P>
+<p>
 Next, drag the <code>new_row</code> guy into the loop_code, right before the final IfBreak guy (drop on top of it).  Again select input_data as the data_var.  This will add a new blank row to the data table.  Then, drag <code>set units var</code> from the Network toolbox into the loop_code, again on top of IfBreak.  This is a magic little program element that uses the name of the DynEnum type of a variable, plus its value, to determine which unit to activate in the input data table.  All you have to do is select input_unit for unit1, and output_unit for unit2, and you're done -- it automatically located the input_data datatable (based on its name).  Note that you want to make sure you don't put one of the vars as the offset variable, which allows you to have for example multiple slots of the same units repeated in an input layer -- the offset determines which slot to put things in.
-<P>
+</p><p>
 Finally, go back to the Data toolbox, and drag the row_done guy on top of IfBreak -- this just lets the system know that you're done writing to the current row of data, and that it can update any relevant displays.
-<P>
+</p><p>
 Congratulations -- you're done!!!  Select the <a href=\"ta:.T3Tab.StdInputData\">StdInputData</a> tab in the 3d view area, and then do
 <a href=\"ta:.programs.AXTaskGen.Init()\">Init</a> 
 and <a href=\"ta:.programs.AXTaskGen.Run()\">Run</a> -- you should see the display update with the correct patterns freshly generated by your program!
-<P>
+</p><p>
 You have now done a little bit of each of the critical main elements of simulating using this system.  The next few steps in the tutorial take this simple starting point and go all the way to a more scientifically interesting model of an actual psychological task: the CPT-AX task: <a href=\"ta:.docs.CPTAX_Program\">CPTAX_Program</a>.
-<P>
-</body>
-</html>
-";
+</p><p>
+
+
+</p></body></html>";
   };
   taDoc @[6] {
    name="CPTAX_Program";
@@ -1080,113 +1074,111 @@ In the next and final segment, we give this network some working memory, and see
 </body>
 </html>
 ";
-   html_text="<html>
-<head></head>
-<body>
+   html_text="<html><head></head><body>
 <h1> CPT-AX Program </h1>
-<P>
+<p>
 The next challenge is to write a program that will generate the CPT-AX task (CPT stands for continuous performance task), which is the logical extension of our simple AX task to the  <i>sequential</i>  domain.  Instead of A and X each being targets, the target is now
 an A  <i>followed by</i>  an X in sequence.  Other sequences such as A followed by Y or B followed by X are 
-non-target sequences, which nevertheless overlap with the target sequence.  In our simplified version of this task (and in several of the actual experiments on people), we restrict the sequences to cue-probe pairs, where cues are A,B,C and probes are X,Y,Z.  See e.g., Braver, T.S., Barch, D.M. & Cohen, J.D. (1999). Cognition and control in schizophrenia: A computational model of dopamine and prefrontal function.  <i>Biological Psychiatry, 46,</i>  312-328, for an application of this task and further discussion and references.
-<P>
+non-target sequences, which nevertheless overlap with the target sequence.  In our simplified version of this task (and in several of the actual experiments on people), we restrict the sequences to cue-probe pairs, where cues are A,B,C and probes are X,Y,Z.  See e.g., Braver, T.S., Barch, D.M. &amp; Cohen, J.D. (1999). Cognition and control in schizophrenia: A computational model of dopamine and prefrontal function.  <i>Biological Psychiatry, 46,</i>  312-328, for an application of this task and further discussion and references.
+</p><p>
 One implementational detail in how this task is run is key for generating interesting behavioral and neural data: the frequency of the A-X target sequence is set to be relatively high (typically 70%), so that it becomes the default expectation.  Then, the two related non-target sequences become much more interesting.  For A-Y, there should be a strong expectation of getting an X, which will be influenced by the extent to which the A cue is well remembered.  Errors on this trial type, where people might press \"target\" at the Y, would actually suggest strong maintenance of the A cue.  A similar argument applies to B-X, where the X is typically a target, but if you remember the B cue, you should not press the target key.  The C,Z items serve as baseline controls, as does the B-Y sequence.
-<P>
-<h2> Plan for the Program </h2>
-<P>
+</p><p>
+</p><h2> Plan for the Program </h2>
+<p>
 With the above in mind, we can sketch out the logic of our overall program:
-<ul><li> Flip a weighted coin to determine whether we want to generate a target sequence or not.  70% of the time we generate a target sequence, in which case we just produce A followed by X and that is easy.
-<li> Generating a non-target sequence is harder.  We need to randomly select from the cues (A,B,C) and the probes (X,Y,Z), while ensuring that we don't randomly pick A-X.  We'll discuss a couple of different strategies for this.
-<li> We can do the above cue-probe generation process multiple times to generate a larger set of trials that we will run on a given epoch worth of network training.  That is just a simple for loop around the above code.
-</ul>
+</p><ul><li> Flip a weighted coin to determine whether we want to generate a target sequence or not.  70% of the time we generate a target sequence, in which case we just produce A followed by X and that is easy.
+</li><li> Generating a non-target sequence is harder.  We need to randomly select from the cues (A,B,C) and the probes (X,Y,Z), while ensuring that we don't randomly pick A-X.  We'll discuss a couple of different strategies for this.
+</li><li> We can do the above cue-probe generation process multiple times to generate a larger set of trials that we will run on a given epoch worth of network training.  That is just a simple for loop around the above code.
+</li></ul>
 <h2> List of Variables </h2>
-<P>
+<p>
 Once we have this plan in place, we can create a set of variables that we'll need -- the general flow of programming in this system involves creating variables and then opearating on them, so getting the variables down is the key first step:
-<ul><li> pct_target -- how frequent should the target sequence be?  this is actually a proportion, but pct is a much simpler label -- for the default case it should be .7
-<li> rnd_number -- a random number between 0 and 1 (floating point or Real) that we'll generate to simulate the flipping of a weighted coin.
-<li> cue -- the identity of the cue input (A,B, or C) represented as a DynEnum of type Input, taking on values I_A, I_B, or I_C.
-<li> probe -- the identity of the probe input (X,Y, or Z), represented by an Input DynEnum as well.
-<li> output_unit -- correct answer for the output layer (DynEnum of type Output) -- we'll have the model respond \"non-target\" for all the cue items, and \"target\" for the targets.
-</ul>
+</p><ul><li> pct_target -- how frequent should the target sequence be?  this is actually a proportion, but pct is a much simpler label -- for the default case it should be .7
+</li><li> rnd_number -- a random number between 0 and 1 (floating point or Real) that we'll generate to simulate the flipping of a weighted coin.
+</li><li> cue -- the identity of the cue input (A,B, or C) represented as a DynEnum of type Input, taking on values I_A, I_B, or I_C.
+</li><li> probe -- the identity of the probe input (X,Y, or Z), represented by an Input DynEnum as well.
+</li><li> output_unit -- correct answer for the output layer (DynEnum of type Output) -- we'll have the model respond \"non-target\" for all the cue items, and \"target\" for the targets.
+</li></ul>
 <h2> Getting Started: Copy and Modify </h2>
-<P>
+<p>
 The easiest way to get started is to duplicate and modify the existing AXTaskGen program (this is a general rule -- if there is a program that has several elements that you want, just copy and modify instead of starting from scratch).  To do this, click on the AXTaskGen program in the left browser, and use the context menu to select Duplicate.  In the new program, enter the name as CPTAXGen, and update the description to reflect what we're doing.
-<P>
+</p><p>
 Now go to EditProgram, and click on the ForLoop object in the prog_code, and use the context menu to Delete that object -- this will also delete everything within it, which is almost all of the code from the previous program.  All that should remain is the ResetDataRows at the start (which we can use in any case).
-<P>
+</p><p>
 We can now setup our variables as indicated above.  Just rename input_unit to cue, then duplicate it and call it probe.  Then drag a new var (from Var/Fun toolbox) into vars and call it \"pct_target\", and set the type to Real, and enter a value of .7.  Duplicate it, and call it \"rnd_number\".  It would be a good idea to enter the descriptions for each variable in their desc fields (you can copy and paste from the above text if you want).
-<P>
-<h2> Flipping a Weighted Coin For the Target </h2>
-<P>
+</p><p>
+</p><h2> Flipping a Weighted Coin For the Target </h2>
+<p>
 The first step in our actual program code is to flip a weighted coin to decide if it is a target sequence or not.  We do this by generating a random number (rnd_number) which is uniformly distributed between 0 and 1.  We then see if this number is  <i>less than</i>  our target percent value -- this will be true 70% of the time for a value of .7, and that is what we want!
-<P>
-<ul><li> in the Toolbox, Misc Fun, there is a random() guy -- grab that and put it at the end of your program (drop on prog_code or after the reset data rows).  Set the result_var to rnd_number, and click on the method -- in the browser window that comes up, you can select different categories (in the menu at the top) of random numbers to generate -- select \"Float\", and then pick ZeroOne.  This will set rnd_number = a random number between 0 and 1.
-<li> Go to Ctrl toolbox and drag <code>if</code> to the end of your program.  In the cond expression, type/select: <code>rnd_number &lt; pct_target</code>.
-</ul>
+</p><p>
+</p><ul><li> in the Toolbox, Misc Fun, there is a random() guy -- grab that and put it at the end of your program (drop on prog_code or after the reset data rows).  Set the result_var to rnd_number, and click on the method -- in the browser window that comes up, you can select different categories (in the menu at the top) of random numbers to generate -- select \"Float\", and then pick ZeroOne.  This will set rnd_number = a random number between 0 and 1.
+</li><li> Go to Ctrl toolbox and drag <code>if</code> to the end of your program.  In the cond expression, type/select: <code>rnd_number &lt; pct_target</code>.
+</li></ul>
 The true_code for this if is now the target case, and the false_code is the non-target.  To set the target values, we just need to assign cue and probe to A and X respectively.  Drag var= from the Var/Fun toolbox into true_code, and set the result_var to cue, and choose the I_A enum from the enum_lookup button.  Drag var= again and set probe = I_X.  Finally, drag var= and set output_unit = O_T.
-<P>
-<h2> Generating the Non-Target </h2>
-<P>
+<p>
+</p><h2> Generating the Non-Target </h2>
+<p>
 There are two strategies for generating the non-target sequence that excludes A-X:
-<ul><li> Brute force: randomly generate a cue and a probe and check that they aren't A-X -- if they are, then repeat the process until they aren't.  This is not particularly efficient, but it is easy to code.
-<li> Choose from a list: generate a list of all possible cue-probe combinations, remove A-X from this list, and then randomly select an item from this list.  This is more efficient overall, but harder to code.  It is left as an excercise for later, as it demonstrates some important techniques.
-</ul>
+</p><ul><li> Brute force: randomly generate a cue and a probe and check that they aren't A-X -- if they are, then repeat the process until they aren't.  This is not particularly efficient, but it is easy to code.
+</li><li> Choose from a list: generate a list of all possible cue-probe combinations, remove A-X from this list, and then randomly select an item from this list.  This is more efficient overall, but harder to code.  It is left as an excercise for later, as it demonstrates some important techniques.
+</li></ul>
 To do the brute-force method, you need to enclose the random generation code in a \"do\" loop, which does some things (generates the random cue/probe) and then tests whether it should loop again (if it is A-X) or not.
-<P>
-Drag the <b>do</b> guy from Ctrl into your false_code of the target if test.  Enter/lookup <code>cue == I_A && probe == I_X</code> as the test for continuing to loop ( == is the equality operator, and && is logical AND).
-<P>
+<p>
+Drag the <b>do</b> guy from Ctrl into your false_code of the target if test.  Enter/lookup <code>cue == I_A &amp;&amp; probe == I_X</code> as the test for continuing to loop ( == is the equality operator, and &amp;&amp; is logical AND).
+</p><p>
 Now inside the loop_code, we need to randomly generate a cue and a probe.  Drag the random() guy from Misc Fun in there, and set the result_var to cue.  For the method, select the Int category, and choose IntMinMax -- we'll specify a minimum and maximum value to generate random numbers between.  Notice that the min and max arguments open up below this element -- these are the values that will be passed to the IntMinMax function.  Click on min, and enter/lookup I_A.  For the max, enter I_C + 1, because this IntMinMax function generates values  <i>exclusive</i>  of max (this is consistent with the C programming language convention, where values go between 0 and n-1 instead of 1 to n).
-<P>
-Just duplicate this RandomCall element, and change cue -> probe and min = I_X, max = I_Z+1.  Finally, drag var= and set output_unit = O_N to show that this is a non-target case (quicker to drag AssignExpr guy from true_code and change O_T to O_N).
-<P>
+</p><p>
+Just duplicate this RandomCall element, and change cue -&gt; probe and min = I_X, max = I_Z+1.  Finally, drag var= and set output_unit = O_N to show that this is a non-target case (quicker to drag AssignExpr guy from true_code and change O_T to O_N).
+</p><p>
 To test the program at this point, you can drag a print var object to the end of the code, and select cue, probe, and output_unit for the vars to print, and do Init and Run and see that it tends to produce a predominance of A-X and O_T.  To really test it, set pct_target = 0, and Run some more.  You should never see an A-X, and only O_N.
-<P>
-<h2> Generating the Input Data Patterns </h2>
-<P>
+</p><p>
+</p><h2> Generating the Input Data Patterns </h2>
+<p>
 The last step is to produce the input data patterns for the values we have generated.  This is just a matter of adding a couple of <code>new row</code> guys from the Data toolbox and <code>set units var</code> from the Network toolbox to set the units.
-<ul><li> drag the <code>new row</code> from Data Toolbox to the end of the program (drop on prog_code) and set data_var to input_data.
-<li> drag the <code>set units var</code> from Network toobox to the end, and set unit 1 to the cue variable.
-<li> Because the output is a literal in this case (O_N or non-target), we cannot set it using this element, which requires a variable.  So, you need to drag the <code>set units lit</code> to the end, and set the enum_type to Output, and the value to O_N.
-<li> drag and drop the AddNewDataRow and SetUnitsVar guys on top of prog_code and select Copy Into to duplicate them at the end of the program, and change cue to probe in the set units var, and select output_unit for unit 2 to also set that guy.
-<li> finally, drag a Data/row done guy to the end to tell it to update the view (select input_data as the data_var).
-</ul>
+</p><ul><li> drag the <code>new row</code> from Data Toolbox to the end of the program (drop on prog_code) and set data_var to input_data.
+</li><li> drag the <code>set units var</code> from Network toobox to the end, and set unit 1 to the cue variable.
+</li><li> Because the output is a literal in this case (O_N or non-target), we cannot set it using this element, which requires a variable.  So, you need to drag the <code>set units lit</code> to the end, and set the enum_type to Output, and the value to O_N.
+</li><li> drag and drop the AddNewDataRow and SetUnitsVar guys on top of prog_code and select Copy Into to duplicate them at the end of the program, and change cue to probe in the set units var, and select output_unit for unit 2 to also set that guy.
+</li><li> finally, drag a Data/row done guy to the end to tell it to update the view (select input_data as the data_var).
+</li></ul>
 <a href=\"ta:.programs.CPTAXGen.Init()\">Init</a>
 and <a href=\"ta:.programs.CPTAXGen.Run()\">Run</a> the program while looking at the 
 <a href=\"ta:.T3Tab.StdInputData\">StdInputData</a> view tab.  You should see it generate a valid cue-probe input that matches what is printed out on the console.  Keep running to see a range of inputs.
-<P>
-<h2> Generating Multiple Cue-Probe Trials </h2>
-<P>
+<p>
+</p><h2> Generating Multiple Cue-Probe Trials </h2>
+<p>
 The last bit of programming needed is to simply loop over the existing set of code multiple times to create several cue-probe sets per epoch for the network to train on.  Drag a for loop from Ctrl on top of the 2nd line of the program (RandomCall).  Then, multi-select the rest of the program code (only the guys at the main level, not the true_code or false_code within the if statement (this is done with alt-click on linux or mac-command-click on the mac -- note that order matters so select down in order!), and then drag the whole thing into the loop_code of the for guy.  Pretty slick.
-<P>
+</p><p>
 If you just Run it like this, you'll get 10 trials.  It would be good to make the number of trials a variable that can be set.  Drag a var into vars and call it \"n_trials\", and set it to 50 (Int = integer type).  Then, click on the for loop and replace the 10 in the test expression with n_trials.
-<P>
+</p><p>
 You can probably turn off the console printout by now -- just click on the PrintVar guy and click the OFF flag -- this keeps it around in case you want to do some debugging or something later, but it is not actually used in the code.
-<P>
-<h2> Updating the Control Panel </h2>
-<P>
+</p><p>
+</p><h2> Updating the Control Panel </h2>
+<p>
 If you go back to the Program Ctrl tab for the CPTAXGen program (instead of Edit Program where we've been), you'll see that all of the args and vars are present there.  However, some of those vars are actually more internal variables that the end-user doesn't need to set or configure.  So, we should remove those from the control panel, leaving only the pct_target and n_trials variables.  To do this, go back to Edit Program and click on each of the vars, and turn off the CTRL_PANEL flag for all but pct_target and n_trials.  Then go back and marvel at the clean interface you've provided for your grateful user!  The mouse-over tooltip even shows whatever comment you entered in the desc field for that variable.  This can provide a quick but quite usable interface for many different programs.
-<P>
-<h2> Calling from the Epoch Program </h2>
-<P>
+</p><p>
+</p><h2> Calling from the Epoch Program </h2>
+<p>
 The final final step is to call the CPTAXGen program every epoch, so that we get a new random selection of trials every epoch (keeps the network from simply memorizing the particular sample we happen to have generated).  To do this, we go to the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraEpoch\">LeabraEpoch</a> program in the LeabraAll_Std subgroup of programs, and do Edit Program.  Then drag the prog() guy from the Var/Fun toolbox just after the 3rd line of the prog_code, which starts the timer recording how long the epoch takes to process (it is a MethodCall, in blue).  Then select CPTAXGen for the target.  Note that this automatically brings up the input_data arg, and it even automatically fills this in with the input_data variable in the LeabraEpoch program -- if an arg has the same name as a variable in the calling program, it is used automatically (of course you can always change it if that isn't right).
-<P>
+</p><p>
 There is one additional and <b>very critical</b> final step with the LeabraEpoch program.  Go to the Program Ctrl tab, and observe the set of program vars available for you to set.  The first one, called <code>data_loop_order</code> is set to <code>PERMUTED</code> by default -- this means that the trials (rows of the input data table) are presented in a shuffled random order (without replacment, so each trial only appears once).  Clearly this is not going to be good for our <i>sequential</i> input data.  So, change it to <code>SEQUENTIAL</code>, which will present the trials in sequential order.  Given that we're doing the randomization within our program, this should be just fine.  There is also another way of doing this that involves creating grouped trials (i.e., cue-probe), where you can randomize the order of the groups, but present the trials within the group in sequential order.  The LeabraEpochGpData program available in the standard program library does this, but that is beyond the scope of this project.
-<P>
-<h2> Running the Network </h2>
-<P>
+</p><p>
+</p><h2> Running the Network </h2>
+<p>
 Now you're finally ready to run the network on this CPT-AX task!  Go back to the LeabraTrain process, do Init and Run on it (initialize the weights) and see what happens!?
-<P>
+</p><p>
 You should see that it will run and run and never fully learn the task (it will stop training if the error goes to zero).  There is some chance that it might get there just by virtue of a lucky set of trials -- try hitting Run again -- it should not stay at zero, and will keep running.
-<P>
+</p><p>
 You probably want to turn off the network and trial output data views at some point -- just click off the display button on their respective control panels under the Network_0 view tab.
-<P>
+</p><p>
 It shouldn't come as that much of a surprise that the network doesn't fully learn the task -- this task requires working memory, and this network hasn't got any!  In fact, it is quite surprising that it is able to learn as well as it can.  Turns out it can learn to use weight changes as a kind of fairly unreliable form of working memory.  Plus, the default target of AX is highly frequent, so it can get pretty far by focusing a lot on that.
-<P>
+</p><p>
 In the next and final segment, we give this network some working memory, and see if that helps: <a href=\"ta:.docs.PfcBg\">PfcBg</a>
-<P>
-<P>
-</body>
-</html>
-";
+</p><p>
+</p><p>
+
+
+</p></body></html>";
   };
   taDoc @[7] {
    name="PfcBg";
@@ -1266,74 +1258,76 @@ That is all we have for now.  You might notice a project called <code>12ax4s.pro
 </body>
 </html>
 ";
-   html_text="<html><head></head><body>
+   html_text="<html>
+<head></head>
+<body>
 <h1> Adding a Prefrontal Cortex, Basal Ganglia Working Memory System </h1>
-<p>
+<P>
 There are many different ways of giving a neural network some amount of working or active memory, to hold on to prior events.  Perhaps the simplest is to add a \"simple recurrent network\" (SRN) context layer that holds on to the prior time step's hidden layer activations, and then feeds back into the hidden layer to provide context for the current inputs.
-</p><p>
-However, there are various limitations of this simple SRN memory, which can be overcome by having an active gating mechanism that determines when to hold onto information and when to forget it.  One scientific theory is that the basal ganglia provide this function, by interacting with the prefrontal cortex, which is widely regarded as the brain area responsible for holding onto working memory.  The specific implementation of this idea, called PBWM (prefrontal-cortex basal-ganglia working memory; O'Reilly &amp; Frank, 2006, Neural Computation) is available through the Leabra wizard, and we'll use that.
-</p><p>
+<P>
+However, there are various limitations of this simple SRN memory, which can be overcome by having an active gating mechanism that determines when to hold onto information and when to forget it.  One scientific theory is that the basal ganglia provide this function, by interacting with the prefrontal cortex, which is widely regarded as the brain area responsible for holding onto working memory.  The specific implementation of this idea, called PBWM (prefrontal-cortex basal-ganglia working memory; O'Reilly & Frank, 2006, Neural Computation) is available through the Leabra wizard, and we'll use that.
+<P>
 First, to prepare the model for the PBWM components, we need to move the Input layer up to the same level as the output layer.  For anatomically-inspired reasons, PBWM locates various brain-stem dopamine systems in the lower level of the model.  To do this, click on the red arrow in the <a href=\"ta:.T3Tab.Network_0\">Network_0</a> panel, and click on the virtical arrow poking through the green Input layer border, and drag it up to the level of the Output layer.  The Output layer should move out of the way, and that is all you need to do, but if things don't look right, you can drag layers around with the horizontal arrows too.
-</p><p>
+<P>
 Next, go to the <a href=\"ta:.PanelTab.LeabraWizard_0\">LeabraWizard_0</a>, and 
 select <a href=\"ta:.wizards.LeabraWizard_0.PBWM()\">Network/PBWM</a>.  A dialog with several options and lots of information comes up.  Turn off <code>out_gate</code>, and turn on <code>nolrn_pfc</code>.  This makes the PFC working memory layer activated directly from the input layer, and not the hidden layer, and it makes it a direct copy of the input layer, instead of having it learn new representations.  These are \"hacks\" that simplfy the model and make it easier to understand -- performance is generally the same without them.  When you hit OK, you'll get  a series of dialogs with information -- just keep hitting OK until it is done.  You should see a rather more elaborate network now, with many more layers.
-</p><p>
-For complete details about these layers, see the  <a href=\"http://psych.colorado.edu/~oreilly/pubs-abstr.html#OReillyFrank06\">O'Reilly and Frank, 2006</a> paper (O'Reilly, R.C. &amp; Frank, M.J. (2006). Making Working Memory Work: A Computational Model of Learning in the Frontal Cortex and Basal Ganglia. <i>Neural Computation, 18,</i> 283-328.)  Here is a very brief overview:
-</p><ul><li> First, note that there are four separate <b>stripes</b> (groups of units) in the PFC and Matrix layers -- this was determined by the <code>n_stripes</code> parameter in the wizard.  Each stripe can be independently updated, such that this system can remember up to 4 different things at the same time, each with a different \"updating policy\" of when memories are updated and maintained.  The active maintenance of the memory is in PFC, and the updating signals (and updating policy more generally) come from the Matrix units (a subset of basal ganglia units).
-</li><li> PV* and LV* and friends at the very bottom layer of the network: these represent the dopaminergic system, which provides reinforcement learning signals to train up the dynamic gating system in the basal ganglia.  The PV layers represent primary values of reward (i.e., actual externally-delivered reward values), while the LV layers represent learned (\"anticipated\") values -- together, they account for Pavlovian conditioning phenomena and associated dopaminergic firing data.
-</li><li> Matrix: this is the dynamic gating system representing the matrix units of the basal ganglia.  Every even-index unit within a stripe represents \"Go\", while the odd-index units represent \"NoGo.\"  The Go units cause updating of the PFC, while the NoGo units cause the PFC to maintain its existing memory representation.
-</li><li> SNrThal: represents the substantia nigra pars reticulata (SNr) and the associated area of the thalamus, which produce a competition among the Go/NoGo units within a given stripe.  If there is more overall Go activity in a given stripe, then the associated SNrThal unit gets activated, and it drives updating in PFC.
-</li><li> PFC: has 4 different stripes each of which has a localist one-to-one representation of the input units (due to the nolrn_pfc flag).  Thus, you can look at these PFC representations and see directly what the network is maintaining.
-</li></ul>
+<P>
+For complete details about these layers, see the  <a href=\"http://psych.colorado.edu/~oreilly/pubs-abstr.html#OReillyFrank06\">O'Reilly and Frank, 2006</a> paper (O'Reilly, R.C. & Frank, M.J. (2006). Making Working Memory Work: A Computational Model of Learning in the Frontal Cortex and Basal Ganglia. <i>Neural Computation, 18,</i> 283-328.)  Here is a very brief overview:
+<ul><li> First, note that there are four separate <b>stripes</b> (groups of units) in the PFC and Matrix layers -- this was determined by the <code>n_stripes</code> parameter in the wizard.  Each stripe can be independently updated, such that this system can remember up to 4 different things at the same time, each with a different \"updating policy\" of when memories are updated and maintained.  The active maintenance of the memory is in PFC, and the updating signals (and updating policy more generally) come from the Matrix units (a subset of basal ganglia units).
+<li> PV* and LV* and friends at the very bottom layer of the network: these represent the dopaminergic system, which provides reinforcement learning signals to train up the dynamic gating system in the basal ganglia.  The PV layers represent primary values of reward (i.e., actual externally-delivered reward values), while the LV layers represent learned (\"anticipated\") values -- together, they account for Pavlovian conditioning phenomena and associated dopaminergic firing data.
+<li> Matrix: this is the dynamic gating system representing the matrix units of the basal ganglia.  Every even-index unit within a stripe represents \"Go\", while the odd-index units represent \"NoGo.\"  The Go units cause updating of the PFC, while the NoGo units cause the PFC to maintain its existing memory representation.
+<li> SNrThal: represents the substantia nigra pars reticulata (SNr) and the associated area of the thalamus, which produce a competition among the Go/NoGo units within a given stripe.  If there is more overall Go activity in a given stripe, then the associated SNrThal unit gets activated, and it drives updating in PFC.
+<li> PFC: has 4 different stripes each of which has a localist one-to-one representation of the input units (due to the nolrn_pfc flag).  Thus, you can look at these PFC representations and see directly what the network is maintaining.
+</ul>
 <h2> Setting the RewTarg Input </h2>
-<p>
+<P>
 Before we can run the model, we need to do one extra bit of configuration.  The PBWM model learns from rewards and punishments generated based on how it is performing the task. Only the reward values generated on the probe trials are relevant, however, so we need to tell the model when the relevant trials are.  This is done using the RewTarg layer (in the bottom layer), which is a new input layer that was added by the wizard.  When we set this unit activation to 1, then that tells the network that this is a trial when reward should be computed based on the difference between the network's output and the correct answer.  Note that this is not the direct value of the reward itself, just the indicator of when reward should be computed.
-</p><p>
+<P>
 The procedural steps for making this RewTarg work are mostly the same for any kind of change in the input data table structure (e.g., adding more input units), so these steps are generally useful:
-</p><ul><li> First, go to the <a href=\"ta:.PanelTab.LeabraWizard_0\">LeabraWizard_0</a> and 
-select <a href=\"ta:.wizards.LeabraWizard_0.UpdateInputDataFmNet()\">Data/UpdateInputDataFmNet</a> -- this will automatically reconfigure your StdInputData table to include the RewTarg input (and it will adjust it to any other changes you might make in your network -- a very useful function!).</li></ul>
+<ul><li> First, go to the <a href=\"ta:.PanelTab.LeabraWizard_0\">LeabraWizard_0</a> and 
+select <a href=\"ta:.wizards.LeabraWizard_0.UpdateInputDataFmNet()\">Data/UpdateInputDataFmNet</a> -- this will automatically reconfigure your StdInputData table to include the RewTarg input (and it will adjust it to any other changes you might make in your network -- a very useful function!).</ul>
 <ul><li> Next, we need to update the program that applies the input data to the network, so that it will appropriately apply the new RewTarg input to the network.  This is the <a href=\"ta:.programs.gp.LeabraAll_Std.ApplyInputs\">ApplyInputs</a> program in LeabraAll_Std subgroup.  
-In its objs section, there is an object called  <a href=\"ta:.programs.gp.LeabraAll_Std.ApplyInputs.LayerWriter_0\">LayerWriter_0</a>, which provides the info for mapping input data the network layers. </li></ul>
+In its objs section, there is an object called  <a href=\"ta:.programs.gp.LeabraAll_Std.ApplyInputs.LayerWriter_0\">LayerWriter_0</a>, which provides the info for mapping input data the network layers. </ul>
 Hit <a href=\"ta:.programs.gp.LeabraAll_Std.ApplyInputs.LayerWriter_0.AutoConfig()\">AutoConfig</a> on this object, and it will automatically update based on the new input data and network configuration.
 <ul><li> Now we need to modify our <a href=\"ta:.programs.CPTAXGen\">CPTAXGen</a> program to set this RewTarg input value correctly.  This requires several steps:
 <ul><li> Update the unit names so we can refer to the rew targ input using an enum: click on the InitNamedUnits object in the init_code section of the program (under Edit Program tab) and hit the <a href=\"ta:.programs.CPTAXGen.init_code[0].InitNamesTable()\">InitNamesTable</a> button -- this will update the UnitNames data table to match the updates in the input data table.
-</li><li> Go to <a href=\"ta:.data.gp.InputData.UnitNames\">UnitNames</a> and enter the name \"rew_targ\" for the single RewTarg unit.
-</li><li> Go back to InitNamedUnits and do <a href=\"ta:.programs.CPTAXGen.init_code[0].InitDynEnums()\">InitDynEnums</a> -- this will add a RewTarg DynEnum in the types section (it would also update the enums based on any other changes you might have made in the UnitNames table -- again a very useful function to remember)
-</li><li> Now we are finally ready to add the code to set the rew_targ input for the probe trial.  Just drag a <code>set units lit</code> from the Network toolbox to end of the prog_code before the DoneWritingRowData guy, and set the enum_type to RewTarg, and the value should be R_rew_targ.
-</li></ul></li></ul>
+<li> Go to <a href=\"ta:.data.gp.InputData.UnitNames\">UnitNames</a> and enter the name \"rew_targ\" for the single RewTarg unit.
+<li> Go back to InitNamedUnits and do <a href=\"ta:.programs.CPTAXGen.init_code[0].InitDynEnums()\">InitDynEnums</a> -- this will add a RewTarg DynEnum in the types section (it would also update the enums based on any other changes you might have made in the UnitNames table -- again a very useful function to remember)
+<li> Now we are finally ready to add the code to set the rew_targ input for the probe trial.  Just drag a <code>set units lit</code> from the Network toolbox to end of the prog_code before the DoneWritingRowData guy, and set the enum_type to RewTarg, and the value should be R_rew_targ.
+</ul></ul>
 Finally, you can hit <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Init()\">Init</a>
 and <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Run()\">Run</a> on the LeabraTrain program to run your new network (select Yes to Initialize the weights).
-<p>
-</p><h2> Increasing the Hidden Layer Size </h2>
-<p>
+<P>
+<h2> Increasing the Hidden Layer Size </h2>
+<P>
 It may or may not learn the task very quickly (depends on your random initial weights, etc).  It turns out from playing with this model a bit that the initial 16 unit hidden layer is just a bit too small to handle all the new information being represented in the PFC layer.  So, click on the Hidden layer's green border in the Network_0 3d view, and you should see the edit panel for the network in the middle panel.  Locate the <code>un_geom</code> line, and change it to 5 x 5 (25 units) instead of 4 x 4.  When you hit apply, the layer will change size in the display, but the extra units will not be filled in.  You need to click back on the Network_0 tab in the middle panel, and hit the Build button at the bottom to rebuild the network based on the changes you made.
-</p><p>
+<P>
 Now <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Init()\">Init</a>
 and <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Run()\">Run</a> on the LeabraTrain program again, select Yes to initialize the weights, and you should see the network learning within 10-20 epochs or so (again, toggle off the display button on the Network view control panel to speed things up -- same with the TrialOutputData Grid display).
-</p><p>
-</p><h2> Displaying Unit Names </h2>
-<p>
+<P>
+<h2> Displaying Unit Names </h2>
+<P>
 Once the network has learned, we can use the Step button on the Train program to see how it operates step by step (turn the network and trial grid log display's back on).  By default, the step goes one settle at a time -- you can change this to LeabraTrial to get one trial at a time.
-</p><p>
+<P>
 To better visualize what is happening, you can change the input, output, and PFC layers to display the name of the most active unit, rather than just the raw unit activations.  This makes it just that much easier to figure out what the network is doing.
-</p><p>
+<P>
 There are two steps to this.  First, we need to get the unit name labels from the UnitNames data table into our network.  Then, we need to configure the network display to show the labels instead of the units.
-</p><ol><li> Go to our good friend the <a href=\"ta:.programs.CPTAXGen.init_code[0]\">InitNamedUnits</a> object in the 
-init_code of the <a href=\"ta:.programs.CPTAXGen\">CPTAXGen</a> program.  There is a LabelNetwork button there, but if you press it, you'll get an error about not finding a network variable to apply the names to.  To create this variable, you can just copy the network variable from the args section of any of the programs in the LeabraAll_Std subgroup, and put it in the args of the CPTAXGen program (do context menu copy on the network variable and then context menu paste on args, or you can actually open up the args section of a program in the left browser and drag the network directly into your CPTAXGen args in the middle browser -- that is a convenient way to do various copies).  </li></ol>
+<ol><li> Go to our good friend the <a href=\"ta:.programs.CPTAXGen.init_code[0]\">InitNamedUnits</a> object in the 
+init_code of the <a href=\"ta:.programs.CPTAXGen\">CPTAXGen</a> program.  There is a LabelNetwork button there, but if you press it, you'll get an error about not finding a network variable to apply the names to.  To create this variable, you can just copy the network variable from the args section of any of the programs in the LeabraAll_Std subgroup, and put it in the args of the CPTAXGen program (do context menu copy on the network variable and then context menu paste on args, or you can actually open up the args section of a program in the left browser and drag the network directly into your CPTAXGen args in the middle browser -- that is a convenient way to do various copies).  </ol>
 Then do <a href=\"ta:.programs.CPTAXGen.init_code[0].LabelNetwork()\">LabelNetwork</a> again, and this time it should work.
 <ol><li> In the <a href=\"ta:.T3Tab.Network_0\">Network_0</a> view, select the red arrow and then click on the Input layer (green border) to select it, and then use the context menu (right mouse button or mac-command-mouse) to select <code>Disp Output Name</code>.  Repeat this for the Output and PFC layers.
-</li></ol>
+</ol>
 Now Step your LeabraTrain program, and you should see the names of the active units.
-<p>
+<P>
 In the network that we trained (which you can load into Network_0 by clicking on that guy and doing Object/Load and selecting <code>ax_tutorial_cptax.net</code>), it is very clear that the middle two stripes update for an A or a C, while the first and third stripe update for B.  No stripes update for any of the probe stimuli.  This encoding of the cue but not the probe is just what you'd expect the network to learn.
-</p><p>
+<P>
 It might be easier to see what the network is doing if you change the pct_target to .25 or something instead of .7 -- you don't have to spend so much time clicking through AX trials.
-</p><p>
-That is all we have for now.  You might notice a project called <code>12ax4s.proj</code> in this same directory -- that is an even more complex version of the CPT-AX task involving an outer-loop of 1 or 2 stimuli that determines what the inner-loop target sequence is (AX or BY).  These same mechanisms can learn that more difficult task, though it takes longer.  It is described in detail in the O'Reilly &amp; Frank 2006 paper referenced above.
-</p><p>
-
-
-</p></body></html>";
+<P>
+That is all we have for now.  You might notice a project called <code>12ax4s.proj</code> in this same directory -- that is an even more complex version of the CPT-AX task involving an outer-loop of 1 or 2 stimuli that determines what the inner-loop target sequence is (AX or BY).  These same mechanisms can learn that more difficult task, though it takes longer.  It is described in detail in the O'Reilly & Frank 2006 paper referenced above.
+<P>
+</body>
+</html>
+";
   };
   taDoc @[8] {
    name="WikiDoc";
@@ -1350,232 +1344,309 @@ That is all we have for now.  You might notice a project called <code>12ax4s.pro
 </body>
 </html>
 ";
-   html_text="<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\" dir=\"ltr\"><head>
-		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">
-		<meta http-equiv=\"Content-Style-Type\" content=\"text/css\">
-		<meta name=\"generator\" content=\"MediaWiki 1.16alpha-wmf\">
-		<meta name=\"keywords\" content=\"AX Tutorial,AXTut BuildNet,AXTut CPTAX Program,AXTut InputData,AXTut OutputData,AXTut PfcBg,AXTut Programs,AXTut TaskProgram\">
-		<link rel=\"stylesheet\" type=\"text/css\" href=\"/emergent/extensions/BreadCrumbs/BreadCrumbs.css\">
-		<link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection\" href=\"http://yui.yahooapis.com/2.5.1/build/fonts/fonts-min.css\">
-		<link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection\" href=\"http://yui.yahooapis.com/2.5.1/build/tabview/assets/skins/sam/tabview.css\">
-		<link rel=\"stylesheet\" type=\"text/css\" media=\"screen, projection\" href=\"/emergent/extensions/HeaderTabs/skins/headertabs.css\">
-		<link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
-		<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"Emergent (en)\">
-		<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Emergent RSS Feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=rss\">
-		<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Emergent Atom Feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
-		<title>AX Tutorial - Emergent</title>
-		<link rel=\"stylesheet\" href=\"/emergent/skins/common/shared.css?233z\" type=\"text/css\" media=\"screen\">
-		<link rel=\"stylesheet\" href=\"/emergent/skins/common/commonPrint.css?233z\" type=\"text/css\" media=\"print\">
-		<link rel=\"stylesheet\" href=\"/emergent/skins/monobook/main.css?233z\" type=\"text/css\" media=\"screen\">
-		<!--[if lt IE 5.5000]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE50Fixes.css?233z\" type=\"text/css\" media=\"screen\" /><![endif]-->
-		<!--[if IE 5.5000]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE55Fixes.css?233z\" type=\"text/css\" media=\"screen\" /><![endif]-->
-		<!--[if IE 6]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE60Fixes.css?233z\" type=\"text/css\" media=\"screen\" /><![endif]-->
-		<!--[if IE 7]><link rel=\"stylesheet\" href=\"/emergent/skins/monobook/IE70Fixes.css?233z\" type=\"text/css\" media=\"screen\" /><![endif]-->
-		<link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:Common.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" type=\"text/css\">
-		<link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:Print.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" type=\"text/css\" media=\"print\">
-		<link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:monobook.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" type=\"text/css\">
-		<link rel=\"stylesheet\" href=\"/emergent/index.php?title=-&amp;action=raw&amp;maxage=18000&amp;gen=css\" type=\"text/css\">
-		<!--[if lt IE 7]><script type=\"text/javascript\" src=\"/emergent/skins/common/IEFixes.js?233z\"></script>
-		<meta http-equiv=\"imagetoolbar\" content=\"no\" /><![endif]-->
+   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\"><head>
+<title>AXTut OutputData - Emergent</title>
+<meta name=\"generator\" content=\"MediaWiki 1.16alpha-wmf\">
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">
+<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=AXTut_OutputData&amp;action=edit\">
+<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=AXTut_OutputData&amp;action=edit\">
+<link rel=\"stylesheet\" media=\"screen, projection\" href=\"http://yui.yahooapis.com/2.5.1/build/fonts/fonts-min.css\">
+<link rel=\"stylesheet\" media=\"screen, projection\" href=\"http://yui.yahooapis.com/2.5.1/build/tabview/assets/skins/sam/tabview.css\">
+<link rel=\"stylesheet\" media=\"screen, projection\" href=\"/emergent/extensions/HeaderTabs/skins/headertabs.css\">
+<link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
+<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"Emergent (en)\">
+<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Emergent RSS Feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=rss\">
+<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Emergent Atom Feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
+<link rel=\"stylesheet\" href=\"/emergent/skins/emer/main-ltr.css?243\" media=\"screen\">
+<link rel=\"stylesheet\" href=\"/emergent/skins/common/shared.css?243\" media=\"screen\">
+<link rel=\"stylesheet\" href=\"/emergent/skins/common/commonPrint.css?243\" media=\"print\">
+<link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:Common.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\">
+<link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:Print.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" media=\"print\">
+<link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:emer.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\">
+<link rel=\"stylesheet\" href=\"/emergent/index.php?title=-&amp;action=raw&amp;maxage=18000&amp;smaxage=0&amp;ts=20091110054211&amp;gen=css\">
+<script>
+var skin=\"emer\",
+stylepath=\"/emergent/skins\",
+wgArticlePath=\"/emergent/index.php/$1\",
+wgScriptPath=\"/emergent\",
+wgScriptExtension=\".php\",
+wgScript=\"/emergent/index.php\",
+wgVariantArticlePath=false,
+wgActionPaths={},
+wgServer=\"http://grey.colorado.edu\",
+wgCanonicalNamespace=\"\",
+wgCanonicalSpecialPageName=false,
+wgNamespaceNumber=0,
+wgPageName=\"AXTut_OutputData\",
+wgTitle=\"AXTut OutputData\",
+wgAction=\"view\",
+wgArticleId=236,
+wgIsArticle=true,
+wgUserName=\"Oreilly\",
+wgUserGroups=[\"*\", \"user\", \"autoconfirmed\"],
+wgUserLanguage=\"en\",
+wgContentLanguage=\"en\",
+wgBreakFrames=false,
+wgCurRevisionId=1737,
+wgVersion=\"1.16alpha-wmf\",
+wgEnableAPI=true,
+wgEnableWriteAPI=true,
+wgSeparatorTransformTable=[\"\", \"\"],
+wgDigitTransformTable=[\"\", \"\"],
+wgMainPageTitle=\"Main Page\",
+wgFormattedNamespaces={\"-2\": \"Media\", \"-1\": \"Special\", \"0\": \"\", \"1\": \"Talk\", \"2\": \"User\", \"3\": \"User talk\", \"4\": \"Emergent\", \"5\": \"Emergent talk\", \"6\": \"File\", \"7\": \"File talk\", \"8\": \"MediaWiki\", \"9\": \"MediaWiki talk\", \"10\": \"Template\", \"11\": \"Template talk\", \"12\": \"Help\", \"13\": \"Help talk\", \"14\": \"Category\", \"15\": \"Category talk\"},
+wgNamespaceIds={\"media\": -2, \"special\": -1, \"\": 0, \"talk\": 1, \"user\": 2, \"user_talk\": 3, \"emergent\": 4, \"emergent_talk\": 5, \"file\": 6, \"file_talk\": 7, \"mediawiki\": 8, \"mediawiki_talk\": 9, \"template\": 10, \"template_talk\": 11, \"help\": 12, \"help_talk\": 13, \"category\": 14, \"category_talk\": 15, \"image\": 6, \"image_talk\": 7},
+wgRestrictionEdit=[],
+wgRestrictionMove=[],
+wgAjaxWatch={\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg\": \"Watching...\", \"unwatchingMsg\": \"Unwatching...\"};
+</script>
+<script src=\"/emergent/skins/common/wikibits.js?urid=243_1257107915\"></script>
+<script src=\"/emergent/skins/common/ajax.js?urid=243_1247772050\"></script>
+<script src=\"/emergent/skins/common/ajaxwatch.js?urid=243_1257107915\"></script>
+<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/utilities/utilities.js\"></script>
+<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/tabview/tabview-min.js\"></script>
+<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/event/event-min.js\"></script>
+<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/history/history-min.js\"></script>
+<script type=\"text/javascript\" src=\"/emergent/extensions/HeaderTabs/skins/headertabs.js\"></script>
+<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/emer/csshover.htc\")}</style><![endif]-->
+<!--[if lt IE 7]><script type=\"text/javascript\" src=\"/emergent/skins/common/IEFixes.js?243\"></script><meta http-equiv=\"imagetoolbar\" content=\"no\" /><![endif]-->
+<script src=\"/emergent/index.php?title=-&amp;action=raw&amp;smaxage=0&amp;gen=js&amp;useskin=emer&amp;urid=243\"></script>
 
-		<script type=\"text/javascript\">/*<![CDATA[*/
-		var skin = \"monobook\";
-		var stylepath = \"/emergent/skins\";
-		var wgArticlePath = \"/emergent/index.php/$1\";
-		var wgScriptPath = \"/emergent\";
-		var wgScript = \"/emergent/index.php\";
-		var wgVariantArticlePath = false;
-		var wgActionPaths = {};
-		var wgServer = \"http://grey.colorado.edu\";
-		var wgCanonicalNamespace = \"\";
-		var wgCanonicalSpecialPageName = false;
-		var wgNamespaceNumber = 0;
-		var wgPageName = \"AX_Tutorial\";
-		var wgTitle = \"AX Tutorial\";
-		var wgAction = \"view\";
-		var wgArticleId = \"232\";
-		var wgIsArticle = true;
-		var wgUserName = null;
-		var wgUserGroups = null;
-		var wgUserLanguage = \"en\";
-		var wgContentLanguage = \"en\";
-		var wgBreakFrames = false;
-		var wgCurRevisionId = 1225;
-		var wgVersion = \"1.16alpha-wmf\";
-		var wgEnableAPI = true;
-		var wgEnableWriteAPI = true;
-		var wgSeparatorTransformTable = [\"\", \"\"];
-		var wgDigitTransformTable = [\"\", \"\"];
-		var wgMainPageTitle = \"Main Page\";
-		var wgRestrictionEdit = [];
-		var wgRestrictionMove = [];
-		var wgFCKEditorDir = \"extensions/FCKeditor/fckeditor/\";
-		var wgFCKEditorExtDir = \"extensions/FCKeditor\";
-		var wgFCKEditorToolbarSet = \"Wiki\";
-		var wgFCKEditorHeight = \"0\";
-		/*]]>*/</script>
+</head><body class=\"mediawiki ltr ns-0 ns-subject page-AXTut_OutputData skin-emer\" dir=\"ltr\">
+                <div style=\"position:absolute; top:5px; left: 5px;z-index:99999;\">
+		     <a href=\"http://grey.colorado.edu/emergent\">
+		     	<img width=\"30px\" src=\"http://grey.colorado.edu/mediawiki/sites/emergent/logo.png\"><span style=\"font-size:150%\">mergent</span>
+		     </a>
+		</div>
+		<div id=\"page-base\" class=\"noprint\"></div>
+		<div id=\"head-base\" class=\"noprint\"></div>
+		<!-- content -->
+		<div id=\"content\">
+			<a id=\"top\"></a>
+			<div id=\"mw-js-message\" style=\"display:none;\"></div>
+						<!-- firstHeading -->
+			<h1 id=\"firstHeading\" class=\"firstHeading\">AXTut OutputData</h1>
+			<!-- /firstHeading -->
+			<!-- bodyContent -->
+			<div id=\"bodyContent\">
 
-		<script type=\"text/javascript\" src=\"/emergent/skins/common/wikibits.js?233z\"><!-- wikibits js --></script><style type=\"text/css\">@import \"/emergent/skins/monobook/KHTMLFixes.css\";</style>
-		<!-- Head Scripts -->
-		<script type=\"text/javascript\" src=\"/emergent/skins/common/ajax.js?233z\"></script>
-		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/utilities/utilities.js\"></script>
-		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/tabview/tabview-min.js\"></script>
-		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/event/event-min.js\"></script>
-		<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/2.5.1/build/history/history-min.js\"></script>
-		<script type=\"text/javascript\" src=\"/emergent/extensions/HeaderTabs/skins/headertabs.js\"></script>
-		<link rel=\"alternate\" type=\"application/rdf+xml\" title=\"AX Tutorial\" href=\"/emergent/index.php?title=Special:ExportRDF/AX_Tutorial&amp;xmlmime=rdf\">
-		<script type=\"text/javascript\" src=\"/emergent/index.php?title=-&amp;action=raw&amp;gen=js&amp;useskin=monobook\"><!-- site js --></script><script src=\"http://meta.wikimedia.org/w/index.php?title=MediaWiki:Wikiminiatlas.js&amp;action=raw&amp;ctype=text/javascript&amp;smaxage=21600&amp;maxage=86400\" type=\"text/javascript\"></script>
-	</head><body class=\"mediawiki ltr ns-0 ns-subject page-AX_Tutorial skin-monobook\">
-	<div id=\"globalWrapper\">
-		<div id=\"column-content\">
-	<div id=\"content\">
-		<a name=\"top\" id=\"top\"></a>
-				<h1 id=\"firstHeading\" class=\"firstHeading\">AX Tutorial</h1>
-		<div id=\"bodyContent\">
-			<h3 id=\"siteSub\">From Emergent</h3>
-			<div id=\"contentSub\"></div>
-									<div id=\"jump-to-nav\">Jump to: <a href=\"#column-one\">navigation</a>, <a href=\"#searchInput\">search</a></div>			<!-- start content -->
-			<div id=\"BreadCrumbsTrail\"><a href=\"/emergent/index.php/AX_Tutorial\" title=\"AX Tutorial\">AX Tutorial</a></div><p>This tutorial shows you how to construct a simple model of an actual psychological task (the CPT-AX task), from start to finish.  This one tutorial touches on all major aspects of the system. It is available as an interactive Emergent project in <code>demo/leabra/ax_tutorial.proj</code> (just run emergent, open the project and start following the instructions that appear), and in this wiki page.
-</p><p>The text from here is largely just copied from the ax_tutorial project, and may refer to the presence of the documentation within the project itself, and thus it probably makes the most sense to follow these directions after loading that ax_tutorial project in any case, even if you're mostly reading along on the wiki here..
+				<!-- tagline -->
+				<h3 id=\"siteSub\">From Emergent</h3>
+				<!-- /tagline -->
+				<!-- subtitle -->
+				<div id=\"contentSub\"></div>
+				<!-- /subtitle -->
+																<!-- jumpto -->
+				<div id=\"jump-to-nav\">
+					Jump to:<a href=\"#head\">navigation</a>,
+					<a href=\"#p-search\">search</a>
+				</div>
+				<!-- /jumpto -->
+								<!-- bodytext -->
+				<p>(back to <a href=\"/emergent/index.php/AX_Tutorial\" title=\"AX Tutorial\">AX Tutorial</a>)
 </p>
-<table id=\"toc\" class=\"toc\" summary=\"Contents\"><tbody><tr><td><div id=\"toctitle\"><h2>Contents</h2> <span class=\"toctoggle\">[<a id=\"togglelink\" class=\"internal\" href=\"javascript:toggleToc()\">hide</a>]</span></div>
+<table id=\"toc\" class=\"toc\"><tbody><tr><td><div id=\"toctitle\"><h2>Contents</h2> <span class=\"toctoggle\">[<a id=\"togglelink\" class=\"internal\" href=\"javascript:toggleToc()\">hide</a>]</span></div>
 <ul>
-<li class=\"toclevel-1\"><a href=\"#Building_a_Complete_Model\"><span class=\"tocnumber\">1</span> <span class=\"toctext\">Building a Complete Model</span></a></li>
-<li class=\"toclevel-1\"><a href=\"#Basic_Task:_Target_Detection\"><span class=\"tocnumber\">2</span> <span class=\"toctext\">Basic Task: Target Detection</span></a></li>
-<li class=\"toclevel-1\"><a href=\"#Chapters\"><span class=\"tocnumber\">3</span> <span class=\"toctext\">Chapters</span></a></li>
-<li class=\"toclevel-1\"><a href=\"#If_You_Get_Off_Track..\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">If You Get Off Track..</span></a></li>
+<li class=\"toclevel-1 tocsection-1\"><a href=\"#Monitoring.2C_Analyzing.2C_and_Displaying_Output_Data\"><span class=\"tocnumber\">1</span> <span class=\"toctext\">Monitoring, Analyzing, and Displaying Output Data</span></a></li>
+<li class=\"toclevel-1 tocsection-2\"><a href=\"#Graphing_Learning_Performance_over_Epochs\"><span class=\"tocnumber\">2</span> <span class=\"toctext\">Graphing Learning Performance over Epochs</span></a>
+<ul>
+<li class=\"toclevel-2 tocsection-3\"><a href=\"#Arranging_the_3d_View\"><span class=\"tocnumber\">2.1</span> <span class=\"toctext\">Arranging the 3d View</span></a></li>
 </ul>
-</td></tr></tbody></table><script type=\"text/javascript\"> if (window.showTocToggle) { var tocShowText = \"show\"; var tocHideText = \"hide\"; showTocToggle(); } </script>
-<a name=\"Building_a_Complete_Model\" id=\"Building_a_Complete_Model\"></a><h2> <span class=\"mw-headline\"> Building a Complete Model </span></h2>
-<p>This project provides step-by-step directions for constructing a working neural network simulation from the ground up, including programming a simple psychological task (target detection), which we extend through several stages to ultimately simulate the more complex CPT-AX task used in working memory studies.
+</li>
+<li class=\"toclevel-1 tocsection-4\"><a href=\"#Recording_Network_Activations_for_a_Grid_View\"><span class=\"tocnumber\">3</span> <span class=\"toctext\">Recording Network Activations for a Grid View</span></a></li>
+<li class=\"toclevel-1 tocsection-5\"><a href=\"#Analyzing_the_Hidden_Layer_Representations\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">Analyzing the Hidden Layer Representations</span></a></li>
+</ul>
+</td></tr></tbody></table><script>if (window.showTocToggle) { var tocShowText = \"show\"; var tocHideText = \"hide\"; showTocToggle(); } </script>
+<h2><span class=\"editsection\">[<a href=\"/emergent/index.php?title=AXTut_OutputData&amp;action=edit&amp;section=1\" title=\"Edit section: Monitoring, Analyzing, and Displaying Output Data\">edit</a>]</span> <span class=\"mw-headline\" id=\"Monitoring.2C_Analyzing.2C_and_Displaying_Output_Data\"> Monitoring, Analyzing, and Displaying Output Data </span></h2>
+<p>In this section we explore various ways of understanding better how the network is performing.
 </p>
-<pre><b>To return to this document</b> at any time, just hit the <code>ProjectDocs</code> tab at the top of this middle panel where you are now reading.
-</pre>
-<p>Some basic terminology:
+<h2><span class=\"editsection\">[<a href=\"/emergent/index.php?title=AXTut_OutputData&amp;action=edit&amp;section=2\" title=\"Edit section: Graphing Learning Performance over Epochs\">edit</a>]</span> <span class=\"mw-headline\" id=\"Graphing_Learning_Performance_over_Epochs\"> Graphing Learning Performance over Epochs </span></h2>
+<p>To see how your network is learning a given task, the first step is to generate a graph of the learning performance (sum squared error on the training patterns) over epochs.  Fortunately, the default programs are already collecting this data for us, so we just need to display the graph.
+</p><p>The data is being recorded in the <a href=\"/emergent/index.php?title=.data.gp.OutputData.EpochOutputData&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".data.gp.OutputData.EpochOutputData (page does not exist)\">.data.gp.OutputData.EpochOutputData</a> data table object in the <code>data/OutputData subgroup</code>.  You should see a few rows of data from the previous run, and you should notice that the <code>avg_sse</code> column shows a general decrease in average sum-squared-error on the training patterns, ending in a 0, which is what stopped the training.
+</p><p>To graph this data, you just generate a graph view of this data table.  As a general rule in the software, all view information is always generated by a given main object like a datatable or a network -- you don't create a graph and then associate data with it -- it goes the other way.  The menu selection to create the graph view is <a href=\"/emergent/index.php?title=.data.gp.OutputData.EpochOutputData.NewGraphView()&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".data.gp.OutputData.EpochOutputData.NewGraphView() (page does not exist)\">View/New Graph View</a>.  This time, let's be adventurous and instead of putting this graph in a separate view frame, put it in the <code>Network_0</code> frame.
+</p><p>If you happened to have put it in the wrong frame initially, don't worry -- just do the context menu over the frame view tab on the right (should be called EpochOutputData), and select Delete Frame.  Note that there can be multiple views of the same underlying data.
+</p><p>You should see a graph appear in the upper right of your network display, showing a decreasing line from left to right.  By default the line is (redundantly) color coded for the plot value.  You can control this and many other features of the graph display in the graph control panel.
+</p><p>But wait, where is that panel?  You should only see a <a href=\"/emergent/index.php?title=.PanelTab.Network_0&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".PanelTab.Network 0 (page does not exist)\">.PanelTab.Network_0</a> tab in the middle (Editor) panel tabs.  If you click on that guy, and look at the bottom, you'll see selectors for the different view objects within this one view frame (Network_0 and EpochOutputData Graph).  Select the graph view tab at the bottom, and again mouse over the various controls and play around with them.  As you can see, there are many different ways of
+configuring the graphs -- feel free to explore.  Note that there are several other variables that you could plot, including average cycles to settle, and a count of the number of errors made across trials. Also see the wiki <a href=\"/emergent/index.php?title=.Wiki.GraphView&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".Wiki.GraphView (page does not exist)\">.Wiki.GraphView</a> page for more details.
+</p><p>To see your graph updating in real-time, you can re-init and run the <a href=\"/emergent/index.php?title=.programs.gp.LeabraAll_Std.LeabraTrain&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".programs.gp.LeabraAll Std.LeabraTrain (page does not exist)\">.programs.gp.LeabraAll_Std.LeabraTrain</a> program: <a href=\"/emergent/index.php?title=.programs.gp.LeabraAll_Std.LeabraTrain.Init()&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".programs.gp.LeabraAll Std.LeabraTrain.Init() (page does not exist)\">Init</a> <a href=\"/emergent/index.php?title=.programs.gp.LeabraAll_Std.LeabraTrain.Run()&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".programs.gp.LeabraAll Std.LeabraTrain.Run() (page does not exist)\">Run</a>.
 </p>
-<ul><li> <b>Left <i>Browser</i> panel</b> is the left portion of the window with a \"tree\" of objects in the simulation (including the network, and the input/output data, etc).
-</li><li> <b>Middle <i>Editor</i> panel</b> is where you are currently reading -- it can display different things depending on the selected tabs at the top, and what is currently selected in the left browser panel.  The left-most tab usually shows what is selected in the browser, and the other tabs with \"pins\" down are locked in place and contain this document and the Wizard, which we will be making heavy use of.  The right-most tab represents the configuration information for the 3D display shown in the right-most view panel (which is now called \"Frame1\" and is empty).
-</li><li> <b>Right <i>Viewer</i> panel</b> shows 3d displays of various simulation objects, incuding the network, input/output patterns, and graphs of results, etc.
+<h3><span class=\"editsection\">[<a href=\"/emergent/index.php?title=AXTut_OutputData&amp;action=edit&amp;section=3\" title=\"Edit section: Arranging the 3d View\">edit</a>]</span> <span class=\"mw-headline\" id=\"Arranging_the_3d_View\"> Arranging the 3d View </span></h3>
+<p>Although the <a href=\"/emergent/index.php?title=.T3Tab.Network_0&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".T3Tab.Network 0 (page does not exist)\">.T3Tab.Network_0</a> view is sufficient, it could be configured to look better.  We could shrink the graph view a bit, and orient it better.  To do this (optional), click on the <b>red arrow</b> button to the right of the view, and then grab the upper horizontal bar of the small purple box in the lower-left hand corner of the graph view display.  Drag this slowly down -- you'll see the green frame rotating as you do.  Do this to the point where graph is angled more \"head on\".  Similarly, you can grab the left vertical bar and rotate the graph to the left a bit to make it more face on.  Next, grab any corner of the box, and shrink the view a bit (maybe to half or so of its original size).  Finally, you can move the view down and to the right a bit, by clicking on the face of the cube (not on any of the purple elements), to fit in between the Hidden and Output layers.
+</p><p>When you've got it the way you want, you can press the <b>eye</b> button to resize the display to fit, and maybe Dolly zoom in a bit.  You could perhaps pan to the right a bit with shift-mouse.  When it looks good, hit the <b>blueprint house</b> button (\"save home\"), which saves this view configuration.
+</p>
+<h2><span class=\"editsection\">[<a href=\"/emergent/index.php?title=AXTut_OutputData&amp;action=edit&amp;section=4\" title=\"Edit section: Recording Network Activations for a Grid View\">edit</a>]</span> <span class=\"mw-headline\" id=\"Recording_Network_Activations_for_a_Grid_View\"> Recording Network Activations for a Grid View </span></h2>
+<p>Another common analysis task is to look at the pattern of activations across trials.  To do this, we need to record activation values to our trial-level output data table (which was automatically created by the wizard).  The easiest way to do this is to select the network object in the network view by clicking on the thin green frame surrounding the text display at the bottom of the network, and then using the right mouse button to get the context menu, and select [[.networks[0].MonitorVar()|MonitorVar]].  For the <code>net_mon</code> field, click and select the <code>trial_netmon</code>, which is for monitoring information at the trial level (the other one is for the epoch level).  For the <code>variable</code> field, type in \"act_m\" (no quotes), to record minus (m) phase activations (act) (the monitor runs at the end of the trial, after the plus phase).  This will record activations for all three layers in the network in one easy step (you could alternatively do MonitorVar on each of the layers individually, or on any other object in the network for that matter, and record any variable).  
+</p><p>Next, we need to make a Grid View of the resulting data, which will be recorded in the <a href=\"/emergent/index.php?title=.data.gp.OutputData.TrialOutputData&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".data.gp.OutputData.TrialOutputData (page does not exist)\">.data.gp.OutputData.TrialOutputData</a> object -- do a 
+<a href=\"/emergent/index.php?title=.data.gp.OutputData.TrialOutputData.NewGridView()&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".data.gp.OutputData.TrialOutputData.NewGridView() (page does not exist)\">View/New Grid View</a>, and again let's put this in the Network_0 frame.  Follow the same general steps as before (see Arranging the 3d View above) to position this new grid view into the bottom right hand region of the view.
+</p><p>The grid view will not contain the new information until the <a href=\"/emergent/index.php?title=.programs.gp.LeabraAll_Std.LeabraTrain&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".programs.gp.LeabraAll Std.LeabraTrain (page does not exist)\">.programs.gp.LeabraAll_Std.LeabraTrain</a> program is <a href=\"/emergent/index.php?title=.programs.gp.LeabraAll_Std.LeabraTrain.Init()&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".programs.gp.LeabraAll Std.LeabraTrain.Init() (page does not exist)\">Init</a> and <a href=\"/emergent/index.php?title=.programs.gp.LeabraAll_Std.LeabraTrain.Run()&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".programs.gp.LeabraAll Std.LeabraTrain.Run() (page does not exist)\">Run</a> again.  After doing that, you need to scroll the grid view display all the way over to the right -- there are too many columns to fit within the 5 columns that the standard grid view is configured to display.  To do this, select the <b>red arrow</b> tool and drag the purple bar at the bottom of the <code>TrialOutputData</code> gridview all the way to the right.  You should see some colored squares with the Input, Hidden, and Output column headers.
+</p><p>To really make things clean, you can select the column headers of the columns you don't want to display (e.g., ext_rew, minus cycles) and do context menu/View Properties and then hit the Hide button at the bottom of the dialog that comes up.  Ideally, you'd just want to see the trial name, sse, and the different layer activation columns.
+</p><p>Also, because there are just 6 events, we can set the rows to display to 6 in the grid view control panel, to make the display fit just right.
+</p><p>Again, you can run your program and see it update the display.
+</p>
+<h2><span class=\"editsection\">[<a href=\"/emergent/index.php?title=AXTut_OutputData&amp;action=edit&amp;section=5\" title=\"Edit section: Analyzing the Hidden Layer Representations\">edit</a>]</span> <span class=\"mw-headline\" id=\"Analyzing_the_Hidden_Layer_Representations\"> Analyzing the Hidden Layer Representations </span></h2>
+<p>Now that we have some data from the network, we can perform some powerful analysis techniques on that data. 
+</p><p>First, we can make a cluster plot of the Hidden Layer activations, to see if we can understand better what is being encoded.  To do this, find the <a href=\"/emergent/index.php?title=.data_proc.data_anal&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".data proc.data anal (page does not exist)\">.data_proc.data_anal</a> object under <code>data_proc/data_anal</code> in the left browser.  This contains many useful analysis tools, organized by different topics in the buttons at the bottom.  Select <a href=\"/emergent/index.php?title=.data_proc.data_anal.Cluster()&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".data proc.data anal.Cluster() (page does not exist)\">HighDim/Cluster</a>, and set the following parameters (leave the rest at their defaults):
+</p>
+<ul><li> view = on (generate a graph of the cluster data)
+</li><li> src_data = TrialOutputData
+</li><li> data_col_nm = Hidden_act_m   (specifies the column of data that we want to cluster)
+</li><li> name_col_name = trial_name (specifies the column with labels for the cluster nodes)
 </li></ul>
-<a name=\"Basic_Task:_Target_Detection\" id=\"Basic_Task:_Target_Detection\"></a><h2> <span class=\"mw-headline\"> Basic Task: Target Detection </span></h2>
-<p>The basic task we'll simulate involves presenting letters one at at a time to the network, and having it identify \"targets\" from \"non-targets\".  The targets are the letters 'A' and 'X', and the non-targets are 'B', 'C', 'Y', and 'Z'.
-</p><p>The network will have six input units representing each of these letters, and two output units, one for \"target\" and the other for \"non-target\".  It will have a hidden layer to learn the mapping (though this task is initially so trivial that it doesn't even require a hidden layer -- we'll make it harder later).
+<p>You should see a new graph show up, with the A,B,C,X,Y,Z labels grouped together into different clusters.  Most likely, you should observe in a trained network that the A and X are grouped together, separate from the other items.  Can you figure out why this would be the case?
+</p><p>Another way to process this high-dimensional activation pattern data is to project it down into 2 dimensions.  Two techniques for this are principal components analysis (PCA) and multidimensiona scaling (MDS).  To try PCA, select
+<a href=\"/emergent/index.php?title=.data_proc.data_anal.PCA2dPrjn()&amp;action=edit&amp;redlink=1\" class=\"new\" title=\".data proc.data anal.PCA2dPrjn() (page does not exist)\">HighDim/PCA2dPrjn</a> -- fill in the same info you did for the Cluster plot.  You should see that the labels are distributed as points in a two-dimensional space, with the X-axis being the dimension (principal component) of the hidden layer activation patterns that captures the greatest amount of variance across patterns, and the Y-axis being the second strongest component.  Accordingly, you should see A and X on the left or the right side of the graph, and the others on the other side.  It is not clear what the vertical axis represents..
+</p><p>There are many more things one could do, but hopefully this gives a flavor.  The next step: <a href=\"/emergent/index.php/AXTut_TaskProgram\" title=\"AXTut TaskProgram\">AXTut TaskProgram</a> is to write a program to automatically generate our input patterns for training the network -- initially we'll start out with the simple task we ran already, but then we'll progressively expand to more complex tasks.
 </p>
-<a name=\"Chapters\" id=\"Chapters\"></a><h2> <span class=\"mw-headline\"> Chapters </span></h2>
-<p>Here are the steps we'll go through, organized as separate document chapters (which live under the <code>docs</code> section of the browser, as does this document):
-</p>
-<ol><li> <a href=\"/emergent/index.php/AXTut_BuildNet\" title=\"AXTut BuildNet\">AXTut BuildNet</a> -- building the network
-</li><li> <a href=\"/emergent/index.php/AXTut_InputData\" title=\"AXTut InputData\">AXTut InputData</a> -- make basic input patterns (data) to present to the network
-</li><li> <a href=\"/emergent/index.php/AXTut_Programs\" title=\"AXTut Programs\">AXTut Programs</a> -- creating and controlling the programs that perform the simulation
-</li><li> <a href=\"/emergent/index.php/AXTut_OutputData\" title=\"AXTut OutputData\">AXTut OutputData</a> -- monitoring and analyzing the performance of the model<br>
-</li><li> <a href=\"/emergent/index.php/AXTut_TaskProgram\" title=\"AXTut TaskProgram\">AXTut TaskProgram</a> -- writing a program to construct the task input patterns, including more complex tasks.
-</li><li> Extras: elaborations that go all the way to the full CPT-AX task
-<ol><li> <a href=\"/emergent/index.php/AXTut_CPTAX_Program\" title=\"AXTut CPTAX Program\">AXTut CPTAX_Program</a> -- extend our basic program to the full CPT-AX task
-</li><li> <a href=\"/emergent/index.php/AXTut_PfcBg\" title=\"AXTut PfcBg\">AXTut PfcBg</a> -- adding a prefrontal cortex/basal ganglia to the model to handle the full CPT-AX task.
-</li></ol>
-</li></ol>
-<a name=\"If_You_Get_Off_Track..\" id=\"If_You_Get_Off_Track..\"></a><h2> <span class=\"mw-headline\"> If You Get Off Track.. </span></h2>
-<p>In the same directory where you loaded this project is a <code>ax_tutorial_final.proj</code> project file, which has the full project that will result from following these directions (not the extras).  You can load this project and refer to it to see what things are supposed to look like.
-</p><p>Let's begin...
-</p>
-<pre>Go to <a href=\"/emergent/index.php/AXTut_BuildNet\" title=\"AXTut BuildNet\">AXTut BuildNet</a>.
-</pre>
 <!-- 
 NewPP limit report
-Preprocessor node count: 5/1000000
+Preprocessor node count: 19/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:232-0!1!0!!en!2!edit=0 and timestamp 20090905073002 -->
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:236-0!1!0!!en!0 and timestamp 20091110055103 -->
 <div class=\"printfooter\">
-Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php/AX_Tutorial\">http://grey.colorado.edu/emergent/index.php/AX_Tutorial</a>\"</div>
-						<!-- end content -->
-						<div class=\"visualClear\"></div>
+Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php/AXTut_OutputData\">http://grey.colorado.edu/emergent/index.php/AXTut_OutputData</a>\"</div>
+				<!-- /bodytext -->
+								<!-- catlinks -->
+				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- /catlinks -->
+												<div class=\"visualClear\"></div>
+			</div>
+			<!-- /bodyContent -->
 		</div>
-	</div>
-		</div>
-		<div id=\"column-one\">
-	<div id=\"p-cactions\" class=\"portlet\">
-		<h5>Views</h5>
-		<div class=\"pBody\">
-			<ul lang=\"en\" xml:lang=\"en\">
-	
-				 <li id=\"ca-nstab-main\" class=\"selected\"><a href=\"/emergent/index.php/AX_Tutorial\" title=\"View the content page [ctrl-alt-c]\" accesskey=\"c\">Page</a></li>
-				 <li id=\"ca-talk\" class=\"new\"><a href=\"/emergent/index.php?title=Talk:AX_Tutorial&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [ctrl-alt-t]\" accesskey=\"t\">Discussion</a></li>
-				 <li id=\"ca-viewsource\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=edit\" title=\"This page is protected.
-You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
-				 <li id=\"ca-history\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=history\" title=\"Past revisions of this page [ctrl-alt-h]\" accesskey=\"h\">History</a></li>			<li id=\"ca-upload\"><a href=\"http://grey.colorado.edu/emergent/index.php/Special:Upload\" accesskey=\"0\" title=\"Special:Upload [ctrl-alt-0]\">upload</a></li><li id=\"ca-recent-changes\"><a href=\"http://grey.colorado.edu/emergent/index.php/Special:RecentChanges\" accesskey=\"0\" title=\"Special:RecentChanges [ctrl-alt-0]\">recent changes</a></li><li id=\"ca-help\"><a href=\"http://grey.colorado.edu/emergent/index.php/Help:Contents\" accesskey=\"0\" title=\"Help:Contents [ctrl-alt-0]\">help</a></li><li id=\"ca-search\"><a href=\"http://grey.colorado.edu/emergent/index.php/Special:Search\" accesskey=\"0\" title=\"Special:Search [ctrl-alt-0]\">search</a></li><li id=\"ca-home\"><a href=\"http://grey.colorado.edu/emergent\" accesskey=\"0\" title=\"Main_Page [ctrl-alt-0]\">home</a></li></ul>
-		</div>
-	</div>
-	<div class=\"portlet\" id=\"p-personal\">
-		<h5>Personal tools</h5>
-		<div class=\"pBody\">
-			<ul lang=\"en\" xml:lang=\"en\">
-				<li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=AX_Tutorial\" title=\"You are encouraged to log in; however, it is not mandatory [ctrl-alt-o]\" accesskey=\"o\">Log in / create account</a></li>
+		<!-- /content -->
+		<!-- header -->
+		<div id=\"head\" class=\"noprint\">
+			
+<!-- 0 -->
+<div id=\"p-personal\" class=\"\">
+	<h5>Personal tools</h5>
+	<ul lang=\"en\" xml:lang=\"en\">
+					<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" title=\"Your user page [ctrl-alt-.]\" accesskey=\".\">Oreilly</a></li>
+					<li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" title=\"Your talk page [ctrl-alt-n]\" accesskey=\"n\" class=\"new\">My talk</a></li>
+					<li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">My preferences</a></li>
+					<li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"The list of pages you are monitoring for changes [ctrl-alt-l]\" accesskey=\"l\">My watchlist</a></li>
+					<li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"List of your contributions [ctrl-alt-y]\" accesskey=\"y\">My contributions</a></li>
+					<li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=AXTut_OutputData\" title=\"Log out\">Log out</a></li>
 			</ul>
-		</div>
-	</div>
-	<div class=\"portlet\" id=\"p-logo\">
-		<a style=\"background-image: url(/mediawiki/sites//emergent/logo.png);\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [ctrl-alt-z]\" accesskey=\"z\"></a>
-	</div>
-	<script type=\"text/javascript\"> if (window.isMSIE55) fixalpha(); </script>
-	<div class=\"generated-sidebar portlet\" id=\"p-navigation\">
-		<h5 lang=\"en\" xml:lang=\"en\">Navigation</h5>
-		<div class=\"pBody\">
-			<ul>
-				<li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li>
-				<li id=\"n-FAQ\"><a href=\"/emergent/index.php/FAQ\">FAQ</a></li>
-				<li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li>
-				<li id=\"n-Bug-tracker\"><a href=\"http://grey.colorado.edu/cgi-bin/bugzilla/index.cgi\">Bug tracker</a></li>
-				<li id=\"n-Mailing-list\"><a href=\"http://grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\">Mailing list</a></li>
-				<li id=\"n-CodeReview\"><a href=\"/emergent/index.php/Special:Code/emergent\">CodeReview</a></li>
-				<li id=\"n-Nightly-build-status\"><a href=\"http://grey.colorado.edu/CDash\">Nightly build status</a></li>
-				<li id=\"n-Browse-source-code\"><a href=\"http://grey.colorado.edu/cgi-bin/viewvc.cgi/emergent/\">Browse source code</a></li>
-				<li id=\"n-ChangeLog\"><a href=\"/emergent/index.php/ChangeLog\">ChangeLog</a></li>
-				<li id=\"n-Installation\"><a href=\"/emergent/index.php/Installation\">Installation</a></li>
-				<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"The list of recent changes in the wiki [ctrl-alt-r]\" accesskey=\"r\">Recent changes</a></li>
-				<li id=\"n-help\"><a href=\"/emergent/index.php/Help:Contents\" title=\"The place to find out\">Help</a></li>
-			</ul>
-		</div>
-	</div>
-	<div id=\"p-search\" class=\"portlet\">
-		<h5 lang=\"en\" xml:lang=\"en\"><label for=\"searchInput\">Search</label></h5>
-		<div id=\"searchBody\" class=\"pBody\">
-			<form action=\"/emergent/index.php\" id=\"searchform\"><div>
-				<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
-				<input id=\"searchInput\" name=\"search\" type=\"text\" title=\"Search Emergent [ctrl-alt-f]\" accesskey=\"f\" value=\"\">
-				<input type=\"submit\" name=\"go\" class=\"searchButton\" id=\"searchGoButton\" value=\"Go\" title=\"Go to a page with this exact name if exists\">&nbsp;
-				<input type=\"submit\" name=\"fulltext\" class=\"searchButton\" id=\"mw-searchButton\" value=\"Search\" title=\"Search the pages for this text\">
-			</div></form>
-		</div>
-	</div>
-	<div class=\"portlet\" id=\"p-tb\">
-		<h5 lang=\"en\" xml:lang=\"en\">Toolbox</h5>
-		<div class=\"pBody\">
-			<ul>
-				<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/AX_Tutorial\" title=\"List of all wiki pages that link here [ctrl-alt-j]\" accesskey=\"j\">What links here</a></li>
-				<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/AX_Tutorial\" title=\"Recent changes in pages linked from this page [ctrl-alt-k]\" accesskey=\"k\">Related changes</a></li>
-<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [ctrl-alt-u]\" accesskey=\"u\">Upload file</a></li>
-<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"List of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
-				<li id=\"t-print\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;printable=yes\" rel=\"alternate\" title=\"Printable version of this page [ctrl-alt-p]\" accesskey=\"p\">Printable version</a></li>				<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;oldid=1225\" title=\"Permanent link to this revision of the page\">Permanent link</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/AX_Tutorial\" title=\"Special:Browse/AX Tutorial\">Browse properties</a></li>			</ul>
-		</div>
-	</div>
-		</div><!-- end of the left (by default at least) column -->
-			<div class=\"visualClear\"></div>
-			<div id=\"footer\">
-				<div id=\"f-poweredbyico\"><a href=\"http://www.mediawiki.org/\"><img src=\"/emergent/skins/common/images/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\"></a></div>
-			<ul id=\"f-list\">
-					<li id=\"lastmod\"> This page was last modified on 18 August 2007, at 15:44.</li>
-					<li id=\"viewcount\">This page has been accessed 8,372 times.</li>
-					<li id=\"about\"><a href=\"/emergent/index.php/Emergent:About\" class=\"mw-redirect\" title=\"Emergent:About\">About Emergent</a></li>
-			</ul>
-		</div>
 </div>
 
-		<script type=\"text/javascript\">if (window.runOnloadHook) runOnloadHook();</script>
-<!-- Served in 0.147 secs. -->
+<!-- /0 -->
+			<div id=\"left-navigation\">
+				
+<!-- 0 -->
+<div id=\"p-namespaces\" class=\"emerTabs\">
+	<h5>Namespaces</h5>
+	<ul lang=\"en\" xml:lang=\"en\">
+					<li id=\"ca-nstab-main\" class=\"selected\"><a href=\"/emergent/index.php/AXTut_OutputData\" title=\"View the content page [ctrl-alt-c]\" accesskey=\"c\"><span>Page</span></a></li>
+					<li id=\"ca-talk\" class=\"new\"><a href=\"/emergent/index.php?title=Talk:AXTut_OutputData&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [ctrl-alt-t]\" accesskey=\"t\"><span>Discussion</span></a></li>
+			</ul>
+</div>
+
+<!-- /0 -->
+
+<!-- 1 -->
+<div id=\"p-variants\" class=\"emerMenu emptyPortlet\">
+	<h5><span>Variants</span><a href=\"#\"></a></h5>
+	<div class=\"menu\">
+		<ul lang=\"en\" xml:lang=\"en\">
+					</ul>
+	</div>
+</div>
+
+<!-- /1 -->
+			</div>
+			<div id=\"right-navigation\">
+				
+<!-- 0 -->
+<div id=\"p-views\" class=\"emerTabs\">
+
+	<h5>Views</h5>
+	<ul lang=\"en\" xml:lang=\"en\">
+					<li id=\"ca-view\" class=\"selected\"><a href=\"/emergent/index.php/AXTut_OutputData\"><span>Read</span></a></li>
+					<li id=\"ca-edit\"><a href=\"/emergent/index.php?title=AXTut_OutputData&amp;action=edit\" title=\"You can edit this page.
+Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span>Edit</span></a></li>
+					<li id=\"ca-history\"><a href=\"/emergent/index.php?title=AXTut_OutputData&amp;action=history\" title=\"Past revisions of this page [ctrl-alt-h]\" accesskey=\"h\"><span>View history</span></a></li>
+			</ul>
+</div>
+
+<!-- /0 -->
+
+<!-- 1 -->
+<div id=\"p-cactions\" class=\"emerMenu\">
+	<h5><span>Actions</span><a href=\"#\"></a></h5>
+	<div class=\"menu\">
+	     <ul>
+
+							<li id=\"ca-delete\"><a href=\"/emergent/index.php?title=AXTut_OutputData&amp;action=delete\" title=\"Delete this page [ctrl-alt-d]\" accesskey=\"d\">Delete</a></li>
+							<li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/AXTut_OutputData\" title=\"Move this page [ctrl-alt-m]\" accesskey=\"m\">Move</a></li>
+							<li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=AXTut_OutputData&amp;action=unwatch\" title=\"Remove this page from your watchlist [ctrl-alt-w]\" accesskey=\"w\">Unwatch</a></li>
+						
+<!-- navigation -->
+					<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"The list of recent changes in the wiki [ctrl-alt-r]\" accesskey=\"r\">Recent changes</a></li>
+					<li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li>
+					<li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li>
+					<li id=\"n-Bug-tracker\"><a href=\"http://grey.colorado.edu/cgi-bin/bugzilla/index.cgi\">Bug tracker</a></li>
+					<li id=\"n-Mailing-list\"><a href=\"http://grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\">Mailing list</a></li>
+		
+<!-- /navigation -->
+
+<!-- SEARCH -->
+
+<!-- /SEARCH -->
+
+<!-- TOOLBOX -->
+					<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/AXTut_OutputData\" title=\"List of all wiki pages that link here [ctrl-alt-j]\" accesskey=\"j\">What links here</a></li>
+						<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/AXTut_OutputData\" title=\"Recent changes in pages linked from this page [ctrl-alt-k]\" accesskey=\"k\">Related changes</a></li>
+																																					<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [ctrl-alt-u]\" accesskey=\"u\">Upload file</a></li>
+											<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"List of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
+									<li id=\"t-print\"><a href=\"/emergent/index.php?title=AXTut_OutputData&amp;printable=yes\" rel=\"alternate\" title=\"Printable version of this page [ctrl-alt-p]\" accesskey=\"p\">Printable version</a></li>
+						<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=AXTut_OutputData&amp;oldid=1737\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
+		
+<!-- /TOOLBOX -->
+
+<!-- LANGUAGES -->
+
+<!-- /LANGUAGES -->
+	     </ul>
+	</div>
+</div>
+
+<!-- /1 -->
+
+<!-- 2 -->
+<div id=\"p-search\">
+<div id=\"cse\"><div class=\"gsc-control-cse\"><form class=\"gsc-search-box\" accept-charset=\"utf-8\"><table cellspacing=\"0\" cellpadding=\"0\" class=\"gsc-search-box\"><tbody><tr><td class=\"gsc-input\"><input autocomplete=\"off\" type=\"text\" size=\"10\" class=\" gsc-input\" name=\"search\" title=\"search\" style=\"background-image: url(http://www.google.com/coop/intl/en/images/google_custom_search_watermark.gif); background-repeat: no-repeat; background-attachment: initial; -webkit-background-clip: initial; -webkit-background-origin: initial; background-color: rgb(255, 255, 255); background-position: 0% 50%; \"></td><td class=\"gsc-search-button\"><input type=\"submit\" value=\"Search\" class=\"gsc-search-button\" title=\"search\"></td><td class=\"gsc-clear-button\"><div class=\"gsc-clear-button\" title=\"clear results\">&nbsp;</div></td></tr></tbody></table><table cellspacing=\"0\" cellpadding=\"0\" class=\"gsc-branding\"><tbody><tr><td class=\"gsc-branding-user-defined\"></td><td class=\"gsc-branding-text\"><div class=\"gsc-branding-text\">powered by</div></td><td class=\"gsc-branding-img\"><img src=\"http://www.google.com/uds/css/small-logo.png\" class=\"gsc-branding-img\"></td></tr></tbody></table></form><div class=\"gsc-tabsAreaInvisible\"><div class=\" gsc-tabHeader gsc-tabhActive\">Custom&nbsp;Search&nbsp;Control</div><span class=\"gs-spacer\"> </span></div><div class=\"gsc-adBlockVerticalInvisible\"></div><div class=\"gsc-wrapper\"><div class=\"gsc-adBlockInvisible\"></div><div class=\"gsc-resultsbox-invisible\"><div class=\"gsc-resultsRoot gsc-tabData gsc-tabdActive\"><table cellspacing=\"0\" cellpadding=\"0\" class=\"gsc-resultsHeader\"><tbody><tr><td class=\"gsc-twiddleRegionCell\"><div class=\"gsc-twiddle\"><div class=\"gsc-title\">Web</div></div><div class=\"gsc-stats\"></div><div class=\"gsc-results-selector gsc-all-results-active\"><div class=\"gsc-result-selector gsc-one-result\" title=\"show one result\">&nbsp;</div><div class=\"gsc-result-selector gsc-more-results\" title=\"show more results\">&nbsp;</div><div class=\"gsc-result-selector gsc-all-results\" title=\"show all results\">&nbsp;</div></div></td><td class=\"gsc-configLabelCell\"></td></tr></tbody></table><div class=\"gsc-results gsc-webResult\"></div></div></div></div></div></div><script src=\"http://www.google.com/jsapi\" type=\"text/javascript\"></script><script type=\"text/javascript\">google.load('search', '1');google.setOnLoadCallback(function(){new google.search.CustomSearchControl('001223136417691641822:3aawef4fybc').draw('cse');}, true);</script><script src=\"http://www.google.com/uds/?file=search&amp;v=1\" type=\"text/javascript\"></script><link href=\"http://www.google.com/uds/api/search/1.0/49d5a0a79a3c081f004d76a6c9c34bf7/default.css\" type=\"text/css\" rel=\"stylesheet\"><script src=\"http://www.google.com/uds/api/search/1.0/49d5a0a79a3c081f004d76a6c9c34bf7/default+en.I.js\" type=\"text/javascript\"></script>
+</div>
+</div>
+
+<!-- /2 -->
+			</div>
+		
+		<!-- /header -->
+		<!-- footer -->
+		<div id=\"footer\">
+											<ul id=\"footer-info\">
+																	<li id=\"footer-info-lastmod\"> This page was last modified on 11 December 2007, at 14:31.</li>
+																							<li id=\"footer-info-viewcount\">This page has been accessed 2,224 times.</li>
+															</ul>
+															<ul id=\"footer-places\">
+																	<li id=\"footer-places-about\"><a href=\"/emergent/index.php/Emergent:About\" title=\"Emergent:About\">About Emergent</a></li>
+															</ul>
+										<ul id=\"footer-icons\" class=\"noprint\">
+								<li id=\"footer-icon-poweredby\"><a href=\"http://www.mediawiki.org/\"><img src=\"/emergent/skins/common/images/poweredby_mediawiki_88x31.png\" height=\"31\" width=\"88\" alt=\"Powered by MediaWiki\"></a></li>
+											</ul>
+			<div style=\"clear:both\"></div>
+		</div>
+		<!-- /footer -->
+		<!-- fixalpha -->
+		<script type=\"text/javascript\"> if ( window.isMSIE55 ) fixalpha(); </script>
+		<!-- /fixalpha -->
+		
+<script>if (window.runOnloadHook) runOnloadHook();</script>
+		<!-- Served in 0.194 secs. -->			
+
 </body></html>";
   };
  };
@@ -1711,8 +1782,8 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$0$;
    name="Browser";
+   m_data=.projects[0]$0$;
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -1723,8 +1794,8 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     el_typ=ToolBar;
     el_def=0;
     ToolBar @[0] {
-     m_data=NULL;
      name="Application";
+     m_data=NULL;
      visible=0;
      lft=0;
      top=0;
@@ -1736,31 +1807,32 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     el_typ=FrameViewer;
     el_def=0;
     tabBrowseViewer @[0] {
-     m_data=NULL;
      name="Tree";
+     m_data=NULL;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
      m_root=$0$;
     };
     PanelViewer @[1] {
-     m_data=NULL;
      name="Panels";
+     m_data=NULL;
      visible=1;
     };
     T3DataViewer @[2] {
-     m_data=NULL;
      name="T3Frames";
+     m_data=NULL;
      visible=1;
      frames {
       name=;
       el_typ=T3DataViewFrame;
       el_def=0;
       T3DataViewFrame @[0] {
-       m_data=NULL;
        name="Frame1";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -1829,8 +1901,8 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     el_typ=DockViewer;
     el_def=0;
     ToolBoxDockViewer @[0] {
-     m_data=NULL;
      name="Tools";
+     m_data=NULL;
      visible=1;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;
