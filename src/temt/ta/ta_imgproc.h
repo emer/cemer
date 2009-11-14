@@ -361,6 +361,71 @@ public:
   TA_SIMPLE_BASEFUNS(GaborFilterSpec);
 };
 
+
+class TA_API MotionDispGaborFilterSpec : public taNBase {
+  // #STEM_BASE ##CAT_Image defines a gabor filter oriented in space and time (gaussian times a plane sine wave) that moving highlights lines/edges in an image.  Takes input from two retins to check for disparity
+INHERITED(taNBase)
+public:
+  enum MotionDispGaborParam {
+    CTR_X,
+    CTR_Y,
+    CTR_T,
+    SPAT_ANGLE,
+    TIME_ANGLE,
+    PHASE,
+    FREQ,
+    FREQ_T,
+    WIDTH,
+    LENGTH,
+    WIDTH_T,
+    AMP,
+  };
+
+  int		x_size;		// overall size of the filtered region
+  int		y_size;		// overall size of the filtered region
+  int		t_size;		// overall size of the filtered region
+  float		ctr_x;		// center in x coord
+  float		ctr_y;		// center in y coord
+  float		ctr_t;		// center in y coord
+
+  float		spat_angle;		// angle of sine wave in 2-d space (in radians)
+  float		time_angle;		// angle of sine wave in 2-d time (in radians)
+
+  float		phase;		// phase of sine wave wrt the center of the gaussian (radians)
+  float		freq;		// frequency of the sine wave
+  float		freq_t;		// frequency of the sine wave
+
+  float		width;		// width of the gaussian in the wave direction
+  float		length;		// width of the gaussian in the wave direction
+  float		width_t;		// width of the gaussian in the wave direction
+
+  float		amp;		// amplitude (maximum value)
+  float_Matrix  filter;		// #READ_ONLY #NO_SAVE #NO_COPY our filter
+
+  virtual float	Eval(float x, float y, float t);
+  // #CAT_GaborFilter evaluate gabor function for given coordinates
+  virtual void	RenderFilter(float_Matrix& flt);
+  // #CAT_GaborFilter render filter into matrix
+  virtual void	UpdateFilter();
+  // #CAT_GaborFilter make our personal filter (RenderFilter(filter)) according to current params
+
+  virtual float	GetParam(MotionDispGaborParam param);
+  // #CAT_GaborFilter get particular parameter value
+
+  virtual void	GraphFilter(DataTable* disp_data);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter into data table and generate a graph from it
+  virtual void	GridFilter(DataTable* disp_data, bool reset = true);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter into data table and generate a grid view of it (reset an existing data first)
+
+  virtual void	OutputParams(ostream& strm = cerr);
+  // #CAT_GaborFilter output current parameter values to stream
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(MotionDispGaborFilterSpec);
+};
+
+
 class TA_API GaborFitter : public GaborFilterSpec {
   // ##CAT_Image fits a gabor filter from image data
 INHERITED(GaborFilterSpec)
@@ -496,6 +561,25 @@ public:
   TA_BASEFUNS(GaborRFSpec);
 };
 
+class TA_API MotionDispGaborRFSpec : public taBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Spec Gabor receptive field spec (for V1)
+  INHERITED(taBase)
+public:
+  int		n_angles;	// number of different angles
+  float		freq;		// frequency of the sine wave
+  float		freq_t;		// frequency of the sine wave related to time
+  float		length;		// length of the gaussian perpendicular to the wave direction
+  float		width;		// width of the gaussian in the wave direction
+  float		width_t;		// width of the gaussian in the time direction
+  float		amp;		// amplitude (maximum value)
+  int           timesteps;      //number of timesteps a motion sensitive filter responds to
+
+  void 	Initialize();
+  void	Destroy() { };
+  SIMPLE_COPY(MotionDispGaborRFSpec);
+  TA_BASEFUNS(MotionDispGaborRFSpec);
+};
+
 class TA_API BlobRFSpec : public taBase {
   // #INLINE #INLINE_DUMP ##CAT_Spec Blob receptive field specs (for V1)
   INHERITED(taBase)
@@ -514,21 +598,25 @@ class TA_API GaborV1SpecBase : public ImgProcThreadBase {
   // #STEM_BASE ##CAT_Image basic V1 model as either blob (DOG) or gabor filters with a specified rf width -- used for generating connections or for explicit filter operation in GaborV1Spec
 INHERITED(ImgProcThreadBase)
 public:
-  enum V1FilterType {
+  enum V1FilterType {  
     GABOR,			// filter using gabors (orientation tuned)
     BLOB,			// filter using blobs (color contrast tuned)
     COPY,			// just copy from retinal inputs, summing over on and off fields
+    MOTIONDISP_GABOR			// filter using gabors (orientation tuned) that are oriented in time and space and receive from two retinas
   };
 
   V1FilterType	filter_type; 	// what type of filter to use?
   TwoDCoord 	rf_width;	// width of the receptive field into the retinal inputs -- enforced to be even numbers, to enable the 1/2 overlap constraint for neighboring rf's
+
   TwoDCoord 	rf_ovlp;	// #CONDEDIT_ON_filter_type:COPY half-width of the receptive field into the retinal inputs, which is the amount that the receptive fields overlap
   int		n_filters;	// #READ_ONLY #SHOW number of filters -- computed from appropriate _rf specifications in terms of number of angles/sizes etc.
   GaborRFSpec	gabor_rf;	// #CONDEDIT_ON_filter_type:GABOR parameters for gabor filter specs
   BlobRFSpec	blob_rf;	// #CONDEDIT_ON_filter_type:BLOB parameters for blob filter specs
+  MotionDispGaborRFSpec	motiondisp_gabor_rf;	// #CONDEDIT_ON_filter_type:MOTIONDISP_GABOR parameters for motion/disp gabor filter specs
 
   taBase_List 	gabor_specs; 	// #READ_ONLY #NO_SAVE underlying gabor generators (type GaborFilterSpec)
   taBase_List 	blob_specs; 	// #READ_ONLY #NO_SAVE underlying DoG generators (type DoGFilterSpec)
+  taBase_List 	motiondisp_gabor_specs; 	// #READ_ONLY #NO_SAVE underlying motion/disp gabor generators (type MotionDispGaborFilterSpec)
 
   virtual bool 	InitFilters();
   // initialize the filters based on the RF specs
@@ -542,6 +630,7 @@ public:
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(GaborV1SpecBase);
 protected:
+  virtual bool 	InitFilters_MotionDispGabor();
   virtual bool 	InitFilters_Gabor();
   virtual bool 	InitFilters_Blob();
   virtual bool 	InitFilters_Copy();
@@ -630,6 +719,67 @@ protected:
   bool 		cur_superimpose;
 };
 
+
+
+class TA_API MotionDispGaborV1Spec : public GaborV1SpecBase {
+  // implements Gabor or DoG (Blob) filtering of a DoG filtered input image, as a model of V1 -- supports integration of multiple filters per unit for greater effective resolution without additional network processing cost
+INHERITED(GaborV1SpecBase)
+public:
+  RetinalSpacingSpec::Region region; // retinal region represented by this filter -- for matching up with associated retinal outputs
+  RetinalSpacingSpec::Resolution res; // resolution represented by this filter -- for matching up with associated retinal outputs
+
+  int rf_time;			//size of rf time dimension
+  XYNGeom	un_geom;  	// size of one 'hypercolumn' unit of orientation detectors -- sets the datatable geometry -- must include room for number of angles/sizes, on/off and n_filters_per_gp (for COPY mode, this is entire size of layer)
+  XYNGeom	gp_geom;  	// #CONDEDIT_OFF_filter_type:COPY size of full set of groups of hypercolumns to process entire set of inputs: with wrap, is input_size / rf_ovlp, subtract 1 for !wrap
+  bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -input_ovlp (wrapped to right/top) and goes +input_ovlp past the right/top edge (wrapped to left/bottom)
+  XYNGeom	n_filter_gps;	// #CONDEDIT_OFF_filter_type:COPY number of groups of filters in each axis -- replicates filters (in interdigitated fashion if n_filters_per_gp > 1) across multiple adjacent locations and integrates into summary value (with gaussian weighting from center)
+  int		n_filters_per_gp; // #CONDEDIT_OFF_filter_type:COPY number of filters per group -- when n_filter_gps > 1, may be useful to have multiple interdigitated filter units to reduce redundancy and produce better effective resolution
+  XYNGeom	tot_filter_gps;	// #READ_ONLY #SHOW n_filter_gps * n_filters_per_gp -- total number of filter groups per location
+  XYNGeom	filter_gp_ovlp;	// #READ_ONLY #SHOW tot_filter_gps / 2 -- overlap of filter groups, in terms of groups of filters
+  XYNGeom	input_ovlp;	// #READ_ONLY #SHOW filter_gp_ovlp * rf_ovlp + rf_ovlp -- overlap of filter groups, in terms of input coordinates -- how much to move over in input space when processing -- note that each subsequent group moves over an extra rf_ovlp
+  XYNGeom	trg_input_size;	// #READ_ONLY #SHOW target input size: gp_geom * input_ovlp for wrap; (gp_geom - 1) * input_ovlp for !wrap
+  float		gp_gauss_sigma;	  // width of gaussian weighting factor over the filter groups, in normalized terms relative to tot_filter_gps widths
+  float_Matrix	gp_gauss_mat;	  // #READ_ONLY #NO_SAVE #NO_COPY group gaussian vals 
+
+  virtual void	UpdateGeoms();	// update all the geometry values based on current setting
+
+  virtual bool	SetGpGeomFmInputSize(TwoDCoord& input_size);
+  // set the gp_geom based on the given input_size (size of input to filter) and existing filter parameters
+  virtual bool 	SetGpGeomFmRetSpec(DoGRetinaSpecList& dogs);
+  // set the gp_geom based on the input size on the given list of retinal dog filters by region and resolution
+
+  virtual bool	FilterMultiInput(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,float_Matrix& on_left_input,float_Matrix& off_left_input,float_Matrix& on_right_input,float_Matrix& off_right_input, bool superimpose = false);
+  // actually perform the filtering operation on input patterns: calls threading deploy
+
+  override void Filter_Thread(int cmp_unit_index, int thread_no=-1);
+  // this is thread target function, deploys to following based on type:
+
+  virtual bool	FilterInput_MotionDispGabor(int cmp_idx);
+  // actually perform the filtering operation on input patterns: Motion Disparity Gabors
+
+  //virtual void	GridFilterInput(DataTable* disp_data, int unit_no=0, int gp_skip=2, bool ctrs_only=false);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter for a given unit as it will be applied to the entire input data -- gp_skip specifies the number of unit groups to increment -- 2 is good to avoid complete overlap -- ctrs_only will only plot the centers of the filters, not the actual raw filters themselves
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(MotionDispGaborV1Spec);
+protected:
+  override bool 	InitFilters_Gabor();
+  override bool 	InitFilters_Blob();
+
+  void	UpdateAfterEdit_impl();
+
+  // cache of items for current function call
+  float_Matrix* cur_v1_output;
+  DoGFilterSpec::ColorChannel cur_c_chan;
+  float_Matrix*  cur_on_left_input;
+  float_Matrix*  cur_off_left_input;
+  float_Matrix* cur_on_right_input;
+  float_Matrix* cur_off_right_input;
+  bool 		cur_superimpose;
+};
+
+
 class TA_API GaborV1SpecList : public taList<GaborV1Spec> {
   // ##CAT_Image a list of Gabor V1 filters
 INHERITED(taList<GaborV1Spec>)
@@ -641,6 +791,20 @@ public:
   TA_BASEFUNS_NOCOPY(GaborV1SpecList);
 private:
   void	Initialize() 		{ SetBaseType(&TA_GaborV1Spec); }
+  void 	Destroy()		{ };
+};
+
+class TA_API MotionDispGaborV1SpecList : public taList<MotionDispGaborV1Spec> {
+  // ##CAT_Image a list of Gabor V1 filters
+INHERITED(taList<MotionDispGaborV1Spec>)
+public:
+
+  virtual bool UpdateSizesFmRetina(DoGRetinaSpecList& dogs);
+  // calls SetGpGeomFmRetSpec on all the items in the list
+
+  TA_BASEFUNS_NOCOPY(MotionDispGaborV1SpecList);
+private:
+  void	Initialize() 		{ SetBaseType(&TA_MotionDispGaborV1Spec); }
   void 	Destroy()		{ };
 };
 
@@ -757,7 +921,19 @@ public:
   virtual DataCol* GetRetImageColumn(DataTable* dt);
   // #CAT_Transform get the RetinaImage column with appropriate args for ensuring its correct size etc has been set
 
+  virtual DataCol* GetRetImageSeriesColumn(DataTable* dt, String mod_name);
+  // #CAT_Transform get the RetinaImage column for a particular image in a stimulus set with appropriate args for ensuring its correct size etc has been set
+
+  virtual String GetModName(int disparity, int timesteps, int curr_disp, int curr_time);
+  // #CAT_Filter gets the suffix used for naming images series data
+
   virtual bool	TransformImageData(float_Matrix& img_data, DataTable* dt,
+				   float move_x=0.0f, float move_y=0.0f,
+				   float scale = 1.0f, float rotate = 0.0f,
+				   bool superimpose = false);
+  // #CAT_Transform transform image data into datatable, with retina centered at given normalized offsets from center of image (move), scaled by given factor (zoom), rotated by normalized units (1=360deg), superimpose = merge into filter values into last row of table; otherwise new row is added -- impl routine for other functions to call (doesn't do any display updating)
+
+  virtual bool	TransformImageSeriesData(float_Matrix& img_data, String mod_name, DataTable* dt,
 				   float move_x=0.0f, float move_y=0.0f,
 				   float scale = 1.0f, float rotate = 0.0f,
 				   bool superimpose = false);
@@ -772,7 +948,19 @@ public:
 				bool superimpose = false);
   // #CAT_Transform transform image data into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and move params applied after foveation scaling and offsets, if superimpose, only do for last one!)
 
+  virtual bool	LookAtImageSeriesData(float_Matrix& img_data, String mod_name, DataTable* dt,
+				RetinalSpacingSpec::Region region,
+				float box_ll_x, float box_ll_y,
+				float box_ur_x, float box_ur_y,
+				float move_x=0, float move_y=0,
+				float scale = 1.0f, float rotate = 0.0f,
+				bool superimpose = false);
+  // #CAT_Transform transform image data into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and move params applied after foveation scaling and offsets, if superimpose, only do for last one!)
+
   virtual bool	FilterImageData(DataTable* dt, bool superimpose = false, int renorm = 1);
+  // #CAT_Filter filter retinal image data in RetinaImage column produced by TransformImageData_impl or LookAtImageData_impl in given datatable -- superimpose = merge into filter values into last row of table; otherwise writes over with new data -- impl routine for other functions to call (doesn't do any display updating), renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!)
+
+  virtual bool	FilterImageSeriesData(DataTable* dt, int disparity, int timesteps, bool superimpose = false, int renorm = 1);
   // #CAT_Filter filter retinal image data in RetinaImage column produced by TransformImageData_impl or LookAtImageData_impl in given datatable -- superimpose = merge into filter values into last row of table; otherwise writes over with new data -- impl routine for other functions to call (doesn't do any display updating), renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!)
 
   virtual void	Filter_Thread(int cmp_unit_index, int thread_no=-1);
@@ -786,6 +974,8 @@ public:
   // #CAT_Image convert image file to img_data float matrix
   virtual bool  RecordImageName(taImage& img, DataTable* dt);
   // #CAT_Image record name of image in Name column of data table
+  virtual bool  RecordImageSeriesName(taImage& img, String mod_name, DataTable* dt);
+  // #CAT_Image record name of image in a series of images with the modified name Name column of data table
 
   virtual bool	TransformImage(taImage& img, DataTable* dt,
 			       float move_x=0, float move_y=0,
@@ -808,6 +998,15 @@ public:
 			    bool superimpose = false);
   // #CAT_Transform transform mage data into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params add to foveation scaling and offsets
 
+  virtual bool	LookAtImageSeries(taImage& img, String mod_name, DataTable* dt,
+			    RetinalSpacingSpec::Region region,
+			    float box_ll_x, float box_ll_y,
+			    float box_ur_x, float box_ur_y,
+			    float move_x=0, float move_y=0,
+			    float scale = 1.0f, float rotate = 0.0f,
+			    bool superimpose = false);
+  // #CAT_Transform transform mage data into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params add to foveation scaling and offsets.  Stores an individual image in a series with the modofied name in the datatable entry
+
   virtual bool	LookAtImageName(const String& img_fname, DataTable* dt,
 				RetinalSpacingSpec::Region region,
 				float box_ll_x, float box_ll_y,
@@ -816,6 +1015,15 @@ public:
 				float scale = 1.0f, float rotate = 0.0f,
 				bool superimpose = false);
   // #BUTTON #CAT_Filter #FILE_DIALOG_LOAD load image from file and transform into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params add to foveation scaling and offsets
+
+virtual bool	LookAtImageSeriesName(const String& img_fname, int disparity, int timesteps, DataTable* dt,
+				RetinalSpacingSpec::Region region,
+				float box_ll_x, float box_ll_y,
+				float box_ur_x, float box_ur_y,
+				float move_x=0, float move_y=0,
+				float scale = 1.0f, float rotate = 0.0f,
+				bool superimpose = false);
+  // #BUTTON #CAT_Filter #FILE_DIALOG_LOAD load a series image from file and transform into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params add to foveation scaling and offsets.  The individual images will be placed into datatable columns with "_disparityX" and/or "_timestepX" appended accordingly
 
   ///////////////////////////////////////////////////////////////////////
   // Full transform and filter in one function call (also updates with WriteClose())
@@ -868,6 +1076,8 @@ public:
 				      bool superimpose = false, int renorm=1);
   // #BUTTON #CAT_Filter #FILE_DIALOG_LOAD load image from file and transform, filter into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params add to foveation scaling and offsets, renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!)
 
+
+
   ///////////////////////////////////////////////////////////////////////
   // Misc other processing operations
 
@@ -902,6 +1112,8 @@ protected:
   float		cur_renorm_factor;
   int		cur_phase;	// phase of processing -- multi-step!
   float_Matrix	max_vals;
+
+  String        cur_filter; //current filter being used for filtering a series 
 };
 
 SmartRef_Of(RetinaSpec,TA_RetinaSpec); // RetinaSpecRef
@@ -943,6 +1155,49 @@ public:
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(V1GaborSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
+};
+
+
+class TA_API MotionDispV1GaborSpec : public taNBase {
+  // #STEM_BASE ##CAT_Image ##DEF_CHILD_gabors ##DEF_CHILDNAME_Gabor_Filters full specification of motion/disparity tuned V1 gabor (oriented edge detectors) filtering -- takes output of RetinaSpec as input.
+INHERITED(taNBase)
+public:
+  MotionDispGaborV1SpecList	gabors;		// the gabor (and blob) V1 filters
+  bool			wrap;		// if true, then filtering has a wrap-around structure, starting at -1/2 offset (wrapped to right/top) and goes +1/2 offset past the right/top edge (wrapped to left/bottom)
+  RetinaSpecRef		retina;		// the specs for the retinal filter that we follow
+  float			norm_max;	// #DEF_0.95 max value to normalize output activations to -- set to -1 to turn off normalization
+  float			norm_thr;	// #DEF_0.01 threshold maximum activation value for renormalizing  -- if below this value, no renormalization is applied
+
+  virtual MotionDispGaborV1Spec*	AddFilter()	{ return (MotionDispGaborV1Spec*)gabors.New(1); }
+  // #BUTTON #CAT_Filter add a new v1 filter
+
+  virtual void	DefaultFilters();
+  // #BUTTON #CAT_Filter create a set of default filters
+
+  virtual bool	UpdateSizesFmRetina();
+  // update the sizes of our filters based on the retina spec values
+
+  virtual void	ConfigDataTable(DataTable* dt, bool reset_cols = false);
+  // #BUTTON #CAT_Config #NULL_OK_0 #NULL_TEXT_0_NewDataTable configure a data table to hold all of the image data (if reset_cols, reset any existing cols in data table before adding new ones) (if dt == NULL, a new one is created in data.InputData)
+
+//   virtual void	PlotSpacing(DataTable* disp_data);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the arrangement of the filters (centers) in the data table and generate a grid view
+
+  virtual bool	FilterRetinaData(DataTable* v1_out_dt, DataTable* ret_in_dt);
+  // Perform the filtering function: operates on output of RetinaSpec processing
+
+//   void	UpdateRetinaSize();	// copy retina_size to dogs..
+
+  override taList_impl*	children_() {return &gabors;}
+  override void*	GetTA_Element(Variant i, TypeDef*& eltd)
+  { return gabors.GetTA_Element(i, eltd); }
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(MotionDispV1GaborSpec);
 protected:
   void	UpdateAfterEdit_impl();
   override void CheckChildConfig_impl(bool quiet, bool& rval);
