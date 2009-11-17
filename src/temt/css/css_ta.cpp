@@ -219,7 +219,7 @@ bool cssTA::AssignCheckSource(const cssEl& s) {
 		   "source object type info is NULL");
     return false;
   }
-  if(type_def && !sp_typ->InheritsFrom(type_def)) {
+  if(type_def && !(sp_typ->InheritsFrom(type_def) || type_def->InheritsFrom(sp_typ))) {
     cssMisc::Error(prog, "Failed to assign TA C pointer of type:", type_def->name,
 		   "source object type is incompatible:", sp_typ->name);
     return false;
@@ -271,23 +271,23 @@ void cssTA::PtrAssignPtr(const cssEl& s) {
   TypeDef* sp_typ = sp->GetNonRefTypeDef();
   if(ptr_cnt == sp_ptr_cnt) {
     ptr = sp_ptr;
-    type_def = sp_typ;
+//     type_def = sp_typ;		// this prevents any form of casting!
     SetClassParent(sp->class_parent);
   }
   else if((ptr_cnt == 1) && (sp_ptr_cnt == 0)) {
     ptr = sp_ptr;		// I now point to that guy
-    type_def = sp_typ;
+//     type_def = sp_typ;
     SetClassParent(sp->class_parent);
   }
   else if((ptr_cnt == 1) && (sp_ptr_cnt == 2) && sp_ptr) {
     ptr = *((void**)sp_ptr);	// deref that guy
-    type_def = sp_typ;
+//     type_def = sp_typ;
     SetClassParent(sp->class_parent);
   }
   else if((ptr_cnt == 2) && (sp_ptr_cnt <= 1)) {
     // I'm a ptr-ptr and this sets me to point to another guy
     if(PtrAssignPtrPtr(sp_ptr)) {
-      type_def = sp_typ;
+//       type_def = sp_typ;
     }
   }
   else {

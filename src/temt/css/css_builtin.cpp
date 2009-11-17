@@ -1379,37 +1379,37 @@ static void Install_Math() {
 "(Real x) The hyperbolic arc-tangent.");
 #endif // HP800
 
-  cssReal_inst_nm(cssMisc::Constants, 3.14159265358979323846,  "PI"   );
-//   cssReal_inst(cssMisc::Constants, 2.71828182845904523536,  E     );
-  cssReal_inst(cssMisc::Constants, 0.57721566490153286060,  GAMMA ); // Euler
-  cssReal_inst(cssMisc::Constants, 57.29577951308232087680, DEG   ); // deg/radian
-  cssReal_inst(cssMisc::Constants, 1.61803398874989484820,  PHI   ); // golden ratio
-  cssReal_inst(cssMisc::Constants, 96484.56,                FARADAY); // coulombs/mole
-//   cssReal_inst(cssMisc::Constants, 8.31441,                 R     );  // molar gas constant, joules/mole/deg-K
+  cssConstReal_inst_nm(cssMisc::Constants, 3.14159265358979323846,  "PI"   );
+//   cssConstReal_inst(cssMisc::Constants, 2.71828182845904523536,  E     );
+  cssConstReal_inst(cssMisc::Constants, 0.57721566490153286060,  GAMMA ); // Euler
+  cssConstReal_inst(cssMisc::Constants, 57.29577951308232087680, DEG   ); // deg/radian
+  cssConstReal_inst(cssMisc::Constants, 1.61803398874989484820,  PHI   ); // golden ratio
+  cssConstReal_inst(cssMisc::Constants, 96484.56,                FARADAY); // coulombs/mole
+//   cssConstReal_inst(cssMisc::Constants, 8.31441,                 R     );  // molar gas constant, joules/mole/deg-K
 
-  cssReal_inst_nm(cssMisc::Constants, FLT_MAX,             "FLT_MAX");
-  cssReal_inst_nm(cssMisc::Constants, FLT_MAX_10_EXP,      "FLT_MAX_10_EXP");
-  cssReal_inst_nm(cssMisc::Constants, FLT_MAX_EXP,         "FLT_MAX_EXP");
-  cssReal_inst_nm(cssMisc::Constants, FLT_MAX,             "MAXFLOAT");	// compatibiltiy
+  cssConstReal_inst_nm(cssMisc::Constants, FLT_MAX,             "FLT_MAX");
+  cssConstReal_inst_nm(cssMisc::Constants, FLT_MAX_10_EXP,      "FLT_MAX_10_EXP");
+  cssConstReal_inst_nm(cssMisc::Constants, FLT_MAX_EXP,         "FLT_MAX_EXP");
+  cssConstReal_inst_nm(cssMisc::Constants, FLT_MAX,             "MAXFLOAT");	// compatibiltiy
 
-  cssReal_inst_nm(cssMisc::Constants, FLT_MIN,             "FLT_MIN");
-  cssReal_inst_nm(cssMisc::Constants, FLT_MIN_10_EXP,      "FLT_MIN_10_EXP");
-  cssReal_inst_nm(cssMisc::Constants, FLT_MIN_EXP,         "FLT_MIN_EXP");
-  cssReal_inst_nm(cssMisc::Constants, FLT_EPSILON,         "FLT_EPSILON");
+  cssConstReal_inst_nm(cssMisc::Constants, FLT_MIN,             "FLT_MIN");
+  cssConstReal_inst_nm(cssMisc::Constants, FLT_MIN_10_EXP,      "FLT_MIN_10_EXP");
+  cssConstReal_inst_nm(cssMisc::Constants, FLT_MIN_EXP,         "FLT_MIN_EXP");
+  cssConstReal_inst_nm(cssMisc::Constants, FLT_EPSILON,         "FLT_EPSILON");
 
-  cssReal_inst_nm(cssMisc::Constants, DBL_MAX,             "DBL_MAX");
-  cssReal_inst_nm(cssMisc::Constants, DBL_MAX_10_EXP,      "DBL_MAX_10_EXP");
-  cssReal_inst_nm(cssMisc::Constants, DBL_MAX_EXP,         "DBL_MAX_EXP");
+  cssConstReal_inst_nm(cssMisc::Constants, DBL_MAX,             "DBL_MAX");
+  cssConstReal_inst_nm(cssMisc::Constants, DBL_MAX_10_EXP,      "DBL_MAX_10_EXP");
+  cssConstReal_inst_nm(cssMisc::Constants, DBL_MAX_EXP,         "DBL_MAX_EXP");
 
-  cssReal_inst_nm(cssMisc::Constants, DBL_MIN,             "DBL_MIN");
-  cssReal_inst_nm(cssMisc::Constants, DBL_MIN_10_EXP,      "DBL_MIN_10_EXP");
-  cssReal_inst_nm(cssMisc::Constants, DBL_MIN_EXP,         "DBL_MIN_EXP");
-  cssReal_inst_nm(cssMisc::Constants, DBL_EPSILON,         "DBL_EPSILON");
+  cssConstReal_inst_nm(cssMisc::Constants, DBL_MIN,             "DBL_MIN");
+  cssConstReal_inst_nm(cssMisc::Constants, DBL_MIN_10_EXP,      "DBL_MIN_10_EXP");
+  cssConstReal_inst_nm(cssMisc::Constants, DBL_MIN_EXP,         "DBL_MIN_EXP");
+  cssConstReal_inst_nm(cssMisc::Constants, DBL_EPSILON,         "DBL_EPSILON");
 
-  cssReal_inst_nm(cssMisc::Constants, INT_MAX,             "INT_MAX");
-  cssReal_inst_nm(cssMisc::Constants, INT_MIN,             "INT_MIN");
-  cssReal_inst_nm(cssMisc::Constants, LONG_MAX,            "LONG_MAX");
-  cssReal_inst_nm(cssMisc::Constants, LONG_MIN,            "LONG_MIN");
+  cssConstReal_inst_nm(cssMisc::Constants, INT_MAX,             "INT_MAX");
+  cssConstReal_inst_nm(cssMisc::Constants, INT_MIN,             "INT_MIN");
+  cssConstReal_inst_nm(cssMisc::Constants, LONG_MAX,            "LONG_MAX");
+  cssConstReal_inst_nm(cssMisc::Constants, LONG_MIN,            "LONG_MIN");
 }
 
 
@@ -2007,24 +2007,24 @@ static void Install_MiscFun() {
   cssMisc::HardVars.Push(new cssIOS((void*)&cerr, 1, &TA_ostream, "stderr"));
 
   // magic stream codes!
-  cssMisc::Constants.Push(new cssBool(false, "ws"));
-  cssMisc::Constants.Push(new cssBool(false, "flush"));
-  cssMisc::Constants.Push(new cssBool(false, "endl"));
-  cssMisc::Constants.Push(new cssBool(false, "ends"));
-  cssMisc::Constants.Push(new cssBool(false, "dec"));
-  cssMisc::Constants.Push(new cssBool(false, "hex"));
-  cssMisc::Constants.Push(new cssBool(false, "oct"));
-  cssMisc::Constants.Push(new cssBool(false, "lock"));
-  cssMisc::Constants.Push(new cssBool(false, "unlock"));
+  cssMisc::Constants.Push(new cssConstBool(false, "ws"));
+  cssMisc::Constants.Push(new cssConstBool(false, "flush"));
+  cssMisc::Constants.Push(new cssConstBool(false, "endl"));
+  cssMisc::Constants.Push(new cssConstBool(false, "ends"));
+  cssMisc::Constants.Push(new cssConstBool(false, "dec"));
+  cssMisc::Constants.Push(new cssConstBool(false, "hex"));
+  cssMisc::Constants.Push(new cssConstBool(false, "oct"));
+  cssMisc::Constants.Push(new cssConstBool(false, "lock"));
+  cssMisc::Constants.Push(new cssConstBool(false, "unlock"));
 
   // constants
-  cssMisc::Enums.Push(new cssBool(true, "true"));
-  cssMisc::Enums.Push(new cssBool(false, "false"));
-  cssBI::true_int = new cssInt(1, "true");
-  cssBI::false_int = new cssInt(0, "false");
+  cssMisc::Enums.Push(new cssConstBool(true, "true"));
+  cssMisc::Enums.Push(new cssConstBool(false, "false"));
+  cssBI::true_int = new cssConstInt(1, "true");
+  cssBI::false_int = new cssConstInt(0, "false");
   cssMisc::Internal.Push(cssBI::true_int); // keep them on this list (to refn)
   cssMisc::Internal.Push(cssBI::false_int);
-  cssInt_inst	(cssMisc::Constants, 0, NULL);
+  cssConstInt_inst(cssMisc::Constants, 0, NULL);
   cssMisc::Constants.Push(new cssVariant(_nilVariant, "_nilVariant"));
 
   // taBase enums that should be generally accessible to all objs..

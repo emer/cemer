@@ -151,43 +151,48 @@ public:
   bool operator!=(cssEl& s) 	{ return (val != (Int)s); }
 };
 
-class CSS_API cssChar : public cssInt {
-  // a character (for string conversions)
-public:
-  const char*	GetTypeName() const { return "(char)"; }
-  bool		IsStringType() const   	{ return true; }
-  bool		IsNumericTypeStrict() const   { return true; }
-
-  String 	PrintStr() const
-  { return String(GetTypeName())+" " + name + " = '" + (char)val + "'"; }
-  String	PrintFStr() const { return (char)val; }
-
-  cssChar()                      : cssInt()		{ };
-  cssChar(Int vl)                : cssInt(vl)		{ };
-  cssChar(Int vl, const String& nm)      : cssInt(vl, nm)	{ };
-  cssChar(const cssChar& cp)           : cssInt(cp)		{ };
-  cssChar(const cssChar& cp, const String& nm) : cssInt(cp, nm) 	{ };
-  cssCloneFuns(cssChar, *this);
-
-  String GetStr() const	{ return (String)(char)val; }
-  Variant GetVar() const { return Variant((char)val); }
-
-  void operator=(Real cp) 		{ val = (int)cp; }
-  void operator=(Int cp)		{ val = cp; }
-  void operator=(const String& cp)	{ if(!cp.empty()) val = cp[0]; }
-
-  void operator=(void*)	 	{ CvtErr("(void*)"); }
-  void operator=(void**)	{ CvtErr("(void**)"); }
-  USING(cssInt::operator=)
-
-  // operators
-  void operator=(const cssEl& s);
-};
-
 #define cssInt_inst(l,n,x)          l .Push(new cssInt((int) n,(const char *) #x))
 #define cssInt_inst_nm(l,n,s)       l .Push(new cssInt(n, s))
 #define cssInt_inst_ptr(l,n,x)      l .Push(cssBI::x = new cssInt(n, #x))
 #define cssInt_inst_ptr_nm(l,n,x,s) l .Push(cssBI::x = new cssInt(n, s))
+
+class CSS_API cssConstInt : public cssInt {
+  // a constant integer value -- cannot be changed through std operators -- must assign directly to value in initialization
+public:
+
+  cssConstInt()				{ Constr(); }
+  cssConstInt(Int vl)			{ Constr(); val = vl; }
+  cssConstInt(Int vl, const String& nm) 	{ Constr(); name = nm;  val = vl; }
+  cssConstInt(const cssConstInt& cp)		{ Copy(cp); name = cp.name; }
+  cssConstInt(const cssConstInt& cp, const String& nm)  { Copy(cp); name = nm; }
+
+  cssCloneFuns(cssConstInt, 0);
+
+  void operator=(Real cp) 		{ NopErr("const ="); }
+  void operator=(Int cp)		{ NopErr("const ="); }
+  void operator=(const String& cp)	{ NopErr("const ="); }
+
+  USING(cssEl::operator=)
+
+  // operators
+  void operator=(const cssEl& s) { NopErr("const ="); }
+
+  void operator+=(cssEl& t) 	{ NopErr("const +="); }
+  void operator-=(cssEl& t) 	{ NopErr("const -="); }
+  void operator*=(cssEl& t) 	{ NopErr("const *="); }
+  void operator/=(cssEl& t) 	{ NopErr("const /="); }
+  void operator%=(cssEl& t) 	{ NopErr("const %="); }
+  void operator<<=(cssEl& t) 	{ NopErr("const <<="); }
+  void operator>>=(cssEl& t) 	{ NopErr("const >>="); }
+  void operator&=(cssEl& t) 	{ NopErr("const &="); }
+  void operator^=(cssEl& t) 	{ NopErr("const ^="); }
+  void operator|=(cssEl& t) 	{ NopErr("const |="); }
+};
+
+#define cssConstInt_inst(l,n,x)          l .Push(new cssConstInt((int) n,(const char *) #x))
+#define cssConstInt_inst_nm(l,n,s)       l .Push(new cssConstInt(n, s))
+#define cssConstInt_inst_ptr(l,n,x)      l .Push(cssBI::x = new cssConstInt(n, #x))
+#define cssConstInt_inst_ptr_nm(l,n,x,s) l .Push(cssBI::x = new cssConstInt(n, s))
 
 class CSS_API cssInt64 : public cssEl {
   // a 64-bt integer value
@@ -294,6 +299,38 @@ public:
 #define cssInt64_inst_ptr(l,n,x)      l .Push(cssBI::x = new cssInt64(n, #x))
 #define cssInt64_inst_ptr_nm(l,n,x,s) l .Push(cssBI::x = new cssInt64(n, s))
 
+class CSS_API cssChar : public cssInt {
+  // a character (for string conversions)
+public:
+  const char*	GetTypeName() const { return "(char)"; }
+  bool		IsStringType() const   	{ return true; }
+  bool		IsNumericTypeStrict() const   { return true; }
+
+  String 	PrintStr() const
+  { return String(GetTypeName())+" " + name + " = '" + (char)val + "'"; }
+  String	PrintFStr() const { return (char)val; }
+
+  cssChar()                      : cssInt()		{ };
+  cssChar(Int vl)                : cssInt(vl)		{ };
+  cssChar(Int vl, const String& nm)      : cssInt(vl, nm)	{ };
+  cssChar(const cssChar& cp)           : cssInt(cp)		{ };
+  cssChar(const cssChar& cp, const String& nm) : cssInt(cp, nm) 	{ };
+  cssCloneFuns(cssChar, *this);
+
+  String GetStr() const	{ return (String)(char)val; }
+  Variant GetVar() const { return Variant((char)val); }
+
+  void operator=(Real cp) 		{ val = (int)cp; }
+  void operator=(Int cp)		{ val = cp; }
+  void operator=(const String& cp)	{ if(!cp.empty()) val = cp[0]; }
+
+  void operator=(void*)	 	{ CvtErr("(void*)"); }
+  void operator=(void**)	{ CvtErr("(void**)"); }
+  USING(cssInt::operator=)
+
+  // operators
+  void operator=(const cssEl& s);
+};
 
 class CSS_API cssReal : public cssEl {
   // a real (floating point) value
@@ -376,7 +413,6 @@ public:
 #define cssReal_inst_ptr(l,n,x)	l .Push(cssBI::x = new cssReal(n, #x))
 #define cssReal_inst_ptr_nm(l,n,x,s)	l .Push(cssBI::x = new cssReal(n, s))
 
-
 // for making stubs automatically, for real functions, having n args
 #define cssRealFun_stub0(x) cssEl* cssRealFun_ ## x ## _stub(int, cssEl**)\
   { return new cssReal((Real)x ()); }
@@ -390,6 +426,45 @@ public:
   { return new cssReal((Real)x ((double)*(arg[1]), (double)*(arg[2]), (double)*(arg[3]), (double)*(arg[4]))); }
 
 #define cssRealFun_inst(l,x,n,hst) l .Push(new cssElCFun(n, cssRealFun_ ## x ## _stub, #x, CSS_FUN, hst))
+
+
+class CSS_API cssConstReal : public cssReal {
+  // a constant real value -- cannot be changed through std operators -- must assign directly to value in initialization
+public:
+
+  cssConstReal()				{ Constr(); }
+  cssConstReal(Real vl)			{ Constr(); val = vl; }
+  cssConstReal(Real vl, const String& nm)	{ Constr(); val = vl; name = nm; }
+  cssConstReal(const cssConstReal& cp)		{ Copy(cp); name = cp.name; }
+  cssConstReal(const cssConstReal& cp, const String& nm){ Copy(cp); name = nm; }
+
+  cssCloneFuns(cssConstReal, 0.0);
+
+  void operator=(Real cp) 		{ NopErr("const ="); }
+  void operator=(Int cp)		{ NopErr("const ="); }
+  void operator=(const String& cp)	{ NopErr("const ="); }
+
+  USING(cssEl::operator=)
+
+  // operators
+  void operator=(const cssEl& s) { NopErr("const ="); }
+
+  void operator+=(cssEl& t) 	{ NopErr("const +="); }
+  void operator-=(cssEl& t) 	{ NopErr("const -="); }
+  void operator*=(cssEl& t) 	{ NopErr("const *="); }
+  void operator/=(cssEl& t) 	{ NopErr("const /="); }
+  void operator%=(cssEl& t) 	{ NopErr("const %="); }
+  void operator<<=(cssEl& t) 	{ NopErr("const <<="); }
+  void operator>>=(cssEl& t) 	{ NopErr("const >>="); }
+  void operator&=(cssEl& t) 	{ NopErr("const &="); }
+  void operator^=(cssEl& t) 	{ NopErr("const ^="); }
+  void operator|=(cssEl& t) 	{ NopErr("const |="); }
+};
+
+#define cssConstReal_inst(l,n,x) l .Push(new cssConstReal(n, #x))
+#define cssConstReal_inst_nm(l,n,s)	l .Push(new cssConstReal(n, s))
+#define cssConstReal_inst_ptr(l,n,x)	l .Push(cssBI::x = new cssConstReal(n, #x))
+#define cssConstReal_inst_ptr_nm(l,n,x,s)	l .Push(cssBI::x = new cssConstReal(n, s))
 
 class taFiler;
 
@@ -482,6 +557,7 @@ public:
 #define cssString_inst_ptr(l,n,x)	l .Push(cssBI::x = new cssString(n, #x))
 #define cssString_inst_ptr_nm(l,n,x,s)	l .Push(cssBI::x = new cssString(n, s))
 
+
 class CSS_API cssBool : public cssEl {
   // a boolean value
 public:
@@ -542,6 +618,31 @@ public:
   bool operator!=(cssEl& s) 	{ return (val != (bool)s); }
 };
 
+class CSS_API cssConstBool : public cssBool {
+  // a constant boolean value -- cannot be changed through std operators -- must assign directly to value in initialization
+public:
+
+  cssConstBool()					{ Constr(); }
+  cssConstBool(bool vl)					{ Constr(); val = vl; }
+  cssConstBool(bool vl, const String& nm) 		{ Constr(); name = nm;  val = vl; }
+  cssConstBool(const cssConstBool& cp)			{ Copy(cp); name = cp.name; }
+  cssConstBool(const cssConstBool& cp, const String& nm)  { Copy(cp); name = nm; }
+
+  cssCloneFuns(cssConstBool, false);
+
+  void operator=(Real cp) 		{ NopErr("const ="); }
+  void operator=(Int cp)		{ NopErr("const ="); }
+  void operator=(const String& cp)	{ NopErr("const ="); }
+
+  USING(cssEl::operator=)
+
+  // operators
+  void operator=(const cssEl& s) { NopErr("const ="); }
+
+  void operator&=(cssEl& t) 	{ NopErr("const &="); }
+  void operator^=(cssEl& t) 	{ NopErr("const ^="); }
+  void operator|=(cssEl& t) 	{ NopErr("const |="); }
+};
 
 class CSS_API cssVariant: public cssEl {
   // css wrapper for a variant object
