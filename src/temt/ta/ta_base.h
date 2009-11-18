@@ -2632,8 +2632,9 @@ class TA_API UserDataItem: public UserDataItemBase {
   // an item of simple user data
 INHERITED(UserDataItemBase)
 public:
-  Variant		value;
+  Variant		value;	// #FIXTYPE_ON_val_type_fixed value for this user data item
   String		desc; // #NO_SAVE_EMPTY optional description (typ. used for schema, not items)
+  bool			val_type_fixed;  // #READ_ONLY is the value type fixed -- can be set programmatically to create simpler user data interfaces -- gui will not show type selector if this is true
   
   override bool		canDelete() const {return true;}
   override bool		canRename() const {return true;}
@@ -2650,8 +2651,8 @@ public:
 	       const String& desc = _nilString);
   // #IGNORE constructor for creating static (compile-time) schema instances
 private:
-  void Copy_(const UserDataItem& cp){value = cp.value; desc = cp.desc;}
-  void Initialize() {}
+  void Copy_(const UserDataItem& cp){value = cp.value; desc = cp.desc; val_type_fixed = cp.val_type_fixed; }
+  void Initialize() { val_type_fixed = false; }
   void Destroy() {}
 };
 TA_SMART_PTRS(UserDataItem);

@@ -205,6 +205,11 @@ void iLineEdit::keyPressEvent(QKeyEvent* e) {
   }
 }
 
+void iLineEdit::wheelEvent(QWheelEvent * event) {
+  // actually, this is ok..
+  inherited::wheelEvent(event);
+  return;
+}
 
 //////////////////////////////////
 //  iTextEditDialog		//

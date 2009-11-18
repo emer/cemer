@@ -515,6 +515,7 @@ public:
     flgNoPtr		= 0x080000, // don't let user choose raw ptr
     flgNoBase		= 0x100000, // don't let user choose taBase or taMatrix
     flgNoTypeItem	= 0x200000, // don't let user choose TypeItem
+    flgFixedType	= 0x400000, // type is fixed to what it already is -- cannot be chosen
   };
   
   bool			fillHor() {return true;} // override 

@@ -40,6 +40,11 @@ void iSpinBox::focusOutEvent(QFocusEvent* ev) {
   emit focusChanged(false);
 }
 
+void iSpinBox::wheelEvent(QWheelEvent * event) {
+  event->ignore();		// don't process this event!
+  return;
+}
+
 void iSpinBox::init() {
   updating = 0;
   setMaximum(INT_MAX); // 99 is a whacked-out maximum

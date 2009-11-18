@@ -57,6 +57,7 @@ protected:
   void 		focusInEvent(QFocusEvent* ev); // override
   void 		focusOutEvent(QFocusEvent* ev); // override
   void 		keyPressEvent(QKeyEvent* e);	// override
+  void 		wheelEvent(QWheelEvent * event);
 private:  
   void		init();
 };

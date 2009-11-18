@@ -39,6 +39,7 @@ protected:
 
   void		init();
 //  void		paintEvent(QPaintEvent* pe); // override
+  void 		wheelEvent(QWheelEvent * event);
 };
 
 #endif // ISPINBOX_H

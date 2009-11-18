@@ -1539,44 +1539,50 @@ void taiVariantBase::Constr(QWidget* gui_parent_) {
 void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
   // type stuff
   QWidget* rep_ =  GetRep();
-  QLabel* lbl = MakeLabel("var type", rep_);
-  AddChildWidget(lbl, taiM->hsep_c);
+  QLabel* lbl = NULL;
+  cmbVarType = NULL;
+  if(!(mflags & flgFixedType)) {
+    lbl = MakeLabel("var type", rep_);
+    AddChildWidget(lbl, taiM->hsep_c);
   
-  TypeDef* typ_var_enum = TA_Variant.sub_types.FindName("VarType");
-  cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep_);
-  //remove unused variant enum types according to flags
-  if (mflags & (flgNoInvalid | flgIntOnly)) {
-    cmbVarType->RemoveItemByData(QVariant(Variant::T_Invalid));
-  }
-  if (mflags & (flgNoAtomics | flgIntOnly)) {
-    for (int vt = Variant::T_Atomic_Min; vt <= Variant::T_Atomic_Max; ++vt) { 
-      if (!((vt == Variant::T_Int) && (mflags & flgIntOnly)))
-        cmbVarType->RemoveItemByData(QVariant(vt));
+    TypeDef* typ_var_enum = TA_Variant.sub_types.FindName("VarType");
+    cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep_);
+    //remove unused variant enum types according to flags
+    if (mflags & (flgNoInvalid | flgIntOnly)) {
+      cmbVarType->RemoveItemByData(QVariant(Variant::T_Invalid));
     }
-  }
-  if (mflags & (flgNoPtr | flgIntOnly)) {
-    cmbVarType->RemoveItemByData(QVariant(Variant::T_Ptr));
-  }
-  if (mflags & (flgNoBase | flgIntOnly)) {
-    cmbVarType->RemoveItemByData(QVariant(Variant::T_Matrix));
-    cmbVarType->RemoveItemByData(QVariant(Variant::T_Base));
-  }
-  if (mflags & (flgNoTypeItem | flgIntOnly)) {
-    cmbVarType->RemoveItemByData(QVariant(Variant::T_TypeItem));
-  }
-  AddChildWidget(cmbVarType->rep(), taiM->hsep_c);
-  lbl->setBuddy(cmbVarType->rep());
-  if (read_only_) {
-    cmbVarType->rep()->setEnabled(false);
-  } else {
-    connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
+    if (mflags & (flgNoAtomics | flgIntOnly)) {
+      for (int vt = Variant::T_Atomic_Min; vt <= Variant::T_Atomic_Max; ++vt) { 
+	if (!((vt == Variant::T_Int) && (mflags & flgIntOnly)))
+	  cmbVarType->RemoveItemByData(QVariant(vt));
+      }
+    }
+    if (mflags & (flgNoPtr | flgIntOnly)) {
+      cmbVarType->RemoveItemByData(QVariant(Variant::T_Ptr));
+    }
+    if (mflags & (flgNoBase | flgIntOnly)) {
+      cmbVarType->RemoveItemByData(QVariant(Variant::T_Matrix));
+      cmbVarType->RemoveItemByData(QVariant(Variant::T_Base));
+    }
+    if (mflags & (flgNoTypeItem | flgIntOnly)) {
+      cmbVarType->RemoveItemByData(QVariant(Variant::T_TypeItem));
+    }
+    AddChildWidget(cmbVarType->rep(), taiM->hsep_c);
+    lbl->setBuddy(cmbVarType->rep());
+    if (read_only_) {
+      cmbVarType->rep()->setEnabled(false);
+    } else {
+      connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
+    }
+
+    lbl = MakeLabel("var value", rep_);
+    AddChildWidget(lbl, taiM->hsep_c);
   }
   
-  lbl = MakeLabel("var value", rep_);
-  AddChildWidget(lbl, taiM->hsep_c);
   stack = new QStackedWidget(rep_);
   AddChildWidget(stack); // fill rest of space
-  lbl->setBuddy(stack);
+  if(lbl)
+    lbl->setBuddy(stack);
   
   // created in order of StackControls
   lbl = MakeLabel("(no value for type Invalid)");
@@ -1658,7 +1664,8 @@ void taiVariantBase::cmbVarType_itemChanged(int itm) {
 void taiVariantBase::GetImage_Variant(const Variant& var) {
   ++m_updating;
   // set combo box to right type
-  cmbVarType->GetEnumImage(var.type());
+  if(cmbVarType)
+    cmbVarType->GetEnumImage(var.type());
   
   switch (var.type()) {
   case Variant::T_Invalid: 
@@ -1708,10 +1715,12 @@ void taiVariantBase::GetImage_Variant(const Variant& var) {
 
 void taiVariantBase::GetValue_Variant(Variant& var) const {
   ++m_updating;
-  int vt; //Variant::VarType
   // set combo box to right type
-  cmbVarType->GetEnumValue(vt);
-  var.setType((Variant::VarType)vt);
+  if(cmbVarType) {
+    int vt; //Variant::VarType
+    cmbVarType->GetEnumValue(vt);
+    var.setType((Variant::VarType)vt);
+  }
   
   //note: the correct widget should be visible...
   

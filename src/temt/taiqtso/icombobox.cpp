@@ -56,6 +56,12 @@ void iComboBox::setHilight(bool value){
   update();
 }
 
+void iComboBox::wheelEvent(QWheelEvent * event) {
+  event->ignore();		// don't process this event!
+  return;
+}
+
+
 /*void iComboBox::paintEvent(QPaintEvent* pe) { // override
   if (mhilight) {
     QPalette pal = QPalette(defPalette);

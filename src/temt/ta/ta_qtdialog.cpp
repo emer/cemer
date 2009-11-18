@@ -729,7 +729,6 @@ taiDataHostBase::taiDataHostBase(TypeDef* typ_, bool read_only_,
   mouse_button = 0;
   no_ok_but = false;
   dialog = NULL;
-//  warn_clobber = false;
   host_type = HT_DIALOG; // default, set later
   reshow_req = false;
   reshow_req_forced = false;
@@ -1475,6 +1474,7 @@ bool taiDataHost_impl::ReShow(bool force) {
   if (!mwidget->isVisible()) {
     defer_reshow_req = true;
     GetImage(false); // no-force; invisible-friendly
+    return false;    // that's it -- otherwise clears when not visible! -- absence of this was source of major crazy bug fixed 11/18/09..
   }
 //note: only called with force from ReShowEdits, typ only from a SelEdit dialog
   if (!updating) {

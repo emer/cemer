@@ -47,6 +47,7 @@ public slots:
 protected:
   void 		focusInEvent(QFocusEvent* ev); // override
   void 		focusOutEvent(QFocusEvent* ev); // override
+  void 		wheelEvent(QWheelEvent * event);
   void		init();
 private:
   int updating;

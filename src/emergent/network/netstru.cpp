@@ -3596,7 +3596,9 @@ void Unit_Group::AddRelPos(TDCoord& rel_pos) {
 bool Unit_Group::Dump_QuerySaveChildren() {
   if (!own_lay) return false; // huh? should always be valid...
   // always save if forced
-  if (own_lay->own_net->HasNetFlag(Network::SAVE_UNITS_FORCE)) return true;
+  if (own_lay->own_net->HasNetFlag(Network::SAVE_UNITS_FORCE)) {
+    return true;
+  }
   // else arbitrate: true if layer says SAVE, or net says SAVE and we don't override
   return (own_lay->HasLayerFlag(Layer::SAVE_UNITS) ||
     (own_lay->own_net->HasNetFlag(Network::SAVE_UNITS)
@@ -5907,7 +5909,8 @@ int Network::Dump_Save_impl(ostream& strm, taBase* par, int indent) {
 }
 
 int Network::Save_strm(ostream& strm, taBase* par, int indent) {
-  SetNetFlag(SAVE_UNITS_FORCE); // override if !SAVE_UNITS
+  if(!taMisc::is_undo_saving)	  // don't do it for undo!!
+    SetNetFlag(SAVE_UNITS_FORCE); // override if !SAVE_UNITS
   int rval = inherited::Save_strm(strm, par, indent);
   ClearNetFlag(SAVE_UNITS_FORCE);
   return rval;
@@ -6223,8 +6226,10 @@ void Network::NetTextUserData() {
   for(int i=td->members.size-1; i>=0; i--) {
     MemberDef* md = td->members[i];
     if(!md->HasOption("VIEW")) continue;
-    if(HasUserData(md->name)) continue;
-    SetUserData(md->name, bool_on_val);
+    UserDataItem* ud = (UserDataItem*)GetUserDataItem(md->name);
+    if(!ud) 
+      ud = SetUserData(md->name, bool_on_val);
+    ud->val_type_fixed = true;
   }  
 }
 
