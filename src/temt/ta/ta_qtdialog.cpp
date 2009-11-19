@@ -760,6 +760,14 @@ void taiDataHostBase::InitGuiFields(bool) {
   help_but = NULL;
 }
 
+void taiDataHostBase::StartEndLayout(bool start) {
+  if (start) {
+    widget()->setUpdatesEnabled(false);
+  } else { // end
+    widget()->setUpdatesEnabled(true);
+  }
+}
+
 void taiDataHostBase::Apply() {
   if (warn_clobber) {
     int chs = taMisc::Choice("Warning: this object has changed since you started editing -- if you apply now, you will overwrite those changes -- what do you want to do?",
@@ -857,7 +865,7 @@ void taiDataHostBase::ConstrDeferred() {
 
 void taiDataHostBase::Constr_impl() {
   row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if using even/odd shading
-  widget()->setUpdatesEnabled(false);
+  StartEndLayout(true);
   Constr_Prompt();
   Constr_Box();
   Constr_Body();
@@ -872,7 +880,7 @@ void taiDataHostBase::Constr_impl() {
 //def  layButtons->setMargin(2); // facilitates container
   Constr_Buttons();
   Constr_Final();
-  widget()->setUpdatesEnabled(true);
+  StartEndLayout(false);
 //NOTE: do NOT do a processevents -- it causes improperly nested event calls
 // in some cases, such as constructing the browser
 }
@@ -1171,11 +1179,12 @@ bool taiDataHostBase::AsyncWaitProc() {
 }
 
 void taiDataHostBase::Apply_Async() {
-//   Apply();	     // no reason to async this..
-  if (apply_req) return; // already waiting
-  if (state != ACTIVE) return;
-  apply_req = true;
-  async_apply_list.Link(this);
+  Apply();	     // no reason to async this..
+//   if (apply_req) return; // already waiting
+//   if (state != ACTIVE) return;
+//   apply_req = true;
+//   taMisc::do_wait_proc = true;
+//   async_apply_list.Link(this);
 //   cerr << "req apply async on: " << typ->name << endl;
 }
 
@@ -1184,6 +1193,7 @@ void taiDataHostBase::ReShow_Async(bool forced) {
   if ((state & STATE_MASK) >= CANCELED) return;
   reshow_req = true;
   reshow_req_forced = forced;
+  taMisc::do_wait_proc = true;
   async_reshow_list.Link(this);
 //   cerr << "req reshow async on: " << typ->name << endl;
 }
@@ -1191,6 +1201,7 @@ void taiDataHostBase::ReShow_Async(bool forced) {
 void taiDataHostBase::ReConstr_Async() {
   if(reconstr_req) return;
   reconstr_req = true;
+  taMisc::do_wait_proc = true;
   async_reconstr_list.Link(this);
 //   cerr << "req constr async on: " << typ->name << endl;
 }
@@ -1201,6 +1212,7 @@ void taiDataHostBase::GetImage_Async() {
   // we can get these for DEFERRED as well, for buttons, ex/esp Program panels
   if ((state & STATE_MASK) >= CANCELED) return;
   getimage_req = true;
+  taMisc::do_wait_proc = true;
   async_getimage_list.Link(this);
 //   cerr << "req getimage async on: " << typ->name << endl;
 }
@@ -1292,14 +1304,6 @@ const iColor taiDataHost_impl::colorOfRow(int row) const {
     return bg_color;
   } else {
     return bg_color_dark;
-  }
-}
-
-void taiDataHost_impl::StartEndLayout(bool start) {
-  if (start) {
-    widget()->setUpdatesEnabled(false);
-  } else { // end
-    widget()->setUpdatesEnabled(true);
   }
 }
 
@@ -1449,10 +1453,15 @@ void taiDataHost_impl::Ok_impl() { //note: only used for Dialogs
 }
 
 void taiDataHost_impl::ClearBody(bool waitproc) {
-  widget()->setUpdatesEnabled(false); // this is not reenabled until getimage!
+  StartEndLayout(true);
   ClearBody_impl();
   if (!(state & SHOW_CHANGED)) return; // probably just destroying
-  ReConstr_Async();
+  //  ReConstr_Async(); 
+  // can actually just do this live here
+  ReConstr_Body();
+  state &= ~SHOW_CHANGED;
+  reconstr_req = false;
+  StartEndLayout(false);
 }
 
 void taiDataHost_impl::ClearBody_impl() {
@@ -1464,6 +1473,7 @@ void taiDataHost_impl::ReConstr_Body() {
   rebuild_body = true;
   Constr_Body();
   GetImage_Async();		// async all the way -- otherwise doesn't work
+//   GetImage(false);
   rebuild_body = false;		// in case..
 }
 
@@ -2060,14 +2070,12 @@ void taiEditDataHost::Enum_Members() {
 
 void taiEditDataHost::Constr_Body() {
   Constr_Body_impl();
-//   StartEndLayout(true);
   if (inline_mode) {
     dat_cnt = 0;
     Constr_Inline();
   } else {
     Constr_Data_Labels();
   }
-//   StartEndLayout(false);
 }
 
 void taiEditDataHost::Constr_Data_Labels() {

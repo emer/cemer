@@ -322,6 +322,8 @@ int taiMiscCore::RunPending() {
 }
 
 void taiMiscCore::WaitProc() {
+  if(!taMisc::do_wait_proc) return;
+  taMisc::do_wait_proc = false;	// reset at the START so other waitproc guys can get on the list from within the current waitproc
   tabMisc::WaitProc();
 }
 
@@ -369,6 +371,15 @@ int taiMiscCore::Exec() {
     taMisc::Error("Attempt to enter event loop a second time!");
     return 0;
   }
+
+  // does idle processing in Qt
+  timer = new QTimer(this);
+  connect(timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
+  timer->start(taMisc::wait_proc_delay);
+  // need a number here to prevent constant busy loop running
+  // this must not have a number in it, so that it happens only
+  // when other events are DONE!
+
   taMisc::in_event_loop = true;
   int rval = 0;
   try {
@@ -393,14 +404,6 @@ void taiMiscCore::Init(bool gui) {
 
   // initialize the type system
   taiTypeBase::InitializeTypes(gui);
-
-  // does idle processing in Qt
-  timer = new QTimer(this);
-  connect(timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
-  timer->start(50);
-  // need a number here to prevent constant busy loop running
-  // this must not have a number in it, so that it happens only
-  // when other events are DONE!
 }
 
 void taiMiscCore::OnQuitting_impl(CancelOp& cancel_op) {
@@ -564,6 +567,7 @@ int	taMisc::display_width = 80;
 int	taMisc::undo_depth = 100;
 int	taMisc::undo_data_max_cells = 1000;
 float	taMisc::undo_new_src_thr = 0.3f;
+int	taMisc::wait_proc_delay = 20;
 bool	taMisc::delete_prompts = false;
 //bool	taMisc::delete_prompts = true;
 int	taMisc::tree_indent = 10; // 12 used to be default, but 10 seems good
@@ -708,9 +712,9 @@ String	taMisc::last_err_msg;
 String	taMisc::last_warn_msg;
 
 String	taMisc::last_check_msg;
-bool taMisc::check_quiet;
-bool taMisc::check_confirm_success;
-bool taMisc::check_ok;
+bool taMisc::check_quiet = false;
+bool taMisc::check_confirm_success = true;
+bool taMisc::check_ok = true;
 
 #ifndef NO_TA_BASE
 String_PArray* taMisc::deferred_schema_names; 
@@ -723,6 +727,8 @@ QPointer<QMainWindow> taMisc::console_win = NULL;
 taMisc::SimageAvail taMisc::simage_avail; 
 
 void (*taMisc::WaitProc)() = NULL;
+bool	taMisc::do_wait_proc = false;
+
 void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'
 
 String 	taMisc::LexBuf;

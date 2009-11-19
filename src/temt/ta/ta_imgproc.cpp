@@ -17,7 +17,9 @@
 #include "ta_project.h"
 
 #include <QMatrix>
-
+#include <QImage>
+#include <QPainter>
+#include <QPainterPath>
 
 ///////////////////////////////////////////
 //	taImage

@@ -185,6 +185,7 @@ void iUserDataDataHost::ClearBody_impl() {
 void iUserDataDataHost::Constr_Data_Labels() {
   // delete all previous udil members
   membs.ResetItems();
+  tw->clearSpans();
   tw->clear();
   // mark place
   String nm;

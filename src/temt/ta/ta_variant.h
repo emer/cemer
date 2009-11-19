@@ -628,7 +628,7 @@ inline bool operator>=(int a, const Variant& b) {return b.cmpInt(a) < 0;}
 
 inline bool operator==(const Variant& a, uint b) {return a.eqUInt(b);}
 inline bool operator!=(const Variant& a, uint b) {return !a.eqUInt(b);}
-inline bool operator==(uint a, const Variant& b) {return b.eqUInt(a);}
+// inline bool operator==(uint a, const Variant& b) {return b.eqUInt(a);}
 //inline bool operator!=(uint a, const Variant& b) {return !b.eqUInt(a);}
 inline bool operator< (const Variant& a, uint b) {return a.cmpUInt(b) < 0;}
 inline bool operator<=(const Variant& a, uint b) {return a.cmpUInt(b) <= 0;}

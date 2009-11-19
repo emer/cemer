@@ -802,6 +802,7 @@ void iSelectEditDataHost2::ClearBody_impl() {
 void iSelectEditDataHost2::Constr_Data_Labels() {
   // delete all previous sele members
   membs.ResetItems();
+  tw->clearSpans();
   tw->clear();
   // mark place
   String nm;

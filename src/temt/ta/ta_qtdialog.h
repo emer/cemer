@@ -324,8 +324,9 @@ public:
   inline bool		isControl() {return (host_type == HT_CONTROL);} 
     // 'true' when shown in a control
   QWidget* 	widget() {return mwidget;}
-
   void			Updating(bool enter) {if (enter) ++updating; else --updating;}
+  virtual void		StartEndLayout(bool start); // bracket the layout of ctrls; helps optimize
+
   taiDataHostBase(TypeDef* typ_ = NULL, bool read_only_ = false, 
     bool modal_ = false, QObject* parent = 0);
   virtual ~taiDataHostBase(); //
@@ -509,7 +510,6 @@ protected:
   taBase*		sel_item_base; // ONLY used/valid in handling of context menu for select edits
   bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
 
-  virtual void		StartEndLayout(bool start); // bracket the layout of ctrls; helps optimize
   virtual void		ClearBody_impl(); // #IGNORE prepare dialog for rebuilding Body to show new contents -- INHERITING CLASSES MUST CALL THIS LAST
   override void  	Constr_Methods(); // creates the box for buttons
   virtual void		Constr_Methods_impl(); // actually makes methods -- stub this out to supress methods
