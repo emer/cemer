@@ -1179,7 +1179,7 @@ bool taiDataHostBase::AsyncWaitProc() {
 }
 
 void taiDataHostBase::Apply_Async() {
-  Apply();	     // no reason to async this..
+   Apply();	     // no reason to actually async this..
 //   if (apply_req) return; // already waiting
 //   if (state != ACTIVE) return;
 //   apply_req = true;
@@ -1400,7 +1400,7 @@ void taiDataHost_impl::Refresh_impl(bool reshow) {
     if (reshow) defer_reshow_req = true; // if not already set
   } else {
     if (reshow)
-      ReShow_Async();
+      ReShow();			// this must NOT be _Async -- otherwise doesn't work with carbon qt on mac
     else 
       GetImage_Async();
   }
