@@ -488,7 +488,7 @@ void taBase::Destroy() {
   if (tabMisc::delayed_close.FindEl(this) >= 0) {
     int i = 0;
     ++i;
-    taMisc::Error("taBase object being destroyed on DelayedClose list");
+    taMisc::Warning("taBase object being destroyed on DelayedClose list");
   }
 #endif
 }

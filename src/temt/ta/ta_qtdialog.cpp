@@ -1399,10 +1399,13 @@ void taiDataHost_impl::Refresh_impl(bool reshow) {
     warn_clobber = true;
     if (reshow) defer_reshow_req = true; // if not already set
   } else {
-    if (reshow)
+    if (reshow) {
       ReShow();			// this must NOT be _Async -- otherwise doesn't work with carbon qt on mac
-    else 
+//       ReShow_Async();			// this must NOT be _Async -- otherwise doesn't work with carbon qt on mac
+    }
+    else {
       GetImage_Async();
+    }
   }
 }
 

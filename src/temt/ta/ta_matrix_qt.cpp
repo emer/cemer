@@ -561,16 +561,12 @@ void iMatrixEditor::Refresh() {
 }
 
 void iMatrixEditor::setMatrix(taMatrix* mat_, bool pat_4d) {
-/*  if (m_mat == mat_) return;
-
-  m_mat = mat_;
-  
-  if (mat_) {
-    //nothing
-  }
-  tv->setModel(model()); // whether NULL or not*/
   QAbstractItemModel* mod = (mat_) ? mat_->GetTableModel() : NULL;
-  tv->setModel(mod);
+  QItemSelectionModel* m = tv->selectionModel();
+  if(mod)
+    tv->setModel(mod);
+  if(m)
+    delete m;
 }
 
 
