@@ -1105,72 +1105,72 @@ bool taiDataHostBase::AsyncWaitProc() {
   for(int i=0;i<async_reconstr_list.size;i++) {
     taiDataHostBase* dhb = async_reconstr_list.FastEl(i);
     if(dhb->reconstr_req) {
+      dhb->reconstr_req = false;
 //       cerr << "doing reconstr on: " << dhb->typ->name << endl;
       dhb->ReConstr_Body();
 //       cerr << "did reconstr on: " << dhb->typ->name << endl;
       dhb->state &= ~SHOW_CHANGED;
-      dhb->reconstr_req = false;
       did_some = true;
     }
   }
   async_reconstr_list.Reset();
   if(did_some) {
-    taMisc::ProcessEvents();
-    taMisc::ProcessEvents();
-    taMisc::ProcessEvents();
+    taMisc::RunPending();
+    taMisc::RunPending();
+    taMisc::RunPending();
     return true;
   }
 
   for(int i=0;i<async_reshow_list.size;i++) {
     taiDataHostBase* dhb = async_reshow_list.FastEl(i);
     if(dhb->reshow_req) {
+      dhb->reshow_req = false;
       if(dhb->state == ACTIVE) {
 // 	cerr << "doing reshow on: " << dhb->typ->name << endl;
         dhb->ReShow(dhb->reshow_req_forced);
 // 	cerr << "did reshow on: " << dhb->typ->name << endl;
 	did_some = true;
       }
-      dhb->reshow_req = false;
     }
   }
   async_reshow_list.Reset();
   if(did_some) {
-    taMisc::ProcessEvents();
-    taMisc::ProcessEvents();
-    taMisc::ProcessEvents();
+    taMisc::RunPending();
+    taMisc::RunPending();
+    taMisc::RunPending();
     return true;
   }
 
   for(int i=0;i<async_getimage_list.size;i++) {
     taiDataHostBase* dhb = async_getimage_list.FastEl(i);
     if(dhb->getimage_req) {
+      dhb->getimage_req = false;
       if ((dhb->state & STATE_MASK) < CANCELED) {
 // 	cerr << "doing getimage on: " << dhb->typ->name << endl;
         dhb->GetImage(false);
 // 	cerr << "did getimage on: " << dhb->typ->name << endl;
 	did_some = true;
       }
-      dhb->getimage_req = false;
     }
   }
   async_getimage_list.Reset();
   if(did_some) {
-    taMisc::ProcessEvents();
-    taMisc::ProcessEvents();
-    taMisc::ProcessEvents();
+    taMisc::RunPending();
+    taMisc::RunPending();
+    taMisc::RunPending();
     return true;
   }
 
   for(int i=0;i<async_apply_list.size;i++) {
     taiDataHostBase* dhb = async_apply_list.FastEl(i);
     if(dhb->apply_req) {
+      dhb->apply_req = false;
       if(dhb->state == ACTIVE) {
 // 	cerr << "doing apply on: " << dhb->typ->name << endl;
         dhb->Apply();
 // 	cerr << "did apply on: " << dhb->typ->name << endl;
 	did_some = true;
       }
-      dhb->apply_req = false;
     }
   }
   async_apply_list.Reset();
@@ -1208,13 +1208,20 @@ void taiDataHostBase::ReConstr_Async() {
 
 void taiDataHostBase::GetImage_Async() {
   // reshow does a getimage, so ignore if a reshow pending
-  if (getimage_req) return; // already waiting
+//   cerr << "req getimage async on: " << typ->name << endl;
+//   taMisc::FlushConsole();
+//   if (getimage_req) return; // already waiting
+  // IMPORTANT: if above getimage_req is honored, then it can end up with some blank 
+  // program control panels -- needs the redundant getimage guys..  doesn't happen very often
   // we can get these for DEFERRED as well, for buttons, ex/esp Program panels
-  if ((state & STATE_MASK) >= CANCELED) return;
+  if ((state & STATE_MASK) >= CANCELED) {
+//     cerr << "getimage async cancelled on: " << typ->name << " state: " << (state & STATE_MASK) << endl;
+//     taMisc::FlushConsole();
+    return;
+  }
   getimage_req = true;
   taMisc::do_wait_proc = true;
   async_getimage_list.Link(this);
-//   cerr << "req getimage async on: " << typ->name << endl;
 }
 
 void taiDataHostBase::DebugDestroy(QObject* obj) {
@@ -1395,13 +1402,14 @@ void taiDataHost_impl::DataDataChanged(taDataLink* dl, int dcr, void* op1, void*
 void taiDataHost_impl::Refresh_impl(bool reshow) {
   // if no changes have been made in this instance, then just refresh,
   // otherwise, user will have to decide what to do, i.e., revert
+//   cerr << "Refresh_impl on: " << typ->name << endl;
+//   taMisc::FlushConsole();
   if (HasChanged()) {
     warn_clobber = true;
     if (reshow) defer_reshow_req = true; // if not already set
   } else {
     if (reshow) {
       ReShow();			// this must NOT be _Async -- otherwise doesn't work with carbon qt on mac
-//       ReShow_Async();			// this must NOT be _Async -- otherwise doesn't work with carbon qt on mac
     }
     else {
       GetImage_Async();
@@ -1456,6 +1464,8 @@ void taiDataHost_impl::Ok_impl() { //note: only used for Dialogs
 }
 
 void taiDataHost_impl::ClearBody(bool waitproc) {
+//   cerr << "ClearBody on: " << typ->name << " waitproc: " << waitproc << endl;
+//   taMisc::FlushConsole();
   StartEndLayout(true);
   ClearBody_impl();
   if (!(state & SHOW_CHANGED)) return; // probably just destroying
@@ -1473,6 +1483,8 @@ void taiDataHost_impl::ClearBody_impl() {
 
 void taiDataHost_impl::ReConstr_Body() {
   if (!isConstructed()) return;
+//   cerr << "ReConstr_Body on: " << typ->name << endl;
+//   taMisc::FlushConsole();
   rebuild_body = true;
   Constr_Body();
   GetImage_Async();		// async all the way -- otherwise doesn't work
@@ -1481,6 +1493,8 @@ void taiDataHost_impl::ReConstr_Body() {
 }
 
 bool taiDataHost_impl::ReShow(bool force) {
+//   cerr << "ReShow on: " << typ->name << endl;
+//   taMisc::FlushConsole();
 // if not visible, we may refresh the buttons if visible, otherwise nothing else
   if (!mwidget) return false;//. huh?
   //note: extremely unlikely to be updating if invisible, so we do this test here
@@ -2378,6 +2392,8 @@ void taiEditDataHost::GetImage(bool force) {
     GetButtonImage(force); // does its own visible check
   if (!mwidget) return; // huh?
   if (!force && !mwidget->isVisible()) return;
+//   cerr << "GetImage on: " << typ->name << endl;
+//   taMisc::FlushConsole();
   ++updating;
   StartEndLayout(true);
   GetImage_PromptTitle();
