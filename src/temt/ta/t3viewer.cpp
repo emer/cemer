@@ -366,7 +366,7 @@ void T3ExaminerViewer::Constr_RHS_Buttons() {
   snapshot_button = new QToolButton(this);
   snapshot_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   snapshot_button->setIcon(QPixmap((const char **)snapshot_xpm));
-  snapshot_button->setToolTip("Snapshot: save the current viewer image to quarter_image_snap.png file");
+  snapshot_button->setToolTip("Snapshot: save the current viewer image to a file -- PNG format is recommended for most cases as it compresses well and is lossles.  Use EPS to produce a postscript format file that can be converted to PDF or other vector formats for editing.");
   connect(snapshot_button, SIGNAL(clicked()), this, SLOT(snapshotbuttonClicked()));
   rhs_button_vbox->addWidget(snapshot_button);
 
@@ -2167,7 +2167,7 @@ bool T3DataViewFrame::SaveImageEPS(const String& fname) {
 
   // apply action on the viewer scenegraph. Remember to use
   // SoSceneManager's scene graph so that the camera is included.
-  ps->apply(viewer->quarter->getSceneGraph());
+  ps->apply(viewer->quarter->getSoRenderManager()->getSceneGraph());
 
   // this will create the postscript file
   ps->endPage();
