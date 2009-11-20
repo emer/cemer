@@ -5816,12 +5816,12 @@ void Network::UpdateAfterEdit_impl(){
   if(wt_save_fmt == NET_FMT)
     wt_save_fmt = TEXT;
 
-  if(name.empty()) {
-    cerr << "name should not be empty -- debug point -- triggering div zero now!" << endl;
-    taMisc::FlushConsole();
-    int zero = 0;
-    cerr << 1 / zero << endl;	// should trigger sigfpe here
-  }
+//   if(name.empty()) {
+//     cerr << "name should not be empty -- debug point -- triggering div zero now!" << endl;
+//     taMisc::FlushConsole();
+//     int zero = 0;
+//     cerr << 1 / zero << endl;	// should trigger sigfpe here
+//   }
 
   ClearNetFlag(SAVE_UNITS_FORCE); // might have been saved in on state from recover file or something!
 }
