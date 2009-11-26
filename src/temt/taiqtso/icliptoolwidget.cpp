@@ -108,6 +108,7 @@ void iClipToolWidget::mouseMoveEvent(QMouseEvent* event) {
     //Qt::DropAction dropAction = 
     drag->exec(supportedDropActions());
   }
+  setDown(false);		// un-down it
 }
 
 void iClipToolWidget::setAutoCopy(bool value) {

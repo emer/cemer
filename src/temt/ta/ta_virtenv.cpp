@@ -35,10 +35,8 @@ void ODEIntParams::UpdateAfterEdit_impl() {
   if(cfm > 1.0f) cfm = 1.0f;
 }
 
-////////////////////////////////////////////////
-//	damping
-
 void ODEDamping::Initialize() {
+  on = false;
   lin = 0.0f;
   lin_thr = 0.0f;
   ang = 0.0f;
@@ -46,8 +44,8 @@ void ODEDamping::Initialize() {
   ang_speed = 0.0f;
 }
 
-void ODEDamping::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
+void ODEFiniteRotation::Initialize() {
+  on = false;
 }
 
 
@@ -95,7 +93,7 @@ bool VETexture::NeedsTransform() {
 void VEBody::Initialize() {
   body_id = NULL;
   geom_id = NULL;
-  flags = BF_NONE;
+  flags = GRAVITY_ON;
   shape = CAPSULE;
   cur_shape = BOX;
   mass = 1.0f;
@@ -106,9 +104,6 @@ void VEBody::Initialize() {
   set_color = true;
   color.Set(0.2f, 0.2f, .5f, .5f);	// transparent blue.. why not..
   fixed_joint_id = NULL;
-  finite_rotation_mode = false;
-  gravity_mode = true;
-  damping = false;
 }
 
 void VEBody::Destroy() {
@@ -338,31 +333,31 @@ void VEBody::SetValsToODE_Mass() {
 }
 
 void VEBody::SetValsToODE_FiniteRotation() {
-  if (finite_rotation_mode) {
-      SetFiniteRotationMode(1);
-      if (finite_rotation_axis.x != 0.0 || \
-	  finite_rotation_axis.y != 0.0 || \
-	  finite_rotation_axis.z != 0.0)
-	SetFiniteRotationAxis(finite_rotation_axis.x, finite_rotation_axis.y, finite_rotation_axis.z);
-    }
+  if (finite_rotation.on) {
+    SetFiniteRotationMode(1);
+    if (finite_rotation.axis.x != 0.0 ||
+	finite_rotation.axis.y != 0.0 ||
+	finite_rotation.axis.z != 0.0)
+      SetFiniteRotationAxis(finite_rotation.axis.x, finite_rotation.axis.y, finite_rotation.axis.z);
+  }
   else
-      SetFiniteRotationMode(0);    
+    SetFiniteRotationMode(0);    
 }
 
 void VEBody::SetValsToODE_Gravity() {
-  if (gravity_mode)
+  if(HasBodyFlag(GRAVITY_ON))
     SetGravityMode(1);
   else
     SetGravityMode(0);
 }
 
 void VEBody::SetValsToODE_Damping() {
-  if (damping) {
-      SetLinearDamping(damp.lin);
-      SetLinearDampingThreshold(damp.lin_thr);
-      SetAngularDamping(damp.ang);
-      SetAngularDampingThreshold(damp.ang_thr);
-      SetMaxAngularSpeed(damp.ang_speed);
+  if (damp.on) {
+    SetLinearDamping(damp.lin);
+    SetLinearDampingThreshold(damp.lin_thr);
+    SetAngularDamping(damp.ang);
+    SetAngularDampingThreshold(damp.ang_thr);
+    SetMaxAngularSpeed(damp.ang_speed);
   }
 }
 
@@ -550,8 +545,8 @@ void VEBody::SetMaxAngularSpeed(float maxaspeed) {
   dBodySetMaxAngularSpeed(bid, maxaspeed);
 }
 
-  //////////////////////////////
-  //	Finite Rotation Mode
+//////////////////////////////
+//	Finite Rotation Mode
 
 void VEBody::SetFiniteRotationMode(int rotmode) {
   if(!body_id) CreateODE();
@@ -567,8 +562,8 @@ void VEBody::SetFiniteRotationAxis(float xr, float yr, float zr) {
   dBodySetFiniteRotationAxis(bid, xr, yr, zr);
 }
 
-  //////////////////////////////
-  //	Gravity mode
+//////////////////////////////
+//	Gravity mode
 
 void VEBody::SetGravityMode(int mode) {
   if(!body_id) CreateODE();

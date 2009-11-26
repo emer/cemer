@@ -2079,17 +2079,19 @@ LeabraProject .projects[0] {
 	  };
 	  AssignExpr @[2] { };
 	  MethodCall @[3] { 
-	    ProgArg_List @.meth_args = [3] {
+	    ProgArg_List @.meth_args = [4] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	      ProgArg @[2] { };
+	      ProgArg @[3] { };
 	    };
 	  };
 	  MethodCall @[4] { 
-	    ProgArg_List @.meth_args = [3] {
+	    ProgArg_List @.meth_args = [4] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	      ProgArg @[2] { };
+	      ProgArg @[3] { };
 	    };
 	  };
 	  MethodCall @[5] { 
@@ -2605,17 +2607,19 @@ LeabraProject .projects[0] {
 	  };
 	  AssignExpr @[2] { };
 	  MethodCall @[3] { 
-	    ProgArg_List @.meth_args = [3] {
+	    ProgArg_List @.meth_args = [4] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	      ProgArg @[2] { };
+	      ProgArg @[3] { };
 	    };
 	  };
 	  MethodCall @[4] { 
-	    ProgArg_List @.meth_args = [3] {
+	    ProgArg_List @.meth_args = [4] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	      ProgArg @[2] { };
+	      ProgArg @[3] { };
 	    };
 	  };
 	  MethodCall @[5] { 
@@ -3616,6 +3620,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="LeabraWizard_1";
@@ -3699,43 +3704,50 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
     el_def=0;
     EditMbrItem @[0] {
      label="LeabraTrain network";
-     desc="network to train";
+     desc=" object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere. if it is in this program's .objs, then the name will be automatically set";
+     cust_desc=0;
      base=.projects[0].programs.gp[1][1].args[0]$0$;
      mbr=ProgVar::object_val;
     };
     EditMbrItem @[1] {
      label="LeabraTrain input_data";
-     desc="datatable with training patterns";
+     desc=" object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere. if it is in this program's .objs, then the name will be automatically set";
+     cust_desc=0;
      base=.projects[0].programs.gp[1][1].args[1]$1$;
      mbr=ProgVar::object_val;
     };
     EditMbrItem @[2] {
      label="LeabraCycle update_net_view";
-     desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
+     desc=" boolean value";
+     cust_desc=0;
      base=.projects[0].programs.gp[1][5].vars[0]$2$;
      mbr=ProgVar::bool_val;
     };
     EditMbrItem @[3] {
      label="LeabraAll_Std step prog";
      desc=" the program that will be stepped when the Step button is pressed";
+     cust_desc=0;
      base=.projects[0].programs.gp[1]$3$;
      mbr=Program_Group::step_prog;
     };
     EditMbrItem @[4] {
      label="LeabraEpochTest network";
-     desc="network to operate on";
+     desc=" object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere. if it is in this program's .objs, then the name will be automatically set";
+     cust_desc=0;
      base=.projects[0].programs.gp[2][0].args[0]$4$;
      mbr=ProgVar::object_val;
     };
     EditMbrItem @[5] {
      label="LeabraEpochTest input_data";
-     desc="table of patterns to present to the network, one row at a time";
+     desc=" object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere. if it is in this program's .objs, then the name will be automatically set";
+     cust_desc=0;
      base=.projects[0].programs.gp[2][0].vars[0]$5$;
      mbr=ProgVar::object_val;
     };
     EditMbrItem @[6] {
      label="LeabraAll_Test step prog";
      desc=" the program that will be stepped when the Step button is pressed";
+     cust_desc=0;
      base=.projects[0].programs.gp[2]$6$;
      mbr=Program_Group::step_prog;
     };
@@ -3746,42 +3758,49 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
      EditMbrItem @[0] {
       label="LeabraUnitSpec_0 noise";
       desc=" distribution parameters for random added noise<br>  type:  type of random variable to generate<br>    UNIFORM:  uniform with var = range on either side of the mean<br>    BINOMIAL:  binomial with var = p, par = n<br>    POISSON:  poisson with lambda = var<br>    GAMMA:  gamma with var and par = stages<br>    GAUSSIAN:  normal with var<br>    NONE:  just the mean<br>  mean:  mean of random distribution<br>  var:  'varibility' parameter for the random numbers (gauss = standard deviation, not variance; uniform = half-range)<br>  par:  extra parameter for distribution (depends on each one)";
+      cust_desc=0;
       base=.projects[0].networks[1].specs[0]$7$;
       mbr=LeabraUnitSpec::noise;
      };
      EditMbrItem @[1] {
       label="LeabraUnitSpec_0 da mod";
       desc=" da modulation of activations (for da-based learning, and other effects)<br>  on:  whether to actually modulate activations by da values<br>  mod:  how to apply DA modulation<br>    PLUS CONT:  da modulates plus-phase activations (only) in a continuous manner<br>    PLUS POST:  da modulates plus-phase activations (only), at the end of the plus phase<br>  gain:  gain multiplier of da values";
+      cust_desc=0;
       base=$7$;
       mbr=LeabraUnitSpec::da_mod;
      };
      EditMbrItem @[2] {
       label="RLModelRew rew_dist ~ hr_init";
-      desc="initial threshold on distance to get a reward at start of training";
+      desc=" real value";
+      cust_desc=0;
       base=.projects[0].programs.gp[0][4].vars[3]$8$;
       mbr=ProgVar::real_val;
      };
      EditMbrItem @[3] {
       label="RLModelRew rew_dist ~ hr_incr";
-      desc="how much to decrease the distance threshold when network is doing well (see avg_rew_thr) -- should be a POSITIVE number";
+      desc=" real value";
+      cust_desc=0;
       base=.projects[0].programs.gp[0][4].vars[4]$9$;
       mbr=ProgVar::real_val;
      };
      EditMbrItem @[4] {
       label="RLModelRew avg_rew_dec_thr";
-      desc="threshold on network avg_rew for decreasing the reward threshold (makes the task harder -- when doing well)";
+      desc=" real value";
+      cust_desc=0;
       base=.projects[0].programs.gp[0][4].vars[5]$10$;
       mbr=ProgVar::real_val;
      };
      EditMbrItem @[5] {
       label="RLModelRew avg_rew_inc_thr";
-      desc="threshold on network avg_rew for increasing the reward threshold (makes task easier -- when doing poorly)";
+      desc=" real value";
+      cust_desc=0;
       base=.projects[0].programs.gp[0][4].vars[6]$11$;
       mbr=ProgVar::real_val;
      };
      EditMbrItem @[6] {
       label="ForceScalarVal inhib";
       desc=" how to compute inhibition -- for kwta modes, a single global inhibition value is computed for the entire layer<br>  type:  how to compute inhibition (g_i)<br>    KWTA INHIB:  between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .25 std)<br>    KWTA AVG INHIB:  average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .6 std)<br>    KWTA KV2K:  average of top k vs avg of next k (2k) -- avoids long 'tail' of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std. In general, this is now preferred to KWTA_AVG_INHIB<br>    KWTA COMP COST:  competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility<br>    AVG MAX PT INHIB:  put inhib value at i_kwta_pt between avg and max values for layer<br>    MAX INHIB:  put inhib value at i_kwta_pt below max guy in layer<br>    UNIT INHIB:  unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)<br>  kwta pt: [Default: 0.25;0.6;0.2]  [Default: .25 for KWTA_INHIB and KWTA_KV2K, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)<br>  min i:  minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation<br>  comp thr:  [0-1] Threshold for competitors in KWTA_COMP_COST -- competitor threshold inhibition is normalized by k'th inhibition and those above this threshold are counted as competitors <br>  comp gain:  Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level<br>  gp pt:  [Default: .2] for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB";
+      cust_desc=0;
       base=.projects[0].networks[1].specs[5]$12$;
       mbr=LeabraLayerSpec::inhib;
      };
@@ -3795,48 +3814,56 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
     EditMthItem @[0] {
      label="Init";
      desc=" set the program state back to the beginning";
+     cust_desc=0;
      base=.projects[0].programs.gp[1][1]$13$;
      mth=Program::Init;
     };
     EditMthItem @[1] {
      label="Run";
      desc=" run the program";
+     cust_desc=0;
      base=$13$;
      mth=Program::Run;
     };
     EditMthItem @[2] {
      label="Step";
      desc=" step the program, at the previously selected step level (see SetAsStep or the program group control panel)";
+     cust_desc=0;
      base=$13$;
      mth=Program::Step;
     };
     EditMthItem @[3] {
      label="Stop";
      desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
+     cust_desc=0;
      base=$13$;
      mth=Program::Stop;
     };
     EditMthItem @[4] {
      label="Test Init";
      desc=" set the program state back to the beginning";
+     cust_desc=0;
      base=.projects[0].programs.gp[2][0]$14$;
      mth=Program::Init;
     };
     EditMthItem @[5] {
      label="Test Run";
      desc=" run the program";
+     cust_desc=0;
      base=$14$;
      mth=Program::Run;
     };
     EditMthItem @[6] {
      label="Test Step";
      desc=" step the program, at the previously selected step level (see SetAsStep or the program group control panel)";
+     cust_desc=0;
      base=$14$;
      mth=Program::Step;
     };
     EditMthItem @[7] {
      label="Test Stop";
      desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
+     cust_desc=0;
      base=$14$;
      mth=Program::Stop;
     };
@@ -3857,36 +3884,42 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
      EditMbrItem @[0] {
       label="VEArmWorld stepsize";
       desc=" how big of a step to take";
+      cust_desc=0;
       base=.projects[0].programs.gp[0][0].objs[0]$15$;
       mbr=VEWorld::stepsize;
      };
      EditMbrItem @[1] {
       label="VEArmWorld ode params";
       desc=" parameters for tuning the ODE engine<br>  erp: [Default: 0.2]  (0-1, .1-.8 useful range) error reduction parameter: how much of the joint error is reduced at the next time step<br>  cfm: [Default: 1e-05]  (0-1, 1e-9 - 1 useful range) constraint force mixing parameter: how 'soft' is the constraint (0 = hard, 1 = soft)<br>  max cor vel: [Default: 1e+06]  maximum correcting velocity for contacts (how quickly they can pop things out of contact)<br>  contact depth: [Default: 0.001]  depth of the surface layer arond all geometry objects -- allows things to go this deep into a surface before actual contact is made -- increased value can help prevent jittering<br>  max col pts: [Default: 4]  maximum number of collision points to get (must be less than 64, which is a hard maximum)";
+      cust_desc=0;
       base=$15$;
       mbr=VEWorld::ode_params;
      };
      EditMbrItem @[2] {
       label="VEArmWorld updt display";
       desc=" if true, will update any attached display after each time step";
+      cust_desc=0;
       base=$15$;
       mbr=VEWorld::updt_display;
      };
      EditMbrItem @[3] {
       label="Arm max_ve_steps";
       desc=" integer value (also for enum types)";
+      cust_desc=0;
       base=.projects[0].programs.gp[0][0].vars[12]$16$;
       mbr=ProgVar::int_val;
      };
      EditMbrItem @[4] {
       label="Arm hand_vel_thr";
-      desc="threshold for stopping movement in hand velocity";
+      desc=" real value";
+      cust_desc=0;
       base=.projects[0].programs.gp[0][0].vars[24]$17$;
       mbr=ProgVar::real_val;
      };
      EditMbrItem @[5] {
       label="Arm co_contract_pct";
-      desc="how much to co-contract the muscles for the movement";
+      desc=" real value";
+      cust_desc=0;
       base=.projects[0].programs.gp[0][0].vars[8]$18$;
       mbr=ProgVar::real_val;
      };
@@ -3927,18 +3960,21 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
       EditMbrItem @[0] {
        label="Humerus cur pos";
        desc=" current position of body<br>  x:  horizontal<br>  y:  vertical<br>  z:  depth";
+       cust_desc=0;
        base=.projects[0].programs.gp[0][0].objs[0].objects[0].bodies[1]$19$;
        mbr=VEBody::cur_pos;
       };
       EditMbrItem @[1] {
        label="Humerus cur lin vel";
        desc=" current linear velocity<br>  x:  horizontal<br>  y:  vertical<br>  z:  depth";
+       cust_desc=0;
        base=$19$;
        mbr=VEBody::cur_lin_vel;
       };
       EditMbrItem @[2] {
        label="Humerus cur ang vel";
        desc=" current angular velocity<br>  x:  horizontal<br>  y:  vertical<br>  z:  depth";
+       cust_desc=0;
        base=$19$;
        mbr=VEBody::cur_ang_vel;
       };
@@ -3950,18 +3986,21 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
       EditMbrItem @[0] {
        label="Ulna cur pos";
        desc=" current position of body<br>  x:  horizontal<br>  y:  vertical<br>  z:  depth";
+       cust_desc=0;
        base=.projects[0].programs.gp[0][0].objs[0].objects[0].bodies[2]$20$;
        mbr=VEBody::cur_pos;
       };
       EditMbrItem @[1] {
        label="Ulna cur lin vel";
        desc=" current linear velocity<br>  x:  horizontal<br>  y:  vertical<br>  z:  depth";
+       cust_desc=0;
        base=$20$;
        mbr=VEBody::cur_lin_vel;
       };
       EditMbrItem @[2] {
        label="Ulna cur ang vel";
        desc=" current angular velocity<br>  x:  horizontal<br>  y:  vertical<br>  z:  depth";
+       cust_desc=0;
        base=$20$;
        mbr=VEBody::cur_ang_vel;
       };
@@ -3973,18 +4012,21 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
       EditMbrItem @[0] {
        label="Hand cur pos";
        desc=" current position of body<br>  x:  horizontal<br>  y:  vertical<br>  z:  depth";
+       cust_desc=0;
        base=.projects[0].programs.gp[0][0].objs[0].objects[0].bodies[3]$21$;
        mbr=VEBody::cur_pos;
       };
       EditMbrItem @[1] {
        label="Hand cur lin vel";
        desc=" current linear velocity<br>  x:  horizontal<br>  y:  vertical<br>  z:  depth";
+       cust_desc=0;
        base=$21$;
        mbr=VEBody::cur_lin_vel;
       };
       EditMbrItem @[2] {
        label="Hand cur ang vel";
        desc=" current angular velocity<br>  x:  horizontal<br>  y:  vertical<br>  z:  depth";
+       cust_desc=0;
        base=$21$;
        mbr=VEBody::cur_ang_vel;
       };
@@ -3999,18 +4041,21 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
     EditMthItem @[0] {
      label="Arm Init";
      desc=" set the program state back to the beginning";
+     cust_desc=0;
      base=.projects[0].programs.gp[0][0]$22$;
      mth=Program::Init;
     };
     EditMthItem @[1] {
      label="Arm Run";
      desc=" run the program";
+     cust_desc=0;
      base=$22$;
      mth=Program::Run;
     };
     EditMthItem @[2] {
      label="Arm Step";
      desc=" step the program, at the previously selected step level (see SetAsStep or the program group control panel)";
+     cust_desc=0;
      base=$22$;
      mth=Program::Step;
     };
@@ -4027,66 +4072,77 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
     EditMbrItem @[0] {
      label="pvr lrate";
      desc="[Default: 0.01;0.02]  [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience";
+     cust_desc=0;
      base=.projects[0].networks[1].specs.gp[1][0].children[0].children[0]$23$;
      mbr=LeabraConSpec::lrate;
     };
     EditMbrItem @[1] {
      label="pvi lrate";
      desc="[Default: 0.01;0.02]  [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience";
+     cust_desc=0;
      base=.projects[0].networks[1].specs.gp[1][0].children[0]$24$;
      mbr=LeabraConSpec::lrate;
     };
     EditMbrItem @[2] {
      label="lve lrate";
      desc="[Default: 0.01;0.02]  [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience";
+     cust_desc=0;
      base=.projects[0].networks[1].specs.gp[1][0].children[0].children[1]$25$;
      mbr=LeabraConSpec::lrate;
     };
     EditMbrItem @[3] {
      label="lvi lrate";
      desc="[Default: 0.01;0.02]  [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience";
+     cust_desc=0;
      base=.projects[0].networks[1].specs.gp[1][0].children[0].children[1].children[0]$26$;
      mbr=LeabraConSpec::lrate;
     };
     EditMbrItem @[4] {
      label="nv lrate";
      desc="[Default: 0.01;0.02]  [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience";
+     cust_desc=0;
      base=.projects[0].networks[1].specs.gp[1][0].children[0].children[2]$27$;
      mbr=LeabraConSpec::lrate;
     };
     EditMbrItem @[5] {
      label="pve rew";
      desc=" misc reward computation specifications<br>  err val: [Default: 0]  reward value for errors (when network does not respond correctly)<br>  norew val: [Default: 0.5]  reward value when no feedback information is present<br>  rew val: [Default: 1]  reward value for correct responses (positive rewards)";
+     cust_desc=0;
      base=.projects[0].networks[1].specs.gp[2][0]$28$;
      mbr=ExtRewLayerSpec::rew;
     };
     EditMbrItem @[6] {
      label="pvi pv";
      desc=" misc parameters for the PV computation<br>  min pvi: [Default: 0.4]  minimum pvi value -- PVi is not allowed to go below this value for the purposes of computing the PV delta value: pvd = PVe - MAX(PVi,min_pvi)";
+     cust_desc=0;
      base=.projects[0].networks[1].specs.gp[2][2]$29$;
      mbr=PViLayerSpec::pv;
     };
     EditMbrItem @[7] {
      label="lve lv";
-     desc=" misc parameters controlling the LV computation (note: only the LVe instance of these parameters are used)<br>  min lvi: [Default: 0.1]  minimum lvi value -- LVi is not allowed to go below this value for the purposes of computing the LV delta value: lvd = LVe - MAX(LVi,min_lvi)";
+     desc=" misc parameters controlling the LV computation (note: only the LVe instance of these parameters are used)<br>  min lvi: [Default: 0.1;0.4]  minimum lvi value -- LVi is not allowed to go below this value for the purposes of computing the LV delta value: lvd = LVe - MAX(LVi,min_lvi)<br>  lrn pv only: [Default: true]  only compute weight changes on trials where primary rewards are expected or actually received -- the target PV value is only presented on such trials, but if this flag is off, it actually learns on other trials, but with whatever plus phase activation state happens to arise";
+     cust_desc=0;
      base=.projects[0].networks[1].specs.gp[2][3]$30$;
      mbr=LVeLayerSpec::lv;
     };
     EditMbrItem @[8] {
      label="pvr pv detect";
-     desc=" primary reward value detection spec: detect if a primary reward is expected based on PVr value<br>  thr min: [Default: 0.2]  minimum threshold on PVr value, below which PV is considered present (i.e., punishment) -- PVr learns a 0 for all punishment-valence cases, regardless of value<br>  thr max: [Default: 0.8]  maximum threshold on PVr value, above which PV is considered present (i.e., reward) -- PVr learns a 1 for all reward-valence cases, regardless of value";
+     desc=" primary reward value detection spec: detect if a primary reward is expected based on PVr value<br>  thr: [Default: 0.7]  threshold on PVr value, above which PV is considered present (i.e., reward) -- PVr learns a 1 for all reward-valence cases, regardless of value, and .5 for reward absent";
+     cust_desc=0;
      base=.projects[0].networks[1].specs.gp[2][1]$31$;
      mbr=PVrLayerSpec::pv_detect;
     };
     EditMbrItem @[9] {
      label="nv nv";
-     desc=" novelty value specs<br>  da gain: [Default: 1]  gain for novelty value dopamine signal<br>  val thr: [Default: 0.1]  threshold for value (training value is 0) -- value is zero below this threshold";
+     desc=" novelty value specs<br>  da gain: [Default: 0:1]  gain for novelty value dopamine signal<br>  val thr: [Default: 0.1]  threshold for value (training value is 0) -- value is zero below this threshold<br>  prior discount: [Default: 1]  how much to discount the prior NV delta value (nvd = NV - val_thr) in computing the net NV dopamine signal (NV DA = nvd_t - prior_discount * nvd_t-1)";
+     cust_desc=0;
      base=.projects[0].networks[1].specs.gp[2][4]$32$;
      mbr=NVLayerSpec::nv;
     };
     EditMbrItem @[10] {
      label="vta da";
-     desc=" parameters for the pvlv da computation<br>  da gain: [Default: 0.2:2]  multiplier for dopamine values<br>  tonic da: [Default: 0]  set a tonic 'dopamine' (DA) level (offset to add to da values)";
+     desc=" parameters for the pvlv da computation<br>  da gain: [Default: 0:2]  multiplier for dopamine values<br>  tonic da: [Default: 0]  set a tonic 'dopamine' (DA) level (offset to add to da values)<br>  pv gain: [Default: 1;0.1;0.5]  extra gain modulation of PV generated DA -- it can be much larger in general than lv so sometimes it is useful to turn it down (e.g., in new version of PBWM)<br>  add pv lv: [Default: false]  for cases where reward is expected/delivered, add PV and LV dopamine signals (otherwise, only use PV signal)";
+     cust_desc=0;
      base=.projects[0].networks[1].specs.gp[2][5]$33$;
      mbr=PVLVDaLayerSpec::da;
     };
@@ -4577,6 +4633,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="batch";
@@ -4598,6 +4655,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="epoch";
@@ -4619,6 +4677,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="trial";
@@ -4664,6 +4723,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="phase_no";
@@ -4758,6 +4818,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="batch";
@@ -4779,6 +4840,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="epoch";
@@ -4921,6 +4983,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="batch";
@@ -4942,6 +5005,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="epoch";
@@ -4963,6 +5027,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="trial";
@@ -5008,6 +5073,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="phase_no";
@@ -5102,6 +5168,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="batch";
@@ -5123,6 +5190,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="epoch";
@@ -5269,6 +5337,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_base";
@@ -5281,6 +5350,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_anal";
@@ -5293,6 +5363,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_gen";
@@ -5305,6 +5376,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="image_proc";
@@ -6080,6 +6152,18 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   erp=0.2;
 	   cfm=1e-05;
 	  };
+	  damp {
+	   on=0;
+	   lin=0;
+	   lin_thr=0;
+	   ang=0;
+	   ang_thr=0;
+	   ang_speed=0;
+	  };
+	  finite_rotation {
+	   on=0;
+	   axis {x=0: y=0: z=0: };
+	  };
 	 };
 	 VEBody @[1] {
 	  name="Humerus";
@@ -6112,6 +6196,18 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  softness {
 	   erp=0.2;
 	   cfm=1e-05;
+	  };
+	  damp {
+	   on=0;
+	   lin=0;
+	   lin_thr=0;
+	   ang=0;
+	   ang_thr=0;
+	   ang_speed=0;
+	  };
+	  finite_rotation {
+	   on=0;
+	   axis {x=0: y=0: z=0: };
 	  };
 	 };
 	 VEBody @[2] {
@@ -6146,6 +6242,18 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   erp=0.2;
 	   cfm=1e-05;
 	  };
+	  damp {
+	   on=0;
+	   lin=0;
+	   lin_thr=0;
+	   ang=0;
+	   ang_thr=0;
+	   ang_speed=0;
+	  };
+	  finite_rotation {
+	   on=0;
+	   axis {x=0: y=0: z=0: };
+	  };
 	 };
 	 VEBody @[3] {
 	  name="Hand";
@@ -6178,6 +6286,18 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  softness {
 	   erp=0.2;
 	   cfm=1e-05;
+	  };
+	  damp {
+	   on=0;
+	   lin=0;
+	   lin_thr=0;
+	   ang=0;
+	   ang_thr=0;
+	   ang_speed=0;
+	  };
+	  finite_rotation {
+	   on=0;
+	   axis {x=0: y=0: z=0: };
 	  };
 	 };
 	 VEBody @[4] {
@@ -6212,6 +6332,18 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   erp=0.2;
 	   cfm=1e-05;
 	  };
+	  damp {
+	   on=0;
+	   lin=0;
+	   lin_thr=0;
+	   ang=0;
+	   ang_thr=0;
+	   ang_speed=0;
+	  };
+	  finite_rotation {
+	   on=0;
+	   axis {x=0: y=0: z=0: };
+	  };
 	 };
 	 VECamera @[5] {
 	  name="LeftEye";
@@ -6244,6 +6376,18 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  softness {
 	   erp=0.2;
 	   cfm=1e-05;
+	  };
+	  damp {
+	   on=0;
+	   lin=0;
+	   lin_thr=0;
+	   ang=0;
+	   ang_thr=0;
+	   ang_speed=0;
+	  };
+	  finite_rotation {
+	   on=0;
+	   axis {x=0: y=0: z=0: };
 	  };
 	  img_size {x=320: y=240: };
 	  color_cam=1;
@@ -6293,6 +6437,18 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   erp=0.2;
 	   cfm=1e-05;
 	  };
+	  damp {
+	   on=0;
+	   lin=0;
+	   lin_thr=0;
+	   ang=0;
+	   ang_thr=0;
+	   ang_speed=0;
+	  };
+	  finite_rotation {
+	   on=0;
+	   axis {x=0: y=0: z=0: };
+	  };
 	  img_size {x=320: y=240: };
 	  color_cam=1;
 	  view_dist {
@@ -6341,6 +6497,18 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	   erp=0.2;
 	   cfm=1e-05;
 	  };
+	  damp {
+	   on=0;
+	   lin=0;
+	   lin_thr=0;
+	   ang=0;
+	   ang_thr=0;
+	   ang_speed=0;
+	  };
+	  finite_rotation {
+	   on=0;
+	   axis {x=0: y=0: z=0: };
+	  };
 	 };
 	 VEBody @[8] {
 	  name="Deltoid";
@@ -6373,6 +6541,18 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  softness {
 	   erp=0.2;
 	   cfm=1e-05;
+	  };
+	  damp {
+	   on=0;
+	   lin=0;
+	   lin_thr=0;
+	   ang=0;
+	   ang_thr=0;
+	   ang_speed=0;
+	  };
+	  finite_rotation {
+	   on=0;
+	   axis {x=0: y=0: z=0: };
 	  };
 	 };
 	};
@@ -7016,6 +7196,18 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  softness {
 	   erp=0.2;
 	   cfm=1e-05;
+	  };
+	  damp {
+	   on=0;
+	   lin=0;
+	   lin_thr=0;
+	   ang=0;
+	   ang_thr=0;
+	   ang_speed=0;
+	  };
+	  finite_rotation {
+	   on=0;
+	   axis {x=0: y=0: z=0: };
 	  };
 	 };
 	};
@@ -9466,7 +9658,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.4;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="how much to co-contract the muscles for the movement";
       init_from=NULL;
@@ -9506,7 +9698,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Int;
       int_val=500;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="maximum number of ve steps to take per movement";
       init_from=NULL;
@@ -9626,7 +9818,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.0001;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="threshold for stopping movement in hand velocity";
       init_from=NULL;
@@ -12426,7 +12618,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.4;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="initial threshold on distance to get a reward at start of training";
       init_from=NULL;
@@ -12436,7 +12628,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.01;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="how much to change the distance threshold when network is doing well or poorly (see avg_rew_*_thr)";
       init_from=NULL;
@@ -12446,7 +12638,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.8;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="threshold on network avg_rew for decreasing the reward threshold (makes the task harder -- when doing well)";
       init_from=NULL;
@@ -12456,7 +12648,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Real;
       real_val=0.2;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="threshold on network avg_rew for increasing the reward threshold (makes task easier -- when doing poorly)";
       init_from=NULL;
@@ -13410,7 +13602,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=DataTable;
       object_val=$35$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="datatable with training patterns";
       init_from=NULL;
@@ -16737,7 +16929,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	arg_type=const_Variant_ref;
 	type="const Variant&";
 	name="val";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="epoch_timer.used.GetTotSecs()";
@@ -16747,7 +16939,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	arg_type=const_taString_ref;
 	type="const taString&";
 	name="col_name";
-	required=0;
+	required=1;
 	def_val="\"\"";
 	expr {
 	 expr="\"epoch_time_tot\"";
@@ -16757,10 +16949,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	arg_type=int;
 	type="int";
 	name="row";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="-1";
+	};
+       };
+       ProgArg @[3] {
+	arg_type=bool;
+	type="bool";
+	name="quiet";
+	required=0;
+	def_val="false";
+	expr {
+	 expr=;
 	};
        };
       };
@@ -16779,7 +16981,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	arg_type=const_Variant_ref;
 	type="const Variant&";
 	name="val";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="epoch_timer.used.GetUsrSecs()";
@@ -16789,7 +16991,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	arg_type=const_taString_ref;
 	type="const taString&";
 	name="col_name";
-	required=0;
+	required=1;
 	def_val="\"\"";
 	expr {
 	 expr="\"epoch_time_usr\"";
@@ -16799,10 +17001,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	arg_type=int;
 	type="int";
 	name="row";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="-1";
+	};
+       };
+       ProgArg @[3] {
+	arg_type=bool;
+	type="bool";
+	name="quiet";
+	required=0;
+	def_val="false";
+	expr {
+	 expr=;
 	};
        };
       };
@@ -19421,7 +19633,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	arg_type=const_Variant_ref;
 	type="const Variant&";
 	name="val";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="epoch_timer.used.GetTotSecs()";
@@ -19431,7 +19643,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	arg_type=const_taString_ref;
 	type="const taString&";
 	name="col_name";
-	required=0;
+	required=1;
 	def_val="\"\"";
 	expr {
 	 expr="\"epoch_time_tot\"";
@@ -19441,10 +19653,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	arg_type=int;
 	type="int";
 	name="row";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="-1";
+	};
+       };
+       ProgArg @[3] {
+	arg_type=bool;
+	type="bool";
+	name="quiet";
+	required=0;
+	def_val="false";
+	expr {
+	 expr=;
 	};
        };
       };
@@ -19463,7 +19685,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	arg_type=const_Variant_ref;
 	type="const Variant&";
 	name="val";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="epoch_timer.used.GetUsrSecs()";
@@ -19473,7 +19695,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	arg_type=const_taString_ref;
 	type="const taString&";
 	name="col_name";
-	required=0;
+	required=1;
 	def_val="\"\"";
 	expr {
 	 expr="\"epoch_time_usr\"";
@@ -19483,10 +19705,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	arg_type=int;
 	type="int";
 	name="row";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="-1";
+	};
+       };
+       ProgArg @[3] {
+	arg_type=bool;
+	type="bool";
+	name="quiet";
+	required=0;
+	def_val="false";
+	expr {
+	 expr=;
 	};
        };
       };
@@ -19512,8 +19744,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$228$;
    name="Browser3";
+   m_data=.projects[0]$228$;
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -19524,8 +19756,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
     el_typ=ToolBar;
     el_def=0;
     ToolBar @[0] {
-     m_data=NULL;
      name="Application";
+     m_data=NULL;
      visible=0;
      lft=0;
      top=0;
@@ -19537,31 +19769,32 @@ presented in the minus phase -- if this is not the case (values are computed on 
     el_typ=FrameViewer;
     el_def=0;
     tabBrowseViewer @[0] {
-     m_data=NULL;
      name="Tree";
+     m_data=NULL;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
      m_root=$228$;
     };
     PanelViewer @[1] {
-     m_data=NULL;
      name="Panels";
+     m_data=NULL;
      visible=1;
     };
     T3DataViewer @[2] {
-     m_data=NULL;
      name="T3Frames";
+     m_data=NULL;
      visible=1;
      frames {
       name=;
       el_typ=T3DataViewFrame;
       el_def=0;
       T3DataViewFrame @[0] {
-       m_data=NULL;
        name="VEArmWorld";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -19569,6 +19802,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 VEWorldView @[0] {
+	  name=;
 	  m_data=$15$;
 	  m_transform=NULL;
 	  children {
@@ -19576,6 +19810,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	   el_typ=T3DataView;
 	   el_def=0;
 	   VESpaceView @[0] {
+	    name="RoomSpace";
 	    m_data=.projects[0].programs.gp[0][0].objs[0].spaces[0]$229$;
 	    m_transform=NULL;
 	    children {
@@ -19583,19 +19818,19 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	     el_typ=T3DataView;
 	     el_def=0;
 	     VEStaticView @[0] {
+	      name="Ground";
 	      m_data=.projects[0].programs.gp[0][0].objs[0].spaces[0].static_els[0]$230$;
 	      m_transform=NULL;
-	      name="Ground";
 	     };
 	     VEStaticView @[1] {
+	      name="BackWall";
 	      m_data=.projects[0].programs.gp[0][0].objs[0].spaces[0].static_els[1]$231$;
 	      m_transform=NULL;
-	      name="BackWall";
 	     };
 	    };
-	    name="RoomSpace";
 	   };
 	   VEObjectView @[1] {
+	    name="Emer";
 	    m_data=.projects[0].programs.gp[0][0].objs[0].objects[0]$232$;
 	    m_transform=NULL;
 	    children {
@@ -19603,79 +19838,79 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	     el_typ=T3DataView;
 	     el_def=0;
 	     VEBodyView @[0] {
+	      name="Torso";
 	      m_data=$49$;
 	      m_transform=NULL;
-	      name="Torso";
 	     };
 	     VEBodyView @[1] {
+	      name="Humerus";
 	      m_data=$19$;
 	      m_transform=NULL;
-	      name="Humerus";
 	     };
 	     VEBodyView @[2] {
+	      name="Ulna";
 	      m_data=$20$;
 	      m_transform=NULL;
-	      name="Ulna";
 	     };
 	     VEBodyView @[3] {
+	      name="Hand";
 	      m_data=$21$;
 	      m_transform=NULL;
-	      name="Hand";
 	     };
 	     VEBodyView @[4] {
+	      name="Head";
 	      m_data=$52$;
 	      m_transform=NULL;
-	      name="Head";
 	     };
 	     VEBodyView @[5] {
+	      name="LeftEye";
 	      m_data=$53$;
 	      m_transform=NULL;
-	      name="LeftEye";
 	     };
 	     VEBodyView @[6] {
+	      name="RightEye";
 	      m_data=$54$;
 	      m_transform=NULL;
-	      name="RightEye";
 	     };
 	     VEBodyView @[7] {
+	      name="Pectoralis";
 	      m_data=$50$;
 	      m_transform=NULL;
-	      name="Pectoralis";
 	     };
 	     VEBodyView @[8] {
+	      name="Deltoid";
 	      m_data=$51$;
 	      m_transform=NULL;
-	      name="Deltoid";
 	     };
 	     VEJointView @[9] {
+	      name="Shoulder";
 	      m_data=$56$;
 	      m_transform=NULL;
-	      name="Shoulder";
 	     };
 	     VEJointView @[10] {
+	      name="Elbow";
 	      m_data=$57$;
 	      m_transform=NULL;
-	      name="Elbow";
 	     };
 	     VEJointView @[11] {
+	      name="Wrist";
 	      m_data=.projects[0].programs.gp[0][0].objs[0].objects[0].joints[2]$233$;
 	      m_transform=NULL;
-	      name="Wrist";
 	     };
 	     VEJointView @[12] {
+	      name="LeftEyeJoint";
 	      m_data=.projects[0].programs.gp[0][0].objs[0].objects[0].joints[3]$234$;
 	      m_transform=NULL;
-	      name="LeftEyeJoint";
 	     };
 	     VEJointView @[13] {
+	      name="RightEyeJoint";
 	      m_data=.projects[0].programs.gp[0][0].objs[0].objects[0].joints[4]$235$;
 	      m_transform=NULL;
-	      name="RightEyeJoint";
 	     };
 	    };
-	    name="Emer";
 	   };
 	   VEObjectView @[2] {
+	    name="Target";
 	    m_data=.projects[0].programs.gp[0][0].objs[0].objects[1]$236$;
 	    m_transform=NULL;
 	    children {
@@ -19683,12 +19918,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	     el_typ=T3DataView;
 	     el_def=0;
 	     VEBodyView @[0] {
+	      name="TargetBody";
 	      m_data=$55$;
 	      m_transform=NULL;
-	      name="TargetBody";
 	     };
 	    };
-	    name="Target";
 	   };
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
@@ -19697,6 +19931,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	  show_joints=0;
 	 };
 	 GraphTableView @[1] {
+	  name=;
 	  m_data=$59$;
 FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=-1: y=0.2: z=-1.2: }: };
 	  children {
@@ -19704,161 +19939,161 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
+	    name="Reach_Name";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[0]$237$;
 	    m_transform=NULL;
-	    name="Reach_Name";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
+	    name="Reach_No";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[1]$238$;
 	    m_transform=NULL;
-	    name="Reach_No";
 	    visible=1;
 	    fixed_range {fix_min=0: min=1: fix_max=0: max=68: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
+	    name="Hand_cur_pos_x";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[2]$239$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_x";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
+	    name="Hand_cur_pos_y";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[3]$240$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
+	    name="Hand_cur_pos_z";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[4]$241$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_z";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
+	    name="Target_cur_pos_x";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[5]$242$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_x";
 	    visible=1;
 	    fixed_range {fix_min=1: min=-0.5: fix_max=1: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
+	    name="Target_cur_pos_y";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[6]$243$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
+	    name="Target_cur_pos_z";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[7]$244$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_z";
 	    visible=1;
 	    fixed_range {fix_min=1: min=-0.5: fix_max=1: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[8] {
+	    name="Hand_cur_lin_vel_x";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[8]$245$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_x";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[9] {
+	    name="Hand_cur_lin_vel_y";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[9]$246$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[10] {
+	    name="Hand_cur_lin_vel_z";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[10]$247$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_z";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[11] {
+	    name="Should_pos";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[11]$248$;
 	    m_transform=NULL;
-	    name="Should_pos";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[12] {
+	    name="Should_vel";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[12]$249$;
 	    m_transform=NULL;
-	    name="Should_vel";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[13] {
+	    name="Should_force_in";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[13]$250$;
 	    m_transform=NULL;
-	    name="Should_force_in";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[14] {
+	    name="Elbow_pos";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[14]$251$;
 	    m_transform=NULL;
-	    name="Elbow_pos";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[15] {
+	    name="Elbow_vel";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[15]$252$;
 	    m_transform=NULL;
-	    name="Elbow_vel";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[16] {
+	    name="Elbow_force_in";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[16]$253$;
 	    m_transform=NULL;
-	    name="Elbow_force_in";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[17] {
+	    name="n_steps";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[17]$254$;
 	    m_transform=NULL;
-	    name="n_steps";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[18] {
+	    name="angle_err";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[18]$255$;
 	    m_transform=NULL;
-	    name="angle_err";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[19] {
+	    name="trg_dist";
 	    m_data=.projects[0].programs.gp[0][0].objs[1].data[19]$256$;
 	    m_transform=NULL;
-	    name="trg_dist";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
@@ -19883,6 +20118,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -19897,6 +20133,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   row_num=0;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -19911,6 +20148,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -19927,6 +20165,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -19943,6 +20182,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -19959,6 +20199,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -19975,6 +20216,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -19991,6 +20233,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20007,6 +20250,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20023,6 +20267,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20044,6 +20289,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20060,6 +20306,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20076,6 +20323,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20092,6 +20340,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20108,6 +20357,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20124,6 +20374,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20140,6 +20391,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20156,6 +20408,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20175,6 +20428,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  err_bar_width=0.02;
 	  color_mode=COLOR_AXIS;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -20199,6 +20453,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20221,6 +20476,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  two_d_font_scale=350;
 	 };
 	 GraphTableView @[2] {
+	  name=;
 	  m_data=$59$;
 FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=-0.25: y=0.2: z=-1.2: }: };
 	  children {
@@ -20228,161 +20484,161 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
+	    name="Reach_Name";
 	    m_data=$237$;
 	    m_transform=NULL;
-	    name="Reach_Name";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
+	    name="Reach_No";
 	    m_data=$238$;
 	    m_transform=NULL;
-	    name="Reach_No";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
+	    name="Hand_cur_pos_x";
 	    m_data=$239$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_x";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
+	    name="Hand_cur_pos_y";
 	    m_data=$240$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
+	    name="Hand_cur_pos_z";
 	    m_data=$241$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_z";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
+	    name="Target_cur_pos_x";
 	    m_data=$242$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_x";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
+	    name="Target_cur_pos_y";
 	    m_data=$243$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
+	    name="Target_cur_pos_z";
 	    m_data=$244$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_z";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[8] {
+	    name="Hand_cur_lin_vel_x";
 	    m_data=$245$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_x";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[9] {
+	    name="Hand_cur_lin_vel_y";
 	    m_data=$246$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[10] {
+	    name="Hand_cur_lin_vel_z";
 	    m_data=$247$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_z";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[11] {
+	    name="Should_pos";
 	    m_data=$248$;
 	    m_transform=NULL;
-	    name="Should_pos";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[12] {
+	    name="Should_vel";
 	    m_data=$249$;
 	    m_transform=NULL;
-	    name="Should_vel";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[13] {
+	    name="Should_force_in";
 	    m_data=$250$;
 	    m_transform=NULL;
-	    name="Should_force_in";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[14] {
+	    name="Elbow_pos";
 	    m_data=$251$;
 	    m_transform=NULL;
-	    name="Elbow_pos";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[15] {
+	    name="Elbow_vel";
 	    m_data=$252$;
 	    m_transform=NULL;
-	    name="Elbow_vel";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[16] {
+	    name="Elbow_force_in";
 	    m_data=$253$;
 	    m_transform=NULL;
-	    name="Elbow_force_in";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[17] {
+	    name="n_steps";
 	    m_data=$254$;
 	    m_transform=NULL;
-	    name="n_steps";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[18] {
+	    name="angle_err";
 	    m_data=$255$;
 	    m_transform=NULL;
-	    name="angle_err";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[19] {
+	    name="trg_dist";
 	    m_data=$256$;
 	    m_transform=NULL;
-	    name="trg_dist";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
@@ -20407,6 +20663,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -20421,6 +20678,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   row_num=0;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20435,6 +20693,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -20451,6 +20710,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20467,6 +20727,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20483,6 +20744,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20499,6 +20761,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20515,6 +20778,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20531,6 +20795,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20547,6 +20812,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20568,6 +20834,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20584,6 +20851,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20600,6 +20868,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20616,6 +20885,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20632,6 +20902,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20648,6 +20919,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20664,6 +20936,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20680,6 +20953,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20699,6 +20973,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  err_bar_width=0.02;
 	  color_mode=COLOR_AXIS;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -20723,6 +20998,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20745,6 +21021,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  two_d_font_scale=350;
 	 };
 	 GraphTableView @[3] {
+	  name=;
 	  m_data=$59$;
 FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=-1.00579: y=0.952894: z=-1.2: }: };
 	  children {
@@ -20752,161 +21029,161 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
+	    name="Reach_Name";
 	    m_data=$237$;
 	    m_transform=NULL;
-	    name="Reach_Name";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
+	    name="Reach_No";
 	    m_data=$238$;
 	    m_transform=NULL;
-	    name="Reach_No";
 	    visible=1;
 	    fixed_range {fix_min=0: min=1: fix_max=0: max=2: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
+	    name="Hand_cur_pos_x";
 	    m_data=$239$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_x";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
+	    name="Hand_cur_pos_y";
 	    m_data=$240$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
+	    name="Hand_cur_pos_z";
 	    m_data=$241$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_z";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
+	    name="Target_cur_pos_x";
 	    m_data=$242$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_x";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
+	    name="Target_cur_pos_y";
 	    m_data=$243$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
+	    name="Target_cur_pos_z";
 	    m_data=$244$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_z";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[8] {
+	    name="Hand_cur_lin_vel_x";
 	    m_data=$245$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_x";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[9] {
+	    name="Hand_cur_lin_vel_y";
 	    m_data=$246$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[10] {
+	    name="Hand_cur_lin_vel_z";
 	    m_data=$247$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_z";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[11] {
+	    name="Should_pos";
 	    m_data=$248$;
 	    m_transform=NULL;
-	    name="Should_pos";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[12] {
+	    name="Should_vel";
 	    m_data=$249$;
 	    m_transform=NULL;
-	    name="Should_vel";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[13] {
+	    name="Should_force_in";
 	    m_data=$250$;
 	    m_transform=NULL;
-	    name="Should_force_in";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[14] {
+	    name="Elbow_pos";
 	    m_data=$251$;
 	    m_transform=NULL;
-	    name="Elbow_pos";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[15] {
+	    name="Elbow_vel";
 	    m_data=$252$;
 	    m_transform=NULL;
-	    name="Elbow_vel";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[16] {
+	    name="Elbow_force_in";
 	    m_data=$253$;
 	    m_transform=NULL;
-	    name="Elbow_force_in";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[17] {
+	    name="n_steps";
 	    m_data=$254$;
 	    m_transform=NULL;
-	    name="n_steps";
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=500: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[18] {
+	    name="angle_err";
 	    m_data=$255$;
 	    m_transform=NULL;
-	    name="angle_err";
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=0: max=0.0292521: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[19] {
+	    name="trg_dist";
 	    m_data=$256$;
 	    m_transform=NULL;
-	    name="trg_dist";
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=0.8: };
 	    data_range {min=0: max=0: };
@@ -20931,6 +21208,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -20945,6 +21223,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   row_num=1;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -20959,6 +21238,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -20975,6 +21255,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -20991,6 +21272,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21007,6 +21289,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=1;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21023,6 +21306,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21039,6 +21323,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21055,6 +21340,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21071,6 +21357,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21092,6 +21379,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21108,6 +21396,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21124,6 +21413,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21140,6 +21430,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21156,6 +21447,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21172,6 +21464,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21188,6 +21481,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21204,6 +21498,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21223,6 +21518,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  err_bar_width=0.02;
 	  color_mode=FIXED_COLOR;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -21247,6 +21543,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21269,6 +21566,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  two_d_font_scale=350;
 	 };
 	 GraphTableView @[4] {
+	  name=;
 	  m_data=$60$;
 FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.5: y=0.2: z=-1.2: }: };
 	  children {
@@ -21276,233 +21574,233 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
+	    name="time";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[0]$258$;
 	    m_transform=NULL;
-	    name="time";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=999: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
+	    name="Hand_cur_pos_x";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[1]$259$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_x";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
+	    name="Hand_cur_pos_y";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[2]$260$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
+	    name="Hand_cur_pos_z";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[3]$261$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_z";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
+	    name="Target_cur_pos_x";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[4]$262$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_x";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
+	    name="Target_cur_pos_y";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[5]$263$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
+	    name="Target_cur_pos_z";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[6]$264$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_z";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
+	    name="Hand_cur_lin_vel_x";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[7]$265$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_x";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[8] {
+	    name="Hand_cur_lin_vel_y";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[8]$266$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[9] {
+	    name="Hand_cur_lin_vel_z";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[9]$267$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_z";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[10] {
+	    name="Should_pos";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[10]$268$;
 	    m_transform=NULL;
-	    name="Should_pos";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[11] {
+	    name="Should_vel";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[11]$269$;
 	    m_transform=NULL;
-	    name="Should_vel";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[12] {
+	    name="Should_flexor_len";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[12]$270$;
 	    m_transform=NULL;
-	    name="Should_flexor_len";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0.103447: fix_max=0: max=0.150032: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[13] {
+	    name="Should_flexor_dlen";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[13]$271$;
 	    m_transform=NULL;
-	    name="Should_flexor_dlen";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[14] {
+	    name="Should_flexor_act";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[14]$272$;
 	    m_transform=NULL;
-	    name="Should_flexor_act";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.0583177: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[15] {
+	    name="Should_flexor_m_act_force";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[15]$273$;
 	    m_transform=NULL;
-	    name="Should_flexor_m_act_force";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[16] {
+	    name="Should_flexor_m_force";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[16]$274$;
 	    m_transform=NULL;
-	    name="Should_flexor_m_force";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[17] {
+	    name="Should_flexor_force";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[17]$275$;
 	    m_transform=NULL;
-	    name="Should_flexor_force";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=13.2941: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[18] {
+	    name="Should_extensor_len";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[18]$276$;
 	    m_transform=NULL;
-	    name="Should_extensor_len";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0.0499678: fix_max=0: max=0.0965525: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[19] {
+	    name="Should_extensor_dlen";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[19]$277$;
 	    m_transform=NULL;
-	    name="Should_extensor_dlen";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[20] {
+	    name="Should_extensor_act";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[20]$278$;
 	    m_transform=NULL;
-	    name="Should_extensor_act";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.0465601: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[21] {
+	    name="Should_extensor_m_act_force";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[21]$279$;
 	    m_transform=NULL;
-	    name="Should_extensor_m_act_force";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[22] {
+	    name="Should_extensor_m_force";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[22]$280$;
 	    m_transform=NULL;
-	    name="Should_extensor_m_force";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[23] {
+	    name="Should_extensor_force";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[23]$281$;
 	    m_transform=NULL;
-	    name="Should_extensor_force";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=10.4362: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[24] {
+	    name="should_cur_trg";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[24]$282$;
 	    m_transform=NULL;
-	    name="should_cur_trg";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0.000951253: fix_max=0: max=0.23532: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[25] {
+	    name="Elbow_pos";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[25]$283$;
 	    m_transform=NULL;
-	    name="Elbow_pos";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[26] {
+	    name="Elbow_vel";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[26]$284$;
 	    m_transform=NULL;
-	    name="Elbow_vel";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[27] {
+	    name="Elbow_force_in";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[27]$285$;
 	    m_transform=NULL;
-	    name="Elbow_force_in";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[28] {
+	    name="elbow_cur_trg";
 	    m_data=.projects[0].programs.gp[0][0].objs[2].data[28]$286$;
 	    m_transform=NULL;
-	    name="elbow_cur_trg";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0.365413: fix_max=0: max=0.535126: };
 	    data_range {min=0: max=0: };
@@ -21527,6 +21825,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -21541,6 +21840,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   row_num=0;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21555,6 +21855,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21571,6 +21872,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21587,6 +21889,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -21603,6 +21906,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=1;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -21619,6 +21923,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=1;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -21635,6 +21940,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -21651,6 +21957,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21667,6 +21974,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21688,6 +21996,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21704,6 +22013,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21720,6 +22030,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21736,6 +22047,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21752,6 +22064,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21768,6 +22081,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21784,6 +22098,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21800,6 +22115,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21819,6 +22135,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  err_bar_width=0.02;
 	  color_mode=FIXED_COLOR;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21843,6 +22160,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -21865,6 +22183,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  two_d_font_scale=350;
 	 };
 	 GraphTableView @[5] {
+	  name=;
 	  m_data=$60$;
 FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.4984179: y=0.9474853: z=-1.2: }: };
 	  children {
@@ -21872,233 +22191,233 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
+	    name="time";
 	    m_data=$258$;
 	    m_transform=NULL;
-	    name="time";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
+	    name="Hand_cur_pos_x";
 	    m_data=$259$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_x";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
+	    name="Hand_cur_pos_y";
 	    m_data=$260$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
+	    name="Hand_cur_pos_z";
 	    m_data=$261$;
 	    m_transform=NULL;
-	    name="Hand_cur_pos_z";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
+	    name="Target_cur_pos_x";
 	    m_data=$262$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_x";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
+	    name="Target_cur_pos_y";
 	    m_data=$263$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
+	    name="Target_cur_pos_z";
 	    m_data=$264$;
 	    m_transform=NULL;
-	    name="Target_cur_pos_z";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
+	    name="Hand_cur_lin_vel_x";
 	    m_data=$265$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_x";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[8] {
+	    name="Hand_cur_lin_vel_y";
 	    m_data=$266$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_y";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[9] {
+	    name="Hand_cur_lin_vel_z";
 	    m_data=$267$;
 	    m_transform=NULL;
-	    name="Hand_cur_lin_vel_z";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[10] {
+	    name="Should_pos";
 	    m_data=$268$;
 	    m_transform=NULL;
-	    name="Should_pos";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[11] {
+	    name="Should_vel";
 	    m_data=$269$;
 	    m_transform=NULL;
-	    name="Should_vel";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[12] {
+	    name="Should_flexor_len";
 	    m_data=$270$;
 	    m_transform=NULL;
-	    name="Should_flexor_len";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[13] {
+	    name="Should_flexor_dlen";
 	    m_data=$271$;
 	    m_transform=NULL;
-	    name="Should_flexor_dlen";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[14] {
+	    name="Should_flexor_act";
 	    m_data=$272$;
 	    m_transform=NULL;
-	    name="Should_flexor_act";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[15] {
+	    name="Should_flexor_m_act_force";
 	    m_data=$273$;
 	    m_transform=NULL;
-	    name="Should_flexor_m_act_force";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[16] {
+	    name="Should_flexor_m_force";
 	    m_data=$274$;
 	    m_transform=NULL;
-	    name="Should_flexor_m_force";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[17] {
+	    name="Should_flexor_force";
 	    m_data=$275$;
 	    m_transform=NULL;
-	    name="Should_flexor_force";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[18] {
+	    name="Should_extensor_len";
 	    m_data=$276$;
 	    m_transform=NULL;
-	    name="Should_extensor_len";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[19] {
+	    name="Should_extensor_dlen";
 	    m_data=$277$;
 	    m_transform=NULL;
-	    name="Should_extensor_dlen";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[20] {
+	    name="Should_extensor_act";
 	    m_data=$278$;
 	    m_transform=NULL;
-	    name="Should_extensor_act";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[21] {
+	    name="Should_extensor_m_act_force";
 	    m_data=$279$;
 	    m_transform=NULL;
-	    name="Should_extensor_m_act_force";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[22] {
+	    name="Should_extensor_m_force";
 	    m_data=$280$;
 	    m_transform=NULL;
-	    name="Should_extensor_m_force";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[23] {
+	    name="Should_extensor_force";
 	    m_data=$281$;
 	    m_transform=NULL;
-	    name="Should_extensor_force";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[24] {
+	    name="should_cur_trg";
 	    m_data=$282$;
 	    m_transform=NULL;
-	    name="should_cur_trg";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[25] {
+	    name="Elbow_pos";
 	    m_data=$283$;
 	    m_transform=NULL;
-	    name="Elbow_pos";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[26] {
+	    name="Elbow_vel";
 	    m_data=$284$;
 	    m_transform=NULL;
-	    name="Elbow_vel";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[27] {
+	    name="Elbow_force_in";
 	    m_data=$285$;
 	    m_transform=NULL;
-	    name="Elbow_force_in";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[28] {
+	    name="elbow_cur_trg";
 	    m_data=$286$;
 	    m_transform=NULL;
-	    name="elbow_cur_trg";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
@@ -22123,6 +22442,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -22137,6 +22457,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   row_num=0;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22151,6 +22472,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -22167,6 +22489,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22183,6 +22506,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22199,6 +22523,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22215,6 +22540,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22231,6 +22557,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22247,6 +22574,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22263,6 +22591,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22284,6 +22613,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22300,6 +22630,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22316,6 +22647,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22332,6 +22664,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22348,6 +22681,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22364,6 +22698,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22380,6 +22715,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22396,6 +22732,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22415,6 +22752,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	  err_bar_width=0.02;
 	  color_mode=COLOR_AXIS;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -22439,6 +22777,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22515,10 +22854,11 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
        };
       };
       T3DataViewFrame @[1] {
-       m_data=NULL;
        name="FwdModelNet";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -22526,6 +22866,7 @@ FloatTransform @*(.m_transform) {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=0: y=0
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 NetView @[0] {
+	  name=;
 	  m_data=$58$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
@@ -22673,10 +23014,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        };
       };
       T3DataViewFrame @[2] {
-       m_data=NULL;
        name="EpochOutputData";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -22684,6 +23026,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GraphTableView @[0] {
+	  name=;
 	  m_data=$37$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
@@ -22691,89 +23034,89 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
+	    name="batch";
 	    m_data=.projects[0].data.gp[1][1].data[0]$287$;
 	    m_transform=NULL;
-	    name="batch";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
+	    name="epoch";
 	    m_data=.projects[0].data.gp[1][1].data[1]$288$;
 	    m_transform=NULL;
-	    name="epoch";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
+	    name="avg_sse";
 	    m_data=.projects[0].data.gp[1][1].data[2]$289$;
 	    m_transform=NULL;
-	    name="avg_sse";
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=0: max=0.444586: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
+	    name="cnt_err";
 	    m_data=.projects[0].data.gp[1][1].data[3]$290$;
 	    m_transform=NULL;
-	    name="cnt_err";
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=0: max=100: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
+	    name="avg_trg_dist";
 	    m_data=.projects[0].data.gp[1][1].data[4]$291$;
 	    m_transform=NULL;
-	    name="avg_trg_dist";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
+	    name="avg_ext_rew";
 	    m_data=.projects[0].data.gp[1][1].data[5]$292$;
 	    m_transform=NULL;
-	    name="avg_ext_rew";
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
+	    name="rew_dist_thr";
 	    m_data=.projects[0].data.gp[1][1].data[6]$293$;
 	    m_transform=NULL;
-	    name="rew_dist_thr";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
+	    name="avg_cycles";
 	    m_data=.projects[0].data.gp[1][1].data[7]$294$;
 	    m_transform=NULL;
-	    name="avg_cycles";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[8] {
+	    name="epoch_time_tot";
 	    m_data=.projects[0].data.gp[1][1].data[8]$295$;
 	    m_transform=NULL;
-	    name="epoch_time_tot";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[9] {
+	    name="epoch_time_usr";
 	    m_data=.projects[0].data.gp[1][1].data[9]$296$;
 	    m_transform=NULL;
-	    name="epoch_time_usr";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[10] {
+	    name="avg_pvi";
 	    m_data=.projects[0].data.gp[1][1].data[10]$297$;
 	    m_transform=NULL;
-	    name="avg_pvi";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
@@ -22798,6 +23141,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -22812,6 +23156,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22826,6 +23171,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22842,6 +23188,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -22858,6 +23205,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=1;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -22874,6 +23222,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -22890,6 +23239,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -22906,6 +23256,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -22922,6 +23273,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22938,6 +23290,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22959,6 +23312,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22975,6 +23329,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -22991,6 +23346,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23007,6 +23363,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23023,6 +23380,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23039,6 +23397,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23055,6 +23414,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23071,6 +23431,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23090,6 +23451,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  err_bar_width=0.02;
 	  color_mode=FIXED_COLOR;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23114,6 +23476,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23190,10 +23553,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
       };
       T3DataViewFrame @[3] {
-       m_data=NULL;
        name="RLNet";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -23201,6 +23565,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 NetView @[0] {
+	  name=;
 	  m_data=$34$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
@@ -23330,10 +23695,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        };
       };
       T3DataViewFrame @[4] {
-       m_data=NULL;
        name="TrialOutputData";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -23341,6 +23707,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GraphTableView @[0] {
+	  name=;
 	  m_data=$38$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
@@ -23348,89 +23715,89 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
+	    name="batch";
 	    m_data=.projects[0].data.gp[1][0].data[0]$298$;
 	    m_transform=NULL;
-	    name="batch";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
+	    name="epoch";
 	    m_data=.projects[0].data.gp[1][0].data[1]$299$;
 	    m_transform=NULL;
-	    name="epoch";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
+	    name="trial";
 	    m_data=.projects[0].data.gp[1][0].data[2]$300$;
 	    m_transform=NULL;
-	    name="trial";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=5: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
+	    name="trial_name";
 	    m_data=.projects[0].data.gp[1][0].data[3]$301$;
 	    m_transform=NULL;
-	    name="trial_name";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
+	    name="group_name";
 	    m_data=.projects[0].data.gp[1][0].data[4]$302$;
 	    m_transform=NULL;
-	    name="group_name";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
+	    name="phase_no";
 	    m_data=.projects[0].data.gp[1][0].data[5]$303$;
 	    m_transform=NULL;
-	    name="phase_no";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
+	    name="minus_cycles";
 	    m_data=.projects[0].data.gp[1][0].data[6]$304$;
 	    m_transform=NULL;
-	    name="minus_cycles";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
+	    name="sse";
 	    m_data=.projects[0].data.gp[1][0].data[7]$305$;
 	    m_transform=NULL;
-	    name="sse";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[8] {
+	    name="ext_rew";
 	    m_data=.projects[0].data.gp[1][0].data[8]$306$;
 	    m_transform=NULL;
-	    name="ext_rew";
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[9] {
+	    name="pvlv_pvi";
 	    m_data=.projects[0].data.gp[1][0].data[9]$307$;
 	    m_transform=NULL;
-	    name="pvlv_pvi";
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[10] {
+	    name="trg_dist";
 	    m_data=.projects[0].data.gp[1][0].data[10]$308$;
 	    m_transform=NULL;
-	    name="trg_dist";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
@@ -23455,6 +23822,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -23469,6 +23837,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23483,6 +23852,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -23499,6 +23869,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -23515,6 +23886,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -23531,6 +23903,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23547,6 +23920,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23563,6 +23937,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23579,6 +23954,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23595,6 +23971,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23616,6 +23993,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23632,6 +24010,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23648,6 +24027,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23664,6 +24044,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23680,6 +24061,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23696,6 +24078,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23712,6 +24095,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23728,6 +24112,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23747,6 +24132,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  err_bar_width=0.02;
 	  color_mode=FIXED_COLOR;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23771,6 +24157,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -23854,8 +24241,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_typ=DockViewer;
     el_def=0;
     ToolBoxDockViewer @[0] {
-     m_data=NULL;
      name="Tools";
+     m_data=NULL;
      visible=1;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;
@@ -23877,78 +24264,97 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     UserDataItem @[0] {
      name="norm_err";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[1] {
      name="ext_rew";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[2] {
      name="maxda";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[3] {
      name="minus_output_name";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[4] {
      name="minus_cycles";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[5] {
      name="ct_cycle";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[6] {
      name="phase_no";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[7] {
      name="phase";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[8] {
      name="sse";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[9] {
      name="output_name";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[10] {
      name="trial_name";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[11] {
      name="group_name";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[12] {
      name="time";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[13] {
      name="cycle";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[14] {
      name="tick";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[15] {
      name="trial";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[16] {
      name="group";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[17] {
      name="epoch";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[18] {
      name="batch";
      value 1 0=1;
+     val_type_fixed=1;
     };
    };
    name="FwdModelNet";
@@ -25438,6 +25844,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    ct_cycle=61;
    time_inc=1;
    cycle_max=60;
+   mid_minus_cycle=-1;
    min_cycles=15;
    min_cycles_phase2=35;
    ct_time {
@@ -25518,78 +25925,97 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     UserDataItem @[0] {
      name="norm_err";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[1] {
      name="ext_rew";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[2] {
      name="maxda";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[3] {
      name="minus_output_name";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[4] {
      name="minus_cycles";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[5] {
      name="ct_cycle";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[6] {
      name="phase_no";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[7] {
      name="phase";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[8] {
      name="sse";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[9] {
      name="output_name";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[10] {
      name="trial_name";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[11] {
      name="group_name";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[12] {
      name="time";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[13] {
      name="cycle";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[14] {
      name="tick";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[15] {
      name="trial";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[16] {
      name="group";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[17] {
      name="epoch";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[18] {
      name="batch";
      value 1 0=1;
+     val_type_fixed=1;
     };
    };
    name="RLNet";
@@ -25809,7 +26235,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
 	SchedItem @[0] {
 	 start_ctr=0;
 	 start_val=1;
@@ -25858,7 +26284,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
       SchedItem @[0] {
        start_ctr=0;
        start_val=1;
@@ -26220,6 +26646,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   tol_sm=0.2;
 	   rel_lrate=0.2;
 	  };
+	  send_act=ACT_P;
 	  wt_dec_mult=0.01;
 	 };
 	 PVConSpec @[1] {
@@ -26273,6 +26700,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	     tol_sm=0.2;
 	     rel_lrate=0.2;
 	    };
+	    send_act=ACT_P;
 	   };
 	  };
 	  rnd {name="": type=UNIFORM: mean=0.1000000014901161: var=0: par=1: };
@@ -26309,6 +26737,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   tol_sm=0.2;
 	   rel_lrate=0.2;
 	  };
+	  send_act=ACT_P;
 	 };
 	 PVConSpec @[2] {
 	  name="NV";
@@ -26353,6 +26782,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   tol_sm=0.2;
 	   rel_lrate=0.2;
 	  };
+	  send_act=ACT_P;
 	 };
 	};
 	rnd {name="": type=UNIFORM: mean=0.1000000014901161: var=0: par=1: };
@@ -26389,6 +26819,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 tol_sm=0.2;
 	 rel_lrate=0.2;
 	};
+	send_act=ACT_P;
        };
        LeabraBiasSpec @[1] {
 	name="BgBias";
@@ -26423,7 +26854,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   last_ctr=-1;
 	   default_val=1;
 	   interpolate=0;
-	   cur_val=1;
+	   cur_val=0;
 	  };
 	  wt_sig {gain=6: off=1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -26460,7 +26891,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 last_ctr=-1;
 	 default_val=1;
 	 interpolate=0;
-	 cur_val=1;
+	 cur_val=0;
 	};
 	wt_sig {gain=6: off=1: };
 	lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -26541,7 +26972,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        last_ctr=-1;
        default_val=1;
        interpolate=0;
-       cur_val=1;
+       cur_val=0;
       };
       wt_sig {gain=6: off=1: };
       lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -26746,7 +27177,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	unit_range {min=0: max=1: range=1: scale=1: };
 	bias_val {un=GC: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0.5: };
 	val_range {min=0: max=1: range=1: scale=1: };
-	lv {min_lvi=0.1: prior_discount=1: er_reset_prior=1: };
+	lv {min_lvi=0.1: lrn_pv_only=1: prior_discount=1: er_reset_prior=1: };
        };
       };
       inhib_group=ENTIRE_LAYER;
@@ -26781,7 +27212,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       unit_range {min=0: max=1: range=1: scale=1: };
       bias_val {un=GC: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0.5: };
       val_range {min=0: max=1: range=1: scale=1: };
-      lv {min_lvi=0.1: prior_discount=1: er_reset_prior=1: };
+      lv {min_lvi=0.1: lrn_pv_only=1: prior_discount=1: er_reset_prior=1: };
      };
      NVLayerSpec @[4] {
       name="NVLayer";
@@ -29016,6 +29447,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    ct_cycle=50;
    time_inc=1;
    cycle_max=50;
+   mid_minus_cycle=-1;
    min_cycles=0;
    min_cycles_phase2=0;
    ct_time {

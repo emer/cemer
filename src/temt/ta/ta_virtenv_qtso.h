@@ -48,8 +48,8 @@ public:
 
   virtual void		SetDraggerPos();
   // set dragger position, based on shape
-  virtual void		FixOrientation();
-  // fix the orientation of the body for different shape axes (capsule and cylinder)
+  virtual void		FixOrientation(bool force=false);
+  // fix the orientation of the body for different shape axes (capsule and cylinder) -- if force, do it regardless of whether IsCurShape is true (i.e. for render_pre)
 
   void 	SetDefaultName() {} // leave it blank
   void	Copy_(const VEBodyView& cp);
@@ -99,7 +99,8 @@ public:
 
   virtual void		SetDraggerPos();
   // set dragger position, based on shape
-  virtual void		FixOrientation();
+  virtual void		FixOrientation(bool force=false);
+  // fix the orientation of the body for different shape axes (capsule and cylinder) -- if force, do it regardless of whether IsCurShape is true (i.e. for render_pre)
 
   void 	SetDefaultName() {} // leave it blank
   void	Copy_(const VEJointView& cp);
@@ -157,8 +158,8 @@ public:
 
   virtual void		SetDraggerPos();
   // set dragger position, based on shape
-  virtual void		FixOrientation();
-  // fix the orientation of the body for different shape axes (capsule and cylinder)
+  virtual void		FixOrientation(bool force=false);
+  // fix the orientation of the body for different shape axes (capsule and cylinder)  -- if force, do it regardless of whether IsCurShape is true (i.e. for render_pre)
 
   void 	SetDefaultName() {} // leave it blank
   void	Copy_(const VEStaticView& cp);

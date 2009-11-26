@@ -1106,9 +1106,7 @@ bool taiDataHostBase::AsyncWaitProc() {
     taiDataHostBase* dhb = async_reconstr_list.FastEl(i);
     if(dhb->reconstr_req) {
       dhb->reconstr_req = false;
-//       cerr << "doing reconstr on: " << dhb->typ->name << endl;
       dhb->ReConstr_Body();
-//       cerr << "did reconstr on: " << dhb->typ->name << endl;
       dhb->state &= ~SHOW_CHANGED;
       did_some = true;
     }
@@ -1126,9 +1124,7 @@ bool taiDataHostBase::AsyncWaitProc() {
     if(dhb->reshow_req) {
       dhb->reshow_req = false;
       if(dhb->state == ACTIVE) {
-// 	cerr << "doing reshow on: " << dhb->typ->name << endl;
         dhb->ReShow(dhb->reshow_req_forced);
-// 	cerr << "did reshow on: " << dhb->typ->name << endl;
 	did_some = true;
       }
     }
@@ -1146,9 +1142,7 @@ bool taiDataHostBase::AsyncWaitProc() {
     if(dhb->getimage_req) {
       dhb->getimage_req = false;
       if ((dhb->state & STATE_MASK) < CANCELED) {
-// 	cerr << "doing getimage on: " << dhb->typ->name << endl;
         dhb->GetImage(false);
-// 	cerr << "did getimage on: " << dhb->typ->name << endl;
 	did_some = true;
       }
     }
@@ -1166,9 +1160,7 @@ bool taiDataHostBase::AsyncWaitProc() {
     if(dhb->apply_req) {
       dhb->apply_req = false;
       if(dhb->state == ACTIVE) {
-// 	cerr << "doing apply on: " << dhb->typ->name << endl;
         dhb->Apply();
-// 	cerr << "did apply on: " << dhb->typ->name << endl;
 	did_some = true;
       }
     }
@@ -1185,7 +1177,6 @@ void taiDataHostBase::Apply_Async() {
 //   apply_req = true;
 //   taMisc::do_wait_proc = true;
 //   async_apply_list.Link(this);
-//   cerr << "req apply async on: " << typ->name << endl;
 }
 
 void taiDataHostBase::ReShow_Async(bool forced) {
@@ -1195,7 +1186,6 @@ void taiDataHostBase::ReShow_Async(bool forced) {
   reshow_req_forced = forced;
   taMisc::do_wait_proc = true;
   async_reshow_list.Link(this);
-//   cerr << "req reshow async on: " << typ->name << endl;
 }
 
 void taiDataHostBase::ReConstr_Async() {
@@ -1203,7 +1193,6 @@ void taiDataHostBase::ReConstr_Async() {
   reconstr_req = true;
   taMisc::do_wait_proc = true;
   async_reconstr_list.Link(this);
-//   cerr << "req constr async on: " << typ->name << endl;
 }
 
 void taiDataHostBase::GetImage_Async() {
@@ -1469,6 +1458,11 @@ void taiDataHost_impl::ClearBody(bool waitproc) {
   StartEndLayout(true);
   ClearBody_impl();
   if (!(state & SHOW_CHANGED)) return; // probably just destroying
+//   if(waitproc) { // these guys cause redraw to flash a lot and lose scroll position!
+//     taMisc::RunPending();
+//     taMisc::RunPending();
+//     taMisc::RunPending();
+//   }
   //  ReConstr_Async(); 
   // can actually just do this live here
   ReConstr_Body();
@@ -1487,6 +1481,11 @@ void taiDataHost_impl::ReConstr_Body() {
 //   taMisc::FlushConsole();
   rebuild_body = true;
   Constr_Body();
+  {		// this is key for selectedit rebuilding on bool toggles, for example
+    taMisc::RunPending();
+    taMisc::RunPending();
+    taMisc::RunPending();
+  }
   GetImage_Async();		// async all the way -- otherwise doesn't work
 //   GetImage(false);
   rebuild_body = false;		// in case..
@@ -2384,6 +2383,8 @@ void taiEditDataHost::GetButtonImage(bool force) {
 }
 
 void taiEditDataHost::GetImage(bool force) {
+  if (!force && !mwidget->isVisible()) return;
+//   cerr << "GetImage start on: " << typ->name << endl;
   if ((typ == NULL) || (root == NULL)) return;
   if (state >= ACCEPTED ) return;
   //note: we could be invisible, so we only do what is visible
@@ -2392,7 +2393,7 @@ void taiEditDataHost::GetImage(bool force) {
     GetButtonImage(force); // does its own visible check
   if (!mwidget) return; // huh?
   if (!force && !mwidget->isVisible()) return;
-//   cerr << "GetImage on: " << typ->name << endl;
+//   cerr << "GetImage do on: " << typ->name << endl;
 //   taMisc::FlushConsole();
   ++updating;
   StartEndLayout(true);

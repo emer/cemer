@@ -314,16 +314,16 @@ void VEBodyView::Render_pre() {
   }      
  finish:
 
-  FixOrientation();
+  FixOrientation(true);
   SetDraggerPos();
 
   inherited::Render_pre();
 }
 
-void VEBodyView::FixOrientation() {
+void VEBodyView::FixOrientation(bool force) {
   VEBody* ob = Body();
   T3VEBody* obv = (T3VEBody*)node_so();
-  if(ob && ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
+  if(ob && (force || ob->IsCurShape())) {// only if we are currently the right shape, incl fm file flag
     switch(ob->shape) {
     case VEBody::CAPSULE: {
       SoTransform* tx = obv->txfm_shape();
@@ -733,16 +733,16 @@ void VEJointView::Render_pre() {
   }      
 
  finalize:
-  FixOrientation();
+  FixOrientation(true);
   SetDraggerPos();
 
   inherited::Render_pre();
 }
 
-void VEJointView::FixOrientation() {
+void VEJointView::FixOrientation(bool force) {
   VEJoint* ob = Joint();
   T3VEJoint* obv = (T3VEJoint*)node_so();
-  if(ob && obv && ob->IsCurType()) {// only if we are currently the right type
+  if(ob && obv && (force || ob->IsCurType())) {// only if we are currently the right type
     SoSeparator* ssep = obv->shapeSeparator();
     switch(ob->joint_type) {
     case VEJoint::HINGE:
@@ -1139,15 +1139,15 @@ void VEStaticView::Render_pre() {
  finish:
 
   SetDraggerPos();
-  FixOrientation();
+  FixOrientation(true);
 
   inherited::Render_pre();
 }
 
-void VEStaticView::FixOrientation() {
+void VEStaticView::FixOrientation(bool force) {
   VEStatic* ob = Static();
   T3VEStatic* obv = (T3VEStatic*)node_so();
-  if(ob && ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
+  if(ob && (force || ob->IsCurShape())) {// only if we are currently the right shape, incl fm file flag
     switch(ob->shape) {
     case VEStatic::CAPSULE: {
       SoTransform* tx = obv->txfm_shape();
