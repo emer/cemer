@@ -2903,94 +2903,13 @@ void taiDefaultEditDataHost::GetValue() {
 
 
 ////////////////////////////////
-//  taiDefaultEdit    //
+//       taiDefaultEdit       //
 ////////////////////////////////
 
 taiEditDataHost* taiDefaultEdit::CreateDataHost(void* base, bool readonly) {
   return new taiDefaultEditDataHost(base, typ, readonly);
 }
 
-
-/*OBS
-//////////////////////
-// taiROListMember //
-/////////////////////
-
-int taiROListMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if ((md->HasOption("READ_ONLY") || md->HasOption("IV_READ_ONLY")) &&
-     (td->InheritsFrom(TA_taList_impl)))
-    return (taiROMember::BidForMember(md,td) + 1);
-  return 0;
-}
-
-taiData* taiROListMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  gpiListEditButton *rval = new gpiListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
-  rval->read_only = true;
-  return rval;
-}
-
-void taiROListMember::GetImage_impl(taiData* dat, const void* base){
-  gpiListEditButton *rval = (gpiListEditButton*)dat;
-  rval->GetImage_impl(base);
-}
-
-void taiROListMember::GetMbrValue(taiData*, void*, bool&) {
-}
-
-
-//////////////////////
-// taiROGroupMember //
-/////////////////////
-
-int taiROGroupMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if ((md->HasOption("READ_ONLY") || md->HasOption("IV_READ_ONLY")) &&
-     (td->InheritsFrom(TA_taGroup_impl)))
-    return (taiROMember::BidForMember(md,td) + 1);
-  return 0;
-}
-
-taiData* taiROGroupMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  gpiGroupEditButton *rval = new gpiGroupEditButton(NULL, typ, host_, par, gui_parent_, flags_);
-  rval->read_only = true;
-  return rval;
-}
-
-void taiROGroupMember::GetImage_impl(taiData* dat, const void* base){
-  gpiGroupEditButton *rval = (gpiGroupEditButton*)dat;
-  rval->GetImage_impl(base);
-}
-
-void taiROGroupMember::GetMbrValue(taiData*, void*, bool&) {
-}
-
-
-
-//////////////////////
-// taiROArrayMember //
-/////////////////////
-
-int taiROArrayMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if ((md->HasOption("READ_ONLY") || md->HasOption("IV_READ_ONLY")) &&
-     (td->InheritsFrom(TA_taArray)))
-    return (taiROMember::BidForMember(md,td) + 1);
-  return 0;
-}
-
-taiData* taiROArrayMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  gpiArrayEditButton *rval = new gpiArrayEditButton(NULL, typ, host_, par, gui_parent_, flags_);
-  rval->read_only = true;
-  return rval;
-}
-
-void taiROArrayMember::GetImage_impl(taiData* dat, const void* base){
-  gpiArrayEditButton *rval = (gpiArrayEditButton*)dat;
-  rval->GetImage_impl(base);
-}
-
-void taiROArrayMember::GetMbrValue(taiData*, void*, bool&) {
-}
-
-*/
 //////////////////////////////////
 // 	gpiDefaultEl		//
 //////////////////////////////////

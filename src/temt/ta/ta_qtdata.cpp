@@ -1915,68 +1915,6 @@ void taiAction::this_triggered_toggled(bool checked) {
   --m_changing;	
 }
 
-/*obs 
-void taiAction::Select() {
-  if (sel_type & taiMenu::toggle)
-    Select_impl(!isChecked());
-  else Select_impl(true);
-
-  emitActions();	// don't set the cur_sel if executing
-  
-  // if a radio item in global group, update global selection
-  if ((sel_type & taiMenu::radio) && (radio_grp == -1))
-    owner->setCurSel(this);
-
-  if (sel_type & taiMenu::update) {
-//    owner->Update();
-    owner->DataChanged();		// something was selected..
-  } 
-}*/
-
-/*obs
-void taiAction::Select_impl(bool selecting) {
-// TODO: verify
-  if (sel_type & taiMenu::toggle) {
-    setChecked(selecting);
-  } else if (sel_type & taiMenu::radio) {
-  
-    if (!selecting) {
-       setChecked(false);
-    } else if (radio_grp != -1) {
- 
-      // if non-global radio group item, then set the item in the group
-      for (int i = 0; i < owner->items.size; ++i) {
-        taiAction* mel = owner->items.FastEl(i);
-        if (mel->radio_grp != this->radio_grp) continue;
-        setChecked((mel == this));
-      } 
-    } else {
-      setChecked(true);
-    } 
-  } */
-  
-
-/*Qt3   // called by Select() and by taiMenu::GetImage -- doesn't trigger events
-  if (sel_type & taiMenu::toggle) {
-    owner->menu()->setItemChecked(id(), selecting);
-  } else if (sel_type & taiMenu::radio) {
-    if (!selecting) {
-       setChecked(false);
-    } else if (radio_grp != -1) {
-
-      // if non-global radio group item, then set the item in the group
-      for (int i = 0; i < owner->items.size; ++i) {
-        taiAction* mel = owner->items.FastEl(i);
-        if (mel->radio_grp != this->radio_grp) continue;
-        setChecked((mel == this));
-      }
-    } else {
-      setChecked(true);
-   }
-  } 
-}*/
-
-
 //////////////////////////
 // 	taiSubMenuEl	//
 //////////////////////////
@@ -2170,17 +2108,7 @@ void taiActions::AddSep(bool new_radio_grp) {
   actionsRep()->addAction(it);
 }
 
-taiMenu* taiActions::AddSubMenu(const String& val, TypeDef* typ_)
-{
-  /*NOTE: Qt4 -- the below was way too obscure -- we should just set the st to this one
-  SelType st;
-  // we use the value of the most recent submenu, otherwise ourself
-  taiAction* it = items.PeekNonSep();
-  if (it != NULL)
-    st = (SelType)it->sel_type;
-  else
-    st = this->sel_type; */
-
+taiMenu* taiActions::AddSubMenu(const String& val, TypeDef* typ_) {
   // do not add items of same label -- return it instead of adding it
   for (int i = 0; i < items.size; ++i) {
     taiAction* act = items.FastEl(i);
@@ -2254,20 +2182,10 @@ taiMenu* taiActions::FindSubMenu(const String& nm) {
   return NULL;
 }
 
- bool taiActions::GetImageByData(const Variant& usr) {
+bool taiActions::GetImageByData(const Variant& usr) {
   // first try to find item by iterating through all eligible items and subitems
   if (GetImage_impl(usr))
       return true; 
-/*TODO Qt4 NOTE: this is fairly horribly obscure!!!
-  // otherwise get first eligible item, if any, on this menu only, with data and without any menu callbacks, as default if nothing else works
-  for (int i = 0; i < items.size; ++i) {
-    taiAction* itm = items.FastEl(i);
-    if (!itm->canSelect()) continue;
-    if ( (!itm->usr_data.isInvalid()) && (!itm->hasCallbacks())) {
-      setCurSel(itm);
-      return true;
-    }
-  } */
   return false;
 }
 
@@ -2413,69 +2331,6 @@ taiAction* taiMenu::insertItem(const char* val, const QObject *receiver, const c
   if (accel != NULL) mel->setShortcut(*accel);
   return mel;
 }
-
-/*QMenu* taiMenu::NewSubItem(const char* val, QMenu* child, const QKeySequence* accel) {
-  QMenu* new_men;
-  int itemId;
-  itemId = menu()->insertItem(val, child);
-  new_men = menu()->findItem(itemId);
-// TODO: Font control
-  if((font_spec == big) || (font_spec == big_italic)) {
-    lbl = new ivLabel(val, taiM->big_menu_font, taiM->font_foreground);
-  }
-  else {
-    lbl = new ivLabel(val, taiM->small_menu_font, taiM->font_foreground);
-  }
-
-  return new_men;
-} */
-
-/* QAction* taiMenu::NewMenuItem(const char* val, SelType st, QMenu* child, const QKeySequence* accel) {
-  QAction* new_men;
-  int itemId;
-  if (st == submenu) {
-    itemId = menu()->insertItem(val, child);
-  } else {
-    if (st == use_default)
-      st = sel_type;
-    //note: you can't pass NULL/NULL to the signal params, so if you want to set things like Accel, you have to do it after
-    itemId = menu()->insertItem(val);
-    if (accel) {
-      menu()->setAccel(*accel, itemId);
-    }
-  }
-  new_men = menu()->findItem(itemId);
-// TODO: Font control
-  if((font_spec == big) || (font_spec == big_italic)) {
-    lbl = new ivLabel(val, taiM->big_menu_font, taiM->font_foreground);
-  }
-  else {
-    lbl = new ivLabel(val, taiM->small_menu_font, taiM->font_foreground);
-  }
-
-  return new_men;
-} */
-
-/*
-void taiMenu::Update() {
-  if (par_menu != NULL)
-    par_menu->Update();
-  else {
-    if ((cur_sel != NULL) && ((cur_sel->sel_type & radio) && (cur_sel->radio_grp != -1)))
-      setLabel(cur_sel->label);
-//    else if (cur_sel == NULL)
-//      setLabel(String::con_NULL);
-  }
-}*/
-/* OBS
-void taiMenu::Update() {
-  if ((cur_sel != NULL) && ((sel_type == radio_update) || (sel_type == normal_update)))
-    SetMLabel(cur_sel->label);
-  else if(cur_sel == NULL)
-    SetMLabel(String::con_NULL);
-  return;
-}
-*/
 
 //////////////////////////
 //  taiButtonMenu 	//
@@ -2675,10 +2530,6 @@ void taiEditButton::GetImage_impl(const void* base) {
 void taiEditButton::Edit() {
   if (cur_base == NULL)
     return;
-//nn  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
-/*obs  bool modal = false;
-  if (host != NULL)
-    modal = host->modal; */
   // note that the target of a pointer is not necessarily readonly just because
   // the pointer itself was readonly... (so we don't propagate ro to target)
   if (ie == NULL) {
@@ -5026,9 +4877,6 @@ void taiToken::Edit() {
   else {
     gc = (taiEdit*)typ->ie;
   }
-//nn  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
-/*obs  bool wait = false;
-  if (host != NULL) wait = host->modal; */
 
   gc->Edit(cur_base, false);
 }
@@ -5127,75 +4975,6 @@ void taiToken::ItemChosen(taiAction* menu_el) {
   setCur_obj(menu_el->usr_data.toBase());
 }
 
-/* taiToken is by definition only for taBase descendants -- therefore, we nuke all TA_taBase stuff...
-void taiToken::GetMenu_impl(taiMenu* menu, TypeDef* td, const taiMenuAction* actn) {
-  String	nm;
-  bool too_many = false;
-  if (td->InheritsFrom(TA_taBase) && (scope_ref != NULL)) {
-    int cnt = taBase::NTokensInScope(td, scope_ref);
-    if (cnt > taMisc::max_menu)
-      too_many = true;
-  }
-  else if (td->tokens.size > taMisc::max_menu) {
-    too_many = true;
-  }
-  if (too_many) {
-    taiAction* mnel = menu->AddItem
-      ("<Over max, select...>", (void*)NULL, taiMenu::normal,
-       taiAction::action, this, SLOT(Chooser()) );
-    over_max = true;
-    if (actn != NULL) {		// also set callback action!
-      mnel->connect(actn);
-    }
-  } else {
-    if (!td->tokens.keep) {
-      menu->AddItem("<Sorry, not keeping tokens>", (void*)NULL, taiMenu::normal);
-    } else {
-      for (int i = 0; i < td->tokens.size; ++i) {
-	void* tmp = td->tokens.FastEl(i);
-	nm = String((long)tmp);
-	if (td->InheritsFrom(TA_taBase)) {
-	  taBase* btmp = (taBase*)tmp;
-	  if ((scope_ref != NULL) && !btmp->SameScope(scope_ref))
-	    continue;
-	  if (!btmp->GetName().empty())
-	    nm = btmp->GetName();
-	}
-	menu->AddItem((char*)nm, tmp, taiMenu::radio_update, actn);
-      }
-    } // !td->tokens.keep
-  } // too_many
-
-  if (td->children.size == 0)
-    return;
-
-  if (td->tokens.size > 0)
-    menu->AddSep();
-
-  for (int i = 0; i < td->children.size; ++i) {
-    TypeDef* chld = td->children[i];
-    if (chld->ptr != 0)
-      continue;
-    if ((chld->tokens.size == 0) && (chld->tokens.sub_tokens == 0))
-      continue;
-    if (chld->tokens.size != 0) {
-      taiMenu* submenu = menu->AddSubMenu(chld->name, (void*)chld);
-//huh?? why??      menu->AddSep();
-      GetMenu_impl(submenu, chld, actn);
-    } else {
-      GetMenu_impl(menu, chld, actn);	// if no tokens, don't add a submenu..
-    }
-  }
-}*/
-/*obs
-void taiToken::SetTypeScope(TypeDef* new_typ, taBase* new_scope, bool force) {
-  if ((new_typ == typ) && (new_scope == scope_ref) && !force) return;
-  typ = new_typ;
-  scope_ref = new_scope;
-  GetUpdateMenu();
-}*/
-
-
 //////////////////////////////////
 // 	taiSubToken		//
 //////////////////////////////////
@@ -5239,10 +5018,6 @@ void taiSubToken::Edit() {
   else {
     gc = (taiEdit*)typ->ie;
   }
-
-//nn  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
-/*obs  bool modal = false;
-  if (host != NULL) modal = host->modal; */
 
   gc->Edit(cur_base, false);
 }
