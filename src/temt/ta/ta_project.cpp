@@ -2904,6 +2904,7 @@ void taRootBase::Cleanup_Main() {
   if (milestone & SM_MPI_INIT)
     MPI_Finalize();
 #endif
+  taThreadMgr::TerminateAllThreads(); // don't leave any active threads lying around
 
 #ifndef TA_OS_WIN
   // only if using readline-based console, reset tty state

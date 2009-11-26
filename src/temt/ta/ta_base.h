@@ -85,6 +85,7 @@ public:
   // perform a delayed function call on this object of given function name (using CallFun) -- if args required they will be prompted for, but that is probably not a great idea from the user's perspective.. best for void functions -- nogui version -- doesn't check for gui
 
   static void		DeleteRoot(); // get rid of root, if not nuked already
+  static void		WaitProc_Cleanup(); // cleanup the waitproc lists, prior to quitting (makes for a cleaner shutdown)
 
 protected:
   static taBase_RefList	delayed_close;

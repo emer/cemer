@@ -233,12 +233,15 @@ bool tabMisc::DoDelayedFunCalls() {
   return did_some;
 }
 
-void tabMisc::DeleteRoot() {
+void tabMisc::WaitProc_Cleanup() {
+  taMisc::do_wait_proc = false;	// just to be sure
   delayed_updateafteredit.Reset();
   delayed_funcalls.Reset();
   delayed_close.Reset();
-  taMisc::do_wait_proc = false;	// just to be sure
+}
 
+void tabMisc::DeleteRoot() {
+  tabMisc::WaitProc_Cleanup();
   if (tabMisc::root) {
     delete tabMisc::root;
     tabMisc::root = NULL;

@@ -274,25 +274,30 @@ taiMiscCore* taiMiscCore::New(QObject* parent) {
 }
 
 void taiMiscCore::Quit(CancelOp cancel_op) {
+  static bool is_quitting = false;
+  if(is_quitting) return;
   // good place to save config, regardless what happens
+  is_quitting = true;
   if (tabMisc::root)
     tabMisc::root->Save();
-
-#ifdef DMEM_COMPILE
-  MPI_Finalize();
-#endif
-  taThreadMgr::TerminateAllThreads(); // don't leave any active threads lying around
 
   taMisc::quitting = (cancel_op == CO_NOT_CANCELLABLE) ? 
     taMisc::QF_FORCE_QUIT : taMisc::QF_USER_QUIT;
   OnQuitting(cancel_op); // saves changes
   if (cancel_op != CO_CANCEL) {
+#ifdef DMEM_COMPILE
+    MPI_Finalize();
+#endif
+    taThreadMgr::TerminateAllThreads(); // don't leave any active threads lying around
+    tabMisc::WaitProc_Cleanup();
     if (taiMC_) {
       taiMC_->Quit_impl(cancel_op);
     }
   }
-  if (cancel_op == CO_CANCEL)
+  if (cancel_op == CO_CANCEL) {
     taMisc::quitting = taMisc::QF_RUNNING;
+    is_quitting = false;
+  }
 }
 
 void taiMiscCore::OnQuitting(CancelOp& cancel_op) {
