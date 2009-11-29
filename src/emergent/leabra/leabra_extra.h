@@ -143,6 +143,46 @@ private:
   void	Destroy()		{ };
 };
 
+// note: the following is not compatible with the leabra unit equations
+
+// class LEABRA_API IzhikevichSpec : public taOBase {
+//   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra Izhikevich simplified Hodgkin-Huxley type spiking dynamics -- uses SPIKE mode and adds special v_m dynamics -- default parameters are for normalized V_m range (0-1) which corresponds to -90..50 in neural mV terms
+// INHERITED(taOBase)
+// public:
+//   bool		on;		// Use this activation function, in conjunction with SPIKE mode
+//   float		rec_dt;		// #CONDSHOW_ON_on #MIN_0 #MAX_1 time constant of the recovery variable (a in original paper) -- if the vm time step is considered to be 1 msec, then values of .02 to .1 are typical, with .02 being a regular spiking neuron, and .1 is fast spiking
+//   float		rec_v_gain;	// #CONDSHOW_ON_on #MIN_0 #MAX_1 gain on the membrane potential driving the recovery variable (b in original paper) -- values between .2 and .25 are typical, with .2 being a regular spiking neuron
+//   float		rec_spike;	// #CONDSHOW_ON_on value to add to the recovery variable after spiking (d in original paper) -- to convert from mV units to normalized, divide by 140 -- range is .057 (8 in mV) for regular spiking to .0004 (.05 in mV) for thalamocortical -- fast spiking is 0.0143 (2 in mV) -- note that v_m_r in spike field is the reset var for vm (set to .15 for std regular spiking)
+//   float		v_m_thr;	// #CONDSHOW_ON_on #DEF_0.86 threshold membrane potential for initiating a spike -- note that this is much higher than act.thr, which is not used under this model
+//   float		rec_c;		// #READ_ONLY #NO_SAVE constant term in the recovery equation = -.642857 * rec_v_gain
+
+//   float	Compute_dVm(float vm, float rec, float I_net) {
+//     // use two .5 steps to achieve better numerical stability
+//     float dvm = .5f * (5.6f * vm * vm - 2.2f * vm + .1f - rec + I_net);
+//     vm += dvm;
+//     dvm += .5f * (5.6f * vm * vm - 2.2f * vm + .1f - rec + I_net);
+//     return dvm;
+//   }
+//   // compute the change in Vm given vm, rec and I_net inputs -- constants are for the normalized form of the equation
+//   float	Compute_dRec(float vm, float rec) {
+//     return rec_dt * (rec_v_gain * vm + rec_c - rec);
+//   }
+//   // compute the change in rec given vm and rec inputs -- constants are for the normalized form of the equation
+//   float	Init_Rec(float vm) {
+//     return rec_v_gain * vm + rec_c;
+//   }
+//   // initial rec value based on initial vm value (equilibrium point)
+
+//   void 	Defaults()	{ Initialize(); }
+//   TA_SIMPLE_BASEFUNS(IzhikevichSpec);
+// protected:
+//   void	UpdateAfterEdit_impl();
+// private:
+//   void	Initialize();
+//   void	Destroy()	{ };
+// };
+
+
 class LEABRA_API LeabraNegBiasSpec : public LeabraBiasSpec {
   // only learns negative bias changes, not positive ones (decay restores back to zero)
 INHERITED(LeabraBiasSpec)

@@ -609,6 +609,21 @@ void SpikeFunSpec::UpdateAfterEdit_impl() {
   }
 }
 
+void ActAdaptSpec::Initialize() {
+  on = false;
+  dt.set_time = false;
+  dt.rate = 0.02f;
+  dt.time = 1.0f / dt.rate;
+  v_m_gain = 1.0f;
+  spike_gain = 0.25f;
+  interval = 10;
+}
+
+void ActAdaptSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  dt.UpdateAfterEdit();
+}
+
 void DepressSpec::Initialize() {
   on = false;
   rec = .2f;
@@ -640,13 +655,21 @@ void OptThreshSpec::Initialize() {
   phase_dif = 0.0f;		// .8 also useful
 }
 
-void DtSpec::Initialize() {
+void LeabraDtSpec::Initialize() {
   vm = 0.25f;			// .3 is too fast!
+  vm_time = 1.0f / vm;
   net = 0.7f;
+  net_time = 1.0f / net;
   d_vm_max = 0.025f;
   midpoint = false;
   vm_eq_cyc = 0;
   vm_eq_dt = 1.0f;
+}
+
+void LeabraDtSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  vm_time = 1.0f / vm;
+  net_time = 1.0f / net;
 }
 
 void DaModSpec::Initialize() {
@@ -735,6 +758,7 @@ void LeabraUnitSpec::Initialize() {
 void LeabraUnitSpec::Defaults() {
   act.Defaults();
   spike.Defaults();
+  adapt.Defaults();
   depress.Defaults();
   syn_delay.Defaults();
   opt_thresh.Defaults();
@@ -778,6 +802,8 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   depress.UpdateAfterEdit();
   noise_sched.UpdateAfterEdit();
   spike.UpdateAfterEdit();
+  adapt.UpdateAfterEdit();
+  dt.UpdateAfterEdit();
   noise_adapt.UpdateAfterEdit();
   CreateNXX1Fun();
   if(depress.on)
@@ -900,6 +926,7 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->gc.a = 0.0f;
   lu->I_net = 0.0f;
   lu->v_m = v_m_init.Gen();
+  lu->adapt = 0.0f;
   lu->da = 0.0f;
   lu->act = 0.0f;
   lu->act_eq = 0.0f;
@@ -926,6 +953,7 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
 
 void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork*, float decay) {
   u->v_m -= decay * (u->v_m - v_m_init.mean);
+  u->adapt -= decay * u->adapt;
   u->act -= decay * u->act;
   u->act_nd -= decay * u->act_nd;
   u->act_eq -= decay * u->act_eq;
@@ -1288,10 +1316,12 @@ void LeabraUnitSpec::Compute_ClampSpike(LeabraUnit* u, LeabraNetwork* net, float
     break;
   }
   }
-  if(fire_now)
+  if(fire_now) {
     u->v_m = act.thr + 0.1f;	// make it fire
-  else
+  }
+  else {
     u->v_m = e_rev.l;		// make it not fire
+  }
     
   Compute_ActFmVm_spike(u, net); // then do normal spiking computation
 }
@@ -1359,7 +1389,7 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
       (u->net * (e_rev.e - v_m_eff)) + (u->gc.l * (e_rev.l - v_m_eff)) + 
       (u->gc.i * (e_rev.i - v_m_eff)) + (u->gc.h * (e_rev.h - v_m_eff)) +
       (u->gc.a * (e_rev.a - v_m_eff));
-    float dvm = dt.vm * u->I_net;
+    float dvm = dt.vm * (u->I_net - u->adapt);
     if(dvm > dt.d_vm_max) dvm = dt.d_vm_max;
     else if(dvm < -dt.d_vm_max) dvm = -dt.d_vm_max;
     u->v_m += dvm;
@@ -1375,9 +1405,11 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
 void LeabraUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
   if(act_fun == SPIKE) {
     Compute_ActFmVm_spike(u, net); 
+    Compute_ActAdapt_spike(u, net);
   }
   else {
     Compute_ActFmVm_rate(u, net); 
+    Compute_ActAdapt_rate(u, net);
   }
 }
 
@@ -1452,6 +1484,18 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
     u->act_nd = u->act_eq;
 }
 
+void LeabraUnitSpec::Compute_ActAdapt_rate(LeabraUnit* u, LeabraNetwork* net) {
+  if(!adapt.on)
+    u->adapt = 0.0f;
+  else {
+    float dad = adapt.Compute_dAdapt(u->v_m - v_m_init.mean, u->adapt); // rest relative
+    if(net->ct_cycle % adapt.interval == 0) {
+      dad += u->act * adapt.spike_gain;	// rate code version of spiking
+    }
+    u->adapt += dad;
+  }
+}
+
 void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net) {
   if(u->v_m > act.thr) {
     u->act = 1.0f;
@@ -1483,6 +1527,18 @@ void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net) {
   }
   else {
     u->act_eq = u->act_nd;	// eq = nd
+  }
+}
+
+void LeabraUnitSpec::Compute_ActAdapt_spike(LeabraUnit* u, LeabraNetwork* net) {
+  if(!adapt.on)
+    u->adapt = 0.0f;
+  else {
+    float dad = adapt.Compute_dAdapt(u->v_m - v_m_init.mean, u->adapt); // rest relative
+    if(u->act > 0.0f) {						      // spiked
+      dad += adapt.spike_gain;
+    }
+    u->adapt += dad;
   }
 }
 

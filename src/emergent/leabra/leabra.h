@@ -106,6 +106,23 @@ class LeabraProject;
     code \
   } 
   
+// todo: transition to using this for dt values!
+
+class LEABRA_API DtSpec : public taBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Math time constant specification -- shows both multiplier and time constant (inverse) value 
+INHERITED(taBase)
+public:
+  bool		set_time;	// if true, time constant is entered in terms of time, otherwise, in terms of rate
+  float		rate;		// #CONDEDIT_OFF_set_time rate factor = 1/time -- used for multiplicative update equations
+  float		time;		// #CONDEDIT_ON_set_time temporal duration for the time constant -- how many msec or sec long (typically to reach a 1/e level with exponential dynamics) = 1/rate
+
+  TA_SIMPLE_BASEFUNS(DtSpec);
+protected:
+  void	UpdateAfterEdit_impl() { if(set_time) rate = 1.0f / time; else time = 1.0f / rate; }
+private:
+  void	Initialize()    { set_time = false; rate = 1.0f; time = 1.0f; }
+  void	Destroy()	{ };
+};
 
 // todo: if at any point CAL is dropped in favor of XCAL, then sravg_s and sravg_m can be 
 // eliminated from the connection (at considerable performance savings) and ravg_s, ravg_m 
@@ -736,7 +753,7 @@ public:
   float		decay;		// #DEF_5 #MIN_0 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function (not very useful)
   float		g_gain;		// #DEF_5 #MIN_0 multiplier for the spike-generated conductances when using alpha function which is normalized by area under the curve -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well, effectively neutralizing the area normalization (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
   int		window;		// #DEF_3 #MIN_0 spike integration window -- when rise==0, this window is used to smooth out the spike impulses similar to a rise time -- each net contributes over the window in proportion to 1/window -- for rise > 0, this is used for computing the alpha function -- should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost
-  float		v_m_r;		// #DEF_0 post-spiking membrane potential to reset to, produces refractory effect 
+  float		v_m_r;		// #DEF_0;0.15 post-spiking membrane potential to reset to, produces refractory effect if lower than vm_init
   float		eq_gain;	// #DEF_10 #MIN_0 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
   float		eq_dt;		// #DEF_0.02 #MIN_0 #MAX_1 if non-zero, eq is computed as a running average with this time constant
   float		clamp_max_p;	// #DEF_0.11 #MIN_0 #MAX_1 maximum probability of spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall probability of firing a spike -- distribution is determined by clamp_type
@@ -763,6 +780,31 @@ private:
   void	Initialize();
   void	Destroy()	{ };
 };
+
+class LEABRA_API ActAdaptSpec : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation-driven adaptation dynamics -- negative feedback on v_m based on sub- and super-threshold activation -- relatively rapid time-scale and especially relevant for spike-based models -- drives the adapt variable on the unit
+INHERITED(taOBase)
+public:
+  bool		on;		// apply adaptation?
+  DtSpec	dt;		// #CONDSHOW_ON_on time constant of the adaptation dynamics -- if the vm time step is considered to be 1 msec, then rate values of .02 to .1 (10 to 50 msec) are typical, with .02 being a regular spiking neuron, and .1 is fast spiking
+  float		v_m_gain;	// #CONDSHOW_ON_on #MIN_0 #MAX_1 gain on the membrane potential v_m driving the adapt adaptation variable -- values around .1 are typical (resting v_m is subtracted from v_m for this, so that 0 adaptation occurs at rest)
+  float		spike_gain;	// #CONDSHOW_ON_on value to add to the adapt adaptation variable after spiking -- range is around .01 for regular spiking neurons (strong adaptation) and lower -- for rate code activations, uses act value weighting and only computes every interval
+  int		interval;	// #CONDSHOW_ON_on how many time steps between applying spike_gain for rate-coded activation function -- simulates the intrinsic delay obtained with spiking dynamics
+
+  float	Compute_dAdapt(float vm, float adapt) {
+    return dt.rate * (v_m_gain * vm - adapt);
+  }
+  // compute the change in adapt given vm (with rest value already subtracted off) and adapt inputs
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(ActAdaptSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 
 class LEABRA_API DepressSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation/spiking conveyed to other units is subject to synaptic depression: depletes a given amount per spike, and recovers with exponential recovery rate (also subject to trial/phase decay = recovery proportion)
@@ -814,19 +856,23 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API DtSpec : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra time constants
+class LEABRA_API LeabraDtSpec : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra rate constants for temporal derivatives in Leabra (Vm, net input)
 INHERITED(taOBase)
 public:
-  float		vm;		// #DEF_0.1:0.3 #MIN_0 membrane potential time constant -- if units oscillate too much, then this is too high (but see d_vm_max for another solution)
+  float		vm;		// #DEF_0.1:0.3 #MIN_0 membrane potential rate constant -- if units oscillate too much, then this is too high (but see d_vm_max for another solution)
+  float		vm_time;	// #READ_ONLY #SHOW 1/vm rate constant = time in cycles for vm to reach 1/e of asymptotic value
   float		net;		// #DEF_0.7 #MIN_0 net input time constant -- how fast to update net input (damps oscillations)
+  float		net_time;	// #READ_ONLY #SHOW 1/net rate constant = time in cycles for net to reach 1/e of asymptotic value
   bool		midpoint;	// #DEF_false use the midpoint method in computing the vm value -- better avoids oscillations and allows a larger dt.vm parameter to be used
   float		d_vm_max;	// #DEF_0.02:0.025 #MIN_0 maximum change in vm at any timestep (limits blowup)
   int		vm_eq_cyc;	// #AKA_cyc0_vm_eq #DEF_0 number of cycles to compute the vm as equilibirium potential given current inputs: set to 1 to quickly activate input layers; set to 100 to always use this computation
   float		vm_eq_dt;	// #DEF_1 #MIN_0 time constant for integrating the vm_eq values: how quickly to move toward the current eq value from previous vm value
 
   void 	Defaults()	{ Initialize(); }
-  TA_SIMPLE_BASEFUNS(DtSpec);
+  TA_SIMPLE_BASEFUNS(LeabraDtSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -990,14 +1036,15 @@ public:
 
   ActFun	act_fun;	// #CAT_Activation activation function to use
   ActFunSpec	act;		// #CAT_Activation activation function specs
-  SpikeFunSpec	spike;		// #CONDEDIT_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
+  SpikeFunSpec	spike;		// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
+  ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
   DepressSpec	depress;	// #CAT_Activation depressing synapses specs -- multiplies activation value by a spike amplitude/probability value that depresses with use and recovers exponentially
   SynDelaySpec	syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   OptThreshSpec	opt_thresh;	// #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
   MinMaxRange	clamp_range;	// #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
   MinMaxRange	vm_range;	// #CAT_Activation membrane potential range (min, max, 0-1 for normalized, -90-50 for bio-based)
   RandomSpec	v_m_init;	// #CAT_Activation what to initialize the membrane potential to (mean = .15, var = 0 std)
-  DtSpec	dt;		// #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
+  LeabraDtSpec	dt;		// #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
   LeabraChannels g_bar;		// #CAT_Activation [Defaults: 1, .1, 1, .1, .5] maximal conductances for channels
   LeabraChannels e_rev;		// #CAT_Activation [Defaults: 1, .15, .15, 1, 0] reversal potentials for each channel
   LeabraChannels e_rev_sub_thr;	// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN e_rev - act.thr for each item -- used for compute_ithresh
@@ -1122,9 +1169,13 @@ public:
       // #CAT_Activation compute the activation from membrane potential -- rate code functions
         virtual float Compute_ActValFmVmVal_rate(float vm_val);
         // #CAT_Activation raw activation function: computes an activation value given membrane potential value based on current activation function -- does not update state variables or anything
+      virtual void Compute_ActAdapt_rate(LeabraUnit* u, LeabraNetwork* net);
+      // #CAT_Activation compute the activation-based adaptation value based on activation (spiking rate) and membrane potential -- rate code functions
 
       virtual void Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net);
       // #CAT_Activation compute the activation from membrane potential -- discrete spiking
+      virtual void Compute_ActAdapt_spike(LeabraUnit* u, LeabraNetwork* net);
+      // #CAT_Activation compute the activation-based adaptation value based on spiking and membrane potential -- spike functions
       virtual void Compute_ClampSpike(LeabraUnit* u, LeabraNetwork* net, float spike_p);
       // #CAT_Activation compute spiking activation according to spike.clamp_type with given probability (typically spike.clamp_max_p * u->ext) -- includes depression and other active factors as done in Compute_ActFmVm_spike -- used for hard clamped inputs in spiking nets
     virtual void Compute_SelfReg_Cycle(LeabraUnit* u, LeabraNetwork* net);
@@ -1275,6 +1326,7 @@ public:
   LeabraUnitChans gc;		// #DMEM_SHARE_SET_1 #NO_SAVE #CAT_Activation current unit channel conductances
   float		I_net;		// #NO_SAVE #CAT_Activation net current produced by all channels
   float		v_m;		// #NO_SAVE #CAT_Activation membrane potential
+  float		adapt;		// #NO_SAVE #CAT_Activation adaptation factor -- driven by both sub-threshold membrane potential and spiking activity -- subtracts directly from the membrane potential on every time step
   float		noise;		// #NO_SAVE #CAT_Activation noise value added to unit (noise_type on unit spec determines where it is added) -- this can be used in learning in some cases
   float 	dav;		// #VIEW_HOT #CAT_Activation dopamine value (da is delta activation) which modulates activations (e.g., via accom and hyst currents) to then drive learning
   float 	maint_h;	// #CAT_Activation maintained hysteresis current value (e.g., for PFC units)
