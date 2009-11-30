@@ -574,11 +574,8 @@ void SpikeFunSpec::Initialize() {
   rise = 0.0f;
   decay = 5.0f;
   window = 3;
-  v_m_r = 0.0f;
   eq_gain = 10.0f;
   eq_dt = 0.02f;
-  clamp_max_p = .11f;
-  clamp_type = REGULAR;
   // vm_dt of .1 should also be used; vm_noise var .002???
   
   gg_decay = g_gain / decay;
@@ -609,13 +606,23 @@ void SpikeFunSpec::UpdateAfterEdit_impl() {
   }
 }
 
+void SpikeMiscSpec::Initialize() {
+  v_m_r = 0.0f;
+  v_m_dend = 0.3f;
+  v_m_dend_dt.set_time = true;
+  v_m_dend_dt.time = 6.0f;
+  v_m_dend_dt.rate = 1.0f / 6.0f;
+  clamp_max_p = .11f;
+  clamp_type = REGULAR;
+}
+
 void ActAdaptSpec::Initialize() {
   on = false;
   dt.set_time = false;
   dt.rate = 0.02f;
   dt.time = 1.0f / dt.rate;
-  v_m_gain = 1.0f;
-  spike_gain = 0.25f;
+  v_m_gain = 0.1f;
+  spike_gain = 0.01f;
   interval = 10;
 }
 
@@ -758,6 +765,7 @@ void LeabraUnitSpec::Initialize() {
 void LeabraUnitSpec::Defaults() {
   act.Defaults();
   spike.Defaults();
+  spike_misc.Defaults();
   adapt.Defaults();
   depress.Defaults();
   syn_delay.Defaults();
@@ -926,6 +934,7 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->gc.a = 0.0f;
   lu->I_net = 0.0f;
   lu->v_m = v_m_init.Gen();
+  lu->v_m_dend = 0.0f;
   lu->adapt = 0.0f;
   lu->da = 0.0f;
   lu->act = 0.0f;
@@ -953,6 +962,7 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
 
 void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork*, float decay) {
   u->v_m -= decay * (u->v_m - v_m_init.mean);
+  u->v_m_dend -= decay * u->v_m_dend;
   u->adapt -= decay * u->adapt;
   u->act -= decay * u->act;
   u->act_nd -= decay * u->act_nd;
@@ -1285,7 +1295,7 @@ void LeabraUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
 
   if((lnet->cycle >= 0) && lay->hard_clamped) {
     if(lay->hard_clamped && act_fun == SPIKE) {
-      Compute_ClampSpike(lu, lnet, u->ext * spike.clamp_max_p);
+      Compute_ClampSpike(lu, lnet, u->ext * spike_misc.clamp_max_p);
       lu->AddToActBuf(syn_delay);
     }
     return; // don't re-compute
@@ -1301,14 +1311,14 @@ void LeabraUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
 
 void LeabraUnitSpec::Compute_ClampSpike(LeabraUnit* u, LeabraNetwork* net, float spike_p) {
   bool fire_now = false;
-  switch(spike.clamp_type) {
-  case SpikeFunSpec::POISSON:
+  switch(spike_misc.clamp_type) {
+  case SpikeMiscSpec::POISSON:
     if(Random::Poisson(spike_p) > 0.0f) fire_now = true;
     break;
-  case SpikeFunSpec::UNIFORM:
+  case SpikeMiscSpec::UNIFORM:
     fire_now = Random::BoolProb(spike_p);
     break;
-  case SpikeFunSpec::REGULAR: {
+  case SpikeMiscSpec::REGULAR: {
     if(spike_p > 0.0f) {
       int cyc_int = (int)((1.0f / spike_p) + 0.5f);
       fire_now = (net->ct_cycle % cyc_int == 0);
@@ -1400,6 +1410,11 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
   }
 
   u->v_m = vm_range.Clip(u->v_m);
+
+  if(act_fun == SPIKE) {
+    // decay back to zero
+    u->v_m_dend -= spike_misc.v_m_dend_dt.rate * u->v_m_dend;
+  }
 }
 
 void LeabraUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
@@ -1499,7 +1514,8 @@ void LeabraUnitSpec::Compute_ActAdapt_rate(LeabraUnit* u, LeabraNetwork* net) {
 void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net) {
   if(u->v_m > act.thr) {
     u->act = 1.0f;
-    u->v_m = spike.v_m_r;
+    u->v_m = spike_misc.v_m_r;
+    u->v_m_dend += spike_misc.v_m_dend;
   }
   else {
     u->act = 0.0f;

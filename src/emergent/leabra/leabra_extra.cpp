@@ -16,6 +16,8 @@
 #include "leabra_extra.h"
 
 #include "netstru_extra.h"
+#include "ta_dataproc.h"
+#include "ta_dataanal.h"
 
 //////////////////////////////////
 //  	MarkerConSpec   	//
@@ -340,31 +342,125 @@ void LeabraDeltaConSpec::UpdateAfterEdit_impl() {
   lmix.err = 1.0f;
 }
 
-// ///////////////////////////////////////////////////////////////
-// //   LeabraXCALSpikeConSpec
+///////////////////////////////////////////////////////////////
+//   LeabraXCALSpikeConSpec
 
-// void LeabraXCALSpikeConSpec::Initialize() {
-//   SetUnique("lmix", true);
-//   lmix.hebb = 0.0f;
-//   lmix.err = 1.0f;
-// //   lmix.err_sb = false;
+void XCALSpikeSpec::Initialize() {
+  k_ca = 0.06f;
+  ca_vgcc = 0.26f;
+  ca_v_nmda = 0.00446f;
+  ca_nmda = 0.1f;
+  ca_dt = 20.0f;
+  ca_rate = 1.0f / ca_dt;
+  nmda_dt = 40.0f;
+  nmda_rate = 1.0f / nmda_dt;
+}
 
-//   SetUnique("wt_limits", true);
-//   wt_limits.sym = false;
+void XCALSpikeSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  ca_rate = 1.0f / ca_dt;
+  nmda_rate = 1.0f / nmda_dt;
+}
 
-//   SetUnique("wt_sig", true);
-//   wt_sig.gain = 1.0f;  wt_sig.off = 1.0f;
+void LeabraXCALSpikeConSpec::Initialize() {
+  min_obj_type = &TA_LeabraSpikeCon;
+}
 
-// //   SetUnique("xcalm", true);
-// //   xcalm.use_sb = false;
-// }
+void LeabraXCALSpikeConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  xcal_spike.UpdateAfterEdit();
+}
 
-// void LeabraXCALSpikeConSpec::UpdateAfterEdit_impl() {
-//   inherited::UpdateAfterEdit_impl();
-//   // these are enforced absolutely because the code does not use them:
-//   lmix.hebb = 0.0f;
-//   lmix.err = 1.0f;
-// }
+void LeabraXCALSpikeConSpec::GraphXCALSpikeSim(DataTable* graph_data,
+		  float rate_min, float rate_max, float rate_inc,
+		  float max_time, int reps_per_point,
+	       float v_m_dend_dt, float v_m_dend) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_XCALSpikeSim", true);
+  }
+  DataTable* sim_data = proj->GetNewAnalysisDataTable(name + "_XCALSpikeSim_Tmp", true);
+
+//   graph_data->StructUpdate(true);
+//   graph_data->ResetData();
+  int idx;
+//   DataCol* r_rate = graph_data->FindMakeColName("r_rate", idx, VT_FLOAT);
+//   DataCol* s_rate = graph_data->FindMakeColName("s_rate", idx, VT_FLOAT);
+//   DataCol* ca_avg = graph_data->FindMakeColName("ca_avg", idx, VT_FLOAT);
+//   r_rate->SetUserData("MIN", 0.0f);
+//   r_rate->SetUserData("MAX", rate_max);
+//   s_rate->SetUserData("MIN", 0.0f);
+//   s_rate->SetUserData("MAX", rate_max);
+
+//   DataTable sim_data;
+//   taBase::Ref(sim_data);
+  DataCol* sim_r_rate = sim_data->FindMakeColName("r_rate", idx, VT_FLOAT);
+  DataCol* sim_s_rate = sim_data->FindMakeColName("s_rate", idx, VT_FLOAT);
+  DataCol* sim_ca_avg = sim_data->FindMakeColName("ca_avg", idx, VT_FLOAT);
+
+  float s_rate, r_rate;
+  for(r_rate = rate_min; r_rate <= rate_max; r_rate += rate_inc) {
+    for(s_rate = rate_min; s_rate <= rate_max; s_rate += rate_inc) {
+      for(int rep=0; rep < reps_per_point; rep++) {
+	float nmda = 0.0f;
+	float ca = 0.0f;
+	float ca_avg = 0.0f;
+	float ca_sum = 0.0f;
+	float vmd = 0.0f;
+	float r_p = r_rate / 1000.0f;
+	float s_p = s_rate / 1000.0f;
+	float time = 0.0f;
+	bool s_act = false;
+	bool r_act = false;
+	for(time = 0.0f; time < max_time; time += 1.0f) {
+	  s_act = (bool)Random::Poisson(s_p);
+	  r_act = (bool)Random::Poisson(r_p);
+	  if(r_act) 
+	    vmd += v_m_dend;
+	  vmd -= vmd / v_m_dend_dt;
+	  float dnmda = -nmda * xcal_spike.nmda_rate;
+	  float dca = (nmda * (xcal_spike.ca_v_nmda * vmd + xcal_spike.ca_nmda))
+	    - (ca * xcal_spike.ca_rate);
+	  if(s_act) { dnmda += xcal_spike.k_ca / (xcal_spike.k_ca + ca); }
+	  if(r_act) { dca += xcal_spike.ca_vgcc; }
+	  nmda += dnmda;
+	  ca += dca;
+	  ca_sum += ca;
+	}
+	ca_avg = ca_sum / max_time;
+	sim_data->AddBlankRow();
+	sim_r_rate->SetValAsFloat(r_rate, -1);
+	sim_s_rate->SetValAsFloat(s_rate, -1);
+	sim_ca_avg->SetValAsFloat(ca_avg, -1);
+      }
+    }
+  }
+
+  DataGroupSpec dgs;
+  taBase::Ref(dgs);
+  dgs.append_agg_name = false;
+  //  dgs.SetDataTable(sim_data);
+  dgs.AddAllColumns(sim_data);
+  dgs.ClearColumns();
+
+  ((DataGroupEl*)dgs.ops[0])->agg.op = Aggregate::GROUP;
+  ((DataGroupEl*)dgs.ops[1])->agg.op = Aggregate::GROUP;
+  ((DataGroupEl*)dgs.ops[2])->agg.op = Aggregate::MEAN;
+
+  taDataProc::Group(graph_data, sim_data, &dgs);
+  dgs.ClearColumns();
+  taDataAnal::Matrix3DGraph(graph_data, "s_rate", "r_rate");
+
+  DataCol* gp_r_rate = graph_data->FindMakeColName("r_rate", idx, VT_FLOAT);
+  gp_r_rate->SetUserData("X_AXIS", true);
+  DataCol* gp_s_rate = graph_data->FindMakeColName("s_rate", idx, VT_FLOAT);
+  gp_s_rate->SetUserData("Z_AXIS", true);
+  DataCol* gp_ca_avg = graph_data->FindMakeColName("ca_avg", idx, VT_FLOAT);
+  gp_ca_avg->SetUserData("PLOT_1", true);
+
+  graph_data->FindMakeGraphView();
+}
+
 
 ///////////////////////////////////////////////////////////////
 //   LeabraLimPrecConSpec

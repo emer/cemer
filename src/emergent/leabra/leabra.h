@@ -124,9 +124,8 @@ private:
   void	Destroy()	{ };
 };
 
-// todo: if at any point CAL is dropped in favor of XCAL, then sravg_s and sravg_m can be 
-// eliminated from the connection (at considerable performance savings) and ravg_s, ravg_m 
-// added to the unit
+// NOTE: XCAL currently uses SR as its default lrule, which requires synapse-level sravg 
+// variables in the connection..  The product of pre/post guys also works but not as well
 
 class LeabraCon : public Connection {
   // #STEM_BASE ##CAT_Leabra Leabra connection
@@ -743,21 +742,12 @@ class LEABRA_API SpikeFunSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically -- for clamped layers, spiking probability is proportional to external input controlled by the clamp_type and clamp_max_p values -- soft clamping may still be a better option though
 INHERITED(taOBase)
 public:
-  enum ClampType {		// how to generate spikes during hard clamp conditions
-    POISSON,			// generate spikes according to Poisson distribution with probability = clamp_max_p * u->ext
-    UNIFORM,			// generate spikes according to Uniform distribution with probability = clamp_max_p * u->ext
-    REGULAR,			// generate spikes every 1 / (clamp_max_p * u->ext) cycles -- this works the best, at least in smaller networks, due to the lack of additional noise, and the synchrony of the inputs for driving synchrony elsewhere
-  };
-
   float		rise;		// #DEF_0 #MIN_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is highly optimized (doesn't use window -- just uses recursive exp decay) and thus the default!
   float		decay;		// #DEF_5 #MIN_0 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function (not very useful)
   float		g_gain;		// #DEF_5 #MIN_0 multiplier for the spike-generated conductances when using alpha function which is normalized by area under the curve -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well, effectively neutralizing the area normalization (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
   int		window;		// #DEF_3 #MIN_0 spike integration window -- when rise==0, this window is used to smooth out the spike impulses similar to a rise time -- each net contributes over the window in proportion to 1/window -- for rise > 0, this is used for computing the alpha function -- should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost
-  float		v_m_r;		// #DEF_0;0.15 post-spiking membrane potential to reset to, produces refractory effect if lower than vm_init
   float		eq_gain;	// #DEF_10 #MIN_0 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
   float		eq_dt;		// #DEF_0.02 #MIN_0 #MAX_1 if non-zero, eq is computed as a running average with this time constant
-  float		clamp_max_p;	// #DEF_0.11 #MIN_0 #MAX_1 maximum probability of spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall probability of firing a spike -- distribution is determined by clamp_type
-  ClampType	clamp_type;	// how to generate spikes when layer is hard clamped -- in many cases soft clamping may work better
 
   float		gg_decay;	// #READ_ONLY #NO_SAVE g_gain/decay
   float		gg_decay_sq;	// #READ_ONLY #NO_SAVE g_gain/decay^2
@@ -776,6 +766,29 @@ public:
   TA_SIMPLE_BASEFUNS(SpikeFunSpec);
 protected:
   void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
+class LEABRA_API SpikeMiscSpec : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra extra misc spiking parameters 
+INHERITED(taOBase)
+public:
+  enum ClampType {		// how to generate spikes during hard clamp conditions
+    POISSON,			// generate spikes according to Poisson distribution with probability = clamp_max_p * u->ext
+    UNIFORM,			// generate spikes according to Uniform distribution with probability = clamp_max_p * u->ext
+    REGULAR,			// generate spikes every 1 / (clamp_max_p * u->ext) cycles -- this works the best, at least in smaller networks, due to the lack of additional noise, and the synchrony of the inputs for driving synchrony elsewhere
+  };
+
+  float		clamp_max_p;	// #DEF_0.11 #MIN_0 #MAX_1 maximum probability of spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall probability of firing a spike -- distribution is determined by clamp_type
+  ClampType	clamp_type;	// how to generate spikes when layer is hard clamped -- in many cases soft clamping may work better
+  float		v_m_r;		// #DEF_0;0.15 post-spiking membrane potential to reset to, produces refractory effect if lower than vm_init
+  float		v_m_dend;	// #DEF_0.3 how much to add to v_m_dend value after every spike
+  DtSpec	v_m_dend_dt;	// rate constant for updating the v_m_dend value (used for spike-based learning) -- default is 6 msec (time)
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(SpikeMiscSpec);
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -1037,6 +1050,7 @@ public:
   ActFun	act_fun;	// #CAT_Activation activation function to use
   ActFunSpec	act;		// #CAT_Activation activation function specs
   SpikeFunSpec	spike;		// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
+  SpikeMiscSpec	spike_misc;	// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
   ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
   DepressSpec	depress;	// #CAT_Activation depressing synapses specs -- multiplies activation value by a spike amplitude/probability value that depresses with use and recovers exponentially
   SynDelaySpec	syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
@@ -1326,6 +1340,7 @@ public:
   LeabraUnitChans gc;		// #DMEM_SHARE_SET_1 #NO_SAVE #CAT_Activation current unit channel conductances
   float		I_net;		// #NO_SAVE #CAT_Activation net current produced by all channels
   float		v_m;		// #NO_SAVE #CAT_Activation membrane potential
+  float		v_m_dend;	// #NO_SAVE #CAT_Activation dendritic membrane potential -- reflects back-propagated spike values in spiking mode -- these are not subject to immediate AHP and thus decay exponentially, and are used for learning
   float		adapt;		// #NO_SAVE #CAT_Activation adaptation factor -- driven by both sub-threshold membrane potential and spiking activity -- subtracts directly from the membrane potential on every time step
   float		noise;		// #NO_SAVE #CAT_Activation noise value added to unit (noise_type on unit spec determines where it is added) -- this can be used in learning in some cases
   float 	dav;		// #VIEW_HOT #CAT_Activation dopamine value (da is delta activation) which modulates activations (e.g., via accom and hyst currents) to then drive learning

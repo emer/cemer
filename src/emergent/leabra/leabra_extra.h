@@ -904,78 +904,103 @@ private:
   void	Destroy()		{ };
 };
 
-// class LEABRA_API XCALSpikeConSpec : public taOBase {
-//   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCAL purely spiking learning rule based on Urakubo et al 2008
-// INHERITED(taOBase)
-// public:
-//   float		K_ca; // #DEF_0.3 effective Ca that gives 50% inhibition of maximal activity
-//   float		V_rspike; // #DEF_20 votage induced in the dendrite resulting from a receiver spike
-//   float		Ca_vgcc;  // #DEF_1.3 Ca influx resulting from receiver spiking (due to voltage gated calcium channels)
-//   float		Ca_v_nmda; // #DEF_0.0223 Ca influx due to nmda
-//   float		NMDAR_dt; // #DEF_40 time constant (in msec) for decay of NMDA conductance
-//   float		V_rest;	  // #DEF_-65 membrane resting potential
-//   float		
+//////////////////////////////////////////////////
+//		XCAL Spike-Based Learning
 
-//   SIMPLE_COPY(ActAvgHebbMixSpec);
-//   TA_BASEFUNS(ActAvgHebbMixSpec);
-// protected:
-//   void	UpdateAfterEdit_impl();
-// private:
-//   void	Initialize();
-//   void	Destroy()	{ };
-// };
+class LeabraSpikeCon : public LeabraCon {
+  // #STEM_BASE ##CAT_Leabra Leabra connection for spike-based learning
+public:
+  float		nmda;		// #NO_SAVE proportion of open NMDA receptor channels
+  float		ca;		// #NO_SAVE postsynaptic Ca value, drives learning
+  
+  LeabraSpikeCon() { nmda = ca = 0.0f; }
+};
 
-// class LEABRA_API LeabraXCALSpikeConSpec : public LeabraConSpec {
-//   // basic delta-rule learning (plus - minus) * sender, with sender in the minus phase -- soft bounding as specified in spec -- no hebbian or anything else
-// INHERITED(LeabraConSpec)
-// public:
-//   inline void C_Compute_dWt_XCALSpike(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-//     float lin_wt = LinFmSigWt(cn->wt);
-//     float dwt = (ru->act_p - ru->act_m) * su->act_m; // basic delta rule, sender in minus
-//     if(lmix.err_sb) {
-//       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
-//       else		dwt *= lin_wt;
-//     }
-//     cn->dwt += cur_lrate * dwt;
-//   }
+class LEABRA_API XCALSpikeSpec : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCAL purely spiking learning rule based on Urakubo et al 2008
+INHERITED(taOBase)
+public:
+  float		k_ca;	  // #DEF_0.06 (.3 in original units) effective Ca that gives 50% inhibition of maximal NMDA receptor activity
+  float		ca_vgcc;  // #DEF_0.26 (1.3 in original units) Ca influx resulting from receiver spiking (due to voltage gated calcium channels)
+  float		ca_v_nmda; // #DEF_0.00446 (0.0223 in original units) Ca influx due to membrane-potential (voltage) driven NMDA receptor activation
+  float		ca_nmda;   // #DEF_0.1 (0.5 in original units) Ca influx from NMDA that is NOT driven by membrane potential
+  float		ca_dt;     // #DEF_20 time constant (in msec) for decay of Ca 
+  float		ca_rate;   // #READ_ONLY #NO_SAVE rate constant (1/dt) for decay of Ca 
+  float		nmda_dt;   // #DEF_40 time constant (in msec) for decay of NMDA receptor conductance
+  float		nmda_rate; // #READ_ONLY #NO_SAVE rate constant (1/dt) for decay of NMDA receptor conductance
 
-//   inline void C_Compute_dWt_Delta_CAL(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-//     float dwt = (ru->act_p - ru->act_m) * su->act_m; // basic delta rule, sender in minus
-//     cn->dwt += cur_lrate * dwt;
-//     // soft bounding is managed in the weight update phase, not in dwt
-//   }
+  TA_SIMPLE_BASEFUNS(XCALSpikeSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
 
-//   override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-//     for(int i=0; i<cg->size; i++) {
-//       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-//       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-//       C_Compute_dWt_Delta(cn, ru, su);  
-//     }
-//   }
+class LEABRA_API LeabraXCALSpikeConSpec : public LeabraConSpec {
+  // XCAL purely spiking learning rule based on Urakubo et al 2008 -- computes a postsynaptic calcium value that drives learning using the XCAL_C fully continous-time learning parameters
+INHERITED(LeabraConSpec)
+public:
+  XCALSpikeSpec	xcal_spike;	// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL_C XCAL (eXtended Contrastive Attractor Learning) spike-based fully continuous-time learning parameters
 
-//   override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-//     for(int i=0; i<cg->size; i++) {
-//       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-//       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-//       C_Compute_dWt_Delta_CAL(cn, ru, su);  
-//     }
-//   }
+  inline void C_Compute_SRAvg_spike(LeabraSpikeCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    // this happens every cycle, and is the place to compute nmda and ca -- expensive!! :(
+    float dnmda = -cn->nmda * xcal_spike.nmda_rate;
+    float dca = (cn->nmda * (xcal_spike.ca_v_nmda * ru->v_m_dend + xcal_spike.ca_nmda))
+      - (cn->ca * xcal_spike.ca_rate);
+    if(su->act > 0.0f) { dnmda += xcal_spike.k_ca / (xcal_spike.k_ca + cn->ca); }
+    if(ru->act > 0.0f) { dca += xcal_spike.ca_vgcc; }
+    cn->nmda += dnmda;
+    cn->ca += dca;
+    float sr = cn->ca;
+    cn->sravg_s += xcal_c.s_dt * (sr - cn->sravg_s);
+    cn->sravg_m += xcal_c.m_dt * (cn->sravg_s - cn->sravg_m);
+  }
 
-//   override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-//     for(int i=0; i<cg->size; i++) {
-//       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-//       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-//       C_Compute_dWt_Delta_CAL(cn, ru, su);  
-//     }
-//   }
+  inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
+    if(!xcalm.do_comp_sravg) return;
 
-//   TA_SIMPLE_BASEFUNS(LeabraXCALSpikeConSpec);
-// protected:
-//   void	UpdateAfterEdit_impl();
-// private:
-//   void 	Initialize();
-//   void	Destroy()		{ };
-// };
+    if(learn_rule == CTLEABRA_XCAL_C) {
+      CON_GROUP_LOOP(cg, C_Compute_SRAvg_spike((LeabraSpikeCon*)cg->OwnCn(i), 
+					       (LeabraUnit*)cg->Un(i), su));
+    }
+    else {
+      inherited::Compute_SRAvg(cg, su, do_s);
+    }
+  }
+
+  inline void C_Compute_dWt_CtLeabraXCAL_C_spike(LeabraCon* cn,
+								LeabraUnit* ru, LeabraUnit* su) {
+    float srs = cn->sravg_s;
+    float srm = cn->sravg_m;
+    float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
+    cn->dwt += cur_lrate * (xcal.svm_mix * xcal.dWtFun(sm_mix, srm) + 
+			    xcal.mvl_mix * xcal.dWtFun(sm_mix, ru->l_thr));
+  }
+
+  inline void Compute_dWt_CtLeabraXCAL_C(LeabraSendCons* cg, LeabraUnit* su) {
+    //  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+    //  LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
+
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      C_Compute_dWt_CtLeabraXCAL_C_spike((LeabraCon*)cg->OwnCn(i), ru, su);
+    }
+  }
+
+  virtual void	GraphXCALSpikeSim(DataTable* graph_data = NULL,
+		  float rate_min=2.0f, float rate_max=100.0f, float rate_inc=2.0f,
+		  float max_time=500.0f, int reps_per_point=5,
+		  float v_m_dend_dt = 6.0f, float v_m_dend = 0.3f);
+  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph a simulation of the XCAL spike function by running a simulated synapse with poisson firing rates sampled over given range, with given samples per point, and other parameters as given
+
+  TA_SIMPLE_BASEFUNS(LeabraXCALSpikeConSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
 
 
 ////////////////////////////////////////////////////////////////////////
