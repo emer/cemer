@@ -471,7 +471,7 @@ public:
   // accumulate sender-receiver activation product average -- medium (trial-level) time scale
   inline void C_Compute_SRAvg_ms(LeabraCon* cn, float ru_act, float su_act);
   // accumulate sender-receiver activation product average -- medium (trial-level) and short (plus phase) time scales
-  inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s);
+  inline virtual void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s);
   // accumulate sender-receiver activation product average -- only for CtLeabraCAL
 
   inline void C_Trial_Init_SRAvg(LeabraCon* cn);

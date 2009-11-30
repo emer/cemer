@@ -958,8 +958,6 @@ public:
   }
 
   inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
-    if(!xcalm.do_comp_sravg) return;
-
     if(learn_rule == CTLEABRA_XCAL_C) {
       CON_GROUP_LOOP(cg, C_Compute_SRAvg_spike((LeabraSpikeCon*)cg->OwnCn(i), 
 					       (LeabraUnit*)cg->Un(i), su));
