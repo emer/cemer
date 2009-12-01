@@ -352,6 +352,7 @@ void XCALSpikeSpec::Initialize() {
   ca_nmda = 0.1f;
   ca_dt = 20.0f;
   ca_rate = 1.0f / ca_dt;
+  ca_off = 0.1f;
   nmda_dt = 40.0f;
   nmda_rate = 1.0f / nmda_dt;
 }
@@ -360,6 +361,13 @@ void XCALSpikeSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   ca_rate = 1.0f / ca_dt;
   nmda_rate = 1.0f / nmda_dt;
+}
+
+void XCALSpikeSpec::RescaleParams(float div_by) {
+  k_ca = 0.3f / div_by;
+  ca_vgcc = 1.3f / div_by;
+  ca_v_nmda = 0.0223f / div_by;
+  ca_nmda = 0.5 / div_by;
 }
 
 void LeabraXCALSpikeConSpec::Initialize() {
@@ -371,32 +379,32 @@ void LeabraXCALSpikeConSpec::UpdateAfterEdit_impl() {
   xcal_spike.UpdateAfterEdit();
 }
 
+void LeabraXCALSpikeConSpec::RescaleXCALSpikeParams(float div_by) {
+  xcal_spike.RescaleParams(div_by);
+  UpdateAfterEdit();		// propagate changes
+}
+
 void LeabraXCALSpikeConSpec::GraphXCALSpikeSim(DataTable* graph_data,
 		  float rate_min, float rate_max, float rate_inc,
 		  float max_time, int reps_per_point,
-	       float v_m_dend_dt, float v_m_dend) {
+	       float v_m_dend_dt, float v_m_dend, float lin_norm) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_XCALSpikeSim", true);
   }
-  DataTable* sim_data = proj->GetNewAnalysisDataTable(name + "_XCALSpikeSim_Tmp", true);
+  String sim_data_name = name + "_XCALSpikeSim_Tmp";
+  DataTable* sim_data = proj->GetNewAnalysisDataTable(sim_data_name, true);
 
 //   graph_data->StructUpdate(true);
 //   graph_data->ResetData();
   int idx;
-//   DataCol* r_rate = graph_data->FindMakeColName("r_rate", idx, VT_FLOAT);
-//   DataCol* s_rate = graph_data->FindMakeColName("s_rate", idx, VT_FLOAT);
-//   DataCol* ca_avg = graph_data->FindMakeColName("ca_avg", idx, VT_FLOAT);
-//   r_rate->SetUserData("MIN", 0.0f);
-//   r_rate->SetUserData("MAX", rate_max);
-//   s_rate->SetUserData("MIN", 0.0f);
-//   s_rate->SetUserData("MAX", rate_max);
 
 //   DataTable sim_data;
 //   taBase::Ref(sim_data);
   DataCol* sim_r_rate = sim_data->FindMakeColName("r_rate", idx, VT_FLOAT);
   DataCol* sim_s_rate = sim_data->FindMakeColName("s_rate", idx, VT_FLOAT);
   DataCol* sim_ca_avg = sim_data->FindMakeColName("ca_avg", idx, VT_FLOAT);
+  DataCol* sim_sr_avg = sim_data->FindMakeColName("sr_avg", idx, VT_FLOAT);
 
   float s_rate, r_rate;
   for(r_rate = rate_min; r_rate <= rate_max; r_rate += rate_inc) {
@@ -412,26 +420,34 @@ void LeabraXCALSpikeConSpec::GraphXCALSpikeSim(DataTable* graph_data,
 	float time = 0.0f;
 	bool s_act = false;
 	bool r_act = false;
+	float s_avg = 0.0f;
+	float r_avg = 0.0f;
 	for(time = 0.0f; time < max_time; time += 1.0f) {
 	  s_act = (bool)Random::Poisson(s_p);
 	  r_act = (bool)Random::Poisson(r_p);
-	  if(r_act) 
+	  if(r_act) {
 	    vmd += v_m_dend;
+	    r_avg += 1.0f;
+	  }
 	  vmd -= vmd / v_m_dend_dt;
 	  float dnmda = -nmda * xcal_spike.nmda_rate;
 	  float dca = (nmda * (xcal_spike.ca_v_nmda * vmd + xcal_spike.ca_nmda))
 	    - (ca * xcal_spike.ca_rate);
-	  if(s_act) { dnmda += xcal_spike.k_ca / (xcal_spike.k_ca + ca); }
+	  if(s_act) { s_avg += 1.0f; dnmda += xcal_spike.k_ca / (xcal_spike.k_ca + ca); }
 	  if(r_act) { dca += xcal_spike.ca_vgcc; }
 	  nmda += dnmda;
 	  ca += dca;
 	  ca_sum += ca;
 	}
 	ca_avg = ca_sum / max_time;
+	s_avg *= lin_norm;
+	r_avg *= lin_norm;
+	float sr_avg = s_avg * r_avg;
 	sim_data->AddBlankRow();
 	sim_r_rate->SetValAsFloat(r_rate, -1);
 	sim_s_rate->SetValAsFloat(s_rate, -1);
 	sim_ca_avg->SetValAsFloat(ca_avg, -1);
+	sim_sr_avg->SetValAsFloat(sr_avg, -1);
       }
     }
   }
@@ -443,9 +459,10 @@ void LeabraXCALSpikeConSpec::GraphXCALSpikeSim(DataTable* graph_data,
   dgs.AddAllColumns(sim_data);
   dgs.ClearColumns();
 
-  ((DataGroupEl*)dgs.ops[0])->agg.op = Aggregate::GROUP;
-  ((DataGroupEl*)dgs.ops[1])->agg.op = Aggregate::GROUP;
-  ((DataGroupEl*)dgs.ops[2])->agg.op = Aggregate::MEAN;
+  ((DataGroupEl*)dgs.ops[0])->agg.op = Aggregate::GROUP; // r_rate
+  ((DataGroupEl*)dgs.ops[1])->agg.op = Aggregate::GROUP; // s_rate
+  ((DataGroupEl*)dgs.ops[2])->agg.op = Aggregate::MEAN; // ca_avg
+  ((DataGroupEl*)dgs.ops[3])->agg.op = Aggregate::MEAN; // sr_avg
 
   taDataProc::Group(graph_data, sim_data, &dgs);
   dgs.ClearColumns();
@@ -457,8 +474,12 @@ void LeabraXCALSpikeConSpec::GraphXCALSpikeSim(DataTable* graph_data,
   gp_s_rate->SetUserData("Z_AXIS", true);
   DataCol* gp_ca_avg = graph_data->FindMakeColName("ca_avg", idx, VT_FLOAT);
   gp_ca_avg->SetUserData("PLOT_1", true);
+  DataCol* gp_sr_avg = graph_data->FindMakeColName("sr_avg", idx, VT_FLOAT);
+  gp_sr_avg->SetUserData("PLOT_2", true);
 
   graph_data->FindMakeGraphView();
+
+  proj->data.RemoveLeafName(sim_data_name); // nuke it
 }
 
 
