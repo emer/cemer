@@ -934,18 +934,16 @@ class LEABRA_API XCALSpikeSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCAL purely spiking learning rule based on Urakubo et al 2008
 INHERITED(taOBase)
 public:
-  float		k_ca;	  // #DEF_0.06 (.3 in original units) effective Ca that gives 50% inhibition of maximal NMDA receptor activity
-  float		ca_vgcc;  // #DEF_0.26 (1.3 in original units) Ca influx resulting from receiver spiking (due to voltage gated calcium channels)
-  float		ca_v_nmda; // #DEF_0.00446 (0.0223 in original units) Ca influx due to membrane-potential (voltage) driven NMDA receptor activation
-  float		ca_nmda;   // #DEF_0.1 (0.5 in original units) Ca influx from NMDA that is NOT driven by membrane potential
+  float		ca_norm;	// #DEF_5 normalization factor for ca -- divide all ca constants by this amount
+  float		k_ca;	  // #READ_ONLY #SHOW (.3 in original units) effective Ca that gives 50% inhibition of maximal NMDA receptor activity
+  float		ca_vgcc;  // #READ_ONLY #SHOW (1.3 in original units) Ca influx resulting from receiver spiking (due to voltage gated calcium channels)
+  float		ca_v_nmda; // #READ_ONLY #SHOW (0.0223 in original units) Ca influx due to membrane-potential (voltage) driven NMDA receptor activation
+  float		ca_nmda;   // #READ_ONLY #SHOW (0.5 in original units) Ca influx from NMDA that is NOT driven by membrane potential
   float		ca_dt;     // #DEF_20 time constant (in msec) for decay of Ca 
   float		ca_rate;   // #READ_ONLY #NO_SAVE rate constant (1/dt) for decay of Ca 
   float		ca_off;	   // #DEF_0.1 offset for ca -- subtract this amount from ca (clipped to zero) for learning computations
   float		nmda_dt;   // #DEF_40 time constant (in msec) for decay of NMDA receptor conductance
   float		nmda_rate; // #READ_ONLY #NO_SAVE rate constant (1/dt) for decay of NMDA receptor conductance
-
-  virtual void 	RescaleParams(float div_by);
-  // #BUTTON rescale xcal params to divide original Urakubo ones by given factor
 
   TA_SIMPLE_BASEFUNS(XCALSpikeSpec);
 protected:
@@ -1027,9 +1025,6 @@ public:
 		  float max_time=500.0f, int reps_per_point=5,
 		  float v_m_dend_dt = 6.0f, float v_m_dend = 0.3f, float lin_norm=0.01f);
   // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph a simulation of the XCAL spike function by running a simulated synapse with poisson firing rates sampled over given range, with given samples per point, and other parameters as given
-
-  virtual void 	RescaleXCALSpikeParams(float div_by);
-  // #BUTTON rescale xcal params to divide original Urakubo ones by given factor
 
   TA_SIMPLE_BASEFUNS(LeabraXCALSpikeConSpec);
 protected:

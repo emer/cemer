@@ -346,10 +346,11 @@ void LeabraDeltaConSpec::UpdateAfterEdit_impl() {
 //   LeabraXCALSpikeConSpec
 
 void XCALSpikeSpec::Initialize() {
-  k_ca = 0.06f;
-  ca_vgcc = 0.26f;
-  ca_v_nmda = 0.00446f;
-  ca_nmda = 0.1f;
+  ca_norm = 5.0f;
+  k_ca = 0.3f / ca_norm;
+  ca_vgcc = 1.3f / ca_norm;
+  ca_v_nmda = 0.0223f / ca_norm;
+  ca_nmda = 0.5 / ca_norm;
   ca_dt = 20.0f;
   ca_rate = 1.0f / ca_dt;
   ca_off = 0.1f;
@@ -359,15 +360,12 @@ void XCALSpikeSpec::Initialize() {
 
 void XCALSpikeSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  k_ca = 0.3f / ca_norm;
+  ca_vgcc = 1.3f / ca_norm;
+  ca_v_nmda = 0.0223f / ca_norm;
+  ca_nmda = 0.5 / ca_norm;
   ca_rate = 1.0f / ca_dt;
   nmda_rate = 1.0f / nmda_dt;
-}
-
-void XCALSpikeSpec::RescaleParams(float div_by) {
-  k_ca = 0.3f / div_by;
-  ca_vgcc = 1.3f / div_by;
-  ca_v_nmda = 0.0223f / div_by;
-  ca_nmda = 0.5 / div_by;
 }
 
 void LeabraXCALSpikeConSpec::Initialize() {
@@ -377,11 +375,6 @@ void LeabraXCALSpikeConSpec::Initialize() {
 void LeabraXCALSpikeConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   xcal_spike.UpdateAfterEdit();
-}
-
-void LeabraXCALSpikeConSpec::RescaleXCALSpikeParams(float div_by) {
-  xcal_spike.RescaleParams(div_by);
-  UpdateAfterEdit();		// propagate changes
 }
 
 void LeabraXCALSpikeConSpec::GraphXCALSpikeSim(DataTable* graph_data,
