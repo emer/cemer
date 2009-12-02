@@ -2383,14 +2383,14 @@ void taiEditDataHost::GetButtonImage(bool force) {
 }
 
 void taiEditDataHost::GetImage(bool force) {
+  if ((host_type != HT_CONTROL) || (frmMethButtons != NULL))
+    GetButtonImage(force); // does its own visible check
   if (!force && !mwidget->isVisible()) return;
 //   cerr << "GetImage start on: " << typ->name << endl;
   if ((typ == NULL) || (root == NULL)) return;
   if (state >= ACCEPTED ) return;
   //note: we could be invisible, so we only do what is visible
   // note: must do this for SeleEdit guys!
-  if ((host_type != HT_CONTROL) || (frmMethButtons != NULL))
-    GetButtonImage(force); // does its own visible check
   if (!mwidget) return; // huh?
   if (!force && !mwidget->isVisible()) return;
 //   cerr << "GetImage do on: " << typ->name << endl;

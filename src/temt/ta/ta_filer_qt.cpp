@@ -31,6 +31,7 @@
 #include <QFrame>
 #include <QLayout>
 #include <QWidget>
+#include <QUrl>
 
 //////////////////////////////////
 //  taiFileDialogExtension	//
@@ -128,8 +129,20 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
 
     fde = new taiFileDialogExtension();
     fd->setExtension(fde);
-    
+
+#ifdef TA_OS_MAC    
+    // native dialog does not support compression stuff
     fd->setOptions(QFileDialog::DontUseNativeDialog);
+#endif
+
+    QList<QUrl> urls;
+    taRootBase* root = tabMisc::root;
+    for(int i=0; i<root->sidebar_paths.size; i++) {
+      String sbp = root->sidebar_paths[i];
+      if(sbp.empty()) continue;
+      urls << QUrl::fromLocalFile(sbp);
+    }
+    fd->setSidebarUrls(urls);
   }
 
   fd->setDirectory(eff_dir);
@@ -188,6 +201,15 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   rval = fd->exec();
   QApplication::restoreOverrideCursor();
   if (rval == QDialog::Accepted) {
+
+    // first persist the sidebars
+    QList<QUrl> urls = fd->sidebarUrls();
+    taRootBase* root = tabMisc::root;
+    for(int i=0; i<urls.count(); i++) {
+      String sbp = urls[i].toLocalFile();
+      root->sidebar_paths.AddUnique(sbp); // save it!
+    }
+
     //note: Qt4 requires us to get the file indirectly, from the list
     QStringList sfs(fd->selectedFiles());
     if (sfs.isEmpty()) goto exit; // shouldn't happen!

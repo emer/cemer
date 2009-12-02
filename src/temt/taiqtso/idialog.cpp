@@ -15,7 +15,26 @@
 
 #include "idialog.h"
 
+#include <QApplication>
+#include <QPointer>
+
 iDialog::iDialog(QWidget* parent, Qt::WindowFlags f) : QDialog(parent, f) {
+}
+
+int iDialog::exec() {
+  // we're losing focus here so need to restore it!!
+#ifdef TA_OS_MAC
+  QPointer<QWidget> m_prev_active = QApplication::activeWindow();
+#endif
+  int rval = QDialog::exec();
+#ifdef TA_OS_MAC
+  if((bool)m_prev_active) {
+//     QApplication::setActiveWindow(m_prev_active);
+    // note: above does NOT work! -- likely source of bug in cocoa 4.6.0
+    m_prev_active->activateWindow();
+  }
+#endif
+  return rval;
 }
 
 void iDialog::keyPressEvent(QKeyEvent *e) {

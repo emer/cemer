@@ -1024,6 +1024,7 @@ MainWindowViewer* taProject::GetDefaultProjectViewer() {
 
 void taProject::PostLoadAutos() {
   DoView();
+  setDirty(false);		// nobody should start off dirty!
 }
 
 void taProject::DoView() {
@@ -1464,12 +1465,14 @@ void taRootBase::InitLinks() {
   taBase::Own(objs, this);
   taBase::Own(recent_files, this);
   taBase::Own(recent_paths, this);
+  taBase::Own(sidebar_paths, this);
   taiMimeFactory_List::setInstance(&mime_factories);
   AddTemplates(); // note: ok that this will be called here, before subclass has finished its own
   AddDocs(); // note: ok that this will be called here, before subclass has finished its own
 }
 
 void taRootBase::CutLinks() {
+  sidebar_paths.CutLinks();
   recent_paths.CutLinks();
   recent_files.CutLinks();
   objs.CutLinks();
@@ -2484,6 +2487,14 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   if (instance()->recent_paths.FindEl(taMisc::app_dir) < 0) {
     instance()->AddRecentPath(taMisc::app_dir);
   }
+
+  // and sidebar paths
+  instance()->sidebar_paths.AddUnique(taMisc::app_dir);
+  String desktop_path = QDesktopServices::storageLocation(QDesktopServices::DesktopLocation);
+  String docs_path = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+  instance()->sidebar_paths.AddUnique(desktop_path);
+  instance()->sidebar_paths.AddUnique(docs_path);
+
   return true;
 }
   	

@@ -136,22 +136,26 @@ taBase_FunCallList  tabMisc::delayed_funcalls;
 ContextFlag  tabMisc::in_wait_proc;
 
 void tabMisc::DelayedClose(taBase* obj) {
+  if(taMisc::quitting) return;
   taMisc::do_wait_proc = true;
   delayed_close.AddUnique(obj); // only add once!!!
 }
 
 void tabMisc::DelayedUpdateAfterEdit(taBase* obj) {
+  if(taMisc::quitting) return;
   taMisc::do_wait_proc = true;
   delayed_updateafteredit.Add(obj);
 }
 
 void tabMisc::DelayedFunCall_gui(taBase* obj, const String& fun_name) {
+  if(taMisc::quitting) return;
   if(!taMisc::gui_active) return;
   taMisc::do_wait_proc = true;
   delayed_funcalls.AddBaseFun(obj, fun_name);
 }
 
 void tabMisc::DelayedFunCall_nogui(taBase* obj, const String& fun_name) {
+  if(taMisc::quitting) return;
   taMisc::do_wait_proc = true;
   delayed_funcalls.AddBaseFun(obj, fun_name);
 }
