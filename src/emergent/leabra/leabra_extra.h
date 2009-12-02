@@ -970,7 +970,7 @@ public:
   inline void C_Compute_SRAvg_spike(LeabraSpikeCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     // this happens every cycle, and is the place to compute nmda and ca -- expensive!! :(
     float dnmda = -cn->nmda * xcal_spike.nmda_rate;
-    float dca = (cn->nmda * (xcal_spike.ca_v_nmda * ru->v_m_dend + xcal_spike.ca_nmda))
+    float dca = (cn->nmda * (xcal_spike.ca_v_nmda * ru->vm_dend + xcal_spike.ca_nmda))
       - (cn->ca * xcal_spike.ca_rate);
     if(su->act > 0.0f) { dnmda += xcal_spike.k_ca / (xcal_spike.k_ca + cn->ca); }
     if(ru->act > 0.0f) { dca += xcal_spike.ca_vgcc; }

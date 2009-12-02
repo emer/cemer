@@ -128,6 +128,8 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
 
     fde = new taiFileDialogExtension();
     fd->setExtension(fde);
+    
+    fd->setOptions(QFileDialog::DontUseNativeDialog);
   }
 
   fd->setDirectory(eff_dir);

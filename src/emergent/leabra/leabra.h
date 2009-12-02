@@ -106,7 +106,9 @@ class LeabraProject;
     code \
   } 
   
-// todo: transition to using this for dt values!
+// NOTE: following is actually not that useful in practice -- better to just add
+// equivalent logic and _time or _rate values directly into spec of interest
+// definitely good to show both reps!
 
 class LEABRA_API DtSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Math time constant specification -- shows both multiplier and time constant (inverse) value 
@@ -783,12 +785,15 @@ public:
 
   float		clamp_max_p;	// #DEF_0.11 #MIN_0 #MAX_1 maximum probability of spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall probability of firing a spike -- distribution is determined by clamp_type
   ClampType	clamp_type;	// how to generate spikes when layer is hard clamped -- in many cases soft clamping may work better
-  float		v_m_r;		// #DEF_0;0.15 post-spiking membrane potential to reset to, produces refractory effect if lower than vm_init
-  float		v_m_dend;	// #DEF_0.3 how much to add to v_m_dend value after every spike
-  DtSpec	v_m_dend_dt;	// rate constant for updating the v_m_dend value (used for spike-based learning) -- default is 6 msec (time)
+  float		vm_r;		// #DEF_0;0.15 #AKA_v_m_r post-spiking membrane potential to reset to, produces refractory effect if lower than vm_init
+  float		vm_dend;	// #DEF_0.3 how much to add to vm_dend value after every spike
+  float		vm_dend_dt;	// #DEF_0.16 rate constant for updating the vm_dend value (used for spike-based learning)
+  float		vm_dend_time;	// #READ_ONLY #SHOW time constant (in msec, 1/vm_dend_dt) for updating the vm_dend value (used for spike-based learning)
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(SpikeMiscSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -799,13 +804,14 @@ class LEABRA_API ActAdaptSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		on;		// apply adaptation?
-  DtSpec	dt;		// #CONDSHOW_ON_on time constant of the adaptation dynamics -- if the vm time step is considered to be 1 msec, then rate values of .02 to .1 (10 to 50 msec) are typical, with .02 being a regular spiking neuron, and .1 is fast spiking
-  float		v_m_gain;	// #CONDSHOW_ON_on #MIN_0 #MAX_1 gain on the membrane potential v_m driving the adapt adaptation variable -- values around .1 are typical (resting v_m is subtracted from v_m for this, so that 0 adaptation occurs at rest)
+  float		dt_rate;	// #CONDSHOW_ON_on rate constant of the adaptation dynamics -- if the vm time step is considered to be 1 msec, then rate values of .02 to .1 (10 to 50 msec) are typical, with .02 being a regular spiking neuron, and .1 is fast spiking
+  float		dt_time;	// #CONDSHOW_ON_on #READ_ONLY #SHOW time constant (in msec = 1/dt_rate) of the adaptation dynamics
+  float		vm_gain;	// #CONDSHOW_ON_on #MIN_0 #MAX_1 gain on the membrane potential v_m driving the adapt adaptation variable -- values around .1 are typical (resting v_m is subtracted from v_m for this, so that 0 adaptation occurs at rest)
   float		spike_gain;	// #CONDSHOW_ON_on value to add to the adapt adaptation variable after spiking -- range is around .01 for regular spiking neurons (strong adaptation) and lower -- for rate code activations, uses act value weighting and only computes every interval
   int		interval;	// #CONDSHOW_ON_on how many time steps between applying spike_gain for rate-coded activation function -- simulates the intrinsic delay obtained with spiking dynamics
 
   float	Compute_dAdapt(float vm, float adapt) {
-    return dt.rate * (v_m_gain * vm - adapt);
+    return dt_rate * (vm_gain * vm - adapt);
   }
   // compute the change in adapt given vm (with rest value already subtracted off) and adapt inputs
 
@@ -1340,7 +1346,7 @@ public:
   LeabraUnitChans gc;		// #DMEM_SHARE_SET_1 #NO_SAVE #CAT_Activation current unit channel conductances
   float		I_net;		// #NO_SAVE #CAT_Activation net current produced by all channels
   float		v_m;		// #NO_SAVE #CAT_Activation membrane potential
-  float		v_m_dend;	// #NO_SAVE #CAT_Activation dendritic membrane potential -- reflects back-propagated spike values in spiking mode -- these are not subject to immediate AHP and thus decay exponentially, and are used for learning
+  float		vm_dend;	// #NO_SAVE #CAT_Activation dendritic membrane potential -- reflects back-propagated spike values in spiking mode -- these are not subject to immediate AHP and thus decay exponentially, and are used for learning
   float		adapt;		// #NO_SAVE #CAT_Activation adaptation factor -- driven by both sub-threshold membrane potential and spiking activity -- subtracts directly from the membrane potential on every time step
   float		noise;		// #NO_SAVE #CAT_Activation noise value added to unit (noise_type on unit spec determines where it is added) -- this can be used in learning in some cases
   float 	dav;		// #VIEW_HOT #CAT_Activation dopamine value (da is delta activation) which modulates activations (e.g., via accom and hyst currents) to then drive learning
