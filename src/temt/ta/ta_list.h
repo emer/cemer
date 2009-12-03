@@ -1173,7 +1173,7 @@ public:
 
   inline bool GetModified(int idx)
   { int aidx = idx / sizeof(int);  int bit = idx % sizeof(int); int mask = 1 << bit;
-    int curval = modified.FastEl(aidx); return curval & mask; }
+    int curval = modified.FastEl(aidx); return (bool)(curval & mask); }
 
   inline void AllocModified()
   { int trg_n = (lines+2) / sizeof(int); modified.SetSize(trg_n+1); }

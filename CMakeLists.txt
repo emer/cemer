@@ -269,6 +269,7 @@ if (WIN32)
   file(GLOB OUR_3RDPARTY_FILES 
     "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bin/*.dll"
     "${COINDIR}/bin/*.dll"
+    "${QTDIR}/bin/*.dll"
   )
   install(FILES ${OUR_3RDPARTY_FILES}
     DESTINATION bin
