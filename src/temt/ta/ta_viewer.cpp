@@ -628,35 +628,17 @@ void TopLevelViewer::WindowClosing(CancelOp& cancel_op) {
   ResolveChanges(cancel_op); // note, may have been done earlier
   if (cancel_op == CO_CANCEL) return;
   
-  //root win is special, since closing it forces shutdown
-  // if only implicitly closing it, ask user, and then maybe force shutdown
+  // root win is special, since closing it forces shutdown
   if (isRoot()) {
     switch (taMisc::quitting) {
     case taMisc::QF_RUNNING: {
-//       int chs = taMisc::Choice("Closing this window will end the application.", "&Quit", "&Save All and Quit", "&Cancel");
-//       switch (chs) {
-//       case 1:
-//         taMisc::quitting = taMisc::QF_USER_QUIT; // tentative
-//         taiMiscCore::OnQuitting(cancel_op); // saves all edits etc.; restores running state if cancelled
-//         if (cancel_op == CO_CANCEL) return;
-//         if (tabMisc::root) tabMisc::root->SaveAll();
-//         //fall through
-//       case 0: {
-        // to avoid bug we send a msg to main obj, then cancel here
-        QEvent* ev = new QEvent((QEvent::Type)taiMiscCore::CE_QUIT);
-        QCoreApplication::postEvent(taiM, ev);
-       // taiMiscCore::Quit(CO_NOT_CANCELLABLE); // no going back now
-        cancel_op = CO_CANCEL;
-	return;
+      // to avoid bug we send a msg to main obj, then cancel here
+      QEvent* ev = new QEvent((QEvent::Type)taiMiscCore::CE_QUIT);
+      QCoreApplication::postEvent(taiM, ev);
+      // taiMiscCore::Quit(CO_NOT_CANCELLABLE); // no going back now
+      cancel_op = CO_CANCEL;
+      return;
     }
-//         } return;
-//         //WARNING: undefined after this point -- do not add any more code after calling Quit
-//       case 2:
-//         cancel_op = CO_CANCEL;
-//         taMisc::quitting = taMisc::QF_RUNNING; // in case anyone set
-//         return;
-//       } 
-//     } break;
     case taMisc::QF_USER_QUIT: 
       // ok, upgrade to non-cancellable
       taMisc::quitting = taMisc::QF_FORCE_QUIT;

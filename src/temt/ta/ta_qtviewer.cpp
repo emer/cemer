@@ -4101,7 +4101,7 @@ void iMainWindowViewer::fileClose() {
   if (!proj) return;
   // Check for dirty/save
   if (proj->isDirty()) {
-    int chs= taMisc::Choice("The project has unsaved changes -- do you want to save before closing it?",
+    int chs= taMisc::Choice("The project: " + taMisc::GetFileFmPath(proj->file_name) + " has unsaved changes -- do you want to save before closing it?",
         "&Save", "&Don't Save", "&Cancel");
   
     switch (chs) {
@@ -4471,10 +4471,10 @@ void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
     bool forced = (cancel_op == CO_NOT_CANCELLABLE);
     int chs;
     if (forced)
-      chs= taMisc::Choice("The project has unsaved changes -- do you want to save before closing this window?",
+      chs= taMisc::Choice("The project: " + taMisc::GetFileFmPath(proj->file_name) + " has unsaved changes -- do you want to save before closing this window?",
         "&Save", "&Don't Save");
     else 
-      chs= taMisc::Choice("The project has unsaved changes -- do you want to save before closing this window?",
+      chs= taMisc::Choice("The project: " + taMisc::GetFileFmPath(proj->file_name) + " has unsaved changes -- do you want to save before closing this window?",
         "&Save", "&Don't Save", "&Cancel");
 
     switch (chs) {
