@@ -602,10 +602,9 @@ public:
     ES_ACTIVE_CONTROL, // #LABEL_Active_Control only display the currently-active edit control, with the rest of the information displayed as formatted text values -- this is much faster and is preferred for the select edit (control panel) displays, which otherwise can really slow down the system
   };
   
-  enum SimageAvail { // whether simage is available or not
-    SA_UNKNOWN, // simage availability not known yet
-    SA_AVAIL, // simage known to be available
-    SA_UNAVAIL, // simage not available
+  enum HelpDetail { // level of detail for generated help information
+    HD_DEFAULT,    	// standard level of help detail
+    HD_DETAILS, 	// full programming details -- offsets, comments, etc
   };
   
   static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "emergent" or "css"
@@ -657,6 +656,8 @@ public:
   static int		tree_indent; 	// #SAVE #CAT_GUI #EXPERT number of pixels to indent in the tree browser gui interface
   static int		program_editor_width; 	// #SAVE #CAT_GUI #EXPERT width in characters of the main listing field of the program editor -- if this is too large, then you can't see the description comments
   static int		program_editor_lines; 	// #SAVE #CAT_GUI #MIN_4 #MAX_20 default number of lines in the mini editor within the program editor, where program elements and other objects are edited.
+
+  static HelpDetail	help_detail; 	// #SAVE #CAT_GUI #EXPERT level of detail to display in the help system
 
   static int		max_menu;	// #SAVE #CAT_GUI #EXPERT maximum number of items in a menu -- largely obsolete at this point
   static int		search_depth;   // #SAVE #CAT_GUI #EXPERT depth recursive find will search for a path object
@@ -754,7 +755,6 @@ public:
 
   static String		edit_cmd;	// #SAVE #CAT_File how to run editor
   
-  static SimageAvail	simage_avail;	// #NO_SAVE #SHOW #READ_ONLY #HIDDEN 
   ////////////////////////////////////////////////////////
   // 	Args
 
@@ -1931,8 +1931,8 @@ public:
   ostream& 	Output(ostream& strm, void* base, int indent) const;
   ostream& 	OutputR(ostream& strm, void* base, int indent) const;
 
-  String GetHTML(int detail_level) const;
-  // gets an HTML representation of this object -- for help view etc -- detail level: 0 = just name and type, 1 = + description, 2 = + options & offsets (full programming stuff)
+  String 	GetHTML(bool gendoc=false, bool short_fmt=false) const;
+  // gets an HTML representation of this object -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
 
   // for dump files
   bool		DumpMember(void* par); 		// decide whether to dump or not
@@ -1985,8 +1985,8 @@ public:
   override void	SetValVar(const Variant& val, void* base, void* par = NULL);
     // note: par is only needed really needed for owned taBase ptrs)
 
-  String GetHTML(int detail_level) const;
-  // gets an HTML representation of this object -- for help view etc -- detail level: 0 = just name and type, 1 = + description, 2 = + options & offsets (full programming stuff)
+  String 	GetHTML(bool gendoc=false, bool short_fmt=false) const;
+  // gets an HTML representation of this object -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
   
 private:
   void 		Initialize();
@@ -2050,8 +2050,8 @@ public:
   const String		ParamsAsString() const; // returns what would be in () for a definition
   bool			ShowMethod(taMisc::ShowMembs show = taMisc::USE_SHOW_GUI_DEF) const;
 
-  String GetHTML(int detail_level) const;
-  // gets an HTML representation of this object -- for help view etc -- detail level: 0 = just name and type (args), 1 = + description, 2 = + options (full programming stuff)
+  String 	GetHTML(bool gendoc=false, bool short_fmt=false) const;
+  // gets an HTML representation of this object -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
 
 protected:
   mutable byte	show_any; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
@@ -2380,12 +2380,12 @@ public:
   ostream&  	OutputInherit(ostream& strm) const;
   ostream&  	OutputInherit_impl(ostream& strm) const;
 
-  String 	GetHTML(int detail_level = 0) const;
-  // gets an HTML representation of this type -- for help view etc -- detail level: 0,1 = basic user information, 2 = + full programming details (expert mode)
-  String	GetHTMLLink() const;
+  String 	GetHTML(bool gendoc=false) const;
+  // gets an HTML representation of this type -- for help view etc -- gendoc = external html file rendering instead of internal help browser
+  String	GetHTMLLink(bool gendoc=false) const;
   // get HTML code for a link to this type -- only generates a link if InheritsNonAtomicClass -- otherwise it just returns the Get_C_Name representation
-  String 	GetHTMLSubType(int detail_level) const;
-  // gets an HTML representation of a sub type (typdef or enum) -- for help view etc -- detail level: 0 = just name and type, 1 = + description, 2 = + options etc (full programming stuff)
+  String 	GetHTMLSubType(bool gendoc=false, bool short_fmt=false) const;
+  // gets an HTML representation of a sub type (typdef or enum) -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
 
   // saving and loading of type instances to/from streams
   int		Dump_Save(ostream& strm, void* base, void* par=NULL, int indent=0);

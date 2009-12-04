@@ -51,14 +51,13 @@ bool taGenDoc::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
   return false;
 }
 
-void taGenDoc::GenDoc(TypeSpace* ts, int detail_level) {
-
+void taGenDoc::GenDoc(TypeSpace* ts) {
   for(int i=0;i<ts->size;i++) {
     TypeDef* td = ts->FastEl(i);
     if (TypeDef_Filter_Type(td, ts)) continue;
 
     String fnm = td->name + ".html";
-    String html = td->GetHTML(detail_level);
+    String html = td->GetHTML(true); // gendoc = true
     fstream strm;
     strm.open(fnm, ios::out);
     strm << html << endl;

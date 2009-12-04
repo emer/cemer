@@ -981,32 +981,14 @@ bool SoImageEx::SetTextureImage(SoTexture2* sotx, const QImage& img) {
 }
 
 bool SoImageEx::SetTextureFile(SoTexture2* sotx, const String& fname) {
-  // if we haven't set any textures yet, try using simage
-  switch (taMisc::simage_avail) {
-  case taMisc::SA_UNKNOWN:
-    // try using simage
-    if (SetTextureFile_impl(sotx, fname, true)) {
-      taMisc::simage_avail = taMisc::SA_AVAIL;
-      return true;
-    }
-    // ok, that didn't work, but is it a bad file? try Qt...
-    if (SetTextureFile_impl(sotx, fname, false)) {
-      taMisc::simage_avail = taMisc::SA_UNAVAIL;
-      return true;
-    }
-    return false; // note: don't change avail state, since probably bad file
-  case taMisc::SA_AVAIL:
-    return SetTextureFile_impl(sotx, fname, true);
-  case taMisc::SA_UNAVAIL:
-    return SetTextureFile_impl(sotx, fname, false);
-  }
-  return false; // compiler food, should only be 3 cases per above
+  // don't use simage under any condition
+  return SetTextureFile_impl(sotx, fname, false);
 }
 
 bool SoImageEx::SetTextureFile_impl(SoTexture2* sotx, const String& fname,
   bool use_simage) 
 {
-  if (use_simage) {
+  if (use_simage) {		// generally not used
     sotx->filename = (const char*)fname;
     // check if anything loaded
     SbVec2s size; 

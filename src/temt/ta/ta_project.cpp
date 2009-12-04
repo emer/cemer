@@ -2763,7 +2763,7 @@ bool taRootBase::Startup_ProcessArgs() {
     taMisc::HelpMsg();
   }
   if(taMisc::CheckArgByName("GenDoc")) {
-    taGenDoc::GenDoc(&(taMisc::types), 1); // 1 = regular mode
+    taGenDoc::GenDoc(&(taMisc::types));
   }
 
   // just load the thing!?
