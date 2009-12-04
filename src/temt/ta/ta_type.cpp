@@ -3782,30 +3782,30 @@ bool MemberDef::ValIsDefault(const void* base, int for_show) const {
 
 
 String MemberDef::GetHTML(bool gendoc, bool short_fmt) const {
-  bool det = !short_fmt && taMisc::help_detail >= taMisc::HD_DETAILS;
-  STRING_BUF(rval, (det ? 300 : 100)); // extends if needed
+  STRING_BUF(rval, (short_fmt ? 100 : 300)); // extends if needed
   String own_typ;
   TypeDef* ot = GetOwnerType();
   if(ot) {
     own_typ.cat(ot->name).cat("::");
   }
-  if(det) {
+  if(short_fmt) {
+    rval.cat("<b><a href=#").cat(name).cat(">").cat(name).cat("</a></b> : ").cat(type->Get_C_Name());
+    if(fun_ptr)   rval.cat("(*)"); // function pointer indicator
+    if(is_static) rval.cat("&nbsp;&nbsp;<tt> [static]</tt>");
+  }
+  else {
     rval.cat("<h3 class=\"fn\"><a name=\"").cat(name).cat("\"></a>").cat(own_typ).cat(name).cat(" : ");
     rval.cat(type->GetHTMLLink(gendoc));
     if(fun_ptr)   rval.cat("(*)"); // function pointer indicator
     if(is_static) rval.cat("&nbsp;&nbsp;<tt> [static]</tt>");
     rval.cat("</h3>\n");
     rval.cat("<p>").cat(trim(desc).xml_esc()).cat("</p>\n");
-    // and include options -- everything!
-    rval.cat("<p> Size: ").cat(String(type->size)).cat("</p>\n");
-    if(opts.size > 0) {
-      rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
+    if(taMisc::help_detail >= taMisc::HD_DETAILS) {
+      rval.cat("<p> Size: ").cat(String(type->size)).cat("</p>\n");
+      if(opts.size > 0) {
+	rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
+      }
     }
-  }
-  else {
-    rval.cat("<b><a href=#").cat(name).cat(">").cat(name).cat("</a></b> : ").cat(type->Get_C_Name());
-    if(fun_ptr)   rval.cat("(*)"); // function pointer indicator
-    if(is_static) rval.cat("&nbsp;&nbsp;<tt> [static]</tt>");
   }
   return rval;
 }
@@ -3916,25 +3916,25 @@ bool PropertyDef::ValIsDefault(const void* base, int for_show) const {
 String PropertyDef::GetHTML(bool gendoc, bool short_fmt) const {
   // todo: accessor functions, etc
   // todo: fun_ptr!
-  bool det = !short_fmt && taMisc::help_detail >= taMisc::HD_DETAILS;
-  STRING_BUF(rval, (det ? 300 : 100)); // extends if needed
+  STRING_BUF(rval, (short_fmt ? 100 : 300)); // extends if needed
   String own_typ;
   TypeDef* ot = GetOwnerType();
   if(ot) {
     own_typ.cat(ot->name).cat("::");
   }
-  if(det) {
+  if(short_fmt) {
+    rval.cat("<b><a href=#").cat(name).cat(">").cat(name).cat("</a></b> : ").cat(type->Get_C_Name());
+  }
+  else {
     rval.cat("<h3 class=\"fn\"><a name=\"").cat(name).cat("\"></a>").cat(own_typ).cat(name).cat(" : ");
     rval.cat(type->GetHTMLLink(gendoc)).cat("</h3>\n");
     rval.cat("<p>").cat(trim(desc).xml_esc()).cat("</p>\n");
-    // options
-    rval.cat("<p> Size: ").cat(String(type->size)).cat("</p>\n");
-    if(opts.size > 0) {
-      rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
+    if(taMisc::help_detail >= taMisc::HD_DETAILS) {
+      rval.cat("<p> Size: ").cat(String(type->size)).cat("</p>\n");
+      if(opts.size > 0) {
+	rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
+      }
     }
-  }
-  else {
-    rval.cat("<b><a href=#").cat(name).cat(">").cat(name).cat("</a></b> : ").cat(type->Get_C_Name());
   }
   return rval;
 }
@@ -4196,14 +4196,26 @@ void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
 }
 
 String MethodDef::GetHTML(bool gendoc, bool short_fmt) const {
-  bool det = !short_fmt && taMisc::help_detail >= taMisc::HD_DETAILS;
-  STRING_BUF(rval, (det ? 300 : 100)); // extends if needed
+  STRING_BUF(rval, (short_fmt ? 100 : 300)); // extends if needed
   String own_typ;
   TypeDef* ot = GetOwnerType();
   if(ot) {
     own_typ.cat(ot->name).cat("::");
   }
-  if(det) {
+  if(short_fmt) {
+    rval.cat(type->Get_C_Name()).cat(" <b><a href=#").cat(name).cat(">").cat(own_typ).cat(name).cat("</a></b> ( ");
+    for(int i = 0; i < arg_names.size; ++i) {
+      if (i > 0) rval.cat(", ");
+      rval.cat(arg_types[i]->Get_C_Name()).cat(' ');
+      rval.cat("<i>").cat(arg_names[i]).cat("</i>");
+      String def = arg_defs[i];
+      if (def.nonempty())
+	rval.cat(" = ").cat(trim(def).xml_esc());
+    }
+    rval.cat(" )");
+    if(is_static) rval.cat("&nbsp;&nbsp;<tt> [static]</tt>");
+  }
+  else {
     rval.cat("<h3 class=\"fn\"><a name=\"").cat(name).cat("\"></a>");
     rval.cat(type->GetHTMLLink(gendoc)).cat(" ").cat(own_typ).cat(name).cat(" ( ");
     for(int i = 0; i < arg_names.size; ++i) {
@@ -4218,25 +4230,13 @@ String MethodDef::GetHTML(bool gendoc, bool short_fmt) const {
     if(is_static) rval.cat("&nbsp;&nbsp;<tt> [static]</tt>");
     rval.cat("</h3>\n");
     rval += "<p>" + trim(desc).xml_esc() + "</p>\n";
-    // options
-    if(opts.size > 0) {
-      rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
+    if(taMisc::help_detail >= taMisc::HD_DETAILS) {
+      if(opts.size > 0) {
+	rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
+      }
     }
     rval.cat("<span class=\"fakelink\" onclick='writesrc(this,\"");
     rval.cat(type->Get_C_Name()).cat(" ").cat(own_typ).cat(name).cat("\")'>Show Source Code</span><br>\n");
-  }
-  else {
-    rval.cat(type->Get_C_Name()).cat(" <b><a href=#").cat(name).cat(">").cat(own_typ).cat(name).cat("</a></b> ( ");
-    for(int i = 0; i < arg_names.size; ++i) {
-      if (i > 0) rval.cat(", ");
-      rval.cat(arg_types[i]->Get_C_Name()).cat(' ');
-      rval.cat("<i>").cat(arg_names[i]).cat("</i>");
-      String def = arg_defs[i];
-      if (def.nonempty())
-	rval.cat(" = ").cat(trim(def).xml_esc());
-    }
-    rval.cat(" )");
-    if(is_static) rval.cat("&nbsp;&nbsp;<tt> [static]</tt>");
   }
   return rval;
 }
@@ -6816,8 +6816,7 @@ String TypeDef::GetHTMLLink(bool gendoc) const {
 }
 
 String TypeDef::GetHTMLSubType(bool gendoc, bool short_fmt) const {
-  bool det = !short_fmt && taMisc::help_detail >= taMisc::HD_DETAILS;
-  STRING_BUF(rval, 100); // extends if needed
+  STRING_BUF(rval, (short_fmt ? 100 : 300)); // extends if needed
   String own_typ;
   TypeDef* ot = GetOwnerType();
   if(ot) {
@@ -6827,7 +6826,7 @@ String TypeDef::GetHTMLSubType(bool gendoc, bool short_fmt) const {
     // todo: not yet supported by maketa..
   }
   else if(InheritsFormal(TA_enum)) {
-    if(!det) {
+    if(short_fmt) {
       rval.cat("enum <b><a href=\"#").cat(name).cat("\">").cat(own_typ).cat(name).cat("</a></b> { ");
       for(int i=0;i<enum_vals.size;i++) {
 	EnumDef* ed = enum_vals[i];
@@ -7061,7 +7060,7 @@ String TypeDef::GetHTML(bool gendoc) const {
       if(!st->InheritsFormal(&TA_enum)) continue;
       if((this != &TA_taBase) && (st->GetOwnerType() == &TA_taBase)) continue;
       if(st->GetOwnerType()->InheritsFormal(TA_templ_inst)) continue;
-      rval.cat(st->GetHTMLSubType(gendoc));
+      rval.cat(st->GetHTMLSubType(gendoc, false));
     }
   }
 
@@ -7080,7 +7079,7 @@ String TypeDef::GetHTML(bool gendoc) const {
 	rval.cat("<h3>Member Category: ").cat(cat).cat("</h3>\n");
 	prv_cat = cat;
       }
-      rval.cat(md->GetHTML(gendoc)).cat("\n"); // extra cr for good readability
+      rval.cat(md->GetHTML(gendoc, false)).cat("\n"); // extra cr for good readability
     }
   }
 
@@ -7099,7 +7098,7 @@ String TypeDef::GetHTML(bool gendoc) const {
 	rval.cat("<h3>Method Category: ").cat(cat).cat("</h3>\n");
 	prv_cat = cat;
       }
-      rval.cat(md->GetHTML(gendoc)).cat("\n"); // extra cr for good readability
+      rval.cat(md->GetHTML(gendoc, false)).cat("\n"); // extra cr for good readability
     }
   }
 
