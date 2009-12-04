@@ -2763,6 +2763,7 @@ bool taRootBase::Startup_ProcessArgs() {
     taMisc::HelpMsg();
   }
   if(taMisc::CheckArgByName("GenDoc")) {
+    taMisc::help_detail = taMisc::HD_DEFAULT; // always render default
     taGenDoc::GenDoc(&(taMisc::types));
   }
 
