@@ -91,9 +91,6 @@ set(CMAKE_MODULE_PATH ${mod_path})
 # set the lib and executable suffix based on build type
 include(${mod_path}/SetBuildSuffix.cmake)
 
-# packaging and testing systems
-include(CMakeModules/CPackConfig.cmake)
-include(CPack)
 include(CTest)
 
 # find all of our dependencies -- also sets their include paths in include_directories
@@ -269,7 +266,7 @@ if (WIN32)
   file(GLOB OUR_3RDPARTY_FILES 
     "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bin/*.dll"
     "${COINDIR}/bin/*.dll"
-    "${QTDIR}/bin/*.dll"
+    "${QT_BINARY_DIR}/*.dll"
   )
   install(FILES ${OUR_3RDPARTY_FILES}
     DESTINATION bin
@@ -304,6 +301,10 @@ install(CODE
   )
 endif (WIN32)
 endif (false)
+
+########### cpack packaging ###############
+
+include(CMakeModules/EmergentCPack.cmake)
 
 ########### special targets and commands ###############
 #BUG: these targets are flakily forcing all the subtargets to become ALL
