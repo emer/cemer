@@ -262,6 +262,8 @@ install(FILES ${PLT}/CMakeLists.txt ${PLT}/NOBUILD ${PLT}/configure
 )
 
 if (WIN32)
+  # it is important to install into a non-space path, so just go straight to C:\Emergent
+  set(CMAKE_INSTALL_PREFIX "C:/Emergent" CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
   # for Windows, we install the pre-req dll's in bin
   file(GLOB OUR_3RDPARTY_FILES 
     "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bin/*.dll"
