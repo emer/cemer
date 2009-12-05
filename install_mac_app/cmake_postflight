@@ -1,0 +1,3 @@
+#!/bin/bash
+"$2/CMake 2.8-0.app/Contents/MacOS/CMake 2.8-0" --mac-install
+exit 0
