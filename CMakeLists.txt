@@ -273,6 +273,9 @@ if (WIN32)
   install(FILES ${OUR_3RDPARTY_FILES}
     DESTINATION bin
   )
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images/Emergent.ico
+    DESTINATION ${EMERGENT_SHARE_DEST}
+  )
 else (WIN32)
   # plugin folder, so emergent doesn't complain
   install(DIRECTORY
