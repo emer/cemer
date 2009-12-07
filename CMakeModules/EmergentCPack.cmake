@@ -12,13 +12,14 @@ SET(CPACK_PACKAGE_VERSION_PATCH "${EMERGENT_VERSION_PATCH}")
 if (WIN32)
 # There is a bug in NSI that does not handle full unix paths properly. 
 # Make sure there is at least one set of four (4) backlasshes.
-  SET(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images\\\\emergent_32x32.png")
+  SET(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images/emergent_32x32x256.ico")
   SET(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images\\\\emergent_16x16x256.ico")
   SET(CPACK_PACKAGE_FILE_NAME "emergent-${EMERGENT_VERSION}-win32")
   SET(CPACK_NSIS_MODIFY_PATH ON)
 else (WIN32)
   # Replace CMAKE_INSTALL_PREFIX to Currently used one,
   # If it wasn't overridden from command line / cache.
+  SET(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images\\\\emergent_32x32.png")
   if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
   endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
