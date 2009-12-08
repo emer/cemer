@@ -488,6 +488,13 @@ public:
   virtual void	Copy_Weights(const BaseCons* src);
   // #CAT_ObjectMgmt copies weights from other con_group
 
+  virtual void	ConVarsToTable(DataTable* dt, Unit* ru, const String& var1, const String& var2 = "",
+	       const String& var3 = "", const String& var4 = "", const String& var5 = "",
+	       const String& var6 = "", const String& var7 = "", const String& var8 = "",
+	       const String& var9 = "", const String& var10 = "", const String& var11 = "",
+	       const String& var12 = "", const String& var13 = "", const String& var14 = "");
+  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var"
+
   override int 	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   override int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
@@ -969,6 +976,13 @@ public: //
 
   virtual void	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
+  virtual void	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
+	       const String& var3 = "", const String& var4 = "", const String& var5 = "",
+	       const String& var6 = "", const String& var7 = "", const String& var8 = "",
+	       const String& var9 = "", const String& var10 = "", const String& var11 = "",
+	       const String& var12 = "", const String& var13 = "", const String& var14 = "",
+	       Projection* prjn=NULL);
+  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var" -- prjn restricts to that prjn
 
   virtual void 	LinkPtrCons();
   // #IGNORE link pointer connections from the corresponding owned connections -- only needed after a Copy
@@ -1193,7 +1207,12 @@ public:
   // #MENU #NULL_OK  #NULL_TEXT_0_NewTable #CAT_Structure copy entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and one column (name is layer name if not otherwise specified) that has a float matrix cell of the geometry of the sending layer
   virtual void	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
-
+  virtual void	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
+	       const String& var3 = "", const String& var4 = "", const String& var5 = "",
+	       const String& var6 = "", const String& var7 = "", const String& var8 = "",
+	       const String& var9 = "", const String& var10 = "", const String& var11 = "",
+	       const String& var12 = "", const String& var13 = "", const String& var14 = "");
+  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var"
 
   override String 	GetTypeDecoKey() const { return "Projection"; }
 
@@ -1296,6 +1315,13 @@ public:
 
   virtual void	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
+  virtual void	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
+	       const String& var3 = "", const String& var4 = "", const String& var5 = "",
+	       const String& var6 = "", const String& var7 = "", const String& var8 = "",
+	       const String& var9 = "", const String& var10 = "", const String& var11 = "",
+	       const String& var12 = "", const String& var13 = "", const String& var14 = "",
+	       Projection* prjn=NULL);
+  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var" -- prjn restricts to that prjn
 
   virtual Unit* MostActiveUnit(int& idx);
   // #CAT_Activation Return the unit with the highest activation (act) value -- index of unit is returned in idx
@@ -1641,6 +1667,13 @@ public:
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send entire set of weights from sending layer to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
   virtual void	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for projection variables, specify prjns.; for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
+  virtual void	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
+	       const String& var3 = "", const String& var4 = "", const String& var5 = "",
+	       const String& var6 = "", const String& var7 = "", const String& var8 = "",
+	       const String& var9 = "", const String& var10 = "", const String& var11 = "",
+	       const String& var12 = "", const String& var13 = "", const String& var14 = "",
+	       Projection* prjn=NULL);
+  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var" -- prjn restricts to that prjn
 
   Unit*		FindUnitFmCoord(const TwoDCoord& coord) {return FindUnitFmCoord(coord.x, coord.y);}
   // #CAT_Structure get unit from coordinates, taking into account group geometry if present (subtracts any gp_spc -- as if it is not present).
@@ -2279,6 +2312,12 @@ public:
   // #MENU #MENU_ON_State #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
   virtual void	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (if a network, one col, if a layer, number of layers, etc).  for projection data, specify: prjns.xxx  for weight values, specify r. or s. (e.g., r.wt) -- this uses a NetMonitor internally (just does AddNetwork with variable, then gets data), so see documentation there for more information
+  virtual void	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
+	       const String& var3 = "", const String& var4 = "", const String& var5 = "",
+	       const String& var6 = "", const String& var7 = "", const String& var8 = "",
+	       const String& var9 = "", const String& var10 = "", const String& var11 = "",
+	       const String& var12 = "", const String& var13 = "", const String& var14 = "");
+  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var"
 
   virtual void	ProjectUnitWeights(Unit* un, float wt_thr = 0.5f, bool swt = false);
   // #CAT_Statistic project given unit's weights (receiving unless swt = true) through all layers (without any loops) -- results stored in anal1 on each unit (anal2 is used as a sum variable)  wt_thr is threshold on max-normalized weights (max=1) for following a given weight value to accumulate (so weaker weights are excluded).  values are always normalized at each layer to prevent exponential decrease/increase effects, so results are only relative indications of influence

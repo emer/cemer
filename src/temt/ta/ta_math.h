@@ -299,6 +299,8 @@ public:
 
   static double fmod(double x, double y) { return std::fmod(x, y); }
   // #CAT_Arithmetic floating-point modulus function: remainder of x / y
+  static double quantize(double x, double grid) { return floor(x / grid) * grid; }
+  // #CAT_Arithmetic quantize the value of x to be an integer multiple of grid size value
 
 //   static double remainder(double x, double y) { return std::remainder(x, y); }
 //   // #CAT_Arithmetic remainder r = x - ny where n is integer value nearest to x/y
@@ -502,6 +504,8 @@ public:
   // #CAT_Arithmetic multiply scalar value b to elements in vector a: a(i) *= b
   static bool  vec_div_scalar(double_Matrix* a, double b);
   // #CAT_Arithmetic divide scalar value b to elements in vector a: a(i) /= b
+  static bool	vec_quantize(double_Matrix* vec, double grid);
+  // #CAT_Arithmetic quantize the values of vector vec to be an integer multiple of grid size value
 
   static bool	vec_simple_math(double_Matrix* vec, const SimpleMathSpec& math_spec);
   // #CAT_Arithmetic apply standard kinds of simple math operators to values in the vector
@@ -850,6 +854,8 @@ public:
 
   static float fmod(float x, float y) { return std::fmod(x, y); }
   // #CAT_Arithmetic floating-point modulus function: remainder of x / y
+  static float quantize(float x, float grid) { return floor(x / grid) * grid; }
+  // #CAT_Arithmetic quantize the value of x to be an integer multiple of grid size value
 
 //   static float remainder(float x, float y) { return remainderf(x, y); }
 //   // #CAT_Arithmetic remainder r = x - ny where n is integer value nearest to x/y
@@ -1054,6 +1060,8 @@ public:
   // #CAT_Arithmetic multiply scalar value b to elements in vector a: a(i) *= b
   static bool  vec_div_scalar(float_Matrix* a, float b);
   // #CAT_Arithmetic divide scalar value b to elements in vector a: a(i) /= b
+  static bool	vec_quantize(float_Matrix* vec, float grid);
+  // #CAT_Arithmetic quantize the values of vector vec to be an integer multiple of grid size value
 
   static bool	vec_simple_math(float_Matrix* vec, const SimpleMathSpec& math_spec);
   // #CAT_Arithmetic apply standard kinds of simple math operators to values in the vector

@@ -908,7 +908,7 @@ private:
 //		XCAL Spike-Based Learning
 
 // turn this on to enable various debugging things..
-// #define XCAL_DEBUG 1
+#define XCAL_DEBUG 1
 
 class LeabraSpikeCon : public LeabraCon {
   // #STEM_BASE ##CAT_Leabra Leabra connection for spike-based learning
@@ -938,7 +938,7 @@ public:
   float		k_ca;	  // #READ_ONLY #SHOW (.3 in original units) effective Ca that gives 50% inhibition of maximal NMDA receptor activity
   float		ca_vgcc;  // #READ_ONLY #SHOW (1.3 in original units) Ca influx resulting from receiver spiking (due to voltage gated calcium channels)
   float		ca_v_nmda; // #READ_ONLY #SHOW (0.0223 in original units) Ca influx due to membrane-potential (voltage) driven NMDA receptor activation
-  float		ca_nmda;   // #READ_ONLY #SHOW (0.5 in original units) Ca influx from NMDA that is NOT driven by membrane potential
+  float		ca_nmda;   // #READ_ONLY #SHOW (0.5 in original units) Ca influx from NMDA that is NOT driven by membrane potential 
   float		ca_dt;     // #DEF_20 time constant (in msec) for decay of Ca 
   float		ca_rate;   // #READ_ONLY #NO_SAVE rate constant (1/dt) for decay of Ca 
   float		ca_off;	   // #DEF_0.1 offset for ca -- subtract this amount from ca (clipped to zero) for learning computations

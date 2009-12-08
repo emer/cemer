@@ -577,13 +577,13 @@ iFieldEditDialog::~iFieldEditDialog() {
 }
 
 void iFieldEditDialog::accept() {
-  if (!isModal()) {
-    if (!m_read_only)
-      btnApply_clicked();
-    if (field)
-      field->edit = NULL;
-    deleteLater();
-  }
+  if (!m_read_only)
+    btnApply_clicked();
+  if (field)
+    field->edit = NULL;
+//   if (!isModal()) {
+//   deleteLater();
+//   }
   inherited::accept();
 }
 
@@ -698,7 +698,8 @@ void taiField::btnEdit_clicked(bool) {
       wintxt = "Editing field";
       //desc =
     }
-    edit = new iFieldEditDialog(false, readOnly(), desc, this);
+    edit = new iFieldEditDialog(true, readOnly(), desc, this);
+    // true = must always be modal -- otherwise crazy stuff can happen.  Brad was right..
     edit->setText(rep()->text());
     edit->setWindowTitle(wintxt);
     QObject::connect(edit->txtText, SIGNAL(lookupKeyPressed()),

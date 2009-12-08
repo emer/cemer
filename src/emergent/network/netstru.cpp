@@ -1308,6 +1308,127 @@ void BaseCons::LinkPtrCons(Unit* my_u) {
   }
 }
 
+void BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1, const String& var2,
+			      const String& var3, const String& var4, const String& var5,
+			      const String& var6, const String& var7, const String& var8,
+			      const String& var9, const String& var10, const String& var11,
+			      const String& var12, const String& var13, const String& var14) {
+  if(TestError(!ru, "ConVarsToTable", "recv unit is NULL -- bailing"))
+    return;
+  if(size <= 0) return;		// nothing here
+  if (!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable("ConVars", true);
+  }
+  dt->StructUpdate(true);
+  const int nvars = 14;
+  DataCol* cols[nvars];
+  const String vars[nvars] = {var1, var2, var3, var4, var5, var6, var7, var8,
+			      var9, var10, var11, var12, var13, var14};
+  MemberDef* mds[nvars];
+  bool ruv[nvars];		// recv unit var
+  bool suv[nvars];		// send unit var
+  bool biasv[nvars];		// bias var
+
+  TypeDef* rutd = ru->GetTypeDef();
+  Unit* su0 = Un(0);
+  TypeDef* sutd = su0->GetTypeDef();
+
+  TypeDef* rubiastd = NULL;
+  Connection* rubias = NULL;
+  TypeDef* subiastd = NULL;
+  Connection* subias0 = NULL;
+  if(ru->bias.size) {
+    rubias = ru->bias.OwnCn(0);
+    rubiastd = ru->bias.con_type;
+  }
+  if(su0->bias.size) {
+    subias0 = su0->bias.OwnCn(0);
+    subiastd = su0->bias.con_type;
+  }
+
+  int idx;
+  for(int i=0;i<nvars;i++) {
+    if(vars[i].nonempty()) {
+      String colnm = taMisc::StringCVar(vars[i]);
+      cols[i] = dt->FindMakeColName(colnm, idx, VT_FLOAT); 
+      ruv[i] = suv[i] = false;
+      if(vars[i].startsWith("r.")) {
+	ruv[i] = true;
+	String varnxt = vars[i].after("r.");
+	if(varnxt.startsWith("bias.")) {
+	  if(TestWarning(!rubiastd || !rubias, "ConVarstoTable", "recv bias type or con not set"))
+	    continue;
+	  biasv[i] = true;
+	  varnxt = varnxt.after("bias.");
+	  mds[i] = rubiastd->members.FindName(varnxt);
+	  if(TestWarning(!mds[i], "ConVarsToTable", "recv unit bias variable named:", varnxt,
+			 "not found in type:", rubiastd->name));
+	}
+	else {
+	  mds[i] = rutd->members.FindName(varnxt);
+	  if(TestWarning(!mds[i], "ConVarsToTable", "recv unit variable named:", varnxt,
+			 "not found in type:", rutd->name));
+	}
+      }
+      else if(vars[i].startsWith("s.")) {
+	suv[i] = true;
+	String varnxt = vars[i].after("s.");
+	if(varnxt.startsWith("bias.")) {
+	  if(TestWarning(!subiastd || !subias0, "ConVarstoTable", "recv bias type or con not set"))
+	    continue;
+	  biasv[i] = true;
+	  varnxt = varnxt.after("bias.");
+	  mds[i] = subiastd->members.FindName(varnxt);
+	  if(TestWarning(!mds[i], "ConVarsToTable", "send unit bias variable named:", varnxt,
+			 "not found in type:", subiastd->name));
+	}
+	else {
+	  mds[i] = sutd->members.FindName(varnxt);
+	  if(TestWarning(!mds[i], "ConVarsToTable", "send unit variable named:", varnxt,
+			 "not found in type:", sutd->name));
+	}
+      }
+      else {
+	mds[i] = con_type->members.FindName(vars[i]);
+	if(TestWarning(!mds[i], "ConVarsToTable", "connection variable named:", vars[i],
+		       "not found in type:", con_type->name));
+      }
+    }
+    else {
+      cols[i] = NULL;
+      mds[i] = NULL;
+    }
+  }
+  for(int j=0;j<size;j++) {
+    dt->AddBlankRow();
+    for(int i=0;i<nvars;i++) {
+      if(!mds[i]) continue;
+      Variant val;
+      if(ruv[i]) {
+	if(biasv[i]) {
+	  val = mds[i]->GetValVar((void*)rubias);
+	}
+	else {
+	  val = mds[i]->GetValVar((void*)ru);
+	}
+      }
+      else if(suv[i]) {
+	if(biasv[i]) {
+	  val = mds[i]->GetValVar((void*)(Un(i)->bias.Cn(0)));
+	}
+	else {
+	  val = mds[i]->GetValVar((void*)Un(i));
+	}
+      }
+      else {
+	val = mds[i]->GetValVar((void*)Cn(i));
+      }
+      cols[i]->SetVal(val, -1);
+    }
+  }
+  dt->StructUpdate(false);
+}
 
 /////////////////////////////////////////////////////////////////////
 //	RecvCons
@@ -2505,8 +2626,7 @@ int Unit::PruneCons(const SimpleMathSpec& pre_proc, Relation::Relations rel,
 
 int Unit::LesionCons(float p_lesion, bool permute, Projection* prjn) {
   int rval = 0;
-  int g;
-  for(g=0; g<recv.size; g++) {
+  for(int g=0; g<recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
     if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
     rval += cg->LesionCons(this, p_lesion, permute);
@@ -2533,6 +2653,26 @@ void Unit::VarToTable(DataTable* dt, const String& variable) {
   dt->AddBlankRow();
   nm.GetMonVals();
   dt->WriteClose();
+}
+
+void Unit::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
+			  const String& var3, const String& var4, const String& var5,
+			  const String& var6, const String& var7, const String& var8,
+			  const String& var9, const String& var10, const String& var11,
+			  const String& var12, const String& var13, const String& var14,
+			  Projection* prjn) {
+  if(!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable("ConVars", true);
+  }
+  dt->StructUpdate(true);
+  for(int g=0; g<recv.size; g++) {
+    RecvCons* cg = recv.FastEl(g);
+    if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
+    cg->ConVarsToTable(dt, this, var1, var2, var3, var4, var5, var6, var7, var8,
+		       var9, var10, var11, var12, var13, var14);
+  }
+  dt->StructUpdate(false);
 }
 
 bool Unit::ChangeMyType(TypeDef*) {
@@ -2865,6 +3005,22 @@ void Projection::VarToTable(DataTable* dt, const String& variable) {
   dt->AddBlankRow();
   nm.GetMonVals();
   dt->WriteClose();
+}
+
+void Projection::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
+				const String& var3, const String& var4, const String& var5,
+				const String& var6, const String& var7, const String& var8,
+				const String& var9, const String& var10, const String& var11,
+				const String& var12, const String& var13, const String& var14) {
+  if(!(bool)layer) return;
+  if(!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable("ConVars", true);
+  }
+  dt->StructUpdate(true);
+  layer->ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
+			var9, var10, var11, var12, var13, var14, this);
+  dt->StructUpdate(false);
 }
 
 void Projection::SetFrom() {
@@ -3516,6 +3672,26 @@ void Unit_Group::VarToTable(DataTable* dt, const String& variable) {
   dt->AddBlankRow();
   nm.GetMonVals();
   dt->WriteClose();
+}
+
+void Unit_Group::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
+				const String& var3, const String& var4, const String& var5,
+				const String& var6, const String& var7, const String& var8,
+				const String& var9, const String& var10, const String& var11,
+				const String& var12, const String& var13, const String& var14,
+				Projection* prjn) {
+  if(!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable("ConVars", true);
+  }
+  dt->StructUpdate(true);
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, this->, i) {
+    u->ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
+		      var9, var10, var11, var12, var13, var14,  prjn);
+  }
+  dt->StructUpdate(false);
 }
 
 bool Unit_Group::SetUnitNames(taMatrix* mat) {
@@ -4871,6 +5047,22 @@ void Layer::VarToTable(DataTable* dt, const String& variable) {
   dt->AddBlankRow();
   nm.GetMonVals();
   dt->WriteClose();
+}
+
+void Layer::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
+			   const String& var3, const String& var4, const String& var5,
+			   const String& var6, const String& var7, const String& var8,
+			   const String& var9, const String& var10, const String& var11,
+			   const String& var12, const String& var13, const String& var14,
+			   Projection* prjn) {
+  if(!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable("ConVars", true);
+  }
+  dt->StructUpdate(true);
+  units.ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
+		       var9, var10, var11, var12, var13, var14, prjn);
+  dt->StructUpdate(false);
 }
 
 Unit* Layer::FindUnitFmCoord(int x, int y) {
@@ -7426,6 +7618,26 @@ void Network::VarToTable(DataTable* dt, const String& variable) {
   dt->AddBlankRow();
   nm.GetMonVals();
   dt->WriteClose();
+}
+
+void Network::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
+			     const String& var3, const String& var4, const String& var5,
+			     const String& var6, const String& var7, const String& var8,
+			     const String& var9, const String& var10, const String& var11,
+			     const String& var12, const String& var13, const String& var14) {
+  if(!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable("ConVars", true);
+  }
+  dt->StructUpdate(true);
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
+			var9, var10, var11, var12, var13, var14);
+  }
+  dt->StructUpdate(false);
 }
 
 void Network::ProjectUnitWeights(Unit* src_u, float wt_thr, bool swt) {

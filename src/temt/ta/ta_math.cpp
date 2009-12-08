@@ -288,7 +288,6 @@ void taMath::mat_cvt_float_to_double(double_Matrix* dbl_dest, const float_Matrix
 // 			double precision math
 ////////////////////////////////////////////////////////////////////////////////
 
-
 /////////////////////////////////////////////////////////////////////////////////
 // ExpLog: exponential and logarithmic functions
 
@@ -929,6 +928,14 @@ bool taMath_double::vec_div_scalar(double_Matrix* a, double b) {
   return true;
 }
 
+bool taMath_double::vec_quantize(double_Matrix* vec, double grid) {
+  if(!vec_check_type(vec)) return false;
+  if(grid == 0.0) return false;
+  for(int i=0;i<vec->size;i++)
+    vec->FastEl_Flat(i) = quantize(vec->FastEl_Flat(i), grid);
+  return true;
+}
+
 bool taMath_double::vec_simple_math(double_Matrix* vec, const SimpleMathSpec& math_spec) {
   if(!vec_check_type(vec)) return false;
   for(int i=0;i<vec->size;i++)
@@ -946,7 +953,6 @@ bool taMath_double::vec_simple_math_arg(double_Matrix* vec, const double_Matrix*
   }
   return true;
 }
-
 
 bool taMath_double::vec_students_cum(double_Matrix* t, const double_Matrix* df) {
   if(!vec_check_same_size(t, df)) return false;
@@ -3305,6 +3311,14 @@ bool taMath_float::vec_div_scalar(float_Matrix* a, float b) {
   return true;
 }
 
+bool taMath_float::vec_quantize(float_Matrix* vec, float grid) {
+  if(!vec_check_type(vec)) return false;
+  if(grid == 0.0) return false;
+  for(int i=0;i<vec->size;i++)
+    vec->FastEl_Flat(i) = quantize(vec->FastEl_Flat(i), grid);
+  return true;
+}
+
 bool taMath_float::vec_simple_math(float_Matrix* vec, const SimpleMathSpec& math_spec) {
   if(!vec_check_type(vec)) return false;
   for(int i=0;i<vec->size;i++)
@@ -3322,7 +3336,6 @@ bool taMath_float::vec_simple_math_arg(float_Matrix* vec, const float_Matrix* ar
   }
   return true;
 }
-
 
 bool taMath_float::vec_students_cum(float_Matrix* t, const float_Matrix* df) {
   if(!vec_check_same_size(t, df)) return false;
