@@ -3,6 +3,7 @@
 
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Emergent Neural Simulation System")
 SET(CPACK_PACKAGE_VENDOR "Computational Cognitive Neuroscience Lab, University of Colorado at Boulder")
+SET(CPACK_PACKAGE_CONTACT "emergent-users@grey.colorado.edu")
 SET(CPACK_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.txt")
 SET(CPACK_PACKAGE_VERSION_MAJOR "${EMERGENT_VERSION_MAJOR}")
@@ -30,7 +31,7 @@ else (WIN32)
     SET(CPACK_PACKAGE_FILE_NAME "emergent-${EMERGENT_VERSION}-mac")
   else (APPLE)
     SET(CPACK_GENERATOR "DEB")
-    SET(CPACK_DEBIAN_PACKAGE_DEPENDS "subversion, cmake, g++, libqt4-dev, libcoin60-dev, libreadline5-dev, libgsl0-dev, libode0-dev, libquarter")
+    SET(CPACK_DEBIAN_PACKAGE_DEPENDS "subversion, cmake, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, libode, libquarter")
   endif (APPLE)
 endif (WIN32)
 
