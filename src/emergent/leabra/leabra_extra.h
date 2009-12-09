@@ -1006,8 +1006,11 @@ public:
     float srs = cn->sravg_s;
     float srm = cn->sravg_m;
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-    cn->dwt += cur_lrate * (xcal.svm_mix * xcal.dWtFun(sm_mix, srm) + 
-			    xcal.mvl_mix * xcal.dWtFun(sm_mix, ru->l_thr));
+    float effthr = MAX(srm, ru->l_thr);
+    cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
+    // using SRMAX by default
+//     cn->dwt += cur_lrate * (xcal.svm_mix * xcal.dWtFun(sm_mix, srm) + 
+// 			    xcal.mvl_mix * xcal.dWtFun(sm_mix, ru->l_thr));
   }
 
   inline void Compute_dWt_CtLeabraXCAL_C(LeabraSendCons* cg, LeabraUnit* su) {

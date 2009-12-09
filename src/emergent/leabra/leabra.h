@@ -233,19 +233,20 @@ INHERITED(taOBase)
 public:
   enum LearnVar {
     XCAL_SR,			// XCAL with synapse-level send-recv avg (sravg) for short and medium time scales (as in CAL), relative to medium and long term averages, passed through the XCAL dwt function (see conspec for option to plot this)
+    XCAL_SRMAX,			// XCAL_SR with learn threshold as MAX of medium (error-driven) and long-term (BCM) averages -- eliminates mvl_mix parameter, and is more plausible overall
     XCAL_SEP,			// XCAL with product of *separate* sending and receiving unit averages (from bias weight) for short and medium time scale, relative to medium and long term averages, passed through the XCAL dwt function (see conspec for option to plot this) -- this typically works almost as well as _SR, and is faster
     CAL,			// XCAL with synapse-level sravg for short and medium time scales (as in CAL) -- svm term (err-driven) does NOT go through XCAL function (main diff from _SR version)
     CHL,			// XCAL with CHL as the svm (err-driven) term (not going through XCAL function) -- basically CHL with XCAL homeostasis mechanism (BCM-like rule)
   };
 
   LearnVar	lrn_var;	// #DEF_XCAL_SR learning rule variant -- non-XCAL options are primarily for testing and specialized applications -- bias weights always use CAL or CHL if CHL is selected
-  float		mvl_mix;	// #DEF_0.001:1.0 [0.002 std] #MIN_0 amount that medium (trial) versus long (epoch) time scale learning contributes -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is svm: short (plus phase) versus medium (trial) time scale which reflects pure error-driven learning
+  float		mvl_mix;	// #CONDEDIT_OFF_lrn_var:XCAL_SRMAX #DEF_0.001:1.0 [0.002 std] #MIN_0 amount that medium (trial) versus long (epoch) time scale learning contributes -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is svm: short (plus phase) versus medium (trial) time scale which reflects pure error-driven learning
   float		svm_mix;	// #READ_ONLY 1-mvl_mix -- how much the short (plus phase) versus medium (trial) time-scale factor contributes to learning -- this the pure error-driven learning component -- the rest (mvl_mix = 1-svm_mix) is medium (trial) versus long (epoch) time-scale
   float		s_mix;		// #DEF_0.7:0.95 [0.90 std] #MIN_0 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
-  float		l_dt;		// #DEF_0.0001:0.01 [0.005 std for TRIAL, .0002 for CONT] #MIN_0 time constant for updating the long time-scale ravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_l variable!!
+  float		l_dt;		// #DEF_0.0001:0.01 [0.005 std for TRIAL, .0002 for CONT] #MIN_0 time constant (rate) for updating the long time-scale ravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_l variable!!
   float		l_gain;		// #DEF_1.5 #MIN_0 gain for long time-scale ravg term -- needed to put into same terms as the s*r avg values used in the s and m components of learning -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level l_thr variable!!
-  float		ml_dt;		// #DEF_0.4 #MIN_0 time constant for updating the medium-to-long time-scale ravg_ml value, which integrates over recent history of medium (trial level) averages, used for rapid adaptation of LTP vs LTD learning threshold in XCAL, and for learning based on receiver average activations with a trace of prior activations -- note this is computed on the unit bias con spec, where it updates the unit-level ravg_ml variable
+  float		ml_dt;		// #DEF_0.4 #MIN_0 time constant (rate) for updating the medium-to-long time-scale ravg_ml value, which integrates over recent history of medium (trial level) averages, used for rapid adaptation of LTP vs LTD learning threshold in XCAL, and for learning based on receiver average activations with a trace of prior activations -- note this is computed on the unit bias con spec, where it updates the unit-level ravg_ml variable
   float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.10 is a compromise
   float		d_gain;		// #DEF_1 #MIN_0 multiplier on LTD values relative to LTP values -- generally do not change from 1.0 default unless using only BCM-style learning
 
@@ -487,6 +488,10 @@ public:
 						    LeabraUnit* ru, LeabraUnit* su,
 						    float sravg_s_nrm, float sravg_m_nrm);
   // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- SR trial-wise version (requires normalization factors) -- uses synapse sravg terms
+  inline void 	C_Compute_dWt_CtLeabraXCAL_SRMAX_trial(LeabraCon* cn,
+						    LeabraUnit* ru, LeabraUnit* su,
+						    float sravg_s_nrm, float sravg_m_nrm);
+  // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- SRMAX trial-wise version (requires normalization factors) -- uses synapse sravg terms
   inline void 	C_Compute_dWt_CtLeabraXCAL_SEP_trial(LeabraCon* cn,
 						     LeabraUnit* ru, LeabraUnit* su,
 						     float sravg_s_nrm, float sravg_m_nrm);
@@ -3150,7 +3155,17 @@ C_Compute_dWt_CtLeabraXCAL_SR_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* s
   float srm = (sravg_m_nrm * cn->sravg_m);
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
   cn->dwt += cur_lrate * (xcal.svm_mix * xcal.dWtFun(sm_mix, srm) + 
-			  xcal.mvl_mix * xcal.dWtFun(sm_mix, ru->l_thr));
+ 			  xcal.mvl_mix * xcal.dWtFun(sm_mix, ru->l_thr));
+}
+
+inline void LeabraConSpec::
+C_Compute_dWt_CtLeabraXCAL_SRMAX_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su,
+				    float sravg_s_nrm, float sravg_m_nrm) {
+  float srs = (sravg_s_nrm * cn->sravg_s);
+  float srm = (sravg_m_nrm * cn->sravg_m);
+  float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
+  float effthr = MAX(srm, ru->l_thr);
+  cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
 inline void LeabraConSpec::
@@ -3216,6 +3231,13 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
 					  sravg_s_nrm, sravg_m_nrm);
     }
   }
+  else if(xcal.lrn_var == XCalLearnSpec::XCAL_SRMAX) {
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      C_Compute_dWt_CtLeabraXCAL_SRMAX_trial((LeabraCon*)cg->OwnCn(i), ru, su,
+					     sravg_s_nrm, sravg_m_nrm);
+    }
+  }
   else if(xcal.lrn_var == XCalLearnSpec::XCAL_SEP) {
     if(xcalm.ml_mix > 0.0f) {
       for(int i=0; i<cg->size; i++) {
@@ -3257,8 +3279,11 @@ inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_C_sep(LeabraCon* cn,
   float srs = rbias->sravg_s * sbias->sravg_s;
   float srm = rbias->sravg_m * sbias->sravg_m;
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-  cn->dwt += cur_lrate * (xcal.svm_mix * xcal.dWtFun(sm_mix, srm) + 
-			  xcal.mvl_mix * xcal.dWtFun(sm_mix, ru->l_thr));
+  float effthr = MAX(srm, ru->l_thr);
+  cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
+  // using SR_MAX by default
+//   cn->dwt += cur_lrate * (xcal.svm_mix * xcal.dWtFun(sm_mix, srm) + 
+// 			  xcal.mvl_mix * xcal.dWtFun(sm_mix, ru->l_thr));
 }
 
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_C(LeabraSendCons* cg, LeabraUnit* su) {
