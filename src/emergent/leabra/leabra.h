@@ -280,16 +280,18 @@ class LEABRA_API XCalContSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra eXtended Contrastive Attractor Learning (XCAL) fully continuous time specs (CTLEABRA_XCAL_C)
 INHERITED(taOBase)
 public:
-  float		s_dt;		// #DEF_0.2 #MIN_0 time (only for XCAL_C) constant for continuously updating the short time-scale sravg_s value
-  float		m_dt;		// #DEF_0.1 #MIN_0 time (only for XCAL_C) constant for continuous updating the medium time-scale sravg_m value
+  float		s_dt;		// #DEF_0.2 #MIN_0 (only for XCAL_C) time constant (rate) for continuously updating the short time-scale sravg_s value
+  float		s_time;		// #READ_ONLY #SHOW (only for XCAL_C) time constant (in cycles, 1/s_dt) for continuously updating the short time-scale sravg_s value
+  float		m_dt;		// #DEF_0.1 #MIN_0 (only for XCAL_C) time constant (rate) for continuous updating the medium time-scale sravg_m value
+  float		m_time;		// #READ_ONLY #SHOW (only for XCAL_C) time constant (in cycles, 1/m_dt) for continuously updating the medium time-scale sravg_m value
   // todo: need some params like this for continuous mode -- currently still use trial-wise hooks
 //   float		lrn_thr;	// threshold on sravg_m value to initiate learning, in continous mode
 //   int		lrn_delay;	// delay after lrn_thr threshold has been crossed after which learning occurs
 
   SIMPLE_COPY(XCalContSpec);
   TA_BASEFUNS(XCalContSpec);
-// protected:
-//   void	UpdateAfterEdit_impl();
+protected:
+  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -788,7 +790,7 @@ public:
   float		vm_r;		// #DEF_0;0.15 #AKA_v_m_r post-spiking membrane potential to reset to, produces refractory effect if lower than vm_init
   float		vm_dend;	// #DEF_0.3 how much to add to vm_dend value after every spike
   float		vm_dend_dt;	// #DEF_0.16 rate constant for updating the vm_dend value (used for spike-based learning)
-  float		vm_dend_time;	// #READ_ONLY #SHOW time constant (in msec, 1/vm_dend_dt) for updating the vm_dend value (used for spike-based learning)
+  float		vm_dend_time;	// #READ_ONLY #SHOW time constant (in cycles, 1/vm_dend_dt) for updating the vm_dend value (used for spike-based learning)
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(SpikeMiscSpec);
@@ -805,7 +807,7 @@ INHERITED(taOBase)
 public:
   bool		on;		// apply adaptation?
   float		dt_rate;	// #CONDSHOW_ON_on rate constant of the adaptation dynamics -- if the vm time step is considered to be 1 msec, then rate values of .02 to .1 (10 to 50 msec) are typical, with .02 being a regular spiking neuron, and .1 is fast spiking
-  float		dt_time;	// #CONDSHOW_ON_on #READ_ONLY #SHOW time constant (in msec = 1/dt_rate) of the adaptation dynamics
+  float		dt_time;	// #CONDSHOW_ON_on #READ_ONLY #SHOW time constant (in cycles = 1/dt_rate) of the adaptation dynamics
   float		vm_gain;	// #CONDSHOW_ON_on #MIN_0 #MAX_1 gain on the membrane potential v_m driving the adapt adaptation variable -- values around .1 are typical (resting v_m is subtracted from v_m for this, so that 0 adaptation occurs at rest)
   float		spike_gain;	// #CONDSHOW_ON_on value to add to the adapt adaptation variable after spiking -- range is around .01 for regular spiking neurons (strong adaptation) and lower -- for rate code activations, uses act value weighting and only computes every interval
   int		interval;	// #CONDSHOW_ON_on how many time steps between applying spike_gain for rate-coded activation function -- simulates the intrinsic delay obtained with spiking dynamics

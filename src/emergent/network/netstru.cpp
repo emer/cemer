@@ -1352,7 +1352,7 @@ void BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1, const
     if(vars[i].nonempty()) {
       String colnm = taMisc::StringCVar(vars[i]);
       cols[i] = dt->FindMakeColName(colnm, idx, VT_FLOAT); 
-      ruv[i] = suv[i] = false;
+      ruv[i] = suv[i] = biasv[i] = false;
       if(vars[i].startsWith("r.")) {
 	ruv[i] = true;
 	String varnxt = vars[i].after("r.");
@@ -1415,14 +1415,14 @@ void BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1, const
       }
       else if(suv[i]) {
 	if(biasv[i]) {
-	  val = mds[i]->GetValVar((void*)(Un(i)->bias.Cn(0)));
+	  val = mds[i]->GetValVar((void*)(Un(j)->bias.Cn(0)));
 	}
 	else {
-	  val = mds[i]->GetValVar((void*)Un(i));
+	  val = mds[i]->GetValVar((void*)Un(j));
 	}
       }
       else {
-	val = mds[i]->GetValVar((void*)Cn(i));
+	val = mds[i]->GetValVar((void*)Cn(j));
       }
       cols[i]->SetVal(val, -1);
     }

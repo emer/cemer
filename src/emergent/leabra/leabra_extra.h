@@ -913,19 +913,18 @@ private:
 class LeabraSpikeCon : public LeabraCon {
   // #STEM_BASE ##CAT_Leabra Leabra connection for spike-based learning
 public:
+  float		sravg_ss;	// #NO_SAVE super-short time-scale average of sender and receiver activation product over time (just for smoothing over transients) -- cascaded into sravg_s
   float		nmda;		// #NO_SAVE proportion of open NMDA receptor channels
   float		ca;		// #NO_SAVE postsynaptic Ca value, drives learning
 
 #ifdef XCAL_DEBUG
-  float		cmp_s;		// #NO_SAVE TODO: temp!!! comparison short term value (from sep bias guys)
-  float		cmp_m;		// #NO_SAVE TODO: temp!!! comparison medium term value (from sep bias guys)
-  float		cmp_sd;		// #NO_SAVE TODO: temp!!! diff from actual and comparison
-  float		cmp_md;		// #NO_SAVE TODO: temp!!! diff from actual and comparison
+  float		srprod_s;	// #NO_SAVE TODO: temp!!! s-r product comparison short term value (from sep bias guys)
+  float		srprod_m;	// #NO_SAVE TODO: temp!!! s-r product comparison medium term value (from sep bias guys)
 #endif
   
-  LeabraSpikeCon() { nmda = ca = 0.0f;
+  LeabraSpikeCon() { sravg_ss = nmda = ca = 0.0f;
 #ifdef XCAL_DEBUG
-    cmp_s = cmp_m = cmp_sd = cmp_md = 0.0f;
+    srprod_s = srprod_m = 0.0f;
 #endif
   }
 };
@@ -934,17 +933,19 @@ class LEABRA_API XCALSpikeSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCAL purely spiking learning rule based on Urakubo et al 2008
 INHERITED(taOBase)
 public:
-  float		ca_norm;	// #DEF_5 normalization factor for ca -- divide all ca constants by this amount
+  float		ca_norm;  // #DEF_5 normalization factor for ca -- divide all ca constants by this amount
   float		k_ca;	  // #READ_ONLY #SHOW (.3 in original units) effective Ca that gives 50% inhibition of maximal NMDA receptor activity
   float		ca_vgcc;  // #READ_ONLY #SHOW (1.3 in original units) Ca influx resulting from receiver spiking (due to voltage gated calcium channels)
   float		ca_v_nmda; // #READ_ONLY #SHOW (0.0223 in original units) Ca influx due to membrane-potential (voltage) driven NMDA receptor activation
   float		ca_nmda;   // #READ_ONLY #SHOW (0.5 in original units) Ca influx from NMDA that is NOT driven by membrane potential 
   float		ca_dt;     // #DEF_20 time constant (in msec) for decay of Ca 
   float		ca_rate;   // #READ_ONLY #NO_SAVE rate constant (1/dt) for decay of Ca 
-  float		ca_off;	   // #DEF_0.1 offset for ca -- subtract this amount from ca (clipped to zero) for learning computations
+  float		ca_off;	   // #DEF_0.55 offset for ca -- subtract this amount from ca (clipped to zero) for learning computations
   float		nmda_dt;   // #DEF_40 time constant (in msec) for decay of NMDA receptor conductance
   float		nmda_rate; // #READ_ONLY #NO_SAVE rate constant (1/dt) for decay of NMDA receptor conductance
-
+  float		ss_dt;	   // #DEF_0.2 #MIN_0 time constant (rate) for continuously updating the super-short time-scale sravg_ss value -- smooths over very rapid transients
+  float		ss_time;   // #READ_ONLY #SHOW (only for XCAL_C) time constant (in cycles, 1/ss_dt) for continuously updating the super-short time-scale sravg_ss value -- smooths over very rapid transients
+  
   TA_SIMPLE_BASEFUNS(XCALSpikeSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -961,9 +962,9 @@ public:
 
   inline void 	C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
     LeabraConSpec::C_Init_Weights(cg, cn, ru, su); LeabraSpikeCon* lcn = (LeabraSpikeCon*)cn;
-    lcn->nmda = 0.0f; lcn->ca = 0.0f; 
+    lcn->sravg_ss = xcalm.avg_init; lcn->nmda = 0.0f; lcn->ca = 0.0f; 
 #ifdef XCAL_DEBUG
-    lcn->cmp_s = lcn->cmp_m = xcalm.avg_init; lcn->cmp_sd = lcn->cmp_md = 0.0f;
+    lcn->srprod_s = lcn->srprod_m = xcalm.avg_init;
 #endif
   }
 
@@ -972,22 +973,21 @@ public:
     float dnmda = -cn->nmda * xcal_spike.nmda_rate;
     float dca = (cn->nmda * (xcal_spike.ca_v_nmda * ru->vm_dend + xcal_spike.ca_nmda))
       - (cn->ca * xcal_spike.ca_rate);
-    if(su->act > 0.0f) { dnmda += xcal_spike.k_ca / (xcal_spike.k_ca + cn->ca); }
-    if(ru->act > 0.0f) { dca += xcal_spike.ca_vgcc; }
+    if(su->act > 0.5f) { dnmda += xcal_spike.k_ca / (xcal_spike.k_ca + cn->ca); }
+    if(ru->act > 0.5f) { dca += xcal_spike.ca_vgcc; }
     cn->nmda += dnmda;
     cn->ca += dca;
     float sr = (cn->ca - xcal_spike.ca_off);
     if(sr < 0.0f) sr = 0.0f;
-    cn->sravg_s += xcal_c.s_dt * (sr - cn->sravg_s);
+    cn->sravg_ss += xcal_spike.ss_dt * (sr - cn->sravg_ss);
+    cn->sravg_s += xcal_c.s_dt * (cn->sravg_ss - cn->sravg_s);
     cn->sravg_m += xcal_c.m_dt * (cn->sravg_s - cn->sravg_m);
 
 #ifdef XCAL_DEBUG
     LeabraCon* rbias = (LeabraCon*)ru->bias.OwnCn(0);
     LeabraCon* sbias = (LeabraCon*)su->bias.OwnCn(0);
-    cn->cmp_s = rbias->sravg_s * sbias->sravg_s;
-    cn->cmp_m = rbias->sravg_m * sbias->sravg_m;
-    cn->cmp_sd = cn->cmp_s - cn->sravg_s; // diffs
-    cn->cmp_md = cn->cmp_m - cn->sravg_m;
+    cn->srprod_s = rbias->sravg_s * sbias->sravg_s;
+    cn->srprod_m = rbias->sravg_m * sbias->sravg_m;
 #endif
   }
 
@@ -1021,8 +1021,8 @@ public:
   }
 
   virtual void	GraphXCALSpikeSim(DataTable* graph_data = NULL,
-		  float rate_min=2.0f, float rate_max=100.0f, float rate_inc=2.0f,
-		  float max_time=500.0f, int reps_per_point=5,
+		  float rate_min=0.0f, float rate_max=150.0f, float rate_inc=5.0f,
+		  float max_time=250.0f, int reps_per_point=5,
 		  float v_m_dend_dt = 6.0f, float v_m_dend = 0.3f, float lin_norm=0.01f);
   // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph a simulation of the XCAL spike function by running a simulated synapse with poisson firing rates sampled over given range, with given samples per point, and other parameters as given
 

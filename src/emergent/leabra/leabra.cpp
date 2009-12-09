@@ -121,15 +121,17 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
 void XCalContSpec::Initialize() {
   m_dt = 0.1f;
   s_dt = 0.2f;
-
+  s_time = 1.0f / s_dt;
+  m_time = 1.0f / m_dt;
 //   lrn_thr = 0.2f;
 //   lrn_delay = 200;
 }
 
-// void XCalContSpec::UpdateAfterEdit_impl() {
-//   inherited::UpdateAfterEdit_impl();
-// }
-
+void XCalContSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  s_time = 1.0f / s_dt;
+  m_time = 1.0f / m_dt;
+}
 
 void XCalMiscSpec::Initialize() {
   ml_mix = 0.0f;
@@ -246,7 +248,7 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   CreateWtSigFun();
   lmix.UpdateAfterEdit();
   xcal.UpdateAfterEdit();
-//   xcal_c.UpdateAfterEdit();
+  xcal_c.UpdateAfterEdit();
   xcalm.UpdateAfterEdit();
 
   if(learn_rule == CTLEABRA_XCAL_C) {
