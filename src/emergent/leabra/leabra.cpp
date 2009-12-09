@@ -123,6 +123,7 @@ void XCalContSpec::Initialize() {
   s_dt = 0.2f;
   s_time = 1.0f / s_dt;
   m_time = 1.0f / m_dt;
+  sr_off = 0.0f;
 //   lrn_thr = 0.2f;
 //   lrn_delay = 200;
 }

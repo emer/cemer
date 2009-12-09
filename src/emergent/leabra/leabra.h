@@ -285,6 +285,8 @@ public:
   float		s_time;		// #READ_ONLY #SHOW (only for XCAL_C) time constant (in cycles, 1/s_dt) for continuously updating the short time-scale sravg_s value
   float		m_dt;		// #DEF_0.1 #MIN_0 (only for XCAL_C) time constant (rate) for continuous updating the medium time-scale sravg_m value
   float		m_time;		// #READ_ONLY #SHOW (only for XCAL_C) time constant (in cycles, 1/m_dt) for continuously updating the medium time-scale sravg_m value
+  float		sr_off;		// #DEF_0.1 offset to subtract from sravg product prior to averaging -- allows for some low baseline level of activity without leading to LTD -- higher values here mean that effective sr values are lower, and thus l_gain must also be lower
+
   // todo: need some params like this for continuous mode -- currently still use trial-wise hooks
 //   float		lrn_thr;	// threshold on sravg_m value to initiate learning, in continous mode
 //   int		lrn_delay;	// delay after lrn_thr threshold has been crossed after which learning occurs
@@ -3276,8 +3278,13 @@ inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_C_sep(LeabraCon* cn,
 							    LeabraUnit* ru, LeabraUnit* su) {
   LeabraCon* rbias = (LeabraCon*)ru->bias.OwnCn(0);
   LeabraCon* sbias = (LeabraCon*)su->bias.OwnCn(0);
-  float srs = rbias->sravg_s * sbias->sravg_s;
-  float srm = rbias->sravg_m * sbias->sravg_m;
+  float srs = (rbias->sravg_s * sbias->sravg_s) - xcal_c.sr_off;
+  if(srs < 0.0f) srs = 0.0f;
+  float srm = (rbias->sravg_m * sbias->sravg_m) - xcal_c.sr_off;
+  if(srm < 0.0f) srm = 0.0f;
+  // todo: can optimize these out, but useful for debugging for time being:
+  cn->sravg_s = srs;
+  cn->sravg_m = srm;
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
   float effthr = MAX(srm, ru->l_thr);
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
