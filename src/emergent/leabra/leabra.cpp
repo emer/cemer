@@ -2267,6 +2267,10 @@ LeabraInhib* LeabraUnit::own_thr() const {
 void LeabraPrjn::Initialize() {
   netin_avg = 0.0f;
   netin_rel = 0.0f;
+  sravg_s_max = 0.0f;
+  sravg_s_avg = 0.0f;
+  sravg_m_max = 0.0f;
+  sravg_m_avg = 0.0f;
 
   avg_netin_avg = 0.0f;
   avg_netin_avg_sum = 0.0f;
@@ -2319,6 +2323,11 @@ void LeabraPrjn::CheckInhibCons(LeabraNetwork* net) {
 void LeabraPrjn::Init_Stats() {
   netin_avg = 0.0f;
   netin_rel = 0.0f;
+
+  sravg_s_max = 0.0f;
+  sravg_s_avg = 0.0f;
+  sravg_m_max = 0.0f;
+  sravg_m_avg = 0.0f;
 
   avg_netin_avg = 0.0f;
   avg_netin_avg_sum = 0.0f;
@@ -4081,7 +4090,7 @@ void LeabraLayerSpec::AdaptKWTAPt(LeabraLayer* lay, LeabraNetwork*) {
   }
 }
 
-void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork*) {
+void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay->netin.max < 0.01f) return; // not getting enough activation to count!
 
   lay->avg_netin_sum.avg += lay->netin.avg;
@@ -4093,7 +4102,12 @@ void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork*) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
     if(!prjn->from || prjn->from->lesioned()) continue;
     prjn->netin_avg = 0.0f;
+    prjn->sravg_s_max = 0.0f;
+    prjn->sravg_s_avg = 0.0f;
+    prjn->sravg_m_max = 0.0f;
+    prjn->sravg_m_avg = 0.0f;
     int netin_avg_n = 0;
+    int sravg_n = 0;
     LeabraUnit* u;
     taLeafItr ui;
     FOR_ITR_EL(LeabraUnit, u, lay->units., ui) {
@@ -4101,14 +4115,30 @@ void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork*) {
       if(u->act_eq < us->opt_thresh.send) continue; // ignore if not above sending thr
       LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(prjn->recv_idx);
       if(!cg) continue;
-      float net = cg->Compute_Netin(u);
-      cg->net = net;
-      prjn->netin_avg += net;
+      float netin = cg->Compute_Netin(u);
+      cg->net = netin;
+      prjn->netin_avg += netin;
       netin_avg_n++;
+
+      if(net->learn_rule >= LeabraNetwork::CTLEABRA_XCAL) {
+	for(int j=0;j<cg->size; j++) {
+	  LeabraCon* cn = (LeabraCon*)cg->PtrCn(j);
+	  prjn->sravg_s_avg += cn->sravg_s;
+	  prjn->sravg_m_avg += cn->sravg_m;
+	  prjn->sravg_s_max = MAX(cn->sravg_s, prjn->sravg_s_max);
+	  prjn->sravg_m_max = MAX(cn->sravg_m, prjn->sravg_m_max);
+	}
+	sravg_n += cg->size;
+      }
     }
     if(netin_avg_n > 0)
       prjn->netin_avg /= (float)netin_avg_n;
     sum_net += prjn->netin_avg;
+
+    if(sravg_n > 0) {
+      prjn->sravg_s_avg /= (float)sravg_n;
+      prjn->sravg_m_avg /= (float)sravg_n;
+    }
   }
 
   for(int i=0;i<lay->projections.size;i++) {

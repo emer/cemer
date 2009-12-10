@@ -1565,6 +1565,10 @@ INHERITED(Projection)
 public:
   float		netin_avg;	// #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer
   float		netin_rel;	// #READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer
+  float		sravg_s_max;	// #READ_ONLY #EXPERT #CAT_Statistic maximum sravg_s values for the recv projections into this layer
+  float		sravg_s_avg;	// #READ_ONLY #EXPERT #CAT_Statistic average sravg_s values for the recv projections into this layer
+  float		sravg_m_max;	// #READ_ONLY #EXPERT #CAT_Statistic maximum sravg_s values for the recv projections into this layer
+  float		sravg_m_avg;	// #READ_ONLY #EXPERT #CAT_Statistic average sravg_s values for the recv projections into this layer
 
   float		avg_netin_avg;	// #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer, averaged over an epoch
   float		avg_netin_avg_sum;// #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic average netinput values for the recv projections into this layer, sum over an epoch
@@ -3165,6 +3169,9 @@ C_Compute_dWt_CtLeabraXCAL_SRMAX_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit
 				    float sravg_s_nrm, float sravg_m_nrm) {
   float srs = (sravg_s_nrm * cn->sravg_s);
   float srm = (sravg_m_nrm * cn->sravg_m);
+  // NOTE: debug only!!
+  cn->sravg_s = srs;
+  cn->sravg_m = srm;
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
   float effthr = MAX(srm, ru->l_thr);
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
