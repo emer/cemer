@@ -11,6 +11,6 @@ HEADERS += quarter_examiner_viewer.h qtthumbwheel.h
 macx {
      LIBS += -framework Quarter -framework Inventor
 }
-# unix {
-#      LIBS += -lQuarter -lInventor
-# }
+else {
+     LIBS += -lQuarter -lCoin
+}
