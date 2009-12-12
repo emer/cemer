@@ -93,7 +93,8 @@ void XCalLearnSpec::Initialize() {
   s_mix = 0.90f;
 
   l_dt = 0.005f;
-  l_gain = 1.5f;
+  l_gain = 1.5f;		// todo: change to 1.0
+  thr_mult = NO_MULT;		// todo: change
 
   ml_dt = 0.4f;
 
