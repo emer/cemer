@@ -1096,12 +1096,33 @@ taiDataHostBase_List taiDataHostBase::async_reconstr_list;
 taiDataHostBase_List taiDataHostBase::async_getimage_list;
 
 bool taiDataHostBase::AsyncWaitProc() {
+  static bool in_waitproc = false;
+
   if(async_apply_list.size == 0 && async_reshow_list.size == 0 &&
      async_getimage_list.size == 0 && async_reconstr_list.size == 0) return false;
 
-  // order is important here: don't want to have one thing trigger another right away..
+  if(in_waitproc) return false;
+  in_waitproc = true;
 
+  // order is important here: don't want to have one thing trigger another right away..
   bool did_some = false;
+  for(int i=0;i<async_getimage_list.size;i++) {
+    taiDataHostBase* dhb = async_getimage_list.FastEl(i);
+    dhb->getimage_req = false;
+    if ((dhb->state & STATE_MASK) < CANCELED) {
+      dhb->GetImage(false);
+      did_some = true;
+    }
+  }
+  async_getimage_list.Reset();
+  if(did_some) {
+    taMisc::RunPending();
+    taMisc::RunPending();
+    taMisc::RunPending();	
+    in_waitproc = false;
+    return true;
+  }
+
   for(int i=0;i<async_reconstr_list.size;i++) {
     taiDataHostBase* dhb = async_reconstr_list.FastEl(i);
     if(dhb->reconstr_req) {
@@ -1116,6 +1137,7 @@ bool taiDataHostBase::AsyncWaitProc() {
     taMisc::RunPending();
     taMisc::RunPending();
     taMisc::RunPending();
+    in_waitproc = false;
     return true;
   }
 
@@ -1134,24 +1156,7 @@ bool taiDataHostBase::AsyncWaitProc() {
     taMisc::RunPending();
     taMisc::RunPending();
     taMisc::RunPending();
-    return true;
-  }
-
-  for(int i=0;i<async_getimage_list.size;i++) {
-    taiDataHostBase* dhb = async_getimage_list.FastEl(i);
-    if(dhb->getimage_req) {
-      dhb->getimage_req = false;
-      if ((dhb->state & STATE_MASK) < CANCELED) {
-        dhb->GetImage(false);
-	did_some = true;
-      }
-    }
-  }
-  async_getimage_list.Reset();
-  if(did_some) {
-    taMisc::RunPending();
-    taMisc::RunPending();
-    taMisc::RunPending();
+    in_waitproc = false;
     return true;
   }
 
@@ -1167,6 +1172,7 @@ bool taiDataHostBase::AsyncWaitProc() {
   }
   async_apply_list.Reset();
 
+  in_waitproc = false;
   return true;
 }
 
@@ -1204,7 +1210,7 @@ void taiDataHostBase::GetImage_Async() {
   // program control panels -- needs the redundant getimage guys..  doesn't happen very often
   // we can get these for DEFERRED as well, for buttons, ex/esp Program panels
   if ((state & STATE_MASK) >= CANCELED) {
-//     cerr << "getimage async cancelled on: " << typ->name << " state: " << (state & STATE_MASK) << endl;
+     cerr << "getimage async cancelled on: " << typ->name << " state: " << (state & STATE_MASK) << endl;
 //     taMisc::FlushConsole();
     return;
   }
@@ -2386,10 +2392,10 @@ void taiEditDataHost::GetButtonImage(bool force) {
 }
 
 void taiEditDataHost::GetImage(bool force) {
+//   cerr << "GetImage start on: " << typ->name << endl;
   if ((host_type != HT_CONTROL) || (frmMethButtons != NULL))
     GetButtonImage(force); // does its own visible check
   if (!force && !mwidget->isVisible()) return;
-//   cerr << "GetImage start on: " << typ->name << endl;
   if ((typ == NULL) || (root == NULL)) return;
   if (state >= ACCEPTED ) return;
   //note: we could be invisible, so we only do what is visible

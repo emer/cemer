@@ -87,29 +87,16 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   lrn_var = XCAL_SR;
-
-  mvl_mix = 0.002f;
-
   s_mix = 0.90f;
-
   l_dt = 0.005f;
-  l_gain = 1.5f;		// todo: change to 1.0
-  thr_mult = NO_MULT;		// todo: change
-
-  ml_dt = 0.4f;
-
-  d_rev = 0.10f;
-
+  d_rev = 0.15f;
   d_gain = 1.0f;
-
-  svm_mix = 1.0f - mvl_mix;
   m_mix = 1.0f - s_mix;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
 }
 
 void XCalLearnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  svm_mix = 1.0f - mvl_mix;
   m_mix = 1.0f - s_mix;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
   if(d_rev > 0.0f)
@@ -137,6 +124,8 @@ void XCalContSpec::UpdateAfterEdit_impl() {
 
 void XCalMiscSpec::Initialize() {
   ml_mix = 0.0f;
+  ml_dt = 0.4f;
+
 
   use_sb = true;
   use_nd = false;
@@ -253,13 +242,6 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   xcal_c.UpdateAfterEdit();
   xcalm.UpdateAfterEdit();
 
-  if(learn_rule == CTLEABRA_XCAL_C) {
-    if(TestWarning(xcal.lrn_var >= XCalLearnSpec::CAL,
-		   "UAE", "lrn_var of CAL or CHL are NOT supported by the CTLEABRA_XCAL_C algorithm -- reverting back to XCAL_SEP")) {
-      xcal.lrn_var = XCalLearnSpec::XCAL_SEP;
-    }
-  }
-
   if(learn_rule == LEABRA_CHL) {
     xcalm.do_init_sravg = xcalm.do_comp_sravg = false;
   }
@@ -267,8 +249,7 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
     xcalm.do_init_sravg = xcalm.do_comp_sravg = true;
   }
   else if(learn_rule == CTLEABRA_XCAL) {
-    xcalm.do_init_sravg = xcalm.do_comp_sravg = ((xcal.lrn_var != XCalLearnSpec::XCAL_SEP) &&
-				     (xcal.lrn_var != XCalLearnSpec::CHL));
+    xcalm.do_init_sravg = xcalm.do_comp_sravg = ((xcal.lrn_var != XCalLearnSpec::XCAL_SEP));
   }
   else if(learn_rule == CTLEABRA_XCAL_C) {
     xcalm.do_init_sravg = false;	// never init
@@ -2165,7 +2146,6 @@ void LeabraUnit::Initialize() {
   act_avg = 0.15f;
   ravg_l = 0.15f;
   ravg_ml = 0.15f;
-  l_thr = 0.15f;
   act_p = act_m = act_dif = 0.0f;
   act_m2 = act_p2 = act_dif2 = 0.0f;
   da = 0.0f;
@@ -2216,7 +2196,6 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   act_avg = cp.act_avg;
   ravg_l = cp.ravg_l;
   ravg_ml = cp.ravg_ml;
-  l_thr = cp.l_thr;
   act_m = cp.act_m;
   act_p = cp.act_p;
   act_dif = cp.act_dif;

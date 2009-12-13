@@ -424,6 +424,16 @@ void PFCBaseLayerSpec::Initialize() {
 //	MatrixConSpec		//
 //////////////////////////////////
 
+void MatrixLearnSpec::Initialize() {
+  bcm_mix = 0.005f;
+  err_mix = 1.0f - bcm_mix;
+}
+
+void MatrixLearnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  err_mix = 1.0f - bcm_mix;
+}
+
 void MatrixConSpec::Initialize() {
   SetUnique("lmix", true);
   lmix.hebb = 0.0f;
@@ -434,7 +444,6 @@ void MatrixConSpec::Initialize() {
   wt_sig.off = 1.0f;
 
   SetUnique("xcal", true);
-  xcal.mvl_mix = 0.005f;
   xcal.s_mix = 0.8f;
 
   SetUnique("wt_limits", true);
@@ -443,6 +452,7 @@ void MatrixConSpec::Initialize() {
 
 void MatrixConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  matrix.UpdateAfterEdit();
   // these are enforced absolutely because the code does not use them:
   lmix.hebb = 0.0f;
   lmix.err = 1.0f;
@@ -3494,7 +3504,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   matrix_cons->wt_sig.gain = 1.0f;
   matrix_cons->wt_sig.off = 1.0f;
   matrix_cons->SetUnique("xcal", true);
-  matrix_cons->xcal.mvl_mix = 0.005f;
   matrix_cons->xcal.s_mix = 0.8f;
 
   mfmpfc_cons->SetUnique("wt_scale", true);
@@ -4198,7 +4207,6 @@ void V1MatrixConSpec::Initialize() {
   wt_sig.off = 1.0f;
 
   SetUnique("xcal", true);
-  xcal.mvl_mix = 0.005f;
   xcal.s_mix = 0.8f;
 
   SetUnique("wt_limits", true);
@@ -4209,6 +4217,7 @@ void V1MatrixConSpec::Initialize() {
 
 void V1MatrixConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  matrix.UpdateAfterEdit();
   // these are enforced absolutely because the code does not use them:
   lmix.hebb = 0.0f;
   lmix.err = 1.0f;

@@ -166,6 +166,22 @@ private:
 ////////////////////////////////////////////////////////////////////
 //	  Matrix Con/Units
 
+class LEABRA_API MatrixLearnSpec : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for matrix conspec learning
+INHERITED(taOBase)
+public:
+  float		bcm_mix;	// #DEF_0.005 #MIN_0 #MAX_1 how much of BCM-like self-organizing mechanism to include into learning rule -- subtracts long-term average (ravg_l) from current sr product
+  float		err_mix;	// #READ_ONLY 1-bcm_mix error-driven learning component
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(MatrixLearnSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 class LEABRA_API MatrixConSpec : public LeabraConSpec {
   // Learning of matrix input connections based on dopamine modulation of activation
 INHERITED(LeabraConSpec)
@@ -173,12 +189,14 @@ public:
 #ifdef __MAKETA__
   XCalLearnSpec	xcal;		// #CAT_Learning XCAL learning parameters for matrix cons, used for keeping units from being either too active or not active enough -- note that mvl_mix default value should be multiplied by da_gain
 #endif
+  MatrixLearnSpec  matrix;	// #CAT_Learning matrix learning parameters
+
   inline void C_Compute_dWt_Matrix(LeabraCon* cn, float lin_wt, 
 				   float mtx_act_m2, float mtx_da, float su_act_m2, 
 				   float ru_thr) {
     float sr_prod = mtx_act_m2 * su_act_m2;
     float err = mtx_da * sr_prod;
-    float dwt = xcal.svm_mix * err + xcal.mvl_mix * xcal.dWtFun(sr_prod, ru_thr);
+    float dwt = matrix.err_mix * err + matrix.bcm_mix * xcal.dWtFun(sr_prod, ru_thr * su_act_m2);
     // std leabra requires separate softbounding on all terms.. see XCAL for its version
     if(lmix.err_sb) {
       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
@@ -191,7 +209,7 @@ public:
 					float su_act_m2, float ru_thr) {
     float sr_prod = mtx_act_m2 * su_act_m2;
     float err = mtx_da * sr_prod;
-    float dwt = xcal.svm_mix * err + xcal.mvl_mix * xcal.dWtFun(sr_prod, ru_thr);
+    float dwt = matrix.err_mix * err + matrix.bcm_mix * xcal.dWtFun(sr_prod, ru_thr * su_act_m2);
     cn->dwt += cur_lrate * dwt;
   }
 
@@ -200,7 +218,7 @@ public:
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_m2, ru->dav, su->act_m2,
-			   ru->l_thr);
+			   ru->ravg_l);
     }
   }
 
@@ -208,7 +226,7 @@ public:
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Matrix_NoSB(cn, ru->act_m2, ru->dav, su->act_m2, ru->l_thr);
+      C_Compute_dWt_Matrix_NoSB(cn, ru->act_m2, ru->dav, su->act_m2, ru->ravg_l);
     }
   }
 
@@ -1000,13 +1018,14 @@ public:
   XCalLearnSpec	xcal;		// #CAT_Learning XCAL learning parameters for matrix cons, used for keeping units from being either too active or not active enough -- note that mvl_mix default value should be multiplied by da_gain
 #endif
   MatrixLearnRule	matrix_rule;	// learning rule to use
+  MatrixLearnSpec  	matrix;	// #CAT_Learning matrix learning parameters
 
   inline void C_Compute_dWt_Matrix(LeabraCon* cn, float lin_wt, 
 				   float ru_act_p, float ru_act_m, float su_act, 
 				   float ru_thr) {
     float err = (ru_act_p - ru_act_m) * su_act;
     float sm_mix = xcal.s_mix * ru_act_p * su_act + xcal.m_mix * ru_act_m * su_act;
-    float dwt = xcal.svm_mix * err + xcal.mvl_mix * xcal.dWtFun(sm_mix, ru_thr);
+    float dwt = matrix.err_mix * err + matrix.bcm_mix * xcal.dWtFun(sm_mix, ru_thr * su_act);
     // std leabra requires separate softbounding on all terms.. see XCAL for its version
     if(lmix.err_sb) {
       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
@@ -1019,7 +1038,7 @@ public:
 					float su_act, float ru_thr) {
     float err = (ru_act_p - ru_act_m) * su_act;
     float sm_mix = xcal.s_mix * ru_act_p * su_act + xcal.m_mix * ru_act_m * su_act;
-    float dwt = xcal.svm_mix * err + xcal.mvl_mix * xcal.dWtFun(sm_mix, ru_thr);
+    float dwt = matrix.err_mix * err + matrix.bcm_mix * xcal.dWtFun(sm_mix, ru_thr * su_act);
     cn->dwt += cur_lrate * dwt;
   }
 
@@ -1028,14 +1047,14 @@ public:
       for(int i=0; i<cg->size; i++) {
 	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p, ru->act_m, su->act_m, ru->l_thr);
+	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p, ru->act_m, su->act_m, ru->ravg_l);
       }
     }
     else { // MAINT
       for(int i=0; i<cg->size; i++) {
 	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p2, ru->act_p, su->act_p, ru->l_thr);
+	C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_p2, ru->act_p, su->act_p, ru->ravg_l);
       }
     }
   }
@@ -1045,14 +1064,14 @@ public:
       for(int i=0; i<cg->size; i++) {
 	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p, ru->act_m, su->act_m, ru->l_thr);
+	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p, ru->act_m, su->act_m, ru->ravg_l);
       }
     }
     else { // MAINT
       for(int i=0; i<cg->size; i++) {
 	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p2, ru->act_p, su->act_p, ru->l_thr);
+	C_Compute_dWt_Matrix_NoSB(cn, ru->act_p2, ru->act_p, su->act_p, ru->ravg_l);
       }
     }
   }
