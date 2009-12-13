@@ -398,7 +398,6 @@ public:
   float		width;		// width of the gaussian in the wave direction
   float		length;		// width of the gaussian in the wave direction
   float		width_t;		// width of the gaussian in the wave direction
-
   float		amp;		// amplitude (maximum value)
   float_Matrix  filter;		// #READ_ONLY #NO_SAVE #NO_COPY our filter
 
@@ -463,7 +462,7 @@ public:
     HI_RES,
     MED_RES,
     LOW_RES,
-    VLOW_RES,
+	  VLOW_RES,
   };
 
   Region	region;		// retinal region represented by this filter 
@@ -570,10 +569,11 @@ public:
   float		freq_t;		// frequency of the sine wave related to time
   float		length;		// length of the gaussian perpendicular to the wave direction
   float		width;		// width of the gaussian in the wave direction
-  float		width_t;		// width of the gaussian in the time direction
-  float		amp;		// amplitude (maximum value)
-  int           timesteps;      //number of timesteps a motion sensitive filter responds to
+	float		width_t;		// width of the gaussian in the time direction
+	float		t_mult;
 
+  float		amp;		// amplitude (maximum value)
+  int       timesteps;      //number of timesteps a motion sensitive filter responds to
   void 	Initialize();
   void	Destroy() { };
   SIMPLE_COPY(MotionDispGaborRFSpec);
@@ -608,7 +608,7 @@ public:
   V1FilterType	filter_type; 	// what type of filter to use?
   TwoDCoord 	rf_width;	// width of the receptive field into the retinal inputs -- enforced to be even numbers, to enable the 1/2 overlap constraint for neighboring rf's
 
-  TwoDCoord 	rf_ovlp;	// #CONDEDIT_ON_filter_type:COPY half-width of the receptive field into the retinal inputs, which is the amount that the receptive fields overlap
+  TwoDCoord 	rf_ovlp;	//  half-width of the receptive field into the retinal inputs, which is the amount that the receptive fields overlap   CONDEDIT_ON_filter_type:COPY
   int		n_filters;	// #READ_ONLY #SHOW number of filters -- computed from appropriate _rf specifications in terms of number of angles/sizes etc.
   GaborRFSpec	gabor_rf;	// #CONDEDIT_ON_filter_type:GABOR parameters for gabor filter specs
   BlobRFSpec	blob_rf;	// #CONDEDIT_ON_filter_type:BLOB parameters for blob filter specs
@@ -740,6 +740,9 @@ public:
   XYNGeom	trg_input_size;	// #READ_ONLY #SHOW target input size: gp_geom * input_ovlp for wrap; (gp_geom - 1) * input_ovlp for !wrap
   float		gp_gauss_sigma;	  // width of gaussian weighting factor over the filter groups, in normalized terms relative to tot_filter_gps widths
   float_Matrix	gp_gauss_mat;	  // #READ_ONLY #NO_SAVE #NO_COPY group gaussian vals 
+	float disp_gauss_sigma; // width of gaussian weighting factor over the disparity comparison
+	int		disparity_width;	//size of the area to compare disparities
+	float_Matrix  disp_gauss_mat; // #READ_ONLY #NO_SAVE #NO_COPY disparity group gaussian vals
 
   virtual void	UpdateGeoms();	// update all the geometry values based on current setting
 
@@ -748,9 +751,10 @@ public:
   virtual bool 	SetGpGeomFmRetSpec(DoGRetinaSpecList& dogs);
   // set the gp_geom based on the input size on the given list of retinal dog filters by region and resolution
 
-  virtual bool	FilterMultiInput(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,float_Matrix& on_left_input,float_Matrix& off_left_input,float_Matrix& on_right_input,float_Matrix& off_right_input, bool superimpose = false);
+  //virtual bool	FilterMultiInput(float_Matrix& v1_output_left, float_Matrix& v1_output_right, int eyes, DoGFilterSpec::ColorChannel c_chan,float_Matrix& on_left_input,float_Matrix& off_left_input,float_Matrix& on_right_input,float_Matrix& off_right_input, bool superimpose = false);
   // actually perform the filtering operation on input patterns: calls threading deploy
-
+	virtual bool	FilterMultiInputDisp(float_Matrix& v1_output, int eyes, int disp, DoGFilterSpec::ColorChannel c_chan,float_Matrix& on_left_input,float_Matrix& off_left_input,float_Matrix& on_right_input,float_Matrix& off_right_input, bool superimpose = false);
+	
   override void Filter_Thread(int cmp_unit_index, int thread_no=-1);
   // this is thread target function, deploys to following based on type:
 
@@ -770,12 +774,18 @@ protected:
   void	UpdateAfterEdit_impl();
 
   // cache of items for current function call
-  float_Matrix* cur_v1_output;
+	float_Matrix* cur_v1_output_left;
+	float_Matrix* cur_v1_output_right;
+	float_Matrix* cur_v1_output;
+
+
   DoGFilterSpec::ColorChannel cur_c_chan;
   float_Matrix*  cur_on_left_input;
   float_Matrix*  cur_off_left_input;
   float_Matrix* cur_on_right_input;
   float_Matrix* cur_off_right_input;
+  int cur_eyes;
+  int cur_disp;
   bool 		cur_superimpose;
 };
 
@@ -924,7 +934,7 @@ public:
   virtual DataCol* GetRetImageSeriesColumn(DataTable* dt, String mod_name);
   // #CAT_Transform get the RetinaImage column for a particular image in a stimulus set with appropriate args for ensuring its correct size etc has been set
 
-  virtual String GetModName(int disparity, int timesteps, int curr_disp, int curr_time);
+  virtual String GetModName(int eyes, int timesteps, int curr_eye, int curr_time);
   // #CAT_Filter gets the suffix used for naming images series data
 
   virtual bool	TransformImageData(float_Matrix& img_data, DataTable* dt,
@@ -960,7 +970,7 @@ public:
   virtual bool	FilterImageData(DataTable* dt, bool superimpose = false, int renorm = 1);
   // #CAT_Filter filter retinal image data in RetinaImage column produced by TransformImageData_impl or LookAtImageData_impl in given datatable -- superimpose = merge into filter values into last row of table; otherwise writes over with new data -- impl routine for other functions to call (doesn't do any display updating), renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!)
 
-  virtual bool	FilterImageSeriesData(DataTable* dt, int disparity, int timesteps, bool superimpose = false, int renorm = 1);
+  virtual bool	FilterImageSeriesData(DataTable* dt, int eyes, int timesteps, bool superimpose = false, int renorm = 1);
   // #CAT_Filter filter retinal image data in RetinaImage column produced by TransformImageData_impl or LookAtImageData_impl in given datatable -- superimpose = merge into filter values into last row of table; otherwise writes over with new data -- impl routine for other functions to call (doesn't do any display updating), renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!)
 
   virtual void	Filter_Thread(int cmp_unit_index, int thread_no=-1);
@@ -1016,7 +1026,7 @@ public:
 				bool superimpose = false);
   // #BUTTON #CAT_Filter #FILE_DIALOG_LOAD load image from file and transform into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params add to foveation scaling and offsets
 
-virtual bool	LookAtImageSeriesName(const String& img_fname, int disparity, int timesteps, DataTable* dt,
+virtual bool	LookAtImageSeriesName(const String& img_fname, int eyes, int timesteps, DataTable* dt,
 				RetinalSpacingSpec::Region region,
 				float box_ll_x, float box_ll_y,
 				float box_ur_x, float box_ur_y,
@@ -1186,7 +1196,7 @@ public:
 //   virtual void	PlotSpacing(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the arrangement of the filters (centers) in the data table and generate a grid view
 
-  virtual bool	FilterRetinaData(DataTable* v1_out_dt, DataTable* ret_in_dt);
+  virtual bool	FilterRetinaData(DataTable* v1_out_dt, DataTable* ret_in_dt, int eyes, int disp);
   // Perform the filtering function: operates on output of RetinaSpec processing
 
 //   void	UpdateRetinaSize();	// copy retina_size to dogs..
