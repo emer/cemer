@@ -353,11 +353,12 @@ void iProgramEditor::Init() {
   // toolbar
   historyBackAction->addTo(tb);
   historyForwardAction->addTo(tb);
-//TEMP 
-QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(historyBackAction));
-if (but) but->setArrowType(Qt::LeftArrow);
-but = qobject_cast<QToolButton*>(tb->widgetForAction(historyForwardAction));
-if (but) but->setArrowType(Qt::RightArrow);
+
+  //TEMP 
+  QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(historyBackAction));
+  if (but) but->setArrowType(Qt::LeftArrow);
+  but = qobject_cast<QToolButton*>(tb->widgetForAction(historyForwardAction));
+  if (but) but->setArrowType(Qt::RightArrow);
   
   InternalSetModified(false);
 }

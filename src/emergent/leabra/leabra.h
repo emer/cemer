@@ -234,6 +234,7 @@ public:
   enum LearnVar {
     XCAL_SR,			// XCAL with synapse-level send-recv avg (sravg) for short and medium time scales (as in CAL), relative to medium and long term averages, passed through the XCAL dwt function (see conspec for option to plot this)
     XCAL_SRMAX,			// XCAL_SR with learn threshold as MAX of medium (error-driven) and long-term (BCM) averages -- eliminates mvl_mix parameter, and is more plausible overall
+    XCAL_SRAVG,			// XCAL_SR with learn threshold as average of medium (error-driven) and long-term (BCM) averages, determined by mvl_mix
     XCAL_SEP,			// XCAL with product of *separate* sending and receiving unit averages (from bias weight) for short and medium time scale, relative to medium and long term averages, passed through the XCAL dwt function (see conspec for option to plot this) -- this typically works almost as well as _SR, and is faster
     CAL,			// XCAL with synapse-level sravg for short and medium time scales (as in CAL) -- svm term (err-driven) does NOT go through XCAL function (main diff from _SR version)
     CHL,			// XCAL with CHL as the svm (err-driven) term (not going through XCAL function) -- basically CHL with XCAL homeostasis mechanism (BCM-like rule)
@@ -503,6 +504,11 @@ public:
 						       float thr_mult,
 						       float sravg_s_nrm, float sravg_m_nrm);
   // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- SRMAX trial-wise version (requires normalization factors) -- uses synapse sravg terms
+  inline void 	C_Compute_dWt_CtLeabraXCAL_SRAVG_trial(LeabraCon* cn,
+						       LeabraUnit* ru, LeabraUnit* su,
+						       float thr_mult,
+						       float sravg_s_nrm, float sravg_m_nrm);
+  // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- SRAVG trial-wise version (requires normalization factors) -- uses synapse sravg terms
   inline void 	C_Compute_dWt_CtLeabraXCAL_SEP_trial(LeabraCon* cn,
 						     LeabraUnit* ru, LeabraUnit* su,
 						     LeabraCon* sbias, float thr_mult,
@@ -3192,6 +3198,20 @@ C_Compute_dWt_CtLeabraXCAL_SRMAX_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit
 }
 
 inline void LeabraConSpec::
+C_Compute_dWt_CtLeabraXCAL_SRAVG_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su,
+				       float thr_mult, float sravg_s_nrm, float sravg_m_nrm) {
+  float srs = (sravg_s_nrm * cn->sravg_s);
+  float srm = (sravg_m_nrm * cn->sravg_m);
+  // NOTE: debug only!!
+  cn->sravg_s = srs;
+  cn->sravg_m = srm;
+  // end debug
+  float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
+  float effthr = xcal.svm_mix * srm + xcal.mvl_mix * thr_mult * ru->l_thr;
+  cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
+}
+
+inline void LeabraConSpec::
 C_Compute_dWt_CtLeabraXCAL_SEP_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su,
 	     LeabraCon* sbias, float thr_mult, float sravg_s_nrm, float sravg_m_nrm) {
   LeabraCon* rbias = (LeabraCon*)ru->bias.OwnCn(0);
@@ -3259,6 +3279,13 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       C_Compute_dWt_CtLeabraXCAL_SRMAX_trial((LeabraCon*)cg->OwnCn(i), ru, su,
+					     thr_mult, sravg_s_nrm, sravg_m_nrm);
+    }
+  }
+  else if(xcal.lrn_var == XCalLearnSpec::XCAL_SRAVG) {
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      C_Compute_dWt_CtLeabraXCAL_SRAVG_trial((LeabraCon*)cg->OwnCn(i), ru, su,
 					     thr_mult, sravg_s_nrm, sravg_m_nrm);
     }
   }

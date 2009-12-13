@@ -2361,6 +2361,9 @@ void taiEditDataHost::GetButtonImage(bool force) {
   if (typ == NULL)  return;
 //always do it  if (!force && !frmMethButtons->isVisible()) return;
   
+//   cerr << "GetButtonImage on: " << typ->name << endl;
+//   taMisc::FlushConsole();
+
   for (int i = 0; i < meth_el.size; ++i) {
     taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);
     if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
