@@ -753,7 +753,7 @@ public:
 
   //virtual bool	FilterMultiInput(float_Matrix& v1_output_left, float_Matrix& v1_output_right, int eyes, DoGFilterSpec::ColorChannel c_chan,float_Matrix& on_left_input,float_Matrix& off_left_input,float_Matrix& on_right_input,float_Matrix& off_right_input, bool superimpose = false);
   // actually perform the filtering operation on input patterns: calls threading deploy
-	virtual bool	FilterMultiInputDisp(float_Matrix& v1_output, int eyes, int disp, DoGFilterSpec::ColorChannel c_chan,float_Matrix& on_left_input,float_Matrix& off_left_input,float_Matrix& on_right_input,float_Matrix& off_right_input, bool superimpose = false);
+	virtual bool	FilterMultiInputDisp(float_Matrix& v1_output1, float_Matrix& v1_output2, float_Matrix& v1_output3, int eyes, int disp, DoGFilterSpec::ColorChannel c_chan,float_Matrix& on_left_input,float_Matrix& off_left_input,float_Matrix& on_right_input,float_Matrix& off_right_input, bool superimpose = false);
 	
   override void Filter_Thread(int cmp_unit_index, int thread_no=-1);
   // this is thread target function, deploys to following based on type:
@@ -776,7 +776,11 @@ protected:
   // cache of items for current function call
 	float_Matrix* cur_v1_output_left;
 	float_Matrix* cur_v1_output_right;
-	float_Matrix* cur_v1_output;
+	float_Matrix* cur_v1_output1;
+	float_Matrix* cur_v1_output2;
+	
+	float_Matrix* cur_v1_output3;
+
 
 
   DoGFilterSpec::ColorChannel cur_c_chan;
