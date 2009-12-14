@@ -1024,7 +1024,7 @@ public:
 				   float ru_act_p, float ru_act_m, float su_act, 
 				   float ru_thr) {
     float err = (ru_act_p - ru_act_m) * su_act;
-    float sm_mix = xcal.s_mix * ru_act_p * su_act + xcal.m_mix * ru_act_m * su_act;
+    float sm_mix = su_act * (xcal.s_mix * ru_act_p + xcal.m_mix * ru_act_m);
     float dwt = matrix.err_mix * err + matrix.bcm_mix * xcal.dWtFun(sm_mix, ru_thr * su_act);
     // std leabra requires separate softbounding on all terms.. see XCAL for its version
     if(lmix.err_sb) {

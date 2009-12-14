@@ -1002,11 +1002,11 @@ public:
   }
 
   inline void C_Compute_dWt_CtLeabraXCAL_C_spike(LeabraCon* cn,
-		    LeabraUnit* ru, LeabraUnit* su, LeabraCon* sbias, float thr_mult) {
+		    LeabraUnit* ru, LeabraUnit* su, LeabraCon* sbias, float l_su_mult) {
     float srs = cn->sravg_s;
     float srm = cn->sravg_m;
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-    float effthr = MAX(srm, thr_mult * ru->ravg_l);
+    float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->ravg_l;
     cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
   }
 
@@ -1015,11 +1015,11 @@ public:
     //  LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
 
     LeabraCon* sbias = (LeabraCon*)su->bias.OwnCn(0);
-    float thr_mult = sbias->sravg_m;
+    float l_su_mult = sbias->sravg_m;
 
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      C_Compute_dWt_CtLeabraXCAL_C_spike((LeabraCon*)cg->OwnCn(i), ru, su, sbias, thr_mult);
+      C_Compute_dWt_CtLeabraXCAL_C_spike((LeabraCon*)cg->OwnCn(i), ru, su, sbias, l_su_mult);
     }
   }
 

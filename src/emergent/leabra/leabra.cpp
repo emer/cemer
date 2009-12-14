@@ -87,18 +87,20 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   lrn_var = XCAL_SR;
-  s_mix = 0.95f;
+  s_mix = 0.9f;
+  thr_l_mix = 0.005f;
   l_dt = 0.005f;
-  l_gain = 1.0f;
-  d_rev = 0.1f;
+  d_rev = 0.15f;
   d_gain = 1.0f;
   m_mix = 1.0f - s_mix;
+  thr_m_mix = 1.0f - thr_l_mix;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
 }
 
 void XCalLearnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   m_mix = 1.0f - s_mix;
+  thr_m_mix = 1.0f - thr_l_mix;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
   if(d_rev > 0.0f)
     d_rev_ratio = (1.0f - d_rev) / d_rev;
