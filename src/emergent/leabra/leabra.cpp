@@ -87,9 +87,10 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   lrn_var = XCAL_SR;
-  s_mix = 0.90f;
+  s_mix = 0.95f;
   l_dt = 0.005f;
-  d_rev = 0.15f;
+  l_gain = 1.0f;
+  d_rev = 0.1f;
   d_gain = 1.0f;
   m_mix = 1.0f - s_mix;
   d_rev_ratio = (1.0f - d_rev) / d_rev;

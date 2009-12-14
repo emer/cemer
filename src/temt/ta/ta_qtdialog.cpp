@@ -1116,11 +1116,7 @@ bool taiDataHostBase::AsyncWaitProc() {
   }
   async_getimage_list.Reset();
   if(did_some) {
-    taMisc::RunPending();
-    taMisc::RunPending();
-    taMisc::RunPending();	
-    in_waitproc = false;
-    return true;
+    goto leave;
   }
 
   for(int i=0;i<async_reconstr_list.size;i++) {
@@ -1134,11 +1130,7 @@ bool taiDataHostBase::AsyncWaitProc() {
   }
   async_reconstr_list.Reset();
   if(did_some) {
-    taMisc::RunPending();
-    taMisc::RunPending();
-    taMisc::RunPending();
-    in_waitproc = false;
-    return true;
+    goto leave;
   }
 
   for(int i=0;i<async_reshow_list.size;i++) {
@@ -1153,11 +1145,7 @@ bool taiDataHostBase::AsyncWaitProc() {
   }
   async_reshow_list.Reset();
   if(did_some) {
-    taMisc::RunPending();
-    taMisc::RunPending();
-    taMisc::RunPending();
-    in_waitproc = false;
-    return true;
+    goto leave;
   }
 
   for(int i=0;i<async_apply_list.size;i++) {
@@ -1171,6 +1159,17 @@ bool taiDataHostBase::AsyncWaitProc() {
     }
   }
   async_apply_list.Reset();
+
+ leave:
+  if(did_some) {
+    taMisc::RunPending();
+    taMisc::RunPending();
+    taMisc::RunPending();
+
+    if(async_apply_list.size != 0 || async_reshow_list.size != 0 ||
+       async_getimage_list.size != 0 || async_reconstr_list.size != 0)
+      taMisc::do_wait_proc = true; // go around again
+  }
 
   in_waitproc = false;
   return true;
