@@ -3165,8 +3165,9 @@ C_Compute_dWt_CtLeabraXCAL_SR_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* s
   cn->sravg_m = srm;
 #endif
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->ravg_l;
-  cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
+//   float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->ravg_l;
+//   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
+  cn->dwt += cur_lrate * (xcal.thr_m_mix * xcal.dWtFun(sm_mix, srm) + xcal.thr_l_mix * xcal.dWtFun(sm_mix, l_su_mult * ru->ravg_l));
 }
 
 inline void LeabraConSpec::
