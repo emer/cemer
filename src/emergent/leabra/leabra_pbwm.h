@@ -120,9 +120,15 @@ public:
 
   virtual void	Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net);
   // compute netinput as GO - NOGO on matrix layer
-
   // hook for new netin goes here:
   override void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
+
+  override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void 	Compute_MidMinusAct(LeabraLayer* lay, LeabraUnit_Group* ugp, 
+				    int gp_idx, LeabraNetwork* net);
+  // computes own mid minus (gating activation) and also calls same function on associated Matrix layer
+  virtual void 	SendGateStates(LeabraLayer* lay, LeabraNetwork* net, LeabraLayer* pfc_lay);
+  // send gating states from pfc layer to this and other associated layers (matrix, patch)
 
   // don't do any learning:
   override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
@@ -191,6 +197,19 @@ public:
 #endif
   MatrixLearnSpec  matrix;	// #CAT_Learning matrix learning parameters
 
+  inline virtual void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
+    // do NOT do this under any circumstances!!
+  }
+
+  inline void Compute_MidMinusAct(LeabraRecvCons* cg, LeabraUnit* ru) {
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
+      cn->sravg_m = su->act_eq;
+    }
+  }
+  // RECV-based save current sender activation states to sravg_m for subsequent learning -- call this at time of gating..
+
   inline void C_Compute_dWt_Matrix(LeabraCon* cn, float lin_wt, 
 				   float mtx_act_m2, float mtx_da, float su_act_m2, 
 				   float ru_thr) {
@@ -217,8 +236,9 @@ public:
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_m2, ru->dav, su->act_m2,
+      C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_m2, ru->dav, cn->sravg_m,
 			   ru->ravg_l);
+      // note: using cn->sravg_m as having saved sending activation in Compute_MidMinusAct
     }
   }
 
@@ -290,6 +310,9 @@ public:
   MatrixNoiseSpec matrix_noise;	// special noise parameters for matrix units
 
   override float Compute_Noise(LeabraUnit* u, LeabraNetwork* net);
+
+  virtual void Compute_MidMinusAct(LeabraUnit* u, LeabraNetwork* net);
+  // save the effective mid-minus (gating) activation state for subsequent learning
 
   void	Defaults();
 
@@ -391,6 +414,9 @@ public:
   MatrixRndGoSpec	rnd_go;		// matrix random Go firing for nogo firing stripes case
   MatrixGoNogoGainSpec  go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
 
+  override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void Compute_MidMinusAct(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net);
+  // save the effective mid-minus (gating) activation state for subsequent learning -- for specific unit group (stripe)
   virtual void 	Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net);
   // compute gate_bias da modulation to influence gating -- continuously throughout settling
     virtual void Compute_UnitBiasDaMod(LeabraUnit* u, float bias_dav, int go_no);
@@ -485,19 +511,12 @@ public:
     INIT_STATE = 30,		// initialized state at start of trial
   };
 
-  enum MntOutGo {		// what to do when both MAINT and OUTPUT fire Go at the same time
-    MOGO_MNT,			// treat like a MAINT Go -- store if empty, or toggle off then back on if maintaining -- this is very good for "promiscuous" updating dynamic, as in first version of PBWM
-    MOGO_VETO,			// the MAINT veto's the OUT clear that would otherwise occur on out_go_clear -- this is good in combination with out_go_clear and the gating biases
-    MOGO_OUT,			// treat like an OUTPUT Go -- depends on out_go_clear -- if that is set, then just ignores MNT update and clears if maintaining, otherwise stores -- not generally useful but here for logical completeness
-  };
-
   float		base_gain;	// #DEF_0;0.5 #MIN_0 #MAX_1 how much activation gets through even without a Go gating signal
   float		go_gain;	// #READ_ONLY how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
   bool		graded_out_go;	// #DEF_true use actual activation level of output Go signal to drive output activation level
   bool		no_empty_out; 	// #DEF_true prevent an output gating signal from being generated from an empty stripe (one that is not currently maintaining something) -- this can help focus output gating on maintained information -- logic is that even if Go firing happens, it still takes recurrent activity from PFC to drive it, so if not maintaining, nothing happens..
   float		clear_decay;	// #DEF_0 #MIN_0 #MAX_1 how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse
   bool		out_go_clear;	// #DEF_true an output Go clears the maintenance currents at the end of the trial -- you use it, you lose it..
-  MntOutGo	mnt_out_go;	// #DEF_MOGO_VETO what to do when both MAINT and OUTPUT fire Go at the same time -- result also depends on out_go_clear status
   float		off_accom;	// #DEF_0 #EXPERT #MIN_0 #MAX_1 how much of the maintenance current to apply to accommodation after turning a unit off
 
   void 	Defaults()	{ Initialize(); }
@@ -517,7 +536,6 @@ public:
   float		go_learn_base;	// #DEF_0.06 #MIN_0 #MAX_1 how much PFC learning occurs in the absence of go gating modulation -- 1 minus this is how much happens with go gating -- determines how far plus phase activations used in learning can deviate from minus-phase activation state: plus phase act_nd = act_m + (go_learn_base + (1-go_learn_base) * gate_act) * (act - act_m)
   float		go_learn_mod;	// #READ_ONLY 1 - go_learn_base -- how much learning is actually modulated by go gating activation
   float		go_netin_gain;	// #DEF_0.01 #MIN_0 extra net input to add to active units as a function of gating signal -- applied in the plus phase (post gating) to help drive learning, as in the dopamine signal
-  bool		learn_out_go;	// #DEF_true learn on output Go gating signal in addition to maintenance output Go
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(PFCLearnSpec);
@@ -546,18 +564,20 @@ public:
 
   virtual void 	Compute_TrialInitGates(LeabraLayer* lay, LeabraNetwork* net);
   // clear various gating signals at the start of the trial
-
-  virtual void 	Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct updt_act,
+    virtual void Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct updt_act,
 				      LeabraLayer* lay, LeabraNetwork* net);
-  // update maintenance state variables (gc.h, misc_1) based on given action: ugp impl
+    // update maintenance state variables (gc.h, misc_1) based on given action: ugp impl
   virtual void	SendGateStates(LeabraLayer* lay, LeabraNetwork* net);
   // send misc_state gating state variables to the snrthal and matrix layers
   virtual void 	Compute_Gating(LeabraLayer* lay, LeabraNetwork* net);
-  // compute the gating signal based on SNrThal layer activations -- each cycle during normal processing
+  // compute the gating signal based on SNrThal layer activations -- each cycle during first minus phase
+  virtual void 	Compute_Gating_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
+  // compute the gating signal based on SNrThal layer activations -- at mid minus point
   virtual void 	Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net);
   // compute the gating signal based on SNrThal layer activations -- at end of plus phase
   virtual void	Compute_PfcMntAct(LeabraLayer* lay, LeabraNetwork* net);
   // compute PFC maint layer activations -- add learn modulation
+
 
   override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);

@@ -235,6 +235,7 @@ public:
     XCAL_SR,			// XCAL with synapse-level send-recv avg (sravg) for short and medium time scales (as in CAL), relative to weighted average of medium and long term averages (controlled by thr_l_mix), passed through the XCAL dwt function (see conspec for option to plot this)
     XCAL_SEP,			// XCAL with product of *separate* sending and receiving unit averages (from bias weight) for short and medium time scale, relative to weighted average of medium and long term averages (controlled by thr_l_mix), passed through the XCAL dwt function (see conspec for option to plot this) -- this typically works almost as well as _SR, and is computationally faster
     XCAL_SR_MAX,		// XCAL with synapse-level send-recv avg (sravg) for short and medium time scales (as in CAL), relative to medium and long term averages, passed through the XCAL dwt function (see conspec for option to plot this)
+    XCAL_SR_X,			// XCAL experimental
   };
 
   LearnVar	lrn_var;	// #DEF_XCAL_SR learning rule variant -- non-XCAL options are primarily for testing and specialized applications -- bias weights always use CAL or CHL if CHL is selected
@@ -503,6 +504,11 @@ public:
 							float l_su_mult,
 							float sravg_s_nrm, float sravg_m_nrm);
   // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- SR MAX trial-wise version (requires normalization factors) -- uses synapse sravg terms
+  inline void 	C_Compute_dWt_CtLeabraXCAL_SR_X_trial(LeabraCon* cn,
+							LeabraUnit* ru, LeabraUnit* su,
+							float l_su_mult,
+							float sravg_s_nrm, float sravg_m_nrm);
+  // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- SR X trial-wise version (requires normalization factors) -- uses synapse sravg terms
 
   inline void 	C_Compute_dWt_CtLeabraXCAL_C_sep(LeabraCon* cn,
 			 LeabraUnit* ru, LeabraUnit* su, LeabraCon* sbias, float l_su_mult);
@@ -3165,9 +3171,8 @@ C_Compute_dWt_CtLeabraXCAL_SR_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* s
   cn->sravg_m = srm;
 #endif
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-//   float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->ravg_l;
-//   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
-  cn->dwt += cur_lrate * (xcal.thr_m_mix * xcal.dWtFun(sm_mix, srm) + xcal.thr_l_mix * xcal.dWtFun(sm_mix, l_su_mult * ru->ravg_l));
+  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->ravg_l;
+  cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
 inline void LeabraConSpec::
@@ -3215,6 +3220,20 @@ C_Compute_dWt_CtLeabraXCAL_SR_MAX_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUni
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
+inline void LeabraConSpec::
+C_Compute_dWt_CtLeabraXCAL_SR_X_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su,
+				      float l_su_mult, float sravg_s_nrm, float sravg_m_nrm) {
+  float srs = (sravg_s_nrm * cn->sravg_s);
+  float srm = (sravg_m_nrm * cn->sravg_m);
+#ifdef XCAL_SAVE_SRAVG
+  cn->sravg_s = srs;
+  cn->sravg_m = srm;
+#endif
+  float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
+  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * MAX(ru->ravg_l, ru->ravg_ml);
+  cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
+}
+
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
   LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
   LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
@@ -3250,6 +3269,13 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       C_Compute_dWt_CtLeabraXCAL_SR_MAX_trial((LeabraCon*)cg->OwnCn(i), ru, su,
+					      l_su_mult, sravg_s_nrm, sravg_m_nrm);
+    }
+  }
+  else if(xcal.lrn_var == XCalLearnSpec::XCAL_SR_X) {
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      C_Compute_dWt_CtLeabraXCAL_SR_X_trial((LeabraCon*)cg->OwnCn(i), ru, su,
 					      l_su_mult, sravg_s_nrm, sravg_m_nrm);
     }
   }
