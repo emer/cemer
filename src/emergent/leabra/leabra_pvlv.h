@@ -59,13 +59,7 @@ public:
 
   SendActVal	send_act;	// what to use for the sending activation value
 
-  inline void C_Compute_dWt_Delta(LeabraCon* cn, float lin_wt, LeabraUnit* ru, LeabraUnit* su) {
-    float su_act;
-    if(send_act == ACT_P)
-      su_act = su->act_p;
-    else			// ACT_M2
-      su_act = su->act_m2;
-	
+  inline void C_Compute_dWt_Delta(LeabraCon* cn, float lin_wt, LeabraUnit* ru, float su_act) {
     float dwt = (ru->act_p - ru->act_m) * su_act; // basic delta rule
     if(lmix.err_sb) {
       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
@@ -74,25 +68,37 @@ public:
     cn->dwt += cur_lrate * dwt;
   }
 
-  inline void C_Compute_dWt_Delta_NoSB(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    float dwt = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
+  inline void C_Compute_dWt_Delta_NoSB(LeabraCon* cn, LeabraUnit* ru, float su_act) {
+    float dwt = (ru->act_p - ru->act_m) * su_act; // basic delta rule
     cn->dwt += cur_lrate * dwt;
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    float su_act;
+    if(send_act == ACT_P)
+      su_act = su->act_p;
+    else			// ACT_M2
+      su_act = su->act_m2;
+	
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta(cn, LinFmSigWt(cn->wt), ru, su);  
+      C_Compute_dWt_Delta(cn, LinFmSigWt(cn->wt), ru, su_act);  
     }
   }
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    float su_act;
+    if(send_act == ACT_P)
+      su_act = su->act_p;
+    else			// ACT_M2
+      su_act = su->act_m2;
+
     // softbound is separate, do noSB guy here
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta_NoSB(cn, ru, su);  
+      C_Compute_dWt_Delta_NoSB(cn, ru, su_act);  
     }
   }
 
@@ -170,6 +176,7 @@ class LEABRA_API PVrConSpec : public PVConSpec {
 INHERITED(PVConSpec)
 public:
   float 	wt_dec_mult;   // multiplier for weight decrease rate relative to basic lrate used for weight increases
+  
 
   inline void C_Compute_dWt_Delta(LeabraCon* cn, float lin_wt, LeabraUnit* ru, LeabraUnit* su) {
     float dwt = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule

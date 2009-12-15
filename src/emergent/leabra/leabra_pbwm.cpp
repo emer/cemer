@@ -412,7 +412,7 @@ void SNrThalLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
   // nop -- don't do the default thing -- already done by call to MidMinusAct
 }
 
-void SNrThalLayerSpec::Compute_MidMinusAct(LeabraLayer* lay, LeabraUnit_Group* ugp, 
+void SNrThalLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay, LeabraUnit_Group* ugp, 
 					   int gp_idx, LeabraNetwork* net) {
   // capture at snrthal level
   LeabraUnit* u;
@@ -426,7 +426,7 @@ void SNrThalLayerSpec::Compute_MidMinusAct(LeabraLayer* lay, LeabraUnit_Group* u
   LeabraLayer* matrix = FindLayerFmSpec(lay, dum_prjn_idx, &TA_MatrixLayerSpec);
   MatrixLayerSpec* mls = (MatrixLayerSpec*)matrix->spec.SPtr();
   LeabraUnit_Group* mugp = (LeabraUnit_Group*)matrix->units.gp[gp_idx];
-  mls->Compute_MidMinusAct(matrix, mugp, net); // tell matrix to do it
+  mls->Compute_MidMinusAct_ugp(matrix, mugp, net); // tell matrix to do it
 }
 
 
@@ -820,8 +820,8 @@ void MatrixLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
   // nop -- don't do the default thing -- already done by call to MidMinusAct
 }
 
-void MatrixLayerSpec::Compute_MidMinusAct(LeabraLayer* lay, LeabraUnit_Group* mugp, 
-					  LeabraNetwork* net) {
+void MatrixLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay, LeabraUnit_Group* mugp, 
+					      LeabraNetwork* net) {
   MatrixUnitSpec* us = (MatrixUnitSpec*)lay->unit_spec.SPtr();
   LeabraUnit* u;
   taLeafItr i;
@@ -1081,6 +1081,7 @@ void PFCLearnSpec::Initialize() {
   go_learn_base = 0.06f;
   go_learn_mod = 1.0f - go_learn_base;
   go_netin_gain = 0.01f;
+  out_gate_act = OUT_M2;
 }
 
 void PFCLearnSpec::UpdateAfterEdit_impl() {
@@ -1269,10 +1270,20 @@ void PFCLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void PFCLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_MidMinus(lay, net);
+  // do NOT do this -- doing this per stripe anyway
+//   inherited::Compute_MidMinus(lay, net);
   Compute_Gating_MidMinus(lay, net);
 }
   
+void PFCLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay, LeabraUnit_Group* ugp, 
+					    int gp_idx, LeabraNetwork* net) {
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, ugp->, i) {
+    u->act_m2 = u->act_eq;
+  }
+}
+
 void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct updt_act,
 					  LeabraLayer* lay, LeabraNetwork* net) {
   for(int j=0;j<ugp->size;j++) {
@@ -1352,7 +1363,8 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 	out_go_act = snr_out_u->act_eq;
       ugp->misc_float1 = gate.base_gain + (gate.go_gain * out_go_act);
       // misc_float2 includes param -- update once only!
-      snrthalsp_out->Compute_MidMinusAct(snrthal_out, snrgp_out, mg, net);
+      Compute_MidMinusAct_ugp(lay, ugp, mg, net);
+      snrthalsp_out->Compute_MidMinusAct_ugp(snrthal_out, snrgp_out, mg, net);
       // snrthal and associated matrix layer grab act_m2 vals based on current state!
     }
 
@@ -1360,10 +1372,13 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     if(!mnt_gate_fired && snr_mnt_u->act_eq > go_thr_mnt) {
       gate_mnt = true;
       mnt_gate_fired = true;	// now it has..
+
+      Compute_MidMinusAct_ugp(lay, ugp, mg, net);
+      snrthalsp_mnt->Compute_MidMinusAct_ugp(snrthal_mnt, snrgp_mnt, mg, net);
+      // snrthal and associated matrix layer grab act_m2 vals based on current state!
+
       if(pfc_mnt_cnt > 0) // full stripe
 	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);	 // clear maint currents if full -- toggle off
-      snrthalsp_mnt->Compute_MidMinusAct(snrthal_mnt, snrgp_mnt, mg, net);
-      // snrthal and associated matrix layer grab act_m2 vals based on current state!
     }
 
     if(gate_mnt || gate_out) {	// something happened
@@ -1435,9 +1450,10 @@ void PFCLayerSpec::Compute_Gating_MidMinus(LeabraLayer* lay, LeabraNetwork* net)
 	ugp->misc_state1 = PFCGateSpec::MAINT_NOGO;
       else
 	ugp->misc_state1 = PFCGateSpec::EMPTY_NOGO;
+      Compute_MidMinusAct_ugp(lay, ugp, mg, net);
       if(snrthal_out)
-	snrthalsp_out->Compute_MidMinusAct(snrthal_out, snrgp_out, mg, net);
-      snrthalsp_mnt->Compute_MidMinusAct(snrthal_mnt, snrgp_mnt, mg, net);
+	snrthalsp_out->Compute_MidMinusAct_ugp(snrthal_out, snrgp_out, mg, net);
+      snrthalsp_mnt->Compute_MidMinusAct_ugp(snrthal_mnt, snrgp_mnt, mg, net);
 
       // misc_float has the go_learn_base factor incorporated
       ugp->misc_float = learn.go_learn_base;
@@ -1654,10 +1670,13 @@ void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
       LeabraUnit* pfcu = (LeabraUnit*)pfcgp->FastEl(i);
 
       if(net->ct_cycle > net->mid_minus_cycle) {
-	ru->act = gate_val * pfcu->act_m2; // use memory value, due to updating issues "hand off"
+	if(pfcspec->learn.out_gate_act == PFCLearnSpec::OUT_M2)
+	  ru->act = gate_val * pfcu->act_m2; // use memory value, due to updating issues "hand off"
+	else
+	  ru->act = gate_val * pfcu->act_eq; // go live
       }
       else {
-	ru->act = gate_val * pfcu->act; // live val is fine
+	ru->act = gate_val * pfcu->act_eq; // live val is fine
       }
       ru->act_eq = ru->act_nd = ru->act;
       ru->da = 0.0f;		// I'm fully settled!

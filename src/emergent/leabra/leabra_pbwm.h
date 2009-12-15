@@ -124,8 +124,8 @@ public:
   override void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
 
   override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
-  virtual void 	Compute_MidMinusAct(LeabraLayer* lay, LeabraUnit_Group* ugp, 
-				    int gp_idx, LeabraNetwork* net);
+  virtual void 	Compute_MidMinusAct_ugp(LeabraLayer* lay, LeabraUnit_Group* ugp, 
+					int gp_idx, LeabraNetwork* net);
   // computes own mid minus (gating activation) and also calls same function on associated Matrix layer
   virtual void 	SendGateStates(LeabraLayer* lay, LeabraNetwork* net, LeabraLayer* pfc_lay);
   // send gating states from pfc layer to this and other associated layers (matrix, patch)
@@ -415,7 +415,7 @@ public:
   MatrixGoNogoGainSpec  go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
 
   override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
-  virtual void Compute_MidMinusAct(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net);
+  virtual void Compute_MidMinusAct_ugp(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net);
   // save the effective mid-minus (gating) activation state for subsequent learning -- for specific unit group (stripe)
   virtual void 	Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net);
   // compute gate_bias da modulation to influence gating -- continuously throughout settling
@@ -533,9 +533,15 @@ class LEABRA_API PFCLearnSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
 INHERITED(taOBase)
 public:
+  enum OutGateAct {
+    OUT_M2,			// output gating always reflects activations prior to any maintenance updating, i.e., act_m2 -- helps to bridge context for performance and learning
+    OUT_CUR,			// output gating always reflects the current pfc states, even as they are being updated
+  };
+
   float		go_learn_base;	// #DEF_0.06 #MIN_0 #MAX_1 how much PFC learning occurs in the absence of go gating modulation -- 1 minus this is how much happens with go gating -- determines how far plus phase activations used in learning can deviate from minus-phase activation state: plus phase act_nd = act_m + (go_learn_base + (1-go_learn_base) * gate_act) * (act - act_m)
   float		go_learn_mod;	// #READ_ONLY 1 - go_learn_base -- how much learning is actually modulated by go gating activation
   float		go_netin_gain;	// #DEF_0.01 #MIN_0 extra net input to add to active units as a function of gating signal -- applied in the plus phase (post gating) to help drive learning, as in the dopamine signal
+  OutGateAct	out_gate_act;	// #DEF_OUT_M2 what activation state does PFC_out reflect
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(PFCLearnSpec);
@@ -567,6 +573,9 @@ public:
     virtual void Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct updt_act,
 				      LeabraLayer* lay, LeabraNetwork* net);
     // update maintenance state variables (gc.h, misc_1) based on given action: ugp impl
+  virtual void 	Compute_MidMinusAct_ugp(LeabraLayer* lay, LeabraUnit_Group* ugp, 
+					int gp_idx, LeabraNetwork* net);
+  // computes mid minus (gating activation) state prior to gating
   virtual void	SendGateStates(LeabraLayer* lay, LeabraNetwork* net);
   // send misc_state gating state variables to the snrthal and matrix layers
   virtual void 	Compute_Gating(LeabraLayer* lay, LeabraNetwork* net);
