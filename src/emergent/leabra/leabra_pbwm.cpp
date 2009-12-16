@@ -1342,11 +1342,11 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     bool mnt_gate_fired = false;
     if((ugp->misc_state2 == PFCGateSpec::GATE_OUT_GO) ||
        (ugp->misc_state2 == PFCGateSpec::GATE_OUT_MNT_GO)) {
-      out_gate_fired;
+      out_gate_fired = true;
     }
     if((ugp->misc_state2 == PFCGateSpec::GATE_MNT_GO) ||
        (ugp->misc_state2 == PFCGateSpec::GATE_OUT_MNT_GO)) {
-      mnt_gate_fired;
+      mnt_gate_fired = true;
     }
 
     // what we do on this trial

@@ -197,7 +197,7 @@ public:
 #endif
   MatrixLearnSpec  matrix;	// #CAT_Learning matrix learning parameters
 
-  inline virtual void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
+  inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
     // do NOT do this under any circumstances!!
   }
 
@@ -246,7 +246,8 @@ public:
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Matrix_NoSB(cn, ru->act_m2, ru->dav, su->act_m2, ru->ravg_l);
+      C_Compute_dWt_Matrix_NoSB(cn, ru->act_m2, ru->dav, cn->sravg_m, ru->ravg_l);
+      // note: using cn->sravg_m as having saved sending activation in Compute_MidMinusAct
     }
   }
 
