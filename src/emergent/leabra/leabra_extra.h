@@ -1006,7 +1006,7 @@ public:
     float srs = cn->sravg_s;
     float srm = cn->sravg_m;
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-    float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->ravg_l;
+    float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->l_thr;
     cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
   }
 

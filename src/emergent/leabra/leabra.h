@@ -243,6 +243,7 @@ public:
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
   float		thr_l_mix;	// #CONDEDIT_OFF_lrn_var:XCAL_SR_MAX #DEF_0.001:1.0 [0.005 std] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
   float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
+  float		l_gain;		// #DEF_1.5 #MIN_0 gain on the long-time scale receiving average activation (ravg_l) value as it enters into the learning threshold l_thr -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level l_thr variable!!
   float		l_dt;		// #DEF_0.0001:0.01 [0.005 std for TRIAL, .0002 for CONT] #MIN_0 time constant (rate) for updating the long time-scale ravg_l value -- note this is ONLY applicable on the unit bias con spec, where it updates the unit-level ravg_l variable!!
   float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero sravg -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.15 is a compromise
   float		d_gain;		// #DEF_1 #MIN_0 multiplier on LTD values relative to LTP values -- generally do not change from 1
@@ -1343,8 +1344,9 @@ public:
   float		act_eq;		// #VIEW_HOT #CAT_Activation rate-code equivalent activity value (time-averaged spikes or just act)
   float		act_nd;		// #CAT_Activation non-depressed rate-code equivalent activity value (time-averaged spikes or just act) -- used for final phase-based variables used in learning and stats
   float		act_avg;	// #CAT_Activation average activation (of final plus phase activation state) over long time intervals (dt = act.avg_dt)
-  float		ravg_ml;	// #CAT_Activation medium-to-long time-scale average activation (as computed in the bias connection and spec) which integrates over recent history of medium (trial level) averages, optionally used for learning based on receiver average activations with a trace of prior activations
+  float		ravg_ml;	// #CAT_Activation medium-to-long time-scale average activation (as computed in the bias connection and spec) which integrates over recent history of medium (trial level) averages, used for rapid adaptation of l_thr = LTP vs LTD learning threshold in XCAL, and for learning based on receiver average activations with a trace of prior activations, and optionally used for learning based on receiver average activations with a trace of prior activations, 
   float		ravg_l;		// #CAT_Activation long time-scale average of medium-time scale (trial level) activation (as computed in the bias connection and spec), used for the BCM-style floating threshold in XCAL
+  float		l_thr;		// #CAT_Activation long time-scale LTP vs LTD learning threshold in XCAL BCM-style learning -- l_gain * MAX(ravg_l, ravg_ml) (as computed in the bias connection and spec)
   float		act_m;		// #VIEW_HOT #CAT_Activation minus_phase activation (act_nd), set after settling, used for learning and performance stats 
   float		act_p;		// #VIEW_HOT #CAT_Activation plus_phase activation (act_nd), set after settling, used for learning and performance stats
   float		act_dif;	// #VIEW_HOT #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
@@ -3171,7 +3173,7 @@ C_Compute_dWt_CtLeabraXCAL_SR_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* s
   cn->sravg_m = srm;
 #endif
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->ravg_l;
+  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->l_thr;
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
@@ -3186,7 +3188,7 @@ C_Compute_dWt_CtLeabraXCAL_SEP_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* 
   cn->sravg_m = srm;
 #endif
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->ravg_l;
+  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->l_thr;
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
@@ -3202,7 +3204,7 @@ C_Compute_dWt_CtLeabraXCAL_SEP_trial_ml(LeabraCon* cn, LeabraUnit* ru, LeabraUni
 #endif
   float srml = xcalm.sm_mix * srm + xcalm.ml_mix * (ru->ravg_ml * su->ravg_ml);
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srml;
-  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->ravg_l;
+  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->l_thr;
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
@@ -3216,7 +3218,7 @@ C_Compute_dWt_CtLeabraXCAL_SR_MAX_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUni
   cn->sravg_m = srm;
 #endif
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-  float effthr = MAX(srm, l_su_mult * ru->ravg_l); // this is key diff -- straight MAX
+  float effthr = MAX(srm, l_su_mult * ru->l_thr); // this is key diff -- straight MAX
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
@@ -3230,7 +3232,7 @@ C_Compute_dWt_CtLeabraXCAL_SR_X_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit*
   cn->sravg_m = srm;
 #endif
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * MAX(ru->ravg_l, ru->ravg_ml);
+  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * ru->l_thr; // old version, mostly: no mult by sender
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
@@ -3295,7 +3297,7 @@ inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_C_sep(LeabraCon* cn,
   cn->sravg_m = srm;
 #endif
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->ravg_l;
+  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->l_thr;
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
@@ -3311,7 +3313,7 @@ inline void LeabraConSpec::C_Compute_dWt_CtLeabraXCAL_C_sep_max(LeabraCon* cn,
   cn->sravg_m = srm;
 #endif
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-  float effthr = MAX(srm, l_su_mult * ru->ravg_l);
+  float effthr = MAX(srm, l_su_mult * ru->l_thr);
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
@@ -3470,6 +3472,8 @@ inline void LeabraConSpec::B_Compute_SRAvg(LeabraCon* cn, LeabraUnit* ru, bool d
     cn->sravg_m += xcal_c.m_dt * (cn->sravg_s - cn->sravg_m);
     ru->ravg_ml += xcalm.ml_dt * (cn->sravg_m - ru->ravg_ml);
     ru->ravg_l += xcal.l_dt * (cn->sravg_m - ru->ravg_l);
+    ru->l_thr = xcal.l_gain * MAX(ru->ravg_l, ru->ravg_ml);
+    // note: updating unit-level ravg_l, ravg_ml, l_thr variables here..
   }
   else {
     cn->sravg_m += ru_act;
@@ -3485,6 +3489,7 @@ inline void LeabraConSpec::B_Trial_Init_SRAvg(LeabraCon* cn, LeabraUnit* ru,
     float rm = net->sravg_vals.m_nrm * cn->sravg_m;
     ru->ravg_l += xcal.l_dt * (rm - ru->ravg_l);
     ru->ravg_ml += xcalm.ml_dt * (rm - ru->ravg_ml);
+    ru->l_thr = xcal.l_gain * MAX(ru->ravg_l, ru->ravg_ml);
     cn->sravg_s = 0.0f;
     cn->sravg_m = 0.0f;
   }
@@ -3493,6 +3498,7 @@ inline void LeabraConSpec::B_Trial_Init_SRAvg(LeabraCon* cn, LeabraUnit* ru,
 inline void LeabraConSpec::B_Init_RAvg_l(LeabraCon* cn, LeabraUnit* ru) {
   ru->ravg_l = xcalm.avg_init;
   ru->ravg_ml = xcalm.avg_init;
+  ru->l_thr = xcal.l_gain * MAX(ru->ravg_l, ru->ravg_ml);
 }
 
 inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru,

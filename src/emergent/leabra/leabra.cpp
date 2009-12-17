@@ -90,6 +90,7 @@ void XCalLearnSpec::Initialize() {
   s_mix = 0.9f;
   thr_l_mix = 0.005f;
   l_dt = 0.005f;
+  l_gain = 1.5f;
   d_rev = 0.10f;
   d_gain = 1.0f;
   m_mix = 1.0f - s_mix;
@@ -2149,6 +2150,7 @@ void LeabraUnit::Initialize() {
   act_avg = 0.15f;
   ravg_l = 0.15f;
   ravg_ml = 0.15f;
+  l_thr = 0.15f;
   act_p = act_m = act_dif = 0.0f;
   act_m2 = act_p2 = act_dif2 = 0.0f;
   da = 0.0f;
@@ -2199,6 +2201,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   act_avg = cp.act_avg;
   ravg_l = cp.ravg_l;
   ravg_ml = cp.ravg_ml;
+  l_thr = cp.l_thr;
   act_m = cp.act_m;
   act_p = cp.act_p;
   act_dif = cp.act_dif;
