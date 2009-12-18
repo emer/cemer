@@ -923,10 +923,13 @@ float MotionDispGaborFilterSpec::Eval(float x, float y, float t) {
   float thet = atan2(cy, cx);
   float totang = thet - spat_angle;
   float n_x = r * cos(totang);
-  float n_y = r * sin(totang);
+  float n_y = r * sin(totang) + (t - ctr_t) * freq_t;
 
-  float rval = amp * cos(phase + freq * n_y + freq_t*ct) * 
-    exp(-.5f * ((n_y * n_y) / (width * width) + (n_x * n_x) / (length * length) + (ct*ct)/(width_t*width_t) ));
+  /*float rval = amp * cos(phase + freq * n_y + freq_t*ct) * 
+    exp(-.5f * ((n_y * n_y) / (width * width) + (n_x * n_x) / (length * length) + (ct*ct)/(width_t*width_t) ));*/
+	
+  float rval = amp * cos(phase + freq * n_y) * 
+    exp(-.5f * ((n_y * n_y) / (width * width) + (n_x * n_x) / (length * length)));
 
   return rval;
 }
