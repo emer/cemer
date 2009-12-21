@@ -1107,7 +1107,8 @@ bool taiDataHostBase::AsyncWaitProc() {
   // order is important here: don't want to have one thing trigger another right away..
   bool did_some = false;
   for(int i=0;i<async_getimage_list.size;i++) {
-    taiDataHostBase* dhb = async_getimage_list.FastEl(i);
+    taiDataHostBase* dhb = async_getimage_list.SafeEl(i);
+    if(!dhb) continue;
     dhb->getimage_req = false;
     if ((dhb->state & STATE_MASK) < CANCELED) {
       dhb->GetImage(false);
@@ -1120,7 +1121,8 @@ bool taiDataHostBase::AsyncWaitProc() {
   }
 
   for(int i=0;i<async_reconstr_list.size;i++) {
-    taiDataHostBase* dhb = async_reconstr_list.FastEl(i);
+    taiDataHostBase* dhb = async_reconstr_list.SafeEl(i);
+    if(!dhb) continue;
     if(dhb->reconstr_req) {
       dhb->reconstr_req = false;
       dhb->ReConstr_Body();
@@ -1134,7 +1136,8 @@ bool taiDataHostBase::AsyncWaitProc() {
   }
 
   for(int i=0;i<async_reshow_list.size;i++) {
-    taiDataHostBase* dhb = async_reshow_list.FastEl(i);
+    taiDataHostBase* dhb = async_reshow_list.SafeEl(i);
+    if(!dhb) continue;
     if(dhb->reshow_req) {
       dhb->reshow_req = false;
       if(dhb->state == ACTIVE) {
@@ -1149,7 +1152,8 @@ bool taiDataHostBase::AsyncWaitProc() {
   }
 
   for(int i=0;i<async_apply_list.size;i++) {
-    taiDataHostBase* dhb = async_apply_list.FastEl(i);
+    taiDataHostBase* dhb = async_apply_list.SafeEl(i);
+    if(!dhb) continue;
     if(dhb->apply_req) {
       dhb->apply_req = false;
       if(dhb->state == ACTIVE) {
