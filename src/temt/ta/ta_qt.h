@@ -43,8 +43,6 @@ typedef taPtrList<QWidget> 	Widget_List;  // #IGNORE list of widgets
 class taiHostDialog_List;		// #IGNORE
 typedef taPtrList<taiEditDataHost> taiEditDataHost_List; // #IGNORE
 
-
-
 //////////////////////////////
 //       taiMisc          //
 //////////////////////////////

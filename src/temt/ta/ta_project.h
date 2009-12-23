@@ -571,6 +571,19 @@ private:
   void 	Destroy()		{ };
 };
 
+#ifndef __MAKETA__
+// this is currently only needed for Mac applications to get open events from finder
+// but could potentially be extended in the future..
+
+# include <QApplication>
+class taApplication : public QApplication {
+  Q_OBJECT
+public:
+  taApplication ( int & argc, char ** argv );
+protected:
+  bool event(QEvent *);
+};
+#endif
 
 class TA_API taRootBaseAdapter: public QObject {
   // ##IGNORE QObject for dispatching startup routines in event loop
@@ -588,7 +601,6 @@ protected slots:
   void 	DMem_SubEventLoop();
 #endif
 };
-
 
 class TA_API taRootBase: public taFBase {
   // ##CAT_Project base class for the root of the structural hierarchy (root. or . in css / paths)

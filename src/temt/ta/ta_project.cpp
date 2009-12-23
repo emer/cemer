@@ -44,6 +44,7 @@
 # include <QMessageBox>
 # include <QWidgetList>
 # include <QGLFormat>
+# include <QFileOpenEvent>
 #endif
 
 #include "inetworkaccessmanager.h"
@@ -1376,6 +1377,21 @@ int Project_Group::Load_strm(istream& strm, taBase* par, taBase** loaded_obj_ptr
   return rval;
 }
 
+//////////////////////////
+//   taApplication	//
+//////////////////////////
+
+taApplication::taApplication(int & argc, char ** argv) : QApplication(argc, argv) {
+}
+
+bool taApplication::event(QEvent *event) {
+  if(event->type() == QEvent::FileOpen) {
+    String fname = static_cast<QFileOpenEvent*>(event)->file();
+    taRootBase::instance()->projects.Load(fname);
+    return true;
+  }
+  return QApplication::event(event);
+}
 
 //////////////////////////
 //   taRootBaseAdapter	//
@@ -2076,12 +2092,12 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 //     if (gstyle.empty()) gstyle = "windows"; // this looks nice and works
 // # endif
 # ifdef TA_USE_INVENTOR
-    new QApplication(argc, (char**)argv); // accessed as qApp
+    new taApplication(argc, (char**)argv); // accessed as qApp
     SIM::Coin3D::Quarter::Quarter::init();
 //     SoQt::init(argc, (char**)argv, cssMisc::prompt.chars()); // creates a special Coin QApplication instance
     milestone |= (SM_QAPP_OBJ | SM_SOQT_INIT);
 # else
-    new QApplication(argc, (char**)argv); // accessed as qApp
+    new taApplication(argc, (char**)argv); // accessed as qApp
     milestone |= SM_QAPP_OBJ;
 # endif // TA_USE_INVENTOR
     if(gstyle.nonempty()) {
