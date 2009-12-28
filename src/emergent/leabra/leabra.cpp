@@ -4669,11 +4669,11 @@ void LeabraNetwork::UpdateAfterEdit_impl() {
     ct_sravg.plus_s_st = ct_time.plus -2;
   }
 
-  if(TestWarning(learn_rule != CTLEABRA_CAL && ct_sravg.interval > 1, "UAE",
-	       "ct_sravg.interval should be 1 for all algorithms *EXCEPT* CTLEABRA_CAL -- I just set it to 1 for you.  Also, while I'm at it, I set n_avg_only_epcs = 0 as well, because that is the new default")) {
-    ct_sravg.interval = 1;
-    ct_time.n_avg_only_epcs = 0;
-  }
+//   if(TestWarning(learn_rule != CTLEABRA_CAL && ct_sravg.interval > 1, "UAE",
+// 	       "ct_sravg.interval should be 1 for all algorithms *EXCEPT* CTLEABRA_CAL -- I just set it to 1 for you.  Also, while I'm at it, I set n_avg_only_epcs = 0 as well, because that is the new default")) {
+//     ct_sravg.interval = 1;
+//     ct_time.n_avg_only_epcs = 0;
+//   }
 //   if(TestWarning(learn_rule == CTLEABRA_CAL && ct_sravg.interval == 1, "UAE",
 // 	       "ct_sravg.interval should be > 1 for CTLEABRA_CAL -- I just set it to 5 for you")) {
 //     ct_sravg.interval = 5;
