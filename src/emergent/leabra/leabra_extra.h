@@ -910,7 +910,7 @@ private:
 // turn this on to enable various debugging things..
 // #define XCAL_DEBUG 1
 
-class LeabraSpikeCon : public LeabraCon {
+class LeabraSpikeCon : public LeabraSRAvgCon {
   // #STEM_BASE ##CAT_Leabra Leabra connection for spike-based learning
 public:
   float		sravg_ss;	// #NO_SAVE super-short time-scale average of sender and receiver activation product over time (just for smoothing over transients) -- cascaded into sravg_s
@@ -962,7 +962,8 @@ public:
 
   inline void 	C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
     LeabraConSpec::C_Init_Weights(cg, cn, ru, su); LeabraSpikeCon* lcn = (LeabraSpikeCon*)cn;
-    lcn->sravg_ss = xcalm.avg_init; lcn->nmda = 0.0f; lcn->ca = 0.0f; 
+    lcn->sravg_ss = 0.15f; lcn->sravg_s = 0.15f; lcn->sravg_m = 0.15f;
+    lcn->nmda = 0.0f; lcn->ca = 0.0f; 
 #ifdef XCAL_DEBUG
     lcn->srprod_s = lcn->srprod_m = xcalm.avg_init;
 #endif
@@ -970,6 +971,7 @@ public:
 
   inline void C_Compute_SRAvg_spike(LeabraSpikeCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     // this happens every cycle, and is the place to compute nmda and ca -- expensive!! :(
+    LeabraUnitSpec* us = (LeabraUnitSpec*)ru->GetUnitSpec();
     float dnmda = -cn->nmda * xcal_spike.nmda_rate;
     float dca = (cn->nmda * (xcal_spike.ca_v_nmda * ru->vm_dend + xcal_spike.ca_nmda))
       - (cn->ca * xcal_spike.ca_rate);
@@ -980,8 +982,8 @@ public:
     float sr = (cn->ca - xcal_spike.ca_off);
     if(sr < 0.0f) sr = 0.0f;
     cn->sravg_ss += xcal_spike.ss_dt * (sr - cn->sravg_ss);
-    cn->sravg_s += xcal_c.s_dt * (cn->sravg_ss - cn->sravg_s);
-    cn->sravg_m += xcal_c.m_dt * (cn->sravg_s - cn->sravg_m);
+    cn->sravg_s += us->act_avg.s_dt * (cn->sravg_ss - cn->sravg_s);
+    cn->sravg_m += us->act_avg.m_dt * (cn->sravg_s - cn->sravg_m);
 
 #ifdef XCAL_DEBUG
     LeabraCon* rbias = (LeabraCon*)ru->bias.OwnCn(0);
@@ -1001,32 +1003,27 @@ public:
     }
   }
 
-  inline void C_Compute_dWt_CtLeabraXCAL_C_spike(LeabraCon* cn,
-		    LeabraUnit* ru, LeabraUnit* su, LeabraCon* sbias, float l_su_mult) {
+  inline void C_Compute_dWt_CtLeabraXCAL_C_spike(LeabraSpikeCon* cn,
+						 LeabraUnit* ru, LeabraUnit* su) {
     float srs = cn->sravg_s;
     float srm = cn->sravg_m;
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-    float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru->l_thr;
+    float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * su->avg_m * ru->l_thr;
     cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
   }
 
   inline void Compute_dWt_CtLeabraXCAL_C(LeabraSendCons* cg, LeabraUnit* su) {
-    //  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-    //  LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
-
-    LeabraCon* sbias = (LeabraCon*)su->bias.OwnCn(0);
-    float l_su_mult = sbias->sravg_m;
-
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      C_Compute_dWt_CtLeabraXCAL_C_spike((LeabraCon*)cg->OwnCn(i), ru, su, sbias, l_su_mult);
+      C_Compute_dWt_CtLeabraXCAL_C_spike((LeabraSpikeCon*)cg->OwnCn(i), ru, su);
     }
   }
 
   virtual void	GraphXCALSpikeSim(DataTable* graph_data = NULL,
+		  LeabraUnitSpec* unit_spec = NULL,
 		  float rate_min=0.0f, float rate_max=150.0f, float rate_inc=5.0f,
 		  float max_time=250.0f, int reps_per_point=5,
-		  float v_m_dend_dt = 6.0f, float v_m_dend = 0.3f, float lin_norm=0.01f);
+				  float lin_norm=0.01f);
   // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph a simulation of the XCAL spike function by running a simulated synapse with poisson firing rates sampled over given range, with given samples per point, and other parameters as given
 
   TA_SIMPLE_BASEFUNS(LeabraXCALSpikeConSpec);

@@ -3088,8 +3088,15 @@ void Projection::CheckSpecs() {
 
 bool Projection::UpdateConSpecs(bool force) {
   if((!(bool)layer) || (!(bool)from)) return false;
-  if(!force && (con_spec.SPtr() == m_prv_con_spec)) return false;
   ConSpec* sp = con_spec.SPtr();
+  if(sp) {
+    if(TestWarning(!con_type->InheritsFrom(sp->min_obj_type), "UpdateConSpec",
+		   "connection type set to:",sp->min_obj_type->name,
+		   "as required by the connection spec:", sp->name)) {
+      con_type = sp->min_obj_type;
+    }
+  }
+  if(!force && (sp == m_prv_con_spec)) return false;
   if(!sp) return false;
   m_prv_con_spec = sp;		// don't redo it
   Unit* u;

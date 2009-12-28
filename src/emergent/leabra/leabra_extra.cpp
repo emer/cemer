@@ -381,13 +381,21 @@ void LeabraXCALSpikeConSpec::UpdateAfterEdit_impl() {
 }
 
 void LeabraXCALSpikeConSpec::GraphXCALSpikeSim(DataTable* graph_data,
-		  float rate_min, float rate_max, float rate_inc,
-		  float max_time, int reps_per_point,
-	       float v_m_dend_dt, float v_m_dend, float lin_norm) {
+					       LeabraUnitSpec* unit_spec,
+					       float rate_min, float rate_max, float rate_inc,
+					       float max_time, int reps_per_point,
+					       float lin_norm) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_XCALSpikeSim", true);
   }
+
+  bool local_us = false;
+  if(!unit_spec) {
+    unit_spec = new LeabraUnitSpec;
+    local_us = true;
+  }
+
   String sim_data_name = name + "_XCALSpikeSim_Tmp";
   DataTable* sim_data = proj->GetNewAnalysisDataTable(sim_data_name, true);
 
@@ -425,21 +433,21 @@ void LeabraXCALSpikeConSpec::GraphXCALSpikeSim(DataTable* graph_data,
 	float r_avg = 0.0f;
 	float s_lin = 0.0f;
 	float r_lin = 0.0f;
-	float s_avg_s = xcalm.avg_init;
-	float s_avg_m = xcalm.avg_init;
-	float r_avg_s = xcalm.avg_init;
-	float r_avg_m = xcalm.avg_init;
-	float sravg_ss = xcalm.avg_init;
-	float sravg_s = xcalm.avg_init;
-	float sravg_m = xcalm.avg_init;
+	float s_avg_s = 0.15f;
+	float s_avg_m = 0.15f;
+	float r_avg_s = 0.15f;
+	float r_avg_m = 0.15f;
+	float sravg_ss = 0.15f;
+	float sravg_s = 0.15f;
+	float sravg_m = 0.15f;
 	for(time = 0.0f; time < max_time; time += 1.0f) {
 	  s_act = (bool)Random::Poisson(s_p);
 	  r_act = (bool)Random::Poisson(r_p);
 	  if(r_act) {
-	    vmd += v_m_dend;
+	    vmd += unit_spec->spike_misc.vm_dend;
 	    r_avg += 1.0f;
 	  }
-	  vmd -= vmd / v_m_dend_dt;
+	  vmd -= vmd / unit_spec->spike_misc.vm_dend_dt;
 	  float dnmda = -nmda * xcal_spike.nmda_rate;
 	  float dca = (nmda * (xcal_spike.ca_v_nmda * vmd + xcal_spike.ca_nmda))
 	    - (ca * xcal_spike.ca_rate);
@@ -451,13 +459,13 @@ void LeabraXCALSpikeConSpec::GraphXCALSpikeSim(DataTable* graph_data,
 
 	  float sr = (ca - xcal_spike.ca_off); if(sr < 0.0f) sr = 0.0f;
 	  sravg_ss += xcal_spike.ss_dt * (sr - sravg_ss);
-	  sravg_s += xcal_c.s_dt * (sravg_ss - sravg_s);
-	  sravg_m += xcal_c.m_dt * (sravg_s - sravg_m);
+	  sravg_s += unit_spec->act_avg.s_dt * (sravg_ss - sravg_s);
+	  sravg_m += unit_spec->act_avg.m_dt * (sravg_s - sravg_m);
 
-	  r_avg_s += xcal_c.s_dt * ((float)r_act - r_avg_s);
-	  r_avg_m += xcal_c.m_dt * (r_avg_s - r_avg_m);
-	  s_avg_s += xcal_c.s_dt * ((float)s_act - s_avg_s);
-	  s_avg_m += xcal_c.m_dt * (s_avg_s - s_avg_m);
+	  r_avg_s += unit_spec->act_avg.s_dt * ((float)r_act - r_avg_s);
+	  r_avg_m += unit_spec->act_avg.m_dt * (r_avg_s - r_avg_m);
+	  s_avg_s += unit_spec->act_avg.s_dt * ((float)s_act - s_avg_s);
+	  s_avg_m += unit_spec->act_avg.m_dt * (s_avg_s - s_avg_m);
 	}
 	ca_avg = ca_sum / max_time;
 	s_lin *= lin_norm;
@@ -479,6 +487,10 @@ void LeabraXCALSpikeConSpec::GraphXCALSpikeSim(DataTable* graph_data,
 	sim_sravg_lin->SetValAsFloat(sravg_lin, -1);
       }
     }
+  }
+
+  if(local_us) {
+    delete unit_spec;
   }
 
   sim_data->StructUpdate(false);

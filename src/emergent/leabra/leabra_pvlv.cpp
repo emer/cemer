@@ -41,9 +41,6 @@ void PVConSpec::Initialize() {
   SetUnique("wt_sig", true);
   wt_sig.gain = 1.0f;  wt_sig.off = 1.0f;
 
-  SetUnique("xcalm", true);
-  xcalm.use_sb = false;
-
   SetUnique("lrate", true);
   lrate = .01f;
   cur_lrate = .01f;
@@ -1345,9 +1342,6 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   pvi_cons->SetUnique("rnd", true);
   pvi_cons->rnd.mean = 0.1f;
   pvi_cons->rnd.var = 0.0f;
-  // for XCAL:
-  pvi_cons->SetUnique("xcalm", true);
-  pvi_cons->xcalm.use_sb = false;
 
   pvi_cons->lrate = .01f;
   pvr_cons->lrate = .02f;
