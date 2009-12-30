@@ -459,16 +459,6 @@ void PFCBaseLayerSpec::Initialize() {
 //	MatrixConSpec		//
 //////////////////////////////////
 
-void MatrixLearnSpec::Initialize() {
-  bcm_mix = 0.005f;
-  err_mix = 1.0f - bcm_mix;
-}
-
-void MatrixLearnSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  err_mix = 1.0f - bcm_mix;
-}
-
 void MatrixConSpec::Initialize() {
   min_obj_type = &TA_MatrixCon;
 
@@ -489,7 +479,6 @@ void MatrixConSpec::Initialize() {
 
 void MatrixConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  matrix.UpdateAfterEdit();
   // these are enforced absolutely because the code does not use them:
   lmix.hebb = 0.0f;
   lmix.err = 1.0f;
@@ -2980,7 +2969,6 @@ void V1MatrixConSpec::Initialize() {
 
 void V1MatrixConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  matrix.UpdateAfterEdit();
   // these are enforced absolutely because the code does not use them:
   lmix.hebb = 0.0f;
   lmix.err = 1.0f;
