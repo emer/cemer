@@ -426,6 +426,9 @@ public:
   const Variant		FastElAsVar_Flat(int idx) const
   { return El_GetVar_(FastEl_Flat_(idx)); } 
   // #CAT_Access treats the matrix like a flat array, returns the element as a variant
+
+  int 		FindVal_Flat(const Variant& val, int st_idx = 0) const;
+  // #CAT_Access find a value in the matrix -- treats the matrix like a flat array, returns the flat index where the value was found, or -1 if not found
     
   void		SetFmVar(const Variant& var, int d0, int d1=0, int d2=0,
     int d3=0, int d4=0, int d5=0, int d6=0)

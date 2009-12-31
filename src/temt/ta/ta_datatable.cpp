@@ -548,6 +548,52 @@ bool DataCol::SetValAsMatrix(const taMatrix* val, int row) {
   return AR()->CopyFrame(*val, row);
 }
 
+void DataCol::WriteFmSubMatrix(int row, 
+			       const taMatrix* src, int off0, int off1, int off2,
+			       int off3, int off4, int off5, int off6) {
+  taMatrix* mat = GetValAsMatrix(row);
+  if(mat) {
+    taBase::Ref(mat);
+    mat->WriteFmSubMatrix(src, off0, off1, off2, off3, off4, off5, off6);
+    taBase::unRefDone(mat);
+  }
+}
+
+void DataCol::ReadToSubMatrix(int row, 
+			      taMatrix* dest, int off0, int off1, int off2,
+			      int off3, int off4, int off5, int off6) {
+  taMatrix* mat = GetValAsMatrix(row);
+  if(mat) {
+    taBase::Ref(mat);
+    mat->ReadToSubMatrix(dest, off0, off1, off2, off3, off4, off5, off6);
+    taBase::unRefDone(mat);
+  }
+}
+
+void DataCol::WriteFmSubMatrix_Render(int row, 
+				      const taMatrix* src, taMatrix::RenderOp render_op,
+				      int off0, int off1, int off2,
+				      int off3, int off4, int off5, int off6) {
+  taMatrix* mat = GetValAsMatrix(row);
+  if(mat) {
+    taBase::Ref(mat);
+    mat->WriteFmSubMatrix_Render(src, render_op, off0, off1, off2, off3, off4, off5, off6);
+    taBase::unRefDone(mat);
+  }
+}
+
+void DataCol::ReadToSubMatrix_Render(int row, 
+				     taMatrix* dest, taMatrix::RenderOp render_op, 
+				     int off0, int off1, int off2,
+				     int off3, int off4, int off5, int off6) {
+  taMatrix* mat = GetValAsMatrix(row);
+  if(mat) {
+    taBase::Ref(mat);
+    mat->ReadToSubMatrix_Render(dest, render_op, off0, off1, off2, off3, off4, off5, off6);
+    taBase::unRefDone(mat);
+  }
+}
+
 //////////////////
 
 bool DataCol::GetMinMaxScale(MinMax& mm) {
@@ -1392,7 +1438,7 @@ DataTableModel* DataTable::GetTableModel() {
 
 /////////////////////
 
-double DataTable::GetValAsDouble(int col, int row) {
+double DataTable::GetValAsDouble(Variant col, int row) {
   DataCol* da = GetColData(col);
   int i;
   if (da && idx_err(row, da->rows(), i))
@@ -1400,7 +1446,7 @@ double DataTable::GetValAsDouble(int col, int row) {
   else return 0.0f;
 }
 
-float DataTable::GetValAsFloat(int col, int row) {
+float DataTable::GetValAsFloat(Variant col, int row) {
   DataCol* da = GetColData(col);
   int i;
   if (da &&  idx_err(row, da->rows(), i))
@@ -1408,7 +1454,7 @@ float DataTable::GetValAsFloat(int col, int row) {
   else return 0.0f;
 }
 
-int DataTable::GetValAsInt(int col, int row) {
+int DataTable::GetValAsInt(Variant col, int row) {
   DataCol* da = GetColData(col);
   int i;
   if (da &&  idx_err(row, da->rows(), i))
@@ -1416,7 +1462,7 @@ int DataTable::GetValAsInt(int col, int row) {
   else return 0;
 }
 
-const String DataTable::GetValAsString(int col, int row) const {
+const String DataTable::GetValAsString(Variant col, int row) const {
   DataCol* da = GetColData(col);
   int i;
   if (da &&  idx_err(row, da->rows(), i))
@@ -1424,7 +1470,7 @@ const String DataTable::GetValAsString(int col, int row) const {
   else return "n/a";
 }
 
-const Variant DataTable::GetValAsVar(int col, int row) const {
+const Variant DataTable::GetValAsVar(Variant col, int row) const {
   DataCol* da = GetColData(col);
   int i;
   if (da &&  idx_err(row, da->rows(), i))
@@ -1432,7 +1478,7 @@ const Variant DataTable::GetValAsVar(int col, int row) const {
   else return _nilVariant;
 }
 
-taMatrix* DataTable::GetValAsMatrix(int col, int row) {
+taMatrix* DataTable::GetValAsMatrix(Variant col, int row) {
   DataCol* da = GetColData(col);
   int i;
   if (da &&  idx_err(row, da->rows(), i))
@@ -1468,7 +1514,7 @@ taMatrix* DataTable::GetValAsMatrixColRowName(const String& col_nm, const String
 }
 
 
-taMatrix* DataTable::GetRangeAsMatrix(int col, int st_row, int n_rows) {
+taMatrix* DataTable::GetRangeAsMatrix(Variant col, int st_row, int n_rows) {
   DataCol* da = GetColData(col);
   int i;
   if (da &&  idx_err(st_row, da->rows(), i))
@@ -1476,9 +1522,135 @@ taMatrix* DataTable::GetRangeAsMatrix(int col, int st_row, int n_rows) {
   else return NULL;
 }
 
+
+///////////////////////////////////////
+// sub-matrix reading and writing functions
+
+void DataTable::WriteFmSubMatrix(Variant col, int row, 
+				 const taMatrix* src, int off0, int off1, int off2,
+				 int off3, int off4, int off5, int off6) {
+  DataCol* da = GetColData(col);
+  int i;
+  if (da && idx_err(row, da->rows(), i))
+    da->WriteFmSubMatrix(row, src, off0, off1, off2, off3, off4, off5, off6);
+}
+
+void DataTable::ReadToSubMatrix(Variant col, int row, 
+				taMatrix* dest, int off0, int off1, int off2,
+				int off3, int off4, int off5, int off6) {
+  DataCol* da = GetColData(col);
+  int i;
+  if (da && idx_err(row, da->rows(), i))
+    da->ReadToSubMatrix(row, dest, off0, off1, off2, off3, off4, off5, off6);
+}
+
+void DataTable::WriteFmSubMatrix_Render(Variant col, int row, 
+					const taMatrix* src, taMatrix::RenderOp render_op,
+					int off0, int off1, int off2,
+					int off3, int off4, int off5, int off6) {
+  DataCol* da = GetColData(col);
+  int i;
+  if (da && idx_err(row, da->rows(), i))
+    da->WriteFmSubMatrix_Render(row, src, render_op, off0, off1, off2, off3, off4, off5, off6);
+}
+
+void DataTable::ReadToSubMatrix_Render(Variant col, int row, 
+				       taMatrix* dest, taMatrix::RenderOp render_op, 
+				       int off0, int off1, int off2,
+				       int off3, int off4, int off5, int off6) {
+  DataCol* da = GetColData(col);
+  int i;
+  if (da && idx_err(row, da->rows(), i))
+    da->ReadToSubMatrix_Render(row, dest, render_op, off0, off1, off2, off3, off4, off5, off6);
+}
+
+void DataTable::WriteFmSubMatrixTable(Variant col, int row, 
+				      const DataTable* src, Variant src_col, int src_row,
+				      int off0, int off1, int off2,
+				      int off3, int off4, int off5, int off6) {
+  DataCol* da = GetColData(col);
+  int i;
+  if (da && idx_err(row, da->rows(), i)) {
+    DataCol* sda = src->GetColData(src_col);
+    int j;
+    if (sda && idx_err(src_row, sda->rows(), j)) {
+      taMatrix* mat = sda->GetValAsMatrix(src_row);
+      if(mat) {
+	taBase::Ref(mat);
+	da->WriteFmSubMatrix(row, mat, off0, off1, off2, off3, off4, off5, off6);
+	taBase::unRefDone(mat);
+      }
+    }
+  }
+}
+
+void DataTable::ReadToSubMatrixTable(Variant col, int row, 
+				     const DataTable* dest, Variant dest_col, int dest_row,
+				     int off0, int off1, int off2,
+				     int off3, int off4, int off5, int off6) {
+  DataCol* da = GetColData(col);
+  int i;
+  if (da && idx_err(row, da->rows(), i)) {
+    DataCol* sda = dest->GetColData(dest_col);
+    int j;
+    if (sda && idx_err(dest_row, sda->rows(), j)) {
+      taMatrix* mat = sda->GetValAsMatrix(dest_row);
+      if(mat) {
+	taBase::Ref(mat);
+	da->ReadToSubMatrix(row, mat, off0, off1, off2, off3, off4, off5, off6);
+	taBase::unRefDone(mat);
+      }
+    }
+  }
+}
+
+void DataTable::WriteFmSubMatrixTable_Render(Variant col, int row, 
+					     const DataTable* src, Variant src_col, int src_row,
+					     taMatrix::RenderOp render_op,
+					     int off0, int off1, int off2,
+					     int off3, int off4, int off5, int off6) {
+  DataCol* da = GetColData(col);
+  int i;
+  if (da && idx_err(row, da->rows(), i)) {
+    DataCol* sda = src->GetColData(src_col);
+    int j;
+    if (sda && idx_err(src_row, sda->rows(), j)) {
+      taMatrix* mat = sda->GetValAsMatrix(src_row);
+      if(mat) {
+	taBase::Ref(mat);
+	da->WriteFmSubMatrix_Render(row, mat, render_op, off0, off1, off2, off3, off4, off5, off6);
+	taBase::unRefDone(mat);
+      }
+    }
+  }
+}
+
+void DataTable::ReadToSubMatrixTable_Render(Variant col, int row, 
+					    const DataTable* dest, Variant dest_col, int dest_row,
+					    taMatrix::RenderOp render_op, 
+					    int off0, int off1, int off2,
+					    int off3, int off4, int off5, int off6) {
+
+  DataCol* da = GetColData(col);
+  int i;
+  if (da && idx_err(row, da->rows(), i)) {
+    DataCol* sda = dest->GetColData(dest_col);
+    int j;
+    if (sda && idx_err(dest_row, sda->rows(), j)) {
+      taMatrix* mat = sda->GetValAsMatrix(dest_row);
+      if(mat) {
+	taBase::Ref(mat);
+	da->ReadToSubMatrix_Render(row, mat, render_op, off0, off1, off2, off3, off4, off5, off6);
+	taBase::unRefDone(mat);
+      }
+    }
+  }
+}
+
+
 ////////////////////////////
 
-bool DataTable::SetValAsDouble(double val, int col, int row) {
+bool DataTable::SetValAsDouble(double val, Variant col, int row) {
   DataCol* da = GetColData(col);
   if (!da) return false;
   if (da->is_matrix_err()) return false;
@@ -1489,7 +1661,7 @@ bool DataTable::SetValAsDouble(double val, int col, int row) {
   } else return false;
 }
 
-bool DataTable::SetValAsFloat(float val, int col, int row) {
+bool DataTable::SetValAsFloat(float val, Variant col, int row) {
   DataCol* da = GetColData(col);
   if (!da) return false;
   if (da->is_matrix_err()) return false;
@@ -1500,7 +1672,7 @@ bool DataTable::SetValAsFloat(float val, int col, int row) {
   } else return false;
 }
 
-bool DataTable::SetValAsInt(int val, int col, int row) {
+bool DataTable::SetValAsInt(int val, Variant col, int row) {
   DataCol* da = GetColData(col);
   if (!da) return false;
   if (da->is_matrix_err()) return false;
@@ -1511,7 +1683,7 @@ bool DataTable::SetValAsInt(int val, int col, int row) {
   } else return false;
 }
 
-bool DataTable::SetValAsString(const String& val, int col, int row) {
+bool DataTable::SetValAsString(const String& val, Variant col, int row) {
   DataCol* da = GetColData(col);
   if (!da) return false;
   if (da->is_matrix_err()) return false;
@@ -1522,7 +1694,7 @@ bool DataTable::SetValAsString(const String& val, int col, int row) {
   } else return false;
 }
 
-bool DataTable::SetValAsVar(const Variant& val, int col, int row) {
+bool DataTable::SetValAsVar(const Variant& val, Variant col, int row) {
   DataCol* da = GetColData(col);
   if (!da) return false;
   if (da->is_matrix_err()) return false;
@@ -1533,7 +1705,7 @@ bool DataTable::SetValAsVar(const Variant& val, int col, int row) {
   } else return false;
 }
 
-bool DataTable::SetValAsMatrix(const taMatrix* val, int col, int row) {
+bool DataTable::SetValAsMatrix(const taMatrix* val, Variant col, int row) {
   DataCol* da = GetColData(col);
   return SetValAsMatrix_impl(val, da, row);
 }
@@ -1555,7 +1727,7 @@ bool DataTable::SetValAsMatrix_impl(const taMatrix* val, DataCol* da, int row, b
 
 ////////////////////////
 
-double DataTable::GetValAsDoubleM(int col, int row, int cell) {
+double DataTable::GetValAsDoubleM(Variant col, int row, int cell) {
   DataCol* da = GetColData(col);
   if (!da || (cell > 0 && da->not_matrix_err())) return false;
   int i;
@@ -1564,7 +1736,7 @@ double DataTable::GetValAsDoubleM(int col, int row, int cell) {
   else return 0.0f;
 }
 
-float DataTable::GetValAsFloatM(int col, int row, int cell) {
+float DataTable::GetValAsFloatM(Variant col, int row, int cell) {
   DataCol* da = GetColData(col);
   if (!da || (cell > 0 && da->not_matrix_err())) return false;
   int i;
@@ -1573,7 +1745,7 @@ float DataTable::GetValAsFloatM(int col, int row, int cell) {
   else return 0.0f;
 }
 
-int DataTable::GetValAsIntM(int col, int row, int cell) {
+int DataTable::GetValAsIntM(Variant col, int row, int cell) {
   DataCol* da = GetColData(col);
   if (!da || (cell > 0 && da->not_matrix_err())) return false;
   int i;
@@ -1582,7 +1754,7 @@ int DataTable::GetValAsIntM(int col, int row, int cell) {
   else return 0;
 }
 
-const String DataTable::GetValAsStringM(int col, int row, int cell, bool na) const {
+const String DataTable::GetValAsStringM(Variant col, int row, int cell, bool na) const {
   DataCol* da = GetColData(col);
   if (!da || (cell > 0 && da->not_matrix_err())) return false;
   int i;
@@ -1592,7 +1764,7 @@ const String DataTable::GetValAsStringM(int col, int row, int cell, bool na) con
     return (na) ? String("n/a") : _nilString;
 }
 
-const Variant DataTable::GetValAsVarM(int col, int row, int cell) const {
+const Variant DataTable::GetValAsVarM(Variant col, int row, int cell) const {
   DataCol* da = GetColData(col);
   if (!da || (cell > 0 && da->not_matrix_err())) return false;
   int i;
@@ -1603,7 +1775,7 @@ const Variant DataTable::GetValAsVarM(int col, int row, int cell) const {
 
 ////////////////////////
 
-bool DataTable::SetValAsDoubleM(double val, int col, int row, int cell) {
+bool DataTable::SetValAsDoubleM(double val, Variant col, int row, int cell) {
   DataCol* da = GetColData(col);
   if (!da || (cell > 0 && da->not_matrix_err())) return false;
   int i;
@@ -1613,7 +1785,7 @@ bool DataTable::SetValAsDoubleM(double val, int col, int row, int cell) {
   } else return false;
 }
 
-bool DataTable::SetValAsFloatM(float val, int col, int row, int cell) {
+bool DataTable::SetValAsFloatM(float val, Variant col, int row, int cell) {
   DataCol* da = GetColData(col);
   if (!da || (cell > 0 && da->not_matrix_err())) return false;
   int i;
@@ -1623,7 +1795,7 @@ bool DataTable::SetValAsFloatM(float val, int col, int row, int cell) {
   } else return false;
 }
 
-bool DataTable::SetValAsIntM(int val, int col, int row, int cell) {
+bool DataTable::SetValAsIntM(int val, Variant col, int row, int cell) {
   DataCol* da = GetColData(col);
   if (!da || (cell > 0 && da->not_matrix_err())) return false;
   int i;
@@ -1633,7 +1805,7 @@ bool DataTable::SetValAsIntM(int val, int col, int row, int cell) {
   } else return false;
 }
 
-bool DataTable::SetValAsStringM(const String& val, int col, int row, int cell) {
+bool DataTable::SetValAsStringM(const String& val, Variant col, int row, int cell) {
   DataCol* da = GetColData(col);
   if (!da || (cell > 0 && da->not_matrix_err())) return false;
   int i;
@@ -1643,7 +1815,7 @@ bool DataTable::SetValAsStringM(const String& val, int col, int row, int cell) {
   } else return false;
 }
 
-bool DataTable::SetValAsVarM(const Variant& val, int col, int row, int cell) {
+bool DataTable::SetValAsVarM(const Variant& val, Variant col, int row, int cell) {
   DataCol* da = GetColData(col);
   if (!da || (cell > 0 && da->not_matrix_err())) return false;
   int i;
@@ -1656,7 +1828,7 @@ bool DataTable::SetValAsVarM(const Variant& val, int col, int row, int cell) {
 ////////////////////////
 //	Matrix Dims
 
-double DataTable::GetValAsDoubleMDims(int col, int row, int d0, int d1, int d2, int d3) {
+double DataTable::GetValAsDoubleMDims(Variant col, int row, int d0, int d1, int d2, int d3) {
   DataCol* da = GetColData(col);
   if (!da || da->not_matrix_err()) return false;
   int i;
@@ -1665,7 +1837,7 @@ double DataTable::GetValAsDoubleMDims(int col, int row, int d0, int d1, int d2, 
   else return 0.0f;
 }
 
-float DataTable::GetValAsFloatMDims(int col, int row, int d0, int d1, int d2, int d3) {
+float DataTable::GetValAsFloatMDims(Variant col, int row, int d0, int d1, int d2, int d3) {
   DataCol* da = GetColData(col);
   if (!da || da->not_matrix_err()) return false;
   int i;
@@ -1674,7 +1846,7 @@ float DataTable::GetValAsFloatMDims(int col, int row, int d0, int d1, int d2, in
   else return 0.0f;
 }
 
-int DataTable::GetValAsIntMDims(int col, int row, int d0, int d1, int d2, int d3) {
+int DataTable::GetValAsIntMDims(Variant col, int row, int d0, int d1, int d2, int d3) {
   DataCol* da = GetColData(col);
   if (!da || da->not_matrix_err()) return false;
   int i;
@@ -1683,7 +1855,7 @@ int DataTable::GetValAsIntMDims(int col, int row, int d0, int d1, int d2, int d3
   else return 0;
 }
 
-const String DataTable::GetValAsStringMDims(int col, int row, int d0, int d1, int d2, int d3, bool na) const {
+const String DataTable::GetValAsStringMDims(Variant col, int row, int d0, int d1, int d2, int d3, bool na) const {
   DataCol* da = GetColData(col);
   if (!da || da->not_matrix_err()) return false;
   int i;
@@ -1693,7 +1865,7 @@ const String DataTable::GetValAsStringMDims(int col, int row, int d0, int d1, in
     return (na) ? String("n/a") : _nilString;
 }
 
-const Variant DataTable::GetValAsVarMDims(int col, int row, int d0, int d1, int d2, int d3) const {
+const Variant DataTable::GetValAsVarMDims(Variant col, int row, int d0, int d1, int d2, int d3) const {
   DataCol* da = GetColData(col);
   if (!da || da->not_matrix_err()) return false;
   int i;
@@ -1704,7 +1876,7 @@ const Variant DataTable::GetValAsVarMDims(int col, int row, int d0, int d1, int 
 
 //////////////////////////////
 
-bool DataTable::SetValAsDoubleMDims(double val, int col, int row, int d0, int d1, int d2, int d3) {
+bool DataTable::SetValAsDoubleMDims(double val, Variant col, int row, int d0, int d1, int d2, int d3) {
   DataCol* da = GetColData(col);
   if (!da || da->not_matrix_err()) return false;
   int i;
@@ -1714,7 +1886,7 @@ bool DataTable::SetValAsDoubleMDims(double val, int col, int row, int d0, int d1
   } else return false;
 }
 
-bool DataTable::SetValAsFloatMDims(float val, int col, int row, int d0, int d1, int d2, int d3) {
+bool DataTable::SetValAsFloatMDims(float val, Variant col, int row, int d0, int d1, int d2, int d3) {
   DataCol* da = GetColData(col);
   if (!da || da->not_matrix_err()) return false;
   int i;
@@ -1724,7 +1896,7 @@ bool DataTable::SetValAsFloatMDims(float val, int col, int row, int d0, int d1, 
   } else return false;
 }
 
-bool DataTable::SetValAsIntMDims(int val, int col, int row, int d0, int d1, int d2, int d3) {
+bool DataTable::SetValAsIntMDims(int val, Variant col, int row, int d0, int d1, int d2, int d3) {
   DataCol* da = GetColData(col);
   if (!da || da->not_matrix_err()) return false;
   int i;
@@ -1734,7 +1906,7 @@ bool DataTable::SetValAsIntMDims(int val, int col, int row, int d0, int d1, int 
   } else return false;
 }
 
-bool DataTable::SetValAsStringMDims(const String& val, int col, int row, int d0, int d1, int d2, int d3) {
+bool DataTable::SetValAsStringMDims(const String& val, Variant col, int row, int d0, int d1, int d2, int d3) {
   DataCol* da = GetColData(col);
   if (!da || da->not_matrix_err()) return false;
   int i;
@@ -1744,7 +1916,7 @@ bool DataTable::SetValAsStringMDims(const String& val, int col, int row, int d0,
   } else return false;
 }
 
-bool DataTable::SetValAsVarMDims(const Variant& val, int col, int row, int d0, int d1, int d2, int d3) {
+bool DataTable::SetValAsVarMDims(const Variant& val, Variant col, int row, int d0, int d1, int d2, int d3) {
   DataCol* da = GetColData(col);
   if (!da || da->not_matrix_err()) return false;
   int i;

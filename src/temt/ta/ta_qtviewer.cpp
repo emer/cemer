@@ -9122,6 +9122,21 @@ void iHelpBrowser::init() {
   actGo = tool_bar->addAction("Go");
   actStop = tool_bar->addAction("X");
   actStop->setToolTip("Stop");
+
+  // find within item
+  find_lbl = new QLabel("| find:");
+  find_lbl->setToolTip("Find text string within currently viewed page");
+  tool_bar->addWidget(find_lbl);
+  find_text = new iLineEdit();
+  find_text->setCharWidth(16);
+  tool_bar->addWidget(find_text);
+  find_clear = tool_bar->addAction("x");
+  find_clear->setToolTip("Clear find text and reset any prior highlighting");
+  find_prev = tool_bar->addAction("<");
+  find_prev->setToolTip("Find previous occurrence of find: text within current page");
+  find_next = tool_bar->addAction(">");
+  find_next->setToolTip("Find next occurrence of find: text within current page");
+
   lay_tab->addWidget(tool_bar);
   tab = new QTabWidget(wid_tab);
   tab->setElideMode(Qt::ElideMiddle);
@@ -9161,6 +9176,12 @@ void iHelpBrowser::init() {
   connect(url_text, SIGNAL(returnPressed()), this, SLOT(go_clicked()) );
   connect(actBack, SIGNAL(triggered()), this, SLOT(back_clicked()) );
   connect(actForward, SIGNAL(triggered()), this, SLOT(forward_clicked()) );
+
+  connect(find_clear, SIGNAL(triggered()), this, SLOT(find_clear_clicked()) );
+  connect(find_next, SIGNAL(triggered()), this, SLOT(find_next_clicked()) );
+  connect(find_prev, SIGNAL(triggered()), this, SLOT(find_prev_clicked()) );
+  connect(find_text, SIGNAL(returnPressed()), this, SLOT(find_next_clicked()) );
+
   connect(tv, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     this, SLOT(tv_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
   connect(tab, SIGNAL(tabCloseRequested(int)),
@@ -9184,6 +9205,30 @@ void iHelpBrowser::forward_clicked() {
 
 void iHelpBrowser::back_clicked() {
   curWebView()->back();
+}
+
+void iHelpBrowser::find_clear_clicked() {
+  find_text->clear();
+  last_find.clear();
+  curWebView()->page()->findText("", QWebPage::HighlightAllOccurrences);
+}
+
+void iHelpBrowser::find_next_clicked() {
+  QString cur_find = find_text->text();
+  if(cur_find != last_find) {
+    // first one highlights all then goes to first one
+    curWebView()->page()->findText(cur_find, QWebPage::HighlightAllOccurrences);
+    curWebView()->page()->findText(cur_find, QWebPage::FindWrapsAroundDocument);
+    last_find = cur_find;
+  }
+  else {
+    // subsequent ones go through one by one
+    curWebView()->page()->findText(cur_find, QWebPage::FindWrapsAroundDocument);
+  }
+}
+
+void iHelpBrowser::find_prev_clicked() {
+  curWebView()->page()->findText(find_text->text(), QWebPage::FindWrapsAroundDocument | QWebPage::FindBackward);
 }
 
 void iHelpBrowser::AddTypesR(TypeSpace* ts) {
@@ -9438,6 +9483,7 @@ void iHelpBrowser::LoadUrl(const String& url) {
 
 void iHelpBrowser::LoadExternal_impl(const String& url)
 {
+  last_find.clear();
   int idx;
   QWebView* wv = FindWebView(url, idx);
   if (!wv)
@@ -9456,6 +9502,7 @@ void iHelpBrowser::LoadExternal_impl(const String& url)
 void iHelpBrowser::LoadType_impl(TypeDef* typ, const String& base_url,
     const String& anchor)
 {
+  last_find.clear();
   String html;
   String url = base_url;
   if (anchor.nonempty())

@@ -2505,6 +2505,11 @@ public:
   QProgressBar*		  prog_bar;
   QAction*		  actGo;
   QAction*	    	  actStop;
+  QLabel*		  find_lbl;
+  iLineEdit*		  find_text;
+  QAction*		  find_clear;
+  QAction*	    	  find_prev;
+  QAction*	    	  find_next;
   QTabWidget*		  tab; // note: use our own load() routine for urls
   QAbstractButton*	  btnAdd; // new tab
   QStatusBar*		status_bar;
@@ -2521,6 +2526,7 @@ protected:
   String		m_curUrl;
   ContextFlag		m_changing; // true when we should ignore various changes
   QString		last_filter; // for checking if anything changed
+  QString		last_find;
   QTimer*		timFilter; // timer for filter changes
   
   QWebView*		FindWebView(const String& url, int& idx); // find existing tab w/ this base url (#anchors ok)
@@ -2557,6 +2563,11 @@ protected slots:
   void			go_clicked(); // or return in url_text
   void			stop_clicked(); // or return in url_text
   void			show_timeout(); // for scrolling to item
+
+  void			find_clear_clicked();
+  void			find_next_clicked(); // or return in find_text
+  void			find_prev_clicked();
+
   void			tab_currentChanged(int index);
   void			tab_tabCloseRequested(int index);
   void 			timFilter_timeout();

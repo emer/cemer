@@ -987,6 +987,14 @@ int taMatrix::FastElIndexN(const MatrixGeom& indices) const {
   rval += d0;
   return rval;
 }
+
+int taMatrix::FindVal_Flat(const Variant& val, int st_idx) const {
+  for(int i=st_idx;i<size; i++) {
+    Variant mval = FastElAsVar_Flat(i);
+    if(mval == val) return i;
+  }
+  return -1;
+}
  
 const String taMatrix::FlatRangeToTSV(int row_fr, int col_fr, int row_to, int col_to) {
   if ((row_fr < 0) || (col_fr < 0) || (row_to < row_fr) || (col_to < col_fr))

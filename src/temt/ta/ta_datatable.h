@@ -264,6 +264,7 @@ public:
     
   ///////////////////////////////////////////////////////////////
   // Matrix versions, cell index
+
   const Variant GetValAsVarM(int row, int cell) const {return GetValAsVar_impl(row, cell);} 
   // #CAT_XpertAccess get value as a variant (safe for all program usage), matrix version, valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsVarM(const Variant& val, int row, int cell) 
@@ -344,6 +345,34 @@ public:
   // #CAT_Modify set the matrix cell from a same-sized matrix 
   taMatrix*	GetRangeAsMatrix(int st_row, int n_rows);
   // #CAT_XpertAccess gets a slice of the entire column from starting row for n_rows (note: not const -- you can write it) -- must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it
+
+  ///////////////////////////////////////
+  // sub-matrix reading and writing functions
+
+  virtual void	WriteFmSubMatrix(int row, 
+				 const taMatrix* src, int off0=0, int off1=0, int off2=0,
+				 int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix write to matrix cell at given row from source sub-matrix (typically of smaller size), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  virtual void	ReadToSubMatrix(int row, 
+				taMatrix* dest, int off0=0, int off1=0, int off2=0,
+				int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix  read from matrix cell at given row to dest sub-matrix (typically of smaller size), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+
+  virtual void	WriteFmSubMatrix_Render(int row, 
+					const taMatrix* src, taMatrix::RenderOp render_op,
+					int off0=0, int off1=0, int off2=0,
+					int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix write to matrix cell at given row from source sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  virtual void	ReadToSubMatrix_Render(int row, 
+				       taMatrix* dest, taMatrix::RenderOp render_op, 
+				       int off0=0, int off1=0, int off2=0,
+				       int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix read from matrix cell at given row to dest sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+
+  /////////////////////////
+  //	misc funs
+
+
   bool		GetMinMaxScale(MinMax& mm);
   // #CAT_Display get min-max range of values contained within this column 
   
@@ -1050,97 +1079,147 @@ public:
   ///////////////
   // Scalar
 
-  const Variant 	GetValAsVar(int col, int row) const;
+  const Variant 	GetValAsVar(Variant col, int row) const;
   // #CAT_XpertAccess get data of scalar type, in Variant form, for given column, row
-  bool 			SetValAsVar(const Variant& val, int col, int row);
+  bool 			SetValAsVar(const Variant& val, Variant col, int row);
   // #CAT_XpertModify set data of scalar type, in Variant form, for given column, row; returns 'true' if valid access and set is successful
-  double 		GetValAsDouble(int col, int row);
+  double 		GetValAsDouble(Variant col, int row);
   // #CAT_XpertAccess get data of scalar type, in double form, for given col, row; if data is NULL, then 0 is returned
-  bool 			SetValAsDouble(double val, int col, int row);
+  bool 			SetValAsDouble(double val, Variant col, int row);
   // #CAT_XpertModify set data of scalar type, in double form, for given column, row; does nothing if no cell' 'true' if set
-  float 		GetValAsFloat(int col, int row);
+  float 		GetValAsFloat(Variant col, int row);
   // #CAT_XpertAccess get data of scalar type, in float form, for given col, row; if data is NULL, then 0 is returned
-  bool 			SetValAsFloat(float val, int col, int row);
+  bool 			SetValAsFloat(float val, Variant col, int row);
   // #CAT_XpertModify set data of scalar type, in float form, for given column, row; does nothing if no cell' 'true' if set
-  int 			GetValAsInt(int col, int row);
+  int 			GetValAsInt(Variant col, int row);
   // #CAT_XpertAccess get data of scalar type, in int form, for given col, row; if data is NULL, then 0 is returned
-  bool 			SetValAsInt(int val, int col, int row);
+  bool 			SetValAsInt(int val, Variant col, int row);
   // #CAT_XpertModify set data of scalar type, in int form, for given column, row; does nothing if no cell' 'true' if set
-  const String 		GetValAsString(int col, int row) const;
+  const String 		GetValAsString(Variant col, int row) const;
   // #CAT_XpertAccess get data of scalar type, in String form, for given column, row; if data is NULL, then "n/a" is returned
-  bool 			SetValAsString(const String& val, int col, int row);
+  bool 			SetValAsString(const String& val, Variant col, int row);
   // #CAT_XpertModify set data of scalar type, in String form, for given column, row; does nothing if no cell; 'true if set
 
   ///////////////
   // Matrix, Flat Idx
 
-  const Variant 	GetValAsVarM(int col, int row, int cell) const;
+  const Variant 	GetValAsVarM(Variant col, int row, int cell) const;
   // #CAT_XpertAccess get data of matrix type, in Variant form, for given column, row, and cell (flat index) in matrix
-  bool 			SetValAsVarM(const Variant& val, int col, int row, int cell);
+  bool 			SetValAsVarM(const Variant& val, Variant col, int row, int cell);
   // #CAT_XpertModify set data of matrix type, in Variant form, for given column, row, and cell (flat index) in matrix; returns 'true' if valid access and set is successful
-  double 		GetValAsDoubleM(int col, int row, int cell);
+  double 		GetValAsDoubleM(Variant col, int row, int cell);
   // #CAT_XpertAccess get data of matrix type, in double form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
-  bool 			SetValAsDoubleM(double val, int col, int row, int cell);
+  bool 			SetValAsDoubleM(double val, Variant col, int row, int cell);
   // #CAT_XpertModify set data of matrix type, in double form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
-  float 		GetValAsFloatM(int col, int row, int cell);
+  float 		GetValAsFloatM(Variant col, int row, int cell);
   // #CAT_XpertAccess get data of matrix type, in float form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
-  bool 			SetValAsFloatM(float val, int col, int row, int cell);
+  bool 			SetValAsFloatM(float val, Variant col, int row, int cell);
   // #CAT_XpertModify set data of matrix type, in float form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
-  int 			GetValAsIntM(int col, int row, int cell);
+  int 			GetValAsIntM(Variant col, int row, int cell);
   // #CAT_XpertAccess get data of matrix type, in int form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
-  bool 			SetValAsIntM(int val, int col, int row, int cell);
+  bool 			SetValAsIntM(int val, Variant col, int row, int cell);
   // #CAT_XpertModify set data of matrix type, in int form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
-  const String 		GetValAsStringM(int col, int row, int cell,
+  const String 		GetValAsStringM(Variant col, int row, int cell,
      bool na = true) const;
   // #CAT_XpertAccess get data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then na="n/a" else "" is returned
-  bool 			SetValAsStringM(const String& val, int col, int row, int cell);
+  bool 			SetValAsStringM(const String& val, Variant col, int row, int cell);
   // #CAT_XpertModify set data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell; 'true if set
 
   ///////////////
   // Matrix, Dims
 
-  const Variant 	GetValAsVarMDims(int col, int row,
+  const Variant 	GetValAsVarMDims(Variant col, int row,
 					 int d0, int d1=0, int d2=0, int d3=0) const;
   // #CAT_XpertAccess get data of matrix type, in Variant form, for given column, row, and matrix dimension indicies
-  bool 			SetValAsVarMDims(const Variant& val, int col, int row, 
+  bool 			SetValAsVarMDims(const Variant& val, Variant col, int row, 
 					 int d0, int d1=0, int d2=0, int d3=0);
   // #CAT_XpertModify set data of matrix type, in Variant form, for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
 
-  double 		GetValAsDoubleMDims(int col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  double 		GetValAsDoubleMDims(Variant col, int row, int d0, int d1=0, int d2=0, int d3=0);
   // #CAT_XpertAccess get data of matrix type, in double form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
-  bool 			SetValAsDoubleMDims(double val, int col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  bool 			SetValAsDoubleMDims(double val, Variant col, int row, int d0, int d1=0, int d2=0, int d3=0);
   // #CAT_XpertModify set data of matrix type, in double form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
-  float 		GetValAsFloatMDims(int col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  float 		GetValAsFloatMDims(Variant col, int row, int d0, int d1=0, int d2=0, int d3=0);
   // #CAT_XpertAccess get data of matrix type, in float form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
-  bool 			SetValAsFloatMDims(float val, int col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  bool 			SetValAsFloatMDims(float val, Variant col, int row, int d0, int d1=0, int d2=0, int d3=0);
   // #CAT_XpertModify set data of matrix type, in float form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
-  int 			GetValAsIntMDims(int col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  int 			GetValAsIntMDims(Variant col, int row, int d0, int d1=0, int d2=0, int d3=0);
   // #CAT_XpertAccess get data of matrix type, in int form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
-  bool 			SetValAsIntMDims(int val, int col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  bool 			SetValAsIntMDims(int val, Variant col, int row, int d0, int d1=0, int d2=0, int d3=0);
   // #CAT_XpertModify set data of matrix type, in int form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
-  const String 		GetValAsStringMDims(int col, int row, int d0, int d1=0, int d2=0, int d3=0,
+  const String 		GetValAsStringMDims(Variant col, int row, int d0, int d1=0, int d2=0, int d3=0,
      bool na = true) const;
   // #CAT_XpertAccess get data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then na="n/a" else "" is returned
-  bool 			SetValAsStringMDims(const String& val, int col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  bool 			SetValAsStringMDims(const String& val, Variant col, int row, int d0, int d1=0, int d2=0, int d3=0);
   // #CAT_XpertModify set data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell; 'true if set
 
   //////////////////////
   // 	Entire Matrix
 
-  taMatrix*	 	GetValAsMatrix(int col, int row);
+  taMatrix*	 	GetValAsMatrix(Variant col, int row);
   // #CAT_Access get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
   taMatrix*	 	GetValAsMatrixColName(const String& col_name, int row, bool quiet = false);
   // #CAT_Access get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it -- quiet = fail quietly
   taMatrix*	 	GetValAsMatrixColRowName(const String& col_name,
 		const String& row_col_name, const Variant& row_value, bool quiet = false);
   // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column name, and row by looking up row_value in column named row_col_name; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it -- quiet = fail quietly
-  bool 			SetValAsMatrix(const taMatrix* val, int col, int row);
+  bool 			SetValAsMatrix(const taMatrix* val, Variant col, int row);
   // #CAT_Modify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
   bool 			SetValAsMatrixColName(const taMatrix* val, const String& col_name,
 					      int row, bool quiet = false);
   // #CAT_Modify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set -- quiet = fail quietly
-  taMatrix*	 	GetRangeAsMatrix(int col, int st_row, int n_rows);
+  taMatrix*	 	GetRangeAsMatrix(Variant col, int st_row, int n_rows);
   // #CAT_XpertAccess get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
+
+  ///////////////////////////////////////
+  // sub-matrix reading and writing functions
+
+  virtual void	WriteFmSubMatrix(Variant col, int row, 
+				 const taMatrix* src, int off0=0, int off1=0, int off2=0,
+				 int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix write to matrix cell at given col, row from source sub-matrix (typically of smaller size), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  virtual void	ReadToSubMatrix(Variant col, int row, 
+				taMatrix* dest, int off0=0, int off1=0, int off2=0,
+				int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix  read from matrix cell at given col, row to dest sub-matrix (typically of smaller size), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+
+  virtual void	WriteFmSubMatrix_Render(Variant col, int row, 
+					const taMatrix* src, taMatrix::RenderOp render_op,
+					int off0=0, int off1=0, int off2=0,
+					int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix write to matrix cell at given col, row from source sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  virtual void	ReadToSubMatrix_Render(Variant col, int row, 
+				       taMatrix* dest, taMatrix::RenderOp render_op, 
+				       int off0=0, int off1=0, int off2=0,
+				       int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix read from matrix cell at given col, row to dest sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+
+  virtual void	WriteFmSubMatrixTable(Variant col, int row, 
+				       const DataTable* src, Variant src_col, int src_row,
+				       int off0=0, int off1=0, int off2=0,
+				       int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix write to matrix cell at given col, row from source matrix cell in src table at given src_col, src_row (typically of smaller size), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  virtual void	ReadToSubMatrixTable(Variant col, int row, 
+				     const DataTable* dest, Variant dest_col, int dest_row,
+				     int off0=0, int off1=0, int off2=0,
+				     int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix read from matrix cell at given col, row to dest matrix cell in dest table at dest_col, dest_row (typically of smaller size), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+
+  virtual void	WriteFmSubMatrixTable_Render(Variant col, int row, 
+					     const DataTable* src, Variant src_col, int src_row,
+					     taMatrix::RenderOp render_op,
+					     int off0=0, int off1=0, int off2=0,
+					     int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix write to matrix cell at given col, row from source matrix cell in src table at given src_col, src_row (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  virtual void	ReadToSubMatrixTable_Render(Variant col, int row, 
+					    const DataTable* dest, Variant dest_col, int dest_row,
+					    taMatrix::RenderOp render_op, 
+					    int off0=0, int off1=0, int off2=0,
+					    int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix read from matrix cell at given col, row to dest matrix cell in dest table at dest_col, dest_row (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+
+  //////////////////////////////
+  // 	Misc funs
 
   int 			GetMaxCellRows(int col_fr, int col_to); // #IGNORE get the max muber of cell rows in this col range (used for clip operations)
   void			GetFlatGeom(const CellRange& cr, int& tot_cols, 
