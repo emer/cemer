@@ -9210,14 +9210,20 @@ void iHelpBrowser::back_clicked() {
 void iHelpBrowser::find_clear_clicked() {
   find_text->clear();
   last_find.clear();
+#if (QT_VERSION >= 0x040600)
   curWebView()->page()->findText("", QWebPage::HighlightAllOccurrences);
+#else
+  curWebView()->page()->findText("");
+#endif
 }
 
 void iHelpBrowser::find_next_clicked() {
   QString cur_find = find_text->text();
   if(cur_find != last_find) {
     // first one highlights all then goes to first one
+#if (QT_VERSION >= 0x040600)
     curWebView()->page()->findText(cur_find, QWebPage::HighlightAllOccurrences);
+#endif
     curWebView()->page()->findText(cur_find, QWebPage::FindWrapsAroundDocument);
     last_find = cur_find;
   }
