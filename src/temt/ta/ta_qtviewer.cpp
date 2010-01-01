@@ -6545,46 +6545,62 @@ iDocDataPanel::iDocDataPanel()
 
   int font_spec = taiMisc::fonMedium;
 
-  url_box = new QHBoxLayout();    wb_box->addLayout(url_box);
-
-  bak_but = new QToolButton(wb_widg);
-  bak_but->setArrowType(Qt::LeftArrow);
+  url_bar = new QToolBar(wb_widg);
+  wb_box->addWidget(url_bar);
+  
+  bak_but = url_bar->addAction("<");
+//   bak_but->setArrowType(Qt::LeftArrow);
   bak_but->setToolTip("Go backward one step in browsing history");
-  url_box->addWidget(bak_but);
-  fwd_but = new QToolButton(wb_widg);
-  fwd_but->setArrowType(Qt::RightArrow);
+  fwd_but = url_bar->addAction(">");
+//   fwd_but->setArrowType(Qt::RightArrow);
   fwd_but->setToolTip("Go forward one step in browsing history");
-  url_box->addWidget(fwd_but);
-  url_box->addSpacing(taiM->hsep_c);
-  go_but = new QPushButton("Go", wb_widg);
+
+//   url_bar->addSpacing(taiM->hsep_c);
+
+  go_but = url_bar->addAction("Go");
   go_but->setToolTip("Go to currently specified URL (can also just press enter in URL field)");
-  url_box->addWidget(go_but);
-  url_box->addSpacing(taiM->hsep_c);
+
+//   url_bar->addSpacing(taiM->hsep_c);
 
   wiki_label = taiM->NewLabel("wiki:", wb_widg, font_spec);
   wiki_label->setToolTip("name of a wiki, as specified in global preferences, where this object should be stored -- this is used to lookup the wiki name -- if blank then url must be a full URL path");
-  url_box->addWidget(wiki_label);
-  url_box->addSpacing(taiM->hsep_c);
+  url_bar->addWidget(wiki_label);
+//   url_bar->addSpacing(taiM->hsep_c);
   wiki_edit = new iLineEdit(wb_widg);
   wiki_edit->setCharWidth(12);	// make this guy shorter
-  url_box->addWidget(wiki_edit);
-  url_box->addSpacing(taiM->hsep_c);
+  url_bar->addWidget(wiki_edit);
+//   url_bar->addSpacing(taiM->hsep_c);
 
   url_label = taiM->NewLabel("URL:", wb_widg, font_spec);
   url_label->setToolTip("a URL location for this document -- if blank or 'local' then text field is used as document text -- otherwise if wiki name is set, then this is relative to that wiki, as wiki_url/index.php/Projects/url, otherwise it is a full URL path to a valid location");
-  url_box->addWidget(url_label);
-  url_box->addSpacing(taiM->hsep_c);
+  url_bar->addWidget(url_label);
+//   url_bar->addSpacing(taiM->hsep_c);
   url_edit = new iLineEdit(wb_widg);
-  url_box->addWidget(url_edit);
-  url_box->addSpacing(taiM->hsep_c);
+  url_bar->addWidget(url_edit);
+//   url_bar->addSpacing(taiM->hsep_c);
 
   prog_bar = new QProgressBar(wb_widg);
   prog_bar->setRange(0, 100);
   prog_bar->setMaximumWidth(30);
-  url_box->addWidget(prog_bar);
+  url_bar->addWidget(prog_bar);
 
-  seturl_but = new QPushButton("Set URL", wb_widg);
-  url_box->addWidget(seturl_but);
+  seturl_but = url_bar->addAction("Set");
+  seturl_but->setToolTip("Set current web page to be the URL for this document -- each document is associated with a single URL");
+
+  // find within item
+  find_lbl = taiM->NewLabel("| find:", wb_widg, font_spec);
+//   find_lbl = new QLabel("| find:");
+  find_lbl->setToolTip("Find text string within currently viewed page");
+  url_bar->addWidget(find_lbl);
+  find_text = new iLineEdit();
+  find_text->setCharWidth(16);
+  url_bar->addWidget(find_text);
+  find_clear = url_bar->addAction("x");
+  find_clear->setToolTip("Clear find text and reset any prior highlighting");
+  find_prev = url_bar->addAction("<");
+  find_prev->setToolTip("Find previous occurrence of find: text within current page");
+  find_next = url_bar->addAction(">");
+  find_next->setToolTip("Find next occurrence of find: text within current page");
 
   webview = new iWebView(wb_widg);
   wb_box->addWidget(webview);
@@ -6596,12 +6612,17 @@ iDocDataPanel::iDocDataPanel()
 
   webview->installEventFilter(this); // translate keys..
 
-  connect(go_but, SIGNAL(pressed()), this, SLOT(doc_goPressed()) );
-  connect(bak_but, SIGNAL(pressed()), this, SLOT(doc_bakPressed()) );
-  connect(fwd_but, SIGNAL(pressed()), this, SLOT(doc_fwdPressed()) );
+  connect(go_but, SIGNAL(triggered()), this, SLOT(doc_goPressed()) );
+  connect(bak_but, SIGNAL(triggered()), this, SLOT(doc_bakPressed()) );
+  connect(fwd_but, SIGNAL(triggered()), this, SLOT(doc_fwdPressed()) );
   connect(url_edit, SIGNAL(returnPressed()), this, SLOT(doc_goPressed()) );
   connect(wiki_edit, SIGNAL(returnPressed()), this, SLOT(doc_goPressed()) );
-  connect(seturl_but, SIGNAL(pressed()), this, SLOT(doc_seturlPressed()) );
+  connect(seturl_but, SIGNAL(triggered()), this, SLOT(doc_seturlPressed()) );
+
+  connect(find_clear, SIGNAL(triggered()), this, SLOT(find_clear_clicked()) );
+  connect(find_next, SIGNAL(triggered()), this, SLOT(find_next_clicked()) );
+  connect(find_prev, SIGNAL(triggered()), this, SLOT(find_prev_clicked()) );
+  connect(find_text, SIGNAL(returnPressed()), this, SLOT(find_next_clicked()) );
 
   connect(webview, SIGNAL(loadProgress(int)), prog_bar, SLOT(setValue(int)) );
   connect(webview, SIGNAL(loadStarted()), this, SLOT(doc_loadStarted()) );
@@ -6719,6 +6740,35 @@ void iDocDataPanel::doc_seturlPressed() {
 
   String url = webview->url().toString();
   doc_->SetURL(url);
+}
+
+void iDocDataPanel::find_clear_clicked() {
+  find_text->clear();
+#if (QT_VERSION >= 0x040600)
+  webview->page()->findText("", QWebPage::HighlightAllOccurrences);
+#else
+  webview->page()->findText("");
+#endif
+}
+
+void iDocDataPanel::find_next_clicked() {
+  QString cur_find = find_text->text();
+//   if(cur_find != last_find) {
+    // first one highlights all then goes to first one
+#if (QT_VERSION >= 0x040600)
+    webview->page()->findText(cur_find, QWebPage::HighlightAllOccurrences);
+#endif
+    webview->page()->findText(cur_find, QWebPage::FindWrapsAroundDocument);
+//     last_find = cur_find;
+//   }
+//   else {
+//     // subsequent ones go through one by one
+//     curWebView()->page()->findText(cur_find, QWebPage::FindWrapsAroundDocument);
+//   }
+}
+
+void iDocDataPanel::find_prev_clicked() {
+  webview->page()->findText(find_text->text(), QWebPage::FindWrapsAroundDocument | QWebPage::FindBackward);
 }
 
 bool iDocDataPanel::ignoreDataChanged() const {
@@ -9070,8 +9120,10 @@ void iHelpBrowser::init() {
   this->setWindowTitle("Help Browser");
 //  this->setSizeGripEnabled(true);
   
+  int font_spec = taiMisc::fonMedium;
+
   split = new iSplitter;
-  
+
   QWidget* tvw = new QWidget;
   QVBoxLayout* lay_tv = new QVBoxLayout(tvw);
   lay_tv->setMargin(0);
@@ -9080,13 +9132,14 @@ void iHelpBrowser::init() {
   lay_tv->addWidget(tool_bar);
   
   actBack = tool_bar->addAction("<");
-  actBack->setToolTip("Back");
+  actBack->setToolTip("Back one step in browsing history -- not often relevant due to opening new pages for each unique URL");
   actBack->setStatusTip(actBack->toolTip());
   actForward = tool_bar->addAction(">" );
-  actForward->setToolTip("Forward");
+  actForward->setToolTip("Forward one step in browsing history  -- not often relevant due to opening new pages for each unique URL");
   actForward->setStatusTip(actForward->toolTip());
   tool_bar->addSeparator();
   
+//   QLabel* lbl = taiM->NewLabel("search", tvw, font_spec);
   QLabel* lbl = new QLabel("search");
   lbl->setToolTip("Search for object type names to narrow the list below -- will find anything containing the text entered");
   tool_bar->addWidget(lbl);
@@ -9124,6 +9177,7 @@ void iHelpBrowser::init() {
   actStop->setToolTip("Stop");
 
   // find within item
+//   find_lbl = taiM->NewLabel("| find:", wid_tab, font_spec);
   find_lbl = new QLabel("| find:");
   find_lbl->setToolTip("Find text string within currently viewed page");
   tool_bar->addWidget(find_lbl);

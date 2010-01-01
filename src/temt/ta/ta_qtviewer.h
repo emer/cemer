@@ -1799,16 +1799,21 @@ public:
   QWidget*		wb_widg;  // overall widget for web browser case
   QVBoxLayout*		wb_box; // web browser vbox
   QWebView*		webview; // the web_doc case
-  QHBoxLayout*		url_box; // the url editing box
+  QToolBar*		url_bar; // toolbar in url box
   QLabel*		wiki_label;
   iLineEdit*		wiki_edit;
   QLabel*		url_label; // url label
   iLineEdit*		url_edit; // editor for url
-  QToolButton*		fwd_but; // forward
-  QToolButton*		bak_but; // backward
-  QPushButton*		go_but; // load web page
+  QAction*		fwd_but; // forward
+  QAction*		bak_but; // backward
+  QAction*		go_but; // load web page
   QProgressBar*		prog_bar;   // progress bar
-  QPushButton*		seturl_but; // save this location as our url!
+  QAction*		seturl_but; // save this location as our url!
+  QLabel*		find_lbl;
+  iLineEdit*		find_text;
+  QAction*		find_clear;
+  QAction*	    	find_prev;
+  QAction*	    	find_next;
   
   virtual void		setDoc(taDoc* doc); // only called if changes after creation
   
@@ -1846,6 +1851,11 @@ protected slots:
   void			doc_seturlPressed();
   void			doc_loadStarted();
   void			doc_loadFinished(bool ok);
+
+  void			find_clear_clicked();
+  void			find_next_clicked(); // or return in find_text
+  void			find_prev_clicked();
+
 //  void 			br_copyAvailable (bool yes);
 #endif
 
