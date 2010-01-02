@@ -969,9 +969,9 @@ public:
 #endif
   }
 
-  inline void C_Compute_SRAvg_spike(LeabraSpikeCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+  inline void C_Compute_SRAvg_spike(LeabraSpikeCon* cn, LeabraUnit* ru, LeabraUnit* su,
+				    LeabraUnitSpec* us) {
     // this happens every cycle, and is the place to compute nmda and ca -- expensive!! :(
-    LeabraUnitSpec* us = (LeabraUnitSpec*)ru->GetUnitSpec();
     float dnmda = -cn->nmda * xcal_spike.nmda_rate;
     float dca = (cn->nmda * (xcal_spike.ca_v_nmda * ru->vm_dend + xcal_spike.ca_nmda))
       - (cn->ca * xcal_spike.ca_rate);
@@ -986,24 +986,23 @@ public:
     cn->sravg_m += us->act_avg.m_dt * (cn->sravg_s - cn->sravg_m);
 
 #ifdef XCAL_DEBUG
-    LeabraCon* rbias = (LeabraCon*)ru->bias.OwnCn(0);
-    LeabraCon* sbias = (LeabraCon*)su->bias.OwnCn(0);
-    cn->srprod_s = rbias->sravg_s * sbias->sravg_s;
-    cn->srprod_m = rbias->sravg_m * sbias->sravg_m;
+    cn->srprod_s = ru->avg_s * su->avg_s;
+    cn->srprod_m = ru->avg_m * su->avg_m;
 #endif
   }
 
   inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
+    LeabraUnitSpec* us = (LeabraUnitSpec*)su->GetUnitSpec();
     if(learn_rule == CTLEABRA_XCAL_C) {
       CON_GROUP_LOOP(cg, C_Compute_SRAvg_spike((LeabraSpikeCon*)cg->OwnCn(i), 
-					       (LeabraUnit*)cg->Un(i), su));
+					       (LeabraUnit*)cg->Un(i), su, us));
     }
     else {
       inherited::Compute_SRAvg(cg, su, do_s);
     }
   }
 
-  inline void C_Compute_dWt_CtLeabraXCAL_C_spike(LeabraSpikeCon* cn,
+  inline void C_Compute_dWt_CtLeabraXCAL_spike(LeabraSpikeCon* cn,
 						 LeabraUnit* ru, LeabraUnit* su) {
     float srs = cn->sravg_s;
     float srm = cn->sravg_m;
@@ -1012,10 +1011,15 @@ public:
     cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
   }
 
-  inline void Compute_dWt_CtLeabraXCAL_C(LeabraSendCons* cg, LeabraUnit* su) {
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      C_Compute_dWt_CtLeabraXCAL_C_spike((LeabraSpikeCon*)cg->OwnCn(i), ru, su);
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    if(learn_rule == CTLEABRA_XCAL_C) {
+      for(int i=0; i<cg->size; i++) {
+	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	C_Compute_dWt_CtLeabraXCAL_spike((LeabraSpikeCon*)cg->OwnCn(i), ru, su);
+      }
+    }
+    else {
+      inherited::Compute_dWt_CtLeabraXCAL(cg, su);
     }
   }
 

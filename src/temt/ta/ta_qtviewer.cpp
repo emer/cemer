@@ -6588,7 +6588,8 @@ iDocDataPanel::iDocDataPanel()
   seturl_but->setToolTip("Set current web page to be the URL for this document -- each document is associated with a single URL");
 
   // find within item
-  find_lbl = taiM->NewLabel("| find:", wb_widg, font_spec);
+  url_bar->addSeparator();
+  find_lbl = taiM->NewLabel("find:", wb_widg, font_spec);
 //   find_lbl = new QLabel("| find:");
   find_lbl->setToolTip("Find text string within currently viewed page");
   url_bar->addWidget(find_lbl);
@@ -9178,7 +9179,8 @@ void iHelpBrowser::init() {
 
   // find within item
 //   find_lbl = taiM->NewLabel("| find:", wid_tab, font_spec);
-  find_lbl = new QLabel("| find:");
+  tool_bar->addSeparator();
+  find_lbl = new QLabel("find:");
   find_lbl->setToolTip("Find text string within currently viewed page");
   tool_bar->addWidget(find_lbl);
   find_text = new iLineEdit();
