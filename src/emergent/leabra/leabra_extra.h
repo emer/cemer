@@ -965,7 +965,7 @@ public:
     lcn->sravg_ss = 0.15f; lcn->sravg_s = 0.15f; lcn->sravg_m = 0.15f;
     lcn->nmda = 0.0f; lcn->ca = 0.0f; 
 #ifdef XCAL_DEBUG
-    lcn->srprod_s = lcn->srprod_m = xcalm.avg_init;
+    lcn->srprod_s = lcn->srprod_m = xcal.avg_init;
 #endif
   }
 

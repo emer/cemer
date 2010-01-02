@@ -1005,7 +1005,7 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
     u->l_thr = act_avg.l_gain * MAX(u->avg_l, u->avg_ml);
   }
 
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL || net->ct_sravg.force_con)  {
     for(int g = 0; g < u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       if(send_gp->prjn->layer->lesioned() || !send_gp->size) continue;
@@ -1803,7 +1803,7 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
     }
   }
 
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL || net->ct_sravg.force_con) {
     if(net->train_mode != LeabraNetwork::TEST) {	// expensive con-level only for training
       for(int g=0; g<u->send.size; g++) {
 	LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
@@ -4536,6 +4536,7 @@ void CtSRAvgSpec::Initialize() {
   end = 1;
   interval = 1;
   plus_s_st = 19;
+  force_con = false;
 }
 
 void CtSRAvgVals::Initialize() {
