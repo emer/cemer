@@ -146,6 +146,12 @@ String SelectEditItem::GetColText(const KeyString& key, int itm_idx) const {
 
 void EditMbrItem::Initialize() {
   mbr = NULL;
+  is_numeric = false;
+  param_search = false;
+  min_val = 0.0f;
+  max_val = 1.0f;
+  next_val = 0.0f;
+  incr = 0.1f;
 }
 
 void EditMbrItem::Destroy() {
@@ -162,6 +168,12 @@ void EditMbrItem::UpdateAfterEdit_impl() {
     MemberDef::GetMembDesc(mbr, desc, "");
     prv_desc = desc;
   }
+  is_numeric = false;
+  if(mbr && !mbr->type->InheritsNonAtomicClass()) {
+    if(mbr->type->InheritsFrom(&TA_float) || mbr->type->InheritsFrom(&TA_double)
+       || mbr->type->InheritsFrom(&TA_int) || mbr->type->InheritsFrom(&TA_int64_t))
+      is_numeric = true;
+  }
 }
 
 String EditMbrItem::GetColText(const KeyString& key, int itm_idx) const {
@@ -169,6 +181,31 @@ String EditMbrItem::GetColText(const KeyString& key, int itm_idx) const {
     return (mbr) ? mbr->type->name : String("NULL");
   else return inherited::GetColText(key, itm_idx);
 }
+
+bool EditMbrItem::PSearchValidTest() {
+  if(TestError(!mbr, "PSearchValidTest", "item does not have member def set -- not valide parameter search item"))
+    return false;
+  if(TestError(!is_numeric, "PSearchValidTest", "item is not numeric and thus not a valid parameter search item.  member name:", mbr->name, "label:", label))
+    return false;
+  return true;
+}
+
+Variant EditMbrItem::PSearchCurVal() {
+  if(!PSearchValidTest()) return 0.0;
+  return mbr->type->GetValVar(mbr->GetOff(base), mbr);
+}  
+
+bool EditMbrItem::PSearchCurVal_Set(const Variant& cur_val) {
+  if(!PSearchValidTest()) return false;
+  mbr->type->SetValVar(cur_val, mbr->GetOff(base), NULL, mbr);
+  return true;
+}  
+
+bool EditMbrItem::PSearchNextToCur() {
+  if(!PSearchValidTest()) return false;
+  mbr->type->SetValVar(next_val, mbr->GetOff(base), NULL, mbr);
+  return true;
+}  
 
 //////////////////////////////////
 //  EditMthItem_Group		//
@@ -205,6 +242,77 @@ const KeyString EditMbrItem_Group::GetListColKey(int col) const {
   default: break;
   }
   return inherited::GetListColKey(col);
+}
+
+//////////////////////////////////////////////////
+// 	Parameter Searching Interface
+
+EditMbrItem* EditMbrItem_Group::FindMbrName(const String& mbr_nm, const String& label) {
+  return NULL;
+}
+
+EditMbrItem* EditMbrItem_Group::PSearchFind(const String& mbr_nm, const String& label) {
+  return NULL;
+}
+
+bool& EditMbrItem_Group::PSearchOn(const String& mbr_nm, const String& label) {
+  static bool no_val = false;
+  return no_val;
+}
+
+bool EditMbrItem_Group::PSearchOn_Set(bool psearch, const String& mbr_nm, const String& label) {
+  return false;
+}
+
+double& EditMbrItem_Group::PSearchMinVal(const String& mbr_nm, const String& label) {
+  static double no_val = 0;
+  return no_val;
+}
+
+bool EditMbrItem_Group::PSearchMinVal_Set(double min_val, const String& mbr_nm, const String& label) {
+  return false;
+}
+
+double& EditMbrItem_Group::PSearchMaxVal(const String& mbr_nm, const String& label) {
+  static double no_val = 0;
+  return no_val;
+}
+
+bool EditMbrItem_Group::PSearchMaxVal_Set(double max_val, const String& mbr_nm, const String& label) {
+  return false;
+}
+
+double& EditMbrItem_Group::PSearchNextVal(const String& mbr_nm, const String& label) {
+  static double no_val = 0;
+  return no_val;
+}
+
+bool EditMbrItem_Group::PSearchNextVal_Set(double next_val, const String& mbr_nm, const String& label) {
+  return false;
+}
+
+double& EditMbrItem_Group::PSearchIncrVal(const String& mbr_nm, const String& label) {
+  static double no_val = 0;
+  return no_val;
+}
+bool EditMbrItem_Group::PSearchIncrVal_Set(double incr_val, const String& mbr_nm, const String& label) {
+  return false;
+}
+
+double EditMbrItem_Group::PSearchCurVal(const String& mbr_nm, const String& label) {
+  return 0;
+}
+
+bool EditMbrItem_Group::PSearchCurVal_Set(double cur_val, const String& mbr_nm, const String& label) {
+  return false;
+}
+
+bool EditMbrItem_Group::PSearchNextToCur(const String& mbr_nm, const String& label) {
+  return false;
+}
+
+bool EditMbrItem_Group::PSearchNextToCur_All() {
+  return false;
 }
 
 //////////////////////////////////

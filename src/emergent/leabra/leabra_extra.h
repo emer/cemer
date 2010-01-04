@@ -1013,7 +1013,8 @@ public:
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
     LeabraLayer* slay = (LeabraLayer*)cg->prjn->from.ptr();
-    float su_act_mult = xcal.thr_l_mix * (xcal.hebb_mix * slay->kwta.pct + xcal.hebb_mix_c * su->avg_m);
+    float su_avg_m = MAX(su->avg_m, xcal.su_act_min);
+    float su_act_mult = xcal.thr_l_mix * (xcal.hebb_mix * slay->kwta.pct + xcal.hebb_mix_c * su_avg_m);
 
     if(learn_rule == CTLEABRA_XCAL_C) {
       for(int i=0; i<cg->size; i++) {
