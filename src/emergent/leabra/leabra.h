@@ -222,6 +222,9 @@ public:
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
   float		thr_l_mix;	// #DEF_0.001:1.0 [0.01 or 0.005 std] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
   float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
+  float		hebb_mix;	// #DEF_0 #MIN_0 #MAX_1 amount of "pure" hebbian learning operating within the thr_l_mix BCM-like component -- actually the amount of fixed sending layer expected activity level to mulitply the recv long-term average activation by (remainder is multiplied by the current sending medium time scale activation, as is done in BCM)
+  float		hebb_mix_c;	// #READ_ONLY 1 - hebb_mix -- amount of sending medium time scale activation to mulitply ru avg_l by
+  float		su_act_min;	// #DEF_0.05 #MIN_0 #MAX_1 minimum effective activation for sending units as entering into learning rule -- because the xcal curve returns to 0 when the S*R coproduct is 0, an inactive sending unit will never experience any weight change -- this is counter to the hebbian form of learning, where an active recv unit will decrease weights from inactive senders -- ensuring a minimal amount of activation avoids this issue, and reflects the low background rate of neural and synaptic activity that actually exists in the brain
   float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.15 is a compromise
   float		d_gain;		// #DEF_1 #MIN_0 multiplier on LTD values relative to LTP values -- generally do not change from 1
   float		d_thr;		// #DEF_0.0001 #MIN_0 minimum LTD threshold value below which no weight change occurs -- small default value is mainly to optimize computation for the many values close to zero associated with inactive synapses
@@ -403,9 +406,11 @@ public:
   /////////////////////////////////////
   // CtLeabraXCAL code
 
-  inline void 	C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su);
+  inline void 	C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
+				 float su_avg_s, float su_avg_m, float su_act_mult);
   // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- SEP trial-wise version (requires normalization factors)
-  inline void 	C_Compute_dWt_CtLeabraXCAL_trial_ml(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su);
+  inline void 	C_Compute_dWt_CtLeabraXCAL_trial_ml(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su,
+				 float su_avg_s, float su_avg_m, float su_act_mult);
   // #CAT_Learning SEP with medium-to-long factor > 0
 
   virtual void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su);
@@ -3056,38 +3061,44 @@ inline void LeabraConSpec::Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraU
 // }
 
 inline void LeabraConSpec::
-C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-  float srs = ru->avg_s * su->avg_s;
-  float srm = ru->avg_m * su->avg_m;
+C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
+				 float su_avg_s, float su_avg_m, float su_act_mult) {
+  float srs = ru->avg_s * su_avg_s;
+  float srm = ru->avg_m * su_avg_m;
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * su->avg_m * ru->l_thr;
+  float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->l_thr;
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
 inline void LeabraConSpec::
-C_Compute_dWt_CtLeabraXCAL_trial_ml(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-  float srs = ru->avg_s * su->avg_s;
-  float srm = ru->avg_m * su->avg_m;
+C_Compute_dWt_CtLeabraXCAL_trial_ml(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su,
+				 float su_avg_s, float su_avg_m, float su_act_mult) {
+  float srs = ru->avg_s * su_avg_s;
+  float srm = ru->avg_m * su_avg_m;
   float srml = xcal.sm_mix * srm + xcal.ml_mix * (ru->avg_ml * su->avg_ml);
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srml;
-  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * su->avg_m * ru->l_thr;
+  float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->l_thr;
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-  LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
+  LeabraLayer* slay = (LeabraLayer*)cg->prjn->from.ptr();
+  float su_act_mult = xcal.thr_l_mix * (xcal.hebb_mix * slay->kwta.pct + xcal.hebb_mix_c * su->avg_m);
+  float su_avg_s = MAX(su->avg_s, xcal.su_act_min);
+  float su_avg_m = MAX(su->avg_m, xcal.su_act_min);
 
   if(xcal.ml_mix > 0.0f) {
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      C_Compute_dWt_CtLeabraXCAL_trial_ml((LeabraCon*)cg->OwnCn(i), ru, su);
+      C_Compute_dWt_CtLeabraXCAL_trial_ml((LeabraCon*)cg->OwnCn(i), ru, su, su_avg_s, su_avg_m,
+					  su_act_mult);
     }
   }
   else {
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->OwnCn(i), ru, su);
+      C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->OwnCn(i), ru, su_avg_s, su_avg_m,
+				       su_act_mult);
     }
   }
 }

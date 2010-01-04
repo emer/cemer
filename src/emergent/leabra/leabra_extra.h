@@ -1002,20 +1002,23 @@ public:
     }
   }
 
-  inline void C_Compute_dWt_CtLeabraXCAL_spike(LeabraSpikeCon* cn,
-						 LeabraUnit* ru, LeabraUnit* su) {
+  inline void C_Compute_dWt_CtLeabraXCAL_spike(LeabraSpikeCon* cn, LeabraUnit* ru,
+					       LeabraUnit* su, float su_act_mult) {
     float srs = cn->sravg_s;
     float srm = cn->sravg_m;
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-    float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * su->avg_m * ru->l_thr;
+    float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->l_thr;
     cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
   }
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    LeabraLayer* slay = (LeabraLayer*)cg->prjn->from.ptr();
+    float su_act_mult = xcal.thr_l_mix * (xcal.hebb_mix * slay->kwta.pct + xcal.hebb_mix_c * su->avg_m);
+
     if(learn_rule == CTLEABRA_XCAL_C) {
       for(int i=0; i<cg->size; i++) {
 	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-	C_Compute_dWt_CtLeabraXCAL_spike((LeabraSpikeCon*)cg->OwnCn(i), ru, su);
+	C_Compute_dWt_CtLeabraXCAL_spike((LeabraSpikeCon*)cg->OwnCn(i), ru, su, su_act_mult);
       }
     }
     else {
