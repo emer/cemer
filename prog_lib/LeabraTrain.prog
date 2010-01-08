@@ -124,12 +124,16 @@ Program .projects[0].programs.gp[0][1] {
       };
     };
     WtInitPrompt @[5] { 
-      ProgEl_List @.yes_code = [2] {
+      ProgEl_List @.yes_code = [3] {
 	MethodCall @[0] { 
 	  ProgArg_List @.meth_args = [0] {
 	  };
 	};
-	PrintExpr @[1] { };
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+	PrintExpr @[2] { };
       };
     };
     AssignExpr @[6] { };
@@ -757,6 +761,18 @@ Program .projects[0].programs.gp[0][1] {
     el_typ=ProgEl;
     el_def=0;
     MethodCall @[0] {
+     desc="need to have built network by now in any case, so do it here to make double sure -- prevents errs when loading project with startup program";
+     flags=;
+     result_var=NULL;
+     obj=$10$;
+     method=Network::Build;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    MethodCall @[1] {
      desc="initialize network weights: could also load pre-set weights or something else here";
      flags=;
      result_var=NULL;
@@ -768,7 +784,7 @@ Program .projects[0].programs.gp[0][1] {
       el_def=0;
      };
     };
-    PrintExpr @[1] {
+    PrintExpr @[2] {
      desc=;
      flags=;
      expr {

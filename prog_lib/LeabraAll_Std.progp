@@ -178,12 +178,16 @@ Program_Group .projects[0].programs.gp[0] {
 	  };
 	};
 	WtInitPrompt @[5] { 
-	  ProgEl_List @.yes_code = [2] {
+	  ProgEl_List @.yes_code = [3] {
 	    MethodCall @[0] { 
 	      ProgArg_List @.meth_args = [0] {
 	      };
 	    };
-	    PrintExpr @[1] { };
+	    MethodCall @[1] { 
+	      ProgArg_List @.meth_args = [0] {
+	      };
+	    };
+	    PrintExpr @[2] { };
 	  };
 	};
 	AssignExpr @[6] { };
@@ -749,7 +753,7 @@ Program_Group .projects[0].programs.gp[0] {
 	};
       };
 
-      ProgEl_List @.prog_code = [6] {
+      ProgEl_List @.prog_code = [7] {
 	MethodCall @[0] { 
 	  ProgArg_List @.meth_args = [0] {
 	  };
@@ -760,23 +764,26 @@ Program_Group .projects[0].programs.gp[0] {
 	};
 	AssignExpr @[2] { };
 	MethodCall @[3] { 
-	  ProgArg_List @.meth_args = [3] {
+	  ProgArg_List @.meth_args = [4] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
 	    ProgArg @[2] { };
+	    ProgArg @[3] { };
 	  };
 	};
 	MethodCall @[4] { 
-	  ProgArg_List @.meth_args = [3] {
+	  ProgArg_List @.meth_args = [4] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
 	    ProgArg @[2] { };
+	    ProgArg @[3] { };
 	  };
 	};
 	MethodCall @[5] { 
 	  ProgArg_List @.meth_args = [0] {
 	  };
 	};
+	Comment @[6] { };
       };
     };
     Program @[9] { 
@@ -1597,6 +1604,18 @@ Program_Group .projects[0].programs.gp[0] {
      el_typ=ProgEl;
      el_def=0;
      MethodCall @[0] {
+      desc="need to have built network by now in any case, so do it here to make double sure -- prevents errs when loading project with startup program";
+      flags=;
+      result_var=NULL;
+      obj=$14$;
+      method=Network::Build;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     MethodCall @[1] {
       desc="initialize network weights: could also load pre-set weights or something else here";
       flags=;
       result_var=NULL;
@@ -1608,7 +1627,7 @@ Program_Group .projects[0].programs.gp[0] {
        el_def=0;
       };
      };
-     PrintExpr @[1] {
+     PrintExpr @[2] {
       desc=;
       flags=;
       expr {
@@ -4228,7 +4247,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       arg_type=const_Variant_ref;
       type="const Variant&";
       name="val";
-      required=0;
+      required=1;
       def_val=;
       expr {
        expr="epoch_timer.used.GetTotSecs()";
@@ -4238,7 +4257,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       arg_type=const_taString_ref;
       type="const taString&";
       name="col_name";
-      required=0;
+      required=1;
       def_val="\"\"";
       expr {
        expr="\"epoch_time_tot\"";
@@ -4248,10 +4267,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       arg_type=int;
       type="int";
       name="row";
-      required=0;
+      required=1;
       def_val=;
       expr {
        expr="-1";
+      };
+     };
+     ProgArg @[3] {
+      arg_type=bool;
+      type="bool";
+      name="quiet";
+      required=0;
+      def_val="false";
+      expr {
+       expr=;
       };
      };
     };
@@ -4270,7 +4299,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       arg_type=const_Variant_ref;
       type="const Variant&";
       name="val";
-      required=0;
+      required=1;
       def_val=;
       expr {
        expr="epoch_timer.used.GetUsrSecs()";
@@ -4280,7 +4309,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       arg_type=const_taString_ref;
       type="const taString&";
       name="col_name";
-      required=0;
+      required=1;
       def_val="\"\"";
       expr {
        expr="\"epoch_time_usr\"";
@@ -4290,10 +4319,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       arg_type=int;
       type="int";
       name="row";
-      required=0;
+      required=1;
       def_val=;
       expr {
        expr="-1";
+      };
+     };
+     ProgArg @[3] {
+      arg_type=bool;
+      type="bool";
+      name="quiet";
+      required=0;
+      def_val="false";
+      expr {
+       expr=;
       };
      };
     };
@@ -4309,6 +4348,21 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_typ=ProgArg;
      el_def=0;
     };
+   };
+   Comment @[6] {
+    desc="NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:
+http://grey.colorado.edu/emergent/index.php/Test_Programs
+quick summary here:
+* Add computed, data_agg, op = LAST items to epoch_netmon to grab from the EpochTestOutputData table.
+* duplicate this program, call the new one LeabraEpochMonitor_postest, remove all netmon items for training, leaving only test,
+  turn off rmv_orphan_cols flag, and set arg for UpdateMonitors in init_code to false
+* in original LeabraEpochMonitor, click OFF flag for WriteClose() line
+* in LeabraEpoch add call to LeabraEpochTest, then _posttest after the first LeabraEpochMonitor call.
+This will ensure that training data is monitored first, right after the training epoch, and then the test epoch is run,
+and the testing data is updated.  The first epoch monitor should have all the items, so that it formats the data table correctly.
+ 
+";
+    flags=;
    };
   };
  };
