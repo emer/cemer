@@ -185,6 +185,35 @@ void LeabraLinUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
   u->act = u->act_nd = u->act_eq = act_range.Clip(new_act);
 }
 
+//////////////////////////////////
+// 	XCalHebbConSpec
+//////////////////////////////////
+
+void XCalHebbConSpec::Initialize() {
+  hebb_mix = 0.0f;
+  su_act_min = 0.0f;
+  hebb_mix_c = 1.0f - hebb_mix;
+}
+
+void XCalHebbConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  hebb_mix_c = 1.0f - hebb_mix;
+}
+
+//////////////////////////////////
+// 	XCalMlTraceConSpec
+//////////////////////////////////
+
+void XCalMlTraceConSpec::Initialize() {
+  ml_mix = 0.0f;
+  sm_mix = 1.0f - ml_mix;
+}
+
+void XCalMlTraceConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  sm_mix = 1.0f - ml_mix;
+}
+
 //////////////////////////
 // 	NegBias		//
 //////////////////////////

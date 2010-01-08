@@ -220,7 +220,7 @@ INHERITED(taOBase)
 public:
   float		s_mix;		// #DEF_0.9 #MIN_0 #MAX_1 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
-  float		thr_l_mix;	// #DEF_0.001:1.0 [0.01 or 0.005 std] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
+  float		thr_l_mix;	// #DEF_0.001:1.0 [0.01 to 0.008 std] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
   float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
   float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.15 is a compromise
   float		d_gain;		// #DEF_1 #MIN_0 multiplier on LTD values relative to LTP values -- generally do not change from 1
@@ -248,26 +248,6 @@ public:
   void 	Defaults()	{ Initialize(); }
   SIMPLE_COPY(XCalLearnSpec);
   TA_BASEFUNS(XCalLearnSpec);
-protected:
-  void	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-class LEABRA_API XCalMiscSpec : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning (XCAL) misc lower-usage specs
-INHERITED(taOBase)
-public:
-  float		hebb_mix;	// #DEF_0 #MIN_0 #MAX_1 amount of "pure" hebbian learning operating within the thr_l_mix BCM-like component -- actually the amount of fixed sending layer expected activity level to mulitply the recv long-term average activation by (remainder is multiplied by the current sending medium time scale activation, as is done in BCM) -- this is not useful for most cases, but is included for generality
-  float		hebb_mix_c;	// #READ_ONLY 1 - hebb_mix -- amount of sending medium time scale activation to mulitply ru avg_l by
-  float		su_act_min;	// #DEF_0 #MIN_0 #MAX_1 NOTE: this is only useful for hebb_mixminimum effective activation for sending units as entering into learning rule -- because the xcal curve returns to 0 when the S*R coproduct is 0, an inactive sending unit will never experience any weight change -- this is counter to the hebbian form of learning, where an active recv unit will decrease weights from inactive senders -- ensuring a minimal amount of activation avoids this issue, and reflects the low background rate of neural and synaptic activity that actually exists in the brain
-  float		ml_mix;		// #DEF_0 #MIN_0 how much the medium-to-long time scale average activations contribute to synaptic activation -- useful for capturing sequential dependencies between events, when these are present in the simulation, but not appropriate for random event sequences
-  float		sm_mix;		// #READ_ONLY #DEF_1 #MIN_0 complement of ml_mix = 1-ml_mix -- how much the short & medium time scale average activations contribute to synaptic activation
-
-  void 	Defaults()	{ Initialize(); }
-  SIMPLE_COPY(XCalMiscSpec);
-  TA_BASEFUNS(XCalMiscSpec);
 protected:
   void	UpdateAfterEdit_impl();
 private:
@@ -347,7 +327,6 @@ public:
   WtSigSpec	wt_sig;		// #CAT_Learning sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
   LearnMixSpec	lmix;		// #CAT_Learning #CONDSHOW_ON_learn_rule:LEABRA_CHL mixture of hebbian & err-driven learning (note: no hebbian for CTLEABRA_XCAL)
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL,CTLEABRA_XCAL_C XCAL (eXtended Contrastive Attractor Learning) learning parameters
-  XCalMiscSpec	xcal_m;		// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL,CTLEABRA_XCAL_C XCAL (eXtended Contrastive Attractor Learning) misc lower-usage learning parameters
   SAvgCorSpec	savg_cor;	// #CAT_Learning for Hebbian and netinput computation: correction for sending average act levels (i.e., renormalization); also norm_con_n for normalizing netinput computation
 
   AdaptRelNetinSpec rel_net_adapt; // #CAT_Learning adapt relative netinput values based on targets for fm_input, fm_output, and lateral projections -- not used by default (call Compute_RelNetinAdapt to activate; requires Compute_RelNetin and Compute_AvgRelNetin for underlying data)
@@ -425,10 +404,6 @@ public:
   inline void 	C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
 				 float su_avg_s, float su_avg_m, float su_act_mult);
   // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- SEP trial-wise version (requires normalization factors)
-  inline void 	C_Compute_dWt_CtLeabraXCAL_trial_ml(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su,
-				 float su_avg_s, float su_avg_m, float su_act_mult);
-  // #CAT_Learning SEP with medium-to-long factor > 0
-
   virtual void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su);
   // #CAT_Learning CtLeabraXCAL weight changes
 
@@ -841,16 +816,18 @@ class LEABRA_API LeabraActAvgSpec : public taOBase {
 INHERITED(taOBase)
 public:
   float		l_gain;		// #DEF_3 #MIN_0 gain on the long-time scale receiving average activation (avg_l) value as it enters into the learning threshold l_thr
-  float		s_dt;		// #DEF_0.2;0.02 #MIN_0 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the short time-scale avg_s value
-  float		m_dt;		// #DEF_0.1;0.01 #MIN_0 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuous updating the medium time-scale avg_m value
-  float		ml_dt;		// #DEF_0.4;0.04 #MIN_0 time constant (rate) for updating the medium-to-long time-scale avg_ml value, which integrates over recent history of medium (trial level) averages, used for XCAL learning rules
-  float		l_dt;		// #DEF_0.0001:0.01 [0.005 std for XCAL, .0002 for XCAL_C] #MIN_0 time constant (rate) for updating the long time-scale avg_l value, used for XCAL learning rules
+  float		l_dt;		// #DEF_0.0001:0.01 [0.005 std for XCAL, .0002 for XCAL_C] #MIN_0 #MAX_1 time constant (rate) for updating the long time-scale avg_l value, used for XCAL learning rules
+  float		ml_dt;		// #DEF_0.4;0.04 #MIN_0 #MAX_1 time constant (rate) for updating the medium-to-long time-scale avg_ml value, which integrates over recent history of medium (trial level) averages, used for XCAL learning rules
+  float		m_dt;		// #DEF_0.1;0.01 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuous updating the medium time-scale avg_m value
+  float		s_dt;		// #DEF_0.2;0.02 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the short time-scale avg_s value
+  float		ss_dt;		// #DEF_1;0.05 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the super-short time-scale avg_ss value
   bool		use_nd;		// #DEF_false use the act_nd variables (non-depressed) for computing averages (else use raw act, which is raw spikes in spiking mode, and subject to depression if in place)
 
-  float		s_time;		// #READ_ONLY #SHOW (only used for CTLEABRA_XCAL_C) time constant (in cycles, 1/s_dt) for continuously updating the short time-scale avg_s value
-  float		m_time;		// #READ_ONLY #SHOW (only used for CTLEABRA_XCAL_C) time constant (in cycles, 1/m_dt) for continuously updating the medium time-scale avg_m value
-  float		ml_time;	// #READ_ONLY #SHOW time constant (in trials for XCAL, cycles for XCAL_C, 1/ml_dt) for updating the medium-long time-scale avg_ml value
   float		l_time;		// #READ_ONLY #SHOW time constant (in trials for XCAL, cycles for XCAL_C, 1/l_dt) for continuously updating the long time-scale avg_l value
+  float		ml_time;	// #READ_ONLY #SHOW time constant (in trials for XCAL, cycles for XCAL_C, 1/ml_dt) for updating the medium-long time-scale avg_ml value
+  float		m_time;		// #READ_ONLY #SHOW (only used for CTLEABRA_XCAL_C) time constant (in cycles, 1/m_dt) for continuously updating the medium time-scale avg_m value
+  float		s_time;		// #READ_ONLY #SHOW (only used for CTLEABRA_XCAL_C) time constant (in cycles, 1/s_dt) for continuously updating the short time-scale avg_s value
+  float		ss_time;	// #READ_ONLY #SHOW (only used for CTLEABRA_XCAL_C) time constant (in cycles, 1/ss_dt) for continuously updating the super-short time-scale avg_ss value
 
   TA_SIMPLE_BASEFUNS(LeabraActAvgSpec);
 protected:
@@ -1296,6 +1273,7 @@ public:
   float		act_eq;		// #VIEW_HOT #CAT_Activation rate-code equivalent activity value (time-averaged spikes or just act)
   float		act_nd;		// #CAT_Activation non-depressed rate-code equivalent activity value (time-averaged spikes or just act) -- used for final phase-based variables used in learning and stats
   float		act_avg;	// #CAT_Activation average activation (of final plus phase activation state) over long time intervals (dt = act.avg_dt)
+  float		avg_ss;		// #CAT_Activation super-short time-scale activation average -- provides the lowest-level time integration, important specifically for spiking networks using the XCAL_C algorithm -- otherwise ss_dt = 1 and this is just the current activation
   float		avg_s;		// #CAT_Activation short time-scale activation average -- tracks the most recent activation states, and represents the plus phase for learning in XCAL algorithms
   float		avg_m;		// #CAT_Activation medium time-scale activation average -- integrates over entire trial of activation, and represents the minus phase for learning in XCAL algorithms
   float		avg_ml;		// #CAT_Activation medium-to-long time-scale average activation (as computed in the bias connection and spec) which integrates over recent history of medium (trial level) averages, used for rapid adaptation of l_thr = LTP vs LTD learning threshold in XCAL, and for learning based on receiver average activations with a trace of prior activations, and optionally used for learning based on receiver average activations with a trace of prior activations, 
@@ -3086,36 +3064,15 @@ C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
-inline void LeabraConSpec::
-C_Compute_dWt_CtLeabraXCAL_trial_ml(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su,
-				 float su_avg_s, float su_avg_m, float su_act_mult) {
-  float srs = ru->avg_s * su_avg_s;
-  float srm = ru->avg_m * su_avg_m;
-  float srml = xcal_m.sm_mix * srm + xcal_m.ml_mix * (ru->avg_ml * su->avg_ml);
-  float sm_mix = xcal.s_mix * srs + xcal.m_mix * srml;
-  float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->l_thr;
-  cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
-}
-
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-  LeabraLayer* slay = (LeabraLayer*)cg->prjn->from.ptr();
-  float su_avg_s = MAX(su->avg_s, xcal_m.su_act_min);
-  float su_avg_m = MAX(su->avg_m, xcal_m.su_act_min);
-  float su_act_mult = xcal.thr_l_mix * (xcal_m.hebb_mix * slay->kwta.pct + xcal_m.hebb_mix_c * su_avg_m);
+  float su_avg_s = su->avg_s;
+  float su_avg_m = su->avg_m;
+  float su_act_mult = xcal.thr_l_mix * su_avg_m;
 
-  if(xcal_m.ml_mix > 0.0f) {
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      C_Compute_dWt_CtLeabraXCAL_trial_ml((LeabraCon*)cg->OwnCn(i), ru, su, su_avg_s, su_avg_m,
-					  su_act_mult);
-    }
-  }
-  else {
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->OwnCn(i), ru, su_avg_s, su_avg_m,
-				       su_act_mult);
-    }
+  for(int i=0; i<cg->size; i++) {
+    LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+    C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->OwnCn(i), ru, su_avg_s, su_avg_m,
+				     su_act_mult);
   }
 }
 

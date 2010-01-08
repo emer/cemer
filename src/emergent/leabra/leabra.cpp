@@ -87,7 +87,7 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   s_mix = 0.9f;
-  thr_l_mix = 0.005f;
+  thr_l_mix = 0.01f;
   d_rev = 0.10f;
   d_gain = 1.0f;
   d_thr = 0.0001f;
@@ -105,21 +105,6 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
     d_rev_ratio = (1.0f - d_rev) / d_rev;
   else
     d_rev_ratio = 1.0f;
-}
-
-void XCalMiscSpec::Initialize() {
-  hebb_mix = 0.0f;
-  su_act_min = 0.0f;
-  ml_mix = 0.0f;
-
-  hebb_mix_c = 1.0f - hebb_mix;
-  sm_mix = 1.0f - ml_mix;
-}
-
-void XCalMiscSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  hebb_mix_c = 1.0f - hebb_mix;
-  sm_mix = 1.0f - ml_mix;
 }
 
 void SAvgCorSpec::Initialize() {
@@ -197,7 +182,6 @@ void LeabraConSpec::InitLinks() {
   taBase::Own(lrate_sched, this);
   taBase::Own(lmix, this);
   taBase::Own(xcal, this);
-  taBase::Own(xcal_m, this);
   taBase::Own(savg_cor, this);
   taBase::Own(rel_net_adapt, this);
   taBase::Own(wt_sig_fun, this);
@@ -217,7 +201,6 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   CreateWtSigFun();
   lmix.UpdateAfterEdit();
   xcal.UpdateAfterEdit();
-  xcal_m.UpdateAfterEdit();
 }
 
 void LeabraConSpec::Defaults() {
@@ -226,7 +209,6 @@ void LeabraConSpec::Defaults() {
   wt_sig.Defaults();
   lmix.Defaults();
   xcal.Defaults();
-  xcal_m.Defaults();
   savg_cor.Defaults();
   Initialize();
 }
@@ -250,12 +232,12 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
   // todo: could set come conflicting params..
   if(learn_rule != LEABRA_CHL) {
     if(wt_sig.off == 1.25f)
-      wt_sig.off = 1.0f;	// this is key
+      wt_sig.off = 1.1f;	// this is key
     if(lrate == 0.01f)
       lrate = 0.02f;		// also important
   }
   else {
-    if(wt_sig.off == 1.0f)
+    if(wt_sig.off == 1.1f)
       wt_sig.off = 1.25f;
     if(lrate == 0.02f)
       lrate = 0.01f;		// also important
@@ -608,24 +590,27 @@ void LeabraDtSpec::UpdateAfterEdit_impl() {
 
 void LeabraActAvgSpec::Initialize() {
   l_gain = 3.0f;
-  s_dt = 0.2f;
-  m_dt = 0.1f;
-  ml_dt = 0.4f;
   l_dt = 0.005;
+  ml_dt = 0.4f;
+  m_dt = 0.1f;
+  s_dt = 0.2f;
+  ss_dt = 1.0f;
   use_nd = false;
 
-  s_time = 1.0f / s_dt;
-  m_time = 1.0f / m_dt;
-  ml_time = 1.0f / ml_dt;
   l_time = 1.0f / l_dt;
+  ml_time = 1.0f / ml_dt;
+  m_time = 1.0f / m_dt;
+  s_time = 1.0f / s_dt;
+  ss_time = 1.0f / ss_dt;
 }
 
 void LeabraActAvgSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  s_time = 1.0f / s_dt;
-  m_time = 1.0f / m_dt;
-  ml_time = 1.0f / ml_dt;
   l_time = 1.0f / l_dt;
+  ml_time = 1.0f / ml_dt;
+  m_time = 1.0f / m_dt;
+  s_time = 1.0f / s_dt;
+  ss_time = 1.0f / ss_dt;
 }
 
 void LeabraChannels::Initialize() {
@@ -934,6 +919,9 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->act_nd = 0.0f;
   lu->act_p = lu->act_m = lu->act_dif = 0.0f;
   lu->act_m2 = lu->act_p2 = lu->act_dif2 = 0.0f;
+  lu->avg_ss = act.avg_init;
+  lu->avg_s = act.avg_init;
+  lu->avg_m = act.avg_init;
   lu->dav = 0.0f;
   lu->noise = 0.0f;
   lu->maint_h = 0.0f;
@@ -959,6 +947,9 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork*, float decay) {
   u->act -= decay * u->act;
   u->act_nd -= decay * u->act_nd;
   u->act_eq -= decay * u->act_eq;
+  u->avg_ss -= decay * (u->avg_ss - act.avg_init);
+  u->avg_s -= decay * (u->avg_s - act.avg_init);
+  u->avg_m -= decay * (u->avg_m - act.avg_init);
   u->prv_net -= decay * u->prv_net;
   u->prv_g_i -= decay * u->prv_g_i;
   if(hyst.on && !hyst.trl)
@@ -1793,7 +1784,8 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
 
   if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C) {
     // note: this is cascade version -- each builds upon the other
-    u->avg_s += act_avg.s_dt * (ru_act - u->avg_s);
+    u->avg_ss += act_avg.ss_dt * (ru_act - u->avg_ss);
+    u->avg_s += act_avg.s_dt * (u->avg_ss - u->avg_s);
     u->avg_m += act_avg.m_dt * (u->avg_s - u->avg_m);
     u->avg_ml += act_avg.ml_dt * (u->avg_m - u->avg_ml); // driven by avg_m
     u->avg_l += act_avg.l_dt * (u->avg_m - u->avg_l);	 // driven by avg_m
@@ -2186,6 +2178,7 @@ void LeabraUnit::Initialize() {
   act_eq = 0.0f;
   act_nd = 0.0f;
   act_avg = 0.15f;
+  avg_ss = 0.15f;
   avg_s = 0.15f;
   avg_m = 0.15f;
   avg_l = 0.15f;
@@ -2240,6 +2233,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   act_nd = cp.act_nd;
   act_avg = cp.act_avg;
   avg_s = cp.avg_s;
+  avg_ss = cp.avg_ss;
   avg_m = cp.avg_m;
   avg_ml = cp.avg_ml;
   avg_l = cp.avg_l;
