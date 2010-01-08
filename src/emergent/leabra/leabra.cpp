@@ -88,25 +88,18 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 void XCalLearnSpec::Initialize() {
   s_mix = 0.9f;
   thr_l_mix = 0.005f;
-  hebb_mix = 0.0f;
-  su_act_min = 0.0f;
   d_rev = 0.10f;
   d_gain = 1.0f;
   d_thr = 0.0001f;
-  ml_mix = 0.0f;
   m_mix = 1.0f - s_mix;
   thr_m_mix = 1.0f - thr_l_mix;
-  hebb_mix_c = 1.0f - hebb_mix;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
-  sm_mix = 1.0f - ml_mix;
 }
 
 void XCalLearnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   m_mix = 1.0f - s_mix;
   thr_m_mix = 1.0f - thr_l_mix;
-  hebb_mix_c = 1.0f - hebb_mix;
-  sm_mix = 1.0f - ml_mix;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
   if(d_rev > 0.0f)
     d_rev_ratio = (1.0f - d_rev) / d_rev;
@@ -114,10 +107,25 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
     d_rev_ratio = 1.0f;
 }
 
+void XCalMiscSpec::Initialize() {
+  hebb_mix = 0.0f;
+  su_act_min = 0.0f;
+  ml_mix = 0.0f;
+
+  hebb_mix_c = 1.0f - hebb_mix;
+  sm_mix = 1.0f - ml_mix;
+}
+
+void XCalMiscSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  hebb_mix_c = 1.0f - hebb_mix;
+  sm_mix = 1.0f - ml_mix;
+}
+
 void SAvgCorSpec::Initialize() {
   cor = .4f;
   thresh = .001f;
-  norm_con_n = false;
+  norm_con_n = true;
 }
 
 void AdaptRelNetinSpec::Initialize() {
@@ -189,6 +197,7 @@ void LeabraConSpec::InitLinks() {
   taBase::Own(lrate_sched, this);
   taBase::Own(lmix, this);
   taBase::Own(xcal, this);
+  taBase::Own(xcal_m, this);
   taBase::Own(savg_cor, this);
   taBase::Own(rel_net_adapt, this);
   taBase::Own(wt_sig_fun, this);
@@ -208,6 +217,7 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   CreateWtSigFun();
   lmix.UpdateAfterEdit();
   xcal.UpdateAfterEdit();
+  xcal_m.UpdateAfterEdit();
 }
 
 void LeabraConSpec::Defaults() {
@@ -215,6 +225,8 @@ void LeabraConSpec::Defaults() {
   wt_scale_init.Defaults();
   wt_sig.Defaults();
   lmix.Defaults();
+  xcal.Defaults();
+  xcal_m.Defaults();
   savg_cor.Defaults();
   Initialize();
 }

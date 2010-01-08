@@ -178,6 +178,8 @@ int taiChoiceDialog::ChoiceDialog(QWidget* parent_, const String& msg,
     msg.toQString(), but_list,  parent_, false);
   // show the dialog
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
+  dlg->setIcon(QMessageBox::Question);
+  dlg->setWindowModality(Qt::ApplicationModal);
   int rval = dlg->exec();
   QApplication::restoreOverrideCursor();
   delete dlg;
@@ -194,6 +196,8 @@ bool taiChoiceDialog::ErrorDialog(QWidget* parent_, const char* msg,
     buts = "Cancel Remaining Error Dialogs" + delimiter + "OK";
   taiChoiceDialog* dlg = new taiChoiceDialog(Warning, QString(title), 
     QString(msg), buts, parent_, copy_but_);
+  dlg->setIcon(QMessageBox::Critical);
+  dlg->setWindowModality(Qt::ApplicationModal);
   int chs = dlg->exec();
   QApplication::restoreOverrideCursor();
   delete dlg;
@@ -206,6 +210,8 @@ void taiChoiceDialog::ConfirmDialog(QWidget* parent_, const char* msg,
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
   taiChoiceDialog* dlg = new taiChoiceDialog(Information, QString(title), 
     QString(msg), "", parent_, copy_but_);
+  dlg->setIcon(QMessageBox::Question);
+  dlg->setWindowModality(Qt::ApplicationModal);
   dlg->exec();
   QApplication::restoreOverrideCursor();
   delete dlg;

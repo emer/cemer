@@ -162,7 +162,7 @@ class LEABRA_API WtSigSpec : public taOBase {
 INHERITED(taOBase)
 public:
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
-  float		off;		// #DEF_1;1.25 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower)
+  float		off;		// #DEF_1:1.25 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1.25 is standard for Leabra CHL, 1.2 for XCAL
 
   static inline float	SigFun(float w, float gn, float of) {
     if(w <= 0.0f) return 0.0f;
@@ -222,15 +222,9 @@ public:
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
   float		thr_l_mix;	// #DEF_0.001:1.0 [0.01 or 0.005 std] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
   float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
-  float		hebb_mix;	// #DEF_0 #MIN_0 #MAX_1 amount of "pure" hebbian learning operating within the thr_l_mix BCM-like component -- actually the amount of fixed sending layer expected activity level to mulitply the recv long-term average activation by (remainder is multiplied by the current sending medium time scale activation, as is done in BCM)
-  float		hebb_mix_c;	// #READ_ONLY 1 - hebb_mix -- amount of sending medium time scale activation to mulitply ru avg_l by
-  float		su_act_min;	// #DEF_0.05 #MIN_0 #MAX_1 minimum effective activation for sending units as entering into learning rule -- because the xcal curve returns to 0 when the S*R coproduct is 0, an inactive sending unit will never experience any weight change -- this is counter to the hebbian form of learning, where an active recv unit will decrease weights from inactive senders -- ensuring a minimal amount of activation avoids this issue, and reflects the low background rate of neural and synaptic activity that actually exists in the brain
   float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.15 is a compromise
   float		d_gain;		// #DEF_1 #MIN_0 multiplier on LTD values relative to LTP values -- generally do not change from 1
   float		d_thr;		// #DEF_0.0001 #MIN_0 minimum LTD threshold value below which no weight change occurs -- small default value is mainly to optimize computation for the many values close to zero associated with inactive synapses
-  float		ml_mix;		// #DEF_0 #MIN_0 how much the medium-to-long time scale average activations contribute to synaptic activation -- useful for capturing sequential dependencies between events, when these are present in the simulation, but not appropriate for random event sequences
-  float		sm_mix;		// #READ_ONLY #DEF_1 #MIN_0 complement of ml_mix = 1-ml_mix -- how much the short & medium time scale average activations contribute to synaptic activation
-
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- multiplication factor in learning rule
 
   inline float  dWtFun(float srval, float thr_p) {
@@ -251,8 +245,29 @@ public:
   }
   // symmetric soft bounding function -- factor of 2 to equate with asymmetric sb for overall lrate at a weight value of .5 (= .5)
 
+  void 	Defaults()	{ Initialize(); }
   SIMPLE_COPY(XCalLearnSpec);
   TA_BASEFUNS(XCalLearnSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API XCalMiscSpec : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning (XCAL) misc lower-usage specs
+INHERITED(taOBase)
+public:
+  float		hebb_mix;	// #DEF_0 #MIN_0 #MAX_1 amount of "pure" hebbian learning operating within the thr_l_mix BCM-like component -- actually the amount of fixed sending layer expected activity level to mulitply the recv long-term average activation by (remainder is multiplied by the current sending medium time scale activation, as is done in BCM) -- this is not useful for most cases, but is included for generality
+  float		hebb_mix_c;	// #READ_ONLY 1 - hebb_mix -- amount of sending medium time scale activation to mulitply ru avg_l by
+  float		su_act_min;	// #DEF_0 #MIN_0 #MAX_1 NOTE: this is only useful for hebb_mixminimum effective activation for sending units as entering into learning rule -- because the xcal curve returns to 0 when the S*R coproduct is 0, an inactive sending unit will never experience any weight change -- this is counter to the hebbian form of learning, where an active recv unit will decrease weights from inactive senders -- ensuring a minimal amount of activation avoids this issue, and reflects the low background rate of neural and synaptic activity that actually exists in the brain
+  float		ml_mix;		// #DEF_0 #MIN_0 how much the medium-to-long time scale average activations contribute to synaptic activation -- useful for capturing sequential dependencies between events, when these are present in the simulation, but not appropriate for random event sequences
+  float		sm_mix;		// #READ_ONLY #DEF_1 #MIN_0 complement of ml_mix = 1-ml_mix -- how much the short & medium time scale average activations contribute to synaptic activation
+
+  void 	Defaults()	{ Initialize(); }
+  SIMPLE_COPY(XCalMiscSpec);
+  TA_BASEFUNS(XCalMiscSpec);
 protected:
   void	UpdateAfterEdit_impl();
 private:
@@ -266,7 +281,7 @@ INHERITED(taBase)
 public:
   float		cor;		// #DEF_0.4:0.8 #MIN_0 #MAX_1 proportion of correction to apply (0=none, 1=all, .5=half, etc)
   float		thresh;		// #DEF_0.001 #MIN_0 threshold of sending average activation below which learning does not occur (prevents learning when there is no input)
-  bool		norm_con_n;	// #DEF_false #AKA_div_gp_n in normalizing netinput, divide by the actual number of connections (recv group n), not the overall number of units in the sending layer; this is good when units only receive from a small fraction of sending layer units
+  bool		norm_con_n;	// #DEF_true #AKA_div_gp_n in normalizing netinput, divide by the actual number of connections (recv group n), not the overall number of units in the sending layer -- THIS SHOULD ALWAYS BE ON AND IS THE NEW DEFAULT
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(SAvgCorSpec);
@@ -332,6 +347,7 @@ public:
   WtSigSpec	wt_sig;		// #CAT_Learning sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
   LearnMixSpec	lmix;		// #CAT_Learning #CONDSHOW_ON_learn_rule:LEABRA_CHL mixture of hebbian & err-driven learning (note: no hebbian for CTLEABRA_XCAL)
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL,CTLEABRA_XCAL_C XCAL (eXtended Contrastive Attractor Learning) learning parameters
+  XCalMiscSpec	xcal_m;		// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL,CTLEABRA_XCAL_C XCAL (eXtended Contrastive Attractor Learning) misc lower-usage learning parameters
   SAvgCorSpec	savg_cor;	// #CAT_Learning for Hebbian and netinput computation: correction for sending average act levels (i.e., renormalization); also norm_con_n for normalizing netinput computation
 
   AdaptRelNetinSpec rel_net_adapt; // #CAT_Learning adapt relative netinput values based on targets for fm_input, fm_output, and lateral projections -- not used by default (call Compute_RelNetinAdapt to activate; requires Compute_RelNetin and Compute_AvgRelNetin for underlying data)
@@ -3075,7 +3091,7 @@ C_Compute_dWt_CtLeabraXCAL_trial_ml(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* s
 				 float su_avg_s, float su_avg_m, float su_act_mult) {
   float srs = ru->avg_s * su_avg_s;
   float srm = ru->avg_m * su_avg_m;
-  float srml = xcal.sm_mix * srm + xcal.ml_mix * (ru->avg_ml * su->avg_ml);
+  float srml = xcal_m.sm_mix * srm + xcal_m.ml_mix * (ru->avg_ml * su->avg_ml);
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srml;
   float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->l_thr;
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
@@ -3083,11 +3099,11 @@ C_Compute_dWt_CtLeabraXCAL_trial_ml(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* s
 
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
   LeabraLayer* slay = (LeabraLayer*)cg->prjn->from.ptr();
-  float su_avg_s = MAX(su->avg_s, xcal.su_act_min);
-  float su_avg_m = MAX(su->avg_m, xcal.su_act_min);
-  float su_act_mult = xcal.thr_l_mix * (xcal.hebb_mix * slay->kwta.pct + xcal.hebb_mix_c * su_avg_m);
+  float su_avg_s = MAX(su->avg_s, xcal_m.su_act_min);
+  float su_avg_m = MAX(su->avg_m, xcal_m.su_act_min);
+  float su_act_mult = xcal.thr_l_mix * (xcal_m.hebb_mix * slay->kwta.pct + xcal_m.hebb_mix_c * su_avg_m);
 
-  if(xcal.ml_mix > 0.0f) {
+  if(xcal_m.ml_mix > 0.0f) {
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       C_Compute_dWt_CtLeabraXCAL_trial_ml((LeabraCon*)cg->OwnCn(i), ru, su, su_avg_s, su_avg_m,
