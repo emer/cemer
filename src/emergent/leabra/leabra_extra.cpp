@@ -385,8 +385,6 @@ void XCALSpikeSpec::Initialize() {
   ca_off = 0.1f;
   nmda_dt = 40.0f;
   nmda_rate = 1.0f / nmda_dt;
-  ss_dt = 0.2f;
-  ss_time = 1.0f / ss_dt;
 }
 
 void XCALSpikeSpec::UpdateAfterEdit_impl() {
@@ -397,7 +395,6 @@ void XCALSpikeSpec::UpdateAfterEdit_impl() {
   ca_nmda = 0.5 / ca_norm;
   ca_rate = 1.0f / ca_dt;
   nmda_rate = 1.0f / nmda_dt;
-  ss_time = 1.0f / ss_dt;
 }
 
 void LeabraXCALSpikeConSpec::Initialize() {
@@ -487,7 +484,7 @@ void LeabraXCALSpikeConSpec::GraphXCALSpikeSim(DataTable* graph_data,
 	  ca_sum += ca;
 
 	  float sr = (ca - xcal_spike.ca_off); if(sr < 0.0f) sr = 0.0f;
-	  sravg_ss += xcal_spike.ss_dt * (sr - sravg_ss);
+	  sravg_ss += unit_spec->act_avg.ss_dt * (sr - sravg_ss);
 	  sravg_s += unit_spec->act_avg.s_dt * (sravg_ss - sravg_s);
 	  sravg_m += unit_spec->act_avg.m_dt * (sravg_s - sravg_m);
 

@@ -154,6 +154,8 @@ public:
   // #CAT_Access true if data is a matrix
   virtual bool		isNumeric() const {return false;}
   // #CAT_Access true if data is float, int, or byte
+  virtual bool		isFloat() const {return false;}
+  // #CAT_Access true if data is float, double
   virtual bool		isString() const {return false;}
   // #CAT_Access true if data is string
   virtual bool		isImage() const;
@@ -890,7 +892,7 @@ public:
   // #MENU_1N #CAT_Columns find existing or create new matrix column of data based on name/type in the data item
     {if (cs) return GetColForChannelSpec_impl(cs); else return NULL;}
     
-  virtual void		RemoveCol(int col);
+  virtual void		RemoveCol(Variant col);
   // #CAT_Columns removes indicated column; 'true' if removed
   void			RemoveAllCols()	{ Reset(); }
   // #CAT_Columns #MENU #MENU_ON_Columns #CONFIRM remove all columns (and data)
@@ -942,10 +944,10 @@ public:
   // #MENU #CAT_Rows duplicate given row number, making given number of copies of it (adds new rows at the end)
   bool			DuplicateRows(int st_row, int n_rows=1);
   // #CAT_Rows copy the n_rows starting from st_row and insert them immediately after selected rows
-  const Variant		GetColUserData(const String& name, int col) const;
-  // #CAT_Config gets user data from the col
-  void			SetColUserData(const String& name, const Variant& value, int col);
-  // #CAT_Config sets user data into the col
+  const Variant		GetColUserData(const String& name, Variant col) const;
+  // #CAT_Config gets user data from the column (col can be an index or a name)
+  void			SetColUserData(const String& name, const Variant& value, Variant col);
+  // #CAT_Config sets user data into the column  (col can be an index or a name) -- use this e.g., to configure various parameters that are used by the grid and graph views, such as IMAGE, MIN, MAX, TOP_ZERO
 
   /////////////////////////////////////////////////////////
   // Main data value access/modify (Get/Set) routines: for Programs and very general use
@@ -1535,6 +1537,7 @@ INHERITED(DataColTp<double_Matrix>)
 friend class DataTable;
 public:
   override bool		isNumeric() const {return true;} 
+  override bool		isFloat() const {return true;} 
   override int		maxColWidth() const {return 15;} // assumes sign, int: 15 dig's; double: 14 dig's, decimal point
   override ValType 	valType() const {return VT_DOUBLE;}
 
@@ -1567,6 +1570,7 @@ INHERITED(DataColTp<float_Matrix>)
 friend class DataTable;
 public:
   override bool		isNumeric() const {return true;} 
+  override bool		isFloat() const {return true;} 
   override int		maxColWidth() const {return 7;} // assumes sign, int: 6 dig's; float: 5 dig's, decimal point
   override ValType 	valType() const {return VT_FLOAT;}
 

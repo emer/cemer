@@ -1060,17 +1060,13 @@ DataCol* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {
   return rval;
 }
 
-const Variant DataTable::GetColUserData(const String& name,
-  int col) const 
-{
+const Variant DataTable::GetColUserData(const String& name, Variant col) const {
   DataCol* da = GetColData(col);
   if (da) return da->GetUserData(name);
   else return _nilVariant;
 }
 
-void DataTable::SetColUserData(const String& name,
-  const Variant& value, int col)
-{
+void DataTable::SetColUserData(const String& name, const Variant& value, Variant col) {
   DataCol* da = GetColData(col);
   if (da) da->SetUserData(name, value);
 }
@@ -2371,9 +2367,9 @@ String DataTable::RangeToTSV(const CellRange& cr) {
   return rval;
 }
 
-void DataTable::RemoveCol(int col) {
-  DataCol* da = data.SafeEl(col);
-  if(TestError(!da, "RemoveCol", "column number not found")) return;
+void DataTable::RemoveCol(Variant col) {
+  DataCol* da = GetColData(col);
+  if(!da) return;
   StructUpdate(true);
   da->Close();
   StructUpdate(false);

@@ -99,7 +99,7 @@ bool taImage::GetPixelRGB_float(int x, int y, float& r, float& g, float& b) {
   return true;
 }
 
-bool taImage::ImageToGrey_float(float_Matrix& img_data) {
+bool taImage::ImageToMatrix_grey(float_Matrix& img_data) {
   if(q_img.isNull()) {
     return false;
   }
@@ -118,7 +118,7 @@ bool taImage::ImageToGrey_float(float_Matrix& img_data) {
   return true;
 }
 
-bool taImage::ImageToRGB_float(float_Matrix& rgb_data) {
+bool taImage::ImageToMatrix_rgb(float_Matrix& rgb_data) {
   if(q_img.isNull()) {
     return false;
   }
@@ -141,14 +141,61 @@ bool taImage::ImageToRGB_float(float_Matrix& rgb_data) {
   return true;
 }
 
-bool taImage::ImageToDataCell(DataTable* dt, int col, int row) {
-  if(q_img.isNull() || !dt) {
+bool taImage::ImageFromMatrix_grey(const float_Matrix& img_data) {
+  if(TestError((img_data.dims() < 2), "IMageFromMatrix_grey", "img data does not have at least 2 dimensions"))
     return false;
+  int wd = img_data.dim(0);
+  int ht = img_data.dim(1);
+
+  q_img = QImage(wd, ht, QImage::Format_RGB32);
+  
+  for(int y=0; y<ht; y++) {
+    for(int x=0; x< wd; x++) {
+      float gval = img_data.FastEl(x, y) * 255.0f;
+      QRgb pix = qRgb(gval, gval, gval);
+      q_img.setPixel(x, ht-1-y, pix);
+    }
   }
+  return true;
+}
+
+bool taImage::ImageFromMatrix_rgb(const float_Matrix& rgb_data) {
+  if(TestError((rgb_data.dims() < 3), "IMageFromMatrix_rgb", "img data does not have at least 3 dimensions"))
+    return false;
+  int wd = rgb_data.dim(0);
+  int ht = rgb_data.dim(1);
+
+  q_img = QImage(wd, ht, QImage::Format_RGB32);
+
+  for(int y=0; y<ht; y++) {
+    for(int x=0; x< wd; x++) {
+      float rval = rgb_data.FastEl(x, y, 0) * 255.0f;
+      float gval = rgb_data.FastEl(x, y, 1) * 255.0f;
+      float bval = rgb_data.FastEl(x, y, 2) * 255.0f;
+      QRgb pix = qRgb(rval, gval, bval);
+      q_img.setPixel(x, ht-1-y, pix);
+    }
+  }
+  return true;
+}
+
+bool taImage::ImageToDataCell(DataTable* dt, Variant col, int row) {
+  if(TestError(q_img.isNull(), "ImageToDataCell", "Null image")) return false;
+  if(TestError(!dt, "ImageToDataCell", "Null data table")) return false;
+
   int ht = q_img.height();
   int wd = q_img.width();
 
-  taMatrixPtr mat; mat = dt->GetValAsMatrix(col, row);
+  DataCol* da = dt->GetColData(col);
+  if(!da) return false;
+  bool isfloat = da->isFloat();
+
+  if(TestError(da->cell_dims() < 2, "ImageToDataCell", "cell dimensions less than 2 -- must have at least 2 dimensions for greyscale, 3 for color")) return false;
+
+  wd = MIN(wd, da->GetCellGeom(0));
+  ht = MIN(ht, da->GetCellGeom(1));
+
+  taMatrixPtr mat; mat = da->GetValAsMatrix(row);
   if(!mat) return false;
 
   bool rval = true;
@@ -158,27 +205,102 @@ bool taImage::ImageToDataCell(DataTable* dt, int col, int row) {
     for(int y=0; y<ht; y++) {
       for(int x=0; x< wd; x++) {
 	QRgb pix = q_img.pixel(x, y);
-	float gval = qGray(pix) / 255.0f;
-	mat->SetFmVar(gval, x, ht-1 - y);
+	if(isfloat) {
+	  float gval = qGray(pix) / 255.0f;
+	  mat->SetFmVar(gval, x, ht-1 - y);
+	}
+	else {
+	  mat->SetFmVar(qGray(pix), x, ht-1 - y);
+	}
       }
     }
   }
-  else if(mat->dims() == 3) {
+  else {			// must be > 2
     for(int y=0; y<ht; y++) {
       for(int x=0; x< wd; x++) {
 	QRgb pix = q_img.pixel(x, y);
-	float rval = qRed(pix) / 255.0f;
-	float gval = qGreen(pix) / 255.0f;
-	float bval = qBlue(pix) / 255.0f;
-	mat->SetFmVar(rval, x, ht-1 - y, 0);
-	mat->SetFmVar(gval, x, ht-1 - y, 1);
-	mat->SetFmVar(bval, x, ht-1 - y, 2);
+	if(isfloat) {
+	  float rval = qRed(pix) / 255.0f;
+	  float gval = qGreen(pix) / 255.0f;
+	  float bval = qBlue(pix) / 255.0f;
+	  mat->SetFmVar(rval, x, ht-1 - y, 0);
+	  mat->SetFmVar(gval, x, ht-1 - y, 1);
+	  mat->SetFmVar(bval, x, ht-1 - y, 2);
+	}
+	else {
+	  mat->SetFmVar(qRed(pix), x, ht-1 - y, 0);
+	  mat->SetFmVar(qGreen(pix), x, ht-1 - y, 1);
+	  mat->SetFmVar(qBlue(pix), x, ht-1 - y, 2);
+	}
       }
     }
   }
-  else {
-    TestError(true, "ImageToDataCell", "cell matrix is not either 2 or 3 dimensional");
-    rval = false;
+
+  DataUpdate(false); 
+
+  return rval;
+}
+
+bool taImage::ImageFromDataCell(DataTable* dt, Variant col, int row) {
+  if(TestError(q_img.isNull(), "ImageToDataCell", "Null image")) return false;
+  if(TestError(!dt, "ImageToDataCell", "Null data table")) return false;
+
+  int ht = q_img.height();
+  int wd = q_img.width();
+
+  DataCol* da = dt->GetColData(col);
+  if(!da) return false;
+  bool isfloat = da->isFloat();
+
+  if(TestError(da->cell_dims() < 2, "ImageFromDataCell", "cell dimensions less than 2 -- must have at least 2 dimensions for greyscale, 3 for color")) return false;
+
+  wd = da->GetCellGeom(0);
+  ht = da->GetCellGeom(1);
+
+  q_img = QImage(wd, ht, QImage::Format_RGB32);
+ 
+  taMatrixPtr mat; mat = da->GetValAsMatrix(row);
+  if(!mat) return false;
+
+  bool rval = true;
+
+  DataUpdate(true);
+  if(mat->dims() == 2) {
+    for(int y=0; y<ht; y++) {
+      for(int x=0; x< wd; x++) {
+	if(isfloat) {
+	  float gval = mat->FastElAsFloat(x, y) * 255.0f;
+	  QRgb pix = qRgb(gval, gval, gval);
+	  q_img.setPixel(x, ht-1-y, pix);
+	}
+	else {
+	  float gval = mat->FastElAsFloat(x, y);
+	  QRgb pix = qRgb(gval, gval, gval);
+	  q_img.setPixel(x, ht-1-y, pix);
+	}
+      }
+    }
+  }
+  else {			// must be > 2
+    for(int y=0; y<ht; y++) {
+      for(int x=0; x< wd; x++) {
+	QRgb pix = q_img.pixel(x, y);
+	if(isfloat) {
+	  float rval = mat->FastElAsFloat(x, y, 0) * 255.0f;
+	  float gval = mat->FastElAsFloat(x, y, 1) * 255.0f;
+	  float bval = mat->FastElAsFloat(x, y, 2) * 255.0f;
+	  QRgb pix = qRgb(rval, gval, bval);
+	  q_img.setPixel(x, ht-1-y, pix);
+	}
+	else {			// assume int
+	  float rval = mat->FastElAsFloat(x, y, 0);
+	  float gval = mat->FastElAsFloat(x, y, 1);
+	  float bval = mat->FastElAsFloat(x, y, 2);
+	  QRgb pix = qRgb(rval, gval, bval);
+	  q_img.setPixel(x, ht-1-y, pix);
+	}
+      }
+    }
   }
 
   DataUpdate(false); 
@@ -187,13 +309,7 @@ bool taImage::ImageToDataCell(DataTable* dt, int col, int row) {
 }
 
 bool taImage::ImageToDataCellName(DataTable* dt, const String& col_nm, int row) {
-  if(q_img.isNull() || !dt) {
-    return false;
-  }
-  int col= dt->FindColNameIdx(col_nm, true);
-  if(col < 0) return false;
-//  DataCol* da = dt->data.FastEl(col);
-  return ImageToDataCell(dt, col, row);
+  return ImageToDataCell(dt, col_nm, row);
 }
 
 bool taImage::ConfigDataColName(DataTable* dt, const String& col_nm, ValType val_type,
@@ -208,6 +324,9 @@ bool taImage::ConfigDataColName(DataTable* dt, const String& col_nm, ValType val
     dt->FindMakeColMatrix(col_nm, val_type, 3, wd, ht, 3);
   else
     dt->FindMakeColMatrix(col_nm, val_type, 2, wd, ht);
+
+  dt->SetColUserData("IMAGE", true, col_nm);
+
   return true;
 }
 
@@ -3819,10 +3938,10 @@ void RetinaSpec::Filter_Thread(int cmp_idx, int thread_no) {
 
 bool RetinaSpec::ConvertImageToMatrix(taImage& img, float_Matrix& img_data) {
   if(color_type == COLOR) {
-    img.ImageToRGB_float(img_data);
+    img.ImageToMatrix_rgb(img_data);
   }
   else {
-    img.ImageToGrey_float(img_data);
+    img.ImageToMatrix_grey(img_data);
   }
   return true;
 }

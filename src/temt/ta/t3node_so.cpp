@@ -963,20 +963,20 @@ void ARGB_to_Texture(const QImage& img, SoTexture2* sotx) {
   free(buf);
 }
 
-bool SoImageEx::SetTextureImage(SoTexture2* sotx, const QImage& img) {
+bool SoImageEx::SetTextureImage(SoTexture2* sotx, const QImage& qimg) {
   // TODO: would be *great* to search paths for fname
   // assume it is a RGB or ARGB -- if latter, we'll need to rotate to Coin's RGBA
-  QImage::Format format = img.format();
+  QImage::Format format = qimg.format();
   // note: loading should never return the normalized alpha format...
   if (format == QImage::Format_ARGB32) {
-    ARGB_to_Texture(img, sotx);
+    ARGB_to_Texture(qimg, sotx);
     return true; 
   } 
-  QImage img2(img); // may not need to be changed
+  QImage qimg2(qimg); // may not need to be changed
   if (format != QImage::Format_RGB32) {
-    img2 = img.convertToFormat(QImage::Format_RGB32);
+    qimg2 = qimg.convertToFormat(QImage::Format_RGB32);
   }
-  xRGB_to_Texture(img2, sotx);
+  xRGB_to_Texture(qimg2, sotx);
   return true;
 }
 
@@ -997,9 +997,9 @@ bool SoImageEx::SetTextureFile_impl(SoTexture2* sotx, const String& fname,
     return (nc != 0); // would be zero on failure
   } 
   // else Qt 
-  QImage img;
-  if (!img.load(fname)) return false;
-  return SetTextureImage(sotx, img);
+  QImage qqimg;
+  if (!qqimg.load(fname)) return false;
+  return SetTextureImage(sotx, qqimg);
 }
 
 void SoImageEx::initClass()
@@ -1025,21 +1025,9 @@ SoImageEx::~SoImageEx() {
 }
 
 void SoImageEx::adjustScale() {
-  float ht;
-  if ((d.x == d.y) || (d.x == 0) || (d.y == 0)) {
-    ht = 1.0f;
-    shape->setDimensions(shape->width, ht);
-  }
-  else {
-    if(img.dims() == 2) {
-      ht = ((float)d.x) / ((float)d.y); // 2d is y,x
-      shape->setDimensions(ht, shape->width);
-    }
-    else {
-      ht = ((float)d.y) / ((float)d.x);
-      shape->setDimensions(shape->width, ht);
-    }
-  }
+  // just always keep it a square with the x a tiny bit larger than the y -- this seems to
+  // prevent spurious rotations and keeps it displayed the same way every time.  geez.
+  shape->setDimensions(1.0f, 0.9999f);
   // set proper type
   if (img.dims() == 2) {
     texture->model = SoTexture2::REPLACE;
@@ -1059,14 +1047,15 @@ void SoImageEx::setImage(const QImage& src) {
 void SoImageEx::setImage2(const QImage& src) {
   d.x = src.width();
   d.y = src.height();
-  img.SetGeom(2, d.y, d.x); 	// seems greyscale is backwards!
+  img.SetGeom(2, d.x, d.y);
   //NOTE: we have to invert the data for Coin's bottom=0 addressing
   for (int y = d.y - 1; y >= 0; --y) {
     for (int x = 0; x < d.x; ++x) {
-      img.FastEl(y,x) = (byte)(qGray(src.pixel(x, y)));
+      img.FastEl(x,y) = (byte)(qGray(src.pixel(x, y)));
     }
   }
-  texture->image.setValue(SbVec2s(d.y, d.x), 1, (const unsigned char*)img.data());
+  texture->image.setValue(SbVec2s(d.y, d.x), 1, (const unsigned char*)img.data(),
+			  SoSFImage::NO_COPY);
 }
 
 void SoImageEx::setImage3(const QImage& src) {
@@ -1085,7 +1074,8 @@ void SoImageEx::setImage3(const QImage& src) {
       img.FastEl_Flat(idx++) = (byte)(qBlue(rgb));
     }
   }
-  texture->image.setValue(SbVec2s(d.x, d.y), 3, (const unsigned char*)img.data());
+  texture->image.setValue(SbVec2s(d.x, d.y), 3, (const unsigned char*)img.data(),
+			  SoSFImage::NO_COPY);
 }
 
 void SoImageEx::setImage(const taMatrix& src, bool top_zero) {
@@ -1104,46 +1094,94 @@ void SoImageEx::setImage(const taMatrix& src, bool top_zero) {
 void SoImageEx::setImage2(const taMatrix& src, bool top_zero) {
   d.x = src.dim(0);
   d.y = src.dim(1);
-  img.SetGeom(2, d.y, d.x);
-  if (top_zero) {
-    for (int y = d.y - 1; y >= 0; --y) {
-      for (int x = 0; x < d.x; ++x) {
-        img.FastEl(y,x) = (byte)(src.FastElAsFloat(x, y) * 255);
+//   if(src.GetDataValType() == taBase::VT_BYTE) {
+//     texture->image.setValue(SbVec2s(d.x, d.y), 1, (const unsigned char*)src.data());
+//   }
+  if((src.GetDataValType() == taBase::VT_FLOAT) ||
+	  (src.GetDataValType() == taBase::VT_DOUBLE)) {
+    img.SetGeom(2, d.x, d.y);
+    if (top_zero) {
+      for (int y = 0; y < d.y; ++y) {
+	for (int x = 0; x < d.x; ++x) {
+	  img.FastEl(x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y) * 255.0f);
+	}
+      }
+    } else {
+      for (int y = 0; y < d.y; ++y) {
+	for (int x = 0; x < d.x; ++x) {
+	  img.FastEl(x,y) = (byte)(src.FastElAsFloat(x, y) * 255.0f);
+	}
       }
     }
-  } else {
-    for (int y = 0; y < d.y; ++y) {
-      for (int x = 0; x < d.x; ++x) {
-        img.FastEl(y,x) = (byte)(src.FastElAsFloat(x, y) * 255);
-      }
-    }
+    texture->image.setValue(SbVec2s(d.x, d.y), 1, (const unsigned char*)img.data(),
+			    SoSFImage::NO_COPY);
   }
-  texture->image.setValue(SbVec2s(d.y, d.x), 1, (const unsigned char*)img.data());
+  else {			// int type -- assume raw value
+    img.SetGeom(2, d.x, d.y);
+    if (top_zero) {
+      for (int y = 0; y < d.y; ++y) {
+	for (int x = 0; x < d.x; ++x) {
+	  img.FastEl(x, d.y - 1 - y) = (byte)src.FastElAsFloat(x, y);
+	}
+      }
+    } else {
+      for (int y = 0; y < d.y; ++y) {
+	for (int x = 0; x < d.x; ++x) {
+	  img.FastEl(x,y) = (byte)src.FastElAsFloat(x, y);
+	}
+      }
+    }
+    texture->image.setValue(SbVec2s(d.x, d.y), 1, (const unsigned char*)img.data(),
+			    SoSFImage::NO_COPY);
+  }
 }
 
 void SoImageEx::setImage3(const taMatrix& src, bool top_zero) {
   d.x = src.dim(0);
   d.y = src.dim(1);
   //NOTE: img geom is not same as input: rgb is in innermost for us
-  img.SetGeom(3, 3, d.y, d.x);
-  if (top_zero) {
-    for (int y = d.y - 1; y >= 0; --y) {
-      for (int x = 0; x < d.x; ++x) {
-        img.FastEl(0,y,x) = (byte)(src.FastElAsFloat(x, y, 0) * 255);
-        img.FastEl(1,y,x) = (byte)(src.FastElAsFloat(x, y, 1) * 255);
-        img.FastEl(2,y,x) = (byte)(src.FastElAsFloat(x, y, 2) * 255);
+  img.SetGeom(3, 3, d.x, d.y);
+  if((src.GetDataValType() == taBase::VT_FLOAT) ||
+     (src.GetDataValType() == taBase::VT_DOUBLE)) {
+    if (top_zero) {
+      for (int y = 0; y < d.y; ++y) {
+	for (int x = 0; x < d.x; ++x) {
+	  img.FastEl(0,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 0) * 255.0f);
+	  img.FastEl(1,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 1) * 255.0f);
+	  img.FastEl(2,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 2) * 255.0f);
+	}
       }
-    }
-  } else {
-    for (int y = 0; y < d.y; ++y) {
-      for (int x = 0; x < d.x; ++x) {
-        img.FastEl(0,y,x) = (byte)(src.FastElAsFloat(x, y, 0) * 255);
-        img.FastEl(1,y,x) = (byte)(src.FastElAsFloat(x, y, 1) * 255);
-        img.FastEl(2,y,x) = (byte)(src.FastElAsFloat(x, y, 2) * 255);
+    } else {
+      for (int y = 0; y < d.y; ++y) {
+	for (int x = 0; x < d.x; ++x) {
+	  img.FastEl(0,x,y) = (byte)(src.FastElAsFloat(x, y, 0) * 255.0f);
+	  img.FastEl(1,x,y) = (byte)(src.FastElAsFloat(x, y, 1) * 255.0f);
+	  img.FastEl(2,x,y) = (byte)(src.FastElAsFloat(x, y, 2) * 255.0f);
+	}
       }
     }
   }
-  texture->image.setValue(SbVec2s(d.y, d.x), 3, (const unsigned char*)img.data());
+  else {			// int type -- assume raw value
+    if (top_zero) {
+      for (int y = 0; y < d.y; ++y) {
+	for (int x = 0; x < d.x; ++x) {
+	  img.FastEl(0,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 0));
+	  img.FastEl(1,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 1));
+	  img.FastEl(2,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 2));
+	}
+      }
+    } else {
+      for (int y = 0; y < d.y; ++y) {
+	for (int x = 0; x < d.x; ++x) {
+	  img.FastEl(0,x,y) = (byte)(src.FastElAsFloat(x, y, 0));
+	  img.FastEl(1,x,y) = (byte)(src.FastElAsFloat(x, y, 1));
+	  img.FastEl(2,x,y) = (byte)(src.FastElAsFloat(x, y, 2));
+	}
+      }
+    }
+  }
+  texture->image.setValue(SbVec2s(d.x, d.y), 3, (const unsigned char*)img.data(),
+			  SoSFImage::NO_COPY);
 }
 
 //////////////////////////

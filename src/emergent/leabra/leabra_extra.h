@@ -1015,8 +1015,6 @@ public:
   float		ca_off;	   // #DEF_0.55 offset for ca -- subtract this amount from ca (clipped to zero) for learning computations
   float		nmda_dt;   // #DEF_40 time constant (in msec) for decay of NMDA receptor conductance
   float		nmda_rate; // #READ_ONLY #NO_SAVE rate constant (1/dt) for decay of NMDA receptor conductance
-  float		ss_dt;	   // #DEF_0.2 #MIN_0 time constant (rate) for continuously updating the super-short time-scale sravg_ss value -- smooths over very rapid transients
-  float		ss_time;   // #READ_ONLY #SHOW (only for XCAL_C) time constant (in cycles, 1/ss_dt) for continuously updating the super-short time-scale sravg_ss value -- smooths over very rapid transients
   
   TA_SIMPLE_BASEFUNS(XCALSpikeSpec);
 protected:
@@ -1053,7 +1051,7 @@ public:
     cn->ca += dca;
     float sr = (cn->ca - xcal_spike.ca_off);
     if(sr < 0.0f) sr = 0.0f;
-    cn->sravg_ss += xcal_spike.ss_dt * (sr - cn->sravg_ss);
+    cn->sravg_ss += us->act_avg.ss_dt * (sr - cn->sravg_ss);
     cn->sravg_s += us->act_avg.s_dt * (cn->sravg_ss - cn->sravg_s);
     cn->sravg_m += us->act_avg.m_dt * (cn->sravg_s - cn->sravg_m);
 
