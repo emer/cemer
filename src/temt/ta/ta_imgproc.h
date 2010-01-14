@@ -1042,7 +1042,7 @@ public:
 				bool superimpose = false);
   // #BUTTON #CAT_Filter #FILE_DIALOG_LOAD load image from file and transform into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params add to foveation scaling and offsets
 
-virtual bool	LookAtImageSeriesName(const String& img_fname, int eyes, int timesteps, DataTable* dt,
+virtual bool	LookAtImageSeriesName(const String& img_fname, int eyes, int timesteps, bool reverse_timstep_order, DataTable* dt,
 				RetinalSpacingSpec::Region region,
 				float box_ll_x, float box_ll_y,
 				float box_ur_x, float box_ur_y,

@@ -4041,7 +4041,7 @@ bool RetinaSpec::LookAtImageName(const String& img_fname, DataTable* dt,
 		     superimpose);
 }
 
-bool RetinaSpec::LookAtImageSeriesName(const String& img_fname, int eyes, int timesteps, DataTable* dt,
+bool RetinaSpec::LookAtImageSeriesName(const String& img_fname, int eyes, int timesteps, bool reverse_timstep_order, DataTable* dt,
 				 RetinalSpacingSpec::Region region,
 				 float box_ll_x, float box_ll_y,
 				 float box_ur_x, float box_ur_y,
@@ -4049,21 +4049,29 @@ bool RetinaSpec::LookAtImageSeriesName(const String& img_fname, int eyes, int ti
 				 float scale, float rotate, 
 				 bool superimpose) {
  
-  for(int eye = 0; eye < eyes || eye == 0; eye++) {
-    for(int t = 0; t < timesteps || t == 0; t++) {
-      taImage img;
-      String mod_name = GetModName(eyes, timesteps,eye,t);
-      String full_img_fname = img_fname + mod_name  + ".png";
-      if(!img.LoadImage(full_img_fname))
-	return false;
-      img.name = full_img_fname;		// explicitly name it
-      if(!LookAtImageSeries(img, mod_name, dt, region, box_ll_x, box_ll_y, box_ur_x, box_ur_y,
-	  	     move_x, move_y, scale, rotate,
-		     superimpose))
-        return false;
-    }
-  }
-  return true;
+	for(int eye = 0; eye < eyes || eye == 0; eye++) {
+		
+		for(int t = 0; t < timesteps || t == 0; t++) {
+			taImage img;
+			int timestep_filenumber = t;
+			if (reverse_timstep_order) {
+				timestep_filenumber = timesteps - 1 - t;
+			}
+			
+			String file_mod_name = GetModName(eyes, timesteps,eye,timestep_filenumber);
+			String full_img_fname = img_fname + file_mod_name  + ".png";
+			if(!img.LoadImage(full_img_fname))
+				return false;
+			img.name = full_img_fname;		// explicitly name it
+			
+			String mod_name = GetModName(eyes, timesteps,eye,t);
+			if(!LookAtImageSeries(img, mod_name, dt, region, box_ll_x, box_ll_y, box_ur_x, box_ur_y,
+								  move_x, move_y, scale, rotate,
+								  superimpose))
+				return false;
+		}
+	}
+	return true;
 }
 
 String RetinaSpec::GetModName(int eyes, int timesteps, int curr_eye, int curr_time) {
