@@ -248,71 +248,148 @@ const KeyString EditMbrItem_Group::GetListColKey(int col) const {
 // 	Parameter Searching Interface
 
 EditMbrItem* EditMbrItem_Group::FindMbrName(const String& mbr_nm, const String& label) {
+  taLeafItr itr;
+  EditMbrItem* sei;
+  FOR_ITR_EL(EditMbrItem, sei, this->, itr) {
+    if(!sei->mbr) continue;
+    if(sei->mbr->name == mbr_nm) {
+      if(label.nonempty()) {
+	if(sei->label.contains(label)) {
+	  return sei;
+	}
+      }
+    }
+  }
   return NULL;
 }
 
 EditMbrItem* EditMbrItem_Group::PSearchFind(const String& mbr_nm, const String& label) {
-  return NULL;
+  taLeafItr itr;
+  EditMbrItem* sei;
+  FOR_ITR_EL(EditMbrItem, sei, this->, itr) {
+    if(!sei->mbr || !sei->is_numeric) continue;
+    if(sei->mbr->name == mbr_nm) {
+      if(label.nonempty()) {
+	if(sei->label.contains(label)) {
+	  return sei;
+	}
+      }
+    }
+  }
+  TestError(true, "PSearchFind", "could not find member named:", mbr_nm, "label:", label);
+  return NULL; 
 }
 
 bool& EditMbrItem_Group::PSearchOn(const String& mbr_nm, const String& label) {
   static bool no_val = false;
-  return no_val;
+  EditMbrItem* sei = PSearchFind(mbr_nm, label);
+  if(!sei)
+    return no_val;
+  return sei->param_search;
 }
 
 bool EditMbrItem_Group::PSearchOn_Set(bool psearch, const String& mbr_nm, const String& label) {
-  return false;
+  EditMbrItem* sei = PSearchFind(mbr_nm, label);
+  if(!sei)
+    return false;
+  sei->param_search = psearch;
+  return true;
 }
 
 double& EditMbrItem_Group::PSearchMinVal(const String& mbr_nm, const String& label) {
   static double no_val = 0;
-  return no_val;
+  EditMbrItem* sei = PSearchFind(mbr_nm, label);
+  if(!sei)
+    return no_val;
+  return sei->min_val;
 }
 
 bool EditMbrItem_Group::PSearchMinVal_Set(double min_val, const String& mbr_nm, const String& label) {
-  return false;
+  EditMbrItem* sei = PSearchFind(mbr_nm, label);
+  if(!sei)
+    return false;
+  sei->min_val = min_val;
+  return true;
 }
 
 double& EditMbrItem_Group::PSearchMaxVal(const String& mbr_nm, const String& label) {
   static double no_val = 0;
-  return no_val;
+  EditMbrItem* sei = PSearchFind(mbr_nm, label);
+  if(!sei)
+    return no_val;
+  return sei->max_val;
 }
 
 bool EditMbrItem_Group::PSearchMaxVal_Set(double max_val, const String& mbr_nm, const String& label) {
-  return false;
+  EditMbrItem* sei = PSearchFind(mbr_nm, label);
+  if(!sei)
+    return false;
+  sei->max_val = max_val;
+  return true;
 }
 
 double& EditMbrItem_Group::PSearchNextVal(const String& mbr_nm, const String& label) {
   static double no_val = 0;
-  return no_val;
+  EditMbrItem* sei = PSearchFind(mbr_nm, label);
+  if(!sei)
+    return no_val;
+  return sei->next_val;
 }
 
 bool EditMbrItem_Group::PSearchNextVal_Set(double next_val, const String& mbr_nm, const String& label) {
-  return false;
+  EditMbrItem* sei = PSearchFind(mbr_nm, label);
+  if(!sei)
+    return false;
+  sei->next_val = next_val;
+  return true;
 }
 
 double& EditMbrItem_Group::PSearchIncrVal(const String& mbr_nm, const String& label) {
   static double no_val = 0;
-  return no_val;
+  EditMbrItem* sei = PSearchFind(mbr_nm, label);
+  if(!sei)
+    return no_val;
+  return sei->incr;
 }
 bool EditMbrItem_Group::PSearchIncrVal_Set(double incr_val, const String& mbr_nm, const String& label) {
-  return false;
+  EditMbrItem* sei = PSearchFind(mbr_nm, label);
+  if(!sei)
+    return false;
+  sei->incr = incr_val;
+  return true;
 }
 
-double EditMbrItem_Group::PSearchCurVal(const String& mbr_nm, const String& label) {
-  return 0;
+Variant EditMbrItem_Group::PSearchCurVal(const String& mbr_nm, const String& label) {
+  EditMbrItem* sei = PSearchFind(mbr_nm, label);
+  if(!sei)
+    return _nilVariant;
+  return sei->PSearchCurVal();
 }
 
-bool EditMbrItem_Group::PSearchCurVal_Set(double cur_val, const String& mbr_nm, const String& label) {
-  return false;
+bool EditMbrItem_Group::PSearchCurVal_Set(const Variant& cur_val, const String& mbr_nm, const String& label) {
+  EditMbrItem* sei = PSearchFind(mbr_nm, label);
+  if(!sei)
+    return false;
+  return sei->PSearchCurVal_Set(cur_val);
 }
 
 bool EditMbrItem_Group::PSearchNextToCur(const String& mbr_nm, const String& label) {
-  return false;
+  EditMbrItem* sei = PSearchFind(mbr_nm, label);
+  if(!sei)
+    return false;
+  return sei->PSearchNextToCur();
 }
 
 bool EditMbrItem_Group::PSearchNextToCur_All() {
-  return false;
+  bool rval = false;
+  taLeafItr itr;
+  EditMbrItem* sei;
+  FOR_ITR_EL(EditMbrItem, sei, this->, itr) {
+    if(!sei->mbr || !sei->is_numeric) continue;
+    sei->PSearchNextToCur();
+    rval = true;
+  }
+  return rval;
 }
 
 //////////////////////////////////

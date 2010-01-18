@@ -947,6 +947,7 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork*, float decay) {
   u->act -= decay * u->act;
   u->act_nd -= decay * u->act_nd;
   u->act_eq -= decay * u->act_eq;
+  // note: this is causing a problem in learning with xcal:
 //   u->avg_ss -= decay * (u->avg_ss - act.avg_init);
 //   u->avg_s -= decay * (u->avg_s - act.avg_init);
 //   u->avg_m -= decay * (u->avg_m - act.avg_init);

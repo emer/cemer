@@ -170,9 +170,9 @@ public:
   // #CAT_ParamSearch gets a reference to the param search incr_val for given member name and, optionally if non-empty, the associated label
   virtual bool		PSearchIncrVal_Set(double incr_val, const String& mbr_nm, const String& label = "");
   // #CAT_ParamSearch set param search incr_val for given member name and, optionally if non-empty, the associated label
-  virtual double	PSearchCurVal(const String& mbr_nm, const String& label = "");
+  virtual Variant	PSearchCurVal(const String& mbr_nm, const String& label = "");
   // #CAT_ParamSearch gets current value for given member name and, optionally if non-empty, the associated label
-  virtual bool		PSearchCurVal_Set(double cur_val, const String& mbr_nm, const String& label = "");
+  virtual bool		PSearchCurVal_Set(const Variant& cur_val, const String& mbr_nm, const String& label = "");
   // #CAT_ParamSearch set current value for given member name and, optionally if non-empty, the associated label
   virtual bool		PSearchNextToCur(const String& mbr_nm, const String& label = "");
   // #CAT_ParamSearch set current value to stored next value for given member name and, optionally if non-empty, the associated label
@@ -341,10 +341,10 @@ public: // public API
   virtual bool		PSearchIncrVal_Set(double incr_val, const String& mbr_nm, const String& label = "")
   { return mbrs.PSearchIncrVal_Set(incr_val, mbr_nm, label); }
   // #CAT_ParamSearch set param search incr_val for given member name and, optionally if non-empty, the associated label
-  virtual double	PSearchCurVal(const String& mbr_nm, const String& label = "")
+  virtual Variant	PSearchCurVal(const String& mbr_nm, const String& label = "")
   { return mbrs.PSearchCurVal(mbr_nm, label); }
   // #CAT_ParamSearch gets current value for given member name and, optionally if non-empty, the associated label
-  virtual bool		PSearchCurVal_Set(double cur_val, const String& mbr_nm, const String& label = "")
+  virtual bool		PSearchCurVal_Set(const Variant& cur_val, const String& mbr_nm, const String& label = "")
   { return mbrs.PSearchCurVal_Set(cur_val, mbr_nm, label); }
   // #CAT_ParamSearch set current value for given member name and, optionally if non-empty, the associated label
   virtual bool		PSearchNextToCur(const String& mbr_nm, const String& label = "")

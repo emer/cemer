@@ -375,6 +375,7 @@ void LeabraDeltaConSpec::UpdateAfterEdit_impl() {
 //   LeabraXCALSpikeConSpec
 
 void XCALSpikeSpec::Initialize() {
+  ss_sr = false;
   ca_norm = 5.0f;
   k_ca = 0.3f / ca_norm;
   ca_vgcc = 1.3f / ca_norm;

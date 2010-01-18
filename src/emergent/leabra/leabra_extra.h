@@ -1005,6 +1005,8 @@ class LEABRA_API XCALSpikeSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCAL purely spiking learning rule based on Urakubo et al 2008
 INHERITED(taOBase)
 public:
+  bool		ss_sr;		// #DEF_false do super-short sender-recv multiplication instead of full Urakubo thing -- just for testing/debugging
+
   float		ca_norm;  // #DEF_5 normalization factor for ca -- divide all ca constants by this amount
   float		k_ca;	  // #READ_ONLY #SHOW (.3 in original units) effective Ca that gives 50% inhibition of maximal NMDA receptor activity
   float		ca_vgcc;  // #READ_ONLY #SHOW (1.3 in original units) Ca influx resulting from receiver spiking (due to voltage gated calcium channels)
@@ -1061,11 +1063,24 @@ public:
 #endif
   }
 
+  inline void C_Compute_SRAvg_sssr(LeabraSpikeCon* cn, LeabraUnit* ru, LeabraUnit* su,
+				   LeabraUnitSpec* us) {
+    cn->sravg_ss = ru->avg_ss * su->avg_ss; // use ss to capture local time window
+    cn->sravg_s += us->act_avg.s_dt * (cn->sravg_ss - cn->sravg_s);
+    cn->sravg_m += us->act_avg.m_dt * (cn->sravg_s - cn->sravg_m);
+  }
+
   inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
     LeabraUnitSpec* us = (LeabraUnitSpec*)su->GetUnitSpec();
     if(learn_rule == CTLEABRA_XCAL_C) {
-      CON_GROUP_LOOP(cg, C_Compute_SRAvg_spike((LeabraSpikeCon*)cg->OwnCn(i), 
-					       (LeabraUnit*)cg->Un(i), su, us));
+      if(xcal_spike.ss_sr) {
+	CON_GROUP_LOOP(cg, C_Compute_SRAvg_sssr((LeabraSpikeCon*)cg->OwnCn(i), 
+						(LeabraUnit*)cg->Un(i), su, us));
+      }
+      else {
+	CON_GROUP_LOOP(cg, C_Compute_SRAvg_spike((LeabraSpikeCon*)cg->OwnCn(i), 
+						 (LeabraUnit*)cg->Un(i), su, us));
+      }
     }
     else {
       inherited::Compute_SRAvg(cg, su, do_s);
