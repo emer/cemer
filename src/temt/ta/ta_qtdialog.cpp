@@ -619,15 +619,9 @@ void iMethodButtonMgr::GetImage() {
       
     bool ghost_on = false; // defaults here make it editable in test chain below
     bool val_is_eq = false;
-    if (!taiType::CheckProcessCondMembMeth("GHOST", mth_rep->meth,
-      base, ghost_on, val_is_eq)
-    ) continue;
+    bool ghost = mth_rep->meth->GetCondOptTest("GHOST", typ, base);
     QAbstractButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
-    if (ghost_on) {
-      but->setEnabled(!val_is_eq);
-    } else {
-      but->setEnabled(val_is_eq);
-    }
+    but->setEnabled(!ghost);
   }
 }
 
@@ -2384,19 +2378,13 @@ void taiEditDataHost::GetButtonImage(bool force) {
     if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
       continue;
       
-    bool ghost_on = false; // defaults here make it editable in test chain below
-    bool val_is_eq = false;
     taBase* base = mth_rep->Base();
     // in case of some obscure delete/refresh scenarios, skip if deleted
     if (!base) continue;
-    if (!taiType::CheckProcessCondMembMeth("GHOST", mth_rep->meth, base, ghost_on, val_is_eq))
-      continue;
+    
+    bool ghost = mth_rep->meth->GetCondOptTest("GHOST", base->GetTypeDef(), base);
     QAbstractButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
-    if (ghost_on) {
-      but->setEnabled(!val_is_eq);
-    } else {
-      but->setEnabled(val_is_eq);
-    }
+    but->setEnabled(!ghost);
   }
 }
 

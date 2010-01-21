@@ -3345,6 +3345,135 @@ String TypeItem::GetOptsHTML() const {
   return rval;
 }
 
+bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const void* base,
+			  bool& is_on, bool& val_is_eq) const {
+  // format: [CONDEDIT|CONDSHOW|GHOST]_[ON|OFF]_member[:value{,value}[&&,||member[:value{,value}...]] -- must all be && or || for logic
+  String optedit = OptionAfter(condkey + "_");
+  if (optedit.empty()) return false;
+  
+  String onoff = optedit.before('_');
+  is_on = (onoff == "ON"); //NOTE: should probably verify if OFF, otherwise it is an error
+  optedit = optedit.after('_');
+
+  val_is_eq = false;
+  int curlogic = 0;		// 0 = nothing, 1 = AND, 2 = OR, 
+
+  while(true) {			// iterate on logical operations
+    String nextedit;
+    int nextlogic = 0;		// 0 = nothing, 1 = AND, 2 = OR, 
+    int andloc = optedit.index("&&");
+    int orloc = optedit.index("||");
+    if(andloc > 0 && orloc > 0) {
+      if(andloc < orloc) {
+	nextlogic = 1;
+	nextedit = optedit.after(andloc+1);
+	optedit = optedit.before(andloc);
+      }
+      else {
+	nextlogic = 2;
+	nextedit = optedit.after(orloc+1);
+	optedit = optedit.before(orloc);
+      }
+    }
+    else if(andloc > 0) {
+      nextlogic = 1;
+      nextedit = optedit.after(andloc+1);
+      optedit = optedit.before(andloc);
+    }
+    else if(orloc > 0) {
+      nextlogic = 2;
+      nextedit = optedit.after(orloc+1);
+      optedit = optedit.before(orloc);
+    }
+
+    String val = optedit.after(':');
+  
+    // find the member name -- depends on mode, see below
+    String mbr;
+    if (val.empty())
+      mbr = optedit; // entire thing is the member, implied boolean
+    else
+      mbr = optedit.before(':');
+  
+    void* mbr_base = NULL;	// base for conditionalizing member itself
+    ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+    TypeDef* eff_td = (TypeDef*)base_td;
+    MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, net_mbr_off,
+						  mbr, false); // no warn..
+    if (md) {
+      mbr_base = MemberDef::GetOff_static(base, net_base_off, net_mbr_off);
+    }
+    
+    if (!md || !mbr_base) {
+      // this can happen in valid cases (selectedit), and the msg is annoying
+      //    taMisc::Warning("taiType::CheckProcessCondMembMeth: conditionalizing member", mbr, "not found!");
+      return false;
+    }
+
+    bool tmp_val_is_eq = false;
+    if (val.empty()) {
+      // implied boolean member mode
+      Variant mbr_val(md->type->GetValVar(mbr_base, md));
+      tmp_val_is_eq = mbr_val.toBool();
+    }
+    else {
+      // explicit value mode
+      String mbr_val = md->type->GetValStr(mbr_base, NULL, md, TypeDef::SC_DEFAULT, true); // inline
+      while (true) {
+	String nxtval;
+	if (val.contains(',')) {
+	  nxtval = val.after(',');
+	  val = val.before(',');
+	}
+	if(md->type->InheritsFormal(TA_enum) && mbr_val.contains('|')) { // bits!
+	  if(mbr_val.contains(val)) {
+	    String aft = mbr_val.after(val);
+	    String bef = mbr_val.before(val);
+	    if((aft.empty() || aft.firstchar() == '|') && (bef.empty() || bef.lastchar() == '|')) {
+	      // make sure it is not just a subset of something else..
+	      tmp_val_is_eq = true;
+	      break;
+	    }
+	  }
+	}
+	else {
+	  if (val == mbr_val) {
+	    tmp_val_is_eq = true;
+	    break;
+	  }
+	}
+	if (!nxtval.empty())
+	  val = nxtval;
+	else
+	  break;
+      } // value while
+    } // if
+
+    if(curlogic == 0)
+      val_is_eq = tmp_val_is_eq;
+    else if(curlogic == 1)
+      val_is_eq = val_is_eq && tmp_val_is_eq;
+    else if(curlogic == 2)
+      val_is_eq = val_is_eq || tmp_val_is_eq;
+
+    if(nextlogic > 0 && nextedit.nonempty()) {
+      optedit = nextedit;
+      curlogic = nextlogic;
+    }
+    else {
+      break;			// done!
+    }
+  } // outer logic while
+  return true;
+}
+
+bool TypeItem::GetCondOptTest(const String condkey, const TypeDef* base_td, const void* base) const {
+  bool is_on = false; 	// defaults here make it return true if no opt spec'd at all
+  bool val_is_eq = false;
+  bool rval = GetCondOpt(condkey, base_td, base, is_on, val_is_eq);
+  return ((is_on && val_is_eq) || (!is_on && !val_is_eq));
+}
+
 
 //////////////////////////
 //   EnumDef		//
@@ -5347,6 +5476,10 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
 	continue;
     }
     if(sc == SC_DISPLAY) {
+      bool condshow = md->GetCondOptTest("CONDSHOW", this, base);
+      if(!condshow) continue;
+      bool condedit = md->GetCondOptTest("CONDEDIT", this, base);
+      if(!condedit) continue;
       bool non_def = false;
       if(md->GetDefaultStatus(base) == MemberDef::NOT_DEF) {
 	non_def = true;

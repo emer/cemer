@@ -132,6 +132,7 @@ protected:
   mutable QPointer<QWidget> rep; // most recently created
   mutable int		m_dat_row; // row corresponding to dat, -1 if none
   mutable QSize		sh; // current size hint -- we return greatest
+  mutable QPointer<QHBoxLayout>	hbl;
 
   override bool 	eventFilter(QObject* object, QEvent* event); // replace
   virtual void		EditorCreated(QWidget* parent, QWidget* editor, 
@@ -202,7 +203,10 @@ Q_OBJECT
 public:
   SelectEdit*		sele;
   iSelectEditDataHost2*	sedh;
-  
+
+  override void		GetImage() const; // callable from edh any time
+  override void		GetValue() const; // callable from edh
+
   override bool		IndexToMembBase(const QModelIndex& index,
     MemberDef*& mbr, taBase*& base) const;
 
@@ -210,6 +214,11 @@ public:
     const QStyleOptionViewItem& option, const QModelIndex& index) const;
   
   SelectEditDelegate(SelectEdit* sele_, iSelectEditDataHost2* sedh_);
+
+ protected:
+  mutable EditMbrItem*   emi;
+  mutable QPointer<taiData> ps_dat; // most recently created
+  mutable QPointer<QWidget> ps_rep; // most recently created
 };
 #endif // !__MAKETA__
 

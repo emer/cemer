@@ -1041,6 +1041,9 @@ public:
 #endif
   }
 
+  inline void Trial_Init_SRAvg(LeabraSendCons* cg, LeabraUnit* su) { };
+  // never init..
+
   inline void C_Compute_SRAvg_spike(LeabraSpikeCon* cn, LeabraUnit* ru, LeabraUnit* su,
 				    LeabraUnitSpec* us) {
     // this happens every cycle, and is the place to compute nmda and ca -- expensive!! :(

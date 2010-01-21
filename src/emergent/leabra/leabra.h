@@ -126,9 +126,9 @@ public:
   LeabraSRAvgCon() { sravg_s = sravg_m = 0.0f; }
 };
 
-class LEABRA_API WtScaleSpec : public taBase {
+class LEABRA_API WtScaleSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight scaling specification
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		abs;		// #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
   float		rel;		// [Default: 1] #MIN_0 relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
@@ -142,9 +142,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API WtScaleSpecInit : public taBase {
+class LEABRA_API WtScaleSpecInit : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial weight scaling values -- applied to active WtScaleSpec values during InitWeights -- useful for adapting scale values
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		init;		// use these scaling values to initialize the wt_scale parameters during InitWeights (if false, these values have no effect at all)
   float		abs;		// #CONDEDIT_ON_init #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
@@ -197,9 +197,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API LearnMixSpec : public taBase {
+class LEABRA_API LearnMixSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra Leabra CHL mixture of learning factors (hebbian vs. error-driven) specification
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		hebb;		// [Default: .01] #MIN_0 amount of hebbian learning (should be relatively small, can be effective at .0001)
   float		err;		// #READ_ONLY #SHOW [Default: .99] amount of error driven learning, automatically computed to be 1-hebb
@@ -255,9 +255,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API SAvgCorSpec : public taBase {
+class LEABRA_API SAvgCorSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sending average activation correction specifications: affects hebbian learning and netinput computation
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		cor;		// #DEF_0.4:0.8 #MIN_0 #MAX_1 proportion of correction to apply (0=none, 1=all, .5=half, etc)
   float		thresh;		// #DEF_0.001 #MIN_0 threshold of sending average activation below which learning does not occur (prevents learning when there is no input)
@@ -270,9 +270,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API AdaptRelNetinSpec : public taBase {
+class LEABRA_API AdaptRelNetinSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra parameters to adapt the relative netinput strength of different projections (to be used at epoch-level in AdaptRelNetin call, after AvgAbsRelNetin vals on projection have been computed)
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		on;		// whether to adapt relative netinput values for this connection (only applied if AdaptAbsNetin is called, after AbsRelNetin and AvgAbsRelNetin)
   float		trg_fm_input;	// #CONDEDIT_ON_on:true (typically 0.85) #MIN_0 #MAX_1 target relative netinput for fm_input projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_output and lateral should sum to 1. if other types are missing, this is increased in proportion
@@ -420,12 +420,12 @@ public:
   // accumulate sender-receiver activation product average -- medium (trial-level) time scale
   inline void C_Compute_SRAvg_ms(LeabraSRAvgCon* cn, float ru_act, float su_act);
   // accumulate sender-receiver activation product average -- medium (trial-level) and short (plus phase) time scales
-  inline virtual void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s);
+  virtual void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s);
   // accumulate sender-receiver activation product average -- only for CtLeabraCAL
 
   inline void C_Trial_Init_SRAvg(LeabraSRAvgCon* cn);
   // initialize sender-receiver activation product averages for trial and below 
-  inline void Trial_Init_SRAvg(LeabraSendCons* cg, LeabraUnit* su);
+  virtual void Trial_Init_SRAvg(LeabraSendCons* cg, LeabraUnit* su);
   // initialize sender-receiver activation product average (only for trial-wise mode, else just in init weights) -- called at start of trial
 
   inline void 	C_Compute_dWt_CtLeabraCAL(LeabraSRAvgCon* cn,
@@ -609,9 +609,9 @@ private:
 // equivalent logic and _time or _rate values directly into spec of interest
 // definitely good to show both reps!
 
-class LEABRA_API DtSpec : public taBase {
+class LEABRA_API DtSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Math time constant specification -- shows both multiplier and time constant (inverse) value 
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		set_time;	// if true, time constant is entered in terms of time, otherwise, in terms of rate
   float		rate;		// #CONDEDIT_OFF_set_time rate factor = 1/time -- used for multiplicative update equations
@@ -744,8 +744,8 @@ class LEABRA_API DepressSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		on;		// synaptic depression is in effect: multiplies normal activation computed by current activation function in effect
-  float		rec;		// #CONDEDIT_ON_on #DEF_0.2 #MIN_0 rate of recovery of spike amplitude (determines overall time constant of depression function)
-  float		asymp_act;	// #CONDEDIT_ON_on #DEF_0.5 #MIN_0 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl value)
+  float		rec;		// #CONDEDIT_ON_on #DEF_0.2;0.015 #MIN_0 #MAX_1 rate of recovery of spike amplitude (determines overall time constant of depression function)
+  float		asymp_act;	// #CONDEDIT_ON_on #DEF_0.2:0.5 #MIN_0 #MAX_1 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl value)
   float		depl;		// #CONDEDIT_ON_on #READ_ONLY #SHOW rate of depletion of spike amplitude as a function of activation output (computed from rec, asymp_act)
   int		interval;	// #CONDEDIT_ON_on #MIN_1 only update synaptic depression at given interval (in terms of cycles, using ct_cycle) -- this can be beneficial in producing a more delayed overall effect, as is observed with discrete spiking
   float		max_amp;	// #CONDEDIT_ON_on #MIN_0 maximum spike amplitude -- this is the multiplier factor for activation values -- set to clamp_norm_max_amp to maintain asymptotic values at normal hard clamp levels, or set to 1 to retain usual normalized activation values (val is copied to act_range.max)

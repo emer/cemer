@@ -64,6 +64,20 @@ private:
   void	Copy_(const SelectEditItem& cp);
 };
 
+class TA_API EditParamSearch: public taOBase {
+  // #INLINE parameter searching values
+  INHERITED(taOBase)
+public:
+  bool			search; 	// include this item in parameter search
+  double		min_val;	// #CONDSHOW_ON_search minimum value to consider for parameter searching purposes
+  double		max_val;	// #CONDSHOW_ON_search maximum value to consider for parameter searching purposes
+  double		next_val;	// #CONDSHOW_ON_search computed next value to assign to this item in the parameter search
+  double		incr;		// #CONDSHOW_ON_search suggested increment to use in searching this parameter (e.g., for grid search)
+
+  TA_SIMPLE_BASEFUNS(EditParamSearch);
+  void	Initialize();
+  void	Destroy();
+};
 
 class TA_API EditMbrItem: public SelectEditItem {
   // a member select edit item -- allows editing of just one member from a class
@@ -71,12 +85,8 @@ class TA_API EditMbrItem: public SelectEditItem {
 public:
   MemberDef*		mbr; // #READ_ONLY #SHOW the mbr type
   bool			is_numeric;   // #READ_ONLY is this a single numeric type (float, double, int)
-  bool			param_search; // #CONDSHOW_ON_is_numeric include item in parameter search
-  double		min_val;	// #CONDSHOW_ON_is_numeric&&param_search minimum value to consider for parameter searching purposes
-  double		max_val;	// #CONDSHOW_ON_is_numeric&&param_search maximum value to consider for parameter searching purposes
-  double		next_val;	// #CONDSHOW_ON_is_numeric&&param_search computed next value to assign to this item in the parameter search
-  double		incr;		// #CONDSHOW_ON_is_numeric&&param_search suggested increment to use in searching this parameter (e.g., for grid search)
-  
+  EditParamSearch	param_search; // #CONDSHOW_ON_is_numeric specifications for parameter searching, only for numeric items
+
   ///////////////////////////////////
   //	    Param Search
 
@@ -86,13 +96,18 @@ public:
   // #CAT_ParamSearch get current value of item, as a variant
   virtual bool		PSearchCurVal_Set(const Variant& cur_val);
   // #CAT_ParamSearch set current value of item from a variant
+  virtual bool		PSearchMinToCur();
+  // #CAT_ParamSearch set current value of item to value stored in min_val field (called at start)
+  virtual bool		PSearchNextIncr();
+  // #CAT_ParamSearch set next_val to current value plus incr -- iterate to next level -- returns false if new next_val > max_val, and sets next_val = min_val in this case
   virtual bool		PSearchNextToCur();
-  // #CAT_ParamSearch set current value of item to value stored in next_val field
+  // #CAT_ParamSearch set current value of item to value stored in next_val field -- call this after updating the next values, before running the evaluation with the current parameters
   
   override TypeItem*	typeItem() const {return mbr;} // the mbr or mth
 
   override String 	GetColText(const KeyString& key, int itm_idx = -1) const;
   TA_BASEFUNS(EditMbrItem);
+  void	InitLinks();
 protected:
   void			UpdateAfterEdit_impl();
 private:
@@ -149,6 +164,8 @@ public:
   // #CAT_Access find an item based on member name and, optionally if non-empty, the associated label
   virtual EditMbrItem*	PSearchFind(const String& mbr_nm, const String& label = "");
   // #CAT_Access find a param_search item based on member name and, optionally if non-empty, the associated label -- must be is_numeric -- issues error if not found -- used for other psearch functions
+  virtual EditMbrItem*	PSearchNext(int& st_idx);
+  // #CAT_Access get the next active param search item starting from the given start index -- null if this was the last one -- must have param_search.search = true
 
   virtual bool&		PSearchOn(const String& mbr_nm, const String& label = "");
   // #CAT_ParamSearch gets a reference to the param_search flag for given member name and, optionally if non-empty, the associated label -- indicates whether to include item in overall search process
@@ -176,6 +193,10 @@ public:
   // #CAT_ParamSearch set current value for given member name and, optionally if non-empty, the associated label
   virtual bool		PSearchNextToCur(const String& mbr_nm, const String& label = "");
   // #CAT_ParamSearch set current value to stored next value for given member name and, optionally if non-empty, the associated label
+  virtual bool		PSearchMinToCur_All();
+  // #CAT_ParamSearch set current value to stored minimum value for all items in active parameter search -- call at start of searching
+  virtual bool		PSearchNextIncr_Grid();
+  // #CAT_ParamSearch increment the next_val for next param search item using a simple grid search algorithm -- first item is searched as an inner-loop, followed by next item, etc -- returns false when last item has been incremented to its max value (time to stop)
   virtual bool		PSearchNextToCur_All();
   // #CAT_ParamSearch set current value to stored next value for all items in active parameter search 
 
@@ -350,6 +371,12 @@ public: // public API
   virtual bool		PSearchNextToCur(const String& mbr_nm, const String& label = "")
   { return mbrs.PSearchNextToCur(mbr_nm, label); }
   // #CAT_ParamSearch set current value to stored next value for given member name and, optionally if non-empty, the associated label
+  virtual bool		PSearchMinToCur_All()
+  { return mbrs.PSearchMinToCur_All(); }
+  // #CAT_ParamSearch set current value to stored minimum value for all items in active parameter search -- call at start of searching
+  virtual bool		PSearchNextIncr_Grid()
+  { return mbrs.PSearchNextIncr_Grid(); }
+  // #CAT_ParamSearch increment the next_val for next param search item using a simple grid search algorithm -- first item is searched as an inner-loop, followed by next item, etc -- returns false when last item has been incremented to its max value (time to stop)
   virtual bool		PSearchNextToCur_All()
   { return mbrs.PSearchNextToCur_All(); }
   // #CAT_ParamSearch set current value to stored next value for all items in active parameter search 

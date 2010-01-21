@@ -65,133 +65,6 @@ taiTypeBase::~taiTypeBase() {
 // 	taiType		//
 //////////////////////////
 
-bool taiType::CheckProcessCondMembMeth(const String condkey,
-    TypeItem* memb_meth, const void* base, bool& is_on, bool& val_is_eq) 
-{
-  // format: [CONDEDIT|CONDSHOW|GHOST]_[ON|OFF]_member[:value{,value}[&&,||member[:value{,value}...]] -- must all be && or || for logic
-  String optedit = memb_meth->OptionAfter(condkey + "_");
-  if (optedit.empty()) return false;
-  
-  String onoff = optedit.before('_');
-  is_on = (onoff == "ON"); //NOTE: should probably verify if OFF, otherwise it is an error
-  optedit = optedit.after('_');
-
-  val_is_eq = false;
-  int curlogic = 0;		// 0 = nothing, 1 = AND, 2 = OR, 
-
-  while(true) {			// iterate on logical operations
-    String nextedit;
-    int nextlogic = 0;		// 0 = nothing, 1 = AND, 2 = OR, 
-    int andloc = optedit.index("&&");
-    int orloc = optedit.index("||");
-    if(andloc > 0 && orloc > 0) {
-      if(andloc < orloc) {
-	nextlogic = 1;
-	nextedit = optedit.after(andloc+1);
-	optedit = optedit.before(andloc);
-      }
-      else {
-	nextlogic = 2;
-	nextedit = optedit.after(orloc+1);
-	optedit = optedit.before(orloc);
-      }
-    }
-    else if(andloc > 0) {
-      nextlogic = 1;
-      nextedit = optedit.after(andloc+1);
-      optedit = optedit.before(andloc);
-    }
-    else if(orloc > 0) {
-      nextlogic = 2;
-      nextedit = optedit.after(orloc+1);
-      optedit = optedit.before(orloc);
-    }
-
-    String val = optedit.after(':');
-  
-    // find the member name -- depends on mode, see below
-    String mbr;
-    if (val.empty())
-      mbr = optedit; // entire thing is the member, implied boolean
-    else
-      mbr = optedit.before(':');
-  
-    taBase* tab = (taBase*)base;
-    void* mbr_base = NULL;	// base for conditionalizing member itself
-
-    TypeDef* own_td = tab->GetTypeDef();
-    ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
-    MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-						  mbr, false); // no warn..
-    if (md) {
-      mbr_base = MemberDef::GetOff_static(base, net_base_off, net_mbr_off);
-    }
-    
-    if (!md || !mbr_base) {
-      // this can happen in valid cases (selectedit), and the msg is annoying
-      //    taMisc::Warning("taiType::CheckProcessCondMembMeth: conditionalizing member", mbr, "not found!");
-      return false;
-    }
-
-    bool tmp_val_is_eq = false;
-    if (val.empty()) {
-      // implied boolean member mode (note: legacy for GHOST, new for CONDEDIT
-      // for GHOST, it is new to support dotted submembers
-      // just get it as a Variant and interpret as boolean
-      Variant mbr_val(md->type->GetValVar(mbr_base, md));
-      tmp_val_is_eq = mbr_val.toBool();
-    }
-    else {
-      // explicit value mode (note: legacy for CONDEDIT, new for GHOST
-      String mbr_val = md->type->GetValStr(mbr_base, NULL, md, TypeDef::SC_DEFAULT, true); // inline
-      while (true) {
-	String nxtval;
-	if (val.contains(',')) {
-	  nxtval = val.after(',');
-	  val = val.before(',');
-	}
-	if(md->type->InheritsFormal(TA_enum) && mbr_val.contains('|')) { // bits!
-	  if(mbr_val.contains(val)) {
-	    String aft = mbr_val.after(val);
-	    String bef = mbr_val.before(val);
-	    if((aft.empty() || aft.firstchar() == '|') && (bef.empty() || bef.lastchar() == '|')) {
-	      // make sure it is not just a subset of something else..
-	      tmp_val_is_eq = true;
-	      break;
-	    }
-	  }
-	}
-	else {
-	  if (val == mbr_val) {
-	    tmp_val_is_eq = true;
-	    break;
-	  }
-	}
-	if (!nxtval.empty())
-	  val = nxtval;
-	else
-	  break;
-      } // value while
-    } // if
-
-    if(curlogic == 0)
-      val_is_eq = tmp_val_is_eq;
-    else if(curlogic == 1)
-      val_is_eq = val_is_eq && tmp_val_is_eq;
-    else if(curlogic == 2)
-      val_is_eq = val_is_eq || tmp_val_is_eq;
-
-    if(nextlogic > 0 && nextedit.nonempty()) {
-      optedit = nextedit;
-      curlogic = nextlogic;
-    }
-    else {
-      break;			// done!
-    }
-  } // outer logic while
-  return true;
-}
-
 void taiType::Initialize() {
   m_par_obj_base = NULL;
   m_par_obj_type = NULL;
@@ -1260,11 +1133,8 @@ taiData* taiMember::GetDataRep_impl(IDataHost* host_, taiData* par,
 void taiMember::GetImage(taiData* dat, const void* base) {
   bool is_visible = true;
   if (isCondShow()) {
-    bool is_on = false; // defaults here make it editable in test chain below
-    bool val_is_eq = false;
     //note: we don't care if processed or not -- flag defaults make it editable
-    CheckProcessCondMembMeth("CONDSHOW", mbr, base, is_on, val_is_eq);
-    is_visible = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
+    is_visible = mbr->GetCondOptTest("CONDSHOW", typ, base);
     dat->setVisible(is_visible);
   }
   // note: we must always fall through and get image, even when invisible, for
@@ -1277,18 +1147,7 @@ void taiMember::GetImage(taiData* dat, const void* base) {
     GetArbitrateImage(dat, base);
   } else { // rw && condEdit
     QCAST_MBR_SAFE_EXIT(taiDataDeck*, deck, dat)
-    bool is_on = false; // defaults here make it editable in test chain below
-    bool val_is_eq = false;
-    int img = 0;
-    //note: we don't care if processed or not -- flag defaults make it editable
-    CheckProcessCondMembMeth("CONDEDIT", mbr, base, is_on, val_is_eq);
-    if (is_on) {
-      if (val_is_eq) img = 0; // editable
-      else           img = 1;	// not editable
-    } else {
-      if (val_is_eq) img = 1;	// not editable
-      else           img = 0;	// editable
-    }
+    int img = !mbr->GetCondOptTest("CONDEDIT", typ, base);
     deck->GetImage(img); // this is the one that is visible
     // NOTE: we must *always* get both images, so the val img is valid if we switch to rw
     GetArbitrateImage(deck->data_el.FastEl(0), base);
@@ -1307,19 +1166,13 @@ void taiMember::CheckProcessCondEnum(taiEnumType* et, taiData* dat,
       ed->HasOption("NO_SHOW"))
       continue;
     
-    bool is_on = false; // defaults here make it editable in test chain below
-    bool val_is_eq = false;
-    taiType::CheckProcessCondMembMeth("CONDSHOW", ed, base, is_on, val_is_eq);
-    bool is_visible = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
+    bool is_visible = ed->GetCondOptTest("CONDSHOW", typ, base);
     if (is_visible) 
       bb->no_show &= ~ed->enum_no;
     else
       bb->no_show |= ed->enum_no;
     
-    is_on = false; // defaults here make it editable in test chain below
-    val_is_eq = false;
-    taiType::CheckProcessCondMembMeth("CONDEDIT", ed, base, is_on, val_is_eq);
-    bool is_editable = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
+    bool is_editable = ed->GetCondOptTest("CONDEDIT", typ, base);
     if (is_editable) 
       bb->no_edit &= ~ed->enum_no;
     else
@@ -1342,11 +1195,7 @@ void taiMember::GetImage_impl(taiData* dat, const void* base) {
 void taiMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
   bool is_visible = true;
   if (isCondShow()) {
-    bool is_on = false; // defaults here make it editable in test chain below
-    bool val_is_eq = false;
-    //note: we don't care if processed or not -- flag defaults make it editable
-    CheckProcessCondMembMeth("CONDSHOW", mbr, base, is_on, val_is_eq);
-    is_visible = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
+    is_visible = mbr->GetCondOptTest("CONDSHOW", typ, base);
     dat->setVisible(is_visible);
   }
   // note: we must always fall through and get value, even when invisible, for
@@ -1361,18 +1210,6 @@ void taiMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
     GetArbitrateMbrValue(dat, base, first_diff);
   } else { // note: we only do this if we aren't RO, otherwise there is no point
     QCAST_MBR_SAFE_EXIT(taiDataDeck*, deck, dat)
-/*nn  bool is_on = false; // defaults here make it editable in test chain below
-    bool val_is_eq = false;
-    int img = 0;
-    //note: we don't care if processed or not -- flag defaults make it editable
-    CheckProcessCondMembMeth("CONDEDIT", mbr, base, is_on, val_is_eq);
-    if (is_on) {
-      if (val_is_eq) img = 0; // editable
-      else           img = 1;	// not editable
-    } else {
-      if (val_is_eq) img = 1;	// not editable
-      else           img = 0;	// editable
-    }*/
     // NOTE: we must *always* get the rw val in case we had switched editability
     dat = deck->data_el.FastEl(0);
     GetArbitrateMbrValue(dat, base, first_diff);

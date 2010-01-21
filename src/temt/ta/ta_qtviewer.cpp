@@ -3436,7 +3436,8 @@ iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
 } */
 
 iMainWindowViewer::~iMainWindowViewer() {
-  hide();			// this prevents bug in deletion later
+  if(isVisible())
+    hide();			// prevents crash later on mac..
   taiMisc::active_wins.RemoveEl(this);
 //TODO: need to delete menu, but just doing a delete causes an exception (prob because Qt
 // has already deleted the menu items
@@ -4491,6 +4492,7 @@ void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
     }
   }
   // if we make it here,  then we should be closed -- closeEvent will do this
+  hide();			// prevent a possible bug on mac associated with hide and delete
   m_close_proj_now = true;
 }
 

@@ -1764,6 +1764,11 @@ public:
 
   virtual String	GetOptsHTML() const;
   // get options in HTML format
+  virtual bool 		GetCondOpt(const String condkey, const TypeDef* base_td, const void* base,
+				   bool& is_on, bool& val_is_eq) const;
+  // return true if item has the condkey (e.g., CONDEDIT, CONDSHOW, GHOST), and if so, sets is_on if the cond type is ON (else OFF) and if the match value was in the list (val_is_eq) -- format: condkey_[ON|OFF]_member[:value{,value}[&&,||member[:value{,value}...]] -- must all be && or || for logic -- base and base_td refer to the the parent object that owns this one -- used for searching for the member to conditionalize on
+  virtual bool 		GetCondOptTest(const String condkey, const TypeDef* base_td, const void* base) const;
+  // returns true if item does NOT have condkey (e.g., CONDEDIT, CONDSHOW, GHOST), or the condition evaluates to true, otherwise false -- this is a simpler interface than GetCondOpt, suitable for most uses -- format: condkey_[ON|OFF]_member[:value{,value}[&&,||member[:value{,value}...]] -- must all be && or || for logic  -- base and base_td refer to the the parent object that owns this one -- used for searching for the member to conditionalize on
   
   TypeItem();
   TypeItem(const TypeItem& cp); // copy constructor
