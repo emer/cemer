@@ -2513,10 +2513,19 @@ bool MotionDispGaborV1Spec::FilterMultiInputDisp(float_Matrix& v1_output1, float
 				break;
 		}
 		cur_t = t;
+		
+		cur_eye = 0;
 		threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
 		threads.min_units = 1;
 		threads.nibble_chunk = 1;
 		ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
+		threads.Run(&ip_call, un_geom.n);
+		
+		
+		cur_eye = 1;
+		threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
+		threads.min_units = 1;
+		threads.nibble_chunk = 1;
 		threads.Run(&ip_call, un_geom.n);
 		
 	}
@@ -2638,95 +2647,114 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 	int fgpdx = uidx % n_filters_per_gp;
 	MotionDispGaborFilterSpec* gf = (MotionDispGaborFilterSpec*)motiondisp_gabor_specs.SafeEl(fidx);
 	if(!gf) return false;			     // shouldn't happen
-
-
-	// for each unit, process entire input:
-	for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
-		for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
-			if(wrap) {
-				ugpof = (ugp-1) * input_ovlp;
-			}
-			else {
-				ugpof = ugp * input_ovlp;
-			}
-			float max_val[3] = {0,0,0};
-			// filter groups
-			for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
-				int ymod = fgp.y % n_filters_per_gp;
-				for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
-					int xmod = (fgp.x + ymod) % n_filters_per_gp;
-					if(xmod != fgpdx) {
-						continue; // not our spot
-					}
-					float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
-					fgpof = ugpof + (fgp * rf_ovlp);
-					
-					// now actually apply the filter itself
-					float flt_sum[3] = {0,0,0};
-
-					for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-						for(fc.x=0;fc.x<rf_width.x;fc.x++) {
-							
-							
-							float fval = gf->filter.FastEl(fc.x, fc.y, cur_t);
-							float oval[3] = {0,0,0};
-							int disp = cur_disp * -1;
-							for(int disp_lvl_i = 0; disp_lvl_i < 3; disp_lvl_i++) {
+	
+	//for(int cur_eye; cur_eye < 2; cur_eye++) {
+		
+		// for each unit, process entire input:
+		for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
+			for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
+				if(wrap) {
+					ugpof = (ugp-1) * input_ovlp;
+				}
+				else {
+					ugpof = ugp * input_ovlp;
+				}
+				float max_val[3] = {0,0,0};
+				// filter groups
+				for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
+					int ymod = fgp.y % n_filters_per_gp;
+					for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
+						int xmod = (fgp.x + ymod) % n_filters_per_gp;
+						if(xmod != fgpdx) {
+							continue; // not our spot
+						}
+						float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
+						fgpof = ugpof + (fgp * rf_ovlp);
+						
+						// now actually apply the filter itself
+						float flt_sum[3] = {0,0,0};
+						
+						for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+							for(fc.x=0;fc.x<rf_width.x;fc.x++) {
 								
 								
-								for(int disp_i = 0; disp_i < disparity_width; disp_i++) {
+								float fval = gf->filter.FastEl(fc.x, fc.y, cur_t);
+								float oval[3] = {0,0,0};
+								int disp = cur_disp * -1;
+								for(int disp_lvl_i = 0; disp_lvl_i < 3; disp_lvl_i++) {
 									
-									in_left = fgpof + fc;
-									in_left.x +=  (-1 * disp) - (disparity_width/2 - disp_i);
-									if(in_left.WrapClip(wrap, trg_input_size)) continue;
-									in_right = fgpof + fc;
-									in_right.x +=  disp + (disparity_width/2 - disp_i);
-									if(in_right.WrapClip(wrap, trg_input_size)) continue;
 									
-									float cur_disp_mult = disp_gauss_mat.FastEl(disp_i);
-									
-									if(fval > 0.0f) {
-										//oval += fval * cur_on_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
-										//oval += fval * cur_on_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
-										oval[disp_lvl_i] += fval * cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y) * cur_disp_mult * (1.0f / disparity_width);
-										//oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
+									for(int disp_i = 0; disp_i < disparity_width; disp_i++) {
+										
+										in_left = fgpof + fc;
+										in_left.x +=  (-1 * disp) - (disparity_width/2 - disp_i);
+										if(in_left.WrapClip(wrap, trg_input_size)) continue;
+										in_right = fgpof + fc;
+										in_right.x +=  disp + (disparity_width/2 - disp_i);
+										if(in_right.WrapClip(wrap, trg_input_size)) continue;
+										
+										float cur_disp_mult = disp_gauss_mat.FastEl(disp_i);
+										
+										if(fval > 0.0f) {
+											//oval += fval * cur_on_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
+											//oval += fval * cur_on_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
+											
+											float input_val = 0;
+											//input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y);
+											if(cur_eye == 0) {
+												input_val = cur_on_left_input->FastEl(in_left.x, in_left.y);
+											}
+											else {
+												input_val = cur_on_right_input->FastEl(in_left.x, in_left.y);
+											}
+											oval[disp_lvl_i] += fval * input_val * cur_disp_mult * (1.0f / disparity_width);
+											//oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
+										}
+										else {
+											//oval += -fval * cur_off_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
+											//oval += -fval * cur_off_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
+											float input_val = 0;
+											//input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y);
+											if(cur_eye == 0) {
+												input_val = cur_off_left_input->FastEl(in_left.x, in_left.y);
+											}
+											else {
+												input_val = cur_off_right_input->FastEl(in_left.x, in_left.y);
+											}
+											oval[disp_lvl_i] += fval * input_val * cur_disp_mult * (1.0f / disparity_width);
+											//oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
+										}
+										
 									}
-									else {
-										//oval += -fval * cur_off_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
-										//oval += -fval * cur_off_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
-										oval[disp_lvl_i] += fval * cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y) * cur_disp_mult * (1.0f / disparity_width);
-										//oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
-									}
-									
+									flt_sum[disp_lvl_i] += oval[disp_lvl_i];
+									disp += cur_disp;
 								}
-								flt_sum[disp_lvl_i] += oval[disp_lvl_i];
-								disp += cur_disp;
 							}
 						}
+						
+						flt_sum[0] *= gmult;
+						max_val[0] = MAX(max_val[0], flt_sum[0]);
+						flt_sum[1] *= gmult;
+						max_val[1] = MAX(max_val[1], flt_sum[1]);
+						flt_sum[2] *= gmult;
+						max_val[2] = MAX(max_val[2], flt_sum[2]);
 					}
+				}
+				
+				if(cur_superimpose || cur_t > 0) {
+					cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[0];
+					cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[1];
+					cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[2];
 					
-					flt_sum[0] *= gmult;
-					max_val[0] = MAX(max_val[0], flt_sum[0]);
-					flt_sum[1] *= gmult;
-					max_val[1] = MAX(max_val[1], flt_sum[1]);
-					flt_sum[2] *= gmult;
-					max_val[2] = MAX(max_val[2], flt_sum[2]);
+				}
+				else {
+					cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[0];
+					cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[1];
+					cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[2];
 				}
 			}
-			
-			if(cur_superimpose || cur_t > 0) {
-				cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[0];
-				cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[1];
-				cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[2];
-
-			}
-			else {
-				cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[0];
-				cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[1];
-				cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[2];
-			}
 		}
-	}
+	//}
 	return true;
 }
 

@@ -802,6 +802,7 @@ protected:
 	int cur_eyes;
 	int cur_disp;
 	int cur_t;
+	int cur_eye;
 	bool 		cur_superimpose;
 };
 
