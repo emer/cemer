@@ -1426,6 +1426,15 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
   return true;
 }
 
+void taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, 
+			   const void* par, TypeDef* par_typ, MemberDef* memb_def) const {
+  // always just add a record for this guy
+  taObjDiffRec* odr = new taObjDiffRec(nest_lev, GetTypeDef(), memb_def, (void*)this, (void*)par, par_typ);
+  odl.Add(odr);
+
+  GetTypeDef()->GetObjDiffVal_class(odl, nest_lev, this, par, par_typ, memb_def);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // 	Updating of object properties
 
@@ -2416,8 +2425,8 @@ int taBase::SelectForEditCompare(taBase*cmp_obj, SelectEdit*& editor, bool no_pt
   return rval;
 }
 
-String taBase::DiffCompare(taBase* cmp_obj, taDoc*& doc) {
-  if(TestError(!cmp_obj, "DiffCompare", "cmp_obj is null")) return _nilString;
+String taBase::DiffCompareString(taBase* cmp_obj, taDoc*& doc) {
+  if(TestError(!cmp_obj, "DiffCompareString", "cmp_obj is null")) return _nilString;
   if(!doc) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "DiffCompare", "cannot find project")) return _nilString;
@@ -2439,6 +2448,69 @@ String taBase::DiffCompare(taBase* cmp_obj, taDoc*& doc) {
   doc->UpdateText();
   tabMisc::DelayedFunCall_gui(doc, "BrowserSelectMe");
   return rval;
+}
+
+bool taBase::DiffCompare(taBase* cmp_obj) {
+  if(TestError(!cmp_obj, "DiffCompareString", "cmp_obj is null")) return false;
+  taObjDiff_List odl_me;
+  taObjDiff_List odl_cmp;
+  
+  GetObjDiffVal(odl_me, 0);
+  cmp_obj->GetObjDiffVal(odl_cmp, 0);
+
+  taStringDiff diff;
+  odl_me.Diff(diff, odl_cmp);
+
+  // following is temporary diff display for debugging purposes until viewer is in place
+
+  String rval;
+  for(int i=0;i<diff.diffs.size;i++) {
+    taStringDiffItem& df = diff.diffs[i];
+    bool chg = false;
+    if(df.delete_a == df.insert_b) {
+      rval += String(df.start_a+1) + "c" + String(df.start_b+1) +
+	taStringDiff::GetDiffRange(df.start_b, df.insert_b) + "\n";
+      chg = true;
+    }
+    if(df.delete_a > 0) {
+      if(!chg) {
+	rval += String(df.start_a+1) +
+	  taStringDiff::GetDiffRange(df.start_a, df.delete_a)
+	  + "d" + String(df.start_b+1) + "\n";
+      }
+      for(int l=df.start_a; l<df.start_a + df.delete_a; l++) {
+	taObjDiffRec* rec = odl_me[l];
+	rval += "< " + rec->name + " : " + rec->value + "\n";
+      }
+      if(chg) {
+	rval += "---\n";
+      }
+    }
+    if(df.insert_b > 0) {
+      if(!chg) {
+	rval += String(df.start_a+1) + "a" + String(df.start_b+1) +
+	  taStringDiff::GetDiffRange(df.start_b, df.insert_b) + "\n";
+      }
+      for(int l=df.start_b; l<df.start_b + df.insert_b; l++) {
+	taObjDiffRec* rec = odl_cmp[l];
+	rval += "> " + rec->name + " : " + rec->value + "\n";
+      }
+    }
+  }
+
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(TestError(!proj, "DiffCompare", "cannot find project")) return false;
+  taDoc* doc = (taDoc*)proj->docs.New(1);
+  doc->name = "DiffCompare_" + GetDisplayName() + "_" + cmp_obj->GetDisplayName();
+
+  String html_safe = rval;
+  html_safe.xml_esc();
+  doc->text = "<html>\n<head></head>\n<body>\n== DiffCompare of: "
+    + GetDisplayName() + " and: " + cmp_obj->GetDisplayName() + " ==\n<pre>\n"
+    + html_safe + "\n</pre>\n</body>\n</html>\n";
+  doc->UpdateText();
+  tabMisc::DelayedFunCall_gui(doc, "BrowserSelectMe");
+  return true;
 }
 
 bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor,
@@ -3394,6 +3466,17 @@ bool taList_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
     }
   }
   return false;
+}
+
+void taList_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, 
+			  const void* par, TypeDef* par_typ, MemberDef* memb_def) const {
+  inherited::GetObjDiffVal(odl, nest_lev, par, par_typ, memb_def);
+  for(int i=0; i<size; i++) {
+    taBase* itm = (taBase*)el[i];
+    if(itm && itm->GetOwner() == this) {
+      itm->GetObjDiffVal(odl, nest_lev+1, this, GetTypeDef(), NULL);
+    }
+  }
 }
 
 int taList_impl::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {

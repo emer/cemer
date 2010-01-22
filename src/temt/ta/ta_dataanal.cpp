@@ -927,13 +927,15 @@ bool taDataAnal::PCAEigenTable(DataTable* pca_data, bool view, DataTable* src_da
 						   da->cell_dims(), da->GetCellGeom(0),
 						   da->GetCellGeom(1), da->GetCellGeom(2),
 						   da->GetCellGeom(3));
+
+  pca_data->StructUpdate(true);
   for(int i=0;i<eigen_vecs.dim(0);i++) {
     pca_data->AddBlankRow();
     for(int j=0;j<eigen_vecs.dim(1);j++) {
       dmda->SetValAsFloatM(eigen_vecs.FastEl(i,j), -1, j);
     }
   }
-
+  pca_data->StructUpdate(false);
   if(view) pca_data->FindMakeGridView();
   return true;
 }

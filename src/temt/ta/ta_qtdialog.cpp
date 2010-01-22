@@ -616,12 +616,13 @@ void iMethodButtonMgr::GetImage() {
     taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);
     if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
       continue;
-      
-    bool ghost_on = false; // defaults here make it editable in test chain below
-    bool val_is_eq = false;
-    bool ghost = mth_rep->meth->GetCondOptTest("GHOST", typ, base);
-    QAbstractButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
-    but->setEnabled(!ghost);
+    
+    if(mth_rep->meth->OptionAfter("GHOST_").nonempty()) {
+      // the default "true" for non-GHOST cases doesn't work here!
+      bool ghost = mth_rep->meth->GetCondOptTest("GHOST", base->GetTypeDef(), base);
+      QAbstractButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
+      but->setEnabled(!ghost);
+    }
   }
 }
 
@@ -2382,9 +2383,12 @@ void taiEditDataHost::GetButtonImage(bool force) {
     // in case of some obscure delete/refresh scenarios, skip if deleted
     if (!base) continue;
     
-    bool ghost = mth_rep->meth->GetCondOptTest("GHOST", base->GetTypeDef(), base);
-    QAbstractButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
-    but->setEnabled(!ghost);
+    if(mth_rep->meth->OptionAfter("GHOST_").nonempty()) {
+      // the default "true" for non-GHOST cases doesn't work here!
+      bool ghost = mth_rep->meth->GetCondOptTest("GHOST", base->GetTypeDef(), base);
+      QAbstractButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
+      but->setEnabled(!ghost);
+    }
   }
 }
 

@@ -24,6 +24,7 @@
 class SelectEditItem;
 class EditMbrItem;
 class EditMthItem;
+class DataTable;
 
 class TA_API SelectEditItem: public taOBase {
   // #STEM_BASE ##CAT_Display base class for membs/meths in a SelectEdit
@@ -163,42 +164,48 @@ public:
   virtual EditMbrItem*	FindMbrName(const String& mbr_nm, const String& label = "");
   // #CAT_Access find an item based on member name and, optionally if non-empty, the associated label
   virtual EditMbrItem*	PSearchFind(const String& mbr_nm, const String& label = "");
-  // #CAT_Access find a param_search item based on member name and, optionally if non-empty, the associated label -- must be is_numeric -- issues error if not found -- used for other psearch functions
+  // #CAT_ParamSearch find a param_search item based on member name and, optionally if non-empty, the associated label -- must be is_numeric -- issues error if not found -- used for other psearch functions
   virtual EditMbrItem*	PSearchNext(int& st_idx);
-  // #CAT_Access get the next active param search item starting from the given start index -- null if this was the last one -- must have param_search.search = true
+  // #CAT_ParamSearch get the next active param search item starting from the given start index -- null if this was the last one -- must have param_search.search = true -- increments st_idx to next item to search so it can be called continuously
 
-  virtual bool&		PSearchOn(const String& mbr_nm, const String& label = "");
-  // #CAT_ParamSearch gets a reference to the param_search flag for given member name and, optionally if non-empty, the associated label -- indicates whether to include item in overall search process
-  virtual bool		PSearchOn_Set(bool psearch, const String& mbr_nm, const String& label = "");
-  // #CAT_ParamSearch set the param_search flag for given member name and, optionally if non-empty, the associated label -- indicates whether to include item in overall search process
-  virtual double&	PSearchMinVal(const String& mbr_nm, const String& label = "");
-  // #CAT_ParamSearch gets a reference to the param search min_val for given member name and, optionally if non-empty, the associated label
-  virtual bool		PSearchMinVal_Set(double min_val, const String& mbr_nm, const String& label = "");
-  // #CAT_ParamSearch set param search min_val for given member name and, optionally if non-empty, the associated label
-  virtual double&	PSearchMaxVal(const String& mbr_nm, const String& label = "");
-  // #CAT_ParamSearch gets a reference to the param search max_val for given member name and, optionally if non-empty, the associated label
-  virtual bool		PSearchMaxVal_Set(double max_val, const String& mbr_nm, const String& label = "");
-  // #CAT_ParamSearch set param search max_val for given member name and, optionally if non-empty, the associated label
-  virtual double&	PSearchNextVal(const String& mbr_nm, const String& label = "");
-  // #CAT_ParamSearch gets a reference to the param search next_val for given member name and, optionally if non-empty, the associated label
-  virtual bool		PSearchNextVal_Set(double next_val, const String& mbr_nm, const String& label = "");
-  // #CAT_ParamSearch set param search next_val for given member name and, optionally if non-empty, the associated label
-  virtual double&	PSearchIncrVal(const String& mbr_nm, const String& label = "");
-  // #CAT_ParamSearch gets a reference to the param search incr_val for given member name and, optionally if non-empty, the associated label
-  virtual bool		PSearchIncrVal_Set(double incr_val, const String& mbr_nm, const String& label = "");
-  // #CAT_ParamSearch set param search incr_val for given member name and, optionally if non-empty, the associated label
-  virtual Variant	PSearchCurVal(const String& mbr_nm, const String& label = "");
-  // #CAT_ParamSearch gets current value for given member name and, optionally if non-empty, the associated label
-  virtual bool		PSearchCurVal_Set(const Variant& cur_val, const String& mbr_nm, const String& label = "");
-  // #CAT_ParamSearch set current value for given member name and, optionally if non-empty, the associated label
-  virtual bool		PSearchNextToCur(const String& mbr_nm, const String& label = "");
-  // #CAT_ParamSearch set current value to stored next value for given member name and, optionally if non-empty, the associated label
   virtual bool		PSearchMinToCur_All();
   // #CAT_ParamSearch set current value to stored minimum value for all items in active parameter search -- call at start of searching
   virtual bool		PSearchNextIncr_Grid();
   // #CAT_ParamSearch increment the next_val for next param search item using a simple grid search algorithm -- first item is searched as an inner-loop, followed by next item, etc -- returns false when last item has been incremented to its max value (time to stop)
   virtual bool		PSearchNextToCur_All();
   // #CAT_ParamSearch set current value to stored next value for all items in active parameter search 
+
+  virtual void		PSearchConfigTable(DataTable* dat);
+  // #CAT_ParamSearch configure data table to hold results of the parameter search -- see PSearchRecord function -- makes a column for each active search variable, plus an "eval" column to hold the overal evaluation value for this set of parameters
+  virtual void		PSearchRecord(DataTable* dat, double eval_val);
+  // #CAT_ParamSearch record current search parameters in data table (configured with PSearchConfigTable), along with the evaluation value for this set of parameters as provided
+
+  virtual bool&		PSearchOn(const String& mbr_nm, const String& label = "");
+  // #CAT_PSearch_Access gets a reference to the param_search flag for given member name and, optionally if non-empty, the associated label -- indicates whether to include item in overall search process
+  virtual bool		PSearchOn_Set(bool psearch, const String& mbr_nm, const String& label = "");
+  // #CAT_PSearch_Access set the param_search flag for given member name and, optionally if non-empty, the associated label -- indicates whether to include item in overall search process
+  virtual double&	PSearchMinVal(const String& mbr_nm, const String& label = "");
+  // #CAT_PSearch_Access gets a reference to the param search min_val for given member name and, optionally if non-empty, the associated label
+  virtual bool		PSearchMinVal_Set(double min_val, const String& mbr_nm, const String& label = "");
+  // #CAT_PSearch_Access set param search min_val for given member name and, optionally if non-empty, the associated label
+  virtual double&	PSearchMaxVal(const String& mbr_nm, const String& label = "");
+  // #CAT_PSearch_Access gets a reference to the param search max_val for given member name and, optionally if non-empty, the associated label
+  virtual bool		PSearchMaxVal_Set(double max_val, const String& mbr_nm, const String& label = "");
+  // #CAT_PSearch_Access set param search max_val for given member name and, optionally if non-empty, the associated label
+  virtual double&	PSearchNextVal(const String& mbr_nm, const String& label = "");
+  // #CAT_PSearch_Access gets a reference to the param search next_val for given member name and, optionally if non-empty, the associated label
+  virtual bool		PSearchNextVal_Set(double next_val, const String& mbr_nm, const String& label = "");
+  // #CAT_PSearch_Access set param search next_val for given member name and, optionally if non-empty, the associated label
+  virtual double&	PSearchIncrVal(const String& mbr_nm, const String& label = "");
+  // #CAT_PSearch_Access gets a reference to the param search incr_val for given member name and, optionally if non-empty, the associated label
+  virtual bool		PSearchIncrVal_Set(double incr_val, const String& mbr_nm, const String& label = "");
+  // #CAT_PSearch_Access set param search incr_val for given member name and, optionally if non-empty, the associated label
+  virtual Variant	PSearchCurVal(const String& mbr_nm, const String& label = "");
+  // #CAT_PSearch_Access gets current value for given member name and, optionally if non-empty, the associated label
+  virtual bool		PSearchCurVal_Set(const Variant& cur_val, const String& mbr_nm, const String& label = "");
+  // #CAT_PSearch_Access set current value for given member name and, optionally if non-empty, the associated label
+  virtual bool		PSearchNextToCur(const String& mbr_nm, const String& label = "");
+  // #CAT_PSearch_Access set current value to stored next value for given member name and, optionally if non-empty, the associated label
 
 private:
   void	Initialize() { SetBaseType(&TA_EditMbrItem);}
@@ -332,45 +339,10 @@ public: // public API
   { return mbrs.PSearchFind(mbr_nm, label); }
   // #CAT_ParamSearch find a param_search item based on member name and, optionally if non-empty, the associated label -- must be is_numeric -- issues error if not found -- used for other psearch functions
 
-  virtual bool&		PSearchOn(const String& mbr_nm, const String& label = "")
-  { return mbrs.PSearchOn(mbr_nm, label); }
-  // #CAT_ParamSearch gets a reference to the param_search flag for given member name and, optionally if non-empty, the associated label -- indicates whether to include item in overall search process
-  virtual bool		PSearchOn_Set(bool psearch, const String& mbr_nm, const String& label = "")
-  { return mbrs.PSearchOn_Set(psearch, mbr_nm, label); }
-  // #CAT_ParamSearch set the param_search flag for given member name and, optionally if non-empty, the associated label -- indicates whether to include item in overall search process
-  virtual double&	PSearchMinVal(const String& mbr_nm, const String& label = "")
-  { return mbrs.PSearchMinVal(mbr_nm, label); }
-  // #CAT_ParamSearch gets a reference to the param search min_val for given member name and, optionally if non-empty, the associated label
-  virtual bool		PSearchMinVal_Set(double min_val, const String& mbr_nm, const String& label = "")
-  { return mbrs.PSearchMinVal_Set(min_val, mbr_nm, label); }
-  // #CAT_ParamSearch set param search min_val for given member name and, optionally if non-empty, the associated label
-  virtual double&	PSearchMaxVal(const String& mbr_nm, const String& label = "")
-  { return mbrs.PSearchMaxVal(mbr_nm, label); }
-  // #CAT_ParamSearch gets a reference to the param search max_val for given member name and, optionally if non-empty, the associated label
-  virtual bool		PSearchMaxVal_Set(double max_val, const String& mbr_nm, const String& label = "")
-  { return mbrs.PSearchMaxVal_Set(max_val, mbr_nm, label); }
-  // #CAT_ParamSearch set param search max_val for given member name and, optionally if non-empty, the associated label
-  virtual double&	PSearchNextVal(const String& mbr_nm, const String& label = "")
-  { return mbrs.PSearchNextVal(mbr_nm, label); }
-  // #CAT_ParamSearch gets a reference to the param search next_val for given member name and, optionally if non-empty, the associated label
-  virtual bool		PSearchNextVal_Set(double next_val, const String& mbr_nm, const String& label = "")
-  { return mbrs.PSearchNextVal_Set(next_val, mbr_nm, label); }
-  // #CAT_ParamSearch set param search next_val for given member name and, optionally if non-empty, the associated label
-  virtual double&	PSearchIncrVal(const String& mbr_nm, const String& label = "")
-  { return mbrs.PSearchIncrVal(mbr_nm, label); }
-  // #CAT_ParamSearch gets a reference to the param search incr_val for given member name and, optionally if non-empty, the associated label
-  virtual bool		PSearchIncrVal_Set(double incr_val, const String& mbr_nm, const String& label = "")
-  { return mbrs.PSearchIncrVal_Set(incr_val, mbr_nm, label); }
-  // #CAT_ParamSearch set param search incr_val for given member name and, optionally if non-empty, the associated label
-  virtual Variant	PSearchCurVal(const String& mbr_nm, const String& label = "")
-  { return mbrs.PSearchCurVal(mbr_nm, label); }
-  // #CAT_ParamSearch gets current value for given member name and, optionally if non-empty, the associated label
-  virtual bool		PSearchCurVal_Set(const Variant& cur_val, const String& mbr_nm, const String& label = "")
-  { return mbrs.PSearchCurVal_Set(cur_val, mbr_nm, label); }
-  // #CAT_ParamSearch set current value for given member name and, optionally if non-empty, the associated label
-  virtual bool		PSearchNextToCur(const String& mbr_nm, const String& label = "")
-  { return mbrs.PSearchNextToCur(mbr_nm, label); }
-  // #CAT_ParamSearch set current value to stored next value for given member name and, optionally if non-empty, the associated label
+  virtual EditMbrItem*	PSearchNext(int& st_idx)
+  { return mbrs.PSearchNext(st_idx); }
+  // #CAT_ParamSearch get the next active param search item starting from the given start index -- null if this was the last one -- must have param_search.search = true -- increments st_idx to next item to search so it can be called continuously
+
   virtual bool		PSearchMinToCur_All()
   { return mbrs.PSearchMinToCur_All(); }
   // #CAT_ParamSearch set current value to stored minimum value for all items in active parameter search -- call at start of searching
@@ -380,6 +352,53 @@ public: // public API
   virtual bool		PSearchNextToCur_All()
   { return mbrs.PSearchNextToCur_All(); }
   // #CAT_ParamSearch set current value to stored next value for all items in active parameter search 
+
+  virtual void		PSearchConfigTable(DataTable* dat)
+  { return mbrs.PSearchConfigTable(dat); }
+  // #CAT_ParamSearch configure data table to hold results of the parameter search -- see PSearchRecord function -- makes a column for each active search variable, plus an "eval" column to hold the overal evaluation value for this set of parameters
+  virtual void		PSearchRecord(DataTable* dat, double eval_val)
+  { return mbrs.PSearchRecord(dat, eval_val); }
+  // #CAT_ParamSearch record current search parameters in data table (configured with PSearchConfigTable), along with the evaluation value for this set of parameters as provided
+
+  virtual bool&		PSearchOn(const String& mbr_nm, const String& label = "")
+  { return mbrs.PSearchOn(mbr_nm, label); }
+  // #CAT_PSearch_Access gets a reference to the param_search flag for given member name and, optionally if non-empty, the associated label -- indicates whether to include item in overall search process
+  virtual bool		PSearchOn_Set(bool psearch, const String& mbr_nm, const String& label = "")
+  { return mbrs.PSearchOn_Set(psearch, mbr_nm, label); }
+  // #CAT_PSearch_Access set the param_search flag for given member name and, optionally if non-empty, the associated label -- indicates whether to include item in overall search process
+  virtual double&	PSearchMinVal(const String& mbr_nm, const String& label = "")
+  { return mbrs.PSearchMinVal(mbr_nm, label); }
+  // #CAT_PSearch_Access gets a reference to the param search min_val for given member name and, optionally if non-empty, the associated label
+  virtual bool		PSearchMinVal_Set(double min_val, const String& mbr_nm, const String& label = "")
+  { return mbrs.PSearchMinVal_Set(min_val, mbr_nm, label); }
+  // #CAT_PSearch_Access set param search min_val for given member name and, optionally if non-empty, the associated label
+  virtual double&	PSearchMaxVal(const String& mbr_nm, const String& label = "")
+  { return mbrs.PSearchMaxVal(mbr_nm, label); }
+  // #CAT_PSearch_Access gets a reference to the param search max_val for given member name and, optionally if non-empty, the associated label
+  virtual bool		PSearchMaxVal_Set(double max_val, const String& mbr_nm, const String& label = "")
+  { return mbrs.PSearchMaxVal_Set(max_val, mbr_nm, label); }
+  // #CAT_PSearch_Access set param search max_val for given member name and, optionally if non-empty, the associated label
+  virtual double&	PSearchNextVal(const String& mbr_nm, const String& label = "")
+  { return mbrs.PSearchNextVal(mbr_nm, label); }
+  // #CAT_PSearch_Access gets a reference to the param search next_val for given member name and, optionally if non-empty, the associated label
+  virtual bool		PSearchNextVal_Set(double next_val, const String& mbr_nm, const String& label = "")
+  { return mbrs.PSearchNextVal_Set(next_val, mbr_nm, label); }
+  // #CAT_PSearch_Access set param search next_val for given member name and, optionally if non-empty, the associated label
+  virtual double&	PSearchIncrVal(const String& mbr_nm, const String& label = "")
+  { return mbrs.PSearchIncrVal(mbr_nm, label); }
+  // #CAT_PSearch_Access gets a reference to the param search incr_val for given member name and, optionally if non-empty, the associated label
+  virtual bool		PSearchIncrVal_Set(double incr_val, const String& mbr_nm, const String& label = "")
+  { return mbrs.PSearchIncrVal_Set(incr_val, mbr_nm, label); }
+  // #CAT_PSearch_Access set param search incr_val for given member name and, optionally if non-empty, the associated label
+  virtual Variant	PSearchCurVal(const String& mbr_nm, const String& label = "")
+  { return mbrs.PSearchCurVal(mbr_nm, label); }
+  // #CAT_PSearch_Access gets current value for given member name and, optionally if non-empty, the associated label
+  virtual bool		PSearchCurVal_Set(const Variant& cur_val, const String& mbr_nm, const String& label = "")
+  { return mbrs.PSearchCurVal_Set(cur_val, mbr_nm, label); }
+  // #CAT_PSearch_Access set current value for given member name and, optionally if non-empty, the associated label
+  virtual bool		PSearchNextToCur(const String& mbr_nm, const String& label = "")
+  { return mbrs.PSearchNextToCur(mbr_nm, label); }
+  // #CAT_PSearch_Access set current value to stored next value for given member name and, optionally if non-empty, the associated label
  
 public: // IRefListClient i/f
   override void*	This() {return this;}

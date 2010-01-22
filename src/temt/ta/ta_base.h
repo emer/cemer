@@ -716,24 +716,28 @@ public:
   virtual int	 	Load_String(const String& load_str, taBase* par=NULL, taBase** loaded_obj_ptr = NULL);
   // #CAT_XpertFile load full object information from a string, which should have been generated through a corresponding Save_String call -- must contain the exact information that would be saved to a file for Save_strm -- just a string-stream (sstream) wrapper around Load_strm
 
-  virtual String	GetValStr(void* par = NULL, MemberDef* md = NULL,
-				  TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-				  bool force_inline = false) const;
+  virtual String GetValStr(void* par = NULL, MemberDef* md = NULL,
+			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			   bool force_inline = false) const;
   // #IGNORE get a value string for this object (ptr=0) -- called by TypeDef GetValStr -- default for inline is just to iterate over members and output values just as in TypeDef code -- can overload for more complex classes for inlines
-  static String		GetValStr_ptr(const TypeDef* td, const void* base, void* par = NULL, 
-				      MemberDef* md = NULL,
-				      TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-				      bool force_inline = false);
+  static String	GetValStr_ptr(const TypeDef* td, const void* base, void* par = NULL, 
+			      MemberDef* md = NULL,
+			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			      bool force_inline = false);
   // #IGNORE get a value string for pointer to ta base object (ptr=1) -- called by TypeDef GetValStr
-  virtual bool		SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
-				  TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-				  bool force_inline = false);
+  virtual bool	SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
+			  TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			  bool force_inline = false);
   // #IGNORE set value from a string for this object (ptr=0) -- called by TypeDef SetValStr -- default for inline is just to iterate over members and output values just as in TypeDef code -- can overload for more complex classes that might still be inlinable
-  static bool		SetValStr_ptr(const String& val, TypeDef* td, void* base,
-				      void* par = NULL, MemberDef* md = NULL, 
-				      TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-				      bool force_inline = false);
+  static bool	SetValStr_ptr(const String& val, TypeDef* td, void* base,
+			      void* par = NULL, MemberDef* md = NULL, 
+			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			      bool force_inline = false);
   // #IGNORE set value from a string for ptr to taBase (ptr=1) -- called by TypeDef SetValStr
+
+  virtual void	GetObjDiffVal(taObjDiff_List& odl, int nest_lev, 
+		      const void* par=NULL, TypeDef* par_typ=NULL, MemberDef* memb_def=NULL) const;
+  // #IGNORE add this object and all its members and sub-objects to the object diff list
 
   ////////////////////////////////////////////////////////////////////// 
   // 	Low-level dump load/save
@@ -1184,8 +1188,10 @@ public:
   // #MENU #NULL_OK_1 #NULL_TEXT_1_NewEditor #CAT_Display search among this object and any sub-objects for members containing given string, and add to given select editor (if NULL, a new one is created in .edits).  returns number found
   virtual int		SelectForEditCompare(taBase* cmp_obj, SelectEdit*& editor, bool no_ptrs = true);
   // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object, adding any differences to given select editor (if NULL, a new one is created in .edits).  returns number of differences.  no_ptrs = ignore differences in pointer fields
-  virtual String	DiffCompare(taBase* cmp_obj, taDoc*& doc);
-  // #MENU #NULL_OK_1  #NULL_TEXT_1_NewDoc  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object using a diff operation on their save file representations -- more robust to large differences than the select-for-edit version (if doc is NULL, a new one is created in .docs).  returns diff string as well.
+  virtual String	DiffCompareString(taBase* cmp_obj, taDoc*& doc);
+  // #NULL_OK_1  #NULL_TEXT_1_NewDoc  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object using a diff operation on their save file representations -- more robust to large differences than the select-for-edit version (if doc is NULL, a new one is created in .docs).  returns diff string as well.
+  virtual bool		DiffCompare(taBase* cmp_obj);
+  // #MENU #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object using a structured hierarchical diff operation -- pulls up a diff editor display to allow the user to view and merge the differences between objects
   virtual bool		SelectFunForEdit(MethodDef* function, SelectEdit* editor,
 	 const String& extra_label = "", const String& sub_gp_nm = "");
   // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display select a given function (method) for calling in a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
@@ -1776,6 +1782,9 @@ public:
   override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
 			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
 			   bool force_inline = false);
+
+  override void	GetObjDiffVal(taObjDiff_List& odl, int nest_lev, 
+		      const void* par=NULL, TypeDef* par_typ=NULL, MemberDef* memb_def=NULL) const;
 
   override void Dump_Save_GetPluginDeps();
   override int	Dump_SaveR(ostream& strm, taBase* par=NULL, int indent=0);

@@ -7247,6 +7247,41 @@ String TypeDef::GetHTML(bool gendoc) const {
   return rval;
 }
 
+
+void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base, const void* par,
+			    TypeDef* par_typ, MemberDef* memb_def) const {
+#ifndef NO_TA_BASE
+  if(InheritsFrom(TA_taBase)) {
+    taBase* rbase = (taBase*)base;
+    if(rbase) {
+      rbase->GetObjDiffVal(odl, nest_lev, par, par_typ, memb_def);
+    }
+    return;
+  }
+#endif
+  // always just add a record for this guy
+  taObjDiffRec* odr = new taObjDiffRec(nest_lev, (TypeDef*)this, memb_def, (void*)base, (void*)par, par_typ);
+  odl.Add(odr);
+//   if(ptr > 0) {
+//     // this will be set wrong here..  need some complex logic probaly to fix it..
+//   }
+
+  // then check for classes
+  if(ptr == 0 && InheritsNonAtomicClass()) {
+    GetObjDiffVal_class(odl, nest_lev, base, par, par_typ, memb_def);
+  }
+}
+
+void TypeDef::GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void* base,
+				  const void* par, TypeDef* par_typ, MemberDef* memb_def) const {
+  for(int i=0; i<members.size; i++) {
+    MemberDef* md = members.FastEl(i);
+    if(md->HasOption("NO_SAVE"))
+      continue;
+    md->type->GetObjDiffVal(odl, nest_lev+1, md->GetOff(base), base, (TypeDef*)this, md);
+  }
+}
+
 #ifdef NO_TA_BASE
 
 //////////////////////////////////////////////////////////
@@ -7344,3 +7379,125 @@ int TypeDef::Dump_Load(istream&, void*, void*, void**) {
 
 #endif // NO_TA_BASE
 
+//////////////////////////////////
+// 	     taObjDiffRec	//
+//////////////////////////////////
+
+void taObjDiffRec::Initialize() {
+  owner = NULL;
+  idx = -1;
+  nest_level = 0;
+  hash_code = 0;
+  type = NULL;
+  mdef = NULL;
+  addr = NULL;
+  par_addr = NULL;
+  par_type = NULL;
+  data_link = NULL;
+}
+
+void taObjDiffRec::Copy_(const taObjDiffRec& cp) {
+  nest_level = cp.nest_level;
+  hash_code = cp.hash_code;
+  type = cp.type;
+  mdef = cp.mdef;
+  addr = cp.addr;
+  par_addr = cp.par_addr;
+  par_type = cp.par_type;
+}
+
+taObjDiffRec::taObjDiffRec() {
+  Initialize();
+}
+
+taObjDiffRec::taObjDiffRec(const taObjDiffRec& cp) {
+  Copy_(cp);
+  data_link = NULL;
+}
+
+taObjDiffRec::taObjDiffRec(int nest, TypeDef* td, MemberDef* md, void* adr,
+			   void* par_adr, TypeDef* par_typ) {
+  Initialize();
+  nest_level = nest;
+  type = td;
+  mdef = md;
+  addr = adr;
+  par_addr = par_adr;
+  par_type = par_typ;
+  GetValue();
+}
+
+taObjDiffRec::~taObjDiffRec() {
+  if (data_link != NULL) {
+    data_link->DataDestroying(); // link NULLs our pointer
+  }
+}
+
+void taObjDiffRec::Copy(const taObjDiffRec& cp) {
+  Copy_(cp);
+}
+
+void taObjDiffRec::GetValue() {
+  if(!type || !addr) return;		// not set!
+  value = type->GetValStr(addr, par_addr, mdef, TypeDef::SC_VALUE);
+#ifndef NO_TA_BASE
+  if(type->InheritsFrom(&TA_taBase)) {
+    name = ((taBase*)addr)->GetDisplayName();
+    value = name;		// otherwise it is a path that will be wrong!
+  }
+  else
+#endif
+  if(mdef) {
+    name = mdef->name;
+  }
+  else {
+    name = type->name;
+  }
+  hash_code = taPtrList_impl::HashCode_String(value);
+}
+
+//////////////////////////////////
+// 	     taObjDiff_List	//
+//////////////////////////////////
+
+taObjDiff_List::~taObjDiff_List() { 
+  Reset();
+  if (data_link) {
+    data_link->DataDestroying(); // link NULLs our pointer
+  }
+}
+
+String	taObjDiff_List::El_GetName_(void* it) const { return ((taObjDiffRec*)it)->name; }
+TALPtr 	taObjDiff_List::El_GetOwnerList_(void* it) const { return ((taObjDiffRec*)it)->owner; }
+void*	taObjDiff_List::El_SetOwner_(void* it_) { 
+  if (!it_) return it_;
+  taObjDiffRec* it = (taObjDiffRec*)it_;
+  it->owner = this; 
+  return it_;
+  
+}
+void	taObjDiff_List::El_SetIndex_(void* it, int i){ ((taObjDiffRec*)it)->idx = i; }
+
+void*	taObjDiff_List::El_Ref_(void* it)   	  { taRefN::Ref((taObjDiffRec*)it); return it; }
+void* 	taObjDiff_List::El_unRef_(void* it) 	  { taRefN::unRef((taObjDiffRec*)it); return it; }
+void	taObjDiff_List::El_Done_(void* it)	  { taRefN::Done((taObjDiffRec*)it); }
+void*	taObjDiff_List::El_MakeToken_(void* it)  { return (void*)((taObjDiffRec*)it)->MakeToken(); }
+void*	taObjDiff_List::El_Copy_(void* trg, void* src)
+{ ((taObjDiffRec*)trg)->Copy(*((taObjDiffRec*)src)); return trg; }
+
+void taObjDiff_List::HashToIntArray(int_PArray& array) {
+  for(int i=0; i<size; i++) {
+    taObjDiffRec* rec = FastEl(i);
+    array.Add(rec->hash_code);
+  }
+}
+
+void taObjDiff_List::Diff(taStringDiff& diff, taObjDiff_List& cmp_list) {
+  int_PArray array_me;
+  int_PArray array_cmp;
+
+  HashToIntArray(array_me);
+  cmp_list.HashToIntArray(array_cmp);
+  
+  diff.DiffInts(array_me, array_cmp);
+}

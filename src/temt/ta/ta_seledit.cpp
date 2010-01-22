@@ -19,7 +19,7 @@
 #include "ta_type.h"
 #include "ta_project.h"
 #include "ta_qt.h"
-
+#include "ta_datatable.h"
 
 //////////////////////////////////
 //  taBase			//
@@ -457,6 +457,36 @@ bool EditMbrItem_Group::PSearchNextToCur_All() {
     rval |= psr;
   }
   return rval;
+}
+
+void EditMbrItem_Group::PSearchConfigTable(DataTable* dat) {
+  if(TestError(!dat, "PSearchConfigTable", "data table is NULL"))
+    return;
+  dat->FindMakeCol("index", VT_INT);
+  taLeafItr itr;
+  EditMbrItem* sei;
+  FOR_ITR_EL(EditMbrItem, sei, this->, itr) {
+    if(!sei->mbr || !sei->is_numeric || !sei->param_search.search) continue;
+    String nm = taMisc::StringCVar(sei->label);
+    dat->FindMakeCol(nm, VT_DOUBLE);
+  }
+  dat->FindMakeCol("eval", VT_DOUBLE);
+}
+
+void EditMbrItem_Group::PSearchRecord(DataTable* dat, double eval_val) {
+  if(TestError(!dat, "PSearchRecord", "data table is NULL"))
+    return;
+  dat->AddBlankRow();
+  dat->SetValColName(dat->rows-1, "index", -1);
+  taLeafItr itr;
+  EditMbrItem* sei;
+  FOR_ITR_EL(EditMbrItem, sei, this->, itr) {
+    if(!sei->mbr || !sei->is_numeric || !sei->param_search.search) continue;
+    String nm = taMisc::StringCVar(sei->label);
+    dat->SetValColName(sei->PSearchCurVal(), nm, -1);
+  }
+  dat->SetValColName(eval_val, "eval", -1);
+  dat->WriteClose();
 }
 
 //////////////////////////////////

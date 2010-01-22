@@ -62,7 +62,9 @@ class TA_API MemberDefBase;
 class TA_API MemberDef;
 class TA_API PropertyDef;
 class TA_API MethodDef;
-class TA_API TypeDef; //
+class TA_API TypeDef;
+class TA_API taObjDiffRec;
+class TA_API taObjDiff_List; //
 
 /*
   These are the basic pre-defined built in type definitions. Many of these are synonyms
@@ -2392,6 +2394,13 @@ public:
   String 	GetHTMLSubType(bool gendoc=false, bool short_fmt=false) const;
   // gets an HTML representation of a sub type (typdef or enum) -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
 
+  void		GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
+	      const void* par=NULL, TypeDef* par_typ=NULL, MemberDef* memb_def=NULL) const;
+  // add this object and all its members (if a class) to the object diff list
+  void		GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void* base,
+		const void* par=NULL, TypeDef* par_typ=NULL, MemberDef* memb_def=NULL) const;
+  // just add members of a class object to the diff list
+
   // saving and loading of type instances to/from streams
   int		Dump_Save(ostream& strm, void* base, void* par=NULL, int indent=0);
   // called by the user to save an object
@@ -2424,6 +2433,75 @@ protected:
 private:
   void 		Initialize();
   void		Copy_(const TypeDef& cp);
+};
+
+
+class TA_API taObjDiffRec : public taRefN {
+  // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS ##MEMB_NO_SHOW_TREE TA object difference record -- records information about objects for purposes of diffing object structures
+INHERITED(taRefN)
+public:
+  taObjDiff_List* owner;	// the owner of this one
+  int		idx;		// the index number in owning list
+  int		nest_level;	// how deeply nested or embedded is this object in the obj hierarchy
+  String	name;		// object name (member name, object name)
+  String	value;		// string representation of this object
+  taHashVal	hash_code;	// hash-code of the value, used in computing diff
+  TypeDef*	type;		// type of this object (same as mdef->type if a member) -- not type of parent
+  MemberDef*	mdef;		// memberdef if this is a member of a parent object
+  void*		addr;		// address in memory of this object
+  void*		par_addr;	// address in memory of parent of this object, if a member of a containing object
+  TypeDef*	par_type;	// type of parent object, if a member of a containing object
+  taDataLink*	data_link;
+
+  void 		GetValue();
+  // gets the value and hash code (and name) fields based on the other information already set
+  
+  taObjDiffRec();
+  taObjDiffRec(int nest, TypeDef* td, MemberDef* md, void* adr, void* par_adr = NULL,
+	       TypeDef* par_typ = NULL);
+  taObjDiffRec(const taObjDiffRec& cp); // copy constructor
+  ~taObjDiffRec();
+
+  taObjDiffRec*	Clone()		{ return new taObjDiffRec(*this); }
+  taObjDiffRec*	MakeToken()	{ return new taObjDiffRec(); }
+  void		Copy(const taObjDiffRec& cp);
+
+private:
+  void 		Initialize();
+  void		Copy_(const taObjDiffRec& cp);
+};
+
+class TA_API taObjDiff_List: public taPtrList<taObjDiffRec> {
+  // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS list of object difference records
+protected:
+  String	GetListName_() const 		{ return name; }
+  String	El_GetName_(void* it) const;
+  TALPtr 	El_GetOwnerList_(void* it) const;
+  void*		El_SetOwner_(void* it);
+  void		El_SetIndex_(void* it, int i);
+
+  void*		El_Ref_(void* it);
+  void* 	El_unRef_(void* it);
+  void		El_Done_(void* it);
+  void*		El_MakeToken_(void* it);
+  void*		El_Copy_(void* trg, void* src);
+
+public:
+  String 	name;		// of the list
+  taDataLink*	data_link;
+
+  void		Initialize()		{ data_link = NULL;}
+
+  taObjDiff_List()				{ Initialize(); }
+  taObjDiff_List(const taObjDiff_List& cp)	{ Initialize(); Borrow(cp); }
+  ~taObjDiff_List();
+  void operator=(const taObjDiff_List& cp)	{ Borrow(cp); }
+
+  void		HashToIntArray(int_PArray& array);
+  // copy all hash values to given array -- for use in differencing
+
+  void		Diff(taStringDiff& diff, taObjDiff_List& cmp_list);
+  // perform a diff operation on a comparison list, using given diff object
 };
 
 #endif // ta_type_h

@@ -2038,7 +2038,7 @@ String taStringDiff::GetDiffStr(const String& str_a, const String& str_b, Output
   }
 }
 
-static String string_diff_get_diff_range(int st, int rg) {
+String taStringDiff::GetDiffRange(int st, int rg) {
   if(rg > 1)
     return "," + String(st + rg);
   return _nilString;
@@ -2051,13 +2051,13 @@ String taStringDiff::GetDiffStr_normal(const String& str_a, const String& str_b)
     bool chg = false;
     if(df.delete_a == df.insert_b) {
       rval += String(df.start_a+1) + "c" + String(df.start_b+1) +
-	string_diff_get_diff_range(df.start_b, df.insert_b) + "\n";
+	GetDiffRange(df.start_b, df.insert_b) + "\n";
       chg = true;
     }
     if(df.delete_a > 0) {
       if(!chg) {
 	rval += String(df.start_a+1) +
-	  string_diff_get_diff_range(df.start_a, df.delete_a)
+	  GetDiffRange(df.start_a, df.delete_a)
 	  + "d" + String(df.start_b+1) + "\n";
       }
       for(int l=df.start_a; l<df.start_a + df.delete_a; l++)
@@ -2069,7 +2069,7 @@ String taStringDiff::GetDiffStr_normal(const String& str_a, const String& str_b)
     if(df.insert_b > 0) {
       if(!chg) {
 	rval += String(df.start_a+1) + "a" + String(df.start_b+1) +
-	  string_diff_get_diff_range(df.start_b, df.insert_b) + "\n";
+	  GetDiffRange(df.start_b, df.insert_b) + "\n";
       }
       for(int l=df.start_b; l<df.start_b + df.insert_b; l++)
 	rval += "> " + data_b.GetLine(str_b, l) + "\n";
@@ -2128,13 +2128,13 @@ String taStringDiffEdits::GetDiffStr(const String& str_a) {
     bool chg = false;
     if(df.delete_a == df.insert_b) {
       rval += String(df.start_a+1) + "c" + String(df.start_b+1) +
-	string_diff_get_diff_range(df.start_b, df.insert_b) + "\n";
+	taStringDiff::GetDiffRange(df.start_b, df.insert_b) + "\n";
       chg = true;
     }
     if(df.delete_a > 0) {
       if(!chg) {
 	rval += String(df.start_a+1) +
-	  string_diff_get_diff_range(df.start_a, df.delete_a)
+	  taStringDiff::GetDiffRange(df.start_a, df.delete_a)
 	  + "d" + String(df.start_b+1) + "\n";
       }
       if(str_a.nonempty()) {
@@ -2148,7 +2148,7 @@ String taStringDiffEdits::GetDiffStr(const String& str_a) {
     if(df.insert_b > 0) {
       if(!chg) {
 	rval += String(df.start_a+1) + "a" + String(df.start_b+1) +
-	  string_diff_get_diff_range(df.start_b, df.insert_b) + "\n";
+	  taStringDiff::GetDiffRange(df.start_b, df.insert_b) + "\n";
       }
       for(int l=df.start_b; l<df.start_b + df.insert_b; l++)
 	rval += "> " + df.insert_b_str + "\n"; // todo: need to line-a-fy with > 

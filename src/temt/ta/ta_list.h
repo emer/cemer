@@ -1262,6 +1262,9 @@ public:
   String GetDiffStr_context(const String& str_a, const String& str_b);
   // #IGNORE
 
+  static String  GetDiffRange(int st, int rg);
+  // get a string representation of the range -- if rg > 1, then = ", st+rg" else _nilString
+
   int GetLinesChanged();
   // *after* running DiffStrings, call this to get total count of lines changed (inserts + deletes) in the diffs
 
