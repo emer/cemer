@@ -2455,10 +2455,10 @@ bool MotionDispGaborV1Spec::FilterMultiInput(float_Matrix& v1_output_left, float
 	return true;
 }*/
 
-bool MotionDispGaborV1Spec::FilterMultiInputDisp(float_Matrix& v1_output1, float_Matrix& v1_output2, float_Matrix& v1_output3, int eyes, int disp, DoGFilterSpec::ColorChannel c_chan,float_Matrix& on_left_input,float_Matrix& off_left_input,float_Matrix& on_right_input,float_Matrix& off_right_input, bool superimpose) {
+bool MotionDispGaborV1Spec::FilterMultiInputDisp(float_Matrix& v1_output1, float_Matrix& v1_output2, float_Matrix& v1_output3, int eyes, int disp, DoGFilterSpec::ColorChannel c_chan,float_Matrix& on_left_input1,float_Matrix& off_left_input1,float_Matrix& on_left_input2,float_Matrix& off_left_input2,float_Matrix& on_left_input3,float_Matrix& off_left_input3,float_Matrix& on_right_input1,float_Matrix& off_right_input1,float_Matrix& on_right_input2,float_Matrix& off_right_input2,float_Matrix& on_right_input3,float_Matrix& off_right_input3, bool superimpose) {
 	TwoDCoord input_size;
-	input_size.x = on_left_input.dim(0);
-	input_size.y = off_left_input.dim(1);
+	input_size.x = on_left_input1.dim(0);
+	input_size.y = off_left_input1.dim(1);
 	
 	if(input_size != trg_input_size) {
 		taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
@@ -2487,19 +2487,39 @@ bool MotionDispGaborV1Spec::FilterMultiInputDisp(float_Matrix& v1_output1, float
 	cur_v1_output2 = &v1_output2;
 	cur_v1_output3 = &v1_output3;
 	cur_c_chan = c_chan;
-	cur_on_left_input = &on_left_input;
-	cur_off_left_input = &off_left_input;
-	cur_on_right_input = &on_right_input;
-	cur_off_right_input = &off_right_input;
 	cur_superimpose = cur_superimpose;
 	cur_eyes = eyes;
 	cur_disp = disp;
 	
-	threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
-	threads.min_units = 1;
-	threads.nibble_chunk = 1;
-	ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
-	threads.Run(&ip_call, un_geom.n);
+	for(int t=0; t < 3; t++) {
+		switch(t) {
+			case 0:
+				cur_on_left_input = &on_left_input1;
+				cur_off_left_input = &off_left_input1;
+				cur_on_right_input = &on_right_input1;
+				cur_off_right_input = &off_right_input1;
+				break;
+			case 1:
+				cur_on_left_input = &on_left_input2;
+				cur_off_left_input = &off_left_input2;
+				cur_on_right_input = &on_right_input2;
+				cur_off_right_input = &off_right_input2;
+				break;
+			case 2:
+				cur_on_left_input = &on_left_input3;
+				cur_off_left_input = &off_left_input3;
+				cur_on_right_input = &on_right_input3;
+				cur_off_right_input = &off_right_input3;
+				break;
+		}
+		cur_t = t;
+		threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
+		threads.min_units = 1;
+		threads.nibble_chunk = 1;
+		ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
+		threads.Run(&ip_call, un_geom.n);
+		
+	}
 	return true;
 }
 
@@ -2644,48 +2664,47 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 					// now actually apply the filter itself
 					float flt_sum[3] = {0,0,0};
 
-					for(t=0;t<rf_time;t++) {
-						for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-							for(fc.x=0;fc.x<rf_width.x;fc.x++) {
-								
+					for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+						for(fc.x=0;fc.x<rf_width.x;fc.x++) {
 							
-								float fval = gf->filter.FastEl(fc.x, fc.y, t);
-								float oval[3] = {0,0,0};
-								int disp = cur_disp * -1;
-								for(int disp_lvl_i = 0; disp_lvl_i < 3; disp_lvl_i++) {
-
-								    
-									for(int disp_i = 0; disp_i < disparity_width; disp_i++) {
+							
+							float fval = gf->filter.FastEl(fc.x, fc.y, cur_t);
+							float oval[3] = {0,0,0};
+							int disp = cur_disp * -1;
+							for(int disp_lvl_i = 0; disp_lvl_i < 3; disp_lvl_i++) {
+								
+								
+								for(int disp_i = 0; disp_i < disparity_width; disp_i++) {
 									
-										in_left = fgpof + fc;
-										in_left.x +=  (-1 * disp) - (disparity_width/2 - disp_i);
-										if(in_left.WrapClip(wrap, trg_input_size)) continue;
-										in_right = fgpof + fc;
-										in_right.x +=  disp + (disparity_width/2 - disp_i);
-										if(in_right.WrapClip(wrap, trg_input_size)) continue;
-										
-										float cur_disp_mult = disp_gauss_mat.FastEl(disp_i);
-										
-										if(fval > 0.0f) {
-											//oval += fval * cur_on_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
-											//oval += fval * cur_on_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
-											oval[disp_lvl_i] += fval * cur_on_left_input->FastEl(in_left.x, in_left.y, t) * cur_on_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * (1.0f / disparity_width);
-											//oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
-										}
-										else {
-											//oval += -fval * cur_off_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
-											//oval += -fval * cur_off_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
-											oval[disp_lvl_i] += fval * cur_off_left_input->FastEl(in_left.x, in_left.y, t) * cur_off_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * (1.0f / disparity_width);
-											//oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
-										}
-										
+									in_left = fgpof + fc;
+									in_left.x +=  (-1 * disp) - (disparity_width/2 - disp_i);
+									if(in_left.WrapClip(wrap, trg_input_size)) continue;
+									in_right = fgpof + fc;
+									in_right.x +=  disp + (disparity_width/2 - disp_i);
+									if(in_right.WrapClip(wrap, trg_input_size)) continue;
+									
+									float cur_disp_mult = disp_gauss_mat.FastEl(disp_i);
+									
+									if(fval > 0.0f) {
+										//oval += fval * cur_on_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
+										//oval += fval * cur_on_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
+										oval[disp_lvl_i] += fval * cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y) * cur_disp_mult * (1.0f / disparity_width);
+										//oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
 									}
-									flt_sum[disp_lvl_i] += oval[disp_lvl_i];
-									disp += cur_disp;
+									else {
+										//oval += -fval * cur_off_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
+										//oval += -fval * cur_off_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
+										oval[disp_lvl_i] += fval * cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y) * cur_disp_mult * (1.0f / disparity_width);
+										//oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
+									}
+									
 								}
+								flt_sum[disp_lvl_i] += oval[disp_lvl_i];
+								disp += cur_disp;
 							}
 						}
 					}
+					
 					flt_sum[0] *= gmult;
 					max_val[0] = MAX(max_val[0], flt_sum[0]);
 					flt_sum[1] *= gmult;
@@ -2695,7 +2714,7 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 				}
 			}
 			
-			if(cur_superimpose) {
+			if(cur_superimpose || cur_t > 0) {
 				cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[0];
 				cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[1];
 				cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[2];
@@ -4623,61 +4642,95 @@ bool MotionDispV1GaborSpec::FilterRetinaData(DataTable* v1_out_dt, DataTable* re
 			if(dog->spacing.region != sp->region || dog->spacing.res != sp->res) continue;
 			
 			
-			float_Matrix on_mats_left;
-			float_Matrix off_mats_left;
-			float_Matrix on_mats_right;
-			float_Matrix off_mats_right;
+			float_Matrix *on_mats_left1;
+			float_Matrix *off_mats_left1;
+			float_Matrix *on_mats_right1;
+			float_Matrix *off_mats_right1;
+			float_Matrix *on_mats_left2;
+			float_Matrix *off_mats_left2;
+			float_Matrix *on_mats_right2;
+			float_Matrix *off_mats_right2;
+			float_Matrix *on_mats_left3;
+			float_Matrix *off_mats_left3;
+			float_Matrix *on_mats_right3;
+			float_Matrix *off_mats_right3;
 			
 			
-			for(int t = 0; t < sp->rf_time; t++) {
-				//left
-				String mod_name = retina->GetModName(eyes,sp->rf_time,0,t);
-				float_Matrix* on_mat = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
-				if(!on_mat) { 
-					taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On left matrix: " + dog->name + mod_name + "_on not found");
-					continue;
-				}
-				float_Matrix* off_mat = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
-				if(!off_mat) {
-					taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off left matrix: " + dog->name + mod_name + "_off not found");
-					continue;
-				}
-				//right
-				float_Matrix* on_mat2;
-				float_Matrix* off_mat2;
-				if(eyes > 1) {
-					mod_name = retina->GetModName(eyes,sp->rf_time,1,t);
-					on_mat2 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
-					if(!on_mat2) { 
-						taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On right matrix: " + dog->name + mod_name + "_on not found");
-						continue;
-					}
-					off_mat2 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
-					if(!off_mat2) {
-						taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off right matrix: " + dog->name + mod_name + "_off not found");
-						continue;
-					}
-				}
-				
-				if(first) {
-					on_mats_left.SetGeom(3, on_mat->dim(0), on_mat->dim(1), sp->rf_time);
-					off_mats_left.SetGeom(3, on_mat->dim(0), on_mat->dim(1), sp->rf_time);
-					if(eyes > 1) {
-						on_mats_right.SetGeom(3, on_mat2->dim(0), on_mat2->dim(1), sp->rf_time);
-						off_mats_right.SetGeom(3, on_mat2->dim(0), on_mat2->dim(1), sp->rf_time);
-					}
-					first = false;
-				}
-				on_mats_left.WriteFmSubMatrix(on_mat,0,0,t);
-				off_mats_left.WriteFmSubMatrix(off_mat,0,0,t);
-				if(eyes > 1) {
-					on_mats_right.WriteFmSubMatrix(on_mat2,0,0,t);
-					off_mats_right.WriteFmSubMatrix(off_mat2,0,0,t);
-				}
+			//left
+			String mod_name = retina->GetModName(eyes,sp->rf_time,0,0);
+			on_mats_left1 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
+			if(!on_mats_left1) { 
+				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On left matrix: " + dog->name + mod_name + "_on not found");
+				continue;
+			}
+			off_mats_left1 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
+			if(!off_mats_left1) {
+				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off left matrix: " + dog->name + mod_name + "_off not found");
+				continue;
+			}
+			mod_name = retina->GetModName(eyes,sp->rf_time,0,1);
+			on_mats_left2 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
+			if(!on_mats_left2) { 
+				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On left matrix: " + dog->name + mod_name + "_on not found");
+				continue;
+			}
+			off_mats_left2 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
+			if(!off_mats_left2) {
+				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off left matrix: " + dog->name + mod_name + "_off not found");
+				continue;
+			}
+			mod_name = retina->GetModName(eyes,sp->rf_time,0,2);
+			on_mats_left3 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
+			if(!on_mats_left3) { 
+				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On left matrix: " + dog->name + mod_name + "_on not found");
+				continue;
+			}
+			off_mats_left3 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
+			if(!off_mats_left3) {
+				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off left matrix: " + dog->name + mod_name + "_off not found");
+				continue;
 			}
 			
+			//right
+			mod_name = retina->GetModName(eyes,sp->rf_time,1,0);
+			on_mats_right1 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
+			if(!on_mats_right1) { 
+				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On right matrix: " + dog->name + mod_name + "_on not found");
+				continue;
+			}
+			off_mats_right1 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
+			if(!off_mats_right1) {
+				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off right matrix: " + dog->name + mod_name + "_off not found");
+				continue;
+			}
+			mod_name = retina->GetModName(eyes,sp->rf_time,1,1);
+			on_mats_right1 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
+			if(!on_mats_right1) { 
+				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On right matrix: " + dog->name + mod_name + "_on not found");
+				continue;
+			}
+			off_mats_right1 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
+			if(!off_mats_right1) {
+				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off right matrix: " + dog->name + mod_name + "_off not found");
+				continue;
+			}
+			mod_name = retina->GetModName(eyes,sp->rf_time,1,0);
+			on_mats_right2 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
+			if(!on_mats_right2) { 
+				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On right matrix: " + dog->name + mod_name + "_on not found");
+				continue;
+			}
+			off_mats_right2 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
+			if(!off_mats_right2) {
+				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off right matrix: " + dog->name + mod_name + "_off not found");
+				continue;
+			}
+			
+			
+			
 			//sp->FilterMultiInput(*out_mat_left, *out_mat_right, eyes, dog->dog.color_chan, on_mats_left, off_mats_left, on_mats_right, off_mats_right, !first);
-			sp->FilterMultiInputDisp(*out_mat1, *out_mat2, *out_mat3, eyes, disp, dog->dog.color_chan, on_mats_left, off_mats_left, on_mats_right, off_mats_right, !first);
+			sp->FilterMultiInputDisp(*out_mat1, *out_mat2, *out_mat3, eyes, disp, dog->dog.color_chan, *on_mats_left1, *off_mats_left1, *on_mats_left2, *off_mats_left2,
+									 *on_mats_left3, *off_mats_left3, *on_mats_right1, *off_mats_right1, *on_mats_right2, *off_mats_right2, *on_mats_right3, *off_mats_right3, !first);
 			// taBase::unRefDone(on_mats_left);
 			// taBase::unRefDone(off_mats_left);
 			// taBase::unRefDone(on_mats_right);
