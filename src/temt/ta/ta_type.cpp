@@ -7248,19 +7248,21 @@ String TypeDef::GetHTML(bool gendoc) const {
 }
 
 
-void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base, const void* par,
-			    TypeDef* par_typ, MemberDef* memb_def) const {
+void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
+			    MemberDef* memb_def, const void* par,
+			    TypeDef* par_typ, taObjDiffRec* par_od) const {
 #ifndef NO_TA_BASE
   if(InheritsFrom(TA_taBase)) {
     taBase* rbase = (taBase*)base;
     if(rbase) {
-      rbase->GetObjDiffVal(odl, nest_lev, par, par_typ, memb_def);
+      rbase->GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
     }
     return;
   }
 #endif
   // always just add a record for this guy
-  taObjDiffRec* odr = new taObjDiffRec(nest_lev, (TypeDef*)this, memb_def, (void*)base, (void*)par, par_typ);
+  taObjDiffRec* odr = new taObjDiffRec(nest_lev, (TypeDef*)this, memb_def, (void*)base,
+				       (void*)par, par_typ, par_od);
   odl.Add(odr);
 //   if(ptr > 0) {
 //     // this will be set wrong here..  need some complex logic probaly to fix it..
@@ -7268,17 +7270,18 @@ void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
 
   // then check for classes
   if(ptr == 0 && InheritsNonAtomicClass()) {
-    GetObjDiffVal_class(odl, nest_lev, base, par, par_typ, memb_def);
+    GetObjDiffVal_class(odl, nest_lev, base, memb_def, par, par_typ, odr);
   }
 }
 
 void TypeDef::GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void* base,
-				  const void* par, TypeDef* par_typ, MemberDef* memb_def) const {
+				  MemberDef* memb_def, const void* par, TypeDef* par_typ,
+				  taObjDiffRec* par_od) const {
   for(int i=0; i<members.size; i++) {
     MemberDef* md = members.FastEl(i);
     if(md->HasOption("NO_SAVE"))
       continue;
-    md->type->GetObjDiffVal(odl, nest_lev+1, md->GetOff(base), base, (TypeDef*)this, md);
+    md->type->GetObjDiffVal(odl, nest_lev+1, md->GetOff(base), md, base, (TypeDef*)this, par_od);
   }
 }
 
@@ -7384,6 +7387,7 @@ int TypeDef::Dump_Load(istream&, void*, void*, void**) {
 //////////////////////////////////
 
 void taObjDiffRec::Initialize() {
+  flags = DF_NONE;
   owner = NULL;
   idx = -1;
   nest_level = 0;
@@ -7393,6 +7397,8 @@ void taObjDiffRec::Initialize() {
   addr = NULL;
   par_addr = NULL;
   par_type = NULL;
+  par_odr = NULL;
+  diff_odr = NULL;
   data_link = NULL;
 }
 
@@ -7404,6 +7410,7 @@ void taObjDiffRec::Copy_(const taObjDiffRec& cp) {
   addr = cp.addr;
   par_addr = cp.par_addr;
   par_type = cp.par_type;
+  par_odr = cp.par_odr;
 }
 
 taObjDiffRec::taObjDiffRec() {
@@ -7411,12 +7418,12 @@ taObjDiffRec::taObjDiffRec() {
 }
 
 taObjDiffRec::taObjDiffRec(const taObjDiffRec& cp) {
+  Initialize();
   Copy_(cp);
-  data_link = NULL;
 }
 
 taObjDiffRec::taObjDiffRec(int nest, TypeDef* td, MemberDef* md, void* adr,
-			   void* par_adr, TypeDef* par_typ) {
+			   void* par_adr, TypeDef* par_typ, taObjDiffRec* par_od) {
   Initialize();
   nest_level = nest;
   type = td;
@@ -7424,6 +7431,7 @@ taObjDiffRec::taObjDiffRec(int nest, TypeDef* td, MemberDef* md, void* adr,
   addr = adr;
   par_addr = par_adr;
   par_type = par_typ;
+  par_odr = par_od;
   GetValue();
 }
 
@@ -7455,6 +7463,63 @@ void taObjDiffRec::GetValue() {
   }
   hash_code = taPtrList_impl::HashCode_String(value);
 }
+
+bool taObjDiffRec::GetCurAction(int a_or_b, String& lbl) {
+  bool rval = false;
+  if(HasDiffFlag(DIFF_DEL)) {
+    if(a_or_b == 0) {		// "a" guy
+      rval = HasDiffFlag(ACT_DEL_A);
+      lbl = "Del A";
+    } else {
+      rval = HasDiffFlag(ACT_ADD_A);
+      lbl = "Add A";
+    }
+  }
+  else if(HasDiffFlag(DIFF_ADD)) {
+    if(a_or_b == 0) {		// "a" guy
+      rval = HasDiffFlag(ACT_ADD_B);
+      lbl = "Add B";
+    } else {
+      rval = HasDiffFlag(ACT_DEL_B);
+      lbl = "Del B";
+    }
+  }
+  else if(HasDiffFlag(DIFF_CHG)) {
+    if(a_or_b == 0) {		// "a" guy
+      rval = HasDiffFlag(ACT_COPY_BA);
+      lbl = "Cpy B";
+    } else {
+      rval = HasDiffFlag(ACT_COPY_AB);
+      lbl = "Cpy A";
+    }
+  }
+  return rval;
+}
+
+void taObjDiffRec::SetCurAction(int a_or_b, bool on_off) {
+  if(HasDiffFlag(DIFF_DEL)) {
+    if(a_or_b == 0) {		// "a" guy
+      SetDiffFlagState(ACT_DEL_A, on_off);
+    } else {
+      SetDiffFlagState(ACT_ADD_A, on_off);
+    }
+  }
+  else if(HasDiffFlag(DIFF_ADD)) {
+    if(a_or_b == 0) {		// "a" guy
+      SetDiffFlagState(ACT_ADD_B, on_off);
+    } else {
+      SetDiffFlagState(ACT_DEL_B, on_off);
+    }
+  }
+  else if(HasDiffFlag(DIFF_CHG)) {
+    if(a_or_b == 0) {		// "a" guy
+      SetDiffFlagState(ACT_COPY_BA, on_off);
+    } else {
+      SetDiffFlagState(ACT_COPY_AB, on_off);
+    }
+  }
+}
+
 
 //////////////////////////////////
 // 	     taObjDiff_List	//
@@ -7492,12 +7557,53 @@ void taObjDiff_List::HashToIntArray(int_PArray& array) {
   }
 }
 
-void taObjDiff_List::Diff(taStringDiff& diff, taObjDiff_List& cmp_list) {
-  int_PArray array_me;
-  int_PArray array_cmp;
+void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) {
+  taStringDiff diff;
 
-  HashToIntArray(array_me);
-  cmp_list.HashToIntArray(array_cmp);
-  
-  diff.DiffInts(array_me, array_cmp);
+  HashToIntArray(diff.data_a.data);
+  cmp_list.HashToIntArray(diff.data_b.data);
+
+  diff.Diff_impl("", "");	// null strings
+
+  for(int i=0;i<diff.diffs.size;i++) {
+    taStringDiffItem& df = diff.diffs[i];
+
+    taObjDiffRec::DiffFlags cur_flag = taObjDiffRec::DF_NONE;
+    
+    bool chg = false;
+    if(df.delete_a == df.insert_b) {
+      cur_flag = taObjDiffRec::DIFF_CHG;
+      chg = true;
+      for(int l=0; l<df.delete_a; l++) {
+	taObjDiffRec* rec_a = SafeEl(df.start_a + l);
+	diffs_list.Link(rec_a);
+	rec_a->flags = cur_flag;
+	taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b + l);
+	rec_a->diff_odr = rec_b; // this is the paired guy
+	rec_b->diff_odr = rec_a; // bidir pairing: why not..
+      }
+    }
+    else {
+      if(df.delete_a > 0) {
+	cur_flag = taObjDiffRec::DIFF_DEL;
+	taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b);
+	for(int l=0; l<df.delete_a; l++) {
+	  taObjDiffRec* rec_a = SafeEl(df.start_a + l);
+	  diffs_list.Link(rec_a);
+	  rec_a->flags = cur_flag;
+	  rec_a->diff_odr = rec_b; // starting point in b..
+	}
+      }
+      if(df.insert_b > 0) {
+	cur_flag = taObjDiffRec::DIFF_ADD;
+	taObjDiffRec* rec_a = SafeEl(df.start_a);
+	for(int l=0; l<df.insert_b; l++) {
+	  taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b + l);
+	  diffs_list.Link(rec_b);
+	  rec_b->flags = cur_flag;
+	  rec_b->diff_odr = rec_a; // starting point in a..
+	}
+      }
+    }
+  }
 }

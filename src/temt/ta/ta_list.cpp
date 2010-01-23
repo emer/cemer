@@ -1697,10 +1697,15 @@ void taStringDiff::DiffStrings(const String& str_a, const String& str_b,
 
   // The A-Version of the data (original data) to be compared.
   DiffCodes(data_a, str_a, trimSpace, ignoreSpace, ignoreCase);
-  data_a.InitFmData();
 
   // The B-Version of the data (modified data) to be compared.
   DiffCodes(data_b, str_b,trimSpace, ignoreSpace, ignoreCase);
+
+  Diff_impl(str_a, str_b);
+}
+
+void taStringDiff::Diff_impl(const String& str_a, const String& str_b) {
+  data_a.InitFmData();
   data_b.InitFmData();
 
   int max_len = data_a.lines + data_b.lines + 1;
@@ -1722,17 +1727,8 @@ void taStringDiff::ReDiffB(const String& str_a, const String& str_b,
 
   // The B-Version of the data (modified data) to be compared.
   DiffCodes(data_b, str_b, trimSpace, ignoreSpace, ignoreCase);
-  data_b.InitFmData();
 
-  int max_len = data_a.lines + data_b.lines + 1;
-  down_vector.SetSize(2 * max_len + 2);
-  up_vector.SetSize(2 * max_len + 2);
-
-  LCS(0, data_a.lines, 0, data_b.lines);
-
-  Optimize(data_a);
-  Optimize(data_b);
-  CreateDiffs(str_a, str_b);
+  Diff_impl(str_a, str_b);
 }
 
 bool taStringDiff::DiffFiles(const String& fname_a, const String& fname_b,
@@ -1831,21 +1827,11 @@ void taStringDiff::Optimize(taStringDiffData& ddata) {
 void taStringDiff::DiffInts(const int_PArray& array_a, const int_PArray& array_b) {
   // The A-Version of the data (original data) to be compared.
   data_a.data = array_a;
-  data_a.InitFmData();
-
   // The B-Version of the data (modified data) to be compared.
   data_b.data = array_b;
-  data_b.InitFmData();
 
-  int max_len = data_a.lines + data_b.lines + 1;
-  down_vector.SetSize(2 * max_len + 2);
-  up_vector.SetSize(2 * max_len + 2);
-
-  LCS(0, data_a.lines, 0, data_b.lines);
-
-  CreateDiffs("", "");		// null strings
+  Diff_impl("", "");		// null strings
 } 
-
 
 // This is the algorithm to find the Shortest Middle Snake (SMS).
 

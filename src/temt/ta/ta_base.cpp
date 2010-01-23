@@ -39,6 +39,7 @@
 # include "ta_qtgroup.h"
 # include "ta_qtclipdata.h"
 # include "ta_qtviewer.h" // for Help Browser
+# include "ta_seledit_qt.h" // for obj diff browser
 # include  <qcolor.h>
 # include <QMessageBox>
 # include  <qpixmap.h>
@@ -1426,13 +1427,13 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
   return true;
 }
 
-void taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, 
-			   const void* par, TypeDef* par_typ, MemberDef* memb_def) const {
+void taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def, 
+			   const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // always just add a record for this guy
-  taObjDiffRec* odr = new taObjDiffRec(nest_lev, GetTypeDef(), memb_def, (void*)this, (void*)par, par_typ);
+  taObjDiffRec* odr = new taObjDiffRec(nest_lev, GetTypeDef(), memb_def, (void*)this, (void*)par, par_typ, par_od);
   odl.Add(odr);
 
-  GetTypeDef()->GetObjDiffVal_class(odl, nest_lev, this, par, par_typ, memb_def);
+  GetTypeDef()->GetObjDiffVal_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -2458,58 +2459,16 @@ bool taBase::DiffCompare(taBase* cmp_obj) {
   GetObjDiffVal(odl_me, 0);
   cmp_obj->GetObjDiffVal(odl_cmp, 0);
 
-  taStringDiff diff;
-  odl_me.Diff(diff, odl_cmp);
 
-  // following is temporary diff display for debugging purposes until viewer is in place
+  taObjDiff_List diffs;
+  odl_me.Diff(diffs, odl_cmp);
 
-  String rval;
-  for(int i=0;i<diff.diffs.size;i++) {
-    taStringDiffItem& df = diff.diffs[i];
-    bool chg = false;
-    if(df.delete_a == df.insert_b) {
-      rval += String(df.start_a+1) + "c" + String(df.start_b+1) +
-	taStringDiff::GetDiffRange(df.start_b, df.insert_b) + "\n";
-      chg = true;
-    }
-    if(df.delete_a > 0) {
-      if(!chg) {
-	rval += String(df.start_a+1) +
-	  taStringDiff::GetDiffRange(df.start_a, df.delete_a)
-	  + "d" + String(df.start_b+1) + "\n";
-      }
-      for(int l=df.start_a; l<df.start_a + df.delete_a; l++) {
-	taObjDiffRec* rec = odl_me[l];
-	rval += "< " + rec->name + " : " + rec->value + "\n";
-      }
-      if(chg) {
-	rval += "---\n";
-      }
-    }
-    if(df.insert_b > 0) {
-      if(!chg) {
-	rval += String(df.start_a+1) + "a" + String(df.start_b+1) +
-	  taStringDiff::GetDiffRange(df.start_b, df.insert_b) + "\n";
-      }
-      for(int l=df.start_b; l<df.start_b + df.insert_b; l++) {
-	taObjDiffRec* rec = odl_cmp[l];
-	rval += "> " + rec->name + " : " + rec->value + "\n";
-      }
-    }
-  }
+  String capt = "DiffCompare_" + GetDisplayName() + "_" + cmp_obj->GetDisplayName();
 
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(TestError(!proj, "DiffCompare", "cannot find project")) return false;
-  taDoc* doc = (taDoc*)proj->docs.New(1);
-  doc->name = "DiffCompare_" + GetDisplayName() + "_" + cmp_obj->GetDisplayName();
+  taiObjDiffBrowser* odb = taiObjDiffBrowser::New(capt, diffs, taiMisc::defFontSize);
+  bool rval = odb->Browse();
+  // todo: construct mod list and actually perform modifications!
 
-  String html_safe = rval;
-  html_safe.xml_esc();
-  doc->text = "<html>\n<head></head>\n<body>\n== DiffCompare of: "
-    + GetDisplayName() + " and: " + cmp_obj->GetDisplayName() + " ==\n<pre>\n"
-    + html_safe + "\n</pre>\n</body>\n</html>\n";
-  doc->UpdateText();
-  tabMisc::DelayedFunCall_gui(doc, "BrowserSelectMe");
   return true;
 }
 
@@ -3468,13 +3427,19 @@ bool taList_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
   return false;
 }
 
-void taList_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, 
-			  const void* par, TypeDef* par_typ, MemberDef* memb_def) const {
-  inherited::GetObjDiffVal(odl, nest_lev, par, par_typ, memb_def);
+void taList_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,  MemberDef* memb_def,
+		  const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
+  // always just add a record for this guy
+  taObjDiffRec* odr = new taObjDiffRec(nest_lev, GetTypeDef(), memb_def, (void*)this,
+				       (void*)par, par_typ, par_od);
+  odl.Add(odr);
+
+  GetTypeDef()->GetObjDiffVal_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
+
   for(int i=0; i<size; i++) {
     taBase* itm = (taBase*)el[i];
     if(itm && itm->GetOwner() == this) {
-      itm->GetObjDiffVal(odl, nest_lev+1, this, GetTypeDef(), NULL);
+      itm->GetObjDiffVal(odl, nest_lev+1, NULL, this, GetTypeDef(), odr);
     }
   }
 }

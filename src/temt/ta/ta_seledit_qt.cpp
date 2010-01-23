@@ -1129,3 +1129,259 @@ void iSelectEditPanel::ResolveChanges_impl(CancelOp& cancel_op) {
 }
 
 
+
+//////////////////////////
+//   taiODRDelegate	//
+//////////////////////////
+
+taiODRDelegate::taiODRDelegate(taiObjDiffBrowser* odb_) : QItemDelegate() {
+  odb = odb_;
+}
+
+QWidget* taiODRDelegate::createEditor(QWidget* parent, 
+    const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+  taObjDiffRec* rec = odb->odl->SafeEl(index.row());
+  if(!rec) {
+    return inherited::createEditor(parent, option, index);
+  }
+  QCheckBox* rval = new QCheckBox("", parent);
+  rval->setAutoFillBackground(true);
+  int a_or_b = index.column() == 0 ? 0 : 1;
+  String lbl;
+  bool chk = rec->GetCurAction(a_or_b, lbl);
+  rval->setChecked(chk);
+  rval->setText(lbl);
+  return rval;
+}
+
+void taiODRDelegate::setEditorData(QWidget* editor,
+    const QModelIndex& index) const
+{
+  taObjDiffRec* rec = odb->odl->SafeEl(index.row());
+  if(!rec) return;
+
+  int a_or_b = index.column() == 0 ? 0 : 1;
+  QCheckBox* rval = static_cast<QCheckBox*>(editor);
+  String lbl;
+  bool chk = rec->GetCurAction(a_or_b, lbl);
+  rval->setChecked(chk);
+  rval->setText(lbl);
+}
+
+void taiODRDelegate::setModelData(QWidget* editor,
+  QAbstractItemModel* model, const QModelIndex& index) const
+{
+  taObjDiffRec* rec = odb->odl->SafeEl(index.row());
+  if(!rec) return;
+
+  int a_or_b = index.column() == 0 ? 0 : 1;
+  QCheckBox* rval = static_cast<QCheckBox*>(editor);
+//   cerr << rval->isChecked() << endl;
+  rec->SetCurAction(a_or_b, rval->isChecked());
+
+  String lbl;
+  bool chk = rec->GetCurAction(a_or_b, lbl);
+  lbl = (chk ? String("+") : String("-")) + String(" ") + lbl;
+
+  odb->items->currentItem()->setText(index.column(), lbl);
+
+  // todo: update background
+  // also tood: do condedit checks in orig diffs.
+}
+
+
+//////////////////////////////////
+//   taiObjDiffBrowser		//
+//////////////////////////////////
+
+taiObjDiffBrowser* taiObjDiffBrowser::New(const String& caption_, taObjDiff_List& diffs, 
+					  int font_type, QWidget* par_window_) {
+  taiObjDiffBrowser* rval = new taiObjDiffBrowser(caption_, par_window_);
+  rval->setFont(taiM->dialogFont(font_type));
+  rval->odl = &diffs;
+  rval->Constr();
+  return rval;
+}
+
+taiObjDiffBrowser::taiObjDiffBrowser(const String& caption_, QWidget* par_window_)
+:inherited(par_window_)
+{
+  caption = caption_;
+  setModal(true);
+  setWindowTitle(caption);
+  resize(taiM->dialogSize(taiMisc::hdlg_b));
+}
+
+taiObjDiffBrowser::~taiObjDiffBrowser() {
+  if(ordel) delete ordel;
+  ordel = NULL;
+}
+
+void taiObjDiffBrowser::accept() {
+  inherited::accept();
+}
+
+void taiObjDiffBrowser::reject() {
+  inherited::reject();
+}
+
+bool taiObjDiffBrowser::Browse() {
+  return (exec() == iDialog::Accepted);
+}
+
+void taiObjDiffBrowser::Constr() {
+  layOuter = new QVBoxLayout(this);
+  layOuter->setMargin(taiM->vsep_c);
+  layOuter->setSpacing(taiM->vspc_c); 
+  QLabel* lbl = NULL;
+  
+  items = new QTreeWidget(this);
+  layOuter->addWidget(items, 1); // list is item to expand in host
+
+  items->setColumnCount(COL_N);
+  items->setSortingEnabled(false);// only 1 order possible
+  items->setEditTriggers(QAbstractItemView::DoubleClicked);
+  items->headerItem()->setText(COL_A_FLG, "A Act");
+  items->headerItem()->setText(COL_A_NM, "A Name");
+  items->headerItem()->setText(COL_A_VAL, "A Value");
+  items->headerItem()->setText(COL_B_FLG, "B Act");
+  items->headerItem()->setText(COL_B_NM, "B Name");
+  items->headerItem()->setText(COL_B_VAL, "B Value");
+  items->setUniformRowHeights(true);
+
+  ordel = new taiODRDelegate(this);
+
+  items->setItemDelegateForColumn(COL_A_FLG, ordel);
+  items->setItemDelegateForColumn(COL_B_FLG, ordel);
+
+  QHBoxLayout* lay = new QHBoxLayout();
+  lay->addStretch();
+  btnOk = new QPushButton("&Ok", this);
+  btnOk->setDefault(true);
+  lay->addWidget(btnOk);
+  lay->addSpacing(taiM->vsep_c);
+  btnCancel = new QPushButton("&Cancel", this);
+  lay->addWidget(btnCancel);
+  layOuter->addLayout(lay);
+
+  connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
+  connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
+
+  AddItems();
+}
+
+void taiObjDiffBrowser::AddItems() {
+  if(! odl || odl->size == 0) return;
+
+  QBrush add_color(Qt::green);
+  QBrush del_color(Qt::red);
+  QBrush chg_color(Qt::yellow);
+
+  const int max_nest = 256;	// max level of nesting
+
+  QTreeWidgetItem* nest_pars[max_nest];
+
+  int init_nest = odl->FastEl(0)->nest_level; // should be 0..
+
+  int del_nest = 0;
+  int add_nest = 0;
+
+  for(int i=0;i<odl->size; i++) {
+    taObjDiffRec* rec = odl->FastEl(i);
+    String lbl_a;
+    bool chk_a = rec->GetCurAction(0, lbl_a);
+    lbl_a = (chk_a ? String("+") : String("-")) + String(" ") + lbl_a;
+    String lbl_b;
+    bool chk_b = rec->GetCurAction(1, lbl_b);
+    lbl_b = (chk_b ? String("+") : String("-")) + String(" ") + lbl_b;
+
+    // todo: need to have proper full nesting of everything down to given level..
+    // probably need that from original guy -- just add a flag: DIFF_PAR
+    // and set that in original diff code
+
+    QTreeWidgetItem* witm;
+    int par_nest = rec->nest_level-1;
+    if(par_nest < init_nest) {
+      witm = new QTreeWidgetItem(items);
+    }
+    else {
+      if(par_nest >= max_nest) 
+	par_nest = max_nest-1;
+      witm = new QTreeWidgetItem(nest_pars[par_nest]);
+    }
+
+    witm->setFlags(witm->flags() | Qt::ItemIsEditable);
+
+    int cur_nest = rec->nest_level;
+    if(cur_nest >= max_nest) 
+      cur_nest = max_nest-1;
+
+    nest_pars[cur_nest] = witm;
+
+    witm->setText(COL_A_FLG, lbl_a);
+    witm->setText(COL_B_FLG, lbl_b);
+
+    if(rec->HasDiffFlag(taObjDiffRec::DIFF_DEL)) {
+      add_nest = 0;
+      witm->setText(COL_A_NM, rec->name);
+      witm->setText(COL_A_VAL, rec->value);
+      witm->setBackground(COL_A_FLG, (chk_a ? add_color : del_color));
+      witm->setBackground(COL_A_VAL, del_color);
+      witm->setBackground(COL_A_NM, del_color);
+      witm->setText(COL_B_NM, "");
+      witm->setText(COL_B_VAL, "");
+      witm->setBackground(COL_B_FLG, (chk_b ? del_color : add_color));
+      witm->setBackground(COL_B_VAL, add_color);
+      witm->setBackground(COL_B_NM, add_color);
+      if(cur_nest > del_nest) {
+	witm->setExpanded(false);
+      }
+      else {
+	del_nest = cur_nest;
+	witm->setExpanded(true);
+      }
+    }
+    else if(rec->HasDiffFlag(taObjDiffRec::DIFF_ADD)) {
+      del_nest = 0;
+      witm->setText(COL_A_NM, "");
+      witm->setText(COL_A_VAL, "");
+      witm->setBackground(COL_A_FLG, (chk_a ? del_color : add_color));
+      witm->setBackground(COL_A_VAL, add_color);
+      witm->setBackground(COL_A_NM, add_color);
+      witm->setText(COL_B_NM, rec->diff_odr->name);
+      witm->setText(COL_B_VAL, rec->diff_odr->value);
+      witm->setBackground(COL_B_FLG, (chk_b ? add_color : del_color));
+      witm->setBackground(COL_B_VAL, del_color);
+      witm->setBackground(COL_B_NM, del_color);
+      if(cur_nest > add_nest) {
+	witm->setExpanded(false);
+      }
+      else {
+	add_nest = cur_nest;
+	witm->setExpanded(true);
+      }
+    }
+    else if(rec->HasDiffFlag(taObjDiffRec::DIFF_CHG)) {
+      del_nest = 0;
+      add_nest = 0;
+      witm->setText(COL_A_NM, rec->name);
+      witm->setText(COL_A_VAL, rec->value);
+      witm->setBackground(COL_A_FLG, (chk_a ? del_color : chg_color));
+      witm->setBackground(COL_A_VAL, chg_color);
+      witm->setBackground(COL_A_NM, chg_color);
+      witm->setText(COL_B_NM, rec->diff_odr->name);
+      witm->setText(COL_B_VAL, rec->diff_odr->value);
+      witm->setBackground(COL_B_FLG, (chk_b ? del_color : chg_color));
+      witm->setBackground(COL_B_VAL, chg_color);
+      witm->setBackground(COL_B_NM, chg_color);
+    }
+  }
+
+  items->resizeColumnToContents(COL_A_FLG);
+  items->resizeColumnToContents(COL_A_NM);
+  items->resizeColumnToContents(COL_A_VAL);
+  items->resizeColumnToContents(COL_B_FLG);
+  items->resizeColumnToContents(COL_B_NM);
+  items->resizeColumnToContents(COL_B_VAL);
+}

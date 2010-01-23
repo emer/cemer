@@ -1271,6 +1271,9 @@ public:
   void	DiffInts(const int_PArray& array_a, const int_PArray& array_b); 
   // computes the difference between two arrays of integers -- underlying algorithm uses ints so this is easy..
 
+  void	Diff_impl(const String& str_a, const String& str_b);
+  // do the diff based on data in data_a and data_b -- does LCS, Optimize and CreateDiffs
+
   void	GetLines(taStringDiffData& ddata, const String& str);
   // find line starting positions in the text strings
 

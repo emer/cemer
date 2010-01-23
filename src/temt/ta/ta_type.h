@@ -2395,10 +2395,12 @@ public:
   // gets an HTML representation of a sub type (typdef or enum) -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
 
   void		GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
-	      const void* par=NULL, TypeDef* par_typ=NULL, MemberDef* memb_def=NULL) const;
+			MemberDef* memb_def=NULL, const void* par=NULL, TypeDef* par_typ=NULL,
+			taObjDiffRec* par_od=NULL) const;
   // add this object and all its members (if a class) to the object diff list
   void		GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void* base,
-		const void* par=NULL, TypeDef* par_typ=NULL, MemberDef* memb_def=NULL) const;
+		    MemberDef* memb_def=NULL, const void* par=NULL, TypeDef* par_typ=NULL,
+		    taObjDiffRec* par_od=NULL) const;
   // just add members of a class object to the diff list
 
   // saving and loading of type instances to/from streams
@@ -2440,6 +2442,22 @@ class TA_API taObjDiffRec : public taRefN {
   // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS ##MEMB_NO_SHOW_TREE TA object difference record -- records information about objects for purposes of diffing object structures
 INHERITED(taRefN)
 public:
+  enum DiffFlags {		// #BITS
+    DF_NONE  = 0x0000,		// nothing
+    DIFF_DEL = 0x0001,		// diff edit = delete from src_a
+    DIFF_ADD = 0x0002,		// diff edit = add from src_b to src_a
+    DIFF_CHG = 0x0004,		// diff edit = change from a to b
+    DIFF_PAR = 0x0008,		// parent of lower-level diff, but not itself different
+    ACT_DEL_A  = 0x0010,	// action to take: delete obj from a
+    ACT_DEL_B  = 0x0020,	// action to take: delete obj from b
+    ACT_ADD_A  = 0x0040,	// action to take: add obj to a after paired diff_odr
+    ACT_ADD_B  = 0x0080,	// action to take: add obj to b after paired diff_odr
+    ACT_COPY_AB = 0x0100,	// action to take: copy from a to paired diff_odr b
+    ACT_COPY_BA = 0x0200,	// action to take: copy from paired diff_odr b to a
+  };
+
+  DiffFlags	flags;		// flags for diff status
+
   taObjDiff_List* owner;	// the owner of this one
   int		idx;		// the index number in owning list
   int		nest_level;	// how deeply nested or embedded is this object in the obj hierarchy
@@ -2451,14 +2469,33 @@ public:
   void*		addr;		// address in memory of this object
   void*		par_addr;	// address in memory of parent of this object, if a member of a containing object
   TypeDef*	par_type;	// type of parent object, if a member of a containing object
+  taObjDiffRec* par_odr;	// parent diff record
+  taObjDiffRec* diff_odr;	// paired diff record from other source
   taDataLink*	data_link;
+
+
+  inline void		SetDiffFlag(DiffFlags flg)   { flags = (DiffFlags)(flags | flg); }
+  // #CAT_ObjectMgmt set data column flag state on
+  inline void		ClearDiffFlag(DiffFlags flg) { flags = (DiffFlags)(flags & ~flg); }
+  // #CAT_ObjectMgmt clear data column flag state (set off)
+  inline bool		HasDiffFlag(DiffFlags flg) const { return (flags & flg); }
+  // #CAT_ObjectMgmt check if data column flag is set
+  inline void		SetDiffFlagState(DiffFlags flg, bool on)
+  { if(on) SetDiffFlag(flg); else ClearDiffFlag(flg); }
+  // #CAT_ObjectMgmt set data column flag state according to on bool (if true, set flag, if false, clear it)
+
+
+  bool		GetCurAction(int a_or_b, String& lbl);
+  // get currently set action for this guy, depending on its flag status, and a_or_b (a=0, b=1) -- also fills in label describing action
+  void		SetCurAction(int a_or_b, bool on_off);
+  // set action for this guy, depending on its flag status, and a_or_b (a=0, b=1)
 
   void 		GetValue();
   // gets the value and hash code (and name) fields based on the other information already set
   
   taObjDiffRec();
   taObjDiffRec(int nest, TypeDef* td, MemberDef* md, void* adr, void* par_adr = NULL,
-	       TypeDef* par_typ = NULL);
+	       TypeDef* par_typ = NULL, taObjDiffRec* par_od = NULL);
   taObjDiffRec(const taObjDiffRec& cp); // copy constructor
   ~taObjDiffRec();
 
@@ -2500,8 +2537,8 @@ public:
   void		HashToIntArray(int_PArray& array);
   // copy all hash values to given array -- for use in differencing
 
-  void		Diff(taStringDiff& diff, taObjDiff_List& cmp_list);
-  // perform a diff operation on a comparison list, using given diff object
+  void		Diff(taObjDiff_List& diff_ods, taObjDiff_List& cmp_list);
+  // perform a diff operation between this list and comparison list (cmp_list), linking diff recs into diff_ods list with flags set to indicate nature of differences
 };
 
 #endif // ta_type_h
