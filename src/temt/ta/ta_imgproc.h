@@ -803,6 +803,7 @@ protected:
 	int cur_disp;
 	int cur_t;
 	int cur_eye;
+	bool process_separate_eyes;
 	bool 		cur_superimpose;
 };
 

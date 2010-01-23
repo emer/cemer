@@ -2514,7 +2514,10 @@ bool MotionDispGaborV1Spec::FilterMultiInputDisp(float_Matrix& v1_output1, float
 		}
 		cur_t = t;
 		
-		cur_eye = 0;
+		//process_separate_eyes = true;
+		//cur_eye = 0;
+		process_separate_eyes = false;
+		
 		threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
 		threads.min_units = 1;
 		threads.nibble_chunk = 1;
@@ -2522,11 +2525,12 @@ bool MotionDispGaborV1Spec::FilterMultiInputDisp(float_Matrix& v1_output1, float
 		threads.Run(&ip_call, un_geom.n);
 		
 		
-		cur_eye = 1;
+		/* cur_eye = 1;
+		 
 		threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
 		threads.min_units = 1;
 		threads.nibble_chunk = 1;
-		threads.Run(&ip_call, un_geom.n);
+		threads.Run(&ip_call, un_geom.n); */
 		
 	}
 	return true;
@@ -2700,13 +2704,19 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 											//oval += fval * cur_on_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
 											
 											float input_val = 0;
-											//input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y);
-											if(cur_eye == 0) {
-												input_val = cur_on_left_input->FastEl(in_left.x, in_left.y);
+											
+											if(process_separate_eyes) {
+												if(cur_eye == 0) {
+													input_val = cur_on_left_input->FastEl(in_left.x, in_left.y);
+												}
+												else {
+													input_val = cur_on_right_input->FastEl(in_left.x, in_left.y);
+												}
 											}
 											else {
-												input_val = cur_on_right_input->FastEl(in_left.x, in_left.y);
+												input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y);
 											}
+
 											oval[disp_lvl_i] += fval * input_val * cur_disp_mult * (1.0f / disparity_width);
 											//oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
 										}
@@ -2714,12 +2724,16 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 											//oval += -fval * cur_off_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
 											//oval += -fval * cur_off_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
 											float input_val = 0;
-											//input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y);
-											if(cur_eye == 0) {
-												input_val = cur_off_left_input->FastEl(in_left.x, in_left.y);
+											if(process_separate_eyes) {
+												if(cur_eye == 0) {
+													input_val = cur_off_left_input->FastEl(in_left.x, in_left.y);
+												}
+												else {
+													input_val = cur_off_right_input->FastEl(in_left.x, in_left.y);
+												}
 											}
 											else {
-												input_val = cur_off_right_input->FastEl(in_left.x, in_left.y);
+												input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y);
 											}
 											oval[disp_lvl_i] += fval * input_val * cur_disp_mult * (1.0f / disparity_width);
 											//oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
