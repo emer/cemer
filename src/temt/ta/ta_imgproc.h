@@ -754,6 +754,8 @@ public:
   float_Matrix	gp_gauss_mat;	  // #READ_ONLY #NO_SAVE #NO_COPY group gaussian vals 
 	float disp_gauss_sigma; // width of gaussian weighting factor over the disparity comparison
 	int		disparity_width;	//size of the area to compare disparities
+	int		disparity_offset;	//disparity offset increments
+
 	float_Matrix  disp_gauss_mat; // #READ_ONLY #NO_SAVE #NO_COPY disparity group gaussian vals
 
   virtual void	UpdateGeoms();	// update all the geometry values based on current setting

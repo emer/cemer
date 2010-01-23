@@ -2691,10 +2691,10 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 									for(int disp_i = 0; disp_i < disparity_width; disp_i++) {
 										
 										in_left = fgpof + fc;
-										in_left.x +=  (-1 * disp) - (disparity_width/2 - disp_i);
+										in_left.x +=  (-1 * disp) - (disparity_offset - disp_i);
 										if(in_left.WrapClip(wrap, trg_input_size)) continue;
 										in_right = fgpof + fc;
-										in_right.x +=  disp + (disparity_width/2 - disp_i);
+										in_right.x +=  disp + (disparity_offset - disp_i);
 										if(in_right.WrapClip(wrap, trg_input_size)) continue;
 										
 										float cur_disp_mult = disp_gauss_mat.FastEl(disp_i);
