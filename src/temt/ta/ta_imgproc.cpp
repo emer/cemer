@@ -1687,32 +1687,42 @@ bool GaborV1SpecBase::InitFilters() {
 }
 
 bool GaborV1SpecBase::InitFilters_Gabor() {
-  n_filters = gabor_rf.n_angles * 2;
-  gabor_specs.SetSize(n_filters);
-
-  for(int i=0;i<n_filters;i++) {
-    float angle_dx = (float)(i % gabor_rf.n_angles); // angle is inner dim
-    float phase_dx = (float)((i / gabor_rf.n_angles) % 2); // then phase
-
-    GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs[i];
-
-    gf->x_size = rf_width.x;
-    gf->y_size = rf_width.y;
-    gf->ctr_x = (float)(gf->x_size - 1.0f) / 2.0f;
-    gf->ctr_y = (float)(gf->y_size - 1.0f) / 2.0f;
-    gf->angle = taMath_float::pi * angle_dx / (float)gabor_rf.n_angles;
-    gf->phase = taMath_float::pi * phase_dx;
-    gf->freq = gabor_rf.freq;
-    gf->length = gabor_rf.length;
-    gf->width = gabor_rf.width;
-    gf->amp = gabor_rf.amp;
-    gf->UpdateFilter();
-  }
-  return true;
+	
+	n_filters = gabor_rf.n_angles * 2;
+	
+	gabor_specs.SetSize(n_filters);
+	
+	for(int i=0;i<n_filters;i++) {
+		float angle_dx = (float)(i % gabor_rf.n_angles); // angle is inner dim
+		float phase_dx = (float)((i / gabor_rf.n_angles) % 2); // then phase
+		
+		GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs[i];
+		
+		gf->x_size = rf_width.x;
+		gf->y_size = rf_width.y;
+		gf->ctr_x = (float)(gf->x_size - 1.0f) / 2.0f;
+		gf->ctr_y = (float)(gf->y_size - 1.0f) / 2.0f;
+		gf->angle = taMath_float::pi * angle_dx / (float)gabor_rf.n_angles;
+		gf->phase = taMath_float::pi * phase_dx;
+		gf->freq = gabor_rf.freq;
+		gf->length = gabor_rf.length;
+		gf->width = gabor_rf.width;
+		gf->amp = gabor_rf.amp;
+		gf->UpdateFilter();
+	}
+	
+	return true;
 }
 
 bool GaborV1SpecBase::InitFilters_MotionDispGabor() {
-  n_filters = motiondisp_gabor_rf.n_angles * 2;
+	
+	if(two_phase) {	
+		n_filters = motiondisp_gabor_rf.n_angles * 2;
+		
+	}
+	else {
+		n_filters = motiondisp_gabor_rf.n_angles;
+	}
   motiondisp_gabor_specs.SetSize(n_filters);
 
   for(int i=0;i<n_filters;i++) {

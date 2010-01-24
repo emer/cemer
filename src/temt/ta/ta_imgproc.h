@@ -629,6 +629,8 @@ public:
   taBase_List 	gabor_specs; 	// #READ_ONLY #NO_SAVE underlying gabor generators (type GaborFilterSpec)
   taBase_List 	blob_specs; 	// #READ_ONLY #NO_SAVE underlying DoG generators (type DoGFilterSpec)
   taBase_List 	motiondisp_gabor_specs; 	// #READ_ONLY #NO_SAVE underlying motion/disp gabor generators (type MotionDispGaborFilterSpec)
+	
+	bool two_phase;
 
   virtual bool 	InitFilters();
   // initialize the filters based on the RF specs
