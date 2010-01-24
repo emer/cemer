@@ -2437,6 +2437,15 @@ private:
   void		Copy_(const TypeDef& cp);
 };
 
+class TA_API taObjDiffRecExtra  {
+  // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS ##MEMB_NO_SHOW_TREE extra data for TA object difference record
+public:
+
+  virtual TypeDef* GetTypeDef()	{ return NULL; } // subclasses should put correct val here
+
+  taObjDiffRecExtra() { };
+  virtual ~taObjDiffRecExtra() { };
+};
 
 class TA_API taObjDiffRec : public taRefN {
   // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS ##MEMB_NO_SHOW_TREE TA object difference record -- records information about objects for purposes of diffing object structures
@@ -2472,7 +2481,7 @@ public:
   taObjDiffRec* par_odr;	// parent diff record
   taObjDiffRec* diff_odr;	// paired diff record from other source
   taDataLink*	data_link;
-
+  taObjDiffRecExtra* extra;	// extra data
 
   inline void		SetDiffFlag(DiffFlags flg)   { flags = (DiffFlags)(flags | flg); }
   // #CAT_ObjectMgmt set data column flag state on
@@ -2539,6 +2548,13 @@ public:
 
   void		Diff(taObjDiff_List& diff_ods, taObjDiff_List& cmp_list);
   // perform a diff operation between this list and comparison list (cmp_list), linking diff recs into diff_ods list with flags set to indicate nature of differences
+
+protected:
+  void_PArray	nest_pars;
+  // keeps track of current parents at each nest level
+
+  bool		CheckAddParents(taObjDiff_List& diff_ods, taObjDiffRec* rec);
+  // add parents of rec item as necessary depending on nest_pars parents already current
 };
 
 #endif // ta_type_h

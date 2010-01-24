@@ -1427,11 +1427,16 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
   return true;
 }
 
+taBaseObjDiffRecExtra::taBaseObjDiffRecExtra(taBase* tab) {
+  tabref = tab;
+}
+
 void taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def, 
 			   const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // always just add a record for this guy
   taObjDiffRec* odr = new taObjDiffRec(nest_lev, GetTypeDef(), memb_def, (void*)this, (void*)par, par_typ, par_od);
   odl.Add(odr);
+  odr->extra = new taBaseObjDiffRecExtra((taBase*)this);
 
   GetTypeDef()->GetObjDiffVal_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
 }
@@ -3433,6 +3438,7 @@ void taList_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,  MemberDef* m
   taObjDiffRec* odr = new taObjDiffRec(nest_lev, GetTypeDef(), memb_def, (void*)this,
 				       (void*)par, par_typ, par_od);
   odl.Add(odr);
+  odr->extra = new taBaseObjDiffRecExtra((taBase*)this);
 
   GetTypeDef()->GetObjDiffVal_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
 

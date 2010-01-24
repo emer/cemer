@@ -2684,5 +2684,19 @@ private:
   void Destroy() {}
 };
 
+class TA_API taBaseObjDiffRecExtra : public taObjDiffRecExtra {
+INHERITED(taObjDiffRecExtra)
+public:
+  taBaseRef	tabref;		// keeps things safe -- check this ref before operating on tabase data
+
+  override TypeDef* GetTypeDef()	{ return &TA_taBaseObjDiffRecExtra; }
+
+  taBaseObjDiffRecExtra() { };
+  taBaseObjDiffRecExtra(taBase* tab);
+  ~taBaseObjDiffRecExtra() { tabref.CutLinks(); }
+ private:
+  taBaseObjDiffRecExtra(const taBaseObjDiffRecExtra& cp) { };
+};
+
 
 #endif // ta_base_h

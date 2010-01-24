@@ -7281,6 +7281,8 @@ void TypeDef::GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void*
     MemberDef* md = members.FastEl(i);
     if(md->HasOption("NO_SAVE"))
       continue;
+    if(!md->GetCondOptTest("CONDSHOW", this, base))
+      continue;
     md->type->GetObjDiffVal(odl, nest_lev+1, md->GetOff(base), md, base, (TypeDef*)this, par_od);
   }
 }
@@ -7400,6 +7402,7 @@ void taObjDiffRec::Initialize() {
   par_odr = NULL;
   diff_odr = NULL;
   data_link = NULL;
+  extra = NULL;
 }
 
 void taObjDiffRec::Copy_(const taObjDiffRec& cp) {
@@ -7439,6 +7442,9 @@ taObjDiffRec::~taObjDiffRec() {
   if (data_link != NULL) {
     data_link->DataDestroying(); // link NULLs our pointer
   }
+  if(extra)
+    delete extra;
+  extra = NULL;
 }
 
 void taObjDiffRec::Copy(const taObjDiffRec& cp) {
@@ -7450,7 +7456,7 @@ void taObjDiffRec::GetValue() {
   value = type->GetValStr(addr, par_addr, mdef, TypeDef::SC_VALUE);
 #ifndef NO_TA_BASE
   if(type->InheritsFrom(&TA_taBase)) {
-    name = ((taBase*)addr)->GetDisplayName();
+    name = type->name + ": " + ((taBase*)addr)->GetDisplayName();
     value = name;		// otherwise it is a path that will be wrong!
   }
   else
@@ -7492,6 +7498,9 @@ bool taObjDiffRec::GetCurAction(int a_or_b, String& lbl) {
       rval = HasDiffFlag(ACT_COPY_AB);
       lbl = "Cpy A";
     }
+  }
+  else if(HasDiffFlag(DIFF_PAR)) {
+    lbl = "Par";
   }
   return rval;
 }
@@ -7557,6 +7566,36 @@ void taObjDiff_List::HashToIntArray(int_PArray& array) {
   }
 }
 
+bool taObjDiff_List::CheckAddParents(taObjDiff_List& diff_ods, taObjDiffRec*  rec) {
+  taObjDiffRec* cur_rec = rec;
+  int cur_nest = cur_rec->nest_level;
+
+  if(cur_nest == 0) return false;
+
+  int start_nest = cur_nest;
+  nest_pars.SetSize(cur_nest+1);
+
+  while(cur_rec->par_odr != (taObjDiffRec*)nest_pars[cur_nest-1]) {
+    nest_pars[cur_nest-1] = (void*)cur_rec->par_odr;
+    cur_rec = cur_rec->par_odr;
+    cur_nest = cur_rec->nest_level;
+    if(cur_nest == 0) break;
+  }
+
+  for(int i=cur_nest;i<start_nest;i++) {
+    cur_rec = (taObjDiffRec*)nest_pars[i];
+    if(cur_rec != rec) {
+      cur_rec->flags = taObjDiffRec::DIFF_PAR; // indicate that it is just a parent
+      diff_ods.Link(cur_rec);
+      taMisc::FlushConsole();
+    }
+  }
+
+  nest_pars[start_nest] = (void*)rec; // always add current as potential next parent
+
+  return true;
+}
+
 void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) {
   taStringDiff diff;
 
@@ -7565,17 +7604,20 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
 
   diff.Diff_impl("", "");	// null strings
 
+  nest_pars.Reset();
   for(int i=0;i<diff.diffs.size;i++) {
     taStringDiffItem& df = diff.diffs[i];
 
     taObjDiffRec::DiffFlags cur_flag = taObjDiffRec::DF_NONE;
-    
+
     bool chg = false;
     if(df.delete_a == df.insert_b) {
       cur_flag = taObjDiffRec::DIFF_CHG;
+
       chg = true;
       for(int l=0; l<df.delete_a; l++) {
 	taObjDiffRec* rec_a = SafeEl(df.start_a + l);
+	CheckAddParents(diffs_list, rec_a);
 	diffs_list.Link(rec_a);
 	rec_a->flags = cur_flag;
 	taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b + l);
@@ -7589,6 +7631,8 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
 	taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b);
 	for(int l=0; l<df.delete_a; l++) {
 	  taObjDiffRec* rec_a = SafeEl(df.start_a + l);
+	  CheckAddParents(diffs_list, rec_a);
+	  taMisc::FlushConsole();
 	  diffs_list.Link(rec_a);
 	  rec_a->flags = cur_flag;
 	  rec_a->diff_odr = rec_b; // starting point in b..
@@ -7599,6 +7643,7 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
 	taObjDiffRec* rec_a = SafeEl(df.start_a);
 	for(int l=0; l<df.insert_b; l++) {
 	  taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b + l);
+	  CheckAddParents(diffs_list, rec_b);
 	  diffs_list.Link(rec_b);
 	  rec_b->flags = cur_flag;
 	  rec_b->diff_odr = rec_a; // starting point in a..
@@ -7606,4 +7651,6 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
       }
     }
   }
+
+  nest_pars.Reset();
 }

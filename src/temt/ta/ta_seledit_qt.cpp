@@ -1242,18 +1242,19 @@ void taiObjDiffBrowser::Constr() {
   items->setColumnCount(COL_N);
   items->setSortingEnabled(false);// only 1 order possible
   items->setEditTriggers(QAbstractItemView::DoubleClicked);
-  items->headerItem()->setText(COL_A_FLG, "A Act");
+  items->headerItem()->setText(COL_A_FLG, "A Action");
   items->headerItem()->setText(COL_A_NM, "A Name");
   items->headerItem()->setText(COL_A_VAL, "A Value");
-  items->headerItem()->setText(COL_B_FLG, "B Act");
+  items->headerItem()->setText(COL_B_FLG, "B Action");
   items->headerItem()->setText(COL_B_NM, "B Name");
   items->headerItem()->setText(COL_B_VAL, "B Value");
   items->setUniformRowHeights(true);
+  items->setIndentation(taMisc::tree_indent);
 
   ordel = new taiODRDelegate(this);
 
-  items->setItemDelegateForColumn(COL_A_FLG, ordel);
-  items->setItemDelegateForColumn(COL_B_FLG, ordel);
+//   items->setItemDelegateForColumn(COL_A_FLG, ordel);
+//   items->setItemDelegateForColumn(COL_B_FLG, ordel);
 
   QHBoxLayout* lay = new QHBoxLayout();
   lay->addStretch();
@@ -1278,9 +1279,7 @@ void taiObjDiffBrowser::AddItems() {
   QBrush del_color(Qt::red);
   QBrush chg_color(Qt::yellow);
 
-  const int max_nest = 256;	// max level of nesting
-
-  QTreeWidgetItem* nest_pars[max_nest];
+  void_PArray	nest_pars;
 
   int init_nest = odl->FastEl(0)->nest_level; // should be 0..
 
@@ -1296,31 +1295,25 @@ void taiObjDiffBrowser::AddItems() {
     bool chk_b = rec->GetCurAction(1, lbl_b);
     lbl_b = (chk_b ? String("+") : String("-")) + String(" ") + lbl_b;
 
-    // todo: need to have proper full nesting of everything down to given level..
-    // probably need that from original guy -- just add a flag: DIFF_PAR
-    // and set that in original diff code
-
     QTreeWidgetItem* witm;
     int par_nest = rec->nest_level-1;
-    if(par_nest < init_nest) {
+    if(par_nest <= init_nest) {
       witm = new QTreeWidgetItem(items);
     }
     else {
-      if(par_nest >= max_nest) 
-	par_nest = max_nest-1;
-      witm = new QTreeWidgetItem(nest_pars[par_nest]);
+      witm = new QTreeWidgetItem((QTreeWidgetItem*)nest_pars[par_nest]);
     }
 
-    witm->setFlags(witm->flags() | Qt::ItemIsEditable);
-
     int cur_nest = rec->nest_level;
-    if(cur_nest >= max_nest) 
-      cur_nest = max_nest-1;
-
+    nest_pars.SetSize(cur_nest+1);
     nest_pars[cur_nest] = witm;
 
     witm->setText(COL_A_FLG, lbl_a);
     witm->setText(COL_B_FLG, lbl_b);
+
+    witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+    witm->setCheckState(COL_A_FLG, Qt::Unchecked);
+    witm->setCheckState(COL_B_FLG, Qt::Unchecked);
 
     if(rec->HasDiffFlag(taObjDiffRec::DIFF_DEL)) {
       add_nest = 0;
@@ -1375,6 +1368,18 @@ void taiObjDiffBrowser::AddItems() {
       witm->setBackground(COL_B_FLG, (chk_b ? del_color : chg_color));
       witm->setBackground(COL_B_VAL, chg_color);
       witm->setBackground(COL_B_NM, chg_color);
+    }
+    else if(rec->HasDiffFlag(taObjDiffRec::DIFF_PAR)) {
+      del_nest = 0;
+      add_nest = 0;
+      witm->setText(COL_A_NM, rec->name);
+      witm->setText(COL_A_VAL, rec->value);
+      if(rec->diff_odr) {
+	witm->setText(COL_B_NM, rec->diff_odr->name);
+	witm->setText(COL_B_VAL, rec->diff_odr->value);
+      }
+      witm->setExpanded(true);
+      // not editable
     }
   }
 
