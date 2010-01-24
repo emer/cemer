@@ -260,7 +260,7 @@ protected:
 class taiObjDiffBrowser;
 
 class TA_API taiODRDelegate: public QItemDelegate {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS delegate for browser
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS delegate for browser -- not currently used..
 INHERITED(QItemDelegate)
 Q_OBJECT
 public:
@@ -316,6 +316,7 @@ public:
 protected slots:
   override void 	accept(); // override
   override void 	reject(); // override
+  void		itemClicked(QTreeWidgetItem* itm, int column);
 private:
   void 		init(const String& captn); // called by constructors
 };

@@ -1230,6 +1230,8 @@ bool taiObjDiffBrowser::Browse() {
   return (exec() == iDialog::Accepted);
 }
 
+Q_DECLARE_METATYPE(taObjDiffRec*);
+
 void taiObjDiffBrowser::Constr() {
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(taiM->vsep_c);
@@ -1269,6 +1271,9 @@ void taiObjDiffBrowser::Constr() {
   connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
   connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
 
+  connect(items, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
+	  SLOT(itemClicked(QTreeWidgetItem*,int)));
+
   AddItems();
 }
 
@@ -1304,16 +1309,15 @@ void taiObjDiffBrowser::AddItems() {
       witm = new QTreeWidgetItem((QTreeWidgetItem*)nest_pars[par_nest]);
     }
 
+    QVariant val = qVariantFromValue( rec );
+    witm->setData(0, Qt::UserRole+1, val);
+
     int cur_nest = rec->nest_level;
     nest_pars.SetSize(cur_nest+1);
     nest_pars[cur_nest] = witm;
 
     witm->setText(COL_A_FLG, lbl_a);
     witm->setText(COL_B_FLG, lbl_b);
-
-    witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
-    witm->setCheckState(COL_A_FLG, Qt::Unchecked);
-    witm->setCheckState(COL_B_FLG, Qt::Unchecked);
 
     if(rec->HasDiffFlag(taObjDiffRec::DIFF_DEL)) {
       add_nest = 0;
@@ -1334,6 +1338,9 @@ void taiObjDiffBrowser::AddItems() {
 	del_nest = cur_nest;
 	witm->setExpanded(true);
       }
+      witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+      witm->setCheckState(COL_A_FLG, Qt::Unchecked);
+      witm->setCheckState(COL_B_FLG, Qt::Unchecked);
     }
     else if(rec->HasDiffFlag(taObjDiffRec::DIFF_ADD)) {
       del_nest = 0;
@@ -1354,6 +1361,9 @@ void taiObjDiffBrowser::AddItems() {
 	add_nest = cur_nest;
 	witm->setExpanded(true);
       }
+      witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+      witm->setCheckState(COL_A_FLG, Qt::Unchecked);
+      witm->setCheckState(COL_B_FLG, Qt::Unchecked);
     }
     else if(rec->HasDiffFlag(taObjDiffRec::DIFF_CHG)) {
       del_nest = 0;
@@ -1368,6 +1378,10 @@ void taiObjDiffBrowser::AddItems() {
       witm->setBackground(COL_B_FLG, (chk_b ? del_color : chg_color));
       witm->setBackground(COL_B_VAL, chg_color);
       witm->setBackground(COL_B_NM, chg_color);
+
+      witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+      witm->setCheckState(COL_A_FLG, Qt::Unchecked);
+      witm->setCheckState(COL_B_FLG, Qt::Unchecked);
     }
     else if(rec->HasDiffFlag(taObjDiffRec::DIFF_PAR)) {
       del_nest = 0;
@@ -1379,7 +1393,7 @@ void taiObjDiffBrowser::AddItems() {
 	witm->setText(COL_B_VAL, rec->diff_odr->value);
       }
       witm->setExpanded(true);
-      // not editable
+      // not editable or checkable
     }
   }
 
@@ -1389,4 +1403,25 @@ void taiObjDiffBrowser::AddItems() {
   items->resizeColumnToContents(COL_B_FLG);
   items->resizeColumnToContents(COL_B_NM);
   items->resizeColumnToContents(COL_B_VAL);
+}
+
+void taiObjDiffBrowser::itemClicked(QTreeWidgetItem* itm, int column) {
+  if(column != COL_A_FLG && column != COL_B_FLG) return;
+
+  QVariant val = itm->data(0, Qt::UserRole+1);
+
+  taObjDiffRec* rec = val.value<taObjDiffRec*>();
+  int a_or_b = 0;
+  if(column > 0) a_or_b = 1;
+
+  Qt::CheckState chkst = itm->checkState(column);
+  bool on = (chkst == Qt::Checked);
+
+  rec->SetCurAction(a_or_b, on);
+
+  String lbl;
+  bool chk = rec->GetCurAction(a_or_b, lbl);
+  lbl = (chk ? String("+") : String("-")) + String(" ") + lbl;
+
+  itm->setText(column, lbl);
 }
