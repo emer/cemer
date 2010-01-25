@@ -259,41 +259,24 @@ protected:
 
 class taiObjDiffBrowser;
 
-class TA_API taiODRDelegate: public QItemDelegate {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS delegate for browser -- not currently used..
-INHERITED(QItemDelegate)
-Q_OBJECT
-public:
-  taiObjDiffBrowser*	odb;
- 
-  taiODRDelegate(taiObjDiffBrowser* odb_);
-
-#ifndef __MAKETA__  
-  override QWidget* 	createEditor(QWidget* parent, const QStyleOptionViewItem& option,
-				     const QModelIndex& index) const;
-  override void 	setEditorData(QWidget* editor, const QModelIndex& index) const;
-  override void 	setModelData(QWidget* editor, QAbstractItemModel* model,
-				     const QModelIndex& index ) const;
-#endif
-
-};
-
 class TA_API taiObjDiffBrowser: iDialog {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS select items from a list, much like a file chooser; can be tokens from typedef or items on a list
 INHERITED(iDialog)
   Q_OBJECT
 public:
   enum ODBCols {
+    COL_NEST,
     COL_A_FLG,
     COL_A_NM,
     COL_A_VAL,
+    COL_SEP,
     COL_B_FLG,
     COL_B_NM,
     COL_B_VAL,
     COL_N,
   };
 
-  static taiObjDiffBrowser* New(const String& caption, taObjDiff_List& diffs, 
+  static taiObjDiffBrowser* New(taObjDiff_List& diffs, 
 				int font_type, QWidget* par_window_ = NULL);
 
   String		caption; 	// current caption at top of chooser
@@ -303,7 +286,6 @@ public:
   QTreeWidget* 		  items; 	// list of items
   QPushButton*		    btnOk;
   QPushButton*		    btnCancel;
-  taiODRDelegate*	ordel;	// delegate for a toggle
 
   virtual bool		Browse();
   // main user interface: this actually puts up the dialog, returns true if Ok, false if cancel
@@ -314,9 +296,9 @@ public:
   taiObjDiffBrowser(const String& captn, QWidget* par_window_);
   ~taiObjDiffBrowser();							      
 protected slots:
-  override void 	accept(); // override
-  override void 	reject(); // override
-  void		itemClicked(QTreeWidgetItem* itm, int column);
+  override void 	accept();
+  override void 	reject();
+  void			itemClicked(QTreeWidgetItem* itm, int column);
 private:
   void 		init(const String& captn); // called by constructors
 };

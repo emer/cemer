@@ -335,7 +335,7 @@ bool taGroup_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
 void taGroup_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,  MemberDef* memb_def,
 		  const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // always just add a record for this guy
-  taObjDiffRec* odr = new taObjDiffRec(nest_lev, GetTypeDef(), memb_def, (void*)this,
+  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
 				       (void*)par, par_typ, par_od);
   odl.Add(odr);
   odr->extra = new taBaseObjDiffRecExtra((taBase*)this);

@@ -1434,9 +1434,11 @@ taBaseObjDiffRecExtra::taBaseObjDiffRecExtra(taBase* tab) {
 void taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def, 
 			   const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // always just add a record for this guy
-  taObjDiffRec* odr = new taObjDiffRec(nest_lev, GetTypeDef(), memb_def, (void*)this, (void*)par, par_typ, par_od);
+  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
+				       (void*)par, par_typ, par_od);
   odl.Add(odr);
-  odr->extra = new taBaseObjDiffRecExtra((taBase*)this);
+  if(GetOwner())
+    odr->extra = new taBaseObjDiffRecExtra((taBase*)this);
 
   GetTypeDef()->GetObjDiffVal_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
 }
@@ -2362,6 +2364,177 @@ Variant taBase::GetGuiArgVal(const String& fun_name, int arg_idx) {
   return Variant(GetStemBase()->name); // taiTypePtrArgType will convert from String
 }
 
+String taBase::DiffCompareString(taBase* cmp_obj, taDoc*& doc) {
+  if(TestError(!cmp_obj, "DiffCompareString", "cmp_obj is null")) return _nilString;
+  if(!doc) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(TestError(!proj, "DiffCompare", "cannot find project")) return _nilString;
+    doc = (taDoc*)proj->docs.New(1);
+    doc->name = "DiffCompare_" + GetDisplayName() + "_" + cmp_obj->GetDisplayName();
+  }
+  String str_a, str_b;
+  taStringDiff diff;
+  
+  Save_String(str_a);
+  cmp_obj->Save_String(str_b);
+  diff.DiffStrings(str_a, str_b);
+  String rval = diff.GetDiffStr(str_a, str_b);
+  String html_safe = rval;
+  html_safe.xml_esc();
+  doc->text = "<html>\n<head></head>\n<body>\n== DiffCompare of: "
+    + GetDisplayName() + " and: " + cmp_obj->GetDisplayName() + " ==\n<pre>\n"
+    + html_safe + "\n</pre>\n</body>\n</html>\n";
+  doc->UpdateText();
+  tabMisc::DelayedFunCall_gui(doc, "BrowserSelectMe");
+  return rval;
+}
+
+bool taBase::DiffCompare(taBase* cmp_obj) {
+  if(TestError(!cmp_obj, "DiffCompareString", "cmp_obj is null")) return false;
+  taObjDiff_List odl_me;
+  taObjDiff_List odl_cmp;
+  
+  odl_me.tab_obj_a = this;
+  odl_cmp.tab_obj_a = cmp_obj;
+
+  GetObjDiffVal(odl_me, 0);
+  cmp_obj->GetObjDiffVal(odl_cmp, 0);
+
+  taObjDiff_List diffs;
+  diffs.tab_obj_a = this;
+  diffs.tab_obj_b = cmp_obj;
+  odl_me.Diff(diffs, odl_cmp);
+
+  taiObjDiffBrowser* odb = taiObjDiffBrowser::New(diffs, taiMisc::defFontSize);
+  bool rval = odb->Browse();
+
+  if(rval) {
+    DoDiffEdits(diffs);
+  }
+
+  return true;
+}
+
+bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
+  // go backwards to minimize consequents..
+  for(int i=diffs.size-1; i>=0; i--) {
+    taObjDiffRec* rec = diffs[i];
+    if(!rec->HasDiffFlag(taObjDiffRec::ACT_MASK)) continue;
+    if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_AB) && rec->HasDiffFlag(taObjDiffRec::ACT_COPY_BA)) { // this is unfortunate but possible
+      // use the saved string reps
+      rec->diff_odr->type->SetValStr(rec->value, rec->diff_odr->addr, rec->diff_odr->par_addr,
+				     rec->diff_odr->mdef);
+      rec->type->SetValStr(rec->diff_odr->value, rec->addr, rec->par_addr, rec->mdef);
+    }
+    else if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_AB)) {
+      if(!rec->mdef && (rec->type != rec->diff_odr->type) && 
+	 rec->type->InheritsFrom(&TA_taBase) &&
+	 rec->diff_odr->type->InheritsFrom(&TA_taBase)) {
+ 	// need to replace old guy with new one
+	if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue;
+	if(!((taBaseObjDiffRecExtra*)rec->diff_odr->extra)->tabref.ptr()) continue;
+	taBase* src = (taBase*)rec->addr;
+	taBase* dest = (taBase*)rec->diff_odr->addr;
+	taList_impl* down = dynamic_cast<taList_impl*>(dest->GetOwner());
+	if(down) {
+	  int idx = down->FindEl(dest);
+	  if(idx >= 0) {		// should always be true..
+	    taBase* new_obj = src->MakeToken();
+	    down->Insert(new_obj, idx);
+	    new_obj->UnSafeCopy(src);
+	    new_obj->SetName(src->GetName());
+	    new_obj->UpdateAfterEdit();
+	    dest->Close();	// nuke old guy
+	  }
+	}
+      }
+      else {
+	rec->diff_odr->type->CopyFromSameType(rec->diff_odr->addr, rec->addr);
+      }
+    }
+    else if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_BA)) {
+      if(!rec->mdef && (rec->type != rec->diff_odr->type) && 
+	 rec->type->InheritsFrom(&TA_taBase) &&
+	 rec->diff_odr->type->InheritsFrom(&TA_taBase)) {
+ 	// need to replace old guy with new one
+	if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue;
+	if(!((taBaseObjDiffRecExtra*)rec->diff_odr->extra)->tabref.ptr()) continue;
+	taBase* src = (taBase*)rec->diff_odr->addr;
+	taBase* dest = (taBase*)rec->addr;
+	taList_impl* down = dynamic_cast<taList_impl*>(dest->GetOwner());
+	if(down) {
+	  int idx = down->FindEl(dest);
+	  if(idx >= 0) {		// should always be true..
+	    taBase* new_obj = src->MakeToken();
+	    down->Insert(new_obj, idx);
+	    new_obj->UnSafeCopy(src);
+	    new_obj->SetName(src->GetName());
+	    new_obj->UpdateAfterEdit();
+	    dest->Close();	// nuke old guy
+	  }
+	}
+      }
+      else {
+	rec->type->CopyFromSameType(rec->addr, rec->diff_odr->addr);
+      }
+    }
+    else if(rec->HasDiffFlag(taObjDiffRec::ACT_ADD_A)) { // do add before del..
+      if(!(rec->type->InheritsFrom(&TA_taBase) && rec->diff_odr->type->InheritsFrom(&TA_taBase)))
+	continue;
+      if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue;
+      if(!((taBaseObjDiffRecExtra*)rec->diff_odr->extra)->tabref.ptr()) continue;
+      taBase* src = (taBase*)rec->addr;
+      taBase* dest = (taBase*)rec->diff_odr->addr;
+      taList_impl* down = dynamic_cast<taList_impl*>(dest->GetOwner());
+      if(down) {
+	int idx = down->FindEl(dest);
+	if(idx >= 0) {		// should always be true..
+	  taBase* new_obj = src->MakeToken();
+	  down->Insert(new_obj, idx);
+	  new_obj->UnSafeCopy(src);
+	  new_obj->SetName(src->GetName());
+	  new_obj->UpdateAfterEdit();
+	}
+      }
+    }
+    else if(rec->HasDiffFlag(taObjDiffRec::ACT_ADD_B)) { // do add before del..
+      if(!(rec->type->InheritsFrom(&TA_taBase) && rec->diff_odr->type->InheritsFrom(&TA_taBase)))
+	continue;
+      if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue;
+      if(!((taBaseObjDiffRecExtra*)rec->diff_odr->extra)->tabref.ptr()) continue;
+      taBase* src = (taBase*)rec->diff_odr->addr;
+      taBase* dest = (taBase*)rec->addr;
+      taList_impl* down = dynamic_cast<taList_impl*>(dest->GetOwner());
+      if(down) {
+	int idx = down->FindEl(dest);
+	if(idx >= 0) {		// should always be true..
+	  taBase* new_obj = src->MakeToken();
+	  down->Insert(new_obj, idx);
+	  new_obj->UnSafeCopy(src);
+	  new_obj->SetName(src->GetName());
+	  new_obj->UpdateAfterEdit();
+	}
+      }
+    }
+    else if(rec->HasDiffFlag(taObjDiffRec::ACT_DEL_A)) {
+      if(!rec->type->InheritsFrom(&TA_taBase))
+	continue;
+      if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue;
+      taBase* src = (taBase*)rec->addr;
+      src->Close();
+    }
+    else if(rec->HasDiffFlag(taObjDiffRec::ACT_DEL_B)) {
+      if(!rec->diff_odr->type->InheritsFrom(&TA_taBase))
+	continue;
+      if(!((taBaseObjDiffRecExtra*)rec->diff_odr->extra)->tabref.ptr()) continue;
+      taBase* src = (taBase*)rec->diff_odr->addr;
+      src->Close();
+    }
+  }
+  return true;
+}
+
+
 bool taBase::SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label,
 			   const String& sub_gp_nm) {
   if(TestError(!member,"SelectForEdit", "member is null")) return false;
@@ -2429,52 +2602,6 @@ int taBase::SelectForEditCompare(taBase*cmp_obj, SelectEdit*& editor, bool no_pt
   int rval = editor->CompareObjs(this, cmp_obj, no_ptrs);
   tabMisc::DelayedFunCall_gui(editor, "BrowserSelectMe");
   return rval;
-}
-
-String taBase::DiffCompareString(taBase* cmp_obj, taDoc*& doc) {
-  if(TestError(!cmp_obj, "DiffCompareString", "cmp_obj is null")) return _nilString;
-  if(!doc) {
-    taProject* proj = GET_MY_OWNER(taProject);
-    if(TestError(!proj, "DiffCompare", "cannot find project")) return _nilString;
-    doc = (taDoc*)proj->docs.New(1);
-    doc->name = "DiffCompare_" + GetDisplayName() + "_" + cmp_obj->GetDisplayName();
-  }
-  String str_a, str_b;
-  taStringDiff diff;
-  
-  Save_String(str_a);
-  cmp_obj->Save_String(str_b);
-  diff.DiffStrings(str_a, str_b);
-  String rval = diff.GetDiffStr(str_a, str_b);
-  String html_safe = rval;
-  html_safe.xml_esc();
-  doc->text = "<html>\n<head></head>\n<body>\n== DiffCompare of: "
-    + GetDisplayName() + " and: " + cmp_obj->GetDisplayName() + " ==\n<pre>\n"
-    + html_safe + "\n</pre>\n</body>\n</html>\n";
-  doc->UpdateText();
-  tabMisc::DelayedFunCall_gui(doc, "BrowserSelectMe");
-  return rval;
-}
-
-bool taBase::DiffCompare(taBase* cmp_obj) {
-  if(TestError(!cmp_obj, "DiffCompareString", "cmp_obj is null")) return false;
-  taObjDiff_List odl_me;
-  taObjDiff_List odl_cmp;
-  
-  GetObjDiffVal(odl_me, 0);
-  cmp_obj->GetObjDiffVal(odl_cmp, 0);
-
-
-  taObjDiff_List diffs;
-  odl_me.Diff(diffs, odl_cmp);
-
-  String capt = "DiffCompare_" + GetDisplayName() + "_" + cmp_obj->GetDisplayName();
-
-  taiObjDiffBrowser* odb = taiObjDiffBrowser::New(capt, diffs, taiMisc::defFontSize);
-  bool rval = odb->Browse();
-  // todo: construct mod list and actually perform modifications!
-
-  return true;
 }
 
 bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor,
@@ -3435,7 +3562,7 @@ bool taList_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
 void taList_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,  MemberDef* memb_def,
 		  const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // always just add a record for this guy
-  taObjDiffRec* odr = new taObjDiffRec(nest_lev, GetTypeDef(), memb_def, (void*)this,
+  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
 				       (void*)par, par_typ, par_od);
   odl.Add(odr);
   odr->extra = new taBaseObjDiffRecExtra((taBase*)this);

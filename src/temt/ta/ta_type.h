@@ -2452,17 +2452,23 @@ class TA_API taObjDiffRec : public taRefN {
 INHERITED(taRefN)
 public:
   enum DiffFlags {		// #BITS
-    DF_NONE  = 0x0000,		// nothing
-    DIFF_DEL = 0x0001,		// diff edit = delete from src_a
-    DIFF_ADD = 0x0002,		// diff edit = add from src_b to src_a
-    DIFF_CHG = 0x0004,		// diff edit = change from a to b
-    DIFF_PAR = 0x0008,		// parent of lower-level diff, but not itself different
-    ACT_DEL_A  = 0x0010,	// action to take: delete obj from a
-    ACT_DEL_B  = 0x0020,	// action to take: delete obj from b
-    ACT_ADD_A  = 0x0040,	// action to take: add obj to a after paired diff_odr
-    ACT_ADD_B  = 0x0080,	// action to take: add obj to b after paired diff_odr
-    ACT_COPY_AB = 0x0100,	// action to take: copy from a to paired diff_odr b
-    ACT_COPY_BA = 0x0200,	// action to take: copy from paired diff_odr b to a
+    DF_NONE  = 0x000000,	// nothing
+    DIFF_DEL = 0x000001,	// diff edit = delete from src_a
+    DIFF_ADD = 0x000002,	// diff edit = add from src_b to src_a
+    DIFF_CHG = 0x000004,	// diff edit = change from a to b
+    DIFF_PAR_A = 0x000008,	// parent on A branch of lower-level diff, but not itself different
+    DIFF_PAR_B = 0x000010,	// parent on B branch of lower-level diff, but not itself different
+    ACT_DEL_A  = 0x000100,	// action to take: delete obj from a
+    ACT_DEL_B  = 0x000200,	// action to take: delete obj from b
+    ACT_ADD_A  = 0x000400,	// action to take: add obj to a after paired diff_odr
+    ACT_ADD_B  = 0x000800,	// action to take: add obj to b after paired diff_odr
+    ACT_COPY_AB = 0x001000,	// action to take: copy from a to paired diff_odr b
+    ACT_COPY_BA = 0x002000,	// action to take: copy from paired diff_odr b to a
+#ifndef __MAKETA__
+    ACT_MASK = ACT_DEL_A | ACT_DEL_B | ACT_ADD_A | ACT_ADD_B | ACT_COPY_AB | ACT_COPY_BA,
+#endif
+    SUB_NO_ACT = 0x010000,	// this is a sub-object of an add or delete and thus not something that an action can be driven from (just follows whatever the parent has selected)
+    VAL_PATH_REL = 0x020000,	// value is a path relative to tab_obj, not a global path
   };
 
   DiffFlags	flags;		// flags for diff status
@@ -2470,9 +2476,9 @@ public:
   taObjDiff_List* owner;	// the owner of this one
   int		idx;		// the index number in owning list
   int		nest_level;	// how deeply nested or embedded is this object in the obj hierarchy
-  String	name;		// object name (member name, object name)
+  String	name;		// object name (member name, object type) -- this is used in diffing and is not always best for display -- see GetDisplayName()
   String	value;		// string representation of this object
-  taHashVal	hash_code;	// hash-code of the value, used in computing diff
+  taHashVal	hash_code;	// hash-code of name&value + nest_level -- this is what diff is based on
   TypeDef*	type;		// type of this object (same as mdef->type if a member) -- not type of parent
   MemberDef*	mdef;		// memberdef if this is a member of a parent object
   void*		addr;		// address in memory of this object
@@ -2493,18 +2499,22 @@ public:
   { if(on) SetDiffFlag(flg); else ClearDiffFlag(flg); }
   // #CAT_ObjectMgmt set data column flag state according to on bool (if true, set flag, if false, clear it)
 
+  String	GetDisplayName();
+  // returns a name suitable for gui display purposes -- taBase->GetDisplayName else name
 
   bool		GetCurAction(int a_or_b, String& lbl);
   // get currently set action for this guy, depending on its flag status, and a_or_b (a=0, b=1) -- also fills in label describing action
   void		SetCurAction(int a_or_b, bool on_off);
   // set action for this guy, depending on its flag status, and a_or_b (a=0, b=1)
 
-  void 		GetValue();
-  // gets the value and hash code (and name) fields based on the other information already set
+  void 		GetValue(taObjDiff_List& odl);
+  // gets the value and hash code (and name) fields based on the other information already set -- also uses information on overall obj diff list (tab_obj_a for paths)
   
   taObjDiffRec();
-  taObjDiffRec(int nest, TypeDef* td, MemberDef* md, void* adr, void* par_adr = NULL,
+  taObjDiffRec(taObjDiff_List& odl, int nest, TypeDef* td, MemberDef* md, void* adr, void* par_adr = NULL,
 	       TypeDef* par_typ = NULL, taObjDiffRec* par_od = NULL);
+  // this is the main interface for making a new item -- sets info and calls GetValue
+
   taObjDiffRec(const taObjDiffRec& cp); // copy constructor
   ~taObjDiffRec();
 
@@ -2535,8 +2545,12 @@ protected:
 public:
   String 	name;		// of the list
   taDataLink*	data_link;
+#ifndef NO_TA_BASE
+  taBase*	tab_obj_a; 	// initial diff object for GetObjDiffVal and A comparison object for diff
+  taBase*	tab_obj_b; 	// original B comparison object as a taBase
+#endif
 
-  void		Initialize()		{ data_link = NULL;}
+  void		Initialize();
 
   taObjDiff_List()				{ Initialize(); }
   taObjDiff_List(const taObjDiff_List& cp)	{ Initialize(); Borrow(cp); }
@@ -2553,7 +2567,7 @@ protected:
   void_PArray	nest_pars;
   // keeps track of current parents at each nest level
 
-  bool		CheckAddParents(taObjDiff_List& diff_ods, taObjDiffRec* rec);
+  bool		CheckAddParents(taObjDiff_List& diff_ods, taObjDiffRec* rec, bool a_list);
   // add parents of rec item as necessary depending on nest_pars parents already current
 };
 

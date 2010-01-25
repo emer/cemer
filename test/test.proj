@@ -1155,8 +1155,98 @@ LeabraProject .projects[0] {
     };
   };
 
-  Network_Group @.networks = [1] {
+  Network_Group @.networks = [2] {
     LeabraNetwork @[0] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+	UserDataItem @[1] { };
+	UserDataItem @[2] { };
+	UserDataItem @[3] { };
+	UserDataItem @[4] { };
+	UserDataItem @[5] { };
+	UserDataItem @[6] { };
+	UserDataItem @[7] { };
+	UserDataItem @[8] { };
+	UserDataItem @[9] { };
+	UserDataItem @[10] { };
+	UserDataItem @[11] { };
+	UserDataItem @[12] { };
+	UserDataItem @[13] { };
+	UserDataItem @[14] { };
+	UserDataItem @[15] { };
+	UserDataItem @[16] { };
+	UserDataItem @[17] { };
+	UserDataItem @[18] { };
+	UserData_DocLink @[19] { };
+   };
+
+      BaseSpec_Group @.specs = [4] {
+	LeabraUnitSpec @[0] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+
+	  Schedule @.noise_sched = [0] {
+	  };
+	};
+	LeabraLayerSpec @[1] { 
+	  BaseSpec_Group @.children = [1] {
+	    LeabraLayerSpec @[0] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+	    };
+	  };
+	};
+	FullPrjnSpec @[2] { 
+	  BaseSpec_Group @.children = [0] {
+	  };
+	};
+	LeabraConSpec @[3] { 
+	  BaseSpec_Group @.children = [1] {
+	    LeabraBiasSpec @[0] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+
+	      Schedule @.lrate_sched = [0] {
+	      };
+	    };
+	  };
+
+	  Schedule @.lrate_sched = [0] {
+	  };
+	};
+      };
+
+      Layer_Group @.layers = [3] {
+	LeabraLayer @[0] { 
+	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [25] {
+	  };
+	};
+	LeabraLayer @[1] { 
+	  Projection_Group @.projections = [2] {
+	    LeabraPrjn @[0] { };
+	    LeabraPrjn @[1] { };
+	  };
+
+	  Unit_Group @.units = [25] {
+	  };
+	};
+	LeabraLayer @[2] { 
+	  Projection_Group @.projections = [1] {
+	    LeabraPrjn @[0] { };
+	  };
+
+	  Unit_Group @.units = [25] {
+	  };
+	};
+      };
+
+      NetViewObj_Group @.view_objs = [0] {
+      };
+    };
+    LeabraNetwork @[1] { 
    UserDataItem_List @*(.user_data_) {
 	UserDataItem @[0] { };
 	UserDataItem @[1] { };
@@ -8690,6 +8780,776 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    lay_layout=THREE_D;
    n_units=75;
    n_cons=1875;
+   max_size {x=5: y=5: z=3: };
+   learn_rule=LEABRA_CHL;
+   phase_order=MINUS_PLUS;
+   no_plus_test=1;
+   sequence_init=DO_NOTHING;
+   phase=MINUS_PHASE;
+   nothing_phase=0;
+   phase_no=0;
+   phase_max=2;
+   ct_cycle=0;
+   time_inc=1;
+   cycle_max=60;
+   mid_minus_cycle=-1;
+   min_cycles=15;
+   min_cycles_phase2=35;
+   ct_time {
+    minus=50;
+    plus=20;
+    inhib=20;
+    n_avg_only_epcs=0;
+    total_cycles=90;
+    inhib_start=70;
+   };
+   ct_sravg {
+    start=30;
+    end=20;
+    interval=1;
+    plus_s_st=19;
+    force_con=0;
+   };
+   ct_sin_i {
+    start=30;
+    duration=20;
+    n_pi=2;
+    burst_i=0.05;
+    trough_i=0.05;
+   };
+   ct_fin_i {
+    start=20;
+    end=25;
+    inhib_i=0;
+   };
+   sravg_vals {
+    s_sum=0;
+    s_nrm=0;
+    m_sum=0;
+    m_nrm=0;
+    do_s=0;
+   };
+   minus_cycles=0;
+   avg_cycles=0;
+   avg_cycles_sum=0;
+   avg_cycles_n=0;
+   minus_output_name=;
+   net_misc {
+    cyc_syn_dep=0;
+    syn_dep_int=20;
+   };
+   send_pct=0;
+   send_pct_n=0;
+   send_pct_tot=0;
+   avg_send_pct=0;
+   avg_send_pct_sum=0;
+   avg_send_pct_n=0;
+   maxda_stopcrit=0.005;
+   maxda=0;
+   trg_max_act_stopcrit=1;
+   trg_max_act=0;
+   ext_rew=0;
+   ext_rew_avail=0;
+   norew_val=0.5;
+   avg_ext_rew=0;
+   pvlv_pvi=0;
+   pvlv_pvr=0;
+   pvlv_lve=0;
+   pvlv_lvi=0;
+   pv_detected=0;
+   avg_ext_rew_sum=0;
+   avg_ext_rew_n=0;
+   off_errs=1;
+   on_errs=1;
+   norm_err=0;
+   avg_norm_err=1;
+   avg_norm_err_sum=0;
+   avg_norm_err_n=0;
+  };
+  LeabraNetwork @[1] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserDataItem @[0] {
+     name="norm_err";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[1] {
+     name="ext_rew";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[2] {
+     name="maxda";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[3] {
+     name="minus_output_name";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[4] {
+     name="minus_cycles";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[5] {
+     name="ct_cycle";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[6] {
+     name="phase_no";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[7] {
+     name="phase";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[8] {
+     name="sse";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[9] {
+     name="output_name";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[10] {
+     name="trial_name";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[11] {
+     name="group_name";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[12] {
+     name="time";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[13] {
+     name="cycle";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[14] {
+     name="tick";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[15] {
+     name="trial";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[16] {
+     name="group";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[17] {
+     name="epoch";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @[18] {
+     name="batch";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserData_DocLink @[19] {
+     name="DocLink";
+     doc=$92$;
+    };
+   };
+   name="Net2";
+   desc=;
+   specs {
+    name=;
+    el_typ=LeabraUnitSpec;
+    el_def=0;
+    LeabraUnitSpec @[0] {
+     name="LeabraUnitSpec_0";
+     desc=;
+     unique{      };
+     children {
+      name=;
+      el_typ=LeabraUnitSpec;
+      el_def=0;
+     };
+     act_range {min=0: max=1: range=1: scale=1: };
+     bias_con_type=LeabraCon;
+     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[1].specs[3].children[0]$100$: };
+     sse_tol=0.5;
+     act_fun=NOISY_XX1;
+     act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
+     spike {rise=1: decay=0.05: g_gain=4: window=20: eq_gain=10: eq_dt=0.02: };
+     spike_misc {
+      clamp_max_p=0.11;
+      clamp_type=REGULAR;
+      vm_r=0;
+      vm_dend=0.3;
+      vm_dend_dt=0.16;
+      vm_dend_time=6.25;
+     };
+     adapt {
+      on=0;
+      dt_rate=0.02;
+      dt_time=50;
+      vm_gain=0.1;
+      spike_gain=0.01;
+      interval=10;
+     };
+     depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=2: clamp_norm_max_amp=2: };
+     syn_delay {
+      on=0;
+      delay=4;
+     };
+     opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+     clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
+     vm_range {min=0: max=1: range=1: scale=1: };
+     v_m_init {name="": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
+     dt {vm=0.3: vm_time=3.333333: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+     act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
+     g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
+     e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
+     hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
+     acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+     da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
+     maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
+     noise_type=NO_NOISE;
+     noise {name="": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
+     noise_adapt {trial_fixed=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
+     noise_sched {
+      name=;
+      el_typ=SchedItem;
+      el_def=0;
+      last_ctr=-1;
+      default_val=1;
+      interpolate=1;
+      cur_val=0;
+     };
+    };
+    LeabraLayerSpec @[1] {
+     name="HiddenLayer";
+     desc=;
+     unique{      };
+     children {
+      name=;
+      el_typ=LeabraLayerSpec;
+      el_def=0;
+      LeabraLayerSpec @[0] {
+       name="Input_Output";
+       desc=;
+       unique{ compute_i;i_kwta_pt;kwta;inhib;       };
+       children {
+	name=;
+	el_typ=LeabraLayerSpec;
+	el_def=0;
+       };
+       inhib_group=ENTIRE_LAYER;
+       inhib {
+	type=KWTA_INHIB;
+	kwta_pt=0.25;
+	min_i=0;
+	comp_thr=0.5;
+	comp_gain=2;
+	gp_pt=0.2;
+       };
+       kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
+       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
+       tie_brk {on=0: k_thr=1: diff_thr=0.2: };
+       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
+       clamp {hard=1: gain=0.5: };
+       decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
+       ct_inhib_mod {
+	use_sin=0;
+	burst_i=0.02;
+	trough_i=0.02;
+	use_fin=0;
+	inhib_i=0;
+       };
+       abs_net_adapt {
+	on=0;
+	trg_net=0.5;
+	tol=0.1;
+	abs_lrate=0.05;
+       };
+      };
+     };
+     inhib_group=ENTIRE_LAYER;
+     inhib {
+      type=KWTA_AVG_INHIB;
+      kwta_pt=0.6;
+      min_i=0;
+      comp_thr=0.5;
+      comp_gain=2;
+      gp_pt=0.2;
+     };
+     kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
+     gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
+     tie_brk {on=0: k_thr=1: diff_thr=0.2: };
+     adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
+     clamp {hard=1: gain=0.5: };
+     decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
+     ct_inhib_mod {
+      use_sin=0;
+      burst_i=0.02;
+      trough_i=0.02;
+      use_fin=0;
+      inhib_i=0;
+     };
+     abs_net_adapt {
+      on=0;
+      trg_net=0.5;
+      tol=0.1;
+      abs_lrate=0.05;
+     };
+    };
+    FullPrjnSpec @[2] {
+     name="FullPrjnSpec_0";
+     desc=;
+     unique{      };
+     children {
+      name=;
+      el_typ=FullPrjnSpec;
+      el_def=0;
+     };
+     self_con=0;
+     init_wts=0;
+    };
+    LeabraConSpec @[3] {
+     name="LeabraConSpec_0";
+     desc=;
+     unique{      };
+     children {
+      name=;
+      el_typ=LeabraConSpec;
+      el_def=0;
+      LeabraBiasSpec @[0] {
+       name="LeabraBiasSpec_0";
+       desc=;
+       unique{ rnd;wt_limits;wt_scale;wt_scale_init;       };
+       children {
+	name=;
+	el_typ=LeabraBiasSpec;
+	el_def=0;
+       };
+       rnd {name="": type=UNIFORM: mean=0: var=0: par=1: };
+       wt_limits {type=NONE: min=-1: max=5: sym=0: };
+       learn_rule=LEABRA_CHL;
+       inhib=0;
+       wt_scale {abs=1: rel=1: };
+       wt_scale_init {init=0: abs=1: rel=1: };
+       lrate=0.55;
+       cur_lrate=0.1;
+       lrs_value=EPOCH;
+       lrate_sched {
+	name=;
+	el_typ=SchedItem;
+	el_def=0;
+	last_ctr=-1;
+	default_val=1;
+	interpolate=0;
+	cur_val=0;
+       };
+       wt_sig {gain=6: off=1.1: };
+       lmix {hebb=0.1: err=0.9: err_sb=1: };
+       xcal {s_mix=0.9: m_mix=0.1: thr_l_mix=0.01: thr_m_mix=0.99: d_rev=0.15: d_gain=2.5: d_thr=0.0001: d_rev_ratio=5.666667: };
+       savg_cor {cor=0.4: thresh=0.01: norm_con_n=1: };
+       rel_net_adapt {
+	on=0;
+	trg_fm_input=0.85;
+	trg_fm_output=0.15;
+	trg_lateral=0;
+	trg_sum=1;
+	tol_lg=0.05;
+	tol_sm=0.2;
+	rel_lrate=0.05;
+       };
+       dwt_thresh=0.1;
+      };
+     };
+     rnd {name="": type=UNIFORM: mean=0.5: var=0.25: par=1: };
+     wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
+     learn_rule=LEABRA_CHL;
+     inhib=0;
+     wt_scale {abs=1: rel=1: };
+     wt_scale_init {init=0: abs=1: rel=1: };
+     lrate=0.55;
+     cur_lrate=0.1;
+     lrs_value=EPOCH;
+     lrate_sched {
+      name=;
+      el_typ=SchedItem;
+      el_def=0;
+      last_ctr=-1;
+      default_val=1;
+      interpolate=0;
+      cur_val=0;
+     };
+     wt_sig {gain=6: off=1.1: };
+     lmix {hebb=0.1: err=0.9: err_sb=1: };
+     xcal {s_mix=0.9: m_mix=0.1: thr_l_mix=0.01: thr_m_mix=0.99: d_rev=0.15: d_gain=2.5: d_thr=0.0001: d_rev_ratio=5.666667: };
+     savg_cor {cor=0.4: thresh=0.01: norm_con_n=1: };
+     rel_net_adapt {
+      on=0;
+      trg_fm_input=0.85;
+      trg_fm_output=0.15;
+      trg_lateral=0;
+      trg_sum=1;
+      tol_lg=0.05;
+      tol_sm=0.2;
+      rel_lrate=0.05;
+     };
+    };
+   };
+   layers {
+    name=;
+    el_typ=LeabraLayer;
+    el_def=0;
+    pos {x=0: y=0: z=0: };
+    max_size {x=5: y=5: z=3: };
+    LeabraLayer @[0] {
+     name="Input";
+     desc=;
+     flags=;
+     layer_type=INPUT;
+     pos {x=0: y=0: z=0: };
+     disp_scale=1;
+     un_geom {x=5: y=5: n_not_xy=0: n=25: };
+     unit_groups=0;
+     gp_geom {x=1: y=1: n_not_xy=0: n=1: };
+     gp_spc {x=0: y=0: };
+     act_geom {x=5: y=5: n_not_xy=0: n=25: };
+     scaled_act_geom {x=5: y=5: n_not_xy=0: n=1: };
+     projections {
+      name=;
+      el_typ=LeabraPrjn;
+      el_def=0;
+     };
+     send_prjns {
+      name=;
+      el_typ=LeabraPrjn;
+      el_def=0;
+	    Projection_Group @. = [0] = LeabraPrjn .projects[0].networks[1].layers[1].projections[0];
+     };
+     units {
+      name=;
+      el_typ=LeabraUnit;
+      el_def=0;
+      pos {x=0: y=0: z=0: };
+      unique_geom=0;
+      geom {x=5: y=5: n_not_xy=0: n=25: };
+      units_lesioned=0;
+      output_name=;
+     };
+     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[1].specs[0]$101$: };
+     ext_flag=;
+     dmem_dist=DMEM_DIST_DEFAULT;
+     dist {
+      fm_input=-1;
+      fm_output=-1;
+     };
+     output_name=;
+     sse=0;
+     icon_value=0;
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.19: max=0.95: max_i=4: };
+     acts_m {cmpt=1: avg=0.19: max=0.95: max_i=4: };
+     phase_dif_ratio=1;
+     acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
+     acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
+     kwta {k=12: pct=0.48: pct_c=0.52: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
+     adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
+     maxda=0;
+     spec {type=LeabraLayerSpec: spec=.projects[0].networks[1].specs[1].children[0]$102$: };
+     hard_clamped=0;
+     avg_l_avg=3.353307e-42;
+     dav=0;
+     avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
+     avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
+     avg_netin_n=0;
+     norm_err=0;
+     da_updt=0;
+    };
+    LeabraLayer @[1] {
+     name="Hidden";
+     desc=;
+     flags=;
+     layer_type=HIDDEN;
+     pos {x=0: y=0: z=1: };
+     disp_scale=1;
+     un_geom {x=5: y=5: n_not_xy=0: n=25: };
+     unit_groups=0;
+     gp_geom {x=1: y=1: n_not_xy=0: n=1: };
+     gp_spc {x=0: y=0: };
+     act_geom {x=5: y=5: n_not_xy=0: n=25: };
+     scaled_act_geom {x=5: y=5: n_not_xy=0: n=1: };
+     projections {
+      name=;
+      el_typ=LeabraPrjn;
+      el_def=0;
+      LeabraPrjn @[0] {
+       name="Fm_Input";
+       from_type=CUSTOM;
+       from=.projects[0].networks[1].layers[0]$103$;
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[1].specs[2]$104$: };
+       con_type=LeabraCon;
+       recvcons_type=LeabraRecvCons;
+       sendcons_type=LeabraSendCons;
+       con_spec {type=LeabraConSpec: spec=.projects[0].networks[1].specs[3]$105$: };
+       recv_idx=-1;
+       send_idx=-1;
+       recv_n=1;
+       send_n=1;
+       projected=1;
+       direction=DIR_UNKNOWN;
+       netin_avg=0;
+       netin_rel=0;
+       avg_netin_avg=0;
+       avg_netin_avg_sum=0;
+       avg_netin_rel=0;
+       avg_netin_rel_sum=0;
+       avg_netin_n=0;
+       trg_netin_rel=-1;
+      };
+      LeabraPrjn @[1] {
+       name="Fm_Output";
+       from_type=CUSTOM;
+       from=.projects[0].networks[1].layers[2]$106$;
+       spec {type=FullPrjnSpec: spec=$104$: };
+       con_type=LeabraCon;
+       recvcons_type=LeabraRecvCons;
+       sendcons_type=LeabraSendCons;
+       con_spec {type=LeabraConSpec: spec=$105$: };
+       recv_idx=-1;
+       send_idx=-1;
+       recv_n=1;
+       send_n=1;
+       projected=1;
+       direction=DIR_UNKNOWN;
+       netin_avg=0;
+       netin_rel=0;
+       avg_netin_avg=0;
+       avg_netin_avg_sum=0;
+       avg_netin_rel=0;
+       avg_netin_rel_sum=0;
+       avg_netin_n=0;
+       trg_netin_rel=-1;
+      };
+     };
+     send_prjns {
+      name=;
+      el_typ=LeabraPrjn;
+      el_def=0;
+	    Projection_Group @. = [0] = LeabraPrjn .projects[0].networks[1].layers[2].projections[0];
+     };
+     units {
+      name=;
+      el_typ=LeabraUnit;
+      el_def=0;
+      pos {x=0: y=0: z=0: };
+      unique_geom=0;
+      geom {x=5: y=5: n_not_xy=0: n=25: };
+      units_lesioned=0;
+      output_name=;
+     };
+     unit_spec {type=LeabraUnitSpec: spec=$101$: };
+     ext_flag=;
+     dmem_dist=DMEM_DIST_DEFAULT;
+     dist {
+      fm_input=-1;
+      fm_output=-1;
+     };
+     output_name=;
+     sse=0;
+     icon_value=0;
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.1865521: max=0.9465926: max_i=20: };
+     acts_m {cmpt=1: avg=0.1866588: max=0.9470888: max_i=20: };
+     phase_dif_ratio=1.000572;
+     acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
+     acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
+     kwta {k=6: pct=0.24: pct_c=0.76: adth_k=1: k_ithr=4.872038: k1_ithr=2.6694: ithr_r=0.6016586: ithr_diff=0.4520979: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
+     adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
+     maxda=0;
+     spec {type=LeabraLayerSpec: spec=.projects[0].networks[1].specs[1]$107$: };
+     hard_clamped=0;
+     avg_l_avg=5.843415e-43;
+     dav=0;
+     avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
+     avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
+     avg_netin_n=0;
+     norm_err=0;
+     da_updt=0;
+    };
+    LeabraLayer @[2] {
+     name="Output";
+     desc=;
+     flags=;
+     layer_type=TARGET;
+     pos {x=0: y=0: z=2: };
+     disp_scale=1;
+     un_geom {x=5: y=5: n_not_xy=0: n=25: };
+     unit_groups=0;
+     gp_geom {x=1: y=1: n_not_xy=0: n=1: };
+     gp_spc {x=0: y=0: };
+     act_geom {x=5: y=5: n_not_xy=0: n=25: };
+     scaled_act_geom {x=5: y=5: n_not_xy=0: n=1: };
+     projections {
+      name=;
+      el_typ=LeabraPrjn;
+      el_def=0;
+      LeabraPrjn @[0] {
+       name="Fm_Hidden";
+       from_type=CUSTOM;
+       from=.projects[0].networks[1].layers[1]$108$;
+       spec {type=FullPrjnSpec: spec=$104$: };
+       con_type=LeabraCon;
+       recvcons_type=LeabraRecvCons;
+       sendcons_type=LeabraSendCons;
+       con_spec {type=LeabraConSpec: spec=$105$: };
+       recv_idx=-1;
+       send_idx=-1;
+       recv_n=1;
+       send_n=1;
+       projected=1;
+       direction=DIR_UNKNOWN;
+       netin_avg=0;
+       netin_rel=0;
+       avg_netin_avg=0;
+       avg_netin_avg_sum=0;
+       avg_netin_rel=0;
+       avg_netin_rel_sum=0;
+       avg_netin_n=0;
+       trg_netin_rel=-1;
+      };
+     };
+     send_prjns {
+      name=;
+      el_typ=LeabraPrjn;
+      el_def=0;
+	    Projection_Group @. = [0] = LeabraPrjn .projects[0].networks[1].layers[1].projections[1];
+     };
+     units {
+      name=;
+      el_typ=LeabraUnit;
+      el_def=0;
+      pos {x=0: y=0: z=0: };
+      unique_geom=0;
+      geom {x=5: y=5: n_not_xy=0: n=25: };
+      units_lesioned=0;
+      output_name=;
+     };
+     unit_spec {type=LeabraUnitSpec: spec=$101$: };
+     ext_flag=;
+     dmem_dist=DMEM_DIST_DEFAULT;
+     dist {
+      fm_input=-1;
+      fm_output=-1;
+     };
+     output_name=;
+     sse=0;
+     icon_value=0;
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.19: max=0.95: max_i=4: };
+     acts_m {cmpt=1: avg=0.1905834: max=0.9588458: max_i=4: };
+     phase_dif_ratio=1.00307;
+     acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
+     acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
+     kwta {k=12: pct=0.48: pct_c=0.52: adth_k=1: k_ithr=2.880155: k1_ithr=2.585402: ithr_r=0.107963: ithr_diff=0.1023392: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
+     adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
+     maxda=0;
+     spec {type=LeabraLayerSpec: spec=$102$: };
+     hard_clamped=0;
+     avg_l_avg=0;
+     dav=0;
+     avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
+     avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
+     avg_netin_n=0;
+     norm_err=0;
+     da_updt=0;
+    };
+   };
+   view_objs {
+    name=;
+    el_typ=NetViewObj;
+    el_def=0;
+   };
+   flags=;
+   auto_build=AUTO_BUILD;
+   train_mode=TRAIN;
+   wt_update=ON_LINE;
+   small_batch_n=2;
+   batch=0;
+   epoch=0;
+   group=0;
+   trial=0;
+   tick=0;
+   cycle=0;
+   time=0;
+   group_name=;
+   trial_name=;
+   output_name=;
+   sse_unit_avg=0;
+   sse_sqrt=0;
+   sse=0;
+   sum_sse=0;
+   avg_sse=0;
+   cnt_err_tol=0;
+   cnt_err=0;
+   pct_err=0;
+   pct_cor=0;
+   cur_sum_sse=0;
+   avg_sse_n=0;
+   cur_cnt_err=0;
+   train_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   epoch_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   trial_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   settle_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   cycle_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   wt_sync_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   misc_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   threads {
+    run_time {name="": s_used=0: n_used=0: };
+    sync_time {name="": s_used=0: n_used=0: };
+    total_time {name="": s_used=0: n_used=0: };
+    n_wake_in_sync=0;
+    run_time_pct=0;
+    sync_time_pct=0;
+    wake_in_sync_pct=-2.221953799241508e-146;
+    interleave=1;
+    ignore_lay_sync=0;
+   };
+   dmem_sync_level=DMEM_SYNC_NETWORK;
+   dmem_nprocs=1;
+   usr1_save_fmt=FULL_NET;
+   wt_save_fmt=TEXT;
+   lay_layout=THREE_D;
+   n_units=0;
+   n_cons=0;
    max_size {x=5: y=5: z=3: };
    learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;
