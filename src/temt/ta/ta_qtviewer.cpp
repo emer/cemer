@@ -3436,7 +3436,11 @@ iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
 } */
 
 iMainWindowViewer::~iMainWindowViewer() {
-//   if(isVisible())
+  // this is a fix from http://bugreports.qt.nokia.com/browse/QTBUG-5279
+//   if (qt_mouseover == this)
+//     qt_mouseover = 0;
+  // this doesn't work here -- too late in game
+  //   if(isVisible())
 //     hide();			// prevents crash later on mac..
   taiMisc::active_wins.RemoveEl(this);
 //TODO: need to delete menu, but just doing a delete causes an exception (prob because Qt
@@ -3596,8 +3600,12 @@ void iMainWindowViewer::closeEvent(QCloseEvent* e) {
      CO_NOT_CANCELLABLE : CO_PROCEED; 
   closeEvent_Handler(e, cancel_op);
   // now, if we are the last proj window, close us!
-  if (m_close_proj_now) 
+  if (m_close_proj_now) {
+//     cerr << "got close, hiding!" << endl;
+//     taMisc::FlushConsole();
+    hide();			// prevent a possible bug on mac associated with hide and delete
     curProject()->CloseLater();
+  }
 }
 
 void iMainWindowViewer::moveEvent(QMoveEvent* e) {
@@ -4492,7 +4500,6 @@ void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
     }
   }
   // if we make it here,  then we should be closed -- closeEvent will do this
-  hide();			// prevent a possible bug on mac associated with hide and delete
   m_close_proj_now = true;
 }
 

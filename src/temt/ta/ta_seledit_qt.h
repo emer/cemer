@@ -284,20 +284,28 @@ public:
 
   QVBoxLayout*		layOuter;
   QTreeWidget* 		  items; 	// list of items
+  QPushButton*		    btnAllA;
+  QPushButton*		    btnAllB;
   QPushButton*		    btnOk;
   QPushButton*		    btnCancel;
 
   virtual bool		Browse();
   // main user interface: this actually puts up the dialog, returns true if Ok, false if cancel
 
-  virtual void		Constr();
-  virtual void		AddItems();
+  virtual void	Constr();
+  virtual void	AddItems();
+  virtual void	ToggleAll(int a_or_b);
+  // toggle checked state of all items -- a_or_b = 0 for A, 1 for B
+  virtual void	UpdateItemDisp(QTreeWidgetItem* witm, taObjDiffRec* rec, int a_or_b);
+  // update display of item
 
   taiObjDiffBrowser(const String& captn, QWidget* par_window_);
   ~taiObjDiffBrowser();							      
 protected slots:
   override void 	accept();
   override void 	reject();
+  virtual  void 	toggleAllA();
+  virtual  void 	toggleAllB();
   void			itemClicked(QTreeWidgetItem* itm, int column);
 private:
   void 		init(const String& captn); // called by constructors

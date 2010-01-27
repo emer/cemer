@@ -2415,122 +2415,209 @@ bool taBase::DiffCompare(taBase* cmp_obj) {
   return true;
 }
 
-bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
-  // go backwards to minimize consequents..
-  for(int i=diffs.size-1; i>=0; i--) {
-    taObjDiffRec* rec = diffs[i];
-    if(!rec->HasDiffFlag(taObjDiffRec::ACT_MASK)) continue;
-    if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_AB) && rec->HasDiffFlag(taObjDiffRec::ACT_COPY_BA)) { // this is unfortunate but possible
-      // use the saved string reps
-      rec->diff_odr->type->SetValStr(rec->value, rec->diff_odr->addr, rec->diff_odr->par_addr,
-				     rec->diff_odr->mdef);
-      rec->type->SetValStr(rec->diff_odr->value, rec->addr, rec->par_addr, rec->mdef);
+static void DoDiffEdits_SetRelPath(taBase* par_obj, taObjDiffRec* srec, taObjDiffRec* drec) {
+  MemberDef* md;
+  taBase* new_guy = par_obj->FindFromPath(srec->value, md);
+  if((drec->type->ptr == 1) && drec->type->DerivesFrom(&TA_taBase)) {
+    if(drec->mdef && drec->mdef->HasOption("OWN_POINTER")) {
+      if(!drec->par_addr)
+	taMisc::Warning("*** NULL parent for owned pointer:",drec->GetDisplayName());
+      else
+	taBase::OwnPointer((taBase**)drec->addr, new_guy, (taBase*)drec->par_addr);
     }
-    else if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_AB)) {
-      if(!rec->mdef && (rec->type != rec->diff_odr->type) && 
-	 rec->type->InheritsFrom(&TA_taBase) &&
-	 rec->diff_odr->type->InheritsFrom(&TA_taBase)) {
- 	// need to replace old guy with new one
-	if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue;
-	if(!((taBaseObjDiffRecExtra*)rec->diff_odr->extra)->tabref.ptr()) continue;
-	taBase* src = (taBase*)rec->addr;
-	taBase* dest = (taBase*)rec->diff_odr->addr;
-	taList_impl* down = dynamic_cast<taList_impl*>(dest->GetOwner());
-	if(down) {
-	  int idx = down->FindEl(dest);
-	  if(idx >= 0) {		// should always be true..
-	    taBase* new_obj = src->MakeToken();
-	    down->Insert(new_obj, idx);
-	    new_obj->UnSafeCopy(src);
-	    new_obj->SetName(src->GetName());
-	    new_obj->UpdateAfterEdit();
-	    dest->Close();	// nuke old guy
-	  }
-	}
-      }
-      else {
-	rec->diff_odr->type->CopyFromSameType(rec->diff_odr->addr, rec->addr);
-      }
-    }
-    else if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_BA)) {
-      if(!rec->mdef && (rec->type != rec->diff_odr->type) && 
-	 rec->type->InheritsFrom(&TA_taBase) &&
-	 rec->diff_odr->type->InheritsFrom(&TA_taBase)) {
- 	// need to replace old guy with new one
-	if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue;
-	if(!((taBaseObjDiffRecExtra*)rec->diff_odr->extra)->tabref.ptr()) continue;
-	taBase* src = (taBase*)rec->diff_odr->addr;
-	taBase* dest = (taBase*)rec->addr;
-	taList_impl* down = dynamic_cast<taList_impl*>(dest->GetOwner());
-	if(down) {
-	  int idx = down->FindEl(dest);
-	  if(idx >= 0) {		// should always be true..
-	    taBase* new_obj = src->MakeToken();
-	    down->Insert(new_obj, idx);
-	    new_obj->UnSafeCopy(src);
-	    new_obj->SetName(src->GetName());
-	    new_obj->UpdateAfterEdit();
-	    dest->Close();	// nuke old guy
-	  }
-	}
-      }
-      else {
-	rec->type->CopyFromSameType(rec->addr, rec->diff_odr->addr);
-      }
-    }
-    else if(rec->HasDiffFlag(taObjDiffRec::ACT_ADD_A)) { // do add before del..
-      if(!(rec->type->InheritsFrom(&TA_taBase) && rec->diff_odr->type->InheritsFrom(&TA_taBase)))
-	continue;
-      if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue;
-      if(!((taBaseObjDiffRecExtra*)rec->diff_odr->extra)->tabref.ptr()) continue;
-      taBase* src = (taBase*)rec->addr;
-      taBase* dest = (taBase*)rec->diff_odr->addr;
-      taList_impl* down = dynamic_cast<taList_impl*>(dest->GetOwner());
-      if(down) {
-	int idx = down->FindEl(dest);
-	if(idx >= 0) {		// should always be true..
-	  taBase* new_obj = src->MakeToken();
-	  down->Insert(new_obj, idx);
-	  new_obj->UnSafeCopy(src);
-	  new_obj->SetName(src->GetName());
-	  new_obj->UpdateAfterEdit();
-	}
-      }
-    }
-    else if(rec->HasDiffFlag(taObjDiffRec::ACT_ADD_B)) { // do add before del..
-      if(!(rec->type->InheritsFrom(&TA_taBase) && rec->diff_odr->type->InheritsFrom(&TA_taBase)))
-	continue;
-      if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue;
-      if(!((taBaseObjDiffRecExtra*)rec->diff_odr->extra)->tabref.ptr()) continue;
-      taBase* src = (taBase*)rec->diff_odr->addr;
-      taBase* dest = (taBase*)rec->addr;
-      taList_impl* down = dynamic_cast<taList_impl*>(dest->GetOwner());
-      if(down) {
-	int idx = down->FindEl(dest);
-	if(idx >= 0) {		// should always be true..
-	  taBase* new_obj = src->MakeToken();
-	  down->Insert(new_obj, idx);
-	  new_obj->UnSafeCopy(src);
-	  new_obj->SetName(src->GetName());
-	  new_obj->UpdateAfterEdit();
-	}
-      }
-    }
-    else if(rec->HasDiffFlag(taObjDiffRec::ACT_DEL_A)) {
-      if(!rec->type->InheritsFrom(&TA_taBase))
-	continue;
-      if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue;
-      taBase* src = (taBase*)rec->addr;
-      src->Close();
-    }
-    else if(rec->HasDiffFlag(taObjDiffRec::ACT_DEL_B)) {
-      if(!rec->diff_odr->type->InheritsFrom(&TA_taBase))
-	continue;
-      if(!((taBaseObjDiffRecExtra*)rec->diff_odr->extra)->tabref.ptr()) continue;
-      taBase* src = (taBase*)rec->diff_odr->addr;
-      src->Close();
+    else {
+      if(drec->mdef && drec->mdef->HasOption("NO_SET_POINTER"))
+	(*(taBase**)drec->addr) = new_guy;
+      else
+	taBase::SetPointer((taBase**)drec->addr, new_guy);
     }
   }
+  else if(drec->type->InheritsFrom(TA_taSmartRef)) {
+    ((taSmartRef*)drec->addr)->set(new_guy);
+  }
+  else if(drec->type->InheritsFrom(TA_taSmartPtr)) {
+    ((taSmartPtr*)drec->addr)->set(new_guy);
+  }
+}
+
+bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
+  StructUpdate(true);
+
+  taProject* proj_a = (taProject*)diffs.tab_obj_a->GetOwner(&TA_taProject);
+  taProject* proj_b = (taProject*)diffs.tab_obj_b->GetOwner(&TA_taProject);
+
+  for(int i=0; i<diffs.size; i++) {
+    taObjDiffRec* rec = diffs[i];
+    if(!rec->HasDiffFlag(taObjDiffRec::ACT_MASK)) continue;
+    if(!rec->addr || !rec->diff_odr || !rec->diff_odr->addr) continue; // sanity checks..
+
+    bool ta_bases = false;
+    bool tab_diff_typ = false;
+    bool taptr = false;
+    // make sure pointers are still current
+    if(rec->type->InheritsFrom(&TA_taBase) && rec->diff_odr->type->InheritsFrom(&TA_taBase)) {
+      ta_bases = true;
+      if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue;
+      if(!((taBaseObjDiffRecExtra*)rec->diff_odr->extra)->tabref.ptr()) continue;
+      if(!rec->mdef && (rec->type != rec->diff_odr->type)) {
+	tab_diff_typ = true;
+      }
+    }
+    else if(((rec->type->ptr == 1) && rec->type->DerivesFrom(&TA_taBase)) ||
+	    rec->type->InheritsFrom(TA_taSmartRef) ||
+	    rec->type->InheritsFrom(TA_taSmartPtr)) {
+      taptr = true;
+    }
+
+    taBase* tab_par_rec = NULL;
+    taBase* tab_par_diff = NULL;
+    if(rec->par_type->InheritsFrom(&TA_taBase))
+      tab_par_rec = (taBase*)rec->par_addr;
+    if(rec->diff_odr->par_type->InheritsFrom(&TA_taBase))
+      tab_par_diff = (taBase*)rec->diff_odr->par_addr;
+
+    if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_AB) &&
+       rec->HasDiffFlag(taObjDiffRec::ACT_COPY_BA)) {
+      // this is unfortunate but possible 
+      taMisc::Info("Copying A -> B:", rec->diff_odr->GetDisplayName(), "=", rec->value);
+      taMisc::Info("Copying B -> A:", rec->GetDisplayName(), "=", rec->diff_odr->value);
+      if(tab_diff_typ) {
+ 	// need to replace old guy with new one
+	taBase* src = (taBase*)rec->addr; taBase* dest = (taBase*)rec->diff_odr->addr;
+	taBase* down = dest->GetOwner();
+	if(down) {		// should always be true
+	  down->CopyChildBefore(src, dest);
+	}
+
+	taBase* sown = src->GetOwner();
+	if(sown) {		// should always be true
+	  sown->CopyChildBefore(dest, src);
+	}
+
+	dest->Close();	// nuke old guys
+	src->Close();	// nuke old guys
+      }
+      else {
+	if(rec->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
+	  DoDiffEdits_SetRelPath(diffs.tab_obj_b, rec, rec->diff_odr);
+	}
+	else if(taptr) {
+	  DoDiffEdits_SetRelPath(proj_b, rec, rec->diff_odr); // always project relative
+	}
+	else {
+	  rec->diff_odr->type->SetValStr(rec->value, rec->diff_odr->addr,
+					 rec->diff_odr->par_addr, rec->diff_odr->mdef);
+	}
+	if(tab_par_diff) tab_par_diff->UpdateAfterEdit();
+
+	if(rec->diff_odr->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
+	  DoDiffEdits_SetRelPath(diffs.tab_obj_a, rec->diff_odr, rec);
+	}
+	else if(taptr) {
+	  DoDiffEdits_SetRelPath(proj_a, rec->diff_odr, rec); // always project relative
+	}
+	else {
+	  rec->type->SetValStr(rec->diff_odr->value, rec->addr, rec->par_addr, rec->mdef);
+	}
+	if(tab_par_rec) tab_par_rec->UpdateAfterEdit();
+	
+      }
+      continue;
+    }
+
+    if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_AB)) {
+      taMisc::Info("Copying A -> B:", rec->diff_odr->GetDisplayName(), "=", rec->value);
+      if(tab_diff_typ) {
+ 	// need to replace old guy with new one
+	taBase* src = (taBase*)rec->addr; taBase* dest = (taBase*)rec->diff_odr->addr;
+	taBase* down = dest->GetOwner();
+	if(down) {
+	  down->CopyChildBefore(src, dest);
+	  dest->Close();	// nuke old guy
+	}
+      }
+      else {
+	if(rec->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
+	  DoDiffEdits_SetRelPath(diffs.tab_obj_b, rec, rec->diff_odr);
+	}
+	else if(taptr) {
+	  DoDiffEdits_SetRelPath(proj_b, rec, rec->diff_odr); // always project relative
+	}
+	else {
+	  rec->diff_odr->type->CopyFromSameType(rec->diff_odr->addr, rec->addr);
+	}
+	if(tab_par_diff) tab_par_diff->UpdateAfterEdit();
+      }
+      continue;
+    }
+
+    if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_BA)) {
+      taMisc::Info("Copying B -> A:", rec->GetDisplayName(), "=", rec->diff_odr->value);
+      if(tab_diff_typ) {
+ 	// need to replace old guy with new one
+	taBase* src = (taBase*)rec->diff_odr->addr; taBase* dest = (taBase*)rec->addr;
+	taBase* down = dest->GetOwner();
+	if(down) {
+	  down->CopyChildBefore(src, dest);
+	  dest->Close();	// nuke old guy
+	}
+      }
+      else {
+	if(rec->diff_odr->HasDiffFlag(taObjDiffRec::VAL_PATH_REL)) {
+	  DoDiffEdits_SetRelPath(diffs.tab_obj_a, rec->diff_odr, rec);
+	}
+	else if(taptr) {
+	  DoDiffEdits_SetRelPath(proj_a, rec->diff_odr, rec); // always project relative
+	}
+	else {
+	  rec->type->CopyFromSameType(rec->addr, rec->diff_odr->addr);
+	}
+	if(tab_par_rec) tab_par_rec->UpdateAfterEdit();
+      }
+      continue;
+    }
+    
+    if(rec->HasDiffFlag(taObjDiffRec::ACT_ADD_A)) { // do add before del..
+      if(!(rec->type->InheritsFrom(&TA_taBase) && rec->diff_odr->type->InheritsFrom(&TA_taBase)))
+	continue;		// shouldn't happen
+      taMisc::Info("Adding A to B:", rec->GetDisplayName());
+      taBase* src = (taBase*)rec->addr; taBase* dest = (taBase*)rec->diff_odr->addr;
+      taBase* down = dest->GetOwner();
+      if(down) {
+	down->CopyChildBefore(src, dest);
+      }
+    }
+    if(rec->HasDiffFlag(taObjDiffRec::ACT_ADD_B)) { // do add before del..
+      if(!(rec->type->InheritsFrom(&TA_taBase) && rec->diff_odr->type->InheritsFrom(&TA_taBase)))
+	continue;
+      taMisc::Info("Adding B to A:", rec->GetDisplayName());
+      taBase* src = (taBase*)rec->addr; taBase* dest = (taBase*)rec->diff_odr->addr;
+      taBase* down = dest->GetOwner();
+      if(down) {
+	down->CopyChildBefore(src, dest);
+      }
+    }
+
+    if(rec->HasDiffFlag(taObjDiffRec::ACT_DEL_A)) {
+      if(!rec->type->InheritsFrom(&TA_taBase))
+	continue;
+      if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue; // double-check
+      taMisc::Info("Deleting A:", rec->GetDisplayName());
+      taBase* src = (taBase*)rec->addr;
+      src->Close();
+    }
+    
+    if(rec->HasDiffFlag(taObjDiffRec::ACT_DEL_B)) {
+      if(!rec->type->InheritsFrom(&TA_taBase))
+	continue;
+      if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue; // double-check
+      taMisc::Info("Deleting B:", rec->GetDisplayName());
+      taBase* src = (taBase*)rec->addr;
+      src->Close();
+    }
+
+  }
+  StructUpdate(false);
   return true;
 }
 
@@ -2550,7 +2637,8 @@ bool taBase::SelectForEditNm(const String& member, SelectEdit* editor,
 			     const String& extra_label, const String& sub_gp_nm,
 			     const String& desc) {
   if(!editor) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GET_MY_OWNER(taProject);  StructUpdate(true);
+
     if(TestError(!proj, "SelectForEditNm", "cannot find project")) return false;
     editor = (SelectEdit*)proj->edits.New(1);
   }
@@ -3532,6 +3620,16 @@ bool taList_impl::CloseLater_Child(taBase* obj) {
   return true;
 }
 
+taBase*	taList_impl::CopyChildBefore(taBase* src, taBase* child_pos) {
+  int idx = FindEl(child_pos);
+  if(idx < 0) idx = size;
+  taBase* new_obj = src->MakeToken();
+  Insert(new_obj, idx);
+  new_obj->UnSafeCopy(src);
+  new_obj->SetName(src->GetName());
+  new_obj->UpdateAfterEdit();
+  return new_obj;
+}
 
 String taList_impl::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
 			      bool force_inline) const {

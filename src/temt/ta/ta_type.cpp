@@ -7403,6 +7403,7 @@ void taObjDiffRec::Initialize() {
   diff_odr = NULL;
   data_link = NULL;
   extra = NULL;
+  widget = NULL;
 }
 
 void taObjDiffRec::Copy_(const taObjDiffRec& cp) {
@@ -7463,7 +7464,7 @@ void taObjDiffRec::GetValue(taObjDiff_List& odl) {
 #ifndef NO_TA_BASE
   if(type->InheritsFrom(&TA_taBase)) {
     if(!mdef && nest_level > 0)
-      value = type->name + ": " + ((taBase*)addr)->GetName();
+      value = type->name + ": " + ((taBase*)addr)->GetDisplayName();
     else
       value = type->name;		// this is the relevant info at this level for diffing
   }
@@ -7478,6 +7479,10 @@ void taObjDiffRec::GetValue(taObjDiff_List& odl) {
       if(rbase->IsChildOf(odl.tab_obj_a)) {
 	value = rbase->GetPath(NULL, odl.tab_obj_a); // scope by tab obj
 	SetDiffFlag(VAL_PATH_REL);
+      }
+      else {
+	// otherwise, always do it relative to project
+	value = rbase->GetPath(NULL, rbase->GetOwner(&TA_taProject));
       }
     }
   }
@@ -7660,6 +7665,16 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
 	taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b + l);
 	rec_a->diff_odr = rec_b; // this is the paired guy
 	rec_b->diff_odr = rec_a; // bidir pairing: why not..
+#ifndef NO_TA_BASE
+	if(rec_a->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
+	  if(!((taBase*)rec_a->addr)->GetOwner())
+	    rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+	}
+	if(rec_b->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
+	  if(!((taBase*)rec_b->addr)->GetOwner())
+	    rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+	}
+#endif
       }
     }
     else {
@@ -7675,8 +7690,19 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
 	  diffs_list.Link(rec_a);
 	  rec_a->SetDiffFlag(cur_flag);
 	  rec_a->diff_odr = rec_b; // starting point in b..
-	  if(rec_a->nest_level > del_nest)
+	  if(rec_a->nest_level > del_nest) {
 	    rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+	  }
+#ifndef NO_TA_BASE
+	  if(rec_a->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
+	    if(!((taBase*)rec_a->addr)->GetOwner())
+	      rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+	  }
+	  else {
+	    // and cannot be a non-ta-base for add/del
+	    rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+	  }
+#endif
 	}
       }
       if(df.insert_b > 0) {
@@ -7691,8 +7717,19 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
 	  diffs_list.Link(rec_b);
 	  rec_b->SetDiffFlag(cur_flag);
 	  rec_b->diff_odr = rec_a; // starting point in a..
-	  if(rec_b->nest_level > add_nest)
+	  if(rec_b->nest_level > add_nest) {
 	    rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+	  }
+#ifndef NO_TA_BASE
+	  if(rec_b->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
+	    if(!((taBase*)rec_b->addr)->GetOwner())
+	      rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+	  }
+	  else {
+	    // and cannot be a non-ta-base for add/del
+	    rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+	  }
+#endif
 	}
       }
     }

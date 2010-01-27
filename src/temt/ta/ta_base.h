@@ -635,8 +635,8 @@ public:
   // #IGNORE mostly for testing if has children
   virtual taBase* 	SetOwner(taBase*)		{ return(NULL); } // #IGNORE
   virtual taBase* 	GetOwner() const	{ return(NULL); } // #CAT_ObjectMgmt 
-  virtual taBase*		GetOwner(TypeDef* td) const; // #CAT_ObjectMgmt 
-  virtual taBase*		GetThisOrOwner(TypeDef* td); // #CAT_ObjectMgmt get this obj or first owner that is of type td
+  virtual taBase*	GetOwner(TypeDef* td) const; // #CAT_ObjectMgmt 
+  virtual taBase*	GetThisOrOwner(TypeDef* td); // #CAT_ObjectMgmt get this obj or first owner that is of type td
   virtual taBase* 	GetParent() const; 
     // #CAT_ObjectMgmt typically the first non-list/group owner above this one
   bool 			IsParentOf(const taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect parent of the obj (or is the obj)
@@ -1274,6 +1274,13 @@ public:
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_Display get help on using this object
 
   ///////////////////////////////////////////////////////////////////////////
+  //	Misc container functionality
+
+  virtual taBase*	CopyChildBefore(taBase* src, taBase* child_pos) { return NULL; }
+  // #CAT_ListMgmt implemented by container (list) objects: make a copy of the src object and insert it at the position of the child_pos object within this list -- copies the name of the object too
+
+
+  ///////////////////////////////////////////////////////////////////////////
   //	Updating pointers (when objects change type or are copied)
 
   virtual taBase* UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par,
@@ -1777,6 +1784,8 @@ public:
   override bool	CloseLater_Child(taBase* obj);
   override void	ChildUpdateAfterEdit(taBase* child, bool& handled); 
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); 
+
+  override taBase* CopyChildBefore(taBase* src, taBase* child_pos);
 
   ostream& 	OutputR(ostream& strm, int indent = 0) const;
 

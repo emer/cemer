@@ -1184,6 +1184,23 @@ void taiObjDiffBrowser::Constr() {
   layOuter->addWidget(lbl);
   //  layOuter->addSpacing(taiM->vsep_c);
   
+  QHBoxLayout* lay = new QHBoxLayout();
+  btnAllA = new QPushButton("Toggle All &A's", this);
+  btnAllA->setToolTip("Toggle selection of all the selectable actions for the A item -- i.e., make the A equivalent to the B");
+  btnAllA->setDefault(false);
+  btnAllA->setAutoDefault(false);
+  lay->addWidget(btnAllA);
+  lay->addStretch();
+
+  btnAllB = new QPushButton("Toggle All &B's", this);
+  btnAllB->setToolTip("Toggle selection all the selectable actions for the B item -- i.e., make the B equivalent to the A");
+  btnAllB->setDefault(false);
+  btnAllB->setAutoDefault(false);
+  lay->addWidget(btnAllB);
+  lay->addStretch();
+
+  layOuter->addLayout(lay);
+
   items = new QTreeWidget(this);
   layOuter->addWidget(items, 1); // list is item to expand in host
 
@@ -1210,7 +1227,7 @@ void taiObjDiffBrowser::Constr() {
   items->setUniformRowHeights(true);
   items->setIndentation(taMisc::tree_indent);
 
-  QHBoxLayout* lay = new QHBoxLayout();
+  lay = new QHBoxLayout();
   lay->addStretch();
   btnOk = new QPushButton("&Ok", this);
   btnOk->setDefault(true);
@@ -1222,6 +1239,9 @@ void taiObjDiffBrowser::Constr() {
 
   connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
   connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
+
+  connect(btnAllA, SIGNAL(clicked()), this, SLOT(toggleAllA()) );
+  connect(btnAllB, SIGNAL(clicked()), this, SLOT(toggleAllB()) );
 
   connect(items, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
 	  SLOT(itemClicked(QTreeWidgetItem*,int)));
@@ -1256,6 +1276,8 @@ void taiObjDiffBrowser::AddItems() {
       witm = new QTreeWidgetItem((QTreeWidgetItem*)nest_pars[par_nest]);
     }
 
+    rec->widget = witm;
+
     QVariant val = qVariantFromValue( rec );
     witm->setData(0, Qt::UserRole+1, val);
 
@@ -1267,8 +1289,8 @@ void taiObjDiffBrowser::AddItems() {
     witm->setText(COL_SEP, " | ");
 
     if(rec->HasDiffFlag(taObjDiffRec::DIFF_DEL)) {
-      witm->setText(COL_A_NM, rec->GetDisplayName());
-      witm->setText(COL_A_VAL, rec->value);
+      witm->setText(COL_A_NM, rec->GetDisplayName().elidedTo(taMisc::program_editor_width));
+      witm->setText(COL_A_VAL, rec->value.elidedTo(taMisc::program_editor_width));
       if(chk_a) witm->setBackground(COL_A_FLG, del_color);
       witm->setBackground(COL_A_VAL, del_color);
       witm->setBackground(COL_A_NM, del_color);
@@ -1295,8 +1317,8 @@ void taiObjDiffBrowser::AddItems() {
       if(chk_a) witm->setBackground(COL_A_FLG, add_color);
       witm->setBackground(COL_A_VAL, add_color);
       witm->setBackground(COL_A_NM, add_color);
-      witm->setText(COL_B_NM, rec->GetDisplayName());
-      witm->setText(COL_B_VAL, rec->value);
+      witm->setText(COL_B_NM, rec->GetDisplayName().elidedTo(taMisc::program_editor_width));
+      witm->setText(COL_B_VAL, rec->value.elidedTo(taMisc::program_editor_width));
       if(chk_b) witm->setBackground(COL_B_FLG, del_color);
       witm->setBackground(COL_B_VAL, del_color);
       witm->setBackground(COL_B_NM, del_color);
@@ -1313,13 +1335,13 @@ void taiObjDiffBrowser::AddItems() {
       }
     }
     else if(rec->HasDiffFlag(taObjDiffRec::DIFF_CHG)) {
-      witm->setText(COL_A_NM, rec->GetDisplayName());
-      witm->setText(COL_A_VAL, rec->value);
+      witm->setText(COL_A_NM, rec->GetDisplayName().elidedTo(taMisc::program_editor_width));
+      witm->setText(COL_A_VAL, rec->value.elidedTo(taMisc::program_editor_width));
       if(chk_a) witm->setBackground(COL_A_FLG, chg_color);
       witm->setBackground(COL_A_VAL, chg_color);
       witm->setBackground(COL_A_NM, chg_color);
-      witm->setText(COL_B_NM, rec->diff_odr->GetDisplayName());
-      witm->setText(COL_B_VAL, rec->diff_odr->value);
+      witm->setText(COL_B_NM, rec->diff_odr->GetDisplayName().elidedTo(taMisc::program_editor_width));
+      witm->setText(COL_B_VAL, rec->diff_odr->value.elidedTo(taMisc::program_editor_width));
       if(chk_b) witm->setBackground(COL_B_FLG, chg_color);
       witm->setBackground(COL_B_VAL, chg_color);
       witm->setBackground(COL_B_NM, chg_color);
@@ -1355,15 +1377,9 @@ void taiObjDiffBrowser::AddItems() {
 }
 
 void taiObjDiffBrowser::itemClicked(QTreeWidgetItem* itm, int column) {
-  QBrush add_color(Qt::green);
-  QBrush del_color(Qt::red);
-  QBrush chg_color(Qt::yellow);
-  QBrush no_color;
-
   if(column != COL_A_FLG && column != COL_B_FLG) return;
 
   QVariant val = itm->data(0, Qt::UserRole+1);
-
   taObjDiffRec* rec = val.value<taObjDiffRec*>();
   int a_or_b = 0;
   if(column == COL_B_FLG) a_or_b = 1;
@@ -1373,8 +1389,20 @@ void taiObjDiffBrowser::itemClicked(QTreeWidgetItem* itm, int column) {
 
   rec->SetCurAction(a_or_b, on);
 
+  UpdateItemDisp(itm, rec, a_or_b);
+}
+
+void taiObjDiffBrowser::UpdateItemDisp(QTreeWidgetItem* itm, taObjDiffRec* rec,  int a_or_b) {
+  QBrush add_color(Qt::green);
+  QBrush del_color(Qt::red);
+  QBrush chg_color(Qt::yellow);
+  QBrush no_color;
+
   String lbl;
   bool chk = rec->GetCurAction(a_or_b, lbl);
+  int column;
+  if(a_or_b == 0) column = COL_A_FLG;
+  else column = COL_B_FLG;
 
   if(rec->HasDiffFlag(taObjDiffRec::DIFF_DEL))
     itm->setBackground(column, chk ? (a_or_b ? add_color : del_color) : no_color);
@@ -1382,4 +1410,39 @@ void taiObjDiffBrowser::itemClicked(QTreeWidgetItem* itm, int column) {
     itm->setBackground(column, chk ? (a_or_b ? del_color : add_color) : no_color);
   else if(rec->HasDiffFlag(taObjDiffRec::DIFF_CHG))
     itm->setBackground(column, chk ? chg_color : no_color);
+
+  itm->setCheckState(column, chk ? Qt::Checked : Qt::Unchecked);
+}
+
+void taiObjDiffBrowser::toggleAllA() {
+  ToggleAll(0);
+}
+
+void taiObjDiffBrowser::toggleAllB() {
+  ToggleAll(1);
+}
+
+void taiObjDiffBrowser::ToggleAll(int a_or_b) {
+  for(int i=0;i<odl->size; i++) {
+    taObjDiffRec* rec = odl->FastEl(i);
+
+    if(rec->HasDiffFlag(taObjDiffRec::DIFF_DEL) || rec->HasDiffFlag(taObjDiffRec::DIFF_ADD)) {
+      if(rec->HasDiffFlag(taObjDiffRec::SUB_NO_ACT)) continue;
+      if(!(rec->type->InheritsFrom(&TA_taBase) &&
+	   rec->diff_odr->type->InheritsFrom(&TA_taBase))) continue;
+    }
+    else if(rec->HasDiffFlag(taObjDiffRec::DIFF_PAR_A) ||
+	    rec->HasDiffFlag(taObjDiffRec::DIFF_PAR_B)) {
+      continue;
+    }
+
+    QTreeWidgetItem* witm = (QTreeWidgetItem*)rec->widget;
+    if(!witm) continue;		// shouldn't happen
+
+    String lbl;
+    bool chk = rec->GetCurAction(a_or_b, lbl);
+    rec->SetCurAction(a_or_b, !chk);
+
+    UpdateItemDisp(witm, rec, a_or_b);
+  }
 }

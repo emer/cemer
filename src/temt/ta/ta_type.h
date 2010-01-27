@@ -2440,7 +2440,6 @@ private:
 class TA_API taObjDiffRecExtra  {
   // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS ##MEMB_NO_SHOW_TREE extra data for TA object difference record
 public:
-
   virtual TypeDef* GetTypeDef()	{ return NULL; } // subclasses should put correct val here
 
   taObjDiffRecExtra() { };
@@ -2488,6 +2487,7 @@ public:
   taObjDiffRec* diff_odr;	// paired diff record from other source
   taDataLink*	data_link;
   taObjDiffRecExtra* extra;	// extra data
+  void*		widget;		// points to the widget associated with this record
 
   inline void		SetDiffFlag(DiffFlags flg)   { flags = (DiffFlags)(flags | flg); }
   // #CAT_ObjectMgmt set data column flag state on
