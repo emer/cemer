@@ -2464,6 +2464,9 @@ public:
     ACT_COPY_AB = 0x001000,	// action to take: copy from a to paired diff_odr b
     ACT_COPY_BA = 0x002000,	// action to take: copy from paired diff_odr b to a
 #ifndef __MAKETA__
+    DIFF_MASK = DIFF_DEL | DIFF_ADD | DIFF_CHG,
+    DIFF_ADDEL = DIFF_DEL | DIFF_ADD,
+    DIFF_PAR = DIFF_PAR_A | DIFF_PAR_B,
     ACT_MASK = ACT_DEL_A | ACT_DEL_B | ACT_ADD_A | ACT_ADD_B | ACT_COPY_AB | ACT_COPY_BA,
 #endif
     SUB_NO_ACT = 0x010000,	// this is a sub-object of an add or delete and thus not something that an action can be driven from (just follows whatever the parent has selected)
@@ -2485,8 +2488,7 @@ public:
   TypeDef*	par_type;	// type of parent object, if a member of a containing object
   taObjDiffRec* par_odr;	// parent diff record
   taObjDiffRec* diff_odr;	// paired diff record from other source
-  taDataLink*	data_link;
-  taObjDiffRecExtra* extra;	// extra data
+  taObjDiffRecExtra* extra;	// extra data for object
   void*		widget;		// points to the widget associated with this record
 
   inline void		SetDiffFlag(DiffFlags flg)   { flags = (DiffFlags)(flags | flg); }
@@ -2502,6 +2504,9 @@ public:
   String	GetDisplayName();
   // returns a name suitable for gui display purposes -- taBase->GetDisplayName else name
 
+  bool		ActionAllowed();
+  // is an action allowed for this item?  checks flags and types to make sure
+
   bool		GetCurAction(int a_or_b, String& lbl);
   // get currently set action for this guy, depending on its flag status, and a_or_b (a=0, b=1) -- also fills in label describing action
   void		SetCurAction(int a_or_b, bool on_off);
@@ -2509,7 +2514,7 @@ public:
 
   void 		GetValue(taObjDiff_List& odl);
   // gets the value and hash code (and name) fields based on the other information already set -- also uses information on overall obj diff list (tab_obj_a for paths)
-  
+
   taObjDiffRec();
   taObjDiffRec(taObjDiff_List& odl, int nest, TypeDef* td, MemberDef* md, void* adr, void* par_adr = NULL,
 	       TypeDef* par_typ = NULL, taObjDiffRec* par_od = NULL);
@@ -2544,7 +2549,6 @@ protected:
 
 public:
   String 	name;		// of the list
-  taDataLink*	data_link;
 #ifndef NO_TA_BASE
   taBase*	tab_obj_a; 	// initial diff object for GetObjDiffVal and A comparison object for diff
   taBase*	tab_obj_b; 	// original B comparison object as a taBase

@@ -257,7 +257,56 @@ protected:
 // 	taiObjDiffBrowser	//
 //////////////////////////////////
 
-class taiObjDiffBrowser;
+class TA_API taiObjDiffBrowserFilter : iDialog {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS filter dialog for obj diff browser
+INHERITED(iDialog)
+  Q_OBJECT
+public:
+
+  static taiObjDiffBrowserFilter* New(int font_type, QWidget* par_window_ = NULL);
+
+  // state to set action to:
+  bool		action_on;
+
+  // what types of changes to include
+  bool		add;
+  bool		del;
+  bool		chg;
+
+  // string value checking
+  bool		nm_not;
+  String	nm_contains;
+
+  bool		val_not;
+  String	val_contains;
+
+  QVBoxLayout*		layOuter;
+  QCheckBox*		  chkActionOn;
+
+  QCheckBox*		  chkAdd;
+  QCheckBox*		  chkDel;
+  QCheckBox*		  chkChg;
+
+  QCheckBox*		  chkNmNot;
+  iLineEdit*		  editNm;
+  QCheckBox*		  chkValNot;
+  iLineEdit*		  editVal;
+
+  QPushButton*		  btnOk;
+  QPushButton*		  btnCancel;
+
+  virtual bool		Browse();
+  // main user interface: this actually puts up the dialog, returns true if Ok, false if cancel -- examine the member vals for results
+  virtual void	Constr();
+
+  taiObjDiffBrowserFilter(QWidget* par_window_);
+  ~taiObjDiffBrowserFilter();							      
+
+protected slots:
+  override void 	accept();
+  override void 	reject();
+};
+
 
 class TA_API taiObjDiffBrowser: iDialog {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS select items from a list, much like a file chooser; can be tokens from typedef or items on a list
@@ -281,11 +330,14 @@ public:
 
   String		caption; 	// current caption at top of chooser
   taObjDiff_List*	odl;
+  taiObjDiffBrowserFilter* filter_dlg;
 
   QVBoxLayout*		layOuter;
   QTreeWidget* 		  items; 	// list of items
   QPushButton*		    btnAllA;
+  QPushButton*		    btnFiltA;
   QPushButton*		    btnAllB;
+  QPushButton*		    btnFiltB;
   QPushButton*		    btnOk;
   QPushButton*		    btnCancel;
 
@@ -296,6 +348,10 @@ public:
   virtual void	AddItems();
   virtual void	ToggleAll(int a_or_b);
   // toggle checked state of all items -- a_or_b = 0 for A, 1 for B
+  virtual void	SetFiltered(int a_or_b, bool on, bool add, bool del, bool chg, 
+			    bool nm_not, String nm_contains, bool val_not, 
+			    String val_contains);
+  // toggle checked state of all items -- a_or_b = 0 for A, 1 for B filtered by given filter settings
   virtual void	UpdateItemDisp(QTreeWidgetItem* witm, taObjDiffRec* rec, int a_or_b);
   // update display of item
 
@@ -305,10 +361,10 @@ protected slots:
   override void 	accept();
   override void 	reject();
   virtual  void 	toggleAllA();
+  virtual  void 	setFilteredA();
   virtual  void 	toggleAllB();
+  virtual  void 	setFilteredB();
   void			itemClicked(QTreeWidgetItem* itm, int column);
-private:
-  void 		init(const String& captn); // called by constructors
 };
 
 

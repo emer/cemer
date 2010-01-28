@@ -7401,7 +7401,6 @@ void taObjDiffRec::Initialize() {
   par_type = NULL;
   par_odr = NULL;
   diff_odr = NULL;
-  data_link = NULL;
   extra = NULL;
   widget = NULL;
 }
@@ -7440,9 +7439,6 @@ taObjDiffRec::taObjDiffRec(taObjDiff_List& odl, int nest, TypeDef* td, MemberDef
 }
 
 taObjDiffRec::~taObjDiffRec() {
-  if (data_link != NULL) {
-    data_link->DataDestroying(); // link NULLs our pointer
-  }
   if(extra)
     delete extra;
   extra = NULL;
@@ -7498,6 +7494,17 @@ String taObjDiffRec::GetDisplayName() {
   }
 #endif
   return name;
+}
+
+bool taObjDiffRec::ActionAllowed() {
+  if(HasDiffFlag(DIFF_ADDEL)) {
+    if(HasDiffFlag(SUB_NO_ACT)) return false;
+    if(!type->InheritsFrom(&TA_taBase)) return false;
+  }
+  else if(HasDiffFlag(DIFF_PAR)) {
+    return false;
+  }
+  return true;
 }
 
 bool taObjDiffRec::GetCurAction(int a_or_b, String& lbl) {
@@ -7564,7 +7571,6 @@ void taObjDiffRec::SetCurAction(int a_or_b, bool on_off) {
 
 
 void taObjDiff_List::Initialize() {
-  data_link = NULL;
 #ifndef NO_TA_BASE
   tab_obj_a = NULL;
   tab_obj_b = NULL;
@@ -7573,9 +7579,6 @@ void taObjDiff_List::Initialize() {
 
 taObjDiff_List::~taObjDiff_List() { 
   Reset();
-  if (data_link) {
-    data_link->DataDestroying(); // link NULLs our pointer
-  }
 #ifndef NO_TA_BASE
   tab_obj_a = NULL;
   tab_obj_b = NULL;
@@ -7627,12 +7630,14 @@ bool taObjDiff_List::CheckAddParents(taObjDiff_List& diff_ods, taObjDiffRec* rec
   for(int i=cur_nest;i<start_nest;i++) {
     cur_rec = (taObjDiffRec*)nest_pars[i];
     if(cur_rec != rec) {
-      if(a_list)
-	cur_rec->SetDiffFlag(taObjDiffRec::DIFF_PAR_A); // indicate that it is just a parent
-      else
-	cur_rec->SetDiffFlag(taObjDiffRec::DIFF_PAR_B); // indicate that it is just a parent
-      diff_ods.Link(cur_rec);
-      rval = true;		// got one..
+      if(!cur_rec->HasDiffFlag(taObjDiffRec::DIFF_MASK)) { // don't mess with existing
+	if(a_list)
+	  cur_rec->SetDiffFlag(taObjDiffRec::DIFF_PAR_A); // indicate that it is just a parent
+	else
+	  cur_rec->SetDiffFlag(taObjDiffRec::DIFF_PAR_B); // indicate that it is just a parent
+	diff_ods.Link(cur_rec);
+	rval = true;		// got one..
+      }
     }
   }
 
@@ -7681,6 +7686,9 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
       if(df.delete_a > 0) {
 	cur_flag = taObjDiffRec::DIFF_DEL;
 	taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b);
+	if(!rec_b) {
+	  rec_b = cmp_list.Peek()->par_odr; // pars are usually safe tabase guys..
+	}
 	taObjDiffRec* rec0 = SafeEl(df.start_a);
 	int del_nest = rec0->nest_level;
 	for(int l=0; l<df.delete_a; l++) {
@@ -7708,6 +7716,9 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
       if(df.insert_b > 0) {
 	cur_flag = taObjDiffRec::DIFF_ADD;
 	taObjDiffRec* rec_a = SafeEl(df.start_a);
+	if(!rec_a) {
+	  rec_a = Peek()->par_odr; // pars are usually safe tabase guys..
+	}
 	taObjDiffRec* rec0 = cmp_list.SafeEl(df.start_b);
 	int add_nest = rec0->nest_level;
 	for(int l=0; l<df.insert_b; l++) {
