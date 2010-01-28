@@ -1032,25 +1032,30 @@ void MotionDispGaborFilterSpec::Initialize() {
 }
 
 float MotionDispGaborFilterSpec::Eval(float x, float y, float t) {
-  // normalize into normal coords, where sin goes along x axis 
-  float cx = x - ctr_x;
-  float cy = y - ctr_y;
-  float ct = time_angle*(t - ctr_t);
-  
-
-  float r = sqrtf(cx*cx + cy*cy);
-  float thet = atan2(cy, cx);
-  float totang = thet - spat_angle;
-  float n_x = r * cos(totang);
-  float n_y = r * sin(totang) + (t - ctr_t) * freq_t;
-
-  /*float rval = amp * cos(phase + freq * n_y + freq_t*ct) * 
-    exp(-.5f * ((n_y * n_y) / (width * width) + (n_x * n_x) / (length * length) + (ct*ct)/(width_t*width_t) ));*/
+	// normalize into normal coords, where sin goes along x axis 
+	float cx = x - ctr_x;
+	float cy = y - ctr_y;
+	float ct = time_angle*(t - ctr_t);
 	
-  float rval = amp * cos(phase + freq * n_y) * 
-    exp(-.5f * ((n_y * n_y) / (width * width) + (n_x * n_x) / (length * length)));
-
-  return rval;
+	
+	float r = sqrtf(cx*cx + cy*cy);
+	float thet = atan2(cy, cx);
+	float totang = thet - spat_angle;
+	float n_x = r * cos(totang);
+	float n_y = r * sin(totang);
+	
+	float rval = 0;
+	if(use_3d_gabors) {
+		rval = amp * cos(phase + freq * n_y + freq_t*ct) * 
+		exp(-.5f * ((n_y * n_y) / (width * width) + (n_x * n_x) / (length * length) + (ct*ct)/(width_t*width_t) ));
+	}
+	else {
+		n_y += (t - ctr_t) * freq_t;
+		rval = amp * cos(phase + freq * n_y) * 
+		exp(-.5f * ((n_y * n_y) / (width * width) + (n_x * n_x) / (length * length)));
+	}
+	
+	return rval;
 }
 
 void MotionDispGaborFilterSpec::RenderFilter(float_Matrix& flt) {
@@ -1747,6 +1752,7 @@ bool GaborV1SpecBase::InitFilters_MotionDispGabor() {
     mdgf->width = motiondisp_gabor_rf.width;
     mdgf->width_t = motiondisp_gabor_rf.width_t;
     mdgf->amp = motiondisp_gabor_rf.amp;
+	  mdgf->use_3d_gabors = use_3d_gabors;
     mdgf->UpdateFilter();
   }
   return true;
@@ -2501,28 +2507,64 @@ bool MotionDispGaborV1Spec::FilterMultiInputDisp(float_Matrix& v1_output1, float
 	cur_eyes = eyes;
 	cur_disp = disp;
 	
-	for(int t=0; t < 3; t++) {
-		switch(t) {
-			case 0:
-				cur_on_left_input = &on_left_input1;
-				cur_off_left_input = &off_left_input1;
-				cur_on_right_input = &on_right_input1;
-				cur_off_right_input = &off_right_input1;
-				break;
-			case 1:
-				cur_on_left_input = &on_left_input2;
-				cur_off_left_input = &off_left_input2;
-				cur_on_right_input = &on_right_input2;
-				cur_off_right_input = &off_right_input2;
-				break;
-			case 2:
-				cur_on_left_input = &on_left_input3;
-				cur_off_left_input = &off_left_input3;
-				cur_on_right_input = &on_right_input3;
-				cur_off_right_input = &off_right_input3;
-				break;
+	if(!process_all_timesteps) {
+		for(int t=0; t < 3; t++) {
+			switch(t) {
+				case 0:
+					cur_on_left_input = &on_left_input1;
+					cur_off_left_input = &off_left_input1;
+					cur_on_right_input = &on_right_input1;
+					cur_off_right_input = &off_right_input1;
+					break;
+				case 1:
+					cur_on_left_input = &on_left_input2;
+					cur_off_left_input = &off_left_input2;
+					cur_on_right_input = &on_right_input2;
+					cur_off_right_input = &off_right_input2;
+					break;
+				case 2:
+					cur_on_left_input = &on_left_input3;
+					cur_off_left_input = &off_left_input3;
+					cur_on_right_input = &on_right_input3;
+					cur_off_right_input = &off_right_input3;
+					break;
+			}
+			cur_t = t;
+			
+			//process_separate_eyes = true;
+			//cur_eye = 0;
+			process_separate_eyes = false;
+			
+			threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
+			threads.min_units = 1;
+			threads.nibble_chunk = 1;
+			ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
+			threads.Run(&ip_call, un_geom.n);
+			
+			
+			/* cur_eye = 1;
+			 
+			 threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
+			 threads.min_units = 1;
+			 threads.nibble_chunk = 1;
+			 threads.Run(&ip_call, un_geom.n); */
+			
 		}
-		cur_t = t;
+	}
+	else {
+		cur_on_left_input1 = &on_left_input1;
+		cur_off_left_input1 = &off_left_input1;
+		cur_on_right_input1 = &on_right_input1;
+		cur_off_right_input1 = &off_right_input1;
+		cur_on_left_input2 = &on_left_input2;
+		cur_off_left_input2 = &off_left_input2;
+		cur_on_right_input2 = &on_right_input2;
+		cur_off_right_input2 = &off_right_input2;
+		cur_on_left_input3 = &on_left_input3;
+		cur_off_left_input3 = &off_left_input3;
+		cur_on_right_input3 = &on_right_input3;
+		cur_off_right_input3 = &off_right_input3;
+		
 		
 		//process_separate_eyes = true;
 		//cur_eye = 0;
@@ -2537,10 +2579,11 @@ bool MotionDispGaborV1Spec::FilterMultiInputDisp(float_Matrix& v1_output1, float
 		
 		/* cur_eye = 1;
 		 
-		threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
-		threads.min_units = 1;
-		threads.nibble_chunk = 1;
-		threads.Run(&ip_call, un_geom.n); */
+		 threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
+		 threads.min_units = 1;
+		 threads.nibble_chunk = 1;
+		 threads.Run(&ip_call, un_geom.n); */
+		
 		
 	}
 	return true;
@@ -2662,9 +2705,8 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 	MotionDispGaborFilterSpec* gf = (MotionDispGaborFilterSpec*)motiondisp_gabor_specs.SafeEl(fidx);
 	if(!gf) return false;			     // shouldn't happen
 	
-	//for(int cur_eye; cur_eye < 2; cur_eye++) {
+	if(!process_all_timesteps) {
 		
-		// for each unit, process entire input:
 		for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
 			for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
 				if(wrap) {
@@ -2694,17 +2736,16 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 								
 								float fval = gf->filter.FastEl(fc.x, fc.y, cur_t);
 								float oval[3] = {0,0,0};
-								int disp = cur_disp * -1;
 								for(int disp_lvl_i = 0; disp_lvl_i < 3; disp_lvl_i++) {
 									
 									
 									for(int disp_i = 0; disp_i < disparity_width; disp_i++) {
 										
 										in_left = fgpof + fc;
-										in_left.x +=  (-1 * disp) - (disparity_offset - disp_i);
+										in_left.x +=  ((disp_lvl_i - 1) * disparity_offset) + (disp_i - (disparity_width / 2));
 										if(in_left.WrapClip(wrap, trg_input_size)) continue;
 										in_right = fgpof + fc;
-										in_right.x +=  disp + (disparity_offset - disp_i);
+										in_right.x +=  ((1 - disp_lvl_i) * disparity_offset) + ((disparity_width / 2) - disp_i);
 										if(in_right.WrapClip(wrap, trg_input_size)) continue;
 										
 										float cur_disp_mult = disp_gauss_mat.FastEl(disp_i);
@@ -2724,9 +2765,32 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 												}
 											}
 											else {
-												input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y);
+												switch(contrast) {
+													case mult_same:
+														input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y);
+														break;
+													case add_same:
+														input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) + cur_on_right_input->FastEl(in_right.x, in_right.y);
+														break;
+													case mult_same_diff:
+														input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y);
+														input_val -= cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y);
+														break;
+													case add_same_diff:
+														input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) + cur_on_right_input->FastEl(in_right.x, in_right.y);
+														input_val -= cur_off_left_input->FastEl(in_left.x, in_left.y) + cur_off_right_input->FastEl(in_right.x, in_right.y);
+														break;
+													case within_diff_mult:
+														input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) - cur_off_left_input->FastEl(in_left.x, in_left.y);
+														input_val *= cur_on_right_input->FastEl(in_right.x, in_right.y) - cur_off_right_input->FastEl(in_right.x, in_right.y);
+														break;
+													default:
+														input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y);
+														break;
+												}
+												
 											}
-
+											
 											oval[disp_lvl_i] += fval * input_val * cur_disp_mult * (1.0f / disparity_width);
 											//oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
 										}
@@ -2743,7 +2807,30 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 												}
 											}
 											else {
-												input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y);
+												switch(contrast) {
+													case mult_same:
+														input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y);
+														break;
+													case add_same:
+														input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) + cur_off_right_input->FastEl(in_right.x, in_right.y);
+														break;
+													case mult_same_diff:
+														input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y);
+														input_val -= cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y);
+														break;
+													case add_same_diff:
+														input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) + cur_off_right_input->FastEl(in_right.x, in_right.y);
+														input_val -= cur_on_left_input->FastEl(in_left.x, in_left.y) + cur_on_right_input->FastEl(in_right.x, in_right.y);
+														break;
+														
+													case within_diff_mult:
+														input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) - cur_on_left_input->FastEl(in_left.x, in_left.y);
+														input_val *= cur_off_right_input->FastEl(in_right.x, in_right.y) - cur_on_right_input->FastEl(in_right.x, in_right.y);
+														break;
+													default:
+														input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y);
+														break;
+												}
 											}
 											oval[disp_lvl_i] += fval * input_val * cur_disp_mult * (1.0f / disparity_width);
 											//oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
@@ -2751,7 +2838,6 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 										
 									}
 									flt_sum[disp_lvl_i] += oval[disp_lvl_i];
-									disp += cur_disp;
 								}
 							}
 						}
@@ -2778,7 +2864,213 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 				}
 			}
 		}
-	//}
+		
+	}
+	else {
+		//for(int cur_eye; cur_eye < 2; cur_eye++) {
+		
+		// for each unit, process entire input:
+		for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
+			for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
+				if(wrap) {
+					ugpof = (ugp-1) * input_ovlp;
+				}
+				else {
+					ugpof = ugp * input_ovlp;
+				}
+				float max_val[3] = {0,0,0};
+				// filter groups
+				for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
+					int ymod = fgp.y % n_filters_per_gp;
+					for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
+						int xmod = (fgp.x + ymod) % n_filters_per_gp;
+						if(xmod != fgpdx) {
+							continue; // not our spot
+						}
+						float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
+						fgpof = ugpof + (fgp * rf_ovlp);
+						
+						// now actually apply the filter itself
+						float flt_sum[3] = {0,0,0};
+						
+						for(int disp_lvl_i = 0; disp_lvl_i < 3; disp_lvl_i++) {
+							for(int disp_i = 0; disp_i < disparity_width; disp_i++) {
+								
+								
+								float cur_disp_mult = disp_gauss_mat.FastEl(disp_i);
+								for(int t = 0; t < 3; t++) {
+									switch(t) {
+										case 0:
+											cur_on_left_input = cur_on_left_input1;
+											cur_off_left_input = cur_off_left_input1;
+											cur_on_right_input = cur_on_right_input1;
+											cur_off_right_input = cur_off_right_input1;
+											break;
+										case 1:
+											cur_on_left_input = cur_on_left_input2;
+											cur_off_left_input = cur_off_left_input2;
+											cur_on_right_input = cur_on_right_input2;
+											cur_off_right_input = cur_off_right_input2;
+											break;
+										case 2:
+											cur_on_left_input = cur_on_left_input3;
+											cur_off_left_input = cur_off_left_input3;
+											cur_on_right_input = cur_on_right_input3;
+											cur_off_right_input = cur_off_right_input3;
+											break;
+									}
+									
+									float oval[3] = {0,0,0};
+									for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+										for(fc.x=0;fc.x<rf_width.x;fc.x++) {
+											
+											
+											in_left = fgpof + fc;
+											in_left.x +=  ((disp_lvl_i - 1) * disparity_offset) + (disp_i - (disparity_width / 2));
+											if(in_left.WrapClip(wrap, trg_input_size)) continue;
+											in_right = fgpof + fc;
+											in_right.x +=  ((1 - disp_lvl_i) * disparity_offset) + ((disparity_width / 2) - disp_i);
+											if(in_right.WrapClip(wrap, trg_input_size)) continue;
+											
+											
+											float fval = gf->filter.FastEl(fc.x, fc.y, t);
+											
+											
+											
+											
+											
+											
+											if(fval > 0.0f) {
+												//oval += fval * cur_on_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
+												//oval += fval * cur_on_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
+												
+												float input_val = 0;
+												
+												if(process_separate_eyes) {
+													if(cur_eye == 0) {
+														input_val = cur_on_left_input->FastEl(in_left.x, in_left.y);
+													}
+													else {
+														input_val = cur_on_right_input->FastEl(in_left.x, in_left.y);
+													}
+												}
+												else {
+													float left_val, right_val;
+													switch(contrast) {
+														case mult_same:
+															input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y);
+															break;
+														case add_same:
+															input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) + cur_on_right_input->FastEl(in_right.x, in_right.y);
+															break;
+														case mult_same_diff:
+															input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y);
+															input_val -= cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y);
+															break;
+														case add_same_diff:
+															input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) + cur_on_right_input->FastEl(in_right.x, in_right.y);
+															input_val -= cur_off_left_input->FastEl(in_left.x, in_left.y) + cur_off_right_input->FastEl(in_right.x, in_right.y);
+															input_val = MAX(0, input_val);
+															break;
+															
+														case within_diff_mult:
+															left_val = cur_on_left_input->FastEl(in_left.x, in_left.y) - cur_off_left_input->FastEl(in_left.x, in_left.y);
+															right_val = cur_on_right_input->FastEl(in_right.x, in_right.y) - cur_off_right_input->FastEl(in_right.x, in_right.y);
+															if(left_val < 0 || right_val < 0) {
+																input_val = 0;
+															}
+															else {
+																input_val = left_val * right_val;
+															}
+															break;
+															
+														default:
+															input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y);
+															break;
+													}
+												}
+												
+												oval[disp_lvl_i] += fval * input_val * cur_disp_mult * (1.0f / disparity_width);
+												//oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
+											}
+											else {
+												//oval += -fval * cur_off_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
+												//oval += -fval * cur_off_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
+												float input_val = 0;
+												if(process_separate_eyes) {
+													if(cur_eye == 0) {
+														input_val = cur_off_left_input->FastEl(in_left.x, in_left.y);
+													}
+													else {
+														input_val = cur_off_right_input->FastEl(in_left.x, in_left.y);
+													}
+												}
+												else {
+													switch(contrast) {
+														case mult_same:
+															input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y);
+															break;
+														case add_same:
+															input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) + cur_off_right_input->FastEl(in_right.x, in_right.y);
+															break;
+														case mult_same_diff:
+															input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y);
+															input_val -= cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y);
+															break;
+														case add_same_diff:
+															input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) + cur_off_right_input->FastEl(in_right.x, in_right.y);
+															input_val -= cur_on_left_input->FastEl(in_left.x, in_left.y) + cur_on_right_input->FastEl(in_right.x, in_right.y);
+															input_val = MAX(0, input_val);
+															
+															break;
+															
+														case within_diff_mult:
+															input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) - cur_on_left_input->FastEl(in_left.x, in_left.y);
+															input_val *= cur_off_right_input->FastEl(in_right.x, in_right.y) - cur_on_right_input->FastEl(in_right.x, in_right.y);
+															break;
+															
+														default:
+															input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y);
+															break;
+													}											
+												}
+												oval[disp_lvl_i] += fval * input_val * cur_disp_mult * (1.0f / disparity_width);
+												//oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
+											}
+											
+										}
+																			
+									}
+									flt_sum[disp_lvl_i] += oval[disp_lvl_i];
+								}
+							}
+						}
+						
+						flt_sum[0] *= gmult;
+						max_val[0] = MAX(max_val[0], flt_sum[0]);
+						flt_sum[1] *= gmult;
+						max_val[1] = MAX(max_val[1], flt_sum[1]);
+						flt_sum[2] *= gmult;
+						max_val[2] = MAX(max_val[2], flt_sum[2]);
+					}
+				}
+				
+				if(cur_superimpose) {
+					cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[0];
+					cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[1];
+					cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[2];
+					
+				}
+				else {
+					cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[0];
+					cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[1];
+					cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[2];
+				}
+			}
+		}
+		
+	}
+	
 	return true;
 }
 

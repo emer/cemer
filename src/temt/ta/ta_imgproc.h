@@ -411,6 +411,7 @@ public:
   float		length;		// width of the gaussian in the wave direction
   float		width_t;		// width of the gaussian in the wave direction
   float		amp;		// amplitude (maximum value)
+	bool	use_3d_gabors;
   float_Matrix  filter;		// #READ_ONLY #NO_SAVE #NO_COPY our filter
 
   virtual float	Eval(float x, float y, float t);
@@ -630,6 +631,8 @@ public:
   taBase_List 	blob_specs; 	// #READ_ONLY #NO_SAVE underlying DoG generators (type DoGFilterSpec)
   taBase_List 	motiondisp_gabor_specs; 	// #READ_ONLY #NO_SAVE underlying motion/disp gabor generators (type MotionDispGaborFilterSpec)
 	
+	bool use_3d_gabors; //motion only
+	
 	bool two_phase;
 
   virtual bool 	InitFilters();
@@ -690,6 +693,7 @@ public:
   XYNGeom	trg_input_size;	// #READ_ONLY #SHOW target input size: gp_geom * input_ovlp for wrap; (gp_geom - 1) * input_ovlp for !wrap
   float		gp_gauss_sigma;	  // width of gaussian weighting factor over the filter groups, in normalized terms relative to tot_filter_gps widths
   float_Matrix	gp_gauss_mat;	  // #READ_ONLY #NO_SAVE #NO_COPY group gaussian vals 
+	
 
   virtual void	UpdateGeoms();	// update all the geometry values based on current setting
 
@@ -757,6 +761,19 @@ public:
 	float disp_gauss_sigma; // width of gaussian weighting factor over the disparity comparison
 	int		disparity_width;	//size of the area to compare disparities
 	int		disparity_offset;	//disparity offset increments
+	
+	enum ContrastType {
+		mult_same,
+		add_same,
+		mult_same_diff,
+		add_same_diff,
+		within_diff_mult
+	};
+	ContrastType contrast;
+	bool process_all_timesteps;
+	
+	
+	
 
 	float_Matrix  disp_gauss_mat; // #READ_ONLY #NO_SAVE #NO_COPY disparity group gaussian vals
 
@@ -803,6 +820,22 @@ protected:
 	float_Matrix*  cur_off_left_input;
 	float_Matrix* cur_on_right_input;
 	float_Matrix* cur_off_right_input;
+	
+	
+	float_Matrix*  cur_on_left_input1;
+	float_Matrix*  cur_off_left_input1;
+	float_Matrix* cur_on_right_input1;
+	float_Matrix* cur_off_right_input1;
+	float_Matrix*  cur_on_left_input2;
+	float_Matrix*  cur_off_left_input2;
+	float_Matrix* cur_on_right_input2;
+	float_Matrix* cur_off_right_input2;
+	float_Matrix*  cur_on_left_input3;
+	float_Matrix*  cur_off_left_input3;
+	float_Matrix* cur_on_right_input3;
+	float_Matrix* cur_off_right_input3;
+	
+	
 	int cur_eyes;
 	int cur_disp;
 	int cur_t;
