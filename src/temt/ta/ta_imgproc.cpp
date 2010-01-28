@@ -2892,12 +2892,16 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 						
 						// now actually apply the filter itself
 						float flt_sum[3] = {0,0,0};
+						float flt_sum_right[3] = {0,0,0};
+						float flt_sum_left[3] = {0,0,0};
 						
 						for(int disp_lvl_i = 0; disp_lvl_i < 3; disp_lvl_i++) {
 							for(int disp_i = 0; disp_i < disparity_width; disp_i++) {
 								
 								
 								float cur_disp_mult = disp_gauss_mat.FastEl(disp_i);
+								float oval_right[3] = {0,0,0};
+								float oval_left[3] = {0,0,0};
 								for(int t = 0; t < 3; t++) {
 									switch(t) {
 										case 0:
@@ -2920,7 +2924,7 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 											break;
 									}
 									
-									float oval[3] = {0,0,0};
+									
 									for(fc.y=0;fc.y<rf_width.y;fc.y++) {
 										for(fc.x=0;fc.x<rf_width.x;fc.x++) {
 											
@@ -2945,6 +2949,7 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 												//oval += fval * cur_on_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
 												
 												float input_val = 0;
+												float left_val, right_val;
 												
 												if(process_separate_eyes) {
 													if(cur_eye == 0) {
@@ -2955,13 +2960,15 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 													}
 												}
 												else {
-													float left_val, right_val;
+													
 													switch(contrast) {
 														case mult_same:
 															input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y);
 															break;
 														case add_same:
 															input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) + cur_on_right_input->FastEl(in_right.x, in_right.y);
+															right_val = cur_on_left_input->FastEl(in_left.x, in_left.y);
+															left_val = cur_on_right_input->FastEl(in_right.x, in_right.y);
 															break;
 														case mult_same_diff:
 															input_val = cur_on_left_input->FastEl(in_left.x, in_left.y) * cur_on_right_input->FastEl(in_right.x, in_right.y);
@@ -2990,13 +2997,16 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 													}
 												}
 												
-												oval[disp_lvl_i] += fval * input_val * cur_disp_mult * (1.0f / disparity_width);
+												oval_left[disp_lvl_i] += fval * left_val;
+												oval_right[disp_lvl_i] += fval * right_val;
 												//oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
 											}
 											else {
 												//oval += -fval * cur_off_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
 												//oval += -fval * cur_off_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
 												float input_val = 0;
+												float right_val = 0;
+												float left_val = 0;
 												if(process_separate_eyes) {
 													if(cur_eye == 0) {
 														input_val = cur_off_left_input->FastEl(in_left.x, in_left.y);
@@ -3012,6 +3022,8 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 															break;
 														case add_same:
 															input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) + cur_off_right_input->FastEl(in_right.x, in_right.y);
+															right_val = cur_off_right_input->FastEl(in_right.x, in_right.y);
+															left_val = cur_off_left_input->FastEl(in_left.x, in_left.y);
 															break;
 														case mult_same_diff:
 															input_val = cur_off_left_input->FastEl(in_left.x, in_left.y) * cur_off_right_input->FastEl(in_right.x, in_right.y);
@@ -3034,22 +3046,34 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 															break;
 													}											
 												}
-												oval[disp_lvl_i] += fval * input_val * cur_disp_mult * (1.0f / disparity_width);
+												oval_left[disp_lvl_i] += -fval * left_val;
+												oval_right[disp_lvl_i] += -fval * right_val;
 												//oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
 											}
 											
 										}
 																			
 									}
-									flt_sum[disp_lvl_i] += oval[disp_lvl_i];
+									
+								}
+								if(max_in_disparity) {
+									flt_sum_right[disp_lvl_i] = MAX(oval_right[disp_lvl_i],flt_sum_right[disp_lvl_i]);
+									flt_sum_left[disp_lvl_i] = MAX(oval_left[disp_lvl_i],flt_sum_left[disp_lvl_i]);
+								}
+								else {
+									flt_sum_right[disp_lvl_i] += oval_right[disp_lvl_i] * cur_disp_mult;
+									flt_sum_left[disp_lvl_i] += oval_left[disp_lvl_i] * cur_disp_mult;
 								}
 							}
 						}
 						
+						flt_sum[0] = flt_sum_left[0] + flt_sum_right[0];
 						flt_sum[0] *= gmult;
 						max_val[0] = MAX(max_val[0], flt_sum[0]);
+						flt_sum[1] = flt_sum_left[1] + flt_sum_right[1];
 						flt_sum[1] *= gmult;
 						max_val[1] = MAX(max_val[1], flt_sum[1]);
+						flt_sum[2] = flt_sum_left[2] + flt_sum_right[2];
 						flt_sum[2] *= gmult;
 						max_val[2] = MAX(max_val[2], flt_sum[2]);
 					}

@@ -771,6 +771,7 @@ public:
 	};
 	ContrastType contrast;
 	bool process_all_timesteps;
+	bool max_in_disparity;
 	
 	
 	
