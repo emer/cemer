@@ -799,14 +799,15 @@ int taBase::ChildEditAction(const MemberDef* md, taBase* child,
   if (proj) {
     proj->undo_mgr.Nest(true); 
   }
+  StructUpdate(true);
   for (int i = 0; i < ms->count(); ++i) {
     ms->setIndex(i);
     rval = ChildEditAction_impl(md, child, ms, ea);
     // keep looping as long as stuff ok
     if (rval != taiClipData::ER_OK)
-      goto exit;
+      break;
   }
-exit:
+  StructUpdate(false);
   if (proj) {
     proj->undo_mgr.Nest(false); 
   }

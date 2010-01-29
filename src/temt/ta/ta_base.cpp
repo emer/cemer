@@ -1431,7 +1431,7 @@ taBaseObjDiffRecExtra::taBaseObjDiffRecExtra(taBase* tab) {
   tabref = tab;
 }
 
-void taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def, 
+taObjDiffRec* taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def, 
 			   const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // always just add a record for this guy
   taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
@@ -1441,6 +1441,7 @@ void taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_de
     odr->extra = new taBaseObjDiffRecExtra((taBase*)this);
 
   GetTypeDef()->GetObjDiffVal_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
+  return odr;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -3724,15 +3725,9 @@ bool taList_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
   return false;
 }
 
-void taList_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,  MemberDef* memb_def,
-		  const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
-  // always just add a record for this guy
-  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
-				       (void*)par, par_typ, par_od);
-  odl.Add(odr);
-  odr->extra = new taBaseObjDiffRecExtra((taBase*)this);
-
-  GetTypeDef()->GetObjDiffVal_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
+taObjDiffRec* taList_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,  MemberDef* memb_def,
+	  const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
+  taObjDiffRec* odr = inherited::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
 
   for(int i=0; i<size; i++) {
     taBase* itm = (taBase*)el[i];
@@ -3740,6 +3735,7 @@ void taList_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,  MemberDef* m
       itm->GetObjDiffVal(odl, nest_lev+1, NULL, this, GetTypeDef(), odr);
     }
   }
+  return odr;
 }
 
 int taList_impl::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {

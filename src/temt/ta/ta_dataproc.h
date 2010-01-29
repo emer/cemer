@@ -456,6 +456,8 @@ protected:
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
+  override void	SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+				     int dcr, void* op1_, void* op2_);
 
 private:
   void	Initialize();

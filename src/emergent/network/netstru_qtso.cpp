@@ -2163,10 +2163,26 @@ String Network::GetViewVar() {
   return nv->unit_disp_md->name;
 }
 
+bool Network::SetViewVar(const String& view_var) {
+  NetView* nv = FindView();
+  if(!nv) return false;
+  nv->SelectVar(view_var, false, true); // add, update
+  return true;
+}
+
 Unit* Network::GetViewSrcU() {
   NetView* nv = FindView();
   if(nv) return nv->unit_src;
   return NULL;
+}
+
+bool Network::SetViewSrcU(Unit* un) {
+  NetView* nv = FindView();
+  if(!nv) return false;
+  nv->setUnitSrc(NULL, un);
+  nv->InitDisplay();
+  nv->UpdateDisplay();
+  return true;
 }
 
 void Network::PlaceNetText(NetTextLoc net_text_loc, float scale) {

@@ -85,6 +85,7 @@ void NetDataLoop::DMem_Initialize(Network* net) {
 }
 
 String NetDataLoop::GetDisplayName() const {
+  ((NetDataLoop*)this)->GetOrderVal();
   String ord_str = GetTypeDef()->GetEnumString("Order", order);
   String data_nm;
   if(data_var) data_nm = data_var->name;

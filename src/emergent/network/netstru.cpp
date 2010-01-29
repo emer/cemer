@@ -3788,6 +3788,12 @@ bool Unit_Group::Dump_QuerySaveChildren() {
      && !own_lay->HasLayerFlag(Layer::NO_SAVE_UNITS)));
 }
 
+taObjDiffRec* Unit_Group::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def, 
+			   const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
+  // do NOT go below unit group in diffing!
+  return taBase::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
+}
+
 ////////////////////////
 //  Projection_Group  //
 ////////////////////////

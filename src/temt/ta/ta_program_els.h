@@ -675,7 +675,10 @@ public:
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
   override String	GetToolbarName() const { return "stop/step"; }
 
-  PROGEL_SIMPLE_BASEFUNS(StopStepPoint);
+  PROGEL_SIMPLE_COPY(StopStepPoint);
+  void InitLinks();
+  SIMPLE_CUTLINKS(StopStepPoint);
+  TA_BASEFUNS(StopStepPoint);
 protected:
   override const String	GenCssBody_impl(int indent_level);
 

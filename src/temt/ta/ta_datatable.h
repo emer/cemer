@@ -150,6 +150,8 @@ public:
 
   virtual ValType 	valType() const = 0;
   // #CAT_Access the type of data in each element
+  virtual TypeDef* 	valTypeDef() const = 0;
+  // #CAT_Access the type of data in each element, as a TypeDef
   inline bool		isMatrix() const {return is_matrix;}
   // #CAT_Access true if data is a matrix
   virtual bool		isNumeric() const {return false;}
@@ -209,10 +211,16 @@ public:
   const Variant GetMatrixVal(int row, int d0, int d1=0, int d2=0, int d3=0) const
   { return GetValAsVarMDims(row, d0,d1,d2,d3); }
   // #CAT_Access get value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), d's are matrix dimension indicies
+  const Variant GetMatrixFlatVal(int row, int cell) const
+  { return GetValAsVarM(row, cell); }
+  // #CAT_Access get value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), using flat representation of matrix cell (single cell index)
   bool	 	SetMatrixVal(const Variant& val, int row, 
 			     int d0, int d1=0, int d2=0, int d3=0)
   { return SetValAsVarMDims(val, row, d0,d1,d2,d3); }
   // #CAT_Modify set value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), d's are matrix dimension indicies
+  bool	 	SetMatrixFlatVal(const Variant& val, int row, int cell)
+  { return SetValAsVarM(val, row, cell); }
+  // #CAT_Modify set value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), using flat representation of matrix cell (single cell index)
 
   bool	 	InitVals(const Variant& init_val);
   // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Column initialize all values in this column to given value
@@ -442,6 +450,10 @@ public:
   override void	SetIndex(int value) {col_idx = (short)value;}
   override String GetDesc() const {return desc;}
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
+				       MemberDef* memb_def=NULL, const void* par=NULL,
+				       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
+
   void	InitLinks(); //note: ok to do own AR here, because never called in constructor
   void	CutLinks(); //note: NOT ok to do disown AR here, because called in destructor
   TA_ABSTRACT_BASEFUNS(DataCol);
@@ -870,6 +882,12 @@ public:
 					  int d0=0, int d1=0, int d2=0, int d3=0,
 					  int d4=0, int d5=0, int d6=0);
   // #CAT_Columns change type and/or geometry of column with given name 
+
+  virtual bool		MatrixColToScalars(Variant mtx_col, const String& scalar_col_name_stub="");
+  // #CAT_Columns #MENU #MENU_ON_Columns convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
+  virtual bool		MatrixColFmScalars(Variant mtx_col, const String& scalar_col_name_stub="");
+  // #CAT_Columns #MENU #MENU_ON_Columns convert a sequence of sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes -- matrix column must already exist and be configured properly
+
   USING(inherited::GetColData)
   virtual DataCol* 	GetColData(Variant col, bool quiet = false) const {
     if(col.isStringType()) return FindColName(col.toString(), !quiet);
@@ -1466,6 +1484,7 @@ friend class DataTable;
 public:
   override bool		isString() const {return true;} 
   override ValType 	valType() const  {return VT_STRING;}
+  override TypeDef* 	valTypeDef() const  {return &TA_taString;}
 
   TA_BASEFUNS_NOCOPY(String_Data);
 
@@ -1501,6 +1520,7 @@ INHERITED(DataColTp<Variant_Matrix>)
 friend class DataTable;
 public:
   override ValType 	valType() const  {return VT_VARIANT;}
+  override TypeDef* 	valTypeDef() const  {return &TA_Variant;}
 
   TA_BASEFUNS_NOCOPY(Variant_Data);
 
@@ -1540,6 +1560,7 @@ public:
   override bool		isFloat() const {return true;} 
   override int		maxColWidth() const {return 15;} // assumes sign, int: 15 dig's; double: 14 dig's, decimal point
   override ValType 	valType() const {return VT_DOUBLE;}
+  override TypeDef* 	valTypeDef() const {return &TA_double;}
 
   TA_BASEFUNS_NOCOPY(double_Data);
   
@@ -1573,6 +1594,7 @@ public:
   override bool		isFloat() const {return true;} 
   override int		maxColWidth() const {return 7;} // assumes sign, int: 6 dig's; float: 5 dig's, decimal point
   override ValType 	valType() const {return VT_FLOAT;}
+  override TypeDef* 	valTypeDef() const {return &TA_float;}
 
   TA_BASEFUNS_NOCOPY(float_Data);
   
@@ -1605,6 +1627,7 @@ public:
   override bool		isNumeric() const {return true;} // 
   override int		maxColWidth() const {return 11;} // assumes sign, 10 digs
   override ValType 	valType() const {return VT_INT;}
+  override TypeDef* 	valTypeDef() const {return &TA_int;}
 
   TA_BASEFUNS_NOCOPY(int_Data);
   
@@ -1637,6 +1660,7 @@ public:
   override bool		isNumeric() const {return true;} // 
   override int		maxColWidth() const {return 3;} // assumes 3 digs
   override ValType 	valType() const {return VT_BYTE;}
+  override TypeDef* 	valTypeDef() const {return &TA_byte;}
 
   TA_BASEFUNS_NOCOPY(byte_Data);
   

@@ -2923,6 +2923,7 @@ taiItemChooser::taiItemChooser(const String& caption_, QWidget* par_window_)
 void taiItemChooser::init(const String& caption_) {
   init_filter = "^";
   m_changing = 0;
+  m_fully_up = false;
   caption = caption_;
   multi_cats = false;
   m_selObj = NULL;
@@ -2937,9 +2938,23 @@ void taiItemChooser::init(const String& caption_) {
 }
 
 void taiItemChooser::accept() {
-  QTreeWidgetItem* itm = items->currentItem();
-  if (itm) {
-    m_selObj = (void*)QVARIANT_TO_INTPTR(itm->data(0,ObjDataRole));
+  String text = filter->text(); // apply current filter
+  if(text.nonempty() && text != last_filter) {
+    last_filter = text.chars();
+    QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::All);
+    QTreeWidgetItem* item;
+    while ((item = *it++)) { 
+      bool show = ShowItem(item);
+      if(!show) continue;
+      m_selObj = (void*)QVARIANT_TO_INTPTR(item->data(0,ObjDataRole));
+      break;
+    }
+  }
+  else {
+    QTreeWidgetItem* itm = items->currentItem();
+    if (itm) {
+      m_selObj = (void*)QVARIANT_TO_INTPTR(itm->data(0,ObjDataRole));
+    }
   }
   m_client = NULL;
   inherited::accept();
@@ -2980,7 +2995,6 @@ void taiItemChooser::ApplyFiltering() {
   QTreeWidgetItem* first_item = NULL;
   int n_items = 0;
   while ((item = *it)) { 
-    // TODO (maybe): don't hide NULL item
     bool show = ShowItem(item);
     items->setItemHidden(item, !show);
     if(show) {
@@ -3046,6 +3060,7 @@ void taiItemChooser::cmbCat_currentIndexChanged(int index) {
 }
 
 void taiItemChooser::Constr(taiItemPtrBase* client_) {
+  m_fully_up = false;
   m_client = client_; // revoked at end
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(taiM->vsep_c);
@@ -3295,6 +3310,7 @@ void taiItemChooser::show_timeout() {
   filter->end(false);
   if (m_selItem)
     items->scrollToItem(m_selItem);
+  m_fully_up = true;
 }
 
 void taiItemChooser::timFilter_timeout() {
@@ -4497,6 +4513,7 @@ int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
       item->setData(2, Qt::DisplayRole, own->GetDisplayName()); // use disp name directly -- overriden to name for groups..
       item->setData(3, Qt::DisplayRole, own->GetColText(taBase::key_type));
     }
+    item->setData(4, Qt::DisplayRole, btmp->GetPath());
     ++rval;
   }
 
@@ -4509,7 +4526,7 @@ int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
 
 int taiTokenPtrButton::columnCount(int view) const {
   switch (view) {
-  case 0: return 4;
+  case 0: return 5;
   default: return 0; // not supposed to happen
   }
 }
@@ -4536,6 +4553,7 @@ const String taiTokenPtrButton::headerText(int index, int view) const {
     case 1: return "Type"; 
     case 2: return "Parent Name"; 
     case 3: return "Parent Type"; 
+    case 4: return "Path"; 
     } break; 
   default: break; // compiler food
   }

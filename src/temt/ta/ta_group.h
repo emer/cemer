@@ -93,8 +93,9 @@ public:
 			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
 			   bool force_inline = false);
 
-  override void	GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL,
-	      const void* par=NULL, TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
+  override taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
+				       MemberDef* memb_def=NULL, const void* par=NULL,
+				       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
 
   override void Dump_Save_GetPluginDeps(); // note: in ta_dump.cpp
   override int	Dump_SaveR(ostream& strm, taBase* par=NULL, int indent=0);

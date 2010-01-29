@@ -117,6 +117,7 @@ public:
   QButtonGroup* bgChoiceButtons; //note: not a widget
 
   override void	done(int r);
+  override  int exec();
   
   ~taiChoiceDialog()		{ }
 

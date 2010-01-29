@@ -27,7 +27,7 @@ class TAIQTSO_API iDialog : public QDialog
 public:
   explicit iDialog(QWidget *parent = 0, Qt::WindowFlags f = 0);
 
-  int exec();
+  override int exec();
 
 protected:
   override void keyPressEvent(QKeyEvent *);

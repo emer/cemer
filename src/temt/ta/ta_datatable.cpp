@@ -691,6 +691,37 @@ void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
   base_nm = nm;
 }
 
+taObjDiffRec* DataCol::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def, 
+			   const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
+  // this is same as base objdiff but puts children last to make more sense for user
+  taObjDiffRec* odr = inherited::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
+
+  for(int i=0;i<rows();i++) {
+    if(isMatrix()) {
+      taMatrix* mat = ((DataCol*)this)->GetValAsMatrix(i);
+      taBase::Ref(mat);
+      // stream each cell separately..
+      for(int j=0;j<cell_size();j++) {
+	taObjDiffRec* clodr = new taObjDiffRec(odl, nest_lev+1, valTypeDef(), NULL,
+					       mat->FastEl_Flat_(j),
+					       (void*)this, GetTypeDef(), odr);
+	clodr->name = String(i) + "," + String(j);	// row, cell
+	clodr->ComputeHashCode();			// need to update
+	odl.Add(clodr);
+      }
+      taBase::unRefDone(mat);
+    }
+    else {
+      taObjDiffRec* clodr = new taObjDiffRec(odl, nest_lev+1, valTypeDef(), NULL,
+					   (void*)AR()->FastEl_Flat_(i),
+					   (void*)this, GetTypeDef(), odr);
+      clodr->name = String(i);	// row
+      clodr->ComputeHashCode();	// need to update
+      odl.Add(clodr);
+    }
+  }
+  return odr;
+}
 
 //////////////////////////
 //  DataTableCols	//
@@ -2260,6 +2291,48 @@ void DataTable::ChangeColTypeGeom(const String& col_nm, ValType new_type,
   if((!da->is_matrix && (mg.dims() == 0)) ||
      da->cell_geom.Equal(mg)) return;
   ChangeColTypeGeom_impl(da, new_type, mg);
+}
+
+bool DataTable::MatrixColToScalars(Variant mtx_col, const String& scalar_col_name_stub) {
+  DataCol* da = GetColData(mtx_col);
+  if(!da || da->not_matrix_err()) return false;
+  String clstub;
+  if(scalar_col_name_stub.nonempty())
+    clstub = scalar_col_name_stub;
+  else
+    clstub = da->name;
+  clstub += "_";
+  int cls = da->cell_size();
+  StructUpdate(true);
+  for(int i=0;i<cls;i++) {
+    DataCol* scda = FindMakeCol(clstub + String(i), da->valType());
+    for(int j=0;j<rows;j++) {
+      scda->SetVal(da->GetMatrixFlatVal(j, i), j);
+    }
+  }
+  StructUpdate(false);
+  return true;
+}
+
+bool DataTable::MatrixColFmScalars(Variant mtx_col, const String& scalar_col_name_stub) {
+  DataCol* da = GetColData(mtx_col);
+  if(!da || da->not_matrix_err()) return false;
+  String clstub;
+  if(scalar_col_name_stub.nonempty())
+    clstub = scalar_col_name_stub;
+  else
+    clstub = da->name;
+  clstub += "_";
+  int cls = da->cell_size();
+  StructUpdate(true);
+  for(int i=0;i<cls;i++) {
+    DataCol* scda = FindMakeCol(clstub + String(i), da->valType());
+    for(int j=0;j<rows;j++) {
+      da->SetMatrixFlatVal(scda->GetVal(j), j, i);
+    }
+  }
+  StructUpdate(false);
+  return true;
 }
 
 void DataTable::UniqueColNames() {

@@ -735,8 +735,9 @@ public:
 			      bool force_inline = false);
   // #IGNORE set value from a string for ptr to taBase (ptr=1) -- called by TypeDef SetValStr
 
-  virtual void	GetObjDiffVal(taObjDiff_List& odl, int nest_lev,  MemberDef* memb_def=NULL,
-	      const void* par=NULL, TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
+  virtual taObjDiffRec*  GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
+			       MemberDef* memb_def=NULL, const void* par=NULL, 
+				       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
   // #IGNORE add this object and all its members and sub-objects to the object diff list
 
   ////////////////////////////////////////////////////////////////////// 
@@ -1796,8 +1797,9 @@ public:
 			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
 			   bool force_inline = false);
 
-  override void	GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def=NULL,
-	      const void* par=NULL, TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
+  override taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
+				       MemberDef* memb_def=NULL, const void* par=NULL,
+				       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
 
   override void Dump_Save_GetPluginDeps();
   override int	Dump_SaveR(ostream& strm, taBase* par=NULL, int indent=0);

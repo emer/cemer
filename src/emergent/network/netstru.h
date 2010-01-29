@@ -1344,6 +1344,9 @@ public:
 
   // implement save_rmv_units:
   override bool	Dump_QuerySaveChildren();
+  override taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
+				       MemberDef* memb_def=NULL, const void* par=NULL,
+				       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
 
   void		RemoveAll();
   
@@ -2192,8 +2195,12 @@ public:
   // #CAT_Display find (first) existing viewer of this network
   virtual String GetViewVar();
   // #CAT_Display get the currently viewed variable name from netview
+  virtual bool 	SetViewVar(const String& view_var);
+  // #CAT_Display set the variable name to view in the netview
   virtual Unit* GetViewSrcU();
-  // #CAT_Display get the currently picked unit (for viewing weights) from netview
+  // #CAT_Display get the currently picked source unit (for viewing weights) from netview
+  virtual bool 	SetViewSrcU(Unit* src_u);
+  // #CAT_Display set the picked source unit (for viewing weights) in netview
 #endif
 
   virtual NetViewObj* NewViewText(const String& txt);

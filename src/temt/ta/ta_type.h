@@ -576,6 +576,8 @@ public:
     VO_DOUBLE_CLICK_EXP_ALL = 0X001, // #LABEL_DoubleClickExpAll double click expands or contracts all tree items -- use at your own risk on big projects...
     VO_AUTO_SELECT_NEW	= 0x002, // #LABEL_AutoSelectNew automatically select (the first) of a new tree item that is made with New or similar menu commands
     VO_AUTO_EXPAND_NEW	= 0x004, // #LABEL_AutoExpandNew automatically expand new tree items that are made with New or similar menu commands
+    VO_NO_TOOLBAR = 0x008,	 // #LABEL_NoToolbar do not turn on the toolbar by default in new project views
+    VO_NO_TOOLBOX = 0x010,	 // #LABEL_NoToolbox do not turn on the program toolbox by default in new projectd views
   };
 
   enum	GuiStyle {	// style options provided by the gui system (not all are available on all platforms)
@@ -2514,6 +2516,9 @@ public:
 
   void 		GetValue(taObjDiff_List& odl);
   // gets the value and hash code (and name) fields based on the other information already set -- also uses information on overall obj diff list (tab_obj_a for paths)
+
+  void		ComputeHashCode();
+  // computes the hash code based on name + & + value + nest_level -- called by GetValue, but call this manually if anything changes
 
   taObjDiffRec();
   taObjDiffRec(taObjDiff_List& odl, int nest, TypeDef* td, MemberDef* md, void* adr, void* par_adr = NULL,

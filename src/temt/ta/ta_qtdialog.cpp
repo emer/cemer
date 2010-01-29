@@ -270,6 +270,22 @@ void taiChoiceDialog::done(int r) {
   inherited::done(r);  
 }
 
+int taiChoiceDialog::exec() {
+  // we're losing focus here so need to restore it!!
+// #ifdef TA_OS_MAC
+  QPointer<QWidget> m_prev_active = QApplication::activeWindow();
+// #endif
+  int rval = inherited::exec();
+  //#ifdef TA_OS_MAC
+  if((bool)m_prev_active) {
+//     QApplication::setActiveWindow(m_prev_active);
+    // note: above does NOT work! -- likely source of bug in cocoa 4.6.0
+    m_prev_active->activateWindow();
+  }
+// #endif
+  return rval;
+}
+
 void taiChoiceDialog::copyToClipboard() {
   QApplication::clipboard()->setText(text());
 }

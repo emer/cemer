@@ -1040,6 +1040,7 @@ public:
 
 protected:
   int			m_changing;
+  bool			m_fully_up;
   void*			m_selObj;	// current selected object
   QTreeWidgetItem*	m_selItem; // cached for showEvent
   int			m_view;

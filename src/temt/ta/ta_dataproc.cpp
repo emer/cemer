@@ -1558,6 +1558,7 @@ void DataLoop::UpdateAfterEdit_impl() {
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying() || prg->isDestroying()) return;
   GetOrderVar();
+  GetOrderVal();
   GetIndexVar();
 }
 
@@ -1610,6 +1611,7 @@ const String DataLoop::GenCssPost_impl(int indent_level) {
 }
 
 String DataLoop::GetDisplayName() const {
+  ((DataLoop*)this)->GetOrderVal();
   String ord_str = GetTypeDef()->GetEnumString("Order", order);
   String data_nm;
   if(data_var) data_nm = data_var->name;
@@ -1620,6 +1622,11 @@ String DataLoop::GetDisplayName() const {
   return "DataTable Loop (" + ord_str + " over: " + data_nm + " index: " + index_nm +")";
 }
 
+void DataLoop::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+				    int dcr, void* op1_, void* op2_) {
+  GetOrderVal();
+  UpdateAfterEdit();
+}
 
 ///////////////////////////////////////////////////////
 //		DataVarProg

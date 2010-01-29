@@ -7277,13 +7277,27 @@ void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
 void TypeDef::GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void* base,
 				  MemberDef* memb_def, const void* par, TypeDef* par_typ,
 				  taObjDiffRec* par_od) const {
+  MemberDef* last_md = NULL;
   for(int i=0; i<members.size; i++) {
     MemberDef* md = members.FastEl(i);
-    if(md->HasOption("NO_SAVE") || md->HasOption("READ_ONLY") || md->HasOption("GUI_READ_ONLY"))
+    if(md->HasOption("NO_SAVE") || md->HasOption("READ_ONLY") || md->HasOption("GUI_READ_ONLY")
+       || md->HasOption("HIDDEN"))
       continue;
+    if(par_od && par_od->mdef) {
+      // object is a member
+      if(md->HasOption("HIDDEN_INLINE")) continue;
+    }
+    if(md->HasOption("DIFF_LAST")) {
+      last_md = md;
+      continue;
+    }
     if(!md->GetCondOptTest("CONDSHOW", this, base))
       continue;
     md->type->GetObjDiffVal(odl, nest_lev+1, md->GetOff(base), md, base, (TypeDef*)this, par_od);
+  }
+  if(last_md) {
+    last_md->type->GetObjDiffVal(odl, nest_lev+1, last_md->GetOff(base), last_md, base,
+				 (TypeDef*)this, par_od);
   }
 }
 
@@ -7483,6 +7497,10 @@ void taObjDiffRec::GetValue(taObjDiff_List& odl) {
     }
   }
 #endif
+  ComputeHashCode();
+}
+
+void taObjDiffRec::ComputeHashCode() {
   // note: level is critical -- don't want to compare at diff levels
   hash_code = taPtrList_impl::HashCode_String(name + "&" + value) + nest_level;
 }

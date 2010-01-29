@@ -3406,6 +3406,7 @@ int Program::CallInit(Program* caller) {
 } 
 
 void Program::Init() {
+  if(run_state == RUN || run_state == INIT) return;	// already running!
   ClearStopReq();		// NOTE: newly added 4/18/09 -- check for breakage..
   taProject* proj = GET_MY_OWNER(taProject);
   if(proj && proj->file_name.nonempty()) {

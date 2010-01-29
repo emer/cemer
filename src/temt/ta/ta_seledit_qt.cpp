@@ -292,8 +292,11 @@ void iSelectEditDataHost::GetImage_Membs_def() {
       taiData* mb_dat = ms->data_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);
       EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
-      if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL))
-        taMisc::Error("iSelectEditDataHost::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
+      if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL)) {
+#ifdef DEBUG	
+        taMisc::Warning("iSelectEditDataHost::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
+#endif
+      }
       else {
         md->im->GetImage(mb_dat, item->base); // need to do this first, to affect visible
       }
@@ -310,8 +313,11 @@ void iSelectEditDataHost::GetValue_Membs_def() {
       taiData* mb_dat = ms->data_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);
       EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
-      if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL))
+      if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL)) {
+#ifdef DEBUG
         taMisc::Error("iSelectEditDataHost::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
+#endif
+      }
       else {
         bool first_diff = true;
         md->im->GetMbrValue(mb_dat, item->base, first_diff); 

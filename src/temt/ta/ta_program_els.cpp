@@ -1468,6 +1468,14 @@ String StopStepPoint::GetDisplayName() const {
   return "Stop/Step Point";
 }
 
+void StopStepPoint::InitLinks() { 
+  inherited::InitLinks(); 
+  InitLinks_taAuto(&TA_StopStepPoint);
+  if (taMisc::is_loading || taMisc::is_duplicating) return;
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg || isDestroying() || prg->isDestroying()) return;
+  prg->SetProgFlag(Program::SHOW_STEP);
+}
 
 //////////////////////////
 //    ReturnExpr	//

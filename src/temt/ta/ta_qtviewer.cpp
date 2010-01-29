@@ -3038,6 +3038,13 @@ void iDockViewer::Showing(bool showing) {
   if (!dv) return;
   taiAction* me = dv->dockMenu->FindActionByData((void*)this);
   if (!me) return;
+  if(showing && vw->InheritsFrom(&TA_ToolBoxDockViewer)) {
+    if(taMisc::viewer_options & taMisc::VO_NO_TOOLBOX) {
+      me->setChecked(false);
+      hide();
+      return;
+    }
+  }
   if (showing == me->isChecked()) return;
   me->setChecked(showing); //note: triggers event
 }
@@ -3153,6 +3160,11 @@ void iToolBar::Showing(bool showing) {
   if (!dv) return;
   taiAction* me = dv->toolBarMenu->FindActionByData((void*)this);
   if (!me) return;
+  if(showing && taMisc::viewer_options & taMisc::VO_NO_TOOLBAR) {
+    me->setChecked(false); //note: triggers event
+    hide();
+    return;
+  }
   if (showing == me->isChecked()) return;
   me->setChecked(showing); //note: triggers event
 }
@@ -7156,6 +7168,7 @@ void iTreeView::InsertEl() {
       if(idx < 0) idx = 0;
       if(idx > sbo->size) idx = sbo->size;
       sbo->Insert(nwi, idx);
+      nwi->UpdateAfterEdit();
       tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
       tabMisc::DelayedFunCall_gui(nwi, "BrowserSelectMe");
     }
