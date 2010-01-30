@@ -762,15 +762,7 @@ public:
 	int		disparity_width;	//size of the area to compare disparities
 	int		disparity_offset;	//disparity offset increments
 	
-	enum ContrastType {
-		mult_same,
-		add_same,
-		mult_same_diff,
-		add_same_diff,
-		within_diff_mult
-	};
-	ContrastType contrast;
-	bool process_all_timesteps;
+	
 	bool max_in_disparity;
 	
 	
@@ -817,10 +809,6 @@ protected:
 	
 	
 	DoGFilterSpec::ColorChannel cur_c_chan;
-	float_Matrix*  cur_on_left_input;
-	float_Matrix*  cur_off_left_input;
-	float_Matrix* cur_on_right_input;
-	float_Matrix* cur_off_right_input;
 	
 	
 	float_Matrix*  cur_on_left_input1;
@@ -840,8 +828,6 @@ protected:
 	int cur_eyes;
 	int cur_disp;
 	int cur_t;
-	int cur_eye;
-	bool process_separate_eyes;
 	bool 		cur_superimpose;
 };
 
