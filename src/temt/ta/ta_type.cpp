@@ -7712,8 +7712,11 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
 	cur_flag = taObjDiffRec::DIFF_DEL;
 	taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b);
 	if(!rec_b) {
-	  rec_b = cmp_list.Peek()->par_odr; // pars are usually safe tabase guys..
+	  rec_b = cmp_list.Peek();
 	}
+	 // find a ta_base!
+	while(!rec_b->extra && (!rec_b->par_odr || !rec_b->par_odr->extra))
+	  rec_b = rec_b->par_odr;
 	taObjDiffRec* rec0 = SafeEl(df.start_a);
 	int del_nest = rec0->nest_level;
 	for(int l=0; l<df.delete_a; l++) {
@@ -7749,8 +7752,10 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
 	cur_flag = taObjDiffRec::DIFF_ADD;
 	taObjDiffRec* rec_a = SafeEl(df.start_a);
 	if(!rec_a) {
-	  rec_a = Peek()->par_odr; // pars are usually safe tabase guys..
+	  rec_a = Peek();
 	}
+	while(rec_a->par_odr && (!rec_a->extra || !rec_a->par_odr->extra))
+	  rec_a = rec_a->par_odr;
 	taObjDiffRec* rec0 = cmp_list.SafeEl(df.start_b);
 	int add_nest = rec0->nest_level;
 	for(int l=0; l<df.insert_b; l++) {
@@ -7760,8 +7765,6 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
 	  diffs_list.Link(rec_b);
 	  rec_b->SetDiffFlag(cur_flag);
 	  rec_b->diff_odr = rec_a; // starting point in a..
-// 	  cerr << "add add_b: " << rec_b->name << " = " << rec_b->value << endl;
-// 	  taMisc::FlushConsole();
 	  if(rec_b->mdef) {	// never actionable
 	    rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
 	  }

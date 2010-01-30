@@ -174,19 +174,9 @@ void LeabraConSpec::Initialize() {
 
 void LeabraConSpec::InitLinks() {
   inherited::InitLinks();
+  InitLinks_taAuto(&TA_LeabraConSpec);
   children.SetBaseType(&TA_LeabraConSpec);
   children.el_typ = GetTypeDef(); // but make the default to be me!
-  taBase::Own(wt_scale, this);
-  taBase::Own(wt_scale_init, this);
-  taBase::Own(wt_sig, this);
-  taBase::Own(lrate_sched, this);
-  taBase::Own(lmix, this);
-  taBase::Own(xcal, this);
-  taBase::Own(savg_cor, this);
-  taBase::Own(rel_net_adapt, this);
-  taBase::Own(wt_sig_fun, this);
-  taBase::Own(wt_sig_fun_inv, this);
-  taBase::Own(wt_sig_fun_lst, this);
   CreateWtSigFun();
   if(taMisc::is_loading || taMisc::is_duplicating) return;
   LeabraNetwork* mynet = GET_MY_OWNER(LeabraNetwork);
@@ -751,29 +741,9 @@ void LeabraUnitSpec::Defaults() {
 void LeabraUnitSpec::InitLinks() {
   //  bias_spec.type = &TA_LeabraBiasSpec;
   inherited::InitLinks();
+  InitLinks_taAuto(&TA_LeabraUnitSpec);
   children.SetBaseType(&TA_LeabraUnitSpec);
   children.el_typ = GetTypeDef(); // but make the default to be me!
-  taBase::Own(act, this);
-  taBase::Own(spike, this);
-  taBase::Own(depress, this);
-  taBase::Own(syn_delay, this);
-  taBase::Own(opt_thresh, this);
-  taBase::Own(clamp_range, this);
-  taBase::Own(vm_range, this);
-  taBase::Own(v_m_init, this);
-  taBase::Own(dt, this);
-  taBase::Own(act_avg, this);
-  taBase::Own(g_bar, this);
-  taBase::Own(e_rev, this);
-  taBase::Own(e_rev_sub_thr, this);
-  taBase::Own(hyst, this);
-  taBase::Own(acc, this);
-  taBase::Own(maxda, this);
-  taBase::Own(noise, this);
-  taBase::Own(noise_sched, this);
-  taBase::Own(noise_adapt, this);
-  taBase::Own(nxx1_fun, this);
-  taBase::Own(noise_conv, this);
 }
 
 void LeabraUnitSpec::UpdateAfterEdit_impl() {
@@ -2461,16 +2431,9 @@ void LeabraLayerSpec::UpdateAfterEdit_impl() {
 
 void LeabraLayerSpec::InitLinks() {
   inherited::InitLinks();
+  InitLinks_taAuto(&TA_LeabraLayerSpec);
   children.SetBaseType(&TA_LeabraLayerSpec);
   children.el_typ = GetTypeDef(); // but make the default to be me!
-  taBase::Own(kwta, this);
-  taBase::Own(gp_kwta, this);
-  taBase::Own(tie_brk, this);
-  taBase::Own(adapt_i, this);
-  taBase::Own(clamp, this);
-  taBase::Own(decay, this);
-  taBase::Own(ct_inhib_mod, this);
-  taBase::Own(abs_net_adapt, this);
 }
 
 bool LeabraLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {

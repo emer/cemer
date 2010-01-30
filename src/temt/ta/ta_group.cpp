@@ -337,7 +337,10 @@ taObjDiffRec* taGroup_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
   // always just add a record for this guy
   taObjDiffRec* odr = inherited::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
   MemberDef* gpmd = FindMember("gp");
-  gp.GetObjDiffVal(odl, nest_lev+1, gpmd, this, GetTypeDef(), odr);
+  taObjDiffRec* gpodr = gp.GetObjDiffVal(odl, nest_lev+1, gpmd, this, GetTypeDef(), odr);
+  gpodr->name = odr->name + "_gp";
+  gpodr->value = odr->value + "_gp";
+  gpodr->ComputeHashCode();
   return odr;
 }
 

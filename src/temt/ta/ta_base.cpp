@@ -2459,20 +2459,23 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
     taBase* tab_b = NULL;;
     // make sure pointers are still current
     if(rec->type->InheritsFrom(&TA_taBase)) {
-      ta_bases = true;
-      if(!rec->extra || !((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) {
-	continue;
-      }
-      tab_a = (taBase*)rec->addr;
-      if(rec->diff_odr) {
-	if(!rec->diff_odr->extra ||
-	   !((taBaseObjDiffRecExtra*)rec->diff_odr->extra)->tabref.ptr()) {
+      if(rec->extra) {
+	if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr())
 	  continue;
+	tab_a = (taBase*)rec->addr;
+      }
+      if(rec->diff_odr) {
+	if(rec->diff_odr->extra) {
+	  if(!((taBaseObjDiffRecExtra*)rec->diff_odr->extra)->tabref.ptr())
+	    continue;
+	  tab_b = (taBase*)rec->diff_odr->addr;
 	}
-	if(!rec->mdef && (rec->type != rec->diff_odr->type)) {
-	  tab_diff_typ = true;
-	}
-	tab_b = (taBase*)rec->diff_odr->addr;
+      }
+      if(tab_a && tab_b)
+	ta_bases = true;
+      if((!rec->mdef && (rec->type != rec->diff_odr->type))) {
+	if(!ta_bases) continue; // no can do
+	tab_diff_typ = true;
       }
     }
     else if(((rec->type->ptr == 1) && rec->type->DerivesFrom(&TA_taBase)) ||
@@ -2485,20 +2488,20 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
     taBase* tab_par_b = NULL;
     if(rec->par_type && rec->par_type->InheritsFrom(&TA_taBase)) {
       // make sure *parent* pointer is still current
-      if(rec->par_odr && (!rec->par_odr->extra ||
-			  !((taBaseObjDiffRecExtra*)rec->par_odr->extra)->tabref.ptr())) {
-	continue;
+      if(rec->par_odr && rec->par_odr->extra) {
+	if(!((taBaseObjDiffRecExtra*)rec->par_odr->extra)->tabref.ptr())
+	  continue;
+	tab_par_a = (taBase*)rec->par_addr;
       }
-      tab_par_a = (taBase*)rec->par_addr;
     }
     if(rec->diff_odr && rec->diff_odr->par_type && 
        rec->diff_odr->par_type->InheritsFrom(&TA_taBase)) {
       // make sure *parent* pointer is still current
-      if(rec->diff_odr->par_odr && (!rec->diff_odr->par_odr->extra ||
-	    !((taBaseObjDiffRecExtra*)rec->diff_odr->par_odr->extra)->tabref.ptr())) {
-	continue;
+      if(rec->diff_odr->par_odr && rec->diff_odr->par_odr->extra) {
+	if(!((taBaseObjDiffRecExtra*)rec->diff_odr->par_odr->extra)->tabref.ptr())
+	  continue;
+	tab_par_b = (taBase*)rec->diff_odr->par_addr;
       }
-      tab_par_b = (taBase*)rec->diff_odr->par_addr;
     }
 
     //////////////////////////////////
@@ -2628,15 +2631,40 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
     if(add) {
       if(rec->diff_odr->nest_level < rec->nest_level) {
 	// for last obj in list, dest is now another member in parent obj..
-	if(rec->par_odr->mdef) {
-	  // find member in dest par (parents always ta base..)
-	  if(tab_par_b) {
-	    MemberDef* dmd;
-	    void* mbase = tab_par_b->FindMembeR(rec->par_odr->mdef->name, dmd);
-	    if(dmd && dmd->type->InheritsFrom(&TA_taBase)) { // it should!
-	      taBase* down = (taBase*)mbase;
-	      down->CopyChildBefore(tab_a, NULL); // NULL goes to end..
+// 	taMisc::Info("diff nest -- rec:", String(rec->nest_level), "diff:",
+// 		     String(rec->diff_odr->nest_level),"rec path:", tab_a->GetPath(),
+// 		     "diff path:", tab_b->GetPath());
+	if(tab_par_b) {
+	  if(rec->par_odr->mdef) {
+	    // find member in dest par (parents always ta base..)
+	    if(rec->diff_odr->par_odr->mdef &&
+	       rec->diff_odr->par_odr->mdef->name == rec->par_odr->mdef->name) {
+	      // parent is the guy!
+	      tab_par_b->CopyChildBefore(tab_a, NULL); // NULL goes to end..
 	      added = true;
+	    }
+	    else {
+	      MemberDef* dmd;
+	      void* mbase = tab_par_b->FindMembeR(rec->par_odr->mdef->name, dmd);
+	      if(dmd && dmd->type->InheritsFrom(&TA_taBase)) { // it should!
+		taBase* down = (taBase*)mbase;
+		down->CopyChildBefore(tab_a, NULL); // NULL goes to end..
+		added = true;
+	      }
+	    }
+	  }
+	  else { // go one level higher
+	    taObjDiffRec* parpar_a = rec->par_odr->par_odr;
+	    if(parpar_a->mdef) {
+	      taBase* tabparpar_b = tab_par_b->GetOwner();
+	      // find member in dest par (parents always ta base..)
+	      MemberDef* dmd;
+	      void* mbase = tabparpar_b->FindMembeR(parpar_a->mdef->name, dmd);
+	      if(dmd && dmd->type->InheritsFrom(&TA_taBase)) { // it should!
+		taBase* down = (taBase*)mbase;
+		down->CopyChildBefore(tab_a, NULL); // NULL goes to end..
+		added = true;
+	      }
 	    }
 	  }
 	}
@@ -2669,7 +2697,8 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
     //////////////////////////////////
     //		Del
 
-    if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue; // double-check
+    if(rec->extra && !((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue;
+    // double-check
 
     bool del = false;
     if(!rec->mdef && rec->HasDiffFlag(taObjDiffRec::ACT_DEL_A)) {
@@ -3730,11 +3759,14 @@ taObjDiffRec* taList_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,  Mem
 	  const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   taObjDiffRec* odr = inherited::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
 
-  // need a special sub-parent to distinguish list elements from members
-  taObjDiffRec* lsodr = new taObjDiffRec(odl, nest_lev+1, GetTypeDef(), NULL, (void*)this,
+  // need a special sub-parent to distinguish list elements from members -- keep member def info tho
+  taObjDiffRec* lsodr = new taObjDiffRec(odl, nest_lev+1, GetTypeDef(), memb_def, (void*)this,
 				       (void*)this, GetTypeDef(), odr);
-  lsodr->name = "el";
-  lsodr->value = "";
+  if(GetOwner())
+    lsodr->extra = new taBaseObjDiffRecExtra((taBase*)this);
+
+  lsodr->name = odr->name + "_el";
+  lsodr->value = odr->value + "_el";
   lsodr->ComputeHashCode();
   odl.Add(lsodr);
 
