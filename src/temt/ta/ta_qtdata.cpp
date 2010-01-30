@@ -2938,9 +2938,9 @@ void taiItemChooser::init(const String& caption_) {
 }
 
 void taiItemChooser::accept() {
-  String text = filter->text(); // apply current filter
-  if(text.nonempty() && text != last_filter) {
-    last_filter = text.chars();
+  QString text = filter->text(); // apply current filter
+  if(!text.isEmpty() && text != last_filter && !(last_filter.isEmpty() && text == "^")) {
+    last_filter = text;
     QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::All);
     QTreeWidgetItem* item;
     while ((item = *it++)) { 

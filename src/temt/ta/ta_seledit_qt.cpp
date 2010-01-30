@@ -1296,14 +1296,29 @@ void taiObjDiffBrowser::AddItems() {
     bool chk_b = rec->GetCurAction(1, lbl_b);
 
     QTreeWidgetItem* witm;
+    QTreeWidgetItem* parw = NULL;
     int par_nest = rec->nest_level-1;
-    if(par_nest <= init_nest) {
+    if(par_nest > init_nest) {
+      if(par_nest < nest_pars.size) {
+	parw = (QTreeWidgetItem*)nest_pars[par_nest];
+	if(!parw) {
+	  cerr << "par widg null: " << rec->name << " = " << rec->value <<endl;
+	  taMisc::FlushConsole();
+	}
+      }
+      else {
+	cerr << "par nest: " << par_nest << " >= nest pars: " << nest_pars.size <<endl;
+	taMisc::FlushConsole();
+      }
+      if(!parw) {
+	if(rec->par_odr)
+	  parw = (QTreeWidgetItem*)rec->par_odr->widget;
+      }
+    }
+    if(parw)
+      witm = new QTreeWidgetItem(parw);
+    else
       witm = new QTreeWidgetItem(items);
-    }
-    else {
-      witm = new QTreeWidgetItem((QTreeWidgetItem*)nest_pars[par_nest]);
-    }
-
     rec->widget = witm;
 
     QVariant val = qVariantFromValue( rec );

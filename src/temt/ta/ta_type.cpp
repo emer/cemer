@@ -7421,6 +7421,8 @@ void taObjDiffRec::Initialize() {
 
 void taObjDiffRec::Copy_(const taObjDiffRec& cp) {
   nest_level = cp.nest_level;
+  name = cp.name;
+  value = cp.value;
   hash_code = cp.hash_code;
   type = cp.type;
   mdef = cp.mdef;
@@ -7428,6 +7430,7 @@ void taObjDiffRec::Copy_(const taObjDiffRec& cp) {
   par_addr = cp.par_addr;
   par_type = cp.par_type;
   par_odr = cp.par_odr;
+  diff_odr = cp.diff_odr;
 }
 
 taObjDiffRec::taObjDiffRec() {
@@ -7644,18 +7647,22 @@ bool taObjDiff_List::CheckAddParents(taObjDiff_List& diff_ods, taObjDiffRec* rec
     if(cur_nest == 0) break;
   }
 
+//   cerr << "par start for rec: " << rec->name << " = " << rec->value << endl;
+//   taMisc::FlushConsole();
+
   bool rval = false;
   for(int i=cur_nest;i<start_nest;i++) {
     cur_rec = (taObjDiffRec*)nest_pars[i];
     if(cur_rec != rec) {
-      if(!cur_rec->HasDiffFlag(taObjDiffRec::DIFF_MASK)) { // don't mess with existing
-	if(a_list)
-	  cur_rec->SetDiffFlag(taObjDiffRec::DIFF_PAR_A); // indicate that it is just a parent
-	else
-	  cur_rec->SetDiffFlag(taObjDiffRec::DIFF_PAR_B); // indicate that it is just a parent
-	diff_ods.Link(cur_rec);
-	rval = true;		// got one..
-      }
+      taObjDiffRec* nw_par = cur_rec->Clone();
+      if(a_list)
+	nw_par->flags = taObjDiffRec::DIFF_PAR_A; // indicate that it is just a parent
+      else
+	nw_par->flags = taObjDiffRec::DIFF_PAR_B; // indicate that it is just a parent
+      diff_ods.Add(nw_par);
+// 	cerr << "add par: " << cur_rec->name << " = " << cur_rec->value << endl;
+// 	taMisc::FlushConsole();
+      rval = true;		// got one..
     }
   }
 
@@ -7716,19 +7723,26 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
 	  diffs_list.Link(rec_a);
 	  rec_a->SetDiffFlag(cur_flag);
 	  rec_a->diff_odr = rec_b; // starting point in b..
-	  if(rec_a->nest_level > del_nest) {
+// 	  cerr << "add del_a: " << rec_a->name << " = " << rec_a->value << endl;
+// 	  taMisc::FlushConsole();
+	  if(rec_a->mdef) {	// never actionable
 	    rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
-	  }
-#ifndef NO_TA_BASE
-	  if(rec_a->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
-	    if(!((taBase*)rec_a->addr)->GetOwner())
-	      rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
 	  }
 	  else {
-	    // and cannot be a non-ta-base for add/del
-	    rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
-	  }
+	    if(rec_a->nest_level > del_nest) {
+	      rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+	    }
+#ifndef NO_TA_BASE
+	    if(rec_a->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
+	      if(!((taBase*)rec_a->addr)->GetOwner())
+		rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+	    }
+	    else {
+	      // and cannot be a non-ta-base for add/del
+	      rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+	    }
 #endif
+	  }
 	}
       }
       if(df.insert_b > 0) {
@@ -7746,19 +7760,26 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
 	  diffs_list.Link(rec_b);
 	  rec_b->SetDiffFlag(cur_flag);
 	  rec_b->diff_odr = rec_a; // starting point in a..
-	  if(rec_b->nest_level > add_nest) {
+// 	  cerr << "add add_b: " << rec_b->name << " = " << rec_b->value << endl;
+// 	  taMisc::FlushConsole();
+	  if(rec_b->mdef) {	// never actionable
 	    rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
-	  }
-#ifndef NO_TA_BASE
-	  if(rec_b->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
-	    if(!((taBase*)rec_b->addr)->GetOwner())
-	      rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
 	  }
 	  else {
-	    // and cannot be a non-ta-base for add/del
-	    rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
-	  }
+	    if(rec_b->nest_level > add_nest) {
+	      rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+	    }
+#ifndef NO_TA_BASE
+	    if(rec_b->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
+	      if(!((taBase*)rec_b->addr)->GetOwner())
+		rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+	    }
+	    else {
+	      // and cannot be a non-ta-base for add/del
+	      rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+	    }
 #endif
+	  }
 	}
       }
     }

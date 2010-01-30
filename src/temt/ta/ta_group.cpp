@@ -336,7 +336,8 @@ taObjDiffRec* taGroup_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
   MemberDef* memb_def, const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // always just add a record for this guy
   taObjDiffRec* odr = inherited::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
-  gp.GetObjDiffVal(odl, nest_lev+1, NULL, this, GetTypeDef(), odr);
+  MemberDef* gpmd = FindMember("gp");
+  gp.GetObjDiffVal(odl, nest_lev+1, gpmd, this, GetTypeDef(), odr);
   return odr;
 }
 
