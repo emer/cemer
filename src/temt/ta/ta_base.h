@@ -1251,6 +1251,8 @@ public:
   // #CAT_UserData #EXPERT gets a linked Doc, if any; you can use this to test for existence
   void			SetDocLink(taDoc* doc);
   // #CAT_UserData #MENU #MENU_CONTEXT #DROP1 #NULL_OK set a link to a doc from the .docs collection -- the doc will then show up automatically in a panel for this obj -- set to NULL to remove it
+  void			PrintMyPath();
+  // #CAT_ObjectMgmt #MENU #MENU_CONTEXT print out the path to this object to the css console -- can then be copied for use in a program or other such things
   
   bool		HasOption(const char* op) const
   { return GetTypeDef()->HasOption(op); }

@@ -100,6 +100,7 @@ public:
   virtual taiDataLink*	GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
   virtual taiDataLink*	GetListChild(void* el) {return NULL;} // get link when item is known (esp for change notifies)
   virtual String	GetPath() const {return _nilString;} // esp taBase path 
+  virtual String	GetPath_Long() const {return _nilString;} // esp taBase path 
   virtual String	GetTypeDecoKey() const {return _nilString;}
   virtual String	GetStateDecoKey() const {return _nilString;}
   virtual const QVariant GetColData(const KeyString& key, int role) const 
@@ -165,6 +166,7 @@ public:
   override bool		HasChildItems();
   override TypeDef*	GetDataTypeDef() const;
   override String	GetPath() const {return data()->GetPath();} 
+  override String	GetPath_Long() const {return data()->GetPath_Long();} 
   override String	GetTypeDecoKey() const;
   override String	GetStateDecoKey() const;
   override String	GetName() const;
@@ -2385,7 +2387,8 @@ public:
   static const int	col_desc = 4;
   static const int	col_hits = 5;
   static const int	col_relev = 6;
-  static const int	num_cols = col_relev + 1;
+  static const int	col_path = 7;
+  static const int	num_cols = col_path + 1;
   
 //static const int	num_vis_cols = 3;
 //static const char*	vis_col_names[] = {"nest", "item", "hits"};
@@ -2425,7 +2428,7 @@ public:
   void			EndSection(); // end the current section
   void			AddItem(const String& headline,
     const String& href, const String& desc, const String& hits,
-    int level = 0, int relev = 0); 
+    const String& path_long,int level = 0, int relev = 0); 
   void			End(); // end all and display results
   
 public: // IDataLinkClient interface
@@ -2442,6 +2445,7 @@ protected:
   int			m_options; // any of the option values
   String		m_caption; // base portion of caption
   String		src;
+  String		root_path;
   int			m_changing;
   bool			m_stop;
   String_PArray		m_targets;
@@ -2456,7 +2460,8 @@ protected:
   void			ParseSearchString();
   void			Render();
   void 			RenderItem(int level, const String& headline,
-    const String& href, const String& desc, const String& hits);
+	   const String& href, const String& desc, const String& hits,
+	   const String& path, int relev);
 
   iSearchDialog(iMainWindowViewer* par_window_);
   ~iSearchDialog();

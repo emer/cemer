@@ -2161,6 +2161,10 @@ void taBase::SetDocLink(taDoc* doc) {
   DataChanged(DCR_USER_DATA_UPDATED);
 }
 
+void taBase::PrintMyPath() {
+  taMisc::Info(GetPath());
+}
+
 UserDataItem* taBase::SetUserData(const String& name, const Variant& value)
 {
   if (TestError((name.empty()),

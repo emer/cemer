@@ -1112,8 +1112,9 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
     String headline = tab->GetColText(taBase::key_disp_name) +
         " (" + tab->GetTypeDef()->name + ")";
     String href = "ta:" + tab->GetPath();
+    String path_long = tab->GetPath_Long();
     String desc = tab->GetColText(taBase::key_desc);
-    sd->AddItem(headline, href, desc, hits, level);
+    sd->AddItem(headline, href, desc, hits, path_long, level, n);
   }
    
   
@@ -8651,8 +8652,9 @@ void iSearchDialog::init() {
   m_items.NewCol(DataCol::VT_STRING, "desc");
   m_items.NewCol(DataCol::VT_STRING, "hits");
   m_items.NewCol(DataCol::VT_INT, "relev");
+  m_items.NewCol(DataCol::VT_STRING, "path");
   setSizeGripEnabled(true);
-  resize(taiM->dialogSize(taiMisc::hdlg_s)); // don't hog too much screen size
+  resize(taiM->dialogSize(taiMisc::hdlg_m)); // don't hog too much screen size
 }
 
 void iSearchDialog::Constr() {
@@ -8701,7 +8703,7 @@ void iSearchDialog::Constr() {
 }
 
 void iSearchDialog::AddItem(const String& headline, const String& href,
-    const String& desc, const String& hits, int level, int relev)
+    const String& desc, const String& hits, const String& path_long, int level, int relev)
 {//note: newlines just to help make resulting str readable in debugger, etc.
   m_items.AddBlankRow();
   m_items.SetVal(m_row++, col_row, -1);
@@ -8711,6 +8713,7 @@ void iSearchDialog::AddItem(const String& headline, const String& href,
   m_items.SetVal(desc, col_desc, -1);
   m_items.SetVal(hits, col_hits, -1);
   m_items.SetVal(relev, col_relev, -1);
+  m_items.SetVal(path_long, col_path, -1);
 }
 
 void iSearchDialog::DataLinkDestroying(taDataLink* dl) {
@@ -8747,11 +8750,11 @@ void iSearchDialog::results_setSourceRequest(iTextBrowser* src,
 }
 
 void iSearchDialog::RootSet(taiDataLink* root) {
-  String cap = "Find: ";
+  String cap = "Find in: ";
   if (root) {
-    cap += root->GetPath();
+    root_path = root->GetPath_Long();
+    cap += root_path;
   }
-  cap += " - " + taMisc::app_name;
   setWindowTitle(cap);
 }
 
@@ -8841,15 +8844,23 @@ void iSearchDialog::Render()
   src += "</th><th>";
   if (m_sorts[0] == col_headline) src += "item";
   else src += "<a href=sort:" + String(col_headline) + ">item</a>";
-  src += "</th><th>hits</th></tr>";
+  src += "</th><th>hits</th><th>";
+  if (m_sorts[0] == col_relev) src += "relev";
+  else src += "<a href=sort:" + String(col_relev) + ">relev</a>";
+  src += "</th><th>";
+  if (m_sorts[0] == col_path) src += "path";
+  else src += "<a href=sort:" + String(col_path) + ">path</a>";
+  src += "</th></tr>\n";
   for (int i = 0; i < m_items.rows; ++i) {
     int level = m_items.GetValAsInt(col_level, i);
     String headline =  m_items.GetValAsString(col_headline, i);
     String href =  m_items.GetValAsString(col_href, i);
     String desc =  m_items.GetValAsString(col_desc, i);
     String hits =  m_items.GetValAsString(col_hits, i);
-    //int relev = m_items.GetValAsInt(col_relev, i);
-    RenderItem(level, headline, href, desc, hits);
+    String path =  m_items.GetValAsString(col_path, i);
+    path = path.after(root_path);
+    int relev = m_items.GetValAsInt(col_relev, i);
+    RenderItem(level, headline, href, desc, hits, path, relev);
   }  
   src += "</table>";
   results->setHtml(src);
@@ -8857,7 +8868,8 @@ void iSearchDialog::Render()
 }
 
 void iSearchDialog::RenderItem(int level, const String& headline,
-  const String& href, const String& desc, const String& hits)
+       const String& href, const String& desc, const String& hits,
+       const String& path, int relev)
 {
   STRING_BUF(b, 200);
   b += "<tr><td>" + String(level) + "</td><td>";
@@ -8870,6 +8882,12 @@ void iSearchDialog::RenderItem(int level, const String& headline,
   b += "</td><td>";
   // hits
   b += hits; // note: this will already have highlighting, breaks etc.
+  b += "</td><td>";
+  // relev
+  b += String(relev);
+  b += "</td><td>";
+  // path
+  b += path;
   b += "</td></tr>";
   src.cat(b);
 }
