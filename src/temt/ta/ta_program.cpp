@@ -3406,7 +3406,7 @@ int Program::CallInit(Program* caller) {
 } 
 
 void Program::Init() {
-  if(run_state == RUN || run_state == INIT) return;	// already running!
+  if(run_state == RUN) return;	// already running!
   ClearStopReq();		// NOTE: newly added 4/18/09 -- check for breakage..
   taProject* proj = GET_MY_OWNER(taProject);
   if(proj && proj->file_name.nonempty()) {
@@ -3694,7 +3694,7 @@ void Program::ScriptCompiled() {
 void Program::setStale() {
   //note: we don't propagate setStale
   //note: 2nd recursive call of this during itself doesn't do anything
-  if(run_state == RUN) return;	     // change is likely self-generated during running, don't do it!
+  if(run_state == RUN || run_state == INIT) return;	     // change is likely self-generated during running, don't do it!
   bool changed = false;
   if (script_compiled) {
     // make sure this always reflects stale status -- is used as check for compiling..
@@ -3705,7 +3705,7 @@ void Program::setStale() {
     changed = true;
     m_stale = true;
     //note: actions in here will not recurse us, because m_stale is now set
-    sub_progs.RemoveAll(); // will need to re-enumerate
+//     sub_progs.RemoveAll(); // will need to re-enumerate
   }
   if (changed) { // user will need to recompile/INIT
     run_state = NOT_INIT;
@@ -3838,6 +3838,7 @@ const String Program::scriptString() {
   // outside of the stale mechanism.  When the user presses Init, they get the
   // current fresh code regardless!  note that it doesn't do this obligatory
   // recompiles all the time -- that is only done at init too.
+  sub_progs.Reset();
   int item_id = 0;
   functions.PreGen(item_id);
   init_code.PreGen(item_id);
