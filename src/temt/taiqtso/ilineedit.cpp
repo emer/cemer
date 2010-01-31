@@ -121,10 +121,10 @@ void iLineEdit::setReadOnly(bool value) {
   inherited::setReadOnly(value);
   QPalette pal(palette());
   if (value) {
-//    setFocusPolicy(ClickFocus);
+    setFocusPolicy(Qt::ClickFocus); // take out of tab chain
     pal.setColor(backgroundRole(), COLOR_RO_BACKGROUND);
   } else {
-//    setFocusPolicy(StrongFocus);
+    setFocusPolicy(Qt::StrongFocus); // put back in tab chain
     pal.setColor(backgroundRole(), 
       QApplication::palette(this).color(QPalette::Base));
   }

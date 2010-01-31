@@ -3373,6 +3373,7 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
       btnEdit->setToolTip("edit this item in another panel");
       connect(btnEdit, SIGNAL(clicked()), this, SLOT(EditPanel()) );
       btnEdit->setFixedHeight(taiM->text_height(defSize()));
+      btnEdit->setFocusPolicy(Qt::ClickFocus); // skip over for normal tab chain
       lay->addWidget(btnEdit);
     }
   }
@@ -3383,6 +3384,7 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
     btnHelp->setToolTip("get Help for this item");
 //    taiM->FormatButton(btnHelp, _nilString, defSize());
     btnHelp->setFixedHeight(taiM->button_height(defSize()));
+    btnHelp->setFocusPolicy(Qt::ClickFocus); // skip over for normal tab chain
     lay->addWidget(btnHelp);
     connect(btnHelp, SIGNAL(clicked()), this, SLOT(btnHelp_clicked()) );
   }

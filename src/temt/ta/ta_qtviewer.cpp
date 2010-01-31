@@ -7150,8 +7150,14 @@ void iTreeView::InsertEl() {
     new taiTypeDefButton(sbo->el_base, NULL, NULL, NULL, taiData::flgAutoApply);
   TypeDef* td = sbo->el_typ;
   typlkup->GetImage(td, sbo->el_base);
-  bool okc = typlkup->OpenChooser();
-  td = typlkup->td();
+  bool okc = false;
+  if(typlkup->hasOnlyOneItem()) {
+    okc = true;
+  }
+  else {
+    okc = typlkup->OpenChooser();
+    td = typlkup->td();
+  }
   if(okc && td) {
     taProject* proj = myProject();
     if(proj) {
