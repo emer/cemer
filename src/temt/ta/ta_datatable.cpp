@@ -1025,7 +1025,7 @@ bool DataTable::AutoLoadData() {
   }
   else {
 //obs    LoadData(auto_load_file, TAB, true, -1, true);
-    LoadDataEx(auto_load_file, LH_AUTO_YES, LD_AUTO, LQ_AUTO, -1, true);
+    LoadAnyData(auto_load_file, LH_AUTO_YES, LD_AUTO, LQ_AUTO, -1, true);
   }
   return true;
 }
@@ -2586,24 +2586,6 @@ void DataTable::RowsAdding(int n, bool begin) {
   Plain Header Format
 */
 
-void DataTable::DecodeImportHeaderName(String nm, String& base_nm, 
-    int& cell_idx)
-{
-  int pos_und = nm.index('_', -1); // first from end
-  // note: must be at least one char before _ otherwise can't be a mat name
-  if (pos_und > 0) {
-    String sidx = nm.after(pos_und);
-    bool ok;
-    cell_idx = sidx.toInt(&ok);
-    if (ok) {
-      base_nm = nm.before(pos_und);
-      return;
-    } 
-  }
-  base_nm = nm;
-  cell_idx = -1;
-}
-
 void DataTable::SaveHeader_strm_impl(ostream& strm, Delimiters delim,
     bool row_mark, int col_fr, int col_to, bool native, bool quote_str) 
 {
@@ -2825,9 +2807,6 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool 
     strm.get();
     depth++;
   }
-/*NO  while(strm.peek() == delim) {	// consume any immediate delims
-    strm.get();
-  }*/
   while(((c = strm.get()) != EOF) && (c != '\n') && (c != '\r') && !((c == delim) && (depth <= 0))) {
     if(quote_str && (depth > 0) && (c == '\"'))
       depth--;
@@ -2840,11 +2819,38 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool 
   return c;
 }
 
+int DataTable::ReadTillDelim_Str(const String& istr, int& idx, String& str,
+				 const char delim, bool quote_str) {
+  int c;
+  int depth = 0;
+  int len = istr.length();
+  if(idx >= len) return EOF;
+  if(quote_str && (istr[idx] == '\"')) {
+    idx++;
+    depth++;
+  }
+  while(idx < len) {
+    c = istr[idx++];
+    if((c != '\n') && (c != '\r') && !((c == delim) && (depth <= 0))) {
+      if(quote_str && (depth > 0) && (c == '\"'))
+	depth--;
+      else
+	str += (char)c;
+    }
+    else {
+      break;
+    }
+  }
+  // consume lf of crlf-pair for Windows files
+  if((idx < len) && (c == '\r') && (istr[idx] == '\n'))
+    c = istr[idx++];
+  return c;
+}
+
 int_Array DataTable::load_col_idx;
 int_Array DataTable::load_mat_idx;
 
-int DataTable::LoadHeader_impl(istream& strm, Delimiters delim,
-  bool native, bool quote_str) 
+int DataTable::LoadHeader_impl(istream& strm, Delimiters delim,	bool native, bool quote_str) 
 {
   if (native) quote_str = false; // never quotes for native headers
   char cdlm = GetDelim(delim);
@@ -2909,26 +2915,6 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim,
     
   }
   return c;
-}
-
-void DataTable::NoHeader_impl() {
-  load_col_idx.Reset();
-  load_mat_idx.Reset();
-  for (int i = 0; i < data.size; ++i) { 
-    DataCol* da = data.FastEl(i);
-    if (!da->HasColFlag(DataCol::SAVE_DATA)) continue;
-    
-    if (da->is_matrix) {
-      const int cells = da->cell_geom.Product();
-      for (int j = 0; j < cells; ++j) {
-        load_col_idx.Add(i);
-        load_mat_idx.Add(j);
-      }
-    } else {
-      load_col_idx.Add(i);
-      load_mat_idx.Add(-1);	// no matrix info
-    }
-  }
 }
 
 int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str) {
@@ -3062,25 +3048,6 @@ void DataTable::LoadData_strm(istream& strm, Delimiters delim, bool quote_str,
   StructUpdate(false);
 }
 
-void DataTable::ImportData_strm(istream& strm, bool headers, 
-    Delimiters delim, bool quote_str, int max_recs)
-{
-  StructUpdate(true);
-  ResetLoadSchema();
-  int c = ~EOF; // just set to something we know is not==EOF
-  int st_row = rows;
-  if (headers) {
-    c = LoadHeader_impl(strm, delim, false, quote_str);
-  } else {
-    NoHeader_impl(); // set up blindly -- all SAVE_DATA guys required, in order
-  }
-  while (c != EOF) {
-    c = LoadDataRow_impl(strm, delim, quote_str);
-    if ((max_recs > 0) && (rows - st_row >= max_recs)) break;
-  }
-  StructUpdate(false);
-}
-
 int DataTable::LoadHeader(const String& fname, Delimiters delim) {
   taFiler* flr = GetLoadFiler(fname, ".dat,.tsv,.csv,.txt,.log", false);
   int rval = 0;
@@ -3092,8 +3059,7 @@ int DataTable::LoadHeader(const String& fname, Delimiters delim) {
 }
 
 int DataTable::LoadDataRow(const String& fname, Delimiters delim, bool quote_str) {
-  load_col_idx.Reset();
-  load_mat_idx.Reset();
+  ResetLoadSchema();
   taFiler* flr = GetLoadFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
   int rval = 0;
   if(flr->istrm)
@@ -3116,7 +3082,7 @@ void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str,
   taRefN::unRefDone(flr);
 }
 
-void DataTable::LoadDataEx(const String& fname, LoadHeaders headers_req,
+void DataTable::LoadAnyData(const String& fname, LoadHeaders headers_req,
     LoadDelimiters delim_req, LoadQuotes quote_str_req, int max_recs,
     bool reset_first)
 {
@@ -3127,8 +3093,7 @@ void DataTable::LoadDataEx(const String& fname, LoadHeaders headers_req,
     bool quote_str;
     bool native;
     DetermineLoadDataParams(*flr->istrm, headers_req, delim_req, quote_str_req,
-      headers, delim, quote_str, native);
-
+			    headers, delim, quote_str, native);
     if (reset_first)
       RemoveAllRows();
     // have to reopen gz filers because gzstream can't seek back to 0
@@ -3144,15 +3109,35 @@ void DataTable::LoadDataEx(const String& fname, LoadHeaders headers_req,
   taRefN::unRefDone(flr);
 }
 
+void DataTable::ImportData_strm(istream& strm, bool headers, 
+    Delimiters delim, bool quote_str, int max_recs)
+{
+  StructUpdate(true);
+  int c = ~EOF; // just set to something we know is not==EOF
+  int st_row = rows;
+  if (headers) {
+    String hdr;
+    readline_auto(strm, hdr);	// discard header
+  }
+  while (c != EOF) {
+    c = LoadDataRow_impl(strm, delim, quote_str);
+    if ((max_recs > 0) && (rows - st_row >= max_recs)) break;
+  }
+  StructUpdate(false);
+}
+
 void DataTable::DetermineLoadDataParams(istream& strm, 
     LoadHeaders headers_req, LoadDelimiters delim_req, LoadQuotes quote_str_req,
     bool& headers, Delimiters& delim, bool& quote_str, bool& native)
 {
   // get first line -- always need this to differentiate Emergent vs. simple
-  String ln;
-  readline_auto(strm, ln);
-  bool native_h = ln.startsWith("_H:");
-  bool native_d = ln.startsWith("_D:");
+  String ln0;
+  readline_auto(strm, ln0);
+  String ln1;
+  readline_auto(strm, ln1); // need this for non-native column format parsing
+
+  bool native_h = ln0.startsWith("_H:");
+  bool native_d = ln0.startsWith("_D:");
   native = native_h || native_d;
   
   // headers is actually same as LH since the Emergent version is auto regardless
@@ -3164,13 +3149,16 @@ void DataTable::DetermineLoadDataParams(istream& strm,
   
   // note: we guess the delims and quotes so we can warn if override seems wrong
   // if it has TABS or COMMA then almost guaranteed that is delim, else assume SPACE
-  if (ln.contains('\t'))
+  int tabfreq = ln0.freq('\t');
+  int commafreq = ln0.freq(',');
+  int spacefreq = ln0.freq(' ');
+  if(tabfreq > commafreq && tabfreq > spacefreq) 
     delim = TAB;
-  else if (ln.contains(','))
+  else if (commafreq > tabfreq && commafreq > spacefreq)
     delim = COMMA;
   else {
     // note: in rare case of only one col, the delim should NOT default to SPACE!
-    if (ln.contains(" "))
+    if (spacefreq > 0)
       delim = SPACE;
     else
       // must be a simple file with only one col, so default to most likely ','
@@ -3190,16 +3178,14 @@ void DataTable::DetermineLoadDataParams(istream& strm,
   // OpenOffice puts quotes around everything by default
   // Excel 2004 (Mac) doesn't quote headers, and only quotes data sometimes, ex. when it has a comma
   if (!native_h || native_d) {
-    int quo_cnt = ln.freq('"');
+    int quo_cnt = ln0.freq('"');
     quote_str = (quo_cnt > 0);
   }
   // if no quotes so far, check first data line (if not already checked)
   if (headers && !quote_str && !native_d) {
-    // read first data line to determine quoting -- obviously irrelevant if empty
-    readline_auto(strm, ln); // don't care if empty
-    // if any quote is present in header, assume quoted
-    int quo_cnt = ln.freq('"');
-    quote_str = (quo_cnt > 0);
+    // if any quote is present in data, assume quoted
+    int quo_cnt = ln1.freq('"');
+    quote_str = (quo_cnt > 1);	// must come in pairs, so at least 2..
   }
   
   if (quote_str_req != LQ_AUTO) {
@@ -3209,10 +3195,152 @@ void DataTable::DetermineLoadDataParams(istream& strm,
     }
     quote_str = (quote_str_req == LQ_YES);
   }
+
+  if(!native) {
+    // get headers/columns 
+    if(!headers)
+      ImportHeaderCols(_nilString, ln0, delim, quote_str);
+    else
+      ImportHeaderCols(ln0, ln1, delim, quote_str);
+  }
+
   // reset stream -- this only works for filestream, not gzstream -- caller must reopen
   strm.seekg(0);
 //  streambuf* sb = strm.rdbuf();
 //  sb->pubseekpos(0, ios_base::in);
+}
+
+
+void DataTable::ImportHeaderCols(const String& hdr_ln, const String& dat_ln,
+				Delimiters delim, bool quote_str) {
+  char cdlm = GetDelim(delim);
+  ResetLoadSchema();
+  int hc; int dc;
+  int hdr_idx = 0;
+  int dat_idx = 0;
+  int nohdr_col_idx = -1;
+  DataCol* last_mat_da = NULL;
+  int last_mat_cell = -1;
+  bool cont = true;
+  while(cont) {
+    String hstr;
+    if(hdr_ln.nonempty())
+      hc = ReadTillDelim_Str(hdr_ln, hdr_idx, hstr, cdlm, quote_str);
+    String dstr;
+    dc = ReadTillDelim_Str(dat_ln, dat_idx, dstr, cdlm, quote_str);
+
+    cont = !((dc == '\n') || (dc == '\r') || (dc == EOF));
+    if(dstr.empty() && hstr.empty()) {
+      if (!cont) break;
+      continue;			// for some reason it is empty
+    }
+
+    ValType val_typ = DecodeImportDataType(dstr);
+    DataCol* da = NULL;
+    int col_idx;
+    int cell_idx = -1; // mat cell index, or -1 if not a mat
+    if(hdr_ln.nonempty()) {
+      String base_nm;
+      DecodeImportHeaderName(hstr, base_nm, cell_idx); // strips final _<int> leaves base_nm
+      col_idx = FindColNameIdx(base_nm);
+      if (col_idx >= 0) da = data.FastEl(col_idx);
+      // we only accept _xxx as mat col designator if col already a mat, and cell in bounds
+      if(!(da && (cell_idx >= 0) && (da->is_matrix) && (cell_idx < da->cell_size()))) {
+	da = FindMakeCol(hstr, val_typ);
+	col_idx = da->col_idx;
+	cell_idx = -1;
+      }
+    }
+    else {
+      // just make a dummy header if needed, else use existing
+      if(last_mat_da && (++last_mat_cell < last_mat_da->cell_size())) {
+	col_idx = nohdr_col_idx;
+	cell_idx = last_mat_cell;
+      }
+      else {
+	if(++nohdr_col_idx < data.size)
+	  da = data[nohdr_col_idx];
+	else
+	  da = FindMakeCol("col_" + String(nohdr_col_idx), val_typ);
+	if(da->isMatrix()) {
+	  last_mat_da = da;
+	  last_mat_cell = 0;
+	}
+	else {
+	  last_mat_da = NULL;
+	  last_mat_cell = -1;
+	}
+      }
+    }
+    if(da->valType() != val_typ) {
+      if(da->isNumeric() && val_typ == VT_STRING) {
+	taMisc::Warning("Import data for data table:", name, "column:", da->name,
+			"is numeric but first row of laded data is string format -- import may be bad.");
+      }
+      else if((da->isString() && (val_typ != VT_STRING && val_typ != VT_VARIANT))) {
+	taMisc::Warning("Import data for data table:", name, "column:", da->name,
+			"is String but first row of laded data is a numeric format -- import may be bad.");
+      }
+    }
+    load_col_idx.Add(da->col_idx);
+    load_mat_idx.Add(cell_idx);
+  }
+}
+
+void DataTable::DecodeImportHeaderName(String nm, String& base_nm, int& cell_idx) {
+  int pos_und = nm.index('_', -1); // first from end
+  // note: must be at least one char before _ otherwise can't be a mat name
+  if (pos_und > 0) {
+    String sidx = nm.after(pos_und);
+    bool ok;
+    cell_idx = sidx.toInt(&ok);
+    if (ok) {
+      base_nm = nm.before(pos_und);
+      return;
+    } 
+  }
+  base_nm = nm;
+  cell_idx = -1;
+}
+
+taBase::ValType DataTable::DecodeImportDataType(const String& dat_str) {
+  cerr << "decode: " << dat_str << endl;
+  taMisc::FlushConsole();
+
+  if(dat_str.empty())
+    return VT_VARIANT;
+
+  int idx = 0;
+  int c;
+  while(idx < dat_str.length()) {
+    c = dat_str[idx++];
+    if(isspace(c)) continue;
+
+    if((c == '.') || isdigit(c) || (c == '-')) {	// number
+      bool not_num = false;
+      bool gotreal = false;
+      if(c == '.') gotreal = true;
+      
+      while(idx < dat_str.length()) {
+	c = dat_str[idx++];
+	if(isspace(c)) continue;
+	if((c == '.') || isxdigit(c) || (c == 'x') || (c == 'e') ||
+	   (c == 'X') || (c == 'E')) {
+	  if(c == '.') gotreal = true;
+	}
+	else {
+	  not_num = true;
+	  break;
+	}
+      }
+      if(!not_num) {
+	if(gotreal) return VT_DOUBLE;
+	return VT_INT;
+      }
+    }
+  }
+  // if not trapped earlier, then it must be a string..
+  return VT_STRING;
 }
 
 void DataTable::LoadDataFixed(const String& fname, FixedWidthSpec* fws,

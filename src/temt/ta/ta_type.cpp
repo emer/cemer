@@ -5246,6 +5246,20 @@ const String TypeDef::Get_C_EnumString(int enum_val) const {
   return rval;
 }
 
+String TypeDef::GetEnumPrefix() const {
+  String prfx;
+  for(int i=0;i<enum_vals.size;i++) {
+    EnumDef* ed = enum_vals.FastEl(i);
+    if(prfx.nonempty()) {
+      if(ed->name.startsWith(prfx)) continue;
+      return _nilString;
+    }
+    if(!ed->name.contains('_')) return _nilString;
+    prfx = ed->name.through('_');
+  }
+  return prfx;
+}
+
 #ifndef NO_TA_BASE
 int TypeDef::FindTokenR(void* addr, TypeDef*& aptr) const {
   int rval = tokens.FindEl(addr);

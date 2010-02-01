@@ -1703,6 +1703,41 @@ bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
   return (bool)iti;
 }
 
+iDataPanelSet* Program::FindMyDataPanelSet() {
+  if(!taMisc::gui_active) return NULL;
+  taDataLink* link = data_link();
+  if(!link) return NULL;
+  taDataLinkItr itr;
+  iDataPanelSet* el;
+  FOR_DLC_EL_OF_TYPE(iDataPanelSet, el, link, itr) {
+//     if (el->data() == this) {
+      return el;
+//     }
+  }
+  return NULL;
+}
+
+bool Program::ViewCtrlPanel() {
+  iDataPanelSet* dps = FindMyDataPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(0);
+  return true;
+}
+
+bool Program::ViewProgEditor() {
+  iDataPanelSet* dps = FindMyDataPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(1);
+  return true;
+}
+
+bool Program::ViewProperties() {
+  iDataPanelSet* dps = FindMyDataPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(2);
+  return true;
+}
+
 ////////////////////////////////////////////////////////
 //  Special ProgLib browser support
 

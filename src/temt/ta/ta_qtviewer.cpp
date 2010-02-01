@@ -4356,8 +4356,16 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
         taMisc::Warning("ta: URL",path,"not found as a path to an object!");
         return;
       }
-      //  iTreeViewItem* item = 
-      iproj_brow->AssertBrowserItem(link);
+      Program* prg = (Program*)tab->GetOwner(&TA_Program);
+      if(prg) {
+	prg->BrowserSelectMe();
+	prg->ViewProgEditor();
+	prg->BrowserSelectMe_ProgItem((taOBase*)tab);
+      }
+      else {
+	//  iTreeViewItem* item = 
+	iproj_brow->AssertBrowserItem(link);
+      }
     }
   }
 }

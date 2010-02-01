@@ -683,8 +683,11 @@ public:
   static char		GetDelim(Delimiters delim);
   // #IGNORE get delimiter from enum
   static int		ReadTillDelim(istream& strm, String& str, const char delim,
-    bool quote_str);
+				      bool quote_str);
   // #IGNORE util function to read from stream into str until delim or newline or EOF
+  static int		ReadTillDelim_Str(const String& istr, int& idx, String& str,
+					  const char delim, bool quote_str);
+  // #IGNORE util function to read from String into str until delim or newline or EOF -- idx is current index and is also updated to new index
 
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
   virtual void 		SaveData_strm(ostream& strm, Delimiters delim = TAB,
@@ -743,71 +746,81 @@ public:
     bool quote_str = true, bool reset_load_schema = true); // #IGNORE used by Server
   virtual void 		LoadData(const String& fname, Delimiters delim = TAB,
 	bool quote_str = true, int max_recs = -1, bool reset_first=false);
-  // #CAT_File #EXT_dat,tsv,csv,txt,log load Emergent format data, up to max num of recs (-1 for all), with delimiter between columns and optionally quoting strings, reset_first = remove any existing data prior to loading
-  void 			LoadData_Gui(const String& fname)
-    {LoadDataEx(fname, LH_AUTO_YES, LD_AUTO, LQ_AUTO, -1, true);}
-  // #CAT_File #LABEL_Load_Data #BUTTON #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load data in default Emergent data format; removes all existing data
-  void 			LoadDataEx(const String& fname, LoadHeaders headers = LH_AUTO_YES,
-    LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO, int max_recs = -1,
-    bool reset_first=false);
-  // #CAT_File #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD loads data in Emergent file format OR delimited import formats, up to max num of recs (-1 for all), reset_first = remove any existing data prior to loading
-  void 			LoadAppendData_Gui(const String& fname)
-    {LoadDataEx(fname, LH_AUTO_YES, LD_AUTO, LQ_AUTO, -1, false);}
-  // #CAT_File #LABEL_Load_Append_Data #MENU  #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load data in default Emergent data format; appends to existing data in table (doesn't reset first)
+  // #CAT_File #EXT_dat,tsv,csv,txt,log load Emergent native format data (ONLY) - has a special header to define columns, up to max num of recs (-1 for all), with delimiter between columns and optionally quoting strings, reset_first = remove any existing data prior to loading
+  virtual void 		LoadAnyData(const String& fname, LoadHeaders headers = LH_AUTO_YES,
+		    LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO,
+		    int max_rows = -1,  bool reset_first=false);
+  // #CAT_File #MENU #MENU_ON_Data #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD #ARGC_1 loads any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto defaults for delimiters and string quoting, and resets any existing data first by default (see Load Any Data Append)
+  virtual void 		LoadAnyData_Append(const String& fname)
+  { LoadAnyData(fname, LH_AUTO_YES, LD_AUTO, LQ_AUTO, -1, false); }
+  // #CAT_File #MENU #MENU_ON_Data #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD loads any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto defaults for delimiters and string quoting, and appends after any existing data first (see Load Any Data)
   
-  void 			LoadDataFixed(const String& fname, FixedWidthSpec* fws, bool reset_first=false);
+  virtual void 		LoadDataFixed(const String& fname, FixedWidthSpec* fws,
+				      bool reset_first=false);
   // #CAT_File loads data, using the specified fixed-width spec (usually in a Program), reset_first = remove any existing data prior to loading
   virtual int 		LoadHeader(const String& fname, Delimiters delim = TAB);
   // #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
-  virtual int 		LoadDataRow(const String& fname, Delimiters delim = TAB, bool quote_str = true);
+  virtual int 		LoadDataRow(const String& fname, Delimiters delim = TAB,
+				    bool quote_str = true);
   // #CAT_File #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   void			ResetLoadSchema() const; // #IGNORE can be used by ex Server to reset the load schema at beginning of a load
  
- 
-  void 			ExportHeader_strm(ostream& strm, Delimiters delim = TAB,
+  virtual void 		ExportHeader_strm(ostream& strm, Delimiters delim = TAB,
 	bool quote_str = true, int col_fr = 0, int col_to = -1)
-    {SaveHeader_strm_impl(strm, delim, false, col_fr, col_to, false, quote_str);}
+  { SaveHeader_strm_impl(strm, delim, false, col_fr, col_to, false, quote_str); }
   // #CAT_XpertFile #EXT_csv,tsv,txt,log saves header information, with delimiter between columns
   void 			ExportData_strm(ostream& strm, Delimiters delim = COMMA,
-    bool quote_str = true, bool headers = true);
+					bool quote_str = true, bool headers = true);
+  // #CAT_XpertFile #EXT_csv,tsv,txt,log exports data with given delimiter and string quoting format options in a format suitable for importing into other applications (spreadsheets, etc) -- does NOT include the emergent native header/data row markers and extended header info, so is not good for loading back into emergent (use SaveData for that)
+  
   void 			ExportData(const String& fname="", Delimiters delim = COMMA,
-    bool quote_str = true, bool headers = true);
-  // #CAT_File #MENU #MENU_ON_Data #MENU_SEP_BEFORE #EXT_csv,tsv,txt,log #FILE_DIALOG_SAVE exports data in text file format
+			   bool quote_str = true, bool headers = true);
+  // #CAT_File #MENU #MENU_ON_Data #MENU_SEP_BEFORE #EXT_csv,tsv,txt,log #FILE_DIALOG_SAVE exports data with given delimiter and string quoting format options in a format suitable for importing into other applications (spreadsheets, etc) -- does NOT include the emergent native header/data row markers and extended header info, so is not good for loading back into emergent (use SaveData for that)
 
-  void 			ImportData(const String& fname="", bool headers = true, LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO)
-    {LoadDataEx(fname, headers ? LH_AUTO_YES : LH_NO, LD_AUTO, LQ_AUTO, -1, true);}
-// #CAT_File #MENU #MENU_ON_Data #EXT_csv,tsv,txt,log #FILE_DIALOG_LOAD imports data in delimited text file format
+  virtual void 		ImportData(const String& fname="", bool headers = true,
+		   LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO)
+  { LoadAnyData(fname, headers ? LH_AUTO_YES : LH_NO, LD_AUTO, LQ_AUTO, -1, true); }
+// #CAT_File #MENU #MENU_ON_Data #EXT_csv,tsv,txt,log #FILE_DIALOG_LOAD imports externally-generated data in delimited text file format -- if headers is selected, then first row is treated as column headers -- auto defaults are typically fine (see also Load Any Data or Load Any Data Append -- same functionality with all AUTO defaults)
 
-protected: // protected Load/Save guys
+
+  ////////////////////////////////////////////////////////////
+  // 	protected Load/Save and other implementation code
+protected: 
+
+  DataTableModel*	table_model; // #IGNORE for gui view/model stuff
   static int_Array	load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
   static int_Array	load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info
   
-  DataTableModel*	table_model;
-
-  void 			DecodeImportHeaderName(String nm, String& base_nm, 
-    int& cell_idx);
-  // decode header information for importing from text files -- if cell_idx >= 0 then we found an approprite mat col when nm was <Name>_<int>
   virtual bool 		CopyCell_impl(DataCol* dar, int dest_row,
-    const DataTable& src, DataCol* sar, int src_row); // #IGNORE
+			      const DataTable& src, DataCol* sar, int src_row); // #IGNORE
+
+  virtual void 		DetermineLoadDataParams(istream& strm, 
+    LoadHeaders headers_req, LoadDelimiters delim_req, LoadQuotes quote_str_req,
+    bool& headers, Delimiters& delim, bool& quote_str, bool& native);
+  // #IGNORE determine delimiters and other info from file for loading data -- for non-native files, will also decode headers and/or create data columns to fit the data -- the first line of actual data after the header (if any) is used to determine column type info
+
+  virtual void		ImportHeaderCols(const String& hdr_line, const String& data_line,
+					  Delimiters delim, bool quote_str = false);
+  // decode headers and/or create data columns to fit the data -- the first line of actual data after the header (if any) is used to determine column type info 
+  virtual void 		DecodeImportHeaderName(String nm, String& base_nm, int& cell_idx);
+  // decode header information for importing from text files -- if cell_idx >= 0 then we found an approprite mat col when nm was <Name>_<int>
+  virtual ValType	DecodeImportDataType(const String& dat_str);
+  // decode header information for importing from text files -- if cell_idx >= 0 then we found an approprite mat col when nm was <Name>_<int>
+
+  void 			ImportData_strm(istream& strm, bool headers = true, 
+    Delimiters delim = COMMA, bool quote_str = true, int max_recs = -1);
+  // #IGNORE loads simple delimited data with undecorated headers and rows (such as csv files from Excel etc.) -- must be called AFTER ImportHeaderCols -- just skips headers
+
   void 			SaveHeader_strm_impl(ostream& strm, Delimiters delim,
 	bool row_mark, int col_fr, int col_to, bool native, bool quote_str);
   // #IGNORE
   virtual int 		LoadHeader_impl(istream& strm, Delimiters delim,
-    bool native, bool quote_str = false);
+					bool native, bool quote_str = false);
   // #IGNORE #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
-  void			NoHeader_impl(); // #IGNORE sets up load indexes for no header -- expects all SAVE DATA cols to exist, up to end of each line in file
   virtual int 		LoadDataRow_impl(istream& strm, Delimiters delim = TAB,
 					 bool quote_str = true);
-  void 			ImportData_strm(istream& strm, bool headers = true, 
-    Delimiters delim = COMMA, bool quote_str = true, int max_recs = -1);
-  // #IGNORE loads simple delimited data with undecorated headers and rows (such as csv files from Excel etc.)
-					 
-  // #IGNORE #CAT_File #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   bool 			SetValAsMatrix_impl(const taMatrix* val, DataCol* da, int row,
 					    bool quiet = false);
-  void 			DetermineLoadDataParams(istream& strm, 
-    LoadHeaders headers_req, LoadDelimiters delim_req, LoadQuotes quote_str_req,
-    bool& headers, Delimiters& delim, bool& quote_str, bool& native);
 
 public:
   
@@ -860,17 +873,17 @@ public:
   virtual int 		FindColNameIdx(const String& col_nm, bool err_msg = false) const;
   // #CAT_Columns find a column index of the given name; if err_msg then generate an error if not found
 
-  DataCol* 		FindMakeCol(const String& col_nm, ValType val_type = VT_FLOAT);
+  DataCol* 		FindMakeCol(const String& col_nm, ValType val_type);
   // #CAT_Columns insures that a scalar column of the given name and val type exists, and return that col. 
   DataCol* 		FindMakeColMatrix(const String& col_nm,
-	ValType val_type = VT_FLOAT, int dims = 1,
+	ValType val_type, int dims = 1,
 	int d0=0, int d1=0, int d2=0, int d3=0, int d4=0, int d5=0, int d6=0);
   // #CAT_Columns insures that a matrix column of the given name, val type, and dimensions exists, and returns that col. 
   DataCol* 		FindMakeColMatrixN(const String& col_nm,
 	ValType val_type, const MatrixGeom& cell_geom,
 	int& col_idx); // #IGNORE
   virtual DataCol* 	FindMakeColName(const String& col_nm, int& col_idx,
-	ValType val_type = VT_FLOAT, int dims = 0,
+	ValType val_type, int dims = 0,
 	int d0=0, int d1=0, int d2=0, int d3=0, int d4=0, int d5=0, int d6=0);
   // #EXPERT #CAT_Columns find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
     

@@ -1978,7 +1978,10 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
       }
     }
     // have to do default for all, since it is not saved
-    pa->required = (md->fun_argd > ti);
+    if(md->fun_argd < 0)
+      pa->required = true;
+    else
+      pa->required = (md->fun_argd > ti);
     if (!pa->required) { // do default processing
       // get default value if available
       String def_val = md->arg_defs.SafeEl(ti);
@@ -1993,6 +1996,17 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
         if(def_val.empty()) def_val = "\"\""; // empty string
       }
       pa->def_val = def_val;
+    }
+    else {			// required
+      if(pa->arg_type->InheritsFormal(&TA_enum) && pa->expr.expr.empty()) {
+	// pre-fill expr with lookup base for enum type -- makes lookup easier
+	String eprfx = pa->arg_type->GetEnumPrefix();
+	if(eprfx.nonempty()) {
+	  TypeDef* ot = pa->arg_type->GetOwnerType();
+	  if(ot) pa->expr.expr = ot->name + "::";
+	  pa->expr.expr += eprfx;
+	}
+      }
     }
   }
   return any_changes;

@@ -1257,12 +1257,22 @@ public: // XxxGui versions provide feedback to the user
 
   virtual iProgramPanel* FindMyProgramPanel();
   // #IGNORE find my program panel, which contains the program editor -- useful for browser-specific operations
+  virtual iDataPanelSet* FindMyDataPanelSet();
+  // #IGNORE find my data panel set, which contains all the more specific data panels
+
   virtual bool		BrowserSelectMe_ProgItem(taOBase* itm);
   // #IGNORE perform BrowserSelectMe function for program sub-item (prog el, etc)
   virtual bool		BrowserExpandAll_ProgItem(taOBase* itm);
   // #IGNORE perform BrowserExpandAll function for program sub-item (prog el, etc)
   virtual bool		BrowserCollapseAll_ProgItem(taOBase* itm);
   // #IGNORE perform BrowserCollapseAll function for program sub-item (prog el, etc)
+
+  virtual bool		ViewCtrlPanel();
+  // #CAT_Display select the edit/middle panel view of this object to be for the control panel
+  virtual bool		ViewProgEditor();
+  // #CAT_Display select the edit/middle panel view of this object to be for the program editor
+  virtual bool		ViewProperties();
+  // #CAT_Display select the edit/middle panel view of this object to be for the program properties
 
   override String 	GetTypeDecoKey() const { return "Program"; }
   override Variant 	GetGuiArgVal(const String& fun_name, int arg_idx);

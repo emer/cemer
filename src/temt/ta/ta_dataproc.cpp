@@ -22,7 +22,6 @@
 /////////////////////////////////////////////////////////
 
 void DataOpEl::Initialize() {
-  data_cols = NULL;
   col_lookup = NULL;
   col_idx = -1;
 }
@@ -34,7 +33,7 @@ void DataOpEl::UpdateAfterEdit_impl() {
     taBase::SetPointer((taBase**)&col_lookup, NULL); // reset as soon as used -- just a temp guy!
   }
   if(!data_table) {
-    taBase::SetPointer((taBase**)&data_cols, NULL);
+    data_cols.set(NULL);
   }
 }
 
@@ -58,9 +57,9 @@ void DataOpEl::CheckThisConfig_impl(bool quiet, bool& rval) {
 void DataOpEl::SetDataTable(DataTable* dt) {
   data_table = dt;
   if(!dt)
-    taBase::SetPointer((taBase**)&data_cols, NULL);
+    data_cols.set(NULL);
   else
-    taBase::SetPointer((taBase**)&data_cols, &dt->data);
+    data_cols.set(&dt->data);
 }
 
 void DataOpEl::GetColumns(DataTable* dt) {

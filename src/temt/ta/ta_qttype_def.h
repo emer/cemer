@@ -175,6 +175,9 @@ public:
     // get an existing, or create new if needed
   virtual const iColor GetEditColorInherit(taiDataLink* dl, bool& ok) const {ok = false; return def_color;} // #IGNORE background color for edit dialog, include inherited colors from parents
 
+  virtual iDataPanelSet*  GetDataPanelSet() { return m_dps; }
+  // return the data panel set that contains multiple data panels if present -- use to control flipping between them..
+
   void			Initialize();
   void			Destroy() {}
   TA_VIEW_TYPE_FUNS(taiViewType, taiTypeBase)
