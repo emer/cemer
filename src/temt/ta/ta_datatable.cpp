@@ -3103,9 +3103,8 @@ void DataTable::LoadAnyData(const String& fname, bool headers_req,
 			    headers, delim, quote_str, native);
     if (reset_first)
       RemoveAllRows();
-    // have to reopen gz filers because gzstream can't seek back to 0
-    if (flr->IsCompressed())
-      flr->open_read();
+    flr->open_read();		// always re-open -- if read goes past EOF, then bad
+				// things happen, and needed for compressed .gz 
     if (native) {
       LoadData_strm(*flr->istrm, delim, quote_str, max_recs);
     } else {
@@ -3210,13 +3209,7 @@ void DataTable::DetermineLoadDataParams(istream& strm,
     else
       ImportHeaderCols(ln0, ln1, delim, quote_str);
   }
-
-  // reset stream -- this only works for filestream, not gzstream -- caller must reopen
-  strm.seekg(0);
-//  streambuf* sb = strm.rdbuf();
-//  sb->pubseekpos(0, ios_base::in);
 }
-
 
 void DataTable::ImportHeaderCols(const String& hdr_ln, const String& dat_ln,
 				Delimiters delim, bool quote_str) {
