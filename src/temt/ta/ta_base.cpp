@@ -1489,14 +1489,13 @@ void taBase::RebuildAllViews() {
 }
 
 void taBase::DataChanged(int dcr, void* op1, void* op2) {
-  if (!taMisc::is_loading) {
-   if (dcr != DCR_ITEM_UPDATED_ND)
-     setDirty(true); // note, also then sets dirty for list ops, like Add etc.
-   // only assume stale for strict condition:
-   if ((useStale() && (dcr == DCR_ITEM_UPDATED)))
-     setStale();
-  }
-  
+  if(taMisc::is_loading)  return; // no notifies while loading!!
+
+  if (dcr != DCR_ITEM_UPDATED_ND)
+    setDirty(true); // note, also then sets dirty for list ops, like Add etc.
+  // only assume stale for strict condition:
+  if ((useStale() && (dcr == DCR_ITEM_UPDATED)))
+    setStale();
   taDataLink* dl = data_link();
   if (dl) dl->DataDataChanged(dcr, op1, op2);
 }
@@ -4265,6 +4264,8 @@ taBase* taList_impl::New_impl(int no, TypeDef* typ, const String& name_) {
   if(TestError(typ->HasOption("VIRT_BASE"),
 		 "You cannot create a token of type:", typ->name,
 		 "because it is a 'virtual' base type -- you must create a more specific subtype of it instead")) return NULL;
+  if(no > 10)			// adding large numbers is slow!
+    StructUpdate(true);
   taBase* rval = NULL;
   Alloc(size + no);		// pre-allocate!
   if((size == 0) || (no > 1))
@@ -4273,7 +4274,7 @@ taBase* taList_impl::New_impl(int no, TypeDef* typ, const String& name_) {
   for(i=0; i < no; i++) {
     rval = taBase::MakeToken(typ);
     if(TestError(!rval, "New", "Could not make a token of type",typ->name,"(probably has #NO_INSTANCE in object header comment directive)"))
-      return NULL;
+      goto exit;
     if (name_.nonempty() && (name_ != "(default name)")) {
       // if only 1 inst, then name is literal, else it is a base
       if (no == 1) {
@@ -4284,6 +4285,9 @@ taBase* taList_impl::New_impl(int no, TypeDef* typ, const String& name_) {
     }
     Add_(rval);
   }
+ exit:
+  if(no > 10)
+    StructUpdate(false);
   return rval;
 }
 

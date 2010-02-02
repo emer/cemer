@@ -2239,6 +2239,9 @@ public:
 
   void			AssertLastListItem(); // #IGNORE updates last_list_items_node -- called by Group node before dynamic inserts/updates etc.
   override void		UpdateChildNames(); // #IGNORE update child names of the indicated node
+  
+  virtual bool		RebuildChildrenIfNeeded();
+  // checks if child count != list count, and rebuilds children if so
 
   tabParTreeDataNode(tabODataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
@@ -2332,6 +2335,8 @@ INHERITED(tabListTreeDataNode)
 public:
   taGroup_impl* 	tadata() const {return ((tabGroupDataLink*)m_link)->data();}
   tabGroupDataLink* 	link() const {return (tabGroupDataLink*)m_link;}
+
+  override bool		RebuildChildrenIfNeeded();
 
   taiTreeDataNode*	CreateSubGroup(taiTreeDataNode* after, void* el); 
     // for dynamic changes to tree

@@ -3614,9 +3614,9 @@ void iMainWindowViewer::closeEvent(QCloseEvent* e) {
   closeEvent_Handler(e, cancel_op);
   // now, if we are the last proj window, close us!
   if (m_close_proj_now) {
-//     cerr << "got close, hiding!" << endl;
-//     taMisc::FlushConsole();
     hide();			// prevent a possible bug on mac associated with hide and delete
+    cerr << "got close, hiding!" << endl;
+    taMisc::FlushConsole();
     taiMiscCore::ProcessEvents();
     curProject()->CloseLater();
   }
@@ -7561,7 +7561,7 @@ void iTreeView::Refresh_impl() {
       // always refresh visible guys
       if (!hide_it) {
         // simulate update notification
-        item->DataChanged(DCR_ITEM_UPDATED, NULL, NULL);
+	item->DataChanged(DCR_ITEM_UPDATED, NULL, NULL);
       }
     }
     ++it;
@@ -7793,15 +7793,16 @@ void iTreeViewItem::CreateChildren() {
 void iTreeViewItem::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   if (dcr != DCR_ITEM_UPDATED) return;
   if (this->dn_flags & iTreeViewItem::DNF_UPDATE_NAME) {
-    taiTreeDataNode* par_nd = (taiTreeDataNode*)this->parent();
-    if (par_nd) {
-      par_nd->UpdateChildNames();
-    } else { // a root node or list node -- just force our name to something sensible...
-      String nm = link()->GetName();
-      if (nm.empty())
-        nm = "(" + link()->GetDataTypeDef()->name + ")";
-      setName(nm); // col0, except list nodes
-    }
+//     taiTreeDataNode* par_nd = (taiTreeDataNode*)this->parent();
+//     if (par_nd) {
+      // the following is the source of N^2 behavior and is NOT good!!
+//       par_nd->UpdateChildNames();
+//     } else { // a root node or list node -- just force our name to something sensible...
+    String nm = link()->GetName();
+    if (nm.empty())
+      nm = "(" + link()->GetDataTypeDef()->name + ")";
+    setName(nm); // col0, except list nodes
+//     }
   }
   DecorateDataNode();
 }
@@ -8294,13 +8295,34 @@ taiTreeDataNode* tabParTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
   return dn;
 }
 
+
+bool tabParTreeDataNode::RebuildChildrenIfNeeded() {
+  int st_idx = 0;
+  if(last_member_node)
+    st_idx = MAX(indexOfChild(last_member_node)+1, 0);
+  if(childCount() != list()->size + st_idx) {
+    takeChildren();
+    CreateChildren();
+    return true;
+  }
+  return false;
+}
+
 void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
   if (!this->children_created) {
-    if ((dcr == DCR_LIST_ITEM_INSERT) || (dcr == DCR_LIST_ITEM_REMOVE))
+    if ((dcr == DCR_LIST_ITEM_INSERT) || (dcr == DCR_LIST_ITEM_REMOVE) ||
+	(dcr == DCR_STRUCT_UPDATE_END))
       UpdateLazyChildren(); // updates
     return;
   }
+
+  if(dcr == DCR_ITEM_UPDATED || dcr == DCR_STRUCT_UPDATE_END) {
+    if(!RebuildChildrenIfNeeded())
+      UpdateListNames();
+    return;
+  }
+
   int idx;
   switch (dcr) {
   case DCR_LIST_INIT: break;
@@ -8385,8 +8407,7 @@ void tabParTreeDataNode::UpdateListNames() {
     int idx;
     taiTreeDataNode* node1 = this->FindChildForData(el, idx); //null if not found
     if (node1 != NULL)
-//TEMP      node1->setText(0, tree_nm);
-node1->DecorateDataNode();
+      node1->DecorateDataNode();
   }
 }
 
@@ -8535,6 +8556,23 @@ taiTreeDataNode* tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_nod
     (iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_DRAG));
      //gets its name in rename
   return dn;
+}
+
+bool tabGroupTreeDataNode::RebuildChildrenIfNeeded() {
+  int st_idx = 0;
+  if(last_member_node)
+    st_idx = MAX(indexOfChild(last_member_node)+1, 0);
+  taSubGroup* gp = &tadata()->gp;
+//   cerr << "gp cc: " << childCount() << " lst: " << list()->size << " gp: "
+//        << gp->size << " st_idx: " << st_idx << endl;
+//   taMisc::FlushConsole();
+  if(childCount() != (list()->size + gp->size + st_idx)) {
+    takeChildren();
+    CreateChildren();
+    AssertLastListItem();
+    return true;
+  }
+  return false;
 }
 
 void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {

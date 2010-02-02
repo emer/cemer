@@ -2555,6 +2555,10 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
     // if we are already updating, then ignore IUs, since we'll send one eventually
     if (m_dbu_cnt != 0) suppress = true;
   }
+  else if (dcr < DCR_UPDATE_VIEWS) {
+    // if we are already updating, then ignore IUs, since we'll send one eventually
+    if (m_dbu_cnt != 0) suppress = true;
+  }
   
   if (!suppress) {
 #ifdef DATA_DATA_DEBUG    
