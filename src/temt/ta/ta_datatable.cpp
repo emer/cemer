@@ -1025,7 +1025,7 @@ bool DataTable::AutoLoadData() {
   }
   else {
 //obs    LoadData(auto_load_file, TAB, true, -1, true);
-    LoadAnyData(auto_load_file, LH_AUTO_YES, LD_AUTO, LQ_AUTO, -1, true);
+    LoadAnyData(auto_load_file, true, LD_AUTO, LQ_AUTO, -1, true);
   }
   return true;
 }
@@ -2294,7 +2294,10 @@ void DataTable::ChangeColTypeGeom(const String& col_nm, ValType new_type,
 }
 
 bool DataTable::MatrixColToScalars(Variant mtx_col, const String& scalar_col_name_stub) {
-  DataCol* da = GetColData(mtx_col);
+  return MatrixColToScalarsCol(GetColData(mtx_col), scalar_col_name_stub); 
+}
+
+bool DataTable::MatrixColToScalarsCol(DataCol* da, const String& scalar_col_name_stub) {
   if(!da || da->not_matrix_err()) return false;
   String clstub;
   if(scalar_col_name_stub.nonempty())
@@ -2315,7 +2318,10 @@ bool DataTable::MatrixColToScalars(Variant mtx_col, const String& scalar_col_nam
 }
 
 bool DataTable::MatrixColFmScalars(Variant mtx_col, const String& scalar_col_name_stub) {
-  DataCol* da = GetColData(mtx_col);
+  return MatrixColFmScalarsCol(GetColData(mtx_col), scalar_col_name_stub);
+}
+
+bool DataTable::MatrixColFmScalarsCol(DataCol* da, const String& scalar_col_name_stub) {
   if(!da || da->not_matrix_err()) return false;
   String clstub;
   if(scalar_col_name_stub.nonempty())
@@ -2328,7 +2334,8 @@ bool DataTable::MatrixColFmScalars(Variant mtx_col, const String& scalar_col_nam
   for(int i=0;i<cls;i++) {
     DataCol* scda = FindMakeCol(clstub + String(i), da->valType());
     for(int j=0;j<rows;j++) {
-      da->SetMatrixFlatVal(scda->GetVal(j), j, i);
+      Variant var = scda->GetVal(j);
+      da->SetMatrixFlatVal(var, j, i);
     }
   }
   StructUpdate(false);
@@ -3082,7 +3089,7 @@ void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str,
   taRefN::unRefDone(flr);
 }
 
-void DataTable::LoadAnyData(const String& fname, LoadHeaders headers_req,
+void DataTable::LoadAnyData(const String& fname, bool headers_req,
     LoadDelimiters delim_req, LoadQuotes quote_str_req, int max_recs,
     bool reset_first)
 {
@@ -3127,7 +3134,7 @@ void DataTable::ImportData_strm(istream& strm, bool headers,
 }
 
 void DataTable::DetermineLoadDataParams(istream& strm, 
-    LoadHeaders headers_req, LoadDelimiters delim_req, LoadQuotes quote_str_req,
+    bool headers_req, LoadDelimiters delim_req, LoadQuotes quote_str_req,
     bool& headers, Delimiters& delim, bool& quote_str, bool& native)
 {
   // get first line -- always need this to differentiate Emergent vs. simple
@@ -3142,7 +3149,7 @@ void DataTable::DetermineLoadDataParams(istream& strm,
   
   // headers is actually same as LH since the Emergent version is auto regardless
   // but we also set if we see the _H: so later quote check knows if 1st line is data
-  headers = (headers_req == LH_AUTO_YES) || native_h;
+  headers = headers_req || native_h;
   
   // for Emergent files, the default is TAB and will almost certainly be used
   // but regardless, Emergent files have at least one delim due to marker col
@@ -3254,6 +3261,7 @@ void DataTable::ImportHeaderCols(const String& hdr_ln, const String& dat_ln,
     else {
       // just make a dummy header if needed, else use existing
       if(last_mat_da && (++last_mat_cell < last_mat_da->cell_size())) {
+	da = last_mat_da;
 	col_idx = nohdr_col_idx;
 	cell_idx = last_mat_cell;
       }
@@ -3265,10 +3273,12 @@ void DataTable::ImportHeaderCols(const String& hdr_ln, const String& dat_ln,
 	if(da->isMatrix()) {
 	  last_mat_da = da;
 	  last_mat_cell = 0;
+	  cell_idx = 0;
 	}
 	else {
 	  last_mat_da = NULL;
 	  last_mat_cell = -1;
+	  cell_idx = -1;
 	}
       }
     }
@@ -3304,9 +3314,6 @@ void DataTable::DecodeImportHeaderName(String nm, String& base_nm, int& cell_idx
 }
 
 taBase::ValType DataTable::DecodeImportDataType(const String& dat_str) {
-  cerr << "decode: " << dat_str << endl;
-  taMisc::FlushConsole();
-
   if(dat_str.empty())
     return VT_VARIANT;
 

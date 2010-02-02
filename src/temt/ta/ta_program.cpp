@@ -644,6 +644,8 @@ void ProgVar::Copy_(const ProgVar& cp) {
 
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(object_val.ptr() == this)	// this would be bad..
+    object_val.set(NULL);
   name = taMisc::StringCVar(name); // make names C legal names -- just much safer
   if(Program::IsForbiddenName(name))
     name = "My" + name;
@@ -1618,6 +1620,10 @@ bool ProgExprBase::ParseExpr() {
     parse_ve_off = 4;
   }
   else {
+    if((bool)taMisc::types.FindName(expr)) {
+      var_expr = expr;
+      return true; // just a type name -- good!
+    }
     parse_expr = "int __tmp= " + expr + ";";
     parse_ve_off = 11;		// offset is 11 due to 'int _tmp= '
   }

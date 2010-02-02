@@ -219,7 +219,7 @@ public:
   { return SetValAsVarMDims(val, row, d0,d1,d2,d3); }
   // #CAT_Modify set value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), d's are matrix dimension indicies
   bool	 	SetMatrixFlatVal(const Variant& val, int row, int cell)
-  { return SetValAsVarM(val, row, cell); }
+  { return SetValAsVar_impl(val, row, cell); }
   // #CAT_Modify set value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), using flat representation of matrix cell (single cell index)
 
   bool	 	InitVals(const Variant& init_val);
@@ -656,11 +656,6 @@ public:
   /////////////////////////////////////////////////////////
   // saving/loading (file)
 
-  enum LoadHeaders { // type of headers
-    LH_AUTO_YES 	= -1, //  #LABEL_AUTO_YES auto for Emergent files, Yes for simple text files
-    LH_NO, // #LABEL_NO no headers (note: ignored if it is an Emergent file)
-  };
-
   enum Delimiters {
     TAB,
     SPACE,
@@ -747,14 +742,16 @@ public:
   virtual void 		LoadData(const String& fname, Delimiters delim = TAB,
 	bool quote_str = true, int max_recs = -1, bool reset_first=false);
   // #CAT_File #EXT_dat,tsv,csv,txt,log load Emergent native format data (ONLY) - has a special header to define columns, up to max num of recs (-1 for all), with delimiter between columns and optionally quoting strings, reset_first = remove any existing data prior to loading
-  virtual void 		LoadAnyData(const String& fname, LoadHeaders headers = LH_AUTO_YES,
+  virtual void 		LoadAnyData(const String& fname, bool headers = true,
 		    LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO,
 		    int max_rows = -1,  bool reset_first=false);
-  // #CAT_File #MENU #MENU_ON_Data #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD #ARGC_1 loads any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto defaults for delimiters and string quoting, and resets any existing data first by default (see Load Any Data Append)
-  virtual void 		LoadAnyData_Append(const String& fname)
-  { LoadAnyData(fname, LH_AUTO_YES, LD_AUTO, LQ_AUTO, -1, false); }
-  // #CAT_File #MENU #MENU_ON_Data #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD loads any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto defaults for delimiters and string quoting, and appends after any existing data first (see Load Any Data)
-  
+  // #CAT_File #EXT_dat,tsv,csv,txt,log load any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto detect works in most cases for delimiters and string quoting, reset_first = reset any existing data before loading (else append) -- headers option MUST be set correctly for non-Emergent files (no auto detect on that), and it is ignored for Emergent native files (which always have headers)
+  virtual void 		LoadAnyData_gui(const String& fname, bool headers = true)
+  { LoadAnyData(fname, headers, LD_AUTO, LQ_AUTO, -1, true); }
+  // #CAT_File #MENU #MENU_ON_Data #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log #FILE_DIALOG_LOAD #LABEL_Load_Any_Data load any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto detects type of delimiters and string quoting -- headers option MUST be set correctly for non-Emergent files (no auto detect on that), and it is ignored for Emergent native files (which always have headers).  See ImportData to manually specify delimiters if auto detect doesn't work.  See Load Any Data Append to append to existing data (this function resets data first)
+  virtual void 		LoadAnyData_Append(const String& fname, bool headers = true)
+  { LoadAnyData(fname, headers, LD_AUTO, LQ_AUTO, -1, false); }
+  // #CAT_File #MENU #MENU_ON_Data #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto detects type of delimiters and string quoting -- headers option MUST be set correctly for non-Emergent files (no auto detect on that), and it is ignored for Emergent native files (which always have headers).  See ImportData to manually specify delimiters if auto detect doesn't work.  See Load Any Data to replace existing data (this function appends to existing)
   virtual void 		LoadDataFixed(const String& fname, FixedWidthSpec* fws,
 				      bool reset_first=false);
   // #CAT_File loads data, using the specified fixed-width spec (usually in a Program), reset_first = remove any existing data prior to loading
@@ -779,7 +776,7 @@ public:
 
   virtual void 		ImportData(const String& fname="", bool headers = true,
 		   LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO)
-  { LoadAnyData(fname, headers ? LH_AUTO_YES : LH_NO, LD_AUTO, LQ_AUTO, -1, true); }
+  { LoadAnyData(fname, headers, LD_AUTO, LQ_AUTO, -1, true); }
 // #CAT_File #MENU #MENU_ON_Data #EXT_csv,tsv,txt,log #FILE_DIALOG_LOAD imports externally-generated data in delimited text file format -- if headers is selected, then first row is treated as column headers -- auto defaults are typically fine (see also Load Any Data or Load Any Data Append -- same functionality with all AUTO defaults)
 
 
@@ -795,7 +792,7 @@ protected:
 			      const DataTable& src, DataCol* sar, int src_row); // #IGNORE
 
   virtual void 		DetermineLoadDataParams(istream& strm, 
-    LoadHeaders headers_req, LoadDelimiters delim_req, LoadQuotes quote_str_req,
+    bool headers_req, LoadDelimiters delim_req, LoadQuotes quote_str_req,
     bool& headers, Delimiters& delim, bool& quote_str, bool& native);
   // #IGNORE determine delimiters and other info from file for loading data -- for non-native files, will also decode headers and/or create data columns to fit the data -- the first line of actual data after the header (if any) is used to determine column type info
 
@@ -896,11 +893,6 @@ public:
 					  int d4=0, int d5=0, int d6=0);
   // #CAT_Columns change type and/or geometry of column with given name 
 
-  virtual bool		MatrixColToScalars(Variant mtx_col, const String& scalar_col_name_stub="");
-  // #CAT_Columns #MENU #MENU_ON_Columns convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
-  virtual bool		MatrixColFmScalars(Variant mtx_col, const String& scalar_col_name_stub="");
-  // #CAT_Columns #MENU #MENU_ON_Columns convert a sequence of sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes -- matrix column must already exist and be configured properly
-
   USING(inherited::GetColData)
   virtual DataCol* 	GetColData(Variant col, bool quiet = false) const {
     if(col.isStringType()) return FindColName(col.toString(), !quiet);
@@ -935,6 +927,18 @@ public:
   virtual void		RemoveOrphanCols();
   // #CAT_Columns removes all non-pinned marked cols
   
+  virtual bool		MatrixColToScalarsCol(DataCol* mtx_col,
+					      const String& scalar_col_name_stub="");
+  // #CAT_XpertColumns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #FROM_GROUP_data #LABEL_MatrixColToScalars convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
+  virtual bool		MatrixColToScalars(Variant mtx_col,
+					   const String& scalar_col_name_stub="");
+  // #CAT_Columns convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
+
+  virtual bool		MatrixColFmScalarsCol(DataCol* mtx_col,
+					      const String& scalar_col_name_stub="");
+  // #CAT_XpertColumns #MENU #FROM_GROUP_data #LABEL_MatrixColFmScalars convert a sequence of sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes -- matrix column must already exist and be configured properly
+  virtual bool		MatrixColFmScalars(Variant mtx_col, const String& scalar_col_name_stub="");
+  // #CAT_Columns convert a sequence of sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes -- matrix column must already exist and be configured properly
 
   /////////////////////////////////////////////////////////
   // rows
@@ -1090,7 +1094,7 @@ public:
 
   bool	 	InitValsCol(DataCol* col, const Variant& init_val)
   { return col->InitVals(init_val); }
-  // #CAT_Columns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #LABEL_InitVals #FROM_GROUP_data initialize all values in given column to given value
+  // #CAT_XpertModify #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #LABEL_InitVals #FROM_GROUP_data initialize all values in given column to given value
   bool	 	InitValsToRowNoCol(DataCol* col) 
   { return col->InitValsToRowNo(); }
   // #CAT_Columns #MENU #LABEL_InitValsToRowNo #FROM_GROUP_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns

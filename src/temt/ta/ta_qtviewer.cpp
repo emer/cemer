@@ -3617,6 +3617,7 @@ void iMainWindowViewer::closeEvent(QCloseEvent* e) {
 //     cerr << "got close, hiding!" << endl;
 //     taMisc::FlushConsole();
     hide();			// prevent a possible bug on mac associated with hide and delete
+    taiMiscCore::ProcessEvents();
     curProject()->CloseLater();
   }
 }
@@ -3719,14 +3720,16 @@ void iMainWindowViewer::Constr_Menu_impl() {
   QString cmd_str = "Ctrl+";
 
   // forward/back guys -- note: on Win the icons don't show up if Action has text
-  historyBackAction = AddAction(new taiAction("Back", QKeySequence(), "historyBackAction" ));
-  historyBackAction->setToolTip("Back");
+  historyBackAction = AddAction(new taiAction("Back",
+      QKeySequence(Qt::ControlModifier, Qt::Key_Left), "historyBackAction" ));
+  historyBackAction->setToolTip("Ctrl + <- -- move back one step in browsing history");
   historyBackAction->setStatusTip(historyBackAction->toolTip());
   connect(historyBackAction, SIGNAL(triggered()), brow_hist, SLOT(back()) );
   connect(brow_hist, SIGNAL(back_enabled(bool)), 
     historyBackAction, SLOT(setEnabled(bool)) );
-  historyForwardAction = AddAction(new taiAction("Forward", QKeySequence(), "historyForwardAction" ));
-  historyForwardAction->setToolTip("Forward");
+  historyForwardAction = AddAction(new taiAction("Forward",
+QKeySequence(Qt::ControlModifier, Qt::Key_Right), "historyForwardAction" ));
+  historyForwardAction->setToolTip("Ctrl + -> -- move forward one step in browsing history");
   historyForwardAction->setStatusTip(historyForwardAction->toolTip());
   connect(historyForwardAction, SIGNAL(triggered()), brow_hist, SLOT(forward()) );
   connect(brow_hist, SIGNAL(forward_enabled(bool)), 
@@ -7417,6 +7420,17 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
       taiDataLink* link = si->link();
       iMainWindowViewer* imw = mainWindow();
       if(imw) imw->Find(link);
+    }
+    e->accept();
+    return;
+  }
+  if(ctrl_pressed && (e->key() == Qt::Key_Left || e->key() == Qt::Key_Right)) {
+    iMainWindowViewer* imw = mainWindow();
+    if(imw && imw->brow_hist) {
+      if(e->key() == Qt::Key_Left)
+	imw->brow_hist->back();
+      else if(e->key() == Qt::Key_Right)
+	imw->brow_hist->forward();
     }
     e->accept();
     return;

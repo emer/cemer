@@ -2900,7 +2900,9 @@ MemberDef* gpiFromGpTokenPtrMember::GetFromMd() {
 TABLPtr	gpiFromGpTokenPtrMember::GetList(MemberDef* from_md, const void* base) {
   if (from_md == NULL)
     return NULL;
-  if(from_md->type->ptr == 1)
+  if(from_md->type->InheritsFrom(&TA_taSmartRef))
+    return (TABLPtr)((taSmartRef*)from_md->GetOff(base))->ptr();
+  else if(from_md->type->ptr == 1)
     return *((TABLPtr*)from_md->GetOff(base));
   else
     return (TABLPtr)from_md->GetOff(base);
@@ -3081,7 +3083,9 @@ MemberDef* gpiFromGpArgType::GetFromMd() {
 TABLPtr	gpiFromGpArgType::GetList(MemberDef* from_md, const void* base) {
   if (from_md == NULL)
     return NULL;
-  if(from_md->type->ptr == 1)
+  if(from_md->type->InheritsFrom(&TA_taSmartRef))
+    return (TABLPtr)((taSmartRef*)from_md->GetOff(base))->ptr();
+  else if(from_md->type->ptr == 1)
     return *((TABLPtr*)from_md->GetOff(base));
   else
     return (TABLPtr)from_md->GetOff(base);
