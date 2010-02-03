@@ -799,7 +799,9 @@ int taBase::ChildEditAction(const MemberDef* md, taBase* child,
   if (proj) {
     proj->undo_mgr.Nest(true); 
   }
-  StructUpdate(true);
+  // these totaly mess with the gui updating for copy/paste/etc -- and with new
+  // fixes, they are also unnecessary!
+//   StructUpdate(true);
   for (int i = 0; i < ms->count(); ++i) {
     ms->setIndex(i);
     rval = ChildEditAction_impl(md, child, ms, ea);
@@ -807,7 +809,7 @@ int taBase::ChildEditAction(const MemberDef* md, taBase* child,
     if (rval != taiClipData::ER_OK)
       break;
   }
-  StructUpdate(false);
+//   StructUpdate(false);
   if (proj) {
     proj->undo_mgr.Nest(false); 
   }
