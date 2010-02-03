@@ -867,7 +867,7 @@ void EmergentRoot::About() {
   info += "WWW Page: http://grey.colorado.edu/emergent\n";
   info += "\n\n";
 
-  info += "Copyright (c) 1995-2006, Regents of the University of Colorado,\n\
+  info += "Copyright (c) 1995-2010, Regents of the University of Colorado,\n\
 Carnegie Mellon University, Princeton University.\n\
  \n\
 Emergent is free software; you can redistribute it and/or modify\n\
@@ -884,7 +884,10 @@ Note that the taString class was derived from the GNU String class\n\
 Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and\n\
 is covered by the GNU General Public License, see ta_string.h\n";
 
-  taMisc::Choice(info, "Ok");
+  if(cssMisc::init_interactive)
+    taMisc::Choice(info, "Ok");
+  else
+    taMisc::Info(info);
 }
 
 

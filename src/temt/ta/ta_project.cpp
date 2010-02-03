@@ -1705,7 +1705,7 @@ void taRootBase::About() {
   info += "WWW Page: http://grey.colorado.edu/temt\n";
   info += "\n\n";
 
-  info += "Copyright (c) 1995-2009, Regents of the University of Colorado,\n\
+  info += "Copyright (c) 1995-2010, Regents of the University of Colorado,\n\
  Carnegie Mellon University, Princeton University.\n\
  \n\
  TEMT is free software; you can redistribute it and/or modify\n\
@@ -1721,7 +1721,10 @@ void taRootBase::About() {
  Note that the taString class was derived from the GNU String class\n\
  Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and\n\
  is covered by the GNU General Public License, see ta_string.h\n";
-  taMisc::Choice(info, "Ok");
+  if(cssMisc::init_interactive)
+    taMisc::Choice(info, "Ok");
+  else
+    taMisc::Info(info);
 }
 
 void taRootBase::AddTemplates() {
@@ -2043,7 +2046,8 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
 #endif
 
   // process gui flag right away -- has other implications
-  if(taMisc::CheckArgByName("GenDoc")) { // auto nogui by default
+  if(taMisc::CheckArgByName("GenDoc") || taMisc::CheckArgByName("Version") ||
+     taMisc::CheckArgByName("Help")) { // auto nogui by default
     taMisc::use_gui = false;
     cssMisc::init_interactive = false;
   }
@@ -2772,15 +2776,19 @@ bool taRootBase::Startup_RegisterSigHandler() {
 }
 
 bool taRootBase::Startup_ProcessArgs() {
+  bool run_startup = true;
   if(taMisc::CheckArgByName("Version")) {
     tabMisc::root->About();
+    run_startup = false;
   }
   if(taMisc::CheckArgByName("Help")) {
     taMisc::HelpMsg();
+    run_startup = false;
   }
   if(taMisc::CheckArgByName("GenDoc")) {
     taMisc::help_detail = taMisc::HD_DEFAULT; // always render default
     taGenDoc::GenDoc(&(taMisc::types));
+    run_startup = false;
   }
 
   // just load the thing!?
@@ -2792,9 +2800,14 @@ bool taRootBase::Startup_ProcessArgs() {
     tabMisc::root->projects.Load(proj_ld);
   }
 
-  // chain the next step -- this will hopefully happen *after* any post-loading
-  // events triggered by the projects.load 
-  QTimer::singleShot(0, root_adapter, SLOT(Startup_RunStartupScript()));
+  if(run_startup) {
+    // chain the next step -- this will hopefully happen *after* any post-loading
+    // events triggered by the projects.load 
+    QTimer::singleShot(0, root_adapter, SLOT(Startup_RunStartupScript()));
+  }
+  else {
+    taiMC_->Quit();
+  }
 
   return true;
 }
