@@ -3615,8 +3615,8 @@ void iMainWindowViewer::closeEvent(QCloseEvent* e) {
   // now, if we are the last proj window, close us!
   if (m_close_proj_now) {
     hide();			// prevent a possible bug on mac associated with hide and delete
-    cerr << "got close, hiding!" << endl;
-    taMisc::FlushConsole();
+//     cerr << "got close, hiding!" << endl;
+//     taMisc::FlushConsole();
     taiMiscCore::ProcessEvents();
     curProject()->CloseLater();
   }
@@ -4139,6 +4139,8 @@ void iMainWindowViewer::fileClose() {
       return;
     }
   }
+  hide();	// prevent a possible bug on mac associated with hide and delete
+  taiMiscCore::ProcessEvents();
   proj->CloseLater();
 }
 
