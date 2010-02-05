@@ -1471,10 +1471,11 @@ String StopStepPoint::GetDisplayName() const {
 void StopStepPoint::InitLinks() { 
   inherited::InitLinks(); 
   InitLinks_taAuto(&TA_StopStepPoint);
-  if (taMisc::is_loading || taMisc::is_duplicating) return;
-  Program* prg = GET_MY_OWNER(Program);
-  if(!prg || isDestroying() || prg->isDestroying()) return;
-  prg->SetProgFlag(Program::SHOW_STEP);
+  // no longer necessary -- TODO: could add to PreGenMe_impl and set flag about self stepping..
+//   if (taMisc::is_loading || taMisc::is_duplicating) return;
+//   Program* prg = GET_MY_OWNER(Program);
+//   if(!prg || isDestroying() || prg->isDestroying()) return;
+//   prg->SetProgFlag(Program::SHOW_STEP);
 }
 
 //////////////////////////

@@ -528,10 +528,10 @@ void iMethodButtonMgr::Init() {
 }
 
 void iMethodButtonMgr::AddMethButton(taiMethodData* mth_rep, const String& label) {
-  QAbstractButton* but = mth_rep->GetButtonRep();
+  QWidget* but = mth_rep->GetButtonRep();
   DoAddMethButton(but);
-  if (label.nonempty()) {
-    but->setText(label);
+  if (label.nonempty() && but->inherits("QAbstractButton")) {
+    ((QAbstractButton*)but)->setText(label);
   }
 }
 
@@ -615,7 +615,7 @@ void iMethodButtonMgr::DataDataChanged(taDataLink* dl, int dcr, void* op1, void*
   GetImage();
 }
 
-void iMethodButtonMgr::DoAddMethButton(QAbstractButton* but) {
+void iMethodButtonMgr::DoAddMethButton(QWidget* but) {
   show_meth_buttons = true;
   // we use "medium" size for buttons
   but->setFont(taiM->buttonFont(taiMisc::fonMedium));
@@ -632,13 +632,8 @@ void iMethodButtonMgr::GetImage() {
     taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);
     if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
       continue;
-    
-    if(mth_rep->meth->OptionAfter("GHOST_").nonempty()) {
-      // the default "true" for non-GHOST cases doesn't work here!
-      bool ghost = mth_rep->meth->GetCondOptTest("GHOST", base->GetTypeDef(), base);
-      QAbstractButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
-      but->setEnabled(!ghost);
-    }
+
+    mth_rep->UpdateButtonRep();
   }
 }
 
@@ -671,7 +666,7 @@ void iMethodButtonMgr::SetCurMenuButton(MethodDef* md) {
   cur_menu_but = taiActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
 	    NULL, host, NULL, widg);
   cur_menu_but->setLabel(men_nm);
-  DoAddMethButton((QAbstractButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
+  DoAddMethButton(cur_menu_but->GetRep()); // rep is the button for buttonmenu
   ta_menu_buttons.Add(cur_menu_but);
 }
 
@@ -2028,10 +2023,10 @@ void taiEditDataHost::InitGuiFields(bool virt) {
 
 
 void taiEditDataHost::AddMethButton(taiMethodData* mth_rep, const String& label) {
-  QAbstractButton* but = mth_rep->GetButtonRep();
+  QWidget* but = mth_rep->GetButtonRep();
   DoAddMethButton(but);
-  if (label.nonempty()) {
-    but->setText(label);
+  if(label.nonempty() && but->inherits("QAbstractButton")) {
+    ((QAbstractButton*)but)->setText(label);
   }
 }
 
@@ -2272,7 +2267,7 @@ void taiEditDataHost::Constr_Final() {
     body->installEventFilter(this); // hopefully everyone below body will get it too!
 }
 
-void taiEditDataHost::DoAddMethButton(QAbstractButton* but) {
+void taiEditDataHost::DoAddMethButton(QWidget* but) {
   show_meth_buttons = true;
   // we use "medium" size for buttons
   but->setFont(taiM->buttonFont(taiMisc::fonMedium));
@@ -2394,17 +2389,8 @@ void taiEditDataHost::GetButtonImage(bool force) {
     taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);
     if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
       continue;
-      
-    taBase* base = mth_rep->Base();
-    // in case of some obscure delete/refresh scenarios, skip if deleted
-    if (!base) continue;
-    
-    if(mth_rep->meth->OptionAfter("GHOST_").nonempty()) {
-      // the default "true" for non-GHOST cases doesn't work here!
-      bool ghost = mth_rep->meth->GetCondOptTest("GHOST", base->GetTypeDef(), base);
-      QAbstractButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
-      but->setEnabled(!ghost);
-    }
+
+    mth_rep->UpdateButtonRep();
   }
 }
 
@@ -2622,7 +2608,7 @@ void taiEditDataHost::SetCurMenuButton(MethodDef* md) {
   cur_menu_but = taiActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
 	    NULL, this, NULL, widget());
   cur_menu_but->setLabel(men_nm);
-  DoAddMethButton((QAbstractButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
+  DoAddMethButton(cur_menu_but->GetRep()); // rep is the button for buttonmenu
   ta_menu_buttons.Add(cur_menu_but);
 }
 

@@ -301,7 +301,7 @@ public: //
 // We use sets: 0:name/desc; 1: gp guys (ex step); set2: args; set3: vars
   enum CtrlMembSets {
     MS_PROG,
-    MS_GP,
+//     MS_GP,
     MS_ARGS,
     MS_VARS, // note: must ARGS..VARS must be in numerical sequence
     
@@ -398,6 +398,34 @@ public:
 private:
   void		Initialize() {}
   void		Destroy() {}
+};
+
+class TA_API taiStepButtonList : public taiMethodData {
+  // one method with a list of buttons for args
+  Q_OBJECT
+public:
+  override QWidget* GetButtonRep();
+  override bool	UpdateButtonRep();
+
+  taiStepButtonList(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
+      QWidget* gui_parent_, int flags_ = 0);
+
+ public slots:
+  virtual void 	CallFunList(void* itm); // call the function from list
+
+ protected:
+  QToolBar* tool_bar;
+};
+
+class TA_API taiStepButtonMethod : public taiActuatorMethod {
+INHERITED(taiActuatorMethod)
+public:
+  int			BidForMethod(MethodDef* md, TypeDef* td);
+
+  TAQT_METHOD_INSTANCE(taiStepButtonMethod, taiActuatorMethod);
+protected:
+  taiMethodData*	GetButtonMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  taiMethodData*	GetMenuMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
 
 #endif

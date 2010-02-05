@@ -1,5 +1,5 @@
-// Copyright, 1995-2007, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
+// Copyright, 1995-2007, Regents of the University of Colorado,
 //
 // This file is part of The Emergent Toolkit
 //
@@ -41,7 +41,9 @@ class ProgLibEl;
 class ProgLib;
 class iProgramPanel;
 class Function;
-class ProgramCall; //
+class ProgramCallBase;
+class ProgramCall;
+class ProgramCallVar; //
 
 /////////////////////////////////////////////////////////////////////
 //		IMPORTANT CODING NOTES:
@@ -1011,6 +1013,7 @@ private:
 //Note: object operations per se don't affect Program::stale, but
 // they will indirectly to the extent that adding/removing them
 // causes a corresponding var to get created
+
 class TA_API ProgObjList: public taBase_List {
   // ##CAT_Program A list of program objects (just a taBase list with proper update actions to update variables associated with objects)
 INHERITED(taBase_List)
@@ -1034,6 +1037,18 @@ private:
   void Destroy() { }
 };
 
+class TA_API Program_List : public taList<Program> {
+  // ##CAT_Program a list of programs
+  INHERITED(taList<Program>)
+public:
+  
+  override String 	GetTypeDecoKey() const { return "Program"; }
+  TA_BASEFUNS_NOCOPY(Program_List);
+private:
+  void	Initialize();
+  void 	Destroy()		{Reset(); }; //
+}; //
+
 
 class TA_API Program: public taNBase, public AbstractScriptBase {
   // #STEM_BASE ##TOKENS ##INSTANCE ##EXT_prog ##FILETYPE_Program ##CAT_Program a structured gui-buildable program that generates css script code to actually run
@@ -1041,9 +1056,8 @@ INHERITED(taNBase)
 public:
   enum ProgFlags { // #BITS program flags
     PF_NONE		= 0, // #NO_BIT
-    NO_STOP		= 0x0001, // this program cannot be stopped by Stop or Step buttons
-    SHOW_STEP		= 0x0002, // show the step_prog in the ctrl panel (turn this off for programs that are not part of the overall main control hierarchy)
-    STARTUP_RUN		= 0x0004, // run this prgram at startup (after project is fully loaded and everything else has been initialized) -- if multiple programs are so marked, they will be run in the order they appear in the browser (depth first)
+    NO_STOP		= 0x0001, // this program cannot be stopped by Stop or Step buttons -- set this flag for simple helper programs to prevent them from showing up in the step list of other programs
+    STARTUP_RUN		= 0x0002, // run this prgram at startup (after project is fully loaded and everything else has been initialized) -- if multiple programs are so marked, they will be run in the order they appear in the browser (depth first)
   };
   
   enum ReturnVal { // system defined return values (<0 are for user defined)
@@ -1099,9 +1113,11 @@ public:
   // #READ_ONLY #NO_SAVE text message associated with stop reason (e.g., err msg, breakpoint info, etc)
   static bool		step_mode;
   // #READ_ONLY #NO_SAVE the program was run in step mode -- check for stepping
-  static Program_Group*	step_gp;
-  // #IGNORE the program group in which the Step button was pressed -- only other programs in this group do single-stepping
-  
+  static ProgramRef	cur_step_prog;
+  // #IGNORE the current program to be single-stepped -- set by the Step call of the program that was last run
+
+  String		short_nm;
+  // short name for this program -- as brief as possible -- used for Step display info
   String		tags;
   // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this program -- should be listed in hierarchical order, with most important/general tags first, as this is how they will be sorted in the program library
   String		desc;
@@ -1127,15 +1143,24 @@ public:
   
   int			ret_val;
   // #HIDDEN #GUI_READ_ONLY #NO_SAVE return value: 0=ok, +ve=sys-defined err, -ve=user-defined err; also accessible inside program
-  ProgEl_List		sub_progs;
-  // #HIDDEN #NO_SAVE the direct subprogs of this one, enumerated in the PreGen phase (note: these are ProgramCall's, not the actual Program's)
+  ProgEl_List		sub_prog_calls;
+  // #HIDDEN #NO_SAVE the ProgramCall direct subprogs of this one, enumerated in the PreGen phase (note: these are ProgramCallBase's, not the actual Program's)
+  Program_List		sub_progs_dir;
+  // #HIDDEN #NO_SAVE direct sub-programs -- called by sub_prog_calls within this program -- also populated during the PreGen phase
+  Program_List		sub_progs_all;
+  // #HIDDEN #NO_SAVE the full set of all sub-programs, including sub-programs of sub-programs..
+  Program_List		sub_progs_step;
+  // #HIDDEN #NO_SAVE all the sub programs eligible for single-stepping
   bool		    	m_stale;
   // #READ_ONLY #NO_SAVE dirty bit -- needs to be public for activating the Compile button
   String		view_script;
   // #READ_ONLY #NO_SAVE current view of script 
   String		view_listing;
   // #READ_ONLY #NO_SAVE current view of listing 
-  
+
+  ProgramRef		step_prog;
+  // #FROM_GROUP_sub_progs_step The default program to single step for the Step function in this program
+
   inline void		SetProgFlag(ProgFlags flg)   { flags = (ProgFlags)(flags | flg); }
   // #CAT_Flags set flag state on
   inline void		ClearProgFlag(ProgFlags flg) { flags = (ProgFlags)(flags & ~flg); }
@@ -1166,17 +1191,18 @@ public:
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run set the program state back to the beginning
   virtual void  Run();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run the program
-  virtual void	Step();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT&&flags:SHOW_STEP #CAT_Run step the program, at the previously selected step level (see SetAsStep or the program group control panel)
+  virtual void	Step(Program* step_prg = NULL);
+  // #BUTTON #STEP_BUTTON #CAT_Run step the program at the level of the given program -- if NULL then step_prog default value will be used
   virtual void	Stop();
   // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)
   virtual void	Abort();
   // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run stop the current program immediately, regardless of where it is
 
-  virtual bool	StopCheck(); // #CAT_Run calls event loop, then checks for STOP state, true if so
+  virtual bool	StopCheck();
+  // #CAT_Run calls event loop, then checks for STOP state, true if so
+  virtual bool	IsStepProg();
+  // #CAT_Run is this program the currently selected step_prog? only true if in step_mode too
   
-  virtual void	SetAsStep();
-  // #BUTTON #CAT_Run set this program as the step level for this set of programs -- this is the grain size of stepping when the Step button is pressed (for a higher-level program)
   virtual void  Compile();
   // #BUTTON #GHOST_ON_script_compiled:true #CAT_Code generate and compile the script code that actually runs (if this button is available, you have changed something that needs to be recompiled)
   virtual void	CmdShell();
@@ -1223,10 +1249,8 @@ public:
   // #CAT_Find find program of given name, first looking within the group that this program belongs in, and then looking for all programs within the project.  if warn_not_found, then issue a warning if not found
   virtual Program*	FindProgramNameContains(const String& prog_nm, bool warn_not_found=false) const;
   // #CAT_Find find program whose name contains given name, first looking within the group that this program belongs in, and then looking for all programs within the project.  if warn_not_found, then issue a warning if not found
-  virtual ProgramCall*	FindSubProgTarget(Program* prg);
-  // #IGNORE find sub_progs ProgramCall that calls given target program
-  virtual bool		AddSubProg(ProgramCall* pcall);
-  // #IGNORE add a sub_progs for given program call object (returns true if added)
+  virtual ProgramCallBase*	FindSubProgTarget(Program* prg);
+  // #IGNORE find sub_prog_calls ProgramCallBase that calls given target program
 
   virtual void		SaveScript(ostream& strm);
   // #MENU #MENU_ON_Script #MENU_CONTEXT #BUTTON #CAT_File save the css script generated by the program to a file
@@ -1293,11 +1317,13 @@ protected:
   String		m_scriptCache; // cache of script, managed by implementation
   String		m_listingCache; // cache of listing, managed by implementation
   bool			m_checked; // flag to help us avoid doing CheckConfig twice
+
   override void		UpdateAfterEdit_impl();
   override bool 	CheckConfig_impl(bool quiet);
   override void 	CheckChildConfig_impl(bool quiet, bool& rval);
   override void		InitScriptObj_impl(); // no "this" and install
   override bool		PreCompileScript_impl(); // CheckConfig & add/update the global vars
+
   virtual void		Stop_impl(); 
   virtual int		Run_impl(); 
   virtual int		Cont_impl(); 
@@ -1307,6 +1333,11 @@ protected:
 #ifdef TA_GUI
   virtual void		ViewScript_impl();
 #endif
+  virtual void		GetSubProgsAll(int depth=0);
+  // populate the sub_progs_all lists of all sub programs including self
+  virtual void		GetSubProgsStep(int depth=0);
+  // populate the sub_progs_step lists of all sub programs including self
+
   static void		InitForbiddenNames();
 
 private:
@@ -1314,18 +1345,6 @@ private:
   void	Initialize();
   void	Destroy();
 };
-
-class TA_API Program_List : public taList<Program> {
-  // ##CAT_Program a list of programs
-  INHERITED(taList<Program>)
-public:
-  
-  override String 	GetTypeDecoKey() const { return "Program"; }
-  TA_BASEFUNS_NOCOPY(Program_List);
-private:
-  void	Initialize();
-  void 	Destroy()		{Reset(); }; //
-}; //
 
 
 //////////////////////////////////
@@ -1405,7 +1424,6 @@ class TA_API Program_Group : public taGroup<Program> {
   // ##EXT_progp ##FILETYPE_ProgramGroup #CAT_Program a collection of programs sharing common global variables and a control panel interface
 INHERITED(taGroup<Program>)
 public:
-  ProgramRef		step_prog; // the program that will be stepped when the Step button is pressed
   String		tags;
   // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this program -- should be listed in hierarchical order, with most important/general tags first, as this is how they will be sorted in the program library
   String		desc; // #EDIT_DIALOG description of what this program group does and when it should be used (used for searching in prog_lib -- be thorough!)
@@ -1441,22 +1459,66 @@ private:
   void 	Destroy()		{Reset(); };
 };
 
-class TA_API ProgramCall: public ProgEl { 
-  // ##DEF_CHILD_prog_args call (run) another program, setting any arguments before hand
+TA_SMART_PTRS(Program_Group); // Program_GroupRef
+
+class TA_API ProgramCallBase: public ProgEl { 
+  // ##DEF_CHILD_prog_args #VIRT_BASE base class for prog el that calls a program -- manages args and provides interface that Program's require for managing sub-progs
 INHERITED(ProgEl)
 public:
-  ProgramRef		target; // the program to be called
-  String		targ_ld_init; // #EDIT_DIALOG name(s) of target programs to search for to set this target pointer when program is loaded from program library or other external sources -- if not found, a warning message is emitted.  if empty, it defaults to name of current target. use commas to separate multiple options (tried in order) and an * indicates use the "contains" searching function (not full regexp support yet)
-  ProgArg_List		prog_args; // #SHOW_TREE arguments to the program--copied to prog before call
+  ProgArg_List		prog_args; // #SHOW_TREE arguments to the program--copied to prog before call -- all programs in prog_group must accept these same args
 
   virtual void		UpdateArgs(); 
   // #BUTTON updates the arguments based on the target args (also automatically called in updateafteredit)
 
-  virtual Program*	GetTarget();
-  // safe call to get target: emits error if target is null (used by program)
+  virtual Program*	GetTarget() { return NULL; }
+  // safe call to get target: emits error if target is null (used by program) -- call during runtime
+  virtual Program*	GetTarget_Compile() { return NULL; }
+  // safe call to get target during compile time -- fail silently
+  virtual void		AddTargetsToListAll(Program_List& all_lst) { };
+  // add any actual targets of this program to the all list-- use LinkUnique -- only non-null!
+  virtual void		AddTargetsToListStep(Program_List& step_lst) { };
+  // add any actual targets of this program to the step list -- use LinkUnique -- only non-null!
+  virtual bool		CallsProgram(Program* prg) { return false; }
+  // return true if this program call calls given program
+  virtual const String	GenCompileScript(Program* prg) { return _nilString; }
+  // generate code to compile script on target
+  virtual const String	GenCallInit(Program* prg) { return _nilString; }
+  // generate code to call init on target
+
+  virtual bool		LoadInitTarget() { return false; }
+  // initialize target based on targ_ld_init information
+
+  override taList_impl*	children_() {return &prog_args;}	
+  override String 	GetTypeDecoKey() const { return "Program"; }
+
+  PROGEL_SIMPLE_BASEFUNS(ProgramCallBase);
+protected:
+  override void		UpdateAfterEdit_impl();
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
+  virtual const String	GenCssArgSet_impl(const String trg_var_nm, int indent_level); 
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
+
+class TA_API ProgramCall: public ProgramCallBase { 
+  // call (run) another program, setting any arguments before hand
+INHERITED(ProgramCallBase)
+public:
+  ProgramRef		target; // the program to be called
+  String		targ_ld_init; // #EDIT_DIALOG name(s) of target programs to search for to set this target pointer when program is loaded from program library or other external sources -- if not found, a warning message is emitted.  if empty, it defaults to name of current target. use commas to separate multiple options (tried in order) and an * indicates use the "contains" searching function (not full regexp support yet)
+
+  override Program*	GetTarget();
+  override Program*	GetTarget_Compile();
+  override void		AddTargetsToListAll(Program_List& all_lst);
+  override void		AddTargetsToListStep(Program_List& step_lst);
+  override bool		CallsProgram(Program* prg);
+  override const String	GenCompileScript(Program* prg);
+  override const String	GenCallInit(Program* prg);
+
   void			SetTarget(Program* target); // #DROP1
 
-  virtual bool		LoadInitTarget();
+  override bool		LoadInitTarget();
   // initialize target based on targ_ld_init information
   virtual bool		LoadInitTarget_impl(const String& nm);
   // initialize target based on targ_ld_init information
@@ -1470,9 +1532,7 @@ public:
 protected:
   override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one
   override void		UpdateAfterEdit_impl();
-  override void		UpdateAfterMove_impl(taBase* old_owner);
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
@@ -1481,6 +1541,39 @@ private:
   void	Destroy()	{}
 };
 
+class TA_API ProgramCallVar: public ProgramCallBase { 
+  // ##DEF_CHILD_prog_args call (run) another program by name based on a string variable, setting any arguments before hand
+INHERITED(ProgramCallBase)
+public:
+  Program_GroupRef	prog_group; // sub-group of programs to look in for program to call -- ALL of the programs in this group MUST have the same set of args, and all are considered potential candidates to be called (e.g., they are all Init'd when the calling program is Init'd)
+  ProgVarRef		prog_name_var; // #ITEM_FILTER_StdProgVarFilter variable that contains name of program within prog_group to call -- this is only used at the time the program call is made when the program is running
+
+  override Program*	GetTarget();
+  override Program*	GetTarget_Compile();
+  override void		AddTargetsToListAll(Program_List& all_lst);
+  override void		AddTargetsToListStep(Program_List& step_lst);
+  override bool		CallsProgram(Program* prg);
+  override const String	GenCompileScript(Program* prg);
+  override const String	GenCallInit(Program* prg);
+
+  virtual Program_Group* GetProgramGp();
+  // get prog_group pointer value in a safe way
+
+  override String	GetDisplayName() const;
+  override String	GetToolbarName() const { return "prog var()"; }
+
+  PROGEL_SIMPLE_BASEFUNS(ProgramCallVar);
+protected:
+  override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one
+  override void		UpdateAfterEdit_impl();
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssBody_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
 
 class TA_API ProgramToolBar: public ToolBar {
 // thin subclass to define custom tb for Programs

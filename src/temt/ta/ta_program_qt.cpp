@@ -26,6 +26,7 @@
 #include <QScrollBar>
 #include <QTreeWidget>
 #include <QVBoxLayout>
+#include <QStackedWidget>
 
 #include "icombobox.h"
 #include "ieditgrid.h"
@@ -1258,7 +1259,7 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       MemberDef* md = ms.FastEl(i);
       if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
       // just have a fixed list of guys we show
-      if ((md->name == "name") || (md->name == "desc")) {
+      if ((md->name == "name") || (md->name == "desc") || (md->name == "short_nm")) {
         memb_el(MS_PROG).Add(md);
       } 
     } 
@@ -1267,28 +1268,14 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
     Constr_Data_Labels_impl(idx, &memb_el(MS_PROG), &data_el(MS_PROG));
   }
   
-  MembSet* ms = membs.SafeEl(MS_GP); 
-  ms->text = "Items from Program_Group";
-  ms->desc = "useful items from the Program_Group to which this Program belongs";
-  iLabel* lbl = new iLabel(ms->text.chars(), body);
-  AddSectionLabel(-1, lbl,ms->desc.chars());
-  
-  // ProgGroup guys
-  if(!(prog->HasProgFlag(Program::NO_STOP) || !prog->HasProgFlag(Program::SHOW_STEP))) {
-    Program_Group* pg = GET_OWNER(prog, Program_Group);
-    MemberDef* md = TA_Program_Group.members.FindName("step_prog");
-    if(pg && md) {
-      memb_el(MS_GP).Add(md);
-      taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
-      data_el(MS_GP).Add(mb_dat);
-      QWidget* data = mb_dat->GetRep();
-      //int row = AddData(-1, data);
-      nm = "step_prog";
-      help_text = md->desc;
-      AddNameData(-1, nm, help_text, data, mb_dat/*, md*/); 
-      ++dat_cnt;
-    }
-  }
+//   MembSet* ms = membs.SafeEl(MS_GP); 
+//   ms->text = "Items from Program_Group";
+//   ms->desc = "useful items from the Program_Group to which this Program belongs";
+//   iLabel* lbl = new iLabel(ms->text.chars(), body);
+//   AddSectionLabel(-1, lbl,ms->desc.chars());
+
+  MembSet* ms = NULL;
+  iLabel* lbl = NULL;
   // args and vars
   for (int j = MS_ARGS; j <= MS_VARS; ++j) {
     ms = membs.SafeEl(j);
@@ -1298,7 +1285,7 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       ms->text = "Program args";
       ms->desc = "the arguments to the program";
       pvl = &prog->args; 
-      lbl = new iLabel(ms->text.chars(), body);
+      iLabel* lbl = new iLabel(ms->text.chars(), body);
       AddSectionLabel(-1, lbl,ms->desc.chars());
       break;
     case MS_VARS: {
@@ -1419,10 +1406,10 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
   }
   
   // group stuff
-  if (show_set(MS_GP) && (data_el(MS_GP).size > 0)) {
-    Program_Group* pg = GET_OWNER(prog, Program_Group);
-    GetValue_impl(&memb_el(MS_GP), data_el(MS_GP), pg);
-  }
+//   if (show_set(MS_GP) && (data_el(MS_GP).size > 0)) {
+//     Program_Group* pg = GET_OWNER(prog, Program_Group);
+//     GetValue_impl(&memb_el(MS_GP), data_el(MS_GP), pg);
+//   }
   
   bool first_diff = true;
   for (int j = MS_ARGS; j <= MS_VARS; ++j) {
@@ -1502,10 +1489,10 @@ void iProgramCtrlDataHost::GetImage_Membs()
   }
   
   // group stuff
-  if (show_set(MS_GP) && (data_el(MS_GP).size > 0)) {
-    Program_Group* pg = GET_OWNER(prog, Program_Group);
-    GetImage_impl(&memb_el(MS_GP), data_el(MS_GP), pg);
-  }
+//   if (show_set(MS_GP) && (data_el(MS_GP).size > 0)) {
+//     Program_Group* pg = GET_OWNER(prog, Program_Group);
+//     GetImage_impl(&memb_el(MS_GP), data_el(MS_GP), pg);
+//   }
   
   for (int j = MS_ARGS; j <= MS_VARS; ++j) {
     if (!show_set(j)) continue;
@@ -2230,4 +2217,98 @@ String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   }
 
   return rval;
+}
+
+/////////////////////////////
+//   taiStepButtonMethod     //
+/////////////////////////////
+
+int taiStepButtonMethod::BidForMethod(MethodDef* md, TypeDef* td) {
+  if (md->HasOption("STEP_BUTTON"))
+    return (inherited::BidForMethod(md,td) + 1);
+  return 0;
+}
+
+taiMethodData* taiStepButtonMethod::GetButtonMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiStepButtonList* rval = new taiStepButtonList(base, meth, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+taiMethodData* taiStepButtonMethod::GetMenuMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  taiMethMenu* rval = new taiMethMenu(base, meth, typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+
+/////////////////////////////
+// 	taiStepButtonList    //
+/////////////////////////////
+
+taiStepButtonList::taiStepButtonList(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_)
+: taiMethodData(bs, md, typ_, host_, par, gui_parent_, flags_)
+{
+  is_menu_item = false;
+  tool_bar = NULL;
+//no  if (gui_parent) SetRep(MakeButton()); //note: later code in win_base.cc etc. has convoluted menu
+  // code that will end up spuriously invoking this, unless we prevent it.
+}
+
+void taiStepButtonList::CallFunList(void* itm) {
+  Program* prg = (Program*)base; // definitively this
+  if(!prg) return;
+
+  QPointer<taiStepButtonList> ths = this; // to detect us being deleted
+  ApplyBefore();
+  // note: this is not a great situation, whereby applying deletes us, but
+  // we warn user (and should probably do something, ie a directive that you 
+  // have to save before)
+  if (!ths) {
+    taMisc::Error("This menu item or button action apparently cannot be invoked when you have not applied changes. Please try the operation again. (The developers would appreciate hearing about this situation.");
+    return;
+  }
+
+  taProject* proj = (taProject*)prg->GetOwner(&TA_taProject);
+  if(proj) {
+    proj->undo_mgr.SaveUndo(prg, "Call Method: " + meth->name);
+  }
+
+  prg->Step((Program*)itm);	// that was simple!
+}
+
+QWidget* taiStepButtonList::GetButtonRep() {
+  if(!buttonRep) {
+    buttonRep = new QStackedWidget(gui_parent);
+    SetRep(buttonRep);
+  }
+  QToolBar* newbar = new QToolBar();
+  newbar->setFont(taiM->menuFont(defSize()));
+  QLabel* lbl = new QLabel("Step:");
+  lbl->setToolTip("Step at given level of program as indicated by buttons after this label");
+  lbl->setFont(taiM->menuFont(defSize()));
+  newbar->addWidget(lbl);
+
+  Program* prg = (Program*)base; // definitively this
+  for(int i=0;i<prg->sub_progs_step.size; i++) {
+    Program* sp = (Program*)prg->sub_progs_step[i];
+    taiAction* act = new taiAction(taiActions::normal, sp->short_nm);
+    act->usr_data = (void*)sp;
+    act->connect(taiAction::ptr_act, this, SLOT(CallFunList(void*)));
+    act->setFont(taiM->menuFont(defSize()));
+    newbar->addAction(act);
+  }
+  if(tool_bar) {
+    ((QStackedWidget*)buttonRep)->removeWidget(tool_bar);
+  }
+  tool_bar = newbar;
+  ((QStackedWidget*)buttonRep)->addWidget(tool_bar);
+//   newbar->show();
+  return buttonRep;
+}
+
+bool taiStepButtonList::UpdateButtonRep() {
+  if(!base || !buttonRep) return false;
+  GetButtonRep();
+  taiMethodData::UpdateButtonRep();
+  return true;
 }

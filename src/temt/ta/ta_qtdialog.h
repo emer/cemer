@@ -234,7 +234,7 @@ protected:
   
   void 			Constr_impl(taBase* base, IDataHost* host); // #IGNORE 
   virtual void 		Constr_Methods_impl(); // #IGNORE
-  void 			DoAddMethButton(QAbstractButton* but); // #IGNORE
+  void 			DoAddMethButton(QWidget* but); // #IGNORE
   void 			SetCurMenuButton(MethodDef* md);
 
 public: // ITypedObject i/f (common to IDLC and IDH)
@@ -749,7 +749,7 @@ protected:
   virtual void		GetButtonImage(bool force = true);
   void			AddMethButton(taiMethodData* mth_rep, const String& label = _nilString);
     // uses mth's label, if no label passed
-  void			DoAddMethButton(QAbstractButton* but);
+  void			DoAddMethButton(QWidget* but);
   void			DoRaise_Panel(); // what Raise() calls for panels
   override void 	DoConstr_Dialog(iHostDialog*& dlg);
 

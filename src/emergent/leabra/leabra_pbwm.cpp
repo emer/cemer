@@ -1039,6 +1039,7 @@ void PFCGateSpec::Initialize() {
   graded_out_go = true;
   no_empty_out = true;
   clear_decay = 0.0f;
+  mid_minus_min = 10;
   out_go_clear = true;
   off_accom = 0.0f;
 }
@@ -1177,6 +1178,11 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
   if(lay->CheckError(net->min_cycles < net->mid_minus_cycle + 5, quiet, rval,
 		"requires LeabraNetwork min_cycles >= mid_minus_cycle + 5, I just set it for you")) {
     net->min_cycles = net->mid_minus_cycle + 5;
+  }
+
+  if(lay->CheckError(gate.mid_minus_min >= net->mid_minus_cycle -1, quiet, rval,
+		     "requires gate.mid_minus_min << mid_minus_cycle, I just set it to -10 for you")) {
+    gate.mid_minus_min = net->mid_minus_cycle - 10;
   }
 
   if(lay->CheckError(net->sequence_init != LeabraNetwork::DO_NOTHING, quiet, rval,
@@ -1499,7 +1505,7 @@ void PFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->ct_cycle <= net->mid_minus_cycle) {
+  if(net->ct_cycle >= gate.mid_minus_min && net->ct_cycle <= net->mid_minus_cycle) {
     Compute_Gating(lay, net);	// continuously during mid minus phase
   }
   if(net->phase == LeabraNetwork::PLUS_PHASE)

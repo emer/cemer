@@ -2679,21 +2679,78 @@ String StaticMethodCall::GetDisplayName() const {
 }
 
 //////////////////////////
-//   ProgramCall	//
+//   ProgramCallBase	//
 //////////////////////////
 
+void ProgramCallBase::Initialize() {
+}
+
+void ProgramCallBase::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdateArgs();		// always do this..  nondestructive and sometimes stuff changes anyway
+}
+
+void ProgramCallBase::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  prog_args.CheckConfig(quiet, rval);
+}
+
+const String ProgramCallBase::GenCssArgSet_impl(const String trg_var_nm, int indent_level) {
+  Program* trg = GetTarget_Compile();
+  if(!trg) return _nilString;
+
+  String rval;
+  if (prog_args.size > 0) {
+    rval += cssMisc::Indent(indent_level+1);
+    rval += "// set global vars of target\n";
+  }
+  String nm;
+  bool set_one = false;
+  for (int i = 0; i < prog_args.size; ++i) {
+    ProgArg* ths_arg = prog_args.FastEl(i);
+    nm = ths_arg->name;
+    ProgVar* prg_var = trg->args.FindName(nm);
+    ths_arg->expr.ParseExpr();		// re-parse just to be sure!
+    String argval = ths_arg->expr.GetFullExpr();
+    if (!prg_var || argval.empty() || argval == "<no_arg>") continue; 
+    set_one = true;
+    rval += cssMisc::Indent(indent_level+1);
+    rval += trg_var_nm + "->SetVar(\"" + prg_var->name + "\", " + argval + ");\n";
+  }
+  return rval;
+}
+
+void ProgramCallBase::UpdateArgs() {
+  Program* trg = GetTarget_Compile();
+  if(!trg) return;
+
+  bool any_changes = prog_args.UpdateFromVarList(trg->args);
+  // now go through and set default value for variables of same name in this program
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg) return;
+  for(int i=0;i<prog_args.size; i++) {
+    ProgArg* pa = prog_args.FastEl(i);
+    if(!pa->expr.expr.empty()) continue; // skip if already set
+    ProgVar* arg_chk = prg->args.FindName(pa->name);
+    ProgVar* var_chk = prg->vars.FindName(pa->name);
+    if(!arg_chk && !var_chk) continue; 
+    pa->expr.SetExpr(pa->name);	// we found var of same name; set as arg value
+    pa->DataChanged(DCR_ITEM_UPDATED);
+  }
+  if(any_changes && taMisc::gui_active) {
+    tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
+  }
+}
+
+//////////////////////////
+//   ProgramCall	//
+//////////////////////////
 
 void ProgramCall::Initialize() {
 }
 
-void ProgramCall::UpdateAfterMove_impl(taBase* old_owner) {
-  inherited::UpdateAfterMove_impl(old_owner);
-  // NOTE: base fun does full update of pointers -- could also lookup by name if null or something..
-}
-
 void ProgramCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  UpdateArgs();		// always do this..  nondestructive and sometimes stuff changes anyway
   if((bool)target) {
     String targ_ld_i = targ_ld_init.between("*", "*");
     if(targ_ld_init.empty() || !target.ptr()->GetName().contains(targ_ld_i)) {
@@ -2707,9 +2764,8 @@ void ProgramCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(!target, quiet, rval, "target is NULL");
 }
 
-void ProgramCall::CheckChildConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckChildConfig_impl(quiet, rval);
-  prog_args.CheckConfig(quiet, rval);
+bool ProgramCall::CallsProgram(Program* prg) {
+  return target.ptr() == prg;
 }
 
 Program* ProgramCall::GetTarget() {
@@ -2727,8 +2783,68 @@ Program* ProgramCall::GetTarget() {
   return target.ptr();
 }
 
+Program* ProgramCall::GetTarget_Compile() {
+  return target.ptr();
+}
+
+void ProgramCall::PreGenMe_impl(int item_id) {
+  // register as a subproc
+  Program* prog = program();
+  if (!prog) return; // shouldn't normally happen
+
+  Program* trg = target.ptr();
+  if(!trg || (prog->sub_progs_dir.FindEl(trg) < 0)) {
+    // link in the call if targ is unique or null
+    prog->sub_prog_calls.LinkUnique(this);
+    if(trg) prog->sub_progs_dir.LinkUnique(trg); // add direct sub-prog
+  }
+}
+
+void ProgramCall::AddTargetsToListAll(Program_List& all_lst) {
+  Program* trg = target.ptr();
+  if(trg) {
+    all_lst.LinkUnique(trg);
+  }
+}
+
+void ProgramCall::AddTargetsToListStep(Program_List& step_lst) {
+  Program* trg = target.ptr();
+  if(trg && !trg->HasProgFlag(Program::NO_STOP)) {
+    step_lst.LinkUnique(trg);
+  }
+}
+
 void ProgramCall::SetTarget(Program* target_) {
   target = target_;
+}
+
+const String ProgramCall::GenCompileScript(Program* prg) {
+  String rval;
+  if(!target) return rval;
+  rval += "    target = this" + GetPath(NULL, prg) + "->GetTarget();\n";
+  rval += "    target->CompileScript(true); // true = force!\n";
+  return rval;
+}
+
+const String ProgramCall::GenCallInit(Program* prg) {
+  String rval;
+  if(!target) return rval;
+  rval += "    target = this" + GetPath(NULL, prg) + "->GetTarget();\n";
+  // set args for guys that are just passing our existing args/vars along
+  for (int j = 0; j < prog_args.size; ++j) {
+    ProgArg* ths_arg = prog_args.FastEl(j);
+    ProgVar* prg_var = target->args.FindName(ths_arg->name);
+    String argval = ths_arg->expr.GetFullExpr();
+    if (!prg_var || argval.empty()) continue;
+    // check to see if the value of this guy is an arg or var of this guy -- if so, propagate it
+    ProgVar* arg_chk = prg->args.FindName(argval);
+    ProgVar* var_chk = prg->vars.FindName(argval);
+    if(!arg_chk && !var_chk) continue; 
+    rval += "    target->SetVar(\"" + prg_var->name + "\", "
+      + argval + ");\n";
+  }
+  rval += "    ret_val = target->CallInit(this);\n"; 
+  return rval;
 }
 
 const String ProgramCall::GenCssPre_impl(int indent_level) {
@@ -2754,27 +2870,8 @@ const String ProgramCall::GenCssBody_impl(int indent_level) {
     rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"calling program\",target->name);\n";
   }
 
-  if (prog_args.size > 0) {
-    rval += cssMisc::Indent(indent_level+1);
-    rval += "// set global vars of target\n";
-  }
-  String nm;
-  bool set_one = false;
-  for (int i = 0; i < prog_args.size; ++i) {
-    ProgArg* ths_arg = prog_args.FastEl(i);
-    nm = ths_arg->name;
-    ProgVar* prg_var = target->args.FindName(nm);
-    ths_arg->expr.ParseExpr();		// re-parse just to be sure!
-    String argval = ths_arg->expr.GetFullExpr();
-    if (!prg_var || argval.empty() || argval == "<no_arg>") continue; 
-    set_one = true;
-    rval += cssMisc::Indent(indent_level+1);
-    rval += "target->SetVar(\"" + prg_var->name + "\", " + argval + ");\n";
-  }
-//   if (set_one) {
-//     rval += cssMisc::Indent(indent_level+1);
-//     rval += "target->DataChanged(DCR_ITEM_UPDATED);\n";
-//   }
+  rval += GenCssArgSet_impl("target", indent_level);
+
   rval += cssMisc::Indent(indent_level+1);
   rval += "{ target->Call(this); }\n";
   rval += cssMisc::Indent(indent_level);
@@ -2804,33 +2901,6 @@ String ProgramCall::GetDisplayName() const {
   else
     rval += "(no program set)";
   return rval;
-}
-
-void ProgramCall::PreGenMe_impl(int item_id) {
-  // register as a subproc
-  Program* prog = program();
-  if (!prog) return; // shouldn't normally happen
-  prog->AddSubProg(this);
-}
-
-void ProgramCall::UpdateArgs() {
-  if (!target) return; // just leave existing stuff for now
-  bool any_changes = prog_args.UpdateFromVarList(target->args);
-  // now go through and set default value for variables of same name in this program
-  Program* prg = GET_MY_OWNER(Program);
-  if(!prg) return;
-  for(int i=0;i<prog_args.size; i++) {
-    ProgArg* pa = prog_args.FastEl(i);
-    if(!pa->expr.expr.empty()) continue; // skip if already set
-    ProgVar* arg_chk = prg->args.FindName(pa->name);
-    ProgVar* var_chk = prg->vars.FindName(pa->name);
-    if(!arg_chk && !var_chk) continue; 
-    pa->expr.SetExpr(pa->name);	// we found var of same name; set as arg value
-    pa->DataChanged(DCR_ITEM_UPDATED);
-  }
-  if(any_changes && taMisc::gui_active) {
-    tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
-  }
 }
 
 bool ProgramCall::LoadInitTarget() {
@@ -2883,6 +2953,201 @@ bool ProgramCall::LoadInitTarget_impl(const String& nm) {
   return false;
 }
 
+
+//////////////////////////
+//   ProgramCallVar	//
+//////////////////////////
+
+void ProgramCallVar::Initialize() {
+}
+
+void ProgramCallVar::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+}
+
+void ProgramCallVar::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!prog_group, quiet, rval, "prog_group is NULL");
+  CheckError(!prog_name_var, quiet, rval, "prog_name_var is NULL");
+  CheckError(prog_name_var->var_type != ProgVar::T_String, quiet, rval,
+	     "prog_name_var is not a String type -- must be");
+  // todo: check all args!
+}
+
+bool ProgramCallVar::CallsProgram(Program* prg) {
+  if(!prog_group) return false;
+  return (prog_group->IsParentOf(prg));
+}
+
+Program_Group* ProgramCallVar::GetProgramGp() {
+  if(!prog_group) {
+    taMisc::CheckError("Program_Group prog_group is NULL in ProgramCallVar:",
+		       desc, "in program:", program()->name);
+    return NULL;
+  }
+  return prog_group;
+}
+
+Program* ProgramCallVar::GetTarget() {
+  if(!prog_group) {
+    taMisc::CheckError("Program_Group prog_group is NULL in ProgramCallVar:",
+		       desc, "in program:", program()->name);
+    return NULL;
+  }
+  if(!prog_name_var) {
+    taMisc::CheckError("prog_name_var is NULL in ProgramCallVar:",
+		       desc, "in program:", program()->name);
+    return NULL;
+  }
+  String pnm = prog_name_var->string_val;
+  Program* rval = prog_group->FindLeafName(pnm);
+  if(!rval) {
+    taMisc::CheckError("Program named:", pnm, "not found in Program_Group:",
+		       prog_group->name, "path:", prog_group->GetPath(),
+		       "in ProgramCallVar in program:", program()->name);
+    return NULL;
+  }
+  return rval;
+}
+
+Program* ProgramCallVar::GetTarget_Compile() {
+  if(!prog_group) {
+    return NULL;
+  }
+  if(prog_group->leaves == 0) return NULL;
+  return prog_group->Leaf(0);	// just return first guy
+}
+
+void ProgramCallVar::PreGenMe_impl(int item_id) {
+  // register as a subproc
+  Program* prog = program();
+  if (!prog) return; // shouldn't normally happen
+
+  Program* trg = GetTarget_Compile();
+  if(!trg || (prog->sub_progs_dir.FindEl(trg) < 0)) {
+    // link in the call if targ is unique or null
+    prog->sub_prog_calls.LinkUnique(this);
+    if(trg) {
+      for(int j=0;j<prog_group->leaves;j++) {
+	Program* strg = prog_group->Leaf(j);
+	prog->sub_progs_dir.LinkUnique(strg); // add direct sub-progs
+      }
+    }
+  }
+}
+
+void ProgramCallVar::AddTargetsToListAll(Program_List& all_lst) {
+  if(!prog_group) return;
+  for(int j=0;j<prog_group->leaves;j++) {
+    Program* strg = prog_group->Leaf(j);
+    all_lst.LinkUnique(strg);
+  }
+}
+
+void ProgramCallVar::AddTargetsToListStep(Program_List& step_lst) {
+  if(!prog_group) return;
+  if(prog_group->leaves <= 3) {	// small number of options is ok for stepping..
+    for(int j=0;j<prog_group->leaves;j++) {
+      Program* strg = prog_group->Leaf(j);
+      if(!strg->HasProgFlag(Program::NO_STOP))
+	step_lst.LinkUnique(strg);
+    }
+  }
+}
+
+const String ProgramCallVar::GenCompileScript(Program* prg) {
+  String rval;
+  if(!prog_group) return rval;
+  rval += "    Program_Group* spgp = this" + GetPath(NULL, prg) + "->GetProgramGp();\n";
+  rval += "    for(int spi=0; spi<spgp->leaves; spi++) {\n";
+  rval += "      Program* prg = spgp->Leaf(spi);\n";
+  rval += "      prg->CompileScript(true); // true = force!\n";
+  rval += "    }\n";
+  return rval;
+}
+
+const String ProgramCallVar::GenCallInit(Program* prg) {
+  String rval;
+  if(!prog_group) return rval;
+  Program* trg = GetTarget_Compile();
+  if(!trg) return rval;
+
+  rval += "    Program_Group* spgp = this" + GetPath(NULL, prg) + "->GetProgramGp();\n";
+  rval += "    for(int spi=0; spi<spgp->leaves; spi++) {\n";
+  rval += "      Program* prg = spgp->Leaf(spi);\n";
+
+  for (int j = 0; j < prog_args.size; ++j) {
+    ProgArg* ths_arg = prog_args.FastEl(j);
+    ProgVar* prg_var = trg->args.FindName(ths_arg->name);
+    String argval = ths_arg->expr.GetFullExpr();
+    if (!prg_var || argval.empty()) continue;
+    // check to see if the value of this guy is an arg or var of this guy -- if so, propagate it
+    ProgVar* arg_chk = prg->args.FindName(argval);
+    ProgVar* var_chk = prg->vars.FindName(argval);
+    if(!arg_chk && !var_chk) continue; 
+    rval += "      prg->SetVar(\"" + prg_var->name + "\", "
+      + argval + ");\n";
+  }
+  rval += "      ret_val = prg->CallInit(this);\n"; 
+  rval += "    }\n";
+  return rval;
+}
+
+const String ProgramCallVar::GenCssPre_impl(int indent_level) {
+  String rval;
+  rval = cssMisc::Indent(indent_level);
+  rval += "{ // call program from var (name) in group: "; 
+  if(prog_group)
+    rval += prog_group->name;
+  rval += "\n";
+  return rval;
+}
+
+const String ProgramCallVar::GenCssBody_impl(int indent_level) {
+  if(!prog_group) return _nilString;
+  String rval;
+  indent_level++;		// everything is indented from outer block
+  rval += cssMisc::Indent(indent_level);
+  rval += "Program* target = this" + GetPath(NULL, program())+ "->GetTarget();\n";
+  rval += cssMisc::Indent(indent_level);
+  rval += "if(target) {\n";
+
+  if(IsVerbose()) {
+    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"calling program\",target->name);\n";
+  }
+
+  rval += GenCssArgSet_impl("target", indent_level);
+
+  rval += cssMisc::Indent(indent_level+1);
+  rval += "{ target->Call(this); }\n";
+  rval += cssMisc::Indent(indent_level);
+  rval += "}\n";
+  
+  return rval;
+}
+
+const String ProgramCallVar::GenCssPost_impl(int indent_level) {
+  return cssMisc::Indent(indent_level) + "} // call program fm var\n";
+}
+
+String ProgramCallVar::GetDisplayName() const {
+  String rval = "Call Fm ";
+  if (prog_group) {
+    rval += prog_group->GetName();
+    if(prog_args.size > 0) {
+      rval += "(";
+      for(int i=0;i<prog_args.size;i++) {
+	ProgArg* pa = prog_args.FastEl(i);
+	if(i > 0) rval += ", ";
+	rval += pa->expr.expr;   // GetDisplayName();
+      }
+      rval += ")";
+    }
+  }
+  else
+    rval += "(no program group set)";
+  return rval;
+}
 
 //////////////////////////
 //   Function_List	//
@@ -3267,7 +3532,7 @@ bool Program::stop_req = false;
 Program::StopReason Program::stop_reason = Program::SR_NONE;
 String Program::stop_msg;
 bool Program::step_mode = false;
-Program_Group* Program::step_gp = NULL;
+ProgramRef Program::cur_step_prog;
 int Program::m_global_run_ct;
 
 Program::RunState Program::GetGlobalRunState() {
@@ -3305,14 +3570,22 @@ void Program::InitLinks() {
   taBase::Own(load_code, this);
   taBase::Own(init_code, this);
   taBase::Own(prog_code, this);
-  taBase::Own(sub_progs, this);
+  taBase::Own(sub_prog_calls, this);
+  taBase::Own(sub_progs_dir, this);
+  taBase::Own(sub_progs_all, this);
+  taBase::Own(sub_progs_step, this);
+  taBase::Own(step_prog, this);
   prog_gp = GET_MY_OWNER(Program_Group);
   if(forbidden_names.size == 0)
     InitForbiddenNames();
 }
 
 void Program::CutLinks() {
-  sub_progs.CutLinks();
+  step_prog.CutLinks();
+  sub_progs_step.CutLinks();
+  sub_progs_all.CutLinks();
+  sub_progs_dir.CutLinks();
+  sub_prog_calls.CutLinks();
   prog_code.CutLinks();
   load_code.CutLinks();
   init_code.CutLinks();
@@ -3326,7 +3599,10 @@ void Program::CutLinks() {
 }
 
 void Program::Reset() {
-  sub_progs.Reset();
+  sub_progs_step.Reset();
+  sub_progs_all.Reset();
+  sub_progs_dir.Reset();
+  sub_prog_calls.Reset();
   prog_code.Reset();
   load_code.Reset();
   init_code.Reset();
@@ -3353,11 +3629,12 @@ void Program::Copy_(const Program& cp) {
   load_code = cp.load_code;
   init_code = cp.init_code;
   prog_code = cp.prog_code;
+  step_prog = cp.step_prog;
   ret_val = 0; // redo
   m_stale = true; // require rebuild/refetch
   m_scriptCache = "";
   m_checked = false; // redo
-  sub_progs.RemoveAll();
+  sub_prog_calls.RemoveAll();
   UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
   UpdatePointers_NewPar_IfParNotCp((taBase*)&cp, &TA_taProject); // also check for project copy
 }
@@ -3372,6 +3649,22 @@ void Program::UpdateAfterEdit_impl() {
   //TODO: the following *do* affect generated script, so we should probably call
   // setDirty(true) if not running, and these changed:
   // name, (more TBD...)
+
+  if(!step_prog) {
+    if(sub_progs_step.size > 0)
+      step_prog = sub_progs_step.Peek(); // set to last guy on list..
+  }
+
+  if(short_nm.empty()) {
+    int ln = name.length();
+    int i;
+    for(i = ln-1; i>= 0; i--) {
+      if(ln - i > 10 || isupper(name[i]))
+	break;
+    }
+    int stpos = MAX(i, 0);
+    short_nm = name.from(stpos);
+  }
 }
 
 bool Program::CheckConfig_impl(bool quiet) {
@@ -3427,6 +3720,7 @@ int Program::CallInit(Program* caller) {
 
 void Program::Init() {
   if(run_state == RUN) return;	// already running!
+  cur_step_prog = NULL;
   ClearStopReq();		// NOTE: newly added 4/18/09 -- check for breakage..
   taProject* proj = GET_MY_OWNER(taProject);
   if(proj && proj->file_name.nonempty()) {
@@ -3449,6 +3743,11 @@ void Program::Init() {
   if(ret_val == RV_OK) {
     script->Run();
   }
+
+  // get these here after all the sub-guys have been initialized -- should now be current
+  GetSubProgsAll();
+  GetSubProgsStep();
+
   taMisc::DoneBusy();
   // now check us..
   CheckConfig(false);
@@ -3542,7 +3841,7 @@ void Program::Run() {
   }
   ClearStopReq();
   step_mode = false;
-  step_gp = NULL;
+  cur_step_prog = NULL;
   taMisc::Busy();
   setRunState(RUN);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
@@ -3575,7 +3874,7 @@ void Program::ShowRunError() {
   taMisc::Error(err_str);
 }
 
-void Program::Step() {
+void Program::Step(Program* step_prg) {
   if(run_state == RUN || run_state == INIT) return;	// already running!
   if(run_state == NOT_INIT) {
     Init();			// auto-press Init button!
@@ -3584,13 +3883,13 @@ void Program::Step() {
 	       "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
     return;
   }
-  if(!prog_gp) return;
-  if(!prog_gp->step_prog) {
-    prog_gp->step_prog = prog_gp->Peek(); // get last guy
-  }
   ClearStopReq();
   step_mode = true;
-  step_gp = prog_gp;
+  if(step_prg)
+    cur_step_prog = step_prg;
+  else
+    cur_step_prog = step_prog;
+    
   taMisc::Busy();
   setRunState(RUN);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
@@ -3602,7 +3901,7 @@ void Program::Step() {
       "Operation Failed");
   }
   step_mode = false;
-  step_gp = NULL;
+  cur_step_prog = NULL;
   if(stop_req) {
     setRunState(STOP);
     if((stop_reason == SR_ERROR) && (ret_val == RV_OK)) {
@@ -3615,12 +3914,6 @@ void Program::Step() {
   }
   stop_req = false;		    // this does not do full clear, so that information can be queried
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
-}
-
-void Program::SetAsStep() {
-  if(!prog_gp) return;
-  prog_gp->step_prog = this;
-//   SetProgFlag(SHOW_STEP);
 }
 
 void Program::SetStopReq(StopReason stop_rsn, const String& stop_message) {
@@ -3654,6 +3947,10 @@ void Program::Stop_impl() {
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
 }
 
+bool Program::IsStepProg() {
+  return (step_mode && (cur_step_prog.ptr() == this));
+}
+
 bool Program::StopCheck() {
   //NOTE: we call event loop even in non-gui compile, since we can presumably
   // have other ways of stopping, such as something from a socket etc.
@@ -3669,7 +3966,7 @@ bool Program::StopCheck() {
     Stop_impl();
     return true;
   }
-  if((step_mode) && step_gp && (step_gp->step_prog.ptr() == this)) {
+  if(IsStepProg()) {
     SetStopReq(SR_STEP_POINT, name);	// stop everyone else
     Stop_impl();			// time for us to stop
     return true;
@@ -3695,7 +3992,7 @@ void Program::UpdateCallerArgs() {
   Program* pg;
   taLeafItr i;
   FOR_ITR_EL(Program, pg, proj->programs., i) {
-    ProgramCall* pc = pg->FindSubProgTarget(this);
+    ProgramCallBase* pc = pg->FindSubProgTarget(this);
     if(pc) {
       pc->UpdateArgs();
     }
@@ -3725,7 +4022,7 @@ void Program::setStale() {
     changed = true;
     m_stale = true;
     //note: actions in here will not recurse us, because m_stale is now set
-//     sub_progs.RemoveAll(); // will need to re-enumerate
+//     sub_prog_calls.RemoveAll(); // will need to re-enumerate
   }
   if (changed) { // user will need to recompile/INIT
     run_state = NOT_INIT;
@@ -3815,27 +4112,14 @@ Program* Program::FindProgramNameContains(const String& prog_nm, bool warn_not_f
   return rval;
 }
 
-ProgramCall* Program::FindSubProgTarget(Program* prg) {
-  for(int i=0;i<sub_progs.size;i++) {
-    ProgramCall* pc = (ProgramCall*)sub_progs.FastEl(i);
-    if(pc->target.ptr() == prg) {
+ProgramCallBase* Program::FindSubProgTarget(Program* prg) {
+  for(int i=0;i<sub_prog_calls.size;i++) {
+    ProgramCallBase* pc = (ProgramCallBase*)sub_prog_calls.FastEl(i);
+    if(pc->CallsProgram(prg)) {
       return pc;
     }
   }
   return NULL;
-}
-
-bool Program::AddSubProg(ProgramCall* pcall) {
-  Program* trg = pcall->target.ptr();
-  if(!trg) {			// if targ not set yet, add it regardless
-    return sub_progs.LinkUnique(pcall);
-  }
-  else {
-    if(!FindSubProgTarget(trg)) {
-      return sub_progs.LinkUnique(pcall); // only add if target is not already on list
-    }
-  }
-  return false;
 }
 
 const String Program::GetDescString(const String& dsc, int indent_level) {
@@ -3851,6 +4135,49 @@ const String Program::GetDescString(const String& dsc, int indent_level) {
   return rval;
 }
 
+void Program::GetSubProgsAll(int depth) {
+  if(TestError((depth >= 100), "GetSubProgsAll",
+	       "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting"))
+    return;
+  sub_progs_all.Reset();
+  for(int i=0;i<sub_prog_calls.size; i++) {
+    ProgramCallBase* sp = (ProgramCallBase*)sub_prog_calls.FastEl(i);
+    sp->AddTargetsToListAll(sub_progs_all);
+  }
+  int init_sz = sub_progs_all.size;
+  for(int i=0;i<init_sz; i++) {
+    Program* sp = sub_progs_all[i];
+    sp->GetSubProgsAll(depth+1);	// no loops please!!!
+    // now get our sub-progs sub-progs..
+    for(int j=0;j<sp->sub_progs_all.size;j++) {
+      Program* ssp = sp->sub_progs_all[j];
+      sub_progs_all.LinkUnique(ssp);
+    }
+  }
+}
+
+void Program::GetSubProgsStep(int depth) {
+  if(TestError((depth >= 100), "GetSubProgsAll",
+	       "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting"))
+    return;
+  sub_progs_step.Reset();
+  sub_progs_step.Link(this);	// we're always an option ourselves..
+  for(int i=0;i<sub_prog_calls.size; i++) {
+    ProgramCallBase* sp = (ProgramCallBase*)sub_prog_calls.FastEl(i);
+    sp->AddTargetsToListStep(sub_progs_step);
+  }
+  int init_sz = sub_progs_step.size;
+  for(int i=1;i<init_sz; i++) {
+    Program* sp = sub_progs_step[i];
+    sp->GetSubProgsStep(depth+1);	// no loops please!!!
+    // now get our sub-progs sub-progs..
+    for(int j=0;j<sp->sub_progs_step.size;j++) {
+      Program* ssp = sp->sub_progs_step[j];
+      sub_progs_step.LinkUnique(ssp);
+    }
+  }
+}
+
 const String Program::scriptString() {
   // enumerate all the progels, esp. to get subprocs registered
   // note: this is regenerated every time because stale is not always right
@@ -3858,7 +4185,8 @@ const String Program::scriptString() {
   // outside of the stale mechanism.  When the user presses Init, they get the
   // current fresh code regardless!  note that it doesn't do this obligatory
   // recompiles all the time -- that is only done at init too.
-  sub_progs.Reset();
+  sub_prog_calls.Reset();
+  sub_progs_dir.Reset();
   int item_id = 0;
   functions.PreGen(item_id);
   init_code.PreGen(item_id);
@@ -3891,16 +4219,17 @@ const String Program::scriptString() {
   // __Init() routine, for our own els, and calls to subprog Init()
   m_scriptCache += "void __Init() {\n";
   // first, make sure any sub-progs are compiled
-  if (sub_progs.size > 0) {
+  if (sub_prog_calls.size > 0) {
     m_scriptCache += "  // First compile any subprogs that could be called from this one\n";
     m_scriptCache += "  { Program* target;\n";
     // note: this is a list of ProgramCall's, not the actual prog itself!
-    for (int i = 0; i < sub_progs.size; ++i) {
-      ProgramCall* sp = (ProgramCall*)sub_progs.FastEl(i);
-      if(!sp->target) continue;
-      m_scriptCache += "    if (ret_val != Program::RV_OK) return; // checks previous\n"; 
-      m_scriptCache += "    target = this" + sp->GetPath(NULL, this) + "->GetTarget();\n";
-      m_scriptCache += "    target->CompileScript(true); // true = force!\n";
+    for (int i = 0; i < sub_prog_calls.size; ++i) {
+      ProgramCallBase* sp = (ProgramCallBase*)sub_prog_calls.FastEl(i);
+      String scrtmp = sp->GenCompileScript(this);
+      if(scrtmp.nonempty()) {
+	m_scriptCache += "    if (ret_val != Program::RV_OK) return; // checks previous\n"; 
+	m_scriptCache += scrtmp;
+      }
     }
     m_scriptCache += "  }\n";
   }
@@ -3909,29 +4238,14 @@ const String Program::scriptString() {
   m_scriptCache += vars.GenCssInitFrom(1);
   m_scriptCache += "  // run our init code\n";
   m_scriptCache += init_code.GenCss(1); // ok if empty, returns nothing
-  if (sub_progs.size > 0) {
+  if (sub_prog_calls.size > 0) {
     if (init_code.size >0) m_scriptCache += "\n";
     m_scriptCache += "  // Then call init on any subprogs that could be called from this one\n";
     m_scriptCache += "  { Program* target;\n";
     // note: this is a list of ProgramCall's, not the actual prog itself!
-    for (int i = 0; i < sub_progs.size; ++i) {
-      ProgramCall* sp = (ProgramCall*)sub_progs.FastEl(i);
-      if(!sp->target) continue;
-      m_scriptCache += "    target = this" + sp->GetPath(NULL, this) + "->GetTarget();\n";
-      // set args for guys that are just passing our existing args/vars along
-      for (int j = 0; j < sp->prog_args.size; ++j) {
-	ProgArg* ths_arg = sp->prog_args.FastEl(j);
-	ProgVar* prg_var = sp->target->args.FindName(ths_arg->name);
-	String argval = ths_arg->expr.GetFullExpr();
-	if (!prg_var || argval.empty()) continue;
-	// check to see if the value of this guy is an arg or var of this guy -- if so, propagate it
-	ProgVar* arg_chk = args.FindName(argval);
-	ProgVar* var_chk = vars.FindName(argval);
-	if(!arg_chk && !var_chk) continue; 
-	m_scriptCache += "    target->SetVar(\"" + prg_var->name + "\", "
-	  + argval + ");\n";
-      }
-      m_scriptCache += "    ret_val = target->CallInit(this);\n"; 
+    for (int i = 0; i < sub_prog_calls.size; ++i) {
+      ProgramCall* sp = (ProgramCall*)sub_prog_calls.FastEl(i);
+      m_scriptCache += sp->GenCallInit(this);
     }
     m_scriptCache += "  }\n";
   }
@@ -4081,8 +4395,8 @@ void Program::RunLoadInitCode() {
   functions.PreGen(item_id);
   init_code.PreGen(item_id);
   prog_code.PreGen(item_id);
-  for (int i = 0; i < sub_progs.size; ++i) {
-    ProgramCall* sp = (ProgramCall*)sub_progs.FastEl(i);
+  for (int i = 0; i < sub_prog_calls.size; ++i) {
+    ProgramCallBase* sp = (ProgramCallBase*)sub_prog_calls.FastEl(i);
     sp->LoadInitTarget();	// just call this directly!
   }
 
@@ -4294,7 +4608,6 @@ void Program_Group::Initialize() {
 
 void Program_Group::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(step_prog, this);
   if(prog_lib.not_init) {
     taBase::Ref(prog_lib);
     prog_lib.FindPrograms();
@@ -4302,14 +4615,11 @@ void Program_Group::InitLinks() {
 }
 
 void Program_Group::CutLinks() {
-  step_prog.CutLinks();
   inherited::CutLinks();
 }
 
 void Program_Group::Copy_(const Program_Group& cp) {
   desc = cp.desc;
-  if(cp.step_prog)
-    step_prog = FindName(cp.step_prog->name);
 }
 
 void Program_Group::SaveToProgLib(Program::ProgLibs library) {

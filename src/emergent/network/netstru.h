@@ -160,7 +160,7 @@ class EMERGENT_API Connection {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network base connection between two units
 public:
   float 	wt;		// #VIEW_HOT weight of connection
-  float		dwt;		// #NO_VIEW #NO_SAVE resulting net weight change
+  float		dwt;		// #VIEW #NO_SAVE resulting net weight change
 
   Connection() { wt = dwt = 0.0f; }
 };

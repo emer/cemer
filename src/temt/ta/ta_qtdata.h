@@ -1671,8 +1671,11 @@ public:
   taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 
-  virtual QAbstractButton*	GetButtonRep() {return buttonRep;}
-    // button connected to method -- only created on demand by subclasses
+  virtual QWidget*	GetButtonRep() {return buttonRep;}
+  // button connected to method -- only created on demand by subclasses
+  
+  virtual bool	UpdateButtonRep();
+  // if needed, can update the button representation -- default does GHOST stuff
 
   virtual bool	hasButtonRep() { return (buttonRep != NULL); }
 
@@ -1687,15 +1690,14 @@ protected:
   static void  	ShowReturnVal(cssEl* rval, IDataHost* host,
      const String& meth_name); // show return value after menu call
   
-  QAbstractButton*	buttonRep;
+  QWidget*	buttonRep;
   QWidget*	gui_parent;
-  QAbstractButton*	MakeButton(); // makes the button if necessary, and returns a reference
+  QWidget*	MakeButton(); // makes the button if necessary, and returns a reference
   
   bool 		CallFun_impl();		// impl -- we could delete partway through, returns true if we still exist!
 // note that some situations can cause this guy to delete during processing
   void		ApplyBefore();	// apply changes before performing menu call
   void		UpdateAfter();	// update display after performing menu call
-
 };
 
 class TA_API taiMethMenu : public taiMethodData {
@@ -1705,14 +1707,14 @@ public:
   taiMethMenu(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 
-  override QAbstractButton* GetButtonRep() {return MakeButton();}
+  override QWidget* GetButtonRep() {return MakeButton();}
   QWidget*	GetRep()		{ return (QWidget*)buttonRep; }
 };
 
 class TA_API taiMethButton : public taiMethodData {
   // button representation of a method -- uses the QAbstractButton, and sets it as the Rep as well
 public:
-  override QAbstractButton* GetButtonRep();
+  override QWidget* GetButtonRep();
   
   taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);

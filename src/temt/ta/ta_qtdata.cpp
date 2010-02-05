@@ -5565,21 +5565,32 @@ bool taiMethodData::CallFun_impl() {
   return (bool)ths;
 }
 
-QAbstractButton* taiMethodData::MakeButton() {
+QWidget* taiMethodData::MakeButton() {
   if (buttonRep == NULL) {
-    //buttonRep = new QPushButton(meth->GetLabel(), gui_parent);
-    buttonRep = new QToolButton(gui_parent);
-    buttonRep->setFont(taiM->menuFont(defSize()));
-    buttonRep->setText(meth->GetLabel());
+    QToolButton* newbut = new QToolButton(gui_parent);
+    newbut->setFont(taiM->menuFont(defSize()));
+    newbut->setText(meth->GetLabel());
     // add meth desc as a status item
     String statustip = meth->desc;
     if (statustip.nonempty())
-      buttonRep->setStatusTip(statustip);
-    connect(buttonRep, SIGNAL(clicked()),
+      newbut->setStatusTip(statustip);
+    connect(newbut, SIGNAL(clicked()),
       this, SLOT(CallFun()) );
-    buttonRep->show();
+    newbut->show();
+    buttonRep = newbut;
   }
   return buttonRep;
+}
+
+bool taiMethodData::UpdateButtonRep() {
+  if(!base || !buttonRep) return false;
+  if(meth->OptionAfter("GHOST_").nonempty()) {
+    // the default "true" for non-GHOST cases doesn't work here!
+    bool ghost = meth->GetCondOptTest("GHOST", typ, base);
+    buttonRep->setEnabled(!ghost);
+    return true;
+  }
+  return false;
 }
 
 void taiMethodData::ApplyBefore() {
@@ -5739,7 +5750,7 @@ taiMethButton::taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* 
   // code that will end up spuriously invoking this, unless we prevent it.
 }
 
-QAbstractButton* taiMethButton::GetButtonRep() {
+QWidget* taiMethButton::GetButtonRep() {
   if (!m_rep)
     SetRep(MakeButton());
   return buttonRep;

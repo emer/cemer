@@ -407,7 +407,7 @@ void NetUpdateView::GetUpdateVar() {
 
 const String NetUpdateView::GenCssBody_impl(int indent_level) {
   if(!network_var) return "// ERROR: network_var not set in NetUpdateView\n";
-  String rval = cssMisc::Indent(indent_level) + "if(update_net_view) "
+  String rval = cssMisc::Indent(indent_level) + "if(update_net_view || this.IsStepProg())"
     + network_var->name + "->UpdateAllViews();\n";
   return rval;
 }
