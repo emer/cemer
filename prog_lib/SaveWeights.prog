@@ -61,9 +61,10 @@ Program .projects[0].programs.gp[0][9] {
 };
 Program .projects[0].programs.gp[0][9] {
  name="SaveWeights";
+ short_nm="SavWts";
  tags="Network, Weights";
  desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
- flags=;
+ flags=NO_STOP_STEP;
  objs {
   name=;
   el_typ=taOBase;
@@ -195,7 +196,7 @@ Program .projects[0].programs.gp[0][9] {
      arg_type=int;
      type="int";
      name="num";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="network.batch";
@@ -205,7 +206,7 @@ Program .projects[0].programs.gp[0][9] {
      arg_type=int;
      type="int";
      name="len";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="2";
@@ -227,7 +228,7 @@ Program .projects[0].programs.gp[0][9] {
      arg_type=int;
      type="int";
      name="num";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="network.epoch";
@@ -237,7 +238,7 @@ Program .projects[0].programs.gp[0][9] {
      arg_type=int;
      type="int";
      name="len";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="4";
@@ -338,4 +339,6 @@ Program .projects[0].programs.gp[0][9] {
    };
   };
  };
+ step_prog=NULL;
+ step_n=1;
 };

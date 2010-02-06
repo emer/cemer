@@ -79,9 +79,10 @@ Program .projects[0].programs.gp[0][3] {
 };
 Program .projects[0].programs.gp[0][3] {
  name="LeabraTrial";
+ short_nm="Trial";
  tags="Leabra, Std";
  desc="Leabra processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
- flags=SHOW_STEP;
+ flags=;
  objs {
   name=;
   el_typ=taOBase;
@@ -221,8 +222,6 @@ Program .projects[0].programs.gp[0][3] {
     ProgramCall @[0] {
      desc="run the settle program (which iterates over cyles of network activation updating) for each phase";
      flags=;
-     target=.projects[0].programs.gp[0][4]$4$;
-     targ_ld_init="*LeabraSettle*";
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -248,6 +247,8 @@ Program .projects[0].programs.gp[0][3] {
        };
       };
      };
+     target=.projects[0].programs.gp[0][4]$4$;
+     targ_ld_init="*LeabraSettle*";
     };
     NetCounterIncr @[1] {
      desc="increment the phase number (also on network)";
@@ -337,8 +338,6 @@ Program .projects[0].programs.gp[0][3] {
   ProgramCall @[6] {
    desc="records data about the trial-level processing to a datatable for graphing/processing";
    flags=;
-   target=.projects[0].programs.gp[0][7]$5$;
-   targ_ld_init="*LeabraTrialMonitor*";
    prog_args {
     name=;
     el_typ=ProgArg;
@@ -354,6 +353,8 @@ Program .projects[0].programs.gp[0][3] {
      };
     };
    };
+   target=.projects[0].programs.gp[0][7]$5$;
+   targ_ld_init="*LeabraTrialMonitor*";
   };
   NetUpdateView @[7] {
    desc="update the network view(s) (only if update_net_view is true)";
@@ -362,4 +363,6 @@ Program .projects[0].programs.gp[0][3] {
    update_var=.projects[0].programs.gp[0][3].vars[1]$6$;
   };
  };
+ step_prog=NULL;
+ step_n=1;
 };

@@ -53,9 +53,10 @@ Program .projects[0].programs.gp[0][0] {
 };
 Program .projects[0].programs.gp[0][0] {
  name="LeabraBatch";
+ short_nm="Batch";
  tags="Leabra, Std";
  desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
- flags=SHOW_STEP;
+ flags=;
  objs {
   name=;
   el_typ=taOBase;
@@ -200,8 +201,6 @@ Program .projects[0].programs.gp[0][0] {
     ProgramCall @[0] {
      desc="run the training program -- sets the network and input_data args";
      flags=;
-     target=.projects[0].programs.gp[0][1]$4$;
-     targ_ld_init="*LeabraTrain*";
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -237,6 +236,8 @@ Program .projects[0].programs.gp[0][0] {
        };
       };
      };
+     target=.projects[0].programs.gp[0][1]$4$;
+     targ_ld_init="*LeabraTrain*";
     };
     NetCounterIncr @[1] {
      desc="increment the local batch counter and copy to network";
@@ -252,4 +253,6 @@ Program .projects[0].programs.gp[0][0] {
    };
   };
  };
+ step_prog=NULL;
+ step_n=1;
 };

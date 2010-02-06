@@ -89,6 +89,7 @@ Program .projects[0].programs.gp[0][4] {
 };
 Program .projects[0].programs.gp[0][4] {
  name="LeabraSettle";
+ short_nm="Settle";
  tags="Leabra, Std";
  desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
  flags=;
@@ -216,8 +217,6 @@ sets the minimum number of cycles to settle for, regardless of network state cha
    desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
    flags=;
-   target=.projects[0].programs.gp[0][6]$4$;
-   targ_ld_init="*ApplyInputs*";
    prog_args {
     name=;
     el_typ=ProgArg;
@@ -243,6 +242,8 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
    };
+   target=.projects[0].programs.gp[0][6]$4$;
+   targ_ld_init="*ApplyInputs*";
   };
   MethodCall @[3] {
    desc="initializes various counters at start of settling";
@@ -299,8 +300,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     ProgramCall @[0] {
      desc="run the cycle program, which computes one cycle of activations";
      flags=;
-     target=.projects[0].programs.gp[0][5]$6$;
-     targ_ld_init="*LeabraCycle*";
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -316,6 +315,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
       };
      };
+     target=.projects[0].programs.gp[0][5]$6$;
+     targ_ld_init="*LeabraCycle*";
     };
     NetCounterIncr @[1] {
      desc="increment cycle counter (also on network)";
@@ -413,4 +414,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
    update_var=.projects[0].programs.gp[0][4].vars[2]$7$;
   };
  };
+ step_prog=NULL;
+ step_n=1;
 };

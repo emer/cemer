@@ -147,6 +147,7 @@ Program .projects[0].programs[0] {
 };
 Program .projects[0].programs[0] {
  name="LeabraStartup";
+ short_nm="Startup";
  tags="Leabra, Startup, Parallel Batch";
  desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx] | [b_start=xxx] [b_end=xxx] for parallel-batch mode";
  flags=STARTUP_RUN;
@@ -420,7 +421,7 @@ Program .projects[0].programs[0] {
        arg_type=const_taString_ref;
        type="const taString&";
        name="var_nm";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"init_batch\"";
@@ -430,7 +431,7 @@ Program .projects[0].programs[0] {
        arg_type=const_Variant_ref;
        type="const Variant&";
        name="value";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="false";
@@ -459,7 +460,7 @@ Program .projects[0].programs[0] {
        arg_type=int;
        type="int";
        name="num";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="batch_start";
@@ -469,7 +470,7 @@ Program .projects[0].programs[0] {
        arg_type=int;
        type="int";
        name="len";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="2";
@@ -561,7 +562,7 @@ Program .projects[0].programs[0] {
 	 arg_type=const_taString_ref;
 	 type="const taString&";
 	 name="fname";
-	 required=0;
+	 required=1;
 	 def_val="\"\"";
 	 expr {
 	  expr="log_file_nm";
@@ -642,7 +643,7 @@ Program .projects[0].programs[0] {
        arg_type=const_taString_ref;
        type="const taString&";
        name="fname";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="log_file_nm";
@@ -890,8 +891,6 @@ Program .projects[0].programs[0] {
   ProgramCall @[25] {
    desc=;
    flags=;
-   target=$3$;
-   targ_ld_init="*LeabraBatch*";
    prog_args {
     name=;
     el_typ=ProgArg;
@@ -917,6 +916,10 @@ Program .projects[0].programs[0] {
      };
     };
    };
+   target=$3$;
+   targ_ld_init="*LeabraBatch*";
   };
  };
+ step_prog=NULL;
+ step_n=1;
 };

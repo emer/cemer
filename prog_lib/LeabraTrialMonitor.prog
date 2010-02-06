@@ -76,9 +76,10 @@ Program .projects[0].programs.gp[0][7] {
 };
 Program .projects[0].programs.gp[0][7] {
  name="LeabraTrialMonitor";
+ short_nm="TrialMon";
  tags="Leabra, Std, Monitor";
  desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
- flags=;
+ flags=NO_STOP_STEP;
  objs {
   name=;
   el_typ=NetMonitor;
@@ -282,7 +283,7 @@ Program .projects[0].programs.gp[0][7] {
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[6] {
-     name="cycle";
+     name="minus_cycles";
      computed=0;
      object_type=LeabraNetwork;
      object=$0$;
@@ -459,7 +460,7 @@ Program .projects[0].programs.gp[0][7] {
      arg_type=DataTable_ptr;
      type="DataTable*";
      name="dt";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="trial_mon_data";
@@ -469,7 +470,7 @@ Program .projects[0].programs.gp[0][7] {
      arg_type=Network_ptr;
      type="Network*";
      name="net";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="network";
@@ -595,4 +596,6 @@ Program .projects[0].programs.gp[0][7] {
    };
   };
  };
+ step_prog=.projects[0].programs.gp[0][7]$6$;
+ step_n=1;
 };
