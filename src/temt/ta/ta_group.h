@@ -440,6 +440,10 @@ private:
 
 TA_SMART_PTRS(UserDataItem_List) // UserDataItem_ListPtr
 
+
+///////////////////////////////////////////////////////
+//	float_CircBuffer
+
 class TA_API float_CircBuffer : public float_Array {
   // Circular buffer for holding state information -- efficient way to store a fixed window of state information without actually shifting memory around -- use CircAdd to initially populate and CircShiftLeft to make room for new items
 INHERITED(float_Array)

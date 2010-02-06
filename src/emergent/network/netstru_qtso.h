@@ -170,7 +170,8 @@ INHERITED(nvDataView)
 public:
   static void		ValToDispText(float val, String& str); // renders the display text, typ 6 chars max
 
-  UnitViewData_PArray	uvd_arr; // #IGNORE
+  UnitViewData_PArray	uvd_arr; // #IGNORE actual unit value data
+  float_CircMatrix	uvd_store; // buffer of previous value data [x][y][var][time] -- time = frame dimension that rotates
 
   Unit_Group*		ugrp() const {return (Unit_Group*)data();}
   UnitViewData&		uvd(const TwoDCoord& co) {return uvd_arr.FastEl(co);} // #IGNORE

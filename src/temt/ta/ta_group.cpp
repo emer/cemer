@@ -831,5 +831,3 @@ void float_CircBuffer::Reset() {
   st_idx = 0;
   length = 0;
 }
-
-

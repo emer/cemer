@@ -1166,7 +1166,7 @@ public:
   ProgramRef		step_prog;
   // #FROM_GROUP_sub_progs_step The default program to single step for the Step function in this program
   int			step_n;
-  // #MIN_1 how many steps to take when stepping -- also set by the step button dynamically
+  // #MIN_1 how many steps to take when stepping at this program level (i.e., when this program name is clicked on the Step button of any other program) -- also set by the step button dynamically
 
   inline void		SetProgFlag(ProgFlags flg)   { flags = (ProgFlags)(flags | flg); }
   // #CAT_Flags set flag state on

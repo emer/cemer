@@ -3908,7 +3908,16 @@ void Program::Step(Program* step_prg) {
     cur_step_prog = step_prg;
   else
     cur_step_prog = step_prog;
-  cur_step_n = step_n;
+
+  if(TestError(!cur_step_prog || !cur_step_prog->owner, "Step",
+	       "step program selected to step by is either NULL or unowned and likely was deleted -- not Stepping")) {
+    return;
+  }
+
+  if(step_prog != step_prg)	// save this as new default..
+    step_prog = step_prg;
+
+  cur_step_n = cur_step_prog->step_n; // get from target, not us..
   cur_step_cnt = 0;
     
   taMisc::Busy();

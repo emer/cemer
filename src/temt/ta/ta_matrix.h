@@ -1213,6 +1213,63 @@ private:
 TA_SMART_PTRS(rgb_Matrix);
 
 
+///////////////////////////////////////////////////////
+//	float_CircMatrix
 
+class TA_API float_CircMatrix : public float_Matrix {
+  // Circular buffer logic on top of a matrix -- efficient way to store a fixed window of state information without actually shifting memory around -- use CircAdd to initially populate and CircShiftLeft to make room for new items -- the *LAST* dimension is the circular one (i.e., the "frame" dimension)
+INHERITED(float_Matrix)
+public:
+  int		st_idx;		// #READ_ONLY index in matrix frame where the list starts (i.e., the position of the logical 0 index) -- updated by functions and should not be set manually
+  int		length;		// #READ_ONLY logical length of the list -- is controlled by adding and shifting, and should NOT be set manually
+
+  /////////////////////////////////////////////////////////
+  //	Special Access Routines
+
+  int	CircIdx(int cidx) const
+  { int rval = cidx+st_idx; if(rval >= frames()) rval -= frames(); return rval; }
+  // #CAT_CircAccess gets physical index from logical circular index
+
+  bool 	CircIdxInRange(int cidx) const { return InRange(CircIdx(cidx)); }
+  // #CAT_CircAccess check if logical circular index is in range
+  
+  /////////////////////////////////////////////////////////
+  //	Special Modify Routines
+
+  void		CircShiftLeft(int nshift)
+  { st_idx = CircIdx(nshift); length -= nshift; }
+  // #CAT_CircModify shift the buffer to the left -- shift the first elements off the start of the list, making room at the end for more elements (decreasing length)
+
+  int		CircAddExpand() {
+    if((st_idx == 0) && (length >= frames())) {
+      AddFrame(); length++; 	// must be building up the list, so add it
+    }
+    else {
+      length++;	// expand the buffer length and set to the element at the end
+    }
+    return length-1;
+  }
+  // #CAT_CircModify add a new frame to the circular buffer, expanding the length of the list by 1 under all circumstances -- returns logical circidx for frame to set data at
+
+  int		CircAddLimit(int max_length) {
+    if(length >= max_length) {
+      CircShiftLeft(1 + length - max_length); // make room
+      length++;
+    }
+    else {
+      CircAddExpand();
+    }
+    return length-1;
+  }
+  // #CAT_CircModify add a new frame to the circular buffer, shifting it left if length is at or above max_length to ensure a fixed overall length list (otherwise expanding list up to max_length)
+
+  override void	Reset();
+
+  void 	Copy_(const float_CircMatrix& cp);
+  TA_BASEFUNS(float_CircMatrix);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
 
 #endif

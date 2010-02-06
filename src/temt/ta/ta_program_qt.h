@@ -400,28 +400,31 @@ private:
   void		Destroy() {}
 };
 
-class TA_API taiStepButtonList : public taiMethodData {
+class TA_API taiProgStepButton : public taiMethodData {
   // one method with a list of buttons for args
   Q_OBJECT
 public:
   override QWidget* GetButtonRep();
   override bool	UpdateButtonRep();
 
-  taiStepButtonList(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
+  taiProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 
  public slots:
-  virtual void 	CallFunList(void* itm); // call the function from list
+  virtual void 	CallFunList(void* prg); // call step on given program (void* needed for callback)
   virtual void  Step1();		// step level callbacks
   virtual void  Step5();
   virtual void  Step10();
 
  protected:
-  int 	step10_val;
-  QToolBar* tool_bar;
-  QCheckBox* stp1;
-  QCheckBox* stp5;
-  QCheckBox* stp10;
+  Program*	last_step;	// last program stepped -- used to reset step size when switching
+  int		new_step_n;	// if > 0, then this is the new value to apply to next program stepped
+  int		last_step_n;	// last step n value used
+  int 		step10_val;
+  QToolBar* 	tool_bar;
+  QCheckBox* 	stp1;
+  QCheckBox* 	stp5;
+  QCheckBox* 	stp10;
 };
 
 class TA_API taiStepButtonMethod : public taiActuatorMethod {

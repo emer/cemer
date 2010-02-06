@@ -2255,7 +2255,7 @@ int taiStepButtonMethod::BidForMethod(MethodDef* md, TypeDef* td) {
 }
 
 taiMethodData* taiStepButtonMethod::GetButtonMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  taiStepButtonList* rval = new taiStepButtonList(base, meth, typ, host_, par, gui_parent_, flags_);
+  taiProgStepButton* rval = new taiProgStepButton(base, meth, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
@@ -2266,23 +2266,28 @@ taiMethodData* taiStepButtonMethod::GetMenuMethodRep_impl(void* base, IDataHost*
 
 
 /////////////////////////////
-// 	taiStepButtonList  //
+// 	taiProgStepButton  //
 /////////////////////////////
 
-taiStepButtonList::taiStepButtonList(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,
+taiProgStepButton::taiProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 : taiMethodData(bs, md, typ_, host_, par, gui_parent_, flags_)
 {
   is_menu_item = false;
   tool_bar = NULL;
+  new_step_n = -1;
+  last_step_n = 1;
   step10_val = 10;
+  last_step = NULL;		// reset when switching
 }
 
-void taiStepButtonList::CallFunList(void* itm) {
+void taiProgStepButton::CallFunList(void* itm) {
   Program* prg = (Program*)base; // definitively this
   if(!prg) return;
 
-  QPointer<taiStepButtonList> ths = this; // to detect us being deleted
+  Program* trg = (Program*)itm;
+
+  QPointer<taiProgStepButton> ths = this; // to detect us being deleted
   ApplyBefore();
   // note: this is not a great situation, whereby applying deletes us, but
   // we warn user (and should probably do something, ie a directive that you 
@@ -2297,42 +2302,54 @@ void taiStepButtonList::CallFunList(void* itm) {
     proj->undo_mgr.SaveUndo(prg, "Call Method: " + meth->name);
   }
 
-  prg->Step((Program*)itm);	// that was simple!
+  if(trg && trg->owner) {
+    if(new_step_n > 0)
+      trg->step_n = new_step_n;
+    last_step_n = trg->step_n;
+  }
+  
+  prg->Step(trg);	// that was simple!
+
+  last_step = trg;
+  new_step_n = -1;
 }
 
-void taiStepButtonList::Step1() {
+void taiProgStepButton::Step1() {
   Program* prg = (Program*)base; // definitively this
   if(!prg) return;
-  prg->step_n = 1;
+  new_step_n = 1;
   stp5->setChecked(false);
   stp10->setChecked(false);
 }
 
-void taiStepButtonList::Step5() {
+void taiProgStepButton::Step5() {
   Program* prg = (Program*)base; // definitively this
   if(!prg) return;
-  prg->step_n = 5;
+  new_step_n = 5;
   stp1->setChecked(false);
   stp10->setChecked(false);
 }
 
 
-void taiStepButtonList::Step10() {
+void taiProgStepButton::Step10() {
   Program* prg = (Program*)base; // definitively this
   if(!prg) return;
-  prg->step_n = step10_val;
+  new_step_n = step10_val;
   stp1->setChecked(false);
   stp5->setChecked(false);
 }
 
 
-QWidget* taiStepButtonList::GetButtonRep() {
+QWidget* taiProgStepButton::GetButtonRep() {
+  Program* prg = (Program*)base; // definitively this
+  if(!prg) return buttonRep;
+
   if(!buttonRep) {
     buttonRep = new QStackedWidget(gui_parent);
     SetRep(buttonRep);
+    if(prg->step_prog)
+      last_step_n = prg->step_prog->step_n;
   }
-  Program* prg = (Program*)base; // definitively this
-  if(!prg) return buttonRep;
 
   QToolBar* newbar = new QToolBar();
   newbar->setFont(taiM->menuFont(defSize()));
@@ -2363,14 +2380,18 @@ QWidget* taiStepButtonList::GetButtonRep() {
   connect(stp10, SIGNAL(clicked(bool)), this, SLOT(Step10()) );
   vbl->addWidget(stp10);
 
-  if(prg->step_n == 1)
+  int stp_n = last_step_n;
+  if(new_step_n > 0)
+    stp_n = new_step_n;
+
+  if(stp_n == 1)
     stp1->setChecked(true);
-  else if(prg->step_n == 5)
+  else if(stp_n == 5)
     stp5->setChecked(true);
-  else if(prg->step_n == 10)
+  else if(stp_n == 10)
     stp10->setChecked(true);
   else {
-    step10_val = prg->step_n;
+    step10_val = stp_n;
     stp10->setChecked(true);
     stp10->setText(String(step10_val));
   }
@@ -2394,7 +2415,7 @@ QWidget* taiStepButtonList::GetButtonRep() {
   return buttonRep;
 }
 
-bool taiStepButtonList::UpdateButtonRep() {
+bool taiProgStepButton::UpdateButtonRep() {
   if(!base || !buttonRep) return false;
   GetButtonRep();
   taiMethodData::UpdateButtonRep();

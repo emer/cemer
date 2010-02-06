@@ -1923,3 +1923,25 @@ const int int_Matrix::blank = 0;
 const unsigned char byte_Matrix::blank = '\0';
 const rgb_t rgb_Matrix::blank;
 
+
+//////////////////////////
+//  	CircMatrix	//
+//////////////////////////
+
+void float_CircMatrix::Initialize() {
+  st_idx = 0;
+  length = 0;
+}
+
+void float_CircMatrix::Copy_(const float_CircMatrix& cp) {
+  st_idx = cp.st_idx;
+  length = cp.length;
+}
+
+void float_CircMatrix::Reset() {
+  float_Matrix::Reset();
+  st_idx = 0;
+  length = 0;
+}
+
+
