@@ -1067,19 +1067,40 @@ void iProgramGroupPanel::items_CustomExpandFilter(iTreeViewItem* item,
 //   ProgramToolBoxProc	//
 //////////////////////////
 
+static void ptbp_deco_widget(QWidget* widg, taBase* obj) {
+  if(!widg) return;
+  String dec_key = obj->GetTypeDecoKey(); // nil if none
+  if(dec_key.nonempty()) {
+    ViewColor* vc = taMisc::view_colors->FindName(dec_key);
+    iColor colr;
+    if(vc) {
+      if(vc->use_fg)
+	colr = vc->fg_color.color();
+      else if(vc->use_bg)
+	colr = vc->bg_color.color();
+      QPalette pal;
+//       pal.setColor(QPalette::Button, Qt::white);
+      pal.setColor(QPalette::ButtonText, colr);
+      widg->setPalette(pal);
+//       widg->setAutoFillBackground(true);
+    }
+  }
+}
+
 static void ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* td) {
   ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction(obj->GetToolbarName(), obj));
+  if(td == &TA_ForLoop) {
+    ((ForLoop*)obj)->init.expr = "_toolbox_tmp_"; // flag for auto-updating of for loop var
+  }
+  iBaseClipWidgetAction* act = new iBaseClipWidgetAction(obj->GetToolbarName(), obj);
+  QWidget* widg = tb->AddClipToolWidget(sec, act);
+  ptbp_deco_widget(widg, obj);
 }
 
 void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   int sec = tb->AssertSection("Ctrl"); //note: need to keep it short
 
-  ForLoop* forguy = (ForLoop*)tabMisc::root->GetTemplateInstance(&TA_ForLoop);
-  forguy->init.expr = "_toolbox_tmp_"; // flag for auto-updating of for loop var
-
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction(forguy->GetToolbarName(),
-    forguy));
+  ptbp_add_widget(tb, sec, &TA_ForLoop);
   ptbp_add_widget(tb, sec, &TA_DoLoop);
   ptbp_add_widget(tb, sec, &TA_WhileLoop);
   
@@ -1099,15 +1120,16 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   ////////////////////////////////////////////////////////////////////////////
   //		Var/Fun
   sec = tb->AssertSection("Var/Fun");
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("var",
-    tabMisc::root->GetTemplateInstance(&TA_ProgVar)));
+  QWidget* widg = tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("var",
+		       tabMisc::root->GetTemplateInstance(&TA_ProgVar)));
+  ptbp_deco_widget(widg, tabMisc::root->GetTemplateInstance(&TA_ProgVar));
   ptbp_add_widget(tb, sec, &TA_ProgVars);
 
   tb->AddSeparator(sec);
   ptbp_add_widget(tb, sec, &TA_AssignExpr);
   ptbp_add_widget(tb, sec, &TA_VarIncr);
-  ptbp_add_widget(tb, sec, &TA_MethodCall);
   ptbp_add_widget(tb, sec, &TA_MemberAssign);
+  ptbp_add_widget(tb, sec, &TA_MethodCall);
   ptbp_add_widget(tb, sec, &TA_MemberMethodCall);
 
   tb->AddSeparator(sec);
@@ -1117,6 +1139,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
 
   tb->AddSeparator(sec);
   ptbp_add_widget(tb, sec, &TA_ProgramCall);
+  ptbp_add_widget(tb, sec, &TA_ProgramCallVar);
   ptbp_add_widget(tb, sec, &TA_OtherProgramVar);
 
   ////////////////////////////////////////////////////////////////////////////

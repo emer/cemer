@@ -3092,15 +3092,16 @@ int iToolBoxDockViewer::AssertSection(const String& sec_name) {
   return sec;
 }
 
-void iToolBoxDockViewer::AddClipToolWidget(int sec, iClipWidgetAction* cwa) {
+QWidget* iToolBoxDockViewer::AddClipToolWidget(int sec, iClipWidgetAction* cwa) {
   QToolBar* w = sectionWidget(sec);
-  if (!w) return; // user didn't assert
+  if (!w) return NULL; // user didn't assert
   // don't leak!
   if (cwa->parent() == NULL) {
     cwa->setParent(this);
   }
   w->addAction(cwa); 
   connect(cwa, SIGNAL(triggered()), cwa, SLOT(copyToClipboard()) ); // ie to self
+  return w->widgetForAction(cwa);
 }
 
 void iToolBoxDockViewer::AddSeparator(int sec) {

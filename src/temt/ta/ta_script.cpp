@@ -129,12 +129,12 @@ void AbstractScriptBase::StopScript() {
 }
 
 void AbstractScriptBase::CmdShellScript() {
-  if(script == NULL) return;
+  if(!script || !cssMisc::TopShell) return;
   cssMisc::TopShell->PushSrcProg(script);
 }
 
 void AbstractScriptBase::ExitShellScript() {
-  if(script == NULL) return;
+  if(!script || !cssMisc::TopShell) return;
   cssMisc::TopShell->PopSrcProg(script);
 }
 

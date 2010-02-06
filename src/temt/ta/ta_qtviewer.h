@@ -806,7 +806,8 @@ public:
   inline ToolBoxDockViewer*	viewer() {return (ToolBoxDockViewer*)m_viewer;}
   
   int			AssertSection(const String& sec_name); // insures the tab exists; returns idx
-  void			AddClipToolWidget(int sec, iClipWidgetAction* cwa);
+  QWidget*		AddClipToolWidget(int sec, iClipWidgetAction* cwa);
+  // returns widget for that action
   void			AddSeparator(int sec); // adds a separator (if one is not at the end already)
   
   iToolBoxDockViewer(ToolBoxDockViewer* viewer_, QWidget* parent = NULL);
