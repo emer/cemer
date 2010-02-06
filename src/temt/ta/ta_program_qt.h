@@ -412,9 +412,16 @@ public:
 
  public slots:
   virtual void 	CallFunList(void* itm); // call the function from list
+  virtual void  Step1();		// step level callbacks
+  virtual void  Step5();
+  virtual void  Step10();
 
  protected:
+  int 	step10_val;
   QToolBar* tool_bar;
+  QCheckBox* stp1;
+  QCheckBox* stp5;
+  QCheckBox* stp10;
 };
 
 class TA_API taiStepButtonMethod : public taiActuatorMethod {

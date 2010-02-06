@@ -1478,6 +1478,13 @@ void StopStepPoint::InitLinks() {
 //   prg->SetProgFlag(Program::SHOW_STEP);
 }
 
+void StopStepPoint::PreGenMe_impl(int item_id) {
+  // register as a subproc
+  Program* prog = program();
+  if (!prog) return; // shouldn't normally happen
+  prog->SetProgFlag(Program::SELF_STEP);
+}
+
 //////////////////////////
 //    ReturnExpr	//
 //////////////////////////

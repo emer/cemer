@@ -1259,7 +1259,8 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       MemberDef* md = ms.FastEl(i);
       if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
       // just have a fixed list of guys we show
-      if ((md->name == "name") || (md->name == "desc") || (md->name == "short_nm")) {
+      if ((md->name == "name") || (md->name == "desc") || (md->name == "short_nm")
+	  || (md->name == "flags")) {
         memb_el(MS_PROG).Add(md);
       } 
     } 
@@ -1281,13 +1282,14 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
     ms = membs.SafeEl(j);
     ProgVar_List* pvl = NULL;
     switch (j) {
-    case MS_ARGS:
+    case MS_ARGS: {
       ms->text = "Program args";
       ms->desc = "the arguments to the program";
       pvl = &prog->args; 
-      iLabel* lbl = new iLabel(ms->text.chars(), body);
+      lbl = new iLabel(ms->text.chars(), body);
       AddSectionLabel(-1, lbl,ms->desc.chars());
       break;
+    }
     case MS_VARS: {
       ms->text = "Program vars";
       ms->desc = "the variables used inside the program";
@@ -2220,7 +2222,7 @@ String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 }
 
 /////////////////////////////
-//   taiStepButtonMethod     //
+//   taiStepButtonMethod   //
 /////////////////////////////
 
 int taiStepButtonMethod::BidForMethod(MethodDef* md, TypeDef* td) {
@@ -2241,7 +2243,7 @@ taiMethodData* taiStepButtonMethod::GetMenuMethodRep_impl(void* base, IDataHost*
 
 
 /////////////////////////////
-// 	taiStepButtonList    //
+// 	taiStepButtonList  //
 /////////////////////////////
 
 taiStepButtonList::taiStepButtonList(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,
@@ -2250,8 +2252,7 @@ taiStepButtonList::taiStepButtonList(void* bs, MethodDef* md, TypeDef* typ_, IDa
 {
   is_menu_item = false;
   tool_bar = NULL;
-//no  if (gui_parent) SetRep(MakeButton()); //note: later code in win_base.cc etc. has convoluted menu
-  // code that will end up spuriously invoking this, unless we prevent it.
+  step10_val = 10;
 }
 
 void taiStepButtonList::CallFunList(void* itm) {
@@ -2276,11 +2277,40 @@ void taiStepButtonList::CallFunList(void* itm) {
   prg->Step((Program*)itm);	// that was simple!
 }
 
+void taiStepButtonList::Step1() {
+  Program* prg = (Program*)base; // definitively this
+  if(!prg) return;
+  prg->step_n = 1;
+  stp5->setChecked(false);
+  stp10->setChecked(false);
+}
+
+void taiStepButtonList::Step5() {
+  Program* prg = (Program*)base; // definitively this
+  if(!prg) return;
+  prg->step_n = 5;
+  stp1->setChecked(false);
+  stp10->setChecked(false);
+}
+
+
+void taiStepButtonList::Step10() {
+  Program* prg = (Program*)base; // definitively this
+  if(!prg) return;
+  prg->step_n = step10_val;
+  stp1->setChecked(false);
+  stp5->setChecked(false);
+}
+
+
 QWidget* taiStepButtonList::GetButtonRep() {
   if(!buttonRep) {
     buttonRep = new QStackedWidget(gui_parent);
     SetRep(buttonRep);
   }
+  Program* prg = (Program*)base; // definitively this
+  if(!prg) return buttonRep;
+
   QToolBar* newbar = new QToolBar();
   newbar->setFont(taiM->menuFont(defSize()));
   QLabel* lbl = new QLabel("Step:");
@@ -2288,7 +2318,42 @@ QWidget* taiStepButtonList::GetButtonRep() {
   lbl->setFont(taiM->menuFont(defSize()));
   newbar->addWidget(lbl);
 
-  Program* prg = (Program*)base; // definitively this
+  QWidget* intstak = new QWidget();
+  QVBoxLayout* vbl = new QVBoxLayout(intstak);
+  vbl->setMargin(0); vbl->setSpacing(0);
+
+  stp1 = new QCheckBox("1", intstak);
+  stp1->setToolTip("step by single (1) steps");
+  stp1->setFont(taiM->menuFont(taiMisc::sizSmall));
+  connect(stp1, SIGNAL(clicked(bool)), this, SLOT(Step1()) );
+  vbl->addWidget(stp1);
+
+  stp5 = new QCheckBox("5", intstak);
+  stp5->setToolTip("step by 5 steps per step click");
+  stp5->setFont(taiM->menuFont(taiMisc::sizSmall));
+  connect(stp5, SIGNAL(clicked(bool)), this, SLOT(Step5()) );
+  vbl->addWidget(stp5);
+
+  stp10 = new QCheckBox("10", intstak);
+  stp10->setToolTip("step by 10 steps per step click, or amount shown if different from 10 (if program step_n != {1,5,10}");
+  stp10->setFont(taiM->menuFont(taiMisc::sizSmall));
+  connect(stp10, SIGNAL(clicked(bool)), this, SLOT(Step10()) );
+  vbl->addWidget(stp10);
+
+  if(prg->step_n == 1)
+    stp1->setChecked(true);
+  else if(prg->step_n == 5)
+    stp5->setChecked(true);
+  else if(prg->step_n == 10)
+    stp10->setChecked(true);
+  else {
+    step10_val = prg->step_n;
+    stp10->setChecked(true);
+    stp10->setText(String(step10_val));
+  }
+  
+  newbar->addWidget(intstak);
+
   for(int i=0;i<prg->sub_progs_step.size; i++) {
     Program* sp = (Program*)prg->sub_progs_step[i];
     taiAction* act = new taiAction(taiActions::normal, sp->short_nm);

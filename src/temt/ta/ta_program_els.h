@@ -680,6 +680,8 @@ public:
   SIMPLE_CUTLINKS(StopStepPoint);
   TA_BASEFUNS(StopStepPoint);
 protected:
+  override void		PreGenMe_impl(int item_id);
+  // register the target as a subprog of this one
   override const String	GenCssBody_impl(int indent_level);
 
 private:

@@ -2809,7 +2809,7 @@ void ProgramCall::AddTargetsToListAll(Program_List& all_lst) {
 
 void ProgramCall::AddTargetsToListStep(Program_List& step_lst) {
   Program* trg = target.ptr();
-  if(trg && !trg->HasProgFlag(Program::NO_STOP)) {
+  if(trg && !trg->HasProgFlag(Program::NO_STOP_STEP)) {
     step_lst.LinkUnique(trg);
   }
 }
@@ -3049,7 +3049,7 @@ void ProgramCallVar::AddTargetsToListStep(Program_List& step_lst) {
   if(prog_group->leaves <= 3) {	// small number of options is ok for stepping..
     for(int j=0;j<prog_group->leaves;j++) {
       Program* strg = prog_group->Leaf(j);
-      if(!strg->HasProgFlag(Program::NO_STOP))
+      if(!strg->HasProgFlag(Program::NO_STOP_STEP))
 	step_lst.LinkUnique(strg);
     }
   }
@@ -3533,6 +3533,8 @@ Program::StopReason Program::stop_reason = Program::SR_NONE;
 String Program::stop_msg;
 bool Program::step_mode = false;
 ProgramRef Program::cur_step_prog;
+int Program::cur_step_n = 1;
+int Program::cur_step_cnt = 0;
 int Program::m_global_run_ct;
 
 Program::RunState Program::GetGlobalRunState() {
@@ -3552,6 +3554,7 @@ void Program::Initialize() {
   m_stale = true; 
   prog_gp = NULL;
   m_checked = false;
+  step_n = 1;
   if(!prog_lib)
     prog_lib = &Program_Group::prog_lib;
 }
@@ -3581,6 +3584,13 @@ void Program::InitLinks() {
 }
 
 void Program::CutLinks() {
+  if(script) {			// clear first, before trashing anything!
+    ExitShellScript();
+    script->ClearAll();
+    script->prog_vars.Reset();
+    delete script;
+    script = NULL;
+  }
   step_prog.CutLinks();
   sub_progs_step.CutLinks();
   sub_progs_all.CutLinks();
@@ -3599,6 +3609,10 @@ void Program::CutLinks() {
 }
 
 void Program::Reset() {
+  if(script) {			// clear first, before trashing anything!
+    script->ClearAll();
+    script->prog_vars.Reset();
+  }
   sub_progs_step.Reset();
   sub_progs_all.Reset();
   sub_progs_dir.Reset();
@@ -3635,6 +3649,9 @@ void Program::Copy_(const Program& cp) {
   m_scriptCache = "";
   m_checked = false; // redo
   sub_prog_calls.RemoveAll();
+  sub_progs_step.RemoveAll();
+  sub_progs_all.RemoveAll();
+  sub_progs_dir.RemoveAll();
   UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
   UpdatePointers_NewPar_IfParNotCp((taBase*)&cp, &TA_taProject); // also check for project copy
 }
@@ -3649,6 +3666,8 @@ void Program::UpdateAfterEdit_impl() {
   //TODO: the following *do* affect generated script, so we should probably call
   // setDirty(true) if not running, and these changed:
   // name, (more TBD...)
+
+  if(step_n < 1) step_n = 1;
 
   if(!step_prog) {
     if(sub_progs_step.size > 0)
@@ -3889,6 +3908,8 @@ void Program::Step(Program* step_prg) {
     cur_step_prog = step_prg;
   else
     cur_step_prog = step_prog;
+  cur_step_n = step_n;
+  cur_step_cnt = 0;
     
   taMisc::Busy();
   setRunState(RUN);
@@ -3967,9 +3988,12 @@ bool Program::StopCheck() {
     return true;
   }
   if(IsStepProg()) {
-    SetStopReq(SR_STEP_POINT, name);	// stop everyone else
-    Stop_impl();			// time for us to stop
-    return true;
+    cur_step_cnt++;
+    if(cur_step_cnt >= cur_step_n) {
+      SetStopReq(SR_STEP_POINT, name);	// stop everyone else
+      Stop_impl();			// time for us to stop
+      return true;
+    }
   }
   return false;
 }
@@ -4161,13 +4185,17 @@ void Program::GetSubProgsStep(int depth) {
 	       "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting"))
     return;
   sub_progs_step.Reset();
-  sub_progs_step.Link(this);	// we're always an option ourselves..
+  int st_idx = 0;
+  if(HasProgFlag(SELF_STEP)) {
+    sub_progs_step.Link(this);
+    st_idx = 1;
+  }
   for(int i=0;i<sub_prog_calls.size; i++) {
     ProgramCallBase* sp = (ProgramCallBase*)sub_prog_calls.FastEl(i);
     sp->AddTargetsToListStep(sub_progs_step);
   }
   int init_sz = sub_progs_step.size;
-  for(int i=1;i<init_sz; i++) {
+  for(int i=st_idx;i<init_sz; i++) {
     Program* sp = sub_progs_step[i];
     sp->GetSubProgsStep(depth+1);	// no loops please!!!
     // now get our sub-progs sub-progs..
@@ -4187,6 +4215,7 @@ const String Program::scriptString() {
   // recompiles all the time -- that is only done at init too.
   sub_prog_calls.Reset();
   sub_progs_dir.Reset();
+  ClearProgFlag(SELF_STEP); // this is set by StopStepPoint..
   int item_id = 0;
   functions.PreGen(item_id);
   init_code.PreGen(item_id);
@@ -4257,7 +4286,7 @@ const String Program::scriptString() {
   m_scriptCache += vars.GenCssInitFrom(1);
   m_scriptCache += "  // prog_code\n";
   m_scriptCache += prog_code.GenCss(1);
-  if(!(flags & NO_STOP)) {
+  if(!(flags & NO_STOP_STEP)) {
     m_scriptCache += "  StopCheck(); // process pending events, including Stop and Step events\n";
   }
   m_scriptCache += "}\n\n";

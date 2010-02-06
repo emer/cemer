@@ -1056,8 +1056,9 @@ INHERITED(taNBase)
 public:
   enum ProgFlags { // #BITS program flags
     PF_NONE		= 0, // #NO_BIT
-    NO_STOP		= 0x0001, // this program cannot be stopped by Stop or Step buttons -- set this flag for simple helper programs to prevent them from showing up in the step list of other programs
-    STARTUP_RUN		= 0x0002, // run this prgram at startup (after project is fully loaded and everything else has been initialized) -- if multiple programs are so marked, they will be run in the order they appear in the browser (depth first)
+    NO_STOP_STEP	= 0x0001, // #AKA_NO_STOP this program cannot be stopped by Stop or Step buttons -- set this flag for simple helper programs to prevent them from showing up in the step list of other programs
+    SELF_STEP		= 0x0002, // #NO_BIT this program has a StopStepPoint program element within it, and thus it shows up within its own list of Step programs -- this flag is set automatically during Init
+    STARTUP_RUN		= 0x0004, // run this prgram at startup (after project is fully loaded and everything else has been initialized) -- if multiple programs are so marked, they will be run in the order they appear in the browser (depth first)
   };
   
   enum ReturnVal { // system defined return values (<0 are for user defined)
@@ -1114,7 +1115,11 @@ public:
   static bool		step_mode;
   // #READ_ONLY #NO_SAVE the program was run in step mode -- check for stepping
   static ProgramRef	cur_step_prog;
-  // #IGNORE the current program to be single-stepped -- set by the Step call of the program that was last run
+  // #READ_ONLY #NO_SAVE the current program to be single-stepped -- set by the Step call of the program that was last run
+  static int		cur_step_n;
+  // #READ_ONLY #NO_SAVE current number of steps to take -- set by the Step call of the program that was last run
+  static int		cur_step_cnt;
+  // #READ_ONLY #NO_SAVE current step count -- incremented until cur_step_n is reached
 
   String		short_nm;
   // short name for this program -- as brief as possible -- used for Step display info
@@ -1160,6 +1165,8 @@ public:
 
   ProgramRef		step_prog;
   // #FROM_GROUP_sub_progs_step The default program to single step for the Step function in this program
+  int			step_n;
+  // #MIN_1 how many steps to take when stepping -- also set by the step button dynamically
 
   inline void		SetProgFlag(ProgFlags flg)   { flags = (ProgFlags)(flags | flg); }
   // #CAT_Flags set flag state on
