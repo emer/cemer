@@ -480,6 +480,9 @@ public:
   UnitRef		unit_src; 	// #NO_SAVE #NO_COPY unit last picked (if any) for display
   bool			unit_con_md;    // #NO_SAVE #NO_COPY true if memberdef is from a connection as opposed to a direct unit var
   MemberDef*		unit_disp_md;   // #NO_SAVE #NO_COPY memberdef (if any) of Unit (or Connection) to display
+  float_CircMatrix	counter_store; 	// buffer of previous counter data [var][time] -- time = frame dimension that rotate
+  int			rewind_idx;	// rewind index -- 
+
   ScaleRange*		unit_sr; 	// #NO_SAVE #NO_COPY scalerange of disp_md
   MDFlags		unit_md_flags;  // #NO_SAVE type to display in units
   UnitDisplayMode	unit_disp_mode; // how to display unit values

@@ -92,7 +92,9 @@ protected:
 };
 
 extern TA_API taStrRep  _nilStrRep; // an empty taStrRep, for convenience and efficiency
-#define ADDR_NIL_STR_REP &_nilStrRep
+extern TA_API taStrRep* _nilStrRepPtr;
+// this points to _nilStrRep, but can't let compiler know, because it issues warning..
+#define ADDR_NIL_STR_REP _nilStrRepPtr
 
 // primitive ops on StrReps -- nearly all String fns go through these.
 
