@@ -155,24 +155,6 @@ void UnitView::Render_pre() {
 
 
 //////////////////////////
-//   UnitViewData	//
-//////////////////////////
-
-void UnitViewData::Initialize() {
-  disp_base = NULL;
-}
-
-//////////////////////////
-//   UnitViewData_PArray//
-//////////////////////////
-
-void UnitViewData_PArray::SetGeom(TwoDCoord& c) {
-  m_x = c.x;
-  SetSize(c.x * c.y); //note: may not shrink alloc
-}
-
-
-//////////////////////////
 //   UnitGroupView	//
 //////////////////////////
 
@@ -181,6 +163,18 @@ void UnitGroupView::Initialize() {
   m_lv = NULL;
 }
 
+void UnitGroupView::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(uvd_hist, this);
+  taBase::Own(uvd_hist_idx, this);
+  uvd_hist_idx.matrix = &uvd_hist; // this is key, to link to hist
+}
+
+void UnitGroupView::CutLinks() {
+  uvd_hist_idx.CutLinks();
+  uvd_hist.CutLinks();
+  inherited::CutLinks();
+}
 
 void UnitGroupView::Destroy() {
   Reset();
@@ -188,7 +182,12 @@ void UnitGroupView::Destroy() {
 
 void UnitGroupView::AllocUnitViewData() {
   //note: allocate based on geom, not current size, in case not built yet
-  uvd_arr.SetGeom(ugrp()->geom);
+  NetView* nv = this->nv();
+  Unit_Group* ugrp = this->ugrp(); //cache
+  int mbs_sz = MAX(nv->membs.size, 1);
+  uvd_bases.SetGeom(3, ugrp->geom.x, ugrp->geom.y, mbs_sz);
+  uvd_hist.SetGeom(4, ugrp->geom.x, ugrp->geom.y, mbs_sz, nv->hist_max);
+  uvd_hist_idx.Reset();
 }
 
 void UnitGroupView::BuildAll() {
@@ -214,62 +213,78 @@ void UnitGroupView::BuildAll() {
 void UnitGroupView::InitDisplay() {
   AllocUnitViewData(); // make sure we have correct space in uvd array
   NetView* nv = this->nv();
-  UpdateUnitViewBase(nv->unit_disp_md, nv->unit_src, nv->unit_con_md);
+  UpdateUnitViewBases(nv->unit_src);
 }
 
-float UnitGroupView::GetUnitDisplayVal(const TwoDCoord& co, int unit_md_flags) {
+float UnitGroupView::GetUnitDisplayVal(const TwoDCoord& co, void*& base) {
   NetView* nv = this->nv();
   float val = nv->scale.zero;
-  void* base = uvd_arr.FastEl(co).disp_base;
+  base = uvd_bases.SafeEl(co.x, co.y, nv->unit_disp_idx);
+  if(!base) return val;
 
-  if (base) switch (unit_md_flags) {
-  case NetView::MD_FLOAT:
-    val = *((float*)base); break;
-  case NetView::MD_DOUBLE:
-    val = *((double*)base); break;
-  case NetView::MD_INT:
-    val = *((int*)base); break;
-//  default:
-//    val = 0.0f; break;
+  if(nv->hist_idx > 0) {
+    int cidx = (uvd_hist_idx.length - nv->hist_idx);
+    int midx = uvd_hist_idx.CircIdx(cidx);
+    val = uvd_hist.SafeEl(co.x, co.y, nv->unit_disp_idx, midx);
+  }
+  else {
+    switch (nv->unit_md_flags) {
+    case NetView::MD_FLOAT:
+      val = *((float*)base); break;
+    case NetView::MD_DOUBLE:
+      val = *((double*)base); break;
+    case NetView::MD_INT:
+      val = *((int*)base); break;
+      //  default:
+      //    val = 0.0f; break;
+    }
   }
   return val;
 }
 
-void UnitGroupView::UpdateUnitViewBase(MemberDef* disp_md, Unit* src_u, bool& con_md) {
-  Unit_Group* ugrp = this->ugrp(); //cache
-  AllocUnitViewData();
-  con_md = false;
-  if (disp_md == NULL) { // just clear all
-    TwoDCoord coord;
-    while ((coord.x < ugrp->geom.x) && (coord.y < ugrp->geom.y)) {
-      UnitViewData& uvd = uvd_arr.FastEl(coord);
-      uvd.disp_base = NULL;
-      if (++(coord.x) >= ugrp->geom.x) {coord.x = 0; ++(coord.y);}
-    }
-    return;
+float UnitGroupView::GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*& base) {
+  NetView* nv = this->nv();
+  float val = nv->scale.zero;
+  base = uvd_bases.SafeEl(co.x, co.y, midx);
+  if(!base) return val;
+  MemberDef* md = nv->membs.SafeEl(midx);
+  if(md) {
+    if(md->type->InheritsFrom(&TA_float))
+      val = *((float*)base);
+    else if(md->type->InheritsFrom(&TA_double))
+      val = *((double*)base);
+    else if(md->type->InheritsFrom(&TA_int))
+      val = *((int*)base);
   }
+  return val;
+}
 
-  String nm = disp_md->name.before(".");
-  if (nm.empty()) { // direct unit member
-    UpdateUnitViewBase_Unit_impl(disp_md);
-  } else if ((nm=="s") || (nm == "r")) {
-    con_md = true;
-    UpdateUnitViewBase_Con_impl((nm=="s"), disp_md->name.after('.'), src_u);
-  } else if (nm=="bias") {
-    UpdateUnitViewBase_Bias_impl(disp_md);
-  } else { // sub-member of unit
-    UpdateUnitViewBase_Sub_impl(disp_md);
+void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
+  AllocUnitViewData();
+  Unit_Group* ugrp = this->ugrp(); //cache
+  NetView* nv = this->nv();
+  for(int midx=0;midx<nv->membs.size;midx++) {
+    MemberDef* disp_md = nv->membs[midx];
+    String nm = disp_md->name.before(".");
+    if(nm.empty()) { // direct unit member
+      UpdateUnitViewBase_Unit_impl(midx, disp_md);
+    } else if ((nm=="s") || (nm == "r")) {
+      UpdateUnitViewBase_Con_impl(midx, (nm=="s"), disp_md->name.after('.'), src_u);
+    } else if (nm=="bias") {
+      UpdateUnitViewBase_Bias_impl(midx, disp_md);
+    } else { // sub-member of unit
+      UpdateUnitViewBase_Sub_impl(midx, disp_md);
+    }
   }
 }
 
-void UnitGroupView::UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* src_u) {
+void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u) {
   Unit_Group* ugrp = this->ugrp(); //cache
   TwoDCoord coord;
   for(coord.y = 0; coord.y < ugrp->geom.y; coord.y++) {
     for(coord.x = 0; coord.x < ugrp->geom.x; coord.x++) {
       Unit* unit = ugrp->FindUnitFmCoord(coord);
-      UnitViewData& uvd = uvd_arr.FastEl(coord);
-      uvd.disp_base = NULL;
+      uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
 
       if (is_send) {
@@ -279,7 +294,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* s
 	  if (!act_md)	continue;
 	  Connection* con = tcong->FindConFrom(src_u);
 	  if (!con) continue;
-	  uvd.disp_base = act_md->GetOff(con);
+	  uvd_bases.Set(act_md->GetOff(con), coord.x, coord.y, midx);
 	  break;		// once you've got one, done!
 	}
       }
@@ -290,7 +305,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* s
 	  if (!act_md)	continue;
 	  Connection* con = tcong->FindConFrom(src_u);
 	  if (!con) continue;
-	  uvd.disp_base = act_md->GetOff(con);
+	  uvd_bases.Set(act_md->GetOff(con), coord.x, coord.y, midx);
 	  break;		// once you've got one, done!
 	}
       }
@@ -298,77 +313,70 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* s
   }
 }
 
-void UnitGroupView::UpdateUnitViewBase_Bias_impl(MemberDef* disp_md) {
+void UnitGroupView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md) {
   Unit_Group* ugrp = this->ugrp(); //cache
   TwoDCoord coord;
-  while ((coord.x < ugrp->geom.x) && (coord.y < ugrp->geom.y)) {
-    Unit* unit = ugrp->FindUnitFmCoord(coord);
-    UnitViewData& uvd = uvd_arr.FastEl(coord);
-    //NOTE: do loop advance here, so we can continue -- ***coord's are now next beyond current***
-    if (++(coord.x) >= ugrp->geom.x) {coord.x = 0; ++(coord.y);}
-    uvd.disp_base = NULL;
-    if (!unit) continue;  // rest will be null too, but we loop to null disp_base
-    if(unit->bias.size == 0) continue;
-    Connection* con = unit->bias.Cn(0);
-    uvd.disp_base = disp_md->GetOff(con);
-  }
-}
-
-void UnitGroupView::UpdateUnitViewBase_Unit_impl(MemberDef* disp_md) {
-  Unit_Group* ugrp = this->ugrp(); //cache
-  TwoDCoord coord;
-  while ((coord.x < ugrp->geom.x) && (coord.y < ugrp->geom.y)) {
-    Unit* unit = ugrp->FindUnitFmCoord(coord);
-    UnitViewData& uvd = uvd_arr.FastEl(coord);
-    //NOTE: do loop advance here, so we can continue -- ***coord's are now next beyond current***
-    if (++(coord.x) >= ugrp->geom.x) {coord.x = 0; ++(coord.y);}
-    uvd.disp_base = NULL;
-    if (!unit) continue;  // rest will be null too, but we loop to null disp_base
-    uvd.disp_base = disp_md->GetOff(unit);
-  }
-}
-
-void UnitGroupView::UpdateUnitViewBase_Sub_impl(MemberDef* disp_md) {
-  Unit_Group* ugrp = this->ugrp(); //cache
-  TwoDCoord coord;
-  while ((coord.x < ugrp->geom.x) && (coord.y < ugrp->geom.y)) {
-    Unit* unit = ugrp->FindUnitFmCoord(coord);
-    UnitViewData& uvd = uvd_arr.FastEl(coord);
-    //NOTE: do loop advance here, so we can continue -- ***coord's are now next beyond current***
-    if (++(coord.x) >= ugrp->geom.x) {coord.x = 0; ++(coord.y);}
-    uvd.disp_base = NULL;
-    if (!unit) continue;  // rest will be null too, but we loop to null disp_base
-
-    String nm = disp_md->name.before(".");
-    MemberDef* par_md = unit->FindMember((const char*)nm);
-    if (par_md == NULL) continue;
-    nm = disp_md->name.after(".");
-    TypeDef* nptd = par_md->type;
-    void* par_base = par_md->GetOff(unit);
-    if (nptd->ptr == 1) {
-      par_base = *((void**)par_base); // its a pointer, so de-reference it
-      if (par_base == NULL) continue;
-      nptd = ((taBase*)par_base)->GetTypeDef(); // get actual typedef
+  for(coord.y = 0; coord.y < ugrp->geom.y; coord.y++) {
+    for(coord.x = 0; coord.x < ugrp->geom.x; coord.x++) {
+      Unit* unit = ugrp->FindUnitFmCoord(coord);
+      uvd_bases.Set(NULL, coord.x, coord.y, midx);
+      if (!unit) continue;  // rest will be null too, but we loop to null disp_base
+      if(unit->bias.size == 0) continue;
+      Connection* con = unit->bias.Cn(0);
+      uvd_bases.Set(disp_md->GetOff(con), coord.x, coord.y, midx);
     }
-    MemberDef* smd = nptd->members.FindName(nm);
-    if (smd == NULL)  continue;
-    uvd.disp_base = smd->GetOff(par_base);
+  }
+}
+
+void UnitGroupView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md) {
+  Unit_Group* ugrp = this->ugrp(); //cache
+  TwoDCoord coord;
+  for(coord.y = 0; coord.y < ugrp->geom.y; coord.y++) {
+    for(coord.x = 0; coord.x < ugrp->geom.x; coord.x++) {
+      Unit* unit = ugrp->FindUnitFmCoord(coord);
+      uvd_bases.Set(NULL, coord.x, coord.y, midx);
+      if (!unit) continue;  // rest will be null too, but we loop to null disp_base
+      uvd_bases.Set(disp_md->GetOff(unit), coord.x, coord.y, midx);
+    }
+  }
+}
+
+void UnitGroupView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {
+  Unit_Group* ugrp = this->ugrp(); //cache
+
+  TypeDef* own_td = ugrp->el_typ; // should be unit type
+  ta_memb_ptr net_mbr_off = 0;
+  int net_base_off = 0;
+  MemberDef* smd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
+						 disp_md->name, false); // no warn
+  TwoDCoord coord;
+  for(coord.y = 0; coord.y < ugrp->geom.y; coord.y++) {
+    for(coord.x = 0; coord.x < ugrp->geom.x; coord.x++) {
+      Unit* unit = ugrp->FindUnitFmCoord(coord);
+      uvd_bases.Set(NULL, coord.x, coord.y, midx);
+      if(!unit || !smd) continue;  // rest will be null too, but we loop to null disp_base
+      void* sbaddr = MemberDef::GetOff_static(unit, net_base_off, net_mbr_off);
+      uvd_bases.Set(sbaddr, coord.x, coord.y, midx);
+    }
   }
 }
 
 void UnitGroupView::UpdateAutoScale(bool& updated) {
   NetView* nv = this->nv();
   TwoDCoord co;
+  void* base;
   Unit_Group* ugrp = this->ugrp(); //cache
   for (co.y = 0; co.y < ugrp->geom.y; ++co.y) {
     for (co.x = 0; co.x < ugrp->geom.x; ++co.x) {
-      float val = GetUnitDisplayVal(co, nv->unit_md_flags); // get val for unit at co
-      if(!updated) {
-	nv->scale.SetMinMax(val, val);
-	updated = true;
+      float val = GetUnitDisplayVal(co, base);
+      if(base) {
+	if(!updated) {
+	  nv->scale.SetMinMax(val, val);
+	  updated = true;
+	}
+	else
+	  nv->scale.UpdateMinMax(val);
       }
-      else
-	nv->scale.UpdateMinMax(val);
     }
   }
 }
@@ -955,6 +963,8 @@ void UnitGroupView::UpdateUnitValues() {
   if(lay->Iconified() || !lv() || lv()->disp_mode == LayerView::DISP_FRAME) {
     return;			// don't render anything!
   }
+  if(nv->hist_save)
+    SaveHist();
   if(nv->snap_bord_disp)
     UpdateUnitValues_snap_bord();
   if(lv()->disp_mode == LayerView::DISP_OUTPUT_NAME) {
@@ -968,9 +978,32 @@ void UnitGroupView::UpdateUnitValues() {
   Render_impl_children();
 }
 
+void UnitGroupView::SaveHist() {
+  NetView* nv = this->nv(); //cache
+  Unit_Group* ugrp = this->ugrp(); //cache
+
+  // bump up the frame circ idx..
+  int circ_idx = uvd_hist_idx.CircAddLimit(nv->hist_max);
+  int eff_hist_idx = uvd_hist_idx.CircIdx(circ_idx);
+
+  TwoDCoord coord;
+  for(coord.y = 0; coord.y < ugrp->geom.y; coord.y++) {
+    for(coord.x = 0; coord.x < ugrp->geom.x; coord.x++) {
+      Unit* unit = ugrp->FindUnitFmCoord(coord);
+      for(int midx=0; midx < nv->membs.size; midx++) {
+	void* base;
+	float val = GetUnitDisplayVal_Idx(coord, midx, base);
+	uvd_hist.Set(val, coord.x, coord.y, midx, eff_hist_idx);
+      }
+    }
+  }
+}
+
 void UnitGroupView::Reset_impl() {
   inherited::Reset_impl();
-  uvd_arr.SetSize(0);
+  uvd_bases.Reset();
+  uvd_hist.Reset();
+  uvd_hist_idx.Reset();
 }
 
 void UnitGroupView::Render_impl_outnm() {
@@ -2228,9 +2261,6 @@ void Network::PlaceNetText(NetTextLoc net_text_loc, float scale) {
 
 void NetView::Initialize() {
   data_base = &TA_Network;
-  unit_disp_md = NULL;
-  unit_sr = NULL;
-  unit_md_flags = MD_UNKNOWN;
   nvp = NULL;
   display = true;
   lay_mv = true;
@@ -2239,9 +2269,19 @@ void NetView::Initialize() {
   net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi); // start at right mid
   net_text_xform.scale = 0.7f;
   net_text_rot = -90.0f;
+
+  unit_con_md = false;
+  unit_disp_md = NULL;
+  unit_disp_idx = -1;
+  n_counters = 0;
+  hist_idx = 0;
+  hist_save = true;
+  hist_max = 20;
+
+  unit_sr = NULL;
+  unit_md_flags = MD_UNKNOWN;
   unit_disp_mode = UDM_BLOCK;
   unit_text_disp = UTD_NONE;
-  unit_con_md = false;
   wt_line_disp = false;
   wt_line_width = 4.0f;
   wt_line_thr = .5f;
@@ -2260,11 +2300,15 @@ void NetView::InitLinks() {
   taBase::Own(lay_disp_modes, this);
   taBase::Own(scale, this);
   taBase::Own(scale_ranges, this);
-  taBase::Own(ordered_uvg_list, this);
+  taBase::Own(cur_unit_vals, this);
+  taBase::Own(ctr_hist, this);
+  taBase::Own(ctr_hist_idx, this);
   taBase::Own(max_size, this);
   taBase::Own(font_sizes, this);
   taBase::Own(view_params, this);
   taBase::Own(net_text_xform, this);
+
+  ctr_hist_idx.matrix = &ctr_hist;
 }
 
 void NetView::CutLinks() {
@@ -2276,7 +2320,9 @@ void NetView::CutLinks() {
   view_params.CutLinks();
   font_sizes.CutLinks();
   max_size.CutLinks();
-  ordered_uvg_list.CutLinks();
+  ctr_hist_idx.CutLinks();
+  ctr_hist.CutLinks();
+  cur_unit_vals.CutLinks();
   scale_ranges.CutLinks();
   scale.CutLinks();
   lay_disp_modes.CutLinks();
@@ -2564,12 +2610,28 @@ void NetView::GetMembs() {
 
   // remove any stale items from sel list, but only if we were built
   if (membs.size > 0) {
-    String_Array& oul = ordered_uvg_list;
+    String_Array& oul = cur_unit_vals;
     for (int i=oul.size-1; i>=0; i--) { 
       if (!membs.FindName(oul[i]))
         oul.RemoveIdx(i,1);
     }
   }
+}
+
+void NetView::InitCtrHist() {
+  hist_idx = 0;
+  ctr_hist_idx.Reset();
+
+  int chld_idx = 0;
+  TypeDef* td = net()->GetTypeDef();
+  for(int i=td->members.size-1; i>=0; i--) {
+    MemberDef* md = td->members[i];
+    if(!md->HasOption("VIEW")) continue;
+    if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
+    chld_idx++;
+  }
+  n_counters = chld_idx;
+  ctr_hist.SetGeom(2, n_counters, hist_max); // just set here -- likely to be same..
 }
 
 void NetView::GetUnitColor(float val,  iColor& col, float& sc_val) {
@@ -2580,26 +2642,14 @@ void NetView::GetUnitColor(float val,  iColor& col, float& sc_val) {
 
 void NetView::GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val, T3Color& col,
 				 float& sc_val) {
-  val = scale.zero;
   sc_val = scale.zero;
-  void* base = ugrv->uvd_arr.FastEl(co).disp_base;
-  if(!base || !unit_disp_md || (unit_md_flags == MD_UNKNOWN)) {
+  void* base = NULL;
+  if(unit_disp_md && unit_md_flags != MD_UNKNOWN)
+    val = ugrv->GetUnitDisplayVal(co, base);
+  if(!base) {
     col.setValue(.8f, .8f, .8f); // lt gray
     return;
   }
-
-  //  val = ugrv->GetUnitDisplayVal(co, unit_md_flags);
-  switch (unit_md_flags) {
-  case NetView::MD_FLOAT:
-    val = *((float*)base); break;
-  case NetView::MD_DOUBLE:
-    val = *((double*)base); break;
-  case NetView::MD_INT:
-    val = *((int*)base); break;
-  default:
-    break;
-  }
-
   iColor tc;
   GetUnitColor(val, tc, sc_val);
   col.setValue(tc.redf(), tc.greenf(), tc.bluef());
@@ -2614,6 +2664,8 @@ void NetView::InitDisplay(bool init_panel) {
   GetMaxSize();
 
   GetMembs();
+  InitCtrHist();
+
   if (init_panel) {
     InitPanel();
     UpdatePanel();
@@ -2621,8 +2673,8 @@ void NetView::InitDisplay(bool init_panel) {
   // select "act" by default, if nothing selected, or saved selection not restored yet (first after load) -- skip if still not initialized
   if (!unit_disp_md && (membs.size > 0)) {
     MemberDef* md = NULL;
-    if (ordered_uvg_list.size > 0) {
-      md = membs.FindName(ordered_uvg_list[0]);
+    if (cur_unit_vals.size > 0) {
+      md = membs.FindName(cur_unit_vals[0]);
     }
     if (md) {
       setUnitDispMd(md);
@@ -2983,7 +3035,16 @@ void NetView::Render_net_text() {
     }
     SoSeparator* tsep = (SoSeparator*)net_txt->getChild(chld_idx + txt_st_off);
     SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
-    String el = md->name + ": " + md->type->GetValStr(md->GetOff((void*)net()));
+    String el = md->name + ": ";
+    String val = md->type->GetValStr(md->GetOff((void*)net()));;
+    if(hist_idx > 0) {
+      int cidx = (ctr_hist_idx.length - hist_idx);
+      int midx = ctr_hist_idx.CircIdx(cidx);
+      if(ctr_hist.InRange(chld_idx, midx)) {
+	val = ctr_hist.SafeEl(chld_idx, midx);
+      }
+    }
+    el += val;
     txt->string.setValue(el.chars());
     chld_idx++;
   }
@@ -3190,11 +3251,11 @@ void NetView::Reset_impl() {
 
 void NetView::SelectVar(const char* var_name, bool add, bool update) {
   if (!add)
-    ordered_uvg_list.Reset();
+    cur_unit_vals.Reset();
   MemberDef* md = (MemberDef*)membs.FindName(var_name);
   if (md) {
-    //nnif (ordered_uvg_list.FindEl(var_name) < 0)
-    ordered_uvg_list.AddUnique(var_name);
+    //nnif (cur_unit_vals.FindEl(var_name) < 0)
+    cur_unit_vals.AddUnique(var_name);
   }
   setUnitDispMd(md);
   if (update) UpdateDisplay();
@@ -3251,8 +3312,10 @@ void NetView::setUnitDisp(int value) {
 void NetView::setUnitDispMd(MemberDef* md) {
   if (md == unit_disp_md) return;
   unit_disp_md = md;
+  unit_disp_idx = membs.FindEl(md);
   unit_sr = NULL;
   unit_md_flags = MD_UNKNOWN;
+  unit_con_md = false;
   if (!unit_disp_md) return;
   if (unit_disp_md) {
     if (unit_disp_md->type->InheritsFrom(&TA_float))
@@ -3262,6 +3325,8 @@ void NetView::setUnitDispMd(MemberDef* md) {
     else if (unit_disp_md->type->InheritsFrom(&TA_int))
       unit_md_flags = MD_INT;
   }
+  if(unit_disp_md->name.startsWith("r.") || md->name.startsWith("s."))
+    unit_con_md = true;
 
   String nm = unit_disp_md->name;
   unit_sr = scale_ranges.FindName(nm);
@@ -3337,8 +3402,28 @@ void NetView::UpdateDisplay(bool update_panel) { // redoes everything
 
 void NetView::UpdateUnitValues() { // *actually* only does unit value updating
   if(children.size == 0) return;
+  if(hist_save)
+    SaveCtrHist();
   LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
   lv->UpdateUnitValues();
+}
+
+void NetView::SaveCtrHist() {
+  TypeDef* td = net()->GetTypeDef();
+
+  // bump up the frame circ idx..
+  int circ_idx = ctr_hist_idx.CircAddLimit(hist_max);
+  int eff_hist_idx = ctr_hist_idx.CircIdx(circ_idx);
+
+  int chld_idx = 0;
+  for(int i=td->members.size-1; i>=0; i--) {
+    MemberDef* md = td->members[i];
+    if(!md->HasOption("VIEW")) continue;
+    if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
+    String val = md->type->GetValStr(md->GetOff((void*)net()));
+    ctr_hist.Set(val, chld_idx, eff_hist_idx);
+    chld_idx++;
+  }
 }
 
 void NetView::DataUpdateView_impl() {
@@ -3574,6 +3659,58 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
 //  layDisplayValues->addStretch();
 
+  ////////////////////////////////////////////////////////////////////////////
+  layHistory = new QHBoxLayout();  layDisplayValues->addLayout(layHistory);
+
+  histTB = new QToolBar(widg);
+  layHistory->addWidget(histTB);
+  chkHist = new QCheckBox("Hist: Save", histTB);
+  chkHist->setToolTip("Save display value history, which can then be replayed..");
+  connect(chkHist, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  histTB->addWidget(chkHist);
+
+  fldHist = dl.Add(new taiField(&TA_int, this, NULL, widg));
+  histTB->addWidget(fldHist->GetRep());
+
+  histTB->addSeparator();
+
+  actBack_All = histTB->addAction("|<");
+  actBack_All->setToolTip("Back all the way to first saved history of display values");
+  connect(actBack_All, SIGNAL(triggered()), this, SLOT(hist_back_all()) );
+
+  actBack_F = histTB->addAction("<<");
+  actBack_F->setToolTip("Back 10 steps in history of display values");
+  connect(actBack_F, SIGNAL(triggered()), this, SLOT(hist_back_f()) );
+
+  actBack = histTB->addAction("<");
+  actBack->setToolTip("Back one step in history of display values");
+  connect(actBack, SIGNAL(triggered()), this, SLOT(hist_back()) );
+
+  actFwd = histTB->addAction(">" );
+  actFwd->setToolTip("Forward one step in history of display values");
+  connect(actFwd, SIGNAL(triggered()), this, SLOT(hist_fwd()) );
+
+  actFwd_F = histTB->addAction(">>" );
+  actFwd_F->setToolTip("Forward 10 steps in history of display values");
+  connect(actFwd_F, SIGNAL(triggered()), this, SLOT(hist_fwd_f()) );
+
+  actFwd_All = histTB->addAction(">|" );
+  actFwd_All->setToolTip("Forward all the way to current display values (will now track current values as they come in)");
+  connect(actFwd_All, SIGNAL(triggered()), this, SLOT(hist_fwd_all()) );
+
+  histTB->addSeparator();
+ 
+  QLabel* lblbk = taiM->NewLabel("Steps Back:", histTB, font_spec);
+  lblbk->setToolTip("number of steps back in history currently viewing");
+  histTB->addWidget(lblbk);
+
+  lblHist = taiM->NewLabel("100", histTB, font_spec);
+  lblHist->setToolTip("number of steps back in history currently viewing");
+  histTB->addWidget(lblHist);
+
+  layHistory->addStretch();
+//   histTB->addStretch();
+
   setCentralWidget(widg);
   
   tw = new QTabWidget(this);
@@ -3689,13 +3826,17 @@ void NetViewPanel::UpdatePanel_impl() {
   fldLayFont->GetImage((String)nv->font_sizes.layer);
   chkXYSquare->setChecked(nv->view_params.xy_square);
 
+  chkHist->setChecked(nv->hist_save);
+  fldHist->GetImage((String)nv->hist_max);
+  lblHist->setText(String(nv->hist_idx));
+
   // update var selection
   int i = 0;
   QTreeWidgetItemIterator it(lvDisplayValues);
   QTreeWidgetItem* item = NULL;
   while (*it) {
     item = *it;
-    bool is_selected = (nv->ordered_uvg_list.FindEl(item->text(0)) >= 0);
+    bool is_selected = (nv->cur_unit_vals.FindEl(item->text(0)) >= 0);
     item->setSelected(is_selected);
     // if list is size 1 make sure that there is a scale_range entry for this one
     ++it;
@@ -3751,6 +3892,9 @@ void NetViewPanel::GetValue_impl() {
   nv->wt_prjn_lay = (Layer*)gelWtPrjnLay->GetValue();
   nv->view_params.xy_square = chkXYSquare->isChecked();
 
+  nv->hist_save = chkHist->isChecked();
+  nv->hist_max = (int)fldHist->GetValue();
+
   nv->SetScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max(), false);
 }
 
@@ -3774,6 +3918,74 @@ void NetViewPanel::butSetColor_pressed() {
   if (!(nv_ = nv())) return;
 
   nv_->CallFun("SetColorSpec");
+}
+
+void NetViewPanel::hist_back() {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+  if(!nv_->hist_save) return;
+
+  if(nv_->hist_idx >= nv_->ctr_hist_idx.length) return;
+  nv_->hist_idx++;
+  nv_->UpdateDisplay(true);
+}
+
+void NetViewPanel::hist_back_all() {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+  if(!nv_->hist_save) return;
+
+  if(nv_->hist_idx >= nv_->ctr_hist_idx.length) return;
+  nv_->hist_idx = nv_->ctr_hist_idx.length;
+  nv_->UpdateDisplay(true);
+}
+
+void NetViewPanel::hist_back_f() {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+  if(!nv_->hist_save) return;
+
+  if(nv_->hist_idx >= nv_->ctr_hist_idx.length) return;
+  nv_->hist_idx += 5;
+  nv_->hist_idx = MIN(nv_->ctr_hist_idx.length, nv_->hist_idx);
+  nv_->UpdateDisplay(true);
+}
+
+void NetViewPanel::hist_fwd() {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+  if(!nv_->hist_save) return;
+
+  if(nv_->hist_idx < 1) return;
+  nv_->hist_idx--;
+  nv_->UpdateDisplay(true);
+}
+
+void NetViewPanel::hist_fwd_f() {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+  if(!nv_->hist_save) return;
+
+  if(nv_->hist_idx < 1) return;
+  nv_->hist_idx -= 5;
+  nv_->hist_idx = MAX(0, nv_->hist_idx);
+  nv_->UpdateDisplay(true);
+}
+
+void NetViewPanel::hist_fwd_all() {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+  if(!nv_->hist_save) return;
+
+  if(nv_->hist_idx < 1) return;
+  nv_->hist_idx = 0;
+  nv_->UpdateDisplay(true);
 }
 
 void NetViewPanel::ColorScaleFromData() {
@@ -3818,20 +4030,21 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   NetView* nv_;
   if (!(nv_ = nv())) return;
   // redo the list each time, to guard against stale values
-  nv_->ordered_uvg_list.Reset(); 
+  nv_->cur_unit_vals.Reset(); 
   QList<QTreeWidgetItem*> items(lvDisplayValues->selectedItems());
   QTreeWidgetItem* item = NULL;
   for (int j = 0; j < items.size(); ++j) {
     item = items.at(j);
-    nv_->ordered_uvg_list.Add(item->text(0));
+    nv_->cur_unit_vals.Add(item->text(0));
   }
-  MemberDef* md = (MemberDef*)nv_->membs.FindName(nv_->ordered_uvg_list.SafeEl(0));
+  MemberDef* md = (MemberDef*)nv_->membs.FindName(nv_->cur_unit_vals.SafeEl(0));
   if (md) {
     nv_->setUnitDispMd(md); 
     nv_->UpdateViewerModeForMd(md);
   }
   ColorScaleFromData();
-  nv_->InitDisplay(false);
+//   nv_->InitDisplay(false);
+  // note: init will reset history etc and is now unnec for updating view guys..
   nv_->UpdateDisplay(false);
 }
 
@@ -3908,8 +4121,8 @@ void NetViewPanel::dynbuttonActivated(int but_no) {
   taiAction* dyb = vw->getDynButton(but_no);
   if(!dyb) return;
   String nm = dyb->text();
-  nv_->ordered_uvg_list.Reset(); 
-  nv_->ordered_uvg_list.Add(nm);
+  nv_->cur_unit_vals.Reset(); 
+  nv_->cur_unit_vals.Add(nm);
   MemberDef* md = (MemberDef*)nv_->membs.FindName(nm);
   if(md) {
     nv_->setUnitDispMd(md); 
@@ -3917,6 +4130,6 @@ void NetViewPanel::dynbuttonActivated(int but_no) {
     vw->setDynButtonChecked(but_no, true, true); // mutex
   }
   ColorScaleFromData();
-  nv_->InitDisplay(false);
+//   nv_->InitDisplay(false);
   nv_->UpdateDisplay(true);	// update panel
 }

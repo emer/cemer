@@ -85,6 +85,5 @@ template class EMERGENT_API taGroup<Process>;
 template class EMERGENT_API taList<DataItem>; 
 
 #ifdef TA_GUI
-template class EMERGENT_API taPlainArray<UnitViewData>; // netstru_qtso.h
 #endif
 

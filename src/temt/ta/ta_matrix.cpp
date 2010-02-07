@@ -1796,6 +1796,20 @@ bool byte_Matrix::StrValIsValid(const String& str, String* err_msg) const {
 }
 
 //////////////////////////
+//   void_Matrix	//
+//////////////////////////
+
+bool void_Matrix::StrValIsValid(const String& str, String* err_msg) const {
+  bool rval = true;
+#ifdef TA_USE_QT
+  str.toInt(&rval, 0); //auto-base sensing; discard result
+#endif
+  if (!rval && (err_msg != NULL))
+    *err_msg = "not a valid integer number";
+  return rval;
+}
+
+//////////////////////////
 //   Variant_Matrix	//
 //////////////////////////
 
@@ -1921,6 +1935,7 @@ const double double_Matrix::blank = 0.0;
 const float float_Matrix::blank = 0.0f;
 const int int_Matrix::blank = 0;
 const unsigned char byte_Matrix::blank = '\0';
+const void* void_Matrix::blank = 0;
 const rgb_t rgb_Matrix::blank;
 
 
@@ -1928,18 +1943,12 @@ const rgb_t rgb_Matrix::blank;
 //  	CircMatrix	//
 //////////////////////////
 
-void float_CircMatrix::Initialize() {
+void CircMatrix::Initialize() {
   st_idx = 0;
   length = 0;
 }
 
-void float_CircMatrix::Copy_(const float_CircMatrix& cp) {
-  st_idx = cp.st_idx;
-  length = cp.length;
-}
-
-void float_CircMatrix::Reset() {
-  float_Matrix::Reset();
+void CircMatrix::Reset() {
   st_idx = 0;
   length = 0;
 }

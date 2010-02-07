@@ -129,32 +129,6 @@ private:
   void			Destroy() {CutLinks();}
 };
 
-class EMERGENT_API UnitViewData { // #IGNORE dynamically maintained data for each unit so we don't need UnitViews
-public:
-  void*		disp_base;	// #IGNORE base pointer used for display
-  UnitViewData() {Initialize();}
-  UnitViewData(const String&) {Initialize();} // dummy, for array template
-  operator String() {return _nilString;} // dummy convertor for array template
-  //NOTE: just use default bitwise copy constructor and copy operator
-private:
-  void		Initialize();
-};
-
-// following needed for the taPlainArray template
-inline bool operator ==(const UnitViewData& a, const UnitViewData& b)
-  {return ((a.disp_base == b.disp_base));}
-
-class EMERGENT_API UnitViewData_PArray: public taPlainArray<UnitViewData> { // #IGNORE
-INHERITED(taPlainArray<UnitViewData>)
-public:
-  UnitViewData&		FastEl(const TwoDCoord& c) {return el[(c.y * m_x) + c.x];}
-  void			SetGeom(TwoDCoord& c); // sets geom, and allocs values
-  UnitViewData_PArray() {m_x = 0;}
-protected:
-  int		m_x; // retained for array lookups
-};
-
-
 ////////////////////////////////////////////////////
 //   UnitGroupView
 
@@ -170,23 +144,26 @@ INHERITED(nvDataView)
 public:
   static void		ValToDispText(float val, String& str); // renders the display text, typ 6 chars max
 
-  UnitViewData_PArray	uvd_arr; // #IGNORE actual unit value data
-  float_CircMatrix	uvd_store; // buffer of previous value data [x][y][var][time] -- time = frame dimension that rotates
+  void_Matrix		uvd_bases; // [x][y][nv->membs.size] void* base pointers to unit values -- computed during Init -- note that bases for all members are encoded, so switching members does not require recompute, and this also speeds history saving
+  float_Matrix		uvd_hist; // [x][y][nv->membs.size][hist_max] buffer of history of previous value data -- last (frame) dimension uses circ buffer system for efficient storing and retrieval
+  CircMatrix		uvd_hist_idx; // circular buffer indexing of uvd_hist -- last (frame) dimension uses circ buffer system for efficient storing and retrieval
 
   Unit_Group*		ugrp() const {return (Unit_Group*)data();}
-  UnitViewData&		uvd(const TwoDCoord& co) {return uvd_arr.FastEl(co);} // #IGNORE
   T3UnitGroupNode*	node_so() const {return (T3UnitGroupNode*)inherited::node_so();}
 
   LayerView*		lv() const { return m_lv; }
   void			SetLayerView(LayerView* l) { m_lv = l; }
 
-  void			AllocUnitViewData(); // make sure we have correct space in uvd array
+  void			AllocUnitViewData(); // make sure we have correct space in uvd storage
   override void		BuildAll(); // creates fully populated subviews
   virtual void		InitDisplay();
 
-  float 		GetUnitDisplayVal(const TwoDCoord& co, int unit_md_flags); // get val for unit at co
-  void 			UpdateUnitViewBase(MemberDef* disp_md, Unit* src_u, bool& con_md);
-  // set the base for the given md; src_u only used for s./r. values (sets con_md true if con)
+  float 		GetUnitDisplayVal(const TwoDCoord& co, void*& base);
+  // get raw floating point value to display according to current nv settings, at given coordinate -- fills in base for this value as well (NULL if not set) -- uses history values if nv hist_idx > 0
+  float 		GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*& base);
+  // get raw floating point value to display at given member index (< membs.size), at given coordinate -- fills in base for this value as well (NULL if not set) -- does NOT use history vals ever
+  void 			UpdateUnitViewBases(Unit* src_u);
+  // update base void* for all current nv->membs, src_u only used for s./r. values
   virtual void		UpdateUnitValues();
   // *only* updates unit values 
   virtual void		UpdateUnitValues_blocks();
@@ -197,14 +174,20 @@ public:
   // snap border
   virtual void		UpdateAutoScale(bool& updated);
   // update autoscale values
+  virtual void		SaveHist();
+  // save current values to usv_hist history -- saves all the possible variables, not just currently displayed one (expensive but worth it..)
 
+  override void		InitLinks();
+  override void		CutLinks();
   T3_DATAVIEWFUNS(UnitGroupView, nvDataView)
 protected:
   LayerView*    	m_lv;
-  void 			UpdateUnitViewBase_Unit_impl(MemberDef* disp_md); // for unit members
-  void 			UpdateUnitViewBase_Sub_impl(MemberDef* disp_md); // for unit submembers
-  void 			UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* src_u); // for cons
-  void 			UpdateUnitViewBase_Bias_impl(MemberDef* disp_md); // for bias vals
+  void 		UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md); // for unit members
+  void 		UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md); // for unit submembers
+  void 		UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u);
+  // for cons
+  void 		UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md);
+  // for bias vals
   override void		DoActionChildren_impl(DataViewAction acts);
   virtual void 		Render_impl_children(); // #IGNORE we trap this in DoActionChildren
   virtual void 		Render_impl_blocks(); // optimized blocks
@@ -475,13 +458,17 @@ public:
   FloatTransform	net_text_xform;  // transform of coordinate system for the net text display element
   float			net_text_rot;	 // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
   MemberSpace		membs;		// #NO_SAVE #NO_COPY list of all the members possible in units; note: all items are new clones
-  String_Array	  	ordered_uvg_list; // #HIDDEN #NO_COPY selected var buttons
-  // unit display flags
+  String_Array	  	cur_unit_vals;  // #HIDDEN #NO_COPY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
   UnitRef		unit_src; 	// #NO_SAVE #NO_COPY unit last picked (if any) for display
   bool			unit_con_md;    // #NO_SAVE #NO_COPY true if memberdef is from a connection as opposed to a direct unit var
   MemberDef*		unit_disp_md;   // #NO_SAVE #NO_COPY memberdef (if any) of Unit (or Connection) to display
-  float_CircMatrix	counter_store; 	// buffer of previous counter data [var][time] -- time = frame dimension that rotate
-  int			rewind_idx;	// rewind index -- 
+  int			unit_disp_idx;	// #NO_SAVE #NO_COPY index of memberdef (if any) of Unit (or Connection) to display
+  int			n_counters;	// #NO_SAVE #NO_COPY number of counter variables on the network object
+  String_Matrix		ctr_hist; 	// #NO_SAVE #NO_COPY [n_counters][hist_max] buffer of history of previous counter data -- saved as text -- used in net_text display
+  CircMatrix		ctr_hist_idx; 	// #NO_SAVE #NO_COPY circular buffer indexing for ctr_hist
+  int			hist_idx;	// history index -- when rewinding backwards, how many steps back from current time to view -- -1 = present
+  bool			hist_save;	// whether to save history right now or not -- can slow things down so need quick option to turn off
+  int			hist_max;	// #MIN_1 how much history of state information to store -- updated each time UpdateUnitValues is called
 
   ScaleRange*		unit_sr; 	// #NO_SAVE #NO_COPY scalerange of disp_md
   MDFlags		unit_md_flags;  // #NO_SAVE type to display in units
@@ -523,6 +510,10 @@ public:
   // re-renders entire display (calls Render_impl) -- assumes structure is still same but various display elements may have changed.  if structure is different, then an InitDisplay is required first
   virtual void		UpdateUnitValues();
   // *only* updates unit values -- display and structure must be the same as last time
+  virtual void		InitCtrHist();
+  // initialize based on current settings
+  virtual void		SaveCtrHist();
+  // save counter history -- called in UpdateUnitValues()
   virtual void 		UpdatePanel(); // updates nvp, esp. after UAE etc.
 
   ////////////////////////////////////////////////////////////////
@@ -648,6 +639,7 @@ public:
   taiField*		    fldWtLineThr;
   QLabel*		    lblWtPrjnLay;
   taiGroupElsButton*	    gelWtPrjnLay;
+
   QHBoxLayout*		 layColorBar;
   QCheckBox*		    chkSnapBord;
   QLabel*		    lblSnapBordWdth;
@@ -656,6 +648,18 @@ public:
   taiField*		    fldUnitSpacing;
   ScaleBar*		   cbar;	      // colorbar
   QPushButton*		   butSetColor;
+
+  QHBoxLayout*		 layHistory;
+  QToolBar*		   histTB;
+  QCheckBox*		   chkHist;
+  taiField*		   fldHist;
+  QAction* 		   actBack_All;
+  QAction* 		   actBack_F;
+  QAction* 		   actBack;
+  QAction* 		   actFwd;
+  QAction* 		   actFwd_F;
+  QAction* 		   actFwd_All;
+  QLabel*		   lblHist;
   
   QTabWidget* 		tw; 
   QTreeWidget*		  lvDisplayValues;
@@ -696,6 +700,12 @@ public slots:
 protected slots:
   void			butScaleDefault_pressed();
   void 			butSetColor_pressed();
+  void 			hist_back();
+  void 			hist_back_f();
+  void 			hist_back_all();
+  void 			hist_fwd();
+  void 			hist_fwd_f();
+  void 			hist_fwd_all();
   void			lvDisplayValues_selectionChanged();
   void			tvSpecs_CustomExpandFilter(iTreeViewItem* item,
 						   int level, bool& expand);

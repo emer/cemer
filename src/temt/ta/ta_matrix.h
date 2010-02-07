@@ -39,6 +39,7 @@ class MatrixTableModel; //
 // forwards this file
 class taMatrix_PList;
 class byte_Matrix; //
+class void_Matrix; //
 class float_Matrix; //
 
 /* Matrix -- a specialized, richer implementation of Array
@@ -1213,13 +1214,48 @@ private:
 TA_SMART_PTRS(rgb_Matrix);
 
 
-///////////////////////////////////////////////////////
-//	float_CircMatrix
+///////////////////////////////////
+// 	void_Matrix
+///////////////////////////////////
 
-class TA_API float_CircMatrix : public float_Matrix {
-  // Circular buffer logic on top of a matrix -- efficient way to store a fixed window of state information without actually shifting memory around -- use CircAdd to initially populate and CircShiftLeft to make room for new items -- the *LAST* dimension is the circular one (i.e., the "frame" dimension)
-INHERITED(float_Matrix)
+class TA_API void_Matrix: public taMatrixT<void*> {
+  // #INSTANCE a matrix of void*s (generic pointers)
+INHERITED(taMatrixT<void*>)
 public:
+  override TypeDef*	GetDataTypeDef() const {return &TA_unsigned_char;} 
+  override ValType	GetDataValType() const {return VT_VOIDPTR;} 
+  
+  override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
+  override bool		BinaryFile_Supported() { return true; }
+  
+  TA_MATRIX_FUNS_FAST(void_Matrix, void*);
+  
+public: //
+  override float	El_GetFloat_(const void* it) const { return (float)(int)*((void**)it); } // #IGNORE
+  override const String	El_GetStr_(const void* it) const { return String(((int)*((void**)it))); } // #IGNORE
+  override void		El_SetFmStr_(void* it, const String& str) {*((void**)it) = (void*)str.toInt();}       // #IGNORE
+  override const Variant El_GetVar_(const void* it) const {return Variant(*((void**)it));} // #IGNORE
+  override void		El_SetFmVar_(void* it, const Variant& var) {*((void**)it) = var.toPtr(); };  // #IGNORE
+protected:
+  STATIC_CONST void*	blank; // #IGNORE
+  override void		BinarySave_Item(ostream& strm, int idx)
+  { strm.write((char*)&(FastEl_Flat(idx)), sizeof(void*)); }; 
+  override void		BinaryLoad_Item(istream& strm, int idx)
+  { strm.read((char*)&(FastEl_Flat(idx)), sizeof(void*)); }; 
+private:
+  void		Initialize() {}
+  void		Destroy() {} //
+};
+TA_SMART_PTRS(void_Matrix);
+
+///////////////////////////////////////////////////////
+//	CircMatrix
+
+class TA_API CircMatrix : public taNBase {
+  // ##TOKENS #CAT_Data Circular buffer logic on top of a matrix -- efficient way to store a fixed window of state information without actually shifting memory around -- use CircAdd to initially populate and CircShiftLeft to make room for new items -- the *LAST* dimension is the circular one (i.e., the "frame" dimension)
+INHERITED(taNBase)
+public:
+  taMatrixRef	matrix;		// the matrix to control using circ buffer logic -- must be set -- routines to not ensure validity of this pointer!
   int		st_idx;		// #READ_ONLY index in matrix frame where the list starts (i.e., the position of the logical 0 index) -- updated by functions and should not be set manually
   int		length;		// #READ_ONLY logical length of the list -- is controlled by adding and shifting, and should NOT be set manually
 
@@ -1227,12 +1263,9 @@ public:
   //	Special Access Routines
 
   int	CircIdx(int cidx) const
-  { int rval = cidx+st_idx; if(rval >= frames()) rval -= frames(); return rval; }
+  { int rval = cidx+st_idx; if(rval >= matrix->frames()) rval -= matrix->frames(); return rval; }
   // #CAT_CircAccess gets physical index from logical circular index
 
-  bool 	CircIdxInRange(int cidx) const { return InRange(CircIdx(cidx)); }
-  // #CAT_CircAccess check if logical circular index is in range
-  
   /////////////////////////////////////////////////////////
   //	Special Modify Routines
 
@@ -1241,8 +1274,8 @@ public:
   // #CAT_CircModify shift the buffer to the left -- shift the first elements off the start of the list, making room at the end for more elements (decreasing length)
 
   int		CircAddExpand() {
-    if((st_idx == 0) && (length >= frames())) {
-      AddFrame(); length++; 	// must be building up the list, so add it
+    if((st_idx == 0) && (length >= matrix->frames())) {
+      matrix->AddFrame(); length++; 	// must be building up the list, so add it
     }
     else {
       length++;	// expand the buffer length and set to the element at the end
@@ -1263,13 +1296,14 @@ public:
   }
   // #CAT_CircModify add a new frame to the circular buffer, shifting it left if length is at or above max_length to ensure a fixed overall length list (otherwise expanding list up to max_length)
 
-  override void	Reset();
+  virtual void	Reset();
+  // resets *JUST* the indicies in this object -- does not reset matrix
 
-  void 	Copy_(const float_CircMatrix& cp);
-  TA_BASEFUNS(float_CircMatrix);
+  TA_SIMPLE_BASEFUNS(CircMatrix);
 private:
   void 	Initialize();
   void	Destroy()		{ };
 };
+
 
 #endif

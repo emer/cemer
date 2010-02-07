@@ -421,9 +421,10 @@ public:
     VT_STRING,		// #LABEL_String an ANSI string of any length
     VT_DOUBLE,		// #LABEL_double a 8-byte floating point value (aprox 15 sig decimal digits)
     VT_FLOAT,		// #LABEL_float a 4-byte floating point value (aprox 7 sig decimal digits)
-    VT_INT,		// #LABEL_int a 32-bit signed integer
+    VT_INT,		// #LABEL_int a signed integer in machine native size (32 or 64 bit)
     VT_BYTE,		// #LABEL_byte an unsigned 8-bit integer; used mostly for image components (rgb)
-    VT_VARIANT		// #LABEL_Variant a Variant, which can hold scalars, strings, matrices, and objects
+    VT_VARIANT,		// #LABEL_Variant a Variant, which can hold scalars, strings, matrices, and objects
+    VT_VOIDPTR,		// #LABEL_void* a generic pointer (void*) 
   };
   
   enum BaseFlags { // #BITS control flags 
