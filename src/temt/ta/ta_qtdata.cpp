@@ -5588,6 +5588,9 @@ bool taiMethodData::UpdateButtonRep() {
     // the default "true" for non-GHOST cases doesn't work here!
     bool ghost = meth->GetCondOptTest("GHOST", typ, base);
     buttonRep->setEnabled(!ghost);
+    if(!ghost) {
+      buttonRep->show();	// make it real?
+    }
     return true;
   }
   return false;

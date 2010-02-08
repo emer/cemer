@@ -2203,12 +2203,12 @@ public:
   // #CAT_Display set the picked source unit (for viewing weights) in netview
 #endif
 
+  virtual void	PlaceNetText(NetTextLoc net_text_loc, float scale = 1.0f);
+  // #MENU_BUTTON #MENU_ON_NetView #CAT_Display locate the network text data display (counters, statistics -- typically shown at bottom of network) in a new standard location (it can also be dragged anywhere in the net view, turn on lay_mv button and click on red arrow) -- can also change the scaling
   virtual NetViewObj* NewViewText(const String& txt);
   // #MENU_BUTTON #MENU_ON_NetView #MENU_SEP_BEFORE #CAT_Display add a new text label to the network view objects -- this is an arbitrary fixed text label that can be placed anywhere in the display for annotating the model or other view elements
   virtual NetViewObj* NewGlassBrain();
   // #MENU_BUTTON #MENU_ON_NetView #CAT_Display add a new glass brain (as two separate hemispheres) to netview objects -- useful for situating biologically-based network models
-  virtual void	PlaceNetText(NetTextLoc net_text_loc, float scale = 1.0f);
-  // #MENU_BUTTON #MENU_ON_NetView #CAT_Display locate the network text data display (counters, statistics -- typically shown at bottom of network) in a new standard location (it can also be dragged anywhere in the net view, turn on lay_mv button and click on red arrow) -- can also change the scaling
   virtual void	NetTextUserData();
   // #IGNORE auto-called in InitLinks -- enable the filtering of what information is shown in the network text data display (typically shown at bottom of network, though see PlaceNetText for options on where to locate) -- this function creates entries for each of the viewable items in the UserData for this network -- just click on the UserData button to edit which items to display.
 

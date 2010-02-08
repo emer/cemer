@@ -450,33 +450,32 @@ public:
   static NetView*	New(Network* net, T3DataViewFrame*& fr); // create a new instance and add to viewer
 
 
-  T3DataView_PtrList	prjns; 		// #IGNORE list of prjn objects under us
-
   bool			display;       	// whether to update the display when values change (under control of programs)
   bool			lay_mv;       	// whether to display layer move controls when the arrow button is pressed (can get in the way of viewing weights)
   bool			net_text;       // whether to display text box below network with counters etc
   FloatTransform	net_text_xform;  // transform of coordinate system for the net text display element
   float			net_text_rot;	 // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
-  MemberSpace		membs;		// #NO_SAVE #NO_COPY list of all the members possible in units; note: all items are new clones
-  String_Array	  	cur_unit_vals;  // #HIDDEN #NO_COPY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
-  UnitRef		unit_src; 	// #NO_SAVE #NO_COPY unit last picked (if any) for display
-  String		unit_src_path;	// #HIDDEN path of unit_src unit relative to the network -- used for saving and reloading
-  bool			unit_con_md;    // #NO_SAVE #NO_COPY true if memberdef is from a connection as opposed to a direct unit var
-  MemberDef*		unit_disp_md;   // #NO_SAVE #NO_COPY memberdef (if any) of Unit (or Connection) to display
-  int			unit_disp_idx;	// #NO_SAVE #NO_COPY index of memberdef (if any) of Unit (or Connection) to display
-  int			n_counters;	// #NO_SAVE #NO_COPY number of counter variables on the network object
-  String_Matrix		ctr_hist; 	// #NO_SAVE #NO_COPY [n_counters][hist_max] buffer of history of previous counter data -- saved as text -- used in net_text display
-  CircMatrix		ctr_hist_idx; 	// #NO_SAVE #NO_COPY circular buffer indexing for ctr_hist
-  int			hist_idx;	// history index -- when rewinding backwards, how many steps back from current time to view -- -1 = present
+  MemberSpace		membs;		// #NO_SAVE #NO_COPY #READ_ONLY list of all the members possible in units; note: all items are new clones
+  String_Array	  	cur_unit_vals;  // #NO_COPY #READ_ONLY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
+  UnitRef		unit_src; 	// #NO_SAVE #NO_COPY #READ_ONLY unit last picked (if any) for display
+  String		unit_src_path;	// ##READ_ONLY path of unit_src unit relative to the network -- used for saving and reloading
+  bool			unit_con_md;    // #NO_SAVE #NO_COPY #READ_ONLY true if memberdef is from a connection as opposed to a direct unit var
+  MemberDef*		unit_disp_md;   // #NO_SAVE #NO_COPY #READ_ONLY memberdef (if any) of Unit (or Connection) to display
+  int			unit_disp_idx;	// #NO_SAVE #NO_COPY #READ_ONLY index of memberdef (if any) of Unit (or Connection) to display
+  int			n_counters;	// #NO_SAVE #NO_COPY #READ_ONLY number of counter variables on the network object
+  String_Matrix		ctr_hist; 	// #NO_SAVE #NO_COPY #READ_ONLY [n_counters][hist_max] buffer of history of previous counter data -- saved as text -- used in net_text display
+  CircMatrix		ctr_hist_idx; 	// #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for ctr_hist
+  int			hist_idx;	// #READ_ONLY history index -- when rewinding backwards, how many steps back from current time to view -- -1 = present
   bool			hist_save;	// whether to save history right now or not -- can slow things down so need quick option to turn off
   int			hist_max;	// #MIN_1 how much history of state information to store -- updated each time UpdateUnitValues is called
   int			hist_ff;	// #MIN_2 how many steps to take in the fast forward/ fast backward interface
+  bool			hist_reset_req; // #NO_SAVE #NO_COPY #READ_ONLY reset of history index position requested because of data reset in one or more of the unit groups
 
-  ScaleRange*		unit_sr; 	// #NO_SAVE #NO_COPY scalerange of disp_md
-  MDFlags		unit_md_flags;  // #NO_SAVE type to display in units
+  ScaleRange*		unit_sr; 	// #NO_SAVE #NO_COPY #READ_ONLY scalerange of disp_md
+  MDFlags		unit_md_flags;  // #NO_SAVE #READ_ONLY type to display in units
   UnitDisplayMode	unit_disp_mode; // how to display unit values
   UnitTextDisplay	unit_text_disp; // what labels to display with units
-  FloatTDCoord		max_size;	// #NO_COPY maximum size in each dimension of the net
+  FloatTDCoord		max_size;	// #NO_COPY #READ_ONLY maximum size in each dimension of the net
   NetViewFontSizes	font_sizes;	// font sizes for various items
   NetViewParams		view_params;	// misc view parameters 
   bool			wt_line_disp;	// display weights from selected unit as lines?
@@ -488,7 +487,7 @@ public:
   float			snap_bord_width; // width of snapshot border lines
   ColorScale		scale;		// contains current min,max,range,zero,auto_scale
   ScaleRange_List 	scale_ranges;  	// #NO_COPY Auto ranges for member buttons
-  NameVar_Array		lay_disp_modes; // layer display modes (not properly saved otherwise, due to reset construction of LayerViews)
+  NameVar_Array		lay_disp_modes; // #READ_ONLY layer display modes (not properly saved otherwise, due to reset construction of LayerViews)
 
   Network*		net() const {return (Network*)data();}
   T3NetNode*		node_so() const {return (T3NetNode*)inherited::node_so();}
@@ -512,8 +511,8 @@ public:
   // re-renders entire display (calls Render_impl) -- assumes structure is still same but various display elements may have changed.  if structure is different, then an InitDisplay is required first
   virtual void		UpdateUnitValues();
   // *only* updates unit values -- display and structure must be the same as last time
-  virtual void		InitCtrHist();
-  // initialize based on current settings
+  virtual void		InitCtrHist(bool force = false);
+  // initialize counter history based on current settings -- this also serves as master for all history -- if force, then always reset history index positions too
   virtual void		SaveCtrHist();
   // save counter history -- called in UpdateUnitValues()
   virtual void 		UpdatePanel(); // updates nvp, esp. after UAE etc.
@@ -572,7 +571,9 @@ public:
   override bool		hasViewProperties() const { return true; } //TODO: NUKE, OBS
 
 protected:
+  T3DataView_PtrList	prjns; 		// #IGNORE list of prjn objects under us
   NetViewPanel*		nvp; // created during first Render
+  bool			no_init_on_rerender; // set by some routines to prevent init on render to avoid losing history data -- only when known to be safe..
 
   override void 	ChildAdding(taDataView* child); // #IGNORE also add to aux list
   override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
@@ -693,7 +694,8 @@ protected:
   int			cmd_x; // current coords of where to place next button/ctrl
   int			cmd_y;
   BaseSpec*		m_cur_spec; // cur spec chosen -- only compared, so ok if stale
-  bool			req_full_redraw;
+  bool			req_full_render; // when updating, call Render on netview
+  bool			req_full_build;	 // when updating, call Build on netview
   override void		UpdatePanel_impl();
   override void		GetValue_impl();
   override void		CopyFrom_impl();

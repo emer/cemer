@@ -412,9 +412,9 @@ public:
 
  public slots:
   virtual void 	CallFunList(void* prg); // call step on given program (void* needed for callback)
-  virtual void  Step1();		// step level callbacks
-  virtual void  Step5();
-  virtual void  Step10();
+  virtual void  Step1(bool on);		// step level callbacks
+  virtual void  Step5(bool on);
+  virtual void  Step10(bool on);
 
  protected:
   Program*	last_step;	// last program stepped -- used to reset step size when switching

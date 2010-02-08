@@ -2314,7 +2314,11 @@ void taiProgStepButton::CallFunList(void* itm) {
   new_step_n = -1;
 }
 
-void taiProgStepButton::Step1() {
+void taiProgStepButton::Step1(bool on) {
+  if(!on) {
+    stp1->setChecked(true);	// can't click off!
+    return;
+  }
   Program* prg = (Program*)base; // definitively this
   if(!prg) return;
   new_step_n = 1;
@@ -2322,7 +2326,11 @@ void taiProgStepButton::Step1() {
   stp10->setChecked(false);
 }
 
-void taiProgStepButton::Step5() {
+void taiProgStepButton::Step5(bool on) {
+  if(!on) {
+    stp5->setChecked(true);	// can't click off!
+    return;
+  }
   Program* prg = (Program*)base; // definitively this
   if(!prg) return;
   new_step_n = 5;
@@ -2331,7 +2339,11 @@ void taiProgStepButton::Step5() {
 }
 
 
-void taiProgStepButton::Step10() {
+void taiProgStepButton::Step10(bool on) {
+  if(!on) {
+    stp10->setChecked(true);	// can't click off!
+    return;
+  }
   Program* prg = (Program*)base; // definitively this
   if(!prg) return;
   new_step_n = step10_val;
@@ -2359,27 +2371,25 @@ QWidget* taiProgStepButton::GetButtonRep() {
   newbar->addWidget(lbl);
 
   QWidget* intstak = new QWidget();
-  QVBoxLayout* vbl = new QVBoxLayout(intstak);
-  vbl->setMargin(0); vbl->setSpacing(0);
+  QGridLayout* glay = new QGridLayout(intstak);
+  glay->setMargin(0); glay->setSpacing(1);
 
-  stp1 = new QCheckBox("1", intstak);
+  stp1 = new QCheckBox(intstak);
   stp1->setToolTip("step by single (1) steps");
-  stp1->setFont(taiM->menuFont(taiMisc::sizSmall));
-  connect(stp1, SIGNAL(clicked(bool)), this, SLOT(Step1()) );
-  vbl->addWidget(stp1);
+  connect(stp1, SIGNAL(clicked(bool)), this, SLOT(Step1(bool)) );
+  glay->addWidget(stp1, 0, 0, Qt::AlignHCenter);
 
-  stp5 = new QCheckBox("5", intstak);
+  stp5 = new QCheckBox(intstak);
   stp5->setToolTip("step by 5 steps per step click");
-  stp5->setFont(taiM->menuFont(taiMisc::sizSmall));
-  connect(stp5, SIGNAL(clicked(bool)), this, SLOT(Step5()) );
-  vbl->addWidget(stp5);
+  connect(stp5, SIGNAL(clicked(bool)), this, SLOT(Step5(bool)) );
+  glay->addWidget(stp5, 0, 1, Qt::AlignHCenter);
 
-  stp10 = new QCheckBox("10", intstak);
+  stp10 = new QCheckBox(intstak);
   stp10->setToolTip("step by 10 steps per step click, or amount shown if different from 10 (if program step_n != {1,5,10}");
-  stp10->setFont(taiM->menuFont(taiMisc::sizSmall));
-  connect(stp10, SIGNAL(clicked(bool)), this, SLOT(Step10()) );
-  vbl->addWidget(stp10);
+  connect(stp10, SIGNAL(clicked(bool)), this, SLOT(Step10(bool)) );
+  glay->addWidget(stp10, 0, 2, Qt::AlignHCenter);
 
+  step10_val = 10;
   int stp_n = last_step_n;
   if(new_step_n > 0)
     stp_n = new_step_n;
@@ -2393,9 +2403,16 @@ QWidget* taiProgStepButton::GetButtonRep() {
   else {
     step10_val = stp_n;
     stp10->setChecked(true);
-    stp10->setText(String(step10_val));
   }
-  
+
+  int steps[3] = {1,5,step10_val};
+
+  for(int i=0;i<3;i++) {
+    lbl = new QLabel(String(steps[i]));
+    lbl->setFont(taiM->menuFont(taiMisc::sizSmall));
+    glay->addWidget(lbl, 1, i, Qt::AlignHCenter);
+  }
+
   newbar->addWidget(intstak);
 
   for(int i=0;i<prg->sub_progs_step.size; i++) {

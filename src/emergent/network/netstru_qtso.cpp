@@ -185,15 +185,26 @@ void UnitGroupView::AllocUnitViewData() {
   NetView* nv = this->nv();
   Unit_Group* ugrp = this->ugrp(); //cache
   int mbs_sz = MAX(nv->membs.size, 1);
-  uvd_bases.SetGeom(3, ugrp->geom.x, ugrp->geom.y, mbs_sz);
-  uvd_hist.SetGeom(4, ugrp->geom.x, ugrp->geom.y, mbs_sz, nv->hist_max);
-  uvd_hist_idx.Reset();
+  MatrixGeom nwgm1(3, ugrp->geom.x, ugrp->geom.y, mbs_sz);
+  if(uvd_bases.geom != nwgm1) {
+    uvd_bases.SetGeomN(nwgm1);
+  }
+  MatrixGeom nwgm2(4, ugrp->geom.x, ugrp->geom.y, mbs_sz, nv->hist_max);
+  bool reset_idx = nv->hist_reset_req; // if requested somewhere, reset us!
+  if(uvd_hist.geom != nwgm2) {
+    uvd_hist.SetGeomN(nwgm2);
+    reset_idx = true;
+    nv->hist_reset_req = true;	// tell main netview history guy to reset and reset everyone
+  }
+  if(reset_idx) {
+    uvd_hist_idx.Reset();
+  }
 }
 
 void UnitGroupView::BuildAll() {
   Reset(); // in case where we are rebuilding
-  AllocUnitViewData();
   NetView* nv = this->nv();
+  UpdateUnitViewBases(nv->unit_src);
   if(nv->unit_disp_mode == NetView::UDM_BLOCK) return; // optimized
 
   Unit_Group* ugrp = this->ugrp(); //cache
@@ -211,7 +222,6 @@ void UnitGroupView::BuildAll() {
 }
 
 void UnitGroupView::InitDisplay() {
-  AllocUnitViewData(); // make sure we have correct space in uvd array
   NetView* nv = this->nv();
   UpdateUnitViewBases(nv->unit_src);
 }
@@ -225,7 +235,12 @@ float UnitGroupView::GetUnitDisplayVal(const TwoDCoord& co, void*& base) {
   if(nv->hist_idx > 0) {
     int cidx = (uvd_hist_idx.length - nv->hist_idx);
     int midx = uvd_hist_idx.CircIdx(cidx);
-    val = uvd_hist.SafeEl(co.x, co.y, nv->unit_disp_idx, midx);
+    if(uvd_hist.InRange(co.x, co.y, nv->unit_disp_idx, midx))
+      val = uvd_hist.FastEl(co.x, co.y, nv->unit_disp_idx, midx);
+    else {
+      taMisc::Info("midx idx problem:", String(midx), "cidx:",
+		   String(cidx), "mbs:", String(uvd_hist.dim(3)));
+    }
   }
   else {
     switch (nv->unit_md_flags) {
@@ -246,8 +261,10 @@ float UnitGroupView::GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*&
   NetView* nv = this->nv();
   float val = nv->scale.zero;
   base = uvd_bases.SafeEl(co.x, co.y, midx);
-  if(!base) return val;
   MemberDef* md = nv->membs.SafeEl(midx);
+  if(!base) {
+    return val;
+  }
   if(md) {
     if(md->type->InheritsFrom(&TA_float))
       val = *((float*)base);
@@ -260,9 +277,9 @@ float UnitGroupView::GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*&
 }
 
 void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
-  AllocUnitViewData();
   Unit_Group* ugrp = this->ugrp(); //cache
   NetView* nv = this->nv();
+  AllocUnitViewData();
   for(int midx=0;midx<nv->membs.size;midx++) {
     MemberDef* disp_md = nv->membs[midx];
     String nm = disp_md->name.before(".");
@@ -431,10 +448,12 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
       
       if((xp >= 0) && (xp < ugrp->geom.x) && (yp >= 0) && (yp < ugrp->geom.y)) {
 	Unit* unit = ugrp->FindUnitFmCoord(xp, yp);
-	if(unit) tnv->setUnitSrc(NULL, unit);
+	if(unit && tnv->unit_src != unit) {
+	  tnv->setUnitSrc(NULL, unit);
+ 	  tnv->InitDisplay();	// this is apparently needed here!!
+	  tnv->UpdateDisplay();
+	}
       }
-      tnv->InitDisplay();
-      tnv->UpdateDisplay();
       got_one = true;
     }
   }
@@ -454,7 +473,6 @@ void UnitGroupView::Render_pre() {
   if(nv->unit_disp_mode != NetView::UDM_BLOCK)
     no_units = false;
 
-  AllocUnitViewData();
   setNode(new T3UnitGroupNode(this, no_units));
   //NOTE: we create/adjust the units in the Render_impl routine
   T3UnitGroupNode* ugrp_so = node_so(); // cache
@@ -2289,6 +2307,9 @@ void NetView::Initialize() {
   wt_line_swt = false;
   snap_bord_disp = false;
   snap_bord_width = 4.0f;
+
+  no_init_on_rerender = false;
+  hist_reset_req = false;
 }
 
 void NetView::Destroy() {
@@ -2515,7 +2536,7 @@ void NetView::GetMembs() {
     if(!unit_src && net()->layers.leaves > 0) {
       Layer* lay = net()->layers.Leaf(net()->layers.leaves-1);
       if(lay->units.leaves > 0)
-	setUnitSrc(NULL, unit_src = lay->units.Leaf(0));
+	setUnitSrc(NULL, lay->units.Leaf(0));
     }
   }
 
@@ -2644,10 +2665,7 @@ void NetView::GetMembs() {
   }
 }
 
-void NetView::InitCtrHist() {
-  hist_idx = 0;
-  ctr_hist_idx.Reset();
-
+void NetView::InitCtrHist(bool force) {
   int chld_idx = 0;
   TypeDef* td = net()->GetTypeDef();
   for(int i=td->members.size-1; i>=0; i--) {
@@ -2657,7 +2675,17 @@ void NetView::InitCtrHist() {
     chld_idx++;
   }
   n_counters = chld_idx;
-  ctr_hist.SetGeom(2, n_counters, hist_max); // just set here -- likely to be same..
+  MatrixGeom nwgm(2, n_counters, hist_max);
+  bool init_idx = force;
+  if(ctr_hist.geom != nwgm) {
+    ctr_hist.SetGeomN(nwgm); // just set here -- likely to be same..
+    init_idx = true;
+  }
+  if(init_idx) {
+    ctr_hist_idx.Reset();
+    hist_reset_req = true;	// tell everyone about it
+    hist_idx = 0;
+  }
 }
 
 void NetView::GetUnitColor(float val,  iColor& col, float& sc_val) {
@@ -2682,14 +2710,14 @@ void NetView::GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val,
 }
 
 void NetView::InitDisplay(bool init_panel) {
-  // this build all doesn't work -- nukes too many things that are not 
-  // rebuilt later (requires full re-Render, not just Render_impl. not sure
-  // why not just do that..  much more invasive I guess
-//   BuildAll();	// rebuild views
-
+  // note: init display is kind of an odd bird -- subsumed under Render but also avail
+  // independently -- deals with some kinds of changes but not really full structural
+  // I guess it is just a "non structural state update" container..
   GetMaxSize();
-
   GetMembs();
+
+  hist_reset_req = false;	// this flag is used to sync history index resetting among
+				// all the history elements in unit groups and network
   InitCtrHist();
 
   if (init_panel) {
@@ -2709,10 +2737,19 @@ void NetView::InitDisplay(bool init_panel) {
     }
   }
 
+  // this init display will also set hist_reset_req for unit groups, if needed
   if(children.size > 0) {
     LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
     lv->InitDisplay();
   }
+  if(hist_reset_req) {		// someone reset history somewhere -- sync everyone!
+    InitCtrHist(true);		// force!
+    if(children.size > 0) {
+      LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
+      lv->InitDisplay();	// unit groups will reset in here
+    }
+  }
+  hist_reset_req = false;
 }
 
 void NetView::InitPanel() {
@@ -2770,7 +2807,9 @@ const iColor NetView::bgColor(bool& ok) const {
 
 
 void NetView::Render_pre() {
-  InitDisplay();
+  if(!no_init_on_rerender)
+    InitDisplay();
+  no_init_on_rerender = false;
   
   bool show_drag = true;;
   T3ExaminerViewer* vw = GetViewer();
@@ -3271,6 +3310,8 @@ void NetView::Render_wt_lines() {
 }
 
 void NetView::Reset_impl() {
+  hist_idx = 0;
+  ctr_hist_idx.Reset();
   prjns.Reset();
   inherited::Reset_impl();
 }
@@ -3329,6 +3370,7 @@ void NetView::setUnitSrc(UnitView* uv, Unit* unit) {
       uv->picked = true;
     unit_src_path = unit_src->GetPath(NULL, net());
   }
+  hist_idx = 0;			// reset index to current time for new unit selection
 }
 
 void NetView::setUnitDisp(int value) {
@@ -3368,6 +3410,7 @@ void NetView::setUnitDispMd(MemberDef* md) {
 void NetView::UpdateViewerModeForMd(MemberDef* md) {
   T3ExaminerViewer* vw = GetViewer();
   if(vw) {
+    no_init_on_rerender = true;	// prevent loss of history..
     if(md->name.startsWith("r.") || md->name.startsWith("s.")) {
       vw->setInteractionModeOn(true, true); // select! -- true = re-render
     }
@@ -3476,7 +3519,7 @@ void NetView::viewWin_NotifySignal(ISelectableHost* src, int op) {
   UnitView* uv = (UnitView*)ci->This();
   Unit* unit_new = uv->unit();
   setUnitSrc(uv, unit_new);
-//   InitDisplay();
+  InitDisplay();
   UpdateDisplay();
 }
 
@@ -3494,7 +3537,8 @@ NetViewPanel::NetViewPanel(NetView* dv_)
 {
   int font_spec = taiMisc::fonMedium;
   m_cur_spec = NULL;
-  req_full_redraw = false;
+  req_full_render = false;
+  req_full_build = false;
 
   T3ExaminerViewer* vw = dv_->GetViewer();
   if(vw)
@@ -3692,8 +3736,8 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   histTB = new QToolBar(widg);
   layHistory->addWidget(histTB);
 
-  histTB->setMovable(true);
-  histTB->setFloatable(true);
+  histTB->setMovable(false);
+  histTB->setFloatable(false);
 
   chkHist = new QCheckBox("Hist: Save", histTB);
   chkHist->setToolTip("Save display value history, which can then be replayed using VCR-style buttons in this toolbar -- value to the right is number of steps to save");
@@ -3837,10 +3881,13 @@ void NetViewPanel::UpdatePanel_impl() {
   ++updating;
   NetView* nv = this->nv(); // cache
   if (!nv) return;
-  if (req_full_redraw) {
-    req_full_redraw = false;
+  if(req_full_build) {
+    req_full_build = false;
     nv->Reset();
     nv->BuildAll();
+  }
+  if(req_full_render) {
+    req_full_render = false;
     nv->Render();
   }
   
@@ -3900,7 +3947,8 @@ void NetViewPanel::GetValue_impl() {
   inherited::GetValue_impl();
   NetView* nv = this->nv(); // cache
   if (!nv) return;
-  req_full_redraw = true;	// not worth micro-managing: MOST changes require full redraw!
+  req_full_render = true;	// everything requires a re-render
+  req_full_build = false;
 
   nv->display = chkDisplay->isChecked();
   nv->lay_mv = chkLayMove->isChecked();
@@ -3910,9 +3958,10 @@ void NetViewPanel::GetValue_impl() {
   int i; 
   cmbUnitText->GetEnumValue(i);
   nv->unit_text_disp = (NetView::UnitTextDisplay)i;
-  
+
+  // unit disp mode is only guy requiring full build!
   cmbDispMode->GetEnumValue(i);
-  //  req_full_redraw = req_full_redraw || (nv->unit_disp_mode != i);
+  req_full_build = req_full_build || (nv->unit_disp_mode != i);
   nv->unit_disp_mode = (NetView::UnitDisplayMode)i;
   
   cmbPrjnDisp->GetEnumValue(i);
