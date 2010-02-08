@@ -1420,6 +1420,60 @@ bool taDataGen::GenNamedFeatPats(DataTable* dest, const String& dest_col,
 }
 
 ///////////////////////////////////////////////////////////////////
+// gen sorted permutations
+
+bool taDataGen::GenSortedPermutations(DataTable* p,int n) {
+  int i;
+  int_Matrix* v = new int_Matrix;
+  v->SetGeom(2,n,1);
+  p->Reset();
+  p->NewColMatrix(taBase::VT_INT,"p",2,n,1);
+  if(n>0){
+    for (i=0;i<n;i++)
+      v->Set_Flat(i+1,i);
+    GSP_permute(p,v,0,n);
+  }
+  delete v;
+  return true;
+}
+
+void taDataGen::GSP_permute(DataTable* p,int_Matrix* v,int start,int n) {
+  int i,j;
+  GSP_write(p,v,n);
+  if(start<n){
+    for (i=n-2;i>=start;i--) {
+      for (j=i+1;j<n;j++) {
+        GSP_swap(v,i,j);
+        GSP_permute(p,v,i+1,n);
+      }
+      GSP_rotateLeft(v,i,n);
+    }
+  }
+}
+
+void taDataGen::GSP_write(DataTable* p,int_Matrix* v,int size) {
+  int i, rows;
+  p->AddRows();
+  for (i=0;i<size;i++)
+    p->SetMatrixVal(v->FastEl_Flat(i),0,p->rows-1,i,0);
+}
+
+void taDataGen::GSP_swap(int_Matrix* v,int i,int j) {
+  int t;
+  t=v->FastEl_Flat(i);
+  v->Set_Flat(v->FastEl_Flat(j),i);
+  v->Set_Flat(j,t);
+}
+
+void taDataGen::GSP_rotateLeft(int_Matrix* v,int start,int n) {
+  int tmp,i;
+  tmp=v->FastEl_Flat(start);
+  for (i=start;i<n-1;i++)
+    v->Set_Flat(v->FastEl_Flat(i+i),i);
+  v->Set_Flat(tmp,n-1);
+}
+
+///////////////////////////////////////////////////////////////////
 // misc data functions
 
 static bool taDataGen_GetDirFiles_impl(DataTable* dest, const String& dir_path, 

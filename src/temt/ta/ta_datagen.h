@@ -258,6 +258,20 @@ public:
 				     const String& feat_name_col_nm = "Name");
   // #CAT_FeatPats #MENU_BUTTON #MENU_ON_FeatPats generate patterns in dest table (dest_col) by stacking together feature patterns from feat_vocab (feat_col_nm) based on list of names given in names table (name_col_nm) -- name column must contain a String matrix -- items are looked up by name in the feat_name_col_nm -- automatically detects how many features to use based on relative geometries (dest must have same innermost (x) dimension as feat pats, next (y) must be even multiple, feat pats must be 2d matrix)
 
+///////////////////////////////////////////////////////////////////
+// gen sorted permutations
+
+  static bool       GenSortedPermutations(DataTable* p,int n);
+  // #CAT_Lists generate a sorted list of all possible n! permutations in sorted order and write them to input table p. if n=3, permutations will contain a table with a 3x1 matrix column that has 3! = 6 rows with the following data: {1,2,3}, {1,3,2}, {2,1,3}, {2,3,1}, {3,1,2}, {3,2,1}. any n > 0 works. adapted from "Practical Algorithms in C++"
+  static void       GSP_permute(DataTable* p,int_Matrix* v,int start,int n);
+  // #IGNORE
+  static void       GSP_write(DataTable* p,int_Matrix* v,int size);
+  // #IGNORE
+  static void       GSP_swap(int_Matrix* v,int i,int j);
+  // #IGNORE
+  static void       GSP_rotateLeft(int_Matrix* v,int start,int n);
+  // #IGNORE
+
   ///////////////////////////////////////////////////////////////////
   // misc data sources
 

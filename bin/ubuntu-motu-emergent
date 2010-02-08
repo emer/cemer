@@ -32,7 +32,7 @@ Section: science
 Priority: extra
 Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
 XSBC-Original-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
-Build-Depends: debhelper (>= 7.0.17), libqt4-dev, libcoin60-dev, libreadline5-dev, libgsl0-dev, libode0-dev, libsndfile1-dev
+Build-Depends: debhelper (>= 7.0.17), libqt4-dev, libcoin60-dev, libreadline5-dev, libgsl0-dev, libode0-dev, libsndfile1-dev, cmake
 Standards-Version: 3.8.3
 Homepage: http://grey.colorado.edu/emergent
 
