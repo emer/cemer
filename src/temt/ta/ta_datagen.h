@@ -263,13 +263,13 @@ public:
 
   static bool       GenSortedPermutations(DataTable* p,int n);
   // #CAT_Lists generate a sorted list of all possible n! permutations in sorted order and write them to input table p. if n=3, permutations will contain a table with a 3x1 matrix column that has 3! = 6 rows with the following data: {1,2,3}, {1,3,2}, {2,1,3}, {2,3,1}, {3,1,2}, {3,2,1}. any n > 0 works. adapted from "Practical Algorithms in C++"
-  static void       GSP_permute(DataTable* p,int_Matrix* v,int start,int n);
+  static void       GSP_permute(DataTable* p,int* v,int start,int n);
   // #IGNORE
-  static void       GSP_write(DataTable* p,int_Matrix* v,int size);
+  static void       GSP_write(DataTable* p,int* v,int size);
   // #IGNORE
-  static void       GSP_swap(int_Matrix* v,int i,int j);
+  static void       GSP_swap(int* v,int i,int j);
   // #IGNORE
-  static void       GSP_rotateLeft(int_Matrix* v,int start,int n);
+  static void       GSP_rotateLeft(int* v,int start,int n);
   // #IGNORE
 
   ///////////////////////////////////////////////////////////////////

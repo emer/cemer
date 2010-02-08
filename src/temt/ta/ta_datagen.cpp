@@ -1424,23 +1424,22 @@ bool taDataGen::GenNamedFeatPats(DataTable* dest, const String& dest_col,
 
 bool taDataGen::GenSortedPermutations(DataTable* p,int n) {
   int i;
-  int_Matrix* v = new int_Matrix;
-  v->SetGeom(2,n,1);
+  int *v = new int[n];
+  p->StructUpdate(true);
   p->Reset();
   p->NewColMatrix(taBase::VT_INT,"p",2,n,1);
-  if(n>0){
-    for (i=0;i<n;i++)
-      v->Set_Flat(i+1,i);
-    GSP_permute(p,v,0,n);
-  }
-  delete v;
+  for (i=0;i<n;i++)
+    v[i]=i+1;
+  GSP_permute(p,v,0,n);
+  delete [] v;
+  p->StructUpdate(false);
   return true;
 }
 
-void taDataGen::GSP_permute(DataTable* p,int_Matrix* v,int start,int n) {
-  int i,j;
+void taDataGen::GSP_permute(DataTable* p,int *v,int start,int n) {
   GSP_write(p,v,n);
   if(start<n){
+    int i,j;
     for (i=n-2;i>=start;i--) {
       for (j=i+1;j<n;j++) {
         GSP_swap(v,i,j);
@@ -1451,26 +1450,27 @@ void taDataGen::GSP_permute(DataTable* p,int_Matrix* v,int start,int n) {
   }
 }
 
-void taDataGen::GSP_write(DataTable* p,int_Matrix* v,int size) {
+void taDataGen::GSP_write(DataTable* p,int* v,int size) {
   int i, rows;
   p->AddRows();
-  for (i=0;i<size;i++)
-    p->SetMatrixVal(v->FastEl_Flat(i),0,p->rows-1,i,0);
+  if (v!=0){
+    for (i=0;i<size;i++)
+      p->SetMatrixVal(v[i],0,p->rows-1,i,0);
+  }
 }
 
-void taDataGen::GSP_swap(int_Matrix* v,int i,int j) {
+void taDataGen::GSP_swap(int* v,int i,int j) {
   int t;
-  t=v->FastEl_Flat(i);
-  v->Set_Flat(v->FastEl_Flat(j),i);
-  v->Set_Flat(j,t);
+  t=v[i];
+  v[i]=v[j];
+  v[j]=t;
 }
 
-void taDataGen::GSP_rotateLeft(int_Matrix* v,int start,int n) {
-  int tmp,i;
-  tmp=v->FastEl_Flat(start);
-  for (i=start;i<n-1;i++)
-    v->Set_Flat(v->FastEl_Flat(i+i),i);
-  v->Set_Flat(tmp,n-1);
+void taDataGen::GSP_rotateLeft(int* v,int start,int n) {
+  int tmp = v[start];
+  for (int i=start;i<n-1;i++)
+    v[i]=v[i+1];
+  v[n-1]=tmp;
 }
 
 ///////////////////////////////////////////////////////////////////
