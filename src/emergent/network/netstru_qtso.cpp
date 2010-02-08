@@ -2276,7 +2276,8 @@ void NetView::Initialize() {
   n_counters = 0;
   hist_idx = 0;
   hist_save = true;
-  hist_max = 20;
+  hist_max = 100;
+  hist_ff = 5;
 
   unit_sr = NULL;
   unit_md_flags = MD_UNKNOWN;
@@ -2332,6 +2333,15 @@ void NetView::CutLinks() {
 void NetView::CopyFromView(NetView* cp) {
   Copy_(*cp);
   // nothing else to do..
+}
+
+String NetView::HistMemUsed() {
+  String rval = "no units";
+  if(net()) {
+    int mem = net()->n_units * membs.size * sizeof(float) * hist_max;
+    rval = String((float)mem / 1.0e6f) + "MB";
+  }
+  return rval;
 }
 
 void NetView::ChildUpdateAfterEdit(taBase* child, bool& handled) {
@@ -2493,6 +2503,22 @@ UnitView* NetView::FindUnitView(Unit* unit) {
 // this fills a member group with the valid memberdefs from the units and connections
 void NetView::GetMembs() { 
   if(!net()) return;
+
+  // try as hard as possible to find a unit to view if nothing selected -- this 
+  // minimizes issues with history etc
+  if(!unit_src) {
+    if(unit_src_path.nonempty()) {
+      MemberDef* umd;
+      Unit* nu = (Unit*)net()->FindFromPath(unit_src_path, umd);
+      if(nu) setUnitSrc(NULL, nu);
+    }
+    if(!unit_src && net()->layers.leaves > 0) {
+      Layer* lay = net()->layers.Leaf(net()->layers.leaves-1);
+      if(lay->units.leaves > 0)
+	setUnitSrc(NULL, unit_src = lay->units.Leaf(0));
+    }
+  }
+
   setUnitDispMd(NULL);
   membs.Reset();
   TypeDef* prv_td = NULL;
@@ -3301,6 +3327,7 @@ void NetView::setUnitSrc(UnitView* uv, Unit* unit) {
   if ((bool)unit_src) {
     if(uv)
       uv->picked = true;
+    unit_src_path = unit_src->GetPath(NULL, net());
   }
 }
 
@@ -3449,7 +3476,7 @@ void NetView::viewWin_NotifySignal(ISelectableHost* src, int op) {
   UnitView* uv = (UnitView*)ci->This();
   Unit* unit_new = uv->unit();
   setUnitSrc(uv, unit_new);
-  InitDisplay();
+//   InitDisplay();
   UpdateDisplay();
 }
 
@@ -3664,13 +3691,18 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 
   histTB = new QToolBar(widg);
   layHistory->addWidget(histTB);
+
+  histTB->setMovable(true);
+  histTB->setFloatable(true);
+
   chkHist = new QCheckBox("Hist: Save", histTB);
-  chkHist->setToolTip("Save display value history, which can then be replayed..");
+  chkHist->setToolTip("Save display value history, which can then be replayed using VCR-style buttons in this toolbar -- value to the right is number of steps to save");
   connect(chkHist, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   histTB->addWidget(chkHist);
 
-  fldHist = dl.Add(new taiField(&TA_int, this, NULL, widg));
-  histTB->addWidget(fldHist->GetRep());
+  fldHistMax = dl.Add(new taiField(&TA_int, this, NULL, widg));
+  fldHistMax->rep()->setCharWidth(4);
+  histTB->addWidget(fldHistMax->GetRep());
 
   histTB->addSeparator();
 
@@ -3679,7 +3711,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   connect(actBack_All, SIGNAL(triggered()), this, SLOT(hist_back_all()) );
 
   actBack_F = histTB->addAction("<<");
-  actBack_F->setToolTip("Back 10 steps in history of display values");
+  actBack_F->setToolTip("Back ff steps in history of display values (edit field on far right to change ff steps to take)");
   connect(actBack_F, SIGNAL(triggered()), this, SLOT(hist_back_f()) );
 
   actBack = histTB->addAction("<");
@@ -3691,7 +3723,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   connect(actFwd, SIGNAL(triggered()), this, SLOT(hist_fwd()) );
 
   actFwd_F = histTB->addAction(">>" );
-  actFwd_F->setToolTip("Forward 10 steps in history of display values");
+  actFwd_F->setToolTip("Forward ff steps in history of display values (edit field on far right to change ff steps to take)");
   connect(actFwd_F, SIGNAL(triggered()), this, SLOT(hist_fwd_f()) );
 
   actFwd_All = histTB->addAction(">|" );
@@ -3700,13 +3732,23 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 
   histTB->addSeparator();
  
-  QLabel* lblbk = taiM->NewLabel("Steps Back:", histTB, font_spec);
-  lblbk->setToolTip("number of steps back in history currently viewing");
+  QLabel* lblbk = taiM->NewLabel("Hist, Pos:", histTB, font_spec);
+  lblbk->setToolTip("number of stored display states in the history buffer right now, and current position relative to the last update (pos numbers = further back in time)");
   histTB->addWidget(lblbk);
 
-  lblHist = taiM->NewLabel("100", histTB, font_spec);
+  lblHist = taiM->NewLabel("100, 100", histTB, font_spec);
   lblHist->setToolTip("number of steps back in history currently viewing");
   histTB->addWidget(lblHist);
+
+  histTB->addSeparator();
+
+  QLabel* lblff = taiM->NewLabel("ff:", histTB, font_spec);
+  lblff->setToolTip("number of steps to take when going fast-forward or fast-back through history");
+  histTB->addWidget(lblff);
+
+  fldHistFF = dl.Add(new taiField(&TA_int, this, NULL, widg));
+  fldHistFF->rep()->setCharWidth(4);
+  histTB->addWidget(fldHistFF->GetRep());
 
   layHistory->addStretch();
 //   histTB->addStretch();
@@ -3827,8 +3869,9 @@ void NetViewPanel::UpdatePanel_impl() {
   chkXYSquare->setChecked(nv->view_params.xy_square);
 
   chkHist->setChecked(nv->hist_save);
-  fldHist->GetImage((String)nv->hist_max);
-  lblHist->setText(String(nv->hist_idx));
+  fldHistMax->GetImage((String)nv->hist_max);
+  lblHist->setText(String(nv->ctr_hist_idx.length) + ", " + String(nv->hist_idx) + "  ");
+  fldHistFF->GetImage((String)nv->hist_ff);
 
   // update var selection
   int i = 0;
@@ -3893,7 +3936,8 @@ void NetViewPanel::GetValue_impl() {
   nv->view_params.xy_square = chkXYSquare->isChecked();
 
   nv->hist_save = chkHist->isChecked();
-  nv->hist_max = (int)fldHist->GetValue();
+  nv->hist_max = (int)fldHistMax->GetValue();
+  nv->hist_ff = (int)fldHistFF->GetValue();
 
   nv->SetScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max(), false);
 }
@@ -3949,7 +3993,7 @@ void NetViewPanel::hist_back_f() {
   if(!nv_->hist_save) return;
 
   if(nv_->hist_idx >= nv_->ctr_hist_idx.length) return;
-  nv_->hist_idx += 5;
+  nv_->hist_idx += nv_->hist_ff;
   nv_->hist_idx = MIN(nv_->ctr_hist_idx.length, nv_->hist_idx);
   nv_->UpdateDisplay(true);
 }
@@ -3972,7 +4016,7 @@ void NetViewPanel::hist_fwd_f() {
   if(!nv_->hist_save) return;
 
   if(nv_->hist_idx < 1) return;
-  nv_->hist_idx -= 5;
+  nv_->hist_idx -= nv_->hist_ff;
   nv_->hist_idx = MAX(0, nv_->hist_idx);
   nv_->UpdateDisplay(true);
 }

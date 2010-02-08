@@ -460,6 +460,7 @@ public:
   MemberSpace		membs;		// #NO_SAVE #NO_COPY list of all the members possible in units; note: all items are new clones
   String_Array	  	cur_unit_vals;  // #HIDDEN #NO_COPY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
   UnitRef		unit_src; 	// #NO_SAVE #NO_COPY unit last picked (if any) for display
+  String		unit_src_path;	// #HIDDEN path of unit_src unit relative to the network -- used for saving and reloading
   bool			unit_con_md;    // #NO_SAVE #NO_COPY true if memberdef is from a connection as opposed to a direct unit var
   MemberDef*		unit_disp_md;   // #NO_SAVE #NO_COPY memberdef (if any) of Unit (or Connection) to display
   int			unit_disp_idx;	// #NO_SAVE #NO_COPY index of memberdef (if any) of Unit (or Connection) to display
@@ -469,6 +470,7 @@ public:
   int			hist_idx;	// history index -- when rewinding backwards, how many steps back from current time to view -- -1 = present
   bool			hist_save;	// whether to save history right now or not -- can slow things down so need quick option to turn off
   int			hist_max;	// #MIN_1 how much history of state information to store -- updated each time UpdateUnitValues is called
+  int			hist_ff;	// #MIN_2 how many steps to take in the fast forward/ fast backward interface
 
   ScaleRange*		unit_sr; 	// #NO_SAVE #NO_COPY scalerange of disp_md
   MDFlags		unit_md_flags;  // #NO_SAVE type to display in units
@@ -553,6 +555,9 @@ public:
 
   virtual void		CopyFromView(NetView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner
+
+  virtual String	HistMemUsed();
+  // #BUTTON #USE_RVAL returns amount of memory used to store history in user-readable format
 
   override void		Dump_Load_post();
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); 
@@ -652,7 +657,8 @@ public:
   QHBoxLayout*		 layHistory;
   QToolBar*		   histTB;
   QCheckBox*		   chkHist;
-  taiField*		   fldHist;
+  taiField*		   fldHistMax;
+  taiField*		   fldHistFF;
   QAction* 		   actBack_All;
   QAction* 		   actBack_F;
   QAction* 		   actBack;
