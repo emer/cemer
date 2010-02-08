@@ -396,6 +396,8 @@ public:
 
   static double fact_ln(int n);
   // #CAT_Probability natural log (ln) of n factorial (n!)
+  static double fact(int n);
+  // #CAT_Probability factorial of n
   static double bico_ln(int n, int j);
   // #CAT_Probability natural log (ln) of n choose j (binomial)
   static double hyperg(int j, int s, int t, int n);

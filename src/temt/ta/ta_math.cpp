@@ -30,6 +30,7 @@
 # include <gsl/gsl_fit.h>
 # include <gsl/gsl_fft_real.h>
 # include <gsl/gsl_fft_halfcomplex.h>
+#include  <gsl/gsl_sf.h>
 #endif
 
 #include <math.h>
@@ -338,6 +339,10 @@ double taMath_double::fact_ln(int n) {
   table.size = n+1;
 
   return (table[n] = gamma_ln(n + 1.0));
+}
+
+double taMath_double::fact(int n) {
+  return gsl_sf_fact(n);
 }
 
 double taMath_double::bico_ln(int n, int j) {
@@ -3036,8 +3041,6 @@ float taMath_float::gamma_dev(int ia) {
   }
   return x;
 }
-
-
 
 /**********************************
   the normal distribution (& error fun)
