@@ -954,6 +954,8 @@ public:
 
   static float fact_ln(int n);
   // #CAT_Probability natural log (ln) of n factorial (n!)
+  static float fact(int n);
+  // #CAT_Probability factorial of n
   static float bico_ln(int n, int j);
   // #CAT_Probability natural log (ln) of n choose j (binomial)
   static float hyperg(int j, int s, int t, int n);

@@ -2727,6 +2727,10 @@ float taMath_float::fact_ln(int n) {
   return (table[n] = gamma_ln(n + 1.0));
 }
 
+float taMath_float::fact(int n) {
+  return (float)gsl_sf_fact(n);
+}
+
 float taMath_float::bico_ln(int n, int j) {
   return fact_ln(n)-fact_ln(j)-fact_ln(n-j);
 }
