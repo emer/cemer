@@ -81,12 +81,12 @@ QuarterExaminerViewer::QuarterExaminerViewer(QWidget* parent)
   lhs_vbox->setMargin(0); lhs_vbox->setSpacing(0);
   main_hbox->addLayout(lhs_vbox);
 
-  quarter = new QuarterWidget(this);
+  quarter = new QuarterWidget(QGLFormat(QGL::SampleBuffers), this);
   main_hbox->addWidget(quarter);
 
   // set any initial configs for quarter widget here (or somewhere else if you please)
   quarter->setInteractionModeEnabled(true);
-  quarter->setTransparencyType(QuarterWidget::BLEND); // this is a good default
+  quarter->setTransparencyType(QuarterWidget::NONE); // this is a good default
   quarter->setNavigationModeFile(QUrl("coin:///scxml/navigation/examiner.xml"));
 
   rhs_vbox = new QVBoxLayout;

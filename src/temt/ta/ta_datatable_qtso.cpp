@@ -1753,6 +1753,8 @@ void GridTableView::RenderLines(){
   SoSeparator* body = node_so->body(); // cache
   body->removeAllChildren(); //should already have been done
 
+  if(dataTable()->data.size == 0) return;
+
   // master font -- we only add a child font if different
   // doesn't seem to make much diff:
   SoComplexity* cplx = new SoComplexity;
