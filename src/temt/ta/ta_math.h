@@ -586,6 +586,9 @@ public:
 				double& cov11, double& sum_sq);
   // #CAT_Statistics computes the best-fit linear regression coefficients (b,m) of the model y = b + mx for the dataset (x, y). The variance-covariance matrix for the parameters (c0, c1) is estimated from the scatter of the points around the best-fit line and returned via the parameters (cov00, cov01, cov11). The sum of squares of the residuals from the best-fit line is returned in sum_sq.  See vec_correl to compute the correlation coefficient.
 
+  static bool vec_jitter_gauss(double_Matrix* vec, double stdev);
+  // #CAT_Statistics jitters all the non-zero elements of vec by a gaussian with stdev rounded to the nearest int. jittered indices below zero or above the length of the vector are rejittered until they fall inside. there must be at least one zero element. method is clobber safe - the number of elements after jittering is guaranteed to be the same as the number of elements before jittering. see also: http://en.wikipedia.org/wiki/Jitter#Random_jitter
+
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)
 
@@ -1143,6 +1146,9 @@ public:
 				float& b, float& m, float& cov00, float& cov01,
 				float& cov11, float& sum_sq);
   // #CAT_Statistics computes the best-fit linear regression coefficients (b,m) of the model y = b + mx for the dataset (x, y). The variance-covariance matrix for the parameters (c0, c1) is estimated from the scatter of the points around the best-fit line and returned via the parameters (cov00, cov01, cov11). The sum of squares of the residuals from the best-fit line is returned in sum_sq.  See vec_correl to compute the correlation coefficient.
+
+  static bool vec_jitter_gauss(float_Matrix* vec, float stdev);
+  // #CAT_Statistics jitters all the non-zero elements of vec by a gaussian with stdev. jittered indices below zero or above the length of the vector are rejittered until they fall inside. there must be at least one zero element. method is clobber safe - the number of elements after jittering is guaranteed to be the same as the number of elements before jittering. see also: http://en.wikipedia.org/wiki/Jitter#Random_jitter
 
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)

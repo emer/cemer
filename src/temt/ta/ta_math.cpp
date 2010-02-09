@@ -1311,6 +1311,50 @@ bool taMath_double::vec_regress_lin(const double_Matrix* x_vec, const double_Mat
 #endif
 }
 
+bool taMath_double::vec_jitter_gauss(double_Matrix* vec, double stdev) {
+  if(!vec_check_type(vec)) return false;
+  if(vec->size == 0) return false;
+
+  double_Array tmp;
+  int jitter, vec_size;
+  int zeroes = 0;
+  int new_index = -1;
+  double el;
+
+  vec_size = vec->size;
+  tmp.SetSize(vec_size);
+
+  for(int i=0;i<vec_size;i++) {
+    el = vec->FastEl_Flat(i);
+    if(el == 0.0f)
+      zeroes += 1;
+    tmp[i] = el;
+  }
+
+  if(zeroes == 0) {
+    taMisc::Error("There must be at least one non-zero element in vec");
+    return false;
+  }
+
+  vec->InitVals(0);
+
+  for (int i=0;i<vec_size;i++) {
+    el = tmp[i];
+    if(el != 0) {
+      while (new_index < 0 || new_index > vec_size) {
+  	jitter = int(Random::Gauss(stdev)+0.5f);
+  	new_index = jitter+i;	
+	if (vec->FastEl_Flat(new_index) != 0)
+	  new_index = -1;
+      }
+      vec->Set_Flat(el, new_index);
+      new_index = -1;
+    }
+  }
+
+  return true;
+}
+
 ///////////////////////////////////////
 // distance metrics (comparing two vectors)
 
@@ -3696,6 +3740,51 @@ bool taMath_float::vec_regress_lin(const float_Matrix* x_vec, const float_Matrix
   return rval;
 }
 
+bool taMath_float::vec_jitter_gauss(float_Matrix* vec, float stdev) {
+  if(!vec_check_type(vec)) return false;
+  if(vec->size == 0) return false;
+
+  float_Array tmp;
+  int jitter, vec_size;
+  int zeroes = 0;
+  int new_index = -1;
+  float el;
+
+  vec_size = vec->size;
+  tmp.SetSize(vec_size);
+
+  for(int i=0;i<vec_size;i++) {
+    el = vec->FastEl_Flat(i);
+    if(el == 0.0f)
+      zeroes += 1;
+    tmp[i] = el;
+  }
+
+  if(zeroes == 0) {
+    taMisc::Error("There must be at least one non-zero element in vec");
+    return false;
+  }
+
+  vec->InitVals(0);
+
+  for (int i=0;i<vec_size;i++) {
+    el = tmp[i];
+    if(el != 0) {
+      while (new_index < 0 || new_index > vec_size) {
+  	jitter = int(Random::Gauss(stdev)+0.5f);
+  	new_index = jitter+i;	
+	if (vec->FastEl_Flat(new_index) != 0)
+	  new_index = -1;
+      }
+      vec->Set_Flat(el, new_index);
+      new_index = -1;
+    }
+  }
+
+  return true;
+}
+
+
 ///////////////////////////////////////
 // distance metrics (comparing two vectors)
 
@@ -5011,7 +5100,7 @@ void RndSeed_List::UseSeed(int idx) {
 }
 
 //////////////////////////
-//  	Random     	//
+//  	Random    	//
 //////////////////////////
 
 double Random::Gen() const {
