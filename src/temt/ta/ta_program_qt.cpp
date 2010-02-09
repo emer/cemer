@@ -27,6 +27,7 @@
 #include <QTreeWidget>
 #include <QVBoxLayout>
 #include <QStackedWidget>
+#include <QRadioButton>
 
 #include "icombobox.h"
 #include "ieditgrid.h"
@@ -2374,17 +2375,17 @@ QWidget* taiProgStepButton::GetButtonRep() {
   QGridLayout* glay = new QGridLayout(intstak);
   glay->setMargin(0); glay->setSpacing(1);
 
-  stp1 = new QCheckBox(intstak);
+  stp1 = new QRadioButton(intstak);
   stp1->setToolTip("step by single (1) steps");
   connect(stp1, SIGNAL(clicked(bool)), this, SLOT(Step1(bool)) );
   glay->addWidget(stp1, 0, 0, Qt::AlignHCenter);
 
-  stp5 = new QCheckBox(intstak);
+  stp5 = new QRadioButton(intstak);
   stp5->setToolTip("step by 5 steps per step click");
   connect(stp5, SIGNAL(clicked(bool)), this, SLOT(Step5(bool)) );
   glay->addWidget(stp5, 0, 1, Qt::AlignHCenter);
 
-  stp10 = new QCheckBox(intstak);
+  stp10 = new QRadioButton(intstak);
   stp10->setToolTip("step by 10 steps per step click, or amount shown if different from 10 (if program step_n != {1,5,10}");
   connect(stp10, SIGNAL(clicked(bool)), this, SLOT(Step10(bool)) );
   glay->addWidget(stp10, 0, 2, Qt::AlignHCenter);

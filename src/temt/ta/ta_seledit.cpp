@@ -693,8 +693,8 @@ int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs) {
   desc = "Differences between: A: " + obj_a->GetDisplayName() + " and B: " + 
     obj_b->GetDisplayName();
   Member_List mds;
-  void_PArray trg_bases;
-  void_PArray src_bases;
+  voidptr_PArray trg_bases;
+  voidptr_PArray src_bases;
   TypeSpace base_types;
   obj_a->CompareSameTypeR(mds, base_types, trg_bases, src_bases, obj_b, no_ptrs);
   taMisc::Info("SelectEdit::CompareObjs generated", (String)mds.size, "differences");

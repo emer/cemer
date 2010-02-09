@@ -1101,16 +1101,12 @@ protected:
   { int tmp = (int)val; *((int*)it) = tmp; }
 };
 
-#ifdef __MAKETA__
-class TA_API void_PArray {
-#else
-class TA_API void_PArray: public taPlainArray<void*> {
-#endif
+class TA_API voidptr_PArray: public taPlainArray<voidptr> {
   // #NO_TOKENS #NO_MEMBERS #NO_CSS a plain-array of void* pointers
 public:
-  void	operator=(const void_PArray& cp)	{ Copy_Duplicate(cp); }
-  void_PArray()				{ };
-  void_PArray(const void_PArray& cp)	{ Copy_Duplicate(cp); }
+  void	operator=(const voidptr_PArray& cp)	{ Copy_Duplicate(cp); }
+  voidptr_PArray()				{ };
+  voidptr_PArray(const voidptr_PArray& cp)	{ Copy_Duplicate(cp); }
 
 protected:
   int		El_Compare_(const void* a, const void* b) const

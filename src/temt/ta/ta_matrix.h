@@ -39,7 +39,7 @@ class MatrixTableModel; //
 // forwards this file
 class taMatrix_PList;
 class byte_Matrix; //
-class void_Matrix; //
+class voidptr_Matrix; //
 class float_Matrix; //
 
 /* Matrix -- a specialized, richer implementation of Array
@@ -1215,10 +1215,10 @@ TA_SMART_PTRS(rgb_Matrix);
 
 
 ///////////////////////////////////
-// 	void_Matrix
+// 	voidptr_Matrix
 ///////////////////////////////////
 
-class TA_API void_Matrix: public taMatrixT<void*> {
+class TA_API voidptr_Matrix: public taMatrixT<voidptr> {
   // #INSTANCE a matrix of void*s (generic pointers)
 INHERITED(taMatrixT<void*>)
 public:
@@ -1228,7 +1228,7 @@ public:
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
   override bool		BinaryFile_Supported() { return true; }
   
-  TA_MATRIX_FUNS_FAST(void_Matrix, void*);
+  TA_MATRIX_FUNS_FAST(voidptr_Matrix, void*);
   
 public: //
   override float	El_GetFloat_(const void* it) const { return (float)(ta_uintptr_t)*((void**)it); } // #IGNORE
@@ -1246,7 +1246,7 @@ private:
   void		Initialize() {}
   void		Destroy() {} //
 };
-TA_SMART_PTRS(void_Matrix);
+TA_SMART_PTRS(voidptr_Matrix);
 
 ///////////////////////////////////////////////////////
 //	CircMatrix

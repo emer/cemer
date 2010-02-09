@@ -529,6 +529,61 @@ Variant taDataGen::ProbSelectColVal(DataTable* data_table, int row_no,
 }
 
 ///////////////////////////////////////////////////////////////////
+// gen sorted permutations
+
+bool taDataGen::SortedPermutations(DataTable* dest,int n) {
+  if(!dest) return false;
+  int i;
+  int *v = new int[n];
+  dest->StructUpdate(true);
+  dest->Reset();
+  dest->NewColMatrix(taBase::VT_INT,"p",2,n,1);
+  for (i=0;i<n;i++)
+    v[i]=i+1;
+  GSP_permute(dest,v,0,n);
+  delete [] v;
+  dest->StructUpdate(false);
+  return true;
+}
+
+void taDataGen::GSP_permute(DataTable* p,int *v,int start,int n) {
+  GSP_write(p,v,n);
+  if(start<n){
+    int i,j;
+    for (i=n-2;i>=start;i--) {
+      for (j=i+1;j<n;j++) {
+        GSP_swap(v,i,j);
+        GSP_permute(p,v,i+1,n);
+      }
+      GSP_rotateLeft(v,i,n);
+    }
+  }
+}
+
+void taDataGen::GSP_write(DataTable* p,int* v,int size) {
+  int i, rows;
+  p->AddRows();
+  if (v!=0){
+    for (i=0;i<size;i++)
+      p->SetMatrixVal(v[i],0,p->rows-1,i,0);
+  }
+}
+
+void taDataGen::GSP_swap(int* v,int i,int j) {
+  int t;
+  t=v[i];
+  v[i]=v[j];
+  v[j]=t;
+}
+
+void taDataGen::GSP_rotateLeft(int* v,int start,int n) {
+  int tmp = v[start];
+  for (int i=start;i<n-1;i++)
+    v[i]=v[i+1];
+  v[n-1]=tmp;
+}
+
+///////////////////////////////////////////////////////////////////
 // drawing routines
 
 bool taDataGen::WritePoint(float_Matrix* mat, int x, int y, float color, bool wrap) {
@@ -1417,60 +1472,6 @@ bool taDataGen::GenNamedFeatPats(DataTable* dest, const String& dest_col,
   }
   dest->StructUpdate(false);
   return true;
-}
-
-///////////////////////////////////////////////////////////////////
-// gen sorted permutations
-
-bool taDataGen::GenSortedPermutations(DataTable* p,int n) {
-  int i;
-  int *v = new int[n];
-  p->StructUpdate(true);
-  p->Reset();
-  p->NewColMatrix(taBase::VT_INT,"p",2,n,1);
-  for (i=0;i<n;i++)
-    v[i]=i+1;
-  GSP_permute(p,v,0,n);
-  delete [] v;
-  p->StructUpdate(false);
-  return true;
-}
-
-void taDataGen::GSP_permute(DataTable* p,int *v,int start,int n) {
-  GSP_write(p,v,n);
-  if(start<n){
-    int i,j;
-    for (i=n-2;i>=start;i--) {
-      for (j=i+1;j<n;j++) {
-        GSP_swap(v,i,j);
-        GSP_permute(p,v,i+1,n);
-      }
-      GSP_rotateLeft(v,i,n);
-    }
-  }
-}
-
-void taDataGen::GSP_write(DataTable* p,int* v,int size) {
-  int i, rows;
-  p->AddRows();
-  if (v!=0){
-    for (i=0;i<size;i++)
-      p->SetMatrixVal(v[i],0,p->rows-1,i,0);
-  }
-}
-
-void taDataGen::GSP_swap(int* v,int i,int j) {
-  int t;
-  t=v[i];
-  v[i]=v[j];
-  v[j]=t;
-}
-
-void taDataGen::GSP_rotateLeft(int* v,int start,int n) {
-  int tmp = v[start];
-  for (int i=start;i<n-1;i++)
-    v[i]=v[i+1];
-  v[n-1]=tmp;
 }
 
 ///////////////////////////////////////////////////////////////////

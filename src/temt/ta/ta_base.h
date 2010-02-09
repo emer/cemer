@@ -1128,7 +1128,7 @@ public:
   // #IGNORE Search test for just this one taBase item according to criteria
 
   virtual void		CompareSameTypeR(Member_List& mds, TypeSpace& base_types, 
-					 void_PArray& trg_bases, void_PArray& src_bases,
+					 voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
 					 taBase* cp_base, 
 					 int show_forbidden = taMisc::NO_HIDDEN,
 					 int show_allowed = taMisc::SHOW_CHECK_MASK,
@@ -1819,7 +1819,7 @@ public:
 			    bool obj_desc = true, bool obj_val = true,
 			    bool mbr_name = true, bool type_desc = false);
   override void	CompareSameTypeR(Member_List& mds, TypeSpace& base_types, 
-				 void_PArray& trg_bases, void_PArray& src_bases,
+				 voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
 				 taBase* cp_base,
 				 int show_forbidden = taMisc::NO_HIDDEN,
 				 int show_allowed = taMisc::SHOW_CHECK_MASK,

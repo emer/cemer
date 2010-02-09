@@ -1796,10 +1796,10 @@ bool byte_Matrix::StrValIsValid(const String& str, String* err_msg) const {
 }
 
 //////////////////////////
-//   void_Matrix	//
+//   voidptr_Matrix	//
 //////////////////////////
 
-bool void_Matrix::StrValIsValid(const String& str, String* err_msg) const {
+bool voidptr_Matrix::StrValIsValid(const String& str, String* err_msg) const {
   bool rval = true;
 #ifdef TA_USE_QT
   str.toInt(&rval, 0); //auto-base sensing; discard result
@@ -1935,7 +1935,7 @@ const double double_Matrix::blank = 0.0;
 const float float_Matrix::blank = 0.0f;
 const int int_Matrix::blank = 0;
 const unsigned char byte_Matrix::blank = '\0';
-const void* void_Matrix::blank = 0;
+const void* voidptr_Matrix::blank = 0;
 const rgb_t rgb_Matrix::blank;
 
 

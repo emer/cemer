@@ -6529,7 +6529,7 @@ void TypeDef::MemberCopyFrom(int memb_no, void* trg_base, void* src_base) {
 //////////////////////////////////
 
 bool MemberSpace::CompareSameType(Member_List& mds, TypeSpace& base_types,
-				  void_PArray& trg_bases, void_PArray& src_bases,
+				  voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
 				  TypeDef* base_typ, void* trg_base, void* src_base,
 				  int show_forbidden, int show_allowed, bool no_ptrs,
 				  bool test_only) {
@@ -6548,7 +6548,7 @@ bool MemberSpace::CompareSameType(Member_List& mds, TypeSpace& base_types,
 }
 
 bool MemberDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
-				void_PArray& trg_bases, void_PArray& src_bases,
+				voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
 				TypeDef* base_typ, void* trg_base, void* src_base,
 				int show_forbidden, int show_allowed, bool no_ptrs,
 				bool test_only) {
@@ -6586,7 +6586,7 @@ bool MemberDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
 }
 
 bool TypeDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
-			      void_PArray& trg_bases, void_PArray& src_bases,
+			      voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
 			      void* trg_base, void* src_base,
 			      int show_forbidden, int show_allowed, bool no_ptrs,
 			      bool test_only) {

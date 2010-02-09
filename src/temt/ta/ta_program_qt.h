@@ -422,9 +422,9 @@ public:
   int		last_step_n;	// last step n value used
   int 		step10_val;
   QToolBar* 	tool_bar;
-  QCheckBox* 	stp1;
-  QCheckBox* 	stp5;
-  QCheckBox* 	stp10;
+  QRadioButton* stp1;
+  QRadioButton* stp5;
+  QRadioButton* stp10;
 };
 
 class TA_API taiStepButtonMethod : public taiActuatorMethod {

@@ -144,7 +144,7 @@ INHERITED(nvDataView)
 public:
   static void		ValToDispText(float val, String& str); // renders the display text, typ 6 chars max
 
-  void_Matrix		uvd_bases; // [x][y][nv->membs.size] void* base pointers to unit values -- computed during Init -- note that bases for all members are encoded, so switching members does not require recompute, and this also speeds history saving
+  voidptr_Matrix	uvd_bases; // [x][y][nv->membs.size] void* base pointers to unit values -- computed during Init -- note that bases for all members are encoded, so switching members does not require recompute, and this also speeds history saving
   float_Matrix		uvd_hist; // [x][y][nv->membs.size][hist_max] buffer of history of previous value data -- last (frame) dimension uses circ buffer system for efficient storing and retrieval
   CircMatrix		uvd_hist_idx; // circular buffer indexing of uvd_hist -- last (frame) dimension uses circ buffer system for efficient storing and retrieval
 

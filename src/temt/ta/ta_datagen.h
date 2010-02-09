@@ -90,19 +90,19 @@ public:
 				   const String& freq_col_nm = "frequency",
 				   CombineOp opr = MULTIPLY,
 				   bool renorm_freqs=true);
-  // #MENU_BUTTON #CAT_Lists #NULL_OK_0 for a data table containing a list of items with multiple frequency_x columns (e.g., as created by the CrossLists function), this will combine the frequencies into one overall frequency in the output table freq_output, using given operation.  If renorm_freqs, then overall frequencies are renormalized as probabilities to sum to 1
+  // #MENU_BUTTON #CAT_Lists #NULL_OK_0 #NULL_TEXT_0_NewDataTable for a data table containing a list of items with multiple frequency_x columns (e.g., as created by the CrossLists function), this will combine the frequencies into one overall frequency in the output table freq_output, using given operation.  If renorm_freqs, then overall frequencies are renormalized as probabilities to sum to 1
   static bool	ReplicateByFrequency(DataTable* repl_output, const DataTable* data_list_in,
 				     int total_number, const String& freq_col_nm = "frequency",
 				     bool renorm_freqs=true);
-  // #MENU_BUTTON #CAT_Lists #NULL_OK_0 replicate the items in the input data by the number given in the frequency column times the total_number value (equivalent to PERMUTED form of frequency sampling -- without replacement, always the same number), optionally renormalizing the frequency values to sum to 1 (does not affect data_list_in table)
+  // #MENU_BUTTON #CAT_Lists #NULL_OK_0 #NULL_TEXT_0_NewDataTable replicate the items in the input data by the number given in the frequency column times the total_number value (equivalent to PERMUTED form of frequency sampling -- without replacement, always the same number), optionally renormalizing the frequency values to sum to 1 (does not affect data_list_in table)
   static bool	SampleByFrequency(DataTable* repl_output, const DataTable* data_list_in,
 				  int n_samples=1, const String& freq_col_nm = "frequency",
 				  bool renorm_freqs=true);
-  // #MENU_BUTTON #CAT_Lists #NULL_OK_0 sample the items in the input data as a function of the probability value given in the frequency column, with n_samples taken per row (equivalent to RANDOM form of frequency sampling -- with replacement -- total N varies), optionally renormalizing the frequency values to sum to 1 (does not affect data_list_in table)
+  // #MENU_BUTTON #CAT_Lists #NULL_OK_0 #NULL_TEXT_0_NewDataTable sample the items in the input data as a function of the probability value given in the frequency column, with n_samples taken per row (equivalent to RANDOM form of frequency sampling -- with replacement -- total N varies), optionally renormalizing the frequency values to sum to 1 (does not affect data_list_in table)
   static bool	NsByFrequency(DataTable* repl_output, const DataTable* data_list_in,
 			      int total_number, const String& freq_col_nm = "frequency",
 			      bool renorm_freqs=true);
-  // #MENU_BUTTON #CAT_Lists #NULL_OK_0 compute the numbers of items in the input data that would be produced by the ReplicateByFrequency fnction (frequency column times the total_number value, optionally renormalizing the frequency values to sum to 1 (does not affect data_list_in table))
+  // #MENU_BUTTON #CAT_Lists #NULL_OK_0 #NULL_TEXT_0_NewDataTable compute the numbers of items in the input data that would be produced by the ReplicateByFrequency fnction (frequency column times the total_number value, optionally renormalizing the frequency values to sum to 1 (does not affect data_list_in table))
   static int 	ProbSelectRow(DataTable* data_table, const String& key_col,
 			      const String& key_val, const String& p_col);
   // #MENU_BUTTON #CAT_Lists select a row from data table from among subset of rows that have key_val for column key_col using probabilities given in p_col column -- very useful for randomly generating events based on a set of probabilities for given options at each point
@@ -126,6 +126,17 @@ public:
 				  const String& colval7="", const String& colp7="",
 				  const String& colval8="", const String& colp8="");
   // #MENU_BUTTON #CAT_Lists select a column value from data table based on probabilities associated with different columns -- the colval is the name of the column to return the column value of given the associated probability in colp -- very useful for randomly generating events based on a set of probabilities for given options at each point
+
+  static bool       SortedPermutations(DataTable* dest, int n);
+  // #MENU_BUTTON #CAT_Lists generate a sorted list of all possible n! permutations in sorted order and write them to destination data table dest. if n=3, permutations will contain a table with a 3x1 matrix column that has 3! = 6 rows with the following data: {1,2,3}, {1,3,2}, {2,1,3}, {2,3,1}, {3,1,2}, {3,2,1}. any n > 0 works. adapted from "Practical Algorithms in C++"
+  static void       GSP_permute(DataTable* p,int* v,int start,int n);
+  // #IGNORE
+  static void       GSP_write(DataTable* p,int* v,int size);
+  // #IGNORE
+  static void       GSP_swap(int* v,int i,int j);
+  // #IGNORE
+  static void       GSP_rotateLeft(int* v,int start,int n);
+  // #IGNORE
 
 
 
@@ -257,20 +268,6 @@ public:
 				     DataTable* names, const String& name_col_nm,
 				     const String& feat_name_col_nm = "Name");
   // #CAT_FeatPats #MENU_BUTTON #MENU_ON_FeatPats generate patterns in dest table (dest_col) by stacking together feature patterns from feat_vocab (feat_col_nm) based on list of names given in names table (name_col_nm) -- name column must contain a String matrix -- items are looked up by name in the feat_name_col_nm -- automatically detects how many features to use based on relative geometries (dest must have same innermost (x) dimension as feat pats, next (y) must be even multiple, feat pats must be 2d matrix)
-
-///////////////////////////////////////////////////////////////////
-// gen sorted permutations
-
-  static bool       GenSortedPermutations(DataTable* p,int n);
-  // #CAT_Lists generate a sorted list of all possible n! permutations in sorted order and write them to input table p. if n=3, permutations will contain a table with a 3x1 matrix column that has 3! = 6 rows with the following data: {1,2,3}, {1,3,2}, {2,1,3}, {2,3,1}, {3,1,2}, {3,2,1}. any n > 0 works. adapted from "Practical Algorithms in C++"
-  static void       GSP_permute(DataTable* p,int* v,int start,int n);
-  // #IGNORE
-  static void       GSP_write(DataTable* p,int* v,int size);
-  // #IGNORE
-  static void       GSP_swap(int* v,int i,int j);
-  // #IGNORE
-  static void       GSP_rotateLeft(int* v,int start,int n);
-  // #IGNORE
 
   ///////////////////////////////////////////////////////////////////
   // misc data sources

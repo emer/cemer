@@ -1284,7 +1284,7 @@ void taiObjDiffBrowser::AddItems() {
   QBrush chg_color(Qt::yellow);
   int max_width = 40;
 
-  void_PArray	nest_pars;
+  voidptr_PArray	nest_pars;
 
   int init_nest = odl->FastEl(0)->nest_level; // should be 0..
 

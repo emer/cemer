@@ -1538,7 +1538,7 @@ public:
   // copy only those members in my type (no inherited ones)
 
   bool		CompareSameType(Member_List& mds, TypeSpace& base_types,
-				void_PArray& trg_bases, void_PArray& src_bases, 
+				voidptr_PArray& trg_bases, voidptr_PArray& src_bases, 
 				TypeDef* base_typ, void* trg_base, void* src_base,
 				int show_forbidden = taMisc::NO_HIDDEN,
 				int show_allowed = taMisc::SHOW_CHECK_MASK,
@@ -1928,7 +1928,7 @@ public:
   void		CopyOnlySameType(void* trg_base, void* src_base);
   // copy only those members from same type (no inherited)
   bool		CompareSameType(Member_List& mds, TypeSpace& base_types,
-				void_PArray& trg_bases, void_PArray& src_bases, 
+				voidptr_PArray& trg_bases, voidptr_PArray& src_bases, 
 				TypeDef* base_typ, void* trg_base, void* src_base,
 				int show_forbidden = taMisc::NO_HIDDEN,
 				int show_allowed = taMisc::SHOW_CHECK_MASK,
@@ -2373,7 +2373,7 @@ public:
   void		MemberCopyFrom(int memb_no, void* trg_base, void* src_base);
   // copy a particular member from same type
   bool		CompareSameType(Member_List& mds, TypeSpace& base_types,
-				void_PArray& trg_bases, void_PArray& src_bases, 
+				voidptr_PArray& trg_bases, voidptr_PArray& src_bases, 
 				void* trg_base, void* src_base,
 				int show_forbidden = taMisc::NO_HIDDEN,
 				int show_allowed = taMisc::SHOW_CHECK_MASK,
@@ -2575,7 +2575,7 @@ public:
   // perform a diff operation between this list and comparison list (cmp_list), linking diff recs into diff_ods list with flags set to indicate nature of differences
 
 protected:
-  void_PArray	nest_pars;
+  voidptr_PArray	nest_pars;
   // keeps track of current parents at each nest level
 
   bool		CheckAddParents(taObjDiff_List& diff_ods, taObjDiffRec* rec, bool a_list);

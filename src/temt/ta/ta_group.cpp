@@ -259,7 +259,7 @@ void taGroup_impl::Search_impl(const String& srch, taBase_PtrList& items,
 
 
 void taGroup_impl::CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
-				    void_PArray& trg_bases, void_PArray& src_bases,
+				    voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
 				    taBase* cp_base,
 				    int show_forbidden, int show_allowed, bool no_ptrs) {
   if(!cp_base) return;
