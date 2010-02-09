@@ -1689,8 +1689,10 @@ public slots:
 protected:
   static void  	ShowReturnVal(cssEl* rval, IDataHost* host,
      const String& meth_name); // show return value after menu call
-  
-  QWidget*	buttonRep;
+
+#ifndef __MAKETA__  
+  QPointer<QWidget> buttonRep;
+#endif
   QWidget*	gui_parent;
   QWidget*	MakeButton(); // makes the button if necessary, and returns a reference
   

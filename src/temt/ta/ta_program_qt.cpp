@@ -2444,10 +2444,10 @@ QWidget* taiProgStepButton::GetButtonRep() {
   newbar->addWidget(stpwidg);
   
   if(tool_bar) {
-    ((QStackedWidget*)buttonRep)->removeWidget(tool_bar);
+    ((QStackedWidget*)buttonRep.data())->removeWidget(tool_bar);
   }
   tool_bar = newbar;
-  ((QStackedWidget*)buttonRep)->addWidget(tool_bar);
+  ((QStackedWidget*)buttonRep.data())->addWidget(tool_bar);
 //   newbar->show();
   return buttonRep;
 }

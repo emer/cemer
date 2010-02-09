@@ -34,7 +34,7 @@
  *@author Houssem BDIOUI, modified extensively by Randall O'Reilly
  */
 
-class QConsole : protected  QTextEdit {
+class QConsole : public QTextEdit {
 Q_OBJECT
 INHERITED(QTextEdit)
 public:

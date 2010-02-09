@@ -97,6 +97,7 @@ protected:
   static bool		DoDelayedCloses();
   static bool		DoDelayedUpdateAfterEdits();
   static bool		DoDelayedFunCalls();
+  static bool		DoAutoSave();
 };
 
 // common defs used by ALL taBase types: Type and Copy guys

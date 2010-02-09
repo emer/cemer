@@ -169,9 +169,17 @@ void tabMisc::WaitProc() {
   taiDataHostBase::AsyncWaitProc();
   taiMisc::PurgeDialogs();
 #endif
-  DoDelayedCloses();
-  DoDelayedUpdateAfterEdits();
-  DoDelayedFunCalls();
+  bool did = false;
+  bool rval = DoDelayedCloses();
+  did |= rval;
+  rval = DoDelayedUpdateAfterEdits();
+  did |= rval;
+  rval = DoDelayedFunCalls();
+  did |= rval;
+
+  if(!did) {
+    DoAutoSave();		// only once it is quiet
+  }
   --in_wait_proc;
 }
 
@@ -236,6 +244,18 @@ bool tabMisc::DoDelayedFunCalls() {
   }
   did_some = true;
   return did_some;
+}
+
+bool tabMisc::DoAutoSave() {
+  if(!tabMisc::root) return false;
+  bool did = false;
+  taProject* proj;
+  taLeafItr i;
+  FOR_ITR_EL(taProject, proj, tabMisc::root->projects., i) {
+    bool rval = proj->AutoSave();
+    did |= rval;
+  }
+  return did;
 }
 
 void tabMisc::WaitProc_Cleanup() {

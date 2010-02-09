@@ -5059,7 +5059,7 @@ bool cssProgSpace::DelWatchIdx(int idx) {
 
 static cssConsole* qand_console = NULL;
 #ifdef HAVE_QT_CONSOLE
-static QcssConsole* qcss_console = NULL;
+QPointer<QcssConsole> qcss_console;
 #endif
 
 void cssCmdShell::Constr() {
@@ -5359,7 +5359,7 @@ void cssCmdShell::Shell_NoConsole_Run() {
 void cssCmdShell::FlushConsole() {
 #ifdef HAVE_QT_CONSOLE
   if(console_type == taMisc::CT_GUI) {
-    if(qcss_console) {
+    if((bool)qcss_console) {
       qcss_console->flushOutput(true); // wait for pager!
       taiM->ProcessEvents();
     }
@@ -5375,7 +5375,7 @@ void cssCmdShell::Exit() {
     break;
 #ifdef HAVE_QT_CONSOLE
   case taMisc::CT_GUI:
-    if(qcss_console)
+    if((bool)qcss_console)
       qcss_console->exit();
     break;
 #endif

@@ -1457,7 +1457,7 @@ void GridTableView::RenderHeader() {
     gcv->Clear();
   }
   
-  if (!header_on) return; // normally shouldn't be called if off
+  if(!header_on || dataTable()->data.size == 0) return; // normally shouldn't be called if off
 
   SoComplexity* cplx = new SoComplexity;
   cplx->value.setValue(taMisc::text_complexity);

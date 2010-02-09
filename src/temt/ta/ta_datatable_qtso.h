@@ -1217,27 +1217,6 @@ protected slots:
   void			tv_hasFocus(iTableView* sender); // for both tableviews
 };
 
-/* TODO
-class TA_API DataTableGridViewWizard: public taWizard {
-  // wizard for automating construction of DataTableGridView objects
-INHERITED(taWizard)
-public:
-
-  DataTableRef		dt; // #NO_NULL the data table being viewed
-  
-
-  void 	InitLinks();
-  void	CutLinks(); 
-  SIMPLE_COPY(DataTableGridViewWizard);
-  TA_BASEFUNS(DataTableGridViewWizard); //
-protected:
-//  override void	UpdateAfterEdit_impl();
-private:
-  void 	Initialize();
-  void 	Destroy()	{ CutLinks(); }
-};
-*/
-
 /*
   MIME TYPE "tacss/matrixdesc" -- description of matrix data (no content)
 

@@ -1287,32 +1287,36 @@ void taProject::UndoStats(bool show_list, bool show_diffs) {
   undo_mgr.ReportStats(show_list, show_diffs);
 }
 
-void taProject::SaveRecoverFile() {
-  String prfx;
-  String sufx = ".proj";
-  String recv = "_recover";
+String taProject::GetAutoFileName(const String& suffix, const String& ftype_ext) {
+  String rval;
   if(file_name.empty()) {
     if(name.empty()) {
-      prfx = GetTypeDef()->name;
+      rval = GetTypeDef()->name;
     }
     else {
-      prfx = name;
+      rval = name;
     }
   }
   else {
-    if(file_name.contains(sufx)) {
-      prfx = file_name.before(sufx, -1);
+    if(file_name.contains(ftype_ext)) {
+      rval = file_name.before(ftype_ext, -1);
     }
     else {
-      prfx = file_name;		// whatever
+      rval = file_name;		// whatever
     }
   }
-  if(prfx.contains(recv))
-    prfx = prfx.through(recv, -1);
+  if(rval.contains(suffix))
+    rval = rval.through(suffix, -1);
   else
-    prfx += recv;
-  int cnt = taMisc::GetUniqueFileNumber(0, prfx, sufx);
-  String fnm = prfx + String(cnt) + sufx; // note: this is a full path!
+    rval += suffix;
+  return rval;
+}
+
+void taProject::SaveRecoverFile() {
+  String ftype_ext = ".proj";
+  String newfm = GetAutoFileName("_recover", ftype_ext); 
+  int cnt = taMisc::GetUniqueFileNumber(0, newfm, ftype_ext);
+  String fnm = newfm + String(cnt) + ftype_ext; // note: this is a full path!
   int acc = access(fnm, W_OK); 	// can we save this file?
   if(acc != 0) {
     fnm = taMisc::user_dir + PATH_SEP + taMisc::GetFileFmPath(fnm);
@@ -1343,7 +1347,7 @@ void taProject::SaveRecoverFile() {
     if(cssMisc::TopShell->console_type == taMisc::CT_GUI) {
       String cfnm = fnm;
       cfnm.gsub("_recover", "_console");
-      cfnm.gsub((const char*)sufx, ".txt");
+      cfnm.gsub((const char*)ftype_ext, ".txt");
       QcssConsole* qcons = QcssConsole::getInstance();
       if(qcons)
 	qcons->saveContents(cfnm);
@@ -1352,6 +1356,51 @@ void taProject::SaveRecoverFile() {
 #endif
 }
 
+bool taProject::AutoSave(bool force) {
+  if(!force) {
+    if(auto_save_timer.start.tot == 0) { // first timer..
+      auto_save_timer.StartTimer(true); // reset
+      return false;
+    }
+    auto_save_timer.EndTimer();
+    if(auto_save_timer.s_used < (double)taMisc::auto_save_interval) {
+      auto_save_timer.StartTimer(false); // don't reset!
+      return false;		// not yet
+    }
+    // ok, times up!
+  }
+  
+  String ftype_ext = ".proj";
+  String newfm = GetAutoFileName("_autosave", ftype_ext); 
+  String fnm = newfm + ftype_ext; // note: this is a full path!
+  int acc = access(fnm, W_OK); 	// can we save this file?
+  if(acc != 0) {
+    fnm = taMisc::user_dir + PATH_SEP + taMisc::GetFileFmPath(fnm);
+  }
+  taFiler* flr = GetSaveFiler(fnm, _nilString, -1, _nilString);
+  bool saved = false;
+  if(flr->ostrm) {
+    int rval = GetTypeDef()->Dump_Save(*flr->ostrm, (void*)this); 
+    // note: not using Save_strm to preserve the dirty bit!
+    saved = true;
+  }
+  if(acc != 0) {
+#ifdef DEBUG // NOTE: really only works on Linux, and is so marginal...
+      cerr << "Error saving auto save file in original location -- now saved in user directory: " << fnm << endl;
+      taMisc::FlushConsole();
+#endif
+  }
+  flr->Close();
+  taRefN::unRefDone(flr);
+
+  auto_save_timer.StartTimer(true); // start it up for next time around..
+
+#ifdef DEBUG
+  taMisc::Info("Saved auto save file:", fnm);
+#endif
+
+  return true;
+}
 
 //////////////////////////
 //   Project_Group	//

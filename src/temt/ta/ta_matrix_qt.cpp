@@ -356,8 +356,11 @@ bool iTableView::event(QEvent* ev) {
   if ((t == QEvent::FocusIn) ||
     (t == QEvent::KeyPress) ||
     (t == QEvent::MouseButtonPress) //||
-  ) 
+      ) {
     emit hasFocus(this);
+    if(t == QEvent::KeyPress)
+      ev->accept();		// this prevents beep on mac due to unaccepted event!
+  }
   return rval;
 }
 

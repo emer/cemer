@@ -511,6 +511,10 @@ public:
   // #CAT_File Save a recover file of this project, usually called when a signal is received indicating a crash condition
   virtual void		SaveRecoverFile_strm(ostream& strm) { Save_strm(strm); }
   // #IGNORE underlying save function to use when saving a recover file -- might want to do something special here
+  virtual String	GetAutoFileName(const String& suffix, const String& ftype_ext = ".proj");
+  // #CAT_File get a file name to save project to, with suffix but file extension *removed*, based on any existing file name, project name, and type
+  virtual bool		AutoSave(bool force = false);
+  // #CAT_File called automatically by the wait process -- if enough time has passed or force is true, save current project to an auto save backup file (file name + _autosave)
 
   override bool		SetFileName(const String& val);
   override int		Save(); 
@@ -531,6 +535,8 @@ public:
   TA_BASEFUNS(taProject);
   
 protected:
+  TimeUsed		auto_save_timer; // #IGNORE timer used for auto saving
+
   virtual void 		InitLinks_post(); // #IGNORE called after all _impls (not called for undo_loading): assert things like default wizards in here
   void 	CutLinks(); // don't override this -- use _impl instead
   virtual MainWindowViewer* MakeProjectBrowser_impl(); // make a standard viewer for this project type
