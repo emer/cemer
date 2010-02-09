@@ -2373,20 +2373,28 @@ QWidget* taiProgStepButton::GetButtonRep() {
 
   QWidget* intstak = new QWidget();
   QGridLayout* glay = new QGridLayout(intstak);
-  glay->setMargin(0); glay->setSpacing(1);
+  glay->setMargin(0); glay->setSpacing(0);
 
   stp1 = new QRadioButton(intstak);
   stp1->setToolTip("step by single (1) steps");
+//   QSize sz = stp1->minimumSizeHint();
+  // this size is useless!
+//   taMisc::Info("radio sz:", String(sz.width()), String(sz.height()));
+  int radio_width = 16;
+  int radio_height = 16;
+  stp1->setMaximumSize(radio_width, radio_height);
   connect(stp1, SIGNAL(clicked(bool)), this, SLOT(Step1(bool)) );
   glay->addWidget(stp1, 0, 0, Qt::AlignHCenter);
 
   stp5 = new QRadioButton(intstak);
   stp5->setToolTip("step by 5 steps per step click");
+  stp5->setMaximumSize(radio_width, radio_height);
   connect(stp5, SIGNAL(clicked(bool)), this, SLOT(Step5(bool)) );
   glay->addWidget(stp5, 0, 1, Qt::AlignHCenter);
 
   stp10 = new QRadioButton(intstak);
   stp10->setToolTip("step by 10 steps per step click, or amount shown if different from 10 (if program step_n != {1,5,10}");
+  stp10->setMaximumSize(radio_width, radio_height);
   connect(stp10, SIGNAL(clicked(bool)), this, SLOT(Step10(bool)) );
   glay->addWidget(stp10, 0, 2, Qt::AlignHCenter);
 
@@ -2416,14 +2424,25 @@ QWidget* taiProgStepButton::GetButtonRep() {
 
   newbar->addWidget(intstak);
 
+  int but_marg_minus = 10;
+
+  QWidget* stpwidg = new QWidget();
+  QHBoxLayout* hbl = new QHBoxLayout(stpwidg);
+  hbl->setMargin(0); hbl->setSpacing(0);
   for(int i=0;i<prg->sub_progs_step.size; i++) {
     Program* sp = (Program*)prg->sub_progs_step[i];
+    QToolButton* tbut = new QToolButton(stpwidg);
     taiAction* act = new taiAction(taiActions::normal, sp->short_nm);
     act->usr_data = (void*)sp;
     act->connect(taiAction::ptr_act, this, SLOT(CallFunList(void*)));
     act->setFont(taiM->menuFont(defSize()));
-    newbar->addAction(act);
+    tbut->setDefaultAction(act);
+    QSize sz = tbut->minimumSizeHint();
+    tbut->setMaximumWidth(sz.width() - but_marg_minus);
+    hbl->addWidget(tbut);
   }
+  newbar->addWidget(stpwidg);
+  
   if(tool_bar) {
     ((QStackedWidget*)buttonRep)->removeWidget(tool_bar);
   }
