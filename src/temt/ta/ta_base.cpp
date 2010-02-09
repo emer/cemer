@@ -241,8 +241,8 @@ bool tabMisc::DoDelayedFunCalls() {
     if (it) {
       it->CallFun(fun_name);
     }
+    did_some = true;
   }
-  did_some = true;
   return did_some;
 }
 
