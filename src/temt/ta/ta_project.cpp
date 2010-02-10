@@ -1200,6 +1200,13 @@ int taProject::Save() {
       fname = fname.before("_recover") + fname.from(".",-1);
     }
   }
+  if(fname.contains("_autosave")) {
+    int chs = taMisc::Choice("This appears to be an auto-save file -- you may not want to save to this file name", "Save to this _autosave file", "Let me choose a new name", "Save to non-_autosave version of this file");
+    if(chs == 1) fname = "";	// this will prompt for name
+    else if(chs == 2) {
+      fname = fname.before("_autosave") + fname.from(".",-1);
+    }
+  }
   return SaveAs(fname);
 }
 

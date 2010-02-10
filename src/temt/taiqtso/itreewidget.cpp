@@ -397,16 +397,18 @@ void iTreeWidget::setSelection(const QRect &rect, QItemSelectionModel::Selection
 
   // get selection state before new selections added..
   QModelIndex firstpar;
-  QModelIndexList sels = selectionModel()->selectedIndexes();
-  if(sels.count() > 0) {
-    firstpar = sels[0].parent();
+  {
+    QModelIndexList sels = selectionModel()->selectedIndexes();
+    if(sels.count() > 0) {
+      firstpar = sels[0].parent();
+    }
   }
   // only allow selections at same level (i.e., having a common parent)
   inherited::setSelection(rect, command); // do it
   if(!firstpar.isValid()) return;	  // no prior sel -- just bail
   // now fix it up
-  sels = selectionModel()->selectedIndexes();
-  if(sels.count() > 0) {
+  QModelIndexList sels = selectionModel()->selectedIndexes();
+  if(sels.count() > 1) {
     int idx = sels.count()-1;
     while(idx >= 0 && sels.count() > idx) {
       QModelIndex itm = sels[idx--];
