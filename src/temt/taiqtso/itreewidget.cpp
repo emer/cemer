@@ -56,6 +56,8 @@ iTreeWidget::~iTreeWidget()
 }
 
 void  iTreeWidget::init() {
+  ext_select_on = false;
+  m_sibling_sel = true;
   m_highlightRows = false;
   m_highlightColors = NULL; // created if highlighting enabled
   // we never use this class for Qt-internal dnd semantics
@@ -111,6 +113,7 @@ void iTreeWidget::doItemExpanded(QTreeWidgetItem* item_, bool expanded) {
 }
 
 void iTreeWidget::dragMoveEvent(QDragMoveEvent* ev) {
+  ext_select_on = false;
   //note: we accept autoscroll decision regardless
   inherited::dragMoveEvent(ev);
   if (ev->isAccepted()) {
@@ -159,6 +162,7 @@ no_hi: */
 }
 
 void iTreeWidget::dropEvent(QDropEvent* e) {
+  ext_select_on = false;
   drop_pos = e->pos();
   key_mods = e->keyboardModifiers();
   // we have to skip QTreeWidget because it does the evil gui move, esp. on Mac
@@ -290,6 +294,12 @@ void iTreeWidget::setHighlightRows(bool value) {
   update();
 }
 
+void iTreeWidget::setSiblingSel(bool value) {
+  if (m_sibling_sel == value) return;
+  m_sibling_sel = value;
+  selectionModel()->clearSelection();
+}
+
 Qt::DropActions iTreeWidget::supportedDropActions() const {
   // we have to support both, because Move is def on Mac, Copy for others
   // we have to support all, to allow the keyboard shortcuts on drop
@@ -317,8 +327,12 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
     ctrl_pressed = true;
 #endif
   if(ctrl_pressed) {
-    QPersistentModelIndex newCurrent;
+    QPersistentModelIndex newCurrent = currentIndex();
     switch (event->key()) {
+    case Qt::Key_Space:
+      ext_select_on = !ext_select_on;
+      selectionModel()->clearSelection();
+      break;
     case Qt::Key_N:
       newCurrent = moveCursor(MoveDown, event->modifiers());
       break;
@@ -344,28 +358,63 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
     }
 
     // from qabstractitemview.cpp
-    QPersistentModelIndex oldCurrent = currentIndex();
-    if (newCurrent != oldCurrent && newCurrent.isValid()) {
-      QItemSelectionModel::SelectionFlags command = selectionCommand(newCurrent, event);
-      if (command != QItemSelectionModel::NoUpdate
-	  || style()->styleHint(QStyle::SH_ItemView_MovementWithoutUpdatingSelection, 0, this)) {
-	if (command & QItemSelectionModel::Current) {
-	  selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::NoUpdate);
-	  // 	  if (d->pressedPosition == QPoint(-1, -1))
-	  // 	    d->pressedPosition = visualRect(oldCurrent).center();
-	  // 	  QRect rect(d->pressedPosition - d->offset(), visualRect(newCurrent).center());
-	  // 	  setSelection(rect, command);
-	} else {
-// 	  selectionModel()->setCurrentIndex(newCurrent, command);
- 	  selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::ClearAndSelect);
-	  // 	  d->pressedPosition = visualRect(newCurrent).center() + d->offset();
+//     QPersistentModelIndex oldCurrent = currentIndex();
+    if(newCurrent.isValid()) {
+      QItemSelectionModel::SelectionFlags command;
+      if(ext_select_on) {
+	// the following logic prevents selecting items at different levels!
+	QModelIndexList sels = selectionModel()->selectedIndexes();
+	if(m_sibling_sel && sels.count() > 0) {
+	  QModelIndex firstpar = sels[0].parent();
+	  if(newCurrent.parent() == firstpar) // only select at same level!
+	    command = QItemSelectionModel::Select;
+	  else
+	    command = QItemSelectionModel::Current;
 	}
-	//	selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::SelectCurrent);
-	return;
+	else {
+	  command = QItemSelectionModel::Select;
+	}
+      }
+      else {
+	command = QItemSelectionModel::ClearAndSelect;
+      }
+      selectionModel()->setCurrentIndex(newCurrent, command);
+      return;
+    }
+  }
+  if(event->key() == Qt::Key_Escape) {
+    ext_select_on = false;
+    selectionModel()->clearSelection();
+  }
+  inherited::keyPressEvent( event );
+}
+
+void iTreeWidget::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) {
+  if(!m_sibling_sel) {
+    inherited::setSelection(rect, command); // do it
+    return;
+  }
+
+  // get selection state before new selections added..
+  QModelIndex firstpar;
+  QModelIndexList sels = selectionModel()->selectedIndexes();
+  if(sels.count() > 0) {
+    firstpar = sels[0].parent();
+  }
+  // only allow selections at same level (i.e., having a common parent)
+  inherited::setSelection(rect, command); // do it
+  if(!firstpar.isValid()) return;	  // no prior sel -- just bail
+  // now fix it up
+  sels = selectionModel()->selectedIndexes();
+  if(sels.count() > 0) {
+    int idx = sels.count()-1;
+    while(idx >= 0 && sels.count() > idx) {
+      QModelIndex itm = sels[idx--];
+      if(itm.parent() != firstpar) {
+	selectionModel()->select(itm, QItemSelectionModel::Toggle); // turn off
       }
     }
   }
-  inherited::keyPressEvent( event );
 }
 
 //////////////////////////

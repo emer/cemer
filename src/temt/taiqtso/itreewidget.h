@@ -43,6 +43,11 @@ public:
   bool			highlightRows() const {return m_highlightRows;}
     // whether we use the highlight information from items
   void			setHighlightRows(bool value);
+
+  bool			siblingSel() const {return m_sibling_sel;}
+  // whether we enforce sibling-only selection
+  void			setSiblingSel(bool value);
+
   void 			resizeColumnsToContents(); // convenience: resizes all but last col
 
   override void 	keyboardSearch(const QString &search);
@@ -58,6 +63,8 @@ protected:
   QPoint		drop_pos; // we capture this from the drop event
   int			key_mods; // we captur this from the drop event
   bool			m_highlightRows;
+  bool			m_sibling_sel; // if true, only siblings (items at same level) can be selected -- items at different levels of the tree will not be selected -- true by default
+  bool			ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
   mutable void*		m_highlightColors; // a QMap
   
   void*			highlightColors() const; // insures map exists
@@ -69,9 +76,11 @@ protected:
     const QMimeData* data, Qt::DropAction action); // override -- we always delegate to the item, and always return false (we handle item manipulation manually)
   void 			contextMenuEvent(QContextMenuEvent* e); // override
   void			doItemExpanded(QTreeWidgetItem* item, bool expanded);
-_(Qt::DropActions	supportedDropActions() const;)
+  Qt::DropActions	supportedDropActions() const;
+  void 			setSelection(const QRect &rect,
+				     QItemSelectionModel::SelectionFlags command);
 
-  void 		keyPressEvent(QKeyEvent* e);	// override
+  override void 	keyPressEvent(QKeyEvent* e);	// override
   
 protected slots:
   void			this_itemExpanded(QTreeWidgetItem* item);

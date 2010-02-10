@@ -7190,6 +7190,7 @@ void iTreeView::InsertEl() {
       if(idx > sbo->size) idx = sbo->size;
       sbo->Insert(nwi, idx);
       nwi->UpdateAfterEdit();
+      selectionModel()->clearSelection(); // force clear!
       tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
       tabMisc::DelayedFunCall_gui(nwi, "BrowserSelectMe");
     }
@@ -7382,11 +7383,13 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
 #endif
   if(ctrl_pressed) {
     if(e->key() == Qt::Key_I) {
+      ext_select_on = false;
       InsertEl();
       e->accept();
       return;
     }
     if(e->key() == Qt::Key_M) {
+      ext_select_on = false;
       ISelectable* si = curItem();
       if(si && si->link()) {
 	taBase* sb = si->link()->taData();
@@ -7404,6 +7407,7 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
   if((ctrl_pressed && e->key() == Qt::Key_W) ||
      (ctrl_pressed && e->key() == Qt::Key_D) || (e->key() == Qt::Key_Delete)
      || (e->key() == Qt::Key_Backspace)) {
+    ext_select_on = false;
     ISelectable* si = curItem();
     ISelectableHost* host = NULL;
       if(si && (host = si->host())) {
@@ -7525,6 +7529,7 @@ int iTreeView::colFormat(int col) {
 
 void iTreeView::scrollTo(QTreeWidgetItem* item, ScrollHint hint) {
   if (!item) return;
+  ext_select_on = false;
   inherited::scrollTo(indexFromItem(item), hint);
 }
 
@@ -7910,7 +7915,6 @@ void iTreeViewItem::dropped(const QMimeData* mime, const QPoint& pos,
     int key_mods, WhereIndicator where) 
 {
   DropHandler(mime, pos, key_mods, where);
-
 }
 
 void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden,
