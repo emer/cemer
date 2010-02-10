@@ -1591,6 +1591,8 @@ void DataTable::ReadToSubMatrixTable(Variant col, int row,
   taBase::unRefDone(mat);
 }
 
+// lookup versions:
+
 void DataTable::WriteFmSubMatrixTableLookup(Variant col, int row, 
 	      const DataTable* submat_src, Variant submat_src_col,
 	      Variant submat_lookup_val, Variant submat_lookup_col,
