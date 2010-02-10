@@ -4180,14 +4180,14 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
   iTreeViewItem* rval = itv->AssertItem(link);
   if (rval) {
     itv->scrollTo(rval);
-    itv->setCurrentItem(rval);
+    itv->setCurrentItem(rval, QItemSelectionModel::ClearAndSelect);
   }
   else if(itv == cur_tree_view) { // try again with main 
     itv = GetMainTreeView();
     rval = itv->AssertItem(link);
     if (rval) {
       itv->scrollTo(rval);
-      itv->setCurrentItem(rval);
+      itv->setCurrentItem(rval, QItemSelectionModel::ClearAndSelect);
     }
   }
   // make sure our operations are finished
@@ -9687,7 +9687,7 @@ void iHelpBrowser::LoadType_impl(TypeDef* typ, const String& base_url,
   }
   if (twi != tv->currentItem()) {
     ++m_changing;
-    tv->setCurrentItem(twi);
+    tv->setCurrentItem(twi, QItemSelectionModel::ClearAndSelect);
     --m_changing;
   }
   int idx;
@@ -9758,7 +9758,7 @@ void iHelpBrowser::SetFilter(const QString& filt) {
 bool iHelpBrowser::SetItem(TypeDef* typ) {
   QTreeWidgetItem* item = FindItem(typ);
   if (item) {
-    tv->setCurrentItem(item); // should raise signal
+    tv->setCurrentItem(item, QItemSelectionModel::ClearAndSelect); // should raise signal
   }
   return (item != NULL);
 }
@@ -9839,7 +9839,7 @@ void iHelpBrowser::UpdateTreeItem() {
   QTreeWidgetItem* twi = FindItem(typ_name);
   if (twi != tv->currentItem()) {
     ++m_changing;
-    tv->setCurrentItem(twi);
+    tv->setCurrentItem(twi, QItemSelectionModel::ClearAndSelect);
     --m_changing;
   }
 }
@@ -9916,5 +9916,9 @@ bool iHelpBrowser::eventFilter(QObject* obj, QEvent* event) {
       return true;		// we absorb this event
     }
   }
+//   else if(e->key() == Qt::Key_F3) {
+//     find_text->setFocus();
+//   }
+
   return QObject::eventFilter(obj, event);
 }

@@ -44,6 +44,8 @@ public:
     // whether we use the highlight information from items
   void			setHighlightRows(bool value);
   void 			resizeColumnsToContents(); // convenience: resizes all but last col
+
+  override void 	keyboardSearch(const QString &search);
   
   iTreeWidget(QWidget* parent = 0);
   ~iTreeWidget();
@@ -112,7 +114,6 @@ public:
   virtual void		CreateChildren(); // creates the children, called automatically on expand if lazy_children; normally override _impl
   void 			UpdateLazyChildren(); // only call when you think child status may have changed, to add or remove the placeholder +
   
-
   iTreeWidgetItem(iTreeWidget* parent);
   iTreeWidgetItem(iTreeWidget* parent, iTreeWidgetItem* preceding);
   iTreeWidgetItem(iTreeWidgetItem* parent);

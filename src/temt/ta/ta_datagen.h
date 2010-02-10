@@ -221,25 +221,15 @@ public:
 
   static bool	WriteFmSubMatricies(DataTable* dest, const String& dest_col_nm, 
 				    DataTable* sub_mtx_src, SubMatrixOpSpec* spec, 
+				    taMatrix::RenderOp render_op = taMatrix::COPY,
 				    bool reset_first = true);
-  // #CAT_SubMatrix #MENU_BUTTON #MENU_ON_SubMatrix write to column dest_col_nm in destination table from sub matricies in sub_mtx_src according to columns and offsets in given spec -- if reset_first, dest is reset first  -- rows are always set to number in source
+  // #CAT_SubMatrix #MENU_BUTTON #MENU_ON_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: write to column dest_col_nm in destination using given rendering operation from sub matricies in sub_mtx_src according to columns and offsets in given spec -- if reset_first, dest is reset first -- rows are always set to number in source
 
   static bool	ReadToSubMatricies(DataTable* src, const String& src_col_nm, 
 				   DataTable* sub_mtx_dest, SubMatrixOpSpec* spec,
+				   taMatrix::RenderOp render_op = taMatrix::COPY,
 				   bool reset_first = true);
-  // #CAT_SubMatrix #MENU_BUTTON #MENU_ON_SubMatrix read from column src_col_nm in source table to sub matricies in sub_mtx_dest according to columns and offsets in given spec -- if reset_first, dest is reset first  -- rows are always set to number in source
-
-  static bool	WriteFmSubMatricies_Render(DataTable* dest, const String& dest_col_nm, 
-					   DataTable* sub_mtx_src, SubMatrixOpSpec* spec, 
-					   taMatrix::RenderOp render_op,
-					   bool reset_first = true);
-  // #CAT_SubMatrix #MENU_BUTTON #MENU_ON_SubMatrix write to column dest_col_nm in destination using given rendering operation from sub matricies in sub_mtx_src according to columns and offsets in given spec -- if reset_first, dest is reset first  -- rows are always set to number in source
-
-  static bool	ReadToSubMatricies_Render(DataTable* src, const String& src_col_nm, 
-					  DataTable* sub_mtx_dest, SubMatrixOpSpec* spec,
-					  taMatrix::RenderOp render_op,
-					  bool reset_first = true);
-  // #CAT_SubMatrix #MENU_BUTTON #MENU_ON_SubMatrix read from column src_col_nm in source using given rendering operation to sub matricies in sub_mtx_dest according to columns and offsets in given spec -- if reset_first, dest is reset first  -- rows are always set to number in source
+  // #CAT_SubMatrix #MENU_BUTTON #MENU_ON_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: read from column src_col_nm in source using given rendering operation to sub matricies in sub_mtx_dest according to columns and offsets in given spec -- if reset_first, dest is reset first -- rows are always set to number in source
 
   ///////////////////////////////////////////////////////////////////
   // 	FeatPats -- Generating larger patterns from Feature patterns

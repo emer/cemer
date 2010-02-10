@@ -359,25 +359,16 @@ public:
   ///////////////////////////////////////
   // sub-matrix reading and writing functions
 
-  virtual void	WriteFmSubMatrix(int row, 
-				 const taMatrix* src, int off0=0, int off1=0, int off2=0,
+  virtual void	WriteFmSubMatrix(int row, const taMatrix* submat_src,
+				 taMatrix::RenderOp render_op = taMatrix::COPY,
+				 int off0=0, int off1=0, int off2=0,
 				 int off3=0, int off4=0, int off5=0, int off6=0);
-  // #CAT_SubMatrix write to matrix cell at given row from source sub-matrix (typically of smaller size), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
-  virtual void	ReadToSubMatrix(int row, 
-				taMatrix* dest, int off0=0, int off1=0, int off2=0,
+  // #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: write to matrix cell in this table at given row from source sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  virtual void	ReadToSubMatrix(int row, taMatrix* submat_dest,
+				taMatrix::RenderOp render_op = taMatrix::COPY, 
+				int off0=0, int off1=0, int off2=0,
 				int off3=0, int off4=0, int off5=0, int off6=0);
-  // #CAT_SubMatrix  read from matrix cell at given row to dest sub-matrix (typically of smaller size), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
-
-  virtual void	WriteFmSubMatrix_Render(int row, 
-					const taMatrix* src, taMatrix::RenderOp render_op,
-					int off0=0, int off1=0, int off2=0,
-					int off3=0, int off4=0, int off5=0, int off6=0);
-  // #CAT_SubMatrix write to matrix cell at given row from source sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
-  virtual void	ReadToSubMatrix_Render(int row, 
-				       taMatrix* dest, taMatrix::RenderOp render_op, 
-				       int off0=0, int off1=0, int off2=0,
-				       int off3=0, int off4=0, int off5=0, int off6=0);
-  // #CAT_SubMatrix read from matrix cell at given row to dest sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  // #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: read from matrix cell in this table at given row to dest sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
 
   /////////////////////////
   //	misc funs
@@ -1212,48 +1203,41 @@ public:
   // sub-matrix reading and writing functions
 
   virtual void	WriteFmSubMatrix(Variant col, int row, 
-				 const taMatrix* src, int off0=0, int off1=0, int off2=0,
-				 int off3=0, int off4=0, int off5=0, int off6=0);
-  // #CAT_SubMatrix write to matrix cell at given col, row from source sub-matrix (typically of smaller size), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+		 const taMatrix* submat_src, taMatrix::RenderOp render_op = taMatrix::COPY,
+		 int off0=0, int off1=0, int off2=0,
+		 int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_XpertSubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: write to matrix cell in this table at given col, row from source sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
   virtual void	ReadToSubMatrix(Variant col, int row, 
-				taMatrix* dest, int off0=0, int off1=0, int off2=0,
-				int off3=0, int off4=0, int off5=0, int off6=0);
-  // #CAT_SubMatrix  read from matrix cell at given col, row to dest sub-matrix (typically of smaller size), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
-
-  virtual void	WriteFmSubMatrix_Render(Variant col, int row, 
-					const taMatrix* src, taMatrix::RenderOp render_op,
-					int off0=0, int off1=0, int off2=0,
-					int off3=0, int off4=0, int off5=0, int off6=0);
-  // #CAT_SubMatrix write to matrix cell at given col, row from source sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
-  virtual void	ReadToSubMatrix_Render(Variant col, int row, 
-				       taMatrix* dest, taMatrix::RenderOp render_op, 
-				       int off0=0, int off1=0, int off2=0,
-				       int off3=0, int off4=0, int off5=0, int off6=0);
-  // #CAT_SubMatrix read from matrix cell at given col, row to dest sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+		taMatrix* submat_dest, taMatrix::RenderOp render_op = taMatrix::COPY, 
+		int off0=0, int off1=0, int off2=0,
+		int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_XpertSubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: read from matrix cell in this table at given col, row to dest sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
 
   virtual void	WriteFmSubMatrixTable(Variant col, int row, 
-				       const DataTable* src, Variant src_col, int src_row,
-				       int off0=0, int off1=0, int off2=0,
-				       int off3=0, int off4=0, int off5=0, int off6=0);
-  // #CAT_SubMatrix write to matrix cell at given col, row from source matrix cell in src table at given src_col, src_row (typically of smaller size), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+		      const DataTable* submat_src, Variant submat_src_col, int submat_src_row,
+		      taMatrix::RenderOp render_op = taMatrix::COPY,
+		      int off0=0, int off1=0, int off2=0,
+		      int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: write to matrix cell in this table at given col, row, from source sub-matrix cell (typically of smaller size) in submat_src table at given submat_src_col, submat_src_row, using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
   virtual void	ReadToSubMatrixTable(Variant col, int row, 
-				     const DataTable* dest, Variant dest_col, int dest_row,
-				     int off0=0, int off1=0, int off2=0,
-				     int off3=0, int off4=0, int off5=0, int off6=0);
-  // #CAT_SubMatrix read from matrix cell at given col, row to dest matrix cell in dest table at dest_col, dest_row (typically of smaller size), starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+		     const DataTable* submat_dest, Variant submat_dest_col, int submat_dest_row,
+		     taMatrix::RenderOp render_op = taMatrix::COPY, 
+		     int off0=0, int off1=0, int off2=0,
+		     int off3=0, int off4=0, int off5=0, int off6=0);
+  // #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: read from matrix cell in this table at given col, row, to dest sub-matrix cell (typically of smaller size) in submat_dest table at submat_dest_col, submat_dest_row, using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
 
-  virtual void	WriteFmSubMatrixTable_Render(Variant col, int row, 
-					     const DataTable* src, Variant src_col, int src_row,
-					     taMatrix::RenderOp render_op,
-					     int off0=0, int off1=0, int off2=0,
-					     int off3=0, int off4=0, int off5=0, int off6=0);
-  // #CAT_SubMatrix write to matrix cell at given col, row from source matrix cell in src table at given src_col, src_row (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
-  virtual void	ReadToSubMatrixTable_Render(Variant col, int row, 
-					    const DataTable* dest, Variant dest_col, int dest_row,
-					    taMatrix::RenderOp render_op, 
-					    int off0=0, int off1=0, int off2=0,
-					    int off3=0, int off4=0, int off5=0, int off6=0);
-  // #CAT_SubMatrix read from matrix cell at given col, row to dest matrix cell in dest table at dest_col, dest_row (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  virtual void	WriteFmSubMatrixTableLookup(Variant col, int row, 
+	      const DataTable* submat_src, Variant submat_src_col,
+	      Variant submat_lookup_val, Variant submat_lookup_col,
+	      taMatrix::RenderOp render_op, const DataTable* offset_lookup,
+	      Variant offset_col, Variant offset_lookup_val, Variant offset_lookup_col);
+  // #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: write to matrix cell in this table at given col, row, from source sub-matrix cell (typically of smaller size) in submat_src table at given submat_src_col, at row given by looking up submat_loop_val in submat_lookup_col, using given render operation to combine source and destination values, starting at offsets found in a matrix cell in offset_lookup table, searching in lookup_col for value lookup_val to select the row, and getting the offsets from column offset_col
+  virtual void	ReadToSubMatrixTableLookup(Variant col, int row, 
+		const DataTable* submat_dest, Variant submat_dest_col,
+	        Variant submat_lookup_val, Variant submat_lookup_col,
+		taMatrix::RenderOp render_op, const DataTable* offset_lookup,
+		Variant offset_col, Variant offset_lookup_val, Variant offset_lookup_col);
+  // #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: read from matrix cell in this table at given col, row, to dest sub-matrix cell (typically of smaller size) in submat_dest table at submat_dest_col, at row given by looking up submat_loop_val in submat_lookup_col, using given render operation to combine source and destination values, starting at offsets found in a matrix cell in offset_lookup table, searching in lookup_col for value lookup_val to select the row, and getting the offsets from column offset_col
 
   //////////////////////////////
   // 	Misc funs

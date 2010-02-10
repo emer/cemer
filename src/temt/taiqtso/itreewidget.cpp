@@ -259,6 +259,17 @@ void iTreeWidget::resizeColumnsToContents() {
 */
 }
 
+void iTreeWidget::keyboardSearch(const QString& search) {
+  // this makes it go directly to single selection mode for keyboard search --
+  // perhaps not as powerful as extended select under keyboard ctrl but a LOT
+  // more intuitive, esp on mac where you don't even get the ghosty outline of
+  // the potentially-selected item..
+  QAbstractItemView::SelectionMode prv_md = selectionMode();
+  setSelectionMode(QAbstractItemView::SingleSelection);
+  inherited::keyboardSearch(search);
+  setSelectionMode(prv_md);
+}
+
 void iTreeWidget::setHighlightColor(int idx, const QColor& base)
 {
   QColor h = base.dark(150); // returns color 100/150 (2/3) as bright

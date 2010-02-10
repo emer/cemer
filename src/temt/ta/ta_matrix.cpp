@@ -1519,38 +1519,9 @@ Variant taMatrix::RenderValue(const Variant& dest_val, const Variant& src_val, R
   return rval;
 }
 
-void taMatrix::WriteFmSubMatrix(const taMatrix* src, int off0, int off1, int off2,
+void taMatrix::WriteFmSubMatrix(const taMatrix* src, RenderOp render_op,
+				int off0, int off1, int off2,
 				int off3, int off4, int off5, int off6) {
-  if(!src) return;
-  MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
-  MatrixGeom srcp;
-  for(int i=0;i<src->size;i++) {
-    src->geom.DimsFmIndex(i, srcp);
-    MatrixGeom trgp(off);
-    trgp.AddFmGeom(srcp);
-    Variant val = src->FastElAsVar_Flat(i);
-    SetFmVarN(val, trgp);
-  }
-}
-
-void taMatrix::ReadToSubMatrix(taMatrix* dest, int off0, int off1, int off2,
-			       int off3, int off4, int off5, int off6) {
-  if(!dest) return;
-  MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
-  MatrixGeom srcp;
-  for(int i=0;i<dest->size;i++) {
-    dest->geom.DimsFmIndex(i, srcp);
-    MatrixGeom trgp(off);
-    trgp.AddFmGeom(srcp);
-    Variant val = SafeElAsVarN(trgp);
-    if(!val.isInvalid())
-      dest->SetFmVar_Flat(val, i);
-  }
-}
-
-void taMatrix::WriteFmSubMatrix_Render(const taMatrix* src, RenderOp render_op,
-					int off0, int off1, int off2,
-				       int off3, int off4, int off5, int off6) {
   if(!src) return;
   MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
   MatrixGeom srcp;
@@ -1565,9 +1536,9 @@ void taMatrix::WriteFmSubMatrix_Render(const taMatrix* src, RenderOp render_op,
   }
 }
 
-void taMatrix::ReadToSubMatrix_Render(taMatrix* dest, RenderOp render_op, 
-				       int off0, int off1, int off2,
-				      int off3, int off4, int off5, int off6) {
+void taMatrix::ReadToSubMatrix(taMatrix* dest, RenderOp render_op, 
+			       int off0, int off1, int off2,
+			       int off3, int off4, int off5, int off6) {
   if(!dest) return;
   MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
   MatrixGeom srcp;
@@ -1584,63 +1555,9 @@ void taMatrix::ReadToSubMatrix_Render(taMatrix* dest, RenderOp render_op,
   }
 }
 
-void taMatrix::WriteFmSubMatrixFrames(taMatrix* src, 
+void taMatrix::WriteFmSubMatrixFrames(taMatrix* src, RenderOp render_op,
 				      int off0, int off1, int off2,
 				      int off3, int off4, int off5, int off6) {
-  if(!src) return;
-  MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
-  MatrixGeom srcp;
-  int fr_max = frames();
-  bool src_frames = false;	// source has frames
-  if(src->dims() == dims()) {
-    fr_max = MIN(fr_max, src->frames());
-    src_frames = true;
-  }
-  for(int fr=0;fr<fr_max;fr++) {
-    taMatrixPtr dfr;  dfr = GetFrameSlice_(fr);
-    taMatrixPtr sfr;
-    if(src_frames)
-      sfr = src->GetFrameSlice_(fr);
-    else
-      sfr = src;
-    for(int i=0;i<sfr->size;i++) {
-      sfr->geom.DimsFmIndex(i, srcp);
-      MatrixGeom trgp(off);
-      trgp.AddFmGeom(srcp);
-      Variant val = sfr->FastElAsVar_Flat(i);
-      dfr->SetFmVarN(val, trgp);
-    }
-  }
-}
-
-void taMatrix::ReadToSubMatrixFrames(taMatrix* dest,
-				     int off0, int off1, int off2,
-				     int off3, int off4, int off5, int off6) {
-  if(!dest) return;
-  // actually, it doesn't matter, just as long as the frame count matches..
-//   if(TestError(dest->dims() != dims(), "ReadToSubMatrixFrames", "destination must be same dimensionality as this (source) matrix.  Source is:", String(dims()), "dest is:", dest->dims()))
-//     return;
-  dest->EnforceFrames(frames()); // match them up
-  MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
-  MatrixGeom srcp;
-  int fr_max = frames();
-  for(int fr=0;fr<fr_max;fr++) {
-    taMatrixPtr sfr;  sfr = GetFrameSlice_(fr);
-    taMatrixPtr dfr;  dfr = dest->GetFrameSlice_(fr);
-    for(int i=0;i<dfr->size;i++) {
-      dfr->geom.DimsFmIndex(i, srcp);
-      MatrixGeom trgp(off);
-      trgp.AddFmGeom(srcp);
-      Variant val = sfr->SafeElAsVarN(trgp);
-      if(!val.isInvalid())
-	dfr->SetFmVar_Flat(val, i);
-    }
-  }
-}
-
-void taMatrix::WriteFmSubMatrixFrames_Render(taMatrix* src, RenderOp render_op,
-					     int off0, int off1, int off2,
-					     int off3, int off4, int off5, int off6) {
   if(!src) return;
   MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);
   MatrixGeom srcp;
@@ -1669,9 +1586,9 @@ void taMatrix::WriteFmSubMatrixFrames_Render(taMatrix* src, RenderOp render_op,
   }
 }
 
-void taMatrix::ReadToSubMatrixFrames_Render(taMatrix* dest, RenderOp render_op, 
-					    int off0, int off1, int off2,
-					    int off3, int off4, int off5, int off6) {
+void taMatrix::ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op, 
+				     int off0, int off1, int off2,
+				     int off3, int off4, int off5, int off6) {
   if(!dest) return;
   dest->EnforceFrames(frames()); // match them up
   MatrixGeom off(dims(), off0, off1, off2, off3, off4, off5, off6);

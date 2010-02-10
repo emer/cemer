@@ -24,11 +24,6 @@ void SubMatrixOpEl::Initialize() {
 }
 
 String SubMatrixOpEl::GetDisplayName() const {
-//   String rval = col_name + " ";
-//   if(order == ASCENDING) 
-//     rval += "up";
-//   else
-//     rval += "dn";
   return col_name;
 }
 
@@ -1164,6 +1159,7 @@ float taDataGen::LastMinMaxDist(DataCol* da, int row, float& max_dist,
 
 bool taDataGen::WriteFmSubMatricies(DataTable* dest, const String& dest_col_nm, 
 				    DataTable* sub_mtx_src, SubMatrixOpSpec* spec, 
+				    taMatrix::RenderOp render_op,
 				    bool reset_first) {
   if(!dest) { taMisc::Error("taDataGen::WriteFmSubMatricies: dest is NULL"); return false; }
   if(!sub_mtx_src) { taMisc::Error("taDataGen::WriteFmSubMatricies: sub_mtx_src is NULL"); return false; }
@@ -1182,7 +1178,7 @@ bool taDataGen::WriteFmSubMatricies(DataTable* dest, const String& dest_col_nm,
     if(ds->col_idx < 0) continue; // couldn't find this col
     ds->offset.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
     DataCol* scol = sub_mtx_src->data.FastEl(ds->col_idx);
-    dcol->AR()->WriteFmSubMatrixFrames(scol->AR(), d0,d1,d2,d3,d4,d5,d6);
+    dcol->AR()->WriteFmSubMatrixFrames(scol->AR(), render_op, d0,d1,d2,d3,d4,d5,d6);
   }
   spec->ClearColumns();
   dest->StructUpdate(false);
@@ -1191,7 +1187,8 @@ bool taDataGen::WriteFmSubMatricies(DataTable* dest, const String& dest_col_nm,
 
 bool taDataGen::ReadToSubMatricies(DataTable* src, const String& src_col_nm, 
 				   DataTable* sub_mtx_dest, SubMatrixOpSpec* spec,
-				    bool reset_first) {
+				   taMatrix::RenderOp render_op,
+				   bool reset_first) {
   if(!src) { taMisc::Error("taDataGen::ReadToSubMatricies: src is NULL"); return false; }
   if(!sub_mtx_dest) { taMisc::Error("taDataGen::ReadToSubMatricies: sub_mtx_dest is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataGen::ReadToSubMatricies: spec is NULL"); return false; }
@@ -1209,63 +1206,7 @@ bool taDataGen::ReadToSubMatricies(DataTable* src, const String& src_col_nm,
     if(ds->col_idx < 0) continue; // couldn't find this col
     ds->offset.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
     DataCol* dcol = sub_mtx_dest->data.FastEl(ds->col_idx);
-    scol->AR()->ReadToSubMatrixFrames(dcol->AR(), d0,d1,d2,d3,d4,d5,d6);
-  }
-  spec->ClearColumns();
-  sub_mtx_dest->StructUpdate(false);
-  return true;
-}
-
-bool taDataGen::WriteFmSubMatricies_Render(DataTable* dest, const String& dest_col_nm, 
-					   DataTable* sub_mtx_src, SubMatrixOpSpec* spec, 
-					   taMatrix::RenderOp render_op,
-					   bool reset_first) {
-  if(!dest) { taMisc::Error("taDataGen::WriteFmSubMatricies: dest is NULL"); return false; }
-  if(!sub_mtx_src) { taMisc::Error("taDataGen::WriteFmSubMatricies: sub_mtx_src is NULL"); return false; }
-  if(!spec) { taMisc::Error("taDataGen::WriteFmSubMatricies: spec is NULL"); return false; }
-
-  DataCol* dcol = dest->FindColName(dest_col_nm, true); // warn
-  if(!dcol) return false;
-
-  dest->StructUpdate(true);
-  spec->GetColumns(sub_mtx_src);		// cache column pointers & indicies from names
-
-  int dms,d0,d1,d2,d3,d4,d5,d6;
-
-  for(int i=0;i<spec->ops.size; i++) {
-    SubMatrixOpEl* ds = (SubMatrixOpEl*)spec->ops.FastEl(i);
-    if(ds->col_idx < 0) continue; // couldn't find this col
-    ds->offset.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
-    DataCol* scol = sub_mtx_src->data.FastEl(ds->col_idx);
-    dcol->AR()->WriteFmSubMatrixFrames_Render(scol->AR(), render_op, d0,d1,d2,d3,d4,d5,d6);
-  }
-  spec->ClearColumns();
-  dest->StructUpdate(false);
-  return true;
-}
-
-bool taDataGen::ReadToSubMatricies_Render(DataTable* src, const String& src_col_nm, 
-					  DataTable* sub_mtx_dest, SubMatrixOpSpec* spec,
-					  taMatrix::RenderOp render_op,
-					  bool reset_first) {
-  if(!src) { taMisc::Error("taDataGen::ReadToSubMatricies: src is NULL"); return false; }
-  if(!sub_mtx_dest) { taMisc::Error("taDataGen::ReadToSubMatricies: sub_mtx_dest is NULL"); return false; }
-  if(!spec) { taMisc::Error("taDataGen::ReadToSubMatricies: spec is NULL"); return false; }
-
-  DataCol* scol = src->FindColName(src_col_nm, true); // warn
-  if(!scol) return false;
-
-  sub_mtx_dest->StructUpdate(true);
-  spec->GetColumns(sub_mtx_dest);		// cache column pointers & indicies from names
-
-  int dms,d0,d1,d2,d3,d4,d5,d6;
-
-  for(int i=0;i<spec->ops.size; i++) {
-    SubMatrixOpEl* ds = (SubMatrixOpEl*)spec->ops.FastEl(i);
-    if(ds->col_idx < 0) continue; // couldn't find this col
-    ds->offset.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
-    DataCol* dcol = sub_mtx_dest->data.FastEl(ds->col_idx);
-    scol->AR()->ReadToSubMatrixFrames_Render(dcol->AR(), render_op, d0,d1,d2,d3,d4,d5,d6);
+    scol->AR()->ReadToSubMatrixFrames(dcol->AR(), render_op, d0,d1,d2,d3,d4,d5,d6);
   }
   spec->ClearColumns();
   sub_mtx_dest->StructUpdate(false);
@@ -1333,7 +1274,7 @@ bool taDataGen::GenRndFeatPats(DataTable* dest, const String& dest_col, int n_pa
       dpt.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
       taMatrixPtr rnd_pat; rnd_pat = GetRndFeatPat(feat_vocab, feat_col_nm);
       taMatrixPtr dst_pat; dst_pat = dcol->GetValAsMatrix(pat);
-      dst_pat->WriteFmSubMatrix(rnd_pat, d0,d1,d2,d3,d4,d5,d6);
+      dst_pat->WriteFmSubMatrix(rnd_pat, taMatrix::COPY, d0,d1,d2,d3,d4,d5,d6);
     }
   }
   dest->StructUpdate(false);
@@ -1407,7 +1348,7 @@ bool taDataGen::GenItemsFmProtos(DataTable* items, const String& dest_col,
       dpt.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
       taMatrixPtr rnd_pat; rnd_pat = GetRndFeatPat(feat_vocab, feat_col_nm);
       taMatrixPtr dst_pat; dst_pat = dcol->GetValAsMatrix(pat);
-      dst_pat->WriteFmSubMatrix(rnd_pat, d0,d1,d2,d3,d4,d5,d6);
+      dst_pat->WriteFmSubMatrix(rnd_pat, taMatrix::COPY, d0,d1,d2,d3,d4,d5,d6);
     }
   }
   items->StructUpdate(false);
@@ -1467,7 +1408,7 @@ bool taDataGen::GenNamedFeatPats(DataTable* dest, const String& dest_col,
 						  feat_name_col_nm);
       if(!(bool)nm_pat) continue; // didn't find it.
       taMatrixPtr dst_pat; dst_pat = dcol->GetValAsMatrix(pat);
-      dst_pat->WriteFmSubMatrix(nm_pat, d0,d1,d2,d3,d4,d5,d6);
+      dst_pat->WriteFmSubMatrix(nm_pat, taMatrix::COPY, d0,d1,d2,d3,d4,d5,d6);
     }
   }
   dest->StructUpdate(false);

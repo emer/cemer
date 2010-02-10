@@ -1406,6 +1406,10 @@ bool taProject::AutoSave(bool force) {
 
   // restore original:
   file_name = orig_fnm;
+  MainWindowViewer* vwr = GetDefaultProjectBrowser();
+  if(vwr) {
+    vwr->SetWinName();
+  }
   return true;
 }
 

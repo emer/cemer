@@ -549,47 +549,25 @@ bool DataCol::SetValAsMatrix(const taMatrix* val, int row) {
 }
 
 void DataCol::WriteFmSubMatrix(int row, 
-			       const taMatrix* src, int off0, int off1, int off2,
+			       const taMatrix* src, taMatrix::RenderOp render_op,
+			       int off0, int off1, int off2,
 			       int off3, int off4, int off5, int off6) {
   taMatrix* mat = GetValAsMatrix(row);
   if(mat) {
     taBase::Ref(mat);
-    mat->WriteFmSubMatrix(src, off0, off1, off2, off3, off4, off5, off6);
+    mat->WriteFmSubMatrix(src, render_op, off0, off1, off2, off3, off4, off5, off6);
     taBase::unRefDone(mat);
   }
 }
 
 void DataCol::ReadToSubMatrix(int row, 
-			      taMatrix* dest, int off0, int off1, int off2,
+			      taMatrix* dest, taMatrix::RenderOp render_op, 
+			      int off0, int off1, int off2,
 			      int off3, int off4, int off5, int off6) {
   taMatrix* mat = GetValAsMatrix(row);
   if(mat) {
     taBase::Ref(mat);
-    mat->ReadToSubMatrix(dest, off0, off1, off2, off3, off4, off5, off6);
-    taBase::unRefDone(mat);
-  }
-}
-
-void DataCol::WriteFmSubMatrix_Render(int row, 
-				      const taMatrix* src, taMatrix::RenderOp render_op,
-				      int off0, int off1, int off2,
-				      int off3, int off4, int off5, int off6) {
-  taMatrix* mat = GetValAsMatrix(row);
-  if(mat) {
-    taBase::Ref(mat);
-    mat->WriteFmSubMatrix_Render(src, render_op, off0, off1, off2, off3, off4, off5, off6);
-    taBase::unRefDone(mat);
-  }
-}
-
-void DataCol::ReadToSubMatrix_Render(int row, 
-				     taMatrix* dest, taMatrix::RenderOp render_op, 
-				     int off0, int off1, int off2,
-				     int off3, int off4, int off5, int off6) {
-  taMatrix* mat = GetValAsMatrix(row);
-  if(mat) {
-    taBase::Ref(mat);
-    mat->ReadToSubMatrix_Render(dest, render_op, off0, off1, off2, off3, off4, off5, off6);
+    mat->ReadToSubMatrix(dest, render_op, off0, off1, off2, off3, off4, off5, off6);
     taBase::unRefDone(mat);
   }
 }
@@ -1554,124 +1532,143 @@ taMatrix* DataTable::GetRangeAsMatrix(Variant col, int st_row, int n_rows) {
 // sub-matrix reading and writing functions
 
 void DataTable::WriteFmSubMatrix(Variant col, int row, 
-				 const taMatrix* src, int off0, int off1, int off2,
+				 const taMatrix* src, taMatrix::RenderOp render_op,
+				 int off0, int off1, int off2,
 				 int off3, int off4, int off5, int off6) {
   DataCol* da = GetColData(col);
   int i;
   if (da && idx_err(row, da->rows(), i))
-    da->WriteFmSubMatrix(row, src, off0, off1, off2, off3, off4, off5, off6);
+    da->WriteFmSubMatrix(row, src, render_op, off0, off1, off2, off3, off4, off5, off6);
 }
 
 void DataTable::ReadToSubMatrix(Variant col, int row, 
-				taMatrix* dest, int off0, int off1, int off2,
+				taMatrix* dest, taMatrix::RenderOp render_op, 
+				int off0, int off1, int off2,
 				int off3, int off4, int off5, int off6) {
   DataCol* da = GetColData(col);
   int i;
   if (da && idx_err(row, da->rows(), i))
-    da->ReadToSubMatrix(row, dest, off0, off1, off2, off3, off4, off5, off6);
-}
-
-void DataTable::WriteFmSubMatrix_Render(Variant col, int row, 
-					const taMatrix* src, taMatrix::RenderOp render_op,
-					int off0, int off1, int off2,
-					int off3, int off4, int off5, int off6) {
-  DataCol* da = GetColData(col);
-  int i;
-  if (da && idx_err(row, da->rows(), i))
-    da->WriteFmSubMatrix_Render(row, src, render_op, off0, off1, off2, off3, off4, off5, off6);
-}
-
-void DataTable::ReadToSubMatrix_Render(Variant col, int row, 
-				       taMatrix* dest, taMatrix::RenderOp render_op, 
-				       int off0, int off1, int off2,
-				       int off3, int off4, int off5, int off6) {
-  DataCol* da = GetColData(col);
-  int i;
-  if (da && idx_err(row, da->rows(), i))
-    da->ReadToSubMatrix_Render(row, dest, render_op, off0, off1, off2, off3, off4, off5, off6);
+    da->ReadToSubMatrix(row, dest, render_op, off0, off1, off2, off3, off4, off5, off6);
 }
 
 void DataTable::WriteFmSubMatrixTable(Variant col, int row, 
 				      const DataTable* src, Variant src_col, int src_row,
+				      taMatrix::RenderOp render_op,
 				      int off0, int off1, int off2,
 				      int off3, int off4, int off5, int off6) {
+  if(TestError(!src, "WriteFmSubMatrixTable", "submat_src table is NULL"))
+    return;
   DataCol* da = GetColData(col);
   int i;
-  if (da && idx_err(row, da->rows(), i)) {
-    DataCol* sda = src->GetColData(src_col);
-    int j;
-    if (sda && idx_err(src_row, sda->rows(), j)) {
-      taMatrix* mat = sda->GetValAsMatrix(src_row);
-      if(mat) {
-	taBase::Ref(mat);
-	da->WriteFmSubMatrix(row, mat, off0, off1, off2, off3, off4, off5, off6);
-	taBase::unRefDone(mat);
-      }
-    }
-  }
+  if(!da || !idx_err(row, da->rows(), i)) return;
+  DataCol* sda = src->GetColData(src_col);
+  int j;
+  if(!sda || !idx_err(src_row, sda->rows(), j)) return;
+  taMatrix* mat = sda->GetValAsMatrix(src_row);
+  if(!mat) return;
+  taBase::Ref(mat);
+  da->WriteFmSubMatrix(row, mat, render_op, off0, off1, off2, off3, off4, off5, off6);
+  taBase::unRefDone(mat);
 }
 
 void DataTable::ReadToSubMatrixTable(Variant col, int row, 
 				     const DataTable* dest, Variant dest_col, int dest_row,
+				     taMatrix::RenderOp render_op, 
 				     int off0, int off1, int off2,
 				     int off3, int off4, int off5, int off6) {
+  if(TestError(!dest, "ReadToSubMatrixTable", "submat_dest table is NULL"))
+    return;
   DataCol* da = GetColData(col);
   int i;
-  if (da && idx_err(row, da->rows(), i)) {
-    DataCol* sda = dest->GetColData(dest_col);
-    int j;
-    if (sda && idx_err(dest_row, sda->rows(), j)) {
-      taMatrix* mat = sda->GetValAsMatrix(dest_row);
-      if(mat) {
-	taBase::Ref(mat);
-	da->ReadToSubMatrix(row, mat, off0, off1, off2, off3, off4, off5, off6);
-	taBase::unRefDone(mat);
-      }
-    }
-  }
+  if(!da || !idx_err(row, da->rows(), i)) return;
+  DataCol* sda = dest->GetColData(dest_col);
+  int j;
+  if(!sda || !idx_err(dest_row, sda->rows(), j)) return;
+  taMatrix* mat = sda->GetValAsMatrix(dest_row);
+  if(!mat) return;
+  taBase::Ref(mat);
+  da->ReadToSubMatrix(row, mat, render_op, off0, off1, off2, off3, off4, off5, off6);
+  taBase::unRefDone(mat);
 }
 
-void DataTable::WriteFmSubMatrixTable_Render(Variant col, int row, 
-					     const DataTable* src, Variant src_col, int src_row,
-					     taMatrix::RenderOp render_op,
-					     int off0, int off1, int off2,
-					     int off3, int off4, int off5, int off6) {
+void DataTable::WriteFmSubMatrixTableLookup(Variant col, int row, 
+	      const DataTable* submat_src, Variant submat_src_col,
+	      Variant submat_lookup_val, Variant submat_lookup_col,
+	      taMatrix::RenderOp render_op, const DataTable* offset_lookup,
+	      Variant offset_col, Variant offset_lookup_val, Variant offset_lookup_col) {
+  if(TestError(!submat_src, "WriteFmSubMatrixTableLookup", "submat_src table is NULL"))
+    return;
+  if(TestError(!offset_lookup, "WriteFmSubMatrixTableLookup", "offset_lookup table is NULL"))
+    return;
   DataCol* da = GetColData(col);
   int i;
-  if (da && idx_err(row, da->rows(), i)) {
-    DataCol* sda = src->GetColData(src_col);
-    int j;
-    if (sda && idx_err(src_row, sda->rows(), j)) {
-      taMatrix* mat = sda->GetValAsMatrix(src_row);
-      if(mat) {
-	taBase::Ref(mat);
-	da->WriteFmSubMatrix_Render(row, mat, render_op, off0, off1, off2, off3, off4, off5, off6);
-	taBase::unRefDone(mat);
-      }
-    }
+  if(!da || !idx_err(row, da->rows(), i)) return;
+  DataCol* sda = submat_src->GetColData(submat_src_col);
+  DataCol* slda = submat_src->GetColData(submat_lookup_col);
+  if(!slda) return;
+  int slrow = slda->FindVal(submat_lookup_val);
+  if(TestError(slrow < 0, "WriteFmSubMatrixTableLookup", "cannot find submat_lookup_val",
+	       submat_lookup_val.toString(),
+	       "in submat_src table column:",slda->name)) return;
+  DataCol* olda = offset_lookup->GetColData(offset_lookup_col);
+  if(!olda) return;
+  DataCol* oda = offset_lookup->GetColData(offset_col);
+  if(!oda) return;
+  int olrow = olda->FindVal(offset_lookup_val);
+  if(TestError(olrow < 0, "WriteFmSubMatrixTableLookup", "cannot find offset_lookup_val", 
+	       offset_lookup_val.toString(),
+	       "in offset_lookup table column:",olda->name)) return;
+  int offs[7] = {0,0,0,0,0,0,0};
+  int mx = MIN(oda->cell_size(), 7);
+  for(int k=0;k<mx;k++) {
+    offs[k] = oda->GetValAsIntM(olrow, k);
   }
+  taMatrix* mat = sda->GetValAsMatrix(slrow);
+  if(!mat) return;
+  taBase::Ref(mat);
+  da->WriteFmSubMatrix(row, mat, render_op, offs[0], offs[1], offs[2], offs[3], offs[4],
+		       offs[5], offs[6]);
+  taBase::unRefDone(mat);
 }
 
-void DataTable::ReadToSubMatrixTable_Render(Variant col, int row, 
-					    const DataTable* dest, Variant dest_col, int dest_row,
-					    taMatrix::RenderOp render_op, 
-					    int off0, int off1, int off2,
-					    int off3, int off4, int off5, int off6) {
-
+void DataTable::ReadToSubMatrixTableLookup(Variant col, int row, 
+		const DataTable* submat_dest, Variant submat_dest_col,
+	        Variant submat_lookup_val, Variant submat_lookup_col,
+		taMatrix::RenderOp render_op, const DataTable* offset_lookup,
+	        Variant offset_col, Variant offset_lookup_val, Variant offset_lookup_col) {
+  if(TestError(!submat_dest, "ReadToSubMatrixTableLookup", "submat_dest table is NULL"))
+    return;
+  if(TestError(!offset_lookup, "ReadToSubMatrixTableLookup", "offset_lookup table is NULL"))
+    return;
   DataCol* da = GetColData(col);
   int i;
-  if (da && idx_err(row, da->rows(), i)) {
-    DataCol* sda = dest->GetColData(dest_col);
-    int j;
-    if (sda && idx_err(dest_row, sda->rows(), j)) {
-      taMatrix* mat = sda->GetValAsMatrix(dest_row);
-      if(mat) {
-	taBase::Ref(mat);
-	da->ReadToSubMatrix_Render(row, mat, render_op, off0, off1, off2, off3, off4, off5, off6);
-	taBase::unRefDone(mat);
-      }
-    }
+  if(!da || !idx_err(row, da->rows(), i)) return;
+  DataCol* sda = submat_dest->GetColData(submat_dest_col);
+  DataCol* slda = submat_dest->GetColData(submat_lookup_col);
+  if(!slda) return;
+  int slrow = slda->FindVal(submat_lookup_val);
+  if(TestError(slrow < 0, "ReadToSubMatrixTableLookup", "cannot find submat_lookup_val",
+	       submat_lookup_val.toString(),
+	       "in submat_src table column:",slda->name)) return;
+  DataCol* olda = offset_lookup->GetColData(offset_lookup_col);
+  if(!olda) return;
+  DataCol* oda = offset_lookup->GetColData(offset_col);
+  if(!oda) return;
+  int olrow = olda->FindVal(offset_lookup_val);
+  if(TestError(olrow < 0, "WriteFmSubMatrixTableLookup", "cannot find offset_lookup_val",
+	       offset_lookup_val.toString(),
+	       "in offset_lookup table column:",olda->name)) return;
+  int offs[7] = {0,0,0,0,0,0,0};
+  int mx = MIN(oda->cell_size(), 7);
+  for(int k=0;k<mx;k++) {
+    offs[k] = oda->GetValAsIntM(olrow, k);
   }
+  taMatrix* mat = sda->GetValAsMatrix(slrow);
+  if(!mat) return;
+  taBase::Ref(mat);
+  da->ReadToSubMatrix(row, mat, render_op, offs[0], offs[1], offs[2], offs[3], offs[4],
+		       offs[5], offs[6]);
+  taBase::unRefDone(mat);
 }
 
 
