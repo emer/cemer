@@ -30,6 +30,7 @@
 #include "ilineedit.h"
 #include "ispinbox.h"
 #include "iscrollarea.h"
+#include "iflowlayout.h"
 
 #include <QApplication>
 #include <QButtonGroup>
@@ -2006,6 +2007,19 @@ iDataTableView_Panel::iDataTableView_Panel(DataTableView* lv)
 //  widg->setFrameStyle( QFrame::GroupBoxPanel | QFrame::Sunken );
   layWidg = new QVBoxLayout(widg); //def margin/spacing=2  
   layWidg->setMargin(0); layWidg->setSpacing(2);
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Command Buttons
+  widCmdButtons = new QWidget(widg);
+  iFlowLayout* fl = new iFlowLayout(widCmdButtons);
+//  layTopCtrls->addWidget(widCmdButtons);
+  layOuter->addWidget(widCmdButtons);
+  
+  meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons); 
+  meth_but_mgr->Constr(lv->dataTable());
+
+  MakeButtons(layOuter);
+
   setCentralWidget(widg);
 }
 

@@ -18,6 +18,7 @@
 
 #include "ta_qttype.h"
 #include "ta_qtviewer.h"
+#include "ta_qtgroup.h"
 
 #include "ta_datatable.h"
 #include "ta_geometry.h"
@@ -448,6 +449,8 @@ class TA_API iDataTableView_Panel: public iViewPanelFrame {
 public:
   QWidget*		widg;
   QVBoxLayout*		layWidg;
+  QWidget*		widCmdButtons;
+  iMethodButtonMgr*	meth_but_mgr;
   DataTableView*	lv() {return (DataTableView*)m_dv;}
 
   iDataTableView_Panel(DataTableView* lv);

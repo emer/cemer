@@ -2483,8 +2483,8 @@ void NetView::ChildRemoving(taDataView* child_) {
 }
 
 void NetView::DataUpdateAfterEdit_impl() {
-  UpdatePanel();
-  // maybe rerender???
+  InitDisplay(true);
+  UpdateDisplay();
 }
 
 void NetView::DataUpdateAfterEdit_Child_impl(taDataView* chld) {
@@ -3467,6 +3467,7 @@ void NetView::UpdateAutoScale() {
 
 void NetView::UpdateDisplay(bool update_panel) { // redoes everything
   if (update_panel) UpdatePanel();
+//   taMisc::Info("UpdateDisplay");
   Render_impl();
 }
 
@@ -3474,6 +3475,7 @@ void NetView::UpdateUnitValues() { // *actually* only does unit value updating
   if(children.size == 0) return;
   if(hist_save)
     SaveCtrHist();
+//   taMisc::Info("UpdateUnitValues");
   LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
   lv->UpdateUnitValues();
 }

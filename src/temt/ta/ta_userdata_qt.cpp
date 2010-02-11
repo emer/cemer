@@ -406,6 +406,8 @@ UserDataItemBase* iUserDataDataHost::GetUserDataItem(int row) {
 
 void iUserDataDataHost::GetValue_Membs_def() {
   udd->GetValue();
+  if(udil && udil->owner)
+    udil->owner->UpdateAfterEdit(); // update owner too
 }
 
 void iUserDataDataHost::tw_currentCellChanged(int row, 
