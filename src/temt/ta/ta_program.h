@@ -1437,6 +1437,8 @@ public:
   String		tags;
   // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this program -- should be listed in hierarchical order, with most important/general tags first, as this is how they will be sorted in the program library
   String		desc; // #EDIT_DIALOG description of what this program group does and when it should be used (used for searching in prog_lib -- be thorough!)
+  ProgramRef		step_prog;
+  // #READ_ONLY #NO_SAVE #OBSOLETE this is just here for loading prior versions and is no longer used in any fashion
 
   static ProgLib	prog_lib; // #HIDDEN_TREE library of available programs
 

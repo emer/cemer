@@ -4657,6 +4657,7 @@ void Program_Group::Initialize() {
 
 void Program_Group::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(step_prog, this);
   if(prog_lib.not_init) {
     taBase::Ref(prog_lib);
     prog_lib.FindPrograms();
