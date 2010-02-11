@@ -2382,7 +2382,7 @@ void GraphAxisBase::CopyFromView_base(GraphAxisBase* cp){
 
 void GraphAxisBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  color.UpdateAfterEdit();
+  color.UpdateAfterEdit_NoGui();
   UpdateFmColLookup();
   UpdateOnFlag();
 }
@@ -2963,34 +2963,34 @@ void GraphTableView::Initialize() {
 
   x_axis.axis = GraphAxisBase::X;
   x_axis.color.name = taMisc::t3d_text_color;
-  x_axis.color.UpdateAfterEdit();	// needed to pick up color name
+  x_axis.color.UpdateAfterEdit_NoGui();	// needed to pick up color name
   z_axis.axis = GraphAxisBase::Z;
   z_axis.color.name = taMisc::t3d_text_color;
-  z_axis.color.UpdateAfterEdit();	// needed to pick up color name
+  z_axis.color.UpdateAfterEdit_NoGui();	// needed to pick up color name
   plot_1.color.name = taMisc::t3d_text_color;
   plot_1.point_style = GraphPlotView::CIRCLE;
-  plot_1.color.UpdateAfterEdit();	// needed to pick up color name
+  plot_1.color.UpdateAfterEdit_NoGui();	// needed to pick up color name
   plot_2.color.name = "red";
   plot_2.point_style = GraphPlotView::SQUARE;
-  plot_2.color.UpdateAfterEdit();
+  plot_2.color.UpdateAfterEdit_NoGui();
   plot_3.color.name = "blue";
   plot_3.point_style = GraphPlotView::DIAMOND;
-  plot_3.color.UpdateAfterEdit();
+  plot_3.color.UpdateAfterEdit_NoGui();
   plot_4.color.name = "green3";
   plot_4.point_style = GraphPlotView::TRIANGLE;
-  plot_4.color.UpdateAfterEdit();
+  plot_4.color.UpdateAfterEdit_NoGui();
   plot_5.color.name = "purple";
   plot_5.point_style = GraphPlotView::PLUS;
-  plot_5.color.UpdateAfterEdit();
+  plot_5.color.UpdateAfterEdit_NoGui();
   plot_6.color.name = "orange";
   plot_6.point_style = GraphPlotView::CROSS;
-  plot_6.color.UpdateAfterEdit();
+  plot_6.color.UpdateAfterEdit_NoGui();
   plot_7.color.name = "brown";
   plot_7.point_style = GraphPlotView::STAR;
-  plot_7.color.UpdateAfterEdit();
+  plot_7.color.UpdateAfterEdit_NoGui();
   plot_8.color.name = "chartreuse";
   plot_8.point_style = GraphPlotView::MINUS;
-  plot_8.color.UpdateAfterEdit();
+  plot_8.color.UpdateAfterEdit_NoGui();
   // todo: following obsolete: nuke
   alt_y_1 = false;
   alt_y_2 = false;

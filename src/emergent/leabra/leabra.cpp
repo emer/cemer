@@ -154,12 +154,12 @@ void LeabraConSpec::Initialize() {
   wt_sig_fun.x_range.min = 0.0f;
   wt_sig_fun.x_range.max = 1.0f;
   wt_sig_fun.res = 1.0e-5f;	// 1e-6 = 1.9Mb & 33% slower!, but 4x more accurate; 1e-5 = .19Mb
-  wt_sig_fun.UpdateAfterEdit();
+  wt_sig_fun.UpdateAfterEdit_NoGui();
 
   wt_sig_fun_inv.x_range.min = 0.0f;
   wt_sig_fun_inv.x_range.max = 1.0f;
   wt_sig_fun_inv.res = 1.0e-5f;	// 1e-6 = 1.9Mb & 33% slower!, but 4x more accurate; 1e-5 = .19Mb
-  wt_sig_fun_inv.UpdateAfterEdit();
+  wt_sig_fun_inv.UpdateAfterEdit_NoGui();
 
   wt_sig_fun_lst.off = -1;   wt_sig_fun_lst.gain = -1; // trigger an update
   wt_sig_fun_res = -1.0;
@@ -187,10 +187,10 @@ void LeabraConSpec::InitLinks() {
 
 void LeabraConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  lrate_sched.UpdateAfterEdit();
+  lrate_sched.UpdateAfterEdit_NoGui();
   CreateWtSigFun();
-  lmix.UpdateAfterEdit();
-  xcal.UpdateAfterEdit();
+  lmix.UpdateAfterEdit_NoGui();
+  xcal.UpdateAfterEdit_NoGui();
 }
 
 void LeabraConSpec::Defaults() {
@@ -675,11 +675,11 @@ void LeabraUnitSpec::Initialize() {
 
   clamp_range.min = .0f;
   clamp_range.max = .95f;
-  clamp_range.UpdateAfterEdit();
+  clamp_range.UpdateAfterEdit_NoGui();
 
   vm_range.max = 1.0f;
   vm_range.min = 0.0f;
-  vm_range.UpdateAfterEdit();
+  vm_range.UpdateAfterEdit_NoGui();
 
   v_m_init.type = Random::UNIFORM;
   v_m_init.mean = .15f;
@@ -714,12 +714,12 @@ void LeabraUnitSpec::Initialize() {
   noise_conv.x_range.min = -.05f;
   noise_conv.x_range.max = .05f;
   noise_conv.res = .001f;
-  noise_conv.UpdateAfterEdit();
+  noise_conv.UpdateAfterEdit_NoGui();
 
   nxx1_fun.x_range.min = -.03f;
   nxx1_fun.x_range.max = .20f;
   nxx1_fun.res = .001f;
-  nxx1_fun.UpdateAfterEdit();
+  nxx1_fun.UpdateAfterEdit_NoGui();
 
   CreateNXX1Fun();
 }
@@ -748,16 +748,16 @@ void LeabraUnitSpec::InitLinks() {
 
 void LeabraUnitSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  clamp_range.UpdateAfterEdit();
-  vm_range.UpdateAfterEdit();
-  depress.UpdateAfterEdit();
-  noise_sched.UpdateAfterEdit();
-  spike.UpdateAfterEdit();
-  spike_misc.UpdateAfterEdit();
-  adapt.UpdateAfterEdit();
-  dt.UpdateAfterEdit();
-  act_avg.UpdateAfterEdit();
-  noise_adapt.UpdateAfterEdit();
+  clamp_range.UpdateAfterEdit_NoGui();
+  vm_range.UpdateAfterEdit_NoGui();
+  depress.UpdateAfterEdit_NoGui();
+  noise_sched.UpdateAfterEdit_NoGui();
+  spike.UpdateAfterEdit_NoGui();
+  spike_misc.UpdateAfterEdit_NoGui();
+  adapt.UpdateAfterEdit_NoGui();
+  dt.UpdateAfterEdit_NoGui();
+  act_avg.UpdateAfterEdit_NoGui();
+  noise_adapt.UpdateAfterEdit_NoGui();
   CreateNXX1Fun();
   if(depress.on)
     act_range.max = depress.max_amp;
@@ -808,7 +808,7 @@ void LeabraUnitSpec::CreateNXX1Fun() {
   fun.x_range.min = nxx1_fun.x_range.min + noise_conv.x_range.min;
   fun.x_range.max = nxx1_fun.x_range.max + noise_conv.x_range.max;
   fun.res = nxx1_fun.res;
-  fun.UpdateAfterEdit();
+  fun.UpdateAfterEdit_NoGui();
   fun.AllocForRange();
 
   if(act_fun == LeabraUnitSpec::NOISY_LINEAR) {
@@ -4636,7 +4636,7 @@ void LeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
 
 void LeabraNetwork::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  ct_time.UpdateAfterEdit();
+  ct_time.UpdateAfterEdit_NoGui();
 
   if(TestWarning(ct_sravg.plus_s_st >= ct_time.plus, "UAE",
 	       "ct_sravg.plus_s_st is higher than ct_time.plus (# of cycles in plus phase)"

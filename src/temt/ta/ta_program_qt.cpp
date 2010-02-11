@@ -2279,6 +2279,7 @@ taiProgStepButton::taiProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IDa
   new_step_n = -1;
   last_step_n = 1;
   step10_val = 10;
+  n_step_progs = 0;
   last_step = NULL;		// reset when switching
 }
 
@@ -2356,6 +2357,10 @@ void taiProgStepButton::Step10(bool on) {
 QWidget* taiProgStepButton::GetButtonRep() {
   Program* prg = (Program*)base; // definitively this
   if(!prg) return buttonRep;
+
+  // we are all up-to-date and this is expensive so just bail!!
+  if(buttonRep && !prg->sub_progs_updtd && n_step_progs == prg->sub_progs_step.size)
+    return buttonRep;
 
   if(!buttonRep) {
     buttonRep = new QStackedWidget(gui_parent);
@@ -2442,6 +2447,7 @@ QWidget* taiProgStepButton::GetButtonRep() {
     hbl->addWidget(tbut);
   }
   newbar->addWidget(stpwidg);
+ n_step_progs = prg->sub_progs_step.size;
   
   if(tool_bar) {
     ((QStackedWidget*)buttonRep.data())->removeWidget(tool_bar);

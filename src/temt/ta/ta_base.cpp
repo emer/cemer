@@ -1481,6 +1481,11 @@ void taBase::UpdateAfterEdit() {
   } /* */
 }
 
+void taBase::UpdateAfterEdit_NoGui() {
+  if (isDestroying()) return;
+  UpdateAfterEdit_impl();
+}
+
 void taBase::ChildUpdateAfterEdit(taBase* child, bool& handled) {
   if (handled) return; // note: really shouldn't have been handled already if we are called...
   // call notify if it is an owned member object (but not list/group items)

@@ -1491,8 +1491,8 @@ void DoGRetinaSpec::Initialize() {
 void DoGRetinaSpec::UpdateAfterEdit_impl() {
   dog.name = name;
   spacing.name = name;
-  dog.UpdateAfterEdit();
-  spacing.UpdateAfterEdit();
+  dog.UpdateAfterEdit_NoGui();
+  spacing.UpdateAfterEdit_NoGui();
 }
 
 void DoGRetinaSpec::GraphFilter(DataTable* graph_data) {
@@ -1905,12 +1905,12 @@ void GaborV1Spec::UpdateGeoms() {
       trg_input_size = (gp_geom +1)* input_ovlp;
   }
 
-  rf_ovlp.UpdateAfterEdit();
-  rf_width.UpdateAfterEdit();
-  tot_filter_gps.UpdateAfterEdit();
-  filter_gp_ovlp.UpdateAfterEdit();
-  input_ovlp.UpdateAfterEdit();
-  trg_input_size.UpdateAfterEdit();
+  rf_ovlp.UpdateAfterEdit_NoGui();
+  rf_width.UpdateAfterEdit_NoGui();
+  tot_filter_gps.UpdateAfterEdit_NoGui();
+  filter_gp_ovlp.UpdateAfterEdit_NoGui();
+  input_ovlp.UpdateAfterEdit_NoGui();
+  trg_input_size.UpdateAfterEdit_NoGui();
 
   if(filter_type != COPY) {
     gp_gauss_mat.SetGeom(2, tot_filter_gps.x, tot_filter_gps.y);
@@ -1937,8 +1937,8 @@ void GaborV1Spec::UpdateGeoms() {
 
 void GaborV1Spec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  un_geom.UpdateAfterEdit();
-  gp_geom.UpdateAfterEdit();
+  un_geom.UpdateAfterEdit_NoGui();
+  gp_geom.UpdateAfterEdit_NoGui();
   UpdateGeoms();
 }
 
@@ -2340,12 +2340,12 @@ void MotionDispGaborV1Spec::UpdateGeoms() {
       trg_input_size = (gp_geom +1)* input_ovlp;
   }
 
-  rf_ovlp.UpdateAfterEdit();
-  rf_width.UpdateAfterEdit();
-  tot_filter_gps.UpdateAfterEdit();
-  filter_gp_ovlp.UpdateAfterEdit();
-  input_ovlp.UpdateAfterEdit();
-  trg_input_size.UpdateAfterEdit();
+  rf_ovlp.UpdateAfterEdit_NoGui();
+  rf_width.UpdateAfterEdit_NoGui();
+  tot_filter_gps.UpdateAfterEdit_NoGui();
+  filter_gp_ovlp.UpdateAfterEdit_NoGui();
+  input_ovlp.UpdateAfterEdit_NoGui();
+  trg_input_size.UpdateAfterEdit_NoGui();
 
 	if(filter_type != COPY) {
 		gp_gauss_mat.SetGeom(2, tot_filter_gps.x, tot_filter_gps.y);
@@ -2381,8 +2381,8 @@ void MotionDispGaborV1Spec::UpdateGeoms() {
 
 void MotionDispGaborV1Spec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  un_geom.UpdateAfterEdit();
-  gp_geom.UpdateAfterEdit();
+  un_geom.UpdateAfterEdit_NoGui();
+  gp_geom.UpdateAfterEdit_NoGui();
   UpdateGeoms();
 }
 
@@ -3459,7 +3459,7 @@ void RetinaSpec::UpdateRetinaSize() {
   for(int i=0;i<dogs.size; i++) {
     DoGRetinaSpec* sp = dogs[i];
     sp->spacing.retina_size = retina_size;
-    sp->spacing.UpdateAfterEdit();
+    sp->spacing.UpdateAfterEdit_NoGui();
   }
 }
 

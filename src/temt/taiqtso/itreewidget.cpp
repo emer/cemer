@@ -333,6 +333,10 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
       ext_select_on = !ext_select_on;
       selectionModel()->clearSelection();
       break;
+    case Qt::Key_G:
+      ext_select_on = false;
+      selectionModel()->clearSelection();
+      break;
     case Qt::Key_N:
       newCurrent = moveCursor(MoveDown, event->modifiers());
       break;
@@ -408,7 +412,7 @@ void iTreeWidget::setSelection(const QRect &rect, QItemSelectionModel::Selection
   if(!firstpar.isValid()) return;	  // no prior sel -- just bail
   // now fix it up
   QModelIndexList sels = selectionModel()->selectedIndexes();
-  if(sels.count() > 1) {
+  if(sels.count() > 2) {
     int idx = sels.count()-1;
     while(idx >= 0 && sels.count() > idx) {
       QModelIndex itm = sels[idx--];

@@ -719,7 +719,7 @@ void NVLayerSpec::Defaults() {
 
 void NVLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  nv.UpdateAfterEdit();
+  nv.UpdateAfterEdit_NoGui();
 }
 
 void NVLayerSpec::HelpConfig() {

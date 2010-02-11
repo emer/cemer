@@ -2751,10 +2751,12 @@ void ProgramCall::Initialize() {
 
 void ProgramCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if((bool)target) {
-    String targ_ld_i = targ_ld_init.between("*", "*");
-    if(targ_ld_init.empty() || !target.ptr()->GetName().contains(targ_ld_i)) {
-      targ_ld_init = String("*") + target.ptr()->GetName() + "*"; // make it wild!
+  if(!taMisc::is_loading) {
+    if((bool)target) {
+      String targ_ld_i = targ_ld_init.between("*", "*");
+      if(targ_ld_init.empty() || !target.ptr()->GetName().contains(targ_ld_i)) {
+	targ_ld_init = String("*") + target.ptr()->GetName() + "*"; // make it wild!
+      }
     }
   }
 }
@@ -3551,6 +3553,7 @@ void Program::Initialize() {
   flags = PF_NONE;
   objs.SetBaseType(&TA_taNBase);
   ret_val = 0;
+  sub_progs_updtd = false;
   m_stale = true; 
   prog_gp = NULL;
   m_checked = false;
@@ -4193,6 +4196,8 @@ void Program::GetSubProgsStep(int depth) {
   if(TestError((depth >= 100), "GetSubProgsAll",
 	       "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting"))
     return;
+
+  sub_progs_updtd = true;
   sub_progs_step.Reset();
   int st_idx = 0;
   if(HasProgFlag(SELF_STEP)) {
@@ -4425,6 +4430,12 @@ void Program::LoadFromProgLib(ProgLibEl* prog_type) {
 	       "cannot load a program group file into a single program!")) return;
 //   Reset();
   prog_type->LoadProgram(this);
+}
+
+void Program::DataChanged(int dcr, void* op1, void* op2) {
+  // just for debug trapping..
+  inherited::DataChanged(dcr, op1, op2);
+  sub_progs_updtd = false;
 }
 
 void Program::RunLoadInitCode() {

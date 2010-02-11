@@ -83,7 +83,7 @@ void BpConSpec::InitLinks() {
 
 void BpConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  lrate_sched.UpdateAfterEdit();
+  lrate_sched.UpdateAfterEdit_NoGui();
   momentum_c = 1.0f - momentum;
 }
 

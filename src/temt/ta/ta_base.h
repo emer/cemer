@@ -789,9 +789,11 @@ public:
 public:
 
   virtual void		UpdateAfterEdit();
-  // #CAT_ObjectMgmt called after editing, or any user change to members (eg. in the interface, script)
+  // #CAT_ObjectMgmt (aka UAE) called after editing, or any user change to members (eg. in the interface, script)
+  virtual void		UpdateAfterEdit_NoGui();
+  // #CAT_ObjectMgmt does any object-related updates based on changes, but does NOT trigger any gui updates -- use this for updating members inside of an object's UAE
   virtual bool		UAEProgramDefault() { return false; }
-  // #CAT_ObjectMgmt what is default setting of update_after flag for programs that modify fields on this object -- the base default is false, to produce reasonable speed -- only use where essential
+  // #IGNORE what is default setting of update_after flag for programs that modify fields on this object -- the base default is false, to produce reasonable speed -- only use where essential
   virtual void		ChildUpdateAfterEdit(taBase* child, bool& handled);
   // #IGNORE called by a child in its UAE routine; provides child notifications  NOTE: only member objects are detected; subclasses that want to notify on owned taBase* members must override and check for those instances manually
   virtual void		UpdateAfterMove(taBase* old_owner);

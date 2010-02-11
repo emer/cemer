@@ -31,7 +31,7 @@ void FunLookup::Initialize() {
   res_inv = 1.0f / res;
   x_range.min = 0.0f;
   x_range.max = 1.0f;
-  x_range.UpdateAfterEdit();
+  x_range.UpdateAfterEdit_NoGui();
 }
 
 void FunLookup::InitLinks() {
@@ -48,7 +48,7 @@ void FunLookup::Copy_(const FunLookup& cp) {
 void FunLookup::UpdateAfterEdit_impl() {
   float_Array::UpdateAfterEdit_impl();
   res_inv = 1.0f / res;
-  x_range.UpdateAfterEdit();
+  x_range.UpdateAfterEdit_NoGui();
 }
 
 // float FunLookup::Eval(float x) {

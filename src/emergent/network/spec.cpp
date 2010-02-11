@@ -349,18 +349,18 @@ void BaseSpec::UpdateMember(BaseSpec* from, int memb_no) {
 	    (((taArray_impl*)md->GetOff((void*)from))->size);
 	}
 	MemberCopyFrom(memb_no, from);
-	DataChanged(DCR_ITEM_UPDATED);
+	// NO NO NO 1000 times no (literally!) -- this causes MASSIVE update chains
+// 	DataChanged(DCR_ITEM_UPDATED);
       }
     }
   }
 }
 
 void BaseSpec::UpdateChildren() {
-  //NOTE: this routine may no longer be necessary, since the variable not_used_ok was removed
   BaseSpec* kid;
   taLeafItr i;
   FOR_ITR_EL(BaseSpec, kid, children., i) {
-    kid->UpdateAfterEdit();
+    kid->UpdateSpec();
   }
 }
 
@@ -529,7 +529,8 @@ void BaseSubSpec::UpdateMember(BaseSubSpec* from, int memb_no) {
 	   md->HasOption("NO_INHERIT")))
       {
 	MemberCopyFrom(memb_no, from);
-	DataChanged(DCR_ITEM_UPDATED); //obstabMisc::NotifyEdits(this);
+	// NO NO NO 1000 times no (literally!) -- this causes MASSIVE update chains
+// 	DataChanged(DCR_ITEM_UPDATED);
       }
     }
   }

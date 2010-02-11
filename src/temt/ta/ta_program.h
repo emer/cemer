@@ -1156,6 +1156,8 @@ public:
   // #HIDDEN #NO_SAVE the full set of all sub-programs, including sub-programs of sub-programs..
   Program_List		sub_progs_step;
   // #HIDDEN #NO_SAVE all the sub programs eligible for single-stepping
+  bool			sub_progs_updtd;
+  // #READ_ONLY #NO_SAVE the sub programs were updated -- this is set when updated and cleared after a datachanged
   bool		    	m_stale;
   // #READ_ONLY #NO_SAVE dirty bit -- needs to be public for activating the Compile button
   String		view_script;
@@ -1307,6 +1309,7 @@ public: // XxxGui versions provide feedback to the user
 
   override String 	GetTypeDecoKey() const { return "Program"; }
   override Variant 	GetGuiArgVal(const String& fun_name, int arg_idx);
+  override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 
   void	InitLinks();
   void	CutLinks();

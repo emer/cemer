@@ -421,6 +421,7 @@ public:
   int		new_step_n;	// if > 0, then this is the new value to apply to next program stepped
   int		last_step_n;	// last step n value used
   int 		step10_val;
+  int		n_step_progs;	// number of step progs we have rendered currently
   QToolBar* 	tool_bar;
   QRadioButton* stp1;
   QRadioButton* stp5;

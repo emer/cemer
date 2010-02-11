@@ -164,9 +164,9 @@ void LeabraLinUnitSpec::Initialize() {
   act_fun = LINEAR;
   act_range.max = 20;
   act_range.min = 0;
-  act_range.UpdateAfterEdit();
+  act_range.UpdateAfterEdit_NoGui();
   clamp_range.max = 1.0f;
-  clamp_range.UpdateAfterEdit();
+  clamp_range.UpdateAfterEdit_NoGui();
   act.gain = 2;
 }
 
@@ -269,7 +269,7 @@ void CycleSynDepConSpec::Initialize() {
 
 void CycleSynDepConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  syn_dep.UpdateAfterEdit();
+  syn_dep.UpdateAfterEdit_NoGui();
 }
 
 //////////////////////////////////
@@ -295,7 +295,7 @@ void CaiSynDepConSpec::Initialize() {
 
 void CaiSynDepConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  ca_dep.UpdateAfterEdit();
+  ca_dep.UpdateAfterEdit_NoGui();
 }
 
 
@@ -339,7 +339,7 @@ void ActAvgHebbMixSpec::UpdateAfterEdit_impl() {
 
 void ActAvgHebbConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  act_avg_hebb.UpdateAfterEdit();
+  act_avg_hebb.UpdateAfterEdit_NoGui();
 }
 
 void ActAvgHebbConSpec::Initialize() {
@@ -404,7 +404,7 @@ void LeabraXCALSpikeConSpec::Initialize() {
 
 void LeabraXCALSpikeConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  xcal_spike.UpdateAfterEdit();
+  xcal_spike.UpdateAfterEdit_NoGui();
 }
 
 void LeabraXCALSpikeConSpec::GraphXCALSpikeSim(DataTable* graph_data,
@@ -660,24 +660,24 @@ void ScalarValLayerSpec::Initialize() {
 
   if(scalar.rep == ScalarValSpec::GAUSSIAN) {
     unit_range.min = -0.5f;   unit_range.max = 1.5f;
-    unit_range.UpdateAfterEdit();
+    unit_range.UpdateAfterEdit_NoGui();
     scalar.InitRange(unit_range.min, unit_range.range); // needed for un_width_eff
     val_range.min = unit_range.min + (.5f * scalar.un_width_eff);
     val_range.max = unit_range.max - (.5f * scalar.un_width_eff);
   }
   else if(scalar.rep == ScalarValSpec::LOCALIST) {
     unit_range.min = 0.0f;  unit_range.max = 1.0f;
-    unit_range.UpdateAfterEdit();
+    unit_range.UpdateAfterEdit_NoGui();
     val_range.min = unit_range.min;
     val_range.max = unit_range.max;
   }
-  val_range.UpdateAfterEdit();
+  val_range.UpdateAfterEdit_NoGui();
 }
 
 void ScalarValLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  unit_range.UpdateAfterEdit();
-  scalar.UpdateAfterEdit();
+  unit_range.UpdateAfterEdit_NoGui();
+  scalar.UpdateAfterEdit_NoGui();
   if(scalar.rep == ScalarValSpec::GAUSSIAN) {
     scalar.InitRange(unit_range.min, unit_range.range); // needed for un_width_eff
     val_range.min = unit_range.min + (.5f * scalar.un_width_eff);
@@ -687,7 +687,7 @@ void ScalarValLayerSpec::UpdateAfterEdit_impl() {
     val_range.min = unit_range.min;
     val_range.max = unit_range.max;
   }
-  val_range.UpdateAfterEdit();
+  val_range.UpdateAfterEdit_NoGui();
 }
 
 void ScalarValLayerSpec::HelpConfig() {
@@ -1356,9 +1356,9 @@ void MotorForceLayerSpec::Initialize() {
 
 void MotorForceLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  pos_range.UpdateAfterEdit();
-  vel_range.UpdateAfterEdit();
-  force_noise.UpdateAfterEdit();
+  pos_range.UpdateAfterEdit_NoGui();
+  vel_range.UpdateAfterEdit_NoGui();
+  force_noise.UpdateAfterEdit_NoGui();
 }
 
 bool MotorForceLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
@@ -1638,8 +1638,8 @@ void TwoDValLayerSpec::Initialize() {
   inhib.kwta_pt = .6f;
 
   if(twod.rep == TwoDValSpec::GAUSSIAN) {
-    x_range.min = -0.5f;   x_range.max = 1.5f; x_range.UpdateAfterEdit();
-    y_range.min = -0.5f;   y_range.max = 1.5f; y_range.UpdateAfterEdit();
+    x_range.min = -0.5f;   x_range.max = 1.5f; x_range.UpdateAfterEdit_NoGui();
+    y_range.min = -0.5f;   y_range.max = 1.5f; y_range.UpdateAfterEdit_NoGui();
     twod.InitRange(x_range.min, x_range.range, y_range.min, y_range.range);
     x_val_range.min = x_range.min + (.5f * twod.un_width_x);
     x_val_range.max = x_range.max - (.5f * twod.un_width_x);
@@ -1647,18 +1647,18 @@ void TwoDValLayerSpec::Initialize() {
     y_val_range.max = y_range.max - (.5f * twod.un_width_y);
   }
   else if(twod.rep == TwoDValSpec::LOCALIST) {
-    x_range.min = 0.0f;  x_range.max = 1.0f;  x_range.UpdateAfterEdit();
-    y_range.min = 0.0f;  y_range.max = 1.0f;  y_range.UpdateAfterEdit();
+    x_range.min = 0.0f;  x_range.max = 1.0f;  x_range.UpdateAfterEdit_NoGui();
+    y_range.min = 0.0f;  y_range.max = 1.0f;  y_range.UpdateAfterEdit_NoGui();
     x_val_range.min = x_range.min;  x_val_range.max = x_range.max;
     y_val_range.min = y_range.min;  y_val_range.max = y_range.max;
   }
-  x_val_range.UpdateAfterEdit(); y_val_range.UpdateAfterEdit();
+  x_val_range.UpdateAfterEdit_NoGui(); y_val_range.UpdateAfterEdit_NoGui();
 }
 
 void TwoDValLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  x_range.UpdateAfterEdit(); y_range.UpdateAfterEdit();
-  twod.UpdateAfterEdit();
+  x_range.UpdateAfterEdit_NoGui(); y_range.UpdateAfterEdit_NoGui();
+  twod.UpdateAfterEdit_NoGui();
   if(twod.rep == TwoDValSpec::GAUSSIAN) {
     twod.InitRange(x_range.min, x_range.range, y_range.min, y_range.range);
     x_val_range.min = x_range.min + (.5f * twod.un_width_x);
@@ -1670,7 +1670,7 @@ void TwoDValLayerSpec::UpdateAfterEdit_impl() {
     x_val_range.min = x_range.min;    y_val_range.min = y_range.min;
     x_val_range.max = x_range.max;    y_val_range.max = y_range.max;
   }
-  x_val_range.UpdateAfterEdit(); y_val_range.UpdateAfterEdit();
+  x_val_range.UpdateAfterEdit_NoGui(); y_val_range.UpdateAfterEdit_NoGui();
 }
 
 void TwoDValLayerSpec::HelpConfig() {
@@ -2609,8 +2609,8 @@ void FourDValLayerSpec::Initialize() {
   inhib.kwta_pt = .6f;
 
   if(fourd.rep == FourDValSpec::GAUSSIAN) {
-    x_range.min = -0.5f;   x_range.max = 1.5f; x_range.UpdateAfterEdit();
-    y_range.min = -0.5f;   y_range.max = 1.5f; y_range.UpdateAfterEdit();
+    x_range.min = -0.5f;   x_range.max = 1.5f; x_range.UpdateAfterEdit_NoGui();
+    y_range.min = -0.5f;   y_range.max = 1.5f; y_range.UpdateAfterEdit_NoGui();
     fourd.InitRange(x_range.min, x_range.range, y_range.min, y_range.range);
     x_val_range.min = x_range.min + (.5f * fourd.un_width_x);
     x_val_range.max = x_range.max - (.5f * fourd.un_width_x);
@@ -2618,18 +2618,18 @@ void FourDValLayerSpec::Initialize() {
     y_val_range.max = y_range.max - (.5f * fourd.un_width_y);
   }
   else if(fourd.rep == FourDValSpec::LOCALIST) {
-    x_range.min = 0.0f;  x_range.max = 1.0f;  x_range.UpdateAfterEdit();
-    y_range.min = 0.0f;  y_range.max = 1.0f;  y_range.UpdateAfterEdit();
+    x_range.min = 0.0f;  x_range.max = 1.0f;  x_range.UpdateAfterEdit_NoGui();
+    y_range.min = 0.0f;  y_range.max = 1.0f;  y_range.UpdateAfterEdit_NoGui();
     x_val_range.min = x_range.min;  x_val_range.max = x_range.max;
     y_val_range.min = y_range.min;  y_val_range.max = y_range.max;
   }
-  x_val_range.UpdateAfterEdit(); y_val_range.UpdateAfterEdit();
+  x_val_range.UpdateAfterEdit_NoGui(); y_val_range.UpdateAfterEdit_NoGui();
 }
 
 void FourDValLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  x_range.UpdateAfterEdit(); y_range.UpdateAfterEdit();
-  fourd.UpdateAfterEdit();
+  x_range.UpdateAfterEdit_NoGui(); y_range.UpdateAfterEdit_NoGui();
+  fourd.UpdateAfterEdit_NoGui();
   if(fourd.rep == FourDValSpec::GAUSSIAN) {
     fourd.InitRange(x_range.min, x_range.range, y_range.min, y_range.range);
     x_val_range.min = x_range.min + (.5f * fourd.un_width_x);
@@ -2641,7 +2641,7 @@ void FourDValLayerSpec::UpdateAfterEdit_impl() {
     x_val_range.min = x_range.min;    y_val_range.min = y_range.min;
     x_val_range.max = x_range.max;    y_val_range.max = y_range.max;
   }
-  x_val_range.UpdateAfterEdit(); y_val_range.UpdateAfterEdit();
+  x_val_range.UpdateAfterEdit_NoGui(); y_val_range.UpdateAfterEdit_NoGui();
 }
 
 void FourDValLayerSpec::HelpConfig() {

@@ -1838,7 +1838,7 @@ bool UnitSpec::CheckObjectType_impl(taBase* obj) {
 
 void UnitSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  act_range.UpdateAfterEdit();
+  act_range.UpdateAfterEdit_NoGui();
 }
 
 void UnitSpec::BuildBiasCons() {
@@ -3367,7 +3367,7 @@ void Unit_Group::RecomputeGeometry() {
   if(!unique_geom)
     geom = own_lay->un_geom;
   else 
-    geom.UpdateAfterEdit();
+    geom.UpdateAfterEdit_NoGui();
 }
 
 void Unit_Group::LayoutUnits(Unit* u) {
@@ -3960,7 +3960,7 @@ void Layer::UpdateAfterEdit_impl() {
     n_units = 0;
   }
   if(un_geom.z > 1) {		// obs: v3compat conversion obs remove later
-    gp_geom.UpdateAfterEdit();	// get n from xy
+    gp_geom.UpdateAfterEdit_NoGui();	// get n from xy
     unit_groups = true;
     if(gp_geom.n != un_geom.z) {
       gp_geom.n_not_xy = true;
@@ -4085,8 +4085,8 @@ void Layer::SyncSendPrjns() {
 }
 
 void Layer::RecomputeGeometry() {
-  un_geom.UpdateAfterEdit();
-  gp_geom.UpdateAfterEdit();
+  un_geom.UpdateAfterEdit_NoGui();
+  gp_geom.UpdateAfterEdit_NoGui();
   if(unit_groups) {
     flat_geom.x = un_geom.x * gp_geom.x;
     flat_geom.y = un_geom.y * gp_geom.y;

@@ -99,7 +99,7 @@ void SNcLayerSpec::Initialize() {
 
 void SNcLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  snc.UpdateAfterEdit();
+  snc.UpdateAfterEdit_NoGui();
 }
 
 void SNcLayerSpec::HelpConfig() {
@@ -657,7 +657,7 @@ void MatrixLayerSpec::Initialize() {
 
 void MatrixLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  gate_bias.UpdateAfterEdit();
+  gate_bias.UpdateAfterEdit_NoGui();
 }
 
 void MatrixLayerSpec::Defaults() {
@@ -1079,8 +1079,8 @@ void PFCLayerSpec::Initialize() {
 
 void PFCLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  gate.UpdateAfterEdit();
-  learn.UpdateAfterEdit();
+  gate.UpdateAfterEdit_NoGui();
+  learn.UpdateAfterEdit_NoGui();
 }
 
 void PFCLayerSpec::Defaults() {
@@ -4112,8 +4112,8 @@ void V1PFCOutLayerSpec::Initialize() {
 
 void V1PFCOutLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  out_gate.UpdateAfterEdit();
-  gain_sched.UpdateAfterEdit();
+  out_gate.UpdateAfterEdit_NoGui();
+  gain_sched.UpdateAfterEdit_NoGui();
 }
 
 void V1PFCOutLayerSpec::Defaults() {

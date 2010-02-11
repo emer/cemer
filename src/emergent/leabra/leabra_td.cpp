@@ -110,7 +110,7 @@ void ExtRewLayerSpec::Initialize() {
 //   kwta.k = 1;
 //   scalar.rep = ScalarValSpec::LOCALIST;
 //   unit_range.min = 0.0f;  unit_range.max = 1.0f;
-//   unit_range.UpdateAfterEdit();
+//   unit_range.UpdateAfterEdit_NoGui();
 //   val_range.min = unit_range.min;
 //   val_range.max = unit_range.max;
 }
@@ -125,9 +125,9 @@ void ExtRewLayerSpec::Defaults() {
 
 void ExtRewLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  rew.UpdateAfterEdit();
-  avg_rew.UpdateAfterEdit();
-  out_err.UpdateAfterEdit();
+  rew.UpdateAfterEdit_NoGui();
+  avg_rew.UpdateAfterEdit_NoGui();
+  out_err.UpdateAfterEdit_NoGui();
 }
 
 void ExtRewLayerSpec::HelpConfig() {
@@ -441,8 +441,8 @@ void TDRewPredLayerSpec::Initialize() {
   decay.clamp_phase2 = false;
   unit_range.min = 0.0f;
   unit_range.max = 3.0f;
-  unit_range.UpdateAfterEdit();
-  val_range.UpdateAfterEdit();
+  unit_range.UpdateAfterEdit_NoGui();
+  val_range.UpdateAfterEdit_NoGui();
   SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
@@ -618,8 +618,8 @@ void TDRewIntegLayerSpec::Initialize() {
   decay.clamp_phase2 = false;
   unit_range.min = 0.0f;
   unit_range.max = 3.0f;
-  unit_range.UpdateAfterEdit();
-  val_range.UpdateAfterEdit();
+  unit_range.UpdateAfterEdit_NoGui();
+  val_range.UpdateAfterEdit_NoGui();
   SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
@@ -633,7 +633,7 @@ void TDRewIntegLayerSpec::Defaults() {
 
 void TDRewIntegLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  rew_integ.UpdateAfterEdit();
+  rew_integ.UpdateAfterEdit_NoGui();
 }
 
 void TDRewIntegLayerSpec::HelpConfig() {

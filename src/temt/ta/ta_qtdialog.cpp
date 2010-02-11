@@ -628,6 +628,8 @@ void iMethodButtonMgr::DoAddMethButton(QWidget* but) {
 }
 
 void iMethodButtonMgr::GetImage() {
+  if(!widg || !widg->isVisible()) return;
+
   for (int i = 0; i < meth_el.size; ++i) {
     taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);
     if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
@@ -1384,6 +1386,7 @@ void taiDataHost_impl::DataDataChanged(taDataLink* dl, int dcr, void* op1, void*
   //NOTE: list/group subclasses typically detect changes in their GetImage routine
   //  so we don't really subclass this routine or explicitly detect the list/group notifies
   // note: because of deferred construction, we may still need to update buttons/menus
+
   if (state == DEFERRED1) {
     Refresh_impl(false);
     return;
@@ -1414,6 +1417,7 @@ void taiDataHost_impl::Refresh_impl(bool reshow) {
   // otherwise, user will have to decide what to do, i.e., revert
 //   cerr << "Refresh_impl on: " << typ->name << endl;
 //   taMisc::FlushConsole();
+
   if (HasChanged()) {
     warn_clobber = true;
     if (reshow) defer_reshow_req = true; // if not already set
@@ -2380,10 +2384,7 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id)
 
 void taiEditDataHost::GetButtonImage(bool force) {
   if (typ == NULL)  return;
-//always do it  if (!force && !frmMethButtons->isVisible()) return;
-  
-//   cerr << "GetButtonImage on: " << typ->name << endl;
-//   taMisc::FlushConsole();
+  if (!force && !frmMethButtons->isVisible()) return;
 
   for (int i = 0; i < meth_el.size; ++i) {
     taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);
@@ -2398,13 +2399,11 @@ void taiEditDataHost::GetImage(bool force) {
 //   cerr << "GetImage start on: " << typ->name << endl;
   if ((host_type != HT_CONTROL) || (frmMethButtons != NULL))
     GetButtonImage(force); // does its own visible check
+  if (!mwidget) return; // huh?
+  //note: we could be invisible, so we only do what is visible
   if (!force && !mwidget->isVisible()) return;
   if ((typ == NULL) || (root == NULL)) return;
   if (state >= ACCEPTED ) return;
-  //note: we could be invisible, so we only do what is visible
-  // note: must do this for SeleEdit guys!
-  if (!mwidget) return; // huh?
-  if (!force && !mwidget->isVisible()) return;
 //   cerr << "GetImage do on: " << typ->name << endl;
 //   taMisc::FlushConsole();
   ++updating;
