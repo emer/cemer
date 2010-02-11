@@ -4765,7 +4765,7 @@ taBase* ProgLibEl::NewProgram(Program_Group* new_owner) {
     path = path.after("file:");
   if(is_group) {
     Program_Group* pg = (Program_Group*)new_owner->NewGp(1);
-    pg->Load(path);
+    LoadProgramGroup(pg);
     Program* first_guy = pg->Leaf(0);
     if(taMisc::gui_active && first_guy)
       tabMisc::DelayedFunCall_gui(first_guy, "BrowserSelectMe");
@@ -4773,7 +4773,7 @@ taBase* ProgLibEl::NewProgram(Program_Group* new_owner) {
   }
 
   Program* pg = new_owner->NewEl(1, &TA_Program);
-  pg->Load(path);
+  LoadProgram(pg);
   if(taMisc::gui_active)
     tabMisc::DelayedFunCall_gui(pg, "BrowserSelectMe");
   return pg;

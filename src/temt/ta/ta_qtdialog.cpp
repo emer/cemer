@@ -2631,10 +2631,10 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
       ctrl_pressed = true;
 #endif
     if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
-//       iProgramCtrlDataHost* ths_ipcdh = dynamic_cast<iProgramCtrlDataHost*>(this);
-//       if(!ths_ipcdh) {		// NOT one of those..
+      if(modal)
+	Ok();
+      else
 	Apply();
-//       }
       iMainWindowViewer* mvw = viewerWindow();
       if(mvw)
 	mvw->FocusCurTreeView(); // return focus back to current browser
