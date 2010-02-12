@@ -2775,7 +2775,7 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 											
 											right_val = cur_on_left_input->FastEl(in_left.x, in_left.y);
 											left_val = cur_on_right_input->FastEl(in_right.x, in_right.y);
-													
+                      
 											
 											oval_left[disp_lvl_i] += fval * left_val;
 											oval_right[disp_lvl_i] += fval * right_val;
@@ -2786,10 +2786,10 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 											//oval += -fval * cur_off_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
 											float right_val = 0;
 											float left_val = 0;
-										
+                      
 											right_val = cur_off_right_input->FastEl(in_right.x, in_right.y);
 											left_val = cur_off_left_input->FastEl(in_left.x, in_left.y);
-													
+                      
 											oval_left[disp_lvl_i] += -fval * left_val;
 											oval_right[disp_lvl_i] += -fval * right_val;
 											//oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
@@ -2836,7 +2836,7 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 			}
 		}
 	}
-		
+  
 	
 	
 	return true;
