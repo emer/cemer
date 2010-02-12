@@ -146,9 +146,9 @@ Program .projects[0].programs[0] {
   };
 };
 Program .projects[0].programs[0] {
- name="BpStartup";
+ name="CsStartup";
  short_nm="Startup";
- tags="Bp, Startup, Parallel Batch";
+ tags="Cs, Startup, Parallel Batch";
  desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx] | [b_start=xxx] [b_end=xxx] for parallel-batch mode";
  flags=NO_STOP_STEP|STARTUP_RUN;
  objs {
@@ -168,8 +168,8 @@ Program .projects[0].programs[0] {
   ProgVar @[0] {
    name="network";
    var_type=T_Object;
-   object_type=BpNetwork;
-   object_val=.projects[0].networks[0]$$<BpNetwork,Network_0>;
+   object_type=CsNetwork;
+   object_val=.projects[0].networks[0]$$<CsNetwork,Network_0>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -180,7 +180,7 @@ Program .projects[0].programs[0] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$$<DataTable,Inputs>;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -196,7 +196,7 @@ Program .projects[0].programs[0] {
    name="train";
    var_type=T_Object;
    object_type=Program;
-   object_val=.projects[0].programs.gp[0][1]$$<Program,BpTrain>;
+   object_val=.projects[0].programs.gp[0][1]$$<Program,CsTrain>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -207,7 +207,7 @@ Program .projects[0].programs[0] {
    name="batch";
    var_type=T_Object;
    object_type=Program;
-   object_val=.projects[0].programs.gp[0][0]$$<Program,BpBatch>;
+   object_val=.projects[0].programs.gp[0][0]$$<Program,CsBatch>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -874,7 +874,7 @@ Program .projects[0].programs[0] {
   OtherProgramVar @[23] {
    desc="propagate the tag";
    flags=;
-   other_prog=.projects[0].programs.gp[0][7]$$<Program,SaveWeights>;
+   other_prog=.projects[0].programs.gp[0][9]$$<Program,SaveWeights>;
    set_other=1;
    var_1=$.projects[0].programs[0].vars[2]$;
    var_2=NULL;
@@ -896,8 +896,8 @@ Program .projects[0].programs[0] {
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
-     arg_type=BpNetwork;
-     type="BpNetwork*";
+     arg_type=CsNetwork;
+     type="CsNetwork*";
      name="network";
      required=1;
      def_val=;
@@ -917,7 +917,7 @@ Program .projects[0].programs[0] {
     };
    };
    target=$.projects[0].programs.gp[0][0]$;
-   targ_ld_init="*BpBatch*";
+   targ_ld_init="*SoBatch*";
   };
  };
  step_prog=NULL;

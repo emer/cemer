@@ -1,5 +1,11 @@
-// ta_Dump File v2.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 Program .projects[0].programs.gp[0][4] { 
+  ProgObjList @.objs = [0] {
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
   ProgVar_List @.args = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
@@ -9,6 +15,12 @@ Program .projects[0].programs.gp[0][4] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.load_code = [0] {
   };
 
   ProgEl_List @.init_code = [1] {
@@ -21,15 +33,24 @@ Program .projects[0].programs.gp[0][4] {
       ProgEl_List @.true_code = [1] {
 	AssignExpr @[0] { };
       };
+
+      ProgEl_List @.false_code = [0] {
+      };
     };
-    MethodCall @[2] { };
+    MethodCall @[2] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     ProgramCall @[3] { 
       ProgArg_List @.prog_args = [2] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
       };
     };
-    MethodCall @[4] { };
+    MethodCall @[4] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     WhileLoop @[5] { 
       ProgEl_List @.loop_code = [4] {
 	ProgramCall @[0] { 
@@ -42,10 +63,19 @@ Program .projects[0].programs.gp[0][4] {
 	IfBreak @[3] { };
       };
     };
-    MethodCall @[6] { };
+    MethodCall @[6] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     IfElse @[7] { 
       ProgEl_List @.true_code = [1] {
-	MethodCall @[0] { };
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+      };
+
+      ProgEl_List @.false_code = [0] {
       };
     };
     NetUpdateView @[8] { };
@@ -53,6 +83,7 @@ Program .projects[0].programs.gp[0][4] {
 };
 Program .projects[0].programs.gp[0][4] {
  name="CsSettle";
+ short_nm="Settle";
  tags="Cs, Std";
  desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
  flags=;
@@ -74,19 +105,23 @@ Program .projects[0].programs.gp[0][4] {
    name="network";
    var_type=T_Object;
    object_type=CsNetwork;
-   object_val=.projects[0].networks[0]$0$;
+   object_val=.projects[0].networks[0]$$<CsNetwork,Network_0>;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc=;
+   init_from=NULL;
   };
   ProgVar @[1] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$1$;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc=;
+   init_from=NULL;
   };
  };
  vars {
@@ -98,29 +133,35 @@ Program .projects[0].programs.gp[0][4] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="current cycle of settling (local loop counter)";
+   init_from=NULL;
   };
   ProgVar @[1] {
    name="min_cycles";
    var_type=T_Int;
    int_val=20;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="sets the minimum number of cycles to settle for, regardless of network state changes, etc";
+   init_from=NULL;
   };
   ProgVar @[2] {
    name="update_net_view";
    var_type=T_Bool;
    bool_val=1;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="if true, will update network views at end of settling";
+   init_from=NULL;
   };
  };
  functions {
   name=;
-  el_typ=ProgEl;
+  el_typ=Function;
   el_def=0;
  };
  load_code {
@@ -135,9 +176,10 @@ Program .projects[0].programs.gp[0][4] {
   NetCounterInit @[0] {
    desc="initialize local cycle counter and corresponding counter on network";
    flags=;
-   network_var=.projects[0].programs.gp[0][4].args[0]$2$;
-   local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$3$;
+   network_var=.projects[0].programs.gp[0][4].args[0]$$;
+   local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$$;
    counter=Network::cycle;
+   update_after=0;
   };
  };
  prog_code {
@@ -147,21 +189,16 @@ Program .projects[0].programs.gp[0][4] {
   NetCounterInit @[0] {
    desc="initialize local cycle counter and corresponding counter on network";
    flags=;
-   network_var=$2$;
-   local_ctr_var=$3$;
+   network_var=$.projects[0].programs.gp[0][4].args[0]$;
+   local_ctr_var=$.projects[0].programs.gp[0][4].vars[0]$;
    counter=Network::cycle;
+   update_after=0;
   };
   IfElse @[1] {
    desc="if not deterministic, set min_cycles = max_cycles!";
    flags=;
    cond {
     expr="!network.deterministic";
-    flags=;
-    var_expr="!$#0#$.deterministic";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
    true_code {
     name=;
@@ -170,15 +207,9 @@ Program .projects[0].programs.gp[0][4] {
     AssignExpr @[0] {
      desc="if not determinstic, must settle for full number of cycles (bypasses use of maxda to stop settling)";
      flags=;
-     result_var=.projects[0].programs.gp[0][4].vars[1]$4$;
+     result_var=.projects[0].programs.gp[0][4].vars[1]$$;
      expr {
       expr="network.cycle_max";
-      flags=;
-      var_expr="$#0#$.cycle_max";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
    };
@@ -192,7 +223,7 @@ Program .projects[0].programs.gp[0][4] {
    desc="resets input data, before getting new external inputs data from apply inputs call";
    flags=;
    result_var=NULL;
-   obj=$2$;
+   obj=$.projects[0].programs.gp[0][4].args[0]$;
    method=Network::Init_InputData;
    meth_args {
     name=;
@@ -204,8 +235,6 @@ Program .projects[0].programs.gp[0][4] {
    desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
    flags=;
-   target=.projects[0].programs.gp[0][6]$5$;
-   targ_ld_init="*ApplyInputs*";
    prog_args {
     name=;
     el_typ=ProgArg;
@@ -218,12 +247,6 @@ this program can be extended to do arbitrary things to generate data and apply i
      def_val=;
      expr {
       expr="network";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -234,21 +257,17 @@ this program can be extended to do arbitrary things to generate data and apply i
      def_val=;
      expr {
       expr="input_data";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ input_data;      };
-      bad_vars{       };
      };
     };
    };
+   target=.projects[0].programs.gp[0][6]$$<Program,ApplyInputs>;
+   targ_ld_init="*ApplyInputs*";
   };
   MethodCall @[4] {
    desc="initializes various counters at start of settling";
    flags=;
    result_var=NULL;
-   obj=$2$;
+   obj=$.projects[0].programs.gp[0][4].args[0]$;
    method=CsNetwork::Settle_Init;
    meth_args {
     name=;
@@ -266,8 +285,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     ProgramCall @[0] {
      desc="run the cycle program, which computes one cycle of activations";
      flags=;
-     target=.projects[0].programs.gp[0][5]$6$;
-     targ_ld_init="*CsCycle*";
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -280,34 +297,25 @@ this program can be extended to do arbitrary things to generate data and apply i
        def_val=;
        expr {
 	expr="network";
-	flags=;
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ network;	};
-	bad_vars{ 	};
        };
       };
      };
+     target=.projects[0].programs.gp[0][5]$$<Program,CsCycle>;
+     targ_ld_init="*CsCycle*";
     };
     NetCounterIncr @[1] {
      desc="increment cycle counter (also on network)";
      flags=;
-     network_var=$2$;
-     local_ctr_var=$3$;
+     network_var=$.projects[0].programs.gp[0][4].args[0]$;
+     local_ctr_var=$.projects[0].programs.gp[0][4].vars[0]$;
      counter=Network::cycle;
+     update_after=0;
     };
     IfContinue @[2] {
      desc="avoid subsequent stopping criteria if below min_cycles";
      flags=;
      cond {
       expr="cycle < min_cycles";
-      flags=;
-      var_expr="$#0#$ < $#1#$";
-      vars {
-      };
-      var_names{ cycle;min_cycles;      };
-      bad_vars{       };
      };
     };
     IfBreak @[3] {
@@ -315,30 +323,18 @@ this program can be extended to do arbitrary things to generate data and apply i
      flags=;
      cond {
       expr="(network.maxda < network.maxda_stopcrit)";
-      flags=;
-      var_expr="($#0#$.maxda < $#0#$.maxda_stopcrit)";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
    };
    test {
     expr="cycle < network.cycle_max";
-    flags=;
-    var_expr="$#0#$ < $#1#$.cycle_max";
-    vars {
-    };
-    var_names{ cycle;network;    };
-    bad_vars{     };
    };
   };
   MethodCall @[6] {
    desc="perform final operations at end of settling (storing final activations, etc)";
    flags=;
    result_var=NULL;
-   obj=$2$;
+   obj=$.projects[0].programs.gp[0][4].args[0]$;
    method=CsNetwork::Settle_Final;
    meth_args {
     name=;
@@ -352,12 +348,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
    flags=;
    cond {
     expr="network.phase == CsNetwork::MINUS_PHASE";
-    flags=;
-    var_expr="$#0#$.phase == CsNetwork::MINUS_PHASE";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
    true_code {
     name=;
@@ -367,7 +357,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      desc="compute trial-level statistics";
      flags=;
      result_var=NULL;
-     obj=$2$;
+     obj=$.projects[0].programs.gp[0][4].args[0]$;
      method=LeabraNetwork::Compute_TrialStats;
      meth_args {
       name=;
@@ -385,8 +375,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
   NetUpdateView @[8] {
    desc="update network views, if update_net_view == true";
    flags=;
-   network_var=$2$;
-   update_var=.projects[0].programs.gp[0][4].vars[2]$7$;
+   network_var=$.projects[0].programs.gp[0][4].args[0]$;
+   update_var=.projects[0].programs.gp[0][4].vars[2]$$;
   };
  };
+ step_prog=NULL;
+ step_n=1;
 };

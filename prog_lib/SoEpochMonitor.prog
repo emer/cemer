@@ -1,4 +1,4 @@
-// ta_Dump File v2.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 Program .projects[0].programs.gp[0][6] { 
   ProgObjList @.objs = [1] {
     NetMonitor @[0] { 
@@ -13,6 +13,9 @@ Program .projects[0].programs.gp[0][6] {
     };
   };
 
+  ProgType_List @.types = [0] {
+  };
+
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
   };
@@ -21,6 +24,12 @@ Program .projects[0].programs.gp[0][6] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.load_code = [0] {
   };
 
   ProgEl_List @.init_code = [4] {
@@ -44,31 +53,43 @@ Program .projects[0].programs.gp[0][6] {
   };
 
   ProgEl_List @.prog_code = [6] {
-    MethodCall @[0] { };
-    MethodCall @[1] { };
+    MethodCall @[0] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     AssignExpr @[2] { };
     MethodCall @[3] { 
-      ProgArg_List @.meth_args = [3] {
+      ProgArg_List @.meth_args = [4] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
 	ProgArg @[2] { };
+	ProgArg @[3] { };
       };
     };
     MethodCall @[4] { 
-      ProgArg_List @.meth_args = [3] {
+      ProgArg_List @.meth_args = [4] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
 	ProgArg @[2] { };
+	ProgArg @[3] { };
       };
     };
-    MethodCall @[5] { };
+    MethodCall @[5] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
   };
 };
 Program .projects[0].programs.gp[0][6] {
  name="SoEpochMonitor";
+ short_nm="SoEpcMon";
  tags="So, Std, Monitor";
  desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
- flags=;
+ flags=NO_STOP_STEP;
  objs {
   name=;
   el_typ=NetMonitor;
@@ -83,7 +104,7 @@ Program .projects[0].programs.gp[0][6] {
      name="batch";
      computed=0;
      object_type=LeabraNetwork;
-     object=.projects[0].networks[0]$0$;
+     object=.projects[0].networks[0]$$<SoNetwork,Network_0>;
      variable="batch";
      var_label=;
      name_style=AUTO_NAME;
@@ -91,6 +112,22 @@ Program .projects[0].programs.gp[0][6] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -99,7 +136,7 @@ Program .projects[0].programs.gp[0][6] {
      name="epoch";
      computed=0;
      object_type=LeabraNetwork;
-     object=$0$;
+     object=$.projects[0].networks[0]$;
      variable="epoch";
      var_label=;
      name_style=AUTO_NAME;
@@ -107,6 +144,22 @@ Program .projects[0].programs.gp[0][6] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -115,7 +168,7 @@ Program .projects[0].programs.gp[0][6] {
      name="avg_sse";
      computed=0;
      object_type=LeabraNetwork;
-     object=$0$;
+     object=$.projects[0].networks[0]$;
      variable="avg_sse";
      var_label=;
      name_style=AUTO_NAME;
@@ -123,6 +176,22 @@ Program .projects[0].programs.gp[0][6] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -131,7 +200,7 @@ Program .projects[0].programs.gp[0][6] {
      name="cnt_err";
      computed=0;
      object_type=LeabraNetwork;
-     object=$0$;
+     object=$.projects[0].networks[0]$;
      variable="cnt_err";
      var_label=;
      name_style=AUTO_NAME;
@@ -139,6 +208,22 @@ Program .projects[0].programs.gp[0][6] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -155,6 +240,22 @@ Program .projects[0].programs.gp[0][6] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -171,13 +272,29 @@ Program .projects[0].programs.gp[0][6] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
    };
-   network=$0$;
-   data=.projects[0].data.gp[1][1]$1$;
+   network=$.projects[0].networks[0]$;
+   data=.projects[0].data.gp[1][1]$$<DataTable,EpochOutputData>;
    rmv_orphan_cols=1;
   };
  };
@@ -194,10 +311,12 @@ Program .projects[0].programs.gp[0][6] {
    name="network";
    var_type=T_Object;
    object_type=Network;
-   object_val=$0$;
+   object_val=$.projects[0].networks[0]$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="network to get data from";
+   init_from=NULL;
   };
  };
  vars {
@@ -208,33 +327,39 @@ Program .projects[0].programs.gp[0][6] {
    name="epoch_mon_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=$1$;
+   object_val=$.projects[0].data.gp[1][1]$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="data table to write the epoch data to";
+   init_from=NULL;
   };
   ProgVar @[1] {
    name="epoch_netmon";
    var_type=T_Object;
    object_type=NetMonitor;
-   object_val=.projects[0].programs.gp[0][6].objs[0]$2$;
+   object_val=.projects[0].programs.gp[0][6].objs[0]$$;
    objs_ptr=1;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="network monitor object that contains full specs for what to record and where to get it";
+   init_from=NULL;
   };
   ProgVar @[2] {
    name="epoch_timer";
    var_type=T_Object;
    object_type=TimeUsed;
-   object_val=.projects[0].networks[0].epoch_time$3$;
+   object_val=.projects[0].networks[0].epoch_time$$<TimeUsed,epoch_time>;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
+   init_from=NULL;
   };
  };
  functions {
   name=;
-  el_typ=ProgEl;
+  el_typ=Function;
   el_def=0;
  };
  load_code {
@@ -249,22 +374,16 @@ Program .projects[0].programs.gp[0][6] {
   AssignExpr @[0] {
    desc="get the epoch timer from current network";
    flags=;
-   result_var=.projects[0].programs.gp[0][6].vars[2]$4$;
+   result_var=.projects[0].programs.gp[0][6].vars[2]$$;
    expr {
     expr="network.epoch_time";
-    flags=;
-    var_expr="$#0#$.epoch_time";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
   };
   MethodCall @[1] {
    desc="set data and network on NetMonitor object";
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][6].vars[1]$5$;
+   obj=.projects[0].programs.gp[0][6].vars[1]$$;
    method=NetMonitor::SetDataNetwork;
    meth_args {
     name=;
@@ -274,32 +393,20 @@ Program .projects[0].programs.gp[0][6] {
      arg_type=DataTable_ptr;
      type="DataTable*";
      name="dt";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="epoch_mon_data";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ epoch_mon_data;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
      arg_type=Network_ptr;
      type="Network*";
      name="net";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="network";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
    };
@@ -308,7 +415,7 @@ Program .projects[0].programs.gp[0][6] {
    desc="check configuration and emit errors/warnings for problems";
    flags=;
    result_var=NULL;
-   obj=$5$;
+   obj=$.projects[0].programs.gp[0][6].vars[1]$;
    method=taBase::CheckConfig;
    meth_args {
     name=;
@@ -322,12 +429,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val="false";
      expr {
       expr="false";
-      flags=;
-      var_expr="false";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -336,7 +437,7 @@ Program .projects[0].programs.gp[0][6] {
    desc="update the monitor items and data schema based on current settings of NetMonitor";
    flags=;
    result_var=NULL;
-   obj=$5$;
+   obj=$.projects[0].programs.gp[0][6].vars[1]$;
    method=NetMonitor::UpdateMonitors;
    meth_args {
     name=;
@@ -350,12 +451,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val="false";
      expr {
       expr="true";
-      flags=;
-      var_expr="true";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -369,7 +464,7 @@ Program .projects[0].programs.gp[0][6] {
    desc="add a new blank row to the data";
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][6].vars[0]$6$;
+   obj=.projects[0].programs.gp[0][6].vars[0]$$;
    method=DataTable::AddBlankRow;
    meth_args {
     name=;
@@ -381,7 +476,7 @@ Program .projects[0].programs.gp[0][6] {
    desc="get the new monitor data and stor it into the data table -- this does the main job here";
    flags=;
    result_var=NULL;
-   obj=$5$;
+   obj=$.projects[0].programs.gp[0][6].vars[1]$;
    method=NetMonitor::GetMonVals;
    meth_args {
     name=;
@@ -392,22 +487,16 @@ Program .projects[0].programs.gp[0][6] {
   AssignExpr @[2] {
    desc="get the epoch timer from current network";
    flags=;
-   result_var=$4$;
+   result_var=$.projects[0].programs.gp[0][6].vars[2]$;
    expr {
     expr="network.epoch_time";
-    flags=;
-    var_expr="$#0#$.epoch_time";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
   };
   MethodCall @[3] {
    desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
    flags=;
    result_var=NULL;
-   obj=$6$;
+   obj=$.projects[0].programs.gp[0][6].vars[0]$;
    method=DataTable::SetValColName;
    meth_args {
     name=;
@@ -417,48 +506,40 @@ Program .projects[0].programs.gp[0][6] {
      arg_type=const_Variant_ref;
      type="const Variant&";
      name="val";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="epoch_timer.used.GetTotSecs()";
-      flags=;
-      var_expr="$#0#$.used.GetTotSecs()";
-      vars {
-      };
-      var_names{ epoch_timer;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
      arg_type=const_taString_ref;
      type="const taString&";
      name="col_name";
-     required=0;
+     required=1;
      def_val="\"\"";
      expr {
       expr="\"epoch_time_tot\"";
-      flags=;
-      var_expr="\"epoch_time_tot\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
     ProgArg @[2] {
      arg_type=int;
      type="int";
      name="row";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="-1";
-      flags=;
-      var_expr="-1";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
+     };
+    };
+    ProgArg @[3] {
+     arg_type=bool;
+     type="bool";
+     name="quiet";
+     required=0;
+     def_val="false";
+     expr {
+      expr=;
      };
     };
    };
@@ -467,7 +548,7 @@ Program .projects[0].programs.gp[0][6] {
    desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
    flags=;
    result_var=NULL;
-   obj=$6$;
+   obj=$.projects[0].programs.gp[0][6].vars[0]$;
    method=DataTable::SetValColName;
    meth_args {
     name=;
@@ -477,48 +558,40 @@ Program .projects[0].programs.gp[0][6] {
      arg_type=const_Variant_ref;
      type="const Variant&";
      name="val";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="epoch_timer.used.GetUsrSecs()";
-      flags=;
-      var_expr="$#0#$.used.GetUsrSecs()";
-      vars {
-      };
-      var_names{ epoch_timer;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
      arg_type=const_taString_ref;
      type="const taString&";
      name="col_name";
-     required=0;
+     required=1;
      def_val="\"\"";
      expr {
       expr="\"epoch_time_usr\"";
-      flags=;
-      var_expr="\"epoch_time_usr\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
     ProgArg @[2] {
      arg_type=int;
      type="int";
      name="row";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="-1";
-      flags=;
-      var_expr="-1";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
+     };
+    };
+    ProgArg @[3] {
+     arg_type=bool;
+     type="bool";
+     name="quiet";
+     required=0;
+     def_val="false";
+     expr {
+      expr=;
      };
     };
    };
@@ -527,7 +600,7 @@ Program .projects[0].programs.gp[0][6] {
    desc="update after writing new data to monitor data table";
    flags=;
    result_var=NULL;
-   obj=$6$;
+   obj=$.projects[0].programs.gp[0][6].vars[0]$;
    method=DataBlock::WriteClose;
    meth_args {
     name=;
@@ -536,4 +609,6 @@ Program .projects[0].programs.gp[0][6] {
    };
   };
  };
+ step_prog=NULL;
+ step_n=1;
 };

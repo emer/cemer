@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.1.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 Program .projects[0].programs.gp[0][3] { 
   ProgObjList @.objs = [0] {
   };
@@ -53,6 +53,7 @@ Program .projects[0].programs.gp[0][3] {
 };
 Program .projects[0].programs.gp[0][3] {
  name="BpTrial";
+ short_nm="Trial";
  tags="Bp, Std";
  desc="Backpropagation processing of a single input/output event or external information";
  flags=;
@@ -74,7 +75,7 @@ Program .projects[0].programs.gp[0][3] {
    name="network";
    var_type=T_Object;
    object_type=BpNetwork;
-   object_val=.projects[0].networks[0]$0$;
+   object_val=.projects[0].networks[0]$$<BpNetwork,Network_0>;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -85,7 +86,7 @@ Program .projects[0].programs.gp[0][3] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$1$;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,Inputs>;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -131,7 +132,7 @@ Program .projects[0].programs.gp[0][3] {
    desc="resets input data, before getting new external inputs data from apply inputs call";
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][3].args[0]$2$;
+   obj=.projects[0].programs.gp[0][3].args[0]$$;
    method=Network::Init_InputData;
    meth_args {
     name=;
@@ -143,14 +144,12 @@ Program .projects[0].programs.gp[0][3] {
    desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
    flags=;
-   target=.projects[0].programs.gp[0][4]$3$;
-   targ_ld_init="*ApplyInputs*";
    prog_args {
     name=;
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
-     arg_type=LeabraNetwork;
+     arg_type=Network;
      type="BpNetwork*";
      name="network";
      required=1;
@@ -170,12 +169,14 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
    };
+   target=.projects[0].programs.gp[0][4]$$<Program,ApplyInputs>;
+   targ_ld_init="*ApplyInputs*";
   };
   MethodCall @[2] {
    desc="initializes various counters at start of trial";
    flags=;
    result_var=NULL;
-   obj=$2$;
+   obj=$.projects[0].programs.gp[0][3].args[0]$;
    method=BpNetwork::Trial_Run;
    meth_args {
     name=;
@@ -187,7 +188,7 @@ this program can be extended to do arbitrary things to generate data and apply i
    desc=;
    flags=;
    result_var=NULL;
-   obj=$2$;
+   obj=$.projects[0].programs.gp[0][3].args[0]$;
    method=LeabraNetwork::Compute_TrialStats;
    meth_args {
     name=;
@@ -198,8 +199,6 @@ this program can be extended to do arbitrary things to generate data and apply i
   ProgramCall @[4] {
    desc="records data about the trial-level processing to a datatable for graphing/processing";
    flags=;
-   target=.projects[0].programs.gp[0][5]$4$;
-   targ_ld_init="*BpTrialMonitor*";
    prog_args {
     name=;
     el_typ=ProgArg;
@@ -215,12 +214,16 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
    };
+   target=.projects[0].programs.gp[0][5]$$<Program,BpTrialMonitor>;
+   targ_ld_init="*BpTrialMonitor*";
   };
   NetUpdateView @[5] {
    desc="update the network view(s) (only if update_net_view is true)";
    flags=;
-   network_var=$2$;
-   update_var=.projects[0].programs.gp[0][3].vars[0]$5$;
+   network_var=$.projects[0].programs.gp[0][3].args[0]$;
+   update_var=.projects[0].programs.gp[0][3].vars[0]$$;
   };
  };
+ step_prog=NULL;
+ step_n=1;
 };

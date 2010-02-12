@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.1.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 Program .projects[0].programs.gp[0][8] { 
   ProgObjList @.objs = [1] {
     NetMonitor @[0] { 
@@ -107,7 +107,7 @@ Program .projects[0].programs.gp[0][8] {
      name="batch";
      computed=0;
      object_type=LeabraNetwork;
-     object=.projects[0].networks[0]$0$;
+     object=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
      variable="batch";
      var_label=;
      name_style=AUTO_NAME;
@@ -139,7 +139,7 @@ Program .projects[0].programs.gp[0][8] {
      name="epoch";
      computed=0;
      object_type=LeabraNetwork;
-     object=$0$;
+     object=$.projects[0].networks[0]$;
      variable="epoch";
      var_label=;
      name_style=AUTO_NAME;
@@ -171,7 +171,7 @@ Program .projects[0].programs.gp[0][8] {
      name="avg_sse";
      computed=0;
      object_type=LeabraNetwork;
-     object=$0$;
+     object=$.projects[0].networks[0]$;
      variable="avg_sse";
      var_label=;
      name_style=AUTO_NAME;
@@ -203,7 +203,7 @@ Program .projects[0].programs.gp[0][8] {
      name="cnt_err";
      computed=0;
      object_type=LeabraNetwork;
-     object=$0$;
+     object=$.projects[0].networks[0]$;
      variable="cnt_err";
      var_label=;
      name_style=AUTO_NAME;
@@ -235,7 +235,7 @@ Program .projects[0].programs.gp[0][8] {
      name="avg_ext_rew";
      computed=0;
      object_type=LeabraNetwork;
-     object=$0$;
+     object=$.projects[0].networks[0]$;
      variable="avg_ext_rew";
      var_label=;
      name_style=AUTO_NAME;
@@ -267,7 +267,7 @@ Program .projects[0].programs.gp[0][8] {
      name="avg_cycles";
      computed=0;
      object_type=LeabraNetwork;
-     object=$0$;
+     object=$.projects[0].networks[0]$;
      variable="avg_cycles";
      var_label=;
      name_style=AUTO_NAME;
@@ -360,8 +360,8 @@ Program .projects[0].programs.gp[0][8] {
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
    };
-   network=$0$;
-   data=.projects[0].data.gp[1][1]$1$;
+   network=$.projects[0].networks[0]$;
+   data=.projects[0].data.gp[1][1]$$<DataTable,EpochOutputData>;
    rmv_orphan_cols=1;
   };
  };
@@ -378,7 +378,7 @@ Program .projects[0].programs.gp[0][8] {
    name="network";
    var_type=T_Object;
    object_type=Network;
-   object_val=$0$;
+   object_val=$.projects[0].networks[0]$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -394,7 +394,7 @@ Program .projects[0].programs.gp[0][8] {
    name="epoch_mon_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=$1$;
+   object_val=$.projects[0].data.gp[1][1]$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -405,7 +405,7 @@ Program .projects[0].programs.gp[0][8] {
    name="epoch_netmon";
    var_type=T_Object;
    object_type=NetMonitor;
-   object_val=.projects[0].programs.gp[0][8].objs[0]$2$;
+   object_val=.projects[0].programs.gp[0][8].objs[0]$$;
    objs_ptr=1;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -416,7 +416,7 @@ Program .projects[0].programs.gp[0][8] {
    name="epoch_timer";
    var_type=T_Object;
    object_type=TimeUsed;
-   object_val=.projects[0].networks[0].epoch_time$3$;
+   object_val=.projects[0].networks[0].epoch_time$$<TimeUsed,TimeUsed_1>;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -441,7 +441,7 @@ Program .projects[0].programs.gp[0][8] {
   AssignExpr @[0] {
    desc="get the epoch timer from current network";
    flags=;
-   result_var=.projects[0].programs.gp[0][8].vars[2]$4$;
+   result_var=.projects[0].programs.gp[0][8].vars[2]$$;
    expr {
     expr="network.epoch_time";
    };
@@ -450,7 +450,7 @@ Program .projects[0].programs.gp[0][8] {
    desc="set data and network on NetMonitor object";
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][8].vars[1]$5$;
+   obj=.projects[0].programs.gp[0][8].vars[1]$$;
    method=NetMonitor::SetDataNetwork;
    meth_args {
     name=;
@@ -482,7 +482,7 @@ Program .projects[0].programs.gp[0][8] {
    desc="check configuration and emit errors/warnings for problems";
    flags=;
    result_var=NULL;
-   obj=$5$;
+   obj=$.projects[0].programs.gp[0][8].vars[1]$;
    method=taBase::CheckConfig;
    meth_args {
     name=;
@@ -504,7 +504,7 @@ Program .projects[0].programs.gp[0][8] {
    desc="update the monitor items and data schema based on current settings of NetMonitor";
    flags=;
    result_var=NULL;
-   obj=$5$;
+   obj=$.projects[0].programs.gp[0][8].vars[1]$;
    method=NetMonitor::UpdateMonitors;
    meth_args {
     name=;
@@ -531,7 +531,7 @@ Program .projects[0].programs.gp[0][8] {
    desc="add a new blank row to the data";
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][8].vars[0]$6$;
+   obj=.projects[0].programs.gp[0][8].vars[0]$$;
    method=DataTable::AddBlankRow;
    meth_args {
     name=;
@@ -543,7 +543,7 @@ Program .projects[0].programs.gp[0][8] {
    desc="get the new monitor data and stor it into the data table -- this does the main job here";
    flags=;
    result_var=NULL;
-   obj=$5$;
+   obj=$.projects[0].programs.gp[0][8].vars[1]$;
    method=NetMonitor::GetMonVals;
    meth_args {
     name=;
@@ -554,7 +554,7 @@ Program .projects[0].programs.gp[0][8] {
   AssignExpr @[2] {
    desc="get the epoch timer from current network";
    flags=;
-   result_var=$4$;
+   result_var=$.projects[0].programs.gp[0][8].vars[2]$;
    expr {
     expr="network.epoch_time";
    };
@@ -563,7 +563,7 @@ Program .projects[0].programs.gp[0][8] {
    desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
    flags=;
    result_var=NULL;
-   obj=$6$;
+   obj=$.projects[0].programs.gp[0][8].vars[0]$;
    method=DataTable::SetValColName;
    meth_args {
     name=;
@@ -615,7 +615,7 @@ Program .projects[0].programs.gp[0][8] {
    desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
    flags=;
    result_var=NULL;
-   obj=$6$;
+   obj=$.projects[0].programs.gp[0][8].vars[0]$;
    method=DataTable::SetValColName;
    meth_args {
     name=;
@@ -667,7 +667,7 @@ Program .projects[0].programs.gp[0][8] {
    desc="update after writing new data to monitor data table";
    flags=;
    result_var=NULL;
-   obj=$6$;
+   obj=$.projects[0].programs.gp[0][8].vars[0]$;
    method=DataBlock::WriteClose;
    meth_args {
     name=;
@@ -691,6 +691,6 @@ and the testing data is updated.  The first epoch monitor should have all the it
    flags=;
   };
  };
- step_prog=.projects[0].programs.gp[0][8]$7$;
+ step_prog=.projects[0].programs.gp[0][8]$$;
  step_n=1;
 };

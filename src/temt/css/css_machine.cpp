@@ -194,6 +194,8 @@ cssClassType	cssMisc::VoidClassType("VoidClass");
 
 cssRef		cssMisc::VoidRef;  // for maketoken
 
+QTime   	cssMisc::proc_events_timer;
+
 void cssMisc::CodeConstExpr() {
   code_cur_top = ConstExprTop;
   ConstExprTop->Reset();
@@ -3283,8 +3285,12 @@ cssEl* cssProg::Cont() {
     }
     top->step_mode = 0;		// always temporary
   }
-  // todo: investigate if this makes any difference or not -- could just remove entirely
-//   taiM->RunPending();
+
+  if(cssMisc::proc_events_timer.elapsed() > taMisc::css_gui_event_interval) {
+    taiM->RunPending();
+    cssMisc::proc_events_timer.restart();
+  }
+
   if(top->run_stat == cssEl::Running)
     top->run_stat = cssEl::Stopping;
   return Stack()->Peek();

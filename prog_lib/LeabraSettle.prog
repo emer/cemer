@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.1.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 Program .projects[0].programs.gp[0][4] { 
   ProgObjList @.objs = [0] {
   };
@@ -111,7 +111,7 @@ Program .projects[0].programs.gp[0][4] {
    name="network";
    var_type=T_Object;
    object_type=LeabraNetwork;
-   object_val=.projects[0].networks[0]$0$;
+   object_val=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -122,7 +122,7 @@ Program .projects[0].programs.gp[0][4] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$1$;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,Inputs>;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -183,8 +183,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
   NetCounterInit @[0] {
    desc="initialize local cycle counter and corresponding counter on network";
    flags=;
-   network_var=.projects[0].programs.gp[0][4].args[0]$2$;
-   local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$3$;
+   network_var=.projects[0].programs.gp[0][4].args[0]$$;
+   local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$$;
    counter=Network::cycle;
    update_after=0;
   };
@@ -196,8 +196,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
   NetCounterInit @[0] {
    desc="initialize local cycle counter and corresponding counter on network";
    flags=;
-   network_var=$2$;
-   local_ctr_var=$3$;
+   network_var=$.projects[0].programs.gp[0][4].args[0]$;
+   local_ctr_var=$.projects[0].programs.gp[0][4].vars[0]$;
    counter=Network::cycle;
    update_after=0;
   };
@@ -205,7 +205,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
    desc="resets input data, before getting new external inputs data from apply inputs call";
    flags=;
    result_var=NULL;
-   obj=$2$;
+   obj=$.projects[0].programs.gp[0][4].args[0]$;
    method=Network::Init_InputData;
    meth_args {
     name=;
@@ -242,14 +242,14 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
    };
-   target=.projects[0].programs.gp[0][6]$4$;
+   target=.projects[0].programs.gp[0][6]$$<Program,ApplyInputs>;
    targ_ld_init="*ApplyInputs*";
   };
   MethodCall @[3] {
    desc="initializes various counters at start of settling";
    flags=;
    result_var=NULL;
-   obj=$2$;
+   obj=$.projects[0].programs.gp[0][4].args[0]$;
    method=LeabraNetwork::Settle_Init;
    meth_args {
     name=;
@@ -270,7 +270,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     AssignExpr @[0] {
      desc="get minimum number of cycles from parameter on network (which is where you should change this value!)";
      flags=;
-     result_var=.projects[0].programs.gp[0][4].vars[1]$5$;
+     result_var=.projects[0].programs.gp[0][4].vars[1]$$;
      expr {
       expr="network.min_cycles";
      };
@@ -283,7 +283,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     AssignExpr @[0] {
      desc="get minimum number of cycles from parameter on network (which is where you should change this value!)";
      flags=;
-     result_var=$5$;
+     result_var=$.projects[0].programs.gp[0][4].vars[1]$;
      expr {
       expr="network.min_cycles_phase2";
      };
@@ -315,14 +315,14 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
       };
      };
-     target=.projects[0].programs.gp[0][5]$6$;
+     target=.projects[0].programs.gp[0][5]$$<Program,LeabraCycle>;
      targ_ld_init="*LeabraCycle*";
     };
     NetCounterIncr @[1] {
      desc="increment cycle counter (also on network)";
      flags=;
-     network_var=$2$;
-     local_ctr_var=$3$;
+     network_var=$.projects[0].programs.gp[0][4].args[0]$;
+     local_ctr_var=$.projects[0].programs.gp[0][4].vars[0]$;
      counter=Network::cycle;
      update_after=0;
     };
@@ -350,7 +350,7 @@ this program can be extended to do arbitrary things to generate data and apply i
    desc="perform final operations at end of settling (storing final activations, etc)";
    flags=;
    result_var=NULL;
-   obj=$2$;
+   obj=$.projects[0].programs.gp[0][4].args[0]$;
    method=LeabraNetwork::Settle_Final;
    meth_args {
     name=;
@@ -373,7 +373,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      desc="compute trial-level statistics";
      flags=;
      result_var=NULL;
-     obj=$2$;
+     obj=$.projects[0].programs.gp[0][4].args[0]$;
      method=LeabraNetwork::Compute_TrialStats;
      meth_args {
       name=;
@@ -397,7 +397,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      desc="get external reward information";
      flags=;
      result_var=NULL;
-     obj=$2$;
+     obj=$.projects[0].programs.gp[0][4].args[0]$;
      method=LeabraNetwork::Compute_ExtRew;
      meth_args {
       name=;
@@ -410,8 +410,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
   NetUpdateView @[9] {
    desc="update network views, if update_net_view == true";
    flags=;
-   network_var=$2$;
-   update_var=.projects[0].programs.gp[0][4].vars[2]$7$;
+   network_var=$.projects[0].programs.gp[0][4].args[0]$;
+   update_var=.projects[0].programs.gp[0][4].vars[2]$$;
   };
  };
  step_prog=NULL;

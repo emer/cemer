@@ -1,4 +1,4 @@
-// ta_Dump File v2.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 Program .projects[0].programs.gp[0][5] { 
   ProgObjList @.objs = [1] {
     NetMonitor @[0] { 
@@ -13,6 +13,9 @@ Program .projects[0].programs.gp[0][5] {
     };
   };
 
+  ProgType_List @.types = [0] {
+  };
+
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
   };
@@ -20,6 +23,12 @@ Program .projects[0].programs.gp[0][5] {
   ProgVar_List @.vars = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.load_code = [0] {
   };
 
   ProgEl_List @.init_code = [3] {
@@ -42,9 +51,18 @@ Program .projects[0].programs.gp[0][5] {
   };
 
   ProgEl_List @.prog_code = [4] {
-    MethodCall @[0] { };
-    MethodCall @[1] { };
-    MethodCall @[2] { };
+    MethodCall @[0] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
+    MethodCall @[2] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     MethodCall @[3] { 
       ProgArg_List @.meth_args = [2] {
 	ProgArg @[0] { };
@@ -55,9 +73,10 @@ Program .projects[0].programs.gp[0][5] {
 };
 Program .projects[0].programs.gp[0][5] {
  name="SoTrialMonitor";
+ short_nm="SoTrlMon";
  tags="So, Std, Monitor";
  desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
- flags=;
+ flags=NO_STOP_STEP;
  objs {
   name=;
   el_typ=NetMonitor;
@@ -72,7 +91,7 @@ Program .projects[0].programs.gp[0][5] {
      name="batch";
      computed=0;
      object_type=LeabraNetwork;
-     object=.projects[0].networks[0]$0$;
+     object=.projects[0].networks[0]$$<SoNetwork,Network_0>;
      variable="batch";
      var_label=;
      name_style=AUTO_NAME;
@@ -80,6 +99,22 @@ Program .projects[0].programs.gp[0][5] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -88,7 +123,7 @@ Program .projects[0].programs.gp[0][5] {
      name="epoch";
      computed=0;
      object_type=LeabraNetwork;
-     object=$0$;
+     object=$.projects[0].networks[0]$;
      variable="epoch";
      var_label=;
      name_style=AUTO_NAME;
@@ -96,6 +131,22 @@ Program .projects[0].programs.gp[0][5] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -104,7 +155,7 @@ Program .projects[0].programs.gp[0][5] {
      name="trial";
      computed=0;
      object_type=LeabraNetwork;
-     object=$0$;
+     object=$.projects[0].networks[0]$;
      variable="trial";
      var_label=;
      name_style=AUTO_NAME;
@@ -112,6 +163,22 @@ Program .projects[0].programs.gp[0][5] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -120,7 +187,7 @@ Program .projects[0].programs.gp[0][5] {
      name="trial_name";
      computed=0;
      object_type=LeabraNetwork;
-     object=$0$;
+     object=$.projects[0].networks[0]$;
      variable="trial_name";
      var_label=;
      name_style=AUTO_NAME;
@@ -128,6 +195,22 @@ Program .projects[0].programs.gp[0][5] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -136,7 +219,7 @@ Program .projects[0].programs.gp[0][5] {
      name="group_name";
      computed=0;
      object_type=LeabraNetwork;
-     object=$0$;
+     object=$.projects[0].networks[0]$;
      variable="group_name";
      var_label=;
      name_style=AUTO_NAME;
@@ -144,6 +227,22 @@ Program .projects[0].programs.gp[0][5] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -152,7 +251,7 @@ Program .projects[0].programs.gp[0][5] {
      name="sse";
      computed=0;
      object_type=LeabraNetwork;
-     object=$0$;
+     object=$.projects[0].networks[0]$;
      variable="sse";
      var_label=;
      name_style=AUTO_NAME;
@@ -160,13 +259,29 @@ Program .projects[0].programs.gp[0][5] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name=;
+     };
+     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name=;
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
    };
-   network=$0$;
-   data=.projects[0].data.gp[1][0]$1$;
+   network=$.projects[0].networks[0]$;
+   data=.projects[0].data.gp[1][0]$$<DataTable,TrialOutputData>;
    rmv_orphan_cols=1;
   };
  };
@@ -183,10 +298,12 @@ Program .projects[0].programs.gp[0][5] {
    name="network";
    var_type=T_Object;
    object_type=Network;
-   object_val=$0$;
+   object_val=$.projects[0].networks[0]$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="network to record data from";
+   init_from=NULL;
   };
  };
  vars {
@@ -197,24 +314,28 @@ Program .projects[0].programs.gp[0][5] {
    name="trial_mon_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=$1$;
+   object_val=$.projects[0].data.gp[1][0]$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="data table to record trial-level data to (this program writes new data to this table!)";
+   init_from=NULL;
   };
   ProgVar @[1] {
    name="trial_netmon";
    var_type=T_Object;
    object_type=NetMonitor;
-   object_val=.projects[0].programs.gp[0][5].objs[0]$2$;
+   object_val=.projects[0].programs.gp[0][5].objs[0]$$;
    objs_ptr=1;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
+   init_from=NULL;
   };
  };
  functions {
   name=;
-  el_typ=ProgEl;
+  el_typ=Function;
   el_def=0;
  };
  load_code {
@@ -230,7 +351,7 @@ Program .projects[0].programs.gp[0][5] {
    desc="set the network and datatable for the NetMonitor";
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][5].vars[1]$3$;
+   obj=.projects[0].programs.gp[0][5].vars[1]$$;
    method=NetMonitor::SetDataNetwork;
    meth_args {
     name=;
@@ -240,32 +361,20 @@ Program .projects[0].programs.gp[0][5] {
      arg_type=DataTable_ptr;
      type="DataTable*";
      name="dt";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="trial_mon_data";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ trial_mon_data;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
      arg_type=Network_ptr;
      type="Network*";
      name="net";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="network";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
    };
@@ -274,7 +383,7 @@ Program .projects[0].programs.gp[0][5] {
    desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
    flags=;
    result_var=NULL;
-   obj=$3$;
+   obj=$.projects[0].programs.gp[0][5].vars[1]$;
    method=taBase::CheckConfig;
    meth_args {
     name=;
@@ -288,12 +397,6 @@ Program .projects[0].programs.gp[0][5] {
      def_val="false";
      expr {
       expr="false";
-      flags=;
-      var_expr="false";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -302,7 +405,7 @@ Program .projects[0].programs.gp[0][5] {
    desc="update the monitor items and data schema based on current settings of the NetMonitor object";
    flags=;
    result_var=NULL;
-   obj=$3$;
+   obj=$.projects[0].programs.gp[0][5].vars[1]$;
    method=NetMonitor::UpdateMonitors;
    meth_args {
     name=;
@@ -316,12 +419,6 @@ Program .projects[0].programs.gp[0][5] {
      def_val="false";
      expr {
       expr="true";
-      flags=;
-      var_expr="true";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -335,7 +432,7 @@ Program .projects[0].programs.gp[0][5] {
    desc="add a new blank row to the data";
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][5].vars[0]$4$;
+   obj=.projects[0].programs.gp[0][5].vars[0]$$;
    method=DataTable::AddBlankRow;
    meth_args {
     name=;
@@ -347,7 +444,7 @@ Program .projects[0].programs.gp[0][5] {
    desc="get the new monitor data from the network and other sources -- this does the main work";
    flags=;
    result_var=NULL;
-   obj=$3$;
+   obj=$.projects[0].programs.gp[0][5].vars[1]$;
    method=NetMonitor::GetMonVals;
    meth_args {
     name=;
@@ -359,7 +456,7 @@ Program .projects[0].programs.gp[0][5] {
    desc="update views and other things after writing new data to monitor data table";
    flags=;
    result_var=NULL;
-   obj=$4$;
+   obj=$.projects[0].programs.gp[0][5].vars[0]$;
    method=DataBlock::WriteClose;
    meth_args {
     name=;
@@ -371,7 +468,7 @@ Program .projects[0].programs.gp[0][5] {
    desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][5].args[0]$5$;
+   obj=.projects[0].programs.gp[0][5].args[0]$$;
    method=Network::DMem_ShareTrialData;
    meth_args {
     name=;
@@ -385,12 +482,6 @@ Program .projects[0].programs.gp[0][5] {
      def_val=;
      expr {
       expr="trial_mon_data";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ trial_mon_data;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -401,15 +492,11 @@ Program .projects[0].programs.gp[0][5] {
      def_val="1";
      expr {
       expr="1";
-      flags=;
-      var_expr="1";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
   };
  };
+ step_prog=NULL;
+ step_n=1;
 };

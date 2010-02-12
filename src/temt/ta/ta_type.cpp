@@ -532,6 +532,8 @@ taThreadDefaults::taThreadDefaults() {
 
 taThreadDefaults taMisc::thread_defaults;
 
+bool 	taMisc::save_old_fmt = false;
+
 ////////////////////////////////////////////////////////
 // 	TA GUI parameters
 
@@ -574,6 +576,7 @@ int	taMisc::undo_data_max_cells = 1000;
 float	taMisc::undo_new_src_thr = 0.3f;
 int	taMisc::auto_save_interval = 120;
 int	taMisc::wait_proc_delay = 20;
+int	taMisc::css_gui_event_interval = 200;
 bool	taMisc::delete_prompts = false;
 //bool	taMisc::delete_prompts = true;
 int	taMisc::tree_indent = 10; // 12 used to be default, but 10 seems good

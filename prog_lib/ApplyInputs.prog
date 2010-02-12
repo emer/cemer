@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.1.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 Program .projects[0].programs.gp[0][6] { 
   ProgObjList @.objs = [1] {
     LayerWriter @[0] { 
@@ -67,8 +67,8 @@ Program .projects[0].programs.gp[0][6] {
   el_def=0;
   LayerWriter @[0] {
    name="LayerWriter_0";
-   data=.projects[0].data.gp[0][0]$0$;
-   network=.projects[0].networks[0]$1$;
+   data=.projects[0].data.gp[0][0]$$<DataTable,Inputs>;
+   network=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
    layer_data {
     name=;
     el_typ=LayerWriterEl;
@@ -119,7 +119,7 @@ Program .projects[0].programs.gp[0][6] {
    name="network";
    var_type=T_Object;
    object_type=Network;
-   object_val=$1$;
+   object_val=$.projects[0].networks[0]$;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -130,7 +130,7 @@ Program .projects[0].programs.gp[0][6] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=$0$;
+   object_val=$.projects[0].data.gp[0][0]$;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -146,7 +146,7 @@ Program .projects[0].programs.gp[0][6] {
    name="LayerWriter_0";
    var_type=T_Object;
    object_type=LayerWriter;
-   object_val=.projects[0].programs.gp[0][6].objs[0]$2$;
+   object_val=.projects[0].programs.gp[0][6].objs[0]$$;
    objs_ptr=1;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -172,7 +172,7 @@ Program .projects[0].programs.gp[0][6] {
    desc="sets the datatable and network for the layer writer, so it knows what to write to";
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][6].vars[0]$3$;
+   obj=.projects[0].programs.gp[0][6].vars[0]$$;
    method=LayerWriter::SetDataNetwork;
    meth_args {
     name=;
@@ -204,7 +204,7 @@ Program .projects[0].programs.gp[0][6] {
    desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
    flags=;
    result_var=NULL;
-   obj=$3$;
+   obj=$.projects[0].programs.gp[0][6].vars[0]$;
    method=taList_impl::CheckConfig;
    meth_args {
     name=;
@@ -231,7 +231,7 @@ Program .projects[0].programs.gp[0][6] {
    desc="sets the datatable and network for the layer writer, so it knows what to write to";
    flags=;
    result_var=NULL;
-   obj=$3$;
+   obj=$.projects[0].programs.gp[0][6].vars[0]$;
    method=LayerWriter::SetDataNetwork;
    meth_args {
     name=;
@@ -263,7 +263,7 @@ Program .projects[0].programs.gp[0][6] {
    desc="apply inputs to the network!  layer writer has all the key specs";
    flags=;
    result_var=NULL;
-   obj=$3$;
+   obj=$.projects[0].programs.gp[0][6].vars[0]$;
    method=LayerWriter::ApplyInputData;
    meth_args {
     name=;

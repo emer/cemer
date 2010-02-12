@@ -1,5 +1,11 @@
-// ta_Dump File v2.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 Program .projects[0].programs.gp[0][2] { 
+  ProgObjList @.objs = [0] {
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
   ProgVar_List @.args = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
@@ -11,6 +17,12 @@ Program .projects[0].programs.gp[0][2] {
     ProgVar @[2] { };
     ProgVar @[3] { };
     ProgVar @[4] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.load_code = [0] {
   };
 
   ProgEl_List @.init_code = [2] {
@@ -26,7 +38,10 @@ Program .projects[0].programs.gp[0][2] {
 	ProgArg @[0] { };
       };
     };
-    MethodCall @[3] { };
+    MethodCall @[3] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
     NetDataLoop @[4] { 
       ProgEl_List @.loop_code = [2] {
 	ProgramCall @[0] { 
@@ -37,30 +52,49 @@ Program .projects[0].programs.gp[0][2] {
 	};
 	IfElse @[1] { 
 	  ProgEl_List @.true_code = [1] {
-	    MethodCall @[0] { };
+	    MethodCall @[0] { 
+	      ProgArg_List @.meth_args = [0] {
+	      };
+	    };
+	  };
+
+	  ProgEl_List @.false_code = [0] {
 	  };
 	};
       };
     };
     IfElse @[5] { 
       ProgEl_List @.true_code = [1] {
-	MethodCall @[0] { };
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+      };
+
+      ProgEl_List @.false_code = [0] {
       };
     };
-    MethodCall @[6] { };
-    MethodCall @[7] { };
-    ProgramCall @[8] { 
+    MethodCall @[6] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+    };
+    ProgramCall @[7] { 
       ProgArg_List @.prog_args = [1] {
 	ProgArg @[0] { };
+      };
+    };
+    MethodCall @[8] { 
+      ProgArg_List @.meth_args = [0] {
       };
     };
   };
 };
 Program .projects[0].programs.gp[0][2] {
  name="CsEpoch";
+ short_nm="Epoch";
  tags="Cs, Std";
  desc="iterates over all of the items in a data table and calls Trial process on them";
- flags=SHOW_STEP;
+ flags=;
  objs {
   name=;
   el_typ=taOBase;
@@ -79,19 +113,23 @@ Program .projects[0].programs.gp[0][2] {
    name="network";
    var_type=T_Object;
    object_type=CsNetwork;
-   object_val=.projects[0].networks[0]$0$;
+   object_val=.projects[0].networks[0]$$<CsNetwork,Network_0>;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="network to operate on";
+   init_from=NULL;
   };
   ProgVar @[1] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$1$;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="table of patterns to present to the network, one row at a time";
+   init_from=NULL;
   };
  };
  vars {
@@ -104,48 +142,58 @@ Program .projects[0].programs.gp[0][2] {
    int_val=1;
    hard_enum_type=DataLoop::Order;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="controls the order in which events (rows of the input data datatable) are presented to the network
 (SEQUENTIAL, PERMUTED, RANDOM)";
+   init_from=NULL;
   };
   ProgVar @[1] {
    name="trial";
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="current trial (event) within the epoch -- increments automatically";
+   init_from=NULL;
   };
   ProgVar @[2] {
    name="trial_mon_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[1][0]$2$;
+   object_val=.projects[0].data.gp[1][0]$$<DataTable,TrialOutputData>;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
+   init_from=NULL;
   };
   ProgVar @[3] {
    name="epoch_timer";
    var_type=T_Object;
    object_type=TimeUsed;
-   object_val=.projects[0].networks[0].epoch_time$3$;
+   object_val=.projects[0].networks[0].epoch_time$$<TimeUsed,epoch_time>;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
+   init_from=NULL;
   };
   ProgVar @[4] {
    name="data_loop_index";
    var_type=T_Int;
    int_val=3;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
    desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
+   init_from=NULL;
   };
  };
  functions {
   name=;
-  el_typ=ProgEl;
+  el_typ=Function;
   el_def=0;
  };
  load_code {
@@ -160,21 +208,17 @@ Program .projects[0].programs.gp[0][2] {
   NetCounterInit @[0] {
    desc="initialize trial counter (local variable and in the network)";
    flags=;
-   network_var=.projects[0].programs.gp[0][2].args[0]$4$;
-   local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$5$;
+   network_var=.projects[0].programs.gp[0][2].args[0]$$;
+   local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$$;
    counter=Network::trial;
+   update_after=0;
   };
   AssignExpr @[1] {
    desc="get pointer to epoch timer object on network";
    flags=;
-   result_var=.projects[0].programs.gp[0][2].vars[3]$6$;
+   result_var=.projects[0].programs.gp[0][2].vars[3]$$;
    expr {
     expr="network.epoch_time";
-    var_expr="$#0#$.epoch_time";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
   };
  };
@@ -185,28 +229,24 @@ Program .projects[0].programs.gp[0][2] {
   NetCounterInit @[0] {
    desc="initialize trial counter (local variable and in the network)";
    flags=;
-   network_var=$4$;
-   local_ctr_var=$5$;
+   network_var=$.projects[0].programs.gp[0][2].args[0]$;
+   local_ctr_var=$.projects[0].programs.gp[0][2].vars[1]$;
    counter=Network::trial;
+   update_after=0;
   };
   AssignExpr @[1] {
    desc="get pointer to epoch timer object on network";
    flags=;
-   result_var=$6$;
+   result_var=$.projects[0].programs.gp[0][2].vars[3]$;
    expr {
     expr="network.epoch_time";
-    var_expr="$#0#$.epoch_time";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
   };
   MethodCall @[2] {
    desc="start the epoch timer to record computation time per epoch";
    flags=;
    result_var=NULL;
-   obj=$6$;
+   obj=$.projects[0].programs.gp[0][2].vars[3]$;
    method=TimeUsed::StartTimer;
    meth_args {
     name=;
@@ -220,11 +260,6 @@ Program .projects[0].programs.gp[0][2] {
      def_val="true";
      expr {
       expr="true";
-      var_expr="true";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -233,7 +268,7 @@ Program .projects[0].programs.gp[0][2] {
    desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][2].vars[2]$7$;
+   obj=.projects[0].programs.gp[0][2].vars[2]$$;
    method=DataTable::ResetData;
    meth_args {
     name=;
@@ -251,8 +286,6 @@ Program .projects[0].programs.gp[0][2] {
     ProgramCall @[0] {
      desc="run the trial program, passing network and input_data";
      flags=;
-     target=.projects[0].programs.gp[0][3]$8$;
-     targ_ld_init="*CsTrial*";
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -265,11 +298,6 @@ Program .projects[0].programs.gp[0][2] {
        def_val=;
        expr {
 	expr="network";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ network;	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[1] {
@@ -280,25 +308,17 @@ Program .projects[0].programs.gp[0][2] {
        def_val=;
        expr {
 	expr="input_data";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ input_data;	};
-	bad_vars{ 	};
        };
       };
      };
+     target=.projects[0].programs.gp[0][3]$$<Program,CsTrial>;
+     targ_ld_init="*CsTrial*";
     };
     IfElse @[1] {
      desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
      flags=;
      cond {
       expr="network.Compute_Weights_Test(trial+1)";
-      var_expr="$#0#$.Compute_Weights_Test($#1#$+1)";
-      vars {
-      };
-      var_names{ network;trial;      };
-      bad_vars{       };
      };
      true_code {
       name=;
@@ -308,7 +328,7 @@ Program .projects[0].programs.gp[0][2] {
        desc="update the weight values based on changes computed by trial program";
        flags=;
        result_var=NULL;
-       obj=$4$;
+       obj=$.projects[0].programs.gp[0][2].args[0]$;
        method=Network::Compute_Weights;
        meth_args {
 	name=;
@@ -324,11 +344,12 @@ Program .projects[0].programs.gp[0][2] {
      };
     };
    };
-   data_var=.projects[0].programs.gp[0][2].args[1]$9$;
-   index_var=.projects[0].programs.gp[0][2].vars[4]$10$;
-   order_var=.projects[0].programs.gp[0][2].vars[0]$11$;
+   data_var=.projects[0].programs.gp[0][2].args[1]$$;
+   index_var=.projects[0].programs.gp[0][2].vars[4]$$;
+   order_var=.projects[0].programs.gp[0][2].vars[0]$$;
    order=PERMUTED;
    item_idx_list{ 1;2;5;3;4;0;   };
+   update_after=0;
    dmem_nprocs=1;
    dmem_this_proc=0;
   };
@@ -337,11 +358,6 @@ Program .projects[0].programs.gp[0][2] {
    flags=;
    cond {
     expr="network.wt_update == Network::BATCH";
-    var_expr="$#0#$.wt_update == Network::BATCH";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
    true_code {
     name=;
@@ -351,7 +367,7 @@ Program .projects[0].programs.gp[0][2] {
      desc="final update of weights based on accumulated changes";
      flags=;
      result_var=NULL;
-     obj=$4$;
+     obj=$.projects[0].programs.gp[0][2].args[0]$;
      method=Network::Compute_Weights;
      meth_args {
       name=;
@@ -370,7 +386,7 @@ Program .projects[0].programs.gp[0][2] {
    desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
    flags=;
    result_var=NULL;
-   obj=$4$;
+   obj=$.projects[0].programs.gp[0][2].args[0]$;
    method=LeabraNetwork::Compute_EpochStats;
    meth_args {
     name=;
@@ -378,23 +394,9 @@ Program .projects[0].programs.gp[0][2] {
     el_def=0;
    };
   };
-  MethodCall @[7] {
-   desc="done with the computation in the epoch -- record time it took";
-   flags=;
-   result_var=NULL;
-   obj=$6$;
-   method=TimeUsed::EndTimer;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-   };
-  };
-  ProgramCall @[8] {
+  ProgramCall @[7] {
    desc="run program that records data from network and possibly other sources about the epoch";
    flags=;
-   target=.projects[0].programs.gp[0][8]$12$;
-   targ_ld_init="*CsEpochMonitor*";
    prog_args {
     name=;
     el_typ=ProgArg;
@@ -407,14 +409,25 @@ Program .projects[0].programs.gp[0][2] {
      def_val=;
      expr {
       expr="network";
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
    };
+   target=.projects[0].programs.gp[0][8]$$<Program,CsEpochMonitor>;
+   targ_ld_init="*CsEpochMonitor*";
+  };
+  MethodCall @[8] {
+   desc="done with the computation in the epoch -- record time it took";
+   flags=;
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[0][2].vars[3]$;
+   method=TimeUsed::EndTimer;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
   };
  };
+ step_prog=NULL;
+ step_n=1;
 };

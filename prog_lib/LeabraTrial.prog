@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.1.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 Program .projects[0].programs.gp[0][3] { 
   ProgObjList @.objs = [0] {
   };
@@ -101,7 +101,7 @@ Program .projects[0].programs.gp[0][3] {
    name="network";
    var_type=T_Object;
    object_type=LeabraNetwork;
-   object_val=.projects[0].networks[0]$0$;
+   object_val=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -112,7 +112,7 @@ Program .projects[0].programs.gp[0][3] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$1$;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,Inputs>;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -182,8 +182,8 @@ Program .projects[0].programs.gp[0][3] {
   NetCounterInit @[0] {
    desc="initialize the local phase_no counter, and corresponding network one";
    flags=;
-   network_var=.projects[0].programs.gp[0][3].args[0]$2$;
-   local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$3$;
+   network_var=.projects[0].programs.gp[0][3].args[0]$$;
+   local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$$;
    counter=LeabraNetwork::phase_no;
    update_after=0;
   };
@@ -195,8 +195,8 @@ Program .projects[0].programs.gp[0][3] {
   NetCounterInit @[0] {
    desc="initialize the local phase_no counter, and corresponding network one";
    flags=;
-   network_var=$2$;
-   local_ctr_var=$3$;
+   network_var=$.projects[0].programs.gp[0][3].args[0]$;
+   local_ctr_var=$.projects[0].programs.gp[0][3].vars[0]$;
    counter=LeabraNetwork::phase_no;
    update_after=0;
   };
@@ -204,7 +204,7 @@ Program .projects[0].programs.gp[0][3] {
    desc="initializes various counters at start of trial";
    flags=;
    result_var=NULL;
-   obj=$2$;
+   obj=$.projects[0].programs.gp[0][3].args[0]$;
    method=LeabraNetwork::Trial_Init;
    meth_args {
     name=;
@@ -247,14 +247,14 @@ Program .projects[0].programs.gp[0][3] {
        };
       };
      };
-     target=.projects[0].programs.gp[0][4]$4$;
+     target=.projects[0].programs.gp[0][4]$$<Program,LeabraSettle>;
      targ_ld_init="*LeabraSettle*";
     };
     NetCounterIncr @[1] {
      desc="increment the phase number (also on network)";
      flags=;
-     network_var=$2$;
-     local_ctr_var=$3$;
+     network_var=$.projects[0].programs.gp[0][3].args[0]$;
+     local_ctr_var=$.projects[0].programs.gp[0][3].vars[0]$;
      counter=LeabraNetwork::phase_no;
      update_after=0;
     };
@@ -262,7 +262,7 @@ Program .projects[0].programs.gp[0][3] {
      desc="increments other phase state information to prepare for the next phase of settling";
      flags=;
      result_var=NULL;
-     obj=$2$;
+     obj=$.projects[0].programs.gp[0][3].args[0]$;
      method=LeabraNetwork::Trial_UpdatePhase;
      meth_args {
       name=;
@@ -279,7 +279,7 @@ Program .projects[0].programs.gp[0][3] {
    desc="after the trial is over, do final computations: Compute_dWt (learn weights), compute stats";
    flags=;
    result_var=NULL;
-   obj=$2$;
+   obj=$.projects[0].programs.gp[0][3].args[0]$;
    method=LeabraNetwork::Trial_Final;
    meth_args {
     name=;
@@ -301,7 +301,7 @@ Program .projects[0].programs.gp[0][3] {
      desc="special for adapting netin";
      flags=;
      result_var=NULL;
-     obj=$2$;
+     obj=$.projects[0].programs.gp[0][3].args[0]$;
      method=LeabraNetwork::Compute_AbsRelNetin;
      meth_args {
       name=;
@@ -325,7 +325,7 @@ Program .projects[0].programs.gp[0][3] {
      desc="update the weight values based on changes computed by trial program";
      flags=;
      result_var=NULL;
-     obj=$2$;
+     obj=$.projects[0].programs.gp[0][3].args[0]$;
      method=Network::Compute_Weights;
      meth_args {
       name=;
@@ -353,14 +353,14 @@ Program .projects[0].programs.gp[0][3] {
      };
     };
    };
-   target=.projects[0].programs.gp[0][7]$5$;
+   target=.projects[0].programs.gp[0][7]$$<Program,LeabraTrialMonitor>;
    targ_ld_init="*LeabraTrialMonitor*";
   };
   NetUpdateView @[7] {
    desc="update the network view(s) (only if update_net_view is true)";
    flags=;
-   network_var=$2$;
-   update_var=.projects[0].programs.gp[0][3].vars[1]$6$;
+   network_var=$.projects[0].programs.gp[0][3].args[0]$;
+   update_var=.projects[0].programs.gp[0][3].vars[1]$$;
   };
  };
  step_prog=NULL;

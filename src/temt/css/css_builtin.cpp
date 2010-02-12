@@ -2426,6 +2426,8 @@ bool cssMisc::Initialize() {
   // use our completion function
   rl_attempted_completion_function = css_attempted_completion;
 
+  cssMisc::proc_events_timer.start(); // always start initialized
+
   // functions
   cssEl::Ref(&cssMisc::Void);		// reference this to keep it around
 

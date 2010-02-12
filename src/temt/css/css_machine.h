@@ -29,6 +29,7 @@
 
 #ifdef TA_USE_QT
 # include <QObject>
+# include <QTime>
 #endif
 
 #include <stdlib.h>
@@ -188,6 +189,7 @@ public:
   static cssClassType	VoidClassType; 	// a void class type
 
   static int		readline_waitproc(); // note: not used in GUI mode, see css_qt.h
+  static QTime		proc_events_timer;   // timer used in deciding when to process gui events
 
   static bool 		Initialize();
   // this is called to install builtin funcs, setup system, etc.; returns true if ok

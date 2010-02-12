@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.1.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 Program .projects[0].programs.gp[0][9] { 
   ProgObjList @.objs = [0] {
   };
@@ -83,7 +83,7 @@ Program .projects[0].programs.gp[0][9] {
    name="network";
    var_type=T_Object;
    object_type=Network;
-   object_val=.projects[0].networks[0]$0$;
+   object_val=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -185,7 +185,7 @@ Program .projects[0].programs.gp[0][9] {
   MiscCall @[1] {
    desc="get current batch counter for file name, with leading zeros to length 3";
    flags=;
-   result_var=.projects[0].programs.gp[0][9].vars[4]$1$;
+   result_var=.projects[0].programs.gp[0][9].vars[4]$$;
    object_type=taMisc;
    method=taMisc::LeadingZeros;
    meth_args {
@@ -217,7 +217,7 @@ Program .projects[0].programs.gp[0][9] {
   MiscCall @[2] {
    desc="get current epoch counter with leading zeros to length 4";
    flags=;
-   result_var=.projects[0].programs.gp[0][9].vars[3]$2$;
+   result_var=.projects[0].programs.gp[0][9].vars[3]$$;
    object_type=taMisc;
    method=taMisc::LeadingZeros;
    meth_args {
@@ -249,7 +249,7 @@ Program .projects[0].programs.gp[0][9] {
   AssignExpr @[3] {
    desc="string 'tag' to identify the batch, epoch, and other user id info for the weights";
    flags=;
-   result_var=.projects[0].programs.gp[0][9].vars[5]$3$;
+   result_var=.projects[0].programs.gp[0][9].vars[5]$$;
    expr {
     expr="tag + \".\" + batch_str + \"_\" + epoch_str";
    };
@@ -257,8 +257,8 @@ Program .projects[0].programs.gp[0][9] {
   MethodCall @[4] {
    desc="get a file name based on the project's current file name, for saving the weights";
    flags=;
-   result_var=.projects[0].programs.gp[0][9].vars[2]$4$;
-   obj=.projects[0].programs.gp[0][9].args[0]$5$;
+   result_var=.projects[0].programs.gp[0][9].vars[2]$$;
+   obj=.projects[0].programs.gp[0][9].args[0]$$;
    method=taBase::GetFileNameFmProject;
    meth_args {
     name=;
@@ -310,7 +310,7 @@ Program .projects[0].programs.gp[0][9] {
    desc="save the weights to that file name";
    flags=;
    result_var=NULL;
-   obj=$5$;
+   obj=$.projects[0].programs.gp[0][9].args[0]$;
    method=Network::SaveWeights;
    meth_args {
     name=;

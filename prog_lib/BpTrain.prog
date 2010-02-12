@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.1.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 Program .projects[0].programs.gp[0][1] { 
   ProgObjList @.objs = [2] {
     RndSeed_List @[0] { 
@@ -212,9 +212,10 @@ Program .projects[0].programs.gp[0][1] {
 };
 Program .projects[0].programs.gp[0][1] {
  name="BpTrain";
+ short_nm="Train";
  tags="Bp, Train, RndSeedList";
  desc="A complete training run of a Backpropagation network: iterating over epochs until the network has learned the task.  Also has a list of random seeds that are tied to the network batch counter, providing consistent runs regardless of what happens in the training of each network, or where it is run (e.g., on different processors)";
- flags=SHOW_STEP;
+ flags=;
  objs {
   name=;
   el_typ=RndSeed;
@@ -396,7 +397,7 @@ Program .projects[0].programs.gp[0][1] {
    name="network";
    var_type=T_Object;
    object_type=BpNetwork;
-   object_val=.projects[0].networks[0]$0$;
+   object_val=.projects[0].networks[0]$$<BpNetwork,Network_0>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -407,7 +408,7 @@ Program .projects[0].programs.gp[0][1] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$1$;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,Inputs>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -464,7 +465,7 @@ Program .projects[0].programs.gp[0][1] {
    name="rnd_init";
    var_type=T_DynEnum;
    dyn_enum_val {
-    enum_type=.projects[0].programs.gp[0][1].types[0]$2$;
+    enum_type=.projects[0].programs.gp[0][1].types[0]$$;
     value=2;
    };
    objs_ptr=0;
@@ -527,7 +528,7 @@ Program .projects[0].programs.gp[0][1] {
    name="rnd_seeds";
    var_type=T_Object;
    object_type=RndSeed_List;
-   object_val=.projects[0].programs.gp[0][1].objs[0]$3$;
+   object_val=.projects[0].programs.gp[0][1].objs[0]$$;
    objs_ptr=1;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -538,7 +539,7 @@ Program .projects[0].programs.gp[0][1] {
    name="train_timer";
    var_type=T_Object;
    object_type=TimeUsed;
-   object_val=.projects[0].networks[0].train_time$4$;
+   object_val=.projects[0].networks[0].train_time$$<TimeUsed,train_time>;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -549,7 +550,7 @@ Program .projects[0].programs.gp[0][1] {
    name="rnd_seed";
    var_type=T_Object;
    object_type=RndSeed;
-   object_val=.projects[0].programs.gp[0][1].objs[1]$5$;
+   object_val=.projects[0].programs.gp[0][1].objs[1]$$;
    objs_ptr=1;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -588,7 +589,7 @@ Program .projects[0].programs.gp[0][1] {
     Switch @[1] {
      desc=;
      flags=;
-     switch_var=.projects[0].programs.gp[0][1].vars[3]$6$;
+     switch_var=.projects[0].programs.gp[0][1].vars[3]$$;
      cases {
       name=;
       el_typ=CaseBlock;
@@ -604,7 +605,7 @@ Program .projects[0].programs.gp[0][1] {
 	 desc="restore previous random seed (all runs produce same results) -- click on rnd_seed object to generate a new seed to use for this if you want";
 	 flags=;
 	 result_var=NULL;
-	 obj=.projects[0].programs.gp[0][1].vars[11]$7$;
+	 obj=.projects[0].programs.gp[0][1].vars[11]$$;
 	 method=RndSeed::OldSeed;
 	 meth_args {
 	  name=;
@@ -628,7 +629,7 @@ Program .projects[0].programs.gp[0][1] {
 	 desc="new random numbers each time";
 	 flags=;
 	 result_var=NULL;
-	 obj=$7$;
+	 obj=$.projects[0].programs.gp[0][1].vars[11]$;
 	 method=RndSeed::NewSeed;
 	 meth_args {
 	  name=;
@@ -652,7 +653,7 @@ Program .projects[0].programs.gp[0][1] {
 	 desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
 	 flags=;
 	 result_var=NULL;
-	 obj=.projects[0].programs.gp[0][1].vars[9]$8$;
+	 obj=.projects[0].programs.gp[0][1].vars[9]$$;
 	 method=RndSeed_List::UseSeed;
 	 meth_args {
 	  name=;
@@ -662,7 +663,7 @@ Program .projects[0].programs.gp[0][1] {
 	   arg_type=int;
 	   type="int";
 	   name="idx";
-	   required=0;
+	   required=1;
 	   def_val=;
 	   expr {
 	    expr="network.batch % rnd_seeds.seeds.size";
@@ -692,7 +693,7 @@ Program .projects[0].programs.gp[0][1] {
   AssignExpr @[0] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][1].args[2]$9$;
+   result_var=.projects[0].programs.gp[0][1].args[2]$$;
    expr {
     expr="false";
    };
@@ -701,7 +702,7 @@ Program .projects[0].programs.gp[0][1] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][1].args[0]$10$;
+   obj=.projects[0].programs.gp[0][1].args[0]$$;
    method=taBase::CheckConfig;
    meth_args {
     name=;
@@ -722,7 +723,7 @@ Program .projects[0].programs.gp[0][1] {
   AssignExpr @[2] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][1].vars[10]$11$;
+   result_var=.projects[0].programs.gp[0][1].vars[10]$$;
    expr {
     expr="network.train_time";
    };
@@ -730,7 +731,7 @@ Program .projects[0].programs.gp[0][1] {
   AssignExpr @[3] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][1].vars[8]$12$;
+   result_var=.projects[0].programs.gp[0][1].vars[8]$$;
    expr {
     expr="0";
    };
@@ -739,7 +740,7 @@ Program .projects[0].programs.gp[0][1] {
    desc="initialize random seed";
    flags=;
    result_var=NULL;
-   fun=.projects[0].programs.gp[0][1].functions[0]$13$;
+   fun=.projects[0].programs.gp[0][1].functions[0]$$;
    fun_args {
     name=;
     el_typ=ProgArg;
@@ -760,7 +761,7 @@ Program .projects[0].programs.gp[0][1] {
      desc="initialize network weights: could also load pre-set weights or something else here";
      flags=;
      result_var=NULL;
-     obj=$10$;
+     obj=$.projects[0].programs.gp[0][1].args[0]$;
      method=Network::Init_Weights;
      meth_args {
       name=;
@@ -780,7 +781,7 @@ Program .projects[0].programs.gp[0][1] {
   AssignExpr @[6] {
    desc="grab the official network epoch counter: will be initialized if needed by now";
    flags=;
-   result_var=.projects[0].programs.gp[0][1].vars[1]$14$;
+   result_var=.projects[0].programs.gp[0][1].vars[1]$$;
    expr {
     expr="network.epoch";
    };
@@ -793,7 +794,7 @@ Program .projects[0].programs.gp[0][1] {
   AssignExpr @[0] {
    desc=;
    flags=;
-   result_var=$11$;
+   result_var=$.projects[0].programs.gp[0][1].vars[10]$;
    expr {
     expr="network.train_time";
    };
@@ -802,7 +803,7 @@ Program .projects[0].programs.gp[0][1] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=$11$;
+   obj=$.projects[0].programs.gp[0][1].vars[10]$;
    method=TimeUsed::StartTimer;
    meth_args {
     name=;
@@ -823,7 +824,7 @@ Program .projects[0].programs.gp[0][1] {
   AssignExpr @[2] {
    desc=;
    flags=;
-   result_var=$12$;
+   result_var=$.projects[0].programs.gp[0][1].vars[8]$;
    expr {
     expr="0";
    };
@@ -831,7 +832,7 @@ Program .projects[0].programs.gp[0][1] {
   MemberAssign @[3] {
    desc="set network's training mode to our local value";
    flags=;
-   obj=$10$;
+   obj=$.projects[0].programs.gp[0][1].args[0]$;
    path="train_mode";
    expr {
     expr="train_mode";
@@ -842,7 +843,7 @@ Program .projects[0].programs.gp[0][1] {
    desc="initialize random seed";
    flags=;
    result_var=NULL;
-   fun=$13$;
+   fun=$.projects[0].programs.gp[0][1].functions[0]$;
    fun_args {
     name=;
     el_typ=ProgArg;
@@ -863,7 +864,7 @@ Program .projects[0].programs.gp[0][1] {
      desc="initialize network weights: could also load pre-set weights or something else here";
      flags=;
      result_var=NULL;
-     obj=$10$;
+     obj=$.projects[0].programs.gp[0][1].args[0]$;
      method=Network::Init_Weights;
      meth_args {
       name=;
@@ -888,7 +889,7 @@ Program .projects[0].programs.gp[0][1] {
   AssignExpr @[6] {
    desc="grab the official network epoch counter: will be initialized if needed by now";
    flags=;
-   result_var=$14$;
+   result_var=$.projects[0].programs.gp[0][1].vars[1]$;
    expr {
     expr="network.epoch";
    };
@@ -903,8 +904,6 @@ Program .projects[0].programs.gp[0][1] {
     ProgramCall @[0] {
      desc=;
      flags=;
-     target=.projects[0].programs.gp[0][2]$15$;
-     targ_ld_init="*BpEpoch*";
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -930,12 +929,14 @@ Program .projects[0].programs.gp[0][1] {
        };
       };
      };
+     target=.projects[0].programs.gp[0][2]$$<Program,BpEpoch>;
+     targ_ld_init="*BpEpoch*";
     };
     NetCounterIncr @[1] {
      desc="increment the epoch counter";
      flags=;
-     network_var=$10$;
-     local_ctr_var=$14$;
+     network_var=$.projects[0].programs.gp[0][1].args[0]$;
+     local_ctr_var=$.projects[0].programs.gp[0][1].vars[1]$;
      counter=Network::epoch;
      update_after=0;
     };
@@ -952,7 +953,7 @@ Program .projects[0].programs.gp[0][1] {
       VarIncr @[0] {
        desc=;
        flags=;
-       var=$12$;
+       var=$.projects[0].programs.gp[0][1].vars[8]$;
        expr {
 	expr="1";
        };
@@ -972,7 +973,7 @@ Program .projects[0].programs.gp[0][1] {
       AssignExpr @[0] {
        desc=;
        flags=;
-       result_var=$12$;
+       result_var=$.projects[0].programs.gp[0][1].vars[8]$;
        expr {
 	expr="0";
        };
@@ -1002,8 +1003,6 @@ Program .projects[0].programs.gp[0][1] {
 	ProgramCall @[0] {
 	 desc=;
 	 flags=;
-	 target=.projects[0].programs.gp[0][7]$16$;
-	 targ_ld_init="*SaveWeights*";
 	 prog_args {
 	  name=;
 	  el_typ=ProgArg;
@@ -1019,6 +1018,8 @@ Program .projects[0].programs.gp[0][1] {
 	   };
 	  };
 	 };
+	 target=.projects[0].programs.gp[0][7]$$<Program,SaveWeights>;
+	 targ_ld_init="*SaveWeights*";
 	};
        };
       };
@@ -1042,8 +1043,6 @@ Program .projects[0].programs.gp[0][1] {
     ProgramCall @[0] {
      desc=;
      flags=;
-     target=$16$;
-     targ_ld_init="*SaveWeights*";
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -1059,6 +1058,8 @@ Program .projects[0].programs.gp[0][1] {
        };
       };
      };
+     target=$.projects[0].programs.gp[0][7]$;
+     targ_ld_init="*SaveWeights*";
     };
    };
   };
@@ -1066,7 +1067,7 @@ Program .projects[0].programs.gp[0][1] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=$11$;
+   obj=$.projects[0].programs.gp[0][1].vars[10]$;
    method=TimeUsed::EndTimer;
    meth_args {
     name=;
@@ -1075,4 +1076,6 @@ Program .projects[0].programs.gp[0][1] {
    };
   };
  };
+ step_prog=NULL;
+ step_n=1;
 };

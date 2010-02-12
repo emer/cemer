@@ -611,20 +611,28 @@ public:
     HD_DETAILS, 	// full programming details -- offsets, comments, etc
   };
   
-  static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "emergent" or "css"
-  static String		app_prefs_key; //  #READ_ONLY #NO_SAVE #HIDDEN the string used for the prefs folders etc. -- emergent and css should share this, but external apps (ex physics sim) should make a new one
-  static String		default_app_install_folder_name; // #READ_ONLY #NO_SAVE #HIDDEN the default folder name for installation, ex. "Emergent"
-  static String		org_name; // #READ_ONLY #NO_SAVE #SHOW the name of the organization, ex. ccnlab (used mostly in Windows paths)
-  static String		version; // #READ_ONLY #NO_SAVE #SHOW version number of ta/css
+  static String		app_name;
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_App the root name of the app, ex. "emergent" or "css"
+  static String		app_prefs_key;
+  // #READ_ONLY #NO_SAVE #HIDDEN #CAT_App the string used for the prefs folders etc. -- emergent and css should share this, but external apps (ex physics sim) should make a new one
+  static String		default_app_install_folder_name;
+  // #READ_ONLY #NO_SAVE #HIDDEN #CAT_App the default folder name for installation, ex. "Emergent"
+  static String		org_name;
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_App the name of the organization, ex. ccnlab (used mostly in Windows paths)
+  static String		version;
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_App version number of ta/css
   static taVersion 	version_bin; 
-   //  #READ_ONLY #NO_SAVE #EXPERT version number of ta/css
+   //  #READ_ONLY #NO_SAVE #EXPERT #CAT_App version number of ta/css
 #ifdef SVN_REV
   static String		svn_rev; 
-   // #READ_ONLY #NO_SAVE #SHOW svn revision number (only valid when configure has been rerun)
+   // #READ_ONLY #NO_SAVE #SHOW #CAT_App svn revision number (only valid when configure has been rerun)
 #endif
-  static const BuildType build_type; // #READ_ONLY #NO_SAVE #SHOW build type, mostly for determining plugin subfolders to search
-  static const String	build_str; // #READ_ONLY #NO_SAVE #EXPERT an extension string based on build type, mostly for plugin subfolders (none for release gui no-dmem) 
-
+  static const BuildType build_type;
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_App build type, mostly for determining plugin subfolders to search
+  static const String	 build_str;
+  // #READ_ONLY #NO_SAVE #EXPERT #CAT_App an extension string based on build type, mostly for plugin subfolders (none for release gui no-dmem) 
+  static bool 		 save_old_fmt;
+  // #SAVE #CAT_File save project and other 'dump' files in the old emergent format (version 2 of the file format) which was used up through version 5.0.1 -- files are unlikely to be very functional in older versions anyway, but this would allow them to at least be loaded -- only use this on a temporary basis when absolutely necessary! (note: old format files can be loaded without problem in current version)
 
   ////////////////////////////////////////////////////////
   // 	User-tunable compute params
@@ -657,6 +665,7 @@ public:
   static float		undo_new_src_thr; // #SAVE #CAT_GUI #EXPERT threshold for how big (as a proportion of total file size) the diff's need to get before a new undo source record is created (default of around .3 is usually fine)
   static int		auto_save_interval; 	// #SAVE #CAT_GUI how many seconds to wait between automatic saves of opened projects that have been modified?  auto save files go to project file name + _autosave
   static int		wait_proc_delay; // #SAVE #CAT_GUI #DEF_20 #EXPERT delay in milliseconds before starting the wait processing function to process misc stuff after all of the current gui events have been processed -- a smaller number makes the system more responsive but also consumes a bit more CPU -- setting to 0 consumes a lot of CPU as the wait processing loop is constantly revisited
+  static int		css_gui_event_interval; // #SAVE #CAT_GUI #DEF_200 #EXPERT how many milliseconds between processing of gui events in css -- lower number = more responsive interface, but worse performance, while things are running
   static bool		delete_prompts;	 //  #SAVE #CAT_GUI should a prompt be provided to confirm when deleting an item?  with the undo system available, this is not neccessary
   static int		tree_indent; 	// #SAVE #CAT_GUI #EXPERT number of pixels to indent in the tree browser gui interface
   static int		program_editor_width; 	// #SAVE #CAT_GUI #EXPERT width in characters of the main listing field of the program editor -- if this is too large, then you can't see the description comments
