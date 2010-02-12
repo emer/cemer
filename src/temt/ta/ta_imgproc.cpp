@@ -2481,6 +2481,46 @@ bool MotionDispGaborV1Spec::FilterMultiInputDisp(float_Matrix& v1_output1, float
 					  "is not correct size, should be:", trg_input_size.GetStr());
 		return false;
 	}
+	input_size.x = on_left_input3.dim(0);
+	input_size.y = off_left_input3.dim(1);
+	
+	if(input_size != trg_input_size) {
+		taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
+					  "is not correct size, should be:", trg_input_size.GetStr());
+		return false;
+	}
+	input_size.x = on_left_input3.dim(0);
+	input_size.y = off_left_input3.dim(1);
+	
+	if(input_size != trg_input_size) {
+		taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
+					  "is not correct size, should be:", trg_input_size.GetStr());
+		return false;
+	}
+	input_size.x = on_right_input1.dim(0);
+	input_size.y = off_right_input1.dim(1);
+	
+	if(input_size != trg_input_size) {
+		taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
+					  "is not correct size, should be:", trg_input_size.GetStr());
+		return false;
+	}
+	input_size.x = on_right_input3.dim(0);
+	input_size.y = off_right_input3.dim(1);
+	
+	if(input_size != trg_input_size) {
+		taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
+					  "is not correct size, should be:", trg_input_size.GetStr());
+		return false;
+	}
+	input_size.x = on_right_input3.dim(0);
+	input_size.y = off_right_input3.dim(1);
+	
+	if(input_size != trg_input_size) {
+		taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
+					  "is not correct size, should be:", trg_input_size.GetStr());
+		return false;
+	}
 	
 	if(filter_type == COPY) {
 		v1_output1.SetGeom(2, un_geom.x, un_geom.y);
@@ -2528,7 +2568,6 @@ bool MotionDispGaborV1Spec::FilterMultiInputDisp(float_Matrix& v1_output1, float
 	threads.nibble_chunk = 1;
 	ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
 	threads.Run(&ip_call, un_geom.n);
-		
 		
 	
 	return true;
@@ -2686,7 +2725,7 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
 						for(int disp_i = 0; disp_i < disparity_width; disp_i++) {
 							
 							
-							float cur_disp_mult = disp_gauss_mat.FastEl(disp_i);
+							float cur_disp_mult = disp_gauss_mat.SafeEl(disp_i);
 							float oval_right[3] = {0,0,0};
 							float oval_left[3] = {0,0,0};
 							for(int t = 0; t < 3; t++) {
@@ -4736,33 +4775,39 @@ bool MotionDispV1GaborSpec::FilterRetinaData(DataTable* v1_out_dt, DataTable* re
 				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On left matrix: " + dog->name + mod_name + "_on not found");
 				continue;
 			}
+			taBase::Ref(on_mats_left1);
 			off_mats_left1 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
 			if(!off_mats_left1) {
 				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off left matrix: " + dog->name + mod_name + "_off not found");
 				continue;
 			}
+			taBase::Ref(off_mats_left1);
 			mod_name = retina->GetModName(eyes,sp->rf_time,0,1);
 			on_mats_left2 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
 			if(!on_mats_left2) { 
 				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On left matrix: " + dog->name + mod_name + "_on not found");
 				continue;
 			}
+			taBase::Ref(on_mats_left2);
 			off_mats_left2 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
 			if(!off_mats_left2) {
 				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off left matrix: " + dog->name + mod_name + "_off not found");
 				continue;
 			}
+			taBase::Ref(on_mats_left1);
 			mod_name = retina->GetModName(eyes,sp->rf_time,0,2);
 			on_mats_left3 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
 			if(!on_mats_left3) { 
 				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On left matrix: " + dog->name + mod_name + "_on not found");
 				continue;
 			}
+			taBase::Ref(on_mats_left3);
 			off_mats_left3 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
 			if(!off_mats_left3) {
 				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off left matrix: " + dog->name + mod_name + "_off not found");
 				continue;
 			}
+			taBase::Ref(off_mats_left3);
 			
 			//right
 			mod_name = retina->GetModName(eyes,sp->rf_time,1,0);
@@ -4771,33 +4816,39 @@ bool MotionDispV1GaborSpec::FilterRetinaData(DataTable* v1_out_dt, DataTable* re
 				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On right matrix: " + dog->name + mod_name + "_on not found");
 				continue;
 			}
+			taBase::Ref(on_mats_right1);
 			off_mats_right1 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
 			if(!off_mats_right1) {
 				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off right matrix: " + dog->name + mod_name + "_off not found");
 				continue;
 			}
+			taBase::Ref(off_mats_right1);
 			mod_name = retina->GetModName(eyes,sp->rf_time,1,1);
 			on_mats_right2 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
 			if(!on_mats_right2) { 
 				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On right matrix: " + dog->name + mod_name + "_on not found");
 				continue;
 			}
+			taBase::Ref(on_mats_right2);
 			off_mats_right2 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
 			if(!off_mats_right2) {
 				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off right matrix: " + dog->name + mod_name + "_off not found");
 				continue;
 			}
+			taBase::Ref(off_mats_right2);
 			mod_name = retina->GetModName(eyes,sp->rf_time,1,2);
 			on_mats_right3 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
 			if(!on_mats_right3) { 
 				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On right matrix: " + dog->name + mod_name + "_on not found");
 				continue;
 			}
+			taBase::Ref(on_mats_right3);
 			off_mats_right3 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
 			if(!off_mats_right3) {
 				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off right matrix: " + dog->name + mod_name + "_off not found");
 				continue;
 			}
+			taBase::Ref(off_mats_right3);
 			
 			
 			
@@ -4808,6 +4859,19 @@ bool MotionDispV1GaborSpec::FilterRetinaData(DataTable* v1_out_dt, DataTable* re
 			// taBase::unRefDone(off_mats_left);
 			// taBase::unRefDone(on_mats_right);
 			// taBase::unRefDone(off_mats_right);
+			taBase::unRefDone(on_mats_left1);
+			taBase::unRefDone(on_mats_left2);
+			taBase::unRefDone(on_mats_left3);
+			taBase::unRefDone(off_mats_left1);
+			taBase::unRefDone(off_mats_left2);
+			taBase::unRefDone(off_mats_left3);
+			taBase::unRefDone(on_mats_right1);
+			taBase::unRefDone(on_mats_right2);
+			taBase::unRefDone(on_mats_right3);
+			taBase::unRefDone(off_mats_right1);
+			taBase::unRefDone(off_mats_right2);
+			taBase::unRefDone(off_mats_right3);
+			first = false;
 			
 		}
 		
