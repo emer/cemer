@@ -1285,6 +1285,8 @@ void LeabraUnitSpec::Compute_ClampSpike(LeabraUnit* u, LeabraNetwork* net, float
     }
     break;
   }
+  case SpikeMiscSpec::CLAMPED:
+    return;			// do nothing further
   }
   if(fire_now) {
     u->v_m = act.thr + 0.1f;	// make it fire

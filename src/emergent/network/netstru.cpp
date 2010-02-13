@@ -756,7 +756,7 @@ int BaseCons::LesionCons(Unit* un, float p_lesion, bool permute) {
 /////////////////////////////////////////////////////////////
 // 	To/From Arrays/Matrix
 
-bool BaseCons::ConValuesToArray(float_Array& ary, const char* variable) {
+bool BaseCons::ConValuesToArray(float_Array& ary, const String& variable) {
   MemberDef* md = con_type->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesToArray",
 		 "Variable:", variable, "not found or not a float on units of type:",
@@ -770,7 +770,7 @@ bool BaseCons::ConValuesToArray(float_Array& ary, const char* variable) {
   return true;
 }
 
-bool BaseCons::ConValuesToMatrix(float_Matrix& mat, const char* variable) {
+bool BaseCons::ConValuesToMatrix(float_Matrix& mat, const String& variable) {
   MemberDef* md = con_type->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesToMatrix",
 		 "Variable:", variable, "not found or not a float on units of type:",
@@ -788,7 +788,7 @@ bool BaseCons::ConValuesToMatrix(float_Matrix& mat, const char* variable) {
   return true;
 }
 
-bool BaseCons::ConValuesFromArray(float_Array& ary, const char* variable) {
+bool BaseCons::ConValuesFromArray(float_Array& ary, const String& variable) {
   MemberDef* md = con_type->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesFromArray",
 		 "Variable:", variable, "not found or not a float on units of type:",
@@ -805,7 +805,7 @@ bool BaseCons::ConValuesFromArray(float_Array& ary, const char* variable) {
   return true;
 }
 
-bool BaseCons::ConValuesFromMatrix(float_Matrix& mat, const char* variable) {
+bool BaseCons::ConValuesFromMatrix(float_Matrix& mat, const String& variable) {
   MemberDef* md = con_type->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesFromMatrix",
 		 "Variable:", variable, "not found or not a float on units of type:",
@@ -3587,7 +3587,7 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
   return rval;
 }
 
-bool Unit_Group::UnitValuesToArray(float_Array& ary, const char* variable) {
+bool Unit_Group::UnitValuesToArray(float_Array& ary, const String& variable) {
   MemberDef* md = el_typ->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "UnitValuesToArray",
 		 "Variable:", variable, "not found or not a float on units of type:",
@@ -3603,7 +3603,7 @@ bool Unit_Group::UnitValuesToArray(float_Array& ary, const char* variable) {
   return true;
 }
 
-bool Unit_Group::UnitValuesToMatrix(float_Matrix& mat, const char* variable) {
+bool Unit_Group::UnitValuesToMatrix(float_Matrix& mat, const String& variable) {
   MemberDef* md = el_typ->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "UnitValuesToMatrix",
 		 "Variable:", variable, "not found or not a float on units of type:",
@@ -3621,7 +3621,7 @@ bool Unit_Group::UnitValuesToMatrix(float_Matrix& mat, const char* variable) {
   return true;
 }
 
-bool Unit_Group::UnitValuesFromArray(float_Array& ary, const char* variable) {
+bool Unit_Group::UnitValuesFromArray(float_Array& ary, const String& variable) {
   if(ary.size == 0) return false;
   MemberDef* md = el_typ->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "UnitValuesFromArray",
@@ -3641,7 +3641,7 @@ bool Unit_Group::UnitValuesFromArray(float_Array& ary, const char* variable) {
   return true;
 }
 
-bool Unit_Group::UnitValuesFromMatrix(float_Matrix& mat, const char* variable) {
+bool Unit_Group::UnitValuesFromMatrix(float_Matrix& mat, const String& variable) {
   if(mat.size == 0) return false;
   MemberDef* md = el_typ->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "UnitValuesFromMatrix",
@@ -3699,6 +3699,42 @@ void Unit_Group::ConVarsToTable(DataTable* dt, const String& var1, const String&
 		      var9, var10, var11, var12, var13, var14,  prjn);
   }
   dt->StructUpdate(false);
+}
+
+bool Unit_Group::VarToVarCopy(const String& dest_var, const String& src_var) {
+  MemberDef* dest_md = el_typ->members.FindName(dest_var);
+  if(TestWarning(!dest_md || !dest_md->type->InheritsFrom(TA_float), "VarToVarCopy",
+		 "Variable:", dest_var, "not found or not a float on units of type:",
+		 el_typ->name)) {
+    return false;
+  }
+  MemberDef* src_md = el_typ->members.FindName(src_var);
+  if(TestWarning(!src_md || !src_md->type->InheritsFrom(TA_float), "VarToVarCopy",
+		 "Variable:", src_var, "not found or not a float on units of type:",
+		 el_typ->name)) {
+    return false;
+  }
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, this->, i) {
+    *((float*)dest_md->GetOff((void*)u)) = *((float*)src_md->GetOff((void*)u));
+  }
+  return true;
+}
+
+bool Unit_Group::VarToVal(const String& dest_var, float val) {
+  MemberDef* dest_md = el_typ->members.FindName(dest_var);
+  if(TestWarning(!dest_md || !dest_md->type->InheritsFrom(TA_float), "VarToVarCopy",
+		 "Variable:", dest_var, "not found or not a float on units of type:",
+		 el_typ->name)) {
+    return false;
+  }
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, this->, i) {
+    *((float*)dest_md->GetOff((void*)u)) = val;
+  }
+  return true;
 }
 
 bool Unit_Group::SetUnitNames(taMatrix* mat) {
@@ -5078,6 +5114,14 @@ void Layer::ConVarsToTable(DataTable* dt, const String& var1, const String& var2
   dt->StructUpdate(false);
 }
 
+bool Layer::VarToVarCopy(const String& dest_var, const String& src_var) {
+  return units.VarToVarCopy(dest_var, src_var);
+}
+
+bool Layer::VarToVal(const String& dest_var, float val) {
+  return units.VarToVal(dest_var, val);
+}
+
 Unit* Layer::FindUnitFmCoord(int x, int y) {
   if(units.gp.size == 0)	// no group structure, just do it
     return units.FindUnitFmCoord(x,y);
@@ -5410,11 +5454,11 @@ void Layer_Group::DispScaleLayers(float disp_scale) {
   UpdateAfterEdit();
 }
 
-Layer* Layer_Group::FindMakeLayer(const char* nm, TypeDef* td, bool& nw_itm,
-				  const char* alt_nm) {
+Layer* Layer_Group::FindMakeLayer(const String& nm, TypeDef* td, bool& nw_itm,
+				  const String& alt_nm) {
   nw_itm = false;
   Layer* lay = (Layer*)FindName(nm);
-  if(!lay && (alt_nm)) {
+  if(!lay && alt_nm.nonempty()) {
     lay = (Layer*)FindName(alt_nm);
     if(lay) lay->name = nm;
   }
@@ -5432,11 +5476,11 @@ Layer* Layer_Group::FindMakeLayer(const char* nm, TypeDef* td, bool& nw_itm,
   return lay;
 }
 
-Layer_Group* Layer_Group::FindMakeLayerGroup(const char* nm, TypeDef* td, bool& nw_itm,
-				       const char* alt_nm) {
+Layer_Group* Layer_Group::FindMakeLayerGroup(const String& nm, TypeDef* td, bool& nw_itm,
+				       const String& alt_nm) {
   nw_itm = false;
   Layer_Group* lay = (Layer_Group*)gp.FindName(nm);
-  if(!lay && (alt_nm)) {
+  if(!lay && alt_nm.nonempty()) {
     lay = (Layer_Group*)gp.FindName(alt_nm);
     if(lay) lay->name = nm;
   }
@@ -7653,6 +7697,26 @@ void Network::ConVarsToTable(DataTable* dt, const String& var1, const String& va
   dt->StructUpdate(false);
 }
 
+bool Network::VarToVarCopy(const String& dest_var, const String& src_var) {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->VarToVarCopy(dest_var, src_var);
+  }
+  return true;
+}
+
+bool Network::VarToVal(const String& dest_var, float val) {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->VarToVal(dest_var, val);
+  }
+  return true;
+}
+
 void Network::ProjectUnitWeights(Unit* src_u, float wt_thr, bool swt) {
   if(!src_u) return;
 
@@ -7771,7 +7835,7 @@ void Network::ProjectUnitWeights(Unit* src_u, float wt_thr, bool swt) {
 
 bool Network::nw_itm_def_arg = false;
 
-BaseSpec_Group* Network::FindMakeSpecGp(const char* nm, bool& nw_itm) {
+BaseSpec_Group* Network::FindMakeSpecGp(const String& nm, bool& nw_itm) {
   BaseSpec_Group* gp = (BaseSpec_Group*)specs.gp.FindName(nm);
   nw_itm = false;
   if(gp == NULL) {
@@ -7782,11 +7846,11 @@ BaseSpec_Group* Network::FindMakeSpecGp(const char* nm, bool& nw_itm) {
   return gp;
 }
 
-BaseSpec* Network::FindMakeSpec(const char* nm, TypeDef* td, bool& nw_itm) {
+BaseSpec* Network::FindMakeSpec(const String& nm, TypeDef* td, bool& nw_itm) {
   return (BaseSpec*)specs.FindMakeSpec(nm, td, nw_itm);
 }
 
-BaseSpec* Network::FindSpecName(const char* nm) {
+BaseSpec* Network::FindSpecName(const String& nm) {
   BaseSpec* rval = (BaseSpec*)specs.FindSpecName(nm);
   TestError(!rval, "FindSpecName", "could not find spec named:", nm);
   return rval;
@@ -7798,11 +7862,11 @@ BaseSpec* Network::FindSpecType(TypeDef* td) {
   return rval;
 }
 
-Layer* Network::FindMakeLayer(const char* nm, TypeDef* td, bool& nw_itm, const char* alt_nm) {
+Layer* Network::FindMakeLayer(const String& nm, TypeDef* td, bool& nw_itm, const String& alt_nm) {
   return layers.FindMakeLayer(nm, td, nw_itm, alt_nm);
 }
 
-Layer_Group* Network::FindMakeLayerGroup(const char* nm, TypeDef* td, bool& nw_itm, const char* alt_nm) {
+Layer_Group* Network::FindMakeLayerGroup(const String& nm, TypeDef* td, bool& nw_itm, const String& alt_nm) {
   return layers.FindMakeLayerGroup(nm, td, nw_itm, alt_nm);
 }
 

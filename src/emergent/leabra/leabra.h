@@ -695,6 +695,7 @@ public:
     POISSON,			// generate spikes according to Poisson distribution with probability = clamp_max_p * u->ext
     UNIFORM,			// generate spikes according to Uniform distribution with probability = clamp_max_p * u->ext
     REGULAR,			// generate spikes every 1 / (clamp_max_p * u->ext) cycles -- this works the best, at least in smaller networks, due to the lack of additional noise, and the synchrony of the inputs for driving synchrony elsewhere
+    CLAMPED,			// just use the straight clamped activation value -- do not do any further modifications
   };
 
   float		clamp_max_p;	// #DEF_0.11 #MIN_0 #MAX_1 maximum probability of spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall probability of firing a spike -- distribution is determined by clamp_type

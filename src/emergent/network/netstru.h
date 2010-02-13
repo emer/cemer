@@ -458,13 +458,13 @@ public:
   virtual int	LesionCons(Unit* un, float p_lesion, bool permute=true);
   // #MENU #USE_RVAL #CAT_Structure remove weights with prob p_lesion (permute = fixed no. lesioned)
 
-  virtual bool	ConValuesToArray(float_Array& ary, const char* variable);
+  virtual bool	ConValuesToArray(float_Array& ary, const String& variable);
   // #CAT_Structure adds values of variable from the connections into the given array (false if var not found)
-  virtual bool	ConValuesToMatrix(float_Matrix& mat, const char* variable);
+  virtual bool	ConValuesToMatrix(float_Matrix& mat, const String& variable);
   // #CAT_Structure sets values of variable from the connections into the given matrix (uses flat index of cons to set: 0..size-1), returns false if matrix is not appropriately sized
-  virtual bool	ConValuesFromArray(float_Array& ary, const char* variable);
+  virtual bool	ConValuesFromArray(float_Array& ary, const String& variable);
   // #CAT_Structure sets values of variable in the connections from the given array (false if var not found)
-  virtual bool	ConValuesFromMatrix(float_Matrix& mat, const char* variable);
+  virtual bool	ConValuesFromMatrix(float_Matrix& mat, const String& variable);
   // #CAT_Structure sets values of variable in the connections from the given array (false if var not found) -- uses flat index of cons to set: 0..size-1
 
   static int	LoadWeights_StartTag(istream& strm, const String& tag, String& val, bool quiet);
@@ -1304,13 +1304,13 @@ public:
   virtual int	LesionUnits(float p_lesion, bool permute=true);
   // #MENU #USE_RVAL #CAT_Structure remove units with prob p_lesion (permute = fixed no. lesioned)
 
-  virtual bool	UnitValuesToArray(float_Array& ary, const char* variable);
+  virtual bool	UnitValuesToArray(float_Array& ary, const String& variable);
   // #CAT_Structure adds values of variable from the units into the given array
-  virtual bool	UnitValuesToMatrix(float_Matrix& mat, const char* variable);
+  virtual bool	UnitValuesToMatrix(float_Matrix& mat, const String& variable);
   // #CAT_Structure adds values of variable from the units into the given matrix
-  virtual bool	UnitValuesFromArray(float_Array& ary, const char* variable);
+  virtual bool	UnitValuesFromArray(float_Array& ary, const String& variable);
   // #CAT_Structure sets unit values from values in the given array
-  virtual bool	UnitValuesFromMatrix(float_Matrix& mat, const char* variable);
+  virtual bool	UnitValuesFromMatrix(float_Matrix& mat, const String& variable);
   // #CAT_Structure sets unit values from values in the given array
 
   virtual void	VarToTable(DataTable* dt, const String& variable);
@@ -1322,6 +1322,11 @@ public:
 	       const String& var12 = "", const String& var13 = "", const String& var14 = "",
 	       Projection* prjn=NULL);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var" -- prjn restricts to that prjn
+
+  virtual bool	VarToVarCopy(const String& dest_var, const String& src_var);
+  // #CAT_Structure copy one unit variable to another (un->dest_var = un->src_var) for all units within this unit group (must be a float type variable)
+  virtual bool	VarToVal(const String& dest_var, float val);
+  // #CAT_Structure set variable to given value for all units within this unit group (must be a float type variable)
 
   virtual Unit* MostActiveUnit(int& idx);
   // #CAT_Activation Return the unit with the highest activation (act) value -- index of unit is returned in idx
@@ -1677,6 +1682,10 @@ public:
 	       const String& var12 = "", const String& var13 = "", const String& var14 = "",
 	       Projection* prjn=NULL);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var" -- prjn restricts to that prjn
+  virtual bool	VarToVarCopy(const String& dest_var, const String& src_var);
+  // #CAT_Structure copy one unit variable to another (un->dest_var = un->src_var) for all units within this layer (must be a float type variable)
+  virtual bool	VarToVal(const String& dest_var, float val);
+  // #CAT_Structure set variable to given value for all units within this layer (must be a float type variable)
 
   Unit*		FindUnitFmCoord(const TwoDCoord& coord) {return FindUnitFmCoord(coord.x, coord.y);}
   // #CAT_Structure get unit from coordinates, taking into account group geometry if present (subtracts any gp_spc -- as if it is not present).
@@ -1792,11 +1801,11 @@ public:
   virtual void	LayerPos_Cleanup();
   // #MENU #MENU_CONTEXT #CAT_Structure cleanup the layer positions relative to each other (prevent overlap etc)
 
-  virtual Layer* FindMakeLayer(const char* nm, TypeDef* td = NULL,
-			       bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
+  virtual Layer* FindMakeLayer(const String& nm, TypeDef* td = NULL,
+			       bool& nw_itm = nw_itm_def_arg, const String& alt_nm = "");
   // #CAT_Structure find a given layer and if not found, make it (of default type if NULL) (if nm is not found and alt_nm != NULL, it is searched for)
-  virtual Layer_Group* FindMakeLayerGroup(const char* nm, TypeDef* td = NULL,
-			  bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
+  virtual Layer_Group* FindMakeLayerGroup(const String& nm, TypeDef* td = NULL,
+			  bool& nw_itm = nw_itm_def_arg, const String& alt_nm = "");
   // #CAT_Structure find a given layer group and if not found, make it (of default type if NULL) (if nm is not found and alt_nm != NULL, it is searched for)
 
   void		TriggerContextUpdate();
@@ -2325,6 +2334,10 @@ public:
 	       const String& var9 = "", const String& var10 = "", const String& var11 = "",
 	       const String& var12 = "", const String& var13 = "", const String& var14 = "");
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var"
+  virtual bool	VarToVarCopy(const String& dest_var, const String& src_var);
+  // #CAT_Structure copy one unit variable to another (un->dest_var = un->src_var) for all units within this network (must be a float type variable)
+  virtual bool	VarToVal(const String& dest_var, float val);
+  // #CAT_Structure set variable to given value for all units within this network (must be a float type variable)
 
   virtual void	ProjectUnitWeights(Unit* un, float wt_thr = 0.5f, bool swt = false);
   // #CAT_Statistic project given unit's weights (receiving unless swt = true) through all layers (without any loops) -- results stored in anal1 on each unit (anal2 is used as a sum variable)  wt_thr is threshold on max-normalized weights (max=1) for following a given weight value to accumulate (so weaker weights are excluded).  values are always normalized at each layer to prevent exponential decrease/increase effects, so results are only relative indications of influence
@@ -2350,22 +2363,22 @@ public:
   // #CAT_Structure switch any layers using old_sp to using new_sp
 
   // wizard construction functions:
-  virtual BaseSpec_Group* FindMakeSpecGp(const char* nm, bool& nw_itm = nw_itm_def_arg);
+  virtual BaseSpec_Group* FindMakeSpecGp(const String& nm, bool& nw_itm = nw_itm_def_arg);
   // #CAT_Structure find a given spec group and if not found, make it
-  virtual BaseSpec* FindMakeSpec(const char* nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg);
+  virtual BaseSpec* FindMakeSpec(const String& nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg);
   // #CAT_Structure find a given spec and if not found, make it
-  virtual BaseSpec* FindSpecName(const char* nm);
+  virtual BaseSpec* FindSpecName(const String& nm);
   // #CAT_Structure find a given spec by name
   virtual BaseSpec* FindSpecType(TypeDef* td);
   // #CAT_Structure find a given spec by type
 
-  virtual Layer* FindMakeLayer(const char* nm, TypeDef* td = NULL,
-			       bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
+  virtual Layer* FindMakeLayer(const String& nm, TypeDef* td = NULL,
+			       bool& nw_itm = nw_itm_def_arg, const String& alt_nm = NULL);
   // #CAT_Structure find a given layer and if not found, make it (of default type if NULL) (if nm is not found and alt_nm != NULL, it is searched for)
-  virtual Layer_Group* FindMakeLayerGroup(const char* nm, TypeDef* td = NULL,
-			    bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
+  virtual Layer_Group* FindMakeLayerGroup(const String& nm, TypeDef* td = NULL,
+			    bool& nw_itm = nw_itm_def_arg, const String& alt_nm = NULL);
   // #CAT_Structure find a given layer group and if not found, make it (of default type if NULL) (if nm is not found and alt_nm != NULL, it is searched for)
-  virtual Layer* FindLayer(const char* nm) { return (Layer*)layers.FindLeafName(nm); }
+  virtual Layer* FindLayer(const String& nm) { return (Layer*)layers.FindLeafName(nm); }
   // #CAT_Structure find layer by name
   virtual Projection* FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps = NULL, ConSpec* cs = NULL, bool& nw_itm = nw_itm_def_arg);
   // #CAT_Structure find a projection between two layers using given specs, make it if not found; if existing prjn between layers exists, it will be modified with current specs
@@ -2377,7 +2390,7 @@ public:
   // #CAT_Structure find a self projection using given specs, make it if not found; if existing self prjn exists but has diff specs, a new prjn is made
   virtual bool   RemovePrjn(Layer* recv, Layer* send, ProjectionSpec* ps = NULL, ConSpec* cs = NULL);
   // #CAT_Structure remove a projection between two layers, if it exists
-  virtual bool   RemoveLayer(const char* nm) { return layers.RemoveName(nm); }
+  virtual bool   RemoveLayer(const String& nm) { return layers.RemoveName(nm); }
   // #CAT_Structure remove layer with given name, if it exists
 
   virtual void	UpdateMaxSize();
