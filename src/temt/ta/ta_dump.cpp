@@ -331,6 +331,7 @@ taBase* DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
 	return NULL;
       }
       // note: strm_ver >=3 with a $path$ without a tok will fall through to make a new token..
+      pat = pat_act + "$$";	// just trun it into a simple definition version
     }
   }
 
