@@ -311,9 +311,11 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
       newCurrent = moveCursor(MoveUp, e->modifiers());
       break;
     case Qt::Key_U:
+    case Qt::Key_Up:
       newCurrent = moveCursor(MovePageUp, e->modifiers());
       break;
     case Qt::Key_V:
+    case Qt::Key_Down:
       newCurrent = moveCursor(MovePageDown, e->modifiers());
       break;
     case Qt::Key_F:
@@ -321,6 +323,14 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
       break;
     case Qt::Key_B:
       newCurrent = moveCursor(MoveLeft, e->modifiers());
+      break;
+    case Qt::Key_A:
+    case Qt::Key_Left:
+      newCurrent = moveCursor(MoveHome, e->modifiers());
+      break;
+    case Qt::Key_E:
+    case Qt::Key_Right:
+      newCurrent = moveCursor(MoveEnd, e->modifiers());
       break;
     }
     // from qabstractitemview.cpp
