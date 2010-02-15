@@ -616,6 +616,13 @@ void taBase::ClearBaseFlag(int flag) {
   base_flags = (BaseFlags)(base_flags & ~flag);
 }
 
+bool taBase::isDestroying() const {
+  if(HasBaseFlag(DESTROYING)) return true;
+  taBase* own = GetOwner();
+  if(own) return own->isDestroying();
+  return false;
+}
+
 int taBase::GetEditableState(int mask) const {
 // note: this routine is not virtual, nor should it be
   int rval = GetThisEditableState_impl(mask);

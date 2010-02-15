@@ -1385,7 +1385,7 @@ void ProgExprBase::Copy_(const ProgExprBase& cp) {
 void ProgExprBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   Program* prg = GET_MY_OWNER(Program);
-  if(!prg || isDestroying() || prg->isDestroying()) return;
+  if(!prg || isDestroying()) return;
   ParseExpr();
   if(!HasExprFlag(NO_VAR_ERRS)) {
     ProgEl* pel = GET_MY_OWNER(ProgEl);

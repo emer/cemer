@@ -582,8 +582,8 @@ public:
     // #IGNORE
   int			GetEditableState(int mask) const; 
   // #IGNORE returns READ_ONLY and GUI_READ_ONLY, which also (in default behavior) factors in the owner's state supercursively until/unless not found; WARNING: result may include other flags, so you must &
-  inline bool		isDestroying() const  {return HasBaseFlag(DESTROYING);}
-    // #IGNORE
+  bool			isDestroying() const;
+    // #IGNORE returns true if this object or ANY of its owners is currently destroying -- if an owner is going, we're going too eventually..
   bool			isReadOnly() const 
     {return (GetEditableState(BF_READ_ONLY) & BF_READ_ONLY);}
     // #IGNORE true if the object is (supercursively) strongly read-only

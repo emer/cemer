@@ -256,7 +256,7 @@ void ForLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) return;
   Program* prg = GET_MY_OWNER(Program);
-  if(!prg || isDestroying() || prg->isDestroying()) return;
+  if(!prg || isDestroying()) return;
   if(init.expr == "_toolbox_tmp_") {
     init.expr = "i = 0";
     UpdateOnInsert_impl();
@@ -1471,11 +1471,6 @@ String StopStepPoint::GetDisplayName() const {
 void StopStepPoint::InitLinks() { 
   inherited::InitLinks(); 
   InitLinks_taAuto(&TA_StopStepPoint);
-  // no longer necessary -- TODO: could add to PreGenMe_impl and set flag about self stepping..
-//   if (taMisc::is_loading || taMisc::is_duplicating) return;
-//   Program* prg = GET_MY_OWNER(Program);
-//   if(!prg || isDestroying() || prg->isDestroying()) return;
-//   prg->SetProgFlag(Program::SHOW_STEP);
 }
 
 void StopStepPoint::PreGenMe_impl(int item_id) {

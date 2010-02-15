@@ -67,7 +67,7 @@ void ColCalcExpr::Copy_(const ColCalcExpr& cp) {
 void ColCalcExpr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 //   Program* prg = GET_MY_OWNER(Program);
-//   if(!prg || isDestroying() || prg->isDestroying()) return;
+//   if(!prg || isDestroying()) return;
   if(col_lookup) {
     if(expr.empty())
       expr += col_lookup->name;
