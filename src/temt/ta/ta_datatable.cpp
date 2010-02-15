@@ -3142,7 +3142,7 @@ void DataTable::DetermineLoadDataParams(istream& strm,
   readline_auto(strm, ln1); // need this for non-native column format parsing
 
   bool native_h = ln0.startsWith("_H:");
-  bool native_d = ln0.startsWith("_D:");
+  bool native_d = ln0.startsWith("_D:") || ln1.startsWith("_D:");
   native = native_h || native_d;
   
   // headers is actually same as LH since the Emergent version is auto regardless
@@ -3154,9 +3154,23 @@ void DataTable::DetermineLoadDataParams(istream& strm,
   
   // note: we guess the delims and quotes so we can warn if override seems wrong
   // if it has TABS or COMMA then almost guaranteed that is delim, else assume SPACE
-  int tabfreq = ln0.freq('\t');
-  int commafreq = ln0.freq(',');
-  int spacefreq = ln0.freq(' ');
+  int tabfreq = 0;
+  int commafreq = 0;
+  int spacefreq = 0;
+  bool useln1 = false;
+  if(ln1.nonempty()) {		// use 2nd line if poss because header can have weird stuff
+    tabfreq = ln1.freq('\t');
+    commafreq = ln1.freq(',');
+    spacefreq = ln1.freq(' ');
+    useln1 = true;
+  }
+  if(tabfreq == 0 && commafreq == 0 && spacefreq == 0) { // only if we didn't get anything
+    useln1 = false;					 // actually not good
+    tabfreq = ln0.freq('\t');
+    commafreq = ln0.freq(',');
+    spacefreq = ln0.freq(' ');
+  }
+
   if(tabfreq > commafreq && tabfreq > spacefreq) 
     delim = TAB;
   else if (commafreq > tabfreq && commafreq > spacefreq)
@@ -3182,17 +3196,15 @@ void DataTable::DetermineLoadDataParams(istream& strm,
   // imported headers *may* be quoted as well as data
   // OpenOffice puts quotes around everything by default
   // Excel 2004 (Mac) doesn't quote headers, and only quotes data sometimes, ex. when it has a comma
-  if (!native_h || native_d) {
-    int quo_cnt = ln0.freq('"');
-    quote_str = (quo_cnt > 0);
+  int quotefreq = 0;
+  if(useln1) {			// rely on delimiter parsing for where to look for quotes
+    quotefreq = ln1.freq('"');
   }
-  // if no quotes so far, check first data line (if not already checked)
-  if (headers && !quote_str && !native_d) {
-    // if any quote is present in data, assume quoted
-    int quo_cnt = ln1.freq('"');
-    quote_str = (quo_cnt > 1);	// must come in pairs, so at least 2..
+  else {
+    quotefreq = ln0.freq('"');
   }
-  
+  quote_str = (quotefreq > 0);
+
   if (quote_str_req != LQ_AUTO) {
     // NOTE: this warning may be annoying if quoted string requested but there are no string cols
     if (quote_str != (quote_str_req == LQ_YES)) {
