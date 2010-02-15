@@ -291,7 +291,8 @@ void DataViewer::WidgetDeleting() {
   WidgetDeleting_impl();
   if (deleteOnWinClose()) {
     // do a deferred delete
-    CloseLater();
+    if(!isDestroying())
+      CloseLater();
   }
 }
 

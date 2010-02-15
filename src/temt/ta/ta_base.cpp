@@ -2853,6 +2853,7 @@ bool taBase::SelectFunForEditNm(const String& function, SelectEdit* editor,
 //	Closing 
 
 void taBase::Close() {
+  if(isDestroying()) return;
   taBase* own = GetOwner();
   if (own && own->Close_Child(this))
     return;
@@ -2860,6 +2861,7 @@ void taBase::Close() {
 }
 
 void taBase::CloseLater() {
+  if(isDestroying()) return;
   taBase* own = GetOwner();
   if (own && own->CloseLater_Child(this))
     return;

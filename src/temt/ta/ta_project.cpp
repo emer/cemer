@@ -342,7 +342,8 @@ void UserData_DocLink::Initialize() {
 
 void UserData_DocLink::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj)
 {
-// destroy ourself, so we don't have this stale ref left over
+  // destroy ourself, so we don't have this stale ref left over
+  if(isDestroying()) return;	// already going..
   if (ref == &doc)
     this->CloseLater();
 }
