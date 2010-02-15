@@ -580,7 +580,7 @@ void LeabraDtSpec::UpdateAfterEdit_impl() {
 
 void LeabraActAvgSpec::Initialize() {
   l_gain = 3.0f;
-  l_dt = 0.005;
+  l_dt = 0.005f;
   ml_dt = 0.4f;
   m_dt = 0.1f;
   s_dt = 0.2f;
@@ -1186,12 +1186,13 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
 
   if(act_fun == SPIKE) {
     // todo: need a mech for inhib spiking
-    u->net = tot_net;		// store directly for integration
+    u->net = MAX(tot_net, 0.0f); // store directly for integration
     Compute_NetinInteg_Spike(u,net);
   }
   else {
     u->net = u->prv_net + dt.net * (tot_net - u->prv_net);
     u->prv_net = u->net;
+    u->net = MAX(u->net, 0.0f);	// negative netin doesn't make any sense
   }
 
   u->i_thr = Compute_IThresh(u, net);

@@ -1363,12 +1363,14 @@ void BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1, const
 	  varnxt = varnxt.after("bias.");
 	  mds[i] = rubiastd->members.FindName(varnxt);
 	  if(TestWarning(!mds[i], "ConVarsToTable", "recv unit bias variable named:", varnxt,
-			 "not found in type:", rubiastd->name));
+			 "not found in type:", rubiastd->name))
+	    continue;
 	}
 	else {
 	  mds[i] = rutd->members.FindName(varnxt);
 	  if(TestWarning(!mds[i], "ConVarsToTable", "recv unit variable named:", varnxt,
-			 "not found in type:", rutd->name));
+			 "not found in type:", rutd->name))
+	    continue;
 	}
       }
       else if(vars[i].startsWith("s.")) {
@@ -1381,18 +1383,21 @@ void BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1, const
 	  varnxt = varnxt.after("bias.");
 	  mds[i] = subiastd->members.FindName(varnxt);
 	  if(TestWarning(!mds[i], "ConVarsToTable", "send unit bias variable named:", varnxt,
-			 "not found in type:", subiastd->name));
+			 "not found in type:", subiastd->name))
+	    continue;
 	}
 	else {
 	  mds[i] = sutd->members.FindName(varnxt);
 	  if(TestWarning(!mds[i], "ConVarsToTable", "send unit variable named:", varnxt,
-			 "not found in type:", sutd->name));
+			 "not found in type:", sutd->name))
+	    continue;
 	}
       }
       else {
 	mds[i] = con_type->members.FindName(vars[i]);
 	if(TestWarning(!mds[i], "ConVarsToTable", "connection variable named:", vars[i],
-		       "not found in type:", con_type->name));
+		       "not found in type:", con_type->name))
+	  continue;
       }
     }
     else {

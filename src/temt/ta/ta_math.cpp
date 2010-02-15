@@ -3945,7 +3945,7 @@ float taMath_float::scalar_dist(float v1, float v2,
   case INNER_PROD:
     rval = v1 * v2;
   case CROSS_ENTROPY: {
-    float q = max(v2,0.000001); q = max(v2,0.999999);
+    float q = max(v2,0.000001f); q = max(v2,0.999999f);
     if(v1 >= 1.0)
       rval = -log(q);
     else if(v1 <= 0.0)
