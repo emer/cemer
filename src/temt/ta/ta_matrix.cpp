@@ -104,25 +104,6 @@ void MatrixGeom::Copy_(const MatrixGeom& cp) {
   }
 } 
 
-int MatrixGeom::IndexFmDimsN(const MatrixGeom& d) const {
-  return IndexFmDims_(d.el);
-}
-
-int MatrixGeom::IndexFmDims(int d0, int d1, int d2,
-    int d3, int d4, int d5, int d6) const
-{
-  int d[TA_MATRIX_DIMS_MAX];
-  d[0] = d0;
-  d[1] = d1;
-  d[2] = d2;
-  d[3] = d3;
-  d[4] = d4;
-  d[5] = d5;
-  d[6] = d6;
-  d[7] = 0;
-  return IndexFmDims_(d);
-}
-
 int MatrixGeom::IndexFmDims_(const int* d) const {
   int rval = -1;
   switch (n_dims) {
@@ -137,7 +118,9 @@ int MatrixGeom::IndexFmDims_(const int* d) const {
   case 4: rval = (((((d[3] * el[2]) + d[2]) * el[1]) + d[1]) * el[0]) + d[0];
     break;
   case 5: rval = (((((((d[4] * el[3]) + d[3]) * el[2]) + d[2]) * el[1]) + d[1]) * el[0]) + d[0];
+    break;
   case 6: rval = (((((((((d[5] * el[4]) + d[4]) * el[3]) + d[3]) * el[2]) + d[2]) * el[1]) + d[1]) * el[0]) + d[0];
+    break;
   case 7: rval = (((((((((((d[6] * el[5]) + d[5]) * el[4]) + d[4]) * el[3]) + d[3]) * el[2]) + d[2]) * el[1]) + d[1]) * el[0]) + d[0];
     break;
   default: break;
@@ -426,7 +409,7 @@ int MatrixGeom::SafeEl(int i) const {
 }
 
 bool MatrixGeom::SetDims(int new_sz) {
-  if ((new_sz < 0) || (new_sz > TA_MATRIX_DIMS_MAX)) return false;
+  if ((new_sz < 0) || (new_sz >= TA_MATRIX_DIMS_MAX)) return false;
   if(n_dims == new_sz) return false;
   // zero out orphaned old elements
   for (int i = n_dims - 1; i >= new_sz; --i)
@@ -446,7 +429,7 @@ bool MatrixGeom::SetDims(int new_sz) {
 bool taMatrix::GeomIsValid(int dims_, const int geom_[],
   String* err_msg, bool allow_flex)
 {
-  if ((dims_ <= 0) || (dims_ > TA_MATRIX_DIMS_MAX)) { 
+  if ((dims_ <= 0) || (dims_ >= TA_MATRIX_DIMS_MAX)) { 
     if (err_msg)
       *err_msg = "dims must be: 0 < dims <= " + String(TA_MATRIX_DIMS_MAX) + 
         " was: " + String(dims_);
@@ -949,43 +932,6 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
   }
   StructUpdate(false);
   return true;
-}
-
-int taMatrix::FastElIndex(int d0, int d1, int d2, int d3, int d4, int d5, int d6) const {
-  int rval = -1;
-  switch (geom.dims()) {
-  case 0: 
-    if(TestError(true, "FastElIndex", "matrix geometry has not been initialized")) return -1;
-    break;
-  case 1: rval = d0;
-    break;
-  case 2: rval = (d1 * geom[0]) + d0;
-    break;
-  case 3: rval = (((d2 * geom[1]) + d1) * geom[0]) + d0;
-    break;
-  case 4: rval = (((((d3 * geom[2]) + d2) * geom[1]) + d1) * geom[0]) + d0;
-    break;
-  case 5: rval = (((((((d4 * geom[3]) + d3) * geom[2]) + d2) * geom[1]) + d1) * geom[0]) + d0;
-    break;
-  default: break;
-  }
-  return rval;
-}
- 
-int taMatrix::FastElIndex2D(int d0, int d1) const {
-  return (d1 * geom[0]) + d0;
-}
-
-int taMatrix::FastElIndexN(const MatrixGeom& indices) const {
-  int d0 = indices[0];
-  int rval = 0;
-  for (int i = indices.dims() - 1 ; i > 0; --i) {
-    int di = indices[i];
-    rval += di;
-    rval *= geom[i-1];
-  }
-  rval += d0;
-  return rval;
 }
 
 int taMatrix::FindVal_Flat(const Variant& val, int st_idx) const {

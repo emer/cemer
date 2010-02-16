@@ -208,10 +208,14 @@ public:
   // #CAT_Access return value along given dimension
   int 		Product() const; 
   // #CAT_Access returns product of all dimension values (i.e., total size of geometry)
-  int 		IndexFmDimsN(const MatrixGeom& dims) const;
+  inline int 	IndexFmDimsN(const MatrixGeom& dims) const
+  { return IndexFmDims_(dims.el); }
   // #CAT_Access get index from dimension values, based on geometry represented by 'this' geom object
-  int		IndexFmDims(int d0, int d1=0, int d2=0,
-			    int d3=0, int d4=0, int d5=0, int d6=0) const;
+  inline int	IndexFmDims(int d0, int d1=0, int d2=0,
+			    int d3=0, int d4=0, int d5=0, int d6=0) const 
+  { int d[TA_MATRIX_DIMS_MAX]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3;
+    d[4]=d4; d[5]=d5; d[6]=d6; d[7]=0; return IndexFmDims_(d); } 
+
   // #CAT_Access get index from dimension values, based on geometry represented by 'this' geom object
   void 		DimsFmIndex(int idx, MatrixGeom& dims) const;
   // #CAT_Access get dimension values from index, based on geometry represented by 'this' geom object
@@ -341,8 +345,8 @@ public:
   //////////////////////////////////////////////////////////////////
   // Access functions
   
-  int 			colCount(bool pat_4d = false) const
-    {return geom.colCount(pat_4d);}
+  inline int 		colCount(bool pat_4d = false) const
+  { return geom.colCount(pat_4d); }
   // #CAT_Access flat col count, for 2-d grid operations, never 0; by2 puts d0/d1 in same row when dims>=4
   inline int		count() const {return size;}
   // #CAT_Access the number of items
@@ -359,11 +363,14 @@ public:
   // #CAT_Access flat row count, for 2-d grid operations, never 0; by2 puts d0/d1 in same row when dims>=4
   int			FrameToRow(int f) const;
   // #CAT_Access convert frame number to row number
-  int			FastElIndex(int d0, int d1=0, int d2=0, int d3=0,
-    int d4=0, int d5=0, int d6=0) const; 
-  int			FastElIndex2D(int d0, int d1=0) const; 
+  inline int		FastElIndex(int d0, int d1=0, int d2=0, int d3=0,
+				    int d4=0, int d5=0, int d6=0) const
+  { return geom.IndexFmDims(d0, d1, d2, d3, d4, d5, d6); }
+  inline int		FastElIndex2D(int d0, int d1=0) const
+  { return (d1 * geom[0]) + d0; }
   // #CAT_Access NO bounds check and return index as if the mat was only 2d -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
-  int			FastElIndexN(const MatrixGeom& indices) const;
+  inline int		FastElIndexN(const MatrixGeom& indices) const
+  { return geom.IndexFmDimsN(indices); }
   // #CAT_Access NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
   int			SafeElIndex(int d0, int d1=0, int d2=0, int d3=0,
     int d4=0, int d5=0, int d6=0) const; 

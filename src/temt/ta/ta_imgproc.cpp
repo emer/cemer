@@ -731,9 +731,9 @@ void DoGFilterSpec::Initialize() {
   on_sigma = 2.0f;
   off_sigma = 4.0f;
   circle_edge = true;
-//   on_filter.SetGeom(2, filter_size, filter_size);
-//   off_filter.SetGeom(2, filter_size, filter_size);
-//   net_filter.SetGeom(2, filter_size, filter_size);
+  on_filter.SetGeom(2, filter_size, filter_size);
+  off_filter.SetGeom(2, filter_size, filter_size);
+  net_filter.SetGeom(2, filter_size, filter_size);
 }
 
 void DoGFilterSpec::UpdateAfterEdit_impl() {
@@ -880,6 +880,7 @@ void GaborFilterSpec::Initialize() {
   width = 4;
   amp = 1;
   filter.SetGeom(2, x_size, y_size);
+  // for some reason this initialization fails in Windows
 }
 
 float GaborFilterSpec::Eval(float x, float y) {
