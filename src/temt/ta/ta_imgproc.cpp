@@ -2306,6 +2306,10 @@ void MotionDispGaborV1Spec::Initialize() {
   gp_gauss_sigma = 0.5f;
   threads.min_units = 1;
   rf_time = 3;
+  disp_gauss_sigma = 0.4f;
+  disparity_width = 1;
+  disparity_offset = 1;
+  max_in_disparity = false;
   UpdateGeoms();
 }
 
@@ -2348,36 +2352,36 @@ void MotionDispGaborV1Spec::UpdateGeoms() {
   input_ovlp.UpdateAfterEdit_NoGui();
   trg_input_size.UpdateAfterEdit_NoGui();
 
-	if(filter_type != COPY) {
-		gp_gauss_mat.SetGeom(2, tot_filter_gps.x, tot_filter_gps.y);
+  if(filter_type != COPY) {
+    gp_gauss_mat.SetGeom(2, tot_filter_gps.x, tot_filter_gps.y);
 		
-		if(tot_filter_gps.n > 1) {
-			float ctr_x = (float)tot_filter_gps.x * .5f;;
-			float ctr_y = (float)tot_filter_gps.y * .5f;;
-			float eff_sig_x = gp_gauss_sigma * ctr_x;
-			float eff_sig_y = gp_gauss_sigma * ctr_y;
-			for(int yi=0; yi< tot_filter_gps.y; yi++) {
-				float y = ((float)yi - ctr_y) / eff_sig_y;
-				for(int xi=0; xi< tot_filter_gps.x; xi++) {
-					float x = ((float)xi - ctr_x) / eff_sig_x;
-					float gv = expf(-(x*x + y*y)/2.0f);
-					gp_gauss_mat.FastEl(xi, yi) = gv;
-				}
-			}
-		}
-		else {
-			gp_gauss_mat.FastEl(0,0) = 1.0f;
-		}
-		
-		disp_gauss_mat.SetGeom(1, disparity_width);
-		float ctr_x = (float)disparity_width* .5f;
-		float eff_sig_x = disp_gauss_sigma * ctr_x;
-		for(int xi=0; xi< disparity_width; xi++) {
-			float x = ((float)xi - ctr_x) / eff_sig_x;
-			float gv = expf(-(x*x)/2.0f);
-			disp_gauss_mat.FastEl(xi) = gv;
-		}
+    if(tot_filter_gps.n > 1) {
+      float ctr_x = (float)tot_filter_gps.x * .5f;;
+      float ctr_y = (float)tot_filter_gps.y * .5f;;
+      float eff_sig_x = gp_gauss_sigma * ctr_x;
+      float eff_sig_y = gp_gauss_sigma * ctr_y;
+      for(int yi=0; yi< tot_filter_gps.y; yi++) {
+	float y = ((float)yi - ctr_y) / eff_sig_y;
+	for(int xi=0; xi< tot_filter_gps.x; xi++) {
+	  float x = ((float)xi - ctr_x) / eff_sig_x;
+	  float gv = expf(-(x*x + y*y)/2.0f);
+	  gp_gauss_mat.FastEl(xi, yi) = gv;
 	}
+      }
+    }
+    else {
+      gp_gauss_mat.FastEl(0,0) = 1.0f;
+    }
+		
+    disp_gauss_mat.SetGeom(1, disparity_width);
+    float ctr_x = (float)disparity_width* .5f;
+    float eff_sig_x = disp_gauss_sigma * ctr_x;
+    for(int xi=0; xi< disparity_width; xi++) {
+      float x = ((float)xi - ctr_x) / eff_sig_x;
+      float gv = expf(-(x*x)/2.0f);
+      disp_gauss_mat.FastEl(xi) = gv;
+    }
+  }
 }
 
 void MotionDispGaborV1Spec::UpdateAfterEdit_impl() {
@@ -2429,149 +2433,149 @@ bool MotionDispGaborV1Spec::InitFilters_Blob() {
 }
 
 /*
-bool MotionDispGaborV1Spec::FilterMultiInput(float_Matrix& v1_output_left, float_Matrix& v1_output_right, int eyes, DoGFilterSpec::ColorChannel c_chan,float_Matrix& on_left_input,float_Matrix& off_left_input,float_Matrix& on_right_input,float_Matrix& off_right_input, bool superimpose) {
-	TwoDCoord input_size;
-	input_size.x = on_left_input.dim(0);
-	input_size.y = off_left_input.dim(1);
+  bool MotionDispGaborV1Spec::FilterMultiInput(float_Matrix& v1_output_left, float_Matrix& v1_output_right, int eyes, DoGFilterSpec::ColorChannel c_chan,float_Matrix& on_left_input,float_Matrix& off_left_input,float_Matrix& on_right_input,float_Matrix& off_right_input, bool superimpose) {
+  TwoDCoord input_size;
+  input_size.x = on_left_input.dim(0);
+  input_size.y = off_left_input.dim(1);
 	
-	if(input_size != trg_input_size) {
-		taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
-					  "is not correct size, should be:", trg_input_size.GetStr());
-		return false;
-	}
+  if(input_size != trg_input_size) {
+  taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
+  "is not correct size, should be:", trg_input_size.GetStr());
+  return false;
+  }
 	
-	if(filter_type == COPY) {
-		v1_output_left.SetGeom(2, un_geom.x, un_geom.y);
-		v1_output_right.SetGeom(2, un_geom.x, un_geom.y);
-	}
-	else {
-		v1_output_left.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
-		v1_output_right.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
-	}
-	if(!superimpose) {
-		v1_output_left.InitVals();		// reset all vals to 0
-		v1_output_right.InitVals();		// reset all vals to 0
-	}
+  if(filter_type == COPY) {
+  v1_output_left.SetGeom(2, un_geom.x, un_geom.y);
+  v1_output_right.SetGeom(2, un_geom.x, un_geom.y);
+  }
+  else {
+  v1_output_left.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
+  v1_output_right.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
+  }
+  if(!superimpose) {
+  v1_output_left.InitVals();		// reset all vals to 0
+  v1_output_right.InitVals();		// reset all vals to 0
+  }
 	
 	
-	cur_v1_output_left = &v1_output_left;
-	cur_v1_output_right = &v1_output_right;
-	cur_c_chan = c_chan;
-	cur_on_left_input = &on_left_input;
-	cur_off_left_input = &off_left_input;
-	cur_on_right_input = &on_right_input;
-	cur_off_right_input = &off_right_input;
-	cur_superimpose = cur_superimpose;
-	cur_eyes = eyes;
+  cur_v1_output_left = &v1_output_left;
+  cur_v1_output_right = &v1_output_right;
+  cur_c_chan = c_chan;
+  cur_on_left_input = &on_left_input;
+  cur_off_left_input = &off_left_input;
+  cur_on_right_input = &on_right_input;
+  cur_off_right_input = &off_right_input;
+  cur_superimpose = cur_superimpose;
+  cur_eyes = eyes;
 	
-	threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
-	threads.min_units = 1;
-	threads.nibble_chunk = 1;
-	ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
-	threads.Run(&ip_call, un_geom.n);
-	return true;
-}*/
+  threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
+  threads.min_units = 1;
+  threads.nibble_chunk = 1;
+  ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
+  threads.Run(&ip_call, un_geom.n);
+  return true;
+  }*/
 
 bool MotionDispGaborV1Spec::FilterMultiInputDisp(float_Matrix& v1_output1, float_Matrix& v1_output2, float_Matrix& v1_output3, int eyes, int disp, DoGFilterSpec::ColorChannel c_chan,float_Matrix& on_left_input1,float_Matrix& off_left_input1,float_Matrix& on_left_input2,float_Matrix& off_left_input2,float_Matrix& on_left_input3,float_Matrix& off_left_input3,float_Matrix& on_right_input1,float_Matrix& off_right_input1,float_Matrix& on_right_input2,float_Matrix& off_right_input2,float_Matrix& on_right_input3,float_Matrix& off_right_input3, bool superimpose) {
-	TwoDCoord input_size;
-	input_size.x = on_left_input1.dim(0);
-	input_size.y = off_left_input1.dim(1);
+  TwoDCoord input_size;
+  input_size.x = on_left_input1.dim(0);
+  input_size.y = off_left_input1.dim(1);
 	
-	if(input_size != trg_input_size) {
-		taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
-					  "is not correct size, should be:", trg_input_size.GetStr());
-		return false;
-	}
-	input_size.x = on_left_input3.dim(0);
-	input_size.y = off_left_input3.dim(1);
+  if(input_size != trg_input_size) {
+    taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
+		  "is not correct size, should be:", trg_input_size.GetStr());
+    return false;
+  }
+  input_size.x = on_left_input3.dim(0);
+  input_size.y = off_left_input3.dim(1);
 	
-	if(input_size != trg_input_size) {
-		taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
-					  "is not correct size, should be:", trg_input_size.GetStr());
-		return false;
-	}
-	input_size.x = on_left_input3.dim(0);
-	input_size.y = off_left_input3.dim(1);
+  if(input_size != trg_input_size) {
+    taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
+		  "is not correct size, should be:", trg_input_size.GetStr());
+    return false;
+  }
+  input_size.x = on_left_input3.dim(0);
+  input_size.y = off_left_input3.dim(1);
 	
-	if(input_size != trg_input_size) {
-		taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
-					  "is not correct size, should be:", trg_input_size.GetStr());
-		return false;
-	}
-	input_size.x = on_right_input1.dim(0);
-	input_size.y = off_right_input1.dim(1);
+  if(input_size != trg_input_size) {
+    taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
+		  "is not correct size, should be:", trg_input_size.GetStr());
+    return false;
+  }
+  input_size.x = on_right_input1.dim(0);
+  input_size.y = off_right_input1.dim(1);
 	
-	if(input_size != trg_input_size) {
-		taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
-					  "is not correct size, should be:", trg_input_size.GetStr());
-		return false;
-	}
-	input_size.x = on_right_input3.dim(0);
-	input_size.y = off_right_input3.dim(1);
+  if(input_size != trg_input_size) {
+    taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
+		  "is not correct size, should be:", trg_input_size.GetStr());
+    return false;
+  }
+  input_size.x = on_right_input3.dim(0);
+  input_size.y = off_right_input3.dim(1);
 	
-	if(input_size != trg_input_size) {
-		taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
-					  "is not correct size, should be:", trg_input_size.GetStr());
-		return false;
-	}
-	input_size.x = on_right_input3.dim(0);
-	input_size.y = off_right_input3.dim(1);
+  if(input_size != trg_input_size) {
+    taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
+		  "is not correct size, should be:", trg_input_size.GetStr());
+    return false;
+  }
+  input_size.x = on_right_input3.dim(0);
+  input_size.y = off_right_input3.dim(1);
 	
-	if(input_size != trg_input_size) {
-		taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
-					  "is not correct size, should be:", trg_input_size.GetStr());
-		return false;
-	}
+  if(input_size != trg_input_size) {
+    taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
+		  "is not correct size, should be:", trg_input_size.GetStr());
+    return false;
+  }
 	
-	if(filter_type == COPY) {
-		v1_output1.SetGeom(2, un_geom.x, un_geom.y);
-		v1_output2.SetGeom(2, un_geom.x, un_geom.y);
-		v1_output3.SetGeom(2, un_geom.x, un_geom.y);
-	}
-	else {
-		v1_output1.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
-		v1_output2.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
-		v1_output3.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
-	}
-	if(!superimpose) {
-		v1_output1.InitVals();		// reset all vals to 0
-		v1_output2.InitVals();		// reset all vals to 0
-		v1_output3.InitVals();		// reset all vals to 0
-	}
-	
-	
-	cur_v1_output1 = &v1_output1;
-	cur_v1_output2 = &v1_output2;
-	cur_v1_output3 = &v1_output3;
-	cur_c_chan = c_chan;
-	cur_superimpose = cur_superimpose;
-	cur_eyes = eyes;
-	cur_disp = disp;
-	
-	cur_on_left_input1 = &on_left_input1;
-	cur_off_left_input1 = &off_left_input1;
-	cur_on_right_input1 = &on_right_input1;
-	cur_off_right_input1 = &off_right_input1;
-	cur_on_left_input2 = &on_left_input2;
-	cur_off_left_input2 = &off_left_input2;
-	cur_on_right_input2 = &on_right_input2;
-	cur_off_right_input2 = &off_right_input2;
-	cur_on_left_input3 = &on_left_input3;
-	cur_off_left_input3 = &off_left_input3;
-	cur_on_right_input3 = &on_right_input3;
-	cur_off_right_input3 = &off_right_input3;
+  if(filter_type == COPY) {
+    v1_output1.SetGeom(2, un_geom.x, un_geom.y);
+    v1_output2.SetGeom(2, un_geom.x, un_geom.y);
+    v1_output3.SetGeom(2, un_geom.x, un_geom.y);
+  }
+  else {
+    v1_output1.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
+    v1_output2.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
+    v1_output3.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
+  }
+  if(!superimpose) {
+    v1_output1.InitVals();		// reset all vals to 0
+    v1_output2.InitVals();		// reset all vals to 0
+    v1_output3.InitVals();		// reset all vals to 0
+  }
 	
 	
+  cur_v1_output1 = &v1_output1;
+  cur_v1_output2 = &v1_output2;
+  cur_v1_output3 = &v1_output3;
+  cur_c_chan = c_chan;
+  cur_superimpose = cur_superimpose;
+  cur_eyes = eyes;
+  cur_disp = disp;
+	
+  cur_on_left_input1 = &on_left_input1;
+  cur_off_left_input1 = &off_left_input1;
+  cur_on_right_input1 = &on_right_input1;
+  cur_off_right_input1 = &off_right_input1;
+  cur_on_left_input2 = &on_left_input2;
+  cur_off_left_input2 = &off_left_input2;
+  cur_on_right_input2 = &on_right_input2;
+  cur_off_right_input2 = &off_right_input2;
+  cur_on_left_input3 = &on_left_input3;
+  cur_off_left_input3 = &off_left_input3;
+  cur_on_right_input3 = &on_right_input3;
+  cur_off_right_input3 = &off_right_input3;
 	
 	
-	threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
-	threads.min_units = 1;
-	threads.nibble_chunk = 1;
-	ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
-	threads.Run(&ip_call, un_geom.n);
+	
+	
+  threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
+  threads.min_units = 1;
+  threads.nibble_chunk = 1;
+  ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
+  threads.Run(&ip_call, un_geom.n);
 		
 	
-	return true;
+  return true;
 }
 
 void MotionDispGaborV1Spec::Filter_Thread(int cmp_idx, int thread_no) {
@@ -2581,266 +2585,264 @@ void MotionDispGaborV1Spec::Filter_Thread(int cmp_idx, int thread_no) {
 }
 
 /*
- bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
-	TwoDCoord un;			// units within group
-	TwoDCoord ugp;		// unit groups
-	TwoDCoord fgp;		// filter groups
-	TwoDCoord ugpof;		// offset from ugps
-	TwoDCoord fgpof;		// offset from fgps
-	TwoDCoord fc;			// filter coords
-	TwoDCoord in;			// input coords
-	int t;			// filter timestep coord
-	int uidx = cmp_idx;
-	un.y = uidx / un_geom.x;
-	un.x = uidx % un_geom.x;
-	int fidx = uidx / n_filters_per_gp;
-	int fgpdx = uidx % n_filters_per_gp;
-	MotionDispGaborFilterSpec* gf = (MotionDispGaborFilterSpec*)motiondisp_gabor_specs.SafeEl(fidx);
-	if(!gf) return false;			     // shouldn't happen
-	float_Matrix*  cur_on_input;
-	float_Matrix*  cur_off_input;
-	float_Matrix*  cur_v1_output;
-	//for each eye	
-	for(int eye = 0; eye < cur_eyes; eye++) {
-		if(eye == 0) {
-			cur_on_input = cur_on_left_input;
-			cur_off_input = cur_off_left_input;
-			cur_v1_output = cur_v1_output_left;
-		}
-		else {
-			cur_on_input = cur_on_right_input;
-			cur_off_input = cur_off_right_input;
-			cur_v1_output = cur_v1_output_right;
-		}
-		// for each unit, process entire input:
-		for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
-			for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
-				if(wrap) {
-					ugpof = (ugp-1) * input_ovlp;
-				}
-				else {
-					ugpof = ugp * input_ovlp;
-				}
-				float max_val = 0.0f;	// output is max val
-				// filter groups
-				for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
-					int ymod = fgp.y % n_filters_per_gp;
-					for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
-						int xmod = (fgp.x + ymod) % n_filters_per_gp;
-						if(xmod != fgpdx) {
-							continue; // not our spot
-						}
-						float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
-						fgpof = ugpof + (fgp * rf_ovlp);
+  bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
+  TwoDCoord un;			// units within group
+  TwoDCoord ugp;		// unit groups
+  TwoDCoord fgp;		// filter groups
+  TwoDCoord ugpof;		// offset from ugps
+  TwoDCoord fgpof;		// offset from fgps
+  TwoDCoord fc;			// filter coords
+  TwoDCoord in;			// input coords
+  int t;			// filter timestep coord
+  int uidx = cmp_idx;
+  un.y = uidx / un_geom.x;
+  un.x = uidx % un_geom.x;
+  int fidx = uidx / n_filters_per_gp;
+  int fgpdx = uidx % n_filters_per_gp;
+  MotionDispGaborFilterSpec* gf = (MotionDispGaborFilterSpec*)motiondisp_gabor_specs.SafeEl(fidx);
+  if(!gf) return false;			     // shouldn't happen
+  float_Matrix*  cur_on_input;
+  float_Matrix*  cur_off_input;
+  float_Matrix*  cur_v1_output;
+  //for each eye	
+  for(int eye = 0; eye < cur_eyes; eye++) {
+  if(eye == 0) {
+  cur_on_input = cur_on_left_input;
+  cur_off_input = cur_off_left_input;
+  cur_v1_output = cur_v1_output_left;
+  }
+  else {
+  cur_on_input = cur_on_right_input;
+  cur_off_input = cur_off_right_input;
+  cur_v1_output = cur_v1_output_right;
+  }
+  // for each unit, process entire input:
+  for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
+  for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
+  if(wrap) {
+  ugpof = (ugp-1) * input_ovlp;
+  }
+  else {
+  ugpof = ugp * input_ovlp;
+  }
+  float max_val = 0.0f;	// output is max val
+  // filter groups
+  for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
+  int ymod = fgp.y % n_filters_per_gp;
+  for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
+  int xmod = (fgp.x + ymod) % n_filters_per_gp;
+  if(xmod != fgpdx) {
+  continue; // not our spot
+  }
+  float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
+  fgpof = ugpof + (fgp * rf_ovlp);
 
-						// now actually apply the filter itself
-						float flt_sum = 0.0f;
-						for(t=0;t<rf_time;t++) {
-							for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-								for(fc.x=0;fc.x<rf_width.x;fc.x++) {
+  // now actually apply the filter itself
+  float flt_sum = 0.0f;
+  for(t=0;t<rf_time;t++) {
+  for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+  for(fc.x=0;fc.x<rf_width.x;fc.x++) {
 				  
 				  
-									in = fgpof + fc;
-									if(in.WrapClip(wrap, trg_input_size)) continue;
-									float fval = gf->filter.FastEl(fc.x, fc.y, t);
-									float oval;
-									if(fval > 0.0f) {
-										oval = fval * cur_on_input->FastEl(in.x, in.y, t);
-										//oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
-									}
-									else {
-										oval = -fval * cur_off_input->FastEl(in.x, in.y, t);
-										//oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
-									}
-									flt_sum += oval;
-								}
-							}
-						}
-						flt_sum *= gmult;
-						max_val = MAX(max_val, flt_sum);
-					}
-				}
+  in = fgpof + fc;
+  if(in.WrapClip(wrap, trg_input_size)) continue;
+  float fval = gf->filter.FastEl(fc.x, fc.y, t);
+  float oval;
+  if(fval > 0.0f) {
+  oval = fval * cur_on_input->FastEl(in.x, in.y, t);
+  //oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
+  }
+  else {
+  oval = -fval * cur_off_input->FastEl(in.x, in.y, t);
+  //oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
+  }
+  flt_sum += oval;
+  }
+  }
+  }
+  flt_sum *= gmult;
+  max_val = MAX(max_val, flt_sum);
+  }
+  }
 			
-				if(cur_superimpose)
-					cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val;
-				else
-					cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val;
-			}
-		}
-	}
-	return true;
-}
- */
+  if(cur_superimpose)
+  cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val;
+  else
+  cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val;
+  }
+  }
+  }
+  return true;
+  }
+*/
 
 bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
-	TwoDCoord un;			// units within group
-	TwoDCoord ugp;		// unit groups
-	TwoDCoord fgp;		// filter groups
-	TwoDCoord ugpof;		// offset from ugps
-	TwoDCoord fgpof;		// offset from fgps
-	TwoDCoord fc;			// filter coords
-	TwoDCoord in_left;			// input coords
-	TwoDCoord in_right;			// input coords
-	int t;			// filter timestep coord
-	int uidx = cmp_idx;
-	un.y = uidx / un_geom.x;
-	un.x = uidx % un_geom.x;
-	int fidx = uidx / n_filters_per_gp;
-	int fgpdx = uidx % n_filters_per_gp;
-	MotionDispGaborFilterSpec* gf = (MotionDispGaborFilterSpec*)motiondisp_gabor_specs.SafeEl(fidx);
-	if(!gf) return false;			     // shouldn't happen
-	float_Matrix*  cur_on_left_input;
-	float_Matrix*  cur_off_left_input;
-	float_Matrix* cur_on_right_input;
-	float_Matrix* cur_off_right_input;
+  TwoDCoord un;			// units within group
+  TwoDCoord ugp;		// unit groups
+  TwoDCoord fgp;		// filter groups
+  TwoDCoord ugpof;		// offset from ugps
+  TwoDCoord fgpof;		// offset from fgps
+  TwoDCoord fc;			// filter coords
+  TwoDCoord in_left;			// input coords
+  TwoDCoord in_right;			// input coords
+  int t;			// filter timestep coord
+  int uidx = cmp_idx;
+  un.y = uidx / un_geom.x;
+  un.x = uidx % un_geom.x;
+  int fidx = uidx / n_filters_per_gp;
+  int fgpdx = uidx % n_filters_per_gp;
+  MotionDispGaborFilterSpec* gf = (MotionDispGaborFilterSpec*)motiondisp_gabor_specs.SafeEl(fidx);
+  if(!gf) return false;			     // shouldn't happen
+  float_Matrix*  cur_on_left_input;
+  float_Matrix*  cur_off_left_input;
+  float_Matrix* cur_on_right_input;
+  float_Matrix* cur_off_right_input;
 	
 	
 	
-	// for each unit, process entire input:
-	for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
-		for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
-			if(wrap) {
-				ugpof = (ugp-1) * input_ovlp;
-			}
-			else {
-				ugpof = ugp * input_ovlp;
-			}
-			float max_val[3] = {0,0,0};
-			// filter groups
-			for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
-				int ymod = fgp.y % n_filters_per_gp;
-				for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
-					int xmod = (fgp.x + ymod) % n_filters_per_gp;
-					if(xmod != fgpdx) {
-						continue; // not our spot
-					}
-					float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
-					fgpof = ugpof + (fgp * rf_ovlp);
+  // for each unit, process entire input:
+  for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
+    for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
+      if(wrap) {
+	ugpof = (ugp-1) * input_ovlp;
+      }
+      else {
+	ugpof = ugp * input_ovlp;
+      }
+      float max_val[3] = {0,0,0};
+      // filter groups
+      for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
+	int ymod = fgp.y % n_filters_per_gp;
+	for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
+	  int xmod = (fgp.x + ymod) % n_filters_per_gp;
+	  if(xmod != fgpdx) {
+	    continue; // not our spot
+	  }
+	  float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
+	  fgpof = ugpof + (fgp * rf_ovlp);
 					
-					// now actually apply the filter itself
-					float flt_sum[3] = {0,0,0};
-					float flt_sum_right[3] = {0,0,0};
-					float flt_sum_left[3] = {0,0,0};
+	  // now actually apply the filter itself
+	  float flt_sum[3] = {0,0,0};
+	  float flt_sum_right[3] = {0,0,0};
+	  float flt_sum_left[3] = {0,0,0};
 					
-					for(int disp_lvl_i = 0; disp_lvl_i < 3; disp_lvl_i++) {
-						for(int disp_i = 0; disp_i < disparity_width; disp_i++) {
+	  for(int disp_lvl_i = 0; disp_lvl_i < 3; disp_lvl_i++) {
+	    for(int disp_i = 0; disp_i < disparity_width; disp_i++) {
 							
 							
-							float cur_disp_mult = disp_gauss_mat.SafeEl(disp_i);
-							float oval_right[3] = {0,0,0};
-							float oval_left[3] = {0,0,0};
-							for(int t = 0; t < 3; t++) {
-								switch(t) {
-									case 0:
-										cur_on_left_input = cur_on_left_input1;
-										cur_off_left_input = cur_off_left_input1;
-										cur_on_right_input = cur_on_right_input1;
-										cur_off_right_input = cur_off_right_input1;
-										break;
-									case 1:
-										cur_on_left_input = cur_on_left_input2;
-										cur_off_left_input = cur_off_left_input2;
-										cur_on_right_input = cur_on_right_input2;
-										cur_off_right_input = cur_off_right_input2;
-										break;
-									case 2:
-										cur_on_left_input = cur_on_left_input3;
-										cur_off_left_input = cur_off_left_input3;
-										cur_on_right_input = cur_on_right_input3;
-										cur_off_right_input = cur_off_right_input3;
-										break;
-								}
-								
-								
-								for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-									for(fc.x=0;fc.x<rf_width.x;fc.x++) {
-										
-										
-										in_left = fgpof + fc;
-										in_left.x +=  ((disp_lvl_i - 1) * disparity_offset) + (disp_i - (disparity_width / 2));
-										if(in_left.WrapClip(wrap, trg_input_size)) continue;
-										in_right = fgpof + fc;
-										in_right.x +=  ((1 - disp_lvl_i) * disparity_offset) + ((disparity_width / 2) - disp_i);
-										if(in_right.WrapClip(wrap, trg_input_size)) continue;
-										
-										
-										float fval = gf->filter.FastEl(fc.x, fc.y, t);
-										
-										
-										if(fval > 0.0f) {
-											//oval += fval * cur_on_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
-											//oval += fval * cur_on_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
-											
-											float left_val, right_val;
-											
-											
-											right_val = cur_on_left_input->FastEl(in_left.x, in_left.y);
-											left_val = cur_on_right_input->FastEl(in_right.x, in_right.y);
-                      
-											
-											oval_left[disp_lvl_i] += fval * left_val;
-											oval_right[disp_lvl_i] += fval * right_val;
-											//oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
-										}
-										else {
-											//oval += -fval * cur_off_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
-											//oval += -fval * cur_off_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
-											float right_val = 0;
-											float left_val = 0;
-                      
-											right_val = cur_off_right_input->FastEl(in_right.x, in_right.y);
-											left_val = cur_off_left_input->FastEl(in_left.x, in_left.y);
-                      
-											oval_left[disp_lvl_i] += -fval * left_val;
-											oval_right[disp_lvl_i] += -fval * right_val;
-											//oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
-										}
-										
-									}
-									
-								}
-								
-							}
-							if(max_in_disparity) {
-								flt_sum_right[disp_lvl_i] = MAX(oval_right[disp_lvl_i],flt_sum_right[disp_lvl_i]);
-								flt_sum_left[disp_lvl_i] = MAX(oval_left[disp_lvl_i],flt_sum_left[disp_lvl_i]);
-							}
-							else {
-								flt_sum_right[disp_lvl_i] += oval_right[disp_lvl_i] * cur_disp_mult;
-								flt_sum_left[disp_lvl_i] += oval_left[disp_lvl_i] * cur_disp_mult;
-							}
-						}
-					}
-					
-					flt_sum[0] = flt_sum_left[0] + flt_sum_right[0];
-					flt_sum[0] *= gmult;
-					max_val[0] = MAX(max_val[0], flt_sum[0]);
-					flt_sum[1] = flt_sum_left[1] + flt_sum_right[1];
-					flt_sum[1] *= gmult;
-					max_val[1] = MAX(max_val[1], flt_sum[1]);
-					flt_sum[2] = flt_sum_left[2] + flt_sum_right[2];
-					flt_sum[2] *= gmult;
-					max_val[2] = MAX(max_val[2], flt_sum[2]);
-				}
-			}
-			
-			if(cur_superimpose) {
-				cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[0];
-				cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[1];
-				cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[2];
-				
-			}
-			else {
-				cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[0];
-				cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[1];
-				cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[2];
-			}
+	      float cur_disp_mult = disp_gauss_mat.SafeEl(disp_i);
+	      float oval_right[3] = {0,0,0};
+	      float oval_left[3] = {0,0,0};
+	      for(int t = 0; t < 3; t++) {
+		switch(t) {
+		case 0:
+		  cur_on_left_input = cur_on_left_input1;
+		  cur_off_left_input = cur_off_left_input1;
+		  cur_on_right_input = cur_on_right_input1;
+		  cur_off_right_input = cur_off_right_input1;
+		  break;
+		case 1:
+		  cur_on_left_input = cur_on_left_input2;
+		  cur_off_left_input = cur_off_left_input2;
+		  cur_on_right_input = cur_on_right_input2;
+		  cur_off_right_input = cur_off_right_input2;
+		  break;
+		case 2:
+		  cur_on_left_input = cur_on_left_input3;
+		  cur_off_left_input = cur_off_left_input3;
+		  cur_on_right_input = cur_on_right_input3;
+		  cur_off_right_input = cur_off_right_input3;
+		  break;
 		}
+								
+								
+		for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+		  for(fc.x=0;fc.x<rf_width.x;fc.x++) {
+										
+										
+		    in_left = fgpof + fc;
+		    in_left.x +=  ((disp_lvl_i - 1) * disparity_offset) + (disp_i - (disparity_width / 2));
+		    if(in_left.WrapClip(wrap, trg_input_size)) continue;
+		    in_right = fgpof + fc;
+		    in_right.x +=  ((1 - disp_lvl_i) * disparity_offset) + ((disparity_width / 2) - disp_i);
+		    if(in_right.WrapClip(wrap, trg_input_size)) continue;
+										
+										
+		    float fval = gf->filter.FastEl(fc.x, fc.y, t);
+										
+										
+		    if(fval > 0.0f) {
+		      //oval += fval * cur_on_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
+		      //oval += fval * cur_on_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
+											
+		      float left_val, right_val;
+											
+											
+		      right_val = cur_on_left_input->FastEl(in_left.x, in_left.y);
+		      left_val = cur_on_right_input->FastEl(in_right.x, in_right.y);
+                      
+											
+		      oval_left[disp_lvl_i] += fval * left_val;
+		      oval_right[disp_lvl_i] += fval * right_val;
+		      //oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
+		    }
+		    else {
+		      //oval += -fval * cur_off_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
+		      //oval += -fval * cur_off_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
+		      float right_val = 0;
+		      float left_val = 0;
+                      
+		      right_val = cur_off_right_input->FastEl(in_right.x, in_right.y);
+		      left_val = cur_off_left_input->FastEl(in_left.x, in_left.y);
+                      
+		      oval_left[disp_lvl_i] += -fval * left_val;
+		      oval_right[disp_lvl_i] += -fval * right_val;
+		      //oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
+		    }
+										
+		  }
+									
+		}
+								
+	      }
+	      if(max_in_disparity) {
+		flt_sum_right[disp_lvl_i] = MAX(oval_right[disp_lvl_i],flt_sum_right[disp_lvl_i]);
+		flt_sum_left[disp_lvl_i] = MAX(oval_left[disp_lvl_i],flt_sum_left[disp_lvl_i]);
+	      }
+	      else {
+		flt_sum_right[disp_lvl_i] += oval_right[disp_lvl_i] * cur_disp_mult;
+		flt_sum_left[disp_lvl_i] += oval_left[disp_lvl_i] * cur_disp_mult;
+	      }
+	    }
+	  }
+					
+	  flt_sum[0] = flt_sum_left[0] + flt_sum_right[0];
+	  flt_sum[0] *= gmult;
+	  max_val[0] = MAX(max_val[0], flt_sum[0]);
+	  flt_sum[1] = flt_sum_left[1] + flt_sum_right[1];
+	  flt_sum[1] *= gmult;
+	  max_val[1] = MAX(max_val[1], flt_sum[1]);
+	  flt_sum[2] = flt_sum_left[2] + flt_sum_right[2];
+	  flt_sum[2] *= gmult;
+	  max_val[2] = MAX(max_val[2], flt_sum[2]);
 	}
+      }
+			
+      if(cur_superimpose) {
+	cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[0];
+	cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[1];
+	cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[2];
+				
+      }
+      else {
+	cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[0];
+	cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[1];
+	cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[2];
+      }
+    }
+  }
   
-	
-	
-	return true;
+  return true;
 }
 
 
