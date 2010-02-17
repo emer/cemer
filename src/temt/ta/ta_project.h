@@ -520,6 +520,9 @@ public:
   override int		Save(); 
   override int		SaveAs(const String& fname = ""); 
 
+  virtual bool		CleanFiles();
+  // #BUTTON #CAT_File remove autosave and recover files based on current file_name -- this is done by default after saving a non-recover or autosave version of the project
+
   virtual int		SaveNoteChanges(); 
   // #CAT_File saves the project to a file using current file name, but first prompts for a text note of changes that have been made, which are registered in the ChangeLog document within the project prior to saving
   virtual int		SaveAsNoteChanges(const String& fname = ""); 

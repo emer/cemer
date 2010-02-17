@@ -22,6 +22,7 @@
 #include "ta_matrix.h"
 #include "ta_datatable.h"
 #include "ta_project.h"
+#include "ta_qtviewer.h"
 
 #include <qapplication.h>
 #include <qclipboard.h>
@@ -812,7 +813,12 @@ int taBase::ChildEditAction(const MemberDef* md, taBase* child,
 //   StructUpdate(false);
   if (proj) {
     proj->undo_mgr.Nest(false); 
+    iMainWindowViewer* imwv = iMainWindowViewer::GetViewerForObj(proj);
+    if(imwv) {
+      imwv->GetCurTreeView()->clearExtSelection(); // clear it
+    }
   }
+
   return rval;
 }
 

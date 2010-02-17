@@ -747,9 +747,12 @@ void taiEditTableWidget::keyPressEvent(QKeyEvent* e) {
     case Qt::Key_U:
       newCurrent = moveCursor(MovePageUp, e->modifiers());
       break;
+#ifdef TA_OS_MAC
+      // this is a conflict with paste -- only works on mac where cmd and ctrl are diff!
     case Qt::Key_V:
       newCurrent = moveCursor(MovePageDown, e->modifiers());
       break;
+#endif
     case Qt::Key_F:
       newCurrent = moveCursor(MoveRight, e->modifiers());
       break;

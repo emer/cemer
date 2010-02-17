@@ -1220,11 +1220,31 @@ int taProject::SaveAs(const String& fname) {
     Save_strm(*(flr->ostrm));
     flr->Close();
     rval = true;
+    // remove autosave and recover files after successful save of non-recover version
+    String fnm = flr->FileName();
+    if(!fnm.contains("_recover") && !fnm.contains("_autosave")) {
+      CleanFiles();
+    }
   }
   taRefN::unRefDone(flr);
   DataChanged(DCR_ITEM_UPDATED_ND);
   return rval;
 } 
+
+
+bool taProject::CleanFiles() {
+  bool got_one = false;
+  String fnm = file_name.before(".proj");
+  String autosave = fnm + "_autosave.proj";
+  got_one |= QFile::remove(autosave.chars());
+  tabMisc::root->recent_files.RemoveEl(autosave);
+  for(int i=0;i<100;i++) {
+    String recover = fnm + "_recover" + String(i) + ".proj";
+    got_one |= QFile::remove(recover.chars());
+  tabMisc::root->recent_files.RemoveEl(recover);
+  }
+  return got_one;
+}
 
 int taProject::SaveNoteChanges() {
   UpdateChangeLog();

@@ -263,6 +263,11 @@ void iTreeWidget::resizeColumnsToContents() {
 */
 }
 
+void iTreeWidget::clearExtSelection() {
+  ext_select_on = false;
+  inherited::clearSelection();
+}
+
 void iTreeWidget::keyboardSearch(const QString& search) {
   // this makes it go directly to single selection mode for keyboard search --
   // perhaps not as powerful as extended select under keyboard ctrl but a LOT
@@ -317,7 +322,6 @@ void iTreeWidget::this_itemExpanded(QTreeWidgetItem* item) {
 
 
 void iTreeWidget::keyPressEvent(QKeyEvent* event) {
-
   bool ctrl_pressed = false;
   if(event->modifiers() & Qt::ControlModifier)
     ctrl_pressed = true;
@@ -330,12 +334,11 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
     QPersistentModelIndex newCurrent = currentIndex();
     switch (event->key()) {
     case Qt::Key_Space:
-      ext_select_on = !ext_select_on;
-      selectionModel()->clearSelection();
+      clearSelection();
+      ext_select_on = true;
       break;
     case Qt::Key_G:
-      ext_select_on = false;
-      selectionModel()->clearSelection();
+      clearExtSelection();
       break;
     case Qt::Key_N:
       newCurrent = moveCursor(MoveDown, event->modifiers());
@@ -346,9 +349,12 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
     case Qt::Key_U:
       newCurrent = moveCursor(MovePageUp, event->modifiers());
       break;
+#ifdef TA_OS_MAC
+      // this is a conflict with paste -- only works on mac where cmd and ctrl are diff!
     case Qt::Key_V:
       newCurrent = moveCursor(MovePageDown, event->modifiers());
       break;
+#endif
     case Qt::Key_F:
       newCurrent = moveCursor(MoveRight, event->modifiers());
       break;
@@ -362,8 +368,8 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
     }
 
     // from qabstractitemview.cpp
-//     QPersistentModelIndex oldCurrent = currentIndex();
-    if(newCurrent.isValid()) {
+    QPersistentModelIndex oldCurrent = currentIndex();
+    if(newCurrent.isValid() && newCurrent != oldCurrent) {
       QItemSelectionModel::SelectionFlags command;
       if(ext_select_on) {
 	// the following logic prevents selecting items at different levels!
@@ -387,8 +393,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
     }
   }
   if(event->key() == Qt::Key_Escape) {
-    ext_select_on = false;
-    selectionModel()->clearSelection();
+    clearExtSelection();
   }
   inherited::keyPressEvent( event );
 }

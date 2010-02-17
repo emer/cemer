@@ -211,12 +211,14 @@ Variant EditMbrItem::PSearchCurVal() {
 bool EditMbrItem::PSearchCurVal_Set(const Variant& cur_val) {
   if(!PSearchValidTest()) return false;
   mbr->type->SetValVar(cur_val, mbr->GetOff(base), NULL, mbr);
+  base->UpdateAfterEdit();
   return true;
 }  
 
 bool EditMbrItem::PSearchMinToCur() {
   if(!PSearchValidTest()) return false;
   mbr->type->SetValVar(param_search.min_val, mbr->GetOff(base), NULL, mbr);
+  base->UpdateAfterEdit();
   return true;
 }  
 
@@ -234,6 +236,7 @@ bool EditMbrItem::PSearchNextIncr() {
 bool EditMbrItem::PSearchNextToCur() {
   if(!PSearchValidTest()) return false;
   mbr->type->SetValVar(param_search.next_val, mbr->GetOff(base), NULL, mbr);
+  base->UpdateAfterEdit();
   return true;
 }  
 

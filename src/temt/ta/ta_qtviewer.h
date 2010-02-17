@@ -1070,6 +1070,10 @@ public:
   void 			setFrameGeometry(const iRect& r);
   void			setFrameGeometry(int left, int top, int width, int height); //bogus: see Qt docs on geometry under X
 
+
+  static iMainWindowViewer* GetViewerForObj(taBase* obj);
+  // useful utility to get main window viewer for any given object
+
   iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent = NULL);
     // uses: WFlags flags = (WType_TopLevel | WStyle_SysMenu | WStyle_MinMax | WDestructiveClose)
   ~iMainWindowViewer();
@@ -1176,6 +1180,7 @@ protected:
   override void 	moveEvent(QMoveEvent* ev);
   override void 	showEvent(QShowEvent* ev);
   override void 	hideEvent(QHideEvent* ev);
+  override bool 	eventFilter(QObject *obj, QEvent *event);
 
   virtual void 		emit_EditAction(int param); // #IGNORE param is one of the taiClipData editAction values; desc can trap this and implement virtually, if desired
   override void 	windowActivationChange(bool oldActive); // we manage active_wins in order of activation
@@ -2127,9 +2132,11 @@ public: // ISelectable interface
   override taiDataLink*	link() const {return IDataLinkClient::link();}
   override MemberDef*	md() const {return m_md;}
   override ISelectable*	par() const;
-//obs  override String	view_name() const; // for members, the member name; for list items, the name if
   override ISelectableHost* host() const;
-//  override taiClipData*	GetClipData(int src_edit_action, bool for_drag);
+  override taiClipData*	GetClipDataSingle(int src_edit_action, bool for_drag,
+    GuiContext sh_typ = GC_DEFAULT) const;
+  override taiClipData*	GetClipDataMulti(const ISelectable_PtrList& sel_items, 
+    int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const;
 //  override int		GetEditActions(taiMimeSource* ms) const; // simpler version uses Query
 protected:
 //  override int		EditAction_impl(taiMimeSource* ms, int ea);

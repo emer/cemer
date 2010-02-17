@@ -49,6 +49,7 @@ public:
   void			setSiblingSel(bool value);
 
   void 			resizeColumnsToContents(); // convenience: resizes all but last col
+  virtual void		clearExtSelection();	   // clear extended selection mode and also clear any existing selection
 
   override void 	keyboardSearch(const QString &search);
   

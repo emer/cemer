@@ -1737,6 +1737,12 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea,
       QApplication::clipboard()->setMimeData(cd, QClipboard::Clipboard);
       cd = NULL; // clipboard now owns it
       rval = taiClipData::ER_OK;
+      // clear the emacs-like extended selection after copy -- makes it clear that copy 
+      // took effect too
+      iMainWindowViewer* imwv = host()->mainWindow();
+      if(imwv) {
+	imwv->GetCurTreeView()->clearExtSelection();
+      }
     } else { // other ops, like Duplicate, Clear or Unlink
       for (int i = 0; i < sel_items.size; ++i) {
         ISelectable* is = sel_items.SafeEl(i);
@@ -2742,6 +2748,7 @@ void iBrowseViewer::Init() {
   lay->setMargin(0);  lay->setSpacing(0);
   lvwDataTree = new iTreeView(this);
   lay->addWidget(lvwDataTree);
+  lvwDataTree->installEventFilter(mainWindowViewer()->widget()); // translate keys..
   lvwDataTree->main_window = mainWindowViewer()->widget();
   lvwDataTree->setObjectName("lvwDataTree");
   lvwDataTree->setSortingEnabled(false); // preserve enumeration order of items
@@ -3693,6 +3700,7 @@ void iMainWindowViewer::Constr_impl() {
 
   body = new iSplitter(); // def is hor
   setCentralWidget(body);
+  body->installEventFilter(this); // translate keys..
   body->show();
 
   taiMisc::active_wins.AddUnique(this);
@@ -4408,6 +4416,47 @@ bool iMainWindowViewer::event(QEvent* ev) {
   return rval;
 }
 
+bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
+  if (event->type() != QEvent::KeyPress) {
+    return QObject::eventFilter(obj, event);
+  }
+
+  QCoreApplication* app = QCoreApplication::instance();
+  QKeyEvent* e = static_cast<QKeyEvent *>(event);
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+  // emacs keys!!
+  if(ctrl_pressed) {
+    if(e->key() == Qt::Key_Y) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_W) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_Slash) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_Minus) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+  }
+  if(e->modifiers() & Qt::AltModifier && e->key() == Qt::Key_W) { // copy
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+    return true;		// we absorb this event
+  }
+  return QObject::eventFilter(obj, event);
+}
+
 int iMainWindowViewer::GetEditActions() {
   int rval = 0;
   emit GetEditActionsEnabled(rval);
@@ -4616,6 +4665,22 @@ void iMainWindowViewer::setFrameGeometry(const iRect& r) {
 
 void  iMainWindowViewer::setFrameGeometry(int left, int top, int width, int height) {
   setFrameGeometry(iRect(left, top, width, height));
+}
+
+iMainWindowViewer* iMainWindowViewer::GetViewerForObj(taBase* obj) {
+  if(!taMisc::gui_active) return NULL;
+  taProject* proj = GET_OWNER(obj, taProject);
+  if(!proj) return NULL;
+  
+  // iterate to find all Browsers 
+  for (int i = 0; i < proj->viewers.size; ++i) {
+    MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(proj->viewers.FastEl(i));
+    if (!(vwr && vwr->isProjBrowser())) continue;
+    iMainWindowViewer* imwv = vwr->widget();
+    if(!imwv) continue;
+    return imwv;
+  }
+  return NULL;
 }
 
 void iMainWindowViewer::ShowChange(taiAction* sender) {
@@ -6896,6 +6961,7 @@ bool iDocDataPanel::eventFilter(QObject* obj, QEvent* event) {
     return QObject::eventFilter(obj, event);
   }
 
+  QCoreApplication* app = QCoreApplication::instance();
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
   bool ctrl_pressed = false;
   if(e->modifiers() & Qt::ControlModifier)
@@ -6907,7 +6973,6 @@ bool iDocDataPanel::eventFilter(QObject* obj, QEvent* event) {
 #endif
   // emacs keys!!
   if(ctrl_pressed) {
-    QCoreApplication* app = QCoreApplication::instance();
     if(e->key() == Qt::Key_P) {
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
       return true;		// we absorb this event
@@ -6956,6 +7021,10 @@ bool iDocDataPanel::eventFilter(QObject* obj, QEvent* event) {
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
       return true;		// we absorb this event
     }
+  }
+  if(e->modifiers() & Qt::AltModifier && e->key() == Qt::Key_W) { // copy
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+    return true;		// we absorb this event
   }
   return QObject::eventFilter(obj, event);
 }
@@ -7964,6 +8033,20 @@ const String iTreeViewItem::GetColText(int col, const String& def) const
 ISelectableHost* iTreeViewItem::host() const {
   iTreeView* tv = treeView();
   return (tv) ? (ISelectableHost*)tv : NULL;
+}
+
+taiClipData* iTreeViewItem::GetClipDataSingle(int src_edit_action, bool for_drag,
+					      GuiContext sh_typ) const {
+  taiClipData* rval = IObjectSelectable::GetClipDataSingle(src_edit_action, for_drag, sh_typ);
+//   treeView()->clearSelection();
+  return rval;
+}
+
+taiClipData* iTreeViewItem::GetClipDataMulti(const ISelectable_PtrList& sel_items, 
+		     int src_edit_action, bool for_drag, GuiContext sh_typ) const {
+  taiClipData* rval = IObjectSelectable::GetClipDataMulti(sel_items, src_edit_action, for_drag, sh_typ);
+//   treeView()->clearSelection();
+  return rval;
 }
 
 void iTreeViewItem::itemExpanded(bool value) {
@@ -9004,9 +9087,6 @@ String iSearchDialog::searchStr() const {
 
 bool iSearchDialog::stop() const {
   taiMisc::ProcessEvents();
-//TEMP
-if (m_stop)
-taMisc::Info("should be stopping...");
   return m_stop;
 }
 
@@ -9859,6 +9939,7 @@ bool iHelpBrowser::eventFilter(QObject* obj, QEvent* event) {
     return QObject::eventFilter(obj, event);
   }
 
+  QCoreApplication* app = QCoreApplication::instance();
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
   bool ctrl_pressed = false;
   if(e->modifiers() & Qt::ControlModifier)
@@ -9870,7 +9951,6 @@ bool iHelpBrowser::eventFilter(QObject* obj, QEvent* event) {
 #endif
   // emacs keys!!
   if(ctrl_pressed) {
-    QCoreApplication* app = QCoreApplication::instance();
     if(e->key() == Qt::Key_P) {
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
       return true;		// we absorb this event
@@ -9920,6 +10000,11 @@ bool iHelpBrowser::eventFilter(QObject* obj, QEvent* event) {
       return true;		// we absorb this event
     }
   }
+  if(e->modifiers() & Qt::AltModifier && e->key() == Qt::Key_W) { // copy
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+    return true;		// we absorb this event
+  }
+
 //   else if(e->key() == Qt::Key_F3) {
 //     find_text->setFocus();
 //   }
