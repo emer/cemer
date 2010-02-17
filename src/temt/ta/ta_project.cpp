@@ -1241,7 +1241,10 @@ bool taProject::CleanFiles() {
   for(int i=0;i<100;i++) {
     String recover = fnm + "_recover" + String(i) + ".proj";
     got_one |= QFile::remove(recover.chars());
-  tabMisc::root->recent_files.RemoveEl(recover);
+    tabMisc::root->recent_files.RemoveEl(recover);
+    
+    String console = fnm + "_console" + String(i) + ".txt";
+    QFile::remove(console.chars());
   }
   return got_one;
 }
