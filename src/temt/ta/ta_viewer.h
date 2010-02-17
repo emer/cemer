@@ -190,7 +190,7 @@ public:
   virtual QPixmap	GrabImage(bool& got_image);
   // #IGNORE grabs the widget image into a pixmap object
   virtual bool		SaveImageAs(const String& fname = "", ImageFormat img_fmt = PNG);
-  // #BUTTON #FILE_DIALOG_SAVE #FILETYPE_Image save the image of this view to a file -- if fname is empty, it prompts the user for a name
+  // #BUTTON #FILE_DIALOG_SAVE #FILETYPE_Image #EXT_png,jpg,eps,ppm,iv save the image of this view to a file -- if fname is empty, it prompts the user for a name
   virtual bool		PrintImage();
   // #BUTTON print the image of this view to printer
   static bool		InitImageExts(); // initialize the image extensions, if not already done

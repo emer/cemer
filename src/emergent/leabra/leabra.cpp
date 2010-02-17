@@ -4832,6 +4832,7 @@ void LeabraNetwork::Trial_Init() {
 void LeabraNetwork::Trial_Init_Phases() {
   phase = MINUS_PHASE;
   nothing_phase = false;
+  phase_no = 0;
 
   bool no_plus_testing = false;
   if(no_plus_test && (train_mode == TEST)) {

@@ -673,6 +673,7 @@ ProgVar* ProgVar::GetInitFromVar(bool warn) {
   ProgVar* ivar = init_from->FindVarName(name); // use our name
   TestWarning(warn && !ivar, "GetInitFromVar", "variable with my name:",name,
 	      "in init_from program:",init_from->name,"not found.");
+  SetVarFlag(CTRL_READ_ONLY);
   return ivar;
 }
 
@@ -3136,6 +3137,9 @@ String ProgramCallVar::GetDisplayName() const {
   String rval = "Call Fm ";
   if (prog_group) {
     rval += prog_group->GetName();
+    if(prog_name_var) {
+      rval += " " + prog_name_var->name;
+    }
     if(prog_args.size > 0) {
       rval += "(";
       for(int i=0;i<prog_args.size;i++) {
