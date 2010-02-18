@@ -2383,8 +2383,8 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id)
 }
 
 void taiEditDataHost::GetButtonImage(bool force) {
-  if (typ == NULL)  return;
-  if (!force && !frmMethButtons->isVisible()) return;
+  if(!typ || !mwidget || !frmMethButtons)  return;
+  if(!force && !frmMethButtons->isVisible()) return;
 
   for (int i = 0; i < meth_el.size; ++i) {
     taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);

@@ -5000,6 +5000,30 @@ void String_Array::ToQStringList(QStringList& sl) {
 }
 #endif // TA_USE_QT
 
+String String_Array::ToDelimString(const String& delim) {
+  String rval;
+  for (int i = 0; i < size; ++i) {
+    rval += FastEl(i);
+    if(i < size-1) rval += delim;
+  }
+  return rval;
+}
+
+void String_Array::FmDelimString(const String& str, const String& delim, bool reset_first) {
+  if(reset_first) Reset();
+  String remainder = str;
+  while(remainder.nonempty()) {
+    if(remainder.contains(delim)) {
+      Add(remainder.before(delim));
+      remainder = remainder.after(delim);
+    }
+    else {
+      Add(remainder);
+      remainder = _nilString;
+    }
+  }
+}
+
 
 //////////////////////////
 // 	SArg_Array	//

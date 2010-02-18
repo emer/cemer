@@ -586,6 +586,12 @@ void VEObjCarouselView::SetObjCarousel(VEObjCarousel* ob) {
 }
 
 void VEObjCarouselView::Render_pre() {
+  VEObjCarousel* ob = ObjCarousel();
+  if(!ob || !ob->HasBodyFlag(VEBody::FM_FILE) || !ob->obj_table) {
+    VEBodyView::Render_pre();	// fall back on basic code
+    return;
+  }
+
   bool show_drag = true;;
   T3ExaminerViewer* vw = GetViewer();
   if(vw)
@@ -597,7 +603,6 @@ void VEObjCarouselView::Render_pre() {
   setNode(obv);
   SoSeparator* ssep = obv->shapeSeparator();
 
-  VEObjCarousel* ob = ObjCarousel();
   if(ob) {
     ob->MakeSwitch();		// ensures
     ssep->addChild(ob->obj_switch);
@@ -611,12 +616,16 @@ void VEObjCarouselView::Render_pre() {
 }
 
 void VEObjCarouselView::Render_impl() {
+  VEObjCarousel* ob = ObjCarousel();
+  if(!ob || !ob->HasBodyFlag(VEBody::FM_FILE) || !ob->obj_table) {
+    VEBodyView::Render_impl();	// fall back on basic code
+    return;
+  }
+
   T3DataView::Render_impl();	// note: skipping over VEBodyView render!
 
   T3VEBody* obv = (T3VEBody*)this->node_so(); // cache
   if(!obv) return;
-  VEObjCarousel* ob = ObjCarousel();
-  if(!ob || !ob->obj_table) return;
 
   SoTransform* tx = obv->transform();
   tx->translation.setValue(ob->cur_pos.x, ob->cur_pos.y, ob->cur_pos.z);

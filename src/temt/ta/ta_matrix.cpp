@@ -1588,6 +1588,44 @@ void String_Matrix::ReclaimOrphans_(int from, int to) {
   }
 }
 
+String String_Matrix::ToDelimString(const String& delim) {
+  String rval;
+  for (int i = 0; i < size; ++i) {
+    rval += FastEl_Flat(i);
+    if(i < size-1) rval += delim;
+  }
+  return rval;
+}
+
+void String_Matrix::FmDelimString(const String& str, const String& delim) {
+  Reset();
+  String_Array ar;
+  ar.FmDelimString(str, delim);
+  if(dims() == 0) {
+    SetGeom(1, ar.size);
+  }
+  else {
+    if(size < ar.size) {
+      int extra = ((ar.size - size) / frameSize());
+      AddFrames(extra);
+      while(size < ar.size)
+	AddFrames(1);
+    }
+  }
+  int idx = 0;
+  String remainder = str;
+  while(remainder.nonempty()) {
+    if(remainder.contains(delim)) {
+      Set_Flat(remainder.before(delim), idx++);
+      remainder = remainder.after(delim);
+    }
+    else {
+      Set_Flat(remainder, idx++);
+      remainder = _nilString;
+    }
+  }
+}
+
 //////////////////////////
 //   float_Matrix	//
 //////////////////////////

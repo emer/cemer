@@ -952,6 +952,11 @@ public:
   override TypeDef*	GetDataTypeDef() const {return &TA_taString;} 
   override ValType	GetDataValType() const {return VT_STRING;} 
   
+  String	ToDelimString(const String& delim = " ");
+  // generates a string of all the items on the list, using given delimiter between items
+  void		FmDelimString(const String& str, const String& delim = " ");
+  // fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything
+
   TA_MATRIX_FUNS_SLOW(String_Matrix, String)
   
 public:

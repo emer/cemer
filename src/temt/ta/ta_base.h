@@ -2468,6 +2468,12 @@ public:
 #ifdef TA_USE_QT
   void			ToQStringList(QStringList& sl); // #IGNORE fills a QStringList
 #endif
+
+  String	ToDelimString(const String& delim = " ");
+  // generates a string of all the items on the list, using given delimiter between items
+  void		FmDelimString(const String& str, const String& delim = " ", bool reset_first = true);
+  // add strings to this array by parsing given string using given delimiter separating strings -- reset first = reset this array before adding (else append)
+
   TA_BASEFUNS(String_Array);
   TA_ARRAY_FUNS(String_Array, String)
 protected:

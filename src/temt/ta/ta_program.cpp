@@ -3506,7 +3506,7 @@ void ProgObjList::GetVarsForObjs() {
 
 void ProgObjList::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
-  if(!taMisc::is_loading && !taMisc::is_duplicating)
+  if(!taMisc::is_loading && !taMisc::is_duplicating && !isDestroying())
     GetVarsForObjs();
 }
 
