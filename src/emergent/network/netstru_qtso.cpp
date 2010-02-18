@@ -229,6 +229,7 @@ void UnitGroupView::InitDisplay() {
 float UnitGroupView::GetUnitDisplayVal(const TwoDCoord& co, void*& base) {
   NetView* nv = this->nv();
   float val = nv->scale.zero;
+  if(nv->unit_disp_idx < 0) return val;
   base = uvd_bases.SafeEl(co.x, co.y, nv->unit_disp_idx);
   if(!base) return val;
 
