@@ -1344,9 +1344,9 @@ protected:
   virtual void		ViewScript_impl();
 #endif
   virtual void		GetSubProgsAll(int depth=0);
-  // populate the sub_progs_all lists of all sub programs including self
-  virtual void		GetSubProgsStep(int depth=0);
-  // populate the sub_progs_step lists of all sub programs including self
+  // populate the sub_progs_all lists of all sub programs
+  virtual void		GetSubProgsStep();
+  // populate the sub_progs_step lists of all sub programs in sub_progs_all that don't have the NO_STOP_STEP flag set
 
   static void		InitForbiddenNames();
 
@@ -1488,8 +1488,6 @@ public:
   // safe call to get target during compile time -- fail silently
   virtual void		AddTargetsToListAll(Program_List& all_lst) { };
   // add any actual targets of this program to the all list-- use LinkUnique -- only non-null!
-  virtual void		AddTargetsToListStep(Program_List& step_lst) { };
-  // add any actual targets of this program to the step list -- use LinkUnique -- only non-null!
   virtual bool		CallsProgram(Program* prg) { return false; }
   // return true if this program call calls given program
   virtual const String	GenCompileScript(Program* prg) { return _nilString; }
@@ -1523,7 +1521,6 @@ public:
   override Program*	GetTarget();
   override Program*	GetTarget_Compile();
   override void		AddTargetsToListAll(Program_List& all_lst);
-  override void		AddTargetsToListStep(Program_List& step_lst);
   override bool		CallsProgram(Program* prg);
   override const String	GenCompileScript(Program* prg);
   override const String	GenCallInit(Program* prg);
@@ -1563,7 +1560,6 @@ public:
   override Program*	GetTarget();
   override Program*	GetTarget_Compile();
   override void		AddTargetsToListAll(Program_List& all_lst);
-  override void		AddTargetsToListStep(Program_List& step_lst);
   override bool		CallsProgram(Program* prg);
   override const String	GenCompileScript(Program* prg);
   override const String	GenCallInit(Program* prg);

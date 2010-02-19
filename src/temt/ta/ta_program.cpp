@@ -2810,13 +2810,6 @@ void ProgramCall::AddTargetsToListAll(Program_List& all_lst) {
   }
 }
 
-void ProgramCall::AddTargetsToListStep(Program_List& step_lst) {
-  Program* trg = target.ptr();
-  if(trg && !trg->HasProgFlag(Program::NO_STOP_STEP)) {
-    step_lst.LinkUnique(trg);
-  }
-}
-
 void ProgramCall::SetTarget(Program* target_) {
   target = target_;
 }
@@ -3044,17 +3037,6 @@ void ProgramCallVar::AddTargetsToListAll(Program_List& all_lst) {
   for(int j=0;j<prog_group->leaves;j++) {
     Program* strg = prog_group->Leaf(j);
     all_lst.LinkUnique(strg);
-  }
-}
-
-void ProgramCallVar::AddTargetsToListStep(Program_List& step_lst) {
-  if(!prog_group) return;
-  if(prog_group->leaves <= 3) {	// small number of options is ok for stepping..
-    for(int j=0;j<prog_group->leaves;j++) {
-      Program* strg = prog_group->Leaf(j);
-      if(!strg->HasProgFlag(Program::NO_STOP_STEP))
-	step_lst.LinkUnique(strg);
-    }
   }
 }
 
@@ -4179,6 +4161,7 @@ void Program::GetSubProgsAll(int depth) {
   if(TestError((depth >= 100), "GetSubProgsAll",
 	       "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting"))
     return;
+  sub_progs_updtd = true;
   sub_progs_all.Reset();
   for(int i=0;i<sub_prog_calls.size; i++) {
     ProgramCallBase* sp = (ProgramCallBase*)sub_prog_calls.FastEl(i);
@@ -4196,31 +4179,18 @@ void Program::GetSubProgsAll(int depth) {
   }
 }
 
-void Program::GetSubProgsStep(int depth) {
-  if(TestError((depth >= 100), "GetSubProgsAll",
-	       "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting"))
-    return;
-
-  sub_progs_updtd = true;
+void Program::GetSubProgsStep() {
+  // strategy here is to just go through the sub_progs_all list and get all the ones with step
+  // flags on -- this is the only really reliable way to do this in terms of picking up
+  // deep step guys even through ProgramCallVar guys
   sub_progs_step.Reset();
-  int st_idx = 0;
   if(HasProgFlag(SELF_STEP)) {
     sub_progs_step.Link(this);
-    st_idx = 1;
   }
-  for(int i=0;i<sub_prog_calls.size; i++) {
-    ProgramCallBase* sp = (ProgramCallBase*)sub_prog_calls.FastEl(i);
-    sp->AddTargetsToListStep(sub_progs_step);
-  }
-  int init_sz = sub_progs_step.size;
-  for(int i=st_idx;i<init_sz; i++) {
-    Program* sp = sub_progs_step[i];
-    sp->GetSubProgsStep(depth+1);	// no loops please!!!
-    // now get our sub-progs sub-progs..
-    for(int j=0;j<sp->sub_progs_step.size;j++) {
-      Program* ssp = sp->sub_progs_step[j];
-      sub_progs_step.LinkUnique(ssp);
-    }
+  for(int i=0;i<sub_progs_all.size; i++) {
+    Program* sp = (Program*)sub_progs_all.FastEl(i);
+    if(!sp->HasProgFlag(Program::NO_STOP_STEP))
+      sub_progs_step.Link(sp);	// guaranteed to be unique already
   }
 }
 

@@ -1408,6 +1408,8 @@ public:
   virtual void	 UseSeed(int idx);
   // #BUTTON use seed at given index in the list (does OldSeed on it); wraps around (modulus) if idx is > list size (issues warning)
 
+  override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); 
+
   TA_SIMPLE_BASEFUNS(RndSeed_List);
 private:
   void	Initialize() 		{ seeds.SetBaseType(&TA_RndSeed); }
