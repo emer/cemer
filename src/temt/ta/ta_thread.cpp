@@ -382,18 +382,17 @@ void taThreadMgr::SyncThreads() {
       n_wake_in_sync += n_to_run - n_started;
   }
 
-//   wait_mutex.lock();
+  // note: one could wrap the following code all in wait_mutex.lock and unlock, but
+  // because the threads are mutex on all the increments, esp the n_running one, 
+  // it is not necessary!  the mutex will be hit next time a run threads guy happens
+  // and that will definitely ensure that everyone got back home..
+
   while(n_started < n_to_run) { // wait for other guys to start
-//     wait_mutex.unlock();
-    taManagedThread::usleep(sync_sleep_usec*10);    // this is going to be slower, so wait longer
-//     wait_mutex.lock();
+    taManagedThread::usleep(sync_sleep_usec);
   }
   while(n_running > 0) {	// then wait for everyone to finish
-//     wait_mutex.unlock();
     taManagedThread::usleep(sync_sleep_usec);
-//     wait_mutex.lock();
   }
-//   wait_mutex.unlock();
 
   if(get_timing) {
     sync_time.EndTimer();
