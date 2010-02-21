@@ -7780,10 +7780,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	interpolate=0;
 	cur_val=0;
        };
-       wt_sig {gain=6: off=1: };
+       wt_sig {gain=6: off=1.1: };
        lmix {hebb=0.01: err=0.99: err_sb=1: };
        xcal {s_mix=0.9: m_mix=0.1: thr_l_mix=0.01: thr_m_mix=0.99: d_rev=0.1: d_gain=1: d_thr=0.0001: d_rev_ratio=9: };
-       savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
+       savg_cor {cor=0.4: thresh=0.001: norm_con_n=1: };
        rel_net_adapt {
 	on=0;
 	trg_fm_input=0.85;
@@ -7815,10 +7815,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       interpolate=0;
       cur_val=0;
      };
-     wt_sig {gain=6: off=1: };
+     wt_sig {gain=6: off=1.1: };
      lmix {hebb=0.01: err=0.99: err_sb=1: };
      xcal {s_mix=0.9: m_mix=0.1: thr_l_mix=0.01: thr_m_mix=0.99: d_rev=0.1: d_gain=1: d_thr=0.0001: d_rev_ratio=9: };
-     savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
+     savg_cor {cor=0.4: thresh=0.001: norm_con_n=1: };
      rel_net_adapt {
       on=0;
       trg_fm_input=0.85;
