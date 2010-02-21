@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.0.2.0
+// ta_Dump File v2.0 -- code v5.0.2.0
 LeabraProject .projects[0] { 
   taBase_Group @.templates = [0] {
   };
@@ -372,7 +372,7 @@ LeabraProject .projects[0] {
      name="FilesTable";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[0].objs[0]$$;
+     object_val=.projects[0].programs[0].objs[0]$0$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -463,7 +463,7 @@ LeabraProject .projects[0] {
     ResetDataRows @[0] {
      desc="getdirfiles adds to table so need to reset it first..";
      flags=;
-     data_var=.projects[0].programs[0].vars[0]$$;
+     data_var=.projects[0].programs[0].vars[0]$1$;
     };
     DataGenCall @[1] {
      desc=;
@@ -547,13 +547,13 @@ LeabraProject .projects[0] {
       DataVarProg @[0] {
        desc="CUR_ROW is set by the data loop as it iterates";
        flags=;
-       data_var=$.projects[0].programs[0].vars[0]$;
+       data_var=$1$;
        set_data=0;
        row_spec=CUR_ROW;
        row_var=NULL;
        quiet=0;
-       var_1=.projects[0].programs[0].vars[5]$$;
-       var_2=.projects[0].programs[0].vars[6]$$;
+       var_1=.projects[0].programs[0].vars[5]$2$;
+       var_2=.projects[0].programs[0].vars[6]$3$;
        var_3=NULL;
        var_4=NULL;
       };
@@ -561,17 +561,17 @@ LeabraProject .projects[0] {
        desc=;
        flags=;
        message="file name and path";
-       print_var=$.projects[0].programs[0].vars[5]$;
-       print_var2=$.projects[0].programs[0].vars[6]$;
+       print_var=$2$;
+       print_var2=$3$;
        print_var3=NULL;
        print_var4=NULL;
        print_var5=NULL;
        print_var6=NULL;
       };
      };
-     data_var=$.projects[0].programs[0].vars[0]$;
-     index_var=.projects[0].programs[0].vars[4]$$;
-     order_var=.projects[0].programs[0].vars[3]$$;
+     data_var=$1$;
+     index_var=.projects[0].programs[0].vars[4]$4$;
+     order_var=.projects[0].programs[0].vars[3]$5$;
      order=SEQUENTIAL;
      item_idx_list{ 0;1;2;3;4;5;6;7;8;9;     };
     };
@@ -586,7 +586,7 @@ LeabraProject .projects[0] {
   el_def=0;
   MainWindowViewer @[0] {
    name="Browser2";
-   m_data=.projects[0]$$;
+   m_data=.projects[0]$6$;
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -615,7 +615,7 @@ LeabraProject .projects[0] {
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$.projects[0]$;
+     m_root=$6$;
     };
     PanelViewer @[1] {
      name="Panels";
