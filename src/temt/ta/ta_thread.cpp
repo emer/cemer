@@ -345,11 +345,6 @@ void taThreadMgr::RunThreads() {
 void taThreadMgr::SyncThreads() {
   if(get_timing)    run_time.EndTimer();
 
-  if(n_started == n_to_run && n_running == 0) {
-    if(get_timing)	total_time.EndTimer();
-    return;
-  }
-
   if(get_timing) {
     sync_time.StartTimer(false); // don't reset
     if(n_started < n_to_run)
@@ -363,8 +358,11 @@ void taThreadMgr::SyncThreads() {
     taManagedThread::usleep(sync_sleep_usec);
   }
 
+  wait_mutex.lock();		// wait until everyone is fully in the wait state before cont
   n_to_run = 0;			// done!
   n_started = 0;
+  n_running = 0;		// just in case..
+  wait_mutex.unlock();		// ok, ready to be done
 
   if(get_timing) {
     sync_time.EndTimer();
