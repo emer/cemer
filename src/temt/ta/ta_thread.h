@@ -207,6 +207,8 @@ public:
 
   int			n_threads; 	// #MIN_1 #NO_SAVE NOTE: not saved -- initialized from user prefs.  desired number of threads to use -- typically the number of physical processors (cores) available -- see preferences/options thread_defaults field for details.
   int			sync_sleep_usec; // #EXPERT #NO_SAVE microseconds to sleep while waiting for threads to synchronize -- not typically adjusted by the user, and not saved, but availble for testing purposes
+  int			terminate_max_wait; // #EXPERT #NO_SAVE number of iterations to wait for threads to self-terminate before taking them out more forcefully
+
   TypeDef*		task_type;	 // #NO_SAVE #READ_ONLY the type of task object to create -- this should be set *prior* to calling InitAll() and should NOT change during the lifetime of the manager, unless an explicit RemoveAll() call is made first
 
   taTask_List		tasks;	 // #NO_SAVE #READ_ONLY the tasks for the threads to perform -- we manage these and allocate them to threads -- all are of type task_type
@@ -234,6 +236,8 @@ public:
   // #IGNORE number of threads that are currently running -- atomically incremented and decremented by the threads as they run and finish their task
   int			n_started;
   // #IGNORE number of threads that actually started the task -- this is reset to 0 at start of run, and atomically incremented by the threads when they start running -- ensures that everyone runs..
+  int			n_active;
+  // #IGNORE number of threads that are activated and ready to start running -- used for syncing on task startup
   QMutex		wait_mutex;
   // #IGNORE mutex for guarding the wait guy
   QWaitCondition 	wait;

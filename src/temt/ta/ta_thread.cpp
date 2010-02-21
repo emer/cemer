@@ -179,6 +179,7 @@ void taManagedThread::run() {
 
   mgr->wait_mutex.lock();	// expects to be in lock at start of loop
   m_active = true;
+  mgr->n_active++;		// add one to the active list -- in mutex
   while(!m_stop_req) {
     mgr->wait.wait(&mgr->wait_mutex); // we wait until we get the go signal
     // note: comes out of the wait with mutex locked
@@ -201,6 +202,7 @@ void taManagedThread::run() {
     mgr->n_running--;   // subtract one from running list
   }
   m_active = false;
+  mgr->n_active--;
   mgr->wait_mutex.unlock();	// only unlock at final exit
 }
 
@@ -221,6 +223,7 @@ taThreadMgr_PList taThreadMgr::all_thread_mgrs;
 void taThreadMgr::Initialize() {
   n_threads = taMisc::thread_defaults.n_threads;
   sync_sleep_usec = 1;
+  terminate_max_wait = 10000;
   task_type = NULL;
   get_timing = false;
   n_wake_in_sync = 0;
@@ -229,6 +232,7 @@ void taThreadMgr::Initialize() {
   n_to_run = 0;
   n_running = 0;
   n_started = 0;
+  n_active = 0;
 }
 
 void taThreadMgr::Destroy() {
@@ -260,7 +264,7 @@ void taThreadMgr::InitAll() {
   if((threads.size == n_threads-1) && (tasks.size == n_threads)) return; // fast bail if same
   InitThreads();
   CreateTasks();
-  SetTasksToThreads();
+  SetTasksToThreads();		// this actually starts threads
 }
 
 void taThreadMgr::RemoveAll() {
@@ -278,6 +282,7 @@ void taThreadMgr::InitThreads() {
     taManagedThread* tt = new taManagedThread(this);
     threads.Add(tt);
   }
+  n_active = 0;			// reset now for sure
 }
 
 void taThreadMgr::RemoveThreads() {
@@ -292,14 +297,28 @@ void taThreadMgr::RemoveThreads() {
   wait_mutex.lock();
   wait.wakeAll();		// now wake them up, where they meet certain death..
   wait_mutex.unlock();
-  
+
+  taManagedThread::usleep(sync_sleep_usec*100); // give some time to wakeup..
+  int n_waits = 0;
+
+  wait_mutex.lock();
+  while(n_active > 0 && n_waits < terminate_max_wait) { // wait for everyone to exit
+    wait_mutex.unlock();
+    taManagedThread::usleep(sync_sleep_usec*10);    // this is going to be slower, so wait longer
+    n_waits++;
+    wait_mutex.lock();
+  }
+  wait_mutex.unlock();
+
+  // if any remain, terminate them!!
   for (int i = old_cnt - 1; i >= 0; i--) {
     taManagedThread* tt = threads[i];
-    if(!tt->wait(100))		// wait 100msec before terminating..
+    if(tt->isActive())
       tt->terminate();		// nuke with vengance..
     threads.RemoveIdx(i);
     delete tt;			// nuke..
   }
+  n_active = 0;			// now 0 for sure
 }
 
 void taThreadMgr::TerminateAllThreads() {
@@ -327,6 +346,17 @@ void taThreadMgr::SetTasksToThreads() {
     tt->setTask(tasks[i+1]);
     tt->start(); // starts paused -- now actually start the thread!
   }
+
+  // wait here to make sure the damn threads actually startup!
+  taManagedThread::usleep(sync_sleep_usec*100); // give some time to wakeup..
+  wait_mutex.lock();
+  while(n_active < threads.size) { // wait for everyone to start and get into first wait
+    wait_mutex.unlock();
+    taManagedThread::usleep(sync_sleep_usec*10);    // this is going to be slower, so wait longer
+    wait_mutex.lock();
+  }
+  wait_mutex.unlock();
+  // now we know for sure everyone is groovy
 }
 
 void taThreadMgr::RunThreads() {
@@ -336,6 +366,7 @@ void taThreadMgr::RunThreads() {
   wait_mutex.lock();
   n_to_run = threads.size;
   n_started = 0;
+  n_running = 0;
   wait.wakeAll();
   wait_mutex.unlock();
 
@@ -351,18 +382,18 @@ void taThreadMgr::SyncThreads() {
       n_wake_in_sync += n_to_run - n_started;
   }
 
+  wait_mutex.lock();
   while(n_started < n_to_run) { // wait for other guys to start
+    wait_mutex.unlock();
     taManagedThread::usleep(sync_sleep_usec*10);    // this is going to be slower, so wait longer
+    wait_mutex.lock();
   }
   while(n_running > 0) {	// then wait for everyone to finish
+    wait_mutex.unlock();
     taManagedThread::usleep(sync_sleep_usec);
+    wait_mutex.lock();
   }
-
-  wait_mutex.lock();		// wait until everyone is fully in the wait state before cont
-  n_to_run = 0;			// done!
-  n_started = 0;
-  n_running = 0;		// just in case..
-  wait_mutex.unlock();		// ok, ready to be done
+  wait_mutex.unlock();
 
   if(get_timing) {
     sync_time.EndTimer();
