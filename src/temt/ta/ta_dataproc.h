@@ -731,6 +731,7 @@ public:
   DataOpList		dest_cols;
   // destination columns to operate on (variables are labeled as d_xxx where xxx is col_name)
   ProgEl_List		loop_code; // #SHOW_TREE the items to execute in the loop
+  bool			use_col_numbers; // #DEF_false use column numbers instead of names to access the column data within the loop -- this is significantly faster but also much more brittle -- if the columns change at all after the program is compiled, difficult-to-debug errors can occur -- use with caution!
   ProgVar_List		src_col_vars;  // #READ_ONLY source column variables
   ProgVar_List		dest_col_vars;  // #READ_ONLY dest column variables
   ProgVar		src_row_var;	// #HIDDEN #READ_ONLY #NO_SAVE variable for FindVarName rval for src_row loop variable

@@ -2234,6 +2234,7 @@ const String DataJoinProg::GenCssBody_impl(int indent_level) {
 
 void DataCalcLoop::Initialize() {
   src_row_var.name = "src_row";
+  use_col_numbers = false;
 }
 
 void DataCalcLoop::UpdateAfterEdit_impl() {
@@ -2433,12 +2434,18 @@ const String DataCalcLoop::GenCssPre_impl(int indent_level) {
 	mat_type = "int_Matrix";
       else if(vt == VT_STRING)
 	mat_type = "String_Matrix";
-      rval += il2 + mat_type + "* s_" + ds->col_name + " = " + src_data_var->name + ".GetValAsMatrix(" +
-	String(ds->col_idx) + ", src_row);\n";
+      rval += il2 + mat_type + "* s_" + ds->col_name + " = " + src_data_var->name +
+	".GetValAsMatrix(";
     }
+    else {
+      rval += il2 + "Variant s_" + ds->col_name + " = " + src_data_var->name +
+	".GetValAsVar(";
+    }
+    if(use_col_numbers)
+      rval += String(ds->col_idx);
     else
-      rval += il2 + "Variant s_" + ds->col_name + " = " + src_data_var->name + ".GetValAsVar(" +
-	String(ds->col_idx) + ", src_row);\n";
+      rval += String("\"") + da->name + String("\"");
+    rval += ", src_row);\n";
   }
   src_cols.ClearColumns();
   // dest cols are only activated by DataAddDestRow
@@ -2563,12 +2570,18 @@ const String DataCalcAddDestRow::GenCssBody_impl(int indent_level) {
 	mat_type = "int_Matrix";
       else if(vt == VT_STRING)
 	mat_type = "String_Matrix";
-      rval += il + mat_type + "* d_" + ds->col_name + " = " + dcl->dest_data_var->name + ".GetValAsMatrix(" +
-	String(ds->col_idx) + ", -1); // -1 = last row\n";
+      rval += il + mat_type + "* d_" + ds->col_name + " = " + dcl->dest_data_var->name
+	+ ".GetValAsMatrix(";
     }
+    else {
+      rval += il + "Variant d_" + ds->col_name + " = " + dcl->dest_data_var->name
+	+ ".GetValAsVar(";
+    }
+    if(dcl->use_col_numbers)
+      rval += String(ds->col_idx);
     else
-      rval += il + "Variant d_" + ds->col_name + " = " + dcl->dest_data_var->name + ".GetValAsVar(" +
-	String(ds->col_idx) + ", -1); // -1 = last row\n";
+      rval += String("\"") + da->name + String("\"");
+    rval += ", -1); // -1 = last row\n";
   }
   dcl->dest_cols.ClearColumns();
   return rval;
@@ -2642,11 +2655,15 @@ const String DataCalcSetDestRow::GenCssBody_impl(int indent_level) {
     if(ds->col_idx < 0) continue;
     DataCol* da = dd->data[ds->col_idx];
     if(da->is_matrix)
-      rval += il + dcl->dest_data_var->name + ".SetValAsMatrix(" + 
-	"d_" + ds->col_name + ", " + String(ds->col_idx) + ", -1); // -1 = last row\n";
+      rval += il + dcl->dest_data_var->name + ".SetValAsMatrix(";
     else
-      rval += il + dcl->dest_data_var->name + ".SetValAsVar(" +
-	"d_" + ds->col_name + ", " + String(ds->col_idx) + ", -1); // -1 = last row\n";
+      rval += il + dcl->dest_data_var->name + ".SetValAsVar(";
+    rval += "d_" + ds->col_name + ", ";
+    if(dcl->use_col_numbers)
+      rval += String(ds->col_idx);
+    else
+      rval += String("\"") + da->name + String("\"");
+    rval += ", -1); // -1 = last row\n";
   }
   rval += il + dcl->dest_data_var->name + ".WriteClose();\n";
   dcl->dest_cols.ClearColumns();
@@ -2714,11 +2731,15 @@ const String DataCalcSetSrcRow::GenCssBody_impl(int indent_level) {
     if(ds->col_idx < 0) continue;
     DataCol* da = sd->data[ds->col_idx];
     if(da->is_matrix)
-      rval += il + dcl->src_data_var->name + ".SetValAsMatrix(" + 
-	"s_" + ds->col_name + ", " + String(ds->col_idx) + ", src_row);\n";
+      rval += il + dcl->src_data_var->name + ".SetValAsMatrix(";
     else
-      rval += il + dcl->src_data_var->name + ".SetValAsVar(" +
-	"s_" + ds->col_name + ", " + String(ds->col_idx) + ", src_row);\n";
+      rval += il + dcl->src_data_var->name + ".SetValAsVar(";
+    rval += "s_" + ds->col_name + ", ";
+    if(dcl->use_col_numbers)
+      rval += String(ds->col_idx);
+    else
+      rval += String("\"") + da->name + String("\"");
+    rval += ", src_row);\n";
   }
   rval += il + dcl->src_data_var->name + ".WriteClose();\n";
   dcl->dest_cols.ClearColumns();
