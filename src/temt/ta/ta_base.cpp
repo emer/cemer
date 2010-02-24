@@ -130,6 +130,7 @@ const QPixmap* folder_open_pixmap() {
 taRootBase* tabMisc::root = NULL;
 taBase*	    tabMisc::cur_undo_save_top = NULL;
 taBase*	    tabMisc::cur_undo_mod_obj = NULL;
+taBase*	    tabMisc::cur_undo_save_owner = NULL;
 
 taBase_RefList 	tabMisc::delayed_close;
 taBase_RefList 	tabMisc::delayed_updateafteredit;
@@ -972,6 +973,13 @@ int taBase::NTokensInScope(TypeDef* td, taBase* ref_obj, TypeDef* scp_tp) {
       cnt++;
   }
   return cnt;
+}
+
+taBase* taBase::GetUndoBarrier() {
+  taBase* own = GetOwner();
+  if(!own) return NULL;
+  if(own->HasOption("UNDO_BARRIER")) return own;
+  return own->GetUndoBarrier();
 }
 
 ////////////////////////////////////////////////////////////////////// 

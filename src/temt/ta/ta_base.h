@@ -64,9 +64,11 @@ public:
   static taRootBase*	root;
   // root of the structural object hierarchy
   static taBase*	cur_undo_save_top;
-  // #READ_ONLY the object under which everything is being saved for the purposes of an undo record -- only valid use is to determine if pointer is same as another one -- do NOT attempt to access the object pointed to -- don't want to change the save state
+  // #READ_ONLY #NO_SAVE the object under which everything is being saved for the purposes of an undo record -- only valid use is to determine if pointer is same as another one -- do NOT attempt to access the object pointed to -- don't want to change the save state
   static taBase*	cur_undo_mod_obj;
-  // #READ_ONLY the object that is being directly modified, triggering an undo save -- only valid use is to determine if pointer is same as another one -- do NOT attempt to access the object pointed to -- don't want to change the save state, and it might have died or something
+  // #READ_ONLY #NO_SAVE the object that is being directly modified, triggering an undo save -- only valid use is to determine if pointer is same as another one -- do NOT attempt to access the object pointed to -- don't want to change the save state, and it might have died or something
+  static taBase*	cur_undo_save_owner;
+  // #READ_ONLY #NO_SAVE for actions that alter the structural hierarchy (adding, moving, deleting items), this is the list or group that owns the objects being modified -- every object that has special is_undo_saving optimizations should check for this being non-null, and check if IsChildOf(undo_save_owner) -- if true, they should save!
 
   static taBase_RefList	delayed_updateafteredit;
   // list of objs to be update-after-edit'd in the wait process
@@ -440,6 +442,10 @@ public:
     DESTROYED		= 0x0080, // #EXPERT set in base destroy (DEBUG only); lets us detect multi destroys
     NAME_READONLY	= 0x0100, // #EXPERT set to disable editing of name
     REGISTERED		= 0x0200, // #EXPERT set when registered (must unreg)
+    BF_MISC1		= 0x1000, // #EXPERT miscellaneous user flag -- useful for internal temp flags that user does not need to see (e.g., marking an object as used or not in a given context)
+    BF_MISC2		= 0x2000, // #EXPERT miscellaneous user flag -- useful for internal temp flags that user does not need to see (e.g., marking an object as used or not in a given context)
+    BF_MISC3		= 0x4000, // #EXPERT miscellaneous user flag -- useful for internal temp flags that user does not need to see (e.g., marking an object as used or not in a given context)
+    BF_MISC4		= 0x8000, // #EXPERT miscellaneous user flag -- useful for internal temp flags that user does not need to see (e.g., marking an object as used or not in a given context)
 #ifndef __MAKETA__
     INVALID_MASK	= THIS_INVALID | CHILD_INVALID
     ,COPY_MASK		= THIS_INVALID | CHILD_INVALID | NAME_READONLY // flags to copy when doing an object copy
@@ -643,6 +649,7 @@ public:
     // #CAT_ObjectMgmt typically the first non-list/group owner above this one
   bool 			IsParentOf(const taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect parent of the obj (or is the obj)
   bool			IsChildOf(const taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect child of the obj (or is the obj)
+
   ///////////////////////////////////////////////////////////////////////////
   //	Paths in the structural hierarchy
 public:
@@ -664,12 +671,14 @@ public:
 
   virtual TypeDef*	GetScopeType();
   // #IGNORE gets my scope type (if NULL, it means no scoping, or root)
-  virtual taBase*		GetScopeObj(TypeDef* scp_tp=NULL);
+  virtual taBase*	GetScopeObj(TypeDef* scp_tp=NULL);
   // #IGNORE gets the object that is at the scope type above me (uses GetScopeType() or scp_tp)
   virtual bool		SameScope(taBase* ref_obj, TypeDef* scp_tp=NULL);
   // #IGNORE determine if this is in the same scope as given ref_obj (uses my scope type)
   static int		NTokensInScope(TypeDef* type, taBase* ref_obj, TypeDef* scp_tp=NULL);
   // #IGNORE number of tokens of taBase objects of given type in same scope as ref_obj
+  virtual taBase*	GetUndoBarrier();
+  // #IGNORE get the nearest owner of this object that is marked as an UNDO_BARRIER -- any changes under that object should not affect anything outside its own scope, and thus undo changes can be saved strictly within that scope
 
 protected: // Impl
   

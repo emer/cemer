@@ -28,7 +28,7 @@ Program .projects[0].programs.gp[0][6] {
   ProgEl_List @.load_code = [0] {
   };
 
-  ProgEl_List @.init_code = [2] {
+  ProgEl_List @.init_code = [3] {
     MethodCall @[0] { 
       ProgArg_List @.meth_args = [2] {
 	ProgArg @[0] { };
@@ -36,6 +36,11 @@ Program .projects[0].programs.gp[0][6] {
       };
     };
     MethodCall @[1] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+    MethodCall @[2] { 
       ProgArg_List @.meth_args = [1] {
 	ProgArg @[0] { };
       };
@@ -80,8 +85,8 @@ Program .projects[0].programs.gp[0][6] {
      offset {x=0: y=0: };
      use_layer_type=1;
      na_by_range=0;
-     ext_flags=EXT;
-     noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+     ext_flags=;
+     noise {name="RandomSpec_7": type=NONE: mean=0: var=0.5: par=1: };
     };
     LayerWriterEl @[1] {
      chan_name="Output";
@@ -90,18 +95,18 @@ Program .projects[0].programs.gp[0][6] {
      offset {x=0: y=0: };
      use_layer_type=1;
      na_by_range=0;
-     ext_flags=TARG;
-     noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+     ext_flags=;
+     noise {name="RandomSpec_8": type=NONE: mean=0: var=0.5: par=1: };
     };
     LayerWriterEl @[2] {
      chan_name="Name";
      net_target=TRIAL_NAME;
-     layer_name="Name";
+     layer_name=;
      offset {x=0: y=0: };
      use_layer_type=1;
      na_by_range=0;
      ext_flags=;
-     noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+     noise {name="RandomSpec_9": type=NONE: mean=0: var=0.5: par=1: };
     };
    };
   };
@@ -201,6 +206,28 @@ Program .projects[0].programs.gp[0][6] {
    };
   };
   MethodCall @[1] {
+   desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
+   flags=;
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[0][6].vars[0]$;
+   method=LayerWriter::AutoConfig;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=bool;
+     type="bool";
+     name="reset_existing";
+     required=0;
+     def_val="true";
+     expr {
+      expr="true";
+     };
+    };
+   };
+  };
+  MethodCall @[2] {
    desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
    flags=;
    result_var=NULL;

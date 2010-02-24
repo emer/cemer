@@ -1464,9 +1464,12 @@ static bool taDataGen_GetDirFiles_impl(DataTable* dest, const String& dir_path,
 bool taDataGen::GetDirFiles(DataTable* dest, const String& dir_path, 
 			    const String& filter, bool recursive,
 			    const String& fname_col_nm,
-			    const String& path_col_nm) {
+			    const String& path_col_nm, bool reset_first) {
   if(!dest) return false;
   dest->StructUpdate(true);
+
+  if(reset_first)
+    dest->RemoveAllRows();
 
   int fname_idx = -1;
   if(!fname_col_nm.empty())

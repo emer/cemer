@@ -2304,7 +2304,8 @@ void taiProgStepButton::CallFunList(void* itm) {
 
   taProject* proj = (taProject*)prg->GetOwner(&TA_taProject);
   if(proj) {
-    proj->undo_mgr.SaveUndo(prg, "Call Method: " + meth->name);
+    proj->undo_mgr.SaveUndo(prg, "Call Method: " + meth->name, NULL, true);
+    // true = force project-level save
   }
 
   if(trg && trg->owner) {

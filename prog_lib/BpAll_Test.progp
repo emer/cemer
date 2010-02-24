@@ -174,7 +174,7 @@ Program_Group .projects[0].programs.gp[1] {
       ProgEl_List @.load_code = [0] {
       };
 
-      ProgEl_List @.init_code = [2] {
+      ProgEl_List @.init_code = [3] {
 	MethodCall @[0] { 
 	  ProgArg_List @.meth_args = [2] {
 	    ProgArg @[0] { };
@@ -182,6 +182,11 @@ Program_Group .projects[0].programs.gp[1] {
 	  };
 	};
 	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[2] { 
 	  ProgArg_List @.meth_args = [1] {
 	    ProgArg @[0] { };
 	  };
@@ -930,7 +935,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       use_layer_type=1;
       na_by_range=0;
       ext_flags=;
-      noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+      noise {name="RandomSpec_4": type=NONE: mean=0: var=0.5: par=1: };
      };
      LayerWriterEl @[1] {
       chan_name="Output";
@@ -940,17 +945,17 @@ this program can be extended to do arbitrary things to generate data and apply i
       use_layer_type=1;
       na_by_range=0;
       ext_flags=;
-      noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+      noise {name="RandomSpec_5": type=NONE: mean=0: var=0.5: par=1: };
      };
      LayerWriterEl @[2] {
       chan_name="Name";
       net_target=TRIAL_NAME;
-      layer_name="Name";
+      layer_name=;
       offset {x=0: y=0: };
       use_layer_type=1;
       na_by_range=0;
       ext_flags=;
-      noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+      noise {name="RandomSpec_6": type=NONE: mean=0: var=0.5: par=1: };
      };
     };
    };
@@ -1050,6 +1055,28 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    MethodCall @[1] {
+    desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
+    flags=;
+    result_var=NULL;
+    obj=$.projects[0].programs.gp[1][2].vars[0]$;
+    method=LayerWriter::AutoConfig;
+    meth_args {
+     name=;
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=bool;
+      type="bool";
+      name="reset_existing";
+      required=0;
+      def_val="true";
+      expr {
+       expr="true";
+      };
+     };
+    };
+   };
+   MethodCall @[2] {
     desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
     flags=;
     result_var=NULL;

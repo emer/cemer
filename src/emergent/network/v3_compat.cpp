@@ -1066,11 +1066,12 @@ bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter* lw, EventSpec* es,
   lw->layer_data.Reset();
   lw->data = dt;
   lw->network = net;
+  bool made_new;
   for(int i=0; i<es->patterns.size; i++) {
     PatternSpec* ps = (PatternSpec*)es->patterns[i];
     if(ps->type == PatternSpec::INACTIVE) continue;
     //LayerWriterEl* le = (LayerWriterEl*)
-    lw->layer_data.FindMakeLayerData(ps->name, ps->layer_name);
+    lw->layer_data.FindMakeLayerData(ps->name, ps->layer_name, made_new);
     Layer* lay = (Layer*)net->layers.FindLeafName(ps->layer_name);
     if(lay) {
       if(ps->type == PatternSpec::INPUT) lay->layer_type = Layer::INPUT;
@@ -1079,12 +1080,12 @@ bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter* lw, EventSpec* es,
     }
   }
   { // trial_name
-    LayerWriterEl* le = (LayerWriterEl*)lw->layer_data.FindMakeChanName("Name");
+    LayerWriterEl* le = (LayerWriterEl*)lw->layer_data.FindMakeChanName("Name", made_new);
     le->net_target = LayerDataEl::TRIAL_NAME;
   }
   if(dt->data.FindName("Group"))
   { // groupl_name
-    LayerWriterEl* le = (LayerWriterEl*)lw->layer_data.FindMakeChanName("Group");
+    LayerWriterEl* le = (LayerWriterEl*)lw->layer_data.FindMakeChanName("Group", made_new);
     le->net_target = LayerDataEl::GROUP_NAME;
   }
   lw->UpdateAfterEdit();	// sets subguys

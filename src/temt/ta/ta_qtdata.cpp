@@ -5494,7 +5494,8 @@ bool taiMethodData::CallFun_impl() {
     taBase* tab = (taBase*)base;
     taProject* proj = (taProject*)tab->GetOwner(&TA_taProject);
     if(proj) {
-      proj->undo_mgr.SaveUndo(tab, "Call Method: " + meth_name);
+      proj->undo_mgr.SaveUndo(tab, "Call Method: " + meth_name, NULL, true);
+      // true = force project-level save
     }
   }
   

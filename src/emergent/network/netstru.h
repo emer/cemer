@@ -1250,7 +1250,7 @@ private:
 };
 
 class EMERGENT_API Unit_Group: public taGroup<Unit> {
-  // #NO_UPDATE_AFTER ##CAT_Network ##SCOPE_Network ##NO_EXPAND_ALL a group of units -- manages structural but not computational functions
+  // #NO_UPDATE_AFTER ##CAT_Network ##SCOPE_Network ##NO_EXPAND_ALL ##UNDO_BARRIER a group of units -- manages structural but not computational functions
 INHERITED(taGroup<Unit>)
 public:
   Layer*	own_lay;	// #READ_ONLY #NO_SAVE #NO_SHOW #NO_SET_POINTER layer owner

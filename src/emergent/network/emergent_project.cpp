@@ -390,6 +390,22 @@ bool Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
 //   if(taMisc::gui_active) {
 //     tabMisc::DelayedFunCall_gui(data_table, "BrowserSelectMe");
 //   }
+
+  UpdateLayerWriters(net, data_table);
+
+  return true;
+}
+
+bool Wizard::UpdateLayerWriters(Network* net, DataTable* data_table) {
+  if(TestError(!data_table || !net, "UpdateLayerWriters",
+	       "must specify both a network and a data table")) return false;
+  TypeDef* td = &TA_LayerWriter;
+  for(int i=0; i<td->tokens.size; i++) {
+    LayerWriter* lw = (LayerWriter*)td->tokens.FastEl(i);
+    if(!lw) continue;
+    if(!(lw->network.ptr() == net && lw->data.ptr() == data_table)) continue;
+    lw->AutoConfig(true);
+  }
   return true;
 }
 

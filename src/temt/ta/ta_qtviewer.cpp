@@ -2255,9 +2255,10 @@ void ISelectableHost::EditAction_Delete(ISelectable::GuiContext gc_typ) {
   if(proj) {
     taBase* tab = ta_items.Peek();
     if(ta_items.size > 1)
-      proj->undo_mgr.SaveUndo(tab, "Delete " + String(ta_items.size) + " items");
+      proj->undo_mgr.SaveUndo(tab, "Delete " + String(ta_items.size) + " items", NULL, false,
+			      tab->GetOwner());
     else
-      proj->undo_mgr.SaveUndo(tab, "Delete");
+      proj->undo_mgr.SaveUndo(tab, "Delete", NULL, false, tab->GetOwner());
   }
 
   for (int i = ta_items.size - 1; i >= 0; --i) {
@@ -7244,7 +7245,7 @@ void iTreeView::InsertEl() {
   if(okc && td) {
     taProject* proj = myProject();
     if(proj) {
-      proj->undo_mgr.SaveUndo(sbo, "InsertEl"); // global save
+      proj->undo_mgr.SaveUndo(sbo, "InsertEl", NULL, false, sbo); // global save
     }
     taBase* nwi = taBase::MakeToken(td);
     if(nwi) {
@@ -7464,7 +7465,7 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
 	taBase* sb = si->link()->taData();
 	if(sb) {
 	  if(proj) {
-	    proj->undo_mgr.SaveUndo(sb, "Duplicate"); // global save
+	    proj->undo_mgr.SaveUndo(sb, "Duplicate", NULL, false, sb->GetOwner()); // global save
 	  }
 	  sb->DuplicateMe();
 	}

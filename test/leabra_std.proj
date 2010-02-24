@@ -903,7 +903,7 @@ LeabraProject .projects[0] {
 	ProgEl_List @.load_code = [0] {
 	};
 
-	ProgEl_List @.init_code = [2] {
+	ProgEl_List @.init_code = [3] {
 	  MethodCall @[0] { 
 	    ProgArg_List @.meth_args = [2] {
 	      ProgArg @[0] { };
@@ -911,6 +911,11 @@ LeabraProject .projects[0] {
 	    };
 	  };
 	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	  MethodCall @[2] { 
 	    ProgArg_List @.meth_args = [1] {
 	      ProgArg @[0] { };
 	    };
@@ -1453,7 +1458,7 @@ LeabraProject .projects[0] {
 	ProgEl_List @.load_code = [0] {
 	};
 
-	ProgEl_List @.init_code = [2] {
+	ProgEl_List @.init_code = [3] {
 	  MethodCall @[0] { 
 	    ProgArg_List @.meth_args = [2] {
 	      ProgArg @[0] { };
@@ -1461,6 +1466,11 @@ LeabraProject .projects[0] {
 	    };
 	  };
 	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	  MethodCall @[2] { 
 	    ProgArg_List @.meth_args = [1] {
 	      ProgArg @[0] { };
 	    };
@@ -4578,7 +4588,7 @@ LeabraProject .projects[0] {
      ProgVar @[4] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=0;
+      int_val=6;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -4734,7 +4744,7 @@ LeabraProject .projects[0] {
       index_var=.projects[0].programs.gp[0][2].vars[4]$$;
       order_var=.projects[0].programs.gp[0][2].vars[0]$$;
       order=PERMUTED;
-      item_idx_list{ 0;3;5;4;1;2;      };
+      item_idx_list{ 5;2;4;1;3;0;      };
       update_after=0;
       dmem_nprocs=1;
       dmem_this_proc=0;
@@ -5609,8 +5619,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	na_by_range=0;
-	ext_flags=EXT;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	ext_flags=;
+	noise {name="RandomSpec_7": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
 	chan_name="Output";
@@ -5619,18 +5629,18 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	na_by_range=0;
-	ext_flags=TARG;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	ext_flags=;
+	noise {name="RandomSpec_8": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[2] {
 	chan_name="Name";
 	net_target=TRIAL_NAME;
-	layer_name="Name";
+	layer_name=;
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	na_by_range=0;
 	ext_flags=;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {name="RandomSpec_9": type=NONE: mean=0: var=0.5: par=1: };
        };
       };
      };
@@ -5730,6 +5740,28 @@ presented in the minus phase -- if this is not the case (values are computed on 
       };
      };
      MethodCall @[1] {
+      desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
+      flags=;
+      result_var=NULL;
+      obj=$.projects[0].programs.gp[0][6].vars[0]$;
+      method=LayerWriter::AutoConfig;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=bool;
+	type="bool";
+	name="reset_existing";
+	required=0;
+	def_val="true";
+	expr {
+	 expr="true";
+	};
+       };
+      };
+     };
+     MethodCall @[2] {
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
       flags=;
       result_var=NULL;
@@ -8247,8 +8279,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	na_by_range=0;
-	ext_flags=EXT;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	ext_flags=;
+	noise {name="RandomSpec_7": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
 	chan_name="Output";
@@ -8257,8 +8289,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	na_by_range=0;
-	ext_flags=TARG;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	ext_flags=;
+	noise {name="RandomSpec_8": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[2] {
 	chan_name="Name";
@@ -8268,7 +8300,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	use_layer_type=1;
 	na_by_range=0;
 	ext_flags=;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {name="RandomSpec_9": type=NONE: mean=0: var=0.5: par=1: };
        };
       };
      };
@@ -8368,6 +8400,28 @@ presented in the minus phase -- if this is not the case (values are computed on 
       };
      };
      MethodCall @[1] {
+      desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
+      flags=;
+      result_var=NULL;
+      obj=$.projects[0].programs.gp[1][4].vars[0]$;
+      method=LayerWriter::AutoConfig;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=bool;
+	type="bool";
+	name="reset_existing";
+	required=0;
+	def_val="true";
+	expr {
+	 expr="true";
+	};
+       };
+      };
+     };
+     MethodCall @[2] {
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
       flags=;
       result_var=NULL;
@@ -9856,10 +9910,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=X;
 	   col_name="epoch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=7: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=11: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=7: };
-	   range {min=0: max=7: };
+	   data_range {min=0: max=11: };
+	   range {min=0: max=11: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -10794,12 +10848,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.1802159: max=0.8709256: max_i=12: };
-     acts_m {cmpt=1: avg=0.1802159: max=0.8709256: max_i=12: };
-     phase_dif_ratio=1;
+     acts_p {cmpt=1: avg=0.2028338: max=0.8952413: max_i=18: };
+     acts_m {cmpt=1: avg=0.2010946: max=0.8968659: max_i=18: };
+     phase_dif_ratio=0.9914253;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=6: pct=0.24: pct_c=0.76: adth_k=1: k_ithr=3.827648: k1_ithr=3.20149: ithr_r=0.1786342: ithr_diff=0.1635882: tie_brk=0: };
+     kwta {k=6: pct=0.24: pct_c=0.76: adth_k=1: k_ithr=4.154047: k1_ithr=3.381416: ithr_r=0.2057884: ithr_diff=0.1859947: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.24: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
@@ -10880,17 +10934,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       fm_output=-1;
      };
      output_name=;
-     sse=4.249584;
+     sse=0;
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.1756001: max=0.9004811: max_i=10: };
-     acts_m {cmpt=1: avg=0.1756001: max=0.9004811: max_i=10: };
-     phase_dif_ratio=1;
+     acts_p {cmpt=1: avg=0.19: max=0.95: max_i=0: };
+     acts_m {cmpt=1: avg=0.173374: max=0.8871916: max_i=12: };
+     phase_dif_ratio=0.9124945;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=12: pct=0.48: pct_c=0.52: adth_k=1: k_ithr=2.964539: k1_ithr=2.750031: ithr_r=0.07510941: ithr_diff=0.07235797: tie_brk=0: };
+     kwta {k=12: pct=0.48: pct_c=0.52: adth_k=1: k_ithr=3.544011: k1_ithr=3.304103: ithr_r=0.07009428: ithr_diff=0.06769405: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.48: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
@@ -10913,7 +10967,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    };
    flags=;
    auto_build=AUTO_BUILD;
-   train_mode=TEST;
+   train_mode=TRAIN;
    wt_update=ON_LINE;
    small_batch_n=10;
    batch=0;
@@ -10938,8 +10992,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="TimeUsed_0": start={usr=2304: sys=393: tot=1991459889: }: end={usr=2548: sys=351: tot=1983243121: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
-   epoch_time {name="TimeUsed_1": start={usr=8689: sys=1945: tot=1991526670: }: end={usr=8641: sys=1942: tot=1991526498: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   train_time {name="TimeUsed_0": start={usr=1435: sys=326: tot=2142190932: }: end={usr=1548: sys=337: tot=2142191058: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   epoch_time {name="TimeUsed_1": start={usr=1539: sys=336: tot=2142191049: }: end={usr=1547: sys=337: tot=2142191058: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    trial_time {name="TimeUsed_3": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    settle_time {name="TimeUsed_4": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    cycle_time {name="TimeUsed_5": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
@@ -10971,8 +11025,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    phase=MINUS_PHASE;
    nothing_phase=0;
    phase_no=0;
-   phase_max=1;
-   ct_cycle=25;
+   phase_max=2;
+   ct_cycle=35;
    time_inc=1;
    cycle_max=60;
    mid_minus_cycle=-1;

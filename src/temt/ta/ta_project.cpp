@@ -577,11 +577,20 @@ void taUndoMgr::Nest(bool nest) {
   } else --nest_count;
 }
 
-bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top) {
+bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top,
+			 bool force_proj_save, taBase* undo_save_owner) {
   // only do the undo guy for first call when nested
   if ((nest_count > 0) && (loop_count++ > 0)) return false;
   if(!owner || !mod_obj) return false;
-  if(!save_top) save_top = owner;
+  if(!save_top) {
+    if(force_proj_save)
+      save_top = owner;
+    else {
+      save_top = mod_obj->GetUndoBarrier();
+      if(!save_top)
+	save_top = owner;
+    }
+  }
   if(mod_obj == save_top && mod_obj->HasOption("UNDO_SAVE_ALL")) {
     save_top = owner;		// save all instead..
   }
@@ -605,11 +614,13 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
 
   tabMisc::cur_undo_save_top = save_top; // let others know who we're saving for..
   tabMisc::cur_undo_mod_obj = mod_obj; // let others know who we're saving for..
+  tabMisc::cur_undo_save_owner = undo_save_owner;
   ++taMisc::is_undo_saving;
   save_top->Save_String(urec->save_data);
   --taMisc::is_undo_saving;
   tabMisc::cur_undo_save_top = NULL;
   tabMisc::cur_undo_mod_obj = NULL;
+  tabMisc::cur_undo_save_owner = NULL;
 
   // now encode diff for big saves!
   if(save_top == owner) {

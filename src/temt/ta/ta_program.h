@@ -1051,7 +1051,7 @@ private:
 
 
 class TA_API Program: public taNBase, public AbstractScriptBase {
-  // #STEM_BASE ##TOKENS ##INSTANCE ##EXT_prog ##FILETYPE_Program ##CAT_Program a structured gui-buildable program that generates css script code to actually run
+  // #STEM_BASE ##TOKENS ##INSTANCE ##EXT_prog ##FILETYPE_Program ##CAT_Program ##UNDO_BARRIER a structured gui-buildable program that generates css script code to actually run
 INHERITED(taNBase)
 public:
   enum ProgFlags { // #BITS program flags

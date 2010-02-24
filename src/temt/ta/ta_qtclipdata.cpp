@@ -986,7 +986,8 @@ int taOBase::ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea
   case taiClipData::EA_UNLINK: {
     taProject* proj = (taProject*)list->GetOwner(&TA_taProject);
     if(proj) {
-      proj->undo_mgr.SaveUndo(lst_itm, "Remove"); // project level scope
+      proj->undo_mgr.SaveUndo(lst_itm, "Remove", NULL, false, list);
+      // list is save_undo_owner
     }
     list->RemoveEl(lst_itm);
     return taiClipData::ER_OK;
@@ -1036,7 +1037,8 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
   ) {
     taProject* proj = dynamic_cast<taProject*>(list->GetThisOrOwner(&TA_taProject));
     if(proj) {
-      proj->undo_mgr.SaveUndo(list, "Paste/Copy"); // project level scope
+      proj->undo_mgr.SaveUndo(list, "Paste/Copy", NULL, false, list);
+      // list is save_undo_owner
     }
     taBase* new_obj = obj->MakeToken();
     // if dest is list itself, then targ item is the virtual new item (end+1)
@@ -1070,7 +1072,8 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
     if (obj == lst_itm) return 1; // nop
     taProject* proj = dynamic_cast<taProject*>(list->GetThisOrOwner(&TA_taProject));
     if(proj) {
-      proj->undo_mgr.SaveUndo(obj, "Move"); // project level scope
+      proj->undo_mgr.SaveUndo(obj, "Move", NULL, false, list);
+      // list is save_undo_owner
     }
     if (obj_idx >= 0) { // in this list: just do a list move
       list->MoveBeforeIdx(obj_idx, itm_idx); // noop for self ops
@@ -1121,7 +1124,8 @@ int taOBase::ChildEditActionLD_impl_ext(const MemberDef* md,
     if (ms->objectData(istr) > 0) {
       taProject* proj = dynamic_cast<taProject*>(list->GetThisOrOwner(&TA_taProject));
       if(proj) {
-	proj->undo_mgr.SaveUndo(list, "Paste/Copy"); // project level scope
+	proj->undo_mgr.SaveUndo(list, "Paste/Copy", NULL, false, list);
+	// list is save_undo_owner
       }
       TypeDef* td = list->GetTypeDef();
       void* new_el_ = NULL; // the dude added

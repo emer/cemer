@@ -93,17 +93,18 @@ public:
 
   virtual LayerDataEl* FindChanName(const String& chn_name);
   // #CAT_LayerData find (first) layer data that applies to given data channel name
-  virtual LayerDataEl* FindMakeChanName(const String& chn_name);
+  virtual LayerDataEl* FindMakeChanName(const String& chn_name, bool& made_new);
   // #CAT_LayerData find (first) layer data that applies to given data channel name -- make it if it doesn't exist
 
   virtual LayerDataEl* FindLayerName(const String& lay_name);
   // #CAT_LayerData find (first) layer data that applies to given layer name
-  virtual LayerDataEl* FindMakeLayerName(const String& lay_name);
+  virtual LayerDataEl* FindMakeLayerName(const String& lay_name, bool& made_new);
   // #CAT_LayerData find (first) layer data that applies to given layer name -- make it if it doesn't exist 
 
   virtual LayerDataEl* FindLayerData(const String& chn_name, const String& lay_name);
   // #CAT_LayerData find (first) layer data that applies to given data channel name and layer name
-  virtual LayerDataEl* FindMakeLayerData(const String& chn_name, const String& lay_name);
+  virtual LayerDataEl* FindMakeLayerData(const String& chn_name, const String& lay_name,
+					 bool& made_new);
   // #CAT_LayerData find (first) layer data that applies to given data channel name and layer name -- make it if it doesn't exist
 
   TA_BASEFUNS_NOCOPY(LayerDataEl_List);
@@ -157,8 +158,8 @@ public:
   virtual void 	SetDataNetwork(DataBlock* db, Network* net);
   // #CAT_LayerWriter set the data table and network pointers -- convenience function for programs 
 
-  virtual void	AutoConfig(bool reset_existing = true);
-  // #BUTTON #CAT_LayerWriter do a 'best guess' configuration of items by matching up like-named data Channels and network Layers
+  virtual void	AutoConfig(bool remove_unused = true);
+  // #BUTTON #CAT_LayerWriter do a 'best guess' configuration of items by matching up like-named data Channels and network Layers -- if remove_unused is true, then layer writer elements that existed previously but were not found in input data and network are removed
 
   virtual bool	ApplyInputData();
   // #CAT_LayerWriter apply data to the layers, using the network's current context settings (TEST,TRAIN,etc) -- returns success

@@ -119,11 +119,13 @@ LayerDataEl* LayerDataEl_List::FindChanName(const String& cnm) {
   return NULL;
 }
 
-LayerDataEl* LayerDataEl_List::FindMakeChanName(const String& cnm) {
+LayerDataEl* LayerDataEl_List::FindMakeChanName(const String& cnm, bool& made_new) {
+  made_new = false;
   LayerDataEl* ld = FindChanName(cnm);
   if(ld) return ld;
   ld = (LayerDataEl*)New(1);
   ld->chan_name = cnm;
+  made_new = true;
   return ld;
 }
 
@@ -135,11 +137,13 @@ LayerDataEl* LayerDataEl_List::FindLayerName(const String& lnm) {
   return NULL;
 }
 
-LayerDataEl* LayerDataEl_List::FindMakeLayerName(const String& lnm) {
+LayerDataEl* LayerDataEl_List::FindMakeLayerName(const String& lnm, bool& made_new) {
+  made_new = false;
   LayerDataEl* ld = FindLayerName(lnm);
   if(ld) return ld;
   ld = (LayerDataEl*)New(1);
   ld->layer_name = lnm;
+  made_new = true;
   return ld;
 }
 
@@ -151,12 +155,15 @@ LayerDataEl* LayerDataEl_List::FindLayerData(const String& cnm, const String& ln
   return NULL;
 }
 
-LayerDataEl* LayerDataEl_List::FindMakeLayerData(const String& cnm, const String& lnm) {
+LayerDataEl* LayerDataEl_List::FindMakeLayerData(const String& cnm, const String& lnm,
+						 bool& made_new) {
+  made_new = false;
   LayerDataEl* ld = FindLayerData(cnm, lnm);
   if(ld) return ld;
   ld = (LayerDataEl*)New(1);
   ld->chan_name = cnm;
   ld->layer_name = lnm;
+  made_new = true;
   return ld;
 }
 
@@ -272,42 +279,56 @@ void LayerWriter::SetDataNetwork(DataBlock* db, Network* net) {
   layer_data.SetDataNetwork(data, network);
 }
 
-void LayerWriter::AutoConfig(bool reset_existing) {
+void LayerWriter::AutoConfig(bool remove_unused) {
   if(TestError(!data || !network, "AutoConfig",
 	       "Either the data or the network variables are not set -- please set them and try again!")) {
     return;
   }
-  if(reset_existing) {
-    layer_data.Reset();
+
+  StructUpdate(true);
+
+  for(int i=0;i<layer_data.size;i++) {
+    layer_data.FastEl(i)->ClearBaseFlag(BF_MISC1); // use this for marking usage
   }
+
+  bool made_new;
   Layer* lay;
   taLeafItr itr;
   FOR_ITR_EL(Layer, lay, network->layers., itr) {
     if(lay->layer_type == Layer::HIDDEN) continue;
     int chan_idx = data->GetSourceChannelByName(lay->name, false);
     if(TestWarning(chan_idx < 0, "AutoConfig",
-		   "did not find channel/data column for layer named:", lay->name, "of type:", TA_Layer.GetEnumString("LayerType", lay->layer_type))) {
+		   "did not find data column for layer named:", lay->name, "of type:", TA_Layer.GetEnumString("LayerType", lay->layer_type))) {
       continue;	// not found
     }
-    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeLayerData(lay->name, lay->name);
+    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeLayerData(lay->name, lay->name, made_new);
     lrw->SetDataNetwork(data, network);
     lrw->DataChanged(DCR_ITEM_UPDATED);
+    lrw->SetBaseFlag(BF_MISC1);	// mark as used
   }
   int nm_idx = data->GetSourceChannelByName("Name", false);
   if(nm_idx >= 0) {
-    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeChanName("Name");
+    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeChanName("Name", made_new);
     lrw->net_target = LayerDataEl::TRIAL_NAME;
     lrw->DataChanged(DCR_ITEM_UPDATED);
+    lrw->SetBaseFlag(BF_MISC1);	// mark as used
   }
   int gp_idx = data->GetSourceChannelByName("Group", false);
   if(gp_idx >= 0) {
-    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeChanName("Group");
+    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeChanName("Group", made_new);
     lrw->net_target = LayerDataEl::GROUP_NAME;
     lrw->DataChanged(DCR_ITEM_UPDATED);
+    lrw->SetBaseFlag(BF_MISC1);	// mark as used
   }
-  if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
+
+  if(remove_unused) {
+    for(int i=layer_data.size-1; i>=0; i--) {
+      if(!layer_data.FastEl(i)->HasBaseFlag(BF_MISC1))
+	layer_data.RemoveIdx(i);
+    }
   }
+
+  StructUpdate(false);
 }
 
 bool LayerWriter::ApplyInputData() {

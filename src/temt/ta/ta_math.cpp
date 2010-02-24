@@ -5102,8 +5102,8 @@ void RndSeed_List::UseSeed(int idx) {
 taBase::DumpQueryResult RndSeed_List::Dump_QuerySaveMember(MemberDef* md) {
   if(md->name == "seeds") {
     if(taMisc::is_undo_saving) {
-      taBase* cumo = tabMisc::cur_undo_mod_obj;
-      if((tabMisc::cur_undo_save_top != this) && (cumo != this)) {
+      if(!tabMisc::cur_undo_save_owner || !IsChildOf(tabMisc::cur_undo_save_owner)) {
+	// no need to save b/c unaffected by changes elsewhere..
 	return DQR_NO_SAVE;
       }
     }

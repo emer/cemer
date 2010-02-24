@@ -88,11 +88,13 @@ public:
   virtual bool	StdData(Network* net, DataTable* data_table=NULL, int n_patterns = 0, bool group=false);
   // #MENU_BUTTON #MENU_ON_Data #NULL_OK_1 #NULL_TEXT_1_NewDataTable make standard input and output data tables: make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences.  also make standard output data to monitor network output
   virtual bool	StdInputData(Network* net, DataTable* data_table=NULL, int n_patterns = 0, bool group=false);
-  // #MENU_BUTTON #MENU_SEP_BEFORE #NULL_OK_1 #NULL_TEXT_1_NewDataTable make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences.  also calls StdOutputData to create monitor output data
+  // #MENU_BUTTON #MENU_SEP_BEFORE #NULL_OK_1 #NULL_TEXT_1_NewDataTable make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences.  also calls StdOutputData to create monitor output data, and UpdateLayerWriters to update any LayerWriter objects (typically in ApplyInputs programs) to the new data layout
   virtual bool	StdOutputData();
   // #MENU_BUTTON make standard set of output data (monitoring network performance) -- this just creates empty datatables in OutputData subgroup with names that standard programs look for
   virtual bool	UpdateInputDataFmNet(Network* net, DataTable* data_table);
-  // #MENU_BUTTON #MENU_SEP_BEFORE update data table columns based on configuration of the network 
+  // #MENU_BUTTON #MENU_SEP_BEFORE update data table columns based on configuration of the network -- also calls UpdateLayerWriters to update ApplyInputs programs to work with any new changes to the input data
+  virtual bool	UpdateLayerWriters(Network* net, DataTable* data_table);
+  // #MENU_BUTTON update LayerWriter configuration in ApplyInputs programs to fit any changes in the network or data table -- only affects LayerWriters that are already configured to use the given network and data table
 
 //   virtual void	TimeSeqEvents(TimeEnvironment* env, int n_seqs = 10, int events_per_seq = 4, float start_time = 0.0, float time_inc = 1.0);
 //   // #MENU_BUTTON make sequences (groups) of TimeEvents, with each sequence having the same sequence of times (start + inc for each addnl event)
