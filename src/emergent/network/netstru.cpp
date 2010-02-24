@@ -6142,10 +6142,13 @@ int Network::Dump_Save_impl(ostream& strm, taBase* par, int indent) {
   if(taMisc::is_undo_saving) {
     if(!tabMisc::cur_undo_save_owner || !IsChildOf(tabMisc::cur_undo_save_owner)) {
       // no need to save b/c unaffected by changes elsewhere..
+      if(!tabMisc::cur_undo_mod_obj || !tabMisc::cur_undo_mod_obj->IsChildOf(this)) {
+	// affected object is not under us
 #ifdef DEBUG
-      taMisc::Info("NOT saving for Undo network named:", name);
+	taMisc::Info("NOT saving for Undo network named:", name);
 #endif
-      return 1;
+	return 1;
+      }
     }
   }
   return inherited::Dump_Save_impl(strm, par, indent);
