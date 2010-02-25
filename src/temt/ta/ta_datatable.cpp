@@ -29,6 +29,7 @@
 #include <ctype.h>
 
 #include <QColor>
+#include <QFileInfo>
 
 //////////////////////////
 //   ColCalcExpr	//
@@ -983,8 +984,9 @@ bool DataTable::AutoLoadData() {
 
   if(TestError(auto_load_file.empty(), "AutoLoadData", "auto_load_file is empty!"))
     return false;
-  if(TestError(access(auto_load_file, F_OK) != 0, "AutoLoadData",
-	       "could not access auto_load_file:", auto_load_file))
+  QFileInfo qfi(auto_load_file);
+  if(TestError(!(qfi.isFile() && qfi.isReadable()), "AutoLoadData",
+	       "auto_load_file is not a valid file that is readable:", auto_load_file))
     return false;
 
   taMisc::Info("DataTable:", name, "auto loading data from:", auto_load_file);
@@ -999,7 +1001,6 @@ bool DataTable::AutoLoadData() {
     auto_load_file = cur_alf;
   }
   else {
-//obs    LoadData(auto_load_file, TAB, true, -1, true);
     LoadAnyData(auto_load_file, true, LD_AUTO, LQ_AUTO, -1, true);
   }
   return true;

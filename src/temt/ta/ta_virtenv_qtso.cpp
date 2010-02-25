@@ -26,6 +26,7 @@
 #include <qwidget.h>
 #include <QPixmap>
 #include <QLabel>
+#include <QFileInfo>
 #include "iflowlayout.h"
 
 #include <Inventor/nodes/SoTexture2.h>
@@ -251,7 +252,8 @@ void VEBodyView::Render_pre() {
   if(ob) {
     if(ob->HasBodyFlag(VEBody::FM_FILE) && !ob->obj_fname.empty()) {
       SoInput in;
-      if((access(ob->obj_fname, F_OK) == 0) && in.openFile(ob->obj_fname)) {
+      QFileInfo qfi(ob->obj_fname);
+      if(qfi.isFile() && qfi.isReadable() && in.openFile(ob->obj_fname)) {
 	SoSeparator* root = SoDB::readAll(&in);
 	if (root) {
 	  ssep->addChild(root);
@@ -549,7 +551,8 @@ bool VEObjCarousel::LoadObjs(bool force) {
     String fpath = fpathcol->GetValAsString(i);
 
     SoInput in;
-    if((access(fpath, F_OK) == 0) && in.openFile(fpath)) {
+    QFileInfo qfi(fpath);
+    if(qfi.isFile() && qfi.isReadable() && in.openFile(fpath)) {
       cout << "Loading " << fpath << "..." << endl;
       taMisc::FlushConsole();
       SoSeparator* root = SoDB::readAll(&in);
@@ -1064,7 +1067,8 @@ void VEStaticView::Render_pre() {
   if(ob) {
     if(ob->HasStaticFlag(VEStatic::FM_FILE) && !ob->obj_fname.empty()) {
       SoInput in;
-      if((access(ob->obj_fname, F_OK) == 0) && in.openFile(ob->obj_fname)) {
+      QFileInfo qfi(ob->obj_fname);
+      if(qfi.isFile() && qfi.isReadable() && in.openFile(ob->obj_fname)) {
 	SoSeparator* root = SoDB::readAll(&in);
 	if (root) {
 	  ssep->addChild(root);

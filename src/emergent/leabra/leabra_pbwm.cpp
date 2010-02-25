@@ -2048,6 +2048,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   if(old_matrix_bias) {
     bg_bias->children.RemoveEl(old_matrix_bias);
   }
+  LeabraLayerSpec* rewtargsp = (LeabraLayerSpec*)layers->FindMakeSpec("RewTargLayer", &TA_LeabraLayerSpec);
   LVeLayerSpec* lvesp = (LVeLayerSpec*)layers->FindMakeSpec(lvenm + "Layer", &TA_LVeLayerSpec);
   LViLayerSpec* lvisp = (LViLayerSpec*)lvesp->FindMakeChild(lvinm + "Layer", &TA_LViLayerSpec);
   NVLayerSpec* nvsp = (NVLayerSpec*)layers->FindMakeSpec(nvnm + "Layer", &TA_NVLayerSpec);
@@ -2256,7 +2257,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   pfc_self->rnd.mean = 0.9f;
   pfc_self->rnd.var = 0.0f;
   pfc_self->SetUnique("wt_scale", true);
-  pfc_self->wt_scale.rel = .1f;
+  pfc_self->wt_scale.rel = .05f;
 
   matrix_cons->SetUnique("lrate", true);
   matrix_cons->lrate = .05f;

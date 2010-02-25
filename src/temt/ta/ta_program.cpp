@@ -4367,8 +4367,8 @@ String Program::GetProgLibPath(ProgLibs library) {
   else if(library == WEB_LIB)
     path = taMisc::prog_lib_paths.GetVal("WebLib").toString();
   if(library != WEB_LIB) {
-    int acc = access(path, F_OK);
-    if (acc != 0) {
+    QFileInfo qfi(path);
+    if(!qfi.isDir()) {
       QDir qd;
       qd.mkpath(path);		// attempt to make it..
       taMisc::Warning("Note: did mkdir for program library directory:", path);
@@ -4380,8 +4380,8 @@ String Program::GetProgLibPath(ProgLibs library) {
 void Program::SaveToProgLib(ProgLibs library) {
   String path = GetProgLibPath(library);
   String fname = path + "/" + name + ".prog";
-  int acc = access(fname, F_OK);
-  if (acc == 0) {
+  QFileInfo qfi(fname);
+  if(qfi.isFile()) {
     int chs = taMisc::Choice("Program library file: " + fname + " already exists: Overwrite?",
 			     "Ok", "Cancel");
     if(chs == 1) return;
@@ -4649,8 +4649,8 @@ void Program_Group::Copy_(const Program_Group& cp) {
 void Program_Group::SaveToProgLib(Program::ProgLibs library) {
   String path = Program::GetProgLibPath(library);
   String fname = path + "/" + name + ".progp";
-  int acc = access(fname, F_OK);
-  if (acc == 0) {
+  QFileInfo qfi(fname);
+  if(qfi.isFile()) {
     int chs = taMisc::Choice("Program library file: " + fname + " already exists: Overwrite?",
 			     "Ok", "Cancel");
     if(chs == 1) return;

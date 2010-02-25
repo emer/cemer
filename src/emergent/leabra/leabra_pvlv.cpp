@@ -1216,6 +1216,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
 //     pvi_cons->RemoveChild("PVr");
 //   }
   bool pvr_cons_new = false;
+  LeabraLayerSpec* rewtargsp = (LeabraLayerSpec*)layers->FindMakeSpec("RewTargLayer", &TA_LeabraLayerSpec);
   PVConSpec* pvr_cons = (PVConSpec*)pvi_cons->FindMakeChild("PVr", &TA_PVrConSpec, pvr_cons_new);
   PVConSpec* lve_cons = (PVConSpec*)pvi_cons->FindMakeChild("LVe", &TA_PVConSpec);
   PVConSpec* lvi_cons = (PVConSpec*)lve_cons->FindMakeChild("LVi", &TA_PVConSpec);
@@ -1410,6 +1411,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   //////////////////////////////////////////////////////////////////////////////////
   // apply specs to objects
 
+  rew_targ_lay->SetLayerSpec(rewtargsp);
   pve->SetLayerSpec(pvesp);	pve->SetUnitSpec(pv_units);
   pvi->SetLayerSpec(pvisp);	pvi->SetUnitSpec(pv_units);
   lve->SetLayerSpec(lvesp);	lve->SetUnitSpec(lv_units);

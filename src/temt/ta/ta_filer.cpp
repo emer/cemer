@@ -506,10 +506,10 @@ bool taFiler::IsCompressed() const {
 istream* taFiler::open_read() {
   Close();
   // note: it is the filename that determines compress, not the flag
+  QFileInfo qfi(FileName());
   if (m_fname.endsWith(taMisc::compress_sfx)) {
     compressed = true;
-    int acc = access(FileName(), R_OK);
-    if(acc == 0)
+    if(qfi.isFile() && qfi.isReadable())
       istrm = new igzstream(FileName().chars(), ios::in);
   } else {
     fstrm = new fstream(FileName().chars(), ios::in);
@@ -529,8 +529,8 @@ istream* taFiler::open_read() {
 
 bool taFiler::open_write_exist_check() {
   Close();
-  int acc = access(FileName(), F_OK);
-  if (acc == 0)
+  QFileInfo qfi(FileName());
+  if(qfi.isFile())
     return true;
   return false;
 }
