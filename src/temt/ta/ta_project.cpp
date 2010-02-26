@@ -1362,8 +1362,9 @@ void taProject::SaveRecoverFile() {
   int cnt = taMisc::GetUniqueFileNumber(0, newfm, ftype_ext);
   String fnm = newfm + String(cnt) + ftype_ext; // note: this is a full path!
   QFileInfo qfi(fnm);
+  QFileInfo qfd(qfi.path());
   bool usr_fl = false;
-  if(!qfi.isWritable()) {
+  if(!qfd.isWritable()) {
     usr_fl = true;
     fnm = taMisc::user_dir + PATH_SEP + taMisc::GetFileFmPath(fnm);
   }
@@ -1422,7 +1423,8 @@ bool taProject::AutoSave(bool force) {
   String newfnm = GetAutoFileName("_autosave", ftype_ext) + ftype_ext;
   String fnm = newfnm; // note: this is a full path!
   QFileInfo qfi(fnm);
-  if(!qfi.isWritable()) {
+  QFileInfo qfd(qfi.path());
+  if(!qfd.isWritable()) {	// use path!
     fnm = taMisc::user_dir + PATH_SEP + taMisc::GetFileFmPath(fnm);
 #ifdef DEBUG // NOTE: really only works on Linux, and is so marginal...
     taMisc::Info("Error saving auto save file in original location:", newfnm,

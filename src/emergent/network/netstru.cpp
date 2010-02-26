@@ -531,8 +531,8 @@ Connection* BaseCons::ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_con
   return con;
 }
 
-void BaseCons::ConnectAllocInc() {
-  size++;
+void BaseCons::ConnectAllocInc(int inc_n) {
+  size += inc_n;
 }
 
 void BaseCons::AllocConsFmSize() {
@@ -2283,11 +2283,44 @@ void Unit::SendConsPreAlloc(int no, Projection* prjn) {
   cgp->AllocCons(no);
 }
 
+void Unit::SendConsAllocInc(int no, Projection* prjn) {
+  SendCons* cgp = NULL;
+  if((prjn->send_idx < 0) || ((cgp = send.SafeEl(prjn->send_idx)) == NULL)) {
+    cgp = send.NewPrjn(prjn); // sets the type
+    prjn->send_idx = send.size-1;
+  }
+  cgp->ConnectAllocInc(no);
+}
+
 void Unit::SendConsPostAlloc(Projection* prjn) {
   SendCons* cgp = NULL;
   if((prjn->send_idx < 0) || ((cgp = send.SafeEl(prjn->send_idx)) == NULL)) {
     cgp = send.NewPrjn(prjn); // sets the type
     prjn->send_idx = send.size-1;
+  }
+  cgp->AllocConsFmSize();
+}
+
+void Unit::RecvConsAllocInc(int no, Projection* prjn) {
+#ifdef DMEM_COMPILE
+  if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return;
+#endif
+  RecvCons* cgp = NULL;
+  if((prjn->recv_idx < 0) || ((cgp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
+    cgp = recv.NewPrjn(prjn); // sets the type
+    prjn->recv_idx = recv.size-1;
+  }
+  cgp->ConnectAllocInc(no);
+}
+
+void Unit::RecvConsPostAlloc(Projection* prjn) {
+#ifdef DMEM_COMPILE
+  if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return;
+#endif
+  RecvCons* cgp = NULL;
+  if((prjn->recv_idx < 0) || ((cgp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
+    cgp = recv.NewPrjn(prjn); // sets the type
+    prjn->recv_idx = recv.size-1;
   }
   cgp->AllocConsFmSize();
 }
@@ -4105,6 +4138,13 @@ void Layer::SendConsPostAlloc(Projection* prjn) {
   taLeafItr su_itr;
   FOR_ITR_EL(Unit, su, units., su_itr)
     su->SendConsPostAlloc(prjn);
+}
+
+void Layer::RecvConsPostAlloc(Projection* prjn) {
+  Unit* su;
+  taLeafItr su_itr;
+  FOR_ITR_EL(Unit, su, units., su_itr)
+    su->RecvConsPostAlloc(prjn);
 }
 
 void Layer::SyncSendPrjns() {

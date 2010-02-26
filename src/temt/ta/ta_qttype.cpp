@@ -1514,16 +1514,18 @@ void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
   taBase* tok_ptr = GetTokenPtr(base); // this is the addr of the token, in the member
   TypeDef* targ_typ = GetMinType(base);
   
-  taBase* scope = NULL;
-  if (!mbr->HasOption("NO_SCOPE")) {
-    scope = (taBase*)base;
+  taBase* scope = (taBase*)base;
 /*nn    if((rval->host != NULL) && (rval->host)->GetRootTypeDef()->InheritsFrom(TA_taBase))
       scope = (taBase*)(rval->host)->Base(); */
-  }
   TypeDef* scope_type = NULL;
-  String sctyp = mbr->OptionAfter("SCOPE_");
-  if(!sctyp.empty()) {
-    scope_type = taMisc::types.FindName(sctyp);
+  if(mbr->HasOption("NO_SCOPE")) {
+    scope_type = taMisc::default_scope;
+  }
+  else {
+    String sctyp = mbr->OptionAfter("SCOPE_");
+    if(!sctyp.empty()) {
+      scope_type = taMisc::types.FindName(sctyp);
+    }
   }
     
   taiTokenPtrButton* tpb = (taiTokenPtrButton*)dat;
@@ -2371,17 +2373,19 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
   taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
   //  taiToken* rval = (taiToken*)dat;
   taBase* scope = NULL;
-  if(GetHasOption("NO_SCOPE"))
-    scope = NULL;
-  else if((rval->host != NULL) && (rval->host->GetRootTypeDef() != NULL) &&
+  if((rval->host != NULL) && (rval->host->GetRootTypeDef() != NULL) &&
 	  (rval->host->GetRootTypeDef()->InheritsFrom(TA_taBase)))
     scope = (rval->host)->Base();
   else
     scope = (taBase*)base;
   TypeDef* scope_type = NULL;
-  String sctyp = GetOptionAfter("SCOPE_");
-  if(!sctyp.empty()) {
-    scope_type = taMisc::types.FindName(sctyp);
+  if(GetHasOption("NO_SCOPE"))
+    scope_type = taMisc::default_scope; // this means: use default
+  else {
+    String sctyp = GetOptionAfter("SCOPE_");
+    if(!sctyp.empty()) {
+      scope_type = taMisc::types.FindName(sctyp);
+    }
   }
   String nulltxt = GetOptionAfter("NULL_TEXT_");
   if(nulltxt.nonempty()) {

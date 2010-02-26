@@ -388,8 +388,8 @@ public:
     bool		ConnectUnPtrCn(Unit* un, Connection* cn, bool ignore_alloc_errs = false);
     // #CAT_Modify add a new connection from given unit and connection pointer for PtrCons case -- returns false if no more room, else true 
 
-  void			ConnectAllocInc();
-  // #CAT_Modify use this for dynamically figuring out how many connections to allocate, if it is not possible to compute directly -- increments size by one -- later call AllocConsFmSize to allocate connections based on the size value
+  void			ConnectAllocInc(int inc_n = 1);
+  // #CAT_Modify use this for dynamically figuring out how many connections to allocate, if it is not possible to compute directly -- increments size by given number -- later call AllocConsFmSize to allocate connections based on the size value
   void			AllocConsFmSize();
   // #CAT_Structure allocate storage for given number of connections (and Unit pointers) based on the size value, and reset size to 0 -- for dynamic allocation with ConnectAllocInc
 
@@ -941,8 +941,14 @@ public: //
   // #CAT_Structure pre-allocate given no of receiving connections -- sufficient connections must be allocated in advance of making specific connections
   virtual void	SendConsPreAlloc(int no, Projection* prjn);
   // #CAT_Structure pre-allocate given no of sending connections -- sufficient connections must be allocated in advance of making specific connections
+  virtual void	SendConsAllocInc(int no, Projection* prjn);
+  // #CAT_Structure increment size by given no of sending connections -- later call SendConsPostAlloc to actually allocate connections
+  virtual void	RecvConsAllocInc(int no, Projection* prjn);
+  // #CAT_Structure increment size by given no of recv connections -- later call RecvConsPostAlloc to actually allocate connections
   virtual void	SendConsPostAlloc(Projection* prjn);
-  // #CAT_Structure post-allocate given no of sending connections -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
+  // #CAT_Structure post-allocate given no of sending connections (calls AllocConsFmSize on send con group) -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
+  virtual void	RecvConsPostAlloc(Projection* prjn);
+  // #CAT_Structure post-allocate given no of recv connections (calls AllocConsFmSize on recv con group) -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
   virtual Connection*	ConnectFrom(Unit* su, Projection* prjn, bool alloc_send = false, 
 				    bool ignore_alloc_errs = false);
   // #CAT_Structure make a recv connection from given unit to this unit using given projection -- requires both recv and sender to have sufficient connections allocated already, unless alloc_send is true, then it only allocates connections on the sender -- does NOT make any connection on the receiver -- use this in a loop that runs connections twice, with first pass as allocation (then call SendConstPostAlloc) and second pass as actual connection making
@@ -1543,6 +1549,8 @@ public:
   // #CAT_XpertStructure allocate given number of send connections for all units in layer, for given projection
   virtual void	SendConsPostAlloc(Projection* prjn);
   // #CAT_XpertStructure allocate sending connections based on those allocated previously 
+  virtual void	RecvConsPostAlloc(Projection* prjn);
+  // #CAT_XpertStructure allocate recv connections based on those allocated previously 
   virtual void  LinkPtrCons();
   // #IGNORE link pointer connections from the corresponding owned connections -- only needed after a Copy
   virtual void	DisConnect();

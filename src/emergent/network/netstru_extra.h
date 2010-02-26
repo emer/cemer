@@ -345,10 +345,10 @@ public:
   TwoDCoord	recv_gp_off; 	// offset for start of recv group to begin connecting
   TwoDCoord	recv_gp_n;    	// number of receiving groups to connect in each dimension (-1 for all)
   TwoDCoord	recv_gp_skip; 	// increment for recv groups in each dimension -- 1 = connect all groups; 2 = skip every other group, etc
-  TwoDCoord	recv_gp_group;	// group together this many units under the same starting coord, resulting in a tile pattern
-  FloatTwoDCoord send_gp_scale;	// scale to apply to transform receiving unit coords into sending unit coords
+  TwoDCoord	recv_gp_group;	// group together this many unit groups under the same starting coord, resulting in a tile pattern
+  FloatTwoDCoord send_gp_scale;	// scale to apply to transform receiving unit group coords into sending unit group coords
   TwoDCoord	send_gp_border; // border size around sending layer (constant offset to add to sending offsets)
-  TessEl_List	send_gp_offs;	// offsets of the sending units
+  TessEl_List	send_gp_offs;	// offsets of the sending unit groups
   bool		wrap;		// whether to wrap coordinates around (else clip)
   float		def_p_con;	// default probability of connectivity when new send_gp_offs are created
   bool		sym_self;	// if a self projection, make it symmetric (senders = receivers) otherwise it is not
@@ -360,7 +360,7 @@ public:
   virtual void	GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc);
   // get center of sender coords from receiving coords
   virtual void  Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
-			    Projection* prjn);
+			    Projection* prjn, bool send_alloc);
   // #IGNORE impl connect send/recv gps
   virtual void  Connect_Gps_Sym(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
 				Projection* prjn);
@@ -374,7 +374,10 @@ public:
   virtual void  Connect_Gps_Std(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
 				Projection* prjn);
   // #IGNORE standard, not symmetric/same
-  virtual void	Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc, Projection* prjn);
+  virtual void  Connect_Gps_Full(Unit_Group* ru_gp, Unit_Group* su_gp, Projection* prjn);
+  // #IGNORE full connectivity, 
+  virtual void	Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc, Projection* prjn,
+			       bool send_alloc);
   // connects one recv unit to all senders
 
   virtual void	MakeRectangle(int width, int height, int left, int bottom);
@@ -387,6 +390,7 @@ public:
   TA_SIMPLE_BASEFUNS(GpRndTesselPrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
+
 private:
   void	Initialize();
   void	Destroy()	{ };

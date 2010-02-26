@@ -4188,11 +4188,13 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
   taiMiscCore::ProcessEvents();
   iTreeViewItem* rval = itv->AssertItem(link);
   if (rval) {
+    itv->clearExtSelection();
     itv->scrollTo(rval);
     itv->setCurrentItem(rval, QItemSelectionModel::ClearAndSelect);
   }
   else if(itv == cur_tree_view) { // try again with main 
     itv = GetMainTreeView();
+    itv->clearExtSelection();
     rval = itv->AssertItem(link);
     if (rval) {
       itv->scrollTo(rval);

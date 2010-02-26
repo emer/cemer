@@ -379,16 +379,16 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
 
   int recv_no;
   if(!self_con && (prjn->from.ptr() == prjn->layer))
-    recv_no = (int) (p_con * (float)(prjn->from->units.leaves-1));
+    recv_no = (int) ((p_con * (float)(prjn->from->units.leaves-1)) + .5f);
   else
-    recv_no = (int) (p_con * (float)prjn->from->units.leaves);
+    recv_no = (int) ((p_con * ((float)prjn->from->units.leaves)) + .5f);
   if(recv_no <= 0) recv_no = 1;
 
   // sending number is even distribution across senders plus some imbalance factor
   float send_no_flt = (float)(prjn->layer->units.leaves * recv_no) / (float)prjn->from->units.leaves;
   // add SEM as corrective factor
   float send_sem = send_no_flt / sqrtf(send_no_flt);
-  int send_no = (int)(send_no_flt + 2.0f * send_sem + 1.0f);
+  int send_no = (int)(send_no_flt + 2.0f * send_sem + 2.0f);
 
   // pre-allocate connections!
   prjn->layer->RecvConsPreAlloc(recv_no, prjn);
@@ -409,8 +409,8 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
       first = (int) (.5f * p_con * (float)prjn->from->units.leaves);
     if(first <= 0) first = 1;
 
-    taPtrList<Unit> ru_list;		// receiver permution list
-    taPtrList<Unit> perm_list;	// sender permution list
+    UnitPtrList ru_list;		// receiver permution list
+    UnitPtrList perm_list;	// sender permution list
 
     FOR_ITR_EL(Unit, ru, lay->units., ru_itr)	// need to permute recvs because of exclusion
       ru_list.Link(ru);			// on making a symmetric connection in first pass
@@ -446,7 +446,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
     }
   }
   else {			// not a symmetric self projection
-    taPtrList<Unit> perm_list;	// permution list
+    UnitPtrList perm_list;	// permution list
     FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr) {
       perm_list.Reset();
       FOR_ITR_EL(Unit, su, prjn->from->units., su_itr) {
@@ -602,16 +602,16 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
 
   int recv_no;
   if(!self_con && (prjn->from.ptr() == prjn->layer))
-    recv_no = (int) (p_con * (float)(prjn->from->units.leaves-1));
+    recv_no = (int) ((p_con * (float)(prjn->from->units.leaves-1)) + .5f);
   else
-    recv_no = (int) (p_con * (float)prjn->from->units.leaves);
+    recv_no = (int) ((p_con * (float)prjn->from->units.leaves) + .5f);
   if(recv_no <= 0) recv_no = 1;
 
   // sending number is even distribution across senders plus some imbalance factor
   float send_no_flt = (float)(prjn->layer->units.leaves * recv_no) / (float)prjn->from->units.leaves;
   // add SEM as corrective factor
   float send_sem = send_no_flt / sqrtf(send_no_flt);
-  int send_no = (int)(send_no_flt + 2.0f * send_sem + 1.0f);
+  int send_no = (int)(send_no_flt + 2.0f * send_sem + 5.0f); // polar needs some extra insurance
 
 
   // pre-allocate connections!
@@ -923,7 +923,7 @@ void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
     float send_no_flt = (float)(rgp->leaves * recv_no) / (float)sgp->leaves;
     // add SEM as corrective factor
     float send_sem = send_no_flt / sqrtf(send_no_flt);
-    int send_no = (int)(send_no_flt + 2.0f * send_sem + 1.0f);
+    int send_no = (int)(send_no_flt + 2.0f * send_sem + 2.0f);
 
     // pre-allocate connections!
     Unit* ru, *su;
@@ -933,7 +933,7 @@ void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
     FOR_ITR_EL(Unit, su, sgp->, su_itr)
       su->SendConsPreAlloc(send_no, prjn);
 
-    taPtrList<Unit> perm_list;	// permution list
+    UnitPtrList perm_list;	// permution list
     FOR_ITR_EL(Unit, ru, rgp->, ru_itr) {
       perm_list.Reset();
       FOR_ITR_EL(Unit, su, sgp->, su_itr) {
@@ -1233,10 +1233,55 @@ void GpRndTesselPrjnSpec::GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc) {
 }
 
 void GpRndTesselPrjnSpec::Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
-				      Projection* prjn) {
-  if((ru_gp->leaves == 0) || (su_gp->leaves == 0)) return;
+				      Projection* prjn, bool send_alloc) {
+  if((ru_gp->size == 0) || (su_gp->size == 0)) return;
+
+  if(send_alloc) {
+    int send_no = 1;
+    int recv_no = 1;
+    if(p_con < 1.0f) {
+      if(p_con < 0) p_con = 1.0f;
+      if(!self_con && (ru_gp == su_gp))
+	recv_no = (int) ((p_con * (float)(su_gp->leaves-1)) + .5f);
+      else
+	recv_no = (int) ((p_con * (float)su_gp->leaves) + .5f);
+      if(recv_no <= 0)  recv_no = 1;
+      recv_no = MAX(su_gp->size, recv_no);
+
+      // sending number is even distribution across senders plus some imbalance factor
+      float send_no_flt = (float)(ru_gp->size * recv_no) / (float)su_gp->size;
+      // add SEM as corrective factor
+      float send_sem = send_no_flt / sqrtf(send_no_flt);
+      send_no = (int)(send_no_flt + 2.0f * send_sem + 3.0f);
+
+      send_no = MIN(ru_gp->size, send_no);
+      send_no = MAX(1, send_no);
+
+      if(ru_gp == su_gp)
+	recv_no += 2;		// bit of extra room here too
+    }
+    else {
+      send_no = ru_gp->size;
+      recv_no = su_gp->size;
+    }
+    for(int i=0;i<su_gp->size;i++) {
+      Unit* su = su_gp->FastEl(i);
+      su->SendConsAllocInc(send_no, prjn);
+    }
+
+    // also do incremental alloc of the recv guy too!
+    Unit* ru;
+    taLeafItr ru_itr;
+    FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr)
+      ru->RecvConsAllocInc(recv_no, prjn);
+    return;
+  }
+
   if(p_con < 0) {		// this means: make symmetric connections!
     Connect_Gps_Sym(ru_gp, su_gp, p_con, prjn);
+  }
+  else if(p_con == 1.0f) {
+    Connect_Gps_Full(ru_gp, su_gp, prjn);
   }
   else if((ru_gp == su_gp) && sym_self) {
     Connect_Gps_SymSameGp(ru_gp, su_gp, p_con, prjn);
@@ -1245,12 +1290,14 @@ void GpRndTesselPrjnSpec::Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, floa
     if((prjn->from.ptr() == prjn->layer) && sym_self) {
       Connect_Gps_SymSameLay(ru_gp, su_gp, p_con, prjn);
     }
-    Connect_Gps_Std(ru_gp, su_gp, p_con, prjn);
+    else {
+      Connect_Gps_Std(ru_gp, su_gp, p_con, prjn);
+    }
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_Gps_Sym(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
-					  Projection* prjn) {
+void GpRndTesselPrjnSpec::Connect_Gps_Sym(Unit_Group* ru_gp, Unit_Group* su_gp,
+					  float p_con, Projection* prjn) {
   if((prjn->from.ptr() != prjn->layer) || !sym_self)
     return;			// not applicable otherwise!
 
@@ -1272,28 +1319,31 @@ void GpRndTesselPrjnSpec::Connect_Gps_Sym(Unit_Group* ru_gp, Unit_Group* su_gp, 
 }
 
 void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(Unit_Group* ru_gp, Unit_Group* su_gp,
-						float p_con, Projection* prjn) {
+				float p_con, Projection* prjn) {
   // trick is to divide cons in half, choose recv, send at random
   // for 1/2 cons, then go through all units and make the symmetric cons..
   // pre-allocate connections!
   TestWarning(p_con > .95f, "Connect_Gps_SymSameGp",
 	      "usually less than complete connectivity for high values of p_con in symmetric, self-connected layers using permute!");
-  int first;
+  int n_cons;
   if(!self_con)
-    first = (int) (.5f * p_con * (float)(su_gp->leaves-1));
+    n_cons = (int) (p_con * (float)(su_gp->leaves-1) + .5f);
   else
-    first = (int) (.5f * p_con * (float)su_gp->leaves);
+    n_cons = (int) (p_con * (float)su_gp->leaves + .5f);
+  int first = (int)(.5f * (float)n_cons);
   if(first <= 0) first = 1;
 
   Unit* ru, *su;
   taLeafItr ru_itr, su_itr;
-  taPtrList<Unit> ru_list;		// receiver permution list
-  taPtrList<Unit> perm_list;	// sender permution list
 
-  FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr)	// need to permute recvs because of exclusion
+  UnitPtrList ru_list;		// receiver permution list
+  for(int i=0;i<ru_gp->size; i++) {
+    ru = ru_gp->FastEl(i);
     ru_list.Link(ru);			// on making a symmetric connection in first pass
+  }
   ru_list.Permute();
 
+  UnitPtrList perm_list;
   for(int i=0;i<ru_list.size; i++) {
     ru = ru_list.FastEl(i);
     perm_list.Reset();
@@ -1306,9 +1356,10 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(Unit_Group* ru_gp, Unit_Group* s
       perm_list.Link(su);
     }
     perm_list.Permute();
-    int j;
-    for(j=0; j<first && j<perm_list.size; j++)	// only connect 1/2 of the units
+
+    for(int j=0; j<first && j<perm_list.size; j++) {	// only connect 1/2 of the units
       ru->ConnectFromCk((Unit*)perm_list[j], prjn);
+    }
   }
   // now go thru and make the symmetric connections
   FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
@@ -1350,20 +1401,21 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameLay(Unit_Group* ru_gp, Unit_Group* 
       return;
     // otherwise, go ahead and make new connections!
   }
+  Connect_Gps_Std(ru_gp, su_gp, p_con, prjn);
 }
 
 void GpRndTesselPrjnSpec::Connect_Gps_Std(Unit_Group* ru_gp, Unit_Group* su_gp,
 					  float p_con, Projection* prjn) {
-  int no;
+  int recv_no;
   if(!self_con && (ru_gp == su_gp))
-    no = (int) (p_con * (float)(su_gp->leaves-1));
+    recv_no = (int) ((p_con * (float)(su_gp->leaves-1)) + .5f);
   else
-    no = (int) (p_con * (float)su_gp->leaves);
-  if(no <= 0)  no = 1;
+    recv_no = (int) ((p_con * (float)su_gp->leaves) + .5f);
+  if(recv_no <= 0)  recv_no = 1;
 
   Unit* ru, *su;
   taLeafItr ru_itr, su_itr;
-  taPtrList<Unit> perm_list;	// permution list
+  UnitPtrList perm_list;	// permution list
   FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
     perm_list.Reset();
     FOR_ITR_EL(Unit, su, su_gp->, su_itr) {
@@ -1371,26 +1423,28 @@ void GpRndTesselPrjnSpec::Connect_Gps_Std(Unit_Group* ru_gp, Unit_Group* su_gp,
       perm_list.Link(su);
     }
     perm_list.Permute();
-    for(int i=0; i<no; i++)
+    for(int i=0; i<recv_no; i++)
       ru->ConnectFrom((Unit*)perm_list[i], prjn);
   }
 }
 
+void GpRndTesselPrjnSpec::Connect_Gps_Full(Unit_Group* ru_gp, Unit_Group* su_gp,
+					   Projection* prjn) {
+  Unit* ru, *su;
+  taLeafItr ru_itr, su_itr;
+  FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
+    FOR_ITR_EL(Unit, su, su_gp->, su_itr) {
+      if(self_con || (ru != su))
+	ru->ConnectFrom(su, prjn);
+    }
+  }
+}
+
 void GpRndTesselPrjnSpec::Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc,
-					 Projection* prjn) {
+					 Projection* prjn, bool send_alloc) {
 
   TwoDCoord& su_geo = prjn->from->gp_geom;
   Unit_Group* su_gp0 = (Unit_Group*)prjn->from->units.gp[0]; // take first gp as representative
-  //  int alloc_sz = (int)(p_con * (float)(send_gp_offs.size * su_gp0->size));
-  // todo: should take p_con into account but requires looping etc..
-  int alloc_sz = send_gp_offs.size * su_gp0->size;
-  if(alloc_sz <= 0) alloc_sz = 1;
-
-  Unit* ru;
-  taLeafItr ru_itr;
-  FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr)
-    ru->RecvConsPreAlloc(alloc_sz, prjn);
-
   TwoDCoord sctr;
   GetCtrFmRecv(sctr, ruc);  // positions of center of recv in sending layer
   for(int i = 0; i< send_gp_offs.size; i++) {
@@ -1400,7 +1454,7 @@ void GpRndTesselPrjnSpec::Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc
       continue;
     Unit_Group* su_gp = prjn->from->FindUnitGpFmCoord(suc);
     if(su_gp == NULL) continue;
-    Connect_Gps(ru_gp, su_gp, te->p_con, prjn);
+    Connect_Gps(ru_gp, su_gp, te->p_con, prjn, send_alloc);
   }
 }
 
@@ -1421,11 +1475,6 @@ void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
     return;
   }
 
-  // todo: fixme!!
-  if(TestWarning(true,  "Connect_impl",  "TODO: THIS IS NOT YET FUNCTIONAL!")) {
-    return;
-  }
-
   TwoDCoord& ru_geo = prjn->layer->gp_geom;
   TwoDCoord use_recv_gp_n = recv_gp_n;
 
@@ -1435,15 +1484,22 @@ void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
     use_recv_gp_n.y = ru_geo.y;
 
   TwoDCoord ruc, nuc;
-  for(ruc.y = recv_gp_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_gp_n.y);
-      ruc.y += recv_gp_skip.y, nuc.y++)
-  {
-    for(ruc.x = recv_gp_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_gp_n.x);
-	ruc.x += recv_gp_skip.x, nuc.x++)
-    {
-      Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
-      if(ru_gp == NULL) continue;
-      Connect_RecvGp(ru_gp, ruc, prjn);
+  for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
+    int rugp_idx = 0;
+    for(ruc.y = recv_gp_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_gp_n.y);
+	ruc.y += recv_gp_skip.y, nuc.y++)
+      {
+	for(ruc.x = recv_gp_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_gp_n.x);
+	    ruc.x += recv_gp_skip.x, nuc.x++, rugp_idx++)
+	  {
+	    Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+	    if(ru_gp == NULL) continue;
+	    Connect_RecvGp(ru_gp, ruc, prjn, alloc_loop);
+	  }
+      }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->layer->RecvConsPostAlloc(prjn);
+      prjn->from->SendConsPostAlloc(prjn);
     }
   }
 }
