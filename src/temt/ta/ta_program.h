@@ -1099,8 +1099,6 @@ public:
   static String_Array	forbidden_names;
   // #NO_SAVE #READ_ONLY #HIDDEN names that should not be used for variables and other such things because they are already in use
 
-  static RunState	GetGlobalRunState(); // gets the global run state, i.e. is ANY program running, stopped, etc.
-  
   Program_Group*	prog_gp;
   // #NO_SHOW #READ_ONLY #NO_SAVE #NO_SET_POINTER our owning program group -- needed for control panel stuff
 
@@ -1120,6 +1118,8 @@ public:
   // #READ_ONLY #NO_SAVE current number of steps to take -- set by the Step call of the program that was last run
   static int		cur_step_cnt;
   // #READ_ONLY #NO_SAVE current step count -- incremented until cur_step_n is reached
+  static RunState	global_run_state;
+  // #READ_ONLY #NO_SAVE global run state -- set by the last program to run in gui mode (from the Run, Init, Step buttons) -- used primarily to prevent multiple programs from running at the same time
 
   String		short_nm;
   // short name for this program -- as brief as possible -- used for Step display info
@@ -1190,9 +1190,14 @@ public:
 
   bool			isStale() const {return m_stale;}
   override void		setStale(); // indicates a component has changed
-  void			setRunState(RunState value); // sets and updates gui
+  void			SetRunState(RunState value);
+  // #IGNORE sets the local AND global run state -- don't use for just local run state updates
+  bool			AlreadyRunning();
+  // #IGNORE check if any program anywhere is already running -- if so, don't allow gui run
+
   override ScriptSource	scriptSource() {return ScriptString;}
   override const String	scriptString();
+
   virtual const String	ProgramListing();
   // #CAT_Code generate the listing of the program (NOT the underlying CSS code -- just the program)
   
@@ -1322,8 +1327,6 @@ public: // ScriptBase i/f
   // #IGNORE
 
 protected:
-  static int		m_global_run_ct;
-  
   String		m_scriptCache; // cache of script, managed by implementation
   String		m_listingCache; // cache of listing, managed by implementation
   bool			m_checked; // flag to help us avoid doing CheckConfig twice

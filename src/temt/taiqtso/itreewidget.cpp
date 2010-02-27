@@ -394,6 +394,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
   }
   if(event->key() == Qt::Key_Escape) {
     clearExtSelection();
+    return;
   }
   inherited::keyPressEvent( event );
 }

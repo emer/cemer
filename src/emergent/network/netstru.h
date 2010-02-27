@@ -1749,6 +1749,9 @@ protected:
   override void 	UpdateAfterMove_impl(taBase* old_owner);
   virtual void		ApplyLayerFlags(Unit::ExtType act_ext_flags);
   // #IGNORE set layer flag to reflect the kind of input received
+  virtual void		ApplyInputData_1d(taMatrix* data, Unit::ExtType ext_flags,
+			       Random* ran, bool na_by_range=false);
+  // #IGNORE 1d data -- just go in order -- offsets ignored
   virtual void		ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
 			       Random* ran, const TwoDCoord& offs, bool na_by_range=false);
   // #IGNORE 2d data is always treated the same: FindUnitFmCoord deals with unit grouping

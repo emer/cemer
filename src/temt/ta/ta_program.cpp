@@ -3523,16 +3523,7 @@ bool Program::step_mode = false;
 ProgramRef Program::cur_step_prog;
 int Program::cur_step_n = 1;
 int Program::cur_step_cnt = 0;
-int Program::m_global_run_ct;
-
-Program::RunState Program::GetGlobalRunState() {
-//TODO: must somehow hook setRunState and such on dudes to track this
-// we are just blindly returning DONE for now!!!
-  if (m_global_run_ct > 0)
-    return Program::RUN;
-  else
-    return Program::DONE;
-}
+Program::RunState Program::global_run_state = Program::NOT_INIT;
 
 void Program::Initialize() {
   run_state = NOT_INIT;
@@ -3697,37 +3688,37 @@ void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 int Program::Call(Program* caller) {
-  setRunState(RUN);
+  run_state = RUN;		// just a local update
   int rval = Cont_impl();
   if(stop_req) {
     script->Stop();		// stop us
     caller->script->Stop();	// stop caller!
     caller->script->Prog()->Frame()->pc = 0;
-    setRunState(STOP);		// we are done
+    run_state = STOP;		// we are done
     // NOTE: this backs up to restart the entire call to fun -- THIS DEPENDS ON THE CODE
     // that generates the call!!!!!  ALWAYS MUST BE IN A SUB-BLOCK of code..
   }
   else {
     script->Restart();		// restart script at beginning if run again	
-    setRunState(DONE);		// we are done
+    run_state = DONE;		// we are done
   }
   return rval;
 } 
 
 int Program::CallInit(Program* caller) {
-  setRunState(INIT);    // this is redundant if called from an existing INIT but otherwise needed
+  run_state = INIT;    // this is redundant if called from an existing INIT but otherwise needed
   Run_impl();
   CheckConfig(false);	// check after running!  see below
   script->Restart(); 	// for init, always restart script at beginning if run again	
   if(!taMisc::check_ok)
-    setRunState(NOT_INIT);
+    run_state = NOT_INIT;
   else
-    setRunState(DONE);
+    run_state = DONE;
   return ret_val;
 } 
 
 void Program::Init() {
-  if(run_state == RUN) return;	// already running!
+  if(AlreadyRunning()) return;	// already running!
   cur_step_prog = NULL;
   ClearStopReq();		// NOTE: newly added 4/18/09 -- check for breakage..
   taProject* proj = GET_MY_OWNER(taProject);
@@ -3736,7 +3727,7 @@ void Program::Init() {
     QDir::setCurrent(fi.absolutePath());
   }
   taMisc::Busy();
-  setRunState(INIT);
+  SetRunState(INIT);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
   // first run the Init code, THEN do the check.  this prevents a catch-22
   // with Init code that is designed to configure things so there won't be 
@@ -3764,9 +3755,9 @@ void Program::Init() {
   script->Restart();		// restart script at beginning if run again
 
   if(!taMisc::check_ok)
-    setRunState(NOT_INIT);
+    SetRunState(NOT_INIT);
   else
-    setRunState(DONE);
+    SetRunState(DONE);
   stop_req = false;  // this does not do full clear, so that information can be queried
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 } 
@@ -3787,25 +3778,18 @@ bool Program::PreCompileScript_impl() {
   return true;
 }
 
-void Program::setRunState(RunState value) {
-  if (run_state == value) return;
-  // manage global state -- do this before updating ourself
-  // note: DONE <-> NOT_INIT are not state changes
-  // going to "done" always decs the ref count
-  if (((value == DONE) && (run_state != NOT_INIT)) ||
-    ((value == NOT_INIT) && (run_state != DONE)) )
-    --m_global_run_ct;
-  // going into a run state from DONE or NOT_INIT bumps ct
-  if (((run_state == DONE) || (run_state == NOT_INIT)) &&
-   ((value == INIT) || (value == RUN) || (value == STOP)) )
-    ++m_global_run_ct;
-  // note: all the others, like INIT->RUN or RUN->STOP do nothing to global
-    
+bool Program::AlreadyRunning() {
+  if(run_state == RUN || run_state == INIT || global_run_state == RUN || 
+     global_run_state == INIT) {
+    taMisc::Info("A Program is already running -- cannot run until it is done");
+    return true;
+  }
+  return false;
+}
+
+void Program::SetRunState(RunState value) {
   run_state = value;
-  
-  // DO NOT DO THIS!! Definitely generates too much overhead
-  // datachanged called only after macroscopic action
-  //  DataChanged(DCR_ITEM_UPDATED_ND);
+  global_run_state = value;
 }
 
 int Program::Run_impl() {
@@ -3836,7 +3820,7 @@ int Program::Cont_impl() {
 }
 
 void Program::Run() {
-  if(run_state == RUN || run_state == INIT) return;	// already running!
+  if(AlreadyRunning()) return;
   if(run_state == NOT_INIT) {
     Init();			// auto-press Init button!
   }
@@ -3850,30 +3834,22 @@ void Program::Run() {
   ClearStopReq();
   step_mode = false;
   cur_step_prog = NULL;
-  QPointer<QWidget> m_prev_active;
-  if(taMisc::gui_active)
-    m_prev_active = QApplication::activeWindow();
   taMisc::Busy();
-  setRunState(RUN);
+  SetRunState(RUN);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
-  if((bool)m_prev_active) {
-//     QApplication::setActiveWindow(m_prev_active);
-    // note: above does NOT work! -- likely source of bug in cocoa 4.6.0
-    m_prev_active->activateWindow();
-  }
   Cont_impl();
   taMisc::DoneBusy();
   if (ret_val != RV_OK) ShowRunError();
   // unless we were stopped, we are done
   if(stop_req) {
-    setRunState(STOP);
+    SetRunState(STOP);
     if((stop_reason == SR_ERROR) && (ret_val == RV_OK)) {
       ret_val = RV_RUNTIME_ERR;
     }
   }
   else {
     script->Restart();
-    setRunState(DONE);
+    SetRunState(DONE);
   }
   stop_req = false;  // this does not do full clear, so that information can be queried
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
@@ -3891,7 +3867,7 @@ void Program::ShowRunError() {
 }
 
 void Program::Step(Program* step_prg) {
-  if(run_state == RUN || run_state == INIT) return;	// already running!
+  if(AlreadyRunning()) return;	// already running!
   if(run_state == NOT_INIT) {
     Init();			// auto-press Init button!
   }
@@ -3918,7 +3894,7 @@ void Program::Step(Program* step_prg) {
   cur_step_cnt = 0;
     
   taMisc::Busy();
-  setRunState(RUN);
+  SetRunState(RUN);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
   Cont_impl();
   taMisc::DoneBusy();
@@ -3930,14 +3906,14 @@ void Program::Step(Program* step_prg) {
   step_mode = false;
   cur_step_prog = NULL;
   if(stop_req) {
-    setRunState(STOP);
+    SetRunState(STOP);
     if((stop_reason == SR_ERROR) && (ret_val == RV_OK)) {
       ret_val = RV_RUNTIME_ERR;
     }
   }
   else {
     script->Restart();
-    setRunState(DONE);
+    SetRunState(DONE);
   }
   stop_req = false;		    // this does not do full clear, so that information can be queried
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
@@ -3970,8 +3946,8 @@ void Program::Abort() {
 
 void Program::Stop_impl() {
   script->Stop();
-  setRunState(STOP);
-  DataChanged(DCR_ITEM_UPDATED_ND); // update button state
+//   setRunState(STOP);
+//   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
 }
 
 bool Program::IsStepProg() {

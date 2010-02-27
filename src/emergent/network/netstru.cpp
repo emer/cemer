@@ -4590,7 +4590,10 @@ void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
   if((offs.x == 0) && (offs.y == 0)) {
     ApplyLayerFlags(ext_flags);
   }
-  if(data->dims() == 2) {
+  if(data->dims() == 1) {
+    ApplyInputData_1d(data, ext_flags, ran, na_by_range);
+  }
+  else if(data->dims() == 2) {
     ApplyInputData_2d(data, ext_flags, ran, offs, na_by_range);
   }
   else {
@@ -4598,6 +4601,17 @@ void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
       ApplyInputData_Gp4d(data, ext_flags, ran, na_by_range); // note: no offsets -- layerwriter does check
     else
       ApplyInputData_Flat4d(data, ext_flags, ran, offs, na_by_range);
+  }
+}
+
+void Layer::ApplyInputData_1d(taMatrix* data, Unit::ExtType ext_flags,
+			      Random* ran, bool na_by_range) {
+  for(int d_x = 0; d_x < data->dim(0); d_x++) {
+    Unit* un = units.Leaf(d_x);
+    if(un) {
+      float val = data->SafeElAsVar(d_x).toFloat();
+      un->ApplyInputData(val, ext_flags, ran, na_by_range);
+    }
   }
 }
 

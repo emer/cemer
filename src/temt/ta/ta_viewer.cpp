@@ -482,6 +482,11 @@ IDataViewWidget* PanelViewer::ConstrWidget_impl(QWidget* gui_parent) {
   return new iTabViewer(this, gui_parent);
 }
 
+iTabBarBase* PanelViewer::tabBar() {
+  if(!widget()) return NULL;
+  return widget()->tabBar();
+}
+
 /*void PanelViewer::Clear_impl() {
   if (!m_window) return;
   browser_win()->Reset();
@@ -1308,6 +1313,24 @@ bool MainWindowViewer::SelectT3ViewTabName(const String& tab_nm) {
     return itv->SetCurrentTabName(tab_nm);
   }
   return false;
+}
+
+BrowseViewer* MainWindowViewer::GetLeftBrowser() {
+  int idx;
+  BrowseViewer* bv = (BrowseViewer*)FindFrameByType(&TA_BrowseViewer, idx);
+  return bv;
+}
+
+PanelViewer* MainWindowViewer::GetMiddlePanel() {
+  int idx;
+  PanelViewer* pv = (PanelViewer*)FindFrameByType(&TA_PanelViewer, idx);
+  return pv;
+}
+
+T3DataViewer* MainWindowViewer::GetRightViewer() {
+  int idx;
+  T3DataViewer* pv = (T3DataViewer*)FindFrameByType(&TA_T3DataViewer, idx);
+  return pv;
 }
 
 //////////////////////////

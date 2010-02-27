@@ -2195,6 +2195,13 @@ void taBase::SetDocLink(taDoc* doc) {
   if (TestError((doc && !uddl), "SetDocLink", "Could not set DocLink -- the object may not support UserData")) return;
   if (!doc && !uddl) return; // not setting, doesn't already have
   if (doc) {
+    if(TestError(!doc->GetOwner(), "SetDocLink", "doc does not have an owner -- invalid:",
+		 doc->name))
+      return;
+    if(TestError(!SameScope(doc, &TA_taProject), "SetDocLink",
+		 "doc is not in the same project as this object -- invalid:",
+		 doc->name))
+      return;
     uddl->doc = doc;
   } else {
     uddl->Close(); // do now, so update is good

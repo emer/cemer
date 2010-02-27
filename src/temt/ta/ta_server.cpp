@@ -711,7 +711,7 @@ void TemtClient::cmdGetRunState() {
   int run_state = 0; // temp
   if (pos_params.size == 0) {
     // global version
-    run_state = Program::GetGlobalRunState();
+    run_state = Program::global_run_state;
   } else {
     // program version
     String pnm = pos_params.SafeEl(0);

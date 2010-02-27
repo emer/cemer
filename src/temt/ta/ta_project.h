@@ -43,6 +43,7 @@ class TA_API taDoc : public taNBase {
   // ##CAT_Docs document for providing information on projects and other objects
 INHERITED(taNBase)
 public:
+  String	desc;	   	// #EDIT_DIALOG #CAT_taBase description of this documentation: what is this doc about
   bool		auto_open;	// open this document upon startup
   bool		web_doc; 	// #READ_ONLY this document lives on the web, at the following URL, instead of being local text saved in the project -- the most recently viewed version of the document is cached into the local text, and is rendered if it is not possible to connect to the internet -- this flag is automatically updated based on the url field
   String	wiki;		// name of a wiki, as specified in global preferences, where this object should be stored -- this is used to lookup the wiki name -- if blank then url must be a full URL path

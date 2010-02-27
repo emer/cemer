@@ -78,7 +78,15 @@ void iSplitter::showDelayed() {
 
 void iSplitter::saveSizes() {
   if(in_collapsing) return;	// not now!
-  saved_sizes = sizes();
+  QList<int> cur_sz = sizes();
+  if(cur_sz.count() != saved_sizes.count()) {
+    saved_sizes = cur_sz;
+  }
+  else {
+    // only save if someone is NOT already collapsed
+    if(!(cur_sz[0] == 0 || cur_sz[cur_sz.count()-1] == 0))
+      saved_sizes = cur_sz;
+  }
 }
 
 void iSplitter::collapseToggle(int index) {

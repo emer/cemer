@@ -2234,14 +2234,18 @@ void iTabBarEx::contextMenuEvent(QContextMenuEvent * e) {
   if (m_tab_widget) m_tab_widget->emit_customContextMenuRequested2(gpos, idx);
 }
 
-
 iTabWidget::iTabWidget(QWidget* parent)
 :inherited(parent)
 {
   iTabBarEx* itbex = new iTabBarEx(this);
   setTabBar(itbex);
-  itbex->setFocusPolicy(Qt::NoFocus); // do not focus on this guy -- nothing useful here
+  //  itbex->setFocusPolicy(Qt::NoFocus); // do not focus on this guy -- nothing useful here
 }
+
+iTabBarBase* iTabWidget::GetTabBar() {
+  return (iTabBarBase*)tabBar();
+}
+
 void iTabWidget::emit_customContextMenuRequested2(const QPoint& pos,
      int tab_idx)
 {

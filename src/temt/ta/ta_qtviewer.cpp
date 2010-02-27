@@ -25,6 +25,8 @@
 #include "ta_project.h"
 #include "ta_qtclassbrowse.h"
 #include "ta_qtgroup.h"
+#include "ta_program_qt.h"
+#include "t3viewer.h"
 
 #include "css_qt.h"
 #include "css_qtdialog.h"
@@ -2985,6 +2987,10 @@ void iTabViewer::UpdateTabNames() { // called by a datalink when a tab name migh
   tabView()->UpdateTabNames();
 }
 
+iTabBarBase* iTabViewer::tabBar() {
+  if(!tabView()) return NULL;
+  return tabView()->tabBar();
+}
 
 //////////////////////////
 //  iDockViewer		//
@@ -3475,6 +3481,8 @@ void iMainWindowViewer::Init() {
   setAttribute(Qt::WA_DeleteOnClose);
   //note: only a bare init -- most stuff done in virtual Constr() called after new
   brow_hist = new iBrowseHistory(this);
+  cur_main_focus = LEFT_BROWSER;
+  cur_sub_focus = MAIN_TREE;
   menu = NULL;
   body = NULL;
   last_clip_handler = NULL;
@@ -3631,17 +3639,15 @@ void iMainWindowViewer::closeEvent(QCloseEvent* e) {
   }
 }
 
+void iMainWindowViewer::raise() {
+  QMainWindow::raise();
+  AlignCssConsole();
+}
+
 void iMainWindowViewer::moveEvent(QMoveEvent* e) {
   QMainWindow::moveEvent(e);
   taProject* prj = curProject();
-  if(!prj) return;
-  if(!taMisc::console_win) return;
-  QRect r = frameGeometry();
-  int nw_top = r.bottom() + 1;
-  int nw_ht = taiM->scrn_s.h - nw_top - 64; // leave a fixed amount of space at bottom.
-  if(nw_ht < 40) nw_ht = 40;
-  taMisc::console_win->resize(r.width(), nw_ht);
-  taMisc::console_win->move(r.left(), nw_top);
+  AlignCssConsole();
 }
 
 void iMainWindowViewer::resizeEvent(QResizeEvent* e) {
@@ -3652,15 +3658,20 @@ void iMainWindowViewer::resizeEvent(QResizeEvent* e) {
     taiM->frame_s.h = r.height() - height();
     taiM->frame_s.w = r.width() - width();
   }
+  AlignCssConsole();
+}
+
+bool iMainWindowViewer::AlignCssConsole() {
   taProject* prj = curProject();
-  if(!prj) return;
-  if(!taMisc::console_win) return;
+  if(!prj) return false;
+  if(!taMisc::console_win) return false;
   QRect r = frameGeometry();
   int nw_top = r.bottom() + 1;
   int nw_ht = taiM->scrn_s.h - nw_top - 64; // leave a fixed amount of space at bottom.
   if(nw_ht < 40) nw_ht = 40;
   taMisc::console_win->resize(r.width(), nw_ht);
   taMisc::console_win->move(r.left(), nw_top);
+  return true;
 }
 
 void iMainWindowViewer::showEvent(QShowEvent* e) {
@@ -3669,7 +3680,9 @@ void iMainWindowViewer::showEvent(QShowEvent* e) {
   if (!db) return;
   taBase* data = db->data();
   if(!data) return;
-  tabMisc::DelayedFunCall_gui(data, "WindowShowHook"); // make it delayed so window should actuall show first!
+  tabMisc::DelayedFunCall_gui(data, "WindowShowHook");
+  // make it delayed so window should actuall show first!
+  AlignCssConsole();
 }
 
 void iMainWindowViewer::hideEvent(QHideEvent* e) {
@@ -3847,7 +3860,7 @@ QKeySequence(Qt::ControlModifier, Qt::Key_Right), "historyForwardAction" ));
   toolsClassBrowseAction = AddAction(new taiAction(0, "Class Browser", QKeySequence(), "toolsClassBrowseAction"));
   toolsTypeBrowseAction = AddAction(new taiAction(0, "&Help Browser", QKeySequence(), "toolsTypeBrowseAction"));
   String s = taMisc::app_name + " Help on the web";
-  helpHelpAction = AddAction(new taiAction("&Help", QKeySequence(), _helpHelpAction ));
+  helpHelpAction = AddAction(new taiAction("&Help", QKeySequence("F1"), _helpHelpAction ));
   helpHelpAction->setToolTip(s);
   helpHelpAction->setStatusTip(s);
   helpAboutAction = AddAction(new taiAction("&About", QKeySequence(), _helpAboutAction ));
@@ -4162,8 +4175,7 @@ void iMainWindowViewer::fileOptions() {
 iTreeView* iMainWindowViewer::GetMainTreeView() {
   MainWindowViewer* db = viewer();
   if (!db) return NULL;
-  int idx;
-  BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer, idx);
+  BrowseViewer* bv = db->GetLeftBrowser();
   if (!bv) return NULL;
   iBrowseViewer* ibv = bv->widget();
   if (!ibv) return NULL;
@@ -4175,9 +4187,89 @@ iTreeView* iMainWindowViewer::GetCurTreeView() {
   return GetMainTreeView();
 }
 
-void iMainWindowViewer::FocusCurTreeView() {
+bool iMainWindowViewer::FocusCurTreeView() {
   iTreeView* itv = GetCurTreeView();
-  if(itv) itv->setFocus();
+  if(!itv) return false;
+  itv->setFocus();
+  if(itv == cur_tree_view) {
+    cur_main_focus = MIDDLE_PANEL;
+    cur_sub_focus = PROG_TREE;
+  }
+  else {
+    cur_main_focus = LEFT_BROWSER;
+    cur_sub_focus = MAIN_TREE;
+  }
+  return true;
+}
+
+bool iMainWindowViewer::FocusLeftBrowser() {
+  iTreeView* itv = GetMainTreeView();
+  if(itv) {
+    itv->setFocus();
+    cur_main_focus = LEFT_BROWSER;
+    cur_sub_focus = MAIN_TREE;
+    return true;
+  }
+  return false;
+}
+
+bool iMainWindowViewer::FocusMiddlePanel() {
+  iTreeView* mtv = GetMainTreeView();
+  MainWindowViewer* db = viewer();
+  if(!db) return false;
+  PanelViewer* pv = db->GetMiddlePanel();
+  if(!pv || !pv->widget()) return false;
+  iTabViewer* itv = pv->widget();
+  iDataPanel* idp = itv->tabView()->curPanel();
+  if(idp) {
+    QWidget* ffwid = idp->firstTabFocusWidget();
+    if(ffwid) {
+      ffwid->setFocus();
+      cur_main_focus = MIDDLE_PANEL;
+      cur_sub_focus = PROG_TREE; // probably..
+      return true;
+    }
+  }
+  itv->tabView()->tabBar()->setFocus();
+  cur_main_focus = MIDDLE_PANEL;
+  cur_sub_focus = MIDDLE_TABS;
+  return true;
+}
+
+bool iMainWindowViewer::FocusRightViewer() {
+  MainWindowViewer* db = viewer();
+  if(!db) return false;
+  T3DataViewer* pv = db->GetRightViewer();
+  if(!pv || !pv->widget()) return false;
+  if(pv->tabBar())
+    pv->tabBar()->setFocus();
+  cur_main_focus = RIGHT_VIEWER;
+  cur_sub_focus = RIGHT_TABS;
+  return true;
+}
+
+bool iMainWindowViewer::MoveFocusLeft() {
+  switch(cur_main_focus) {
+  case LEFT_BROWSER:
+    return FocusRightViewer();
+  case MIDDLE_PANEL:
+    return FocusLeftBrowser();
+  case RIGHT_VIEWER:
+    return FocusMiddlePanel();
+  }
+  return false;
+}
+
+bool iMainWindowViewer::MoveFocusRight() {
+  switch(cur_main_focus) {
+  case LEFT_BROWSER:
+    return FocusMiddlePanel();
+  case MIDDLE_PANEL:
+    return FocusRightViewer();
+  case RIGHT_VIEWER:
+    return FocusLeftBrowser();
+  }
+  return false;
 }
 
 iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
@@ -4191,6 +4283,7 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
     itv->clearExtSelection();
     itv->scrollTo(rval);
     itv->setCurrentItem(rval, QItemSelectionModel::ClearAndSelect);
+    itv->setFocus();
   }
   else if(itv == cur_tree_view) { // try again with main 
     itv = GetMainTreeView();
@@ -4199,6 +4292,7 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
     if (rval) {
       itv->scrollTo(rval);
       itv->setCurrentItem(rval, QItemSelectionModel::ClearAndSelect);
+      itv->setFocus();
     }
   }
   // make sure our operations are finished
@@ -4414,14 +4508,16 @@ void iMainWindowViewer::httpUrlHandler(const QUrl& url) {
 
 bool iMainWindowViewer::event(QEvent* ev) {
   bool rval = inherited::event(ev);
-  if (ev->type() == QEvent::WindowActivate)
+  if(ev->type() == QEvent::WindowActivate) {
     taiMisc::active_wins.GotFocus_MainWindow(this);
+    AlignCssConsole();
+  }
   return rval;
 }
 
 bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
   if (event->type() != QEvent::KeyPress) {
-    return QObject::eventFilter(obj, event);
+    return inherited::eventFilter(obj, event);
   }
 
   QCoreApplication* app = QCoreApplication::instance();
@@ -4452,12 +4548,59 @@ bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
       return true;		// we absorb this event
     }
+    else if(e->key() == Qt::Key_Tab) {
+      if(e->modifiers() & Qt::ShiftModifier) {
+	if(cur_main_focus == RIGHT_VIEWER) {
+	  MainWindowViewer* db = viewer();
+	  if(db) {
+	    T3DataViewer* pv = db->GetRightViewer();
+	    if(pv && pv->tabBar()) {
+	      pv->tabBar()->selectPrevTab();
+	    }
+	  }
+	}
+	else {
+	  iTabViewer* itv = GetTabViewer();
+	  if(itv) {
+	    itv->tabBar()->selectPrevTab();
+	  }
+	}
+      }
+      else {
+	if(cur_main_focus == RIGHT_VIEWER) {
+	  MainWindowViewer* db = viewer();
+	  if(db) {
+	    T3DataViewer* pv = db->GetRightViewer();
+	    if(pv && pv->tabBar()) {
+	      pv->tabBar()->selectNextTab();
+	    }
+	  }
+	}
+	else {
+	  iTabViewer* itv = GetTabViewer();
+	  if(itv) {
+	    itv->tabBar()->selectNextTab();
+	  }
+	}
+      }
+      return true;		// we absorb this event
+    }
   }
-  if(e->modifiers() & Qt::AltModifier && e->key() == Qt::Key_W) { // copy
-    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
-    return true;		// we absorb this event
+  if(e->modifiers() & Qt::AltModifier) {
+    if(e->key() == Qt::Key_W) { // copy
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_J) { // move left between regions
+      MoveFocusLeft();
+      return true;
+    }
+    else if(e->key() == Qt::Key_L) { // move right between regions
+      MoveFocusRight();
+      return true;
+    }
   }
-  return QObject::eventFilter(obj, event);
+  return inherited::eventFilter(obj, event);
 }
 
 int iMainWindowViewer::GetEditActions() {
@@ -4861,6 +5004,51 @@ void iMainWindowViewer::windowActivationChange(bool oldActive) {
 // 	iTabBar 	//
 //////////////////////////
 
+iTabBarBase::iTabBarBase(QWidget* parent_) : inherited(parent_) {
+  // nothing
+}
+
+void iTabBarBase::selectNextTab() {
+  int dx = 1;
+  for (int index = currentIndex() + dx; index >= 0 && index < count(); index += dx) {
+    if (isTabEnabled(index)) {
+      setCurrentIndex(index);
+      break;
+    }
+  }
+}
+
+void iTabBarBase::selectPrevTab() {
+  int dx = -1;
+  for (int index = currentIndex() + dx; index >= 0 && index < count(); index += dx) {
+    if (isTabEnabled(index)) {
+      setCurrentIndex(index);
+      break;
+    }
+  }
+}
+
+void iTabBarBase::keyPressEvent(QKeyEvent* e) {
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+  if(ctrl_pressed && ((e->key() == Qt::Key_B) || (e->key() == Qt::Key_F))) {
+    if(e->key() == Qt::Key_F)
+      selectNextTab();
+    else
+      selectPrevTab();
+  }
+  else {
+    inherited::keyPressEvent(e);
+  }
+}
+
+
 QIcon* iTabBar::tab_icon[iTabBar::TI_LOCKED + 1]; 
 
 void iTabBar::InitClass() {
@@ -4871,12 +5059,9 @@ void iTabBar::InitClass() {
 }
 
 iTabBar::iTabBar(iTabView* parent_)
-:QTabBar((QWidget*)parent_)
+:inherited((QWidget*)parent_)
 {
   defPalette = palette();
-
-//  defBackgroundColor = paletteBackgroundColor();
-//  defBaseColor = colorGroup().base();
 }
 
 iTabBar::~iTabBar() {
@@ -4915,33 +5100,9 @@ void iTabBar::contextMenuEvent(QContextMenuEvent * e) {
 }
 
 void iTabBar::mousePressEvent(QMouseEvent* e) {
-  QTabBar::mousePressEvent(e);
+  inherited::mousePressEvent(e);
   if (tabView()->m_viewer_win)
     tabView()->m_viewer_win->TabView_Selected(tabView());
-}
-
-void iTabBar::keyPressEvent(QKeyEvent* e) {
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
-  if(ctrl_pressed && ((e->key() == Qt::Key_B) || (e->key() == Qt::Key_F))) {
-    // following code from qtabbar.cpp:
-    int dx = e->key() == (isRightToLeft() ? Qt::Key_F : Qt::Key_B) ? -1 : 1;
-    for (int index = currentIndex() + dx; index >= 0 && index < count(); index += dx) {
-      if (isTabEnabled(index)) {
-	setCurrentIndex(index);
-	break;
-      }
-    }
-  }
-  else {
-    inherited::keyPressEvent(e);
-  }
 }
 
 bool iTabBar::focusNextPrevChild(bool next) {
@@ -6353,7 +6514,7 @@ iViewPanelSet::iViewPanelSet(taiDataLink* link_)
 :inherited(link_)
 {
   layDetail->addWidget(wsSubPanels, 1);
-  tbSubPanels = new QTabBar(widg);
+  tbSubPanels = new iTabBarBase(widg);
   tbSubPanels->setShape(QTabBar::TriangularSouth);
   layDetail->addWidget(tbSubPanels);
 
@@ -6961,7 +7122,7 @@ void iDocDataPanel::setDoc(taDoc* doc) {
 
 bool iDocDataPanel::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() != QEvent::KeyPress) {
-    return QObject::eventFilter(obj, event);
+    return inherited::eventFilter(obj, event);
   }
 
   QCoreApplication* app = QCoreApplication::instance();
@@ -7029,7 +7190,7 @@ bool iDocDataPanel::eventFilter(QObject* obj, QEvent* event) {
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
     return true;		// we absorb this event
   }
-  return QObject::eventFilter(obj, event);
+  return inherited::eventFilter(obj, event);
 }
   
 /*void iDocDataPanel::br_copyAvailable (bool) {
@@ -7372,6 +7533,14 @@ void iTreeView::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev); // prob does nothing
   if(main_window) {
     main_window->cur_tree_view = this; // always overwrite with current
+    if(this == main_window->GetMainTreeView()) {
+      main_window->cur_main_focus = iMainWindowViewer::LEFT_BROWSER;
+      main_window->cur_sub_focus = iMainWindowViewer::MAIN_TREE;
+    }
+    else {			// assume prog editor!
+      main_window->cur_main_focus = iMainWindowViewer::MIDDLE_PANEL;
+      main_window->cur_sub_focus = iMainWindowViewer::PROG_TREE;
+    }
 //     cerr << "focus itv: " << this << endl;
   }
   Emit_GotFocusSignal();
@@ -9401,6 +9570,10 @@ void iHelpBrowser::init() {
   
   setCentralWidget(split);
 //  layOuter->addWidget(status_bar);
+
+  tool_bar->installEventFilter(this); // translate keys..
+  tv->installEventFilter(this); // translate keys..
+  filter->installEventFilter(this); // translate keys..
   
   // add all types -- only non-virtual, base types
   AddTypesR(&taMisc::types);
@@ -9939,7 +10112,7 @@ QWebView* iHelpBrowser::webView(int index) {
 
 bool iHelpBrowser::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() != QEvent::KeyPress) {
-    return QObject::eventFilter(obj, event);
+    return inherited::eventFilter(obj, event);
   }
 
   QCoreApplication* app = QCoreApplication::instance();
@@ -10002,15 +10175,18 @@ bool iHelpBrowser::eventFilter(QObject* obj, QEvent* event) {
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
       return true;		// we absorb this event
     }
+    else if(e->key() == Qt::Key_S) {
+      if(find_text->hasFocus())
+	filter->setFocus();
+      else
+	find_text->setFocus();
+      return true;		// we absorb this event
+    }
   }
   if(e->modifiers() & Qt::AltModifier && e->key() == Qt::Key_W) { // copy
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
     return true;		// we absorb this event
   }
 
-//   else if(e->key() == Qt::Key_F3) {
-//     find_text->setFocus();
-//   }
-
-  return QObject::eventFilter(obj, event);
+  return inherited::eventFilter(obj, event);
 }

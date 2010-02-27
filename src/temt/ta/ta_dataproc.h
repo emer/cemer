@@ -778,7 +778,7 @@ private:
 };
 
 class TA_API DataCalcAddDestRow : public DataSrcDestProg { 
-  // add a new blank row into the dest data table (used ONLY within a DataCalcLoop to add new data -- automatically gets dest_data from outer DataCalcLoop object)
+  // add a new blank row into the dest data table (used ONLY within a DataCalcLoop to add new data -- automatically gets dest_data from outer DataCalcLoop object) -- MUST put within a CodeBlock if multiple are used per loop, otherwise duplicate variable definition warnings will occur
 INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__
@@ -862,7 +862,7 @@ private:
 };
 
 class TA_API DataCalcCopyCommonCols : public DataSrcDestProg { 
-  // copy all of the columns from source to dest that have the same name and type (used ONLY within a DataCalcLoop -- automatically gets src_data from outer DataCalcLoop object)
+  // copy all of the columns from source to dest that have the same name and type (used ONLY within a DataCalcLoop -- automatically gets src_data from outer DataCalcLoop object) -- must do a + dest row *before* this step (copies into this new row)
 INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__

@@ -34,7 +34,6 @@
 
 #ifndef __MAKETA__
 # include <qevent.h>
-# include <QTabBar>
 # include <qwidget.h>
 # include <Inventor/nodes/SoSeparator.h>
 # include <Inventor/SbLinear.h>
@@ -871,16 +870,16 @@ private:
 
 class iTabWidget; // IGNORE
 #ifndef __MAKETA__
-class TA_API iTabBarEx : public QTabBar {
+class TA_API iTabBarEx : public iTabBarBase {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS decodes tab for context menu
   Q_OBJECT
-INHERITED(QTabBar)
+INHERITED(iTabBarBase)
 public:
   iTabBarEx(iTabWidget* parent = NULL);
   
 protected:
   iTabWidget*		m_tab_widget;
-  override void		contextMenuEvent(QContextMenuEvent* ev);
+  override void	contextMenuEvent(QContextMenuEvent* ev);
 };
 
 class TA_API iTabWidget : public QTabWidget {
@@ -890,6 +889,8 @@ INHERITED(QTabWidget)
 friend class iTabBarEx;
 public:
   iTabWidget(QWidget* parent = NULL);
+
+  iTabBarBase* 	GetTabBar();
   
 #ifndef __MAKETA__
 signals:
@@ -897,9 +898,8 @@ signals:
 #endif
 
 protected:
-  void 			emit_customContextMenuRequested2(const QPoint& pos,
-     int tab_idx);
-  override void		contextMenuEvent(QContextMenuEvent* ev);
+  void 		emit_customContextMenuRequested2(const QPoint& pos, int tab_idx);
+  override void contextMenuEvent(QContextMenuEvent* ev);
 };
 
 #endif
@@ -916,6 +916,7 @@ public:
   iT3DataViewFrame*	iViewFrame(int idx) const; // the frame in indicated tab
   T3DataViewFrame*	viewFrame(int idx) const; // view of frame in indicate tab -- NOT necessarily same as view idx if all frames not viewed in frames
 
+  iTabBarBase*		tabBar() { if(!tw) return NULL; return tw->GetTabBar(); }
   int			TabIndexByName(const String& nm) const;
   bool			SetCurrentTab(int tab_idx); 
   // focus indicated tab -- returns success
@@ -961,6 +962,8 @@ public:
 
   override bool		isRootLevelView() const {return true;} 
   inline iT3DataViewer*	widget() {return (iT3DataViewer*)inherited::widget();} // lex override
+
+  iTabBarBase*		tabBar() { if(!widget()) return NULL; return widget()->tabBar(); }
 
   virtual T3DataView*	FindRootViewOfData(taBase* data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
 

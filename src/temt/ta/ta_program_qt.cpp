@@ -366,24 +366,38 @@ void iProgramEditor::Init() {
 }
 
 bool iProgramEditor::eventFilter(QObject* obj, QEvent* event) {
-  if (event->type() == QEvent::KeyPress) {
-    QKeyEvent* e = static_cast<QKeyEvent *>(event);
-    bool ctrl_pressed = false;
-    if(e->modifiers() & Qt::ControlModifier)
-      ctrl_pressed = true;
+  if (event->type() != QEvent::KeyPress) {
+    return QWidget::eventFilter(obj, event);
+  }
+
+  QKeyEvent* e = static_cast<QKeyEvent *>(event);
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
 #ifdef TA_OS_MAC
-    // ctrl = meta on apple
-    if(e->modifiers() & Qt::MetaModifier)
-      ctrl_pressed = true;
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
 #endif
-    if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
-      Apply();			// do it!
-      items->setFocus();	// return to items!
+  if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
+    Apply();			// do it!
+    items->setFocus();	// return to items!
+    return true;
+  }
+  if(e->key() == Qt::Key_Escape) {
+    Revert();			// do it!
+    items->setFocus();	// return to items!
+    return true;
+  }
+  if(e->modifiers() & Qt::AltModifier) {
+    if(e->key() == Qt::Key_J) { // move left between regions
+      if((bool)m_window)
+	m_window->MoveFocusLeft();
       return true;
     }
-    if(e->key() == Qt::Key_Escape) {
-      Revert();			// do it!
-      items->setFocus();	// return to items!
+    else if(e->key() == Qt::Key_L) { // move right between regions
+      if((bool)m_window)
+	m_window->MoveFocusRight();
       return true;
     }
   }
@@ -941,13 +955,7 @@ void iProgramPanelBase::OnWindowBind_impl(iTabViewer* itv) {
 
   // make sure the Program toolbar is created
   MainWindowViewer* mvw = itv->viewerWindow()->viewer();
-  //ProgramToolBar* ptb = 
-  (ProgramToolBar*)mvw->FindToolBarByType(&TA_ProgramToolBar,
-    "Program");
-/*TODO: re-enable once the program toolbar is defined
-  if (!ptb)
-    ptb = (ProgramToolBar*)mvw->AddToolBarByType(&TA_ProgramToolBar,
-    "Program");*/
+  mvw->FindToolBarByType(&TA_ProgramToolBar,"Program");
 }
 
 void iProgramPanelBase::UpdatePanel_impl() {

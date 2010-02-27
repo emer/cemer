@@ -81,6 +81,7 @@ class taProject;
   class iMainWindowViewer;
   class iDockViewer;
   class iToolBoxDockViewer;
+  class iTabBarBase;
   class iTabBar;
   class iTabView;
   class iDataPanel;
@@ -127,6 +128,7 @@ class     BrowseViewer;
 class       tabBrowseViewer;
 class       ClassBrowseViewer;
 class     PanelViewer;
+class     T3DataViewer;
 class ToolBoxRegistrar; //
 
 
@@ -364,6 +366,7 @@ friend class iDataPanel;
 public:
 
   inline iTabViewer*	widget() {return (iTabViewer*)inherited::widget();}
+  iTabBarBase*		tabBar();
 
   TA_DATAVIEWFUNS(PanelViewer, FrameViewer) //
 protected:
@@ -636,6 +639,13 @@ public:
   // select T3DataViewer (3d view) (right view panel) tab by number
   bool			SelectT3ViewTabName(const String& tab_name);
   // select T3DataViewer (3d view) (right view panel) tab by name
+
+  BrowseViewer*		GetLeftBrowser();
+  // get the BrowseViewer (left browser panel)
+  PanelViewer*		GetMiddlePanel();
+  // get the PanelViewer (middle edit panel)
+  T3DataViewer*		GetRightViewer();
+  // get the T3DataViewer (right viewer panel)
   
   override void		FrameSizeToSize(iSize& sz);
   override bool 	GetWinState();

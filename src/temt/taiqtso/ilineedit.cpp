@@ -42,6 +42,7 @@ iLineEdit::iLineEdit(const char* text, QWidget* parent)
 void iLineEdit::init() {
   mmin_char_width = 0;
   mchar_width = 0;
+  ext_select_on = false;
   // this seems unnecessary, and conflicts with ctrl-U select-all!
 //   QShortcut* sc = new QShortcut(QKeySequence(/*Qt::ALT +*/ Qt::CTRL + Qt::Key_U), this);
 //   sc->setContext(Qt::WidgetShortcut);
@@ -132,6 +133,11 @@ void iLineEdit::setReadOnly(bool value) {
   update();
 }
 
+void iLineEdit::clearExtSelection() {
+  ext_select_on = false;
+  inherited::deselect();
+}
+
 void iLineEdit::keyPressEvent(QKeyEvent* e) {
   bool ctrl_pressed = false;
   if(e->modifiers() & Qt::ControlModifier)
@@ -144,30 +150,41 @@ void iLineEdit::keyPressEvent(QKeyEvent* e) {
 
   // emacs keys!!
   if(ctrl_pressed) {
-    if(e->key() == Qt::Key_A) {
+    if(e->key() == Qt::Key_Space) {
       e->accept();
-      home(false);		// no mark
+      deselect();
+      ext_select_on = true;
+    }
+    else if(e->key() == Qt::Key_G) {
+      e->accept();
+      clearExtSelection();
+    }
+    else if(e->key() == Qt::Key_A) {
+      e->accept();
+      home(ext_select_on);
     }
     else if(e->key() == Qt::Key_E) {
       e->accept();
-      end(false);		// no mark
+      end(ext_select_on);
     }
     else if(e->key() == Qt::Key_F) {
       e->accept();
-      cursorForward(false, 1);	// no mark
+      cursorForward(ext_select_on, 1);
     }
     else if(e->key() == Qt::Key_B) {
       e->accept();
-      cursorBackward(false, 1);	// no mark
+      cursorBackward(ext_select_on, 1);
     }
     else if(e->key() == Qt::Key_D) {
       e->accept();
       del();
+      clearExtSelection();
     }
     else if(e->key() == Qt::Key_K) { // supposedly already supported
       e->accept();
       end(true);		// mark
       cut();
+      clearExtSelection();
     }
     else if(e->key() == Qt::Key_U) {	 
       e->accept();	 
@@ -176,10 +193,12 @@ void iLineEdit::keyPressEvent(QKeyEvent* e) {
     else if(e->key() == Qt::Key_Y) {
       e->accept();
       paste();
+      clearExtSelection();
     }
     else if(e->key() == Qt::Key_W) {
       e->accept();
       cut();
+      clearExtSelection();
     }
     else if(e->key() == Qt::Key_Slash) {
       e->accept();
@@ -199,10 +218,24 @@ void iLineEdit::keyPressEvent(QKeyEvent* e) {
     else {
       QLineEdit::keyPressEvent( e );
     }
+    return;
   }
-  else {
-    QLineEdit::keyPressEvent( e );
+
+  if(e->modifiers() & Qt::AltModifier) {
+    if(e->key() == Qt::Key_W) { // copy
+      e->accept();
+      copy();
+      clearExtSelection();
+      return;
+    }
   }
+  if(e->key() == Qt::Key_Escape) {
+    e->accept();
+    clearExtSelection();
+    return;
+  }
+
+  QLineEdit::keyPressEvent( e );
 }
 
 void iLineEdit::wheelEvent(QWheelEvent * event) {

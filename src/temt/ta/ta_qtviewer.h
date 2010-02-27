@@ -732,6 +732,7 @@ public:
   override int		stretchFactor() const {return 4;} // 3/2 default
   iTabView*		tabView() {return m_curTabView;} // currently active
 //  iTabView_PtrList*	tabViews() {return m_tabViews;} // currently active
+  iTabBarBase*		tabBar();
 
   virtual void		AddPanel(iDataPanel* panel); // adds a new pane, and sets active in current tab
   void			AddPanelNewTab(iDataPanel* panel, bool lock = false); // adds a new tab, sets panel active in it, locks if requested
@@ -963,7 +964,24 @@ public:
   };
 #endif
 
-//nn  iToolBar_List		toolbars; // list of all created toolbars
+  enum MainWinLocs {		// names for major locations within window
+    LEFT_BROWSER,
+    MIDDLE_PANEL,
+    RIGHT_VIEWER,
+  };
+  enum WinSubLocs {		// sub-locations within windows
+    MAIN_TREE,			// main tree view within left browser
+    PROG_TREE,			// program tree view browser
+    PROG_EDIT,			// program edit panel
+    MIDDLE_TABS,		// middle tabs
+    MIDDLE_EDIT,		// middle edit panel
+    RIGHT_TABS,			// right tabs
+    RIGHT_VIEW,			// right viewer
+  };
+
+  MainWinLocs		cur_main_focus; // where is our current major focus located?
+  WinSubLocs		cur_sub_focus; // where is our current sub focus within main?
+
   taiAction_List	actions; // our own list of all created actions
   iBrowseHistory*	brow_hist;
   taiMenuBar*		menu;		// menu bar -- note: we use the window's built-in QMenu
@@ -1051,25 +1069,47 @@ public:
   // common find called by main menu, and context menu finds
 #endif
 
-  iTreeView*		GetMainTreeView(); // the main one from the iBrowseViewer
+  //////////////////////////////////////////////////////////////
+  // navigation around the window
+
+  iTreeView*		GetMainTreeView();
+  // the main one from the iBrowseViewer
   iTreeView*		GetCurTreeView();
   // the tree view can be a sub-viewer (e.g., program editor) instead of the main one
-  void			FocusCurTreeView();
+
+  bool			FocusCurTreeView();
   // send focus back to current tree view
+  bool			FocusLeftBrowser();
+  // send focus to left browser
+  bool			FocusMiddlePanel();
+  // send focus to middle panel
+  bool			FocusRightViewer();
+  // send focus to right viewer
+  bool			MoveFocusLeft();
+  // shift focus to the left of current (wraps around)
+  bool			MoveFocusRight();
+  // shift focus to the right of current (wraps around)
 
   iTreeViewItem* 	AssertBrowserItem(taiDataLink* link);
   iTreeViewItem* 	BrowserExpandAllItem(taiDataLink* link);
   iTreeViewItem* 	BrowserCollapseAllItem(taiDataLink* link);
 
   bool		 	AssertPanel(taiDataLink* link, bool new_tab = false,
-				    bool new_tab_lock = true); // used for things like wizards and edits; note: ntl ignored if !nt
-  void			EditItem(taiDataLink* link, bool not_in_cur = false); // edit this guy in a new panel, making a tab viewer if necessary
-  int			GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
-  iTabViewer* 		GetTabViewer(bool force = false); // get the tab viewer, or make one if force
+				    bool new_tab_lock = true);
+  // used for things like wizards and edits; note: ntl ignored if !nt
+  void			EditItem(taiDataLink* link, bool not_in_cur = false);
+  // edit this guy in a new panel, making a tab viewer if necessary
+  int			GetEditActions();
+  // after a change in selection, update the available edit actions (cut, copy, etc.)
+  iTabViewer* 		GetTabViewer(bool force = false);
+  // get the tab viewer, or make one if force
 
   void 			setFrameGeometry(const iRect& r);
-  void			setFrameGeometry(int left, int top, int width, int height); //bogus: see Qt docs on geometry under X
-
+  void			setFrameGeometry(int left, int top, int width, int height);
+  //bogus: see Qt docs on geometry under X
+  bool			AlignCssConsole();
+  // align css console to our window, if applicable
+  override void		raise();
 
   static iMainWindowViewer* GetViewerForObj(taBase* obj);
   // useful utility to get main window viewer for any given object
@@ -1203,9 +1243,27 @@ private:
 // 	iTabBar 	//
 //////////////////////////
 
-class TA_API iTabBar: public QTabBar { //  encapsulates the TabBar for iTabView
+class TA_API iTabBarBase : public QTabBar {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base tab bar with ctrl+f/b navigation
   Q_OBJECT
 INHERITED(QTabBar)
+public:
+  iTabBarBase(QWidget* parent_ = NULL);
+
+public slots:
+  virtual void	selectNextTab();
+  // select the next tab in the list
+  virtual void	selectPrevTab();
+  // select the previous tab in the list
+
+protected:
+  override void keyPressEvent(QKeyEvent* e);
+};
+
+
+class TA_API iTabBar: public iTabBarBase { //  encapsulates the TabBar for iTabView
+  Q_OBJECT
+INHERITED(iTabBarBase)
 public:
   enum TabIcon {
     TI_NONE		= -1,
@@ -1227,19 +1285,15 @@ public:
   int			addTab(iDataPanel* panel); //#IGNORE puts at end if locked else inserts at end of unlocked
   void 			setTabIcon(int idx, TabIcon ti);
   void			SetPanel(int idx, iDataPanel* value, bool force = false); //#IGNORE set or remove (NULL) a panel
-  
+   
   iTabBar(iTabView* parent_ = NULL);
   ~iTabBar();
 protected:
-//  QColor	defBackgroundColor; // for when tabpanel doesn't provide one
-//  QColor	defBaseColor; // for when tabpanel doesn't provide one
   QPalette	defPalette;
  
   override bool	focusNextPrevChild(bool next);
   override void contextMenuEvent(QContextMenuEvent * e);
   override void mousePressEvent(QMouseEvent* e);
-  override void keyPressEvent(QKeyEvent* e);
-//  override void paint(QPainter* p, QTab* t, bool selected ) const;
 };
 
 
@@ -1277,6 +1331,7 @@ public:
   iDataPanel*		panel(int pan_idx = 0); // implementation-independent way to access panels
   int			tabCount() const; // number of tabs
   iDataPanel*		tabPanel(int tab_idx); // panel from indicated tab (can be NULL)
+  iTabBarBase*		tabBar() { return tbPanels; }
   taiDataLink*		par_link() const {return (m_viewer_win) ? m_viewer_win->sel_link() : NULL;}
   MemberDef*		par_md() const {return (m_viewer_win) ? m_viewer_win->sel_md() : NULL;}
   iTabViewer* 		tabViewerWin() {return m_viewer_win;}
@@ -1379,6 +1434,7 @@ public:
   void			setUpdateOnShow(bool val);
 //  DataViewer*		viewer() {return (m_dps) ? m_dps->viewer() : m_tabView->viewer();}
   iTabBar::TabIcon	tabIcon() const;
+  iTabBarBase*		tabBar() {return NULL;}
   inline iTabView*	tabView() const {return m_tabView;} // tab view in which we are shown
   virtual void		setTabView(iTabView* value) {m_tabView = value;} // just set the value, no side effects
   virtual iTabViewer* 	tabViewerWin() const = 0;
@@ -1524,7 +1580,7 @@ public:
     // true if panel should not be replaced, ex. if dirty, or viewpanel
   override taiDataLink*	par_link() const {return NULL;} // n/a
   override MemberDef*	par_md() const {return NULL;}
-  override iTabViewer* tabViewerWin() const;
+  override iTabViewer* 	tabViewerWin() const;
   override bool		isViewPanelFrame() const {return true;}
 
 
@@ -1691,7 +1747,7 @@ class TA_API iViewPanelSet: public iDataPanelSetBase { //  contains 0 or more su
   Q_OBJECT
 INHERITED(iDataPanelSetBase)
 public:
-  QTabBar*		  tbSubPanels; 
+  iTabBarBase*		  tbSubPanels; 
 
   override bool		lockInPlace() const {return true;}
   
