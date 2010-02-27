@@ -1104,6 +1104,8 @@ class TA_API iDataTableView: public iTableView {
 INHERITED(iTableView)
   Q_OBJECT
 public:
+  bool			gui_edit_op; // true if doing a gui editing operation
+
   DataTable*		dataTable() const;
   
   override bool		isFixedRowCount() const {return false;}
@@ -1121,6 +1123,7 @@ signals:
     const QModelIndex & bottomRight); // #IGNORE
   
 protected:
+
   override void 	currentChanged(const QModelIndex& current,
     const QModelIndex& previous); // override
   override void 	dataChanged(const QModelIndex& topLeft,
@@ -1170,7 +1173,7 @@ protected:
 
 public: // IDataLinkClient i/f
   override void		DataLinkDestroying(taDataLink* dl);
-  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {}
+  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
 
 protected:
   DataTableRef		m_dt;

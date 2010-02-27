@@ -409,6 +409,9 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
     // if no save, don't need to check DataTable global
     if (saveToDumpFile()) {
       if(taMisc::is_undo_saving) {
+	// always save for obj itself
+	if(tabMisc::cur_undo_mod_obj == dt || tabMisc::cur_undo_mod_obj == this)
+	  return DQR_SAVE;
 	if(!tabMisc::cur_undo_save_owner || !IsChildOf(tabMisc::cur_undo_save_owner)) {
 	  // no need to save b/c unaffected by changes elsewhere..
 	  return DQR_NO_SAVE;

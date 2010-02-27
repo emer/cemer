@@ -5307,6 +5307,7 @@ iDataTableView::iDataTableView(QWidget* parent)
 :inherited(parent)
 {
   setSelectionMode(QAbstractItemView::ContiguousSelection);
+  gui_edit_op = false;
 
   // this is important for faster viewing:
   verticalHeader()->setResizeMode(QHeaderView::Interactive);
@@ -5333,6 +5334,7 @@ DataTable* iDataTableView::dataTable() const {
 void iDataTableView::EditAction(int ea) {
   DataTable* tab = this->dataTable(); // may not exist
   if (!tab) return;
+  gui_edit_op = true;
   taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
   CellRange sel(selectionModel()->selectedIndexes());
   if (ea & taiClipData::EA_SRC_OPS) {
@@ -5342,6 +5344,7 @@ void iDataTableView::EditAction(int ea) {
     fact->Table_EditActionD(tab, sel, ms, ea);
     delete ms;
   }
+  gui_edit_op = false;
 }
 
 void iDataTableView::GetEditActionsEnabled(int& ea) {
@@ -5363,10 +5366,11 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   if (!tab) return;
   taProject* proj = (taProject*)tab->GetOwner(&TA_taProject);
 
+  gui_edit_op = true;
   if (op_code & OP_ROW) {
     // must have >=1 row selected to make sense
     if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE))) {
-      if (sel.height() < 1) return;
+      if (sel.height() < 1) goto bail;
       if (op_code & OP_APPEND) {
 	if(proj) proj->undo_mgr.SaveUndo(tab, "AddRows", tab);
         tab->AddRows(sel.height());
@@ -5378,7 +5382,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
         tab->DuplicateRows(sel.row_fr, sel.height());
       } else if (op_code & OP_DELETE) {
 	if(taMisc::delete_prompts || !tab->HasDataFlag(DataTable::SAVE_ROWS)) {
-	  if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0) return;
+	  if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0) goto bail;
 	}
 	if(proj) proj->undo_mgr.SaveUndo(tab, "RemoveRows", tab);
         tab->RemoveRows(sel.row_fr, sel.height());
@@ -5387,7 +5391,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   } else if (op_code & OP_COL) { 
     // must have >=1 col selected to make sense
     if ((op_code & (OP_APPEND | OP_INSERT | OP_DELETE))) {
-      if (sel.width() < 1) return;
+      if (sel.width() < 1) goto bail;
 /*note: not supporting col ops here
       if (op_code & OP_APPEND) {
       } else 
@@ -5395,7 +5399,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       } else */
       if (op_code & OP_DELETE) {
 	if(taMisc::delete_prompts || !tab->HasDataFlag(DataTable::SAVE_ROWS)) {
-	  if (taMisc::Choice("Are you sure you want to delete the selected columns?", "Yes", "Cancel") != 0) return;
+	  if (taMisc::Choice("Are you sure you want to delete the selected columns?", "Yes", "Cancel") != 0) goto bail;
 	}
         tab->StructUpdate(true);
 	if(proj) proj->undo_mgr.SaveUndo(tab, "RemoveCols", tab);
@@ -5406,6 +5410,8 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       }
     }
   }
+ bail:
+  gui_edit_op = false;
 } 
 
 void iDataTableView::FillContextMenu_impl(ContextArea ca,
@@ -5499,6 +5505,9 @@ void iDataTableEditor::DataLinkDestroying(taDataLink* dl) {
   }
 }
 
+void iDataTableEditor::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+}
+
 DataTableModel* iDataTableEditor::dtm() const {
   if (m_dt)
     return m_dt->GetTableModel();
@@ -5561,8 +5570,10 @@ void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index,
   }
 }
 
-void iDataTableEditor::tvTable_layoutChanged()
-{
+void iDataTableEditor::tvTable_layoutChanged() {
+  if(!isVisible()) return;
+  if(tvTable && !tvTable->gui_edit_op)
+    tvTable->scrollToBottom();
   ConfigView();
 //no-causes recursive invocation!  Refresh();
   if (m_cell) {

@@ -3850,9 +3850,17 @@ void Program::Run() {
   ClearStopReq();
   step_mode = false;
   cur_step_prog = NULL;
+  QPointer<QWidget> m_prev_active;
+  if(taMisc::gui_active)
+    m_prev_active = QApplication::activeWindow();
   taMisc::Busy();
   setRunState(RUN);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
+  if((bool)m_prev_active) {
+//     QApplication::setActiveWindow(m_prev_active);
+    // note: above does NOT work! -- likely source of bug in cocoa 4.6.0
+    m_prev_active->activateWindow();
+  }
   Cont_impl();
   taMisc::DoneBusy();
   if (ret_val != RV_OK) ShowRunError();

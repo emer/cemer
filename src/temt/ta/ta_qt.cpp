@@ -598,6 +598,8 @@ void taiMisc::ScriptRecordingGui_(bool start){
 }
 
 void taiMisc::SetWinCursors() {
+  QPointer<QWidget> m_prev_active = QApplication::activeWindow();
+
   bool is_busy = false;
   bool is_rec = false;
   if((taiMisc::busy_count > 0) /*|| cssiSession::block_in_event*/)
@@ -607,15 +609,22 @@ void taiMisc::SetWinCursors() {
   // busy trumps recording...
   if (is_busy) {
     QApplication::setOverrideCursor(*taiM->wait_cursor);
-    return;
+    goto bail;
   }
 
   if (is_rec) {
     QApplication::setOverrideCursor(*taiM->record_cursor);
-    return;
+    goto bail;
   }
 
   taMisc::Warning("*** Unexpected call to SetWinCursors -- not busy or recording.");
+
+ bail:
+  if((bool)m_prev_active) {
+//     QApplication::setActiveWindow(m_prev_active);
+    // note: above does NOT work! -- likely source of bug in cocoa 4.6.0
+    m_prev_active->activateWindow();
+  }
 }
 
 /*bool taiMisc::RevertEdits(void* obj, TypeDef*) {
