@@ -1089,6 +1089,10 @@ public:
   // shift focus to the left of current (wraps around)
   bool			MoveFocusRight();
   // shift focus to the right of current (wraps around)
+  bool			ShiftCurTabRight();
+  // shift tab in currently focused panel to the right
+  bool			ShiftCurTabLeft();
+  // shift tab in currently focused panel to the left
 
   iTreeViewItem* 	AssertBrowserItem(taiDataLink* link);
   iTreeViewItem* 	BrowserExpandAllItem(taiDataLink* link);

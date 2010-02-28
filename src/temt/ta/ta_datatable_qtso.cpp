@@ -5333,7 +5333,7 @@ DataTable* iDataTableView::dataTable() const {
 
 void iDataTableView::EditAction(int ea) {
   DataTable* tab = this->dataTable(); // may not exist
-  if (!tab) return;
+  if (!tab || !selectionModel()) return;
   gui_edit_op = true;
   taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
   CellRange sel(selectionModel()->selectedIndexes());
@@ -5351,7 +5351,7 @@ void iDataTableView::GetEditActionsEnabled(int& ea) {
   int allowed = 0;
   int forbidden = 0;
   DataTable* tab = this->dataTable(); // may not exist
-  if (tab) {
+  if (tab && selectionModel()) {
     taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
     CellRange sel(selectionModel()->selectedIndexes());
     taiMimeSource* ms = taiMimeSource::NewFromClipboard();
@@ -5732,16 +5732,20 @@ void iDataTablePanel::Render_impl() {
     this, SLOT(tv_hasFocus(iTableView*)) );
   connect(dte->tvCell->tv, SIGNAL(hasFocus(iTableView*)),
     this, SLOT(tv_hasFocus(iTableView*)) );
+
+  iMainWindowViewer* vw = viewerWindow();
+  if (vw)
+    dte->installEventFilter(vw);
 }
 
 void iDataTablePanel::tv_hasFocus(iTableView* sender) {
   iMainWindowViewer* vw = viewerWindow();
   if (vw)
     vw->SetClipboardHandler(sender,
-    SLOT(GetEditActionsEnabled(int&)),
-    SLOT(EditAction(int)),
-    NULL,
-    SIGNAL(UpdateUi()) );
+			    SLOT(GetEditActionsEnabled(int&)),
+			    SLOT(EditAction(int)),
+			    NULL,
+			    SIGNAL(UpdateUi()) );
 }
 
 

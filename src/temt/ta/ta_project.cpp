@@ -1334,11 +1334,12 @@ void taProject::UndoStats(bool show_list, bool show_diffs) {
 String taProject::GetAutoFileName(const String& suffix, const String& ftype_ext) {
   String rval;
   if(file_name.empty()) {
+    rval = taMisc::user_dir + PATH_SEP;
     if(name.empty()) {
-      rval = GetTypeDef()->name;
+      rval += GetTypeDef()->name;
     }
     else {
-      rval = name;
+      rval += name;
     }
   }
   else {

@@ -114,7 +114,8 @@ public:
 
   virtual bool		isFixedRowCount() const = 0; // true, ex. for tab mat cells with fixed rows
   virtual bool		isFixedColCount() const = 0; // true, ex. for tab mat cells with fixed geom
-  
+  virtual void		clearExtSelection();	   // clear extended selection mode and also clear any existing selection
+
   iTableView(QWidget* parent = NULL);
   
 #ifndef __MAKETA__
@@ -130,7 +131,6 @@ signals:
   void			UpdateUi();
 #endif
 
-
 protected:
   enum RowColOpCode {
     OP_APPEND		= 0x01,
@@ -141,13 +141,16 @@ protected:
     OP_COL		= 0x80
   };
   
+  bool			ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
+
   override bool		event(QEvent* ev);
   override void 	keyPressEvent(QKeyEvent* e);
+  override bool 	eventFilter(QObject* obj, QEvent* event);
   void 			ContextMenuRequested(ContextArea ca, const QPoint& global_pos);
   virtual void		FillContextMenu_impl(ContextArea ca, taiMenu* menu,
-    const CellRange& sel);
+					     const CellRange& sel);
   virtual void		RowColOp_impl(int op_code, const CellRange& sel) {} 
-    
+
 protected slots:
   void 			this_customContextMenuRequested(const QPoint& pos);
   void 			hor_customContextMenuRequested(const QPoint& pos);

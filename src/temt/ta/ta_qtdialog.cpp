@@ -2620,36 +2620,75 @@ iMainWindowViewer* taiEditDataHost::viewerWindow() const {
 #include "ta_program_qt.h"
 
 bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
-  if (event->type() == QEvent::KeyPress) {
-    QKeyEvent* e = static_cast<QKeyEvent *>(event);
-    bool ctrl_pressed = false;
-    if(e->modifiers() & Qt::ControlModifier)
-      ctrl_pressed = true;
+  if(event->type() != QEvent::KeyPress) {
+    return inherited::eventFilter(obj, event);
+  }
+
+  QKeyEvent* e = static_cast<QKeyEvent *>(event);
+  bool ctrl_pressed = false;
+
+  QCoreApplication* app = QCoreApplication::instance();
+  iMainWindowViewer* mvw = viewerWindow();
+
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
 #ifdef TA_OS_MAC
-    // ctrl = meta on apple
-    if(e->modifiers() & Qt::MetaModifier)
-      ctrl_pressed = true;
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
 #endif
-    if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
-      if(modal)
-	Ok();
-      else
-	Apply();
-      iMainWindowViewer* mvw = viewerWindow();
-      if(mvw)
-	mvw->FocusCurTreeView(); // return focus back to current browser
+  if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
+    if(modal)
+      Ok();
+    else
+      Apply();
+    if(mvw)
+      mvw->FocusCurTreeView(); // return focus back to current browser
+    return true;
+  }
+  if(mvw && ctrl_pressed) {
+    if(e->key() == Qt::Key_J) { // move left between regions
+      mvw->MoveFocusLeft();
       return true;
     }
-    if(e->key() == Qt::Key_Escape) {
-      if(modal)
-	Cancel();
-      else
-	Revert();			// do it!
-      iMainWindowViewer* mvw = viewerWindow();
-      if(mvw)
-	mvw->FocusCurTreeView(); // return focus back to current browser
+    else if(e->key() == Qt::Key_L) { // move right between regions
+      mvw->MoveFocusRight();
       return true;
     }
+    else if(e->key() == Qt::Key_Tab) {
+      if(e->modifiers() & Qt::ShiftModifier) {
+	mvw->ShiftCurTabLeft();
+      }
+      else {
+	mvw->ShiftCurTabRight();
+      }
+      return true;		// we absorb this event
+    }
+  }
+  if(e->modifiers() & Qt::AltModifier) {
+    if(e->key() == Qt::Key_W) { // copy
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+    else if(e->key() == Qt::Key_J) { // move left between regions
+      if(mvw)
+	mvw->MoveFocusLeft();
+      return true;
+    }
+    else if(e->key() == Qt::Key_L) { // move right between regions
+      if(mvw)
+	mvw->MoveFocusRight();
+      return true;
+    }
+  }
+  if(e->key() == Qt::Key_Escape) {
+    if(modal)
+      Cancel();
+    else
+      Revert();			// do it!
+    if(mvw)
+      mvw->FocusCurTreeView(); // return focus back to current browser
+    return true;
   }
   return QObject::eventFilter(obj, event);
 }

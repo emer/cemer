@@ -4272,6 +4272,43 @@ bool iMainWindowViewer::MoveFocusRight() {
   return false;
 }
 
+bool iMainWindowViewer::ShiftCurTabRight() {
+  MainWindowViewer* db = viewer();
+  if(!db) return false;
+  if(cur_main_focus == RIGHT_VIEWER) {
+    T3DataViewer* pv = db->GetRightViewer();
+    if(pv && pv->tabBar()) {
+      pv->tabBar()->selectNextTab();
+    }
+  }
+  else {
+    iTabViewer* itv = GetTabViewer();
+    if(itv) {
+      itv->tabBar()->selectNextTab();
+    }
+  }
+  return true;
+}
+
+bool iMainWindowViewer::ShiftCurTabLeft() {
+  MainWindowViewer* db = viewer();
+  if(!db) return false;
+  if(cur_main_focus == RIGHT_VIEWER) {
+    T3DataViewer* pv = db->GetRightViewer();
+    if(pv && pv->tabBar()) {
+      pv->tabBar()->selectPrevTab();
+    }
+  }
+  else {
+    iTabViewer* itv = GetTabViewer();
+    if(itv) {
+      itv->tabBar()->selectPrevTab();
+    }
+  }
+  return true;
+}
+
+
 iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
   iTreeView* itv = GetCurTreeView(); // note: use current
   if(!itv) return NULL;
@@ -4558,38 +4595,10 @@ bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
     }
     else if(e->key() == Qt::Key_Tab) {
       if(e->modifiers() & Qt::ShiftModifier) {
-	if(cur_main_focus == RIGHT_VIEWER) {
-	  MainWindowViewer* db = viewer();
-	  if(db) {
-	    T3DataViewer* pv = db->GetRightViewer();
-	    if(pv && pv->tabBar()) {
-	      pv->tabBar()->selectPrevTab();
-	    }
-	  }
-	}
-	else {
-	  iTabViewer* itv = GetTabViewer();
-	  if(itv) {
-	    itv->tabBar()->selectPrevTab();
-	  }
-	}
+	ShiftCurTabLeft();
       }
       else {
-	if(cur_main_focus == RIGHT_VIEWER) {
-	  MainWindowViewer* db = viewer();
-	  if(db) {
-	    T3DataViewer* pv = db->GetRightViewer();
-	    if(pv && pv->tabBar()) {
-	      pv->tabBar()->selectNextTab();
-	    }
-	  }
-	}
-	else {
-	  iTabViewer* itv = GetTabViewer();
-	  if(itv) {
-	    itv->tabBar()->selectNextTab();
-	  }
-	}
+	ShiftCurTabRight();
       }
       return true;		// we absorb this event
     }

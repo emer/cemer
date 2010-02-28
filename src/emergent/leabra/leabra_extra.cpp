@@ -4421,6 +4421,9 @@ bool LeabraWizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
 //   if(taMisc::gui_active) {
 //     tabMisc::DelayedFunCall_gui(data_table, "BrowserSelectMe");
 //   }
+
+  UpdateLayerWriters(net, data_table);
+
   return true;
 }
 

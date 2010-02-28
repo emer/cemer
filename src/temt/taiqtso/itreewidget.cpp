@@ -333,8 +333,11 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
   if(ctrl_pressed) {
     QPersistentModelIndex newCurrent = currentIndex();
     switch (event->key()) {
+    case Qt::Key_S:		// s works too
     case Qt::Key_Space:
       clearSelection();
+      // select this guy
+      selectionModel()->setCurrentIndex(currentIndex(), QItemSelectionModel::ClearAndSelect);
       ext_select_on = true;
       event->accept();
       break;
@@ -351,16 +354,18 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
       event->accept();
       break;
     case Qt::Key_U:
+    case Qt::Key_Up:
       newCurrent = moveCursor(MovePageUp, event->modifiers());
       event->accept();
       break;
 #ifdef TA_OS_MAC
       // this is a conflict with paste -- only works on mac where cmd and ctrl are diff!
     case Qt::Key_V:
+#endif
+    case Qt::Key_Down:
       newCurrent = moveCursor(MovePageDown, event->modifiers());
       event->accept();
       break;
-#endif
     case Qt::Key_F:
       newCurrent = moveCursor(MoveRight, event->modifiers());
       event->accept();
