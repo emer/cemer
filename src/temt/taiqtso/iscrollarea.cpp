@@ -82,7 +82,7 @@ void iSplitter::saveSizes() {
   if(cur_sz.count() != saved_sizes.count()) {
     saved_sizes = cur_sz;
   }
-  else {
+  else if(cur_sz.count() > 0) {
     // only save if someone is NOT already collapsed
     if(!(cur_sz[0] == 0 || cur_sz[cur_sz.count()-1] == 0))
       saved_sizes = cur_sz;
