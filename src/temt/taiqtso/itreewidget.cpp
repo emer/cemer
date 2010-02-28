@@ -336,30 +336,38 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
     case Qt::Key_Space:
       clearSelection();
       ext_select_on = true;
+      event->accept();
       break;
     case Qt::Key_G:
       clearExtSelection();
+      event->accept();
       break;
     case Qt::Key_N:
       newCurrent = moveCursor(MoveDown, event->modifiers());
+      event->accept();
       break;
     case Qt::Key_P:
       newCurrent = moveCursor(MoveUp, event->modifiers());
+      event->accept();
       break;
     case Qt::Key_U:
       newCurrent = moveCursor(MovePageUp, event->modifiers());
+      event->accept();
       break;
 #ifdef TA_OS_MAC
       // this is a conflict with paste -- only works on mac where cmd and ctrl are diff!
     case Qt::Key_V:
       newCurrent = moveCursor(MovePageDown, event->modifiers());
+      event->accept();
       break;
 #endif
     case Qt::Key_F:
       newCurrent = moveCursor(MoveRight, event->modifiers());
+      event->accept();
       break;
     case Qt::Key_B:
       newCurrent = moveCursor(MoveLeft, event->modifiers());
+      event->accept();
       break;
     case Qt::Key_Enter:
     case Qt::Key_Return:
@@ -392,10 +400,11 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
       return;
     }
   }
-  if(event->key() == Qt::Key_Escape) {
-    clearExtSelection();
-    return;
-  }
+  // esc interferes with dialog cancel and other such things
+//   if(event->key() == Qt::Key_Escape) {
+//     clearExtSelection();
+//     return;
+//   }
   inherited::keyPressEvent( event );
 }
 

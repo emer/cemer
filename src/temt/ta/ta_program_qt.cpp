@@ -384,6 +384,18 @@ bool iProgramEditor::eventFilter(QObject* obj, QEvent* event) {
     items->setFocus();	// return to items!
     return true;
   }
+  if(ctrl_pressed) {
+    if(e->key() == Qt::Key_J) { // move left between regions
+      if((bool)m_window)
+	m_window->MoveFocusLeft();
+      return true;
+    }
+    else if(e->key() == Qt::Key_L) { // move right between regions
+      if((bool)m_window)
+	m_window->MoveFocusRight();
+      return true;
+    }
+  }
   if(e->key() == Qt::Key_Escape) {
     Revert();			// do it!
     items->setFocus();	// return to items!
@@ -1683,8 +1695,10 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   iTreeView* itv = mwv->pe->items;
   iTreeViewItem* iti = itv->AssertItem(link);
   if(iti) {
+    itv->clearExtSelection();
     itv->scrollTo(iti);
     itv->setCurrentItem(iti);
+    itv->setFocus();
   }
   // make sure our operations are finished
   taiMiscCore::ProcessEvents();

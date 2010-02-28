@@ -229,11 +229,12 @@ void iLineEdit::keyPressEvent(QKeyEvent* e) {
       return;
     }
   }
-  if(e->key() == Qt::Key_Escape) {
-    e->accept();
-    clearExtSelection();
-    return;
-  }
+  // Esc interferes with dialog cancel and other such things
+//   if(e->key() == Qt::Key_Escape) {
+//     e->ignore();		// fake ignore so that any dialog ops will happen as expected
+//     clearExtSelection();
+//     return;
+//   }
 
   QLineEdit::keyPressEvent( e );
 }

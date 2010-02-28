@@ -2641,7 +2641,10 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
       return true;
     }
     if(e->key() == Qt::Key_Escape) {
-      Revert();			// do it!
+      if(modal)
+	Cancel();
+      else
+	Revert();			// do it!
       iMainWindowViewer* mvw = viewerWindow();
       if(mvw)
 	mvw->FocusCurTreeView(); // return focus back to current browser

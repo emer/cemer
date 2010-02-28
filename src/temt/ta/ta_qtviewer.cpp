@@ -4548,6 +4548,14 @@ bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
       return true;		// we absorb this event
     }
+    else if(e->key() == Qt::Key_J) { // move left between regions
+      MoveFocusLeft();
+      return true;
+    }
+    else if(e->key() == Qt::Key_L) { // move right between regions
+      MoveFocusRight();
+      return true;
+    }
     else if(e->key() == Qt::Key_Tab) {
       if(e->modifiers() & Qt::ShiftModifier) {
 	if(cur_main_focus == RIGHT_VIEWER) {

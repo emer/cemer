@@ -52,6 +52,12 @@ void iDialog::keyPressEvent(QKeyEvent *e) {
     accept();
     return;
   }
+  // this is the default so should not need reiterating..
+//   if(e->key() == Qt::Key_Escape) {
+//     e->accept();
+//     reject();
+//     return;
+//   }
 
   QDialog::keyPressEvent(e);
 }
