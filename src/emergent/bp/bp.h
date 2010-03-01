@@ -153,7 +153,7 @@ class BP_API BpUnitSpec : public UnitSpec {
 INHERITED(UnitSpec)
 public:
   SigmoidSpec	sig;		// sigmoid activation parameters
-  float		err_tol;	// error tolerance (no error signal if |t-o|<err_tol)
+  float		err_tol;	// error tolerance: no error signal for a unit if |targ-act| < err_tol) (i.e., as if act == targ exactly) -- often useful to set to .05 or so to prevent over-learning with binary training signals -- big weights often needed to get very high or low activations
   void 		(*err_fun)(BpUnitSpec* spec, BpUnit* u);
   // #LIST_BpUnit_Error this points to the error fun, set appropriately
 

@@ -5461,7 +5461,10 @@ iDataTableEditor::iDataTableEditor(QWidget* parent)
   tvCell = new iMatrixEditor();
   splMain->addWidget(tvTable);
   splMain->addWidget(tvCell);
-  
+
+  tvTable->installEventFilter(this);
+  tvCell->tv->installEventFilter(this);
+
   connect(tvTable, SIGNAL(sig_currentChanged(const QModelIndex&)),
     this, SLOT(tvTable_currentChanged(const QModelIndex&)));
   connect(tvTable, SIGNAL(sig_dataChanged(const QModelIndex&, const QModelIndex&)),
@@ -5533,7 +5536,7 @@ void iDataTableEditor::setDataTable(DataTable* dt_) {
 //nn    tv->setItemDelegate(new DataTableDelegate(dt_));
     tvTable->setModel(mod);
     connect(mod, SIGNAL(layoutChanged()),
-      this, SLOT(tvTable_layoutChanged()) );
+	    this, SLOT(tvTable_layoutChanged()) );
   }
   
   ConfigView();
@@ -5591,10 +5594,12 @@ void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
     if (tcell) {
       bool pat_4d = (col->HasColFlag(DataCol::PAT_4D) && tcell->dims() >= 4);
       setCellMat(tcell, index, pat_4d);
+      tvCell->setVisible(true);
       return;
     }
   }
   setCellMat(NULL, QModelIndex());
+  tvCell->setVisible(false);
 }
 
 void iDataTableEditor::tvTable_dataChanged(const QModelIndex& topLeft,
@@ -5610,7 +5615,40 @@ void iDataTableEditor::tvTable_dataChanged(const QModelIndex& topLeft,
 }
 
 void iDataTableEditor::UpdateSelectedItems_impl() {
-//note: not needed
+  //note: not needed
+}
+
+
+bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() != QEvent::KeyPress) {
+    return inherited::eventFilter(obj, event);
+  }
+
+  if((bool)tvTable->m_window) {
+    tvTable->m_window->FocusIsMiddlePanel();
+  }
+
+  QCoreApplication* app = QCoreApplication::instance();
+  QKeyEvent* e = static_cast<QKeyEvent *>(event);
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+  if(ctrl_pressed) {
+    if(e->key() == Qt::Key_T) {
+      if(obj->inherits("iDataTableView")) {
+	tvTable->clearExtSelection();
+	if(m_cell) {
+	  tvCell->tv->setFocus();
+	  tvCell->tv->selectCurCell();
+	}
+      }
+      else {
+	tvCell->tv->clearExtSelection();
+	tvTable->setFocus();
+	tvTable->selectCurCell();
+      }
+      return true;
+    }
+  }
+  return tvTable->eventFilter(obj, event); // this has all the other good emacs xlations
 }
 
 //////////////////////////
@@ -5729,23 +5767,27 @@ void iDataTablePanel::Render_impl() {
   
   dte->setDataTable(dt());
   connect(dte->tvTable, SIGNAL(hasFocus(iTableView*)),
-    this, SLOT(tv_hasFocus(iTableView*)) );
+	  this, SLOT(tv_hasFocus(iTableView*)) );
   connect(dte->tvCell->tv, SIGNAL(hasFocus(iTableView*)),
-    this, SLOT(tv_hasFocus(iTableView*)) );
+	  this, SLOT(tv_hasFocus(iTableView*)) );
 
   iMainWindowViewer* vw = viewerWindow();
-  if (vw)
+  if (vw) {
     dte->installEventFilter(vw);
+    dte->tvTable->m_window = vw;
+    dte->tvCell->tv->m_window = vw;
+  }
 }
 
 void iDataTablePanel::tv_hasFocus(iTableView* sender) {
   iMainWindowViewer* vw = viewerWindow();
-  if (vw)
+  if (vw) {
     vw->SetClipboardHandler(sender,
 			    SLOT(GetEditActionsEnabled(int&)),
 			    SLOT(EditAction(int)),
 			    NULL,
 			    SIGNAL(UpdateUi()) );
+  }
 }
 
 

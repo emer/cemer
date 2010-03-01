@@ -2625,18 +2625,16 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
   }
 
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
-  bool ctrl_pressed = false;
 
   QCoreApplication* app = QCoreApplication::instance();
   iMainWindowViewer* mvw = viewerWindow();
+  if(mvw) {
+    mvw->FocusIsMiddlePanel();
+    if(mvw->KeyEventFilterWindowNav(obj, e))
+      return true;
+  }
 
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
     if(modal)
       Ok();
@@ -2646,39 +2644,15 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
       mvw->FocusCurTreeView(); // return focus back to current browser
     return true;
   }
-  if(mvw && ctrl_pressed) {
-    if(e->key() == Qt::Key_J) { // move left between regions
-      mvw->MoveFocusLeft();
-      return true;
-    }
-    else if(e->key() == Qt::Key_L) { // move right between regions
-      mvw->MoveFocusRight();
-      return true;
-    }
-    else if(e->key() == Qt::Key_Tab) {
-      if(e->modifiers() & Qt::ShiftModifier) {
-	mvw->ShiftCurTabLeft();
-      }
-      else {
-	mvw->ShiftCurTabRight();
-      }
+  if(ctrl_pressed) {
+    // for edit dialogs -- arrows = tabs..
+    if(e->key() == Qt::Key_N || e->key() == Qt::Key_Down) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
       return true;		// we absorb this event
     }
-  }
-  if(e->modifiers() & Qt::AltModifier) {
-    if(e->key() == Qt::Key_W) { // copy
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+    else if(e->key() == Qt::Key_P || e->key() == Qt::Key_Up) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
       return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_J) { // move left between regions
-      if(mvw)
-	mvw->MoveFocusLeft();
-      return true;
-    }
-    else if(e->key() == Qt::Key_L) { // move right between regions
-      if(mvw)
-	mvw->MoveFocusRight();
-      return true;
     }
   }
   if(e->key() == Qt::Key_Escape) {
@@ -2801,14 +2775,7 @@ void taiStringDataHost::Ok_impl() { //note: only used for Dialogs
 bool taiStringDataHost::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() == QEvent::KeyPress) {
     QKeyEvent* e = static_cast<QKeyEvent *>(event);
-    bool ctrl_pressed = false;
-    if(e->modifiers() & Qt::ControlModifier)
-      ctrl_pressed = true;
-#ifdef TA_OS_MAC
-    // ctrl = meta on apple
-    if(e->modifiers() & Qt::MetaModifier)
-      ctrl_pressed = true;
-#endif
+    bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
     if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
       Ok();			// do it!
       return true;

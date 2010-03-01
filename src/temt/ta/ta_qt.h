@@ -191,6 +191,16 @@ public:
   override void Busy_(bool busy);// impl for taMisc, puts system in a 'busy' state (pointer, no input)
   override void CheckConfigResult_(bool ok);
 
+
+  static bool	KeyEventCtrlPressed(QKeyEvent* e);
+  // #IGNORE process given event to see if the ctrl key was pressed -- uses MetaModifier on Mac = actual Ctrl key..
+  static bool	KeyEventFilterEmacs_Nav(QObject* obj, QKeyEvent* e);
+  // #IGNORE translate emacs navigation key sequences into equivalent arrow events and re-post as new events -- returns true if procssed, otherwise false
+  static bool	KeyEventFilterEmacs_Edit(QObject* obj, QKeyEvent* e);
+  // #IGNORE translate emacs editing (includes nav + copy/paste, undo) key sequences into equivalent arrow events and re-post as new events -- returns true if procssed, otherwise false
+  static bool	KeyEventFilterEmacs_Clip(QObject* obj, QKeyEvent* e);
+  // #IGNORE translate emacs copy/paste/undo only (no nav) key sequences into equivalent arrow events and re-post as new events -- returns true if procssed, otherwise false
+
 protected:
   static void	SetWinCursors();
   // #IGNORE sets cursors for all active windows based on busy and record status

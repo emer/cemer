@@ -2441,6 +2441,15 @@ bool iT3DataViewer::SetCurrentTabName(const String& tab_nm) {
   return false;
 }
 
+void iT3DataViewer::focusInEvent(QFocusEvent* ev) {
+  inherited::focusInEvent(ev);
+  MainWindowViewer* mwv = viewer()->mainWindowViewer();
+  if(mwv && mwv->widget()) {
+    mwv->widget()->FocusIsRightViewer();
+  }
+}
+
+
 //////////////////////////
 //	T3DataViewer	//
 //////////////////////////
@@ -2514,6 +2523,11 @@ void T3DataViewer::ConstrFrames_impl() {
     // note: don't parent the frame, since we use the api to add it
     ((DataViewer*)fv)->Constr_impl(NULL);
     idv->AddT3DataViewFrame(fv->widget());
+  }
+  MainWindowViewer* mwv = mainWindowViewer();
+  if(mwv && mwv->widget()) {
+    idv->installEventFilter(mwv->widget());
+    idv->tabBar()->installEventFilter(mwv->widget());
   }
 }
 

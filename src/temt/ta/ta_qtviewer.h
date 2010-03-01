@@ -759,12 +759,14 @@ protected:
   iTabView*		m_curTabView; // tab view (split) that currently has the focus
   ISelectable*		cur_item; // the last item that was curItem -- NOTE: somewhat dangerous to cache, but according to spec, src_host should issue a new notify if this deletes
   ContextFlag		tab_changing; // lets us ignore spurious re-entrant tab changes, ex. bugID:817
-  void			Constr_Menu_impl(); // override
+
   override void		Constr_post(); // called virtually, in DV::Constr_post 
   override void		ResolveChanges_impl(CancelOp& cancel_op);
   override void 	SelectionChanged_impl(ISelectableHost* src_host); // called when sel changes
   override void 	GetWinState_impl();
   override void		SetWinState_impl();
+
+  override void 	focusInEvent(QFocusEvent* ev);
 
 private:
   void			Init();
@@ -1072,27 +1074,39 @@ public:
   //////////////////////////////////////////////////////////////
   // navigation around the window
 
-  iTreeView*		GetMainTreeView();
+  virtual iTreeView*	GetMainTreeView();
   // the main one from the iBrowseViewer
-  iTreeView*		GetCurTreeView();
+  virtual iTreeView*	GetCurTreeView();
   // the tree view can be a sub-viewer (e.g., program editor) instead of the main one
 
-  bool			FocusCurTreeView();
+  virtual bool		FocusCurTreeView();
   // send focus back to current tree view
-  bool			FocusLeftBrowser();
+
+  virtual bool		FocusLeftBrowser();
   // send focus to left browser
-  bool			FocusMiddlePanel();
+  virtual bool		FocusMiddlePanel();
   // send focus to middle panel
-  bool			FocusRightViewer();
+  virtual bool		FocusRightViewer();
   // send focus to right viewer
-  bool			MoveFocusLeft();
+
+  virtual void		FocusIsLeftBrowser();
+  // update main window that focus is currently in left browser -- sometimes it gets confused..
+  virtual void		FocusIsMiddlePanel(WinSubLocs sub_foc = MIDDLE_EDIT);
+  // update main window that focus is currently in middle browser with given sub focus -- sometimes it gets confused..
+  virtual void		FocusIsRightViewer(WinSubLocs sub_foc = RIGHT_TABS);
+  // update main window that focus is currently in right viewer with given sub focus -- sometimes it gets confused..
+
+  virtual bool		MoveFocusLeft();
   // shift focus to the left of current (wraps around)
-  bool			MoveFocusRight();
+  virtual bool		MoveFocusRight();
   // shift focus to the right of current (wraps around)
-  bool			ShiftCurTabRight();
+  virtual bool		ShiftCurTabRight();
   // shift tab in currently focused panel to the right
-  bool			ShiftCurTabLeft();
+  virtual bool		ShiftCurTabLeft();
   // shift tab in currently focused panel to the left
+
+  virtual bool		KeyEventFilterWindowNav(QObject* obj, QKeyEvent* e);
+  // process window navigation key events (Ctrl/Alt J, L, Tab) -- returns true if processed
 
   iTreeViewItem* 	AssertBrowserItem(taiDataLink* link);
   iTreeViewItem* 	BrowserExpandAllItem(taiDataLink* link);

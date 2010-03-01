@@ -301,105 +301,40 @@ void iTableView::clearExtSelection() {
   inherited::clearSelection();
 }
 
+void iTableView::selectCurCell() {
+  clearExtSelection();
+  if(!selectionModel()) return;
+  selectionModel()->setCurrentIndex(currentIndex(), QItemSelectionModel::ClearAndSelect);
+}
+
 bool iTableView::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);
   }
 
-  QCoreApplication* app = QCoreApplication::instance();
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
-  // emacs keys!!
-  if(ctrl_pressed) {
-    if(e->key() == Qt::Key_P) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_N) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_A) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_E) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_F) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_B) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_D) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_K) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_Y) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_W) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_Slash) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_Minus) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-  }
-  if(e->modifiers() & Qt::AltModifier && e->key() == Qt::Key_W) { // copy
-    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
-    return true;		// we absorb this event
+  if(taiMisc::KeyEventFilterEmacs_Edit(obj, e))
+    return true;
+  if((bool)m_window) {
+    if(m_window->KeyEventFilterWindowNav(obj, e))
+      return true;
   }
   return inherited::eventFilter(obj, event);
 }
 
 void iTableView::keyPressEvent(QKeyEvent* e) {
   if(state() == EditingState) {
-//     taMisc::Info("editstate");
     e->ignore();
-//     inherited::keyPressEvent(e);
     return;
   }
-
   QCoreApplication* app = QCoreApplication::instance();
-
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   QPersistentModelIndex newCurrent;
   if(ctrl_pressed) {
     switch (e->key()) {
       // note: cannot use Ctrl+Space as that is reserved for selecting item to start editing
     case Qt::Key_S:
-      clearSelection();
-      // select this guy
-      selectionModel()->setCurrentIndex(currentIndex(), QItemSelectionModel::ClearAndSelect);
+      selectCurCell();
       ext_select_on = true;
       e->accept();
       break;
@@ -447,7 +382,7 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
   }
   // from qabstractitemview.cpp
   QPersistentModelIndex oldCurrent = currentIndex();
-  if (newCurrent != oldCurrent && newCurrent.isValid()) {
+  if(newCurrent != oldCurrent && newCurrent.isValid()) {
     QItemSelectionModel::SelectionFlags command;
     if(ext_select_on) {
       command = QItemSelectionModel::Select;
@@ -462,13 +397,13 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
 }
 
 bool iTableView::event(QEvent* ev) {
-//NOTE: this probably doesn't even get triggered
+  //NOTE: this probably doesn't even get triggered
   bool rval = inherited::event(ev);
   // look for anything that indicates we are focused
   QEvent::Type t = ev->type();
   if ((t == QEvent::FocusIn) ||
-    (t == QEvent::KeyPress) ||
-    (t == QEvent::MouseButtonPress) //||
+      (t == QEvent::KeyPress) ||
+      (t == QEvent::MouseButtonPress) //||
       ) {
     emit hasFocus(this);
     if(t == QEvent::KeyPress)
@@ -479,6 +414,7 @@ bool iTableView::event(QEvent* ev) {
 
 void iTableView::ContextMenuRequested(ContextArea ca, const QPoint& global_pos) {
   taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
+  if(!selectionModel()) return;
   CellRange sel(selectionModel()->selectedIndexes());
   FillContextMenu_impl(ca, menu, sel);
   if (menu->count() > 0) { //only show if any items!
@@ -547,6 +483,7 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
 }
 
 void iTableView::RowColOp(int op_code) {
+  if(!selectionModel()) return;
   CellRange sel(selectionModel()->selectedIndexes());
   RowColOp_impl(op_code, sel);
 }
@@ -713,12 +650,13 @@ void iMatrixPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
 
 void iMatrixPanel::tv_hasFocus(iTableView* sender) {
   iMainWindowViewer* vw = viewerWindow();
-  if (vw)
+  if(vw) {
     vw->SetClipboardHandler(sender,
 			    SLOT(GetEditActionsEnabled(int&)),
 			    SLOT(EditAction(int)),
 			    NULL,
 			    SIGNAL(UpdateUi()) );
+  }
 }
 
 String iMatrixPanel::panel_type() const {
@@ -740,6 +678,8 @@ void iMatrixPanel::Render_impl() {
   me->setMatrix(mat_);
   connect(me->tv, SIGNAL(hasFocus(iTableView*)), this, SLOT(tv_hasFocus(iTableView*)) );
   iMainWindowViewer* vw = viewerWindow();
-  if (vw)
+  if (vw) {
     me->installEventFilter(vw);
+    me->tv->m_window = vw;
+  }
 }

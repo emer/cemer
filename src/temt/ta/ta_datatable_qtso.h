@@ -50,6 +50,7 @@ class GraphTableView;
 class iGraphTableView_Panel;
 
 class tabDataTableViewType;
+class iDataTableEditor;
 class iDataTableView;
 class iDataTablePanel; //
 
@@ -1098,11 +1099,12 @@ public:
   ~DataTableDelegate();
 };
 
-#ifndef __MAKETA__ // too much crud to parse
+
 class TA_API iDataTableView: public iTableView {
   // widget with some customizations to display submatrix views
 INHERITED(iTableView)
   Q_OBJECT
+friend class iDataTableEditor;
 public:
   bool			gui_edit_op; // true if doing a gui editing operation
 
@@ -1117,28 +1119,29 @@ public: // cliphandler i/f
   override void 	EditAction(int ea);
   override void		GetEditActionsEnabled(int& ea);
 
+#ifndef __MAKETA__
 signals:
   void 			sig_currentChanged(const QModelIndex& current);
   void			sig_dataChanged(const QModelIndex& topLeft,
     const QModelIndex & bottomRight); // #IGNORE
+#endif
   
 protected:
-
   override void 	currentChanged(const QModelIndex& current,
-    const QModelIndex& previous); // override
+				       const QModelIndex& previous);
   override void 	dataChanged(const QModelIndex& topLeft,
-    const QModelIndex & bottomRight); // refresh mat cell if in here
+				    const QModelIndex & bottomRight);
+  // refresh mat cell if in here
   override void		FillContextMenu_impl(ContextArea ca, taiMenu* menu,
-    const CellRange& sel);
+					     const CellRange& sel);
   override void		RowColOp_impl(int op_code, const CellRange& sel); 
 };
-#endif // MAKETA
 
-class TA_API iDataTableEditor: public QWidget,
-  public virtual ISelectableHost, 
-  public virtual IDataLinkClient 
-{
-  Q_OBJECT // ##NO_CSS
+
+class TA_API iDataTableEditor: public QWidget,  public virtual ISelectableHost, 
+			       public virtual IDataLinkClient {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER editor for data tables
+  Q_OBJECT   
 INHERITED(QWidget)
 public:
   QVBoxLayout*		layOuter;
@@ -1158,7 +1161,7 @@ public:
 public slots:
   void			tvTable_currentChanged(const QModelIndex& index); // #IGNORE
   void			tvTable_dataChanged(const QModelIndex& topLeft,
-    const QModelIndex & bottomRight); // #IGNORE
+					    const QModelIndex & bottomRight); // #IGNORE
   void 			tvTable_layoutChanged(); // #IGNORE
 
 public: // ITypedObject i/f
@@ -1180,8 +1183,11 @@ protected:
   taMatrix*		m_cell_par; // parent of cell -- we link to it
   taMatrixPtr		m_cell; // current cell 
   QModelIndex		m_cell_index; // we keep this to refresh cell if data changes
+
+  override bool 	eventFilter(QObject* obj, QEvent* event);
+
   void			setCellMat(taMatrix* cell, const QModelIndex& index,
-    bool pat_4d = false);
+				   bool pat_4d = false);
   void			ConfigView(); // setup or change view, esp after col ins/deletes
 };
 

@@ -49,6 +49,7 @@
 #include <qprogressdialog.h>
 #include <qpushbutton.h> // metrics
 #include <QSessionManager>
+#include <QKeyEvent>
 
 // #ifdef TA_USE_INVENTOR
 // #endif
@@ -820,3 +821,104 @@ iColor taiMisc::ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrig
 }
 
 
+bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+  return ctrl_pressed;
+}
+
+bool taiMisc::KeyEventFilterEmacs_Nav(QObject* obj, QKeyEvent* e) {
+  bool ctrl_pressed = KeyEventCtrlPressed(e);
+  if(!ctrl_pressed) return false;
+  QCoreApplication* app = QCoreApplication::instance();
+  switch(e->key()) {
+  case Qt::Key_P:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
+    return true;		// we absorb this event
+  case Qt::Key_N:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
+    return true;		// we absorb this event
+  case Qt::Key_A:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::ControlModifier));
+    return true;		// we absorb this event
+  case Qt::Key_E:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::ControlModifier));
+    return true;		// we absorb this event
+  case Qt::Key_F:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
+    return true;		// we absorb this event
+  case Qt::Key_B:
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
+    return true;		// we absorb this event
+  }
+  return false;
+}
+
+bool taiMisc::KeyEventFilterEmacs_Edit(QObject* obj, QKeyEvent* e) {
+  if(KeyEventFilterEmacs_Nav(obj, e))
+    return true;
+  bool ctrl_pressed = KeyEventCtrlPressed(e);
+  QCoreApplication* app = QCoreApplication::instance();
+  if(ctrl_pressed) {
+    switch(e->key()) {
+    case Qt::Key_D:
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
+      return true;		// we absorb this event
+    case Qt::Key_H:
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier));
+      return true;		// we absorb this event
+    case Qt::Key_K:
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
+      return true;		// we absorb this event
+    case Qt::Key_Y:
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
+      return true;		// we absorb this event
+    case Qt::Key_W:
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
+      return true;		// we absorb this event
+    case Qt::Key_Slash:
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+      return true;		// we absorb this event
+    case Qt::Key_Minus:
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+  }
+  if(e->modifiers() & Qt::AltModifier && e->key() == Qt::Key_W) { // copy
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+    return true;		// we absorb this event
+  }
+  return false;
+}
+
+bool taiMisc::KeyEventFilterEmacs_Clip(QObject* obj, QKeyEvent* e) {
+  bool ctrl_pressed = KeyEventCtrlPressed(e);
+  QCoreApplication* app = QCoreApplication::instance();
+  if(ctrl_pressed) {
+    switch(e->key()) {
+    case Qt::Key_Y:
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
+      return true;		// we absorb this event
+    case Qt::Key_W:
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
+      return true;		// we absorb this event
+    case Qt::Key_Slash:
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+      return true;		// we absorb this event
+    case Qt::Key_Minus:
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+      return true;		// we absorb this event
+    }
+  }
+  if(e->modifiers() & Qt::AltModifier && e->key() == Qt::Key_W) { // copy
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+    return true;		// we absorb this event
+  }
+  return false;
+}

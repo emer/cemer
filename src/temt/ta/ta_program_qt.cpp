@@ -371,47 +371,20 @@ bool iProgramEditor::eventFilter(QObject* obj, QEvent* event) {
   }
 
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
+  if((bool)m_window) {
+    if(m_window->KeyEventFilterWindowNav(obj, e))
+      return true;
+  }
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
     Apply();			// do it!
     items->setFocus();	// return to items!
     return true;
   }
-  if(ctrl_pressed) {
-    if(e->key() == Qt::Key_J) { // move left between regions
-      if((bool)m_window)
-	m_window->MoveFocusLeft();
-      return true;
-    }
-    else if(e->key() == Qt::Key_L) { // move right between regions
-      if((bool)m_window)
-	m_window->MoveFocusRight();
-      return true;
-    }
-  }
   if(e->key() == Qt::Key_Escape) {
     Revert();			// do it!
     items->setFocus();	// return to items!
     return true;
-  }
-  if(e->modifiers() & Qt::AltModifier) {
-    if(e->key() == Qt::Key_J) { // move left between regions
-      if((bool)m_window)
-	m_window->MoveFocusLeft();
-      return true;
-    }
-    else if(e->key() == Qt::Key_L) { // move right between regions
-      if((bool)m_window)
-	m_window->MoveFocusRight();
-      return true;
-    }
   }
   return QWidget::eventFilter(obj, event);
 }
@@ -620,8 +593,10 @@ iTreeViewItem* iProgramEditor::AssertBrowserItem(taiDataLink* link)
   taiMiscCore::ProcessEvents();
   iTreeViewItem* rval = items->AssertItem(link);
   if (rval) {
+    items->setFocus();
+    items->clearExtSelection();
     items->scrollTo(rval);
-    items->setCurrentItem(rval);
+    items->setCurrentItem(rval, 0, QItemSelectionModel::ClearAndSelect);
   }
   // make sure our operations are finished
   taiMiscCore::ProcessEvents();
@@ -1695,10 +1670,10 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   iTreeView* itv = mwv->pe->items;
   iTreeViewItem* iti = itv->AssertItem(link);
   if(iti) {
+    itv->setFocus();
     itv->clearExtSelection();
     itv->scrollTo(iti);
-    itv->setCurrentItem(iti);
-    itv->setFocus();
+    itv->setCurrentItem(iti, 0, QItemSelectionModel::ClearAndSelect);
   }
   // make sure our operations are finished
   taiMiscCore::ProcessEvents();

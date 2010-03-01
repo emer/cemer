@@ -1457,6 +1457,47 @@ QWidget* DocEditDataHost::firstTabFocusWidget() {
   return tedHtml;
 }
 
+bool DocEditDataHost::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() != QEvent::KeyPress) {
+    return inherited::eventFilter(obj, event);
+  }
+  QKeyEvent* e = static_cast<QKeyEvent *>(event);
+
+  iMainWindowViewer* mvw = viewerWindow();
+  if(mvw) {
+    mvw->FocusIsMiddlePanel();
+    if(mvw->KeyEventFilterWindowNav(obj, e))
+      return true;
+  }
+
+  if(taiMisc::KeyEventFilterEmacs_Edit(obj, e)) // full emacs edits
+    return true;
+
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+
+  // below are regular dialog guys
+  if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
+    if(modal)
+      Ok();
+    else
+      Apply();
+    if(mvw)
+      mvw->FocusCurTreeView(); // return focus back to current browser
+    return true;
+  }
+  if(e->key() == Qt::Key_Escape) {
+    if(modal)
+      Cancel();
+    else
+      Revert();			// do it!
+    if(mvw)
+      mvw->FocusCurTreeView(); // return focus back to current browser
+    return true;
+  }
+  return QObject::eventFilter(obj, event);
+  // don't go back to regular host b/c it remaps arrows to tabs
+}
+
 //////////////////////////
 //    iDocEditDataPanel	//
 //////////////////////////

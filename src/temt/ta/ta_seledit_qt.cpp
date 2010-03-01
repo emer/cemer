@@ -727,14 +727,7 @@ void taiEditTableWidget::keyPressEvent(QKeyEvent* e) {
     e->ignore();			// tell that we don't want this -- send to others
     return;
   }
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed) {
     QPersistentModelIndex newCurrent;
     switch (e->key()) {
@@ -768,16 +761,9 @@ void taiEditTableWidget::keyPressEvent(QKeyEvent* e) {
 	  || style()->styleHint(QStyle::SH_ItemView_MovementWithoutUpdatingSelection, 0, this)) {
 	if (command & QItemSelectionModel::Current) {
 	  selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::NoUpdate);
-	  // 	  if (d->pressedPosition == QPoint(-1, -1))
-	  // 	    d->pressedPosition = visualRect(oldCurrent).center();
-	  // 	  QRect rect(d->pressedPosition - d->offset(), visualRect(newCurrent).center());
-	  // 	  setSelection(rect, command);
 	} else {
-// 	  selectionModel()->setCurrentIndex(newCurrent, command);
  	  selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::ClearAndSelect);
-	  // 	  d->pressedPosition = visualRect(newCurrent).center() + d->offset();
 	}
-	//	selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::SelectCurrent);
 	return;
       }
     }

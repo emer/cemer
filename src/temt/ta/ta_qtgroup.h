@@ -449,6 +449,8 @@ protected:
   override void 	GetValue_Membs();
   override void 	GetImage_Membs();
 
+  override bool 	eventFilter(QObject* obj, QEvent* event);
+
 private:
   void init();
 };

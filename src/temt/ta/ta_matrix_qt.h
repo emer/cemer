@@ -112,9 +112,15 @@ public:
     CA_HDR_MASK = 0x0C
   };
 
+#ifndef __MAKETA__
+  QPointer<iMainWindowViewer> m_window; // used for tab processing etc
+#endif
+
   virtual bool		isFixedRowCount() const = 0; // true, ex. for tab mat cells with fixed rows
   virtual bool		isFixedColCount() const = 0; // true, ex. for tab mat cells with fixed geom
   virtual void		clearExtSelection();	   // clear extended selection mode and also clear any existing selection
+  virtual void		selectCurCell();	   // call clearExtSelection and then select current index
+
 
   iTableView(QWidget* parent = NULL);
   
@@ -158,6 +164,7 @@ protected slots:
   void			RowColOp(int op_code); // based on selection
 };
 
+
 class TA_API iMatrixTableView: public iTableView {
   // table editor; model flattens >2d into 2d by frames
 INHERITED(iTableView)
@@ -178,6 +185,7 @@ public: // cliphandler i/f
   override void		GetEditActionsEnabled(int& ea);
 };
 
+
 class TA_API iMatrixEditor: public QWidget {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER widget that includes a table editor; model flattens >2d into 2d by frames
 INHERITED(QWidget)
@@ -185,7 +193,7 @@ INHERITED(QWidget)
 public:
   QVBoxLayout*		layOuter;
   QHBoxLayout*		  layDims;
-  iMatrixTableView*		  tv;
+  iMatrixTableView*	  tv;
 
  // taMatrix*		mat() const;
  // MatrixTableModel* 	model() const;

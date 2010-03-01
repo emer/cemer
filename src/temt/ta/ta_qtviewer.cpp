@@ -2992,6 +2992,16 @@ iTabBarBase* iTabViewer::tabBar() {
   return tabView()->tabBar();
 }
 
+void iTabViewer::focusInEvent(QFocusEvent* ev) {
+  inherited::focusInEvent(ev);
+  MainWindowViewer* mwv = mainWindowViewer();
+  if(mwv && mwv->widget()) {
+    mwv->widget()->FocusIsMiddlePanel();
+  }
+}
+
+
+
 //////////////////////////
 //  iDockViewer		//
 //////////////////////////
@@ -4191,13 +4201,13 @@ bool iMainWindowViewer::FocusCurTreeView() {
   iTreeView* itv = GetCurTreeView();
   if(!itv) return false;
   itv->setFocus();
-  if(itv == cur_tree_view) {
-    cur_main_focus = MIDDLE_PANEL;
-    cur_sub_focus = PROG_TREE;
-  }
-  else {
+  if(itv == GetMainTreeView()) {
     cur_main_focus = LEFT_BROWSER;
     cur_sub_focus = MAIN_TREE;
+  }
+  else {
+    cur_main_focus = MIDDLE_PANEL;
+    cur_sub_focus = PROG_TREE;
   }
   return true;
 }
@@ -4246,6 +4256,21 @@ bool iMainWindowViewer::FocusRightViewer() {
   cur_main_focus = RIGHT_VIEWER;
   cur_sub_focus = RIGHT_TABS;
   return true;
+}
+
+void iMainWindowViewer::FocusIsLeftBrowser() {
+  cur_main_focus = LEFT_BROWSER;
+  cur_sub_focus = MAIN_TREE;
+}
+
+void iMainWindowViewer::FocusIsMiddlePanel(WinSubLocs sub_loc) {
+  cur_main_focus = MIDDLE_PANEL;
+  cur_sub_focus = sub_loc;
+}
+
+void iMainWindowViewer::FocusIsRightViewer(WinSubLocs sub_loc) {
+  cur_main_focus = RIGHT_VIEWER;
+  cur_sub_focus = sub_loc;
 }
 
 bool iMainWindowViewer::MoveFocusLeft() {
@@ -4308,6 +4333,38 @@ bool iMainWindowViewer::ShiftCurTabLeft() {
   return true;
 }
 
+bool iMainWindowViewer::KeyEventFilterWindowNav(QObject* obj, QKeyEvent* e) {
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+  if(ctrl_pressed) {
+    switch(e->key()) {
+    case Qt::Key_J: // move left between regions
+      MoveFocusLeft();
+      return true;
+    case Qt::Key_L: // move right between regions
+      MoveFocusRight();
+      return true;
+    case Qt::Key_Tab:
+      if(e->modifiers() & Qt::ShiftModifier) {
+	ShiftCurTabLeft();
+      }
+      else {
+	ShiftCurTabRight();
+      }
+      return true;		// we absorb this event
+    }
+  }
+  if(e->modifiers() & Qt::AltModifier) {
+    switch(e->key()) {
+    case Qt::Key_J: // move left between regions
+      MoveFocusLeft();
+      return true;
+    case Qt::Key_L: // move right between regions
+      MoveFocusRight();
+      return true;
+    }
+  }
+  return false;
+}
 
 iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
   iTreeView* itv = GetCurTreeView(); // note: use current
@@ -4317,19 +4374,19 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
   taiMiscCore::ProcessEvents();
   iTreeViewItem* rval = itv->AssertItem(link);
   if (rval) {
+    itv->setFocus();
     itv->clearExtSelection();
     itv->scrollTo(rval);
-    itv->setCurrentItem(rval, QItemSelectionModel::ClearAndSelect);
-    itv->setFocus();
+    itv->setCurrentItem(rval, 0, QItemSelectionModel::ClearAndSelect);
   }
   else if(itv == cur_tree_view) { // try again with main 
     itv = GetMainTreeView();
     itv->clearExtSelection();
     rval = itv->AssertItem(link);
     if (rval) {
-      itv->scrollTo(rval);
-      itv->setCurrentItem(rval, QItemSelectionModel::ClearAndSelect);
       itv->setFocus();
+      itv->scrollTo(rval);
+      itv->setCurrentItem(rval, 0, QItemSelectionModel::ClearAndSelect);
     }
   }
   // make sure our operations are finished
@@ -4556,67 +4613,11 @@ bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
   if (event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);
   }
-
-  QCoreApplication* app = QCoreApplication::instance();
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
-  // emacs keys!!
-  if(ctrl_pressed) {
-    if(e->key() == Qt::Key_Y) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_W) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_Slash) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_Minus) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_J) { // move left between regions
-      MoveFocusLeft();
-      return true;
-    }
-    else if(e->key() == Qt::Key_L) { // move right between regions
-      MoveFocusRight();
-      return true;
-    }
-    else if(e->key() == Qt::Key_Tab) {
-      if(e->modifiers() & Qt::ShiftModifier) {
-	ShiftCurTabLeft();
-      }
-      else {
-	ShiftCurTabRight();
-      }
-      return true;		// we absorb this event
-    }
-  }
-  if(e->modifiers() & Qt::AltModifier) {
-    if(e->key() == Qt::Key_W) { // copy
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_J) { // move left between regions
-      MoveFocusLeft();
-      return true;
-    }
-    else if(e->key() == Qt::Key_L) { // move right between regions
-      MoveFocusRight();
-      return true;
-    }
-  }
+  if(KeyEventFilterWindowNav(obj, e))
+    return true;
+  if(taiMisc::KeyEventFilterEmacs_Clip(obj, e))
+    return true;
   return inherited::eventFilter(obj, event);
 }
 
@@ -5046,14 +5047,7 @@ void iTabBarBase::selectPrevTab() {
 }
 
 void iTabBarBase::keyPressEvent(QKeyEvent* e) {
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed && ((e->key() == Qt::Key_B) || (e->key() == Qt::Key_F))) {
     if(e->key() == Qt::Key_F)
       selectNextTab();
@@ -5330,7 +5324,7 @@ void iTabView::DataPanelDestroying(iDataPanel* panel) {
 void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   iDataPanel* dp = tabPanel(tab_idx); // always safe, NULL if no tab
   // note: need to (re)parent the actions; not parented by adding to menu
-  taiAction* act = new taiAction(tab_idx, "&Add Tab",  CTRL+Key_T );
+  taiAction* act = new taiAction(tab_idx, "&Add Tab",  QKeySequence());
   act->connect(taiAction::int_act, this,  SLOT(AddTab(int))); 
   act->setParent(contextMenu);
   contextMenu->addAction(act);
@@ -5625,14 +5619,7 @@ void iTabView::UpdateTabName(iDataPanel* pan) { // called by a panel when its ta
 }
 
 void iTabView::keyPressEvent(QKeyEvent* e) {
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed) {
     if(e->key() == Qt::Key_P) {
       iDataPanel* dp = curPanel();
@@ -5645,11 +5632,11 @@ void iTabView::keyPressEvent(QKeyEvent* e) {
       e->accept();
       return;
     }
-    else if(e->key() == Qt::Key_T) {
-      AddTab(tbPanels->currentIndex());
-      e->accept();
-      return;
-    }
+//     else if(e->key() == Qt::Key_T) {
+//       AddTab(tbPanels->currentIndex());
+//       e->accept();
+//       return;
+//     }
     // I don't think it is useful to have a command for this -- too obscure and dangerous
 //     else if(e->key() == Qt::Key_D) {
 //       CloseTab(tbPanels->currentIndex());
@@ -6139,15 +6126,7 @@ void iViewPanelFrame::UpdateButtons() {
 }
 
 void iViewPanelFrame::keyPressEvent(QKeyEvent* e) {
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
-
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
     Apply();			// do it!
   }
@@ -6300,15 +6279,7 @@ iDataPanelSetButton::iDataPanelSetButton(QWidget* parent) : QToolButton(parent) 
 void iDataPanelSetButton::keyPressEvent(QKeyEvent* e) {
   if(!m_datapanelset || m_idx < 0) { inherited::keyPressEvent(e); return; }
 
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
-
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   // arrow/ctrl-key nav to adjacent buttons
   if((e->key() == Qt::Key_Left) || (ctrl_pressed && e->key() == Qt::Key_B)) {
     int prv_idx = m_idx -1;
@@ -7141,80 +7112,15 @@ bool iDocDataPanel::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);
   }
-
-  QCoreApplication* app = QCoreApplication::instance();
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
-  // emacs keys!!
-  if(ctrl_pressed) {
-    if(e->key() == Qt::Key_P) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_N) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_A) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_E) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_F) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_B) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_D) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_K) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_Y) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_W) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_Slash) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_Minus) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-  }
-  if(e->modifiers() & Qt::AltModifier && e->key() == Qt::Key_W) { // copy
-    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
-    return true;		// we absorb this event
-  }
+  if(taiMisc::KeyEventFilterEmacs_Edit(obj, e))
+    return true;
   return inherited::eventFilter(obj, event);
 }
   
 /*void iDocDataPanel::br_copyAvailable (bool) {
   viewerWindow()->UpdateUi();
 }*/
-
-
 
 
 //////////////////////////
@@ -7551,12 +7457,10 @@ void iTreeView::focusInEvent(QFocusEvent* ev) {
   if(main_window) {
     main_window->cur_tree_view = this; // always overwrite with current
     if(this == main_window->GetMainTreeView()) {
-      main_window->cur_main_focus = iMainWindowViewer::LEFT_BROWSER;
-      main_window->cur_sub_focus = iMainWindowViewer::MAIN_TREE;
+      main_window->FocusIsLeftBrowser();
     }
     else {			// assume prog editor!
-      main_window->cur_main_focus = iMainWindowViewer::MIDDLE_PANEL;
-      main_window->cur_sub_focus = iMainWindowViewer::PROG_TREE;
+      main_window->FocusIsMiddlePanel(iMainWindowViewer::PROG_TREE);
     }
 //     cerr << "focus itv: " << this << endl;
   }
@@ -7631,14 +7535,7 @@ QStringList iTreeView::mimeTypes () const {
 
 void iTreeView::keyPressEvent(QKeyEvent* e) {
   taProject* proj = myProject();
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed) {
     if(e->key() == Qt::Key_I) {
       ext_select_on = false;
@@ -8576,6 +8473,7 @@ taiTreeDataNode* tabParTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
 
 
 bool tabParTreeDataNode::RebuildChildrenIfNeeded() {
+//   taMisc::Info("rebuild children:",tadata()->GetDisplayName());
   int st_idx = 0;
   if(last_member_node)
     st_idx = MAX(indexOfChild(last_member_node)+1, 0);
@@ -9964,7 +9862,7 @@ void iHelpBrowser::LoadType_impl(TypeDef* typ, const String& base_url,
   }
   if (twi != tv->currentItem()) {
     ++m_changing;
-    tv->setCurrentItem(twi, QItemSelectionModel::ClearAndSelect);
+    tv->setCurrentItem(twi, 0, QItemSelectionModel::ClearAndSelect);
     --m_changing;
   }
   int idx;
@@ -10035,7 +9933,7 @@ void iHelpBrowser::SetFilter(const QString& filt) {
 bool iHelpBrowser::SetItem(TypeDef* typ) {
   QTreeWidgetItem* item = FindItem(typ);
   if (item) {
-    tv->setCurrentItem(item, QItemSelectionModel::ClearAndSelect); // should raise signal
+    tv->setCurrentItem(item, 0, QItemSelectionModel::ClearAndSelect); // should raise signal
   }
   return (item != NULL);
 }
@@ -10116,7 +10014,7 @@ void iHelpBrowser::UpdateTreeItem() {
   QTreeWidgetItem* twi = FindItem(typ_name);
   if (twi != tv->currentItem()) {
     ++m_changing;
-    tv->setCurrentItem(twi, QItemSelectionModel::ClearAndSelect);
+    tv->setCurrentItem(twi, 0, QItemSelectionModel::ClearAndSelect);
     --m_changing;
   }
 }
@@ -10134,76 +10032,15 @@ bool iHelpBrowser::eventFilter(QObject* obj, QEvent* event) {
 
   QCoreApplication* app = QCoreApplication::instance();
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
-  // emacs keys!!
-  if(ctrl_pressed) {
-    if(e->key() == Qt::Key_P) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_N) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_A) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_E) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_F) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_B) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_D) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_K) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_Y) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_W) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_Slash) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_Minus) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_S) {
-      if(find_text->hasFocus())
-	filter->setFocus();
-      else
-	find_text->setFocus();
-      return true;		// we absorb this event
-    }
-  }
-  if(e->modifiers() & Qt::AltModifier && e->key() == Qt::Key_W) { // copy
-    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+  if(taiMisc::KeyEventFilterEmacs_Edit(obj, e))
+    return true;
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+  if(ctrl_pressed && e->key() == Qt::Key_S) {
+    if(find_text->hasFocus())
+      filter->setFocus();
+    else
+      find_text->setFocus();
     return true;		// we absorb this event
   }
-
   return inherited::eventFilter(obj, event);
 }
