@@ -291,6 +291,7 @@ void LeabraConSpec::LogLrateSched(int epcs_per_step, float n_steps) {
     lrate_sched[i]->start_ctr = i * epcs_per_step;
     lrate_sched[i]->start_val = log_ns[i%3] * powf(10.0f,-(i/3));
   }
+  UpdateAfterEdit();		// needed to update the sub guys
 }
 
 void LeabraConSpec::CreateWtSigFun() {
