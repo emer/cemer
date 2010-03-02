@@ -7,7 +7,7 @@
 \usepackage[landscape]{geometry}
 
 \ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }
+	{ \geometry{top=.05in,left=.05in,right=.05in,bottom=.05in} }
 	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
@@ -114,8 +114,8 @@
 \verb!Ctrl+W!  & Cut selected element(s). \\
 \verb!Ctrl+V!  & Paste element(s). \\
 \verb!Ctrl+Y!  & Paste element(s). \\
+\verb!Ctrl+M!  & Duplicate element(s). \\
 \verb!Ctrl+U!  & Page up. \\
-\verb!Cmd+V!  & Page down. (mac only) \\
 \verb!Ctrl+G!  & Deselect. \\
 \end{tabular}
 
@@ -139,7 +139,6 @@
 \includegraphics[width=91px]{path.png} \\
 \begin{tabular}{@{}ll@{}}
 \verb!Ctrl+L!    & Text completion lookup.  \\
-\verb!Ctrl+I!    & Insert tab. \\
 \verb!Ctrl+U!    & Highlight all.
 \end{tabular}
 
@@ -147,13 +146,15 @@
 \includegraphics[width=108.5px]{console.png} \\
 \begin{tabular}{@{}ll@{}}
 \verb!Ctrl+L!    & Clear console buffer history. \\
-\verb!Ctrl+L!    & Delete highlighted text. 
+\verb!Ctrl+L!    & Delete highlighted text. \\
+\verb!Ctrl+I!    & Insert tab.
 \end{tabular}
-
 
 \section{DataTables and matrices}
 \includegraphics[width=115px]{datatable.png} \\
 \begin{tabular}{@{}ll@{}}
+\verb!Ctrl+A!    & Beginning of row. \\
+\verb!Ctrl+E!    & End of row. \\
 \verb!Ctrl+T!    & Switch between table and matrix focus. \\
 \verb!Ctrl+F!    & Move one cell right. \\
 \verb!Ctrl+B!    & Move one cell left. \\
@@ -161,8 +162,8 @@
 \verb!Ctrl+N!    & Move one cell down. \\
 \verb!Ctrl+C!    & Copy table/matrix cell. \\
 \verb!Ctrl+V!    & paste table/matrix cell. \\
+\verb!Ctrl+spacebar!    & Start editing cell.
 \end{tabular}
-
 
 \section{New elements in left tree browser}
 \includegraphics[width=66px]{treebrowser.png} \\
@@ -209,7 +210,7 @@ These sequences insert new items. Press Ctrl+left,left afterwards to navigate ba
 
 \section{Program code elements}
 \includegraphics[width=137px]{progel.png} \\
-Press Ctrl+i seq Enter as fast as you can, where seq is the shortest subset of the full name needed to put that program element at the top of the chooser list. No need to wait for visual confirmation of the choice.
+Press Ctrl+i seq Enter, where seq is the shortest subset of the full name needed to put that program element at the top of the list.
 
 \end{multicols}
 \end{document}
