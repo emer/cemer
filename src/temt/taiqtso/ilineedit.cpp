@@ -150,78 +150,72 @@ void iLineEdit::keyPressEvent(QKeyEvent* e) {
 
   // emacs keys!!
   if(ctrl_pressed) {
-    if(e->key() == Qt::Key_Space) {
+    switch(e->key()) {
+    case Qt::Key_Space:
       e->accept();
       deselect();
       ext_select_on = true;
-    }
-    else if(e->key() == Qt::Key_G) {
+      return;
+    case Qt::Key_G:
       e->accept();
       clearExtSelection();
-    }
-    else if(e->key() == Qt::Key_A) {
+      return;
+    case Qt::Key_A:
       e->accept();
       home(ext_select_on);
-    }
-    else if(e->key() == Qt::Key_E) {
+      return;
+    case Qt::Key_E:
       e->accept();
       end(ext_select_on);
-    }
-    else if(e->key() == Qt::Key_F) {
+      return;
+    case Qt::Key_F:
       e->accept();
       cursorForward(ext_select_on, 1);
-    }
-    else if(e->key() == Qt::Key_B) {
+      return;
+    case Qt::Key_B:
       e->accept();
       cursorBackward(ext_select_on, 1);
-    }
-    else if(e->key() == Qt::Key_D) {
+      return;
+    case Qt::Key_D:
       e->accept();
       del();
       clearExtSelection();
-    }
-    else if(e->key() == Qt::Key_K) { // supposedly already supported
+      return;
+    case Qt::Key_K:
       e->accept();
       end(true);		// mark
       cut();
       clearExtSelection();
-    }
-    else if(e->key() == Qt::Key_U) {	 
+      return;
+    case Qt::Key_U:
       e->accept();	 
       selectAll();	 
-    }
-    else if(e->key() == Qt::Key_Y) {
+      return;
+    case Qt::Key_Y:
       e->accept();
       paste();
       clearExtSelection();
-    }
-    else if(e->key() == Qt::Key_W) {
+      return;
+    case Qt::Key_W:
       e->accept();
       cut();
       clearExtSelection();
-    }
-    else if(e->key() == Qt::Key_Slash) {
+      return;
+    case Qt::Key_Slash:
       e->accept();
       undo();
-    }
-    else if(e->key() == Qt::Key_Minus) {
+      return;
+    case Qt::Key_Minus:
       e->accept();
       undo();
-    }
-    else if(e->key() == Qt::Key_L) {
+      return;
+    case Qt::Key_L:
       e->accept();
       emit lookupKeyPressed();
+      return;
     }
-//     else if((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter)) {
-//       emit returnPressed(); // ctrl same as not?
-//     }
-    else {
-      QLineEdit::keyPressEvent( e );
-    }
-    return;
   }
-
-  if(e->modifiers() & Qt::AltModifier) {
+  else if(e->modifiers() & Qt::AltModifier) {
     if(e->key() == Qt::Key_W) { // copy
       e->accept();
       copy();

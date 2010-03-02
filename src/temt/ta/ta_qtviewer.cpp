@@ -8473,7 +8473,9 @@ taiTreeDataNode* tabParTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
 
 
 bool tabParTreeDataNode::RebuildChildrenIfNeeded() {
-//   taMisc::Info("rebuild children:",tadata()->GetDisplayName());
+#ifdef DEBUG
+  taMisc::Info("rebuild children:",tadata()->GetDisplayName());
+#endif
   int st_idx = 0;
   if(last_member_node)
     st_idx = MAX(indexOfChild(last_member_node)+1, 0);

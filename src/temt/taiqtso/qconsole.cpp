@@ -28,6 +28,7 @@
 #include <QApplication>
 #include <QCoreApplication>
 #include <QDir>
+#include <QMenu>
 
 //#include <QDebug>
 
@@ -382,6 +383,13 @@ void QConsole::mouseReleaseEvent(QMouseEvent *e) {
 //   setTextCursor(cursor);
 }
 
+void QConsole::contextMenuEvent(QContextMenuEvent *event) {
+  QMenu* menu = createStandardContextMenu();
+  menu->addSeparator();
+  menu->addAction("&Clear All (Ctrl+L)", this, SLOT(clear()));
+  menu->exec(event->globalPos());
+  delete menu;
+}
 
 //Get the current command
 QString QConsole::getCurrentCommand() {

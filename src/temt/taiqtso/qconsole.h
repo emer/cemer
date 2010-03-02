@@ -49,9 +49,6 @@ public:
   virtual int loadScript(QString fileName); // load script and execute commands -- returns 0 on success, -1 on failure
   virtual int setStdLogfile(QString fileName);
   // log stdout and stderr to given log file name, as they come in -- useful for debugging if app itself crashes/goes to the debugger and you can't scroll the console! -- returns 0 on success, -1 on failure
-  virtual void clear();	       // clear & reset the console (useful sometimes)
-  virtual void reset();
-  virtual void exit();		// exit shell
   virtual void flushOutput(bool wait_for_pager = false);
   // flush cout & cerr output.  if wait_for_pager, then wait until user has paged through
   // everything in the buffer
@@ -68,6 +65,12 @@ public:
 
 using inherited::setMinimumSize;
 using inherited::minimumSize;
+
+public slots:
+  virtual void clear();	       // clear & reset the console (useful sometimes)
+  virtual void reset();
+  virtual void exit();		// exit shell
+
 protected:
   // code that new specific implementation should override:
 
@@ -96,6 +99,7 @@ protected:
   void mousePressEvent(QMouseEvent *e);
   void mouseMoveEvent(QMouseEvent *e);
   void mouseReleaseEvent(QMouseEvent *e);
+  void contextMenuEvent(QContextMenuEvent* e);
 
   virtual void getDisplayGeom();
 

@@ -1470,8 +1470,9 @@ bool DocEditDataHost::eventFilter(QObject* obj, QEvent* event) {
       return true;
   }
 
-  if(taiMisc::KeyEventFilterEmacs_Edit(obj, e)) // full emacs edits
-    return true;
+  // already has all the emacs edits!
+//   if(taiMisc::KeyEventFilterEmacs_Edit(obj, e)) // full emacs edits
+//     return true;
 
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
 

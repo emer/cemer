@@ -5569,7 +5569,7 @@ void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index,
     // connect the magic signal that updates the table -- note that there is just
     // one of these, and it hangs around even when the cell isn't viewed
     connect(mat_model, SIGNAL(matDataChanged(int)),
-      dtm(), SLOT(matDataChanged(int)) );
+	    dtm(), SLOT(matDataChanged(int)) );
   }
 }
 
@@ -5598,8 +5598,8 @@ void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
       return;
     }
   }
-  setCellMat(NULL, QModelIndex());
   tvCell->setVisible(false);
+  setCellMat(NULL, QModelIndex());
 }
 
 void iDataTableEditor::tvTable_dataChanged(const QModelIndex& topLeft,

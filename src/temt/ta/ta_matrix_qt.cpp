@@ -319,6 +319,7 @@ bool iTableView::eventFilter(QObject* obj, QEvent* event) {
     if(m_window->KeyEventFilterWindowNav(obj, e))
       return true;
   }
+
   return inherited::eventFilter(obj, event);
 }
 
@@ -327,6 +328,13 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
     e->ignore();
     return;
   }
+
+  if(e->key() == Qt::Key_Delete) {
+    RowColOp(OP_ROW | OP_DELETE);
+    e->accept();
+    return;
+  }
+
   QCoreApplication* app = QCoreApplication::instance();
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   QPersistentModelIndex newCurrent;
@@ -356,6 +364,18 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
       break;
     case Qt::Key_Right:
       newCurrent = moveCursor(MoveEnd, e->modifiers());
+      e->accept();
+      break;
+    case Qt::Key_I:
+      RowColOp(OP_ROW | OP_INSERT);
+      e->accept();
+      break;
+    case Qt::Key_M:
+      RowColOp(OP_ROW | OP_DUPLICATE);
+      e->accept();
+      break;
+    case Qt::Key_D:
+      RowColOp(OP_ROW | OP_DELETE);
       e->accept();
       break;
     }
@@ -447,11 +467,11 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
     if (!isFixedRowCount()) {
       act = menu->AddItem("Append Rows", taiMenu::normal, taiAction::int_act,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_APPEND) );
-      act = menu->AddItem("Insert Rows", taiMenu::normal, taiAction::int_act,
+      act = menu->AddItem("Insert Rows (Ctrl+I)", taiMenu::normal, taiAction::int_act,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_INSERT) );
-      act = menu->AddItem("Duplicate Rows", taiMenu::normal, taiAction::int_act,
+      act = menu->AddItem("Duplicate Rows (Ctrl+M)", taiMenu::normal, taiAction::int_act,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_DUPLICATE) );
-      act = menu->AddItem("Delete Rows", taiMenu::normal, taiAction::int_act,
+      act = menu->AddItem("Delete Rows (Ctrl+D)", taiMenu::normal, taiAction::int_act,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE) );
     }
     menu->AddSep();
@@ -614,12 +634,14 @@ void iMatrixEditor::Refresh() {
 }
 
 void iMatrixEditor::setMatrix(taMatrix* mat_, bool pat_4d) {
+  tv->clearExtSelection();	// nuke any existing selection
   QAbstractItemModel* mod = (mat_) ? mat_->GetTableModel() : NULL;
-  QItemSelectionModel* m = tv->selectionModel();
   if(mod)
     tv->setModel(mod);
-  if(m)
-    delete m;
+//   QItemSelectionModel* m = tv->selectionModel();
+  // why are we deleting the selection model!?  this is bad and likely bug-inducing
+//   if(m)
+//     delete m;
 }
 
 

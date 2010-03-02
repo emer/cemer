@@ -31,6 +31,12 @@ public:
   iTextEdit(QWidget* parent = 0);
   iTextEdit(const QString &text, QWidget *parent = 0);
   ~iTextEdit();
+
+  virtual void	clearExtSelection();	   // clear extended selection mode and also clear any existing selection
+
+public slots:
+  virtual bool	findPrompt();
+  // find function with prompt for search string
   
 #ifndef __MAKETA__
 signals:
@@ -38,7 +44,12 @@ signals:
 #endif
 
 protected:
-  void keyPressEvent(QKeyEvent* e);
+  bool		ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
+  QString	prev_find_str;	   // previous find string
+
+  override void keyPressEvent(QKeyEvent* e);
+  override void contextMenuEvent(QContextMenuEvent* e);
+
 };
 
 #endif
