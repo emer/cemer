@@ -347,9 +347,15 @@ bool taDataProc::GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest
     }
     DataCol* dda = dest->data[d_idx];
     DataCol* sda = src->data[sop->col_idx];
-    if(dda->cell_size() != sda->cell_size()) continue; // incompatible
+    if(dda->cell_size() != sda->cell_size()) {
+      src_cols->RemoveIdx(i); i--;
+      continue; // incompatible
+    }
     if(sda->cell_size() > 1) {
-      if(sda->valType() != dda->valType()) continue; // must be compatible var types
+      if(sda->valType() != dda->valType()) {
+	src_cols->RemoveIdx(i); i--;
+	continue; // must be compatible var types
+      }
     }
     DataOpEl* dop = (DataOpEl*)dest_cols->New(1);
     dop->SetDataTable(dest);

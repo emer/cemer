@@ -234,8 +234,6 @@ void BaseSpec::CutLinks() {
 
 void BaseSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-/*obs  Network* net = GET_MY_OWNER(Network);
-  if(isDestroying() || !net || net->isDestroying()) return; */
   UpdateSpec();
 }
 
@@ -360,7 +358,7 @@ void BaseSpec::UpdateChildren() {
   BaseSpec* kid;
   taLeafItr i;
   FOR_ITR_EL(BaseSpec, kid, children., i) {
-    kid->UpdateSpec();
+    kid->UpdateAfterEdit();	// calls updatespec and updates gui too -- can be wasteful but also needed for e.g., ctrl panels to update properly, so no real way around it..
   }
 }
 
