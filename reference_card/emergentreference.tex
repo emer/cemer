@@ -4,7 +4,6 @@
 \usepackage{calc}
 \usepackage{ifthen}
 \usepackage{color}
-\usepackage{subfigure}
 \usepackage[landscape]{geometry}
 
 \ifthenelse{\lengthtest { \paperwidth = 11in}}
@@ -111,6 +110,9 @@ and Cmd+V is paste while Ctrl+V is Page Down. \\
 \end{tabular}
 
 \subsection{New elements in project tree}
+The project tree contains the most important organizational elements
+of an emergent project. These include Wizards, DataTables, Programs
+and Networks.
 \begin{tabular}{@{}ll@{}}
 \verb!do Ctrl+I!    & New Doc \\
 \verb!da Ctrl+I!    & New DataTable \\
@@ -122,7 +124,10 @@ and Cmd+V is paste while Ctrl+V is Page Down. \\
 \end{tabular}
 
 \subsection{New elements in program tree}
-These sequences insert new items. Press Ctrl+left,left afterwards to navigate back to where you were. \\
+You can quickly create all kinds of programming elements using these
+sequences. You can write entire programs without using the
+mouse. Press Ctrl+left,left afterwards to navigate back to where you
+were.
 \begin{tabular}{@{}ll@{}}
 \verb!obj Ctrl+I Type!    & New obj of Type \\
 \verb!var Ctrl+I!    & New var \\
@@ -143,29 +148,40 @@ fields of edit panels.
 \verb!Up/Down arrow!    & (dropdown) Move up/down. \\
 \verb!ESC!    & Revert changes. \\
 \verb!Ctrl+Enter!    & Apply changes. \\
-\verb!Space!    & Open token chooser and Check/uncheck flag.\\
+\verb!Space!    & Open token chooser and check/uncheck flag.\\
 \verb!Ctrl+L!    & (expression fields) Lookup information. \\
 \end{tabular}
 
 \section{Help Browser}
+The Help Browser allows you to browse emergent\'s classes, including
+wiki documentation for classes and direct links to the source code of
+any object.
+
 \includegraphics[width=240px]{helpbrowser.png}
 \begin{tabular}{@{}ll@{}}
+\verb!Standard!  & Page, Ctrl+N/P/A/E. \\
 \verb!F1!  & Help Browser. \\
-\verb!Standard nav!  & Page, Ctrl+N/P/A/E. \\
 \verb!Ctrl+S!  & Toggle Search/Find focus. \\
 \end{tabular}
 
 \section{DataTables and matrices}
+DataTables are spreadsheet-like container objects for strings, scalars
+and matrices. Clicking on a matrix cell of the DataTable (top grid)
+enables the matrix view (bottom grid). Matrices can have up to seven
+dimensions. Use DataTable->Get/SetMatrixVal,GetValAsMatrix.
 \includegraphics[width=215.5px]{datatable.png}
 \begin{tabular}{@{}ll@{}}
 \verb!Standard nav!  & Page, Ctrl+F/B/N/P/A/E/C/V. \\
 \verb!Ctrl+T!    & Switch between table and matrix focus. \\
-\verb!Ctrl+spacebar!    & Start editing cell.
+\verb!Ctrl+Space!    & Start editing cell.
 \end{tabular}
 
 \section{css console and text fields}
+The css console allows you to execute css code, which is an
+interpreted subset of c++. All program code is actually css script
+code in the backround.
 \begin{tabular}{@{}ll@{}}
-\verb!Standard nav!  & Ctrl+F/B/N/P/A/E/X/C/V. \\
+\verb!Standard!  & Ctrl+F/B/N/P/A/E/X/C/V. \\
 \verb!Ctrl+K! & Kill text until end of line. \\
 \verb!Ctrl+right! & Move cursor one word forward. \\
 \verb!Ctrl+left! & Move cursor one word backwards. \\
@@ -176,8 +192,7 @@ fields of edit panels.
 \subsection{css console}
 \includegraphics[width=209.5px]{console.png} \\
 \begin{tabular}{@{}ll@{}}
-\verb!Ctrl+L!    & Clear console buffer history. \\
-\verb!Ctrl+L!    & Delete highlighted text. \\
+\verb!Ctrl+L!    & Clear console buffer history/delete highlighted text  \\
 \end{tabular}
 
 \subsection{Text fields}
@@ -188,9 +203,12 @@ fields of edit panels.
 \end{tabular}
 
 \section{Choosers}
+Choosers are a frequently used meme that allow you to select one from
+a list of many things. The caret (\^) indicates that the beginning of the
+line should match. 
 \includegraphics[width=213px]{progel.png} \\
 \begin{tabular}{@{}ll@{}}
-\verb!Standard nav!  & Tab, Ctrl+F/B/N/P/A/E/D/X/C/V. \\
+\verb!Standard!  & Tab, Ctrl+F/B/N/P/A/E/D/X/C/V. \\
 \end{tabular}
 
 \end{multicols}
