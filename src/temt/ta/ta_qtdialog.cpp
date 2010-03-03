@@ -2655,18 +2655,18 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
       return true;		// we absorb this event
     case Qt::Key_V:
       if(taMisc::emacs_mode) {
-	for(int i=0;i<10;i++)	// page up = 10
+	for(int i=0;i<5;i++)	// page up = 5
 	  app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
 	return true;		// we absorb this event
       }
       return false;
     case Qt::Key_Down:
-      for(int i=0;i<10;i++)
+      for(int i=0;i<5;i++)
 	app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
       return true;		// we absorb this event
     case Qt::Key_U:
     case Qt::Key_Up:
-      for(int i=0;i<10;i++)
+      for(int i=0;i<5;i++)
 	app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
       return true;		// we absorb this event
     }
@@ -2680,11 +2680,11 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
       return true;		// we absorb this event
     case Qt::Key_PageDown:
-      for(int i=0;i<10;i++)
+      for(int i=0;i<5;i++)
 	app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
       return true;		// we absorb this event
     case Qt::Key_PageUp:
-      for(int i=0;i<10;i++)
+      for(int i=0;i<5;i++)
 	app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
       return true;		// we absorb this event
     }
