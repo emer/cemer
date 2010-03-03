@@ -14,6 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "itreewidget.h"
+#include "ta_qt.h"
+// ^^ note: this creates dependence on ta stuff, but needed for keyboard prefs
 
 #include <QMap>
 #include <QModelIndex>
@@ -321,62 +323,61 @@ void iTreeWidget::this_itemExpanded(QTreeWidgetItem* item) {
 }
 
 
-void iTreeWidget::keyPressEvent(QKeyEvent* event) {
-  bool ctrl_pressed = false;
-  if(event->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(event->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
+void iTreeWidget::keyPressEvent(QKeyEvent* e) {
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+
   if(ctrl_pressed) {
     QPersistentModelIndex newCurrent = currentIndex();
-    switch (event->key()) {
+    switch (e->key()) {
     case Qt::Key_S:		// s works too
     case Qt::Key_Space:
       clearSelection();
       // select this guy
       selectionModel()->setCurrentIndex(currentIndex(), QItemSelectionModel::ClearAndSelect);
       ext_select_on = true;
-      event->accept();
+      e->accept();
       break;
     case Qt::Key_G:
       clearExtSelection();
-      event->accept();
+      e->accept();
       break;
     case Qt::Key_N:
-      newCurrent = moveCursor(MoveDown, event->modifiers());
-      event->accept();
+      newCurrent = moveCursor(MoveDown, e->modifiers());
+      e->accept();
       break;
     case Qt::Key_P:
-      newCurrent = moveCursor(MoveUp, event->modifiers());
-      event->accept();
+      newCurrent = moveCursor(MoveUp, e->modifiers());
+      e->accept();
       break;
     case Qt::Key_U:
     case Qt::Key_Up:
-      newCurrent = moveCursor(MovePageUp, event->modifiers());
-      event->accept();
+      newCurrent = moveCursor(MovePageUp, e->modifiers());
+      e->accept();
       break;
-#ifdef TA_OS_MAC
-      // this is a conflict with paste -- only works on mac where cmd and ctrl are diff!
-    case Qt::Key_V:
-#endif
     case Qt::Key_Down:
-      newCurrent = moveCursor(MovePageDown, event->modifiers());
-      event->accept();
+      newCurrent = moveCursor(MovePageDown, e->modifiers());
+      e->accept();
+      break;
+    case Qt::Key_V:
+      if(taMisc::emacs_mode) {
+	newCurrent = moveCursor(MovePageDown, e->modifiers());
+	e->accept();
+      }
+      else {
+	e->ignore();		// save for paste elsewhere
+      }
       break;
     case Qt::Key_F:
-      newCurrent = moveCursor(MoveRight, event->modifiers());
-      event->accept();
+      newCurrent = moveCursor(MoveRight, e->modifiers());
+      e->accept();
       break;
     case Qt::Key_B:
-      newCurrent = moveCursor(MoveLeft, event->modifiers());
-      event->accept();
+      newCurrent = moveCursor(MoveLeft, e->modifiers());
+      e->accept();
       break;
     case Qt::Key_Enter:
     case Qt::Key_Return:
-      event->ignore();		// pass this on to anyone higher (e.g., a dialog!)
+      e->ignore();		// pass this on to anyone higher (e.g., a dialog!)
       return;
     }
 
@@ -410,7 +411,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
 //     clearExtSelection();
 //     return;
 //   }
-  inherited::keyPressEvent( event );
+  inherited::keyPressEvent( e );
 }
 
 void iTreeWidget::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) {

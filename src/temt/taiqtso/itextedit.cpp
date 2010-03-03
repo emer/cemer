@@ -14,12 +14,15 @@
 //   Lesser General Public License for more details.
 
 #include "itextedit.h"
+#include "ta_qt.h"
+// ^^ note: this creates dependence on ta stuff, but needed for keyboard prefs
 
 #include <QKeyEvent>
 #include <QTextCursor>
 #include <QMenu>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QCoreApplication>
 
 iTextEdit::iTextEdit(QWidget* parent)
 :inherited(parent)
@@ -45,14 +48,9 @@ void iTextEdit::clearExtSelection() {
 void iTextEdit::keyPressEvent(QKeyEvent* e) {
   QTextCursor cursor(textCursor());
 
-  bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
-    ctrl_pressed = true;
-#ifdef TA_OS_MAC
-  // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
-    ctrl_pressed = true;
-#endif
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+
+  QCoreApplication* app = QCoreApplication::instance();
 
   QTextCursor::MoveMode mv_md = QTextCursor::MoveAnchor;
   if(ext_select_on)
@@ -105,6 +103,10 @@ void iTextEdit::keyPressEvent(QKeyEvent* e) {
       cursor.movePosition(QTextCursor::PreviousCharacter, mv_md);
       setTextCursor(cursor);
       return;
+    case Qt::Key_U:
+      app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageUp, Qt::NoModifier));
+      e->accept();
+      return;
     case Qt::Key_D:
       e->accept();
       cursor.deleteChar();
@@ -138,8 +140,13 @@ void iTextEdit::keyPressEvent(QKeyEvent* e) {
       return;
     case Qt::Key_V:
       e->accept();
-      paste();
-      clearExtSelection();
+      if(taMisc::emacs_mode) {
+	app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
+      }
+      else {
+	paste();
+	clearExtSelection();
+      }
       return;
     case Qt::Key_S:
       findPrompt();

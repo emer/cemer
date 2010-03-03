@@ -335,6 +335,8 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
     return;
   }
 
+  // note: emacs nav keys have all been converted into basic arrow keys by this point..
+
   QCoreApplication* app = QCoreApplication::instance();
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   QPersistentModelIndex newCurrent;
@@ -381,6 +383,7 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
     }
   }
   else {
+    // deal with these here to manage the ext select
     switch (e->key()) {
     case Qt::Key_Down:
       newCurrent = moveCursor(MoveDown, e->modifiers());

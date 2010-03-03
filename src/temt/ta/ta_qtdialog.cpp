@@ -2644,14 +2644,48 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
       mvw->FocusCurTreeView(); // return focus back to current browser
     return true;
   }
+  // for edit dialogs -- arrows = tabs..
   if(ctrl_pressed) {
-    // for edit dialogs -- arrows = tabs..
-    if(e->key() == Qt::Key_N || e->key() == Qt::Key_Down) {
+    switch(e->key()) {
+    case Qt::Key_N:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
       return true;		// we absorb this event
-    }
-    else if(e->key() == Qt::Key_P || e->key() == Qt::Key_Up) {
+    case Qt::Key_P:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
+      return true;		// we absorb this event
+    case Qt::Key_V:
+      if(taMisc::emacs_mode) {
+	for(int i=0;i<10;i++)	// page up = 10
+	  app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
+	return true;		// we absorb this event
+      }
+      return false;
+    case Qt::Key_Down:
+      for(int i=0;i<10;i++)
+	app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
+      return true;		// we absorb this event
+    case Qt::Key_U:
+    case Qt::Key_Up:
+      for(int i=0;i<10;i++)
+	app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
+      return true;		// we absorb this event
+    }
+  }
+  else {
+    switch (e->key()) {
+    case Qt::Key_Down:
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
+      return true;		// we absorb this event
+    case Qt::Key_Up:
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
+      return true;		// we absorb this event
+    case Qt::Key_PageDown:
+      for(int i=0;i<10;i++)
+	app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
+      return true;		// we absorb this event
+    case Qt::Key_PageUp:
+      for(int i=0;i<10;i++)
+	app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
       return true;		// we absorb this event
     }
   }

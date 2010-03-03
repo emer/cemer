@@ -826,7 +826,9 @@ bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
   if(e->modifiers() & Qt::ControlModifier)
     ctrl_pressed = true;
 #ifdef TA_OS_MAC
-  // ctrl = meta on apple
+  // Command + V should NOT be registered as ctrl_pressed on a mac -- that is paste..
+  if(ctrl_pressed & e->key() == Qt::Key_V) ctrl_pressed = false;
+  // actual ctrl = meta on apple -- enable this
   if(e->modifiers() & Qt::MetaModifier)
     ctrl_pressed = true;
 #endif
@@ -856,6 +858,21 @@ bool taiMisc::KeyEventFilterEmacs_Nav(QObject* obj, QKeyEvent* e) {
   case Qt::Key_B:
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
     return true;		// we absorb this event
+  case Qt::Key_U:
+  case Qt::Key_Up:		// translate ctrl+up to page up
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageUp, Qt::NoModifier));
+    return true;		// we absorb this event
+  case Qt::Key_Down:		// translate ctrl+down to page down
+    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
+    return true;
+  case Qt::Key_V:
+    if(taMisc::emacs_mode) {
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
+      return true;		// we absorb this event
+    }
+    else {
+      return false;		// pass it on..
+    }
   }
   return false;
 }
