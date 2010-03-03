@@ -4,10 +4,11 @@
 \usepackage{calc}
 \usepackage{ifthen}
 \usepackage{color}
+\usepackage{subfigure}
 \usepackage[landscape]{geometry}
 
 \ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.05in,left=.05in,right=.05in,bottom=.05in} }
+	{ \geometry{top=.1in,left=.25in,right=-.4in,bottom=.1in} }
 	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
@@ -45,6 +46,8 @@
 \setlength{\parskip}{0pt plus 0.5ex}
 
 
+\newlength{\MyLen}
+\settowidth{\MyLen}{\texttt{letterpaper}/\texttt{a4paper} \ }
 % -----------------------------------------------------------------------
 
 \begin{document}
@@ -53,120 +56,61 @@
 \footnotesize
 \begin{multicols}{3}
 
-
-% multicol parameters
-% These lengths are set only within the two main columns
-%\setlength{\columnseprule}{0.25pt}
 \setlength{\premulticols}{1pt}
 \setlength{\postmulticols}{1pt}
 \setlength{\multicolsep}{1pt}
 \setlength{\columnsep}{2pt}
 
-\begin{center}
-   \includegraphics[width=15px]{emer.png}\huge{\textbf{mergent keyboard reference}} \\
-   
-\end{center}
-\section{Global project}
-\begin{tabular}{@{}ll@{}}
-\verb!Ctrl+S!    & Save project. \\
-\verb!Ctrl+left! & Backwards in navigation history \\
-\verb!Ctrl+right! & Forwards in navigation history \\
-\verb!F5!  & Refresh GUI. \\
-\verb!Tab! & Forward through interface \\
-\verb!Shift+Tab! & Backwards through interface \\
-\verb!Alt+J! & Move global focus left \\
-\verb!Ctrl+J! & Move global focus left \\
-\verb!Alt+L! & Move global focus right \\
-\verb!Ctrl+L! & Move global focus right \\
-\end{tabular}
+\begin{center}\includegraphics[width=198.5px]{header.png}\end{center}
 
-\section{Help Browser}
-\includegraphics[width=153.5px]{helpbrowser.png} \\
+\section{Standard navigation keys}
+A variety of standard emacs/readline navigation keys have analogs
+throughout emergent. The first line of each top-level section lists
+which of these work there. On OSX you can swap the Cmd and Ctrl keys
+and Cmd+V is paste while Ctrl+V is Page Down. \\
 \begin{tabular}{@{}ll@{}}
-\verb!F1!  & Help Browser. \\
-\verb!Ctrl+S!  & Toggle Search/Find focus. \\
-\verb!Tab!  & Switch to search list focus. \\
-\verb!Ctrl+n!  & Next element. \\
-\verb!Ctrl+p!  & Next element. \\
-\verb!Page Up!  & Page Up list or web page. \\
-\verb!Page Down!  & Page Down list or web page. \\
-\end{tabular}
-
-\section{Tree browser and program code}
-\newlength{\MyLen}
-\settowidth{\MyLen}{\texttt{letterpaper}/\texttt{a4paper} \ }
-\begin{tabular}{@{}ll@{}}
-\verb!Any 1-3 chars!    & Find as you type \\
-\verb!Alt+F!  & Find from selected node. \\
-\verb!Ctrl+I!    & New item below cursor. \\
-\verb!Ctrl+F!  & Expand this node. \\
-\verb!Shift++!  & Expand this node. \\
-\verb!Ctrl+B!  & Collapse this node. \\
-\verb!Ctrl+-!  & Collapse this node. \\
-\verb!Ctrl+spacebar!  & Selection mode. \\
-\verb!Ctrl+P!  & (select) Previous element. \\
-\verb!Ctrl+N!  & (select) Next element. \\
-\verb!Ctrl+D!  & Delete selected item(s). \\
-\verb!Delete!  & Delete selected item(s). \\
-\verb!Ctrl+C!  & Copy selected element(s). \\
-\verb!Alt+W!  & Copy selected element(s). \\
-\verb!Ctrl+X!  & Cut selected element(s). \\
-\verb!Ctrl+W!  & Cut selected element(s). \\
-\verb!Ctrl+V!  & Paste element(s). \\
-\verb!Ctrl+Y!  & Paste element(s). \\
-\verb!Ctrl+M!  & Duplicate element(s). \\
-\verb!Ctrl+U!  & Page up. \\
-\verb!Ctrl+G!  & Deselect. \\
-\end{tabular}
-
-\section{css console and text fields}
-\begin{tabular}{@{}ll@{}}
-\verb!Ctrl+A!    & Beginning of line. \\
-\verb!Ctrl+E! & End of line. \\
-\verb!Ctrl+K! & Kill text until end of line. \\
-\verb!Ctrl+B!  & Move cursor back one character. \\
-\verb!Ctrl+F! & Move cursor forward one character. \\
-\verb!Ctrl+right! & Move cursor one word forward. \\
-\verb!Ctrl+left! & Move cursor one word backwards. \\
-\verb!Ctrl+shift+right! & Highlight one word forward. \\
-\verb!Ctrl+shift+left! & Highlight one word backwards. \\
+\\
+\verb!Tab/Shift+Tab! & Forward/Backwards through elements/interface \\
+\verb!Page Up/Down!    & Move cursor to the top/bottom or first/last element\\
+\verb!Ctrl+Space!    & Enable select as you navigate mode. \\
+\verb!Ctrl+F!    & Move cursor forwards or expand node. \\
+\verb!Ctrl+B!    & Move cursor backwards or expand node. \\
+\verb!Ctrl+N!    & Move cursor down one line. \\
+\verb!Ctrl+P!    & Move cursor up one line. \\
+\verb!Ctrl+A!    & Move cursor to first character \\
+\verb!Ctrl+E!    & Move cursor to last character \\
+\verb!Ctrl+D!  & Delete item in focus or all selected items. \\
+\verb!Ctrl+G!  & Deselect text or tree selection. \\
 \verb!Ctrl+X! & Cut. \\
 \verb!Ctrl+C! & Copy. \\
 \verb!Ctrl+V! & Paste.
 \end{tabular}
 
-\subsection{Text fields}
-\includegraphics[width=91px]{path.png} \\
+\section{Global project}
 \begin{tabular}{@{}ll@{}}
-\verb!Ctrl+L!    & Text completion lookup.  \\
-\verb!Ctrl+U!    & Highlight all.
+\verb!Standard!    & Tab \\
+\verb!Ctrl+S!    & Save project. \\
+\verb!Ctrl+left! & Backwards in navigation history \\
+\verb!Ctrl+right! & Forwards in navigation history \\
+\verb!F5!  & Refresh GUI. \\
+\verb!Ctrl/Alt+J! & Move global focus left \\
+\verb!Ctrl/Alt+L! & Move global focus right \\
 \end{tabular}
 
-\subsection{css console}
-\includegraphics[width=108.5px]{console.png} \\
+\section{Project tree and program tree}
+\settowidth{\MyLen}{\texttt{multicol} }
+\begin{tabular}{@{}ll@{}} \\
+\includegraphics[width=91px]{treebrowser.png}   & \includegraphics[width=150px]{programcode.png}
+\end{tabular}
 \begin{tabular}{@{}ll@{}}
-\verb!Ctrl+L!    & Clear console buffer history. \\
-\verb!Ctrl+L!    & Delete highlighted text. \\
-\verb!Ctrl+I!    & Insert tab.
+\verb!Standard!    & Page, Ctrl+Space/F/B/N/P/D/G/X/C/V \\
+\verb!Any 1-3 chars!    & Find as you type \\
+\verb!Ctrl+I!    & New item below cursor. \\
+\verb!Alt+F!  & Find from selected node. \\
+\verb!Ctrl+M!  & Duplicate element(s). \\
 \end{tabular}
 
-\section{DataTables and matrices}
-\includegraphics[width=115px]{datatable.png} \\
-\begin{tabular}{@{}ll@{}}
-\verb!Ctrl+A!    & Beginning of row. \\
-\verb!Ctrl+E!    & End of row. \\
-\verb!Ctrl+T!    & Switch between table and matrix focus. \\
-\verb!Ctrl+F!    & Move one cell right. \\
-\verb!Ctrl+B!    & Move one cell left. \\
-\verb!Ctrl+P!    & Move one cell up. \\
-\verb!Ctrl+N!    & Move one cell down. \\
-\verb!Ctrl+C!    & Copy table/matrix cell. \\
-\verb!Ctrl+V!    & paste table/matrix cell. \\
-\verb!Ctrl+spacebar!    & Start editing cell.
-\end{tabular}
-
-\section{New elements in left tree browser}
-\includegraphics[width=66px]{treebrowser.png} \\
+\subsection{New elements in project tree}
 \begin{tabular}{@{}ll@{}}
 \verb!do Ctrl+I!    & New Doc \\
 \verb!da Ctrl+I!    & New DataTable \\
@@ -177,8 +121,7 @@
 \verb!sp Ctrl+I!    & New Spec
 \end{tabular}
 
-\section{New elements in program code}
-\includegraphics[width=56px]{programcode.png} \\
+\subsection{New elements in program tree}
 These sequences insert new items. Press Ctrl+left,left afterwards to navigate back to where you were. \\
 \begin{tabular}{@{}ll@{}}
 \verb!obj Ctrl+I Type!    & New obj of Type \\
@@ -189,28 +132,67 @@ These sequences insert new items. Press Ctrl+left,left afterwards to navigate ba
 \verb!prog Ctrl+I Name!    & New prog code Name \\
 \end{tabular}
 
-\section{Middle panel edit dialogs}
-\includegraphics[width=225px]{middlepanel.png} \\
-\settowidth{\MyLen}{\texttt{multicol} }
+\section{Edit panels}
+See the ``Text fields'' section for shortcuts that work on the text
+fields of edit panels.
+\includegraphics[width=221.5px]{middlepanel.png}
+\\ \settowidth{\MyLen}{\texttt{multicol} }
 \begin{tabular}{@{}ll@{}} \\
-\verb!Tab!    & Next element. \\
-\verb!Ctrl+n!    & Next element. \\
-\verb!Shift+tab!    & previous element. \\
-\verb!Ctrl+p!    & Next element. \\
-\verb!Up!    & (numeric field) Increase value. \\
-\verb!Down!    & (numeric field) Decrease value. \\
-\verb!Up!    & (dropdown) Move up. \\
-\verb!Down!    & (dropdown) Move down. \\
+\verb!Standard!    & Tab  \\
+\verb!Up/Down arrow!    & (numeric field) Increase/decrease value. \\
+\verb!Up/Down arrow!    & (dropdown) Move up/down. \\
 \verb!ESC!    & Revert changes. \\
 \verb!Ctrl+Enter!    & Apply changes. \\
-\verb!Spacebar!    & (buttons) Open token chooser. \\
-\verb!Spacebar!    & (flags) Check/uncheck flag. \\
+\verb!Space!    & Open token chooser and Check/uncheck flag.\\
 \verb!Ctrl+L!    & (expression fields) Lookup information. \\
 \end{tabular}
 
-\section{Program code elements}
-\includegraphics[width=137px]{progel.png} \\
-Press Ctrl+i seq Enter, where seq is the shortest subset of the full name needed to put that program element at the top of the list.
+\section{Help Browser}
+\includegraphics[width=240px]{helpbrowser.png}
+\begin{tabular}{@{}ll@{}}
+\verb!F1!  & Help Browser. \\
+\verb!Standard nav!  & Page, Ctrl+N/P/A/E. \\
+\verb!Ctrl+S!  & Toggle Search/Find focus. \\
+\end{tabular}
+
+\section{DataTables and matrices}
+\includegraphics[width=215.5px]{datatable.png}
+\begin{tabular}{@{}ll@{}}
+\verb!Standard nav!  & Page, Ctrl+F/B/N/P/A/E/C/V. \\
+\verb!Ctrl+T!    & Switch between table and matrix focus. \\
+\verb!Ctrl+spacebar!    & Start editing cell.
+\end{tabular}
+
+\section{css console and text fields}
+\begin{tabular}{@{}ll@{}}
+\verb!Standard nav!  & Ctrl+F/B/N/P/A/E/X/C/V. \\
+\verb!Ctrl+K! & Kill text until end of line. \\
+\verb!Ctrl+right! & Move cursor one word forward. \\
+\verb!Ctrl+left! & Move cursor one word backwards. \\
+\verb!Ctrl+shift+right! & Highlight one word forward. \\
+\verb!Ctrl+shift+left! & Highlight one word backwards. \\
+\end{tabular}
+
+\subsection{css console}
+\includegraphics[width=209.5px]{console.png} \\
+\begin{tabular}{@{}ll@{}}
+\verb!Ctrl+L!    & Clear console buffer history. \\
+\verb!Ctrl+L!    & Delete highlighted text. \\
+\end{tabular}
+
+\subsection{Text fields}
+\includegraphics[width=205px]{path.png} \\
+\begin{tabular}{@{}ll@{}}
+\verb!Ctrl+L!    & Text completion lookup.  \\
+\verb!Ctrl+U!    & Highlight all.
+\end{tabular}
+
+\section{Choosers}
+\includegraphics[width=213px]{progel.png} \\
+\begin{tabular}{@{}ll@{}}
+\verb!Standard nav!  & Tab, Ctrl+F/B/N/P/A/E/D/X/C/V. \\
+\end{tabular}
 
 \end{multicols}
+
 \end{document}
