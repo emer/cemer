@@ -809,7 +809,6 @@ public:
   String		plugin_name; // the name, which must be a valid C identifier, and must not cause name clashes with existing classes or loaded plugins (this will be checked during Validate) -- lower case by convention
   String		class_name_prefix; // #READ_ONLY #SHOW capitalized version of plugin_name, for classes and similar contexts
   PluginType		plugin_type; // the type -- this controls the visibility of the plugin (just you, or everyone on your system) -- on Unix and some Windows systems, you will need administrator rights to install a system plugin	
-  bool			default_location; // #DEF_true create the plugin in the default location for the type RECOMMENDED
   bool			validated; // #NO_SHOW
   String		plugin_location; // folder where to create the plugin (folder name should usually be same as plugin_name)
   String		desc;

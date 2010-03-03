@@ -134,7 +134,7 @@ if [[ $prefix == "Default" ]]; then
 elif [[ $prefix == "System" ]]; then
   echo "Now you must type : $build_dir; make; sudo make install"
 elif [[ $prefix == "User" ]]; then
-  echo "Now you must type : $build_dir; make; make install"
+  echo "Now you must type : cd $build_dir; make; make install"
 else
   echo "WARNING: unknown prefix -- you may not be able"
 fi

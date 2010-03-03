@@ -492,7 +492,6 @@ void PluginWizard::Initialize() {
   plugin_name = "myplugin";
   class_name_prefix = "Myplugin";
   plugin_type = UserPlugin;
-  default_location = true;
   validated = false;
   plugin_location = taMisc::user_app_dir + PATH_SEP + "plugins" + PATH_SEP +
         plugin_name;
@@ -507,20 +506,10 @@ void PluginWizard::UpdateAfterEdit_impl() {
   // modify it to force it to be C-valid
   plugin_name = taMisc::StringCVar(plugin_name);
   class_name_prefix = capitalize(plugin_name);
-  if (default_location) {
-    if (plugin_type == UserPlugin) {
-      plugin_location = taMisc::user_app_dir + PATH_SEP + "plugins" + PATH_SEP +
-        plugin_name;
-    } else {
-      plugin_location = taMisc::app_dir + PATH_SEP + "plugins" + PATH_SEP +
-        plugin_name;
-    }
-  } else {
 #ifdef TA_OS_WIN
-    plugin_location.gsub("/", "\\");
+  plugin_location.gsub("/", "\\");
 #endif
-    plugin_location = taPlatform::noFinalSep(plugin_location);
-  }
+  plugin_location = taPlatform::noFinalSep(plugin_location);
 }
 
 void PluginWizard::CheckThisConfig_impl(bool quiet, bool& ok) {

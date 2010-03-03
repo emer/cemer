@@ -5,9 +5,10 @@
 #include "ta_base.h" // TODO: replace with the temt/emergent file that contains your base class
 //TODO: add any headers of additional types that are used in your class, such as ta_geometry.h 
 
+// The following is an example class -- replace with actual object name you want to use
 
-class TEMPLATE_API TemplatePluginExampleClass : public taNBase
-{ // TODO: describe your class
+class TEMPLATE_API TemplatePluginExampleClass : public taNBase {
+  // TODO: describe your class
   INHERITED(taNBase) // declares 'inherited' keyword for safer base-class references
 public:
   String		example_member1; // TODO: replace these and add your own members
@@ -27,17 +28,18 @@ public:
   void			MyCodeMethod(); // example of a method that will be used by your code, but not available to the user in a menu -- it will be availabe in the CSS scripting language
 
 
-  SIMPLE_LINKS(TemplatePluginExampleClass) // automatically links embedded taBase objects into ownership chain
-  TA_BASEFUNS(TemplatePluginExampleClass) // defines a default set of constructors and copy code 
-
+  TA_SIMPLE_BASEFUNS(TemplatePluginExampleClass);
+  // defines a default set of constructors and copy code -- all the infrastructure 
 protected:
   // use the 'override' pseudo-keyword to indicate overridden virtual methods
   override void		UpdateAfterEdit_impl(); // called when a class changes, just prior to gui updates and client class notifications
 private:
-  SIMPLE_COPY(TemplatePluginExampleClass) // enables this object to be copied
+  // these are the basic constructor and destructor code for this object -- just initialize
+  // the members of this class -- usually destroy is not needed unless something special needs
+  // to be freed (any taBase member will be dealt with automatically in the std BASEFUNS)
   void	Initialize();
   void	Destroy();
-}; //
+};
 
 /* TemplatePluginState
 
@@ -45,8 +47,8 @@ private:
   is automatically created in the .root.plugin_state collections.
   Note: if you rename your plugin you MUST fix up this class name accordingly.
 */
-class TEMPLATE_API TemplatePluginState : public taFBase
-{ // this class is used to hold and save/restore user options and internal state for the TemplatePlugin 
+class TEMPLATE_API TemplatePluginState : public taFBase {
+  // this class is used to hold and save/restore user options and internal state for the TemplatePlugin 
   INHERITED(taFBase)
 public:
   static TemplatePluginState* instance(); 
