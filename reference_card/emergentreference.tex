@@ -7,7 +7,7 @@
 \usepackage[landscape]{geometry}
 
 \ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.1in,left=.25in,right=-.4in,bottom=.1in} }
+	{ \geometry{top=.05in,left=.2in,right=0in,bottom=.05in} }
 	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
@@ -93,7 +93,7 @@ and Cmd+V is paste while Ctrl+V is Page Down. \\
 \verb!Ctrl+right! & Forwards in navigation history \\
 \verb!F5!  & Refresh GUI. \\
 \verb!Ctrl/Alt+J! & Move global focus left \\
-\verb!Ctrl/Alt+L! & Move global focus right \\
+\verb!Ctrl/Alt+L! & Move global focus right
 \end{tabular}
 
 \section{Project tree and program tree}
@@ -106,7 +106,7 @@ and Cmd+V is paste while Ctrl+V is Page Down. \\
 \verb!Any 1-3 chars!    & Find as you type. Moves cursor to next matching line. \\
 \verb!Ctrl+I!    & New item below cursor. \\
 \verb!Alt+F!  & Find from selected node. \\
-\verb!Ctrl+M!  & Duplicate element(s). \\
+\verb!Ctrl+M!  & Duplicate element(s).
 \end{tabular}
 
 \subsection{New elements in project tree}
@@ -128,7 +128,49 @@ These sequences insert new items. Press Ctrl+left,left afterwards to navigate ba
 \verb!arg Ctrl+I!    & New arg \\
 \verb!fun Ctrl+I!    & New fun \\
 \verb!init Ctrl+I Name!    & New init code Name \\
-\verb!prog Ctrl+I Name!    & New prog code Name \\
+\verb!prog Ctrl+I Name!    & New prog code Name
+\end{tabular}
+
+\section{css console and text fields}
+\begin{tabular}{@{}ll@{}}
+\verb!Standard!  & Ctrl+F/B/N/P/A/E/D/X/W/C/V/Y. \\
+\verb!Ctrl+K! & Kill text until end of line. \\
+\verb!Ctrl+right! & Move cursor one word forward. \\
+\verb!Ctrl+left! & Move cursor one word backwards. \\
+\verb!Ctrl+shift+right! & Highlight one word forward. \\
+\verb!Ctrl+shift+left! & Highlight one word backwards.
+\end{tabular}
+
+\subsection{css console}
+\includegraphics[width=209.5px]{console.png} \\
+\begin{tabular}{@{}ll@{}}
+\verb!Ctrl+L!    & Clear console buffer history. \\
+\verb!Ctrl+L!    & Delete highlighted text.
+\end{tabular}
+
+\subsection{Text fields}
+\includegraphics[width=205px]{path.png} \\
+\begin{tabular}{@{}ll@{}}
+\verb!Ctrl+L!    & Text completion lookup.  \\
+\verb!Ctrl+U!    & Highlight all.
+\end{tabular} 
+
+\section{Help Browser}
+\includegraphics[width=240px]{helpbrowser.png}
+\begin{tabular}{@{}ll@{}}
+\verb!Standard!  & Tab,Page,Ctrl+F/B/N/P/A/E/X/W/C/V/Y. \\
+\verb!F1!  & Help Browser. \\
+\verb!Ctrl+S!  & Toggle Search/Find focus. \\
+\end{tabular}
+
+\section{DataTables and matrices}
+\includegraphics[width=215.5px]{datatable.png}
+\begin{tabular}{@{}ll@{}}
+\verb!Standard!  & Page,Ctrl+F/B/N/P/A/E/C/V/D/G/Y. \\
+\verb!Ctrl+T!    & Switch between table and matrix focus. \\
+\verb!Ctrl+I!    & Insert new row. \\
+\verb!Ctrl+M!    & Duplicate row. \\
+\verb!Ctrl+Space!    & Start editing cell.
 \end{tabular}
 
 \section{Edit panels}
@@ -143,56 +185,21 @@ fields of edit panels.
 \verb!ESC!    & Revert changes. \\
 \verb!Ctrl+Enter!    & Apply changes. \\
 \verb!Space!    & Open token chooser and Check/uncheck flag.\\
-\verb!Ctrl+L!    & (expression fields) Lookup information. \\
-\end{tabular}
-
-\section{Help Browser}
-\includegraphics[width=240px]{helpbrowser.png}
-\begin{tabular}{@{}ll@{}}
-\verb!Standard nav!  & Tab,Page,Ctrl+F/B/N/P/A/E/X/W/C/V/Y. \\
-\verb!F1!  & Help Browser. \\
-\verb!Ctrl+S!  & Toggle Search/Find focus. \\
-\end{tabular}
-
-\section{DataTables and matrices}
-\includegraphics[width=215.5px]{datatable.png}
-\begin{tabular}{@{}ll@{}}
-\verb!Standard!  & Page,Ctrl+F/B/N/P/A/E/C/V/D/G/Y. \\
-\verb!Ctrl+T!    & Switch between table and matrix focus. \\
-\verb!Ctrl+I!    & Insert new row. \\
-\verb!Ctrl+M!    & Duplicate row. \\
-\verb!Ctrl+spacebar!    & Start editing cell.
-\end{tabular}
-
-\section{css console and text fields}
-\begin{tabular}{@{}ll@{}}
-\verb!Standard!  & Ctrl+F/B/N/P/A/E/D/X/W/C/V/Y. \\
-\verb!Ctrl+K! & Kill text until end of line. \\
-\verb!Ctrl+right! & Move cursor one word forward. \\
-\verb!Ctrl+left! & Move cursor one word backwards. \\
-\verb!Ctrl+shift+right! & Highlight one word forward. \\
-\verb!Ctrl+shift+left! & Highlight one word backwards. \\
-\end{tabular}
-
-\subsection{css console}
-\includegraphics[width=209.5px]{console.png} \\
-\begin{tabular}{@{}ll@{}}
-\verb!Ctrl+L!    & Clear console buffer history. \\
-\verb!Ctrl+L!    & Delete highlighted text. \\
-\end{tabular}
-
-\subsection{Text fields}
-\includegraphics[width=205px]{path.png} \\
-\begin{tabular}{@{}ll@{}}
-\verb!Ctrl+L!    & Text completion lookup.  \\
-\verb!Ctrl+U!    & Highlight all.
+\verb!Ctrl+L!    & (expression fields) Lookup information.
 \end{tabular}
 
 \section{Choosers}
 \includegraphics[width=213px]{progel.png} \\
 \begin{tabular}{@{}ll@{}}
-\verb!Standard nav!  & Tab,Ctrl+F/B/N/P/A/E/D/X/W/C/V/Y. \\
+\verb!Standard!  & Tab,Ctrl+F/B/N/P/A/E/D/X/W/C/V/Y.
 \end{tabular}
+
+\section{Docs}
+\includegraphics[width=186px]{doc.png} \\
+\begin{tabular}{@{}ll@{}}
+\verb!Standard!  & Tab,Space,Ctrl+F/B/N/P/A/E/D/X/W/C/V/Y.
+\end{tabular}
+
 
 \end{multicols}
 
