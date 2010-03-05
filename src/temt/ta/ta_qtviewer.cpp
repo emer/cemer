@@ -2502,24 +2502,24 @@ void ISelectableHost::DoDynAction(int idx) {
         }
         ISelectable* it1 = sel_items_cp.FastEl(0);
         typ = it1->GetEffDataTypeDef(gui_ctxt);
-        for (int j = 0; j < ctxt_ms->count(); ++j) {
-          ctxt_ms->setIndex(j);
-          taBase* obj = ctxt_ms->tabObject();
-          if (!obj) continue;
-          *param[2] = (void*)obj;
-          while (sel_items_cp.size > 0) {
-            itN = sel_items_cp.TakeItem(0);
-            link = itN->effLink(gui_ctxt);
-            if (!link) continue; // prob won't happen, because we wouldn't have been called
-            base = link->data();
-            rval = (*(meth->stubp))(base, 1 + prompt_argc, param); 
-            if (link->isBase())
-              ((taBase*)base)->UpdateAfterEdit();
+	while (sel_items_cp.size > 0) {
+	  itN = sel_items_cp.TakeItem(0);
+	  link = itN->effLink(gui_ctxt);
+	  if (!link) continue; // prob won't happen, because we wouldn't have been called
+	  base = link->data();
+	  for (int j = 0; j < ctxt_ms->count(); ++j) {
+	    ctxt_ms->setIndex(j);
+	    taBase* obj = ctxt_ms->tabObject();
+	    if (!obj) continue;
+	    *param[2] = (void*)obj;
+	    rval = (*(meth->stubp))(base, 1 + prompt_argc, param); 
+	    if (link->isBase())
+	      ((taBase*)base)->UpdateAfterEdit();
 	    if(rval) {
 	      cssEl::Ref(rval);
 	      cssEl::unRefDone(rval);
 	    }
-          }
+	  }
         }
       } break;
       default: break; // compiler food, we handled all cases
