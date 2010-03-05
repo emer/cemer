@@ -7512,16 +7512,22 @@ void iTreeView::ItemDestroyingCb(iTreeViewItem* item) {
 }
 
 QMimeData* iTreeView::mimeData(const QList<QTreeWidgetItem*> items) const {
-//NOTE: in Qt4, we no longer know if we are starting a drag operation
+  //NOTE: in Qt4, we no longer know if we are starting a drag operation
   if (items.count() == 0) return NULL; // according to Qt spec
   else if (items.count() == 1) {
     iTreeViewItem* tvi = dynamic_cast<iTreeViewItem*>(items.at(0));
     if (!tvi) return NULL; // prob shouldn't happen
+#ifdef DEBUG
+    taMisc::Info("get mime data 1 item:", tvi->GetColText(0));
+#endif
     return tvi->GetClipDataSingle(taiClipData::EA_SRC_OPS, false);
   } else { // multi case
     ISelectable_PtrList list;
     FillTypedList(items, list);
     if (list.size == 0) return NULL; // not likely
+#ifdef DEBUG
+    taMisc::Info("get mime data multi item");
+#endif
     return list.FastEl(0)->GetClipData(list, taiClipData::EA_SRC_OPS, false);
   }
 }

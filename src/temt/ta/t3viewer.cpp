@@ -215,8 +215,8 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   quarter->setTransparencyType(QuarterWidget::BLEND); // this is a good default
   quarter->setNavigationModeFile(QUrl("coin:///scxml/navigation/examiner.xml"));
   quarter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  quarter->installEventFilter(this);
   main_hbox->addWidget(quarter, 1);
-
 
   rhs_vbox = new QVBoxLayout;
   rhs_vbox->setMargin(0); rhs_vbox->setSpacing(0);
@@ -806,6 +806,9 @@ void T3ExaminerViewer::syncViewerMode() {
   if(!quarter) return;
   bool int_onoff = (bool)viewer_mode;
   if(quarter->interactionModeOn() != int_onoff) {
+#ifdef DEBUG
+    taMisc::Info("set interact to:", String(int_onoff));
+#endif
     quarter->setInteractionModeOn(int_onoff);
   }
 }
@@ -813,6 +816,9 @@ void T3ExaminerViewer::syncViewerMode() {
 void T3ExaminerViewer::setInteractionModeOn(bool onoff, bool re_render) {
   viewer_mode = (ViewerMode)onoff; // enum matches
   if(quarter->interactionModeOn() != onoff) {
+#ifdef DEBUG
+    taMisc::Info("set interact to:", String(onoff));
+#endif
     quarter->setInteractionModeOn(onoff);
     if(re_render) {
       T3DataViewFrame* dvf = GetFrame();
@@ -895,13 +901,25 @@ bool so_scrollbar_is_dragging = false; // referenced in t3node_so.cpp
 bool T3ExaminerViewer::event(QEvent* ev_) {
   static bool inside_event_loop = false;
 
-  // this is probably not necc -- too much!
-//   syncViewerMode();		// keep it sync'd
-
   //NOTE: the base classes don't check if event is already handled, so we have to skip
   // calling inherited if we handle it ourselves
 
-  if (!t3vw) goto do_inherited;
+  bool rval = inherited::event(ev_);
+
+  if(so_scrollbar_is_dragging) {
+    if(!inside_event_loop) {
+      inside_event_loop = true;
+      while(so_scrollbar_is_dragging) { // remain inside local scroll event loop until end!
+	taiMiscCore::ProcessEvents();
+      }
+      inside_event_loop = false;
+    }
+  }
+  return rval;
+}
+
+bool T3ExaminerViewer::eventFilter(QObject* obj, QEvent* ev_) {
+  if(!t3vw || (obj != this && obj != quarter)) goto do_inherited;
 
   if (ev_->type() == QEvent::MouseButtonPress) {
     QMouseEvent* ev = (QMouseEvent*)ev_;
@@ -915,7 +933,7 @@ bool T3ExaminerViewer::event(QEvent* ev_) {
   }
 
  do_inherited:
-  bool rval = inherited::event(ev_);
+  static bool inside_event_loop = false;
 
   if(so_scrollbar_is_dragging) {
     if(!inside_event_loop) {
@@ -926,7 +944,8 @@ bool T3ExaminerViewer::event(QEvent* ev_) {
       inside_event_loop = false;
     }
   }
-  return rval;
+
+  return inherited::eventFilter(obj, ev_);
 }
 
 //////////////////////////

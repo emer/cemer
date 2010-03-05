@@ -1183,6 +1183,12 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
 
   if(!nv->snap_bord_disp) return;
 
+  int cur_disp_idx = nv->unit_disp_idx;
+
+  MemberDef* md = (MemberDef*)nv->membs.FindName("snap");
+  if(!md) return;		// shouldn't happen
+  nv->unit_disp_idx = nv->membs.FindEl(md);
+
   Unit_Group* ugrp = this->ugrp(); //cache
   T3UnitGroupNode* node_so = this->node_so(); // cache
 
@@ -1204,7 +1210,8 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
       val = 0.0f;
       Unit* unit = ugrp->FindUnitFmCoord(pos);
       if(unit) {
-	val = unit->snap;
+	void* base;
+	val = GetUnitDisplayVal(pos, base);
       }
       nv->GetUnitColor(val, tc, sc_val);
       col.setValue(tc.redf(), tc.greenf(), tc.bluef());
