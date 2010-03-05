@@ -202,25 +202,21 @@ CsProject .projects[0] {
       ProgEl_List @.init_code = [0] {
       };
 
-      ProgEl_List @.prog_code = [26] {
+      ProgEl_List @.prog_code = [25] {
 	IfReturn @[0] { };
 	RegisterArgs @[1] { };
 	PrintExpr @[2] { };
-	MethodCall @[3] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	Comment @[4] { };
+	Comment @[3] { };
+	ProgVarFmArg @[4] { };
 	ProgVarFmArg @[5] { };
 	ProgVarFmArg @[6] { };
 	ProgVarFmArg @[7] { };
 	ProgVarFmArg @[8] { };
 	ProgVarFmArg @[9] { };
 	ProgVarFmArg @[10] { };
-	ProgVarFmArg @[11] { };
+	Comment @[11] { };
 	Comment @[12] { };
-	Comment @[13] { };
-	IfElse @[14] { 
+	IfElse @[13] { 
 	  ProgEl_List @.true_code = [5] {
 	    MethodCall @[0] { 
 	      ProgArg_List @.meth_args = [2] {
@@ -271,8 +267,25 @@ CsProject .projects[0] {
 	    };
 	  };
 	};
-	Comment @[15] { };
+	Comment @[14] { };
+	MethodCall @[15] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
 	MethodCall @[16] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+	PrintVar @[17] { };
+	Comment @[18] { };
+	MethodCall @[19] { 
 	  ProgArg_List @.meth_args = [4] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
@@ -280,34 +293,17 @@ CsProject .projects[0] {
 	    ProgArg @[3] { };
 	  };
 	};
-	MethodCall @[17] { 
-	  ProgArg_List @.meth_args = [3] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	  };
-	};
-	PrintVar @[18] { };
-	Comment @[19] { };
 	MethodCall @[20] { 
-	  ProgArg_List @.meth_args = [4] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	  };
-	};
-	MethodCall @[21] { 
 	  ProgArg_List @.meth_args = [3] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
 	    ProgArg @[2] { };
 	  };
 	};
-	PrintVar @[22] { };
-	OtherProgramVar @[23] { };
-	PrintExpr @[24] { };
-	ProgramCall @[25] { 
+	PrintVar @[21] { };
+	OtherProgramVar @[22] { };
+	PrintExpr @[23] { };
+	ProgramCall @[24] { 
 	  ProgArg_List @.prog_args = [2] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
@@ -2769,80 +2765,68 @@ CsProject .projects[0] {
       expr="\"Loaded project: \" << .projects[0].file_name";
      };
     };
-    MethodCall @[3] {
-     desc="initialize process hierarchy prior to setting variables, etc";
-     flags=;
-     result_var=NULL;
-     obj=.projects[0].programs[0].vars[1]$$;
-     method=Program::Init;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-     };
-    };
-    Comment @[4] {
+    Comment @[3] {
      desc="= Std variables in startup program itself =";
      flags=;
     };
-    ProgVarFmArg @[5] {
+    ProgVarFmArg @[4] {
      desc=;
      flags=;
      prog=.projects[0].programs[0]$$;
      var_name="tag";
      arg_name="tag";
     };
-    ProgVarFmArg @[6] {
+    ProgVarFmArg @[5] {
      desc=;
      flags=;
      prog=$.projects[0].programs[0]$;
      var_name="log_dir";
      arg_name="log_dir";
     };
-    ProgVarFmArg @[7] {
+    ProgVarFmArg @[6] {
      desc=;
      flags=;
      prog=$.projects[0].programs.gp[0][1]$;
      var_name="max_epoch";
      arg_name="epochs";
     };
-    ProgVarFmArg @[8] {
+    ProgVarFmArg @[7] {
      desc=;
      flags=;
      prog=$.projects[0].programs.gp[0][1]$;
      var_name="rnd_init";
      arg_name="rnd_init";
     };
-    ProgVarFmArg @[9] {
+    ProgVarFmArg @[8] {
      desc=;
      flags=;
      prog=$.projects[0].programs.gp[0][0]$;
      var_name="max_batch";
      arg_name="batches";
     };
-    ProgVarFmArg @[10] {
+    ProgVarFmArg @[9] {
      desc="b_end is parallel-batch mode of operation (see b_start)";
      flags=;
      prog=$.projects[0].programs.gp[0][0]$;
      var_name="max_batch";
      arg_name="b_end";
     };
-    ProgVarFmArg @[11] {
+    ProgVarFmArg @[10] {
      desc="b_start is parallel-batch mode of operation (see also b_end)";
      flags=;
      prog=$.projects[0].programs.gp[0][0]$;
      var_name="batch";
      arg_name="b_start";
     };
-    Comment @[12] {
+    Comment @[11] {
      desc="= Add your own variables here =";
      flags=;
     };
-    Comment @[13] {
+    Comment @[12] {
      desc="= Below saves log files of standard data tables =";
      flags=;
     };
-    IfElse @[14] {
+    IfElse @[13] {
      desc="if passed b_start, then turn off init_batch in Batch program, so it starts here instead of 0";
      flags=;
      cond {
@@ -2856,7 +2840,7 @@ CsProject .projects[0] {
        desc="directly set variable on batch program";
        flags=;
        result_var=NULL;
-       obj=$.projects[0].programs[0].vars[1]$;
+       obj=.projects[0].programs[0].vars[1]$$;
        method=Program::SetVar;
        meth_args {
 	name=;
@@ -3098,11 +3082,11 @@ CsProject .projects[0] {
       };
      };
     };
-    Comment @[15] {
+    Comment @[14] {
      desc="== Save epoch log -- on by default ==";
      flags=;
     };
-    MethodCall @[16] {
+    MethodCall @[15] {
      desc="last arg is to include dmem proc number";
      flags=;
      result_var=$.projects[0].programs[0].vars[5]$;
@@ -3154,7 +3138,7 @@ CsProject .projects[0] {
       };
      };
     };
-    MethodCall @[17] {
+    MethodCall @[16] {
      desc="last arg is to restrict log to dmem_proc = 0";
      flags=;
      result_var=NULL;
@@ -3196,7 +3180,7 @@ CsProject .projects[0] {
       };
      };
     };
-    PrintVar @[18] {
+    PrintVar @[17] {
      desc=;
      flags=;
      message="Saving epoch log data to:";
@@ -3207,11 +3191,11 @@ CsProject .projects[0] {
      print_var5=NULL;
      print_var6=NULL;
     };
-    Comment @[19] {
+    Comment @[18] {
      desc="== Save trial log -- OFF by default ==";
      flags=;
     };
-    MethodCall @[20] {
+    MethodCall @[19] {
      desc="last arg is to include dmem proc number";
      flags=OFF;
      result_var=$.projects[0].programs[0].vars[5]$;
@@ -3263,7 +3247,7 @@ CsProject .projects[0] {
       };
      };
     };
-    MethodCall @[21] {
+    MethodCall @[20] {
      desc="last arg is to restrict log to dmem_proc = 0";
      flags=OFF;
      result_var=NULL;
@@ -3305,7 +3289,7 @@ CsProject .projects[0] {
       };
      };
     };
-    PrintVar @[22] {
+    PrintVar @[21] {
      desc=;
      flags=OFF;
      message="Saving trial log data to:";
@@ -3316,7 +3300,7 @@ CsProject .projects[0] {
      print_var5=NULL;
      print_var6=NULL;
     };
-    OtherProgramVar @[23] {
+    OtherProgramVar @[22] {
      desc="propagate the tag";
      flags=;
      other_prog=.projects[0].programs.gp[0][9]$$;
@@ -3326,14 +3310,14 @@ CsProject .projects[0] {
      var_3=NULL;
      var_4=NULL;
     };
-    PrintExpr @[24] {
+    PrintExpr @[23] {
      desc=;
      flags=;
      expr {
       expr="\"Running: \" << batch.name";
      };
     };
-    ProgramCall @[25] {
+    ProgramCall @[24] {
      desc=;
      flags=;
      prog_args {
