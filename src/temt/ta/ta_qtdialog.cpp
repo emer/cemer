@@ -1194,12 +1194,12 @@ bool taiDataHostBase::AsyncWaitProc() {
 }
 
 void taiDataHostBase::Apply_Async() {
-   Apply();	     // no reason to actually async this..
-//   if (apply_req) return; // already waiting
-//   if (state != ACTIVE) return;
-//   apply_req = true;
-//   taMisc::do_wait_proc = true;
-//   async_apply_list.Link(this);
+//    Apply();	     // no reason to actually async this..
+  if (apply_req) return; // already waiting
+  if (state != ACTIVE) return;
+  apply_req = true;
+  taMisc::do_wait_proc = true;
+  async_apply_list.Link(this);
 }
 
 void taiDataHostBase::ReShow_Async(bool forced) {

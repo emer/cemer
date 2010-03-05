@@ -1038,7 +1038,7 @@ void PFCGateSpec::Initialize() {
   go_gain = 1.0f;
   graded_out_go = true;
   no_empty_out = true;
-  clear_decay = 0.0f;
+  clear_decay = 0.9f;
   mid_minus_min = 10;
   out_go_clear = true;
   off_accom = 0.0f;

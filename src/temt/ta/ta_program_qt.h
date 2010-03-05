@@ -98,6 +98,14 @@ class TA_API iProgramEditor: public QWidget, public virtual IDataHost,
 INHERITED(QWidget)
   Q_OBJECT
 public:
+#ifndef __MAKETA__
+  enum CustomEventType { // note: just copied from taiDataHost, not all used
+    CET_RESHOW		= QEvent::User + 1,  // uses ReShowEvent
+    CET_GET_IMAGE,
+    CET_APPLY
+  };
+#endif
+
   iBrowseHistory*	brow_hist;
   taiAction* 		historyBackAction;
   taiAction* 		historyForwardAction;
@@ -177,6 +185,7 @@ protected:
   iColor		bg_color_dark; // for edit area
   bool			m_modified;
   bool			warn_clobber; // set if we get a notify and are already modified
+  bool			apply_req;
   taBase*		base; // no need for smartref, because we are a dlc
   MembSet_List		membs; // the member items, one set per line
   
@@ -185,6 +194,7 @@ protected:
   MemberDef*		sel_item_mbr; // used (and only valid!) for context menus
   taBase*		sel_item_base; // used (and only valid!) for context menus
  
+  override void 	customEvent(QEvent* ev_);
   override bool 	eventFilter(QObject *obj, QEvent *event);
   // event filter to trigger apply button on Ctrl+Return
 

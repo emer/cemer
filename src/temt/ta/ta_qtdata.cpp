@@ -173,11 +173,15 @@ void taiData::DataChanged(taiData* chld) {
 
   // don't do anything ourselves, but notify host and our parent..
   // if we have a parent, delegate notification to it, otherwise inform the host
+  // we might end up committing suicide here so guard..
+  QPointer<taiData> ths = this;
   if (mparent != NULL)
     mparent->DataChanged(this);
   else if (host)
     host->Changed();
 
+  if(!ths) return;		// above could have done it
+  
   DataChanged_impl(chld);
   if (!chld)
     emit DataChangedNotify(this);
@@ -1944,6 +1948,7 @@ void taiAction_List::El_Done_(void* it_)	{
   taiAction* it = (taiAction*)it_;
   if (it->nref == 0)
     delete it; //NB: don't deleteLater, because taiData->parent will be invalid by then
+//     it->deleteLater();
 }
 
 taiAction* taiAction_List::PeekNonSep() {
@@ -5571,12 +5576,16 @@ QWidget* taiMethodData::MakeButton() {
     QToolButton* newbut = new QToolButton(gui_parent);
     newbut->setFont(taiM->menuFont(defSize()));
     newbut->setText(meth->GetLabel());
-    // add meth desc as a status item
     String statustip = meth->desc;
+    String shortcut = meth->OptionAfter("SHORTCUT_");
+    if(shortcut.nonempty()) {
+      newbut->setShortcut(QKeySequence((QString)shortcut.chars()));
+      statustip = String("(") + shortcut + String(") ") + statustip;
+    }
+    // add meth desc as a status item
     if (statustip.nonempty())
       newbut->setStatusTip(statustip);
-    connect(newbut, SIGNAL(clicked()),
-      this, SLOT(CallFun()) );
+    connect(newbut, SIGNAL(clicked()),this, SLOT(CallFun()) );
     newbut->show();
     buttonRep = newbut;
   }

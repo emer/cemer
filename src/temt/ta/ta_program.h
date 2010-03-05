@@ -1202,15 +1202,15 @@ public:
   // #CAT_Code generate the listing of the program (NOT the underlying CSS code -- just the program)
   
   virtual void  Init();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run set the program state back to the beginning
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run #SHORTCUT_F8 set the program state back to the beginning
   virtual void  Run();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run the program
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run #SHORTCUT_F9 run the program
   virtual void	Step(Program* step_prg = NULL);
-  // #BUTTON #STEP_BUTTON #CAT_Run step the program at the level of the given program -- if NULL then step_prog default value will be used
+  // #BUTTON #STEP_BUTTON #CAT_Run #SHORTCUT_F10 step the program at the level of the given program -- if NULL then step_prog default value will be used
   virtual void	Stop();
-  // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)
+  // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run #SHORTCUT_F11 stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)
   virtual void	Abort();
-  // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run stop the current program immediately, regardless of where it is
+  // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run #SHORTCUT_F12 stop the current program immediately, regardless of where it is
 
   virtual bool	StopCheck();
   // #CAT_Run calls event loop, then checks for STOP state, true if so

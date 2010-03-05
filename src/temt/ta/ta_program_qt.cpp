@@ -247,6 +247,7 @@ void iProgramEditor::Init() {
   read_only = false;
   m_modified = false;
   warn_clobber = false;
+  apply_req = false;
 //  bg_color.set(TAI_Program->GetEditColor()); // always the same
   base = NULL;
   row = 0;
@@ -563,6 +564,21 @@ void iProgramEditor::Controls_Remove() {
 //nn and dangerous!  taiMiscCore::RunPending(); // note: this is critical for the editgrid clear
 }
 
+void iProgramEditor::customEvent(QEvent* ev_) {
+  // we return early if we don't accept, otherwise fall through to accept
+  switch ((int)ev_->type()) {
+  case CET_APPLY: {
+    if (apply_req) {
+      Apply();
+      apply_req = false;
+    }
+  } break;
+  default: inherited::customEvent(ev_); 
+    return; // don't accept
+  }
+  ev_->accept();
+}
+
 void iProgramEditor::Apply() {
   if (warn_clobber) {
     int chs = taMisc::Choice("Warning: this object has changed since you started editing -- if you apply now, you will overwrite those changes -- what do you want to do?",
@@ -580,7 +596,10 @@ void iProgramEditor::Apply() {
 }
 
 void iProgramEditor::Apply_Async() {
-  Apply();			// no async!?
+  if (apply_req) return; // already waiting
+  QEvent* ev = new QEvent((QEvent::Type)CET_APPLY);
+  apply_req = true;
+  QCoreApplication::postEvent(this, ev);
 }
 
 void iProgramEditor::Help() {
@@ -2443,6 +2462,9 @@ QWidget* taiProgStepButton::GetButtonRep() {
     act->connect(taiAction::ptr_act, this, SLOT(CallFunList(void*)));
     act->setFont(taiM->menuFont(defSize()));
     tbut->setDefaultAction(act);
+    if(i == prg->sub_progs_step.size-1) {
+      tbut->setShortcut(QKeySequence("F10"));
+    }
     QSize sz = tbut->minimumSizeHint();
     tbut->setMaximumWidth(sz.width() - but_marg_minus);
     hbl->addWidget(tbut);

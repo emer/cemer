@@ -721,7 +721,7 @@ taiData* gpiArray_Type::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget*
 int taiTokenPtrType::BidForType(TypeDef* td) {
   if(((td->ptr == 1) && td->DerivesFrom(TA_taBase)) ||
      ((td->ptr == 0) && (td->DerivesFrom(TA_taSmartPtr) || 
-      td->DerivesFrom(TA_taSmartRef))) )
+			 td->DerivesFrom(TA_taSmartRef))) )
     return (taiType::BidForType(td) +1);
   return 0;
 }
@@ -1391,10 +1391,10 @@ void taiMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff)
 //////////////////////////////////
 
 int taiTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if (td->InheritsFrom(&TA_taBase) &&
+  if(td->InheritsFrom(&TA_taBase) &&
      ((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase)) ||
      ((md->type->ptr == 0) && ((md->type->DerivesFrom(TA_taSmartPtr) || 
-       md->type->DerivesFrom(TA_taSmartRef)))) )
+				md->type->DerivesFrom(TA_taSmartRef)))) )
      return inherited::BidForMember(md,td) + 1;
   return 0;
 }
@@ -2838,8 +2838,11 @@ void gpiLinkList::GetMbrValue(taiData*, void*, bool&) {
 //////////////////////////////////
 
 int gpiFromGpTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if (td->InheritsFrom(TA_taBase) && (md->type->ptr == 1)
-      && md->type->DerivesFrom(TA_taBase) && md->OptionAfter("FROM_GROUP_").nonempty())
+  if(td->InheritsFrom(&TA_taBase) &&
+     (((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase)) ||
+      ((md->type->ptr == 0) && (md->type->DerivesFrom(TA_taSmartPtr) || 
+				md->type->DerivesFrom(TA_taSmartRef))))
+     && md->OptionAfter("FROM_GROUP_").nonempty())
     return taiTokenPtrMember::BidForMember(md,td)+1;
   return 0;
 }
@@ -2847,6 +2850,15 @@ int gpiFromGpTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 taiData* gpiFromGpTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)	return NULL;
+
+  // setting mode now is good for rest of life
+  if(mbr->type->DerivesFrom(TA_taBase))
+    mode = MD_BASE;
+  else if (mbr->type->DerivesFrom(TA_taSmartPtr)) 
+    mode = MD_SMART_PTR;
+  else if (mbr->type->DerivesFrom(TA_taSmartRef))
+    mode = MD_SMART_REF;
+
   int new_flags = flags_;
   if(!mbr->HasOption("NO_NULL"))
     new_flags |= taiData::flgNullOk;
@@ -2870,26 +2882,58 @@ taiData* gpiFromGpTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par
 void gpiFromGpTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)	return;
+
+  taBase* tok_ptr = NULL; // this is the addr of the token, in the member
+  switch (mode) {
+  case MD_BASE: 
+  case MD_SMART_PTR:  // is binary compatible
+  {
+    tok_ptr = *((taBase**)mbr->GetOff(base));
+  } break;
+  case MD_SMART_REF: {
+    taSmartRef& ref = *((taSmartRef*)(mbr->GetOff(base)));
+    tok_ptr = ref.ptr();
+  } break;
+  }
+
   if (mbr->type->DerivesFrom(TA_taGroup_impl)) {
     gpiSubGroups* rval = (gpiSubGroups*)dat;
     TAGPtr lst = (TAGPtr)GetList(from_md, base);
-    rval->GetImage(lst, *((TAGPtr*)mbr->GetOff(base)));
+    rval->GetImage(lst, (TAGPtr)tok_ptr);
   } else {
     gpiListEls* rval = (gpiListEls*)dat;
     TABLPtr lst = GetList(from_md, base);
-    rval->GetImage(lst, *((taBase**)mbr->GetOff(base)));
+    rval->GetImage(lst, tok_ptr);
   }
   GetOrigVal(dat, base);
 }
 
 void gpiFromGpTokenPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+  taBase* tabval = NULL;
   if (mbr->type->DerivesFrom(&TA_taGroup_impl)) {
     gpiSubGroups* rval = (gpiSubGroups*)dat;
-    taBase::SetPointer((taBase**)mbr->GetOff(base), (taBase*)rval->GetValue());
+    tabval = (taBase*)rval->GetValue();
   } else {
     gpiListEls* rval = (gpiListEls*)dat;
-    taBase::SetPointer((taBase**)mbr->GetOff(base), (taBase*)rval->GetValue());
+    tabval = (taBase*)rval->GetValue();
   }
+
+  switch (mode) {
+  case MD_BASE:
+    if (no_setpointer)
+      *((void**)mbr->GetOff(base)) = tabval;
+    else
+      taBase::SetPointer((taBase**)mbr->GetOff(base), tabval);
+    break;
+  case MD_SMART_PTR: //WARNING: use of no_setpointer on smartptrs is not defined!
+    taBase::SetPointer((taBase**)mbr->GetOff(base), tabval);
+    break;
+  case MD_SMART_REF: {
+    taSmartRef& ref = *((taSmartRef*)(mbr->GetOff(base)));
+    ref.set(tabval);
+  } break;
+  }
+
   CmpOrigVal(dat, base, first_diff);
 }
 
