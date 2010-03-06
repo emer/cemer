@@ -216,6 +216,8 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   quarter->setNavigationModeFile(QUrl("coin:///scxml/navigation/examiner.xml"));
   quarter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   quarter->installEventFilter(this);
+  SoEventManager* emgr = quarter->getSoEventManager();
+  emgr->setNavigationState(SoEventManager::JUST_NAVIGATION);
   main_hbox->addWidget(quarter, 1);
 
   rhs_vbox = new QVBoxLayout;
@@ -806,20 +808,45 @@ void T3ExaminerViewer::syncViewerMode() {
   if(!quarter) return;
   bool int_onoff = (bool)viewer_mode;
   if(quarter->interactionModeOn() != int_onoff) {
-#ifdef DEBUG
-    taMisc::Info("set interact to:", String(int_onoff));
-#endif
+    SoEventManager* emgr = quarter->getSoEventManager();
+    if(int_onoff) {
+      emgr->setNavigationState(SoEventManager::NO_NAVIGATION);
+    }
     quarter->setInteractionModeOn(int_onoff);
+    if(!int_onoff) {
+      emgr->setNavigationState(SoEventManager::JUST_NAVIGATION);
+    }
+// #ifdef DEBUG
+//     taMisc::Info("sync interact to:", String(int_onoff));
+// #endif
   }
+}
+
+bool T3ExaminerViewer::syncCursor() {
+  if(!quarter) return false;
+  if(viewer_mode == INTERACT) {
+    setCursor(quarter->stateCursor("interact"));
+  }
+  else {
+    setCursor(quarter->cursor());
+  }
+  return true;
 }
 
 void T3ExaminerViewer::setInteractionModeOn(bool onoff, bool re_render) {
   viewer_mode = (ViewerMode)onoff; // enum matches
   if(quarter->interactionModeOn() != onoff) {
-#ifdef DEBUG
-    taMisc::Info("set interact to:", String(onoff));
-#endif
+    SoEventManager* emgr = quarter->getSoEventManager();
+    if(onoff) {
+      emgr->setNavigationState(SoEventManager::NO_NAVIGATION);
+    }
     quarter->setInteractionModeOn(onoff);
+    if(!onoff) {
+      emgr->setNavigationState(SoEventManager::JUST_NAVIGATION); // after is best here
+    }
+// #ifdef DEBUG
+//     taMisc::Info("set interact to:", String(onoff));
+// #endif
     if(re_render) {
       T3DataViewFrame* dvf = GetFrame();
       if(dvf) {
@@ -921,7 +948,12 @@ bool T3ExaminerViewer::event(QEvent* ev_) {
 bool T3ExaminerViewer::eventFilter(QObject* obj, QEvent* ev_) {
   if(!t3vw || (obj != this && obj != quarter)) goto do_inherited;
 
-  if (ev_->type() == QEvent::MouseButtonPress) {
+  if((ev_->type() == QEvent::MouseMove) || (ev_->type() == QEvent::MouseButtonPress) || 
+     (ev_->type() == QEvent::Enter) || (ev_->type() == QEvent::FocusIn)) {
+    syncViewerMode();
+  }
+
+  if(ev_->type() == QEvent::MouseButtonPress) {
     QMouseEvent* ev = (QMouseEvent*)ev_;
     if (ev->button() == Qt::RightButton) {
       ISelectable* ci = t3vw->curItem();
@@ -1368,7 +1400,6 @@ void iT3ViewspaceWidget::SoSelectionCallback(void* inst, SoPath* path) {
   if(!t3vw->t3viewer()->interactionModeOn()) return;
   t3vw->SoSelectionEvent(&ev);
   t3vw->sel_so->touch(); // to redraw
-
 }
 
 void iT3ViewspaceWidget::SoDeselectionCallback(void* inst, SoPath* path) {
@@ -1689,6 +1720,9 @@ void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
   else {
     RemoveSelectedItem(t3node);
   }
+
+  t3viewer()->syncViewerMode();
+
   // notify to our frame that we have grabbed focus
   Emit_GotFocusSignal();
 }

@@ -262,6 +262,8 @@ public:
 
   virtual void		syncViewerMode();
   // ensure that quarter is in the same viewer mode that we think it should be in -- this should be called upon any redraw that might knock quarter out of whack.
+  bool			syncCursor();
+  // set our cursor to match what quarter says it should be..
 
   virtual void		setInteractionModeOn(bool onoff, bool re_render = true);
   // set the interaction mode on or off (if off, then it is in view mode) -- also updates button states -- also calls Render on parent dataview if mode has changed, so that interactors can be updated (unless re_render = false)

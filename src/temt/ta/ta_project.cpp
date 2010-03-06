@@ -535,6 +535,8 @@ void UndoDiffTask::run() {
   if(!um) return;
   if(!um->rec_to_diff) return;
 
+  if(um->isDestroying()) return; // checks owner..
+
   um->rec_to_diff->EncodeMyDiff();
   um->rec_to_diff = NULL;	// done, reset!
 }

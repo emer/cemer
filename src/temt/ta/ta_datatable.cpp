@@ -408,10 +408,15 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
     DataTable* dt = dataTable();
     // if no save, don't need to check DataTable global
     if (saveToDumpFile()) {
-      if(taMisc::is_undo_saving) {
+      if(dt && taMisc::is_undo_saving) {
 	// always save for obj itself
-	if(tabMisc::cur_undo_mod_obj == dt || tabMisc::cur_undo_mod_obj == this)
+	if(tabMisc::cur_undo_mod_obj == dt || tabMisc::cur_undo_mod_obj == this) {
+	  if((dt->Cells() > taMisc::undo_data_max_cells) ||
+	     !dt->HasDataFlag(DataTable::SAVE_ROWS)) {
+	    return DQR_NO_SAVE;	// too big or no save!
+	  }
 	  return DQR_SAVE;
+	}
 	if(!tabMisc::cur_undo_save_owner || !IsChildOf(tabMisc::cur_undo_save_owner)) {
 	  // no need to save b/c unaffected by changes elsewhere..
 	  return DQR_NO_SAVE;
@@ -420,7 +425,7 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
 	  return DQR_NO_SAVE;	// too big!
 	}
       }
-      if (dt && dt->HasDataFlag(DataTable::SAVE_ROWS)) return DQR_SAVE;
+      if(dt && dt->HasDataFlag(DataTable::SAVE_ROWS)) return DQR_SAVE;
     }
     return DQR_NO_SAVE;
   } else return inherited::Dump_QuerySaveMember(md);

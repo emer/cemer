@@ -470,9 +470,6 @@ void MatrixConSpec::Initialize() {
   wt_sig.gain = 1.0f;
   wt_sig.off = 1.0f;
 
-  SetUnique("xcal", true);
-  xcal.s_mix = 0.8f;
-
   SetUnique("wt_limits", true);
   wt_limits.sym = false;
 }
@@ -2264,8 +2261,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   matrix_cons->SetUnique("wt_sig", true);
   matrix_cons->wt_sig.gain = 1.0f;
   matrix_cons->wt_sig.off = 1.0f;
-  matrix_cons->SetUnique("xcal", true);
-  matrix_cons->xcal.s_mix = 0.8f;
 
   mfmpfc_cons->SetUnique("wt_scale", true);
   mfmpfc_cons->wt_scale.rel = .2f;
@@ -2273,7 +2268,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
 
   matrix_bias->SetUnique("lrate", true);
   matrix_bias->lrate = 0.0f;		// default is no bias learning
-  matrix_bias->SetUnique("xcal", false); // inherit
 
   matrix_units->g_bar.h = .01f; // old syn dep
   matrix_units->g_bar.a = .03f;
@@ -2302,7 +2296,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     matrixo_cons->SetUnique("wt_sig", true);
     matrixo_cons->wt_sig.gain = 1.0f;
     matrixo_cons->wt_sig.off = 1.0f;
-    matrixo_cons->SetUnique("xcal", false); // inherit
 
     mofmpfc_cons->SetUnique("wt_scale", true);
     mofmpfc_cons->wt_scale.rel = 1.0f; // works better with gp-one-to-one
@@ -2544,8 +2537,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     }
     matrix_cons->SelectForEditNm("lrate", edit, "matrix", subgp,
    "Default MAINT Matrix lrate is .05");
-    matrix_cons->SelectForEditNm("xcal", edit, "matrix", subgp,
-   "Matrix cons use XCAL (BCM-like activity feedback set-point like behavior) for preventing hog units -- mvl_mix is only relevant parameter -- generaly .005 or .002 are best");
     if(out_gate) {
       matrixo_cons->SelectForEditNm("lrate", edit, "matrix_out", subgp,
    "Default OUTPUT Matrix lrate is .1");
@@ -2964,9 +2955,6 @@ void V1MatrixConSpec::Initialize() {
   SetUnique("wt_sig", true);
   wt_sig.gain = 1.0f;
   wt_sig.off = 1.0f;
-
-  SetUnique("xcal", true);
-  xcal.s_mix = 0.8f;
 
   SetUnique("wt_limits", true);
   wt_limits.sym = false;
