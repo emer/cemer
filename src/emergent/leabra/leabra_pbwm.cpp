@@ -591,23 +591,19 @@ float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
 //////////////////////////////////
 
 void MatrixGateBiasSpec::Initialize() {
-  one_bias = true;
-  bias = 1.0f;
   mnt_nogo = 1.0f;
-  mnt_empty_go = 1.0f;
   out_pvr = 1.0f;
-  out_empty_nogo = 1.0f;
+  out_empty_nogo = 2.0f;
+  mnt_empty_go = 0.0f;
   mnt_pvr = 0.0f;
 }
 
-void MatrixGateBiasSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  if(one_bias) {
-    mnt_nogo = bias;
-    mnt_empty_go = bias;
-    out_pvr = bias;
-    out_empty_nogo = bias;
-  }
+void MatrixGateBiasSpec::SetAllBiases(float one_bias) {
+  mnt_nogo = one_bias;
+  out_pvr = one_bias;
+  out_empty_nogo = one_bias;
+  mnt_empty_go = one_bias;
+  mnt_pvr = one_bias;
 }
 
 void MatrixMiscSpec::Initialize() {
@@ -2024,8 +2020,11 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   LeabraConSpec* intra_pfc = (LeabraConSpec*)topfc_cons->FindMakeChild("IntraPFC", &TA_LeabraConSpec);
   LeabraConSpec* pfc_bias = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCBias", &TA_LeabraBiasSpec);
   LeabraConSpec* fmpfcmnt_cons = NULL;
-  if(out_gate)
+  LeabraConSpec* fmpfcout_cons = NULL;
+  if(out_gate) {
     fmpfcmnt_cons = (LeabraConSpec*)learn_cons->FindMakeChild("FmPFC_mnt", &TA_LeabraConSpec);
+    fmpfcout_cons = (LeabraConSpec*)learn_cons->FindMakeChild("FmPFC_out", &TA_LeabraConSpec);
+  }
   MatrixConSpec* matrix_cons = (MatrixConSpec*)learn_cons->FindMakeChild("MatrixCons", &TA_MatrixConSpec);
   MatrixConSpec* mfmpfc_cons = (MatrixConSpec*)matrix_cons->FindMakeChild("MatrixFmPFC", &TA_MatrixConSpec);
 
@@ -2141,8 +2140,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
 
     net->FindMakePrjn(pfc_o, pfc_m, onetoone, marker_cons);
 
-    net->FindMakePrjn(matrix_m, pfc_m, gponetoone, mfmpfc_cons);
-    net->FindMakePrjn(matrix_o, pfc_m, gponetoone, mofmpfc_cons);
+//     net->FindMakePrjn(matrix_m, pfc_m, gponetoone, mfmpfc_cons);
+//     net->FindMakePrjn(matrix_o, pfc_m, gponetoone, mofmpfc_cons);
 
     net->FindMakeSelfPrjn(pfc_m, pfc_selfps, pfc_self);
     //  net->FindMakeSelfPrjn(pfc_m, intra_pfcps, intra_pfc);
@@ -2158,7 +2157,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     net->FindMakePrjn(patch, pfc_m, gponetoone, lve_cons);
   }
   else {			// !out_gate
-    net->FindMakePrjn(matrix_m, pfc_m, gponetoone, mfmpfc_cons);
+//     net->FindMakePrjn(matrix_m, pfc_m, gponetoone, mfmpfc_cons);
 
     net->FindMakeSelfPrjn(pfc_m, pfc_selfps, pfc_self);
     //  net->FindMakeSelfPrjn(pfc, intra_pfcps, intra_pfc);
@@ -2188,7 +2187,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   for(i=0;i<hidden_lays.size;i++) {
     Layer* hl = (Layer*)hidden_lays[i];
     if(out_gate) {
-      net->FindMakePrjn(hl, pfc_o, fullprjn, learn_cons);
+      net->FindMakePrjn(hl, pfc_o, fullprjn, fmpfcout_cons);
       net->FindMakePrjn(hl, pfc_m, fullprjn, fmpfcmnt_cons);
     }
     else {
@@ -2263,7 +2262,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   matrix_cons->wt_sig.off = 1.0f;
 
   mfmpfc_cons->SetUnique("wt_scale", true);
-  mfmpfc_cons->wt_scale.rel = .2f;
+  mfmpfc_cons->wt_scale.rel = .02f;
   mfmpfc_cons->SetUnique("lmix", false);
 
   matrix_bias->SetUnique("lrate", true);
@@ -2298,7 +2297,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     matrixo_cons->wt_sig.off = 1.0f;
 
     mofmpfc_cons->SetUnique("wt_scale", true);
-    mofmpfc_cons->wt_scale.rel = 1.0f; // works better with gp-one-to-one
+    mofmpfc_cons->wt_scale.rel = 0.02f; // works better with gp-one-to-one
     mofmpfc_cons->SetUnique("lmix", false);
 
     snrthalosp->SetUnique("kwta", true);
@@ -2311,7 +2310,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     snrthalosp->SetUnique("ct_inhib_mod", false);
 
     fmpfcmnt_cons->SetUnique("wt_scale", true);
-    fmpfcmnt_cons->wt_scale.rel = 1.0f; // todo: see if important
+    fmpfcmnt_cons->wt_scale.rel = 1.0f; // .2 might be better in some cases
+    fmpfcout_cons->SetUnique("wt_scale", true);
+    fmpfcout_cons->wt_scale.rel = 1.0f; // 2 might be better in some cases
   }
 
   pfc_units->SetUnique("g_bar", true);
@@ -2517,8 +2518,11 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     if(out_gate) {
       fmpfcmnt_cons->SelectForEditNm("wt_scale", edit, "fm_pfc_mnt", subgp,
      "If SNrThal_out kwta k value is low (i.e., few output stripes activated in general), set wt_scale.rel to a lower value to compensate in balance between mnt and out projections");
+      fmpfcout_cons->SelectForEditNm("wt_scale", edit, "fm_pfc_out", subgp,
+     "If SNrThal_out kwta k value is low (i.e., few output stripes activated in general), set wt_scale.rel to a lower value to compensate in balance between mnt and out projections");
       pfcosp->SelectForEditNm("gp_kwta", edit, "pfc_o", subgp,
      "If SNrThal_out kwta k value is low (i.e., few output stripes activated in general), set dif_act_pct and act_pct to a lower value to compensate in balance between mnt and out projections");
+      pfc_self->SelectForEditNm("wt_scale", edit, "pfc_self", subgp);
     }
     ////////////////////////////////
     subgp = "Matrix";
@@ -2672,9 +2676,7 @@ bool LeabraWizard::PBWM_Mode(LeabraNetwork* net, PBWMMode mode) {
     snrthalsp->snrthal.net_off = 0.2f;
     snrthalsp->snrthal.go_thr = 0.1f;
 
-    matrixsp->gate_bias.one_bias = true;
-    matrixsp->gate_bias.bias = 0.0f;
-    matrixsp->gate_bias.mnt_pvr = 0.0f;
+    matrixsp->gate_bias.SetAllBiases(0.0f);
     matrixsp->rnd_go.sep_out_mnt = false;
     matrixsp->UpdateAfterEdit();
 
@@ -2695,8 +2697,11 @@ bool LeabraWizard::PBWM_Mode(LeabraNetwork* net, PBWMMode mode) {
     snrthalsp->snrthal.net_off = 0.0f;
     snrthalsp->snrthal.go_thr = 0.5f;
     
-    matrixsp->gate_bias.one_bias = true;
-    matrixsp->gate_bias.bias = 1.0f;
+    matrixsp->gate_bias.mnt_nogo = 1.0f;
+    matrixsp->gate_bias.out_pvr = 1.0f;
+    matrixsp->gate_bias.out_empty_nogo = 2.0f;
+    matrixsp->gate_bias.mnt_empty_go = 0.0f;
+    matrixsp->gate_bias.mnt_pvr = 0.0f;
     matrixsp->rnd_go.sep_out_mnt = true;
     matrixsp->UpdateAfterEdit();
 
