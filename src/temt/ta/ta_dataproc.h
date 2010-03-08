@@ -320,6 +320,9 @@ public:
   static bool	ConcatRows(DataTable* dest, DataTable* src_a, DataTable* src_b, DataTable* src_c=NULL,
 			   DataTable* src_d=NULL, DataTable* src_e=NULL, DataTable* src_f=NULL);
   // #CAT_Copy #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable concatenate rows of data from all the source data tables into the destination, which is completely overwritten with the new data.  (if dest is NULL, a new one is created in proj.data.AnalysisData).  just a sequence of calls to CopyCommonColData
+  static bool	AllDataToOne2DCell(DataTable* dest, DataTable* src, ValType val_type = VT_FLOAT, 
+				 const String& col_nm_contains="");
+  // #CAT_Copy #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable convert all data of given val_type from source (src) data table to a single 2-dimensional Matrix cell in dest -- can be useful as a predecessor to various data analysis operations etc -- any combination of matrix or scalar cols is ok -- if col_nm_contains is provided, column names must contain this string to be included -- resulting geometry depends on configuration -- if multiple columns are involved, then all column data stretched out linearly is the x (inner) dimension and y is rows; if one matrix column is selected, then x is the first dimension and y is all the other dimensions multiplied out, including the rows
 
   ///////////////////////////////////////////////////////////////////
   // reordering functions

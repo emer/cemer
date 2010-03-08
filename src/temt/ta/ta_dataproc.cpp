@@ -529,6 +529,77 @@ bool taDataProc::ConcatRows(DataTable* dest, DataTable* src_a, DataTable* src_b,
   return true;
 }
 
+bool taDataProc::AllDataToOne2DCell(DataTable* dest, DataTable* src, ValType val_type,
+				  const String& col_nm_contains) {
+  bool in_place_req = false;
+  GetDest(dest, src, "AllDataToOneCell", in_place_req);
+  if(in_place_req) {
+    taMisc::Error("taDataProc::ConcatRows -- src_a cannot be same as dest for this operation!");
+    delete dest;
+    return false;
+  }
+  dest->StructUpdate(true);
+  int xsize = 0;
+  int ysize = 0;
+  int n_cols = 0;
+  DataCol* first_da = NULL;
+  for(int i=0;i<src->data.size; i++) { 
+    DataCol* da = src->data[i];
+    if(da->valType() != val_type) continue;
+    if(col_nm_contains.nonempty() && !da->name.contains(col_nm_contains)) continue;
+    n_cols++;
+    if(n_cols == 1) first_da = da;
+    if(da->isMatrix())
+      xsize += da->cell_size();
+    else
+      xsize++;
+  }
+  
+  if(n_cols == 1 && first_da->isMatrix()) {		// special case
+    xsize = first_da->cell_geom[0];
+    int src_cel_sz = first_da->cell_size();
+    int dst_cel_sz = src_cel_sz / xsize;
+    ysize = dst_cel_sz * src->rows;
+
+    DataCol* dda = dest->FindMakeColMatrix(first_da->name, val_type, 2, xsize, ysize);
+    dest->EnforceRows(1);
+    for(int row=0;row<src->rows;row++) {
+      for(int cell=0;cell<src_cel_sz;cell++) {
+	int src_abs_idx = row * src_cel_sz + cell;
+	dda->SetValAsVarM(first_da->GetValAsVarM(row, cell), 0, src_abs_idx);
+      }
+    }
+  }
+  else {	
+    ysize = src->rows;
+    DataCol* dda = dest->FindMakeColMatrix("One2dCell", val_type, 2, xsize, ysize);
+    dest->EnforceRows(1);
+
+    for(int row=0;row<src->rows;row++) {
+      int stoff = row * xsize;
+      for(int i=0;i<src->data.size; i++) { 
+	DataCol* da = src->data[i];
+	if(da->valType() != val_type) continue;
+	if(col_nm_contains.nonempty() && !da->name.contains(col_nm_contains)) continue;
+	if(da->isMatrix()) {
+	  int src_cel_sz = da->cell_size();
+	  for(int k=0;k<src_cel_sz;k++) {
+	    dda->SetValAsVarM(da->GetValAsVarM(row, k), 0, stoff + k);
+	  }
+	  stoff += src_cel_sz;
+	}
+	else {
+	  dda->SetValAsVarM(da->GetValAsVar(row), 0, stoff);
+	  stoff++;
+	}
+      }
+    }
+  }
+
+  dest->StructUpdate(false);
+  return true;
+}
+  
 
 ///////////////////////////////////////////////////////////////////
 // reordering functions
