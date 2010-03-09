@@ -54,14 +54,12 @@
 \raggedright
 \footnotesize
 \begin{multicols}{3}
-
+\vspace{-5mm}
+\begin{center}\includegraphics[width=198.5px]{header.png}\end{center}
 \setlength{\premulticols}{1pt}
 \setlength{\postmulticols}{1pt}
 \setlength{\multicolsep}{1pt}
 \setlength{\columnsep}{2pt}
-
-\begin{center}\includegraphics[width=198.5px]{header.png}\end{center}
-
 \section{Standard navigation keys}
 A variety of standard emacs/readline navigation keys have analogs
 throughout emergent. The first line of each top-level section lists
@@ -87,7 +85,6 @@ and Cmd+V is paste while Ctrl+V is Page Down. \\
 \section{Global project}
 \begin{tabular}{@{}ll@{}}
 \verb!Standard!    & Tab \\
-\verb!Init,Run,Step,Stop,Abort!    & F8,F9,F10,F11,F12 (control panels) \\
 \verb!Ctrl+S!    & Save project. \\
 \verb!Ctrl+left! & Backwards in navigation history \\
 \verb!Ctrl+right! & Forwards in navigation history \\
@@ -95,6 +92,12 @@ and Cmd+V is paste while Ctrl+V is Page Down. \\
 \verb!Ctrl/Alt+J! & Move global focus left \\
 \verb!Ctrl/Alt+L! & Move global focus right
 \end{tabular}
+
+\section{Control panels}
+\begin{tabular}{@{}ll@{}}
+\verb!Init,Run,Step,Stop,Abort!    & F8,F9,F10,F11,F12
+\end{tabular}
+
 
 \section{Project tree and program tree}
 \settowidth{\MyLen}{\texttt{multicol}}
