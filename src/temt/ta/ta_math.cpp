@@ -1185,8 +1185,8 @@ double taMath_double::vec_count(const double_Matrix* vec, Relation& rel) {
 }
 
 double taMath_double::vec_median(const double_Matrix* vec) {
-  if(!vec_check_type(vec)) return false;
-  if(vec->size == 0) return 0.0f;
+  if(!vec_check_type(vec)) return 0.0;
+  if(vec->size == 0) return 0.0;
   double_Array tmp;
   tmp.SetSize(vec->size);
   for(int i=0;i<vec->size;i++)
@@ -1197,8 +1197,8 @@ double taMath_double::vec_median(const double_Matrix* vec) {
 }
 
 double taMath_double::vec_quantile(const double_Matrix* vec, double quant_pos) {
-  if(!vec_check_type(vec)) return false;
-  if(vec->size == 0) return 0.0f;
+  if(!vec_check_type(vec)) return 0.0;
+  if(vec->size == 0) return 0.0;
   double_Array tmp;
   tmp.SetSize(vec->size);
   for(int i=0;i<vec->size;i++)
@@ -1208,6 +1208,68 @@ double taMath_double::vec_quantile(const double_Matrix* vec, double quant_pos) {
   if(idx >= tmp.size) idx = tmp.size-1;
   if(idx < 0) idx = 0;
   return tmp[idx];
+}
+
+double taMath_double::vec_kwta(double_Matrix* vec, int k, bool descending) {
+  if(!vec_check_type(vec)) return 0.0;
+  if(vec->size == 0) return 0.0;
+  int_Array act_idx;
+  // first fill act buff and get k for first items in list
+  act_idx.SetSize(k);
+  act_idx.FillSeq();
+  int k_idx = 0;		// location of k guy within act_
+  double k_val = vec->FastEl_Flat(0);
+  if(descending) {
+    for(int i=1;i<k; i++) {
+      double val = vec->FastEl_Flat(i);
+      if(val < k_val) {
+	k_val = val;
+	k_idx = i;
+      }
+    }
+    // now, use the "replace-the-lowest" sorting technique
+    for(int i=k;i<vec->size; i++) {
+      double val = vec->FastEl_Flat(i);
+      if(val <= k_val) {	// not bigger than smallest one in sort buffer
+	continue;
+      }
+      act_idx.FastEl(k_idx) = i; // replace the smallest with it
+      k_val = val;		// assume its the smallest
+      for(int j=0; j < k; j++) { 	// and recompute the actual smallest
+	double val = vec->FastEl_Flat(act_idx[j]);
+	if(val < k_val) {
+	  k_val = val;
+	  k_idx = j;		// idx in top k
+	}
+      }
+    }
+  }
+  else {
+    for(int i=1;i<k; i++) {
+      double val = vec->FastEl_Flat(i);
+      if(val > k_val) {
+	k_val = val;
+	k_idx = i;
+      }
+    }
+    // now, use the "replace-the-lowest" sorting technique
+    for(int i=k;i<vec->size; i++) {
+      double val = vec->FastEl_Flat(i);
+      if(val >= k_val) {	// not bigger than smallest one in sort buffer
+	continue;
+      }
+      act_idx.FastEl(k_idx) = i; // replace the smallest with it
+      k_val = val;		// assume its the smallest
+      for(int j=0; j < k; j++) { 	// and recompute the actual smallest
+	double val = vec->FastEl_Flat(act_idx[j]);
+	if(val > k_val) {
+	  k_val = val;
+	  k_idx = j;		// idx in top k
+	}
+      }
+    }
+  }
+  return k_val;
 }
 
 double taMath_double::vec_mode(const double_Matrix* vec) {
@@ -3636,6 +3698,68 @@ float taMath_float::vec_quantile(const float_Matrix* vec, float quant_pos) {
   if(idx >= tmp.size) idx = tmp.size-1;
   if(idx < 0) idx = 0;
   return tmp[idx];
+}
+
+float taMath_float::vec_kwta(float_Matrix* vec, int k, bool descending) {
+  if(!vec_check_type(vec)) return 0.0f;
+  if(vec->size == 0) return 0.0f;
+  int_Array act_idx;
+  // first fill act buff and get k for first items in list
+  act_idx.SetSize(k);
+  act_idx.FillSeq();
+  int k_idx = 0;		// location of k guy within act_
+  float k_val = vec->FastEl_Flat(0);
+  if(descending) {
+    for(int i=1;i<k; i++) {
+      float val = vec->FastEl_Flat(i);
+      if(val < k_val) {
+	k_val = val;
+	k_idx = i;
+      }
+    }
+    // now, use the "replace-the-lowest" sorting technique
+    for(int i=k;i<vec->size; i++) {
+      float val = vec->FastEl_Flat(i);
+      if(val <= k_val) {	// not bigger than smallest one in sort buffer
+	continue;
+      }
+      act_idx.FastEl(k_idx) = i; // replace the smallest with it
+      k_val = val;		// assume its the smallest
+      for(int j=0; j < k; j++) { 	// and recompute the actual smallest
+	float val = vec->FastEl_Flat(act_idx[j]);
+	if(val < k_val) {
+	  k_val = val;
+	  k_idx = j;		// idx in top k
+	}
+      }
+    }
+  }
+  else {
+    for(int i=1;i<k; i++) {
+      float val = vec->FastEl_Flat(i);
+      if(val > k_val) {
+	k_val = val;
+	k_idx = i;
+      }
+    }
+    // now, use the "replace-the-lowest" sorting technique
+    for(int i=k;i<vec->size; i++) {
+      float val = vec->FastEl_Flat(i);
+      if(val >= k_val) {	// not bigger than smallest one in sort buffer
+	continue;
+      }
+      act_idx.FastEl(k_idx) = i; // replace the smallest with it
+      k_val = val;		// assume its the smallest
+      for(int j=0; j < k; j++) { 	// and recompute the actual smallest
+	float val = vec->FastEl_Flat(act_idx[j]);
+	if(val > k_val) {
+	  k_val = val;
+	  k_idx = j;		// idx in top k
+	}
+      }
+    }
+  }
+  return k_val;
 }
 
 float taMath_float::vec_mode(const float_Matrix* vec) {
