@@ -508,6 +508,15 @@ void EditMthItem::Copy_(const EditMthItem& cp) {
 }
 
 void EditMthItem::UpdateAfterEdit_impl() {
+  // version 5.0.2 -- update to new Gui buttons for Run and Step
+  if(mth) {
+    if(((mth->name == "Run") || (mth->name == "Step")) && !mth->im) {
+      MethodDef* nwmth = mth->owner->FindName(mth->name + "_Gui");
+      if(nwmth) {
+	mth = nwmth;
+      }
+    }
+  }
   if(!cust_desc && mth) {
     desc = mth->desc;
     prv_desc = desc;
