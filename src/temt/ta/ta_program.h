@@ -637,6 +637,8 @@ public:
   String                def_val; // #SHOW #READ_ONLY for default arguments, what will get passed by default -- this is for reference only (leave expr blank for default)
   ProgExpr		expr; // the expression to compute and pass as the argument -- enter <no_arg> to specify a null or empty argument for program calls -- does not set this arg value
 
+  virtual void		SetVarAsExpr(ProgVar* prog_var);
+  // #DROP1 set given variable as the expression value for this arg
   virtual bool		UpdateFromVar(const ProgVar& cp); 
   // updates our type information given variable that we apply to -- returns true if any changes
   virtual bool		UpdateFromType(TypeDef* td); 
@@ -1026,6 +1028,9 @@ public:
   virtual void	GetVarsForObjs();
   // automatically create variables for objects in parent program
 
+  virtual void	StructUpdateEls(bool begin);
+  // runs StructUpdate(begin) on all the elements in the list
+
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
   TA_BASEFUNS_NOCOPY(ProgObjList);
@@ -1059,6 +1064,7 @@ public:
     NO_STOP_STEP	= 0x0001, // #AKA_NO_STOP this program cannot be stopped by Stop or Step buttons -- set this flag for simple helper programs to prevent them from showing up in the step list of other programs
     SELF_STEP		= 0x0002, // #NO_BIT this program has a StopStepPoint program element within it, and thus it shows up within its own list of Step programs -- this flag is set automatically during Init
     STARTUP_RUN		= 0x0004, // run this prgram at startup (after project is fully loaded and everything else has been initialized) -- if multiple programs are so marked, they will be run in the order they appear in the browser (depth first)
+    OBJS_UPDT_GUI	= 0x0008, // when this flag is set, changes to the objs objects update the gui as they happen -- otherwise they are only updated after the program finishes (much faster)
   };
   
   enum ReturnVal { // system defined return values (<0 are for user defined)
@@ -1203,14 +1209,20 @@ public:
   
   virtual void  Init();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run #SHORTCUT_F8 set the program state back to the beginning
+  virtual void  Run_Gui();
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run #LABEL_Run #SHORTCUT_F9 run the program -- if not yet Init, will run Init first
   virtual void  Run();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run #SHORTCUT_F9 run the program
-  virtual void	Step(Program* step_prg = NULL);
-  // #BUTTON #STEP_BUTTON #CAT_Run #SHORTCUT_F10 step the program at the level of the given program -- if NULL then step_prog default value will be used
+  // #CAT_Run run the program -- if not yet Init, will run Init first
+  virtual void	Step_Gui(Program* step_prg = NULL);
+  // #BUTTON #STEP_BUTTON #CAT_Run #LABEL_Step #SHORTCUT_F10 step the program at the level of the given program -- if NULL then step_prog default value will be used
+  virtual void  Step(Program* step_prg = NULL);
+  // #CAT_Run step the program at the level of the given program -- if NULL then step_prog default value will be used
   virtual void	Stop();
   // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run #SHORTCUT_F11 stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)
   virtual void	Abort();
   // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run #SHORTCUT_F12 stop the current program immediately, regardless of where it is
+
+
 
   virtual bool	StopCheck();
   // #CAT_Run calls event loop, then checks for STOP state, true if so

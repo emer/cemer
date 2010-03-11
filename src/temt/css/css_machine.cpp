@@ -3286,10 +3286,10 @@ cssEl* cssProg::Cont() {
     top->step_mode = 0;		// always temporary
   }
 
-//   if(cssMisc::proc_events_timer.elapsed() > taMisc::css_gui_event_interval) {
-//     taiM->RunPending();
-//     cssMisc::proc_events_timer.restart();
-//   }
+  if(cssMisc::proc_events_timer.elapsed() > taMisc::css_gui_event_interval) {
+    taiM->RunPending();
+    cssMisc::proc_events_timer.restart();
+  }
 
   if(top->run_stat == cssEl::Running)
     top->run_stat = cssEl::Stopping;

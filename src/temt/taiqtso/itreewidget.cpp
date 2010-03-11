@@ -336,7 +336,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       selectionModel()->setCurrentIndex(currentIndex(), QItemSelectionModel::ClearAndSelect);
       ext_select_on = true;
       e->accept();
-      break;
+      return;			// don't continue
     case Qt::Key_G:
       clearExtSelection();
       e->accept();

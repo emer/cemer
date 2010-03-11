@@ -37,6 +37,7 @@
 # include <QTreeWidgetItem>
 # include <qtoolbar.h>
 # include <QWebView>
+# include <QTime>
 
 # include "icliptoolwidget.h"
 # include "itreewidget.h"
@@ -2492,6 +2493,7 @@ public:
   QAbstractButton*	    btnStop;
   iTextBrowser* 	  results; 	// list of result items
   QStatusBar*		  status_bar;
+  QTime   		  proc_events_timer;
   
   int			options() const {return m_options;}
   void			setRoot(taiDataLink* root, bool update_gui = true); // set or reset the root and window used for the search; sets caption and clears
@@ -2549,6 +2551,8 @@ protected:
   void 			RenderItem(int level, const String& headline,
 	   const String& href, const String& desc, const String& hits,
 	   const String& path, int relev);
+
+  override void 	closeEvent(QCloseEvent * e);
 
   iSearchDialog(iMainWindowViewer* par_window_);
   ~iSearchDialog();

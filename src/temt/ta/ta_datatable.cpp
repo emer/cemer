@@ -3341,7 +3341,7 @@ taBase::ValType DataTable::DecodeImportDataType(const String& dat_str) {
       while(idx < dat_str.length()) {
 	c = dat_str[idx++];
 	if(isspace(c)) continue;
-	if((c == '.') || isxdigit(c) || (c == 'x') || (c == 'e') ||
+	if((c == '.') || isxdigit(c) || (c == 'x') || (c == 'e') || (c == '-') ||
 	   (c == 'X') || (c == 'E')) {
 	  if(c == '.') gotreal = true;
 	}

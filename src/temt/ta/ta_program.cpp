@@ -1778,6 +1778,12 @@ void ProgArg::CheckThisConfig_impl(bool quiet, bool& rval) {
     "An expression is required for this argument -- enter <no_arg> as the expression to explicitly not pass an argument for calling a Program (does not work for method or function calls)");
 }
 
+void ProgArg::SetVarAsExpr(ProgVar* prog_var) {
+  if(!prog_var) return;
+  expr.expr = prog_var->name;
+  expr.UpdateAfterEdit();
+}
+
 bool ProgArg::UpdateFromVar(const ProgVar& cp) {
   bool any_changes = false;
   String ntyp = cp.GenCssType();
@@ -3492,6 +3498,13 @@ void ProgObjList::DataChanged(int dcr, void* op1, void* op2) {
     GetVarsForObjs();
 }
 
+void ProgObjList::StructUpdateEls(bool begin) {
+  for(int i=0;i<size;i++) {
+    taBase* itm = FastEl(i);
+    itm->StructUpdate(begin);
+  }
+}
+
 void* ProgObjList::El_Own_(void* it_) {
   // note: gen the name first, so we don't need to do another notify
   // note: setting default name is mostly for things like taMatrix
@@ -3740,7 +3753,14 @@ void Program::Init() {
       ret_val = RV_COMPILE_ERR;
   }
   if(ret_val == RV_OK) {
+    bool did_struct_updt = false;
+    if(!HasProgFlag(OBJS_UPDT_GUI)) {
+      objs.StructUpdateEls(true);
+      did_struct_updt = true;
+    }
     script->Run();
+    if(did_struct_updt)
+      objs.StructUpdateEls(false);
   }
 
   // get these here after all the sub-guys have been initialized -- should now be current
@@ -3819,8 +3839,12 @@ int Program::Cont_impl() {
   return ret_val;
 }
 
-void Program::Run() {
+void Program::Run_Gui() {
   if(AlreadyRunning()) return;
+  Run();
+}
+
+void Program::Run() {
   if(run_state == NOT_INIT) {
     Init();			// auto-press Init button!
   }
@@ -3837,7 +3861,14 @@ void Program::Run() {
   taMisc::Busy();
   SetRunState(RUN);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
+  bool did_struct_updt = false;
+  if(!HasProgFlag(OBJS_UPDT_GUI)) {
+    objs.StructUpdateEls(true);
+    did_struct_updt = true;
+  }
   Cont_impl();
+  if(did_struct_updt)
+    objs.StructUpdateEls(false);
   taMisc::DoneBusy();
   if (ret_val != RV_OK) ShowRunError();
   // unless we were stopped, we are done
@@ -3866,8 +3897,12 @@ void Program::ShowRunError() {
   taMisc::Error(err_str);
 }
 
-void Program::Step(Program* step_prg) {
+void Program::Step_Gui(Program* step_prg) {
   if(AlreadyRunning()) return;	// already running!
+  Step(step_prg);
+}
+
+void Program::Step(Program* step_prg) {
   if(run_state == NOT_INIT) {
     Init();			// auto-press Init button!
   }
@@ -3896,7 +3931,14 @@ void Program::Step(Program* step_prg) {
   taMisc::Busy();
   SetRunState(RUN);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
+  bool did_struct_updt = false;
+  if(!HasProgFlag(OBJS_UPDT_GUI)) {
+    objs.StructUpdateEls(true);
+    did_struct_updt = true;
+  }
   Cont_impl();
+  if(did_struct_updt)
+    objs.StructUpdateEls(false);
   taMisc::DoneBusy();
   if (ret_val != 0) {//TODO: use enums and sensible output string
     taiChoiceDialog::ErrorDialog(NULL, String(

@@ -339,15 +339,17 @@ public:
 				float lg_max_x, float lg_max_y, float lg_max_z,
 				float max_x, float max_y, float max_z);
 
+  bool			hideLines() { return hide_lines_; }
   SoDrawStyle* 		drawStyle() { return drw_styl_; }
 
-  T3LayerGroupNode(void* dataView_ = NULL, bool show_draggers = true, bool root_lg = false);
+  T3LayerGroupNode(void* dataView_ = NULL, bool show_draggers = true, bool hide_lines = false);
 
 protected:
   
   iVec3i		pos; 	// starting position
   iVec3i		lgp_max_size; 	// layer group max_size
   iVec3f		max_size; // maximum size of network x,y,z
+
   void			render(); // called after pos/geom changes
   ~T3LayerGroupNode();
 
@@ -356,7 +358,7 @@ private:
   SoDrawStyle*		drw_styl_;
 
   bool			show_drag_;
-  bool			root_lg_; // root layer group: no shape
+  bool			hide_lines_;
 
   SoSeparator*		xy_drag_sep_;
   SoTransform*		xy_drag_xf_;

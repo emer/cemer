@@ -7339,7 +7339,7 @@ void iTreeView::InsertEl() {
 	idx = sbo->size;
       }
       else {
-	idx = sbo->FindEl(sb) + 1;
+	idx = sbo->FindEl(sb);
       }
       if(idx < 0) idx = 0;
       if(idx > sbo->size) idx = sbo->size;
@@ -8879,7 +8879,7 @@ iSearchDialog* iSearchDialog::New(int ft, iMainWindowViewer* par_window_)
 }
 
 iSearchDialog::iSearchDialog(iMainWindowViewer* par_window_)
-:inherited(par_window_, Qt::WindowStaysOnTopHint)
+:inherited(par_window_)
 {
   init();
 }
@@ -9055,6 +9055,7 @@ void iSearchDialog::Search() {
   // get the latest options
   bbOptions->GetValue(m_options);
   ParseSearchString();
+  proc_events_timer.start();
   taMisc::Busy(true);
   Start();
   link()->Search(this);
@@ -9180,7 +9181,10 @@ String iSearchDialog::searchStr() const {
 }
 
 bool iSearchDialog::stop() const {
-  taiMisc::ProcessEvents();
+  if(proc_events_timer.elapsed() > taMisc::css_gui_event_interval) {
+    taiM->RunPending();
+    const_cast<iSearchDialog*>(this)->proc_events_timer.restart();
+  }
   return m_stop;
 }
 
@@ -9188,6 +9192,10 @@ void iSearchDialog::stop_clicked() {
   m_stop = true;
 }
 
+void iSearchDialog::closeEvent(QCloseEvent * e) {
+  m_stop = true;		// stop on close
+  inherited::closeEvent(e);
+}
 
 //////////////////////////////////
 //   taBase			//

@@ -144,9 +144,9 @@ INHERITED(nvDataView)
 public:
   static void		ValToDispText(float val, String& str); // renders the display text, typ 6 chars max
 
-  voidptr_Matrix	uvd_bases; // [x][y][nv->membs.size] void* base pointers to unit values -- computed during Init -- note that bases for all members are encoded, so switching members does not require recompute, and this also speeds history saving
-  float_Matrix		uvd_hist; // [x][y][nv->membs.size][hist_max] buffer of history of previous value data -- last (frame) dimension uses circ buffer system for efficient storing and retrieval
-  CircMatrix		uvd_hist_idx; // circular buffer indexing of uvd_hist -- last (frame) dimension uses circ buffer system for efficient storing and retrieval
+  voidptr_Matrix	uvd_bases; // #IGNORE [x][y][nv->membs.size] void* base pointers to unit values -- computed during Init -- note that bases for all members are encoded, so switching members does not require recompute, and this also speeds history saving
+  float_Matrix		uvd_hist; // #IGNORE [x][y][nv->membs.size][hist_max] buffer of history of previous value data -- last (frame) dimension uses circ buffer system for efficient storing and retrieval
+  CircMatrix		uvd_hist_idx; // #IGNORE circular buffer indexing of uvd_hist -- last (frame) dimension uses circ buffer system for efficient storing and retrieval
 
   Unit_Group*		ugrp() const {return (Unit_Group*)data();}
   T3UnitGroupNode*	node_so() const {return (T3UnitGroupNode*)inherited::node_so();}
@@ -405,6 +405,7 @@ public:
   float		lay_trans;	// #DEF_0.5 transparency of the layer border
   float		unit_trans;	// #DEF_0.6 transparency of the units
   float		laygp_width;	// #DEF_1 width of the layer group lines (as a line width, not as a geometry size relative to normalized network size)
+  bool		show_laygp;	// #DEF_true whether to display layer group boxes in first place
 
   override String 	GetTypeDecoKey() const { return "Network"; }
 
@@ -632,6 +633,7 @@ public:
   QLabel*		    lblLayFont;
   taiField*		    fldLayFont;
   QCheckBox*		    chkXYSquare;
+  QCheckBox*		    chkLayGp;
 
   QVBoxLayout*		layDisplayValues;
   QHBoxLayout*		  layColorScaleCtrls;

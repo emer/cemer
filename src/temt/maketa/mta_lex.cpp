@@ -477,7 +477,7 @@ int MTA::lex() {
       if(c == '.') gotreal = 1;
       
       while(((c=Peekc()) != EOF) &&
-	    ((c == '.') || isxdigit(c) || (c == 'x') || (c == 'e') ||
+	    ((c == '.') || isxdigit(c) || (c == 'x') || (c == 'e') || (c == '-') ||
 	     (c == 'X') || (c == 'E')))	{
 	LexBuf += (char)c; if(c == '.') gotreal = 1;
 	Getc();

@@ -223,7 +223,7 @@ public:
   // #CAT_Modify set value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), using flat representation of matrix cell (single cell index)
 
   bool	 	InitVals(const Variant& init_val);
-  // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Column initialize all values in this column to given value
+  // #CAT_Modify #BUTTON #MENU #MENU_CONTEXT #MENU_ON_Column initialize all values in this column to given value
   bool	 	InitValsToRowNo();
   // #CAT_Modify #MENU #MENU_CONTEXT initialize all values in this column to be equal to the row number -- only valid for scalar (not matrix) columns
 
@@ -386,7 +386,7 @@ public:
   // misc
 
   virtual String	ColStats();
-  // #CAT_DataProc #MENU #MENU_ON_Column #MENU_SEP_BEFORE #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
+  // #CAT_DataProc #BUTTON #MENU #MENU_ON_Column #MENU_SEP_BEFORE #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
   int			displayWidth() const;
   // #CAT_Display low level display width, in chars, taken from options
@@ -425,9 +425,9 @@ public:
 
   //IMPORTANT: DO NOT CHANGE THE FOLLOWING METHODS TO VIRTUAL
   void		ChangeColType(ValType new_type);
-  // #CAT_ObjectMgmt #MENU #DYN1 change the type of the data in this col, without loss of data
+  // #CAT_ObjectMgmt #BUTTON #MENU #DYN1 change the type of the data in this col, without loss of data
   void		ChangeColCellGeom(const MatrixGeom& new_geom);
-  // #CAT_ObjectMgmt #MENU #DYN1 #INIT_ARGVAL_ON_cell_geom change the cell geom of a mat col, or change from scalar to mat, without loss of data
+  // #CAT_ObjectMgmt #BUTTON #MENU #DYN1 #INIT_ARGVAL_ON_cell_geom change the cell geom of a mat col, or change from scalar to mat, without loss of data
   void		ChangeColCellGeomNs(int dims = 1, int d0=0, int d1=0, int d2=0,
 				      int d3=0, int d4=0, int d5=0, int d6=0);
   // #CAT_ObjectMgmt change the cell geom of a mat col, or change from scalar to mat, without loss of data -- separate numbers input instead of overall geom object

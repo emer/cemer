@@ -1065,7 +1065,8 @@ void GridTableView::Render_pre() {
   T3ExaminerViewer* vw = GetViewer();
   if(vw) {
     vw->syncViewerMode();
-    show_drag = vw->interactionModeOn();
+    if(!vw->interactionModeOn())
+      show_drag = false;
   }
 
   setNode(new T3GridViewNode(this, width, show_drag));
@@ -3466,7 +3467,8 @@ void GraphTableView::Render_pre() {
   T3ExaminerViewer* vw = GetViewer();
   if(vw) {
     vw->syncViewerMode();
-    show_drag = vw->interactionModeOn();
+    if(!vw->interactionModeOn())
+      show_drag = false;
   }
 
   setNode(new T3GraphViewNode(this, width, show_drag));

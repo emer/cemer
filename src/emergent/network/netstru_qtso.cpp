@@ -1183,12 +1183,6 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
 
   if(!nv->snap_bord_disp) return;
 
-  int cur_disp_idx = nv->unit_disp_idx;
-
-  MemberDef* md = (MemberDef*)nv->membs.FindName("snap");
-  if(!md) return;		// shouldn't happen
-  nv->unit_disp_idx = nv->membs.FindEl(md);
-
   Unit_Group* ugrp = this->ugrp(); //cache
   T3UnitGroupNode* node_so = this->node_so(); // cache
 
@@ -1197,6 +1191,12 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
 
   uint32_t* color_dat = color.startEditing();
   if(!color_dat) return;
+
+  int cur_disp_idx = nv->unit_disp_idx;
+
+  MemberDef* md = (MemberDef*)nv->membs.FindName("snap");
+  if(!md) return;		// shouldn't happen
+  nv->unit_disp_idx = nv->membs.FindEl(md);
 
   float trans = nv->view_params.unit_trans;
   float val;
@@ -1220,6 +1220,8 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
       color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
     }
   }
+
+  nv->unit_disp_idx = cur_disp_idx; // restore!
 
   color.finishEditing();
 }
@@ -1836,7 +1838,10 @@ void LayerGroupView::Render_pre() {
   if(root_laygp)
     show_drag = false;		// never for root.
 
-  setNode(new T3LayerGroupNode(this, show_drag, root_laygp));
+  bool hide_lines = !nv->view_params.show_laygp;
+  if(root_laygp) hide_lines = true; // always true
+
+  setNode(new T3LayerGroupNode(this, show_drag, hide_lines));
   DoHighlightColor(false);
 
   inherited::Render_pre();
@@ -1865,7 +1870,7 @@ void LayerGroupView::Render_impl() {
 		   lgp->max_size.x, lgp->max_size.y, lgp->max_size.z,
 		   nv->max_size.x, nv->max_size.y, nv->max_size.z);
 
-  if(!root_laygp) {
+  if(!node_so->hideLines()) {
     node_so->drawStyle()->lineWidth = nv->view_params.laygp_width;
 
     node_so->setCaption(data()->GetName().chars());
@@ -2134,6 +2139,7 @@ void NetViewParams::Initialize() {
   lay_trans = .5f;
   unit_trans = 0.6f;
   laygp_width = 1.0f;
+  show_laygp = true;
 }
 
 /*
@@ -3586,6 +3592,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addWidget(lblTextRot);
   fldTextRot = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layDispCheck->addWidget(fldTextRot->GetRep());
+  ((iLineEdit*)fldTextRot->GetRep())->setCharWidth(6);
   layDispCheck->addSpacing(taiM->hsep_c);
 
   lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
@@ -3624,6 +3631,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layFontsEtc->addWidget(lblPrjnWdth);
   fldPrjnWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldPrjnWdth->GetRep());
+  ((iLineEdit*)fldPrjnWdth->GetRep())->setCharWidth(6);
   layFontsEtc->addSpacing(taiM->hsep_c);
 
   lblUnitTrans = taiM->NewLabel("Trans\nparency", widg, font_spec);
@@ -3631,13 +3639,14 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layFontsEtc->addWidget(lblUnitTrans);
   fldUnitTrans = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldUnitTrans->GetRep());
-  layFontsEtc->addSpacing(taiM->hsep_c);
+  ((iLineEdit*)fldUnitTrans->GetRep())->setCharWidth(6);  layFontsEtc->addSpacing(taiM->hsep_c);
 
   lblUnitFont = taiM->NewLabel("Font\nSize", widg, font_spec);
   lblUnitFont->setToolTip("Unit text font size (as a proportion of entire network display). .02 is default.");
   layFontsEtc->addWidget(lblUnitFont);
   fldUnitFont = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldUnitFont->GetRep());
+  ((iLineEdit*)fldUnitFont->GetRep())->setCharWidth(6);
   layFontsEtc->addSpacing(taiM->hsep_c);
 
   lblLayFont = taiM->NewLabel("Layer\nFont Sz", widg, font_spec);
@@ -3645,12 +3654,19 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layFontsEtc->addWidget(lblLayFont);
   fldLayFont = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldLayFont->GetRep());
+  ((iLineEdit*)fldLayFont->GetRep())->setCharWidth(6);
   layFontsEtc->addSpacing(taiM->hsep_c);
 
   chkXYSquare = new QCheckBox("XY\nSquare", widg);
   chkXYSquare->setToolTip("Make the X and Y size of network the same, so that unit cubes are always square (but can waste a certain amount of display space).");
   connect(chkXYSquare, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layFontsEtc->addWidget(chkXYSquare);
+
+  chkLayGp = new QCheckBox("Lay\nGp", widg);
+  chkLayGp->setToolTip("Display boxes around layer groups.");
+  connect(chkLayGp, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layFontsEtc->addWidget(chkLayGp);
+
   layFontsEtc->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
@@ -3669,6 +3685,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addWidget(lblSnapBordWdth);
   fldSnapBordWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldSnapBordWdth->GetRep());
+  ((iLineEdit*)fldSnapBordWdth->GetRep())->setCharWidth(6);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblUnitSpacing = taiM->NewLabel("Unit\nSpace", widg, font_spec);
@@ -3676,6 +3693,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addWidget(lblUnitSpacing);
   fldUnitSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldUnitSpacing->GetRep());
+  ((iLineEdit*)fldUnitSpacing->GetRep())->setCharWidth(6);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   chkWtLines = new QCheckBox("wt\nLines", widg);
@@ -3695,6 +3713,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addWidget(lblWtLineWdth);
   fldWtLineWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtLineWdth->GetRep());
+  ((iLineEdit*)fldWtLineWdth->GetRep())->setCharWidth(6);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblWtLineThr = taiM->NewLabel("Thr", widg, font_spec);
@@ -3702,6 +3721,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addWidget(lblWtLineThr);
   fldWtLineThr = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtLineThr->GetRep());
+  ((iLineEdit*)fldWtLineThr->GetRep())->setCharWidth(6);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   int list_flags = taiData::flgNullOk | taiData::flgAutoApply;
@@ -3924,6 +3944,7 @@ void NetViewPanel::UpdatePanel_impl() {
   fldUnitFont->GetImage((String)nv->font_sizes.unit);
   fldLayFont->GetImage((String)nv->font_sizes.layer);
   chkXYSquare->setChecked(nv->view_params.xy_square);
+  chkLayGp->setChecked(nv->view_params.show_laygp);
 
   chkHist->setChecked(nv->hist_save);
   fldHistMax->GetImage((String)nv->hist_max);
@@ -3993,6 +4014,7 @@ void NetViewPanel::GetValue_impl() {
   nv->wt_line_thr = (float)fldWtLineThr->GetValue();
   nv->wt_prjn_lay = (Layer*)gelWtPrjnLay->GetValue();
   nv->view_params.xy_square = chkXYSquare->isChecked();
+  nv->view_params.show_laygp = chkLayGp->isChecked();
 
   nv->hist_save = chkHist->isChecked();
   nv->hist_max = (int)fldHistMax->GetValue();

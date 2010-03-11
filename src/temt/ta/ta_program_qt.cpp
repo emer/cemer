@@ -2330,7 +2330,7 @@ void taiProgStepButton::CallFunList(void* itm) {
     last_step_n = trg->step_n;
   }
   
-  prg->Step(trg);	// that was simple!
+  prg->Step_Gui(trg);	// that was simple!
 
   last_step = trg;
   new_step_n = -1;

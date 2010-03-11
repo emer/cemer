@@ -646,13 +646,13 @@ extern void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragger);
 extern void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragger);
 // defined in qtso
 
-T3LayerGroupNode::T3LayerGroupNode(void* dataView_, bool show_draggers, bool root_lg)
+T3LayerGroupNode::T3LayerGroupNode(void* dataView_, bool show_draggers, bool hide_lines)
 :inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3LayerGroupNode);
 
   show_drag_ = show_draggers;
-  root_lg_ = root_lg;
+  hide_lines_ = hide_lines;
 
   if(show_drag_) {
     const float len = .08f;	// bar_len
@@ -710,7 +710,7 @@ T3LayerGroupNode::T3LayerGroupNode(void* dataView_, bool show_draggers, bool roo
     z_drag_calc_ = NULL;
   }
 
-  if(!root_lg_) {
+  if(!hide_lines_) {
     SoSeparator* ss = shapeSeparator(); // cache
     drw_styl_ = new SoDrawStyle;
     drw_styl_->style = SoDrawStyle::LINES;
