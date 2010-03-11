@@ -4622,9 +4622,9 @@ bool Program::SelectCtrlFunsForEdit(SelectEdit* editor, const String& extra_labe
   bool rval = true;
   MethodDef* md = td->methods.FindName("Init"); // "" = desc field
   if(md) rval = editor->SelectMethod(this, md, extra_label, "", sub_gp_nm);
-  md = td->methods.FindName("Run");
+  md = td->methods.FindName("Run_Gui");
   if(md) rval |= editor->SelectMethod(this, md, extra_label, "", sub_gp_nm);
-  md = td->methods.FindName("Step");
+  md = td->methods.FindName("Step_Gui");
   if(md) rval |= editor->SelectMethod(this, md, extra_label, "", sub_gp_nm);
   md = td->methods.FindName("Stop");
   if(md) rval |= editor->SelectMethod(this, md, extra_label, "", sub_gp_nm);
