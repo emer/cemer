@@ -65,14 +65,58 @@ protected:
 
 class TA_API taPlugins { // #NO_INSTANCE global object to manage plugins
 public:
-  static String_PArray	plugin_folders; // folders to search for plugins
-  static taPluginInst_PList	plugins; // plugins that have been loaded -- they remain for the lifetime of program
+  static String_PArray	plugin_folders;
+  // folders to search for plugins (taMisc::user_plugin_dir, app_plugin_dir)
+  static taPluginInst_PList	plugins;
+  // plugins that have been loaded -- they remain for the lifetime of program
   static String		logfile;
   
-  static void		AddPluginFolder(const String& folder); // adds a folder, note: ignores duplicates
-  static void		InitLog(const String& logfile); // clear the log file
-  static void		AppendLogEntry(const String& entry, bool warn = false); // append entry, with nl, highlighting if a warning
+  static void		AddPluginFolder(const String& folder);
+  // adds a folder, note: ignores duplicates
+  static void		InitLog(const String& logfile);
+  // clear the log file
+  static void		AppendLogEntry(const String& entry, bool warn = false);
+  // append entry, with nl, highlighting if a warning
+
+  static String		PlatformPluginExt();
+  // get the plugin (dynamic library) filename extension for this platform (.so, .dll, dylib)
+
   static void		EnumeratePlugins(); // enumerates, and lo-level loads
+
+  static void		MakeAllPlugins();
+  // make all plugins in user and system directories
+  static void		MakeAllUserPlugins();
+  // make all plugins in user directory
+  static void		MakeAllSystemPlugins();
+  // make all plugins in system directory
+  static bool		MakeUserPlugin(const String& plugin_name);
+  // make specified plugin in user directory
+  static bool		MakeSystemPlugin(const String& plugin_name);
+  // make specified plugin in user directory
+
+  static bool		ExecMakeCmd(const String& cmd, const String& working_dir);
+  // execute given system command in given working directory, also echoing it to the screen and its results
+
+  static bool		MakePlugin(const String& plugin_path, const String& plugin_name,
+				   bool system_plugin = false);
+  // make specified plugin in given full path to plugin source (plugin name only used for info purposes) -- basic interface for making plugins -- if system_plugin, then make command is prefixed with "sudo" and plugin type is set as System (else defaults to user)
+
+
+  static void		CleanAllPlugins();
+  // clean all plugins in user and system directories
+  static void		CleanAllUserPlugins();
+  // clean all plugins in user directory
+  static void		CleanAllSystemPlugins();
+  // clean all plugins in system directory
+  static bool		CleanUserPlugin(const String& plugin_name);
+  // clean specified plugin in user directory
+  static bool		CleanSystemPlugin(const String& plugin_name);
+  // clean specified plugin in user directory
+
+  static bool		CleanPlugin(const String& plugin_path, const String& plugin_name,
+				   bool system_plugin = false);
+  // clean specified plugin in given full path to plugin directory (user or app plugin_dir) -- plugin_name is the full filename of the plugin
+
 protected:
   
   static taPluginInst*	ProbePlugin(const String& fileName); 
@@ -113,8 +157,19 @@ public:
   String		state_classname; // #READ_ONLY #SHOW #NO_SAVE the name of the the cached state type, if any -- is based on the plugin name, and must inherit taFBase
   TypeDef*		state_type; // #READ_ONLY #SHOW #NO_SAVE cached state type, if any -- is based on the plugin name, and must inherit taFBase
   
-  bool			InitPlugin(); // #IGNORE initializes the plugin, including making/loading state object if any -- assumes it has been reconciled
-  virtual void		PluginOptions(); // #BUTTON open the Options dialog for this plugin (if it has one)
+  bool			InitPlugin();
+  // #IGNORE initializes the plugin, including making/loading state object if any -- assumes it has been reconciled
+
+  virtual void		PluginOptions();
+  // #BUTTON open the Options dialog for this plugin (if it has one)
+
+  virtual bool		Compile();
+  // #BUTTON compile the plugin from the existing source code -- does a make and a make install
+  virtual bool		Clean();
+  // #BUTTON remove (clean) the plugin -- prevents it from being loaded
+  virtual bool		LoadWiz();
+  // #BUTTON load an existing wizard configuration file saved from a prior wizard create step
+
   int	GetEnabled() const {return enabled && loaded;}
   void	SetEnabled(bool value) {enabled = value;}
   void	Copy_(const taPlugin& cp); //note: we only use this for descs, not actual plugins

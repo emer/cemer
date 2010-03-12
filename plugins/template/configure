@@ -8,8 +8,8 @@
 echo "Running simple configure script wrapper around cmake build system!"
 echo "args are (special for plugins):"
 echo "  --enable-debug (or --debug)  enable debug, non-optimized build"
-echo "  --prefix=User|System|Default where to install plugin: user's home dir, or system;" 
-echo "      use 'Default' if already building in-place ('default location' option in Wizard)"
+echo "  --prefix=User|System         where to install plugin: user's home dir, or system;" 
+echo "                                 defaults to User if not specified"
 echo "  --enable-mpi (or --mpi)      enable MPI distributed memory parallel build"
 echo "  --clean                      clean existing cmake cache etc first: start fresh"
 echo "  --build-dir=<name>           provide a custom build directory name (else auto)"
@@ -22,6 +22,7 @@ echo " "
 
 cmake_cmd="cmake ../"
 build_dir="build"
+prefix="User"
 
 while [ $# -gt 0 ]
 do
@@ -129,12 +130,10 @@ $cmake_cmd
 
 echo " "
 echo "####################################################"
-if [[ $prefix == "Default" ]]; then
-  echo "Now you must type : cd $build_dir; make"
-elif [[ $prefix == "System" ]]; then
-  echo "Now you must type : $build_dir; make; sudo make install"
+if [[ $prefix == "System" ]]; then
+  echo "Now you must type: cd $build_dir; make; sudo make install"
 elif [[ $prefix == "User" ]]; then
-  echo "Now you must type : cd $build_dir; make; make install"
+  echo "Now you must type: cd $build_dir; make; make install"
 else
   echo "WARNING: unknown prefix -- you may not be able"
 fi

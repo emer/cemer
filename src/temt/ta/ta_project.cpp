@@ -1259,6 +1259,9 @@ bool taProject::CleanFiles() {
     String console = fnm + "_console" + String(i) + ".txt";
     QFile::remove(console.chars());
   }
+  if(got_one && taMisc::dmem_proc == 0) {
+    tabMisc::root->Save();	// save with updated files list
+  }
   return got_one;
 }
 
@@ -2140,6 +2143,36 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("Port", "\
  -- Specifies the tcp port for server mode (def=5360");
 
+
+  ////////////////////////////////////////////////////
+  // 	Plugin making
+  
+  taMisc::AddArgName("--make_all_user_plugins", "MakeAllUserPlugins");
+  taMisc::AddArgNameDesc("MakeAllUserPlugins", "\
+ -- (re)make all the plugins located in the user plugin directory -- these are typically installed with a make install from wherever original source is located, and source is installed to user plugin directory -- make will make from this installed source");
+
+  taMisc::AddArgName("--make_all_system_plugins", "MakeAllSystemPlugins");
+  taMisc::AddArgNameDesc("MakeAllSystemPlugins", "\
+ -- (re)make all the plugins located in the system plugin directory -- these are typically installed with a make install from wherever original source is located, and source is installed to system plugin directory -- make will make from this installed source");
+
+  taMisc::AddArgName("--clean_all_user_plugins", "CleanAllUserPlugins");
+  taMisc::AddArgNameDesc("CleanAllUserPlugins", "\
+ -- clean (remove) all the plugins (just the library files, not the source) located in the user plugin directory");
+
+  taMisc::AddArgName("--clean_all_system_plugins", "CleanAllSystemPlugins");
+  taMisc::AddArgNameDesc("CleanAllSystemPlugins", "\
+ -- clean (remove) all the plugins (just the library files, not the source) located in the system plugin directory");
+
+  taMisc::AddArgName("--make_user_plugin", "MakeUserPlugin");
+  taMisc::AddArgName("make_user_plugin=", "MakeUserPlugin");
+  taMisc::AddArgNameDesc("MakeUserPlugin", "\
+ -- (re)make specified plugin located in the user plugin directory -- these are typically installed with a make install from wherever original source is located, and source is installed to user plugin directory -- make will make from this installed source");
+
+  taMisc::AddArgName("--make_system_plugin", "MakeSystemPlugin");
+  taMisc::AddArgName("make_system_plugin=", "MakeSystemPlugin");
+  taMisc::AddArgNameDesc("MakeSystemPlugin", "\
+ -- (re)make specified plugin located in the system plugin directory -- these are typically installed with a make install from wherever original source is located, and source is installed to system plugin directory -- make will make from this installed source");
+
   taMisc::Init_Args(argc, argv);
   return true;
 }
@@ -2152,8 +2185,21 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
 #endif
 
   // process gui flag right away -- has other implications
-  if(taMisc::CheckArgByName("GenDoc") || taMisc::CheckArgByName("Version") ||
-     taMisc::CheckArgByName("Help")) { // auto nogui by default
+  if(taMisc::CheckArgByName("GenDoc") || taMisc::CheckArgByName("Version")
+     || taMisc::CheckArgByName("Help")) {
+    taMisc::use_gui = false;
+    cssMisc::init_interactive = false;
+  }
+
+  if(taMisc::CheckArgByName("MakeAllUserPlugins")
+     || taMisc::CheckArgByName("MakeAllSystemPlugins")
+     || taMisc::CheckArgByName("MakeAllPlugins")
+     || taMisc::CheckArgByName("CleanAllUserPlugins")
+     || taMisc::CheckArgByName("CleanAllSystemPlugins")
+     || taMisc::CheckArgByName("CleanAllPlugins")
+     || taMisc::CheckArgByName("MakeUserPlugin")
+     || taMisc::CheckArgByName("MakeSystemPlugin")) { // auto nogui by default
+    taMisc::use_plugins = false;		      // don't use if making
     taMisc::use_gui = false;
     cssMisc::init_interactive = false;
   }
@@ -2894,6 +2940,44 @@ bool taRootBase::Startup_ProcessArgs() {
   if(taMisc::CheckArgByName("GenDoc")) {
     taMisc::help_detail = taMisc::HD_DEFAULT; // always render default
     taGenDoc::GenDoc(&(taMisc::types));
+    run_startup = false;
+  }
+  if(taMisc::CheckArgByName("MakeAllPlugins")) {
+    taPlugins::MakeAllPlugins();
+    run_startup = false;
+  }
+  if(taMisc::CheckArgByName("MakeAllUserPlugins")) {
+    taPlugins::MakeAllUserPlugins();
+    run_startup = false;
+  }
+  if(taMisc::CheckArgByName("MakeUserPlugin")) {
+    String plugnm = taMisc::FindArgByName("MakeUserPlugin");
+    if(plugnm.nonempty()) {
+      taPlugins::MakeUserPlugin(plugnm);
+    }
+    run_startup = false;
+  }
+  if(taMisc::CheckArgByName("MakeAllSystemPlugins")) {
+    taPlugins::MakeAllSystemPlugins();
+    run_startup = false;
+  }
+  if(taMisc::CheckArgByName("MakeSystemPlugin")) {
+    String plugnm = taMisc::FindArgByName("MakeSystemPlugin");
+    if(plugnm.nonempty()) {
+      taPlugins::MakeSystemPlugin(plugnm);
+    }
+    run_startup = false;
+  }
+  if(taMisc::CheckArgByName("CleanAllPlugins")) {
+    taPlugins::CleanAllUserPlugins();
+    run_startup = false;
+  }
+  if(taMisc::CheckArgByName("CleanAllUserPlugins")) {
+    taPlugins::CleanAllUserPlugins();
+    run_startup = false;
+  }
+  if(taMisc::CheckArgByName("CleanAllSystemPlugins")) {
+    taPlugins::CleanAllSystemPlugins();
     run_startup = false;
   }
 

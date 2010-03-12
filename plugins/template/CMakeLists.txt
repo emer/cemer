@@ -6,7 +6,7 @@
 # cd build;
 # cmake ../ [-G see cmake --help for options] [-DMPI_BUILD=true] \
 #  [-DCMAKE_BUILD_TYPE= Debug | Release | RelWithDebInfo | MinSizeRel]
-#  [-DEMERGENT_PLUGIN_TYPE= User | System | Default] # where to install plugin
+#  [-DEMERGENT_PLUGIN_TYPE= User | System ] # where to install plugin -- defaults to User
 #  [-DCMAKE_VERBOSE_MAKEFILE=ON | OFF] # useful for tracking down issues sometimes
 #
 # ccmake ./ to edit custom options
@@ -22,8 +22,7 @@
 ################################################################
 # Step 0: ensure we have the right version of cmake -- this
 # has to go here at the top of this file otherwise cmake complains
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
-
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
 
 ################################################################
 # Step 1: Find the emergent share (application) directory
@@ -36,7 +35,7 @@ if (WIN32)
   if (EMERGENTDIR)
     set(EMERGENT_SHARE_DIR "${EMERGENTDIR}")
   else (EMERGENTDIR)
-    find_path(EMERGENT_SHARE_DIR README PATHS
+    find_path(EMERGENT_SHARE_DIR AUTHORS PATHS
       "C:/Program Files/Emergent"
       C:/Emergent
       "C:/Program Files (x86)/Emergent" # W32 on 64, should be rare
@@ -83,7 +82,7 @@ set(PLUGIN_VERSION_PATCH "@PLUGIN_VERSION_PATCH@")
 set(PLUGIN_VERSION "${PLUGIN_VERSION_MAJOR}.${PLUGIN_VERSION_MINOR}.${PLUGIN_VERSION_PATCH}")
 
 # this includes all necessary setup stuff to setup the make process
-include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginSetup.cmake)
+include(${EMERGENT_SHARE_DIR}/CMakeModules/EmergentPluginSetup.cmake NO_POLICY_SCOPE)
 set(CMAKE_MODULE_PATH "${EMERGENT_SHARE_DIR}/CMakeModules")
 
 

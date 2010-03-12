@@ -22,6 +22,7 @@
 #include "ta_project.h"
 
 #include <QDir>
+#include <QProcess>
 
 
 //////////////////////////
@@ -139,6 +140,20 @@ taPluginInst* taPlugins::ProbePlugin(const String& fileName) {
   return rval;
 }
 
+String taPlugins::PlatformPluginExt() {
+  String filt;
+#ifdef TA_OS_LINUX
+  filt = ".so";
+#elif defined(TA_OS_WIN)
+  filt = ".dll";
+#elif  defined(TA_OS_MAC)
+  filt = ".dylib";
+#else // huh??? what else?
+  filt = ".*";
+#endif
+  return filt;
+}
+
 void taPlugins::EnumeratePlugins() {
   String folder;
   for (int i = 0; i < plugin_folders.size; ++i) {
@@ -150,15 +165,7 @@ void taPlugins::EnumeratePlugins() {
     if (taMisc::build_str.nonempty()) {
       filt.append("_").append(taMisc::build_str.chars());
     }
-#ifdef TA_OS_LINUX
-    filt += ".so";
-#elif defined(TA_OS_WIN)
-    filt += ".dll";
-#elif  defined(TA_OS_MAC)
-    filt += ".dylib";
-#else // huh??? what else?
-    filt += ".*";
-#endif
+    filt += PlatformPluginExt().chars();
     QStringList fltrs;
     fltrs.append(filt);
 
@@ -175,6 +182,249 @@ void taPlugins::EnumeratePlugins() {
       }
     }
   } 
+}
+
+void taPlugins::MakeAllPlugins() {
+  MakeAllUserPlugins();
+  MakeAllSystemPlugins();
+}
+
+void taPlugins::MakeAllUserPlugins() {
+  QDir pluginsDir(taMisc::user_plugin_dir);
+  QString filt("*");
+  if (taMisc::build_str.nonempty()) {
+    filt.append("_").append(taMisc::build_str.chars());
+  }
+  filt += PlatformPluginExt().chars();
+  QStringList fltrs;
+  fltrs.append(filt);
+
+  pluginsDir.setNameFilters(fltrs);
+  foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+    // if this is the default release build, then reject any others
+    if (taMisc::build_str.empty()) {
+      if (fileName.contains("_dbg") || fileName.contains("_mpi") ||
+          fileName.contains("_nogui")) continue;
+    }
+    String plugin_nm_full = fileName;
+    String plugin_nm = plugin_nm_full.before(".");
+    if(plugin_nm.startsWith("lib")) plugin_nm = plugin_nm.after("lib");
+    if(taMisc::build_str.nonempty())
+      plugin_nm = plugin_nm.before(String("_") + taMisc::build_str);
+
+    String plug_path = taMisc::user_plugin_dir + PATH_SEP + plugin_nm;
+    QFileInfo qfi(plug_path);
+    if(!qfi.isDir()) {
+      taMisc::Info("MakeAllUserPlugins -- plugin directory named:", plug_path, "does not exist for plugin file named:", plugin_nm_full, "cannot build plugin");
+      continue;
+    }
+    MakePlugin(plug_path, plugin_nm, false); // no system
+  }
+}
+
+void taPlugins::MakeAllSystemPlugins() {
+  QDir pluginsDir(taMisc::app_plugin_dir);
+  QString filt("*");
+  if (taMisc::build_str.nonempty()) {
+    filt.append("_").append(taMisc::build_str.chars());
+  }
+  filt += PlatformPluginExt().chars();
+  QStringList fltrs;
+  fltrs.append(filt);
+
+  pluginsDir.setNameFilters(fltrs);
+  foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+    // if this is the default release build, then reject any others
+    if (taMisc::build_str.empty()) {
+      if (fileName.contains("_dbg") || fileName.contains("_mpi") ||
+          fileName.contains("_nogui")) continue;
+    }
+    String plugin_nm_full = fileName;
+    String plugin_nm = plugin_nm_full.before(".");
+    if(plugin_nm.startsWith("lib")) plugin_nm = plugin_nm.after("lib");
+    if(taMisc::build_str.nonempty())
+      plugin_nm = plugin_nm.before(String("_") + taMisc::build_str);
+
+    String plug_path = taMisc::app_plugin_dir + PATH_SEP + plugin_nm;
+    QFileInfo qfi(plug_path);
+    if(!qfi.isDir()) {
+      taMisc::Info("MakeAllSystemPlugins -- plugin directory named:", plug_path, "does not exist for plugin file named:", plugin_nm_full, "cannot build plugin");
+      continue;
+    }
+
+    MakePlugin(plug_path, plugin_nm, true); // system
+  }
+}
+
+bool taPlugins::MakeUserPlugin(const String& plugin_name) {
+  String plug_path = taMisc::user_plugin_dir + PATH_SEP + plugin_name;
+  QFileInfo qfi(plug_path);
+  if(!qfi.isDir()) {
+    taMisc::Info("MakeUserPlugin -- plugin directory named:", plug_path, "does not exist -- cannot build plugin");
+    return false;
+  }
+  return MakePlugin(plug_path, plugin_name, false); // no system
+}
+
+bool taPlugins::MakeSystemPlugin(const String& plugin_name) {
+  String plug_path = taMisc::app_plugin_dir + PATH_SEP + plugin_name;
+  QFileInfo qfi(plug_path);
+  if(!qfi.isDir()) {
+    taMisc::Info("MakeSystemPlugin -- plugin directory named:", plug_path, "does not exist -- cannot build plugin");
+    return false;
+  }
+  return MakePlugin(plug_path, plugin_name, true); // system
+}
+
+class InteractiveProcess : public QProcess {
+  static int stdinClone;
+public:
+  InteractiveProcess(QObject *parent = 0) : QProcess(parent) {
+    if (stdinClone == -1)
+      stdinClone = ::dup(fileno(stdin));
+  }
+protected:
+  void setupChildProcess() {
+    ::dup2(stdinClone, fileno(stdin));
+  }
+};
+
+int InteractiveProcess::stdinClone = -1;
+
+bool taPlugins::ExecMakeCmd(const String& cmd, const String& working_dir) {
+  taMisc::Info(cmd);
+  InteractiveProcess proc;
+  proc.setWorkingDirectory(working_dir);
+  proc.start(cmd);
+  if(!proc.waitForStarted()) return false;
+  if(!proc.waitForFinished()) return false;
+  QByteArray result = proc.readAll();
+  taMisc::Info(result);
+  return true;
+}
+
+bool taPlugins::MakePlugin(const String& plugin_path, const String& plugin_name,
+			   bool system_plugin) {
+  String build_dir = "build" + taMisc::build_str;
+  String build_path = plugin_path + PATH_SEP + build_dir;
+
+  String sudo_cmd;
+#ifndef TA_OS_WIN
+  if(system_plugin)
+    sudo_cmd = "sudo ";
+#endif
+
+  String mkdir_cmd = sudo_cmd + "mkdir " + build_dir;
+  if(!ExecMakeCmd(mkdir_cmd, plugin_path)) return false;
+
+  String cmake_cmd = sudo_cmd + "cmake ../ ";
+  if(taMisc::build_str.nonempty()) {
+    if(taMisc::build_str.contains("dbg")) {
+      cmake_cmd += "-DCMAKE_BUILD_TYPE=Debug ";
+    }
+    if(taMisc::build_str.contains("mpi")) {
+      cmake_cmd += "-DMPI_BUILD=TRUE ";
+    }
+  }
+  if(system_plugin)
+    cmake_cmd += "-DEMERGENT_PLUGIN_TYPE=System ";
+  if(!ExecMakeCmd(cmake_cmd, build_path)) return false;
+
+  String make_cmd = sudo_cmd;
+#ifdef TA_OS_WIN
+  make_cmd += "nmake";
+#else
+  make_cmd += "make";
+#endif
+  if(!ExecMakeCmd(make_cmd, build_path)) return false;
+
+  make_cmd += " install";
+  if(!ExecMakeCmd(make_cmd, build_path)) return false;
+
+  return true;
+}
+
+//////////////////////////////////////////////////
+// 	Clean Plugins
+
+void taPlugins::CleanAllPlugins() {
+  CleanAllUserPlugins();
+  CleanAllSystemPlugins();
+}
+
+void taPlugins::CleanAllUserPlugins() {
+  QDir pluginsDir(taMisc::user_plugin_dir);
+  QString filt("*");
+  if (taMisc::build_str.nonempty()) {
+    filt.append("_").append(taMisc::build_str.chars());
+  }
+  filt += PlatformPluginExt().chars();
+  QStringList fltrs;
+  fltrs.append(filt);
+
+  pluginsDir.setNameFilters(fltrs);
+  foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+    // if this is the default release build, then reject any others
+    if (taMisc::build_str.empty()) {
+      if (fileName.contains("_dbg") || fileName.contains("_mpi") ||
+          fileName.contains("_nogui")) continue;
+    }
+    String plugin_nm_full = fileName;
+    CleanPlugin(taMisc::user_plugin_dir, plugin_nm_full, false); // no system
+  }
+}
+
+void taPlugins::CleanAllSystemPlugins() {
+  QDir pluginsDir(taMisc::app_plugin_dir);
+  QString filt("*");
+  if (taMisc::build_str.nonempty()) {
+    filt.append("_").append(taMisc::build_str.chars());
+  }
+  filt += PlatformPluginExt().chars();
+  QStringList fltrs;
+  fltrs.append(filt);
+
+  pluginsDir.setNameFilters(fltrs);
+  foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+    // if this is the default release build, then reject any others
+    if (taMisc::build_str.empty()) {
+      if (fileName.contains("_dbg") || fileName.contains("_mpi") ||
+          fileName.contains("_nogui")) continue;
+    }
+    String plugin_nm_full = fileName;
+    CleanPlugin(taMisc::app_plugin_dir, plugin_nm_full, false); // no system
+  }
+}
+
+bool taPlugins::CleanUserPlugin(const String& plugin_name) {
+  String plugin_nm_full =  "lib" + plugin_name;
+  if(taMisc::build_str.nonempty()) {
+    plugin_nm_full += String("_") + taMisc::build_str;
+  }
+  plugin_nm_full += PlatformPluginExt();
+  return CleanPlugin(taMisc::user_plugin_dir, plugin_nm_full, false); // no system
+}
+
+bool taPlugins::CleanSystemPlugin(const String& plugin_name) {
+  String plugin_nm_full =  "lib" + plugin_name;
+  if(taMisc::build_str.nonempty()) {
+    plugin_nm_full += String("_") + taMisc::build_str;
+  }
+  plugin_nm_full += PlatformPluginExt();
+  return CleanPlugin(taMisc::app_plugin_dir, plugin_nm_full, true); // system
+}
+
+bool taPlugins::CleanPlugin(const String& plugin_path, const String& plugin_name,
+			   bool system_plugin) {
+  String sudo_cmd;
+#ifndef TA_OS_WIN
+  if(system_plugin)
+    sudo_cmd = "sudo ";
+#endif
+
+  String rm_cmd = sudo_cmd + "rm " + plugin_name;
+  if(!ExecMakeCmd(rm_cmd, plugin_path)) return false;
+  return true;
 }
 
 
@@ -259,6 +509,14 @@ void taPlugin::PluginOptions() {
   } else {
     taMisc::Confirm("This plugin does not have user-configurable options.");
   }
+}
+
+bool taPlugin::Compile() {
+  return true;
+}
+
+bool taPlugin::Clean() {
+  return true;
 }
 
 //////////////////////////
@@ -493,7 +751,8 @@ void PluginWizard::Initialize() {
   class_name_prefix = "Myplugin";
   plugin_type = UserPlugin;
   validated = false;
-  plugin_location = taMisc::user_app_dir + PATH_SEP + "plugins" + PATH_SEP +
+  created = false;
+  plugin_location = taMisc::user_dir + PATH_SEP + "plugins" + PATH_SEP +
         plugin_name;
   desc = "enter description of your plugin";
   uniqueId = "pluginname.dept.organization.org";
@@ -613,27 +872,46 @@ void PluginWizard::CreateDestFile(const String& src_file,
   fdst.close();
 }
 
-bool PluginWizard::MakePlugin() {
+bool PluginWizard::Create() {
   bool upgrade_only = false; //TODO: check for upgrade
   if (TestError((!validated),
-    "PluginWizard::MakePlugin", 
+    "PluginWizard::Create", 
     "You must Validate the plugin before you can make it"))
     return false;
   // extract dirs
   src_dir = taMisc::app_dir + PATH_SEP + "plugins" + PATH_SEP + "template" + PATH_SEP;
   
+  QFileInfo qfi(plugin_location);
+  if(qfi.isDir()) {
+    String wiz_file = plugin_location + PATH_SEP + "PluginWizard.wiz";
+    QFileInfo qfiwiz(wiz_file);
+    if(qfiwiz.isFile()) {
+      int chs = taMisc::Choice("Plugin directory: " + plugin_location + " already exists and has previously-created Wizard data -- you can load that existing information (overwrites current configuration info in this wizard) or rename existing directory to .old and create a new blank plugin", "Load Existing", "Rename Existing, Make New", "Cancel");
+      if(chs == 2) return false;
+      if(chs == 0) {
+	LoadWiz(wiz_file);
+	return false;
+      }
+      QDir qd(plugin_location);
+      String justpath = qd.path();
+      String dirnm = qd.dirName();
+      QDir qdp(justpath);
+      qdp.rename(dirnm, dirnm + "_old");
+    }
+  }
+
   // make the dest dir
   if (TestError(!taPlatform::mkdir(plugin_location),
-    "PluginWizard::MakePlugin", 
+    "PluginWizard::Create", 
     "Could not make folder for plugin -- make sure the path is valid, and you have permission to create a folder in that location"))
     return false;
   // std build dirs
   if (TestError(!taPlatform::mkdir(plugin_location + PATH_SEP + "build"),
-    "PluginWizard::MakePlugin", 
+    "PluginWizard::Create", 
     "Could not make 'build' subfolder for plugin -- make sure the path is valid, and you have permission to create a folder in that location"))
     return false;
   if (TestError(!taPlatform::mkdir(plugin_location + PATH_SEP + "build_dbg"),
-    "PluginWizard::MakePlugin", 
+    "PluginWizard::Create", 
     "Could not make 'build' subfolder for plugin -- make sure the path is valid, and you have permission to create a folder in that location"))
     return false;
   
@@ -669,13 +947,44 @@ bool PluginWizard::MakePlugin() {
     if (!QFile::link(src_file, dst_file))
       ok = QFile::copy(src_file, dst_file);
   }
+
+  created = true;
+
+  SaveAs(plugin_location + PATH_SEP + "PluginWizard.wiz"); // save our settings!!
+
   if (ok) {
     taMisc::Info("The plugin was created successfully! See the CMakeLists.txt file in your plugin folder for build instructions");
   } else {
     taMisc::Error(
-      "PluginWizard::MakePlugin", 
+      "PluginWizard::Create", 
       "Could not copy and templatize files for plugin -- make sure the path is valid, and you have permission to create files in that location");
     return false;
   }
   return true;
+}
+
+bool PluginWizard::Compile() {
+  if (TestError((!created),
+    "PluginWizard::Compile", 
+    "You must Create the plugin before you can compile it"))
+    return false;
+
+  return taPlugins::MakePlugin(plugin_location, plugin_name, (bool)plugin_type);
+}
+
+bool PluginWizard::Clean() {
+  if (TestError((!created),
+    "PluginWizard::Compile", 
+    "You must Create the plugin before you can clean it"))
+    return false;
+
+  if(plugin_type == SystemPlugin)
+    taPlugins::CleanSystemPlugin(plugin_name);
+  else
+    taPlugins::CleanUserPlugin(plugin_name);
+  return true;
+}
+
+bool PluginWizard::LoadWiz(const String& wiz_file) {
+  return Load(wiz_file);
 }

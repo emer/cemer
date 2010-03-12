@@ -19,10 +19,14 @@
 # has to go directly here in this file otherwise cmake complains
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
+
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
+if(POLICY CMP0011)
+   cmake_policy(SET CMP0011 NEW)
+endif(POLICY CMP0011)
 
 ################################################################
 # Step 1: set all the basic parameters about the project
@@ -190,8 +194,38 @@ add_subdirectory(src/emergent/cs)
 add_subdirectory(src/emergent/lib)
 add_subdirectory(src/emergent/bin)
 
-# Plugins
-# add_subdirectory(plugins)
+
+####################################
+#  plugin commands -- use these after make install to remake plugins
+
+set(EMERGENT_INST_EXE "emergent${EMERGENT_SUFFIX}")
+
+add_custom_target(plugins 
+  COMMAND ${EMERGENT_INST_EXE} --make_all_plugins
+)
+
+add_custom_target(user_plugins 
+  COMMAND ${EMERGENT_INST_EXE} --make_all_user_plugins
+)
+
+add_custom_target(system_plugins 
+  COMMAND ${EMERGENT_INST_EXE} --make_all_system_plugins
+)
+
+add_custom_target(clean_plugins 
+  COMMAND ${EMERGENT_INST_EXE} --clean_all_plugins
+)
+
+add_custom_target(clean_user_plugins 
+  COMMAND ${EMERGENT_INST_EXE} --clean_all_user_plugins
+)
+
+add_custom_target(clean_system_plugins 
+  COMMAND ${EMERGENT_INST_EXE} --clean_all_system_plugins
+)
+
+####################################
+#  plugin commands -- auto remake..
 
 # share misc files
 add_subdirectory(prog_lib)
