@@ -54,7 +54,7 @@ message( STATUS "---------------------------------------------------------------
 ################################################################
 # Step 5: install/uninstall stuff -- only for non-default
 
-install(FILES ${plugin_FILES}
+install(FILES ${plugin_FILES} "PluginWizard.wiz"
   DESTINATION ${EMERGENT_PLUGIN_DEST}/${PROJECT_NAME}
   )
 

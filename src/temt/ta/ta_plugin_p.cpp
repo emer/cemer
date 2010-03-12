@@ -190,6 +190,9 @@ void taPlugins::MakeAllPlugins() {
 }
 
 void taPlugins::MakeAllUserPlugins() {
+  taMisc::Info("=========================================================================");
+  taMisc::Info("Making All UserPlugins");
+  taMisc::Info("=========================================================================");
   QDir pluginsDir(taMisc::user_plugin_dir);
   QString filt("*");
   if (taMisc::build_str.nonempty()) {
@@ -223,6 +226,9 @@ void taPlugins::MakeAllUserPlugins() {
 }
 
 void taPlugins::MakeAllSystemPlugins() {
+  taMisc::Info("=========================================================================");
+  taMisc::Info("Making All System Plugins");
+  taMisc::Info("=========================================================================");
   QDir pluginsDir(taMisc::app_plugin_dir);
   QString filt("*");
   if (taMisc::build_str.nonempty()) {
@@ -305,6 +311,10 @@ bool taPlugins::ExecMakeCmd(const String& cmd, const String& working_dir) {
 
 bool taPlugins::MakePlugin(const String& plugin_path, const String& plugin_name,
 			   bool system_plugin) {
+  taMisc::Info("=========================================================================");
+  taMisc::Info("Making Plugin:", plugin_name, "in dir:", plugin_path);
+  taMisc::Info("=========================================================================");
+
   String build_dir = "build" + taMisc::build_str;
   String build_path = plugin_path + PATH_SEP + build_dir;
 
@@ -336,10 +346,17 @@ bool taPlugins::MakePlugin(const String& plugin_path, const String& plugin_name,
 #else
   make_cmd += "make";
 #endif
+
+  // always start off with a make clean to ensure everything is rebuilt
+  String make_clean = make_cmd + " clean";
+  if(!ExecMakeCmd(make_clean, build_path)) return false;
+
+  // straight make
   if(!ExecMakeCmd(make_cmd, build_path)) return false;
 
-  make_cmd += " install";
-  if(!ExecMakeCmd(make_cmd, build_path)) return false;
+  // make install
+  String make_install = make_cmd + " install";
+  if(!ExecMakeCmd(make_install, build_path)) return false;
 
   return true;
 }
@@ -353,6 +370,9 @@ void taPlugins::CleanAllPlugins() {
 }
 
 void taPlugins::CleanAllUserPlugins() {
+  taMisc::Info("=========================================================================");
+  taMisc::Info("Cleaning All User Plugins");
+  taMisc::Info("=========================================================================");
   QDir pluginsDir(taMisc::user_plugin_dir);
   QString filt("*");
   if (taMisc::build_str.nonempty()) {
@@ -375,6 +395,9 @@ void taPlugins::CleanAllUserPlugins() {
 }
 
 void taPlugins::CleanAllSystemPlugins() {
+  taMisc::Info("=========================================================================");
+  taMisc::Info("Cleaning All System Plugins");
+  taMisc::Info("=========================================================================");
   QDir pluginsDir(taMisc::app_plugin_dir);
   QString filt("*");
   if (taMisc::build_str.nonempty()) {
@@ -416,6 +439,10 @@ bool taPlugins::CleanSystemPlugin(const String& plugin_name) {
 
 bool taPlugins::CleanPlugin(const String& plugin_path, const String& plugin_name,
 			   bool system_plugin) {
+  taMisc::Info("=========================================================================");
+  taMisc::Info("Cleaning Plugin:", plugin_name, "in dir:", plugin_path);
+  taMisc::Info("=========================================================================");
+
   String sudo_cmd;
 #ifndef TA_OS_WIN
   if(system_plugin)
@@ -512,10 +539,73 @@ void taPlugin::PluginOptions() {
 }
 
 bool taPlugin::Compile() {
+  String base_path = taMisc::GetDirFmPath(filename);
+  String plugin_nm_full = taMisc::GetFileFmPath(filename);
+
+  String plugin_nm = plugin_nm_full.before(".");
+  if(plugin_nm.startsWith("lib")) plugin_nm = plugin_nm.after("lib");
+  if(taMisc::build_str.nonempty())
+    plugin_nm = plugin_nm.before(String("_") + taMisc::build_str);
+
+  String plug_path = base_path + PATH_SEP + plugin_nm;
+  QFileInfo qfi(plug_path);
+  if(!qfi.isDir()) {
+    taMisc::Error("Compile Plugin -- plugin directory named:", plug_path, "does not exist for plugin file named:", plugin_nm_full, "cannot build plugin");
+    return false;
+  }
+
+  bool sys_plug = false;
+  if(plug_path.contains(taMisc::app_plugin_dir)) sys_plug = true;
+  
+  taPlugins::MakePlugin(plug_path, plugin_nm, sys_plug);
+
   return true;
 }
 
 bool taPlugin::Clean() {
+  String base_path = taMisc::GetDirFmPath(filename);
+  String plugin_nm_full = taMisc::GetFileFmPath(filename);
+
+  bool sys_plug = false;
+  if(base_path.contains(taMisc::app_plugin_dir)) sys_plug = true;
+  
+  taPlugins::CleanPlugin(base_path, plugin_nm_full, sys_plug);
+
+  return true;
+}
+
+bool taPlugin::LoadWiz() {
+  String base_path = taMisc::GetDirFmPath(filename);
+  String plugin_nm_full = taMisc::GetFileFmPath(filename);
+
+  String plugin_nm = plugin_nm_full.before(".");
+  if(plugin_nm.startsWith("lib")) plugin_nm = plugin_nm.after("lib");
+  if(taMisc::build_str.nonempty())
+    plugin_nm = plugin_nm.before(String("_") + taMisc::build_str);
+
+  String plug_path = base_path + PATH_SEP + plugin_nm;
+  QFileInfo qfi(plug_path);
+  if(!qfi.isDir()) {
+    taMisc::Error("LoadWiz Plugin -- plugin directory named:", plug_path, "does not exist for plugin file named:", plugin_nm_full, "cannot load wizard");
+    return false;
+  }
+  
+  String wiz_file = plug_path + PATH_SEP + "PluginWizard.wiz";
+  QFileInfo qfiwiz(wiz_file);
+  if(!qfiwiz.isFile()) {
+    taMisc::Error("LoadWiz Plugin -- PluginWizard.wiz file not found in:", plug_path,
+		  "(this may have been created before wizard saving was enabled in 5.0.2)");
+    return false;
+  }
+
+  PluginWizard* wiz = (PluginWizard*)tabMisc::root->wizards.FindName("PluginWizard");
+  if(!wiz) {
+    taMisc::Error("LoadWiz Plugin -- PluginWizard object not found in root -- this is weird and should be reported to developers");
+    return false;
+  }
+    
+  wiz->LoadWiz(wiz_file);
+  wiz->BrowserSelectMe();
   return true;
 }
 
@@ -886,15 +976,22 @@ bool PluginWizard::Create() {
     String wiz_file = plugin_location + PATH_SEP + "PluginWizard.wiz";
     QFileInfo qfiwiz(wiz_file);
     if(qfiwiz.isFile()) {
-      int chs = taMisc::Choice("Plugin directory: " + plugin_location + " already exists and has previously-created Wizard data -- you can load that existing information (overwrites current configuration info in this wizard) or rename existing directory to .old and create a new blank plugin", "Load Existing", "Rename Existing, Make New", "Cancel");
+      int chs = taMisc::Choice("Plugin directory: " + plugin_location + " already exists and has previously-created Wizard data -- you can load that existing information (overwrites current configuration info in this wizard) or rename existing directory to _old and create a new blank plugin, or cancel", "Load Existing", "Rename Existing, Make New", "Cancel");
       if(chs == 2) return false;
       if(chs == 0) {
 	LoadWiz(wiz_file);
 	return false;
       }
-      QDir qd(plugin_location);
-      String justpath = qd.path();
-      String dirnm = qd.dirName();
+      String justpath = taMisc::GetDirFmPath(plugin_location);
+      String dirnm = taMisc::GetFileFmPath(plugin_location);
+      QDir qdp(justpath);
+      qdp.rename(dirnm, dirnm + "_old");
+    }
+    else {
+      int chs = taMisc::Choice("Plugin directory: " + plugin_location + " already exists but does NOT have previously-created Wizard data -- you can rename existing directory to _old and create a new blank plugin, or cancel", "Rename Existing, Make New", "Cancel");
+      if(chs == 1) return false;
+      String justpath = taMisc::GetDirFmPath(plugin_location);
+      String dirnm = taMisc::GetFileFmPath(plugin_location);
       QDir qdp(justpath);
       qdp.rename(dirnm, dirnm + "_old");
     }
