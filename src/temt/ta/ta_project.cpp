@@ -2452,8 +2452,8 @@ have_app_dir:
   taMisc::app_dir.gsub("/", "\\"); // clean it up, so it never causes issues
 #endif
 
-  taMisc::Info("app dir:", taMisc::app_dir);
 #ifdef TA_OS_WIN
+  taMisc::Info("app dir:", taMisc::app_dir);
   // todo: do this for windows
 #else
   if(!taMisc::app_dir.contains("share")) { // if we don't have share, then we're in compile dir

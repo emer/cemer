@@ -22,10 +22,11 @@
 #include "ta_plugin.h"
 #include "ta_base.h"
 
+class iPluginEditor; //
 
 // forwards
 class taPlugin;
-class taPlugin_List;
+class taPlugin_List;//
 
 class TA_API taPluginInst: public QPluginLoader { // ##NO_INSTANCE an instance of a plugin
   Q_OBJECT
@@ -169,11 +170,23 @@ public:
   // #BUTTON remove (clean) the plugin -- prevents it from being loaded
   virtual bool		LoadWiz();
   // #BUTTON load an existing wizard configuration file saved from a prior wizard create step
+  virtual bool		Editor();
+  // #BUTTON open the plugin file editor to edit plugin source files -- does LoadWiz() and then calls Editor on that, to get back to the original source files and not the installed source files
+
+  virtual void		ParseFileName(String& base_path, String& plugin_nm_full,
+				      String& plugin_nm);
+  // parse the filename to extract the base path, and full plugin library file name, plus the short plugin name that should correspond to the source directory name
 
   int	GetEnabled() const {return enabled && loaded;}
   void	SetEnabled(bool value) {enabled = value;}
+
   void	Copy_(const taPlugin& cp); //note: we only use this for descs, not actual plugins
   TA_BASEFUNS(taPlugin);
+protected:
+#ifndef __MAKETA__
+  QPointer<iPluginEditor> editor;
+#endif
+
 private:
   void	Initialize();
   void	Destroy() {}

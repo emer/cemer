@@ -884,8 +884,8 @@ protected:
   iPluginEditor();
   ~iPluginEditor();
 
-
   override void closeEvent(QCloseEvent* ev);
+  override bool	eventFilter(QObject *obj, QEvent *event);
   
 protected slots:
   void			save_clicked();

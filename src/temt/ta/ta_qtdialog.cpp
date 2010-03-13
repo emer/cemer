@@ -2991,17 +2991,8 @@ void iPluginEditor::init() {
   main_widg = new QWidget();
   main_vbox = new QVBoxLayout(main_widg);
   main_vbox->setMargin(0);
-  split = new iSplitter(main_widg);
 
-  main_vbox->addWidget(split);
-
-  hfile_view = new NumberedTextView;
-  cfile_view = new NumberedTextView;
-
-  split->addWidget(hfile_view);
-  split->addWidget(cfile_view);
-
-  tool_box = new QHBoxLayout(main_widg);
+  tool_box = new QHBoxLayout();
   main_vbox->addLayout(tool_box);
 
   tool_bar = new QToolBar(main_widg);
@@ -3009,6 +3000,21 @@ void iPluginEditor::init() {
 
   actSave = tool_bar->addAction("Save");
   actCompile = tool_bar->addAction("Compile");
+
+  actCompile->setShortcut(QKeySequence("Ctrl+M"));
+  actCompile->setToolTip("Compile (Make) plugin from current source code -- does a Save first before compiling");
+
+  split = new iSplitter(main_widg);
+  main_vbox->addWidget(split);
+
+  hfile_view = new NumberedTextView;
+  cfile_view = new NumberedTextView;
+
+  hfile_view->installEventFilter(this);
+  cfile_view->installEventFilter(this);
+
+  split->addWidget(hfile_view);
+  split->addWidget(cfile_view);
 
   setCentralWidget(main_widg);
 
@@ -3085,3 +3091,26 @@ void iPluginEditor::closeEvent(QCloseEvent* ev) {
     SaveFiles();
   inherited::closeEvent(ev);
 }
+
+bool iPluginEditor::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() != QEvent::KeyPress) {
+    return inherited::eventFilter(obj, event);
+  }
+  QKeyEvent* e = static_cast<QKeyEvent *>(event);
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+  if(ctrl_pressed) {
+    switch(e->key()) {
+    case Qt::Key_O:
+      if(hfile_view->hasFocus() || hfile_view->textEdit()->hasFocus())
+	cfile_view->textEdit()->setFocus();
+      else
+	hfile_view->textEdit()->setFocus();
+      return true;		// we absorb this event
+    case Qt::Key_M:
+      Compile();
+      return true;
+    }
+  }
+  return inherited::eventFilter(obj, event);
+}
+

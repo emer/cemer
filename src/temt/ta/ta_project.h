@@ -842,11 +842,16 @@ public:
   virtual bool		MakeAllPlugins(bool user_only = true);
   // #BUTTON re-make all the currently-installed plugins (useful e.g., when main source is updated) -- user_only = only make the User plugins, not the System ones.  Can also do this by running emergent --make_all_plugins or --make_all_user_plugins at command line
 
+  virtual bool		ShowWiz();
+  // show the wizard
+
   TA_BASEFUNS_NOCOPY(PluginWizard);
 protected:
   String 		src_dir;
   String_PArray 	files;
-  iPluginEditor*	editor;
+#ifndef __MAKETA__
+  QPointer<iPluginEditor> editor;
+#endif
 
   override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& ok);

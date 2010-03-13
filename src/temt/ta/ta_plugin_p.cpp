@@ -543,14 +543,19 @@ void taPlugin::PluginOptions() {
   }
 }
 
-bool taPlugin::Compile() {
-  String base_path = taMisc::GetDirFmPath(filename);
-  String plugin_nm_full = taMisc::GetFileFmPath(filename);
+void taPlugin::ParseFileName(String& base_path, String& plugin_nm_full, String& plugin_nm) {
+  base_path = taMisc::GetDirFmPath(filename);
+  plugin_nm_full = taMisc::GetFileFmPath(filename);
 
-  String plugin_nm = plugin_nm_full.before(".");
+  plugin_nm = plugin_nm_full.before(".");
   if(plugin_nm.startsWith("lib")) plugin_nm = plugin_nm.after("lib");
   if(taMisc::build_str.nonempty())
     plugin_nm = plugin_nm.before(String("_") + taMisc::build_str);
+}
+
+bool taPlugin::Compile() {
+  String base_path;  String plugin_nm_full;  String plugin_nm;
+  ParseFileName(base_path, plugin_nm_full, plugin_nm);
 
   String plug_path = base_path + PATH_SEP + plugin_nm;
   QFileInfo qfi(plug_path);
@@ -568,8 +573,8 @@ bool taPlugin::Compile() {
 }
 
 bool taPlugin::Clean() {
-  String base_path = taMisc::GetDirFmPath(filename);
-  String plugin_nm_full = taMisc::GetFileFmPath(filename);
+  String base_path;  String plugin_nm_full;  String plugin_nm;
+  ParseFileName(base_path, plugin_nm_full, plugin_nm);
 
   bool sys_plug = false;
   if(base_path.contains(taMisc::app_plugin_dir)) sys_plug = true;
@@ -580,13 +585,8 @@ bool taPlugin::Clean() {
 }
 
 bool taPlugin::LoadWiz() {
-  String base_path = taMisc::GetDirFmPath(filename);
-  String plugin_nm_full = taMisc::GetFileFmPath(filename);
-
-  String plugin_nm = plugin_nm_full.before(".");
-  if(plugin_nm.startsWith("lib")) plugin_nm = plugin_nm.after("lib");
-  if(taMisc::build_str.nonempty())
-    plugin_nm = plugin_nm.before(String("_") + taMisc::build_str);
+  String base_path;  String plugin_nm_full;  String plugin_nm;
+  ParseFileName(base_path, plugin_nm_full, plugin_nm);
 
   String plug_path = base_path + PATH_SEP + plugin_nm;
   QFileInfo qfi(plug_path);
@@ -610,8 +610,17 @@ bool taPlugin::LoadWiz() {
   }
     
   wiz->LoadWiz(wiz_file);
-  wiz->BrowserSelectMe();
+  wiz->ShowWiz();
   return true;
+}
+
+bool taPlugin::Editor() {
+  bool rval = LoadWiz();
+  if(!rval) return false;
+  
+  PluginWizard* wiz = (PluginWizard*)tabMisc::root->wizards.FindName("PluginWizard");
+  if(!wiz) return false;
+  return wiz->Editor();
 }
 
 //////////////////////////
@@ -1124,5 +1133,21 @@ bool PluginWizard::MakeAllPlugins(bool user_only) {
   else {
     taPlugins::MakeAllPlugins();
   }
+  return true;
+}
+
+bool PluginWizard::ShowWiz() {
+  if(!taMisc::gui_active) return false;
+
+  MainWindowViewer* vwr = (MainWindowViewer*)tabMisc::root->viewers.SafeEl(0);
+  if(!vwr) return false;
+
+  taiDataLink* link = (taiDataLink*)GetDataLink();
+  if (!link) return false;
+
+  iMainWindowViewer* imwv = vwr->widget();
+  if(!imwv) return false;
+
+  imwv->AssertBrowserItem(link);
   return true;
 }
