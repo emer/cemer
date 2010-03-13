@@ -27,7 +27,8 @@
 #include <QtGui/QPixmap>
 #include <QtGui/QTextCursor>
 
-class QTextEdit;
+#include "itextedit.h"
+
 class QHBoxLayout;
 
 /**
@@ -44,7 +45,7 @@ class NumberBar : public QWidget {
   void setStopLine( int lineno );
   void setBugLine( int lineno );
 
-  void setTextEdit( QTextEdit *edit );
+  void setTextEdit( iTextEdit *edit );
   void paintEvent( QPaintEvent *ev );
 
 protected:
@@ -52,7 +53,7 @@ protected:
 
 private:
   bool	icons_enabled;
-  QTextEdit *edit;
+  iTextEdit *edit;
   QPixmap stopMarker;
   QPixmap currentMarker;
   QPixmap bugMarker;
@@ -65,7 +66,7 @@ private:
 };
 
 /**
- * Displays a QTextEdit with line numbers.
+ * Displays a iTextEdit with line numbers.
  */
 class NumberedTextView : public QFrame {
   Q_OBJECT
@@ -74,8 +75,8 @@ class NumberedTextView : public QFrame {
   NumberedTextView( QWidget *parent = 0, bool enable_icons = false);
   ~NumberedTextView();
 
-  /** Returns the QTextEdit of the main view. */
-  QTextEdit *textEdit() const { return view; }
+  /** Returns the iTextEdit of the main view. */
+  iTextEdit *textEdit() const { return view; }
 
   /**
    * Sets the line that should have the current line indicator.
@@ -117,7 +118,7 @@ Q_SIGNALS:
   void textChanged( int pos, int added, int removed );
 
 private:
-  QTextEdit *view;
+  iTextEdit *view;
   NumberBar *numbers;
   QHBoxLayout *box;
   int currentLine;

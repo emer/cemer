@@ -25,7 +25,7 @@
 #include "ta_qtviewer.h"
 
 #ifndef __MAKETA__
-# include <ilabel.h>
+# include "ilabel.h"
 # include <QAbstractItemModel>
 # include <QEvent>
 # include <QMessageBox>
@@ -37,12 +37,17 @@
 class taiDataLink;  //
 class iDataPanel; //
 class taWizard; //
+#ifndef __MAKETA__
+class iSplitter;
+class NumberedTextView;// 
+#endif
 
 // forwards
 class taiDataHostBase;
 class taiDataHost_impl;
 class taiDataHost;
 class taiEditDataHost; 
+class iPluginEditor;
 class taiStringDataHost; //
 
 
@@ -836,6 +841,59 @@ protected:
   override void		Enum_Members(); // called by Constr_impl to fill memb_el[]
   override void 	ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
   override void 	Ok_impl();
+};
+
+
+class TA_API iPluginEditor: public QMainWindow {
+  // editor window for plugins
+INHERITED(QMainWindow)
+  Q_OBJECT
+public:
+#ifndef __MAKETA__
+  enum Roles { // extra roles, for additional data, etc.
+    ObjUrlRole = Qt::UserRole + 1, // Url stored in this
+//    ObjCatRole  // for object category string, whether shown or not
+  };
+#endif
+
+  String		dir_path;	// path to directory with files
+  String		file_base;	// base name of files to edit
+  
+  static iPluginEditor* New(const String& dir, const String& file_bse);
+  // main interface -- make a new editor
+
+  virtual void		LoadFiles(); // load files into editors
+  virtual void		SaveFiles(); // save files from editors
+  virtual void		Compile(); // compile
+
+#ifndef __MAKETA__ 
+public:
+
+  QWidget*		main_widg;
+  QVBoxLayout*		main_vbox;
+  iSplitter*		split;
+  NumberedTextView*	hfile_view; // header file
+  NumberedTextView*	cfile_view; // cpp file
+  QHBoxLayout*		tool_box;
+  QToolBar*		tool_bar;
+  QAction* 		  actSave;
+  QAction* 		  actCompile;
+  
+protected:
+  
+  iPluginEditor();
+  ~iPluginEditor();
+
+
+  override void closeEvent(QCloseEvent* ev);
+  
+protected slots:
+  void			save_clicked();
+  void			compile_clicked();
+  
+private:
+  void 		init(); // called by constructors
+#endif // !__MAKETA__
 };
 
 

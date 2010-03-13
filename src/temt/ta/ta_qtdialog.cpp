@@ -2956,3 +2956,132 @@ void taiWizardDataHost::Ok_impl() { //note: only used for Dialogs
     //  }
 }
 
+//////////////////////////////////////////////////
+//  	iPluginEditor
+//////////////////////////////////////////////////
+
+iPluginEditor* iPluginEditor::New(const String& dir, const String& file_bse) {
+  iPluginEditor* pe = new iPluginEditor();
+  pe->dir_path = dir;
+  pe->file_base = file_bse;
+
+  pe->LoadFiles();
+
+  iSize sz = taiM->dialogSize(taiMisc::dlgBig);
+  pe->resize(sz.width(), (int)(1.2f * (float)sz.height())); // a bit bigger than .6h
+  pe->show();
+
+  return pe;
+}
+
+// note: we parent to main_win so something will delete it
+iPluginEditor::iPluginEditor() 
+:inherited(taiMisc::main_window)
+{
+  init();
+}
+
+iPluginEditor::~iPluginEditor() {
+}
+
+void iPluginEditor::init() {
+  this->setAttribute(Qt::WA_DeleteOnClose, true); // kill on close
+  this->setWindowTitle("Plugin Editor");
+
+  main_widg = new QWidget();
+  main_vbox = new QVBoxLayout(main_widg);
+  main_vbox->setMargin(0);
+  split = new iSplitter(main_widg);
+
+  main_vbox->addWidget(split);
+
+  hfile_view = new NumberedTextView;
+  cfile_view = new NumberedTextView;
+
+  split->addWidget(hfile_view);
+  split->addWidget(cfile_view);
+
+  tool_box = new QHBoxLayout(main_widg);
+  main_vbox->addLayout(tool_box);
+
+  tool_bar = new QToolBar(main_widg);
+  tool_box->addWidget(tool_bar);
+
+  actSave = tool_bar->addAction("Save");
+  actCompile = tool_bar->addAction("Compile");
+
+  setCentralWidget(main_widg);
+
+  connect(actSave, SIGNAL(triggered()), this, SLOT(save_clicked()) );
+  connect(actCompile, SIGNAL(triggered()), this, SLOT(compile_clicked()) );
+}
+
+void iPluginEditor::save_clicked() {
+  SaveFiles();
+}
+
+void iPluginEditor::compile_clicked() {
+  SaveFiles();
+  Compile();
+}
+
+void iPluginEditor::LoadFiles() {
+  fstream fsrch;
+  String hfnm = dir_path + "/" + file_base + ".h";
+  fsrch.open(hfnm, ios::in);
+  if(!fsrch.good()) {
+    taMisc::Error("Could not open file name for saving", hfnm);
+    return;
+  }
+  String hstr;
+  hstr.Load_str(fsrch);
+  fsrch.close();
+  hfile_view->textEdit()->setPlainText(hstr);
+
+  fstream fsrcc;
+  String cfnm = dir_path + "/" + file_base + ".cpp";
+  fsrcc.open(cfnm, ios::in);
+  if(!fsrcc.good()) {
+    taMisc::Error("Could not open file name for saving", cfnm);
+    return;
+  }
+  String cstr;
+  cstr.Load_str(fsrcc);
+  fsrcc.close();
+  cfile_view->textEdit()->setPlainText(cstr);
+}
+
+void iPluginEditor::SaveFiles() {
+  fstream fsrch;
+  String hfnm = dir_path + "/" + file_base + ".h";
+  fsrch.open(hfnm, ios::out);
+  if(!fsrch.good()) {
+    taMisc::Error("Could not open file name for saving", hfnm);
+    return;
+  }
+  String hstr = hfile_view->textEdit()->toPlainText();
+  hstr.Save_str(fsrch);
+  fsrch.close();
+
+  fstream fsrcc;
+  String cfnm = dir_path + "/" + file_base + ".cpp";
+  fsrcc.open(cfnm, ios::out);
+  if(!fsrcc.good()) {
+    taMisc::Error("Could not open file name for saving", cfnm);
+    return;
+  }
+  String cstr = cfile_view->textEdit()->toPlainText();
+  cstr.Save_str(fsrcc);
+  fsrcc.close();
+}
+
+void iPluginEditor::Compile() {
+  taPlugins::MakePlugin(dir_path, file_base, false); // assume user
+}
+
+void iPluginEditor::closeEvent(QCloseEvent* ev) {
+  int chs = taMisc::Choice("Closing editor -- Save Files first?", "Save Files", "Discard Changes");
+  if(chs == 0)
+    SaveFiles();
+  inherited::closeEvent(ev);
+}

@@ -67,7 +67,7 @@ void NumberBar::setBugLine( int lineno )
   bugLine = lineno;
 }
 
-void NumberBar::setTextEdit( QTextEdit *edit )
+void NumberBar::setTextEdit( iTextEdit *edit )
 {
   this->edit = edit;
   connect( edit->document()->documentLayout(), SIGNAL( update(const QRectF &) ),
@@ -153,9 +153,9 @@ NumberedTextView::NumberedTextView( QWidget *parent, bool enable_icons )
   setLineWidth( 2 );
 
   // Setup the main view
-  view = new QTextEdit( this );
+  view = new iTextEdit( this );
   view->setFontFamily( "Courier" );
-  view->setLineWrapMode( QTextEdit::NoWrap );
+  view->setLineWrapMode( iTextEdit::NoWrap );
   view->setFrameStyle( QFrame::NoFrame );
   view->installEventFilter( this );
 

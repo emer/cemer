@@ -35,6 +35,7 @@ class taDoc;
 class taWizard;
 class taProject;
 class taRootBase;
+class iPluginEditor;//
 
 ////////////////////////////////////////////////////////////////////////
 //		taDoc -- documents
@@ -831,13 +832,21 @@ public:
   // #BUTTON #CONDEDIT_ON_created  compile the plugin from the existing source code -- must be created first -- does a make and a make install
   virtual bool		Clean();
   // #BUTTON #CONDEDIT_ON_created remove (clean) the plugin -- prevents it from being loaded
+  virtual bool		Editor();
+  // #BUTTON open the plugin file editor to edit plugin source files right here..
   virtual bool		LoadWiz(const String& wiz_file);
   // #BUTTON #FILE_DIALOG_LOAD #FILETYPE_PluginWizard #EXT_wiz load an existing wizard configuration file saved from a prior wizard create step
+  virtual bool		SaveWiz();
+  // #BUTTON save current wizard configuration info to the PluginWizard.wiz file into the current plugin_location directory (only valid after directory created)
+
+  virtual bool		MakeAllPlugins(bool user_only = true);
+  // #BUTTON re-make all the currently-installed plugins (useful e.g., when main source is updated) -- user_only = only make the User plugins, not the System ones.  Can also do this by running emergent --make_all_plugins or --make_all_user_plugins at command line
 
   TA_BASEFUNS_NOCOPY(PluginWizard);
 protected:
   String 		src_dir;
   String_PArray 	files;
+  iPluginEditor*	editor;
 
   override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& ok);

@@ -2685,5 +2685,4 @@ private:
 #endif // !__MAKETA__
 };
 
-
 #endif // TA_QTVIEWER_H

@@ -20,6 +20,7 @@
 #include "ta_qtclipdata.h"
 #include "ta_platform.h"
 #include "ta_project.h"
+#include "ta_qtdialog.h"
 
 #include <QDir>
 #include <QProcess>
@@ -338,6 +339,10 @@ bool taPlugins::MakePlugin(const String& plugin_path, const String& plugin_name,
   }
   if(system_plugin)
     cmake_cmd += "-DEMERGENT_PLUGIN_TYPE=System ";
+#ifdef TA_OS_WIN
+  cmake_cmd += "-G \"\"\"NMake Makefiles\"\"\"";
+#endif
+
   if(!ExecMakeCmd(cmake_cmd, build_path)) return false;
 
   String make_cmd = sudo_cmd;
@@ -842,6 +847,7 @@ void PluginWizard::Initialize() {
   plugin_type = UserPlugin;
   validated = false;
   created = false;
+  editor = NULL;
   plugin_location = taMisc::user_dir + PATH_SEP + "plugins" + PATH_SEP +
         plugin_name;
   desc = "enter description of your plugin";
@@ -869,9 +875,14 @@ void PluginWizard::CheckThisConfig_impl(bool quiet, bool& ok) {
     return;
   
   CheckError((plugin_name == "template"), quiet, ok,
-    "you cannot use the name \"template\"");
+	     "you cannot use the name \"template\"");
   //TODO: do our name conflict checks!
   //TODO: check if a plugin already exists there!
+
+  QFileInfo qfi(plugin_location);
+  CheckError((qfi.isDir()), quiet, ok,
+	     "plugin location already exists:", plugin_location,
+	     "you can move out of way or load wiz from that location to compile");
 }
 
 bool PluginWizard::Validate() {
@@ -1082,6 +1093,36 @@ bool PluginWizard::Clean() {
   return true;
 }
 
+bool PluginWizard::Editor() {
+  if(editor) {
+    editor->show();
+    editor->raise();
+    return true;
+  }
+  editor = iPluginEditor::New(plugin_location, plugin_name);
+  return true;
+}
+
 bool PluginWizard::LoadWiz(const String& wiz_file) {
   return Load(wiz_file);
+}
+
+bool PluginWizard::SaveWiz() {
+  if (TestError((!created),
+    "PluginWizard::SaveWiz", 
+    "You must Create the plugin before you can save the wizard file"))
+    return false;
+  String fname = plugin_location + PATH_SEP + "PluingWizard.wiz";
+  SaveAs(fname);
+  return true;
+}
+
+bool PluginWizard::MakeAllPlugins(bool user_only) {
+  if(user_only) {
+    taPlugins::MakeAllUserPlugins();
+  }
+  else {
+    taPlugins::MakeAllPlugins();
+  }
+  return true;
 }
