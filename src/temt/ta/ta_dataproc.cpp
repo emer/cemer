@@ -600,41 +600,45 @@ bool taDataProc::AllDataToOne2DCell(DataTable* dest, DataTable* src, ValType val
   return true;
 }
 
-bool taDataProc::Slice2D(DataTable* dest, DataTable* src, int src_row, String src_col_nm, String dest_col_nm,
+bool taDataProc::Slice2D(DataTable* dest, DataTable* src, int src_row, String src_col_nm, int dest_row, String dest_col_nm,
 			 int d0_start, int d0_end, int d1_start, int d1_end) {
   int src_dims, src_col, d0_src_size, d1_src_size, d0_dest_size, d1_dest_size, i, j, k, l;
-  ValType src_val_type;
+
+  if(dest_col_nm == "") dest_col_nm = "SliceData";
+  bool in_place_req = false;
+  GetDest(dest, src, dest_col_nm, in_place_req);
+  if(in_place_req) {taMisc::Error("taDataProc::Slice2D -- src cannot be same as dest for this operation!");delete dest;return false;}
+  dest->StructUpdate(true);
 
   if(!src) {taMisc::Error("taDataProc::Slice: src is NULL"); return false;}
   if(!dest) {taMisc::Error("taDataProc::Slice: dest is NULL"); return false;}
   if(src_row > src->rows-1) {taMisc::Error("src_data does not have src_row rows."); return false;}
 
+  if(src_col_nm == "") src_col_nm = src->data[0]->name;
   src_col = src->FindColNameIdx(src_col_nm);
   if(src_col < 0) {taMisc::Error("src_col does not exist in src_data."); return false;}
-  else {
-    src_dims = src->data[src_col]->cell_geom.dims();
-    if(src_dims == 1) {taMisc::Error("src_col matrix must have at least two dimensions. To slice from a 1d matrix use DataTable->GetMatrixVal."); return false;}
-    else {
-      d0_src_size = src->data[src_col]->cell_geom.dim(0);
-      d1_src_size = src->data[src_col]->cell_geom.dim(1);
 
-      if (d0_start > d0_src_size || d0_end > d0_src_size || 
-	  d1_start > d1_src_size || d1_end > d1_src_size) {
-	taMisc::Error("d0_start, d0_end, d1_start, d1_end must all be less than the geometry of the src_data matrix column dimensions"); return false;
-      }
-      d0_dest_size = d0_end-d0_start+1 > 0 ? d0_end-d0_start+1 : 1;
-      d1_dest_size = d1_end-d1_start+1 > 0 ? d1_end-d1_start+1 : 1;
-    }
+  src_dims = src->data[src_col]->cell_geom.dims();
+  if(src_dims == 1) {taMisc::Error("src_col.dim() < 2. To slice from a 1d matrix use DataTable->GetMatrixVal."); return false;}
+
+  d0_src_size = src->data[src_col]->cell_geom.dim(0);
+  d1_src_size = src->data[src_col]->cell_geom.dim(1);
+  if(d0_end == -1) d0_end = d0_src_size-1;
+  if(d1_end == -1) d1_end = d1_src_size-1;
+  if(d0_start > d0_src_size || d0_end > d0_src_size || d1_start > d1_src_size || d1_end > d1_src_size) {
+    taMisc::Error("One of d0_start/d0_end/d1_start/d1_end is greater than the src_data matrix col dims"); return false;
   }
+  d0_dest_size = d0_end-d0_start+1 > 0 ? d0_end-d0_start+1 : 1;
+  d1_dest_size = d1_end-d1_start+1 > 0 ? d1_end-d1_start+1 : 1;
 
-  src_val_type = src->data[src_col]->valType();
-  dest->StructUpdate(true);
-  dest->FindMakeColMatrix(dest_col_nm, src_val_type, 2, d0_dest_size, d1_dest_size);
-  dest->EnforceRows(1);
+  dest->FindMakeColMatrix(dest_col_nm, src->data[src_col]->valType(), 2, d0_dest_size, d1_dest_size);
+  if(dest_row == -1) dest->AddRows();
+  else if(dest_row > dest->rows-1) dest->EnforceRows(dest_row+1);
+  dest_row = dest->rows-1;
 
   for (i = d0_start,k = 0; i <= d0_end; i++, k++)
     for (j = d1_start,l = 0; j <= d1_end; j++, l++)
-      dest->SetMatrixVal(src->GetMatrixVal(src_col_nm, src_row, i, j), dest_col_nm, 0, k, l);
+      dest->SetMatrixVal(src->GetMatrixVal(src_col_nm, src_row, i, j), dest_col_nm, dest_row, k, l);
 
   dest->StructUpdate(false);
   return true;
