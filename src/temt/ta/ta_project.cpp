@@ -2453,8 +2453,8 @@ have_app_dir:
 #endif
 
 #ifdef TA_OS_WIN
-  taMisc::Info("app dir:", taMisc::app_dir);
-  // todo: do this for windows
+  // taMisc::Info("app dir:", taMisc::app_dir);
+  // todo: do this for windows  -- no need to do this probably
 #else
   if(!taMisc::app_dir.contains("share")) { // if we don't have share, then we're in compile dir
     taMisc::Info("Note: running development executable: not loading plugins");

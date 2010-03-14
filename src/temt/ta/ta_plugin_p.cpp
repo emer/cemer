@@ -300,7 +300,11 @@ int InteractiveProcess::stdinClone = -1;
 
 bool taPlugins::ExecMakeCmd(const String& cmd, const String& working_dir) {
   taMisc::Info(cmd);
+#ifdef TA_OS_WIN
+  QProcess proc;
+#else
   InteractiveProcess proc;
+#endif
   proc.setWorkingDirectory(working_dir);
   proc.start(cmd);
   if(!proc.waitForStarted()) return false;
@@ -320,14 +324,18 @@ bool taPlugins::MakePlugin(const String& plugin_path, const String& plugin_name,
   String build_path = plugin_path + PATH_SEP + build_dir;
 
   String sudo_cmd;
-#ifndef TA_OS_WIN
+
+#ifdef TA_OS_WIN
+  QDir qdr(plugin_path);
+  qdr.mkdir(build_dir);
+#else
   if(system_plugin)
     sudo_cmd = "sudo ";
-#endif
 
   String mkdir_cmd = sudo_cmd + "mkdir " + build_dir;
   if(!ExecMakeCmd(mkdir_cmd, plugin_path)) return false;
 
+#endif
   String cmake_cmd = sudo_cmd + "cmake ../ ";
   if(taMisc::build_str.nonempty()) {
     if(taMisc::build_str.contains("dbg")) {
