@@ -2053,6 +2053,12 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layTopCtrls->addWidget(chkDisplay);
   layTopCtrls->addSpacing(taiM->hsep_c);
 
+  chkManip = new QCheckBox("Manip", widg); chkDisplay->setObjectName("chkManip");
+  chkManip->setToolTip("Whether to enable manipulation of the view object via a transformation box that supports position, scale and rotation manipulations");
+  connect(chkManip, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layTopCtrls->addWidget(chkManip);
+  layTopCtrls->addSpacing(taiM->hsep_c);
+
   chkHeaders =  new QCheckBox("Hdrs", widg ); chkHeaders->setObjectName("chkHeaders");
   chkHeaders->setToolTip("Whether to display a top row of headers indicating the name of the columns");
   connect(chkHeaders, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
@@ -2076,6 +2082,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layTopCtrls->addWidget(lblFontScale);
   fldFontScale = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layTopCtrls->addWidget(fldFontScale->GetRep());
+  ((iLineEdit*)fldFontScale->GetRep())->setCharWidth(8);
 
   layTopCtrls->addStretch();
 
@@ -2104,18 +2111,21 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layVals->addWidget(lblWidth);
   fldWidth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldWidth->GetRep());
+  ((iLineEdit*)fldWidth->GetRep())->setCharWidth(8);
 
   lblTxtMin = taiM->NewLabel("Min\nText", widg, font_spec);
   lblTxtMin->setToolTip("Minimum text size in 'view units' (size of entire display is 1.0) -- .02 is default -- increase to make small text more readable");
   layVals->addWidget(lblTxtMin);
   fldTxtMin = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldTxtMin->GetRep());
+  ((iLineEdit*)fldTxtMin->GetRep())->setCharWidth(8);
 
   lblTxtMax = taiM->NewLabel("Max\nText", widg, font_spec);
   lblTxtMax->setToolTip("Maximum text size in 'view units' (size of entire display is 1.0) -- .05 is default");
   layVals->addWidget(lblTxtMax);
   fldTxtMax = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldTxtMax->GetRep());
+  ((iLineEdit*)fldTxtMax->GetRep())->setCharWidth(8);
 
   layVals->addStretch();
 
@@ -2138,20 +2148,23 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layMatrix->addWidget(lblTrans);
   fldTrans = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layMatrix->addWidget(fldTrans->GetRep());
+  ((iLineEdit*)fldTrans->GetRep())->setCharWidth(8);
 
   lblRot = taiM->NewLabel("Mat\nRot", widg, font_spec);
   lblRot->setToolTip("Rotation (in degrees) of the matrix in the Z axis, producing a denser stacking of patterns.");
   layMatrix->addWidget(lblRot);
   fldRot = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layMatrix->addWidget(fldRot->GetRep());
+  ((iLineEdit*)fldRot->GetRep())->setCharWidth(8);
 
   lblBlockHeight = taiM->NewLabel("Blk\nHgt", widg, font_spec);
   lblBlockHeight->setToolTip("Maximum height of grid blocks (in Z dimension), as a proportion of their overall X-Y size.");
   layMatrix->addWidget(lblBlockHeight);
   fldBlockHeight = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layMatrix->addWidget(fldBlockHeight->GetRep());
-//   layMatrix->addSpacing(taiM->hsep_c);
+  ((iLineEdit*)fldBlockHeight->GetRep())->setCharWidth(8);
 
+  layMatrix->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
   // 	Colorscale etc
@@ -2188,12 +2201,16 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layClickVals->addWidget(lblLMBVal);
   fldLMBVal = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layClickVals->addWidget(fldLMBVal->GetRep());
+  ((iLineEdit*)fldLMBVal->GetRep())->setCharWidth(8);
 
   lblMMBVal = taiM->NewLabel("Middle Click\nValue", widg, font_spec);
   lblMMBVal->setToolTip("Value that will be set in the cell if you click with the middle mouse button (if Click Vals is on).");
   layClickVals->addWidget(lblMMBVal);
   fldMMBVal = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layClickVals->addWidget(fldMMBVal->GetRep());
+  ((iLineEdit*)fldMMBVal->GetRep())->setCharWidth(8);
+
+  layClickVals->addStretch();
 
   layWidg->addStretch();
 
@@ -2214,6 +2231,7 @@ void iGridTableView_Panel::GetValue_impl() {
   if (!glv) return;
   
   glv->display_on = chkDisplay->isChecked();
+  glv->manip_ctrl_on = chkManip->isChecked();
   glv->header_on = chkHeaders->isChecked();
   glv->row_num_on = chkRowNum->isChecked();
   glv->two_d_font = chk2dFont->isChecked();
@@ -2248,6 +2266,7 @@ void iGridTableView_Panel::UpdatePanel_impl() {
   if (!glv) return;
 
   chkDisplay->setChecked(glv->display_on);
+  chkManip->setChecked(glv->manip_ctrl_on);
   chkHeaders->setChecked(glv->header_on);
   chkRowNum->setChecked(glv->row_num_on);
   chk2dFont->setChecked(glv->two_d_font);
@@ -4837,6 +4856,12 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layTopCtrls->addWidget(chkDisplay);
   layTopCtrls->addSpacing(taiM->hsep_c);
 
+  chkManip = new QCheckBox("Manip", widg); chkDisplay->setObjectName("chkManip");
+  chkManip->setToolTip("Whether to enable manipulation of the view object via a transformation box that supports position, scale and rotation manipulations");
+  connect(chkManip, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layTopCtrls->addWidget(chkManip);
+  layTopCtrls->addSpacing(taiM->hsep_c);
+
   // todo: fix tool tips on all of these..
 
   lblGraphType = taiM->NewLabel("Graph", widg, font_spec);
@@ -5120,6 +5145,7 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
   if (!glv) return; // probably destructing
 
   chkDisplay->setChecked(glv->display_on);
+  chkManip->setChecked(glv->manip_ctrl_on);
   cmbGraphType->GetImage(glv->graph_type);
   cmbPlotStyle->GetImage(glv->plot_style);
   fldRows->GetImage((String)glv->view_rows);
@@ -5184,6 +5210,7 @@ void iGraphTableView_Panel::GetValue_impl() {
   if (!glv) return;
   
   glv->display_on = chkDisplay->isChecked();
+  glv->manip_ctrl_on = chkManip->isChecked();
   int i = 0;
   cmbGraphType->GetEnumValue(i); glv->graph_type = (GraphTableView::GraphType)i;
   cmbPlotStyle->GetEnumValue(i); glv->plot_style = (GraphTableView::PlotStyle)i;

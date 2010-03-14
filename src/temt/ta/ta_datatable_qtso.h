@@ -470,6 +470,7 @@ INHERITED(iDataTableView_Panel)
 public:
   QHBoxLayout*		  layTopCtrls;
   QCheckBox*		    chkDisplay;
+  QCheckBox*		    chkManip;
   QCheckBox*		    chkHeaders;
   QCheckBox*		    chkRowNum;
   QCheckBox*		    chk2dFont;
@@ -980,6 +981,7 @@ public:
 
   QHBoxLayout*		  layTopCtrls;
   QCheckBox*		    chkDisplay;
+  QCheckBox*		    chkManip;
   QLabel*		    lblGraphType;
   taiComboBox*		    cmbGraphType;
   QLabel*		    lblPlotStyle;
