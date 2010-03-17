@@ -1657,6 +1657,33 @@ int taMath_double::vec_threshold(double_Matrix* vec, double thresh, double low, 
   return rval;
 }
 
+int taMath_double::vec_threshold_low(double_Matrix* vec, double thresh, double low) {
+  if(!vec_check_type(vec)) return false;
+  if(vec->size == 0)  return 0;
+  int rval = 0;
+  for(int i=0;i<vec->size;i++) {
+    if(vec->FastEl_Flat(i) <= thresh) {
+      vec->FastEl_Flat(i) = low;
+      rval++;
+    }
+  }
+  return rval;
+}
+
+int taMath_double::vec_threshold_high(double_Matrix* vec, double thresh, double high) {
+  if(!vec_check_type(vec)) return false;
+  if(vec->size == 0)  return 0;
+  int rval = 0;
+  for(int i=0;i<vec->size;i++) {
+    if(vec->FastEl_Flat(i) >= thresh) {
+      vec->FastEl_Flat(i) = high;
+      rval++;
+    }
+  }
+  return rval;
+}
+
+
 int taMath_double::vec_replace(double_Matrix* vec, double find1, double repl1,
 			       bool do2, double find2, double repl2,
 			       bool do3, double find3, double repl3,
@@ -2094,6 +2121,87 @@ bool taMath_double::mat_mds(const double_Matrix* a, double_Matrix* xy_coords, in
   return true;
 }*/
 
+bool taMath_double::mat_transpose(double_Matrix* dest, double_Matrix* src) {
+  if(!dest || !src){taMisc::Error("dest or src cannot be null. try dest=new double_Matrix");return false;}
+  if(src->dims() != 2){taMisc::Error("Can only transpose a 2d matrix");return false;}
+  int d0 = src->dim(0);
+  int d1 = src->dim(1);
+  dest->SetGeom(2,d1,d0);
+  for(int i=0;i<d0;i++)
+    for(int j=0;j<d1;j++)
+      dest->Set(src->FastElAsDouble(i,j),j,i);
+  return true;
+}
+
+bool taMath_double::mat_slice(double_Matrix* dest, double_Matrix* src, int d0_start, int d0_end, int d1_start, int d1_end) {
+  if(!dest || !src){taMisc::Error("dest or src cannot be null. try dest=new double_Matrix");return false;}
+  if(src->dims() < 2) {taMisc::Error("Can only slice from a 2d matrix or the first 2 dims of a higher matrix"); return false;}
+  int d0_src, d1_src, d0_dest, d1_dest, i, j, k, l;
+  d0_src = src->dim(0);
+  d1_src = src->dim(1);
+  if(d0_end == -1) d0_end = d0_src-1;
+  if(d1_end == -1) d1_end = d1_src-1;
+  if(d0_start > d0_src || d0_end > d0_src || d1_start > d1_src || d1_end > d1_src){
+    taMisc::Error("One of d0_start/d0_end/d1_start/d1_end is greater than the src dims"); return false;}
+  d0_dest = d0_end-d0_start+1 > 0 ? d0_end-d0_start+1 : 1;
+  d1_dest = d1_end-d1_start+1 > 0 ? d1_end-d1_start+1 : 1;
+  dest->SetGeom(2,d0_dest,d1_dest);
+  for (i = d0_start,k = 0; i <= d0_end; i++, k++)
+    for (j = d1_start,l = 0; j <= d1_end; j++, l++)
+      dest->Set(src->FastElAsDouble(i,j),k,l);
+  return true;
+}
+
+bool taMath_double::mat_trim(double_Matrix* dest, double_Matrix* src, Relation& rel, bool left, bool right, bool top, bool bottom) {
+  if(!dest || !src){taMisc::Error("dest or src cannot be null. try dest=new double_Matrix");return false;}
+  if(src->dims() != 2) {taMisc::Error("Can only trim a 2d matrix"); return false;}
+
+  int d0_src, d1_src, d0_dest, d1_dest, i, count;
+  int trim_left = 0, trim_right = 0, trim_top = 0, trim_bottom = 0;
+  double_Matrix* mat = new double_Matrix;
+
+  d0_src = src->dim(0);
+  d1_src = src->dim(1);
+
+  if(left) {
+    for(i = 0;i < d0_src;i++) {
+      mat_slice(mat,src,i,i);
+      count = vec_count(mat,rel);
+      if(count == d1_src) trim_left++; else break;
+    }
+    if(trim_left == d0_src) return false;
+  }
+  if(right) {
+    for(i = d0_src-1;i >= 0;i--) {
+      mat_slice(mat,src,i,i);
+      count = vec_count(mat,rel);
+      if(count == d1_src) trim_right++; else break;
+    }
+    if(trim_right == d0_src) return false;
+  }
+  if(top) {
+    for(i = 0;i < d1_src;i++) {
+      mat_slice(mat,src,0,-1,i,i);
+      count = vec_count(mat,rel);
+      if(count == d0_src) trim_top++; else break;
+    }
+    if(trim_top == d1_src) return false;
+  }
+  if(bottom) {
+    for(i = d1_src-1;i >= 0;i--) {
+      mat_slice(mat,src,0,-1,i,i);
+      count = vec_count(mat,rel);
+      if(count == d0_src) trim_bottom++; else break;
+    }
+    if(trim_bottom == d1_src) return false;
+  }
+
+  mat_slice(dest,src,trim_left,d0_src-1-trim_right,trim_top,d1_src-1-trim_bottom);
+  delete mat;
+  return true;
+}
+
+
 bool taMath_double::fft_real_transform(double_Matrix* out_mat,
   const double_Matrix* in_mat, bool real_out, bool norm)
 {
@@ -2187,7 +2295,6 @@ exit:
   if (gwt) gsl_fft_real_wavetable_free(gwt);
   return rval;
 }
-
 
 #else // !HAVE_LIBGSL
 
@@ -4149,6 +4256,32 @@ int taMath_float::vec_threshold(float_Matrix* vec, float thresh, float low, floa
   return rval;
 }
 
+int taMath_float::vec_threshold_low(float_Matrix* vec, float thresh, float low) {
+  if(!vec_check_type(vec)) return false;
+  if(vec->size == 0)  return 0;
+  int rval = 0;
+  for(int i=0;i<vec->size;i++) {
+    if(vec->FastEl_Flat(i) <= thresh) {
+      vec->FastEl_Flat(i) = low;
+      rval++;
+    }
+  }
+  return rval;
+}
+
+int taMath_float::vec_threshold_high(float_Matrix* vec, float thresh, float high) {
+  if(!vec_check_type(vec)) return false;
+  if(vec->size == 0)  return 0;
+  int rval = 0;
+  for(int i=0;i<vec->size;i++) {
+    if(vec->FastEl_Flat(i) >= thresh) {
+      vec->FastEl_Flat(i) = high;
+      rval++;
+    }
+  }
+  return rval;
+}
+
 int taMath_float::vec_replace(float_Matrix* vec, float find1, float repl1,
 			       bool do2, float find2, float repl2,
 			       bool do3, float find3, float repl3,
@@ -4508,6 +4641,87 @@ bool taMath_float::mat_mds_owrite(float_Matrix* a, float_Matrix* xy_coords, int 
 
 bool taMath_float::mat_mds(const float_Matrix* a, float_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
   return mat_mds_owrite((float_Matrix*)a, xy_coords, x_axis_c, y_axis_c);
+}
+
+bool taMath_float::mat_transpose(float_Matrix* dest, float_Matrix* src) {
+  if(!dest || !src){taMisc::Error("dest or src cannot be null. try dest=new float_Matrix");return false;}
+  if(src->dims() != 2){taMisc::Error("Can only transpose a 2d matrix");return false;}
+  int d0,d1;
+  d0 = src->dim(0);
+  d1 = src->dim(1);
+  dest->SetGeom(2,d1,d0);
+  for(int i=0;i<d0;i++)
+    for(int j=0;j<d1;j++)
+      dest->Set(src->FastElAsFloat(i,j),j,i);
+  return true;
+}
+
+bool taMath_float::mat_slice(float_Matrix* dest, float_Matrix* src, int d0_start, int d0_end, int d1_start, int d1_end) {
+  if(!dest || !src){taMisc::Error("dest or src cannot be null. try dest=new float_Matrix");return false;}
+  if(src->dims() < 2) {taMisc::Error("Can only slice from a 2d matrix or the first 2 dims of a higher matrix"); return false;}
+  int d0_src, d1_src, d0_dest, d1_dest, i, j, k, l;
+  d0_src = src->dim(0);
+  d1_src = src->dim(1);
+  if(d0_end == -1) d0_end = d0_src-1;
+  if(d1_end == -1) d1_end = d1_src-1;
+  if(d0_start > d0_src || d0_end > d0_src || d1_start > d1_src || d1_end > d1_src){
+    taMisc::Error("One of d0_start/d0_end/d1_start/d1_end is greater than the src dims"); return false;}
+  d0_dest = d0_end-d0_start+1 > 0 ? d0_end-d0_start+1 : 1;
+  d1_dest = d1_end-d1_start+1 > 0 ? d1_end-d1_start+1 : 1;
+  dest->SetGeom(2,d0_dest,d1_dest);
+  for (i = d0_start,k = 0; i <= d0_end; i++, k++)
+    for (j = d1_start,l = 0; j <= d1_end; j++, l++)
+      dest->Set(src->FastElAsFloat(i,j),k,l);
+  return true;
+}
+
+bool taMath_float::mat_trim(float_Matrix* dest, float_Matrix* src, Relation& rel, bool left, bool right, bool top, bool bottom) {
+  if(!dest || !src){taMisc::Error("dest or src cannot be null. try dest=new float_Matrix");return false;}
+  if(src->dims() != 2) {taMisc::Error("Can only trim a 2d matrix"); return false;}
+
+  int d0_src, d1_src, d0_dest, d1_dest, i, count;
+  int trim_left = 0, trim_right = 0, trim_top = 0, trim_bottom = 0;
+  float_Matrix* mat = new float_Matrix;
+
+  d0_src = src->dim(0);
+  d1_src = src->dim(1);
+
+  if(left) {
+    for(i = 0;i < d0_src;i++) {
+      mat_slice(mat,src,i,i);
+      count = vec_count(mat,rel);
+      if(count == d1_src) trim_left++; else break;
+    }
+    if(trim_left == d0_src) return false;
+  }
+  if(right) {
+    for(i = d0_src-1;i >= 0;i--) {
+      mat_slice(mat,src,i,i);
+      count = vec_count(mat,rel);
+      if(count == d1_src) trim_right++; else break;
+    }
+    if(trim_right == d0_src) return false;
+  }
+  if(top) {
+    for(i = 0;i < d1_src;i++) {
+      mat_slice(mat,src,0,-1,i,i);
+      count = vec_count(mat,rel);
+      if(count == d0_src) trim_top++; else break;
+    }
+    if(trim_top == d1_src) return false;
+  }
+  if(bottom) {
+    for(i = d1_src-1;i >= 0;i--) {
+      mat_slice(mat,src,0,-1,i,i);
+      count = vec_count(mat,rel);
+      if(count == d0_src) trim_bottom++; else break;
+    }
+    if(trim_bottom == d1_src) return false;
+  }
+
+  mat_slice(dest,src,trim_left,d0_src-1-trim_right,trim_top,d1_src-1-trim_bottom);
+  delete mat;
+  return true;
 }
 
 bool taMath_float::fft_real_transform(float_Matrix* out_mat, const float_Matrix* in_mat,

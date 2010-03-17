@@ -633,6 +633,13 @@ public:
   static int	vec_threshold(double_Matrix* vec, double thresh=.5,
 			      double low=0.0, double high=1.0);
   // #CAT_Norm threshold values in the vector, low vals go to low, etc; returns number of high values
+  static int	vec_threshold_low(double_Matrix* vec, double thresh=.5,
+				  double low=0.0);
+  // #CAT_Norm threshold values in the vector, low vals go to low; returns number of low vals
+  static int	vec_threshold_high(double_Matrix* vec, double thresh=.5,
+				  double high=0.0);
+  // #CAT_Norm threshold values in the vector, high vals go to high; returns number of high values
+
   static int	vec_replace(double_Matrix* vec, double find1, double repl1,
 			    bool do2 = false, double find2=0.0, double repl2=0.0,
 			    bool do3 = false, double find3=0.0, double repl3=0.0,
@@ -703,6 +710,14 @@ public:
   static bool mat_mds(const double_Matrix* A, double_Matrix* x_y_coords, int x_component = 0,
 		      int y_component = 1);
   // perform multidimensional scaling of matrix A (must be square symmetric matrix, e.g., a distance matrix), returning two-dimensional coordinates that best capture the distance relationships among the items (rows, columns) in x,y coordinates using specified components -- first copies the matrix A so it is not overwritten
+  static bool mat_transpose(double_Matrix* dest, double_Matrix* src);
+  // #CAT_Matrix transpose a 2d matrix
+  static bool mat_slice(double_Matrix* dest, double_Matrix* src, int d0_start = 0, int d0_end = -1, int d1_start = 0, int d1_end = -1);
+  // #CAT_Matrix See http://en.wikipedia.org/wiki/Array_slicing. Copies a 2d slice out of the first 2 dimensions of src into dest. If d0_end or d1_end are -1 (default) they will be set to the size of that dimension. See also taDataProc::Slice2D.
+  static bool mat_trim(double_Matrix* dest, double_Matrix* src, Relation& rel,
+		       bool left = true, bool right = true, bool top = true, bool bottom = true);
+  // #CAT_Matrix Trim all consecutive rows/columns starting from top, bottom, left, right that are under thresh. Returns false if the entire matrix so be sure to check the return value.
+
 
   /////////////////////////////////////////////////////////////////////////////////
   // higher-dimensional matrix frame-based operations (matrix = collection of matricies)
@@ -1196,6 +1211,12 @@ public:
   static int	vec_threshold(float_Matrix* vec, float thresh=.5f,
 			      float low=0.0f, float high=1.0f);
   // #CAT_Norm threshold values in the vector, low vals go to low, etc; returns number of high values
+  static int	vec_threshold_low(float_Matrix* vec, float thresh=.5,
+				  float low=0.0);
+  // #CAT_Norm threshold values in the vector, low vals go to low; returns number of low vals
+  static int	vec_threshold_high(float_Matrix* vec, float thresh=.5,
+				   float high=0.0);
+  // #CAT_Norm threshold values in the vector, high vals go to high; returns number of high values
   static int	vec_replace(float_Matrix* vec, float find1, float repl1,
 			    bool do2 = false, float find2=0.0, float repl2=0.0,
 			    bool do3 = false, float find3=0.0, float repl3=0.0,
@@ -1267,6 +1288,13 @@ public:
   static bool mat_mds(const float_Matrix* A, float_Matrix* x_y_coords, int x_component = 0,
 		      int y_component = 1);
   // perform multidimensional scaling of matrix A (must be square symmetric matrix, e.g., a distance matrix), returning two-dimensional coordinates that best capture the distance relationships among the items (rows, columns) in x,y coordinates using specified components -- first copies the matrix A so it is not overwritten
+  static bool mat_transpose(float_Matrix* dest, float_Matrix* src);
+  // #CAT_Matrix transpose a 2d matrix
+  static bool mat_slice(float_Matrix* dest, float_Matrix* src, int d0_start = 0, int d0_end = -1, int d1_start = 0, int d1_end = -1);
+  // #CAT_Matrix See http://en.wikipedia.org/wiki/Array_slicing. Copies a 2d slice out of the first 2 dimensions of src into dest. If d0_end or d1_end are -1 (default) they will be set to the size of that dimension. See also taDataProc::Slice2D.
+  static bool mat_trim(float_Matrix* dest, float_Matrix* src, Relation& rel,
+		       bool left = true, bool right = true, bool top = true, bool bottom = true);
+  // #CAT_Matrix Trim all consecutive rows/columns starting from top, bottom, left, right that are under thresh. Returns false if the entire matrix so be sure to check the return value.
 
   /////////////////////////////////////////////////////////////////////////////////
   // higher-dimensional matrix frame-based operations (matrix = collection of matricies)
