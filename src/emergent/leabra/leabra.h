@@ -1587,15 +1587,18 @@ public:
     KWTA_COMP_COST,		// competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility
     AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer
     MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer
+    K_SOFTMAX,			// k-softmax algorithm: selects k units to activate according to iterative softmax selection process (i.e., softmax on remainder after each successive one is chosen) -- resulting activations are just hard-clamped with corresponding probability values -- completely bypasses the normal activation dynamics -- smax_cyc determines cycle on which acts are computed -- they remain frozen from there on out
     UNIT_INHIB			// unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)
   };
 
   InhibType	type;		// how to compute inhibition (g_i)
   float		kwta_pt;	// #DEF_0.25;0.6;0.2 [Default: .25 for KWTA_INHIB and KWTA_KV2K, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
   float		min_i;		// minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
-  float		comp_thr;	// #CONDEDIT_ON_type:KWTA_COMP_COST [0-1] Threshold for competitors in KWTA_COMP_COST -- competitor threshold inhibition is normalized by k'th inhibition and those above this threshold are counted as competitors 
-  float		comp_gain;	// #CONDEDIT_ON_type:KWTA_COMP_COST Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level
-  float		gp_pt;		// #CONDEDIT_ON_type:AVG_MAX_PT_INHIB [Default: .2] for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
+  float		comp_thr;	// #CONDSHOW_ON_type:KWTA_COMP_COST [0-1] Threshold for competitors in KWTA_COMP_COST -- competitor threshold inhibition is normalized by k'th inhibition and those above this threshold are counted as competitors 
+  float		comp_gain;	// #CONDSHOW_ON_type:KWTA_COMP_COST Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level
+  float		gp_pt;		// #CONDSHOW_ON_type:AVG_MAX_PT_INHIB #DEF_0.2 for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
+  int		smax_cyc;	// #CONDSHOW_ON_type:K_SOFTMAX cycle at which softmax is computed -- acts are all off before this, and fixed after this
+  float		smax_gain;	// #CONDSHOW_ON_type:K_SOFTMAX gain on the softmax -- multiplier on the netinput values prior to exp: p = exp(gain * netin) / sum exp(gain * netin)
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(LeabraInhibSpec);
@@ -1884,6 +1887,9 @@ public:
     virtual void Compute_Inhib_Max(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
 					  LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of max inhibition computation
+    virtual void Compute_Inhib_KSoftMax(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+					  LeabraNetwork* net, LeabraInhibSpec& ispec);
+    // #IGNORE implementation of K_SoftMax inhibition computation
     virtual void Compute_Inhib_kWTA_Gps(LeabraLayer* lay, LeabraNetwork* net,
 					       LeabraInhibSpec& ispec);
     // #IGNORE implementation of GPS_THEN_UNITS kwta on groups
@@ -3378,10 +3384,10 @@ public:
 
   virtual bool PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_layer,
 				 bool disconnect = false);
-  // #MENU_BUTTON #NO_SCOPE_1 make (or break if disconnect = true) connections between given sending_layer in given network and the learning PVLV layers (PVr, PVi, LVe, LVi, NV), each of which should typically receive from the same sending layers
+  // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connections between given sending_layer in given network and the learning PVLV layers (PVr, PVi, LVe, LVi, NV), each of which should typically receive from the same sending layers
   virtual bool PVLV_OutToPVe(LeabraNetwork* net, LeabraLayer* output_layer,
 				 bool disconnect = false);
-  // #MENU_BUTTON #NO_SCOPE_1 make (or break if disconnect = true) connection between given output_layer in given network and the PVe layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance
+  // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connection between given output_layer in given network and the PVe layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance
   virtual bool PVLV_ToLayerGroup(LeabraNetwork* net);
   // #MENU_BUTTON move all the PVLV layers to a PVLV layer group, which is the new default way of organizing these layers
 

@@ -2348,6 +2348,8 @@ void LeabraInhibSpec::Initialize() {
   comp_thr = .5f;
   comp_gain = 2.0f;
   gp_pt = .2f;
+  smax_cyc = 10;
+  smax_gain = 1.0f;
 }
 
 void KWTASpec::Initialize() {
@@ -2971,18 +2973,29 @@ void LeabraLayerSpec::Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ug, Leabr
     thr->i_val.g_i = 0.0f;	// make sure it's zero, cuz this gets added to units.. 
   }
   else {
-    if(ispec.type == LeabraInhibSpec::KWTA_INHIB)
+    switch(ispec.type) {
+    case LeabraInhibSpec::KWTA_INHIB:
       Compute_Inhib_kWTA(lay, ug, thr, net, ispec);
-    else if(ispec.type == LeabraInhibSpec::KWTA_AVG_INHIB)
+      break;
+    case LeabraInhibSpec::KWTA_AVG_INHIB:
       Compute_Inhib_kWTA_Avg(lay, ug, thr, net, ispec);
-    else if(ispec.type == LeabraInhibSpec::KWTA_KV2K)
+      break;
+    case LeabraInhibSpec::KWTA_KV2K:
       Compute_Inhib_kWTA_kv2k(lay, ug, thr, net, ispec);
-    else if(ispec.type == LeabraInhibSpec::KWTA_COMP_COST)
+      break;
+    case LeabraInhibSpec::KWTA_COMP_COST:
       Compute_Inhib_kWTA_CompCost(lay, ug, thr, net, ispec);
-    else if(ispec.type == LeabraInhibSpec::AVG_MAX_PT_INHIB)
+      break;
+    case LeabraInhibSpec::AVG_MAX_PT_INHIB:
       Compute_Inhib_AvgMaxPt(lay, ug, thr, net, ispec);
-    else if(ispec.type == LeabraInhibSpec::MAX_INHIB)
+      break;
+    case LeabraInhibSpec::MAX_INHIB:
       Compute_Inhib_Max(lay, ug, thr, net, ispec);
+      break;
+    case LeabraInhibSpec::K_SOFTMAX:
+      Compute_Inhib_KSoftMax(lay, ug, thr, net, ispec);
+      break;
+    }
     thr->i_val.g_i = thr->i_val.kwta;
   }
 
@@ -3365,6 +3378,12 @@ void LeabraLayerSpec::Compute_Inhib_Max(LeabraLayer* lay, Unit_Group*, LeabraInh
   thr->kwta.k_ithr = k_avg;
   thr->kwta.k1_ithr = nw_gi;
   thr->kwta.Compute_IThrR();
+}
+
+void LeabraLayerSpec::Compute_Inhib_KSoftMax(LeabraLayer* lay, Unit_Group*, LeabraInhib* thr,
+					     LeabraNetwork*, LeabraInhibSpec& ispec) {
+  // one key issue: gc.a, gc.h influences -- how?
+
 }
 
 void LeabraLayerSpec::Compute_CtDynamicInhib(LeabraLayer* lay, LeabraNetwork* net) {

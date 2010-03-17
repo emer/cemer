@@ -1381,6 +1381,16 @@ void T3DataViewMain::Copy_(const T3DataViewMain& cp) {
 }
 
 
+void T3DataViewMain::CopyFromViewFrame(T3DataViewPar* cp) {
+  T3DataViewFrame* vwr = GetFrame();
+  if(!vwr) return;
+  T3DataViewFrame* cp_vwr = cp->GetFrame();
+  if(!cp_vwr || vwr == cp_vwr) return;
+
+  vwr->CopyFromViewFrame(cp_vwr);
+}
+
+
 //////////////////////////
 //   iSoSelectionEvent	//
 //////////////////////////
@@ -1933,11 +1943,19 @@ void T3DataViewFrame::CutLinks() {
 }
 
 void T3DataViewFrame::Copy_(const T3DataViewFrame& cp) {
-  root_view = cp.root_view;
+//   root_view = cp.root_view;
   bg_color = cp.bg_color;
   text_color = cp.text_color;
+  headlight_on = cp.headlight_on;
+  stereo_view = cp.stereo_view;
+  saved_views = cp.saved_views;
 }
 
+void T3DataViewFrame::CopyFromViewFrame(T3DataViewFrame* cp) {
+  Copy_(*cp);
+  SetAllSavedViews();
+  GoToSavedView(0);
+}
 
 void T3DataViewFrame::AddView(T3DataView* view) {
   root_view.children.Add(view);

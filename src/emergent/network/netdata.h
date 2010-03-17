@@ -57,7 +57,7 @@ public:
   Layer_Group* 		layer_group;
   // #READ_ONLY #HIDDEN #NO_SAVE the group of layers on the network -- just for choosing the layer from a list
   LayerRef 		layer;
-  // #NO_SAVE #CONDSHOW_ON_net_target:LAYER #FROM_GROUP_layer_group #NO_SCOPE the Layer that will get read or written -- this is just for choosing layer_name from a list -- will be reset after selection is applied
+  // #NO_SAVE #CONDSHOW_ON_net_target:LAYER #FROM_GROUP_layer_group #PROJ_SCOPE the Layer that will get read or written -- this is just for choosing layer_name from a list -- will be reset after selection is applied
   String 		layer_name;
   // #CONDSHOW_ON_net_target:LAYER the name of the Layer that will get read or written
 
@@ -232,7 +232,7 @@ public:
   bool			off; // #NO_SAVE_EMPTY set this to not use this netmon item
   bool			computed;	// if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
   TypeDef*		object_type;	// #CONDSHOW_OFF_computed LAYER #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
-  taSmartRef 		object;		// #CONDSHOW_OFF_computed #TYPE_ON_object_type #NO_SCOPE the network object being monitored
+  taSmartRef 		object;		// #CONDSHOW_OFF_computed #TYPE_ON_object_type #PROJ_SCOPE the network object being monitored
   MemberDef*		lookup_var;	// #CONDSHOW_OFF_computed #TYPE_ON_object_type #NULL_OK #NO_SAVE #NO_EDIT lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
   String        	variable;	// #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections or prjns gets projection-level variables; can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified
   String		var_label;	// #CONDSHOW_OFF_computed label to use in place of variable in naming the columns/channels generated from this data (if empty, variable is used)
@@ -387,19 +387,19 @@ public:
   // #BUTTON #CAT_Monitor monitor a value in the Network or its subobjects
   void		AddLayer(Layer* lay, const String& variable)
   { AddObject(lay, variable);}
-  // #BUTTON #CAT_Monitor #NO_SCOPE monitor a value in the Layer or its subobjects
+  // #BUTTON #CAT_Monitor #PROJ_SCOPE monitor a value in the Layer or its subobjects
   void		AddProjection(Projection* prj, const String& variable)
   { AddObject(prj, variable);}
-  // #BUTTON #CAT_Monitor #NO_SCOPE monitor a value in the Projection or its subobjects
+  // #BUTTON #CAT_Monitor #PROJ_SCOPE monitor a value in the Projection or its subobjects
   void		AddUnitGroup(Unit_Group* ug, const String& variable)
   { AddObject(ug, variable);}
-  // #CAT_Monitor #NO_SCOPE monitor a value in the UnitGroup or its subobjects
+  // #CAT_Monitor #PROJ_SCOPE monitor a value in the UnitGroup or its subobjects
   void		AddUnit(Unit* un, const String& variable)
   { AddObject(un, variable);}
-  // #CAT_Monitor #NO_SCOPE monitor a value in the Unit or its subobjects
+  // #CAT_Monitor #PROJ_SCOPE monitor a value in the Unit or its subobjects
   
   void		AddObject(taBase* obj, const String& variable);
-  // #CAT_Monitor #NO_SCOPE monitor a value in the object or its subobjects
+  // #CAT_Monitor #PROJ_SCOPE monitor a value in the object or its subobjects
 
   void 		UpdateDataTable(bool reset_first = false);
   // #BUTTON #CAT_Monitor update the datatable configuration to match current set of monitored items -- call this during Init. if reset_first, then existing data rows are removed first
@@ -453,7 +453,7 @@ public:
   NetworkRef	network;
   // the network to operate on -- all layers (except lesioned or iconified) are computed, with each layer getting a column of the data table
   LayerRef	trg_layer;
-  // #NO_SCOPE the target layer to compute receptive fields for: each unit in the layer gets a row of the data table, and the columns in that row show the activation based receptive field for that unit for all the other layers in the network
+  // #PROJ_SCOPE the target layer to compute receptive fields for: each unit in the layer gets a row of the data table, and the columns in that row show the activation based receptive field for that unit for all the other layers in the network
   NormMode	norm_mode;
   // how to normalize the resulting values
   float		threshold;

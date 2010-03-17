@@ -3013,6 +3013,11 @@ void iPluginEditor::init() {
   hfile_view->installEventFilter(this);
   cfile_view->installEventFilter(this);
 
+  hfile_view->textEdit()->setLineWrapMode(QTextEdit::WidgetWidth);
+  cfile_view->textEdit()->setLineWrapMode(QTextEdit::WidgetWidth);
+  hfile_view->textEdit()->setTabStopWidth(40);
+  cfile_view->textEdit()->setTabStopWidth(40);
+
   split->addWidget(hfile_view);
   split->addWidget(cfile_view);
 

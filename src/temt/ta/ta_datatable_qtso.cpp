@@ -982,6 +982,7 @@ void GridTableView::CopyFromView(GridTableView* cp) {
       cvs->CopyFromView(cpvs);
     }
   }
+  T3DataViewMain::CopyFromViewFrame(cp);
 }
 
 void GridTableView::UpdateAfterEdit_impl(){
@@ -3213,6 +3214,7 @@ void GraphTableView::CopyFromView(GraphTableView* cp) {
       cvs->CopyFromView(cpvs);
     }
   }
+  T3DataViewMain::CopyFromViewFrame(cp);
 }
 
 void GraphTableView::UpdateAfterEdit_impl(){

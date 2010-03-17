@@ -2367,7 +2367,7 @@ void NetView::CutLinks() {
 
 void NetView::CopyFromView(NetView* cp) {
   Copy_(*cp);
-  // nothing else to do..
+  T3DataViewMain::CopyFromViewFrame(cp);
 }
 
 String NetView::HistMemUsed() {

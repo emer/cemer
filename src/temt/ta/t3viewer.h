@@ -562,6 +562,9 @@ public:
   // this is the overall transform (position, scale, rotation) for this view object (typically can be adjusted by view's transform dragbox)
 
   override bool		isTopLevelView() const {return true;} 
+
+  virtual void		CopyFromViewFrame(T3DataViewPar* cp);
+  // copy key view frame parameters from other view object
   
   override void		InitLinks();
   T3_DATAVIEWFUNS(T3DataViewMain, T3DataViewPar) // 
@@ -830,6 +833,9 @@ public:
   // #CAT_Display save image in EPS format
   virtual bool		SaveImageIV(const String& fname = "");
   // #CAT_Display save image in IV (open inventor) format
+
+  virtual void		CopyFromViewFrame(T3DataViewFrame* cp);
+  // #CAT_Display copy key view information from another view frame (saved views, other view info)
 
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // we notify viewer
   void	InitLinks();

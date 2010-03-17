@@ -532,7 +532,7 @@ public:
   virtual bool 	MoveEl(T* from, T* to)		{ return MoveIdx(FindEl(from), FindEl(to)); }
   // #CAT_Modify #MENU #ARG_ON_OBJ Move item (from) to position of (to)
   virtual bool 	Transfer(T* item)  		{ return Transfer_((void*)item); }
-  // #CAT_Modify #MENU #MENU_ON_Edit #NO_SCOPE Transfer item to this list
+  // #CAT_Modify #MENU #MENU_ON_Edit #PROJ_SCOPE Transfer item to this list
 
   virtual bool	MoveBefore(T* trg, T* item) { return MoveBefore_((void*)trg, (void*)item); }
   // #CAT_Modify move item so that it appears just before the target item trg in the list
@@ -606,7 +606,7 @@ public:
   virtual bool 	MoveEl(T* from, T* to)		{ return MoveIdx(FindEl(from), FindEl(to)); }
   // #MENU #ARG_ON_OBJ Move #CAT_Modify item (from) to position of (to)
   virtual bool 	Transfer(T* item)  		{ return Transfer_((void*)item); }
-  // #MENU #MENU_ON_Edit #NO_SCOPE #CAT_Modify Transfer element to this list
+  // #MENU #MENU_ON_Edit #PROJ_SCOPE #CAT_Modify Transfer element to this list
 
   virtual bool	MoveBefore(T* trg, T* item) { return MoveBefore_((void*)trg, (void*)item); }
   // #CAT_Modify move item so that it appears just before the target item trg in the list

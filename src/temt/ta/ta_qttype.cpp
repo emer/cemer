@@ -1519,8 +1519,11 @@ void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
       scope = (taBase*)(rval->host)->Base(); */
   TypeDef* scope_type = NULL;
   if(mbr->HasOption("NO_SCOPE")) {
-    scope_type = taMisc::default_scope;
+    scope = NULL;
+    scope_type = NULL;		// really no scope
   }
+  else if(mbr->HasOption("PROJ_SCOPE"))
+    scope_type = taMisc::default_scope; // default is project
   else {
     String sctyp = mbr->OptionAfter("SCOPE_");
     if(!sctyp.empty()) {
@@ -2379,8 +2382,12 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
   else
     scope = (taBase*)base;
   TypeDef* scope_type = NULL;
-  if(GetHasOption("NO_SCOPE"))
-    scope_type = taMisc::default_scope; // this means: use default
+  if(GetHasOption("NO_SCOPE")) {
+    scope = NULL;
+    scope_type = NULL; // really no scope!
+  }
+  else if(GetHasOption("PROJ_SCOPE"))
+    scope_type = taMisc::default_scope; // default is project
   else {
     String sctyp = GetOptionAfter("SCOPE_");
     if(!sctyp.empty()) {
