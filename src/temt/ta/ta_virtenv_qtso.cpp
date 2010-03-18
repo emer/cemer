@@ -107,25 +107,23 @@ bool VETexture::UpdateTexture() {
   if(idx < 0 || fname.empty()) return false;
   bool rval = false;
   VEWorld* wrld = GET_MY_OWNER(VEWorld);
-  if(wrld) {
-    VEWorldView* wv = wrld->FindView();
-    if(wv) {
-      SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
-      if(tsw) {
-	if(tsw->getNumChildren() > idx) {
-	  SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
-	  SetTexture(tex);
-	  rval = true;
-	}
-      }
-      tsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
-      if(tsw) {
-	if(tsw->getNumChildren() > idx) {
-	  SoTexture2Transform* tex = (SoTexture2Transform*)tsw->getChild(idx);
-	  SetTransform(tex);
-	  rval = true;
-	}
-      }
+  if(!wrld) return false;
+  VEWorldView* wv = wrld->FindView();
+  if(!wv || !wv->node_so()) return false;
+  SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
+  if(tsw) {
+    if(tsw->getNumChildren() > idx) {
+      SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
+      SetTexture(tex);
+      rval = true;
+    }
+  }
+  tsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
+  if(tsw) {
+    if(tsw->getNumChildren() > idx) {
+      SoTexture2Transform* tex = (SoTexture2Transform*)tsw->getChild(idx);
+      SetTransform(tex);
+      rval = true;
     }
   }
   return rval;
@@ -184,7 +182,7 @@ bool VELight::UpdateLight() {
   VEWorld* wrld = GET_MY_OWNER(VEWorld);
   if(!wrld) return false;
   VEWorldView* wv = wrld->FindView();
-  if(!wv) return false;
+  if(!wv || !wv->node_so()) return false;
   SoGroup* lg = ((T3VEWorld*)wv->node_so())->getLightGroup();
   if(!lg || lg->getNumChildren() == 0) return false;
   if(wrld->light_0.ptr() == this) {
